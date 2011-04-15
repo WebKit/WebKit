@@ -55,31 +55,33 @@ public:
         , m_constantUndefined(UINT_MAX)
         , m_constantNull(UINT_MAX)
         , m_constant1(UINT_MAX)
+        , m_constants(codeBlock->numberOfConstantRegisters())
+        , m_arguments(codeBlock->m_numParameters)
+        , m_variables(codeBlock->m_numVars)
+        , m_temporaries(codeBlock->m_numCalleeRegisters - codeBlock->m_numVars)
     {
-        unsigned numberOfConstants = codeBlock->numberOfConstantRegisters();
-        m_constantRecords.grow(numberOfConstants);
-
-        unsigned numberOfParameters = codeBlock->m_numParameters;
-        m_arguments.grow(numberOfParameters);
-        for (unsigned i = 0; i < numberOfParameters; ++i)
+        for (unsigned i = 0; i < m_arguments.size(); ++i)
             m_arguments[i] = NoNode;
-
-        unsigned numberOfRegisters = codeBlock->m_numCalleeRegisters;
-        m_calleeRegisters.grow(numberOfRegisters);
-        for (unsigned i = 0; i < numberOfRegisters; ++i)
-            m_calleeRegisters[i] = NoNode;
+        for (unsigned i = 0; i < m_variables.size(); ++i)
+            m_variables[i] = NoNode;
+        for (unsigned i = 0; i < m_temporaries.size(); ++i)
+            m_temporaries[i] = NoNode;
     }
 
+    // Parse a full CodeBlock of bytecode.
     bool parse();
 
 private:
+    // Parse a single basic block of bytecode instructions.
+    bool parseBlock();
+
     // Get/Set the operands/result of a bytecode instruction.
     NodeIndex get(int operand)
     {
         // Is this a constant?
         if (operand >= FirstConstantRegisterIndex) {
             unsigned constant = operand - FirstConstantRegisterIndex;
-            ASSERT(constant < m_constantRecords.size());
+            ASSERT(constant < m_constants.size());
             return getJSConstant(constant);
         }
 
@@ -90,9 +92,15 @@ private:
             return getArgument(argument);
         }
 
-        // Must be a local or temporary.
-        ASSERT((unsigned)operand < m_calleeRegisters.size());
-        return getRegister((unsigned)operand);
+        // Is this a variable?
+        unsigned numVariables = m_variables.size();
+        if ((unsigned)operand < numVariables)
+            return getVariable((unsigned)operand);
+        
+        // Must be a temporary.
+        unsigned temporary = (unsigned)operand - numVariables;
+        ASSERT(temporary < m_temporaries.size());
+        return getTemporary(temporary);
     }
     void set(int operand, NodeIndex value)
     {
@@ -103,15 +111,23 @@ private:
             return setArgument(argument, value);
         }
 
-        // Must be a local or temporary.
-        ASSERT((unsigned)operand < m_calleeRegisters.size());
-        return setRegister((unsigned)operand, value);
+        // Is this a variable?
+        unsigned numVariables = m_variables.size();
+        if ((unsigned)operand < numVariables) {
+            setVariable((unsigned)operand, value);
+            return;
+        }
+        
+        // Must be a temporary.
+        unsigned temporary = (unsigned)operand - numVariables;
+        ASSERT(temporary < m_temporaries.size());
+        setTemporary(temporary, value);
     }
 
-    // Used in implementing get/set, above, where the operand is a local or temporary.
-    NodeIndex getRegister(unsigned operand)
+    // Used in implementing get/set, above, where the operand is a local variable.
+    NodeIndex getVariable(unsigned operand)
     {
-        NodeIndex index = m_calleeRegisters[operand];
+        NodeIndex index = m_variables[operand];
         if (index != NoNode)
             return index;
         // We have not yet seen a definition for this value in this block.
@@ -121,9 +137,25 @@ private:
         //     function f() { var x; return x; }
         return constantUndefined();
     }
-    void setRegister(int operand, NodeIndex value)
+    void setVariable(int operand, NodeIndex value)
     {
-        m_calleeRegisters[operand] = value;
+        m_variables[operand] = value;
+    }
+
+    // Used in implementing get/set, above, where the operand is a temporary.
+    NodeIndex getTemporary(unsigned operand)
+    {
+        NodeIndex index = m_temporaries[operand];
+        if (index != NoNode)
+            return index;
+        
+        // Detect a read of an temporary that is not a yet defined within this block (e.g. use of ?:).
+        m_parseFailed = true;
+        return constantUndefined();
+    }
+    void setTemporary(int operand, NodeIndex value)
+    {
+        m_temporaries[operand] = value;
     }
 
     // Used in implementing get/set, above, where the operand is an argument.
@@ -132,8 +164,7 @@ private:
         NodeIndex index = m_arguments[argument];
         if (index != NoNode)
             return index;
-        NodeIndex resultIndex = (NodeIndex)m_graph.size();
-        m_graph.append(Node(Argument, m_currentIndex, OpInfo(argument)));
+        NodeIndex resultIndex = addToGraph(Argument, OpInfo(argument));
         return m_arguments[argument] = resultIndex;
     }
     void setArgument(int operand, NodeIndex value)
@@ -237,35 +268,32 @@ private:
     // Used in implementing get, above, where the operand is a constant.
     NodeIndex getInt32Constant(int32_t value, unsigned constant)
     {
-        NodeIndex index = m_constantRecords[constant].asInt32;
+        NodeIndex index = m_constants[constant].asInt32;
         if (index != NoNode)
             return index;
-        NodeIndex resultIndex = (NodeIndex)m_graph.size();
-        m_graph.append(Node(Int32Constant, m_currentIndex, OpInfo(constant)));
+        NodeIndex resultIndex = addToGraph(Int32Constant, OpInfo(constant));
         m_graph[resultIndex].setInt32Constant(value);
-        m_constantRecords[constant].asInt32 = resultIndex;
+        m_constants[constant].asInt32 = resultIndex;
         return resultIndex;
     }
     NodeIndex getDoubleConstant(double value, unsigned constant)
     {
-        NodeIndex index = m_constantRecords[constant].asNumeric;
+        NodeIndex index = m_constants[constant].asNumeric;
         if (index != NoNode)
             return index;
-        NodeIndex resultIndex = (NodeIndex)m_graph.size();
-        m_graph.append(Node(DoubleConstant, m_currentIndex, OpInfo(constant)));
+        NodeIndex resultIndex = addToGraph(DoubleConstant, OpInfo(constant));
         m_graph[resultIndex].setDoubleConstant(value);
-        m_constantRecords[constant].asNumeric = resultIndex;
+        m_constants[constant].asNumeric = resultIndex;
         return resultIndex;
     }
     NodeIndex getJSConstant(unsigned constant)
     {
-        NodeIndex index = m_constantRecords[constant].asJSValue;
+        NodeIndex index = m_constants[constant].asJSValue;
         if (index != NoNode)
             return index;
 
-        NodeIndex resultIndex = (NodeIndex)m_graph.size();
-        m_graph.append(Node(JSConstant, m_currentIndex, OpInfo(constant)));
-        m_constantRecords[constant].asJSValue = resultIndex;
+        NodeIndex resultIndex = addToGraph(JSConstant, OpInfo(constant));
+        m_constants[constant].asJSValue = resultIndex;
         return resultIndex;
     }
 
@@ -323,11 +351,11 @@ private:
                     return getJSConstant(m_constantUndefined);
             }
 
-            // Add undefined to the CodeBlock's constants, and add a corresponding slot in m_constantRecords.
-            ASSERT(m_constantRecords.size() == numberOfConstants);
+            // Add undefined to the CodeBlock's constants, and add a corresponding slot in m_constants.
+            ASSERT(m_constants.size() == numberOfConstants);
             m_codeBlock->addConstant(jsUndefined());
-            m_constantRecords.append(ConstantRecord());
-            ASSERT(m_constantRecords.size() == m_codeBlock->numberOfConstantRegisters());
+            m_constants.append(ConstantRecord());
+            ASSERT(m_constants.size() == m_codeBlock->numberOfConstantRegisters());
         }
 
         // m_constantUndefined must refer to an entry in the CodeBlock's constant pool that has the value 'undefined'.
@@ -348,11 +376,11 @@ private:
                     return getJSConstant(m_constantNull);
             }
 
-            // Add null to the CodeBlock's constants, and add a corresponding slot in m_constantRecords.
-            ASSERT(m_constantRecords.size() == numberOfConstants);
+            // Add null to the CodeBlock's constants, and add a corresponding slot in m_constants.
+            ASSERT(m_constants.size() == numberOfConstants);
             m_codeBlock->addConstant(jsNull());
-            m_constantRecords.append(ConstantRecord());
-            ASSERT(m_constantRecords.size() == m_codeBlock->numberOfConstantRegisters());
+            m_constants.append(ConstantRecord());
+            ASSERT(m_constants.size() == m_codeBlock->numberOfConstantRegisters());
         }
 
         // m_constantNull must refer to an entry in the CodeBlock's constant pool that has the value 'null'.
@@ -373,11 +401,11 @@ private:
                     return getDoubleConstant(1, m_constant1);
             }
 
-            // Add the value 1 to the CodeBlock's constants, and add a corresponding slot in m_constantRecords.
-            ASSERT(m_constantRecords.size() == numberOfConstants);
+            // Add the value 1 to the CodeBlock's constants, and add a corresponding slot in m_constants.
+            ASSERT(m_constants.size() == numberOfConstants);
             m_codeBlock->addConstant(jsNumber(1));
-            m_constantRecords.append(ConstantRecord());
-            ASSERT(m_constantRecords.size() == m_codeBlock->numberOfConstantRegisters());
+            m_constants.append(ConstantRecord());
+            ASSERT(m_constants.size() == m_codeBlock->numberOfConstantRegisters());
         }
 
         // m_constant1 must refer to an entry in the CodeBlock's constant pool that has the integer value 1.
@@ -441,12 +469,13 @@ private:
         NodeIndex asNumeric;
         NodeIndex asJSValue;
     };
-    Vector <ConstantRecord, 32> m_constantRecords;
+    Vector <ConstantRecord, 32> m_constants;
 
     // Track the index of the node whose result is the current value for every
     // register value in the bytecode - argument, local, and temporary.
     Vector <NodeIndex, 32> m_arguments;
-    Vector <NodeIndex, 32> m_calleeRegisters;
+    Vector <NodeIndex, 32> m_variables;
+    Vector <NodeIndex, 32> m_temporaries;
 
     // These maps are used to unique ToNumber and ToInt32 operations.
     typedef HashMap<NodeIndex, NodeIndex> UnaryOpMap;
@@ -462,7 +491,7 @@ private:
     m_currentIndex += OPCODE_LENGTH(name); \
     return !m_parseFailed
 
-bool ByteCodeParser::parse()
+bool ByteCodeParser::parseBlock()
 {
     AliasTracker aliases(m_graph);
 
@@ -799,17 +828,15 @@ bool ByteCodeParser::parse()
     }
 }
 
-bool parse(Graph& graph, JSGlobalData* globalData, CodeBlock* codeBlock)
+bool ByteCodeParser::parse()
 {
-    // Call ByteCodeParser::parse to build the dataflow for the basic block at 'startIndex'.
-    ByteCodeParser state(globalData, codeBlock, graph);
-    if (!state.parse())
+    if (!parseBlock())
         return false;
 
     // Assign VirtualRegisters.
-    ScoreBoard scoreBoard(graph);
-    Node* nodes = graph.begin();
-    size_t size = graph.size();
+    ScoreBoard scoreBoard(m_graph, m_variables.size());
+    Node* nodes = m_graph.begin();
+    size_t size = m_graph.size();
     for (size_t i = 0; i < size; ++i) {
         Node& node = nodes[i];
         if (node.refCount) {
@@ -831,13 +858,27 @@ bool parse(Graph& graph, JSGlobalData* globalData, CodeBlock* codeBlock)
     // 'm_numCalleeRegisters' is the number of locals and temporaries allocated
     // for the function (and checked for on entry). Since we perform a new and
     // different allocation of temporaries, more registers may now be required.
-    if ((unsigned)codeBlock->m_numCalleeRegisters < scoreBoard.allocatedCount())
-        codeBlock->m_numCalleeRegisters = scoreBoard.allocatedCount();
+    unsigned calleeRegisters = scoreBoard.allocatedCount() + m_variables.size();
+    if ((unsigned)m_codeBlock->m_numCalleeRegisters < calleeRegisters)
+        m_codeBlock->m_numCalleeRegisters = calleeRegisters;
 
 #if DFG_DEBUG_VERBOSE
-    graph.dump(codeBlock);
+    m_graph.dump(m_codeBlock);
 #endif
+
     return true;
+}
+
+bool parse(Graph& graph, JSGlobalData* globalData, CodeBlock* codeBlock)
+{
+#if DFG_DEBUG_LOCAL_DISBALE
+    UNUSED_PARAM(graph);
+    UNUSED_PARAM(globalData);
+    UNUSED_PARAM(codeBlock);
+    return false;
+#else
+    return ByteCodeParser(globalData, codeBlock, graph).parse();
+#endif
 }
 
 } } // namespace JSC::DFG

@@ -38,6 +38,8 @@
 #define DFG_CONSISTENCY_CHECK 0
 // Emit a breakpoint into the head of every generated function, to aid debugging in GDB.
 #define DFG_JIT_BREAK_ON_ENTRY 0
+// Disable the DFG JIT without having to touch Platform.h!
+#define DFG_DEBUG_LOCAL_DISBALE 0
 
 
 namespace JSC { namespace DFG {

@@ -1,3 +1,39 @@
+2011-04-15  Gavin Barraclough  <barraclough@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Bug 58696 - DFG JIT split handling of vars/temporaries
+
+        Presently all callee registers are treated as having single block scope,
+        since the DFG JIT can only compile single block functions. In order to
+        expand the JIT to support control flow we will need to change to retaining
+        locals (but not temporaries) across basic block boundaries.
+
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::ByteCodeParser):
+        (JSC::DFG::ByteCodeParser::get):
+        (JSC::DFG::ByteCodeParser::set):
+        (JSC::DFG::ByteCodeParser::getVariable):
+        (JSC::DFG::ByteCodeParser::setVariable):
+        (JSC::DFG::ByteCodeParser::getTemporary):
+        (JSC::DFG::ByteCodeParser::setTemporary):
+        (JSC::DFG::ByteCodeParser::getArgument):
+        (JSC::DFG::ByteCodeParser::getInt32Constant):
+        (JSC::DFG::ByteCodeParser::getDoubleConstant):
+        (JSC::DFG::ByteCodeParser::getJSConstant):
+        (JSC::DFG::ByteCodeParser::constantUndefined):
+        (JSC::DFG::ByteCodeParser::constantNull):
+        (JSC::DFG::ByteCodeParser::one):
+        (JSC::DFG::ByteCodeParser::parseBlock):
+        (JSC::DFG::ByteCodeParser::parse):
+        (JSC::DFG::parse):
+        * dfg/DFGNode.h:
+        * dfg/DFGScoreBoard.h:
+        (JSC::DFG::ScoreBoard::ScoreBoard):
+        (JSC::DFG::ScoreBoard::~ScoreBoard):
+        (JSC::DFG::ScoreBoard::allocate):
+        (JSC::DFG::ScoreBoard::use):
+
 2011-04-15  Michael Saboff  <msaboff@apple.com>
 
         Reviewed by Oliver Hunt.

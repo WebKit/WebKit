@@ -42,8 +42,9 @@ namespace JSC { namespace DFG {
 // another node.
 class ScoreBoard {
 public:
-    ScoreBoard(Graph& graph)
+    ScoreBoard(Graph& graph, uint32_t firstTemporary)
         : m_graph(graph)
+        , m_firstTemporary(firstTemporary)
     {
     }
 
@@ -58,7 +59,7 @@ public:
         // * By setting m_used to a non-zero value after checking it, we are checking that all
         //   entries in m_free are unique (otherwise the second test of m_used will fail).
         for (size_t i = 0; i < m_free.size(); ++i) {
-            VirtualRegister virtualRegister = m_free[i];
+            uint32_t virtualRegister = m_free[i];
             ASSERT(!m_used[virtualRegister]);
             m_used[virtualRegister] = 1;
         }
@@ -70,17 +71,17 @@ public:
         // Do we have any VirtualRegsiters in the free list, that were used by
         // prior nodes, but are now available?
         if (!m_free.isEmpty()) {
-            VirtualRegister result = m_free.last();
+            uint32_t index = m_free.last();
             m_free.removeLast();
             // Use count must have hit zero for it to have been added to the free list!
-            ASSERT(!m_used[result]);
-            return result;
+            ASSERT(!m_used[index]);
+            return (VirtualRegister)(m_firstTemporary + index);
         }
 
         // Allocate a new VirtualRegister, and add a corresponding entry to m_used.
         size_t next = allocatedCount();
         m_used.append(0);
-        return (VirtualRegister)next;
+        return (VirtualRegister)(m_firstTemporary + next);
     }
 
     // Increment the usecount for the VirtualRegsiter associated with 'child',
@@ -92,7 +93,7 @@ public:
 
         // Find the virtual register number for this child, increment its use count.
         Node& node = m_graph[child];
-        VirtualRegister index = node.virtualRegister;
+        uint32_t index = node.virtualRegister - m_firstTemporary;
         if (node.refCount == ++m_used[index]) {
             // If the use count in the scoreboard reaches the use count for the node,
             // then this was its last use; the virtual register is now free.
@@ -111,6 +112,9 @@ public:
 private:
     // The graph, so we can get refCounts for nodes, to determine when values are dead.
     Graph& m_graph;
+    // The first VirtualRegsiter to be used as a temporary.
+    uint32_t m_firstTemporary;
+    
     // For every virtual register that has been allocated (either currently alive, or in
     // the free list), we keep a count of the number of remaining uses until it is dead
     // (0, in the case of entries in the free list). Since there is an entry for every
@@ -118,7 +122,7 @@ private:
     // next available VirtualRegister number.
     Vector<uint32_t, 64> m_used;
     // A free list of VirtualRegsiters no longer alive.
-    Vector<VirtualRegister, 64> m_free;
+    Vector<uint32_t, 64> m_free;
 };
 
 } } // namespace JSC::DFG
