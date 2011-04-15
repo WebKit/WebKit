@@ -3483,6 +3483,9 @@ BUGWK58306 GPU MAC DEBUG : media/adopt-node-crash.html = CRASH
 
 BUGCROGERS WIN LINUX : fast/text/zero-font-size.html = IMAGE+TEXT
 
+// Investigating
+BUGJAMESR GPU LINUX : compositing/direct-image-compositing.html = IMAGE
+
 // Temporarily marked failing for rebaselining.
 BUGWK57113 GPU : compositing/geometry/fixed-position.html = FAIL
 BUGWK57113 GPU : compositing/geometry/horizontal-scroll-composited.html = FAIL

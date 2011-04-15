@@ -1,3 +1,9 @@
+2011-04-14  James Robinson  <jamesr@chromium.org>
+
+        Guess what? Chicken^W chromium test_expectations.txt update.
+
+        * platform/chromium/test_expectations.txt:
+
 2011-04-14  Andy Estes  <aestes@apple.com>
 
         Skip a test in WK2 that requires
