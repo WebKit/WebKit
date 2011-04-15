@@ -230,6 +230,7 @@ void GraphicsContext3DInternal::paintRenderingResultsToCanvas(CanvasRenderingCon
     }
 
 #if USE(SKIA)
+    readbackBitmap->notifyPixelsChanged();
     if (m_resizingBitmap.readyToDraw()) {
         // We need to draw the resizing bitmap into the canvas's backing store.
         SkCanvas canvas(*canvasBitmap);

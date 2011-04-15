@@ -1,3 +1,15 @@
+2011-04-14  Brian Salomon  <bsalomon@google.com>
+
+        Reviewed by Kenneth Russell.
+
+        In skia platform call SkBitmap::notifyPixelsChanged on WebGL readback
+        https://bugs.webkit.org/show_bug.cgi?id=58543
+
+        No new tests. Tested by fast/canvas/webgl/canvas-test.html
+
+        * src/GraphicsContext3DChromium.cpp:
+        (WebCore::GraphicsContext3DInternal::paintRenderingResultsToCanvas):
+
 2011-04-14  Adrienne Walker  <enne@google.com>
 
         Reviewed by James Robinson.
