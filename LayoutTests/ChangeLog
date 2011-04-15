@@ -1,3 +1,9 @@
+2011-04-14  Adrienne Walker  <enne@google.com>
+
+        [chromium] Unreviewed, update test expectations for huge-layer-img.
+
+        * platform/chromium/test_expectations.txt:
+
 2011-04-14  Leandro Gracia Gil  <leandrogracia@chromium.org>
 
         Reviewed by Steve Block.
