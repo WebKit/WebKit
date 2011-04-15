@@ -40,7 +40,7 @@ static IntRect placeholderRectForMarker()
 
 inline bool DocumentMarkerController::possiblyHasMarkers(DocumentMarker::MarkerTypes types)
 {
-    return m_possiblyExistingMarkerTypes & types;
+    return m_possiblyExistingMarkerTypes.intersects(types);
 }
 
 DocumentMarkerController::DocumentMarkerController()
@@ -91,7 +91,7 @@ void DocumentMarkerController::addMarker(Node* node, DocumentMarker newMarker)
     if (newMarker.endOffset == newMarker.startOffset)
         return;
 
-    m_possiblyExistingMarkerTypes |= newMarker.type;
+    m_possiblyExistingMarkerTypes.add(newMarker.type);
 
     MarkerMapVectorPair* vectorPair = m_markers.get(node);
 
@@ -152,12 +152,12 @@ void DocumentMarkerController::addMarker(Node* node, DocumentMarker newMarker)
 
 // copies markers from srcNode to dstNode, applying the specified shift delta to the copies.  The shift is
 // useful if, e.g., the caller has created the dstNode from a non-prefix substring of the srcNode.
-void DocumentMarkerController::copyMarkers(Node* srcNode, unsigned startOffset, int length, Node* dstNode, int delta, DocumentMarker::MarkerType markerType)
+void DocumentMarkerController::copyMarkers(Node* srcNode, unsigned startOffset, int length, Node* dstNode, int delta)
 {
     if (length <= 0)
         return;
 
-    if (!possiblyHasMarkers(markerType))
+    if (!possiblyHasMarkers(DocumentMarker::AllMarkers()))
         return;
     ASSERT(!m_markers.isEmpty());
 
@@ -178,7 +178,7 @@ void DocumentMarkerController::copyMarkers(Node* srcNode, unsigned startOffset, 
             break;
 
         // skip marker that is before the specified range or is the wrong type
-        if (marker.endOffset < startOffset || (marker.type != markerType && markerType != DocumentMarker::AllMarkers))
+        if (marker.endOffset < startOffset)
             continue;
 
         // pin the marker to the specified range and apply the shift delta
@@ -224,7 +224,7 @@ void DocumentMarkerController::removeMarkers(Node* node, unsigned startOffset, i
             break;
 
         // skip marker that is wrong type or before target
-        if (marker.endOffset <= startOffset || !(marker.type & markerTypes)) {
+        if (marker.endOffset <= startOffset || !markerTypes.contains(marker.type)) {
             i++;
             continue;
         }
@@ -292,7 +292,7 @@ DocumentMarker* DocumentMarkerController::markerContainingPoint(const IntPoint& 
             DocumentMarker& marker = markers[markerIndex];
 
             // skip marker that is wrong type
-            if (marker.type != markerType && markerType != DocumentMarker::AllMarkers)
+            if (marker.type != markerType)
                 continue;
 
             IntRect& r = rects[markerIndex];
@@ -334,7 +334,7 @@ Vector<DocumentMarker> DocumentMarkerController::markersInRange(Range* range, Do
         Vector<DocumentMarker> markers = markersForNode(node);
         Vector<DocumentMarker>::const_iterator end = markers.end();
         for (Vector<DocumentMarker>::const_iterator it = markers.begin(); it != end; ++it) {
-            if (!(markerType & it->type))
+            if (markerType != it->type)
                 continue;
             if (node == startContainer && it->endOffset <= static_cast<unsigned>(range->startOffset()))
                 continue;
@@ -367,7 +367,7 @@ Vector<IntRect> DocumentMarkerController::renderedRectsForMarkers(DocumentMarker
             DocumentMarker marker = markers[markerIndex];
 
             // skip marker that is wrong type
-            if (marker.type != markerType && markerType != DocumentMarker::AllMarkers)
+            if (marker.type != markerType)
                 continue;
 
             IntRect r = rects[markerIndex];
@@ -408,13 +408,13 @@ void DocumentMarkerController::removeMarkers(DocumentMarker::MarkerTypes markerT
         removeMarkersFromMarkerMapVectorPair(node, vectorPair, markerTypes);
     }
 
-    m_possiblyExistingMarkerTypes &= ~markerTypes;
+    m_possiblyExistingMarkerTypes.remove(markerTypes);
 }
 
 // This function may release node and vectorPair.
 void DocumentMarkerController::removeMarkersFromMarkerMapVectorPair(Node* node, MarkerMapVectorPair* vectorPair, DocumentMarker::MarkerTypes markerTypes)
 {
-    if (!~(markerTypes & DocumentMarker::AllMarkers)) {
+    if (markerTypes == DocumentMarker::AllMarkers()) {
         delete vectorPair;
         m_markers.remove(node);
         if (RenderObject* renderer = node->renderer())
@@ -428,7 +428,7 @@ void DocumentMarkerController::removeMarkersFromMarkerMapVectorPair(Node* node, 
             DocumentMarker marker = markers[i];
 
             // skip nodes that are not of the specified type
-            if (!(marker.type & markerTypes)) {
+            if (!markerTypes.contains(marker.type)) {
                 ++i;
                 continue;
             }
@@ -459,9 +459,9 @@ void DocumentMarkerController::removeMarkersFromMarkerMapVectorPair(Node* node, 
         m_possiblyExistingMarkerTypes = 0;
 }
 
-void DocumentMarkerController::repaintMarkers(DocumentMarker::MarkerType markerType)
+void DocumentMarkerController::repaintMarkers(DocumentMarker::MarkerTypes markerTypes)
 {
-    if (!possiblyHasMarkers(markerType))
+    if (!possiblyHasMarkers(markerTypes))
         return;
     ASSERT(!m_markers.isEmpty());
 
@@ -478,7 +478,7 @@ void DocumentMarkerController::repaintMarkers(DocumentMarker::MarkerType markerT
             DocumentMarker marker = markers[i];
 
             // skip nodes that are not of the specified type
-            if (marker.type == markerType || markerType == DocumentMarker::AllMarkers) {
+            if (markerTypes.contains(marker.type)) {
                 nodeNeedsRepaint = true;
                 break;
             }
@@ -532,9 +532,9 @@ void DocumentMarkerController::invalidateRenderedRectsForMarkersInRect(const Int
     }
 }
 
-void DocumentMarkerController::shiftMarkers(Node* node, unsigned startOffset, int delta, DocumentMarker::MarkerType markerType)
+void DocumentMarkerController::shiftMarkers(Node* node, unsigned startOffset, int delta)
 {
-    if (!possiblyHasMarkers(markerType))
+    if (!possiblyHasMarkers(DocumentMarker::AllMarkers()))
         return;
     ASSERT(!m_markers.isEmpty());
 
@@ -549,7 +549,7 @@ void DocumentMarkerController::shiftMarkers(Node* node, unsigned startOffset, in
     bool docDirty = false;
     for (size_t i = 0; i != markers.size(); ++i) {
         DocumentMarker& marker = markers[i];
-        if (marker.startOffset >= startOffset && (markerType == DocumentMarker::AllMarkers || marker.type == markerType)) {
+        if (marker.startOffset >= startOffset) {
             ASSERT((int)marker.startOffset + delta >= 0);
             marker.startOffset += delta;
             marker.endOffset += delta;
@@ -567,7 +567,7 @@ void DocumentMarkerController::shiftMarkers(Node* node, unsigned startOffset, in
 
 void DocumentMarkerController::setMarkersActive(Range* range, bool active)
 {
-    if (!possiblyHasMarkers(DocumentMarker::AllMarkers))
+    if (!possiblyHasMarkers(DocumentMarker::AllMarkers()))
         return;
     ASSERT(!m_markers.isEmpty());
 
@@ -629,7 +629,7 @@ bool DocumentMarkerController::hasMarkers(Range* range, DocumentMarker::MarkerTy
         Vector<DocumentMarker> markers = markersForNode(node);
         Vector<DocumentMarker>::const_iterator end = markers.end();
         for (Vector<DocumentMarker>::const_iterator it = markers.begin(); it != end; ++it) {
-            if (!(markerTypes & it->type))
+            if (!markerTypes.contains(it->type))
                 continue;
             if (node == startContainer && it->endOffset <= static_cast<unsigned>(range->startOffset()))
                 continue;
@@ -667,7 +667,7 @@ void DocumentMarkerController::clearDescriptionOnMarkersIntersectingRange(Range*
                 break;
 
             // skip marker that is wrong type or before target
-            if (marker.endOffset <= startOffset || !(marker.type & markerTypes)) {
+            if (marker.endOffset <= startOffset || !markerTypes.contains(marker.type)) {
                 i++;
                 continue;
             }

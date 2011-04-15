@@ -53,10 +53,33 @@ struct DocumentMarker {
         Autocorrected = 1 << 6,
         // On some platforms, this prevents the text from being spellchecked again.
         SpellCheckingExemption = 1 << 7,
-        AllMarkers = Spelling | Grammar | TextMatch | Replacement | CorrectionIndicator | RejectedCorrection | Autocorrected | SpellCheckingExemption
     };
+
+    class MarkerTypes {
+    public:
+        // The constructor is intentionally implicit to allow conversion from the bit-wise sum of above types
+        MarkerTypes(unsigned mask) : m_mask(mask) { }
+
+        bool contains(MarkerType type) const { return m_mask & type; }
+        bool intersects(const MarkerTypes& types) const { return (m_mask & types.m_mask); }
+        bool operator==(const MarkerTypes& other) const { return m_mask == other.m_mask; }
+
+        void add(const MarkerTypes& types) { m_mask |= types.m_mask; }
+        void remove(const MarkerTypes& types) { m_mask &= ~types.m_mask; }
+
+    private:
+        unsigned m_mask;
+    };
+
+    class AllMarkers : public MarkerTypes {
+    public:
+        AllMarkers()
+            : MarkerTypes(Spelling | Grammar | TextMatch | Replacement | CorrectionIndicator | RejectedCorrection | Autocorrected | SpellCheckingExemption)
+        {
+        }
+    };
+    
     MarkerType type;
-    typedef unsigned MarkerTypes;
     unsigned startOffset;
     unsigned endOffset;
     String description;

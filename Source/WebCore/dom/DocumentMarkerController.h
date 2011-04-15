@@ -47,29 +47,29 @@ public:
     void detach();
     void addMarker(Range*, DocumentMarker::MarkerType, String description = String());
     void addMarker(Node*, DocumentMarker);
-    void copyMarkers(Node* srcNode, unsigned startOffset, int length, Node* dstNode, int delta, DocumentMarker::MarkerType = DocumentMarker::AllMarkers);
-    bool hasMarkers(Range*, DocumentMarker::MarkerTypes = DocumentMarker::AllMarkers);
+    void copyMarkers(Node* srcNode, unsigned startOffset, int length, Node* dstNode, int delta);
+    bool hasMarkers(Range*, DocumentMarker::MarkerTypes = DocumentMarker::AllMarkers());
 
     // When a marker partially overlaps with range, if removePartiallyOverlappingMarkers is true, we completely
     // remove the marker. If the argument is false, we will adjust the span of the marker so that it retains
     // the portion that is outside of the range.
     enum RemovePartiallyOverlappingMarkerOrNot { DoNotRemovePartiallyOverlappingMarker, RemovePartiallyOverlappingMarker };
-    void removeMarkers(Range*, DocumentMarker::MarkerTypes = DocumentMarker::AllMarkers, RemovePartiallyOverlappingMarkerOrNot = DoNotRemovePartiallyOverlappingMarker);
-    void removeMarkers(Node*, unsigned startOffset, int length, DocumentMarker::MarkerTypes = DocumentMarker::AllMarkers,  RemovePartiallyOverlappingMarkerOrNot = DoNotRemovePartiallyOverlappingMarker);
+    void removeMarkers(Range*, DocumentMarker::MarkerTypes = DocumentMarker::AllMarkers(), RemovePartiallyOverlappingMarkerOrNot = DoNotRemovePartiallyOverlappingMarker);
+    void removeMarkers(Node*, unsigned startOffset, int length, DocumentMarker::MarkerTypes = DocumentMarker::AllMarkers(),  RemovePartiallyOverlappingMarkerOrNot = DoNotRemovePartiallyOverlappingMarker);
 
-    void removeMarkers(DocumentMarker::MarkerTypes = DocumentMarker::AllMarkers);
-    void removeMarkers(Node*, DocumentMarker::MarkerTypes = DocumentMarker::AllMarkers);
-    void repaintMarkers(DocumentMarker::MarkerType = DocumentMarker::AllMarkers);
+    void removeMarkers(DocumentMarker::MarkerTypes = DocumentMarker::AllMarkers());
+    void removeMarkers(Node*, DocumentMarker::MarkerTypes = DocumentMarker::AllMarkers());
+    void repaintMarkers(DocumentMarker::MarkerTypes = DocumentMarker::AllMarkers());
     void setRenderedRectForMarker(Node*, const DocumentMarker&, const IntRect&);
     void invalidateRenderedRectsForMarkersInRect(const IntRect&);
-    void shiftMarkers(Node*, unsigned startOffset, int delta, DocumentMarker::MarkerType = DocumentMarker::AllMarkers);
+    void shiftMarkers(Node*, unsigned startOffset, int delta);
     void setMarkersActive(Range*, bool);
     void setMarkersActive(Node*, unsigned startOffset, unsigned endOffset, bool);
 
-    DocumentMarker* markerContainingPoint(const IntPoint&, DocumentMarker::MarkerType = DocumentMarker::AllMarkers);
+    DocumentMarker* markerContainingPoint(const IntPoint&, DocumentMarker::MarkerType);
     Vector<DocumentMarker> markersForNode(Node*);
     Vector<DocumentMarker> markersInRange(Range*, DocumentMarker::MarkerType);
-    Vector<IntRect> renderedRectsForMarkers(DocumentMarker::MarkerType = DocumentMarker::AllMarkers);
+    Vector<IntRect> renderedRectsForMarkers(DocumentMarker::MarkerType);
     void clearDescriptionOnMarkersIntersectingRange(Range*, DocumentMarker::MarkerTypes);
 
 #ifndef NDEBUG

@@ -1,3 +1,44 @@
+2011-04-07  MORITA Hajime  <morrita@google.com>
+
+        Reviewed by Ryosuke Niwa.
+
+        DocumentMaker::AllMarkers should not be a part of DocumentMarker::MarkerType
+        https://bugs.webkit.org/show_bug.cgi?id=58112
+        
+        - Converted DocumentMarker::MarkerTypes from unsigned int to a class.
+        - Converted DocumentMarker::AllMarkers from an enum entry to a subclass of MarkerTypes.
+        - Changed type of some MarkerType argument on DocumentMarkerController API to MarkerTypes
+          which should allow a combination of MarkerType constansts.
+        - Removed some MarkerType arguments on DocumentMarkerController API
+          which only received AllMarkers.
+        
+        No new tests, no behavior change.
+
+        * WebCore.exp.in:
+        * dom/DocumentMarker.h:
+        (WebCore::DocumentMarker::MarkerTypes::MarkerTypes):
+        (WebCore::DocumentMarker::MarkerTypes::contains):
+        (WebCore::DocumentMarker::MarkerTypes::intersects):
+        (WebCore::DocumentMarker::MarkerTypes::operator==):
+        (WebCore::DocumentMarker::MarkerTypes::add):
+        (WebCore::DocumentMarker::MarkerTypes::remove):
+        (WebCore::DocumentMarker::AllMarkers::AllMarkers):
+        * dom/DocumentMarkerController.cpp:
+        (WebCore::DocumentMarkerController::possiblyHasMarkers):
+        (WebCore::DocumentMarkerController::addMarker):
+        (WebCore::DocumentMarkerController::copyMarkers):
+        (WebCore::DocumentMarkerController::removeMarkers):
+        (WebCore::DocumentMarkerController::markerContainingPoint):
+        (WebCore::DocumentMarkerController::markersInRange):
+        (WebCore::DocumentMarkerController::renderedRectsForMarkers):
+        (WebCore::DocumentMarkerController::removeMarkersFromMarkerMapVectorPair):
+        (WebCore::DocumentMarkerController::repaintMarkers):
+        (WebCore::DocumentMarkerController::shiftMarkers):
+        (WebCore::DocumentMarkerController::setMarkersActive):
+        (WebCore::DocumentMarkerController::hasMarkers):
+        (WebCore::DocumentMarkerController::clearDescriptionOnMarkersIntersectingRange):
+        * dom/DocumentMarkerController.h:
+
 2011-04-14  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Oliver Hunt.
