@@ -788,6 +788,9 @@ WebInspector.documentKeyDown = function(event)
             if (!isMac)
                 PageAgent.reloadPage(event.ctrlKey || event.shiftKey);
             break;
+        case "U+0008": // Backspace
+            event.preventDefault();
+            break;
     }
 }
 

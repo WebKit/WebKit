@@ -1,3 +1,13 @@
+2011-04-15  Alexander Pavlov  <apavlov@chromium.org>
+
+        Reviewed by Yury Semikhatsky.
+
+        Web Inspector: Prevent Backspace keypresses from routing into the inspected page
+        https://bugs.webkit.org/show_bug.cgi?id=58653
+
+        * inspector/front-end/inspector.js:
+        (WebInspector.documentKeyDown):
+
 2011-04-15  Alice Boxhall  <aboxhall@chromium.org>
 
         Reviewed by Ryosuke Niwa.
