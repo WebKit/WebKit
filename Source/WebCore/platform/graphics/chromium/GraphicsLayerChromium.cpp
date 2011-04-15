@@ -283,6 +283,8 @@ void GraphicsLayerChromium::setMaskLayer(GraphicsLayer* maskLayer)
     GraphicsLayer::setMaskLayer(maskLayer);
 
     LayerChromium* maskLayerChromium = m_maskLayer ? m_maskLayer->platformLayer() : 0;
+    if (maskLayerChromium)
+        maskLayerChromium->setIsMask(true);
     m_layer->setMaskLayer(maskLayerChromium);
 }
 

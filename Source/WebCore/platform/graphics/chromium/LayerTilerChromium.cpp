@@ -40,6 +40,8 @@
 
 using namespace std;
 
+static int minTextureSize = 16;
+
 namespace WebCore {
 
 PassOwnPtr<LayerTilerChromium> LayerTilerChromium::create(LayerRendererChromium* layerRenderer, const IntSize& tileSize, BorderTexelOption border)
@@ -69,8 +71,10 @@ GraphicsContext3D* LayerTilerChromium::layerRendererContext() const
     return layerRenderer()->context();
 }
 
-void LayerTilerChromium::setTileSize(const IntSize& size)
+void LayerTilerChromium::setTileSize(const IntSize& requestedSize)
 {
+    IntSize size(max(minTextureSize, requestedSize.width()), max(minTextureSize, requestedSize.height()));
+
     if (m_tileSize == size)
         return;
 
@@ -79,6 +83,12 @@ void LayerTilerChromium::setTileSize(const IntSize& size)
     m_tileSize = size;
     m_tilePixels = adoptArrayPtr(new uint8_t[m_tileSize.width() * m_tileSize.height() * 4]);
     m_tilingData.setMaxTextureSize(max(size.width(), size.height()));
+}
+
+LayerTexture* LayerTilerChromium::getSingleTexture()
+{
+    Tile* tile = tileAt(0, 0);
+    return tile ? tile->texture() : 0;
 }
 
 void LayerTilerChromium::reset()
@@ -180,7 +190,7 @@ IntRect LayerTilerChromium::tileLayerRect(const Tile* tile) const
 
 void LayerTilerChromium::invalidateRect(const IntRect& contentRect)
 {
-    if (contentRect.isEmpty())
+    if (contentRect.isEmpty() || m_skipsDraw)
         return;
 
     growLayerToContain(contentRect);
@@ -236,6 +246,8 @@ void LayerTilerChromium::update(TilePaintInterface& painter, const IntRect& cont
                 tile = createTile(i, j);
             if (!tile->texture()->isValid(m_tileSize, GraphicsContext3D::RGBA))
                 tile->m_dirtyLayerRect = tileLayerRect(tile);
+            else
+                tile->texture()->reserve(m_tileSize, GraphicsContext3D::RGBA);
             dirtyLayerRect.unite(tile->m_dirtyLayerRect);
         }
     }
@@ -243,27 +255,35 @@ void LayerTilerChromium::update(TilePaintInterface& painter, const IntRect& cont
     if (dirtyLayerRect.isEmpty())
         return;
 
-    const IntRect paintRect = layerRectToContentRect(dirtyLayerRect);
+    m_paintRect = layerRectToContentRect(dirtyLayerRect);
 
-    m_canvas.resize(paintRect.size());
-    PlatformCanvas::Painter canvasPainter(&m_canvas);
-    canvasPainter.context()->translate(-paintRect.x(), -paintRect.y());
+    m_canvas.resize(m_paintRect.size());
+
+    // Assumption: if a tiler is using border texels, then it is because the
+    // layer is likely to be filtered or transformed. Because of it might be
+    // transformed, draw the text in grayscale instead of subpixel antialiasing.
+    PlatformCanvas::Painter::TextOption textOption = m_tilingData.borderTexels() ? PlatformCanvas::Painter::GrayscaleText : PlatformCanvas::Painter::SubpixelText;
+    PlatformCanvas::Painter canvasPainter(&m_canvas, textOption);
+    canvasPainter.context()->translate(-m_paintRect.x(), -m_paintRect.y());
     {
         TRACE_EVENT("LayerTilerChromium::update::paint", this, 0);
-        painter.paint(*canvasPainter.context(), paintRect);
+        painter.paint(*canvasPainter.context(), m_paintRect);
     }
+}
 
+void LayerTilerChromium::uploadCanvas()
+{
     PlatformCanvas::AutoLocker locker(&m_canvas);
     {
         TRACE_EVENT("LayerTilerChromium::updateFromPixels", this, 0);
-        updateFromPixels(paintRect, locker.pixels());
+        updateFromPixels(m_paintRect, locker.pixels());
     }
 }
 
 void LayerTilerChromium::updateFromPixels(const IntRect& paintRect, const uint8_t* paintPixels)
 {
     // Painting could cause compositing to get turned off, which may cause the tiler to become invalidated mid-update.
-    if (!m_tiles.size())
+    if (!m_tilingData.totalSizeX() || !m_tilingData.totalSizeY())
         return;
 
     GraphicsContext3D* context = layerRendererContext();
@@ -274,21 +294,26 @@ void LayerTilerChromium::updateFromPixels(const IntRect& paintRect, const uint8_
         for (int i = left; i <= right; ++i) {
             Tile* tile = tileAt(i, j);
             if (!tile)
-                CRASH();
-            if (!tile->dirty())
+                tile = createTile(i, j);
+            else if (!tile->dirty())
                 continue;
 
             // Calculate page-space rectangle to copy from.
             IntRect sourceRect = tileContentRect(tile);
             const IntPoint anchor = sourceRect.location();
             sourceRect.intersect(layerRectToContentRect(tile->m_dirtyLayerRect));
+            // Paint rect not guaranteed to line up on tile boundaries, so
+            // make sure that sourceRect doesn't extend outside of it.
+            sourceRect.intersect(paintRect);
             if (sourceRect.isEmpty())
                 continue;
 
-            if (!tile->texture()->reserve(m_tileSize, GraphicsContext3D::RGBA)) {
-                m_skipsDraw = true;
-                reset();
-                return;
+            if (!tile->texture()->isReserved()) {
+                if (!tile->texture()->reserve(m_tileSize, GraphicsContext3D::RGBA)) {
+                    m_skipsDraw = true;
+                    reset();
+                    return;
+                }
             }
 
             // Calculate tile-space rectangle to upload into.
@@ -324,8 +349,10 @@ void LayerTilerChromium::updateFromPixels(const IntRect& paintRect, const uint8_
             }
 
             tile->texture()->bindTexture();
-            GLC(context, context->texParameteri(GraphicsContext3D::TEXTURE_2D, GraphicsContext3D::TEXTURE_MIN_FILTER, GraphicsContext3D::NEAREST));
-            GLC(context, context->texParameteri(GraphicsContext3D::TEXTURE_2D, GraphicsContext3D::TEXTURE_MAG_FILTER, GraphicsContext3D::NEAREST));
+
+            const GC3Dint filter = m_tilingData.borderTexels() ? GraphicsContext3D::LINEAR : GraphicsContext3D::NEAREST;
+            GLC(context, context->texParameteri(GraphicsContext3D::TEXTURE_2D, GraphicsContext3D::TEXTURE_MIN_FILTER, filter));
+            GLC(context, context->texParameteri(GraphicsContext3D::TEXTURE_2D, GraphicsContext3D::TEXTURE_MAG_FILTER, filter));
 
             GLC(context, context->texSubImage2D(GraphicsContext3D::TEXTURE_2D, 0, destRect.x(), destRect.y(), destRect.width(), destRect.height(), GraphicsContext3D::RGBA, GraphicsContext3D::UNSIGNED_BYTE, pixelSource));
 
@@ -339,7 +366,7 @@ void LayerTilerChromium::setLayerPosition(const IntPoint& layerPosition)
     m_layerPosition = layerPosition;
 }
 
-void LayerTilerChromium::draw(const IntRect& contentRect)
+void LayerTilerChromium::draw(const IntRect& contentRect, const TransformationMatrix& globalTransform, float opacity)
 {
     if (m_skipsDraw || !m_tiles.size())
         return;
@@ -354,17 +381,18 @@ void LayerTilerChromium::draw(const IntRect& contentRect)
     for (int j = top; j <= bottom; ++j) {
         for (int i = left; i <= right; ++i) {
             Tile* tile = tileAt(i, j);
-            ASSERT(tile);
+            if (!tile)
+                continue;
 
             tile->texture()->bindTexture();
 
-            TransformationMatrix tileMatrix;
+            TransformationMatrix tileMatrix(globalTransform);
 
             // Don't use tileContentRect here, as that contains the full
             // rect with border texels which shouldn't be drawn.
             IntRect tileRect = m_tilingData.tileBounds(m_tilingData.tileIndex(tile->i(), tile->j()));
             tileRect.move(m_layerPosition.x(), m_layerPosition.y());
-            tileMatrix.translate3d(tileRect.x() - contentRect.x() + tileRect.width() / 2.0, tileRect.y() - contentRect.y() + tileRect.height() / 2.0, 0);
+            tileMatrix.translate3d(tileRect.x() + tileRect.width() / 2.0, tileRect.y() + tileRect.height() / 2.0, 0);
 
             IntPoint texOffset = m_tilingData.textureOffset(tile->i(), tile->j());
             float tileWidth = static_cast<float>(m_tileSize.width());
@@ -374,10 +402,18 @@ void LayerTilerChromium::draw(const IntRect& contentRect)
             float texScaleX = tileRect.width() / tileWidth;
             float texScaleY = tileRect.height() / tileHeight;
 
-            drawTexturedQuad(context, layerRenderer()->projectionMatrix(), tileMatrix, tileRect.width(), tileRect.height(), 1, texTranslateX, texTranslateY, texScaleX, texScaleY, program);
-
-            tile->texture()->unreserve();
+            drawTexturedQuad(context, layerRenderer()->projectionMatrix(), tileMatrix, tileRect.width(), tileRect.height(), opacity, texTranslateX, texTranslateY, texScaleX, texScaleY, program);
         }
+    }
+}
+
+void LayerTilerChromium::unreserveTextures()
+{
+    for (TileMap::iterator iter = m_tiles.begin(); iter != m_tiles.end(); ++iter) {
+        Tile* tile = iter->second.get();
+        if (!tile)
+            continue;
+        tile->texture()->unreserve();
     }
 }
 

@@ -1,3 +1,98 @@
+2011-04-14  Adrienne Walker  <enne@google.com>
+
+        Reviewed by James Robinson.
+
+        [chromium] Tile content and image layers
+        https://bugs.webkit.org/show_bug.cgi?id=57113
+
+        Layers tile by default if any dimension is larger than 512.  Smaller
+        layers are contained within a single texture but still use the tiler
+        infrastructure so that there's only one code path.
+
+        Remove large layer support from content layers.  Content layers no
+        longer own a platform canvas--they own a tiler.  Refactor tiler to
+        allow for better separation of update/upload/paint.  Add rect
+        parameter to update and draw functions on layers for the layer-space
+        rect of interest.  This is necessary to know which tiles need to be
+        drawn.
+
+        * platform/graphics/chromium/ContentLayerChromium.cpp:
+        (WebCore::ContentLayerChromium::ContentLayerChromium):
+        (WebCore::ContentLayerChromium::~ContentLayerChromium):
+        (WebCore::ContentLayerPainter::ContentLayerPainter):
+        (WebCore::ContentLayerPainter::paint):
+        (WebCore::ContentLayerChromium::paintContentsIfDirty):
+        (WebCore::ContentLayerChromium::setLayerRenderer):
+        (WebCore::ContentLayerChromium::tilingTransform):
+        (WebCore::ContentLayerChromium::visibleLayerRect):
+        (WebCore::ContentLayerChromium::layerBounds):
+        (WebCore::ContentLayerChromium::updateLayerSize):
+        (WebCore::ContentLayerChromium::draw):
+        (WebCore::ContentLayerChromium::createTilerIfNeeded):
+        (WebCore::ContentLayerChromium::updateCompositorResources):
+        (WebCore::ContentLayerChromium::setTilingOption):
+        (WebCore::ContentLayerChromium::bindContentsTexture):
+        (WebCore::ContentLayerChromium::unreserveContentsTexture):
+        (WebCore::ContentLayerChromium::setIsMask):
+        (WebCore::ContentLayerChromium::dumpLayerProperties):
+        * platform/graphics/chromium/ContentLayerChromium.h:
+        (WebCore::ContentLayerChromium::drawsContent):
+        * platform/graphics/chromium/GraphicsLayerChromium.cpp:
+        (WebCore::GraphicsLayerChromium::setMaskLayer):
+        * platform/graphics/chromium/ImageLayerChromium.cpp:
+        (WebCore::ImageLayerChromium::paintContentsIfDirty):
+        (WebCore::ImageLayerChromium::updateCompositorResources):
+        (WebCore::ImageLayerChromium::layerBounds):
+        (WebCore::ImageLayerChromium::tilingTransform):
+        * platform/graphics/chromium/ImageLayerChromium.h:
+        * platform/graphics/chromium/LayerChromium.h:
+        (WebCore::LayerChromium::invalidateRect):
+        (WebCore::LayerChromium::paintContentsIfDirty):
+        (WebCore::LayerChromium::setIsMask):
+        (WebCore::LayerChromium::draw):
+        * platform/graphics/chromium/LayerRendererChromium.cpp:
+        (WebCore::LayerRendererChromium::drawRootLayer):
+        (WebCore::LayerRendererChromium::drawLayers):
+        (WebCore::LayerRendererChromium::paintContentsRecursive):
+        (WebCore::LayerRendererChromium::copyOffscreenTextureToDisplay):
+        (WebCore::LayerRendererChromium::drawLayer):
+        (WebCore::LayerRendererChromium::initializeSharedObjects):
+        (WebCore::LayerRendererChromium::cleanupSharedObjects):
+        * platform/graphics/chromium/LayerRendererChromium.h:
+        * platform/graphics/chromium/LayerTilerChromium.cpp:
+        (WebCore::LayerTilerChromium::setTileSize):
+        (WebCore::LayerTilerChromium::getSingleTexture):
+        (WebCore::LayerTilerChromium::invalidateRect):
+        (WebCore::LayerTilerChromium::update):
+        (WebCore::LayerTilerChromium::uploadCanvas):
+        (WebCore::LayerTilerChromium::updateFromPixels):
+        (WebCore::LayerTilerChromium::draw):
+        (WebCore::LayerTilerChromium::unreserveTextures):
+        * platform/graphics/chromium/LayerTilerChromium.h:
+        (WebCore::LayerTilerChromium::setLayerRenderer):
+        (WebCore::LayerTilerChromium::skipsDraw):
+        * platform/graphics/chromium/PlatformCanvas.cpp:
+        (WebCore::PlatformCanvas::AutoLocker::AutoLocker):
+        (WebCore::PlatformCanvas::Painter::Painter):
+        * platform/graphics/chromium/PlatformCanvas.h:
+        * platform/graphics/chromium/RenderSurfaceChromium.cpp:
+        (WebCore::RenderSurfaceChromium::draw):
+        * platform/graphics/chromium/RenderSurfaceChromium.h:
+        * platform/graphics/chromium/cc/CCCanvasLayerImpl.cpp:
+        (WebCore::CCCanvasLayerImpl::draw):
+        * platform/graphics/chromium/cc/CCCanvasLayerImpl.h:
+        * platform/graphics/chromium/cc/CCHeadsUpDisplay.cpp:
+        (WebCore::CCHeadsUpDisplay::draw):
+        * platform/graphics/chromium/cc/CCLayerImpl.cpp:
+        (WebCore::CCLayerImpl::draw):
+        * platform/graphics/chromium/cc/CCLayerImpl.h:
+        * platform/graphics/chromium/cc/CCPluginLayerImpl.cpp:
+        (WebCore::CCPluginLayerImpl::draw):
+        * platform/graphics/chromium/cc/CCPluginLayerImpl.h:
+        * platform/graphics/chromium/cc/CCVideoLayerImpl.cpp:
+        (WebCore::CCVideoLayerImpl::draw):
+        * platform/graphics/chromium/cc/CCVideoLayerImpl.h:
+
 2011-04-14  James Robinson  <jamesr@chromium.org>
 
         Reviewed by Darin Fisher.

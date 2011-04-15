@@ -47,7 +47,7 @@ public:
     typedef ProgramBinding<VertexShaderPosTexTransform, FragmentShaderRGBATexFlipAlpha> RGBAProgram;
     typedef ProgramBinding<VertexShaderPosTexYUVStretch, FragmentShaderYUVVideo> YUVProgram;
 
-    virtual void draw();
+    virtual void draw(const IntRect&);
 
     virtual void dumpLayerProperties(TextStream&, int indent) const;
 
@@ -72,4 +72,3 @@ private:
 }
 
 #endif // CCVideoLayerImpl_h
-

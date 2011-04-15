@@ -143,7 +143,7 @@ void RenderSurfaceChromium::drawSurface(CCLayerImpl* maskLayer, const Transforma
         maskLayer->unreserveContentsTexture();
 }
 
-void RenderSurfaceChromium::draw()
+void RenderSurfaceChromium::draw(const IntRect&)
 {
     if (m_skipsDraw || !m_contentsTexture)
         return;

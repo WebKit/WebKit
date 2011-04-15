@@ -79,7 +79,7 @@ void CCHeadsUpDisplay::draw()
     PlatformCanvas canvas;
     canvas.resize(hudSize);
     {
-        PlatformCanvas::Painter painter(&canvas);
+        PlatformCanvas::Painter painter(&canvas, PlatformCanvas::Painter::GrayscaleText);
         drawHudContents(painter.context(), hudSize);
     }
 
@@ -92,7 +92,7 @@ void CCHeadsUpDisplay::draw()
     }
 
     // Draw the HUD onto the default render surface.
-    const ContentLayerChromium::Program* program = m_layerRenderer->contentLayerProgram();
+    const LayerTilerChromium::Program* program = m_layerRenderer->tilerProgram();
     ASSERT(program && program->initialized());
     GLC(context, context->activeTexture(GraphicsContext3D::TEXTURE0));
     m_hudTexture->bindTexture();
