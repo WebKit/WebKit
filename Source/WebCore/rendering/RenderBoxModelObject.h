@@ -134,6 +134,9 @@ protected:
     RenderBoxModelObject* continuation() const;
     void setContinuation(RenderBoxModelObject*);
 
+    RoundedIntRect computeBorderOuterRect(const IntRect&, const RenderStyle*, bool includeLogicalLeftEdge, bool includeLogicalRightEdge);
+    RoundedIntRect computeBorderInnerRect(const IntRect&, const RenderStyle*, bool includeLogicalLeftEdge, bool includeLogicalRightEdge);
+    
 private:
     virtual bool isBoxModelObject() const { return true; }
 

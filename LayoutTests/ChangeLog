@@ -1,3 +1,29 @@
+2011-04-15  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Beth Dakin.
+
+        Some borders with border-radius do not have rounded inner edges
+        https://bugs.webkit.org/show_bug.cgi?id=58457
+        
+        Pixel tests for various combinations of border styles and radii.
+        Update pixel results for affected tests.
+
+
+        * fast/borders/mixed-border-styles-radius.html: Added.
+        * fast/borders/mixed-border-styles-radius2.html: Added.
+        * fast/borders/mixed-border-styles.html: Added.
+        * platform/mac/fast/borders/border-radius-constraints-expected.checksum:
+        * platform/mac/fast/borders/border-radius-constraints-expected.png:
+        * platform/mac/fast/borders/mixed-border-styles-expected.checksum: Added.
+        * platform/mac/fast/borders/mixed-border-styles-expected.png: Added.
+        * platform/mac/fast/borders/mixed-border-styles-expected.txt: Added.
+        * platform/mac/fast/borders/mixed-border-styles-radius-expected.checksum: Added.
+        * platform/mac/fast/borders/mixed-border-styles-radius-expected.png: Added.
+        * platform/mac/fast/borders/mixed-border-styles-radius-expected.txt: Added.
+        * platform/mac/fast/borders/mixed-border-styles-radius2-expected.checksum: Added.
+        * platform/mac/fast/borders/mixed-border-styles-radius2-expected.png: Added.
+        * platform/mac/fast/borders/mixed-border-styles-radius2-expected.txt: Added.
+
 2011-04-13  Xiaomei Ji  <xji@chromium.org>
 
         Reviewed by Ryosuke Niwa.

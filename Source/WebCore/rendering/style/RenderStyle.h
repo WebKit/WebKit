@@ -866,8 +866,8 @@ public:
     }
     
     RoundedIntRect getRoundedBorderFor(const IntRect&) const;
-    RoundedIntRect getRoundedInnerBorderWithBorderWidths(const IntRect&, unsigned short topWidth, 
-                                                         unsigned short bottomWidth, unsigned short leftWidth, unsigned short rightWidth) const;
+    RoundedIntRect getRoundedInnerBorderWithBorderWidths(const IntRect& outerRect, const IntRect& innerRect,
+        unsigned short topWidth, unsigned short bottomWidth, unsigned short leftWidth, unsigned short rightWidth) const;
 
     void setBorderLeftWidth(unsigned short v) { SET_VAR(surround, border.m_left.m_width, v) }
     void setBorderLeftStyle(EBorderStyle v) { SET_VAR(surround, border.m_left.m_style, v) }

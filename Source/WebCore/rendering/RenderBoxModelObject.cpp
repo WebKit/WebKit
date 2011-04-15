@@ -1023,6 +1023,33 @@ bool RenderBoxModelObject::paintNinePieceImage(GraphicsContext* graphicsContext,
     return true;
 }
 
+RoundedIntRect RenderBoxModelObject::computeBorderOuterRect(const IntRect& borderRect, const RenderStyle* style, bool includeLogicalLeftEdge, bool includeLogicalRightEdge)
+{
+    RoundedIntRect border(borderRect);
+    if (style->hasBorderRadius())
+        border.includeLogicalEdges(style->getRoundedBorderFor(borderRect).radii(), style->isHorizontalWritingMode(), includeLogicalLeftEdge, includeLogicalRightEdge);
+
+    return border;
+}
+
+RoundedIntRect RenderBoxModelObject::computeBorderInnerRect(const IntRect& borderRect, const RenderStyle* style, bool includeLogicalLeftEdge, bool includeLogicalRightEdge)
+{
+    bool horizontal = style->isHorizontalWritingMode();
+    int leftWidth = (!horizontal || includeLogicalLeftEdge) ? style->borderLeftWidth() : 0;
+    int rightWidth = (!horizontal || includeLogicalRightEdge) ? style->borderRightWidth() : 0;
+    int topWidth = (horizontal || includeLogicalLeftEdge) ? style->borderTopWidth() : 0;
+    int bottomWidth = (horizontal || includeLogicalRightEdge) ? style->borderBottomWidth() : 0;
+
+    RoundedIntRect innerRect(borderInnerRect(borderRect, topWidth, bottomWidth, leftWidth, rightWidth));
+    
+    if (style->hasBorderRadius()) {
+        innerRect.includeLogicalEdges(style->getRoundedInnerBorderWithBorderWidths(borderRect, innerRect.rect(), topWidth, bottomWidth, leftWidth, rightWidth).radii(),
+            horizontal, includeLogicalLeftEdge, includeLogicalRightEdge);
+    }
+
+    return innerRect;
+}
+
 #if HAVE(PATH_BASED_BORDER_RADIUS_DRAWING)
 static bool borderWillArcInnerEdge(const IntSize& firstRadius, const IntSize& secondRadius, int firstBorderWidth, int secondBorderWidth, int middleBorderWidth)
 {
@@ -1065,28 +1092,15 @@ void RenderBoxModelObject::paintBorder(GraphicsContext* graphicsContext, int tx,
     bool renderBottom = bottomStyle > BHIDDEN && !bottomTransparent && (horizontal || includeLogicalRightEdge);
 
     Path roundedPath;
-    RoundedIntRect border(tx, ty, w, h);
+    RoundedIntRect border = computeBorderOuterRect(IntRect(tx, ty, w, h), style, includeLogicalLeftEdge, includeLogicalRightEdge);
+    RoundedIntRect inner = computeBorderInnerRect(IntRect(tx, ty, w, h), style, includeLogicalLeftEdge, includeLogicalRightEdge);
 
-    if (style->hasBorderRadius()) {
-        border.includeLogicalEdges(style->getRoundedBorderFor(border.rect()).radii(),
-                                   horizontal, includeLogicalLeftEdge, includeLogicalRightEdge);
-
-        int leftWidth = (!horizontal || includeLogicalLeftEdge) ? style->borderLeftWidth() : 0;
-        int rightWidth = (!horizontal || includeLogicalRightEdge) ? style->borderRightWidth() : 0;
-        int topWidth = (horizontal || includeLogicalLeftEdge) ? style->borderTopWidth() : 0;
-        int bottomWidth = (horizontal || includeLogicalRightEdge) ? style->borderBottomWidth() : 0;
-
-        RoundedIntRect inner(borderInnerRect(border.rect(), topWidth, bottomWidth, leftWidth, rightWidth));
-        inner.includeLogicalEdges(style->getRoundedInnerBorderWithBorderWidths(inner.rect(), topWidth, bottomWidth, leftWidth, rightWidth).radii(),
-                                  horizontal, includeLogicalLeftEdge, includeLogicalRightEdge);
-
-        if (border.isRounded()) {
-            // Clip to the inner and outer radii rects.
-            graphicsContext->save();
-            graphicsContext->addRoundedRectClip(border);
-            graphicsContext->clipOutRoundedRect(inner);
-            roundedPath.addRoundedRect(border.rect(), border.radii().topLeft(), border.radii().topRight(), border.radii().bottomLeft(), border.radii().bottomRight());
-        }
+    if (border.isRounded()) {
+        // Clip to the inner and outer radii rects.
+        graphicsContext->save();
+        graphicsContext->addRoundedRectClip(border);
+        graphicsContext->clipOutRoundedRect(inner);
+        roundedPath.addRoundedRect(border.rect(), border.radii().topLeft(), border.radii().topRight(), border.radii().bottomLeft(), border.radii().bottomRight());
     }
 
     bool renderRadii = border.isRounded();
@@ -1622,21 +1636,13 @@ void RenderBoxModelObject::paintBoxShadow(GraphicsContext* context, int tx, int 
     if (context->paintingDisabled() || !s->boxShadow())
         return;
 
-    RoundedIntRect border(tx, ty, w, h);
+    IntRect borderRect(tx, ty, w, h);
+    RoundedIntRect border = (shadowStyle == Inset) ? computeBorderInnerRect(borderRect, s, includeLogicalLeftEdge, includeLogicalRightEdge)
+                                                   : computeBorderOuterRect(borderRect, s, includeLogicalLeftEdge, includeLogicalRightEdge);
+
     bool hasBorderRadius = s->hasBorderRadius();
     bool isHorizontal = s->isHorizontalWritingMode();
-
-    if (shadowStyle == Inset)
-        border.setRect(IntRect(border.rect().x() + (includeLogicalLeftEdge || !isHorizontal ? borderLeft() : 0),
-                               border.rect().y() + (includeLogicalLeftEdge || isHorizontal ? borderTop() : 0),
-                               border.rect().width() - ((includeLogicalLeftEdge || !isHorizontal) ? borderLeft() : 0) - ((includeLogicalRightEdge || !isHorizontal) ? borderRight() : 0),
-                               border.rect().height() - ((includeLogicalLeftEdge || isHorizontal) ? borderTop() : 0) - ((includeLogicalRightEdge || isHorizontal) ? borderBottom() : 0)));
-
-    if (hasBorderRadius && (includeLogicalLeftEdge || includeLogicalRightEdge)) {
-        RoundedIntRect::Radii radii = ((shadowStyle == Inset) ? s->getRoundedInnerBorderWithBorderWidths(border.rect(), borderTop(), borderBottom(), borderLeft(), borderRight()) : s->getRoundedBorderFor(border.rect())).radii();
-        border.includeLogicalEdges(radii, isHorizontal, includeLogicalLeftEdge, includeLogicalRightEdge);
-    }
-
+    
     bool hasOpaqueBackground = s->visitedDependentColor(CSSPropertyBackgroundColor).isValid() && s->visitedDependentColor(CSSPropertyBackgroundColor).alpha() == 255;
     for (const ShadowData* shadow = s->boxShadow(); shadow; shadow = shadow->next()) {
         if (shadow->style() != shadowStyle)

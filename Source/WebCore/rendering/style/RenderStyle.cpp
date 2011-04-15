@@ -806,12 +806,14 @@ RoundedIntRect RenderStyle::getRoundedBorderFor(const IntRect& rect) const
     return RoundedIntRect(rect, radii);
 }
 
-RoundedIntRect RenderStyle::getRoundedInnerBorderWithBorderWidths(const IntRect& innerRect, unsigned short topWidth, 
-                                                                  unsigned short bottomWidth, unsigned short leftWidth, unsigned short rightWidth) const
+RoundedIntRect RenderStyle::getRoundedInnerBorderWithBorderWidths(const IntRect& outerRect, const IntRect& innerRect,
+    unsigned short topWidth, unsigned short bottomWidth, unsigned short leftWidth, unsigned short rightWidth) const
 {
-    RoundedIntRect::Radii radii = calcRadiiFor(surround->border, innerRect.width(), innerRect.height());
+    RoundedIntRect::Radii radii = calcRadiiFor(surround->border, outerRect.width(), outerRect.height());
+    radii.scale(calcConstraintScaleFor(outerRect, radii));
+
     radii.shrink(topWidth, bottomWidth, leftWidth, rightWidth);
-    radii.scale(calcConstraintScaleFor(innerRect, radii));
+
     return RoundedIntRect(innerRect, radii);
 }
 

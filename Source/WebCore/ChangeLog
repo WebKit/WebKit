@@ -1,3 +1,39 @@
+2011-04-15  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Beth Dakin.
+
+        Some borders with border-radius do not have rounded inner edges
+        https://bugs.webkit.org/show_bug.cgi?id=58457
+        
+        Improve the logic used to compute the inner radii on curved
+        borders, to maintain borders of even thickness around the curve.
+        
+        Tests: fast/borders/mixed-border-styles-radius.html
+               fast/borders/mixed-border-styles.html
+
+        * rendering/RenderBoxModelObject.h:
+        * rendering/RenderBoxModelObject.cpp:
+        (WebCore::RenderBoxModelObject::computeBorderOuterRect):
+        (WebCore::RenderBoxModelObject::computeBorderInnerRect):
+        Two new utility functions to share some code that was in both paintBorder()
+        and paintBoxShaadow().
+        getRoundedInnerBorderWithBorderWidths() now takes the outer border box
+        as well as the inner box.
+        
+        (WebCore::RenderBoxModelObject::paintBorder): Call new methods.
+        (WebCore::RenderBoxModelObject::paintBoxShadow): Ditto.
+
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::drawBoxSideFromPath):
+        getRoundedInnerBorderWithBorderWidths() now takes the outer border box
+        as well as the inner box.
+
+        * rendering/style/RenderStyle.cpp:
+        (WebCore::RenderStyle::getRoundedInnerBorderWithBorderWidths):
+        * rendering/style/RenderStyle.h:
+        Compute the inner radii by starting with teh radii used for the
+        outer box, and then shrinking them down based on the border thickness.
+
 2011-04-14  Alexey Proskuryakov  <ap@apple.com>
 
         Reviewed by Dan Bernstein.
