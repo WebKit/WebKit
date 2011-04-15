@@ -54,6 +54,10 @@ EAPI const char      *ewk_settings_cache_directory_path_get(void);
 EAPI void             ewk_settings_proxy_uri_set(const char* proxy);
 EAPI const char*      ewk_settings_proxy_uri_get(void);
 
+EAPI Eina_Bool        ewk_settings_cache_enable_get(void);
+EAPI void             ewk_settings_cache_enable_set(Eina_Bool set);
+EAPI void             ewk_settings_cache_capacity_set(unsigned capacity);
+
 #ifdef __cplusplus
 }
 #endif

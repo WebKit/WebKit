@@ -1,3 +1,16 @@
+2011-04-14  Grzegorz Czajkowski  <g.czajkowski@samsung.com>
+
+        Reviewed by Antonio Gomes.
+
+        Memory cache API
+        https://bugs.webkit.org/show_bug.cgi?id=58016
+
+        * ewk/ewk_settings.cpp:
+        (ewk_settings_cache_enable_get):
+        (ewk_settings_cache_enable_set):
+        (ewk_settings_cache_capacity_set):
+        * ewk/ewk_settings.h:
+
 2011-04-13  Grzegorz Czajkowski  <g.czajkowski@samsung.com>
 
         Reviewed by Kent Tamura.

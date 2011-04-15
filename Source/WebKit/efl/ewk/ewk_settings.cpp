@@ -29,6 +29,7 @@
 #include "Image.h"
 #include "IntSize.h"
 #include "KURL.h"
+#include "MemoryCache.h"
 #include "ewk_private.h"
 
 #include <Eina.h>
@@ -323,6 +324,46 @@ const char* ewk_settings_proxy_uri_get(void)
 #elif USE(CURL)
     EINA_SAFETY_ON_TRUE_RETURN_VAL(1, 0);
 #endif
+}
+
+/**
+ * Gets status of the memory cache of WebCore.
+ *
+ * @return @c EINA_TRUE if the cache is enabled or @c EINA_FALSE if not
+ */
+Eina_Bool ewk_settings_cache_enable_get(void)
+{
+    WebCore::MemoryCache* cache = WebCore::memoryCache();
+    return !cache->disabled();
+}
+
+/**
+ * Enables/disables the memory cache of WebCore, possibly clearing it.
+ *
+ * Disabling the cache will remove all resources from the cache.
+ * They may still live on if they are referenced by some Web page though.
+ *
+ * @param set @c EINA_TRUE to enable memory cache, @c EINA_FALSE to disable
+ */
+void ewk_settings_cache_enable_set(Eina_Bool set)
+{
+    WebCore::MemoryCache* cache = WebCore::memoryCache();
+    set = !set;
+    if (cache->disabled() != set)
+        cache->setDisabled(set);
+}
+
+/**
+ * Sets capacity of memory cache of WebCore.
+ *
+ * WebCore sets default value of memory cache on 8192 * 1024 bytes.
+ *
+ * @param capacity the maximum number of bytes that the cache should consume overall
+ */
+void ewk_settings_cache_capacity_set(unsigned capacity)
+{
+    WebCore::MemoryCache* cache = WebCore::memoryCache();
+    cache->setCapacities(0, capacity, capacity);
 }
 
 /**
