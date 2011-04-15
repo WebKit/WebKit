@@ -34,6 +34,13 @@
 
 namespace JSC { namespace DFG {
 
+#if ENABLE(DFG_JIT_RESTRICTIONS)
+// FIXME: Temporarily disable arithmetic, until we fix associated performance regressions.
+#define ARITHMETIC_OP() m_parseFailed = true
+#else
+#define ARITHMETIC_OP() ((void)0)
+#endif
+
 // === ByteCodeParser ===
 //
 // This class is used to compile the dataflow graph from a CodeBlock.
@@ -44,7 +51,7 @@ public:
         , m_codeBlock(codeBlock)
         , m_graph(graph)
         , m_currentIndex(0)
-        , m_regressionGuard(false)
+        , m_parseFailed(false)
         , m_constantUndefined(UINT_MAX)
         , m_constantNull(UINT_MAX)
         , m_constant1(UINT_MAX)
@@ -408,8 +415,8 @@ private:
     // The bytecode index of the current instruction being generated.
     unsigned m_currentIndex;
 
-    // FIXME: used to temporarily disable arithmetic, until we fix associated performance regressions.
-    bool m_regressionGuard;
+    // Record failures due to unimplemented functionality or regressions.
+    bool m_parseFailed;
 
     // We use these values during code generation, and to avoid the need for
     // special handling we make sure they are available as constants in the
@@ -449,7 +456,11 @@ private:
 
 #define NEXT_OPCODE(name) \
     m_currentIndex += OPCODE_LENGTH(name); \
-    continue;
+    continue
+
+#define LAST_OPCODE(name) \
+    m_currentIndex += OPCODE_LENGTH(name); \
+    return !m_parseFailed
 
 bool ByteCodeParser::parse()
 {
@@ -588,7 +599,7 @@ bool ByteCodeParser::parse()
         // === Arithmetic operations ===
 
         case op_add: {
-            m_regressionGuard = true;
+            ARITHMETIC_OP();
             NodeIndex op1 = get(currentInstruction[2].u.operand);
             NodeIndex op2 = get(currentInstruction[3].u.operand);
             // If both operands can statically be determined to the numbers, then this is an arithmetic add.
@@ -601,7 +612,7 @@ bool ByteCodeParser::parse()
         }
 
         case op_sub: {
-            m_regressionGuard = true;
+            ARITHMETIC_OP();
             NodeIndex op1 = getToNumber(currentInstruction[2].u.operand);
             NodeIndex op2 = getToNumber(currentInstruction[3].u.operand);
             set(currentInstruction[1].u.operand, addToGraph(ArithSub, op1, op2));
@@ -609,7 +620,7 @@ bool ByteCodeParser::parse()
         }
 
         case op_mul: {
-            m_regressionGuard = true;
+            ARITHMETIC_OP();
             NodeIndex op1 = getToNumber(currentInstruction[2].u.operand);
             NodeIndex op2 = getToNumber(currentInstruction[3].u.operand);
             set(currentInstruction[1].u.operand, addToGraph(ArithMul, op1, op2));
@@ -617,7 +628,7 @@ bool ByteCodeParser::parse()
         }
 
         case op_mod: {
-            m_regressionGuard = true;
+            ARITHMETIC_OP();
             NodeIndex op1 = getToNumber(currentInstruction[2].u.operand);
             NodeIndex op2 = getToNumber(currentInstruction[3].u.operand);
             set(currentInstruction[1].u.operand, addToGraph(ArithMod, op1, op2));
@@ -625,7 +636,7 @@ bool ByteCodeParser::parse()
         }
 
         case op_div: {
-            m_regressionGuard = true;
+            ARITHMETIC_OP();
             NodeIndex op1 = getToNumber(currentInstruction[2].u.operand);
             NodeIndex op2 = getToNumber(currentInstruction[3].u.operand);
             set(currentInstruction[1].u.operand, addToGraph(ArithDiv, op1, op2));
@@ -641,14 +652,14 @@ bool ByteCodeParser::parse()
         }
 
         case op_not: {
-            m_regressionGuard = true;
+            ARITHMETIC_OP();
             NodeIndex value = get(currentInstruction[2].u.operand);
             set(currentInstruction[1].u.operand, addToGraph(LogicalNot, value));
             NEXT_OPCODE(op_not);
         }
 
         case op_less: {
-            m_regressionGuard = true;
+            ARITHMETIC_OP();
             NodeIndex op1 = get(currentInstruction[2].u.operand);
             NodeIndex op2 = get(currentInstruction[3].u.operand);
             set(currentInstruction[1].u.operand, addToGraph(CompareLess, op1, op2));
@@ -656,7 +667,7 @@ bool ByteCodeParser::parse()
         }
 
         case op_lesseq: {
-            m_regressionGuard = true;
+            ARITHMETIC_OP();
             NodeIndex op1 = get(currentInstruction[2].u.operand);
             NodeIndex op2 = get(currentInstruction[3].u.operand);
             set(currentInstruction[1].u.operand, addToGraph(CompareLessEq, op1, op2));
@@ -664,7 +675,7 @@ bool ByteCodeParser::parse()
         }
 
         case op_eq: {
-            m_regressionGuard = true;
+            ARITHMETIC_OP();
             NodeIndex op1 = get(currentInstruction[2].u.operand);
             NodeIndex op2 = get(currentInstruction[3].u.operand);
             set(currentInstruction[1].u.operand, addToGraph(CompareEq, op1, op2));
@@ -672,14 +683,14 @@ bool ByteCodeParser::parse()
         }
 
         case op_eq_null: {
-            m_regressionGuard = true;
+            ARITHMETIC_OP();
             NodeIndex value = get(currentInstruction[2].u.operand);
             set(currentInstruction[1].u.operand, addToGraph(CompareEq, value, constantNull()));
             NEXT_OPCODE(op_eq_null);
         }
 
         case op_stricteq: {
-            m_regressionGuard = true;
+            ARITHMETIC_OP();
             NodeIndex op1 = get(currentInstruction[2].u.operand);
             NodeIndex op2 = get(currentInstruction[3].u.operand);
             set(currentInstruction[1].u.operand, addToGraph(CompareStrictEq, op1, op2));
@@ -687,7 +698,7 @@ bool ByteCodeParser::parse()
         }
 
         case op_neq: {
-            m_regressionGuard = true;
+            ARITHMETIC_OP();
             NodeIndex op1 = get(currentInstruction[2].u.operand);
             NodeIndex op2 = get(currentInstruction[3].u.operand);
             set(currentInstruction[1].u.operand, addToGraph(LogicalNot, addToGraph(CompareEq, op1, op2)));
@@ -695,14 +706,14 @@ bool ByteCodeParser::parse()
         }
 
         case op_neq_null: {
-            m_regressionGuard = true;
+            ARITHMETIC_OP();
             NodeIndex value = get(currentInstruction[2].u.operand);
             set(currentInstruction[1].u.operand, addToGraph(LogicalNot, addToGraph(CompareEq, value, constantNull())));
             NEXT_OPCODE(op_neq_null);
         }
 
         case op_nstricteq: {
-            m_regressionGuard = true;
+            ARITHMETIC_OP();
             NodeIndex op1 = get(currentInstruction[2].u.operand);
             NodeIndex op2 = get(currentInstruction[3].u.operand);
             set(currentInstruction[1].u.operand, addToGraph(LogicalNot, addToGraph(CompareStrictEq, op1, op2)));
@@ -778,17 +789,11 @@ bool ByteCodeParser::parse()
 
         case op_ret: {
             addToGraph(Return, get(currentInstruction[1].u.operand));
-            m_currentIndex += OPCODE_LENGTH(op_ret);
-#if ENABLE(DFG_JIT_RESTRICTIONS)
-            // FIXME: temporarily disabling the DFG JIT for functions containing arithmetic.
-            if (m_regressionGuard)
-                return false;
-#endif
-            return true;
+            LAST_OPCODE(op_ret);
         }
 
         default:
-            // parse failed!
+            // Parse failed!
             return false;
         }
     }

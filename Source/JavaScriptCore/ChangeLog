@@ -1,5 +1,17 @@
 2011-04-14  Gavin Barraclough  <barraclough@apple.com>
 
+        Rubber stamped by Geoffrey Garen.
+
+        Hide DFG_JIT_RESTRICTIONS behind ARITHMETIC_OP() macro, and rename
+        m_regressionGuard to m_parseFailed, such that it can be reused for
+        other failure cases.
+
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::ByteCodeParser):
+        (JSC::DFG::ByteCodeParser::parse):
+
+2011-04-14  Gavin Barraclough  <barraclough@apple.com>
+
         Reviewed by Geoffrey Garen.
 
         Bug 58620 - DFG JIT - loading of arguments should not be lazy
