@@ -1,3 +1,17 @@
+2011-04-15  Joseph Pecoraro  <joepeck@webkit.org>
+
+        Reviewed by David Kilzer.
+
+        JSLock ASSERT seen often when using the inspector for long
+        periods of time. We should take the JSLock whenever we
+        might allocate memory in the JavaScript Heap.
+
+        JSC InjectedScriptHost::nodeAsScriptValue should take JSLock before possible JavaScript Allocations
+        https://bugs.webkit.org/show_bug.cgi?id=58674
+
+        * bindings/js/JSInjectedScriptHostCustom.cpp:
+        (WebCore::InjectedScriptHost::nodeAsScriptValue): take the JSLock.
+
 2011-04-14  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Geoffrey Garen.

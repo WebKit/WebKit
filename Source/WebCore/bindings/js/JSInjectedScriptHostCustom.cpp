@@ -70,6 +70,7 @@ Node* InjectedScriptHost::scriptValueAsNode(ScriptValue value)
 
 ScriptValue InjectedScriptHost::nodeAsScriptValue(ScriptState* state, Node* node)
 {
+    JSLock lock(SilenceAssertionsOnly);
     return ScriptValue(state->globalData(), toJS(state, node));
 }
 
