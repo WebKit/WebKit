@@ -1,3 +1,19 @@
+2011-04-14  Naoki Takano  <takano.naoki@gmail.com>
+
+        Reviewed by Eric Seidel.
+
+        [Chromium]Change menu list background fallback value to transparent to work background:none for HTML select tag.
+        https://bugs.webkit.org/show_bug.cgi?id=57818
+
+        * fast/forms/select-background-none.html: Added.
+        * platform/chromium-mac/fast/forms/select-background-none-expected.checksum: Added.
+        * platform/chromium-mac/fast/forms/select-background-none-expected.png: Added.
+        * platform/chromium-mac/fast/forms/select-background-none-expected.txt: Added.
+        * platform/chromium-linux/fast/forms/select-background-none-expected.checksum: Added.
+        * platform/chromium-linux/fast/forms/select-background-none-expected.png: Added.
+        * platform/chromium-linux/fast/forms/select-background-none-expected.txt: Added.
+        * platform/mac/fast/forms/select-background-none-expected.txt: Added.
+
 2011-04-14  Adrienne Walker  <enne@google.com>
 
         [chromium] Unreviewed, update test expectations for huge-layer-img.

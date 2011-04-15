@@ -274,7 +274,8 @@ bool RenderThemeChromiumLinux::paintMenuList(RenderObject* o, const PaintInfo& i
     // Match Chromium Win behaviour of showing all borders if any are shown.
     extraParams.menuList.hasBorder = box->borderRight() || box->borderLeft() || box->borderTop() || box->borderBottom();
     extraParams.menuList.hasBorderRadius = o->style()->hasBorderRadius();
-    extraParams.menuList.backgroundColor = SkColorSetRGB(0xdd, 0xdd, 0xdd);
+    // Fallback to transparent if the specified color object is invalid.
+    extraParams.menuList.backgroundColor = Color::transparent;
     if (o->hasBackground())
         extraParams.menuList.backgroundColor = o->style()->visitedDependentColor(CSSPropertyBackgroundColor).rgb();
 

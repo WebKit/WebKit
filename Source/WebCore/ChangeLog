@@ -1,3 +1,18 @@
+2011-04-14  Naoki Takano  <takano.naoki@gmail.com>
+
+        Reviewed by Eric Seidel.
+
+        [Chromium]Change menu list background fallback value to transparent to work background:none for HTML select tag.
+        https://bugs.webkit.org/show_bug.cgi?id=57818
+
+        Test: fast/forms/select-background-none.html
+
+        This fix is only for Chromium on Linux. Chromium on Mac already works fine.
+        But Windows has the same problem. This change doesn't include Windows part.
+
+        * rendering/RenderThemeChromiumLinux.cpp:
+        (WebCore::RenderThemeChromiumLinux::paintMenuList): Change the default color to transparent.
+
 2011-04-14  Luke Macpherson   <macpherson@chromium.org>
 
         Reviewed by Dimitri Glazkov.
