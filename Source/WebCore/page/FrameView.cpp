@@ -2111,7 +2111,11 @@ void FrameView::didCompleteRubberBand(const IntSize& initialOverhang) const
 
 void FrameView::scrollbarStyleChanged()
 {
-    m_frame->page()->setNeedsRecalcStyleInAllFrames();
+    Page* page = m_frame->page();
+    ASSERT(page);
+    if (!page)
+        return;
+    page->setNeedsRecalcStyleInAllFrames();
 }
 
 bool FrameView::shouldSuspendScrollAnimations() const

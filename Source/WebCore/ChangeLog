@@ -1,3 +1,17 @@
+2011-04-14  Beth Dakin  <bdakin@apple.com>
+
+        Reviewed by Adele Peterson.
+
+        https://bugs.webkit.org/show_bug.cgi?id=58612
+        Crash switching overlay/non-overlay scrollbar preference 
+        (WebCore::Page::setNeedsRecalcStyleInAllFrames + 9)
+        -and corresponding-
+        <rdar://problem/9241920> 
+
+        Speculative fix: Page could definitely be null here. 
+        * page/FrameView.cpp:
+        (WebCore::FrameView::scrollbarStyleChanged):
+
 2011-04-14  Vsevolod Vlasov  <vsevik@chromium.org>
 
         Reviewed by Pavel Feldman.
