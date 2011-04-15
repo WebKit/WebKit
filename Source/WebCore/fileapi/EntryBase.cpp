@@ -64,7 +64,17 @@ String EntryBase::toURL()
     result.append("filesystem:");
     result.append(originString);
     result.append("/");
-    result.append(m_fileSystem->asyncFileSystem()->type() == AsyncFileSystem::Temporary ? DOMFileSystemBase::kTemporaryPathPrefix : DOMFileSystemBase::kPersistentPathPrefix);
+    switch (m_fileSystem->asyncFileSystem()->type()) {
+    case AsyncFileSystem::Temporary:
+        result.append(DOMFileSystemBase::kTemporaryPathPrefix);
+        break;
+    case AsyncFileSystem::Persistent:
+        result.append(DOMFileSystemBase::kPersistentPathPrefix);
+        break;
+    case AsyncFileSystem::External:
+        result.append(DOMFileSystemBase::kExternalPathPrefix);
+        break;
+    }
     result.append(m_fullPath);
     return result.toString();
 }

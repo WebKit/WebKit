@@ -54,6 +54,8 @@ const char DOMFileSystemBase::kPersistentPathPrefix[] = "persistent";
 const size_t DOMFileSystemBase::kPersistentPathPrefixLength = sizeof(DOMFileSystemBase::kPersistentPathPrefix) - 1;
 const char DOMFileSystemBase::kTemporaryPathPrefix[] = "temporary";
 const size_t DOMFileSystemBase::kTemporaryPathPrefixLength = sizeof(DOMFileSystemBase::kTemporaryPathPrefix) - 1;
+const char DOMFileSystemBase::kExternalPathPrefix[] = "external";
+const size_t DOMFileSystemBase::kExternalPathPrefixLength = sizeof(DOMFileSystemBase::kExternalPathPrefix) - 1;
 
 bool DOMFileSystemBase::crackFileSystemURL(const KURL& url, AsyncFileSystem::Type& type, String& filePath)
 {
@@ -72,6 +74,9 @@ bool DOMFileSystemBase::crackFileSystemURL(const KURL& url, AsyncFileSystem::Typ
     } else if (path.startsWith(kPersistentPathPrefix)) {
         type = AsyncFileSystem::Persistent;
         path = path.substring(kPersistentPathPrefixLength);
+    } else if (path.startsWith(kExternalPathPrefix)) {
+        type = AsyncFileSystem::External;
+        path = path.substring(kExternalPathPrefixLength);
     } else
         return false;
 

@@ -53,6 +53,7 @@ public:
     enum Type {
         Temporary,
         Persistent,
+        External,
     };
 
     virtual void stop() { }

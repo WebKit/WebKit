@@ -1,3 +1,19 @@
+2011-04-15  Zelidrag Hornung  <zelidrag@chromium.org>
+
+        Reviewed by Darin Fisher.
+
+        Added enums for external file system type and exposed factory function
+        for creating File- and DirectoryEntry objects from Chromium side.
+        https://bugs.webkit.org/show_bug.cgi?id=58456
+
+        * public/WebFileSystem.h:
+        * public/WebFrame.h:
+        * src/AssertMatchingEnums.cpp:
+        * src/WebFrameImpl.cpp:
+        (WebKit::WebFrameImpl::createFileSystem):
+        (WebKit::WebFrameImpl::createFileEntry):
+        * src/WebFrameImpl.h:
+
 2011-04-15  Vsevolod Vlasov  <vsevik@chromium.org>
 
         Reviewed by Pavel Feldman.

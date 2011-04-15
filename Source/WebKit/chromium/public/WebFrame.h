@@ -32,6 +32,7 @@
 #define WebFrame_h
 
 #include "WebCanvas.h"
+#include "WebFileSystem.h"
 #include "WebNode.h"
 #include "WebURL.h"
 
@@ -72,6 +73,7 @@ struct WebRect;
 struct WebScriptSource;
 struct WebSize;
 struct WebURLLoaderOptions;
+
 template <typename T> class WebVector;
 
 class WebFrame {
@@ -263,9 +265,15 @@ public:
     virtual v8::Local<v8::Context> mainWorldScriptContext() const = 0;
 
     // Creates an instance of file system object.
-    virtual v8::Handle<v8::Value> createFileSystem(int type,
+    virtual v8::Handle<v8::Value> createFileSystem(WebFileSystem::Type,
                                                    const WebString& name,
                                                    const WebString& path) = 0;
+    // Creates an instance of file or directory entry object.
+    virtual v8::Handle<v8::Value> createFileEntry(WebFileSystem::Type,
+                                                  const WebString& fileSystemName,
+                                                  const WebString& fileSystemPath,
+                                                  const WebString& filePath,
+                                                  bool isDirectory) = 0;
 #endif
 
 

@@ -109,9 +109,14 @@ public:
     virtual v8::Handle<v8::Value> executeScriptAndReturnValue(
         const WebScriptSource&);
     virtual v8::Local<v8::Context> mainWorldScriptContext() const;
-    virtual v8::Handle<v8::Value> createFileSystem(int type,
+    virtual v8::Handle<v8::Value> createFileSystem(WebFileSystem::Type,
                                                    const WebString& name,
                                                    const WebString& path);
+    virtual v8::Handle<v8::Value> createFileEntry(WebFileSystem::Type,
+                                                  const WebString& fileSystemName,
+                                                  const WebString& fileSystemPath,
+                                                  const WebString& filePath,
+                                                  bool isDirectory);
 #endif
     virtual bool insertStyleText(const WebString& css, const WebString& id);
     virtual void reload(bool ignoreCache);

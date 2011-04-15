@@ -130,6 +130,7 @@ namespace WebCore {
         enum FileSystemType {
             TEMPORARY,
             PERSISTENT,
+            EXTERNAL,
         };
         void requestFileSystem(int type, long long size, PassRefPtr<FileSystemCallback> successCallback, PassRefPtr<ErrorCallback>);
         PassRefPtr<DOMFileSystemSync> requestFileSystemSync(int type, long long size, ExceptionCode&);

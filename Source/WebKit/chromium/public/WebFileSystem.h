@@ -40,11 +40,15 @@ class WebFileSystemCallbacks;
 class WebFileWriter;
 class WebFileWriterClient;
 
+// FIXME(zelidrag): Remove this define once Chromium side catches up.
+#define WEB_FILE_SYSTEM_TYPE_EXTERNAL
+
 class WebFileSystem {
 public:
     enum Type {
         TypeTemporary,
         TypePersistent,
+        TypeExternal,
     };
 
     // Moves a file or directory at |srcPath| to |destPath|.
