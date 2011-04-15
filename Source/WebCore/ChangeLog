@@ -1,3 +1,11 @@
+2011-04-15  Andreas Kling  <kling@webkit.org>
+
+        Rolling out accidental part of r84010.
+
+        * platform/qt/RenderThemeQt.cpp:
+        (WebCore::RenderThemeQt::computeSizeBasedOnStyle):
+        (WebCore::RenderThemeQt::setButtonPadding):
+
 2011-04-15  Oliver Hunt  <oliver@apple.com>
 
         Forgot windows build fix.

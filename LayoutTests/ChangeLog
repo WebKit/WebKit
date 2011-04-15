@@ -1,5 +1,11 @@
 2011-04-15  Andreas Kling  <kling@webkit.org>
 
+        Rolling out accidental part of r84010.
+
+        * fast/forms/button-line-break.html: Removed.
+
+2011-04-15  Andreas Kling  <kling@webkit.org>
+
         Reviewed by Antonio Gomes.
 
         [Qt] DRT: Default custom policy delegate decision should be Ignore.

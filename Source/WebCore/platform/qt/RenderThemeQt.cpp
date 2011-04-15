@@ -527,9 +527,9 @@ void RenderThemeQt::computeSizeBasedOnStyle(RenderStyle* renderStyle) const
 
     // FIXME: Check is flawed, since it doesn't take min-width/max-width into account.
     if (renderStyle->width().isIntrinsicOrAuto() && size.width() > 0)
-        renderStyle->setMinWidth(Length(size.width(), Fixed));
+        renderStyle->setWidth(Length(size.width(), Fixed));
     if (renderStyle->height().isAuto() && size.height() > 0)
-        renderStyle->setMinHeight(Length(size.height(), Fixed));
+        renderStyle->setHeight(Length(size.height(), Fixed));
 }
 
 void RenderThemeQt::setCheckboxSize(RenderStyle* style) const
@@ -607,8 +607,8 @@ void RenderThemeQt::setButtonPadding(RenderStyle* style) const
     int buttonMargin = qStyle()->pixelMetric(QStyle::PM_ButtonMargin, &styleOption, 0);
     int paddingLeft = buttonMargin;
     int paddingRight = buttonMargin;
-    int paddingTop = buttonMargin;
-    int paddingBottom = buttonMargin;
+    int paddingTop = 1;
+    int paddingBottom = 0;
 
     // Then check if the style uses layout margins
     QRect layoutRect = qStyle()->subElementRect(QStyle::SE_PushButtonLayoutItem,
