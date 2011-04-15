@@ -59,6 +59,7 @@ WebInspector.TextEditorModel = function()
     this._attributes = [];
     this._undoStack = [];
     this._noPunctuationRegex = /[^ !%&()*+,-.:;<=>?\[\]\^{|}~]+/;
+    this._lineBreak = "\n";
 }
 
 WebInspector.TextEditorModel.prototype = {
@@ -74,7 +75,7 @@ WebInspector.TextEditorModel.prototype = {
 
     get text()
     {
-        return this._lines.join("\n");
+        return this._lines.join(this._lineBreak);
     },
 
     line: function(lineNumber)
@@ -91,8 +92,10 @@ WebInspector.TextEditorModel.prototype = {
 
     setText: function(range, text)
     {
-        if (!range)
+        if (!range) {
             range = new WebInspector.TextRange(0, 0, this._lines.length - 1, this._lines[this._lines.length - 1].length);
+            this._lineBreak = /\r\n/.test(text) ? "\r\n" : "\n";
+        }
         var command = this._pushUndoableCommand(range);
         var newRange = this._innerSetText(range, text);
         command.range = newRange.clone();
@@ -113,7 +116,7 @@ WebInspector.TextEditorModel.prototype = {
         if (text === "")
             return new WebInspector.TextRange(range.startLine, range.startColumn, range.startLine, range.startColumn);
 
-        var newLines = text.split("\n");
+        var newLines = text.split(/\r?\n/);
         this._replaceTabsIfNeeded(newLines);
 
         var prefix = this._lines[range.startLine].substring(0, range.startColumn);
@@ -210,13 +213,13 @@ WebInspector.TextEditorModel.prototype = {
         var clip = [];
         if (range.startLine === range.endLine) {
             clip.push(this._lines[range.startLine].substring(range.startColumn, range.endColumn));
-            return clip.join("\n");
+            return clip.join(this._lineBreak);
         }
         clip.push(this._lines[range.startLine].substring(range.startColumn));
         for (var i = range.startLine + 1; i < range.endLine; ++i)
             clip.push(this._lines[i]);
         clip.push(this._lines[range.endLine].substring(0, range.endColumn));
-        return clip.join("\n");
+        return clip.join(this._lineBreak);
     },
 
     setAttribute: function(line, name, value)

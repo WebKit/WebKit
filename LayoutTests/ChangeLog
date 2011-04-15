@@ -1,3 +1,13 @@
+2011-04-15  Andrey Adaikin  <aandrey@google.com>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: TextViewer and TextEditorModel must support both \n and \r\n as line separators
+        https://bugs.webkit.org/show_bug.cgi?id=58449
+
+        * inspector/editor/text-editor-model-expected.txt: Added.
+        * inspector/editor/text-editor-model.html: Added.
+
 2011-04-15  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Eric Carlson.
