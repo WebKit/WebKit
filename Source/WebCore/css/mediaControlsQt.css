@@ -69,6 +69,7 @@ audio::-webkit-media-controls-mute-button {
     height: 12px;
     padding: 6px;
     margin: 5px 5px 5px 3px;
+    border: none !important;
 }
 
 video::-webkit-media-controls-mute-button {
@@ -76,6 +77,7 @@ video::-webkit-media-controls-mute-button {
     height: 12px;
     padding: 6px;
     margin: 5px 5px 5px 3px;
+    border: none !important;
 }
 
 audio::-webkit-media-controls-play-button {
@@ -83,6 +85,7 @@ audio::-webkit-media-controls-play-button {
     height: 12px;
     padding: 6px 12px 6px 11px;
     margin: 5px 3px 5px 5px;
+    border: none !important;
 }
 
 video::-webkit-media-controls-play-button {
@@ -90,6 +93,7 @@ video::-webkit-media-controls-play-button {
     height: 12px;
     padding: 6px 12px 6px 11px;
     margin: 5px 3px 5px 5px;
+    border: none !important;
 }
 
 audio::-webkit-media-controls-timeline-container {
@@ -219,6 +223,7 @@ video::-webkit-media-controls-fullscreen-button {
     height: 12px;
     padding: 6px;
     margin: 5px 5px 5px 3px;
+    border: none !important;
 }
 
 audio::-webkit-media-controls-rewind-button {
