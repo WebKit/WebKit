@@ -939,6 +939,7 @@ fast/loader/unschedule-relayout-after-unload.html
 fast/parser/noscript-with-javascript-disabled.html
 fast/parser/noscript-with-javascript-enabled.html
 fast/repaint/no-caret-repaint-in-non-content-editable-element.html
+fast/text/zero-font-size.html
 http/tests/appcache/disabled.html
 http/tests/canvas/webgl/origin-clean-conformance.html
 http/tests/navigation/ping-cross-origin-from-https.html
