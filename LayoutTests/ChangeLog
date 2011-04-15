@@ -1,3 +1,15 @@
+2011-04-15  Jessie Berlin  <jberlin@apple.com>
+
+        DRT on Windows doesn't block access to external URLs (https://bugs.webkit.org/show_bug.cgi?id=57334),
+        but WKTR does, so add the expected passing results to the win-wk2 directory to override the expected
+        failing results in the win directory in order to get the bots green.
+
+        * platform/win-wk2/fast/ruby: Added.
+        * platform/win-wk2/fast/ruby/after-block-doesnt-crash-expected.txt: Added.
+        * platform/win-wk2/fast/ruby/after-table-doesnt-crash-expected.txt: Added.
+        * platform/win-wk2/fast/ruby/before-block-doesnt-crash-expected.txt: Added.
+        * platform/win-wk2/fast/ruby/before-table-doesnt-crash-expected.txt: Added.
+
 2011-04-15  Vsevolod Vlasov  <vsevik@chromium.org>
 
         Reviewed by Pavel Feldman.
