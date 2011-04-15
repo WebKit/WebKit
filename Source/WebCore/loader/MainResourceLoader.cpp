@@ -358,6 +358,8 @@ void MainResourceLoader::didReceiveResponse(const ResourceResponse& r)
     if (it != r.httpHeaderFields().end()) {
         String content = it->second;
         if (m_frame->loader()->shouldInterruptLoadForXFrameOptions(content, r.url())) {
+            InspectorInstrumentation::continueAfterXFrameOptionsDenied(m_frame.get(), documentLoader(), identifier(), r);
+
             cancel();
             return;
         }

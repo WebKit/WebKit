@@ -1,3 +1,16 @@
+2011-04-15  Vsevolod Vlasov  <vsevik@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: No console message and headers in inspector when X-Frame-Options header blocks a load
+        https://bugs.webkit.org/show_bug.cgi?id=58136
+
+        Passed response info to inspector when X-Frame-Options header blocks resource loading.
+
+        * http/tests/inspector/network/resources/x-frame-options-deny.cgi: Added.
+        * http/tests/inspector/network/x-frame-options-deny-expected.txt: Added.
+        * http/tests/inspector/network/x-frame-options-deny.html: Added.
+
 2011-04-15  Andrey Adaikin  <aandrey@google.com>
 
         Reviewed by Pavel Feldman.

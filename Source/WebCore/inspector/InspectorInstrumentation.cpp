@@ -463,6 +463,11 @@ void InspectorInstrumentation::didReceiveResourceResponseButCanceledImpl(Frame* 
     InspectorInstrumentation::didReceiveResourceResponse(cookie, identifier, loader, r);
 }
 
+void InspectorInstrumentation::continueAfterXFrameOptionsDeniedImpl(Frame* frame, DocumentLoader* loader, unsigned long identifier, const ResourceResponse& r)
+{
+    didReceiveResourceResponseButCanceledImpl(frame, loader, identifier, r);
+}
+
 void InspectorInstrumentation::continueWithPolicyDownloadImpl(Frame* frame, DocumentLoader* loader, unsigned long identifier, const ResourceResponse& r)
 {
     didReceiveResourceResponseButCanceledImpl(frame, loader, identifier, r);
