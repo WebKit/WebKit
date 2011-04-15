@@ -1,3 +1,49 @@
+2011-04-15  Pavel Feldman  <pfeldman@google.com>
+
+        Reviewed by Yury Semikhatsky.
+
+        Web Inspector: make resource revisions use dedicated type (not Resource clone).
+        https://bugs.webkit.org/show_bug.cgi?id=58659
+
+        * inspector/front-end/CSSStyleModel.js:
+        (WebInspector.CSSStyleModel.prototype.setStyleSheetText):
+        * inspector/front-end/Resource.js:
+        (WebInspector.Resource.prototype.addRevision):
+        (WebInspector.Resource.prototype._innerRequestContent.onResourceContent):
+        (WebInspector.Resource.prototype._innerRequestContent):
+        (WebInspector.ResourceRevision):
+        (WebInspector.ResourceRevision.prototype.get resource):
+        (WebInspector.ResourceRevision.prototype.get timestamp):
+        (WebInspector.ResourceRevision.prototype.get content):
+        (WebInspector.ResourceRevision.prototype.revertToThis):
+        (WebInspector.ResourceRevision.prototype.requestContent.mycallback):
+        (WebInspector.ResourceRevision.prototype.requestContent):
+        * inspector/front-end/ResourceView.js:
+        (WebInspector.ResourceView.resourceViewTypeMatchesResource):
+        (WebInspector.ResourceView.resourceViewForResource):
+        (WebInspector.ResourceView.recreateResourceView):
+        (WebInspector.ResourceView.existingResourceViewForResource):
+        (WebInspector.RevisionSourceFrame):
+        (WebInspector.RevisionSourceFrame.prototype.get resource):
+        (WebInspector.RevisionSourceFrame.prototype.isContentEditable):
+        (WebInspector.RevisionSourceFrame.prototype.requestContent):
+        * inspector/front-end/ResourcesPanel.js:
+        (WebInspector.ResourcesPanel.prototype._showResourceView):
+        (WebInspector.ResourcesPanel.prototype._showRevisionView):
+        (WebInspector.ResourcesPanel.prototype._fetchAndApplyDiffMarkup.step1):
+        (WebInspector.ResourcesPanel.prototype._fetchAndApplyDiffMarkup.step2):
+        (WebInspector.ResourcesPanel.prototype._fetchAndApplyDiffMarkup):
+        (WebInspector.ResourceRevisionTreeElement):
+        (WebInspector.ResourceRevisionTreeElement.prototype.get itemURL):
+        (WebInspector.ResourceRevisionTreeElement.prototype.onselect):
+        (WebInspector.ResourceRevisionTreeElement.prototype._ondragstart):
+        (WebInspector.ResourceRevisionTreeElement.prototype._handleContextMenuEvent):
+        * inspector/front-end/SourceFrame.js:
+        (WebInspector.SourceFrame.prototype._ensureContentLoaded):
+        (WebInspector.SourceFrame.prototype.requestContent):
+        (WebInspector.SourceFrame.prototype.commitEditing.didEditContent):
+        (WebInspector.SourceFrame.prototype.commitEditing):
+
 2011-04-15  Alexander Pavlov  <apavlov@chromium.org>
 
         Reviewed by Yury Semikhatsky.

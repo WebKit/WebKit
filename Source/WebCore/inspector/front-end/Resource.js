@@ -723,55 +723,13 @@ WebInspector.Resource.prototype = {
 
     addRevision: function(newContent)
     {
-        var revisionResource = new WebInspector.Resource(null, this.url);
-        revisionResource.frameId = this.frameId;
-        revisionResource.loaderId = this.loaderId;
-        revisionResource.documentURL = this.documentURL;
-        revisionResource.type = this.type;
-        revisionResource.loader = this.loader;
-        revisionResource.timestamp = this.timestamp;
-        revisionResource._content = this._content;
-        revisionResource._actualResource = this;
-
-        if (this.finished)
-            revisionResource.finished = true;
-        else {
-            function finished()
-            {
-                this.removeEventListener("finished", finished);
-                revisionResource.finished = true;
-            }
-            this.addEventListener("finished", finished.bind(this));
-        }
-
-        if (!this._baseRevision)
-            this._baseRevision = revisionResource;
-        else
-            revisionResource._baseRevision = this._baseRevision;
+        var revision = new WebInspector.ResourceRevision(this, this._content, this._contentTimestamp);
+        this.history.push(revision);
 
         this._content = newContent;
-        this.timestamp = new Date();
+        this._contentTimestamp = new Date();
 
-        this.history.push(revisionResource);
-        this.dispatchEventToListeners(WebInspector.Resource.Events.RevisionAdded, revisionResource);
-    },
-
-    revertToThis: function()
-    {
-        if (!this._actualResource)
-            return;
-
-        function callback(content)
-        {
-            if (content)
-                this._actualResource.setContent(content, true);
-        }
-        this.requestContent(callback.bind(this));
-    },
-
-    get baseRevision()
-    {
-        return this._baseRevision;
+        this.dispatchEventToListeners(WebInspector.Resource.Events.RevisionAdded, revision);
     },
 
     requestContent: function(callback)
@@ -830,6 +788,7 @@ WebInspector.Resource.prototype = {
         function onResourceContent(data)
         {
             this._content = data;
+            this._originalContent = data;
             var callbacks = this._pendingContentCallbacks.slice();
             for (var i = 0; i < callbacks.length; ++i)
                 callbacks[i](this._content, this._contentEncoded);
@@ -842,6 +801,61 @@ WebInspector.Resource.prototype = {
 
 WebInspector.Resource.prototype.__proto__ = WebInspector.Object.prototype;
 
+WebInspector.ResourceRevision = function(resource, content, timestamp)
+{
+    this._resource = resource;
+    this._content = content;
+    this._timestamp = timestamp;
+}
+
+WebInspector.ResourceRevision.prototype = {
+    get resource()
+    {
+        return this._resource;
+    },
+
+    get timestamp()
+    {
+        return this._timestamp;
+    },
+
+    get content()
+    {
+        return this._content;
+    },
+
+    revertToThis: function()
+    {
+        function revert(content)
+        {
+            this._resource.setContent(content, true);
+        }
+        this.requestContent(revert.bind(this));
+    },
+
+    requestContent: function(callback)
+    {
+        if (typeof this._content === "string") {
+            callback(this._content);
+            return;
+        }
+
+        // If we are here, this is initial revision. First, look up content fetched over the wire.
+        if (typeof this.resource._originalContent === "string") {
+            this._content = this._resource._originalContent;
+            callback(this._content);
+            return;
+        }
+
+        // If unsuccessful, request the content.
+        function mycallback(content)
+        {
+            this._content = content;
+            callback(content);
+        }
+        WebInspector.networkManager.requestContent(this._resource, false, mycallback.bind(this));
+    }
+}
 
 WebInspector.ResourceDomainModelBinding = function()
 {

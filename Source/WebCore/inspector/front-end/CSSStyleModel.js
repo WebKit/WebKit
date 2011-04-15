@@ -187,7 +187,7 @@ WebInspector.CSSStyleModel.prototype = {
         function callback(error)
         {
              if (!error)
-                 this._fireStyleSheetChanged(this.id, majorChange);
+                 this._fireStyleSheetChanged(styleSheetId, majorChange);
 
              if (userCallback)
                  userCallback(error);

@@ -403,17 +403,38 @@ WebInspector.ResourcesPanel.prototype = {
     _showResourceView: function(resource)
     {
         var view = WebInspector.ResourceView.resourceViewForResource(resource);
-
-        // Consider rendering diff markup here.
-        if (resource.baseRevision && view instanceof WebInspector.SourceFrame) {
-            function callback(baseContent)
-            {
-                if (baseContent)
-                    this._applyDiffMarkup(view, baseContent, resource.content);
-            }
-            resource.baseRevision.requestContent(callback.bind(this));
-        }
+        this._fetchAndApplyDiffMarkup(view, resource);
         this._innerShowView(view);
+    },
+
+    _showRevisionView: function(revision)
+    {
+        if (!revision._view)
+            revision._view = new WebInspector.RevisionSourceFrame(revision);
+        var view = revision._view;
+        this._fetchAndApplyDiffMarkup(view, revision.resource, revision);
+        this._innerShowView(view);
+    },
+
+    _fetchAndApplyDiffMarkup: function(view, resource, revision)
+    {
+        var baseRevision = resource.history[0];
+        if (!baseRevision)
+            return;
+        if (!(view instanceof WebInspector.SourceFrame))
+            return;
+
+        baseRevision.requestContent(step1.bind(this));
+
+        function step1(baseContent)
+        {
+            (revision ? revision : resource).requestContent(step2.bind(this, baseContent));
+        }
+
+        function step2(baseContent, revisionContent)
+        {
+            this._applyDiffMarkup(view, baseContent, revisionContent);
+        }
     },
 
     _applyDiffMarkup: function(view, baseContent, newContent) {
@@ -1252,13 +1273,18 @@ WebInspector.ApplicationCacheTreeElement.prototype.__proto__ = WebInspector.Base
 WebInspector.ResourceRevisionTreeElement = function(storagePanel, revision)
 {
     var title = revision.timestamp ? revision.timestamp.toLocaleTimeString() : WebInspector.UIString("(original)");
-    WebInspector.BaseStorageTreeElement.call(this, storagePanel, null, title, ["resource-sidebar-tree-item", "resources-category-" + revision.category.name]);
+    WebInspector.BaseStorageTreeElement.call(this, storagePanel, null, title, ["resource-sidebar-tree-item", "resources-category-" + revision.resource.category.name]);
     if (revision.timestamp)
         this.tooltip = revision.timestamp.toLocaleString();
-    this._resource = revision;
+    this._revision = revision;
 }
 
 WebInspector.ResourceRevisionTreeElement.prototype = {
+    get itemURL()
+    {
+        return this._revision.resource.url;
+    },
+
     onattach: function()
     {
         WebInspector.BaseStorageTreeElement.prototype.onattach.call(this);
@@ -1270,20 +1296,22 @@ WebInspector.ResourceRevisionTreeElement.prototype = {
     onselect: function()
     {
         WebInspector.BaseStorageTreeElement.prototype.onselect.call(this);
-        this._storagePanel._showResourceView(this._resource);
+        this._storagePanel._showRevisionView(this._revision);
     },
 
     _ondragstart: function(event)
     {
-        event.dataTransfer.setData("text/plain", this._resource.content);
-        event.dataTransfer.effectAllowed = "copy";
-        return true;
+        if (this._revision.content) {
+            event.dataTransfer.setData("text/plain", this._revision.content);
+            event.dataTransfer.effectAllowed = "copy";
+            return true;
+        }
     },
 
     _handleContextMenuEvent: function(event)
     {
         var contextMenu = new WebInspector.ContextMenu();
-        contextMenu.appendItem(WebInspector.UIString("Revert to this revision"), this._resource.revertToThis.bind(this._resource));
+        contextMenu.appendItem(WebInspector.UIString("Revert to this revision"), this._revision.revertToThis.bind(this._revision));
         contextMenu.show(event);
     }
 }

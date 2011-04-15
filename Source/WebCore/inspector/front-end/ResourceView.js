@@ -62,7 +62,7 @@ WebInspector.ResourceView.createResourceView = function(resource)
 
 WebInspector.ResourceView.resourceViewTypeMatchesResource = function(resource)
 {
-    var resourceView = resource._resourcesView;
+    var resourceView = resource._resourceView;
     switch (resource.category) {
     case WebInspector.resourceCategories.documents:
     case WebInspector.resourceCategories.scripts:
@@ -82,23 +82,23 @@ WebInspector.ResourceView.resourceViewForResource = function(resource)
 {
     if (!resource)
         return null;
-    if (!resource._resourcesView)
-        resource._resourcesView = WebInspector.ResourceView.createResourceView(resource);
-    return resource._resourcesView;
+    if (!resource._resourceView)
+        resource._resourceView = WebInspector.ResourceView.createResourceView(resource);
+    return resource._resourceView;
 }
 
 WebInspector.ResourceView.recreateResourceView = function(resource)
 {
     var newView = WebInspector.ResourceView.createResourceView(resource);
 
-    var oldView = resource._resourcesView;
+    var oldView = resource._resourceView;
     var oldViewParentNode = oldView.visible ? oldView.element.parentNode : null;
     var scrollTop = oldView.scrollTop;
 
-    resource._resourcesView.detach();
-    delete resource._resourcesView;
+    resource._resourceView.detach();
+    delete resource._resourceView;
 
-    resource._resourcesView = newView;
+    resource._resourceView = newView;
 
     if (oldViewParentNode)
         newView.show(oldViewParentNode);
@@ -112,7 +112,7 @@ WebInspector.ResourceView.existingResourceViewForResource = function(resource)
 {
     if (!resource)
         return null;
-    return resource._resourcesView;
+    return resource._resourceView;
 }
 
 
@@ -166,7 +166,7 @@ WebInspector.ResourceSourceFrame.prototype = {
         delete this._incrementalUpdateTimer;
     },
 
-    _requestContent: function(callback)
+    requestContent: function(callback)
     {
         function contentLoaded(text)
         {
@@ -178,3 +178,33 @@ WebInspector.ResourceSourceFrame.prototype = {
 }
 
 WebInspector.ResourceSourceFrame.prototype.__proto__ = WebInspector.SourceFrame.prototype;
+
+WebInspector.RevisionSourceFrame = function(revision)
+{
+    WebInspector.SourceFrame.call(this, new WebInspector.SourceFrameDelegate(), revision.resource.url);
+    this._revision = revision;
+}
+
+WebInspector.RevisionSourceFrame.prototype = {
+    get resource()
+    {
+        return this._revision.resource;
+    },
+
+    isContentEditable: function()
+    {
+        return false;
+    },
+
+    requestContent: function(callback)
+    {
+        function contentLoaded(text)
+        {
+            var mimeType = WebInspector.ResourceSourceFrame.DefaultMIMETypeForResourceType[this._revision.resource.type] || this._revision.resource.mimeType;
+            callback(mimeType, text);
+        }
+        this._revision.requestContent(contentLoaded.bind(this));
+    }
+}
+
+WebInspector.RevisionSourceFrame.prototype.__proto__ = WebInspector.SourceFrame.prototype;

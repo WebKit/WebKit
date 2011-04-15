@@ -119,11 +119,11 @@ WebInspector.SourceFrame.prototype = {
     {
         if (!this._contentRequested) {
             this._contentRequested = true;
-            this._requestContent(this._initializeTextViewer.bind(this));
+            this.requestContent(this._initializeTextViewer.bind(this));
         }
     },
 
-    _requestContent: function(callback)
+    requestContent: function(callback)
     {
         this._delegate.requestContent(callback);
     },
@@ -903,8 +903,10 @@ WebInspector.SourceFrame.prototype = {
         function didEditContent(error)
         {
             if (error) {
-                WebInspector.log(error.data[0], WebInspector.ConsoleMessage.MessageLevel.Error);
-                WebInspector.showConsole();
+                if (error.data && error.data[0]) {
+                    WebInspector.log(error.data[0], WebInspector.ConsoleMessage.MessageLevel.Error);
+                    WebInspector.showConsole();
+                }
                 callback(error);
                 return;
             }
