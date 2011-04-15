@@ -1,3 +1,66 @@
+2011-04-14  Gavin Barraclough  <barraclough@apple.com>
+
+        Reviewed by Geoffrey Garen.
+
+        Bug 58600 - DFG JIT bugs in ValueToInt, PutByVal
+
+        The bug in PutByVal is that an operand is in JSValueOperand - when this
+        locks an integer into a register it will always retag the value without
+        checking if the register is already locked. This is a problem where the
+        value being stored by a PutByVal is the same as the subscript.
+        The subscript is locked into a register first, as a strict integer.
+        Locking the value results in the subscript being modified.
+
+        The bug in ValueToInt related to the function of sillentFillAllRegisters.
+        The problem is that this method will restore all register values from
+        prior to the call, overwriting the result of the call out. Allow a
+        register to be passed to specifically be excluded from being preserved.
+
+        * assembler/ARMAssembler.h:
+        (JSC::ARMAssembler::debugOffset):
+        * assembler/ARMv7Assembler.h:
+        (JSC::ARMv7Assembler::ARMInstructionFormatter::debugOffset):
+        * assembler/AbstractMacroAssembler.h:
+        (JSC::AbstractMacroAssembler::debugOffset):
+        * assembler/AssemblerBuffer.h:
+        (JSC::AssemblerBuffer::debugOffset):
+        * assembler/LinkBuffer.h:
+        (JSC::LinkBuffer::debugAddress):
+        * assembler/MIPSAssembler.h:
+        (JSC::MIPSAssembler::debugOffset):
+        * assembler/MacroAssemblerX86_64.h:
+        (JSC::MacroAssemblerX86_64::orPtr):
+        * assembler/X86Assembler.h:
+        (JSC::X86Assembler::debugOffset):
+        (JSC::X86Assembler::X86InstructionFormatter::debugOffset):
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::parse):
+        * dfg/DFGGenerationInfo.h:
+        * dfg/DFGJITCodeGenerator.cpp:
+        (JSC::DFG::JITCodeGenerator::fillJSValue):
+        * dfg/DFGJITCodeGenerator.h:
+        (JSC::DFG::JITCodeGenerator::isConstant):
+        * dfg/DFGJITCompiler.cpp:
+        (JSC::DFG::JITCompiler::compileFunction):
+        * dfg/DFGJITCompiler.h:
+        (JSC::DFG::JITCompiler::isConstant):
+        * dfg/DFGNonSpeculativeJIT.cpp:
+        (JSC::DFG::NonSpeculativeJIT::valueToNumber):
+        (JSC::DFG::NonSpeculativeJIT::valueToInt32):
+        (JSC::DFG::NonSpeculativeJIT::numberToInt32):
+        (JSC::DFG::NonSpeculativeJIT::isKnownInteger):
+        (JSC::DFG::NonSpeculativeJIT::isKnownNumeric):
+        (JSC::DFG::NonSpeculativeJIT::compile):
+        * dfg/DFGNonSpeculativeJIT.h:
+        (JSC::DFG::NonSpeculativeJIT::silentSpillGPR):
+        (JSC::DFG::NonSpeculativeJIT::silentSpillFPR):
+        (JSC::DFG::NonSpeculativeJIT::silentFillGPR):
+        (JSC::DFG::NonSpeculativeJIT::silentFillFPR):
+        (JSC::DFG::NonSpeculativeJIT::silentSpillAllRegisters):
+        (JSC::DFG::NonSpeculativeJIT::silentFillAllRegisters):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+
 2011-04-14  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Oliver Hunt.

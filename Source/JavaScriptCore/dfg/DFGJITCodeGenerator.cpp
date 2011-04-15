@@ -283,6 +283,13 @@ GPRReg JITCodeGenerator::fillJSValue(NodeIndex nodeIndex)
 
     case DataFormatInteger: {
         GPRReg gpr = info.gpr();
+        // If the register has already been locked we need to take a copy.
+        // If not, we'll zero extend in place, so mark on the info that this is now type DataFormatInteger, not DataFormatJSInteger.
+        if (m_gprs.isLocked(gpr)) {
+            GPRReg result = allocate();
+            m_jit.orPtr(JITCompiler::tagTypeNumberRegister, JITCompiler::gprToRegisterID(gpr), JITCompiler::gprToRegisterID(result));
+            return result;
+        }
         m_gprs.lock(gpr);
         m_jit.orPtr(JITCompiler::tagTypeNumberRegister, JITCompiler::gprToRegisterID(gpr));
         info.fillJSValue(gpr, DataFormatJSInteger);

@@ -81,91 +81,138 @@ public:
 private:
     void compile(SpeculationCheckIndexIterator&, Node&);
 
+    bool isKnownInteger(NodeIndex);
+    bool isKnownNumeric(NodeIndex);
+
     // These methods are used when generating 'unexpected'
     // calls out from JIT code to C++ helper routines -
     // they spill all live values to the appropriate
     // slots in the RegisterFile without changing any state
     // in the GenerationInfo.
-    void silentSpill(VirtualRegister spillMe, GPRReg canTrample)
+    void silentSpillGPR(VirtualRegister spillMe, GPRReg exclude = InvalidGPRReg)
     {
         GenerationInfo& info = m_generationInfo[spillMe];
-        ASSERT(info.registerFormat() != DataFormatNone);
-        if (info.needsSpill()) {
-            DataFormat spillFormat = info.registerFormat();
+        ASSERT(info.registerFormat() != DataFormatNone && info.registerFormat() != DataFormatDouble);
 
-            if (spillFormat == DataFormatDouble) {
-                boxDouble(info.fpr(), canTrample);
-                m_jit.storePtr(JITCompiler::gprToRegisterID(canTrample), JITCompiler::addressFor(spillMe));
-            } else {
-                JITCompiler::RegisterID reg = JITCompiler::gprToRegisterID(info.gpr());
+        if (!info.needsSpill() || (info.gpr() == exclude))
+            return;
 
-                if (spillFormat == DataFormatInteger) {
-                    m_jit.orPtr(JITCompiler::tagTypeNumberRegister, reg);
-                    m_jit.storePtr(reg, JITCompiler::addressFor(spillMe));
-                } else {
-                    ASSERT(spillFormat & DataFormatJS || spillFormat == DataFormatCell);
-                    m_jit.storePtr(reg, JITCompiler::addressFor(spillMe));
-                }
-            }
+        DataFormat registerFormat = info.registerFormat();
+        JITCompiler::RegisterID reg = JITCompiler::gprToRegisterID(info.gpr());
+
+        if (registerFormat == DataFormatInteger) {
+            m_jit.orPtr(JITCompiler::tagTypeNumberRegister, reg);
+            m_jit.storePtr(reg, JITCompiler::addressFor(spillMe));
+        } else {
+            ASSERT(registerFormat & DataFormatJS || registerFormat == DataFormatCell);
+            m_jit.storePtr(reg, JITCompiler::addressFor(spillMe));
         }
     }
-    void silentFill(VirtualRegister spillMe, GPRReg canTrample)
+    void silentSpillFPR(VirtualRegister spillMe, GPRReg canTrample, FPRReg exclude = InvalidFPRReg)
     {
         GenerationInfo& info = m_generationInfo[spillMe];
+        ASSERT(info.registerFormat() == DataFormatDouble);
+
+        if (!info.needsSpill() || (info.fpr() == exclude))
+            return;
+
+        boxDouble(info.fpr(), canTrample);
+        m_jit.storePtr(JITCompiler::gprToRegisterID(canTrample), JITCompiler::addressFor(spillMe));
+    }
+
+    void silentFillGPR(VirtualRegister spillMe, GPRReg exclude = InvalidGPRReg)
+    {
+        GenerationInfo& info = m_generationInfo[spillMe];
+        if (info.gpr() == exclude)
+            return;
+
         NodeIndex nodeIndex = info.nodeIndex();
         Node& node = m_jit.graph()[nodeIndex];
-        ASSERT(info.registerFormat() != DataFormatNone);
-        DataFormat spillFormat = info.registerFormat();
+        ASSERT(info.registerFormat() != DataFormatNone && info.registerFormat() != DataFormatDouble);
+        DataFormat registerFormat = info.registerFormat();
+        JITCompiler::RegisterID reg = JITCompiler::gprToRegisterID(info.gpr());
+
+        if (registerFormat == DataFormatInteger) {
+            if (node.isConstant()) {
+                ASSERT(isInt32Constant(nodeIndex));
+                m_jit.move(Imm32(valueOfInt32Constant(nodeIndex)), reg);
+            } else
+                m_jit.load32(JITCompiler::addressFor(spillMe), reg);
+            return;
+        }
+
+        if (node.isConstant())
+            m_jit.move(constantAsJSValueAsImmPtr(nodeIndex), reg);
+        else {
+            ASSERT(registerFormat & DataFormatJS || registerFormat == DataFormatCell);
+            m_jit.loadPtr(JITCompiler::addressFor(spillMe), reg);
+        }
+    }
+    void silentFillFPR(VirtualRegister spillMe, GPRReg canTrample, FPRReg exclude = InvalidFPRReg)
+    {
+        GenerationInfo& info = m_generationInfo[spillMe];
+        if (info.fpr() == exclude)
+            return;
+
+        NodeIndex nodeIndex = info.nodeIndex();
+        Node& node = m_jit.graph()[nodeIndex];
+        ASSERT(info.registerFormat() == DataFormatDouble);
 
         if (node.isConstant()) {
             JITCompiler::RegisterID reg = JITCompiler::gprToRegisterID(info.gpr());
             m_jit.move(constantAsJSValueAsImmPtr(nodeIndex), reg);
-        } else if (node.isArgument()) {
-            JITCompiler::RegisterID reg = JITCompiler::gprToRegisterID(info.gpr());
-            m_jit.loadPtr(m_jit.addressForArgument(m_jit.graph()[nodeIndex].argumentNumber()), reg);
-        } else if (spillFormat == DataFormatDouble) {
+        } else {
             m_jit.loadPtr(JITCompiler::addressFor(spillMe), JITCompiler::gprToRegisterID(canTrample));
             unboxDouble(canTrample, info.fpr());
-        } else if (spillFormat == DataFormatInteger) {
-            JITCompiler::RegisterID reg = JITCompiler::gprToRegisterID(info.gpr());
-            m_jit.load32(JITCompiler::addressFor(spillMe), reg);
-        } else {
-            ASSERT(spillFormat & DataFormatJS || spillFormat == DataFormatCell);
-            JITCompiler::RegisterID reg = JITCompiler::gprToRegisterID(info.gpr());
-            m_jit.loadPtr(JITCompiler::addressFor(spillMe), reg);
         }
     }
-    void silentSpillAllRegisters(GPRReg dontTrample)
+
+    void silentSpillAllRegisters(GPRReg exclude, GPRReg preserve = InvalidGPRReg)
     {
-        GPRReg canTrample = (dontTrample == gpr0) ? gpr1 : gpr0;
+        GPRReg canTrample = (preserve == gpr0) ? gpr1 : gpr0;
         
         for (GPRReg gpr = gpr0; gpr < numberOfGPRs; next(gpr)) {
             VirtualRegister name = m_gprs.name(gpr);
             if (name != InvalidVirtualRegister)
-                silentSpill(name, canTrample);
+                silentSpillGPR(name, exclude);
         }
         for (FPRReg fpr = fpr0; fpr < numberOfFPRs; next(fpr)) {
             VirtualRegister name = m_fprs.name(fpr);
             if (name != InvalidVirtualRegister)
-                silentSpill(name, canTrample);
+                silentSpillFPR(name, canTrample);
         }
     }
-    void silentFillAllRegisters(GPRReg dontTrample)
+    void silentSpillAllRegisters(FPRReg exclude, GPRReg preserve = InvalidGPRReg)
     {
-        GPRReg canTrample = (dontTrample == gpr0) ? gpr1 : gpr0;
+        GPRReg canTrample = (preserve == gpr0) ? gpr1 : gpr0;
+        
+        for (GPRReg gpr = gpr0; gpr < numberOfGPRs; next(gpr)) {
+            VirtualRegister name = m_gprs.name(gpr);
+            if (name != InvalidVirtualRegister)
+                silentSpillGPR(name);
+        }
+        for (FPRReg fpr = fpr0; fpr < numberOfFPRs; next(fpr)) {
+            VirtualRegister name = m_fprs.name(fpr);
+            if (name != InvalidVirtualRegister)
+                silentSpillFPR(name, canTrample, exclude);
+        }
+    }
+    void silentFillAllRegisters(GPRReg exclude)
+    {
+        GPRReg canTrample = (exclude == gpr0) ? gpr1 : gpr0;
         
         for (FPRReg fpr = fpr0; fpr < numberOfFPRs; next(fpr)) {
             VirtualRegister name = m_fprs.name(fpr);
             if (name != InvalidVirtualRegister)
-                silentFill(name, canTrample);
+                silentFillFPR(name, canTrample);
         }
         for (GPRReg gpr = gpr0; gpr < numberOfGPRs; next(gpr)) {
             VirtualRegister name = m_gprs.name(gpr);
             if (name != InvalidVirtualRegister)
-                silentFill(name, canTrample);
+                silentFillGPR(name, exclude);
         }
     }
-    void silentFillAllRegisters(FPRReg dontTrample)
+    void silentFillAllRegisters(FPRReg exclude)
     {
         GPRReg canTrample = gpr0;
         
@@ -173,17 +220,17 @@ private:
             VirtualRegister name = m_fprs.name(fpr);
             if (name != InvalidVirtualRegister) {
 #ifndef NDEBUG
-                ASSERT(fpr != dontTrample);
+                ASSERT(fpr != exclude);
 #else
-                UNUSED_PARAM(dontTrample);
+                UNUSED_PARAM(exclude);
 #endif
-                silentFill(name, canTrample);
+                silentFillFPR(name, canTrample, exclude);
             }
         }
         for (GPRReg gpr = gpr0; gpr < numberOfGPRs; next(gpr)) {
             VirtualRegister name = m_gprs.name(gpr);
             if (name != InvalidVirtualRegister)
-                silentFill(name, canTrample);
+                silentFillGPR(name);
         }
     }
 

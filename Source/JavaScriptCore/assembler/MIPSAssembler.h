@@ -719,6 +719,10 @@ public:
         return result;
     }
 
+#ifndef NDEBUG
+    unsigned debugOffset() { return m_formatter.debugOffset(); }
+#endif
+
     static unsigned getCallReturnOffset(JmpSrc call)
     {
         // The return address is after a call and a delay slot instruction

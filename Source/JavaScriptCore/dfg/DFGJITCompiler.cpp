@@ -349,6 +349,10 @@ void JITCompiler::compileFunction(JITCode& entry, MacroAssemblerCodePtr& entryWi
 
     LinkBuffer linkBuffer(this, m_globalData->executableAllocator.poolForSize(m_assembler.size()), 0);
 
+#if DFG_DEBUG_VERBOSE
+    fprintf(stderr, "JIT code start at %p\n", linkBuffer.debugAddress());
+#endif
+
     // Link all calls out from the JIT code to their respective functions.
     for (unsigned i = 0; i < m_calls.size(); ++i)
         linkBuffer.link(m_calls[i].m_call, m_calls[i].m_function);

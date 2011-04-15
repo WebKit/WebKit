@@ -154,6 +154,10 @@ namespace JSC {
             return memcpy(result, m_buffer, m_size);
         }
 
+#ifndef NDEBUG
+        unsigned debugOffset() { return m_size; }
+#endif
+
     protected:
         void append(const char* data, int size)
         {

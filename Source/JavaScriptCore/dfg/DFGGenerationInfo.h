@@ -173,7 +173,7 @@ public:
         return !m_canFill;
     }
 
-    // Called when a VirtualRegister is being spilled †o the RegisterFile for the first time.
+    // Called when a VirtualRegister is being spilled to the RegisterFile for the first time.
     void spill(DataFormat spillFormat)
     {
         // We shouldn't be spill values that don't need spilling.

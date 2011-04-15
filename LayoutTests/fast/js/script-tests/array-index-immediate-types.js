@@ -10,4 +10,14 @@ shouldBe("array[undefined]", "undefined");
 shouldBe("array[true]", "undefined");
 shouldBe("array[false]", "undefined");
 
+function putSelf(array, index)
+{
+    index = index << 0;
+    array[index] = index;
+    return true;
+}
+
+shouldBeTrue("putSelf([0], 0);");
+shouldBeTrue("putSelf([0], 1/9);");
+
 successfullyParsed = true;

@@ -347,6 +347,7 @@ bool SpeculativeJIT::compile(Node& node)
         integerResult(result.gpr(), m_compileIndex, op1.format());
         break;
     }
+
     case ValueToInt32: {
         SpeculateIntegerOperand op1(this, node.child1);
         GPRTemporary result(this, op1);
@@ -538,62 +539,60 @@ bool SpeculativeJIT::compile(Node& node)
         break;
     }
 
-    case PutByVal:
-    case PutByValAlias: {
+    case PutByVal: {
+        SpeculateCellOperand base(this, node.child1);
         SpeculateStrictInt32Operand property(this, node.child2);
+        JSValueOperand value(this, node.child3);
         GPRTemporary storage(this);
 
-        MacroAssembler::RegisterID propertyReg;
-        MacroAssembler::RegisterID storageReg;
+        // Map base, property & value into registers, allocate a register for storage.
+        MacroAssembler::RegisterID baseReg = base.registerID();
+        MacroAssembler::RegisterID propertyReg = property.registerID();
+        MacroAssembler::RegisterID valueReg = value.registerID();
+        MacroAssembler::RegisterID storageReg = storage.registerID();
 
-        // This block also defines the scope for base, and all bails to the non-speculative path.
-        // At the end of this scope base will be release, and as such may be reused by for 'value'.
-        //
-        // If we've already read from this location on the speculative pass, then it cannot be beyond array bounds, or a hole.
-        if (op == PutByValAlias) {
-            SpeculateCellOperand base(this, node.child1);
+        // Check that base is an array, and that property is contained within m_vector (< m_vectorLength).
+        speculationCheck(m_jit.branchPtr(MacroAssembler::NotEqual, MacroAssembler::Address(baseReg), MacroAssembler::TrustedImmPtr(m_jit.globalData()->jsArrayVPtr)));
+        speculationCheck(m_jit.branch32(MacroAssembler::AboveOrEqual, propertyReg, MacroAssembler::Address(baseReg, JSArray::vectorLengthOffset())));
 
-            // Map base & property into registers, allocate a register for storage.
-            propertyReg = property.registerID();
-            storageReg = storage.registerID();
-            MacroAssembler::RegisterID baseReg = base.registerID();
+        // Get the array storage.
+        m_jit.loadPtr(MacroAssembler::Address(baseReg, JSArray::storageOffset()), storageReg);
 
-            // Get the array storage.
-            m_jit.loadPtr(MacroAssembler::Address(baseReg, JSArray::storageOffset()), storageReg);
-        } else {
-            SpeculateCellOperand base(this, node.child1);
+        // Check if we're writing to a hole; if so increment m_numValuesInVector.
+        MacroAssembler::Jump notHoleValue = m_jit.branchTestPtr(MacroAssembler::NonZero, MacroAssembler::BaseIndex(storageReg, propertyReg, MacroAssembler::ScalePtr, OBJECT_OFFSETOF(ArrayStorage, m_vector[0])));
+        m_jit.add32(TrustedImm32(1), MacroAssembler::Address(storageReg, OBJECT_OFFSETOF(ArrayStorage, m_numValuesInVector)));
 
-            // Map base & property into registers, allocate a register for storage.
-            propertyReg = property.registerID();
-            storageReg = storage.registerID();
-            MacroAssembler::RegisterID baseReg = base.registerID();
+        // If we're writing to a hole we might be growing the array; 
+        MacroAssembler::Jump lengthDoesNotNeedUpdate = m_jit.branch32(MacroAssembler::Below, propertyReg, MacroAssembler::Address(storageReg, OBJECT_OFFSETOF(ArrayStorage, m_length)));
+        m_jit.add32(TrustedImm32(1), propertyReg);
+        m_jit.store32(propertyReg, MacroAssembler::Address(storageReg, OBJECT_OFFSETOF(ArrayStorage, m_length)));
+        m_jit.sub32(TrustedImm32(1), propertyReg);
 
-            // Check that base is an array, and that property is contained within m_vector (< m_vectorLength).
-            speculationCheck(m_jit.branchPtr(MacroAssembler::NotEqual, MacroAssembler::Address(baseReg), MacroAssembler::TrustedImmPtr(m_jit.globalData()->jsArrayVPtr)));
-            speculationCheck(m_jit.branch32(MacroAssembler::AboveOrEqual, propertyReg, MacroAssembler::Address(baseReg, JSArray::vectorLengthOffset())));
-
-            // Get the array storage.
-            m_jit.loadPtr(MacroAssembler::Address(baseReg, JSArray::storageOffset()), storageReg);
-
-            // Check if we're writing to a hole; if so increment m_numValuesInVector.
-            MacroAssembler::Jump notHoleValue = m_jit.branchTestPtr(MacroAssembler::NonZero, MacroAssembler::BaseIndex(storageReg, propertyReg, MacroAssembler::ScalePtr, OBJECT_OFFSETOF(ArrayStorage, m_vector[0])));
-            m_jit.add32(TrustedImm32(1), MacroAssembler::Address(storageReg, OBJECT_OFFSETOF(ArrayStorage, m_numValuesInVector)));
-
-            // If we're writing to a hole we might be growing the array; 
-            MacroAssembler::Jump lengthDoesNotNeedUpdate = m_jit.branch32(MacroAssembler::Below, propertyReg, MacroAssembler::Address(storageReg, OBJECT_OFFSETOF(ArrayStorage, m_length)));
-            m_jit.add32(TrustedImm32(1), propertyReg);
-            m_jit.store32(propertyReg, MacroAssembler::Address(storageReg, OBJECT_OFFSETOF(ArrayStorage, m_length)));
-            m_jit.sub32(TrustedImm32(1), propertyReg);
-
-            lengthDoesNotNeedUpdate.link(&m_jit);
-            notHoleValue.link(&m_jit);
-        }
-        // After this point base goes out of scope. This may free the register.
-        // As such, after this point we'd better not have any bails out to the non-speculative path!
+        lengthDoesNotNeedUpdate.link(&m_jit);
+        notHoleValue.link(&m_jit);
 
         // Store the value to the array.
+        m_jit.storePtr(valueReg, MacroAssembler::BaseIndex(storageReg, propertyReg, MacroAssembler::ScalePtr, OBJECT_OFFSETOF(ArrayStorage, m_vector[0])));
+
+        noResult(m_compileIndex);
+        break;
+    }
+
+    case PutByValAlias: {
+        SpeculateCellOperand base(this, node.child1);
+        SpeculateStrictInt32Operand property(this, node.child2);
         JSValueOperand value(this, node.child3);
+        GPRTemporary storage(this, base); // storage may overwrite base.
+
+        // Get the array storage.
+        MacroAssembler::RegisterID storageReg = storage.registerID();
+        m_jit.loadPtr(MacroAssembler::Address(base.registerID(), JSArray::storageOffset()), storageReg);
+
+        // Map property & value into registers.
+        MacroAssembler::RegisterID propertyReg = property.registerID();
         MacroAssembler::RegisterID valueReg = value.registerID();
+
+        // Store the value to the array.
         m_jit.storePtr(valueReg, MacroAssembler::BaseIndex(storageReg, propertyReg, MacroAssembler::ScalePtr, OBJECT_OFFSETOF(ArrayStorage, m_vector[0])));
 
         noResult(m_compileIndex);
@@ -712,7 +711,7 @@ bool SpeculativeJIT::compile()
 
     for (; m_compileIndex < m_jit.graph().size(); ++m_compileIndex) {
 #if DFG_DEBUG_VERBOSE
-        fprintf(stderr, "index(%d)\n", (int)m_compileIndex);
+        fprintf(stderr, "SpeculativeJIT generating Node @%d at code offset 0x%x\n", (int)m_compileIndex, m_jit.debugOffset());
 #endif
 
         Node& node = nodes[m_compileIndex];

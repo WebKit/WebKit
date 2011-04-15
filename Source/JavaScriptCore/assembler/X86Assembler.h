@@ -1637,6 +1637,10 @@ public:
         return copy;
     }
 
+#ifndef NDEBUG
+    unsigned debugOffset() { return m_formatter.debugOffset(); }
+#endif
+
 private:
 
     static void setPointer(void* where, void* value)
@@ -1935,6 +1939,10 @@ private:
         bool isAligned(int alignment) const { return m_buffer.isAligned(alignment); }
         void* data() const { return m_buffer.data(); }
         void* executableCopy(ExecutablePool* allocator) { return m_buffer.executableCopy(allocator); }
+
+#ifndef NDEBUG
+        unsigned debugOffset() { return m_buffer.debugOffset(); }
+#endif
 
     private:
 

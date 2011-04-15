@@ -78,7 +78,7 @@ void NonSpeculativeJIT::valueToNumber(JSValueOperand& operand, FPRReg fpr)
 
     // Next handle cells (& other JS immediates)
     nonNumeric.link(&m_jit);
-    silentSpillAllRegisters(jsValueGpr);
+    silentSpillAllRegisters(fpr, jsValueGpr);
     m_jit.move(jsValueReg, JITCompiler::argumentRegister1);
     m_jit.move(JITCompiler::callFrameRegister, JITCompiler::argumentRegister0);
     appendCallWithExceptionCheck(dfgConvertJSValueToNumber);
@@ -105,7 +105,7 @@ void NonSpeculativeJIT::valueToInt32(JSValueOperand& operand, GPRReg result)
     JITCompiler::Jump isInteger = m_jit.branchPtr(MacroAssembler::AboveOrEqual, jsValueReg, JITCompiler::tagTypeNumberRegister);
 
     // First handle non-integers
-    silentSpillAllRegisters(jsValueGpr);
+    silentSpillAllRegisters(result, jsValueGpr);
     m_jit.move(jsValueReg, JITCompiler::argumentRegister1);
     m_jit.move(JITCompiler::callFrameRegister, JITCompiler::argumentRegister0);
     appendCallWithExceptionCheck(dfgConvertJSValueToInt32);
@@ -126,7 +126,7 @@ void NonSpeculativeJIT::numberToInt32(FPRReg fpr, GPRReg gpr)
 
     JITCompiler::Jump truncatedToInteger = m_jit.branchTruncateDoubleToInt32(fpReg, reg, JITCompiler::BranchIfTruncateSuccessful);
 
-    silentSpillAllRegisters(gpr); // don't really care!
+    silentSpillAllRegisters(gpr);
 
     m_jit.moveDouble(fpReg, JITCompiler::fpArgumentRegister0);
     appendCallWithExceptionCheck(toInt32);
@@ -135,6 +135,46 @@ void NonSpeculativeJIT::numberToInt32(FPRReg fpr, GPRReg gpr)
     silentFillAllRegisters(gpr);
 
     truncatedToInteger.link(&m_jit);
+}
+
+bool NonSpeculativeJIT::isKnownInteger(NodeIndex nodeIndex)
+{
+    GenerationInfo& info = m_generationInfo[m_jit.graph()[nodeIndex].virtualRegister];
+
+    DataFormat registerFormat = info.registerFormat();
+    if (registerFormat != DataFormatNone)
+        return (registerFormat | DataFormatJS) == DataFormatJSInteger;
+
+    DataFormat spillFormat = info.spillFormat();
+    if (spillFormat != DataFormatNone)
+        return (spillFormat | DataFormatJS) == DataFormatJSInteger;
+
+    if (m_jit.graph()[nodeIndex].isArgument())
+        return false;
+
+    ASSERT(isConstant(nodeIndex));
+    return isInt32Constant(nodeIndex);
+}
+
+bool NonSpeculativeJIT::isKnownNumeric(NodeIndex nodeIndex)
+{
+    GenerationInfo& info = m_generationInfo[m_jit.graph()[nodeIndex].virtualRegister];
+
+    DataFormat registerFormat = info.registerFormat();
+    if (registerFormat != DataFormatNone)
+        return (registerFormat | DataFormatJS) == DataFormatJSInteger
+            || (registerFormat | DataFormatJS) == DataFormatJSDouble;
+
+    DataFormat spillFormat = info.spillFormat();
+    if (spillFormat != DataFormatNone)
+        return (spillFormat | DataFormatJS) == DataFormatJSInteger
+            || (spillFormat | DataFormatJS) == DataFormatJSDouble;
+
+    if (m_jit.graph()[nodeIndex].isArgument())
+        return false;
+
+    ASSERT(isConstant(nodeIndex));
+    return isInt32Constant(nodeIndex) || isDoubleConstant(nodeIndex);
 }
 
 void NonSpeculativeJIT::compile(SpeculationCheckIndexIterator& checkIterator, Node& node)
@@ -250,10 +290,8 @@ void NonSpeculativeJIT::compile(SpeculationCheckIndexIterator& checkIterator, No
     case NumberToInt32:
     case ValueToInt32: {
         ASSERT(!isInt32Constant(node.child1));
-        GenerationInfo& operandInfo = m_generationInfo[m_jit.graph()[node.child1].virtualRegister];
 
-        switch (operandInfo.registerFormat()) {
-        case DataFormatInteger: {
+        if (isKnownInteger(node.child1)) {
             IntegerOperand op1(this, node.child1);
             GPRTemporary result(this, op1);
             m_jit.move(op1.registerID(), result.registerID());
@@ -261,7 +299,7 @@ void NonSpeculativeJIT::compile(SpeculationCheckIndexIterator& checkIterator, No
             break;
         }
 
-        case DataFormatDouble: {
+        if (isKnownNumeric(node.child1)) {
             DoubleOperand op1(this, node.child1);
             GPRTemporary result(this);
             numberToInt32(op1.fpr(), result.gpr());
@@ -269,84 +307,29 @@ void NonSpeculativeJIT::compile(SpeculationCheckIndexIterator& checkIterator, No
             break;
         }
 
-        default: {
-            JSValueOperand op1(this, node.child1);
-            GPRTemporary result(this, op1);
-            op1.gpr(); // force op1 to be filled!
-            result.gpr(); // force result to be allocated!
-            
-            switch (operandInfo.registerFormat()) {
-            case DataFormatNone:
-            case DataFormatInteger:
-            case DataFormatDouble:
-                // The operand has been filled as a JSValue; it cannot be in a !DataFormatJS state.
-                CRASH();
+        // We should have handled this via isKnownInteger, or isKnownNumeric!
+        ASSERT(op != NumberToInt32);
 
-            case DataFormatCell:
-            case DataFormatJS:
-            case DataFormatJSCell: {
-                if (op == NumberToInt32) {
-                    FPRTemporary fpTemp(this);
-                    FPRReg fpr = fpTemp.fpr();
-
-                    JITCompiler::Jump isInteger = m_jit.branchPtr(MacroAssembler::AboveOrEqual, op1.registerID(), JITCompiler::tagTypeNumberRegister);
-
-                    m_jit.move(op1.registerID(), result.registerID());
-                    m_jit.addPtr(JITCompiler::tagTypeNumberRegister, result.registerID());
-                    m_jit.movePtrToDouble(result.registerID(), fpTemp.registerID());
-                    numberToInt32(fpr, result.gpr());
-                    JITCompiler::Jump wasDouble = m_jit.jump();
-                    
-                    isInteger.link(&m_jit);
-                    m_jit.zeroExtend32ToPtr(op1.registerID(), result.registerID());
-
-                    wasDouble.link(&m_jit);
-                } else
-                    valueToInt32(op1, result.gpr());
-                integerResult(result.gpr(), m_compileIndex);
-                break;
-            }
-
-            case DataFormatJSDouble: {
-                FPRTemporary fpTemp(this);
-                m_jit.move(op1.registerID(), result.registerID());
-                m_jit.addPtr(JITCompiler::tagTypeNumberRegister, result.registerID());
-                m_jit.movePtrToDouble(result.registerID(), fpTemp.registerID());
-                numberToInt32(fpTemp.fpr(), result.gpr());
-                integerResult(result.gpr(), m_compileIndex);
-                break;
-            }
-
-            case DataFormatJSInteger: {
-                m_jit.move(op1.registerID(), result.registerID());
-                jsValueResult(result.gpr(), m_compileIndex, DataFormatJSInteger);
-                break;
-            }
-            }
-        }
-
-        }
+        JSValueOperand op1(this, node.child1);
+        GPRTemporary result(this, op1);
+        valueToInt32(op1, result.gpr());
+        integerResult(result.gpr(), m_compileIndex);
         break;
     }
 
     case ValueToNumber: {
         ASSERT(!isInt32Constant(node.child1));
         ASSERT(!isDoubleConstant(node.child1));
-        GenerationInfo& operandInfo = m_generationInfo[m_jit.graph()[node.child1].virtualRegister];
-        switch (operandInfo.registerFormat()) {
-        case DataFormatNone:
-        case DataFormatCell:
-        case DataFormatJS:
-        case DataFormatJSCell: {
-            JSValueOperand op1(this, node.child1);
+
+        if (isKnownInteger(node.child1)) {
+            IntegerOperand op1(this, node.child1);
             FPRTemporary result(this);
-            valueToNumber(op1, result.fpr());
+            m_jit.convertInt32ToDouble(op1.registerID(), result.registerID());
             doubleResult(result.fpr(), m_compileIndex);
             break;
         }
 
-        case DataFormatJSDouble:
-        case DataFormatDouble: {
+        if (isKnownNumeric(node.child1)) {
             DoubleOperand op1(this, node.child1);
             FPRTemporary result(this, op1);
             m_jit.moveDouble(op1.registerID(), result.registerID());
@@ -354,15 +337,10 @@ void NonSpeculativeJIT::compile(SpeculationCheckIndexIterator& checkIterator, No
             break;
         }
 
-        case DataFormatJSInteger:
-        case DataFormatInteger: {
-            IntegerOperand op1(this, node.child1);
-            FPRTemporary result(this);
-            m_jit.convertInt32ToDouble(op1.registerID(), result.registerID());
-            doubleResult(result.fpr(), m_compileIndex);
-            break;
-        }
-        }
+        JSValueOperand op1(this, node.child1);
+        FPRTemporary result(this);
+        valueToNumber(op1, result.fpr());
+        doubleResult(result.fpr(), m_compileIndex);
         break;
     }
 
@@ -644,7 +622,7 @@ void NonSpeculativeJIT::compile(SpeculationCheckIndexIterator& checkIterator)
 
     for (; m_compileIndex < m_jit.graph().size(); ++m_compileIndex) {
 #if DFG_DEBUG_VERBOSE
-        fprintf(stderr, "index(%d)\n", (int)m_compileIndex);
+        fprintf(stderr, "NonSpeculativeJIT generating Node @%d at code offset 0x%x\n", (int)m_compileIndex, m_jit.debugOffset());
 #endif
 
         Node& node = nodes[m_compileIndex];

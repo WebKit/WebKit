@@ -248,6 +248,10 @@ public:
     }
 
     // Helper methods to check nodes for constants.
+    bool isConstant(NodeIndex nodeIndex)
+    {
+        return graph()[nodeIndex].isConstant();
+    }
     bool isInt32Constant(NodeIndex nodeIndex)
     {
         return graph()[nodeIndex].op == Int32Constant;

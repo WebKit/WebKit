@@ -237,6 +237,7 @@ protected:
     }
 
     // Checks/accessors for constant values.
+    bool isConstant(NodeIndex nodeIndex) { return m_jit.isConstant(nodeIndex); }
     bool isInt32Constant(NodeIndex nodeIndex) { return m_jit.isInt32Constant(nodeIndex); }
     bool isDoubleConstant(NodeIndex nodeIndex) { return m_jit.isDoubleConstant(nodeIndex); }
     bool isJSConstant(NodeIndex nodeIndex) { return m_jit.isJSConstant(nodeIndex); }

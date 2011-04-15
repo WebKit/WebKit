@@ -197,6 +197,24 @@ public:
         m_assembler.orq_ir(imm.m_value, dest);
     }
 
+    void orPtr(RegisterID op1, RegisterID op2, RegisterID dest)
+    {
+        if (op1 == op2)
+            move(op1, dest);
+        else if (op1 == dest)
+            orPtr(op2, dest);
+        else {
+            move(op2, dest);
+            orPtr(op1, dest);
+        }
+    }
+
+    void orPtr(TrustedImm32 imm, RegisterID src, RegisterID dest)
+    {
+        move(src, dest);
+        orPtr(imm, dest);
+    }
+
     void subPtr(RegisterID src, RegisterID dest)
     {
         m_assembler.subq_rr(src, dest);

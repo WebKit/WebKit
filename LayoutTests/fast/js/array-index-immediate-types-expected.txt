@@ -8,6 +8,8 @@ PASS array[null] is undefined
 PASS array[undefined] is undefined
 PASS array[true] is undefined
 PASS array[false] is undefined
+PASS putSelf([0], 0); is true
+PASS putSelf([0], 1/9); is true
 PASS successfullyParsed is true
 
 TEST COMPLETE

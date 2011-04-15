@@ -1,3 +1,25 @@
+2011-04-14  Gavin Barraclough  <barraclough@apple.com>
+
+        Reviewed by Geoffrey Garen.
+
+        Bug 58600 - DFG JIT bugs in ValueToInt, PutByVal
+
+        The bug in PutByVal is that an operand is in JSValueOperand - when this
+        locks an integer into a register it will always retag the value without
+        checking if the register is already locked. This is a problem where the
+        value being stored by a PutByVal is the same as the subscript.
+        The subscript is locked into a register first, as a strict integer.
+        Locking the value results in the subscript being modified.
+
+        The bug in ValueToInt related to the function of sillentFillAllRegisters.
+        The problem is that this method will restore all register values from
+        prior to the call, overwriting the result of the call out. Allow a
+        register to be passed to specifically be excluded from being preserved.
+
+        * fast/js/array-index-immediate-types-expected.txt:
+        * fast/js/script-tests/array-index-immediate-types.js:
+        (putSelf):
+
 2011-04-14  Adrienne Walker  <enne@google.com>
 
         Reviewed by James Robinson.

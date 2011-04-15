@@ -720,7 +720,7 @@ bool ByteCodeParser::parse()
             aliases.recordGetByVal(getByVal);
 
             NEXT_OPCODE(op_get_by_val);
-        };
+        }
 
         case op_put_by_val: {
             NodeIndex base = get(currentInstruction[1].u.operand);
@@ -732,7 +732,7 @@ bool ByteCodeParser::parse()
             aliases.recordPutByVal(putByVal);
 
             NEXT_OPCODE(op_put_by_val);
-        };
+        }
 
         case op_get_by_id: {
             NodeIndex base = get(currentInstruction[2].u.operand);

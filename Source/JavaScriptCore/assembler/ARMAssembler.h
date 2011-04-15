@@ -722,6 +722,10 @@ namespace JSC {
 
         void* executableCopy(ExecutablePool* allocator);
 
+#ifndef NDEBUG
+        unsigned debugOffset() { return m_formatter.debugOffset(); }
+#endif
+
         // Patching helpers
 
         static ARMWord* getLdrImmAddress(ARMWord* insn)

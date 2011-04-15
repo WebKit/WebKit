@@ -2292,6 +2292,10 @@ private:
         void* data() const { return m_buffer.data(); }
         void* executableCopy(ExecutablePool* allocator) { return m_buffer.executableCopy(allocator); }
 
+#ifndef NDEBUG
+        unsigned debugOffset() { return m_formatter.debugOffset(); }
+#endif
+
     private:
         AssemblerBuffer m_buffer;
     } m_formatter;
