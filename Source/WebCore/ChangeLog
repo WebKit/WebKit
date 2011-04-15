@@ -1,3 +1,38 @@
+2011-04-14  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Simon Fraser.
+
+        PumpSession should not call currentTime() in the constructor
+        https://bugs.webkit.org/show_bug.cgi?id=55211
+
+        currentTime() is expensive.  So we avoid calling it in the constructor
+        and instead set startTime on the first check for a yield
+        (which in the synchronous case never happens, and in the yielding
+        case will happen immediately after the first token due to
+        processedTokens being set to INT_MAX).
+
+        This ended up being a large win on (my local copy of)
+        peacekeeper's domDynamicCreationCreateElement:
+
+        Before:
+        avg 366.3333333333333
+        median 366
+        stdev 2.712112747574399
+        min 362
+        max 377
+
+        After:
+        avg 345.96666666666664
+        median 346
+        stdev 1.6829207415152454
+        min 343
+        max 349
+
+        * html/parser/HTMLDocumentParser.cpp:
+        * html/parser/HTMLParserScheduler.h:
+        (WebCore::PumpSession::PumpSession):
+        (WebCore::HTMLParserScheduler::checkForYieldBeforeToken):
+
 2011-04-14  Ami Fischman  <fischman@google.com>
 
         Reviewed by Eric Carlson.

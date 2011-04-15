@@ -26,6 +26,8 @@
 #ifndef HTMLParserScheduler_h
 #define HTMLParserScheduler_h
 
+#include <limits.h>
+
 #include "NestingLevelIncrementer.h"
 #include "Timer.h"
 #include <wtf/CurrentTime.h>
@@ -39,8 +41,11 @@ class PumpSession : public NestingLevelIncrementer {
 public:
     PumpSession(unsigned& nestingLevel)
         : NestingLevelIncrementer(nestingLevel)
-        , processedTokens(0)
-        , startTime(currentTime())
+        // Setting processedTokens to INT_MAX causes us to check for yields
+        // after any token during any parse where yielding is allowed.
+        // At that time we'll initialize startTime.
+        , processedTokens(INT_MAX)
+        , startTime(0)
         , needsYield(false)
     {
     }
@@ -63,6 +68,11 @@ public:
     void checkForYieldBeforeToken(PumpSession& session)
     {
         if (session.processedTokens > m_parserChunkSize) {
+            // currentTime() can be expensive.  By delaying, we avoided calling
+            // currentTime() when constructing non-yielding PumpSessions.
+            if (!session.startTime)
+                session.startTime = currentTime();
+
             session.processedTokens = 0;
             double elapsedTime = currentTime() - session.startTime;
             if (elapsedTime > m_parserTimeLimit)

@@ -40,7 +40,6 @@
 #include "InspectorInstrumentation.h"
 #include "NestingLevelIncrementer.h"
 #include "Settings.h"
-#include <wtf/CurrentTime.h>
 
 namespace WebCore {
 
