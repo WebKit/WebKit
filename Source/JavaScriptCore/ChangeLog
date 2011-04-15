@@ -1,3 +1,15 @@
+2011-04-14  Alexey Proskuryakov  <ap@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        WebKit2: Password field input does not switch to ASCII-compatible source
+        https://bugs.webkit.org/show_bug.cgi?id=58583
+        <rdar://problem/9059651>
+
+        * wtf/Platform.h: Removed WTF_USE_CARBON_SECURE_INPUT_MODE. It's now only used by Chromium,
+        and shouldn't be enabled on any other platforms, so there is no reason to make it
+        configurable via Platform.h.
+
 2011-04-15  Dmitry Lomov  <dslomov@google.com>
 
         Reviewed by David Levin.

@@ -1,3 +1,17 @@
+2011-04-14  Alexey Proskuryakov  <ap@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        WebKit2: Password field input does not switch to ASCII-compatible source
+        https://bugs.webkit.org/show_bug.cgi?id=58583
+        <rdar://problem/9059651>
+
+        * platform/SecureTextInput.cpp:
+        (WebCore::enableSecureTextInput):
+        (WebCore::disableSecureTextInput):
+        This is now only used by Chromium. There is no need to change TSMDocument properties in
+        renderer process (and really, all secure text input logic in WebCore should be eliminated).
+
 2011-04-13  Xiaomei Ji  <xji@chromium.org>
 
         Reviewed by Ryosuke Niwa.

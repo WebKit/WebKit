@@ -1,3 +1,36 @@
+2011-04-14  Alexey Proskuryakov  <ap@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        WebKit2: Password field input does not switch to ASCII-compatible source
+        https://bugs.webkit.org/show_bug.cgi?id=58583
+        <rdar://problem/9059651>
+
+        The implementation is more modern than what we have in WK1. Instead of returning a null
+        input context (as in non-editable content), we now set page context's properties.
+
+        * UIProcess/PageClient.h:
+        * UIProcess/API/mac/PageClientImpl.h:
+        * UIProcess/API/mac/PageClientImpl.mm: (WebKit::PageClientImpl::updateSecureInputState):
+        Forward updateSecureInputState() call from WebPageProxy to WKView.
+
+        * UIProcess/API/mac/WKView.mm:
+        (-[WKView dealloc]): ASSERT that we didn't somehow leave secure input events enabled.
+        (-[WKView becomeFirstResponder]): Update secure event mode.
+        (-[WKView resignFirstResponder]): Disable secure event mode.
+        (-[WKView setMarkedText:selectedRange:replacementRange:]): Prevent most advanced editing
+        behaviors in password fields, matching NSSecureTextInputField.
+        (-[WKView attributedSubstringForProposedRange:actualRange:]): Disable TSM Document Access
+        in password fields. There is also a check in web process, but it doest't hurt to check twice.
+        (-[WKView _windowDidBecomeKey:]): Call _updateSecureInputState.
+        (-[WKView _windowDidResignKey:]): Call _updateSecureInputState.
+        (-[WKView _updateSecureInputState]): Update secure event mode and allowed input sources.
+
+        * UIProcess/API/mac/WKViewInternal.h: Added _updateSecureInputState.
+
+        * UIProcess/WebPageProxy.cpp: (WebKit::WebPageProxy::selectionStateChanged): Update secure
+        input state when going in or out a password field.
+
 2011-04-14  Jer Noble  <jer.noble@apple.com>
 
         Reviewed by Eric Carlson.

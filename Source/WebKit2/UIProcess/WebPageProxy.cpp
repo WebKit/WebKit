@@ -2134,7 +2134,17 @@ void WebPageProxy::backForwardForwardListCount(int32_t& count)
 
 void WebPageProxy::selectionStateChanged(const SelectionState& selectionState)
 {
+    bool couldChangeSecureInputState = m_selectionState.isInPasswordField != selectionState.isInPasswordField || m_selectionState.isNone;
     m_selectionState = selectionState;
+
+#if PLATFORM(MAC)
+    // This is a temporary state. Flipping secure input state too quickly can expose race conditions.
+    if (selectionState.isNone)
+        return;
+
+    if (couldChangeSecureInputState)
+        m_pageClient->updateSecureInputState();
+#endif
 }
 
 #if PLATFORM(WIN)

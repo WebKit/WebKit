@@ -1,3 +1,26 @@
+2011-04-14  Alexey Proskuryakov  <ap@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        WebKit2: Password field input does not switch to ASCII-compatible source
+        https://bugs.webkit.org/show_bug.cgi?id=58583
+        <rdar://problem/9059651>
+
+        Now that WebCore doesn't set secure input mode, WebKit has to. Happily, it already has the
+        necessary logic, needed to return a nil text input context when in password fields.
+
+        * WebView/WebHTMLView.mm:
+        (-[WebHTMLView close]): If the view is still enforcing secure event mode, stop.
+        (-[WebHTMLView windowDidBecomeKey:]): Call _updateSecureInputState.
+        (-[WebHTMLView windowDidResignKey:]): Ditto.
+        (-[WebHTMLView becomeFirstResponder]): Call _updateSecureInputState. It's a bit tricky
+        because the first responder is still different an this point, so set a boolean variable to
+        let _updateSecureInputState know what's going on.
+        (-[WebHTMLView resignFirstResponder]): Disable secure event mode if it's on.
+        (-[WebHTMLView _updateSecureInputState]): Update HIToolbox secure event input state and
+        allowed input sources accorsing to current selection.
+        (-[WebHTMLView _updateSelectionForInputManager]): Call _updateSecureInputState.
+
 2011-04-15  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Maciej Stachowiak.

@@ -154,6 +154,8 @@ struct WKViewInterpretKeyEventsParameters {
 
     BOOL _hasSpellCheckerDocumentTag;
     NSInteger _spellCheckerDocumentTag;
+
+    BOOL _inSecureInputState;
 }
 @end
 
@@ -247,6 +249,8 @@ struct WKViewInterpretKeyEventsParameters {
 {
     _data->_page->close();
 
+    ASSERT(!_data->_inSecureInputState);
+
     [_data release];
     _data = nil;
 
@@ -290,7 +294,10 @@ struct WKViewInterpretKeyEventsParameters {
     NSSelectionDirection direction = [[self window] keyViewSelectionDirection];
 
     _data->_inBecomeFirstResponder = true;
+    
+    [self _updateSecureInputState];
     _data->_page->viewStateDidChange(WebPageProxy::ViewIsFocused);
+
     _data->_inBecomeFirstResponder = false;
 
     if (direction != NSDirectSelection)
@@ -302,7 +309,13 @@ struct WKViewInterpretKeyEventsParameters {
 - (BOOL)resignFirstResponder
 {
     _data->_inResignFirstResponder = true;
+
+    if (_data->_inSecureInputState) {
+        DisableSecureEventInput();
+        _data->_inSecureInputState = NO;
+    }
     _data->_page->viewStateDidChange(WebPageProxy::ViewIsFocused);
+
     _data->_inResignFirstResponder = false;
 
     return YES;
@@ -1389,6 +1402,20 @@ static void extractUnderlines(NSAttributedString *string, Vector<CompositionUnde
         text = string;
 
     TextInputState newTextInputState;
+    if (_data->_page->selectionState().isInPasswordField) {
+        // In password fields, we only allow ASCII dead keys, and don't allow inline input, matching NSSecureTextInputField.
+        // Allowing ASCII dead keys is necessary to enable full Roman input when using a Vietnamese keyboard.
+        ASSERT(!_data->_page->selectionState().hasComposition);
+        [[super inputContext] discardMarkedText]; // Inform the input method that we won't have an inline input area despite having been asked to.
+        if ([text length] == 1 && [[text decomposedStringWithCanonicalMapping] characterAtIndex:0] < 0x80) {
+            _data->_page->insertText(text, replacementRange.location, NSMaxRange(replacementRange), newTextInputState);
+            if (parameters)
+                parameters->cachedTextInputState = newTextInputState;
+        } else
+            NSBeep();
+        return;
+    }
+
     _data->_page->setComposition(text, underlines, newSelRange.location, NSMaxRange(newSelRange), replacementRange.location, NSMaxRange(replacementRange), newTextInputState);
     if (parameters)
         parameters->cachedTextInputState = newTextInputState;
@@ -1415,6 +1442,9 @@ static void extractUnderlines(NSAttributedString *string, Vector<CompositionUnde
         LOG(TextInput, "attributedSubstringFromRange:(%u, %u) -> nil", nsRange.location, nsRange.length);
         return nil;
     }
+
+    if (_data->_page->selectionState().isInPasswordField)
+        return nil;
 
     AttributedString result;
     _data->_page->getAttributedSubstringFromRange(nsRange.location, NSMaxRange(nsRange), result);
@@ -1715,15 +1745,19 @@ static void maybeCreateSandboxExtensionFromPasteboard(NSPasteboard *pasteboard, 
 - (void)_windowDidBecomeKey:(NSNotification *)notification
 {
     NSWindow *keyWindow = [notification object];
-    if (keyWindow == [self window] || keyWindow == [[self window] attachedSheet])
+    if (keyWindow == [self window] || keyWindow == [[self window] attachedSheet]) {
+        [self _updateSecureInputState];
         _data->_page->viewStateDidChange(WebPageProxy::ViewWindowIsActive);
+    }
 }
 
 - (void)_windowDidResignKey:(NSNotification *)notification
 {
     NSWindow *formerKeyWindow = [notification object];
-    if (formerKeyWindow == [self window] || formerKeyWindow == [[self window] attachedSheet])
+    if (formerKeyWindow == [self window] || formerKeyWindow == [[self window] attachedSheet]) {
+        [self _updateSecureInputState];
         _data->_page->viewStateDidChange(WebPageProxy::ViewWindowIsActive);
+    }
 }
 
 - (void)_windowDidMiniaturize:(NSNotification *)notification
@@ -2284,6 +2318,32 @@ static void drawPageBackground(CGContextRef context, WebPageProxy* page, const I
               source:self
            slideBack:YES];
     _data->_dragHasStarted = NO;
+}
+
+- (void)_updateSecureInputState
+{
+    if (![[self window] isKeyWindow] || ([[self window] firstResponder] != self && !_data->_inBecomeFirstResponder)) {
+        if (_data->_inSecureInputState) {
+            DisableSecureEventInput();
+            _data->_inSecureInputState = NO;
+        }
+        return;
+    }
+    // WKView has a single input context for all editable areas (except for plug-ins).
+    NSTextInputContext *context = [super inputContext];
+    bool isInPasswordField = _data->_page->selectionState().isInPasswordField;
+
+    if (isInPasswordField) {
+        if (!_data->_inSecureInputState)
+            EnableSecureEventInput();
+        static NSArray *romanInputSources = [[NSArray alloc] initWithObjects:&NSAllRomanInputSourcesLocaleIdentifier count:1];
+        [context setAllowedInputSourceLocales:romanInputSources];
+    } else {
+        if (_data->_inSecureInputState)
+            DisableSecureEventInput();
+        [context setAllowedInputSourceLocales:nil];
+    }
+    _data->_inSecureInputState = isInPasswordField;
 }
 
 - (void)_setDrawingAreaSize:(NSSize)size

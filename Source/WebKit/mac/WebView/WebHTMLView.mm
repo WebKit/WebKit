@@ -432,6 +432,7 @@ static CachedResourceClient* promisedDataClient()
 
 @interface WebHTMLView (WebForwardDeclaration) // FIXME: Put this in a normal category and stop doing the forward declaration trick.
 - (void)_setPrinting:(BOOL)printing minimumPageLogicalWidth:(float)minPageWidth logicalHeight:(float)minPageHeight maximumPageLogicalWidth:(float)maxPageWidth adjustViewSize:(BOOL)adjustViewSize paginateScreenContent:(BOOL)paginateScreenContent;
+- (void)_updateSecureInputState;
 @end
 
 @class NSTextInputContext;
@@ -494,6 +495,11 @@ struct WebHTMLViewInterpretKeyEventsParameters {
     // A WebHTMLView has a single input context, but we return nil when in non-editable content to avoid making input methods do their work.
     // This state is saved each time selection changes, because computing it causes style recalc, which is not always safe to do.
     BOOL exposeInputContext;
+
+    // Track whether the view has set a secure input state.
+    BOOL isInSecureInputState;
+
+    BOOL _forceUpdateSecureInputState;
 
     NSPoint lastScrollPosition;
 #ifndef BUILDING_ON_TIGER
@@ -1994,6 +2000,11 @@ static void _updateMouseoverTimerCallback(CFRunLoopTimerRef timer, void *info)
     // remove tooltips before clearing _private so removeTrackingRect: will work correctly
     [self removeAllToolTips];
 
+    if (_private->isInSecureInputState) {
+        DisableSecureEventInput();
+        _private->isInSecureInputState = NO;
+    }
+
     [_private clear];
 }
 
@@ -3459,8 +3470,10 @@ static void setMenuTargets(NSMenu* menu)
 
     NSWindow *keyWindow = [notification object];
 
-    if (keyWindow == [self window])
+    if (keyWindow == [self window]) {
         [self addMouseMovedObserver];
+        [self _updateSecureInputState];
+    }
 }
 
 - (void)windowDidResignKey:(NSNotification *)notification
@@ -3475,8 +3488,10 @@ static void setMenuTargets(NSMenu* menu)
     if (formerKeyWindow == [self window])
         [self removeMouseMovedObserver];
 
-    if (formerKeyWindow == [self window] || formerKeyWindow == [[self window] attachedSheet])
+    if (formerKeyWindow == [self window] || formerKeyWindow == [[self window] attachedSheet]) {
+        [self _updateSecureInputState];
         [_private->completionController endRevertingChange:NO moveLeft:NO];
+    }
 }
 
 - (void)windowWillClose:(NSNotification *)notification
@@ -3809,6 +3824,10 @@ static BOOL isInPasswordField(Frame* coreFrame)
         [NSApp updateWindows];
     }
 
+    _private->_forceUpdateSecureInputState = YES;
+    [self _updateSecureInputState];
+    _private->_forceUpdateSecureInputState = NO;
+
     frame->editor()->setStartNewKillRingSequence(true);
 
     Page* page = frame->page();
@@ -3834,6 +3853,10 @@ static BOOL isInPasswordField(Frame* coreFrame)
 {
     BOOL resign = [super resignFirstResponder];
     if (resign) {
+        if (_private->isInSecureInputState) {
+            DisableSecureEventInput();
+            _private->isInSecureInputState = NO;
+        }
         [_private->completionController endRevertingChange:NO moveLeft:NO];
         Frame* coreFrame = core([self _frame]);
         if (!coreFrame)
@@ -6100,6 +6123,37 @@ static void extractUnderlines(NSAttributedString *string, Vector<CompositionUnde
         parameters->eventInterpretationHadSideEffects |= eventHandled;
 }
 
+- (void)_updateSecureInputState
+{
+    if (![[self window] isKeyWindow] || ([[self window] firstResponder] != self && !_private->_forceUpdateSecureInputState)) {
+        if (_private->isInSecureInputState) {
+            DisableSecureEventInput();
+            _private->isInSecureInputState = NO;
+        }
+        return;
+    }
+
+    Frame* coreFrame = core([self _frame]);
+    if (!coreFrame)
+        return;
+
+    if (isInPasswordField(coreFrame)) {
+        if (!_private->isInSecureInputState)
+            EnableSecureEventInput();
+        _private->isInSecureInputState = YES;
+        // WebKit substitutes nil for input context when in password field, which corresponds to null TSMDocument. So, there is
+        // no need to call TSMGetActiveDocument(), which may return an incorrect result when selection hasn't been yet updated
+        // after focusing a node.
+        static CFArrayRef inputSources = TISCreateASCIICapableInputSourceList();
+        TSMSetDocumentProperty(0, kTSMDocumentEnabledInputSourcesPropertyTag, sizeof(CFArrayRef), &inputSources);
+    } else {
+        if (_private->isInSecureInputState)
+            DisableSecureEventInput();
+        _private->isInSecureInputState = NO;
+        TSMRemoveDocumentProperty(0, kTSMDocumentEnabledInputSourcesPropertyTag);
+    }
+}
+
 - (void)_updateSelectionForInputManager
 {
     Frame* coreFrame = core([self _frame]);
@@ -6114,6 +6168,8 @@ static void extractUnderlines(NSAttributedString *string, Vector<CompositionUnde
         if (!coreFrame->selection()->isNone())
             [NSApp updateWindows];
     }
+
+    [self _updateSecureInputState];
 
     if (!coreFrame->editor()->hasComposition())
         return;
