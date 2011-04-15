@@ -157,6 +157,7 @@ def summarize_results(port_obj, expectations, result_summary, retry_summary, tes
     # FIXME: If non-chromium ports start using an expectations file,
     # we should make this check more robust.
     results['uses_expectations_file'] = port_obj.name().find('chromium') != -1
+    results['layout_tests_dir'] = port_obj.layout_tests_dir()
 
     return results
 

@@ -2,6 +2,16 @@
 
         Reviewed by Eric Seidel.
 
+        fix path to layout test in new results file
+        https://bugs.webkit.org/show_bug.cgi?id=58618
+
+        * Scripts/webkitpy/layout_tests/layout_package/json_results.html:
+        * Scripts/webkitpy/layout_tests/layout_package/test_runner.py:
+
+2011-04-15  Ojan Vafai  <ojan@chromium.org>
+
+        Reviewed by Eric Seidel.
+
         fix sorting in new results file
         https://bugs.webkit.org/show_bug.cgi?id=58616
 

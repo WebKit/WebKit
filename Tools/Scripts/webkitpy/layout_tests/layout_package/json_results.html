@@ -63,8 +63,11 @@ if (results.uses_expectations_file)
 
 html += '</tr></thead>';
 
-// FIXME: Should this point to the local file instead? Should it dynamically figure out where to point?
-var test_base_path = 'http://trac.webkit.org/browser/trunk/LayoutTests/';
+var test_base_path;
+if (results.layout_tests_dir && location.toString().indexOf('file://') != 0)
+    test_base_path = results.layout_tests_dir + '/';
+else
+    test_base_path = 'http://trac.webkit.org/browser/trunk/LayoutTests/';
 
 function resultLink(test_prefix, suffix, contents)
 {
