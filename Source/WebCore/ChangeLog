@@ -1,3 +1,25 @@
+2011-04-14  Ami Fischman  <fischman@google.com>
+
+        Reviewed by Eric Carlson.
+
+        Remove unnecessary bottom margin of controls in video elements on media documents.
+        This makes the cases of media documents and non-media documents consistent,
+        and makes it possible to reason about the height of a rendered media document
+        (needed e.g. for sizing iframes).
+
+        This change is covered by (the currently Skipped, but soon-to-be-un-Skipped)
+        media/video-controls-in-media-document.html layouttest (see bug 54634 for
+        the un-Skipping).
+
+        https://bugs.webkit.org/show_bug.cgi?id=58442
+
+        * css/mediaControls.css:
+        (video:-webkit-full-page-media::-webkit-media-controls-panel):
+        * css/mediaControlsEfl.css:
+        (video:-webkit-full-page-media::-webkit-media-controls-panel):
+        * css/mediaControlsQuickTime.css:
+        (video:-webkit-full-page-media::-webkit-media-controls-panel):
+
 2011-04-14  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Oliver Hunt.

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009, 2010 Apple Inc.  All rights reserved.
+ * Copyright (C) 2009, 2010, 2011 Apple Inc.  All rights reserved.
  * Copyright (C) 2011 Samsung Electronics
  *
  * Redistribution and use in source and binary forms, with or without
@@ -45,7 +45,7 @@ audio::-webkit-media-controls-panel, video::-webkit-media-controls-panel {
 }
 
 video:-webkit-full-page-media::-webkit-media-controls-panel {
-    bottom: -25px;
+    bottom: 0px;
 }
 
 audio::-webkit-media-controls-mute-button, video::-webkit-media-controls-mute-button {
