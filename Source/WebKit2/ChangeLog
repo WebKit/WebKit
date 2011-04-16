@@ -1,3 +1,10 @@
+2011-04-15  Daniel Bates  <dbates@webkit.org>
+
+        Attempt to fix the Qt Linux Release build after changeset 84064 <http://trac.webkit.org/changeset/84064>
+        (https://bugs.webkit.org/show_bug.cgi?id=58686).
+
+        * UIProcess/API/qt/qwkpage_p.h: Remove takeFocus().
+
 2011-04-15  Shishir Agrawal  <shishir@chromium.org>
 
         Reviewed by James Robinson.
