@@ -714,10 +714,18 @@ void FrameLoaderClientImpl::dispatchDidStartProvisionalLoad()
         // m_expectedClientRedirectDest could be something like
         // "javascript:history.go(-1)" thus we need to exclude url starts with
         // "javascript:". See bug: 1080873
-        ASSERT(m_expectedClientRedirectDest.protocolIs("javascript")
-            || m_expectedClientRedirectDest == url);
-        ds->appendRedirect(m_expectedClientRedirectSrc);
-        completingClientRedirect = true;
+        if (m_expectedClientRedirectDest.protocolIs("javascript")
+            || m_expectedClientRedirectDest == url) {
+            ds->appendRedirect(m_expectedClientRedirectSrc);
+            completingClientRedirect = true;
+        } else {
+            // Any pending redirect is no longer in progress. This can happen
+            // if the navigation was canceled with PolicyIgnore, or if the
+            // redirect was scheduled on the wrong frame (e.g., due to a form
+            // submission targeted to _blank, as in http://webkit.org/b/44079).
+            m_expectedClientRedirectSrc = KURL();
+            m_expectedClientRedirectDest = KURL();
+        }
     }
     ds->appendRedirect(url);
 

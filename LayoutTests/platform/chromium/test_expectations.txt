@@ -2250,10 +2250,6 @@ BUGWK43912 WIN LINUX : svg/custom/absolute-sized-content-with-resources.xhtml = 
 // Times out frequently since the test was added
 BUGCR52017 MAC LINUX : http/tests/misc/isindex-with-no-form.html = PASS TIMEOUT
 
-// Probably http://trac.webkit.org/changeset/65381
-// This test causes the next one to run to ASSERT
-BUGWK44079 DEBUG SKIP : fast/events/popup-allowed-from-gesture-initiated-form-submit.html = PASS
-
 // Flaky. Not sure when it started to fail.
 BUGCR52572 WIN LINUX DEBUG : http/tests/misc/image-blocked-src-change.html = PASS TEXT
 
