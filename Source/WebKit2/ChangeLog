@@ -1,3 +1,16 @@
+2011-04-16  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Crash when NPP_Write returns -1 when writing the manual stream
+        https://bugs.webkit.org/show_bug.cgi?id=58735
+        <rdar://problem/9124993>
+
+        If NPP_Write returns -1 we must cancel the stream.
+
+        * WebProcess/Plugins/Netscape/NetscapePluginStream.cpp:
+        (WebKit::NetscapePluginStream::deliverDataToPlugin):
+
 2011-04-16  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Simon Fraser.

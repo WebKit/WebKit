@@ -221,6 +221,7 @@ void NetscapePluginStream::deliverDataToPlugin()
 
         int32_t numBytesWritten = m_plugin->NPP_Write(&m_npStream, m_offset, dataLength, data);
         if (numBytesWritten < 0) {
+            cancel();
             stop(NPRES_NETWORK_ERR);
             return;
         }
