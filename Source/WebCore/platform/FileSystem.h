@@ -77,7 +77,9 @@ typedef struct _GModule GModule;
 namespace WebCore {
 
 // PlatformModule
-#if OS(WINDOWS)
+#if PLATFORM(GTK)
+typedef GModule* PlatformModule;
+#elif OS(WINDOWS)
 typedef HMODULE PlatformModule;
 #elif PLATFORM(QT)
 #if defined(Q_WS_MAC)
@@ -87,8 +89,6 @@ typedef QLibrary* PlatformModule;
 #else
 typedef void* PlatformModule;
 #endif
-#elif PLATFORM(GTK)
-typedef GModule* PlatformModule;
 #elif USE(CF)
 typedef CFBundleRef PlatformModule;
 #else
@@ -122,6 +122,9 @@ typedef unsigned PlatformModuleVersion;
 #if PLATFORM(QT)
 typedef QFile* PlatformFileHandle;
 const PlatformFileHandle invalidPlatformFileHandle = 0;
+#elif PLATFORM(GTK)
+typedef GFileIOStream* PlatformFileHandle;
+const PlatformFileHandle invalidPlatformFileHandle = 0;
 #elif OS(WINDOWS)
 typedef HANDLE PlatformFileHandle;
 // FIXME: -1 is INVALID_HANDLE_VALUE, defined in <winbase.h>. Chromium tries to
@@ -129,9 +132,6 @@ typedef HANDLE PlatformFileHandle;
 const PlatformFileHandle invalidPlatformFileHandle = reinterpret_cast<HANDLE>(-1);
 #elif PLATFORM(BREWMP)
 typedef IFile* PlatformFileHandle;
-const PlatformFileHandle invalidPlatformFileHandle = 0;
-#elif PLATFORM(GTK)
-typedef GFileIOStream* PlatformFileHandle;
 const PlatformFileHandle invalidPlatformFileHandle = 0;
 #elif PLATFORM(WX)
 typedef wxFile* PlatformFileHandle;
