@@ -27,14 +27,19 @@
 #include "LocalizedStrings.h"
 
 #include "WebCoreInstanceHandle.h"
-#include <CoreFoundation/CFBundle.h>
 #include <wtf/Assertions.h>
-#include <wtf/RetainPtr.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/Threading.h>
 #include <wtf/text/WTFString.h>
 
+#if USE(CF)
+#include <CoreFoundation/CFBundle.h>
+#include <wtf/RetainPtr.h>
+#endif
+
 namespace WebCore {
+
+#if USE(CF)
 
 static CFBundleRef createWebKitBundle()
 {
@@ -63,10 +68,13 @@ static CFBundleRef webKitBundle()
     return bundle;
 }
 
+#endif // USE(CF)
+
 String localizedString(const char* key)
 {
     ASSERT(isMainThread());
 
+#if USE(CF)
     static CFStringRef notFound = CFSTR("localized string not found");
 
     RetainPtr<CFStringRef> keyString(AdoptCF, CFStringCreateWithCStringNoCopy(NULL, key, kCFStringEncodingUTF8, kCFAllocatorNull));
@@ -74,6 +82,10 @@ String localizedString(const char* key)
     ASSERT_WITH_MESSAGE(result.get() != notFound, "could not find localizable string %s in bundle", key);
 
     return result.get();
+#else
+    // FIXME: Implement localizedString() for !USE(CF).
+    return String::fromUTF8(key, strlen(key));
+#endif
 }
 
 } // namespace WebCore
