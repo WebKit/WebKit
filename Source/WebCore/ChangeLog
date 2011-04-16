@@ -1,3 +1,19 @@
+2011-04-15  Emil A Eklund  <eae@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        input field with focus makes appendChild operation ~42x slower
+        https://bugs.webkit.org/show_bug.cgi?id=57059
+
+        Change ContainerNode::cloneChildNodes to only disable the
+        deleteButtonController if the container itself (or any of its children)
+        is being edited. Thus avoiding a reflow in cases where it's not.
+
+        Test: perf/clone-with-focus.html
+
+        * dom/ContainerNode.cpp:
+        (WebCore::ContainerNode::cloneChildNodes):
+
 2011-04-15  Kinuko Yasuda  <kinuko@chromium.org>
 
         Reviewed by David Levin.

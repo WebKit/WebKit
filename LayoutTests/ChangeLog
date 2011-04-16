@@ -1,3 +1,15 @@
+2011-04-15  Emil A Eklund  <eae@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        input field with focus makes appendChild operation ~42x slower
+        https://bugs.webkit.org/show_bug.cgi?id=57059
+
+        Add performance test for cloneNode when an input field has focus.
+
+        * perf/clone-with-focus-expected.txt: Added.
+        * perf/clone-with-focus.html: Added.
+
 2011-04-15  Charlie Reis  <creis@chromium.org>
 
         Reviewed by Darin Fisher.

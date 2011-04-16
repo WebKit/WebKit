@@ -1,0 +1,2 @@
+
+PASS. Cloning elements takes roughly as long with as without focus.

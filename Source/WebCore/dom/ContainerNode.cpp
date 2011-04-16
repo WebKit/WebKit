@@ -798,9 +798,16 @@ void ContainerNode::childrenChanged(bool changedByParser, Node* beforeChange, No
 void ContainerNode::cloneChildNodes(ContainerNode *clone)
 {
     // disable the delete button so it's elements are not serialized into the markup
-    bool isEditorEnabled = document()->frame() && document()->frame()->editor()->canEdit();
-    if (isEditorEnabled)
-        document()->frame()->editor()->deleteButtonController()->disable();
+    bool isEditorEnabled = false;
+    if (document()->frame() && document()->frame()->editor()->canEdit()) {
+        SelectionController* selection = document()->frame()->selection();
+        Element* root = selection ? selection->rootEditableElement() : 0;
+        isEditorEnabled = root && isDescendantOf(root);
+
+        if (isEditorEnabled)
+            document()->frame()->editor()->deleteButtonController()->disable();
+    }
+    
     ExceptionCode ec = 0;
     for (Node* n = firstChild(); n && !ec; n = n->nextSibling())
         clone->appendChild(n->cloneNode(true), ec);
