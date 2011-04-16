@@ -29,7 +29,6 @@
 #include "WebPreferences.h"
 
 #include "COMPtr.h"
-#include "WebLocalizableStrings.h"
 #include "WebNotificationCenter.h"
 #include "WebPreferenceKeysPrivate.h"
 
@@ -37,7 +36,7 @@
 #include <WebCore/CACFLayerTreeHost.h>
 #include <WebCore/FileSystem.h>
 #include <WebCore/Font.h>
-#include <WebCore/PlatformString.h>
+#include <WebCore/LocalizedStrings.h>
 #include <limits>
 #include <shlobj.h>
 #include <wchar.h>
@@ -45,6 +44,7 @@
 #include <wtf/OwnArrayPtr.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/StringHash.h>
+#include <wtf/text/WTFString.h>
 
 #if PLATFORM(CG)
 #include <CoreGraphics/CoreGraphics.h>
@@ -193,7 +193,8 @@ void WebPreferences::initializeDefaultSettings()
     CFDictionaryAddValue(defaults, CFSTR(WebKitMinimumLogicalFontSizePreferenceKey), CFSTR("9"));
     CFDictionaryAddValue(defaults, CFSTR(WebKitDefaultFontSizePreferenceKey), CFSTR("16"));
     CFDictionaryAddValue(defaults, CFSTR(WebKitDefaultFixedFontSizePreferenceKey), CFSTR("13"));
-    WTF::String defaultDefaultEncoding(LPCTSTR_UI_STRING("ISO-8859-1", "The default, default character encoding"));
+
+    String defaultDefaultEncoding(WEB_UI_STRING("ISO-8859-1", "The default, default character encoding"));
     CFDictionaryAddValue(defaults, CFSTR(WebKitDefaultTextEncodingNamePreferenceKey), defaultDefaultEncoding.createCFString());
 
     CFDictionaryAddValue(defaults, CFSTR(WebKitUserStyleSheetEnabledPreferenceKey), kCFBooleanFalse);

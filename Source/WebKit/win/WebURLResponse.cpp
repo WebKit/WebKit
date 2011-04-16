@@ -31,7 +31,6 @@
 
 #include "COMPropertyBag.h"
 #include "MarshallingHelpers.h"
-#include "WebLocalizableStrings.h"
 
 #if USE(CFNETWORK)
 #include <WebKitSystemInterface/WebKitSystemInterface.h>
@@ -40,6 +39,7 @@
 #include <wtf/platform.h>
 #include <WebCore/BString.h>
 #include <WebCore/KURL.h>
+#include <WebCore/LocalizedStrings.h>
 #include <WebCore/ResourceHandle.h>
 #include <shlobj.h>
 #include <shlwapi.h>
@@ -47,160 +47,160 @@
 
 using namespace WebCore;
 
-static LPCTSTR CFHTTPMessageCopyLocalizedShortDescriptionForStatusCode(CFIndex statusCode)
+static String CFHTTPMessageCopyLocalizedShortDescriptionForStatusCode(CFIndex statusCode)
 {
-    LPCTSTR result = 0;
+    String result;
     if (statusCode < 100 || statusCode >= 600)
-        result = LPCTSTR_UI_STRING("server error", "HTTP result code string");
+        result = WEB_UI_STRING("server error", "HTTP result code string");
     else if (statusCode >= 100 && statusCode <= 199) {
         switch (statusCode) {
             case 100:
-                result = LPCTSTR_UI_STRING("continue", "HTTP result code string");
+                result = WEB_UI_STRING("continue", "HTTP result code string");
                 break;
             case 101:
-                result = LPCTSTR_UI_STRING("switching protocols", "HTTP result code string");
+                result = WEB_UI_STRING("switching protocols", "HTTP result code string");
                 break;
             default:
-                result = LPCTSTR_UI_STRING("informational", "HTTP result code string");
+                result = WEB_UI_STRING("informational", "HTTP result code string");
                 break;
         }
     } else if (statusCode >= 200 && statusCode <= 299) {
         switch (statusCode) {
             case 200:
-                result = LPCTSTR_UI_STRING("no error", "HTTP result code string");
+                result = WEB_UI_STRING("no error", "HTTP result code string");
                 break;
             case 201:
-                result = LPCTSTR_UI_STRING("created", "HTTP result code string");
+                result = WEB_UI_STRING("created", "HTTP result code string");
                 break;
             case 202:
-                result = LPCTSTR_UI_STRING("accepted", "HTTP result code string");
+                result = WEB_UI_STRING("accepted", "HTTP result code string");
                 break;
             case 203:
-                result = LPCTSTR_UI_STRING("non-authoritative information", "HTTP result code string");
+                result = WEB_UI_STRING("non-authoritative information", "HTTP result code string");
                 break;
             case 204:
-                result = LPCTSTR_UI_STRING("no content", "HTTP result code string");
+                result = WEB_UI_STRING("no content", "HTTP result code string");
                 break;
             case 205:
-                result = LPCTSTR_UI_STRING("reset content", "HTTP result code string");
+                result = WEB_UI_STRING("reset content", "HTTP result code string");
                 break;
             case 206:
-                result = LPCTSTR_UI_STRING("partial content", "HTTP result code string");
+                result = WEB_UI_STRING("partial content", "HTTP result code string");
                 break;
             default:
-                result = LPCTSTR_UI_STRING("success", "HTTP result code string");
+                result = WEB_UI_STRING("success", "HTTP result code string");
                 break;
         } 
     } else if (statusCode >= 300 && statusCode <= 399) {
         switch (statusCode) {
             case 300:
-                result = LPCTSTR_UI_STRING("multiple choices", "HTTP result code string");
+                result = WEB_UI_STRING("multiple choices", "HTTP result code string");
                 break;
             case 301:
-                result = LPCTSTR_UI_STRING("moved permanently", "HTTP result code string");
+                result = WEB_UI_STRING("moved permanently", "HTTP result code string");
                 break;
             case 302:
-                result = LPCTSTR_UI_STRING("found", "HTTP result code string");
+                result = WEB_UI_STRING("found", "HTTP result code string");
                 break;
             case 303:
-                result = LPCTSTR_UI_STRING("see other", "HTTP result code string");
+                result = WEB_UI_STRING("see other", "HTTP result code string");
                 break;
             case 304:
-                result = LPCTSTR_UI_STRING("not modified", "HTTP result code string");
+                result = WEB_UI_STRING("not modified", "HTTP result code string");
                 break;
             case 305:
-                result = LPCTSTR_UI_STRING("needs proxy", "HTTP result code string");
+                result = WEB_UI_STRING("needs proxy", "HTTP result code string");
                 break;
             case 307:
-                result = LPCTSTR_UI_STRING("temporarily redirected", "HTTP result code string");
+                result = WEB_UI_STRING("temporarily redirected", "HTTP result code string");
                 break;
             case 306:   // 306 status code unused in HTTP
             default:
-                result = LPCTSTR_UI_STRING("redirected", "HTTP result code string");
+                result = WEB_UI_STRING("redirected", "HTTP result code string");
                 break;
         }
     } else if (statusCode >= 400 && statusCode <= 499) {
         switch (statusCode) {
             case 400:
-                result = LPCTSTR_UI_STRING("bad request", "HTTP result code string");
+                result = WEB_UI_STRING("bad request", "HTTP result code string");
                 break;
             case 401:
-                result = LPCTSTR_UI_STRING("unauthorized", "HTTP result code string");
+                result = WEB_UI_STRING("unauthorized", "HTTP result code string");
                 break;
             case 402:
-                result = LPCTSTR_UI_STRING("payment required", "HTTP result code string");
+                result = WEB_UI_STRING("payment required", "HTTP result code string");
                 break;
             case 403:
-                result = LPCTSTR_UI_STRING("forbidden", "HTTP result code string");
+                result = WEB_UI_STRING("forbidden", "HTTP result code string");
                 break;
             case 404:
-                result = LPCTSTR_UI_STRING("not found", "HTTP result code string");
+                result = WEB_UI_STRING("not found", "HTTP result code string");
                 break;
             case 405:
-                result = LPCTSTR_UI_STRING("method not allowed", "HTTP result code string");
+                result = WEB_UI_STRING("method not allowed", "HTTP result code string");
                 break;
             case 406:
-                result = LPCTSTR_UI_STRING("unacceptable", "HTTP result code string");
+                result = WEB_UI_STRING("unacceptable", "HTTP result code string");
                 break;
             case 407:
-                result = LPCTSTR_UI_STRING("proxy authentication required", "HTTP result code string");
+                result = WEB_UI_STRING("proxy authentication required", "HTTP result code string");
                 break;
             case 408:
-                result = LPCTSTR_UI_STRING("request timed out", "HTTP result code string");
+                result = WEB_UI_STRING("request timed out", "HTTP result code string");
                 break;
             case 409:
-                result = LPCTSTR_UI_STRING("conflict", "HTTP result code string");
+                result = WEB_UI_STRING("conflict", "HTTP result code string");
                 break;
             case 410:
-                result = LPCTSTR_UI_STRING("no longer exists", "HTTP result code string");
+                result = WEB_UI_STRING("no longer exists", "HTTP result code string");
                 break;
             case 411:
-                result = LPCTSTR_UI_STRING("length required", "HTTP result code string");
+                result = WEB_UI_STRING("length required", "HTTP result code string");
                 break;
             case 412:
-                result = LPCTSTR_UI_STRING("precondition failed", "HTTP result code string");
+                result = WEB_UI_STRING("precondition failed", "HTTP result code string");
                 break;
             case 413:
-                result = LPCTSTR_UI_STRING("request too large", "HTTP result code string");
+                result = WEB_UI_STRING("request too large", "HTTP result code string");
                 break;
             case 414:
-                result = LPCTSTR_UI_STRING("requested URL too long", "HTTP result code string");
+                result = WEB_UI_STRING("requested URL too long", "HTTP result code string");
                 break;
             case 415:
-                result = LPCTSTR_UI_STRING("unsupported media type", "HTTP result code string");
+                result = WEB_UI_STRING("unsupported media type", "HTTP result code string");
                 break;
             case 416:
-                result = LPCTSTR_UI_STRING("requested range not satisfiable", "HTTP result code string");
+                result = WEB_UI_STRING("requested range not satisfiable", "HTTP result code string");
                 break;
             case 417:
-                result = LPCTSTR_UI_STRING("expectation failed", "HTTP result code string");
+                result = WEB_UI_STRING("expectation failed", "HTTP result code string");
                 break;
             default:
-                result = LPCTSTR_UI_STRING("client error", "HTTP result code string");
+                result = WEB_UI_STRING("client error", "HTTP result code string");
                 break;
         }
     } else if (statusCode >= 500 && statusCode <= 599) {
         switch (statusCode) {
             case 500:
-                result = LPCTSTR_UI_STRING("internal server error", "HTTP result code string");
+                result = WEB_UI_STRING("internal server error", "HTTP result code string");
                 break;
             case 501:
-                result = LPCTSTR_UI_STRING("unimplemented", "HTTP result code string");
+                result = WEB_UI_STRING("unimplemented", "HTTP result code string");
                 break;
             case 502:
-                result = LPCTSTR_UI_STRING("bad gateway", "HTTP result code string");
+                result = WEB_UI_STRING("bad gateway", "HTTP result code string");
                 break;
             case 503:
-                result = LPCTSTR_UI_STRING("service unavailable", "HTTP result code string");
+                result = WEB_UI_STRING("service unavailable", "HTTP result code string");
                 break;
             case 504:
-                result = LPCTSTR_UI_STRING("gateway timed out", "HTTP result code string");
+                result = WEB_UI_STRING("gateway timed out", "HTTP result code string");
                 break;
             case 505:
-                result = LPCTSTR_UI_STRING("unsupported version", "HTTP result code string");
+                result = WEB_UI_STRING("unsupported version", "HTTP result code string");
                 break;
             default:
-                result = LPCTSTR_UI_STRING("server error", "HTTP result code string");
+                result = WEB_UI_STRING("server error", "HTTP result code string");
                 break;
         }
     }
@@ -372,11 +372,11 @@ HRESULT STDMETHODCALLTYPE WebURLResponse::localizedStringForStatusCode(
     ASSERT(m_response.isHTTP());
     if (statusString)
         *statusString = 0;
-    LPCTSTR statusText = CFHTTPMessageCopyLocalizedShortDescriptionForStatusCode(statusCode);
+    String statusText = CFHTTPMessageCopyLocalizedShortDescriptionForStatusCode(statusCode);
     if (!statusText)
         return E_FAIL;
     if (statusString)
-        *statusString = SysAllocString(statusText);
+        *statusString = BString(statusText).release();
     return S_OK;
 }
 

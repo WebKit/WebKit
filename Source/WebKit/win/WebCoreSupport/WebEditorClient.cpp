@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006, 2007 Apple Inc.  All rights reserved.
+ * Copyright (C) 2006, 2007, 2011 Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -28,7 +28,6 @@
 #include "WebEditorClient.h"
 
 #include "WebKit.h"
-#include "WebLocalizableStrings.h"
 #include "WebNotification.h"
 #include "WebNotificationCenter.h"
 #include "WebView.h"
@@ -40,6 +39,7 @@
 #include <WebCore/HTMLInputElement.h>
 #include <WebCore/HTMLNames.h>
 #include <WebCore/KeyboardEvent.h>
+#include <WebCore/LocalizedStrings.h>
 #include <WebCore/NotImplemented.h>
 #include <WebCore/PlatformKeyboardEvent.h>
 #include <WebCore/Range.h>
@@ -482,65 +482,62 @@ ULONG STDMETHODCALLTYPE WebEditorUndoCommand::Release(void)
     return newRef;
 }
 
-static LPCTSTR undoNameForEditAction(EditAction editAction)
+static String undoNameForEditAction(EditAction editAction)
 {
     switch (editAction) {
-        case EditActionUnspecified: return 0;
-        case EditActionSetColor: return LPCTSTR_UI_STRING_KEY("Set Color", "Set Color (Undo action name)", "Undo action name");
-        case EditActionSetBackgroundColor: return LPCTSTR_UI_STRING_KEY("Set Background Color", "Set Background Color (Undo action name)", "Undo action name");
-        case EditActionTurnOffKerning: return LPCTSTR_UI_STRING_KEY("Turn Off Kerning", "Turn Off Kerning (Undo action name)", "Undo action name");
-        case EditActionTightenKerning: return LPCTSTR_UI_STRING_KEY("Tighten Kerning", "Tighten Kerning (Undo action name)", "Undo action name");
-        case EditActionLoosenKerning: return LPCTSTR_UI_STRING_KEY("Loosen Kerning", "Loosen Kerning (Undo action name)", "Undo action name");
-        case EditActionUseStandardKerning: return LPCTSTR_UI_STRING_KEY("Use Standard Kerning", "Use Standard Kerning (Undo action name)", "Undo action name");
-        case EditActionTurnOffLigatures: return LPCTSTR_UI_STRING_KEY("Turn Off Ligatures", "Turn Off Ligatures (Undo action name)", "Undo action name");
-        case EditActionUseStandardLigatures: return LPCTSTR_UI_STRING_KEY("Use Standard Ligatures", "Use Standard Ligatures (Undo action name)", "Undo action name");
-        case EditActionUseAllLigatures: return LPCTSTR_UI_STRING_KEY("Use All Ligatures", "Use All Ligatures (Undo action name)", "Undo action name");
-        case EditActionRaiseBaseline: return LPCTSTR_UI_STRING_KEY("Raise Baseline", "Raise Baseline (Undo action name)", "Undo action name");
-        case EditActionLowerBaseline: return LPCTSTR_UI_STRING_KEY("Lower Baseline", "Lower Baseline (Undo action name)", "Undo action name");
-        case EditActionSetTraditionalCharacterShape: return LPCTSTR_UI_STRING_KEY("Set Traditional Character Shape", "Set Traditional Character Shape (Undo action name)", "Undo action name");
-        case EditActionSetFont: return LPCTSTR_UI_STRING_KEY("Set Font", "Set Font (Undo action name)", "Undo action name");
-        case EditActionChangeAttributes: return LPCTSTR_UI_STRING_KEY("Change Attributes", "Change Attributes (Undo action name)", "Undo action name");
-        case EditActionAlignLeft: return LPCTSTR_UI_STRING_KEY("Align Left", "Align Left (Undo action name)", "Undo action name");
-        case EditActionAlignRight: return LPCTSTR_UI_STRING_KEY("Align Right", "Align Right (Undo action name)", "Undo action name");
-        case EditActionCenter: return LPCTSTR_UI_STRING_KEY("Center", "Center (Undo action name)", "Undo action name");
-        case EditActionJustify: return LPCTSTR_UI_STRING_KEY("Justify", "Justify (Undo action name)", "Undo action name");
-        case EditActionSetWritingDirection: return LPCTSTR_UI_STRING_KEY("Set Writing Direction", "Set Writing Direction (Undo action name)", "Undo action name");
-        case EditActionSubscript: return LPCTSTR_UI_STRING_KEY("Subscript", "Subscript (Undo action name)", "Undo action name");
-        case EditActionSuperscript: return LPCTSTR_UI_STRING_KEY("Superscript", "Superscript (Undo action name)", "Undo action name");
-        case EditActionUnderline: return LPCTSTR_UI_STRING_KEY("Underline", "Underline (Undo action name)", "Undo action name");
-        case EditActionOutline: return LPCTSTR_UI_STRING_KEY("Outline", "Outline (Undo action name)", "Undo action name");
-        case EditActionUnscript: return LPCTSTR_UI_STRING_KEY("Unscript", "Unscript (Undo action name)", "Undo action name");
-        case EditActionDrag: return LPCTSTR_UI_STRING_KEY("Drag", "Drag (Undo action name)", "Undo action name");
-        case EditActionCut: return LPCTSTR_UI_STRING_KEY("Cut", "Cut (Undo action name)", "Undo action name");
-        case EditActionPaste: return LPCTSTR_UI_STRING_KEY("Paste", "Paste (Undo action name)", "Undo action name");
-        case EditActionPasteFont: return LPCTSTR_UI_STRING_KEY("Paste Font", "Paste Font (Undo action name)", "Undo action name");
-        case EditActionPasteRuler: return LPCTSTR_UI_STRING_KEY("Paste Ruler", "Paste Ruler (Undo action name)", "Undo action name");
-        case EditActionTyping: return LPCTSTR_UI_STRING_KEY("Typing", "Typing (Undo action name)", "Undo action name");
-        case EditActionCreateLink: return LPCTSTR_UI_STRING_KEY("Create Link", "Create Link (Undo action name)", "Undo action name");
-        case EditActionUnlink: return LPCTSTR_UI_STRING_KEY("Unlink", "Unlink (Undo action name)", "Undo action name");
-        case EditActionInsertList: return LPCTSTR_UI_STRING_KEY("Insert List", "Insert List (Undo action name)", "Undo action name");
-        case EditActionFormatBlock: return LPCTSTR_UI_STRING_KEY("Formatting", "Format Block (Undo action name)", "Undo action name");
-        case EditActionIndent: return LPCTSTR_UI_STRING_KEY("Indent", "Indent (Undo action name)", "Undo action name");
-        case EditActionOutdent: return LPCTSTR_UI_STRING_KEY("Outdent", "Outdent (Undo action name)", "Undo action name");
+    case EditActionUnspecified: return String();
+    case EditActionSetColor: return WEB_UI_STRING_KEY("Set Color", "Set Color (Undo action name)", "Undo action name");
+    case EditActionSetBackgroundColor: return WEB_UI_STRING_KEY("Set Background Color", "Set Background Color (Undo action name)", "Undo action name");
+    case EditActionTurnOffKerning: return WEB_UI_STRING_KEY("Turn Off Kerning", "Turn Off Kerning (Undo action name)", "Undo action name");
+    case EditActionTightenKerning: return WEB_UI_STRING_KEY("Tighten Kerning", "Tighten Kerning (Undo action name)", "Undo action name");
+    case EditActionLoosenKerning: return WEB_UI_STRING_KEY("Loosen Kerning", "Loosen Kerning (Undo action name)", "Undo action name");
+    case EditActionUseStandardKerning: return WEB_UI_STRING_KEY("Use Standard Kerning", "Use Standard Kerning (Undo action name)", "Undo action name");
+    case EditActionTurnOffLigatures: return WEB_UI_STRING_KEY("Turn Off Ligatures", "Turn Off Ligatures (Undo action name)", "Undo action name");
+    case EditActionUseStandardLigatures: return WEB_UI_STRING_KEY("Use Standard Ligatures", "Use Standard Ligatures (Undo action name)", "Undo action name");
+    case EditActionUseAllLigatures: return WEB_UI_STRING_KEY("Use All Ligatures", "Use All Ligatures (Undo action name)", "Undo action name");
+    case EditActionRaiseBaseline: return WEB_UI_STRING_KEY("Raise Baseline", "Raise Baseline (Undo action name)", "Undo action name");
+    case EditActionLowerBaseline: return WEB_UI_STRING_KEY("Lower Baseline", "Lower Baseline (Undo action name)", "Undo action name");
+    case EditActionSetTraditionalCharacterShape: return WEB_UI_STRING_KEY("Set Traditional Character Shape", "Set Traditional Character Shape (Undo action name)", "Undo action name");
+    case EditActionSetFont: return WEB_UI_STRING_KEY("Set Font", "Set Font (Undo action name)", "Undo action name");
+    case EditActionChangeAttributes: return WEB_UI_STRING_KEY("Change Attributes", "Change Attributes (Undo action name)", "Undo action name");
+    case EditActionAlignLeft: return WEB_UI_STRING_KEY("Align Left", "Align Left (Undo action name)", "Undo action name");
+    case EditActionAlignRight: return WEB_UI_STRING_KEY("Align Right", "Align Right (Undo action name)", "Undo action name");
+    case EditActionCenter: return WEB_UI_STRING_KEY("Center", "Center (Undo action name)", "Undo action name");
+    case EditActionJustify: return WEB_UI_STRING_KEY("Justify", "Justify (Undo action name)", "Undo action name");
+    case EditActionSetWritingDirection: return WEB_UI_STRING_KEY("Set Writing Direction", "Set Writing Direction (Undo action name)", "Undo action name");
+    case EditActionSubscript: return WEB_UI_STRING_KEY("Subscript", "Subscript (Undo action name)", "Undo action name");
+    case EditActionSuperscript: return WEB_UI_STRING_KEY("Superscript", "Superscript (Undo action name)", "Undo action name");
+    case EditActionUnderline: return WEB_UI_STRING_KEY("Underline", "Underline (Undo action name)", "Undo action name");
+    case EditActionOutline: return WEB_UI_STRING_KEY("Outline", "Outline (Undo action name)", "Undo action name");
+    case EditActionUnscript: return WEB_UI_STRING_KEY("Unscript", "Unscript (Undo action name)", "Undo action name");
+    case EditActionDrag: return WEB_UI_STRING_KEY("Drag", "Drag (Undo action name)", "Undo action name");
+    case EditActionCut: return WEB_UI_STRING_KEY("Cut", "Cut (Undo action name)", "Undo action name");
+    case EditActionPaste: return WEB_UI_STRING_KEY("Paste", "Paste (Undo action name)", "Undo action name");
+    case EditActionPasteFont: return WEB_UI_STRING_KEY("Paste Font", "Paste Font (Undo action name)", "Undo action name");
+    case EditActionPasteRuler: return WEB_UI_STRING_KEY("Paste Ruler", "Paste Ruler (Undo action name)", "Undo action name");
+    case EditActionTyping: return WEB_UI_STRING_KEY("Typing", "Typing (Undo action name)", "Undo action name");
+    case EditActionCreateLink: return WEB_UI_STRING_KEY("Create Link", "Create Link (Undo action name)", "Undo action name");
+    case EditActionUnlink: return WEB_UI_STRING_KEY("Unlink", "Unlink (Undo action name)", "Undo action name");
+    case EditActionInsertList: return WEB_UI_STRING_KEY("Insert List", "Insert List (Undo action name)", "Undo action name");
+    case EditActionFormatBlock: return WEB_UI_STRING_KEY("Formatting", "Format Block (Undo action name)", "Undo action name");
+    case EditActionIndent: return WEB_UI_STRING_KEY("Indent", "Indent (Undo action name)", "Undo action name");
+    case EditActionOutdent: return WEB_UI_STRING_KEY("Outdent", "Outdent (Undo action name)", "Undo action name");
     }
-    return 0;
+    return String();
 }
 
 void WebEditorClient::registerCommandForUndo(PassRefPtr<EditCommand> command)
 {
     IWebUIDelegate* uiDelegate = 0;
     if (SUCCEEDED(m_webView->uiDelegate(&uiDelegate))) {
-        LPCTSTR actionName = undoNameForEditAction(command->editingAction());
+        String actionName = undoNameForEditAction(command->editingAction());
         WebEditorUndoCommand* undoCommand = new WebEditorUndoCommand(command, true);
         if (!undoCommand)
             return;
         uiDelegate->registerUndoWithTarget(m_undoTarget, 0, undoCommand);
         undoCommand->Release(); // the undo manager owns the reference
-        BSTR actionNameBSTR = SysAllocString(actionName);
-        if (actionNameBSTR) {
-            uiDelegate->setActionTitle(actionNameBSTR);
-            SysFreeString(actionNameBSTR);
-        }
+        if (!actionName.isEmpty())
+            uiDelegate->setActionTitle(BString(actionName));
         uiDelegate->Release();
     }
 }

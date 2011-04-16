@@ -1,3 +1,25 @@
+2011-04-16  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Simon Fraser.
+
+        Windows should use WebCore localized strings
+        <rdar://problem/9119405>
+        https://bugs.webkit.org/show_bug.cgi?id=58733
+
+        * WebCoreSupport/WebEditorClient.cpp:
+        (undoNameForEditAction):
+        (WebEditorClient::registerCommandForUndo):
+        * WebPreferences.cpp:
+        (WebPreferences::initializeDefaultSettings):
+        * WebURLResponse.cpp:
+        (CFHTTPMessageCopyLocalizedShortDescriptionForStatusCode):
+        (WebURLResponse::localizedStringForStatusCode):
+        Change to use WEB_UI_STRING.
+
+        * WebCoreSupport/WebPlatformStrategies.cpp:
+        * WebCoreSupport/WebPlatformStrategies.h:
+        Remove the localization strategy in favor of using the default one.
+
 2011-04-16  Patrick Gansterer  <paroga@webkit.org>
 
         Reviewed by Eric Seidel.
