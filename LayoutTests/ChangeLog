@@ -1,3 +1,14 @@
+2011-04-16  Abhishek Arya  <inferno@chromium.org>
+
+        Reviewed by Nikolas Zimmermann.
+
+        Tests that we do not crash when adding a list item block child
+        as a before child to svg text.
+        https://bugs.webkit.org/show_bug.cgi?id=58678
+
+        * svg/text/text-block-child-crash-expected.txt: Added.
+        * svg/text/text-block-child-crash.xhtml: Added.
+
 2011-04-16  Sergio Villar Senin  <svillar@igalia.com>
 
         Unreviewed, new GTK+ test expectations after r84039.

@@ -36,6 +36,8 @@ class RenderSVGText : public RenderSVGBlock {
 public:
     RenderSVGText(SVGTextElement*);
 
+    virtual bool isChildAllowed(RenderObject*, RenderStyle*) const;
+
     void setNeedsPositioningValuesUpdate() { m_needsPositioningValuesUpdate = true; }
     virtual void setNeedsTransformUpdate() { m_needsTransformUpdate = true; }
     virtual FloatRect repaintRectInLocalCoordinates() const;

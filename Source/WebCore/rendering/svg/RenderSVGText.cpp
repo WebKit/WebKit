@@ -57,6 +57,11 @@ RenderSVGText::RenderSVGText(SVGTextElement* node)
 {
 }
 
+bool RenderSVGText::isChildAllowed(RenderObject* child, RenderStyle*) const
+{
+    return child->isInline();
+}
+
 RenderSVGText* RenderSVGText::locateRenderSVGTextAncestor(RenderObject* start)
 {
     ASSERT(start);
