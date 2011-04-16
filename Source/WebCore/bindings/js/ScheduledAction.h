@@ -34,6 +34,7 @@ namespace JSC {
 namespace WebCore {
 
     class Document;
+    class ContentSecurityPolicy;
     class ScriptExecutionContext;
     class WorkerContext;
 
@@ -44,7 +45,7 @@ namespace WebCore {
     class ScheduledAction {
         WTF_MAKE_NONCOPYABLE(ScheduledAction); WTF_MAKE_FAST_ALLOCATED;
     public:
-        static PassOwnPtr<ScheduledAction> create(JSC::ExecState*, DOMWrapperWorld* isolatedWorld);
+        static PassOwnPtr<ScheduledAction> create(JSC::ExecState*, DOMWrapperWorld* isolatedWorld, ContentSecurityPolicy*);
 
         void execute(ScriptExecutionContext*);
 

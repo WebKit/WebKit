@@ -24,6 +24,7 @@
 #include "config.h"
 #include "ScheduledAction.h"
 
+#include "ContentSecurityPolicy.h"
 #include "DOMWindow.h"
 #include "Document.h"
 #include "Frame.h"
@@ -46,11 +47,13 @@ using namespace JSC;
 
 namespace WebCore {
 
-PassOwnPtr<ScheduledAction> ScheduledAction::create(ExecState* exec, DOMWrapperWorld* isolatedWorld)
+PassOwnPtr<ScheduledAction> ScheduledAction::create(ExecState* exec, DOMWrapperWorld* isolatedWorld, ContentSecurityPolicy* policy)
 {
     JSValue v = exec->argument(0);
     CallData callData;
     if (getCallData(v, callData) == CallTypeNone) {
+        if (policy && !policy->allowEval())
+            return 0;
         UString string = v.toString(exec);
         if (exec->hadException())
             return 0;

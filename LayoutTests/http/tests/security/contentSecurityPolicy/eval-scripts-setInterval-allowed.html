@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="X-WebKit-CSP" content="script-src 'none'; options disable-xss-protection eval-script">
+</head>
+<pre>
+<script>
+if (window.layoutTestController) {
+    layoutTestController.dumpAsText();
+    layoutTestController.waitUntilDone();
+}
+
+var id_string = setInterval("clearInterval(id_string); alert('PASS 1 of 2')", 0);
+if (id_string == 0)
+    document.write('FAIL: Return value for string (should not be 0): ' + id_string);
+
+var id_function = setInterval(function() {
+  clearInterval(id_function);
+  alert('PASS 2 of 2');
+  if (window.layoutTestController)
+      layoutTestController.notifyDone();
+}, 0);
+if (id_function == 0)
+    document.write('FAIL: Return value for function (should not be 0): ' + id_function);
+</script>
+</pre>
+</body>
+</html>

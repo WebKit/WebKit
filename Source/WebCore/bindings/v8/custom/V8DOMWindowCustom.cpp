@@ -32,6 +32,7 @@
 #include "V8DOMWindow.h"
 
 #include "Chrome.h"
+#include "ContentSecurityPolicy.h"
 #include "DOMTimer.h"
 #include "DOMWindow.h"
 #include "ExceptionCode.h"
@@ -131,6 +132,8 @@ v8::Handle<v8::Value> WindowSetTimeoutImpl(const v8::Arguments& args, bool singl
 
         id = DOMTimer::install(scriptContext, action, timeout, singleShot);
     } else {
+        if (imp->document() && !imp->document()->contentSecurityPolicy()->allowEval())
+            return v8::Integer::New(0);
         id = DOMTimer::install(scriptContext, new ScheduledAction(V8Proxy::context(imp->frame()), functionString), timeout, singleShot);
     }
 
