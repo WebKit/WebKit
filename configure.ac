@@ -402,6 +402,14 @@ AC_ARG_ENABLE(meter_tag,
               [],[enable_meter_tag="yes"])
 AC_MSG_RESULT([$enable_meter_tag])
 
+# check whether to enable page visibility API.
+AC_MSG_CHECKING([whether to enable Page Visibility API support])
+AC_ARG_ENABLE(page_visibility_api,
+              AC_HELP_STRING([--enable-page-visibility-api],
+                             [enable page visibility api[default=no]]),
+              [],[enable_page_visibility_api="no"])
+AC_MSG_RESULT([$enable_page_visibility_api])
+
 # check whether to enable the progress tag
 AC_MSG_CHECKING([whether to enable HTML5 progress tag])
 AC_ARG_ENABLE(progress_tag,
@@ -1053,6 +1061,7 @@ AM_CONDITIONAL([ENABLE_3D_TRANSFORMS],[test "$enable_3d_transforms" = "yes"])
 AM_CONDITIONAL([ENABLE_WEBGL],[test "$enable_webgl" = "yes"])
 AM_CONDITIONAL([ENABLE_BLOB],[test "$enable_blob" = "yes"])
 AM_CONDITIONAL([ENABLE_METER_TAG],[test "$enable_meter_tag" = "yes"])
+AM_CONDITIONAL([ENABLE_PAGE_VISIBILITY_API],[test "$enable_page_visibility_api" = "yes"])
 AM_CONDITIONAL([ENABLE_PROGRESS_TAG],[test "$enable_progress_tag" = "yes"])
 AM_CONDITIONAL([ENABLE_CHANNEL_MESSAGING],[test "$enable_channel_messaging" = "yes"])
 AM_CONDITIONAL([ENABLE_JAVASCRIPT_DEBUGGER],[test "$enable_javascript_debugger" = "yes"])
@@ -1163,6 +1172,7 @@ Features:
  HTML5 offline web applications support                   : $enable_offline_web_applications
  HTML5 channel messaging support                          : $enable_channel_messaging
  HTML5 meter element support                              : $enable_meter_tag
+ Page Visibility API support                              : $enable_page_visibility_api
  HTML5 progress element support                           : $enable_progress_tag
  HTML5 client-side session and persistent storage support : $enable_dom_storage
  HTML5 client-side database storage support               : $enable_database

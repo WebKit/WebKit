@@ -96,6 +96,7 @@ my (
     $notificationsSupport,
     $offlineWebApplicationSupport,
     $orientationEventsSupport,
+    $pageVisibilityApiSupport,
     $progressTagSupport,
     $quotaSupport,
     $registerProtocolHandlerSupport,
@@ -225,6 +226,9 @@ my @features = (
 
     { option => "orientation-events", desc => "Toggle Orientation Events support",
       define => "ENABLE_ORIENTATION_EVENTS", default => 0, value => \$orientationEventsSupport },
+
+    { option => "page-visibility-api", desc => "Page Visibility API support",
+      define => "ENABLE_PAGE_VISIBILITY_API", default => 0, value => \$pageVisibilityApiSupport },
 
     { option => "progress-tag", desc => "Progress Tag support",
       define => "ENABLE_PROGRESS_TAG", default => 1, value => \$progressTagSupport },

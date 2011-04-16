@@ -1,3 +1,12 @@
+2011-04-15  Shishir Agrawal  <shishir@chromium.org>
+
+        Reviewed by James Robinson.
+
+        Add a flag to guard Page Visibility API changes.
+        https://bugs.webkit.org/show_bug.cgi?id=58464
+
+        * Scripts/build-webkit:
+
 2011-04-15  Chang Shu  <cshu@webkit.org>
 
         Reviewed by Alexey Proskuryakov.
