@@ -1,3 +1,16 @@
+2011-04-16  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Simon Fraser.
+
+        Pages in the PageCache don't have the correct visited link coloring after being restored
+        https://bugs.webkit.org/show_bug.cgi?id=58721
+
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::visitedLinkStateChanged):
+        (WebKit::WebProcess::allVisitedLinkStateChanged):
+        Mark all pages in the page cache as needing visited link style recalc
+        whenever visited link information changes.
+
 2011-04-15  Daniel Bates  <dbates@webkit.org>
 
         Attempt to fix the Qt Linux Release build after changeset 84064 <http://trac.webkit.org/changeset/84064>

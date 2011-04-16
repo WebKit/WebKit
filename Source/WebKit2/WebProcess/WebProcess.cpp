@@ -59,6 +59,7 @@
 #include <WebCore/Logging.h>
 #include <WebCore/MemoryCache.h>
 #include <WebCore/Page.h>
+#include <WebCore/PageCache.h>
 #include <WebCore/PageGroup.h>
 #include <WebCore/ResourceHandle.h>
 #include <WebCore/SchemeRegistry.h>
@@ -69,7 +70,6 @@
 #include <wtf/RandomNumber.h>
 
 #ifndef NDEBUG
-#include <WebCore/MemoryCache.h>
 #include <WebCore/GCController.h>
 #endif
 
@@ -283,6 +283,8 @@ void WebProcess::visitedLinkStateChanged(const Vector<WebCore::LinkHash>& linkHa
         for (; it != end; ++it)
             Page::visitedStateChanged(PageGroup::pageGroup(it->second->identifier()), linkHashes[i]);
     }
+
+    pageCache()->markPagesForVistedLinkStyleRecalc();
 }
 
 void WebProcess::allVisitedLinkStateChanged()
@@ -292,6 +294,8 @@ void WebProcess::allVisitedLinkStateChanged()
     HashMap<uint64_t, RefPtr<WebPageGroupProxy> >::const_iterator end = m_pageGroupMap.end();
     for (; it != end; ++it)
         Page::allVisitedStateChanged(PageGroup::pageGroup(it->second->identifier()));
+
+    pageCache()->markPagesForVistedLinkStyleRecalc();
 }
 
 bool WebProcess::isLinkVisited(LinkHash linkHash) const

@@ -26,6 +26,7 @@
 #include "config.h"
 #include "CachedPage.h"
 
+#include "CSSStyleSelector.h"
 #include "FocusController.h"
 #include "Frame.h"
 #include "FrameView.h"
@@ -49,6 +50,7 @@ PassRefPtr<CachedPage> CachedPage::create(Page* page)
 CachedPage::CachedPage(Page* page)
     : m_timeStamp(currentTime())
     , m_cachedMainFrame(CachedFrame::create(page->mainFrame()))
+    , m_needStyleRecalcForVisitedLinks(false)
 {
 #ifndef NDEBUG
     cachedPageCounter.increment();
@@ -80,7 +82,14 @@ void CachedPage::restore(Page* page)
         if (node->isElementNode())
             static_cast<Element*>(node)->updateFocusAppearance(true);
     }
-    
+
+    if (m_needStyleRecalcForVisitedLinks) {
+        for (Frame* frame = page->mainFrame(); frame; frame = frame->tree()->traverseNext()) {
+            if (CSSStyleSelector* styleSelector = frame->document()->styleSelector())
+                styleSelector->allVisitedStateChanged();
+        }
+    }
+
     clear();
 }
 
@@ -89,6 +98,7 @@ void CachedPage::clear()
     ASSERT(m_cachedMainFrame);
     m_cachedMainFrame->clear();
     m_cachedMainFrame = 0;
+    m_needStyleRecalcForVisitedLinks = false;
 }
 
 void CachedPage::destroy()

@@ -59,6 +59,8 @@ namespace WebCore {
         int frameCount() const;
         int autoreleasedPageCount() const;
 
+        void markPagesForVistedLinkStyleRecalc();
+
     private:
         typedef HashSet<RefPtr<CachedPage> > CachedPageSet;
 

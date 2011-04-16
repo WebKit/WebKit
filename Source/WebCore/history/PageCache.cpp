@@ -341,6 +341,12 @@ int PageCache::autoreleasedPageCount() const
     return m_autoreleaseSet.size();
 }
 
+void PageCache::markPagesForVistedLinkStyleRecalc()
+{
+    for (HistoryItem* current = m_head; current; current = current->m_next)
+        current->m_cachedPage->markForVistedLinkStyleRecalc();
+}
+
 void PageCache::add(PassRefPtr<HistoryItem> prpItem, Page* page)
 {
     ASSERT(prpItem);

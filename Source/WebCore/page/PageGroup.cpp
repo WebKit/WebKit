@@ -33,6 +33,7 @@
 #include "GroupSettings.h"
 #include "IDBFactoryBackendInterface.h"
 #include "Page.h"
+#include "PageCache.h"
 #include "SecurityOrigin.h"
 #include "Settings.h"
 #include "StorageNamespace.h"
@@ -202,6 +203,7 @@ inline void PageGroup::addVisitedLink(LinkHash hash)
         return;
 #endif
     Page::visitedStateChanged(this, hash);
+    pageCache()->markPagesForVistedLinkStyleRecalc();
 }
 
 void PageGroup::addVisitedLink(const KURL& url)
@@ -226,11 +228,13 @@ void PageGroup::removeVisitedLinks()
         return;
     m_visitedLinkHashes.clear();
     Page::allVisitedStateChanged(this);
+    pageCache()->markPagesForVistedLinkStyleRecalc();
 }
 
 void PageGroup::removeAllVisitedLinks()
 {
     Page::removeAllVisitedLinks();
+    pageCache()->markPagesForVistedLinkStyleRecalc();
 }
 
 void PageGroup::setShouldTrackVisitedLinks(bool shouldTrack)

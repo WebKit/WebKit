@@ -50,11 +50,14 @@ public:
     
     CachedFrame* cachedMainFrame() { return m_cachedMainFrame.get(); }
 
+    void markForVistedLinkStyleRecalc() { m_needStyleRecalcForVisitedLinks = true; }
+
 private:
     CachedPage(Page*);
 
     double m_timeStamp;
     RefPtr<CachedFrame> m_cachedMainFrame;
+    bool m_needStyleRecalcForVisitedLinks;
 };
 
 } // namespace WebCore
