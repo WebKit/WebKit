@@ -1,3 +1,16 @@
+2011-04-15  Vsevolod Vlasov  <vsevik@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        Show a console message when X-Frame-Options blocks a load
+        https://bugs.webkit.org/show_bug.cgi?id=39087
+
+        Added console message when X-Frame-Options headers block resource loading
+
+        * http/tests/inspector/network/x-frame-options-deny-expected.txt:
+        * http/tests/security/XFrameOptions/x-frame-options-deny-expected.txt:
+        * http/tests/security/XFrameOptions/x-frame-options-parent-same-origin-deny-expected.txt:
+
 2011-04-15  Luiz Agostini  <luiz.agostini@openbossa.org>
 
         Rubberstamped by Andreas Kling.
