@@ -56,6 +56,7 @@ public:
     bool allowImageFromSource(const KURL&) const;
     bool allowStyleFromSource(const KURL&) const;
     bool allowFontFromSource(const KURL&) const;
+    bool allowMediaFromSource(const KURL&) const;
 
 private:
     explicit ContentSecurityPolicy(SecurityOrigin*);
@@ -73,6 +74,7 @@ private:
     OwnPtr<CSPDirective> m_imgSrc;
     OwnPtr<CSPDirective> m_styleSrc;
     OwnPtr<CSPDirective> m_fontSrc;
+    OwnPtr<CSPDirective> m_mediaSrc;
     OwnPtr<CSPOptions> m_options;
 };
 

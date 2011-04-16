@@ -528,6 +528,11 @@ bool ContentSecurityPolicy::allowFontFromSource(const KURL& url) const
     return !m_fontSrc || m_fontSrc->allows(url);
 }
 
+bool ContentSecurityPolicy::allowMediaFromSource(const KURL& url) const
+{
+    return !m_mediaSrc || m_mediaSrc->allows(url);
+}
+
 // policy            = directive-list
 // directive-list    = [ directive *( ";" [ directive ] ) ]
 //
@@ -606,6 +611,7 @@ void ContentSecurityPolicy::addDirective(const String& name, const String& value
     DEFINE_STATIC_LOCAL(String, imgSrc, ("img-src"));
     DEFINE_STATIC_LOCAL(String, styleSrc, ("style-src"));
     DEFINE_STATIC_LOCAL(String, fontSrc, ("font-src"));
+    DEFINE_STATIC_LOCAL(String, mediaSrc, ("media-src"));
     DEFINE_STATIC_LOCAL(String, options, ("options"));
 
     ASSERT(!name.isEmpty());
@@ -620,6 +626,8 @@ void ContentSecurityPolicy::addDirective(const String& name, const String& value
         m_styleSrc = adoptPtr(new CSPDirective(value, m_origin.get()));
     else if (!m_fontSrc && equalIgnoringCase(name, fontSrc))
         m_fontSrc = adoptPtr(new CSPDirective(value, m_origin.get()));
+    else if (!m_mediaSrc && equalIgnoringCase(name, mediaSrc))
+        m_mediaSrc = adoptPtr(new CSPDirective(value, m_origin.get()));
     else if (!m_options && equalIgnoringCase(name, options))
         m_options = adoptPtr(new CSPOptions(value));
 }

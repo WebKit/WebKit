@@ -1,0 +1,2 @@
+END OF TEST
+This test passes if it doesn't alert failure.

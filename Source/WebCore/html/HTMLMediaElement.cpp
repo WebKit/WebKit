@@ -33,6 +33,7 @@
 #include "ChromeClient.h"
 #include "ClientRect.h"
 #include "ClientRectList.h"
+#include "ContentSecurityPolicy.h"
 #include "ContentType.h"
 #include "CSSPropertyNames.h"
 #include "CSSValueKeywords.h"
@@ -736,6 +737,9 @@ bool HTMLMediaElement::isSafeToLoadURL(const KURL& url, InvalidSourceAction acti
         LOG(Media, "HTMLMediaElement::isSafeToLoadURL(%s) -> FALSE rejected by SecurityOrigin", urlForLogging(url.string()).utf8().data());
         return false;
     }
+
+    if (!document()->contentSecurityPolicy()->allowMediaFromSource(url))
+        return false;
 
     return true;
 }

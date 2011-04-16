@@ -2,6 +2,29 @@
 
         Reviewed by Eric Seidel.
 
+        CSP media-src is missing
+        https://bugs.webkit.org/show_bug.cgi?id=58642
+
+        Yay HTMLMediaElement for having the exact hook we need!
+
+        Tests: http/tests/security/contentSecurityPolicy/media-src-allowed.html
+               http/tests/security/contentSecurityPolicy/media-src-blocked.html
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::isSafeToLoadURL):
+            - Although it's tempting to add this branch to the previous
+              if-block, that results in the wrong error message being logged to
+              the console (covered by the "blocked" test).
+        * page/ContentSecurityPolicy.cpp:
+        (WebCore::ContentSecurityPolicy::allowMediaFromSource):
+        (WebCore::ContentSecurityPolicy::addDirective):
+        * page/ContentSecurityPolicy.h:
+            - These changes are routine.
+
+2011-04-15  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
         CSP should block string arguments to setTimeout and setInterval unless options eval-script
         https://bugs.webkit.org/show_bug.cgi?id=58610
 

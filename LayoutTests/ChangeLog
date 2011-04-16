@@ -2,6 +2,20 @@
 
         Reviewed by Eric Seidel.
 
+        CSP media-src is missing
+        https://bugs.webkit.org/show_bug.cgi?id=58642
+
+        These tests are adapted from the other media loading tests.
+
+        * http/tests/security/contentSecurityPolicy/media-src-allowed-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/media-src-allowed.html: Added.
+        * http/tests/security/contentSecurityPolicy/media-src-blocked-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/media-src-blocked.html: Added.
+
+2011-04-15  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
         CSP should block string arguments to setTimeout and setInterval unless options eval-script
         https://bugs.webkit.org/show_bug.cgi?id=58610
 
