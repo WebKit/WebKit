@@ -1,3 +1,17 @@
+2011-04-15  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Gavin Barraclough.
+
+        Remove DeprecatedPtr
+        https://bugs.webkit.org/show_bug.cgi?id=58718
+
+        As simple as it sounds.
+
+        * heap/MarkStack.h:
+        (JSC::MarkStack::append):
+        * runtime/JSValue.h:
+        * runtime/WriteBarrier.h:
+
 2011-04-15  Gavin Barraclough  <barraclough@apple.com>
 
         Reviewed by Oliver Hunt.

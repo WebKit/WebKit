@@ -43,51 +43,6 @@ inline void writeBarrier(JSGlobalData&, const JSCell*, JSCell*)
 typedef enum { } Unknown;
 typedef JSValue* HandleSlot;
 
-// FIXME: Remove all uses of this class.
-template <class T> class DeprecatedPtr {
-public:
-    DeprecatedPtr() : m_cell(0) { }
-    DeprecatedPtr(T* cell) : m_cell(reinterpret_cast<JSCell*>(cell)) { }
-    T* get() const { return reinterpret_cast<T*>(m_cell); }
-    T* operator*() const { return static_cast<T*>(m_cell); }
-    T* operator->() const { return static_cast<T*>(m_cell); }
-    
-    JSCell** slot() { return &m_cell; }
-    
-    typedef T* (DeprecatedPtr::*UnspecifiedBoolType);
-    operator UnspecifiedBoolType*() const { return m_cell ? reinterpret_cast<UnspecifiedBoolType*>(1) : 0; }
-
-    bool operator!() const { return !m_cell; }
-
-protected:
-    JSCell* m_cell;
-};
-
-// FIXME: Remove all uses of this class.
-template <> class DeprecatedPtr<Unknown> {
-public:
-    DeprecatedPtr() { }
-    DeprecatedPtr(JSValue value) : m_value(value) { }
-    DeprecatedPtr(JSCell* value) : m_value(value) { }
-    const JSValue& get() const { return m_value; }
-    const JSValue* operator*() const { return &m_value; }
-    const JSValue* operator->() const { return &m_value; }
-    
-    JSValue* slot() { return &m_value; }
-    
-    typedef JSValue (DeprecatedPtr::*UnspecifiedBoolType);
-    operator UnspecifiedBoolType*() const { return m_value ? reinterpret_cast<UnspecifiedBoolType*>(1) : 0; }
-    bool operator!() const { return !m_value; }
-    
-private:
-    JSValue m_value;
-};
-
-template <typename U, typename V> inline bool operator==(const DeprecatedPtr<U>& lhs, const DeprecatedPtr<V>& rhs)
-{
-    return lhs.get() == rhs.get();
-}
-
 template <typename T> struct JSValueChecker {
     static const bool IsJSValue = false;
 };
