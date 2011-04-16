@@ -499,6 +499,8 @@ WebInspector.doLoadedDone = function()
         ConsoleAgent.setMonitoringXHREnabled(true);
     ConsoleAgent.enable(this.console.setConsoleMessageExpiredCount.bind(this.console));
 
+    DatabaseAgent.enable();
+
     WebInspector.showPanel(WebInspector.settings.lastActivePanel);
 
     function propertyNamesCallback(error, names)

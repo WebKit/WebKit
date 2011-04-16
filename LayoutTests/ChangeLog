@@ -1,3 +1,12 @@
+2011-04-15  Ilya Tikhonovsky  <loislo@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: The list of Database entries is empty if the page opens a database just before Web Inspector.
+        https://bugs.webkit.org/show_bug.cgi?id=57833
+
+        * http/tests/inspector-enabled/database-open.html:
+
 2011-04-15  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Eric Seidel.
