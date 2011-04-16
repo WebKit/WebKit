@@ -990,10 +990,6 @@ void WebView::didRelaunchProcess()
     ::InvalidateRect(m_window, 0, TRUE);
 }
 
-void WebView::takeFocus(bool)
-{
-}
-
 void WebView::toolTipChanged(const String&, const String& newToolTip)
 {
     if (!m_toolTipWindow)

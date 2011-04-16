@@ -196,11 +196,6 @@ void PageClientImpl::didRelaunchProcess()
     [m_wkView _didRelaunchProcess];
 }
 
-void PageClientImpl::takeFocus(bool direction)
-{
-    [m_wkView _takeFocus:direction];
-}
-
 void PageClientImpl::toolTipChanged(const String& oldToolTip, const String& newToolTip)
 {
     [m_wkView _toolTipChangedFrom:nsStringFromWebCoreString(oldToolTip) to:nsStringFromWebCoreString(newToolTip)];

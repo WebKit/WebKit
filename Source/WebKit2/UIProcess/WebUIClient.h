@@ -56,6 +56,7 @@ public:
     void showPage(WebPageProxy*);
     void close(WebPageProxy*);
 
+    void takeFocus(WebPageProxy*, WKFocusDirection);
     void focus(WebPageProxy*);
     void unfocus(WebPageProxy*);
 

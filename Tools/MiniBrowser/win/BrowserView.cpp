@@ -98,6 +98,7 @@ void BrowserView::create(RECT webViewRect, BrowserWindow* parentWindow)
         createNewPage,
         showPage,
         closePage,
+        0,          /* takeFocus */
         0,          /* focus */
         0,          /* unfocus */
         runJavaScriptAlert,

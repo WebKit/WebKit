@@ -1,3 +1,36 @@
+2011-04-15  Jeff Miller  <jeffm@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Add takeFocus callback to WKPageUIClient
+        https://bugs.webkit.org/show_bug.cgi?id=58686
+
+        On Windows, we need to handle moving focus out of the web view in the client, so add a takeFocus callback to WKPageUIClient
+        and stop handling taking focus in the framework in WKView.mm on the Mac.
+
+        * UIProcess/API/C/WKPage.h: Added WKFocusDirection enum and takeFocus to WKPageUIClient.
+        * UIProcess/API/mac/PageClientImpl.h: Removed takeFocus().
+        * UIProcess/API/mac/PageClientImpl.mm: Removed takeFocus().
+        * UIProcess/API/mac/WKView.mm: Removed _takeFocus().
+        * UIProcess/API/mac/WKViewInternal.h: Removed _takeFocus().
+        * UIProcess/API/qt/ClientImpl.cpp:
+        (qt_wk_takeFocus): Added.
+        * UIProcess/API/qt/ClientImpl.h: Added qt_wk_takeFocus.
+        * UIProcess/API/qt/qwkpage.cpp: Remove takeFocus().
+        (QWKPage::QWKPage): Added takeFocus() callback.
+        * UIProcess/PageClient.h: Removed takeFocus().
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::takeFocus): Call m_uiClient to take focus.
+        * UIProcess/WebPageProxy.h: Pass FocusDirection as a uint32_t to takeFocus().
+        * UIProcess/WebPageProxy.messages.in: Pass FocusDirection as a uint32_t in TakeFocus message.
+        * UIProcess/WebUIClient.cpp:
+        (WebKit::WebUIClient::takeFocus): Added.
+        * UIProcess/WebUIClient.h: Added takeFocus().
+        * UIProcess/win/WebView.cpp: Removed takeFocus(), which was never implemented on Windows.
+        * UIProcess/win/WebView.h: Removed takeFocus().
+        * WebProcess/WebCoreSupport/WebChromeClient.cpp:
+        (WebKit::WebChromeClient::takeFocus): Pass FocusDirection as a uint32_t in TakeFocus message.
+
 2011-04-15  Alexey Proskuryakov  <ap@apple.com>
 
         Reviewed by Sam Weinig.

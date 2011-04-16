@@ -36,7 +36,7 @@ messages -> WebPageProxy {
     SetStatusText(WTF::String statusText)
     SetToolTip(WTF::String toolTip)
     SetFocus(bool focused)
-    TakeFocus(bool direction)
+    TakeFocus(uint32_t direction)
     FocusedFrameChanged(uint64_t frameID)
     FrameSetLargestFrameChanged(uint64_t frameID)
     SetToolbarsAreVisible(bool toolbarsAreVisible)

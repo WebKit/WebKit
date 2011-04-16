@@ -126,11 +126,6 @@ void QWKPagePrivate::setViewportArguments(const ViewportArguments& args)
     emit q->viewportChangeRequested();
 }
 
-void QWKPagePrivate::takeFocus(bool direction)
-{
-    emit q->focusNextPrevChild(direction);
-}
-
 PassOwnPtr<DrawingAreaProxy> QWKPagePrivate::createDrawingAreaProxy()
 {
     // FIXME: We should avoid this cast by decoupling the view from the page.
@@ -463,6 +458,7 @@ QWKPage::QWKPage(QWKContext* context)
         qt_wk_createNewPage,
         qt_wk_showPage,
         qt_wk_close,
+        qt_wk_takeFocus,
         0,  /* focus */
         0,  /* unfocus */
         qt_wk_runJavaScriptAlert,

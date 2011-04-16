@@ -659,7 +659,7 @@ private:
     void ignoreWord(const String& word);
 
     void setFocus(bool focused);
-    void takeFocus(bool direction);
+    void takeFocus(uint32_t direction);
     void setToolTip(const String&);
     void setCursor(const WebCore::Cursor&);
 

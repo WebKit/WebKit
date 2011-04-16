@@ -618,6 +618,7 @@ static void runOpenPanel(WKPageRef page, WKFrameRef frame, WKOpenPanelParameters
         createNewPage,
         showPage,
         closePage,
+        0,          /* takeFocus */
         0,          /* focus */
         0,          /* unfocus */
         runJavaScriptAlert,

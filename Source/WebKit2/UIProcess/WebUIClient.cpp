@@ -84,6 +84,14 @@ void WebUIClient::close(WebPageProxy* page)
     m_client.close(toAPI(page), m_client.clientInfo);
 }
 
+void WebUIClient::takeFocus(WebPageProxy* page, WKFocusDirection direction)
+{
+    if (!m_client.takeFocus)
+        return;
+    
+    m_client.takeFocus(toAPI(page), direction, m_client.clientInfo);
+}
+
 void WebUIClient::focus(WebPageProxy* page)
 {
     if (!m_client.focus)

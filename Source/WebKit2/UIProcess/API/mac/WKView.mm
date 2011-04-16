@@ -1982,14 +1982,6 @@ static void drawPageBackground(CGContextRef context, WebPageProxy* page, const I
     [self setNeedsDisplay:YES];
 }
 
-- (void)_takeFocus:(BOOL)forward
-{
-    if (forward)
-        [[self window] selectKeyViewFollowingView:self];
-    else
-        [[self window] selectKeyViewPrecedingView:self];
-}
-
 - (void)_setCursor:(NSCursor *)cursor
 {
     if ([NSCursor currentCursor] == cursor)

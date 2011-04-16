@@ -70,6 +70,7 @@
 #include "WebURLRequest.h"
 #include <WebCore/DragData.h>
 #include <WebCore/FloatRect.h>
+#include <WebCore/FocusDirection.h>
 #include <WebCore/MIMETypeRegistry.h>
 #include <WebCore/WindowFeatures.h>
 #include <stdio.h>
@@ -2516,9 +2517,9 @@ void WebPageProxy::setFocus(bool focused)
         m_uiClient.unfocus(this);
 }
 
-void WebPageProxy::takeFocus(bool direction)
+void WebPageProxy::takeFocus(uint32_t direction)
 {
-    m_pageClient->takeFocus(direction);
+    m_uiClient.takeFocus(this, (static_cast<FocusDirection>(direction) == FocusDirectionForward) ? kWKFocusDirectionForward : kWKFocusDirectionBackward);
 }
 
 void WebPageProxy::setToolTip(const String& toolTip)

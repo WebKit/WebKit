@@ -1,3 +1,20 @@
+2011-04-15  Jeff Miller  <jeffm@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Add takeFocus callback to WKPageUIClient
+        https://bugs.webkit.org/show_bug.cgi?id=58686
+
+        Add empty WKPageUIClient entries for the takeFocus callback in the MiniBrowser and WebKitTestRunner.
+
+        * MiniBrowser/mac/BrowserWindowController.m:
+        (-[BrowserWindowController awakeFromNib]): Added empty takeFocus entry.
+        * MiniBrowser/win/BrowserView.cpp:
+        (BrowserView::create): Added empty takeFocus entry.
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::TestController::createOtherPage): Added empty takeFocus entry.
+        (WTR::TestController::initialize): Added empty takeFocus entry.
+
 2011-04-15  Ojan Vafai  <ojan@chromium.org>
 
         Reviewed by Eric Seidel.
