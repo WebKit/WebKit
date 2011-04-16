@@ -43,7 +43,7 @@
 #define ntohs(x) std_ntohs(x)
 #endif
 
-#if PLATFORM(WIN)
+#if OS(WINDOWS)
 #if CPU(BIG_ENDIAN)
 #define ntohs(x) ((uint16_t)(x))
 #define htons(x) ((uint16_t)(x))
@@ -61,7 +61,7 @@
                  (((uint32_t)(x) & 0x0000ff00) <<  8) | (((uint32_t)(x) & 0x000000ff) << 24)))
 #define htonl(x) ntohl(x)
 #endif
-#endif // PLATFORM(WIN)
+#endif // OS(WINDOWS)
 
 namespace WebCore {
 

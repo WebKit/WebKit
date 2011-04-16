@@ -1,3 +1,14 @@
+2011-04-15  Fridrich Strba  <fridrich.strba@bluewin.ch>
+
+        Reviewed by Martin Robinson.
+
+        Expand the ntohs, ntohl, htons and htonl defines for OS(WINDOWS)
+        These have to be defined for Windows in general, since win32 API
+        does not provide them.
+        https://bugs.webkit.org/show_bug.cgi?id=58582
+
+        * platform/graphics/WOFFFileFormat.cpp:
+
 2011-04-15  Vsevolod Vlasov  <vsevik@chromium.org>
 
         Reviewed by Adam Barth.
