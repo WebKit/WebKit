@@ -1,15 +1,11 @@
 <!DocType html>
 <style>
-tr:hover {
+tr:first-of-type:hover {
     opacity: 0.7
 }
 
-thead tr:nth-child(odd), tr:nth-child(even) {
+thead, tbody {
     background-color: #E3E9FF;
-}
-
-tr:nth-child(odd) {
-    background-color: #eee;
 }
 
 td {
@@ -29,10 +25,36 @@ label {
     margin-left: 10px;
 }
 
+.results-row {
+    background-color: white;
+}
+
+.results-row iframe {
+    width: 600px;
+    height: 400px;
+}
+
 #options {
     position: absolute;
     top: 0;
     right: 0;
+}
+
+.expand-button {
+    background-color: white;
+    color: blue;
+    width: 11px;
+    height: 11px;
+    border: 1px solid blue;
+    display: inline-block;
+    margin: 0 3px 0 0;
+    position: relative;
+}
+
+.expand-button-text {
+    position: absolute;
+    top: -0.3em;
+    left: 1px;
 }
 </style>
 
@@ -69,28 +91,80 @@ if (results.uses_expectations_file)
 
 html += '</tr></thead>';
 
+function parentOfType(node, selector)
+{
+    while (node = node.parentElement) {
+        if (node.webkitMatchesSelector(selector))
+            return node;
+    }
+    return null;
+}
+
+function appendResultIframe(src, parent)
+{
+    // FIXME: label the iframes appropriately
+    var result = document.createElement('iframe');
+    result.src = src;
+    parent.appendChild(result);
+}
+
+function expandExpectations(e)
+{
+    var expandLink = e.target;
+    if (expandLink.className != 'expand-button-text')
+        expandLink = expandLink.querySelector('.expand-button-text');
+
+    var isExpand = expandLink.textContent == '+';
+    var row = parentOfType(expandLink, 'tr');
+    var parentTbody = row.parentNode;
+    var existingResultsRow = parentTbody.querySelector('.results-row');
+    
+    if (!isExpand) {
+        expandLink.textContent = '+';
+        existingResultsRow.style.display = 'none';
+        return;
+    }
+    
+    var enDash = '\u2013';
+    expandLink.textContent = enDash;
+    if (existingResultsRow) {
+        existingResultsRow.style.display = '';
+        return;
+    }
+    
+    var newRow = document.createElement('tr');
+    newRow.className = 'results-row';
+    var newCell = document.createElement('td');
+    newCell.colSpan = row.querySelectorAll('td').length;
+
+    appendResultIframe(row.querySelector('.test-link').href, newCell);
+
+    var resultLinks = row.querySelectorAll('.result-link');
+    for (var i = 0; i < resultLinks.length; i++)
+        appendResultIframe(resultLinks[i].href, newCell);
+
+    newRow.appendChild(newCell);
+    parentTbody.appendChild(newRow);
+}
+
 function testLink(test)
 {
     var test_base_path;
-    if (results.layout_tests_dir && location.toString().indexOf('file://') != 0)
+    if (results.layout_tests_dir && location.toString().indexOf('file://') == 0)
         test_base_path = results.layout_tests_dir + '/';
     else
         test_base_path = 'http://trac.webkit.org/browser/trunk/LayoutTests/';
-    return '<a href="' + test_base_path + test + '">' + test + '</a>';
+    return '<span class=expand-button onclick="expandExpectations(event)"><span class=expand-button-text>+</span></span>' +
+        '<a class=test-link href="' + test_base_path + test + '">' + test + '</a>';
 }
 
 function resultLink(test_prefix, suffix, contents)
 {
-    return '<a href="' + test_prefix + suffix + '">' + contents + '</a> ';
+    return '<a class=result-link href="' + test_prefix + suffix + '">' + contents + '</a> ';
 }
-
-// FIXME: show expected/actual/diff contents inline in iframes
-// FIXME: allow zooming in on pixel diffs
 
 var hasTextFailures = false;
 var hasImageFailures = false;
-
-html += '<tbody>';
 
 var testsWithStderr = [];
 var newTests = [];
@@ -137,6 +211,7 @@ for (var test in results.tests) {
   row += '</td><td>';
 
   if (actual.indexOf('IMAGE') != -1) {
+      // FIXME: allow zooming in on pixel diffs
       hasImageFailures = true;
       row += resultLink(test_prefix, '-expected.png', 'expected') +
           resultLink(test_prefix, '-actual.png', 'actual') +
@@ -150,10 +225,10 @@ for (var test in results.tests) {
     row += '<td>' + expected + '</td>';
 
   var isExpected = results.uses_expectations_file && expected == actual;
-  html += '<tr class="' + (isExpected ? 'expected' : '') + '">' + row + '</tr>';
+  html += '<tbody class="' + (isExpected ? 'expected' : '') + '"><tr>' + row + '</tr></tbody>';
 }
 
-html += '</tbody></table>'
+html += '</table>'
 
 function appendTestList(tests, header, tableId, fileSuffix, linkName)
 {
@@ -162,8 +237,8 @@ function appendTestList(tests, header, tableId, fileSuffix, linkName)
     html += '<p>' + header + '</p><table id="' + tableId + '">';
     for (var i = 0; i < tests.length; i++) {
         var test = tests[i];
-        html += '<tr><td>' + testLink(test) + '</td>' +
-            '<td>' + resultLink(stripExtension(test), fileSuffix, linkName) + '</td></tr>';
+        html += '<tbody><tr><td>' + testLink(test) + '</td>' +
+            '<td>' + resultLink(stripExtension(test), fileSuffix, linkName) + '</td></tr></tbody>';
     }
     html += '</table>'
 }
@@ -223,24 +298,28 @@ TableSorter._updateHeaderClassNames = function(newHeader)
     newHeader.classList.add('sortHeader');
 }
 
+TableSorter._textContent = function(tbodyRow, column)
+{
+    return tbodyRow.querySelectorAll('td')[column].textContent;
+}
+
 TableSorter._sortRows = function(newHeader, reversed)
 {
     var testsTable = document.querySelector('#results-table');
     var headers = toArray(testsTable.querySelectorAll('th'));
     var sortColumn = headers.indexOf(newHeader);
 
-    var tbody = testsTable.querySelector('tbody');
-    var rows = toArray(tbody.querySelectorAll('tr'));
+    var rows = toArray(testsTable.querySelectorAll('tbody'));
 
     rows.sort(function(a, b) {
         // Only need to support lexicographic sort for now.
-        var aText = a.childNodes[sortColumn].textContent;
-        var bText = b.childNodes[sortColumn].textContent;
+        var aText = TableSorter._textContent(a, sortColumn);
+        var bText = TableSorter._textContent(b, sortColumn);
         
         // Forward sort equal values by test name.
         if (sortColumn && aText == bText) {
-            var aTestName = a.childNodes[0].textContent;
-            var bTestName = b.childNodes[0].textContent;
+            var aTestName = TableSorter._textContent(a, 0);
+            var bTestName = TableSorter._textContent(b, 0);
             if (aTestName == bTestName)
                 return 0;
             return aTestName < bTestName ? -1 : 1;
@@ -253,7 +332,7 @@ TableSorter._sortRows = function(newHeader, reversed)
     });
 
     for (var i = 0; i < rows.length; i++)
-        tbody.appendChild(rows[i]);
+        testsTable.appendChild(rows[i]);
 }
 
 TableSorter.sortColumn = function(columnNumber)

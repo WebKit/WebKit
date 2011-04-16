@@ -2,6 +2,18 @@
 
         Reviewed by Eric Seidel.
 
+        show diffs+test inline in the results page
+        https://bugs.webkit.org/show_bug.cgi?id=58723
+        
+        Put each row in it's own tbody and sort based on tbodies. That way
+        we can append the results to the tbody inline as another table row.
+
+        * Scripts/webkitpy/layout_tests/layout_package/json_results.html:
+
+2011-04-16  Ojan Vafai  <ojan@chromium.org>
+
+        Reviewed by Eric Seidel.
+
         handle new tests in the new results html file
         https://bugs.webkit.org/show_bug.cgi?id=58715
 
