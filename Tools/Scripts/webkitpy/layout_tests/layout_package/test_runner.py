@@ -145,6 +145,8 @@ def summarize_results(port_obj, expectations, result_summary, retry_summary, tes
         tests[test] = {}
         tests[test]['expected'] = expected
         tests[test]['actual'] = " ".join(actual)
+        # FIXME: Set this correctly once https://webkit.org/b/37739 is fixed.
+        tests[test]['has_stderr'] = False
 
         if filename in test_timings_map:
             time_seconds = test_timings_map[filename]

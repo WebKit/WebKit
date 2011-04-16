@@ -4,12 +4,12 @@ tr:hover {
     opacity: 0.7
 }
 
-tr:nth-child(odd) {
+thead tr:nth-child(odd), tr:nth-child(even) {
     background-color: #E3E9FF;
 }
 
-thead tr, tr:nth-child(even) {
-    background-color: #BCF;
+tr:nth-child(odd) {
+    background-color: #eee;
 }
 
 td {
@@ -27,6 +27,12 @@ th {
 
 label {
     margin-left: 10px;
+}
+
+#options {
+    position: absolute;
+    top: 0;
+    right: 0;
 }
 </style>
 
@@ -47,12 +53,12 @@ function stripExtension(test)
     return test.substring(0, index);
 }
 
-var html = 'Tests where results did not match expected results:';
+var html = '<p>Tests where results did not match expected results:</p>';
 
 if (results.uses_expectations_file)
-    html += '<label><input class="unexpected-results" type=checkbox checked>Only show unexpected results</label>';
+    html += '<div id=options><label><input class="unexpected-results" type=checkbox checked>Only show unexpected results</label></div>';
 
-html += '<table><thead><tr>' +
+html += '<table id="results-table"><thead><tr>' +
         '<th>test</th>' +
         '<th id="text-results-header">text results</th>' +
         '<th id="image-results-header">image results</th>' +
@@ -63,11 +69,15 @@ if (results.uses_expectations_file)
 
 html += '</tr></thead>';
 
-var test_base_path;
-if (results.layout_tests_dir && location.toString().indexOf('file://') != 0)
-    test_base_path = results.layout_tests_dir + '/';
-else
-    test_base_path = 'http://trac.webkit.org/browser/trunk/LayoutTests/';
+function testLink(test)
+{
+    var test_base_path;
+    if (results.layout_tests_dir && location.toString().indexOf('file://') != 0)
+        test_base_path = results.layout_tests_dir + '/';
+    else
+        test_base_path = 'http://trac.webkit.org/browser/trunk/LayoutTests/';
+    return '<a href="' + test_base_path + test + '">' + test + '</a>';
+}
 
 function resultLink(test_prefix, suffix, contents)
 {
@@ -76,22 +86,29 @@ function resultLink(test_prefix, suffix, contents)
 
 // FIXME: show expected/actual/diff contents inline in iframes
 // FIXME: allow zooming in on pixel diffs
-// FIXME: store stderr information in the json
-// FIXME: add links to the httpd access/error logs
 // FIXME: handle new tests
 
 var hasTextFailures = false;
 var hasImageFailures = false;
 
 html += '<tbody>';
+
+var testsWithStderr = [];
+var hasHttpTests = false;
+
 for (var test in results.tests) {
+  if (results.tests[test].has_stderr)
+      testsWithStderr.push(test);
+
+  hasHttpTests = hasHttpTests || test.indexOf('http/') == 0;
+
   var actual = results.tests[test].actual;
   var expected = results.tests[test].expected || 'PASS';
   
   if (actual == 'PASS' && (!results.uses_expectations_file || expected == 'PASS'))
     continue;
 
-  var row = '<td><a href="' + test_base_path + test + '">' + test + '</a></td>';
+  var row = '<td>' + testLink(test) + '</td>';
   var test_prefix = stripExtension(test);
 
   row += '<td>';
@@ -121,7 +138,6 @@ for (var test in results.tests) {
   }
 
   row += '</td>';
-  // FIXME: Handle stderr output.
   row += '<td>' + actual + '</td>';
   
   if (results.uses_expectations_file)
@@ -132,6 +148,24 @@ for (var test in results.tests) {
 }
 
 html += '</tbody></table>'
+
+if (testsWithStderr.length) {
+    testsWithStderr.sort();
+
+    html += '<p>Tests that had stderr output:</p><table id="stderr-table">';
+    for (var i = 0; i < testsWithStderr.length; i++) {
+        var test = testsWithStderr[i];
+        html += '<tr><td>' + testLink(test) + '</td>' +
+            '<td>' + resultLink(stripExtension(test), '-stderr.txt', 'stderr') + '</td></tr>';
+    }
+    html += '</table>'
+}
+
+if (hasHttpTests) {
+    html += '<p>httpd access log: <a href="access_log.txt">access_log.txt</a></p>' +
+        '<p>httpd error log: <a href="error_log.txt">error_log.txt</a></p>';
+}
+
 document.write(html);
 
 function toArray(nodeList)
@@ -178,7 +212,7 @@ TableSorter._updateHeaderClassNames = function(newHeader)
 
 TableSorter._sortRows = function(newHeader, reversed)
 {
-    var testsTable = document.querySelector('table');
+    var testsTable = document.querySelector('#results-table');
     var headers = toArray(testsTable.querySelectorAll('th'));
     var sortColumn = headers.indexOf(newHeader);
 
@@ -211,7 +245,7 @@ TableSorter._sortRows = function(newHeader, reversed)
 
 TableSorter.sortColumn = function(columnNumber)
 {
-    var newHeader = document.querySelector('table').querySelectorAll('th')[columnNumber];
+    var newHeader = document.querySelector('#results-table').querySelectorAll('th')[columnNumber];
     TableSorter._sort(newHeader);
 }
 
@@ -234,7 +268,7 @@ TableSorter._sort = function(newHeader)
     TableSorter._sortRows(newHeader, reversed);
 }
 
-document.querySelector('table').addEventListener('click', TableSorter.handleClick, false);
+document.querySelector('#results-table').addEventListener('click', TableSorter.handleClick, false);
 TableSorter.sortColumn(0);
 
 var unexpectedStyleNode = document.createElement('style');
