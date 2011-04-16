@@ -1,3 +1,104 @@
+2011-04-16  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Fix border drawing tests to drop -webkit prefix on border-radius, and make the tests compatible with Firefox
+        https://bugs.webkit.org/show_bug.cgi?id=58734
+        
+        Drop the -webkit prefix on border-radius in the tests, and remove -moz-border-radius,
+        since Firefox supports the unprefixed property now. This avoids the problem where
+        -moz-border-radius and -webkit-border-radius had different behaviors when given two values.
+        
+        Also unprefix box-sizing for WebKit, and add a -moz prefixed version for Firefox.
+        
+        Add a test that compares the behavior of -webkit-border-radius and border-radius with
+        two values.
+
+        * fast/borders/border-radius-circle.html:
+        * fast/borders/border-radius-constraints.html:
+        * fast/borders/border-radius-groove-01.html:
+        * fast/borders/border-radius-groove-02.html:
+        * fast/borders/border-radius-groove-03.html:
+        * fast/borders/border-radius-wide-border-01.html:
+        * fast/borders/border-radius-wide-border-02.html:
+        * fast/borders/border-radius-wide-border-03.html:
+        * fast/borders/border-radius-wide-border-04.html:
+        * fast/borders/borderRadiusAllStylesAllCorners.html:
+        * fast/borders/borderRadiusArcs01.html:
+        * fast/borders/borderRadiusDashed01.html:
+        * fast/borders/borderRadiusDashed02.html:
+        * fast/borders/borderRadiusDashed03.html:
+        * fast/borders/borderRadiusDashed04.html:
+        * fast/borders/borderRadiusDashed05.html:
+        * fast/borders/borderRadiusDashed06.html:
+        * fast/borders/borderRadiusDotted01.html:
+        * fast/borders/borderRadiusDotted02.html:
+        * fast/borders/borderRadiusDotted03.html:
+        * fast/borders/borderRadiusDotted04.html:
+        * fast/borders/borderRadiusDotted05.html:
+        * fast/borders/borderRadiusDotted06.html:
+        * fast/borders/borderRadiusDouble02.html:
+        * fast/borders/borderRadiusDouble03.html:
+        * fast/borders/borderRadiusDouble04.html:
+        * fast/borders/borderRadiusDouble05.html:
+        * fast/borders/borderRadiusDouble06.html:
+        * fast/borders/borderRadiusDouble07.html:
+        * fast/borders/borderRadiusDouble08.html:
+        * fast/borders/borderRadiusDouble09.html:
+        * fast/borders/borderRadiusGroove01.html:
+        * fast/borders/borderRadiusGroove02.html:
+        * fast/borders/webkit-border-radius.html: Added.
+        * platform/mac/fast/borders/border-radius-groove-01-expected.checksum:
+        * platform/mac/fast/borders/border-radius-groove-01-expected.png:
+        * platform/mac/fast/borders/border-radius-groove-02-expected.png:
+        * platform/mac/fast/borders/border-radius-groove-03-expected.checksum:
+        * platform/mac/fast/borders/border-radius-groove-03-expected.png:
+        * platform/mac/fast/borders/border-radius-inline-flow-expected.png:
+        * platform/mac/fast/borders/border-radius-split-inline-expected.png:
+        * platform/mac/fast/borders/border-radius-wide-border-01-expected.png:
+        * platform/mac/fast/borders/border-radius-wide-border-02-expected.png:
+        * platform/mac/fast/borders/border-radius-wide-border-03-expected.checksum:
+        * platform/mac/fast/borders/border-radius-wide-border-03-expected.png:
+        * platform/mac/fast/borders/border-radius-wide-border-04-expected.checksum:
+        * platform/mac/fast/borders/border-radius-wide-border-04-expected.png:
+        * platform/mac/fast/borders/borderRadiusDashed01-expected.png:
+        * platform/mac/fast/borders/borderRadiusDashed02-expected.png:
+        * platform/mac/fast/borders/borderRadiusDashed03-expected.png:
+        * platform/mac/fast/borders/borderRadiusDashed04-expected.png:
+        * platform/mac/fast/borders/borderRadiusDashed05-expected.png:
+        * platform/mac/fast/borders/borderRadiusDashed06-expected.checksum:
+        * platform/mac/fast/borders/borderRadiusDashed06-expected.png:
+        * platform/mac/fast/borders/borderRadiusDotted01-expected.png:
+        * platform/mac/fast/borders/borderRadiusDotted02-expected.png:
+        * platform/mac/fast/borders/borderRadiusDotted03-expected.png:
+        * platform/mac/fast/borders/borderRadiusDotted04-expected.png:
+        * platform/mac/fast/borders/borderRadiusDotted05-expected.png:
+        * platform/mac/fast/borders/borderRadiusDotted06-expected.checksum:
+        * platform/mac/fast/borders/borderRadiusDotted06-expected.png:
+        * platform/mac/fast/borders/borderRadiusDouble01-expected.png:
+        * platform/mac/fast/borders/borderRadiusDouble02-expected.png:
+        * platform/mac/fast/borders/borderRadiusDouble03-expected.png:
+        * platform/mac/fast/borders/borderRadiusDouble04-expected.png:
+        * platform/mac/fast/borders/borderRadiusDouble05-expected.checksum:
+        * platform/mac/fast/borders/borderRadiusDouble05-expected.png:
+        * platform/mac/fast/borders/borderRadiusDouble06-expected.checksum:
+        * platform/mac/fast/borders/borderRadiusDouble06-expected.png:
+        * platform/mac/fast/borders/borderRadiusDouble07-expected.checksum:
+        * platform/mac/fast/borders/borderRadiusDouble07-expected.png:
+        * platform/mac/fast/borders/borderRadiusDouble08-expected.checksum:
+        * platform/mac/fast/borders/borderRadiusDouble08-expected.png:
+        * platform/mac/fast/borders/borderRadiusDouble09-expected.checksum:
+        * platform/mac/fast/borders/borderRadiusDouble09-expected.png:
+        * platform/mac/fast/borders/borderRadiusGroove01-expected.png:
+        * platform/mac/fast/borders/borderRadiusGroove02-expected.png:
+        * platform/mac/fast/borders/borderRadiusInset01-expected.png:
+        * platform/mac/fast/borders/borderRadiusInvalidColor-expected.png:
+        * platform/mac/fast/borders/borderRadiusOutset01-expected.png:
+        * platform/mac/fast/borders/borderRadiusRidge01-expected.png:
+        * platform/mac/fast/borders/borderRadiusSolid01-expected.png:
+        * platform/mac/fast/borders/borderRadiusSolid02-expected.png:
+        * platform/mac/fast/borders/borderRadiusSolid03-expected.png:
+
 2011-04-16  Leo Yang  <leoyang.webkit@gmail.com>
 
         Reviewed by Nikolas Zimmermann.
