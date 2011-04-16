@@ -1,3 +1,9 @@
+2011-04-15  Gavin Barraclough  <barraclough@apple.com>
+
+        Errrk! - build fix from !x86-64.
+
+        * dfg/DFGNode.h:
+
 2011-04-15  David Levin  <levin@chromium.org>
 
         Revert of r83974.

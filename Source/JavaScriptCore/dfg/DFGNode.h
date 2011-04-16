@@ -26,10 +26,6 @@
 #ifndef DFGNode_h
 #define DFGNode_h
 
-#if ENABLE(DFG_JIT)
-
-#include <wtf/Vector.h>
-
 // Emit various logging information for debugging, including dumping the dataflow graphs.
 #define DFG_DEBUG_VERBOSE 0
 // Enable generation of dynamic checks into the instruction stream.
@@ -43,6 +39,10 @@
 // Generate stats on how successful we were in making use of the DFG jit, and remaining on the hot path.
 #define DFG_SUCCESS_STATS 0
 
+
+#if ENABLE(DFG_JIT)
+
+#include <wtf/Vector.h>
 
 namespace JSC { namespace DFG {
 
