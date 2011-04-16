@@ -1,3 +1,14 @@
+2011-04-15  Chris Rogers  <crogers@google.com>
+
+        Reviewed by Kenneth Russell.
+
+        Reduce default kernel size of SincResampler to favor better speed over quality
+        https://bugs.webkit.org/show_bug.cgi?id=58710
+
+        No new tests since audio API is not yet implemented.
+
+        * platform/audio/SincResampler.h:
+
 2011-04-15  Fridrich Strba  <fridrich.strba@bluewin.ch>
 
         Reviewed by Martin Robinson.

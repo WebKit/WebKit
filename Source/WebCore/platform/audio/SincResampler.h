@@ -40,7 +40,7 @@ public:
     // scaleFactor == sourceSampleRate / destinationSampleRate
     // kernelSize can be adjusted for quality (higher is better)
     // numberOfKernelOffsets is used for interpolation and is the number of sub-sample kernel shifts.
-    SincResampler(double scaleFactor, unsigned kernelSize = 64, unsigned numberOfKernelOffsets = 32);
+    SincResampler(double scaleFactor, unsigned kernelSize = 32, unsigned numberOfKernelOffsets = 32);
     
     // Processes numberOfSourceFrames from source to produce numberOfSourceFrames / scaleFactor frames in destination.
     void process(float* source, float* destination, unsigned numberOfSourceFrames);
