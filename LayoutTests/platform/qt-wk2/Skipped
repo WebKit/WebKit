@@ -2151,7 +2151,6 @@ fast/parser/document-close-iframe-load.html
 fast/table/giantCellspacing.html
 fast/workers/storage/change-version-handle-reuse-sync.html
 fast/workers/storage/multiple-databases-garbage-collection.html
-fast/xmlhttprequest/xmlhttprequest-no-file-access.html
 fast/xmlhttprequest/xmlhttprequest-nonexistent-file.html
 storage/open-database-while-transaction-in-progress.html
 fast/workers/storage/open-database-creation-callback-sync.html

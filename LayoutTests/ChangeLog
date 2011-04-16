@@ -1,3 +1,16 @@
+2011-04-15  Chang Shu  <cshu@webkit.org>
+
+        Reviewed by Alexey Proskuryakov.
+
+        When a message with url embedded is added to console, the "file:" scheme
+        and path should be stripped.
+        https://bugs.webkit.org/show_bug.cgi?id=58665
+
+        Unskip passed tests.
+
+        * platform/mac-wk2/Skipped:
+        * platform/qt-wk2/Skipped:
+
 2011-04-15  Vsevolod Vlasov  <vsevik@chromium.org>
 
         Reviewed by Adam Barth.

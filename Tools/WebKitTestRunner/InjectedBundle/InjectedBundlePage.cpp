@@ -748,13 +748,38 @@ void InjectedBundlePage::willRunJavaScriptPrompt(WKBundlePageRef page, WKStringR
     static_cast<InjectedBundlePage*>(const_cast<void*>(clientInfo))->willRunJavaScriptPrompt(message, defaultValue, frame);
 }
 
+static string lastFileURLPathComponent(const string& path)
+{
+    size_t pos = path.find("file://");
+    ASSERT(string::npos != pos);
+
+    string tmpPath = path.substr(pos + 7);
+    if (tmpPath.empty())
+        return tmpPath;
+
+    // Remove the trailing delimiter
+    if (tmpPath[tmpPath.length() - 1] == '/')
+        tmpPath.erase(tmpPath.length() - 1);
+
+    pos = tmpPath.rfind('/');
+    if (string::npos != pos)
+        return tmpPath.substr(pos + 1);
+
+    return tmpPath;
+}
+
 void InjectedBundlePage::willAddMessageToConsole(WKStringRef message, uint32_t lineNumber)
 {
     if (!InjectedBundle::shared().isTestRunning())
         return;
 
-    // FIXME: Strip file: urls.
-    InjectedBundle::shared().os() << "CONSOLE MESSAGE: line " << lineNumber << ": " << message << "\n";
+    string messageString = toSTD(message);
+    size_t fileProtocolStart = messageString.find("file://");
+    if (fileProtocolStart != string::npos)
+        // FIXME: The code below does not handle additional text after url nor multiple urls. This matches DumpRenderTree implementation.
+        messageString = messageString.substr(0, fileProtocolStart) + lastFileURLPathComponent(messageString.substr(fileProtocolStart));
+
+    InjectedBundle::shared().os() << "CONSOLE MESSAGE: line " << lineNumber << ": " << messageString << "\n";
 }
 
 void InjectedBundlePage::willSetStatusbarText(WKStringRef statusbarText)

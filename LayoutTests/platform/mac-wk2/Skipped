@@ -1890,7 +1890,6 @@ fast/overflow/overflow_hidden.html
 fast/workers/storage/interrupt-database-sync.html
 fast/workers/storage/interrupt-database.html
 fast/workers/storage/use-same-database-in-page-and-workers.html
-fast/xmlhttprequest/xmlhttprequest-no-file-access.html
 fast/xmlhttprequest/xmlhttprequest-nonexistent-file.html
 http/tests/appcache/different-https-origin-resource-main.html
 http/tests/appcache/fallback.html
