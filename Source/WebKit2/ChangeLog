@@ -1,3 +1,19 @@
+2011-04-15  Alexey Proskuryakov  <ap@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        WebKit2: Stop using deprecated NSInputManager
+        https://bugs.webkit.org/show_bug.cgi?id=58709
+
+        Changed all mouse related functions to give NSInputContext a chance to handle the event,
+        added logging. Removed -rightMouseMoved: method, which was added by accident.
+
+        * UIProcess/API/mac/WKView.mm:
+        (-[WKView mouseMoved:]):
+        (-[WKView mouseDown:]):
+        (-[WKView mouseUp:]):
+        (-[WKView mouseDragged:]):
+
 2011-04-15  Jon Honeycutt  <jhoneycutt@apple.com>
 
         Potential crash getting a JS wrapper.

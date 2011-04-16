@@ -943,19 +943,26 @@ static void speakString(WKStringRef string, WKErrorRef error, void*)
 #define NATIVE_MOUSE_EVENT_HANDLER(Selector) \
     - (void)Selector:(NSEvent *)theEvent \
     { \
+        if ([[self inputContext] handleEvent:theEvent]) { \
+            LOG(TextInput, "%s was handled by text input context", String(#Selector).substring(0, String(#Selector).find("Internal")).ascii().data()); \
+            return; \
+        } \
         NativeWebMouseEvent webEvent(theEvent, self); \
         _data->_page->handleMouseEvent(webEvent); \
     }
 
 NATIVE_MOUSE_EVENT_HANDLER(mouseEntered)
 NATIVE_MOUSE_EVENT_HANDLER(mouseExited)
+NATIVE_MOUSE_EVENT_HANDLER(mouseMovedInternal)
+NATIVE_MOUSE_EVENT_HANDLER(mouseDownInternal)
+NATIVE_MOUSE_EVENT_HANDLER(mouseUpInternal)
+NATIVE_MOUSE_EVENT_HANDLER(mouseDraggedInternal)
 NATIVE_MOUSE_EVENT_HANDLER(otherMouseDown)
 NATIVE_MOUSE_EVENT_HANDLER(otherMouseDragged)
 NATIVE_MOUSE_EVENT_HANDLER(otherMouseMoved)
 NATIVE_MOUSE_EVENT_HANDLER(otherMouseUp)
 NATIVE_MOUSE_EVENT_HANDLER(rightMouseDown)
 NATIVE_MOUSE_EVENT_HANDLER(rightMouseDragged)
-NATIVE_MOUSE_EVENT_HANDLER(rightMouseMoved)
 NATIVE_MOUSE_EVENT_HANDLER(rightMouseUp)
 
 #undef NATIVE_MOUSE_EVENT_HANDLER
@@ -977,15 +984,7 @@ EVENT_HANDLER(scrollWheel, Wheel)
     if (self == [[self window] firstResponder] && !NSPointInRect([self convertPoint:[event locationInWindow] fromView:nil], [self visibleRect]))
         return;
 
-    _data->_page->handleMouseEvent(NativeWebMouseEvent(event, self));
-}
-
-- (void)_mouseHandler:(NSEvent *)event
-{
-    NSInputManager *currentInputManager = [NSInputManager currentInputManager];
-    if ([currentInputManager wantsToHandleMouseEvents] && [currentInputManager handleMouseEvent:event])
-        return;
-    _data->_page->handleMouseEvent(NativeWebMouseEvent(event, self));
+    [self mouseMovedInternal:event];
 }
 
 - (void)mouseDown:(NSEvent *)event
@@ -993,20 +992,20 @@ EVENT_HANDLER(scrollWheel, Wheel)
     [self _setMouseDownEvent:event];
     _data->_ignoringMouseDraggedEvents = NO;
     _data->_dragHasStarted = NO;
-    [self _mouseHandler:event];
+    [self mouseDownInternal:event];
 }
 
 - (void)mouseUp:(NSEvent *)event
 {
     [self _setMouseDownEvent:nil];
-    [self _mouseHandler:event];
+    [self mouseUpInternal:event];
 }
 
 - (void)mouseDragged:(NSEvent *)event
 {
     if (_data->_ignoringMouseDraggedEvents)
         return;
-    [self _mouseHandler:event];
+    [self mouseDraggedInternal:event];
 }
 
 - (BOOL)acceptsFirstMouse:(NSEvent *)event
