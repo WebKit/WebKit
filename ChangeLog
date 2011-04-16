@@ -1,3 +1,12 @@
+2011-04-16  Patrick Gansterer  <paroga@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        Rename PLATFORM(CAIRO) to USE(CAIRO)
+        https://bugs.webkit.org/show_bug.cgi?id=55192
+
+        * Source/cmake/OptionsEfl.cmake:
+
 2011-04-15  Shishir Agrawal  <shishir@chromium.org>
 
         Reviewed by James Robinson.
