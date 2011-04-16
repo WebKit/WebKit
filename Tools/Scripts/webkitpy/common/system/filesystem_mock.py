@@ -63,7 +63,7 @@ class MockFileSystem(object):
         return path.rsplit(self.sep, 1)
 
     def abspath(self, path):
-        if path.startswith(self.sep):
+        if os.path.isabs(path):
             return self.normpath(path)
         return self.abspath(self.join(self.cwd, path))
 
