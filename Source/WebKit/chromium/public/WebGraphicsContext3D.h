@@ -169,10 +169,10 @@ public:
     virtual void renderbufferStorageMultisampleCHROMIUM(WGC3Denum target, WGC3Dsizei samples, WGC3Denum internalformat, WGC3Dsizei width, WGC3Dsizei height) = 0;
 
     // GL_CHROMIUM_latch
-    virtual void getParentToChildLatchCHROMIUM(WGC3Duint* latchId) {} // FIXME: = 0;
-    virtual void getChildToParentLatchCHROMIUM(WGC3Duint* latchId) {} // FIXME: = 0;
-    virtual void waitLatchCHROMIUM(WGC3Duint latchId) {} // FIXME: = 0;
-    virtual void setLatchCHROMIUM(WGC3Duint latchId) {} // FIXME: = 0;
+    virtual void getParentToChildLatchCHROMIUM(WGC3Duint* latchId) = 0;
+    virtual void getChildToParentLatchCHROMIUM(WGC3Duint* latchId) = 0;
+    virtual void waitLatchCHROMIUM(WGC3Duint latchId) = 0;
+    virtual void setLatchCHROMIUM(WGC3Duint latchId) = 0;
 
     // The entry points below map directly to the OpenGL ES 2.0 API.
     // See: http://www.khronos.org/registry/gles/
