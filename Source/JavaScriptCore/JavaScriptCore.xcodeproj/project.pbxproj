@@ -594,10 +594,6 @@
 		E49DC16C12EF294E00184A1F /* SourceProviderCache.h in Headers */ = {isa = PBXBuildFile; fileRef = E49DC15112EF272200184A1F /* SourceProviderCache.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E49DC16D12EF295300184A1F /* SourceProviderCacheItem.h in Headers */ = {isa = PBXBuildFile; fileRef = E49DC14912EF261A00184A1F /* SourceProviderCacheItem.h */; };
 		E4D8CEFB12FC439600BC9F5A /* BloomFilter.h in Headers */ = {isa = PBXBuildFile; fileRef = E4D8CE9B12FC42E100BC9F5A /* BloomFilter.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		F33EE2D8135679CC00E09E65 /* libgtest.a in Frameworks */ = {isa = PBXBuildFile; fileRef = F33EE0E5135678CA00E09E65 /* libgtest.a */; };
-		F33EE4FA1356972900E09E65 /* StringTests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F33EE4F91356972900E09E65 /* StringTests.cpp */; };
-		F3BBAEB51356573A00CBD414 /* JavaScriptCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 932F5BD90822A1C700736975 /* JavaScriptCore.framework */; };
-		F3BBAF0E1356662E00CBD414 /* RunAllWtfTests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F3BBAF0D1356662E00CBD414 /* RunAllWtfTests.cpp */; };
 		F3BD31ED126735770065467F /* TextPosition.h in Headers */ = {isa = PBXBuildFile; fileRef = F3BD31D0126730180065467F /* TextPosition.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		FDA15C1E12B0305C003A583A /* Complex.h in Headers */ = {isa = PBXBuildFile; fileRef = FDA15C1612B03028003A583A /* Complex.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		FE1B447A0ECCD73B004F4DD1 /* StdLibExtras.h in Headers */ = {isa = PBXBuildFile; fileRef = FE1B44790ECCD73B004F4DD1 /* StdLibExtras.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -659,55 +655,6 @@
 			proxyType = 1;
 			remoteGlobalIDString = 932F5BDA0822A1C700736975;
 			remoteInfo = "jsc (Upgraded)";
-		};
-		F33EE0E2135678CA00E09E65 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = F33EE0D3135678CA00E09E65 /* gtest.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 4539C8FF0EC27F6400A70F4C;
-			remoteInfo = "gtest-framework";
-		};
-		F33EE0E4135678CA00E09E65 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = F33EE0D3135678CA00E09E65 /* gtest.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 40C848FA101A209C0083642A;
-			remoteInfo = "gtest-static";
-		};
-		F33EE0E6135678CA00E09E65 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = F33EE0D3135678CA00E09E65 /* gtest.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 40C8490B101A217E0083642A;
-			remoteInfo = "gtest_main-static";
-		};
-		F33EE0E8135678CA00E09E65 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = F33EE0D3135678CA00E09E65 /* gtest.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 40899F430FFA7184000B29AE;
-			remoteInfo = "gtest_unittest-framework";
-		};
-		F33EE0EA135678CA00E09E65 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = F33EE0D3135678CA00E09E65 /* gtest.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 40C84987101A36850083642A;
-			remoteInfo = "gtest_unittest-static";
-		};
-		F33EE0EC135678CA00E09E65 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = F33EE0D3135678CA00E09E65 /* gtest.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 4089A0130FFACEFC000B29AE;
-			remoteInfo = "sample1_unittest-framework";
-		};
-		F33EE0EE135678CA00E09E65 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = F33EE0D3135678CA00E09E65 /* gtest.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 40C84997101A36A60083642A;
-			remoteInfo = "sample1_unittest-static";
 		};
 /* End PBXContainerItemProxy section */
 
@@ -1298,10 +1245,6 @@
 		E49DC15112EF272200184A1F /* SourceProviderCache.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SourceProviderCache.h; sourceTree = "<group>"; };
 		E49DC15512EF277200184A1F /* SourceProviderCache.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SourceProviderCache.cpp; sourceTree = "<group>"; };
 		E4D8CE9B12FC42E100BC9F5A /* BloomFilter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BloomFilter.h; sourceTree = "<group>"; };
-		F33EE0D3135678CA00E09E65 /* gtest.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = gtest.xcodeproj; path = ../ThirdParty/gtest/xcode/gtest.xcodeproj; sourceTree = SOURCE_ROOT; };
-		F33EE4F91356972900E09E65 /* StringTests.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = StringTests.cpp; path = tests/StringTests.cpp; sourceTree = "<group>"; };
-		F3BBAEAF1356572F00CBD414 /* wtftests */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = wtftests; sourceTree = BUILT_PRODUCTS_DIR; };
-		F3BBAF0D1356662E00CBD414 /* RunAllWtfTests.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = RunAllWtfTests.cpp; path = tests/RunAllWtfTests.cpp; sourceTree = "<group>"; };
 		F3BD31D0126730180065467F /* TextPosition.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TextPosition.h; path = text/TextPosition.h; sourceTree = "<group>"; };
 		F5BB2BC5030F772101FCFE1D /* Completion.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = Completion.h; sourceTree = "<group>"; tabWidth = 8; };
 		F5C290E60284F98E018635CA /* JavaScriptCorePrefix.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = JavaScriptCorePrefix.h; sourceTree = "<group>"; tabWidth = 8; };
@@ -1379,15 +1322,6 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		F3BBAEAD1356572F00CBD414 /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				F33EE2D8135679CC00E09E65 /* libgtest.a in Frameworks */,
-				F3BBAEB51356573A00CBD414 /* JavaScriptCore.framework in Frameworks */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
@@ -1398,7 +1332,6 @@
 				932F5BE10822A1C700736975 /* jsc */,
 				141211200A48793C00480255 /* minidom */,
 				14BD59BF0A3E8F9000BAF59C /* testapi */,
-				F3BBAEAF1356572F00CBD414 /* wtftests */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -1416,7 +1349,6 @@
 		0867D691FE84028FC02AAC07 /* JavaScriptCore */ = {
 			isa = PBXGroup;
 			children = (
-				F33EE0D3135678CA00E09E65 /* gtest.xcodeproj */,
 				A718F8211178EB4B002465A7 /* create_regex_tables */,
 				937B63CC09E766D200A671DD /* DerivedSources.make */,
 				F692A8540255597D01FF60F7 /* create_hash_table */,
@@ -1668,7 +1600,6 @@
 		65162EF108E6A21C007556CD /* wtf */ = {
 			isa = PBXGroup;
 			children = (
-				F3BBA8CA13564EED00CBD414 /* tests */,
 				A7C40C07130B057D00D002A1 /* BlockStack.h */,
 				A7C40C08130B057D00D002A1 /* SentinelLinkedList.h */,
 				A7C40C09130B057D00D002A1 /* SinglyLinkedList.h */,
@@ -2241,29 +2172,6 @@
 			path = icu;
 			sourceTree = "<group>";
 		};
-		F33EE0D4135678CA00E09E65 /* Products */ = {
-			isa = PBXGroup;
-			children = (
-				F33EE0E3135678CA00E09E65 /* gtest.framework */,
-				F33EE0E5135678CA00E09E65 /* libgtest.a */,
-				F33EE0E7135678CA00E09E65 /* libgtest_main.a */,
-				F33EE0E9135678CA00E09E65 /* gtest_unittest-framework */,
-				F33EE0EB135678CA00E09E65 /* gtest_unittest */,
-				F33EE0ED135678CA00E09E65 /* sample1_unittest-framework */,
-				F33EE0EF135678CA00E09E65 /* sample1_unittest-static */,
-			);
-			name = Products;
-			sourceTree = "<group>";
-		};
-		F3BBA8CA13564EED00CBD414 /* tests */ = {
-			isa = PBXGroup;
-			children = (
-				F33EE4F91356972900E09E65 /* StringTests.cpp */,
-				F3BBAF0D1356662E00CBD414 /* RunAllWtfTests.cpp */,
-			);
-			name = tests;
-			sourceTree = "<group>";
-		};
 /* End PBXGroup section */
 
 /* Begin PBXHeadersBuildPhase section */
@@ -2714,22 +2622,6 @@
 			productReference = 932F5BE10822A1C700736975 /* jsc */;
 			productType = "com.apple.product-type.tool";
 		};
-		F3BBAEAE1356572F00CBD414 /* wtftests */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = F3BBAEBB1356574D00CBD414 /* Build configuration list for PBXNativeTarget "wtftests" */;
-			buildPhases = (
-				F3BBAEAC1356572F00CBD414 /* Sources */,
-				F3BBAEAD1356572F00CBD414 /* Frameworks */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-			);
-			name = wtftests;
-			productName = wtftests;
-			productReference = F3BBAEAF1356572F00CBD414 /* wtftests */;
-			productType = "com.apple.product-type.tool";
-		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -2751,12 +2643,6 @@
 			mainGroup = 0867D691FE84028FC02AAC07 /* JavaScriptCore */;
 			productRefGroup = 034768DFFF38A50411DB9C8B /* Products */;
 			projectDirPath = "";
-			projectReferences = (
-				{
-					ProductGroup = F33EE0D4135678CA00E09E65 /* Products */;
-					ProjectRef = F33EE0D3135678CA00E09E65 /* gtest.xcodeproj */;
-				},
-			);
 			projectRoot = "";
 			targets = (
 				932F5BE30822A1C700736975 /* All */,
@@ -2765,62 +2651,9 @@
 				1412111F0A48793C00480255 /* minidom */,
 				14BD59BE0A3E8F9000BAF59C /* testapi */,
 				932F5BDA0822A1C700736975 /* jsc */,
-				F3BBAEAE1356572F00CBD414 /* wtftests */,
 			);
 		};
 /* End PBXProject section */
-
-/* Begin PBXReferenceProxy section */
-		F33EE0E3135678CA00E09E65 /* gtest.framework */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.framework;
-			path = gtest.framework;
-			remoteRef = F33EE0E2135678CA00E09E65 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		F33EE0E5135678CA00E09E65 /* libgtest.a */ = {
-			isa = PBXReferenceProxy;
-			fileType = archive.ar;
-			path = libgtest.a;
-			remoteRef = F33EE0E4135678CA00E09E65 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		F33EE0E7135678CA00E09E65 /* libgtest_main.a */ = {
-			isa = PBXReferenceProxy;
-			fileType = archive.ar;
-			path = libgtest_main.a;
-			remoteRef = F33EE0E6135678CA00E09E65 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		F33EE0E9135678CA00E09E65 /* gtest_unittest-framework */ = {
-			isa = PBXReferenceProxy;
-			fileType = "compiled.mach-o.executable";
-			path = "gtest_unittest-framework";
-			remoteRef = F33EE0E8135678CA00E09E65 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		F33EE0EB135678CA00E09E65 /* gtest_unittest */ = {
-			isa = PBXReferenceProxy;
-			fileType = "compiled.mach-o.executable";
-			path = gtest_unittest;
-			remoteRef = F33EE0EA135678CA00E09E65 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		F33EE0ED135678CA00E09E65 /* sample1_unittest-framework */ = {
-			isa = PBXReferenceProxy;
-			fileType = "compiled.mach-o.executable";
-			path = "sample1_unittest-framework";
-			remoteRef = F33EE0EC135678CA00E09E65 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		F33EE0EF135678CA00E09E65 /* sample1_unittest-static */ = {
-			isa = PBXReferenceProxy;
-			fileType = "compiled.mach-o.executable";
-			path = "sample1_unittest-static";
-			remoteRef = F33EE0EE135678CA00E09E65 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-/* End PBXReferenceProxy section */
 
 /* Begin PBXShellScriptBuildPhase section */
 		5D29D8BE0E9860B400C3D2D0 /* Check For Weak VTables and Externals */ = {
@@ -3160,15 +2993,6 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		F3BBAEAC1356572F00CBD414 /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				F3BBAF0E1356662E00CBD414 /* RunAllWtfTests.cpp in Sources */,
-				F33EE4FA1356972900E09E65 /* StringTests.cpp in Sources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
@@ -3430,82 +3254,6 @@
 			};
 			name = Profiling;
 		};
-		F3BBAEB11356572F00CBD414 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				GCC_PREPROCESSOR_DEFINITIONS = (
-					"$(GCC_PREPROCESSOR_DEFINITIONS)",
-					"\"GTEST_HAS_RTTI=0\"",
-				);
-				HEADER_SEARCH_PATHS = (
-					"$(HEADER_SEARCH_PATHS)",
-					../ThirdParty/gtest/include,
-				);
-				PRODUCT_NAME = wtftests;
-				WARNING_CFLAGS = (
-					"$(WARNING_CFLAGS_$(REAL_PLATFORM_NAME))",
-					"-Wno-undef",
-				);
-			};
-			name = Debug;
-		};
-		F3BBAEB21356572F00CBD414 /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				GCC_PREPROCESSOR_DEFINITIONS = (
-					"$(GCC_PREPROCESSOR_DEFINITIONS)",
-					"\"GTEST_HAS_RTTI=0\"",
-				);
-				HEADER_SEARCH_PATHS = (
-					"$(HEADER_SEARCH_PATHS)",
-					../ThirdParty/gtest/include,
-				);
-				PRODUCT_NAME = wtftests;
-				WARNING_CFLAGS = (
-					"$(WARNING_CFLAGS_$(REAL_PLATFORM_NAME))",
-					"-Wno-undef",
-				);
-			};
-			name = Release;
-		};
-		F3BBAEB31356572F00CBD414 /* Profiling */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				GCC_PREPROCESSOR_DEFINITIONS = (
-					"$(GCC_PREPROCESSOR_DEFINITIONS)",
-					"\"GTEST_HAS_RTTI=0\"",
-				);
-				HEADER_SEARCH_PATHS = (
-					"$(HEADER_SEARCH_PATHS)",
-					../ThirdParty/gtest/include,
-				);
-				PRODUCT_NAME = wtftests;
-				WARNING_CFLAGS = (
-					"$(WARNING_CFLAGS_$(REAL_PLATFORM_NAME))",
-					"-Wno-undef",
-				);
-			};
-			name = Profiling;
-		};
-		F3BBAEB41356572F00CBD414 /* Production */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				GCC_PREPROCESSOR_DEFINITIONS = (
-					"$(GCC_PREPROCESSOR_DEFINITIONS)",
-					"\"GTEST_HAS_RTTI=0\"",
-				);
-				HEADER_SEARCH_PATHS = (
-					"$(HEADER_SEARCH_PATHS)",
-					../ThirdParty/gtest/include,
-				);
-				PRODUCT_NAME = wtftests;
-				WARNING_CFLAGS = (
-					"$(WARNING_CFLAGS_$(REAL_PLATFORM_NAME))",
-					"-Wno-undef",
-				);
-			};
-			name = Production;
-		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -3582,17 +3330,6 @@
 				65FB3F7909D11EBD00F49DEB /* Release */,
 				A76148400E6402F700E357FA /* Profiling */,
 				65FB3F7A09D11EBD00F49DEB /* Production */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Production;
-		};
-		F3BBAEBB1356574D00CBD414 /* Build configuration list for PBXNativeTarget "wtftests" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				F3BBAEB11356572F00CBD414 /* Debug */,
-				F3BBAEB21356572F00CBD414 /* Release */,
-				F3BBAEB31356572F00CBD414 /* Profiling */,
-				F3BBAEB41356572F00CBD414 /* Production */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Production;

@@ -1,3 +1,14 @@
+2011-04-15  David Levin  <levin@chromium.org>
+
+        Revert of r83974.
+
+        JavaScriptCore shouldn't depend on ../ThirdParty/gtest/xcode/gtest.xcodeproj
+        https://bugs.webkit.org/show_bug.cgi?id=58716
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * wtf/tests/RunAllWtfTests.cpp: Removed.
+        * wtf/tests/StringTests.cpp: Removed.
+
 2011-04-15  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Gavin Barraclough.
