@@ -1,3 +1,24 @@
+2011-04-15  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r84067.
+        http://trac.webkit.org/changeset/84067
+        https://bugs.webkit.org/show_bug.cgi?id=58724
+
+        qt build are failing. (Requested by loislo2 on #webkit).
+
+        * heap/MarkStack.h:
+        (JSC::MarkStack::append):
+        * runtime/JSValue.h:
+        * runtime/WriteBarrier.h:
+        (JSC::DeprecatedPtr::DeprecatedPtr):
+        (JSC::DeprecatedPtr::get):
+        (JSC::DeprecatedPtr::operator*):
+        (JSC::DeprecatedPtr::operator->):
+        (JSC::DeprecatedPtr::slot):
+        (JSC::DeprecatedPtr::operator UnspecifiedBoolType*):
+        (JSC::DeprecatedPtr::operator!):
+        (JSC::operator==):
+
 2011-04-15  Shishir Agrawal  <shishir@chromium.org>
 
         Reviewed by James Robinson.
