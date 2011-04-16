@@ -47,6 +47,7 @@
 #include "Image.h"
 #include "KeyboardEvent.h"
 #include "MouseEvent.h"
+#include "NotImplemented.h"
 #include "Page.h"
 #include "PlatformContextCairo.h"
 #include "PlatformKeyboardEvent.h"
@@ -662,7 +663,7 @@ bool PluginView::platformGetValue(NPNVariable variable, void* value, NPError* re
 #if defined(XP_UNIX)
             *static_cast<Window*>(value) = GDK_WINDOW_XWINDOW(gdk_window_get_toplevel(gdkWindow));
 #elif defined(GDK_WINDOWING_WIN32)
-            *static_cast<HGIOBJ*>(value) = GDK_WINDOW_HWND(gdkWindow);
+            *static_cast<HGDIOBJ*>(value) = GDK_WINDOW_HWND(gdkWindow);
 #endif
             *result = NPERR_NO_ERROR;
             return true;
@@ -708,6 +709,7 @@ void PluginView::forceRedraw()
         gtk_widget_queue_draw(m_parentFrame->view()->hostWindow()->platformPageClient());
 }
 
+#ifndef GDK_WINDOWING_WIN32
 static Display* getPluginDisplay()
 {
     // The plugin toolkit might have a different X connection open.  Since we're
@@ -721,6 +723,7 @@ static Display* getPluginDisplay()
     return 0;
 #endif
 }
+#endif
 
 #if defined(XP_UNIX)
 static void getVisualAndColormap(int depth, Visual** visual, Colormap* colormap)
@@ -785,6 +788,7 @@ bool PluginView::platformStart()
     ASSERT(m_isStarted);
     ASSERT(m_status == PluginStatusLoadedSuccessfully);
 
+#if defined(XP_UNIX)
     if (m_plugin->pluginFuncs()->getvalue) {
         PluginView::setCurrentPluginView(this);
         JSC::JSLock::DropAllLocks dropAllLocks(JSC::SilenceAssertionsOnly);
@@ -793,11 +797,11 @@ bool PluginView::platformStart()
         setCallingPlugin(false);
         PluginView::setCurrentPluginView(0);
     }
+#endif
 
     if (m_isWindowed) {
-#if defined(XP_UNIX)
         GtkWidget* pageClient = m_parentFrame->view()->hostWindow()->platformPageClient();
-
+#if defined(XP_UNIX)
         if (m_needsXEmbed) {
             // If our parent is not anchored the startup process will
             // fail miserably for XEmbed plugins a bit later on when
@@ -819,7 +823,9 @@ bool PluginView::platformStart()
 #endif
     } else {
         setPlatformWidget(0);
+#if defined(XP_UNIX)
         m_pluginDisplay = getPluginDisplay();
+#endif
     }
 
     show();

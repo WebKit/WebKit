@@ -340,7 +340,7 @@ void PluginView::stop()
 #endif
 
 #if ENABLE(NETSCAPE_PLUGIN_API)
-#ifdef XP_WIN
+#if defined(XP_WIN) && !PLATFORM(GTK)
     // Unsubclass the window
     if (m_isWindowed) {
 #if OS(WINCE)
@@ -355,7 +355,7 @@ void PluginView::stop()
             SetWindowLongPtr(platformPluginWidget(), GWLP_WNDPROC, (LONG_PTR)m_pluginWndProc);
 #endif
     }
-#endif // XP_WIN
+#endif // !defined(XP_WIN) || PLATFORM(GTK)
 #endif // ENABLE(NETSCAPE_PLUGIN_API)
 
 #if !defined(XP_MACOSX)

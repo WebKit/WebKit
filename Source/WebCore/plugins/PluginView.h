@@ -390,7 +390,7 @@ public:
 
 private:
 
-#if defined(XP_UNIX) || OS(SYMBIAN)
+#if defined(XP_UNIX) || OS(SYMBIAN) || PLATFORM(GTK)
         void setNPWindowIfNeeded();
 #elif defined(XP_MACOSX)
         NP_CGContext m_npCgContext;

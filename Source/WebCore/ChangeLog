@@ -1,3 +1,18 @@
+2011-04-15  Fridrich Strba  <fridrich.strba@bluewin.ch>
+
+        Reviewed by Martin Robinson.
+
+        Make plugins compile during WebKit GTK Windows build.
+        Ifdef properly relevant parts so that the PluginViewGtk compiles on Windows.
+        https://bugs.webkit.org/show_bug.cgi?id=58580
+
+        * plugins/PluginView.cpp:
+        (WebCore::PluginView::stop):
+        * plugins/PluginView.h:
+        * plugins/gtk/PluginViewGtk.cpp:
+        (WebCore::PluginView::platformGetValue):
+        (WebCore::PluginView::platformStart):
+
 2011-04-15  MORITA Hajime  <morrita@google.com>
 
         Reviewed by Simon Fraser.
