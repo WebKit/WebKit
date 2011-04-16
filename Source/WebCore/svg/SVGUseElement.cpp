@@ -475,6 +475,7 @@ void SVGUseElement::buildPendingResource()
     if (m_isPendingResource) {
         ASSERT(!m_targetElementInstance);
         m_isPendingResource = false;    
+        m_resourceId = String();
         invalidateShadowTree();
     }
 }

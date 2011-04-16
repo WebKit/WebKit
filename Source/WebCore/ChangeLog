@@ -1,3 +1,23 @@
+2011-04-16  Leo Yang  <leoyang.webkit@gmail.com>
+
+        Reviewed by Nikolas Zimmermann.
+
+        ASSERT failure when svg <use> element changes href
+        https://bugs.webkit.org/show_bug.cgi?id=58726
+
+        m_resourceId was not empty after the pending resource
+        becomes available. This will trigger the assertion at
+        line 509 of SVGUseElement.cpp when the <use> element's
+        href becomes empty or invalid.
+
+        This patch makes m_resourceId be empty after the pending
+        resource becomes available to avoid assertion failure.
+
+        Test: svg/custom/use-crash-when-href-change.svg
+
+        * svg/SVGUseElement.cpp:
+        (WebCore::SVGUseElement::buildPendingResource):
+
 2011-04-16  Patrick Gansterer  <paroga@webkit.org>
 
         Reviewed by Eric Seidel.

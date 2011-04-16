@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+
+<g>
+    <use id="use" xlink:href="#rect" />
+</g>
+
+<defs>
+    <rect id="rect" x="0" y="0" width="100" height="60" />
+</defs>
+
+<text x="10" y= "30">PASS without crash in debug mode.</text>
+
+<script>
+    if (window.layoutTestController) {
+        layoutTestController.waitUntilDone();
+        layoutTestController.dumpAsText();
+    }
+
+    function runTest()
+    {
+        document.getElementById("use").setAttribute("xlink:href", "");
+        if (window.layoutTestController)
+            layoutTestController.notifyDone();
+    }
+
+    window.setTimeout("runTest()", 0);
+</script>
+
+</svg>
