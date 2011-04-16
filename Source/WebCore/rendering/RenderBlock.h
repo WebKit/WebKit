@@ -511,6 +511,7 @@ private:
     // Positions new floats and also adjust all floats encountered on the line if any of them
     // have to move to the next page/column.
     bool positionNewFloatOnLine(FloatingObject* newFloat, FloatingObject* lastFloatFromPreviousLine, LineWidth&);
+    void appendFloatingObjectToLastLine(FloatingObject*);
 
     // End of functions defined in RenderBlockLineLayout.cpp.
 

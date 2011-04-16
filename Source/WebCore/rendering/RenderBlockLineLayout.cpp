@@ -714,6 +714,15 @@ inline BidiRun* RenderBlock::handleTrailingSpaces(BidiRunList<BidiRun>& bidiRuns
     return trailingSpaceRun;
 }
 
+void RenderBlock::appendFloatingObjectToLastLine(FloatingObject* floatingObject)
+{
+    // Ensure that the float touches the line.
+    if (logicalBottomForFloat(floatingObject) < lastRootBox()->blockLogicalHeight())
+        setLogicalHeightForFloat(floatingObject, lastRootBox()->blockLogicalHeight() - logicalTopForFloat(floatingObject));
+
+    lastRootBox()->appendFloat(floatingObject->renderer());
+}
+
 void RenderBlock::layoutInlineChildren(bool relayoutChildren, int& repaintLogicalTop, int& repaintLogicalBottom)
 {
     bool useRepaintBounds = false;
@@ -998,7 +1007,7 @@ void RenderBlock::layoutInlineChildren(bool relayoutChildren, int& repaintLogica
                 }
                 for (; it != end; ++it) {
                     FloatingObject* f = *it;
-                    lastRootBox()->floats().append(f->m_renderer);
+                    appendFloatingObjectToLastLine(f);
                     ASSERT(f->m_renderer == floats[floatIndex].object);
                     // If a float's geometry has changed, give up on syncing with clean lines.
                     if (floats[floatIndex].rect != f->frameRect())
@@ -1080,7 +1089,7 @@ void RenderBlock::layoutInlineChildren(bool relayoutChildren, int& repaintLogica
                 it = lastFloatIterator;
             }
             for (; it != end; ++it)
-                lastRootBox()->floats().append((*it)->m_renderer);
+                appendFloatingObjectToLastLine(*it);
             lastFloat = !floatingObjectSet.isEmpty() ? floatingObjectSet.last() : 0;
         }
         size_t floatCount = floats.size();
@@ -1138,6 +1147,7 @@ void RenderBlock::checkFloatsInCleanLine(RootInlineBox* line, Vector<FloatWithRe
             int floatTop = isHorizontalWritingMode() ? floats[floatIndex].rect.y() : floats[floatIndex].rect.x();
             int floatHeight = isHorizontalWritingMode() ? max(floats[floatIndex].rect.height(), newSize.height()) 
                                                                  : max(floats[floatIndex].rect.width(), newSize.width());
+            floatHeight = min(floatHeight, numeric_limits<int>::max() - floatTop);
             line->markDirty();
             markLinesDirtyInBlockRange(line->blockLogicalHeight(), floatTop + floatHeight, line);
             floats[floatIndex].rect.setSize(newSize);

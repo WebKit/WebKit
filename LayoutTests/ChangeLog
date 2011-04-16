@@ -1,3 +1,14 @@
+2011-04-16  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Simon Fraser.
+
+        <rdar://problem/9190108> Crash when hiding a float
+
+        * fast/block/float/overhanging-tall-block.html: Added.
+        * platform/mac/fast/block/float/overhanging-tall-block-expected.checksum: Added.
+        * platform/mac/fast/block/float/overhanging-tall-block-expected.png: Added.
+        * platform/mac/fast/block/float/overhanging-tall-block-expected.txt: Added.
+
 2011-04-16  Simon Fraser  <simon.fraser@apple.com>
 
         Fix border drawing tests to drop -webkit prefix on border-radius, and make the tests compatible with Firefox

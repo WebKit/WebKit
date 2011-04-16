@@ -3650,6 +3650,7 @@ int RenderBlock::addOverhangingFloats(RenderBlock* child, int logicalLeftOffset,
     if (child->hasOverflowClip() || !child->containsFloats() || child->isRoot() || child->hasColumns() || child->isWritingModeRoot())
         return 0;
 
+    int childLogicalTop = child->logicalTop();
     int lowestFloatLogicalBottom = 0;
 
     // Floats that will remain the child's responsibility to paint should factor into its
@@ -3657,7 +3658,8 @@ int RenderBlock::addOverhangingFloats(RenderBlock* child, int logicalLeftOffset,
     FloatingObjectSetIterator childEnd = child->m_floatingObjects->set().end();
     for (FloatingObjectSetIterator childIt = child->m_floatingObjects->set().begin(); childIt != childEnd; ++childIt) {
         FloatingObject* r = *childIt;
-        int logicalBottom = child->logicalTop() + logicalBottomForFloat(r);
+        int logicalBottomForFloat = min(this->logicalBottomForFloat(r), numeric_limits<int>::max() - childLogicalTop);
+        int logicalBottom = childLogicalTop + logicalBottomForFloat;
         lowestFloatLogicalBottom = max(lowestFloatLogicalBottom, logicalBottom);
 
         if (logicalBottom > logicalHeight()) {

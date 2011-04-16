@@ -111,12 +111,13 @@ public:
 
     InlineBox* closestLeafChildForLogicalLeftPosition(int, bool onlyEditableLeaves = false);
 
-    Vector<RenderBox*>& floats()
+    void appendFloat(RenderBox* floatingBox)
     {
         ASSERT(!isDirty());
-        if (!m_floats)
-            m_floats= adoptPtr(new Vector<RenderBox*>);
-        return *m_floats;
+        if (m_floats)
+            m_floats->append(floatingBox);
+        else
+            m_floats= adoptPtr(new Vector<RenderBox*>(1, floatingBox));
     }
 
     Vector<RenderBox*>* floatsPtr() { ASSERT(!isDirty()); return m_floats.get(); }

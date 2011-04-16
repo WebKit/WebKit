@@ -1,3 +1,25 @@
+2011-04-16  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Simon Fraser.
+
+        <rdar://problem/9190108> Crash when hiding a float
+
+        Test: fast/block/float/overhanging-tall-block.html
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::addOverhangingFloats): Moved the call to childLogicalTop() out of the loop.
+        Capped the logical bottom so that we get the correct maximum.
+        * rendering/RenderBlock.h: Decleared appendFloatingObjectToLastLine().
+        * rendering/RenderBlockLineLayout.cpp:
+        (WebCore::RenderBlock::appendFloatingObjectToLastLine): Added. Ensures correct bookkeeping by
+        extending the float if needed so that it touches the line.
+        (WebCore::RenderBlock::layoutInlineChildren): Changed to call appendFloatingObjectToLastLine().
+        (WebCore::RenderBlock::checkFloatsInCleanLine): Capped the float height so the we mark the right
+        range of lines as dirty.
+        * rendering/RootInlineBox.h:
+        (WebCore::RootInlineBox::appendFloat): Replaced the floats() accessor with this function, which
+        allows the creation of the vector to be combined with appending the first float.
+
 2011-04-16  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Simon Fraser.
