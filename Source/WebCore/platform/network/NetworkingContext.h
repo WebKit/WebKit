@@ -58,6 +58,7 @@ public:
 #if PLATFORM(QT)
     virtual QObject* originatingObject() const = 0;
     virtual QNetworkAccessManager* networkAccessManager() const = 0;
+    virtual bool mimeSniffingEnabled() const = 0;
 #endif
 
 #if PLATFORM(WIN)

@@ -28,16 +28,17 @@
 
 namespace WebCore {
 
-FrameNetworkingContextQt::FrameNetworkingContextQt(Frame* frame, QObject* originatingObject, QNetworkAccessManager* networkAccessManager)
+FrameNetworkingContextQt::FrameNetworkingContextQt(Frame* frame, QObject* originatingObject, bool mimeSniffingEnabled, QNetworkAccessManager* networkAccessManager)
     : FrameNetworkingContext(frame)
     , m_originatingObject(originatingObject)
     , m_networkAccessManager(networkAccessManager)
+    , m_mimeSniffingEnabled(mimeSniffingEnabled)
 {
 }
 
-PassRefPtr<FrameNetworkingContextQt> FrameNetworkingContextQt::create(Frame* frame, QObject* originatingObject, QNetworkAccessManager* networkAccessManager)
+PassRefPtr<FrameNetworkingContextQt> FrameNetworkingContextQt::create(Frame* frame, QObject* originatingObject, bool mimeSniffingEnabled, QNetworkAccessManager* networkAccessManager)
 {
-    return adoptRef(new FrameNetworkingContextQt(frame, originatingObject, networkAccessManager));
+    return adoptRef(new FrameNetworkingContextQt(frame, originatingObject, mimeSniffingEnabled, networkAccessManager));
 }
 
 QObject* FrameNetworkingContextQt::originatingObject() const
@@ -48,6 +49,11 @@ QObject* FrameNetworkingContextQt::originatingObject() const
 QNetworkAccessManager* FrameNetworkingContextQt::networkAccessManager() const
 {
     return (qobject_cast<QWebFrame*>(m_originatingObject))->page()->networkAccessManager();
+}
+
+bool FrameNetworkingContextQt::mimeSniffingEnabled() const
+{
+    return m_mimeSniffingEnabled;
 }
 
 }

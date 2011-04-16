@@ -1,3 +1,14 @@
+2011-04-15  Luiz Agostini  <luiz.agostini@openbossa.org>
+
+        Rubberstamped by Andreas Kling.
+
+        [Qt] QWebPage MIME type handling inconsistency with other web browsers
+        https://bugs.webkit.org/show_bug.cgi?id=46968
+
+        Unskipping http/tests/loading/text-content-type-with-binary-extension.html.
+
+        * platform/qt/Skipped:
+
 2011-04-15  Emil A Eklund  <eae@chromium.org>
 
         Reviewed by Dimitri Glazkov.

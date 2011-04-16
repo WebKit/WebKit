@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies)
+    Copyright (C) 2011 Nokia Corporation and/or its subsidiary(-ies)
 
     This library is free software; you can redistribute it and/or
     modify it under the terms of the GNU Library General Public
@@ -17,28 +17,34 @@
     Boston, MA 02110-1301, USA.
 */
 
-#ifndef WebFrameNetworkingContext_h
-#define WebFrameNetworkingContext_h
+#ifndef QtMIMETypeSniffer_h
+#define QtMIMETypeSniffer_h
 
-#include <WebCore/FrameNetworkingContext.h>
+#include "MIMESniffing.h"
+#include <QObject>
 
-namespace WebCore {
+class QNetworkReply;
 
-class WebFrameNetworkingContext : public FrameNetworkingContext {
+class QtMIMETypeSniffer : public QObject {
+    Q_OBJECT
 public:
-    static PassRefPtr<WebFrameNetworkingContext> create(Frame*);
+    QtMIMETypeSniffer(QNetworkReply*, const QString& advertisedMimeType, bool isSupportedImageType);
+    QString mimeType() const { return m_mimeType; }
+    bool isFinished() const { return m_isFinished; }
+
+signals:
+    void finished();
+
+private slots:
+    void trySniffing();
 
 private:
-    WebFrameNetworkingContext(Frame*);
+    bool sniff();
 
-    virtual QObject* originatingObject() const;
-    virtual QNetworkAccessManager* networkAccessManager() const;
-    virtual bool mimeSniffingEnabled() const;
-
-    QObject* m_originatingObject;
-    bool m_mimeSniffingEnabled;
+    QNetworkReply* m_reply;
+    QString m_mimeType;
+    MIMESniffer m_sniffer;
+    bool m_isFinished;
 };
 
-}
-
-#endif // WebFrameNetworkingContext_h
+#endif // QtMIMETypeSniffer_h

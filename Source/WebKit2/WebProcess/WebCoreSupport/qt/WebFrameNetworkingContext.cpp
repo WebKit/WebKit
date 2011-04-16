@@ -29,6 +29,7 @@ namespace WebCore {
 WebFrameNetworkingContext::WebFrameNetworkingContext(Frame* frame)
     : FrameNetworkingContext(frame)
     , m_originatingObject(0)
+    , m_mimeSniffingEnabled(true)
 {
 }
 
@@ -45,6 +46,11 @@ QObject* WebFrameNetworkingContext::originatingObject() const
 QNetworkAccessManager* WebFrameNetworkingContext::networkAccessManager() const
 {
     return WebKit::WebProcess::shared().networkAccessManager();
+}
+
+bool WebFrameNetworkingContext::mimeSniffingEnabled() const
+{
+    return m_mimeSniffingEnabled;
 }
 
 }

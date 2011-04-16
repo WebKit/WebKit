@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies)
+    Copyright (C) 2011 Nokia Corporation and/or its subsidiary(-ies)
 
     This library is free software; you can redistribute it and/or
     modify it under the terms of the GNU Library General Public
@@ -17,28 +17,25 @@
     Boston, MA 02110-1301, USA.
 */
 
-#ifndef WebFrameNetworkingContext_h
-#define WebFrameNetworkingContext_h
+#ifndef MIMESniffing_h
+#define MIMESniffing_h
 
-#include <WebCore/FrameNetworkingContext.h>
+#include <stddef.h>
 
-namespace WebCore {
+// MIME type sniffing implementation based on http://tools.ietf.org/html/draft-abarth-mime-sniff-06
 
-class WebFrameNetworkingContext : public FrameNetworkingContext {
+class MIMESniffer {
 public:
-    static PassRefPtr<WebFrameNetworkingContext> create(Frame*);
+    MIMESniffer(const char* advertisedMIMEType, bool isSupportedImageType);
+
+    size_t dataSize() const { return m_dataSize; }
+    const char* sniff(const char* data, size_t size) const { return m_function ?  m_function(data, size) : 0; }
+    bool isValid() const { return m_dataSize > 0; }
 
 private:
-    WebFrameNetworkingContext(Frame*);
-
-    virtual QObject* originatingObject() const;
-    virtual QNetworkAccessManager* networkAccessManager() const;
-    virtual bool mimeSniffingEnabled() const;
-
-    QObject* m_originatingObject;
-    bool m_mimeSniffingEnabled;
+    typedef const char* (*SniffFunction)(const char*, size_t);
+    size_t m_dataSize;
+    SniffFunction m_function;
 };
 
-}
-
-#endif // WebFrameNetworkingContext_h
+#endif // MIMESniffing_h

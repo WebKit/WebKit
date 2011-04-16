@@ -241,9 +241,6 @@ http/tests/security/dataURL/xss-DENIED-to-data-url-sub-frame-uppercase.html
 http/tests/media
 http/tests/wml
 
-# - content sniffing - Binary data not loaded as text.
-http/tests/loading/text-content-type-with-binary-extension.html
-
 # drag n drop support again
 http/tests/local/drag-over-remote-content.html
 http/tests/local/fileapi

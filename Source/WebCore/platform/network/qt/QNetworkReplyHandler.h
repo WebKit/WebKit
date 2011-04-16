@@ -25,6 +25,7 @@
 #include <QNetworkAccessManager>
 
 #include "FormData.h"
+#include "QtMIMETypeSniffer.h"
 
 QT_BEGIN_NAMESPACE
 class QFile;
@@ -34,6 +35,7 @@ QT_END_NAMESPACE
 namespace WebCore {
 
 class ResourceHandle;
+class ResourceRequest;
 class ResourceResponse;
 class QNetworkReplyHandler;
 
@@ -62,7 +64,7 @@ private:
 class QNetworkReplyWrapper : public QObject {
     Q_OBJECT
 public:
-    QNetworkReplyWrapper(QNetworkReplyHandlerCallQueue*, QNetworkReply*, QObject* parent = 0);
+    QNetworkReplyWrapper(QNetworkReplyHandlerCallQueue*, QNetworkReply*, bool sniffMIMETypes, QObject* parent = 0);
     ~QNetworkReplyWrapper();
 
     QNetworkReply* reply() const { return m_reply; }
@@ -72,7 +74,8 @@ public:
 
     QUrl redirectionTargetUrl() const { return m_redirectionTargetUrl; }
     QString encoding() const { return m_encoding; }
-    QString advertisedMimeType() const { return m_advertisedMimeType; }
+    QString advertisedMIMEType() const { return m_advertisedMIMEType; }
+    QString mimeType() const { return m_sniffedMIMEType.isEmpty() ? m_advertisedMIMEType : m_sniffedMIMEType; }
 
     bool responseContainsData() const { return m_responseContainsData; }
     bool wasRedirected() const { return m_redirectionTargetUrl.isValid(); }
@@ -81,18 +84,24 @@ private Q_SLOTS:
     void receiveMetaData();
     void didReceiveFinished();
     void didReceiveReadyRead();
+    void receiveSniffedMIMEType();
 
 private:
     void resetConnections();
+    void emitMetaDataChanged();
 
     QNetworkReply* m_reply;
     QUrl m_redirectionTargetUrl;
 
     QString m_encoding;
-    QString m_advertisedMimeType;
-
     QNetworkReplyHandlerCallQueue* m_queue;
     bool m_responseContainsData;
+
+    QString m_advertisedMIMEType;
+
+    QString m_sniffedMIMEType;
+    OwnPtr<QtMIMETypeSniffer> m_sniffer;
+    bool m_sniffMIMETypes;
 };
 
 class QNetworkReplyHandler : public QObject
@@ -113,10 +122,11 @@ public:
 
     QNetworkReply* release();
 
-public slots:
     void finish();
-    void sendResponseIfNeeded();
     void forwardData();
+    void sendResponseIfNeeded();
+
+private slots:
     void uploadProgress(qint64 bytesSent, qint64 bytesTotal);
 
 private:
@@ -124,7 +134,7 @@ private:
     String httpMethod() const;
     void redirect(ResourceResponse&, const QUrl&);
     bool wasAborted() const { return !m_resourceHandle; }
-    QNetworkReply* sendNetworkRequest();
+    QNetworkReply* sendNetworkRequest(QNetworkAccessManager*, const ResourceRequest&);
 
     OwnPtr<QNetworkReplyWrapper> m_replyWrapper;
     ResourceHandle* m_resourceHandle;
