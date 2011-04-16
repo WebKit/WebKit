@@ -623,6 +623,11 @@ void NonSpeculativeJIT::compile(SpeculationCheckIndexIterator& checkIterator, No
         ASSERT(JITCompiler::regT1 != JITCompiler::returnValueRegister);
         ASSERT(JITCompiler::returnValueRegister != JITCompiler::callFrameRegister);
 
+#if DFG_SUCCESS_STATS
+        static SamplingCounter counter("NonSpeculativeJIT");
+        m_jit.emitCount(counter);
+#endif
+
         // Return the result in returnValueRegister.
         JSValueOperand op1(this, node.child1);
         m_jit.move(op1.registerID(), JITCompiler::returnValueRegister);

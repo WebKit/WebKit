@@ -44,6 +44,7 @@ JSC::MacroAssemblerX86Common::SSE2CheckState JSC::MacroAssemblerX86Common::s_sse
 #include "RepatchBuffer.h"
 #include "ResultType.h"
 #include "SamplingTool.h"
+#include "dfg/DFGNode.h" // for DFG_SUCCESS_STATS
 
 using namespace std;
 
@@ -471,6 +472,11 @@ JITCode JIT::privateCompile(CodePtr* functionEntryArityCheck)
 
     Jump registerFileCheck;
     if (m_codeBlock->codeType() == FunctionCode) {
+#if DFG_SUCCESS_STATS
+        static SamplingCounter counter("orignalJIT");
+        emitCount(counter);
+#endif
+
         // In the case of a fast linked call, we do not set this up in the caller.
         emitPutImmediateToCallFrameHeader(m_codeBlock, RegisterFile::CodeBlock);
 

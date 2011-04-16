@@ -1,3 +1,18 @@
+2011-04-15  Gavin Barraclough  <barraclough@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        Add a simple tool to gather statistics on whether functions
+        are completed through the new or old JIT.
+
+        * dfg/DFGNode.h:
+        * dfg/DFGNonSpeculativeJIT.cpp:
+        (JSC::DFG::NonSpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * jit/JIT.cpp:
+        (JSC::JIT::privateCompile):
+
 2011-04-15  Oliver Hunt  <oliver@apple.com>
 
         GC allocate Structure
