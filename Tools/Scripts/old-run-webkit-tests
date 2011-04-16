@@ -692,6 +692,9 @@ for (my $i = 1; $i < $iterations; $i++) {
     push(@tests, @originalTests);
 }
 
+my $absTestResultsDirectory = resolveAndMakeTestResultsDirectory();
+open my $tests_run_fh, '>', "$absTestResultsDirectory/tests_run.txt" or die $!;
+
 for my $test (@tests) {
     my $newDumpTool = not $isDumpToolOpen;
     openDumpTool();
@@ -741,6 +744,8 @@ for my $test (@tests) {
     my $result;
 
     my $startTime = time if $report10Slowest;
+
+    print $tests_run_fh "$testDirectory/$test\n";
 
     # Try to read expected hash file for pixel tests
     my $suffixExpectedHash = "";
@@ -1089,6 +1094,8 @@ for my $test (@tests) {
     countFinishedTest($test, $base, $result, $isText);
     last if stopRunningTestsEarlyIfNeeded();
 }
+
+close($tests_run_fh);
 
 my $totalTestingTime = time - $overallStartTime;
 my $waitTime = getWaitTime();

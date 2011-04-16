@@ -2,6 +2,15 @@
 
         Reviewed by Ojan Vafai.
 
+        old-run-webkit-tests: save the list of tests actually run to a file
+        https://bugs.webkit.org/show_bug.cgi?id=58692
+
+        * Scripts/old-run-webkit-tests:
+
+2011-04-15  Dirk Pranke  <dpranke@chromium.org>
+
+        Reviewed by Ojan Vafai.
+
         fix MockFileSystem.abspath() on windows
         https://bugs.webkit.org/show_bug.cgi?id=58713
 
