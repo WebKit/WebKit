@@ -1082,8 +1082,6 @@ public:
     void serviceScriptedAnimations(DOMTimeStamp);
 #endif
 
-    bool mayCauseFlashOfUnstyledContent() const;
-
     virtual EventTarget* errorEventTarget();
     virtual void logExceptionToConsole(const String& errorMessage, int lineNumber, const String& sourceURL, PassRefPtr<ScriptCallStack>);
 

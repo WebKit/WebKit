@@ -328,7 +328,7 @@ bool FrameView::didFirstLayout() const
 void FrameView::invalidateRect(const IntRect& rect)
 {
     if (!parent()) {
-        if (hostWindow() && shouldUpdate())
+        if (hostWindow())
             hostWindow()->invalidateContentsAndWindow(rect, false /*immediate*/);
         return;
     }
@@ -1838,8 +1838,6 @@ void FrameView::setShouldUpdateWhileOffscreen(bool shouldUpdateWhileOffscreen)
 bool FrameView::shouldUpdate(bool immediateRequested) const
 {
     if (!immediateRequested && isOffscreen() && !shouldUpdateWhileOffscreen())
-        return false;
-    if (!m_frame || !m_frame->document() || m_frame->document()->mayCauseFlashOfUnstyledContent())
         return false;
     return true;
 }

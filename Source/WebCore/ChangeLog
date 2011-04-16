@@ -1,3 +1,24 @@
+2011-04-15  MORITA Hajime  <morrita@google.com>
+
+        Reviewed by Simon Fraser.
+
+        Calls to WebCore::Document::mayCauseFlashOfUnstyledContent make frequently-run drawing methods slower
+        https://bugs.webkit.org/show_bug.cgi?id=58512
+        
+        Manually rolled out r72367 at which mayCauseFlashOfUnstyledContent() was introduced.
+        This change keeps an small refactoring on
+        FrameView::shouldUpdate(), which doesn't affect on the behavior.
+
+        * dom/Document.cpp:
+        * dom/Document.h:
+        * page/FrameView.cpp:
+        (WebCore::FrameView::invalidateRect):
+        (WebCore::FrameView::shouldUpdate):
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::paintContents):
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::paintLayer):
+
 2011-04-15  Chris Rogers  <crogers@google.com>
 
         Reviewed by Kenneth Russell.
