@@ -86,7 +86,6 @@ function resultLink(test_prefix, suffix, contents)
 
 // FIXME: show expected/actual/diff contents inline in iframes
 // FIXME: allow zooming in on pixel diffs
-// FIXME: handle new tests
 
 var hasTextFailures = false;
 var hasImageFailures = false;
@@ -94,6 +93,7 @@ var hasImageFailures = false;
 html += '<tbody>';
 
 var testsWithStderr = [];
+var newTests = [];
 var hasHttpTests = false;
 
 for (var test in results.tests) {
@@ -103,8 +103,14 @@ for (var test in results.tests) {
   hasHttpTests = hasHttpTests || test.indexOf('http/') == 0;
 
   var actual = results.tests[test].actual;
-  var expected = results.tests[test].expected || 'PASS';
+  if (actual == 'MISSING') {
+      // FIXME: make sure that new-run-webkit-tests spits out an -actual.txt file for
+      // tests with MISSING results.
+      newTests.push(test);
+      continue;
+  }
   
+  var expected = results.tests[test].expected || 'PASS';
   if (actual == 'PASS' && (!results.uses_expectations_file || expected == 'PASS'))
     continue;
 
@@ -149,17 +155,24 @@ for (var test in results.tests) {
 
 html += '</tbody></table>'
 
-if (testsWithStderr.length) {
-    testsWithStderr.sort();
+function appendTestList(tests, header, tableId, fileSuffix, linkName)
+{
+    tests.sort();
 
-    html += '<p>Tests that had stderr output:</p><table id="stderr-table">';
-    for (var i = 0; i < testsWithStderr.length; i++) {
-        var test = testsWithStderr[i];
+    html += '<p>' + header + '</p><table id="' + tableId + '">';
+    for (var i = 0; i < tests.length; i++) {
+        var test = tests[i];
         html += '<tr><td>' + testLink(test) + '</td>' +
-            '<td>' + resultLink(stripExtension(test), '-stderr.txt', 'stderr') + '</td></tr>';
+            '<td>' + resultLink(stripExtension(test), fileSuffix, linkName) + '</td></tr>';
     }
     html += '</table>'
 }
+
+if (newTests.length)
+    appendTestList(newTests, 'Tests that had no expected results (probably new):', 'new-tests-table', '-actual.txt', 'result');
+
+if (testsWithStderr.length)
+    appendTestList(testsWithStderr, 'Tests that had stderr output:', 'stderr-table', '-stderr.txt', 'stderr');
 
 if (hasHttpTests) {
     html += '<p>httpd access log: <a href="access_log.txt">access_log.txt</a></p>' +
