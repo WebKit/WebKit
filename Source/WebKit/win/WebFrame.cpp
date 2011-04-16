@@ -106,7 +106,7 @@
 
 #if PLATFORM(CG)
 #include <CoreGraphics/CoreGraphics.h>
-#elif PLATFORM(CAIRO)
+#elif USE(CAIRO)
 #include "PlatformContextCairo.h"
 #include <cairo-win32.h>
 #endif
@@ -2167,7 +2167,7 @@ void WebFrame::spoolPage(PlatformGraphicsContext* pctx, GraphicsContext* spoolCt
     CGContextEndPage(pctx);
     CGContextRestoreGState(pctx);
 }
-#elif PLATFORM(CAIRO)
+#elif USE(CAIRO)
 static float scaleFactor(HDC printDC, const IntRect& marginRect, const IntRect& pageRect)
 {
     const IntRect& printRect = printerRect(printDC);
@@ -2325,7 +2325,7 @@ HRESULT STDMETHODCALLTYPE WebFrame::spoolPages(
         ASSERT_NOT_REACHED();
         return E_POINTER;
     }
-#elif PLATFORM(CAIRO)
+#elif USE(CAIRO)
     if (!printDC) {
         ASSERT_NOT_REACHED();
         return E_POINTER;
@@ -2396,7 +2396,7 @@ HRESULT STDMETHODCALLTYPE WebFrame::spoolPages(
     for (UINT ii = startPage; ii < endPage; ii++)
         spoolPage(pctx, &spoolCtx, printDC, ui.get(), headerHeight, footerHeight, ii, pageCount);
 
-#if PLATFORM(CAIRO)
+#if USE(CAIRO)
     cairo_surface_finish(printSurface);
     ASSERT(!cairo_surface_status(printSurface));
     cairo_surface_destroy(printSurface);

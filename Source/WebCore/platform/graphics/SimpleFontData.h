@@ -48,7 +48,7 @@ typedef struct OpaqueATSUStyle* ATSUStyle;
 #include <usp10.h>
 #endif
 
-#if PLATFORM(CAIRO)
+#if USE(CAIRO)
 #include <cairo.h>
 #endif
 
@@ -115,7 +115,7 @@ public:
 
     float spaceWidth() const { return m_spaceWidth; }
 
-#if PLATFORM(CG) || PLATFORM(CAIRO) || PLATFORM(WX) || USE(SKIA_ON_MAC_CHROME)
+#if PLATFORM(CG) || USE(CAIRO) || PLATFORM(WX) || USE(SKIA_ON_MAC_CHROME)
     float syntheticBoldOffset() const { return m_syntheticBoldOffset; }
 #endif
 
@@ -252,7 +252,7 @@ private:
 
     mutable OwnPtr<DerivedFontData> m_derivedFontData;
 
-#if PLATFORM(CG) || PLATFORM(CAIRO) || PLATFORM(WX) || USE(SKIA_ON_MAC_CHROME)
+#if PLATFORM(CG) || USE(CAIRO) || PLATFORM(WX) || USE(SKIA_ON_MAC_CHROME)
     float m_syntheticBoldOffset;
 #endif
 

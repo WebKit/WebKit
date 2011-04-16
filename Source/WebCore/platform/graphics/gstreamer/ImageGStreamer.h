@@ -27,7 +27,7 @@
 #include <gst/video/video.h>
 #include <wtf/PassRefPtr.h>
 
-#if PLATFORM(CAIRO)
+#if USE(CAIRO)
 #include <cairo.h>
 #endif
 
@@ -48,7 +48,7 @@ class ImageGStreamer : public RefCounted<ImageGStreamer> {
     private:
         RefPtr<BitmapImage> m_image;
 
-#if PLATFORM(CAIRO)
+#if USE(CAIRO)
         ImageGStreamer(GstBuffer*&, IntSize, cairo_format_t&);
 #endif
 

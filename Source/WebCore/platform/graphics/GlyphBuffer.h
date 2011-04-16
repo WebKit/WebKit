@@ -38,7 +38,7 @@
 #include <ApplicationServices/ApplicationServices.h>
 #endif
 
-#if PLATFORM(CAIRO) || (PLATFORM(WX) && defined(__WXGTK__))
+#if USE(CAIRO) || (PLATFORM(WX) && defined(__WXGTK__))
 #include <cairo.h>
 #endif
 
@@ -47,7 +47,7 @@ namespace WebCore {
 typedef unsigned short Glyph;
 class SimpleFontData;
 
-#if PLATFORM(CAIRO)
+#if USE(CAIRO)
 // FIXME: Why does Cairo use such a huge struct instead of just an offset into an array?
 typedef cairo_glyph_t GlyphBufferGlyph;
 #elif OS(WINCE)
@@ -113,7 +113,7 @@ public:
 
     Glyph glyphAt(int index) const
     {
-#if PLATFORM(CAIRO)
+#if USE(CAIRO)
         return m_glyphs[index].index;
 #else
         return m_glyphs[index];
@@ -145,7 +145,7 @@ public:
     {
         m_fontData.append(font);
 
-#if PLATFORM(CAIRO)
+#if USE(CAIRO)
         cairo_glyph_t cairoGlyph;
         cairoGlyph.index = glyph;
         m_glyphs.append(cairoGlyph);
@@ -176,7 +176,7 @@ public:
     void add(Glyph glyph, const SimpleFontData* font, GlyphBufferAdvance advance)
     {
         m_fontData.append(font);
-#if PLATFORM(CAIRO)
+#if USE(CAIRO)
         cairo_glyph_t cairoGlyph;
         cairoGlyph.index = glyph;
         m_glyphs.append(cairoGlyph);

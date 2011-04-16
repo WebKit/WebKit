@@ -1,5 +1,53 @@
 2011-04-16  Patrick Gansterer  <paroga@webkit.org>
 
+        Reviewed by Eric Seidel.
+
+        Rename PLATFORM(CAIRO) to USE(CAIRO)
+        https://bugs.webkit.org/show_bug.cgi?id=55192
+
+        * CMakeListsEfl.txt:
+        * config.h:
+        * platform/MIMETypeRegistry.cpp:
+        (WebCore::initializeSupportedImageMIMETypesForEncoding):
+        * platform/graphics/ContextShadow.h:
+        * platform/graphics/DashArray.h:
+        * platform/graphics/FloatRect.h:
+        * platform/graphics/FontPlatformData.h:
+        (WebCore::FontPlatformData::FontPlatformData):
+        (WebCore::FontPlatformData::hash):
+        (WebCore::FontPlatformData::isHashTableDeletedValue):
+        * platform/graphics/GlyphBuffer.h:
+        (WebCore::GlyphBuffer::glyphAt):
+        (WebCore::GlyphBuffer::add):
+        * platform/graphics/Gradient.cpp:
+        * platform/graphics/Gradient.h:
+        * platform/graphics/GraphicsContext.cpp:
+        * platform/graphics/GraphicsContext.h:
+        (WebCore::GraphicsContextState::GraphicsContextState):
+        * platform/graphics/GraphicsContext3D.h:
+        * platform/graphics/ImageBufferData.h:
+        * platform/graphics/ImageSource.h:
+        * platform/graphics/Path.h:
+        * platform/graphics/Pattern.h:
+        * platform/graphics/SimpleFontData.h:
+        * platform/graphics/cairo/DrawErrorUnderline.h:
+        * platform/graphics/cairo/GraphicsContextCairo.cpp:
+        * platform/graphics/cairo/ImageCairo.cpp:
+        * platform/graphics/gstreamer/ImageGStreamer.h:
+        * platform/graphics/transforms/AffineTransform.h:
+        * platform/graphics/transforms/TransformationMatrix.h:
+        * platform/graphics/win/FontCacheWin.cpp:
+        (WebCore::createGDIFont):
+        (WebCore::FontCache::createFontPlatformData):
+        * platform/graphics/win/FontPlatformDataWin.cpp:
+        (WebCore::FontPlatformData::FontPlatformData):
+        * platform/graphics/win/GraphicsContextWin.cpp:
+        * plugins/win/PluginViewWin.cpp:
+        (WebCore::PluginView::paintWindowedPluginIntoContext):
+        * rendering/RenderObject.h:
+
+2011-04-16  Patrick Gansterer  <paroga@webkit.org>
+
         Unreviewed WinCE build fix for r84033.
 
         * platform/win/LocalizedStringsWin.cpp:

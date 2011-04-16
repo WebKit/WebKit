@@ -54,7 +54,7 @@ QT_BEGIN_NAMESPACE
 class QGradient;
 QT_END_NAMESPACE
 typedef QGradient* PlatformGradient;
-#elif PLATFORM(CAIRO)
+#elif USE(CAIRO)
 typedef struct _cairo_pattern cairo_pattern_t;
 typedef cairo_pattern_t* PlatformGradient;
 #elif USE(SKIA)

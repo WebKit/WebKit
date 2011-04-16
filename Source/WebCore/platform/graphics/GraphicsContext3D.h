@@ -90,7 +90,7 @@ class Extensions3DOpenGL;
 class HostWindow;
 class Image;
 class ImageData;
-#if PLATFORM(CAIRO)
+#if USE(CAIRO)
 class PlatformContextCairo;
 #endif
 

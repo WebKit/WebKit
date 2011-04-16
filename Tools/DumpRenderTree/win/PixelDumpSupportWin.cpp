@@ -30,7 +30,7 @@
 
 #if PLATFORM(CG)
 #include "PixelDumpSupportCG.h"
-#elif PLATFORM(CAIRO)
+#elif USE(CAIRO)
 #include "PixelDumpSupportCairo.h"
 #endif
 
@@ -74,7 +74,7 @@ PassRefPtr<BitmapContext> createBitmapContextFromWebView(bool onscreen, bool inc
     RetainPtr<CGColorSpaceRef> colorSpace(AdoptCF, CGColorSpaceCreateDeviceRGB());
     CGContextRef context = CGBitmapContextCreate(info.bmBits, info.bmWidth, info.bmHeight, 8,
                                                 info.bmWidthBytes, colorSpace.get(), kCGBitmapByteOrder32Host | kCGImageAlphaPremultipliedFirst);
-#elif PLATFORM(CAIRO) 
+#elif USE(CAIRO) 
     cairo_surface_t* image = cairo_image_surface_create_for_data((unsigned char*)info.bmBits, CAIRO_FORMAT_ARGB32, 
                                                       info.bmWidth, info.bmHeight, info.bmWidthBytes); 
     cairo_t* context = cairo_create(image); 

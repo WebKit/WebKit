@@ -34,7 +34,7 @@
 #include "IntRect.h"
 #include <wtf/RefCounted.h>
 
-#if PLATFORM(CAIRO)
+#if USE(CAIRO)
 typedef struct _cairo cairo_t;
 typedef struct _cairo_surface cairo_surface_t;
 #elif PLATFORM(QT)
@@ -49,7 +49,7 @@ namespace WebCore {
 class AffineTransform;
 class GraphicsContext;
 
-#if PLATFORM(CAIRO)
+#if USE(CAIRO)
 typedef cairo_surface_t* PlatformImage;
 typedef cairo_t* PlatformContext;
 #elif PLATFORM(QT)
@@ -116,7 +116,7 @@ public:
 
     void setShadowsIgnoreTransforms(bool enable) { m_shadowsIgnoreTransforms = enable; }
     bool shadowsIgnoreTransforms() const { return m_shadowsIgnoreTransforms; }
-#if PLATFORM(CAIRO)
+#if USE(CAIRO)
     void drawRectShadow(GraphicsContext* context, const IntRect& rect, const IntSize& topLeftRadius = IntSize(), const IntSize& topRightRadius = IntSize(), const IntSize& bottomLeftRadius = IntSize(), const IntSize& bottomRightRadius = IntSize());
 #endif
 #if PLATFORM(QT)
@@ -135,7 +135,7 @@ private:
     void blurLayerImage(unsigned char*, const IntSize& imageSize, int stride);
     IntRect calculateLayerBoundingRect(GraphicsContext*, const FloatRect& layerArea, const IntRect& clipRect);
 
-#if PLATFORM(CAIRO)
+#if USE(CAIRO)
     void drawRectShadowWithoutTiling(GraphicsContext*, const IntRect& shadowRect, const IntSize& topLeftRadius, const IntSize& topRightRadius, const IntSize& bottomLeftRadius, const IntSize& bottomRightRadius, float alpha);
 #endif
 };

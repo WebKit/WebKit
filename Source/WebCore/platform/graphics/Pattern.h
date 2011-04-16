@@ -38,7 +38,7 @@
 #if PLATFORM(CG)
 typedef struct CGPattern* CGPatternRef;
 typedef CGPatternRef PlatformPatternPtr;
-#elif PLATFORM(CAIRO)
+#elif USE(CAIRO)
 #include <cairo.h>
 typedef cairo_pattern_t* PlatformPatternPtr;
 #elif USE(SKIA)

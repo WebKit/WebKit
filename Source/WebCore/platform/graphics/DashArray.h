@@ -30,7 +30,7 @@
 
 #if PLATFORM(CG)
 typedef Vector<CGFloat> DashArray;
-#elif PLATFORM(CAIRO)
+#elif USE(CAIRO)
 typedef Vector<double> DashArray;
 #else
 typedef Vector<float> DashArray;

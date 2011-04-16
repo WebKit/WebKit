@@ -221,7 +221,7 @@ void Gradient::setGradientSpaceTransform(const AffineTransform& gradientSpaceTra
     setPlatformGradientSpaceTransform(gradientSpaceTransformation);
 }
 
-#if !USE(SKIA) && !PLATFORM(CAIRO)
+#if !USE(SKIA) && !USE(CAIRO)
 void Gradient::setPlatformGradientSpaceTransform(const AffineTransform&)
 {
 }

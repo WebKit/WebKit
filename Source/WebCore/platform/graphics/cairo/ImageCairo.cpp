@@ -28,7 +28,7 @@
 #include "config.h"
 #include "BitmapImage.h"
 
-#if PLATFORM(CAIRO)
+#if USE(CAIRO)
 
 #include "AffineTransform.h"
 #include "CairoUtilities.h"
@@ -205,4 +205,4 @@ void BitmapImage::checkForSolidColor()
 
 }
 
-#endif // PLATFORM(CAIRO)
+#endif // USE(CAIRO)

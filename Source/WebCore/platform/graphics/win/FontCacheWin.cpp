@@ -471,7 +471,7 @@ static HFONT createGDIFont(const AtomicString& family, LONG desiredWeight, bool 
     matchData.m_chosen.lfUnderline = false;
     matchData.m_chosen.lfStrikeOut = false;
     matchData.m_chosen.lfCharSet = DEFAULT_CHARSET;
-#if PLATFORM(CG) || PLATFORM(CAIRO)
+#if PLATFORM(CG) || USE(CAIRO)
     matchData.m_chosen.lfOutPrecision = OUT_TT_ONLY_PRECIS;
 #else
     matchData.m_chosen.lfOutPrecision = OUT_TT_PRECIS;
@@ -583,7 +583,7 @@ FontPlatformData* FontCache::createFontPlatformData(const FontDescription& fontD
 
 #if PLATFORM(CG)
     bool fontCreationFailed = !result->cgFont();
-#elif PLATFORM(CAIRO)
+#elif USE(CAIRO)
     bool fontCreationFailed = !result->scaledFont();
 #endif
 

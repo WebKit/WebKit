@@ -28,7 +28,7 @@
 
 #if PLATFORM(CG)
 #include "GraphicsContextPlatformPrivateCG.h"
-#elif PLATFORM(CAIRO)
+#elif USE(CAIRO)
 #include "GraphicsContextPlatformPrivateCairo.h"
 #endif
 

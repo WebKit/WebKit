@@ -565,7 +565,7 @@
 #endif
 
 #if PLATFORM(GTK)
-#define WTF_PLATFORM_CAIRO 1
+#define WTF_USE_CAIRO 1
 #endif
 
 

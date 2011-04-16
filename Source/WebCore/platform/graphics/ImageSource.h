@@ -43,7 +43,7 @@ typedef const struct __CFData* CFDataRef;
 QT_BEGIN_NAMESPACE
 class QPixmap;
 QT_END_NAMESPACE
-#elif PLATFORM(CAIRO)
+#elif USE(CAIRO)
 struct _cairo_surface;
 typedef struct _cairo_surface cairo_surface_t;
 #elif USE(SKIA)
@@ -88,7 +88,7 @@ typedef wxGraphicsBitmap* NativeImagePtr;
 #else
 typedef wxBitmap* NativeImagePtr;
 #endif
-#elif PLATFORM(CAIRO)
+#elif USE(CAIRO)
 typedef cairo_surface_t* NativeImagePtr;
 #elif USE(SKIA)
 typedef WebCore::NativeImageSkia* NativeImagePtr;

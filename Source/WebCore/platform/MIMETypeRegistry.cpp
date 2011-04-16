@@ -164,7 +164,7 @@ static void initializeSupportedImageMIMETypesForEncoding()
     supportedImageMIMETypesForEncoding->add("image/tiff");
     supportedImageMIMETypesForEncoding->add("image/bmp");
     supportedImageMIMETypesForEncoding->add("image/ico");
-#elif PLATFORM(CAIRO)
+#elif USE(CAIRO)
     supportedImageMIMETypesForEncoding->add("image/png");
 #endif
 }

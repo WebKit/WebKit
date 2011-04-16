@@ -82,7 +82,7 @@
 #define LOG_PLUGIN_NET_ERROR()
 #endif
 
-#if PLATFORM(CAIRO)
+#if USE(CAIRO)
 #include "PlatformContextCairo.h"
 #include <cairo-win32.h>
 #endif
@@ -569,7 +569,7 @@ void PluginView::paintWindowedPluginIntoContext(GraphicsContext* context, const 
 
     LocalWindowsContext windowsContext(context, frameRect(), false);
 
-#if PLATFORM(CAIRO)
+#if USE(CAIRO)
     // Must flush drawings up to this point to the backing metafile, otherwise the
     // plugin region will be overwritten with any clear regions specified in the
     // cairo-controlled portions of the rendering.

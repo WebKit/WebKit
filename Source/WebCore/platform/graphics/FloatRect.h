@@ -59,7 +59,7 @@ class BRect;
 struct SkRect;
 #endif
 
-#if PLATFORM(CAIRO)
+#if USE(CAIRO)
 typedef struct _cairo_rectangle cairo_rectangle_t;
 #endif
 
@@ -173,7 +173,7 @@ public:
     operator VGRect() const;
 #endif
 
-#if PLATFORM(CAIRO)
+#if USE(CAIRO)
     FloatRect(const cairo_rectangle_t&);
     operator cairo_rectangle_t() const;
 #endif

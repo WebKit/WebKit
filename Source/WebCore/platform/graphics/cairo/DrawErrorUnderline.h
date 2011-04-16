@@ -21,7 +21,7 @@
  *
  */
 
-#if PLATFORM(CAIRO)
+#if USE(CAIRO)
 
 #ifndef DrawErrorUnderline_h
 #define DrawErrorUnderline_h

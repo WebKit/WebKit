@@ -39,7 +39,7 @@
 
 #if PLATFORM(CG)
 typedef struct CGContext PlatformGraphicsContext;
-#elif PLATFORM(CAIRO)
+#elif USE(CAIRO)
 namespace WebCore {
 class ContextShadow;
 class PlatformContextCairo;
@@ -154,7 +154,7 @@ namespace WebCore {
         GraphicsContextState()
             : strokeThickness(0)
             , shadowBlur(0)
-#if PLATFORM(CAIRO)
+#if USE(CAIRO)
             , globalAlpha(1)
 #endif
             , textDrawingMode(TextModeFill)
@@ -189,7 +189,7 @@ namespace WebCore {
         float strokeThickness;
         float shadowBlur;
 
-#if PLATFORM(CAIRO)
+#if USE(CAIRO)
         float globalAlpha;
 #endif
         TextDrawingModeFlags textDrawingMode;
@@ -390,7 +390,7 @@ namespace WebCore {
         void setMiterLimit(float);
 
         void setAlpha(float);
-#if PLATFORM(CAIRO)
+#if USE(CAIRO)
         float getAlpha();
 #endif
 
@@ -490,11 +490,11 @@ namespace WebCore {
         void takeOwnershipOfPlatformContext();
 #endif
 
-#if PLATFORM(QT) || PLATFORM(CAIRO)
+#if PLATFORM(QT) || USE(CAIRO)
         ContextShadow* contextShadow();
 #endif
 
-#if PLATFORM(CAIRO)
+#if USE(CAIRO)
         GraphicsContext(cairo_t*);
 #endif
 

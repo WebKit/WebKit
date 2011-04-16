@@ -1,3 +1,16 @@
+2011-04-16  Patrick Gansterer  <paroga@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        Rename PLATFORM(CAIRO) to USE(CAIRO)
+        https://bugs.webkit.org/show_bug.cgi?id=55192
+
+        * DumpRenderTree/PixelDumpSupport.cpp:
+        * DumpRenderTree/config.h:
+        * DumpRenderTree/win/PixelDumpSupportWin.cpp:
+        (createBitmapContextFromWebView):
+        * WebKitTestRunner/config.h:
+
 2011-04-16  Ojan Vafai  <ojan@chromium.org>
 
         Reviewed by Eric Seidel.

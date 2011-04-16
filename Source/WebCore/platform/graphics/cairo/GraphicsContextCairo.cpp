@@ -32,7 +32,7 @@
 #include "config.h"
 #include "GraphicsContext.h"
 
-#if PLATFORM(CAIRO)
+#if USE(CAIRO)
 
 #include "AffineTransform.h"
 #include "CairoUtilities.h"
@@ -1182,4 +1182,4 @@ InterpolationQuality GraphicsContext::imageInterpolationQuality() const
 
 } // namespace WebCore
 
-#endif // PLATFORM(CAIRO)
+#endif // USE(CAIRO)

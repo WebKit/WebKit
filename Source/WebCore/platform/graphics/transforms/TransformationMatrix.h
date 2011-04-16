@@ -36,7 +36,7 @@ typedef struct CATransform3D CATransform3D;
 #endif
 #if PLATFORM(CG)
 typedef struct CGAffineTransform CGAffineTransform;
-#elif PLATFORM(CAIRO)
+#elif USE(CAIRO)
 #include <cairo.h>
 #elif PLATFORM(OPENVG)
 #include "VGUtils.h"
@@ -315,7 +315,7 @@ public:
 #if PLATFORM(CG)
     TransformationMatrix(const CGAffineTransform&);
     operator CGAffineTransform() const;
-#elif PLATFORM(CAIRO)
+#elif USE(CAIRO)
     operator cairo_matrix_t() const;
 #elif PLATFORM(OPENVG)
     operator VGMatrix() const;

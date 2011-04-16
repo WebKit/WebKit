@@ -1,3 +1,14 @@
+2011-04-16  Patrick Gansterer  <paroga@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        Rename PLATFORM(CAIRO) to USE(CAIRO)
+        https://bugs.webkit.org/show_bug.cgi?id=55192
+
+        * WebFrame.cpp:
+        (WebFrame::spoolPages):
+        * WebFrame.h:
+
 2011-04-14  Adam Roben  <aroben@apple.com>
 
         Replace some known-to-fail assertions with FIXMEs

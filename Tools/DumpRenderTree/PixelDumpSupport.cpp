@@ -39,7 +39,7 @@
 
 #if PLATFORM(CG)
 #include "PixelDumpSupportCG.h"
-#elif PLATFORM(CAIRO)
+#elif USE(CAIRO)
 #include "PixelDumpSupportCairo.h"
 #endif
 

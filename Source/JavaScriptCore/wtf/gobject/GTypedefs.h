@@ -61,7 +61,7 @@ typedef struct _GSource GSource;
 typedef struct _GVariant GVariant;
 typedef union _GdkEvent GdkEvent;
 
-#if PLATFORM(CAIRO)
+#if USE(CAIRO)
 typedef struct _cairo_surface cairo_surface_t;
 #endif
 

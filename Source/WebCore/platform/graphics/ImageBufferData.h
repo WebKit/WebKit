@@ -25,7 +25,7 @@
 
 #if PLATFORM(CG)
 #include "ImageBufferDataCG.h"
-#elif PLATFORM(CAIRO)
+#elif USE(CAIRO)
 #include "ImageBufferDataCairo.h"
 #elif PLATFORM(QT)
 #include "ImageBufferDataQt.h"
