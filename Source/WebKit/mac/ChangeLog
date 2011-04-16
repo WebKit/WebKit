@@ -1,3 +1,15 @@
+2011-04-15  Jia Pu  <jpu@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        [Mac] WebKit needs to convert the bounding box of autocorrected word to view coordinate.
+        https://bugs.webkit.org/show_bug.cgi?id=58717
+
+        Convert the bounding box from window coordinate to view coordinate, which is expected by NSCorrectionPanel.
+
+        * WebCoreSupport/CorrectionPanel.mm:
+        (CorrectionPanel::show):
+
 2011-04-15  Shishir Agrawal  <shishir@chromium.org>
 
         Reviewed by James Robinson.

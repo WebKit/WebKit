@@ -75,7 +75,7 @@ void CorrectionPanel::show(WebView* view, CorrectionPanelInfo::PanelType type, c
             [alternativeStrings addObject:(NSString*)alternativeReplacementStrings[i]];
     }
 
-    [[NSSpellChecker sharedSpellChecker] showCorrectionBubbleOfType:bubbleType primaryString:replacementStringAsNSString alternativeStrings:alternativeStrings forStringInRect:boundingBoxOfReplacedString view:m_view.get() completionHandler:^(NSString* acceptedString) {
+    [[NSSpellChecker sharedSpellChecker] showCorrectionBubbleOfType:bubbleType primaryString:replacementStringAsNSString alternativeStrings:alternativeStrings forStringInRect:[view convertRect:boundingBoxOfReplacedString fromView:nil] view:m_view.get() completionHandler:^(NSString* acceptedString) {
         handleAcceptedReplacement(acceptedString, replacedStringAsNSString, replacementStringAsNSString, bubbleType);
     }];
 }
