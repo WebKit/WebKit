@@ -1,5 +1,16 @@
 2011-04-16  Simon Fraser  <simon.fraser@apple.com>
 
+        Fix border drawing tests to drop -webkit prefix on border-radius, and make the tests compatible with Firefox
+        https://bugs.webkit.org/show_bug.cgi?id=58734
+        
+        Add result for new test.
+
+        * platform/mac/fast/borders/webkit-border-radius-expected.checksum: Added.
+        * platform/mac/fast/borders/webkit-border-radius-expected.png: Added.
+        * platform/mac/fast/borders/webkit-border-radius-expected.txt: Added.
+
+2011-04-16  Simon Fraser  <simon.fraser@apple.com>
+
         Reviewed by Sam Weinig.
 
         Fix border drawing tests to drop -webkit prefix on border-radius, and make the tests compatible with Firefox
