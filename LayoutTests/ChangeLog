@@ -1,3 +1,12 @@
+2011-04-16  Balazs Kelemen  <kbalazs@webkit.org>
+
+        Unreviewed.
+
+        [Qt][WK2] Unskip fast/loader/null-request-after-willSendRequest.html since
+        it is passing for a long time.
+
+        * platform/qt-wk2/Skipped:
+
 2011-04-16  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Simon Fraser.
