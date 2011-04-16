@@ -1,3 +1,16 @@
+2011-04-15  Jon Honeycutt  <jhoneycutt@apple.com>
+
+        Potential crash getting a JS wrapper.
+
+        <rdar://problem/8988741>
+
+        Reviewed by Brian Weinstein.
+
+        * WebProcess/WebPage/WebFrame.cpp:
+        (WebKit::WebFrame::jsWrapperForWorld):
+        Ensure that we have a valid m_coreFrame, because it can be cleared by
+        invalidate().
+
 2011-04-08  Luiz Agostini  <luiz.agostini@openbossa.org>
 
         Reviewed by Kenneth Rohde Christiansen.
