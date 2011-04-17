@@ -277,7 +277,7 @@ bool CachedResourceLoader::canRequest(CachedResource::Type type, const KURL& url
         break;
     }
 #if ENABLE(LINK_PREFETCH)
-    case CachedResource::LinkPrefetch:
+    case CachedResource::LinkResource:
         break;
 #endif
     }
