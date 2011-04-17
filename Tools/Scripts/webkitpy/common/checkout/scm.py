@@ -134,8 +134,9 @@ def commit_error_handler(error):
 
 
 class AuthenticationError(Exception):
-    def __init__(self, server_host):
+    def __init__(self, server_host, prompt_for_password=False):
         self.server_host = server_host
+        self.prompt_for_password = prompt_for_password
 
 
 class AmbiguousCommitError(Exception):
@@ -291,7 +292,7 @@ class SCM:
     def revert_files(self, file_paths):
         self._subclass_must_implement()
 
-    def commit_with_message(self, message, username=None, git_commit=None, force_squash=False, changed_files=None):
+    def commit_with_message(self, message, username=None, password=None, git_commit=None, force_squash=False, changed_files=None):
         self._subclass_must_implement()
 
     def svn_commit_log(self, svn_revision):
@@ -319,7 +320,18 @@ class SCM:
         return []
 
 
-class SVN(SCM):
+# A mixin class that represents common functionality for SVN and Git-SVN.
+class SVNRepository:
+    def has_authorization_for_realm(self, realm, home_directory=os.getenv("HOME")):
+        # Assumes find and grep are installed.
+        if not os.path.isdir(os.path.join(home_directory, ".subversion")):
+            return False
+        find_args = ["find", ".subversion", "-type", "f", "-exec", "grep", "-q", realm, "{}", ";", "-print"]
+        find_output = self.run(find_args, cwd=home_directory, error_handler=Executive.ignore_error).rstrip()
+        return find_output and os.path.isfile(os.path.join(home_directory, find_output))
+
+
+class SVN(SCM, SVNRepository):
     # FIXME: These belong in common.config.urls
     svn_server_host = "svn.webkit.org"
     svn_server_realm = "<http://svn.webkit.org:80> Mac OS Forge"
@@ -373,14 +385,6 @@ class SVN(SCM):
     @staticmethod
     def commit_success_regexp():
         return "^Committed revision (?P<svn_revision>\d+)\.$"
-
-    def has_authorization_for_realm(self, realm=svn_server_realm, home_directory=os.getenv("HOME")):
-        # Assumes find and grep are installed.
-        if not os.path.isdir(os.path.join(home_directory, ".subversion")):
-            return False
-        find_args = ["find", ".subversion", "-type", "f", "-exec", "grep", "-q", realm, "{}", ";", "-print"];
-        find_output = self.run(find_args, cwd=home_directory, error_handler=Executive.ignore_error).rstrip()
-        return find_output and os.path.isfile(os.path.join(home_directory, find_output))
 
     @memoized
     def svn_version(self):
@@ -556,11 +560,11 @@ class SVN(SCM):
         # FIXME: This should probably use cwd=self.checkout_root.
         self.run(['svn', 'revert'] + file_paths)
 
-    def commit_with_message(self, message, username=None, git_commit=None, force_squash=False, changed_files=None):
+    def commit_with_message(self, message, username=None, password=None, git_commit=None, force_squash=False, changed_files=None):
         # git-commit and force are not used by SVN.
         svn_commit_args = ["svn", "commit"]
 
-        if not username and not self.has_authorization_for_realm():
+        if not username and not self.has_authorization_for_realm(self.svn_server_realm):
             raise AuthenticationError(self.svn_server_host)
         if username:
             svn_commit_args.extend(["--username", username])
@@ -598,7 +602,7 @@ class SVN(SCM):
 
 
 # All git-specific logic should go here.
-class Git(SCM):
+class Git(SCM, SVNRepository):
     def __init__(self, cwd, executive=None):
         SCM.__init__(self, cwd, executive)
         self._check_git_architecture()
@@ -833,7 +837,7 @@ class Git(SCM):
             if num_local_commits > 1 or (num_local_commits > 0 and not working_directory_is_clean):
                 raise AmbiguousCommitError(num_local_commits, working_directory_is_clean)
 
-    def commit_with_message(self, message, username=None, git_commit=None, force_squash=False, changed_files=None):
+    def commit_with_message(self, message, username=None, password=None, git_commit=None, force_squash=False, changed_files=None):
         # Username is ignored during Git commits.
         working_directory_is_clean = self.working_directory_is_clean()
 
@@ -843,7 +847,7 @@ class Git(SCM):
                 if working_directory_is_clean:
                     raise ScriptError(message="The working copy is not modified. --git-commit=HEAD.. only commits working copy changes.")
                 self.commit_locally_with_message(message)
-                return self._commit_on_branch(message, 'HEAD')
+                return self._commit_on_branch(message, 'HEAD', username=username, password=password)
 
             # Need working directory changes to be committed so we can checkout the merge branch.
             if not working_directory_is_clean:
@@ -851,15 +855,15 @@ class Git(SCM):
                 # That will modify the working-copy and cause us to hit this error.
                 # The ChangeLog modification could be made to modify the existing local commit.
                 raise ScriptError(message="Working copy is modified. Cannot commit individual git_commits.")
-            return self._commit_on_branch(message, git_commit)
+            return self._commit_on_branch(message, git_commit, username=username, password=password)
 
         if not force_squash:
             self._assert_can_squash(working_directory_is_clean)
         self.run(['git', 'reset', '--soft', self.remote_merge_base()])
         self.commit_locally_with_message(message)
-        return self.push_local_commits_to_server()
+        return self.push_local_commits_to_server(username=username, password=password)
 
-    def _commit_on_branch(self, message, git_commit):
+    def _commit_on_branch(self, message, git_commit, username=None, password=None):
         branch_ref = self.run(['git', 'symbolic-ref', 'HEAD']).strip()
         branch_name = branch_ref.replace('refs/heads/', '')
         commit_ids = self.commit_ids_from_commitish_arguments([git_commit])
@@ -888,7 +892,7 @@ class Git(SCM):
                 self.run(['git', 'cherry-pick', '--no-commit', commit])
 
             self.run(['git', 'commit', '-m', message])
-            output = self.push_local_commits_to_server()
+            output = self.push_local_commits_to_server(username=username, password=password)
         except Exception, e:
             log("COMMIT FAILED: " + str(e))
             output = "Commit failed."
@@ -936,11 +940,15 @@ class Git(SCM):
     def commit_locally_with_message(self, message):
         self.run(['git', 'commit', '--all', '-F', '-'], input=message)
 
-    def push_local_commits_to_server(self):
+    def push_local_commits_to_server(self, username=None, password=None):
         dcommit_command = ['git', 'svn', 'dcommit']
         if self.dryrun:
             dcommit_command.append('--dry-run')
-        output = self.run(dcommit_command, error_handler=commit_error_handler)
+        if not self.has_authorization_for_realm(SVN.svn_server_realm):
+            raise AuthenticationError(SVN.svn_server_host, prompt_for_password=True)
+        if username:
+            dcommit_command.extend(["--username", username])
+        output = self.run(dcommit_command, error_handler=commit_error_handler, input=password)
         # Return a string which looks like a commit so that things which parse this output will succeed.
         if self.dryrun:
             output += "\nCommitted r0"

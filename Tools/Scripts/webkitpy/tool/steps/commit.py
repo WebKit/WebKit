@@ -50,6 +50,7 @@ class Commit(AbstractStep):
         self._state = state
 
         username = None
+        password = None
         force_squash = False
 
         num_tries = 0
@@ -58,7 +59,7 @@ class Commit(AbstractStep):
 
             try:
                 scm = self._tool.scm()
-                commit_text = scm.commit_with_message(self._commit_message, git_commit=self._options.git_commit, username=username, force_squash=force_squash, changed_files=self._changed_files(state))
+                commit_text = scm.commit_with_message(self._commit_message, git_commit=self._options.git_commit, username=username, password=password, force_squash=force_squash, changed_files=self._changed_files(state))
                 svn_revision = scm.svn_revision_from_commit_text(commit_text)
                 log("Committed r%s: <%s>" % (svn_revision, urls.view_revision_url(svn_revision)))
                 self._state["commit_text"] = commit_text
@@ -72,4 +73,8 @@ class Commit(AbstractStep):
             except AuthenticationError, e:
                 username = self._tool.user.prompt("%s login: " % e.server_host, repeat=5)
                 if not username:
-                    raise ScriptError("You need to specify the username on %s to perform the commit as." % self.svn_server_host)
+                    raise ScriptError("You need to specify the username on %s to perform the commit as." % e.server_host)
+                if e.prompt_for_password:
+                    password = self._tool.user.prompt_password("%s password for %s: " % (e.server_host, username), repeat=5)
+                    if not password:
+                        raise ScriptError("You need to specify the password for %s on %s to perform the commit." % (username, e.server_host))

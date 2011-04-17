@@ -29,7 +29,6 @@
 #
 # Python module for reading stored web credentials from the OS.
 
-import getpass
 import os
 import platform
 import re
@@ -149,7 +148,7 @@ class Credentials(object):
         if not username:
             username = User.prompt("%s login: " % self.host)
         if not password:
-            password = getpass.getpass("%s password for %s: " % (self.host, username))
+            password = User.prompt_password("%s password for %s: " % (self.host, username))
             self._offer_to_store_credentials_in_keyring(username, password)
 
         return (username, password)

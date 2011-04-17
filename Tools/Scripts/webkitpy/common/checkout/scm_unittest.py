@@ -664,7 +664,7 @@ Q1dTBx0AAAB42itg4GlgYJjGwMDDyODMxMDw34GBgQEAJPQDJA==
         self._shared_test_commit_with_message("dbates@webkit.org")
 
     def test_commit_without_authorization(self):
-        self.scm.has_authorization_for_realm = lambda: False
+        self.scm.has_authorization_for_realm = lambda realm: False
         self.assertRaises(AuthenticationError, self._shared_test_commit_with_message)
 
     def test_has_authorization_for_realm(self):
@@ -674,7 +674,7 @@ Q1dTBx0AAAB42itg4GlgYJjGwMDDyODMxMDw34GBgQEAJPQDJA==
         os.mkdir(svn_config_dir_path)
         fake_webkit_auth_file = os.path.join(svn_config_dir_path, "fake_webkit_auth_file")
         write_into_file_at_path(fake_webkit_auth_file, SVN.svn_server_realm)
-        self.assertTrue(scm.has_authorization_for_realm(home_directory=fake_home_dir))
+        self.assertTrue(scm.has_authorization_for_realm(SVN.svn_server_realm, home_directory=fake_home_dir))
         os.remove(fake_webkit_auth_file)
         os.rmdir(svn_config_dir_path)
         os.rmdir(fake_home_dir)
@@ -684,7 +684,7 @@ Q1dTBx0AAAB42itg4GlgYJjGwMDDyODMxMDw34GBgQEAJPQDJA==
         fake_home_dir = tempfile.mkdtemp(suffix="fake_home_dir")
         svn_config_dir_path = os.path.join(fake_home_dir, ".subversion")
         os.mkdir(svn_config_dir_path)
-        self.assertFalse(scm.has_authorization_for_realm(home_directory=fake_home_dir))
+        self.assertFalse(scm.has_authorization_for_realm(SVN.svn_server_realm, home_directory=fake_home_dir))
         os.rmdir(svn_config_dir_path)
         os.rmdir(fake_home_dir)
 

@@ -26,6 +26,7 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+import getpass
 import logging
 import os
 import re
@@ -63,6 +64,10 @@ class User(object):
             repeat -= 1
             response = raw_input(message)
         return response
+
+    @classmethod
+    def prompt_password(cls, message, repeat=1):
+        return cls.prompt(message, repeat=repeat, raw_input=getpass.getpass)
 
     @classmethod
     def prompt_with_list(cls, list_title, list_items, can_choose_multiple=False, raw_input=raw_input):

@@ -1,3 +1,33 @@
+2011-04-17  Daniel Bates  <dbates@webkit.com>
+
+        Reviewed by Eric Seidel.
+
+        webkit-patch land hangs if svn prompts for credentials
+        https://bugs.webkit.org/show_bug.cgi?id=31500
+
+        Prompt for username and password when using git-svn and there aren't cached SVN credentials.
+
+        * Scripts/webkitpy/common/checkout/scm.py:
+          - Added mixin class SVNRepository and made both class SVN and Git inherit from it.
+          - Moved SVN.has_authorization_for_realm() to class SVNRepository and removed default value
+            for argument realm; modified call sites as needed.
+          - Modified AuthenticationError constructor to take optional prompt_for_password argument.
+          - Modified {SCM, SVN, Git}.commit_with_message() to take optional password argument.
+          - Modified Git._commit_on_branch() to take optional username and password argument.
+          - Modified Git.push_local_commits_to_server() to take optional username and password
+            argument and to call has_authorization_for_realm().
+        * Scripts/webkitpy/common/checkout/scm_unittest.py:
+          - Modified SVNTest.test_commit_without_authorization() to take dummy realm argument.
+          - Modified SVNTest.test_not_have_authorization_for_realm() to pass realm argument to
+            SVN.has_authorization_for_realm().
+        * Scripts/webkitpy/common/net/credentials.py:
+          - Modified Credentials.read_credentials() to call User.prompt_password() instead
+            of using getpass.getpass() directly.
+        * Scripts/webkitpy/common/system/user.py:
+          - Added User.prompt_password().
+        * Scripts/webkitpy/tool/steps/commit.py:
+          - Modified Commit.run() to prompt for a password if needed.
+
 2011-04-17  Dirk Pranke  <dpranke@chromium.org>
 
         Reviewed by Ojan Vafai.
