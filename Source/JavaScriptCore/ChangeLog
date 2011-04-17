@@ -2,6 +2,17 @@
 
         Reviewed by Adam Barth.
 
+        Remove WTF_PLATFORM_SGL
+        https://bugs.webkit.org/show_bug.cgi?id=58743
+
+        WTF_PLATFORM_SGL and PLATFORM(SGL) are not used in the code anywhere.
+
+        * wtf/Platform.h:
+
+2011-04-17  Patrick Gansterer  <paroga@webkit.org>
+
+        Reviewed by Adam Barth.
+
         Rename PLATFORM(CA) to USE(CA)
         https://bugs.webkit.org/show_bug.cgi?id=58742
 
