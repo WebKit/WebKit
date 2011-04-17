@@ -328,6 +328,8 @@
 		93EB178D09F88D460091F8FF /* WebSystemInterface.mm in Sources */ = {isa = PBXBuildFile; fileRef = 93EB178C09F88D460091F8FF /* WebSystemInterface.mm */; };
 		93EB178F09F88D510091F8FF /* WebSystemInterface.h in Headers */ = {isa = PBXBuildFile; fileRef = 93EB178E09F88D510091F8FF /* WebSystemInterface.h */; };
 		93FDE9330D79CAF30074F029 /* WebHistoryInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = 93FDE9320D79CAF30074F029 /* WebHistoryInternal.h */; };
+		A5687BDA135B791A0074CBCB /* WebNodeHighlighter.h in Headers */ = {isa = PBXBuildFile; fileRef = A5687BD8135B791A0074CBCB /* WebNodeHighlighter.h */; };
+		A5687BDB135B791A0074CBCB /* WebNodeHighlighter.mm in Sources */ = {isa = PBXBuildFile; fileRef = A5687BD9135B791A0074CBCB /* WebNodeHighlighter.mm */; };
 		A57E2F24120749E600048DF3 /* WebQuotaManager.h in Headers */ = {isa = PBXBuildFile; fileRef = A57E2F22120749E600048DF3 /* WebQuotaManager.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A5DEFC0A11D5331C00885273 /* WebSecurityOrigin.mm in Sources */ = {isa = PBXBuildFile; fileRef = A5DEFC0711D5331C00885273 /* WebSecurityOrigin.mm */; };
 		A5DEFC0B11D5331C00885273 /* WebSecurityOriginInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = A5DEFC0811D5331C00885273 /* WebSecurityOriginInternal.h */; };
@@ -645,6 +647,8 @@
 		9CAE9D070252A4130ECA16EA /* WebPreferencesPrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = WebPreferencesPrivate.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		9CE1F8A302A5C6F30ECA2ACD /* WebImageRendererFactory.m */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.objc; path = WebImageRendererFactory.m; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		9CF0E249021361B00ECA16EA /* WebFramePrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = WebFramePrivate.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
+		A5687BD8135B791A0074CBCB /* WebNodeHighlighter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebNodeHighlighter.h; sourceTree = "<group>"; };
+		A5687BD9135B791A0074CBCB /* WebNodeHighlighter.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebNodeHighlighter.mm; sourceTree = "<group>"; };
 		A57E2F22120749E600048DF3 /* WebQuotaManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebQuotaManager.h; sourceTree = "<group>"; };
 		A5DEFC0711D5331C00885273 /* WebSecurityOrigin.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebSecurityOrigin.mm; sourceTree = "<group>"; };
 		A5DEFC0811D5331C00885273 /* WebSecurityOriginInternal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebSecurityOriginInternal.h; sourceTree = "<group>"; };
@@ -914,6 +918,8 @@
 				B804176E1217A83100466BAE /* WebInspectorFrontend.mm */,
 				1C68F663095B5FC100C2984E /* WebNodeHighlight.h */,
 				1C68F664095B5FC100C2984E /* WebNodeHighlight.mm */,
+				A5687BD8135B791A0074CBCB /* WebNodeHighlighter.h */,
+				A5687BD9135B791A0074CBCB /* WebNodeHighlighter.mm */,
 				1C68F665095B5FC100C2984E /* WebNodeHighlightView.h */,
 				1C68F666095B5FC100C2984E /* WebNodeHighlightView.mm */,
 			);
@@ -1648,6 +1654,7 @@
 				3ABB3C7A1309C3B500E93D94 /* WebStorageTrackerClient.h in Headers */,
 				BC42D324131ED1E00075FA4B /* WebLocalizableStringsInternal.h in Headers */,
 				B82958D3132707D0000D0E79 /* CorrectionPanel.h in Headers */,
+				A5687BDA135B791A0074CBCB /* WebNodeHighlighter.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2019,6 +2026,7 @@
 				3ABB3C7B1309C3B500E93D94 /* WebStorageTrackerClient.mm in Sources */,
 				BC42D34D131ED3880075FA4B /* WebLocalizableStringsInternal.mm in Sources */,
 				B82958D4132707D0000D0E79 /* CorrectionPanel.mm in Sources */,
+				A5687BDB135B791A0074CBCB /* WebNodeHighlighter.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

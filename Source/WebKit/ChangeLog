@@ -1,3 +1,12 @@
+2011-04-17  Joseph Pecoraro  <joepeck@webkit.org>
+
+        Reviewed by Timothy Hatcher.
+
+        Move WebNodeHighlighter into its own file
+        https://bugs.webkit.org/show_bug.cgi?id=58746
+
+        * WebKit.xcodeproj/project.pbxproj: Add WebNodeHighlighter.{h,mm}.
+
 2011-04-13  Ryuan Choi  <ryuan.choi@samsung.com>
 
         Reviewed by Kenneth Rohde Christiansen.

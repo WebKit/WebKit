@@ -36,7 +36,7 @@
 #import "WebInspectorPrivate.h"
 #import "WebInspectorFrontend.h"
 #import "WebLocalizableStringsInternal.h"
-#import "WebNodeHighlight.h"
+#import "WebNodeHighlighter.h"
 #import "WebUIDelegate.h"
 #import "WebViewInternal.h"
 #import <WebCore/InspectorController.h>
@@ -70,25 +70,13 @@ using namespace WebCore;
 - (void)destroyInspectorView:(bool)notifyInspectorController;
 @end
 
-// MARK: -
-
-@interface WebNodeHighlighter : NSObject {
-@private
-    WebView *_inspectedWebView;
-    WebNodeHighlight *_currentHighlight;
-}
-- (id)initWithInspectedWebView:(WebView *)webView;
-- (void)highlightNode:(DOMNode *)node;
-- (void)hideHighlight;
-@end
 
 // MARK: -
-
 
 WebInspectorClient::WebInspectorClient(WebView *webView)
-: m_webView(webView)
-, m_highlighter(AdoptNS, [[WebNodeHighlighter alloc] initWithInspectedWebView:webView])
-, m_frontendPage(0)
+    : m_webView(webView)
+    , m_highlighter(AdoptNS, [[WebNodeHighlighter alloc] initWithInspectedWebView:webView])
+    , m_frontendPage(0)
 {
 }
 
@@ -482,19 +470,6 @@ void WebInspectorFrontendClient::updateWindowTitle() const
 }
 
 // MARK: -
-// MARK: WebNodeHighlight delegate
-
-- (void)didAttachWebNodeHighlight:(WebNodeHighlight *)highlight
-{
-    [_inspectedWebView setCurrentNodeHighlight:highlight];
-}
-
-- (void)willDetachWebNodeHighlight:(WebNodeHighlight *)highlight
-{
-    [_inspectedWebView setCurrentNodeHighlight:nil];
-}
-
-// MARK: -
 // MARK: UI delegate
 
 - (NSUInteger)webView:(WebView *)sender dragDestinationActionMaskForDraggingInfo:(id <NSDraggingInfo>)draggingInfo
@@ -547,61 +522,4 @@ void WebInspectorFrontendClient::updateWindowTitle() const
     return YES;
 }
 
-@end
-
-
-// MARK: -
-
-@implementation WebNodeHighlighter
-- (id)initWithInspectedWebView:(WebView *)webView
-{
-    // Don't retain to avoid a circular reference
-    _inspectedWebView = webView;
-    return self;
-}
-
-- (void)dealloc
-{
-    ASSERT(!_currentHighlight);
-    [super dealloc];
-}
-
-// MARK: -
-
-- (void)highlightNode:(DOMNode *)node
-{
-    // The scrollview's content view stays around between page navigations, so target it
-    NSView *view = [[[[[_inspectedWebView mainFrame] frameView] documentView] enclosingScrollView] contentView];
-    if (![view window])
-        return; // skip the highlight if we have no window (e.g. hidden tab)
-    
-    if (!_currentHighlight) {
-        _currentHighlight = [[WebNodeHighlight alloc] initWithTargetView:view inspectorController:[_inspectedWebView page]->inspectorController()];
-        [_currentHighlight setDelegate:self];
-        [_currentHighlight attach];
-    } else
-        [[_currentHighlight highlightView] setNeedsDisplay:YES];
-}
-
-- (void)hideHighlight
-{
-    [_currentHighlight detach];
-    [_currentHighlight setDelegate:nil];
-    [_currentHighlight release];
-    _currentHighlight = nil;
-}
-
-// MARK: -
-// MARK: WebNodeHighlight delegate
-
-- (void)didAttachWebNodeHighlight:(WebNodeHighlight *)highlight
-{
-    [_inspectedWebView setCurrentNodeHighlight:highlight];
-}
-
-- (void)willDetachWebNodeHighlight:(WebNodeHighlight *)highlight
-{
-    [_inspectedWebView setCurrentNodeHighlight:nil];
-}
-    
 @end

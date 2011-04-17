@@ -1,3 +1,26 @@
+2011-04-17  Joseph Pecoraro  <joepeck@webkit.org>
+
+        Reviewed by Timothy Hatcher.
+
+        Move WebNodeHighlighter into its own file
+        https://bugs.webkit.org/show_bug.cgi?id=58746
+
+        Extract this class into its own file alongside the
+        other WebNodeHighlight files. In doing so do some
+        cleanup on WebInspectorClient removing some methods
+        that were never called.
+
+        * WebCoreSupport/WebInspectorClient.mm:
+        (WebInspectorClient::WebInspectorClient): style fix.
+        * WebInspector/WebNodeHighlighter.h: Added.
+        * WebInspector/WebNodeHighlighter.mm: Added.
+        (-[WebNodeHighlighter initWithInspectedWebView:]): call super init.
+        (-[WebNodeHighlighter dealloc]):
+        (-[WebNodeHighlighter highlightNode:]):
+        (-[WebNodeHighlighter hideHighlight]):
+        (-[WebNodeHighlighter didAttachWebNodeHighlight:]):
+        (-[WebNodeHighlighter willDetachWebNodeHighlight:]):
+
 2011-04-15  Jia Pu  <jpu@apple.com>
 
         Reviewed by Dan Bernstein.
