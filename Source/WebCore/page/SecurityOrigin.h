@@ -133,9 +133,6 @@ public:
     // resources, and can set arbitrary headers on XMLHttpRequests.
     bool isLocal() const;
 
-    // The empty SecurityOrigin is the least privileged SecurityOrigin.
-    bool isEmpty() const;
-
     // The origin is a globally unique identifier assigned when the Document is
     // created. http://www.whatwg.org/specs/web-apps/current-work/#sandboxOrigin
     //
@@ -143,6 +140,13 @@ public:
     // has the SandboxOrigin flag set. The latter implies the former, and, in
     // addition, the SandboxOrigin flag is inherited by iframes.
     bool isUnique() const { return m_isUnique; }
+
+    // The empty SecurityOrigin is a unique security orign (in the sense of
+    // isUnique above) that was created for a "blank" document, such about
+    // about:blank. Empty origins differ from unique origins in that they can
+    // sometimes be replaced by non-empty origins, for example when an
+    // about:blank iframe inherits its security origin from its parent frame.
+    bool isEmpty() const;
 
     // Marks a file:// origin as being in a domain defined by its path.
     void enforceFilePathSeparation();

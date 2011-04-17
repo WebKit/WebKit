@@ -103,6 +103,8 @@ SecurityOrigin::SecurityOrigin(const KURL& url, SandboxFlags sandboxFlags)
     // For edge case URLs that were probably misparsed, make sure that the origin is unique.
     if (schemeRequiresAuthority(m_protocol) && m_host.isEmpty())
         m_isUnique = true;
+    if (m_protocol.isEmpty())
+        m_isUnique = true;
 
     // document.domain starts as m_host, but can be set by the DOM.
     m_domain = m_host;
