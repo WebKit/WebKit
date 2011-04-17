@@ -26,7 +26,7 @@
 #include "config.h"
 #include "Color.h"
 
-#if PLATFORM(CG)
+#if USE(CG)
 
 #include "GraphicsContextCG.h"
 #include <wtf/Assertions.h>
@@ -146,4 +146,4 @@ CGColorRef cachedCGColor(const Color& color, ColorSpace colorSpace)
 
 }
 
-#endif // PLATFORM(CG)
+#endif // USE(CG)

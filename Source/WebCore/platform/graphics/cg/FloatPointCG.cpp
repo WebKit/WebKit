@@ -27,7 +27,7 @@
 #include "config.h"
 #include "FloatPoint.h"
 
-#if PLATFORM(CG) || USE(SKIA_ON_MAC_CHROME)
+#if USE(CG) || USE(SKIA_ON_MAC_CHROME)
 
 #include <ApplicationServices/ApplicationServices.h>
 
@@ -44,4 +44,4 @@ FloatPoint::operator CGPoint() const
 
 }
 
-#endif // PLATFORM(CG)
+#endif // USE(CG)

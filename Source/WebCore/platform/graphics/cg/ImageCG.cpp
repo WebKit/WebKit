@@ -26,7 +26,7 @@
 #include "config.h"
 #include "BitmapImage.h"
 
-#if PLATFORM(CG)
+#if USE(CG)
 
 #include "AffineTransform.h"
 #include "FloatConversion.h"
@@ -359,4 +359,4 @@ void Image::drawPattern(GraphicsContext* ctxt, const FloatRect& tileRect, const 
 
 }
 
-#endif // PLATFORM(CG)
+#endif // USE(CG)

@@ -23,7 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#if PLATFORM(CG)
+#if USE(CG)
 #include "ImageBufferDataCG.h"
 #elif USE(CAIRO)
 #include "ImageBufferDataCairo.h"

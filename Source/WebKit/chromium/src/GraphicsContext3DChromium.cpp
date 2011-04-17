@@ -54,7 +54,7 @@
 #include <wtf/FastMalloc.h>
 #include <wtf/text/CString.h>
 
-#if PLATFORM(CG)
+#if USE(CG)
 #include "GraphicsContext.h"
 #include "WebGLRenderingContext.h"
 #include <CoreGraphics/CGContext.h>
@@ -84,7 +84,7 @@ GraphicsContext3DInternal::GraphicsContext3DInternal()
     , m_initializedAvailableExtensions(false)
     , m_layerComposited(false)
 #if USE(SKIA)
-#elif PLATFORM(CG)
+#elif USE(CG)
     , m_renderOutput(0)
 #else
 #error Must port to your platform
@@ -94,7 +94,7 @@ GraphicsContext3DInternal::GraphicsContext3DInternal()
 
 GraphicsContext3DInternal::~GraphicsContext3DInternal()
 {
-#if PLATFORM(CG)
+#if USE(CG)
     if (m_renderOutput)
         delete[] m_renderOutput;
 #endif
@@ -210,7 +210,7 @@ void GraphicsContext3DInternal::paintRenderingResultsToCanvas(CanvasRenderingCon
     // Read back the frame buffer.
     SkAutoLockPixels bitmapLock(*readbackBitmap);
     pixels = static_cast<unsigned char*>(readbackBitmap->getPixels());
-#elif PLATFORM(CG)
+#elif USE(CG)
     if (m_renderOutput)
         pixels = m_renderOutput;
 #else
@@ -238,7 +238,7 @@ void GraphicsContext3DInternal::paintRenderingResultsToCanvas(CanvasRenderingCon
         dst.set(SkIntToScalar(0), SkIntToScalar(0), SkIntToScalar(canvasBitmap->width()), SkIntToScalar(canvasBitmap->height()));
         canvas.drawBitmapRect(m_resizingBitmap, 0, dst);
     }
-#elif PLATFORM(CG)
+#elif USE(CG)
     if (m_renderOutput && context->is3d()) {
         WebGLRenderingContext* webGLContext = static_cast<WebGLRenderingContext*>(context);
         webGLContext->graphicsContext3D()->paintToCanvas(m_renderOutput, m_impl->width(), m_impl->height(), canvas->width(), canvas->height(), imageBuffer->context()->platformContext());
@@ -278,7 +278,7 @@ void GraphicsContext3DInternal::reshape(int width, int height)
 
     m_impl->reshape(width, height);
 
-#if PLATFORM(CG)
+#if USE(CG)
     // Need to reallocate the client-side backing store.
     // FIXME: make this more efficient.
     if (m_renderOutput) {
@@ -287,7 +287,7 @@ void GraphicsContext3DInternal::reshape(int width, int height)
     }
     int rowBytes = width * 4;
     m_renderOutput = new unsigned char[height * rowBytes];
-#endif // PLATFORM(CG)
+#endif // USE(CG)
 }
 
 IntSize GraphicsContext3DInternal::getInternalFramebufferSize()

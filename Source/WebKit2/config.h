@@ -125,7 +125,7 @@ static const type& name() \
 #include <WebCore/config.h>
 #include <windows.h>
 
-#if PLATFORM(CG)
+#if USE(CG)
 #include <CoreGraphics/CoreGraphics.h>
 #endif
 

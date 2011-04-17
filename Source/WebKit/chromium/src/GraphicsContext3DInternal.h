@@ -298,7 +298,7 @@ private:
     SkBitmap m_resizingBitmap;
 #endif
 
-#if PLATFORM(CG)
+#if USE(CG)
     unsigned char* m_renderOutput;
 #endif
 

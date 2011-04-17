@@ -50,7 +50,7 @@
 #if USE(SKIA)
 #include "NativeImageSkia.h"
 #include "PlatformContextSkia.h"
-#elif PLATFORM(CG)
+#elif USE(CG)
 #include <CoreGraphics/CGBitmapContext.h>
 #endif
 

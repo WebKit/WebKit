@@ -52,7 +52,7 @@
 #include <wtf/RefCounted.h>
 #include <wtf/Vector.h>
 
-#if PLATFORM(CG)
+#if USE(CG)
 #include <CoreGraphics/CGContext.h>
 #include <wtf/RetainPtr.h>
 #endif
@@ -190,7 +190,7 @@ private:
     OwnPtr<SkCanvas> m_rootLayerCanvas;
     OwnPtr<PlatformContextSkia> m_rootLayerSkiaContext;
     OwnPtr<GraphicsContext> m_rootLayerGraphicsContext;
-#elif PLATFORM(CG)
+#elif USE(CG)
     Vector<uint8_t> m_rootLayerBackingStore;
     RetainPtr<CGContextRef> m_rootLayerCGContext;
     OwnPtr<GraphicsContext> m_rootLayerGraphicsContext;

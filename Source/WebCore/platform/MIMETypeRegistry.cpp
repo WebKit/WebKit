@@ -33,7 +33,7 @@
 #include <wtf/StdLibExtras.h>
 #include <wtf/text/StringHash.h>
 
-#if PLATFORM(CG)
+#if USE(CG)
 #include "ImageSourceCG.h"
 #include <ApplicationServices/ApplicationServices.h>
 #include <wtf/RetainPtr.h>
@@ -61,7 +61,7 @@ typedef HashMap<String, Vector<String>*, CaseFoldingHash> MediaMIMETypeMap;
     
 static void initializeSupportedImageMIMETypes()
 {
-#if PLATFORM(CG)
+#if USE(CG)
     RetainPtr<CFArrayRef> supportedTypes(AdoptCF, CGImageSourceCopyTypeIdentifiers());
     CFIndex count = CFArrayGetCount(supportedTypes.get());
     for (CFIndex i = 0; i < count; i++) {
@@ -134,7 +134,7 @@ static void initializeSupportedImageMIMETypesForEncoding()
 {
     supportedImageMIMETypesForEncoding = new HashSet<String>;
 
-#if PLATFORM(CG)
+#if USE(CG)
 #if PLATFORM(MAC)
     RetainPtr<CFArrayRef> supportedTypes(AdoptCF, CGImageDestinationCopyTypeIdentifiers());
     CFIndex count = CFArrayGetCount(supportedTypes.get());

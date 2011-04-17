@@ -65,7 +65,7 @@ private:
     bool m_shouldCollectGradientAttributes : 1;
     HashMap<RenderObject*, GradientData*> m_gradient;
 
-#if PLATFORM(CG)
+#if USE(CG)
     GraphicsContext* m_savedContext;
     OwnPtr<ImageBuffer> m_imageBuffer;
 #endif

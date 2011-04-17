@@ -70,7 +70,7 @@ struct TableDirectoryEntry {
     BigEndianULong length;
 };
 
-#if !PLATFORM(CG) || !defined(COREGRAPHICS_INCLUDES_CORESERVICES_HEADER)
+#if !USE(CG) || !defined(COREGRAPHICS_INCLUDES_CORESERVICES_HEADER)
 // Fixed type is not defined on non-CG and Windows platforms. |version| in sfntHeader
 // and headTable and |fontRevision| in headTable are of Fixed, but they're
 // not actually refered to anywhere. Therefore, we just have to match

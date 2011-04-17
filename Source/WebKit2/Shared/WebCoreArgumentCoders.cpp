@@ -33,7 +33,7 @@ namespace CoreIPC {
 
 // For now, these are CG-only. Once other platforms have createImage functions,
 // we can compile these for non-CG builds.
-#if PLATFORM(CG)
+#if USE(CG)
 
 void encodeImage(ArgumentEncoder* encoder, Image* image)
 {

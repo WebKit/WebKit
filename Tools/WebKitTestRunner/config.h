@@ -60,7 +60,7 @@
 #define WTF_USE_CAIRO 1
 #define WTF_USE_CURL 1
 #else
-#define WTF_PLATFORM_CG 1
+#define WTF_USE_CG 1
 #define WTF_USE_CFNETWORK 1
 #endif
 #endif

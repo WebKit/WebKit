@@ -154,7 +154,7 @@ void RenderSVGResourceMasker::drawContentIntoMaskImage(MaskerData* maskerData, c
 
     maskImageContext->restore();
 
-#if !PLATFORM(CG)
+#if !USE(CG)
     maskerData->maskImage->transformColorSpace(ColorSpaceDeviceRGB, ColorSpaceLinearRGB);
 #endif
 

@@ -40,7 +40,7 @@
 #include <wtf/StdLibExtras.h>
 #include <wtf/Vector.h>
 
-#if PLATFORM(CG)
+#if USE(CG)
 #include "PDFDocumentImage.h"
 #endif
 
@@ -240,7 +240,7 @@ inline void CachedImage::createImage()
     // Create the image if it doesn't yet exist.
     if (m_image)
         return;
-#if PLATFORM(CG) && !USE(WEBKIT_IMAGE_DECODERS)
+#if USE(CG) && !USE(WEBKIT_IMAGE_DECODERS)
     if (m_response.mimeType() == "application/pdf") {
         m_image = PDFDocumentImage::create();
         return;

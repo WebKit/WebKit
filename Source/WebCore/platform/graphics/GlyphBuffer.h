@@ -34,7 +34,7 @@
 #include <wtf/UnusedParam.h>
 #include <wtf/Vector.h>
 
-#if PLATFORM(CG) || (PLATFORM(WX) && OS(DARWIN)) || USE(SKIA_ON_MAC_CHROME)
+#if USE(CG) || (PLATFORM(WX) && OS(DARWIN)) || USE(SKIA_ON_MAC_CHROME)
 #include <ApplicationServices/ApplicationServices.h>
 #endif
 
@@ -58,7 +58,7 @@ typedef Glyph GlyphBufferGlyph;
 
 // CG uses CGSize instead of FloatSize so that the result of advances()
 // can be passed directly to CGContextShowGlyphsWithAdvances in FontMac.mm
-#if PLATFORM(CG) || (PLATFORM(WX) && OS(DARWIN)) || USE(SKIA_ON_MAC_CHROME)
+#if USE(CG) || (PLATFORM(WX) && OS(DARWIN)) || USE(SKIA_ON_MAC_CHROME)
 typedef CGSize GlyphBufferAdvance;
 #elif OS(WINCE)
 // There is no cross-platform code that uses the height of GlyphBufferAdvance,
@@ -122,7 +122,7 @@ public:
 
     float advanceAt(int index) const
     {
-#if PLATFORM(CG) || (PLATFORM(WX) && OS(DARWIN)) || USE(SKIA_ON_MAC_CHROME)
+#if USE(CG) || (PLATFORM(WX) && OS(DARWIN)) || USE(SKIA_ON_MAC_CHROME)
         return m_advances[index].width;
 #elif OS(WINCE)
         return m_advances[index];
@@ -153,7 +153,7 @@ public:
         m_glyphs.append(glyph);
 #endif
 
-#if PLATFORM(CG) || (PLATFORM(WX) && OS(DARWIN)) || USE(SKIA_ON_MAC_CHROME)
+#if USE(CG) || (PLATFORM(WX) && OS(DARWIN)) || USE(SKIA_ON_MAC_CHROME)
         CGSize advance = { width, 0 };
         m_advances.append(advance);
 #elif OS(WINCE)
@@ -192,7 +192,7 @@ public:
     {
         ASSERT(!isEmpty());
         GlyphBufferAdvance& lastAdvance = m_advances.last();
-#if PLATFORM(CG) || (PLATFORM(WX) && OS(DARWIN)) || USE(SKIA_ON_MAC_CHROME)
+#if USE(CG) || (PLATFORM(WX) && OS(DARWIN)) || USE(SKIA_ON_MAC_CHROME)
         lastAdvance.width += width;
 #elif OS(WINCE)
         lastAdvance += width;

@@ -1,3 +1,109 @@
+2011-04-17  Patrick Gansterer  <paroga@webkit.org>
+
+        Reviewed by Adam Barth.
+
+        Rename PLATFORM(CG) to USE(CG)
+        https://bugs.webkit.org/show_bug.cgi?id=58729
+
+        * config.h:
+        * html/HTMLCanvasElement.cpp:
+        (WebCore::HTMLCanvasElement::toDataURL):
+        * html/HTMLCanvasElement.h:
+        * html/canvas/CanvasRenderingContext2D.cpp:
+        (WebCore::CanvasRenderingContext2D::setShadow):
+        (WebCore::CanvasRenderingContext2D::drawTextInternal):
+        * html/canvas/CanvasRenderingContext2D.h:
+        * html/canvas/CanvasStyle.cpp:
+        (WebCore::CanvasStyle::applyStrokeColor):
+        (WebCore::CanvasStyle::applyFillColor):
+        * loader/cache/CachedFont.cpp:
+        * loader/cache/CachedImage.cpp:
+        (WebCore::CachedImage::createImage):
+        * platform/FloatConversion.h:
+        * platform/MIMETypeRegistry.cpp:
+        (WebCore::initializeSupportedImageMIMETypes):
+        (WebCore::initializeSupportedImageMIMETypesForEncoding):
+        * platform/graphics/BitmapImage.h:
+        * platform/graphics/Color.h:
+        * platform/graphics/DashArray.h:
+        * platform/graphics/FloatPoint.h:
+        * platform/graphics/FloatRect.h:
+        * platform/graphics/FloatSize.h:
+        * platform/graphics/FontPlatformData.h:
+        (WebCore::FontPlatformData::FontPlatformData):
+        (WebCore::FontPlatformData::hash):
+        * platform/graphics/GlyphBuffer.h:
+        (WebCore::GlyphBuffer::advanceAt):
+        (WebCore::GlyphBuffer::add):
+        (WebCore::GlyphBuffer::expandLastAdvance):
+        * platform/graphics/Gradient.h:
+        * platform/graphics/GraphicsContext.cpp:
+        (WebCore::GraphicsContext::setLegacyShadow):
+        * platform/graphics/GraphicsContext.h:
+        (WebCore::GraphicsContextState::GraphicsContextState):
+        * platform/graphics/GraphicsContext3D.h:
+        * platform/graphics/Image.cpp:
+        * platform/graphics/Image.h:
+        * platform/graphics/ImageBuffer.cpp:
+        * platform/graphics/ImageBuffer.h:
+        * platform/graphics/ImageBufferData.h:
+        * platform/graphics/ImageSource.h:
+        * platform/graphics/IntPoint.h:
+        * platform/graphics/IntRect.h:
+        * platform/graphics/IntSize.h:
+        * platform/graphics/Path.h:
+        * platform/graphics/Pattern.h:
+        * platform/graphics/SimpleFontData.h:
+        * platform/graphics/cg/ColorCG.cpp:
+        * platform/graphics/cg/FloatPointCG.cpp:
+        * platform/graphics/cg/FloatRectCG.cpp:
+        * platform/graphics/cg/FloatSizeCG.cpp:
+        * platform/graphics/cg/ImageCG.cpp:
+        * platform/graphics/cg/ImageSourceCG.cpp:
+        * platform/graphics/cg/IntPointCG.cpp:
+        * platform/graphics/cg/IntRectCG.cpp:
+        * platform/graphics/cg/IntSizeCG.cpp:
+        * platform/graphics/cg/PDFDocumentImage.cpp:
+        * platform/graphics/cg/PDFDocumentImage.h:
+        * platform/graphics/cg/PathCG.cpp:
+        * platform/graphics/cg/TransformationMatrixCG.cpp:
+        * platform/graphics/chromium/ImageLayerChromium.h:
+        * platform/graphics/chromium/LayerRendererChromium.cpp:
+        * platform/graphics/chromium/LayerRendererChromium.h:
+        * platform/graphics/chromium/PlatformCanvas.cpp:
+        (WebCore::PlatformCanvas::resize):
+        (WebCore::PlatformCanvas::AutoLocker::AutoLocker):
+        (WebCore::PlatformCanvas::Painter::Painter):
+        * platform/graphics/chromium/PlatformCanvas.h:
+        * platform/graphics/chromium/PlatformImage.cpp:
+        (WebCore::PlatformImage::updateFromImage):
+        * platform/graphics/opentype/OpenTypeUtilities.cpp:
+        * platform/graphics/transforms/AffineTransform.h:
+        * platform/graphics/transforms/TransformationMatrix.h:
+        * platform/graphics/win/DIBPixelData.h:
+        * platform/graphics/win/FontCacheWin.cpp:
+        (WebCore::FontCache::platformInit):
+        (WebCore::createGDIFont):
+        (WebCore::FontCache::createFontPlatformData):
+        * platform/graphics/win/FontPlatformDataWin.cpp:
+        (WebCore::FontPlatformData::FontPlatformData):
+        * platform/graphics/win/GraphicsContextWin.cpp:
+        * platform/graphics/win/MediaPlayerPrivateFullscreenWindow.cpp:
+        * platform/graphics/win/SimpleFontDataWin.cpp:
+        * platform/image-decoders/ImageDecoder.cpp:
+        * platform/image-decoders/ImageDecoder.h:
+        * rendering/RenderObject.h:
+        * rendering/svg/RenderSVGResourceFilter.cpp:
+        (WebCore::RenderSVGResourceFilter::postApplyResource):
+        * rendering/svg/RenderSVGResourceGradient.cpp:
+        (WebCore::RenderSVGResourceGradient::RenderSVGResourceGradient):
+        (WebCore::RenderSVGResourceGradient::applyResource):
+        * rendering/svg/RenderSVGResourceGradient.h:
+        * rendering/svg/RenderSVGResourceMasker.cpp:
+        (WebCore::RenderSVGResourceMasker::drawContentIntoMaskImage):
+        * rendering/svg/RenderSVGResourcePattern.cpp:
+        (WebCore::RenderSVGResourcePattern::applyResource):
+
 2011-04-16  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Sam Weinig.

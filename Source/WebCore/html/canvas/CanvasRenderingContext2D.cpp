@@ -1046,7 +1046,7 @@ void CanvasRenderingContext2D::strokeRect(float x, float y, float width, float h
     didDraw(boundingRect);
 }
 
-#if PLATFORM(CG)
+#if USE(CG)
 static inline CGSize adjustedShadowSize(CGFloat width, CGFloat height)
 {
     // Work around <rdar://problem/5539388> by ensuring that shadow offsets will get truncated
@@ -1150,7 +1150,7 @@ void CanvasRenderingContext2D::setShadow(float width, float height, float blur, 
     GraphicsContext* dc = drawingContext();
     if (!dc)
         return;
-#if PLATFORM(CG)
+#if USE(CG)
     const CGFloat components[5] = { c, m, y, k, a };
     CGColorSpaceRef colorSpace = CGColorSpaceCreateDeviceCMYK();
     CGColorRef shadowColor = CGColorCreate(colorSpace, components);
@@ -1891,7 +1891,7 @@ void CanvasRenderingContext2D::drawTextInternal(const String& text, float x, flo
     if (!fill)
         textRect.inflate(c->strokeThickness() / 2);
 
-#if PLATFORM(CG)
+#if USE(CG)
     CanvasStyle* drawStyle = fill ? state().m_fillStyle.get() : state().m_strokeStyle.get();
     if (drawStyle->canvasGradient() || drawStyle->canvasPattern()) {
         // FIXME: The rect is not big enough for miters on stroked text.

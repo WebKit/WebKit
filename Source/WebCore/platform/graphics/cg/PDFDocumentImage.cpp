@@ -27,7 +27,7 @@
 #include "config.h"
 #include "PDFDocumentImage.h"
 
-#if PLATFORM(CG)
+#if USE(CG)
 
 #include "GraphicsContext.h"
 #include "ImageObserver.h"
@@ -188,4 +188,4 @@ void PDFDocumentImage::draw(GraphicsContext* context, const FloatRect& dstRect, 
 
 }
 
-#endif // PLATFORM(CG)
+#endif // USE(CG)

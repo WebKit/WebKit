@@ -37,7 +37,7 @@
 
 #include <wtf/Vector.h>
 
-#if PLATFORM(CG)
+#if USE(CG)
 #include <ApplicationServices/ApplicationServices.h>
 #endif
 

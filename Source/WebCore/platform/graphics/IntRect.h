@@ -29,7 +29,7 @@
 #include "IntPoint.h"
 #include <wtf/Vector.h>
 
-#if PLATFORM(CG) || USE(SKIA_ON_MAC_CHROME)
+#if USE(CG) || USE(SKIA_ON_MAC_CHROME)
 typedef struct CGRect CGRect;
 #endif
 
@@ -183,7 +183,7 @@ public:
     operator Eina_Rectangle() const;
 #endif
 
-#if PLATFORM(CG) || USE(SKIA_ON_MAC_CHROME)
+#if USE(CG) || USE(SKIA_ON_MAC_CHROME)
     operator CGRect() const;
 #endif
 
@@ -229,7 +229,7 @@ inline bool operator!=(const IntRect& a, const IntRect& b)
     return a.location() != b.location() || a.size() != b.size();
 }
 
-#if PLATFORM(CG) || USE(SKIA_ON_MAC_CHROME)
+#if USE(CG) || USE(SKIA_ON_MAC_CHROME)
 IntRect enclosingIntRect(const CGRect&);
 #endif
 

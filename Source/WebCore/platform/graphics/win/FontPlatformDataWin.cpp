@@ -41,7 +41,7 @@ FontPlatformData::FontPlatformData(HFONT font, float size, bool bold, bool obliq
     , m_orientation(Horizontal)
     , m_textOrientation(TextOrientationVerticalRight)
     , m_widthVariant(RegularWidth)
-#if PLATFORM(CG)
+#if USE(CG)
     , m_cgFont(0)
 #elif USE(CAIRO)
     , m_scaledFont(0)

@@ -76,7 +76,7 @@ typedef void* PlatformGraphicsContext3D;
 const PlatformGraphicsContext3D NullPlatformGraphicsContext3D = 0;
 const Platform3DObject NullPlatform3DObject = 0;
 
-#if PLATFORM(CG)
+#if USE(CG)
 #include <CoreGraphics/CGContext.h>
 #endif
 
@@ -762,7 +762,7 @@ public:
 
     void reshape(int width, int height);
 
-#if PLATFORM(CG)
+#if USE(CG)
     void paintToCanvas(const unsigned char* imagePixels, int imageWidth, int imageHeight,
                        int canvasWidth, int canvasHeight, CGContextRef context);
 #elif PLATFORM(GTK)

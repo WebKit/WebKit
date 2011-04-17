@@ -29,7 +29,7 @@
 #include "IntSize.h"
 #include <windows.h>
 
-#if !PLATFORM(CG)
+#if !USE(CG)
 // UInt8 is defined in CoreFoundation/CFBase.h
 typedef unsigned char UInt8;
 #endif

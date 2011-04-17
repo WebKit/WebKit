@@ -31,7 +31,7 @@
 #include "IntSize.h"
 #include <wtf/MathExtras.h>
 
-#if PLATFORM(CG) || (PLATFORM(WX) && OS(DARWIN)) || USE(SKIA_ON_MAC_CHROME)
+#if USE(CG) || (PLATFORM(WX) && OS(DARWIN)) || USE(SKIA_ON_MAC_CHROME)
 typedef struct CGSize CGSize;
 #endif
 
@@ -89,7 +89,7 @@ public:
         return m_width * m_width + m_height * m_height;
     }
 
-#if PLATFORM(CG) || (PLATFORM(WX) && OS(DARWIN)) || USE(SKIA_ON_MAC_CHROME)
+#if USE(CG) || (PLATFORM(WX) && OS(DARWIN)) || USE(SKIA_ON_MAC_CHROME)
     explicit FloatSize(const CGSize&); // don't do this implicitly since it's lossy
     operator CGSize() const;
 #endif

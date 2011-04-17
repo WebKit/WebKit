@@ -27,7 +27,7 @@
 #include "config.h"
 #include "Path.h"
 
-#if PLATFORM(CG)
+#if USE(CG)
 
 #include "AffineTransform.h"
 #include "FloatRect.h"
@@ -309,4 +309,4 @@ void Path::transform(const AffineTransform& transform)
 
 }
 
-#endif // PLATFORM(CG)
+#endif // USE(CG)

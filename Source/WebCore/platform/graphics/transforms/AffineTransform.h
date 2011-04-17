@@ -32,7 +32,7 @@
 #include <string.h> // for memcpy
 #include <wtf/FastAllocBase.h>
 
-#if PLATFORM(CG)
+#if USE(CG)
 #include <CoreGraphics/CGAffineTransform.h>
 #elif USE(CAIRO)
 #include <cairo.h>
@@ -157,7 +157,7 @@ public:
         return result;
     }
 
-#if PLATFORM(CG)
+#if USE(CG)
     operator CGAffineTransform() const;
 #elif USE(CAIRO)
     operator cairo_matrix_t() const;

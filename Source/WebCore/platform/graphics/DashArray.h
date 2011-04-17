@@ -28,7 +28,7 @@
 
 #include <wtf/Vector.h>
 
-#if PLATFORM(CG)
+#if USE(CG)
 typedef Vector<CGFloat> DashArray;
 #elif USE(CAIRO)
 typedef Vector<double> DashArray;

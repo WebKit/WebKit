@@ -93,7 +93,7 @@ namespace WebCore {
         void putPremultipliedImageData(ByteArray*, const IntSize& sourceSize, const IntRect& sourceRect, const IntPoint& destPoint);
         
         String toDataURL(const String& mimeType, const double* quality = 0) const;
-#if !PLATFORM(CG)
+#if !USE(CG)
         AffineTransform baseTransform() const { return AffineTransform(); }
         void transformColorSpace(ColorSpace srcColorSpace, ColorSpace dstColorSpace);
         void platformTransformColorSpace(const Vector<int>&);
@@ -119,7 +119,7 @@ namespace WebCore {
         bool m_accelerateRendering;
         OwnPtr<GraphicsContext> m_context;
 
-#if !PLATFORM(CG)
+#if !USE(CG)
         Vector<int> m_linearRgbLUT;
         Vector<int> m_deviceRgbLUT;
 #endif
@@ -129,7 +129,7 @@ namespace WebCore {
         ImageBuffer(const IntSize&, ColorSpace colorSpace, RenderingMode renderingMode, bool& success);
     };
 
-#if PLATFORM(CG) || USE(SKIA)
+#if USE(CG) || USE(SKIA)
     String ImageDataToDataURL(const ImageData& input, const String& mimeType, const double* quality);
 #endif
 

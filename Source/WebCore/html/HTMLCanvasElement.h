@@ -34,7 +34,7 @@
 
 #if PLATFORM(CHROMIUM) || PLATFORM(QT)
 #define DefaultInterpolationQuality InterpolationMedium
-#elif PLATFORM(CG)
+#elif USE(CG)
 #define DefaultInterpolationQuality InterpolationLow
 #else
 #define DefaultInterpolationQuality InterpolationDefault

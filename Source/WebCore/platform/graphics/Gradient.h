@@ -35,7 +35,7 @@
 #include <wtf/PassRefPtr.h>
 #include <wtf/Vector.h>
 
-#if PLATFORM(CG)
+#if USE(CG)
 
 typedef struct CGContext* CGContextRef;
 
@@ -138,7 +138,7 @@ namespace WebCore {
 
         void setPlatformGradientSpaceTransform(const AffineTransform& gradientSpaceTransformation);
 
-#if PLATFORM(CG)
+#if USE(CG)
         void paint(CGContextRef);
         void paint(GraphicsContext*);
 #endif

@@ -37,7 +37,7 @@
 #include "TransformationMatrix.h"
 #include <wtf/UnusedParam.h>
 
-#if PLATFORM(CG) || USE(CAIRO) || PLATFORM(QT)
+#if USE(CG) || USE(CAIRO) || PLATFORM(QT)
 #define HAVE_PATH_BASED_BORDER_RADIUS_DRAWING 1
 #endif
 

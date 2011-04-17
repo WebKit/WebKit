@@ -30,7 +30,7 @@
 #include <wtf/Forward.h>
 #include <wtf/unicode/Unicode.h>
 
-#if PLATFORM(CG)
+#if USE(CG)
 #include "ColorSpace.h"
 typedef struct CGColor* CGColorRef;
 #endif
@@ -143,7 +143,7 @@ public:
     operator wxColour() const;
 #endif
 
-#if PLATFORM(CG)
+#if USE(CG)
     Color(CGColorRef);
 #endif
 
@@ -180,7 +180,7 @@ inline bool operator!=(const Color& a, const Color& b)
 Color colorFromPremultipliedARGB(unsigned);
 unsigned premultipliedARGBFromColor(const Color&);
 
-#if PLATFORM(CG)
+#if USE(CG)
 CGColorRef cachedCGColor(const Color&, ColorSpace);
 #endif
 

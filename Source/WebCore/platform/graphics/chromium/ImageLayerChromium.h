@@ -37,7 +37,7 @@
 #include "ContentLayerChromium.h"
 #include "PlatformImage.h"
 
-#if PLATFORM(CG)
+#if USE(CG)
 #include <wtf/RetainPtr.h>
 #endif
 

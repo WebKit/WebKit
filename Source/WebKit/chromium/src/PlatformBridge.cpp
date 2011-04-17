@@ -61,7 +61,7 @@
 #include "WebViewImpl.h"
 #include "WebWorkerClientImpl.h"
 
-#if PLATFORM(CG)
+#if USE(CG)
 #include <CoreGraphics/CGContext.h>
 #endif
 

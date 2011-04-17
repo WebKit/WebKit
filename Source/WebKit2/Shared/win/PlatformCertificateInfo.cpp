@@ -30,7 +30,7 @@
 #include "ArgumentEncoder.h"
 #include <WebCore/ResourceResponse.h>
 
-#if PLATFORM(CG)
+#if USE(CG)
 #include <WebKitSystemInterface/WebKitSystemInterface.h>
 #endif
 
@@ -48,7 +48,7 @@ PlatformCertificateInfo::PlatformCertificateInfo(const ResourceResponse& respons
     if (!cfResponse)
         return;
 
-#if PLATFORM(CG)
+#if USE(CG)
     CFDictionaryRef certificateInfo = wkGetSSLCertificateInfo(cfResponse);
     if (!certificateInfo)
         return;

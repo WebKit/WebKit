@@ -278,7 +278,7 @@ void RenderSVGResourceFilter::postApplyResource(RenderObject* object, GraphicsCo
 
         context = filterData->savedContext;
         filterData->savedContext = 0;
-#if !PLATFORM(CG)
+#if !USE(CG)
         if (filterData->sourceGraphicBuffer)
             filterData->sourceGraphicBuffer->transformColorSpace(ColorSpaceDeviceRGB, ColorSpaceLinearRGB);
 #endif
@@ -296,7 +296,7 @@ void RenderSVGResourceFilter::postApplyResource(RenderObject* object, GraphicsCo
         // Always true if filterData is just built (filterData->builded is false).
         if (!lastEffect->hasResult()) {
             lastEffect->apply();
-#if !PLATFORM(CG)
+#if !USE(CG)
             ImageBuffer* resultImage = lastEffect->asImageBuffer();
             if (resultImage)
                 resultImage->transformColorSpace(ColorSpaceLinearRGB, ColorSpaceDeviceRGB);

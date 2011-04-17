@@ -139,7 +139,7 @@ public:
     virtual CFDataRef getTIFFRepresentation();
 #endif
     
-#if PLATFORM(CG)
+#if USE(CG)
     virtual CGImageRef getCGImageRef();
     virtual CGImageRef getFirstCGImageRefOfSize(const IntSize&);
 #endif

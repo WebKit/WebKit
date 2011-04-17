@@ -30,7 +30,7 @@
 #if USE(SKIA)
 #include "NativeImageSkia.h"
 #include "PlatformContextSkia.h"
-#elif PLATFORM(CG)
+#elif USE(CG)
 #include <CoreGraphics/CGBitmapContext.h>
 #include <CoreGraphics/CGContext.h>
 #include <CoreGraphics/CGImage.h>
@@ -54,7 +54,7 @@ void PlatformImage::updateFromImage(NativeImagePtr nativeImage)
 
     IntSize bitmapSize(skiaBitmap->width(), skiaBitmap->height());
     ASSERT(skiaBitmap);
-#elif PLATFORM(CG)
+#elif USE(CG)
     // NativeImagePtr is a CGImageRef on Mac OS X.
     int width = CGImageGetWidth(nativeImage);
     int height = CGImageGetHeight(nativeImage);
@@ -73,7 +73,7 @@ void PlatformImage::updateFromImage(NativeImagePtr nativeImage)
     // FIXME: do we need to support more image configurations?
     ASSERT(skiaBitmap->config()== SkBitmap::kARGB_8888_Config);
     skiaBitmap->copyPixelsTo(m_pixelData.get(), bufferSize);
-#elif PLATFORM(CG)
+#elif USE(CG)
     // FIXME: we should get rid of this temporary copy where possible.
     int tempRowBytes = width * 4;
     // Note we do not zero this vector since we are going to

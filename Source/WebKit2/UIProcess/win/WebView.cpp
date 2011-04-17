@@ -45,7 +45,7 @@
 #include <WebCore/BitmapInfo.h>
 #include <WebCore/Cursor.h>
 #include <WebCore/FloatRect.h>
-#if PLATFORM(CG)
+#if USE(CG)
 #include <WebCore/GraphicsContextCG.h>
 #endif
 #include <WebCore/IntRect.h>
@@ -1406,7 +1406,7 @@ void WebView::setFindIndicator(PassRefPtr<FindIndicator> prpFindIndicator, bool 
 
             hbmp = CreateDIBSection(0, &bitmapInfo, DIB_RGB_COLORS, static_cast<void**>(&bits), 0, 0);
             HBITMAP hbmpOld = static_cast<HBITMAP>(SelectObject(hdc, hbmp));
-#if PLATFORM(CG)
+#if USE(CG)
             RetainPtr<CGContextRef> context(AdoptCF, CGBitmapContextCreate(bits, width, height,
                 8, width * sizeof(RGBQUAD), deviceRGBColorSpaceRef(), kCGBitmapByteOrder32Little | kCGImageAlphaPremultipliedFirst));
 

@@ -43,7 +43,7 @@
 #include <WebCore/RenderView.h>
 #include <WebCore/ResourceHandle.h>
 #include <WebCore/Settings.h>
-#if PLATFORM(CG)
+#if USE(CG)
 #include <WebKitSystemInterface/WebKitSystemInterface.h>
 #endif
 #include <WinUser.h>
@@ -67,7 +67,7 @@ void WebPage::platformPreferencesDidChange(const WebPreferencesStore& store)
 {
     FontSmoothingLevel fontSmoothingLevel = static_cast<FontSmoothingLevel>(store.getUInt32ValueForKey(WebPreferencesKey::fontSmoothingLevelKey()));
 
-#if PLATFORM(CG)
+#if USE(CG)
     FontSmoothingLevel adjustedLevel = fontSmoothingLevel;
     if (adjustedLevel == FontSmoothingLevelWindows)
         adjustedLevel = FontSmoothingLevelMedium;

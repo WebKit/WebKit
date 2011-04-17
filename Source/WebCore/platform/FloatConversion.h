@@ -29,7 +29,7 @@
 #ifndef FloatConversion_h
 #define FloatConversion_h
 
-#if PLATFORM(CG)
+#if USE(CG)
 #include <CoreGraphics/CGBase.h>
 #endif
 
@@ -44,7 +44,7 @@ namespace WebCore {
         return static_cast<float>(number);
     }
 
-#if PLATFORM(CG)
+#if USE(CG)
     template<typename T>
     CGFloat narrowPrecisionToCGFloat(T);
 

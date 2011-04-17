@@ -30,7 +30,7 @@
 #include "WebCoreInstanceHandle.h"
 #include <windows.h>
 
-#if PLATFORM(CG)
+#if USE(CG)
 #include <CoreGraphics/CGColor.h>
 #endif
 

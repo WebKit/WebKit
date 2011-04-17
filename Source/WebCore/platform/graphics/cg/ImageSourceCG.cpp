@@ -26,7 +26,7 @@
 #include "config.h"
 #include "ImageSource.h"
 
-#if PLATFORM(CG)
+#if USE(CG)
 #include "ImageSourceCG.h"
 
 #include "IntPoint.h"
@@ -356,4 +356,4 @@ bool ImageSource::frameHasAlphaAtIndex(size_t)
 
 }
 
-#endif // PLATFORM(CG)
+#endif // USE(CG)

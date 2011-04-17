@@ -115,7 +115,7 @@ public:
 
     float spaceWidth() const { return m_spaceWidth; }
 
-#if PLATFORM(CG) || USE(CAIRO) || PLATFORM(WX) || USE(SKIA_ON_MAC_CHROME)
+#if USE(CG) || USE(CAIRO) || PLATFORM(WX) || USE(SKIA_ON_MAC_CHROME)
     float syntheticBoldOffset() const { return m_syntheticBoldOffset; }
 #endif
 
@@ -252,7 +252,7 @@ private:
 
     mutable OwnPtr<DerivedFontData> m_derivedFontData;
 
-#if PLATFORM(CG) || USE(CAIRO) || PLATFORM(WX) || USE(SKIA_ON_MAC_CHROME)
+#if USE(CG) || USE(CAIRO) || PLATFORM(WX) || USE(SKIA_ON_MAC_CHROME)
     float m_syntheticBoldOffset;
 #endif
 

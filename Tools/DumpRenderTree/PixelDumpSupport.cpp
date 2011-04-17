@@ -37,7 +37,7 @@
 #include <wtf/RefPtr.h>
 #include <wtf/Vector.h>
 
-#if PLATFORM(CG)
+#if USE(CG)
 #include "PixelDumpSupportCG.h"
 #elif USE(CAIRO)
 #include "PixelDumpSupportCairo.h"

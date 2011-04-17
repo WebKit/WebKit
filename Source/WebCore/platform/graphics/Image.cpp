@@ -36,7 +36,7 @@
 #include <math.h>
 #include <wtf/StdLibExtras.h>
 
-#if PLATFORM(CG)
+#if USE(CG)
 #include <CoreFoundation/CoreFoundation.h>
 #endif
 

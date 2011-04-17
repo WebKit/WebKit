@@ -31,7 +31,7 @@
 #include <wtf/FastAllocBase.h>
 #include <wtf/Forward.h>
 
-#if PLATFORM(CG)
+#if USE(CG)
 typedef struct CGPath PlatformPath;
 #elif PLATFORM(OPENVG)
 namespace WebCore {

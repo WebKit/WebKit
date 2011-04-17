@@ -34,7 +34,7 @@
 #if PLATFORM(CA)
 typedef struct CATransform3D CATransform3D;
 #endif
-#if PLATFORM(CG)
+#if USE(CG)
 typedef struct CGAffineTransform CGAffineTransform;
 #elif USE(CAIRO)
 #include <cairo.h>
@@ -312,7 +312,7 @@ public:
     TransformationMatrix(const CATransform3D&);
     operator CATransform3D() const;
 #endif
-#if PLATFORM(CG)
+#if USE(CG)
     TransformationMatrix(const CGAffineTransform&);
     operator CGAffineTransform() const;
 #elif USE(CAIRO)

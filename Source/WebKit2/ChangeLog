@@ -1,3 +1,27 @@
+2011-04-17  Patrick Gansterer  <paroga@webkit.org>
+
+        Reviewed by Adam Barth.
+
+        Rename PLATFORM(CG) to USE(CG)
+        https://bugs.webkit.org/show_bug.cgi?id=58729
+
+        * Shared/ShareableBitmap.h:
+        * Shared/WebCoreArgumentCoders.cpp:
+        * Shared/WebCoreArgumentCoders.h:
+        * Shared/WebGraphicsContext.cpp:
+        (WebKit::WebGraphicsContext::WebGraphicsContext):
+        * Shared/WebGraphicsContext.h:
+        * Shared/win/PlatformCertificateInfo.cpp:
+        (WebKit::PlatformCertificateInfo::PlatformCertificateInfo):
+        * UIProcess/win/WebView.cpp:
+        (WebKit::WebView::setFindIndicator):
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::drawRectToPDF):
+        (WebKit::WebPage::drawPagesToPDF):
+        * WebProcess/WebPage/win/WebPageWin.cpp:
+        (WebKit::WebPage::platformPreferencesDidChange):
+        * config.h:
+
 2011-04-16  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Sam Weinig.

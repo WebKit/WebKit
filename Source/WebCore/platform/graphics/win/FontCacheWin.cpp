@@ -36,7 +36,7 @@
 #include <windows.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/text/StringHash.h>
-#if PLATFORM(CG)
+#if USE(CG)
 #include <ApplicationServices/ApplicationServices.h>
 #include <WebKitSystemInterface/WebKitSystemInterface.h>
 #endif
@@ -48,7 +48,7 @@ namespace WebCore
 
 void FontCache::platformInit()
 {
-#if PLATFORM(CG)
+#if USE(CG)
     wkSetUpFontCache(1536 * 1024 * 4); // This size matches Mac.
 #endif
 }
@@ -471,7 +471,7 @@ static HFONT createGDIFont(const AtomicString& family, LONG desiredWeight, bool 
     matchData.m_chosen.lfUnderline = false;
     matchData.m_chosen.lfStrikeOut = false;
     matchData.m_chosen.lfCharSet = DEFAULT_CHARSET;
-#if PLATFORM(CG) || USE(CAIRO)
+#if USE(CG) || USE(CAIRO)
     matchData.m_chosen.lfOutPrecision = OUT_TT_ONLY_PRECIS;
 #else
     matchData.m_chosen.lfOutPrecision = OUT_TT_PRECIS;
@@ -581,7 +581,7 @@ FontPlatformData* FontCache::createFontPlatformData(const FontDescription& fontD
 
     FontPlatformData* result = new FontPlatformData(hfont, fontDescription.computedPixelSize(), synthesizeBold, synthesizeItalic, useGDI);
 
-#if PLATFORM(CG)
+#if USE(CG)
     bool fontCreationFailed = !result->cgFont();
 #elif USE(CAIRO)
     bool fontCreationFailed = !result->scaledFont();

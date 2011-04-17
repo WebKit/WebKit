@@ -46,7 +46,7 @@
 #include <wtf/text/StringHash.h>
 #include <wtf/text/WTFString.h>
 
-#if PLATFORM(CG)
+#if USE(CG)
 #include <CoreGraphics/CoreGraphics.h>
 #include <WebKitSystemInterface/WebKitSystemInterface.h>
 #endif
@@ -1101,7 +1101,7 @@ HRESULT STDMETHODCALLTYPE WebPreferences::setFontSmoothing(
     setIntegerValue(CFSTR(WebKitFontSmoothingTypePreferenceKey), smoothingType);
     if (smoothingType == FontSmoothingTypeWindows)
         smoothingType = FontSmoothingTypeMedium;
-#if PLATFORM(CG)
+#if USE(CG)
     wkSetFontSmoothingLevel((int)smoothingType);
 #endif
     return S_OK;
@@ -1118,7 +1118,7 @@ HRESULT STDMETHODCALLTYPE WebPreferences::setFontSmoothingContrast(
     /* [in] */ float contrast)
 {
     setFloatValue(CFSTR(WebKitFontSmoothingContrastPreferenceKey), contrast);
-#if PLATFORM(CG)
+#if USE(CG)
     wkSetFontSmoothingContrast(contrast);
 #endif
     return S_OK;

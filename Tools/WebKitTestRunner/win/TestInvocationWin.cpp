@@ -28,7 +28,7 @@
 
 namespace WTR {
 
-#if !PLATFORM(CG)
+#if !USE(CG)
 void TestInvocation::dumpPixelsAndCompareWithExpected(WKImageRef)
 {
 }

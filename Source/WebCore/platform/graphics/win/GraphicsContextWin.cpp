@@ -26,7 +26,7 @@
 #include "config.h"
 #include "GraphicsContext.h"
 
-#if PLATFORM(CG)
+#if USE(CG)
 #include "GraphicsContextPlatformPrivateCG.h"
 #elif USE(CAIRO)
 #include "GraphicsContextPlatformPrivateCairo.h"

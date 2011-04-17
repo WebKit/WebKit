@@ -34,7 +34,7 @@
 #include "PlatformContextSkia.h"
 #include "SkColorPriv.h"
 #include "skia/ext/platform_canvas.h"
-#elif PLATFORM(CG)
+#elif USE(CG)
 #include <CoreGraphics/CGBitmapContext.h>
 #endif
 
@@ -53,7 +53,7 @@ void PlatformCanvas::resize(const IntSize& size)
     m_size = size;
 #if USE(SKIA)
     m_skiaCanvas = skia::CreateBitmapCanvas(size.width(), size.height(), false);
-#elif PLATFORM(CG)
+#elif USE(CG)
     size_t bufferSize = size.width() * size.height() * 4;
     m_pixelData = adoptArrayPtr(new uint8_t[bufferSize]);
     memset(m_pixelData.get(), 0, bufferSize);
@@ -73,7 +73,7 @@ PlatformCanvas::AutoLocker::AutoLocker(PlatformCanvas* canvas)
             m_pixels = static_cast<uint8_t*>(m_bitmap->getPixels());
     } else
         m_bitmap = 0;
-#elif PLATFORM(CG)
+#elif USE(CG)
     if (canvas->m_pixelData)
         m_pixels = &canvas->m_pixelData[0];
 #endif
@@ -95,7 +95,7 @@ PlatformCanvas::Painter::Painter(PlatformCanvas* canvas, PlatformCanvas::Painter
     m_skiaContext->setDrawingToImageBuffer(option == GrayscaleText);
 
     m_context = adoptPtr(new GraphicsContext(reinterpret_cast<PlatformGraphicsContext*>(m_skiaContext.get())));
-#elif PLATFORM(CG)
+#elif USE(CG)
 
     m_colorSpace = CGColorSpaceCreateDeviceRGB();
     size_t rowBytes = canvas->size().width() * 4;

@@ -45,7 +45,7 @@ class NSImage;
 #endif
 #endif
 
-#if PLATFORM(CG)
+#if USE(CG)
 struct CGContext;
 #endif
 
@@ -136,7 +136,7 @@ public:
     virtual CFDataRef getTIFFRepresentation() { return 0; }
 #endif
 
-#if PLATFORM(CG)
+#if USE(CG)
     virtual CGImageRef getCGImageRef() { return 0; }
     virtual CGImageRef getFirstCGImageRefOfSize(const IntSize&) { return 0; }
 #endif

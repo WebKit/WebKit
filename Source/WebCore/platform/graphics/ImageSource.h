@@ -34,7 +34,7 @@
 #if PLATFORM(WX)
 class wxBitmap;
 class wxGraphicsBitmap;
-#elif PLATFORM(CG)
+#elif USE(CG)
 typedef struct CGImageSource* CGImageSourceRef;
 typedef struct CGImage* CGImageRef;
 typedef const struct __CFData* CFDataRef;
@@ -62,7 +62,7 @@ class IntPoint;
 class IntSize;
 class SharedBuffer;
 
-#if PLATFORM(CG)
+#if USE(CG)
 #if USE(WEBKIT_IMAGE_DECODERS)
 class ImageDecoder;
 typedef ImageDecoder* NativeImageSourcePtr;

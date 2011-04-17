@@ -37,7 +37,7 @@ namespace WebCore {
 RenderSVGResourceGradient::RenderSVGResourceGradient(SVGGradientElement* node)
     : RenderSVGResourceContainer(node)
     , m_shouldCollectGradientAttributes(true)
-#if PLATFORM(CG)
+#if USE(CG)
     , m_savedContext(0)
 #endif
 {
@@ -73,7 +73,7 @@ void RenderSVGResourceGradient::removeClientFromCache(RenderObject* client, bool
     markClientForInvalidation(client, markForInvalidation ? RepaintInvalidation : ParentOnlyInvalidation);
 }
 
-#if PLATFORM(CG)
+#if USE(CG)
 static inline bool createMaskAndSwapContextForTextGradient(GraphicsContext*& context,
                                                            GraphicsContext*& savedContext,
                                                            OwnPtr<ImageBuffer>& imageBuffer,
@@ -178,7 +178,7 @@ bool RenderSVGResourceGradient::applyResource(RenderObject* object, RenderStyle*
         // CG platforms will handle the gradient space transform for text after applying the
         // resource, so don't apply it here. For non-CG platforms, we want the text bounding
         // box applied to the gradient space transform now, so the gradient shader can use it.
-#if PLATFORM(CG)
+#if USE(CG)
         if (boundingBoxMode() && !objectBoundingBox.isEmpty() && !isPaintingText) {
 #else
         if (boundingBoxMode() && !objectBoundingBox.isEmpty()) {
@@ -201,7 +201,7 @@ bool RenderSVGResourceGradient::applyResource(RenderObject* object, RenderStyle*
     context->save();
 
     if (isPaintingText) {
-#if PLATFORM(CG)
+#if USE(CG)
         if (!createMaskAndSwapContextForTextGradient(context, m_savedContext, m_imageBuffer, object)) {
             context->restore();
             return false;
@@ -235,7 +235,7 @@ void RenderSVGResourceGradient::postApplyResource(RenderObject* object, Graphics
     ASSERT(resourceMode != ApplyToDefaultMode);
 
     if (resourceMode & ApplyToTextMode) {
-#if PLATFORM(CG)
+#if USE(CG)
         // CG requires special handling for gradient on text
         if (m_savedContext && m_gradient.contains(object)) {
             GradientData* gradientData = m_gradient.get(object);

@@ -30,7 +30,7 @@
 #include <WebCore/GraphicsContext.h>
 #include <wtf/PassRefPtr.h>
 
-#if PLATFORM(CG)
+#if USE(CG)
 #include <wtf/RetainPtr.h>
 #elif PLATFORM(GTK)
 #include "RefPtrCairo.h"
@@ -47,7 +47,7 @@ public:
         return adoptRef(new WebGraphicsContext(graphicsContext));
     }
 
-#if PLATFORM(CG)
+#if USE(CG)
     CGContextRef platformContext() { return m_platformContext.get(); }
 #elif PLATFORM(GTK)
     cairo_t* platformContext() { return m_platformContext.get(); }
@@ -59,7 +59,7 @@ private:
 
     virtual Type type() const { return APIType; }
 
-#if PLATFORM(CG)
+#if USE(CG)
     RetainPtr<CGContextRef> m_platformContext;
 #elif PLATFORM(GTK)
     RefPtr<cairo_t> m_platformContext;

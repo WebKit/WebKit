@@ -26,7 +26,7 @@
 #include "config.h"
 #include "IntPoint.h"
 
-#if PLATFORM(CG) || USE(SKIA_ON_MAC_CHROME)
+#if USE(CG) || USE(SKIA_ON_MAC_CHROME)
 
 #include <ApplicationServices/ApplicationServices.h>
 
@@ -43,4 +43,4 @@ IntPoint::operator CGPoint() const
 
 }
 
-#endif // PLATFORM(CG)
+#endif // USE(CG)

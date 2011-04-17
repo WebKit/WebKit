@@ -37,7 +37,7 @@
 #include <wtf/Noncopyable.h>
 #include <wtf/PassOwnPtr.h>
 
-#if PLATFORM(CG)
+#if USE(CG)
 typedef struct CGContext PlatformGraphicsContext;
 #elif USE(CAIRO)
 namespace WebCore {
@@ -93,7 +93,7 @@ typedef void PlatformGraphicsContext;
 #if PLATFORM(WIN)
 #include "DIBPixelData.h"
 typedef struct HDC__* HDC;
-#if !PLATFORM(CG)
+#if !USE(CG)
 // UInt8 is defined in CoreFoundation/CFBase.h
 typedef unsigned char UInt8;
 #endif
@@ -170,7 +170,7 @@ namespace WebCore {
             , shouldSmoothFonts(true)
             , paintingDisabled(false)
             , shadowsIgnoreTransforms(false)
-#if PLATFORM(CG)
+#if USE(CG)
             // Core Graphics incorrectly renders shadows with radius > 8px (<rdar://problem/8103442>),
             // but we need to preserve this buggy behavior for canvas and -webkit-box-shadow.
             , shadowsUseLegacyRadius(false)
@@ -211,7 +211,7 @@ namespace WebCore {
         bool shouldSmoothFonts : 1;
         bool paintingDisabled : 1;
         bool shadowsIgnoreTransforms : 1;
-#if PLATFORM(CG)
+#if USE(CG)
         bool shadowsUseLegacyRadius : 1;
 #endif
     };
@@ -263,7 +263,7 @@ namespace WebCore {
 
         const GraphicsContextState& state() const;
 
-#if PLATFORM(CG)
+#if USE(CG)
         void applyStrokePattern();
         void applyFillPattern();
         void drawPath(const Path&);

@@ -539,18 +539,18 @@
 
 /* Graphics engines */
 
-/* PLATFORM(CG) and PLATFORM(CI) */
+/* USE(CG) and PLATFORM(CI) */
 #if PLATFORM(MAC) || PLATFORM(IOS)
-#define WTF_PLATFORM_CG 1
+#define WTF_USE_CG 1
 #endif
-#if PLATFORM(MAC) || PLATFORM(IOS) || (PLATFORM(WIN) && PLATFORM(CG))
+#if PLATFORM(MAC) || PLATFORM(IOS) || (PLATFORM(WIN) && USE(CG))
 #define WTF_PLATFORM_CA 1
 #endif
 
 /* USE(SKIA) for Win/Linux, CG for Mac */
 #if PLATFORM(CHROMIUM)
 #if OS(DARWIN)
-#define WTF_PLATFORM_CG 1
+#define WTF_USE_CG 1
 #define WTF_USE_ATSUI 1
 #define WTF_USE_CORE_TEXT 1
 #define WTF_USE_ICCJPEG 1

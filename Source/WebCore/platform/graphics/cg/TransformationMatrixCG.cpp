@@ -27,7 +27,7 @@
 #include "AffineTransform.h"
 #include "TransformationMatrix.h"
 
-#if PLATFORM(CG)
+#if USE(CG)
 
 #include <CoreGraphics/CGAffineTransform.h>
 #include "FloatConversion.h"
@@ -66,4 +66,4 @@ AffineTransform::operator CGAffineTransform() const
 
 }
 
-#endif // PLATFORM(CG)
+#endif // USE(CG)

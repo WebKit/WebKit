@@ -138,7 +138,7 @@
 #include <WebCore/GeolocationError.h>
 #endif
 
-#if PLATFORM(CG)
+#if USE(CG)
 #include <CoreGraphics/CGContext.h>
 #endif
 
@@ -3195,7 +3195,7 @@ HRESULT STDMETHODCALLTYPE WebView::preferencesIdentifier(
 
 static void systemParameterChanged(WPARAM parameter)
 {
-#if PLATFORM(CG)
+#if USE(CG)
     if (parameter == SPI_SETFONTSMOOTHING || parameter == SPI_SETFONTSMOOTHINGTYPE || parameter == SPI_SETFONTSMOOTHINGCONTRAST || parameter == SPI_SETFONTSMOOTHINGORIENTATION)
         wkSystemFontSmoothingChanged();
 #endif

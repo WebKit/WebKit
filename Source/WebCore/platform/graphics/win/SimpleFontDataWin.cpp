@@ -39,7 +39,7 @@
 #include <winsock2.h>
 #include <wtf/MathExtras.h>
 
-#if PLATFORM(CG)
+#if USE(CG)
 #include <ApplicationServices/ApplicationServices.h>
 #include <WebKitSystemInterface/WebKitSystemInterface.h>
 #endif

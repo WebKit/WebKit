@@ -342,7 +342,7 @@ String HTMLCanvasElement::toDataURL(const String& mimeType, const double* qualit
     if (mimeType.isNull() || !MIMETypeRegistry::isSupportedImageMIMETypeForEncoding(lowercaseMimeType))
         lowercaseMimeType = "image/png";
 
-#if PLATFORM(CG) || USE(SKIA)
+#if USE(CG) || USE(SKIA)
     // Try to get ImageData first, as that may avoid lossy conversions.
     RefPtr<ImageData> imageData = getImageData();
 

@@ -28,7 +28,7 @@
 
 #include <wtf/Platform.h>
 
-#if PLATFORM(CG)
+#if USE(CG)
 #include <CoreGraphics/CGGeometry.h>
 #endif
 

@@ -26,7 +26,7 @@
 #include "config.h"
 #include "ImageBuffer.h"
 
-#if !PLATFORM(CG)
+#if !USE(CG)
 
 #include <math.h>
 
@@ -69,4 +69,4 @@ void ImageBuffer::transformColorSpace(ColorSpace srcColorSpace, ColorSpace dstCo
 
 }
 
-#endif // PLATFORM(CG)
+#endif // USE(CG)

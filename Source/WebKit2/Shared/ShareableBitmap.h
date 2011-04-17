@@ -33,7 +33,7 @@
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
 
-#if PLATFORM(CG)
+#if USE(CG)
 #include <wtf/RetainPtr.h>
 #endif
 
@@ -98,7 +98,7 @@ public:
 
     bool isBackedBySharedMemory() const { return m_sharedMemory; }
 
-#if PLATFORM(CG)
+#if USE(CG)
     // This creates a copied CGImageRef (most likely a copy-on-write) of the shareable bitmap.
     RetainPtr<CGImageRef> makeCGImageCopy();
 
@@ -113,7 +113,7 @@ private:
 
     static size_t numBytesForSize(const WebCore::IntSize& size) { return size.width() * size.height() * 4; }
 
-#if PLATFORM(CG)
+#if USE(CG)
     static void releaseBitmapContextData(void* typelessBitmap, void* typelessData);
     static void releaseDataProviderData(void* typelessBitmap, const void* typelessData, size_t);
 #endif

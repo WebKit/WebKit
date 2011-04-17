@@ -38,7 +38,7 @@
 #include <wtf/Assertions.h>
 #include <wtf/PassRefPtr.h>
 
-#if PLATFORM(CG)
+#if USE(CG)
 #include <CoreGraphics/CGContext.h>
 #endif
 
@@ -238,7 +238,7 @@ void CanvasStyle::applyStrokeColor(GraphicsContext* context)
     case CMYKA: {
         // FIXME: Do this through platform-independent GraphicsContext API.
         // We'll need a fancier Color abstraction to support CMYKA correctly
-#if PLATFORM(CG)
+#if USE(CG)
         CGContextSetCMYKStrokeColor(context->platformContext(), m_cmyka.c, m_cmyka.m, m_cmyka.y, m_cmyka.k, m_cmyka.a);
 #elif PLATFORM(QT)
         QPen currentPen = context->platformContext()->pen();
@@ -275,7 +275,7 @@ void CanvasStyle::applyFillColor(GraphicsContext* context)
     case CMYKA: {
         // FIXME: Do this through platform-independent GraphicsContext API.
         // We'll need a fancier Color abstraction to support CMYKA correctly
-#if PLATFORM(CG)
+#if USE(CG)
         CGContextSetCMYKFillColor(context->platformContext(), m_cmyka.c, m_cmyka.m, m_cmyka.y, m_cmyka.k, m_cmyka.a);
 #elif PLATFORM(QT)
         QBrush currentBrush = context->platformContext()->brush();

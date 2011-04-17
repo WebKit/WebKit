@@ -104,14 +104,14 @@
 #include <JavaScriptCore/JSValue.h>
 #include <wtf/MathExtras.h>
 
-#if PLATFORM(CG)
+#if USE(CG)
 #include <CoreGraphics/CoreGraphics.h>
 #elif USE(CAIRO)
 #include "PlatformContextCairo.h"
 #include <cairo-win32.h>
 #endif
 
-#if PLATFORM(CG)
+#if USE(CG)
 // CG SPI used for printing
 extern "C" {
     CGAffineTransform CGContextGetBaseCTM(CGContextRef c); 
@@ -2113,7 +2113,7 @@ HRESULT STDMETHODCALLTYPE WebFrame::getPrintedPageCount(
     return S_OK;
 }
 
-#if PLATFORM(CG)
+#if USE(CG)
 void WebFrame::drawHeader(PlatformGraphicsContext* pctx, IWebUIDelegate* ui, const IntRect& pageRect, float headerHeight)
 {
     int x = pageRect.x();
@@ -2320,7 +2320,7 @@ HRESULT STDMETHODCALLTYPE WebFrame::spoolPages(
     /* [in] */ UINT endPage,
     /* [retval][out] */ void* ctx)
 {
-#if PLATFORM(CG)
+#if USE(CG)
     if (!printDC || !ctx) {
         ASSERT_NOT_REACHED();
         return E_POINTER;
@@ -2369,7 +2369,7 @@ HRESULT STDMETHODCALLTYPE WebFrame::spoolPages(
         return E_FAIL;
 
     UINT pageCount = (UINT) m_pageRects.size();
-#if PLATFORM(CG)
+#if USE(CG)
     PlatformGraphicsContext* pctx = (PlatformGraphicsContext*)ctx;
 #endif
 

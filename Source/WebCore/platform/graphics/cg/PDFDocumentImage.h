@@ -31,7 +31,7 @@
 #include "FloatRect.h"
 #include "GraphicsTypes.h"
 
-#if PLATFORM(CG)
+#if USE(CG)
 
 #include <ApplicationServices/ApplicationServices.h>
 
@@ -78,6 +78,6 @@ namespace WebCore {
 
 }
 
-#endif // PLATFORM(CG)
+#endif // USE(CG)
 
 #endif // PDFDocumentImage_h

@@ -167,7 +167,7 @@ void ImageFrame::zeroFillPixelData()
     m_hasAlpha = true;
 }
 
-#if !PLATFORM(CG)
+#if !USE(CG)
 
 void ImageFrame::copyReferenceToBitmapData(const ImageFrame& other)
 {

@@ -31,7 +31,7 @@
 #include <wtf/Noncopyable.h>
 #include <wtf/OwnPtr.h>
 
-#if PLATFORM(CG)
+#if USE(CG)
 #include <CoreGraphics/CGColorSpace.h>
 #include <CoreGraphics/CGContext.h>
 #include <wtf/OwnArrayPtr.h>
@@ -88,7 +88,7 @@ public:
         OwnPtr<GraphicsContext> m_context;
 #if USE(SKIA)
         OwnPtr<PlatformContextSkia> m_skiaContext;
-#elif PLATFORM(CG)
+#elif USE(CG)
         RetainPtr<CGColorSpaceRef> m_colorSpace;
         RetainPtr<CGContextRef> m_contextCG;
 #endif
@@ -100,7 +100,7 @@ public:
 private:
 #if USE(SKIA)
     OwnPtr<SkCanvas> m_skiaCanvas;
-#elif PLATFORM(CG)
+#elif USE(CG)
     OwnArrayPtr<uint8_t> m_pixelData;
 #endif
     IntSize m_size;

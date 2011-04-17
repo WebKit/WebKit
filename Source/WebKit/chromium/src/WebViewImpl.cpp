@@ -126,7 +126,7 @@
 #include <wtf/CurrentTime.h>
 #include <wtf/RefPtr.h>
 
-#if PLATFORM(CG)
+#if USE(CG)
 #include <CoreGraphics/CGBitmapContext.h>
 #include <CoreGraphics/CGContext.h>
 #endif
@@ -1039,7 +1039,7 @@ void WebViewImpl::doPixelReadbackToCanvas(WebCanvas* canvas, const IntRect& rect
     // PlatformGraphicsContext is actually a pointer to PlatformContextSkia
     GraphicsContext gc(reinterpret_cast<PlatformGraphicsContext*>(&context));
     int bitmapHeight = canvas->getDevice()->accessBitmap(false).height();
-#elif PLATFORM(CG)
+#elif USE(CG)
     GraphicsContext gc(canvas);
     int bitmapHeight = CGBitmapContextGetHeight(reinterpret_cast<CGContextRef>(canvas));
 #else

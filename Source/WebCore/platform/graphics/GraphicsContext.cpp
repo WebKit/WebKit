@@ -148,7 +148,7 @@ void GraphicsContext::setLegacyShadow(const FloatSize& offset, float blur, const
     m_state.shadowBlur = blur;
     m_state.shadowColor = color;
     m_state.shadowColorSpace = colorSpace;
-#if PLATFORM(CG)
+#if USE(CG)
     m_state.shadowsUseLegacyRadius = true;
 #endif
     setPlatformShadow(offset, blur, color, colorSpace);
@@ -588,7 +588,7 @@ void GraphicsContext::clipToImageBuffer(ImageBuffer* buffer, const FloatRect& re
     buffer->clip(this, rect);
 }
 
-#if !PLATFORM(CG)
+#if !USE(CG)
 IntRect GraphicsContext::clipBounds() const
 {
     ASSERT_NOT_REACHED();
@@ -621,7 +621,7 @@ void GraphicsContext::fillRoundedRect(const RoundedIntRect& rect, const Color& c
     fillRoundedRect(rect.rect(), rect.radii().topLeft(), rect.radii().topRight(), rect.radii().bottomLeft(), rect.radii().bottomRight(), color, colorSpace);
 }
 
-#if !PLATFORM(CG)
+#if !USE(CG)
 void GraphicsContext::fillRectWithRoundedHole(const IntRect& rect, const RoundedIntRect& roundedHoleRect, const Color& color, ColorSpace colorSpace)
 {
     if (paintingDisabled())
@@ -678,7 +678,7 @@ void GraphicsContext::setPlatformStrokePattern(Pattern*)
 }
 #endif
 
-#if !PLATFORM(CG) && !USE(SKIA)
+#if !USE(CG) && !USE(SKIA)
 // Implement this if you want to go ahead and push the drawing mode into your native context
 // immediately.
 void GraphicsContext::setPlatformTextDrawingMode(TextDrawingModeFlags mode)
@@ -692,7 +692,7 @@ void GraphicsContext::setPlatformStrokeStyle(StrokeStyle)
 }
 #endif
 
-#if !PLATFORM(CG)
+#if !USE(CG)
 void GraphicsContext::setPlatformShouldSmoothFonts(bool)
 {
 }
