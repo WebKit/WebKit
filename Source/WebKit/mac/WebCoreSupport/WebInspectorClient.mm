@@ -216,7 +216,7 @@ void WebInspectorFrontendClient::updateWindowTitle() const
 @implementation WebInspectorWindowController
 - (id)init
 {
-    if (![super initWithWindow:nil])
+    if (!(self = [super initWithWindow:nil]))
         return nil;
 
     // Keep preferences separate from the rest of the client, making sure we are using expected preference values.
@@ -260,10 +260,10 @@ void WebInspectorFrontendClient::updateWindowTitle() const
 
 - (id)initWithInspectedWebView:(WebView *)webView
 {
-    if (![self init])
+    if (!(self = [self init]))
         return nil;
 
-    // Don't retain to avoid a circular reference
+    // Don't retain to avoid a circular reference.
     _inspectedWebView = webView;
     return self;
 }
