@@ -1,3 +1,13 @@
+2011-04-16  Dan Bernstein  <mitz@apple.com>
+
+        Updated results for fast/block/float/032.html after r84096. Filed http://webkit.org/b/58736 to
+        track this change.
+
+        * platform/chromium-win/fast/block/float/032-expected.txt:
+        * platform/gtk/fast/block/float/032-expected.txt:
+        * platform/mac/fast/block/float/032-expected.txt:
+        * platform/qt/fast/block/float/032-expected.txt:
+
 2011-04-16  Balazs Kelemen  <kbalazs@webkit.org>
 
         Unreviewed.
