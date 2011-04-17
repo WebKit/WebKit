@@ -2,6 +2,16 @@
 
         Reviewed by Ojan Vafai.
 
+        new-run-webkit-tests: save stderr into the layout-test-results dir
+        https://bugs.webkit.org/show_bug.cgi?id=58690
+
+        * Scripts/webkitpy/layout_tests/layout_package/test_result_writer.py:
+        * Scripts/webkitpy/layout_tests/run_webkit_tests_unittest.py:
+
+2011-04-17  Dirk Pranke  <dpranke@chromium.org>
+
+        Reviewed by Ojan Vafai.
+
         new-run-webkit-tests: read stderr from chromium DRT separately
         https://bugs.webkit.org/show_bug.cgi?id=58708
 

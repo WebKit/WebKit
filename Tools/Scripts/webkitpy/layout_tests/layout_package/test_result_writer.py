@@ -43,6 +43,9 @@ def write_test_result(port, filename, driver_output,
     checksums_mismatch_but_images_are_same = False
     imagehash_mismatch_failure = None
     writer = TestResultWriter(port, root_output_dir, filename)
+    if driver_output.error:
+        writer.write_stderr(driver_output.error)
+
     for failure in failures:
         # FIXME: Instead of this long 'if' block, each failure class might
         # have a responsibility for writing a test result.
@@ -153,6 +156,12 @@ class TestResultWriter(object):
             fs.write_binary_file(actual_filename, output)
         if expected is not None:
             fs.write_binary_file(expected_filename, expected)
+
+    def write_stderr(self, error):
+        fs = self._port._filesystem
+        filename = self.output_filename("-stderr.txt")
+        fs.maybe_make_directory(fs.dirname(filename))
+        fs.write_text_file(filename, error)
 
     def write_crash_report(self, error):
         """Write crash information."""
