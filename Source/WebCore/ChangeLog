@@ -1,3 +1,17 @@
+2011-04-17  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Joseph Pecoraro.
+
+        <rdar://problem/9296211> REGRESSION (r83514): Failing fast/repaint/trailing-floats-root-line-box-overflow.html
+        https://bugs.webkit.org/show_bug.cgi?id=58745
+
+        This is really a regression from r82611, but it went unnoticed due to a mistake in r73385,
+        which was fixed in r83514.
+
+        * rendering/RenderBlockLineLayout.cpp:
+        (WebCore::RenderBlock::layoutInlineChildren): Actually assign the bottom visual overflow to the
+        variable so named, not the top layout overflow.
+
 2011-04-17  Geoffrey Garen  <ggaren@apple.com>
 
         Strongly suggested, but not necessarily reviewed, by

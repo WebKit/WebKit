@@ -1064,7 +1064,7 @@ void RenderBlock::layoutInlineChildren(bool relayoutChildren, int& repaintLogica
             // This has to be done before adding in the bottom border/padding, or the float will
             // include the padding incorrectly. -dwh
             if (checkForFloatsFromLastLine) {
-                int bottomVisualOverflow = lastRootBox()->logicalTopLayoutOverflow();
+                int bottomVisualOverflow = lastRootBox()->logicalBottomVisualOverflow();
                 int bottomLayoutOverflow = lastRootBox()->logicalBottomLayoutOverflow();
                 TrailingFloatsRootInlineBox* trailingFloatsLineBox = new (renderArena()) TrailingFloatsRootInlineBox(this);
                 m_lineBoxes.appendLineBox(trailingFloatsLineBox);
