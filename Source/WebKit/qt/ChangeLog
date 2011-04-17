@@ -1,3 +1,60 @@
+2011-04-16  Caio Marcelo de Oliveira Filho  <caio.oliveira@openbossa.org>
+
+        Reviewed by Andreas Kling.
+
+        [Qt] Autotest got missed in the handover of the QML WebView element
+        https://bugs.webkit.org/show_bug.cgi?id=41449
+
+        Importing WebView QML element test cases from Qt repository. I did some
+        style modifications and simplifications in the original code but hopefully
+        without changing the behavior.
+
+        Tests that do not pass are marked with QEXPECT_FAIL or QSKIP. The two major
+        issues currently are:
+
+        - pixelCache() test checked the usage of pixel cache by using a subclass of
+          QDeclarativeWebView. We can't do that right now because this class is not
+          exported. We may need a Q_AUTOTEST_EXPORT thing for QtWebKit if we want
+          this kind of test.
+        - elementAtArea() test uses a function that is not exported. But in this case
+          I think we should test it's user, the public method "heuristicZoom".
+
+        * tests/qdeclarativewebview/resources/basic.html: Added.
+        * tests/qdeclarativewebview/resources/basic.png: Added.
+        * tests/qdeclarativewebview/resources/basic.qml: Added.
+        * tests/qdeclarativewebview/resources/elements.html: Added.
+        * tests/qdeclarativewebview/resources/elements.qml: Added.
+        * tests/qdeclarativewebview/resources/forward.html: Added.
+        * tests/qdeclarativewebview/resources/forward.png: Added.
+        * tests/qdeclarativewebview/resources/javaScript.html: Added.
+        * tests/qdeclarativewebview/resources/javaScript.qml: Added.
+        * tests/qdeclarativewebview/resources/loadError.qml: Added.
+        * tests/qdeclarativewebview/resources/newwindows.html: Added.
+        * tests/qdeclarativewebview/resources/newwindows.qml: Added.
+        * tests/qdeclarativewebview/resources/propertychanges.qml: Added.
+        * tests/qdeclarativewebview/resources/sethtml.qml: Added.
+        * tests/qdeclarativewebview/tst_qdeclarativewebview.cpp:
+        (tst_QDeclarativeWebView::tmpDir):
+        (strippedHtml):
+        (fileContents):
+        (removeRecursive):
+        (tst_QDeclarativeWebView::cleanupTestCase):
+        (tst_QDeclarativeWebView::basicProperties):
+        (tst_QDeclarativeWebView::elementAreaAt):
+        (tst_QDeclarativeWebView::historyNav):
+        (callEvaluateJavaScript):
+        (tst_QDeclarativeWebView::javaScript):
+        (tst_QDeclarativeWebView::loadError):
+        (tst_QDeclarativeWebView::multipleWindows):
+        (tst_QDeclarativeWebView::newWindowComponent):
+        (tst_QDeclarativeWebView::newWindowParent):
+        (tst_QDeclarativeWebView::pressGrabTime):
+        (tst_QDeclarativeWebView::renderingEnabled):
+        (tst_QDeclarativeWebView::setHtml):
+        (tst_QDeclarativeWebView::settings):
+        (tst_QDeclarativeWebView::checkNoErrors):
+        * tests/qdeclarativewebview/tst_qdeclarativewebview.qrc:
+
 2011-04-08  Luiz Agostini  <luiz.agostini@openbossa.org>
 
         Reviewed by Kenneth Rohde Christiansen.

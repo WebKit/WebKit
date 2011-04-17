@@ -1,0 +1,16 @@
+<html>
+<head>
+<script type="text/javascript">
+<!--
+function clickTheLink()
+{
+    var ev = document.createEvent('MouseEvents');
+    ev.initEvent( "click", true, false );
+    document.getElementById('thelink').dispatchEvent(ev);
+}
+// -->
+</script>
+</head>
+<h1>Multiple windows...</h1>
+
+<a id=thelink target="_blank" href="newwindows.html">Popup!</a>
