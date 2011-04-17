@@ -31,7 +31,7 @@
 #include <string.h> //for memcpy
 #include <wtf/FastAllocBase.h>
 
-#if PLATFORM(CA)
+#if USE(CA)
 typedef struct CATransform3D CATransform3D;
 #endif
 #if USE(CG)
@@ -308,7 +308,7 @@ public:
         return result;
     }
 
-#if PLATFORM(CA)
+#if USE(CA)
     TransformationMatrix(const CATransform3D&);
     operator CATransform3D() const;
 #endif

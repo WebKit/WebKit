@@ -26,7 +26,7 @@
 #include "config.h"
 #include "LayerTreeHost.h"
 
-#if PLATFORM(CA)
+#if USE(CA)
 #if PLATFORM(MAC)
 #include "LayerTreeHostCAMac.h"
 #elif PLATFORM(WIN)

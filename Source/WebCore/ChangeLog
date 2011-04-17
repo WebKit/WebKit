@@ -1,3 +1,20 @@
+2011-04-17  Patrick Gansterer  <paroga@webkit.org>
+
+        Reviewed by Adam Barth.
+
+        Rename PLATFORM(CA) to USE(CA)
+        https://bugs.webkit.org/show_bug.cgi?id=58742
+
+        * config.h:
+        * platform/graphics/ca/TransformationMatrixCA.cpp:
+        * platform/graphics/cg/ImageBufferDataCG.h:
+        * platform/graphics/transforms/TransformationMatrix.h:
+        * platform/mac/WebCoreSystemInterface.h:
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::containsPaintedContent):
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::updateBacking):
+
 2011-04-17  Young Han Lee  <joybro@company100.net>
 
         Reviewed by Benjamin Poulain.

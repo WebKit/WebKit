@@ -29,7 +29,7 @@
 #include <ApplicationServices/ApplicationServices.h>
 #include <objc/objc.h>
 
-#if PLATFORM(MAC) && PLATFORM(CA) && !defined(BUILDING_ON_TIGER) && !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOW_LEOPARD)
+#if PLATFORM(MAC) && USE(CA) && !defined(BUILDING_ON_TIGER) && !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOW_LEOPARD)
 #include <IOSurface/IOSurface.h>
 #endif
 

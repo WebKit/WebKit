@@ -544,7 +544,7 @@
 #define WTF_USE_CG 1
 #endif
 #if PLATFORM(MAC) || PLATFORM(IOS) || (PLATFORM(WIN) && USE(CG))
-#define WTF_PLATFORM_CA 1
+#define WTF_USE_CA 1
 #endif
 
 /* USE(SKIA) for Win/Linux, CG for Mac */

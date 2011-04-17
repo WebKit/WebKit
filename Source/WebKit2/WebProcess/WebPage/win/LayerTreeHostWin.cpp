@@ -26,7 +26,7 @@
 #include "config.h"
 #include "LayerTreeHost.h"
 
-#if PLATFORM(CA)
+#if USE(CA)
 #include "LayerTreeHostCAWin.h"
 #endif
 
@@ -34,7 +34,7 @@ namespace WebKit {
 
 bool LayerTreeHost::supportsAcceleratedCompositing()
 {
-#if PLATFORM(CA) && HAVE(WKQCA)
+#if USE(CA) && HAVE(WKQCA)
     return LayerTreeHostCAWin::supportsAcceleratedCompositing();
 #else
     return false;

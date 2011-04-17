@@ -341,7 +341,7 @@ bool RenderLayerCompositor::updateBacking(RenderLayer* layer, CompositingChangeR
 
             layer->ensureBacking();
 
-#if PLATFORM(MAC) && PLATFORM(CA)
+#if PLATFORM(MAC) && USE(CA)
             if (m_renderView->document()->settings()->acceleratedDrawingEnabled())
                 layer->backing()->graphicsLayer()->setAcceleratesDrawing(true);
             else if (layer->renderer()->isCanvas()) {

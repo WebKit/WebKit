@@ -2,6 +2,16 @@
 
         Reviewed by Adam Barth.
 
+        Rename PLATFORM(CA) to USE(CA)
+        https://bugs.webkit.org/show_bug.cgi?id=58742
+
+        * DumpRenderTree/mac/DumpRenderTree.mm:
+        (resetDefaultsToConsistentValues):
+
+2011-04-17  Patrick Gansterer  <paroga@webkit.org>
+
+        Reviewed by Adam Barth.
+
         Rename PLATFORM(CG) to USE(CG)
         https://bugs.webkit.org/show_bug.cgi?id=58729
 

@@ -249,7 +249,7 @@ typedef float CGFloat;
 
 // CoreAnimation is available to IOS, Mac and Windows if using CG
 #if PLATFORM(MAC) || PLATFORM(IOS) || (PLATFORM(WIN) && USE(CG))
-#define WTF_PLATFORM_CA 1
+#define WTF_USE_CA 1
 #endif
 
 #if PLATFORM(QT) && USE(V8) && defined(Q_WS_X11)

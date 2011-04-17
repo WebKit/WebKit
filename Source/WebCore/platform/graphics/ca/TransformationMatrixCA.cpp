@@ -26,7 +26,7 @@
 #include "config.h"
 #include "TransformationMatrix.h"
 
-#if PLATFORM(CA)
+#if USE(CA)
 
 #include "FloatConversion.h"
 #include <QuartzCore/CATransform3D.h>
@@ -66,4 +66,4 @@ TransformationMatrix::operator CATransform3D() const
 
 }
 
-#endif // PLATFORM(CA)
+#endif // USE(CA)
