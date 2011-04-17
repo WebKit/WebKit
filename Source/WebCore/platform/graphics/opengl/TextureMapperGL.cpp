@@ -388,7 +388,7 @@ void TextureMapperGL::drawTexture(const BitmapTexture& texture, const IntRect& t
     GL_CMD(glBindTexture(GL_TEXTURE_2D, textureGL.m_id))
     GL_CMD(glBindBuffer(GL_ARRAY_BUFFER, 0))
     const GLfloat unitRect[] = {0, 0, 1, 0, 1, 1, 0, 1};
-    GL_CMD(glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 0, unitRect))
+    GL_CMD(glVertexAttribPointer(gInVertexAttributeIndex, 2, GL_FLOAT, GL_FALSE, 0, unitRect))
 
     TransformationMatrix matrix = TransformationMatrix(data().projectionMatrix).multiply(modelViewMatrix).multiply(TransformationMatrix(
             targetRect.width(), 0, 0, 0,
@@ -641,7 +641,7 @@ void TextureMapperGL::paintToTarget(const BitmapTexture& aSurface, const IntSize
     GL_CMD(glUniformMatrix4fv(programInfo.vars[TextureMapperGLData::ShaderInfo::InSourceMatrixVariable], 1, GL_FALSE, m4src))
     GL_CMD(glBindBuffer(GL_ARRAY_BUFFER, 0))
     const GLfloat unitRect[] = {0, 0, 1, 0, 1, 1, 0, 1};
-    GL_CMD(glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 0, unitRect))
+    GL_CMD(glVertexAttribPointer(gInVertexAttributeIndex, 2, GL_FLOAT, GL_FALSE, 0, unitRect))
     GL_CMD(glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA))
     GL_CMD(glEnable(GL_BLEND))
     setClip(visibleRect);
