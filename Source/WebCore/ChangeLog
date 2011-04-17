@@ -1,3 +1,9 @@
+2011-04-17  Patrick Gansterer  <paroga@webkit.org>
+
+        Unreviewed. Add missing include to fix build without precompiled header.
+
+        * rendering/RenderMediaControls.cpp:
+
 2011-04-17  Daniel Bates  <dbates@webkit.org>
 
         Attempt to fix the Chromium build after changeset 84110 <http://trac.webkit.org/changeset/84110>

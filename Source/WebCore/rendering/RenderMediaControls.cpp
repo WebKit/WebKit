@@ -32,6 +32,7 @@
 #include "GraphicsContext.h"
 #include "HTMLMediaElement.h"
 #include "HTMLNames.h"
+#include "PaintInfo.h"
 #include "RenderTheme.h"
 
 // FIXME: Unify more of the code for Mac and Win.
