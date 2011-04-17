@@ -26,16 +26,15 @@
 
 namespace WebCore {
 
-// FIXME: Rename to JSDOMWrapper.
-class DOMObject : public JSC::JSObjectWithGlobalObject {
+class JSDOMWrapper : public JSC::JSObjectWithGlobalObject {
 protected:
-    explicit DOMObject(JSC::JSGlobalObject* globalObject, JSC::Structure* structure) 
+    explicit JSDOMWrapper(JSC::JSGlobalObject* globalObject, JSC::Structure* structure) 
         : JSObjectWithGlobalObject(globalObject, structure)
     {
     }
 
 #ifndef NDEBUG
-    virtual ~DOMObject();
+    virtual ~JSDOMWrapper();
 #endif
 };
 

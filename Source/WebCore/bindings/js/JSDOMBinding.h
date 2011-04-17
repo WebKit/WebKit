@@ -48,13 +48,13 @@ namespace WebCore {
 
     typedef int ExceptionCode;
 
-    // FIXME: This class should collapse into DOMObject once all DOMObjects are
+    // FIXME: This class should collapse into JSDOMWrapper once all JSDOMWrappers are
     // updated to store a globalObject pointer.
-    class DOMObjectWithGlobalPointer : public DOMObject {
+    class JSDOMWrapperWithGlobalPointer : public JSDOMWrapper {
     public:
         JSDOMGlobalObject* globalObject() const
         {
-            return static_cast<JSDOMGlobalObject*>(DOMObject::globalObject());
+            return static_cast<JSDOMGlobalObject*>(JSDOMWrapper::globalObject());
         }
 
         ScriptExecutionContext* scriptExecutionContext() const
@@ -69,8 +69,8 @@ namespace WebCore {
         }
 
     protected:
-        DOMObjectWithGlobalPointer(JSC::Structure* structure, JSDOMGlobalObject* globalObject)
-            : DOMObject(globalObject, structure)
+        JSDOMWrapperWithGlobalPointer(JSC::Structure* structure, JSDOMGlobalObject* globalObject)
+            : JSDOMWrapper(globalObject, structure)
         {
             // FIXME: This ASSERT is valid, but fires in fast/dom/gc-6.html when trying to create
             // new JavaScript objects on detached windows due to DOMWindow::document()
@@ -80,7 +80,7 @@ namespace WebCore {
     };
 
     // Base class for all constructor objects in the JSC bindings.
-    class DOMConstructorObject : public DOMObjectWithGlobalPointer {
+    class DOMConstructorObject : public JSDOMWrapperWithGlobalPointer {
     public:
         static JSC::Structure* createStructure(JSC::JSGlobalData& globalData, JSC::JSValue prototype)
         {
@@ -88,9 +88,9 @@ namespace WebCore {
         }
 
     protected:
-        static const unsigned StructureFlags = JSC::ImplementsHasInstance | JSC::OverridesMarkChildren | DOMObjectWithGlobalPointer::StructureFlags;
+        static const unsigned StructureFlags = JSC::ImplementsHasInstance | JSC::OverridesMarkChildren | JSDOMWrapperWithGlobalPointer::StructureFlags;
         DOMConstructorObject(JSC::Structure* structure, JSDOMGlobalObject* globalObject)
-            : DOMObjectWithGlobalPointer(structure, globalObject)
+            : JSDOMWrapperWithGlobalPointer(structure, globalObject)
         {
         }
     };
@@ -112,9 +112,9 @@ namespace WebCore {
         }
     };
 
-    DOMObject* getCachedDOMObjectWrapper(DOMWrapperWorld*, void* objectHandle);
-    void cacheDOMObjectWrapper(DOMWrapperWorld*, void* objectHandle, DOMObject* wrapper);
-    void uncacheDOMObjectWrapper(DOMWrapperWorld*, void* objectHandle, DOMObject* wrapper);
+    JSDOMWrapper* getCachedDOMObjectWrapper(DOMWrapperWorld*, void* objectHandle);
+    void cacheDOMObjectWrapper(DOMWrapperWorld*, void* objectHandle, JSDOMWrapper* wrapper);
+    void uncacheDOMObjectWrapper(DOMWrapperWorld*, void* objectHandle, JSDOMWrapper* wrapper);
 
     JSNode* getCachedDOMNodeWrapper(DOMWrapperWorld*, Node*);
     void cacheDOMNodeWrapper(DOMWrapperWorld*, Node*, JSNode* wrapper);
@@ -150,7 +150,7 @@ namespace WebCore {
         return static_cast<JSC::JSObject*>(asObject(getDOMStructure<WrapperClass>(exec, static_cast<JSDOMGlobalObject*>(globalObject))->storedPrototype()));
     }
     #define CREATE_DOM_OBJECT_WRAPPER(exec, globalObject, className, object) createDOMObjectWrapper<JS##className>(exec, globalObject, static_cast<className*>(object))
-    template<class WrapperClass, class DOMClass> inline DOMObject* createDOMObjectWrapper(JSC::ExecState* exec, JSDOMGlobalObject* globalObject, DOMClass* object)
+    template<class WrapperClass, class DOMClass> inline JSDOMWrapper* createDOMObjectWrapper(JSC::ExecState* exec, JSDOMGlobalObject* globalObject, DOMClass* object)
     {
         ASSERT(object);
         ASSERT(!getCachedDOMObjectWrapper(currentWorld(exec), object));
@@ -163,7 +163,7 @@ namespace WebCore {
     {
         if (!object)
             return JSC::jsNull();
-        if (DOMObject* wrapper = getCachedDOMObjectWrapper(currentWorld(exec), object))
+        if (JSDOMWrapper* wrapper = getCachedDOMObjectWrapper(currentWorld(exec), object))
             return wrapper;
         return createDOMObjectWrapper<WrapperClass>(exec, globalObject, object);
     }

@@ -135,17 +135,17 @@ const JSC::HashTable* getHashTableForGlobalData(JSGlobalData& globalData, const 
     return DOMObjectHashTableMap::mapFor(globalData).get(staticTable);
 }
 
-DOMObject* getCachedDOMObjectWrapper(DOMWrapperWorld* world, void* objectHandle) 
+JSDOMWrapper* getCachedDOMObjectWrapper(DOMWrapperWorld* world, void* objectHandle) 
 {
     return world->m_wrappers.get(objectHandle).get();
 }
 
-void cacheDOMObjectWrapper(DOMWrapperWorld* world, void* objectHandle, DOMObject* wrapper) 
+void cacheDOMObjectWrapper(DOMWrapperWorld* world, void* objectHandle, JSDOMWrapper* wrapper) 
 {
-    world->m_wrappers.set(objectHandle, Weak<DOMObject>(*world->globalData(), wrapper, world->domObjectHandleOwner(), objectHandle));
+    world->m_wrappers.set(objectHandle, Weak<JSDOMWrapper>(*world->globalData(), wrapper, world->domObjectHandleOwner(), objectHandle));
 }
 
-void uncacheDOMObjectWrapper(DOMWrapperWorld* world, void* objectHandle, DOMObject* wrapper)
+void uncacheDOMObjectWrapper(DOMWrapperWorld* world, void* objectHandle, JSDOMWrapper* wrapper)
 {
     ASSERT_UNUSED(wrapper, world->m_wrappers.find(objectHandle)->second.get() == wrapper);
     world->m_wrappers.remove(objectHandle);
@@ -184,7 +184,7 @@ void markDOMObjectWrapper(MarkStack& markStack, JSGlobalData& globalData, void* 
         return;
 
     for (JSGlobalDataWorldIterator worldIter(&globalData); worldIter; ++worldIter) {
-        if (DOMObject* wrapper = worldIter->m_wrappers.get(object).get())
+        if (JSDOMWrapper* wrapper = worldIter->m_wrappers.get(object).get())
             markStack.deprecatedAppend(reinterpret_cast<JSCell**>(&wrapper));
     }
 }

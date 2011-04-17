@@ -441,7 +441,7 @@ JSValue JSDOMWindow::lookupSetter(ExecState* exec, const Identifier& propertyNam
 JSValue JSDOMWindow::history(ExecState* exec) const
 {
     History* history = impl()->history();
-    if (DOMObject* wrapper = getCachedDOMObjectWrapper(currentWorld(exec), history))
+    if (JSDOMWrapper* wrapper = getCachedDOMObjectWrapper(currentWorld(exec), history))
         return wrapper;
 
     JSDOMWindow* window = const_cast<JSDOMWindow*>(this);
@@ -453,7 +453,7 @@ JSValue JSDOMWindow::history(ExecState* exec) const
 JSValue JSDOMWindow::location(ExecState* exec) const
 {
     Location* location = impl()->location();
-    if (DOMObject* wrapper = getCachedDOMObjectWrapper(currentWorld(exec), location))
+    if (JSDOMWrapper* wrapper = getCachedDOMObjectWrapper(currentWorld(exec), location))
         return wrapper;
 
     JSDOMWindow* window = const_cast<JSDOMWindow*>(this);

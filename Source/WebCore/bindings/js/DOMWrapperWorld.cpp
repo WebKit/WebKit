@@ -77,7 +77,7 @@ static bool isObservable(JSNode* jsNode, Node* node, DOMWrapperWorld* world)
     // keep the node wrappers protecting them alive.
     if (node->isElementNode()) {
         if (NamedNodeMap* attributes = static_cast<Element*>(node)->attributeMap()) {
-            if (DOMObject* wrapper = world->m_wrappers.get(attributes).get()) {
+            if (JSDOMWrapper* wrapper = world->m_wrappers.get(attributes).get()) {
                 // FIXME: This check seems insufficient, because NamedNodeMap items can have custom properties themselves.
                 // Maybe it would be OK to just keep the wrapper alive, as it is done for CSSOM objects below.
                 if (wrapper->hasCustomProperties())
@@ -92,7 +92,7 @@ static bool isObservable(JSNode* jsNode, Node* node, DOMWrapperWorld* world)
         }
         if (static_cast<Element*>(node)->hasTagName(canvasTag)) {
             if (CanvasRenderingContext* context = static_cast<HTMLCanvasElement*>(node)->renderingContext()) {
-                if (DOMObject* wrapper = world->m_wrappers.get(context).get()) {
+                if (JSDOMWrapper* wrapper = world->m_wrappers.get(context).get()) {
                     if (wrapper->hasCustomProperties())
                         return true;
                 }
@@ -201,7 +201,7 @@ bool DOMObjectHandleOwner::isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown>,
 
 void DOMObjectHandleOwner::finalize(JSC::Handle<JSC::Unknown> handle, void* context)
 {
-    DOMObject* domObject = static_cast<DOMObject*>(handle.get().asCell());
+    JSDOMWrapper* domObject = static_cast<JSDOMWrapper*>(handle.get().asCell());
     uncacheDOMObjectWrapper(m_world, context, domObject);
 }
 

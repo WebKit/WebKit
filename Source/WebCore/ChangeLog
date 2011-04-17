@@ -1,3 +1,48 @@
+2011-04-17  Geoffrey Garen  <ggaren@apple.com>
+
+        Strongly suggested, but not necessarily reviewed, by
+        Sam Weinig and Maciej Stachowiak.
+
+        Renamed DOMObject* => JSDOMWrapper*.
+
+        * bindings/js/DOMWrapperWorld.cpp:
+        (WebCore::isObservable):
+        (WebCore::DOMObjectHandleOwner::finalize):
+        * bindings/js/DOMWrapperWorld.h:
+        * bindings/js/JSArrayBufferViewHelper.h:
+        (WebCore::toJSArrayBufferView):
+        * bindings/js/JSCSSRuleCustom.cpp:
+        (WebCore::toJS):
+        * bindings/js/JSCSSValueCustom.cpp:
+        (WebCore::toJS):
+        * bindings/js/JSDOMBinding.h:
+        (WebCore::JSDOMWrapperWithGlobalPointer::globalObject):
+        (WebCore::JSDOMWrapperWithGlobalPointer::JSDOMWrapperWithGlobalPointer):
+        (WebCore::DOMConstructorObject::DOMConstructorObject):
+        (WebCore::createDOMObjectWrapper):
+        (WebCore::getDOMObjectWrapper):
+        * bindings/js/JSDOMWrapper.cpp:
+        (WebCore::JSDOMWrapper::~JSDOMWrapper):
+        * bindings/js/JSDOMWrapper.h:
+        (WebCore::JSDOMWrapper::JSDOMWrapper):
+        * bindings/js/JSDocumentCustom.cpp:
+        (WebCore::JSDocument::location):
+        (WebCore::toJS):
+        * bindings/js/JSEventCustom.cpp:
+        (WebCore::toJS):
+        * bindings/js/JSHTMLCollectionCustom.cpp:
+        (WebCore::toJS):
+        * bindings/js/JSImageDataCustom.cpp:
+        (WebCore::toJS):
+        * bindings/js/JSSVGPathSegCustom.cpp:
+        (WebCore::toJS):
+        * bindings/js/JSStyleSheetCustom.cpp:
+        (WebCore::toJS):
+        * bindings/js/ScriptWrappable.h:
+        (WebCore::ScriptWrappable::wrapper):
+        (WebCore::ScriptWrappable::setWrapper):
+        * bindings/scripts/CodeGeneratorJS.pm:
+
 2011-04-17  Patrick Gansterer  <paroga@webkit.org>
 
         Reviewed by Adam Barth.

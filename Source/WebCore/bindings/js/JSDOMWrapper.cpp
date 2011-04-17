@@ -34,7 +34,7 @@ namespace WebCore {
 
 #ifndef NDEBUG
 
-DOMObject::~DOMObject()
+JSDOMWrapper::~JSDOMWrapper()
 {
 }
 

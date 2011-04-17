@@ -28,10 +28,10 @@
 
 namespace WebCore {
 
-class DOMObject;
+class JSDOMWrapper;
 class ScriptController;
 
-typedef HashMap<void*, JSC::Weak<DOMObject> > DOMObjectWrapperMap;
+typedef HashMap<void*, JSC::Weak<JSDOMWrapper> > DOMObjectWrapperMap;
 typedef JSC::WeakGCMap<StringImpl*, JSC::JSString> JSStringCache;
 
 class JSNodeHandleOwner : public JSC::WeakHandleOwner {
