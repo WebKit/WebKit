@@ -71,8 +71,8 @@ static CachedResource* createResource(CachedResource::Type type, const KURL& url
         return new CachedXSLStyleSheet(url.string());
 #endif
 #if ENABLE(LINK_PREFETCH)
-    case CachedResource::LinkPrefetch:
-        return new CachedResource(url.string(), CachedResource::LinkPrefetch);
+    case CachedResource::LinkResource:
+        return new CachedResource(url.string(), CachedResource::LinkResource);
 #endif
     }
     ASSERT_NOT_REACHED();
@@ -188,10 +188,10 @@ CachedXSLStyleSheet* CachedResourceLoader::requestXSLStyleSheet(const String& ur
 #endif
 
 #if ENABLE(LINK_PREFETCH)
-CachedResource* CachedResourceLoader::requestLinkPrefetch(const String& url)
+CachedResource* CachedResourceLoader::requestLinkResource(const String& url, ResourceLoadPriority priority)
 {
     ASSERT(frame());
-    return requestResource(CachedResource::LinkPrefetch, url, String());
+    return requestResource(CachedResource::LinkResource, url, String(), priority);
 }
 #endif
 
@@ -206,7 +206,7 @@ bool CachedResourceLoader::canRequest(CachedResource::Type type, const KURL& url
     case CachedResource::Script:
     case CachedResource::FontResource:
 #if ENABLE(LINK_PREFETCH)
-    case CachedResource::LinkPrefetch:
+    case CachedResource::LinkResource:
 #endif
         // These types of resources can be loaded from any origin.
         // FIXME: Are we sure about CachedResource::FontResource?
@@ -248,7 +248,7 @@ bool CachedResourceLoader::canRequest(CachedResource::Type type, const KURL& url
         break;
     }
 #if ENABLE(LINK_PREFETCH)
-    case CachedResource::LinkPrefetch:
+    case CachedResource::LinkResource:
         // Prefetch cannot affect the current document.
         break;
 #endif
@@ -593,7 +593,7 @@ void CachedResourceLoader::notifyLoadedFromMemoryCache(CachedResource* resource)
 
 void CachedResourceLoader::incrementRequestCount(const CachedResource* res)
 {
-    if (res->isPrefetch())
+    if (res->isLinkResource())
         return;
 
     ++m_requestCount;
@@ -601,7 +601,7 @@ void CachedResourceLoader::incrementRequestCount(const CachedResource* res)
 
 void CachedResourceLoader::decrementRequestCount(const CachedResource* res)
 {
-    if (res->isPrefetch())
+    if (res->isLinkResource())
         return;
 
     --m_requestCount;

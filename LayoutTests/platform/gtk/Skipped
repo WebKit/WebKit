@@ -512,6 +512,7 @@ http/tests/media/video-seekable-stall.html
 http/tests/mime/standard-mode-loads-stylesheet-with-empty-content-type.html
 http/tests/mime/standard-mode-loads-stylesheet-with-text-css-and-invalid-type.html
 http/tests/misc/acid3.html
+http/tests/misc/link-rel-prefetch-and-subresource.html
 http/tests/misc/policy-delegate-called-twice.html
 http/tests/misc/prefetch-purpose.html
 http/tests/misc/redirect-to-external-url.html
@@ -924,6 +925,7 @@ fast/dom/HTMLLinkElement/prefetch.html
 fast/dom/HTMLLinkElement/prefetch-onerror.html
 fast/dom/HTMLLinkElement/prefetch-onload.html
 fast/dom/HTMLLinkElement/prefetch-beforeload.html
+fast/dom/HTMLLinkElement/subresource.html
 
 # Tests failing because the context menu is grabbing mouse events.
 # https://bugs.webkit.org/show_bug.cgi?id=40601

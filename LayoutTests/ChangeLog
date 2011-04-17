@@ -1,3 +1,28 @@
+2011-04-17  Gavin Peters  <gavinp@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        Add support for link rel type "subresource"
+        https://bugs.webkit.org/show_bug.cgi?id=57842
+
+        Link rel=prefetch is great for cache warming for resources on
+        subsequent pages, but it launches requests at too low a priority
+        to use for subresources of the current page.
+
+        During testing, I was dissapointed to see the results for the http
+        test below don't give the subresource priority ordering.  This is
+        another instance of https://bugs.webkit.org/show_bug.cgi?id=49238
+        which I'll be working on next, and thus fix the test.
+
+        * fast/dom/HTMLLinkElement/subresource-expected.txt: Added.
+        * fast/dom/HTMLLinkElement/subresource.html: Added.
+        * http/tests/misc/link-rel-prefetch-and-subresource-expected.txt: Added.
+        * http/tests/misc/link-rel-prefetch-and-subresource.html: Added.
+        * platform/gtk/Skipped:
+        * platform/mac/Skipped:
+        * platform/qt/Skipped:
+        * platform/win/Skipped:
+
 2011-04-16  Dan Bernstein  <mitz@apple.com>
 
         Updated results for fast/block/float/032.html after r84096. Filed http://webkit.org/b/58736 to

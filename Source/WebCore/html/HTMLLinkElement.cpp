@@ -26,6 +26,7 @@
 
 #include "Attribute.h"
 #include "CachedCSSStyleSheet.h"
+#include "CachedResource.h"
 #include "CachedResourceLoader.h"
 #include "CSSStyleSelector.h"
 #include "Document.h"
@@ -78,8 +79,8 @@ HTMLLinkElement::~HTMLLinkElement()
     }
     
 #if ENABLE(LINK_PREFETCH)
-    if (m_cachedLinkPrefetch)
-        m_cachedLinkPrefetch->removeClient(this);
+    if (m_cachedLinkResource)
+        m_cachedLinkResource->removeClient(this);
 #endif
 }
 
@@ -163,6 +164,7 @@ void HTMLLinkElement::tokenizeRelAttribute(const AtomicString& rel, RelAttribute
     relAttribute.m_isDNSPrefetch = false;
 #if ENABLE(LINK_PREFETCH)
     relAttribute.m_isLinkPrefetch = false;
+    relAttribute.m_isLinkSubresource = false;
 #endif
     if (equalIgnoringCase(rel, "stylesheet"))
         relAttribute.m_isStyleSheet = true;
@@ -170,10 +172,6 @@ void HTMLLinkElement::tokenizeRelAttribute(const AtomicString& rel, RelAttribute
         relAttribute.m_isIcon = true;
     else if (equalIgnoringCase(rel, "dns-prefetch"))
         relAttribute.m_isDNSPrefetch = true;
-#if ENABLE(LINK_PREFETCH)
-    else if (equalIgnoringCase(rel, "prefetch"))
-        relAttribute.m_isLinkPrefetch = true;
-#endif
     else if (equalIgnoringCase(rel, "alternate stylesheet") || equalIgnoringCase(rel, "stylesheet alternate")) {
         relAttribute.m_isStyleSheet = true;
         relAttribute.m_isAlternate = true;
@@ -191,6 +189,12 @@ void HTMLLinkElement::tokenizeRelAttribute(const AtomicString& rel, RelAttribute
                 relAttribute.m_isAlternate = true;
             else if (equalIgnoringCase(*it, "icon"))
                 relAttribute.m_isIcon = true;
+#if ENABLE(LINK_PREFETCH)
+            else if (equalIgnoringCase(*it, "prefetch"))
+              relAttribute.m_isLinkPrefetch = true;
+            else if (equalIgnoringCase(*it, "subresource"))
+              relAttribute.m_isLinkSubresource = true;
+#endif
         }
     }
 }
@@ -232,12 +236,16 @@ void HTMLLinkElement::process()
     }
 
 #if ENABLE(LINK_PREFETCH)
-    if (m_relAttribute.m_isLinkPrefetch && m_url.isValid() && document()->frame()) {
+    if ((m_relAttribute.m_isLinkPrefetch || m_relAttribute.m_isLinkSubresource) && m_url.isValid() && document()->frame()) {
         if (!checkBeforeLoadEvent())
             return;
-        m_cachedLinkPrefetch = document()->cachedResourceLoader()->requestLinkPrefetch(m_url);
-        if (m_cachedLinkPrefetch)
-            m_cachedLinkPrefetch->addClient(this);
+        ResourceLoadPriority priority = ResourceLoadPriorityUnresolved;
+        if (m_relAttribute.m_isLinkSubresource)
+            priority = ResourceLoadPriorityLow;
+
+        m_cachedLinkResource = document()->cachedResourceLoader()->requestLinkResource(m_url, priority);
+        if (m_cachedLinkResource)
+            m_cachedLinkResource->addClient(this);
     }
 #endif
 
@@ -409,19 +417,19 @@ bool HTMLLinkElement::isLoading() const
 void HTMLLinkElement::onloadTimerFired(Timer<HTMLLinkElement>* timer)
 {
     ASSERT_UNUSED(timer, timer == &m_onloadTimer);
-    if (m_cachedLinkPrefetch->errorOccurred())
+    if (m_cachedLinkResource->errorOccurred())
         dispatchEvent(Event::create(eventNames().errorEvent, false, false));
     else
         dispatchEvent(Event::create(eventNames().loadEvent, false, false));
 
-    m_cachedLinkPrefetch->removeClient(this);
-    m_cachedLinkPrefetch = 0;
+    m_cachedLinkResource->removeClient(this);
+    m_cachedLinkResource = 0;
 }
 
 void HTMLLinkElement::notifyFinished(CachedResource* resource)
 {
     m_onloadTimer.startOneShot(0);
-    ASSERT(m_cachedLinkPrefetch.get() == resource);
+    ASSERT(m_cachedLinkResource.get() == resource);
 }
 #endif
 

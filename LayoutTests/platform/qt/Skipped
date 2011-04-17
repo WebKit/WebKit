@@ -2958,6 +2958,8 @@ fast/dom/HTMLLinkElement/prefetch.html
 fast/dom/HTMLLinkElement/prefetch-beforeload.html
 fast/dom/HTMLLinkElement/prefetch-onerror.html
 fast/dom/HTMLLinkElement/prefetch-onload.html
+fast/dom/HTMLLinkElement/subresource.html
+http/tests/misc/link-rel-prefetch-and-subresource.html
 http/tests/misc/prefetch-purpose.html
 
 # [Qt] fast/text/bidi-explicit-embedding-past-end.html fails

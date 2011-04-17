@@ -62,7 +62,7 @@ static ResourceLoadPriority defaultPriorityForResourceType(CachedResource::Type 
         case CachedResource::ImageResource:
             return ResourceLoadPriorityLow;
 #if ENABLE(LINK_PREFETCH)
-        case CachedResource::LinkPrefetch:
+        case CachedResource::LinkResource:
             return ResourceLoadPriorityVeryLow;
 #endif
     }

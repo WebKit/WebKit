@@ -42,8 +42,11 @@
 
 namespace WebCore {
     
-static ResourceRequest::TargetType cachedResourceTypeToTargetType(CachedResource::Type type)
+static ResourceRequest::TargetType cachedResourceTypeToTargetType(CachedResource::Type type, ResourceLoadPriority priority)
 {
+#if !ENABLE(LINK_PREFETCH)
+    UNUSED_PARAM(priority);
+#endif
     switch (type) {
     case CachedResource::CSSStyleSheet:
 #if ENABLE(XSLT)
@@ -57,8 +60,10 @@ static ResourceRequest::TargetType cachedResourceTypeToTargetType(CachedResource
     case CachedResource::ImageResource:
         return ResourceRequest::TargetIsImage;
 #if ENABLE(LINK_PREFETCH)
-    case CachedResource::LinkPrefetch:
-        return ResourceRequest::TargetIsPrefetch;
+    case CachedResource::LinkResource:
+        if (priority == ResourceLoadPriorityLowest)
+            return ResourceRequest::TargetIsPrefetch;
+        return ResourceRequest::TargetIsSubresource;
 #endif
     }
     ASSERT_NOT_REACHED();
@@ -85,7 +90,7 @@ PassRefPtr<CachedResourceRequest> CachedResourceRequest::load(CachedResourceLoad
     RefPtr<CachedResourceRequest> request = adoptRef(new CachedResourceRequest(cachedResourceLoader, resource, incremental));
 
     ResourceRequest resourceRequest(resource->url());
-    resourceRequest.setTargetType(cachedResourceTypeToTargetType(resource->type()));
+    resourceRequest.setTargetType(cachedResourceTypeToTargetType(resource->type(), resource->loadPriority()));
 
     if (!resource->accept().isEmpty())
         resourceRequest.setHTTPAccept(resource->accept());
@@ -108,7 +113,7 @@ PassRefPtr<CachedResourceRequest> CachedResourceRequest::load(CachedResourceLoad
     }
     
 #if ENABLE(LINK_PREFETCH)
-    if (resource->type() == CachedResource::LinkPrefetch)
+    if (resource->type() == CachedResource::LinkResource)
         resourceRequest.setHTTPHeaderField("Purpose", "prefetch");
 #endif
 

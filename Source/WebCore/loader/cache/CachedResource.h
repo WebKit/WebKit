@@ -65,7 +65,7 @@ public:
         , XSLStyleSheet
 #endif
 #if ENABLE(LINK_PREFETCH)
-        , LinkPrefetch
+        , LinkResource
 #endif
     };
 
@@ -129,10 +129,10 @@ public:
     void setLoading(bool b) { m_loading = b; }
 
     virtual bool isImage() const { return false; }
-    bool isPrefetch() const
+    bool isLinkResource() const
     {
 #if ENABLE(LINK_PREFETCH)
-        return type() == LinkPrefetch;
+        return type() == LinkResource;
 #else
         return false;
 #endif

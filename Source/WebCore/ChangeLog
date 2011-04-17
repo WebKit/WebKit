@@ -1,3 +1,52 @@
+2011-04-17  Gavin Peters  <gavinp@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        Add support for link rel type "subresource"
+        https://bugs.webkit.org/show_bug.cgi?id=57842
+
+        Link rel=prefetch is great for cache warming for resources on
+        subsequent pages, but it launches requests at too low a priority
+        to use for subresources of the current page.
+
+        Particularly after https://bugs.webkit.org/show_bug.cgi?id=51940
+        is implemented, a rel type that launches requests at an higher
+        priority is going to be very useful.  This rel type is in the
+        HTML5 spec at http://wiki.whatwg.org/wiki/RelExtensions .  An
+        expected use case will be for servers to provide subresource hints
+        in link headers, which will allow servers to help make the web
+        faster.
+
+        This feature continues my implementation of the Link header, which
+        we've talked about in WebKit-dev in
+        https://lists.webkit.org/pipermail/webkit-dev/2011-February/016034.html.
+
+        Tests: fast/dom/HTMLLinkElement/subresource.html
+               http/tests/misc/link-rel-prefetch-and-subresource.html
+
+        * html/HTMLLinkElement.cpp:
+        (WebCore::HTMLLinkElement::~HTMLLinkElement):
+        (WebCore::HTMLLinkElement::tokenizeRelAttribute):
+        (WebCore::HTMLLinkElement::process):
+        (WebCore::HTMLLinkElement::onloadTimerFired):
+        (WebCore::HTMLLinkElement::notifyFinished):
+        * html/HTMLLinkElement.h:
+        (WebCore::HTMLLinkElement::RelAttribute::RelAttribute):
+        * loader/cache/CachedResource.cpp:
+        (WebCore::defaultPriorityForResourceType):
+        * loader/cache/CachedResource.h:
+        (WebCore::CachedResource::isLinkResource):
+        * loader/cache/CachedResourceLoader.cpp:
+        (WebCore::createResource):
+        (WebCore::CachedResourceLoader::requestLinkResource):
+        (WebCore::CachedResourceLoader::canRequest):
+        (WebCore::CachedResourceLoader::incrementRequestCount):
+        (WebCore::CachedResourceLoader::decrementRequestCount):
+        * loader/cache/CachedResourceLoader.h:
+        * loader/cache/CachedResourceRequest.cpp:
+        (WebCore::cachedResourceTypeToTargetType):
+        (WebCore::CachedResourceRequest::load):
+
 2011-04-17  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Joseph Pecoraro.
