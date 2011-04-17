@@ -1,3 +1,13 @@
+2011-04-17  Patrick Gansterer  <paroga@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        Remove pthread dependency of GCController
+        https://bugs.webkit.org/show_bug.cgi?id=54833
+
+        * bindings/js/GCController.cpp:
+        (WebCore::GCController::garbageCollectOnAlternateThreadForDebugging):
+
 2011-04-17  Gavin Peters  <gavinp@chromium.org>
 
         Reviewed by Adam Barth.
