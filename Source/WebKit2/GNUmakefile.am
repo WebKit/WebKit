@@ -183,7 +183,6 @@ libWebKit2_la_SOURCES = \
 	Source/WebKit2/Shared/CoreIPCSupport/InjectedBundleMessageKinds.h \
 	Source/WebKit2/Shared/CoreIPCSupport/WebContextMessageKinds.h \
 	Source/WebKit2/Shared/CoreIPCSupport/WebPageProxyMessageKinds.h \
-	Source/WebKit2/Shared/CoreIPCSupport/WebProcessProxyMessageKinds.h \
 	Source/WebKit2/Shared/DrawingAreaInfo.h \
 	Source/WebKit2/Shared/FontSmoothingLevel.h \
 	Source/WebKit2/Shared/gtk/ShareableBitmapGtk.cpp \

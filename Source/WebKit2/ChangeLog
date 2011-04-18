@@ -1,5 +1,23 @@
 2011-04-18  Anders Carlsson  <andersca@apple.com>
 
+        Reviewed by Dan Bernstein.
+
+        Get rid of WebProcessProxyLegacyMessage
+        https://bugs.webkit.org/show_bug.cgi?id=58825
+
+        * GNUmakefile.am:
+        * Platform/CoreIPC/MessageID.h:
+        * Shared/CoreIPCSupport/WebProcessProxyMessageKinds.h: Removed.
+        * UIProcess/WebProcessProxy.cpp:
+        * WebKit2.xcodeproj/project.pbxproj:
+        * WebProcess/Plugins/PluginProcessConnectionManager.cpp:
+        * WebProcess/WebCoreSupport/WebChromeClient.cpp:
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        * WebProcess/WebPage/WebPage.cpp:
+        * win/WebKit2.vcproj:
+
+2011-04-18  Anders Carlsson  <andersca@apple.com>
+
         Fix build.
 
         * UIProcess/Plugins/PluginInfoStore.h:

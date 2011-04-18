@@ -1149,10 +1149,6 @@
 					RelativePath="..\Shared\CoreIPCSupport\WebPageProxyMessageKinds.h"
 					>
 				</File>
-				<File
-					RelativePath="..\Shared\CoreIPCSupport\WebProcessProxyMessageKinds.h"
-					>
-				</File>
 			</Filter>
 			<Filter
 				Name="cf"

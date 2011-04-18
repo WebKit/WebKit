@@ -34,7 +34,6 @@
 #include "WebCoreArgumentCoders.h"
 #include "WebProcess.h"
 #include "WebProcessProxyMessages.h"
-#include "WebProcessProxyMessageKinds.h"
 #include <wtf/StdLibExtras.h>
 
 #if PLATFORM(MAC)

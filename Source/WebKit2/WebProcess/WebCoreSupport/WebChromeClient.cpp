@@ -43,7 +43,6 @@
 #include "WebPopupMenu.h"
 #include "WebPreferencesStore.h"
 #include "WebProcess.h"
-#include "WebProcessProxyMessageKinds.h"
 #include "WebSearchPopupMenu.h"
 #include <WebCore/DatabaseTracker.h>
 #include <WebCore/FileChooser.h>

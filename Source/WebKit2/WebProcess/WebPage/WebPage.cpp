@@ -67,7 +67,6 @@
 #include "WebPopupMenu.h"
 #include "WebPreferencesStore.h"
 #include "WebProcess.h"
-#include "WebProcessProxyMessageKinds.h"
 #include "WebProcessProxyMessages.h"
 #include <JavaScriptCore/APICast.h>
 #include <WebCore/AbstractDatabase.h>
