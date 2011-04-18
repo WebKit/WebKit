@@ -635,8 +635,6 @@ WebInspector.StylePropertiesSection = function(parentPane, styleRule, editable, 
     function linkifyUncopyable(url, line)
     {
         var link = WebInspector.linkifyResourceAsNode(url, "resources", line + 1);
-        link.setAttribute("data-uncopyable", link.textContent);
-        link.textContent = "";
         return link;
     }
 

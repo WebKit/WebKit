@@ -1,3 +1,17 @@
+2011-04-18  Alexander Pavlov  <apavlov@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: Need a workaround for bug 58422
+        https://bugs.webkit.org/show_bug.cgi?id=58780
+
+        Instead of the A:before content, the link text is displayed as the A tag content.
+
+        * inspector/front-end/StylesSidebarPane.js:
+        (WebInspector.StylePropertiesSection.linkifyUncopyable):
+        (WebInspector.StylePropertiesSection):
+        * inspector/front-end/inspector.css:
+
 2011-04-18  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed. Fix WebKit2 GTK build after 82465.
