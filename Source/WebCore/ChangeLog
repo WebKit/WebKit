@@ -1,3 +1,22 @@
+2011-04-18  Ilya Tikhonovsky  <loislo@chromium.org>
+
+        Reviewed by Yury Semikhatsky.
+
+        Web Inspector: Database agent stops to propagate it's events after navigation.
+        https://bugs.webkit.org/show_bug.cgi?id=58776
+
+        * inspector/InspectorAgent.cpp:
+        (WebCore::InspectorAgent::InspectorAgent):
+        (WebCore::InspectorAgent::restoreInspectorStateFromCookie):
+        * inspector/InspectorDatabaseAgent.cpp:
+        (WebCore::InspectorDatabaseAgent::InspectorDatabaseAgent):
+        (WebCore::InspectorDatabaseAgent::clearFrontend):
+        (WebCore::InspectorDatabaseAgent::enable):
+        (WebCore::InspectorDatabaseAgent::disable):
+        (WebCore::InspectorDatabaseAgent::restore):
+        * inspector/InspectorDatabaseAgent.h:
+        (WebCore::InspectorDatabaseAgent::create):
+
 2011-04-18  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r83968.

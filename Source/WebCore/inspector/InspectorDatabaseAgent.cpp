@@ -36,6 +36,7 @@
 #include "ExceptionCode.h"
 #include "InspectorDatabaseResource.h"
 #include "InspectorFrontend.h"
+#include "InspectorState.h"
 #include "InspectorValues.h"
 #include "InstrumentingAgents.h"
 #include "SQLError.h"
@@ -51,6 +52,10 @@
 #include <wtf/Vector.h>
 
 namespace WebCore {
+
+namespace DatabaseAgentState {
+static const char databaseAgentEnabled[] = "databaseAgentEnabled";
+};
 
 class InspectorDatabaseAgent::FrontendProvider : public RefCounted<InspectorDatabaseAgent::FrontendProvider> {
 public:
@@ -237,8 +242,9 @@ void InspectorDatabaseAgent::clearResources()
     m_resources.clear();
 }
 
-InspectorDatabaseAgent::InspectorDatabaseAgent(InstrumentingAgents* instrumentingAgents)
+InspectorDatabaseAgent::InspectorDatabaseAgent(InstrumentingAgents* instrumentingAgents, InspectorState* state)
     : m_instrumentingAgents(instrumentingAgents)
+    , m_inspectorState(state)
     , m_enabled(false)
 {
     m_instrumentingAgents->setInspectorDatabaseAgent(this);
@@ -258,7 +264,7 @@ void InspectorDatabaseAgent::clearFrontend()
 {
     m_frontendProvider->clearFrontend();
     m_frontendProvider.clear();
-    m_enabled = false;
+    disable(0);
 }
 
 void InspectorDatabaseAgent::enable(ErrorString*)
@@ -266,6 +272,7 @@ void InspectorDatabaseAgent::enable(ErrorString*)
     if (m_enabled)
         return;
     m_enabled = true;
+    m_inspectorState->setBoolean(DatabaseAgentState::databaseAgentEnabled, m_enabled);
 
     DatabaseResourcesMap::iterator databasesEnd = m_resources.end();
     for (DatabaseResourcesMap::iterator it = m_resources.begin(); it != databasesEnd; ++it)
@@ -277,6 +284,12 @@ void InspectorDatabaseAgent::disable(ErrorString*)
     if (!m_enabled)
         return;
     m_enabled = false;
+    m_inspectorState->setBoolean(DatabaseAgentState::databaseAgentEnabled, m_enabled);
+}
+
+void InspectorDatabaseAgent::restore()
+{
+    m_enabled =  m_inspectorState->getBoolean(DatabaseAgentState::databaseAgentEnabled);
 }
 
 void InspectorDatabaseAgent::getDatabaseTableNames(ErrorString* error, int databaseId, RefPtr<InspectorArray>* names)

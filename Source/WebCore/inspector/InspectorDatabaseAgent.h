@@ -39,6 +39,7 @@ class Database;
 class InspectorArray;
 class InspectorDatabaseResource;
 class InspectorFrontend;
+class InspectorState;
 class InstrumentingAgents;
 
 typedef String ErrorString;
@@ -47,9 +48,9 @@ class InspectorDatabaseAgent {
 public:
     class FrontendProvider;
 
-    static PassOwnPtr<InspectorDatabaseAgent> create(InstrumentingAgents* instrumentingAgents)
+    static PassOwnPtr<InspectorDatabaseAgent> create(InstrumentingAgents* instrumentingAgents, InspectorState* state)
     {
-        return adoptPtr(new InspectorDatabaseAgent(instrumentingAgents));
+        return adoptPtr(new InspectorDatabaseAgent(instrumentingAgents, state));
     }
     ~InspectorDatabaseAgent();
 
@@ -57,6 +58,7 @@ public:
     void clearFrontend();
 
     void clearResources();
+    void restore();
 
     // Called from the front-end.
     void enable(ErrorString*);
@@ -69,12 +71,13 @@ public:
 
     void didOpenDatabase(PassRefPtr<Database>, const String& domain, const String& name, const String& version);
 private:
-    explicit InspectorDatabaseAgent(InstrumentingAgents*);
+    explicit InspectorDatabaseAgent(InstrumentingAgents*, InspectorState*);
 
     Database* databaseForId(int databaseId);
     InspectorDatabaseResource* findByFileName(const String& fileName);
 
     InstrumentingAgents* m_instrumentingAgents;
+    InspectorState* m_inspectorState;
     typedef HashMap<int, RefPtr<InspectorDatabaseResource> > DatabaseResourcesMap;
     DatabaseResourcesMap m_resources;
     RefPtr<FrontendProvider> m_frontendProvider;
