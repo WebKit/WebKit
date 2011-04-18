@@ -1,3 +1,15 @@
+2011-04-18  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Fix WebKit2 GTK build after 84017.
+
+        * GNUmakefile.am:
+        * Shared/NativeWebMouseEvent.h:
+        (WebKit::NativeWebMouseEvent::nativeEvent):
+        * Shared/gtk/NativeWebMouseEventGtk.cpp: Copied from Source/WebKit2/Shared/NativeWebMouseEvent.h.
+        (WebKit::NativeWebMouseEvent::NativeWebMouseEvent):
+        * UIProcess/gtk/WebView.cpp:
+        (WebKit::WebView::handleMouseEvent):
+
 2011-04-17  David Kilzer  <ddkilzer@apple.com>
 
         <http://webkit.org/b/58463> Switch HTTP pipelining from user default to private setting

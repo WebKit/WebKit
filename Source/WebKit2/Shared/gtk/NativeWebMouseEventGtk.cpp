@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 Apple Inc. All rights reserved.
+ * Copyright (C) 2011 Igalia S.L.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,56 +23,17 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef NativeWebMouseEvent_h
-#define NativeWebMouseEvent_h
+#include "config.h"
+#include "NativeWebMouseEvent.h"
 
-#include "WebEvent.h"
-
-#if PLATFORM(MAC)
-#include <wtf/RetainPtr.h>
-OBJC_CLASS NSView;
-#elif PLATFORM(QT)
-#include <qgraphicssceneevent.h>
-#elif PLATFORM(GTK)
-typedef union _GdkEvent GdkEvent;
-#endif
+#include "WebEventFactory.h"
 
 namespace WebKit {
 
-class NativeWebMouseEvent : public WebMouseEvent {
-public:
-#if PLATFORM(MAC)
-    NativeWebMouseEvent(NSEvent *, NSView *);
-#elif PLATFORM(WIN)
-    NativeWebMouseEvent(HWND, UINT message, WPARAM, LPARAM, bool);
-#elif PLATFORM(QT)
-    explicit NativeWebMouseEvent(QGraphicsSceneMouseEvent*, int);
-#elif PLATFORM(GTK)
-    NativeWebMouseEvent(GdkEvent*, int);
-#endif
-
-#if PLATFORM(MAC)
-    NSEvent* nativeEvent() const { return m_nativeEvent.get(); }
-#elif PLATFORM(WIN)
-    const MSG* nativeEvent() const { return &m_nativeEvent; }
-#elif PLATFORM(QT)
-    const QGraphicsSceneMouseEvent* nativeEvent() const { return m_nativeEvent; }
-#elif PLATFORM(GTK)
-    GdkEvent* nativeEvent() const { return m_nativeEvent; }
-#endif
-
-private:
-#if PLATFORM(MAC)
-    RetainPtr<NSEvent> m_nativeEvent;
-#elif PLATFORM(WIN)
-    MSG m_nativeEvent;
-#elif PLATFORM(QT)
-    QGraphicsSceneMouseEvent* m_nativeEvent;
-#elif PLATFORM(GTK)
-    GdkEvent* m_nativeEvent;
-#endif
-};
+NativeWebMouseEvent::NativeWebMouseEvent(GdkEvent* event, int eventClickCount)
+    : WebMouseEvent(WebEventFactory::createWebMouseEvent(event, eventClickCount))
+    , m_nativeEvent(event)
+{
+}
 
 } // namespace WebKit
-
-#endif // NativeWebMouseEvent_h

@@ -30,6 +30,7 @@
 
 #include "ChunkedUpdateDrawingAreaProxy.h"
 #include "NativeWebKeyboardEvent.h"
+#include "NativeWebMouseEvent.h"
 #include "NotImplemented.h"
 #include "WebContext.h"
 #include "WebContextMenuProxy.h"
@@ -288,7 +289,7 @@ void WebView::handleKeyboardEvent(GdkEventKey* event)
 
 void WebView::handleMouseEvent(GdkEvent* event, int currentClickCount)
 {
-    m_page->handleMouseEvent(WebEventFactory::createWebMouseEvent(event, currentClickCount));
+    m_page->handleMouseEvent(NativeWebMouseEvent(event, currentClickCount));
 }
 
 void WebView::handleWheelEvent(GdkEventScroll* event)
