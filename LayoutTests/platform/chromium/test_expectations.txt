@@ -3495,3 +3495,17 @@ BUGWK58619 GPU LINUX WIN : media/video-volume-slider.html = IMAGE
 BUGCR79725 WIN LINUX DEBUG : canvas/philip/tests/2d.gradient.interpolate.outside.html = TIMEOUT
 BUGCR79725 LINUX RELEASE : canvas/philip/tests/2d.gradient.interpolate.outside.html = CRASH
 
+// Broken by skia shadow code change in r83936
+BUGWK58772 WIN : fast/multicol/shadow-breaking.html = IMAGE
+BUGWK58772 WIN : fast/repaint/shadow-multiple-horizontal.html = IMAGE
+BUGWK58772 WIN : fast/repaint/shadow-multiple-strict-horizontal.html = IMAGE
+BUGWK58772 WIN : fast/repaint/shadow-multiple-strict-vertical.html = IMAGE
+BUGWK58772 WIN : fast/repaint/shadow-multiple-vertical.html = IMAGE
+BUGWK58772 WIN : fast/text/shadow-translucent-fill.html = IMAGE
+BUGWK58772 WIN : fast/transforms/shadows.html = IMAGE
+BUGWK58772 WIN : svg/css/group-with-shadow.svg = IMAGE
+BUGWK58772 WIN : svg/css/shadow-changes.svg = IMAGE
+BUGWK58772 WIN : svg/css/text-shadow-multiple.xhtml = IMAGE
+BUGWK58772 WIN : transitions/svg-text-shadow-transition.html = IMAGE
+BUGWK58772 WIN LINUX : svg/css/composite-shadow-text.svg = IMAGE
+

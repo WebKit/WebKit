@@ -1,3 +1,9 @@
+2011-04-18  Andrey Kosyakov  <caseq@chromium.org>
+
+        Unreviewed. Added suppressions for shadow texts broken by r83936.
+
+        * platform/chromium/test_expectations.txt:
+
 2011-04-18  John Knottenbelt  <jknotten@chromium.org>
 
         Unreviewed.
