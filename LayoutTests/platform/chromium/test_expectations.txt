@@ -3491,3 +3491,7 @@ BUGWK58632 GPU LINUX DEBUG : compositing/direct-image-compositing.html = IMAGE
 
 BUGWK58619 GPU LINUX WIN : media/video-volume-slider.html = IMAGE
 
+// Regression caused by Skia roll: Chromium r81836
+BUGCR79725 WIN LINUX DEBUG : canvas/philip/tests/2d.gradient.interpolate.outside.html = TIMEOUT
+BUGCR79725 LINUX RELEASE : canvas/philip/tests/2d.gradient.interpolate.outside.html = CRASH
+
