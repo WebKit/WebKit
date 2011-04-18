@@ -3481,11 +3481,8 @@ BUGCR79259 : fast/js/array-proto-func-property-getter-except.html = TEXT
 
 BUGWK58306 GPU MAC DEBUG : media/adopt-node-crash.html = CRASH
 
-BUGCROGERS WIN LINUX : fast/text/zero-font-size.html = IMAGE+TEXT
-
 // Flaky due to this webkit bug
 BUGWK58632 GPU LINUX DEBUG : compositing/direct-image-compositing.html = IMAGE
-
 
 // Temporarily marked failing for rebaselining.
 

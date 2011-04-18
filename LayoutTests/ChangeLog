@@ -1,5 +1,25 @@
 2011-04-18  Andrey Kosyakov  <caseq@chromium.org>
 
+        Unreviewed. Added chromium baselines for new tests.
+
+        * platform/chromium-linux/fast/text/zero-font-size-expected.png: Added.
+        * platform/chromium-mac-leopard/fast/text/zero-font-size-expected.png: Added.
+        * platform/chromium-mac-leopard/svg/dynamic-updates/SVGFEDiffuseLightingElement-inherit-lighting-color-css-prop-expected.png: Added.
+        * platform/chromium-mac-leopard/svg/dynamic-updates/SVGFEFloodElement-inherit-flood-color-expected.png: Added.
+        * platform/chromium-mac-leopard/svg/dynamic-updates/SVGFESpecularLightingElement-inherit-lighting-color-css-prop-expected.png: Added.
+        * platform/chromium-mac-leopard/svg/dynamic-updates/SVGFESpecularLightingElement-lighting-color-css-prop-expected.png: Added.
+        * platform/chromium-mac/fast/canvas/image-object-in-canvas-expected.png: Added.
+        * platform/chromium-mac/fast/forms/select-background-none-expected.checksum: Removed.
+        * platform/chromium-mac/fast/forms/select-background-none-expected.png: Removed.
+        * platform/chromium-win/fast/forms/select-background-none-expected.png: Added.
+        * platform/chromium-win/fast/forms/select-background-none-expected.txt: Added.
+        * platform/chromium-win/fast/frames/iframe-outline-expected.png: Added.
+        * platform/chromium-win/fast/text/zero-font-size-expected.png: Added.
+        * platform/chromium-win/fast/text/zero-font-size-expected.txt: Added.
+        * platform/chromium/test_expectations.txt:
+
+2011-04-18  Andrey Kosyakov  <caseq@chromium.org>
+
         Unreviewed. Added suppressions for shadow texts broken by r83936.
 
         * platform/chromium/test_expectations.txt:
