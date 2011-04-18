@@ -717,8 +717,10 @@ inline BidiRun* RenderBlock::handleTrailingSpaces(BidiRunList<BidiRun>& bidiRuns
 void RenderBlock::appendFloatingObjectToLastLine(FloatingObject* floatingObject)
 {
     // Ensure that the float touches the line.
-    if (logicalBottomForFloat(floatingObject) < lastRootBox()->blockLogicalHeight())
-        setLogicalHeightForFloat(floatingObject, lastRootBox()->blockLogicalHeight() - logicalTopForFloat(floatingObject));
+    if (RootInlineBox* previousLine = lastRootBox()->prevRootBox()) {
+        if (logicalBottomForFloat(floatingObject) < previousLine->blockLogicalHeight())
+            setLogicalHeightForFloat(floatingObject, previousLine->blockLogicalHeight() - logicalTopForFloat(floatingObject));
+    }
 
     lastRootBox()->appendFloat(floatingObject->renderer());
 }

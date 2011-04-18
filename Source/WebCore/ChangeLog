@@ -1,3 +1,15 @@
+2011-04-17  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Maciej Stachowiak.
+
+        REGRESSION (r84096): <br> moved to the right in fast/block/float/032.html
+        https://bugs.webkit.org/show_bug.cgi?id=58736
+
+        * rendering/RenderBlockLineLayout.cpp:
+        (WebCore::RenderBlock::appendFloatingObjectToLastLine): It is enough to extend the float so
+        that it touches the bottom of the previous line, since RenderBlock::markLinesDirtyInBlockRange()
+        always dirties the line after the last one in the range.
+
 2011-04-17  Patrick Gansterer  <paroga@webkit.org>
 
         Unreviewed. Add missing include to fix build without precompiled header.

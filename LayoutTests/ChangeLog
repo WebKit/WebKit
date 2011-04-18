@@ -1,3 +1,17 @@
+2011-04-17  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Maciej Stachowiak.
+
+        REGRESSION (r84096): <br> moved to the right in fast/block/float/032.html
+        https://bugs.webkit.org/show_bug.cgi?id=58736
+
+        Revert to the correct results.
+
+        * platform/chromium-win/fast/block/float/032-expected.txt:
+        * platform/gtk/fast/block/float/032-expected.txt:
+        * platform/mac/fast/block/float/032-expected.txt:
+        * platform/qt/fast/block/float/032-expected.txt:
+
 2011-04-17  Gavin Peters  <gavinp@chromium.org>
 
         Reviewed by Adam Barth.
