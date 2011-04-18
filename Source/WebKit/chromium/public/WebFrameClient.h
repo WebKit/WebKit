@@ -36,6 +36,7 @@
 #include "WebNavigationPolicy.h"
 #include "WebNavigationType.h"
 #include "WebStorageQuotaType.h"
+#include "WebTextDirection.h"
 #include "WebURLError.h"
 
 namespace WebKit {
@@ -206,7 +207,8 @@ public:
     virtual void didCreateDocumentElement(WebFrame*) { }
 
     // The page title is available.
-    virtual void didReceiveTitle(WebFrame*, const WebString& title) { }
+    // FIXME: remove default arg once Chrome is updated.
+    virtual void didReceiveTitle(WebFrame*, const WebString& title, WebTextDirection direction = WebTextDirectionDefault) { }
 
     // The icons for the page have changed.
     virtual void didChangeIcons(WebFrame*) { }

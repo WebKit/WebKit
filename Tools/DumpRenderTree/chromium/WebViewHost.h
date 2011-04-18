@@ -192,7 +192,7 @@ class WebViewHost : public WebKit::WebSpellCheckClient, public WebKit::WebViewCl
     virtual void didFailProvisionalLoad(WebKit::WebFrame*, const WebKit::WebURLError&);
     virtual void didCommitProvisionalLoad(WebKit::WebFrame*, bool isNewNavigation);
     virtual void didClearWindowObject(WebKit::WebFrame*);
-    virtual void didReceiveTitle(WebKit::WebFrame*, const WebKit::WebString&);
+    virtual void didReceiveTitle(WebKit::WebFrame*, const WebKit::WebString&, WebKit::WebTextDirection);
     virtual void didFinishDocumentLoad(WebKit::WebFrame*);
     virtual void didHandleOnloadEvents(WebKit::WebFrame*);
     virtual void didFailLoad(WebKit::WebFrame*, const WebKit::WebURLError&);

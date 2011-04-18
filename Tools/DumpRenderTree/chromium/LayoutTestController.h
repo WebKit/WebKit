@@ -44,6 +44,7 @@
 #include "CppBoundClass.h"
 #include "Task.h"
 #include "WebString.h"
+#include "WebTextDirection.h"
 #include "WebURL.h"
 #include <wtf/Deque.h>
 #include <wtf/OwnPtr.h>
@@ -391,6 +392,10 @@ public:
     bool stopProvisionalFrameLoads() { return m_stopProvisionalFrameLoads; }
     bool deferMainResourceDataLoad() { return m_deferMainResourceDataLoad; }
     void setShowDebugLayerTree(bool value) { m_showDebugLayerTree = value; }
+    void setTitleTextDirection(WebKit::WebTextDirection dir)
+    {
+        m_titleTextDirection.set(dir == WebKit::WebTextDirectionLeftToRight ? "ltr" : "rtl");
+    }
 
     bool testRepaint() const { return m_testRepaint; }
     bool sweepHorizontally() const { return m_sweepHorizontally; }
@@ -573,6 +578,9 @@ private:
 
     // Bound variable counting the number of top URLs visited.
     CppVariant m_webHistoryItemCount;
+
+    // Bound variable tracking the directionality of the <title> tag.
+    CppVariant m_titleTextDirection;
 
     WebKit::WebURL m_userStyleSheetLocation;
 

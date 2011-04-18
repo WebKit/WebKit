@@ -932,7 +932,7 @@ void WebViewHost::didClearWindowObject(WebFrame* frame)
     m_shell->bindJSObjectsToWindow(frame);
 }
 
-void WebViewHost::didReceiveTitle(WebFrame* frame, const WebString& title)
+void WebViewHost::didReceiveTitle(WebFrame* frame, const WebString& title, WebTextDirection direction)
 {
     WebCString title8 = title.utf8();
 
@@ -945,6 +945,7 @@ void WebViewHost::didReceiveTitle(WebFrame* frame, const WebString& title)
         printf("TITLE CHANGED: %s\n", title8.data());
 
     setPageTitle(title);
+    layoutTestController()->setTitleTextDirection(direction);
 }
 
 void WebViewHost::didFinishDocumentLoad(WebFrame* frame)

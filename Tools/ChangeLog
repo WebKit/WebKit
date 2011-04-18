@@ -1,3 +1,23 @@
+2011-04-18  Evan Martin  <evan@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        [chromium] expose title direction to webkit client
+        https://bugs.webkit.org/show_bug.cgi?id=58823
+
+        * DumpRenderTree/chromium/LayoutTestController.cpp:
+        (LayoutTestController::LayoutTestController):
+        (LayoutTestController::reset):
+        * DumpRenderTree/chromium/LayoutTestController.h:
+        (LayoutTestController::setTitleTextDirection):
+        Add member and setter to let us stash the title direction at load time.
+
+        * DumpRenderTree/chromium/WebViewHost.cpp:
+        (WebViewHost::didReceiveTitle):
+        * DumpRenderTree/chromium/WebViewHost.h:
+        Adapt to new API; push the title into layoutTestController when we
+        receive it.
+
 2011-04-18  Dirk Pranke  <dpranke@chromium.org>
 
         Reviewed by Tony Chang.

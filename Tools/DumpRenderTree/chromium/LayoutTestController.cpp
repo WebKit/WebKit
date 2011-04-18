@@ -214,6 +214,7 @@ LayoutTestController::LayoutTestController(TestShell* shell)
     bindProperty("globalFlag", &m_globalFlag);
     // webHistoryItemCount is used by tests in LayoutTests\http\tests\history
     bindProperty("webHistoryItemCount", &m_webHistoryItemCount);
+    bindProperty("titleTextDirection", &m_titleTextDirection);
 }
 
 LayoutTestController::~LayoutTestController()
@@ -573,6 +574,7 @@ void LayoutTestController::reset()
     m_deferMainResourceDataLoad = true;
     m_globalFlag.set(false);
     m_webHistoryItemCount.set(0);
+    m_titleTextDirection.set("ltr");
     m_userStyleSheetLocation = WebURL();
 
     webkit_support::SetAcceptAllCookies(false);

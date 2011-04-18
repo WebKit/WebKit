@@ -744,9 +744,8 @@ void FrameLoaderClientImpl::dispatchDidStartProvisionalLoad()
 
 void FrameLoaderClientImpl::dispatchDidReceiveTitle(const StringWithDirection& title)
 {
-    // FIXME: use direction of title.
     if (m_webFrame->client())
-        m_webFrame->client()->didReceiveTitle(m_webFrame, title.string());
+        m_webFrame->client()->didReceiveTitle(m_webFrame, title.string(), title.direction() == LTR ? WebTextDirectionLeftToRight : WebTextDirectionRightToLeft);
 }
 
 void FrameLoaderClientImpl::dispatchDidChangeIcons()

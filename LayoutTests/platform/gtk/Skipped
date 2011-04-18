@@ -1386,3 +1386,7 @@ editing/selection/select-out-of-editable.html
 
 # Quota API is not supported.
 storage/storageinfo-query-usage.html
+
+# Expose title direction in WebKit API
+# https://bugs.webkit.org/show_bug.cgi?id=58845
+fast/dom/title-directionality.html
