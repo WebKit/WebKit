@@ -23,6 +23,7 @@
 #define DOMWrapperWorld_h
 
 #include "JSDOMGlobalObject.h"
+#include <heap/Weak.h>
 #include <runtime/WeakGCMap.h>
 #include <wtf/Forward.h>
 
@@ -34,32 +35,16 @@ class ScriptController;
 typedef HashMap<void*, JSC::Weak<JSDOMWrapper> > DOMObjectWrapperMap;
 typedef JSC::WeakGCMap<StringImpl*, JSC::JSString> JSStringCache;
 
-class JSNodeHandleOwner : public JSC::WeakHandleOwner {
+class JSDOMWrapperOwner : public JSC::WeakHandleOwner {
 public:
-    JSNodeHandleOwner(DOMWrapperWorld*);
-    virtual bool isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown>, void*, JSC::MarkStack&);
-    virtual void finalize(JSC::Handle<JSC::Unknown>, void*);
+    JSDOMWrapperOwner(DOMWrapperWorld*);
+    virtual void finalize(JSC::Handle<JSC::Unknown>, void* context);
 
 private:
     DOMWrapperWorld* m_world;
 };
 
-inline JSNodeHandleOwner::JSNodeHandleOwner(DOMWrapperWorld* world)
-    : m_world(world)
-{
-}
-
-class DOMObjectHandleOwner : public JSC::WeakHandleOwner {
-public:
-    DOMObjectHandleOwner(DOMWrapperWorld*);
-    virtual bool isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown>, void*, JSC::MarkStack&);
-    virtual void finalize(JSC::Handle<JSC::Unknown>, void*);
-
-private:
-    DOMWrapperWorld* m_world;
-};
-
-inline DOMObjectHandleOwner::DOMObjectHandleOwner(DOMWrapperWorld* world)
+inline JSDOMWrapperOwner::JSDOMWrapperOwner(DOMWrapperWorld* world)
     : m_world(world)
 {
 }
@@ -85,8 +70,7 @@ public:
     bool isNormal() const { return m_isNormal; }
 
     JSC::JSGlobalData* globalData() const { return m_globalData; }
-    JSNodeHandleOwner* jsNodeHandleOwner() { return &m_jsNodeHandleOwner; }
-    DOMObjectHandleOwner* domObjectHandleOwner() { return &m_domObjectHandleOwner; }
+    JSDOMWrapperOwner* defaultWrapperOwner() { return &m_defaultWrapperOwner; }
 
 protected:
     DOMWrapperWorld(JSC::JSGlobalData*, bool isNormal);
@@ -95,8 +79,7 @@ private:
     JSC::JSGlobalData* m_globalData;
     HashSet<ScriptController*> m_scriptControllersWithWindowShells;
     bool m_isNormal;
-    JSNodeHandleOwner m_jsNodeHandleOwner;
-    DOMObjectHandleOwner m_domObjectHandleOwner;
+    JSDOMWrapperOwner m_defaultWrapperOwner;
 };
 
 DOMWrapperWorld* normalWorld(JSC::JSGlobalData&);

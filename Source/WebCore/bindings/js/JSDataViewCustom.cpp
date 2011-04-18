@@ -44,7 +44,7 @@ enum DataViewAccessType {
 
 JSValue toJS(ExecState* exec, JSDOMGlobalObject* globalObject, DataView* object)
 {
-    return getDOMObjectWrapper<JSDataView>(exec, globalObject, object);
+    return wrap<JSDataView>(exec, globalObject, object);
 }
 
 EncodedJSValue JSC_HOST_CALL JSDataViewConstructor::constructJSDataView(ExecState* exec)

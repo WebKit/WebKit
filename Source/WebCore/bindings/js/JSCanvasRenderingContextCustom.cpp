@@ -44,10 +44,10 @@ JSC::JSValue toJS(JSC::ExecState* exec, JSDOMGlobalObject* globalObject, CanvasR
 
 #if ENABLE(WEBGL)
     if (object->is3d())
-        return getDOMObjectWrapper<JSWebGLRenderingContext>(exec, globalObject, static_cast<WebGLRenderingContext*>(object));
+        return wrap<JSWebGLRenderingContext>(exec, globalObject, static_cast<WebGLRenderingContext*>(object));
 #endif
     ASSERT(object->is2d());
-    return getDOMObjectWrapper<JSCanvasRenderingContext2D>(exec, globalObject, static_cast<CanvasRenderingContext2D*>(object));
+    return wrap<JSCanvasRenderingContext2D>(exec, globalObject, static_cast<CanvasRenderingContext2D*>(object));
 }
 
 } // namespace WebCore

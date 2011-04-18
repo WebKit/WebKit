@@ -44,7 +44,6 @@
 #include "JSEventException.h"
 #include "JSExceptionBase.h"
 #include "JSMainThreadExecState.h"
-#include "JSNode.h"
 #include "JSRangeException.h"
 #include "JSXMLHttpRequestException.h"
 #include "KURL.h"
@@ -133,22 +132,6 @@ private:
 const JSC::HashTable* getHashTableForGlobalData(JSGlobalData& globalData, const JSC::HashTable* staticTable)
 {
     return DOMObjectHashTableMap::mapFor(globalData).get(staticTable);
-}
-
-JSDOMWrapper* getCachedDOMObjectWrapper(DOMWrapperWorld* world, void* objectHandle) 
-{
-    return world->m_wrappers.get(objectHandle).get();
-}
-
-void cacheDOMObjectWrapper(DOMWrapperWorld* world, void* objectHandle, JSDOMWrapper* wrapper) 
-{
-    world->m_wrappers.set(objectHandle, Weak<JSDOMWrapper>(*world->globalData(), wrapper, world->domObjectHandleOwner(), objectHandle));
-}
-
-void uncacheDOMObjectWrapper(DOMWrapperWorld* world, void* objectHandle, JSDOMWrapper* wrapper)
-{
-    ASSERT_UNUSED(wrapper, world->m_wrappers.find(objectHandle)->second.get() == wrapper);
-    world->m_wrappers.remove(objectHandle);
 }
 
 void markActiveObjectsForContext(MarkStack& markStack, JSGlobalData& globalData, ScriptExecutionContext* scriptExecutionContext)

@@ -1,3 +1,108 @@
+2011-04-18  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        Made DOM handle ownership customizable, and customized it for Nodes and NamedAttrMaps
+        https://bugs.webkit.org/show_bug.cgi?id=58828
+
+        * WebCore.exp.in: Blah.
+
+        * bindings/js/DOMWrapperWorld.cpp: Moved code related to JSNode ownership
+        to JSNodeCustom, where other custom JSNode-related code goes.
+
+        (WebCore::JSDOMWrapperOwner::finalize):
+        (WebCore::DOMWrapperWorld::DOMWrapperWorld):
+        * bindings/js/DOMWrapperWorld.h:
+        (WebCore::JSDOMWrapperOwner::JSDOMWrapperOwner):
+        (WebCore::DOMWrapperWorld::defaultWrapperOwner): Renamed DOMObjectHandleOwner
+        to JSDOMWrapperOwner, to match the name of JSDOMWrapper.
+
+        * bindings/js/JSArrayBufferViewHelper.h:
+        (WebCore::toJSArrayBufferView):
+        * bindings/js/JSCSSRuleCustom.cpp:
+        (WebCore::toJS):
+        * bindings/js/JSCSSValueCustom.cpp:
+        (WebCore::toJS):
+        * bindings/js/JSCanvasRenderingContextCustom.cpp:
+        (WebCore::toJS): Removed "DOMObject" and "Node" from the names of wrapper-
+        related functions, since there is no meaningful distinction between the
+        two anymore -- they both use the same extensible interface.
+        
+        * bindings/js/JSDOMBinding.cpp: Removed some now-unused functions.
+
+        * bindings/js/JSDOMBinding.h:
+        (WebCore::getInlineCachedWrapper):
+        (WebCore::setInlineCachedWrapper):
+        (WebCore::clearInlineCachedWrapper):
+        (WebCore::wrapperOwner):
+        (WebCore::wrapperContext):
+        (WebCore::getCachedWrapper):
+        (WebCore::cacheWrapper):
+        (WebCore::uncacheWrapper):
+        (WebCore::createWrapper):
+        (WebCore::wrap): Created a generic, extensible mechanism for creating,
+        caching, retrieving, marking, and destroying DOM wrappers. This eliminates
+        the difference between DOM object wrappers and DOM node wrappers, and
+        lays the groundwork for getting rid of MarkStack::deprecatedAppend usage
+        for marking the remainder of our DOM objects.
+        
+        * bindings/js/JSDOMWindowCustom.cpp:
+        (WebCore::JSDOMWindow::history):
+        (WebCore::JSDOMWindow::location):
+        * bindings/js/JSDataViewCustom.cpp:
+        (WebCore::toJS):
+        * bindings/js/JSDocumentCustom.cpp:
+        (WebCore::JSDocument::location):
+        (WebCore::toJS):
+        * bindings/js/JSElementCustom.cpp:
+        (WebCore::toJSNewlyCreated):
+        * bindings/js/JSEventCustom.cpp:
+        (WebCore::toJS):
+        * bindings/js/JSHTMLCollectionCustom.cpp:
+        (WebCore::toJS):
+        * bindings/js/JSImageDataCustom.cpp:
+        (WebCore::toJS): Updated for renames mentioned above.
+
+        * bindings/js/JSNamedNodeMapCustom.cpp:
+        (WebCore::JSNamedNodeMapOwner::isReachableFromOpaqueRoots):
+        (WebCore::JSNamedNodeMapOwner::finalize):
+        (WebCore::wrapperOwner):
+        (WebCore::wrapperContext):
+        (WebCore::JSNamedNodeMap::markChildren):
+        (WebCore::toJS): Updated to use our new interface for customizing wrapper
+        lifetime management through function overloading without using
+        MarkStack::deprecatedAppend.
+
+        * bindings/js/JSNodeCustom.cpp:
+        (WebCore::isObservable):
+        (WebCore::isReachableFromDOM):
+        (WebCore::JSNodeOwner::isReachableFromOpaqueRoots):
+        (WebCore::JSNodeOwner::finalize):
+        (WebCore::createWrapperInline): Moved node-related code from JSDOMBinding
+        to here. Removed special case marking code for JSNamedNodeMap because
+        JSNamedNodeMap now knows how to maintain its own lifetime invariants.
+
+        * bindings/js/JSNodeCustom.h:
+        (WebCore::wrapperOwner):
+        (WebCore::wrapperContext):
+        (WebCore::getInlineCachedWrapper):
+        (WebCore::setInlineCachedWrapper):
+        (WebCore::clearInlineCachedWrapper):
+        (WebCore::toJS): Updated to use our new interface for customizing wrapper
+        lifetime management through function overloading without using
+        MarkStack::deprecatedAppend or special-case code for nodes.
+        
+        * bindings/js/JSSVGPathSegCustom.cpp:
+        (WebCore::toJS):
+        * bindings/js/JSStyleSheetCustom.cpp:
+        (WebCore::toJS): Updated for renames mentioned above.
+
+        * bindings/scripts/CodeGeneratorJS.pm: Fixed up newlines. Updated for
+        renames mentioned above.
+
+        * dom/NamedNodeMap.idl: NamedNodeMap needs a custom toJS function now
+        because it needs to provide a custom WeakHandleOwner at wrapper creation time.
+
 2011-04-18  Jessie Berlin  <jberlin@apple.com>
 
         Rubber-stamped by Sam Weinig.

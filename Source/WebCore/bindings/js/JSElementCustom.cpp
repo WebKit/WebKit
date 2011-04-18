@@ -71,7 +71,7 @@ JSValue toJSNewlyCreated(ExecState* exec, JSDOMGlobalObject* globalObject, Eleme
     if (!element)
         return jsNull();
 
-    ASSERT(!getCachedDOMNodeWrapper(currentWorld(exec), element));
+    ASSERT(!getCachedWrapper(currentWorld(exec), element));
 
     JSNode* wrapper;        
     if (element->isHTMLElement())

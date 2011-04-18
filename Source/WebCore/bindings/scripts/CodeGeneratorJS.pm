@@ -1304,7 +1304,7 @@ sub GenerateImplementation
         push(@implContent, "static const HashTable* get${className}PrototypeTable(ExecState* exec)\n");
         push(@implContent, "{\n");
         push(@implContent, "    return getHashTableForGlobalData(exec->globalData(), &${className}PrototypeTable);\n");
-        push(@implContent, "}\n");
+        push(@implContent, "}\n\n");
         push(@implContent, "const ClassInfo ${className}Prototype::s_info = { \"${visibleClassName}Prototype\", &JSC::JSObjectWithGlobalObject::s_info, 0, get${className}PrototypeTable };\n\n");
     } else {
         push(@implContent, "const ClassInfo ${className}Prototype::s_info = { \"${visibleClassName}Prototype\", &JSC::JSObjectWithGlobalObject::s_info, &${className}PrototypeTable, 0 };\n\n");
@@ -1379,7 +1379,7 @@ sub GenerateImplementation
         push(@implContent, "static const HashTable* get${className}Table(ExecState* exec)\n");
         push(@implContent, "{\n");
         push(@implContent, "    return getHashTableForGlobalData(exec->globalData(), &${className}Table);\n");
-        push(@implContent, "}\n");
+        push(@implContent, "}\n\n");
     }
 
     push(@implContent, "const ClassInfo $className" . "::s_info = { \"${visibleClassName}\", &" . $parentClassName . "::s_info, ");
@@ -1590,7 +1590,7 @@ sub GenerateImplementation
                     push(@implContent, "    return result;\n");
                 }
 
-                push(@implContent, "}\n");
+                push(@implContent, "}\n\n");
 
                 push(@implContent, "#endif\n") if $attributeConditionalString;
 
@@ -1610,8 +1610,7 @@ sub GenerateImplementation
                 }
 
                 push(@implContent, "    return ${className}::getConstructor(exec, domObject->globalObject());\n");
-                push(@implContent, "}\n");
-                push(@implContent, "\n");
+                push(@implContent, "}\n\n");
             }
         }
 
@@ -1769,7 +1768,7 @@ sub GenerateImplementation
                             }
                         }
                         
-                        push(@implContent, "}\n");
+                        push(@implContent, "}\n\n");
 
                         push(@implContent, "#endif\n") if $attributeConditionalString;
 
@@ -1799,8 +1798,7 @@ sub GenerateImplementation
                 } else {
                     push(@implContent, "    static_cast<$className*>(thisObject)->putDirect(exec->globalData(), Identifier(exec, \"$name\"), value);\n");
                 }
-                push(@implContent, "}\n");
-                push(@implContent, "\n");
+                push(@implContent, "}\n\n");
             }        
         }
     }
@@ -2095,7 +2093,7 @@ sub GenerateImplementation
         } else {
             push(@implContent, "    return toJS(exec, thisObj->globalObject(), static_cast<$implClassName*>(thisObj->impl())->item(index));\n");
         }
-        push(@implContent, "}\n");
+        push(@implContent, "}\n\n");
         if ($interfaceName eq "HTMLCollection" or $interfaceName eq "HTMLAllCollection") {
             $implIncludes{"JSNode.h"} = 1;
             $implIncludes{"Node.h"} = 1;
@@ -2106,7 +2104,7 @@ sub GenerateImplementation
         push(@implContent, "\nJSValue ${className}::getByIndex(ExecState*, unsigned index)\n");
         push(@implContent, "{\n");
         push(@implContent, "    return jsNumber(static_cast<$implClassName*>(impl())->item(index));\n");
-        push(@implContent, "}\n");
+        push(@implContent, "}\n\n");
         if ($interfaceName eq "HTMLCollection" or $interfaceName eq "HTMLAllCollection") {
             $implIncludes{"JSNode.h"} = 1;
             $implIncludes{"Node.h"} = 1;
@@ -2115,17 +2113,17 @@ sub GenerateImplementation
 
     if ((!$hasParent or $dataNode->extendedAttributes->{"GenerateToJS"}) and !$dataNode->extendedAttributes->{"CustomToJS"}) {
         if ($svgPropertyType) {
-            push(@implContent, "JSC::JSValue toJS(JSC::ExecState* exec, JSDOMGlobalObject* globalObject, $implType* object)\n");
+            push(@implContent, "JSC::JSValue toJS(JSC::ExecState* exec, JSDOMGlobalObject* globalObject, $implType* impl)\n");
         } else {
-            push(@implContent, "JSC::JSValue toJS(JSC::ExecState* exec, JSDOMGlobalObject* globalObject, $implType* object)\n");
+            push(@implContent, "JSC::JSValue toJS(JSC::ExecState* exec, JSDOMGlobalObject* globalObject, $implType* impl)\n");
         }
         push(@implContent, "{\n");
         if ($svgPropertyType) {
-            push(@implContent, "    return getDOMObjectWrapper<$className, $implType>(exec, globalObject, object);\n");
+            push(@implContent, "    return wrap<$className, $implType>(exec, globalObject, impl);\n");
         } else {
-            push(@implContent, "    return getDOMObjectWrapper<$className>(exec, globalObject, object);\n");
+            push(@implContent, "    return wrap<$className>(exec, globalObject, impl);\n");
         }
-        push(@implContent, "}\n");
+        push(@implContent, "}\n\n");
     }
 
     if ((!$hasParent or $dataNode->extendedAttributes->{"GenerateNativeConverter"}) and !$dataNode->extendedAttributes->{"CustomNativeConverter"}) {
