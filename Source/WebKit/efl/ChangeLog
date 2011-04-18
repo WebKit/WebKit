@@ -1,3 +1,16 @@
+2011-04-18  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r84155.
+        http://trac.webkit.org/changeset/84155
+        https://bugs.webkit.org/show_bug.cgi?id=58802
+
+        "paintEntireContents flag is used for painting outside of the
+        screen. It's not the right way to fix EFL tiled backing
+        store." (Requested by demarchi on #webkit).
+
+        * ewk/ewk_view_tiled.c:
+        (_ewk_view_tiled_smart_add):
+
 2011-04-18  Eunsol Park  <eunsol47.park@samsung.com>
 
         Reviewed by Eric Seidel.
