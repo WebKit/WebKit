@@ -1,3 +1,15 @@
+2011-04-18  Chang Shu  <cshu@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        WebKitTestRunner needs layoutTestController.pathToLocalResource
+        https://bugs.webkit.org/show_bug.cgi?id=42541
+
+        Unskip passed tests.
+
+        * platform/mac-wk2/Skipped:
+        * platform/qt-wk2/Skipped:
+
 2011-04-18  Hao Zheng  <zhenghao@chromium.org>
 
         Reviewed by Eric Seidel.

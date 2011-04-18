@@ -1164,24 +1164,6 @@ fast/frames/flattening/iframe-flattening-simple.html
 storage/open-database-creation-callback.html
 storage/quota-tracking.html
 
-# WebKitTestRunner needs layoutTestController.pathToLocalResource
-# <https://bugs.webkit.org/show_bug.cgi?id=42541>
-fast/dom/frame-loading-via-document-write.html
-fast/history/history-traversal-is-asynchronous.html
-fast/loader/local-CSS-from-local.html
-fast/loader/local-iFrame-source-from-local.html
-fast/loader/local-image-from-local.html
-fast/loader/local-JavaScript-from-local.html
-http/tests/plugins/post-url-file.html
-http/tests/security/frame-loading-via-document-write.html
-http/tests/security/local-CSS-from-remote.html
-http/tests/security/local-iFrame-from-remote.html
-http/tests/security/local-image-from-remote.html
-http/tests/security/local-JavaScript-from-remote.html
-http/tests/security/local-video-poster-from-remote.html
-http/tests/security/local-video-source-from-remote.html
-http/tests/security/local-video-src-from-remote.html
-
 # WebKitTestRunner needs layoutTestController.dumpResourceResponseMIMETypes
 # <https://bugs.webkit.org/show_bug.cgi?id=42543>
 fast/dom/HTMLScriptElement/dont-load-unknown-type.html

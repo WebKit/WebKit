@@ -83,6 +83,7 @@ module WTR {
         // Local storage API
         void clearAllDatabases();
         void setDatabaseQuota(in unsigned long long quota);
+        DOMString pathToLocalResource(in DOMString url);
 
         // Compositing testing.
         DOMString layerTreeAsText();

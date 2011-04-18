@@ -28,6 +28,7 @@
 #include "LayoutTestController.h"
 
 #include "InjectedBundle.h"
+#include <QDir>
 #include <QObject>
 
 namespace WTR {
@@ -68,6 +69,12 @@ void LayoutTestController::initializeWaitToDumpWatchdogTimerIfNeeded()
         return;
 
     m_waitToDumpWatchdogTimer.start(waitToDumpWatchdogTimerInterval * 1000);
+}
+
+JSRetainPtr<JSStringRef> LayoutTestController::pathToLocalResource(JSStringRef url)
+{
+    QString path = QDir::toNativeSeparators(QString(reinterpret_cast<const QChar*>(JSStringGetCharactersPtr(url)), JSStringGetLength(url)));
+    return JSStringCreateWithCharacters(reinterpret_cast<const JSChar*>(path.constData()), path.length());
 }
 
 } // namespace WTR

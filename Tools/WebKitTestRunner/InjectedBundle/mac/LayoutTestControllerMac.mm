@@ -56,4 +56,9 @@ void LayoutTestController::initializeWaitToDumpWatchdogTimerIfNeeded()
     CFRunLoopAddTimer(CFRunLoopGetCurrent(), m_waitToDumpWatchdogTimer.get(), kCFRunLoopCommonModes);
 }
 
+JSRetainPtr<JSStringRef> LayoutTestController::pathToLocalResource(JSStringRef url)
+{
+    return JSStringRetain(url); // Do nothing on mac.
+}
+
 } // namespace WTR

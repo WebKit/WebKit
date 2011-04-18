@@ -111,6 +111,7 @@ public:
     // Local storage
     void clearAllDatabases();
     void setDatabaseQuota(uint64_t);
+    JSRetainPtr<JSStringRef> pathToLocalResource(JSStringRef);
 
     // Printing
     int numberOfPages(double pageWidthInPixels, double pageHeightInPixels);

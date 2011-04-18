@@ -59,4 +59,9 @@ void LayoutTestController::initializeWaitToDumpWatchdogTimerIfNeeded()
     m_waitToDumpWatchdogTimer = ::SetTimer(0, waitToDumpWatchdogTimerIdentifier, waitToDumpWatchdogTimerInterval * 1000, WTR::waitToDumpWatchdogTimerFired);
 }
 
+JSRetainPtr<JSStringRef> LayoutTestController::pathToLocalResource(JSStringRef url)
+{
+    return JSStringRetain(url); // TODO.
+}
+
 } // namespace WTR
