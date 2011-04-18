@@ -182,7 +182,7 @@ void PluginView::updatePluginWidget()
         // Note that we don't invalidate the frameRect() here. This is because QWebFrame::renderRelativeCoords()
         // imitates ScrollView and adds the scroll offset back on to the rect we damage here (making the co-ordinates absolute
         // to the frame again) before passing it to FrameView.
-        frameView->invalidateRect(m_windowRect);
+        invalidate();
     }
 }
 
@@ -812,8 +812,12 @@ void PluginView::invalidateRect(const IntRect& rect)
 #endif
 
     if (m_isWindowed) {
-        if (platformWidget())
+        if (platformWidget()) {
+            // update() will schedule a repaint of the widget so ensure
+            // its knowledge of its position on the page is up to date.
+            platformWidget()->setGeometry(m_windowRect);
             platformWidget()->update(rect);
+        }
         return;
     }
 

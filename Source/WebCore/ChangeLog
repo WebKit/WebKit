@@ -1,3 +1,22 @@
+2011-04-18  Robert Hogan  <robert@webkit.org>
+
+        Reviewed by Andreas Kling.
+
+        [Qt] PluginViewQt needs to update geometry of plugin widget before scheduling a repaint
+
+        When scheduling a repaint for the plugin's widget, PluginViewQt
+        needs to make sure the widget's geometry is up to date. Otherwise
+        the paint event happens on the widget's old location.
+
+        https://bugs.webkit.org/show_bug.cgi?id=57179
+
+        Added a manual test. 
+
+        * manual-tests/qt/plugin-painting.html: Added.
+        * plugins/qt/PluginViewQt.cpp:
+        (WebCore::PluginView::updatePluginWidget):
+        (WebCore::PluginView::invalidateRect):
+
 2011-04-18  Oliver Hunt  <oliver@apple.com>
 
         Fix Qt build
