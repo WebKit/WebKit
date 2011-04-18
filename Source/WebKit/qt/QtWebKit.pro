@@ -31,6 +31,7 @@ include($$SOURCE_DIR/JavaScriptCore/JavaScriptCore.pri)
 webkit2 {
     include($$SOURCE_DIR/WebKit2/WebKit2.pri)
     include($$SOURCE_DIR/WebKit2/WebKit2API.pri)
+    INCLUDEPATH += $$OUTPUT_DIR/WebKit2/generated
 }
 include($$SOURCE_DIR/WebCore/WebCore.pri)
 

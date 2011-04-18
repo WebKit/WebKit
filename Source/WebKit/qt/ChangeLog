@@ -1,3 +1,9 @@
+2011-04-18  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [Qt][WK2] Unreviewed buildfix after r84174.
+
+        * QtWebKit.pro: Missing includepath added.
+
 2011-04-18  Yi Shen  <yi.4.shen@nokia.com>
 
         Reviewed by Laszlo Gombos.
