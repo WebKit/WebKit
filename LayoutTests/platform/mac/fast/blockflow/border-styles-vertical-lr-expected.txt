@@ -1,0 +1,105 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (20,8) size 760x584
+      RenderBlock {DIV} at (0,20) size 160x544
+        RenderBlock {DIV} at (0,0) size 160x85
+          RenderInline {SPAN} at (0,0) size 166x85 [bgcolor=#DDDDDD] [border: (20px solid #808080)]
+            RenderText {#text} at (17,35) size 46x50
+              text run at (17,35) width 50: "     "
+            RenderBR {BR} at (27,85) size 0x0
+            RenderText {#text} at (97,0) size 46x50
+              text run at (97,0) width 50: "     "
+          RenderText {#text} at (0,0) size 0x0
+        RenderText {#text} at (39,85) size 18x4
+          text run at (39,85) width 4: " "
+        RenderBlock {DIV} at (0,89) size 160x85
+          RenderInline {SPAN} at (0,0) size 166x85 [bgcolor=#DDDDDD] [border: (20px groove #808080)]
+            RenderText {#text} at (17,35) size 46x50
+              text run at (17,35) width 50: "     "
+            RenderBR {BR} at (27,85) size 0x0
+            RenderText {#text} at (97,0) size 46x50
+              text run at (97,0) width 50: "     "
+          RenderText {#text} at (0,0) size 0x0
+        RenderText {#text} at (39,174) size 18x4
+          text run at (39,174) width 4: " "
+        RenderBlock {DIV} at (0,178) size 160x85
+          RenderInline {SPAN} at (0,0) size 166x85 [bgcolor=#DDDDDD] [border: (20px ridge #808080)]
+            RenderText {#text} at (17,35) size 46x50
+              text run at (17,35) width 50: "     "
+            RenderBR {BR} at (27,85) size 0x0
+            RenderText {#text} at (97,0) size 46x50
+              text run at (97,0) width 50: "     "
+          RenderText {#text} at (0,0) size 0x0
+        RenderText {#text} at (39,263) size 18x4
+          text run at (39,263) width 4: " "
+        RenderBlock {DIV} at (0,267) size 160x85
+          RenderInline {SPAN} at (0,0) size 166x85 [bgcolor=#DDDDDD] [border: (20px outset #808080)]
+            RenderText {#text} at (17,35) size 46x50
+              text run at (17,35) width 50: "     "
+            RenderBR {BR} at (27,85) size 0x0
+            RenderText {#text} at (97,0) size 46x50
+              text run at (97,0) width 50: "     "
+          RenderText {#text} at (0,0) size 0x0
+        RenderText {#text} at (39,352) size 18x4
+          text run at (39,352) width 4: " "
+        RenderBlock {DIV} at (0,356) size 160x85
+          RenderInline {SPAN} at (0,0) size 166x85 [bgcolor=#DDDDDD] [border: (20px inset #808080)]
+            RenderText {#text} at (17,35) size 46x50
+              text run at (17,35) width 50: "     "
+            RenderBR {BR} at (27,85) size 0x0
+            RenderText {#text} at (97,0) size 46x50
+              text run at (97,0) width 50: "     "
+          RenderText {#text} at (0,0) size 0x0
+        RenderText {#text} at (0,0) size 0x0
+      RenderBlock {DIV} at (180,20) size 160x544
+        RenderBlock {DIV} at (0,0) size 160x85
+          RenderInline {SPAN} at (0,0) size 166x85 [bgcolor=#DDDDDD] [border: (20px solid #808080)]
+            RenderText {#text} at (17,35) size 46x50
+              text run at (17,35) width 50: "     "
+            RenderBR {BR} at (27,85) size 0x0
+            RenderText {#text} at (97,0) size 46x50
+              text run at (97,0) width 50: "     "
+          RenderText {#text} at (0,0) size 0x0
+        RenderText {#text} at (39,85) size 18x4
+          text run at (39,85) width 4: " "
+        RenderBlock {DIV} at (0,89) size 160x85
+          RenderInline {SPAN} at (0,0) size 166x85 [bgcolor=#DDDDDD] [border: (20px groove #808080)]
+            RenderText {#text} at (17,35) size 46x50
+              text run at (17,35) width 50: "     "
+            RenderBR {BR} at (27,85) size 0x0
+            RenderText {#text} at (97,0) size 46x50
+              text run at (97,0) width 50: "     "
+          RenderText {#text} at (0,0) size 0x0
+        RenderText {#text} at (39,174) size 18x4
+          text run at (39,174) width 4: " "
+        RenderBlock {DIV} at (0,178) size 160x85
+          RenderInline {SPAN} at (0,0) size 166x85 [bgcolor=#DDDDDD] [border: (20px ridge #808080)]
+            RenderText {#text} at (17,35) size 46x50
+              text run at (17,35) width 50: "     "
+            RenderBR {BR} at (27,85) size 0x0
+            RenderText {#text} at (97,0) size 46x50
+              text run at (97,0) width 50: "     "
+          RenderText {#text} at (0,0) size 0x0
+        RenderText {#text} at (39,263) size 18x4
+          text run at (39,263) width 4: " "
+        RenderBlock {DIV} at (0,267) size 160x85
+          RenderInline {SPAN} at (0,0) size 166x85 [bgcolor=#DDDDDD] [border: (20px outset #808080)]
+            RenderText {#text} at (17,35) size 46x50
+              text run at (17,35) width 50: "     "
+            RenderBR {BR} at (27,85) size 0x0
+            RenderText {#text} at (97,0) size 46x50
+              text run at (97,0) width 50: "     "
+          RenderText {#text} at (0,0) size 0x0
+        RenderText {#text} at (39,352) size 18x4
+          text run at (39,352) width 4: " "
+        RenderBlock {DIV} at (0,356) size 160x85
+          RenderInline {SPAN} at (0,0) size 166x85 [bgcolor=#DDDDDD] [border: (20px inset #808080)]
+            RenderText {#text} at (17,35) size 46x50
+              text run at (17,35) width 50: "     "
+            RenderBR {BR} at (27,85) size 0x0
+            RenderText {#text} at (97,0) size 46x50
+              text run at (97,0) width 50: "     "
+          RenderText {#text} at (0,0) size 0x0
+        RenderText {#text} at (0,0) size 0x0

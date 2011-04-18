@@ -1,3 +1,22 @@
+2011-04-18  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Dave Hyatt.
+
+        Add some new tests that exercise border-drawing on split inlines.
+
+        * fast/blockflow/border-styles-vertical-lr.html: Added.
+        * fast/blockflow/border-styles-vertical-rl.html: Added.
+        * fast/borders/border-styles-split.html: Added.
+        * platform/mac/fast/blockflow/border-styles-vertical-lr-expected.checksum: Added.
+        * platform/mac/fast/blockflow/border-styles-vertical-lr-expected.png: Added.
+        * platform/mac/fast/blockflow/border-styles-vertical-lr-expected.txt: Added.
+        * platform/mac/fast/blockflow/border-styles-vertical-rl-expected.checksum: Added.
+        * platform/mac/fast/blockflow/border-styles-vertical-rl-expected.png: Added.
+        * platform/mac/fast/blockflow/border-styles-vertical-rl-expected.txt: Added.
+        * platform/mac/fast/borders/border-styles-split-expected.checksum: Added.
+        * platform/mac/fast/borders/border-styles-split-expected.png: Added.
+        * platform/mac/fast/borders/border-styles-split-expected.txt: Added.
+
 2011-04-18  Alejandro G. Castro  <alex@igalia.com>
 
         Skipping overhanging-tall-block.html, it is crashing in the GTK+ bots.
