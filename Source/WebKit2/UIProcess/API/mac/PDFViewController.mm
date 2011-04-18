@@ -35,6 +35,7 @@
 #import "WebPageProxy.h"
 #import "WebPreferences.h"
 #import <PDFKit/PDFKit.h>
+#import <WebCore/LocalizedStrings.h>
 #import <wtf/text/WTFString.h>
 
 // Redeclarations of PDFKit notifications. We can't use the API since we use a weak link to the framework.
@@ -313,15 +314,13 @@ static BOOL _PDFSelectionsAreEqual(PDFSelection *selectionA, PDFSelection *selec
         NSImage *appIcon = nil;
 
         _applicationInfoForMIMEType(@"application/pdf", &appName, &appIcon);
-        if (!appName) {
-            // FIXME: Localize this.
-            appName = @"Finder";
-        }
+        if (!appName)
+            appName = WEB_UI_STRING("Finder", "Default application name for Open With context menu");
 
         // To match the PDFKit style, we'll add Open with Preview even when there's no document yet to view, and
         // disable it using validateUserInterfaceItem.
-        // FIXME: Localize this.
-        NSString *title = [NSString stringWithFormat:@"Open with %@", appName];
+        NSString *title = [NSString stringWithFormat:WEB_UI_STRING("Open with %@", "context menu item for PDF"), appName];
+
         item = [[NSMenuItem alloc] initWithTitle:title action:@selector(_openWithFinder:) keyEquivalent:@""];
         if (appIcon)
             [item setImage:appIcon];

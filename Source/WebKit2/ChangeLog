@@ -1,3 +1,20 @@
+2011-04-17  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Geoffrey Garen.
+
+        Make more strings in WebKit2 localizable
+        https://bugs.webkit.org/show_bug.cgi?id=58757
+
+        * UIProcess/API/mac/PDFViewController.mm:
+        (-[WKPDFView menuForEvent:]):
+        * UIProcess/API/mac/PageClientImpl.mm:
+        (WebKit::PageClientImpl::setViewportArguments):
+        (WebKit::PageClientImpl::registerEditCommand):
+        * UIProcess/WebEditCommandProxy.cpp:
+        (WebKit::WebEditCommandProxy::nameForEditAction):
+        * UIProcess/WebEditCommandProxy.h:
+        Use WebCore's localization macro to make more strings localizable.
+
 2011-04-17  Patrick Gansterer  <paroga@webkit.org>
 
         Reviewed by Adam Barth.

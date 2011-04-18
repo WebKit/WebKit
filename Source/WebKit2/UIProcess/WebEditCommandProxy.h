@@ -28,6 +28,7 @@
 
 #include "APIObject.h"
 #include <WebCore/EditAction.h>
+#include <wtf/Forward.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
 
@@ -50,6 +51,8 @@ public:
 
     void unapply();
     void reapply();
+
+    static String nameForEditAction(WebCore::EditAction);
 
 private:
     WebEditCommandProxy(uint64_t commandID, WebCore::EditAction, WebPageProxy*);

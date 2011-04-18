@@ -209,54 +209,6 @@ void PageClientImpl::setCursor(const WebCore::Cursor& cursor)
 
 void PageClientImpl::setViewportArguments(const WebCore::ViewportArguments&)
 {
-
-}
-
-static NSString* nameForEditAction(EditAction editAction)
-{
-    // FIXME: Use localized strings.
-    // FIXME: Move this to a platform independent location.
-
-    switch (editAction) {
-    case EditActionUnspecified: return nil;
-    case EditActionSetColor: return @"Set Color";
-    case EditActionSetBackgroundColor: return @"Set Background Color";
-    case EditActionTurnOffKerning: return @"Turn Off Kerning";
-    case EditActionTightenKerning: return @"Tighten Kerning";
-    case EditActionLoosenKerning: return @"Loosen Kerning";
-    case EditActionUseStandardKerning: return @"Use Standard Kerning";
-    case EditActionTurnOffLigatures: return @"Turn Off Ligatures";
-    case EditActionUseStandardLigatures: return @"Use Standard Ligatures";
-    case EditActionUseAllLigatures: return @"Use All Ligatures";
-    case EditActionRaiseBaseline: return @"Raise Baseline";
-    case EditActionLowerBaseline: return @"Lower Baseline";
-    case EditActionSetTraditionalCharacterShape: return @"Set Traditional Character Shape";
-    case EditActionSetFont: return @"Set Font";
-    case EditActionChangeAttributes: return @"Change Attributes";
-    case EditActionAlignLeft: return @"Align Left";
-    case EditActionAlignRight: return @"Align Right";
-    case EditActionCenter: return @"Center";
-    case EditActionJustify: return @"Justify";
-    case EditActionSetWritingDirection: return @"Set Writing Direction";
-    case EditActionSubscript: return @"Subscript";
-    case EditActionSuperscript: return @"Superscript";
-    case EditActionUnderline: return @"Underline";
-    case EditActionOutline: return @"Outline";
-    case EditActionUnscript: return @"Unscript";
-    case EditActionDrag: return @"Drag";
-    case EditActionCut: return @"Cut";
-    case EditActionPaste: return @"Paste";
-    case EditActionPasteFont: return @"Paste Font";
-    case EditActionPasteRuler: return @"Paste Ruler";
-    case EditActionTyping: return @"Typing";
-    case EditActionCreateLink: return @"Create Link";
-    case EditActionUnlink: return @"Unlink";
-    case EditActionInsertList: return @"Insert List";
-    case EditActionFormatBlock: return @"Formatting";
-    case EditActionIndent: return @"Indent";
-    case EditActionOutdent: return @"Outdent";
-    }
-    return nil;
 }
 
 void PageClientImpl::registerEditCommand(PassRefPtr<WebEditCommandProxy> prpCommand, WebPageProxy::UndoOrRedo undoOrRedo)
@@ -264,12 +216,12 @@ void PageClientImpl::registerEditCommand(PassRefPtr<WebEditCommandProxy> prpComm
     RefPtr<WebEditCommandProxy> command = prpCommand;
 
     RetainPtr<WKEditCommandObjC> commandObjC(AdoptNS, [[WKEditCommandObjC alloc] initWithWebEditCommandProxy:command]);
-    NSString *actionName = nameForEditAction(command->editAction());
+    String actionName = WebEditCommandProxy::nameForEditAction(command->editAction());
 
     NSUndoManager *undoManager = [m_wkView undoManager];
     [undoManager registerUndoWithTarget:m_undoTarget.get() selector:((undoOrRedo == WebPageProxy::Undo) ? @selector(undoEditing:) : @selector(redoEditing:)) object:commandObjC.get()];
-    if (actionName)
-        [undoManager setActionName:actionName];
+    if (!actionName.isEmpty())
+        [undoManager setActionName:(NSString *)actionName];
 }
 
 void PageClientImpl::clearAllEditCommands()
