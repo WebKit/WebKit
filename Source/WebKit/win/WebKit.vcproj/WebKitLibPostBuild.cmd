@@ -13,7 +13,5 @@ xcopy /y /d "%CONFIGURATIONBUILDDIR%\include\WebCore\nptypes.h" "%CONFIGURATIONB
 
 mkdir 2>NUL "%OUTDIR%\..\bin\WebKit.resources"
 xcopy /y /d "%PROJECTDIR%..\WebKit.resources\*" "%OUTDIR%\..\bin\WebKit.resources"
-mkdir 2>NUL "%OUTDIR%\..\bin\WebKit.resources\en.lproj"
-xcopy /y /d "%PROJECTDIR%..\..\English.lproj\Localizable.strings" "%OUTDIR%\..\bin\WebKit.resources\en.lproj\"
 
 if exist "%CONFIGURATIONBUILDDIR%\buildfailed" del "%CONFIGURATIONBUILDDIR%\buildfailed"

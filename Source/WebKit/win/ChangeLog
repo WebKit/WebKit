@@ -1,3 +1,11 @@
+2011-04-18  Timothy Hatcher  <timothy@apple.com>
+
+        Remove the two commands that make en.lproj and copy Localizable.strings.
+
+        Rubber-stamped by Adam Roben.
+
+        * WebKit.vcproj/WebKitLibPostBuild.cmd:
+
 2011-04-18  Patrick Gansterer  <paroga@webkit.org>
 
         Reviewed by Adam Roben.
