@@ -1,3 +1,12 @@
+2011-04-18  Jessie Berlin  <jberlin@apple.com>
+
+        WebKitTestRunner needs a more-complete implementation of eventSender.
+        https://bugs.webkit.org/show_bug.cgi?id=42194
+
+        Skip fullscreen/full-screen-cancel.html (which uses eventSender.keyDown) in the WK2 tests.
+
+        * platform/mac-wk2/Skipped:
+
 2011-04-05  Jer Noble  <jer.noble@apple.com>
 
         Reviewed by Sam Weinig.
