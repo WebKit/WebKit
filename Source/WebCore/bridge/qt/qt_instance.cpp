@@ -151,7 +151,7 @@ void QtInstance::removeCachedMethod(JSObject* method)
     if (m_defaultMethod.get() == method)
         m_defaultMethod.clear();
 
-    for (QHash<QByteArray, Global<JSObject> >::Iterator it = m_methods.begin(),
+    for (QHash<QByteArray, Strong<JSObject> >::Iterator it = m_methods.begin(),
         end = m_methods.end(); it != end; ++it)
         if (it.value().get() == method) {
             m_methods.erase(it);

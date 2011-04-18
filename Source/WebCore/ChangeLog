@@ -1,5 +1,15 @@
 2011-04-18  Oliver Hunt  <oliver@apple.com>
 
+        Fix Qt build
+
+        * bridge/qt/qt_class.cpp:
+        (JSC::Bindings::QtClass::fallbackObject):
+        * bridge/qt/qt_instance.cpp:
+        (JSC::Bindings::QtInstance::removeCachedMethod):
+        * bridge/qt/qt_instance.h:
+
+2011-04-18  Oliver Hunt  <oliver@apple.com>
+
         Reviewed by Gavin Barraclough.
 
         Remove DeprecatedPtr
