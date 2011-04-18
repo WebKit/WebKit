@@ -2,6 +2,19 @@
 
         Reviewed by Adam Roben.
 
+        Finish implementing delayed sync replies in the CoreIPC message generator
+        https://bugs.webkit.org/show_bug.cgi?id=58814
+
+        Put the DelayedReply function definitions in the .cpp file and fix bugs found by
+        actually trying to compile the generated files.
+
+        * Scripts/webkit2/messages.py:
+        * Scripts/webkit2/messages_unittest.py:
+
+2011-04-18  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Adam Roben.
+
         Reproducible crash in Find on Page, on pages that use accelerated compositing
         https://bugs.webkit.org/show_bug.cgi?id=58793
         <rdar://problem/9295870>

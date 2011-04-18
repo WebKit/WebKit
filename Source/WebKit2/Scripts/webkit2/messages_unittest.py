@@ -270,9 +270,12 @@ _expected_header = """/*
 #include "Plugin.h"
 #include <WebCore/KeyboardEvent.h>
 #include <WebCore/PluginData.h>
+#include <wtf/ThreadSafeRefCounted.h>
 #include <wtf/Vector.h>
 
 namespace CoreIPC {
+    class ArgumentEncoder;
+    class Connection;
     class MachPort;
 }
 
@@ -405,27 +408,18 @@ struct GetPlugins : CoreIPC::Arguments1<bool> {
 
 struct GetPluginProcessConnection : CoreIPC::Arguments1<const WTF::String&> {
     static const Kind messageID = GetPluginProcessConnectionID;
-    struct DelayedReply {
-        DelayedReply(PassRefPtr<CoreIPC::Connection> connection, PassOwnPtr<CoreIPC::ArgumentDecoder> arguments)
-            : m_connection(connection)
-            , m_arguments(arguments)
-        {
-        }
+    struct DelayedReply : public ThreadSafeRefCounted<DelayedReply> {
+        DelayedReply(PassRefPtr<CoreIPC::Connection>, PassOwnPtr<CoreIPC::ArgumentEncoder>);
+        ~DelayedReply();
 
-        bool send(const CoreIPC::Connection::Handle& connectionHandle)
-        {
-            ASSERT(m_arguments);
-            m_arguments->encode(connectionHandle);
-            bool result = m_connection->sendSyncReply(m_arguments.release());
-            m_connection = nullptr;
-            return result;
-        }
+        bool send(const CoreIPC::Connection::Handle& connectionHandle);
 
     private:
         RefPtr<CoreIPC::Connection> m_connection;
-        OwnPtr<CoreIPC::ArgumentDecoder> m_arguments;
+        OwnPtr<CoreIPC::ArgumentEncoder> m_arguments;
     };
 
+    typedef CoreIPC::Arguments1<CoreIPC::Connection::Handle&> Reply;
     typedef CoreIPC::Arguments1<const WTF::String&> DecodeType;
     explicit GetPluginProcessConnection(const WTF::String& pluginPath)
         : CoreIPC::Arguments1<const WTF::String&>(pluginPath)
@@ -435,26 +429,18 @@ struct GetPluginProcessConnection : CoreIPC::Arguments1<const WTF::String&> {
 
 struct TestMultipleAttributes : CoreIPC::Arguments0 {
     static const Kind messageID = TestMultipleAttributesID;
-    struct DelayedReply {
-        DelayedReply(PassRefPtr<CoreIPC::Connection> connection, PassOwnPtr<CoreIPC::ArgumentDecoder> arguments)
-            : m_connection(connection)
-            , m_arguments(arguments)
-        {
-        }
+    struct DelayedReply : public ThreadSafeRefCounted<DelayedReply> {
+        DelayedReply(PassRefPtr<CoreIPC::Connection>, PassOwnPtr<CoreIPC::ArgumentEncoder>);
+        ~DelayedReply();
 
-        bool send()
-        {
-            ASSERT(m_arguments);
-            bool result = m_connection->sendSyncReply(m_arguments.release());
-            m_connection = nullptr;
-            return result;
-        }
+        bool send();
 
     private:
         RefPtr<CoreIPC::Connection> m_connection;
-        OwnPtr<CoreIPC::ArgumentDecoder> m_arguments;
+        OwnPtr<CoreIPC::ArgumentEncoder> m_arguments;
     };
 
+    typedef CoreIPC::Arguments0 Reply;
     typedef CoreIPC::Arguments0 DecodeType;
 };
 
@@ -547,6 +533,53 @@ _expected_receiver_implementation = """/*
 #include "WebPageMessages.h"
 #include "WebPreferencesStore.h"
 
+namespace Messages {
+
+namespace WebPage {
+
+GetPluginProcessConnection::DelayedReply::DelayedReply(PassRefPtr<CoreIPC::Connection> connection, PassOwnPtr<CoreIPC::ArgumentEncoder> arguments)
+    : m_connection(connection)
+    , m_arguments(arguments)
+{
+}
+
+GetPluginProcessConnection::DelayedReply::~DelayedReply()
+{
+    ASSERT(!m_connection);
+}
+
+bool GetPluginProcessConnection::DelayedReply::send(const CoreIPC::Connection::Handle& connectionHandle)
+{
+    ASSERT(m_arguments);
+    m_arguments->encode(connectionHandle);
+    bool result = m_connection->sendSyncReply(m_arguments.release());
+    m_connection = nullptr;
+    return result;
+}
+
+TestMultipleAttributes::DelayedReply::DelayedReply(PassRefPtr<CoreIPC::Connection> connection, PassOwnPtr<CoreIPC::ArgumentEncoder> arguments)
+    : m_connection(connection)
+    , m_arguments(arguments)
+{
+}
+
+TestMultipleAttributes::DelayedReply::~DelayedReply()
+{
+    ASSERT(!m_connection);
+}
+
+bool TestMultipleAttributes::DelayedReply::send()
+{
+    ASSERT(m_arguments);
+    bool result = m_connection->sendSyncReply(m_arguments.release());
+    m_connection = nullptr;
+    return result;
+}
+
+} // namespace WebPage
+
+} // namespace Messages
+
 namespace WebKit {
 
 void WebPage::didReceiveWebPageMessage(CoreIPC::Connection*, CoreIPC::MessageID messageID, CoreIPC::ArgumentDecoder* arguments)
@@ -587,7 +620,7 @@ void WebPage::didReceiveWebPageMessage(CoreIPC::Connection*, CoreIPC::MessageID 
     ASSERT_NOT_REACHED();
 }
 
-CoreIPC::SyncReplyMode WebPage::didReceiveSyncWebPageMessage(CoreIPC::Connection*, CoreIPC::MessageID messageID, CoreIPC::ArgumentDecoder* arguments, CoreIPC::ArgumentEncoder* reply)
+CoreIPC::SyncReplyMode WebPage::didReceiveSyncWebPageMessage(CoreIPC::Connection* connection, CoreIPC::MessageID messageID, CoreIPC::ArgumentDecoder* arguments, CoreIPC::ArgumentEncoder* reply)
 {
     switch (messageID.get<Messages::WebPage::Kind>()) {
     case Messages::WebPage::CreatePluginID:
@@ -600,11 +633,11 @@ CoreIPC::SyncReplyMode WebPage::didReceiveSyncWebPageMessage(CoreIPC::Connection
         CoreIPC::handleMessage<Messages::WebPage::GetPlugins>(arguments, reply, this, &WebPage::getPlugins);
         return CoreIPC::AutomaticReply;
     case Messages::WebPage::GetPluginProcessConnectionID:
-        CoreIPC::handleMessage<Messages::WebPage::GetPluginProcessConnection>(arguments, reply, this, &WebPage::getPluginProcessConnection);
-        return CoreIPC::AutomaticReply;
+        CoreIPC::handleMessageDelayed<Messages::WebPage::GetPluginProcessConnection>(connection, arguments, reply, this, &WebPage::getPluginProcessConnection);
+        return CoreIPC::ManualReply;
     case Messages::WebPage::TestMultipleAttributesID:
-        CoreIPC::handleMessage<Messages::WebPage::TestMultipleAttributes>(arguments, reply, this, &WebPage::testMultipleAttributes);
-        return CoreIPC::AutomaticReply;
+        CoreIPC::handleMessageDelayed<Messages::WebPage::TestMultipleAttributes>(connection, arguments, reply, this, &WebPage::testMultipleAttributes);
+        return CoreIPC::ManualReply;
 #if PLATFORM(MAC)
     case Messages::WebPage::InterpretKeyEventID:
         CoreIPC::handleMessage<Messages::WebPage::InterpretKeyEvent>(arguments, reply, this, &WebPage::interpretKeyEvent);
