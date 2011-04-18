@@ -76,7 +76,7 @@ Node* HTMLDetailsElement::findMainSummary()
 
 void HTMLDetailsElement::refreshMainSummary(RefreshRenderer refreshRenderer)
 {
-    Node* oldSummary = m_mainSummary;
+    RefPtr<Node> oldSummary = m_mainSummary;
     m_mainSummary = findMainSummary();
 
     if (oldSummary == m_mainSummary || !attached())
