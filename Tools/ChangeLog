@@ -1,3 +1,18 @@
+2011-04-18  Dirk Pranke  <dpranke@chromium.org>
+
+        Reviewed by Tony Chang.
+
+        new-run-webkit-tests: don't run more processes than necessary
+        https://bugs.webkit.org/show_bug.cgi?id=58751
+
+        Previously NRWT would start up 1 process for each processor on
+        the machine by default, which was a waste if we were only
+        running a few shards of tests.
+
+        * Scripts/webkitpy/layout_tests/layout_package/test_runner.py:
+        * Scripts/webkitpy/layout_tests/layout_package/test_runner2.py:
+        * Scripts/webkitpy/layout_tests/run_webkit_tests_unittest.py:
+
 2011-04-18  Ojan Vafai  <ojan@chromium.org>
 
         Reviewed by Eric Seidel.

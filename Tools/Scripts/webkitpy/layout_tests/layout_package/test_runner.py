@@ -521,8 +521,16 @@ class TestRunner:
                 return True
         return False
 
-    def _num_workers(self):
-        return int(self._options.child_processes)
+    def _num_workers(self, num_shards):
+        num_workers = min(int(self._options.child_processes), num_shards)
+        driver_name = self._port.driver_name()
+        if num_workers == 1:
+            self._printer.print_config("Running 1 %s over %s" %
+                (driver_name, grammar.pluralize('shard', num_shards)))
+        else:
+            self._printer.print_config("Running %d %ss in parallel over %d shards" %
+                (num_workers, driver_name, num_shards))
+        return num_workers
 
     def _run_tests(self, file_list, result_summary):
         """Runs the tests in the file_list.
@@ -542,20 +550,21 @@ class TestRunner:
         """
 
         self._printer.print_update('Sharding tests ...')
-        num_workers = self._num_workers()
         test_lists = self._shard_tests(file_list,
-            num_workers > 1 and not self._options.experimental_fully_parallel)
+            (int(self._options.child_processes) > 1) and not self._options.experimental_fully_parallel)
         filename_queue = Queue.Queue()
         for item in test_lists:
             filename_queue.put(item)
 
-        self._printer.print_update('Starting %s ...' %
-                                   grammar.pluralize('worker', num_workers))
+        num_workers = self._num_workers(len(test_lists))
+
         self._message_broker = message_broker.get(self._port, self._options)
         broker = self._message_broker
         self._current_filename_queue = filename_queue
         self._current_result_summary = result_summary
 
+        self._printer.print_update('Starting %s ...' %
+                                   grammar.pluralize('worker', num_workers))
         if not self._options.dry_run:
             threads = broker.start_workers(self)
         else:
@@ -887,12 +896,6 @@ class TestRunner:
                        (self._options.time_out_ms,
                         self._options.slow_time_out_ms))
 
-        if self._num_workers() == 1:
-            p.print_config("Running one %s" % self._port.driver_name())
-        else:
-            p.print_config("Running %s %ss in parallel" %
-                           (self._options.child_processes,
-                            self._port.driver_name()))
         p.print_config('Command line: ' +
                        ' '.join(self._port.driver_cmd_line()))
         p.print_config("Worker model: %s" % self._options.worker_model)

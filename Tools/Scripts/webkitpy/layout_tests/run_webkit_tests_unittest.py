@@ -197,16 +197,20 @@ class MainTest(unittest.TestCase):
             self.assertTrue(len(batch) <= 2, '%s had too many tests' % ', '.join(batch))
 
     def test_child_process_1(self):
-        res, buildbot_output, regular_output, user = logging_run(
+        _, _, regular_output, _ = logging_run(
              ['--print', 'config', '--worker-model', 'threads', '--child-processes', '1'])
-        self.assertTrue('Running one DumpRenderTree\n'
-                        in regular_output.get())
+        self.assertTrue(any(['Running 1 ' in line for line in regular_output.get()]))
 
     def test_child_processes_2(self):
-        res, buildbot_output, regular_output, user = logging_run(
+        _, _, regular_output, _ = logging_run(
              ['--print', 'config', '--worker-model', 'threads', '--child-processes', '2'])
-        self.assertTrue('Running 2 DumpRenderTrees in parallel\n'
-                        in regular_output.get())
+        self.assertTrue(any(['Running 2 ' in line for line in regular_output.get()]))
+
+    def test_child_processes_min(self):
+        _, _, regular_output, _ = logging_run(
+             ['--print', 'config', '--worker-model', 'threads', '--child-processes', '2', 'passes'],
+             tests_included=True)
+        self.assertTrue(any(['Running 1 ' in line for line in regular_output.get()]))
 
     def test_dryrun(self):
         batch_tests_run = get_tests_run(['--dry-run'])

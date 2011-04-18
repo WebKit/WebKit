@@ -117,15 +117,15 @@ class TestRunner2(test_runner.TestRunner):
         self._group_stats = {}
         self._worker_states = {}
 
-        num_workers = self._num_workers()
         keyboard_interrupted = False
         interrupted = False
         thread_timings = []
 
         self._printer.print_update('Sharding tests ...')
         test_lists = self._shard_tests(file_list,
-            num_workers > 1 and not self._options.experimental_fully_parallel)
-        _log.debug("Using %d shards" % len(test_lists))
+            (int(self._options.child_processes) > 1) and not self._options.experimental_fully_parallel)
+
+        num_workers = self._num_workers(len(test_lists))
 
         manager_connection = manager_worker_broker.get(self._port, self._options,
                                                        self, worker.Worker)
