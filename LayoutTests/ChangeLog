@@ -1,3 +1,9 @@
+2011-04-17  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Update Qt specific expected files after r84039.
+
+        * platform/qt/fast/html/details-[...] : Updated.
+
 2011-04-17  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Maciej Stachowiak.

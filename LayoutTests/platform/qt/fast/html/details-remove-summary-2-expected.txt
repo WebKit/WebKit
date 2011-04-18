@@ -6,7 +6,7 @@ layer at (0,0) size 800x600
       RenderDetails {DETAILS} at (0,0) size 784x22
         RenderBlock (anonymous) at (0,0) size 784x22
           RenderSummary {SUMMARY} at (0,0) size 784x22
-            RenderDetailsMarker at (0,0) size 10x22: right
-            RenderText {#text} at (17,0) size 76x22
-              text run at (17,0) width 76: "summary 2"
+            RenderDetailsMarker {DIV} at (0,6) size 10x10: right
+            RenderText {#text} at (16,0) size 76x22
+              text run at (16,0) width 76: "summary 2"
         RenderBlock (anonymous) at (0,22) size 784x0
