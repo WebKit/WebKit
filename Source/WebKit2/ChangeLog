@@ -1,3 +1,12 @@
+2011-04-18  Jeff Miller  <jeffm@apple.com>
+
+        Reviewed by Timothy Hatcher.
+
+        WKFrameLoadState should be a uint32_t to match our API conventions
+        https://bugs.webkit.org/show_bug.cgi?id=58785
+
+        * UIProcess/API/C/WKFrame.h: typedef WKFrameLoadState as a uint32_t and define its values as an anonymous enum.
+
 2011-04-18  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed. Fix WebKit2 GTK build after 84017.

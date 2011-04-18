@@ -36,12 +36,12 @@
 extern "C" {
 #endif
 
-enum WKFrameLoadState {
+enum {
     kWKFrameLoadStateProvisional = 0,
     kWKFrameLoadStateCommitted = 1,
     kWKFrameLoadStateFinished = 2
 };
-typedef enum WKFrameLoadState WKFrameLoadState;
+typedef uint32_t WKFrameLoadState;
 
 WK_EXPORT WKTypeID WKFrameGetTypeID();
  
