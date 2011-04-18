@@ -209,20 +209,6 @@ class ChromiumPort(base.Port):
             return self._build_path(self.get_option('configuration'),
                                     'layout-test-results')
 
-    def results_directory(self):
-        # FIXME: This is a hack needed for compatibility with the Chromium
-        # buildbots until their scripts can be updated. Once they have been,
-        # this routine can be deleted and we can use the base class.
-        # See https://bugs.webkit.org/show_bug.cgi?id=58272 for more details.
-        if not self._results_directory:
-            option_val = self.get_option('results_directory')
-            if option_val and not self._filesystem.isabs(option_val):
-                self._results_directory = self._build_path(self.get_option('configuration'),
-                                                           option_val)
-            else:
-                return super(ChromiumPort, self).results_directory()
-        return self._results_directory
-
     def setup_test_run(self):
         # Delete the disk cache if any to ensure a clean test run.
         dump_render_tree_binary_path = self._path_to_driver()

@@ -1,3 +1,12 @@
+2011-04-18  Dirk Pranke  <dpranke@chromium.org>
+
+        Reviewed by Tony Chang.
+
+        new-run-webkit-tests: remove chromium-specific relpath hack for --results-directory
+        https://bugs.webkit.org/show_bug.cgi?id=58388
+
+        * Scripts/webkitpy/layout_tests/port/chromium.py:
+
 2011-04-18  Evan Martin  <evan@chromium.org>
 
         Reviewed by Eric Seidel.
