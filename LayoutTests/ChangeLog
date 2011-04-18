@@ -1,3 +1,13 @@
+2011-04-18  Alexander Pavlov  <apavlov@chromium.org>
+
+        Reviewed by Yury Semikhatsky.
+
+        Web Inspector: Incorrect content area dimensions in Metrics pane for box-sizing: border-box
+        https://bugs.webkit.org/show_bug.cgi?id=58551
+
+        * inspector/styles/metrics-box-sizing-expected.txt: Added.
+        * inspector/styles/metrics-box-sizing.html: Added.
+
 2011-04-18  Andrey Kosyakov  <caseq@chromium.org>
 
         Unreviewed. Added chromium baselines for new tests.

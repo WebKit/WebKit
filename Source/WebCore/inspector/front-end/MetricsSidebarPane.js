@@ -61,11 +61,27 @@ WebInspector.MetricsSidebarPane.prototype = {
         WebInspector.cssModel.getInlineStyleAsync(node.id, inlineStyleCallback);
     },
 
+    _getPropertyValueAsPx: function(style, propertyName)
+    {
+        return Number(style.getPropertyValue(propertyName).replace(/px$/, "") || 0);
+    },
+
+    _getBox: function(computedStyle, componentName)
+    {
+        var suffix = componentName === "border" ? "-width" : "";
+        var left = this._getPropertyValueAsPx(computedStyle, componentName + "-left" + suffix);
+        var top = this._getPropertyValueAsPx(computedStyle, componentName + "-top" + suffix);
+        var right = this._getPropertyValueAsPx(computedStyle, componentName + "-right" + suffix);
+        var bottom = this._getPropertyValueAsPx(computedStyle, componentName + "-bottom" + suffix);
+        return { left: left, top: top, right: right, bottom: bottom };
+    },
+
     _update: function(style)
     {
         // Updating with computed style.
         var metricsElement = document.createElement("div");
         metricsElement.className = "metrics";
+        var self = this;
 
         function createBoxPartElement(style, name, side, suffix)
         {
@@ -82,6 +98,32 @@ WebInspector.MetricsSidebarPane.prototype = {
             element.textContent = value;
             element.addEventListener("dblclick", this.startEditing.bind(this, element, name, propertyName), false);
             return element;
+        }
+
+        function getContentAreaWidthPx(style)
+        {
+            var width = style.getPropertyValue("width").replace(/px$/, "");
+            if (style.getPropertyValue("box-sizing") === "border-box") {
+                var borderBox = self._getBox(style, "border");
+                var paddingBox = self._getBox(style, "padding");
+
+                width = width - borderBox.left - borderBox.right - paddingBox.left - paddingBox.right;
+            }
+
+            return width;
+        }
+
+        function getContentAreaHeightPx(style)
+        {
+            var height = style.getPropertyValue("height").replace(/px$/, "");
+            if (style.getPropertyValue("box-sizing") === "border-box") {
+                var borderBox = self._getBox(style, "border");
+                var paddingBox = self._getBox(style, "padding");
+
+                height = height - borderBox.top - borderBox.bottom - paddingBox.top - paddingBox.bottom;
+            }
+
+            return height;
         }
 
         // Display types for which margin is ignored.
@@ -127,15 +169,13 @@ WebInspector.MetricsSidebarPane.prototype = {
             boxElement.className = name;
 
             if (name === "content") {
-                var width = style.getPropertyValue("width").replace(/px$/, "");
                 var widthElement = document.createElement("span");
-                widthElement.textContent = width;
-                widthElement.addEventListener("dblclick", this.startEditing.bind(this, widthElement, "width", "width"), false);
+                widthElement.textContent = getContentAreaWidthPx(style);
+                widthElement.addEventListener("dblclick", this.startEditing.bind(this, widthElement, "width", "width", style), false);
 
-                var height = style.getPropertyValue("height").replace(/px$/, "");
                 var heightElement = document.createElement("span");
-                heightElement.textContent = height;
-                heightElement.addEventListener("dblclick", this.startEditing.bind(this, heightElement, "height", "height"), false);
+                heightElement.textContent = getContentAreaHeightPx(style);
+                heightElement.addEventListener("dblclick", this.startEditing.bind(this, heightElement, "height", "height", style), false);
 
                 boxElement.appendChild(widthElement);
                 boxElement.appendChild(document.createTextNode(" \u00D7 "));
@@ -168,12 +208,12 @@ WebInspector.MetricsSidebarPane.prototype = {
         this.bodyElement.appendChild(metricsElement);
     },
 
-    startEditing: function(targetElement, box, styleProperty)
+    startEditing: function(targetElement, box, styleProperty, computedStyle)
     {
         if (WebInspector.isBeingEdited(targetElement))
             return;
 
-        var context = { box: box, styleProperty: styleProperty };
+        var context = { box: box, styleProperty: styleProperty, computedStyle: computedStyle };
 
         WebInspector.startEditing(targetElement, {
             context: context,
@@ -202,9 +242,33 @@ WebInspector.MetricsSidebarPane.prototype = {
         else if (context.box === "position" && (!userInput || userInput === "\u2012"))
             userInput = "auto";
 
+        userInput = userInput.toLowerCase();
         // Append a "px" unit if the user input was just a number.
         if (/^\d+$/.test(userInput))
             userInput += "px";
+
+        var styleProperty = context.styleProperty;
+        var computedStyle = context.computedStyle;
+
+        if (computedStyle.getPropertyValue("box-sizing") === "border-box" && (styleProperty === "width" || styleProperty === "height")) {
+            if (!userInput.match(/px$/)) {
+                WebInspector.log("For elements with box-sizing: border-box, only absolute content area dimensions can be applied", WebInspector.ConsoleMessage.MessageLevel.Error);
+                WebInspector.showConsole();
+                return;
+            }
+
+            var borderBox = this._getBox(computedStyle, "border");
+            var paddingBox = this._getBox(computedStyle, "padding");
+            var userValuePx = Number(userInput.replace(/px$/, ""));
+            if (isNaN(userValuePx))
+                return;
+            if (styleProperty === "width")
+                userValuePx += borderBox.left + borderBox.right + paddingBox.left + paddingBox.right;
+            else
+                userValuePx += borderBox.top + borderBox.bottom + paddingBox.top + paddingBox.bottom;
+
+            userInput = userValuePx + "px";
+        }
 
         var self = this;
         var callback = function(style) {
@@ -217,7 +281,7 @@ WebInspector.MetricsSidebarPane.prototype = {
 
         function setEnabledValueCallback(context, style)
         {
-            var property = style.getLiveProperty(context.styleProperty);
+            var property = style.getLiveProperty(styleProperty);
             if (!property)
                 style.appendProperty(context.styleProperty, userInput, callback);
              else

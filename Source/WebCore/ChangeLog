@@ -1,3 +1,22 @@
+2011-04-18  Alexander Pavlov  <apavlov@chromium.org>
+
+        Reviewed by Yury Semikhatsky.
+
+        Web Inspector: Incorrect content area dimensions in Metrics pane for box-sizing: border-box
+        https://bugs.webkit.org/show_bug.cgi?id=58551
+
+        Test: inspector/styles/metrics-box-sizing.html
+
+        * inspector/front-end/MetricsSidebarPane.js:
+        (WebInspector.MetricsSidebarPane.prototype._getPropertyValueAsPx):
+        (WebInspector.MetricsSidebarPane.prototype._getBox):
+        (WebInspector.MetricsSidebarPane.prototype._update.getContentAreaWidthPx):
+        (WebInspector.MetricsSidebarPane.prototype._update.getContentAreaHeightPx):
+        (WebInspector.MetricsSidebarPane.prototype._update):
+        (WebInspector.MetricsSidebarPane.prototype.startEditing):
+        (WebInspector.MetricsSidebarPane.prototype.editingCommitted.setEnabledValueCallback):
+        (WebInspector.MetricsSidebarPane.prototype.editingCommitted):
+
 2011-04-18  Ilya Tikhonovsky  <loislo@chromium.org>
 
         Reviewed by Yury Semikhatsky.
