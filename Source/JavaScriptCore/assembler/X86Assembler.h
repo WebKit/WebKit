@@ -1637,6 +1637,8 @@ public:
         return copy;
     }
 
+    void rewindToLabel(JmpDst rewindTo) { m_formatter.rewindToLabel(rewindTo); }
+
 #ifndef NDEBUG
     unsigned debugOffset() { return m_formatter.debugOffset(); }
 #endif
@@ -1939,6 +1941,8 @@ private:
         bool isAligned(int alignment) const { return m_buffer.isAligned(alignment); }
         void* data() const { return m_buffer.data(); }
         void* executableCopy(ExecutablePool* allocator) { return m_buffer.executableCopy(allocator); }
+
+        void rewindToLabel(JmpDst rewindTo) { m_buffer.rewindToOffset(rewindTo.m_offset); }
 
 #ifndef NDEBUG
         unsigned debugOffset() { return m_buffer.debugOffset(); }

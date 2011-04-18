@@ -1,3 +1,33 @@
+2011-04-18  Gavin Barraclough  <barraclough@apple.com>
+
+        Reviewed by Geoff Garen.
+
+        Bug 58817 - DFG JIT - if speculative compilation fails, throw away code.
+
+        If we detect a logical conflict, throw away generated code,
+        and only compile through the NonSpeculativeJIT.
+
+        * assembler/AbstractMacroAssembler.h:
+        (JSC::AbstractMacroAssembler::rewindToLabel):
+        * assembler/AssemblerBuffer.h:
+        (JSC::AssemblerBuffer::rewindToOffset):
+        * assembler/MacroAssemblerX86Common.h:
+        (JSC::MacroAssemblerX86Common::branchAdd32):
+        (JSC::MacroAssemblerX86Common::branchSub32):
+        * assembler/X86Assembler.h:
+        (JSC::X86Assembler::rewindToLabel):
+        (JSC::X86Assembler::X86InstructionFormatter::rewindToLabel):
+        * dfg/DFGJITCompiler.cpp:
+        (JSC::DFG::JITCompiler::linkSpeculationChecks):
+        (JSC::DFG::JITCompiler::compileFunction):
+        * dfg/DFGNode.h:
+        * dfg/DFGNonSpeculativeJIT.cpp:
+        (JSC::DFG::NonSpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT.h:
+        (JSC::DFG::SpeculationCheckIndexIterator::SpeculationCheckIndexIterator):
+
 2011-04-18  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Gavin Barraclough.

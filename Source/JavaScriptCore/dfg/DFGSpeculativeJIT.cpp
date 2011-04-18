@@ -242,7 +242,6 @@ GPRReg SpeculativeJIT::fillSpeculateCell(NodeIndex nodeIndex)
 bool SpeculativeJIT::compile(Node& node)
 {
     checkConsistency();
-
     NodeType op = node.op;
 
     switch (op) {
@@ -747,15 +746,21 @@ bool SpeculativeJIT::compile(BasicBlock& block)
 {
     ASSERT(m_compileIndex == block.begin);
     m_blockHeads[m_block] = m_jit.label();
-
-    for (; m_compileIndex < block.end; ++m_compileIndex) {
-#if DFG_DEBUG_VERBOSE
-        fprintf(stderr, "Generating Node @%d at JIT offset 0x%x\n", (int)m_compileIndex, m_jit.debugOffset());
+#if DFG_JIT_BREAK_ON_EVERY_BLOCK
+    m_jit.breakpoint();
 #endif
 
+    for (; m_compileIndex < block.end; ++m_compileIndex) {
         Node& node = m_jit.graph()[m_compileIndex];
         if (!node.refCount)
             continue;
+
+#if DFG_DEBUG_VERBOSE
+        fprintf(stderr, "SpeculativeJIT generating Node @%d at JIT offset 0x%x\n", (int)m_compileIndex, m_jit.debugOffset());
+#endif
+#if DFG_JIT_BREAK_ON_EVERY_NODE
+    m_jit.breakpoint();
+#endif
         if (!compile(node))
             return false;
     }

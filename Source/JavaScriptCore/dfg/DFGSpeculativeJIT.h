@@ -88,6 +88,7 @@ struct SpeculationCheck {
     RegisterInfo m_gprInfo[numberOfGPRs];
     NodeIndex m_fprInfo[numberOfFPRs];
 };
+typedef SegmentedVector<SpeculationCheck, 16> SpeculationCheckVector;
 
 
 // === SpeculativeJIT ===
@@ -103,9 +104,6 @@ struct SpeculationCheck {
 class SpeculativeJIT : public JITCodeGenerator {
     friend struct SpeculationCheck;
 public:
-    // The speculation 
-    typedef SegmentedVector<SpeculationCheck, 16> SpeculationCheckVector;
-
     SpeculativeJIT(JITCompiler& jit)
         : JITCodeGenerator(jit, true)
         , m_didTerminate(false)
@@ -326,8 +324,8 @@ private:
 // nodes require entry points from the speculative path.
 class SpeculationCheckIndexIterator {
 public:
-    SpeculationCheckIndexIterator(SpeculativeJIT& speculativeJIT)
-        : m_speculationChecks(speculativeJIT.speculationChecks())
+    SpeculationCheckIndexIterator(SpeculationCheckVector& speculationChecks)
+        : m_speculationChecks(speculationChecks)
         , m_iter(m_speculationChecks.begin())
         , m_end(m_speculationChecks.end())
     {
@@ -345,10 +343,11 @@ public:
     }
 
 private:
-    SpeculativeJIT::SpeculationCheckVector& m_speculationChecks;
-    SpeculativeJIT::SpeculationCheckVector::Iterator m_iter;
-    SpeculativeJIT::SpeculationCheckVector::Iterator m_end;
+    SpeculationCheckVector& m_speculationChecks;
+    SpeculationCheckVector::Iterator m_iter;
+    SpeculationCheckVector::Iterator m_end;
 };
+
 
 } } // namespace JSC::DFG
 

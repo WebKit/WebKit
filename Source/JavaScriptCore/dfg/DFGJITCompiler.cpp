@@ -187,8 +187,8 @@ void JITCompiler::jumpFromSpeculativeToNonSpeculative(const SpeculationCheck& ch
 void JITCompiler::linkSpeculationChecks(SpeculativeJIT& speculative, NonSpeculativeJIT& nonSpeculative)
 {
     // Iterators to walk over the set of bail outs & corresponding entry points.
-    SpeculativeJIT::SpeculationCheckVector::Iterator checksIter = speculative.speculationChecks().begin();
-    SpeculativeJIT::SpeculationCheckVector::Iterator checksEnd = speculative.speculationChecks().end();
+    SpeculationCheckVector::Iterator checksIter = speculative.speculationChecks().begin();
+    SpeculationCheckVector::Iterator checksEnd = speculative.speculationChecks().end();
     NonSpeculativeJIT::EntryLocationVector::Iterator entriesIter = nonSpeculative.entryLocations().begin();
     NonSpeculativeJIT::EntryLocationVector::Iterator entriesEnd = nonSpeculative.entryLocations().end();
 
@@ -256,25 +256,36 @@ void JITCompiler::compileFunction(JITCode& entry, MacroAssemblerCodePtr& entryWi
     // register values around, rebox values, and ensure spilled, to match the
     // non-speculative path's requirements).
 
-#if DFG_JIT_BREAK_ON_ENTRY
+#if DFG_JIT_BREAK_ON_EVERY_FUNCTION
     // Handy debug tool!
     breakpoint();
 #endif
 
     // First generate the speculative path.
+    Label speculativePathBegin = label();
     SpeculativeJIT speculative(*this);
-    speculative.compile();
+    bool compiledSpeculative = speculative.compile();
 
     // Next, generate the non-speculative path. We pass this a SpeculationCheckIndexIterator
     // to allow it to check which nodes in the graph may bail out, and may need to reenter the
     // non-speculative path.
-    SpeculationCheckIndexIterator checkIterator(speculative);
-    NonSpeculativeJIT nonSpeculative(*this);
-    nonSpeculative.compile(checkIterator);
+    if (compiledSpeculative) {
+        SpeculationCheckIndexIterator checkIterator(speculative.speculationChecks());
+        NonSpeculativeJIT nonSpeculative(*this);
+        nonSpeculative.compile(checkIterator);
 
-    // Link the bail-outs from the speculative path to the corresponding entry points into the non-speculative one.
-    linkSpeculationChecks(speculative, nonSpeculative);
+        // Link the bail-outs from the speculative path to the corresponding entry points into the non-speculative one.
+        linkSpeculationChecks(speculative, nonSpeculative);
+    } else {
+        // If compilation through the SpeculativeJIT failed, throw away the code we generated.
+        m_calls.clear();
+        rewindToLabel(speculativePathBegin);
 
+        SpeculationCheckVector noChecks;
+        SpeculationCheckIndexIterator checkIterator(noChecks);
+        NonSpeculativeJIT nonSpeculative(*this);
+        nonSpeculative.compile(checkIterator);
+    }
 
     // === Stage 3 - Function footer code generation ===
     //

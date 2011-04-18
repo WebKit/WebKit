@@ -503,7 +503,12 @@ public:
     {
         return AssemblerType::getDifferenceBetweenLabels(from.m_label, to.m_jmp);
     }
-    
+
+    // Temporary interface; likely to be removed, since may be hard to port to all architectures.
+#if CPU(X86) || CPU(X86_64)
+    void rewindToLabel(Label rewindTo) { m_assembler.rewindToLabel(rewindTo.m_label); }
+#endif
+
     void beginUninterruptedSequence() { }
     void endUninterruptedSequence() { }
 

@@ -154,6 +154,12 @@ namespace JSC {
             return memcpy(result, m_buffer, m_size);
         }
 
+        void rewindToOffset(int offset)
+        {
+            ASSERT(offset >= 0);
+            m_size = offset;
+        }
+
 #ifndef NDEBUG
         unsigned debugOffset() { return m_size; }
 #endif

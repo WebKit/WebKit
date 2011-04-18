@@ -178,7 +178,6 @@ void NonSpeculativeJIT::compile(SpeculationCheckIndexIterator& checkIterator, No
         trackEntry(m_jit.label());
 
     checkConsistency();
-
     NodeType op = node.op;
 
     switch (op) {
@@ -656,14 +655,22 @@ void NonSpeculativeJIT::compile(SpeculationCheckIndexIterator& checkIterator, Ba
     ASSERT(m_compileIndex == block.begin);
     m_blockHeads[m_block] = m_jit.label();
 
-    for (; m_compileIndex < block.end; ++m_compileIndex) {
-#if DFG_DEBUG_VERBOSE
-        fprintf(stderr, "NonSpeculativeJIT generating Node @%d at code offset 0x%x\n", (int)m_compileIndex, m_jit.debugOffset());
+#if DFG_JIT_BREAK_ON_EVERY_BLOCK
+    m_jit.breakpoint();
 #endif
 
+    for (; m_compileIndex < block.end; ++m_compileIndex) {
         Node& node = m_jit.graph()[m_compileIndex];
         if (!node.refCount)
             continue;
+
+#if DFG_DEBUG_VERBOSE
+        fprintf(stderr, "NonSpeculativeJIT generating Node @%d at code offset 0x%x\n", (int)m_compileIndex, m_jit.debugOffset());
+#endif
+#if DFG_JIT_BREAK_ON_EVERY_NODE
+    m_jit.breakpoint();
+#endif
+
         compile(checkIterator, node);
     }
 }

@@ -1004,7 +1004,7 @@ public:
         return branchAdd32(cond, src1, dest);
     }
 
-    Jump branchAdd32(Condition cond, TrustedImm32 imm, RegisterID src, RegisterID dest)
+    Jump branchAdd32(Condition cond, RegisterID src, TrustedImm32 imm, RegisterID dest)
     {
         move(src, dest);
         return branchAdd32(cond, imm, dest);
@@ -1079,6 +1079,12 @@ public:
         // B := A - B is invalid.
         ASSERT(src1 == dest || src2 != dest);
 
+        move(src1, dest);
+        return branchSub32(cond, src2, dest);
+    }
+
+    Jump branchSub32(Condition cond, RegisterID src1, TrustedImm32 src2, RegisterID dest)
+    {
         move(src1, dest);
         return branchSub32(cond, src2, dest);
     }

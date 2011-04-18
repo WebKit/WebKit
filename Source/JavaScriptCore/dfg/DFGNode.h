@@ -33,7 +33,11 @@
 // Consistency check contents compiler data structures.
 #define DFG_CONSISTENCY_CHECK 0
 // Emit a breakpoint into the head of every generated function, to aid debugging in GDB.
-#define DFG_JIT_BREAK_ON_ENTRY 0
+#define DFG_JIT_BREAK_ON_EVERY_FUNCTION 0
+// Emit a breakpoint into the head of every generated node, to aid debugging in GDB.
+#define DFG_JIT_BREAK_ON_EVERY_BLOCK 0
+// Emit a breakpoint into the head of every generated node, to aid debugging in GDB.
+#define DFG_JIT_BREAK_ON_EVERY_NODE 0
 // Disable the DFG JIT without having to touch Platform.h!
 #define DFG_DEBUG_LOCAL_DISBALE 0
 // Generate stats on how successful we were in making use of the DFG jit, and remaining on the hot path.
