@@ -1,3 +1,30 @@
+2011-04-18  Andreas Kling  <kling@webkit.org>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        [Qt][WK2] Clean up tool-tip/status-bar confusion.
+        https://bugs.webkit.org/show_bug.cgi?id=58844
+
+        Tool-tips were incorrectly hooked up to the status bar text.
+        Chrome::setStatusbarText() now correctly causes the QWKPage::statusBarMessage() signal.
+
+        New API:
+        - QWKPage::toolTipChanged(const QString& toolTip) [signal]
+
+        QGraphicsWKView will automatically listen for this and set its own toolTip().
+
+        * UIProcess/API/qt/ClientImpl.cpp:
+        (qt_wk_setStatusText):
+        * UIProcess/API/qt/ClientImpl.h:
+        * UIProcess/API/qt/qgraphicswkview.cpp:
+        (QGraphicsWKView::QGraphicsWKView):
+        (QGraphicsWKViewPrivate::onToolTipChanged):
+        * UIProcess/API/qt/qgraphicswkview.h:
+        * UIProcess/API/qt/qwkpage.cpp:
+        (QWKPagePrivate::toolTipChanged):
+        (QWKPage::QWKPage):
+        * UIProcess/API/qt/qwkpage.h:
+
 2011-04-18  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Dan Bernstein.

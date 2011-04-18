@@ -122,6 +122,7 @@ public:
 
 public:
     Q_SIGNAL void statusBarMessage(const QString&);
+    Q_SIGNAL void toolTipChanged(const QString&);
     Q_SIGNAL void titleChanged(const QString&);
     Q_SIGNAL void loadStarted();
     Q_SIGNAL void loadFinished(bool ok);

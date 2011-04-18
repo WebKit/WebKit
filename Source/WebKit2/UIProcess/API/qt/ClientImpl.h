@@ -50,6 +50,7 @@ void qt_wk_showPage(WKPageRef page, const void *clientInfo);
 void qt_wk_close(WKPageRef page, const void *clientInfo);
 void qt_wk_takeFocus(WKPageRef page, WKFocusDirection direction, const void *clientInfo);
 void qt_wk_runJavaScriptAlert(WKPageRef page, WKStringRef alertText, WKFrameRef frame, const void* clientInfo);
+void qt_wk_setStatusText(WKPageRef page, WKStringRef text, const void *clientInfo);
 
 #ifdef __cplusplus
 }

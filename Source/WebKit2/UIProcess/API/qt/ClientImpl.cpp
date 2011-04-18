@@ -173,3 +173,9 @@ void qt_wk_takeFocus(WKPageRef page, WKFocusDirection direction, const void *cli
 void qt_wk_runJavaScriptAlert(WKPageRef page, WKStringRef alertText, WKFrameRef frame, const void* clientInfo)
 {
 }
+
+void qt_wk_setStatusText(WKPageRef page, WKStringRef text, const void *clientInfo)
+{
+    QString qText = WKStringCopyQString(text);
+    emit toQWKPage(clientInfo)->statusBarMessage(qText);
+}

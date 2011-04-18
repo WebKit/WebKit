@@ -50,6 +50,7 @@ struct QGraphicsWKViewPrivate {
     QGraphicsWKViewPrivate(QGraphicsWKView* view);
     WKPageRef pageRef() const { return page->pageRef(); }
 
+    void onToolTipChanged(const QString&);
     void onScaleChanged();
     void commitScale();
 
@@ -84,6 +85,7 @@ QGraphicsWKView::QGraphicsWKView(QWKContext* context, BackingStoreType backingSt
     connect(d->page, SIGNAL(cursorChanged(const QCursor&)), this, SLOT(updateCursor(const QCursor&)));
     connect(d->page, SIGNAL(focusNextPrevChild(bool)), this, SLOT(focusNextPrevChildCallback(bool)));
     connect(d->page, SIGNAL(showContextMenu(QSharedPointer<QMenu>)), this, SLOT(showContextMenu(QSharedPointer<QMenu>)));
+    connect(d->page, SIGNAL(toolTipChanged(QString)), this, SLOT(onToolTipChanged(QString)));
 }
 
 QGraphicsWKView::~QGraphicsWKView()
@@ -422,6 +424,11 @@ void QGraphicsWKViewPrivate::onScaleChanged()
     if (!m_isChangingScale)
         m_scaleCommitTimer.startOneShot(0.1);
 #endif
+}
+
+void QGraphicsWKViewPrivate::onToolTipChanged(const QString& toolTip)
+{
+    q->setToolTip(toolTip);
 }
 
 void QGraphicsWKViewPrivate::commitScale()

@@ -202,7 +202,7 @@ void QWKPagePrivate::didChangeContentsSize(const IntSize& newSize)
 
 void QWKPagePrivate::toolTipChanged(const String&, const String& newTooltip)
 {
-    emit q->statusBarMessage(QString(newTooltip));
+    emit q->toolTipChanged(QString(newTooltip));
 }
 
 void QWKPagePrivate::registerEditCommand(PassRefPtr<WebEditCommandProxy>, WebPageProxy::UndoOrRedo)
@@ -464,7 +464,7 @@ QWKPage::QWKPage(QWKContext* context)
         qt_wk_runJavaScriptAlert,
         0,  /* runJavaScriptConfirm */
         0,  /* runJavaScriptPrompt */
-        0,  /* setStatusText */
+        qt_wk_setStatusText,
         0,  /* mouseDidMoveOverElement */
         0,  /* missingPluginButtonClicked */
         0,  /* didNotHandleKeyEvent */

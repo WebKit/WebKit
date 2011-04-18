@@ -90,7 +90,8 @@ protected:
     virtual void focusOutEvent(QFocusEvent*);
 
 private:
-    Q_PRIVATE_SLOT(d, void onScaleChanged());
+    Q_PRIVATE_SLOT(d, void onScaleChanged())
+    Q_PRIVATE_SLOT(d, void onToolTipChanged(const QString&))
 
     QGraphicsWKViewPrivate* d;
     friend class QGraphicsWKViewPrivate;
