@@ -20,6 +20,16 @@
 
 2011-04-18  Dirk Pranke  <dpranke@chromium.org>
 
+        Unreviewed.
+
+        Re-land r84112. It was rolled out in r84127 but it didn't need
+        to be. Only r84111 actually broke things.
+
+        * Scripts/webkitpy/layout_tests/layout_package/test_result_writer.py:
+        * Scripts/webkitpy/layout_tests/run_webkit_tests_unittest.py:
+
+2011-04-18  Dirk Pranke  <dpranke@chromium.org>
+
         Reviewed by Tony Chang.
 
         new-run-webkit-tests: don't run more processes than necessary

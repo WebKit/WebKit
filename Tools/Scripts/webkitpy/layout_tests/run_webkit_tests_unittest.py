@@ -345,6 +345,12 @@ class MainTest(unittest.TestCase):
         tests_run = get_tests_run(['failures/expected/keybaord.html'], tests_included=True, flatten_batches=True)
         self.assertEquals([], tests_run)
 
+    def test_stderr_is_saved(self):
+        fs = port.unit_test_filesystem()
+        self.assertTrue(passing_run(filesystem=fs))
+        self.assertEquals(fs.read_text_file('/tmp/layout-test-results/passes/error-stderr.txt'),
+                          'stuff going to stderr')
+
     def test_test_list(self):
         fs = port.unit_test_filesystem()
         filename = '/tmp/foo.txt'
