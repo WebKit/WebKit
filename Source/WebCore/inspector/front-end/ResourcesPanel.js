@@ -201,7 +201,10 @@ WebInspector.ResourcesPanel.prototype = {
         
         var frameTreeElement = this._treeElementForFrameId[frameId];
         if (frameTreeElement) {
+            // Maintain sorted order.
+            frameTreeElement.parent.removeChild(frameTreeElement);
             frameTreeElement.setTitles(title, subtitle);
+            frameTreeElement.parent.appendChild(frameTreeElement);
             return;
         }
 
@@ -213,20 +216,6 @@ WebInspector.ResourcesPanel.prototype = {
 
         var frameTreeElement = new WebInspector.FrameTreeElement(this, frameId, title, subtitle);
         this._treeElementForFrameId[frameId] = frameTreeElement;
-
-        // Insert in the alphabetical order, first frames, then resources.
-        var children = parentTreeElement.children;
-        for (var i = 0; i < children.length; ++i) {
-            var child = children[i];
-            if (!(child instanceof WebInspector.FrameTreeElement)) {
-                parentTreeElement.insertChild(frameTreeElement, i);
-                return;
-            }
-            if (child.displayName.localeCompare(frameTreeElement.displayName) > 0) {
-                parentTreeElement.insertChild(frameTreeElement, i);
-                return;
-            }
-        }
         parentTreeElement.appendChild(frameTreeElement);
     },
 
@@ -256,21 +245,7 @@ WebInspector.ResourcesPanel.prototype = {
             return;
         }
 
-        var resourceTreeElement = new WebInspector.FrameResourceTreeElement(this, resource);
-
-        // Insert in the alphabetical order, first frames, then resources. Document resource goes first.
-        var children = frameTreeElement.children;
-        var i;
-        for (i = 0; i < children.length; ++i) {
-            var child = children[i];
-            if (!(child instanceof WebInspector.FrameResourceTreeElement))
-                continue;
-
-            if (resource.type === WebInspector.Resource.Type.Document || (child._resource.type !== WebInspector.Resource.Type.Document && child._resource.displayName.localeCompare(resource.displayName) > 0))
-                break;
-        }
-        frameTreeElement.insertChild(resourceTreeElement, i);
-        resourceTreeElement._populateRevisions();
+        frameTreeElement.appendResource(resource);
     },
 
     _frameNavigated: function(event)
@@ -829,12 +804,13 @@ WebInspector.ResourcesPanel.prototype = {
 
 WebInspector.ResourcesPanel.prototype.__proto__ = WebInspector.Panel.prototype;
 
-WebInspector.BaseStorageTreeElement = function(storagePanel, representedObject, title, iconClasses, hasChildren)
+WebInspector.BaseStorageTreeElement = function(storagePanel, representedObject, title, iconClasses, hasChildren, noIcon)
 {
     TreeElement.call(this, "", representedObject, hasChildren);
     this._storagePanel = storagePanel;
     this._titleText = title;
     this._iconClasses = iconClasses;
+    this._noIcon = noIcon;
 }
 
 WebInspector.BaseStorageTreeElement.prototype = {
@@ -850,9 +826,11 @@ WebInspector.BaseStorageTreeElement.prototype = {
         selectionElement.className = "selection";
         this.listItemElement.appendChild(selectionElement);
 
-        this.imageElement = document.createElement("img");
-        this.imageElement.className = "icon";
-        this.listItemElement.appendChild(this.imageElement);
+        if (!this._noIcon) {
+            this.imageElement = document.createElement("img");
+            this.imageElement.className = "icon";
+            this.listItemElement.appendChild(this.imageElement);
+        }
 
         this.titleElement = document.createElement("div");
         this.titleElement.className = "base-storage-tree-element-title";
@@ -898,9 +876,9 @@ WebInspector.BaseStorageTreeElement.prototype = {
 
 WebInspector.BaseStorageTreeElement.prototype.__proto__ = TreeElement.prototype;
 
-WebInspector.StorageCategoryTreeElement = function(storagePanel, categoryName, settingsKey, iconClasses)
+WebInspector.StorageCategoryTreeElement = function(storagePanel, categoryName, settingsKey, iconClasses, noIcon)
 {
-    WebInspector.BaseStorageTreeElement.call(this, storagePanel, null, categoryName, iconClasses, true);
+    WebInspector.BaseStorageTreeElement.call(this, storagePanel, null, categoryName, iconClasses, true, noIcon);
     this._expandedSettingKey = "resources" + settingsKey + "Expanded";
     WebInspector.settings.installApplicationSetting(this._expandedSettingKey, settingsKey === "Frames");
     this._categoryName = categoryName;
@@ -942,6 +920,7 @@ WebInspector.FrameTreeElement = function(storagePanel, frameId, title, subtitle)
     WebInspector.BaseStorageTreeElement.call(this, storagePanel, null, "", ["frame-storage-tree-item"]);
     this._frameId = frameId;
     this.setTitles(title, subtitle);
+    this._categoryElements = {};
 }
 
 WebInspector.FrameTreeElement.prototype = {
@@ -976,15 +955,16 @@ WebInspector.FrameTreeElement.prototype = {
 
     setTitles: function(title, subtitle)
     {
-        this._displayName = "";
+        this._displayName = title || "";
+        if (subtitle)
+            this._displayName += " (" + subtitle + ")";
+
         if (this.parent) {
             this.titleElement.textContent = title || "";
-            this._displayName = title || "";
             if (subtitle) {
                 var subtitleElement = document.createElement("span");
                 subtitleElement.className = "base-storage-tree-element-subtitle";
                 subtitleElement.textContent = "(" + subtitle + ")";
-                this._displayName += " (" + subtitle + ")";
                 this.titleElement.appendChild(subtitleElement);
             }
         } else {
@@ -1002,8 +982,67 @@ WebInspector.FrameTreeElement.prototype = {
             this.listItemElement.removeStyleClass("hovered");
             DOMAgent.hideFrameHighlight();
         }
+    },
+
+    appendResource: function(resource)
+    {
+        var categoryName = resource.category.name;
+        var categoryElement = resource.category === WebInspector.resourceCategories.documents ? this : this._categoryElements[categoryName];
+        if (!categoryElement) {
+            categoryElement = new WebInspector.StorageCategoryTreeElement(this._storagePanel, resource.category.title, categoryName, null, true);
+            this._categoryElements[resource.category.name] = categoryElement;
+            this._insertInPresentationOrder(this, categoryElement);
+        }
+        var resourceTreeElement = new WebInspector.FrameResourceTreeElement(this._storagePanel, resource);
+        this._insertInPresentationOrder(categoryElement, resourceTreeElement);
+        resourceTreeElement._populateRevisions();
+    },
+
+    appendChild: function(treeElement)
+    {
+        this._insertInPresentationOrder(this, treeElement);
+    },
+
+    _insertInPresentationOrder: function(parentTreeElement, childTreeElement)
+    {
+        // Insert in the alphabetical order, first frames, then resources. Document resource goes last.
+        function typeWeight(treeElement)
+        {
+            if (treeElement instanceof WebInspector.StorageCategoryTreeElement)
+                return 2;
+            if (treeElement instanceof WebInspector.FrameTreeElement)
+                return 1;
+            return 3;
+        }
+
+        function compare(treeElement1, treeElement2)
+        {
+            var typeWeight1 = typeWeight(treeElement1);
+            var typeWeight2 = typeWeight(treeElement2);
+
+            var result;
+            if (typeWeight1 > typeWeight2)
+                result = 1;
+            else if (typeWeight1 < typeWeight2)
+                result = -1;
+            else {
+                var title1 = treeElement1.displayName || treeElement1.titleText;
+                var title2 = treeElement2.displayName || treeElement2.titleText;
+                result = title1.localeCompare(title2);
+            }
+            return result;            
+        }
+
+        var children = parentTreeElement.children;
+        var i;
+        for (i = 0; i < children.length; ++i) {
+            if (compare(childTreeElement, children[i]) < 0)
+                break;
+        }
+        parentTreeElement.insertChild(childTreeElement, i);
     }
 }
+
 WebInspector.FrameTreeElement.prototype.__proto__ = WebInspector.BaseStorageTreeElement.prototype;
 
 WebInspector.FrameResourceTreeElement = function(storagePanel, resource)

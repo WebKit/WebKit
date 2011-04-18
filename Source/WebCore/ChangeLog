@@ -1,3 +1,24 @@
+2011-04-18  Pavel Feldman  <pfeldman@google.com>
+
+        Reviewed by Yury Semikhatsky.
+
+        Web Inspector: group resources by type in the resources panel.
+        https://bugs.webkit.org/show_bug.cgi?id=58796
+
+        * inspector/front-end/ResourcesPanel.js:
+        (WebInspector.ResourcesPanel.prototype._frameAdded):
+        (WebInspector.ResourcesPanel.prototype._resourceAdded):
+        (WebInspector.BaseStorageTreeElement):
+        (WebInspector.BaseStorageTreeElement.prototype.onattach):
+        (WebInspector.StorageCategoryTreeElement):
+        (WebInspector.FrameTreeElement):
+        (WebInspector.FrameTreeElement.prototype.setTitles):
+        (WebInspector.FrameTreeElement.prototype.set hovered):
+        (WebInspector.FrameTreeElement.prototype.appendResource):
+        (WebInspector.FrameTreeElement.prototype.appendChild):
+        (WebInspector.FrameTreeElement.prototype._insertInPresentationOrder):
+        (WebInspector.FrameTreeElement.prototype._insertInPresentationOrder.compare):
+
 2011-04-18  Timothy Hatcher  <timothy@apple.com>
 
         Make update-webkit-localizable-strings put WebKit/win strings in WebCore
