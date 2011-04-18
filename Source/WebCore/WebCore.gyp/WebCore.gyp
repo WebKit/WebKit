@@ -184,6 +184,7 @@
       '../platform/image-decoders/xbm',
       '../platform/image-decoders/webp',
       '../platform/image-encoders/skia',
+      '../platform/leveldb',
       '../platform/mock',
       '../platform/network',
       '../platform/network/chromium',

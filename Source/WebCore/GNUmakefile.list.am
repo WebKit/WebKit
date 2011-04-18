@@ -2508,6 +2508,12 @@ webcore_sources += \
 	Source/WebCore/platform/Length.cpp \
 	Source/WebCore/platform/Length.h \
 	Source/WebCore/platform/LengthSize.h \
+	Source/WebCore/platform/leveldb/LevelDBComparator.h \
+	Source/WebCore/platform/leveldb/LevelDBDatabase.cpp \
+	Source/WebCore/platform/leveldb/LevelDBDatabase.h \
+	Source/WebCore/platform/leveldb/LevelDBIterator.cpp \
+	Source/WebCore/platform/leveldb/LevelDBIterator.h \
+	Source/WebCore/platform/leveldb/LevelDBSlice.h \
 	Source/WebCore/platform/LinkHash.cpp \
 	Source/WebCore/platform/LinkHash.h \
 	Source/WebCore/platform/LocalizedStrings.h \

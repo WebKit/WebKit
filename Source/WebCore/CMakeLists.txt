@@ -38,6 +38,7 @@ SET(WebCore_INCLUDE_DIRECTORIES
     "${WEBCORE_DIR}/platform/image-decoders/jpeg"
     "${WEBCORE_DIR}/platform/image-decoders/png"
     "${WEBCORE_DIR}/platform/image-decoders/webp"
+    "${WEBCORE_DIR}/platform/leveldb"
     "${WEBCORE_DIR}/platform/mock"
     "${WEBCORE_DIR}/platform/network"
     "${WEBCORE_DIR}/platform/sql"
@@ -1446,6 +1447,13 @@ IF (ENABLE_DATA_TRANSFER_ITEMS)
     LIST(APPEND WebCore_SOURCES
         dom/DataTransferItem.cpp
         dom/StringCallback.cpp
+    )
+ENDIF ()
+
+IF (ENABLE_LEVELDB)
+    LIST(APPEND WebCore_SOURCES
+        platform/leveldb/LevelDBDatabase.cpp
+        platform/leveldb/LevelDBIterator.cpp
     )
 ENDIF ()
 

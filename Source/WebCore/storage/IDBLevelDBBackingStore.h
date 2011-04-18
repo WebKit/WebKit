@@ -32,10 +32,10 @@
 #include "IDBBackingStore.h"
 #include <wtf/OwnPtr.h>
 
-namespace leveldb {
-class DB;
-}
 namespace WebCore {
+
+class LevelDBComparator;
+class LevelDBDatabase;
 
 class IDBLevelDBBackingStore : public IDBBackingStore {
 public:
@@ -74,11 +74,12 @@ public:
     virtual PassRefPtr<Transaction> createTransaction();
 
 private:
-    IDBLevelDBBackingStore(String identifier, IDBFactoryBackendImpl*, leveldb::DB*);
+    IDBLevelDBBackingStore(String identifier, IDBFactoryBackendImpl*, LevelDBDatabase*);
 
     String m_identifier;
     RefPtr<IDBFactoryBackendImpl> m_factory;
-    OwnPtr<leveldb::DB> m_db;
+    OwnPtr<LevelDBDatabase> m_db;
+    OwnPtr<LevelDBComparator> m_comparator;
 };
 
 } // namespace WebCore

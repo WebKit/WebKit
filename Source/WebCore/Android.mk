@@ -604,6 +604,9 @@ LOCAL_SRC_FILES := $(LOCAL_SRC_FILES) \
 	platform/image-decoders/gif/GIFImageDecoder.cpp \
 	platform/image-decoders/gif/GIFImageReader.cpp \
 	\
+	platform/leveldb/LevelDBDatabase.cpp \
+	platform/leveldb/LevelDBIterator.cpp \
+	\
 	platform/mock/DeviceOrientationClientMock.cpp \
 	platform/mock/GeolocationClientMock.cpp \
 	platform/mock/GeolocationServiceMock.cpp \

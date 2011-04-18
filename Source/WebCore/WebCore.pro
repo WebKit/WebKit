@@ -1011,6 +1011,12 @@ SOURCES += \
     platform/Language.cpp \
     platform/Length.cpp \
     platform/text/LineEnding.cpp \
+    platform/leveldb/LevelDBComparator.h \
+    platform/leveldb/LevelDBDatabase.cpp \
+    platform/leveldb/LevelDBDatabase.h \
+    platform/leveldb/LevelDBIterator.cpp \
+    platform/leveldb/LevelDBIterator.h \
+    platform/leveldb/LevelDBSlice.h \
     platform/LinkHash.cpp \
     platform/Logging.cpp \
     platform/MIMETypeRegistry.cpp \

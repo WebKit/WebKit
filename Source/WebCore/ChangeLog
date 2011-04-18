@@ -1,3 +1,181 @@
+2011-04-18  Hans Wennborg  <hans@chromium.org>
+
+        Reviewed by Steve Block.
+
+        LevelDB backend for IndexedDB
+        https://bugs.webkit.org/show_bug.cgi?id=57372
+
+        Only available behind a run-time flag. Covered by existing layout
+        tests.
+
+        * Android.mk:
+        * CMakeLists.txt:
+        * GNUmakefile.am:
+        * GNUmakefile.list.am:
+        * WebCore.gyp/WebCore.gyp:
+        * WebCore.gypi:
+        * WebCore.pri:
+        * WebCore.pro:
+        * WebCore.xcodeproj/project.pbxproj:
+        * platform/leveldb/LevelDBComparator.h: Added.
+        (WebCore::LevelDBComparator::~LevelDBComparator):
+        * platform/leveldb/LevelDBDatabase.cpp: Added.
+        (WebCore::makeSlice):
+        (WebCore::makeLevelDBSlice):
+        (WebCore::makeVector):
+        (WebCore::LevelDBDatabase::LevelDBDatabase):
+        (WebCore::LevelDBDatabase::~LevelDBDatabase):
+        (WebCore::LevelDBDatabase::open):
+        (WebCore::LevelDBDatabase::put):
+        (WebCore::LevelDBDatabase::remove):
+        (WebCore::LevelDBDatabase::get):
+        (WebCore::LevelDBDatabase::newIterator):
+        * platform/leveldb/LevelDBDatabase.h: Added.
+        * platform/leveldb/LevelDBIterator.cpp: Added.
+        (WebCore::LevelDBIterator::~LevelDBIterator):
+        (WebCore::LevelDBIterator::LevelDBIterator):
+        (WebCore::makeSlice):
+        (WebCore::makeLevelDBSlice):
+        (WebCore::LevelDBIterator::isValid):
+        (WebCore::LevelDBIterator::seekToLast):
+        (WebCore::LevelDBIterator::seek):
+        (WebCore::LevelDBIterator::next):
+        (WebCore::LevelDBIterator::prev):
+        (WebCore::LevelDBIterator::key):
+        (WebCore::LevelDBIterator::value):
+        * platform/leveldb/LevelDBIterator.h: Added.
+        * platform/leveldb/LevelDBSlice.h: Added.
+        (WebCore::LevelDBSlice::LevelDBSlice):
+        (WebCore::LevelDBSlice::~LevelDBSlice):
+        (WebCore::LevelDBSlice::begin):
+        (WebCore::LevelDBSlice::end):
+        * storage/IDBLevelDBBackingStore.cpp:
+        (WebCore::encodeByte):
+        (WebCore::maxIDBKey):
+        (WebCore::minIDBKey):
+        (WebCore::encodeInt):
+        (WebCore::decodeInt):
+        (WebCore::encodeVarInt):
+        (WebCore::decodeVarInt):
+        (WebCore::encodeString):
+        (WebCore::decodeString):
+        (WebCore::encodeStringWithLength):
+        (WebCore::decodeStringWithLength):
+        (WebCore::encodeDouble):
+        (WebCore::decodeDouble):
+        (WebCore::encodeIDBKey):
+        (WebCore::decodeIDBKey):
+        (WebCore::extractEncodedIDBKey):
+        (WebCore::compareEncodedIDBKeys):
+        (WebCore::getInt):
+        (WebCore::putInt):
+        (WebCore::getString):
+        (WebCore::putString):
+        (WebCore::KeyPrefix::SchemaVersionKey::encode):
+        (WebCore::KeyPrefix::MaxDatabaseIdKey::encode):
+        (WebCore::KeyPrefix::DatabaseFreeListKey::DatabaseFreeListKey):
+        (WebCore::KeyPrefix::DatabaseFreeListKey::decode):
+        (WebCore::KeyPrefix::DatabaseFreeListKey::encode):
+        (WebCore::KeyPrefix::DatabaseFreeListKey::databaseId):
+        (WebCore::KeyPrefix::DatabaseFreeListKey::compare):
+        (WebCore::KeyPrefix::DatabaseNameKey::decode):
+        (WebCore::KeyPrefix::DatabaseNameKey::encode):
+        (WebCore::KeyPrefix::DatabaseNameKey::origin):
+        (WebCore::KeyPrefix::DatabaseNameKey::databaseName):
+        (WebCore::KeyPrefix::DatabaseNameKey::compare):
+        (WebCore::KeyPrefix::DatabaseMetaDataKey::encode):
+        (WebCore::KeyPrefix::ObjectStoreMetaDataKey::ObjectStoreMetaDataKey):
+        (WebCore::KeyPrefix::ObjectStoreMetaDataKey::decode):
+        (WebCore::KeyPrefix::ObjectStoreMetaDataKey::encode):
+        (WebCore::KeyPrefix::ObjectStoreMetaDataKey::objectStoreId):
+        (WebCore::KeyPrefix::ObjectStoreMetaDataKey::metaDataType):
+        (WebCore::KeyPrefix::ObjectStoreMetaDataKey::compare):
+        (WebCore::KeyPrefix::IndexMetaDataKey::IndexMetaDataKey):
+        (WebCore::KeyPrefix::IndexMetaDataKey::decode):
+        (WebCore::KeyPrefix::IndexMetaDataKey::encode):
+        (WebCore::KeyPrefix::IndexMetaDataKey::compare):
+        (WebCore::KeyPrefix::IndexMetaDataKey::indexId):
+        (WebCore::KeyPrefix::IndexMetaDataKey::metaDataType):
+        (WebCore::KeyPrefix::ObjectStoreFreeListKey::ObjectStoreFreeListKey):
+        (WebCore::KeyPrefix::ObjectStoreFreeListKey::decode):
+        (WebCore::KeyPrefix::ObjectStoreFreeListKey::encode):
+        (WebCore::KeyPrefix::ObjectStoreFreeListKey::objectStoreId):
+        (WebCore::KeyPrefix::ObjectStoreFreeListKey::compare):
+        (WebCore::KeyPrefix::IndexFreeListKey::IndexFreeListKey):
+        (WebCore::KeyPrefix::IndexFreeListKey::decode):
+        (WebCore::KeyPrefix::IndexFreeListKey::encode):
+        (WebCore::KeyPrefix::IndexFreeListKey::compare):
+        (WebCore::KeyPrefix::IndexFreeListKey::objectStoreId):
+        (WebCore::KeyPrefix::IndexFreeListKey::indexId):
+        (WebCore::KeyPrefix::ObjectStoreNamesKey::decode):
+        (WebCore::KeyPrefix::ObjectStoreNamesKey::encode):
+        (WebCore::KeyPrefix::ObjectStoreNamesKey::compare):
+        (WebCore::KeyPrefix::ObjectStoreNamesKey::objectStoreName):
+        (WebCore::KeyPrefix::IndexNamesKey::IndexNamesKey):
+        (WebCore::KeyPrefix::IndexNamesKey::decode):
+        (WebCore::KeyPrefix::IndexNamesKey::encode):
+        (WebCore::KeyPrefix::IndexNamesKey::compare):
+        (WebCore::KeyPrefix::IndexNamesKey::indexName):
+        (WebCore::KeyPrefix::ObjectStoreDataKey::decode):
+        (WebCore::KeyPrefix::ObjectStoreDataKey::encode):
+        (WebCore::KeyPrefix::ObjectStoreDataKey::compare):
+        (WebCore::KeyPrefix::ObjectStoreDataKey::userKey):
+        (WebCore::KeyPrefix::ExistsEntryKey::decode):
+        (WebCore::KeyPrefix::ExistsEntryKey::encode):
+        (WebCore::KeyPrefix::ExistsEntryKey::compare):
+        (WebCore::KeyPrefix::ExistsEntryKey::userKey):
+        (WebCore::KeyPrefix::IndexDataKey::IndexDataKey):
+        (WebCore::KeyPrefix::IndexDataKey::decode):
+        (WebCore::KeyPrefix::IndexDataKey::encode):
+        (WebCore::KeyPrefix::IndexDataKey::encodeMaxKey):
+        (WebCore::KeyPrefix::IndexDataKey::compare):
+        (WebCore::KeyPrefix::IndexDataKey::databaseId):
+        (WebCore::KeyPrefix::IndexDataKey::objectStoreId):
+        (WebCore::KeyPrefix::IndexDataKey::indexId):
+        (WebCore::KeyPrefix::IndexDataKey::userKey):
+        (WebCore::KeyPrefix::realCompare):
+        (WebCore::KeyPrefix::compareKeys):
+        (WebCore::KeyPrefix::compareIndexKeys):
+        (WebCore::KeyPrefix::Comparator::compare):
+        (WebCore::KeyPrefix::Comparator::name):
+        (WebCore::setUpMetadata):
+        (WebCore::IDBLevelDBBackingStore::IDBLevelDBBackingStore):
+        (WebCore::IDBLevelDBBackingStore::open):
+        (WebCore::IDBLevelDBBackingStore::extractIDBDatabaseMetaData):
+        (WebCore::getNewDatabaseId):
+        (WebCore::IDBLevelDBBackingStore::setIDBDatabaseMetaData):
+        (WebCore::IDBLevelDBBackingStore::getObjectStores):
+        (WebCore::getNewObjectStoreId):
+        (WebCore::IDBLevelDBBackingStore::createObjectStore):
+        (WebCore::deleteRange):
+        (WebCore::IDBLevelDBBackingStore::deleteObjectStore):
+        (WebCore::IDBLevelDBBackingStore::getObjectStoreRecord):
+        (WebCore::getNewVersionNumber):
+        (WebCore::IDBLevelDBBackingStore::putObjectStoreRecord):
+        (WebCore::IDBLevelDBBackingStore::clearObjectStore):
+        (WebCore::IDBLevelDBBackingStore::createInvalidRecordIdentifier):
+        (WebCore::IDBLevelDBBackingStore::deleteObjectStoreRecord):
+        (WebCore::IDBLevelDBBackingStore::nextAutoIncrementNumber):
+        (WebCore::IDBLevelDBBackingStore::keyExistsInObjectStore):
+        (WebCore::IDBLevelDBBackingStore::forEachObjectStoreRecord):
+        (WebCore::IDBLevelDBBackingStore::getIndexes):
+        (WebCore::getNewIndexId):
+        (WebCore::IDBLevelDBBackingStore::createIndex):
+        (WebCore::IDBLevelDBBackingStore::deleteIndex):
+        (WebCore::IDBLevelDBBackingStore::putIndexDataForRecord):
+        (WebCore::findGreatestKeyLessThan):
+        (WebCore::IDBLevelDBBackingStore::deleteIndexDataForRecord):
+        (WebCore::IDBLevelDBBackingStore::getObjectViaIndex):
+        (WebCore::versionExists):
+        (WebCore::IDBLevelDBBackingStore::getPrimaryKeyViaIndex):
+        (WebCore::IDBLevelDBBackingStore::keyExistsInIndex):
+        (WebCore::findLastIndexKeyEqualTo):
+        (WebCore::IDBLevelDBBackingStore::openObjectStoreCursor):
+        (WebCore::IDBLevelDBBackingStore::openIndexKeyCursor):
+        (WebCore::IDBLevelDBBackingStore::openIndexCursor):
+        (WebCore::IDBLevelDBBackingStore::createTransaction):
+        * storage/IDBLevelDBBackingStore.h:
+
 2011-04-18  Pavel Feldman  <pfeldman@google.com>
 
         Reviewed by Yury Semikhatsky.

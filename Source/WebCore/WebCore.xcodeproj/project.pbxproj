@@ -2790,6 +2790,12 @@
 		8AF4E55C11DC5A63000ED3DE /* PerformanceTiming.h in Headers */ = {isa = PBXBuildFile; fileRef = 8AF4E55911DC5A63000ED3DE /* PerformanceTiming.h */; };
 		8C6EA61911EF7E0400FD8EE3 /* RuntimeEnabledFeatures.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8C6EA61711EF7E0400FD8EE3 /* RuntimeEnabledFeatures.cpp */; };
 		8C6EA61A11EF7E0400FD8EE3 /* RuntimeEnabledFeatures.h in Headers */ = {isa = PBXBuildFile; fileRef = 8C6EA61811EF7E0400FD8EE3 /* RuntimeEnabledFeatures.h */; };
+		8CADF2A9135C7B36009EF43F /* LevelDBComparator.h in Headers */ = {isa = PBXBuildFile; fileRef = 8CADF2A3135C7B36009EF43F /* LevelDBComparator.h */; };
+		8CADF2AA135C7B36009EF43F /* LevelDBDatabase.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8CADF2A4135C7B36009EF43F /* LevelDBDatabase.cpp */; };
+		8CADF2AB135C7B36009EF43F /* LevelDBDatabase.h in Headers */ = {isa = PBXBuildFile; fileRef = 8CADF2A5135C7B36009EF43F /* LevelDBDatabase.h */; };
+		8CADF2AC135C7B36009EF43F /* LevelDBIterator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8CADF2A6135C7B36009EF43F /* LevelDBIterator.cpp */; };
+		8CADF2AD135C7B36009EF43F /* LevelDBIterator.h in Headers */ = {isa = PBXBuildFile; fileRef = 8CADF2A7135C7B36009EF43F /* LevelDBIterator.h */; };
+		8CADF2AE135C7B36009EF43F /* LevelDBSlice.h in Headers */ = {isa = PBXBuildFile; fileRef = 8CADF2A8135C7B36009EF43F /* LevelDBSlice.h */; };
 		8F67561B1288B17B0047ACA3 /* EventQueue.h in Headers */ = {isa = PBXBuildFile; fileRef = 8F6756191288B17B0047ACA3 /* EventQueue.h */; };
 		8F67561C1288B17B0047ACA3 /* EventQueue.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8F67561A1288B17B0047ACA3 /* EventQueue.cpp */; };
 		8FAC774D119872CB0015AE94 /* JSMainThreadExecState.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8F934D841189F1EE00508D5D /* JSMainThreadExecState.cpp */; };
@@ -9349,6 +9355,12 @@
 		8AF4E55A11DC5A63000ED3DE /* PerformanceTiming.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = PerformanceTiming.idl; sourceTree = "<group>"; };
 		8C6EA61711EF7E0400FD8EE3 /* RuntimeEnabledFeatures.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = RuntimeEnabledFeatures.cpp; path = generic/RuntimeEnabledFeatures.cpp; sourceTree = "<group>"; };
 		8C6EA61811EF7E0400FD8EE3 /* RuntimeEnabledFeatures.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = RuntimeEnabledFeatures.h; path = generic/RuntimeEnabledFeatures.h; sourceTree = "<group>"; };
+		8CADF2A3135C7B36009EF43F /* LevelDBComparator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LevelDBComparator.h; sourceTree = "<group>"; };
+		8CADF2A4135C7B36009EF43F /* LevelDBDatabase.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = LevelDBDatabase.cpp; sourceTree = "<group>"; };
+		8CADF2A5135C7B36009EF43F /* LevelDBDatabase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LevelDBDatabase.h; sourceTree = "<group>"; };
+		8CADF2A6135C7B36009EF43F /* LevelDBIterator.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = LevelDBIterator.cpp; sourceTree = "<group>"; };
+		8CADF2A7135C7B36009EF43F /* LevelDBIterator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LevelDBIterator.h; sourceTree = "<group>"; };
+		8CADF2A8135C7B36009EF43F /* LevelDBSlice.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LevelDBSlice.h; sourceTree = "<group>"; };
 		8F6756191288B17B0047ACA3 /* EventQueue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EventQueue.h; sourceTree = "<group>"; };
 		8F67561A1288B17B0047ACA3 /* EventQueue.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = EventQueue.cpp; sourceTree = "<group>"; };
 		8F934D831189F1EE00508D5D /* JSMainThreadExecState.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSMainThreadExecState.h; sourceTree = "<group>"; };
@@ -15613,6 +15625,19 @@
 			name = FileAPI;
 			sourceTree = "<group>";
 		};
+		8CADF2A2135C7B36009EF43F /* leveldb */ = {
+			isa = PBXGroup;
+			children = (
+				8CADF2A3135C7B36009EF43F /* LevelDBComparator.h */,
+				8CADF2A4135C7B36009EF43F /* LevelDBDatabase.cpp */,
+				8CADF2A5135C7B36009EF43F /* LevelDBDatabase.h */,
+				8CADF2A6135C7B36009EF43F /* LevelDBIterator.cpp */,
+				8CADF2A7135C7B36009EF43F /* LevelDBIterator.h */,
+				8CADF2A8135C7B36009EF43F /* LevelDBSlice.h */,
+			);
+			path = leveldb;
+			sourceTree = "<group>";
+		};
 		93309D86099E64910056E581 /* editing */ = {
 			isa = PBXGroup;
 			children = (
@@ -18627,6 +18652,7 @@
 				A5C974CE11485FDA0066F2AB /* cocoa */,
 				B2A015910AF6CD53006BCE0E /* graphics */,
 				A59E3C1B11580F340072928E /* iphone */,
+				8CADF2A2135C7B36009EF43F /* leveldb */,
 				6582A14809999D6C00BEEB6D /* mac */,
 				59C77F101054591C00506104 /* mock */,
 				656B84D70AEA1CE900A095B4 /* network */,
@@ -22966,6 +22992,10 @@
 				93F199ED08245E59001E9ABC /* XSLTProcessor.h in Headers */,
 				E1BE512E0CF6C512002EA959 /* XSLTUnicodeSort.h in Headers */,
 				977E2E0F12F0FC9C00C13379 /* XSSFilter.h in Headers */,
+				8CADF2A9135C7B36009EF43F /* LevelDBComparator.h in Headers */,
+				8CADF2AB135C7B36009EF43F /* LevelDBDatabase.h in Headers */,
+				8CADF2AD135C7B36009EF43F /* LevelDBIterator.h in Headers */,
+				8CADF2AE135C7B36009EF43F /* LevelDBSlice.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -25672,6 +25702,8 @@
 				93F19B0508245E59001E9ABC /* XSLTProcessorLibxslt.cpp in Sources */,
 				E1BE512D0CF6C512002EA959 /* XSLTUnicodeSort.cpp in Sources */,
 				977E2E0E12F0FC9C00C13379 /* XSSFilter.cpp in Sources */,
+				8CADF2AA135C7B36009EF43F /* LevelDBDatabase.cpp in Sources */,
+				8CADF2AC135C7B36009EF43F /* LevelDBIterator.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
