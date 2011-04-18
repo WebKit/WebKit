@@ -1,3 +1,19 @@
+2011-04-18  Adam Bergkvist  <adam.bergkvist@ericsson.com>
+
+        Reviewed by Daniel Bates.
+
+        Modify make_names.pl to not include conditional includes unconditionally
+        https://bugs.webkit.org/show_bug.cgi?id=53672
+
+        Fixed conditional includes being unconditionally included.
+
+        No new tests (no change in functionality)
+
+        * dom/make_names.pl:
+            - Modified printJSElementIncludes() to only print unconditional element includes.
+            - Modified printElementIncludes() to only print unconditional element includes.
+            - Added printConditionalElementIncludes() which takes care of printing conditional element includes.
+
 2011-04-18  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r83803.

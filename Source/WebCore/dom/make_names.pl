@@ -3,6 +3,7 @@
 # Copyright (C) 2005, 2006, 2007, 2009 Apple Inc. All rights reserved.
 # Copyright (C) 2009, Julien Chaffraix <jchaffraix@webkit.org>
 # Copyright (C) 2009 Torch Mobile Inc. All rights reserved. (http://www.torchmobile.com/)
+# Copyright (C) 2011 Ericsson AB. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -596,6 +597,10 @@ sub printJSElementIncludes
     for my $tagName (sort keys %enabledTags) {
         my $JSInterfaceName = $enabledTags{$tagName}{JSInterfaceName};
         next if defined($tagsSeen{$JSInterfaceName}) || usesDefaultJSWrapper($tagName);
+        if ($enabledTags{$tagName}{conditional}) {
+            # We skip feature-define-specific #includes here since we handle them separately.
+            next;
+        }
         $tagsSeen{$JSInterfaceName} = 1;
 
         print F "#include \"${wrapperFactoryType}${JSInterfaceName}.h\"\n";
@@ -610,9 +615,51 @@ sub printElementIncludes
     for my $tagName (sort keys %enabledTags) {
         my $interfaceName = $enabledTags{$tagName}{interfaceName};
         next if defined($tagsSeen{$interfaceName});
+        if ($enabledTags{$tagName}{conditional}) {
+            # We skip feature-define-specific #includes here since we handle them separately.
+            next;
+        }
         $tagsSeen{$interfaceName} = 1;
 
         print F "#include \"${interfaceName}.h\"\n";
+    }
+}
+
+sub printConditionalElementIncludes
+{
+    my ($F, $wrapperFactoryType) = @_;
+
+    my %conditionals;
+    my %unconditionalElementIncludes;
+    my %unconditionalJSElementIncludes;
+
+    for my $tagName (keys %enabledTags) {
+        my $conditional = $enabledTags{$tagName}{conditional};
+        my $interfaceName = $enabledTags{$tagName}{interfaceName};
+        my $JSInterfaceName = $enabledTags{$tagName}{JSInterfaceName};
+
+        if ($conditional) {
+            $conditionals{$conditional}{interfaceNames}{$interfaceName} = 1;
+            $conditionals{$conditional}{JSInterfaceNames}{$JSInterfaceName} = 1;
+        } else {
+            $unconditionalElementIncludes{$interfaceName} = 1;
+            $unconditionalJSElementIncludes{$JSInterfaceName} = 1;
+        }
+    }
+
+    for my $conditional (sort keys %conditionals) {
+        print F "\n#if ENABLE($conditional)\n";
+        for my $interfaceName (sort keys %{$conditionals{$conditional}{interfaceNames}}) {
+            next if $unconditionalElementIncludes{$interfaceName};
+            print F "#include \"$interfaceName.h\"\n";
+        }
+        if ($wrapperFactoryType) {
+            for my $JSInterfaceName (sort keys %{$conditionals{$conditional}{JSInterfaceNames}}) {
+                next if $unconditionalJSElementIncludes{$JSInterfaceName};
+                print F "#include \"$wrapperFactoryType$JSInterfaceName.h\"\n";
+            }
+        }
+        print F "#endif\n";
     }
 }
 
@@ -661,8 +708,11 @@ END
 
 printElementIncludes($F);
 
+print F "\n#include <wtf/HashMap.h>\n";
+
+printConditionalElementIncludes($F);
+
 print F <<END
-#include <wtf/HashMap.h>
 
 #if ENABLE(DASHBOARD_SUPPORT) || ENABLE(VIDEO)
 #include "Document.h"
@@ -922,8 +972,11 @@ sub printWrapperFactoryCppFile
 
     printElementIncludes($F);
 
+    print F "\n#include <wtf/StdLibExtras.h>\n";
+
+    printConditionalElementIncludes($F, $wrapperFactoryType);
+
     print F <<END
-#include <wtf/StdLibExtras.h>
 
 #if ENABLE(VIDEO)
 #include "Document.h"
