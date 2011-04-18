@@ -1330,13 +1330,13 @@ IntRect RenderText::linesVisualOverflowBoundingBox() const
 
 IntRect RenderText::clippedOverflowRectForRepaint(RenderBoxModelObject* repaintContainer)
 {
-    RenderObject* cb = containingBlock();
-    // The containing block may be an ancestor of repaintContainer, but we need to do a repaintContainer-relative repaint.
-    if (repaintContainer && repaintContainer != cb) {
-        if (!cb->isDescendantOf(repaintContainer))
-            return repaintContainer->clippedOverflowRectForRepaint(repaintContainer);
-    }
-    return cb->clippedOverflowRectForRepaint(repaintContainer);
+    bool repaintContainerSkipped;
+    RenderObject* container = this->container(repaintContainer, &repaintContainerSkipped);
+    // The container may be an ancestor of repaintContainer, but we need to do a repaintContainer-relative repaint.
+    if (repaintContainerSkipped)
+        return repaintContainer->clippedOverflowRectForRepaint(repaintContainer);
+
+    return container->clippedOverflowRectForRepaint(repaintContainer);
 }
 
 IntRect RenderText::selectionRectForRepaint(RenderBoxModelObject* repaintContainer, bool clipToVisibleContent)

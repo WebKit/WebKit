@@ -1,3 +1,15 @@
+2011-04-18  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Eric Seidel.
+
+        <rdar://problem/9282486> REGRESSION (r81992): Facebook photo tags can get cut off when moving the mouse.
+        https://bugs.webkit.org/show_bug.cgi?id=58500
+
+        * fast/repaint/text-in-relative-positioned-inline-expected.checksum: Added.
+        * fast/repaint/text-in-relative-positioned-inline-expected.png: Added.
+        * fast/repaint/text-in-relative-positioned-inline-expected.txt: Added.
+        * fast/repaint/text-in-relative-positioned-inline.html: Added.
+
 2011-04-18  Chang Shu  <cshu@webkit.org>
 
         Reviewed by Eric Seidel.
