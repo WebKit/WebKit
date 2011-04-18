@@ -66,6 +66,12 @@ enum {
 };
 typedef uint32_t WKInputFieldActionType;
 
+enum {
+    WKFullScreenNoKeyboard,
+    WKFullScreenKeyboard,
+};
+typedef uint32_t WKFullScreenKeyboardRequestType;
+
 // Loader Client
 typedef void (*WKBundlePageDidStartProvisionalLoadForFrameCallback)(WKBundlePageRef page, WKBundleFrameRef frame, WKTypeRef* userData, const void *clientInfo);
 typedef void (*WKBundlePageDidReceiveServerRedirectForProvisionalLoadForFrameCallback)(WKBundlePageRef page, WKBundleFrameRef frame, WKTypeRef* userData, const void *clientInfo);
@@ -243,8 +249,27 @@ struct WKBundlePageContextMenuClient {
 };
 typedef struct WKBundlePageContextMenuClient WKBundlePageContextMenuClient;
 
+// Full Screen client
+typedef bool (*WKBundlePageSupportsFullScreen)(WKBundlePageRef page, WKFullScreenKeyboardRequestType requestType);
+typedef void (*WKBundlePageEnterFullScreenForElement)(WKBundlePageRef page, WKBundleNodeHandleRef element);
+typedef void (*WKBundlePageExitFullScreenForElement)(WKBundlePageRef page, WKBundleNodeHandleRef element);
+
+struct WKBundlePageFullScreenClient {
+    int                                                                 version;
+    const void *                                                        clientInfo;
+    WKBundlePageSupportsFullScreen                                      supportsFullScreen;
+    WKBundlePageEnterFullScreenForElement                               enterFullScreenForElement;
+    WKBundlePageExitFullScreenForElement                                exitFullScreenForElement;
+};
+typedef struct WKBundlePageFullScreenClient WKBundlePageFullScreenClient;
+
+WK_EXPORT void WKBundlePageWillEnterFullScreen(WKBundlePageRef page);
+WK_EXPORT void WKBundlePageDidEnterFullScreen(WKBundlePageRef page);
+WK_EXPORT void WKBundlePageWillExitFullScreen(WKBundlePageRef page);
+WK_EXPORT void WKBundlePageDidExitFullScreen(WKBundlePageRef page);
+
 WK_EXPORT WKTypeID WKBundlePageGetTypeID();
- 
+
 WK_EXPORT void WKBundlePageSetContextMenuClient(WKBundlePageRef page, WKBundlePageContextMenuClient* client);
 WK_EXPORT void WKBundlePageSetEditorClient(WKBundlePageRef page, WKBundlePageEditorClient* client);
 WK_EXPORT void WKBundlePageSetFormClient(WKBundlePageRef page, WKBundlePageFormClient* client);
@@ -252,6 +277,8 @@ WK_EXPORT void WKBundlePageSetPageLoaderClient(WKBundlePageRef page, WKBundlePag
 WK_EXPORT void WKBundlePageSetResourceLoadClient(WKBundlePageRef page, WKBundlePageResourceLoadClient* client);
 WK_EXPORT void WKBundlePageSetPolicyClient(WKBundlePageRef page, WKBundlePagePolicyClient* client);
 WK_EXPORT void WKBundlePageSetUIClient(WKBundlePageRef page, WKBundlePageUIClient* client);
+    
+WK_EXPORT void WKBundlePageSetFullScreenClient(WKBundlePageRef page, WKBundlePageFullScreenClient* client);
 
 WK_EXPORT WKBundlePageGroupRef WKBundlePageGetPageGroup(WKBundlePageRef page);
 WK_EXPORT WKBundleFrameRef WKBundlePageGetMainFrame(WKBundlePageRef page);

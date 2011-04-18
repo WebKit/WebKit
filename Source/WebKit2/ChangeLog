@@ -1,3 +1,36 @@
+2011-04-05  Jer Noble  <jer.noble@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        WebKit2: WKTR should support WebKit2 full screen APIs
+        https://bugs.webkit.org/show_bug.cgi?id=56318
+
+        Add a new WKBundlePage API for Full Screen events, and move some of the implementation
+        of WebFullScreenManager into the new InjectedBundlePageFullScreenClient class, so that
+        the default behavior can be overridden by a WKBundlePageFullScreenClient.
+
+        * WebKit2.xcodeproj/project.pbxproj:
+        * WebProcess/FullScreen/WebFullScreenManager.cpp:
+        (WebKit::WebFullScreenManager::supportsFullScreen): Moved contents into InjectedBundlePageFullScreenClient.
+        (WebKit::WebFullScreenManager::enterFullScreenForElement): Ditto.
+        (WebKit::WebFullScreenManager::exitFullScreenForElement): Ditto.
+        * WebProcess/InjectedBundle/API/c/WKBundlePage.cpp:
+        (WKBundlePageSetFullScreenClient): Added.
+        (WKBundlePageWillEnterFullScreenForElement): Added.
+        (WKBundlePageDidEnterFullScreenForElement): Added.
+        (WKBundlePageWillExitFullScreenForElement): Added.
+        (WKBundlePageDidExitFullScreenForElement): Added.
+        * WebProcess/InjectedBundle/API/c/WKBundlePage.h:
+        * WebProcess/InjectedBundle/InjectedBundlePageFullScreenClient.cpp: Added.
+        (WebKit::InjectedBundlePageFullScreenClient::supportsFullScreen): Added. 
+        (WebKit::InjectedBundlePageFullScreenClient::enterFullScreenForElement): Added.
+        (WebKit::InjectedBundlePageFullScreenClient::exitFullScreenForElement): Added.
+        * WebProcess/InjectedBundle/InjectedBundlePageFullScreenClient.h: Added.
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::initializeInjectedBundleFullScreenClient): Added.
+        * WebProcess/WebPage/WebPage.h:
+        (WebKit::WebPage::injectedBundleFullScreenClient): Added.
+
 2011-04-18  Alexey Proskuryakov  <ap@apple.com>
 
         Reviewed by Maciej Stachowiak.

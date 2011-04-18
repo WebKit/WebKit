@@ -1,3 +1,22 @@
+2011-04-05  Jer Noble  <jer.noble@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        WebKit2: WKTR should support WebKit2 full screen APIs
+        https://bugs.webkit.org/show_bug.cgi?id=56318
+
+        Respond to enterFullScreenForElement() and exitFullScreenForElement(), allowing 
+        WKTR to test the LayoutTest/fullscreen/ tests.
+
+        * WebKitTestRunner/InjectedBundle/InjectedBundlePage.cpp:
+        (WTR::InjectedBundlePage::InjectedBundlePage): Add support for WKBundlePageFullScreenClient.
+        (WTR::InjectedBundlePage::supportsFullScreen): Added.
+        (WTR::InjectedBundlePage::enterFullScreenForElement): Added.
+        (WTR::InjectedBundlePage::exitFullScreenForElement): Added.
+        * WebKitTestRunner/InjectedBundle/InjectedBundlePage.h:
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::TestController::resetStateToConsistentValues): Enable the full screen preference.
+
 2011-04-18  Dirk Pranke  <dpranke@chromium.org>
 
         Reviewed by Tony Chang.

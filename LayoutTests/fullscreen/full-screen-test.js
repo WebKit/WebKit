@@ -11,9 +11,14 @@ if (!runPixelTests && window.layoutTestController) {
 
 function runWithKeyDown(fn) 
 {
-    document.addEventListener('keypress', function() { fn(); }, false);
+    // FIXME: WKTR does not yet support the keyDown() message.  Do a mouseDown here
+    // instead until keyDown support is added.
+    document.addEventListener(eventSender.keyDown ? 'keypress' : 'mousedown', function() { fn(); }, false);
     if (window.layoutTestController) {
-        eventSender.keyDown(" ", []);
+        if (eventSender.keyDown)
+            eventSender.keyDown(" ", []);
+        else
+            eventSender.mouseDown();
     }
 }
 

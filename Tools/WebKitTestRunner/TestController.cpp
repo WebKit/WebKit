@@ -364,6 +364,9 @@ bool TestController::resetStateToConsistentValues()
     WKPreferencesSetDOMPasteAllowed(preferences, true);
     WKPreferencesSetUniversalAccessFromFileURLsAllowed(preferences, true);
     WKPreferencesSetFileAccessFromFileURLsAllowed(preferences, true);
+#if ENABLE(FULLSCREEN_API)
+    WKPreferencesSetFullScreenEnabled(preferences, true);
+#endif
 
     static WKStringRef standardFontFamily = WKStringCreateWithUTF8CString("Times");
     static WKStringRef cursiveFontFamily = WKStringCreateWithUTF8CString("Apple Chancery");

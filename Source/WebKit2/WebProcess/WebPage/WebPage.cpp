@@ -294,6 +294,13 @@ void WebPage::initializeInjectedBundleUIClient(WKBundlePageUIClient* client)
     m_uiClient.initialize(client);
 }
 
+#if ENABLE(FULLSCREEN_API)
+void WebPage::initializeInjectedBundleFullScreenClient(WKBundlePageFullScreenClient* client)
+{
+    m_fullScreenClient.initialize(client);
+}
+#endif
+
 PassRefPtr<Plugin> WebPage::createPlugin(const Plugin::Parameters& parameters)
 {
     String pluginPath;

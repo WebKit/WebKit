@@ -1,3 +1,17 @@
+2011-04-05  Jer Noble  <jer.noble@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        WebKit2: WKTR should support WebKit2 full screen APIs
+        https://bugs.webkit.org/show_bug.cgi?id=56318
+
+        WKTR does not support the eventSender.keyDown() method, so use mouseDown() 
+        in those cases that keyDown() does not exist.
+
+        * fullscreen/full-screen-test.js:
+        (runWithKeyDown.document.addEventListener):
+        (runWithKeyDown):
+
 2011-04-18  Evan Martin  <evan@chromium.org>
 
         Reviewed by Eric Seidel.

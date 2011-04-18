@@ -244,6 +244,17 @@ InjectedBundlePage::InjectedBundlePage(WKBundlePageRef page)
         didChangeSelection
     };
     WKBundlePageSetEditorClient(m_page, &editorClient);
+
+#if ENABLE(FULLSCREEN_API)
+    WKBundlePageFullScreenClient fullScreenClient = {
+        0,
+        this,
+        supportsFullScreen,
+        enterFullScreenForElement,
+        exitFullScreenForElement,
+    };
+    WKBundlePageSetFullScreenClient(m_page, &fullScreenClient);
+#endif
 }
 
 InjectedBundlePage::~InjectedBundlePage()
@@ -997,6 +1008,28 @@ void InjectedBundlePage::didChangeSelection(WKStringRef notificationName)
     if (InjectedBundle::shared().layoutTestController()->shouldDumpEditingCallbacks())
         InjectedBundle::shared().os() << "EDITING DELEGATE: webViewDidChangeSelection:" << notificationName << "\n";
 }
+
+#if ENABLE(FULLSCREEN_API)
+bool InjectedBundlePage::supportsFullScreen(WKBundlePageRef pageRef, WKFullScreenKeyboardRequestType requestType)
+{
+    InjectedBundle::shared().os() << "supportsFullScreen() == true\n";
+    return true;
+}
+
+void InjectedBundlePage::enterFullScreenForElement(WKBundlePageRef pageRef, WKBundleNodeHandleRef elementRef)
+{
+    InjectedBundle::shared().os() << "enterFullScreenForElement()\n";
+    WKBundlePageWillEnterFullScreen(pageRef);
+    WKBundlePageDidEnterFullScreen(pageRef);
+}
+
+void InjectedBundlePage::exitFullScreenForElement(WKBundlePageRef pageRef, WKBundleNodeHandleRef elementRef)
+{
+    InjectedBundle::shared().os() << "exitFullScreenForElement()\n";
+    WKBundlePageWillExitFullScreen(pageRef);
+    WKBundlePageDidExitFullScreen(pageRef);
+}
+#endif
 
 static bool compareByTargetName(WKBundleBackForwardListItemRef item1, WKBundleBackForwardListItemRef item2)
 {

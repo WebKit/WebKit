@@ -66,9 +66,8 @@ bool WebFullScreenManager::supportsFullScreen(bool withKeyboard)
     if (!m_page->corePage()->settings()->fullScreenEnabled())
         return false;
 
-    bool supports = true;
-    m_page->sendSync(Messages::WebFullScreenManagerProxy::SupportsFullScreen(withKeyboard), supports);
-    return supports;
+    return m_page->injectedBundleFullScreenClient().supportsFullScreen(m_page.get(), withKeyboard);
+
 }
 
 void WebFullScreenManager::enterFullScreenForElement(WebCore::Element* element)
@@ -76,14 +75,14 @@ void WebFullScreenManager::enterFullScreenForElement(WebCore::Element* element)
     ASSERT(element);
     m_element = element;
     m_initialFrame = m_element->screenRect();
-    m_page->send(Messages::WebFullScreenManagerProxy::EnterFullScreen());
+    m_page->injectedBundleFullScreenClient().enterFullScreenForElement(m_page.get(), element);
 }
 
 void WebFullScreenManager::exitFullScreenForElement(WebCore::Element* element)
 {
     ASSERT(element);
     ASSERT(m_element == element);
-    m_page->send(Messages::WebFullScreenManagerProxy::ExitFullScreen());
+    m_page->injectedBundleFullScreenClient().exitFullScreenForElement(m_page.get(), element);
 }
 
 void WebFullScreenManager::beganEnterFullScreenAnimation()

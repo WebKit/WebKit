@@ -34,6 +34,7 @@
 #include "InjectedBundlePageContextMenuClient.h"
 #include "InjectedBundlePageEditorClient.h"
 #include "InjectedBundlePageFormClient.h"
+#include "InjectedBundlePageFullScreenClient.h"
 #include "InjectedBundlePageLoaderClient.h"
 #include "InjectedBundlePagePolicyClient.h"
 #include "InjectedBundlePageResourceLoadClient.h"
@@ -195,6 +196,9 @@ public:
     void initializeInjectedBundlePolicyClient(WKBundlePagePolicyClient*);
     void initializeInjectedBundleResourceLoadClient(WKBundlePageResourceLoadClient*);
     void initializeInjectedBundleUIClient(WKBundlePageUIClient*);
+#if ENABLE(FULLSCREEN_API)
+    void initializeInjectedBundleFullScreenClient(WKBundlePageFullScreenClient*);
+#endif
 
     InjectedBundlePageContextMenuClient& injectedBundleContextMenuClient() { return m_contextMenuClient; }
     InjectedBundlePageEditorClient& injectedBundleEditorClient() { return m_editorClient; }
@@ -203,6 +207,9 @@ public:
     InjectedBundlePagePolicyClient& injectedBundlePolicyClient() { return m_policyClient; }
     InjectedBundlePageResourceLoadClient& injectedBundleResourceLoadClient() { return m_resourceLoadClient; }
     InjectedBundlePageUIClient& injectedBundleUIClient() { return m_uiClient; }
+#if ENABLE(FULLSCREEN_API)
+    InjectedBundlePageFullScreenClient& injectedBundleFullScreenClient() { return m_fullScreenClient; }
+#endif
 
     bool findStringFromInjectedBundle(const String&, FindOptions);
 
@@ -603,6 +610,9 @@ private:
     InjectedBundlePagePolicyClient m_policyClient;
     InjectedBundlePageResourceLoadClient m_resourceLoadClient;
     InjectedBundlePageUIClient m_uiClient;
+#if ENABLE(FULLSCREEN_API)
+    InjectedBundlePageFullScreenClient m_fullScreenClient;
+#endif
 
 #if ENABLE(TILED_BACKING_STORE)
     WebCore::IntSize m_resizesToContentsLayoutSize;

@@ -63,15 +63,16 @@ public:
     void finishedExitFullScreenAnimation(bool completed);
     virtual void setRootFullScreenLayer(WebCore::GraphicsLayer*) = 0;
 
+    void willEnterFullScreen();
+    void didEnterFullScreen();
+    void willExitFullScreen();
+    void didExitFullScreen();
+
     WebCore::Element* element();
 
 protected:
     WebFullScreenManager(WebPage*);
 
-    void willEnterFullScreen();
-    void didEnterFullScreen();
-    void willExitFullScreen();
-    void didExitFullScreen();
     virtual void beginEnterFullScreenAnimation(float duration) = 0;
     virtual void beginExitFullScreenAnimation(float duration) = 0;
     WebCore::IntRect getFullScreenRect();

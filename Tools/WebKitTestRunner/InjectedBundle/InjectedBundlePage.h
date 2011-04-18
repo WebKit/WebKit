@@ -116,6 +116,13 @@ private:
     void willRunJavaScriptConfirm(WKStringRef message, WKBundleFrameRef);
     void willRunJavaScriptPrompt(WKStringRef message, WKStringRef defaultValue, WKBundleFrameRef);
 
+#if ENABLE(FULLSCREEN_API)
+    // Full Screen client
+    static bool supportsFullScreen(WKBundlePageRef, WKFullScreenKeyboardRequestType);
+    static void enterFullScreenForElement(WKBundlePageRef, WKBundleNodeHandleRef element);
+    static void exitFullScreenForElement(WKBundlePageRef, WKBundleNodeHandleRef element);
+#endif
+
     // Editor client
     static bool shouldBeginEditing(WKBundlePageRef, WKBundleRangeHandleRef, const void* clientInfo);
     static bool shouldEndEditing(WKBundlePageRef, WKBundleRangeHandleRef, const void* clientInfo);

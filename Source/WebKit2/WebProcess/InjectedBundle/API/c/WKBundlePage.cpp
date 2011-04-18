@@ -28,8 +28,10 @@
 #include "WKBundlePagePrivate.h"
 
 #include "InjectedBundleBackForwardList.h"
+#include "InjectedBundleNodeHandle.h"
 #include "WKAPICast.h"
 #include "WKBundleAPICast.h"
+#include "WebFullScreenManager.h"
 #include "WebImage.h"
 #include "WebPage.h"
 #include "WebURL.h"
@@ -91,6 +93,43 @@ void WKBundlePageSetUIClient(WKBundlePageRef pageRef, WKBundlePageUIClient* wkCl
     if (wkClient && wkClient->version)
         return;
     toImpl(pageRef)->initializeInjectedBundleUIClient(wkClient);
+}
+
+void WKBundlePageSetFullScreenClient(WKBundlePageRef pageRef, WKBundlePageFullScreenClient* wkClient)
+{
+#if defined(ENABLE_FULLSCREEN_API) && ENABLE_FULLSCREEN_API
+    if (wkClient && wkClient->version)
+        return;
+    toImpl(pageRef)->initializeInjectedBundleFullScreenClient(wkClient);
+#endif
+}
+
+void WKBundlePageWillEnterFullScreen(WKBundlePageRef pageRef)
+{
+#if defined(ENABLE_FULLSCREEN_API) && ENABLE_FULLSCREEN_API
+    toImpl(pageRef)->fullScreenManager()->willEnterFullScreen();
+#endif
+}
+
+void WKBundlePageDidEnterFullScreen(WKBundlePageRef pageRef)
+{
+#if defined(ENABLE_FULLSCREEN_API) && ENABLE_FULLSCREEN_API
+    toImpl(pageRef)->fullScreenManager()->didEnterFullScreen();
+#endif
+}
+
+void WKBundlePageWillExitFullScreen(WKBundlePageRef pageRef)
+{
+#if defined(ENABLE_FULLSCREEN_API) && ENABLE_FULLSCREEN_API
+    toImpl(pageRef)->fullScreenManager()->willExitFullScreen();
+#endif
+}
+
+void WKBundlePageDidExitFullScreen(WKBundlePageRef pageRef)
+{
+#if defined(ENABLE_FULLSCREEN_API) && ENABLE_FULLSCREEN_API
+    toImpl(pageRef)->fullScreenManager()->didExitFullScreen();
+#endif
 }
 
 WKBundlePageGroupRef WKBundlePageGetPageGroup(WKBundlePageRef pageRef)
