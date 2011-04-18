@@ -1,3 +1,14 @@
+2011-04-18  Timothy Hatcher  <timothy@apple.com>
+
+        Make update-webkit-localizable-strings put WebKit/win strings in WebCore
+        now that all localized strings in WebKit/win use WEB_UI_STRING.
+
+        https://webkit.org/b/58747
+
+        Reviewed by Dan Bernstein.
+
+        * English.lproj/Localizable.strings: Removed.
+
 2011-04-17  Joseph Pecoraro  <joepeck@webkit.org>
 
         Reviewed by Timothy Hatcher.
