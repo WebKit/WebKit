@@ -227,3 +227,8 @@ void WKContextEnableProcessTermination(WKContextRef contextRef)
 {
     toImpl(contextRef)->enableProcessTermination();
 }
+
+void _WKContextSetHTTPPipeliningEnabled(WKContextRef contextRef, bool enabled)
+{
+    toImpl(contextRef)->setHTTPPipeliningEnabled(enabled);
+}

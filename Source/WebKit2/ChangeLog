@@ -1,3 +1,28 @@
+2011-04-17  David Kilzer  <ddkilzer@apple.com>
+
+        <http://webkit.org/b/58463> Switch HTTP pipelining from user default to private setting
+        <rdar://problem/9268729>
+
+        Reviewed by Dan Bernstein.
+
+        This replaces support for the WebKitEnableHTTPPipelining user
+        default with methods on the WebCore::ResourceRequest class in
+        WebCore, the WebView class in WebKit1, and the WebContext class
+        in WebKit2.  It also removes support for the
+        WebKitForceHTTPPipeliningPriorityHigh user default which was not
+        needed.
+
+        * UIProcess/API/C/WKContext.cpp:
+        (_WKContextSetHTTPPipeliningEnabled): Added.
+        * UIProcess/API/C/WKContextPrivate.h:
+        (_WKContextSetHTTPPipeliningEnabled): Added declaration.
+        * UIProcess/WebContext.cpp:
+        (WebKit::WebContext::setHTTPPipeliningEnabled): Added.
+        (WebKit::WebContext::httpPipeliningEnabled): Added.
+        * UIProcess/WebContext.h:
+        (WebKit::WebContext::setHTTPPipeliningEnabled): Added declaration.
+        (WebKit::WebContext::httpPipeliningEnabled): Added declaration.
+
 2011-04-17  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Geoffrey Garen.

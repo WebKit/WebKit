@@ -66,6 +66,8 @@ WK_EXPORT void WKContextSetLocalStorageDirectory(WKContextRef context, WKStringR
 WK_EXPORT void WKContextDisableProcessTermination(WKContextRef context);
 WK_EXPORT void WKContextEnableProcessTermination(WKContextRef context);
 
+WK_EXPORT void _WKContextSetHTTPPipeliningEnabled(WKContextRef context, bool enabled);
+
 #ifdef __cplusplus
 }
 #endif

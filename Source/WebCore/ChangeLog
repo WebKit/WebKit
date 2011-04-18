@@ -1,3 +1,51 @@
+2011-04-17  David Kilzer  <ddkilzer@apple.com>
+
+        <http://webkit.org/b/58463> Switch HTTP pipelining from user default to private setting
+        <rdar://problem/9268729>
+
+        Reviewed by Dan Bernstein.
+
+        This replaces support for the WebKitEnableHTTPPipelining user
+        default with methods on the WebCore::ResourceRequest class in
+        WebCore, the WebView class in WebKit1, and the WebContext class
+        in WebKit2.  It also removes support for the
+        WebKitForceHTTPPipeliningPriorityHigh user default which was not
+        needed.
+
+        Run these commands if you set the user defaults previously,
+        replacing "BUNDLE.ID" with your application's bundle ID:
+
+            defaults delete BUNDLE.ID WebKitEnableHTTPPipelining
+            defaults delete BUNDLE.ID WebKitForceHTTPPipeliningPriorityHigh
+
+        * WebCore.exp.in: Export ResourceRequest::httpPipeliningEnabled()
+        and ResourceRequest::setHTTPPipeliningEnabled().
+
+        * platform/network/ResourceRequestBase.h:
+        (WebCore::isHTTPPipeliningEnabled): Removed declaration.
+        (WebCore::shouldForceHTTPPipeliningPriorityHigh): Removed declaration.
+
+        * platform/network/cf/ResourceRequest.h:
+        (WebCore::ResourceRequest::httpPipeliningEnabled): Added declaration.
+        (WebCore::ResourceRequest::setHTTPPipeliningEnabled): Added declaration.
+        (WebCore::ResourceRequest::s_httpPipeliningEnabled): Added declaration.
+
+        * platform/network/cf/ResourceRequestCFNet.cpp:
+        (WebCore::ResourceRequest::s_httpPipeliningEnabled): Added.
+        (WebCore::ResourceRequest::httpPipeliningEnabled): Added.
+        (WebCore::ResourceRequest::setHTTPPipeliningEnabled): Added.
+        (WebCore::initializeMaximumHTTPConnectionCountPerHost): Switched
+        to use ResourceRequest::httpPipeliningEnabled().
+        (WebCore::readBooleanPreference): Removed.
+        (WebCore::isHTTPPipeliningEnabled): Removed.
+        (WebCore::shouldForceHTTPPipeliningPriorityHigh): Removed.
+
+        * platform/network/mac/ResourceRequestMac.mm:
+        (WebCore::ResourceRequest::doUpdateResourceRequest): Switched to
+        use ResourceRequest::httpPipeliningEnabled().  Removed check for
+        shouldForceHTTPPipeliningPriorityHigh().
+        (WebCore::ResourceRequest::doUpdatePlatformRequest): Ditto.
+
 2011-04-17  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Maciej Stachowiak.

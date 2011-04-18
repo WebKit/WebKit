@@ -54,6 +54,7 @@
 #include <WebCore/Language.h>
 #include <WebCore/LinkHash.h>
 #include <WebCore/Logging.h>
+#include <WebCore/ResourceRequest.h>
 #include <wtf/CurrentTime.h>
 
 #ifndef NDEBUG
@@ -746,6 +747,22 @@ String WebContext::localStorageDirectory() const
         return m_overrideLocalStorageDirectory;
 
     return platformDefaultLocalStorageDirectory();
+}
+
+void WebContext::setHTTPPipeliningEnabled(bool enabled)
+{
+#if PLATFORM(MAC)
+    ResourceRequest::setHTTPPipeliningEnabled(enabled);
+#endif
+}
+
+bool WebContext::httpPipeliningEnabled()
+{
+#if PLATFORM(MAC)
+    return ResourceRequest::httpPipeliningEnabled();
+#else
+    return false;
+#endif
 }
 
 } // namespace WebKit

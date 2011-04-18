@@ -171,6 +171,10 @@ public:
     void disableProcessTermination() { m_processTerminationEnabled = false; }
     void enableProcessTermination();
 
+    // Defaults to false.
+    void setHTTPPipeliningEnabled(bool);
+    bool httpPipeliningEnabled();
+
 private:
     WebContext(ProcessModel, const String& injectedBundlePath);
 

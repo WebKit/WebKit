@@ -88,6 +88,9 @@ namespace WebCore {
         void setStorageSession(CFURLStorageSessionRef);
 #endif
 
+        static bool httpPipeliningEnabled();
+        static void setHTTPPipeliningEnabled(bool);
+
     private:
         friend class ResourceRequestBase;
 
@@ -102,6 +105,8 @@ namespace WebCore {
 #else
         RetainPtr<NSURLRequest> m_nsRequest;
 #endif
+
+        static bool s_httpPipeliningEnabled;
     };
 
     struct CrossThreadResourceRequestData : public CrossThreadResourceRequestDataBase {

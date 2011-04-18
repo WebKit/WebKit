@@ -594,6 +594,22 @@ Could be worth adding to the API.
 */
 - (void)_setMinimumTimerInterval:(double)intervalInSeconds;
 
+/*!
+    @method _HTTPPipeliningEnabled
+    @abstract Checks the HTTP pipelining status.
+    @discussion Defaults to NO.
+    @result YES if HTTP pipelining is enabled, NO if not enabled.
+ */
++ (BOOL)_HTTPPipeliningEnabled;
+
+/*!
+    @method _setHTTPPipeliningEnabled:
+    @abstract Set the HTTP pipelining status.
+    @discussion Defaults to NO.
+    @param enabled The new HTTP pipelining status.
+ */
++ (void)_setHTTPPipeliningEnabled:(BOOL)enabled;
+
 @end
 
 @interface WebView (WebViewPrintingPrivate)

@@ -70,7 +70,7 @@ void ResourceRequest::doUpdateResourceRequest()
     m_allowCookies = [m_nsRequest.get() HTTPShouldHandleCookies];
 
 #if !defined(BUILDING_ON_TIGER) && !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOW_LEOPARD)
-    if (isHTTPPipeliningEnabled() && !shouldForceHTTPPipeliningPriorityHigh())
+    if (ResourceRequest::httpPipeliningEnabled())
         m_priority = toResourceLoadPriority(wkGetHTTPPipeliningPriority(m_nsRequest.get()));
 #endif
 
@@ -120,10 +120,8 @@ void ResourceRequest::doUpdatePlatformRequest()
 #endif
 
 #if !defined(BUILDING_ON_TIGER) && !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOW_LEOPARD)
-    if (isHTTPPipeliningEnabled()) {
-        int priority = toHTTPPipeliningPriority(shouldForceHTTPPipeliningPriorityHigh() ? ResourceLoadPriorityHigh : m_priority);
-        wkSetHTTPPipeliningPriority(nsRequest, priority);
-    }
+    if (ResourceRequest::httpPipeliningEnabled())
+        wkSetHTTPPipeliningPriority(nsRequest, toHTTPPipeliningPriority(m_priority));
 #endif
 
     [nsRequest setCachePolicy:(NSURLRequestCachePolicy)cachePolicy()];

@@ -241,14 +241,6 @@ namespace WebCore {
     
     unsigned initializeMaximumHTTPConnectionCountPerHost();
 
-#if USE(CF)
-    bool isHTTPPipeliningEnabled();
-    bool shouldForceHTTPPipeliningPriorityHigh();
-#else
-    inline bool isHTTPPipeliningEnabled() { return false; }
-    inline bool shouldForceHTTPPipeliningPriorityHigh() { return false; }
-#endif
-
 } // namespace WebCore
 
 #endif // ResourceRequestBase_h

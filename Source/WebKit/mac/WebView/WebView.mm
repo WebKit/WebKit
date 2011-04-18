@@ -148,6 +148,7 @@
 #import <WebCore/RenderWidget.h>
 #import <WebCore/ResourceHandle.h>
 #import <WebCore/ResourceLoadScheduler.h>
+#import <WebCore/ResourceRequest.h>
 #import <WebCore/RuntimeApplicationChecks.h>
 #import <WebCore/SchemeRegistry.h>
 #import <WebCore/ScriptController.h>
@@ -2825,6 +2826,16 @@ static PassOwnPtr<Vector<String> > toStringVector(NSArray* patterns)
 {
     if (_private->page)
         _private->page->settings()->setMinDOMTimerInterval(intervalInSeconds);
+}
+
++ (BOOL)_HTTPPipeliningEnabled
+{
+    return ResourceRequest::httpPipeliningEnabled();
+}
+
++ (void)_setHTTPPipeliningEnabled:(BOOL)enabled
+{
+    ResourceRequest::setHTTPPipeliningEnabled(enabled);
 }
 
 @end
