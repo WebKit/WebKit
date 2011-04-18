@@ -50,12 +50,20 @@ DOMWrapperWorld::~DOMWrapperWorld()
     JSGlobalData::ClientData* clientData = m_globalData->clientData;
     ASSERT(clientData);
     static_cast<WebCoreJSClientData*>(clientData)->forgetWorld(this);
+
+    // These items are created lazily.
+    while (!m_scriptControllersWithWindowShells.isEmpty())
+        (*m_scriptControllersWithWindowShells.begin())->destroyWindowShell(this);
 }
 
 void DOMWrapperWorld::clearWrappers()
 {
     m_wrappers.clear();
     m_stringCache.clear();
+
+    // These items are created lazily.
+    while (!m_scriptControllersWithWindowShells.isEmpty())
+        (*m_scriptControllersWithWindowShells.begin())->destroyWindowShell(this);
 }
 
 DOMWrapperWorld* normalWorld(JSC::JSGlobalData& globalData)

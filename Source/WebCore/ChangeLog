@@ -1,5 +1,18 @@
 2011-04-18  Geoffrey Garen  <ggaren@apple.com>
 
+        Discovered and rubber-stamped by Stephanie Lewis.
+
+        Restored some code I accidentally deleted in <http://trac.webkit.org/changeset/83990>
+
+        * bindings/js/DOMWrapperWorld.cpp:
+        (WebCore::DOMWrapperWorld::~DOMWrapperWorld):
+        (WebCore::DOMWrapperWorld::clearWrappers): Do clear / destroy all our
+        window shells when clearing / destroying ourselves. r83990 removed this
+        behavior for documents since there are no per-document maps anymore,
+        but removing this behavior for window shells too was a typo.
+
+2011-04-18  Geoffrey Garen  <ggaren@apple.com>
+
         Reviewed by Oliver Hunt.
 
         Made DOM handle ownership customizable, and customized it for Nodes and NamedAttrMaps
