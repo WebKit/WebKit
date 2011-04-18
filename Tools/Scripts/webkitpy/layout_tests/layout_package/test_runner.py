@@ -46,10 +46,8 @@ import random
 import sys
 import time
 
-from webkitpy.layout_tests.layout_package import dump_render_tree_thread
 from webkitpy.layout_tests.layout_package import json_layout_results_generator
 from webkitpy.layout_tests.layout_package import json_results_generator
-from webkitpy.layout_tests.layout_package import message_broker
 from webkitpy.layout_tests.layout_package import printing
 from webkitpy.layout_tests.layout_package import test_expectations
 from webkitpy.layout_tests.layout_package import test_failures
@@ -548,55 +546,7 @@ class TestRunner:
               in the form {filename:filename, test_run_time:test_run_time}
             result_summary: summary object to populate with the results
         """
-
-        self._printer.print_update('Sharding tests ...')
-        test_lists = self._shard_tests(file_list,
-            (int(self._options.child_processes) > 1) and not self._options.experimental_fully_parallel)
-        filename_queue = Queue.Queue()
-        for item in test_lists:
-            filename_queue.put(item)
-
-        num_workers = self._num_workers(len(test_lists))
-
-        self._message_broker = message_broker.get(self._port, self._options)
-        broker = self._message_broker
-        self._current_filename_queue = filename_queue
-        self._current_result_summary = result_summary
-
-        self._printer.print_update('Starting %s ...' %
-                                   grammar.pluralize('worker', num_workers))
-        if not self._options.dry_run:
-            threads = broker.start_workers(self)
-        else:
-            threads = {}
-
-        self._printer.print_update("Starting testing ...")
-        keyboard_interrupted = False
-        interrupted = False
-        if not self._options.dry_run:
-            try:
-                broker.run_message_loop()
-            except KeyboardInterrupt:
-                _log.info("Interrupted, exiting")
-                broker.cancel_workers()
-                keyboard_interrupted = True
-                interrupted = True
-            except TestRunInterruptedException, e:
-                _log.info(e.reason)
-                broker.cancel_workers()
-                interrupted = True
-            except:
-                # Unexpected exception; don't try to clean up workers.
-                _log.info("Exception raised, exiting")
-                raise
-
-        thread_timings, test_timings, individual_test_timings = \
-            self._collect_timing_info(threads)
-
-        broker.cleanup()
-        self._message_broker = None
-        return (interrupted, keyboard_interrupted, thread_timings, test_timings,
-                individual_test_timings)
+        raise NotImplementedError()
 
     def update(self):
         self.update_summary(self._current_result_summary)

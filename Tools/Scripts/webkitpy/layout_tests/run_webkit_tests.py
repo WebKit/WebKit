@@ -89,11 +89,7 @@ def run(port, options, args, regular_output=sys.stderr,
     # in a try/finally to ensure that we clean up the logging configuration.
     num_unexpected_results = -1
     try:
-        if options.worker_model in ('inline', 'threads', 'processes'):
-            runner = test_runner2.TestRunner2(port, options, printer)
-        else:
-            runner = test_runner.TestRunner(port, options, printer)
-
+        runner = test_runner2.TestRunner2(port, options, printer)
         runner._print_config()
 
         printer.print_update("Collecting tests ...")
@@ -135,9 +131,9 @@ def _set_up_derived_options(port_obj, options):
     if options.worker_model is None:
         options.worker_model = port_obj.default_worker_model()
 
-    if options.worker_model in ('inline', 'old-inline'):
+    if options.worker_model == 'inline':
         if options.child_processes and int(options.child_processes) > 1:
-            warnings.append("--worker-model=%s overrides --child-processes" % options.worker_model)
+            warnings.append("--worker-model=inline overrides --child-processes")
         options.child_processes = "1"
     if not options.child_processes:
         options.child_processes = os.environ.get("WEBKIT_TEST_CHILD_PROCESSES",
@@ -381,8 +377,8 @@ def parse_args(args=None):
             help="Number of DumpRenderTrees to run in parallel."),
         # FIXME: Display default number of child processes that will run.
         optparse.make_option("--worker-model", action="store",
-            default=None, help=("controls worker model. Valid values are 'old-inline', "
-                                "'old-threads', 'inline', 'threads', and 'processes'.")),
+            default=None, help=("controls worker model. Valid values are "
+                                "'inline', 'threads', and 'processes'.")),
         optparse.make_option("--experimental-fully-parallel",
             action="store_true", default=False,
             help="run all tests in parallel"),

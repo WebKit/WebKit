@@ -54,7 +54,6 @@ from webkitpy.common.system import filesystem_mock
 from webkitpy.tool import mocktool
 from webkitpy.layout_tests import port
 from webkitpy.layout_tests import run_webkit_tests
-from webkitpy.layout_tests.layout_package import dump_render_tree_thread
 from webkitpy.layout_tests.port.test import TestPort, TestDriver
 from webkitpy.layout_tests.port.test_files import is_reference_html_file
 from webkitpy.python24.versioning import compare_version
@@ -504,15 +503,6 @@ class MainTest(unittest.TestCase):
     def test_run_order__inline(self):
         self.assert_run_order('inline')
 
-    def test_run_order__old_inline(self):
-        self.assert_run_order('old-inline')
-
-    def test_run_order__threads(self):
-        self.assert_run_order('old-inline', child_processes='2')
-
-    def test_run_order__old_threads(self):
-        self.assert_run_order('old-threads', child_processes='2')
-
     def test_tolerance(self):
         class ImageDiffTestPort(TestPort):
             def diff_image(self, expected_contents, actual_contents,
@@ -547,12 +537,6 @@ class MainTest(unittest.TestCase):
                                            '--child-processes', '2'])
         self.assertEqual(res, 0)
         self.assertTrue('--worker-model=inline overrides --child-processes\n' in err.get())
-
-    def test_worker_model__old_inline(self):
-        self.assertTrue(passing_run(['--worker-model', 'old-inline']))
-
-    def test_worker_model__old_threads(self):
-        self.assertTrue(passing_run(['--worker-model', 'old-threads']))
 
     def test_worker_model__processes(self):
         # FIXME: remove this when we fix test-webkitpy to work properly

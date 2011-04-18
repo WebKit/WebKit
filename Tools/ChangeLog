@@ -2,6 +2,25 @@
 
         Reviewed by Eric Seidel.
 
+        new-run-webkit-tests: obsolete old threading code, part 1
+        https://bugs.webkit.org/show_bug.cgi?id=58752
+
+        This patch removes support for the 'old-inline' and
+        'old-threads' worker models, and deletes the corresponding code.
+        Now that the new code is stable, this stuff is no longer
+        necessary.
+
+        * Scripts/webkitpy/layout_tests/layout_package/dump_render_tree_thread.py: Removed.
+        * Scripts/webkitpy/layout_tests/layout_package/message_broker.py: Removed.
+        * Scripts/webkitpy/layout_tests/layout_package/message_broker_unittest.py: Removed.
+        * Scripts/webkitpy/layout_tests/layout_package/test_runner.py:
+        * Scripts/webkitpy/layout_tests/run_webkit_tests.py:
+        * Scripts/webkitpy/layout_tests/run_webkit_tests_unittest.py:
+
+2011-04-18  Dirk Pranke  <dpranke@chromium.org>
+
+        Reviewed by Eric Seidel.
+
         new-run-webkit-tests: add an --additional-drt-flag option
         https://bugs.webkit.org/show_bug.cgi?id=58680
 
