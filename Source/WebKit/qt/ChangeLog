@@ -1,3 +1,17 @@
+2011-04-18  Yi Shen  <yi.4.shen@nokia.com>
+
+        Reviewed by Laszlo Gombos.
+
+        [Qt] Fix Api tests for QWebPage on Symbian
+        https://bugs.webkit.org/show_bug.cgi?id=56924
+
+        Ignores the style attribute that selectedHtml() returns.
+
+        * tests/qwebpage/tst_qwebpage.cpp:
+        (tst_QWebPage::cursorMovements):
+        (tst_QWebPage::textSelection):
+        (tst_QWebPage::findText):
+
 2011-04-18  Andreas Kling  <kling@webkit.org>
 
         Reviewed by Adam Barth.
