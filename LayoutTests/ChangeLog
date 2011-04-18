@@ -1,3 +1,11 @@
+2011-04-18  Adam Roben  <aroben@apple.com>
+
+        Skip a flaky test on Windows
+
+        <http://webkit.org/b/58367> tracks the failure.
+
+        * platform/win/Skipped: Added http/tests/inspector/resource-tree-model.html.
+
 2011-04-18  John Knottenbelt  <jknotten@chromium.org>
 
         Unreviewed.

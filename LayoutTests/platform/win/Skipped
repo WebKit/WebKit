@@ -421,6 +421,9 @@ http/tests/websocket
 # Timing out http://webkit.org/b/58654
 media/video-controls-in-media-document.html
 
+# Sometimes fails http://webkit.org/b/58367
+http/tests/inspector/resource-tree-model.html
+
 ################################################################################
 ####################### No bugs filed about the below yet#######################
 ################################################################################
