@@ -49,6 +49,8 @@ class Node;
 
 #if ENABLE(INSPECTOR)
 
+typedef String ErrorString;
+
 class InspectorCSSId {
 public:
     InspectorCSSId() { }
@@ -127,8 +129,8 @@ public:
     CSSStyleDeclaration* cssStyle() const { return m_style.get(); }
     PassRefPtr<InspectorObject> buildObjectForStyle() const;
     bool hasDisabledProperties() const { return !m_disabledProperties.isEmpty(); }
-    bool setPropertyText(unsigned index, const String& text, bool overwrite);
-    bool toggleProperty(unsigned index, bool disable);
+    bool setPropertyText(ErrorString*, unsigned index, const String& text, bool overwrite);
+    bool toggleProperty(ErrorString*, unsigned index, bool disable);
 
 private:
     InspectorStyle(const InspectorCSSId& styleId, PassRefPtr<CSSStyleDeclaration> style, InspectorStyleSheet* parentStyleSheet);
@@ -171,8 +173,8 @@ public:
     PassRefPtr<InspectorObject> buildObjectForStyleSheetInfo();
     PassRefPtr<InspectorObject> buildObjectForRule(CSSStyleRule*);
     PassRefPtr<InspectorObject> buildObjectForStyle(CSSStyleDeclaration*);
-    bool setPropertyText(const InspectorCSSId&, unsigned propertyIndex, const String& text, bool overwrite);
-    bool toggleProperty(const InspectorCSSId&, unsigned propertyIndex, bool disable);
+    bool setPropertyText(ErrorString*, const InspectorCSSId&, unsigned propertyIndex, const String& text, bool overwrite);
+    bool toggleProperty(ErrorString*, const InspectorCSSId&, unsigned propertyIndex, bool disable);
 
     virtual bool text(String* result) const;
     virtual CSSStyleDeclaration* styleForId(const InspectorCSSId&) const;

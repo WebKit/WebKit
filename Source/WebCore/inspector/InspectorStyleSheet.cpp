@@ -180,11 +180,13 @@ PassRefPtr<InspectorObject> InspectorStyle::buildObjectForStyle() const
 //
 // The propertyText (if not empty) is checked to be a valid style declaration (containing at least one property). If not,
 // the method returns false (denoting an error).
-bool InspectorStyle::setPropertyText(unsigned index, const String& propertyText, bool overwrite)
+bool InspectorStyle::setPropertyText(ErrorString* errorString, unsigned index, const String& propertyText, bool overwrite)
 {
     ASSERT(m_parentStyleSheet);
-    if (!m_parentStyleSheet->ensureParsedDataReady())
+    if (!m_parentStyleSheet->ensureParsedDataReady()) {
+        *errorString = "Internal error: no stylesheet parsed data available";
         return false;
+    }
 
     Vector<InspectorStyleProperty> allProperties;
     populateAllProperties(&allProperties);
@@ -201,12 +203,16 @@ bool InspectorStyle::setPropertyText(unsigned index, const String& propertyText,
         unsigned propertyCount = propertyData.size();
 
         // At least one property + the bogus property added just above should be present.
-        if (propertyCount < 2)
+        if (propertyCount < 2) {
+            *errorString = "Invalid property value";
             return false;
+        }
 
         // Check for a proper propertyText termination (the parser could at least restore to the PROPERTY_NAME state).
-        if (propertyData.at(propertyCount - 1).name != "-webkit-boguz-propertee")
+        if (propertyData.at(propertyCount - 1).name != "-webkit-boguz-propertee") {
+            *errorString = "Invalid property value";
             return false;
+        }
     }
 
     if (overwrite) {
@@ -220,8 +226,10 @@ bool InspectorStyle::setPropertyText(unsigned index, const String& propertyText,
 
         if (!property.disabled) {
             bool success = replacePropertyInStyleText(property, propertyText);
-            if (!success)
+            if (!success) {
+                *errorString = "Internal error: could not replace property value";
                 return false;
+            }
         } else {
             unsigned textLength = propertyText.length();
             unsigned disabledIndex = disabledIndexByOrdinal(index, false, allProperties);
@@ -239,12 +247,16 @@ bool InspectorStyle::setPropertyText(unsigned index, const String& propertyText,
     } else {
         // Insert at index.
         RefPtr<CSSRuleSourceData> sourceData = m_parentStyleSheet->ruleSourceDataFor(m_style.get());
-        if (!sourceData)
+        if (!sourceData) {
+            *errorString = "Internal error: no CSS rule source found";
             return false;
+        }
         String text;
         bool success = styleText(&text);
-        if (!success)
+        if (!success) {
+            *errorString = "Internal error: could not fetch style text";
             return false;
+        }
         propertyLengthDelta = propertyText.length();
 
         bool insertLast = true;
@@ -287,19 +299,25 @@ bool InspectorStyle::setPropertyText(unsigned index, const String& propertyText,
     return true;
 }
 
-bool InspectorStyle::toggleProperty(unsigned index, bool disable)
+bool InspectorStyle::toggleProperty(ErrorString* errorString, unsigned index, bool disable)
 {
     ASSERT(m_parentStyleSheet);
-    if (!m_parentStyleSheet->ensureParsedDataReady())
-        return false; // Can toggle only source-based properties.
+    if (!m_parentStyleSheet->ensureParsedDataReady()) {
+        *errorString = "Can toggle only source-based properties";
+        return false;
+    }
     RefPtr<CSSRuleSourceData> sourceData = m_parentStyleSheet->ruleSourceDataFor(m_style.get());
-    if (!sourceData)
-        return false; // No source data for the style.
+    if (!sourceData) {
+        *errorString = "Internal error: No source data for the style found";
+        return false;
+    }
 
     Vector<InspectorStyleProperty> allProperties;
     populateAllProperties(&allProperties);
-    if (index >= allProperties.size())
-        return false; // Outside of property range.
+    if (index >= allProperties.size()) {
+        *errorString = "Property index is outside of property range";
+        return false;
+    }
 
     InspectorStyleProperty& property = allProperties.at(index);
     if (property.disabled == disable)
@@ -805,22 +823,26 @@ PassRefPtr<InspectorObject> InspectorStyleSheet::buildObjectForStyle(CSSStyleDec
     return result.release();
 }
 
-bool InspectorStyleSheet::setPropertyText(const InspectorCSSId& id, unsigned propertyIndex, const String& text, bool overwrite)
+bool InspectorStyleSheet::setPropertyText(ErrorString* errorString, const InspectorCSSId& id, unsigned propertyIndex, const String& text, bool overwrite)
 {
     RefPtr<InspectorStyle> inspectorStyle = inspectorStyleForId(id);
-    if (!inspectorStyle)
+    if (!inspectorStyle) {
+        *errorString = "No style found for given id";
         return false;
+    }
 
-    return inspectorStyle->setPropertyText(propertyIndex, text, overwrite);
+    return inspectorStyle->setPropertyText(errorString, propertyIndex, text, overwrite);
 }
 
-bool InspectorStyleSheet::toggleProperty(const InspectorCSSId& id, unsigned propertyIndex, bool disable)
+bool InspectorStyleSheet::toggleProperty(ErrorString* errorString, const InspectorCSSId& id, unsigned propertyIndex, bool disable)
 {
     RefPtr<InspectorStyle> inspectorStyle = inspectorStyleForId(id);
-    if (!inspectorStyle)
+    if (!inspectorStyle) {
+        *errorString = "No style found for given id";
         return false;
+    }
 
-    bool success = inspectorStyle->toggleProperty(propertyIndex, disable);
+    bool success = inspectorStyle->toggleProperty(errorString, propertyIndex, disable);
     if (success) {
         if (disable)
             rememberInspectorStyle(inspectorStyle);

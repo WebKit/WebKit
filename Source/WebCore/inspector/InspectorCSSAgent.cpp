@@ -302,7 +302,7 @@ void InspectorCSSAgent::setStyleSheetText(ErrorString* errorString, const String
     if (inspectorStyleSheet->setText(text))
         inspectorStyleSheet->reparseStyleSheet(text);
     else
-        *errorString = "Internal error setting style sheet text.";
+        *errorString = "Internal error setting style sheet text";
 }
 
 void InspectorCSSAgent::setPropertyText(ErrorString* errorString, const RefPtr<InspectorObject>& fullStyleId, int propertyIndex, const String& text, bool overwrite, RefPtr<InspectorObject>* result)
@@ -314,7 +314,7 @@ void InspectorCSSAgent::setPropertyText(ErrorString* errorString, const RefPtr<I
     if (!inspectorStyleSheet)
         return;
 
-    bool success = inspectorStyleSheet->setPropertyText(compoundId, propertyIndex, text, overwrite);
+    bool success = inspectorStyleSheet->setPropertyText(errorString, compoundId, propertyIndex, text, overwrite);
     if (success)
         *result = inspectorStyleSheet->buildObjectForStyle(inspectorStyleSheet->styleForId(compoundId));
 }
@@ -328,7 +328,7 @@ void InspectorCSSAgent::toggleProperty(ErrorString* errorString, const RefPtr<In
     if (!inspectorStyleSheet)
         return;
 
-    bool success = inspectorStyleSheet->toggleProperty(compoundId, propertyIndex, disable);
+    bool success = inspectorStyleSheet->toggleProperty(errorString, compoundId, propertyIndex, disable);
     if (success)
         *result = inspectorStyleSheet->buildObjectForStyle(inspectorStyleSheet->styleForId(compoundId));
 }

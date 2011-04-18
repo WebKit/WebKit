@@ -166,20 +166,23 @@ WebInspector.CSSStyleModel.prototype = {
         CSSAgent.addRule(nodeId, selector, callback.bind(this, successCallback, failureCallback, selector));
     },
 
-    _fireStyleSheetChanged: function(styleSheetId, majorChange)
+    _fireStyleSheetChanged: function(styleSheetId, majorChange, callback)
     {
-        if (!majorChange || !styleSheetId)
+        callback = callback || function() {};
+
+        if (!majorChange || !styleSheetId || !this.hasEventListeners(WebInspector.CSSStyleModel.Events.StyleSheetChanged)) {
+            callback();
             return;
-
-        function callback(error, content)
-        {
-            if (error)
-                return;
-
-            this.dispatchEventToListeners(WebInspector.CSSStyleModel.Events.StyleSheetChanged, { styleSheetId: styleSheetId, content: content, majorChange: majorChange });
         }
-        if (this.hasEventListeners(WebInspector.CSSStyleModel.Events.StyleSheetChanged))
-            CSSAgent.getStyleSheetText(styleSheetId, callback.bind(this));
+
+        function mycallback(error, content)
+        {
+            if (!error)
+                this.dispatchEventToListeners(WebInspector.CSSStyleModel.Events.StyleSheetChanged, { styleSheetId: styleSheetId, content: content, majorChange: majorChange });
+            callback();
+        }
+
+        CSSAgent.getStyleSheetText(styleSheetId, mycallback.bind(this));
     },
 
     setStyleSheetText: function(styleSheetId, newText, majorChange, userCallback)
@@ -187,10 +190,7 @@ WebInspector.CSSStyleModel.prototype = {
         function callback(error)
         {
              if (!error)
-                 this._fireStyleSheetChanged(styleSheetId, majorChange);
-
-             if (userCallback)
-                 userCallback(error);
+                 this._fireStyleSheetChanged(styleSheetId, majorChange, userCallback ? userCallback.bind(this, error) : null);
         }
         CSSAgent.setStyleSheetText(styleSheetId, newText, callback.bind(this));
     }
@@ -366,9 +366,10 @@ WebInspector.CSSStyleDeclaration.prototype = {
             if (!userCallback)
                 return;
 
-            if (error)
+            if (error) {
+                console.error(JSON.stringify(error));
                 userCallback(null);
-            else {
+            } else {
                 userCallback(WebInspector.CSSStyleDeclaration.parsePayload(payload));
                 WebInspector.cssModel._fireStyleSheetChanged(this.id.styleSheetId, true);
             }
@@ -498,7 +499,7 @@ WebInspector.CSSProperty.prototype = {
 
         function callback(error, stylePayload)
         {
-            if (!error && stylePayload) {
+            if (!error) {
                 this.text = propertyText;
                 var style = WebInspector.CSSStyleDeclaration.parsePayload(stylePayload);
                 var newProperty = style.allProperties[this.index];
@@ -506,11 +507,11 @@ WebInspector.CSSProperty.prototype = {
                 if (newProperty && this.disabled && !propertyText.match(/^\s*$/)) {
                     newProperty.setDisabled(false, enabledCallback);
                     return;
-                } else
-                    WebInspector.cssModel._fireStyleSheetChanged(style.id.styleSheetId, majorChange);
-                if (userCallback)
-                    userCallback(style);
+                }
+
+                WebInspector.cssModel._fireStyleSheetChanged(style.id.styleSheetId, majorChange, userCallback.bind(this, style));
             } else {
+                console.error(JSON.stringify(error));
                 if (userCallback)
                     userCallback(null);
             }
