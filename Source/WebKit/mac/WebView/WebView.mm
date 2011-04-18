@@ -643,7 +643,8 @@ static bool shouldEnableLoadDeferring()
 static NSString *leakMailQuirksUserScriptContents()
 {
     NSString *scriptPath = [[NSBundle bundleForClass:[WebView class]] pathForResource:@"MailQuirksUserScript" ofType:@"js"];
-    return [[NSString alloc] initWithContentsOfFile:scriptPath];
+    NSStringEncoding encoding;
+    return [[NSString alloc] initWithContentsOfFile:scriptPath usedEncoding:&encoding error:0];
 }
 
 - (void)_injectMailQuirksScript
@@ -663,7 +664,8 @@ static bool needsOutlookQuirksScript()
 static NSString *leakOutlookQuirksUserScriptContents()
 {
     NSString *scriptPath = [[NSBundle bundleForClass:[WebView class]] pathForResource:@"OutlookQuirksUserScript" ofType:@"js"];
-    return [[NSString alloc] initWithContentsOfFile:scriptPath];
+    NSStringEncoding encoding;
+    return [[NSString alloc] initWithContentsOfFile:scriptPath usedEncoding:&encoding error:0];
 }
 
 -(void)_injectOutlookQuirksScript

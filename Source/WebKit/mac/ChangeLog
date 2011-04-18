@@ -1,3 +1,16 @@
+2011-04-17  Cameron Zwarich  <zwarich@apple.com>
+
+        Reviewed by Timothy Hatcher.
+
+        Stop using -[NSString initWithContentsOfFile:]
+        https://bugs.webkit.org/show_bug.cgi?id=58763
+
+        -[NSString initWithContentsOfFile:] was deprecated in 10.4, so we should stop using it.
+
+        * WebView/WebView.mm:
+        (leakMailQuirksUserScriptContents):
+        (leakOutlookQuirksUserScriptContents):
+
 2011-04-17  David Kilzer  <ddkilzer@apple.com>
 
         <http://webkit.org/b/58463> Switch HTTP pipelining from user default to private setting
