@@ -1,3 +1,9 @@
+2011-04-18  Alejandro G. Castro  <alex@igalia.com>
+
+        Skipping overhanging-tall-block.html, it is crashing in the GTK+ bots.
+
+        * platform/gtk/Skipped:
+
 2011-04-18  Andrew Scherkus  <scherkus@chromium.org>
 
         Reviewed by Eric Seidel.
