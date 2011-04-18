@@ -988,9 +988,10 @@ CallFrameClosure Interpreter::prepareForRepeatCall(FunctionExecutable* FunctionE
     }
 
     CallFrame* newCallFrame = CallFrame::create(oldEnd);
+    // We initialise |this| unnecessarily here for the sake of code clarity
     size_t dst = 0;
     for (int i = 0; i < argc; ++i)
-        newCallFrame->uncheckedR(++dst) = jsUndefined();
+        newCallFrame->uncheckedR(dst++) = jsUndefined();
     
     JSObject* error = FunctionExecutable->compileForCall(callFrame, scopeChain);
     if (error) {

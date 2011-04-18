@@ -1,3 +1,25 @@
+2011-04-18  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Adam Roben.
+
+        Off by one initialising repeat callframe
+        https://bugs.webkit.org/show_bug.cgi?id=58838
+        <rdar://problem/8756810>
+
+        If the end of a callframe made for a repeat call landed on
+        a page boundary the following page may not have been committed
+        which means that the off by one could lead to a crash.  However
+        it could only happen in this case and only on windows which is
+        why it was so hard to repro.  Alas given the steps needed to
+        reproduce are such that it's not really possible to make a
+        testcase.
+
+        This fix makes the code a little less squirrely by not trying
+        to avoid the unnecessary initialisation of |this|.
+
+        * interpreter/Interpreter.cpp:
+        (JSC::Interpreter::prepareForRepeatCall):
+
 2011-04-18  Gavin Barraclough  <barraclough@apple.com>
 
         Reviewed by Geoff Garen.
