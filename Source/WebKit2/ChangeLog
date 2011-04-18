@@ -1,5 +1,11 @@
 2011-04-18  Anders Carlsson  <andersca@apple.com>
 
+        Try to fix the Windows build.
+
+        * Scripts/webkit2/messages.py:
+
+2011-04-18  Anders Carlsson  <andersca@apple.com>
+
         Reviewed by Dan Bernstein.
 
         Get rid of WebProcessProxyLegacyMessage

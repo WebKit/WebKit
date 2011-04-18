@@ -541,6 +541,9 @@ def generate_message_handler(file):
         for message in sync_delayed_messages:
             send_parameters = [(function_parameter_type(x.type), x.name) for x in message.reply_parameters]
 
+            if message.condition:
+                result.append('#if %s\n\n' % message.condition)
+            
             result.append('%s::DelayedReply::DelayedReply(PassRefPtr<CoreIPC::Connection> connection, PassOwnPtr<CoreIPC::ArgumentEncoder> arguments)\n' % message.name)
             result.append('    : m_connection(connection)\n')
             result.append('    , m_arguments(arguments)\n')
@@ -562,7 +565,10 @@ def generate_message_handler(file):
             result.append('}\n')
             result.append('\n')
 
-            result.append('} // namespace %s\n\n} // namespace Messages\n\n' % receiver.name)
+            if message.condition:
+                result.append('#endif\n\n')
+
+        result.append('} // namespace %s\n\n} // namespace Messages\n\n' % receiver.name)
 
     result.append('namespace WebKit {\n\n')
 
