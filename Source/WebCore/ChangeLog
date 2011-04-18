@@ -1,3 +1,23 @@
+2011-04-15  MORITA Hajime  <morrita@google.com>
+
+        Reviewed by Adam Barth.
+
+        REGRESSION: <progress> doesn't animate if it doesn't have value
+        https://bugs.webkit.org/show_bug.cgi?id=58693
+
+        The initial value of RenderProgress::m_position is accidentally same as
+        the indeterminate value, that makes update code on updateFromElement() skipped.
+        This change set unique invalid value for the initial value of m_position.
+        
+        No new tests. Testing animated bar is not possible with DRT.
+
+        * html/HTMLProgressElement.cpp:
+        (WebCore::HTMLProgressElement::position):
+        * html/HTMLProgressElement.h:
+        * rendering/RenderProgress.cpp:
+        (WebCore::RenderProgress::RenderProgress):
+        (WebCore::RenderProgress::isDeterminate):
+
 2011-04-18  MORITA Hajime  <morrita@google.com>
 
         Reviewed by Eric Seidel.

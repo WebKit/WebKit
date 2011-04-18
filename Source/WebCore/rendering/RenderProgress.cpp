@@ -38,7 +38,7 @@ namespace WebCore {
 
 RenderProgress::RenderProgress(HTMLProgressElement* element)
     : RenderBlock(element)
-    , m_position(-1)
+    , m_position(HTMLProgressElement::InvalidPosition)
     , m_animationStartTime(0)
     , m_animationRepeatInterval(0)
     , m_animationDuration(0)
@@ -69,7 +69,8 @@ double RenderProgress::animationProgress() const
 
 bool RenderProgress::isDeterminate() const
 {
-    return 0 <= position();
+    return (HTMLProgressElement::IndeterminatePosition != position()
+            && HTMLProgressElement::InvalidPosition != position());
 }
 
 void RenderProgress::animationTimerFired(Timer<RenderProgress>*)

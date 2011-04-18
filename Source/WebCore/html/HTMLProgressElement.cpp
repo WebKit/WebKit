@@ -39,6 +39,9 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
+const double HTMLProgressElement::IndeterminatePosition = -1;
+const double HTMLProgressElement::InvalidPosition = -2;
+
 HTMLProgressElement::HTMLProgressElement(const QualifiedName& tagName, Document* document, HTMLFormElement* form)
     : HTMLFormControlElement(tagName, document, form)
 {
@@ -123,7 +126,7 @@ void HTMLProgressElement::setMax(double max, ExceptionCode& ec)
 double HTMLProgressElement::position() const
 {
     if (!hasAttribute(valueAttr))
-        return -1;
+        return HTMLProgressElement::IndeterminatePosition;
     return value() / max();
 }
 

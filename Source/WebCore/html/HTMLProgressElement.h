@@ -30,6 +30,9 @@ class ProgressValueElement;
 
 class HTMLProgressElement : public HTMLFormControlElement {
 public:
+    static const double IndeterminatePosition;
+    static const double InvalidPosition;
+
     static PassRefPtr<HTMLProgressElement> create(const QualifiedName&, Document*, HTMLFormElement*);
 
     double value() const;
