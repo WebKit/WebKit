@@ -1,3 +1,13 @@
+2011-04-18  Alexey Proskuryakov  <ap@apple.com>
+
+        Reviewed by Maciej Stachowiak.
+
+        Re-add a null check lost in r83081
+        https://bugs.webkit.org/show_bug.cgi?id=58846
+
+        * WebProcess/WebPage/mac/WebPageMac.mm:
+        (WebKit::WebPage::getSelectedRange):
+
 2011-04-18  Andreas Kling  <kling@webkit.org>
 
         Reviewed by Kenneth Rohde Christiansen.

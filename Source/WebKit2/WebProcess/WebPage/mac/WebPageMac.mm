@@ -304,7 +304,8 @@ void WebPage::getSelectedRange(uint64_t& location, uint64_t& length)
 
     size_t locationSize;
     size_t lengthSize;
-    if (TextIterator::locationAndLengthFromRange(frame->selection()->toNormalizedRange().get(), locationSize, lengthSize)) {
+    RefPtr<Range> range = frame->selection()->toNormalizedRange();
+    if (range && TextIterator::locationAndLengthFromRange(range.get(), locationSize, lengthSize)) {
         location = static_cast<uint64_t>(locationSize);
         length = static_cast<uint64_t>(lengthSize);
     }
