@@ -1,3 +1,13 @@
+2011-04-18  Jeff Miller  <jeffm@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        Allow all log channels to be initialized from WebCoreLogLevel Windows environment variable
+        https://bugs.webkit.org/show_bug.cgi?id=58811
+
+        * platform/win/LoggingWin.cpp:
+        (WebCore::InitializeLoggingChannelsIfNecessary): Support initializing LogResourceLoading, LogProgress, and LogFileAPI from WebCoreLogLevel Windows environment variable.
+
 2011-04-18  Andrew Scherkus  <scherkus@chromium.org>
 
         Reviewed by Eric Seidel.
