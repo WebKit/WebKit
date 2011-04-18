@@ -200,6 +200,8 @@ public:
 
     static QUrl mediaContentUrlByElementId(QWebFrame*, const QString& elementId);
     static void setAlternateHtml(QWebFrame*, const QString& html, const QUrl& baseUrl, const QUrl& failingUrl);
+
+    static QVariant shadowRoot(const QWebElement&);
 };
 
 #endif

@@ -1993,8 +1993,6 @@ fast/dom/HTMLHeadElement/textInHead4.html
 fast/dom/HTMLHeadElement/textInHead5.html
 fast/dom/HTMLImageElement/image-alt-text.html
 fast/dom/HTMLInputElement/input-image-alt-text.html
-# See https://bugs.webkit.org/show_bug.cgi?id=56573
-fast/dom/HTMLKeygenElement/keygen.html
 fast/dom/HTMLLinkElement/pending-stylesheet-count.html
 # meter-element.html is temporally disabled.We need to rebaseline.
 fast/dom/HTMLMeterElement/meter-element.html

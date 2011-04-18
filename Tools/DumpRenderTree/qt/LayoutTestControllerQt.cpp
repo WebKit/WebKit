@@ -780,6 +780,11 @@ void LayoutTestController::setGeolocationPermission(bool allow)
     DumpRenderTreeSupportQt::setMockGeolocationPermission(m_drt->webPage(), allow);
 }
 
+QVariant LayoutTestController::shadowRoot(const QWebElement& element)
+{
+    return DumpRenderTreeSupportQt::shadowRoot(element);
+}
+
 int LayoutTestController::numberOfPendingGeolocationPermissionRequests()
 {
     int pendingPermissionCount = 0;
