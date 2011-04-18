@@ -28,12 +28,12 @@
 #include "WebKitDLL.h"
 #include "WebPreferences.h"
 
-#include "COMPtr.h"
 #include "WebNotificationCenter.h"
 #include "WebPreferenceKeysPrivate.h"
 
 #include <CoreFoundation/CoreFoundation.h>
 #include <WebCore/CACFLayerTreeHost.h>
+#include <WebCore/COMPtr.h>
 #include <WebCore/FileSystem.h>
 #include <WebCore/Font.h>
 #include <WebCore/LocalizedStrings.h>

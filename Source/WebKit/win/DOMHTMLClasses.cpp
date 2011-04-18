@@ -26,10 +26,10 @@
 #include "config.h"
 #include "WebKitDLL.h"
 #include "DOMHTMLClasses.h"
-#include "COMPtr.h"
 #include "WebFrame.h"
 
 #include <WebCore/BString.h>
+#include <WebCore/COMPtr.h>
 #include <WebCore/Document.h>
 #include <WebCore/Element.h>
 #include <WebCore/FrameView.h>

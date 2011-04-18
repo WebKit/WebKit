@@ -27,7 +27,7 @@
 #ifndef WebDropSource_h
 #define WebDropSource_h
 
-#include "COMPtr.h"
+#include <WebCore/COMPtr.h>
 #include <objidl.h>
 
 class WebView;

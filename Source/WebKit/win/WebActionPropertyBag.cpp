@@ -27,11 +27,11 @@
 #include "WebKitDLL.h"
 #include "WebActionPropertyBag.h"
 
-#include "COMPtr.h"
 #include "DOMCoreClasses.h"
 #include "WebElementPropertyBag.h"
 #include "WebKit.h"
 #include <WebCore/BString.h>
+#include <WebCore/COMPtr.h>
 #include <WebCore/EventHandler.h>
 #include <WebCore/HitTestResult.h>
 #include <WebCore/MouseEvent.h>

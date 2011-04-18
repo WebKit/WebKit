@@ -27,12 +27,12 @@
 #include "WebKitDLL.h"
 #include "WebBackForwardList.h"
 
-#include "COMPtr.h"
 #include "WebFrame.h"
 #include "WebKit.h"
 #include "WebPreferences.h"
 
 #include <WebCore/BackForwardListImpl.h>
+#include <WebCore/COMPtr.h>
 #include <WebCore/HistoryItem.h>
 
 using std::min;

@@ -26,8 +26,8 @@
 #ifndef WebDownload_h
 #define WebDownload_h
 
-#include "COMPtr.h"
 #include "WebKit.h"
+#include <WebCore/COMPtr.h>
 #include <WebCore/PlatformString.h>
 #include <wtf/RetainPtr.h>
 

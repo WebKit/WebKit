@@ -30,7 +30,6 @@
 
 #include "CFDictionaryPropertyBag.h"
 #include "COMPropertyBag.h"
-#include "COMPtr.h"
 #include "DOMCoreClasses.h"
 #include "DefaultPolicyDelegate.h"
 #include "HTMLFrameOwnerElement.h"
@@ -54,6 +53,7 @@
 #include "WebURLResponse.h"
 #include "WebView.h"
 #include <WebCore/BString.h>
+#include <WebCore/COMPtr.h>
 #include <WebCore/MemoryCache.h>
 #include <WebCore/Document.h>
 #include <WebCore/DocumentLoader.h>

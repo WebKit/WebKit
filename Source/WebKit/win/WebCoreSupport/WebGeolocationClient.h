@@ -26,7 +26,7 @@
 #ifndef WebGeolocationClient_h
 #define WebGeolocationClient_h
 
-#include "COMPtr.h"
+#include <WebCore/COMPtr.h>
 #include <WebCore/GeolocationClient.h>
 
 namespace WebCore {

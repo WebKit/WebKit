@@ -1,3 +1,29 @@
+2011-04-18  Patrick Gansterer  <paroga@webkit.org>
+
+        Reviewed by Adam Roben.
+
+        Include <WebCore/COMPtr.h> instead of "COMPtr.h"
+        https://bugs.webkit.org/show_bug.cgi?id=58744
+
+        * DOMCoreClasses.cpp:
+        * DOMHTMLClasses.cpp:
+        * WebActionPropertyBag.cpp:
+        * WebBackForwardList.cpp:
+        * WebCoreSupport/WebGeolocationClient.h:
+        * WebDownload.h:
+        * WebDropSource.h:
+        * WebFrame.cpp:
+        * WebHistoryItem.cpp:
+        * WebIconDatabase.cpp:
+        * WebNavigationData.h:
+        * WebPreferences.cpp:
+        * WebResource.h:
+        * WebURLAuthenticationChallenge.cpp:
+        * WebURLAuthenticationChallengeSender.cpp:
+        * WebURLAuthenticationChallengeSenderCFNet.cpp:
+        * WebURLAuthenticationChallengeSenderCurl.cpp:
+        * WebView.h:
+
 2011-04-17  Patrick Gansterer  <paroga@webkit.org>
 
         Reviewed by Adam Barth.

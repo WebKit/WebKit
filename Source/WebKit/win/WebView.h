@@ -26,10 +26,10 @@
 #ifndef WebView_H
 #define WebView_H
 
-#include "COMPtr.h"
 #include "WebKit.h"
 #include "WebFrame.h"
 #include "WebPreferences.h"
+#include <WebCore/COMPtr.h>
 #include <WebCore/DragActions.h>
 #include <WebCore/IntRect.h>
 #include <WebCore/RefCountedGDIHandle.h>

@@ -27,7 +27,7 @@
 #define WebResource_h
 
 #include "WebKit.h"
-#include "COMPtr.h"
+#include <WebCore/COMPtr.h>
 #include <WebCore/KURL.h>
 #include <WebCore/PlatformString.h>
 #include <WebCore/ResourceResponse.h>

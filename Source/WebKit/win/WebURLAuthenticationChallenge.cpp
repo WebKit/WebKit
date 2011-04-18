@@ -27,7 +27,6 @@
 #include "WebKitDLL.h"
 #include "WebURLAuthenticationChallenge.h"
 
-#include "COMPtr.h"
 #include "WebError.h"
 #include "WebKit.h"
 #include "WebURLAuthenticationChallengeSender.h"
@@ -36,6 +35,7 @@
 #include "WebURLResponse.h"
 #include "WebKit.h"
 #include <WebCore/BString.h>
+#include <WebCore/COMPtr.h>
 #include <WebCore/ResourceHandle.h>
 
 using namespace WebCore;

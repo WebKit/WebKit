@@ -27,13 +27,13 @@
 #include "WebKitDLL.h"
 #include "DOMCoreClasses.h"
 
-#include "COMPtr.h"
 #include "DOMCSSClasses.h"
 #include "DOMEventsClasses.h"
 #include "DOMHTMLClasses.h"
 #include "WebKitGraphics.h"
 
 #include <WebCore/BString.h>
+#include <WebCore/COMPtr.h>
 #include <WebCore/DOMWindow.h>
 #include <WebCore/Document.h>
 #include <WebCore/Element.h>

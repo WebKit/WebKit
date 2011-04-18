@@ -28,8 +28,8 @@
 
 #include "WebKit.h"
 
-#include "COMPtr.h"
 #include <WebCore/BString.h>
+#include <WebCore/COMPtr.h>
 
 class WebNavigationData : public IWebNavigationData {
 public:

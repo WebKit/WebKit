@@ -28,10 +28,10 @@
 #include "WebHistoryItem.h"
 
 #include "COMEnumVariant.h"
-#include "COMPtr.h"
 #include "MarshallingHelpers.h"
 #include "WebKit.h"
 #include <WebCore/BString.h>
+#include <WebCore/COMPtr.h>
 #include <WebCore/HistoryItem.h>
 #include <WebCore/KURL.h>
 #include <wtf/PassOwnPtr.h>

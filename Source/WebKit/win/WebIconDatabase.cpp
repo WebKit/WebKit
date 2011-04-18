@@ -28,11 +28,11 @@
 #include "WebIconDatabase.h"
 
 #include "CFDictionaryPropertyBag.h"
-#include "COMPtr.h"
 #include "WebPreferences.h"
 #include "WebNotificationCenter.h"
 #include <WebCore/BitmapInfo.h>
 #include <WebCore/BString.h>
+#include <WebCore/COMPtr.h>
 #include <WebCore/FileSystem.h>
 #include <WebCore/IconDatabase.h>
 #include <WebCore/Image.h>
