@@ -743,6 +743,7 @@ void WebPage::installPageOverlay(PassRefPtr<PageOverlay> pageOverlay)
         m_pageOverlay->startFadeInAnimation();
 
     m_drawingArea->didInstallPageOverlay();
+    m_pageOverlay->setNeedsDisplay();
 }
 
 void WebPage::uninstallPageOverlay(PageOverlay* pageOverlay, bool fadeOut)

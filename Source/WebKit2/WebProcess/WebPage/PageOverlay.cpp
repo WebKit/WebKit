@@ -83,9 +83,6 @@ void PageOverlay::setPage(WebPage* webPage)
     m_webPage = webPage;
     m_client->didMoveToWebPage(this, webPage);
 
-    if (m_webPage)
-        setNeedsDisplay();
-
     m_fadeAnimationTimer.stop();
 }
 

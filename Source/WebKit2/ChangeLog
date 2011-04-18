@@ -1,3 +1,19 @@
+2011-04-18  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Adam Roben.
+
+        Reproducible crash in Find on Page, on pages that use accelerated compositing
+        https://bugs.webkit.org/show_bug.cgi?id=58793
+        <rdar://problem/9295870>
+
+        Move the call to PageOverlay::setNeedsDisplay() back to WebPage::installPageOverlay;
+        it needs to be called after we've told the drawing area that a page overlay has been installed.
+
+        * WebProcess/WebPage/PageOverlay.cpp:
+        (WebKit::PageOverlay::setPage):
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::installPageOverlay):
+
 2011-04-18  Jeff Miller  <jeffm@apple.com>
 
         Reviewed by Timothy Hatcher.
