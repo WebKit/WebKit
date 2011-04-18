@@ -357,7 +357,6 @@ class ChromiumDriver(base.Driver):
         if self._port.get_option('pixel_tests'):
             self._image_path = self._port._filesystem.join(self._port.results_directory(),
                 'png_result%s.png' % self._worker_number)
-        self._stderr_is_nonblocking = False
 
     def cmd_line(self):
         cmd = self._command_wrapper(self._port.get_option('wrapper'))
@@ -404,9 +403,8 @@ class ChromiumDriver(base.Driver):
         close_flag = sys.platform not in ('win32', 'cygwin')
         self._proc = subprocess.Popen(cmd, stdin=subprocess.PIPE,
                                       stdout=subprocess.PIPE,
-                                      stderr=subprocess.PIPE,
+                                      stderr=subprocess.STDOUT,
                                       close_fds=close_flag)
-        self._stderr_is_nonblocking = False
 
     def poll(self):
         # poll() is not threadsafe and can throw OSError due to:
@@ -517,7 +515,7 @@ class ChromiumDriver(base.Driver):
             elif actual_uri:
                 output.append(line)
             else:
-                error.append('extra stdout output: %s' % line)
+                error.append(line)
 
             (line, crash) = self._write_command_and_read_line(input=None)
 
@@ -528,10 +526,9 @@ class ChromiumDriver(base.Driver):
         text = ''.join(output)
         if not text:
             text = None
-        error_text = ''.join(error) + self._read_stderr()
 
         return base.DriverOutput(text, output_image, actual_checksum, audio=None,
-            crash=crash, test_time=run_time, timeout=timeout, error=error_text)
+            crash=crash, test_time=run_time, timeout=timeout, error=''.join(error))
 
     def stop(self):
         if self._proc:
@@ -555,24 +552,3 @@ class ChromiumDriver(base.Driver):
             if self._proc.poll() is not None:
                 self._proc.wait()
             self._proc = None
-
-    def _read_stderr(self):
-        if sys.platform in ('win32', 'cygwin'):
-            import msvcrt
-            import win32pipe
-
-            fd = self._proc.stderr.fileno()
-            osf = msvcrt.get_osfhandle(fd)
-            _, avail, _ = win32pipe.PeekNamedPipe(osf, 0)
-            if avail:
-                return self._proc.stderr.read(avail)
-            return ''
-        else:
-            if not self._stderr_is_nonblocking:
-                import fcntl
-                import os
-                fd = self._proc.stderr.fileno()
-                fl = fcntl.fcntl(fd, fcntl.F_GETFL)
-                fcntl.fcntl(fd, fcntl.F_SETFL, fl | os.O_NONBLOCK)
-                self._stderr_is_nonblocking = True
-            return self._proc.stderr.read()

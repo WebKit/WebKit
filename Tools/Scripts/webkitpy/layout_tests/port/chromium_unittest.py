@@ -41,8 +41,6 @@ import chromium_linux
 import chromium_mac
 import chromium_win
 
-from webkitpy.layout_tests.port import base
-from webkitpy.layout_tests.port import factory
 from webkitpy.layout_tests.port import port_testcase
 
 
@@ -221,22 +219,6 @@ LINUX WIN : fast/js/very-good.js = TIMEOUT PASS"""
         except ValueError, e:
             exception_raised = True
         self.assertFalse(exception_raised)
-
-    # Disabled because this is an integration test that relies on the
-    # actual filesystem.
-    def disabled_test_stderr(self):
-        port = factory.get('mock-chromium-mac-snowleopard')
-        path = port.abspath_for_test('fast/html/article-element.html')
-        self.assertTrue(port._filesystem.exists(path))
-
-        driver = port.create_driver(1)
-        driver.start()
-        try:
-            driver_input = base.DriverInput(path, 1000, None)
-            driver_output = driver.run_test(driver_input)
-            self.assertEquals(driver_output.error.strip(), 'stuff going to stderr')
-        finally:
-            driver.stop()
 
 
 class ChromiumPortLoggingTest(logtesting.LoggingTestCase):

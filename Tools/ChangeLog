@@ -1,5 +1,18 @@
 2011-04-18  Sheriff Bot  <webkit.review.bot@gmail.com>
 
+        Unreviewed, rolling out r84111.
+        http://trac.webkit.org/changeset/84111
+        https://bugs.webkit.org/show_bug.cgi?id=58771
+
+        Chromium linux layout tests are broken. (Requested by loislo2
+        on #webkit).
+
+        * Scripts/webkitpy/layout_tests/port/chromium.py:
+        * Scripts/webkitpy/layout_tests/port/chromium_unittest.py:
+        * Scripts/webkitpy/layout_tests/port/mock_drt.py:
+
+2011-04-18  Sheriff Bot  <webkit.review.bot@gmail.com>
+
         Unreviewed, rolling out r84112.
         http://trac.webkit.org/changeset/84112
         https://bugs.webkit.org/show_bug.cgi?id=58770

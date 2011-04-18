@@ -283,13 +283,6 @@ class MockChromiumDRT(MockDRT):
         self._stdout.write('#EOF\n')
         self._stdout.flush()
 
-        # FIXME: this is a lame hack to test that we are capturing stderr
-        # output correctly. We should fix this by passing in a command line
-        # arg once https://bugs.webkit.org/show_bug.cgi?id=58680 lands.
-        if 'article-element' in test_input.uri:
-            self._stderr.write("stuff going to stderr\n")
-            self._stderr.flush()
-
 
 if __name__ == '__main__':
     fs = filesystem.FileSystem()
