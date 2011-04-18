@@ -1026,7 +1026,7 @@ void FrameLoaderClientQt::assignIdentifierToInitialRequest(unsigned long identif
 
 void FrameLoaderClientQt::dispatchWillSendRequest(WebCore::DocumentLoader*, unsigned long identifier, WebCore::ResourceRequest& newRequest, const WebCore::ResourceResponse& redirectResponse)
 {
-    KURL url = newRequest.url();
+    QUrl url = newRequest.url();
 
     if (dumpResourceLoadCallbacks)
         printf("%s - willSendRequest %s redirectResponse %s\n",
@@ -1046,10 +1046,11 @@ void FrameLoaderClientQt::dispatchWillSendRequest(WebCore::DocumentLoader*, unsi
     }
 
     if (QWebPagePrivate::drtRun
-        && url.protocolInHTTPFamily()
-        && url.host() != "127.0.0.1"
-        && url.host() != "255.255.255.255"
-        && !equalIgnoringCase(url.host(), "localhost")) {
+        && url.isValid()
+        && (url.scheme().toLower() == QLatin1String("http") || url.scheme().toLower() == QLatin1String("https"))
+        && url.host() != QLatin1String("127.0.0.1")
+        && url.host() != QLatin1String("255.255.255.255")
+        && url.host().toLower() != QLatin1String("localhost")) {
 
         printf("Blocked access to external URL %s\n", qPrintable(drtDescriptionSuitableForTestResult(url)));
         newRequest.setURL(QUrl());
@@ -1060,7 +1061,7 @@ void FrameLoaderClientQt::dispatchWillSendRequest(WebCore::DocumentLoader*, unsi
           newRequest.setHTTPHeaderField(sendRequestClearHeaders.at(i).toLocal8Bit().constData(), QString());
 
     if (QWebPagePrivate::drtRun) {
-        QMap<QString, QString>::const_iterator it = URLsToRedirect.constFind(url.string());
+        QMap<QString, QString>::const_iterator it = URLsToRedirect.constFind(url.toString());
         if (it != URLsToRedirect.constEnd())
             newRequest.setURL(QUrl(it.value()));
     }

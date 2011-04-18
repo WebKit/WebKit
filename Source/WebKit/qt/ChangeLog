@@ -1,3 +1,16 @@
+2011-04-18  Andreas Kling  <kling@webkit.org>
+
+        Reviewed by Adam Barth.
+
+        REGRESSION (r84010): [Qt] DRT: Unbreak redirection of http:/ URLs.
+        https://bugs.webkit.org/show_bug.cgi?id=58779
+
+        KURL::host() doesn't return the host part of [broken] http:/ URLs, so use
+        QUrl instead to match the behavior of other ports.
+
+        * WebCoreSupport/FrameLoaderClientQt.cpp:
+        (WebCore::FrameLoaderClientQt::dispatchWillSendRequest):
+
 2011-04-18  Dominic Cooney  <dominicc@chromium.org>
 
         Reviewed by Andreas Kling.
