@@ -177,6 +177,13 @@ void callMemberFunction(const Arguments4<P1, P2, P3, P4>& args, Arguments3<R1, R
     (object->*function)(args.argument1, args.argument2, args.argument3, args.argument4, replyArgs.argument1, replyArgs.argument2, replyArgs.argument3);
 }
 
+// Dispatch functions with delayed reply arguments.
+template<typename C, typename MF, typename P1, typename R>
+void callMemberFunction(const Arguments1<P1>& args, PassRefPtr<R> delayedReply, C* object, MF function)
+{
+    (object->*function)(args.argument1, delayedReply);
+}
+
 // Variadic dispatch functions.
 
 template<typename C, typename MF>
@@ -290,6 +297,17 @@ void handleMessageVariadic(ArgumentDecoder* argumentDecoder, ArgumentEncoder* re
     typename T::Reply::ValueType replyArguments;
     callMemberFunction(arguments, argumentDecoder, replyArguments, object, function);
     replyEncoder->encode(replyArguments);
+}
+
+template<typename T, typename C, typename MF>
+void handleMessageDelayed(Connection* connection, ArgumentDecoder* argumentDecoder, ArgumentEncoder* replyEncoder, C* object, MF function)
+{
+    typename T::DecodeType::ValueType arguments;
+    if (!argumentDecoder->decode(arguments))
+        return;
+
+    RefPtr<typename T::DelayedReply> delayedReply = adoptRef(new typename T::DelayedReply(connection, replyEncoder));
+    callMemberFunction(arguments, delayedReply.release(), object, function);
 }
 
 } // namespace CoreIPC

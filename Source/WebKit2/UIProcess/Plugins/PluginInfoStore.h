@@ -35,6 +35,8 @@ namespace WebCore {
 namespace WebKit {
 
 class PluginInfoStore {
+    WTF_MAKE_NONCOPYABLE(PluginInfoStore)
+
 public:
     PluginInfoStore();
 

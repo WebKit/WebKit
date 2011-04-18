@@ -45,14 +45,13 @@ PluginProcessManager::PluginProcessManager()
 {
 }
 
-void PluginProcessManager::getPluginProcessConnection(const String& pluginPath, WebProcessProxy* webProcessProxy, CoreIPC::ArgumentEncoder* reply)
+void PluginProcessManager::getPluginProcessConnection(PluginInfoStore* pluginInfoStore, const String& pluginPath, PassRefPtr<Messages::WebProcessProxy::GetPluginProcessConnection::DelayedReply> reply)
 {
     ASSERT(!pluginPath.isNull());
 
-    PluginInfoStore::Plugin plugin = webProcessProxy->context()->pluginInfoStore()->infoForPluginWithPath(pluginPath);
+    PluginInfoStore::Plugin plugin = pluginInfoStore->infoForPluginWithPath(pluginPath);
     PluginProcessProxy* pluginProcess = getOrCreatePluginProcess(plugin);
-
-    pluginProcess->createWebProcessConnection(webProcessProxy, reply);
+    pluginProcess->getPluginProcessConnection(reply);
 }
 
 void PluginProcessManager::removePluginProcessProxy(PluginProcessProxy* pluginProcessProxy)

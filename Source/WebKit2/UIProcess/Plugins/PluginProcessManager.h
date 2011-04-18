@@ -29,6 +29,7 @@
 #if ENABLE(PLUGIN_PROCESS)
 
 #include "PluginInfoStore.h"
+#include "WebProcessProxyMessages.h"
 #include <wtf/Forward.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/Vector.h>
@@ -39,6 +40,7 @@ namespace CoreIPC {
 
 namespace WebKit {
 
+class PluginInfoStore;
 class PluginProcessProxy;
 class WebProcessProxy;
 class WebPluginSiteDataManager;
@@ -48,7 +50,7 @@ class PluginProcessManager {
 public:
     static PluginProcessManager& shared();
 
-    void getPluginProcessConnection(const String& pluginPath, WebProcessProxy*, CoreIPC::ArgumentEncoder* reply);
+    void getPluginProcessConnection(PluginInfoStore*, const String& pluginPath, PassRefPtr<Messages::WebProcessProxy::GetPluginProcessConnection::DelayedReply>);
     void removePluginProcessProxy(PluginProcessProxy*);
 
     void getSitesWithData(const PluginInfoStore::Plugin&, WebPluginSiteDataManager*, uint64_t callbackID);

@@ -217,9 +217,9 @@ void WebProcessProxy::addBackForwardItem(uint64_t itemID, const String& original
 }
 
 #if ENABLE(PLUGIN_PROCESS)
-void WebProcessProxy::getPluginProcessConnection(const String& pluginPath, CoreIPC::ArgumentEncoder* reply)
+void WebProcessProxy::getPluginProcessConnection(const String& pluginPath, PassRefPtr<Messages::WebProcessProxy::GetPluginProcessConnection::DelayedReply> reply)
 {
-    PluginProcessManager::shared().getPluginProcessConnection(pluginPath, this, reply);
+    PluginProcessManager::shared().getPluginProcessConnection(context()->pluginInfoStore(), pluginPath, reply);
 }
 #endif
 
@@ -260,22 +260,6 @@ CoreIPC::SyncReplyMode WebProcessProxy::didReceiveSyncMessage(CoreIPC::Connectio
 {
     if (messageID.is<CoreIPC::MessageClassWebProcessProxy>())
         return didReceiveSyncWebProcessProxyMessage(connection, messageID, arguments, reply);
-
-#if ENABLE(PLUGIN_PROCESS)
-    if (messageID.is<CoreIPC::MessageClassWebProcessProxyLegacy>()) {
-        switch (messageID.get<WebProcessProxyLegacyMessage::Kind>()) {
-            case WebProcessProxyLegacyMessage::GetPluginProcessConnection: {
-                String pluginPath;
-                
-                if (!arguments->decode(CoreIPC::Out(pluginPath)))
-                    return CoreIPC::AutomaticReply;
-
-                getPluginProcessConnection(pluginPath, reply);
-                return CoreIPC::ManualReply;
-            }
-        }
-    }
-#endif
 
     if (messageID.is<CoreIPC::MessageClassWebContext>() || messageID.is<CoreIPC::MessageClassWebContextLegacy>() 
         || messageID.is<CoreIPC::MessageClassDownloadProxy>() || messageID.is<CoreIPC::MessageClassWebIconDatabase>())

@@ -1,5 +1,46 @@
 2011-04-18  Anders Carlsson  <andersca@apple.com>
 
+        Reviewed by Sam Weinig.
+
+        Use the message generator for the GetPluginProcessConnection message
+        https://bugs.webkit.org/show_bug.cgi?id=58815
+
+        * Platform/CoreIPC/HandleMessage.h:
+        (CoreIPC::callMemberFunction):
+        (CoreIPC::handleMessageDelayed):
+        Add helper functions.
+
+        * UIProcess/Plugins/PluginInfoStore.h:
+        Mark class noncopyable.
+
+        * UIProcess/Plugins/PluginProcessManager.cpp:
+        (WebKit::PluginProcessManager::getPluginProcessConnection):
+        This now takes a delayed reply.
+
+        * UIProcess/Plugins/PluginProcessProxy.cpp:
+        (WebKit::PluginProcessProxy::getPluginProcessConnection):
+        This now takes a delayed reply.
+
+        (WebKit::PluginProcessProxy::pluginProcessCrashedOrFailedToLaunch):
+        (WebKit::PluginProcessProxy::didCreateWebProcessConnection):
+        Call DelayedReply::send.
+
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::getPluginProcessConnection):
+        This now takes a delayed reply.
+        
+        (WebKit::WebProcessProxy::didReceiveSyncMessage):
+        No need to handle this message here.
+
+        * UIProcess/WebProcessProxy.messages.in:
+        Add GetPluginProcessConnection message.
+
+        * WebProcess/Plugins/PluginProcessConnectionManager.cpp:
+        (WebKit::PluginProcessConnectionManager::getPluginProcessConnection):
+        Don't use deprecatedSendSync.
+
+2011-04-18  Anders Carlsson  <andersca@apple.com>
+
         Reviewed by Adam Roben.
 
         Finish implementing delayed sync replies in the CoreIPC message generator

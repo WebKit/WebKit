@@ -31,6 +31,7 @@
 #include "Connection.h"
 #include "PluginInfoStore.h"
 #include "ProcessLauncher.h"
+#include "WebProcessProxyMessages.h"
 #include <wtf/Deque.h>
 
 #if PLATFORM(MAC)
@@ -63,8 +64,8 @@ public:
 
     // Asks the plug-in process to create a new connection to a web process. The connection identifier will be 
     // encoded in the given argument encoder and sent back to the connection of the given web process.
-    void createWebProcessConnection(WebProcessProxy*, CoreIPC::ArgumentEncoder* reply);
-
+    void getPluginProcessConnection(PassRefPtr<Messages::WebProcessProxy::GetPluginProcessConnection::DelayedReply>);
+    
     // Asks the plug-in process to get a list of domains for which the plug-in has data stored.
     void getSitesWithData(WebPluginSiteDataManager*, uint64_t callbackID);
 
@@ -122,7 +123,7 @@ private:
     // The process launcher for the plug-in host process.
     RefPtr<ProcessLauncher> m_processLauncher;
 
-    Deque<std::pair<RefPtr<WebProcessProxy>, CoreIPC::ArgumentEncoder*> > m_pendingConnectionReplies;
+    Deque<RefPtr<Messages::WebProcessProxy::GetPluginProcessConnection::DelayedReply> > m_pendingConnectionReplies;
 
     Vector<uint64_t> m_pendingGetSitesRequests;
     HashMap<uint64_t, RefPtr<WebPluginSiteDataManager> > m_pendingGetSitesReplies;

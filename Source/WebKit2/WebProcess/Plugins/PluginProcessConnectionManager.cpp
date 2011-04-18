@@ -33,6 +33,7 @@
 #include "PluginProcessConnection.h"
 #include "WebCoreArgumentCoders.h"
 #include "WebProcess.h"
+#include "WebProcessProxyMessages.h"
 #include "WebProcessProxyMessageKinds.h"
 #include <wtf/StdLibExtras.h>
 
@@ -66,7 +67,8 @@ PluginProcessConnection* PluginProcessConnectionManager::getPluginProcessConnect
     CoreIPC::Connection::Identifier connectionIdentifier;
 #if PLATFORM(MAC)
     CoreIPC::MachPort connectionMachPort;
-    if (!WebProcess::shared().connection()->deprecatedSendSync(WebProcessProxyLegacyMessage::GetPluginProcessConnection, 0, CoreIPC::In(pluginPath), CoreIPC::Out(connectionMachPort)))
+
+    if (!WebProcess::shared().connection()->sendSync(Messages::WebProcessProxy::GetPluginProcessConnection(pluginPath), Messages::WebProcessProxy::GetPluginProcessConnection::Reply(connectionMachPort), 0))
         return 0;
 
     connectionIdentifier = connectionMachPort.port();

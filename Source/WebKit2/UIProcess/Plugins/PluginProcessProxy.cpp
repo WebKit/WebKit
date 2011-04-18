@@ -73,15 +73,15 @@ PluginProcessProxy::~PluginProcessProxy()
 
 // Asks the plug-in process to create a new connection to a web process. The connection identifier will be 
 // encoded in the given argument encoder and sent back to the connection of the given web process.
-void PluginProcessProxy::createWebProcessConnection(WebProcessProxy* webProcessProxy, CoreIPC::ArgumentEncoder* reply)
+void PluginProcessProxy::getPluginProcessConnection(PassRefPtr<Messages::WebProcessProxy::GetPluginProcessConnection::DelayedReply> reply)
 {
-    m_pendingConnectionReplies.append(make_pair(webProcessProxy, reply));
+    m_pendingConnectionReplies.append(reply);
 
     if (m_processLauncher->isLaunching()) {
         m_numPendingConnectionRequests++;
         return;
     }
-
+    
     // Ask the plug-in process to create a connection. Since the plug-in can be waiting for a synchronous reply
     // we need to make sure that this message is always processed, even when the plug-in is waiting for a synchronus reply.
     m_connection->send(Messages::PluginProcess::CreateWebProcessConnection(), 0, CoreIPC::DispatchMessageEvenWhenWaitingForSyncReply);
@@ -124,17 +124,14 @@ void PluginProcessProxy::pluginProcessCrashedOrFailedToLaunch()
 {
     // The plug-in process must have crashed or exited, send any pending sync replies we might have.
     while (!m_pendingConnectionReplies.isEmpty()) {
-        RefPtr<WebProcessProxy> replyWebProcessProxy = m_pendingConnectionReplies.first().first.release();
-        CoreIPC::ArgumentEncoder* reply = m_pendingConnectionReplies.first().second;
-        m_pendingConnectionReplies.removeFirst();
+        RefPtr<Messages::WebProcessProxy::GetPluginProcessConnection::DelayedReply> reply = m_pendingConnectionReplies.takeFirst();
 
 #if PLATFORM(MAC)
-        reply->encode(CoreIPC::MachPort(0, MACH_MSG_TYPE_MOVE_SEND));
+        reply->send(CoreIPC::MachPort(0, MACH_MSG_TYPE_MOVE_SEND));
 #else
         // FIXME: Implement.
         ASSERT_NOT_REACHED();
 #endif
-        replyWebProcessProxy->connection()->sendSyncReply(reply);
     }
 
     while (!m_pendingGetSitesReplies.isEmpty())
@@ -214,12 +211,9 @@ void PluginProcessProxy::didCreateWebProcessConnection(const CoreIPC::MachPort& 
     ASSERT(!m_pendingConnectionReplies.isEmpty());
 
     // Grab the first pending connection reply.
-    RefPtr<WebProcessProxy> replyWebProcessProxy = m_pendingConnectionReplies.first().first.release();
-    CoreIPC::ArgumentEncoder* reply = m_pendingConnectionReplies.first().second;
-    m_pendingConnectionReplies.removeFirst();
+    RefPtr<Messages::WebProcessProxy::GetPluginProcessConnection::DelayedReply> reply = m_pendingConnectionReplies.takeFirst();
 
-    reply->encode(CoreIPC::MachPort(machPort.port(), MACH_MSG_TYPE_MOVE_SEND));
-    replyWebProcessProxy->connection()->sendSyncReply(reply);
+    reply->send(CoreIPC::MachPort(machPort.port(), MACH_MSG_TYPE_MOVE_SEND));
 }
 #endif
 

@@ -34,6 +34,7 @@
 #include "ResponsivenessTimer.h"
 #include "ThreadLauncher.h"
 #include "WebPageProxy.h"
+#include "WebProcessProxyMessages.h"
 #include <WebCore/LinkHash.h>
 #include <wtf/Forward.h>
 #include <wtf/HashMap.h>
@@ -120,7 +121,7 @@ private:
     void shouldTerminate(bool& shouldTerminate);
 
 #if ENABLE(PLUGIN_PROCESS)
-    void getPluginProcessConnection(const String& pluginPath, CoreIPC::ArgumentEncoder* reply);
+    void getPluginProcessConnection(const String& pluginPath, PassRefPtr<Messages::WebProcessProxy::GetPluginProcessConnection::DelayedReply>);
 #endif
 
     // CoreIPC::Connection::Client
