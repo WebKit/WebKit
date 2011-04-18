@@ -22,6 +22,7 @@
 #include "DOMWrapperWorld.h"
 
 #include "JSDOMWindow.h"
+#include "ScriptController.h"
 #include "WebCoreJSClientData.h"
 
 using namespace JSC;
