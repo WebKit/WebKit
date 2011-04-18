@@ -365,6 +365,30 @@ bool SpeculativeJIT::compile(Node& node)
 
     case ValueAdd:
     case ArithAdd: {
+        int32_t imm1;
+        if (isDoubleConstantWithInt32Value(node.child1, imm1)) {
+            SpeculateIntegerOperand op2(this, node.child2);
+            GPRTemporary result(this);
+
+            MacroAssembler::RegisterID reg = op2.registerID();
+            speculationCheck(m_jit.branchAdd32(MacroAssembler::Overflow, reg, Imm32(imm1), result.registerID()));
+
+            integerResult(result.gpr(), m_compileIndex);
+            break;
+        }
+            
+        int32_t imm2;
+        if (isDoubleConstantWithInt32Value(node.child2, imm2)) {
+            SpeculateIntegerOperand op1(this, node.child1);
+            GPRTemporary result(this);
+
+            MacroAssembler::RegisterID reg = op1.registerID();
+            speculationCheck(m_jit.branchAdd32(MacroAssembler::Overflow, reg, Imm32(imm2), result.registerID()));
+
+            integerResult(result.gpr(), m_compileIndex);
+            break;
+        }
+            
         SpeculateIntegerOperand op1(this, node.child1);
         SpeculateIntegerOperand op2(this, node.child2);
         GPRTemporary result(this, op1, op2);
@@ -386,6 +410,18 @@ bool SpeculativeJIT::compile(Node& node)
     }
 
     case ArithSub: {
+        int32_t imm2;
+        if (isDoubleConstantWithInt32Value(node.child2, imm2)) {
+            SpeculateIntegerOperand op1(this, node.child1);
+            GPRTemporary result(this);
+
+            MacroAssembler::RegisterID reg = op1.registerID();
+            speculationCheck(m_jit.branchSub32(MacroAssembler::Overflow, reg, Imm32(imm2), result.registerID()));
+
+            integerResult(result.gpr(), m_compileIndex);
+            break;
+        }
+            
         SpeculateIntegerOperand op1(this, node.child1);
         SpeculateIntegerOperand op2(this, node.child2);
         GPRTemporary result(this);
@@ -406,7 +442,11 @@ bool SpeculativeJIT::compile(Node& node)
         MacroAssembler::RegisterID reg1 = op1.registerID();
         MacroAssembler::RegisterID reg2 = op2.registerID();
         speculationCheck(m_jit.branchMul32(MacroAssembler::Overflow, reg1, reg2, result.registerID()));
-        speculationCheck(m_jit.branchTest32(MacroAssembler::Zero, result.registerID()));
+
+        MacroAssembler::Jump resultNonZero = m_jit.branchTest32(MacroAssembler::NonZero, result.registerID());
+        speculationCheck(m_jit.branch32(MacroAssembler::LessThan, reg1, TrustedImm32(0)));
+        speculationCheck(m_jit.branch32(MacroAssembler::LessThan, reg2, TrustedImm32(0)));
+        resultNonZero.link(&m_jit);
 
         integerResult(result.gpr(), m_compileIndex);
         break;

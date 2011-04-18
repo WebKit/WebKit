@@ -2,6 +2,21 @@
 
         Reviewed by Geoff Garen.
 
+        Bug 58829 - DFG JIT - Optimize add/sub immediate, multiply.
+
+        Add code generation for add/subtract instruction with immediate operands
+        (where a child is a constant), and don't bail to non-speculative if an
+        integer multiple results in a +0 result (only if it should be generating -0).
+
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT.h:
+        (JSC::DFG::SpeculativeJIT::isDoubleConstantWithInt32Value):
+
+2011-04-18  Gavin Barraclough  <barraclough@apple.com>
+
+        Reviewed by Geoff Garen.
+
         Bug 58817 - DFG JIT - if speculative compilation fails, throw away code.
 
         If we detect a logical conflict, throw away generated code,
