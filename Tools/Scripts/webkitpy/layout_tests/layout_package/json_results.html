@@ -301,12 +301,16 @@ function appendTestList(tests, header, tableId, fileSuffix, linkName)
     for (var i = 0; i < tests.length; i++) {
         var test = tests[i];
         html += '<tbody><tr><td>' + testLink(test) + '</td>' +
-            '<td>' + resultLink(stripExtension(test), fileSuffix, linkName) + '</td></tr></tbody>';
+            '<td>' + resultLink(stripExtension(test), fileSuffix, linkName) + '</td>';
+        
+        if (fileSuffix.indexOf('actual') != -1)
+            html += '<td class="image-result-link">' + resultLink(stripExtension(test), '-actual.png', 'png result') + '</td>';
+        
+        html += '</tr></tbody>';
     }
     html += '</table>'
 }
 
-// FIXME: We need to append image results here as well?
 if (newTests.length)
     appendTestList(newTests, 'Tests that had no expected results (probably new):', 'new-tests-table', '-actual.txt', 'result');
 
@@ -319,6 +323,24 @@ if (hasHttpTests) {
 }
 
 document.write(html);
+
+function resultLinkErrorHandlerFunction(link)
+{
+    return function() { link.parentNode.removeChild(link); };
+}
+
+function removeNonExistantNewPixelResults()
+{
+    var imageResultLinks = document.querySelectorAll('#new-tests-table .image-result-link');
+    for (var i = 0, len = imageResultLinks.length; i < len; i++) {
+        var resultLink = imageResultLinks[i];
+        var img = new Image();
+        img.onerror = resultLinkErrorHandlerFunction(resultLink);
+        img.src = resultLink.querySelector('a').href;
+    }
+}
+
+removeNonExistantNewPixelResults();
 
 function toArray(nodeList)
 {
