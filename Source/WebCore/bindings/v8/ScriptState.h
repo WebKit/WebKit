@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008, 2009 Google Inc. All rights reserved.
+ * Copyright (C) 2008, 2009, 2011 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -41,6 +41,7 @@ class DOMWrapperWorld;
 class Frame;
 class Node;
 class Page;
+class WorkerContext;
 
 class ScriptState {
     WTF_MAKE_NONCOPYABLE(ScriptState);
@@ -107,6 +108,10 @@ ScriptState* mainWorldScriptState(Frame*);
 
 ScriptState* scriptStateFromNode(DOMWrapperWorld*, Node*);
 ScriptState* scriptStateFromPage(DOMWrapperWorld*, Page*);
+
+#if ENABLE(WORKERS)
+ScriptState* scriptStateFromWorkerContext(WorkerContext*);
+#endif
 
 inline DOMWrapperWorld* debuggerWorld() { return mainThreadNormalWorld(); }
 inline DOMWrapperWorld* pluginWorld() { return mainThreadNormalWorld(); }

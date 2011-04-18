@@ -51,6 +51,7 @@
 #include "ScriptSourceCode.h"
 #include "ScriptValue.h"
 #include "SecurityOrigin.h"
+#include "WorkerInspectorController.h"
 #include "WorkerLocation.h"
 #include "WorkerNavigator.h"
 #include "WorkerObjectProxy.h"
@@ -106,6 +107,9 @@ WorkerContext::WorkerContext(const KURL& url, const String& userAgent, WorkerThr
     , m_userAgent(userAgent)
     , m_script(new WorkerScriptController(this))
     , m_thread(thread)
+#if ENABLE(INSPECTOR)
+    , m_workerInspectorController(new WorkerInspectorController(this))
+#endif
     , m_closing(false)
 {
     setSecurityOrigin(SecurityOrigin::create(url));

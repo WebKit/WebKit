@@ -56,6 +56,7 @@ namespace WebCore {
     class FileSystemCallback;
     class NotificationCenter;
     class ScheduledAction;
+    class WorkerInspectorController;
     class WorkerLocation;
     class WorkerNavigator;
     class WorkerThread;
@@ -137,7 +138,9 @@ namespace WebCore {
         void resolveLocalFileSystemURL(const String& url, PassRefPtr<EntryCallback> successCallback, PassRefPtr<ErrorCallback>);
         PassRefPtr<EntrySync> resolveLocalFileSystemSyncURL(const String& url, ExceptionCode&);
 #endif
-
+#if ENABLE(INSPECTOR)
+        WorkerInspectorController* workerInspectorController() { return m_workerInspectorController.get(); }
+#endif
         // These methods are used for GC marking. See JSWorkerContext::markChildren(MarkStack&) in
         // JSWorkerContextCustom.cpp.
         WorkerNavigator* optionalNavigator() const { return m_navigator.get(); }
@@ -196,6 +199,9 @@ namespace WebCore {
 #endif
 #if ENABLE(BLOB)
         mutable RefPtr<DOMURL> m_domURL;
+#endif
+#if ENABLE(INSPECTOR)
+        OwnPtr<WorkerInspectorController> m_workerInspectorController;
 #endif
         bool m_closing;
         EventTargetData m_eventTargetData;

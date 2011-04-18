@@ -2005,6 +2005,8 @@ webcore_sources += \
 	Source/WebCore/inspector/TimelineRecordFactory.h \
 	Source/WebCore/inspector/WorkerDebuggerAgent.cpp \
 	Source/WebCore/inspector/WorkerDebuggerAgent.h \
+	Source/WebCore/inspector/WorkerInspectorController.cpp \
+	Source/WebCore/inspector/WorkerInspectorController.h \
 	Source/WebCore/loader/appcache/ApplicationCache.cpp \
 	Source/WebCore/loader/appcache/ApplicationCacheGroup.cpp \
 	Source/WebCore/loader/appcache/ApplicationCacheGroup.h \

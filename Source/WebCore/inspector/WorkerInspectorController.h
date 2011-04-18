@@ -1,11 +1,10 @@
 /*
- * Copyright (c) 2008, 2011 Google Inc.
- * All rights reserved.
- * 
+ * Copyright (C) 2011 Google Inc. All rights reserved.
+ *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
  * met:
- * 
+ *
  *     * Redistributions of source code must retain the above copyright
  * notice, this list of conditions and the following disclaimer.
  *     * Redistributions in binary form must reproduce the above
@@ -15,7 +14,7 @@
  *     * Neither the name of Google Inc. nor the names of its
  * contributors may be used to endorse or promote products derived from
  * this software without specific prior written permission.
- * 
+ *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
  * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
  * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
@@ -29,49 +28,54 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef ScriptState_h
-#define ScriptState_h
+#ifndef WorkerInspectorController_h
+#define WorkerInspectorController_h
 
-#include <heap/Strong.h>
+#if ENABLE(INSPECTOR) && ENABLE(WORKERS)
+
+#include <wtf/FastAllocBase.h>
+#include <wtf/Forward.h>
 #include <wtf/Noncopyable.h>
-
-namespace JSC {
-class ExecState;
-class JSGlobalObject;
-}
+#include <wtf/OwnPtr.h>
 
 namespace WebCore {
-class DOMWrapperWorld;
-class Frame;
-class Node;
-class Page;
+
+class InjectedScriptManager;
+class InspectorDebuggerAgent;
+class InspectorBackendDispatcher;
+class InspectorFrontend;
+class InspectorFrontendChannel;
+class InspectorInstrumentation;
+class InspectorRuntimeAgent;
+class InspectorState;
+class InstrumentingAgents;
 class WorkerContext;
 
-// The idea is to expose "state-like" methods (hadException, and any other
-// methods where ExecState just dips into globalData) of JSC::ExecState as a
-// separate abstraction.
-// For now, the separation is purely by convention.
-typedef JSC::ExecState ScriptState;
-
-class ScriptStateProtectedPtr {
-    WTF_MAKE_NONCOPYABLE(ScriptStateProtectedPtr);
+class WorkerInspectorController {
+    WTF_MAKE_NONCOPYABLE(WorkerInspectorController);
+    WTF_MAKE_FAST_ALLOCATED;
 public:
-    explicit ScriptStateProtectedPtr(ScriptState*);
-    ~ScriptStateProtectedPtr();
-    ScriptState* get() const;
+    WorkerInspectorController(WorkerContext*);
+    ~WorkerInspectorController();
+
+    void connectFrontend(InspectorFrontendChannel*);
+    void disconnectFrontend();
+    void dispatchMessageFromFrontend(const String&);
+
 private:
-    JSC::Strong<JSC::JSGlobalObject> m_globalObject;
+    WorkerContext* m_workerContext;
+    OwnPtr<InspectorState> m_state;
+    OwnPtr<InstrumentingAgents> m_instrumentingAgents;
+    OwnPtr<InjectedScriptManager> m_injectedScriptManager;
+    OwnPtr<InspectorDebuggerAgent> m_debuggerAgent;
+    OwnPtr<InspectorRuntimeAgent> m_runtimeAgent;
+
+    OwnPtr<InspectorFrontend> m_frontend;
+    OwnPtr<InspectorBackendDispatcher> m_backendDispatcher;
 };
 
-ScriptState* mainWorldScriptState(Frame*);
+}
 
-ScriptState* scriptStateFromNode(DOMWrapperWorld*, Node*);
-ScriptState* scriptStateFromPage(DOMWrapperWorld*, Page*);
+#endif // ENABLE(WORKERS)
 
-#if ENABLE(WORKERS)
-ScriptState* scriptStateFromWorkerContext(WorkerContext*);
-#endif
-
-} // namespace WebCore
-
-#endif // ScriptState_h
+#endif // !defined(WorkerInspectorController_h)

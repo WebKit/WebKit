@@ -3286,6 +3286,8 @@
             'inspector/TimelineRecordFactory.h',
             'inspector/WorkerDebuggerAgent.cpp',
             'inspector/WorkerDebuggerAgent.h',
+            'inspector/WorkerInspectorController.cpp',
+            'inspector/WorkerInspectorController.h',
             'loader/CachedMetadata.h',
             'loader/CrossOriginAccessControl.cpp',
             'loader/CrossOriginAccessControl.h',

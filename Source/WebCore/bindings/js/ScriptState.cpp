@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009 Google Inc. All rights reserved.
+ * Copyright (C) 2009, 2011 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -33,8 +33,11 @@
 
 #include "Frame.h"
 #include "JSDOMWindowBase.h"
+#include "JSWorkerContext.h"
 #include "Node.h"
 #include "Page.h"
+#include "WorkerContext.h"
+#include "WorkerScriptController.h"
 #include <interpreter/CallFrame.h>
 #include <runtime/JSGlobalObject.h>
 
@@ -82,5 +85,12 @@ ScriptState* scriptStateFromPage(DOMWrapperWorld* world, Page* page)
 {
     return page->mainFrame()->script()->globalObject(world)->globalExec();
 }
+
+#if ENABLE(WORKERS)
+ScriptState* scriptStateFromWorkerContext(WorkerContext* workerContext)
+{
+    return workerContext->script()->workerContextWrapper()->globalExec();
+}
+#endif
 
 }

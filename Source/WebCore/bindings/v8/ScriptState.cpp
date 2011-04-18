@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009 Google Inc. All rights reserved.
+ * Copyright (C) 2009, 2011 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -36,6 +36,10 @@
 #include "Page.h"
 #include "ScriptController.h"
 #include "V8HiddenPropertyName.h"
+
+#include "WorkerContext.h"
+#include "WorkerContextExecutionProxy.h"
+#include "WorkerScriptController.h"
 
 #include <v8.h>
 #include <wtf/Assertions.h>
@@ -110,5 +114,18 @@ ScriptState* scriptStateFromPage(DOMWrapperWorld*, Page* page)
     // This should be only reached with V8 bindings from single process layout tests.
     return mainWorldScriptState(page->mainFrame());
 }
+
+#if ENABLE(WORKERS)
+ScriptState* scriptStateFromWorkerContext(WorkerContext* workerContext)
+{
+    WorkerContextExecutionProxy* proxy = workerContext->script()->proxy();
+    if (!proxy)
+        return 0;
+
+    v8::HandleScope handleScope;
+    v8::Local<v8::Context> context = proxy->context();
+    return ScriptState::forContext(context);
+}
+#endif
 
 }

@@ -1,3 +1,39 @@
+2011-04-15  Yury Semikhatsky  <yurys@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: introduce WorkerInspectorController
+        https://bugs.webkit.org/show_bug.cgi?id=58668
+
+        WorkerInspectorController will be owned by WorkerContext and will hold all inspector
+        agents and will also manage connection to the inspector frontend.
+
+        * CMakeLists.txt:
+        * GNUmakefile.list.am:
+        * WebCore.gypi:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/ScriptState.cpp:
+        (WebCore::scriptStateFromWorkerContext):
+        * bindings/js/ScriptState.h:
+        * bindings/v8/ScriptState.cpp:
+        (WebCore::scriptStateFromWorkerContext):
+        * bindings/v8/ScriptState.h:
+        * inspector/InspectorState.cpp:
+        (WebCore::InspectorState::updateCookie):
+        * inspector/WorkerInspectorController.cpp: Added.
+        (WebCore::WorkerInspectorController::WorkerInspectorController):
+        (WebCore::WorkerInspectorController::~WorkerInspectorController):
+        (WebCore::WorkerInspectorController::connectFrontend):
+        (WebCore::WorkerInspectorController::disconnectFrontend):
+        (WebCore::WorkerInspectorController::dispatchMessageFromFrontend):
+        * inspector/WorkerInspectorController.h: Copied from Source/WebCore/bindings/js/ScriptState.h.
+        * workers/WorkerContext.cpp:
+        (WebCore::WorkerContext::WorkerContext):
+        * workers/WorkerContext.h:
+        (WebCore::WorkerContext::workerInspectorController):
+
 2011-04-17  Thierry Reding  <thierry.reding@avionic-design.de>
 
         Reviewed by Adam Barth.

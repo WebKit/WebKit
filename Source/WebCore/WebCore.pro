@@ -846,6 +846,7 @@ SOURCES += \
     inspector/ScriptCallStack.cpp \
     inspector/TimelineRecordFactory.cpp \
     inspector/WorkerDebuggerAgent.cpp \
+    inspector/WorkerInspectorController.cpp \
     loader/archive/ArchiveResource.cpp \
     loader/archive/ArchiveResourceCollection.cpp \
     loader/cache/MemoryCache.cpp \

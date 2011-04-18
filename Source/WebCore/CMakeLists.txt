@@ -927,6 +927,7 @@ SET(WebCore_SOURCES
     inspector/ScriptCallStack.cpp
     inspector/TimelineRecordFactory.cpp
     inspector/WorkerDebuggerAgent.cpp
+    inspector/WorkerInspectorController.cpp
 
     loader/CrossOriginAccessControl.cpp
     loader/CrossOriginPreflightResultCache.cpp

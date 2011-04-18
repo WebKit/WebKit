@@ -67025,6 +67025,14 @@
 				RelativePath="..\inspector\WorkerDebuggerAgent.h"
 				>
 			</File>
+			<File
+				RelativePath="..\inspector\WorkerInspectorController.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\inspector\WorkerInspectorController.h"
+				>
+			</File>
 			<Filter
 				Name="front-end"
 				>
