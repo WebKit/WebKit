@@ -1,5 +1,13 @@
 <!DocType html>
 <style>
+body {
+    margin: 4px;
+}
+
+body > p:first-of-type {
+    margin-top: 0;
+}
+
 tr:first-of-type:hover {
     opacity: 0.7
 }
@@ -30,14 +38,14 @@ label {
 }
 
 .results-row iframe {
-    width: 600px;
-    height: 400px;
+    width: 800px;
+    height: 600px;
 }
 
 #options {
     position: absolute;
-    top: 0;
-    right: 0;
+    top: 4px;
+    right: 4px;
 }
 
 .expand-button {
@@ -55,6 +63,22 @@ label {
     position: absolute;
     top: -0.3em;
     left: 1px;
+}
+
+.result-container {
+    display: inline-block;
+    border: 1px solid gray;
+}
+
+.result-container iframe, .result-container img {
+    border: 0;
+    border-top: 1px solid lightgray;
+}
+
+.label {
+    padding-left: 3px;
+    font-weight: bold;
+    font-size: small;
 }
 </style>
 
@@ -102,10 +126,24 @@ function parentOfType(node, selector)
 
 function appendResultIframe(src, parent)
 {
-    // FIXME: label the iframes appropriately
-    var result = document.createElement('iframe');
-    result.src = src;
-    parent.appendChild(result);
+    // FIXME: use IMG tags for pixel results.
+    var layoutTestsIndex = src.indexOf('LayoutTests');
+    var name;
+    if (layoutTestsIndex != -1) {
+        var hasTrac = src.indexOf('trac.webkit.org') != -1;
+        var prefix = hasTrac ? 'trac.webkit.org/.../' : '';
+        name = prefix + src.substring(layoutTestsIndex + 'LayoutTests/'.length);
+    } else {
+        var lastDashIndex = src.lastIndexOf('-pretty');
+        if (lastDashIndex == -1)
+            lastDashIndex = src.lastIndexOf('-');
+        name = src.substring(lastDashIndex + 1);
+    }
+
+    var container = document.createElement('div');
+    container.className = 'result-container';
+    container.innerHTML = '<div class=label>' + name + '</div><iframe src="' + src + '?format=txt"></iframe>';
+    parent.appendChild(container);
 }
 
 function expandExpectations(e)
@@ -149,18 +187,18 @@ function expandExpectations(e)
 
 function testLink(test)
 {
-    var test_base_path;
+    var basePath;
     if (results.layout_tests_dir && location.toString().indexOf('file://') == 0)
-        test_base_path = results.layout_tests_dir + '/';
+        basePath = results.layout_tests_dir + '/';
     else
-        test_base_path = 'http://trac.webkit.org/browser/trunk/LayoutTests/';
+        basePath = 'http://trac.webkit.org/browser/trunk/LayoutTests/';
     return '<span class=expand-button onclick="expandExpectations(event)"><span class=expand-button-text>+</span></span>' +
-        '<a class=test-link href="' + test_base_path + test + '">' + test + '</a>';
+        '<a class=test-link href="' + basePath + test + '">' + test + '</a>';
 }
 
-function resultLink(test_prefix, suffix, contents)
+function resultLink(testPrefix, suffix, contents)
 {
-    return '<a class=result-link href="' + test_prefix + suffix + '">' + contents + '</a> ';
+    return '<a class=result-link href="' + testPrefix + suffix + '">' + contents + '</a> ';
 }
 
 var hasTextFailures = false;
@@ -243,6 +281,7 @@ function appendTestList(tests, header, tableId, fileSuffix, linkName)
     html += '</table>'
 }
 
+// FIXME: We need to append image results here as well?
 if (newTests.length)
     appendTestList(newTests, 'Tests that had no expected results (probably new):', 'new-tests-table', '-actual.txt', 'result');
 

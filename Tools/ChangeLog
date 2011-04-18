@@ -1,3 +1,16 @@
+2011-04-18  Ojan Vafai  <ojan@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        add labels to results html page
+        https://bugs.webkit.org/show_bug.cgi?id=58803
+
+        -fix iframe size to be the size of the png results
+        -fix a bunch of aesthetic nits
+        -fix some incorrectly styled code
+
+        * Scripts/webkitpy/layout_tests/layout_package/json_results.html:
+
 2011-04-18  Chang Shu  <cshu@webkit.org>
 
         Reviewed by Eric Seidel.
