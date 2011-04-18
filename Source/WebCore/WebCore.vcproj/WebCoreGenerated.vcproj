@@ -81,7 +81,7 @@
 			>
 		</File>
 		<File
-			RelativePath=".\copyInspectorFiles.cmd"
+			RelativePath=".\copyWebCoreResourceFiles.cmd"
 			>
 		</File>
 		<File

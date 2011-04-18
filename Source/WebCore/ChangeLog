@@ -1,3 +1,18 @@
+2011-04-18  Jessie Berlin  <jberlin@apple.com>
+
+        Rubber-stamped by Sam Weinig.
+
+        REGRESSION (r84094): Many tests failing assertions in WebCore::localizedString on Windows.
+        https://bugs.webkit.org/show_bug.cgi?id=58747
+
+        Copy the WebCore Localizable.strings file into the output directory.
+
+        * WebCore.vcproj/WebCoreGenerated.vcproj:
+        * WebCore.vcproj/WebCoreGeneratedCairo.vsprops:
+        * WebCore.vcproj/WebCoreGeneratedCommon.vsprops:
+        * WebCore.vcproj/copyInspectorFiles.cmd: Removed.
+        * WebCore.vcproj/copyWebCoreResourceFiles.cmd: Copied from Source/WebCore/WebCore.vcproj/copyInspectorFiles.cmd.
+
 2011-04-18  Robert Hogan  <robert@webkit.org>
 
         Reviewed by Andreas Kling.
