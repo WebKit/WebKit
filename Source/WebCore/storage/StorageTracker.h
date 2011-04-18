@@ -86,6 +86,7 @@ private:
     bool canDeleteOrigin(const String& originIdentifier);
     void willDeleteOrigin(const String& originIdentifier);
     void willDeleteAllOrigins();
+    static void deleteOriginOnMainThread(void* originIdentifier);
 
     void originFilePaths(Vector<String>& paths);
     

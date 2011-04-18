@@ -232,8 +232,10 @@ void StorageTracker::syncFileSystemAndTrackerDatabase()
     // Delete stale StorageTracker records.
     OriginSet::const_iterator setEnd = originSetCopy.end();
     for (OriginSet::const_iterator it = originSetCopy.begin(); it != setEnd; ++it) {
-        if (!foundOrigins.contains(*it))
-            syncDeleteOrigin(*it);
+        if (!foundOrigins.contains(*it)) {
+            RefPtr<StringImpl> originIdentifier = (*it).threadsafeCopy().impl();
+            callOnMainThread(deleteOriginOnMainThread, originIdentifier.release().leakRef());
+        }
     }
 }
 
@@ -376,8 +378,31 @@ void StorageTracker::syncDeleteAllOrigins()
     if (m_database.isOpen())
         m_database.close();
     
-    SQLiteFileSystem::deleteDatabaseFile(trackerDatabasePath());
+    if (!SQLiteFileSystem::deleteDatabaseFile(trackerDatabasePath())) {
+        // In the case where it is not possible to delete the database file (e.g some other program
+        // like a virus scanner is accessing it), make sure to remove all entries.
+        openTrackerDatabase(false);
+        if (!m_database.isOpen())
+            return;
+        SQLiteStatement deleteStatement(m_database, "DELETE FROM Origins");
+        if (deleteStatement.prepare() != SQLResultOk) {
+            LOG_ERROR("Unable to prepare deletion of all origins");
+            return;
+        }
+        if (!deleteStatement.executeCommand()) {
+            LOG_ERROR("Unable to execute deletion of all origins");
+            return;
+        }
+    }
     SQLiteFileSystem::deleteEmptyDatabaseDirectory(m_storageDirectoryPath);
+}
+
+void StorageTracker::deleteOriginOnMainThread(void* originIdentifier)
+{
+    ASSERT(isMainThread());
+
+    String identifier = adoptRef(reinterpret_cast<StringImpl*>(originIdentifier));
+    tracker().deleteOrigin(identifier);
 }
 
 void StorageTracker::deleteOrigin(const String& originIdentifier)

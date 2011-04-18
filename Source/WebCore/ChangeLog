@@ -1,3 +1,22 @@
+2011-04-18  Jessie Berlin  <jberlin@apple.com>
+
+        Reviewed by Steve Falkenburg.
+
+        If deleting the StorageTracker.db file fails, local storage is left in a strange state.
+        https://bugs.webkit.org/show_bug.cgi?id=58805
+
+        * storage/StorageTracker.cpp:
+        (WebCore::StorageTracker::syncFileSystemAndTrackerDatabase):
+        When cleaning up the StorageTracker.db file, is not enough to call syncDeleteOrigin.
+        deleteOrigin itself must be called to update the data structures that syncDeleteOrigin
+        depends on and to prevent clashes between a theoretical web page editing local storage
+        at the same time this method is called.
+        (WebCore::StorageTracker::syncDeleteAllOrigins):
+        If it is not possible to delete the StorageTracker.db file, empty it.
+        (WebCore::StorageTracker::deleteOriginOnMainThread):
+        Wrapper for deleteOrigin.
+        * storage/StorageTracker.h:
+
 2011-04-18  Geoffrey Garen  <ggaren@apple.com>
 
         Build fix.
