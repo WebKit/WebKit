@@ -1,3 +1,19 @@
+2011-04-17  Cameron Zwarich  <zwarich@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        JSC no longer builds with Clang due to -Woverloaded-virtual warning
+        https://bugs.webkit.org/show_bug.cgi?id=58760
+
+        Rename Structure's specificValue overload of put to putSpecificValue to avoid
+        Clang's warning for overloading a virtual function.
+
+        * runtime/Structure.cpp:
+        (JSC::Structure::addPropertyTransition):
+        (JSC::Structure::addPropertyWithoutTransition):
+        (JSC::Structure::putSpecificValue):
+        * runtime/Structure.h:
+
 2011-04-17  Patrick Gansterer  <paroga@webkit.org>
 
         Reviewed by Adam Barth.

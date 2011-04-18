@@ -176,7 +176,7 @@ namespace JSC {
         } DictionaryKind;
         static Structure* toDictionaryTransition(JSGlobalData&, Structure*, DictionaryKind);
 
-        size_t put(JSGlobalData&, const Identifier& propertyName, unsigned attributes, JSCell* specificValue);
+        size_t putSpecificValue(JSGlobalData&, const Identifier& propertyName, unsigned attributes, JSCell* specificValue);
         size_t remove(const Identifier& propertyName);
 
         void createPropertyMap(unsigned keyCount = 0);

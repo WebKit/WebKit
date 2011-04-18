@@ -336,7 +336,7 @@ Structure* Structure::addPropertyTransition(JSGlobalData& globalData, Structure*
     if (structure->transitionCount() > s_maxTransitionLength) {
         Structure* transition = toCacheableDictionaryTransition(globalData, structure);
         ASSERT(structure != transition);
-        offset = transition->put(globalData, propertyName, attributes, specificValue);
+        offset = transition->putSpecificValue(globalData, propertyName, attributes, specificValue);
         ASSERT(offset >= structure->m_anonymousSlotCount);
         ASSERT(structure->m_anonymousSlotCount == transition->m_anonymousSlotCount);
         if (transition->propertyStorageSize() > transition->propertyStorageCapacity())
@@ -364,7 +364,7 @@ Structure* Structure::addPropertyTransition(JSGlobalData& globalData, Structure*
             transition->createPropertyMap();
     }
 
-    offset = transition->put(globalData, propertyName, attributes, specificValue);
+    offset = transition->putSpecificValue(globalData, propertyName, attributes, specificValue);
     ASSERT(offset >= structure->m_anonymousSlotCount);
     ASSERT(structure->m_anonymousSlotCount == transition->m_anonymousSlotCount);
     if (transition->propertyStorageSize() > transition->propertyStorageCapacity())
@@ -588,7 +588,7 @@ size_t Structure::addPropertyWithoutTransition(JSGlobalData& globalData, const I
 
     m_isPinnedPropertyTable = true;
 
-    size_t offset = put(globalData, propertyName, attributes, specificValue);
+    size_t offset = putSpecificValue(globalData, propertyName, attributes, specificValue);
     ASSERT(offset >= m_anonymousSlotCount);
     if (propertyStorageSize() > propertyStorageCapacity())
         growPropertyStorageCapacity();
@@ -683,7 +683,7 @@ void Structure::despecifyAllFunctions(JSGlobalData& globalData)
         iter->specificValue.clear();
 }
 
-size_t Structure::put(JSGlobalData& globalData, const Identifier& propertyName, unsigned attributes, JSCell* specificValue)
+size_t Structure::putSpecificValue(JSGlobalData& globalData, const Identifier& propertyName, unsigned attributes, JSCell* specificValue)
 {
     ASSERT(!propertyName.isNull());
     ASSERT(get(globalData, propertyName) == notFound);
