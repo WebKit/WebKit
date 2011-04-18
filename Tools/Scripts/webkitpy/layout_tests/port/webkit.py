@@ -372,11 +372,11 @@ class WebKitDriver(base.Driver):
 
     def cmd_line(self):
         cmd = self._command_wrapper(self._port.get_option('wrapper'))
-        cmd += [self._port._path_to_driver(), '-']
-
+        cmd.append(self._port._path_to_driver())
         if self._port.get_option('pixel_tests'):
             cmd.append('--pixel-tests')
-
+        cmd.extend(self._port.get_option('additional_drt_flag', []))
+        cmd.append('-')
         return cmd
 
     def start(self):

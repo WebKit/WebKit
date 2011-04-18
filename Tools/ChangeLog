@@ -1,3 +1,22 @@
+2011-04-18  Dirk Pranke  <dpranke@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        new-run-webkit-tests: add an --additional-drt-flag option
+        https://bugs.webkit.org/show_bug.cgi?id=58680
+
+        NRWT has a bunch of command line flags that exist to pass
+        custom flags to DRT, especially on chromium. It would be nice
+        if there was a generic mechanism to pass through flags so we
+        didn't have all the custom ones.
+
+        * Scripts/webkitpy/layout_tests/port/chromium.py:
+        * Scripts/webkitpy/layout_tests/port/mock_drt_unittest.py:
+        * Scripts/webkitpy/layout_tests/port/port_testcase.py:
+        * Scripts/webkitpy/layout_tests/port/test.py:
+        * Scripts/webkitpy/layout_tests/port/webkit.py:
+        * Scripts/webkitpy/layout_tests/run_webkit_tests.py:
+
 2011-04-05  Jer Noble  <jer.noble@apple.com>
 
         Reviewed by Sam Weinig.

@@ -39,13 +39,17 @@ from webkitpy.layout_tests.port import factory
 from webkitpy.layout_tests.port import port_testcase
 from webkitpy.layout_tests.port import test
 
+from webkitpy.tool import mocktool
+mock_options = mocktool.MockOptions(use_apache=True,
+                                    configuration='Release')
+
 
 class MockDRTPortTest(port_testcase.PortTestCase):
-    def make_port(self):
+    def make_port(self, options=mock_options):
         if sys.platform == 'win32':
             # We use this because the 'win' port doesn't work yet.
-            return mock_drt.MockDRTPort(port_name='mock-chromium-win')
-        return mock_drt.MockDRTPort()
+            return mock_drt.MockDRTPort(port_name='mock-chromium-win', options=options)
+        return mock_drt.MockDRTPort(options=options)
 
     def test_default_worker_model(self):
         # only overridding the default test; we don't care about this one.

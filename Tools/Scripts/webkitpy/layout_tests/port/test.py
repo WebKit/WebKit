@@ -422,7 +422,7 @@ class TestDriver(base.Driver):
         self._port = port
 
     def cmd_line(self):
-        return [self._port._path_to_driver()]
+        return [self._port._path_to_driver()] + self._port.get_option('additional_drt_flag', [])
 
     def poll(self):
         return True

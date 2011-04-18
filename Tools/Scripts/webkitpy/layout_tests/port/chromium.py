@@ -375,6 +375,8 @@ class ChromiumDriver(base.Driver):
             cmd.append('--enable-accelerated-2d-canvas')
         if self._port.get_option('enable_hardware_gpu'):
             cmd.append('--enable-hardware-gpu')
+
+        cmd.extend(self._port.get_option('additional_drt_flag', []))
         return cmd
 
     def start(self):

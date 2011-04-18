@@ -77,6 +77,12 @@ class PortTestCase(unittest.TestCase):
             return
         self.assertTrue(len(port.driver_cmd_line()))
 
+        options = mocktool.MockOptions(additional_drt_flag=['--foo=bar', '--foo=baz'])
+        port = self.make_port(options=options)
+        cmd_line = port.driver_cmd_line()
+        self.assertTrue('--foo=bar' in cmd_line)
+        self.assertTrue('--foo=baz' in cmd_line)
+
     def disabled_test_http_server(self):
         port = self.make_port()
         if not port:
