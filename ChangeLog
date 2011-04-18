@@ -1,3 +1,14 @@
+2011-04-18  Patrick Gansterer  <paroga@webkit.org>
+
+        Reviewed by Pavel Feldman.
+
+        REGRESSION (r81479): generate-inspector-idl fails on native win32
+        https://bugs.webkit.org/show_bug.cgi?id=58315
+
+        Disable git autocrlf for Inspector.json.
+
+        * .gitattributes:
+
 2011-04-16  Patrick Gansterer  <paroga@webkit.org>
 
         Reviewed by Eric Seidel.
