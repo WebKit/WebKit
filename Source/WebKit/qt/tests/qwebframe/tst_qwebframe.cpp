@@ -2700,6 +2700,8 @@ void tst_QWebFrame::inputFieldFocus()
     int delay = qApp->cursorFlashTime() * 2;
 
     // focus the lineedit and check if it blinks
+    bool autoSipEnabled = qApp->autoSipEnabled();
+    qApp->setAutoSipEnabled(false);
     const QWebElement inputElement = view.page()->mainFrame()->documentElement().findFirst(QLatin1String("input[type=text]"));
     QTest::mouseClick(&view, Qt::LeftButton, 0, inputElement.geometry().center());
     m_inputFieldsTestView = &view;
@@ -2707,6 +2709,7 @@ void tst_QWebFrame::inputFieldFocus()
     QTest::qWait(delay);
     QVERIFY2(m_inputFieldTestPaintCount >= 3,
              "The input field should have a blinking caret");
+    qApp->setAutoSipEnabled(autoSipEnabled);
 }
 
 void tst_QWebFrame::hitTestContent()

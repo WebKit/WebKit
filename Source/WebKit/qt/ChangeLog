@@ -1,3 +1,14 @@
+2011-04-18  Yi Shen  <yi.4.shen@nokia.com>
+
+        Reviewed by Laszlo Gombos.
+
+        [Qt][Symbian] Fix Api test failure -- tst_QWebFrame::inputFieldFocus
+        https://bugs.webkit.org/show_bug.cgi?id=57546
+
+        Disable the fullscreen VKB when testing inputFieldFocus().
+
+        * tests/qwebframe/tst_qwebframe.cpp:
+
 2011-04-18  Andreas Kling  <kling@webkit.org>
 
         [Qt] DRT: Unreviewed test fix after r84168.
