@@ -1052,7 +1052,7 @@ void FrameLoaderClientQt::dispatchWillSendRequest(WebCore::DocumentLoader*, unsi
         && url.host() != QLatin1String("255.255.255.255")
         && url.host().toLower() != QLatin1String("localhost")) {
 
-        printf("Blocked access to external URL %s\n", qPrintable(drtDescriptionSuitableForTestResult(url)));
+        printf("Blocked access to external URL %s\n", qPrintable(drtDescriptionSuitableForTestResult(newRequest.url())));
         newRequest.setURL(QUrl());
         return;
     }

@@ -1,3 +1,13 @@
+2011-04-18  Andreas Kling  <kling@webkit.org>
+
+        [Qt] DRT: Unreviewed test fix after r84168.
+        
+        Dump the original request KURL for blocked access attempts.
+        Turns out converting it to a QUrl lower-cases the hostname.
+
+        * WebCoreSupport/FrameLoaderClientQt.cpp:
+        (WebCore::FrameLoaderClientQt::dispatchWillSendRequest):
+
 2011-04-18  Yi Shen  <yi.4.shen@nokia.com>
 
         Reviewed by Laszlo Gombos.
