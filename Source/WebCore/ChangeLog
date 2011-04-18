@@ -1,3 +1,10 @@
+2011-04-18  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Fix WebKit2 GTK build after 82465.
+
+        * platform/gtk/LocalizedStringsGtk.cpp:
+        (WebCore::localizedString):
+
 2011-04-18  Andrey Adaikin  <aandrey@google.com>
 
         Reviewed by Yury Semikhatsky.

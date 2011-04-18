@@ -642,4 +642,9 @@ String validationMessageStepMismatchText(const String&, const String&)
     return String::fromUTF8(_("step mismatch"));
 }
 
+String localizedString(const char* key)
+{
+    return String::fromUTF8(key, strlen(key));
+}
+
 }
