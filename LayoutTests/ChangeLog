@@ -1,3 +1,14 @@
+2011-04-18  Andrew Scherkus  <scherkus@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        Reset fullscreen element reference when leaving fullscreen mode and some other cleanup.
+
+        https://bugs.webkit.org/show_bug.cgi?id=58719
+
+        * fullscreen/full-screen-cancel-expected.txt: Added.
+        * fullscreen/full-screen-cancel.html: Added.
+
 2011-04-18  Andreas Kling  <kling@webkit.org>
 
         Reviewed by Adam Barth.

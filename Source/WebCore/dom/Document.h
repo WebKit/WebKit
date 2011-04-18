@@ -1043,8 +1043,8 @@ public:
     const QualifiedName& idAttributeName() const { return m_idAttributeName; }
     
 #if ENABLE(FULLSCREEN_API)
-    bool webkitIsFullScreen() const { return m_isFullScreen; }
-    bool webkitFullScreenKeyboardInputAllowed() const { return m_isFullScreen && m_areKeysEnabledInFullScreen; }
+    bool webkitIsFullScreen() const { return m_fullScreenElement.get(); }
+    bool webkitFullScreenKeyboardInputAllowed() const { return m_fullScreenElement.get() && m_areKeysEnabledInFullScreen; }
     Element* webkitCurrentFullScreenElement() const { return m_fullScreenElement.get(); }
     void webkitRequestFullScreenForElement(Element*, unsigned short flags);
     void webkitCancelFullScreen();
@@ -1362,7 +1362,6 @@ private:
     QualifiedName m_idAttributeName;
     
 #if ENABLE(FULLSCREEN_API)
-    bool m_isFullScreen;
     bool m_areKeysEnabledInFullScreen;
     RefPtr<Element> m_fullScreenElement;
     RenderFullScreen* m_fullScreenRenderer;

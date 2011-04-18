@@ -422,7 +422,6 @@ Document::Document(Frame* frame, const KURL& url, bool isXHTML, bool isHTML)
     , m_weakReference(DocumentWeakReference::create(this))
     , m_idAttributeName(idAttr)
 #if ENABLE(FULLSCREEN_API)
-    , m_isFullScreen(0)
     , m_areKeysEnabledInFullScreen(0)
     , m_fullScreenRenderer(0)
     , m_fullScreenChangeDelayTimer(this, &Document::fullScreenChangeDelayTimerFired)
@@ -4811,7 +4810,6 @@ void Document::webkitWillEnterFullScreenForElement(Element* element)
     ASSERT(page() && page()->settings()->fullScreenEnabled());
 
     m_fullScreenElement = element;
-    m_isFullScreen = true;
     
     if (m_fullScreenElement != documentElement())
         m_fullScreenElement->detach();
@@ -4844,7 +4842,6 @@ void Document::webkitWillExitFullScreenForElement(Element*)
 {
     if (m_fullScreenRenderer) {
         m_fullScreenRenderer->setAnimating(true);
-        m_fullScreenRenderer->setAnimating(true);
 #if USE(ACCELERATED_COMPOSITING)
         view()->updateCompositingLayers();
         if (m_fullScreenRenderer->layer()->isComposited())
@@ -4855,7 +4852,6 @@ void Document::webkitWillExitFullScreenForElement(Element*)
 
 void Document::webkitDidExitFullScreenForElement(Element*)
 {
-    m_isFullScreen = false;
     m_areKeysEnabledInFullScreen = false;
 
     if (m_fullScreenRenderer)
@@ -4863,7 +4859,8 @@ void Document::webkitDidExitFullScreenForElement(Element*)
     
     if (m_fullScreenElement != documentElement())
         m_fullScreenElement->detach();
-    
+
+    m_fullScreenElement = 0;
     setFullScreenRenderer(0);
 #if USE(ACCELERATED_COMPOSITING)
     page()->chrome()->client()->setRootFullScreenLayer(0);

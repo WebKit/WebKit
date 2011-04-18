@@ -1,3 +1,22 @@
+2011-04-18  Andrew Scherkus  <scherkus@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        Reset fullscreen element reference when leaving fullscreen mode and some other cleanup.
+
+        https://bugs.webkit.org/show_bug.cgi?id=58719
+
+        Test: fullscreen/full-screen-cancel.html
+
+        * dom/Document.cpp:
+        (WebCore::Document::Document): Remove m_isFullscreen.
+        (WebCore::Document::webkitWillEnterFullScreenForElement):
+        (WebCore::Document::webkitWillExitFullScreenForElement): Remove duplicate call to setAnimating().
+        (WebCore::Document::webkitDidExitFullScreenForElement): Reset m_fullScreenElement reference.
+        * dom/Document.h:
+        (WebCore::Document::webkitIsFullScreen): Use m_fullScreenElement instead of m_isFullscreen.
+        (WebCore::Document::webkitFullScreenKeyboardInputAllowed): Ditto.
+
 2011-04-18  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Eric Seidel.
