@@ -1,3 +1,11 @@
+2011-04-18  Chang Shu  <cshu@webkit.org>
+
+        Unreviewed.
+
+        Skip failed test due to r84160.
+
+        * platform/win-wk2/Skipped:
+
 2011-04-18  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Dave Hyatt.
