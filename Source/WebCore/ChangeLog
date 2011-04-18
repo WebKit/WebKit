@@ -1,3 +1,19 @@
+2011-04-18  Andrey Adaikin  <aandrey@google.com>
+
+        Reviewed by Yury Semikhatsky.
+
+        Web Inspector: TAB should not move focus from the text editor while live editing
+        https://bugs.webkit.org/show_bug.cgi?id=58537
+
+        * inspector/front-end/TextViewer.js:
+        (WebInspector.TextViewer.prototype._registerShortcuts):
+        (WebInspector.TextViewer.prototype._cancelEditing):
+        (WebInspector.TextEditorMainPanel.prototype.handleUndoRedo):
+        (WebInspector.TextEditorMainPanel.prototype.handleTabKeyPress):
+        (WebInspector.TextEditorMainPanel.prototype._setCaretLocation):
+        (WebInspector.TextEditorMainPanel.prototype._applyDomUpdates):
+        (WebInspector.TextEditorMainPanel.prototype._setText):
+
 2011-04-18  Alexander Pavlov  <apavlov@chromium.org>
 
         Reviewed by Yury Semikhatsky.

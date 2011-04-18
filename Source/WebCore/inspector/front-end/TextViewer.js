@@ -253,10 +253,15 @@ WebInspector.TextViewer.prototype = {
         this._shortcuts[WebInspector.KeyboardShortcut.makeKey(keys.Enter.code, modifiers.CtrlOrMeta)] = commitEditing;
         this._shortcuts[WebInspector.KeyboardShortcut.makeKey(keys.Esc.code)] = cancelEditing;
 
-        var handleUndo = this._handleUndoRedo.bind(this, 0);
-        var handleRedo = this._handleUndoRedo.bind(this, 1);
+        var handleUndo = this._mainPanel.handleUndoRedo.bind(this._mainPanel, false);
+        var handleRedo = this._mainPanel.handleUndoRedo.bind(this._mainPanel, true);
         this._shortcuts[WebInspector.KeyboardShortcut.makeKey("z", modifiers.CtrlOrMeta)] = handleUndo;
         this._shortcuts[WebInspector.KeyboardShortcut.makeKey("z", modifiers.Shift | modifiers.CtrlOrMeta)] = handleRedo;
+
+        var handleTabKey = this._mainPanel.handleTabKeyPress.bind(this._mainPanel, false);
+        var handleShiftTabKey = this._mainPanel.handleTabKeyPress.bind(this._mainPanel, true);
+        this._shortcuts[WebInspector.KeyboardShortcut.makeKey(keys.Tab.code)] = handleTabKey;
+        this._shortcuts[WebInspector.KeyboardShortcut.makeKey(keys.Tab.code, modifiers.Shift)] = handleShiftTabKey;
     },
 
     _handleKeyDown: function(e)
@@ -294,11 +299,6 @@ WebInspector.TextViewer.prototype = {
         this.readOnly = true;
         this._delegate.cancelEditing();
         return true;
-    },
-
-    _handleUndoRedo: function(redo)
-    {
-        return this._mainPanel.handleUndoRedo(redo);
     }
 }
 
@@ -937,11 +937,39 @@ WebInspector.TextEditorMainPanel.prototype = {
 
         var range = redo ? this._textModel.redo(callback) : this._textModel.undo(callback);
         if (range)
-            this._restoreSelection(new WebInspector.TextRange(range.endLine, range.endColumn, range.endLine, range.endColumn), true);
+            this._setCaretLocation(range.endLine, range.endColumn, true);
 
         this._exitTextChangeMode(null, null);
         this.endUpdates();
 
+        return true;
+    },
+
+    handleTabKeyPress: function(shiftKey)
+    {
+        if (this._readOnly || this._dirtyLines)
+            return false;
+
+        var selection = this._getSelection();
+        if (!selection)
+            return false;
+
+        if (shiftKey)
+            return true;
+
+        this.beginUpdates();
+        this._enterTextChangeMode();
+
+        var range = selection;
+        if (range.startLine > range.endLine || (range.startLine === range.endLine && range.startColumn > range.endColumn))
+            range = new WebInspector.TextRange(range.endLine, range.endColumn, range.startLine, range.startColumn);
+
+        var newRange = this._setText(range, "\t");
+
+        this._exitTextChangeMode(range, newRange);
+        this.endUpdates();
+
+        this._setCaretLocation(newRange.endLine, newRange.endColumn, true);
         return true;
     },
 
@@ -1227,6 +1255,12 @@ WebInspector.TextEditorMainPanel.prototype = {
         }
     },
 
+    _setCaretLocation: function(line, column, scrollIntoView)
+    {
+        var range = new WebInspector.TextRange(line, column, line, column);
+        this._restoreSelection(range, scrollIntoView);
+    },
+
     _selectionToPosition: function(container, offset)
     {
         if (container === this._container && offset === 0)
@@ -1506,12 +1540,8 @@ WebInspector.TextEditorMainPanel.prototype = {
         else
             var oldRange = new WebInspector.TextRange(startLine, startColumn, endLine - 1, endColumn);
 
-        if (this._lastEditedRange && (lines.length !== 1 || this._lastEditedRange.endLine !== oldRange.startLine || this._lastEditedRange.endColumn !== oldRange.startColumn))
-            this._textModel.markUndoableState();
-
-        var newRange = this._textModel.setText(oldRange, lines.join("\n"));
-        this._lastEditedRange = newRange;
-
+        var newRange = this._setText(oldRange, lines.join("\n"));
+        
         this._paintScheduledLines(true);
         this._restoreSelection(selection);
 
@@ -1525,6 +1555,17 @@ WebInspector.TextEditorMainPanel.prototype = {
         this._updateChunksForRanges(oldRange, newRange);
         this._updateHighlightsForRange(newRange);
         this.endDomUpdates();
+    },
+
+    _setText: function(range, text)
+    {
+        if (this._lastEditedRange && (!text || text.indexOf("\n") !== -1 || this._lastEditedRange.endLine !== range.startLine || this._lastEditedRange.endColumn !== range.startColumn))
+            this._textModel.markUndoableState();
+
+        var newRange = this._textModel.setText(range, text);
+        this._lastEditedRange = newRange;
+
+        return newRange;
     },
 
     _removeDecorationsInRange: function(range)
