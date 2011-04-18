@@ -1,3 +1,15 @@
+2011-04-18  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        sandbox violation for ~/Library/Dictionaries
+        https://bugs.webkit.org/show_bug.cgi?id=58841
+        <rdar://problem/9294770>
+
+        * WebProcess/com.apple.WebProcess.sb: Add to sandbox profile.
+        No obvious harm from allowing this, though it's not 100% clear
+        why it's needed.
+
 2011-04-18  Anders Carlsson  <andersca@apple.com>
 
         Try to fix the Windows build.

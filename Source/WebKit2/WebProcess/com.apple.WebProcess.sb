@@ -67,6 +67,8 @@
     ;; FIXME: This should be removed when <rdar://problem/9276430> is fixed.
     (literal (string-append (param "HOME_DIR") "/Library/Preferences/com.apple.LaunchServices.QuarantineEventsV2"))
 
+    (subpath (string-append (param "HOME_DIR") "/Library/Dictionaries"))
+
     ;; Extensions from UIProcess
     (extension)
 )
