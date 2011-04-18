@@ -1,5 +1,11 @@
 2011-04-18  Anders Carlsson  <andersca@apple.com>
 
+        Fix build.
+
+        * UIProcess/Plugins/PluginInfoStore.h:
+
+2011-04-18  Anders Carlsson  <andersca@apple.com>
+
         Reviewed by Sam Weinig.
 
         Use the message generator for the GetPluginProcessConnection message
