@@ -74,7 +74,6 @@ static void _ewk_view_tiled_smart_add(Evas_Object *o)
     evas_object_smart_callback_add(
         sd->main_frame, "contents,size,changed",
         _ewk_view_tiled_contents_size_changed_cb, sd);
-    ewk_frame_paint_full_set(sd->main_frame, EINA_TRUE);
 }
 
 static Eina_Bool _ewk_view_tiled_smart_scrolls_process(Ewk_View_Smart_Data *sd)

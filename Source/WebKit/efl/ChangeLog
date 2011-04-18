@@ -1,3 +1,17 @@
+2011-04-18  Eunsol Park  <eunsol47.park@samsung.com>
+
+        Reviewed by Eric Seidel.
+
+        [EFL] Scroll doesn't work on tiled backing store
+        https://bugs.webkit.org/show_bug.cgi?id=55021
+
+        Scroll doesn't work on tiled backing store, but it works on single.
+        If ewk_frame_paint_full_set() set True, view size return content size and scroll can't be made. 
+        so, ewk_frame_paint_full_set() is removed from ewk_tiled_smart_add().
+
+        * ewk/ewk_view_tiled.c:
+        (_ewk_view_tiled_smart_add):
+
 2011-04-14  Grzegorz Czajkowski  <g.czajkowski@samsung.com>
 
         Reviewed by Antonio Gomes.
