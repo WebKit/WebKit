@@ -327,12 +327,12 @@ void PrintView(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
     HDC printDC = getPrinterDC();
     if (!printDC) {
-        ::MessageBox(0, _T("Error creating printing DC"), _T("Error"), MB_APPLMODAL | MB_OK);
+        ::MessageBoxW(0, L"Error creating printing DC", L"Error", MB_APPLMODAL | MB_OK);
         return;
     }
 
     if (::SetAbortProc(printDC, AbortProc) == SP_ERROR) {
-        ::MessageBox(0, _T("Error setting up AbortProc"), _T("Error"), MB_APPLMODAL | MB_OK);
+        ::MessageBoxW(0, L"Error setting up AbortProc", L"Error", MB_APPLMODAL | MB_OK);
         return;
     }
 
@@ -350,7 +350,7 @@ void PrintView(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
     framePrivate->getPrintedPageCount(printDC, &pageCount);
 
     DOCINFO di;
-    initDocStruct(&di, _T("WebKit Doc"));
+    initDocStruct(&di, L"WebKit Doc");
     ::StartDoc(printDC, &di);
 
     // FIXME: Need CoreGraphics implementation

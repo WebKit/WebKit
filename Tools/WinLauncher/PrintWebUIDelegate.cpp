@@ -27,13 +27,12 @@
 #include "stdafx.h"
 #include "PrintWebUIDelegate.h"
 
+#include <WebKit/WebKitCOMAPI.h>
 #include <commctrl.h>
 #include <commdlg.h>
 #include <objbase.h>
 #include <shlwapi.h>
 #include <wininet.h>
-
-#include <WebKit/WebKitCOMAPI.h>
 
 static const int MARGIN = 20;
 
@@ -97,98 +96,98 @@ HRESULT PrintWebUIDelegate::webViewPrintingMarginRect(IWebView* view, RECT* rect
 
 HRESULT PrintWebUIDelegate::webViewHeaderHeight(IWebView* webView, float* height)
 {
-   if (!webView || !height)
-      return E_POINTER;
-   
-   HDC dc = ::GetDC(0);
+    if (!webView || !height)
+        return E_POINTER;
 
-   TEXTMETRIC textMetric;
-   ::GetTextMetrics(dc, &textMetric);
-   ::ReleaseDC(0, dc);
+    HDC dc = ::GetDC(0);
 
-   *height = 1.1 * textMetric.tmHeight;
+    TEXTMETRIC textMetric;
+    ::GetTextMetrics(dc, &textMetric);
+    ::ReleaseDC(0, dc);
 
-   return S_OK;
+    *height = 1.1 * textMetric.tmHeight;
+
+    return S_OK;
 }
 
 HRESULT PrintWebUIDelegate::webViewFooterHeight(IWebView* webView, float* height)
 {
-   if (!webView || !height)
-      return E_POINTER;
+    if (!webView || !height)
+        return E_POINTER;
 
-   HDC dc = ::GetDC(0);
+    HDC dc = ::GetDC(0);
 
-   TEXTMETRIC textMetric;
-   ::GetTextMetrics(dc, &textMetric);
-   ::ReleaseDC(0, dc);
+    TEXTMETRIC textMetric;
+    ::GetTextMetrics(dc, &textMetric);
+    ::ReleaseDC(0, dc);
 
-   *height = 1.1 * textMetric.tmHeight;
+    *height = 1.1 * textMetric.tmHeight;
 
-   return S_OK;
+    return S_OK;
 }
 
-HRESULT PrintWebUIDelegate::drawHeaderInRect( 
-            /* [in] */ IWebView *webView,
-            /* [in] */ RECT *rect,
+HRESULT PrintWebUIDelegate::drawHeaderInRect(
+            /* [in] */ IWebView* webView,
+            /* [in] */ RECT* rect,
             /* [in] */ OLE_HANDLE drawingContext)
 {
-   if (!webView || !rect)
-      return E_POINTER;
+    if (!webView || !rect)
+        return E_POINTER;
 
-   // Turn off header for now.
-   HDC dc = reinterpret_cast<HDC>(drawingContext);
+    // Turn off header for now.
+    HDC dc = reinterpret_cast<HDC>(drawingContext);
 
-   HFONT hFont = (HFONT)::GetStockObject(ANSI_VAR_FONT);
-   HFONT hOldFont = (HFONT)::SelectObject(dc, hFont);
+    HGDIOBJ hFont = ::GetStockObject(ANSI_VAR_FONT);
+    HGDIOBJ hOldFont = ::SelectObject(dc, hFont);
 
-   LPCTSTR header(_T("[Sample Header]"));
-   int length = _tcslen(header);
+    LPCWSTR header = L"[Sample Header]";
+    size_t length = wcslen(header);
 
-   int rc = ::DrawText(dc, header, length, rect, DT_LEFT | DT_NOCLIP | DT_VCENTER  | DT_SINGLELINE);
-   ::SelectObject(dc, hOldFont);
+    int rc = ::DrawTextW(dc, header, length, rect, DT_LEFT | DT_NOCLIP | DT_VCENTER | DT_SINGLELINE);
+    ::SelectObject(dc, hOldFont);
 
-   if (!rc)
-      return E_FAIL;
+    if (!rc)
+        return E_FAIL;
 
-   ::MoveToEx(dc, rect->left, rect->bottom, 0);
-   HPEN hPen = (HPEN)::GetStockObject(BLACK_PEN);
-   HPEN hOldPen = (HPEN)::SelectObject(dc, hPen);
-   ::LineTo(dc, rect->right, rect->bottom);
-   ::SelectObject(dc, hOldPen);
+    ::MoveToEx(dc, rect->left, rect->bottom, 0);
+    HGDIOBJ hPen = ::GetStockObject(BLACK_PEN);
+    HGDIOBJ hOldPen = ::SelectObject(dc, hPen);
+    ::LineTo(dc, rect->right, rect->bottom);
+    ::SelectObject(dc, hOldPen);
 
-   return S_OK;
+    return S_OK;
 }
 
-HRESULT PrintWebUIDelegate::drawFooterInRect( 
-            /* [in] */ IWebView *webView,
-            /* [in] */ RECT *rect,
+HRESULT PrintWebUIDelegate::drawFooterInRect(
+            /* [in] */ IWebView* webView,
+            /* [in] */ RECT* rect,
             /* [in] */ OLE_HANDLE drawingContext,
             /* [in] */ UINT pageIndex,
             /* [in] */ UINT pageCount)
 {
-   if (!webView || !rect)
-      return E_POINTER;
+    if (!webView || !rect)
+        return E_POINTER;
 
-   HDC dc = reinterpret_cast<HDC>(drawingContext);
+    HDC dc = reinterpret_cast<HDC>(drawingContext);
 
-   HFONT hFont = (HFONT)::GetStockObject(ANSI_VAR_FONT);
-   HFONT hOldFont = (HFONT)::SelectObject(dc, hFont);
+    HGDIOBJ hFont = ::GetStockObject(ANSI_VAR_FONT);
+    HGDIOBJ hOldFont = ::SelectObject(dc, hFont);
 
-   LPCTSTR footer(_T("[Sample Footer]"));
-   int length = _tcslen(footer);
+    LPCWSTR footer = L"[Sample Footer]";
+    size_t length = wcslen(footer);
 
-   // Add a line, 1/10th inch above the footer text from left margin to right margin.
-   ::MoveToEx(dc, rect->left, rect->top, 0);
-   HPEN hPen = (HPEN)::GetStockObject(BLACK_PEN);
-   HPEN hOldPen = (HPEN)::SelectObject(dc, hPen);
-   ::LineTo(dc, rect->right, rect->top);
-   ::SelectObject(dc, hOldPen);
+    // Add a line, 1/10th inch above the footer text from left margin to right margin.
+    ::MoveToEx(dc, rect->left, rect->top, 0);
+    HGDIOBJ hPen = ::GetStockObject(BLACK_PEN);
+    HGDIOBJ hOldPen = ::SelectObject(dc, hPen);
+    ::LineTo(dc, rect->right, rect->top);
+    ::SelectObject(dc, hOldPen);
 
-   int rc = ::DrawText(dc, footer, length, rect, DT_LEFT | DT_NOCLIP | DT_VCENTER  | DT_SINGLELINE);
-   ::SelectObject(dc, hOldFont);
+    int rc = ::DrawTextW(dc, footer, length, rect, DT_LEFT | DT_NOCLIP | DT_VCENTER | DT_SINGLELINE);
+    ::SelectObject(dc, hOldFont);
 
-   if (!rc)
-      return E_FAIL;
+    if (!rc)
+        return E_FAIL;
 
-   return S_OK;
+    return S_OK;
 }

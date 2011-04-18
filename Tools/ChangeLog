@@ -1,3 +1,17 @@
+2011-04-18  Patrick Gansterer  <paroga@webkit.org>
+
+        Reviewed by Adam Roben.
+
+        [WIN] Use WCHAR instead of TCHAR
+        https://bugs.webkit.org/show_bug.cgi?id=58755
+
+        We always use the UNICODE versions of windows functions, so
+        the usage of TCHAR makes no sense and mixing them is bad style.
+
+        * WinLauncher/PrintWebUIDelegate.cpp:
+          Also fix various style issues (including indentation and removal of ugly C-casts).
+        * WinLauncher/WinLauncher.cpp:
+
 2011-04-18  Dominic Cooney  <dominicc@chromium.org>
 
         Reviewed by Andreas Kling.
