@@ -1,3 +1,24 @@
+2011-04-15  Stephen White  <senorblanco@chromium.org>
+
+        Reviewed by Kenneth Russell.
+
+        Speed up DrawingBuffer::reset().
+        https://bugs.webkit.org/show_bug.cgi?id=58706
+
+        When DrawingBuffer::reset() is called, it should not reallocate
+        the FBOs if the size has not changed.  It should just do a glClear().
+
+        Covered by tests in fast/canvas and canvas/philip.
+
+        * platform/graphics/chromium/DrawingBufferChromium.cpp:
+        (WebCore::DrawingBuffer::DrawingBuffer):
+        Initialize the size to -1, -1, so the size change check will work on
+        first reset.
+        * platform/graphics/gpu/DrawingBuffer.cpp:
+        (WebCore::DrawingBuffer::reset):
+        If the size hasn't changed, don't resize the FBOs.  Just clear the
+        relevant buffers.
+
 2011-04-18  Pavel Feldman  <pfeldman@google.com>
 
         Reviewed by Yury Semikhatsky.

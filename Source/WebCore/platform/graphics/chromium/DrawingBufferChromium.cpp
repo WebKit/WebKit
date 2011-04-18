@@ -76,7 +76,7 @@ DrawingBuffer::DrawingBuffer(GraphicsContext3D* context,
                              bool multisampleExtensionSupported,
                              bool packedDepthStencilExtensionSupported)
     : m_context(context)
-    , m_size(size)
+    , m_size(-1, -1)
     , m_multisampleExtensionSupported(multisampleExtensionSupported)
     , m_packedDepthStencilExtensionSupported(packedDepthStencilExtensionSupported)
     , m_fbo(0)
