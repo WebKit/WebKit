@@ -73,12 +73,37 @@ label {
 .result-container iframe, .result-container img {
     border: 0;
     border-top: 1px solid lightgray;
+    vertical-align: top;
 }
 
 .label {
     padding-left: 3px;
     font-weight: bold;
     font-size: small;
+}
+
+.pixel-zoom-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    display: -webkit-box;
+}
+
+.pixel-zoom-container > * {
+    display: -webkit-box;
+    -webkit-box-flex: 1;
+    border: 1px inset lightgray;
+    height: 100px;
+    overflow: hidden;
+    zoom: 300%;
+    background-color: white;
+}
+
+.pixel-zoom-container img {
+    width: 800px;
+    height: 600px;
+    vertical-align: top;
 }
 </style>
 
@@ -126,7 +151,6 @@ function parentOfType(node, selector)
 
 function appendResultIframe(src, parent)
 {
-    // FIXME: use IMG tags for pixel results.
     var layoutTestsIndex = src.indexOf('LayoutTests');
     var name;
     if (layoutTestsIndex != -1) {
@@ -140,9 +164,11 @@ function appendResultIframe(src, parent)
         name = src.substring(lastDashIndex + 1);
     }
 
+    var tagName = (src.lastIndexOf('.png') == -1) ? 'iframe' : 'img';
+
     var container = document.createElement('div');
     container.className = 'result-container';
-    container.innerHTML = '<div class=label>' + name + '</div><iframe src="' + src + '?format=txt"></iframe>';
+    container.innerHTML = '<div class=label>' + name + '</div><' + tagName + ' src="' + src + '?format=txt"></' + tagName + '>';
     parent.appendChild(container);
 }
 
@@ -249,7 +275,6 @@ for (var test in results.tests) {
   row += '</td><td>';
 
   if (actual.indexOf('IMAGE') != -1) {
-      // FIXME: allow zooming in on pixel diffs
       hasImageFailures = true;
       row += resultLink(test_prefix, '-expected.png', 'expected') +
           resultLink(test_prefix, '-actual.png', 'actual') +
@@ -401,6 +426,69 @@ TableSorter._sort = function(newHeader)
 
 document.querySelector('#results-table').addEventListener('click', TableSorter.handleClick, false);
 TableSorter.sortColumn(0);
+
+var PixelZoomer = {};
+
+PixelZoomer._createContainer = function(e)
+{
+    var tbody = parentOfType(e.target, 'tbody');
+    var imageDiffLinks = tbody.querySelector('tr').querySelectorAll('a[href$=".png"]');
+    
+    var container = document.createElement('div');
+    container.className = 'pixel-zoom-container';
+    
+    var html = '';
+    for (var i = 0; i < imageDiffLinks.length; i++)
+        html += '<div class=zoom-image-container><img src="' + imageDiffLinks[i].href + '"></div>';
+    
+    container.innerHTML = html;
+    document.body.appendChild(container);
+
+    PixelZoomer._position(e);
+}
+
+PixelZoomer._position = function(e)
+{
+    var pageX = e.clientX;
+    var pageY = e.clientY;
+    var targetLocation = e.target.getBoundingClientRect();
+    var x = pageX - targetLocation.left;
+    var y = pageY - targetLocation.top;
+
+    var zoomContainers = document.querySelectorAll('.pixel-zoom-container > .zoom-image-container');
+    for (var i = 0; i < zoomContainers.length; i++) {
+        var container = zoomContainers[i];
+        container.scrollLeft = x - container.offsetWidth / 2;
+        container.scrollTop = y - container.offsetHeight / 2;
+    }
+}
+
+PixelZoomer.handleMouseMove = function(e) {
+    if (PixelZoomer._mouseMoveTimeout)
+        clearTimeout(PixelZoomer._mouseMoveTimeout);
+
+    if (parentOfType(e.target, '.pixel-zoom-container'))
+        return;
+
+    var container = document.querySelector('.pixel-zoom-container');
+    if (!e.target.src || e.target.src.indexOf('.png') == -1) {
+        if (container)
+            container.parentNode.removeChild(container);
+        return;
+    }
+    
+    if (!container) {
+        PixelZoomer._mouseMoveTimeout = setTimeout(function() {
+            PixelZoomer._createContainer(e);
+        }, 200);
+        return;
+    }
+    
+    PixelZoomer._position(e);
+}
+
+document.body.addEventListener('mousemove', PixelZoomer.handleMouseMove, false);
+
 
 var unexpectedStyleNode = document.createElement('style');
 document.body.appendChild(unexpectedStyleNode);

@@ -2,6 +2,15 @@
 
         Reviewed by Eric Seidel.
 
+        add a zoomed view for pixel results to the new results html file
+        https://bugs.webkit.org/show_bug.cgi?id=58827
+
+        * Scripts/webkitpy/layout_tests/layout_package/json_results.html:
+
+2011-04-18  Ojan Vafai  <ojan@chromium.org>
+
+        Reviewed by Eric Seidel.
+
         add labels to results html page
         https://bugs.webkit.org/show_bug.cgi?id=58803
 
