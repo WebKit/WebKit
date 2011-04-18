@@ -1,3 +1,25 @@
+2011-04-17  Thierry Reding  <thierry.reding@avionic-design.de>
+
+        Reviewed by Adam Barth.
+
+        Fix build with GCC 4.6.
+
+        * dom/make_names.pl: Execute preprocessor without the -P option. The
+        preprocessor in GCC 4.6 eats empty lines, effectively breaking the
+        parsing performed by this script. Dropping the -P option when invoking
+        the preprocessor keeps the empty lines but as a side-effect also adds
+        additional linemarkers.
+
+        From the cpp manpage:
+
+          -P  Inhibit generation of linemarkers in the output from the
+              preprocessor. This might be useful when running the preprocessor
+              on something that is not C code, and will be sent to a program
+              which might be confused by the linemarkers.
+
+        The linemarkers are not problematic, however, because the script
+        properly handles them by ignoring all lines starting with a #.
+
 2011-04-17  David Kilzer  <ddkilzer@apple.com>
 
         <http://webkit.org/b/58463> Switch HTTP pipelining from user default to private setting
