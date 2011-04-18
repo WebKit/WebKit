@@ -444,7 +444,7 @@ String getURL(const DragDataMap* data, DragData::FilenameConversionPolicy filena
 
     if (stringData.isEmpty() || (!PathFileExists(stringData.charactersWithNullTermination()) && !PathIsUNC(stringData.charactersWithNullTermination())))
         return url;
-    RetainPtr<CFStringRef> pathAsCFString(AdoptCF, CFStringCreateWithCharacters(kCFAllocatorDefault, (const UniChar *)stringData.charactersWithNullTermination(), stringData.length()));
+    RetainPtr<CFStringRef> pathAsCFString(AdoptCF, CFStringCreateWithCharacters(kCFAllocatorDefault, (const UniChar *)stringData.charactersWithNullTermination(), wcslen(stringData.charactersWithNullTermination())));
     if (urlFromPath(pathAsCFString.get(), url) && title)
         *title = url;
 #endif

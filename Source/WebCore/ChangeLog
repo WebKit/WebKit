@@ -1,3 +1,17 @@
+2011-04-18  Enrica Casucci  <enrica@apple.com>
+
+        Reviewed by Maciej Stachowiak.
+
+        Dropping a file in a WKView (WebKit2) doesn't load the file.
+        https://bugs.webkit.org/show_bug.cgi?id=58842
+        <rdar://problem/8514409>
+        
+        The URL string for the file contains an extra %00 at the end
+        that causes the network framework to fail to load the file.
+        
+        * platform/win/ClipboardUtilitiesWin.cpp:
+        (WebCore::getURL):
+
 2011-04-18  Geoffrey Garen  <ggaren@apple.com>
 
         Discovered and rubber-stamped by Stephanie Lewis.
