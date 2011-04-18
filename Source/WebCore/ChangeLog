@@ -1,3 +1,15 @@
+2011-04-18  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r83803.
+        http://trac.webkit.org/changeset/83803
+        https://bugs.webkit.org/show_bug.cgi?id=58782
+
+        Caused focus rings to appear in youtube videos (Requested by
+        inferno-sec on #webkit).
+
+        * rendering/RenderWidget.cpp:
+        (WebCore::RenderWidget::paint):
+
 2011-04-18  Alexander Pavlov  <apavlov@chromium.org>
 
         Reviewed by Pavel Feldman.

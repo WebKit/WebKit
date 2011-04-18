@@ -1,3 +1,17 @@
+2011-04-18  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r83803.
+        http://trac.webkit.org/changeset/83803
+        https://bugs.webkit.org/show_bug.cgi?id=58782
+
+        Caused focus rings to appear in youtube videos (Requested by
+        inferno-sec on #webkit).
+
+        * fast/frames/iframe-outline.html: Removed.
+        * platform/mac/fast/frames/iframe-outline-expected.checksum: Removed.
+        * platform/mac/fast/frames/iframe-outline-expected.png: Removed.
+        * platform/mac/fast/frames/iframe-outline-expected.txt: Removed.
+
 2011-04-18  Adam Roben  <aroben@apple.com>
 
         Skip a flaky test on Windows
