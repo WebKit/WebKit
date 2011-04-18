@@ -34,6 +34,17 @@
 
 #if USE(IOSURFACE_CANVAS_BACKING_STORE)
 #include <IOSurface/IOSurface.h>
+#include <dispatch/dispatch.h>
+#endif
+
+#if USE(ACCELERATE)
+struct ScanlineData {
+    vImagePixelCount scanlineWidth;
+    unsigned char* srcData;
+    size_t srcRowBytes;
+    unsigned char* destData;
+    size_t destRowBytes;
+};
 #endif
 
 namespace WebCore {
@@ -54,7 +65,48 @@ static bool haveVImageRoundingErrorFix()
     static bool result = (Gestalt(gestaltSystemVersion, &version) == noErr && version > 0x1066);
     return result;
 }
-#endif
+
+#if USE(IOSURFACE_CANVAS_BACKING_STORE)
+static void convertScanline(void* data, size_t tileNumber, bool premultiply)
+{
+    ScanlineData* scanlineData = static_cast<ScanlineData*>(data);
+
+    vImage_Buffer src;
+    src.data = scanlineData->srcData + tileNumber * scanlineData->srcRowBytes;
+    src.height = 1;
+    src.width = scanlineData->scanlineWidth;
+    src.rowBytes = scanlineData->srcRowBytes;
+
+    vImage_Buffer dest;
+    dest.data = scanlineData->destData + tileNumber * scanlineData->destRowBytes;
+    dest.height = 1;
+    dest.width = scanlineData->scanlineWidth;
+    dest.rowBytes = scanlineData->destRowBytes;
+
+    if (premultiply) {
+        if (kvImageNoError != vImagePremultiplyData_RGBA8888(&src, &dest, kvImageDoNotTile))
+            return;
+    } else {
+        if (kvImageNoError != vImageUnpremultiplyData_RGBA8888(&src, &dest, kvImageDoNotTile))
+            return;
+    }
+
+    // Swap channels 1 and 3, to convert BGRA<->RGBA. IOSurfaces is BGRA, ImageData expects RGBA.
+    const uint8_t map[4] = { 2, 1, 0, 3 };
+    vImagePermuteChannels_ARGB8888(&dest, &dest, map, kvImageDoNotTile);
+}
+
+static void unpremultitplyScanline(void* data, size_t tileNumber)
+{
+    convertScanline(data, tileNumber, false);
+}
+
+static void premultitplyScanline(void* data, size_t tileNumber)
+{
+    convertScanline(data, tileNumber, true);
+}
+#endif // USE(IOSURFACE_CANVAS_BACKING_STORE)
+#endif // USE(ACCELERATE)
 
 PassRefPtr<ByteArray> ImageBufferData::getData(const IntRect& rect, const IntSize& size, bool accelerateRendering, bool unmultiplied) const
 {
@@ -138,7 +190,35 @@ PassRefPtr<ByteArray> ImageBufferData::getData(const IntRect& rect, const IntSiz
         IOSurfaceLock(surface, kIOSurfaceLockReadOnly, 0);
         srcBytesPerRow = IOSurfaceGetBytesPerRow(surface);
         srcRows = (unsigned char*)(IOSurfaceGetBaseAddress(surface)) + originy * srcBytesPerRow + originx * 4;
-        
+
+#if USE(ACCELERATE)
+        if (unmultiplied) {
+            ScanlineData scanlineData;
+            scanlineData.scanlineWidth = width;
+            scanlineData.srcData = srcRows;
+            scanlineData.srcRowBytes = srcBytesPerRow;
+            scanlineData.destData = destRows;
+            scanlineData.destRowBytes = destBytesPerRow;
+
+            dispatch_apply_f(height, dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), &scanlineData, unpremultitplyScanline);
+        } else {
+            vImage_Buffer src;
+            src.height = height;
+            src.width = width;
+            src.rowBytes = srcBytesPerRow;
+            src.data = srcRows;
+
+            vImage_Buffer dest;
+            dest.height = height;
+            dest.width = width;
+            dest.rowBytes = destBytesPerRow;
+            dest.data = destRows;
+
+            // Swap pixel channels from BGRA to RGBA.
+            const uint8_t map[4] = { 2, 1, 0, 3 };
+            vImagePermuteChannels_ARGB8888(&src, &dest, map, kvImageNoFlags);
+        }
+#else
         for (int y = 0; y < height; ++y) {
             for (int x = 0; x < width; x++) {
                 int basex = x * 4;
@@ -158,10 +238,11 @@ PassRefPtr<ByteArray> ImageBufferData::getData(const IntRect& rect, const IntSiz
             srcRows += srcBytesPerRow;
             destRows += destBytesPerRow;
         }
+#endif // USE(ACCELERATE)
         IOSurfaceUnlock(surface, kIOSurfaceLockReadOnly, 0);
 #else
         ASSERT_NOT_REACHED();
-#endif
+#endif // USE(IOSURFACE_CANVAS_BACKING_STORE)
     }
     
     return result.release();
@@ -246,7 +327,35 @@ void ImageBufferData::putData(ByteArray*& source, const IntSize& sourceSize, con
         IOSurfaceLock(surface, 0, 0);
         destBytesPerRow = IOSurfaceGetBytesPerRow(surface);
         destRows = (unsigned char*)(IOSurfaceGetBaseAddress(surface)) + desty * destBytesPerRow + destx * 4;
-        
+
+#if USE(ACCELERATE)
+        if (unmultiplied) {
+            ScanlineData scanlineData;
+            scanlineData.scanlineWidth = width;
+            scanlineData.srcData = srcRows;
+            scanlineData.srcRowBytes = srcBytesPerRow;
+            scanlineData.destData = destRows;
+            scanlineData.destRowBytes = destBytesPerRow;
+
+            dispatch_apply_f(height, dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), &scanlineData, premultitplyScanline);
+        } else {
+            vImage_Buffer src;
+            src.height = height;
+            src.width = width;
+            src.rowBytes = srcBytesPerRow;
+            src.data = srcRows;
+
+            vImage_Buffer dest;
+            dest.height = height;
+            dest.width = width;
+            dest.rowBytes = destBytesPerRow;
+            dest.data = destRows;
+
+            // Swap pixel channels from RGBA to BGRA.
+            const uint8_t map[4] = { 2, 1, 0, 3 };
+            vImagePermuteChannels_ARGB8888(&src, &dest, map, kvImageNoFlags);
+        }
+#else
         for (int y = 0; y < height; ++y) {
             for (int x = 0; x < width; x++) {
                 int basex = x * 4;
@@ -266,10 +375,12 @@ void ImageBufferData::putData(ByteArray*& source, const IntSize& sourceSize, con
             destRows += destBytesPerRow;
             srcRows += srcBytesPerRow;
         }
+#endif // USE(ACCELERATE)
+
         IOSurfaceUnlock(surface, 0, 0);
 #else
         ASSERT_NOT_REACHED();
-#endif
+#endif // USE(IOSURFACE_CANVAS_BACKING_STORE)
     }
 }
 

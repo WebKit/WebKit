@@ -1,3 +1,17 @@
+2011-04-14  Matthew Delaney  <mdelaney@apple.com>
+
+        Reviewed by Simon Fraser.
+
+        [CG] Use vImage (un)premultiplyImageData functions for get/putImageData with IOSurfaces
+        https://bugs.webkit.org/show_bug.cgi?id=58088
+
+        * platform/graphics/cg/ImageBufferDataCG.cpp:
+        (WebCore::convertScanline): un/premultiplies and converts a scanline of image data from/to BGRA to/from RGBA
+        (WebCore::unpremultitplyScanline):
+        (WebCore::premultitplyScanline):
+        (WebCore::ImageBufferData::getData):
+        (WebCore::ImageBufferData::putData):
+
 2011-04-18  Jeff Miller  <jeffm@apple.com>
 
         Reviewed by Dan Bernstein.
