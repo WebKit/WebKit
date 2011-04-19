@@ -49,7 +49,7 @@
 #include "HTMLSourceElement.h"
 #include "HTMLVideoElement.h"
 #include "Logging.h"
-#include "MediaControlRootElement.h"
+#include "MediaControls.h"
 #include "MediaDocument.h"
 #include "MediaError.h"
 #include "MediaList.h"
@@ -2653,9 +2653,14 @@ void HTMLMediaElement::privateBrowsingStateDidChange()
     m_player->setPrivateBrowsingMode(privateMode);
 }
 
-MediaControlRootElement* HTMLMediaElement::mediaControls()
+MediaControls* HTMLMediaElement::mediaControls()
 {
-    return shadowRoot() ? toMediaControls(shadowRoot()->firstChild()) : 0;
+    if (!shadowRoot())
+        return 0;
+
+    Node* node = shadowRoot()->firstChild();
+    ASSERT(node->isHTMLElement());
+    return static_cast<MediaControls*>(node);
 }
 
 bool HTMLMediaElement::hasMediaControls()
@@ -2669,10 +2674,10 @@ void HTMLMediaElement::ensureMediaControls()
         return;
 
     ExceptionCode ec;
-    ensureShadowRoot()->appendChild(MediaControlRootElement::create(this), ec);
+    ensureShadowRoot()->appendChild(MediaControls::create(this), ec);
 }
 
-void* HTMLMediaElement::preDispatchEventHandler(Event* event) 
+void* HTMLMediaElement::preDispatchEventHandler(Event* event)
 {
     if (event && event->type() == eventNames().webkitfullscreenchangeEvent) {
         if (controls()) {

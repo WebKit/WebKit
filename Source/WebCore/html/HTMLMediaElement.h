@@ -41,7 +41,7 @@ namespace WebCore {
 
 class Event;
 class HTMLSourceElement;
-class MediaControlRootElement;
+class MediaControls;
 class MediaError;
 class KURL;
 class TimeRanges;
@@ -172,7 +172,7 @@ public:
     bool closedCaptionsVisible() const;
     void setClosedCaptionsVisible(bool);
 
-    MediaControlRootElement* mediaControls();
+    MediaControls* mediaControls();
 
     bool processingUserGesture() const;
 
@@ -335,7 +335,7 @@ private:
     Timer<HTMLMediaElement> m_playbackProgressTimer;
     Vector<RefPtr<Event> > m_pendingEvents;
     RefPtr<TimeRanges> m_playedTimeRanges;
-    
+
     float m_playbackRate;
     float m_defaultPlaybackRate;
     bool m_webkitPreservesPitch;

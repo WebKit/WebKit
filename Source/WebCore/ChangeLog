@@ -1,3 +1,45 @@
+2011-04-18  Steve Lacey  <sjl@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        Decouple media controls usage from implementation.
+        This allows each port to implement thier own controls in a different
+        manner to the default webkit implementation.
+
+        Convert media controls hooks to a client interface
+        https://bugs.webkit.org/show_bug.cgi?id=58346
+
+        No new tests as there is no functional change.
+
+        * Android.mk:
+        * CMakeLists.txt:
+        * GNUmakefile.list.am:
+        * WebCore.gypi:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::mediaControls):
+        (WebCore::HTMLMediaElement::ensureMediaControls):
+        (WebCore::HTMLMediaElement::preDispatchEventHandler):
+        * html/HTMLMediaElement.h:
+        * html/shadow/MediaControlElements.cpp:
+        (WebCore::MediaControlPanelMuteButtonElement::MediaControlPanelMuteButtonElement):
+        (WebCore::MediaControlPanelMuteButtonElement::create):
+        (WebCore::MediaControlTimelineElement::MediaControlTimelineElement):
+        (WebCore::MediaControlTimelineElement::create):
+        (WebCore::MediaControlFullscreenButtonElement::MediaControlFullscreenButtonElement):
+        (WebCore::MediaControlFullscreenButtonElement::create):
+        * html/shadow/MediaControlElements.h:
+        * html/shadow/MediaControlRootElement.cpp:
+        (WebCore::MediaControlRootElement::MediaControlRootElement):
+        (WebCore::MediaControls::create):
+        * html/shadow/MediaControlRootElement.h:
+        * html/shadow/MediaControls.cpp: Added.
+        (WebCore::MediaControls::MediaControls):
+        * html/shadow/MediaControls.h: Added.
+        (WebCore::MediaControls::~MediaControls):
+
 2011-04-18  Pascal Massimino  <pascal.massimino@gmail.com>
 
         Reviewed by Adam Barth.

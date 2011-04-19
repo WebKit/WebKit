@@ -355,6 +355,7 @@ LOCAL_SRC_FILES := $(LOCAL_SRC_FILES) \
 	html/parser/TextViewSourceParser.cpp \
 	html/parser/XSSFilter.cpp \
 	\
+	html/shadow/MediaControls.cpp \
 	html/shadow/MediaControlElements.cpp \
 	html/shadow/MediaControlRootElement.cpp \
 	html/shadow/MeterShadowElement.cpp \

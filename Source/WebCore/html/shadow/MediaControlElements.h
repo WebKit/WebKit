@@ -42,7 +42,7 @@ namespace WebCore {
 
 class Event;
 class Frame;
-class MediaControlRootElement;
+class MediaControls;
 
 // Must match WebKitSystemInterface.h
 enum MediaControlElementType {
@@ -193,15 +193,15 @@ private:
 
 class MediaControlPanelMuteButtonElement : public MediaControlMuteButtonElement {
 public:
-    static PassRefPtr<MediaControlPanelMuteButtonElement> create(HTMLMediaElement*, MediaControlRootElement*);
+    static PassRefPtr<MediaControlPanelMuteButtonElement> create(HTMLMediaElement*, MediaControls*);
 
 private:
-    MediaControlPanelMuteButtonElement(HTMLMediaElement*, MediaControlRootElement*);
+    MediaControlPanelMuteButtonElement(HTMLMediaElement*, MediaControls*);
 
     virtual void defaultEventHandler(Event*);
     virtual const AtomicString& shadowPseudoId() const;
 
-    MediaControlRootElement* m_controls;
+    MediaControls* m_controls;
 };
 
 // ----------------------------
@@ -325,18 +325,18 @@ private:
 
 class MediaControlTimelineElement : public MediaControlInputElement {
 public:
-    static PassRefPtr<MediaControlTimelineElement> create(HTMLMediaElement*, MediaControlRootElement*);
+    static PassRefPtr<MediaControlTimelineElement> create(HTMLMediaElement*, MediaControls*);
 
     virtual void defaultEventHandler(Event*);
     void setPosition(float);
     void setDuration(float);
 
 private:
-    MediaControlTimelineElement(HTMLMediaElement*, MediaControlRootElement*);
+    MediaControlTimelineElement(HTMLMediaElement*, MediaControls*);
 
     virtual const AtomicString& shadowPseudoId() const;
 
-    MediaControlRootElement* m_controls;
+    MediaControls* m_controls;
 };
 
 // ----------------------------
@@ -359,16 +359,16 @@ private:
 
 class MediaControlFullscreenButtonElement : public MediaControlInputElement {
 public:
-    static PassRefPtr<MediaControlFullscreenButtonElement> create(HTMLMediaElement*, MediaControlRootElement*);
+    static PassRefPtr<MediaControlFullscreenButtonElement> create(HTMLMediaElement*, MediaControls*);
 
     virtual void defaultEventHandler(Event*);
 
 private:
-    MediaControlFullscreenButtonElement(HTMLMediaElement*, MediaControlRootElement*);
+    MediaControlFullscreenButtonElement(HTMLMediaElement*, MediaControls*);
 
     virtual const AtomicString& shadowPseudoId() const;
 
-    MediaControlRootElement* m_controls;
+    MediaControls* m_controls;
 };
 
 // ----------------------------

@@ -24,18 +24,16 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef MediaControls_h
-#define MediaControls_h
+#ifndef MediaControlRootElement_h
+#define MediaControlRootElement_h
 
 #if ENABLE(VIDEO)
 
-#include "HTMLDivElement.h"
-#include "Timer.h"
+#include "MediaControls.h"
 #include <wtf/RefPtr.h>
 
 namespace WebCore {
 
-class HTMLElement;
 class HTMLInputElement;
 class HTMLMediaElement;
 class Event;
@@ -68,10 +66,11 @@ class MediaPlayer;
 class RenderBox;
 class RenderMedia;
 
-class MediaControlRootElement : public HTMLDivElement {
+class MediaControlRootElement : public MediaControls {
 public:
     static PassRefPtr<MediaControlRootElement> create(HTMLMediaElement*);
 
+    // MediaControls implementation.
     void show();
     void hide();
     void makeOpaque();
@@ -127,12 +126,6 @@ private:
 
     bool m_opaque;
 };
-
-inline MediaControlRootElement* toMediaControls(Node* node)
-{
-    ASSERT(node->isHTMLElement());
-    return static_cast<MediaControlRootElement*>(node);
-}
 
 }
 

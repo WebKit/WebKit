@@ -29,26 +29,16 @@
 #if ENABLE(VIDEO)
 #include "MediaControlRootElement.h"
 
-#include "EventNames.h"
-#include "FloatConversion.h"
-#include "HTMLNames.h"
 #include "MediaControlElements.h"
-#include "MouseEvent.h"
 #include "Page.h"
-#include "RenderLayer.h"
 #include "RenderTheme.h"
-#include <wtf/CurrentTime.h>
-#include <wtf/MathExtras.h>
-
 
 using namespace std;
 
 namespace WebCore {
 
-using namespace HTMLNames;
-
 MediaControlRootElement::MediaControlRootElement(HTMLMediaElement* mediaElement)
-    : HTMLDivElement(divTag, mediaElement->document())
+    : MediaControls(mediaElement)
     , m_mediaElement(mediaElement)
     , m_rewindButton(0)
     , m_playButton(0)
@@ -72,6 +62,11 @@ MediaControlRootElement::MediaControlRootElement(HTMLMediaElement* mediaElement)
     , m_panel(0)
     , m_opaque(true)
 {
+}
+
+PassRefPtr<MediaControls> MediaControls::create(HTMLMediaElement* mediaElement)
+{
+    return MediaControlRootElement::create(mediaElement);
 }
 
 PassRefPtr<MediaControlRootElement> MediaControlRootElement::create(HTMLMediaElement* mediaElement)
