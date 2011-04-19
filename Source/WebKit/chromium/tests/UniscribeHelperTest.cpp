@@ -115,7 +115,7 @@ TEST_F(UniscribeTest, TooBig)
     {
         UniscribeHelper uniscribe(
             input.characters(), static_cast<int>(input.length()),
-            false, hfont, scriptCache, &properties);
+            false, hfont, scriptCache, &properties, 0);
         uniscribe.initWithOptionalLengthProtection(false);
 
         // There should be one shaping entry, with nothing in it.
@@ -148,7 +148,7 @@ TEST_F(UniscribeTest, TooBig)
     {
         UniscribeHelper uniscribe(
             input.characters(), static_cast<int>(input.length()),
-            false, hfont, scriptCache, &properties);
+            false, hfont, scriptCache, &properties, 0);
         uniscribe.initWithOptionalLengthProtection(true);
 
         // There should be 0 runs and shapes.

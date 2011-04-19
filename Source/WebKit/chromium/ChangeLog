@@ -1,3 +1,16 @@
+2011-04-19  Jungshik Shin  <jshin@chromium.org>
+
+        Reviewed by Adam Barth
+
+        Fix the compile failure in UniscribeHelperTest.cpp due to
+        a change in UniscribeHelper made by the CL for bug 48860
+        (r84264)
+
+        http://bugs.webkit.org/show_bug.cgi?id=48860
+
+        * tests/UniscribeHelperTest.cpp:
+        (TEST_F):
+
 2011-04-19  Stuart Morgan  <stuartmorgan@chromium.org>
 
         Reviewed by Tony Chang.
