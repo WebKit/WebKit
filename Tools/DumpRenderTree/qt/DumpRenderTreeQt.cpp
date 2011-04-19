@@ -190,6 +190,7 @@ void WebPage::resetSettings()
     settings()->resetAttribute(QWebSettings::LinksIncludedInFocusChain);
     settings()->resetAttribute(QWebSettings::OfflineWebApplicationCacheEnabled);
     settings()->resetAttribute(QWebSettings::LocalContentCanAccessRemoteUrls);
+    settings()->resetAttribute(QWebSettings::LocalContentCanAccessFileUrls);
     settings()->resetAttribute(QWebSettings::PluginsEnabled);
     settings()->resetAttribute(QWebSettings::JavascriptCanAccessClipboard);
     settings()->resetAttribute(QWebSettings::AutoLoadImages);
