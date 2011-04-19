@@ -1,3 +1,10 @@
+2011-04-19  Kevin Ollivier  <kevino@theolliviers.com>
+
+        [wx] Unreviewed build fix for Win / wx 2.9 wxPython installation.
+
+        * wx/packaging/build-win-installer.py:
+        * wx/packaging/wxWebKitInstaller.iss.in:
+
 2011-04-19  Adam Roben  <aroben@apple.com>
 
         Skip another accelerated-compositing-sensitive test when accelerated compositing is disabled
