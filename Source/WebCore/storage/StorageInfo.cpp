@@ -47,6 +47,10 @@ StorageInfo::StorageInfo()
 {
 }
 
+StorageInfo::~StorageInfo()
+{
+}
+
 #if !PLATFORM(CHROMIUM)
 void StorageInfo::queryUsageAndQuota(ScriptExecutionContext*, int, PassRefPtr<StorageInfoUsageCallback>, PassRefPtr<StorageInfoErrorCallback>)
 {
@@ -58,10 +62,6 @@ void StorageInfo::requestQuota(ScriptExecutionContext*, int, unsigned long long,
     notImplemented();
 }
 #endif
-
-StorageInfo::~StorageInfo()
-{
-}
 
 } // namespace WebCore
 

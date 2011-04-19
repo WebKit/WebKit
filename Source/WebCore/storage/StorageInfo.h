@@ -59,11 +59,10 @@ public:
 
     void requestQuota(ScriptExecutionContext*, int storageType, unsigned long long newQuotaInBytes, PassRefPtr<StorageInfoQuotaCallback>, PassRefPtr<StorageInfoErrorCallback>);
 
-private:
-    StorageInfo();
     ~StorageInfo();
 
-    friend class RefCounted<StorageInfo>;
+private:
+    StorageInfo();
 };
 
 } // namespace WebCore

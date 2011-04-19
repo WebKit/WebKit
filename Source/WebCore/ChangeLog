@@ -1,5 +1,13 @@
 2011-04-19  Kinuko Yasuda  <kinuko@chromium.org>
 
+        Not reviewed; windows build fix attempt.
+
+        * storage/StorageInfo.cpp:
+        (WebCore::StorageInfo::~StorageInfo):
+        * storage/StorageInfo.h:
+
+2011-04-19  Kinuko Yasuda  <kinuko@chromium.org>
+
         Reviewed by David Levin.
 
         [Chromium] Enable QUOTA API at runtime if enable-quota flag is given
