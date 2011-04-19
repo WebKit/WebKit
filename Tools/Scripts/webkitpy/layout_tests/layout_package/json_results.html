@@ -325,13 +325,13 @@ function appendTestList(tests, header, tableId, fileSuffix, linkName)
         if (fileSuffix.indexOf('actual') == -1)
             html += resultLink(stripExtension(test), fileSuffix, linkName);
         else {
-            if (g_results.tests[test].is_missing_audio)
+            var testObject = g_results.tests[test];
+            if (testObject.is_missing_audio)
                 html += resultLink(stripExtension(test), '-actual.wav', 'audio result');
-            else {
+            if (testObject.is_missing_text)
                 html += resultLink(stripExtension(test), fileSuffix, linkName);
-                if (g_results.tests[test].is_missing_image)
-                    html += resultLink(stripExtension(test), '-actual.png', 'png result');
-            }
+            if (testObject.is_missing_image)
+                html += resultLink(stripExtension(test), '-actual.png', 'png result');
         } 
         
         html += '</td></tr></tbody>';

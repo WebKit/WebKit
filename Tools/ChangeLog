@@ -2,6 +2,25 @@
 
         Reviewed by Eric Seidel.
 
+        don't show missing text results for tests that only dump image results
+        https://bugs.webkit.org/show_bug.cgi?id=58931
+
+        * Scripts/webkitpy/layout_tests/layout_package/json_results.html:
+        * Scripts/webkitpy/layout_tests/layout_package/test_runner.py:
+
+2011-04-19  Ojan Vafai  <ojan@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        don't show failures table if there are only new tests
+        https://bugs.webkit.org/show_bug.cgi?id=58929
+
+        * Scripts/webkitpy/layout_tests/layout_package/json_results.html:
+
+2011-04-19  Ojan Vafai  <ojan@chromium.org>
+
+        Reviewed by Eric Seidel.
+
         don't show failures table if there are only new tests
         https://bugs.webkit.org/show_bug.cgi?id=58929
 

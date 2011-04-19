@@ -161,6 +161,9 @@ def summarize_results(port_obj, expectations, result_summary, retry_summary, tes
         if test_failures.FailureReftestMismatchDidNotOccur in failure_types:
             tests[test]['is_mismatch_reftest'] = True
 
+        if test_failures.FailureMissingResult in failure_types:
+            tests[test]['is_missing_text'] = True
+
         if test_failures.FailureMissingImage in failure_types or test_failures.FailureMissingImageHash in failure_types:
             tests[test]['is_missing_image'] = True
 
