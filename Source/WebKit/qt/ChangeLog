@@ -1,3 +1,21 @@
+2011-04-19  Igor Oliveira  <igor.oliveira@openbossa.org>
+
+        Reviewed by Andreas Kling.
+
+        [Qt] X11: Text selection is causing oncopy event to be called
+        https://bugs.webkit.org/show_bug.cgi?id=58656
+
+        Always when text is selected the oncopy event is fired, this behavior does
+        not exist in Firefox or Chrome. Now, when selecting a text, QtWebKit
+        is making multi part-copies (with rich text metadata), the multi-part
+        data can be obtained by data transfer items interface when supported by QtWebKit.
+        Also, copies to the clipboard of a selected image, is not supported by Chrome and
+        Firefox and was removed from QtWebKit.
+
+
+        * Api/qwebpage.cpp:
+        (QWebPagePrivate::handleClipboard):
+
 2011-04-18  Csaba Osztrogonác  <ossy@webkit.org>
 
         [Qt][WK2] Unreviewed buildfix after r84174.
