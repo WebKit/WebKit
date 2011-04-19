@@ -521,6 +521,8 @@ void FrameView::applyOverflowToViewport(RenderObject* o, ScrollbarMode& hMode, S
 
 void FrameView::calculateScrollbarModesForLayout(ScrollbarMode& hMode, ScrollbarMode& vMode)
 {
+    m_viewportRenderer = 0;
+
     const HTMLFrameOwnerElement* owner = m_frame->ownerElement();
     if (owner && (owner->scrollingMode() == ScrollbarAlwaysOff)) {
         hMode = ScrollbarAlwaysOff;
@@ -880,7 +882,7 @@ void FrameView::layout(bool allowSubtree)
             printf("Elapsed time before first layout: %d\n", document->elapsedTime());
 #endif        
     }
-    
+
     ScrollbarMode hMode;
     ScrollbarMode vMode;    
     calculateScrollbarModesForLayout(hMode, vMode);
