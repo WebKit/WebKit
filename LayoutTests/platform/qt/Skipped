@@ -3499,3 +3499,7 @@ storage/storageinfo-query-usage.html
 # Expose title direction in WebKit API
 # https://bugs.webkit.org/show_bug.cgi?id=58845
 fast/dom/title-directionality.html
+
+# fast/text/zero-width-characters-complex-script fails on Chrome and Qt on Linux
+# https://bugs.webkit.org/show_bug.cgi?id=58741
+fast/text/zero-width-characters-complex-script.html
