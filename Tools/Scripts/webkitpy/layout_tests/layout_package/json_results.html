@@ -108,10 +108,10 @@ label {
 </style>
 
 <script>
-var results;
+var g_results;
 function ADD_RESULTS(input)
 {
-    results = input;
+    g_results = input;
 }
 </script>
 
@@ -123,22 +123,6 @@ function stripExtension(test)
     var index = test.lastIndexOf('.');
     return test.substring(0, index);
 }
-
-var html = '<p>Tests where results did not match expected results:</p>';
-
-if (results.uses_expectations_file)
-    html += '<div id=options><label><input class="unexpected-results" type=checkbox checked>Only show unexpected results</label></div>';
-
-html += '<table id="results-table"><thead><tr>' +
-        '<th>test</th>' +
-        '<th id="text-results-header">text results</th>' +
-        '<th id="image-results-header">image results</th>' +
-        '<th>failure type</th>';
-        
-if (results.uses_expectations_file)
-    html += '<th>expected failure type</th>';
-
-html += '</tr></thead>';
 
 function parentOfType(node, selector)
 {
@@ -215,8 +199,8 @@ function expandExpectations(e)
 function testLink(test)
 {
     var basePath;
-    if (results.layout_tests_dir && location.toString().indexOf('file://') == 0)
-        basePath = results.layout_tests_dir + '/';
+    if (g_results.layout_tests_dir && location.toString().indexOf('file://') == 0)
+        basePath = g_results.layout_tests_dir + '/';
     else
         basePath = 'http://trac.webkit.org/browser/trunk/LayoutTests/';
     return '<span class=expand-button onclick="expandExpectations(event)"><span class=expand-button-text>+</span></span>' +
@@ -228,83 +212,106 @@ function resultLink(testPrefix, suffix, contents)
     return '<a class=result-link href="' + testPrefix + suffix + '">' + contents + '</a> ';
 }
 
-var hasTextFailures = false;
-var hasImageFailures = false;
+var g_hasTextFailures = false;
+var g_hasImageFailures = false;
 
-var testsWithStderr = [];
-var newTests = [];
-var hasHttpTests = false;
+var g_testsWithStderr = [];
+var g_newTests = [];
+var g_hasHttpTests = false;
 
-for (var test in results.tests) {
-  if (results.tests[test].has_stderr)
-      testsWithStderr.push(test);
+function tableRows()
+{
+    var html = '';
+    for (var test in g_results.tests) {
+        if (g_results.tests[test].has_stderr)
+            g_testsWithStderr.push(test);
 
-  hasHttpTests = hasHttpTests || test.indexOf('http/') == 0;
+        g_hasHttpTests = g_hasHttpTests || test.indexOf('http/') == 0;
 
-  var actual = results.tests[test].actual;
-  if (actual == 'MISSING') {
-      // FIXME: make sure that new-run-webkit-tests spits out an -actual.txt file for
-      // tests with MISSING results.
-      newTests.push(test);
-      continue;
-  }
-  
-  var expected = results.tests[test].expected || 'PASS';
-  if (actual == 'PASS' && (!results.uses_expectations_file || expected == 'PASS'))
-    continue;
+        var actual = g_results.tests[test].actual;
+        if (actual == 'MISSING') {
+            // FIXME: make sure that new-run-webkit-tests spits out an -actual.txt file for
+            // tests with MISSING results.
+            g_newTests.push(test);
+            continue;
+        }
 
-  var row = '<td>' + testLink(test) + '</td>';
-  var test_prefix = stripExtension(test);
+        var expected = g_results.tests[test].expected || 'PASS';
+        if (actual == 'PASS' && (!g_results.uses_expectations_file || expected == 'PASS'))
+          continue;
 
-  row += '<td>';
-  if (actual == 'CRASH')
-      row += resultLink(test_prefix, '-stack.txt', 'stack');
-  else if (actual == 'AUDIO') {
-      row += resultLink(test_prefix, '-expected.wav', 'expected');
-      row += resultLink(test_prefix, '-actual.wav', 'actual');
-  } else if (actual.indexOf('TEXT') != -1 || actual == 'TIMEOUT') {
-      // FIXME: only include timeout actual/expected results here if we actually spit out results for timeout tests.
-      hasTextFailures = true;
-      row += resultLink(test_prefix, '-expected.txt', 'expected') +
-          resultLink(test_prefix, '-actual.txt', 'actual') +
-          resultLink(test_prefix, '-diff.txt', 'diff');
-        
-      if (results.has_pretty_patch)
-          row += resultLink(test_prefix, '-pretty-diff.html', 'pretty diff');
+        var row = '<td>' + testLink(test) + '</td>';
+        var test_prefix = stripExtension(test);
 
-      if (results.has_wdiff)
-          row += resultLink(test_prefix, '-wdiff.html', 'wdiff');
-  }
+        row += '<td>';
+        if (actual == 'CRASH')
+            row += resultLink(test_prefix, '-stack.txt', 'stack');
+        else if (actual == 'AUDIO') {
+            row += resultLink(test_prefix, '-expected.wav', 'expected');
+            row += resultLink(test_prefix, '-actual.wav', 'actual');
+        } else if (actual.indexOf('TEXT') != -1 || actual == 'TIMEOUT') {
+            // FIXME: only include timeout actual/expected results here if we actually spit out results for timeout tests.
+            g_hasTextFailures = true;
+            row += resultLink(test_prefix, '-expected.txt', 'expected') +
+                resultLink(test_prefix, '-actual.txt', 'actual') +
+                resultLink(test_prefix, '-diff.txt', 'diff');
+      
+            if (g_results.has_pretty_patch)
+                row += resultLink(test_prefix, '-pretty-diff.html', 'pretty diff');
 
-  row += '</td><td>';
+            if (g_results.has_wdiff)
+                row += resultLink(test_prefix, '-wdiff.html', 'wdiff');
+        }
 
-  if (actual.indexOf('IMAGE') != -1) {
-      hasImageFailures = true;
+        row += '</td><td>';
 
-      if (results.tests[test].is_mismatch_reftest) {
-          row += resultLink(test_prefix, '-expected-mismatch.html', 'ref mismatch html') +
-              resultLink(test_prefix, '-actual.png', 'actual');
-      } else {
-          if (results.tests[test].is_reftest)
-              row += resultLink(test_prefix, '-expected.html', 'ref html');
+        if (actual.indexOf('IMAGE') != -1) {
+            g_hasImageFailures = true;
 
-          row += resultLink(test_prefix, '-expected.png', 'expected') +
-              resultLink(test_prefix, '-actual.png', 'actual') +
-              resultLink(test_prefix, '-diff.png', 'diff');
-      }
-  }
+            if (g_results.tests[test].is_mismatch_reftest) {
+                row += resultLink(test_prefix, '-expected-mismatch.html', 'ref mismatch html') +
+                    resultLink(test_prefix, '-actual.png', 'actual');
+            } else {
+                if (g_results.tests[test].is_reftest)
+                    row += resultLink(test_prefix, '-expected.html', 'ref html');
 
-  row += '</td>';
-  row += '<td>' + actual + '</td>';
-  
-  if (results.uses_expectations_file)
-    row += '<td>' + expected + '</td>';
+                row += resultLink(test_prefix, '-expected.png', 'expected') +
+                    resultLink(test_prefix, '-actual.png', 'actual') +
+                    resultLink(test_prefix, '-diff.png', 'diff');
+            }
+        }
 
-  var isExpected = actual == 'SKIP' || (results.uses_expectations_file && expected == actual);
-  html += '<tbody class="' + (isExpected ? 'expected' : '') + '"><tr>' + row + '</tr></tbody>';
+        row += '</td>';
+        row += '<td>' + actual + '</td>';
+
+        if (g_results.uses_expectations_file)
+          row += '<td>' + expected + '</td>';
+
+        var isExpected = actual == 'SKIP' || (g_results.uses_expectations_file && expected == actual);
+        html += '<tbody class="' + (isExpected ? 'expected' : '') + '"><tr>' + row + '</tr></tbody>';
+    }
+    return html;
 }
 
-html += '</table>'
+var html = '';
+if (g_results.uses_expectations_file)
+    html += '<div id=options><label><input class="unexpected-results" type=checkbox checked>Only show unexpected results</label></div>';
+
+var tableRowsHtml = tableRows();
+
+if (tableRowsHtml) {
+    html += '<p>Tests where results did not match expected results:</p>' +
+        '<table id="results-table"><thead><tr>' +
+        '<th>test</th>' +
+        '<th id="text-results-header">text results</th>' +
+        '<th id="image-results-header">image results</th>' +
+        '<th>failure type</th>';
+        
+    if (g_results.uses_expectations_file)
+        html += '<th>expected failure type</th>';
+
+    html += '</tr></thead>' + tableRowsHtml + '</table>';
+}
 
 function appendTestList(tests, header, tableId, fileSuffix, linkName)
 {
@@ -318,11 +325,11 @@ function appendTestList(tests, header, tableId, fileSuffix, linkName)
         if (fileSuffix.indexOf('actual') == -1)
             html += resultLink(stripExtension(test), fileSuffix, linkName);
         else {
-            if (results.tests[test].is_missing_audio)
+            if (g_results.tests[test].is_missing_audio)
                 html += resultLink(stripExtension(test), '-actual.wav', 'audio result');
             else {
                 html += resultLink(stripExtension(test), fileSuffix, linkName);
-                if (results.tests[test].is_missing_image)
+                if (g_results.tests[test].is_missing_image)
                     html += resultLink(stripExtension(test), '-actual.png', 'png result');
             }
         } 
@@ -332,13 +339,13 @@ function appendTestList(tests, header, tableId, fileSuffix, linkName)
     html += '</table>'
 }
 
-if (newTests.length)
-    appendTestList(newTests, 'Tests that had no expected results (probably new):', 'new-tests-table', '-actual.txt', 'result');
+if (g_newTests.length)
+    appendTestList(g_newTests, 'Tests that had no expected results (probably new):', 'new-tests-table', '-actual.txt', 'result');
 
-if (testsWithStderr.length)
-    appendTestList(testsWithStderr, 'Tests that had stderr output:', 'stderr-table', '-stderr.txt', 'stderr');
+if (g_testsWithStderr.length)
+    appendTestList(g_testsWithStderr, 'Tests that had stderr output:', 'stderr-table', '-stderr.txt', 'stderr');
 
-if (hasHttpTests) {
+if (g_hasHttpTests) {
     html += '<p>httpd access log: <a href="access_log.txt">access_log.txt</a></p>' +
         '<p>httpd error log: <a href="error_log.txt">error_log.txt</a></p>';
 }
@@ -394,7 +401,7 @@ TableSorter._textContent = function(tbodyRow, column)
 
 TableSorter._sortRows = function(newHeader, reversed)
 {
-    var testsTable = document.querySelector('#results-table');
+    var testsTable = document.getElementById('results-table');
     var headers = toArray(testsTable.querySelectorAll('th'));
     var sortColumn = headers.indexOf(newHeader);
 
@@ -426,7 +433,7 @@ TableSorter._sortRows = function(newHeader, reversed)
 
 TableSorter.sortColumn = function(columnNumber)
 {
-    var newHeader = document.querySelector('#results-table').querySelectorAll('th')[columnNumber];
+    var newHeader = document.getElementById('results-table').querySelectorAll('th')[columnNumber];
     TableSorter._sort(newHeader);
 }
 
@@ -449,7 +456,8 @@ TableSorter._sort = function(newHeader)
     TableSorter._sortRows(newHeader, reversed);
 }
 
-document.querySelector('#results-table').addEventListener('click', TableSorter.handleClick, false);
+if (document.getElementById('results-table'))
+    document.getElementById('results-table').addEventListener('click', TableSorter.handleClick, false);
 TableSorter.sortColumn(0);
 
 var PixelZoomer = {};
@@ -528,10 +536,11 @@ function updateExpectedResults()
 }
 
 updateExpectedResults();
-document.querySelector('.unexpected-results').addEventListener('change', updateExpectedResults, false);
+if (document.querySelector('.unexpected-results'))
+    document.querySelector('.unexpected-results').addEventListener('change', updateExpectedResults, false);
 
-if (!hasTextFailures)
-  document.body.querySelector('#text-results-header').textContent = '';
-if (!hasImageFailures)
-  document.body.querySelector('#image-results-header').textContent = '';
+if (!g_hasTextFailures)
+  document.body.getElementById('text-results-header').textContent = '';
+if (!g_hasImageFailures)
+  document.body.getElementById('image-results-header').textContent = '';
 </script>
