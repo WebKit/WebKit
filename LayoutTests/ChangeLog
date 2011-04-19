@@ -1,3 +1,12 @@
+2011-04-19  Chris Rogers  <crogers@google.com>
+
+        Unreviewed.
+
+        Update test_expectations.txt due to border radius bugs in Skia
+        https://bugs.webkit.org/show_bug.cgi?id=58920
+
+        * platform/chromium/test_expectations.txt:
+
 2011-04-19  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by David Hyatt.
