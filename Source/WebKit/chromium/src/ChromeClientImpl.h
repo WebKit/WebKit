@@ -139,6 +139,9 @@ public:
     virtual void cancelGeolocationPermissionRequestForFrame(WebCore::Frame*, WebCore::Geolocation*);
     virtual void runOpenPanel(WebCore::Frame*, PassRefPtr<WebCore::FileChooser>);
     virtual void chooseIconForFiles(const Vector<WTF::String>&, WebCore::FileChooser*);
+#if ENABLE(DIRECTORY_UPLOAD)
+    virtual void enumerateChosenDirectory(const WTF::String&, WebCore::FileChooser*);
+#endif
     virtual void setCursor(const WebCore::Cursor&);
     virtual void formStateDidChange(const WebCore::Node*);
 #if ENABLE(TOUCH_EVENTS)

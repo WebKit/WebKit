@@ -109,6 +109,12 @@ bool RenderFileUploadControl::allowsDirectoryUpload()
     HTMLInputElement* input = static_cast<HTMLInputElement*>(node());
     return input->fastHasAttribute(webkitdirectoryAttr);
 }
+
+void RenderFileUploadControl::receiveDropForDirectoryUpload(const Vector<String>& paths)
+{
+    if (Chrome* chromePointer = chrome())
+        chromePointer->enumerateChosenDirectory(paths[0], m_fileChooser.get());
+}
 #endif
 
 String RenderFileUploadControl::acceptTypes()
@@ -304,6 +310,13 @@ VisiblePosition RenderFileUploadControl::positionForPoint(const IntPoint&)
 
 void RenderFileUploadControl::receiveDroppedFiles(const Vector<String>& paths)
 {
+#if ENABLE(DIRECTORY_UPLOAD)
+    if (allowsDirectoryUpload()) {
+        receiveDropForDirectoryUpload(paths);
+        return;
+    }
+#endif
+
     if (allowsMultipleFiles())
         m_fileChooser->chooseFiles(paths);
     else

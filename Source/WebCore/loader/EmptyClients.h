@@ -192,6 +192,10 @@ public:
     virtual NotificationPresenter* notificationPresenter() const { return 0; }
 #endif
 
+#if ENABLE(DIRECTORY_UPLOAD)
+    virtual void enumerateChosenDirectory(const String&, FileChooser*) { }
+#endif
+
     virtual void runOpenPanel(Frame*, PassRefPtr<FileChooser>) { }
     virtual void chooseIconForFiles(const Vector<String>&, FileChooser*) { }
 

@@ -122,6 +122,12 @@ public:
     // The icon is shown in a file upload control.
     virtual bool queryIconForFiles(const WebVector<WebString>& filenames, WebIconLoadingCompletion*) { return false; }
 
+    // This method enumerates all the files in the path. It returns immediately
+    // and asynchronously invokes the WebFileChooserCompletion with all the
+    // files in the directory. Returns false if the WebFileChooserCompletion
+    // will never be called.
+    virtual bool enumerateChosenDirectory(const WebString& path, WebFileChooserCompletion*) { return false; }
+
 
     // Navigational --------------------------------------------------------
 

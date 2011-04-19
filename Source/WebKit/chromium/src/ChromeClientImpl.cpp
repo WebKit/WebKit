@@ -683,6 +683,22 @@ void ChromeClientImpl::chooseIconForFiles(const Vector<String>& filenames, FileC
         iconCompletion->didLoadIcon(WebData());
 }
 
+#if ENABLE(DIRECTORY_UPLOAD)
+void ChromeClientImpl::enumerateChosenDirectory(const String& path, FileChooser* fileChooser)
+{
+    WebViewClient* client = m_webView->client();
+    if (!client)
+        return;
+
+    WebFileChooserCompletionImpl* chooserCompletion =
+        new WebFileChooserCompletionImpl(fileChooser);
+
+    // If the enumeration can't happen, call the callback with an empty list.
+    if (!client->enumerateChosenDirectory(path, chooserCompletion))
+        chooserCompletion->didChooseFile(WebVector<WebString>());
+}
+#endif
+
 void ChromeClientImpl::popupOpened(PopupContainer* popupContainer,
                                    const IntRect& bounds,
                                    bool handleExternally)

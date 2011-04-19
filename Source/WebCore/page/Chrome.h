@@ -153,6 +153,9 @@ namespace WebCore {
 
         void runOpenPanel(Frame*, PassRefPtr<FileChooser>);
         void chooseIconForFiles(const Vector<String>&, FileChooser*);
+#if ENABLE(DIRECTORY_UPLOAD)
+        void enumerateChosenDirectory(const String&, FileChooser*);
+#endif
 
         void dispatchViewportDataDidChange(const ViewportArguments&) const;
 

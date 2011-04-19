@@ -64,6 +64,7 @@ private:
     bool allowsMultipleFiles();
 #if ENABLE(DIRECTORY_UPLOAD)
     bool allowsDirectoryUpload();
+    void receiveDropForDirectoryUpload(const Vector<String>&);
 #endif
     String acceptTypes();
     void chooseIconForFiles(FileChooser*, const Vector<String>&);

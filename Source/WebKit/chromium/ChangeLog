@@ -1,3 +1,20 @@
+2011-04-19  John Gregg  <johnnyg@google.com>
+
+        Reviewed by Darin Fisher.
+
+        Enable folder drag-n-drop when using a "webkitdirectory" file input
+        https://bugs.webkit.org/show_bug.cgi?id=58401
+
+        This uses a new ChromeClient API to enumerate the directory and 
+        return all the files, as if the user had selected that directory
+        by clicking the control in the normal way.
+
+        * public/WebViewClient.h:
+        (WebKit::WebViewClient::enumerateChosenDirectory):
+        * src/ChromeClientImpl.cpp:
+        (WebKit::ChromeClientImpl::enumerateChosenDirectory):
+        * src/ChromeClientImpl.h:
+
 2011-04-18  Evan Martin  <evan@chromium.org>
 
         Reviewed by Eric Seidel.
