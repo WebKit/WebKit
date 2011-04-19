@@ -1,3 +1,15 @@
+2011-04-19  John Knottenbelt  <jknotten@chromium.org>
+
+        Unreviewed.
+
+        [Chromium] Reenable layout test canvas/philip/tests/2d.gradient.interpolate.outside.html
+        https://bugs.webkit.org/show_bug.cgi?id=58873
+
+	Fixed in Chromium r81956.
+	http://code.google.com/p/chromium/issues/detail?id=79725
+
+        * platform/chromium/test_expectations.txt:
+
 2011-04-19  Csaba Osztrogonác  <ossy@webkit.org>
 
         [Qt] REGRESSION(84194): http/tests/xmlhttprequest/event-listener-gc.html fails
