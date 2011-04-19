@@ -563,6 +563,7 @@ if (!$hasAcceleratedCompositing) {
         $ignoredFiles{'media/controls-drag-timebar.html'} = 1;
         $ignoredFiles{'media/controls-strict.html'} = 1;
         $ignoredFiles{'media/controls-styling.html'} = 1;
+        $ignoredFiles{'media/controls-without-preload.html'} = 1;
         $ignoredFiles{'media/video-controls-rendering.html'} = 1;
         $ignoredFiles{'media/video-display-toggle.html'} = 1;
         $ignoredFiles{'media/video-no-audio.html'} = 1;

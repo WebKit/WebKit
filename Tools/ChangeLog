@@ -1,3 +1,10 @@
+2011-04-19  Adam Roben  <aroben@apple.com>
+
+        Skip another accelerated-compositing-sensitive test when accelerated compositing is disabled
+
+        * Scripts/old-run-webkit-tests: Skip media/controls-without-preload.html on Windows when
+        accelerated compositing is disabled.
+
 2011-04-19  Ojan Vafai  <ojan@chromium.org>
 
         Remove accidentally committed debug code.
