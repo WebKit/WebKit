@@ -1,3 +1,17 @@
+2011-04-19  Enrica Casucci  <enrica@apple.com>
+
+        Reviewed by Ryosuke Niwa.
+
+        REGRESSION(r55762): Highlight color can't be copied in gmail.
+        https://bugs.webkit.org/show_bug.cgi?id=58925
+        <rdar://problem/9253057>
+
+        The following test checks that when we copy a text node surrounded by an element that
+        has non transparent background color we preserve the background color as well.
+        
+        * editing/pasteboard/copy-text-with-backgroundcolor-expected.txt: Added.
+        * editing/pasteboard/copy-text-with-backgroundcolor.html: Added.
+
 2011-04-19  Chris Rogers  <crogers@google.com>
 
         Unreviewed.

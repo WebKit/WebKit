@@ -916,7 +916,7 @@ TriState Editor::selectionHasStyle(int propertyID, const String& value) const
     return state;
 }
 
-static bool hasTransparentBackgroundColor(CSSStyleDeclaration* style)
+bool Editor::hasTransparentBackgroundColor(CSSStyleDeclaration* style)
 {
     RefPtr<CSSValue> cssValue = style->getPropertyCSSValue(CSSPropertyBackgroundColor);
     if (!cssValue)

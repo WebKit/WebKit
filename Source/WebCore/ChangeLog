@@ -1,3 +1,28 @@
+2011-04-19  Enrica Casucci  <enrica@apple.com>
+
+        Reviewed by Ryosuke Niwa.
+
+        REGRESSION(r55762): Highlight color can't be copied in gmail.
+        https://bugs.webkit.org/show_bug.cgi?id=58925
+        <rdar://problem/9253057>
+
+        Test: editing/pasteboard/copy-text-with-backgroundcolor.html
+
+        The changes of r55762 uncovered the underlying issue here. The markup fragment
+        placed in the pasteboard does not contain the background color style.
+        This occurs only if the selection is limited to a single text node, whereas if the
+        selection spans across multiple nodes, the style is preserved correctly.
+        The fix consists in changing the logic that decides whether we should include the wrapping
+        node in the markup. That logic is based on the code in highestAncestorToWrapMarkup which relies
+        on isElementPresentational to choose candidates to be the wrapping node.
+        I've extended it to accept nodes that have non fully transparent background colors.
+
+        * editing/Editor.cpp:
+        (WebCore::Editor::hasTransparentBackgroundColor): Now is a static method of the class.
+        * editing/Editor.h:
+        * editing/markup.cpp:
+        (WebCore::isElementPresentational): Modified to use hasTransparentBackgroundColor.
+
 2011-04-19  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Oliver Hunt.
