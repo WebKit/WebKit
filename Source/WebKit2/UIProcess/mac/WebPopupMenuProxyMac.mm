@@ -62,7 +62,7 @@ void WebPopupMenuProxyMac::populate(const Vector<WebPopupItem>& items, NSFont *f
     int size = items.size();
 
     for (int i = 0; i < size; i++) {
-        if (items[i].m_type == WebPopupItem::Seperator)
+        if (items[i].m_type == WebPopupItem::Separator)
             [[m_popup.get() menu] addItem:[NSMenuItem separatorItem]];
         else {
             [m_popup.get() addItemWithTitle:@""];

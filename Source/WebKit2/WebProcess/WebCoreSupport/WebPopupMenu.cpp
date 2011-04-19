@@ -81,7 +81,7 @@ Vector<WebPopupItem> WebPopupMenu::populateItems()
     
     for (size_t i = 0; i < size; ++i) {
         if (m_popupClient->itemIsSeparator(i))
-            items.append(WebPopupItem(WebPopupItem::Seperator));
+            items.append(WebPopupItem(WebPopupItem::Separator));
         else {
             // FIXME: Add support for styling the font.
             // FIXME: Add support for styling the foreground and background colors.

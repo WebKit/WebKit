@@ -38,13 +38,13 @@ namespace WebKit {
 
 struct WebPopupItem {
     enum Type {
-        Seperator,
+        Separator,
         Item
     };
 
     WebPopupItem();
     WebPopupItem(Type);
-    WebPopupItem(Type, const String& text, WebCore::TextDirection, bool hasTextDirectionOverride, const String& toolTip, const String& accessibilityText, bool isEnabled, bool m_isLabel);
+    WebPopupItem(Type, const String& text, WebCore::TextDirection, bool hasTextDirectionOverride, const String& toolTip, const String& accessibilityText, bool isEnabled, bool isLabel);
 
     void encode(CoreIPC::ArgumentEncoder*) const;
     static bool decode(CoreIPC::ArgumentDecoder*, WebPopupItem&);

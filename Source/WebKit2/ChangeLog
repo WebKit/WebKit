@@ -1,3 +1,19 @@
+2011-04-19  Andreas Kling  <andreas.kling@nokia.com>
+
+        Reviewed by Antonio Gomes.
+
+        WebKit2: Typo fix in WebPopupMenu::Type.
+        https://bugs.webkit.org/show_bug.cgi?id=58891
+
+        Fixed a typo, Seperator -> Separator.
+        Also removed m_ prefix on an argument variable name.
+
+        * Shared/WebPopupItem.h:
+        * UIProcess/mac/WebPopupMenuProxyMac.mm:
+        (WebKit::WebPopupMenuProxyMac::populate):
+        * WebProcess/WebCoreSupport/WebPopupMenu.cpp:
+        (WebKit::WebPopupMenu::populateItems):
+
 2011-04-19  Jon Honeycutt  <jhoneycutt@apple.com>
 
         WKContextDownloadURLRequest() should return a WKDownloadRef
