@@ -207,8 +207,12 @@ public:
     virtual void didCreateDocumentElement(WebFrame*) { }
 
     // The page title is available.
-    // FIXME: remove default arg once Chrome is updated.
-    virtual void didReceiveTitle(WebFrame*, const WebString& title, WebTextDirection direction = WebTextDirectionDefault) { }
+    // FIXME: remove override once Chrome is updated to new API.
+    virtual void didReceiveTitle(WebFrame*, const WebString& title) { }
+    virtual void didReceiveTitle(WebFrame* frame, const WebString& title, WebTextDirection direction)
+    {
+        didReceiveTitle(frame, title);
+    }
 
     // The icons for the page have changed.
     virtual void didChangeIcons(WebFrame*) { }

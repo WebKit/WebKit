@@ -1,3 +1,16 @@
+2011-04-19  Evan Martin  <evan@chromium.org>
+
+        Reviewed by Darin Fisher.
+
+        [chromium] didReceiveTitle API signature should not change
+        https://bugs.webkit.org/show_bug.cgi?id=58909
+
+        My previous attempt at a temporary shim was wrong.
+        This second try should correctly work with older clients.
+
+        * public/WebFrameClient.h:
+        (WebKit::WebFrameClient::didReceiveTitle):
+
 2011-04-19  Jungshik Shin  <jshin@chromium.org>
 
         Reviewed by Adam Barth
