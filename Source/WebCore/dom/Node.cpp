@@ -77,7 +77,6 @@
 #include "ScopedEventQueue.h"
 #include "ScriptController.h"
 #include "SelectorNodeList.h"
-#include "ShadowRoot.h"
 #include "StaticNodeList.h"
 #include "TagNodeList.h"
 #include "Text.h"
@@ -469,22 +468,39 @@ void Node::setDocument(Document* document)
 
 TreeScope* Node::treeScope() const
 {
-    // FIXME: Using m_document directly is not good -> see comment with document() in the header file.
     if (!hasRareData())
-        return m_document;
+        return document();
     TreeScope* scope = rareData()->treeScope();
-    return scope ? scope : m_document;
+    // FIXME: Until we land shadow scopes, there should be no non-document scopes.
+    ASSERT(!scope);
+    return scope ? scope : document();
 }
 
-void Node::setTreeScopeRecursively(TreeScope* newTreeScope, bool includeRoot)
+void Node::setTreeScope(TreeScope* newTreeScope)
 {
-    ASSERT(this);
-    ASSERT(!includeRoot || !isDocumentNode());
+    ASSERT(!isDocumentNode());
     ASSERT(newTreeScope);
-    ASSERT(!m_deletionHasBegun);
+    ASSERT(!inDocument() || treeScope() == newTreeScope);
 
-    TreeScope* currentTreeScope = treeScope();
-    if (currentTreeScope == newTreeScope)
+    if (newTreeScope->isDocumentNode()) {
+        if (hasRareData())
+            rareData()->setTreeScope(0);
+        // Setting the new document scope will be handled implicitly
+        // by setDocument() below.
+    } else {
+        // FIXME: Until we land shadow scopes, this branch should be inert.
+        ASSERT_NOT_REACHED();
+        ensureRareData()->setTreeScope(newTreeScope);
+    }
+
+    setDocument(newTreeScope->document());
+}
+
+void Node::setTreeScopeRecursively(TreeScope* newTreeScope)
+{
+    ASSERT(!isDocumentNode());
+    ASSERT(newTreeScope);
+    if (treeScope() == newTreeScope)
         return;
 
     Document* currentDocument = document();
@@ -496,25 +512,9 @@ void Node::setTreeScopeRecursively(TreeScope* newTreeScope, bool includeRoot)
     if (currentDocument && currentDocument != newDocument)
         currentDocument->incDOMTreeVersion();
 
-    for (Node* node = includeRoot ? this : traverseNextNode(this); node; node = node->traverseNextNode(this)) {
-        if (newTreeScope == newDocument) {
-            if (node->hasRareData())
-                node->rareData()->setTreeScope(0);
-            // Setting the new document tree scope will be handled implicitly
-            // by setDocument() below.
-        } else
-            node->ensureRareData()->setTreeScope(newTreeScope);
-
-        node->setDocument(newDocument);
-
-        if (!node->isElementNode())
-            continue;
-        // FIXME: Remove toShadowRoot() once shadowRoot() returns a proper ShadowRoot* (bug 58703).
-        if (ShadowRoot* shadowRoot = toShadowRoot(toElement(node)->shadowRoot())) {
-            shadowRoot->setParentTreeScope(newTreeScope);
-            if (currentDocument != newDocument)
-                shadowRoot->setDocumentRecursively(newDocument);
-        }
+    for (Node* node = this; node; node = node->traverseNextNode(this)) {
+        node->setTreeScope(newTreeScope);
+        // FIXME: Once shadow scopes are landed, update parent scope, etc.
     }
 }
 

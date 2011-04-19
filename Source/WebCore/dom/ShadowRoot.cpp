@@ -27,57 +27,17 @@
 #include "config.h"
 #include "ShadowRoot.h"
 
-#include "Document.h"
-#include "NodeRareData.h"
-
 namespace WebCore {
 
 ShadowRoot::ShadowRoot(Document* document)
-    : TreeScope(document)
+    : DocumentFragment(document)
 {
     ASSERT(document);
-    
-    // Assume document as parent scope.
-    setParentTreeScope(document);
-    // Shadow tree scopes have the scope pointer point to themselves.
-    // This way, direct children will receive the correct scope pointer.
-    ensureRareData()->setTreeScope(this);
-}
-
-ShadowRoot::~ShadowRoot()
-{
 }
 
 String ShadowRoot::nodeName() const
 {
     return "#shadow-root";
-}
-
-Node::NodeType ShadowRoot::nodeType() const
-{
-    // FIXME: Decide correct node type (bug 58704).
-    return DOCUMENT_FRAGMENT_NODE;
-}
-
-PassRefPtr<Node> ShadowRoot::cloneNode(bool)
-{
-    // ShadowRoot should not be arbitrarily cloned.
-    return 0;
-}
-
-bool ShadowRoot::childTypeAllowed(NodeType type) const
-{
-    switch (type) {
-    case ELEMENT_NODE:
-    case PROCESSING_INSTRUCTION_NODE:
-    case COMMENT_NODE:
-    case TEXT_NODE:
-    case CDATA_SECTION_NODE:
-    case ENTITY_REFERENCE_NODE:
-        return true;
-    default:
-        return false;
-    }
 }
 
 void ShadowRoot::recalcStyle(StyleChange change)

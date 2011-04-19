@@ -90,10 +90,6 @@ void ContainerNode::takeAllChildrenFrom(ContainerNode* oldParent)
         RefPtr<Node> child = document()->adoptNode(children[i].release(), ec);
         ASSERT(!ec);
         parserAddChild(child.get());
-        // FIXME: Together with adoptNode above, the tree scope might get updated recursively twice
-        // (if the document changed or oldParent was in a shadow tree, AND *this is in a shadow tree).
-        // Can we do better?
-        child->setTreeScopeRecursively(treeScope());
         if (attached() && !child->attached())
             child->attach();
     }
@@ -485,8 +481,6 @@ void ContainerNode::removeBetween(Node* previousChild, Node* nextChild, Node* ol
     oldChild->setNextSibling(0);
     oldChild->setParent(0);
 
-    oldChild->setTreeScopeRecursively(document());
-
     allowEventDispatch();
 }
 
@@ -536,7 +530,6 @@ void ContainerNode::removeChildren()
         n->setPreviousSibling(0);
         n->setNextSibling(0);
         n->setParent(0);
-        n->setTreeScopeRecursively(document());
 
         m_firstChild = next;
         if (n == m_lastChild)
@@ -655,8 +648,6 @@ void ContainerNode::parserAddChild(PassRefPtr<Node> newChild)
     Node* last = m_lastChild;
     // FIXME: This method should take a PassRefPtr.
     appendChildToContainer<Node, ContainerNode>(newChild.get(), this);
-    newChild->setTreeScopeRecursively(treeScope());
-    
     allowEventDispatch();
 
     // FIXME: Why doesn't this use notifyChildInserted(newChild) instead?

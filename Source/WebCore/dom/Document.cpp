@@ -377,7 +377,7 @@ private:
 uint64_t Document::s_globalTreeVersion = 0;
 
 Document::Document(Frame* frame, const KURL& url, bool isXHTML, bool isHTML)
-    : TreeScope(0)
+    : TreeScope(this)
     , m_guardRefCount(0)
     , m_compatibilityMode(NoQuirksMode)
     , m_compatibilityModeLocked(false)
@@ -433,7 +433,6 @@ Document::Document(Frame* frame, const KURL& url, bool isXHTML, bool isHTML)
     , m_writeRecursionIsTooDeep(false)
     , m_writeRecursionDepth(0)
 {
-
     m_document = this;
 
     m_pageGroupUserSheetCacheValid = false;
@@ -514,7 +513,6 @@ Document::~Document()
     ASSERT(m_ranges.isEmpty());
     ASSERT(!m_styleRecalcTimer.isActive());
     ASSERT(!m_parentTreeScope);
-    ASSERT(!m_guardRefCount);
 
     m_scriptRunner.clear();
 
@@ -672,7 +670,7 @@ void Document::setDocType(PassRefPtr<DocumentType> docType)
     ASSERT(!m_docType || !docType);
     m_docType = docType;
     if (m_docType)
-        m_docType->setTreeScopeRecursively(this);
+        m_docType->setTreeScope(this);
 }
 
 DOMImplementation* Document::implementation()

@@ -27,13 +27,13 @@
 #ifndef ShadowRoot_h
 #define ShadowRoot_h
 
-#include "TreeScope.h"
+#include "DocumentFragment.h"
 
 namespace WebCore {
 
 class Document;
 
-class ShadowRoot : public TreeScope {
+class ShadowRoot : public DocumentFragment {
 public:
     static PassRefPtr<ShadowRoot> create(Document*);
 
@@ -42,23 +42,12 @@ public:
 
 private:
     ShadowRoot(Document*);
-    virtual ~ShadowRoot();
-
     virtual String nodeName() const;
-    virtual NodeType nodeType() const;
-    virtual PassRefPtr<Node> cloneNode(bool deep);
-    virtual bool childTypeAllowed(NodeType) const;
 };
 
 inline PassRefPtr<ShadowRoot> ShadowRoot::create(Document* document)
 {
     return adoptRef(new ShadowRoot(document));
-}
-
-inline ShadowRoot* toShadowRoot(Node* node)
-{
-    ASSERT(!node || node->isShadowBoundary());
-    return static_cast<ShadowRoot*>(node);
 }
 
 } // namespace
