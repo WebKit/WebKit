@@ -3486,7 +3486,7 @@ BUGWK58619 GPU LINUX WIN : media/video-volume-slider.html = IMAGE
 BUGWK58741 LINUX : fast/text/zero-width-characters-complex-script.html = FAIL
 
 // Broken by skia shadow code change in r83936
-BUGWK58772 WIN : fast/multicol/shadow-breaking.html = IMAGE
+BUGWK58772 WIN LINUX : fast/multicol/shadow-breaking.html = IMAGE
 BUGWK58772 WIN : fast/repaint/shadow-multiple-horizontal.html = IMAGE
 BUGWK58772 WIN : fast/repaint/shadow-multiple-strict-horizontal.html = IMAGE
 BUGWK58772 WIN : fast/repaint/shadow-multiple-strict-vertical.html = IMAGE
@@ -3649,15 +3649,6 @@ BUGCR79917 WIN LINUX : tables/mozilla_expected_failures/marvin/backgr_position-t
 BUGCR79917 WIN LINUX : tables/mozilla_expected_failures/marvin/backgr_position-table-row.html = IMAGE
 BUGCR79917 WIN LINUX : transforms/svg-vs-css.xhtml = IMAGE
 
-// need rebaseline all platforms
-BUGCR79943 WIN MAC LINUX : css2.1/t0805-c5517-brdr-s-00-c.html = IMAGE
-BUGCR79943 WIN MAC LINUX : fast/backgrounds/border-radius-split-background-image.html = IMAGE+TEXT
-BUGCR79943 WIN MAC LINUX : fast/backgrounds/border-radius-split-background.html = IMAGE+TEXT
-BUGCR79943 WIN MAC LINUX : fast/backgrounds/repeat/negative-offset-repeat-transformed.html = IMAGE
-BUGCR79943 WIN MAC LINUX : fast/forms/validation-message-appearance.html = IMAGE
-BUGCR79943 WIN MAC LINUX : fast/borders/table-borders.html = IMAGE
-BUGCR79943 WIN MAC LINUX : fast/borders/borderRadiusAllStylesAllCorners.html = IMAGE
-BUGCR79943 WIN MAC LINUX : fast/box-shadow/inset.html = IMAGE
 
 // need rebaseline mac
 BUGCR79943 MAC : fast/blockflow/border-radius-clipping-vertical-lr.html = IMAGE
@@ -3688,3 +3679,5 @@ BUGCR79943 MAC : fast/forms/select-baseline.html = IMAGE
 BUGCR79943 MAC : fast/forms/select-empty-option-height.html = IMAGE
 BUGCR79943 MAC : fast/css/font_property_normal.html = IMAGE
 BUGCR79943 MAC LEOPARD : fast/canvas/canvasDrawingIntoSelf.html = IMAGE
+
+BUGCR79948 WIN MAC LINUX : fast/loader/scroll-position-restored-on-back.html = TEXT

@@ -1,3 +1,58 @@
+2011-04-19  Chris Rogers  <crogers@google.com>
+
+        Unreviewed.
+
+        Rebase a bunch of border-radius related layout tests
+        https://bugs.webkit.org/show_bug.cgi?id=58942
+
+        * platform/chromium-linux/css2.1/t0805-c5517-brdr-s-00-c-expected.checksum: Removed.
+        * platform/chromium-linux/css2.1/t0805-c5517-brdr-s-00-c-expected.png:
+        * platform/chromium-linux/fast/backgrounds/border-radius-split-background-expected.png: Added.
+        * platform/chromium-linux/fast/backgrounds/border-radius-split-background-image-expected.png: Added.
+        * platform/chromium-linux/fast/backgrounds/repeat/negative-offset-repeat-transformed-expected.checksum: Removed.
+        * platform/chromium-linux/fast/backgrounds/repeat/negative-offset-repeat-transformed-expected.png:
+        * platform/chromium-linux/fast/borders/borderRadiusAllStylesAllCorners-expected.png:
+        * platform/chromium-linux/fast/box-shadow/inset-expected.png:
+        * platform/chromium-linux/fast/forms/validation-message-appearance-expected.checksum: Removed.
+        * platform/chromium-linux/fast/forms/validation-message-appearance-expected.png:
+        * platform/chromium-mac-leopard/css2.1/t0805-c5517-brdr-s-00-c-expected.png: Added.
+        * platform/chromium-mac-leopard/fast/backgrounds/repeat/negative-offset-repeat-transformed-expected.checksum: Removed.
+        * platform/chromium-mac-leopard/fast/backgrounds/repeat/negative-offset-repeat-transformed-expected.png:
+        * platform/chromium-mac-leopard/fast/borders/borderRadiusAllStylesAllCorners-expected.checksum: Removed.
+        * platform/chromium-mac-leopard/fast/borders/borderRadiusAllStylesAllCorners-expected.png:
+        * platform/chromium-mac-leopard/fast/box-shadow/inset-expected.png: Removed.
+        * platform/chromium-mac-leopard/fast/forms/validation-message-appearance-expected.checksum: Removed.
+        * platform/chromium-mac-leopard/fast/forms/validation-message-appearance-expected.png:
+        * platform/chromium-mac/css2.1/t0805-c5517-brdr-s-00-c-expected.png: Added.
+        * platform/chromium-mac/fast/backgrounds/border-radius-split-background-expected.png: Added.
+        * platform/chromium-mac/fast/backgrounds/border-radius-split-background-image-expected.png: Added.
+        * platform/chromium-mac/fast/backgrounds/repeat/negative-offset-repeat-transformed-expected.checksum: Removed.
+        * platform/chromium-mac/fast/backgrounds/repeat/negative-offset-repeat-transformed-expected.png:
+        * platform/chromium-mac/fast/borders/borderRadiusAllStylesAllCorners-expected.checksum: Removed.
+        * platform/chromium-mac/fast/borders/borderRadiusAllStylesAllCorners-expected.png:
+        * platform/chromium-mac/fast/borders/table-borders-expected.png: Added.
+        * platform/chromium-mac/fast/borders/table-borders-expected.txt: Added.
+        * platform/chromium-mac/fast/box-shadow/inset-expected.png: Added.
+        * platform/chromium-mac/fast/events/overflow-viewport-renderer-deleted-expected.txt: Added.
+        * platform/chromium-mac/fast/forms/validation-message-appearance-expected.png: Added.
+        * platform/chromium-win-vista/fast/backgrounds/repeat/negative-offset-repeat-transformed-expected.png: Added.
+        * platform/chromium-win/css2.1/t0805-c5517-brdr-s-00-c-expected.checksum: Removed.
+        * platform/chromium-win/css2.1/t0805-c5517-brdr-s-00-c-expected.png:
+        * platform/chromium-win/fast/backgrounds/border-radius-split-background-expected.png: Added.
+        * platform/chromium-win/fast/backgrounds/border-radius-split-background-expected.txt: Added.
+        * platform/chromium-win/fast/backgrounds/border-radius-split-background-image-expected.png: Added.
+        * platform/chromium-win/fast/backgrounds/border-radius-split-background-image-expected.txt: Added.
+        * platform/chromium-win/fast/backgrounds/repeat/negative-offset-repeat-transformed-expected.checksum: Removed.
+        * platform/chromium-win/fast/backgrounds/repeat/negative-offset-repeat-transformed-expected.png:
+        * platform/chromium-win/fast/borders/borderRadiusAllStylesAllCorners-expected.png:
+        * platform/chromium-win/fast/borders/table-borders-expected.png: Added.
+        * platform/chromium-win/fast/borders/table-borders-expected.txt: Added.
+        * platform/chromium-win/fast/box-shadow/inset-expected.png:
+        * platform/chromium-win/fast/events/overflow-viewport-renderer-deleted-expected.txt: Added.
+        * platform/chromium-win/fast/forms/validation-message-appearance-expected.checksum: Removed.
+        * platform/chromium-win/fast/forms/validation-message-appearance-expected.png:
+        * platform/chromium/test_expectations.txt:
+
 2011-04-19  Tony Chang  <tony@chromium.org>
 
         Add checksums to png files in platform win, win-wk2, and win-xp.
