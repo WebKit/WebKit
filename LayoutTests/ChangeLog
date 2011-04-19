@@ -1,3 +1,9 @@
+2011-04-19  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Skip the test added by r84270 on WebKit2 since it uses eventSender.
+
+        * platform/mac-wk2/Skipped:
+
 2011-04-19  Tony Chang  <tony@chromium.org>
 
         Fixing pngs with bad checksum crcs.  There was a 64bit specific bug
