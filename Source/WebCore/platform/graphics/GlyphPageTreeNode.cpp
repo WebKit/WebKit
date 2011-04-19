@@ -191,6 +191,9 @@ void GlyphPageTreeNode::initializePage(const FontData* fontData, unsigned pageNu
                 } else if (start == (objectReplacementCharacter & ~(GlyphPage::size - 1))) {
                     // Object replacement character must not render at all.
                     buffer[objectReplacementCharacter - start] = zeroWidthSpace;
+                } else if (start == (zeroWidthNoBreakSpace & ~(GlyphPage::size - 1))) {
+                    // ZWNBS/BOM must not render at all.
+                    buffer[zeroWidthNoBreakSpace - start] = zeroWidthSpace;
                 }
             } else {
                 bufferLength = GlyphPage::size * 2;

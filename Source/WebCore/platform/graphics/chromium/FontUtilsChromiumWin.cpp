@@ -250,17 +250,31 @@ int getAscent(HFONT hfont)
     return gotMetrics ? tm.tmAscent : kUndefinedAscent;
 }
 
+WORD getSpaceGlyph(HFONT hfont) 
+{
+    HDC dc = GetDC(0);
+    HGDIOBJ oldFont = SelectObject(dc, hfont);
+    WCHAR space = L' ';
+    WORD spaceGlyph = 0;
+    GetGlyphIndices(dc, &space, 1, &spaceGlyph, 0);
+    SelectObject(dc, oldFont);
+    ReleaseDC(0, dc);
+    return spaceGlyph;
+}
+
 struct FontData {
     FontData()
         : hfont(0)
         , ascent(kUndefinedAscent)
         , scriptCache(0)
+        , spaceGlyph(0)
     {
     }
 
     HFONT hfont;
     int ascent;
     mutable SCRIPT_CACHE scriptCache;
+    WORD spaceGlyph;
 };
 
 // Again, using hash_map does not earn us much here.  page_cycler_test intl2
@@ -379,7 +393,8 @@ bool getDerivedFontData(const UChar* family,
                         LOGFONT* logfont,
                         int* ascent,
                         HFONT* hfont,
-                        SCRIPT_CACHE** scriptCache)
+                        SCRIPT_CACHE** scriptCache,
+                        WORD* spaceGlyph)
 {
     ASSERT(logfont);
     ASSERT(family);
@@ -408,6 +423,7 @@ bool getDerivedFontData(const UChar* family,
         // cache it so that we won't have to call CreateFontIndirect once
         // more for HFONT next time.
         derived->ascent = getAscent(derived->hfont);
+        derived->spaceGlyph = getSpaceGlyph(derived->hfont);
     } else {
         derived = &iter->second;
         // Last time, GetAscent failed so that only HFONT was
@@ -419,6 +435,7 @@ bool getDerivedFontData(const UChar* family,
     *hfont = derived->hfont;
     *ascent = derived->ascent;
     *scriptCache = &(derived->scriptCache);
+    *spaceGlyph = derived->spaceGlyph;
     return *ascent != kUndefinedAscent;
 }
 

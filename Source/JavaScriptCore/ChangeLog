@@ -1,3 +1,15 @@
+2011-04-19  Jungshik Shin  <jshin@chromium.org>
+
+        Reviewed by David Levin
+
+        Add U+FEFF (Zero width no-break space) to CharacterNames.h.
+        It's added to the list of characters to treat as zero-width
+        in WebCore.
+
+        https://bugs.webkit.org/show_bug.cgi?id=48860
+
+        * wtf/unicode/CharacterNames.h:
+
 2011-04-19  Csaba Osztrogonác  <ossy@webkit.org>
 
         [Qt] REGRESSION(84176): http/tests/xmlhttprequest/event-listener-gc.html fails

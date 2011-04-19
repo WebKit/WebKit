@@ -85,6 +85,7 @@ const UChar yenSign = 0x00A5;
 const UChar zeroWidthJoiner = 0x200D;
 const UChar zeroWidthNonJoiner = 0x200C;
 const UChar zeroWidthSpace = 0x200B;
+const UChar zeroWidthNoBreakSpace = 0xFEFF;
 
 } // namespace Unicode
 } // namespace WTF
@@ -138,5 +139,6 @@ using WTF::Unicode::yenSign;
 using WTF::Unicode::zeroWidthJoiner;
 using WTF::Unicode::zeroWidthNonJoiner;
 using WTF::Unicode::zeroWidthSpace;
+using WTF::Unicode::zeroWidthNoBreakSpace;
 
 #endif // CharacterNames_h

@@ -3486,6 +3486,7 @@ BUGWK58632 GPU LINUX DEBUG : compositing/direct-image-compositing.html = IMAGE
 // Temporarily marked failing for rebaselining.
 
 BUGWK58619 GPU LINUX WIN : media/video-volume-slider.html = IMAGE
+BUGWK58741 LINUX : fast/text/zero-width-characters-complex-script.html = FAIL
 
 // Broken by skia shadow code change in r83936
 BUGWK58772 WIN : fast/multicol/shadow-breaking.html = IMAGE

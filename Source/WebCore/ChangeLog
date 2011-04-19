@@ -1,3 +1,37 @@
+2011-04-19  Jungshik Shin  <jshin@chromium.org>
+
+        Reviewed by David Levin
+
+        Make U+FEFF be treated as a zero-width character in both
+        simple script and complex script code paths. In Chromium
+        Windows, UniscribeHelper needs a rather extensive changes
+        summarized below.  Other ports need minor changes.
+
+        https://bugs.webkit.org/show_bug.cgi?id=48860
+
+        Test: fast/text/zero-width-characters-complex-script.html
+
+        * platform/graphics/Font.h:
+        (WebCore::Font::treatAsZeroWidthSpace): U+FEFF is added to the list
+        (WebCore::Font::treatAsZeroWidthSpaceInComplexScript): Added. Same as the above except that ZWNJ and ZWJ are excluded.
+        * platform/graphics/GlyphPageTreeNode.cpp:
+        (WebCore::GlyphPageTreeNode::initializePage): U+FEFF is made to have zero-width characters in simple script (fast) code path.
+        * platform/graphics/chromium/FontUtilsChromiumWin.cpp:
+        (WebCore::FontMap::getSpaceGlyph): Added to get the gid for space glyph to use in adjustSpaceAdvance when zero-width glyph character has a non-zero width and potentially 'visible' glyph.
+        (WebCore::FontMap::FontData::FontData): spaceGlyph member added.
+        (WebCore::getDerivedFontData): spaceGlyph is retrieved as well.
+        * platform/graphics/chromium/FontUtilsChromiumWin.h:
+        * platform/graphics/chromium/UniscribeHelper.cpp:
+        (WebCore::UniscribeHelper::UniscribeHelper): m_spaceGlyph added.
+        (WebCore::UniscribeHelper::shape): spaceGlyph is obtained stored for a font tried for each item.
+        (WebCore::UniscribeHelper::adjustSpaceAdvances): For zero-width complex script characters, set the advance width to zero and replace a non-zero-width/visible glyph with a space glyph.
+        (WebCore::UniscribeHelper::applySpacing):
+        (WebCore::UniscribeHelper::containsMissingGlyphs): turned to a member function because it cannot work on glyphs alone any more but need to take into account a character corresponding to a glyph
+        * platform/graphics/chromium/UniscribeHelper.h: 
+        (WebCore::UniscribeHelper::Shaping::Shaping): m_spaceGlyph is added
+        * platform/graphics/chromium/UniscribeHelperTextRun.cpp:
+        (WebCore::UniscribeHelperTextRun::UniscribeHelperTextRun): When calling UniscriberHelper, add a new argument for spaceGlyph.
+
 2011-04-19  Brent Fulgham  <bfulgham@webkit.org>
 
         Reviewed by Adam Roben.

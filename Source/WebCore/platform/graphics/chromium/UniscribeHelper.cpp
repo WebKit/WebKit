@@ -31,44 +31,15 @@
 #include "config.h"
 #include "UniscribeHelper.h"
 
-#include <windows.h>
-
+#include "Font.h"
 #include "FontUtilsChromiumWin.h"
 #include "PlatformContextSkia.h"
 #include "SkiaFontWin.h"
 #include "SkPoint.h"
+#include <windows.h>
 #include <wtf/Assertions.h>
 
 namespace WebCore {
-
-// This function is used to see where word spacing should be applied inside
-// runs. Note that this must match Font::treatAsSpace so we all agree where
-// and how much space this is, so we don't want to do more general Unicode
-// "is this a word break" thing.
-static bool treatAsSpace(UChar c)
-{
-    return c == ' ' || c == '\t' || c == '\n' || c == 0x00A0;
-}
-
-// SCRIPT_FONTPROPERTIES contains glyph indices for default, invalid
-// and blank glyphs. Just because ScriptShape succeeds does not mean
-// that a text run is rendered correctly. Some characters may be rendered
-// with default/invalid/blank glyphs. Therefore, we need to check if the glyph
-// array returned by ScriptShape contains any of those glyphs to make
-// sure that the text run is rendered successfully.
-static bool containsMissingGlyphs(WORD *glyphs,
-                                  int length,
-                                  SCRIPT_FONTPROPERTIES* properties)
-{
-    for (int i = 0; i < length; ++i) {
-        if (glyphs[i] == properties->wgDefault
-            || (glyphs[i] == properties->wgInvalid
-            && glyphs[i] != properties->wgBlank))
-            return true;
-    }
-
-    return false;
-}
 
 // HFONT is the 'incarnation' of 'everything' about font, but it's an opaque
 // handle and we can't directly query it to make a new HFONT sharing
@@ -102,13 +73,15 @@ UniscribeHelper::UniscribeHelper(const UChar* input,
                                 bool isRtl,
                                 HFONT hfont,
                                 SCRIPT_CACHE* scriptCache,
-                                SCRIPT_FONTPROPERTIES* fontProperties)
+                                SCRIPT_FONTPROPERTIES* fontProperties,
+                                WORD spaceGlyph)
     : m_input(input)
     , m_inputLength(inputLength)
     , m_isRtl(isRtl)
     , m_hfont(hfont)
     , m_scriptCache(scriptCache)
     , m_fontProperties(fontProperties)
+    , m_spaceGlyph(spaceGlyph)
     , m_directionalOverride(false)
     , m_inhibitLigate(false)
     , m_letterSpacing(0)
@@ -546,6 +519,7 @@ bool UniscribeHelper::shape(const UChar* input,
     SCRIPT_CACHE* scriptCache = m_scriptCache;
     SCRIPT_FONTPROPERTIES* fontProperties = m_fontProperties;
     int ascent = m_ascent;
+    WORD spaceGlyph = m_spaceGlyph;
     HDC tempDC = 0;
     HGDIOBJ oldFont = 0;
     HRESULT hr;
@@ -601,7 +575,7 @@ bool UniscribeHelper::shape(const UChar* input,
         } else if (hr == E_OUTOFMEMORY) {
             numGlyphs *= 2;
             continue;
-        } else if (SUCCEEDED(hr) && (lastFallbackTried || !containsMissingGlyphs(&shaping.m_glyphs[0], generatedGlyphs, fontProperties)))
+        } else if (SUCCEEDED(hr) && (lastFallbackTried || !containsMissingGlyphs(shaping, run, fontProperties)))
             break;
 
         // The current font can't render this run. clear DC and try
@@ -632,7 +606,9 @@ bool UniscribeHelper::shape(const UChar* input,
             const UChar *family = getFallbackFamily(input, itemLength,
                 FontDescription::StandardFamily, 0, 0);
             bool fontOk = getDerivedFontData(family, m_style, &m_logfont,
-                                              &ascent, &hfont, &scriptCache);
+                                             &ascent, &hfont, &scriptCache,
+                                             &spaceGlyph);
+                                              
 
             if (!fontOk) {
                 // If this GetDerivedFontData is called from the renderer it
@@ -644,7 +620,8 @@ bool UniscribeHelper::shape(const UChar* input,
 
                 // Try again.
                 fontOk = getDerivedFontData(family, m_style, &m_logfont,
-                                             &ascent, &hfont, &scriptCache);
+                                            &ascent, &hfont, &scriptCache,
+                                            &spaceGlyph);
                 ASSERT(fontOk);
             }
 
@@ -673,6 +650,7 @@ bool UniscribeHelper::shape(const UChar* input,
     // because it's not used elsewhere.
     shaping.m_hfont = hfont;
     shaping.m_scriptCache = scriptCache;
+    shaping.m_spaceGlyph = spaceGlyph;
 
     // The ascent of a font for this run can be different from
     // that of the primary font so that we need to keep track of
@@ -806,22 +784,39 @@ void UniscribeHelper::adjustSpaceAdvances()
     for (size_t run = 0; run < m_runs.size(); run++) {
         Shaping& shaping = m_shapes[run];
 
+        // FIXME: This loop is not UTF-16-safe. Unicode 6.0 has a couple
+        // of complex script blocks in Plane 1.
         for (int i = 0; i < shaping.charLength(); i++) {
-            if (!treatAsSpace(m_input[m_runs[run].iCharPos + i]))
+            UChar c = m_input[m_runs[run].iCharPos + i];
+            bool treatAsSpace = Font::treatAsSpace(c);
+            if (!treatAsSpace && !Font::treatAsZeroWidthSpaceInComplexScript(c))
                 continue;
 
             int glyphIndex = shaping.m_logs[i];
             int currentAdvance = shaping.m_advance[glyphIndex];
 
-            // currentAdvance does not include additional letter-spacing, but
-            // space_width does. Here we find out how off we are from the
-            // correct width for the space not including letter-spacing, then
-            // just subtract that diff.
-            int diff = currentAdvance - spaceWidthWithoutLetterSpacing;
-            // The shaping can consist of a run of text, so only subtract the
-            // difference in the width of the glyph.
-            shaping.m_advance[glyphIndex] -= diff;
-            shaping.m_abc.abcB -= diff;
+            if (treatAsSpace) {
+                // currentAdvance does not include additional letter-spacing,
+                // but m_spaceWidth does. Here we find out how off we are from
+                // the correct width (spaceWidthWithoutLetterSpacing) and
+                // just subtract that diff.
+                int diff = currentAdvance - spaceWidthWithoutLetterSpacing;
+                // The shaping can consist of a run of text, so only subtract
+                // the difference in the width of the glyph.
+                shaping.m_advance[glyphIndex] -= diff;
+                shaping.m_abc.abcB -= diff;
+                continue;
+            }
+
+            // For characters treated as zero-width space in complex
+            // scripts, set the advance width to zero, adjust
+            // |abcB| of the current run accordingly and set 
+            // the glyph to m_spaceGlyph (invisible).
+            shaping.m_advance[glyphIndex] = 0;
+            shaping.m_abc.abcB -= currentAdvance;
+            shaping.m_offsets[glyphIndex].du = 0;
+            shaping.m_offsets[glyphIndex].dv = 0;
+            shaping.m_glyphs[glyphIndex] = shaping.m_spaceGlyph;
         }
     }
 }
@@ -872,7 +867,7 @@ void UniscribeHelper::applySpacing()
         // extra wordspacing amount for the glyphs they correspond to.
         if (m_wordSpacing != 0) {
             for (int i = 0; i < shaping.charLength(); i++) {
-                if (!treatAsSpace(m_input[m_runs[run].iCharPos + i]))
+                if (!Font::treatAsSpace(m_input[m_runs[run].iCharPos + i]))
                     continue;
 
                 // The char in question is a word separator...
@@ -928,5 +923,32 @@ int UniscribeHelper::advanceForItem(int itemIndex) const
 
     return shaping.m_prePadding + justification;
 }
+
+// SCRIPT_FONTPROPERTIES contains glyph indices for default, invalid
+// and blank glyphs. Just because ScriptShape succeeds does not mean
+// that a text run is rendered correctly. Some characters may be rendered
+// with default/invalid/blank glyphs. Therefore, we need to check if the glyph
+// array returned by ScriptShape contains any of those glyphs to make
+// sure that the text run is rendered successfully.
+// However, we should not subject zero-width characters to this test.
+
+bool UniscribeHelper::containsMissingGlyphs(const Shaping& shaping,
+                                            const SCRIPT_ITEM& run,
+                                            const SCRIPT_FONTPROPERTIES* properties) const
+{
+    for (int i = 0; i < shaping.charLength(); i++) {
+        UChar c = m_input[run.iCharPos + i];
+        // Skip zero-width space characters because they're not considered to be missing in a font.
+        if (Font::treatAsZeroWidthSpaceInComplexScript(c))
+            continue;
+        int glyphIndex = shaping.m_logs[i];
+        WORD glyph = shaping.m_glyphs[glyphIndex];
+        if (glyph == properties->wgDefault
+            || (glyph == properties->wgInvalid && glyph != properties->wgBlank))
+            return true;
+    }
+    return false;
+}
+
 
 }  // namespace WebCore

@@ -78,7 +78,7 @@ const UChar* getFallbackFamily(const UChar* characters, int length,
 // intl2 page-cycler test is noticeably slower with one out param than
 // the current version although the subsequent 9 passes take about the
 // same time.
-bool getDerivedFontData(const UChar* family, int style, LOGFONT*, int* ascent, HFONT*, SCRIPT_CACHE**);
+bool getDerivedFontData(const UChar* family, int style, LOGFONT*, int* ascent, HFONT*, SCRIPT_CACHE**, WORD* spaceGlyph);
 
 enum {
     FontStyleNormal = 0,

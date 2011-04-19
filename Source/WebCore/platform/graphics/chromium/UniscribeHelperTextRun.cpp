@@ -43,7 +43,8 @@ UniscribeHelperTextRun::UniscribeHelperTextRun(const TextRun& run,
     : UniscribeHelper(run.characters(), run.length(), run.rtl(),
                       font.primaryFont()->platformData().hfont(),
                       font.primaryFont()->platformData().scriptCache(),
-                      font.primaryFont()->platformData().scriptFontProperties())
+                      font.primaryFont()->platformData().scriptFontProperties(),
+                      font.primaryFont()->spaceGlyph())
     , m_font(&font)
     , m_fontIndex(0)
 {
@@ -69,7 +70,7 @@ UniscribeHelperTextRun::UniscribeHelperTextRun(
     SCRIPT_CACHE* scriptCache,
     SCRIPT_FONTPROPERTIES* fontProperties)
     : UniscribeHelper(input, inputLength, isRtl, hfont,
-                      scriptCache, fontProperties)
+                      scriptCache, fontProperties, 0)
     , m_font(0)
     , m_fontIndex(-1)
 {

@@ -76,7 +76,8 @@ public:
                     bool isRtl,
                     HFONT,
                     SCRIPT_CACHE*,
-                    SCRIPT_FONTPROPERTIES*);
+                    SCRIPT_FONTPROPERTIES*,
+                    WORD);
 
     virtual ~UniscribeHelper();
 
@@ -225,7 +226,9 @@ private:
             : m_prePadding(0)
             , m_hfont(NULL)
             , m_scriptCache(NULL)
-            , m_ascentOffset(0) {
+            , m_ascentOffset(0)
+            , m_spaceGlyph(0)
+        {
             m_abc.abcA = 0;
             m_abc.abcB = 0;
             m_abc.abcC = 0;
@@ -319,6 +322,8 @@ private:
         // when drawing a string, to align multiple runs rendered with
         // different fonts.
         int m_ascentOffset;
+
+        WORD m_spaceGlyph;
     };
 
     // Computes the runs_ array from the text run.
@@ -342,6 +347,10 @@ private:
 
     // Returns the total width of a single item.
     int advanceForItem(int) const;
+
+    bool containsMissingGlyphs(const Shaping&,
+                               const SCRIPT_ITEM&,
+                               const SCRIPT_FONTPROPERTIES*) const;
 
     // Shapes a run (pointed to by |input|) using |hfont| first.
     // Tries a series of fonts specified retrieved with NextWinFontData
@@ -384,6 +393,7 @@ private:
     int m_ascent;
     LOGFONT m_logfont;
     int m_style;
+    WORD m_spaceGlyph;
 
     // Options, see the getters/setters above.
     bool m_directionalOverride;
