@@ -599,6 +599,10 @@ void WebPage::registerUIProcessAccessibilityTokens(const CoreIPC::DataReference&
 void WebPage::writeSelectionToPasteboard(const String& pasteboardName, const Vector<String>& pasteboardTypes, bool& result)
 {
     Frame* frame = m_page->focusController()->focusedOrMainFrame();
+    if (!frame || frame->selection()->isNone()) {
+        result = false;
+        return;
+    }
     frame->editor()->writeSelectionToPasteboard(pasteboardName, pasteboardTypes);
     result = true;
 }
@@ -606,6 +610,10 @@ void WebPage::writeSelectionToPasteboard(const String& pasteboardName, const Vec
 void WebPage::readSelectionFromPasteboard(const String& pasteboardName, bool& result)
 {
     Frame* frame = m_page->focusController()->focusedOrMainFrame();
+    if (!frame || frame->selection()->isNone()) {
+        result = false;
+        return;
+    }
     frame->editor()->readSelectionFromPasteboard(pasteboardName);
     result = true;
 }

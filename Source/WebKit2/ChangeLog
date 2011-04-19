@@ -1,3 +1,19 @@
+2011-04-19  Alexey Proskuryakov  <ap@apple.com>
+
+        Reviewed by Timothy Hatcher.
+
+        100% reproducible crash when right-clicking any element in Web Inspector on any page
+        https://bugs.webkit.org/show_bug.cgi?id=58822
+
+        Web Inspector changes selection from JavaScript, and checks in UI process are insufficient
+        when selection is changing asynchronously.
+
+        * WebProcess/WebPage/mac/WebPageMac.mm:
+        (WebKit::WebPage::writeSelectionToPasteboard): Check that there is a selection, matching WK1
+        and UI process side. Perhaps the check should really be in WebCore, but for now, it's a
+        WebKit responsibility.
+        (WebKit::WebPage::readSelectionFromPasteboard): Same check, for no other reason but consistency.
+
 2011-04-19  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Sam Weinig.
