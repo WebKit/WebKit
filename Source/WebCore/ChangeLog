@@ -1,3 +1,18 @@
+2011-04-18  Pascal Massimino  <pascal.massimino@gmail.com>
+
+        Reviewed by Adam Barth.
+
+        Add incremental decoding to WebP decoder
+        https://bugs.webkit.org/show_bug.cgi?id=58851
+
+        No new tests, as it's not possible for the layout test framework to
+        force the decoders to decode incrementally.
+
+        * platform/image-decoders/webp/WEBPImageDecoder.cpp:
+        (WebCore::WEBPImageDecoder::WEBPImageDecoder):
+        (WebCore::WEBPImageDecoder::decode):
+        * platform/image-decoders/webp/WEBPImageDecoder.h:
+
 2011-04-18  Daniel Bates  <dbates@rim.com>
 
         Reviewed by Adam Roben.
