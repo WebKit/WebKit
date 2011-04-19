@@ -233,8 +233,11 @@ PlatformContextSkia::~PlatformContextSkia()
     if (m_gpuCanvas) {
 #if ENABLE(SKIA_GPU)
         // make sure everything related to this platform context has been flushed
-        if (!m_useGPU)
-            m_gpuCanvas->context()->grContext()->flush(0);
+        if (!m_useGPU) {
+            SharedGraphicsContext3D* context = m_gpuCanvas->context();
+            context->makeContextCurrent();
+            context->grContext()->flush(0);
+        }
 #endif
         m_gpuCanvas->drawingBuffer()->setWillPublishCallback(0);
     }

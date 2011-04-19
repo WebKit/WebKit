@@ -1,3 +1,17 @@
+2011-04-19 Brian Salomon <bsalomon@google.com>
+
+        Reviewed by Eric Seidel.
+
+        When flushing GrContext in ~PlatformContextSkia be sure correct GL context is set
+        https://bugs.webkit.org/show_bug.cgi?id=58788
+
+        Chromium browser test will be added that loads canvas page and then an 
+        acclerated-composited page. Test must trigger ~PlatformContextSkia() 
+        followed by invocation of GL compositor.
+
+        * platform/graphics/skia/PlatformContextSkia.cpp:
+        (WebCore::PlatformContextSkia::~PlatformContextSkia):
+
 2011-04-19  Csaba Osztrogonác  <ossy@webkit.org>
 
         [Qt] REGRESSION(84176): http/tests/xmlhttprequest/event-listener-gc.html fails
