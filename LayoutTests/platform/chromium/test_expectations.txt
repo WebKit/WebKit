@@ -3505,3 +3505,7 @@ BUGCR79770 WIN : fast/box-shadow/inset-with-extraordinary-radii-and-border.html 
 
 // Flaky, perhaps Skia related.
 BUGCR79851 LINUX : fast/table/frame-and-rules.html = PASS TEXT
+
+// Flaky, possibly timing related.
+BUGCR79853 : animations/combo-transform-translate+scale.html = PASS TEXT
+
