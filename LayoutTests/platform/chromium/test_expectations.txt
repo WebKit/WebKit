@@ -1543,6 +1543,7 @@ BUGCR12361 SLOW MAC RELEASE : http/tests/cookies/double-quoted-value-with-semi-c
 
 BUGCR14207 LINUX : tables/mozilla/bugs/bug28341.html = FAIL
 BUGCR32231 WIN DEBUG : tables/mozilla/bugs/bug28341.html = IMAGE PASS
+BUGCR32231 MAC : tables/mozilla/bugs/bug28341.html = IMAGE PASS
 
 // Newly added test http://trac.webkit.org/changeset/44816
 BUGCR18733 WIN SLOW : http/tests/xmlhttprequest/cross-origin-no-authorization.html = PASS
