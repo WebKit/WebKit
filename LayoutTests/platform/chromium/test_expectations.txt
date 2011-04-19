@@ -3531,10 +3531,10 @@ BUGCR79910 MAC SNOWLEOPARD: fast/text/international/bidi-linebreak-003.html = IM
 
 // The following are failures due to Skia bugs on Win/Linux
 // http://code.google.com/p/chromium/issues/detail?id=79917
-BUGCR79917 WIN LINUX : fast/blockflow/border-styles-vertical-lr.html = IMAGE
-BUGCR79917 WIN LINUX : fast/blockflow/border-styles-vertical-rl.html = IMAGE
-BUGCR79917 WIN LINUX : fast/borders/border-radius-inset-outset.html = IMAGE
-BUGCR79917 WIN LINUX : fast/borders/border-styles-split.html = IMAGE
+BUGCR79917 WIN LINUX : fast/blockflow/border-styles-vertical-lr.html = IMAGE+TEXT
+BUGCR79917 WIN LINUX : fast/blockflow/border-styles-vertical-rl.html = IMAGE+TEXT
+BUGCR79917 WIN LINUX : fast/borders/border-radius-inset-outset.html = IMAGE+TEXT
+BUGCR79917 WIN LINUX : fast/borders/border-styles-split.html = IMAGE+TEXT
 BUGCR79917 WIN LINUX : css1/box_properties/border_style.html = IMAGE
 BUGCR79917 WIN LINUX : css1/box_properties/border_style_inline.html = IMAGE
 BUGCR79917 WIN LINUX : css2.1/t0805-c5517-ibrdr-s-00-a.html = IMAGE
