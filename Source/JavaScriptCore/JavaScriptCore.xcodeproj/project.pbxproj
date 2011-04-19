@@ -1351,7 +1351,6 @@
 		0867D691FE84028FC02AAC07 /* JavaScriptCore */ = {
 			isa = PBXGroup;
 			children = (
-				A1D764511354448B00C5C7C0 /* Alignment.h */,
 				A718F8211178EB4B002465A7 /* create_regex_tables */,
 				937B63CC09E766D200A671DD /* DerivedSources.make */,
 				F692A8540255597D01FF60F7 /* create_hash_table */,
@@ -1603,6 +1602,7 @@
 		65162EF108E6A21C007556CD /* wtf */ = {
 			isa = PBXGroup;
 			children = (
+				A1D764511354448B00C5C7C0 /* Alignment.h */,
 				A7C40C07130B057D00D002A1 /* BlockStack.h */,
 				A7C40C08130B057D00D002A1 /* SentinelLinkedList.h */,
 				A7C40C09130B057D00D002A1 /* SinglyLinkedList.h */,
