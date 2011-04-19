@@ -1179,11 +1179,16 @@ bool RenderLayerCompositor::shouldPropagateCompositingToEnclosingFrame() const
     // use native views for frames (like Mac), so disable that behavior on those platforms for now.
     HTMLFrameOwnerElement* ownerElement = enclosingFrameElement();
     RenderObject* renderer = ownerElement ? ownerElement->renderer() : 0;
-    if (!renderer || !renderer->isRenderPart())
+
+    // If we are the top-level frame, don't propagate.
+    if (!ownerElement)
         return false;
 
     if (!allowsIndependentlyCompositedFrames(m_renderView->frameView()))
         return true;
+
+    if (!renderer || !renderer->isRenderPart())
+        return false;
 
     // On Mac, only propagate compositing if the frame is overlapped in the parent
     // document, or the parent is already compositing, or the main frame is scaled.

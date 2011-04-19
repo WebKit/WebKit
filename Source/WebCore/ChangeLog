@@ -1,3 +1,20 @@
+2011-04-19  Antoine Labour  <piman@chromium.org>
+
+        Reviewed by James Robinson.
+
+        For invisible iframes, propagate compositing to parent instead of setting self
+        as root.
+        https://bugs.webkit.org/show_bug.cgi?id=58414
+
+        Tests: compositing/iframes/invisible-iframe.html
+               compositing/iframes/invisible-nested-iframe-hide.html
+               compositing/iframes/invisible-nested-iframe-show.html
+               compositing/iframes/invisible-nested-iframe.html
+
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::shouldPropagateCompositingToEnclosingFrame):
+        Propagate compositing to parent even if frame owner has no renderer.
+
 2011-04-19  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Beth Dakin.

@@ -1,3 +1,25 @@
+2011-04-19  Antoine Labour  <piman@chromium.org>
+
+        Reviewed by James Robinson.
+
+        For invisible iframes, propagate compositing to parent instead of setting self
+        as root.
+        https://bugs.webkit.org/show_bug.cgi?id=58414
+
+        * compositing/iframes/invisible-iframe-expected.checksum: Added.
+        * compositing/iframes/invisible-iframe-expected.png: Added.
+        * compositing/iframes/invisible-iframe-expected.txt: Added.
+        * compositing/iframes/invisible-iframe.html: Added.
+        * compositing/iframes/invisible-nested-iframe-expected.checksum: Added.
+        * compositing/iframes/invisible-nested-iframe-expected.png: Added.
+        * compositing/iframes/invisible-nested-iframe-expected.txt: Added.
+        * compositing/iframes/invisible-nested-iframe-hide-expected.txt: Added.
+        * compositing/iframes/invisible-nested-iframe-hide.html: Added.
+        * compositing/iframes/invisible-nested-iframe-show-expected.txt: Added.
+        * compositing/iframes/invisible-nested-iframe-show.html: Added.
+        * compositing/iframes/invisible-nested-iframe.html: Added.
+        * platform/chromium-gpu/compositing/iframes/invisible-nested-iframe-show-expected.txt: Added.
+
 2011-04-19  Chris Rogers  <crogers@google.com>
 
         Unreviewed.
