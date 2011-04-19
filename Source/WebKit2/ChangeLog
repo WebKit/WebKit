@@ -1,5 +1,38 @@
 2011-04-19  Anders Carlsson  <andersca@apple.com>
 
+        Reviewed by Alexey Proskuryakov.
+
+        Replace the didFailToSendSyncMessage Connection::Client function with a flag
+        https://bugs.webkit.org/show_bug.cgi?id=58923
+
+        * Platform/CoreIPC/Connection.cpp:
+        (CoreIPC::Connection::Connection):
+        Initialize m_shouldExitOnSyncMessageSendFailure to false.
+
+        (CoreIPC::Connection::setShouldExitOnSyncMessageSendFailure):
+        Set m_didCloseOnConnectionWorkQueueCallback.
+
+        (CoreIPC::Connection::sendSyncMessage):
+        Call didFailToSendSyncMessage if we fail to send the sync message for some reason.
+
+        (CoreIPC::Connection::didFailToSendSyncMessage):
+        if m_shouldExitOnSyncMessageSendFailure is true, exit.
+
+        * Platform/CoreIPC/Connection.h:
+        Remove didFailToSendSyncMessage from Connection::Client.
+
+        * PluginProcess/PluginProcess.cpp:
+        * PluginProcess/PluginProcess.h:
+        Remove didFailToSendSyncMessage.
+
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::initialize):
+        * WebProcess/WebProcess.h:
+        Remove didFailToSendSyncMessage. Call setShouldExitOnSyncMessageSendFailure on our
+        UI process connection.
+
+2011-04-19  Anders Carlsson  <andersca@apple.com>
+
         Reviewed by Sam Weinig.
 
         Add a way to set the default sync message timeout for a CoreIPC connection

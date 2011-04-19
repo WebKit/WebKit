@@ -148,6 +148,7 @@ void WebProcess::initialize(CoreIPC::Connection::Identifier serverIdentifier, Ru
 
     m_connection = CoreIPC::Connection::createClientConnection(serverIdentifier, this, runLoop);
     m_connection->setDidCloseOnConnectionWorkQueueCallback(didCloseOnConnectionWorkQueue);
+    m_connection->setShouldExitOnSyncMessageSendFailure(true);
 
     m_connection->open();
 
@@ -663,13 +664,6 @@ void WebProcess::didReceiveInvalidMessage(CoreIPC::Connection*, CoreIPC::Message
 {
     // We received an invalid message, but since this is from the UI process (which we trust),
     // we'll let it slide.
-}
-
-NO_RETURN void WebProcess::didFailToSendSyncMessage(CoreIPC::Connection*)
-{
-    // We were making a synchronous call to a UI process that doesn't exist any more.
-    // Callers are unlikely to be prepared for an error like this, so it's best to exit immediately.
-    exit(0);
 }
 
 WebFrame* WebProcess::webFrame(uint64_t frameID) const

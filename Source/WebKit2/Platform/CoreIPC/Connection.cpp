@@ -197,6 +197,7 @@ Connection::Connection(Identifier identifier, bool isServer, Client* client, Run
     , m_isServer(isServer)
     , m_syncRequestID(0)
     , m_onlySendMessagesAsDispatchWhenWaitingForSyncReplyWhenProcessingSuchAMessage(false)
+    , m_shouldExitOnSyncMessageSendFailure(false)
     , m_didCloseOnConnectionWorkQueueCallback(0)
     , m_isConnected(false)
     , m_connectionQueue("com.apple.CoreIPC.ReceiveQueue")
@@ -225,6 +226,13 @@ void Connection::setOnlySendMessagesAsDispatchWhenWaitingForSyncReplyWhenProcess
     ASSERT(!m_isConnected);
 
     m_onlySendMessagesAsDispatchWhenWaitingForSyncReplyWhenProcessingSuchAMessage = flag;
+}
+
+void Connection::setShouldExitOnSyncMessageSendFailure(bool shouldExitOnSyncMessageSendFailure)
+{
+    ASSERT(!m_isConnected);
+
+    m_shouldExitOnSyncMessageSendFailure = shouldExitOnSyncMessageSendFailure;
 }
 
 void Connection::setDidCloseOnConnectionWorkQueueCallback(DidCloseOnConnectionWorkQueueCallback callback)
@@ -358,14 +366,16 @@ PassOwnPtr<ArgumentDecoder> Connection::sendSyncMessage(MessageID messageID, uin
     // We only allow sending sync messages from the client run loop.
     ASSERT(RunLoop::current() == m_clientRunLoop);
 
-    if (!isValid())
+    if (!isValid()) {
+        didFailToSendSyncMessage();
         return 0;
-    
+    }
+
     // Push the pending sync reply information on our stack.
     {
         MutexLocker locker(m_syncReplyStateMutex);
         if (!m_shouldWaitForSyncReplies) {
-            m_client->didFailToSendSyncMessage(this);
+            didFailToSendSyncMessage();
             return 0;
         }
 
@@ -387,8 +397,8 @@ PassOwnPtr<ArgumentDecoder> Connection::sendSyncMessage(MessageID messageID, uin
         m_pendingSyncReplies.removeLast();
     }
 
-    if (!reply && m_client)
-        m_client->didFailToSendSyncMessage(this);
+    if (!reply)
+        didFailToSendSyncMessage();
 
     return reply.release();
 }
@@ -590,6 +600,14 @@ void Connection::dispatchSyncMessage(MessageID messageID, ArgumentDecoder* argum
 
     // Send the reply.
     sendSyncReply(replyEncoder);
+}
+
+void Connection::didFailToSendSyncMessage()
+{
+    if (!m_shouldExitOnSyncMessageSendFailure)
+        return;
+
+    exit(0);
 }
 
 void Connection::enqueueIncomingMessage(IncomingMessage& incomingMessage)

@@ -172,7 +172,6 @@ private:
     CoreIPC::SyncReplyMode didReceiveSyncMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::ArgumentDecoder*, CoreIPC::ArgumentEncoder*);
     void didClose(CoreIPC::Connection*);
     void didReceiveInvalidMessage(CoreIPC::Connection*, CoreIPC::MessageID);
-    NO_RETURN void didFailToSendSyncMessage(CoreIPC::Connection*);
 #if PLATFORM(WIN)
     Vector<HWND> windowsToReceiveSentMessagesWhileWaitingForSyncReply();
 #endif

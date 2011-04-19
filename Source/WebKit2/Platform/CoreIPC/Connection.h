@@ -93,7 +93,6 @@ public:
     public:
         virtual void didClose(Connection*) = 0;
         virtual void didReceiveInvalidMessage(Connection*, MessageID) = 0;
-        virtual void didFailToSendSyncMessage(Connection*) { }
 
 #if PLATFORM(WIN)
         virtual Vector<HWND> windowsToReceiveSentMessagesWhileWaitingForSyncReply() = 0;
@@ -120,6 +119,7 @@ public:
 #endif
 
     void setOnlySendMessagesAsDispatchWhenWaitingForSyncReplyWhenProcessingSuchAMessage(bool);
+    void setShouldExitOnSyncMessageSendFailure(bool shouldExitOnSyncMessageSendFailure);
 
     // The set callback will be called on the connection work queue when the connection is closed, 
     // before didCall is called on the client thread. Must be called before the connection is opened.
@@ -216,6 +216,7 @@ private:
     void dispatchMessage(IncomingMessage&);
     void dispatchMessages();
     void dispatchSyncMessage(MessageID, ArgumentDecoder*);
+    void didFailToSendSyncMessage();
 
     // Can be called on any thread.
     void enqueueIncomingMessage(IncomingMessage&);
@@ -225,6 +226,7 @@ private:
     uint64_t m_syncRequestID;
 
     bool m_onlySendMessagesAsDispatchWhenWaitingForSyncReplyWhenProcessingSuchAMessage;
+    bool m_shouldExitOnSyncMessageSendFailure;
     DidCloseOnConnectionWorkQueueCallback m_didCloseOnConnectionWorkQueueCallback;
 
     bool m_isConnected;
