@@ -509,6 +509,10 @@
 			</File>
 		</Filter>
 		<File
+			RelativePath="..\..\wtf\Alignment.h"
+			>
+		</File>
+		<File
 			RelativePath="..\..\wtf\AlwaysInline.h"
 			>
 		</File>

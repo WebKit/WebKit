@@ -130,6 +130,7 @@
             'runtime/WriteBarrier.h',
             'wtf/ASCIICType.h',
             'wtf/AVLTree.h',
+            'wtf/Alignment.h',
             'wtf/AlwaysInline.h',
             'wtf/Assertions.h',
             'wtf/Atomics.h',
