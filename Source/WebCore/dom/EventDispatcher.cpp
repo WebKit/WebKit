@@ -249,7 +249,11 @@ void EventDispatcher::ensureEventAncestors(Event* event)
         if (isSVGShadowRoot || ancestor->isShadowRoot()) {
             if (behavior == StayInsideShadowDOM)
                 return;
+#if ENABLE(SVG)
             ancestor = isSVGShadowRoot ? ancestor->svgShadowHost() : ancestor->shadowHost();
+#else
+            ancestor = ancestor->shadowHost();
+#endif
             if (!shouldSkipNextAncestor)
                 target = ancestor;
         } else
