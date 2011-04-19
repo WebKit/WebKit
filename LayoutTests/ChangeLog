@@ -1,3 +1,11 @@
+2011-04-19  Balazs Kelemen  <kbalazs@webkit.org>
+
+        Rubber-stamped by Csaba Osztrogonác.
+
+        [Qt][WK2] Skip new eventSender dependent tests.
+
+        * platform/qt-wk2/Skipped:
+
 2011-04-19  John Knottenbelt  <jknotten@chromium.org>
 
         Unreviewed.
