@@ -2,6 +2,18 @@
 
         Unreviewed.
 
+        [Chromium] Mark svg/text/font-size-below-point-five.svg as flaky on Linux, Mac
+        https://bugs.webkit.org/show_bug.cgi?id=58878
+
+	See also existing chromium bug:
+	http://code.google.com/p/chromium/issues/detail?id=74710
+
+        * platform/chromium/test_expectations.txt:
+
+2011-04-19  John Knottenbelt  <jknotten@chromium.org>
+
+        Unreviewed.
+
         [Chromium] Mark layout test editing/execCommand/delete-empty-container.html as flaky
         https://bugs.webkit.org/show_bug.cgi?id=58877
 

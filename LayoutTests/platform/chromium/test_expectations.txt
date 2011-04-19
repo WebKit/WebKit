@@ -3076,7 +3076,7 @@ BUGCR74519 WIN LINUX : svg/W3C-SVG-1.1-SE/color-prop-05-t.svg = IMAGE+TEXT
 
 BUGWK55560 : editing/input/setting-input-value-cancel-ime-composition.html = TEXT
 
-BUGCR74710 MAC : svg/text/font-size-below-point-five.svg = TEXT
+BUGCR74710 LINUX MAC : svg/text/font-size-below-point-five.svg = TEXT PASS
 
 BUGCR74766 WIN DEBUG : http/tests/security/javascriptURL/xss-ALLOWED-from-javascript-url-sub-frame-to-javascript-url-sub-frame.html = PASS CRASH
 
