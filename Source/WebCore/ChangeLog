@@ -1,3 +1,15 @@
+2011-04-19  David Kilzer  <ddkilzer@apple.com>
+
+        <http://webkit.org/b/57867> Re-order enum ResourceLoadPriority to make Unresolved value less important
+
+        Reviewed by Antti Koivisto.
+
+        * platform/network/ResourceLoadPriority.h:
+        (enum ResourceLoadPriority): Moved Unresolved enum to the top of
+        the list and set to -1 to emphasize the fact that this is an
+        unresolved priority (rather than one higher than the highest
+        priority).  Removed whitespace from the end of all enum lines.
+
 2011-04-19  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by David Hyatt.

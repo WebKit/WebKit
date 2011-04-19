@@ -28,15 +28,15 @@
 
 namespace WebCore {
 
-enum ResourceLoadPriority { 
-    ResourceLoadPriorityVeryLow, 
-    ResourceLoadPriorityLow, 
-    ResourceLoadPriorityMedium, 
-    ResourceLoadPriorityHigh, 
-    ResourceLoadPriorityLowest = ResourceLoadPriorityVeryLow, 
-    ResourceLoadPriorityHighest = ResourceLoadPriorityHigh, 
+enum ResourceLoadPriority {
     // The unresolved priority is here for the convenience of the clients. It should not be passed to the ResourceLoadScheduler.
-    ResourceLoadPriorityUnresolved,
+    ResourceLoadPriorityUnresolved = -1,
+    ResourceLoadPriorityVeryLow = 0,
+    ResourceLoadPriorityLow,
+    ResourceLoadPriorityMedium,
+    ResourceLoadPriorityHigh,
+    ResourceLoadPriorityLowest = ResourceLoadPriorityVeryLow,
+    ResourceLoadPriorityHighest = ResourceLoadPriorityHigh,
 };
 
 }
