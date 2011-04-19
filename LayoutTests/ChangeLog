@@ -1,3 +1,24 @@
+2011-04-19  Tony Chang  <tony@chromium.org>
+
+        Fixing pngs with bad checksum crcs.  There was a 64bit specific bug
+        in computing crcs of checksums embedded in png files.  During that
+        time, these images were checked in.  Just fixing with the correct
+        crcs (the image result itself is unchanged).
+
+        * platform/gtk/fast/block/positioning/complex-positioned-movement-expected.png:
+        * platform/gtk/fast/text/decorations-transformed-expected.png:
+        * platform/mac/compositing/images/content-image-change-expected.png:
+        * platform/mac/editing/inserting/editable-inline-element-expected.png:
+        * platform/mac/editing/spelling/autocorrection-at-beginning-of-word-1-expected.png:
+        * platform/mac/editing/spelling/autocorrection-at-beginning-of-word-2-expected.png:
+        * platform/mac/fast/borders/bidi-002-expected.png:
+        * platform/mac/fast/borders/bidi-004-expected.png:
+        * platform/mac/fast/borders/bidi-009a-expected.png:
+        * platform/mac/fast/box-shadow/inset-expected.png:
+        * platform/mac/fast/inline/positioned-object-between-replaced-elements-expected.png:
+        * platform/mac/fast/overflow/trailing-float-linebox-expected.png:
+        * platform/mac/fullscreen/full-screen-zIndex-expected.png:
+
 2011-04-19  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Dave Hyatt.
