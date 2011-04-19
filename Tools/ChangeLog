@@ -1,3 +1,13 @@
+2011-04-19  Brent Fulgham  <bfulgham@webkit.org>
+
+        Unreviewed build correction.
+
+        Avoid duplicate stub implementation of test routine
+        for WinCairo build.
+
+        * WebKitTestRunner/win/TestInvocationWin.cpp: Exclude
+        WinCairo from using this stub.
+
 2011-04-18  Ojan Vafai  <ojan@chromium.org>
 
         Reviewed by Eric Seidel.
