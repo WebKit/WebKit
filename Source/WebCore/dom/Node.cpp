@@ -2651,28 +2651,6 @@ EventTargetData* Node::ensureEventTargetData()
     return ensureRareData()->ensureEventTargetData();
 }
 
-#if USE(JSC)
-
-template <class NodeListMap>
-void markNodeLists(const NodeListMap& map, JSC::MarkStack& markStack, JSC::JSGlobalData& globalData)
-{
-    for (typename NodeListMap::const_iterator it = map.begin(); it != map.end(); ++it)
-        markDOMObjectWrapper(markStack, globalData, it->second);
-}
-
-void Node::markCachedNodeListsSlow(JSC::MarkStack& markStack, JSC::JSGlobalData& globalData)
-{
-    NodeListsNodeData* nodeLists = rareData()->nodeLists();
-    if (!nodeLists)
-        return;
-
-    markNodeLists(nodeLists->m_classNodeListCache, markStack, globalData);
-    markNodeLists(nodeLists->m_nameNodeListCache, markStack, globalData);
-    markNodeLists(nodeLists->m_tagNodeListCache, markStack, globalData);
-}
-
-#endif
-
 void Node::handleLocalEvents(Event* event)
 {
     if (!hasRareData() || !rareData()->eventTargetData())

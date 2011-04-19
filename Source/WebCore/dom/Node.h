@@ -572,17 +572,6 @@ public:
     virtual EventTargetData* eventTargetData();
     virtual EventTargetData* ensureEventTargetData();
 
-#if USE(JSC)
-    void markCachedNodeLists(JSC::MarkStack& markStack, JSC::JSGlobalData& globalData)
-    {
-        // NodeLists may be present.  If so, they need to be marked.
-        if (!hasRareData())
-            return;
-
-        markCachedNodeListsSlow(markStack, globalData);
-    }
-#endif
-
 private:
     enum NodeFlags {
         IsTextFlag = 1,
@@ -665,10 +654,6 @@ protected:
     NodeRareData* ensureRareData();
 
 private:
-#if USE(JSC)
-    void markCachedNodeListsSlow(JSC::MarkStack&, JSC::JSGlobalData&);
-#endif
-
     enum EditableLevel { Editable, RichlyEditable };
     bool rendererIsEditable(EditableLevel) const;
 

@@ -145,6 +145,11 @@ Node* DynamicNodeList::itemWithName(const AtomicString& elementId) const
     return 0;
 }
 
+bool DynamicNodeList::isDynamicNodeList() const
+{
+    return true;
+}
+
 void DynamicNodeList::invalidateCache()
 {
     // This should only be called for node lists that own their own caches.

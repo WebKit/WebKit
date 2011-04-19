@@ -21,6 +21,7 @@
 module core {
 
     interface [
+        CustomToJS,
         HasIndexGetter,
         HasNameGetter,
         CustomCall

@@ -27,7 +27,6 @@
 #include "JSNamedNodeMap.h"
 
 #include "JSNode.h"
-
 #include "Element.h"
 #include "NamedNodeMap.h"
 

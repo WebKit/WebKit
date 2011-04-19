@@ -26,6 +26,7 @@
 #include "config.h"
 #include "JSNodeList.h"
 
+#include "DynamicNodeList.h"
 #include "JSNode.h"
 #include "Node.h"
 #include "NodeList.h"
@@ -34,6 +35,44 @@
 using namespace JSC;
 
 namespace WebCore {
+
+class JSNodeListOwner : public JSC::WeakHandleOwner {
+    virtual bool isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown>, void* context, JSC::MarkStack&);
+    virtual void finalize(JSC::Handle<JSC::Unknown>, void* context);
+};
+
+bool JSNodeListOwner::isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown> handle, void*, MarkStack& markStack)
+{
+    JSNodeList* jsNodeList = static_cast<JSNodeList*>(handle.get().asCell());
+    if (!jsNodeList->hasCustomProperties())
+        return false;
+    if (!jsNodeList->impl()->isDynamicNodeList())
+        return false;
+    return markStack.containsOpaqueRoot(root(static_cast<DynamicNodeList*>(jsNodeList->impl())->rootNode()));
+}
+
+void JSNodeListOwner::finalize(JSC::Handle<JSC::Unknown> handle, void* context)
+{
+    JSNodeList* jsNodeList = static_cast<JSNodeList*>(handle.get().asCell());
+    DOMWrapperWorld* world = static_cast<DOMWrapperWorld*>(context);
+    uncacheWrapper(world, jsNodeList->impl(), jsNodeList);
+}
+
+inline JSC::WeakHandleOwner* wrapperOwner(DOMWrapperWorld*, NodeList*)
+{
+    DEFINE_STATIC_LOCAL(JSNodeListOwner, jsNodeListOwner, ());
+    return &jsNodeListOwner;
+}
+
+inline void* wrapperContext(DOMWrapperWorld* world, NodeList*)
+{
+    return world;
+}
+
+JSC::JSValue toJS(JSC::ExecState* exec, JSDOMGlobalObject* globalObject, NodeList* impl)
+{
+    return wrap<JSNodeList>(exec, globalObject, impl);
+}
 
 // Need to support call so that list(0) works.
 static EncodedJSValue JSC_HOST_CALL callNodeList(ExecState* exec)

@@ -1,3 +1,39 @@
+2011-04-19  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        Removed a use of markDOMObjectWrapper: NodeLists
+        https://bugs.webkit.org/show_bug.cgi?id=58939
+
+        * bindings/js/JSDocumentCustom.cpp:
+        (WebCore::JSDocument::markChildren): No need to mark node lists, because
+        now they use the opaque roots system to decide their lifetimes.
+
+        * bindings/js/JSNamedNodeMapCustom.cpp: Removed stray newline.
+
+        * bindings/js/JSNodeListCustom.cpp:
+        (WebCore::JSNodeListOwner::isReachableFromOpaqueRoots):
+        (WebCore::JSNodeListOwner::finalize):
+        (WebCore::wrapperOwner):
+        (WebCore::wrapperContext):
+        (WebCore::toJS): Use the opaque roots system to avoid relying on
+        markDOMObjectWrapper.
+
+        * dom/DynamicNodeList.cpp:
+        (WebCore::DynamicNodeList::isDynamicNodeList):
+        * dom/DynamicNodeList.h:
+        (WebCore::DynamicNodeList::rootNode): Added the ability to get the node
+        backing a NodeList, for use in the opaque roots system.
+
+        * dom/Node.cpp:
+        * dom/Node.h:
+        * dom/NodeList.h:
+        (WebCore::NodeList::isDynamicNodeList): Ditto. Removed cruft related
+        to the old way of marking NodeLists.
+
+        * dom/NodeList.idl: We need a custom toJS so we can specify a custom
+        WeakHandleOwner at construction time.
+
 2011-04-19  Antoine Labour  <piman@chromium.org>
 
         Reviewed by James Robinson.
