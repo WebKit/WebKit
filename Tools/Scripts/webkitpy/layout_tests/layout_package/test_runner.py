@@ -147,9 +147,6 @@ def summarize_results(port_obj, expectations, result_summary, retry_summary, tes
         # and only set it if there actually is stderr data.
         tests[test]['has_stderr'] = False
 
-        for f in result.failures:
-            print f.message()
-
         failure_types = [type(f) for f in result.failures]
         if test_failures.FailureMissingAudio in failure_types:
             tests[test]['is_missing_audio'] = True
