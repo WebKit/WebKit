@@ -1029,7 +1029,7 @@ void InlineFlowBox::paintFillLayer(const PaintInfo& paintInfo, const Color& c, c
     StyleImage* img = fillLayer->image();
     bool hasFillImage = img && img->canRender(renderer()->style()->effectiveZoom());
     if ((!hasFillImage && !renderer()->style()->hasBorderRadius()) || (!prevLineBox() && !nextLineBox()) || !parent())
-        boxModelObject()->paintFillLayerExtended(paintInfo, c, fillLayer, tx, ty, w, h, this, op);
+        boxModelObject()->paintFillLayerExtended(paintInfo, c, fillLayer, tx, ty, w, h, this, w, h, op);
     else {
         // We have a fill image that spans multiple lines.
         // We need to adjust tx and ty by the width of all previous lines.
@@ -1058,7 +1058,7 @@ void InlineFlowBox::paintFillLayer(const PaintInfo& paintInfo, const Color& c, c
         int stripHeight = isHorizontal() ? height() : totalLogicalWidth;
         paintInfo.context->save();
         paintInfo.context->clip(IntRect(tx, ty, width(), height()));
-        boxModelObject()->paintFillLayerExtended(paintInfo, c, fillLayer, stripX, stripY, stripWidth, stripHeight, this, op);
+        boxModelObject()->paintFillLayerExtended(paintInfo, c, fillLayer, stripX, stripY, stripWidth, stripHeight, this, w, h, op);
         paintInfo.context->restore();
     }
 }

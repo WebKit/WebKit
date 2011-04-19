@@ -559,7 +559,20 @@ int RenderBoxModelObject::paddingEnd(bool) const
     return padding.calcMinValue(w);
 }
 
-void RenderBoxModelObject::paintFillLayerExtended(const PaintInfo& paintInfo, const Color& color, const FillLayer* bgLayer, int tx, int ty, int w, int h, InlineFlowBox* box, CompositeOperator op, RenderObject* backgroundObject)
+RoundedIntRect RenderBoxModelObject::getBackgroundRoundedRect(const IntRect& borderRect, InlineFlowBox* box, int inlineBoxWidth, int inlineBoxHeight,
+    bool includeLogicalLeftEdge, bool includeLogicalRightEdge)
+{
+    RoundedIntRect border = style()->getRoundedBorderFor(borderRect, includeLogicalLeftEdge, includeLogicalRightEdge);
+    if (box && (box->nextLineBox() || box->prevLineBox())) {
+        RoundedIntRect segmentBorder = style()->getRoundedBorderFor(IntRect(0, 0, inlineBoxWidth, inlineBoxHeight), includeLogicalLeftEdge, includeLogicalRightEdge);
+        border.setRadii(segmentBorder.radii());
+    }
+
+    return border;
+}
+
+void RenderBoxModelObject::paintFillLayerExtended(const PaintInfo& paintInfo, const Color& color, const FillLayer* bgLayer, int tx, int ty, int w, int h,
+    InlineFlowBox* box, int inlineBoxWidth, int inlineBoxHeight, CompositeOperator op, RenderObject* backgroundObject)
 {
     GraphicsContext* context = paintInfo.context;
     if (context->paintingDisabled())
@@ -604,8 +617,7 @@ void RenderBoxModelObject::paintFillLayerExtended(const PaintInfo& paintInfo, co
             return;
 
         if (hasRoundedBorder) {
-            RoundedIntRect border = style()->getRoundedBorderFor(borderRect);
-            border.excludeLogicalEdges(box && box->isHorizontal(), !includeLeftEdge, !includeRightEdge);
+            RoundedIntRect border = getBackgroundRoundedRect(borderRect, box, inlineBoxWidth, inlineBoxHeight, includeLeftEdge, includeRightEdge);
             context->fillRoundedRect(border, bgColor, style()->colorSpace());
         } else
             context->fillRect(borderRect, bgColor, style()->colorSpace());
@@ -622,8 +634,7 @@ void RenderBoxModelObject::paintFillLayerExtended(const PaintInfo& paintInfo, co
 
         context->save();
 
-        RoundedIntRect border = style()->getRoundedBorderFor(borderRect);
-        border.excludeLogicalEdges(box && box->isHorizontal(), !includeLeftEdge, !includeRightEdge);
+        RoundedIntRect border = getBackgroundRoundedRect(borderRect, box, inlineBoxWidth, inlineBoxHeight, includeLeftEdge, includeRightEdge);
         context->addRoundedRectClip(border);
         clippedToBorderRadius = true;
     }

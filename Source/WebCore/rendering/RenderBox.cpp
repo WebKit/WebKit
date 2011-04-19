@@ -955,7 +955,7 @@ void RenderBox::paintFillLayers(const PaintInfo& paintInfo, const Color& c, cons
 
 void RenderBox::paintFillLayer(const PaintInfo& paintInfo, const Color& c, const FillLayer* fillLayer, int tx, int ty, int width, int height, CompositeOperator op, RenderObject* backgroundObject)
 {
-    paintFillLayerExtended(paintInfo, c, fillLayer, tx, ty, width, height, 0, op, backgroundObject);
+    paintFillLayerExtended(paintInfo, c, fillLayer, tx, ty, width, height, 0, 0, 0, op, backgroundObject);
 }
 
 #if USE(ACCELERATED_COMPOSITING)

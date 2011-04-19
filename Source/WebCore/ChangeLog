@@ -1,5 +1,35 @@
 2011-04-19  Simon Fraser  <simon.fraser@apple.com>
 
+        Reviewed by David Hyatt.
+
+        Background radius is wrong for split inline
+        https://bugs.webkit.org/show_bug.cgi?id=58843
+        
+        When computing the radii for a segment of a split inline, we have to
+        constrain those radii for the current segment, while still drawing
+        using the entire logical width.
+
+        Tests: fast/backgrounds/border-radius-split-background-image.html
+               fast/backgrounds/border-radius-split-background.html
+
+        * rendering/InlineFlowBox.cpp:
+        (WebCore::InlineFlowBox::paintFillLayer):
+        Pass height and width for this box only to paintFillLayer()
+        
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::paintFillLayer):
+        Pass 0 for unused inlineBox height and width.
+
+        * rendering/RenderBoxModelObject.h:
+        * rendering/RenderBoxModelObject.cpp:
+        (WebCore::RenderBoxModelObject::getBackgroundRoundedRect):
+        When computing the rounded background rect, we have to take the size of
+        this segment of the inline box into account for radius constraining.
+        (WebCore::RenderBoxModelObject::paintFillLayerExtended):
+        Call getBackgroundRoundedRect() in two places.
+
+2011-04-19  Simon Fraser  <simon.fraser@apple.com>
+
         Build fix. For some reason RenderBoxModelObject.cpp
         was missing from my last commit.
 

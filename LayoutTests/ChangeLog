@@ -1,3 +1,22 @@
+2011-04-19  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by David Hyatt.
+
+        Background radius is wrong for split inline
+        https://bugs.webkit.org/show_bug.cgi?id=58843
+        
+        New tests for split inline with border-radius, with background color and image,
+        in both horizontal and vertical text.
+
+        * fast/backgrounds/border-radius-split-background-image.html: Added.
+        * fast/backgrounds/border-radius-split-background.html: Added.
+        * platform/mac/fast/backgrounds/border-radius-split-background-expected.checksum: Added.
+        * platform/mac/fast/backgrounds/border-radius-split-background-expected.png: Added.
+        * platform/mac/fast/backgrounds/border-radius-split-background-expected.txt: Added.
+        * platform/mac/fast/backgrounds/border-radius-split-background-image-expected.checksum: Added.
+        * platform/mac/fast/backgrounds/border-radius-split-background-image-expected.png: Added.
+        * platform/mac/fast/backgrounds/border-radius-split-background-image-expected.txt: Added.
+
 2011-04-19  Chris Rogers  <crogers@google.com>
 
         Unreviewed.

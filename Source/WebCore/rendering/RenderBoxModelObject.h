@@ -115,7 +115,7 @@ public:
     void paintBorder(GraphicsContext*, int tx, int ty, int w, int h, const RenderStyle*, bool includeLogicalLeftEdge = true, bool includeLogicalRightEdge = true);
     bool paintNinePieceImage(GraphicsContext*, int tx, int ty, int w, int h, const RenderStyle*, const NinePieceImage&, CompositeOperator = CompositeSourceOver);
     void paintBoxShadow(GraphicsContext*, int tx, int ty, int w, int h, const RenderStyle*, ShadowStyle, bool includeLogicalLeftEdge = true, bool includeLogicalRightEdge = true);
-    void paintFillLayerExtended(const PaintInfo&, const Color&, const FillLayer*, int tx, int ty, int width, int height, InlineFlowBox* = 0, CompositeOperator = CompositeSourceOver, RenderObject* backgroundObject = 0);
+    void paintFillLayerExtended(const PaintInfo&, const Color&, const FillLayer*, int tx, int ty, int width, int height, InlineFlowBox* = 0, int inlineBoxWidth = 0, int inlineBoxHeight = 0, CompositeOperator = CompositeSourceOver, RenderObject* backgroundObject = 0);
     
     // Overridden by subclasses to determine line height and baseline position.
     virtual int lineHeight(bool firstLine, LineDirectionMode, LinePositionMode = PositionOnContainingLine) const = 0;
@@ -139,6 +139,9 @@ private:
     virtual bool isBoxModelObject() const { return true; }
 
     IntSize calculateFillTileSize(const FillLayer*, IntSize scaledSize) const;
+
+    RoundedIntRect getBackgroundRoundedRect(const IntRect&, InlineFlowBox*, int inlineBoxWidth, int inlineBoxHeight,
+        bool includeLogicalLeftEdge, bool includeLogicalRightEdge);
 
     void clipBorderSidePolygon(GraphicsContext*, const RoundedIntRect& outerBorder, const RoundedIntRect& innerBorder,
                                BoxSide, bool firstEdgeMatches, bool secondEdgeMatches);
