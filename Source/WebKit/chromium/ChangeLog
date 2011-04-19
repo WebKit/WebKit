@@ -1,5 +1,16 @@
 2011-04-19  Kinuko Yasuda  <kinuko@chromium.org>
 
+        Not reviewed; another build fix attempt.
+
+        * src/StorageInfoChromium.cpp:
+        (WebCore::StorageInfo::queryUsageAndQuota):
+        (WebCore::StorageInfo::requestQuota):
+        * src/WebStorageQuotaCallbacksImpl.cpp:
+        (WebKit::WebStorageQuotaCallbacksImpl::WebStorageQuotaCallbacksImpl):
+        * src/WebStorageQuotaCallbacksImpl.h:
+
+2011-04-19  Kinuko Yasuda  <kinuko@chromium.org>
+
         Reviewed by David Levin.
 
         [Chromium] Enable QUOTA API at runtime if enable-quota flag is given

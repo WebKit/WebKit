@@ -46,9 +46,9 @@ namespace WebKit {
 
 class WebStorageQuotaCallbacksImpl : public WebStorageQuotaCallbacks {
 public:
-    // The following create methods return a leaked ptr (the class is self-destructed).
-    static WebStorageQuotaCallbacksImpl* createForUsageCallback(PassRefPtr<WebCore::StorageInfoUsageCallback>, PassRefPtr<WebCore::StorageInfoErrorCallback>);
-    static WebStorageQuotaCallbacksImpl* createForQuotaCallback(PassRefPtr<WebCore::StorageInfoQuotaCallback>, PassRefPtr<WebCore::StorageInfoErrorCallback>);
+    // The class is self-destructed and thus we have bare constructors.
+    WebStorageQuotaCallbacksImpl(PassRefPtr<WebCore::StorageInfoUsageCallback>, PassRefPtr<WebCore::StorageInfoErrorCallback>);
+    WebStorageQuotaCallbacksImpl(PassRefPtr<WebCore::StorageInfoQuotaCallback>, PassRefPtr<WebCore::StorageInfoErrorCallback>);
 
     virtual ~WebStorageQuotaCallbacksImpl();
 
@@ -57,9 +57,6 @@ public:
     virtual void didFail(WebStorageQuotaError);
 
 private:
-    WebStorageQuotaCallbacksImpl(PassRefPtr<WebCore::StorageInfoUsageCallback>, PassRefPtr<WebCore::StorageInfoErrorCallback>);
-    WebStorageQuotaCallbacksImpl(PassRefPtr<WebCore::StorageInfoQuotaCallback>, PassRefPtr<WebCore::StorageInfoErrorCallback>);
-
     RefPtr<WebCore::StorageInfoUsageCallback> m_usageCallback;
     RefPtr<WebCore::StorageInfoQuotaCallback> m_quotaCallback;
     RefPtr<WebCore::StorageInfoErrorCallback> m_errorCallback;

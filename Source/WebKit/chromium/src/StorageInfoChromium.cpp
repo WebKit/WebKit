@@ -69,7 +69,7 @@ void StorageInfo::queryUsageAndQuota(ScriptExecutionContext* context, int storag
     if (context->isDocument()) {
         Document* document = static_cast<Document*>(context);
         WebFrameImpl* webFrame = WebFrameImpl::fromFrame(document->frame());
-        webFrame->client()->queryStorageUsageAndQuota(webFrame, static_cast<WebStorageQuotaType>(storageType), WebStorageQuotaCallbacksImpl::createForUsageCallback(successCallback, errorCallback));
+        webFrame->client()->queryStorageUsageAndQuota(webFrame, static_cast<WebStorageQuotaType>(storageType), new WebStorageQuotaCallbacksImpl(successCallback, errorCallback));
     } else if (errorCallback) {
         // FIXME: calling this on worker is not yet supported.
         fireStorageInfoErrorCallback(errorCallback, NOT_SUPPORTED_ERR);
@@ -87,7 +87,7 @@ void StorageInfo::requestQuota(ScriptExecutionContext* context, int storageType,
     if (context->isDocument()) {
         Document* document = static_cast<Document*>(context);
         WebFrameImpl* webFrame = WebFrameImpl::fromFrame(document->frame());
-        webFrame->client()->requestStorageQuota(webFrame, static_cast<WebStorageQuotaType>(storageType), newQuotaInBytes, WebStorageQuotaCallbacksImpl::createForQuotaCallback(successCallback, errorCallback));
+        webFrame->client()->requestStorageQuota(webFrame, static_cast<WebStorageQuotaType>(storageType), newQuotaInBytes, new WebStorageQuotaCallbacksImpl(successCallback, errorCallback));
     } else if (errorCallback) {
         // FIXME: calling this on worker is not yet supported.
         fireStorageInfoErrorCallback(errorCallback, NOT_SUPPORTED_ERR);

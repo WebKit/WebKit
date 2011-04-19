@@ -42,16 +42,16 @@ using namespace WebCore;
 
 namespace WebKit {
 
-WebStorageQuotaCallbacksImpl* WebStorageQuotaCallbacksImpl::createForUsageCallback(PassRefPtr<WebCore::StorageInfoUsageCallback> usageCallback, PassRefPtr<WebCore::StorageInfoErrorCallback> errorCallback)
+WebStorageQuotaCallbacksImpl::WebStorageQuotaCallbacksImpl(PassRefPtr<WebCore::StorageInfoUsageCallback> usageCallback, PassRefPtr<WebCore::StorageInfoErrorCallback> errorCallback)
+    : m_usageCallback(usageCallback)
+    , m_errorCallback(errorCallback)
 {
-    // This class is self-destructed; returning a leaked pointer.
-    return adoptPtr(new WebStorageQuotaCallbacksImpl(usageCallback, errorCallback)).leakPtr();
 }
 
-WebStorageQuotaCallbacksImpl* WebStorageQuotaCallbacksImpl::createForQuotaCallback(PassRefPtr<WebCore::StorageInfoQuotaCallback> quotaCallback, PassRefPtr<WebCore::StorageInfoErrorCallback> errorCallback)
+WebStorageQuotaCallbacksImpl::WebStorageQuotaCallbacksImpl(PassRefPtr<WebCore::StorageInfoQuotaCallback> quotaCallback, PassRefPtr<WebCore::StorageInfoErrorCallback> errorCallback)
+    : m_quotaCallback(quotaCallback)
+    , m_errorCallback(errorCallback)
 {
-    // This class is self-destructed; returning a leaked pointer.
-    return adoptPtr(new WebStorageQuotaCallbacksImpl(quotaCallback, errorCallback)).leakPtr();
 }
 
 WebStorageQuotaCallbacksImpl::~WebStorageQuotaCallbacksImpl()
@@ -80,18 +80,6 @@ void WebStorageQuotaCallbacksImpl::didFail(WebStorageQuotaError error)
         m_errorCallback->handleEvent(DOMCoreException::create(description).get());
     }
     delete this;
-}
-
-WebStorageQuotaCallbacksImpl::WebStorageQuotaCallbacksImpl(PassRefPtr<WebCore::StorageInfoUsageCallback> usageCallback, PassRefPtr<WebCore::StorageInfoErrorCallback> errorCallback)
-    : m_usageCallback(usageCallback)
-    , m_errorCallback(errorCallback)
-{
-}
-
-WebStorageQuotaCallbacksImpl::WebStorageQuotaCallbacksImpl(PassRefPtr<WebCore::StorageInfoQuotaCallback> quotaCallback, PassRefPtr<WebCore::StorageInfoErrorCallback> errorCallback)
-    : m_quotaCallback(quotaCallback)
-    , m_errorCallback(errorCallback)
-{
 }
 
 } // namespace WebKit
