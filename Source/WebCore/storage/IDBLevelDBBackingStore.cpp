@@ -38,7 +38,6 @@
 #include "LevelDBIterator.h"
 #include "LevelDBSlice.h"
 #include "SecurityOrigin.h"
-#include <string>
 
 #ifndef INT64_MAX
 // FIXME: We shouldn't need to rely on these macros.
