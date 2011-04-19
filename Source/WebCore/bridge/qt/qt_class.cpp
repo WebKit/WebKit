@@ -87,7 +87,7 @@ JSValue QtClass::fallbackObject(ExecState* exec, Instance* inst, const Identifie
         QMetaMethod m = m_metaObject->method(index);
         if (m.access() != QMetaMethod::Private) {
             QtRuntimeMetaMethod* val = new (exec) QtRuntimeMetaMethod(exec, identifier, static_cast<QtInstance*>(inst), index, normal, false);
-            qtinst->m_methods.insert(name, val);
+            qtinst->m_methods.insert(name, WriteBarrier<JSObject>(exec->globalData(), qtinst->createRuntimeObject(exec), val));
             return val;
         }
     }
@@ -106,7 +106,7 @@ JSValue QtClass::fallbackObject(ExecState* exec, Instance* inst, const Identifie
 
         if (normal == QByteArray::fromRawData(signature, iter)) {
             QtRuntimeMetaMethod* val = new (exec) QtRuntimeMetaMethod(exec, identifier, static_cast<QtInstance*>(inst), index, normal, false);
-            qtinst->m_methods.insert(name, val);
+            qtinst->m_methods.insert(name, WriteBarrier<JSObject>(exec->globalData(), qtinst->createRuntimeObject(exec), val));
             return val;
         }
     }

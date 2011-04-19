@@ -1,3 +1,23 @@
+2011-04-19  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Andreas Kling.
+
+        [Qt] QtInstance method cache ownership rules are unclear
+        https://bugs.webkit.org/show_bug.cgi?id=58820
+
+        Make the QtInstance method cache use WriteBarrier, and handle
+        ownership properly.
+
+        * bridge/qt/qt_class.cpp:
+        (JSC::Bindings::QtClass::fallbackObject):
+        (JSC::Bindings::QtClass::fieldNamed):
+        * bridge/qt/qt_instance.cpp:
+        (JSC::Bindings::QtInstance::~QtInstance):
+        (JSC::Bindings::QtInstance::removeCachedMethod):
+        (JSC::Bindings::QtInstance::newRuntimeObject):
+        (JSC::Bindings::QtInstance::markAggregate):
+        * bridge/qt/qt_instance.h:
+
 2011-04-19  David Kilzer  <ddkilzer@apple.com>
 
         <http://webkit.org/b/57867> Re-order enum ResourceLoadPriority to make Unresolved value less important
