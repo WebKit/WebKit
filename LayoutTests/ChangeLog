@@ -2,6 +2,68 @@
 
         Unreviewed.
 
+        Rebaseline a bunch of border-radius related layout tests for chromium mac
+        https://bugs.webkit.org/show_bug.cgi?id=58945
+
+        * platform/chromium-mac-leopard/fast/blockflow/border-vertical-lr-expected.checksum: Removed.
+        * platform/chromium-mac-leopard/fast/blockflow/border-vertical-lr-expected.png:
+        * platform/chromium-mac-leopard/fast/borders/border-radius-constraints-expected.checksum: Removed.
+        * platform/chromium-mac-leopard/fast/borders/border-radius-constraints-expected.png:
+        * platform/chromium-mac-leopard/fast/borders/border-radius-huge-assert-expected.png:
+        * platform/chromium-mac-leopard/fast/borders/border-radius-inline-flow-expected.checksum: Removed.
+        * platform/chromium-mac-leopard/fast/borders/border-radius-inline-flow-expected.png:
+        * platform/chromium-mac-leopard/fast/borders/borderRadiusInvalidColor-expected.checksum: Removed.
+        * platform/chromium-mac-leopard/fast/borders/borderRadiusInvalidColor-expected.png:
+        * platform/chromium-mac-leopard/fast/borders/svg-as-border-image-2-expected.checksum: Removed.
+        * platform/chromium-mac-leopard/fast/borders/svg-as-border-image-2-expected.png: Added.
+        * platform/chromium-mac-leopard/fast/box-shadow/basic-shadows-expected.png: Added.
+        * platform/chromium-mac-leopard/fast/canvas/canvasDrawingIntoSelf-expected.png: Added.
+        * platform/chromium-mac-leopard/fast/css/font_property_normal-expected.png: Added.
+        * platform/chromium-mac-leopard/fast/forms/basic-selects-expected.checksum: Removed.
+        * platform/chromium-mac-leopard/fast/forms/basic-selects-expected.png:
+        * platform/chromium-mac-leopard/fast/forms/menulist-clip-expected.checksum: Removed.
+        * platform/chromium-mac-leopard/fast/forms/menulist-clip-expected.png:
+        * platform/chromium-mac-leopard/fast/forms/menulist-narrow-width-expected.checksum: Removed.
+        * platform/chromium-mac-leopard/fast/forms/menulist-narrow-width-expected.png:
+        * platform/chromium-mac-leopard/fast/forms/menulist-option-wrap-expected.checksum: Removed.
+        * platform/chromium-mac-leopard/fast/forms/menulist-option-wrap-expected.png:
+        * platform/chromium-mac-leopard/fast/forms/menulist-restrict-line-height-expected.checksum: Removed.
+        * platform/chromium-mac-leopard/fast/forms/menulist-restrict-line-height-expected.png:
+        * platform/chromium-mac-leopard/fast/forms/menulist-style-color-expected.checksum: Removed.
+        * platform/chromium-mac-leopard/fast/forms/menulist-style-color-expected.png:
+        * platform/chromium-mac-leopard/fast/forms/select-baseline-expected.png: Added.
+        * platform/chromium-mac/fast/blockflow/border-radius-clipping-vertical-lr-expected.png: Added.
+        * platform/chromium-mac/fast/blockflow/border-vertical-lr-expected.checksum: Removed.
+        * platform/chromium-mac/fast/blockflow/border-vertical-lr-expected.png:
+        * platform/chromium-mac/fast/blockflow/box-shadow-horizontal-bt-expected.png: Added.
+        * platform/chromium-mac/fast/blockflow/box-shadow-vertical-lr-expected.png: Added.
+        * platform/chromium-mac/fast/blockflow/box-shadow-vertical-rl-expected.png: Added.
+        * platform/chromium-mac/fast/borders/border-radius-circle-expected.png: Removed.
+        * platform/chromium-mac/fast/borders/border-radius-huge-assert-expected.png: Removed.
+        * platform/chromium-mac/fast/borders/borderRadiusDotted06-expected.checksum:
+        * platform/chromium-mac/fast/borders/borderRadiusDotted06-expected.png: Removed.
+        * platform/chromium-mac/fast/box-shadow/basic-shadows-expected.png: Added.
+        * platform/chromium-mac/fast/box-shadow/inset-box-shadows-expected.png: Added.
+        * platform/chromium-mac/fast/box-shadow/inset-with-extraordinary-radii-and-border-expected.png:
+        * platform/chromium-mac/fast/css/nested-rounded-corners-expected.checksum: Removed.
+        * platform/chromium-mac/fast/css/nested-rounded-corners-expected.png:
+        * platform/chromium-mac/fast/forms/basic-selects-expected.png: Added.
+        * platform/chromium-mac/fast/forms/menulist-clip-expected.png: Added.
+        * platform/chromium-mac/fast/forms/menulist-narrow-width-expected.png: Added.
+        * platform/chromium-mac/fast/forms/menulist-option-wrap-expected.png: Added.
+        * platform/chromium-mac/fast/forms/menulist-restrict-line-height-expected.png: Added.
+        * platform/chromium-mac/fast/forms/menulist-separator-painting-expected.checksum: Removed.
+        * platform/chromium-mac/fast/forms/menulist-separator-painting-expected.png:
+        * platform/chromium-mac/fast/forms/menulist-style-color-expected.png: Added.
+        * platform/chromium-mac/fast/forms/select-background-none-expected.png: Added.
+        * platform/chromium-mac/fast/forms/select-baseline-expected.png: Added.
+        * platform/chromium-mac/fast/forms/select-empty-option-height-expected.png: Added.
+        * platform/chromium/test_expectations.txt:
+
+2011-04-19  Chris Rogers  <crogers@google.com>
+
+        Unreviewed.
+
         Rebase a bunch of border-radius related layout tests
         https://bugs.webkit.org/show_bug.cgi?id=58942
 
