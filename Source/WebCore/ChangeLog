@@ -2,6 +2,17 @@
 
         Reviewed by Maciej Stachowiak.
 
+        With overlay scrollbars, textarea resize corner gains borders when the textarea becomes scrollable
+        https://bugs.webkit.org/show_bug.cgi?id=58617
+        <rdar://problem/9048012>
+
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::paintResizer): Check for overlay scrollbars first, and then if the bars were created, before displaying the borders
+
+2011-04-18  Jon Lee  <jonlee@apple.com>
+
+        Reviewed by Maciej Stachowiak.
+
         Selected item background in list box gets rendered on top of overlay scrollbar knob (58824)
         https://bugs.webkit.org/show_bug.cgi?id=58824
         <rdar://problem/9292680>

@@ -2344,7 +2344,7 @@ void RenderLayer::paintResizer(GraphicsContext* context, int tx, int ty, const I
 
     // Draw a frame around the resizer (1px grey line) if there are any scrollbars present.
     // Clipping will exclude the right and bottom edges of this frame.
-    if (m_hBar || m_vBar) {
+    if (!hasOverlayScrollbars() && (m_vBar || m_hBar)) {
         context->save();
         context->clip(absRect);
         IntRect largerCorner = absRect;
