@@ -116,6 +116,10 @@ void PluginProcessConnection::didReceiveInvalidMessage(CoreIPC::Connection*, Cor
 {
 }
 
+void PluginProcessConnection::syncMessageSendTimedOut(CoreIPC::Connection*)
+{
+}
+
 } // namespace WebKit
 
 #endif // ENABLE(PLUGIN_PROCESS)

@@ -66,7 +66,8 @@ private:
     virtual CoreIPC::SyncReplyMode didReceiveSyncMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::ArgumentDecoder*, CoreIPC::ArgumentEncoder*);
     virtual void didClose(CoreIPC::Connection*);
     virtual void didReceiveInvalidMessage(CoreIPC::Connection*, CoreIPC::MessageID);
-    
+    virtual void syncMessageSendTimedOut(CoreIPC::Connection*);
+
     PluginProcessConnectionManager* m_pluginProcessConnectionManager;
     String m_pluginPath;
 

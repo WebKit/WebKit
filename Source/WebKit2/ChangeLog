@@ -1,5 +1,33 @@
 2011-04-19  Anders Carlsson  <andersca@apple.com>
 
+        Reviewed by Sam Weinig.
+
+        Add syncMessageSendTimedOut CoreIPC Connection::Client member function
+        https://bugs.webkit.org/show_bug.cgi?id=58928
+
+        * Platform/CoreIPC/Connection.cpp:
+        (CoreIPC::Connection::waitForSyncReply):
+        Call syncMessageSendTimedOut.
+
+        * Platform/CoreIPC/Connection.h:
+        Add syncMessageSendTimedOut to Connection::Client.
+
+        * PluginProcess/PluginProcess.cpp:
+        * PluginProcess/PluginProcess.h:
+        * PluginProcess/WebProcessConnection.cpp:
+        * PluginProcess/WebProcessConnection.h:
+        * UIProcess/Plugins/PluginProcessProxy.cpp:
+        * UIProcess/Plugins/PluginProcessProxy.h:
+        * UIProcess/WebProcessProxy.cpp:
+        * UIProcess/WebProcessProxy.h:
+        * WebProcess/Plugins/PluginProcessConnection.cpp:
+        * WebProcess/Plugins/PluginProcessConnection.h:
+        * WebProcess/WebProcess.cpp:
+        * WebProcess/WebProcess.h:
+        Add syncMessageSendTimedOut stubs.
+
+2011-04-19  Anders Carlsson  <andersca@apple.com>
+
         Reviewed by Alexey Proskuryakov.
 
         Replace the didFailToSendSyncMessage Connection::Client function with a flag

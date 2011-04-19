@@ -442,6 +442,9 @@ PassOwnPtr<ArgumentDecoder> Connection::waitForSyncReply(uint64_t syncRequestID,
     }
 
     // We timed out.
+    if (m_client)
+        m_client->syncMessageSendTimedOut(this);
+
     return 0;
 }
 

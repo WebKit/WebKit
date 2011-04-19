@@ -666,6 +666,10 @@ void WebProcess::didReceiveInvalidMessage(CoreIPC::Connection*, CoreIPC::Message
     // we'll let it slide.
 }
 
+void WebProcess::syncMessageSendTimedOut(CoreIPC::Connection*)
+{
+}
+
 WebFrame* WebProcess::webFrame(uint64_t frameID) const
 {
     return m_frameMap.get(frameID);

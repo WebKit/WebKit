@@ -299,6 +299,10 @@ void WebProcessProxy::didReceiveInvalidMessage(CoreIPC::Connection*, CoreIPC::Me
     terminate();
 }
 
+void WebProcessProxy::syncMessageSendTimedOut(CoreIPC::Connection*)
+{
+}
+
 void WebProcessProxy::didBecomeUnresponsive(ResponsivenessTimer*)
 {
     Vector<RefPtr<WebPageProxy> > pages;

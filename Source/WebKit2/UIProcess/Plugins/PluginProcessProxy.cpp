@@ -167,6 +167,10 @@ void PluginProcessProxy::didReceiveInvalidMessage(CoreIPC::Connection*, CoreIPC:
 {
 }
 
+void PluginProcessProxy::syncMessageSendTimedOut(CoreIPC::Connection*)
+{
+}
+
 void PluginProcessProxy::didFinishLaunching(ProcessLauncher*, CoreIPC::Connection::Identifier connectionIdentifier)
 {
     ASSERT(!m_connection);
