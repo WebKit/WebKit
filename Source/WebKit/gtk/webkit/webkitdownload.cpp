@@ -927,7 +927,7 @@ void DownloadClient::didReceiveResponse(ResourceHandle*, const ResourceResponse&
     webkit_download_set_response(m_download, response);
 }
 
-void DownloadClient::didReceiveData(ResourceHandle*, const char* data, int length, int lengthReceived)
+void DownloadClient::didReceiveData(ResourceHandle*, const char* data, int length, int encodedDataLength)
 {
     webkit_download_received_data(m_download, data, length);
 }

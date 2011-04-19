@@ -53,18 +53,18 @@ public:
 
     void willSendRequest(ResourceLoader*, ResourceRequest&, const ResourceResponse& redirectResponse);
     void didReceiveResponse(ResourceLoader*, const ResourceResponse&);
-    void didReceiveData(ResourceLoader*, const char*, int dataLength, int lengthReceived);
+    void didReceiveData(ResourceLoader*, const char*, int dataLength, int encodedDataLength);
     void didFinishLoad(ResourceLoader*, double finishTime);
     void didFailToLoad(ResourceLoader*, const ResourceError&);
 
     void assignIdentifierToInitialRequest(unsigned long identifier, DocumentLoader*, const ResourceRequest&);
     void dispatchWillSendRequest(DocumentLoader*, unsigned long identifier, ResourceRequest&, const ResourceResponse& redirectResponse);
     void dispatchDidReceiveResponse(DocumentLoader*, unsigned long identifier, const ResourceResponse&);
-    void dispatchDidReceiveContentLength(DocumentLoader*, unsigned long identifier, int dataLength, int lengthReceived);
+    void dispatchDidReceiveContentLength(DocumentLoader*, unsigned long identifier, int dataLength, int encodedDataLength);
     void dispatchDidFinishLoading(DocumentLoader*, unsigned long identifier, double finishTime);
     void dispatchTransferLoadingResourceFromPage(unsigned long, DocumentLoader*, const ResourceRequest&, Page*);
 
-    void sendRemainingDelegateMessages(DocumentLoader*, unsigned long identifier, const ResourceResponse&, int dataLength, int lengthReceived, const ResourceError&);
+    void sendRemainingDelegateMessages(DocumentLoader*, unsigned long identifier, const ResourceResponse&, int dataLength, int encodedDataLength, const ResourceError&);
 
 private:
     Frame* m_frame;

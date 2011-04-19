@@ -72,7 +72,7 @@ public:
     virtual void didSendData(
         WebURLLoader*, unsigned long long bytesSent, unsigned long long totalBytesToBeSent);
     virtual void didReceiveResponse(WebURLLoader*, const WebURLResponse&);
-    virtual void didReceiveData(WebURLLoader*, const char* data, int dataLength, int lengthReceived);
+    virtual void didReceiveData(WebURLLoader*, const char* data, int dataLength, int encodedDataLength);
 
     virtual void didReceiveCachedMetadata(WebURLLoader*, const char* data, int dataLength);
     virtual void didFinishLoading(WebURLLoader*, double finishTime);
@@ -160,14 +160,14 @@ void ResourceHandleInternal::didReceiveResponse(WebURLLoader*, const WebURLRespo
     m_client->didReceiveResponse(m_owner, response.toResourceResponse());
 }
 
-void ResourceHandleInternal::didReceiveData(WebURLLoader*, const char* data, int dataLength, int lengthReceived)
+void ResourceHandleInternal::didReceiveData(WebURLLoader*, const char* data, int dataLength, int encodedDataLength)
 {
     ASSERT(m_client);
     if (m_state != ConnectionStateReceivedResponse && m_state != ConnectionStateReceivingData)
         CRASH();
     m_state = ConnectionStateReceivingData;
 
-    m_client->didReceiveData(m_owner, data, dataLength, lengthReceived);
+    m_client->didReceiveData(m_owner, data, dataLength, encodedDataLength);
 }
 
 void ResourceHandleInternal::didReceiveCachedMetadata(WebURLLoader*, const char* data, int dataLength)

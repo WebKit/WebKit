@@ -1128,7 +1128,7 @@ void FrameLoaderClient::setTitle(const StringWithDirection& title, const KURL& u
     frameData->title = g_strdup(title.string().utf8().data());
 }
 
-void FrameLoaderClient::dispatchDidReceiveContentLength(WebCore::DocumentLoader*, unsigned long identifier, int lengthReceived)
+void FrameLoaderClient::dispatchDidReceiveContentLength(WebCore::DocumentLoader*, unsigned long identifier, int dataLength)
 {
     notImplemented();
 }

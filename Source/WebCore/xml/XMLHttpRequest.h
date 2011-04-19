@@ -149,7 +149,7 @@ private:
 
     virtual void didSendData(unsigned long long bytesSent, unsigned long long totalBytesToBeSent);
     virtual void didReceiveResponse(const ResourceResponse&);
-    virtual void didReceiveData(const char* data, int lengthReceived);
+    virtual void didReceiveData(const char* data, int dataLength);
     virtual void didFinishLoading(unsigned long identifier, double finishTime);
     virtual void didFail(const ResourceError&);
     virtual void didFailRedirectCheck();

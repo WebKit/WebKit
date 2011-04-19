@@ -1,3 +1,12 @@
+2011-04-19  Vsevolod Vlasov  <vsevik@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: Rename lengthReceived to encodedDataLength/dataLength
+        https://bugs.webkit.org/show_bug.cgi?id=58883
+
+        * WebCoreSupport/WebFrameLoaderClient.h:
+
 2011-04-18  Timothy Hatcher  <timothy@apple.com>
 
         Remove the two commands that make en.lproj and copy Localizable.strings.

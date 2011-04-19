@@ -58,7 +58,7 @@ public:
     virtual void didDownloadData(WebURLLoader*, int dataLength) { }
 
     // Called when a chunk of response data is received.
-    virtual void didReceiveData(WebURLLoader*, const char* data, int dataLength, int lengthReceived) { }
+    virtual void didReceiveData(WebURLLoader*, const char* data, int dataLength, int encodedDataLength) { }
 
     // Called when a chunk of renderer-generated metadata is received from the cache.
     virtual void didReceiveCachedMetadata(WebURLLoader*, const char* data, int dataLength) { }

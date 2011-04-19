@@ -715,7 +715,7 @@ void FrameLoaderClientEfl::setTitle(const StringWithDirection& title, const KURL
     // no need for, dispatchDidReceiveTitle is the right callback
 }
 
-void FrameLoaderClientEfl::dispatchDidReceiveContentLength(DocumentLoader*, unsigned long identifier, int lengthReceived)
+void FrameLoaderClientEfl::dispatchDidReceiveContentLength(DocumentLoader*, unsigned long identifier, int dataLength)
 {
     notImplemented();
 }

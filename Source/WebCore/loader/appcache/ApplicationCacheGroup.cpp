@@ -552,9 +552,9 @@ void ApplicationCacheGroup::didReceiveResponse(ResourceHandle* handle, const Res
     m_currentResource = ApplicationCacheResource::create(url, response, type);
 }
 
-void ApplicationCacheGroup::didReceiveData(ResourceHandle* handle, const char* data, int length, int lengthReceived)
+void ApplicationCacheGroup::didReceiveData(ResourceHandle* handle, const char* data, int length, int encodedDataLength)
 {
-    UNUSED_PARAM(lengthReceived);
+    UNUSED_PARAM(encodedDataLength);
 
 #if ENABLE(INSPECTOR)
     InspectorInstrumentation::didReceiveContentLength(m_frame, m_currentResourceIdentifier, length, 0);

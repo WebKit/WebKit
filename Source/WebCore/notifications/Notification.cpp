@@ -190,9 +190,9 @@ void Notification::didReceiveResponse(const ResourceResponse& response)
     m_iconData = SharedBuffer::create();
 }
 
-void Notification::didReceiveData(const char* data, int lengthReceived)
+void Notification::didReceiveData(const char* data, int dataLength)
 {
-    m_iconData->append(data, lengthReceived);
+    m_iconData->append(data, dataLength);
 }
 
 void Notification::didFinishLoading(unsigned long, double)

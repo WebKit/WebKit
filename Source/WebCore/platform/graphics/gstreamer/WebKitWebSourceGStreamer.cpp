@@ -791,7 +791,7 @@ void StreamingClient::didReceiveResponse(ResourceHandle*, const ResourceResponse
         gst_element_found_tags_for_pad(GST_ELEMENT(m_src), m_src->priv->srcpad, tags);
 }
 
-void StreamingClient::didReceiveData(ResourceHandle* handle, const char* data, int length, int lengthReceived)
+void StreamingClient::didReceiveData(ResourceHandle* handle, const char* data, int length, int encodedDataLength)
 {
     WebKitWebSrcPrivate* priv = m_src->priv;
 

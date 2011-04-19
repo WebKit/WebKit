@@ -126,7 +126,7 @@ namespace WebCore {
         void maybeLoadMainResourceForRedirect(ResourceRequest&, SubstituteData&);
         bool maybeLoadFallbackForMainResponse(const ResourceRequest&, const ResourceResponse&);
         bool maybeLoadFallbackForMainError(const ResourceRequest&, const ResourceError&);
-        void mainResourceDataReceived(const char* data, int length, long long lengthReceived, bool allAtOnce);
+        void mainResourceDataReceived(const char* data, int length, long long encodedDataLength, bool allAtOnce);
         void finishedLoadingMainResource();
         void failedLoadingMainResource();
 

@@ -121,7 +121,7 @@ public:
     static void continueAfterXFrameOptionsDenied(Frame*, DocumentLoader*, unsigned long identifier, const ResourceResponse&);
     static void continueWithPolicyDownload(Frame*, DocumentLoader*, unsigned long identifier, const ResourceResponse&);
     static void continueWithPolicyIgnore(Frame*, DocumentLoader*, unsigned long identifier, const ResourceResponse&);
-    static void didReceiveContentLength(Frame*, unsigned long identifier, int dataLength, int lengthReceived);
+    static void didReceiveContentLength(Frame*, unsigned long identifier, int dataLength, int encodedDataLength);
     static void didFinishLoading(Frame*, unsigned long identifier, double finishTime);
     static void didFailLoading(Frame*, unsigned long identifier, const ResourceError&);
     static void resourceRetrievedByXMLHttpRequest(ScriptExecutionContext*, unsigned long identifier, const String& sourceString, const String& url, const String& sendURL, unsigned sendLineNumber);
@@ -241,7 +241,7 @@ private:
     static void continueAfterXFrameOptionsDeniedImpl(Frame*, DocumentLoader*, unsigned long identifier, const ResourceResponse&);
     static void continueWithPolicyDownloadImpl(Frame*, DocumentLoader*, unsigned long identifier, const ResourceResponse&);
     static void continueWithPolicyIgnoreImpl(Frame*, DocumentLoader*, unsigned long identifier, const ResourceResponse&);
-    static void didReceiveContentLengthImpl(InspectorAgent*, unsigned long identifier, int dataLength, int lengthReceived);
+    static void didReceiveContentLengthImpl(InspectorAgent*, unsigned long identifier, int dataLength, int encodedDataLength);
     static void didFinishLoadingImpl(InspectorAgent*, unsigned long identifier, double finishTime);
     static void didFailLoadingImpl(InspectorAgent*, unsigned long identifier, const ResourceError&);
     static void resourceRetrievedByXMLHttpRequestImpl(InspectorAgent*, unsigned long identifier, const String& sourceString, const String& url, const String& sendURL, unsigned sendLineNumber);
@@ -696,11 +696,11 @@ inline void InspectorInstrumentation::continueWithPolicyIgnore(Frame* frame, Doc
 #endif
 }
 
-inline void InspectorInstrumentation::didReceiveContentLength(Frame* frame, unsigned long identifier, int dataLength, int lengthReceived)
+inline void InspectorInstrumentation::didReceiveContentLength(Frame* frame, unsigned long identifier, int dataLength, int encodedDataLength)
 {
 #if ENABLE(INSPECTOR)
     if (InspectorAgent* inspectorAgent = inspectorAgentForFrame(frame))
-        didReceiveContentLengthImpl(inspectorAgent, identifier, dataLength, lengthReceived);
+        didReceiveContentLengthImpl(inspectorAgent, identifier, dataLength, encodedDataLength);
 #endif
 }
 

@@ -79,7 +79,7 @@ namespace WebCore {
         virtual void willSendRequest(ResourceRequest&, const ResourceResponse& redirectResponse);
         virtual void didSendData(unsigned long long bytesSent, unsigned long long totalBytesToBeSent);
         virtual void didReceiveResponse(const ResourceResponse&);
-        virtual void didReceiveData(const char*, int, long long lengthReceived, bool allAtOnce);
+        virtual void didReceiveData(const char*, int, long long encodedDataLength, bool allAtOnce);
         virtual void didReceiveCachedMetadata(const char*, int) { }
         void willStopBufferingData(const char*, int);
         virtual void didFinishLoading(double finishTime);
@@ -100,7 +100,7 @@ namespace WebCore {
         virtual void willSendRequest(ResourceHandle*, ResourceRequest&, const ResourceResponse& redirectResponse);
         virtual void didSendData(ResourceHandle*, unsigned long long bytesSent, unsigned long long totalBytesToBeSent);
         virtual void didReceiveResponse(ResourceHandle*, const ResourceResponse&);
-        virtual void didReceiveData(ResourceHandle*, const char*, int, int lengthReceived);
+        virtual void didReceiveData(ResourceHandle*, const char*, int, int encodedDataLength);
         virtual void didReceiveCachedMetadata(ResourceHandle*, const char* data, int length) { didReceiveCachedMetadata(data, length); }
         virtual void didFinishLoading(ResourceHandle*, double finishTime);
         virtual void didFail(ResourceHandle*, const ResourceError&);

@@ -128,12 +128,12 @@ void AssociatedURLLoader::ClientAdapter::didReceiveData(const char* data, int da
     m_downloadLength += dataLength;
 }
 
-void AssociatedURLLoader::ClientAdapter::didReceiveCachedMetadata(const char* data, int lengthReceived)
+void AssociatedURLLoader::ClientAdapter::didReceiveCachedMetadata(const char* data, int dataLength)
 {
     if (!m_client)
         return;
 
-    m_client->didReceiveCachedMetadata(m_loader, data, lengthReceived);
+    m_client->didReceiveCachedMetadata(m_loader, data, dataLength);
 }
 
 void AssociatedURLLoader::ClientAdapter::didFinishLoading(unsigned long identifier, double finishTime)

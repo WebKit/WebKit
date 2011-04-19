@@ -117,7 +117,7 @@ private:
     virtual bool shouldUseCredentialStorage(ResourceHandle*);
     virtual void didReceiveAuthenticationChallenge(ResourceHandle*, const AuthenticationChallenge&);
     virtual void didReceiveResponse(ResourceHandle*, const ResourceResponse&);
-    virtual void didReceiveData(ResourceHandle*, const char*, int, int /*lengthReceived*/);
+    virtual void didReceiveData(ResourceHandle*, const char*, int, int /*encodedDataLength*/);
     virtual void didFinishLoading(ResourceHandle*, double /*finishTime*/);
     virtual void didFail(ResourceHandle*, const ResourceError&);
 #if USE(PROTECTION_SPACE_AUTH_CALLBACK)
@@ -1127,7 +1127,7 @@ void WebCoreSynchronousLoaderClient::didReceiveResponse(ResourceHandle*, const R
     m_response = [response.nsURLResponse() copy];
 }
 
-void WebCoreSynchronousLoaderClient::didReceiveData(ResourceHandle*, const char* data, int length, int /*lengthReceived*/)
+void WebCoreSynchronousLoaderClient::didReceiveData(ResourceHandle*, const char* data, int length, int /*encodedDataLength*/)
 {
     if (!m_data)
         m_data = [[NSMutableData alloc] init];

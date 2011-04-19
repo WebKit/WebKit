@@ -165,15 +165,15 @@ WebInspector.NetworkDispatcher.prototype = {
             WebInspector.panels.network.mainResourceLoadTime = time;
     },
 
-    dataReceived: function(identifier, time, dataLength, lengthReceived)
+    dataReceived: function(identifier, time, dataLength, encodedDataLength)
     {
         var resource = this._inflightResourcesById[identifier];
         if (!resource)
             return;
 
         resource.resourceSize += dataLength;
-        if (lengthReceived != -1)
-            resource.increaseTransferSize(lengthReceived);
+        if (encodedDataLength != -1)
+            resource.increaseTransferSize(encodedDataLength);
         resource.endTime = time;
 
         this._updateResource(resource);

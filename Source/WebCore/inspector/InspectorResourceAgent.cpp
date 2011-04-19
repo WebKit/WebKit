@@ -363,9 +363,9 @@ void InspectorResourceAgent::didReceiveResponse(unsigned long identifier, Docume
         didReceiveContentLength(identifier, cachedResourceSize, 0);
 }
 
-void InspectorResourceAgent::didReceiveContentLength(unsigned long identifier, int dataLength, int lengthReceived)
+void InspectorResourceAgent::didReceiveContentLength(unsigned long identifier, int dataLength, int encodedDataLength)
 {
-    m_frontend->dataReceived(static_cast<int>(identifier), currentTime(), dataLength, lengthReceived);
+    m_frontend->dataReceived(static_cast<int>(identifier), currentTime(), dataLength, encodedDataLength);
 }
 
 void InspectorResourceAgent::didFinishLoading(unsigned long identifier, double finishTime)

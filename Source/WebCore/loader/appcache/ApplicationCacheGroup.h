@@ -112,7 +112,7 @@ private:
     virtual bool shouldUseCredentialStorage(ResourceHandle*) { return true; }
 
     virtual void didReceiveResponse(ResourceHandle*, const ResourceResponse&);
-    virtual void didReceiveData(ResourceHandle*, const char*, int length, int lengthReceived);
+    virtual void didReceiveData(ResourceHandle*, const char*, int length, int encodedDataLength);
     virtual void didFinishLoading(ResourceHandle*, double finishTime);
     virtual void didFail(ResourceHandle*, const ResourceError&);
 

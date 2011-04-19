@@ -1,3 +1,14 @@
+2011-04-19  Vsevolod Vlasov  <vsevik@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: Rename lengthReceived to encodedDataLength/dataLength
+        https://bugs.webkit.org/show_bug.cgi?id=58883
+
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebKit::WebFrameLoaderClient::dispatchDidReceiveContentLength):
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.h:
+
 2011-04-19  Andreas Kling  <andreas.kling@nokia.com>
 
         Reviewed by Antonio Gomes.

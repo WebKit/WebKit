@@ -419,7 +419,7 @@ void MainResourceLoader::didReceiveResponse(const ResourceResponse& r)
     frameLoader()->policyChecker()->checkContentPolicy(m_response, callContinueAfterContentPolicy, this);
 }
 
-void MainResourceLoader::didReceiveData(const char* data, int length, long long lengthReceived, bool allAtOnce)
+void MainResourceLoader::didReceiveData(const char* data, int length, long long encodedDataLength, bool allAtOnce)
 {
     ASSERT(data);
     ASSERT(length != 0);
@@ -442,7 +442,7 @@ void MainResourceLoader::didReceiveData(const char* data, int length, long long 
 #endif
  
  #if ENABLE(OFFLINE_WEB_APPLICATIONS)
-    documentLoader()->applicationCacheHost()->mainResourceDataReceived(data, length, lengthReceived, allAtOnce);
+    documentLoader()->applicationCacheHost()->mainResourceDataReceived(data, length, encodedDataLength, allAtOnce);
 #endif
 
     // The additional processing can do anything including possibly removing the last
@@ -451,7 +451,7 @@ void MainResourceLoader::didReceiveData(const char* data, int length, long long 
 
     m_timeOfLastDataReceived = currentTime();
 
-    ResourceLoader::didReceiveData(data, length, lengthReceived, allAtOnce);
+    ResourceLoader::didReceiveData(data, length, encodedDataLength, allAtOnce);
 }
 
 void MainResourceLoader::didFinishLoading(double finishTime)

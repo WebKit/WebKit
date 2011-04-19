@@ -71,7 +71,7 @@ namespace WebCore {
         virtual void didSendData(ResourceHandle*, unsigned long long /*bytesSent*/, unsigned long long /*totalBytesToBeSent*/) { }
 
         virtual void didReceiveResponse(ResourceHandle*, const ResourceResponse&) { }
-        virtual void didReceiveData(ResourceHandle*, const char*, int, int /*lengthReceived*/) { }
+        virtual void didReceiveData(ResourceHandle*, const char*, int, int /*encodedDataLength*/) { }
         virtual void didReceiveCachedMetadata(ResourceHandle*, const char*, int) { }
         virtual void didFinishLoading(ResourceHandle*, double /*finishTime*/) { }
         virtual void didFail(ResourceHandle*, const ResourceError&) { }

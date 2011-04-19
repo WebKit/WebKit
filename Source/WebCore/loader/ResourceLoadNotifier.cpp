@@ -74,12 +74,12 @@ void ResourceLoadNotifier::didReceiveResponse(ResourceLoader* loader, const Reso
     dispatchDidReceiveResponse(loader->documentLoader(), loader->identifier(), r);
 }
 
-void ResourceLoadNotifier::didReceiveData(ResourceLoader* loader, const char* data, int dataLength, int lengthReceived)
+void ResourceLoadNotifier::didReceiveData(ResourceLoader* loader, const char* data, int dataLength, int encodedDataLength)
 {
     if (Page* page = m_frame->page())
         page->progress()->incrementProgress(loader->identifier(), data, dataLength);
 
-    dispatchDidReceiveContentLength(loader->documentLoader(), loader->identifier(), dataLength, lengthReceived);
+    dispatchDidReceiveContentLength(loader->documentLoader(), loader->identifier(), dataLength, encodedDataLength);
 }
 
 void ResourceLoadNotifier::didFinishLoad(ResourceLoader* loader, double finishTime)
@@ -130,11 +130,11 @@ void ResourceLoadNotifier::dispatchDidReceiveResponse(DocumentLoader* loader, un
     InspectorInstrumentation::didReceiveResourceResponse(cookie, identifier, loader, r);
 }
 
-void ResourceLoadNotifier::dispatchDidReceiveContentLength(DocumentLoader* loader, unsigned long identifier, int dataLength, int lengthReceived)
+void ResourceLoadNotifier::dispatchDidReceiveContentLength(DocumentLoader* loader, unsigned long identifier, int dataLength, int encodedDataLength)
 {
     m_frame->loader()->client()->dispatchDidReceiveContentLength(loader, identifier, dataLength);
 
-    InspectorInstrumentation::didReceiveContentLength(m_frame, identifier, dataLength, lengthReceived);
+    InspectorInstrumentation::didReceiveContentLength(m_frame, identifier, dataLength, encodedDataLength);
 }
 
 void ResourceLoadNotifier::dispatchDidFinishLoading(DocumentLoader* loader, unsigned long identifier, double finishTime)
@@ -152,13 +152,13 @@ void ResourceLoadNotifier::dispatchTransferLoadingResourceFromPage(unsigned long
     oldPage->progress()->completeProgress(identifier);
 }
 
-void ResourceLoadNotifier::sendRemainingDelegateMessages(DocumentLoader* loader, unsigned long identifier, const ResourceResponse& response, int dataLength, int lengthReceived, const ResourceError& error)
+void ResourceLoadNotifier::sendRemainingDelegateMessages(DocumentLoader* loader, unsigned long identifier, const ResourceResponse& response, int dataLength, int encodedDataLength, const ResourceError& error)
 {
     if (!response.isNull())
         dispatchDidReceiveResponse(loader, identifier, response);
 
     if (dataLength > 0)
-        dispatchDidReceiveContentLength(loader, identifier, dataLength, lengthReceived);
+        dispatchDidReceiveContentLength(loader, identifier, dataLength, encodedDataLength);
 
     if (error.isNull())
         dispatchDidFinishLoading(loader, identifier, 0);

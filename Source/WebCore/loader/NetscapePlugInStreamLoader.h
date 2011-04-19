@@ -57,7 +57,7 @@ namespace WebCore {
 
     private:
         virtual void didReceiveResponse(const ResourceResponse&);
-        virtual void didReceiveData(const char*, int, long long lengthReceived, bool allAtOnce);
+        virtual void didReceiveData(const char*, int, long long encodedDataLength, bool allAtOnce);
         virtual void didFinishLoading(double finishTime);
         virtual void didFail(const ResourceError&);
 

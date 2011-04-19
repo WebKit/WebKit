@@ -232,7 +232,7 @@ void DocumentThreadableLoader::didReceiveResponse(SubresourceLoader* loader, con
     }
 }
 
-void DocumentThreadableLoader::didReceiveData(SubresourceLoader* loader, const char* data, int lengthReceived)
+void DocumentThreadableLoader::didReceiveData(SubresourceLoader* loader, const char* data, int dataLength)
 {
     ASSERT(m_client);
     ASSERT_UNUSED(loader, loader == m_loader);
@@ -241,10 +241,10 @@ void DocumentThreadableLoader::didReceiveData(SubresourceLoader* loader, const c
     if (m_actualRequest)
         return;
 
-    m_client->didReceiveData(data, lengthReceived);
+    m_client->didReceiveData(data, dataLength);
 }
 
-void DocumentThreadableLoader::didReceiveCachedMetadata(SubresourceLoader* loader, const char* data, int lengthReceived)
+void DocumentThreadableLoader::didReceiveCachedMetadata(SubresourceLoader* loader, const char* data, int dataLength)
 {
     ASSERT(m_client);
     ASSERT_UNUSED(loader, loader == m_loader);
@@ -253,7 +253,7 @@ void DocumentThreadableLoader::didReceiveCachedMetadata(SubresourceLoader* loade
     if (m_actualRequest)
         return;
 
-    m_client->didReceiveCachedMetadata(data, lengthReceived);
+    m_client->didReceiveCachedMetadata(data, dataLength);
 }
 
 void DocumentThreadableLoader::didFinishLoading(SubresourceLoader* loader, double finishTime)

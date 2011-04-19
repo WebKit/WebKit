@@ -1,3 +1,73 @@
+2011-04-19  Vsevolod Vlasov  <vsevik@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: Rename lengthReceived to encodedDataLength/dataLength
+        https://bugs.webkit.org/show_bug.cgi?id=58883
+
+        * fileapi/FileReaderLoader.cpp:
+        (WebCore::FileReaderLoader::didReceiveData):
+        * inspector/InspectorInstrumentation.cpp:
+        (WebCore::InspectorInstrumentation::didReceiveContentLengthImpl):
+        * inspector/InspectorInstrumentation.h:
+        (WebCore::InspectorInstrumentation::didReceiveContentLength):
+        * inspector/InspectorResourceAgent.cpp:
+        (WebCore::InspectorResourceAgent::didReceiveContentLength):
+        * inspector/InspectorResourceAgent.h:
+        * inspector/front-end/NetworkManager.js:
+        (WebInspector.NetworkDispatcher.prototype.dataReceived):
+        * loader/DocumentThreadableLoader.cpp:
+        (WebCore::DocumentThreadableLoader::didReceiveData):
+        (WebCore::DocumentThreadableLoader::didReceiveCachedMetadata):
+        * loader/DocumentThreadableLoader.h:
+        * loader/FrameLoaderClient.h:
+        * loader/MainResourceLoader.cpp:
+        (WebCore::MainResourceLoader::didReceiveData):
+        * loader/MainResourceLoader.h:
+        * loader/NetscapePlugInStreamLoader.cpp:
+        (WebCore::NetscapePlugInStreamLoader::didReceiveData):
+        * loader/NetscapePlugInStreamLoader.h:
+        * loader/ResourceLoadNotifier.cpp:
+        (WebCore::ResourceLoadNotifier::didReceiveData):
+        (WebCore::ResourceLoadNotifier::dispatchDidReceiveContentLength):
+        (WebCore::ResourceLoadNotifier::sendRemainingDelegateMessages):
+        * loader/ResourceLoadNotifier.h:
+        * loader/ResourceLoader.cpp:
+        (WebCore::ResourceLoader::didReceiveData):
+        * loader/ResourceLoader.h:
+        * loader/SubresourceLoader.cpp:
+        (WebCore::SubresourceLoader::didReceiveData):
+        * loader/SubresourceLoader.h:
+        * loader/SubresourceLoaderClient.h:
+        (WebCore::SubresourceLoaderClient::didReceiveData):
+        (WebCore::SubresourceLoaderClient::didReceiveCachedMetadata):
+        * loader/WorkerThreadableLoader.cpp:
+        (WebCore::WorkerThreadableLoader::MainThreadBridge::didReceiveData):
+        (WebCore::WorkerThreadableLoader::MainThreadBridge::didReceiveCachedMetadata):
+        * loader/appcache/ApplicationCacheGroup.cpp:
+        (WebCore::ApplicationCacheGroup::didReceiveData):
+        * loader/appcache/ApplicationCacheGroup.h:
+        * loader/appcache/ApplicationCacheHost.h:
+        * notifications/Notification.cpp:
+        (WebCore::Notification::didReceiveData):
+        * notifications/Notification.h:
+        * platform/graphics/gstreamer/WebKitWebSourceGStreamer.cpp:
+        (StreamingClient::didReceiveData):
+        * platform/network/BlobResourceHandle.cpp:
+        * platform/network/ResourceHandleClient.h:
+        (WebCore::ResourceHandleClient::didReceiveData):
+        * platform/network/android/ResourceHandleAndroid.cpp:
+        (WebCore::SyncLoader::didReceiveData):
+        * platform/network/cf/ResourceHandleCFNet.cpp:
+        (WebCore::WebCoreSynchronousLoaderClient::didReceiveData):
+        * platform/network/curl/ResourceHandleCurl.cpp:
+        * platform/network/mac/ResourceHandleMac.mm:
+        (WebCoreSynchronousLoaderClient::didReceiveData):
+        * platform/network/soup/ResourceHandleSoup.cpp:
+        * platform/network/win/ResourceHandleWin.cpp:
+        * workers/WorkerScriptLoader.h:
+        * xml/XMLHttpRequest.h:
+
 2011-04-19  Stephen White  <senorblanco@chromium.org>
 
         Reviewed by Eric Seidel.

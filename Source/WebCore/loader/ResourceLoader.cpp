@@ -264,7 +264,7 @@ void ResourceLoader::didReceiveResponse(const ResourceResponse& r)
         frameLoader()->notifier()->didReceiveResponse(this, m_response);
 }
 
-void ResourceLoader::didReceiveData(const char* data, int length, long long lengthReceived, bool allAtOnce)
+void ResourceLoader::didReceiveData(const char* data, int length, long long encodedDataLength, bool allAtOnce)
 {
     // The following assertions are not quite valid here, since a subclass
     // might override didReceiveData in a way that invalidates them. This
@@ -281,7 +281,7 @@ void ResourceLoader::didReceiveData(const char* data, int length, long long leng
     // However, with today's computers and networking speeds, this won't happen in practice.
     // Could be an issue with a giant local file.
     if (m_sendResourceLoadCallbacks && m_frame)
-        frameLoader()->notifier()->didReceiveData(this, data, length, static_cast<int>(lengthReceived));
+        frameLoader()->notifier()->didReceiveData(this, data, length, static_cast<int>(encodedDataLength));
 }
 
 void ResourceLoader::willStopBufferingData(const char* data, int length)
@@ -424,10 +424,10 @@ void ResourceLoader::didReceiveResponse(ResourceHandle*, const ResourceResponse&
     didReceiveResponse(response);
 }
 
-void ResourceLoader::didReceiveData(ResourceHandle*, const char* data, int length, int lengthReceived)
+void ResourceLoader::didReceiveData(ResourceHandle*, const char* data, int length, int encodedDataLength)
 {
     InspectorInstrumentationCookie cookie = InspectorInstrumentation::willReceiveResourceData(m_frame.get(), identifier());
-    didReceiveData(data, length, lengthReceived, false);
+    didReceiveData(data, length, encodedDataLength, false);
     InspectorInstrumentation::didReceiveResourceData(cookie);
 }
 

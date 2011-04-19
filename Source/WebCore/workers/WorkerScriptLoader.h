@@ -58,7 +58,7 @@ namespace WebCore {
         unsigned long identifier() const { return m_identifier; }
 
         virtual void didReceiveResponse(const ResourceResponse&);
-        virtual void didReceiveData(const char* data, int lengthReceived);
+        virtual void didReceiveData(const char* data, int dataLength);
         virtual void didFinishLoading(unsigned long identifier, double);
         virtual void didFail(const ResourceError&);
         virtual void didFailRedirectCheck();

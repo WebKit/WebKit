@@ -191,10 +191,10 @@ static void workerContextDidReceiveData(ScriptExecutionContext* context, RefPtr<
     workerClientWrapper->didReceiveData(vectorData->data(), vectorData->size());
 }
 
-void WorkerThreadableLoader::MainThreadBridge::didReceiveData(const char* data, int lengthReceived)
+void WorkerThreadableLoader::MainThreadBridge::didReceiveData(const char* data, int dataLength)
 {
-    OwnPtr<Vector<char> > vector = adoptPtr(new Vector<char>(lengthReceived)); // needs to be an OwnPtr for usage with createCallbackTask.
-    memcpy(vector->data(), data, lengthReceived);
+    OwnPtr<Vector<char> > vector = adoptPtr(new Vector<char>(dataLength)); // needs to be an OwnPtr for usage with createCallbackTask.
+    memcpy(vector->data(), data, dataLength);
     m_loaderProxy.postTaskForModeToWorkerContext(createCallbackTask(&workerContextDidReceiveData, m_workerClientWrapper, vector.release()), m_taskMode);
 }
 
@@ -204,10 +204,10 @@ static void workerContextDidReceiveCachedMetadata(ScriptExecutionContext* contex
     workerClientWrapper->didReceiveCachedMetadata(vectorData->data(), vectorData->size());
 }
 
-void WorkerThreadableLoader::MainThreadBridge::didReceiveCachedMetadata(const char* data, int lengthReceived)
+void WorkerThreadableLoader::MainThreadBridge::didReceiveCachedMetadata(const char* data, int dataLength)
 {
-    OwnPtr<Vector<char> > vector = adoptPtr(new Vector<char>(lengthReceived)); // needs to be an OwnPtr for usage with createCallbackTask.
-    memcpy(vector->data(), data, lengthReceived);
+    OwnPtr<Vector<char> > vector = adoptPtr(new Vector<char>(dataLength)); // needs to be an OwnPtr for usage with createCallbackTask.
+    memcpy(vector->data(), data, dataLength);
     m_loaderProxy.postTaskForModeToWorkerContext(createCallbackTask(&workerContextDidReceiveCachedMetadata, m_workerClientWrapper, vector.release()), m_taskMode);
 }
 

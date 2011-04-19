@@ -154,16 +154,16 @@ void FileReaderLoader::didReceiveResponse(const ResourceResponse& response)
         m_client->didStartLoading();
 }
 
-void FileReaderLoader::didReceiveData(const char* data, int lengthReceived)
+void FileReaderLoader::didReceiveData(const char* data, int dataLength)
 {
     ASSERT(data);
-    ASSERT(lengthReceived > 0);
+    ASSERT(dataLength > 0);
 
     // Bail out if we already encountered an error.
     if (m_errorCode)
         return;
 
-    int length = lengthReceived;
+    int length = dataLength;
     unsigned remainingBufferSpace = m_totalBytes - m_bytesLoaded;
     if (length > static_cast<long long>(remainingBufferSpace))
         length = static_cast<int>(remainingBufferSpace);

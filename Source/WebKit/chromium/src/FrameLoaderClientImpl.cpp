@@ -380,7 +380,7 @@ void FrameLoaderClientImpl::dispatchDidReceiveResponse(DocumentLoader* loader,
 void FrameLoaderClientImpl::dispatchDidReceiveContentLength(
     DocumentLoader* loader,
     unsigned long identifier,
-    int lengthReceived)
+    int dataLength)
 {
 }
 

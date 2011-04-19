@@ -122,7 +122,7 @@ public:
         *m_response = response;
     }
 
-    virtual void didReceiveData(ResourceHandle*, const char* data, int len, int lengthReceived)
+    virtual void didReceiveData(ResourceHandle*, const char* data, int len, int encodedDataLength)
     {
         m_data->append(data, len);
     }
