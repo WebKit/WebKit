@@ -1,3 +1,22 @@
+2011-04-19  Stephen White  <senorblanco@chromium.org>
+
+        Reviewed by Kenneth Russell.
+
+        Refactor GLES2Canvas state application out into its own function.
+        https://bugs.webkit.org/show_bug.cgi?id=58906
+
+        Covered by existing tests in fast/canvas and canvas/philip.
+
+        * platform/graphics/chromium/GLES2Canvas.cpp:
+        (WebCore::GLES2Canvas::applyState):
+        New function to apply compositing and clipping state.
+        (WebCore::GLES2Canvas::fillPath):
+        (WebCore::GLES2Canvas::fillRect):
+        (WebCore::GLES2Canvas::beginShadowDraw):
+        (WebCore::GLES2Canvas::endShadowDraw):
+        Refactor calls to applyState().
+        * platform/graphics/chromium/GLES2Canvas.h:
+
 2011-04-19  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Dave Hyatt.

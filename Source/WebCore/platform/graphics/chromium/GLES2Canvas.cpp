@@ -235,6 +235,13 @@ void GLES2Canvas::clearRect(const FloatRect& rect)
     }
 }
 
+void GLES2Canvas::applyState()
+{
+    bindFramebuffer();
+    m_context->applyCompositeOperator(m_state->m_compositeOp);
+    applyClipping(m_state->clippingEnabled());
+}
+
 void GLES2Canvas::scissorClear(float x, float y, float width, float height)
 {
     int intX = static_cast<int>(x + 0.5f);
@@ -256,10 +263,7 @@ void GLES2Canvas::fillPath(const Path& path)
         endShadowDraw(path.boundingRect());
     }
 
-    bindFramebuffer();
-    m_context->applyCompositeOperator(m_state->m_compositeOp);
-    applyClipping(m_state->clippingEnabled());
-
+    applyState();
     fillPathInternal(path, m_state->applyAlpha(m_state->m_fillColor));
 }
 
@@ -271,10 +275,7 @@ void GLES2Canvas::fillRect(const FloatRect& rect, const Color& color, ColorSpace
         endShadowDraw(rect);
     }
 
-    bindFramebuffer();
-    m_context->applyCompositeOperator(m_state->m_compositeOp);
-    applyClipping(m_state->clippingEnabled());
-
+    applyState();
     fillRectInternal(rect, color);
 }
 
@@ -777,9 +778,7 @@ void GLES2Canvas::beginShadowDraw()
         m_context->clearColor(Color(RGBA32(0)));
         m_context->clear(GraphicsContext3D::COLOR_BUFFER_BIT);
     } else {
-        bindFramebuffer();
-        m_context->applyCompositeOperator(m_state->m_compositeOp);
-        applyClipping(m_state->clippingEnabled());
+        applyState();
     }
 }
 
@@ -854,19 +853,14 @@ void GLES2Canvas::endShadowDraw(const FloatRect& boundingBox)
             std::swap(srcBuffer, dstBuffer);
 
             // Upsample srcBuffer -> main framebuffer using bicubic filtering.
-            bindFramebuffer();
-            m_context->applyCompositeOperator(m_state->m_compositeOp);
-            applyClipping(m_state->clippingEnabled());
+            applyState();
             m_context->bindTexture(GraphicsContext3D::TEXTURE_2D, srcBuffer->colorBuffer());
             FloatRect dstRect = srcRect;
             dstRect.scale(scaleFactor);
             drawTexturedQuadMitchell(srcBuffer->size(), flipRect(srcRect), dstRect, AffineTransform(), 1.0);
         } else {
             // Blur in Y directly to framebuffer.
-            bindFramebuffer();
-            m_context->applyCompositeOperator(m_state->m_compositeOp);
-            applyClipping(m_state->clippingEnabled());
-
+            applyState();
             convolveRect(srcBuffer->colorBuffer(), srcBuffer->size(), flipRect(srcRect), srcRect, imageIncrementY, kernel.get(), kernelWidth);
         }
     }

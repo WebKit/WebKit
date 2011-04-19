@@ -100,13 +100,13 @@ public:
     DrawingBuffer* drawingBuffer() const { return m_drawingBuffer; }
 
 private:
+    void applyState();
     void scissorClear(float x, float y, float width, float height);
     void drawTexturedRectTile(Texture* texture, int tile, const FloatRect& srcRect, const FloatRect& dstRect, const AffineTransform&, float alpha);
     void drawTexturedQuad(const IntSize& textureSize, const FloatRect& srcRect, const FloatRect& dstRect, const AffineTransform&, float alpha);
     void drawTexturedQuadMitchell(const IntSize& textureSize, const FloatRect& srcRect, const FloatRect& dstRect, const AffineTransform&, float alpha);
     void convolveRect(unsigned texture, const IntSize& textureSize, const FloatRect& srcRect, const FloatRect& dstRect, float imageIncrement[2], const float* kernel, int kernelWidth);
 
-    void applyCompositeOperator(CompositeOperator);
     void tesselateAndFillPath(const Path&, const Color&);
     void fillPathInternal(const Path&, const Color&);
     void fillRectInternal(const FloatRect&, const Color&);
