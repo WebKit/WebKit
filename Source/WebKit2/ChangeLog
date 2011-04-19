@@ -1,3 +1,23 @@
+2011-04-19  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Add a way to set the default sync message timeout for a CoreIPC connection
+        https://bugs.webkit.org/show_bug.cgi?id=58908
+
+        * Platform/CoreIPC/Connection.cpp:
+        (CoreIPC::Connection::Connection):
+        Initialize m_defaultSyncMessageTimeout.
+
+        (CoreIPC::Connection::setDefaultSyncMessageTimeout):
+        Set the m_defaultSyncMessageTimeout member variable.
+
+        (CoreIPC::Connection::waitForSyncReply):
+        Handle the timeout being one of our two special magic values.
+
+        * Platform/CoreIPC/Connection.h:
+        Add a DefaultTimeout constant and change the NoTimeout constant to be -1.
+
 2011-04-19  Vsevolod Vlasov  <vsevik@chromium.org>
 
         Reviewed by Pavel Feldman.

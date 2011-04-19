@@ -133,10 +133,13 @@ public:
     void invalidate();
     void markCurrentlyDispatchedMessageAsInvalid();
 
-    static const unsigned long long NoTimeout = 10000000000ULL;
+    void setDefaultSyncMessageTimeout(double);
+
+    static const int DefaultTimeout = 0;
+    static const int NoTimeout = -1;
 
     template<typename T> bool send(const T& message, uint64_t destinationID, unsigned messageSendFlags = 0);
-    template<typename T> bool sendSync(const T& message, const typename T::Reply& reply, uint64_t destinationID, double timeout = NoTimeout);
+    template<typename T> bool sendSync(const T& message, const typename T::Reply& reply, uint64_t destinationID, double timeout = DefaultTimeout);
     template<typename T> bool waitForAndDispatchImmediately(uint64_t destinationID, double timeout);
 
     PassOwnPtr<ArgumentEncoder> createSyncMessageArgumentEncoder(uint64_t destinationID, uint64_t& syncRequestID);
@@ -231,6 +234,8 @@ private:
     unsigned m_inDispatchMessageCount;
     unsigned m_inDispatchMessageMarkedDispatchWhenWaitingForSyncReplyCount;
     bool m_didReceiveInvalidMessage;
+
+    double m_defaultSyncMessageTimeout;
 
     // Incoming messages.
     Mutex m_incomingMessagesLock;
