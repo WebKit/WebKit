@@ -571,11 +571,14 @@ String createMarkup(const Range* range, Vector<Node*>* nodes, EAnnotateForInterc
         accumulator.appendString(interchangeNewlineString);
         startNode = visibleStart.next().deepEquivalent().deprecatedNode();
 
-        if (pastEnd && Range::compareBoundaryPoints(startNode, 0, pastEnd, 0) >= 0) {
+        ExceptionCode ec = 0;
+        if (pastEnd && Range::compareBoundaryPoints(startNode, 0, pastEnd, 0, ec) >= 0) {
+            ASSERT(!ec);
             if (deleteButton)
                 deleteButton->enable();
             return interchangeNewlineString;
         }
+        ASSERT(!ec);
     }
 
     Node* body = enclosingNodeWithTag(firstPositionInNode(commonAncestor), bodyTag);

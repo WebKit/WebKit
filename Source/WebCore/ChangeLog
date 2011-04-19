@@ -1,3 +1,44 @@
+2011-04-19  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        REGRESSION(r74228-75294): removing nodes is 200+ times slower when selection is inside a shadow DOM
+        https://bugs.webkit.org/show_bug.cgi?id=57061
+
+        The bug was caused by Range::compareNode's incorrectly returning NODE_INSIDE when the selection is inside
+        a shadow DOM and the node is outside of the shadow DOM. This caused respondToNodeModification to call
+        RenderView::clearSelection every time a node is removed when selection is in a shadow DOM and resulted in
+        a significant performance regression.
+
+        Fixed Ranged::compareNode by making Range::compareBoundaryPoints throw a WRONG_DOCUMENT_ERR when there are
+        no common ancestors between containerA and containerB. This will force compareNode to also throw an exception
+        and prevents respondToNodeModification from clearing selection.
+
+        No new tests because this is a performance improvement and the fix in Range cannot be tested since shadow DOM
+        isn't exposed to JavaScript.
+
+        * dom/Range.cpp:
+        (WebCore::Range::setStart): Calls compareBoundaryPoints; since we ensures that the root container noes of
+        start and end nodes are same, we should never get an exception from compareBoundaryPoints.
+        (WebCore::Range::setEnd): Ditto.
+        (WebCore::Range::isPointInRange): Calls compareBoundaryPoints; returns false when compareBoundaryPoints
+        throws an exception.
+        (WebCore::Range::comparePoint): Calls compareBoundaryPoints; exit early when an exception is thrown by
+        compareBoundaryPoints.
+        (WebCore::Range::compareBoundaryPoints): Throws an exception when two containers do not have a common ancestor.
+        (WebCore::Range::boundaryPointsValid): Calls compareBoundaryPoints and checks that it didn't throw an exception.
+        * dom/Range.h:
+        * editing/SelectionController.cpp:
+        (WebCore::SelectionController::respondToNodeModification):
+        * editing/htmlediting.cpp:
+        (WebCore::comparePositions): Calls compareBoundaryPoints.
+        * editing/markup.cpp:
+        (WebCore::createMarkup): Calls compareBoundaryPoints; since startNode and pastEnd are both in the same document
+        and neither are in a shadow DOM, it should never throw an exception.
+        * page/DOMSelection.cpp:
+        (WebCore::DOMSelection::containsNode): Calls compareBoundaryPoints; node is fully selected only if no exception
+        was thrown.
+
 2011-04-19  Jungshik Shin  <jshin@chromium.org>
 
         Reviewed by David Levin

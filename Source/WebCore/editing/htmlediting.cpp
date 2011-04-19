@@ -122,7 +122,8 @@ int comparePositions(const Position& a, const Position& b)
         }
     }
 
-    int result = Range::compareBoundaryPoints(nodeA, offsetA, nodeB, offsetB);
+    ExceptionCode ec;
+    int result = Range::compareBoundaryPoints(nodeA, offsetA, nodeB, offsetB, ec);
     return result ? result : bias;
 }
 
