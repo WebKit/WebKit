@@ -69,28 +69,15 @@
 #import <runtime/InitializeThreading.h>
 #import <wtf/PassRefPtr.h>
 #import <wtf/Threading.h>
-#if !defined(BUILDING_ON_TIGER) && !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOW_LEOPARD)
-#import <AppKit/NSTextChecker.h>
-#endif
 
 using namespace WebCore;
 
 using namespace HTMLNames;
 
 #if !defined(BUILDING_ON_TIGER) && !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOW_LEOPARD)
-static inline NSCorrectionBubbleType correctionBubbleType(CorrectionPanelInfo::PanelType panelType)
-{
-    switch (panelType) {
-    case CorrectionPanelInfo::PanelTypeCorrection:
-        return NSCorrectionBubbleTypeCorrection;
-    case CorrectionPanelInfo::PanelTypeReversion:
-        return NSCorrectionBubbleTypeReversion;
-    case CorrectionPanelInfo::PanelTypeSpellingSuggestions:
-        return NSCorrectionBubbleTypeGuesses;
-    }
-    ASSERT_NOT_REACHED();
-    return NSCorrectionBubbleTypeCorrection;
-}
+@interface NSSpellChecker (WebNSSpellCheckerDetails)
+- (NSString *)languageForWordRange:(NSRange)range inString:(NSString *)string orthography:(NSOrthography *)orthography;
+@end
 #endif
 
 @interface NSAttributedString (WebNSAttributedStringDetails)

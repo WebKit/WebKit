@@ -1,3 +1,22 @@
+2011-04-18  Jia Pu  <jpu@apple.com>
+
+        Reviewed by Mark Rowe.
+
+        WebKit needs to stop importing <AppKit/NSTextChecker.h>
+        https://bugs.webkit.org/show_bug.cgi?id=58798
+        <rdar://problem/9294938>
+
+        Use public header <AppKit/NSSpellChecker.h> instead.
+
+        * WebCoreSupport/CorrectionPanel.h:
+        * WebCoreSupport/CorrectionPanel.mm:
+        (correctionIndicatorType):
+        (CorrectionPanel::show):
+        (CorrectionPanel::dismissInternal):
+        (CorrectionPanel::handleAcceptedReplacement):
+        * WebCoreSupport/WebEditorClient.mm:
+        * WebView/WebView.mm:
+
 2011-04-17  Cameron Zwarich  <zwarich@apple.com>
 
         Reviewed by Timothy Hatcher.

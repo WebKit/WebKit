@@ -46,9 +46,6 @@
 #import <WebCore/Page.h>
 #import <WebKit/WebResource.h>
 #import <WebKit/WebNSURLExtras.h>
-#if !defined(BUILDING_ON_SNOW_LEOPARD)
-#import <AppKit/NSTextChecker.h>
-#endif
 
 using namespace WebCore;
 

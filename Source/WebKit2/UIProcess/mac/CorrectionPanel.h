@@ -27,7 +27,7 @@
 #define CorrectionPanel_h
 
 #if !defined(BUILDING_ON_SNOW_LEOPARD)
-#import <AppKit/NSTextChecker.h>
+#import <AppKit/NSSpellChecker.h>
 #import <WebCore/SpellingCorrectionController.h>
 #import <wtf/RetainPtr.h>
 
@@ -47,7 +47,7 @@ public:
 private:
     bool isShowing() const { return m_view; }
     void dismissInternal(WebCore::ReasonForDismissingCorrectionPanel, bool dismissingExternally);
-    void handleAcceptedReplacement(NSString* acceptedReplacement, NSString* replaced, NSString* proposedReplacement, NSCorrectionBubbleType);
+    void handleAcceptedReplacement(NSString* acceptedReplacement, NSString* replaced, NSString* proposedReplacement, NSCorrectionIndicatorType);
 
     bool m_wasDismissedExternally;
     WebCore::ReasonForDismissingCorrectionPanel m_reasonForDismissing;

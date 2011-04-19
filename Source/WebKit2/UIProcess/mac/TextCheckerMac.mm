@@ -31,7 +31,9 @@
 #import <wtf/RetainPtr.h>
 
 #ifndef BUILDING_ON_SNOW_LEOPARD
-#import <AppKit/NSTextChecker.h>
+@interface NSSpellChecker (WebNSSpellCheckerDetails)
+- (NSString *)languageForWordRange:(NSRange)range inString:(NSString *)string orthography:(NSOrthography *)orthography;
+@end
 #endif
 
 static NSString* const WebAutomaticSpellingCorrectionEnabled = @"WebAutomaticSpellingCorrectionEnabled";

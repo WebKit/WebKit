@@ -29,18 +29,18 @@
 #if !defined(BUILDING_ON_TIGER) && !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOW_LEOPARD)
 using namespace WebCore;
 
-static inline NSCorrectionBubbleType correctionBubbleType(CorrectionPanelInfo::PanelType panelType)
+static inline NSCorrectionIndicatorType correctionIndicatorType(CorrectionPanelInfo::PanelType panelType)
 {
     switch (panelType) {
     case CorrectionPanelInfo::PanelTypeCorrection:
-        return NSCorrectionBubbleTypeCorrection;
+        return NSCorrectionIndicatorTypeDefault;
     case CorrectionPanelInfo::PanelTypeReversion:
-        return NSCorrectionBubbleTypeReversion;
+        return NSCorrectionIndicatorTypeReversion;
     case CorrectionPanelInfo::PanelTypeSpellingSuggestions:
-        return NSCorrectionBubbleTypeGuesses;
+        return NSCorrectionIndicatorTypeGuesses;
     }
     ASSERT_NOT_REACHED();
-    return NSCorrectionBubbleTypeCorrection;
+    return NSCorrectionIndicatorTypeDefault;
 }
 
 CorrectionPanel::CorrectionPanel()
@@ -65,7 +65,7 @@ void CorrectionPanel::show(WebView* view, CorrectionPanelInfo::PanelType type, c
     NSString* replacedStringAsNSString = replacedString;
     NSString* replacementStringAsNSString = replacementString;
     m_view = view;
-    NSCorrectionBubbleType bubbleType = correctionBubbleType(type);
+    NSCorrectionIndicatorType indicatorType = correctionIndicatorType(type);
     
     NSMutableArray* alternativeStrings = 0;
     if (!alternativeReplacementStrings.isEmpty()) {
@@ -75,8 +75,8 @@ void CorrectionPanel::show(WebView* view, CorrectionPanelInfo::PanelType type, c
             [alternativeStrings addObject:(NSString*)alternativeReplacementStrings[i]];
     }
 
-    [[NSSpellChecker sharedSpellChecker] showCorrectionBubbleOfType:bubbleType primaryString:replacementStringAsNSString alternativeStrings:alternativeStrings forStringInRect:[view convertRect:boundingBoxOfReplacedString fromView:nil] view:m_view.get() completionHandler:^(NSString* acceptedString) {
-        handleAcceptedReplacement(acceptedString, replacedStringAsNSString, replacementStringAsNSString, bubbleType);
+    [[NSSpellChecker sharedSpellChecker] showCorrectionIndicatorOfType:indicatorType primaryString:replacementStringAsNSString alternativeStrings:alternativeStrings forStringInRect:[view convertRect:boundingBoxOfReplacedString fromView:nil] view:m_view.get() completionHandler:^(NSString* acceptedString) {
+        handleAcceptedReplacement(acceptedString, replacedStringAsNSString, replacementStringAsNSString, indicatorType);
     }];
 }
 
@@ -106,7 +106,7 @@ void CorrectionPanel::dismissInternal(ReasonForDismissingCorrectionPanel reason,
     
     m_reasonForDismissing = reason;
     m_resultForSynchronousDismissal.clear();
-    [[NSSpellChecker sharedSpellChecker] dismissCorrectionBubbleForView:m_view.get()];
+    [[NSSpellChecker sharedSpellChecker] dismissCorrectionIndicatorForView:m_view.get()];
     m_view.clear();
 }
 
@@ -115,13 +115,13 @@ void CorrectionPanel::recordAutocorrectionResponse(WebView* view, NSCorrectionRe
     [[NSSpellChecker sharedSpellChecker] recordResponse:response toCorrection:replacementString forWord:replacedString language:nil inSpellDocumentWithTag:[view spellCheckerDocumentTag]];
 }
 
-void CorrectionPanel::handleAcceptedReplacement(NSString* acceptedReplacement, NSString* replaced, NSString* proposedReplacement,  NSCorrectionBubbleType correctionBubbleType)
+void CorrectionPanel::handleAcceptedReplacement(NSString* acceptedReplacement, NSString* replaced, NSString* proposedReplacement,  NSCorrectionIndicatorType correctionIndicatorType)
 {
     NSSpellChecker* spellChecker = [NSSpellChecker sharedSpellChecker];
     NSInteger documentTag = [m_view.get() spellCheckerDocumentTag];
 
-    switch (correctionBubbleType) {
-    case NSCorrectionBubbleTypeCorrection:
+    switch (correctionIndicatorType) {
+    case NSCorrectionIndicatorTypeDefault:
         if (acceptedReplacement)
             [spellChecker recordResponse:NSCorrectionResponseAccepted toCorrection:acceptedReplacement forWord:replaced language:nil inSpellDocumentWithTag:documentTag];
         else {
@@ -131,11 +131,11 @@ void CorrectionPanel::handleAcceptedReplacement(NSString* acceptedReplacement, N
                 [spellChecker recordResponse:NSCorrectionResponseIgnored toCorrection:proposedReplacement forWord:replaced language:nil inSpellDocumentWithTag:documentTag];
         }
         break;
-    case NSCorrectionBubbleTypeReversion:
+    case NSCorrectionIndicatorTypeReversion:
         if (acceptedReplacement)
             [spellChecker recordResponse:NSCorrectionResponseReverted toCorrection:replaced forWord:acceptedReplacement language:nil inSpellDocumentWithTag:documentTag];
         break;
-    case NSCorrectionBubbleTypeGuesses:
+    case NSCorrectionIndicatorTypeGuesses:
         if (acceptedReplacement)
             [spellChecker recordResponse:NSCorrectionResponseAccepted toCorrection:acceptedReplacement forWord:replaced language:nil inSpellDocumentWithTag:documentTag];
         break;
