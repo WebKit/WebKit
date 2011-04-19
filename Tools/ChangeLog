@@ -1,3 +1,24 @@
+2011-04-19  Jer Noble  <jer.noble@apple.com>
+
+        Reviewed by Adam Roben.
+
+        REGRESSION (r84206): 50 tests failing on SnowLeopard Intel Release (WebKit2 Tests) due to extra "supportsFullScreen() == true" output
+        https://bugs.webkit.org/show_bug.cgi?id=58890
+
+        Add a layoutTestController flag which controls when full screen callbacks are written to stdout.
+        Defaults to false.
+
+        * WebKitTestRunner/InjectedBundle/Bindings/LayoutTestController.idl: Added dumpFullScreenCallbacks().
+        * WebKitTestRunner/InjectedBundle/InjectedBundlePage.cpp:
+        (WTR::InjectedBundlePage::supportsFullScreen): Only write to stdout if shouldDumpFullScreenCallbacks is set.
+        (WTR::InjectedBundlePage::enterFullScreenForElement): Ditto.
+        (WTR::InjectedBundlePage::exitFullScreenForElement): Ditto.
+        * WebKitTestRunner/InjectedBundle/LayoutTestController.cpp:
+        (WTR::LayoutTestController::LayoutTestController): Initialize new ivar.
+        * WebKitTestRunner/InjectedBundle/LayoutTestController.h:
+        (WTR::LayoutTestController::dumpFullScreenCallbacks): Added.
+        (WTR::LayoutTestController::shouldDumpFullScreenCallbacks): Added.
+
 2011-04-19  Kristóf Kosztyó  <Kosztyo.Kristof@stud.u-szeged.hu>
 
         Reviewed by Andreas Kling.

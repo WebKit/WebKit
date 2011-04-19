@@ -1012,20 +1012,23 @@ void InjectedBundlePage::didChangeSelection(WKStringRef notificationName)
 #if ENABLE(FULLSCREEN_API)
 bool InjectedBundlePage::supportsFullScreen(WKBundlePageRef pageRef, WKFullScreenKeyboardRequestType requestType)
 {
-    InjectedBundle::shared().os() << "supportsFullScreen() == true\n";
+    if (InjectedBundle::shared().layoutTestController()->shouldDumpFullScreenCallbacks())
+        InjectedBundle::shared().os() << "supportsFullScreen() == true\n";
     return true;
 }
 
 void InjectedBundlePage::enterFullScreenForElement(WKBundlePageRef pageRef, WKBundleNodeHandleRef elementRef)
 {
-    InjectedBundle::shared().os() << "enterFullScreenForElement()\n";
+    if (InjectedBundle::shared().layoutTestController()->shouldDumpFullScreenCallbacks())
+        InjectedBundle::shared().os() << "enterFullScreenForElement()\n";
     WKBundlePageWillEnterFullScreen(pageRef);
     WKBundlePageDidEnterFullScreen(pageRef);
 }
 
 void InjectedBundlePage::exitFullScreenForElement(WKBundlePageRef pageRef, WKBundleNodeHandleRef elementRef)
 {
-    InjectedBundle::shared().os() << "exitFullScreenForElement()\n";
+    if (InjectedBundle::shared().layoutTestController()->shouldDumpFullScreenCallbacks())
+        InjectedBundle::shared().os() << "exitFullScreenForElement()\n";
     WKBundlePageWillExitFullScreen(pageRef);
     WKBundlePageDidExitFullScreen(pageRef);
 }

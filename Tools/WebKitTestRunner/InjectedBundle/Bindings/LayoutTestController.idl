@@ -39,6 +39,7 @@ module WTR {
         void dumpSelectionRect();
         void dumpStatusCallbacks();
         void dumpTitleChanges();
+        void dumpFullScreenCallbacks();
 
         // Special options.
         void keepWebHistory();
