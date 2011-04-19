@@ -1,3 +1,17 @@
+2011-04-19  Beth Dakin  <bdakin@apple.com>
+
+        Reviewed by Maciej Stachowiak.
+
+        https://bugs.webkit.org/show_bug.cgi?id=57898
+        REGRESSION (r82185): Scroll position not restored on navigation back to a page in 
+        the page cache
+        -and corresponding-
+        <rdar://problem/9226652>
+
+        * fast/loader/resources/empty-document-goes-back.html: Added.
+        * fast/loader/scroll-position-restored-on-back-expected.txt: Added.
+        * fast/loader/scroll-position-restored-on-back.html: Added.
+
 2011-04-19  Ryosuke Niwa  <rniwa@webkit.org>
 
         Skip the test added by r84264. The bug tracked by

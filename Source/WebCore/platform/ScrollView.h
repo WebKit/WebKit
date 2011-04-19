@@ -179,6 +179,9 @@ public:
 
     IntSize overhangAmount() const;
 
+    void cacheCurrentScrollPosition() { m_cachedScrollPosition = scrollPosition(); }
+    IntPoint cachedScrollPosition() const { return m_cachedScrollPosition; }
+
     // Functions for scrolling the view.
     void setScrollPosition(const IntPoint&);
     void scrollBy(const IntSize& s) { return setScrollPosition(scrollPosition() + s); }
@@ -338,6 +341,7 @@ private:
 
     IntRect m_actualVisibleContentRect;
     IntSize m_scrollOffset; // FIXME: Would rather store this as a position, but we will wait to make this change until more code is shared.
+    IntPoint m_cachedScrollPosition;
     IntSize m_fixedLayoutSize;
     IntSize m_contentsSize;
 

@@ -258,6 +258,10 @@ void FrameView::resetScrollbars()
 
 void FrameView::resetScrollbarsAndClearContentsSize()
 {
+    // Since the contents size is being cleared, the scroll position will lost as a consequence.
+    // Cache the scroll position so it can be restored by the page cache if necessary. 
+    cacheCurrentScrollPosition();
+
     resetScrollbars();
 
     setScrollbarsSuppressed(true);

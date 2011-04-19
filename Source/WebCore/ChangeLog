@@ -1,3 +1,28 @@
+2011-04-19  Beth Dakin  <bdakin@apple.com>
+
+        Reviewed by Maciej Stachowiak.
+
+        https://bugs.webkit.org/show_bug.cgi?id=57898
+        REGRESSION (r82185): Scroll position not restored on navigation back to a page in 
+        the page cache
+        -and corresponding-
+        <rdar://problem/9226652>
+
+        Setting the contentsSize of a ScrollView to (0, 0) necessarily causes the scroll 
+        position to be lost. (The scroll position is computed based on the 
+        visibleContentSize.) This patch provides a mechanism to cache the current scroll 
+        position, and then the HistoryController accesses only the cached position rather 
+        than calling scrollPosition() which does a computation based on the 
+        visibleContentSize. 
+
+        * loader/HistoryController.cpp:
+        (WebCore::HistoryController::saveScrollPositionAndViewStateToItem):
+        * page/FrameView.cpp:
+        (WebCore::FrameView::resetScrollbarsAndClearContentsSize):
+        * platform/ScrollView.h:
+        (WebCore::ScrollView::cacheCurrentScrollPosition):
+        (WebCore::ScrollView::cachedScrollPosition):
+
 2011-04-19  Renata Hodovan  <reni@webkit.org>
 
         Reviewed by Eric Seidel.
