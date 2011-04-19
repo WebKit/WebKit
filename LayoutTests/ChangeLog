@@ -2,6 +2,15 @@
 
         Unreviewed.
 
+        [Chromium] Mark fast/css/create_element_align.xhtml as slow.
+        https://bugs.webkit.org/show_bug.cgi?id=58884
+
+        * platform/chromium/test_expectations.txt:
+
+2011-04-19  John Knottenbelt  <jknotten@chromium.org>
+
+        Unreviewed.
+
         [Chromium] Mark fast/events/popup-blocking-timers.html as flaky on Debug Win,Mac,Linux
         https://bugs.webkit.org/show_bug.cgi?id=58882
 

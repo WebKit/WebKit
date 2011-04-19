@@ -3518,3 +3518,7 @@ BUGCR79855 DEBUG : fast/css/only-child-pseudo-class.html = PASS TEXT
 
 // Flaky on debug
 BUGCR79857 DEBUG : fast/events/popup-blocking-timers.html = PASS TEXT
+
+// Slow test, flaky on linux debug.
+BUGCR79859 LINUX DEBUG : fast/css/create_element_align.xhtml = PASS TIMEOUT
+
