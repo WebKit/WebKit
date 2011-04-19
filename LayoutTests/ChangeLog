@@ -2,6 +2,18 @@
 
         Unreviewed.
 
+        [Chromium] Mark animations/play-state.html as flaky.
+        https://bugs.webkit.org/show_bug.cgi?id=58880
+
+	See also existing chromium bug:
+	http://code.google.com/p/chromium/issues/detail?id=76609
+
+        * platform/chromium/test_expectations.txt:
+
+2011-04-19  John Knottenbelt  <jknotten@chromium.org>
+
+        Unreviewed.
+
         [Chromium] Mark tables/mozilla/bugs/bug28341.html as flaky on Mac
         https://bugs.webkit.org/show_bug.cgi?id=58879
 
