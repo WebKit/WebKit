@@ -1,3 +1,14 @@
+2011-04-19  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Gavin Barraclough.
+
+        Remove unneeded deprecated methods from MarkStack
+        https://bugs.webkit.org/show_bug.cgi?id=58853
+
+        Remove deprecated methods
+
+        * heap/MarkStack.h:
+
 2011-04-19  Mark Rowe  <mrowe@apple.com>
 
         Things work best when the Xcode project refers to the file at a path that exists.
