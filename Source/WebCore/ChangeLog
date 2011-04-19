@@ -1,3 +1,37 @@
+2011-04-19  Simon Fraser  <simon.fraser@apple.com>
+
+        Build fix. For some reason RenderBoxModelObject.cpp
+        was missing from my last commit.
+
+        * rendering/RenderBoxModelObject.cpp:
+        (WebCore::borderWillArcInnerEdge):
+        (WebCore::edgeFlagForSide):
+        (WebCore::includesEdge):
+        (WebCore::BorderEdge::BorderEdge):
+        (WebCore::BorderEdge::hasVisibleColorAndStyle):
+        (WebCore::BorderEdge::shouldRender):
+        (WebCore::BorderEdge::presentButInvisible):
+        (WebCore::BorderEdge::usedWidth):
+        (WebCore::BorderEdge::getDoubleBorderStripeWidths):
+        (WebCore::edgesShareColor):
+        (WebCore::styleRequiresClipPolygon):
+        (WebCore::borderStyleFillsBorderArea):
+        (WebCore::borderStyleHasInnerDetail):
+        (WebCore::borderStyleIsDottedOrDashed):
+        (WebCore::borderStyleHasUnmatchedColorsAtCorner):
+        (WebCore::colorsMatchAtCorner):
+        (WebCore::willBeOverdrawn):
+        (WebCore::borderStylesRequireMitre):
+        (WebCore::joinRequiresMitre):
+        (WebCore::RenderBoxModelObject::paintOneBorderSide):
+        (WebCore::RenderBoxModelObject::paintBorderSides):
+        (WebCore::RenderBoxModelObject::paintTranslucentBorderSides):
+        (WebCore::RenderBoxModelObject::paintBorder):
+        (WebCore::RenderBoxModelObject::drawBoxSideFromPath):
+        (WebCore::findInnerVertex):
+        (WebCore::RenderBoxModelObject::clipBorderSidePolygon):
+        (WebCore::RenderBoxModelObject::paintBoxShadow):
+
 2011-04-19  Stephen White  <senorblanco@chromium.org>
 
         Reviewed by Kenneth Russell.
