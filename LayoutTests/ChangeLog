@@ -1,3 +1,17 @@
+2011-04-19  Chris Rogers  <crogers@google.com>
+
+        Unreviewed.
+
+        Rebaseline some chromium Snow Leopard tests - update test_expectations.txt
+        https://bugs.webkit.org/show_bug.cgi?id=58915
+
+        * platform/chromium-mac/fast/borders/svg-as-border-image-2-expected.png: Added.
+        * platform/chromium-mac/fast/css/font-face-default-font-expected.png: Added.
+        * platform/chromium-mac/fast/css/font_property_normal-expected.png: Added.
+        * platform/chromium-mac/fast/repaint/text-in-relative-positioned-inline-expected.png: Added.
+        * platform/chromium-mac/fast/text/international/bidi-neutral-directionality-paragraph-start-expected.png: Added.
+        * platform/chromium/test_expectations.txt:
+
 2011-04-19  Ryosuke Niwa  <rniwa@webkit.org>
 
         Skip the test added by r84270 on WebKit2 since it uses eventSender.

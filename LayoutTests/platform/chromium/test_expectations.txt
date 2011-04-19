@@ -3524,3 +3524,11 @@ BUGCR79857 DEBUG : fast/events/popup-blocking-timers.html = PASS TEXT
 BUGCR79859 LINUX DEBUG : fast/css/create_element_align.xhtml = PASS TIMEOUT
 
 BUGWK58900 LINUX WIN : fast/block/float/overhanging-tall-block.html = IMAGE+TEXT
+
+// line height may be incorrect
+BUGCR79908 MAC SNOWLEOPARD : fast/css/line-height-font-order.html = IMAGE
+
+BUGCR79910 MAC SNOWLEOPARD: fast/text/international/bidi-linebreak-001.html = IMAGE
+BUGCR79910 MAC SNOWLEOPARD: fast/text/international/bidi-linebreak-002.html = IMAGE
+BUGCR79910 MAC SNOWLEOPARD: fast/text/international/bidi-linebreak-003.html = IMAGE
+
