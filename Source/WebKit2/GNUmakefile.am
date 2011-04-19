@@ -184,6 +184,7 @@ libWebKit2_la_SOURCES = \
 	Source/WebKit2/Shared/CoreIPCSupport/WebContextMessageKinds.h \
 	Source/WebKit2/Shared/CoreIPCSupport/WebPageProxyMessageKinds.h \
 	Source/WebKit2/Shared/DrawingAreaInfo.h \
+	Source/WebKit2/Shared/EditorState.h \
 	Source/WebKit2/Shared/FontSmoothingLevel.h \
 	Source/WebKit2/Shared/gtk/ShareableBitmapGtk.cpp \
 	Source/WebKit2/Shared/gtk/NativeWebKeyboardEventGtk.cpp \
@@ -233,7 +234,6 @@ libWebKit2_la_SOURCES = \
 	Source/WebKit2/Shared/SandboxExtension.h \
 	Source/WebKit2/Shared/SecurityOriginData.h \
 	Source/WebKit2/Shared/SecurityOriginData.cpp \
-	Source/WebKit2/Shared/SelectionState.h \
 	Source/WebKit2/Shared/SessionState.cpp \
 	Source/WebKit2/Shared/SessionState.h \
 	Source/WebKit2/Shared/StringPairVector.h \

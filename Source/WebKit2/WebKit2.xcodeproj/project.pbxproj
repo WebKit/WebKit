@@ -179,7 +179,7 @@
 		1AA2E51E12E4C05E00BC4966 /* CGUtilities.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1AA2E51C12E4C05E00BC4966 /* CGUtilities.cpp */; };
 		1AA417CB12C00CCA002BE67B /* TextChecker.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AA417C912C00CCA002BE67B /* TextChecker.h */; };
 		1AA417EF12C00D87002BE67B /* TextCheckerMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1AA417ED12C00D87002BE67B /* TextCheckerMac.mm */; };
-		1AA41AB512C02EC4002BE67B /* SelectionState.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AA41AB412C02EC4002BE67B /* SelectionState.h */; };
+		1AA41AB512C02EC4002BE67B /* EditorState.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AA41AB412C02EC4002BE67B /* EditorState.h */; };
 		1AA4792312A59FD9008236C3 /* PluginProcessMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1AA4792212A59FD9008236C3 /* PluginProcessMac.mm */; };
 		1AA479B012A5A436008236C3 /* Carbon.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1AA1CD06100FA1BA0078DEBC /* Carbon.framework */; };
 		1AA56F2911E92BC80061B882 /* PluginController.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AA56F2811E92BC80061B882 /* PluginController.h */; };
@@ -789,7 +789,6 @@
 		E134F01A12EA5D99004EC58D /* WKPrintingView.mm in Sources */ = {isa = PBXBuildFile; fileRef = E134F01912EA5D99004EC58D /* WKPrintingView.mm */; };
 		E179FD9C134D38060015B883 /* ArgumentCodersMac.h in Headers */ = {isa = PBXBuildFile; fileRef = E179FD9B134D38060015B883 /* ArgumentCodersMac.h */; };
 		E179FD9F134D38250015B883 /* ArgumentCodersMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = E179FD9E134D38250015B883 /* ArgumentCodersMac.mm */; };
-		E1839349134297A5001842EC /* TextInputState.h in Headers */ = {isa = PBXBuildFile; fileRef = E1839348134297A5001842EC /* TextInputState.h */; };
 		E18C92F412DB9E7100CF2AEB /* PrintInfo.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E18C92F312DB9E7100CF2AEB /* PrintInfo.cpp */; };
 		E1A31732134CEA6C007C9A4F /* AttributedString.h in Headers */ = {isa = PBXBuildFile; fileRef = E1A31731134CEA6C007C9A4F /* AttributedString.h */; };
 		E1A31735134CEA80007C9A4F /* AttributedString.mm in Sources */ = {isa = PBXBuildFile; fileRef = E1A31734134CEA80007C9A4F /* AttributedString.mm */; };
@@ -1056,7 +1055,7 @@
 		1AA2E51C12E4C05E00BC4966 /* CGUtilities.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CGUtilities.cpp; sourceTree = "<group>"; };
 		1AA417C912C00CCA002BE67B /* TextChecker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TextChecker.h; sourceTree = "<group>"; };
 		1AA417ED12C00D87002BE67B /* TextCheckerMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = TextCheckerMac.mm; sourceTree = "<group>"; };
-		1AA41AB412C02EC4002BE67B /* SelectionState.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SelectionState.h; sourceTree = "<group>"; };
+		1AA41AB412C02EC4002BE67B /* EditorState.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EditorState.h; sourceTree = "<group>"; };
 		1AA4792212A59FD9008236C3 /* PluginProcessMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = PluginProcessMac.mm; sourceTree = "<group>"; };
 		1AA56F2811E92BC80061B882 /* PluginController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PluginController.h; sourceTree = "<group>"; };
 		1AA5889011EE70400061B882 /* NetscapePluginStream.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NetscapePluginStream.h; sourceTree = "<group>"; };
@@ -1716,7 +1715,6 @@
 		E134F01912EA5D99004EC58D /* WKPrintingView.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WKPrintingView.mm; sourceTree = "<group>"; };
 		E179FD9B134D38060015B883 /* ArgumentCodersMac.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ArgumentCodersMac.h; sourceTree = "<group>"; };
 		E179FD9E134D38250015B883 /* ArgumentCodersMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ArgumentCodersMac.mm; sourceTree = "<group>"; };
-		E1839348134297A5001842EC /* TextInputState.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TextInputState.h; sourceTree = "<group>"; };
 		E18C92F312DB9E7100CF2AEB /* PrintInfo.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PrintInfo.cpp; sourceTree = "<group>"; };
 		E1A31731134CEA6C007C9A4F /* AttributedString.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AttributedString.h; sourceTree = "<group>"; };
 		E1A31734134CEA80007C9A4F /* AttributedString.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = AttributedString.mm; sourceTree = "<group>"; };
@@ -2088,7 +2086,7 @@
 				1AAB4A8C1296F0A20023952F /* SandboxExtension.h */,
 				33152973130D0CB200ED2483 /* SecurityOriginData.cpp */,
 				33152974130D0CB200ED2483 /* SecurityOriginData.h */,
-				1AA41AB412C02EC4002BE67B /* SelectionState.h */,
+				1AA41AB412C02EC4002BE67B /* EditorState.h */,
 				518D2CC812D51DFB003BB93B /* SessionState.cpp */,
 				518D2CC912D51DFB003BB93B /* SessionState.h */,
 				1A6420E212DCE2FF00CAAE2C /* ShareableBitmap.cpp */,
@@ -2791,7 +2789,6 @@
 				1AAB4AA91296F1540023952F /* SandboxExtensionMac.mm */,
 				1A9636BA12F348490078A062 /* ShareableSurface.cpp */,
 				1A9636BB12F348490078A062 /* ShareableSurface.h */,
-				E1839348134297A5001842EC /* TextInputState.h */,
 				BC9E95D211449B0300870E71 /* UpdateChunk.cpp */,
 				BC9E95D111449B0300870E71 /* UpdateChunk.h */,
 				BCE23262122C6CF300D5C35A /* WebCoreArgumentCodersMac.mm */,
@@ -3590,7 +3587,7 @@
 				BC858A2012C0357B00EDEB2E /* WebResourceLoadClient.h in Headers */,
 				1AA417CB12C00CCA002BE67B /* TextChecker.h in Headers */,
 				909854ED12BC4E18000AD080 /* WebMemorySampler.h in Headers */,
-				1AA41AB512C02EC4002BE67B /* SelectionState.h in Headers */,
+				1AA41AB512C02EC4002BE67B /* EditorState.h in Headers */,
 				BCCF672D12C7EDF7008F9C35 /* OriginAndDatabases.h in Headers */,
 				BCCF6ABD12C91EF9008F9C35 /* WebImage.h in Headers */,
 				BCCF6AC312C91F34008F9C35 /* WKImage.h in Headers */,
@@ -3683,7 +3680,6 @@
 				5110AE0D133C16CB0072717A /* WKIconDatabase.h in Headers */,
 				5123CF1C133D260A0056F800 /* WKIconDatabaseCG.h in Headers */,
 				51834593134532E90092B696 /* WebIconDatabaseClient.h in Headers */,
-				E1839349134297A5001842EC /* TextInputState.h in Headers */,
 				C0FA52431345694A0028E8C2 /* LayerTreeHostCAMac.h in Headers */,
 				E1A31732134CEA6C007C9A4F /* AttributedString.h in Headers */,
 				E179FD9C134D38060015B883 /* ArgumentCodersMac.h in Headers */,

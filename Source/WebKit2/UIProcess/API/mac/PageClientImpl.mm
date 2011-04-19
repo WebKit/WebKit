@@ -239,9 +239,9 @@ void PageClientImpl::executeUndoRedo(WebPageProxy::UndoOrRedo undoOrRedo)
     return (undoOrRedo == WebPageProxy::Undo) ? [[m_wkView undoManager] undo] : [[m_wkView undoManager] redo];
 }
 
-bool PageClientImpl::interpretKeyEvent(const NativeWebKeyboardEvent& event, const TextInputState& state, Vector<WebCore::KeypressCommand>& commands)
+bool PageClientImpl::interpretKeyEvent(const NativeWebKeyboardEvent& event, Vector<WebCore::KeypressCommand>& commands)
 {
-    return [m_wkView _interpretKeyEvent:event.nativeEvent() withCachedTextInputState:state savingCommandsTo:commands];
+    return [m_wkView _interpretKeyEvent:event.nativeEvent() savingCommandsTo:commands];
 }
 
 void PageClientImpl::setDragImage(const IntPoint& clientPosition, PassRefPtr<ShareableBitmap> dragImage, bool isLinkDrag)

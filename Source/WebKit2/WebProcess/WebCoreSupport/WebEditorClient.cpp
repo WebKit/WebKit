@@ -26,7 +26,7 @@
 #include "config.h"
 #include "WebEditorClient.h"
 
-#include "SelectionState.h"
+#include "EditorState.h"
 #include "WebCoreArgumentCoders.h"
 #include "WebFrameLoaderClient.h"
 #include "WebPage.h"
@@ -44,7 +44,6 @@
 #include <WebCore/KeyboardEvent.h>
 #include <WebCore/NotImplemented.h>
 #include <WebCore/Page.h>
-#include <WebCore/TextIterator.h>
 #include <WebCore/UserTypingGestureIndicator.h>
 
 using namespace WebCore;
@@ -191,24 +190,7 @@ void WebEditorClient::respondToChangedSelection()
     if (!frame)
         return;
 
-    SelectionState selectionState;
-    selectionState.isNone = frame->selection()->isNone();
-    selectionState.isContentEditable = frame->selection()->isContentEditable();
-    selectionState.isContentRichlyEditable = frame->selection()->isContentRichlyEditable();
-    selectionState.isInPasswordField = frame->selection()->isInPasswordField();
-    selectionState.hasComposition = frame->editor()->hasComposition();
-
-    RefPtr<Range> range = frame->selection()->toNormalizedRange();
-    if (range) {
-        size_t location;
-        size_t length;
-        if (!TextIterator::locationAndLengthFromRange(range.get(), location, length))
-            return;
-        selectionState.selectedRangeStart = static_cast<uint64_t>(location);
-        selectionState.selectedRangeLength = static_cast<uint64_t>(length);
-    }
-
-    m_page->send(Messages::WebPageProxy::SelectionStateChanged(selectionState));
+    m_page->send(Messages::WebPageProxy::EditorStateChanged(m_page->editorState()));
 
 #if PLATFORM(WIN)
     // FIXME: This should also go into the selection state.

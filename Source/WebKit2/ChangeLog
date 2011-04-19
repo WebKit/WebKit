@@ -39,6 +39,81 @@
 
 2011-04-19  Alexey Proskuryakov  <ap@apple.com>
 
+        Reviewed by Adele Peterson.
+
+        WebKit2: Merge SelectionState and TextInputState
+        https://bugs.webkit.org/show_bug.cgi?id=58919
+
+        Combined TextInputState and EditorState in one structure, which is updated whenever we get
+        a chance to. There is no sense to keep possibly stale SelectionState data when we have already
+        requested the most recent data synchronously.
+
+        This also simplifies the code, as we don't need to pass the state around in a separate variable.
+
+        * GNUmakefile.am:
+        * Scripts/webkit2/messages.py:
+        * Shared/EditorState.h: Copied from Source/WebKit2/Shared/SelectionState.h.
+        (WebKit::EditorState::EditorState):
+        * Shared/SelectionState.h: Removed.
+        * Shared/mac/TextInputState.h: Removed.
+        * UIProcess/API/mac/PageClientImpl.h:
+        * UIProcess/API/mac/PageClientImpl.mm:
+        (WebKit::PageClientImpl::interpretKeyEvent):
+        * UIProcess/API/mac/WKView.mm:
+        (-[WKView validRequestorForSendType:returnType:]):
+        (-[WKView validateUserInterfaceItem:]):
+        (-[WKView shouldDelayWindowOrderingForEvent:]):
+        (-[WKView doCommandBySelector:]):
+        (-[WKView insertText:replacementRange:]):
+        (-[WKView _handleStyleKeyEquivalent:]):
+        (-[WKView _executeSavedKeypressCommands]):
+        (-[WKView inputContext]):
+        (-[WKView hasMarkedText]):
+        (-[WKView unmarkText]):
+        (-[WKView setMarkedText:selectedRange:replacementRange:]):
+        (-[WKView attributedSubstringForProposedRange:actualRange:]):
+        (-[WKView _interpretKeyEvent:savingCommandsTo:WebCore::]):
+        (-[WKView _updateSecureInputState]):
+        * UIProcess/API/mac/WKViewInternal.h:
+        * UIProcess/PageClient.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::editorStateChanged):
+        * UIProcess/WebPageProxy.h:
+        (WebKit::WebPageProxy::editorState):
+        (WebKit::WebPageProxy::hasSelectedRange):
+        (WebKit::WebPageProxy::isContentEditable):
+        * UIProcess/WebPageProxy.messages.in:
+        * UIProcess/mac/WebPageProxyMac.mm:
+        (WebKit::WebPageProxy::setComposition):
+        (WebKit::WebPageProxy::confirmComposition):
+        (WebKit::WebPageProxy::insertText):
+        (WebKit::WebPageProxy::executeKeypressCommands):
+        (WebKit::WebPageProxy::writeSelectionToPasteboard):
+        (WebKit::WebPageProxy::readSelectionFromPasteboard):
+        (WebKit::WebPageProxy::interpretQueuedKeyEvent):
+        * UIProcess/win/WebView.cpp:
+        (WebKit::WebView::compositionSelectionChanged):
+        (WebKit::WebView::onIMEComposition):
+        (WebKit::WebView::onIMEEndComposition):
+        (WebKit::WebView::onIMERequestCharPosition):
+        (WebKit::WebView::onIMERequest):
+        * WebKit2.xcodeproj/project.pbxproj:
+        * WebProcess/WebCoreSupport/WebEditorClient.cpp:
+        (WebKit::WebEditorClient::respondToChangedSelection):
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::editorState):
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/WebPage.messages.in:
+        * WebProcess/WebPage/mac/WebPageMac.mm:
+        (WebKit::WebPage::handleEditingKeyboardEvent):
+        (WebKit::WebPage::setComposition):
+        (WebKit::WebPage::confirmComposition):
+        (WebKit::WebPage::insertText):
+        (WebKit::WebPage::executeKeypressCommands):
+        * win/WebKit2.vcproj:
+
+2011-04-19  Alexey Proskuryakov  <ap@apple.com>
+
         Reviewed by Timothy Hatcher.
 
         100% reproducible crash when right-clicking any element in Web Inspector on any page

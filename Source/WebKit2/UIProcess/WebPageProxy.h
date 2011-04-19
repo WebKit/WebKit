@@ -31,9 +31,9 @@
 #include "ContextMenuState.h"
 #include "DragControllerAction.h"
 #include "DrawingAreaProxy.h"
+#include "EditorState.h"
 #include "GeolocationPermissionRequestManagerProxy.h"
 #include "SandboxExtension.h"
-#include "SelectionState.h"
 #include "SharedMemory.h"
 #include "WKBase.h"
 #include "WKPagePrivate.h"
@@ -97,9 +97,9 @@ class WebURLRequest;
 class WebWheelEvent;
 struct AttributedString;
 struct DictionaryPopupInfo;
+struct EditorState;
 struct PlatformPopupMenuData;
 struct PrintInfo;
-struct TextInputState;
 struct WebPageCreationParameters;
 struct WebPopupItem;
 
@@ -247,24 +247,24 @@ public:
     void executeEditCommand(const String& commandName);
     void validateCommand(const String& commandName, PassRefPtr<ValidateCommandCallback>);
 
-    const SelectionState& selectionState() const { return m_selectionState; }
+    const EditorState& editorState() const { return m_editorState; }
     bool canDelete() const { return hasSelectedRange() && isContentEditable(); }
-    bool hasSelectedRange() const { return m_selectionState.selectedRangeLength; }
-    bool isContentEditable() const { return m_selectionState.isContentEditable; }
+    bool hasSelectedRange() const { return m_editorState.selectionIsRange; }
+    bool isContentEditable() const { return m_editorState.isContentEditable; }
 
 #if PLATFORM(MAC)
     void updateWindowIsVisible(bool windowIsVisible);
     void windowAndViewFramesChanged(const WebCore::IntRect& windowFrameInScreenCoordinates, const WebCore::IntRect& viewFrameInWindowCoordinates, const WebCore::IntPoint& accessibilityViewCoordinates);
 
-    void setComposition(const String& text, Vector<WebCore::CompositionUnderline> underlines, uint64_t selectionStart, uint64_t selectionEnd, uint64_t replacementRangeStart, uint64_t replacementRangeEnd, TextInputState& newState);
-    void confirmComposition(TextInputState& newState);
-    bool insertText(const String& text, uint64_t replacementRangeStart, uint64_t replacementRangeEnd, TextInputState& newState);
+    void setComposition(const String& text, Vector<WebCore::CompositionUnderline> underlines, uint64_t selectionStart, uint64_t selectionEnd, uint64_t replacementRangeStart, uint64_t replacementRangeEnd);
+    void confirmComposition();
+    bool insertText(const String& text, uint64_t replacementRangeStart, uint64_t replacementRangeEnd);
     void getMarkedRange(uint64_t& location, uint64_t& length);
     void getSelectedRange(uint64_t& location, uint64_t& length);
     void getAttributedSubstringFromRange(uint64_t location, uint64_t length, AttributedString&);
     uint64_t characterIndexForPoint(const WebCore::IntPoint);
     WebCore::IntRect firstRectForCharacterRange(uint64_t, uint64_t);
-    bool executeKeypressCommands(const Vector<WebCore::KeypressCommand>&, TextInputState& newState);
+    bool executeKeypressCommands(const Vector<WebCore::KeypressCommand>&);
 
     void sendComplexTextInputToPlugin(uint64_t pluginComplexTextInputIdentifier, const String& textInput);
     CGContextRef containingWindowGraphicsContext();
@@ -589,8 +589,7 @@ private:
     void didFindZoomableArea(const WebCore::IntRect&);
 #endif
 
-    // Selection
-    void selectionStateChanged(const SelectionState&);
+    void editorStateChanged(const EditorState&);
 
     // Back/Forward list management
     void backForwardAddItem(uint64_t itemID);
@@ -608,7 +607,7 @@ private:
 
     // Keyboard handling
 #if PLATFORM(MAC)
-    void interpretQueuedKeyEvent(const TextInputState&, bool& handled, Vector<WebCore::KeypressCommand>&);
+    void interpretQueuedKeyEvent(const EditorState&, bool& handled, Vector<WebCore::KeypressCommand>&);
     void executeSavedCommandBySelector(const String& selector, bool& handled);
 #endif
 
@@ -764,7 +763,7 @@ private:
 
     String m_toolTip;
 
-    SelectionState m_selectionState;
+    EditorState m_editorState;
 
     double m_textZoomFactor;
     double m_pageZoomFactor;

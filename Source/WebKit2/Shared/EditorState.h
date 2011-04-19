@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 Apple Inc. All rights reserved.
+ * Copyright (C) 2010, 2011 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,22 +23,37 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef TextInputState_h
-#define TextInputState_h
+#ifndef EditorState_h
+#define EditorState_h
 
 #include "ArgumentCoders.h"
+#include <wtf/NotFound.h>
 
 namespace WebKit {
 
-struct TextInputState {
-    bool hasMarkedText;
-    bool selectionIsEditable;
+struct EditorState {
+    EditorState()
+        : selectionIsNone(true)
+        , selectionIsRange(false)
+        , isContentEditable(false)
+        , isContentRichlyEditable(false)
+        , isInPasswordField(false)
+        , hasComposition(false)
+    {
+    }
+
+    bool selectionIsNone; // This will be false when there is a caret selection.
+    bool selectionIsRange;
+    bool isContentEditable;
+    bool isContentRichlyEditable;
+    bool isInPasswordField;
+    bool hasComposition;
 };
 
 }
 
 namespace CoreIPC {
-template<> struct ArgumentCoder<WebKit::TextInputState> : SimpleArgumentCoder<WebKit::TextInputState> { };
-}
+template<> struct ArgumentCoder<WebKit::EditorState> : SimpleArgumentCoder<WebKit::EditorState> { };
+};
 
-#endif // TextInputState_h
+#endif // EditorState_h

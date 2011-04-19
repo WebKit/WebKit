@@ -29,8 +29,8 @@
 #import "AccessibilityWebPageObject.h"
 #import "AttributedString.h"
 #import "DataReference.h"
+#import "EditorState.h"
 #import "PluginView.h"
-#import "TextInputState.h"
 #import "WebCoreArgumentCoders.h"
 #import "WebEvent.h"
 #import "WebEventConversion.h"
@@ -118,14 +118,6 @@ static String commandNameForSelectorName(const String& selectorName)
     return selectorName.left(selectorNameLength - 1);
 }
 
-static TextInputState currentTextInputState(Frame* frame)
-{
-    TextInputState state;
-    state.hasMarkedText = frame->editor()->hasComposition();
-    state.selectionIsEditable = !frame->selection()->isNone() && frame->selection()->isContentEditable();
-    return state;
-}
-
 static Frame* frameForEvent(KeyboardEvent* event)
 {
     Node* node = event->target()->toNode();
@@ -190,7 +182,7 @@ bool WebPage::handleEditingKeyboardEvent(KeyboardEvent* event, bool saveCommands
     if (saveCommands) {
         KeyboardEvent* oldEvent = m_keyboardEventBeingInterpreted;
         m_keyboardEventBeingInterpreted = event;
-        bool sendResult = WebProcess::shared().connection()->sendSync(Messages::WebPageProxy::InterpretQueuedKeyEvent(currentTextInputState(frame)), 
+        bool sendResult = WebProcess::shared().connection()->sendSync(Messages::WebPageProxy::InterpretQueuedKeyEvent(editorState()), 
             Messages::WebPageProxy::InterpretQueuedKeyEvent::Reply(eventWasHandled, commands), m_pageID);
         m_keyboardEventBeingInterpreted = oldEvent;
         if (!sendResult)
@@ -229,7 +221,7 @@ void WebPage::sendComplexTextInputToPlugin(uint64_t pluginComplexTextInputIdenti
     }
 }
 
-void WebPage::setComposition(const String& text, Vector<CompositionUnderline> underlines, uint64_t selectionStart, uint64_t selectionEnd, uint64_t replacementRangeStart, uint64_t replacementRangeEnd, TextInputState& newState)
+void WebPage::setComposition(const String& text, Vector<CompositionUnderline> underlines, uint64_t selectionStart, uint64_t selectionEnd, uint64_t replacementRangeStart, uint64_t replacementRangeEnd, EditorState& newState)
 {
     Frame* frame = m_page->focusController()->focusedOrMainFrame();
 
@@ -243,19 +235,19 @@ void WebPage::setComposition(const String& text, Vector<CompositionUnderline> un
         frame->editor()->setComposition(text, underlines, selectionStart, selectionEnd);
     }
 
-    newState = currentTextInputState(frame);
+    newState = editorState();
 }
 
-void WebPage::confirmComposition(TextInputState& newState)
+void WebPage::confirmComposition(EditorState& newState)
 {
     Frame* frame = m_page->focusController()->focusedOrMainFrame();
 
     frame->editor()->confirmComposition();
 
-    newState = currentTextInputState(frame);
+    newState = editorState();
 }
 
-void WebPage::insertText(const String& text, uint64_t replacementRangeStart, uint64_t replacementRangeEnd, bool& handled, TextInputState& newState)
+void WebPage::insertText(const String& text, uint64_t replacementRangeStart, uint64_t replacementRangeEnd, bool& handled, EditorState& newState)
 {
     Frame* frame = m_page->focusController()->focusedOrMainFrame();
 
@@ -274,7 +266,7 @@ void WebPage::insertText(const String& text, uint64_t replacementRangeStart, uin
         frame->editor()->confirmComposition(text);
     }
 
-    newState = currentTextInputState(frame);
+    newState = editorState();
 }
 
 void WebPage::getMarkedRange(uint64_t& location, uint64_t& length)
@@ -394,13 +386,10 @@ void WebPage::firstRectForCharacterRange(uint64_t location, uint64_t length, Web
     resultRect = frame->view()->contentsToWindow(rect);
 }
 
-void WebPage::executeKeypressCommands(const Vector<WebCore::KeypressCommand>& commands, bool& handled, TextInputState& newState)
+void WebPage::executeKeypressCommands(const Vector<WebCore::KeypressCommand>& commands, bool& handled, EditorState& newState)
 {
-    Frame* frame = m_page->focusController()->focusedOrMainFrame();
-
     handled = executeKeypressCommandsInternal(commands, m_keyboardEventBeingInterpreted);
-
-    newState = currentTextInputState(frame);
+    newState = editorState();
 }
 
 static bool isPositionInRange(const VisiblePosition& position, Range* range)

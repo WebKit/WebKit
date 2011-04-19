@@ -40,7 +40,6 @@ namespace WebKit {
     class DrawingAreaProxy;
     class FindIndicator;
     class LayerTreeContext;
-    struct TextInputState;
 }
 
 @class WKFullScreenWindowController;
@@ -54,7 +53,7 @@ namespace WebKit {
 - (void)_toolTipChangedFrom:(NSString *)oldToolTip to:(NSString *)newToolTip;
 - (void)_setCursor:(NSCursor *)cursor;
 - (void)_setUserInterfaceItemState:(NSString *)commandName enabled:(BOOL)isEnabled state:(int)newState;
-- (BOOL)_interpretKeyEvent:(NSEvent *)theEvent withCachedTextInputState:(const WebKit::TextInputState&)cachedTextInputState savingCommandsTo:(Vector<WebCore::KeypressCommand>&)commands;
+- (BOOL)_interpretKeyEvent:(NSEvent *)theEvent savingCommandsTo:(Vector<WebCore::KeypressCommand>&)commands;
 - (void)_resendKeyDownEvent:(NSEvent *)event;
 - (bool)_executeSavedCommandBySelector:(SEL)selector;
 - (NSRect)_convertToDeviceSpace:(NSRect)rect;

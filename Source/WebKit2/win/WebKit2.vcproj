@@ -431,6 +431,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\Shared\EditorState.h"
+				>
+			</File>
+			<File
 				RelativePath="..\Shared\FontInfo.cpp"
 				>
 			</File>
@@ -524,10 +528,6 @@
 			</File>
 			<File
 				RelativePath="..\Shared\SecurityOriginData.h"
-				>
-			</File>
-			<File
-				RelativePath="..\Shared\SelectionState.h"
 				>
 			</File>
 			<File

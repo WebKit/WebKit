@@ -185,15 +185,15 @@ messages -> WebPage {
     ReadSelectionFromPasteboard(WTF::String pasteboardName) -> (bool result)
 
     # Text input.
-    SetComposition(WTF::String text, WTF::Vector<WebCore::CompositionUnderline> underlines, uint64_t selectionStart, uint64_t selectionEnd, uint64_t replacementRangeStart, uint64_t replacementRangeEnd) -> (WebKit::TextInputState newState)
-    ConfirmComposition() -> (WebKit::TextInputState newState)
-    InsertText(WTF::String text, uint64_t replacementRangeStart, uint64_t replacementRangeEnd) -> (bool handled, WebKit::TextInputState newState)
+    SetComposition(WTF::String text, WTF::Vector<WebCore::CompositionUnderline> underlines, uint64_t selectionStart, uint64_t selectionEnd, uint64_t replacementRangeStart, uint64_t replacementRangeEnd) -> (WebKit::EditorState newState)
+    ConfirmComposition() -> (WebKit::EditorState newState)
+    InsertText(WTF::String text, uint64_t replacementRangeStart, uint64_t replacementRangeEnd) -> (bool handled, WebKit::EditorState newState)
     GetMarkedRange() -> (uint64_t location, uint64_t length)
     GetSelectedRange() -> (uint64_t location, uint64_t length)
     GetAttributedSubstringFromRange(uint64_t location, uint64_t length) -> (WebKit::AttributedString result)
     CharacterIndexForPoint(WebCore::IntPoint point) -> (uint64_t result)
     FirstRectForCharacterRange(uint64_t location, uint64_t length) -> (WebCore::IntRect resultRect)
-    ExecuteKeypressCommands(Vector<WebCore::KeypressCommand> savedCommands) -> (bool handled, WebKit::TextInputState newState)
+    ExecuteKeypressCommands(Vector<WebCore::KeypressCommand> savedCommands) -> (bool handled, WebKit::EditorState newState)
     ShouldDelayWindowOrderingEvent(WebKit::WebMouseEvent event) -> (bool result)
     AcceptsFirstMouse(int eventNumber, WebKit::WebMouseEvent event) -> (bool result)
 #endif

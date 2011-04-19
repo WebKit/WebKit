@@ -321,6 +321,22 @@ PassRefPtr<Plugin> WebPage::createPlugin(const Plugin::Parameters& parameters)
 #endif
 }
 
+EditorState WebPage::editorState() const
+{
+    Frame* frame = m_page->focusController()->focusedOrMainFrame();
+    ASSERT(frame);
+
+    EditorState result;
+    result.selectionIsNone = frame->selection()->isNone();
+    result.selectionIsRange = frame->selection()->isRange();
+    result.isContentEditable = frame->selection()->isContentEditable();
+    result.isContentRichlyEditable = frame->selection()->isContentRichlyEditable();
+    result.isInPasswordField = frame->selection()->isInPasswordField();
+    result.hasComposition = frame->editor()->hasComposition();
+    
+    return result;
+}
+
 String WebPage::renderTreeExternalRepresentation() const
 {
     return externalRepresentation(m_mainFrame->coreFrame(), RenderAsTextBehaviorNormal);

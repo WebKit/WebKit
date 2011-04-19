@@ -106,8 +106,8 @@ class WebPageGroupProxy;
 class WebPopupMenu;
 class WebWheelEvent;
 struct AttributedString;
+struct EditorState;
 struct PrintInfo;
-struct TextInputState;
 struct WebPageCreationParameters;
 struct WebPreferencesStore;
 
@@ -216,6 +216,8 @@ public:
     WebFrame* mainFrame() const { return m_mainFrame.get(); }
     PassRefPtr<Plugin> createPlugin(const Plugin::Parameters&);
 
+    EditorState editorState() const;
+
     String renderTreeExternalRepresentation() const;
     void executeEditingCommand(const String& commandName, const String& argument);
     bool isEditingCommandEnabled(const String& commandName);
@@ -319,15 +321,15 @@ public:
     
     void sendComplexTextInputToPlugin(uint64_t pluginComplexTextInputIdentifier, const String& textInput);
 
-    void setComposition(const String& text, Vector<WebCore::CompositionUnderline> underlines, uint64_t selectionStart, uint64_t selectionEnd, uint64_t replacementRangeStart, uint64_t replacementRangeEnd, TextInputState& newState);
-    void confirmComposition(TextInputState& newState);
-    void insertText(const String& text, uint64_t replacementRangeStart, uint64_t replacementRangeEnd, bool& handled, TextInputState& newState);
+    void setComposition(const String& text, Vector<WebCore::CompositionUnderline> underlines, uint64_t selectionStart, uint64_t selectionEnd, uint64_t replacementRangeStart, uint64_t replacementRangeEnd, EditorState& newState);
+    void confirmComposition(EditorState& newState);
+    void insertText(const String& text, uint64_t replacementRangeStart, uint64_t replacementRangeEnd, bool& handled, EditorState& newState);
     void getMarkedRange(uint64_t& location, uint64_t& length);
     void getSelectedRange(uint64_t& location, uint64_t& length);
     void getAttributedSubstringFromRange(uint64_t location, uint64_t length, AttributedString&);
     void characterIndexForPoint(const WebCore::IntPoint point, uint64_t& result);
     void firstRectForCharacterRange(uint64_t location, uint64_t length, WebCore::IntRect& resultRect);
-    void executeKeypressCommands(const Vector<WebCore::KeypressCommand>&, bool& handled, TextInputState& newState);
+    void executeKeypressCommands(const Vector<WebCore::KeypressCommand>&, bool& handled, EditorState& newState);
     void writeSelectionToPasteboard(const WTF::String& pasteboardName, const WTF::Vector<WTF::String>& pasteboardTypes, bool& result);
     void readSelectionFromPasteboard(const WTF::String& pasteboardName, bool& result);
     void shouldDelayWindowOrderingEvent(const WebKit::WebMouseEvent&, bool& result);

@@ -30,6 +30,7 @@
 #import "ChunkedUpdateDrawingAreaProxy.h"
 #import "DataReference.h"
 #import "DrawingAreaProxyImpl.h"
+#import "EditorState.h"
 #import "FindIndicator.h"
 #import "FindIndicatorWindow.h"
 #import "LayerTreeContext.h"
@@ -43,7 +44,6 @@
 #import "RunLoop.h"
 #import "TextChecker.h"
 #import "TextCheckerState.h"
-#import "TextInputState.h"
 #import "WKAPICast.h"
 #import "WKFullScreenWindowController.h"
 #import "WKPrintingView.h"
@@ -101,7 +101,6 @@ typedef HashMap<String, ValidationVector> ValidationMap;
 }
 
 struct WKViewInterpretKeyEventsParameters {
-    TextInputState cachedTextInputState;
     bool eventInterpretationHadSideEffects;
     bool consumedByIM;
     bool executingSavedKeypressCommands;
@@ -536,13 +535,13 @@ WEBCORE_COMMAND(yankAndSelect)
 
 - (id)validRequestorForSendType:(NSString *)sendType returnType:(NSString *)returnType
 {
-    BOOL isValidSendType = !sendType || ([PasteboardTypes::forSelection() containsObject:sendType] && !_data->_page->selectionState().isNone);
+    BOOL isValidSendType = !sendType || ([PasteboardTypes::forSelection() containsObject:sendType] && !_data->_page->editorState().selectionIsNone);
     BOOL isValidReturnType = NO;
     if (!returnType)
         isValidReturnType = YES;
-    else if ([PasteboardTypes::forEditing() containsObject:returnType] && _data->_page->selectionState().isContentEditable) {
+    else if ([PasteboardTypes::forEditing() containsObject:returnType] && _data->_page->editorState().isContentEditable) {
         // We can insert strings in any editable context.  We can insert other types, like images, only in rich edit contexts.
-        isValidReturnType = _data->_page->selectionState().isContentRichlyEditable || [returnType isEqualToString:NSStringPboardType];
+        isValidReturnType = _data->_page->editorState().isContentRichlyEditable || [returnType isEqualToString:NSStringPboardType];
     }
     if (isValidSendType && isValidReturnType)
         return self;
@@ -627,11 +626,11 @@ static void validateCommandCallback(WKStringRef commandName, bool isEnabled, int
     if (action == @selector(showGuessPanel:)) {
         if (NSMenuItem *menuItem = ::menuItem(item))
             [menuItem setTitle:contextMenuItemTagShowSpellingPanel(![[[NSSpellChecker sharedSpellChecker] spellingPanel] isVisible])];
-        return _data->_page->selectionState().isContentEditable;
+        return _data->_page->editorState().isContentEditable;
     }
 
     if (action == @selector(checkSpelling:) || action == @selector(changeSpelling:))
-        return _data->_page->selectionState().isContentEditable;
+        return _data->_page->editorState().isContentEditable;
 
     if (action == @selector(toggleContinuousSpellChecking:)) {
         bool enabled = TextChecker::isContinuousSpellCheckingAllowed();
@@ -649,47 +648,47 @@ static void validateCommandCallback(WKStringRef commandName, bool isEnabled, int
     if (action == @selector(toggleAutomaticSpellingCorrection:)) {
         bool checked = TextChecker::state().isAutomaticSpellingCorrectionEnabled;
         [menuItem(item) setState:checked ? NSOnState : NSOffState];
-        return _data->_page->selectionState().isContentEditable;
+        return _data->_page->editorState().isContentEditable;
     }
 
     if (action == @selector(orderFrontSubstitutionsPanel:)) {
         if (NSMenuItem *menuItem = ::menuItem(item))
             [menuItem setTitle:contextMenuItemTagShowSubstitutions(![[[NSSpellChecker sharedSpellChecker] substitutionsPanel] isVisible])];
-        return _data->_page->selectionState().isContentEditable;
+        return _data->_page->editorState().isContentEditable;
     }
 
     if (action == @selector(toggleSmartInsertDelete:)) {
         bool checked = _data->_page->isSmartInsertDeleteEnabled();
         [menuItem(item) setState:checked ? NSOnState : NSOffState];
-        return _data->_page->selectionState().isContentEditable;
+        return _data->_page->editorState().isContentEditable;
     }
 
     if (action == @selector(toggleAutomaticQuoteSubstitution:)) {
         bool checked = TextChecker::state().isAutomaticQuoteSubstitutionEnabled;
         [menuItem(item) setState:checked ? NSOnState : NSOffState];
-        return _data->_page->selectionState().isContentEditable;
+        return _data->_page->editorState().isContentEditable;
     }
 
     if (action == @selector(toggleAutomaticDashSubstitution:)) {
         bool checked = TextChecker::state().isAutomaticDashSubstitutionEnabled;
         [menuItem(item) setState:checked ? NSOnState : NSOffState];
-        return _data->_page->selectionState().isContentEditable;
+        return _data->_page->editorState().isContentEditable;
     }
 
     if (action == @selector(toggleAutomaticLinkDetection:)) {
         bool checked = TextChecker::state().isAutomaticLinkDetectionEnabled;
         [menuItem(item) setState:checked ? NSOnState : NSOffState];
-        return _data->_page->selectionState().isContentEditable;
+        return _data->_page->editorState().isContentEditable;
     }
 
     if (action == @selector(toggleAutomaticTextReplacement:)) {
         bool checked = TextChecker::state().isAutomaticTextReplacementEnabled;
         [menuItem(item) setState:checked ? NSOnState : NSOffState];
-        return _data->_page->selectionState().isContentEditable;
+        return _data->_page->editorState().isContentEditable;
     }
 
     if (action == @selector(uppercaseWord:) || action == @selector(lowercaseWord:) || action == @selector(capitalizeWord:))
-        return _data->_page->selectionState().selectedRangeLength && _data->_page->selectionState().isContentEditable;
+        return _data->_page->editorState().selectionIsRange && _data->_page->editorState().isContentEditable;
     
     if (action == @selector(stopSpeaking:))
         return [NSApp isSpeaking];
@@ -1028,7 +1027,7 @@ EVENT_HANDLER(scrollWheel, Wheel)
 {
     // If this is the active window or we don't have a range selection, there is no need to perform additional checks
     // and we can avoid making a synchronous call to the WebProcess.
-    if ([[self window] isKeyWindow] || _data->_page->selectionState().isNone || !_data->_page->selectionState().selectedRangeLength)
+    if ([[self window] isKeyWindow] || _data->_page->editorState().selectionIsNone || !_data->_page->editorState().selectionIsRange)
         return NO;
 
     // There's a chance that responding to this event will run a nested event loop, and
@@ -1089,7 +1088,7 @@ static const short kIOHIDEventTypeScroll = 6;
         parameters->consumedByIM = false;
 
     // As in insertText:replacementRange:, we assume that the call comes from an input method if there is marked text.
-    bool isFromInputMethod = parameters && parameters->cachedTextInputState.hasMarkedText;
+    bool isFromInputMethod = _data->_page->editorState().hasComposition;
 
     if (parameters && !isFromInputMethod)
         parameters->commands->append(KeypressCommand(NSStringFromSelector(selector)));
@@ -1122,7 +1121,7 @@ static const short kIOHIDEventTypeScroll = 6;
         parameters->consumedByIM = false;
 
     NSString *text;
-    bool isFromInputMethod = parameters && parameters->cachedTextInputState.hasMarkedText;
+    bool isFromInputMethod = _data->_page->editorState().hasComposition;
 
     if (isAttributedString) {
         // FIXME: We ignore most attributes from the string, so for example inserting from Character Palette loses font and glyph variation data.
@@ -1142,20 +1141,17 @@ static const short kIOHIDEventTypeScroll = 6;
         return;
     }
 
-    TextInputState newTextInputState;
     String eventText = text;
     eventText.replace(NSBackTabCharacter, NSTabCharacter); // same thing is done in KeyEventMac.mm in WebCore
-    bool eventHandled = _data->_page->insertText(eventText, replacementRange.location, NSMaxRange(replacementRange), newTextInputState);
+    bool eventHandled = _data->_page->insertText(eventText, replacementRange.location, NSMaxRange(replacementRange));
 
-    if (parameters) {
+    if (parameters)
         parameters->eventInterpretationHadSideEffects |= eventHandled;
-        parameters->cachedTextInputState = newTextInputState;
-    }
 }
 
 - (BOOL)_handleStyleKeyEquivalent:(NSEvent *)event
 {
-    if (!_data->_page->selectionState().isContentEditable)
+    if (!_data->_page->editorState().isContentEditable)
         return NO;
 
     if (([event modifierFlags] & NSDeviceIndependentModifierFlagsMask) != NSCommandKeyMask)
@@ -1261,9 +1257,7 @@ static const short kIOHIDEventTypeScroll = 6;
         return;
 
     parameters->executingSavedKeypressCommands = true;
-    TextInputState newTextInputState;
-    parameters->eventInterpretationHadSideEffects |= _data->_page->executeKeypressCommands(*parameters->commands, newTextInputState);
-    parameters->cachedTextInputState = newTextInputState;
+    parameters->eventInterpretationHadSideEffects |= _data->_page->executeKeypressCommands(*parameters->commands);
     parameters->commands->clear();
     parameters->executingSavedKeypressCommands = false;
 }
@@ -1276,9 +1270,7 @@ static const short kIOHIDEventTypeScroll = 6;
         return [[WKTextInputWindowController sharedTextInputWindowController] inputContext];
 
     // Disable text input machinery when in non-editable content. An invisible inline input area affects performance, and can prevent Expose from working.
-    if (parameters && !parameters->cachedTextInputState.selectionIsEditable)
-        return nil;
-    if (!_data->_page->selectionState().isContentEditable)
+    if (!_data->_page->editorState().isContentEditable)
         return nil;
 
     return [super inputContext];
@@ -1307,11 +1299,11 @@ static const short kIOHIDEventTypeScroll = 6;
 
     BOOL result;
     if (parameters) {
-        result = parameters->cachedTextInputState.hasMarkedText;
+        result = _data->_page->editorState().hasComposition;
         if (result) {
             // A saved command can confirm a composition, but it cannot start a new one.
             [self _executeSavedKeypressCommands];
-            result = parameters->cachedTextInputState.hasMarkedText;
+            result = _data->_page->editorState().hasComposition;
         }
     } else {
         uint64_t location;
@@ -1338,10 +1330,7 @@ static const short kIOHIDEventTypeScroll = 6;
         parameters->consumedByIM = false;
     }
 
-    TextInputState newTextInputState;
-    _data->_page->confirmComposition(newTextInputState);
-    if (parameters)
-        parameters->cachedTextInputState = newTextInputState;
+    _data->_page->confirmComposition();
 }
 
 - (NSArray *)validAttributesForMarkedText
@@ -1409,24 +1398,19 @@ static void extractUnderlines(NSAttributedString *string, Vector<CompositionUnde
     } else
         text = string;
 
-    TextInputState newTextInputState;
-    if (_data->_page->selectionState().isInPasswordField) {
+    if (_data->_page->editorState().isInPasswordField) {
         // In password fields, we only allow ASCII dead keys, and don't allow inline input, matching NSSecureTextInputField.
         // Allowing ASCII dead keys is necessary to enable full Roman input when using a Vietnamese keyboard.
-        ASSERT(!_data->_page->selectionState().hasComposition);
+        ASSERT(!_data->_page->editorState().hasComposition);
         [[super inputContext] discardMarkedText]; // Inform the input method that we won't have an inline input area despite having been asked to.
         if ([text length] == 1 && [[text decomposedStringWithCanonicalMapping] characterAtIndex:0] < 0x80) {
-            _data->_page->insertText(text, replacementRange.location, NSMaxRange(replacementRange), newTextInputState);
-            if (parameters)
-                parameters->cachedTextInputState = newTextInputState;
+            _data->_page->insertText(text, replacementRange.location, NSMaxRange(replacementRange));
         } else
             NSBeep();
         return;
     }
 
-    _data->_page->setComposition(text, underlines, newSelRange.location, NSMaxRange(newSelRange), replacementRange.location, NSMaxRange(replacementRange), newTextInputState);
-    if (parameters)
-        parameters->cachedTextInputState = newTextInputState;
+    _data->_page->setComposition(text, underlines, newSelRange.location, NSMaxRange(newSelRange), replacementRange.location, NSMaxRange(replacementRange));
 }
 
 - (NSRange)markedRange
@@ -1445,13 +1429,12 @@ static void extractUnderlines(NSAttributedString *string, Vector<CompositionUnde
 {
     [self _executeSavedKeypressCommands];
 
-    WKViewInterpretKeyEventsParameters* parameters = _data->_interpretKeyEventsParameters;
-    if (parameters && !parameters->cachedTextInputState.selectionIsEditable) {
+    if (!_data->_page->editorState().isContentEditable) {
         LOG(TextInput, "attributedSubstringFromRange:(%u, %u) -> nil", nsRange.location, nsRange.length);
         return nil;
     }
 
-    if (_data->_page->selectionState().isInPasswordField)
+    if (_data->_page->editorState().isInPasswordField)
         return nil;
 
     AttributedString result;
@@ -2012,7 +1995,7 @@ static void drawPageBackground(CGContextRef context, WebPageProxy* page, const I
     _data->_keyDownEventBeingResent = nullptr;
 }
 
-- (BOOL)_interpretKeyEvent:(NSEvent *)event withCachedTextInputState:(const TextInputState&)cachedTextInputState savingCommandsTo:(Vector<WebCore::KeypressCommand>&)commands
+- (BOOL)_interpretKeyEvent:(NSEvent *)event savingCommandsTo:(Vector<WebCore::KeypressCommand>&)commands
 {
     ASSERT(!_data->_interpretKeyEventsParameters);
     ASSERT(commands.isEmpty());
@@ -2021,7 +2004,6 @@ static void drawPageBackground(CGContextRef context, WebPageProxy* page, const I
         return NO;
 
     WKViewInterpretKeyEventsParameters parameters;
-    parameters.cachedTextInputState = cachedTextInputState;
     parameters.eventInterpretationHadSideEffects = false;
     parameters.executingSavedKeypressCommands = false;
     // We assume that an input method has consumed the event, and only change this assumption if one of the NSTextInput methods is called.
@@ -2331,7 +2313,7 @@ static void drawPageBackground(CGContextRef context, WebPageProxy* page, const I
     }
     // WKView has a single input context for all editable areas (except for plug-ins).
     NSTextInputContext *context = [super inputContext];
-    bool isInPasswordField = _data->_page->selectionState().isInPasswordField;
+    bool isInPasswordField = _data->_page->editorState().isInPasswordField;
 
     if (isInPasswordField) {
         if (!_data->_inSecureInputState)
