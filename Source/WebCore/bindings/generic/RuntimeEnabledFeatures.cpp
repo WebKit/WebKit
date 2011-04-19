@@ -142,4 +142,8 @@ bool RuntimeEnabledFeatures::openDatabaseSyncEnabled()
 }
 #endif
 
+#if ENABLE(QUOTA)
+bool RuntimeEnabledFeatures::isQuotaEnabled = false;
+#endif
+
 } // namespace WebCore

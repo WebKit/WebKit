@@ -786,7 +786,9 @@ module window {
 
         readonly attribute [Conditional=BLOB] DOMURL webkitURL;
 
-        readonly attribute [Conditional=QUOTA] StorageInfo webkitStorageInfo;
+#if defined(ENABLE_QUOTA) && ENABLE_QUOTA
+        readonly attribute [EnabledAtRuntime=Quota] StorageInfo webkitStorageInfo;
+#endif
 
 #endif // defined(LANGUAGE_JAVASCRIPT)
 

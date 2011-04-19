@@ -320,4 +320,20 @@ bool WebRuntimeFeatures::isJavaScriptI18NAPIEnabled()
 #endif
 }
 
+void WebRuntimeFeatures::enableQuota(bool enable)
+{
+#if ENABLE(QUOTA)
+    RuntimeEnabledFeatures::setQuotaEnabled(enable);
+#endif
+}
+
+bool WebRuntimeFeatures::isQuotaEnabled()
+{
+#if ENABLE(QUOTA)
+    return RuntimeEnabledFeatures::quotaEnabled();
+#else
+    return false;
+#endif
+}
+
 } // namespace WebKit

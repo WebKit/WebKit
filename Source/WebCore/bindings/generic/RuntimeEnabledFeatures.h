@@ -150,6 +150,11 @@ public:
     static bool webkitGetUserMediaEnabled() { return isMediaStreamEnabled; }
 #endif
 
+#if ENABLE(QUOTA)
+    static bool quotaEnabled() { return isQuotaEnabled; }
+    static void setQuotaEnabled(bool isEnabled) { isQuotaEnabled = isEnabled; }
+#endif
+
 private:
     // Never instantiate.
     RuntimeEnabledFeatures() { }
@@ -181,6 +186,10 @@ private:
 
 #if ENABLE(MEDIA_STREAM)
     static bool isMediaStreamEnabled;
+#endif
+
+#if ENABLE(QUOTA)
+    static bool isQuotaEnabled;
 #endif
 };
 

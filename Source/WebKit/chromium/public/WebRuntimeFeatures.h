@@ -100,6 +100,9 @@ public:
     WEBKIT_API static void enableJavaScriptI18NAPI(bool);
     WEBKIT_API static bool isJavaScriptI18NAPIEnabled();
 
+    WEBKIT_API static void enableQuota(bool);
+    WEBKIT_API static bool isQuotaEnabled();
+
 private:
     WebRuntimeFeatures();
 };

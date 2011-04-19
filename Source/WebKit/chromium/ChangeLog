@@ -1,3 +1,16 @@
+2011-04-19  Kinuko Yasuda  <kinuko@chromium.org>
+
+        Reviewed by David Levin.
+
+        [Chromium] Enable QUOTA API at runtime if enable-quota flag is given
+        https://bugs.webkit.org/show_bug.cgi?id=58784
+
+        * features.gypi: Added ENABLE_QUOTA=1.
+        * public/WebRuntimeFeatures.h:
+        * src/WebRuntimeFeatures.cpp:
+        (WebKit::WebRuntimeFeatures::enableQuota): Added.
+        (WebKit::WebRuntimeFeatures::isQuotaEnabled): Added.
+
 2011-04-19  John Gregg  <johnnyg@google.com>
 
         Reviewed by Darin Fisher.
