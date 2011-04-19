@@ -600,9 +600,13 @@ TestSuite.prototype.testNetworkTiming = function()
 
     function finishResource(resource, finishTime)
     {
-        test.assertTrue(resource.timing.receiveHeadersEnd - resource.timing.connectStart >= 100, "Time between connectStart and receiveHeadersEnd should be more than 100ms.");        
-        test.assertTrue(resource.endTime - resource.responseReceivedTime >= 0.1, "Time between endTime and responseReceivedTime should be more than 100ms.");        
-        test.assertTrue(resource.responseReceivedTime - resource.startTime >= 0.1, "Time between responseReceivedTime and startTime should be more than 100ms.");        
+        test.assertTrue(resource.timing.receiveHeadersEnd - resource.timing.connectStart >= 100, 
+                        "Time between receiveHeadersEnd and connectStart should be >=100ms, but was " +
+                        "receiveHeadersEnd=" + resource.timing.receiveHeadersEnd + ", connectStart=" + resource.timing.connectStart + ".");
+        test.assertTrue(resource.endTime - resource.startTime >= 0.2, 
+                        "Time between endTime and startTime should be >=200ms, but was " +
+                        "endtime=" + resource.endTime + ", startTime=" + resource.startTime + ".");
+        
         test.releaseControl();
     }
     
