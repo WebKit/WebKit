@@ -32,9 +32,10 @@
 #include "DumpRenderTree.h"
 #include "GtkVersioning.h"
 #include "PixelDumpSupportCairo.h"
+#include "WebCoreSupport/DumpRenderTreeSupportGtk.h"
 #include <webkit/webkit.h>
 
-PassRefPtr<BitmapContext> createBitmapContextFromWebView(bool, bool, bool, bool)
+PassRefPtr<BitmapContext> createBitmapContextFromWebView(bool, bool, bool, bool drawSelectionRect)
 {
     WebKitWebView* view = webkit_web_frame_get_web_view(mainFrame);
     GtkWidget* viewContainer = gtk_widget_get_parent(GTK_WIDGET(view));
@@ -49,6 +50,7 @@ PassRefPtr<BitmapContext> createBitmapContextFromWebView(bool, bool, bool, bool)
 
     cairo_surface_t* imageSurface = cairo_image_surface_create(CAIRO_FORMAT_ARGB32, width, height);
     cairo_t* context = cairo_create(imageSurface);
+
 #ifdef GTK_API_VERSION_2
     gdk_cairo_set_source_pixmap(context, pixmap, 0, 0);
     cairo_paint(context);
@@ -56,6 +58,16 @@ PassRefPtr<BitmapContext> createBitmapContextFromWebView(bool, bool, bool, bool)
 #else
     gtk_widget_draw(viewContainer, context);
 #endif
+
+    if (drawSelectionRect) {
+        GdkRectangle rectangle;
+        DumpRenderTreeSupportGtk::rectangleForSelection(mainFrame, &rectangle);
+
+        cairo_set_line_width(context, 1.0);
+        cairo_rectangle(context, rectangle.x, rectangle.y, rectangle.width, rectangle.height);
+        cairo_set_source_rgba(context, 1.0, 0.0, 0.0, 1.0);
+        cairo_stroke(context);
+    }
 
     return BitmapContext::createByAdoptingBitmapAndContext(0, context);
 }

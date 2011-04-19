@@ -748,3 +748,16 @@ void DumpRenderTreeSupportGtk::setValueForUser(JSContextRef context, JSValueRef 
     JSStringGetUTF8CString(value, valueBuffer.get(), bufferSize);
     inputElement->setValueForUser(String::fromUTF8(valueBuffer.get()));
 }
+
+void DumpRenderTreeSupportGtk::rectangleForSelection(WebKitWebFrame* frame, GdkRectangle* rectangle)
+{
+    Frame* coreFrame = core(frame);
+    if (!coreFrame)
+        return;
+
+    IntRect bounds = enclosingIntRect(coreFrame->selection()->bounds());
+    rectangle->x = bounds.x();
+    rectangle->y = bounds.y();
+    rectangle->width = bounds.width();
+    rectangle->height = bounds.height();
+}

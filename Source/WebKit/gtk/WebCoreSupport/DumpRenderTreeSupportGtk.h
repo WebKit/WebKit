@@ -98,6 +98,7 @@ public:
     static bool selectedRange(WebKitWebView*, int* start, int* end);
     static double defaultMinimumTimerInterval(); // Not really tied to WebView
     static void setMinimumTimerInterval(WebKitWebView*, double);
+    static void rectangleForSelection(WebKitWebFrame*, GdkRectangle*);
 
     // Accessibility
     static void incrementAccessibilityValue(AtkObject*);

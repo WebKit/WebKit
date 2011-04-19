@@ -1,3 +1,82 @@
+2011-04-18  Zan Dobersek  <zandobersek@gmail.com>
+
+        Reviewed by Martin Robinson.
+
+        Update pixel results for tests that draw the selection rectangle.
+
+        * platform/gtk/editing/selection/4402375-expected.checksum:
+        * platform/gtk/editing/selection/4402375-expected.png:
+        * platform/gtk/editing/selection/image-before-linebreak-expected.checksum:
+        * platform/gtk/editing/selection/image-before-linebreak-expected.png:
+        * platform/gtk/editing/selection/replaced-boundaries-1-expected.checksum:
+        * platform/gtk/editing/selection/replaced-boundaries-1-expected.png:
+        * platform/gtk/editing/selection/replaced-boundaries-2-expected.checksum:
+        * platform/gtk/editing/selection/replaced-boundaries-2-expected.png:
+        * platform/gtk/editing/selection/replaced-boundaries-3-expected.checksum:
+        * platform/gtk/editing/selection/replaced-boundaries-3-expected.png:
+        * platform/gtk/editing/selection/transformed-selection-rects-expected.checksum:
+        * platform/gtk/editing/selection/transformed-selection-rects-expected.png:
+        * platform/gtk/svg/text/foreignObject-text-clipping-bug-expected.checksum:
+        * platform/gtk/svg/text/foreignObject-text-clipping-bug-expected.png:
+        * platform/gtk/svg/text/selection-doubleclick-expected.checksum:
+        * platform/gtk/svg/text/selection-doubleclick-expected.png:
+        * platform/gtk/svg/text/selection-tripleclick-expected.checksum:
+        * platform/gtk/svg/text/selection-tripleclick-expected.png:
+        * platform/gtk/svg/text/text-align-01-b-expected.checksum:
+        * platform/gtk/svg/text/text-align-01-b-expected.png:
+        * platform/gtk/svg/text/text-align-02-b-expected.checksum:
+        * platform/gtk/svg/text/text-align-02-b-expected.png:
+        * platform/gtk/svg/text/text-align-03-b-expected.checksum:
+        * platform/gtk/svg/text/text-align-03-b-expected.png:
+        * platform/gtk/svg/text/text-align-04-b-expected.checksum:
+        * platform/gtk/svg/text/text-align-04-b-expected.png:
+        * platform/gtk/svg/text/text-align-05-b-expected.checksum:
+        * platform/gtk/svg/text/text-align-05-b-expected.png:
+        * platform/gtk/svg/text/text-align-06-b-expected.checksum:
+        * platform/gtk/svg/text/text-align-06-b-expected.png:
+        * platform/gtk/svg/text/text-altglyph-01-b-expected.checksum:
+        * platform/gtk/svg/text/text-altglyph-01-b-expected.png:
+        * platform/gtk/svg/text/text-deco-01-b-expected.checksum:
+        * platform/gtk/svg/text/text-deco-01-b-expected.png:
+        * platform/gtk/svg/text/text-fonts-01-t-expected.checksum:
+        * platform/gtk/svg/text/text-fonts-01-t-expected.png:
+        * platform/gtk/svg/text/text-fonts-02-t-expected.checksum:
+        * platform/gtk/svg/text/text-fonts-02-t-expected.png:
+        * platform/gtk/svg/text/text-intro-05-t-expected.checksum:
+        * platform/gtk/svg/text/text-intro-05-t-expected.png:
+        * platform/gtk/svg/text/text-path-01-b-expected.checksum:
+        * platform/gtk/svg/text/text-path-01-b-expected.png:
+        * platform/gtk/svg/text/text-spacing-01-b-expected.checksum:
+        * platform/gtk/svg/text/text-spacing-01-b-expected.png:
+        * platform/gtk/svg/text/text-text-01-b-expected.checksum:
+        * platform/gtk/svg/text/text-text-01-b-expected.png:
+        * platform/gtk/svg/text/text-text-03-b-expected.checksum:
+        * platform/gtk/svg/text/text-text-03-b-expected.png:
+        * platform/gtk/svg/text/text-text-04-t-expected.checksum:
+        * platform/gtk/svg/text/text-text-04-t-expected.png:
+        * platform/gtk/svg/text/text-text-05-t-expected.checksum:
+        * platform/gtk/svg/text/text-text-05-t-expected.png:
+        * platform/gtk/svg/text/text-text-06-t-expected.checksum:
+        * platform/gtk/svg/text/text-text-06-t-expected.png:
+        * platform/gtk/svg/text/text-text-07-t-expected.checksum:
+        * platform/gtk/svg/text/text-text-07-t-expected.png:
+        * platform/gtk/svg/text/text-text-08-b-expected.checksum:
+        * platform/gtk/svg/text/text-text-08-b-expected.png:
+        * platform/gtk/svg/text/text-tref-01-b-expected.checksum:
+        * platform/gtk/svg/text/text-tref-01-b-expected.png:
+        * platform/gtk/svg/text/text-tselect-01-b-expected.checksum:
+        * platform/gtk/svg/text/text-tselect-01-b-expected.png:
+        * platform/gtk/svg/text/text-tselect-02-f-expected.checksum:
+        * platform/gtk/svg/text/text-tselect-02-f-expected.png:
+        * platform/gtk/svg/text/text-tspan-01-b-expected.checksum:
+        * platform/gtk/svg/text/text-tspan-01-b-expected.png:
+        * platform/gtk/svg/text/text-ws-01-t-expected.checksum:
+        * platform/gtk/svg/text/text-ws-01-t-expected.png:
+        * platform/gtk/svg/text/text-ws-02-t-expected.checksum:
+        * platform/gtk/svg/text/text-ws-02-t-expected.png:
+        * platform/gtk/svg/text/textPathBoundsBug-expected.checksum:
+        * platform/gtk/svg/text/textPathBoundsBug-expected.png:
+
 2011-04-18  Mike Reed  <reed@google.com>
 
         Reviewed by Kenneth Russell.
