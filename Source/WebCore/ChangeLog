@@ -1,3 +1,14 @@
+2011-04-19  Herczeg Zoltan  <zherczeg@webkit.org>
+
+        Build fix.
+
+        LEFilter change doesn't compile on ARM neon targets
+        https://bugs.webkit.org/show_bug.cgi?id=58671
+
+        Thanks for Charlie Lee to fixing this.
+
+        * WebCore.gypi:
+
 2011-04-19  Daniel Bates  <dbates@webkit.org>
 
         Attempt to fix the Qt Linux Release Minimal build after changeset 84225
