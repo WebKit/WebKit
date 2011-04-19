@@ -240,6 +240,8 @@ function tableRows()
         if (actual == 'PASS' && (!g_results.uses_expectations_file || expected == 'PASS'))
           continue;
 
+        // FIXME: put unexpected passes in a separate table.
+
         var row = '<td>' + testLink(test) + '</td>';
         var test_prefix = stripExtension(test);
 
@@ -287,7 +289,14 @@ function tableRows()
         if (g_results.uses_expectations_file)
           row += '<td>' + expected + '</td>';
 
-        var isExpected = actual == 'SKIP' || (g_results.uses_expectations_file && expected == actual);
+        var isExpected = actual == 'SKIP';
+        if (!isExpected && g_results.uses_expectations_file) {
+            var expectedArray = expected.split(' ');
+            if (expectedArray.indexOf(actual) != -1)
+                isExpected = true;
+            else if (expectedArray.indexOf('FAIL') != -1)
+                isExpected = actual == 'IMAGE' || actual == 'TEXT' || actual == 'IMAGE+TEXT';
+        }
         html += '<tbody class="' + (isExpected ? 'expected' : '') + '"><tr>' + row + '</tr></tbody>';
     }
     return html;

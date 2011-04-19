@@ -1,5 +1,11 @@
 2011-04-19  Ojan Vafai  <ojan@chromium.org>
 
+        Fix check for whether a failure is expected to deal with
+        flaky tests and FAIL expectations.
+        * Scripts/webkitpy/layout_tests/layout_package/json_results.html:
+
+2011-04-19  Ojan Vafai  <ojan@chromium.org>
+
         Reviewed by Eric Seidel.
 
         don't show missing text results for tests that only dump image results
