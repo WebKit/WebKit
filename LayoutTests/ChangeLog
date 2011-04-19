@@ -1,3 +1,31 @@
+2011-04-19  Mario Sanchez Prada  <msanchez@igalia.com>
+
+        Unreviewed, added new baselines for the GTK port.
+
+        Added missing baselines to GTK after revisions 83998, 84092 and 84180.
+
+        * platform/gtk/fast/blockflow/border-styles-vertical-lr-expected.checksum: Added.
+        * platform/gtk/fast/blockflow/border-styles-vertical-lr-expected.png: Added.
+        * platform/gtk/fast/blockflow/border-styles-vertical-lr-expected.txt: Added.
+        * platform/gtk/fast/blockflow/border-styles-vertical-rl-expected.checksum: Added.
+        * platform/gtk/fast/blockflow/border-styles-vertical-rl-expected.png: Added.
+        * platform/gtk/fast/blockflow/border-styles-vertical-rl-expected.txt: Added.
+        * platform/gtk/fast/borders/border-styles-split-expected.checksum: Added.
+        * platform/gtk/fast/borders/border-styles-split-expected.png: Added.
+        * platform/gtk/fast/borders/border-styles-split-expected.txt: Added.
+        * platform/gtk/fast/borders/mixed-border-styles-expected.checksum: Added.
+        * platform/gtk/fast/borders/mixed-border-styles-expected.png: Added.
+        * platform/gtk/fast/borders/mixed-border-styles-expected.txt: Added.
+        * platform/gtk/fast/borders/mixed-border-styles-radius-expected.checksum: Added.
+        * platform/gtk/fast/borders/mixed-border-styles-radius-expected.png: Added.
+        * platform/gtk/fast/borders/mixed-border-styles-radius-expected.txt: Added.
+        * platform/gtk/fast/borders/mixed-border-styles-radius2-expected.checksum: Added.
+        * platform/gtk/fast/borders/mixed-border-styles-radius2-expected.png: Added.
+        * platform/gtk/fast/borders/mixed-border-styles-radius2-expected.txt: Added.
+        * platform/gtk/fast/borders/webkit-border-radius-expected.checksum: Added.
+        * platform/gtk/fast/borders/webkit-border-radius-expected.png: Added.
+        * platform/gtk/fast/borders/webkit-border-radius-expected.txt: Added.
+
 2011-04-18  Taiju TSUIKI  <develop@tzik.jp>
 
         Reviewed by Darin Fisher.
