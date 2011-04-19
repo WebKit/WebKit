@@ -36,6 +36,14 @@ class WorkItems(db.Model, QueuePropertyMixin):
     item_ids = db.ListProperty(int)
     date = db.DateTimeProperty(auto_now_add=True)
 
+    @classmethod
+    def key_for_queue(cls, queue_name):
+        return "work-items-%s" % (queue_name)
+
+    @classmethod
+    def lookup_by_queue(cls, queue_name):
+        return cls.get_or_insert(key_name=cls.key_for_queue(queue_name), queue_name=queue_name)
+
     def display_position_for_attachment(self, attachment_id):
         """Returns a 1-based index corresponding to the position
         of the attachment_id in the queue.  If the attachment is

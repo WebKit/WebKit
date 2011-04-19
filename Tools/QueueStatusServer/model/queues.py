@@ -70,13 +70,11 @@ class Queue(object):
         return self._name
 
     def work_items(self):
-        key_name = "work-items-%s" % (self._name)
-        return WorkItems.get_or_insert(key_name=key_name, queue_name=self._name)
+        return WorkItems.lookup_by_queue(self._name)
 
     # FIXME: active_work_items is a bad name for this lock-table.
     def active_work_items(self):
-        key_name = "active-work-items-%s" % (self._name)
-        return ActiveWorkItems.get_or_insert(key_name=key_name, queue_name=self._name)
+        return ActiveWorkItems.lookup_by_queue(self._name)
 
     def _caplitalize_after_dash(self, string):
         return "-".join([word[0].upper() + word[1:] for word in string.split("-")])

@@ -61,6 +61,14 @@ class ActiveWorkItems(db.Model, QueuePropertyMixin):
         nonexpired_pairs = [pair for pair in self._item_time_pairs() if pair[0] != item_id]
         self._set_item_time_pairs(nonexpired_pairs)
 
+    @classmethod
+    def key_for_queue(cls, queue_name):
+        return "active-work-items-%s" % (queue_name)
+
+    @classmethod
+    def lookup_by_queue(cls, queue_name):
+        return cls.get_or_insert(key_name=cls.key_for_queue(queue_name), queue_name=queue_name)
+
     @staticmethod
     def _expire_item(key, item_id):
         active_work_items = db.get(key)

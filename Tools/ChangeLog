@@ -2,6 +2,19 @@
 
         Reviewed by Adam Barth.
 
+        test-webkitpy should run the ActiveWorkItems tests
+        https://bugs.webkit.org/show_bug.cgi?id=58859
+
+        Also make the unit tests pass. :)
+
+        * QueueStatusServer/model/activeworkitems.py:
+        * QueueStatusServer/model/queue.py:
+        * QueueStatusServer/model/workitems.py:
+
+2011-04-18  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Adam Barth.
+
         queues.webkit.org should show trailing-days pass counts for queues
         https://bugs.webkit.org/show_bug.cgi?id=58812
 

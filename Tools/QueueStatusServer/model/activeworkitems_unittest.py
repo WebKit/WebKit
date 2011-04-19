@@ -28,15 +28,27 @@
 
 import unittest
 from datetime import datetime
+from google.appengine.ext import testbed
 
 from model.activeworkitems import ActiveWorkItems
 
 
 class ActiveWorkItemsTest(unittest.TestCase):
+
+    def setUp(self):
+        self.testbed = testbed.Testbed()
+        self.testbed.activate()
+        self.testbed.init_datastore_v3_stub()
+        self.testbed.init_memcache_stub()
+
+    def tearDown(self):
+        self.testbed.deactivate()
+
     def test_basic(self):
-        items = ActiveWorkItems()
+        items = ActiveWorkItems.lookup_by_queue("test-queue")
         queued_items = [1, 2]
-        time = datetime.now()
+        # db.Model only stores dates to second resolution, so we use an explicit datetime without milliseconds.
+        time = datetime(2011, 4, 18, 18, 50, 44)
         self.assertEqual(items.next_item(queued_items, time), 1)
         self.assertEqual(items.next_item([1], time), None)
         self.assertEqual(items.next_item([], time), None)
@@ -45,8 +57,8 @@ class ActiveWorkItemsTest(unittest.TestCase):
         self.assertEqual(items.time_for_item(2), None)
 
         items.expire_item(1)
+        # expire_item uses a transaction so it doesn't take effect on the current object.
+        self.assertEqual(items.time_for_item(1), time)
+        # If we look up the saved object, we see it's been updated.
+        items = ActiveWorkItems.lookup_by_queue("test-queue")
         self.assertEqual(items.time_for_item(1), None)
-
-
-if __name__ == '__main__':
-    unittest.main()
