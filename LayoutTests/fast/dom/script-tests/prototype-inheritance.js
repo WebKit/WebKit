@@ -26,7 +26,7 @@ var skippedProperties = [
     "DeviceOrientationEvent",
     "DeviceMotionEvent",
     "TEMPORARY", "PERSISTENT",
-    "Flags",
+    "WebKitFlags",
     "v8Locale",
     // Ignore this property because it only appears in debug builds.
     "jscprint"

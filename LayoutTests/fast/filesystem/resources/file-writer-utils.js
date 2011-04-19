@@ -161,13 +161,12 @@ function setFileContents(fileEntry, fileWriter, contents, onSuccess) {
 
 function setupAndRunTest(size, testName, testFunc)
 {
-    if (!requestFileSystem) {
+    if (!webkitRequestFileSystem) {
         debug("This test requires FileSystem API support.");
         return;
     }
     debug("starting test");
-    requestFileSystem(TEMPORARY, size, function(fs) {
+    webkitRequestFileSystem(TEMPORARY, size, function(fs) {
         createEmptyFile(fs, testName, testFunc);
     }, onError);
 }
-

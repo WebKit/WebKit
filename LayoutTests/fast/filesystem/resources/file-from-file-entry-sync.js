@@ -3,7 +3,7 @@ importScripts('fs-worker-common.js');
 
 description("Obtaining File from FileEntrySync.");
 
-var fileSystem = requestFileSystemSync(this.TEMPORARY, 100);
+var fileSystem = webkitRequestFileSystemSync(this.TEMPORARY, 100);
 removeAllInDirectorySync(fileSystem.root);
 
 var testFileName = '/testFileEntry.txt';

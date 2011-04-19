@@ -5430,7 +5430,7 @@
 				>
 			</File>
 			<File
-				RelativePath="$(ConfigurationBuildDir)\obj\$(ProjectName)\DerivedSources\JSFlags.cpp"
+				RelativePath="$(ConfigurationBuildDir)\obj\$(ProjectName)\DerivedSources\JSWebKitFlags.cpp"
 				>
 				<FileConfiguration
 					Name="Debug|Win32"
@@ -5482,7 +5482,7 @@
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath="$(ConfigurationBuildDir)\obj\$(ProjectName)\DerivedSources\JSFlags.h"
+				RelativePath="$(ConfigurationBuildDir)\obj\$(ProjectName)\DerivedSources\JSWebKitFlags.h"
 				>
 			</File>
 			<File
@@ -51722,7 +51722,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\fileapi\Flags.h"
+				RelativePath="..\fileapi\WebKitFlags.h"
 				>
 			</File>
 			<File

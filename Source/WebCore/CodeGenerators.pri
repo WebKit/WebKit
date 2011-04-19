@@ -184,7 +184,7 @@ IDL_BINDINGS += \
     fileapi/FileSystemCallback.idl \
     fileapi/FileWriter.idl \
     fileapi/FileWriterCallback.idl \
-    fileapi/Flags.idl \
+    fileapi/WebKitFlags.idl \
     fileapi/Metadata.idl \
     fileapi/MetadataCallback.idl \
     fileapi/WebKitBlobBuilder.idl \

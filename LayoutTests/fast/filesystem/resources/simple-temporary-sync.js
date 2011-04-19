@@ -5,7 +5,7 @@ if (this.importScripts) {
 
 description("requestFileSystemSync TEMPORARY test.");
 
-var fileSystem = requestFileSystemSync(TEMPORARY, 100);
+var fileSystem = webkitRequestFileSystemSync(TEMPORARY, 100);
 
 debug("Successfully obtained TEMPORARY FileSystem:" + fileSystem.name);
 shouldBeTrue("fileSystem.name.length > 0");

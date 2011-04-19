@@ -2859,7 +2859,7 @@ contains(DEFINES, ENABLE_FILE_SYSTEM=1) {
         fileapi/FileWriterCallback.h \
         fileapi/FileWriterClient.h \
         fileapi/FileWriterSync.h \
-        fileapi/Flags.h \
+        fileapi/WebKitFlags.h \
         fileapi/LocalFileSystem.h \
         fileapi/Metadata.h \
         fileapi/MetadataCallback.h \

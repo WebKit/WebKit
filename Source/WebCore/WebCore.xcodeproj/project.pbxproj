@@ -2728,7 +2728,7 @@
 		89878563122CA064003AABDA /* FileSystemCallback.h in Headers */ = {isa = PBXBuildFile; fileRef = 8987854A122CA064003AABDA /* FileSystemCallback.h */; };
 		89878564122CA064003AABDA /* FileSystemCallbacks.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8987854B122CA064003AABDA /* FileSystemCallbacks.cpp */; };
 		89878565122CA064003AABDA /* FileSystemCallbacks.h in Headers */ = {isa = PBXBuildFile; fileRef = 8987854C122CA064003AABDA /* FileSystemCallbacks.h */; };
-		89878566122CA064003AABDA /* Flags.h in Headers */ = {isa = PBXBuildFile; fileRef = 8987854D122CA064003AABDA /* Flags.h */; };
+		89878566122CA064003AABDA /* WebKitFlags.h in Headers */ = {isa = PBXBuildFile; fileRef = 8987854D122CA064003AABDA /* WebKitFlags.h */; };
 		89878567122CA064003AABDA /* LocalFileSystem.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8987854E122CA064003AABDA /* LocalFileSystem.cpp */; };
 		89878568122CA064003AABDA /* LocalFileSystem.h in Headers */ = {isa = PBXBuildFile; fileRef = 8987854F122CA064003AABDA /* LocalFileSystem.h */; };
 		89878569122CA064003AABDA /* Metadata.h in Headers */ = {isa = PBXBuildFile; fileRef = 89878550122CA064003AABDA /* Metadata.h */; };
@@ -2753,8 +2753,8 @@
 		898785B1122CA2A7003AABDA /* JSFileEntry.h in Headers */ = {isa = PBXBuildFile; fileRef = 8987859B122CA2A7003AABDA /* JSFileEntry.h */; };
 		898785B2122CA2A7003AABDA /* JSFileSystemCallback.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8987859C122CA2A7003AABDA /* JSFileSystemCallback.cpp */; };
 		898785B3122CA2A7003AABDA /* JSFileSystemCallback.h in Headers */ = {isa = PBXBuildFile; fileRef = 8987859D122CA2A7003AABDA /* JSFileSystemCallback.h */; };
-		898785B4122CA2A7003AABDA /* JSFlags.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8987859E122CA2A7003AABDA /* JSFlags.cpp */; };
-		898785B5122CA2A7003AABDA /* JSFlags.h in Headers */ = {isa = PBXBuildFile; fileRef = 8987859F122CA2A7003AABDA /* JSFlags.h */; };
+		898785B4122CA2A7003AABDA /* JSWebKitFlags.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8987859E122CA2A7003AABDA /* JSWebKitFlags.cpp */; };
+		898785B5122CA2A7003AABDA /* JSWebKitFlags.h in Headers */ = {isa = PBXBuildFile; fileRef = 8987859F122CA2A7003AABDA /* JSWebKitFlags.h */; };
 		898785B6122CA2A7003AABDA /* JSMetadata.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 898785A0122CA2A7003AABDA /* JSMetadata.cpp */; };
 		898785B7122CA2A7003AABDA /* JSMetadata.h in Headers */ = {isa = PBXBuildFile; fileRef = 898785A1122CA2A7003AABDA /* JSMetadata.h */; };
 		898785B8122CA2A7003AABDA /* JSMetadataCallback.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 898785A2122CA2A7003AABDA /* JSMetadataCallback.cpp */; };
@@ -9292,7 +9292,7 @@
 		8987854A122CA064003AABDA /* FileSystemCallback.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FileSystemCallback.h; path = fileapi/FileSystemCallback.h; sourceTree = "<group>"; };
 		8987854B122CA064003AABDA /* FileSystemCallbacks.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = FileSystemCallbacks.cpp; path = fileapi/FileSystemCallbacks.cpp; sourceTree = "<group>"; };
 		8987854C122CA064003AABDA /* FileSystemCallbacks.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FileSystemCallbacks.h; path = fileapi/FileSystemCallbacks.h; sourceTree = "<group>"; };
-		8987854D122CA064003AABDA /* Flags.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Flags.h; path = fileapi/Flags.h; sourceTree = "<group>"; };
+		8987854D122CA064003AABDA /* WebKitFlags.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WebKitFlags.h; path = fileapi/WebKitFlags.h; sourceTree = "<group>"; };
 		8987854E122CA064003AABDA /* LocalFileSystem.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = LocalFileSystem.cpp; path = fileapi/LocalFileSystem.cpp; sourceTree = "<group>"; };
 		8987854F122CA064003AABDA /* LocalFileSystem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = LocalFileSystem.h; path = fileapi/LocalFileSystem.h; sourceTree = "<group>"; };
 		89878550122CA064003AABDA /* Metadata.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Metadata.h; path = fileapi/Metadata.h; sourceTree = "<group>"; };
@@ -9317,8 +9317,8 @@
 		8987859B122CA2A7003AABDA /* JSFileEntry.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSFileEntry.h; sourceTree = "<group>"; };
 		8987859C122CA2A7003AABDA /* JSFileSystemCallback.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSFileSystemCallback.cpp; sourceTree = "<group>"; };
 		8987859D122CA2A7003AABDA /* JSFileSystemCallback.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSFileSystemCallback.h; sourceTree = "<group>"; };
-		8987859E122CA2A7003AABDA /* JSFlags.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSFlags.cpp; sourceTree = "<group>"; };
-		8987859F122CA2A7003AABDA /* JSFlags.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSFlags.h; sourceTree = "<group>"; };
+		8987859E122CA2A7003AABDA /* JSWebKitFlags.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSWebKitFlags.cpp; sourceTree = "<group>"; };
+		8987859F122CA2A7003AABDA /* JSWebKitFlags.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSWebKitFlags.h; sourceTree = "<group>"; };
 		898785A0122CA2A7003AABDA /* JSMetadata.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSMetadata.cpp; sourceTree = "<group>"; };
 		898785A1122CA2A7003AABDA /* JSMetadata.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSMetadata.h; sourceTree = "<group>"; };
 		898785A2122CA2A7003AABDA /* JSMetadataCallback.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSMetadataCallback.cpp; sourceTree = "<group>"; };
@@ -15619,8 +15619,8 @@
 				46DA844C1224A0710060D006 /* JSFileWriter.h */,
 				893C47B91238A0A9002B3D86 /* JSFileWriterCallback.cpp */,
 				893C47BA1238A0A9002B3D86 /* JSFileWriterCallback.h */,
-				8987859E122CA2A7003AABDA /* JSFlags.cpp */,
-				8987859F122CA2A7003AABDA /* JSFlags.h */,
+				8987859E122CA2A7003AABDA /* JSWebKitFlags.cpp */,
+				8987859F122CA2A7003AABDA /* JSWebKitFlags.h */,
 				898785A0122CA2A7003AABDA /* JSMetadata.cpp */,
 				898785A1122CA2A7003AABDA /* JSMetadata.h */,
 				898785A2122CA2A7003AABDA /* JSMetadataCallback.cpp */,
@@ -16276,7 +16276,7 @@
 				893C47A61238908B002B3D86 /* FileWriterCallback.h */,
 				46700ECE127B96CB00F5D5D6 /* FileWriterSync.cpp */,
 				46700ECF127B96CB00F5D5D6 /* FileWriterSync.h */,
-				8987854D122CA064003AABDA /* Flags.h */,
+				8987854D122CA064003AABDA /* WebKitFlags.h */,
 				8987854E122CA064003AABDA /* LocalFileSystem.cpp */,
 				8987854F122CA064003AABDA /* LocalFileSystem.h */,
 				89878550122CA064003AABDA /* Metadata.h */,
@@ -21115,7 +21115,7 @@
 				08C9251A0FCC7C4A00480DEC /* FilterEffect.h in Headers */,
 				372C00D9129619F8005C9575 /* FindOptions.h in Headers */,
 				A8CFF04F0A154F09000A4234 /* FixedTableLayout.h in Headers */,
-				89878566122CA064003AABDA /* Flags.h in Headers */,
+				89878566122CA064003AABDA /* WebKitFlags.h in Headers */,
 				49EECDE610503C2400099FAB /* Float32Array.h in Headers */,
 				BC073BAA0C399B1F000F5979 /* FloatConversion.h in Headers */,
 				B27535690B053814002CE64F /* FloatPoint.h in Headers */,
@@ -21582,7 +21582,7 @@
 				898785B3122CA2A7003AABDA /* JSFileSystemCallback.h in Headers */,
 				46DA844E1224A0710060D006 /* JSFileWriter.h in Headers */,
 				893C47BC1238A0A9002B3D86 /* JSFileWriterCallback.h in Headers */,
-				898785B5122CA2A7003AABDA /* JSFlags.h in Headers */,
+				898785B5122CA2A7003AABDA /* JSWebKitFlags.h in Headers */,
 				49EECF03105070C400099FAB /* JSFloat32Array.h in Headers */,
 				FE80DA640E9C4703000D6F75 /* JSGeolocation.h in Headers */,
 				FE80DA660E9C4703000D6F75 /* JSGeoposition.h in Headers */,
@@ -24444,7 +24444,7 @@
 				898785B2122CA2A7003AABDA /* JSFileSystemCallback.cpp in Sources */,
 				46DA844D1224A0710060D006 /* JSFileWriter.cpp in Sources */,
 				893C47BB1238A0A9002B3D86 /* JSFileWriterCallback.cpp in Sources */,
-				898785B4122CA2A7003AABDA /* JSFlags.cpp in Sources */,
+				898785B4122CA2A7003AABDA /* JSWebKitFlags.cpp in Sources */,
 				49EECF02105070C400099FAB /* JSFloat32Array.cpp in Sources */,
 				49EECF7910508D9C00099FAB /* JSFloat32ArrayCustom.cpp in Sources */,
 				FE80DA630E9C4703000D6F75 /* JSGeolocation.cpp in Sources */,

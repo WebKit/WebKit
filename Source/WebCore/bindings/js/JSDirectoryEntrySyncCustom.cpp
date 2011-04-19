@@ -38,23 +38,23 @@
 #include "JSEntryCallback.h"
 #include "JSErrorCallback.h"
 #include "JSFileEntrySync.h"
-#include "JSFlags.h"
+#include "JSWebKitFlags.h"
 #include <wtf/Assertions.h>
 
 using namespace JSC;
 
 namespace WebCore {
 
-static PassRefPtr<Flags> getFlags(ExecState* exec, const JSValue& argument)
+static PassRefPtr<WebKitFlags> getFlags(ExecState* exec, const JSValue& argument)
 {
     if (argument.isNull() || argument.isUndefined() || !argument.isObject())
         return 0;
-    if (argument.inherits(&JSFlags::s_info))
+    if (argument.inherits(&JSWebKitFlags::s_info))
         return toFlags(argument);
 
-    RefPtr<Flags> flags;
+    RefPtr<WebKitFlags> flags;
     JSObject* object = argument.getObject();
-    flags = Flags::create();
+    flags = WebKitFlags::create();
     JSValue jsCreate = object->get(exec, Identifier(exec, "create"));
     flags->setCreate(jsCreate.toBoolean(exec));
     JSValue jsExclusive = object->get(exec, Identifier(exec, "exclusive"));
@@ -69,7 +69,7 @@ JSValue JSDirectoryEntrySync::getFile(ExecState* exec)
     if (exec->hadException())
         return jsUndefined();
 
-    RefPtr<Flags> flags = getFlags(exec, exec->argument(1));
+    RefPtr<WebKitFlags> flags = getFlags(exec, exec->argument(1));
     if (exec->hadException())
         return jsUndefined();
 
@@ -86,7 +86,7 @@ JSValue JSDirectoryEntrySync::getDirectory(ExecState* exec)
     if (exec->hadException())
         return jsUndefined();
 
-    RefPtr<Flags> flags = getFlags(exec, exec->argument(1));
+    RefPtr<WebKitFlags> flags = getFlags(exec, exec->argument(1));
     if (exec->hadException())
         return jsUndefined();
 

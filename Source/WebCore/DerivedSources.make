@@ -197,7 +197,7 @@ DOM_CLASSES = \
     FileWriterCallback \
     FileWriterSync \
     FileSystemCallback \
-    Flags \
+    WebKitFlags \
     Geolocation \
     Geoposition \
     HashChangeEvent \

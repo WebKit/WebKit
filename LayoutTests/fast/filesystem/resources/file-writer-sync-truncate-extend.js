@@ -7,7 +7,7 @@ if (this.importScripts) {
 description("Test using FileWriterSync.truncate to extend a file.");
 
 // Start with an empty FileSystem.
-var fileSystem = requestFileSystemSync(this.TEMPORARY, 100);
+var fileSystem = webkitRequestFileSystemSync(this.TEMPORARY, 100);
 removeAllInDirectorySync(fileSystem.root);
 
 // Prepare a file with sample contents.

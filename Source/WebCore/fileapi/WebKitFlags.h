@@ -28,13 +28,40 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-module storage {
-    interface [
-        Conditional=FILE_SYSTEM,
-        CanBeConstructed,
-        NoStaticTables
-    ] Flags {
-        attribute boolean create;
-        attribute boolean exclusive;
-    };
-}
+#ifndef WebKitFlags_h
+#define WebKitFlags_h
+
+#if ENABLE(FILE_SYSTEM)
+
+#include <wtf/PassRefPtr.h>
+#include <wtf/RefCounted.h>
+
+namespace WebCore {
+
+class WebKitFlags : public RefCounted<WebKitFlags> {
+public:
+    static PassRefPtr<WebKitFlags> create(bool create = false, bool exclusive = false)
+    {
+        return adoptRef(new WebKitFlags(create, exclusive));
+    }
+
+    bool isCreate() const { return m_create; }
+    void setCreate(bool create) { m_create = create; }
+    bool isExclusive() const { return m_exclusive; }
+    void setExclusive(bool exclusive) { m_exclusive = exclusive; }
+
+private:
+    WebKitFlags(bool create, bool exclusive)
+        : m_create(create)
+        , m_exclusive(exclusive)
+    {
+    }
+    bool m_create;
+    bool m_exclusive;
+};
+
+} // namespace
+
+#endif // ENABLE(FILE_SYSTEM)
+
+#endif // WebKitFlags_h

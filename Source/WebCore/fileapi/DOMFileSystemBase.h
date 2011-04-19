@@ -34,7 +34,7 @@
 #if ENABLE(FILE_SYSTEM)
 
 #include "AsyncFileSystem.h"
-#include "Flags.h"
+#include "WebKitFlags.h"
 #include "PlatformString.h"
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
@@ -82,8 +82,8 @@ public:
     bool remove(const EntryBase*, PassRefPtr<VoidCallback>, PassRefPtr<ErrorCallback>);
     bool removeRecursively(const EntryBase*, PassRefPtr<VoidCallback>, PassRefPtr<ErrorCallback>);
     bool getParent(const EntryBase*, PassRefPtr<EntryCallback>, PassRefPtr<ErrorCallback>);
-    bool getFile(const EntryBase*, const String& path, PassRefPtr<Flags>, PassRefPtr<EntryCallback>, PassRefPtr<ErrorCallback>);
-    bool getDirectory(const EntryBase*, const String& path, PassRefPtr<Flags>, PassRefPtr<EntryCallback>, PassRefPtr<ErrorCallback>);
+    bool getFile(const EntryBase*, const String& path, PassRefPtr<WebKitFlags>, PassRefPtr<EntryCallback>, PassRefPtr<ErrorCallback>);
+    bool getDirectory(const EntryBase*, const String& path, PassRefPtr<WebKitFlags>, PassRefPtr<EntryCallback>, PassRefPtr<ErrorCallback>);
     bool readDirectory(PassRefPtr<DirectoryReaderBase>, const String& path, PassRefPtr<EntriesCallback>, PassRefPtr<ErrorCallback>);
 
 protected:

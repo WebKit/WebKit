@@ -21,5 +21,5 @@ function successCallback(fs) {
 }
 
 var jsTestIsAsync = true;
-requestFileSystem(TEMPORARY, 100, successCallback, errorCallback);
+webkitRequestFileSystem(TEMPORARY, 100, successCallback, errorCallback);
 var successfullyParsed = true;

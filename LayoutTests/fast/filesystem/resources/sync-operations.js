@@ -5,7 +5,7 @@ if (this.importScripts) {
 
 description("Test making multiple synchronous FileSystem operations.");
 
-var fileSystem = requestFileSystemSync(this.TEMPORARY, 100);
+var fileSystem = webkitRequestFileSystemSync(this.TEMPORARY, 100);
 removeAllInDirectorySync(fileSystem.root);
 
 // Stage 1 (prepare)

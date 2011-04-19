@@ -39,7 +39,7 @@
 #include "V8BindingMacros.h"
 #include "V8EntryCallback.h"
 #include "V8ErrorCallback.h"
-#include "V8Flags.h"
+#include "V8WebKitFlags.h"
 #include "V8Proxy.h"
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
@@ -55,10 +55,10 @@ v8::Handle<v8::Value> V8DirectoryEntry::getDirectoryCallback(const v8::Arguments
         imp->getDirectory(path);
         return v8::Handle<v8::Value>();
     }
-    RefPtr<Flags> flags;
-    if (!isUndefinedOrNull(args[1]) && args[1]->IsObject() && !V8Flags::HasInstance(args[1])) {
+    RefPtr<WebKitFlags> flags;
+    if (!isUndefinedOrNull(args[1]) && args[1]->IsObject() && !V8WebKitFlags::HasInstance(args[1])) {
         EXCEPTION_BLOCK(v8::Handle<v8::Object>, object, v8::Handle<v8::Object>::Cast(args[1]));
-        flags = Flags::create();
+        flags = WebKitFlags::create();
         v8::Local<v8::Value> v8Create = object->Get(v8::String::New("create"));
         if (!v8Create.IsEmpty() && !isUndefinedOrNull(v8Create)) {
             EXCEPTION_BLOCK(bool, isCreate, v8Create->BooleanValue());
@@ -70,7 +70,7 @@ v8::Handle<v8::Value> V8DirectoryEntry::getDirectoryCallback(const v8::Arguments
             flags->setExclusive(isExclusive);
         }
     } else {
-        EXCEPTION_BLOCK(Flags*, tmp_flags, V8Flags::HasInstance(args[1]) ? V8Flags::toNative(v8::Handle<v8::Object>::Cast(args[1])) : 0);
+        EXCEPTION_BLOCK(WebKitFlags*, tmp_flags, V8WebKitFlags::HasInstance(args[1]) ? V8WebKitFlags::toNative(v8::Handle<v8::Object>::Cast(args[1])) : 0);
         flags = tmp_flags;
     }
     RefPtr<EntryCallback> successCallback;
@@ -98,10 +98,10 @@ v8::Handle<v8::Value> V8DirectoryEntry::getFileCallback(const v8::Arguments& arg
         imp->getFile(path);
         return v8::Handle<v8::Value>();
     }
-    RefPtr<Flags> flags;
-    if (!isUndefinedOrNull(args[1]) && args[1]->IsObject() && !V8Flags::HasInstance(args[1])) {
+    RefPtr<WebKitFlags> flags;
+    if (!isUndefinedOrNull(args[1]) && args[1]->IsObject() && !V8WebKitFlags::HasInstance(args[1])) {
         EXCEPTION_BLOCK(v8::Handle<v8::Object>, object, v8::Handle<v8::Object>::Cast(args[1]));
-        flags = Flags::create();
+        flags = WebKitFlags::create();
         v8::Local<v8::Value> v8Create = object->Get(v8::String::New("create"));
         if (!v8Create.IsEmpty() && !isUndefinedOrNull(v8Create)) {
             EXCEPTION_BLOCK(bool, isCreate, v8Create->BooleanValue());
@@ -113,7 +113,7 @@ v8::Handle<v8::Value> V8DirectoryEntry::getFileCallback(const v8::Arguments& arg
             flags->setExclusive(isExclusive);
         }
     } else {
-       EXCEPTION_BLOCK(Flags*, tmp_flags, V8Flags::HasInstance(args[1]) ? V8Flags::toNative(v8::Handle<v8::Object>::Cast(args[1])) : 0);
+       EXCEPTION_BLOCK(WebKitFlags*, tmp_flags, V8WebKitFlags::HasInstance(args[1]) ? V8WebKitFlags::toNative(v8::Handle<v8::Object>::Cast(args[1])) : 0);
        flags = tmp_flags;
     }
     RefPtr<EntryCallback> successCallback;

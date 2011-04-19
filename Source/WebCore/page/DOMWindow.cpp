@@ -744,7 +744,7 @@ IDBFactory* DOMWindow::webkitIndexedDB() const
 #endif
 
 #if ENABLE(FILE_SYSTEM)
-void DOMWindow::requestFileSystem(int type, long long size, PassRefPtr<FileSystemCallback> successCallback, PassRefPtr<ErrorCallback> errorCallback)
+void DOMWindow::webkitRequestFileSystem(int type, long long size, PassRefPtr<FileSystemCallback> successCallback, PassRefPtr<ErrorCallback> errorCallback)
 {
     Document* document = this->document();
     if (!document)
@@ -764,7 +764,7 @@ void DOMWindow::requestFileSystem(int type, long long size, PassRefPtr<FileSyste
     LocalFileSystem::localFileSystem().requestFileSystem(document, fileSystemType, size, FileSystemCallbacks::create(successCallback, errorCallback, document), false);
 }
 
-void DOMWindow::resolveLocalFileSystemURL(const String& url, PassRefPtr<EntryCallback> successCallback, PassRefPtr<ErrorCallback> errorCallback)
+void DOMWindow::webkitResolveLocalFileSystemURL(const String& url, PassRefPtr<EntryCallback> successCallback, PassRefPtr<ErrorCallback> errorCallback)
 {
     Document* document = this->document();
     if (!document)

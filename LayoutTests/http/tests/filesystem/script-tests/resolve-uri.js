@@ -3,7 +3,7 @@ if (this.importScripts) {
     importScripts('../resources/fs-test-util.js');
 }
 
-description("Tests using resolveLocalFileSystemURL to obtain an Entry from a URL");
+description("Tests using webkitResolveLocalFileSystemURL to obtain an Entry from a URL");
 
 var testFileName = '/testFile';
 var fileSystem = null;
@@ -57,7 +57,7 @@ function assertIsFile(entry) {
 function runBasicTest() {
     debug("* Resolving a generated URL.");
     createTestFile(function(entry) {
-        resolveLocalFileSystemURL(entry.toURL(), function(e) {
+        webkitResolveLocalFileSystemURL(entry.toURL(), function(e) {
             assertPathsMatch(entry.fullPath, e.fullPath);
             assertIsFile(e);
             cleanupAndRunNext();
@@ -68,7 +68,7 @@ function runBasicTest() {
 function runHandmadeURL() {
     debug("* Resolving test file by hand");
     createTestFile(function(entry) {
-        resolveLocalFileSystemURL("filesystem:http://127.0.0.1:8000/temporary/testFile", function(e) {
+        webkitResolveLocalFileSystemURL("filesystem:http://127.0.0.1:8000/temporary/testFile", function(e) {
             assertPathsMatch(testFileName, e.fullPath);
             assertIsFile(e);
             cleanupAndRunNext();
@@ -78,40 +78,40 @@ function runHandmadeURL() {
 
 function runWrongDomain() {
     debug("* Resolving a URL with the wrong security origin (domain)");
-    resolveLocalFileSystemURL("filesystem:http://localhost:8000/temporary/foo", errorCallback, expectSecurityErrAndRunNext);
+    webkitResolveLocalFileSystemURL("filesystem:http://localhost:8000/temporary/foo", errorCallback, expectSecurityErrAndRunNext);
 }
 
 function runWrongPort() {
     debug("* Resolving a URL with the wrong security origin (port)");
-    resolveLocalFileSystemURL("filesystem:http://127.0.0.1:8080/temporary/foo", errorCallback, expectSecurityErrAndRunNext);
+    webkitResolveLocalFileSystemURL("filesystem:http://127.0.0.1:8080/temporary/foo", errorCallback, expectSecurityErrAndRunNext);
 }
 
 function runWrongScheme() {
     debug("* Resolving a URL with the wrong security origin (scheme)");
-    resolveLocalFileSystemURL("filesystem:https://127.0.0.1:8000/temporary/foo", errorCallback, expectSecurityErrAndRunNext);
+    webkitResolveLocalFileSystemURL("filesystem:https://127.0.0.1:8000/temporary/foo", errorCallback, expectSecurityErrAndRunNext);
 }
 
 function runBogusURL() {
     debug("* Resolving a completely bogus URL.");
-    resolveLocalFileSystemURL("foo", errorCallback, expectEncodingErrAndRunNext);
+    webkitResolveLocalFileSystemURL("foo", errorCallback, expectEncodingErrAndRunNext);
 }
 
 function runWrongProtocol() {
     debug("* Resolving a URL with the wrong protocol");
-    resolveLocalFileSystemURL("http://127.0.0.1:8000/foo/bar/baz", errorCallback, expectEncodingErrAndRunNext);
+    webkitResolveLocalFileSystemURL("http://127.0.0.1:8000/foo/bar/baz", errorCallback, expectEncodingErrAndRunNext);
 }
 
 function runNotEnoughSlashes() {
     debug("* Resolving a URL with no slash between type and file");
     createTestFile(function(entry) {
-        resolveLocalFileSystemURL("filesystem:http://127.0.0.1:8000/temporarytestFile", errorCallback, expectEncodingErrAndRunNext);
+        webkitResolveLocalFileSystemURL("filesystem:http://127.0.0.1:8000/temporarytestFile", errorCallback, expectEncodingErrAndRunNext);
     });
 }
 
 function runNotEnoughSlashes2() {
     debug("* Resolving a URL with no slash between protocol and type (bogus port)");
     createTestFile(function(entry) {
-        resolveLocalFileSystemURL("filesystem:http://127.0.0.1:8000temporary/testFile", errorCallback, expectSecurityErrAndRunNext);
+        webkitResolveLocalFileSystemURL("filesystem:http://127.0.0.1:8000temporary/testFile", errorCallback, expectSecurityErrAndRunNext);
     });
 }
 
@@ -119,7 +119,7 @@ function runUseBackSlashes() {
     debug("* Resolve a path using backslashes");
     fileSystem.root.getDirectory("foo", {create:true}, function(entry) {
         entry.getFile("testFile", {create:true}, function(f) {
-            resolveLocalFileSystemURL("filesystem:http://127.0.0.1:8000/temporary/foo\\testFile", function(e) {
+            webkitResolveLocalFileSystemURL("filesystem:http://127.0.0.1:8000/temporary/foo\\testFile", function(e) {
                 assertPathsMatch("/foo/testFile", e.fullPath);
                 assertIsFile(e);
                 cleanupAndRunNext();
@@ -131,7 +131,7 @@ function runUseBackSlashes() {
 function runDirectory() {
     debug("* Resolve a directory");
     fileSystem.root.getDirectory("foo", {create:true}, function(entry) {
-        resolveLocalFileSystemURL("filesystem:http://127.0.0.1:8000/temporary/foo", function(e) {
+        webkitResolveLocalFileSystemURL("filesystem:http://127.0.0.1:8000/temporary/foo", function(e) {
             assertPathsMatch("/foo", e.fullPath);
             assertIsDirectory(e);
             cleanupAndRunNext();
@@ -142,7 +142,7 @@ function runDirectory() {
 function runWithTrailingSlash() {
     debug("* Resolve a path using a trailing slash");
     fileSystem.root.getDirectory("foo", {create:true}, function(entry) {
-        resolveLocalFileSystemURL("filesystem:http://127.0.0.1:8000/temporary/foo/", function(e) {
+        webkitResolveLocalFileSystemURL("filesystem:http://127.0.0.1:8000/temporary/foo/", function(e) {
             assertPathsMatch("/foo", e.fullPath);
             assertIsDirectory(e);
             cleanupAndRunNext();
@@ -152,8 +152,8 @@ function runWithTrailingSlash() {
 
 function runPersistentTest() {
     debug("* Resolving a persistent URL.");
-    requestFileSystem(PERSISTENT, 100, function(fs) {
-        resolveLocalFileSystemURL(fs.root.toURL(), function(entry) {
+    webkitRequestFileSystem(PERSISTENT, 100, function(fs) {
+        webkitResolveLocalFileSystemURL(fs.root.toURL(), function(entry) {
             assertPathsMatch("/", entry.fullPath);
             assertIsDirectory(entry);
             cleanupAndRunNext();
@@ -197,9 +197,9 @@ function fileSystemCallback(fs) {
     cleanupAndRunNext();
 }
 
-if (this.requestFileSystem) {
+if (this.webkitRequestFileSystem) {
     jsTestIsAsync = true;
-    requestFileSystem(this.TEMPORARY, 100, fileSystemCallback, errorCallback);
+    webkitRequestFileSystem(this.TEMPORARY, 100, fileSystemCallback, errorCallback);
 } else
     debug("This test requires FileSystem API support.");
 

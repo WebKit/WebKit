@@ -88,8 +88,8 @@ function successCallback(fs)
     removeAllInDirectory(fileSystem.root, prepareForTest, errorCallback);
 }
 
-if (window.requestFileSystem) {
-    requestFileSystem(window.TEMPORARY, 100, successCallback, errorCallback);
+if (window.webkitRequestFileSystem) {
+    webkitRequestFileSystem(window.TEMPORARY, 100, successCallback, errorCallback);
     window.jsTestIsAsync = true;
 } else
     debug("This test requires FileSystem API support.");

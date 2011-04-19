@@ -1,3 +1,45 @@
+2011-04-18  Taiju TSUIKI  <develop@tzik.jp>
+
+        Reviewed by Darin Fisher.
+
+        Vendor-prefix requestFileSystem in FileSystem API
+        https://bugs.webkit.org/show_bug.cgi?id=58517
+
+        Prefix from:
+        - window.requestFileSystem to window.webkitRequestFileSystem
+        - window.resolveLocalFileSystemURL to window.webkitResolveLocalFileSystemURL
+        - window.Flags to window.WebKitFlags
+        - WorkerContext.requestFileSystem to WorkerContext.webkitRequestFileSystem
+        - WorkerContext.resolveLocalFileSystemURL to WorkerContext.webkitResolveLocalFileSystemURL
+        - WorkerContext.Flags to WorkerContext.WebKitFlags
+
+        * fast/dom/script-tests/prototype-inheritance.js:
+        * fast/filesystem/flags-passing-expected.txt:
+        * fast/filesystem/resources/async-operations.js:
+        * fast/filesystem/resources/directory-entry-to-uri.js:
+        * fast/filesystem/resources/file-entry-to-uri-sync.js:
+        * fast/filesystem/resources/file-entry-to-uri.js:
+        * fast/filesystem/resources/file-from-file-entry-sync.js:
+        * fast/filesystem/resources/file-from-file-entry.js:
+        * fast/filesystem/resources/file-writer-sync-truncate-extend.js:
+        * fast/filesystem/resources/file-writer-sync-write-overlapped.js:
+        * fast/filesystem/resources/file-writer-utils.js:
+        * fast/filesystem/resources/fs-worker-common.js:
+        * fast/filesystem/resources/op-tests-helper.js:
+        * fast/filesystem/resources/simple-persistent-sync.js:
+        * fast/filesystem/resources/simple-persistent.js:
+        * fast/filesystem/resources/simple-temporary-sync.js:
+        * fast/filesystem/resources/simple-temporary.js:
+        * fast/filesystem/resources/sync-operations.js:
+        * fast/filesystem/script-tests/filesystem-reference.js:
+        * fast/filesystem/script-tests/flags-passing.js:
+        * fast/filesystem/script-tests/read-directory.js:
+        * http/tests/filesystem/resolve-uri-expected.txt:
+        * http/tests/filesystem/script-tests/resolve-uri.js:
+        * http/tests/filesystem/workers/resolve-url-expected.txt:
+        * http/tests/filesystem/workers/script-tests/resolve-url-sync.js:
+        * platform/chromium/fast/dom/prototype-inheritance-expected.txt:
+
 2011-04-18  Daniel Bates  <dbates@rim.com>
 
         https://bugs.webkit.org/show_bug.cgi?id=58863

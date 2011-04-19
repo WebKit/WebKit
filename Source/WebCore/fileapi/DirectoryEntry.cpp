@@ -51,14 +51,14 @@ PassRefPtr<DirectoryReader> DirectoryEntry::createReader()
     return DirectoryReader::create(m_fileSystem, m_fullPath);
 }
 
-void DirectoryEntry::getFile(const String& path, PassRefPtr<Flags> flags, PassRefPtr<EntryCallback> successCallback, PassRefPtr<ErrorCallback> errorCallbackRef)
+void DirectoryEntry::getFile(const String& path, PassRefPtr<WebKitFlags> flags, PassRefPtr<EntryCallback> successCallback, PassRefPtr<ErrorCallback> errorCallbackRef)
 {
     RefPtr<ErrorCallback> errorCallback(errorCallbackRef);
     if (!m_fileSystem->getFile(this, path, flags, successCallback, errorCallback))
         filesystem()->scheduleCallback(errorCallback.release(), FileError::create(FileError::INVALID_MODIFICATION_ERR));
 }
 
-void DirectoryEntry::getDirectory(const String& path, PassRefPtr<Flags> flags, PassRefPtr<EntryCallback> successCallback, PassRefPtr<ErrorCallback> errorCallbackRef)
+void DirectoryEntry::getDirectory(const String& path, PassRefPtr<WebKitFlags> flags, PassRefPtr<EntryCallback> successCallback, PassRefPtr<ErrorCallback> errorCallbackRef)
 {
     RefPtr<ErrorCallback> errorCallback(errorCallbackRef);
     if (!m_fileSystem->getDirectory(this, path, flags, successCallback, errorCallback))

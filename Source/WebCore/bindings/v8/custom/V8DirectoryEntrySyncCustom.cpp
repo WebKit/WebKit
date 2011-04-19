@@ -40,7 +40,7 @@
 #include "V8EntryCallback.h"
 #include "V8ErrorCallback.h"
 #include "V8FileEntrySync.h"
-#include "V8Flags.h"
+#include "V8WebKitFlags.h"
 #include "V8Proxy.h"
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
@@ -62,13 +62,13 @@ static bool extractBooleanValue(const v8::Handle<v8::Object>& object, const char
     return false;
 }
 
-static PassRefPtr<Flags> getFlags(const v8::Local<v8::Value>& arg, ExceptionCode& ec)
+static PassRefPtr<WebKitFlags> getFlags(const v8::Local<v8::Value>& arg, ExceptionCode& ec)
 {
     ec = 0;
     if (isUndefinedOrNull(arg) || !arg->IsObject())
         return 0;
-    if (V8Flags::HasInstance(arg))
-        return V8Flags::toNative(v8::Handle<v8::Object>::Cast(arg));
+    if (V8WebKitFlags::HasInstance(arg))
+        return V8WebKitFlags::toNative(v8::Handle<v8::Object>::Cast(arg));
 
     v8::Handle<v8::Object> object;
     {
@@ -87,7 +87,7 @@ static PassRefPtr<Flags> getFlags(const v8::Local<v8::Value>& arg, ExceptionCode
     if (ec)
         return 0;
 
-    RefPtr<Flags> flags = Flags::create();
+    RefPtr<WebKitFlags> flags = WebKitFlags::create();
     flags->setCreate(isCreate);
     flags->setExclusive(isExclusive);
 
@@ -100,7 +100,7 @@ v8::Handle<v8::Value> V8DirectoryEntrySync::getDirectoryCallback(const v8::Argum
     DirectoryEntrySync* imp = V8DirectoryEntrySync::toNative(args.Holder());
     ExceptionCode ec = 0;
     STRING_TO_V8PARAMETER_EXCEPTION_BLOCK(V8Parameter<>, path, args[0]);
-    RefPtr<Flags> flags = getFlags(args[1], ec);
+    RefPtr<WebKitFlags> flags = getFlags(args[1], ec);
     if (UNLIKELY(ec)) {
         V8Proxy::setDOMException(ec);
         return v8::Handle<v8::Value>();
@@ -119,7 +119,7 @@ v8::Handle<v8::Value> V8DirectoryEntrySync::getFileCallback(const v8::Arguments&
     DirectoryEntrySync* imp = V8DirectoryEntrySync::toNative(args.Holder());
     ExceptionCode ec = 0;
     STRING_TO_V8PARAMETER_EXCEPTION_BLOCK(V8Parameter<>, path, args[0]);
-    RefPtr<Flags> flags = getFlags(args[1], ec);
+    RefPtr<WebKitFlags> flags = getFlags(args[1], ec);
     if (UNLIKELY(ec)) {
         V8Proxy::setDOMException(ec);
         return v8::Handle<v8::Value>();

@@ -761,8 +761,6 @@ PASS inner.resizeBy.isInner is true
 PASS inner.resizeBy.constructor.isInner is true
 PASS inner.resizeTo.isInner is true
 PASS inner.resizeTo.constructor.isInner is true
-PASS inner.resolveLocalFileSystemURL.isInner is true
-PASS inner.resolveLocalFileSystemURL.constructor.isInner is true
 FAIL inner.screen.isInner should be true. Was false.
 FAIL inner.screen.constructor.isInner should be true. Was false.
 PASS inner.scroll.isInner is true
@@ -821,6 +819,10 @@ FAIL inner.webkitIndexedDB.isInner should be true. Was false.
 FAIL inner.webkitIndexedDB.constructor.isInner should be true. Was false.
 PASS inner.webkitRequestAnimationFrame.isInner is true
 PASS inner.webkitRequestAnimationFrame.constructor.isInner is true
+PASS inner.webkitRequestFileSystem.isInner is true
+PASS inner.webkitRequestFileSystem.constructor.isInner is true
+PASS inner.webkitResolveLocalFileSystemURL.isInner is true
+PASS inner.webkitResolveLocalFileSystemURL.constructor.isInner is true
 PASS inner.window.isInner is true
 PASS inner.window.constructor.isInner is true
 PASS successfullyParsed is true

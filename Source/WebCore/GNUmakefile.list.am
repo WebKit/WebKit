@@ -1482,7 +1482,7 @@ webcore_sources += \
 	Source/WebCore/fileapi/FileWriterCallback.h \
 	Source/WebCore/fileapi/FileWriterSync.cpp \
 	Source/WebCore/fileapi/FileWriterSync.h \
-	Source/WebCore/fileapi/Flags.h \
+	Source/WebCore/fileapi/WebKitFlags.h \
 	Source/WebCore/fileapi/LocalFileSystem.cpp \
 	Source/WebCore/fileapi/LocalFileSystem.h \
 	Source/WebCore/fileapi/MetadataCallback.h \
@@ -4058,8 +4058,8 @@ webcore_built_sources += \
 	DerivedSources/WebCore/JSFileWriterCallback.h \
 	DerivedSources/WebCore/JSFileWriterSync.cpp \
 	DerivedSources/WebCore/JSFileWriterSync.h \
-	DerivedSources/WebCore/JSFlags.cpp \
-	DerivedSources/WebCore/JSFlags.h \
+	DerivedSources/WebCore/JSWebKitFlags.cpp \
+	DerivedSources/WebCore/JSWebKitFlags.h \
 	DerivedSources/WebCore/JSMetadata.cpp \
 	DerivedSources/WebCore/JSMetadata.h \
 	DerivedSources/WebCore/JSMetadataCallback.cpp \

@@ -51,7 +51,7 @@ PassRefPtr<DirectoryReaderSync> DirectoryEntrySync::createReader(ExceptionCode&)
     return DirectoryReaderSync::create(m_fileSystem, m_fullPath);
 }
 
-PassRefPtr<FileEntrySync> DirectoryEntrySync::getFile(const String& path, PassRefPtr<Flags> flags, ExceptionCode& ec)
+PassRefPtr<FileEntrySync> DirectoryEntrySync::getFile(const String& path, PassRefPtr<WebKitFlags> flags, ExceptionCode& ec)
 {
     ec = 0;
     EntrySyncCallbackHelper helper(m_fileSystem->asyncFileSystem());
@@ -62,7 +62,7 @@ PassRefPtr<FileEntrySync> DirectoryEntrySync::getFile(const String& path, PassRe
     return static_pointer_cast<FileEntrySync>(helper.getResult(ec));
 }
 
-PassRefPtr<DirectoryEntrySync> DirectoryEntrySync::getDirectory(const String& path, PassRefPtr<Flags> flags, ExceptionCode& ec)
+PassRefPtr<DirectoryEntrySync> DirectoryEntrySync::getDirectory(const String& path, PassRefPtr<WebKitFlags> flags, ExceptionCode& ec)
 {
     ec = 0;
     EntrySyncCallbackHelper helper(m_fileSystem->asyncFileSystem());

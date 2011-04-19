@@ -7,7 +7,7 @@ if (this.importScripts) {
 description("Test using FileWriterSync.seek to write overlapping existing data in a file.");
 
 // Start with an empty FileSystem.
-var fileSystem = requestFileSystemSync(this.TEMPORARY, 100);
+var fileSystem = webkitRequestFileSystemSync(this.TEMPORARY, 100);
 removeAllInDirectorySync(fileSystem.root);
 
 // Prepare a file with sample contents.

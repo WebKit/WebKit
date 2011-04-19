@@ -391,6 +391,5 @@ function fileSystemCallback(fs)
 }
 
 var jsTestIsAsync = true;
-requestFileSystem(TEMPORARY, 100, fileSystemCallback, errorCallback);
+webkitRequestFileSystem(TEMPORARY, 100, fileSystemCallback, errorCallback);
 var successfullyParsed = true;
-

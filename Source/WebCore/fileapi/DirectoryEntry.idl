@@ -36,8 +36,8 @@ module storage {
         NoStaticTables
     ] DirectoryEntry : Entry {
         DirectoryReader createReader();
-        [Custom] void getFile(in [ConvertUndefinedOrNullToNullString] DOMString path, in [Optional] Flags flags, in [Optional, Callback] EntryCallback successCallback, in [Optional, Callback] ErrorCallback errorCallback);
-        [Custom] void getDirectory(in [ConvertUndefinedOrNullToNullString] DOMString path, in [Optional] Flags flags, in [Optional, Callback] EntryCallback successCallback, in [Optional, Callback] ErrorCallback errorCallback);
+        [Custom] void getFile(in [ConvertUndefinedOrNullToNullString] DOMString path, in [Optional] WebKitFlags flags, in [Optional, Callback] EntryCallback successCallback, in [Optional, Callback] ErrorCallback errorCallback);
+        [Custom] void getDirectory(in [ConvertUndefinedOrNullToNullString] DOMString path, in [Optional] WebKitFlags flags, in [Optional, Callback] EntryCallback successCallback, in [Optional, Callback] ErrorCallback errorCallback);
         void removeRecursively(in [Optional, Callback] VoidCallback successCallback, in [Optional, Callback] ErrorCallback errorCallback);
     };
 }

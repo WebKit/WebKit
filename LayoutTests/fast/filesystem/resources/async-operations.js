@@ -90,11 +90,11 @@ function asyncTest1() {
     helper.join(asyncTest2);
 }
 
-if (this.requestFileSystem) {
+if (this.webkitRequestFileSystem) {
     jsTestIsAsync = true;
     var helper = new JoinHelper();
     helper.run(function() {
-    requestFileSystem.apply(this, [this.TEMPORARY, 100, function(fs) {
+    webkitRequestFileSystem.apply(this, [this.TEMPORARY, 100, function(fs) {
         debug("Got FileSystem:" + fs.name);
         fileSystem = fs;
         removeAllInDirectory(fileSystem.root, function(){ helper.done(); }, errorCallback);

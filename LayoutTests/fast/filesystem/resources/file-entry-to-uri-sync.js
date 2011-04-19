@@ -2,7 +2,7 @@ importScripts('fs-worker-common.js');
 
 description("Obtaining URL from FileEntry.");
 
-var fileSystem = requestFileSystemSync(TEMPORARY, 100);
+var fileSystem = webkitRequestFileSystemSync(TEMPORARY, 100);
 removeAllInDirectorySync(fileSystem.root);
 
 var testFileName = 'testFileEntry.txt';

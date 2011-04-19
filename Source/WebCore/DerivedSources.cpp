@@ -128,7 +128,7 @@
 #include "JSFileWriter.cpp"
 #include "JSFileWriterCallback.cpp"
 #include "JSFileWriterSync.cpp"
-#include "JSFlags.cpp"
+#include "JSWebKitFlags.cpp"
 #include "JSFloat32Array.cpp"
 #include "JSGeolocation.cpp"
 #include "JSGeoposition.cpp"

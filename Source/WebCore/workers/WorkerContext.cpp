@@ -350,7 +350,7 @@ DOMURL* WorkerContext::webkitURL() const
 #endif
 
 #if ENABLE(FILE_SYSTEM)
-void WorkerContext::requestFileSystem(int type, long long size, PassRefPtr<FileSystemCallback> successCallback, PassRefPtr<ErrorCallback> errorCallback)
+void WorkerContext::webkitRequestFileSystem(int type, long long size, PassRefPtr<FileSystemCallback> successCallback, PassRefPtr<ErrorCallback> errorCallback)
 {
     if (!AsyncFileSystem::isAvailable() || !securityOrigin()->canAccessFileSystem()) {
         DOMFileSystem::scheduleCallback(this, errorCallback, FileError::create(FileError::SECURITY_ERR));
@@ -366,7 +366,7 @@ void WorkerContext::requestFileSystem(int type, long long size, PassRefPtr<FileS
     LocalFileSystem::localFileSystem().requestFileSystem(this, fileSystemType, size, FileSystemCallbacks::create(successCallback, errorCallback, this), false);
 }
 
-PassRefPtr<DOMFileSystemSync> WorkerContext::requestFileSystemSync(int type, long long size, ExceptionCode& ec)
+PassRefPtr<DOMFileSystemSync> WorkerContext::webkitRequestFileSystemSync(int type, long long size, ExceptionCode& ec)
 {
     ec = 0;
     if (!AsyncFileSystem::isAvailable() || !securityOrigin()->canAccessFileSystem()) {
@@ -385,7 +385,7 @@ PassRefPtr<DOMFileSystemSync> WorkerContext::requestFileSystemSync(int type, lon
     return helper.getResult(ec);
 }
 
-void WorkerContext::resolveLocalFileSystemURL(const String& url, PassRefPtr<EntryCallback> successCallback, PassRefPtr<ErrorCallback> errorCallback)
+void WorkerContext::webkitResolveLocalFileSystemURL(const String& url, PassRefPtr<EntryCallback> successCallback, PassRefPtr<ErrorCallback> errorCallback)
 {
     KURL completedURL = completeURL(url);
     if (!AsyncFileSystem::isAvailable() || !securityOrigin()->canAccessFileSystem() || !securityOrigin()->canRequest(completedURL)) {
@@ -403,7 +403,7 @@ void WorkerContext::resolveLocalFileSystemURL(const String& url, PassRefPtr<Entr
     LocalFileSystem::localFileSystem().readFileSystem(this, type, ResolveURICallbacks::create(successCallback, errorCallback, this, filePath));
 }
 
-PassRefPtr<EntrySync> WorkerContext::resolveLocalFileSystemSyncURL(const String& url, ExceptionCode& ec)
+PassRefPtr<EntrySync> WorkerContext::webkitResolveLocalFileSystemSyncURL(const String& url, ExceptionCode& ec)
 {
     ec = 0;
     KURL completedURL = completeURL(url);

@@ -63,9 +63,9 @@ function fileSystemCallback(fs)
     gc();
 }
 
-if (window.requestFileSystem) {
+if (window.webkitRequestFileSystem) {
     window.jsTestIsAsync = true;
-    requestFileSystem(window.TEMPORARY, 100, fileSystemCallback, errorCallback);
+    webkitRequestFileSystem(window.TEMPORARY, 100, fileSystemCallback, errorCallback);
 } else
     debug("This test requires FileSystem API support.");
 

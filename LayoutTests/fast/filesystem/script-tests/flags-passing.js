@@ -34,20 +34,20 @@ function errorCallback(error) {
 
 // Test body functions ----------------------------------------------------
 function runNullTest(v) {
-    debug("* Passing null as a Flags parameter.");
+    debug("* Passing null as a WebKitFlags parameter.");
 
     // This should be ok and we treat it as {false, false} Flags.
     fileSystem.root.getFile(testFileName, null, runNextTest, errorCallback);
 }
 
 function runObjectTest(v) {
-    debug("* Passing a Flags object.");
-    var flags = new Flags();
+    debug("* Passing a WebKitFlags object.");
+    var flags = new WebKitFlags();
     flags.create = false;
 
     fileSystem.root.getFile(testFileName, flags, unexpected, expected);
 
-    debug("* Recycling the same Flags object.");
+    debug("* Recycling the same WebKitFlags object.");
 
     fileSystem.root.getFile(testFileName, flags, unexpected, expected);
 
@@ -56,8 +56,8 @@ function runObjectTest(v) {
 }
 
 function runObjectTestWithExclusive(v) {
-    debug("* Passing a Flags object (with exclusive=true).");
-    var flags = new Flags;
+    debug("* Passing a WebKitFlags object (with exclusive=true).");
+    var flags = new WebKitFlags;
     flags.create = true;
     flags.exclusive = true;
 
@@ -93,9 +93,9 @@ function fileSystemCallback(fs) {
     cleanupAndRunNext();
 }
 
-if (window.requestFileSystem) {
+if (window.webkitRequestFileSystem) {
     window.jsTestIsAsync = true;
-    requestFileSystem(window.TEMPORARY, 100, fileSystemCallback, errorCallback);
+    webkitRequestFileSystem(window.TEMPORARY, 100, fileSystemCallback, errorCallback);
 } else
     debug("This test requires FileSystem API support.");
 

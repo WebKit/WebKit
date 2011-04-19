@@ -205,7 +205,7 @@ bool DOMFileSystemBase::getParent(const EntryBase* entry, PassRefPtr<EntryCallba
     return true;
 }
 
-bool DOMFileSystemBase::getFile(const EntryBase* base, const String& path, PassRefPtr<Flags> flags, PassRefPtr<EntryCallback> successCallback, PassRefPtr<ErrorCallback> errorCallback)
+bool DOMFileSystemBase::getFile(const EntryBase* base, const String& path, PassRefPtr<WebKitFlags> flags, PassRefPtr<EntryCallback> successCallback, PassRefPtr<ErrorCallback> errorCallback)
 {
     String absolutePath;
     if (!pathToAbsolutePath(base, path, absolutePath))
@@ -220,7 +220,7 @@ bool DOMFileSystemBase::getFile(const EntryBase* base, const String& path, PassR
     return true;
 }
 
-bool DOMFileSystemBase::getDirectory(const EntryBase* base, const String& path, PassRefPtr<Flags> flags, PassRefPtr<EntryCallback> successCallback, PassRefPtr<ErrorCallback> errorCallback)
+bool DOMFileSystemBase::getDirectory(const EntryBase* base, const String& path, PassRefPtr<WebKitFlags> flags, PassRefPtr<EntryCallback> successCallback, PassRefPtr<ErrorCallback> errorCallback)
 {
     String absolutePath;
     if (!pathToAbsolutePath(base, path, absolutePath))
