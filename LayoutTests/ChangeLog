@@ -1,3 +1,12 @@
+2011-04-19  John Knottenbelt  <jknotten@chromium.org>
+
+        Unreviewed.
+
+        [Chromium] Mark fast/block/float/overhanging-tall-block.html as failing on Windows and Linux.
+        https://bugs.webkit.org/show_bug.cgi?id=58901
+
+        * platform/chromium/test_expectations.txt:
+
 2011-04-19  Csaba Osztrogonác  <ossy@webkit.org>
 
         [Qt] REGRESSION(84176): http/tests/xmlhttprequest/event-listener-gc.html fails

@@ -3522,3 +3522,4 @@ BUGCR79857 DEBUG : fast/events/popup-blocking-timers.html = PASS TEXT
 // Slow test, flaky on linux debug.
 BUGCR79859 LINUX DEBUG : fast/css/create_element_align.xhtml = PASS TIMEOUT
 
+BUGWK58900 LINUX WIN : fast/block/float/overhanging-tall-block.html = IMAGE+TEXT
