@@ -122,6 +122,7 @@ private:
 
 #if ENABLE(PLUGIN_PROCESS)
     void getPluginProcessConnection(const String& pluginPath, PassRefPtr<Messages::WebProcessProxy::GetPluginProcessConnection::DelayedReply>);
+    void pluginSyncMessageSendTimedOut(const String& pluginPath);
 #endif
 
     // CoreIPC::Connection::Client

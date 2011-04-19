@@ -220,6 +220,11 @@ void WebProcessProxy::getPluginProcessConnection(const String& pluginPath, PassR
 {
     PluginProcessManager::shared().getPluginProcessConnection(context()->pluginInfoStore(), pluginPath, reply);
 }
+
+void WebProcessProxy::pluginSyncMessageSendTimedOut(const String& pluginPath)
+{
+    PluginProcessManager::shared().pluginSyncMessageSendTimedOut(pluginPath);
+}
 #endif
 
 void WebProcessProxy::didReceiveMessage(CoreIPC::Connection* connection, CoreIPC::MessageID messageID, CoreIPC::ArgumentDecoder* arguments)

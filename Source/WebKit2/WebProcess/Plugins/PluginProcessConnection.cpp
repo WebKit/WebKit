@@ -32,14 +32,33 @@
 #include "PluginProcessConnectionManager.h"
 #include "PluginProxy.h"
 #include "WebProcess.h"
+#include "WebProcessProxyMessages.h"
+#include <WebCore/FileSystem.h>
+
+using namespace WebCore;
 
 namespace WebKit {
+
+// The timeout, in seconds, when sending sync messages to the plug-in.
+static const double syncMessageTimeout = 45;
+
+static double defaultSyncMessageTimeout(const String& pluginPath)
+{
+    // We don't want a message timeout for the AppleConnect plug-in.
+    // FIXME: We should key this off something other than the path.
+    if (pathGetFileName(pluginPath) == "AppleConnect.plugin")
+        return CoreIPC::Connection::NoTimeout;
+
+    return syncMessageTimeout;
+}
 
 PluginProcessConnection::PluginProcessConnection(PluginProcessConnectionManager* pluginProcessConnectionManager, const String& pluginPath, CoreIPC::Connection::Identifier connectionIdentifier)
     : m_pluginProcessConnectionManager(pluginProcessConnectionManager)
     , m_pluginPath(pluginPath)
 {
     m_connection = CoreIPC::Connection::createClientConnection(connectionIdentifier, this, WebProcess::shared().runLoop());
+
+    m_connection->setDefaultSyncMessageTimeout(defaultSyncMessageTimeout(m_pluginPath));
     m_npRemoteObjectMap = NPRemoteObjectMap::create(m_connection.get());
 
     m_connection->open();
@@ -118,6 +137,7 @@ void PluginProcessConnection::didReceiveInvalidMessage(CoreIPC::Connection*, Cor
 
 void PluginProcessConnection::syncMessageSendTimedOut(CoreIPC::Connection*)
 {
+    WebProcess::shared().connection()->send(Messages::WebProcessProxy::PluginSyncMessageSendTimedOut(m_pluginPath), 0);
 }
 
 } // namespace WebKit

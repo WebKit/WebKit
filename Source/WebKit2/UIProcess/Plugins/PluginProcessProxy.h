@@ -72,6 +72,9 @@ public:
     // Asks the plug-in process to clear the data for the given sites.
     void clearSiteData(WebPluginSiteDataManager*, const Vector<String>& sites, uint64_t flags, uint64_t maxAgeInSeconds, uint64_t callbackID);
 
+    // Terminates the plug-in process.
+    void terminate();
+
 private:
     PluginProcessProxy(PluginProcessManager*, const PluginInfoStore::Plugin&);
 

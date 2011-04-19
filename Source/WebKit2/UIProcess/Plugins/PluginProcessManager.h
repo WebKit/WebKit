@@ -56,10 +56,13 @@ public:
     void getSitesWithData(const PluginInfoStore::Plugin&, WebPluginSiteDataManager*, uint64_t callbackID);
     void clearSiteData(const PluginInfoStore::Plugin&, WebPluginSiteDataManager*, const Vector<String>& sites, uint64_t flags, uint64_t maxAgeInSeconds, uint64_t callbackID);
 
+    void pluginSyncMessageSendTimedOut(const String& pluginPath);
+
 private:
     PluginProcessManager();
 
     PluginProcessProxy* getOrCreatePluginProcess(const PluginInfoStore::Plugin&);
+    PluginProcessProxy* pluginProcessWithPath(const String& pluginPath);
 
     Vector<PluginProcessProxy*> m_pluginProcesses;
 };

@@ -1,3 +1,42 @@
+2011-04-19  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        Terminate hung plug-in processes after 45 seconds
+        https://bugs.webkit.org/show_bug.cgi?id=58932
+        <rdar://problem/8083219>
+
+        * UIProcess/Plugins/PluginProcessManager.cpp:
+        (WebKit::PluginProcessManager::pluginSyncMessageSendTimedOut):
+        Find the plug-in process proxy and terminate it.
+
+        (WebKit::PluginProcessManager::pluginProcessWithPath):
+        Add new helper function.
+
+        (WebKit::PluginProcessManager::getOrCreatePluginProcess):
+        Call pluginProcessWithPath.
+
+        * UIProcess/Plugins/PluginProcessProxy.cpp:
+        (WebKit::PluginProcessProxy::terminate):
+        Terminate the process.
+
+        * UIProcess/Plugins/PluginProcessProxy.h:
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::pluginSyncMessageSendTimedOut):
+        Call PluginProcessManager::pluginSyncMessageSendTimedOut.
+
+        * UIProcess/WebProcessProxy.h:
+        * UIProcess/WebProcessProxy.messages.in:
+        Add PluginSyncMessageSendTimedOut message.
+
+        * WebProcess/Plugins/PluginProcessConnection.cpp:
+        (WebKit::defaultSyncMessageTimeout):
+        (WebKit::PluginProcessConnection::PluginProcessConnection):
+        Set a sync message timeout on the plug-in process connection.
+
+        (WebKit::PluginProcessConnection::syncMessageSendTimedOut):
+        Send a message to the web process proxy.
+
 2011-04-19  Alexey Proskuryakov  <ap@apple.com>
 
         Reviewed by Timothy Hatcher.
