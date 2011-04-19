@@ -79,13 +79,12 @@ enum HitTestAction {
     HitTestForeground
 };
 
-// Sides used when drawing borders and outlines.  This is in RenderObject rather than RenderBoxModelObject since outlines can
-// be drawn by SVG around bounding boxes.
+// Sides used when drawing borders and outlines. The values should run clockwise from top.
 enum BoxSide {
     BSTop,
+    BSRight,
     BSBottom,
-    BSLeft,
-    BSRight
+    BSLeft
 };
 
 const int caretWidth = 1;
@@ -434,13 +433,8 @@ public:
     bool hasMask() const { return style() && style()->hasMask(); }
 
     inline bool preservesNewline() const;
-    void drawLineForBoxSide(GraphicsContext*, int x1, int y1, int x2, int y2, BoxSide,
-                            Color, EBorderStyle, int adjbw1, int adjbw2);
-#if HAVE(PATH_BASED_BORDER_RADIUS_DRAWING)
-    void drawBoxSideFromPath(GraphicsContext*, const IntRect&, const Path&,
-                            float thickness, float drawThickness, BoxSide, const RenderStyle*, 
-                            Color, EBorderStyle);
-#else
+
+#if !HAVE(PATH_BASED_BORDER_RADIUS_DRAWING)
     // FIXME: This function should be removed when all ports implement GraphicsContext::clipConvexPolygon()!!
     // At that time, everyone can use RenderObject::drawBoxSideFromPath() instead. This should happen soon.
     void drawArcForBoxSide(GraphicsContext*, int x, int y, float thickness, const IntSize& radius, int angleStart,
@@ -782,6 +776,9 @@ protected:
     virtual void styleWillChange(StyleDifference, const RenderStyle* newStyle);
     // Overrides should call the superclass at the start
     virtual void styleDidChange(StyleDifference, const RenderStyle* oldStyle);
+
+    void drawLineForBoxSide(GraphicsContext*, int x1, int y1, int x2, int y2, BoxSide,
+                            Color, EBorderStyle, int adjbw1, int adjbw2, bool antialias = false);
 
     void paintFocusRing(GraphicsContext*, int tx, int ty, RenderStyle*);
     void paintOutline(GraphicsContext*, int tx, int ty, int w, int h);

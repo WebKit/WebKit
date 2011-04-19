@@ -188,4 +188,9 @@ void Path::addRoundedRect(const FloatRect& rect, const FloatSize& topLeftRadius,
     closeSubpath();
 }
 
+void Path::addRoundedRect(const RoundedIntRect& r)
+{
+    addRoundedRect(r.rect(), r.radii().topLeft(), r.radii().topRight(), r.radii().bottomLeft(), r.radii().bottomRight());
+}
+
 }

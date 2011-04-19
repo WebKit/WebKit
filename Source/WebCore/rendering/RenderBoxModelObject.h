@@ -32,6 +32,7 @@ namespace WebCore {
 // Modes for some of the line-related functions.
 enum LinePositionMode { PositionOnContainingLine, PositionOfInteriorLineBoxes };
 enum LineDirectionMode { HorizontalLine, VerticalLine };
+typedef unsigned BorderEdgeFlags;
 
 // This class is the base for all objects that adhere to the CSS box model as described
 // at http://www.w3.org/TR/CSS21/box.html
@@ -133,18 +134,24 @@ protected:
 
     RenderBoxModelObject* continuation() const;
     void setContinuation(RenderBoxModelObject*);
-
-    RoundedIntRect computeBorderOuterRect(const IntRect&, const RenderStyle*, bool includeLogicalLeftEdge, bool includeLogicalRightEdge);
-    RoundedIntRect computeBorderInnerRect(const IntRect&, const RenderStyle*, bool includeLogicalLeftEdge, bool includeLogicalRightEdge);
     
 private:
     virtual bool isBoxModelObject() const { return true; }
 
     IntSize calculateFillTileSize(const FillLayer*, IntSize scaledSize) const;
 
-    void clipBorderSidePolygon(GraphicsContext*, const RoundedIntRect& border,
-                               const BoxSide, bool firstEdgeMatches, bool secondEdgeMatches, const RenderStyle*,
-                               bool includeLogicalLeftEdge, bool includeLogicalRightEdge);
+    void clipBorderSidePolygon(GraphicsContext*, const RoundedIntRect& outerBorder, const RoundedIntRect& innerBorder,
+                               BoxSide, bool firstEdgeMatches, bool secondEdgeMatches);
+    void paintOneBorderSide(GraphicsContext*, const RenderStyle*, const RoundedIntRect& outerBorder, const RoundedIntRect& innerBorder,
+                                const IntRect& sideRect, BoxSide, BoxSide adjacentSide1, BoxSide adjacentSide2, const class BorderEdge[],
+                                const Path*, bool includeLogicalLeftEdge, bool includeLogicalRightEdge, bool antialias, const Color* overrideColor = 0);
+    void paintTranslucentBorderSides(GraphicsContext*, const RenderStyle*, const RoundedIntRect& outerBorder, const RoundedIntRect& innerBorder,
+                          const class BorderEdge[], bool includeLogicalLeftEdge, bool includeLogicalRightEdge, bool antialias = false);
+    void paintBorderSides(GraphicsContext*, const RenderStyle*, const RoundedIntRect& outerBorder, const RoundedIntRect& innerBorder,
+                          const class BorderEdge[], BorderEdgeFlags, bool includeLogicalLeftEdge, bool includeLogicalRightEdge, bool antialias = false, const Color* overrideColor = 0);
+    void drawBoxSideFromPath(GraphicsContext*, const IntRect&, const Path&, const class BorderEdge[],
+                            float thickness, float drawThickness, BoxSide, const RenderStyle*, 
+                            Color, EBorderStyle, bool includeLogicalLeftEdge, bool includeLogicalRightEdge);
 
     friend class RenderView;
 

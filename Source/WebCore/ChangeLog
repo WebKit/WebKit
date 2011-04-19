@@ -1,3 +1,166 @@
+2011-04-19  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Dave Hyatt.
+
+        Fix multiple border rendering issues
+        https://bugs.webkit.org/show_bug.cgi?id=58761
+        
+        Fix various border-drawing bugs, and optimize some common cases.
+        Also refactors a lot of the border-drawing code to be more maintainable.
+        
+            Rounded border rendering with different border widths looks strange
+            https://bugs.webkit.org/show_bug.cgi?id=17468
+            
+            paintBorder in RenderObject paint two times the corners
+            https://bugs.webkit.org/show_bug.cgi?id=20495
+            
+            Overdraw at box corners when using RGBA colors with alpha
+            https://bugs.webkit.org/show_bug.cgi?id=21835
+            
+            Enable antialiasing for border drawing, when transformed
+            https://bugs.webkit.org/show_bug.cgi?id=22746
+            
+            Drawing border-radius from path sometimes fails to round outer border in the double style when it should
+            https://bugs.webkit.org/show_bug.cgi?id=41301
+            
+            Drawing border-radius from path doesn't appear to always match up border edges correctly
+            https://bugs.webkit.org/show_bug.cgi?id=41302
+            
+        Also fixes
+            Should be able to create Path from RoundedIntRect
+            https://bugs.webkit.org/show_bug.cgi?id=58809
+
+        Tests: fast/borders/border-radius-different-width-001.html
+               fast/borders/border-radius-inset-outset.html
+               fast/borders/table-borders.html
+
+        * platform/graphics/FloatPoint.h:
+        * platform/graphics/FloatPoint.cpp:
+        (WebCore::findSlope):
+        (WebCore::findIntersection):
+        New geometry helper functions (should eventually move into a new
+        GeometryUtilities file).
+        
+        * platform/graphics/Path.h:
+        * platform/graphics/Path.cpp:
+        (WebCore::Path::addRoundedRect):
+        Add an overload of addRoundedRect() that takes a RoundedIntRect.
+
+        * platform/graphics/GraphicsContext.cpp:
+        (WebCore::GraphicsContext::addRoundedRectClip):
+        (WebCore::GraphicsContext::clipOutRoundedRect):
+        (WebCore::GraphicsContext::fillRectWithRoundedHole):
+        Can now add a RoundedIntRect to a Path directly.
+        
+        * platform/graphics/IntRect.h:
+        (WebCore::IntRect::minXMinYCorner):
+        (WebCore::IntRect::maxXMinYCorner):
+        (WebCore::IntRect::minXMaxYCorner):
+        (WebCore::IntRect::maxXMaxYCorner):
+        Convenience functions to get the rect corners, in a writing-mode-
+        friendly way.
+
+        * platform/graphics/RoundedIntRect.h:
+        * platform/graphics/RoundedIntRect.cpp:
+        (WebCore::RoundedIntRect::isRenderable):
+        We need to know when Path::addRoundedRect() will fail because
+        the sum of the radii exceed the height or width. This method tells
+        us that.
+        
+        * platform/graphics/cg/GraphicsContextCG.cpp:
+        (WebCore::GraphicsContext::fillRectWithRoundedHole):
+        Can now add a RoundedIntRect to a Path directly.
+
+        * rendering/RenderBoxModelObject.h:
+        * rendering/RenderBoxModelObject.cpp:
+        (WebCore::borderWillArcInnerEdge):
+        This can just to see if there are inner radii now.
+        
+        (WebCore::edgeFlagForSide):
+        (WebCore::includesEdge):
+        Convenience functions for the BorderEdgeFlags bitmask.
+        
+        (WebCore::BorderEdge::BorderEdge):
+        (WebCore::BorderEdge::hasVisibleColorAndStyle):
+        (WebCore::BorderEdge::shouldRender):
+        (WebCore::BorderEdge::presentButInvisible):
+        (WebCore::BorderEdge::usedWidth):
+        (WebCore::BorderEdge::getDoubleBorderStripeWidths):
+        Convenience class to hold data about how a single edge
+        is drawn, and to contain some commonly used width-related methods.
+        
+        (WebCore::edgesShareColor):
+        (WebCore::styleRequiresClipPolygon):
+        (WebCore::borderStyleFillsBorderArea):
+        (WebCore::borderStyleHasInnerDetail):
+        (WebCore::borderStyleIsDottedOrDashed):
+        (WebCore::borderStyleHasUnmatchedColorsAtCorner):
+        (WebCore::colorsMatchAtCorner):
+        (WebCore::willBeOverdrawn):
+        (WebCore::borderStylesRequireMitre):
+        (WebCore::joinRequiresMitre):
+        Functions used to make the border drawing code more readable,
+        which are used to determine when corners need a mitre, and
+        need antialiasing.
+        
+        (WebCore::RenderBoxModelObject::paintOneBorderSide):
+        Code to paint one side of a border, either via the path, or
+        using rects/polygons, the appropriate mitres and antialiasing
+        at the corners. includeLogicalLeftEdge and includeLogicalRightEdge need
+        to be passed all the way down here so that when we recompute the
+        path for double and ridge/groove borders, we correctly handle split box
+        borders.
+        
+        (WebCore::RenderBoxModelObject::paintBorderSides):
+        Paints the 4 border sides (if present).
+        
+        (WebCore::RenderBoxModelObject::paintTranslucentBorderSides):
+        Called when one or more of the borders has a non-opaque color,
+        and uses a transparency layer for each set of same-colored
+        sides to avoid overdraw at the corners.
+        
+        (WebCore::RenderBoxModelObject::paintBorder):
+        Builds an array of BorderEdge so we can iterate over them to 
+        detect different border compbinations, and optimizations. Has
+        a fast path for all-solid borders.
+        
+        (WebCore::RenderBoxModelObject::drawBoxSideFromPath):
+        Moved from RenderObject, since all callers are in RenderBoxModelObject.
+        Has the following changes:
+          * Don't attempt to draw dashes if there is only space for a few,
+            since it looks bad.
+          * Handle double and groove borders on split inlines correctly,
+            making use of includeLogicalLeftEdge, includeLogicalRightEdge
+
+        (WebCore::findInnerVertex):
+        For borders with a radiused inner edge, the per-side clip polygon
+        has to project inside the padding box to avoid clipping the inner edge.
+        This function computes a reasonable inner corner for the clipping
+        polygon.
+        (WebCore::RenderBoxModelObject::clipBorderSidePolygon):
+        Have the corner joins pass through the corners of the inner and outer
+        border rectangles, ensure we don't clip the inside if necessary,
+        and handle antialiasing on the two mitres.
+        
+        (WebCore::RenderBoxModelObject::paintBoxShadow):
+        Use RenderStyle::getRoundedInnerBorderFor() rather than computeBorderInnerRect()
+        etc.
+
+        * rendering/RenderObject.h:
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::drawLineForBoxSide):
+        Moved to RenderBoxModelObject.
+        
+        * rendering/style/RenderStyle.h:
+        * rendering/style/RenderStyle.cpp:
+        (WebCore::RenderStyle::getRoundedBorderFor):
+        (WebCore::RenderStyle::getRoundedInnerBorderFor):
+        There was some very clumsy code that computed a rounded rect
+        given the border rect and side widths. Cleaned this up by moving
+        some code into RenderStyle. The overloaded getRoundedInnerBorderFor()
+        which takes the border widths is used by the double and groove drawing
+        code.
+
 2011-04-19  Ryosuke Niwa  <rniwa@webkit.org>
 
         Reviewed by Dimitri Glazkov.

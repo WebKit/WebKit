@@ -1,3 +1,111 @@
+2011-04-19  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Dave Hyatt.
+
+        Fix multiple border rendering issues
+        https://bugs.webkit.org/show_bug.cgi?id=58761
+        
+        New results for progressions, and some new tests.
+        
+        * fast/blockflow/border-styles-vertical-lr.html:
+        * fast/blockflow/border-styles-vertical-rl.html:
+        * fast/borders/border-styles-split.html:
+        Adjusted to fit in the pixel result without scrollbars, and added
+        double border test.
+        
+        * fast/borders/border-radius-different-width-001.html: Added.
+        * fast/borders/border-radius-inset-outset.html: Added.
+        * fast/borders/table-borders.html: Added.
+        * platform/mac/fast/backgrounds/repeat/negative-offset-repeat-transformed-expected.checksum:
+        * platform/mac/fast/backgrounds/repeat/negative-offset-repeat-transformed-expected.png:
+        * platform/mac/fast/blockflow/border-styles-vertical-lr-expected.checksum:
+        * platform/mac/fast/blockflow/border-styles-vertical-lr-expected.png:
+        * platform/mac/fast/blockflow/border-styles-vertical-lr-expected.txt:
+        * platform/mac/fast/blockflow/border-styles-vertical-rl-expected.checksum:
+        * platform/mac/fast/blockflow/border-styles-vertical-rl-expected.png:
+        * platform/mac/fast/blockflow/border-styles-vertical-rl-expected.txt:
+        * platform/mac/fast/borders/border-radius-circle-expected.checksum:
+        * platform/mac/fast/borders/border-radius-circle-expected.png:
+        * platform/mac/fast/borders/border-radius-constraints-expected.checksum:
+        * platform/mac/fast/borders/border-radius-constraints-expected.png:
+        * platform/mac/fast/borders/border-radius-different-width-001-expected.checksum: Added.
+        * platform/mac/fast/borders/border-radius-different-width-001-expected.png: Added.
+        * platform/mac/fast/borders/border-radius-different-width-001-expected.txt: Added.
+        * platform/mac/fast/borders/border-radius-groove-01-expected.checksum:
+        * platform/mac/fast/borders/border-radius-groove-01-expected.png:
+        * platform/mac/fast/borders/border-radius-groove-02-expected.png:
+        * platform/mac/fast/borders/border-radius-groove-03-expected.checksum:
+        * platform/mac/fast/borders/border-radius-groove-03-expected.png:
+        * platform/mac/fast/borders/border-radius-huge-assert-expected.checksum:
+        * platform/mac/fast/borders/border-radius-huge-assert-expected.png:
+        * platform/mac/fast/borders/border-radius-inline-flow-expected.checksum:
+        * platform/mac/fast/borders/border-radius-inline-flow-expected.png:
+        * platform/mac/fast/borders/border-radius-inset-outset-expected.checksum: Added.
+        * platform/mac/fast/borders/border-radius-inset-outset-expected.png: Added.
+        * platform/mac/fast/borders/border-radius-inset-outset-expected.txt: Added.
+        * platform/mac/fast/borders/border-radius-split-inline-expected.checksum:
+        * platform/mac/fast/borders/border-radius-split-inline-expected.png:
+        * platform/mac/fast/borders/border-radius-wide-border-02-expected.checksum:
+        * platform/mac/fast/borders/border-radius-wide-border-02-expected.png:
+        * platform/mac/fast/borders/border-radius-wide-border-03-expected.checksum:
+        * platform/mac/fast/borders/border-radius-wide-border-03-expected.png:
+        * platform/mac/fast/borders/border-radius-wide-border-04-expected.checksum:
+        * platform/mac/fast/borders/border-radius-wide-border-04-expected.png:
+        * platform/mac/fast/borders/border-styles-split-expected.checksum:
+        * platform/mac/fast/borders/border-styles-split-expected.png:
+        * platform/mac/fast/borders/border-styles-split-expected.txt:
+        * platform/mac/fast/borders/borderRadiusAllStylesAllCorners-expected.checksum:
+        * platform/mac/fast/borders/borderRadiusAllStylesAllCorners-expected.png:
+        * platform/mac/fast/borders/borderRadiusDashed05-expected.checksum:
+        * platform/mac/fast/borders/borderRadiusDashed05-expected.png:
+        * platform/mac/fast/borders/borderRadiusDashed06-expected.checksum:
+        * platform/mac/fast/borders/borderRadiusDashed06-expected.png:
+        * platform/mac/fast/borders/borderRadiusDotted04-expected.checksum:
+        * platform/mac/fast/borders/borderRadiusDotted04-expected.png:
+        * platform/mac/fast/borders/borderRadiusDotted05-expected.checksum:
+        * platform/mac/fast/borders/borderRadiusDotted06-expected.checksum:
+        * platform/mac/fast/borders/borderRadiusDotted06-expected.png:
+        * platform/mac/fast/borders/borderRadiusDouble04-expected.checksum:
+        * platform/mac/fast/borders/borderRadiusDouble04-expected.png:
+        * platform/mac/fast/borders/borderRadiusDouble05-expected.checksum:
+        * platform/mac/fast/borders/borderRadiusDouble05-expected.png:
+        * platform/mac/fast/borders/borderRadiusDouble06-expected.checksum:
+        * platform/mac/fast/borders/borderRadiusDouble06-expected.png:
+        * platform/mac/fast/borders/borderRadiusDouble07-expected.checksum:
+        * platform/mac/fast/borders/borderRadiusDouble07-expected.png:
+        * platform/mac/fast/borders/borderRadiusDouble08-expected.checksum:
+        * platform/mac/fast/borders/borderRadiusDouble08-expected.png:
+        * platform/mac/fast/borders/borderRadiusDouble09-expected.checksum:
+        * platform/mac/fast/borders/borderRadiusDouble09-expected.png:
+        * platform/mac/fast/borders/borderRadiusInvalidColor-expected.checksum:
+        * platform/mac/fast/borders/borderRadiusInvalidColor-expected.png:
+        * platform/mac/fast/borders/borderRadiusSolid01-expected.checksum:
+        * platform/mac/fast/borders/borderRadiusSolid01-expected.png:
+        * platform/mac/fast/borders/borderRadiusSolid02-expected.checksum:
+        * platform/mac/fast/borders/borderRadiusSolid02-expected.png:
+        * platform/mac/fast/borders/borderRadiusSolid03-expected.checksum:
+        * platform/mac/fast/borders/borderRadiusSolid03-expected.png:
+        * platform/mac/fast/borders/borderRadiusSolid04-expected.checksum:
+        * platform/mac/fast/borders/borderRadiusSolid04-expected.png:
+        * platform/mac/fast/borders/fieldsetBorderRadius-expected.checksum:
+        * platform/mac/fast/borders/fieldsetBorderRadius-expected.png:
+        * platform/mac/fast/borders/mixed-border-styles-expected.checksum:
+        * platform/mac/fast/borders/mixed-border-styles-expected.png:
+        * platform/mac/fast/borders/mixed-border-styles-radius-expected.checksum:
+        * platform/mac/fast/borders/mixed-border-styles-radius-expected.png:
+        * platform/mac/fast/borders/mixed-border-styles-radius2-expected.checksum:
+        * platform/mac/fast/borders/mixed-border-styles-radius2-expected.png:
+        * platform/mac/fast/borders/webkit-border-radius-expected.checksum:
+        * platform/mac/fast/borders/webkit-border-radius-expected.png:
+        * platform/mac/fast/box-shadow/inset-box-shadow-radius-expected.checksum:
+        * platform/mac/fast/box-shadow/inset-box-shadow-radius-expected.png:
+        * platform/mac/fast/multicol/client-rects-expected.checksum:
+        * platform/mac/fast/multicol/client-rects-expected.png:
+        * platform/mac/fast/transforms/rotated-transform-affects-scrolling-1-expected.checksum:
+        * platform/mac/fast/transforms/rotated-transform-affects-scrolling-1-expected.png:
+        * platform/mac/fast/transforms/rotated-transform-affects-scrolling-2-expected.checksum:
+        * platform/mac/fast/transforms/rotated-transform-affects-scrolling-2-expected.png:
+
 2011-04-19  Stuart Morgan  <stuartmorgan@chromium.org>
 
         Reviewed by Tony Chang.

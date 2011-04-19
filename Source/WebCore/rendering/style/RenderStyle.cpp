@@ -799,22 +799,45 @@ static float calcConstraintScaleFor(const IntRect& rect, const RoundedIntRect::R
     return factor;
 }
 
-RoundedIntRect RenderStyle::getRoundedBorderFor(const IntRect& rect) const
+RoundedIntRect RenderStyle::getRoundedBorderFor(const IntRect& borderRect, bool includeLogicalLeftEdge, bool includeLogicalRightEdge) const
 {
-    RoundedIntRect::Radii radii = calcRadiiFor(surround->border, rect.width(), rect.height());
-    radii.scale(calcConstraintScaleFor(rect, radii));
-    return RoundedIntRect(rect, radii);
+    RoundedIntRect roundedRect(borderRect);
+    if (hasBorderRadius()) {
+        RoundedIntRect::Radii radii = calcRadiiFor(surround->border, borderRect.width(), borderRect.height());
+        radii.scale(calcConstraintScaleFor(borderRect, radii));
+        roundedRect.includeLogicalEdges(radii, isHorizontalWritingMode(), includeLogicalLeftEdge, includeLogicalRightEdge);
+    }
+    return roundedRect;
 }
 
-RoundedIntRect RenderStyle::getRoundedInnerBorderWithBorderWidths(const IntRect& outerRect, const IntRect& innerRect,
-    unsigned short topWidth, unsigned short bottomWidth, unsigned short leftWidth, unsigned short rightWidth) const
+RoundedIntRect RenderStyle::getRoundedInnerBorderFor(const IntRect& borderRect, bool includeLogicalLeftEdge, bool includeLogicalRightEdge) const
 {
-    RoundedIntRect::Radii radii = calcRadiiFor(surround->border, outerRect.width(), outerRect.height());
-    radii.scale(calcConstraintScaleFor(outerRect, radii));
+    bool horizontal = isHorizontalWritingMode();
 
-    radii.shrink(topWidth, bottomWidth, leftWidth, rightWidth);
+    int leftWidth = (!horizontal || includeLogicalLeftEdge) ? borderLeftWidth() : 0;
+    int rightWidth = (!horizontal || includeLogicalRightEdge) ? borderRightWidth() : 0;
+    int topWidth = (horizontal || includeLogicalLeftEdge) ? borderTopWidth() : 0;
+    int bottomWidth = (horizontal || includeLogicalRightEdge) ? borderBottomWidth() : 0;
 
-    return RoundedIntRect(innerRect, radii);
+    return getRoundedInnerBorderFor(borderRect, topWidth, bottomWidth, leftWidth, rightWidth, includeLogicalLeftEdge, includeLogicalRightEdge);
+}
+
+RoundedIntRect RenderStyle::getRoundedInnerBorderFor(const IntRect& borderRect,
+    int topWidth, int bottomWidth, int leftWidth, int rightWidth, bool includeLogicalLeftEdge, bool includeLogicalRightEdge) const
+{
+    IntRect innerRect(borderRect.x() + leftWidth, 
+            borderRect.y() + topWidth, 
+            borderRect.width() - leftWidth - rightWidth, 
+            borderRect.height() - topWidth - bottomWidth);
+
+    RoundedIntRect roundedRect(innerRect);
+
+    if (hasBorderRadius()) {
+        RoundedIntRect::Radii radii = getRoundedBorderFor(borderRect).radii();
+        radii.shrink(topWidth, bottomWidth, leftWidth, rightWidth);
+        roundedRect.includeLogicalEdges(radii, isHorizontalWritingMode(), includeLogicalLeftEdge, includeLogicalRightEdge);
+    }
+    return roundedRect;
 }
 
 const CounterDirectiveMap* RenderStyle::counterDirectives() const

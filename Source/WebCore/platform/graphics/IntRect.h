@@ -133,6 +133,11 @@ public:
         setHeight(std::max(0, height() + delta));
     }
 
+    IntPoint minXMinYCorner() const { return m_location; } // typically topLeft
+    IntPoint maxXMinYCorner() const { return IntPoint(m_location.x() + m_size.width(), m_location.y()); } // typically topRight
+    IntPoint minXMaxYCorner() const { return IntPoint(m_location.x(), m_location.y() + m_size.height()); } // typically bottomLeft
+    IntPoint maxXMaxYCorner() const { return IntPoint(m_location.x() + m_size.width(), m_location.y() + m_size.height()); } // typically bottomRight
+    
     bool intersects(const IntRect&) const;
     bool contains(const IntRect&) const;
 

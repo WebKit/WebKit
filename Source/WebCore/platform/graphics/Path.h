@@ -28,6 +28,7 @@
 #ifndef Path_h
 #define Path_h
 
+#include "RoundedIntRect.h"
 #include <wtf/FastAllocBase.h>
 #include <wtf/Forward.h>
 
@@ -137,6 +138,7 @@ namespace WebCore {
         void addEllipse(const FloatRect&);
         void addRoundedRect(const FloatRect&, const FloatSize& roundingRadii);
         void addRoundedRect(const FloatRect&, const FloatSize& topLeftRadius, const FloatSize& topRightRadius, const FloatSize& bottomLeftRadius, const FloatSize& bottomRightRadius);
+        void addRoundedRect(const RoundedIntRect&);
 
         void translate(const FloatSize&);
 

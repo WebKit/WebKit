@@ -93,6 +93,8 @@ public:
     void includeLogicalEdges(const Radii& edges, bool isHorizontal, bool includeLogicalLeftEdge, bool includeLogicalRightEdge);
     void excludeLogicalEdges(bool isHorizontal, bool excludeLogicalLeftEdge, bool excludeLogicalRightEdge);
 
+    bool isRenderable() const;
+
 private:
     IntRect m_rect;
     Radii m_radii;

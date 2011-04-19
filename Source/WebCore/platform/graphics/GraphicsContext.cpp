@@ -567,7 +567,7 @@ void GraphicsContext::addRoundedRectClip(const RoundedIntRect& rect)
         return;
 
     Path path;
-    path.addRoundedRect(rect.rect(), rect.radii().topLeft(), rect.radii().topRight(), rect.radii().bottomLeft(), rect.radii().bottomRight());
+    path.addRoundedRect(rect);
     clip(path);
 }
 
@@ -577,7 +577,7 @@ void GraphicsContext::clipOutRoundedRect(const RoundedIntRect& rect)
         return;
 
     Path path;
-    path.addRoundedRect(rect.rect(), rect.radii().topLeft(), rect.radii().topRight(), rect.radii().bottomLeft(), rect.radii().bottomRight());
+    path.addRoundedRect(rect);
     clipOut(path);
 }
 
@@ -631,7 +631,7 @@ void GraphicsContext::fillRectWithRoundedHole(const IntRect& rect, const Rounded
     path.addRect(rect);
 
     if (!roundedHoleRect.radii().isZero())
-        path.addRoundedRect(roundedHoleRect.rect(), roundedHoleRect.radii().topLeft(), roundedHoleRect.radii().topRight(), roundedHoleRect.radii().bottomLeft(), roundedHoleRect.radii().bottomRight());
+        path.addRoundedRect(roundedHoleRect);
     else
         path.addRect(roundedHoleRect.rect());
 

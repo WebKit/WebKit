@@ -705,7 +705,7 @@ bool RenderObject::mustRepaintBackgroundOrBorder() const
 
 void RenderObject::drawLineForBoxSide(GraphicsContext* graphicsContext, int x1, int y1, int x2, int y2,
                                       BoxSide side, Color color, EBorderStyle style,
-                                      int adjacentWidth1, int adjacentWidth2)
+                                      int adjacentWidth1, int adjacentWidth2, bool antialias)
 {
     int width = (side == BSTop || side == BSBottom ? y2 - y1 : x2 - x1);
 
@@ -722,7 +722,10 @@ void RenderObject::drawLineForBoxSide(GraphicsContext* graphicsContext, int x1, 
             graphicsContext->setStrokeThickness(width);
             graphicsContext->setStrokeStyle(style == DASHED ? DashedStroke : DottedStroke);
 
-            if (width > 0)
+            if (width > 0) {
+                bool wasAntialiased = graphicsContext->shouldAntialias();
+                graphicsContext->setShouldAntialias(antialias);
+
                 switch (side) {
                     case BSBottom:
                     case BSTop:
@@ -733,6 +736,8 @@ void RenderObject::drawLineForBoxSide(GraphicsContext* graphicsContext, int x1, 
                         graphicsContext->drawLine(IntPoint((x1 + x2) / 2, y1), IntPoint((x1 + x2) / 2, y2));
                         break;
                 }
+                graphicsContext->setShouldAntialias(wasAntialiased);
+            }
             break;
         case DOUBLE: {
             int third = (width + 1) / 3;
@@ -740,6 +745,10 @@ void RenderObject::drawLineForBoxSide(GraphicsContext* graphicsContext, int x1, 
             if (adjacentWidth1 == 0 && adjacentWidth2 == 0) {
                 graphicsContext->setStrokeStyle(NoStroke);
                 graphicsContext->setFillColor(color, m_style->colorSpace());
+                
+                bool wasAntialiased = graphicsContext->shouldAntialias();
+                graphicsContext->setShouldAntialias(antialias);
+
                 switch (side) {
                     case BSTop:
                     case BSBottom:
@@ -755,6 +764,8 @@ void RenderObject::drawLineForBoxSide(GraphicsContext* graphicsContext, int x1, 
                         graphicsContext->drawRect(IntRect(x2 - third, y1 + 1, third, y2 - y1 - 1));
                         break;
                 }
+
+                graphicsContext->setShouldAntialias(wasAntialiased);
             } else {
                 int adjacent1BigThird = ((adjacentWidth1 > 0) ? adjacentWidth1 + 1 : adjacentWidth1 - 1) / 3;
                 int adjacent2BigThird = ((adjacentWidth2 > 0) ? adjacentWidth2 + 1 : adjacentWidth2 - 1) / 3;
@@ -763,34 +774,34 @@ void RenderObject::drawLineForBoxSide(GraphicsContext* graphicsContext, int x1, 
                     case BSTop:
                         drawLineForBoxSide(graphicsContext, x1 + max((-adjacentWidth1 * 2 + 1) / 3, 0),
                                    y1, x2 - max((-adjacentWidth2 * 2 + 1) / 3, 0), y1 + third,
-                                   side, color, SOLID, adjacent1BigThird, adjacent2BigThird);
+                                   side, color, SOLID, adjacent1BigThird, adjacent2BigThird, antialias);
                         drawLineForBoxSide(graphicsContext, x1 + max((adjacentWidth1 * 2 + 1) / 3, 0),
                                    y2 - third, x2 - max((adjacentWidth2 * 2 + 1) / 3, 0), y2,
-                                   side, color, SOLID, adjacent1BigThird, adjacent2BigThird);
+                                   side, color, SOLID, adjacent1BigThird, adjacent2BigThird, antialias);
                         break;
                     case BSLeft:
                         drawLineForBoxSide(graphicsContext, x1, y1 + max((-adjacentWidth1 * 2 + 1) / 3, 0),
                                    x1 + third, y2 - max((-adjacentWidth2 * 2 + 1) / 3, 0),
-                                   side, color, SOLID, adjacent1BigThird, adjacent2BigThird);
+                                   side, color, SOLID, adjacent1BigThird, adjacent2BigThird, antialias);
                         drawLineForBoxSide(graphicsContext, x2 - third, y1 + max((adjacentWidth1 * 2 + 1) / 3, 0),
                                    x2, y2 - max((adjacentWidth2 * 2 + 1) / 3, 0),
-                                   side, color, SOLID, adjacent1BigThird, adjacent2BigThird);
+                                   side, color, SOLID, adjacent1BigThird, adjacent2BigThird, antialias);
                         break;
                     case BSBottom:
                         drawLineForBoxSide(graphicsContext, x1 + max((adjacentWidth1 * 2 + 1) / 3, 0),
                                    y1, x2 - max((adjacentWidth2 * 2 + 1) / 3, 0), y1 + third,
-                                   side, color, SOLID, adjacent1BigThird, adjacent2BigThird);
+                                   side, color, SOLID, adjacent1BigThird, adjacent2BigThird, antialias);
                         drawLineForBoxSide(graphicsContext, x1 + max((-adjacentWidth1 * 2 + 1) / 3, 0),
                                    y2 - third, x2 - max((-adjacentWidth2 * 2 + 1) / 3, 0), y2,
-                                   side, color, SOLID, adjacent1BigThird, adjacent2BigThird);
+                                   side, color, SOLID, adjacent1BigThird, adjacent2BigThird, antialias);
                         break;
                     case BSRight:
                         drawLineForBoxSide(graphicsContext, x1, y1 + max((adjacentWidth1 * 2 + 1) / 3, 0),
                                    x1 + third, y2 - max((adjacentWidth2 * 2 + 1) / 3, 0),
-                                   side, color, SOLID, adjacent1BigThird, adjacent2BigThird);
+                                   side, color, SOLID, adjacent1BigThird, adjacent2BigThird, antialias);
                         drawLineForBoxSide(graphicsContext, x2 - third, y1 + max((-adjacentWidth1 * 2 + 1) / 3, 0),
                                    x2, y2 - max((-adjacentWidth2 * 2 + 1) / 3, 0),
-                                   side, color, SOLID, adjacent1BigThird, adjacent2BigThird);
+                                   side, color, SOLID, adjacent1BigThird, adjacent2BigThird, antialias);
                         break;
                     default:
                         break;
@@ -816,32 +827,34 @@ void RenderObject::drawLineForBoxSide(GraphicsContext* graphicsContext, int x1, 
             switch (side) {
                 case BSTop:
                     drawLineForBoxSide(graphicsContext, x1 + max(-adjacentWidth1, 0) / 2, y1, x2 - max(-adjacentWidth2, 0) / 2, (y1 + y2 + 1) / 2,
-                               side, color, s1, adjacent1BigHalf, adjacent2BigHalf);
+                               side, color, s1, adjacent1BigHalf, adjacent2BigHalf, antialias);
                     drawLineForBoxSide(graphicsContext, x1 + max(adjacentWidth1 + 1, 0) / 2, (y1 + y2 + 1) / 2, x2 - max(adjacentWidth2 + 1, 0) / 2, y2,
-                               side, color, s2, adjacentWidth1 / 2, adjacentWidth2 / 2);
+                               side, color, s2, adjacentWidth1 / 2, adjacentWidth2 / 2, antialias);
                     break;
                 case BSLeft:
                     drawLineForBoxSide(graphicsContext, x1, y1 + max(-adjacentWidth1, 0) / 2, (x1 + x2 + 1) / 2, y2 - max(-adjacentWidth2, 0) / 2,
-                               side, color, s1, adjacent1BigHalf, adjacent2BigHalf);
+                               side, color, s1, adjacent1BigHalf, adjacent2BigHalf, antialias);
                     drawLineForBoxSide(graphicsContext, (x1 + x2 + 1) / 2, y1 + max(adjacentWidth1 + 1, 0) / 2, x2, y2 - max(adjacentWidth2 + 1, 0) / 2,
-                               side, color, s2, adjacentWidth1 / 2, adjacentWidth2 / 2);
+                               side, color, s2, adjacentWidth1 / 2, adjacentWidth2 / 2, antialias);
                     break;
                 case BSBottom:
                     drawLineForBoxSide(graphicsContext, x1 + max(adjacentWidth1, 0) / 2, y1, x2 - max(adjacentWidth2, 0) / 2, (y1 + y2 + 1) / 2,
-                               side, color, s2, adjacent1BigHalf, adjacent2BigHalf);
+                               side, color, s2, adjacent1BigHalf, adjacent2BigHalf, antialias);
                     drawLineForBoxSide(graphicsContext, x1 + max(-adjacentWidth1 + 1, 0) / 2, (y1 + y2 + 1) / 2, x2 - max(-adjacentWidth2 + 1, 0) / 2, y2,
-                               side, color, s1, adjacentWidth1 / 2, adjacentWidth2 / 2);
+                               side, color, s1, adjacentWidth1 / 2, adjacentWidth2 / 2, antialias);
                     break;
                 case BSRight:
                     drawLineForBoxSide(graphicsContext, x1, y1 + max(adjacentWidth1, 0) / 2, (x1 + x2 + 1) / 2, y2 - max(adjacentWidth2, 0) / 2,
-                               side, color, s2, adjacent1BigHalf, adjacent2BigHalf);
+                               side, color, s2, adjacent1BigHalf, adjacent2BigHalf, antialias);
                     drawLineForBoxSide(graphicsContext, (x1 + x2 + 1) / 2, y1 + max(-adjacentWidth1 + 1, 0) / 2, x2, y2 - max(-adjacentWidth2 + 1, 0) / 2,
-                               side, color, s1, adjacentWidth1 / 2, adjacentWidth2 / 2);
+                               side, color, s1, adjacentWidth1 / 2, adjacentWidth2 / 2, antialias);
                     break;
             }
             break;
         }
         case INSET:
+            // FIXME: Maybe we should lighten the colors on one side like Firefox.
+            // https://bugs.webkit.org/show_bug.cgi?id=58608
             if (side == BSTop || side == BSLeft)
                 color = color.dark();
             // fall through
@@ -855,7 +868,12 @@ void RenderObject::drawLineForBoxSide(GraphicsContext* graphicsContext, int x1, 
             ASSERT(x2 >= x1);
             ASSERT(y2 >= y1);
             if (!adjacentWidth1 && !adjacentWidth2) {
+                // Turn off antialiasing to match the behavior of drawConvexPolygon();
+                // this matters for rects in transformed contexts.
+                bool wasAntialiased = graphicsContext->shouldAntialias();
+                graphicsContext->setShouldAntialias(antialias);
                 graphicsContext->drawRect(IntRect(x1, y1, x2 - x1, y2 - y1));
+                graphicsContext->setShouldAntialias(wasAntialiased);
                 return;
             }
             FloatPoint quad[4];
@@ -885,7 +903,8 @@ void RenderObject::drawLineForBoxSide(GraphicsContext* graphicsContext, int x1, 
                     quad[3] = FloatPoint(x2, y1 + max(-adjacentWidth1, 0));
                     break;
             }
-            graphicsContext->drawConvexPolygon(4, quad);
+
+            graphicsContext->drawConvexPolygon(4, quad, antialias);
             break;
         }
     }
@@ -900,154 +919,7 @@ IntRect RenderObject::borderInnerRect(const IntRect& borderRect, unsigned short 
             borderRect.height() - topWidth - bottomWidth);
 }
 
-#if HAVE(PATH_BASED_BORDER_RADIUS_DRAWING)
-void RenderObject::drawBoxSideFromPath(GraphicsContext* graphicsContext, const IntRect& borderRect, const Path& borderPath,
-                                    float thickness, float drawThickness, BoxSide s, const RenderStyle* style, 
-                                    Color color, EBorderStyle borderStyle)
-{
-    if (thickness <= 0)
-        return;
-
-    if (borderStyle == DOUBLE && thickness < 3)
-        borderStyle = SOLID;
-
-    switch (borderStyle) {
-    case BNONE:
-    case BHIDDEN:
-        return;
-    case DOTTED:
-    case DASHED: {
-        graphicsContext->setStrokeColor(color, style->colorSpace());
-
-        // The stroke is doubled here because the provided path is the 
-        // outside edge of the border so half the stroke is clipped off. 
-        // The extra multiplier is so that the clipping mask can antialias
-        // the edges to prevent jaggies.
-        graphicsContext->setStrokeThickness(drawThickness * 2 * 1.1f);
-        graphicsContext->setStrokeStyle(borderStyle == DASHED ? DashedStroke : DottedStroke);
-
-        // If the number of dashes that fit in the path is odd and non-integral then we
-        // will have an awkwardly-sized dash at the end of the path. To try to avoid that
-        // here, we simply make the whitespace dashes ever so slightly bigger.
-        // FIXME: This could be even better if we tried to manipulate the dash offset
-        // and possibly the whiteSpaceWidth to get the corners dash-symmetrical.
-        float patWidth = thickness * ((borderStyle == DASHED) ? 3.0f : 1.0f);
-        float whiteSpaceWidth = patWidth;
-        float numberOfDashes = borderPath.length() / patWidth;
-        bool evenNumberOfFullDashes = !((int)numberOfDashes % 2);
-        bool integralNumberOfDashes = !(numberOfDashes - (int)numberOfDashes);
-        if (!evenNumberOfFullDashes && !integralNumberOfDashes) {
-            float numberOfWhitespaceDashes = numberOfDashes / 2;
-            whiteSpaceWidth += (patWidth  / numberOfWhitespaceDashes);
-        }
-
-        DashArray lineDash;
-        lineDash.append(patWidth);
-        lineDash.append(whiteSpaceWidth);
-        graphicsContext->setLineDash(lineDash, patWidth);
-        graphicsContext->strokePath(borderPath);
-        return;
-    }
-    case DOUBLE: {
-        int outerBorderTopWidth = style->borderTopWidth() / 3;
-        int outerBorderRightWidth = style->borderRightWidth() / 3;
-        int outerBorderBottomWidth = style->borderBottomWidth() / 3;
-        int outerBorderLeftWidth = style->borderLeftWidth() / 3;
-
-        int innerBorderTopWidth = style->borderTopWidth() * 2 / 3;
-        int innerBorderRightWidth = style->borderRightWidth() * 2 / 3;
-        int innerBorderBottomWidth = style->borderBottomWidth() * 2 / 3;
-        int innerBorderLeftWidth = style->borderLeftWidth() * 2 / 3;
-
-        // We need certain integer rounding results
-        if (style->borderTopWidth() % 3 == 2)
-            outerBorderTopWidth += 1;
-        if (style->borderRightWidth() % 3 == 2)
-            outerBorderRightWidth += 1;
-        if (style->borderBottomWidth() % 3 == 2)
-            outerBorderBottomWidth += 1;
-        if (style->borderLeftWidth() % 3 == 2)
-            outerBorderLeftWidth += 1;
-
-        if (style->borderTopWidth() % 3 == 1)
-            innerBorderTopWidth += 1;
-        if (style->borderRightWidth() % 3 == 1)
-            innerBorderRightWidth += 1;
-        if (style->borderBottomWidth() % 3 == 1)
-            innerBorderBottomWidth += 1;
-        if (style->borderLeftWidth() % 3 == 1)
-            innerBorderLeftWidth += 1;
-
-        // Get the inner border rects for both the outer border line and the inner border line
-
-        // Draw inner border line
-        graphicsContext->save();
-        IntRect innerBorderInnerRect = borderInnerRect(borderRect, innerBorderTopWidth, innerBorderBottomWidth, 
-                                                       innerBorderLeftWidth, innerBorderRightWidth);
-        RoundedIntRect innerClip = style->getRoundedInnerBorderWithBorderWidths(borderRect, innerBorderInnerRect, innerBorderTopWidth, innerBorderBottomWidth,
-                                                                                innerBorderLeftWidth, innerBorderRightWidth);
-        graphicsContext->addRoundedRectClip(innerClip);
-        drawBoxSideFromPath(graphicsContext, borderRect, borderPath, thickness, drawThickness, s, style, color, SOLID);
-        graphicsContext->restore();
-
-        // Draw outer border line
-        graphicsContext->save();
-        IntRect outerBorderInnerRect = borderInnerRect(borderRect, outerBorderTopWidth, outerBorderBottomWidth, 
-                                                       outerBorderLeftWidth, outerBorderRightWidth);
-        RoundedIntRect outerClip = style->getRoundedInnerBorderWithBorderWidths(borderRect, outerBorderInnerRect, outerBorderTopWidth, outerBorderBottomWidth, 
-                                                                                outerBorderLeftWidth, outerBorderRightWidth);
-        graphicsContext->clipOutRoundedRect(outerClip);
-        drawBoxSideFromPath(graphicsContext, borderRect, borderPath, thickness, drawThickness, s, style, color, SOLID);
-        graphicsContext->restore();
-
-        return;
-    }
-    case RIDGE:
-    case GROOVE:
-    {
-        EBorderStyle s1;
-        EBorderStyle s2;
-        if (borderStyle == GROOVE) {
-            s1 = INSET;
-            s2 = OUTSET;
-        } else {
-            s1 = OUTSET;
-            s2 = INSET;
-        }
-
-        IntRect halfBorderRect = borderInnerRect(borderRect, style->borderLeftWidth() / 2, style->borderBottomWidth() / 2, 
-            style->borderLeftWidth() / 2, style->borderRightWidth() / 2);
-
-        // Paint full border
-        drawBoxSideFromPath(graphicsContext, borderRect, borderPath, thickness, drawThickness, s, style, color, s1);
-
-        // Paint inner only
-        graphicsContext->save();
-        RoundedIntRect clipRect = style->getRoundedInnerBorderWithBorderWidths(borderRect, halfBorderRect, style->borderLeftWidth() / 2, style->borderBottomWidth() / 2, 
-                                                                               style->borderLeftWidth() / 2, style->borderRightWidth() / 2);
-        graphicsContext->addRoundedRectClip(clipRect);
-        drawBoxSideFromPath(graphicsContext, borderRect, borderPath, thickness, drawThickness, s, style, color, s2);
-        graphicsContext->restore();
-
-        return;
-    }
-    case INSET:
-        if (s == BSTop || s == BSLeft)
-            color = color.dark();
-        break;
-    case OUTSET:
-        if (s == BSBottom || s == BSRight)
-            color = color.dark();
-        break;
-    default:
-        break;
-    }
-
-    graphicsContext->setStrokeStyle(NoStroke);
-    graphicsContext->setFillColor(color, style->colorSpace());
-    graphicsContext->drawRect(borderRect);
-}
-#else
+#if !HAVE(PATH_BASED_BORDER_RADIUS_DRAWING)
 void RenderObject::drawArcForBoxSide(GraphicsContext* graphicsContext, int x, int y, float thickness, const IntSize& radius,
                                      int angleStart, int angleSpan, BoxSide s, Color color,
                                      EBorderStyle style, bool firstCorner)

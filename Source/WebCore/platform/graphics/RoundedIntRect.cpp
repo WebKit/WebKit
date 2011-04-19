@@ -140,4 +140,12 @@ void RoundedIntRect::excludeLogicalEdges(bool isHorizontal, bool excludeLogicalL
     m_radii.excludeLogicalEdges(isHorizontal, excludeLogicalLeftEdge, excludeLogicalRightEdge);
 }
 
+bool RoundedIntRect::isRenderable() const
+{
+    return m_radii.topLeft().width() + m_radii.topRight().width() <= m_rect.width()
+        && m_radii.bottomLeft().width() + m_radii.bottomRight().width() <= m_rect.width()
+        && m_radii.topLeft().height() + m_radii.topRight().height() <= m_rect.height()
+        && m_radii.bottomLeft().height() + m_radii.bottomRight().height() <= m_rect.height();
+}
+
 } // namespace WebCore

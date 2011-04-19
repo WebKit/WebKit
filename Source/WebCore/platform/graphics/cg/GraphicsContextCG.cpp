@@ -796,7 +796,7 @@ void GraphicsContext::fillRectWithRoundedHole(const IntRect& rect, const Rounded
     path.addRect(rect);
 
     if (!roundedHoleRect.radii().isZero())
-        path.addRoundedRect(roundedHoleRect.rect(), roundedHoleRect.radii().topLeft(), roundedHoleRect.radii().topRight(), roundedHoleRect.radii().bottomLeft(), roundedHoleRect.radii().bottomRight());
+        path.addRoundedRect(roundedHoleRect);
     else
         path.addRect(roundedHoleRect.rect());
 
