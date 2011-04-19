@@ -53,13 +53,15 @@ private:
 
 class SVGShadowTreeRootElement : public SVGShadowTreeContainerElement {
 public:
-    static PassRefPtr<SVGShadowTreeRootElement> create(Document*, SVGUseElement* shadowParent);
+    static PassRefPtr<SVGShadowTreeRootElement> create(Document*, SVGUseElement* host);
 
     void attachElement(PassRefPtr<RenderStyle>, RenderArena*);
-    void clearShadowHost();
+    void clearSVGShadowHost();
+
+    virtual bool isSVGShadowRoot() const { return true; }
 
 private:
-    SVGShadowTreeRootElement(Document*, SVGUseElement* shadowParent);
+    SVGShadowTreeRootElement(Document*, SVGUseElement* host);
 };
 
 }

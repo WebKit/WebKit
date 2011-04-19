@@ -81,13 +81,13 @@ String SVGStyledElement::title() const
     // Walk up the tree, to find out whether we're inside a <use> shadow tree, to find the right title.
     Node* parent = const_cast<SVGStyledElement*>(this);
     while (parent) {
-        if (!parent->isShadowRoot()) {
+        if (!parent->isSVGShadowRoot()) {
             parent = parent->parentNodeGuaranteedHostFree();
             continue;
         }
         
         // Get the <use> element.
-        Element* shadowParent = parent->shadowHost();
+        Element* shadowParent = parent->svgShadowHost();
         if (shadowParent && shadowParent->isSVGElement() && shadowParent->hasTagName(SVGNames::useTag)) {
             SVGUseElement* useElement = static_cast<SVGUseElement*>(shadowParent);
             // If the <use> title is not empty we found the title to use.

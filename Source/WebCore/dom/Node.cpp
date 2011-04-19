@@ -548,7 +548,7 @@ Element* Node::shadowHost() const
 
 void Node::setShadowHost(Element* host)
 {
-    ASSERT(!parentNode());
+    ASSERT(!parentNode() && !isSVGShadowRoot());
     if (host)
         setFlag(IsShadowRootFlag);
     else
@@ -1602,6 +1602,13 @@ bool Node::canStartSelection() const
     return parentOrHostNode() ? parentOrHostNode()->canStartSelection() : true;
 }
 
+#if ENABLE(SVG)
+SVGUseElement* Node::svgShadowHost() const
+{
+    return isSVGShadowRoot() ? static_cast<SVGUseElement*>(parent()) : 0;
+}
+#endif
+
 Node* Node::shadowAncestorNode()
 {
 #if ENABLE(SVG)
@@ -1623,7 +1630,7 @@ Node* Node::shadowTreeRootNode()
 {
     Node* root = this;
     while (root) {
-        if (root->isShadowRoot())
+        if (root->isShadowRoot() || root->isSVGShadowRoot())
             return root;
         root = root->parentNodeGuaranteedHostFree();
     }

@@ -71,6 +71,9 @@ class RenderBox;
 class RenderBoxModelObject;
 class RenderObject;
 class RenderStyle;
+#if ENABLE(SVG)
+class SVGUseElement;
+#endif
 class TagNodeList;
 class TreeScope;
 
@@ -191,6 +194,10 @@ public:
     bool isHTMLElement() const { return getFlag(IsHTMLFlag); }
 
     bool isSVGElement() const { return getFlag(IsSVGFlag); }
+    virtual bool isSVGShadowRoot() const { return false; }
+#if ENABLE(SVG)
+    SVGUseElement* svgShadowHost() const;
+#endif
 
 #if ENABLE(WML)
     virtual bool isWMLElement() const { return false; }
@@ -213,9 +220,9 @@ public:
     Node* shadowAncestorNode();
     Node* shadowTreeRootNode();
     bool isInShadowTree();
-    // Node's parent or shadow tree host.
+    // Node's parent, shadow tree host, or SVG use.
     ContainerNode* parentOrHostNode() const;
-    // Use when it's guaranteed to that shadowHost is 0.
+    // Use when it's guaranteed to that shadowHost is 0 and svgShadowHost is 0.
     ContainerNode* parentNodeGuaranteedHostFree() const;
 
     Element* shadowHost() const;
@@ -733,7 +740,7 @@ inline void addSubresourceURL(ListHashSet<KURL>& urls, const KURL& url)
 
 inline ContainerNode* Node::parentNode() const
 {
-    return getFlag(IsShadowRootFlag) ? 0 : parent();
+    return getFlag(IsShadowRootFlag) || isSVGShadowRoot() ? 0 : parent();
 }
 
 inline ContainerNode* Node::parentOrHostNode() const
@@ -743,7 +750,7 @@ inline ContainerNode* Node::parentOrHostNode() const
 
 inline ContainerNode* Node::parentNodeGuaranteedHostFree() const
 {
-    ASSERT(!getFlag(IsShadowRootFlag));
+    ASSERT(!getFlag(IsShadowRootFlag) && !isSVGShadowRoot());
     return parentOrHostNode();
 }
 

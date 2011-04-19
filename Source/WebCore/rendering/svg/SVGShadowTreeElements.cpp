@@ -53,21 +53,21 @@ PassRefPtr<Element> SVGShadowTreeContainerElement::cloneElementWithoutAttributes
 }
 // SVGShadowTreeRootElement
 
-inline SVGShadowTreeRootElement::SVGShadowTreeRootElement(Document* document, SVGUseElement* shadowParent)
+inline SVGShadowTreeRootElement::SVGShadowTreeRootElement(Document* document, SVGUseElement* host)
     : SVGShadowTreeContainerElement(document)
 {
-    setShadowHost(shadowParent);
+    setParent(host);
     setInDocument();
 }
 
-PassRefPtr<SVGShadowTreeRootElement> SVGShadowTreeRootElement::create(Document* document, SVGUseElement* shadowParent)
+PassRefPtr<SVGShadowTreeRootElement> SVGShadowTreeRootElement::create(Document* document, SVGUseElement* host)
 {
-    return adoptRef(new SVGShadowTreeRootElement(document, shadowParent));
+    return adoptRef(new SVGShadowTreeRootElement(document, host));
 }
 
 void SVGShadowTreeRootElement::attachElement(PassRefPtr<RenderStyle> style, RenderArena* arena)
 {
-    ASSERT(shadowHost());
+    ASSERT(svgShadowHost());
 
     // Create the renderer with the specified style
     RenderObject* renderer = createRenderer(arena, style.get());
@@ -81,12 +81,12 @@ void SVGShadowTreeRootElement::attachElement(PassRefPtr<RenderStyle> style, Rend
 
     // Add the renderer to the render tree
     if (renderer)
-        shadowHost()->renderer()->addChild(renderer);
+        svgShadowHost()->renderer()->addChild(renderer);
 }
 
-void SVGShadowTreeRootElement::clearShadowHost()
+void SVGShadowTreeRootElement::clearSVGShadowHost()
 {
-    setShadowHost(0);
+    setParent(0);
 }
 
 }

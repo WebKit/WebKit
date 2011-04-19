@@ -65,10 +65,10 @@ static EventTarget* findElementInstance(Node* referenceNode)
     // Spec: The event handling for the non-exposed tree works as if the referenced element had been textually included
     // as a deeply cloned child of the 'use' element, except that events are dispatched to the SVGElementInstance objects
     for (Node* n = referenceNode; n; n = n->parentNode()) {
-        if (!n->isShadowRoot() || !n->isSVGElement())
+        if (!n->isSVGShadowRoot() || !n->isSVGElement())
             continue;
 
-        Element* shadowTreeParentElement = n->shadowHost();
+        Element* shadowTreeParentElement = n->svgShadowHost();
         ASSERT(shadowTreeParentElement->hasTagName(SVGNames::useTag));
 
         if (SVGElementInstance* instance = static_cast<SVGUseElement*>(shadowTreeParentElement)->instanceForShadowTreeElement(referenceNode))
@@ -122,6 +122,11 @@ void EventDispatcher::dispatchSimulatedClick(Node* node, PassRefPtr<Event> under
     gNodesDispatchingSimulatedClicks->remove(node);
 }
 
+static inline bool isShadowRootOrSVGShadowRoot(const Node* node)
+{
+    return node->isShadowRoot() || node->isSVGShadowRoot();
+}
+
 PassRefPtr<EventTarget> EventDispatcher::adjustToShadowBoundaries(PassRefPtr<Node> relatedTarget, const Vector<Node*> relatedTargetAncestors)
 {
     Vector<EventContext>::const_iterator lowestCommonBoundary = m_ancestors.end();
@@ -133,7 +138,7 @@ PassRefPtr<EventTarget> EventDispatcher::adjustToShadowBoundaries(PassRefPtr<Nod
     bool diverged = false;
     for (Vector<Node*>::const_iterator i = relatedTargetAncestors.end() - 1; i >= relatedTargetAncestors.begin(); --i) {
         if (diverged) {
-            if ((*i)->isShadowRoot()) {
+            if (isShadowRootOrSVGShadowRoot(*i)) {
                 firstDivergentBoundary = i + 1;
                 break;
             }
@@ -147,7 +152,7 @@ PassRefPtr<EventTarget> EventDispatcher::adjustToShadowBoundaries(PassRefPtr<Nod
 
         targetAncestor--;
 
-        if ((*i)->isShadowRoot())
+        if (isShadowRootOrSVGShadowRoot(*i))
             lowestCommonBoundary = targetAncestor;
 
         if ((*i) != (*targetAncestor).node())
@@ -156,7 +161,7 @@ PassRefPtr<EventTarget> EventDispatcher::adjustToShadowBoundaries(PassRefPtr<Nod
 
     if (!diverged) {
         // The relatedTarget is a parent or shadowHost of the target.
-        if (m_node->isShadowRoot())
+        if (isShadowRootOrSVGShadowRoot(m_node.get()))
             lowestCommonBoundary = m_ancestors.begin();
     } else if ((*firstDivergentBoundary) == m_node.get()) {
         // Since ancestors does not contain target itself, we must account
@@ -203,7 +208,7 @@ PassRefPtr<EventTarget> EventDispatcher::adjustRelatedTarget(Event* event, PassR
     Vector<Node*> relatedTargetAncestors;
     Node* outermostShadowBoundary = relatedTarget.get();
     for (Node* n = outermostShadowBoundary; n; n = n->parentOrHostNode()) {
-        if (n->isShadowRoot())
+        if (isShadowRootOrSVGShadowRoot(n))
             outermostShadowBoundary = n->parentOrHostNode();
         if (!noCommonBoundary)
             relatedTargetAncestors.append(n);
@@ -240,10 +245,11 @@ void EventDispatcher::ensureEventAncestors(Event* event)
     EventTarget* target = eventTargetRespectingSVGTargetRules(ancestor);
     bool shouldSkipNextAncestor = false;
     while (true) {
-        if (ancestor->isShadowRoot()) {
+        bool isSVGShadowRoot = ancestor->isSVGShadowRoot();
+        if (isSVGShadowRoot || ancestor->isShadowRoot()) {
             if (behavior == StayInsideShadowDOM)
                 return;
-            ancestor = ancestor->shadowHost();
+            ancestor = isSVGShadowRoot ? ancestor->svgShadowHost() : ancestor->shadowHost();
             if (!shouldSkipNextAncestor)
                 target = ancestor;
         } else
@@ -254,7 +260,7 @@ void EventDispatcher::ensureEventAncestors(Event* event)
 
 #if ENABLE(SVG)
         // Skip SVGShadowTreeRootElement.
-        shouldSkipNextAncestor = ancestor->isSVGElement() && ancestor->isShadowRoot();
+        shouldSkipNextAncestor = ancestor->isSVGShadowRoot();
         if (shouldSkipNextAncestor)
             continue;
 #endif

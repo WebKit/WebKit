@@ -1,3 +1,38 @@
+2011-04-18  Dominic Cooney  <dominicc@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        Makes SVG shadow roots and DOM shadow roots distinct.
+        https://bugs.webkit.org/show_bug.cgi?id=52788
+
+        Not a functional change. Covered by existing SVG tests.
+
+        * dom/EventDispatcher.cpp:
+        (WebCore::findElementInstance):
+        (WebCore::EventDispatcher::adjustToShadowBoundaries):
+        (WebCore::EventDispatcher::adjustRelatedTarget):
+        (WebCore::EventDispatcher::ensureEventAncestors):
+        * dom/Node.cpp:
+        (WebCore::Node::setShadowHost):
+        (WebCore::Node::svgShadowHost):
+        (WebCore::Node::shadowTreeRootNode):
+        * dom/Node.h:
+        (WebCore::Node::isSVGShadowRoot):
+        (WebCore::Node::parentNode):
+        (WebCore::Node::parentNodeGuaranteedHostFree):
+        * rendering/svg/RenderSVGShadowTreeRootContainer.cpp:
+        (WebCore::RenderSVGShadowTreeRootContainer::~RenderSVGShadowTreeRootContainer):
+        (WebCore::RenderSVGShadowTreeRootContainer::updateFromElement):
+        * rendering/svg/SVGShadowTreeElements.cpp:
+        (WebCore::SVGShadowTreeRootElement::SVGShadowTreeRootElement):
+        (WebCore::SVGShadowTreeRootElement::create):
+        (WebCore::SVGShadowTreeRootElement::attachElement):
+        (WebCore::SVGShadowTreeRootElement::clearSVGShadowHost):
+        * rendering/svg/SVGShadowTreeElements.h:
+        (WebCore::SVGShadowTreeRootElement::isSVGShadowRoot):
+        * svg/SVGStyledElement.cpp:
+        (WebCore::SVGStyledElement::title):
+
 2011-04-18  Taiju TSUIKI  <develop@tzik.jp>
 
         Reviewed by Darin Fisher.

@@ -38,7 +38,7 @@ RenderSVGShadowTreeRootContainer::~RenderSVGShadowTreeRootContainer()
 {
     if (m_shadowRoot && m_shadowRoot->attached()) {
         m_shadowRoot->detach();
-        m_shadowRoot->clearShadowHost();
+        m_shadowRoot->clearSVGShadowHost();
     }
 }
 
@@ -59,7 +59,7 @@ void RenderSVGShadowTreeRootContainer::updateFromElement()
         useElement->buildPendingResource();
     }
 
-    ASSERT(m_shadowRoot->shadowHost() == useElement);
+    ASSERT(m_shadowRoot->svgShadowHost() == useElement);
 
     bool shouldRecreateTree = m_recreateTree;
     if (m_recreateTree) {
