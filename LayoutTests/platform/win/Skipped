@@ -961,7 +961,7 @@ inspector/timeline/timeline-paint.html
 # New canvas test suite from http://philip.html5.org/tests/canvas/suite/tests/
 canvas/philip
 
-# Need to dump context menu items on eventSender.contextClick(true). TODO: add bug number
+# Need to dump context menu items on eventSender.contextClick(true).
 # https://bugs.webkit.org/show_bug.cgi?id=39104
 editing/spelling/context-menu-suggestions.html
 
@@ -1244,3 +1244,7 @@ storage/storageinfo-query-usage.html
 # Expose title direction in WebKit API
 # https://bugs.webkit.org/show_bug.cgi?id=58845
 fast/dom/title-directionality.html
+
+# Timing out for unknown reasons.  Passes on Chromium, QT and GTK+.
+# https://bugs.webkit.org/show_bug.cgi?id=58924
+plugins/mouse-click-iframe-to-plugin.html

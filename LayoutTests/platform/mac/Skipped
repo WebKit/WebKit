@@ -330,3 +330,7 @@ storage/storageinfo-query-usage.html
 # Expose title direction in WebKit API
 # https://bugs.webkit.org/show_bug.cgi?id=58845
 fast/dom/title-directionality.html
+
+# Timing out for unknown reasons.  Passes on Chromium, QT and GTK+.
+# https://bugs.webkit.org/show_bug.cgi?id=58924
+plugins/mouse-click-iframe-to-plugin.html
