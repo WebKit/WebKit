@@ -60,8 +60,18 @@ namespace JSC {
             ASSERT(m_values.isEmpty());
         }
 
+        void deprecatedAppend(JSValue*);
         void deprecatedAppend(JSCell**);
+        void deprecatedAppend(Register*);
         template <typename T> void append(WriteBarrierBase<T>*);
+        template <typename T> void append(DeprecatedPtr<T>*);
+        
+        ALWAYS_INLINE void deprecatedAppendValues(Register* registers, size_t count, MarkSetProperties properties = NoNullValues)
+        {
+            JSValue* values = reinterpret_cast<JSValue*>(registers);
+            if (count)
+                m_markSets.append(MarkSet(values, values + count, properties));
+        }
 
         void appendValues(WriteBarrierBase<Unknown>* barriers, size_t count, MarkSetProperties properties = NoNullValues)
         {
@@ -208,6 +218,11 @@ namespace JSC {
             return;
         m_markSets.append(MarkSet(slot, slot + count, NoNullValues));
     }
+
+    template <typename T> inline void MarkStack::append(DeprecatedPtr<T>* slot)
+    {
+        internalAppend(*slot->slot());
+    }
     
     template <typename T> inline void MarkStack::append(WriteBarrierBase<T>* slot)
     {
@@ -220,6 +235,12 @@ namespace JSC {
         internalAppend(*value);
     }
 
+    ALWAYS_INLINE void MarkStack::deprecatedAppend(JSValue* value)
+    {
+        ASSERT(value);
+        internalAppend(*value);
+    }
+    
     ALWAYS_INLINE void MarkStack::append(JSValue* value)
     {
         ASSERT(value);
@@ -230,6 +251,12 @@ namespace JSC {
     {
         ASSERT(value);
         internalAppend(*value);
+    }
+
+    ALWAYS_INLINE void MarkStack::deprecatedAppend(Register* value)
+    {
+        ASSERT(value);
+        internalAppend(value->jsValue());
     }
 
     ALWAYS_INLINE void MarkStack::internalAppend(JSValue value)
