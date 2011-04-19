@@ -3515,3 +3515,6 @@ BUGCR79854 : editing/execCommand/delete-empty-container.html = PASS TEXT
 
 // Flaky on debug
 BUGCR79855 DEBUG : fast/css/only-child-pseudo-class.html = PASS TEXT
+
+// Flaky on debug
+BUGCR79857 DEBUG : fast/events/popup-blocking-timers.html = PASS TEXT
