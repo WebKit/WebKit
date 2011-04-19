@@ -151,6 +151,7 @@ function parentOfType(node, selector)
 
 function appendResultIframe(src, parent)
 {
+    // FIXME: use audio tags for AUDIO tests?
     var layoutTestsIndex = src.indexOf('LayoutTests');
     var name;
     if (layoutTestsIndex != -1) {
@@ -258,7 +259,10 @@ for (var test in results.tests) {
   row += '<td>';
   if (actual == 'CRASH')
       row += resultLink(test_prefix, '-stack.txt', 'stack');
-  else if (actual.indexOf('TEXT' || actual == 'TIMEOUT') != -1) {
+  else if (actual == 'AUDIO') {
+      row += resultLink(test_prefix, '-expected.wav', 'expected');
+      row += resultLink(test_prefix, '-actual.wav', 'actual');
+  } else if (actual.indexOf('TEXT') != -1 || actual == 'TIMEOUT') {
       // FIXME: only include timeout actual/expected results here if we actually spit out results for timeout tests.
       hasTextFailures = true;
       row += resultLink(test_prefix, '-expected.txt', 'expected') +
@@ -276,9 +280,18 @@ for (var test in results.tests) {
 
   if (actual.indexOf('IMAGE') != -1) {
       hasImageFailures = true;
-      row += resultLink(test_prefix, '-expected.png', 'expected') +
-          resultLink(test_prefix, '-actual.png', 'actual') +
-          resultLink(test_prefix, '-diff.png', 'diff');
+
+      if (results.tests[test].is_mismatch_reftest) {
+          row += resultLink(test_prefix, '-expected-mismatch.html', 'ref mismatch html') +
+              resultLink(test_prefix, '-actual.png', 'actual');
+      } else {
+          if (results.tests[test].is_reftest)
+              row += resultLink(test_prefix, '-expected.html', 'ref html');
+
+          row += resultLink(test_prefix, '-expected.png', 'expected') +
+              resultLink(test_prefix, '-actual.png', 'actual') +
+              resultLink(test_prefix, '-diff.png', 'diff');
+      }
   }
 
   row += '</td>';
@@ -300,13 +313,21 @@ function appendTestList(tests, header, tableId, fileSuffix, linkName)
     html += '<p>' + header + '</p><table id="' + tableId + '">';
     for (var i = 0; i < tests.length; i++) {
         var test = tests[i];
-        html += '<tbody><tr><td>' + testLink(test) + '</td>' +
-            '<td>' + resultLink(stripExtension(test), fileSuffix, linkName) + '</td>';
+        html += '<tbody><tr><td>' + testLink(test) + '</td><td>';
         
-        if (fileSuffix.indexOf('actual') != -1)
-            html += '<td class="image-result-link">' + resultLink(stripExtension(test), '-actual.png', 'png result') + '</td>';
+        if (fileSuffix.indexOf('actual') == -1)
+            html += resultLink(stripExtension(test), fileSuffix, linkName);
+        else {
+            if (results.tests[test].is_missing_audio)
+                html += resultLink(stripExtension(test), '-actual.wav', 'audio result');
+            else {
+                html += resultLink(stripExtension(test), fileSuffix, linkName);
+                if (results.tests[test].is_missing_image)
+                    html += resultLink(stripExtension(test), '-actual.png', 'png result');
+            }
+        } 
         
-        html += '</tr></tbody>';
+        html += '</td></tr></tbody>';
     }
     html += '</table>'
 }
@@ -323,24 +344,6 @@ if (hasHttpTests) {
 }
 
 document.write(html);
-
-function resultLinkErrorHandlerFunction(link)
-{
-    return function() { link.parentNode.removeChild(link); };
-}
-
-function removeNonExistantNewPixelResults()
-{
-    var imageResultLinks = document.querySelectorAll('#new-tests-table .image-result-link');
-    for (var i = 0, len = imageResultLinks.length; i < len; i++) {
-        var resultLink = imageResultLinks[i];
-        var img = new Image();
-        img.onerror = resultLinkErrorHandlerFunction(resultLink);
-        img.src = resultLink.querySelector('a').href;
-    }
-}
-
-removeNonExistantNewPixelResults();
 
 function toArray(nodeList)
 {

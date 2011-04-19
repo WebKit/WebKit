@@ -143,8 +143,25 @@ def summarize_results(port_obj, expectations, result_summary, retry_summary, tes
         tests[test] = {}
         tests[test]['expected'] = expected
         tests[test]['actual'] = " ".join(actual)
-        # FIXME: Set this correctly once https://webkit.org/b/37739 is fixed.
+        # FIXME: Set this correctly once https://webkit.org/b/37739 is fixed
+        # and only set it if there actually is stderr data.
         tests[test]['has_stderr'] = False
+
+        for f in result.failures:
+            print f.message()
+
+        failure_types = [type(f) for f in result.failures]
+        if test_failures.FailureMissingAudio in failure_types:
+            tests[test]['is_missing_audio'] = True
+
+        if test_failures.FailureReftestMismatch in failure_types:
+            tests[test]['is_reftest'] = True
+
+        if test_failures.FailureReftestMismatchDidNotOccur in failure_types:
+            tests[test]['is_mismatch_reftest'] = True
+
+        if test_failures.FailureMissingImage in failure_types or test_failures.FailureMissingImageHash in failure_types:
+            tests[test]['is_missing_image'] = True
 
         if filename in test_timings_map:
             time_seconds = test_timings_map[filename]
