@@ -1,5 +1,26 @@
 2011-04-19  Mario Sanchez Prada  <msanchez@igalia.com>
 
+        Unreviewed, rebaselines to fix wrongly added expectations.
+
+        By mistake, I added expectations generated with GTK3 locally
+        instead of the expectations generated in the bots using GTK2, so
+        we need to add the expectation files as needed.
+
+        * platform/gtk/fast/blockflow/border-styles-vertical-lr-expected.checksum:
+        * platform/gtk/fast/blockflow/border-styles-vertical-lr-expected.png:
+        * platform/gtk/fast/blockflow/border-styles-vertical-rl-expected.checksum:
+        * platform/gtk/fast/blockflow/border-styles-vertical-rl-expected.png:
+        * platform/gtk/fast/borders/border-styles-split-expected.checksum:
+        * platform/gtk/fast/borders/border-styles-split-expected.png:
+        * platform/gtk/fast/borders/mixed-border-styles-radius-expected.checksum:
+        * platform/gtk/fast/borders/mixed-border-styles-radius-expected.png:
+        * platform/gtk/fast/borders/mixed-border-styles-radius2-expected.checksum:
+        * platform/gtk/fast/borders/mixed-border-styles-radius2-expected.png:
+        * platform/gtk/fast/borders/webkit-border-radius-expected.checksum:
+        * platform/gtk/fast/borders/webkit-border-radius-expected.png:
+
+2011-04-19  Mario Sanchez Prada  <msanchez@igalia.com>
+
         Unreviewed, added new baselines for the GTK port.
 
         Added missing baselines to GTK after revisions 83998, 84092 and 84180.
