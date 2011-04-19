@@ -1,3 +1,16 @@
+2011-04-19  Stuart Morgan  <stuartmorgan@chromium.org>
+
+        Reviewed by Tony Chang.
+
+        [chromium] Clicking on plugin for first time blocks focus shift
+        https://bugs.webkit.org/show_bug.cgi?id=58419
+
+        Switched to using FocusController when moving focus to a plugin
+        so that cross-frame focus changes are handled correctly.
+
+        * src/WebPluginContainerImpl.cpp:
+        (WebKit::WebPluginContainerImpl::handleMouseEvent):
+
 2011-04-19  Vsevolod Vlasov  <vsevik@chromium.org>
 
         Reviewed by Pavel Feldman.

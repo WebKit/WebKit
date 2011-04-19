@@ -1,3 +1,15 @@
+2011-04-19  Stuart Morgan  <stuartmorgan@chromium.org>
+
+        Reviewed by Tony Chang.
+
+        [chromium] Clicking on plugin for first time blocks focus shift
+        https://bugs.webkit.org/show_bug.cgi?id=58419
+
+        Added new test for cross-iframe focus changes on plugin clicks.
+
+        * plugins/mouse-click-iframe-to-plugin-expected.txt: Added.
+        * plugins/mouse-click-iframe-to-plugin.html: Added.
+
 2011-04-19  Jungshik Shin  <jshin@chromium.org>
 
         Reviewed by David Levin

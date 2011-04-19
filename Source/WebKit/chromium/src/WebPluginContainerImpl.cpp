@@ -480,12 +480,11 @@ void WebPluginContainerImpl::handleMouseEvent(MouseEvent* event)
         return;
 
     if (event->type() == eventNames().mousedownEvent) {
-        // Ensure that the frame containing the plugin has focus.
         Frame* containingFrame = parentView->frame();
         if (Page* currentPage = containingFrame->page())
-            currentPage->focusController()->setFocusedFrame(containingFrame);
-        // Give focus to our containing HTMLPluginElement.
-        containingFrame->document()->setFocusedNode(m_element);
+            currentPage->focusController()->setFocusedNode(m_element, containingFrame);
+        else
+            containingFrame->document()->setFocusedNode(m_element);
     }
 
     WebCursorInfo cursorInfo;
