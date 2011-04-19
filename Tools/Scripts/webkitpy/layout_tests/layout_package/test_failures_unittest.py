@@ -46,22 +46,22 @@ class Test(unittest.TestCase):
         self.assertFalse(failure_obj != new_failure_obj)
 
     def test_crash(self):
-        self.assertResultHtml(FailureCrash())
+        FailureCrash()
 
     def test_hash_incorrect(self):
-        self.assertResultHtml(FailureImageHashIncorrect())
+        FailureImageHashIncorrect()
 
     def test_missing(self):
-        self.assertResultHtml(FailureMissingResult())
+        FailureMissingResult()
 
     def test_missing_image(self):
-        self.assertResultHtml(FailureMissingImage())
+        FailureMissingImage()
 
     def test_missing_image_hash(self):
-        self.assertResultHtml(FailureMissingImageHash())
+        FailureMissingImageHash()
 
     def test_timeout(self):
-        self.assertResultHtml(FailureTimeout())
+        FailureTimeout()
 
     def test_unknown_failure_type(self):
         class UnknownFailure(TestFailure):

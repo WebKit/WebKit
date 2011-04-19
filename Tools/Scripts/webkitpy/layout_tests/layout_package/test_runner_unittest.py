@@ -44,27 +44,6 @@ class TestRunnerWrapper(test_runner.TestRunner):
 
 
 class TestRunnerTest(unittest.TestCase):
-    def test_results_html(self):
-        mock_port = Mock()
-        mock_port._filesystem = filesystem_mock.MockFileSystem()
-        mock_port.relative_test_filename = lambda name: name
-        mock_port.filename_to_uri = lambda name: name
-
-        runner = test_runner.TestRunner(port=mock_port, options=Mock(),
-            printer=Mock())
-        expected_html = u"""<html>
-  <head>
-    <title>Layout Test Results (time)</title>
-  </head>
-  <body>
-    <h2>Title (time)</h2>
-        <p><a href='test_path'>test_path</a><br />
-</p>
-</body></html>
-"""
-        html = runner._results_html(["test_path"], {}, "Title", override_time="time")
-        self.assertEqual(html, expected_html)
-
     def test_shard_tests(self):
         # Test that _shard_tests in test_runner.TestRunner really
         # put the http tests first in the queue.

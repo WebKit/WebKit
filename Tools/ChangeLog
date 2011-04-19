@@ -1,3 +1,10 @@
+2011-04-19  Ojan Vafai  <ojan@chromium.org>
+
+        Fix unittest failures from http://trac.webkit.org/changeset/84294.
+
+        * Scripts/webkitpy/layout_tests/layout_package/test_failures_unittest.py:
+        * Scripts/webkitpy/layout_tests/layout_package/test_runner_unittest.py:
+
 2011-04-18  Ojan Vafai  <ojan@chromium.org>
 
         Reviewed by Eric Seidel.
