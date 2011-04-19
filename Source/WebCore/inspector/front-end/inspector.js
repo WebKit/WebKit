@@ -792,16 +792,6 @@ WebInspector.documentKeyDown = function(event)
             if (!isMac)
                 PageAgent.reloadPage(event.ctrlKey || event.shiftKey);
             break;
-        case "U+0008": // Backspace
-            if (this.currentFocusElement && document.defaultView) {
-                // We inhibit the Backspace default handling for non-editable elements
-                // (which otherwise may result into a navigation to the previous history entry with a docked inspector).
-                var computedStyle = document.defaultView.getComputedStyle(this.currentFocusElement, null, "");
-                var userModify = computedStyle.getPropertyValue("-webkit-user-modify");
-                if (!userModify || userModify === "read-only")
-                    event.preventDefault();
-            }
-            break;
     }
 }
 
