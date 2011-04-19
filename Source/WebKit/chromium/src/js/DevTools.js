@@ -169,6 +169,10 @@ WebInspector.platformExtensionAPI = function(tabId)
         return tabId;
     }
     webInspector.inspectedWindow.__proto__.__defineGetter__("tabId", getTabId);
+    chrome = window.chrome || {};
+    chrome.devTools = chrome.devTools || {};
+    for (var property in webInspector)
+        chrome.devTools[property] = webInspector[property];
 }
 
 WebInspector.buildPlatformExtensionAPI = function()
