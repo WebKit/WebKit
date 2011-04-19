@@ -90,7 +90,7 @@ public:
 
     const String& injectedBundlePath() const { return m_injectedBundlePath; }
 
-    void download(WebPageProxy* initiatingPage, const WebCore::ResourceRequest&);
+    DownloadProxy* download(WebPageProxy* initiatingPage, const WebCore::ResourceRequest&);
 
     void setInjectedBundleInitializationUserData(PassRefPtr<APIObject> userData) { m_injectedBundleInitializationUserData = userData; }
     APIObject* injectedBundleInitializationUserData() const { return m_injectedBundleInitializationUserData.get(); }
@@ -137,7 +137,7 @@ public:
     void setEnhancedAccessibility(bool);
     
     // Downloads.
-    uint64_t createDownloadProxy();
+    DownloadProxy* createDownloadProxy();
     WebDownloadClient& downloadClient() { return m_downloadClient; }
     void downloadFinished(DownloadProxy*);
 

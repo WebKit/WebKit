@@ -29,6 +29,7 @@
 #include "AuthenticationChallengeProxy.h"
 #include "AuthenticationDecisionListener.h"
 #include "DataReference.h"
+#include "DownloadProxy.h"
 #include "DrawingAreaProxy.h"
 #include "FindIndicator.h"
 #include "MessageID.h"
@@ -922,7 +923,7 @@ void WebPageProxy::receivedPolicyDecision(PolicyAction action, WebFrameProxy* fr
     uint64_t downloadID = 0;
     if (action == PolicyDownload) {
         // Create a download proxy.
-        downloadID = m_process->context()->createDownloadProxy();
+        downloadID = m_process->context()->createDownloadProxy()->downloadID();
     }
 
     // If we received a policy decision while in decidePolicyForMIMEType the decision will 

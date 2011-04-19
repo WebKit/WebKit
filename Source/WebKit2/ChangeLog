@@ -1,3 +1,31 @@
+2011-04-19  Jon Honeycutt  <jhoneycutt@apple.com>
+
+        WKContextDownloadURLRequest() should return a WKDownloadRef
+        https://bugs.webkit.org/show_bug.cgi?id=58867
+        Part of <rdar://problem/8931717>
+
+        Reviewed by Steve Falkenburg.
+
+        * UIProcess/API/C/WKContext.cpp:
+        (WKContextDownloadURLRequest):
+        Return the result of calling WebContext::download().
+
+        * UIProcess/API/C/WKContext.h:
+        Updated return type of WKContextDownloadURLRequest().
+
+        * UIProcess/WebContext.cpp:
+        (WebKit::WebContext::download):
+        Return the DownloadProxy returned by createDownloadProxy().
+        (WebKit::WebContext::createDownloadProxy):
+        Return the DownloadProxy.
+
+        * UIProcess/WebContext.h:
+        Changed return type of download() and createDownloadProxy().
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::receivedPolicyDecision):
+        Call the DownloadProxy's downloadID() function to get the ID.
+
 2011-04-18  Jia Pu  <jpu@apple.com>
 
         Reviewed by Mark Rowe.

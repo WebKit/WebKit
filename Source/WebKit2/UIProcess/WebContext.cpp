@@ -369,12 +369,13 @@ WebProcessProxy* WebContext::relaunchProcessIfNecessary()
     return m_process.get();
 }
 
-void WebContext::download(WebPageProxy* initiatingPage, const ResourceRequest& request)
+DownloadProxy* WebContext::download(WebPageProxy* initiatingPage, const ResourceRequest& request)
 {
-    uint64_t downloadID = createDownloadProxy();
+    DownloadProxy* download = createDownloadProxy();
     uint64_t initiatingPageID = initiatingPage ? initiatingPage->pageID() : 0;
 
-    process()->send(Messages::WebProcess::DownloadRequest(downloadID, initiatingPageID, request), 0);
+    process()->send(Messages::WebProcess::DownloadRequest(download->downloadID(), initiatingPageID, request), 0);
+    return download;
 }
 
 void WebContext::postMessageToInjectedBundle(const String& messageName, APIObject* messageBody)
@@ -542,14 +543,11 @@ void WebContext::didClearPluginSiteData(uint64_t callbackID)
 }
 #endif
 
-uint64_t WebContext::createDownloadProxy()
+DownloadProxy* WebContext::createDownloadProxy()
 {
     RefPtr<DownloadProxy> downloadProxy = DownloadProxy::create(this);
-    uint64_t downloadID = downloadProxy->downloadID();
-
-    m_downloads.set(downloadID, downloadProxy.release());
-
-    return downloadID;
+    m_downloads.set(downloadProxy->downloadID(), downloadProxy);
+    return downloadProxy.get();
 }
 
 void WebContext::downloadFinished(DownloadProxy* downloadProxy)

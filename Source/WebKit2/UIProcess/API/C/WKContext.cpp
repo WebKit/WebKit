@@ -84,9 +84,9 @@ void WKContextSetDownloadClient(WKContextRef contextRef, const WKContextDownload
     toImpl(contextRef)->initializeDownloadClient(wkClient);
 }
 
-void WKContextDownloadURLRequest(WKContextRef contextRef, const WKURLRequestRef requestRef)
+WKDownloadRef WKContextDownloadURLRequest(WKContextRef contextRef, const WKURLRequestRef requestRef)
 {
-    toImpl(contextRef)->download(0, toImpl(requestRef)->resourceRequest());
+    return toAPI(toImpl(contextRef)->download(0, toImpl(requestRef)->resourceRequest()));
 }
 
 void WKContextSetInitializationUserDataForInjectedBundle(WKContextRef contextRef,  WKTypeRef userDataRef)
