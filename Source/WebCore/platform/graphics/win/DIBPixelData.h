@@ -49,6 +49,10 @@ class DIBPixelData {
 
         void initialize(HBITMAP);
 
+#ifndef NDEBUG
+        void writeToFile(LPCWSTR);
+#endif
+
         UInt8* buffer() const { return m_bitmapBuffer; }
         unsigned bufferLength() const { return m_bitmapBufferLength; }
         const IntSize& size() const { return m_size; }

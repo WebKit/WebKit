@@ -1,3 +1,15 @@
+2011-04-19  Brent Fulgham  <bfulgham@webkit.org>
+
+        Reviewed by Adam Roben.
+
+        Extend the DIBPixelData class with the facility for writing the
+        bitmap representation to disk for debugging purposes.
+        https://bugs.webkit.org/show_bug.cgi?id=58862.
+
+        * platform/graphics/win/DIBPixelData.cpp:
+        (WebCore::DIBPixelData::writeToFile): New function.
+        * platform/graphics/win/DIBPixelData.h:
+
 2011-04-19  Vsevolod Vlasov  <vsevik@chromium.org>
 
         Reviewed by Pavel Feldman.
