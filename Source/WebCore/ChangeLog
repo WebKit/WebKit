@@ -1,3 +1,19 @@
+2011-04-18  John Bauman  <jbauman@chromium.org>
+
+        Reviewed by Kenneth Russell.
+
+        Don't cast BitmapImageSingleFrameSkia to BitmapImage
+        https://bugs.webkit.org/show_bug.cgi?id=58821
+
+        BitmapImageSingleFrameSkia has isBitmap return true, but
+        can't be cast to a BitmapImage. Instead of using BitmapImage,
+        use isOpaque from SkBitmap to determine if the image has alpha.
+
+        No new tests.
+
+        * platform/graphics/skia/GraphicsContext3DSkia.cpp:
+        (WebCore::GraphicsContext3D::getImageData):
+
 2011-04-18  Jessie Berlin  <jberlin@apple.com>
 
         Reviewed by Steve Falkenburg.

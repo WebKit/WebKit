@@ -51,10 +51,10 @@ bool GraphicsContext3D::getImageData(Image* image,
     if (!image)
         return false;
     OwnPtr<NativeImageSkia> pixels;
-    NativeImageSkia* skiaImage = 0;
+    NativeImageSkia* skiaImage = image->nativeImageForCurrentFrame();
     AlphaOp neededAlphaOp = AlphaDoNothing;
-    bool hasAlpha = image->isBitmapImage() ? static_cast<BitmapImage*>(image)->frameHasAlphaAtIndex(0) : true;
-    if ((ignoreGammaAndColorProfile || (hasAlpha && !premultiplyAlpha)) && image->data()) {
+    bool hasAlpha = skiaImage ? !skiaImage->isOpaque() : true;
+    if ((!skiaImage || ignoreGammaAndColorProfile || (hasAlpha && !premultiplyAlpha)) && image->data()) {
         ImageSource decoder(ImageSource::AlphaNotPremultiplied,
                             ignoreGammaAndColorProfile ? ImageSource::GammaAndColorProfileIgnored : ImageSource::GammaAndColorProfileApplied);
         // Attempt to get raw unpremultiplied image data 
@@ -71,11 +71,8 @@ bool GraphicsContext3D::getImageData(Image* image,
         skiaImage = pixels.get();
         if (hasAlpha && premultiplyAlpha)
             neededAlphaOp = AlphaDoPremultiply;
-    } else {
-        skiaImage = image->nativeImageForCurrentFrame();
-        if (!premultiplyAlpha && hasAlpha)
-            neededAlphaOp = AlphaDoUnmultiply;
-    }
+    } else if (!premultiplyAlpha && hasAlpha)
+        neededAlphaOp = AlphaDoUnmultiply;
     if (!skiaImage)
         return false;
     SkBitmap& skiaImageRef = *skiaImage;
