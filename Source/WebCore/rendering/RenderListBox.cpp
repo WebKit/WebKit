@@ -273,14 +273,28 @@ void RenderListBox::paintObject(PaintInfo& paintInfo, int tx, int ty)
     // Paint the children.
     RenderBlock::paintObject(paintInfo, tx, ty);
 
-    if (paintInfo.phase == PaintPhaseBlockBackground)
-        paintScrollbar(paintInfo, tx, ty);
-    else if (paintInfo.phase == PaintPhaseChildBlockBackground || paintInfo.phase == PaintPhaseChildBlockBackgrounds) {
+    switch (paintInfo.phase) {
+    // Depending on whether we have overlay scrollbars they
+    // get rendered in the foreground or background phases
+    case PaintPhaseForeground:
+        if (m_vBar->isOverlayScrollbar())
+            paintScrollbar(paintInfo, tx, ty);
+        break;
+    case PaintPhaseBlockBackground:
+        if (!m_vBar->isOverlayScrollbar())
+            paintScrollbar(paintInfo, tx, ty);
+        break;
+    case PaintPhaseChildBlockBackground:
+    case PaintPhaseChildBlockBackgrounds: {
         int index = m_indexOffset;
         while (index < listItemsSize && index <= m_indexOffset + numVisibleItems()) {
             paintItemBackground(paintInfo, tx, ty, index);
             index++;
         }
+        break;
+    }
+    default:
+        break;
     }
 }
 

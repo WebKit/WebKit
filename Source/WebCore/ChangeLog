@@ -1,3 +1,14 @@
+2011-04-18  Jon Lee  <jonlee@apple.com>
+
+        Reviewed by Maciej Stachowiak.
+
+        Selected item background in list box gets rendered on top of overlay scrollbar knob (58824)
+        https://bugs.webkit.org/show_bug.cgi?id=58824
+        <rdar://problem/9292680>
+
+        * rendering/RenderListBox.cpp:
+        (WebCore::RenderListBox::paintObject): Moving the stage of painting the scrollbars to the foreground if using overlay scrollbars
+
 2011-04-18  John Bauman  <jbauman@chromium.org>
 
         Reviewed by Kenneth Russell.
