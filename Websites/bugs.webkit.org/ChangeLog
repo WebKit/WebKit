@@ -1,3 +1,15 @@
+2011-04-19  Caio Marcelo de Oliveira Filho  <caio.oliveira@openbossa.org>
+
+        Reviewed by Adam Roben.
+
+        PrettyPatch tries to show images for deleted files
+        https://bugs.webkit.org/show_bug.cgi?id=28457
+
+        When the image data is empty, instead of generating an <img> tag, generate
+        a text to indicate the image was deleted.
+
+        * PrettyPatch/PrettyPatch.rb:
+
 2011-04-14  Tony Chang  <tony@chromium.org>
 
         Reviewed by Adam Roben.

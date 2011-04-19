@@ -514,7 +514,7 @@ EOF
             end
             lines_with_contents = lines[startOfSections...lines.length]
             @sections = DiffSection.parse(lines_with_contents) unless @binary
-            if @image
+            if @image and not lines_with_contents.empty?
                 @image_url = "data:image/png;base64," + lines_with_contents.join
                 @image_checksum = FileDiff.read_checksum_from_png(lines_with_contents.join.unpack("m").join)
             elsif @git_image
@@ -544,14 +544,22 @@ EOF
             nil
         end
 
+        def image_to_html
+            if not @image_url then
+                return "<span class='text'>Image file removed</span>"
+            end
+            image_snippet = "<img class='image' src='" + @image_url + "' />"
+            if not @image_checksum then
+                return image_snippet
+            end
+            return "<p>" + @image_checksum + "</p>" + image_snippet
+        end
+
         def to_html
             str = "<div class='FileDiff'>\n"
             str += "<h1>#{PrettyPatch.linkifyFilename(@filename)}</h1>\n"
             if @image then
-                if @image_checksum then
-                    str += "<p>" + @image_checksum + "</p>"
-                end
-                str += "<img class='image' src='" + @image_url + "' />"
+                str += self.image_to_html
             elsif @git_image then
                 if @image_error
                     str += @image_error
