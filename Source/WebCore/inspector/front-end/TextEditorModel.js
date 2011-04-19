@@ -92,6 +92,7 @@ WebInspector.TextEditorModel.prototype = {
 
     setText: function(range, text)
     {
+        text = text || "";
         if (!range) {
             range = new WebInspector.TextRange(0, 0, this._lines.length - 1, this._lines[this._lines.length - 1].length);
             this._lineBreak = /\r\n/.test(text) ? "\r\n" : "\n";

@@ -202,9 +202,10 @@ WebInspector.ResourcesPanel.prototype = {
         var frameTreeElement = this._treeElementForFrameId[frameId];
         if (frameTreeElement) {
             // Maintain sorted order.
-            frameTreeElement.parent.removeChild(frameTreeElement);
+            var parent = frameTreeElement.parent;
+            parent.removeChild(frameTreeElement);
             frameTreeElement.setTitles(title, subtitle);
-            frameTreeElement.parent.appendChild(frameTreeElement);
+            parent.appendChild(frameTreeElement);
             return;
         }
 
