@@ -1,3 +1,7 @@
+2011-04-19  Tony Chang  <tony@chromium.org>
+
+        Add checksums to png files in platform win, win-wk2, and win-xp.
+
 2011-04-19  Enrica Casucci  <enrica@apple.com>
 
         Reviewed by Ryosuke Niwa.
