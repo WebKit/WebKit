@@ -194,7 +194,7 @@ class SingleTestRunner:
         failures = []
         fs = self._port._filesystem
         if driver_output.timeout:
-            failures.append(test_failures.FailureTimeout(reference_filename))
+            failures.append(test_failures.FailureTimeout(bool(reference_filename)))
 
         if reference_filename:
             testname = self._port.relative_test_filename(reference_filename)
@@ -202,7 +202,7 @@ class SingleTestRunner:
             testname = self._testname
 
         if driver_output.crash:
-            failures.append(test_failures.FailureCrash(reference_filename))
+            failures.append(test_failures.FailureCrash(bool(reference_filename)))
             _log.debug("%s Stacktrace for %s:\n%s" % (self._worker_name, testname,
                                                       driver_output.error))
         elif driver_output.error:

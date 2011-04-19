@@ -34,9 +34,6 @@ from webkitpy.layout_tests.layout_package.test_failures import *
 
 
 class Test(unittest.TestCase):
-    def assertResultHtml(self, failure_obj):
-        self.assertNotEqual(failure_obj.result_html_output('foo'), None)
-
     def assert_loads(self, cls):
         failure_obj = cls()
         s = failure_obj.dumps()
@@ -73,8 +70,6 @@ class Test(unittest.TestCase):
         failure_obj = UnknownFailure()
         self.assertRaises(ValueError, determine_result_type, [failure_obj])
         self.assertRaises(NotImplementedError, failure_obj.message)
-        self.assertRaises(NotImplementedError, failure_obj.result_html_output,
-                          "foo.txt")
 
     def test_loads(self):
         for c in ALL_FAILURE_CLASSES:
@@ -88,13 +83,6 @@ class Test(unittest.TestCase):
         # The hash happens to be the name of the class, but sets still work:
         crash_set = set([FailureCrash(), "FailureCrash"])
         self.assertEqual(len(crash_set), 2)
-
-    def test_relative_output_filename(self):
-        # This could be any Failure* object, since we're testing a method
-        # on the base class.
-        failure_obj = FailureTextMismatch()
-        actual_filename = failure_obj.relative_output_filename("fast/html/article-element.html", "-actual.txt")
-        self.assertEquals(actual_filename, "fast/html/article-element-actual.txt")
 
 if __name__ == '__main__':
     unittest.main()

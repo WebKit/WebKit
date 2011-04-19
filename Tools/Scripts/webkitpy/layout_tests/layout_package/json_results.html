@@ -300,7 +300,7 @@ for (var test in results.tests) {
   if (results.uses_expectations_file)
     row += '<td>' + expected + '</td>';
 
-  var isExpected = results.uses_expectations_file && expected == actual;
+  var isExpected = actual == 'SKIP' || (results.uses_expectations_file && expected == actual);
   html += '<tbody class="' + (isExpected ? 'expected' : '') + '"><tr>' + row + '</tr></tbody>';
 }
 
@@ -520,7 +520,8 @@ document.body.appendChild(unexpectedStyleNode);
 
 function updateExpectedResults()
 {
-    if (document.querySelector('.unexpected-results').checked)
+    var checkBox = document.querySelector('.unexpected-results');
+    if (!checkBox || checkBox.checked)
         unexpectedStyleNode.innerText = '.expected { display: none; }';
     else
         unexpectedStyleNode.innerText = '';

@@ -71,7 +71,7 @@ def write_test_result(port, filename, driver_output,
                                   test_failures.FailureMissingAudio)):
             writer.write_audio_files(driver_output.audio, expected_driver_output.audio)
         elif isinstance(failure, test_failures.FailureCrash):
-            if failure.reference_filename:
+            if failure.is_reftest:
                 writer.write_crash_report(expected_driver_output.error)
             else:
                 writer.write_crash_report(driver_output.error)

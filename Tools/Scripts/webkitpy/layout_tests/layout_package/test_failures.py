@@ -103,98 +103,21 @@ class TestFailure(object):
         """Returns the string/JSON representation of a TestFailure."""
         return cPickle.dumps(self)
 
-    def result_html_output(self, filename):
-        """Returns an HTML string to be included on the results.html page."""
-        raise NotImplementedError
-
     def should_kill_dump_render_tree(self):
         """Returns True if we should kill DumpRenderTree before the next
         test."""
         return False
 
-    def relative_output_filename(self, filename, modifier):
-        """Returns a relative filename inside the output dir that contains
-        modifier.
-
-        For example, if filename is fast\dom\foo.html and modifier is
-        "-expected.txt", the return value is fast\dom\foo-expected.txt
-
-        Args:
-          filename: relative filename to test file
-          modifier: a string to replace the extension of filename with
-
-        Return:
-          The relative windows path to the output filename
-        """
-        # FIXME: technically this breaks if files don't use ".ext" to indicate
-        # the extension, but passing in a Filesystem object here is a huge
-        # hassle.
-        return filename[:filename.rfind('.')] + modifier
-
-
-class ComparisonTestFailure(TestFailure):
-    """Base class that produces standard HTML output based on the result of the comparison test.
-
-    Subclasses may commonly choose to override the ResultHtmlOutput, but still
-    use the standard OutputLinks.
-    """
-
-    # Filename suffixes used by ResultHtmlOutput.
-    OUT_FILENAMES = ()
-
-    def output_links(self, filename, out_names):
-        """Returns a string holding all applicable output file links.
-
-        Args:
-          filename: the test filename, used to construct the result file names
-          out_names: list of filename suffixes for the files. If three or more
-              suffixes are in the list, they should be [actual, expected, diff,
-              wdiff]. Two suffixes should be [actual, expected], and a
-              single item is the [actual] filename suffix.
-              If out_names is empty, returns the empty string.
-        """
-        # FIXME: Seems like a bad idea to separate the display name data
-        # from the path data by hard-coding the display name here
-        # and passing in the path information via out_names.
-        #
-        # FIXME: Also, we don't know for sure that these files exist,
-        # and we shouldn't be creating links to files that don't exist
-        # (for example, if we don't actually have wdiff output).
-        links = ['']
-        uris = [self.relative_output_filename(filename, fn) for
-                fn in out_names]
-        if len(uris) > 1:
-            links.append("<a href='%s'>expected</a>" % uris[1])
-        if len(uris) > 0:
-            links.append("<a href='%s'>actual</a>" % uris[0])
-        if len(uris) > 2:
-            links.append("<a href='%s'>diff</a>" % uris[2])
-        if len(uris) > 3:
-            links.append("<a href='%s'>wdiff</a>" % uris[3])
-        if len(uris) > 4:
-            links.append("<a href='%s'>pretty diff</a>" % uris[4])
-        return ' '.join(links)
-
-    def result_html_output(self, filename):
-        return self.message() + self.output_links(filename, self.OUT_FILENAMES)
-
 
 class FailureTimeout(TestFailure):
     """Test timed out.  We also want to restart DumpRenderTree if this
     happens."""
-
-    def __init__(self, reference_filename=None):
-        self.reference_filename = reference_filename
+    def __init__(self, is_reftest=False):
+        self.is_reftest = is_reftest
 
     @staticmethod
     def message():
         return "Test timed out"
-
-    def result_html_output(self, filename):
-        if self.reference_filename:
-            return "<strong>%s</strong> (occured in <a href=%s>expected html</a>)" % (
-                self.message(), self.reference_filename)
-        return "<strong>%s</strong>" % self.message()
 
     def should_kill_dump_render_tree(self):
         return True
@@ -202,53 +125,34 @@ class FailureTimeout(TestFailure):
 
 class FailureCrash(TestFailure):
     """DumpRenderTree crashed."""
-
-    def __init__(self, reference_filename=None):
-        self.reference_filename = reference_filename
+    def __init__(self, is_reftest=False):
+        self.is_reftest = is_reftest
 
     @staticmethod
     def message():
         return "DumpRenderTree crashed"
 
-    def result_html_output(self, filename):
-        # FIXME: create a link to the minidump file
-        stack = self.relative_output_filename(filename, "-stack.txt")
-        if self.reference_filename:
-            return "<strong>%s</strong> <a href=%s>stack</a> (occured in <a href=%s>expected html</a>)" % (
-                self.message(), stack, self.reference_filename)
-        else:
-            return "<strong>%s</strong> <a href=%s>stack</a>" % (self.message(), stack)
-
     def should_kill_dump_render_tree(self):
         return True
 
 
-class FailureMissingResult(ComparisonTestFailure):
+class FailureMissingResult(TestFailure):
     """Expected result was missing."""
-    OUT_FILENAMES = ("-actual.txt",)
 
     @staticmethod
     def message():
         return "No expected results found"
 
-    def result_html_output(self, filename):
-        return ("<strong>%s</strong>" % self.message() +
-                self.output_links(filename, self.OUT_FILENAMES))
 
-
-class FailureTextMismatch(ComparisonTestFailure):
+class FailureTextMismatch(TestFailure):
     """Text diff output failed."""
-    # Filename suffixes used by ResultHtmlOutput.
-    # FIXME: Why don't we use the constants from TestTypeBase here?
-    OUT_FILENAMES = ("-actual.txt", "-expected.txt", "-diff.txt",
-                     "-wdiff.html", "-pretty-diff.html")
 
     @staticmethod
     def message():
         return "Text diff mismatch"
 
 
-class FailureMissingImageHash(ComparisonTestFailure):
+class FailureMissingImageHash(TestFailure):
     """Actual result hash was missing."""
     # Chrome doesn't know to display a .checksum file as text, so don't bother
     # putting in a link to the actual result.
@@ -257,26 +161,17 @@ class FailureMissingImageHash(ComparisonTestFailure):
     def message():
         return "No expected image hash found"
 
-    def result_html_output(self, filename):
-        return "<strong>%s</strong>" % self.message()
 
-
-class FailureMissingImage(ComparisonTestFailure):
+class FailureMissingImage(TestFailure):
     """Actual result image was missing."""
-    OUT_FILENAMES = ("-actual.png",)
 
     @staticmethod
     def message():
         return "No expected image found"
 
-    def result_html_output(self, filename):
-        return ("<strong>%s</strong>" % self.message() +
-                self.output_links(filename, self.OUT_FILENAMES))
 
-
-class FailureImageHashMismatch(ComparisonTestFailure):
+class FailureImageHashMismatch(TestFailure):
     """Image hashes didn't match."""
-    OUT_FILENAMES = ("-actual.png", "-expected.png", "-diff.png")
 
     @staticmethod
     def message():
@@ -285,7 +180,7 @@ class FailureImageHashMismatch(ComparisonTestFailure):
         return "Image mismatch"
 
 
-class FailureImageHashIncorrect(ComparisonTestFailure):
+class FailureImageHashIncorrect(TestFailure):
     """Actual result hash is incorrect."""
     # Chrome doesn't know to display a .checksum file as text, so don't bother
     # putting in a link to the actual result.
@@ -294,63 +189,33 @@ class FailureImageHashIncorrect(ComparisonTestFailure):
     def message():
         return "Images match, expected image hash incorrect. "
 
-    def result_html_output(self, filename):
-        return "<strong>%s</strong>" % self.message()
 
-
-class FailureReftestMismatch(ComparisonTestFailure):
+class FailureReftestMismatch(TestFailure):
     """The result didn't match the reference rendering."""
-
-    OUT_FILENAMES = ("-expected.html", "-expected.png", "-actual.png",
-                     "-diff.png",)
 
     @staticmethod
     def message():
         return "Mismatch with reference"
 
-    def output_links(self, filename, out_names):
-        links = ['']
-        uris = [self.relative_output_filename(filename, output_filename)
-                for output_filename in out_names]
-        for text, uri in zip(['-expected.html', 'expected', 'actual', 'diff'], uris):
-            links.append("<a href='%s'>%s</a>" % (uri, text))
-        return ' '.join(links)
 
-
-class FailureReftestMismatchDidNotOccur(ComparisonTestFailure):
+class FailureReftestMismatchDidNotOccur(TestFailure):
     """Unexpected match between the result and the reference rendering."""
-
-    OUT_FILENAMES = ("-expected-mismatch.html", "-actual.png",)
 
     @staticmethod
     def message():
         return "Mismatch with the reference did not occur"
 
-    def output_links(self, filename, out_names):
-        links = ['']
-        uris = [self.relative_output_filename(filename, output_filename)
-                for output_filename in out_names]
-        for text, uri in zip(['-expected-mismatch.html', 'image'], uris):
-            links.append("<a href='%s'>%s</a>" % (uri, text))
-        return ' '.join(links)
 
-
-class FailureMissingAudio(ComparisonTestFailure):
+class FailureMissingAudio(TestFailure):
     """Actual result image was missing."""
-    OUT_FILENAMES = ("-actual.wav",)
 
     @staticmethod
     def message():
         return "No expected audio found"
 
-    def result_html_output(self, filename):
-        return ("<strong>%s</strong>" % self.message() +
-                self.output_links(filename, self.OUT_FILENAMES))
 
-
-class FailureAudioMismatch(ComparisonTestFailure):
+class FailureAudioMismatch(TestFailure):
     """Audio files didn't match."""
-    OUT_FILENAMES = ("-actual.wav", "-expected.wav")
 
     @staticmethod
     def message():

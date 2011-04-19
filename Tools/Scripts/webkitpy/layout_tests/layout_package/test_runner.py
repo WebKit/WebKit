@@ -154,6 +154,10 @@ def summarize_results(port_obj, expectations, result_summary, retry_summary, tes
         if test_failures.FailureReftestMismatch in failure_types:
             tests[test]['is_reftest'] = True
 
+        for f in result.failures:
+            if 'is_reftest' in result.failures:
+                tests[test]['is_reftest'] = True
+
         if test_failures.FailureReftestMismatchDidNotOccur in failure_types:
             tests[test]['is_mismatch_reftest'] = True
 
@@ -692,10 +696,9 @@ class TestRunner:
 
         # Write the summary to disk (results.html) and display it if requested.
         if not self._options.dry_run:
-            wrote_results = self._write_results_html_file(result_summary)
-            if self._options.show_results and wrote_results:
-                self._show_results_html_file()
-            self._write_unexpected_results_html_file(unexpected_results)
+            self._copy_results_html_file()
+            if self._options.show_results:
+                self._show_results_html_file(result_summary)
 
         # Now that we've completed all the processing we can, we re-raise
         # a KeyboardInterrupt if necessary so the caller can handle it.
@@ -1110,72 +1113,24 @@ class TestRunner:
                 self._printer.print_actual("  %5d %-24s (%4.1f%%)" %
                     (len(results), desc[len(results) != 1], pct))
 
-    def _results_html(self, test_files, failures, title="Test Failures", override_time=None):
-        """
-        test_files = a list of file paths
-        failures = dictionary mapping test paths to failure objects
-        title = title printed at top of test
-        override_time = current time (used by unit tests)
-        """
-        page = """<html>
-  <head>
-    <title>Layout Test Results (%(time)s)</title>
-  </head>
-  <body>
-    <h2>%(title)s (%(time)s)</h2>
-        """ % {'title': title, 'time': override_time or time.asctime()}
-
-        for test_file in sorted(test_files):
-            test_name = self._port.relative_test_filename(test_file)
-            test_url = self._port.filename_to_uri(test_file)
-            page += u"<p><a href='%s'>%s</a><br />\n" % (test_url, test_name)
-            test_failures = failures.get(test_file, [])
-            for failure in test_failures:
-                page += (u"&nbsp;&nbsp;%s<br/>" %
-                         failure.result_html_output(test_name))
-            page += "</p>\n"
-        page += "</body></html>\n"
-        return page
-
-    def _write_results_html_file(self, result_summary):
-        """Write results.html which is a summary of tests that failed.
-
-        Args:
-          result_summary: a summary of the results :)
-
-        Returns:
-          True if any results were written (since expected failures may be
-          omitted)
-        """
-        # test failures
-        if self._options.full_results_html:
-            results_title = "Test Failures"
-            test_files = result_summary.failures.keys()
-        else:
-            results_title = "Unexpected Test Failures"
-            unexpected_failures = self._get_failures(result_summary,
-                include_crashes=True)
-            test_files = unexpected_failures.keys()
-        if not len(test_files):
-            return False
-
-        out_filename = self._fs.join(self._results_directory, "results.html")
-        with self._fs.open_text_file_for_writing(out_filename) as results_file:
-            html = self._results_html(test_files, result_summary.failures, results_title)
-            results_file.write(html)
-
-        return True
-
-    # FIXME: Have this replace results.html and have a checkbox for whether to show expected failures or not.
-    def _write_unexpected_results_html_file(self, unexpected_results):
+    def _copy_results_html_file(self):
         base_dir = self._port.path_from_webkit_base('Tools', 'Scripts', 'webkitpy', 'layout_tests', 'layout_package')
         results_file = self._fs.join(base_dir, 'json_results.html')
         # FIXME: What should we do if this doesn't exist (e.g., in unit tests)?
         if self._fs.exists(results_file):
-            self._fs.copyfile(results_file, self._fs.join(self._results_directory, "json_results.html"))
+            self._fs.copyfile(results_file, self._fs.join(self._results_directory, "results.html"))
 
-    def _show_results_html_file(self):
+    def _show_results_html_file(self, result_summary):
         """Shows the results.html page."""
+        if self._options.full_results_html:
+            test_files = result_summary.failures.keys()
+        else:
+            unexpected_failures = self._get_failures(result_summary, include_crashes=True)
+            test_files = unexpected_failures.keys()
+
+        if not len(test_files):
+            return
+
         results_filename = self._fs.join(self._results_directory, "results.html")
         self._port.show_results_html_file(results_filename)
 
