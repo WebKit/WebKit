@@ -144,6 +144,53 @@ void DrawingBuffer::resizeDepthStencil(int sampleCount)
     m_context->bindRenderbuffer(GraphicsContext3D::RENDERBUFFER, 0);
 }
 
+void DrawingBuffer::clearFramebuffer()
+{
+    m_context->bindFramebuffer(GraphicsContext3D::FRAMEBUFFER, m_multisampleFBO ? m_multisampleFBO : m_fbo);
+    const GraphicsContext3D::Attributes& attributes = m_context->getContextAttributes();
+    float clearDepth = 0;
+    int clearStencil = 0;
+    unsigned char depthMask = true;
+    unsigned int stencilMask = 0xffffffff;
+    unsigned char isScissorEnabled = false;
+    unsigned long clearMask = GraphicsContext3D::COLOR_BUFFER_BIT;
+    if (attributes.depth) {
+        m_context->getFloatv(GraphicsContext3D::DEPTH_CLEAR_VALUE, &clearDepth);
+        m_context->clearDepth(1);
+        m_context->getBooleanv(GraphicsContext3D::DEPTH_WRITEMASK, &depthMask);
+        m_context->depthMask(true);
+        clearMask |= GraphicsContext3D::DEPTH_BUFFER_BIT;
+    }
+    if (attributes.stencil) {
+        m_context->getIntegerv(GraphicsContext3D::STENCIL_CLEAR_VALUE, &clearStencil);
+        m_context->clearStencil(0);
+        m_context->getIntegerv(GraphicsContext3D::STENCIL_WRITEMASK, reinterpret_cast<int*>(&stencilMask));
+        m_context->stencilMaskSeparate(GraphicsContext3D::FRONT, 0xffffffff);
+        clearMask |= GraphicsContext3D::STENCIL_BUFFER_BIT;
+    }
+    isScissorEnabled = m_context->isEnabled(GraphicsContext3D::SCISSOR_TEST);
+    m_context->disable(GraphicsContext3D::SCISSOR_TEST);
+
+    float clearColor[4];
+    m_context->getFloatv(GraphicsContext3D::COLOR_CLEAR_VALUE, clearColor);
+    m_context->clearColor(0, 0, 0, 0);
+    m_context->clear(clearMask);
+    m_context->clearColor(clearColor[0], clearColor[1], clearColor[2], clearColor[3]);
+
+    if (attributes.depth) {
+        m_context->clearDepth(clearDepth);
+        m_context->depthMask(depthMask);
+    }
+    if (attributes.stencil) {
+        m_context->clearStencil(clearStencil);
+        m_context->stencilMaskSeparate(GraphicsContext3D::FRONT, stencilMask);
+    }
+    if (isScissorEnabled)
+        m_context->enable(GraphicsContext3D::SCISSOR_TEST);
+    else
+        m_context->disable(GraphicsContext3D::SCISSOR_TEST);
+}
+
 bool DrawingBuffer::reset(const IntSize& newSize)
 {
     if (!m_context)
@@ -214,50 +261,7 @@ bool DrawingBuffer::reset(const IntSize& newSize)
         }
     }
 
-    m_context->bindFramebuffer(GraphicsContext3D::FRAMEBUFFER, m_multisampleFBO ? m_multisampleFBO : m_fbo);
-
-    // Initialize renderbuffers (depth/stencil).
-    float clearDepth = 0;
-    int clearStencil = 0;
-    unsigned char depthMask = true;
-    unsigned int stencilMask = 0xffffffff;
-    unsigned char isScissorEnabled = false;
-    unsigned long clearMask = GraphicsContext3D::COLOR_BUFFER_BIT;
-    if (attributes.depth) {
-        m_context->getFloatv(GraphicsContext3D::DEPTH_CLEAR_VALUE, &clearDepth);
-        m_context->clearDepth(1);
-        m_context->getBooleanv(GraphicsContext3D::DEPTH_WRITEMASK, &depthMask);
-        m_context->depthMask(true);
-        clearMask |= GraphicsContext3D::DEPTH_BUFFER_BIT;
-    }
-    if (attributes.stencil) {
-        m_context->getIntegerv(GraphicsContext3D::STENCIL_CLEAR_VALUE, &clearStencil);
-        m_context->clearStencil(0);
-        m_context->getIntegerv(GraphicsContext3D::STENCIL_WRITEMASK, reinterpret_cast<int*>(&stencilMask));
-        m_context->stencilMaskSeparate(GraphicsContext3D::FRONT, 0xffffffff);
-        clearMask |= GraphicsContext3D::STENCIL_BUFFER_BIT;
-    }
-    isScissorEnabled = m_context->isEnabled(GraphicsContext3D::SCISSOR_TEST);
-    m_context->disable(GraphicsContext3D::SCISSOR_TEST);
-
-    float clearColor[4];
-    m_context->getFloatv(GraphicsContext3D::COLOR_CLEAR_VALUE, clearColor);
-    m_context->clearColor(0, 0, 0, 0);
-    m_context->clear(clearMask);
-    m_context->clearColor(clearColor[0], clearColor[1], clearColor[2], clearColor[3]);
-
-    if (attributes.depth) {
-        m_context->clearDepth(clearDepth);
-        m_context->depthMask(depthMask);
-    }
-    if (attributes.stencil) {
-        m_context->clearStencil(clearStencil);
-        m_context->stencilMaskSeparate(GraphicsContext3D::FRONT, stencilMask);
-    }
-    if (isScissorEnabled)
-        m_context->enable(GraphicsContext3D::SCISSOR_TEST);
-    else
-        m_context->disable(GraphicsContext3D::SCISSOR_TEST);
+    clearFramebuffer();
 
     didReset();
 

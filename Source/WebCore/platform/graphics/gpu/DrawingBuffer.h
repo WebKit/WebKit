@@ -61,6 +61,8 @@ public:
     
     ~DrawingBuffer();
 
+    void clearFramebuffer();
+
     // Returns true if the buffer was successfully resized.
     bool reset(const IntSize&);
     void bind();
