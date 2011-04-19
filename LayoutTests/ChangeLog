@@ -1,3 +1,17 @@
+2011-04-18  Daniel Bates  <dbates@rim.com>
+
+        Reviewed by Adam Roben.
+
+        With PAN_SCROLLING, mousedown events for a mouse button aren't dispatched while
+        pressing-and-holding another mouse button
+        https://bugs.webkit.org/show_bug.cgi?id=58700
+
+        Test to ensure that a mousedown event is fired when pressing a mouse button A
+        while pressing and holding a mouse button B, where A != B.
+
+        * fast/events/fire-mousedown-while-pressing-mouse-button-expected.txt: Added.
+        * fast/events/fire-mousedown-while-pressing-mouse-button.html: Added.
+
 2011-04-18  Jessie Berlin  <jberlin@apple.com>
 
         WebKitTestRunner needs a more-complete implementation of eventSender.

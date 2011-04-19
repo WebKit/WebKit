@@ -1,3 +1,24 @@
+2011-04-18  Daniel Bates  <dbates@rim.com>
+
+        Reviewed by Adam Roben.
+
+        With PAN_SCROLLING, mousedown events for a mouse button aren't dispatched while
+        pressing-and-holding another mouse button
+        https://bugs.webkit.org/show_bug.cgi?id=58700
+
+        Fixes an issue where mousedown events weren't dispatched when pressing a mouse button A
+        while pressing and holding a mouse button B, where A != B. This issue only affects builds
+        that enable PAN_SCROLLING.
+
+        On mouse press with autoscroll in progress (m_autoscrollInProgress == true) we stopped
+        the autoscroll timer, invalidated the click, and swallowed the mouse press. Instead, we
+        should only stop the autoscroll timer.
+
+        Test: fast/events/fire-mousedown-while-pressing-mouse-button.html
+
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::handleMousePressEvent):
+
 2011-04-18  Jon Lee  <jonlee@apple.com>
 
         Reviewed by Maciej Stachowiak.

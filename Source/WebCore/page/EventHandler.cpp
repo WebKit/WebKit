@@ -1393,9 +1393,14 @@ bool EventHandler::handleMousePressEvent(const PlatformMouseEvent& mouseEvent)
     }
 
 #if ENABLE(PAN_SCROLLING)
-    Page* page = m_frame->page();
-    if ((page && page->mainFrame()->eventHandler()->panScrollInProgress()) || m_autoscrollInProgress) {
+    // We store whether pan scrolling is in progress before calling stopAutoscrollTimer()
+    // because it will set m_panScrollInProgress to false on return.
+    bool isPanScrollInProgress = m_frame->page() && m_frame->page()->mainFrame()->eventHandler()->panScrollInProgress();
+    if (isPanScrollInProgress || m_autoscrollInProgress)
         stopAutoscrollTimer();
+    if (isPanScrollInProgress) {
+        // We invalidate the click when exiting pan scrolling so that we don't inadvertently navigate
+        // away from the current page (e.g. the click was on a hyperlink). See <rdar://problem/6095023>.
         invalidateClick();
         return true;
     }
