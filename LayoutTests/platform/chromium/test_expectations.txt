@@ -3502,3 +3502,6 @@ BUGWK58772 WIN LINUX : svg/css/composite-shadow-text.svg = IMAGE
 
 // May just need to be re-baselined
 BUGCR79770 WIN : fast/box-shadow/inset-with-extraordinary-radii-and-border.html = IMAGE
+
+// Flaky, perhaps Skia related.
+BUGCR79851 LINUX : fast/table/frame-and-rules.html = PASS TEXT
