@@ -1,3 +1,15 @@
+2011-04-18  Daniel Bates  <dbates@rim.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=58863
+
+        Skip fast/events/fire-mousedown-while-pressing-mouse-button.html which is failing on
+        Qt Linux for now. See bug for more details.
+
+        This test was added in changeset 84217 <http://trac.webkit.org/changeset/84217>
+        (https://bugs.webkit.org/show_bug.cgi?id=58700).
+
+        * platform/qt/Skipped:
+
 2011-04-18  Zan Dobersek  <zandobersek@gmail.com>
 
         Reviewed by Martin Robinson.
