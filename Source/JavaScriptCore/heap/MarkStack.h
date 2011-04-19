@@ -64,7 +64,6 @@ namespace JSC {
         void deprecatedAppend(JSCell**);
         void deprecatedAppend(Register*);
         template <typename T> void append(WriteBarrierBase<T>*);
-        template <typename T> void append(DeprecatedPtr<T>*);
         
         ALWAYS_INLINE void deprecatedAppendValues(Register* registers, size_t count, MarkSetProperties properties = NoNullValues)
         {
@@ -217,11 +216,6 @@ namespace JSC {
         if (!count)
             return;
         m_markSets.append(MarkSet(slot, slot + count, NoNullValues));
-    }
-
-    template <typename T> inline void MarkStack::append(DeprecatedPtr<T>* slot)
-    {
-        internalAppend(*slot->slot());
     }
     
     template <typename T> inline void MarkStack::append(WriteBarrierBase<T>* slot)

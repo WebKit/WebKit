@@ -51,7 +51,6 @@ namespace JSC {
     struct ClassInfo;
     struct Instruction;
 
-    template <class T> class DeprecatedPtr;
     template <class T> class WriteBarrierBase;
 
     enum PreferredPrimitiveType { NoPreference, PreferNumber, PreferString };
@@ -236,7 +235,6 @@ namespace JSC {
 #endif
 
     private:
-        template <class T> JSValue(DeprecatedPtr<T>);
         template <class T> JSValue(WriteBarrierBase<T>);
 
         enum HashTableDeletedValueTag { HashTableDeletedValue };
