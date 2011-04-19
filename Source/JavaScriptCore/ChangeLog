@@ -1,5 +1,16 @@
 2011-04-18  Oliver Hunt  <oliver@apple.com>
 
+        Reviewed by Gavin Barraclough.
+
+        Remove unneeded deprecated methods from MarkStack
+        https://bugs.webkit.org/show_bug.cgi?id=58853
+
+        Remove deprecated methods
+
+        * heap/MarkStack.h:
+
+2011-04-18  Oliver Hunt  <oliver@apple.com>
+
         Reviewed by Adam Roben.
 
         Off by one initialising repeat callframe
