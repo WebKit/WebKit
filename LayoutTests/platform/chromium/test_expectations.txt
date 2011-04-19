@@ -3570,7 +3570,6 @@ BUGCR79917 WIN LINUX : css2.1/t170602-bdr-conflct-w-94-d.html = IMAGE
 BUGCR79917 WIN LINUX : editing/execCommand/5138441.html = IMAGE
 BUGCR79917 WIN LINUX : editing/inserting/editing-empty-divs.html = IMAGE
 BUGCR79917 WIN LINUX : editing/selection/transformed-selection-rects.html = IMAGE
-BUGCR79917 WIN LINUX : fast/backgrounds/repeat/negative-offset-repeat-transformed.html = IMAGE
 BUGCR79917 WIN LINUX : fast/backgrounds/repeat/negative-offset-repeat.html = IMAGE
 BUGCR79917 WIN LINUX : fast/block/positioning/absolute-in-inline-ltr-2.html = IMAGE
 BUGCR79917 WIN LINUX : fast/block/positioning/absolute-in-inline-ltr-3.html = IMAGE
@@ -3620,13 +3619,10 @@ BUGCR79917 WIN LINUX : fast/transforms/matrix-01.html = IMAGE
 BUGCR79917 WIN LINUX : fast/transforms/matrix-02.html = IMAGE
 BUGCR79917 WIN LINUX : fast/transforms/skew-with-unitless-zero.html = IMAGE
 BUGCR79917 WIN LINUX : fast/transforms/transformed-caret.html = IMAGE
-BUGCR79917 WIN LINUX : media/video-layer-crash.html = IMAGE
-BUGCR79917 WIN LINUX : media/video-transformed.html = IMAGE
-BUGCR79917 WIN LINUX : plugins/embed-attributes-style.html = IMAGE
-BUGCR79917 WIN LINUX : svg/custom/no-inherited-dashed-stroke.xhtml
-BUGCR79917 WIN LINUX : svg/custom/use-css-no-effect-on-shadow-tree.svg
-BUGCR79917 WIN LINUX : svg/transforms/animated-path-inside-transformed-html.xhtml
-BUGCR79917 WIN LINUX : svg/transforms/text-with-pattern-inside-transformed-html.xhtml
+BUGCR79917 WIN LINUX : svg/custom/no-inherited-dashed-stroke.xhtml = IMAGE
+BUGCR79917 WIN LINUX : svg/custom/use-css-no-effect-on-shadow-tree.svg = IMAGE
+BUGCR79917 WIN LINUX : svg/transforms/animated-path-inside-transformed-html.xhtml = IMAGE
+BUGCR79917 WIN LINUX : svg/transforms/text-with-pattern-inside-transformed-html.xhtml = IMAGE
 BUGCR79917 WIN LINUX : tables/mozilla/bugs/bug22019.html = IMAGE
 BUGCR79917 WIN LINUX : tables/mozilla/bugs/bug2886.html = IMAGE
 BUGCR79917 WIN LINUX : tables/mozilla/bugs/bug2947.html = IMAGE
@@ -3656,7 +3652,5 @@ BUGCR79917 WIN LINUX : tables/mozilla_expected_failures/marvin/backgr_position-t
 BUGCR79917 WIN LINUX : tables/mozilla_expected_failures/marvin/backgr_position-table-column.html = IMAGE
 BUGCR79917 WIN LINUX : tables/mozilla_expected_failures/marvin/backgr_position-table-row-group.html = IMAGE
 BUGCR79917 WIN LINUX : tables/mozilla_expected_failures/marvin/backgr_position-table-row.html = IMAGE
-BUGCR79917 WIN LINUX : transforms/2d/hindi-rotated.html = IMAGE
-BUGCR79917 WIN LINUX : transforms/svg-vs-css.xhtml
-BUGCR79917 WIN LINUX : fast/text/justification-padding-mid-word.html = IMAGE
+BUGCR79917 WIN LINUX : transforms/svg-vs-css.xhtml = IMAGE
 BUGCR79917 WIN LINUX : fast/borders/table-borders.html = IMAGE
