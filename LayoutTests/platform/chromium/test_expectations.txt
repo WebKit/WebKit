@@ -2925,7 +2925,6 @@ BUGCR74982 GPU MAC SNOWLEOPARD : media/video-transformed.html = IMAGE
 BUGCR74982 GPU : media/video-zoom-controls.html = IMAGE
 
 BUGWK55708 BUGCR75345 GPU MAC : media/video-controls-rendering.html = CRASH IMAGE
-BUGWK55708 BUGCR75345 GPU MAC : media/video-zoom.html = CRASH
 BUGWK55718 BUGCR75354 GPU : media/media-document-audio-repaint.html = IMAGE+TEXT
 
 BUGWK55968 BUGWK58306 GPU MAC : compositing/webgl/webgl-nonpremultiplied-blend.html = IMAGE+TEXT CRASH
@@ -3091,7 +3090,6 @@ BUGCR75019 WIN LINUX MAC :fast/text/hyphenate-limit-before-after.html = IMAGE+TE
 // Commented out because BUGWK57113 supersedes it below.
 //BUGWK58587 DEBUG GPU LINUX : compositing/geometry/horizontal-scroll-composited.html = IMAGE
 BUGWK58587 DEBUG GPU LINUX : fast/canvas/image-object-in-canvas.html = IMAGE
-BUGWK58587 DEBUG GPU LINUX : media/video-zoom.html = IMAGE
 //BUGWK58587 DEBUG GPU LINUX : platform/chromium/compositing/layout-width-change.html = IMAGE
 
 // WebKit roll 80564:80631: rendering on Mac LEOPARD is shifted to the top right

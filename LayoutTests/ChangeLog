@@ -2,6 +2,15 @@
 
         Unreviewed.
 
+        Update test_expectations.txt with now passing test : media/video-zoom.html
+        https://bugs.webkit.org/show_bug.cgi?id=58916
+
+        * platform/chromium/test_expectations.txt:
+
+2011-04-19  Chris Rogers  <crogers@google.com>
+
+        Unreviewed.
+
         Rebaseline some chromium Snow Leopard tests - update test_expectations.txt
         https://bugs.webkit.org/show_bug.cgi?id=58915
 
