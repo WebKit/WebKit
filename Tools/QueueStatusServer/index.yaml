@@ -43,6 +43,12 @@ indexes:
   - name: message
   - name: queue_name
   - name: date
+
+- kind: QueueStatus
+  properties:
+  - name: message
+  - name: queue_name
+  - name: date
     direction: desc
 
 - kind: QueueStatus

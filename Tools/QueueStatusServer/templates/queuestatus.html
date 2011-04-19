@@ -20,6 +20,8 @@ Last Boot: {{ last_boot.date|timesince }} ago
 by <a href="/queue-status/{{last_boot.queue_name}}/bots/{{last_boot.bot_id}}">{{ last_boot.bot_id }}</a>
 {% endif %}
 </div>
+<div>7-day "Pass" count: {{ trailing_week_pass_count }}</div>
+<div>30-day "Pass" count: {{ trailing_month_pass_count }}</div>
 
 <h3>Recent Status</h3>
 

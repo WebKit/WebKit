@@ -26,6 +26,7 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+import datetime
 import itertools
 
 from google.appengine.ext import webapp
@@ -58,18 +59,28 @@ class QueueStatus(webapp.RequestHandler):
 
     def _fetch_statuses(self, queue, bot_id):
         statuses = queuestatus.QueueStatus.all()
-        statuses = statuses.filter("queue_name =", queue.name())
+        statuses.filter("queue_name =", queue.name())
         if bot_id:
             statuses.filter("bot_id =", bot_id)
         return statuses.order("-date").fetch(15)
 
     def _fetch_last_message_matching(self, queue, bot_id, message):
         statuses = queuestatus.QueueStatus.all()
-        statuses = statuses.filter("queue_name =", queue.name())
+        statuses.filter("queue_name =", queue.name())
         if bot_id:
             statuses.filter("bot_id =", bot_id)
         statuses.filter("message =", message)
         return statuses.order("-date").get()
+
+    def _fetch_trailing_days_pass_count(self, queue, bot_id, days):
+        statuses = queuestatus.QueueStatus.all()
+        statuses.filter("queue_name =", queue.name())
+        days_ago = datetime.datetime.now() - datetime.timedelta(days=days)
+        statuses.filter("date >", days_ago)
+        if bot_id:
+            statuses.filter("bot_id =", bot_id)
+        statuses.filter("message =", "Pass")
+        return statuses.count()
 
     def _page_title(self, queue, bot_id):
         title = "%s Messages" % queue.display_name()
@@ -92,5 +103,7 @@ class QueueStatus(webapp.RequestHandler):
             "bot_id": bot_id,
             "last_pass": self._fetch_last_message_matching(queue, bot_id, "Pass"),
             "last_boot": self._fetch_last_message_matching(queue, bot_id, "Starting Queue"),
+            "trailing_month_pass_count": self._fetch_trailing_days_pass_count(queue, bot_id, 30),
+            "trailing_week_pass_count": self._fetch_trailing_days_pass_count(queue, bot_id, 7),
         }
         self.response.out.write(template.render("templates/queuestatus.html", template_values))
