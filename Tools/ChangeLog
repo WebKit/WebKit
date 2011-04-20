@@ -1,3 +1,14 @@
+2011-04-20 Peter Gal <galpeter@inf.u-szeged.hu>
+
+        Reviewed by Csaba Osztrogonác.
+
+        Modify builder.html template to allow easy access
+        to list more builds on the builder's page.
+
+        https://bugs.webkit.org/show_bug.cgi?id=59008
+
+        * BuildSlaveSupport/build.webkit.org-config/templates/builder.html:
+
 2011-04-20  Peter Gal  <galpeter@inf.u-szeged.hu>
 
         Reviewed by Csaba Osztrogonác.
