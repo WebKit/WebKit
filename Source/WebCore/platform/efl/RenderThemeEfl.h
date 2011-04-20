@@ -209,6 +209,9 @@ private:
     Color m_entryTextForegroundColor;
     Color m_searchTextBackgroundColor;
     Color m_searchTextForegroundColor;
+#if ENABLE(VIDEO)
+    Color m_panelColor;
+#endif
     Ecore_Evas* m_canvas;
     Evas_Object* m_edje;
 

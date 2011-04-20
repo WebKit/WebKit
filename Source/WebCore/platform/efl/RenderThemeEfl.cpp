@@ -41,6 +41,7 @@
 #include "RenderSlider.h"
 #include "UserAgentStyleSheets.h"
 #include <wtf/text/CString.h>
+#include <wtf/text/StringConcatenate.h>
 
 #include <Ecore_Evas.h>
 #include <Edje.h>
@@ -690,6 +691,9 @@ RenderThemeEfl::RenderThemeEfl(Page* page)
     , m_entryTextForegroundColor(0, 0, 0)
     , m_searchTextBackgroundColor(0, 0, 0, 0)
     , m_searchTextForegroundColor(0, 0, 0)
+#if ENABLE(VIDEO)
+    , m_panelColor(220, 220, 195) // light tannish color.
+#endif
     , m_canvas(0)
     , m_edje(0)
 {
@@ -1095,8 +1099,7 @@ String RenderThemeEfl::extraMediaControlsStyleSheet()
 
 String RenderThemeEfl::formatMediaControlsCurrentTime(float currentTime, float duration) const
 {
-    notImplemented();
-    return String();
+    return makeString(formatMediaControlsTime(currentTime), " / ", formatMediaControlsTime(duration));
 }
 
 bool RenderThemeEfl::paintMediaFullscreenButton(RenderObject* object, const PaintInfo& info, const IntRect& rect)
@@ -1190,8 +1193,8 @@ bool RenderThemeEfl::paintMediaVolumeSliderThumb(RenderObject* object, const Pai
 
 bool RenderThemeEfl::paintMediaCurrentTime(RenderObject* object, const PaintInfo& info, const IntRect& rect)
 {
-    notImplemented();
-    return false;
+    info.context->fillRect(FloatRect(rect), m_panelColor, ColorSpaceDeviceRGB);
+    return true;
 }
 #endif
 }

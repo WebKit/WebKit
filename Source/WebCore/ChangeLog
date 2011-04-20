@@ -1,3 +1,18 @@
+2011-04-20  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        Reviewed by Daniel Bates.
+
+        [EFL] Add current time to media control panel.
+        https://bugs.webkit.org/show_bug.cgi?id=58866
+
+        Implement paintMediaCurrentTime() to show playing time of media content.
+
+        * platform/efl/RenderThemeEfl.cpp:
+        (WebCore::RenderThemeEfl::RenderThemeEfl):
+        (WebCore::RenderThemeEfl::formatMediaControlsCurrentTime):
+        (WebCore::RenderThemeEfl::paintMediaCurrentTime):
+        * platform/efl/RenderThemeEfl.h:
+
 2011-04-19  Jungshik Shin  <jshin@chromium.org>
 
         Reviewed by Adam Barth
