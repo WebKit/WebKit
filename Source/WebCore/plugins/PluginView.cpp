@@ -59,7 +59,6 @@
 #include "ProxyServer.h"
 #include "RenderBox.h"
 #include "RenderObject.h"
-#include "ScriptController.h"
 #include "ScriptValue.h"
 #include "SecurityOrigin.h"
 #include "Settings.h"

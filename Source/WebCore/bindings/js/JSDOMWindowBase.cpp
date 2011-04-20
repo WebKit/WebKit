@@ -32,7 +32,6 @@
 #include "JSNode.h"
 #include "Logging.h"
 #include "Page.h"
-#include "ScriptController.h"
 #include "SecurityOrigin.h"
 #include "Settings.h"
 #include "WebCoreJSClientData.h"

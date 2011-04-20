@@ -33,7 +33,6 @@
 #include "Frame.h"
 #include "OwnArrayPtr.h"
 #include "PlatformString.h"
-#include "ScriptController.h"
 #include "UserGestureIndicator.h"
 #include "V8GCController.h"
 #include "V8Helpers.h"

@@ -61,7 +61,6 @@
 #include "PluginMessageThrottlerWin.h"
 #include "PluginPackage.h"
 #include "RenderWidget.h"
-#include "ScriptController.h"
 #include "Settings.h"
 #include "WebCoreInstanceHandle.h"
 #include "c_instance.h"

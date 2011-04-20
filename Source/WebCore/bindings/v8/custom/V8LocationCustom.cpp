@@ -37,7 +37,6 @@
 #include "KURL.h"
 #include "Location.h"
 #include "PlatformString.h"
-#include "ScriptController.h"
 #include "V8Binding.h"
 #include "V8BindingState.h"
 #include "V8DOMWindow.h"

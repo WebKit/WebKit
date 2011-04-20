@@ -47,7 +47,6 @@
 #include "ResourceRequest.h"
 #include "ResourceResponse.h"
 #include "ScriptableDocumentParser.h"
-#include "ScriptController.h"
 #include "ScriptElement.h"
 #include "ScriptSourceCode.h"
 #include "ScriptValue.h"

@@ -42,7 +42,6 @@
 #include "RuntimeEnabledFeatures.h"
 #include "ScriptCallStack.h"
 #include "ScriptCallStackFactory.h"
-#include "ScriptController.h"
 #include "ScriptProfiler.h"
 #include "StorageNamespace.h"
 #include "V8Binding.h"

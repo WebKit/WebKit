@@ -31,7 +31,6 @@
 // https://bugs.webkit.org/show_bug.cgi?id=35061 is fixed.
 
 #include "Frame.h"
-#include "ScriptController.h"
 #include "V8DOMWindow.h"
 
 namespace WebCore {

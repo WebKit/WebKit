@@ -48,7 +48,6 @@
 #if ENABLE(SVG)
 #include "SVGNames.h"
 #endif
-#include "ScriptController.h"
 #include "Settings.h"
 #include "Text.h"
 #include <wtf/UnusedParam.h>

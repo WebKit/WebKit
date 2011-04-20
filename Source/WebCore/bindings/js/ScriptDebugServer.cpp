@@ -36,7 +36,6 @@
 #include "Frame.h"
 #include "JavaScriptCallFrame.h"
 #include "ScriptBreakpoint.h"
-#include "ScriptController.h"
 #include "ScriptDebugListener.h"
 #include <debugger/DebuggerCallFrame.h>
 #include <parser/SourceProvider.h>

@@ -64,7 +64,6 @@
 #include "PluginMainThreadScheduler.h"
 #include "QWebPageClient.h"
 #include "RenderLayer.h"
-#include "ScriptController.h"
 #include "Settings.h"
 #include "npruntime_impl.h"
 #include "qwebpage_p.h"

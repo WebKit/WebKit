@@ -46,7 +46,6 @@
 #include "MathMLNames.h"
 #include "NotImplemented.h"
 #include "SVGNames.h"
-#include "ScriptController.h"
 #include "Text.h"
 #include "XLinkNames.h"
 #include "XMLNSNames.h"

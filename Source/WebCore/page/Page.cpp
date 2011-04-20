@@ -61,7 +61,6 @@
 #include "RenderTheme.h"
 #include "RenderWidget.h"
 #include "RuntimeEnabledFeatures.h"
-#include "ScriptController.h"
 #include "SelectionController.h"
 #include "Settings.h"
 #include "SharedBuffer.h"

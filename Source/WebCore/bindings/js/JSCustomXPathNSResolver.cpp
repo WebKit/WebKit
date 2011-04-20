@@ -32,7 +32,6 @@
 #include "ExceptionCode.h"
 #include "Frame.h"
 #include "JSDOMWindowCustom.h"
-#include "ScriptController.h"
 #include <runtime/JSLock.h>
 
 namespace WebCore {

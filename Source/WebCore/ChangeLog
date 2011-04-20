@@ -1,3 +1,50 @@
+2011-04-19  Mihai Parparita  <mihaip@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        ScriptController.h is included in too many places
+        https://bugs.webkit.org/show_bug.cgi?id=58963
+
+        Remove ScriptController.h #includes from a bunch of .cpp files where it
+        doesn't appear to be necessary.
+
+        * bindings/js/JSCustomPositionCallback.cpp:
+        * bindings/js/JSCustomPositionErrorCallback.cpp:
+        * bindings/js/JSCustomVoidCallback.cpp:
+        * bindings/js/JSCustomXPathNSResolver.cpp:
+        * bindings/js/JSDOMWindowBase.cpp:
+        * bindings/js/JSDOMWindowShell.cpp:
+        * bindings/js/JSDocumentCustom.cpp:
+        * bindings/js/ScriptDebugServer.cpp:
+        * bindings/v8/NPV8Object.cpp:
+        * bindings/v8/ScriptCachedFrameData.cpp:
+        * bindings/v8/V8DOMWindowShell.cpp:
+        * bindings/v8/V8DOMWrapper.cpp:
+        * bindings/v8/V8IsolatedContext.cpp:
+        * bindings/v8/V8Proxy.cpp:
+        * bindings/v8/custom/V8LocationCustom.cpp:
+        * dom/Node.cpp:
+        * dom/ScriptElement.cpp:
+        * dom/XMLDocumentParser.cpp:
+        * dom/XMLDocumentParserQt.cpp:
+        * html/HTMLEmbedElement.cpp:
+        * html/HTMLObjectElement.cpp:
+        * html/HTMLPlugInElement.cpp:
+        * html/parser/HTMLConstructionSite.cpp:
+        * html/parser/HTMLTreeBuilder.cpp:
+        * inspector/InspectorProfilerAgent.cpp:
+        * loader/icon/IconDatabase.cpp:
+        * page/Chrome.cpp:
+        * page/Navigator.cpp:
+        * page/Page.cpp:
+        * plugins/PluginView.cpp:
+        * plugins/gtk/PluginViewGtk.cpp:
+        * plugins/qt/PluginViewQt.cpp:
+        * plugins/symbian/PluginViewSymbian.cpp:
+        * plugins/win/PluginViewWin.cpp:
+        * svg/SVGDocumentExtensions.cpp:
+        * xml/XMLTreeViewer.cpp:
+
 2011-04-20  Pavel Feldman  <pfeldman@google.com>
 
         Reviewed by Yury Semikhatsky.

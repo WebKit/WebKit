@@ -30,7 +30,6 @@
 
 #include "Frame.h"
 #include "JSPositionError.h"
-#include "ScriptController.h"
 #include <runtime/JSLock.h>
 
 namespace WebCore {

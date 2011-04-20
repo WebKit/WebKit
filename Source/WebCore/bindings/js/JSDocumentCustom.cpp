@@ -34,7 +34,6 @@
 #include "JSTouch.h"
 #include "JSTouchList.h"
 #include "Location.h"
-#include "ScriptController.h"
 #include "TouchList.h"
 
 #if ENABLE(SVG)

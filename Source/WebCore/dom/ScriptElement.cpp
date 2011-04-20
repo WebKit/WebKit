@@ -36,7 +36,6 @@
 #include "IgnoreDestructiveWriteCountIncrementer.h"
 #include "MIMETypeRegistry.h"
 #include "Page.h"
-#include "ScriptController.h"
 #include "ScriptRunner.h"
 #include "ScriptSourceCode.h"
 #include "ScriptValue.h"

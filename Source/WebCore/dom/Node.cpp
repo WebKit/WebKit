@@ -75,7 +75,6 @@
 #include "RenderFullScreen.h"
 #include "RenderView.h"
 #include "ScopedEventQueue.h"
-#include "ScriptController.h"
 #include "SelectorNodeList.h"
 #include "StaticNodeList.h"
 #include "TagNodeList.h"

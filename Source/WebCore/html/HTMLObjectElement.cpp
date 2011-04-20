@@ -39,7 +39,6 @@
 #include "RenderEmbeddedObject.h"
 #include "RenderImage.h"
 #include "RenderWidget.h"
-#include "ScriptController.h"
 #include "ScriptEventListener.h"
 #include "Text.h"
 

@@ -40,7 +40,6 @@
 #include "PageGroup.h"
 #include "PlatformString.h"
 #include "PluginData.h"
-#include "ScriptController.h"
 #include "Settings.h"
 #include "StorageNamespace.h"
 #include <wtf/StdLibExtras.h>

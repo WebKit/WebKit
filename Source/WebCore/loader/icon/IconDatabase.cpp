@@ -36,7 +36,6 @@
 #include "IconRecord.h"
 #include "IntSize.h"
 #include "Logging.h"
-#include "ScriptController.h"
 #include "SQLiteStatement.h"
 #include "SQLiteTransaction.h"
 #include "SuddenTermination.h"

@@ -36,7 +36,6 @@
 #include "DocumentLoader.h"
 #include "FrameLoaderClient.h"
 #include "Notification.h"
-#include "ScriptController.h"
 #include "V8AbstractEventListener.h"
 #include "V8Binding.h"
 #include "V8Collection.h"

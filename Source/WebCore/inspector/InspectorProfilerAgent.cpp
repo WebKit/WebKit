@@ -41,7 +41,6 @@
 #include "KURL.h"
 #include "Page.h"
 #include "PageScriptDebugServer.h"
-#include "ScriptController.h"
 #include "ScriptHeapSnapshot.h"
 #include "ScriptProfile.h"
 #include "ScriptProfiler.h"

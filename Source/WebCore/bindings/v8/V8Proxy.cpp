@@ -44,7 +44,6 @@
 #include "Page.h"
 #include "PageGroup.h"
 #include "PlatformBridge.h"
-#include "ScriptController.h"
 #include "Settings.h"
 #include "StorageNamespace.h"
 #include "V8Binding.h"

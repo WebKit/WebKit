@@ -35,7 +35,6 @@
 #include "Element.h"
 #include "Frame.h"
 #include "Page.h"
-#include "ScriptController.h"
 #include "ScriptSourceCode.h"
 #include "Settings.h"
 #include "Text.h"

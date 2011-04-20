@@ -38,7 +38,6 @@
 #include "PageGroupLoadDeferrer.h"
 #include "RenderObject.h"
 #include "ResourceHandle.h"
-#include "ScriptController.h"
 #include "SecurityOrigin.h"
 #include "Settings.h"
 #include "WindowFeatures.h"

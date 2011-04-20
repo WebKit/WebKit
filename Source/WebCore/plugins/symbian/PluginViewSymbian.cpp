@@ -47,7 +47,6 @@
 #include "PluginPackage.h"
 #include "QWebPageClient.h"
 #include "RenderLayer.h"
-#include "ScriptController.h"
 #include "Settings.h"
 #include "npfunctions.h"
 #include "npinterface.h"

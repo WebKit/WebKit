@@ -35,7 +35,6 @@
 #include "SVGElement.h"
 #include "SVGSMILElement.h"
 #include "SVGSVGElement.h"
-#include "ScriptController.h"
 #include "ScriptableDocumentParser.h"
 #include <wtf/text/AtomicString.h>
 
