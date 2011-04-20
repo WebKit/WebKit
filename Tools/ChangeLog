@@ -1,3 +1,22 @@
+2011-04-20  W. James MacLean  <wjmaclean@chromium.org>
+
+        Reviewed by Kenneth Russell.
+
+        Add support for composite-to-texture to DumpRenderTree.
+        https://bugs.webkit.org/show_bug.cgi?id=58675
+
+        * DumpRenderTree/chromium/DumpRenderTree.cpp:
+        (main):
+        * DumpRenderTree/chromium/TestShell.cpp:
+        (TestShell::TestShell):
+        (TestShell::resetWebSettings):
+        * DumpRenderTree/chromium/TestShell.h:
+        (TestShell::setCompositeToTexture):
+        * DumpRenderTree/chromium/WebPreferences.cpp:
+        (WebPreferences::reset):
+        (WebPreferences::applyTo):
+        * DumpRenderTree/chromium/WebPreferences.h:
+
 2011-04-19  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Adam Barth.
