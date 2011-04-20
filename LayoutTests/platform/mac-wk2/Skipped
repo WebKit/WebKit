@@ -940,6 +940,7 @@ fast/harness/use-page-cache.html
 fast/history/timed-refresh-in-cached-frame.html
 fast/loader/frames-with-unload-handlers-in-page-cache.html
 fast/loader/input-element-page-cache-crash.html
+fast/loader/scroll-position-restored-on-back.html
 fast/loader/stateobjects/popstate-fires-with-page-cache.html
 fast/loader/unschedule-relayout-after-unload.html
 fast/parser/noscript-with-javascript-disabled.html
