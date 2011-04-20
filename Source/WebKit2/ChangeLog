@@ -1,3 +1,19 @@
+2011-04-20  Chris Marrin  <cmarrin@apple.com>
+
+        Reviewed by Adam Roben.
+
+        REGRESSION (WebKit2): CSS animations on pages that use accelerated compositing stop after switching tabs
+        https://bugs.webkit.org/show_bug.cgi?id=57868
+        
+        Subclassed setRootCompositingLayer so it can call ensureAnimationsSubmitted on Win.
+
+        * WebProcess/WebPage/ca/LayerTreeHostCA.h:
+            Make setRootCompositingLayer protected so it can be called from subclass
+        * WebProcess/WebPage/ca/win/LayerTreeHostCAWin.cpp:
+            Override setRootCompositingLayer to add call to root layer's
+            PlatformCALayer::ensureAnimationsSubmitted method
+        * WebProcess/WebPage/ca/win/LayerTreeHostCAWin.h:
+
 2011-04-18  Eric Carlson  <eric.carlson@apple.com>
 
         Reviewed by Dan Bernstein.

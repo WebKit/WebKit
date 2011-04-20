@@ -49,6 +49,7 @@ protected:
     virtual void invalidate();
     virtual void sizeDidChange(const WebCore::IntSize& newSize);
     virtual void forceRepaint();
+    virtual void setRootCompositingLayer(WebCore::GraphicsLayer*);
 
     // LayerTreeHostCA
     virtual void didPerformScheduledLayerFlush();
@@ -57,7 +58,6 @@ private:
     // LayerTreeHost.
     virtual const LayerTreeContext& layerTreeContext();
     virtual void setShouldNotifyAfterNextScheduledLayerFlush(bool);
-    virtual void setRootCompositingLayer(WebCore::GraphicsLayer*);
 
     virtual void setNonCompositedContentsNeedDisplay(const WebCore::IntRect&);
     virtual void scrollNonCompositedContents(const WebCore::IntRect& scrollRect, const WebCore::IntSize& scrollOffset);

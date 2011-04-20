@@ -1,3 +1,27 @@
+2011-04-20  Chris Marrin  <cmarrin@apple.com>
+
+        Reviewed by Adam Roben.
+
+        REGRESSION (WebKit2): CSS animations on pages that use accelerated compositing stop after switching tabs
+        https://bugs.webkit.org/show_bug.cgi?id=57868
+        
+        Running CACFAnimations aren't remembered when layer tree is unparented and 
+        then reparented. Added a new ensureAnimationsSubmitted function to 
+        PlatformCALayer to traverse the tree and resubmit animations, setting the 
+        beginTime to the original start time of the animation. This is called in WK2
+        when layer tree is newly parented.
+        
+        I also consolidated currentTimeToMediaTime into PlatformCALayer so it can be shared
+        between PlatformCALayer and GraphicsLayerCA.
+
+        * platform/graphics/ca/GraphicsLayerCA.cpp:
+        * platform/graphics/ca/PlatformCAAnimation.h:
+            Remember actual animation start time in CACFAnimation beginTime property
+        * platform/graphics/ca/PlatformCALayer.h:
+            New ensureAnimationsSubmitted function which traverses layers and resubmits all animations
+        * platform/graphics/ca/mac/PlatformCALayerMac.mm:
+        * platform/graphics/ca/win/PlatformCALayerWin.cpp:
+
 2011-04-20  Eric Carlson  <eric.carlson@apple.com>
 
         Reviewed by Dan Bernstein.

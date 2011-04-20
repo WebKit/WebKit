@@ -236,6 +236,12 @@ PlatformLayer* PlatformCALayer::platformLayer() const
     return m_layer.get();
 }
 
+void PlatformCALayer::animationStarted(CFTimeInterval beginTime)
+{
+    if (m_owner)
+        m_owner->platformCALayerAnimationStarted(beginTime);
+}
+
 void PlatformCALayer::setNeedsDisplay(const FloatRect* dirtyRect)
 {
     BEGIN_BLOCK_OBJC_EXCEPTIONS

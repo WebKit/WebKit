@@ -294,6 +294,16 @@ void LayerTreeHostCAWin::flushPendingLayerChangesNow()
     m_isFlushingLayerChanges = false;
 }
 
+void LayerTreeHostCAWin::setRootCompositingLayer(GraphicsLayer* graphicsLayer)
+{    
+    // Resubmit all existing animations. CACF does not remember running animations
+    // When the layer tree is removed and then added back to the hierarchy
+    if (graphicsLayer)
+        static_cast<GraphicsLayerCA*>(graphicsLayer)->platformCALayer()->ensureAnimationsSubmitted();
+
+    LayerTreeHostCA::setRootCompositingLayer(graphicsLayer);
+}
+
 } // namespace WebKit
 
 #endif // HAVE(WKQCA)

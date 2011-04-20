@@ -58,13 +58,6 @@ static const int cMaxPixelDimension = 2000;
 // of 250ms. So send a very small value instead.
 static const float cAnimationAlmostZeroDuration = 1e-3f;
 
-// CACurrentMediaTime() is a time since boot. These methods convert between that and
-// WebCore time, which is system time (UTC).
-static CFTimeInterval currentTimeToMediaTime(double t)
-{
-    return CACurrentMediaTime() + t - WTF::currentTime();
-}
-
 static bool isTransformTypeTransformationMatrix(TransformOperation::OperationType transformType)
 {
     switch (transformType) {
@@ -1886,7 +1879,7 @@ bool GraphicsLayerCA::setTransformAnimationKeyframes(const KeyframeValueList& va
 
 void GraphicsLayerCA::suspendAnimations(double time)
 {
-    double t = currentTimeToMediaTime(time ? time : currentTime());
+    double t = PlatformCALayer::currentTimeToMediaTime(time ? time : currentTime());
     primaryLayer()->setSpeed(0);
     primaryLayer()->setTimeOffset(t);
 

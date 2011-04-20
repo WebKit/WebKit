@@ -137,6 +137,12 @@ public:
 protected:
     PlatformCAAnimation(AnimationType, const String& keyPath);
     PlatformCAAnimation(PlatformAnimationRef);
+
+    void setActualStartTimeIfNeeded(CFTimeInterval t)
+    {
+        if (beginTime() <= 0)
+            setBeginTime(t);
+    }
     
 private:
     AnimationType m_type;

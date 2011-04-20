@@ -160,6 +160,38 @@ PlatformCALayer* PlatformCALayer::rootLayer() const
     return host ? host->rootLayer() : 0;
 }
 
+void PlatformCALayer::animationStarted(CFTimeInterval beginTime)
+{
+    // Update start time for any animation not yet started
+    CFTimeInterval cacfBeginTime = currentTimeToMediaTime(beginTime);
+
+    HashMap<String, RefPtr<PlatformCAAnimation> >::const_iterator end = m_animations.end();
+    for (HashMap<String, RefPtr<PlatformCAAnimation> >::const_iterator it = m_animations.begin(); it != end; ++it)
+        it->second->setActualStartTimeIfNeeded(cacfBeginTime);
+
+    if (m_owner)
+        m_owner->platformCALayerAnimationStarted(beginTime);
+}
+
+static void resubmitAllAnimations(PlatformCALayer* layer)
+{
+    HashMap<String, RefPtr<PlatformCAAnimation> >::const_iterator end = layer->animations().end();
+    for (HashMap<String, RefPtr<PlatformCAAnimation> >::const_iterator it = layer->animations().begin(); it != end; ++it) {
+        RetainPtr<CFStringRef> s(AdoptCF, it->first.createCFString());
+        CACFLayerAddAnimation(layer->platformLayer(), s.get(), it->second->platformAnimation());
+    }
+}
+
+void PlatformCALayer::ensureAnimationsSubmitted()
+{
+    resubmitAllAnimations(this);
+
+    PlatformCALayerList children;
+    intern(this)->getSublayers(children);
+    for (size_t i = 0; i < children.size(); ++i)
+        children[i]->ensureAnimationsSubmitted();
+}
+
 void PlatformCALayer::setNeedsDisplay(const FloatRect* dirtyRect)
 {
     intern(this)->setNeedsDisplay(dirtyRect);

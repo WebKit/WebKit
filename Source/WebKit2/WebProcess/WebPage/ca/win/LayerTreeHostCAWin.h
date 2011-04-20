@@ -64,6 +64,7 @@ private:
 
     // LayerTreeHostCA
     virtual void platformInitialize(LayerTreeContext&);
+    virtual void setRootCompositingLayer(WebCore::GraphicsLayer*);
 
     // AbstractCACFLayerTreeHost
     virtual WebCore::PlatformCALayer* rootLayer() const;

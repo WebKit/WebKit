@@ -32,6 +32,8 @@
 #include "PlatformCAAnimation.h"
 #include "PlatformCALayerClient.h"
 #include "PlatformString.h"
+#include <QuartzCore/CABase.h>
+#include <wtf/CurrentTime.h>
 #include <wtf/HashMap.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
@@ -47,6 +49,8 @@ typedef Vector<RefPtr<PlatformCALayer> > PlatformCALayerList;
 
 class PlatformCALayer : public RefCounted<PlatformCALayer> {
 public:
+    static CFTimeInterval currentTimeToMediaTime(double t) { return CACurrentMediaTime() + t - WTF::currentTime(); }
+
     // LayerTypeRootLayer is used on some platforms. It has no backing store, so setNeedsDisplay
     // should not call CACFLayerSetNeedsDisplay, but rather just notify the renderer that it
     // has changed and should be re-rendered.
@@ -74,11 +78,8 @@ public:
     PlatformCALayerClient* owner() const { return m_owner; }
     void setOwner(PlatformCALayerClient*);
 
-    void animationStarted(CFTimeInterval beginTime)
-    {
-        if (m_owner)
-            m_owner->platformCALayerAnimationStarted(beginTime);
-    }
+    void animationStarted(CFTimeInterval beginTime);
+    void ensureAnimationsSubmitted();
 
     // Layout support
     void setNeedsLayout();
@@ -185,6 +186,10 @@ public:
     
     float contentsScale() const;
     void setContentsScale(float);
+
+#if PLATFORM(WIN)
+    HashMap<String, RefPtr<PlatformCAAnimation> >& animations() { return m_animations; }
+#endif
 
 #if PLATFORM(WIN) && !defined(NDEBUG)
     void printTree() const;
