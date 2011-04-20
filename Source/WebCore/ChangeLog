@@ -1,3 +1,29 @@
+2011-04-20  Jia Pu  <jpu@apple.com>
+
+        Reviewed by Adele Peterson.
+    
+        [Mac] Like autocorrection, other types of substitution need to respect undo.
+        https://bugs.webkit.org/show_bug.cgi?id=59009
+        <rdar://problem/8601537>
+
+        Similar to autocorrection, we use SpellingCorrectionCommand to carry out other types of text substitution, so that
+        if user undoes the substitution, it will not be applied again. For CreateLinkCommand,  we add marker when it's undone
+        so that we won't automatically add link again.
+
+        * editing/CreateLinkCommand.h:
+        (WebCore::CreateLinkCommand::isCreateLinkCommand):
+        * editing/EditCommand.cpp:
+        (WebCore::EditCommand::isCreateLinkCommand):
+        * editing/EditCommand.h:
+        * editing/Editor.cpp:
+        (WebCore::Editor::unappliedEditing):
+        (WebCore::Editor::markAllMisspellingsAndBadGrammarInRanges):
+        * editing/SpellingCorrectionController.cpp:
+        (WebCore::SpellingCorrectionController::respondToAppliedEditing):
+        (WebCore::SpellingCorrectionController::respondToUnappliedEditing):
+        * editing/SpellingCorrectionController.h:
+        (WebCore::SpellingCorrectionController::UNLESS_ENABLED):
+
 2011-04-20  Steve Lacey  <sjl@chromium.org>
 
         Reviewed by Eric Carlson.

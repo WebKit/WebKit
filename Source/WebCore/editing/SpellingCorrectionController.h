@@ -96,7 +96,8 @@ public:
     bool applyAutocorrectionBeforeTypingIfAppropriate() UNLESS_ENABLED({ return false; })
 
     void respondToUnappliedSpellCorrection(const VisibleSelection&, const String& corrected, const String& correction) UNLESS_ENABLED({ UNUSED_PARAM(corrected); UNUSED_PARAM(correction); })
-    void respondToAppliedEditing(PassRefPtr<EditCommand>) UNLESS_ENABLED({})
+    void respondToAppliedEditing(EditCommand*) UNLESS_ENABLED({})
+    void respondToUnappliedEditing(EditCommand*) UNLESS_ENABLED({})
     void respondToChangedSelection(const VisibleSelection& oldSelection) UNLESS_ENABLED({ UNUSED_PARAM(oldSelection); })
 
     void stopPendingCorrection(const VisibleSelection& oldSelection) UNLESS_ENABLED({ UNUSED_PARAM(oldSelection); })

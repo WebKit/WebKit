@@ -409,10 +409,22 @@ void SpellingCorrectionController::respondToChangedSelection(const VisibleSelect
     }
 }
 
-void SpellingCorrectionController::respondToAppliedEditing(PassRefPtr<EditCommand> command)
+void SpellingCorrectionController::respondToAppliedEditing(EditCommand* command)
 {
     if (command->isTopLevelCommand() && !command->shouldRetainAutocorrectionIndicator())
         m_frame->document()->markers()->removeMarkers(DocumentMarker::CorrectionIndicator);
+}
+
+void SpellingCorrectionController::respondToUnappliedEditing(EditCommand* command)
+{
+    if (!command->isCreateLinkCommand())
+        return;
+    RefPtr<Range> range = Range::create(m_frame->document(), command->startingSelection().start(), command->startingSelection().end());
+    if (!range)
+        return;
+    DocumentMarkerController* markers = m_frame->document()->markers();
+    markers->addMarker(range.get(), DocumentMarker::Replacement);
+    markers->addMarker(range.get(), DocumentMarker::SpellCheckingExemption);
 }
 
 EditorClient* SpellingCorrectionController::client()

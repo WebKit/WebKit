@@ -37,6 +37,8 @@ public:
         return adoptRef(new CreateLinkCommand(document, linkURL));
     }
 
+    bool isCreateLinkCommand() const { return true; }
+
 private:
     CreateLinkCommand(Document*, const String& linkURL);
 

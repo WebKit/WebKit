@@ -54,6 +54,7 @@ public:
     
     virtual bool isInsertTextCommand() const;
     virtual bool isTypingCommand() const;
+    virtual bool isCreateLinkCommand() const;
     
     virtual bool preservesTypingStyle() const;
 

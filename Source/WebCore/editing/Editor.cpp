@@ -1021,6 +1021,7 @@ void Editor::unappliedEditing(PassRefPtr<EditCommand> cmd)
     
     VisibleSelection newSelection(cmd->startingSelection());
     changeSelectionAfterCommand(newSelection, true, true);
+    m_spellingCorrector->respondToUnappliedEditing(cmd.get());
     
     m_lastEditCommand = 0;
     if (client())
@@ -2232,18 +2233,16 @@ void Editor::markAllMisspellingsAndBadGrammarInRanges(TextCheckingOptions textCh
             if (result->type == TextCheckingTypeLink && selectionOffset > resultLocation + resultLength + 1)
                 continue;
 
-            String replacedString;
+            String replacedString = plainText(rangeToReplace.get());
 
             // Don't correct spelling in an already-corrected word.
-            if (result->type == TextCheckingTypeCorrection) {
-                replacedString = plainText(rangeToReplace.get());
-                DocumentMarkerController* markers = m_frame->document()->markers();
-                if (markers->hasMarkers(rangeToReplace.get(), DocumentMarker::Replacement)) {
-                    doReplacement = false;
+            DocumentMarkerController* markers = m_frame->document()->markers();
+            if (markers->hasMarkers(rangeToReplace.get(), DocumentMarker::Replacement)) {
+                doReplacement = false;
+                if (result->type == TextCheckingTypeCorrection)
                     m_spellingCorrector->recordSpellcheckerResponseForModifiedCorrection(rangeToReplace.get(), replacedString, result->replacement);
-                } else if (markers->hasMarkers(rangeToReplace.get(), DocumentMarker::RejectedCorrection))
-                    doReplacement = false;
-            }
+            } else if (markers->hasMarkers(rangeToReplace.get(), DocumentMarker::RejectedCorrection))
+                doReplacement = false;
 
             if (!(shouldPerformReplacement || shouldShowCorrectionPanel) || !doReplacement)
                 continue;
@@ -2272,12 +2271,7 @@ void Editor::markAllMisspellingsAndBadGrammarInRanges(TextCheckingOptions textCh
                 if (canEditRichly())
                     applyCommand(CreateLinkCommand::create(m_frame->document(), result->replacement));
             } else if (canEdit() && shouldInsertText(result->replacement, rangeToReplace.get(), EditorInsertActionTyped)) {
-                if (result->type == TextCheckingTypeCorrection)
-                    applyCommand(SpellingCorrectionCommand::create(rangeToReplace, result->replacement));
-                else {
-                    m_frame->selection()->setSelection(selectionToReplace);
-                    replaceSelectionWithText(result->replacement, false, false);
-                }
+                applyCommand(SpellingCorrectionCommand::create(rangeToReplace, result->replacement));
 
                 if (AXObjectCache::accessibilityEnabled()) {
                     if (Element* root = m_frame->selection()->selection().rootEditableElement())
