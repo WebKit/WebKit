@@ -2642,6 +2642,8 @@ template<> inline CSSPrimitiveValue::operator EAlignmentBaseline() const
     }
 }
 
+#endif
+
 template<> inline CSSPrimitiveValue::CSSPrimitiveValue(EBorderCollapse e)
     : m_type(CSS_IDENT)
     , m_hasCachedCSSText(false)
@@ -2668,6 +2670,8 @@ template<> inline CSSPrimitiveValue::operator EBorderCollapse() const
         return BSEPARATE;
     }
 }
+
+#if ENABLE(SVG)
 
 template<> inline CSSPrimitiveValue::CSSPrimitiveValue(EColorInterpolation e)
     : m_type(CSS_IDENT)
