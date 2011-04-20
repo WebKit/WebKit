@@ -1,3 +1,12 @@
+2011-04-19  Simon Fraser  <simon.fraser@apple.com>
+
+        Fix 32-bit builds.
+
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::determineBackgroundBleedAvoidance):
+        * rendering/RenderBoxModelObject.cpp:
+        (WebCore::RenderBoxModelObject::paintFillLayerExtended):
+
 2011-04-19  Naoki Takano  <takano.naoki@gmail.com>
 
         Reviewed by Kent Tamura.

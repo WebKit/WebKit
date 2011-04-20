@@ -621,7 +621,7 @@ void RenderBoxModelObject::paintFillLayerExtended(const PaintInfo& paintInfo, co
             if (bleedAvoidance == BackgroundBleedShrinkBackground) {
                 // We need to shrink the border by one device pixel on each side.
                 AffineTransform ctm = context->getCTM();
-                FloatSize contextScale(ctm.xScale(), ctm.yScale());
+                FloatSize contextScale(static_cast<float>(ctm.xScale()), static_cast<float>(ctm.yScale()));
                 roundedBorder.inflateX(-ceilf(1.0f / contextScale.width()));
                 roundedBorder.inflateY(-ceilf(1.0f / contextScale.height()));
             }

@@ -824,7 +824,7 @@ BackgroundBleedAvoidance RenderBox::determineBackgroundBleedAvoidance(GraphicsCo
         return BackgroundBleedNone;
 
     AffineTransform ctm = context->getCTM();
-    FloatSize contextScaling(ctm.xScale(), ctm.yScale());
+    FloatSize contextScaling(static_cast<float>(ctm.xScale()), static_cast<float>(ctm.yScale()));
     if (borderObscuresBackgroundEdge(contextScaling))
         return BackgroundBleedShrinkBackground;
     
