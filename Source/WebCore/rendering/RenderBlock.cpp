@@ -2081,7 +2081,7 @@ void RenderBlock::simplifiedNormalFlowLayout()
     if (childrenInline()) {
         ListHashSet<RootInlineBox*> lineBoxes;
         bool endOfInline = false;
-        RenderObject* o = bidiFirst(this, 0, false);
+        RenderObject* o = bidiFirstNotSkippingInlines(this);
         while (o) {
             if (!o->isPositioned() && (o->isReplaced() || o->isFloating())) {
                 o->layoutIfNeeded();

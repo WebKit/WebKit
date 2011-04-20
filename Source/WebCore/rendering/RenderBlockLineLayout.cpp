@@ -753,7 +753,7 @@ void RenderBlock::layoutInlineChildren(bool relayoutChildren, int& repaintLogica
     if (firstChild()) {
         // layout replaced elements
         bool endOfInline = false;
-        RenderObject* o = bidiFirst(this, 0, false);
+        RenderObject* o = bidiFirstNotSkippingInlines(this);
         Vector<FloatWithRect> floats;
         bool hasInlineChild = false;
         while (o) {
@@ -1274,7 +1274,7 @@ RootInlineBox* RenderBlock::determineStartPosition(bool& firstLine, bool& fullLa
         resolver.setEorDir(direction);
         resolver.setContext(BidiContext::create(ltr ? 0 : 1, direction, style()->unicodeBidi() == Override, FromStyleOrDOM));
 
-        startObj = bidiFirst(this, &resolver);
+        startObj = bidiFirstSkippingInlines(this, &resolver);
     }
 
     resolver.setPosition(InlineIterator(this, startObj, pos));

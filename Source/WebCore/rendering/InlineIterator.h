@@ -137,6 +137,7 @@ static inline void notifyResolverWillExitObject(InlineBidiResolver* resolver, Re
 static inline RenderObject* bidiNext(RenderObject* root, RenderObject* current, InlineBidiResolver* resolver = 0, bool skipInlines = true, bool* endOfInlinePtr = 0)
 {
     RenderObject* next = 0;
+    // oldEndOfInline denotes if when we last stopped iterating if we were at the end of an inline.
     bool oldEndOfInline = endOfInlinePtr ? *endOfInlinePtr : false;
     bool endOfInline = false;
 
@@ -147,7 +148,9 @@ static inline RenderObject* bidiNext(RenderObject* root, RenderObject* current, 
             notifyResolverEnteredObject(resolver, next);
         }
 
+        // We hit this when either current has no children, or when current is not a renderer we care about.
         if (!next) {
+            // If it is a renderer we care about, and we're doing our inline-walk, return it.
             if (!skipInlines && !oldEndOfInline && current->isRenderInline()) {
                 next = current;
                 endOfInline = true;
@@ -188,16 +191,17 @@ static inline RenderObject* bidiNext(RenderObject* root, RenderObject* current, 
     return next;
 }
 
-static inline RenderObject* bidiFirst(RenderObject* root, InlineBidiResolver* resolver, bool skipInlines = true)
+static inline RenderObject* bidiFirstSkippingInlines(RenderObject* root, InlineBidiResolver* resolver)
 {
-    if (!root->firstChild())
+    ASSERT(resolver);
+    RenderObject* o = root->firstChild();
+    if (!o)
         return 0;
 
-    RenderObject* o = root->firstChild();
     if (o->isRenderInline()) {
         notifyResolverEnteredObject(resolver, o);
-        if (skipInlines && o->firstChild())
-            o = bidiNext(root, o, resolver, skipInlines);
+        if (o->firstChild())
+            o = bidiNext(root, o, resolver, true);
         else {
             // Never skip empty inlines.
             if (resolver)
@@ -206,12 +210,24 @@ static inline RenderObject* bidiFirst(RenderObject* root, InlineBidiResolver* re
         }
     }
 
+    // FIXME: Unify this with the bidiNext call above.
     if (o && !o->isText() && !o->isReplaced() && !o->isFloating() && !o->isPositioned())
-        o = bidiNext(root, o, resolver, skipInlines);
+        o = bidiNext(root, o, resolver, true);
 
-    if (resolver)
-        resolver->commitExplicitEmbedding();
+    resolver->commitExplicitEmbedding();
     return o;
+}
+
+// FIXME: This method needs to be renamed when bidiNext finds a good name.
+static inline RenderObject* bidiFirstNotSkippingInlines(RenderObject* root)
+{
+    RenderObject* o = root->firstChild();
+    // If either there are no children to walk, or the first one is correct
+    // then just return it.
+    if (!o || o->isRenderInline() || o->isText() || o->isReplaced() || o->isFloating() || o->isPositioned())
+        return o;
+
+    return bidiNext(root, o, 0, false);
 }
 
 inline void InlineIterator::increment(InlineBidiResolver* resolver)
