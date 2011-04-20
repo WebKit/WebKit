@@ -266,6 +266,9 @@
 		86A90ED00EE7D51F00AB350D /* JITArithmetic.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 86A90ECF0EE7D51F00AB350D /* JITArithmetic.cpp */; };
 		86ADD1450FDDEA980006EEC2 /* ARMv7Assembler.h in Headers */ = {isa = PBXBuildFile; fileRef = 86ADD1430FDDEA980006EEC2 /* ARMv7Assembler.h */; };
 		86ADD1460FDDEA980006EEC2 /* MacroAssemblerARMv7.h in Headers */ = {isa = PBXBuildFile; fileRef = 86ADD1440FDDEA980006EEC2 /* MacroAssemblerARMv7.h */; };
+		86AE64A8135E5E1C00963012 /* MacroAssemblerSH4.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 86AE64A5135E5E1C00963012 /* MacroAssemblerSH4.cpp */; };
+		86AE64A9135E5E1C00963012 /* MacroAssemblerSH4.h in Headers */ = {isa = PBXBuildFile; fileRef = 86AE64A6135E5E1C00963012 /* MacroAssemblerSH4.h */; };
+		86AE64AA135E5E1C00963012 /* SH4Assembler.h in Headers */ = {isa = PBXBuildFile; fileRef = 86AE64A7135E5E1C00963012 /* SH4Assembler.h */; };
 		86B99AB8117E391E00DF5A90 /* RopeImpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 86B99AB6117E391E00DF5A90 /* RopeImpl.cpp */; };
 		86B99AB9117E391E00DF5A90 /* RopeImpl.h in Headers */ = {isa = PBXBuildFile; fileRef = 86B99AB7117E391E00DF5A90 /* RopeImpl.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		86B99AE3117E578100DF5A90 /* StringBuffer.h in Headers */ = {isa = PBXBuildFile; fileRef = 86B99AE1117E578100DF5A90 /* StringBuffer.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -931,6 +934,9 @@
 		86A90ECF0EE7D51F00AB350D /* JITArithmetic.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JITArithmetic.cpp; sourceTree = "<group>"; };
 		86ADD1430FDDEA980006EEC2 /* ARMv7Assembler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ARMv7Assembler.h; sourceTree = "<group>"; };
 		86ADD1440FDDEA980006EEC2 /* MacroAssemblerARMv7.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MacroAssemblerARMv7.h; sourceTree = "<group>"; };
+		86AE64A5135E5E1C00963012 /* MacroAssemblerSH4.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MacroAssemblerSH4.cpp; sourceTree = "<group>"; };
+		86AE64A6135E5E1C00963012 /* MacroAssemblerSH4.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MacroAssemblerSH4.h; sourceTree = "<group>"; };
+		86AE64A7135E5E1C00963012 /* SH4Assembler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SH4Assembler.h; sourceTree = "<group>"; };
 		86B99AB6117E391E00DF5A90 /* RopeImpl.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RopeImpl.cpp; sourceTree = "<group>"; };
 		86B99AB7117E391E00DF5A90 /* RopeImpl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RopeImpl.h; sourceTree = "<group>"; };
 		86B99AE1117E578100DF5A90 /* StringBuffer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = StringBuffer.h; path = text/StringBuffer.h; sourceTree = "<group>"; };
@@ -2086,11 +2092,14 @@
 				86ADD1440FDDEA980006EEC2 /* MacroAssemblerARMv7.h */,
 				863B23DF0FC60E6200703AA4 /* MacroAssemblerCodeRef.h */,
 				86C568DE11A213EE0007F7F0 /* MacroAssemblerMIPS.h */,
+				86AE64A5135E5E1C00963012 /* MacroAssemblerSH4.cpp */,
+				86AE64A6135E5E1C00963012 /* MacroAssemblerSH4.h */,
 				860161E00F3A83C100F84710 /* MacroAssemblerX86.h */,
 				860161E10F3A83C100F84710 /* MacroAssemblerX86_64.h */,
 				860161E20F3A83C100F84710 /* MacroAssemblerX86Common.h */,
 				86C568DF11A213EE0007F7F0 /* MIPSAssembler.h */,
 				86D3B3C210159D7F002865E7 /* RepatchBuffer.h */,
+				86AE64A7135E5E1C00963012 /* SH4Assembler.h */,
 				9688CB140ED12B4E001D649F /* X86Assembler.h */,
 			);
 			path = assembler;
@@ -2541,6 +2550,8 @@
 				142D6F0D13539A2F00B02E86 /* MarkedSpace.h in Headers */,
 				142D6F1213539A4100B02E86 /* MarkStack.h in Headers */,
 				A1D764521354448B00C5C7C0 /* Alignment.h in Headers */,
+				86AE64A9135E5E1C00963012 /* MacroAssemblerSH4.h in Headers */,
+				86AE64AA135E5E1C00963012 /* SH4Assembler.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2986,6 +2997,7 @@
 				142D6F0C13539A2F00B02E86 /* MarkedSpace.cpp in Sources */,
 				142D6F1113539A4100B02E86 /* MarkStack.cpp in Sources */,
 				142D6F1313539A4100B02E86 /* MarkStackPosix.cpp in Sources */,
+				86AE64A8135E5E1C00963012 /* MacroAssemblerSH4.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

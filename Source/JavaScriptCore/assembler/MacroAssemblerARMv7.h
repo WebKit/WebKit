@@ -100,7 +100,7 @@ public:
 
     static const Scale ScalePtr = TimesFour;
 
-    enum Condition {
+    enum RelationalCondition {
         Equal = ARMv7Assembler::ConditionEQ,
         NotEqual = ARMv7Assembler::ConditionNE,
         Above = ARMv7Assembler::ConditionHI,
@@ -110,12 +110,16 @@ public:
         GreaterThan = ARMv7Assembler::ConditionGT,
         GreaterThanOrEqual = ARMv7Assembler::ConditionGE,
         LessThan = ARMv7Assembler::ConditionLT,
-        LessThanOrEqual = ARMv7Assembler::ConditionLE,
+        LessThanOrEqual = ARMv7Assembler::ConditionLE
+    };
+
+    enum ResultCondition {
         Overflow = ARMv7Assembler::ConditionVS,
         Signed = ARMv7Assembler::ConditionMI,
         Zero = ARMv7Assembler::ConditionEQ,
         NonZero = ARMv7Assembler::ConditionNE
     };
+
     enum DoubleCondition {
         // These conditions will only evaluate to true if the comparison is ordered - i.e. neither operand is NaN.
         DoubleEqual = ARMv7Assembler::ConditionEQ,
@@ -865,65 +869,65 @@ private:
     }
 
 public:
-    Jump branch32(Condition cond, RegisterID left, RegisterID right)
+    Jump branch32(RelationalCondition cond, RegisterID left, RegisterID right)
     {
         m_assembler.cmp(left, right);
         return Jump(makeBranch(cond));
     }
 
-    Jump branch32(Condition cond, RegisterID left, TrustedImm32 right)
+    Jump branch32(RelationalCondition cond, RegisterID left, TrustedImm32 right)
     {
         compare32(left, right);
         return Jump(makeBranch(cond));
     }
 
-    Jump branch32(Condition cond, RegisterID left, Address right)
+    Jump branch32(RelationalCondition cond, RegisterID left, Address right)
     {
         load32(right, dataTempRegister);
         return branch32(cond, left, dataTempRegister);
     }
 
-    Jump branch32(Condition cond, Address left, RegisterID right)
+    Jump branch32(RelationalCondition cond, Address left, RegisterID right)
     {
         load32(left, dataTempRegister);
         return branch32(cond, dataTempRegister, right);
     }
 
-    Jump branch32(Condition cond, Address left, TrustedImm32 right)
+    Jump branch32(RelationalCondition cond, Address left, TrustedImm32 right)
     {
         // use addressTempRegister incase the branch32 we call uses dataTempRegister. :-/
         load32(left, addressTempRegister);
         return branch32(cond, addressTempRegister, right);
     }
 
-    Jump branch32(Condition cond, BaseIndex left, TrustedImm32 right)
+    Jump branch32(RelationalCondition cond, BaseIndex left, TrustedImm32 right)
     {
         // use addressTempRegister incase the branch32 we call uses dataTempRegister. :-/
         load32(left, addressTempRegister);
         return branch32(cond, addressTempRegister, right);
     }
 
-    Jump branch32WithUnalignedHalfWords(Condition cond, BaseIndex left, TrustedImm32 right)
+    Jump branch32WithUnalignedHalfWords(RelationalCondition cond, BaseIndex left, TrustedImm32 right)
     {
         // use addressTempRegister incase the branch32 we call uses dataTempRegister. :-/
         load32WithUnalignedHalfWords(left, addressTempRegister);
         return branch32(cond, addressTempRegister, right);
     }
 
-    Jump branch32(Condition cond, AbsoluteAddress left, RegisterID right)
+    Jump branch32(RelationalCondition cond, AbsoluteAddress left, RegisterID right)
     {
         load32(left.m_ptr, dataTempRegister);
         return branch32(cond, dataTempRegister, right);
     }
 
-    Jump branch32(Condition cond, AbsoluteAddress left, TrustedImm32 right)
+    Jump branch32(RelationalCondition cond, AbsoluteAddress left, TrustedImm32 right)
     {
         // use addressTempRegister incase the branch32 we call uses dataTempRegister. :-/
         load32(left.m_ptr, addressTempRegister);
         return branch32(cond, addressTempRegister, right);
     }
 
-    Jump branch16(Condition cond, BaseIndex left, RegisterID right)
+    Jump branch16(RelationalCondition cond, BaseIndex left, RegisterID right)
     {
         load16(left, dataTempRegister);
         m_assembler.lsl(addressTempRegister, right, 16);
@@ -931,7 +935,7 @@ public:
         return branch32(cond, dataTempRegister, addressTempRegister);
     }
 
-    Jump branch16(Condition cond, BaseIndex left, TrustedImm32 right)
+    Jump branch16(RelationalCondition cond, BaseIndex left, TrustedImm32 right)
     {
         // use addressTempRegister incase the branch32 we call uses dataTempRegister. :-/
         load16(left, addressTempRegister);
@@ -939,59 +943,53 @@ public:
         return branch32(cond, addressTempRegister, TrustedImm32(right.m_value << 16));
     }
 
-    Jump branch8(Condition cond, RegisterID left, TrustedImm32 right)
+    Jump branch8(RelationalCondition cond, RegisterID left, TrustedImm32 right)
     {
         compare32(left, right);
         return Jump(makeBranch(cond));
     }
 
-    Jump branch8(Condition cond, Address left, TrustedImm32 right)
+    Jump branch8(RelationalCondition cond, Address left, TrustedImm32 right)
     {
         // use addressTempRegister incase the branch8 we call uses dataTempRegister. :-/
         load8(left, addressTempRegister);
         return branch8(cond, addressTempRegister, right);
     }
 
-    Jump branchTest32(Condition cond, RegisterID reg, RegisterID mask)
+    Jump branchTest32(ResultCondition cond, RegisterID reg, RegisterID mask)
     {
-        ASSERT((cond == Zero) || (cond == NonZero));
         m_assembler.tst(reg, mask);
         return Jump(makeBranch(cond));
     }
 
-    Jump branchTest32(Condition cond, RegisterID reg, TrustedImm32 mask = TrustedImm32(-1))
+    Jump branchTest32(ResultCondition cond, RegisterID reg, TrustedImm32 mask = TrustedImm32(-1))
     {
-        ASSERT((cond == Zero) || (cond == NonZero));
         test32(reg, mask);
         return Jump(makeBranch(cond));
     }
 
-    Jump branchTest32(Condition cond, Address address, TrustedImm32 mask = TrustedImm32(-1))
+    Jump branchTest32(ResultCondition cond, Address address, TrustedImm32 mask = TrustedImm32(-1))
     {
-        ASSERT((cond == Zero) || (cond == NonZero));
         // use addressTempRegister incase the branchTest32 we call uses dataTempRegister. :-/
         load32(address, addressTempRegister);
         return branchTest32(cond, addressTempRegister, mask);
     }
 
-    Jump branchTest32(Condition cond, BaseIndex address, TrustedImm32 mask = TrustedImm32(-1))
+    Jump branchTest32(ResultCondition cond, BaseIndex address, TrustedImm32 mask = TrustedImm32(-1))
     {
-        ASSERT((cond == Zero) || (cond == NonZero));
         // use addressTempRegister incase the branchTest32 we call uses dataTempRegister. :-/
         load32(address, addressTempRegister);
         return branchTest32(cond, addressTempRegister, mask);
     }
 
-    Jump branchTest8(Condition cond, RegisterID reg, TrustedImm32 mask = TrustedImm32(-1))
+    Jump branchTest8(ResultCondition cond, RegisterID reg, TrustedImm32 mask = TrustedImm32(-1))
     {
-        ASSERT((cond == Zero) || (cond == NonZero));
         test32(reg, mask);
         return Jump(makeBranch(cond));
     }
 
-    Jump branchTest8(Condition cond, Address address, TrustedImm32 mask = TrustedImm32(-1))
+    Jump branchTest8(ResultCondition cond, Address address, TrustedImm32 mask = TrustedImm32(-1))
     {
-        ASSERT((cond == Zero) || (cond == NonZero));
         // use addressTempRegister incase the branchTest8 we call uses dataTempRegister. :-/
         load8(address, addressTempRegister);
         return branchTest8(cond, addressTempRegister, mask);
@@ -1025,16 +1023,14 @@ public:
     // * jo operations branch if the (signed) arithmetic
     //   operation caused an overflow to occur.
     
-    Jump branchAdd32(Condition cond, RegisterID src, RegisterID dest)
+    Jump branchAdd32(ResultCondition cond, RegisterID src, RegisterID dest)
     {
-        ASSERT((cond == Overflow) || (cond == Signed) || (cond == Zero) || (cond == NonZero));
         m_assembler.add_S(dest, dest, src);
         return Jump(makeBranch(cond));
     }
 
-    Jump branchAdd32(Condition cond, TrustedImm32 imm, RegisterID dest)
+    Jump branchAdd32(ResultCondition cond, TrustedImm32 imm, RegisterID dest)
     {
-        ASSERT((cond == Overflow) || (cond == Signed) || (cond == Zero) || (cond == NonZero));
         ARMThumbImmediate armImm = ARMThumbImmediate::makeEncodedImm(imm.m_value);
         if (armImm.isValid())
             m_assembler.add_S(dest, dest, armImm);
@@ -1045,40 +1041,43 @@ public:
         return Jump(makeBranch(cond));
     }
 
-    Jump branchMul32(Condition cond, RegisterID src, RegisterID dest)
+    Jump branchMul32(ResultCondition cond, RegisterID src1, RegisterID src2, RegisterID dest)
     {
-        ASSERT_UNUSED(cond, cond == Overflow);
-        m_assembler.smull(dest, dataTempRegister, dest, src);
-        m_assembler.asr(addressTempRegister, dest, 31);
-        return branch32(NotEqual, addressTempRegister, dataTempRegister);
+        m_assembler.smull(dest, dataTempRegister, src1, src2);
+
+        if (cond == Overflow) {
+            m_assembler.asr(addressTempRegister, dest, 31);
+            return branch32(NotEqual, addressTempRegister, dataTempRegister);
+        }
+
+        return branchTest32(cond, dest);
     }
 
-    Jump branchMul32(Condition cond, TrustedImm32 imm, RegisterID src, RegisterID dest)
+    Jump branchMul32(ResultCondition cond, RegisterID src, RegisterID dest)
     {
-        ASSERT_UNUSED(cond, cond == Overflow);
+        return branchMul32(cond, src, dest, dest);
+    }
+
+    Jump branchMul32(ResultCondition cond, TrustedImm32 imm, RegisterID src, RegisterID dest)
+    {
         move(imm, dataTempRegister);
-        m_assembler.smull(dest, dataTempRegister, src, dataTempRegister);
-        m_assembler.asr(addressTempRegister, dest, 31);
-        return branch32(NotEqual, addressTempRegister, dataTempRegister);
+        return branchMul32(cond, dataTempRegister, src, dest);
     }
 
-    Jump branchOr32(Condition cond, RegisterID src, RegisterID dest)
+    Jump branchOr32(ResultCondition cond, RegisterID src, RegisterID dest)
     {
-        ASSERT((cond == Signed) || (cond == Zero) || (cond == NonZero));
         m_assembler.orr_S(dest, dest, src);
         return Jump(makeBranch(cond));
     }
 
-    Jump branchSub32(Condition cond, RegisterID src, RegisterID dest)
+    Jump branchSub32(ResultCondition cond, RegisterID src, RegisterID dest)
     {
-        ASSERT((cond == Overflow) || (cond == Signed) || (cond == Zero) || (cond == NonZero));
         m_assembler.sub_S(dest, dest, src);
         return Jump(makeBranch(cond));
     }
 
-    Jump branchSub32(Condition cond, TrustedImm32 imm, RegisterID dest)
+    Jump branchSub32(ResultCondition cond, TrustedImm32 imm, RegisterID dest)
     {
-        ASSERT((cond == Overflow) || (cond == Signed) || (cond == Zero) || (cond == NonZero));
         ARMThumbImmediate armImm = ARMThumbImmediate::makeEncodedImm(imm.m_value);
         if (armImm.isValid())
             m_assembler.sub_S(dest, dest, armImm);
@@ -1137,7 +1136,7 @@ public:
         m_assembler.bx(linkRegister, ARMv7Assembler::JumpFixed);
     }
 
-    void set32Compare32(Condition cond, RegisterID left, RegisterID right, RegisterID dest)
+    void compare32(RelationalCondition cond, RegisterID left, RegisterID right, RegisterID dest)
     {
         m_assembler.cmp(left, right);
         m_assembler.it(armV7Condition(cond), false);
@@ -1145,13 +1144,13 @@ public:
         m_assembler.mov(dest, ARMThumbImmediate::makeUInt16(0));
     }
 
-    void set32Compare32(Condition cond, Address left, RegisterID right, RegisterID dest)
+    void compare32(RelationalCondition cond, Address left, RegisterID right, RegisterID dest)
     {
         load32(left, dataTempRegister);
-        set32Compare32(cond, dataTempRegister, right, dest);
+        compare32(cond, dataTempRegister, right, dest);
     }
 
-    void set32Compare32(Condition cond, RegisterID left, TrustedImm32 right, RegisterID dest)
+    void compare32(RelationalCondition cond, RegisterID left, TrustedImm32 right, RegisterID dest)
     {
         compare32(left, right);
         m_assembler.it(armV7Condition(cond), false);
@@ -1159,26 +1158,11 @@ public:
         m_assembler.mov(dest, ARMThumbImmediate::makeUInt16(0));
     }
 
-    void set8Compare32(Condition cond, RegisterID left, RegisterID right, RegisterID dest)
-    {
-        set32Compare32(cond, left, right, dest);
-    }
-
-    void set8Compare32(Condition cond, Address left, RegisterID right, RegisterID dest)
-    {
-        set32Compare32(cond, left, right, dest);
-    }
-
-    void set8Compare32(Condition cond, RegisterID left, TrustedImm32 right, RegisterID dest)
-    {
-        set32Compare32(cond, left, right, dest);
-    }
-
     // FIXME:
     // The mask should be optional... paerhaps the argument order should be
     // dest-src, operations always have a dest? ... possibly not true, considering
     // asm ops like test, or pseudo ops like pop().
-    void set32Test32(Condition cond, Address address, TrustedImm32 mask, RegisterID dest)
+    void test32(ResultCondition cond, Address address, TrustedImm32 mask, RegisterID dest)
     {
         load32(address, dataTempRegister);
         test32(dataTempRegister, mask);
@@ -1187,7 +1171,7 @@ public:
         m_assembler.mov(dest, ARMThumbImmediate::makeUInt16(0));
     }
 
-    void set32Test8(Condition cond, Address address, TrustedImm32 mask, RegisterID dest)
+    void test8(ResultCondition cond, Address address, TrustedImm32 mask, RegisterID dest)
     {
         load8(address, dataTempRegister);
         test32(dataTempRegister, mask);
@@ -1208,13 +1192,13 @@ public:
         return DataLabelPtr(this);
     }
 
-    Jump branchPtrWithPatch(Condition cond, RegisterID left, DataLabelPtr& dataLabel, TrustedImmPtr initialRightValue = TrustedImmPtr(0))
+    Jump branchPtrWithPatch(RelationalCondition cond, RegisterID left, DataLabelPtr& dataLabel, TrustedImmPtr initialRightValue = TrustedImmPtr(0))
     {
         dataLabel = moveWithPatch(initialRightValue, dataTempRegister);
         return branch32(cond, left, dataTempRegister);
     }
 
-    Jump branchPtrWithPatch(Condition cond, Address left, DataLabelPtr& dataLabel, TrustedImmPtr initialRightValue = TrustedImmPtr(0))
+    Jump branchPtrWithPatch(RelationalCondition cond, Address left, DataLabelPtr& dataLabel, TrustedImmPtr initialRightValue = TrustedImmPtr(0))
     {
         load32(left, addressTempRegister);
         dataLabel = moveWithPatch(initialRightValue, dataTempRegister);
@@ -1267,7 +1251,8 @@ protected:
         moveFixedWidthEncoding(TrustedImm32(0), dataTempRegister);
         return m_assembler.bx(dataTempRegister, inUninterruptedSequence() ? ARMv7Assembler::JumpConditionFixedSize : ARMv7Assembler::JumpCondition, cond);
     }
-    ARMv7Assembler::JmpSrc makeBranch(Condition cond) { return makeBranch(armV7Condition(cond)); }
+    ARMv7Assembler::JmpSrc makeBranch(RelationalCondition cond) { return makeBranch(armV7Condition(cond)); }
+    ARMv7Assembler::JmpSrc makeBranch(ResultCondition cond) { return makeBranch(armV7Condition(cond)); }
     ARMv7Assembler::JmpSrc makeBranch(DoubleCondition cond) { return makeBranch(armV7Condition(cond)); }
 
     ArmAddress setupArmAddress(BaseIndex address)
@@ -1327,7 +1312,12 @@ protected:
         m_assembler.movt(dst, ARMThumbImmediate::makeUInt16(value >> 16));
     }
 
-    ARMv7Assembler::Condition armV7Condition(Condition cond)
+    ARMv7Assembler::Condition armV7Condition(RelationalCondition cond)
+    {
+        return static_cast<ARMv7Assembler::Condition>(cond);
+    }
+
+    ARMv7Assembler::Condition armV7Condition(ResultCondition cond)
     {
         return static_cast<ARMv7Assembler::Condition>(cond);
     }

@@ -1046,7 +1046,7 @@ void JIT::emit_op_eq(Instruction* currentInstruction)
     addSlowCase(branch32(Equal, regT1, TrustedImm32(JSValue::CellTag)));
     addSlowCase(branch32(Below, regT1, TrustedImm32(JSValue::LowestTag)));
 
-    set32Compare32(Equal, regT0, regT2, regT0);
+    compare32(Equal, regT0, regT2, regT0);
 
     emitStoreBool(dst, regT0);
 }
@@ -1096,7 +1096,7 @@ void JIT::emit_op_neq(Instruction* currentInstruction)
     addSlowCase(branch32(Equal, regT1, TrustedImm32(JSValue::CellTag)));
     addSlowCase(branch32(Below, regT1, TrustedImm32(JSValue::LowestTag)));
 
-    set32Compare32(NotEqual, regT0, regT2, regT0);
+    compare32(NotEqual, regT0, regT2, regT0);
 
     emitStoreBool(dst, regT0);
 }
@@ -1151,9 +1151,9 @@ void JIT::compileOpStrictEq(Instruction* currentInstruction, CompileOpStrictEqTy
     addSlowCase(branch32(AboveOrEqual, regT2, TrustedImm32(JSValue::CellTag)));
 
     if (type == OpStrictEq)
-        set32Compare32(Equal, regT0, regT1, regT0);
+        compare32(Equal, regT0, regT1, regT0);
     else
-        set32Compare32(NotEqual, regT0, regT1, regT0);
+        compare32(NotEqual, regT0, regT1, regT0);
 
     emitStoreBool(dst, regT0);
 }
@@ -1207,14 +1207,14 @@ void JIT::emit_op_eq_null(Instruction* currentInstruction)
     Jump isImmediate = branch32(NotEqual, regT1, TrustedImm32(JSValue::CellTag));
 
     loadPtr(Address(regT0, JSCell::structureOffset()), regT1);
-    set32Test8(NonZero, Address(regT1, Structure::typeInfoFlagsOffset()), TrustedImm32(MasqueradesAsUndefined), regT1);
+    test8(NonZero, Address(regT1, Structure::typeInfoFlagsOffset()), TrustedImm32(MasqueradesAsUndefined), regT1);
 
     Jump wasNotImmediate = jump();
 
     isImmediate.link(this);
 
-    set32Compare32(Equal, regT1, TrustedImm32(JSValue::NullTag), regT2);
-    set32Compare32(Equal, regT1, TrustedImm32(JSValue::UndefinedTag), regT1);
+    compare32(Equal, regT1, TrustedImm32(JSValue::NullTag), regT2);
+    compare32(Equal, regT1, TrustedImm32(JSValue::UndefinedTag), regT1);
     or32(regT2, regT1);
 
     wasNotImmediate.link(this);
@@ -1231,14 +1231,14 @@ void JIT::emit_op_neq_null(Instruction* currentInstruction)
     Jump isImmediate = branch32(NotEqual, regT1, TrustedImm32(JSValue::CellTag));
 
     loadPtr(Address(regT0, JSCell::structureOffset()), regT1);
-    set32Test8(Zero, Address(regT1, Structure::typeInfoFlagsOffset()), TrustedImm32(MasqueradesAsUndefined), regT1);
+    test8(Zero, Address(regT1, Structure::typeInfoFlagsOffset()), TrustedImm32(MasqueradesAsUndefined), regT1);
 
     Jump wasNotImmediate = jump();
 
     isImmediate.link(this);
 
-    set32Compare32(NotEqual, regT1, TrustedImm32(JSValue::NullTag), regT2);
-    set32Compare32(NotEqual, regT1, TrustedImm32(JSValue::UndefinedTag), regT1);
+    compare32(NotEqual, regT1, TrustedImm32(JSValue::NullTag), regT2);
+    compare32(NotEqual, regT1, TrustedImm32(JSValue::UndefinedTag), regT1);
     and32(regT2, regT1);
 
     wasNotImmediate.link(this);

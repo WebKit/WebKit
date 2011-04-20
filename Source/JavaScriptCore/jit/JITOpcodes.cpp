@@ -797,7 +797,7 @@ void JIT::emit_op_eq(Instruction* currentInstruction)
 {
     emitGetVirtualRegisters(currentInstruction[2].u.operand, regT0, currentInstruction[3].u.operand, regT1);
     emitJumpSlowCaseIfNotImmediateIntegers(regT0, regT1, regT2);
-    set32Compare32(Equal, regT1, regT0, regT0);
+    compare32(Equal, regT1, regT0, regT0);
     emitTagAsBoolImmediate(regT0);
     emitPutVirtualRegister(currentInstruction[1].u.operand);
 }
@@ -845,7 +845,7 @@ void JIT::emit_op_neq(Instruction* currentInstruction)
 {
     emitGetVirtualRegisters(currentInstruction[2].u.operand, regT0, currentInstruction[3].u.operand, regT1);
     emitJumpSlowCaseIfNotImmediateIntegers(regT0, regT1, regT2);
-    set32Compare32(NotEqual, regT1, regT0, regT0);
+    compare32(NotEqual, regT1, regT0, regT0);
     emitTagAsBoolImmediate(regT0);
 
     emitPutVirtualRegister(currentInstruction[1].u.operand);
@@ -1018,9 +1018,9 @@ void JIT::compileOpStrictEq(Instruction* currentInstruction, CompileOpStrictEqTy
     addSlowCase(emitJumpIfImmediateNumber(regT2));
 
     if (type == OpStrictEq)
-        set32Compare32(Equal, regT1, regT0, regT0);
+        compare32(Equal, regT1, regT0, regT0);
     else
-        set32Compare32(NotEqual, regT1, regT0, regT0);
+        compare32(NotEqual, regT1, regT0, regT0);
     emitTagAsBoolImmediate(regT0);
 
     emitPutVirtualRegister(dst);
@@ -1162,14 +1162,14 @@ void JIT::emit_op_eq_null(Instruction* currentInstruction)
     Jump isImmediate = emitJumpIfNotJSCell(regT0);
 
     loadPtr(Address(regT0, JSCell::structureOffset()), regT2);
-    set32Test8(NonZero, Address(regT2, Structure::typeInfoFlagsOffset()), TrustedImm32(MasqueradesAsUndefined), regT0);
+    test8(NonZero, Address(regT2, Structure::typeInfoFlagsOffset()), TrustedImm32(MasqueradesAsUndefined), regT0);
 
     Jump wasNotImmediate = jump();
 
     isImmediate.link(this);
 
     andPtr(TrustedImm32(~TagBitUndefined), regT0);
-    setPtr(Equal, regT0, TrustedImm32(ValueNull), regT0);
+    comparePtr(Equal, regT0, TrustedImm32(ValueNull), regT0);
 
     wasNotImmediate.link(this);
 
@@ -1187,14 +1187,14 @@ void JIT::emit_op_neq_null(Instruction* currentInstruction)
     Jump isImmediate = emitJumpIfNotJSCell(regT0);
 
     loadPtr(Address(regT0, JSCell::structureOffset()), regT2);
-    set32Test8(Zero, Address(regT2, Structure::typeInfoFlagsOffset()), TrustedImm32(MasqueradesAsUndefined), regT0);
+    test8(Zero, Address(regT2, Structure::typeInfoFlagsOffset()), TrustedImm32(MasqueradesAsUndefined), regT0);
 
     Jump wasNotImmediate = jump();
 
     isImmediate.link(this);
 
     andPtr(TrustedImm32(~TagBitUndefined), regT0);
-    setPtr(NotEqual, regT0, TrustedImm32(ValueNull), regT0);
+    comparePtr(NotEqual, regT0, TrustedImm32(ValueNull), regT0);
 
     wasNotImmediate.link(this);
 

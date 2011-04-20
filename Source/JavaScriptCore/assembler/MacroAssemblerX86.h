@@ -108,13 +108,13 @@ public:
         m_assembler.movl_rm(src, address);
     }
 
-    Jump branch32(Condition cond, AbsoluteAddress left, RegisterID right)
+    Jump branch32(RelationalCondition cond, AbsoluteAddress left, RegisterID right)
     {
         m_assembler.cmpl_rm(right, left.m_ptr);
         return Jump(m_assembler.jCC(x86Condition(cond)));
     }
 
-    Jump branch32(Condition cond, AbsoluteAddress left, TrustedImm32 right)
+    Jump branch32(RelationalCondition cond, AbsoluteAddress left, TrustedImm32 right)
     {
         m_assembler.cmpl_im(right.m_value, left.m_ptr);
         return Jump(m_assembler.jCC(x86Condition(cond)));
@@ -142,14 +142,14 @@ public:
         return DataLabelPtr(this);
     }
 
-    Jump branchPtrWithPatch(Condition cond, RegisterID left, DataLabelPtr& dataLabel, TrustedImmPtr initialRightValue = TrustedImmPtr(0))
+    Jump branchPtrWithPatch(RelationalCondition cond, RegisterID left, DataLabelPtr& dataLabel, TrustedImmPtr initialRightValue = TrustedImmPtr(0))
     {
         m_assembler.cmpl_ir_force32(initialRightValue.asIntptr(), left);
         dataLabel = DataLabelPtr(this);
         return Jump(m_assembler.jCC(x86Condition(cond)));
     }
 
-    Jump branchPtrWithPatch(Condition cond, Address left, DataLabelPtr& dataLabel, TrustedImmPtr initialRightValue = TrustedImmPtr(0))
+    Jump branchPtrWithPatch(RelationalCondition cond, Address left, DataLabelPtr& dataLabel, TrustedImmPtr initialRightValue = TrustedImmPtr(0))
     {
         m_assembler.cmpl_im_force32(initialRightValue.asIntptr(), left.offset, left.base);
         dataLabel = DataLabelPtr(this);

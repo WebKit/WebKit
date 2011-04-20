@@ -493,7 +493,7 @@ bool SpeculativeJIT::compile(Node& node)
         SpeculateIntegerOperand op2(this, node.child2);
         GPRTemporary result(this, op1, op2);
 
-        m_jit.set32Compare32(JITCompiler::LessThan, op1.registerID(), op2.registerID(), result.registerID());
+        m_jit.compare32(JITCompiler::LessThan, op1.registerID(), op2.registerID(), result.registerID());
 
         // If we add a DataFormatBool, we should use it here.
         m_jit.or32(TrustedImm32(ValueFalse), result.registerID());
@@ -506,7 +506,7 @@ bool SpeculativeJIT::compile(Node& node)
         SpeculateIntegerOperand op2(this, node.child2);
         GPRTemporary result(this, op1, op2);
 
-        m_jit.set32Compare32(JITCompiler::LessThanOrEqual, op1.registerID(), op2.registerID(), result.registerID());
+        m_jit.compare32(JITCompiler::LessThanOrEqual, op1.registerID(), op2.registerID(), result.registerID());
 
         // If we add a DataFormatBool, we should use it here.
         m_jit.or32(TrustedImm32(ValueFalse), result.registerID());
@@ -519,7 +519,7 @@ bool SpeculativeJIT::compile(Node& node)
         SpeculateIntegerOperand op2(this, node.child2);
         GPRTemporary result(this, op1, op2);
 
-        m_jit.set32Compare32(JITCompiler::Equal, op1.registerID(), op2.registerID(), result.registerID());
+        m_jit.compare32(JITCompiler::Equal, op1.registerID(), op2.registerID(), result.registerID());
 
         // If we add a DataFormatBool, we should use it here.
         m_jit.or32(TrustedImm32(ValueFalse), result.registerID());
@@ -532,7 +532,7 @@ bool SpeculativeJIT::compile(Node& node)
         SpeculateIntegerOperand op2(this, node.child2);
         GPRTemporary result(this, op1, op2);
 
-        m_jit.set32Compare32(JITCompiler::Equal, op1.registerID(), op2.registerID(), result.registerID());
+        m_jit.compare32(JITCompiler::Equal, op1.registerID(), op2.registerID(), result.registerID());
 
         // If we add a DataFormatBool, we should use it here.
         m_jit.or32(TrustedImm32(ValueFalse), result.registerID());

@@ -41,7 +41,7 @@ class MacroAssemblerX86Common : public AbstractMacroAssembler<X86Assembler> {
 public:
     typedef X86Assembler::FPRegisterID FPRegisterID;
 
-    enum Condition {
+    enum RelationalCondition {
         Equal = X86Assembler::ConditionE,
         NotEqual = X86Assembler::ConditionNE,
         Above = X86Assembler::ConditionA,
@@ -51,7 +51,10 @@ public:
         GreaterThan = X86Assembler::ConditionG,
         GreaterThanOrEqual = X86Assembler::ConditionGE,
         LessThan = X86Assembler::ConditionL,
-        LessThanOrEqual = X86Assembler::ConditionLE,
+        LessThanOrEqual = X86Assembler::ConditionLE
+    };
+
+    enum ResultCondition {
         Overflow = X86Assembler::ConditionO,
         Signed = X86Assembler::ConditionS,
         Zero = X86Assembler::ConditionE,
@@ -794,19 +797,19 @@ public:
     // an optional second operand of a mask under which to perform the test.
 
 public:
-    Jump branch8(Condition cond, Address left, TrustedImm32 right)
+    Jump branch8(RelationalCondition cond, Address left, TrustedImm32 right)
     {
         m_assembler.cmpb_im(right.m_value, left.offset, left.base);
         return Jump(m_assembler.jCC(x86Condition(cond)));
     }
 
-    Jump branch32(Condition cond, RegisterID left, RegisterID right)
+    Jump branch32(RelationalCondition cond, RegisterID left, RegisterID right)
     {
         m_assembler.cmpl_rr(right, left);
         return Jump(m_assembler.jCC(x86Condition(cond)));
     }
 
-    Jump branch32(Condition cond, RegisterID left, TrustedImm32 right)
+    Jump branch32(RelationalCondition cond, RegisterID left, TrustedImm32 right)
     {
         if (((cond == Equal) || (cond == NotEqual)) && !right.m_value)
             m_assembler.testl_rr(left, left);
@@ -815,42 +818,42 @@ public:
         return Jump(m_assembler.jCC(x86Condition(cond)));
     }
     
-    Jump branch32(Condition cond, RegisterID left, Address right)
+    Jump branch32(RelationalCondition cond, RegisterID left, Address right)
     {
         m_assembler.cmpl_mr(right.offset, right.base, left);
         return Jump(m_assembler.jCC(x86Condition(cond)));
     }
     
-    Jump branch32(Condition cond, Address left, RegisterID right)
+    Jump branch32(RelationalCondition cond, Address left, RegisterID right)
     {
         m_assembler.cmpl_rm(right, left.offset, left.base);
         return Jump(m_assembler.jCC(x86Condition(cond)));
     }
 
-    Jump branch32(Condition cond, Address left, TrustedImm32 right)
+    Jump branch32(RelationalCondition cond, Address left, TrustedImm32 right)
     {
         m_assembler.cmpl_im(right.m_value, left.offset, left.base);
         return Jump(m_assembler.jCC(x86Condition(cond)));
     }
 
-    Jump branch32(Condition cond, BaseIndex left, TrustedImm32 right)
+    Jump branch32(RelationalCondition cond, BaseIndex left, TrustedImm32 right)
     {
         m_assembler.cmpl_im(right.m_value, left.offset, left.base, left.index, left.scale);
         return Jump(m_assembler.jCC(x86Condition(cond)));
     }
 
-    Jump branch32WithUnalignedHalfWords(Condition cond, BaseIndex left, TrustedImm32 right)
+    Jump branch32WithUnalignedHalfWords(RelationalCondition cond, BaseIndex left, TrustedImm32 right)
     {
         return branch32(cond, left, right);
     }
 
-    Jump branch16(Condition cond, BaseIndex left, RegisterID right)
+    Jump branch16(RelationalCondition cond, BaseIndex left, RegisterID right)
     {
         m_assembler.cmpw_rm(right, left.offset, left.base, left.index, left.scale);
         return Jump(m_assembler.jCC(x86Condition(cond)));
     }
 
-    Jump branch16(Condition cond, BaseIndex left, TrustedImm32 right)
+    Jump branch16(RelationalCondition cond, BaseIndex left, TrustedImm32 right)
     {
         ASSERT(!(right.m_value & 0xFFFF0000));
 
@@ -858,16 +861,14 @@ public:
         return Jump(m_assembler.jCC(x86Condition(cond)));
     }
 
-    Jump branchTest32(Condition cond, RegisterID reg, RegisterID mask)
+    Jump branchTest32(ResultCondition cond, RegisterID reg, RegisterID mask)
     {
-        ASSERT((cond == Zero) || (cond == NonZero) || (cond == Signed));
         m_assembler.testl_rr(reg, mask);
         return Jump(m_assembler.jCC(x86Condition(cond)));
     }
 
-    Jump branchTest32(Condition cond, RegisterID reg, TrustedImm32 mask = TrustedImm32(-1))
+    Jump branchTest32(ResultCondition cond, RegisterID reg, TrustedImm32 mask = TrustedImm32(-1))
     {
-        ASSERT((cond == Zero) || (cond == NonZero) || (cond == Signed));
         // if we are only interested in the low seven bits, this can be tested with a testb
         if (mask.m_value == -1)
             m_assembler.testl_rr(reg, reg);
@@ -878,9 +879,8 @@ public:
         return Jump(m_assembler.jCC(x86Condition(cond)));
     }
 
-    Jump branchTest32(Condition cond, Address address, TrustedImm32 mask = TrustedImm32(-1))
+    Jump branchTest32(ResultCondition cond, Address address, TrustedImm32 mask = TrustedImm32(-1))
     {
-        ASSERT((cond == Zero) || (cond == NonZero) || (cond == Signed));
         if (mask.m_value == -1)
             m_assembler.cmpl_im(0, address.offset, address.base);
         else
@@ -888,9 +888,8 @@ public:
         return Jump(m_assembler.jCC(x86Condition(cond)));
     }
 
-    Jump branchTest32(Condition cond, BaseIndex address, TrustedImm32 mask = TrustedImm32(-1))
+    Jump branchTest32(ResultCondition cond, BaseIndex address, TrustedImm32 mask = TrustedImm32(-1))
     {
-        ASSERT((cond == Zero) || (cond == NonZero) || (cond == Signed));
         if (mask.m_value == -1)
             m_assembler.cmpl_im(0, address.offset, address.base, address.index, address.scale);
         else
@@ -898,11 +897,10 @@ public:
         return Jump(m_assembler.jCC(x86Condition(cond)));
     }
     
-    Jump branchTest8(Condition cond, RegisterID reg, TrustedImm32 mask = TrustedImm32(-1))
+    Jump branchTest8(ResultCondition cond, RegisterID reg, TrustedImm32 mask = TrustedImm32(-1))
     {
         // Byte in TrustedImm32 is not well defined, so be a little permisive here, but don't accept nonsense values.
         ASSERT(mask.m_value >= -128 && mask.m_value <= 255);
-        ASSERT((cond == Zero) || (cond == NonZero) || (cond == Signed));
         if (mask.m_value == -1)
             m_assembler.testb_rr(reg, reg);
         else
@@ -910,11 +908,10 @@ public:
         return Jump(m_assembler.jCC(x86Condition(cond)));
     }
 
-    Jump branchTest8(Condition cond, Address address, TrustedImm32 mask = TrustedImm32(-1))
+    Jump branchTest8(ResultCondition cond, Address address, TrustedImm32 mask = TrustedImm32(-1))
     {
         // Byte in TrustedImm32 is not well defined, so be a little permisive here, but don't accept nonsense values.
         ASSERT(mask.m_value >= -128 && mask.m_value <= 255);
-        ASSERT((cond == Zero) || (cond == NonZero) || (cond == Signed));
         if (mask.m_value == -1)
             m_assembler.cmpb_im(0, address.offset, address.base);
         else
@@ -922,11 +919,10 @@ public:
         return Jump(m_assembler.jCC(x86Condition(cond)));
     }
     
-    Jump branchTest8(Condition cond, BaseIndex address, TrustedImm32 mask = TrustedImm32(-1))
+    Jump branchTest8(ResultCondition cond, BaseIndex address, TrustedImm32 mask = TrustedImm32(-1))
     {
         // Byte in TrustedImm32 is not well defined, so be a little permisive here, but don't accept nonsense values.
         ASSERT(mask.m_value >= -128 && mask.m_value <= 255);
-        ASSERT((cond == Zero) || (cond == NonZero) || (cond == Signed));
         if (mask.m_value == -1)
             m_assembler.cmpb_im(0, address.offset, address.base, address.index, address.scale);
         else
@@ -961,42 +957,37 @@ public:
     // * jo operations branch if the (signed) arithmetic
     //   operation caused an overflow to occur.
     
-    Jump branchAdd32(Condition cond, RegisterID src, RegisterID dest)
+    Jump branchAdd32(ResultCondition cond, RegisterID src, RegisterID dest)
     {
-        ASSERT((cond == Overflow) || (cond == Signed) || (cond == Zero) || (cond == NonZero));
         add32(src, dest);
         return Jump(m_assembler.jCC(x86Condition(cond)));
     }
 
-    Jump branchAdd32(Condition cond, TrustedImm32 imm, RegisterID dest)
+    Jump branchAdd32(ResultCondition cond, TrustedImm32 imm, RegisterID dest)
     {
-        ASSERT((cond == Overflow) || (cond == Signed) || (cond == Zero) || (cond == NonZero));
         add32(imm, dest);
         return Jump(m_assembler.jCC(x86Condition(cond)));
     }
     
-    Jump branchAdd32(Condition cond, TrustedImm32 src, Address dest)
+    Jump branchAdd32(ResultCondition cond, TrustedImm32 src, Address dest)
     {
-        ASSERT((cond == Overflow) || (cond == Zero) || (cond == NonZero));
         add32(src, dest);
         return Jump(m_assembler.jCC(x86Condition(cond)));
     }
 
-    Jump branchAdd32(Condition cond, RegisterID src, Address dest)
+    Jump branchAdd32(ResultCondition cond, RegisterID src, Address dest)
     {
-        ASSERT((cond == Overflow) || (cond == Zero) || (cond == NonZero));
         add32(src, dest);
         return Jump(m_assembler.jCC(x86Condition(cond)));
     }
 
-    Jump branchAdd32(Condition cond, Address src, RegisterID dest)
+    Jump branchAdd32(ResultCondition cond, Address src, RegisterID dest)
     {
-        ASSERT((cond == Overflow) || (cond == Zero) || (cond == NonZero));
         add32(src, dest);
         return Jump(m_assembler.jCC(x86Condition(cond)));
     }
 
-    Jump branchAdd32(Condition cond, RegisterID src1, RegisterID src2, RegisterID dest)
+    Jump branchAdd32(ResultCondition cond, RegisterID src1, RegisterID src2, RegisterID dest)
     {
         if (src1 == dest)
             return branchAdd32(cond, src2, dest);
@@ -1004,34 +995,37 @@ public:
         return branchAdd32(cond, src1, dest);
     }
 
-    Jump branchAdd32(Condition cond, RegisterID src, TrustedImm32 imm, RegisterID dest)
+    Jump branchAdd32(ResultCondition cond, RegisterID src, TrustedImm32 imm, RegisterID dest)
     {
         move(src, dest);
         return branchAdd32(cond, imm, dest);
     }
 
-    Jump branchMul32(Condition cond, RegisterID src, RegisterID dest)
+    Jump branchMul32(ResultCondition cond, RegisterID src, RegisterID dest)
     {
-        ASSERT(cond == Overflow);
         mul32(src, dest);
+        if (cond != Overflow)
+            m_assembler.testl_rr(dest, dest);
         return Jump(m_assembler.jCC(x86Condition(cond)));
     }
 
-    Jump branchMul32(Condition cond, Address src, RegisterID dest)
+    Jump branchMul32(ResultCondition cond, Address src, RegisterID dest)
     {
-        ASSERT((cond == Overflow) || (cond == Zero) || (cond == NonZero));
         mul32(src, dest);
+        if (cond != Overflow)
+            m_assembler.testl_rr(dest, dest);
         return Jump(m_assembler.jCC(x86Condition(cond)));
     }
     
-    Jump branchMul32(Condition cond, TrustedImm32 imm, RegisterID src, RegisterID dest)
+    Jump branchMul32(ResultCondition cond, TrustedImm32 imm, RegisterID src, RegisterID dest)
     {
-        ASSERT(cond == Overflow);
         mul32(imm, src, dest);
+        if (cond != Overflow)
+            m_assembler.testl_rr(dest, dest);
         return Jump(m_assembler.jCC(x86Condition(cond)));
     }
     
-    Jump branchMul32(Condition cond, RegisterID src1, RegisterID src2, RegisterID dest)
+    Jump branchMul32(ResultCondition cond, RegisterID src1, RegisterID src2, RegisterID dest)
     {
         if (src1 == dest)
             return branchMul32(cond, src2, dest);
@@ -1039,42 +1033,37 @@ public:
         return branchMul32(cond, src1, dest);
     }
 
-    Jump branchSub32(Condition cond, RegisterID src, RegisterID dest)
+    Jump branchSub32(ResultCondition cond, RegisterID src, RegisterID dest)
     {
-        ASSERT((cond == Overflow) || (cond == Signed) || (cond == Zero) || (cond == NonZero));
         sub32(src, dest);
         return Jump(m_assembler.jCC(x86Condition(cond)));
     }
     
-    Jump branchSub32(Condition cond, TrustedImm32 imm, RegisterID dest)
+    Jump branchSub32(ResultCondition cond, TrustedImm32 imm, RegisterID dest)
     {
-        ASSERT((cond == Overflow) || (cond == Signed) || (cond == Zero) || (cond == NonZero));
         sub32(imm, dest);
         return Jump(m_assembler.jCC(x86Condition(cond)));
     }
 
-    Jump branchSub32(Condition cond, TrustedImm32 imm, Address dest)
+    Jump branchSub32(ResultCondition cond, TrustedImm32 imm, Address dest)
     {
-        ASSERT((cond == Overflow) || (cond == Zero) || (cond == NonZero));
         sub32(imm, dest);
         return Jump(m_assembler.jCC(x86Condition(cond)));
     }
 
-    Jump branchSub32(Condition cond, RegisterID src, Address dest)
+    Jump branchSub32(ResultCondition cond, RegisterID src, Address dest)
     {
-        ASSERT((cond == Overflow) || (cond == Zero) || (cond == NonZero));
         sub32(src, dest);
         return Jump(m_assembler.jCC(x86Condition(cond)));
     }
 
-    Jump branchSub32(Condition cond, Address src, RegisterID dest)
+    Jump branchSub32(ResultCondition cond, Address src, RegisterID dest)
     {
-        ASSERT((cond == Overflow) || (cond == Zero) || (cond == NonZero));
         sub32(src, dest);
         return Jump(m_assembler.jCC(x86Condition(cond)));
     }
 
-    Jump branchSub32(Condition cond, RegisterID src1, RegisterID src2, RegisterID dest)
+    Jump branchSub32(ResultCondition cond, RegisterID src1, RegisterID src2, RegisterID dest)
     {
         // B := A - B is invalid.
         ASSERT(src1 == dest || src2 != dest);
@@ -1083,22 +1072,20 @@ public:
         return branchSub32(cond, src2, dest);
     }
 
-    Jump branchSub32(Condition cond, RegisterID src1, TrustedImm32 src2, RegisterID dest)
+    Jump branchSub32(ResultCondition cond, RegisterID src1, TrustedImm32 src2, RegisterID dest)
     {
         move(src1, dest);
         return branchSub32(cond, src2, dest);
     }
 
-    Jump branchNeg32(Condition cond, RegisterID srcDest)
+    Jump branchNeg32(ResultCondition cond, RegisterID srcDest)
     {
-        ASSERT((cond == Overflow) || (cond == Zero) || (cond == NonZero));
         neg32(srcDest);
         return Jump(m_assembler.jCC(x86Condition(cond)));
     }
 
-    Jump branchOr32(Condition cond, RegisterID src, RegisterID dest)
+    Jump branchOr32(ResultCondition cond, RegisterID src, RegisterID dest)
     {
-        ASSERT((cond == Signed) || (cond == Zero) || (cond == NonZero));
         or32(src, dest);
         return Jump(m_assembler.jCC(x86Condition(cond)));
     }
@@ -1131,35 +1118,14 @@ public:
         m_assembler.ret();
     }
 
-    void set8Compare32(Condition cond, RegisterID left, RegisterID right, RegisterID dest)
-    {
-        m_assembler.cmpl_rr(right, left);
-        m_assembler.setCC_r(x86Condition(cond), dest);
-    }
-
-    void set8Compare32(Condition cond, Address left, RegisterID right, RegisterID dest)
-    {
-        m_assembler.cmpl_mr(left.offset, left.base, right);
-        m_assembler.setCC_r(x86Condition(cond), dest);
-    }
-
-    void set8Compare32(Condition cond, RegisterID left, TrustedImm32 right, RegisterID dest)
-    {
-        if (((cond == Equal) || (cond == NotEqual)) && !right.m_value)
-            m_assembler.testl_rr(left, left);
-        else
-            m_assembler.cmpl_ir(right.m_value, left);
-        m_assembler.setCC_r(x86Condition(cond), dest);
-    }
-
-    void set32Compare32(Condition cond, RegisterID left, RegisterID right, RegisterID dest)
+    void compare32(RelationalCondition cond, RegisterID left, RegisterID right, RegisterID dest)
     {
         m_assembler.cmpl_rr(right, left);
         m_assembler.setCC_r(x86Condition(cond), dest);
         m_assembler.movzbl_rr(dest, dest);
     }
 
-    void set32Compare32(Condition cond, RegisterID left, TrustedImm32 right, RegisterID dest)
+    void compare32(RelationalCondition cond, RegisterID left, TrustedImm32 right, RegisterID dest)
     {
         if (((cond == Equal) || (cond == NotEqual)) && !right.m_value)
             m_assembler.testl_rr(left, left);
@@ -1174,7 +1140,7 @@ public:
     // dest-src, operations always have a dest? ... possibly not true, considering
     // asm ops like test, or pseudo ops like pop().
 
-    void set32Test8(Condition cond, Address address, TrustedImm32 mask, RegisterID dest)
+    void test8(ResultCondition cond, Address address, TrustedImm32 mask, RegisterID dest)
     {
         if (mask.m_value == -1)
             m_assembler.cmpb_im(0, address.offset, address.base);
@@ -1184,7 +1150,7 @@ public:
         m_assembler.movzbl_rr(dest, dest);
     }
 
-    void set32Test32(Condition cond, Address address, TrustedImm32 mask, RegisterID dest)
+    void test32(ResultCondition cond, Address address, TrustedImm32 mask, RegisterID dest)
     {
         if (mask.m_value == -1)
             m_assembler.cmpl_im(0, address.offset, address.base);
@@ -1195,7 +1161,12 @@ public:
     }
 
 protected:
-    X86Assembler::Condition x86Condition(Condition cond)
+    X86Assembler::Condition x86Condition(RelationalCondition cond)
+    {
+        return static_cast<X86Assembler::Condition>(cond);
+    }
+
+    X86Assembler::Condition x86Condition(ResultCondition cond)
     {
         return static_cast<X86Assembler::Condition>(cond);
     }

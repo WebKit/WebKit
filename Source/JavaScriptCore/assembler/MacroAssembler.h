@@ -105,32 +105,32 @@ public:
 
 
     // Backwards banches, these are currently all implemented using existing forwards branch mechanisms.
-    void branchPtr(Condition cond, RegisterID op1, TrustedImmPtr imm, Label target)
+    void branchPtr(RelationalCondition cond, RegisterID op1, TrustedImmPtr imm, Label target)
     {
         branchPtr(cond, op1, imm).linkTo(target, this);
     }
 
-    void branch32(Condition cond, RegisterID op1, RegisterID op2, Label target)
+    void branch32(RelationalCondition cond, RegisterID op1, RegisterID op2, Label target)
     {
         branch32(cond, op1, op2).linkTo(target, this);
     }
 
-    void branch32(Condition cond, RegisterID op1, TrustedImm32 imm, Label target)
+    void branch32(RelationalCondition cond, RegisterID op1, TrustedImm32 imm, Label target)
     {
         branch32(cond, op1, imm).linkTo(target, this);
     }
 
-    void branch32(Condition cond, RegisterID left, Address right, Label target)
+    void branch32(RelationalCondition cond, RegisterID left, Address right, Label target)
     {
         branch32(cond, left, right).linkTo(target, this);
     }
 
-    void branch16(Condition cond, BaseIndex left, RegisterID right, Label target)
+    void branch16(RelationalCondition cond, BaseIndex left, RegisterID right, Label target)
     {
         branch16(cond, left, right).linkTo(target, this);
     }
     
-    void branchTestPtr(Condition cond, RegisterID reg, Label target)
+    void branchTestPtr(ResultCondition cond, RegisterID reg, Label target)
     {
         branchTestPtr(cond, reg).linkTo(target, this);
     }
@@ -236,9 +236,9 @@ public:
         return load32WithAddressOffsetPatch(address, dest);
     }
 
-    void setPtr(Condition cond, RegisterID left, TrustedImm32 right, RegisterID dest)
+    void comparePtr(RelationalCondition cond, RegisterID left, TrustedImm32 right, RegisterID dest)
     {
-        set32Compare32(cond, left, right, dest);
+        compare32(cond, left, right, dest);
     }
 
     void storePtr(RegisterID src, ImplicitAddress address)
@@ -272,73 +272,73 @@ public:
     }
 
 
-    Jump branchPtr(Condition cond, RegisterID left, RegisterID right)
+    Jump branchPtr(RelationalCondition cond, RegisterID left, RegisterID right)
     {
         return branch32(cond, left, right);
     }
 
-    Jump branchPtr(Condition cond, RegisterID left, TrustedImmPtr right)
+    Jump branchPtr(RelationalCondition cond, RegisterID left, TrustedImmPtr right)
     {
         return branch32(cond, left, TrustedImm32(right));
     }
 
-    Jump branchPtr(Condition cond, RegisterID left, Address right)
+    Jump branchPtr(RelationalCondition cond, RegisterID left, Address right)
     {
         return branch32(cond, left, right);
     }
 
-    Jump branchPtr(Condition cond, Address left, RegisterID right)
+    Jump branchPtr(RelationalCondition cond, Address left, RegisterID right)
     {
         return branch32(cond, left, right);
     }
 
-    Jump branchPtr(Condition cond, AbsoluteAddress left, RegisterID right)
+    Jump branchPtr(RelationalCondition cond, AbsoluteAddress left, RegisterID right)
     {
         return branch32(cond, left, right);
     }
 
-    Jump branchPtr(Condition cond, Address left, TrustedImmPtr right)
+    Jump branchPtr(RelationalCondition cond, Address left, TrustedImmPtr right)
     {
         return branch32(cond, left, TrustedImm32(right));
     }
 
-    Jump branchPtr(Condition cond, AbsoluteAddress left, TrustedImmPtr right)
+    Jump branchPtr(RelationalCondition cond, AbsoluteAddress left, TrustedImmPtr right)
     {
         return branch32(cond, left, TrustedImm32(right));
     }
 
-    Jump branchTestPtr(Condition cond, RegisterID reg, RegisterID mask)
+    Jump branchTestPtr(ResultCondition cond, RegisterID reg, RegisterID mask)
     {
         return branchTest32(cond, reg, mask);
     }
 
-    Jump branchTestPtr(Condition cond, RegisterID reg, TrustedImm32 mask = TrustedImm32(-1))
+    Jump branchTestPtr(ResultCondition cond, RegisterID reg, TrustedImm32 mask = TrustedImm32(-1))
     {
         return branchTest32(cond, reg, mask);
     }
 
-    Jump branchTestPtr(Condition cond, Address address, TrustedImm32 mask = TrustedImm32(-1))
+    Jump branchTestPtr(ResultCondition cond, Address address, TrustedImm32 mask = TrustedImm32(-1))
     {
         return branchTest32(cond, address, mask);
     }
 
-    Jump branchTestPtr(Condition cond, BaseIndex address, TrustedImm32 mask = TrustedImm32(-1))
+    Jump branchTestPtr(ResultCondition cond, BaseIndex address, TrustedImm32 mask = TrustedImm32(-1))
     {
         return branchTest32(cond, address, mask);
     }
 
 
-    Jump branchAddPtr(Condition cond, RegisterID src, RegisterID dest)
+    Jump branchAddPtr(ResultCondition cond, RegisterID src, RegisterID dest)
     {
         return branchAdd32(cond, src, dest);
     }
 
-    Jump branchSubPtr(Condition cond, TrustedImm32 imm, RegisterID dest)
+    Jump branchSubPtr(ResultCondition cond, TrustedImm32 imm, RegisterID dest)
     {
         return branchSub32(cond, imm, dest);
     }
     using MacroAssemblerBase::branchTest8;
-    Jump branchTest8(Condition cond, ExtendedAddress address, TrustedImm32 mask = TrustedImm32(-1))
+    Jump branchTest8(ResultCondition cond, ExtendedAddress address, TrustedImm32 mask = TrustedImm32(-1))
     {
         return MacroAssemblerBase::branchTest8(cond, Address(address.base, address.offset), mask);
     }

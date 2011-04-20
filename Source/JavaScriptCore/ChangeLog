@@ -1,3 +1,122 @@
+2011-04-19  Gavin Barraclough  <barraclough@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        Rationalize MacroAssembler branch methods
+        https://bugs.webkit.org/show_bug.cgi?id=58950
+
+        The MacroAssembler currently exposes x86's weird behaviour that the 'setcc'
+        instruction only sets the low 8 bits of a register. Stop that.
+
+        Having done so, to clarify remove the 'set32' prefix from test & compare
+        instructions - these methods all now set a full 32/64 bit register (Ptr size).
+        The size in the function name should indicate the amount of data being compared.
+
+        Also split out the 'Condition' enum into 'RelationalCondition' and
+        'ResultCondition'. The former is used in binary comparison, the latter is a unary
+        condition check on the result of an operation.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * assembler/MacroAssembler.h:
+        (JSC::MacroAssembler::branchPtr):
+        (JSC::MacroAssembler::branch32):
+        (JSC::MacroAssembler::branch16):
+        (JSC::MacroAssembler::branchTestPtr):
+        (JSC::MacroAssembler::comparePtr):
+        (JSC::MacroAssembler::branchAddPtr):
+        (JSC::MacroAssembler::branchSubPtr):
+        (JSC::MacroAssembler::branchTest8):
+        * assembler/MacroAssemblerARM.h:
+        (JSC::MacroAssemblerARM::branch8):
+        (JSC::MacroAssemblerARM::branch32):
+        (JSC::MacroAssemblerARM::branch32WithUnalignedHalfWords):
+        (JSC::MacroAssemblerARM::branch16):
+        (JSC::MacroAssemblerARM::branchTest8):
+        (JSC::MacroAssemblerARM::branchTest32):
+        (JSC::MacroAssemblerARM::branchAdd32):
+        (JSC::MacroAssemblerARM::branchMul32):
+        (JSC::MacroAssemblerARM::branchSub32):
+        (JSC::MacroAssemblerARM::branchNeg32):
+        (JSC::MacroAssemblerARM::branchOr32):
+        (JSC::MacroAssemblerARM::compare32):
+        (JSC::MacroAssemblerARM::test32):
+        (JSC::MacroAssemblerARM::test8):
+        (JSC::MacroAssemblerARM::branchPtrWithPatch):
+        (JSC::MacroAssemblerARM::ARMCondition):
+        * assembler/MacroAssemblerARMv7.h:
+        (JSC::MacroAssemblerARMv7::branch32):
+        (JSC::MacroAssemblerARMv7::branch32WithUnalignedHalfWords):
+        (JSC::MacroAssemblerARMv7::branch16):
+        (JSC::MacroAssemblerARMv7::branch8):
+        (JSC::MacroAssemblerARMv7::branchTest32):
+        (JSC::MacroAssemblerARMv7::branchTest8):
+        (JSC::MacroAssemblerARMv7::branchAdd32):
+        (JSC::MacroAssemblerARMv7::branchMul32):
+        (JSC::MacroAssemblerARMv7::branchOr32):
+        (JSC::MacroAssemblerARMv7::branchSub32):
+        (JSC::MacroAssemblerARMv7::compare32):
+        (JSC::MacroAssemblerARMv7::test32):
+        (JSC::MacroAssemblerARMv7::test8):
+        (JSC::MacroAssemblerARMv7::branchPtrWithPatch):
+        (JSC::MacroAssemblerARMv7::makeBranch):
+        (JSC::MacroAssemblerARMv7::armV7Condition):
+        * assembler/MacroAssemblerMIPS.h:
+        (JSC::MacroAssemblerMIPS::branch8):
+        (JSC::MacroAssemblerMIPS::branch32):
+        (JSC::MacroAssemblerMIPS::branch32WithUnalignedHalfWords):
+        (JSC::MacroAssemblerMIPS::branch16):
+        (JSC::MacroAssemblerMIPS::branchTest32):
+        (JSC::MacroAssemblerMIPS::branchTest8):
+        (JSC::MacroAssemblerMIPS::branchAdd32):
+        (JSC::MacroAssemblerMIPS::branchMul32):
+        (JSC::MacroAssemblerMIPS::branchSub32):
+        (JSC::MacroAssemblerMIPS::branchOr32):
+        (JSC::MacroAssemblerMIPS::compare32):
+        (JSC::MacroAssemblerMIPS::test8):
+        (JSC::MacroAssemblerMIPS::test32):
+        (JSC::MacroAssemblerMIPS::branchPtrWithPatch):
+        * assembler/MacroAssemblerX86.h:
+        (JSC::MacroAssemblerX86::branch32):
+        (JSC::MacroAssemblerX86::branchPtrWithPatch):
+        * assembler/MacroAssemblerX86Common.h:
+        (JSC::MacroAssemblerX86Common::branch8):
+        (JSC::MacroAssemblerX86Common::branch32):
+        (JSC::MacroAssemblerX86Common::branch32WithUnalignedHalfWords):
+        (JSC::MacroAssemblerX86Common::branch16):
+        (JSC::MacroAssemblerX86Common::branchTest32):
+        (JSC::MacroAssemblerX86Common::branchTest8):
+        (JSC::MacroAssemblerX86Common::branchAdd32):
+        (JSC::MacroAssemblerX86Common::branchMul32):
+        (JSC::MacroAssemblerX86Common::branchSub32):
+        (JSC::MacroAssemblerX86Common::branchNeg32):
+        (JSC::MacroAssemblerX86Common::branchOr32):
+        (JSC::MacroAssemblerX86Common::compare32):
+        (JSC::MacroAssemblerX86Common::test8):
+        (JSC::MacroAssemblerX86Common::test32):
+        (JSC::MacroAssemblerX86Common::x86Condition):
+        * assembler/MacroAssemblerX86_64.h:
+        (JSC::MacroAssemblerX86_64::comparePtr):
+        (JSC::MacroAssemblerX86_64::branchPtr):
+        (JSC::MacroAssemblerX86_64::branchTestPtr):
+        (JSC::MacroAssemblerX86_64::branchAddPtr):
+        (JSC::MacroAssemblerX86_64::branchSubPtr):
+        (JSC::MacroAssemblerX86_64::branchPtrWithPatch):
+        (JSC::MacroAssemblerX86_64::branchTest8):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * jit/JITOpcodes.cpp:
+        (JSC::JIT::emit_op_eq):
+        (JSC::JIT::emit_op_neq):
+        (JSC::JIT::compileOpStrictEq):
+        (JSC::JIT::emit_op_eq_null):
+        (JSC::JIT::emit_op_neq_null):
+        * jit/JITOpcodes32_64.cpp:
+        (JSC::JIT::emit_op_eq):
+        (JSC::JIT::emit_op_neq):
+        (JSC::JIT::compileOpStrictEq):
+        (JSC::JIT::emit_op_eq_null):
+        (JSC::JIT::emit_op_neq_null):
+
 2011-04-20  Balazs Kelemen  <kbalazs@webkit.org>
 
         Reviewed by Csaba Osztrogonác.

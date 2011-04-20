@@ -42,7 +42,7 @@ class MacroAssemblerARM : public AbstractMacroAssembler<ARMAssembler> {
 public:
     typedef ARMRegisters::FPRegisterID FPRegisterID;
 
-    enum Condition {
+    enum RelationalCondition {
         Equal = ARMAssembler::EQ,
         NotEqual = ARMAssembler::NE,
         Above = ARMAssembler::HI,
@@ -52,7 +52,10 @@ public:
         GreaterThan = ARMAssembler::GT,
         GreaterThanOrEqual = ARMAssembler::GE,
         LessThan = ARMAssembler::LT,
-        LessThanOrEqual = ARMAssembler::LE,
+        LessThanOrEqual = ARMAssembler::LE
+    };
+
+    enum ResultCondition {
         Overflow = ARMAssembler::VS,
         Signed = ARMAssembler::MI,
         Zero = ARMAssembler::EQ,
@@ -387,19 +390,19 @@ public:
             move(src, dest);
     }
 
-    Jump branch8(Condition cond, Address left, TrustedImm32 right)
+    Jump branch8(RelationalCondition cond, Address left, TrustedImm32 right)
     {
         load8(left, ARMRegisters::S1);
         return branch32(cond, ARMRegisters::S1, right);
     }
 
-    Jump branch32(Condition cond, RegisterID left, RegisterID right, int useConstantPool = 0)
+    Jump branch32(RelationalCondition cond, RegisterID left, RegisterID right, int useConstantPool = 0)
     {
         m_assembler.cmp_r(left, right);
         return Jump(m_assembler.jmp(ARMCondition(cond), useConstantPool));
     }
 
-    Jump branch32(Condition cond, RegisterID left, TrustedImm32 right, int useConstantPool = 0)
+    Jump branch32(RelationalCondition cond, RegisterID left, TrustedImm32 right, int useConstantPool = 0)
     {
         if (right.m_isPointer) {
             m_assembler.ldr_un_imm(ARMRegisters::S0, right.m_value);
@@ -414,37 +417,37 @@ public:
         return Jump(m_assembler.jmp(ARMCondition(cond), useConstantPool));
     }
 
-    Jump branch32(Condition cond, RegisterID left, Address right)
+    Jump branch32(RelationalCondition cond, RegisterID left, Address right)
     {
         load32(right, ARMRegisters::S1);
         return branch32(cond, left, ARMRegisters::S1);
     }
 
-    Jump branch32(Condition cond, Address left, RegisterID right)
+    Jump branch32(RelationalCondition cond, Address left, RegisterID right)
     {
         load32(left, ARMRegisters::S1);
         return branch32(cond, ARMRegisters::S1, right);
     }
 
-    Jump branch32(Condition cond, Address left, TrustedImm32 right)
+    Jump branch32(RelationalCondition cond, Address left, TrustedImm32 right)
     {
         load32(left, ARMRegisters::S1);
         return branch32(cond, ARMRegisters::S1, right);
     }
 
-    Jump branch32(Condition cond, BaseIndex left, TrustedImm32 right)
+    Jump branch32(RelationalCondition cond, BaseIndex left, TrustedImm32 right)
     {
         load32(left, ARMRegisters::S1);
         return branch32(cond, ARMRegisters::S1, right);
     }
 
-    Jump branch32WithUnalignedHalfWords(Condition cond, BaseIndex left, TrustedImm32 right)
+    Jump branch32WithUnalignedHalfWords(RelationalCondition cond, BaseIndex left, TrustedImm32 right)
     {
         load32WithUnalignedHalfWords(left, ARMRegisters::S1);
         return branch32(cond, ARMRegisters::S1, right);
     }
 
-    Jump branch16(Condition cond, BaseIndex left, RegisterID right)
+    Jump branch16(RelationalCondition cond, BaseIndex left, RegisterID right)
     {
         UNUSED_PARAM(cond);
         UNUSED_PARAM(left);
@@ -453,7 +456,7 @@ public:
         return jump();
     }
 
-    Jump branch16(Condition cond, BaseIndex left, TrustedImm32 right)
+    Jump branch16(RelationalCondition cond, BaseIndex left, TrustedImm32 right)
     {
         load16(left, ARMRegisters::S0);
         move(right, ARMRegisters::S1);
@@ -461,20 +464,20 @@ public:
         return m_assembler.jmp(ARMCondition(cond));
     }
 
-    Jump branchTest8(Condition cond, Address address, TrustedImm32 mask = TrustedImm32(-1))
+    Jump branchTest8(ResultCondition cond, Address address, TrustedImm32 mask = TrustedImm32(-1))
     {
         load8(address, ARMRegisters::S1);
         return branchTest32(cond, ARMRegisters::S1, mask);
     }
 
-    Jump branchTest32(Condition cond, RegisterID reg, RegisterID mask)
+    Jump branchTest32(ResultCondition cond, RegisterID reg, RegisterID mask)
     {
         ASSERT((cond == Zero) || (cond == NonZero));
         m_assembler.tst_r(reg, mask);
         return Jump(m_assembler.jmp(ARMCondition(cond)));
     }
 
-    Jump branchTest32(Condition cond, RegisterID reg, TrustedImm32 mask = TrustedImm32(-1))
+    Jump branchTest32(ResultCondition cond, RegisterID reg, TrustedImm32 mask = TrustedImm32(-1))
     {
         ASSERT((cond == Zero) || (cond == NonZero));
         ARMWord w = m_assembler.getImm(mask.m_value, ARMRegisters::S0, true);
@@ -485,13 +488,13 @@ public:
         return Jump(m_assembler.jmp(ARMCondition(cond)));
     }
 
-    Jump branchTest32(Condition cond, Address address, TrustedImm32 mask = TrustedImm32(-1))
+    Jump branchTest32(ResultCondition cond, Address address, TrustedImm32 mask = TrustedImm32(-1))
     {
         load32(address, ARMRegisters::S1);
         return branchTest32(cond, ARMRegisters::S1, mask);
     }
 
-    Jump branchTest32(Condition cond, BaseIndex address, TrustedImm32 mask = TrustedImm32(-1))
+    Jump branchTest32(ResultCondition cond, BaseIndex address, TrustedImm32 mask = TrustedImm32(-1))
     {
         load32(address, ARMRegisters::S1);
         return branchTest32(cond, ARMRegisters::S1, mask);
@@ -512,14 +515,14 @@ public:
         load32(address, ARMRegisters::pc);
     }
 
-    Jump branchAdd32(Condition cond, RegisterID src, RegisterID dest)
+    Jump branchAdd32(ResultCondition cond, RegisterID src, RegisterID dest)
     {
         ASSERT((cond == Overflow) || (cond == Signed) || (cond == Zero) || (cond == NonZero));
         add32(src, dest);
         return Jump(m_assembler.jmp(ARMCondition(cond)));
     }
 
-    Jump branchAdd32(Condition cond, TrustedImm32 imm, RegisterID dest)
+    Jump branchAdd32(ResultCondition cond, TrustedImm32 imm, RegisterID dest)
     {
         ASSERT((cond == Overflow) || (cond == Signed) || (cond == Zero) || (cond == NonZero));
         add32(imm, dest);
@@ -536,7 +539,7 @@ public:
         m_assembler.cmp_r(ARMRegisters::S1, m_assembler.asr(dest, 31));
     }
 
-    Jump branchMul32(Condition cond, RegisterID src, RegisterID dest)
+    Jump branchMul32(ResultCondition cond, RegisterID src, RegisterID dest)
     {
         ASSERT((cond == Overflow) || (cond == Signed) || (cond == Zero) || (cond == NonZero));
         if (cond == Overflow) {
@@ -548,7 +551,7 @@ public:
         return Jump(m_assembler.jmp(ARMCondition(cond)));
     }
 
-    Jump branchMul32(Condition cond, TrustedImm32 imm, RegisterID src, RegisterID dest)
+    Jump branchMul32(ResultCondition cond, TrustedImm32 imm, RegisterID src, RegisterID dest)
     {
         ASSERT((cond == Overflow) || (cond == Signed) || (cond == Zero) || (cond == NonZero));
         if (cond == Overflow) {
@@ -561,28 +564,28 @@ public:
         return Jump(m_assembler.jmp(ARMCondition(cond)));
     }
 
-    Jump branchSub32(Condition cond, RegisterID src, RegisterID dest)
+    Jump branchSub32(ResultCondition cond, RegisterID src, RegisterID dest)
     {
         ASSERT((cond == Overflow) || (cond == Signed) || (cond == Zero) || (cond == NonZero));
         sub32(src, dest);
         return Jump(m_assembler.jmp(ARMCondition(cond)));
     }
 
-    Jump branchSub32(Condition cond, TrustedImm32 imm, RegisterID dest)
+    Jump branchSub32(ResultCondition cond, TrustedImm32 imm, RegisterID dest)
     {
         ASSERT((cond == Overflow) || (cond == Signed) || (cond == Zero) || (cond == NonZero));
         sub32(imm, dest);
         return Jump(m_assembler.jmp(ARMCondition(cond)));
     }
 
-    Jump branchNeg32(Condition cond, RegisterID srcDest)
+    Jump branchNeg32(ResultCondition cond, RegisterID srcDest)
     {
         ASSERT((cond == Overflow) || (cond == Signed) || (cond == Zero) || (cond == NonZero));
         neg32(srcDest);
         return Jump(m_assembler.jmp(ARMCondition(cond)));
     }
 
-    Jump branchOr32(Condition cond, RegisterID src, RegisterID dest)
+    Jump branchOr32(ResultCondition cond, RegisterID src, RegisterID dest)
     {
         ASSERT((cond == Signed) || (cond == Zero) || (cond == NonZero));
         or32(src, dest);
@@ -621,40 +624,21 @@ public:
         m_assembler.bx(linkRegister);
     }
 
-    void set32Compare32(Condition cond, RegisterID left, RegisterID right, RegisterID dest)
+    void compare32(RelationalCondition cond, RegisterID left, RegisterID right, RegisterID dest)
     {
         m_assembler.cmp_r(left, right);
         m_assembler.mov_r(dest, ARMAssembler::getOp2(0));
         m_assembler.mov_r(dest, ARMAssembler::getOp2(1), ARMCondition(cond));
     }
 
-    void set32Compare32(Condition cond, RegisterID left, TrustedImm32 right, RegisterID dest)
+    void compare32(RelationalCondition cond, RegisterID left, TrustedImm32 right, RegisterID dest)
     {
         m_assembler.cmp_r(left, m_assembler.getImm(right.m_value, ARMRegisters::S0));
         m_assembler.mov_r(dest, ARMAssembler::getOp2(0));
         m_assembler.mov_r(dest, ARMAssembler::getOp2(1), ARMCondition(cond));
     }
 
-    void set8Compare32(Condition cond, RegisterID left, RegisterID right, RegisterID dest)
-    {
-        // ARM doesn't have byte registers
-        set32Compare32(cond, left, right, dest);
-    }
-
-    void set8Compare32(Condition cond, Address left, RegisterID right, RegisterID dest)
-    {
-        // ARM doesn't have byte registers
-        load32(left, ARMRegisters::S1);
-        set32Compare32(cond, ARMRegisters::S1, right, dest);
-    }
-
-    void set8Compare32(Condition cond, RegisterID left, TrustedImm32 right, RegisterID dest)
-    {
-        // ARM doesn't have byte registers
-        set32Compare32(cond, left, right, dest);
-    }
-
-    void set32Test32(Condition cond, RegisterID reg, TrustedImm32 mask, RegisterID dest)
+    void test32(ResultCondition cond, RegisterID reg, TrustedImm32 mask, RegisterID dest)
     {
         if (mask.m_value == -1)
             m_assembler.cmp_r(0, reg);
@@ -664,13 +648,13 @@ public:
         m_assembler.mov_r(dest, ARMAssembler::getOp2(1), ARMCondition(cond));
     }
 
-    void set32Test32(Condition cond, Address address, TrustedImm32 mask, RegisterID dest)
+    void test32(ResultCondition cond, Address address, TrustedImm32 mask, RegisterID dest)
     {
         load32(address, ARMRegisters::S1);
-        set32Test32(cond, ARMRegisters::S1, mask, dest);
+        test32(cond, ARMRegisters::S1, mask, dest);
     }
 
-    void set32Test8(Condition cond, Address address, TrustedImm32 mask, RegisterID dest)
+    void test8(ResultCondition cond, Address address, TrustedImm32 mask, RegisterID dest)
     {
         load8(address, ARMRegisters::S1);
         set32Test32(cond, ARMRegisters::S1, mask, dest);
@@ -705,13 +689,13 @@ public:
         m_assembler.dtr_u(true, dest, ARMRegisters::S0, 0);
     }
 
-    Jump branch32(Condition cond, AbsoluteAddress left, RegisterID right)
+    Jump branch32(RelationalCondition cond, AbsoluteAddress left, RegisterID right)
     {
         load32(left.m_ptr, ARMRegisters::S1);
         return branch32(cond, ARMRegisters::S1, right);
     }
 
-    Jump branch32(Condition cond, AbsoluteAddress left, TrustedImm32 right)
+    Jump branch32(RelationalCondition cond, AbsoluteAddress left, TrustedImm32 right)
     {
         load32(left.m_ptr, ARMRegisters::S1);
         return branch32(cond, ARMRegisters::S1, right);
@@ -755,14 +739,14 @@ public:
         return dataLabel;
     }
 
-    Jump branchPtrWithPatch(Condition cond, RegisterID left, DataLabelPtr& dataLabel, TrustedImmPtr initialRightValue = TrustedImmPtr(0))
+    Jump branchPtrWithPatch(RelationalCondition cond, RegisterID left, DataLabelPtr& dataLabel, TrustedImmPtr initialRightValue = TrustedImmPtr(0))
     {
         dataLabel = moveWithPatch(initialRightValue, ARMRegisters::S1);
         Jump jump = branch32(cond, left, ARMRegisters::S1, true);
         return jump;
     }
 
-    Jump branchPtrWithPatch(Condition cond, Address left, DataLabelPtr& dataLabel, TrustedImmPtr initialRightValue = TrustedImmPtr(0))
+    Jump branchPtrWithPatch(RelationalCondition cond, Address left, DataLabelPtr& dataLabel, TrustedImmPtr initialRightValue = TrustedImmPtr(0))
     {
         load32(left, ARMRegisters::S1);
         dataLabel = moveWithPatch(initialRightValue, ARMRegisters::S0);
@@ -944,7 +928,12 @@ public:
     }
 
 protected:
-    ARMAssembler::Condition ARMCondition(Condition cond)
+    ARMAssembler::Condition ARMCondition(RelationalCondition cond)
+    {
+        return static_cast<ARMAssembler::Condition>(cond);
+    }
+
+    ARMAssembler::Condition ARMCondition(ResultCondition cond)
     {
         return static_cast<ARMAssembler::Condition>(cond);
     }

@@ -312,7 +312,7 @@ public:
         m_assembler.movq_rr(src, dest);
     }
 
-    void setPtr(Condition cond, RegisterID left, TrustedImm32 right, RegisterID dest)
+    void comparePtr(RelationalCondition cond, RegisterID left, TrustedImm32 right, RegisterID dest)
     {
         if (((cond == Equal) || (cond == NotEqual)) && !right.m_value)
             m_assembler.testq_rr(left, left);
@@ -322,49 +322,49 @@ public:
         m_assembler.movzbl_rr(dest, dest);
     }
 
-    Jump branchPtr(Condition cond, RegisterID left, RegisterID right)
+    Jump branchPtr(RelationalCondition cond, RegisterID left, RegisterID right)
     {
         m_assembler.cmpq_rr(right, left);
         return Jump(m_assembler.jCC(x86Condition(cond)));
     }
 
-    Jump branchPtr(Condition cond, RegisterID left, TrustedImmPtr right)
+    Jump branchPtr(RelationalCondition cond, RegisterID left, TrustedImmPtr right)
     {
         move(right, scratchRegister);
         return branchPtr(cond, left, scratchRegister);
     }
 
-    Jump branchPtr(Condition cond, RegisterID left, Address right)
+    Jump branchPtr(RelationalCondition cond, RegisterID left, Address right)
     {
         m_assembler.cmpq_mr(right.offset, right.base, left);
         return Jump(m_assembler.jCC(x86Condition(cond)));
     }
 
-    Jump branchPtr(Condition cond, AbsoluteAddress left, RegisterID right)
+    Jump branchPtr(RelationalCondition cond, AbsoluteAddress left, RegisterID right)
     {
         move(TrustedImmPtr(left.m_ptr), scratchRegister);
         return branchPtr(cond, Address(scratchRegister), right);
     }
 
-    Jump branchPtr(Condition cond, Address left, RegisterID right)
+    Jump branchPtr(RelationalCondition cond, Address left, RegisterID right)
     {
         m_assembler.cmpq_rm(right, left.offset, left.base);
         return Jump(m_assembler.jCC(x86Condition(cond)));
     }
 
-    Jump branchPtr(Condition cond, Address left, TrustedImmPtr right)
+    Jump branchPtr(RelationalCondition cond, Address left, TrustedImmPtr right)
     {
         move(right, scratchRegister);
         return branchPtr(cond, left, scratchRegister);
     }
 
-    Jump branchTestPtr(Condition cond, RegisterID reg, RegisterID mask)
+    Jump branchTestPtr(ResultCondition cond, RegisterID reg, RegisterID mask)
     {
         m_assembler.testq_rr(reg, mask);
         return Jump(m_assembler.jCC(x86Condition(cond)));
     }
 
-    Jump branchTestPtr(Condition cond, RegisterID reg, TrustedImm32 mask = TrustedImm32(-1))
+    Jump branchTestPtr(ResultCondition cond, RegisterID reg, TrustedImm32 mask = TrustedImm32(-1))
     {
         // if we are only interested in the low seven bits, this can be tested with a testb
         if (mask.m_value == -1)
@@ -376,13 +376,13 @@ public:
         return Jump(m_assembler.jCC(x86Condition(cond)));
     }
 
-    Jump branchTestPtr(Condition cond, AbsoluteAddress address, TrustedImm32 mask = TrustedImm32(-1))
+    Jump branchTestPtr(ResultCondition cond, AbsoluteAddress address, TrustedImm32 mask = TrustedImm32(-1))
     {
         loadPtr(address.m_ptr, scratchRegister);
         return branchTestPtr(cond, scratchRegister, mask);
     }
 
-    Jump branchTestPtr(Condition cond, Address address, TrustedImm32 mask = TrustedImm32(-1))
+    Jump branchTestPtr(ResultCondition cond, Address address, TrustedImm32 mask = TrustedImm32(-1))
     {
         if (mask.m_value == -1)
             m_assembler.cmpq_im(0, address.offset, address.base);
@@ -391,7 +391,7 @@ public:
         return Jump(m_assembler.jCC(x86Condition(cond)));
     }
 
-    Jump branchTestPtr(Condition cond, BaseIndex address, TrustedImm32 mask = TrustedImm32(-1))
+    Jump branchTestPtr(ResultCondition cond, BaseIndex address, TrustedImm32 mask = TrustedImm32(-1))
     {
         if (mask.m_value == -1)
             m_assembler.cmpq_im(0, address.offset, address.base, address.index, address.scale);
@@ -401,16 +401,14 @@ public:
     }
 
 
-    Jump branchAddPtr(Condition cond, RegisterID src, RegisterID dest)
+    Jump branchAddPtr(ResultCondition cond, RegisterID src, RegisterID dest)
     {
-        ASSERT((cond == Overflow) || (cond == Zero) || (cond == NonZero));
         addPtr(src, dest);
         return Jump(m_assembler.jCC(x86Condition(cond)));
     }
 
-    Jump branchSubPtr(Condition cond, TrustedImm32 imm, RegisterID dest)
+    Jump branchSubPtr(ResultCondition cond, TrustedImm32 imm, RegisterID dest)
     {
-        ASSERT((cond == Overflow) || (cond == Zero) || (cond == NonZero));
         subPtr(imm, dest);
         return Jump(m_assembler.jCC(x86Condition(cond)));
     }
@@ -421,13 +419,13 @@ public:
         return DataLabelPtr(this);
     }
 
-    Jump branchPtrWithPatch(Condition cond, RegisterID left, DataLabelPtr& dataLabel, TrustedImmPtr initialRightValue = TrustedImmPtr(0))
+    Jump branchPtrWithPatch(RelationalCondition cond, RegisterID left, DataLabelPtr& dataLabel, TrustedImmPtr initialRightValue = TrustedImmPtr(0))
     {
         dataLabel = moveWithPatch(initialRightValue, scratchRegister);
         return branchPtr(cond, left, scratchRegister);
     }
 
-    Jump branchPtrWithPatch(Condition cond, Address left, DataLabelPtr& dataLabel, TrustedImmPtr initialRightValue = TrustedImmPtr(0))
+    Jump branchPtrWithPatch(RelationalCondition cond, Address left, DataLabelPtr& dataLabel, TrustedImmPtr initialRightValue = TrustedImmPtr(0))
     {
         dataLabel = moveWithPatch(initialRightValue, scratchRegister);
         return branchPtr(cond, left, scratchRegister);
@@ -441,7 +439,7 @@ public:
     }
 
     using MacroAssemblerX86Common::branchTest8;
-    Jump branchTest8(Condition cond, ExtendedAddress address, TrustedImm32 mask = TrustedImm32(-1))
+    Jump branchTest8(ResultCondition cond, ExtendedAddress address, TrustedImm32 mask = TrustedImm32(-1))
     {
         TrustedImmPtr addr(reinterpret_cast<void*>(address.offset));
         MacroAssemblerX86Common::move(addr, scratchRegister);
