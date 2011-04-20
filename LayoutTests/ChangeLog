@@ -1,3 +1,18 @@
+2011-04-20  Yury Semikhatsky  <yurys@chromium.org>
+
+        Reviewed by Tony Gentilcore.
+
+        Error event in <script> element shouldn't bubble
+        https://bugs.webkit.org/show_bug.cgi?id=51040
+
+        * fast/events/onerror-bubbling-expected.txt:
+        * fast/events/onerror-bubbling.html:
+        * svg/dom/SVGScriptElement/script-load-and-error-events.svg: error event is dispatched on the
+        corresponding SVGScriptElement and shouldn't bubble, so the global error handler should
+        never be invoked for script load errors. This behaviour is consistent with HTMLScriptElement element.
+        * svg/dom/SVGScriptElement/script-onerror-bubbling-expected.txt: Added.
+        * svg/dom/SVGScriptElement/script-onerror-bubbling.svg: Added.
+
 2011-04-20  John Knottenbelt  <jknotten@chromium.org>
 
         Unreviewed.

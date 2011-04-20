@@ -135,6 +135,11 @@ static bool isLegacySupportedJavaScriptLanguage(const String& language)
     return languages.contains(language);
 }
 
+void ScriptElement::dispatchErrorEvent()
+{
+    m_element->dispatchEvent(Event::create(eventNames().errorEvent, false, false));
+}
+
 bool ScriptElement::isScriptTypeSupported(LegacyTypeSupport supportLegacyTypes) const
 {
     // FIXME: isLegacySupportedJavaScriptLanguage() is not valid HTML5. It is used here to maintain backwards compatibility with existing layout tests. The specific violations are:

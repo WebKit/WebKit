@@ -50,7 +50,7 @@ public:
 
     // XML parser calls these
     virtual void dispatchLoadEvent() = 0;
-    virtual void dispatchErrorEvent() = 0;
+    void dispatchErrorEvent();
     bool isScriptTypeSupported(LegacyTypeSupport) const;
 
     bool haveFiredLoadEvent() const { return m_haveFiredLoad; }

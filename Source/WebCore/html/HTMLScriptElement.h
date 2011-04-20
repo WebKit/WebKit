@@ -65,7 +65,6 @@ private:
     virtual bool hasSourceAttribute() const;
 
     virtual void dispatchLoadEvent();
-    virtual void dispatchErrorEvent();
 
     PassRefPtr<Element> cloneElementWithoutAttributesAndChildren() const;
 };

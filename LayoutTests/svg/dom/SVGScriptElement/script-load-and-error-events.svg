@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<svg width="100%" height="100%" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xhtml="http://www.w3.org/1999/xhtml" onerror="errorEventHandler(evt)" onload="testLoadEventNotFired()">
+<svg width="100%" height="100%" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xhtml="http://www.w3.org/1999/xhtml" onerror="testGlobalErrorHandlerNotFired(evt)" onload="testLoadEventNotFired()">
 <defs>
 <title>&lt;SCRIPT&gt; load and error events</title>
 <script type="text/javascript">
@@ -13,6 +13,10 @@ for (i = 0; i &lt; 7; ++i)
 if (window.layoutTestController) {
     layoutTestController.dumpAsText();
     layoutTestController.waitUntilDone();
+}
+
+function testGlobalErrorHandlerNotFired(evt) {
+    status_[evt.target.id] += "G";
 }
 
 function testLoadEventNotFired() {
@@ -96,6 +100,7 @@ function continueDynamicTest1() {
         loadEventHandler(loadEvent);
         window.setTimeout('continueDynamicTest2()', 0);
     };
+    scriptElement.onerror = errorEventHandler;
 
     document.getElementsByTagName("defs")[0].appendChild(scriptElement);  
 }
@@ -106,15 +111,16 @@ function continueDynamicTest2() {
     scriptElement.type.baseVal = "text/javascript";
     scriptElement.href.baseVal = "resources/not-existant.js";
     scriptElement.externalResourcesRequired.baseVal = true;
+    scriptElement.onerror = errorEventHandler;
 
     lastTest = 1;
     document.getElementsByTagName("defs")[0].appendChild(scriptElement);  
 }
 </script>
-<script id="0" type="text/javascript" onload="loadEventHandler(evt)" xlink:href="resources/certainlydoesnotexist.js"></script>
-<script id="1" type="text/javascript" externalResourcesRequired="true" onload="loadEventHandler(evt)" xlink:href="resources/certainlydoesnotexisttoo.js"/>
-<script id="2" type="text/javascript" onload="loadEventHandler(evt)" xlink:href="resources/script-load.js"></script>
-<script id="3" type="text/javascript" externalResourcesRequired="true" onload="loadEventHandler(evt); lastTestBeforeRootElementLoaded();" xlink:href="resources/script-load.js"/>
+<script id="0" type="text/javascript" onerror="errorEventHandler(evt)" onload="loadEventHandler(evt)" xlink:href="resources/certainlydoesnotexist.js"></script>
+<script id="1" type="text/javascript" onerror="errorEventHandler(evt)" externalResourcesRequired="true" onload="loadEventHandler(evt)" xlink:href="resources/certainlydoesnotexisttoo.js"/>
+<script id="2" type="text/javascript" onerror="errorEventHandler(evt)" onload="loadEventHandler(evt)" xlink:href="resources/script-load.js"></script>
+<script id="3" type="text/javascript" onerror="errorEventHandler(evt)" externalResourcesRequired="true" onload="loadEventHandler(evt); lastTestBeforeRootElementLoaded();" xlink:href="resources/script-load.js"/>
 </defs>
 <foreignObject>
 Test load and error event handling with SVGScriptElement

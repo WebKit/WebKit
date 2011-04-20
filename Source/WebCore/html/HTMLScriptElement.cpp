@@ -185,11 +185,6 @@ void HTMLScriptElement::dispatchLoadEvent()
     dispatchEvent(Event::create(eventNames().loadEvent, false, false));
 }
 
-void HTMLScriptElement::dispatchErrorEvent()
-{
-    dispatchEvent(Event::create(eventNames().errorEvent, true, false));
-}
-
 PassRefPtr<Element> HTMLScriptElement::cloneElementWithoutAttributesAndChildren() const
 {
     return adoptRef(new HTMLScriptElement(tagQName(), document(), false, alreadyStarted()));

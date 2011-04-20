@@ -86,11 +86,6 @@ inline PassRefPtr<Event> createScriptLoadEvent()
     return Event::create(eventNames().loadEvent, false, false);
 }
 
-inline PassRefPtr<Event> createScriptErrorEvent()
-{
-    return Event::create(eventNames().errorEvent, true, false);
-}
-
 ScriptSourceCode HTMLScriptRunner::sourceFromPendingScript(const PendingScript& script, bool& errorOccurred) const
 {
     if (script.cachedScript()) {
@@ -138,7 +133,7 @@ void HTMLScriptRunner::executePendingScriptAndDispatchEvent(PendingScript& pendi
         NestingLevelIncrementer nestingLevelIncrementer(m_scriptNestingLevel);
         IgnoreDestructiveWriteCountIncrementer ignoreDestructiveWriteCountIncrementer(m_document);
         if (errorOccurred)
-            element->dispatchEvent(createScriptErrorEvent());
+            scriptElement->dispatchErrorEvent();
         else {
             ASSERT(isExecutingScript());
             scriptElement->executeScript(sourceCode);

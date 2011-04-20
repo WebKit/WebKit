@@ -27,7 +27,9 @@
 #include "Document.h"
 #include "Event.h"
 #include "EventNames.h"
+#include "HTMLNames.h"
 #include "SVGNames.h"
+#include "ScriptEventListener.h"
 
 namespace WebCore {
 
@@ -52,6 +54,8 @@ void SVGScriptElement::parseMappedAttribute(Attribute* attr)
 
     if (attrName == SVGNames::typeAttr)
         setType(attr->value());
+    else if (attr->name() == HTMLNames::onerrorAttr)
+        setAttributeEventListener(eventNames().errorEvent, createAttributeEventListener(this, attr));
     else {
         if (SVGURIReference::parseMappedAttribute(attr))
             return;
@@ -242,11 +246,6 @@ void SVGScriptElement::dispatchLoadEvent()
 
         sendSVGLoadEventIfPossible();
     }
-}
-
-void SVGScriptElement::dispatchErrorEvent()
-{
-    dispatchEvent(Event::create(eventNames().errorEvent, true, false));
 }
 
 PassRefPtr<Element> SVGScriptElement::cloneElementWithoutAttributesAndChildren() const

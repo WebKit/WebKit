@@ -1,3 +1,26 @@
+2011-04-20  Yury Semikhatsky  <yurys@chromium.org>
+
+        Reviewed by Tony Gentilcore.
+
+        Error event in <script> element shouldn't bubble
+        https://bugs.webkit.org/show_bug.cgi?id=51040
+
+        Test: svg/dom/SVGScriptElement/script-onerror-bubbling.svg
+
+        * dom/ScriptElement.cpp:
+        (WebCore::ScriptElement::dispatchErrorEvent): the method now has same implementation for all script
+        elements, script load error event doesn' bubble.
+        * dom/ScriptElement.h:
+        * html/HTMLScriptElement.cpp:
+        * html/HTMLScriptElement.h:
+        * html/parser/HTMLScriptRunner.cpp:
+        (WebCore::HTMLScriptRunner::executePendingScriptAndDispatchEvent):
+        * svg/SVGScriptElement.cpp:
+        (WebCore::SVGScriptElement::parseMappedAttribute): SVG script element now supports onerror
+        hanlder which behaves the same way as onerror in HTML script element: it's invoked when
+        script loading fails and the event doesn't bubble.
+        * svg/SVGScriptElement.h:
+
 2011-04-20  Pavel Feldman  <pfeldman@google.com>
 
         Reviewed by Yury Semikhatsky.

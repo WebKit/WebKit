@@ -20,7 +20,7 @@ function test()
     }
         
     var div = document.createElement("div");
-    div.setAttribute("onerror", "print('PASS: dynamic script load error bubbled'); \
+    div.setAttribute("onerror", "print('FAILED: dynamic script load error bubbled'); \
                                  if (window.layoutTestController) \
                                     layoutTestController.notifyDone();");
     
@@ -31,13 +31,28 @@ function test()
     // force the script to load
     document.body.appendChild(div);
 }
+
+function scriptOnerror()
+{
+    print('PASS: script error handler invoked');
+
+    // Allow event bubbling phase to complete.
+    setTimeout(function() {
+        if (window.layoutTestController)
+            layoutTestController.notifyDone();
+    }, 0);
+}
+
+window.onerror = function() {
+    print('FAILED: window.onerror handler invoked');
+}
 </script>
 </head>
 <body onload="test();">
 <hr>
 <div id='console'></div>
-<div onerror="print('PASS: inline script load error bubbled')">
-    <script src="file:///GregTheBunny.js"></script>
+<div onerror="print('FAILED: inline script load error bubbled')">
+    <script src="file:///GregTheBunny.js" onerror="scriptOnerror()"></script>
 </div>
 
 </body>
