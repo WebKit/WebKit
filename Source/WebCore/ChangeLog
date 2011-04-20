@@ -1,3 +1,18 @@
+2011-04-20  Benjamin Poulain  <benjamin.poulain@nokia.com>
+
+        Reviewed by Andreas Kling.
+
+        [Qt] Clean the style of our cookie methods
+        https://bugs.webkit.org/show_bug.cgi?id=58987
+
+        Got rid of the variables named "u" in favor just converting the url when needed.
+
+        * platform/qt/CookieJarQt.cpp:
+        (WebCore::setCookies): The variable p was unused.
+        The ::toAscii() depends on the default codec, use toLatin1() instead.
+        (WebCore::cookies): foreach() should use const reference.
+        (WebCore::cookieRequestHeaderFieldValue):
+
 2011-04-19  Mihai Parparita  <mihaip@chromium.org>
 
         Reviewed by Adam Barth.

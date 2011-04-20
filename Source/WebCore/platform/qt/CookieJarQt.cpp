@@ -59,13 +59,11 @@ static QNetworkCookieJar *cookieJar(const Document *document)
 
 void setCookies(Document* document, const KURL& url, const String& value)
 {
-    QUrl u(url);
-    QUrl p(document->firstPartyForCookies());
     QNetworkCookieJar* jar = cookieJar(document);
     if (!jar)
         return;
 
-    QList<QNetworkCookie> cookies = QNetworkCookie::parseCookies(QString(value).toAscii());
+    QList<QNetworkCookie> cookies = QNetworkCookie::parseCookies(QString(value).toLatin1());
     QList<QNetworkCookie>::Iterator it = cookies.begin();
     while (it != cookies.end()) {
         if (it->isHttpOnly())
@@ -73,22 +71,21 @@ void setCookies(Document* document, const KURL& url, const String& value)
         else
             ++it;
     }
-    jar->setCookiesFromUrl(cookies, u);
+    jar->setCookiesFromUrl(cookies, QUrl(url));
 }
 
 String cookies(const Document* document, const KURL& url)
 {
-    QUrl u(url);
     QNetworkCookieJar* jar = cookieJar(document);
     if (!jar)
         return String();
 
-    QList<QNetworkCookie> cookies = jar->cookiesForUrl(u);
+    QList<QNetworkCookie> cookies = jar->cookiesForUrl(QUrl(url));
     if (cookies.isEmpty())
         return String();
 
     QStringList resultCookies;
-    foreach (QNetworkCookie networkCookie, cookies) {
+    foreach (const QNetworkCookie& networkCookie, cookies) {
         if (networkCookie.isHttpOnly())
             continue;
         resultCookies.append(QString::fromLatin1(networkCookie.toRawForm(QNetworkCookie::NameAndValueOnly).constData()));
@@ -99,12 +96,11 @@ String cookies(const Document* document, const KURL& url)
 
 String cookieRequestHeaderFieldValue(const Document* document, const KURL &url)
 {
-    QUrl u(url);
     QNetworkCookieJar* jar = cookieJar(document);
     if (!jar)
         return String();
 
-    QList<QNetworkCookie> cookies = jar->cookiesForUrl(u);
+    QList<QNetworkCookie> cookies = jar->cookiesForUrl(QUrl(url));
     if (cookies.isEmpty())
         return String();
 
