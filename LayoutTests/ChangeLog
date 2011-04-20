@@ -1,3 +1,20 @@
+2011-04-19  Chris Rogers  <crogers@google.com>
+
+        Unreviewed.
+
+        Rebaseline some tests and update test_expectations.txt
+        https://bugs.webkit.org/show_bug.cgi?id=58954
+
+        * platform/chromium-mac-leopard/fast/overflow/border-radius-clipping-expected.checksum: Removed.
+        * platform/chromium-mac-leopard/fast/overflow/border-radius-clipping-expected.png:
+        * platform/chromium-mac-leopard/svg/custom/svg-fonts-in-html-expected.checksum: Removed.
+        * platform/chromium-mac-leopard/svg/custom/svg-fonts-in-html-expected.png: Removed.
+        * platform/chromium-mac/fast/overflow/border-radius-clipping-expected.png: Added.
+        * platform/chromium-mac/svg/custom/svg-fonts-in-html-expected.checksum: Removed.
+        * platform/chromium-mac/svg/custom/svg-fonts-in-html-expected.png:
+        * platform/chromium-win/fast/text/justification-padding-mid-word-expected.txt:
+        * platform/chromium/test_expectations.txt:
+
 2011-04-19  James Robinson  <jamesr@chromium.org>
 
         [win] New test compositing/iframes/invisible-nested-iframe-show.html fails on windows
