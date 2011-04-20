@@ -112,6 +112,8 @@ void Image::drawTiled(GraphicsContext* ctxt, const FloatRect& destRect, const Fl
         return;
     }
 
+    ASSERT(!isBitmapImage() || static_cast<BitmapImage*>(this)->notSolidColor());
+
     FloatSize intrinsicTileSize = size();
     if (hasRelativeWidth())
         intrinsicTileSize.setWidth(scaledTileSize.width());

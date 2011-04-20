@@ -1,3 +1,17 @@
+2011-04-19  Pratik Solanki  <psolanki@apple.com>
+
+        Reviewed by Simon Fraser.
+
+        Follow on fix for https://bugs.webkit.org/show_bug.cgi?id=58926
+
+        Move the assert from Image::drawPattern() to Image::drawTiled() so we don't hit it when
+        trying to paint GeneratedImages.
+
+        * platform/graphics/Image.cpp:
+        (WebCore::Image::drawTiled):
+        * platform/graphics/cg/ImageCG.cpp:
+        (WebCore::Image::drawPattern):
+
 2011-04-19  Simon Fraser  <simon.fraser@apple.com>
 
         Fix 32-bit builds.
