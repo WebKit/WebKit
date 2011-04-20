@@ -922,6 +922,7 @@ fast/history/back-forward-reset-after-error-handling.html
 fast/history/timed-refresh-in-cached-frame.html
 fast/loader/frames-with-unload-handlers-in-page-cache.html
 fast/loader/input-element-page-cache-crash.html
+fast/loader/scroll-position-restored-on-back.html
 fast/loader/unschedule-relayout-after-unload.html
 fast/parser/noscript-with-javascript-disabled.html
 fast/parser/noscript-with-javascript-enabled.html
@@ -2377,6 +2378,7 @@ http/tests/websocket/tests/frame-lengths.html
 http/tests/navigation/ping-cross-origin-from-https.html
 http/tests/misc/object-image-error.html
 http/tests/history/back-during-onload-triggered-by-back.html
+http/tests/security/contentSecurityPolicy/media-src-allowed.html
 
 # Cookie handling problems
 http/tests/security/cookies/document-open.html
@@ -3389,3 +3391,11 @@ fast/history/nested-visited-test.html
 fast/history/self-is-visited.html
 fast/history/sibling-visited-test.html
 fast/loader/stateobjects/state-url-sets-links-visited.html
+
+# [Qt][WK2] editing/pasteboard/copy-text-with-backgroundcolor.html fails
+# https://bugs.webkit.org/show_bug.cgi?id=59001
+editing/pasteboard/copy-text-with-backgroundcolor.html
+
+# [Qt][WK2]REGRESSION(r84263): editing/pasteboard/text-selection.html fails
+# https://bugs.webkit.org/show_bug.cgi?id=58998
+editing/pasteboard/text-selection.html fails
