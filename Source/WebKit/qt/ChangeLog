@@ -1,5 +1,19 @@
 2011-04-19  Yi Shen  <yi.4.shen@nokia.com>
 
+        Reviewed by Andreas Kling.
+
+        [Qt][Symbian] Fix Api test failure -- tst_QWebView::setPalette()
+        https://bugs.webkit.org/show_bug.cgi?id=57254
+
+        Skip test for setPalette() which doesn't work 
+        when WTF_USE_QT_MOBILE_THEME is defined.
+
+        * tests/qgraphicswebview/tst_qgraphicswebview.cpp:
+        * tests/qwebview/tst_qwebview.cpp:
+        * tests/tests.pri:
+
+2011-04-19  Yi Shen  <yi.4.shen@nokia.com>
+
         Reviewed by Laszlo Gombos.
 
         [Qt][Symbian] Fix Api test failure -- tst_QGraphicsWebView::widgetsRenderingThroughCache

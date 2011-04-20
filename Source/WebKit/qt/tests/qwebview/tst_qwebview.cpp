@@ -62,9 +62,10 @@ private slots:
     void focusInputTypes();
 
     void crashTests();
-
+#if !(defined(WTF_USE_QT_MOBILE_THEME) && WTF_USE_QT_MOBILE_THEME)
     void setPalette_data();
     void setPalette();
+#endif
 };
 
 // This will be called before the first test function is executed.
@@ -325,6 +326,7 @@ void tst_QWebView::focusInputTypes()
     QVERIFY(webView.testAttribute(Qt::WA_InputMethodEnabled));
 }
 
+#if !(defined(WTF_USE_QT_MOBILE_THEME) && WTF_USE_QT_MOBILE_THEME)
 void tst_QWebView::setPalette_data()
 {
     QTest::addColumn<bool>("active");
@@ -453,6 +455,7 @@ void tst_QWebView::setPalette()
 
     QVERIFY(img1 != img2);
 }
+#endif
 
 void tst_QWebView::renderingAfterMaxAndBack()
 {

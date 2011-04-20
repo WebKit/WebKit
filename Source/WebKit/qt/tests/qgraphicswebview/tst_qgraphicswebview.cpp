@@ -41,8 +41,10 @@ private slots:
     void focusInputTypes();
     void crashOnSetScaleBeforeSetUrl();
     void widgetsRenderingThroughCache();
+#if !(defined(WTF_USE_QT_MOBILE_THEME) && WTF_USE_QT_MOBILE_THEME)
     void setPalette_data();
     void setPalette();
+#endif
     void renderHints();
 #if defined(ENABLE_TILED_BACKING_STORE) && ENABLE_TILED_BACKING_STORE
     void bug56929();
@@ -311,6 +313,7 @@ void tst_QGraphicsWebView::focusInputTypes()
     delete view;
 }
 
+#if !(defined(WTF_USE_QT_MOBILE_THEME) && WTF_USE_QT_MOBILE_THEME)
 void tst_QGraphicsWebView::setPalette_data()
 {
     QTest::addColumn<bool>("active");
@@ -458,6 +461,7 @@ void tst_QGraphicsWebView::setPalette()
 
     QVERIFY(img1 != img2);
 }
+#endif
 
 void tst_QGraphicsWebView::renderHints()
 {
