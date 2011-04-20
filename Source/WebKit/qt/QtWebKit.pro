@@ -15,23 +15,12 @@ else: CONFIG_DIR = release
 
 SOURCE_DIR = $$replace(PWD, /WebKit/qt, "")
 
-CONFIG(standalone_package) {
-    isEmpty(WEBKIT2_GENERATED_SOURCES_DIR):JSC_GENERATED_SOURCES_DIR = $$PWD/../../JavaScriptCore/generated
-    isEmpty(WC_GENERATED_SOURCES_DIR):WC_GENERATED_SOURCES_DIR = $$PWD/../../WebCore/generated
-    isEmpty(WC_GENERATED_SOURCES_DIR):WEBKIT2_GENERATED_SOURCES_DIR = $$PWD/../../WebKit2/generated
-} else {
-    isEmpty(WEBKIT2_GENERATED_SOURCES_DIR):JSC_GENERATED_SOURCES_DIR = ../../JavaScriptCore/generated
-    isEmpty(WC_GENERATED_SOURCES_DIR):WC_GENERATED_SOURCES_DIR = ../../WebCore/generated
-    isEmpty(WC_GENERATED_SOURCES_DIR):WEBKIT2_GENERATED_SOURCES_DIR = ../../WebKit2/generated
-}
-
 include($$PWD/Api/headers.pri)
 include($$SOURCE_DIR/WebKit.pri)
 include($$SOURCE_DIR/JavaScriptCore/JavaScriptCore.pri)
 webkit2 {
     include($$SOURCE_DIR/WebKit2/WebKit2.pri)
     include($$SOURCE_DIR/WebKit2/WebKit2API.pri)
-    INCLUDEPATH += $$OUTPUT_DIR/WebKit2/generated
 }
 include($$SOURCE_DIR/WebCore/WebCore.pri)
 

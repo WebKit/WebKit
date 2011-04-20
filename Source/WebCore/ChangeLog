@@ -1,3 +1,16 @@
+2011-04-20  Balazs Kelemen  <kbalazs@webkit.org>
+
+        Reviewed by Csaba Osztrogonác.
+
+        [Qt] Cleanup includepath adjustment for generated files
+        https://bugs.webkit.org/show_bug.cgi?id=58869
+
+        Build cleanup, no new tests.
+
+        * WebCore.pri: Add the directory of generated files to the include path
+        with absolute path to make it valid in the final build step. Remove
+        unnecessary logic.
+
 2011-04-20  Mariusz Grzegorczyk  <mariusz.g@samsung.com>
 
         Reviewed by Andreas Kling.

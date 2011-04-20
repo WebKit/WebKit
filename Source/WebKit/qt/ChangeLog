@@ -1,3 +1,13 @@
+2011-04-20  Balazs Kelemen  <kbalazs@webkit.org>
+
+        Reviewed by Csaba Osztrogonác.
+
+        [Qt] Cleanup includepath adjustment for generated files
+        https://bugs.webkit.org/show_bug.cgi?id=58869
+
+        * QtWebKit.pro: Revert the hacky fix in r84174. Remove
+        unnecessary logic.
+
 2011-04-19  Yi Shen  <yi.4.shen@nokia.com>
 
         Reviewed by Andreas Kling.
