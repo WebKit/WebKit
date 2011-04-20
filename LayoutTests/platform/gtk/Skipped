@@ -186,6 +186,9 @@ svg/text/text-deco-01-b.svg
 # https://bugs.webkit.org/show_bug.cgi?id=58818
 fast/block/float/overhanging-tall-block.html
 
+# https://bugs.webkit.org/show_bug.cgi?id=58976
+fast/events/overflow-viewport-renderer-deleted.html
+
 ###############################################################################
 # EXPECTED FAILURES
 ###############################################################################
