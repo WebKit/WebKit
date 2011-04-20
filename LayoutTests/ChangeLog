@@ -1,3 +1,12 @@
+2011-04-20  John Knottenbelt  <jknotten@chromium.org>
+
+        Unreviewed.
+
+        [Chromium] Mark css2.1/t140201-c533-bgimage-00-a.html as crash on Linux, Win Debug
+        https://bugs.webkit.org/show_bug.cgi?id=58995
+
+        * platform/chromium/test_expectations.txt:
+
 2011-04-20  Jessie Berlin  <jberlin@apple.com>
 
         [Snow Leopard Intel WebKit2 Release Tests] editing/execCommand/convert-style-elements-to-spans.html

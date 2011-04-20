@@ -3742,3 +3742,5 @@ BUGDPRANKE : svg/custom/svg-fonts-in-html.html = IMAGE
 
 // probably just needs a new baseline
 BUGDPRANKE WIN LINUX : fast/backgrounds/background-leakage-transforms.html = IMAGE+TEXT
+
+BUGCR80011 MAC LINUX DEBUG : css2.1/t140201-c533-bgimage-00-a.html = CRASH
