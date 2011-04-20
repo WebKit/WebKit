@@ -3218,7 +3218,7 @@ BUGCR77582 BUG_DRT WIN LINUX DEBUG SLOW : inspector/debugger/debugger-activation
 BUGCR77619 MAC SNOWLEOPARD : plugins/plugin-javascript-access.html = TEXT
 
 // New test in r82013.
-BUGWK82013 WIN MAC LINUX : fast/text/justify-ideograph-leading-expansion.html = IMAGE+TEXT
+BUGWK82013 WIN MAC LINUX : fast/text/justify-ideograph-leading-expansion.html = IMAGE+TEXT IMAGE
 
 // New test added in r82056. The arrow does not point upwards.
 BUGCR77574 LINUX : fast/blockflow/fallback-orientation.html = IMAGE
@@ -3660,4 +3660,22 @@ BUGDPRANKE MAC : fast/forms/select-background-none.html = IMAGE
 BUGDPRANKE MAC : fast/html/details-add-summary-1.html = IMAGE
 BUGDPRANKE CPU LINUX : media/video-transformed.html = IMAGE
 BUGDPRANKE LINUX : transforms/2d/hindi-rotated.html = IMAGE
+BUGDPRANKE MAC : compositing/iframes/invisible-nested-iframe-show.html = TEXT
+BUGDPRANKE MAC GPU : compositing/geometry/video-fixed-scrolling.html = IMAGE
+BUGDPRANKE MAC GPU : media/video-volume-slider.html = IMAGE
+BUGDPRANKE MAC GPU : media/video-zoom.html = CRASH
+BUGDPRANKE MAC : plugins/mouse-click-iframe-to-plugin.html = TIMEOUT PASS
+BUGDPRANKE MAC : animations/3d/transform-origin-vs-functions.html = TEXT PASS
+BUGDPRANKE MAC : fast/encoding/parser-tests-10.html = TIMEOUT PASS
+BUGDPRANKE MAC : fast/encoding/parser-tests-120.html = TIMEOUT PASS
+BUGDPRANKE MAC : http/tests/loading/preload-slow-loading.php = TEXT
+BUGDPRANKE MAC : http/tests/misc/image-error.html = TEXT
+BUGDPRANKE MAC : http/tests/ssl/verify-ssl-enabled.php = TEXT
+BUGDPRANKE MAC : fast/text/international/thai-line-breaks.html = IMAGE
+BUGDPRANKE MAC : css1/basic/grouping.html = CRASH
+BUGDPRANKE MAC : http/tests/local/formdata/send-form-data-with-sliced-file.html = CRASH
+BUGDPRANKE MAC : http/tests/media/video-served-as-text.html = CRASH
+BUGDPRANKE MAC : http/tests/misc/object-image-error.html = TIMEOUT
+BUGDPRANKE MAC : fast/text/international/thai-baht-space.html = IMAGE+TEXT
+
 
