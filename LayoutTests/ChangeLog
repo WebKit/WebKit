@@ -1,3 +1,12 @@
+2011-04-20  Mike Reed  <reed@google.com>
+
+        Reviewed by Steve Block.
+
+        prepare tests for rebaselining
+        https://bugs.webkit.org/show_bug.cgi?id=58989
+
+        * platform/chromium/test_expectations.txt:
+
 2011-04-20  Tony Chang  <tony@chromium.org>
 
         Fixed lint errors in test_expectations.txt.
