@@ -1,3 +1,10 @@
+2011-04-20  Jian Li  <jianli@chromium.org>
+
+        Unreviewed, fixed typo in the failed test added to chromium test
+        expectations.
+
+        * platform/chromium/test_expectations.txt:
+
 2011-04-20  Tony Chang  <tony@chromium.org>
 
         More .checksum file cleanup.
