@@ -1,3 +1,19 @@
+2011-04-19  Eric Carlson  <eric.carlson@apple.com>
+
+        Reviewed by Dimitri Glazkov.
+
+        Media controls status display should not be hidden for live streams
+        https://bugs.webkit.org/show_bug.cgi?id=58952
+
+        Tested manually because we don't have any live streams to test in DRT.
+
+        * html/shadow/MediaControlElements.cpp:
+        (WebCore::MediaControlStatusDisplayElement::update): Set the status to "Loading" only until
+            there is something to display (readyState exceeds HAVE_METADATA).
+        * html/shadow/MediaControlRootElement.cpp:
+        (WebCore::MediaControlRootElement::loadedMetadata): Don't hide the status display for
+            live streams.
+
 2011-04-19  Julien Chaffraix  <jchaffraix@codeaurora.org>
 
         Reviewed by Alexey Proskuryakov.

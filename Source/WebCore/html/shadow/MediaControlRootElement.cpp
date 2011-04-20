@@ -382,7 +382,7 @@ void MediaControlRootElement::changedNetworkState()
 
 void MediaControlRootElement::loadedMetadata()
 {
-    if (m_statusDisplay)
+    if (m_statusDisplay && m_mediaElement->movieLoadType() != MediaPlayer::LiveStream)
         m_statusDisplay->hide();
 
     reset();

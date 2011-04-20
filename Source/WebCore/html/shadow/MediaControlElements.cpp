@@ -243,7 +243,7 @@ void MediaControlStatusDisplayElement::update()
     // Get the new state that we'll have to display.
     StateBeingDisplayed newStateToDisplay = Nothing;
 
-    if (mediaElement()->readyState() != HTMLMediaElement::HAVE_ENOUGH_DATA && !mediaElement()->currentSrc().isEmpty())
+    if (mediaElement()->readyState() <= HTMLMediaElement::HAVE_METADATA && !mediaElement()->currentSrc().isEmpty())
         newStateToDisplay = Loading;
     else if (mediaElement()->movieLoadType() == MediaPlayer::LiveStream)
         newStateToDisplay = LiveBroadcast;
