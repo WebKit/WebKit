@@ -721,7 +721,8 @@ nodist_libWebCore_la_SOURCES = \
 	$(webcore_built_sources)
 
 libWebCore_la_SOURCES = \
-	$(webcore_sources)
+	$(webcore_sources) \
+	$(webcoregtk_sources)
 
 libWebCore_la_CXXFLAGS = \
 	$(SYMBOL_VISIBILITY_INLINES) \

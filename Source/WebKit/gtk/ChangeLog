@@ -1,3 +1,16 @@
+2011-04-20  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Reviewed by Martin Robinson.
+
+        [GTK] Build libWebCore with the gtk sources too
+        https://bugs.webkit.org/show_bug.cgi?id=58968
+
+        In some cases webcore files are compiled twice, so it improves the
+        build time.
+
+        * GNUmakefile.am: Remove webcore gtk sources from libwebkitgtk
+        sources.
+
 2011-04-19  Vsevolod Vlasov  <vsevik@chromium.org>
 
         Reviewed by Pavel Feldman.
