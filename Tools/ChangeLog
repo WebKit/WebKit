@@ -1,5 +1,25 @@
 2011-04-20  Adam Roben  <aroben@apple.com>
 
+        Replace old-run-webkit-tests's win-7 platform with win-7sp0
+
+        It was an error that we had a win-7 platform to begin with. Windows 7 was the most recent
+        version of Windows we cared about, so its results should just go in win. But now that
+        Windows 7 SP1 exists (and has different results for some tests), we need a place to store
+        results for Windows 7 without SP1 (and older versions of Windows).
+
+        Part of <http://webkit.org/b/56617> Several tests fail on Windows 7 SP1 due to font
+        differences from Windows 7 "SP0"
+
+        Reviewed by David Kilzer.
+
+        * Scripts/old-run-webkit-tests: Replaced win-7 with win-7sp0. Newer versions of Windows 7
+        will just use "win".
+
+        * Scripts/webkitdirs.pm:
+        (isWindows7SP0): Added. Replaces isWindows7, because that function had no remaining callers.
+
+2011-04-20  Adam Roben  <aroben@apple.com>
+
         Teach webkitdirs::winVersion about build numbers
 
         The build number isn't currently used, but soon will be.

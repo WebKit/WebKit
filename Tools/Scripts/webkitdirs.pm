@@ -918,9 +918,9 @@ sub winVersion()
     return $winVersion;
 }
 
-sub isWindows7()
+sub isWindows7SP0()
 {
-    return isAnyWindows() && winVersion()->{major} == 6 && winVersion()->{minor} == 1;
+    return isAnyWindows() && winVersion()->{major} == 6 && winVersion()->{minor} == 1 && winVersion()->{build} == 7600;
 }
 
 sub isWindowsVista()
