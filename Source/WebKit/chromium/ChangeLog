@@ -1,3 +1,15 @@
+2011-04-20  Yuzhu Shen  <yzshen@chromium.org>
+
+        Reviewed by Tony Chang.
+
+        [chromium] linux chromium doesn't set click count for mouse up events.
+        https://bugs.webkit.org/show_bug.cgi?id=58921
+
+        The reason why we need such a fix is that the Pepper API passes this information to plugins,
+        and some consumers (e.g., Flash) need it to detect double-clicks.
+
+        * src/gtk/WebInputEventFactory.cpp: set click count for mouse up events.
+        * tests/WebInputEventFactoryTestGtk.cpp: added test case MouseUpClickCount.
 2011-04-20  Evan Martin  <evan@chromium.org>
 
         Reviewed by Tony Chang.

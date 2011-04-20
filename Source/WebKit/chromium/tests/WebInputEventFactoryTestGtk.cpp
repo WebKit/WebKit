@@ -109,4 +109,67 @@ TEST(WebInputEventFactoryTest, DoubleClick)
     EXPECT_EQ(1, secondClickEvent.clickCount);
 }
 
+TEST(WebInputEventFactoryTest, MouseUpClickCount)
+{
+    GdkEventButton mouseDown;
+    memset(&mouseDown, 0, sizeof(mouseDown));
+    mouseDown.type = GDK_BUTTON_PRESS;
+    mouseDown.window = static_cast<GdkWindow*>(GINT_TO_POINTER(1));
+    mouseDown.x = mouseDown.y = mouseDown.x_root = mouseDown.y_root = 100;
+    mouseDown.time = 0;
+    mouseDown.button = 1;
+
+    // Properly set the last click time, so that the internal state won't be affected by previous tests.
+    WebInputEventFactory::mouseEvent(&mouseDown);
+
+    mouseDown.time += 10000;
+    GdkEventButton mouseUp = mouseDown;
+    mouseUp.type = GDK_BUTTON_RELEASE;
+    WebMouseEvent mouseDownEvent;
+    WebMouseEvent mouseUpEvent;
+
+    // Click for three times.
+    for (int i = 1; i < 4; ++i) {
+        mouseDown.time += 100;
+        mouseDownEvent = WebInputEventFactory::mouseEvent(&mouseDown);
+        EXPECT_EQ(i, mouseDownEvent.clickCount);
+
+        mouseUp.time = mouseDown.time + 50;
+        mouseUpEvent = WebInputEventFactory::mouseEvent(&mouseUp);
+        EXPECT_EQ(i, mouseUpEvent.clickCount);
+    }
+
+    // Reset the click count.
+    mouseDown.time += 10000;
+    mouseDownEvent = WebInputEventFactory::mouseEvent(&mouseDown);
+    EXPECT_EQ(1, mouseDownEvent.clickCount);
+
+    // Moving the cursor for a significant distance will reset the click count to 0.
+    GdkEventMotion mouseMove;
+    memset(&mouseMove, 0, sizeof(mouseMove));
+    mouseMove.type = GDK_MOTION_NOTIFY;
+    mouseMove.window = mouseDown.window;
+    mouseMove.time = mouseDown.time;
+    mouseMove.x = mouseMove.y = mouseMove.x_root = mouseMove.y_root = mouseDown.x + 100;
+    WebInputEventFactory::mouseEvent(&mouseMove);
+
+    mouseUp.time = mouseDown.time + 50;
+    mouseUpEvent = WebInputEventFactory::mouseEvent(&mouseUp);
+    EXPECT_EQ(0, mouseUpEvent.clickCount);
+
+    // Reset the click count.
+    mouseDown.time += 10000;
+    mouseDownEvent = WebInputEventFactory::mouseEvent(&mouseDown);
+    EXPECT_EQ(1, mouseDownEvent.clickCount);
+
+    // Moving the cursor with a significant delay will reset the click count to 0.
+    mouseMove.time = mouseDown.time + 1000;
+    mouseMove.x = mouseMove.y = mouseMove.x_root = mouseMove.y_root = mouseDown.x;
+    WebInputEventFactory::mouseEvent(&mouseMove);
+
+    mouseUp.time = mouseMove.time + 50;
+    mouseUpEvent = WebInputEventFactory::mouseEvent(&mouseUp);
+    EXPECT_EQ(0, mouseUpEvent.clickCount);
+}
+
 } // anonymous namespace

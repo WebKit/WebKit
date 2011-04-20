@@ -45,15 +45,39 @@
 
 namespace {
 
-bool countsAsDoubleClick(gint timeDiff, gint xDiff, gint yDiff)
+// For click count tracking.
+static int gNumClicks = 0;
+static GdkWindow* gLastClickEventWindow = 0;
+static gint gLastClickTime = 0;
+static gint gLastClickX = 0;
+static gint gLastClickY = 0;
+static WebKit::WebMouseEvent::Button gLastClickButton = WebKit::WebMouseEvent::ButtonNone;
+
+bool shouldForgetPreviousClick(GdkWindow* window, gint time, gint x, gint y)
 {
     static GtkSettings* settings = gtk_settings_get_default();
+
+    if (window != gLastClickEventWindow)
+      return true;
+
     gint doubleClickTime = 250;
     gint doubleClickDistance = 5;
     g_object_get(G_OBJECT(settings),
                  "gtk-double-click-time", &doubleClickTime,
                  "gtk-double-click-distance", &doubleClickDistance, NULL);
-    return timeDiff <= doubleClickTime && abs(xDiff) <= doubleClickDistance && abs(yDiff) <= doubleClickDistance;
+    return (time - gLastClickTime) > doubleClickTime
+           || abs(x - gLastClickX) > doubleClickDistance
+           || abs(y - gLastClickY) > doubleClickDistance;
+}
+
+void resetClickCountState()
+{
+    gNumClicks = 0;
+    gLastClickEventWindow = 0;
+    gLastClickTime = 0;
+    gLastClickX = 0;
+    gLastClickY = 0;
+    gLastClickButton = WebKit::WebMouseEvent::ButtonNone;
 }
 
 }  // namespace
@@ -407,28 +431,6 @@ WebMouseEvent WebInputEventFactory::mouseEvent(const GdkEventButton* event)
         ASSERT_NOT_REACHED();
     };
 
-    if (GDK_BUTTON_PRESS == event->type) {
-        static int numClicks = 0;
-        static GdkWindow* eventWindow = 0;
-        static gint lastLeftClickTime = 0;
-        static gint lastLeftClickX = 0;
-        static gint lastLeftClickY = 0;
-
-        gint timeDiff = event->time - lastLeftClickTime;
-        gint xDiff = event->x - lastLeftClickX;
-        gint yDiff = event->y - lastLeftClickY;
-        if (eventWindow == event->window && countsAsDoubleClick(timeDiff, xDiff, yDiff))
-            numClicks++;
-        else
-            numClicks = 1;
-
-        result.clickCount = numClicks;
-        eventWindow = event->window;
-        lastLeftClickTime = event->time;
-        lastLeftClickX = event->x;
-        lastLeftClickY = event->y;
-    }
-
     result.button = WebMouseEvent::ButtonNone;
     if (event->button == 1)
         result.button = WebMouseEvent::ButtonLeft;
@@ -436,6 +438,23 @@ WebMouseEvent WebInputEventFactory::mouseEvent(const GdkEventButton* event)
         result.button = WebMouseEvent::ButtonMiddle;
     else if (event->button == 3)
         result.button = WebMouseEvent::ButtonRight;
+
+    if (result.type == WebInputEvent::MouseDown) {
+        bool forgetPreviousClick = shouldForgetPreviousClick(event->window, event->time, event->x, event->y);
+
+        if (!forgetPreviousClick && result.button == gLastClickButton)
+            ++gNumClicks;
+        else {
+            gNumClicks = 1;
+
+            gLastClickEventWindow = event->window;
+            gLastClickX = event->x;
+            gLastClickY = event->y;
+            gLastClickButton = result.button;
+        }
+        gLastClickTime = event->time;
+    }
+    result.clickCount = gNumClicks;
 
     return result;
 }
@@ -468,6 +487,9 @@ WebMouseEvent WebInputEventFactory::mouseEvent(const GdkEventMotion* event)
         result.button = WebMouseEvent::ButtonMiddle;
     else if (event->state & GDK_BUTTON3_MASK)
         result.button = WebMouseEvent::ButtonRight;
+
+    if (shouldForgetPreviousClick(event->window, event->time, event->x, event->y))
+        resetClickCountState();
 
     return result;
 }
@@ -504,6 +526,9 @@ WebMouseEvent WebInputEventFactory::mouseEvent(const GdkEventCrossing* event)
         result.button = WebMouseEvent::ButtonMiddle;
     else if (event->state & GDK_BUTTON3_MASK)
         result.button = WebMouseEvent::ButtonRight;
+
+    if (shouldForgetPreviousClick(event->window, event->time, event->x, event->y))
+        resetClickCountState();
 
     return result;
 }
