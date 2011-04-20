@@ -1,3 +1,9 @@
+2011-04-19  Geoffrey Garen  <ggaren@apple.com>
+
+        Try to fix v8 build.
+
+        * bindings/scripts/CodeGeneratorV8.pm: This is a pretty bad system.
+
 2011-04-19  Enrica Casucci  <enrica@apple.com>
 
         Reviewed by Ryosuke Niwa.

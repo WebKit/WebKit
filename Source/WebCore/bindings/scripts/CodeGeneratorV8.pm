@@ -2552,6 +2552,7 @@ sub HasCustomToV8Implementation {
     return 0 if $interfaceName eq "AbstractWorker";
     return 0 if $interfaceName eq "CanvasRenderingContext";
     return 0 if $interfaceName eq "SVGElementInstance";
+    return 0 if $interfaceName eq "NodeList";
 
     # For everything else, do what JSC does.
     return $dataNode->extendedAttributes->{"CustomToJS"};
