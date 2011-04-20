@@ -13,8 +13,10 @@
     ctx.fillText("B", 0, 100);
     ctx.fillStyle = "green";
     canvas.parentNode.removeChild(canvas);
-    if (window.layoutTestController)
+    if (window.layoutTestController) {
+        layoutTestController.dumpAsText(true);
         layoutTestController.waitUntilDone();
+	}
     setTimeout(function()
     {
         ctx.fillText("A", 0, 100);

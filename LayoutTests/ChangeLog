@@ -1,3 +1,13 @@
+2011-04-20  Matthew Delaney  <mdelaney@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        Update fast/canvas/font-update.html to use dumpAsText.
+        https://bugs.webkit.org/show_bug.cgi?id=59003
+
+        * fast/canvas/font-update-expected.txt:
+        * fast/canvas/font-update.html: This test is only useful as a pixel test. Dumping the render tree will always show the same thing regardless of what's done on the canvas in the test. However, with new render tree schemes (canvases in layers and such) the render trees will even look different but not actually failing what the test tests.
+
 2011-04-20  Mike Reed  <reed@google.com>
 
         Reviewed by Steve Block.
