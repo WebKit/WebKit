@@ -1,3 +1,9 @@
+2011-04-20  Tony Chang  <tony@chromium.org>
+
+        Fixed lint errors in test_expectations.txt.
+
+        * platform/chromium/test_expectations.txt:
+
 2011-04-20  John Knottenbelt  <jknotten@chromium.org>
 
         Unreviewed.

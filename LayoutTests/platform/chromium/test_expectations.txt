@@ -615,7 +615,7 @@ BUGCR8630 WIN LINUX : fast/repaint/body-background-image.html = FAIL
 
 // Relies on text metrics to pass. Rework to be meaningful for ports other than platform/mac.
 BUGCR8630 WIN LINUX : fast/repaint/overflow-outline-repaint.html = FAIL
-BUGCR8630 WIN LINUX : fast/backgrounds/solid-color-context-restore.html = FAIL
+BUGCR8630 WIN LINUX RELEASE : fast/backgrounds/solid-color-context-restore.html = FAIL
 BUGCR8630 WIN LINUX : fast/dynamic/containing-block-change.html = FAIL
 BUGCR8630 LINUX : fast/forms/listbox-clip.html = IMAGE+TEXT
 BUGCR8630 WIN LINUX : fast/overflow/hidden-scrollbar-resize.html = FAIL
@@ -2373,7 +2373,7 @@ BUGWK46951 : fast/url/segments.html = TEXT
 BUGWK44406 : http/tests/appcache/foreign-fallback.html = PASS FAIL CRASH
 
 // This test starts to timeout during build bots were down between 68880:68920
-BUG_HCLAM WIN : fast/css/acid2-pixel.html = TIMEOUT PASS
+BUG_HCLAM WIN RELEASE : fast/css/acid2-pixel.html = TIMEOUT PASS
 
 // Unexpected timeout in these tests.
 BUG_HCLAM : http/tests/css/border-image-loading.html = TEXT TIMEOUT PASS
@@ -2585,7 +2585,7 @@ BUGCR62433 MAC LINUX : fast/images/gif-loop-count.html = IMAGE
 BUG_DRT MAC : fast/css/input-search-padding.html = IMAGE
 
 // Background color is wrong.
-BUG_DRT MAC : fast/backgrounds/solid-color-context-restore.html = IMAGE
+BUG_DRT MAC RELEASE : fast/backgrounds/solid-color-context-restore.html = IMAGE
 BUG_DRT MAC : fast/reflections/inline-crash.html = IMAGE
 // The background color of Apple Mac results also look wrong.
 BUG_DRT : http/tests/misc/slow-loading-image-in-pattern.html = IMAGE
@@ -3594,7 +3594,6 @@ BUGCR79917 WIN LINUX : fast/css/resize-corner-tracking-transformed.html = IMAGE
 BUGCR79917 WIN LINUX : fast/forms/control-clip.html = IMAGE
 BUGCR79917 WIN LINUX : fast/forms/negativeLineHeight.html = IMAGE
 BUGCR79917 WIN LINUX : fast/forms/textAreaLineHeight.html = IMAGE
-BUGCR79917 WIN LINUX : fast/gradients/background-clipped.html = IMAGE
 BUGCR79917 WIN LINUX : fast/inline-block/inline-block-vertical-align.html = IMAGE
 BUGCR79917 WIN LINUX : fast/layers/opacity-outline.html = IMAGE
 BUGCR79917 WIN LINUX : fast/lists/big-list-marker.html = IMAGE
