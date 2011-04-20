@@ -1,3 +1,14 @@
+2011-04-20  John Knottenbelt  <jknotten@chromium.org>
+
+        Unreviewed.
+
+        [Chromium] Rebaseline overhanging-tall-block
+        https://bugs.webkit.org/show_bug.cgi?id=58974
+
+        * platform/chromium-win/fast/block/float/overhanging-tall-block-expected.png: Added.
+        * platform/chromium-win/fast/block/float/overhanging-tall-block-expected.txt: Added.
+        * platform/chromium/test_expectations.txt:
+
 2011-04-19  Dirk Pranke  <dpranke@chromium.org>
 
         Unreviewed, expectations change.
