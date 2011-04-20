@@ -379,8 +379,8 @@ HRESULT STDMETHODCALLTYPE WebMutableURLRequest::mutableCopy(
     *result = createInstance(ResourceRequest(mutableRequest.get()));
     return S_OK;
 #else
-   notImplemented();
-   return E_NOTIMPL;
+    *result = createInstance(m_request);
+    return S_OK;
 #endif
 }
 

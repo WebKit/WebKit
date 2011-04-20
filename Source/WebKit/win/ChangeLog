@@ -1,3 +1,16 @@
+2011-04-20  Brent Fulgham  <bfulgham@webkit.org>
+
+        Reviewed by Martin Robinson.
+
+        Provide missing implementation of WebMutableURLRequest::mutableCopy.
+        This was preventing DumpRenderTree from working properly under
+        the WinCairo port.
+        https://bugs.webkit.org/show_bug.cgi?id=59034
+
+        * WebMutableURLRequest.cpp:
+        (WebMutableURLRequest::mutableCopy): Implement cURL version of the
+        copy operation.
+
 2011-04-19  Vsevolod Vlasov  <vsevik@chromium.org>
 
         Reviewed by Pavel Feldman.
