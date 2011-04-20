@@ -1,3 +1,12 @@
+2011-04-19  James Robinson  <jamesr@chromium.org>
+
+        [win] New test compositing/iframes/invisible-nested-iframe-show.html fails on windows
+        https://bugs.webkit.org/show_bug.cgi?id=58951
+
+        Add a failing expectation for this test on windows.
+
+        * platform/win/compositing/iframes/invisible-nested-iframe-show-expected.txt: Added.
+
 2011-04-19  Simon Fraser  <simon.fraser@apple.com>
 
         Add missing results for fast/borders/table-borders.html, and
