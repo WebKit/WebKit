@@ -172,14 +172,14 @@ void TypingCommand::insertText(Document* document, const String& text, const Vis
     VisibleSelection currentSelection = frame->selection()->selection();
     bool changeSelection = currentSelection != selectionForInsertion;
     String newText = text;
-    Node* startNode = selectionForInsertion.start().deprecatedNode();
-    
-    if (startNode && startNode->rootEditableElement() && compositionType != TextCompositionUpdate) {
-        // Send BeforeTextInsertedEvent. The event handler will update text if necessary.
-        ExceptionCode ec = 0;
-        RefPtr<BeforeTextInsertedEvent> evt = BeforeTextInsertedEvent::create(text);
-        startNode->rootEditableElement()->dispatchEvent(evt, ec);
-        newText = evt->text();
+    if (Node* startNode = selectionForInsertion.start().containerNode()) {
+        if (startNode->rootEditableElement() && compositionType != TextCompositionUpdate) {
+            // Send BeforeTextInsertedEvent. The event handler will update text if necessary.
+            ExceptionCode ec = 0;
+            RefPtr<BeforeTextInsertedEvent> evt = BeforeTextInsertedEvent::create(text);
+            startNode->rootEditableElement()->dispatchEvent(evt, ec);
+            newText = evt->text();
+        }
     }
     
     if (newText.isEmpty())
@@ -506,7 +506,7 @@ void TypingCommand::deleteKeyPressed(TextGranularity granularity, bool killRing)
 
         VisiblePosition visibleStart(endingSelection().visibleStart());
         // If we have a caret selection on an empty cell, we have nothing to do.
-        if (isEmptyTableCell(visibleStart.deepEquivalent().deprecatedNode()))
+        if (isEmptyTableCell(visibleStart.deepEquivalent().containerNode()))
             return;
 
         // If the caret is at the start of a paragraph after a table, move content into the last table cell.
@@ -525,7 +525,8 @@ void TypingCommand::deleteKeyPressed(TextGranularity granularity, bool killRing)
 
         selectionToDelete = selection.selection();
 
-        if (granularity == CharacterGranularity && selectionToDelete.end().deprecatedNode() == selectionToDelete.start().deprecatedNode() && selectionToDelete.end().deprecatedEditingOffset() - selectionToDelete.start().deprecatedEditingOffset() > 1) {
+        if (granularity == CharacterGranularity && selectionToDelete.end().containerNode() == selectionToDelete.start().containerNode()
+            && selectionToDelete.end().computeOffsetInContainerNode() - selectionToDelete.start().computeOffsetInContainerNode() > 1) {
             // If there are multiple Unicode code points to be deleted, adjust the range to match platform conventions.
             selectionToDelete.setWithoutValidation(selectionToDelete.end(), selectionToDelete.end().previous(BackwardDeletion));
         }
@@ -592,8 +593,9 @@ void TypingCommand::forwardDeleteKeyPressed(TextGranularity granularity, bool ki
         if (visibleEnd == endOfParagraph(visibleEnd))
             downstreamEnd = visibleEnd.next(CannotCrossEditingBoundary).deepEquivalent().downstream();
         // When deleting tables: Select the table first, then perform the deletion
-        if (downstreamEnd.deprecatedNode() && downstreamEnd.deprecatedNode()->renderer() && downstreamEnd.deprecatedNode()->renderer()->isTable() && !downstreamEnd.deprecatedEditingOffset()) {
-            setEndingSelection(VisibleSelection(endingSelection().end(), positionAfterNode(downstreamEnd.deprecatedNode()), DOWNSTREAM));
+        if (downstreamEnd.containerNode() && downstreamEnd.containerNode()->renderer() && downstreamEnd.containerNode()->renderer()->isTable()
+            && downstreamEnd.computeOffsetInContainerNode() <= caretMinOffset(downstreamEnd.containerNode())) {
+            setEndingSelection(VisibleSelection(endingSelection().end(), positionAfterNode(downstreamEnd.containerNode()), DOWNSTREAM));
             typingAddedToOpenCommand(ForwardDeleteKey);
             return;
         }
@@ -610,15 +612,15 @@ void TypingCommand::forwardDeleteKeyPressed(TextGranularity granularity, bool ki
             // We can't let the VisibleSelection class's validation kick in or it'll adjust for us based on
             // the current state of the document and we'll get the wrong result.
             Position extent = startingSelection().end();
-            if (extent.deprecatedNode() != selectionToDelete.end().deprecatedNode())
+            if (extent.containerNode() != selectionToDelete.end().containerNode())
                 extent = selectionToDelete.extent();
             else {
                 int extraCharacters;
-                if (selectionToDelete.start().deprecatedNode() == selectionToDelete.end().deprecatedNode())
-                    extraCharacters = selectionToDelete.end().deprecatedEditingOffset() - selectionToDelete.start().deprecatedEditingOffset();
+                if (selectionToDelete.start().containerNode() == selectionToDelete.end().containerNode())
+                    extraCharacters = selectionToDelete.end().computeOffsetInContainerNode() - selectionToDelete.start().computeOffsetInContainerNode();
                 else
-                    extraCharacters = selectionToDelete.end().deprecatedEditingOffset();
-                extent = Position(extent.deprecatedNode(), extent.deprecatedEditingOffset() + extraCharacters, Position::PositionIsOffsetInAnchor);
+                    extraCharacters = selectionToDelete.end().computeOffsetInContainerNode();
+                extent = Position(extent.containerNode(), extent.computeOffsetInContainerNode() + extraCharacters, Position::PositionIsOffsetInAnchor);
             }
             selectionAfterUndo.setWithoutValidation(startingSelection().start(), extent);
         }
