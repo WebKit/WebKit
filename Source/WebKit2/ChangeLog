@@ -1,3 +1,9 @@
+2011-04-20  Alejandro G. Castro  <alex@igalia.com>
+
+        Fixed GTK+ compilation after r84206.
+
+        * GNUmakefile.am:
+
 2011-04-20  Adam Roben  <aroben@apple.com>
 
         Remove some unnecessary VS junk related to NativeWebMouseEventWin.cpp
