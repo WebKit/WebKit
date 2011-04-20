@@ -1,3 +1,15 @@
+2011-04-20  Leon Scroggins  <scroggo@google.com>
+
+        Reviewed by Kenneth Russell.
+
+        Mark tests as failing for rebaselining.
+        https://bugs.webkit.org/show_bug.cgi?id=58839
+
+        We are making a change to the way gradients
+        are calculated, so disable tests for now.
+
+        * platform/chromium/test_expectations.txt:
+
 2011-04-20  Philippe Normand  <pnormand@igalia.com>
 
         Unreviewed, skip GTK crashing test

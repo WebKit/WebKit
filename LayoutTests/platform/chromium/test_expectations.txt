@@ -3499,6 +3499,15 @@ BUGWK58772 WIN LINUX : svg/css/composite-shadow-text.svg = IMAGE
 // May just need to be re-baselined
 BUGCR79770 WIN : fast/box-shadow/inset-with-extraordinary-radii-and-border.html = IMAGE
 
+// Temporarily marked as failing for rebaselining.
+BUGCR79798 : fast/gradients/crash-on-zero-radius.html = FAIL
+BUGCR79798 : fast/gradients/generated-gradients.html = FAIL
+BUGCR79798 : fast/gradients/radial-centered.html = FAIL
+BUGCR79798 : fast/gradients/simple-gradients.html = FAIL
+BUGCR79798 : fast/gradients/background-clipped.html = FAIL
+BUGCR79798 : svg/W3C-SVG-1.1/pservers-grad-13-b.svg = FAIL
+BUGCR79798 : svg/custom/radial-gradient-with-outstanding-focalPoint.svg = FAIL
+
 // Flaky, perhaps Skia related.
 BUGCR79851 LINUX : fast/table/frame-and-rules.html = PASS TEXT
 
