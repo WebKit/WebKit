@@ -1,3 +1,12 @@
+2011-04-20  Vsevolod Vlasov  <vsevik@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: Update front-end files list in WebCore.vcproj
+        https://bugs.webkit.org/show_bug.cgi?id=58896
+
+        * WebCore.vcproj/WebCore.vcproj:
+
 2011-04-20  Dimitri Glazkov  <dglazkov@chromium.org>
 
         Qt build fix after r84380.

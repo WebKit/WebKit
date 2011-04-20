@@ -67085,10 +67085,6 @@
 					>
 				</File>
 				<File
-					RelativePath="..\inspector\front-end\Callback.js"
-					>
-				</File>
-				<File
 					RelativePath="..\inspector\front-end\CallStackSidebarPane.js"
 					>
 				</File>
@@ -67277,6 +67273,10 @@
 					>
 				</File>
 				<File
+					RelativePath="..\inspector\front-end\InspectorFrontendHostStub.js"
+					>
+				</File>
+				<File
 					RelativePath="..\inspector\front-end\inspector.css"
 					>
 				</File>
@@ -67290,6 +67290,10 @@
 				</File>
 				<File
 					RelativePath="..\inspector\front-end\inspectorSyntaxHighlight.css"
+					>
+				</File>
+				<File
+					RelativePath="..\inspector\front-end\KeyboardShortcut.js"
 					>
 				</File>
 				<File
@@ -67425,7 +67429,7 @@
 					>
 				</File>
 				<File
-					RelativePath="..\inspector\front-end\scriptFormatterWorker.js"
+					RelativePath="..\inspector\front-end\ScriptFormatterWorker.js"
 					>
 				</File>
 				<File
