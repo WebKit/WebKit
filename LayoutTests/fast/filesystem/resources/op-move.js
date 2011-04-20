@@ -158,4 +158,95 @@ var testCases = [
             {fullPath:'/b/a/b/d'},
         ],
     },
+    {
+        name: "OverwritingMoveFileToFile",
+        precondition: [
+            {fullPath:"/a"},
+            {fullPath:"/b"},
+        ],
+        tests: [
+            function(helper) {helper.move("/a","/","b");}
+        ],
+        postcondition: [
+            {fullPath:"/b"},
+        ],
+    },
+    {
+        name: "OverwritingMoveDirectoryToEmptyDirectory",
+        precondition: [
+            {fullPath:"/a", isDirectory:true},
+            {fullPath:"/a/b"},
+            {fullPath:"/c", isDirectory:true},
+        ],
+        tests: [
+            function(helper) {helper.move("/a","/","c");}
+        ],
+        postcondition: [
+            {fullPath:"/c", isDirectory:true},
+            {fullPath:"/c/b"},
+            {fullPath:"/a", nonexistent:true},
+        ],
+    },
+    {
+        name: "OverwritingMoveFileToDirectory",
+        precondition: [
+            {fullPath:"/a"},
+            {fullPath:"/b", isDirectory: true},
+        ],
+        tests: [
+            function(helper) {helper.move("/a","/","b",FileError.INVALID_MODIFICATION_ERR);}
+        ],
+        postcondition: [
+            {fullPath:"/a"},
+            {fullPath:"/b", isDirectory: true},
+        ],
+    },
+    {
+        name: "OverwritingMoveDirectoryToFile",
+        precondition: [
+            {fullPath:"/a", isDirectory: true},
+            {fullPath:"/b"},
+        ],
+        tests: [
+            function(helper) {helper.move("/a","/","b",FileError.INVALID_MODIFICATION_ERR);}
+        ],
+        postcondition: [
+            {fullPath:"/a", isDirectory: true},
+            {fullPath:"/b"},
+        ],
+    },
+    {
+        name: "OverwritingMoveFileToNonemptyDirectory",
+        precondition: [
+            {fullPath:"/a"},
+            {fullPath:"/b", isDirectory: true},
+            {fullPath:"/b/c"},
+        ],
+        tests: [
+            function(helper) {helper.move("/a","/","b",FileError.INVALID_MODIFICATION_ERR);}
+        ],
+        postcondition: [
+            {fullPath:"/a"},
+            {fullPath:"/b", isDirectory: true},
+            {fullPath:"/b/c"},
+        ],
+    },
+    {
+        name: "OverwritingMoveDirectoryToNonemptyDirectory",
+        precondition: [
+            {fullPath:"/a", isDirectory: true},
+            {fullPath:"/a/b"},
+            {fullPath:"/c", isDirectory: true},
+            {fullPath:"/c/d"},
+        ],
+        tests: [
+            function(helper) {helper.move("/a","/","c",FileError.INVALID_MODIFICATION_ERR);}
+        ],
+        postcondition: [
+            {fullPath:"/a", isDirectory: true},
+            {fullPath:"/a/b"},
+            {fullPath:"/c", isDirectory: true},
+            {fullPath:"/c/d"},
+        ],
+    },
 ];

@@ -49,6 +49,33 @@ PASS Verified entry: ENTRY {path:/b/a name:a type:DIRECTORY}
 PASS Verified entry: ENTRY {path:/b/a/b name:b type:DIRECTORY}
 PASS Verified entry: ENTRY {path:/b/a/b/c name:c type:FILE}
 PASS Verified entry: ENTRY {path:/b/a/b/d name:d type:FILE}
+* Running: OverwritingMoveFileToFile
+PASS Succeeded: "/a".moveTo("/", "b")
+PASS Verified entry: ENTRY {path:/b name:b type:FILE}
+* Running: OverwritingMoveDirectoryToEmptyDirectory
+PASS Succeeded: "/a".moveTo("/", "c")
+PASS Verified entry: ENTRY {path:/c name:c type:DIRECTORY}
+PASS Verified entry: ENTRY {path:/c/b name:b type:FILE}
+PASS Verified entry does NOT exist: /a
+* Running: OverwritingMoveFileToDirectory
+PASS this.expectedErrorCode + "" is "9"
+PASS Verified entry: ENTRY {path:/a name:a type:FILE}
+PASS Verified entry: ENTRY {path:/b name:b type:DIRECTORY}
+* Running: OverwritingMoveDirectoryToFile
+PASS this.expectedErrorCode + "" is "9"
+PASS Verified entry: ENTRY {path:/a name:a type:DIRECTORY}
+PASS Verified entry: ENTRY {path:/b name:b type:FILE}
+* Running: OverwritingMoveFileToNonemptyDirectory
+PASS this.expectedErrorCode + "" is "9"
+PASS Verified entry: ENTRY {path:/a name:a type:FILE}
+PASS Verified entry: ENTRY {path:/b name:b type:DIRECTORY}
+PASS Verified entry: ENTRY {path:/b/c name:c type:FILE}
+* Running: OverwritingMoveDirectoryToNonemptyDirectory
+PASS this.expectedErrorCode + "" is "9"
+PASS Verified entry: ENTRY {path:/a name:a type:DIRECTORY}
+PASS Verified entry: ENTRY {path:/a/b name:b type:FILE}
+PASS Verified entry: ENTRY {path:/c name:c type:DIRECTORY}
+PASS Verified entry: ENTRY {path:/c/d name:d type:FILE}
 Finished running tests.
 PASS successfullyParsed is true
 

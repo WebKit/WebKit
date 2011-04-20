@@ -161,4 +161,97 @@ var testCases = [
             {fullPath:'/b/a/b/d'},
         ],
     },
+    {
+        name: "OverwritingCopyFileToFile",
+        precondition: [
+            {fullPath:"/a"},
+            {fullPath:"/b"},
+        ],
+        tests: [
+            function(helper) {helper.copy("/a","/","b");}
+        ],
+        postcondition: [
+            {fullPath:"/a"},
+            {fullPath:"/b"},
+        ],
+    },
+    {
+        name: "OverwritingCopyDirectoryToEmptyDirectory",
+        precondition: [
+            {fullPath:"/a", isDirectory:true},
+            {fullPath:"/a/b"},
+            {fullPath:"/c", isDirectory:true},
+        ],
+        tests: [
+            function(helper) {helper.copy("/a","/","c");}
+        ],
+        postcondition: [
+            {fullPath:"/a", isDirectory:true},
+            {fullPath:"/a/b"},
+            {fullPath:"/c", isDirectory:true},
+            {fullPath:"/c/b"},
+        ],
+    },
+    {
+        name: "OverwritingCopyFileToDirectory",
+        precondition: [
+            {fullPath:"/a"},
+            {fullPath:"/b", isDirectory: true},
+        ],
+        tests: [
+            function(helper) {helper.copy("/a","/","b",FileError.INVALID_MODIFICATION_ERR);}
+        ],
+        postcondition: [
+            {fullPath:"/a"},
+            {fullPath:"/b", isDirectory: true},
+        ],
+    },
+    {
+        name: "OverwritingCopyDirectoryToFile",
+        precondition: [
+            {fullPath:"/a", isDirectory: true},
+            {fullPath:"/b"},
+        ],
+        tests: [
+            function(helper) {helper.copy("/a","/","b",FileError.INVALID_MODIFICATION_ERR);}
+        ],
+        postcondition: [
+            {fullPath:"/a", isDirectory: true},
+            {fullPath:"/b"},
+        ],
+    },
+    {
+        name: "OverwritingCopyFileToNonemptyDirectory",
+        precondition: [
+            {fullPath:"/a"},
+            {fullPath:"/b", isDirectory: true},
+            {fullPath:"/b/c"},
+        ],
+        tests: [
+            function(helper) {helper.copy("/a","/","b",FileError.INVALID_MODIFICATION_ERR);}
+        ],
+        postcondition: [
+            {fullPath:"/a"},
+            {fullPath:"/b", isDirectory: true},
+            {fullPath:"/b/c"},
+        ],
+    },
+    {
+        name: "OverwritingCopyDirectoryToNonemptyDirectory",
+        precondition: [
+            {fullPath:"/a", isDirectory: true},
+            {fullPath:"/a/b"},
+            {fullPath:"/c", isDirectory: true},
+            {fullPath:"/c/d"},
+        ],
+        tests: [
+            function(helper) {helper.copy("/a","/","c",FileError.INVALID_MODIFICATION_ERR);}
+        ],
+        postcondition: [
+            {fullPath:"/a", isDirectory: true},
+            {fullPath:"/a/b"},
+            {fullPath:"/c", isDirectory: true},
+            {fullPath:"/c/d"},
+        ],
+    },
 ];
