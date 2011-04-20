@@ -3399,3 +3399,6 @@ editing/pasteboard/copy-text-with-backgroundcolor.html
 # [Qt][WK2]REGRESSION(r84263): editing/pasteboard/text-selection.html fails
 # https://bugs.webkit.org/show_bug.cgi?id=58998
 editing/pasteboard/text-selection.html fails
+
+# WebProcess crashes intermittently: "FAIL: TestControllerRunLoop timed out."
+http/tests/security/contentSecurityPolicy/media-src-blocked.html

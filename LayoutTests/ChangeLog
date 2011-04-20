@@ -1,5 +1,11 @@
 2011-04-20  Csaba Osztrogonác  <ossy@webkit.org>
 
+        [Qt][WK2] WebProcess crashes intermittently: "FAIL: TestControllerRunLoop timed out."
+
+        * platform/qt-wk2/Skipped: Add http/tests/security/contentSecurityPolicy/media-src-blocked.html.
+
+2011-04-20  Csaba Osztrogonác  <ossy@webkit.org>
+
         [Qt][WK2] Skip new failing tests.
 
         * platform/qt-wk2/Skipped:
