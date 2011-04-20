@@ -63,6 +63,7 @@ public:
     virtual WebURL unreachableURL() const;
     virtual void redirectChain(WebVector<WebURL>&) const;
     virtual WebString pageTitle() const;
+    virtual WebTextDirection pageTitleDirection() const;
     virtual WebNavigationType navigationType() const;
     virtual double triggeringEventTime() const;
     virtual ExtraData* extraData() const;

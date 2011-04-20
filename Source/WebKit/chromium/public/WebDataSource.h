@@ -33,6 +33,7 @@
 
 #include "WebCommon.h"
 #include "WebNavigationType.h"
+#include "WebTextDirection.h"
 
 namespace WebKit {
 
@@ -77,6 +78,9 @@ public:
 
     // Returns the title for the current page.
     virtual WebString pageTitle() const = 0;
+
+    // Returns the text direction of the title for the current page.
+    virtual WebTextDirection pageTitleDirection() const = 0;
 
     // The type of navigation that triggered the creation of this datasource.
     virtual WebNavigationType navigationType() const = 0;

@@ -1,3 +1,16 @@
+2011-04-20  Evan Martin  <evan@chromium.org>
+
+        Reviewed by Tony Chang.
+
+        [chromium] expose title text direction on WebDataSource
+        https://bugs.webkit.org/show_bug.cgi?id=59010
+
+        * public/WebDataSource.h:
+        * src/WebDataSourceImpl.cpp:
+        (WebKit::WebDataSourceImpl::pageTitle):
+        (WebKit::WebDataSourceImpl::pageTitleDirection):
+        * src/WebDataSourceImpl.h:
+
 2011-04-20  Pavel Feldman  <pfeldman@google.com>
 
         Reviewed by Yury Semikhatsky.
