@@ -1,3 +1,20 @@
+2011-04-20  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Don't discard backing stores for hung web processes
+        https://bugs.webkit.org/show_bug.cgi?id=59039
+        <rdar://problem/9237090>
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::viewStateDidChange):
+        (WebKit::WebPageProxy::processDidBecomeUnresponsive):
+        (WebKit::WebPageProxy::processDidBecomeResponsive):
+        Call updateBackingStoreDiscardableState.
+
+        (WebKit::WebPageProxy::updateBackingStoreDiscardableState):
+        Never mark the backing store as discardable if the web process is hung
+
 2011-04-20  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Sam Weinig.

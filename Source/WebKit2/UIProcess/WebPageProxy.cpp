@@ -619,7 +619,7 @@ void WebPageProxy::viewStateDidChange(ViewStateFlags flags)
     }
 
     if (flags & (ViewWindowIsActive | ViewIsVisible))
-        m_drawingArea->setBackingStoreIsDiscardable(!m_pageClient->isViewWindowActive() || !isViewVisible());
+        updateBackingStoreDiscardableState();
 }
 
 IntSize WebPageProxy::viewSize() const
@@ -2714,11 +2714,15 @@ void WebPageProxy::frameSetLargestFrameChanged(uint64_t frameID)
 
 void WebPageProxy::processDidBecomeUnresponsive()
 {
+    updateBackingStoreDiscardableState();
+
     m_loaderClient.processDidBecomeUnresponsive(this);
 }
 
 void WebPageProxy::processDidBecomeResponsive()
 {
+    updateBackingStoreDiscardableState();
+
     m_loaderClient.processDidBecomeResponsive(this);
 }
 
@@ -3002,6 +3006,18 @@ void WebPageProxy::drawPagesToPDF(WebFrameProxy* frame, uint32_t first, uint32_t
 void WebPageProxy::flashBackingStoreUpdates(const Vector<IntRect>& updateRects)
 {
     m_pageClient->flashBackingStoreUpdates(updateRects);
+}
+
+void WebPageProxy::updateBackingStoreDiscardableState()
+{
+    bool isDiscardable;
+
+    if (!process()->responsivenessTimer()->isResponsive())
+        isDiscardable = false;
+    else
+        isDiscardable = !m_pageClient->isViewWindowActive() || !isViewVisible();
+
+    m_drawingArea->setBackingStoreIsDiscardable(isDiscardable);
 }
 
 Color WebPageProxy::viewUpdatesFlashColor()
