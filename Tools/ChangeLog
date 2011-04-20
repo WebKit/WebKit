@@ -1,3 +1,13 @@
+2011-04-20  Peter Gal  <galpeter@inf.u-szeged.hu>
+
+        Reviewed by Csaba Osztrogonác.
+
+        Add the default template for builder page.
+
+        https://bugs.webkit.org/show_bug.cgi?id=59008
+
+        * BuildSlaveSupport/build.webkit.org-config/templates/builder.html: Added.
+
 2011-04-20  Ojan Vafai  <ojan@chromium.org>
 
         Reviewed by Eric Seidel.
