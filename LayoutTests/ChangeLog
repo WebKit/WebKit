@@ -1,3 +1,18 @@
+2011-04-20  John Knottenbelt  <jknotten@chromium.org>
+
+        Unreviewed.
+
+        [Chromium] Rebaseline fast/repaint/trailing-floats-root-line-box-overflow fast/canvas/webgl/css-webkit-canvas fast/canvas/webgl/css-webkit-canvas-repaint
+        https://bugs.webkit.org/show_bug.cgi?id=58978
+
+	Windows bots are now generating baselines, so include them.
+	fast/repaint/trailing-floats-root-line-box-overflow looks like correct output.
+
+        * platform/chromium-mac/fast/repaint/trailing-floats-root-line-box-overflow-expected.png: Added.
+        * platform/chromium-win/fast/canvas/webgl/css-webkit-canvas-expected.png: Added.
+        * platform/chromium-win/fast/canvas/webgl/css-webkit-canvas-repaint-expected.png: Added.
+        * platform/chromium/test_expectations.txt:
+
 2011-04-20  Csaba Osztrogonác  <ossy@webkit.org>
 
         [Qt] REGRESSION(r84296): platform/qt/fast/history/back-to-unreachable-url-then-forward.html fails

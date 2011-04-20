@@ -1363,7 +1363,6 @@ BUGCR23473 MAC : fast/repaint/text-append-dirty-lines.html = IMAGE
 BUGCR23473 MAC : fast/repaint/text-selection-rect-in-overflow-2.html = IMAGE
 BUGCR23473 MAC : fast/repaint/text-selection-rect-in-overflow.html = IMAGE
 // Win/Linux also failed after r83514.
-BUGCR23473 : fast/repaint/trailing-floats-root-line-box-overflow.html = IMAGE
 BUGCR23473 MAC : fast/repaint/transform-absolute-child.html = IMAGE
 BUGCR23473 MAC : fast/repaint/transform-absolute-in-positioned-container.html = IMAGE
 BUGCR23473 MAC : fast/repaint/transform-disable-layoutstate.html = IMAGE
@@ -2326,8 +2325,6 @@ BUGWK45737 DEBUG SLOW : fast/frames/frame-limit.html = PASS
 BUGDPRANKE WIN LINUX DEBUG : fast/forms/select-set-length-with-mutation-remove.html = TIMEOUT PASS
 BUGDPRANKE LINUX DEBUG : http/tests/incremental/slow-utf8-text.pl = TIMEOUT PASS
 
-BUGWEBGL : fast/canvas/webgl/css-webkit-canvas-repaint.html = IMAGE
-BUGWEBGL : fast/canvas/webgl/css-webkit-canvas.html = IMAGE
 BUGWEBGL WIN : fast/canvas/webgl/tex-image-and-sub-image-2d-with-array-buffer-view.html = CRASH PASS
 BUGWEBGL WIN DEBUG : fast/canvas/webgl/texture-complete.html = PASS TEXT
 BUGWEBGL : fast/canvas/webgl/read-pixels-test.html = TIMEOUT
