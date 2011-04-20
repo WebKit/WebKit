@@ -1,3 +1,46 @@
+2011-04-20  Dirk Schulze  <krit@webkit.org>
+
+        Reviewed by Simon Fraser.
+
+        SVG feDropShadow implementation of SVG Filters 1.2
+        https://bugs.webkit.org/show_bug.cgi?id=52513
+
+        Support different radii for horizontal and vertical blurring in ShadowBlur. This is a preperation for feDropShadow.
+        feDropShadow is a new shorthand filter effect for the up-comming Filter 1.0 specification and will use ShadowBlur.
+        feGaussianBlur might make use of ShadowBlur as well later (on SourceAlpha input).
+        Added ShadowBlur to remaining platforms.
+
+        The changes can't be tested before the changes in feGaussianBlur or feDropShadow. Current behavior is not affected.
+
+        * Android.mk:
+        * CMakeLists.txt:
+        * GNUmakefile.list.am:
+        * WebCore.pro:
+        * platform/graphics/FloatSize.h:
+        (WebCore::FloatSize::scale):
+        * platform/graphics/ShadowBlur.cpp:
+        (WebCore::ScratchBuffer::ScratchBuffer):
+        (WebCore::ScratchBuffer::setLastShadowValues):
+        (WebCore::ScratchBuffer::setLastInsetShadowValues):
+        (WebCore::ScratchBuffer::matchesLastShadow):
+        (WebCore::ScratchBuffer::matchesLastInsetShadow):
+        (WebCore::ScratchBuffer::clearScratchBuffer):
+        (WebCore::ShadowBlur::ShadowBlur):
+        (WebCore::calculateLobes):
+        (WebCore::ShadowBlur::blurLayerImage):
+        (WebCore::ShadowBlur::adjustBlurRadius):
+        (WebCore::ShadowBlur::calculateLayerBoundingRect):
+        (WebCore::computeSliceSizesFromRadii):
+        (WebCore::ShadowBlur::templateSize):
+        (WebCore::ShadowBlur::drawInsetShadowWithTiling):
+        (WebCore::ShadowBlur::drawRectShadowWithTiling):
+        (WebCore::ShadowBlur::drawLayerPieces):
+        * platform/graphics/ShadowBlur.h:
+        * platform/graphics/cg/GraphicsContextCG.cpp:
+        (WebCore::GraphicsContext::fillRect):
+        (WebCore::GraphicsContext::fillRoundedRect):
+        (WebCore::GraphicsContext::fillRectWithRoundedHole):
+
 2011-04-19  Roland Steiner  <rolandsteiner@chromium.org>
 
         Reviewed by Dimitri Glazkov.

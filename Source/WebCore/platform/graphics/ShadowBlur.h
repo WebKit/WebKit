@@ -44,7 +44,7 @@ class ImageBuffer;
 class ShadowBlur {
     WTF_MAKE_NONCOPYABLE(ShadowBlur);
 public:
-    ShadowBlur(float radius, const FloatSize& offset, const Color&, ColorSpace);
+    ShadowBlur(const FloatSize& radius, const FloatSize& offset, const Color&, ColorSpace);
 
     void setShadowsIgnoreTransforms(bool ignoreTransforms) { m_shadowsIgnoreTransforms = ignoreTransforms; }
     bool shadowsIgnoreTransforms() const { return m_shadowsIgnoreTransforms; }
@@ -72,7 +72,7 @@ private:
     void drawInsetShadowWithoutTiling(GraphicsContext*, const FloatRect&, const FloatRect& holeRect, const RoundedIntRect::Radii&, const IntRect& layerRect);
     void drawInsetShadowWithTiling(GraphicsContext*, const FloatRect&, const FloatRect& holeRect, const RoundedIntRect::Radii&, const IntSize& shadowTemplateSize);
     
-    void drawLayerPieces(GraphicsContext*, const FloatRect& shadowBounds, const RoundedIntRect::Radii&, float roundedRadius, const IntSize& templateSize, ShadowDirection);
+    void drawLayerPieces(GraphicsContext*, const FloatRect& shadowBounds, const RoundedIntRect::Radii&, const IntSize& roundedRadius, const IntSize& templateSize, ShadowDirection);
     
     void blurShadowBuffer(const IntSize& templateSize);
     void blurAndColorShadowBuffer(const IntSize& templateSize);
@@ -87,7 +87,7 @@ private:
 
     Color m_color;
     ColorSpace m_colorSpace;
-    float m_blurRadius;
+    FloatSize m_blurRadius;
     FloatSize m_offset;
 
     ImageBuffer* m_layerImage; // Buffer to where the temporary shadow will be drawn to.

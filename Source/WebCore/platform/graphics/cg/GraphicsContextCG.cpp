@@ -702,7 +702,7 @@ void GraphicsContext::fillRect(const FloatRect& rect)
         CGContextSaveGState(context);
         CGContextSetShadowWithColor(platformContext(), CGSizeZero, 0, 0);
 
-        ShadowBlur contextShadow(shadowBlur, m_state.shadowOffset, m_state.shadowColor, m_state.shadowColorSpace);
+        ShadowBlur contextShadow(FloatSize(shadowBlur, shadowBlur), m_state.shadowOffset, m_state.shadowColor, m_state.shadowColorSpace);
         contextShadow.drawRectShadow(this, rect, RoundedIntRect::Radii());
     }
 
@@ -731,7 +731,7 @@ void GraphicsContext::fillRect(const FloatRect& rect, const Color& color, ColorS
         CGContextSaveGState(context);
         CGContextSetShadowWithColor(platformContext(), CGSizeZero, 0, 0);
 
-        ShadowBlur contextShadow(shadowBlur, m_state.shadowOffset, m_state.shadowColor, m_state.shadowColorSpace);
+        ShadowBlur contextShadow(FloatSize(shadowBlur, shadowBlur), m_state.shadowOffset, m_state.shadowColor, m_state.shadowColorSpace);
         contextShadow.drawRectShadow(this, rect, RoundedIntRect::Radii());
     }
 
@@ -764,7 +764,7 @@ void GraphicsContext::fillRoundedRect(const IntRect& rect, const IntSize& topLef
         CGContextSaveGState(context);
         CGContextSetShadowWithColor(platformContext(), CGSizeZero, 0, 0);
 
-        ShadowBlur contextShadow(shadowBlur, m_state.shadowOffset, m_state.shadowColor, m_state.shadowColorSpace);
+        ShadowBlur contextShadow(FloatSize(shadowBlur, shadowBlur), m_state.shadowOffset, m_state.shadowColor, m_state.shadowColorSpace);
         contextShadow.drawRectShadow(this, rect, RoundedIntRect::Radii(topLeft, topRight, bottomLeft, bottomRight));
     }
 
@@ -816,7 +816,7 @@ void GraphicsContext::fillRectWithRoundedHole(const IntRect& rect, const Rounded
         CGContextSaveGState(context);
         CGContextSetShadowWithColor(platformContext(), CGSizeZero, 0, 0);
 
-        ShadowBlur contextShadow(shadowBlur, m_state.shadowOffset, m_state.shadowColor, m_state.shadowColorSpace);
+        ShadowBlur contextShadow(FloatSize(shadowBlur, shadowBlur), m_state.shadowOffset, m_state.shadowColor, m_state.shadowColorSpace);
         contextShadow.drawInsetShadow(this, rect, roundedHoleRect.rect(), roundedHoleRect.radii());
     }
 

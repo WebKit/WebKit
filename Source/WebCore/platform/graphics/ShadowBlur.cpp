@@ -42,6 +42,11 @@ using namespace std;
 
 namespace WebCore {
 
+enum {
+    leftLobe = 0,
+    rightLobe = 1
+};
+
 static inline int roundUpToMultipleOf32(int d)
 {
     return (1 + (d >> 5)) << 5;
@@ -54,7 +59,6 @@ class ScratchBuffer {
 public:
     ScratchBuffer()
         : m_purgeTimer(this, &ScratchBuffer::timerFired)
-        , m_lastRadius(0)
         , m_lastWasInset(false)
 #if !ASSERT_DISABLED
         , m_bufferInUse(false)
@@ -79,7 +83,7 @@ public:
         return m_imageBuffer.get();
     }
 
-    void setLastShadowValues(float radius, const Color& color, ColorSpace colorSpace, const FloatRect& shadowRect, const RoundedIntRect::Radii& radii)
+    void setLastShadowValues(const FloatSize& radius, const Color& color, ColorSpace colorSpace, const FloatRect& shadowRect, const RoundedIntRect::Radii& radii)
     {
         m_lastWasInset = false;
         m_lastRadius = radius;
@@ -89,7 +93,7 @@ public:
         m_lastRadii = radii;
     }
 
-    void setLastInsetShadowValues(float radius, const Color& color, ColorSpace colorSpace, const FloatRect& bounds, const FloatRect& shadowRect, const RoundedIntRect::Radii& radii)
+    void setLastInsetShadowValues(const FloatSize& radius, const Color& color, ColorSpace colorSpace, const FloatRect& bounds, const FloatRect& shadowRect, const RoundedIntRect::Radii& radii)
     {
         m_lastWasInset = true;
         m_lastInsetBounds = bounds;
@@ -100,14 +104,14 @@ public:
         m_lastRadii = radii;
     }
     
-    bool matchesLastShadow(float radius, const Color& color, ColorSpace colorSpace, const FloatRect& shadowRect, const RoundedIntRect::Radii& radii) const
+    bool matchesLastShadow(const FloatSize& radius, const Color& color, ColorSpace colorSpace, const FloatRect& shadowRect, const RoundedIntRect::Radii& radii) const
     {
         if (m_lastWasInset)
             return false;
         return m_lastRadius == radius && m_lastColor == color && m_lastColorSpace == colorSpace && shadowRect == m_lastShadowRect && radii == m_lastRadii;
     }
 
-    bool matchesLastInsetShadow(float radius, const Color& color, ColorSpace colorSpace, const FloatRect& bounds, const FloatRect& shadowRect, const RoundedIntRect::Radii& radii) const
+    bool matchesLastInsetShadow(const FloatSize& radius, const Color& color, ColorSpace colorSpace, const FloatRect& bounds, const FloatRect& shadowRect, const RoundedIntRect::Radii& radii) const
     {
         if (!m_lastWasInset)
             return false;
@@ -137,7 +141,7 @@ private:
     void clearScratchBuffer()
     {
         m_imageBuffer = 0;
-        m_lastRadius = 0;
+        m_lastRadius = FloatSize();
     }
 
     OwnPtr<ImageBuffer> m_imageBuffer;
@@ -148,7 +152,7 @@ private:
     RoundedIntRect::Radii m_lastRadii;
     Color m_lastColor;
     ColorSpace m_lastColorSpace;
-    float m_lastRadius;
+    FloatSize m_lastRadius;
     bool m_lastWasInset;
     
 #if !ASSERT_DISABLED
@@ -164,7 +168,7 @@ ScratchBuffer& ScratchBuffer::shared()
 
 static const int templateSideLength = 1;
 
-ShadowBlur::ShadowBlur(float radius, const FloatSize& offset, const Color& color, ColorSpace colorSpace)
+ShadowBlur::ShadowBlur(const FloatSize& radius, const FloatSize& offset, const Color& color, ColorSpace colorSpace)
     : m_color(color)
     , m_colorSpace(colorSpace)
     , m_blurRadius(radius)
@@ -173,13 +177,13 @@ ShadowBlur::ShadowBlur(float radius, const FloatSize& offset, const Color& color
     , m_shadowsIgnoreTransforms(false)
 {
     // Limit blur radius to 128 to avoid lots of very expensive blurring.
-    m_blurRadius = min<float>(m_blurRadius, 128);
+    m_blurRadius = m_blurRadius.shrunkTo(FloatSize(128, 128));
 
     // The type of shadow is decided by the blur radius, shadow offset, and shadow color.
     if (!m_color.isValid() || !color.alpha()) {
         // Can't paint the shadow with invalid or invisible color.
         m_type = NoShadow;
-    } else if (m_blurRadius > 0) {
+    } else if (m_blurRadius.width() > 0 || m_blurRadius.height() > 0) {
         // Shadow is always blurred, even the offset is zero.
         m_type = BlurShadow;
     } else if (!m_offset.width() && !m_offset.height()) {
@@ -192,32 +196,24 @@ ShadowBlur::ShadowBlur(float radius, const FloatSize& offset, const Color& color
 // Instead of integer division, we use 17.15 for fixed-point division.
 static const int blurSumShift = 15;
 
-void ShadowBlur::blurLayerImage(unsigned char* imageData, const IntSize& size, int rowStride)
+// Takes a two dimensional array with three rows and two columns for the lobes.
+static void calculateLobes(int lobes[][2], float blurRadius, bool shadowsIgnoreTransforms)
 {
-    const int channels[4] = { 3, 0, 1, 3 };
-
     int diameter;
-    if (m_shadowsIgnoreTransforms)
-        diameter = max(2, static_cast<int>(floorf((2 / 3.f) * m_blurRadius))); // Canvas shadow. FIXME: we should adjust the blur radius higher up.
+    if (shadowsIgnoreTransforms)
+        diameter = max(2, static_cast<int>(floorf((2 / 3.f) * blurRadius))); // Canvas shadow. FIXME: we should adjust the blur radius higher up.
     else {
         // http://dev.w3.org/csswg/css3-background/#box-shadow
         // Approximate a Gaussian blur with a standard deviation equal to half the blur radius,
         // which http://www.w3.org/TR/SVG/filters.html#feGaussianBlurElement tell us how to do.
         // However, shadows rendered according to that spec will extend a little further than m_blurRadius,
         // so we apply a fudge factor to bring the radius down slightly.
-        float stdDev = m_blurRadius / 2;
+        float stdDev = blurRadius / 2;
         const float gaussianKernelFactor = 3 / 4.f * sqrtf(2 * piFloat);
         const float fudgeFactor = 0.88f;
         diameter = max(2, static_cast<int>(floorf(stdDev * gaussianKernelFactor * fudgeFactor + 0.5f)));
     }
 
-    enum {
-        leftLobe = 0,
-        rightLobe = 1
-    };
-
-    int lobes[3][2]; // indexed by pass, and left/right lobe
-    
     if (diameter & 1) {
         // if d is odd, use three box-blurs of size 'd', centered on the output pixel.
         int lobeSize = (diameter - 1) / 2;
@@ -239,6 +235,14 @@ void ShadowBlur::blurLayerImage(unsigned char* imageData, const IntSize& size, i
         lobes[2][leftLobe] = lobeSize;
         lobes[2][rightLobe] = lobeSize;
     }
+}
+
+void ShadowBlur::blurLayerImage(unsigned char* imageData, const IntSize& size, int rowStride)
+{
+    const int channels[4] = { 3, 0, 1, 3 };
+
+    int lobes[3][2]; // indexed by pass, and left/right lobe
+    calculateLobes(lobes, m_blurRadius.width(), m_shadowsIgnoreTransforms);
 
     // First pass is horizontal.
     int stride = 4;
@@ -248,6 +252,8 @@ void ShadowBlur::blurLayerImage(unsigned char* imageData, const IntSize& size, i
 
     // Two stages: horizontal and vertical
     for (int pass = 0; pass < 2; ++pass) {
+        if (pass && m_blurRadius.width() != m_blurRadius.height())
+            calculateLobes(lobes, m_blurRadius.height(), m_shadowsIgnoreTransforms);
         unsigned char* pixels = imageData;
 
         for (int j = 0; j < final; ++j, pixels += delta) {
@@ -333,19 +339,17 @@ void ShadowBlur::adjustBlurRadius(GraphicsContext* context)
     const float yAxisScale = sqrtf(yUnitChange.width() * yUnitChange.width()
                                    + yUnitChange.height() * yUnitChange.height());
 
-    // blurLayerImage() does not support per-axis blurring, so calculate a balanced scaling.
-    // FIXME: does AffineTransform.xScale()/yScale() help?
-    const float scale = sqrtf(xAxisScale * yAxisScale);
-    m_blurRadius = roundf(m_blurRadius / scale);
+    // Scale blur radius
+    m_blurRadius.scale(1 / xAxisScale, 1 / yAxisScale);
 }
 
 IntRect ShadowBlur::calculateLayerBoundingRect(GraphicsContext* context, const FloatRect& shadowedRect, const IntRect& clipRect)
 {
-    const float roundedRadius = ceilf(m_blurRadius);
+    const IntSize roundedRadius = expandedIntSize(m_blurRadius);
 
     // Calculate the destination of the blurred and/or transformed layer.
     FloatRect layerRect;
-    float inflation = 0;
+    IntSize inflation;
 
     const AffineTransform transform = context->getCTM();
     if (m_shadowsIgnoreTransforms && !transform.isIdentity()) {
@@ -359,7 +363,8 @@ IntRect ShadowBlur::calculateLayerBoundingRect(GraphicsContext* context, const F
 
     // We expand the area by the blur radius to give extra space for the blur transition.
     if (m_type == BlurShadow) {
-        layerRect.inflate(roundedRadius);
+        layerRect.inflateX(roundedRadius.width());
+        layerRect.inflateY(roundedRadius.height());
         inflation = roundedRadius;
     }
 
@@ -373,14 +378,17 @@ IntRect ShadowBlur::calculateLayerBoundingRect(GraphicsContext* context, const F
         IntRect inflatedClip = clipRect;
         // Pixels at the edges can be affected by pixels outside the buffer,
         // so intersect with the clip inflated by the blur.
-        if (m_type == BlurShadow)
-            inflatedClip.inflate(roundedRadius);
+        if (m_type == BlurShadow) {
+            inflatedClip.inflateX(roundedRadius.width());
+            inflatedClip.inflateY(roundedRadius.height());
+        }
         
         layerRect.intersect(inflatedClip);
     }
 
-    const float frameSize = inflation * 2;
-    m_sourceRect = FloatRect(0, 0, shadowedRect.width() + frameSize, shadowedRect.height() + frameSize);
+    IntSize frameSize = inflation;
+    frameSize.scale(2);
+    m_sourceRect = FloatRect(0, 0, shadowedRect.width() + frameSize.width(), shadowedRect.height() + frameSize.height());
     m_layerOrigin = FloatPoint(layerRect.x(), layerRect.y());
     m_layerSize = layerRect.size();
 
@@ -389,8 +397,8 @@ IntRect ShadowBlur::calculateLayerBoundingRect(GraphicsContext* context, const F
 
     // Set the origin as the top left corner of the scratch image, or, in case there's a clipped
     // out region, set the origin accordingly to the full bounding rect's top-left corner.
-    float translationX = -shadowedRect.x() + inflation - fabsf(clippedOut.width());
-    float translationY = -shadowedRect.y() + inflation - fabsf(clippedOut.height());
+    float translationX = -shadowedRect.x() + inflation.width() - fabsf(clippedOut.width());
+    float translationY = -shadowedRect.y() + inflation.height() - fabsf(clippedOut.height());
     m_layerContextTranslation = FloatSize(translationX, translationY);
 
     return enclosingIntRect(layerRect);
@@ -418,13 +426,13 @@ void ShadowBlur::drawShadowBuffer(GraphicsContext* graphicsContext)
     graphicsContext->restore();
 }
 
-static void computeSliceSizesFromRadii(int twiceRadius, const RoundedIntRect::Radii& radii, int& leftSlice, int& rightSlice, int& topSlice, int& bottomSlice)
+static void computeSliceSizesFromRadii(const IntSize& twiceRadius, const RoundedIntRect::Radii& radii, int& leftSlice, int& rightSlice, int& topSlice, int& bottomSlice)
 {
-    leftSlice = twiceRadius + max(radii.topLeft().width(), radii.bottomLeft().width()); 
-    rightSlice = twiceRadius + max(radii.topRight().width(), radii.bottomRight().width()); 
+    leftSlice = twiceRadius.width() + max(radii.topLeft().width(), radii.bottomLeft().width()); 
+    rightSlice = twiceRadius.width() + max(radii.topRight().width(), radii.bottomRight().width()); 
 
-    topSlice = twiceRadius + max(radii.topLeft().height(), radii.topRight().height());
-    bottomSlice = twiceRadius + max(radii.bottomLeft().height(), radii.bottomRight().height());
+    topSlice = twiceRadius.height() + max(radii.topLeft().height(), radii.topRight().height());
+    bottomSlice = twiceRadius.height() + max(radii.bottomLeft().height(), radii.bottomRight().height());
 }
 
 IntSize ShadowBlur::templateSize(const RoundedIntRect::Radii& radii) const
@@ -435,7 +443,10 @@ IntSize ShadowBlur::templateSize(const RoundedIntRect::Radii& radii) const
     int rightSlice;
     int topSlice;
     int bottomSlice;
-    computeSliceSizesFromRadii(2 * ceilf(m_blurRadius), radii, leftSlice, rightSlice, topSlice, bottomSlice);
+    IntSize twiceRadius = expandedIntSize(m_blurRadius);
+    twiceRadius.scale(2);
+
+    computeSliceSizesFromRadii(twiceRadius, radii, leftSlice, rightSlice, topSlice, bottomSlice);
     
     return IntSize(templateSideLength + leftSlice + rightSlice,
                    templateSideLength + topSlice + bottomSlice);
@@ -609,8 +620,8 @@ void ShadowBlur::drawInsetShadowWithTiling(GraphicsContext* graphicsContext, con
     graphicsContext->save();
     graphicsContext->clearShadow();
 
-    const float roundedRadius = ceilf(m_blurRadius);
-    const float twiceRadius = roundedRadius * 2;
+    const IntSize roundedRadius = expandedIntSize(m_blurRadius);
+    const IntSize twiceRadius = IntSize(roundedRadius.width() * 2, roundedRadius.height() * 2);
 
     m_layerImage = ScratchBuffer::shared().getScratchBuffer(templateSize);
     if (!m_layerImage)
@@ -618,7 +629,7 @@ void ShadowBlur::drawInsetShadowWithTiling(GraphicsContext* graphicsContext, con
 
     // Draw the rectangle with hole.
     FloatRect templateBounds(0, 0, templateSize.width(), templateSize.height());
-    FloatRect templateHole = FloatRect(roundedRadius, roundedRadius, templateSize.width() - twiceRadius, templateSize.height() - twiceRadius);
+    FloatRect templateHole = FloatRect(roundedRadius.width(), roundedRadius.height(), templateSize.width() - twiceRadius.width(), templateSize.height() - twiceRadius.height());
 
     if (!ScratchBuffer::shared().matchesLastInsetShadow(m_blurRadius, m_color, m_colorSpace, templateBounds, templateHole, radii)) {
         // Draw shadow into a new ImageBuffer.
@@ -649,7 +660,8 @@ void ShadowBlur::drawInsetShadowWithTiling(GraphicsContext* graphicsContext, con
     FloatRect destHoleRect = holeRect;
     destHoleRect.move(m_offset);
     FloatRect destHoleBounds = destHoleRect;
-    destHoleBounds.inflate(roundedRadius);
+    destHoleBounds.inflateX(roundedRadius.width());
+    destHoleBounds.inflateY(roundedRadius.height());
 
     // Fill the external part of the shadow (which may be visible because of offset).
     Path exteriorPath;
@@ -675,14 +687,14 @@ void ShadowBlur::drawRectShadowWithTiling(GraphicsContext* graphicsContext, cons
     graphicsContext->save();
     graphicsContext->clearShadow();
 
-    const float roundedRadius = ceilf(m_blurRadius);
-    const float twiceRadius = roundedRadius * 2;
+    const IntSize roundedRadius = expandedIntSize(m_blurRadius);
+    const IntSize twiceRadius = IntSize(roundedRadius.width() * 2, roundedRadius.height() * 2);
 
     m_layerImage = ScratchBuffer::shared().getScratchBuffer(templateSize);
     if (!m_layerImage)
         return;
 
-    FloatRect templateShadow = FloatRect(roundedRadius, roundedRadius, templateSize.width() - twiceRadius, templateSize.height() - twiceRadius);
+    FloatRect templateShadow = FloatRect(roundedRadius.width(), roundedRadius.height(), templateSize.width() - twiceRadius.width(), templateSize.height() - twiceRadius.height());
 
     if (!ScratchBuffer::shared().matchesLastShadow(m_blurRadius, m_color, m_colorSpace, templateShadow, radii)) {
         // Draw shadow into the ImageBuffer.
@@ -707,7 +719,8 @@ void ShadowBlur::drawRectShadowWithTiling(GraphicsContext* graphicsContext, cons
 
     FloatRect shadowBounds = shadowedRect;
     shadowBounds.move(m_offset.width(), m_offset.height());
-    shadowBounds.inflate(roundedRadius);
+    shadowBounds.inflateX(roundedRadius.width());
+    shadowBounds.inflateY(roundedRadius.height());
 
     drawLayerPieces(graphicsContext, shadowBounds, radii, roundedRadius, templateSize, OuterShadow);
 
@@ -717,9 +730,9 @@ void ShadowBlur::drawRectShadowWithTiling(GraphicsContext* graphicsContext, cons
     ScratchBuffer::shared().scheduleScratchBufferPurge();
 }
 
-void ShadowBlur::drawLayerPieces(GraphicsContext* graphicsContext, const FloatRect& shadowBounds, const RoundedIntRect::Radii& radii, float roundedRadius, const IntSize& templateSize, ShadowDirection direction)
+void ShadowBlur::drawLayerPieces(GraphicsContext* graphicsContext, const FloatRect& shadowBounds, const RoundedIntRect::Radii& radii, const IntSize& roundedRadius, const IntSize& templateSize, ShadowDirection direction)
 {
-    const float twiceRadius = roundedRadius * 2;
+    const IntSize twiceRadius = IntSize(roundedRadius.width() * 2, roundedRadius.height() * 2);
 
     int leftSlice;
     int rightSlice;

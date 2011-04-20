@@ -1108,6 +1108,7 @@ SET(WebCore_SOURCES
     platform/graphics/Pattern.cpp
     platform/graphics/RoundedIntRect.cpp
     platform/graphics/SegmentedFontData.cpp
+    platform/graphics/ShadowBlur.cpp
     platform/graphics/SimpleFontData.cpp
     platform/graphics/StringTruncator.cpp
     platform/graphics/WidthIterator.cpp

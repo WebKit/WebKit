@@ -2463,6 +2463,8 @@ webcore_sources += \
 	Source/WebCore/platform/graphics/RoundedIntRect.h \
 	Source/WebCore/platform/graphics/SegmentedFontData.cpp \
 	Source/WebCore/platform/graphics/SegmentedFontData.h \
+	Source/WebCore/platform/graphics/ShadowBlur.cpp \
+	Source/WebCore/platform/graphics/ShadowBlur.h \
 	Source/WebCore/platform/graphics/SimpleFontData.cpp \
 	Source/WebCore/platform/graphics/SimpleFontData.h \
 	Source/WebCore/platform/graphics/StringTruncator.cpp \

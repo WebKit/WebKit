@@ -65,10 +65,12 @@ public:
 
     float aspectRatio() const { return m_width / m_height; }
 
-    void scale(float scale)
+    void scale(float s) { scale(s, s); }
+
+    void scale(float scaleX, float scaleY)
     {
-        m_width *= scale;
-        m_height *= scale;
+        m_width *= scaleX;
+        m_height *= scaleY;
     }
 
     FloatSize expandedTo(const FloatSize& other) const

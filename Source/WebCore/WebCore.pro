@@ -995,6 +995,7 @@ SOURCES += \
     platform/graphics/Pattern.cpp \
     platform/graphics/RoundedIntRect.cpp \
     platform/graphics/SegmentedFontData.cpp \
+    platform/graphics/ShadowBlur.cpp \
     platform/graphics/SimpleFontData.cpp \
     platform/graphics/TiledBackingStore.cpp \
     platform/graphics/transforms/AffineTransform.cpp \
@@ -1971,6 +1972,7 @@ HEADERS += \
     platform/graphics/qt/StillImageQt.h \
     platform/graphics/qt/TransparencyLayer.h \
     platform/graphics/SegmentedFontData.h \
+    platform/graphics/ShadowBlur.h \
     platform/graphics/SimpleFontData.h \
     platform/graphics/Tile.h \
     platform/graphics/TiledBackingStore.h \    
