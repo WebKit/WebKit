@@ -103,6 +103,7 @@ void BitmapImage::destroyDecodedDataIfNecessary(bool destroyAll)
 void BitmapImage::destroyMetadataAndNotify(int framesCleared)
 {
     m_isSolidColor = false;
+    m_checkedForSolidColor = false;
     invalidatePlatformData();
 
     int deltaBytes = framesCleared * -frameBytes(m_size);

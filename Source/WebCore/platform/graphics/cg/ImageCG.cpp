@@ -268,6 +268,11 @@ void Image::drawPattern(GraphicsContext* ctxt, const FloatRect& tileRect, const 
         // Avoid a hang under CGContextDrawTiledImage on release builds.
         return;
 
+#if !ASSERT_DISABLED
+    if (this->isBitmapImage())
+        ASSERT(static_cast<BitmapImage*>(this)->notSolidColor());
+#endif
+
     CGContextRef context = ctxt->platformContext();
     ctxt->save();
     CGContextClipToRect(context, destRect);

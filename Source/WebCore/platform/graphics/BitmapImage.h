@@ -159,6 +159,13 @@ public:
     virtual NativeImagePtr nativeImageForCurrentFrame() { return frameAtIndex(currentFrame()); }
     bool frameHasAlphaAtIndex(size_t); 
 
+#if !ASSERT_DISABLED
+    bool notSolidColor()
+    {
+        return size().width() != 1 || size().height() != 1 || frameCount() > 1;
+    }
+#endif
+
 protected:
     enum RepetitionCountStatus {
       Unknown,    // We haven't checked the source's repetition count.

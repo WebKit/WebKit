@@ -1,3 +1,17 @@
+2011-04-19  Pratik Solanki  <psolanki@apple.com>
+
+        Reviewed by Simon Fraser.
+
+        BitmapImage::destroyMetadataAndNotify should clear m_checkedForSolidColor
+        https://bugs.webkit.org/show_bug.cgi?id=58926
+
+        * platform/graphics/BitmapImage.cpp:
+        (WebCore::BitmapImage::destroyMetadataAndNotify): Set m_checkedForSolidColor to false.
+        * platform/graphics/BitmapImage.h:
+        (WebCore::BitmapImage::assertNotSolidColor):
+        * platform/graphics/cg/ImageCG.cpp:
+        (WebCore::Image::drawPattern): Add assert to make sure this is not called for a 1x1 image.
+
 2011-04-19  Ryosuke Niwa  <rniwa@webkit.org>
 
         Reviewed by Ojan Vafai.
