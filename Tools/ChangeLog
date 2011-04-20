@@ -1,3 +1,12 @@
+2011-04-20  Ojan Vafai  <ojan@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        add expandAll/collapseAll links
+        https://bugs.webkit.org/show_bug.cgi?id=59011
+
+        * Scripts/webkitpy/layout_tests/layout_package/json_results.html:
+
 2011-04-20  Kevin Ollivier  <kevino@theolliviers.com>
 
         [wx] Unreviewed build fixes for wx 2.9.1, Cocoa and 64-bit builds.

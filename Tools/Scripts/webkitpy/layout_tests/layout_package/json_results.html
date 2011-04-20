@@ -157,22 +157,31 @@ function appendResultIframe(src, parent)
     parent.appendChild(container);
 }
 
-function expandExpectations(e)
+function toggleExpectations(e)
 {
     var expandLink = e.target;
     if (expandLink.className != 'expand-button-text')
         expandLink = expandLink.querySelector('.expand-button-text');
 
-    var isExpand = expandLink.textContent == '+';
+    if (expandLink.textContent == '+')
+        expandExpectations(expandLink);
+    else
+        collapseExpectations(expandLink);
+}
+
+function collapseExpectations(expandLink)
+{
+    expandLink.textContent = '+';
+    var existingResultsRow = parentOfType(expandLink, 'tbody').querySelector('.results-row');
+    if (existingResultsRow)
+        existingResultsRow.style.display = 'none';
+}
+
+function expandExpectations(expandLink)
+{
     var row = parentOfType(expandLink, 'tr');
     var parentTbody = row.parentNode;
     var existingResultsRow = parentTbody.querySelector('.results-row');
-    
-    if (!isExpand) {
-        expandLink.textContent = '+';
-        existingResultsRow.style.display = 'none';
-        return;
-    }
     
     var enDash = '\u2013';
     expandLink.textContent = enDash;
@@ -196,6 +205,20 @@ function expandExpectations(e)
     parentTbody.appendChild(newRow);
 }
 
+function expandAllExpectations()
+{
+    var expandLinks = document.querySelectorAll('.expand-button-text');
+    for (var i = 0; len = expandLinks.length; i++)
+        expandExpectations(expandLinks[i]);
+}
+
+function collapseAllExpectations()
+{
+    var expandLinks = document.querySelectorAll('.expand-button-text');
+    for (var i = 0; len = expandLinks.length; i++)
+        collapseExpectations(expandLinks[i]);
+}
+
 function testLink(test)
 {
     var basePath;
@@ -203,7 +226,7 @@ function testLink(test)
         basePath = g_results.layout_tests_dir + '/';
     else
         basePath = 'http://trac.webkit.org/browser/trunk/LayoutTests/';
-    return '<span class=expand-button onclick="expandExpectations(event)"><span class=expand-button-text>+</span></span>' +
+    return '<span class=expand-button onclick="toggleExpectations(event)"><span class=expand-button-text>+</span></span>' +
         '<a class=test-link href="' + basePath + test + '">' + test + '</a>';
 }
 
@@ -302,9 +325,14 @@ function tableRows()
     return html;
 }
 
-var html = '';
+var html = '<div id=options>' +
+    '<a href="javascript:void()" class="expand-all" onclick="expandAllExpectations()">expand all</a> ' +
+    '<a href="javascript:void()" class="collapse-all" onclick="collapseAllExpectations()">collapse all</a>';
+
 if (g_results.uses_expectations_file)
-    html += '<div id=options><label><input class="unexpected-results" type=checkbox checked>Only show unexpected results</label></div>';
+    html += '<label><input class="unexpected-results" type=checkbox checked onchange="updateExpectedResults()">Only show unexpected results</label>';
+
+html += '</div>';
 
 var tableRowsHtml = tableRows();
 
@@ -545,8 +573,6 @@ function updateExpectedResults()
 }
 
 updateExpectedResults();
-if (document.querySelector('.unexpected-results'))
-    document.querySelector('.unexpected-results').addEventListener('change', updateExpectedResults, false);
 
 if (!g_hasTextFailures)
   document.body.getElementById('text-results-header').textContent = '';
