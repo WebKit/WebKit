@@ -736,8 +736,11 @@ class Bugzilla(object):
         self.browser['resolution'] = ['FIXED']
         self.browser.submit()
 
-    def reassign_bug(self, bug_id, assignee, comment_text=None):
+    def reassign_bug(self, bug_id, assignee=None, comment_text=None):
         self.authenticate()
+
+        if not assignee:
+            assignee = self.username
 
         log("Assigning bug %s to %s" % (bug_id, assignee))
         if self.dryrun:

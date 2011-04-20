@@ -329,6 +329,13 @@ class MockBugzilla(Mock):
             action_param = "&action=%s" % action
         return "%s/%s%s" % (self.bug_server_url, attachment_id, action_param)
 
+    def reassign_bug(self, bug_id, assignee=None, comment_text=None):
+        log("MOCK reassign_bug: bug_id=%s, assignee=%s" % (bug_id, assignee))
+        if comment_text:
+            log("-- Begin comment --")
+            log(comment_text)
+            log("-- End comment --")
+
     def set_flag_on_attachment(self,
                                attachment_id,
                                flag_name,
