@@ -657,7 +657,7 @@ public:
     void test8(ResultCondition cond, Address address, TrustedImm32 mask, RegisterID dest)
     {
         load8(address, ARMRegisters::S1);
-        set32Test32(cond, ARMRegisters::S1, mask, dest);
+        test32(cond, ARMRegisters::S1, mask, dest);
     }
 
     void add32(TrustedImm32 imm, RegisterID src, RegisterID dest)

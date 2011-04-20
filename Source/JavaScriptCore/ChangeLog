@@ -1,3 +1,10 @@
+2011-04-20  Gavin Barraclough  <barraclough@apple.com>
+
+        ARMv7 build fix.
+
+        * assembler/MacroAssemblerARM.h:
+        (JSC::MacroAssemblerARM::test8):
+
 2011-04-19  Gavin Barraclough  <barraclough@apple.com>
 
         Reviewed by Oliver Hunt.
