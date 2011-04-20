@@ -1,3 +1,18 @@
+2011-04-20  Robert Hogan  <robert@webkit.org>
+
+        Reviewed by Antonio Gomes.
+
+        [Qt] DRT sideeffect revealed by r63657 and r75305
+        https://bugs.webkit.org/show_bug.cgi?id=42578
+
+        Unskip tests passing since r76958
+
+        The NetworkAccessManager's authentication cache is getting
+        cleared now on every page load, so these no longer leak
+        credentials between tests.
+
+        * platform/qt/Skipped:
+
 2011-03-07  Victoria Kirst  <vrk@google.com>
 
         Reviewed by Mihai Parparita.
