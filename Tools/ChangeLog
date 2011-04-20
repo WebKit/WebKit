@@ -1,5 +1,16 @@
 2011-04-20  Ojan Vafai  <ojan@chromium.org>
 
+        Reviewed by Tony Chang.
+
+        move global state into a shared object
+        https://bugs.webkit.org/show_bug.cgi?id=59023
+
+        This makes the code more testable.
+
+        * Scripts/webkitpy/layout_tests/layout_package/json_results.html:
+
+2011-04-20  Ojan Vafai  <ojan@chromium.org>
+
         Reviewed by Eric Seidel.
 
         add expandAll/collapseAll links
