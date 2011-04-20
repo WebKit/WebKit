@@ -151,6 +151,32 @@ private:
         return true;
     }
 
+    bool isJSConstantWithInt32Value(NodeIndex nodeIndex, int32_t& out)
+    {
+        if (!m_jit.isJSConstant(nodeIndex))
+            return false;
+        JSValue value = m_jit.valueOfJSConstant(nodeIndex);
+
+        if (!value.isInt32())
+            return false;
+        
+        out = value.asInt32();
+        return true;
+    }
+
+    bool detectPeepHoleBranch()
+    {
+        // Check if the block contains precisely one more node.
+        if (m_compileIndex + 2 != m_jit.graph().m_blocks[m_block].end)
+            return false;
+
+        // Check if the lastNode is a branch on this node.
+        Node& lastNode = m_jit.graph()[m_compileIndex + 1];
+        return lastNode.op == Branch && lastNode.child1 == m_compileIndex;
+    }
+
+    void compilePeepHoleBranch(Node&, JITCompiler::RelationalCondition);
+
     // Add a speculation check without additional recovery.
     void speculationCheck(MacroAssembler::Jump jumpToFail)
     {

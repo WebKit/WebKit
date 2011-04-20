@@ -239,6 +239,39 @@ GPRReg SpeculativeJIT::fillSpeculateCell(NodeIndex nodeIndex)
     return InvalidGPRReg;
 }
 
+void SpeculativeJIT::compilePeepHoleBranch(Node& node, JITCompiler::RelationalCondition condition)
+{
+    Node& branchNode = m_jit.graph()[m_compileIndex + 1];
+    BlockIndex taken = m_jit.graph().blockIndexForBytecodeOffset(branchNode.takenBytecodeOffset());
+    BlockIndex notTaken = m_jit.graph().blockIndexForBytecodeOffset(branchNode.notTakenBytecodeOffset());
+
+    // The branch instruction will branch to the taken block.
+    // If taken is next, switch taken with notTaken & invert the branch condition so we can fall through.
+    if (taken == (m_block + 1)) {
+        condition = JITCompiler::invert(condition);
+        BlockIndex tmp = taken;
+        taken = notTaken;
+        notTaken = tmp;
+    }
+
+    int32_t imm;
+    if (isJSConstantWithInt32Value(node.child1, imm)) {
+        SpeculateIntegerOperand op2(this, node.child2);
+        addBranch(m_jit.branch32(condition, JITCompiler::Imm32(imm), op2.registerID()), taken);
+    } else if (isJSConstantWithInt32Value(node.child2, imm)) {
+        SpeculateIntegerOperand op1(this, node.child1);
+        addBranch(m_jit.branch32(condition, op1.registerID(), JITCompiler::Imm32(imm)), taken);
+    } else {
+        SpeculateIntegerOperand op1(this, node.child1);
+        SpeculateIntegerOperand op2(this, node.child2);
+        addBranch(m_jit.branch32(condition, op1.registerID(), op2.registerID()), taken);
+    }
+
+    // Check for fall through, otherwise we need to jump.
+    if (notTaken != (m_block + 1))
+        addBranch(m_jit.jump(), notTaken);
+}
+
 bool SpeculativeJIT::compile(Node& node)
 {
     checkConsistency();
@@ -489,6 +522,25 @@ bool SpeculativeJIT::compile(Node& node)
     }
 
     case CompareLess: {
+        // Fused compare & branch.
+        if (detectPeepHoleBranch()) {
+            // detectPeepHoleBranch currently only permits the branch to be the very next node,
+            // so can be no intervening nodes to also reference the compare. 
+            ASSERT(node.adjustedRefCount() == 1);
+
+            compilePeepHoleBranch(node, JITCompiler::LessThan);
+
+            use(node.child1);
+            use(node.child2);
+            ++m_compileIndex;
+
+            if (m_didTerminate)
+                return false;
+            checkConsistency();
+            return true;
+        }
+
+        // Normal case, not fused to branch.
         SpeculateIntegerOperand op1(this, node.child1);
         SpeculateIntegerOperand op2(this, node.child2);
         GPRTemporary result(this, op1, op2);
@@ -502,6 +554,25 @@ bool SpeculativeJIT::compile(Node& node)
     }
 
     case CompareLessEq: {
+        // Fused compare & branch.
+        if (detectPeepHoleBranch()) {
+            // detectPeepHoleBranch currently only permits the branch to be the very next node,
+            // so can be no intervening nodes to also reference the compare. 
+            ASSERT(node.adjustedRefCount() == 1);
+
+            compilePeepHoleBranch(node, JITCompiler::LessThanOrEqual);
+
+            use(node.child1);
+            use(node.child2);
+            ++m_compileIndex;
+
+            if (m_didTerminate)
+                return false;
+            checkConsistency();
+            return true;
+        }
+
+        // Normal case, not fused to branch.
         SpeculateIntegerOperand op1(this, node.child1);
         SpeculateIntegerOperand op2(this, node.child2);
         GPRTemporary result(this, op1, op2);

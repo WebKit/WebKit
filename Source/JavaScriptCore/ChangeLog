@@ -1,5 +1,27 @@
 2011-04-20  Gavin Barraclough  <barraclough@apple.com>
 
+        Reviewed by Oliver Hunt.
+
+        Bug 59022 - DFG JIT - Optimize branch-on-relational-compare
+
+        If a relational compare (< or <=) is immediately followed by a branch,
+        we can combine the two, avoiding generation of a boolean into a register.
+
+        * assembler/MacroAssemblerX86Common.h:
+        (JSC::MacroAssemblerX86Common::branch32):
+        (JSC::MacroAssemblerX86Common::invert):
+        (JSC::MacroAssemblerX86Common::commute):
+        * dfg/DFGNode.h:
+        (JSC::DFG::Node::adjustedRefCount):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compilePeepHoleBranch):
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT.h:
+        (JSC::DFG::SpeculativeJIT::isJSConstantWithInt32Value):
+        (JSC::DFG::SpeculativeJIT::detectPeepHoleBranch):
+
+2011-04-20  Gavin Barraclough  <barraclough@apple.com>
+
         ARMv7 build fix II.
 
         * jit/JITOpcodes32_64.cpp:

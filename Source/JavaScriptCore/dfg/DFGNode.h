@@ -327,6 +327,12 @@ struct Node {
         return m_constantValue.opInfo2;
     }
 
+    unsigned adjustedRefCount()
+    {
+        return mustGenerate() ? refCount - 1 : refCount;
+    }
+
+
     // This enum value describes the type of the node.
     NodeType op;
     // Used to look up exception handling information (currently implemented as a bytecode index).
