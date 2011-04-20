@@ -1,3 +1,13 @@
+2011-04-20  Cris Neckar  <cdn@chromium.org>
+
+        Reviewed by Dirk Schulze.
+
+        Tests for crash when copying a filter effect after applying tranforms.
+        https://bugs.webkit.org/show_bug.cgi?id=57885
+
+        * svg/filters/svg-transform-blur-crash-expected.txt: Added.
+        * svg/filters/svg-transform-blur-crash.xhtml: Added.
+
 2011-04-20  Jian Li  <jianli@chromium.org>
 
         Reviewed by Kenneth Russell.

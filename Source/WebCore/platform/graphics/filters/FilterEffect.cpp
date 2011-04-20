@@ -118,9 +118,13 @@ PassRefPtr<ByteArray> FilterEffect::asPremultipliedImage(const IntRect& rect)
 
 inline void FilterEffect::copyImageBytes(ByteArray* source, ByteArray* destination, const IntRect& rect)
 {
-    // Copy the necessary lines.
-    if (rect.x() < 0 || rect.y() < 0 || rect.maxY() > m_absolutePaintRect.width() || rect.maxY() > m_absolutePaintRect.height())
+    // Initialize the destination to transparent black, if not entirely covered by the source.
+    if (rect.x() < 0 || rect.y() < 0 || rect.maxX() > m_absolutePaintRect.width() || rect.maxY() > m_absolutePaintRect.height())
         memset(destination->data(), 0, destination->length());
+
+    // Early return if the rect does not intersect with the source.
+    if (rect.maxX() <= 0 || rect.maxY() <= 0 || rect.x() >= m_absolutePaintRect.width() || rect.y() >= m_absolutePaintRect.height())
+        return;
 
     int xOrigin = rect.x();
     int xDest = 0;
