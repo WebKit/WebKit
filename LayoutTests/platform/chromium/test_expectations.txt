@@ -737,7 +737,6 @@ BUGCR67767 : http/tests/security/aboutBlank/xss-DENIED-set-opener.html = TEXT
 // Plugin tests
 // -----------------------------------------------------------------
 BUGCR21841 MAC WIN DEBUG : plugins/destroy-during-npp-new.html = CRASH PASS
-BUGJOHNNYG LINUX : plugins/embed-attributes-style.html = IMAGE
 BUGCR61799 : plugins/evaluate-js-after-removing-plugin-element.html = CRASH TEXT
 BUGCR37962 MAC : plugins/iframe-shims.html = TEXT PASS TIMEOUT
 BUGCR10351 MAC : plugins/inner-html-display-none.html = FAIL
@@ -818,9 +817,6 @@ BUGCR25375 BUGCR59399 SKIP : media/audio-delete-while-step-button-clicked.html =
 // Seeks to the end of file, which results in ogg packets with no timestamps.
 // KNOWNISSUE : fails because progress event is not published 
 BUGCR59675 BUGCR59263 SKIP : media/event-attributes.html = PASS FAIL TIMEOUT
-
-// These tests are flaky with subtle pixel differences.
-BUGCR60744 LINUX : media/video-layer-crash.html = IMAGE
 
 // These tests are failing because they use position-dependent mouse clicks.
 // might be hard to fix
@@ -1553,8 +1549,8 @@ BUGCR15217 : fast/js/dictionary-no-cache.html = FAIL
 
 // WebKit 45086:45111
 BUGCR15270 MAC LINUX RELEASE : fast/js/excessive-comma-usage.html = TEXT
-BUGCR15270 MAC LINUX DEBUG SLOW : fast/js/excessive-comma-usage.html = FAIL
-BUGCR15270 WIN : fast/js/excessive-comma-usage.html = CRASH FAIL
+BUGCR15270 MAC LINUX DEBUG : fast/js/excessive-comma-usage.html = FAIL CRASH TIMEOUT
+BUGCR15270 WIN : fast/js/excessive-comma-usage.html = CRASH FAIL TIMEOUT
 
 
 // Flaky for a while; also related to BUGCR17974
@@ -1872,7 +1868,7 @@ BUGCR38706 : svg/custom/deep-dynamic-updates.svg = IMAGE+TEXT IMAGE PASS
 BUGCR29737 WIN LINUX : svg/filters/filterRes.svg = IMAGE
 
 // Caused by http://trac.webkit.org/changeset/56394.
-BUG_JAPHET WIN : http/tests/xmlhttprequest/xmlhttprequest-50ms-download-dispatch.html = TEXT
+BUG_JAPHET WIN : http/tests/xmlhttprequest/xmlhttprequest-50ms-download-dispatch.html = TEXT TIMEOUT
 
 // Due to the differences in initialization checks in KURL and googleurl.
 // Note: this test was also marked as flaky on WIN RELEASE above, BUGCR31342.
@@ -2572,7 +2568,7 @@ BUG_YUTAK WIN LINUX : fast/images/imagemap-polygon-focus-ring.html = IMAGE+TEXT
 BUG_YUTAK MAC : fast/images/imagemap-polygon-focus-ring.html = IMAGE
 
 // Started to produce text difference occasionally since r68528.
-BUGCR65279 LINUX DEBUG : fast/css/visited-link-hang.html = TEXT PASS
+// BUGCR65279 LINUX DEBUG : fast/css/visited-link-hang.html = TEXT PASS
 
 ///////////////////////////////////////////////////////////////////////////
 // Regressions caused by switching to DRT.
@@ -2596,7 +2592,7 @@ BUGCR57950 WIN XP : svg/batik/text/verticalText.svg = CRASH PASS
 BUGWK58193 WIN WIN7 : svg/batik/text/verticalText.svg = IMAGE+TEXT
 
 // media/video-* flakyness
-BUGCR59665 MAC : media/video-layer-crash.html = CRASH TIMEOUT PASS IMAGE
+BUGCR59665 : media/video-layer-crash.html = CRASH TIMEOUT PASS IMAGE
 // BUGCR59415 : cannot repro the flakiness
 BUGCR59415 WIN : media/video-loop.html = TIMEOUT TEXT PASS
 // This test needs enhanced eventSender.contextMenu() return value.
@@ -2618,7 +2614,7 @@ BUG_DRT MAC : fast/dom/beforeload/script-before-load-dynamic.html = TIMEOUT PASS
 BUG_DRT : fast/dynamic/window-resize-scrollbars-test.html = IMAGE+TEXT
 BUG_DRT LINUX : fast/events/select-onchange-crash.html = CRASH
 BUG_DRT DEBUG : fast/frames/calculate-round.html = TIMEOUT PASS
-BUG_DRT BUGCR43890 WIN DEBUG SLOW : fast/forms/implicit-submission.html = PASS
+BUG_DRT BUGCR43890 WIN DEBUG SLOW : fast/forms/implicit-submission.html = PASS TEXT
 BUG_DRT BUGCR43890 LINUX : fast/forms/implicit-submission.html = CRASH
 BUG_DRT BUGCR43890 MAC DEBUG SLOW : fast/forms/implicit-submission.html = PASS TEXT
 BUG_DRT BUGCR21141 LINUX : fast/forms/select-double-onchange.html = CRASH FAIL
@@ -2929,7 +2925,7 @@ BUGWK55968 GPU WIN DEBUG : compositing/webgl/webgl-nonpremultiplied-blend.html =
 
 // 2 pixel stretching when rendering some videos with the GPU
 BUGCR74102 GPU WIN LINUX : media/video-controls-rendering.html = IMAGE
-BUGCR74102 GPU WIN : media/video-layer-crash.html = IMAGE
+// BUGCR74102 GPU WIN : media/video-layer-crash.html = IMAGE
 
 // New test causes an assertion failure.
 BUGWK58214 WIN LINUX RELEASE GPU : fast/canvas/font-update.html = TEXT
@@ -3019,7 +3015,7 @@ BUGWK54322 MAC SNOWLEOPARD : http/tests/xmlhttprequest/small-chunks-response-tex
 BUGWK54322 MAC SNOWLEOPARD : scrollbars/hidden-iframe-scrollbar-crash2.html = TEXT PASS
 BUGWK54322 MAC SNOWLEOPARD : storage/indexeddb/data-corruption.html = TIMEOUT PASS
 BUGWK54322 MAC SNOWLEOPARD : svg/custom/acid3-test-77.html = TIMEOUT PASS
-BUGWK54322 MAC SNOWLEOPARD : svg/dom/SVGScriptElement/script-set-href.svg = PASS TEXT
+BUGWK54322 MAC : svg/dom/SVGScriptElement/script-set-href.svg = PASS TEXT
 BUGWK54322 MAC SNOWLEOPARD : transitions/transition-end-event-rendering.html = PASS TEXT
 
 BUGCR72428 : fast/dom/HTMLAnchorElement/set-href-attribute-hash.html = TEXT
@@ -3675,7 +3671,7 @@ BUGDPRANKE MAC : fast/borders/border-radius-constraints.html = IMAGE
 BUGDPRANKE MAC LEOPARD : fast/canvas/canvasDrawingIntoSelf.html = IMAGE
 BUGDPRANKE MAC : fast/forms/select-background-none.html = IMAGE
 BUGDPRANKE MAC : fast/html/details-add-summary-1.html = IMAGE
-BUGDPRANKE LINUX : transforms/2d/hindi-rotated.html = IMAGE
+BUGDPRANKE LINUX : transforms/2d/hindi-rotated.html = IMAGE IMAGE+TEXT
 BUGDPRANKE MAC : compositing/iframes/invisible-nested-iframe-show.html = TEXT
 BUGDPRANKE MAC GPU : compositing/geometry/video-fixed-scrolling.html = IMAGE
 BUGDPRANKE MAC GPU : media/video-volume-slider.html = IMAGE
@@ -3762,3 +3758,80 @@ BUGCR80011 WIN LINUX DEBUG : fast/backgrounds/solid-color-context-restore.html =
 BUGCR80011 WIN LINUX DEBUG : fast/css/acid2-pixel.html = CRASH
 BUGCR80011 WIN LINUX DEBUG : fast/frames/content-opacity-1.html = CRASH
 BUGCR80011 WIN LINUX DEBUG : fast/frames/content-opacity-2.html = CRASH
+
+// webkit roll : 84350:84431 
+BUGDPRANKE LINUX : fast/canvas/webgl/css-webkit-canvas-repaint.html = IMAGE
+BUGDPRANKE LINUX : fast/canvas/webgl/css-webkit-canvas.html = IMAGE
+BUGDPRANKE LINUX : fast/encoding/parser-tests-100.html = TIMEOUT PASS
+BUGDPRANKE LINUX : fast/encoding/parser-tests-50.html = TIMEOUT PASS
+BUGDPRANKE LINUX : fast/css/visited-link-hang.html = CRASH
+BUGDPRANKE WIN LINUX CPU : media/media-document-audio-repaint.html = IMAGE
+BUGDPRANKE LINUX : transitions/interrupt-zero-duration.html = TEXT PASS
+BUGDPRANKE : media/controls-css-overload.html = TIMEOUT PASS
+BUGDPRANKE : fast/borders/bidi-012.html = IMAGE+TEXT
+BUGDPRANKE MAC CPU : media/video-zoom.html = IMAGE
+BUGDPRANKE WIN LINUX : fast/filesystem/op-copy.html = TEXT
+BUGDPRANKE WIN LINUX : fast/filesystem/op-move.html = TEXT
+BUGDPRANKE WIN LINUX : animations/change-one-anim.html = TEXT PASS
+BUGDPRANKE WIN LINUX CPU : media/video-controls-rendering.html = IMAGE
+
+// pulled in from downstream during webkit roll 84350:84431
+BUGCASEQ MAC : svg/dynamic-updates/SVGFEDiffuseLightingElement-inherit-lighting-color-css-prop.html = IMAGE
+BUGCASEQ MAC : svg/dynamic-updates/SVGFEFloodElement-inherit-flood-color.html = IMAGE
+BUGCASEQ MAC : svg/dynamic-updates/SVGFESpecularLightingElement-inherit-lighting-color-css-prop.html = IMAGE
+BUGCASEQ MAC : svg/dynamic-updates/SVGFESpecularLightingElement-lighting-color-css-prop.html = IMAGE
+BUGCASEQ WIN LINUX : editing/selection/select-from-textfield-outwards.html = IMAGE+TEXT
+BUGCASEQ WIN LINUX : fast/forms/input-text-drag-down.html = IMAGE+TEXT
+BUGCASEQ MAC : fast/canvas/image-object-in-canvas.html = IMAGE
+
+BUGDPRANKE : fast/backgrounds/background-leakage.html = IMAGE+TEXT IMAGE
+BUGDPRANKE : fast/multicol/client-rects.html = IMAGE
+
+BUGDPRANKE WIN DEBUG : fast/css/text-overflow-ellipsis.html = CRASH
+BUGDPRANKE MAC DEBUG : transitions/cancel-transition.html = TEXT PASS
+BUGDPRANKE LINUX DEBUG : fast/css/getComputedStyle/getComputedStyle-relayout.html = CRASH
+BUGDPRANKE LINUX DEBUG : fast/dom/HTMLFormElement/invalid-form-field.html = CRASH
+
+BUGDPRANKE LINUX DEBUG : perf/array-nested-loop.html = TEXT TIMEOUT PASS
+BUGDPRANKE LINUX DEBUG : fast/dom/Node/mutation-blur.html = CRASH
+BUGDPRANKE WIN : media/video-zoom.html = IMAGE
+BUGDPRANKE WIN DEBUG : svg/custom/font-platformDestroy-crash.svg = CRASH
+BUGDPRANKE WIN DEBUG : svg/custom/foreignObject-crash-on-hover.xml = CRASH
+BUGDPRANKE WIN DEBUG : svg/custom/foreign-object-skew.svg = CRASH
+
+// flakiness
+BUGDPRANKE WIN DEBUG : http/tests/navigation/forward-to-fragment-fires-onload.html = TIMEOUT PASS
+BUGDPRANKE WIN DEBUG : perf/mouse-event.html = TEXT TIMEOUT PASS
+BUGDPRANKE LINUX DEBUG : http/tests/security/contentSecurityPolicy/media-src-allowed.html = TIMEOUT PASS
+BUGDPRANKE WIN DEBUG : perf/typing-at-end-of-line.html = TEXT TIMEOUT PASS
+BUGDPRANKE MAC DEBUG : fast/notifications/notifications-display-close-events.html = TIMEOUT PASS
+BUGDPRANKE MAC DEBUG : fast/css-generated-content/table-row-group-to-inline.html = IMAGE+TEXT PASS
+
+// Green on canary
+BUGJKNOTTEN MAC : fast/borders/borderRadiusDashed01.html = IMAGE PASS
+BUGJKNOTTEN MAC : fast/forms/menulist-clip.html = IMAGE PASS
+BUGJKNOTTEN MAC : fast/forms/menulist-narrow-width.html = IMAGE PASS
+BUGJKNOTTEN MAC : fast/forms/menulist-option-wrap.html = IMAGE PASS
+BUGJKNOTTEN MAC : fast/forms/menulist-restrict-line-height.html = IMAGE PASS
+BUGJKNOTTEN MAC : fast/forms/menulist-separator-painting.html = IMAGE PASS
+BUGJKNOTTEN MAC : fast/forms/menulist-style-color.html = IMAGE PASS
+BUGJKNOTTEN MAC : fast/forms/select-baseline.html = IMAGE PASS
+BUGJKNOTTEN MAC : fast/forms/select-empty-option-height.html = IMAGE PASS
+BUGJKNOTTEN : http/tests/local/formdata/send-form-data-with-sliced-file.html = PASS
+
+BUGDPRANKE DEBUG WIN LINUX : fast/table/stale-grid-crash.html = CRASH
+BUGDPRANKE DEBUG MAC : fast/css/background-clip-values.html = CRASH
+BUGDPRANKE DEBUG MAC : fast/css/background-currentcolor.html = CRASH
+
+BUGDPRANKE LINUX : canvas/philip/tests/2d.gradient.radial.touch2.html = TEXT
+
+BUGDPRANKE : editing/undo/undo-deleteWord.html = CRASH
+BUGDPRANKE : fast/encoding/parser-tests-70.html = TIMEOUT PASS
+BUGDPRANKE MAC : http/tests/navigation/lockedhistory-iframe.html = TEXT
+BUGDPRANKE : fast/parser/iframe-sets-parent-to-javascript-url.html = TEXT PASS
+BUGDPRANKE : fast/repaint/moving-shadow-on-path.html = TEXT PASS
+
+BUGDPRANKE LINUX : fast/runin/nonblock-runin.html = CRASH
+BUGDPRANKE WIN: http/tests/misc/empty-file-formdata.html = TIMEOUT PASS
+BUGDPRANKE WIN: http/tests/xmlhttprequest/access-control-preflight-headers-async.html = TIMEOUT PASS
+
