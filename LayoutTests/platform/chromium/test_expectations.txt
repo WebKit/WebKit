@@ -3678,4 +3678,10 @@ BUGDPRANKE MAC : http/tests/media/video-served-as-text.html = CRASH
 BUGDPRANKE MAC : http/tests/misc/object-image-error.html = TIMEOUT
 BUGDPRANKE MAC : fast/text/international/thai-baht-space.html = IMAGE+TEXT
 
+BUGDPRANKE LINUX DEBUG : svg/custom/foreignObject-crash-on-hover.xml = CRASH
+BUGDPRANKE LINUX DEBUG : fast/css/getComputedStyle/getComputedStyle-margin-percentage.html = CRASH
+BUGDPRANKE LINUX DEBUG : fast/dom/Attr/access-after-element-destruction.html = CRASH
+BUGDPRANKE LINUX DEBUG : fast/css/last-child-pseudo-class.html = TEXT PASS
+BUGDPRANKE LINUX DEBUG : fast/dom/HTMLLinkElement/link-and-subresource-test.html = TEXT PASS
+
 
