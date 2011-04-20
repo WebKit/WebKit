@@ -90,8 +90,12 @@ CopyMode: alwaysoverwrite; Source: *.py;        DestDir: "{app}"
     wx_version = '%d.%d' % (wx.MAJOR_VERSION, wx.MINOR_VERSION)
     if wx.MINOR_VERSION % 2 == 1:
         wx_version += ".%d" % wx.RELEASE_VERSION
-        installerTemplate = installerTemplate.replace("msw-unicode", "msw")
         
+    # in 2.9/3.0, there are only unicode builds, so unicode has been removed
+    # from build names.
+    if wx.MAJOR_VERSION > 2 or wx.MINOR_VERSION > 8:
+        installerTemplate = installerTemplate.replace("msw-unicode", "msw")
+
     installerTemplate = installerTemplate.replace("<<VERSION>>", date)
     installerTemplate = installerTemplate.replace("<<WXVERSION>>", wx_version)
     installerTemplate = installerTemplate.replace("<<ROOTDIR>>", wxwebkit_dir )

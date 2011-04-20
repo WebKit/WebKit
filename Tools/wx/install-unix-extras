@@ -174,7 +174,7 @@ if [ ! -f $DEPS_PREFIX/lib/libpng.a ]; then
   cd $DL_DIR/libpng-$LIBPNG_VERSION
 
   if [ "${OSTYPE:0:6}" == "darwin" ]; then
-    ./configure --prefix=$DEPS_PREFIX --disable-dependency-tracking
+    ./configure --prefix=$DEPS_PREFIX --disable-dependency-tracking --disable-shared
     make CFLAGS="-O -g -isysroot $SDK $ARCH_FLAGS" \
     LDFLAGS="$ARCH_FLAGS"
     make install
@@ -205,7 +205,6 @@ if [ ! -f $DEPS_PREFIX/lib/libcurl.$DLLEXT ]; then
     mkdir -p $DEPS_PREFIX/include/curl
     
     cp include/curl/curlbuild.h include/curl/curlbuild32.h
-    cp include/curl/curlbuild.h $DEPS_PREFIX/include/curl/curlbuild32.h
     
     make distclean
     
@@ -213,7 +212,6 @@ if [ ! -f $DEPS_PREFIX/lib/libcurl.$DLLEXT ]; then
     ./configure --prefix=$DEPS_PREFIX --disable-dependency-tracking
     
     cp include/curl/curlbuild.h include/curl/curlbuild64.h
-    cp include/curl/curlbuild.h $DEPS_PREFIX/include/curl/curlbuild64.h
     
     make distclean
     
@@ -231,6 +229,11 @@ EOF
     make CFLAGS="-O -g -isysroot $SDK $ARCH_FLAGS" \
     LDFLAGS="$ARCH_FLAGS"
     make install
+    
+    cp include/curl/curlbuild32.h $DEPS_PREFIX/include/curl/curlbuild32.h
+    cp include/curl/curlbuild64.h $DEPS_PREFIX/include/curl/curlbuild64.h
+    cp include/curl/curlbuild.h $DEPS_PREFIX/include/curl/curlbuild.h
+    
   else
     ./configure --prefix=$DEPS_PREFIX
   

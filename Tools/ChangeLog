@@ -1,3 +1,14 @@
+2011-04-20  Kevin Ollivier  <kevino@theolliviers.com>
+
+        [wx] Unreviewed build fixes for wx 2.9.1, Cocoa and 64-bit builds.
+
+        * Scripts/webkitdirs.pm:
+        * wx/build/build_utils.py:
+        * wx/build/settings.py:
+        * wx/install-unix-extras:
+        * wx/packaging/build-mac-installer.py:
+        * wx/packaging/build-win-installer.py:
+
 2011-04-20  Adam Roben  <aroben@apple.com>
 
         Replace old-run-webkit-tests's win-7 platform with win-7sp0

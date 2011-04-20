@@ -175,6 +175,17 @@ def get_config(wk_root):
 
     return config
 
+
+def get_arch(wk_root):
+    arch_file = os.path.join(wk_root, 'WebKitBuild', 'Architecture')
+    arch = 'x86_64'
+
+    if os.path.exists(arch_file):
+        arch = open(arch_file).read()
+
+    return arch
+
+
 def svn_revision():
     if os.system("git-svn info") == 0:
         info = commands.getoutput("git-svn info ../..")

@@ -157,6 +157,7 @@ webcore_dirs = [
 ]
 
 config = get_config(wk_root)
+arch = get_arch(wk_root)
 config_dir = config + git_branch_name()
 
 output_dir = os.path.join(wk_root, 'WebKitBuild', config_dir)
@@ -294,6 +295,8 @@ def common_configure(conf):
             conf.env['CPPPATH_WX'] = wxincludes
             conf.env['LIB_WX'] = wxlibs
             conf.env['LIBPATH_WX'] = wxlibpaths
+        else:
+            conf.check_cfg(path=get_path_to_wxconfig(), args='--cxxflags --libs', package='', uselib_store='WX', mandatory=True)
 
     if sys.platform.startswith('darwin'):
         conf.env['LIB_ICU'] = ['icucore']
@@ -323,8 +326,14 @@ def common_configure(conf):
             # work fine for wx's purposes.
             conf.env.append_value('LIB_WKINTERFACE', ['WebKitSystemInterfaceLeopard'])
 
+        # match WebKit Mac's default here unless we're building on platforms that won't support 64-bit.
+        global arch
+        is_cocoa = "__WXOSX_COCOA__" in conf.env["CXXDEFINES_WX"]
+        if min_version == "10.4" or not is_cocoa:
+            arch = "i386"
+
         sdkroot = '/Developer/SDKs/MacOSX%s.sdk' % sdk_version
-        sdkflags = ['-arch', 'i386', '-isysroot', sdkroot]
+        sdkflags = ['-arch', arch, '-isysroot', sdkroot]
 
         conf.env.append_value('CPPFLAGS', sdkflags)
         conf.env.append_value('LINKFLAGS', sdkflags)
@@ -384,8 +393,6 @@ def common_configure(conf):
             conf.env.append_value('LIBPATH', os.path.join(wklibs_dir, 'unix', 'lib'))
             conf.env.append_value('CPPPATH', os.path.join(wklibs_dir, 'unix', 'include'))
             conf.env.append_value('CXXFLAGS', ['-fPIC', '-DPIC'])
-
-            conf.check_cfg(path=get_path_to_wxconfig(), args='--cxxflags --libs', package='', uselib_store='WX', mandatory=True)
 
         conf.check_cfg(msg='Checking for libxslt', path='xslt-config', args='--cflags --libs', package='', uselib_store='XSLT', mandatory=True)
         conf.check_cfg(path='xml2-config', args='--cflags --libs', package='', uselib_store='XML', mandatory=True)

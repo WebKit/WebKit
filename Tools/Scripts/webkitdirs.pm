@@ -501,7 +501,7 @@ sub determinePassedArchitecture
         my $opt = $ARGV[$i];
         if ($opt =~ /^--32-bit$/i) {
             splice(@ARGV, $i, 1);
-            if (isAppleMacWebKit()) {
+            if (isAppleMacWebKit() || isWx()) {
                 $passedArchitecture = `arch`;
                 chomp $passedArchitecture;
             }

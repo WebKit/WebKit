@@ -67,12 +67,20 @@ installapps = os.path.join(tempdir, "install-apps")
 sp_root = distutils.sysconfig.get_python_lib()
 wx_root = sp_root
 if sys.platform.startswith("darwin"):
-    wx_root = "/usr/local/lib/wxPython-unicode-%s" % wx.__version__
+    build_string = "%s" % wx.__version__
+    if wx.VERSION[1] <= 8:
+        build_string = "unicode-%s" % build_string
+    wx_root = "/usr/local/lib/wxPython-%s" % build_string
     sp_root = "%s/lib/python%s/site-packages" % (wx_root, py_version)
-sitepackages = "%s/wx-%s-mac-unicode/wx" % (sp_root, wx_version[:3])
+
+if "wxOSX-cocoa" in wx.PlatformInfo:
+    sitepackages = "%s/wx-%s-osx_cocoa/wx" % (sp_root, wx_version[:5])
+else:
+    sitepackages = "%s/wx-%s-mac-unicode/wx" % (sp_root, wx_version[:3])
 prefix = wx_root + "/lib"
 
-def mac_update_dependencies(dylib, prefix):
+
+def mac_update_dependencies(dylib, prefix, should_copy=True):
     """
     Copies any non-system dependencies into the bundle, and
     updates the install name path to the new path in the bundle.
@@ -82,10 +90,9 @@ def mac_update_dependencies(dylib, prefix):
 
     output = commands.getoutput("otool -L %s" % dylib).strip()
     for line in output.split("\n"):
+        copy = should_copy
         filename = line.split("(")[0].strip()
         if os.path.exists(filename):
-            print "checking dll %s" % filename
-            copy = True
             for sys_prefix in system_prefixes:
                 if filename.startswith(sys_prefix):
                     copy = False
@@ -100,6 +107,7 @@ def mac_update_dependencies(dylib, prefix):
                     shutil.copy(filename, copydir)
                     os.system("install_name_tool -id %s %s" % (dest_filename, copyname))
                 
+                print "changing %s to %s" % (filename, dest_filename)
                 os.system("install_name_tool -change %s %s %s" % (filename, dest_filename, dylib))
 
 def exitIfError(cmd):
@@ -112,6 +120,7 @@ def exitIfError(cmd):
 
 wxroot = installroot + prefix
 wxpythonroot = installroot + sitepackages
+dmg_dir = "dmg_files"
 
 try:
     if not os.path.exists(wxroot):
@@ -134,19 +143,23 @@ try:
         dylib_path = os.path.join(wxroot, "libwxwebkit.dylib")
         os.system("install_name_tool -id %s %s" % (os.path.join(prefix, "libwxwebkit.dylib"), dylib_path))
         mac_update_dependencies(dylib_path, prefix)
-        mac_update_dependencies(os.path.join(wxpythonroot, "_webview.so"), prefix)
-        
+        mac_update_dependencies(os.path.join(wxpythonroot, "_webview.so"), prefix, should_copy=False)
+
         demodir = installroot + "/Applications/wxWebKit/Demos"
         if not os.path.exists(demodir):
             os.makedirs(demodir)
-            
+
         shutil.copy(os.path.join(wxwk_root, "Source", "WebKit", "wx", "bindings", "python", "samples", "simple.py"), demodir)
-        
-        if os.path.exists(pkgname + ".pkg"):
-            shutil.rmtree(pkgname + ".pkg")
-    
+
+        output_name = os.path.join(dmg_dir, pkgname + ".pkg")
+
+        if os.path.exists(dmg_dir):
+            shutil.rmtree(dmg_dir)
+
+        os.makedirs(dmg_dir)
+
         pkg_args = ['--title ' + pkgname,
-                    '--out %s.pkg' % pkgname,
+                    '--out %s' % output_name,
                     '--version ' + date.strip(),
                     '--id org.wxwebkit.wxwebkit',
                     '--domain system',
@@ -154,9 +167,14 @@ try:
                     '--root ' + installroot,
                     '--verbose'
                     ]
-    
+
         packagemaker = "/Developer/Applications/Utilities/PackageMaker.app/Contents/MacOS/PackageMaker"
         exitIfError(packagemaker + " %s" % (string.join(pkg_args, " ")))
+
+        os.system('hdiutil create -srcfolder %s -volname "%s" -imagekey zlib-level=9 %s.dmg' % (dmg_dir, pkgname, pkgname))
 finally:
     if os.path.exists(tempdir):
         shutil.rmtree(tempdir)
+
+    if os.path.exists(dmg_dir):
+        shutil.rmtree(dmg_dir)
