@@ -133,7 +133,7 @@
                 "description": "Mirror object referencing original JavaScript object.",
                 "properties": [
                     { "name": "description", "type": "string", "description": "String representation of the object." },
-                    { "name": "hasChildren", "type": "integer", "optional": true, "description": "True when this object can be queried for children." },
+                    { "name": "hasChildren", "type": "boolean", "optional": true, "description": "True when this object can be queried for children." },
                     { "name": "objectId", "type": "string", "optional": true, "description": "Unique object identifier (for non-primitive values)." },
                     { "name": "type", "type": "string", "enum": ["object", "array", "function", "null", "node", "undefined", "string", "number", "boolean", "error", "regexp", "date"], "description": "Object type." }
                 ]
@@ -145,7 +145,7 @@
                 "properties": [
                     { "name": "name", "type": "string", "description": "Property name." },
                     { "name": "value", "$ref": "RemoteObject", "description": "Property value." },
-                    { "name": "isGetter", "type": "string", "description": "True if this property is getter." }
+                    { "name": "isGetter", "type": "boolean", "optional": true, "description": "True if this property is getter." }
                 ]
             }
         ],
@@ -180,7 +180,7 @@
                     { "name": "ignoreHasOwnProperty", "type": "boolean", "description": "If true, returns properties belonging to any element of the prototype chain." }
                 ],
                 "returns": [
-                    { "name": "result", "type": "array", "items": { "$ref": "RuntimeProperty"}, "description": "Object properties." }
+                    { "name": "result", "type": "array", "items": { "$ref": "RemoteProperty"}, "description": "Object properties." }
                 ],
                 "description": "Returns properties of a given object."
             },
