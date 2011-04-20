@@ -187,6 +187,17 @@ void WebInspectorProxy::platformClose()
     m_inspectorView = 0;
 }
 
+void WebInspectorProxy::platformBringToFront()
+{
+    // FIXME: support bring to front in docked mode here.
+
+    if (!m_inspectorWindow)
+        return;
+
+    ASSERT(::IsWindow(m_inspectorWindow));
+    ::SetWindowPos(m_inspectorWindow, HWND_TOP, 0, 0, 0, 0, SWP_SHOWWINDOW | SWP_NOMOVE | SWP_NOSIZE);
+}
+
 void WebInspectorProxy::platformInspectedURLChanged(const String& urlString)
 {
     // FIXME: this should be made localizable once WebKit2 supports it. <rdar://problem/8728860>

@@ -49,6 +49,11 @@ void WebInspectorProxy::platformClose()
     notImplemented();
 }
 
+void WebInspectorProxy::platformBringToFront()
+{
+    notImplemented();
+}
+
 void WebInspectorProxy::platformInspectedURLChanged(const String&)
 {
     notImplemented();

@@ -195,6 +195,11 @@ void WebInspectorProxy::didClose()
     m_isVisible = false;
 }
 
+void WebInspectorProxy::bringToFront()
+{
+    platformBringToFront();
+}
+
 void WebInspectorProxy::inspectedURLChanged(const String& urlString)
 {
     platformInspectedURLChanged(urlString);

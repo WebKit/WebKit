@@ -64,7 +64,7 @@ String WebInspectorFrontendClient::hiddenPanels()
 
 void WebInspectorFrontendClient::bringToFront()
 {
-    notImplemented();
+    m_page->inspector()->bringToFront();
 }
 
 void WebInspectorFrontendClient::closeWindow()

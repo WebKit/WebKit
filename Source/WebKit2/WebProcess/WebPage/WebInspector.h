@@ -73,6 +73,7 @@ private:
     // Called from WebInspectorFrontendClient
     void didLoadInspectorPage();
     void didClose();
+    void bringToFront();
     void inspectedURLChanged(const String&);
 
     // Implemented in platform WebInspector file

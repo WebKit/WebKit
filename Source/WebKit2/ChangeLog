@@ -1,3 +1,26 @@
+2011-04-20  Timothy Hatcher  <timothy@apple.com>
+
+        Make the Web Insepctor come to the front when a breakpoint is hit.
+
+        <https://webkit.org/b/57480> REGRESSION (WebKit2): Inspector doesn't come to the front when a breakpoint is hit in the debugger
+        <rdar://problem/9209472>
+
+        Reviewed by Adam Roben.
+
+        * UIProcess/WebInspectorProxy.cpp:
+        (WebKit::WebInspectorProxy::bringToFront): Added. Call platformBringToFront.
+        * UIProcess/WebInspectorProxy.h:
+        * UIProcess/WebInspectorProxy.messages.in: Added BringToFront.
+        * UIProcess/mac/WebInspectorProxyMac.mm:
+        (WebKit::WebInspectorProxy::platformBringToFront): Added. Call orderFront:.
+        * UIProcess/win/WebInspectorProxyWin.cpp:
+        (WebKit::WebInspectorProxy::platformBringToFront): Added. Call ShowWindow.
+        * WebProcess/WebCoreSupport/WebInspectorFrontendClient.cpp:
+        (WebKit::WebInspectorFrontendClient::bringToFront): Call WebInspector::bringToFront.
+        * WebProcess/WebPage/WebInspector.cpp:
+        (WebKit::WebInspector::bringToFront): Added. Send WebInspectorProxy::BringToFront message.
+        * WebProcess/WebPage/WebInspector.h: Added bringToFront.
+
 2011-04-20  Chris Marrin  <cmarrin@apple.com>
 
         Reviewed by Adam Roben.

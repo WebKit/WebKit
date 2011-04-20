@@ -134,6 +134,13 @@ void WebInspectorProxy::platformClose()
     m_inspectorProxyObjCAdapter = 0;
 }
 
+void WebInspectorProxy::platformBringToFront()
+{
+    // FIXME: support bring to front in docked mode here.
+
+    [m_inspectorWindow.get() makeKeyAndOrderFront:nil];
+}
+
 void WebInspectorProxy::platformInspectedURLChanged(const String& urlString)
 {
     NSString *title = [NSString stringWithFormat:WEB_UI_STRING("Web Inspector — %@", "Web Inspector window title"), (NSString *)urlString];
