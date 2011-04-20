@@ -1,3 +1,34 @@
+2011-04-20  Philippe Normand  <pnormand@igalia.com>
+
+        Unreviewed, new GTK baselines for tests added in r84273.
+        Also skip a couple of failing tests.
+
+        * platform/gtk/Skipped:
+        * platform/gtk/fast/backgrounds/background-leakage-expected.checksum: Added.
+        * platform/gtk/fast/backgrounds/background-leakage-expected.png: Added.
+        * platform/gtk/fast/backgrounds/background-leakage-expected.txt: Added.
+        * platform/gtk/fast/backgrounds/background-leakage-transforms-expected.checksum: Added.
+        * platform/gtk/fast/backgrounds/background-leakage-transforms-expected.png: Added.
+        * platform/gtk/fast/backgrounds/background-leakage-transforms-expected.txt: Added.
+        * platform/gtk/fast/backgrounds/border-radius-split-background-expected.checksum: Added.
+        * platform/gtk/fast/backgrounds/border-radius-split-background-expected.png: Added.
+        * platform/gtk/fast/backgrounds/border-radius-split-background-expected.txt: Added.
+        * platform/gtk/fast/backgrounds/border-radius-split-background-image-expected.checksum: Added.
+        * platform/gtk/fast/backgrounds/border-radius-split-background-image-expected.png: Added.
+        * platform/gtk/fast/backgrounds/border-radius-split-background-image-expected.txt: Added.
+        * platform/gtk/fast/borders/border-radius-different-width-001-expected.checksum: Added.
+        * platform/gtk/fast/borders/border-radius-different-width-001-expected.png: Added.
+        * platform/gtk/fast/borders/border-radius-different-width-001-expected.txt: Added.
+        * platform/gtk/fast/borders/border-radius-inset-outset-expected.checksum: Added.
+        * platform/gtk/fast/borders/border-radius-inset-outset-expected.png: Added.
+        * platform/gtk/fast/borders/border-radius-inset-outset-expected.txt: Added.
+        * platform/gtk/fast/borders/table-borders-expected.checksum: Added.
+        * platform/gtk/fast/borders/table-borders-expected.png: Added.
+        * platform/gtk/fast/borders/table-borders-expected.txt: Added.
+        * platform/gtk/fast/blockflow/border-styles-vertical-lr-expected.txt:
+        * platform/gtk/fast/blockflow/border-styles-vertical-rl-expected.txt:
+        * platform/gtk/fast/borders/border-styles-split-expected.txt:
+
 2011-04-20  John Knottenbelt  <jknotten@chromium.org>
 
         Unreviewed.
