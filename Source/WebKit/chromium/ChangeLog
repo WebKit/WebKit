@@ -1,3 +1,15 @@
+2011-04-19  Dominic Cooney  <dominicc@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        Check the type of the wrapper when unwrapping NPObjects to native
+        Ranges and Elements
+        https://bugs.webkit.org/show_bug.cgi?id=58957
+
+        * src/WebBindings.cpp:
+        (WebKit::getRangeImpl): check HasInstance
+        (WebKit::getElementImpl): check HasInstance
+
 2011-04-19  Evan Martin  <evan@chromium.org>
 
         Reviewed by Darin Fisher.

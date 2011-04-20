@@ -212,7 +212,7 @@ static bool getRangeImpl(NPObject* object, WebRange* webRange)
     if (!V8Range::info.equals(V8DOMWrapper::domWrapperType(v8Object)))
         return false;
 
-    Range* native = V8Range::toNative(v8Object);
+    Range* native = V8Range::HasInstance(v8Object) ? V8Range::toNative(v8Object) : 0;
     if (!native)
         return false;
 
@@ -227,7 +227,7 @@ static bool getElementImpl(NPObject* object, WebElement* webElement)
 
     V8NPObject* v8NPObject = reinterpret_cast<V8NPObject*>(object);
     v8::Handle<v8::Object> v8Object(v8NPObject->v8Object);
-    Element* native = V8Element::toNative(v8Object);
+    Element* native = V8Element::HasInstance(v8Object) ? V8Element::toNative(v8Object) : 0;
     if (!native)
         return false;
 
