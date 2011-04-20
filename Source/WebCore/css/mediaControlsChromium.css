@@ -76,7 +76,6 @@ audio::-webkit-media-controls-timeline-container, video::-webkit-media-controls-
     -webkit-box-orient: horizontal;
     -webkit-box-align: center;
     -webkit-box-pack: center;
-    -webkit-box-direction: reverse;
     -webkit-box-flex: 1;
 
     position: absolute;
@@ -121,35 +120,6 @@ audio::-webkit-media-controls-current-time-display, video::-webkit-media-control
     text-decoration: none;
 }
 
-audio::-webkit-media-controls-time-remaining-display, video::-webkit-media-controls-time-remaining-display {
-    -webkit-appearance: media-time-remaining-display;
-    -webkit-user-select: none;
-    display: none;
-    -webkit-box-flex: 0;
-    -webkit-box-pack: center;
-    -webkit-box-align: center;
-
-    overflow: hidden;
-    cursor: default;
-
-    line-height: 21px;
-    height: 20px;
-    width: 58px;
-
-    text-align: center;
-    font-family: Arial;
-    font-size: 16px;
-    font-weight: bold;
-    color: white;
-
-    letter-spacing: normal;
-    word-spacing: normal;
-    text-transform: none;
-    text-indent: 0;
-    text-shadow: none;
-    text-decoration: none;
-}
-
 audio::-webkit-media-controls-timeline, video::-webkit-media-controls-timeline {
     -webkit-appearance: media-slider;
     display: -webkit-box;
@@ -166,21 +136,6 @@ audio::-webkit-media-controls-timeline, video::-webkit-media-controls-timeline {
     border-radius: 2px;
     background-color: rgba(255, 255, 255, 0.08);
     color: rgb(50, 140, 223);
-}
-
-audio::-webkit-media-controls-seek-back-button, video::-webkit-media-controls-seek-back-button {
-    -webkit-appearance: media-seek-back-button;
-    display: none;
-}
-
-audio::-webkit-media-controls-seek-forward-button, video::-webkit-media-controls-seek-forward-button {
-    -webkit-appearance: media-seek-forward-button;
-    display: none;
-}
-
-audio::-webkit-media-controls-fullscreen-button, video::-webkit-media-controls-fullscreen-button {
-    -webkit-appearance: media-fullscreen-button;
-    display: none;
 }
 
 audio::-webkit-media-controls-volume-slider-container, video::-webkit-media-controls-volume-slider-container {

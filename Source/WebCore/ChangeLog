@@ -1,3 +1,19 @@
+2011-04-20  Steve Lacey  <sjl@chromium.org>
+
+        Reviewed by Eric Carlson.
+
+        [chromium] Move Chromium media controls into own root element.
+        https://bugs.webkit.org/show_bug.cgi?id=59018
+
+        No new tests as there is no functional change
+
+        * WebCore.gypi:
+        * css/mediaControlsChromium.css:
+        (audio::-webkit-media-controls-timeline-container, video::-webkit-media-controls-timeline-container):
+        * html/shadow/MediaControlRootElementChromium.cpp: Added.
+        Clone of html/shadow/MediaControlRootElement.cpp with all unused code removed.
+        * html/shadow/MediaControlRootElementChromium.h: Added.
+
 2011-04-20  Charlie Lee  <chocobo@chromium.org>
 
         Reviewed by Dirk Schulze.
