@@ -1779,7 +1779,7 @@ void JIT::softModulo()
     // Power of two fast case
     move(regT3, regT0);
     sub32(TrustedImm32(1), regT0);
-    Jump powerOfTwo = branchTest32(NotEqual, regT0, regT3);
+    Jump powerOfTwo = branchTest32(NonZero, regT0, regT3);
     and32(regT0, regT2);
     powerOfTwo.link(this);
 

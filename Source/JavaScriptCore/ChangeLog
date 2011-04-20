@@ -1,5 +1,12 @@
 2011-04-20  Gavin Barraclough  <barraclough@apple.com>
 
+        ARMv7 build fix II.
+
+        * jit/JITOpcodes32_64.cpp:
+        (JSC::JIT::softModulo):
+
+2011-04-20  Gavin Barraclough  <barraclough@apple.com>
+
         ARMv7 build fix.
 
         * assembler/MacroAssemblerARM.h:
