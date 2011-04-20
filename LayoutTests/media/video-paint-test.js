@@ -5,10 +5,13 @@ function init()
     document.addEventListener("canplaythrough", function () {
         if (!--count) {
             var video = document.getElementsByTagName('video')[0];
-            if (window.layoutTestController) {
-                video.play();
-                video.addEventListener("playing", function() { layoutTestController.notifyDone(); });
-            }
+            video.play();
+            video.addEventListener("playing", function() {
+                video.pause();
+                video.currentTime = 0;
+                if (window.layoutTestController)
+                    layoutTestController.notifyDone();
+            });
             document.body.offsetLeft;
         }
     }, true);

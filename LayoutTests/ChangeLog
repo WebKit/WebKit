@@ -1,3 +1,15 @@
+2011-03-07  Victoria Kirst  <vrk@google.com>
+
+        Reviewed by Mihai Parparita.
+
+        Make LayoutTests robust to latency btwn playing event and frame rendering
+        https://bugs.webkit.org/show_bug.cgi?id=55918
+
+        * media/controls-after-reload.html:
+        * media/controls-without-preload.html:
+        * media/video-paint-test.js:
+        * platform/chromium/test_expectations.txt:
+
 2011-04-20  Taiju TSUIKI  <tzik@google.com>
 
         Reviewed by David Levin.
