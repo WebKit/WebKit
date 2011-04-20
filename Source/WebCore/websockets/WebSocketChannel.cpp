@@ -219,7 +219,11 @@ void WebSocketChannel::didFail(SocketStreamHandle* handle, const SocketStreamErr
             message = makeString("WebSocket network error: error code ", String::number(error.errorCode()));
         else
             message = makeString("WebSocket network error: ", error.localizedDescription());
-        m_context->addMessage(OtherMessageSource, NetworkErrorMessageType, ErrorMessageLevel, message, 0, error.failingURL(), 0);
+        String failingURL = error.failingURL();
+        ASSERT(failingURL.isNull() || m_handshake.url().string() == failingURL);
+        if (failingURL.isNull())
+            failingURL = m_handshake.url().string();
+        m_context->addMessage(OtherMessageSource, NetworkErrorMessageType, ErrorMessageLevel, message, 0, failingURL, 0);
     }
     m_shouldDiscardReceivedData = true;
     handle->close();

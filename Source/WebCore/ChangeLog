@@ -1,3 +1,18 @@
+2011-04-19  Yuta Kitamura  <yutak@chromium.org>
+
+        Reviewed by Alexey Proskuryakov.
+
+        WebSocket: Add assertion for SocketStreamError::failingURL.
+        https://bugs.webkit.org/show_bug.cgi?id=58765
+
+        No new tests, because an existing test http/tests/inspector/console-websocket-error.html should cover this.
+
+        * websockets/WebSocketChannel.cpp:
+        (WebCore::WebSocketChannel::didFail): If error.failingURL() is provided, it must be the same as
+        m_handshake.url(). failingURL may be null if SocketStreamHandle has created a SocketStreamError
+        using zero- or one-argument constructor (which is old version but some ports are still using it).
+        In that case, m_handshake.url() is passed to addMessage().
+
 2011-04-19  Eric Carlson  <eric.carlson@apple.com>
 
         Reviewed by Dimitri Glazkov.
