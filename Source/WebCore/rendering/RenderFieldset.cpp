@@ -177,7 +177,7 @@ void RenderFieldset::paintBoxDecorations(PaintInfo& paintInfo, int tx, int ty)
         graphicsContext->clipOut(IntRect(clipLeft, ty + legend->y(), clipWidth, legend->height()));
     }
 
-    paintBorder(paintInfo.context, tx, ty, w, h, style(), true, true);
+    paintBorder(paintInfo.context, tx, ty, w, h, style());
 
     graphicsContext->restore();
 }

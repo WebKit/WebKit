@@ -34,6 +34,12 @@ enum LinePositionMode { PositionOnContainingLine, PositionOfInteriorLineBoxes };
 enum LineDirectionMode { HorizontalLine, VerticalLine };
 typedef unsigned BorderEdgeFlags;
 
+enum BackgroundBleedAvoidance {
+    BackgroundBleedNone,
+    BackgroundBleedShrinkBackground,
+    BackgroundBleedUseTransparencyLayer
+};
+
 // This class is the base for all objects that adhere to the CSS box model as described
 // at http://www.w3.org/TR/CSS21/box.html
 
@@ -112,10 +118,10 @@ public:
 
     virtual void childBecameNonInline(RenderObject* /*child*/) { }
 
-    void paintBorder(GraphicsContext*, int tx, int ty, int w, int h, const RenderStyle*, bool includeLogicalLeftEdge = true, bool includeLogicalRightEdge = true);
+    void paintBorder(GraphicsContext*, int tx, int ty, int w, int h, const RenderStyle*, BackgroundBleedAvoidance = BackgroundBleedNone, bool includeLogicalLeftEdge = true, bool includeLogicalRightEdge = true);
     bool paintNinePieceImage(GraphicsContext*, int tx, int ty, int w, int h, const RenderStyle*, const NinePieceImage&, CompositeOperator = CompositeSourceOver);
     void paintBoxShadow(GraphicsContext*, int tx, int ty, int w, int h, const RenderStyle*, ShadowStyle, bool includeLogicalLeftEdge = true, bool includeLogicalRightEdge = true);
-    void paintFillLayerExtended(const PaintInfo&, const Color&, const FillLayer*, int tx, int ty, int width, int height, InlineFlowBox* = 0, int inlineBoxWidth = 0, int inlineBoxHeight = 0, CompositeOperator = CompositeSourceOver, RenderObject* backgroundObject = 0);
+    void paintFillLayerExtended(const PaintInfo&, const Color&, const FillLayer*, int tx, int ty, int width, int height, BackgroundBleedAvoidance, InlineFlowBox* = 0, int inlineBoxWidth = 0, int inlineBoxHeight = 0, CompositeOperator = CompositeSourceOver, RenderObject* backgroundObject = 0);
     
     // Overridden by subclasses to determine line height and baseline position.
     virtual int lineHeight(bool firstLine, LineDirectionMode, LinePositionMode = PositionOnContainingLine) const = 0;
@@ -129,12 +135,14 @@ public:
     virtual void setSelectionState(SelectionState s);
 protected:
     void calculateBackgroundImageGeometry(const FillLayer*, int tx, int ty, int w, int h, IntRect& destRect, IntPoint& phase, IntSize& tileSize);
+    void getBorderEdgeInfo(class BorderEdge[], bool includeLogicalLeftEdge = true, bool includeLogicalRightEdge = true) const;
+    bool borderObscuresBackgroundEdge(const FloatSize& contextScale) const;
 
     bool shouldPaintAtLowQuality(GraphicsContext*, Image*, const void*, const IntSize&);
 
     RenderBoxModelObject* continuation() const;
     void setContinuation(RenderBoxModelObject*);
-    
+
 private:
     virtual bool isBoxModelObject() const { return true; }
 
@@ -147,14 +155,15 @@ private:
                                BoxSide, bool firstEdgeMatches, bool secondEdgeMatches);
     void paintOneBorderSide(GraphicsContext*, const RenderStyle*, const RoundedIntRect& outerBorder, const RoundedIntRect& innerBorder,
                                 const IntRect& sideRect, BoxSide, BoxSide adjacentSide1, BoxSide adjacentSide2, const class BorderEdge[],
-                                const Path*, bool includeLogicalLeftEdge, bool includeLogicalRightEdge, bool antialias, const Color* overrideColor = 0);
+                                const Path*, BackgroundBleedAvoidance, bool includeLogicalLeftEdge, bool includeLogicalRightEdge, bool antialias, const Color* overrideColor = 0);
     void paintTranslucentBorderSides(GraphicsContext*, const RenderStyle*, const RoundedIntRect& outerBorder, const RoundedIntRect& innerBorder,
-                          const class BorderEdge[], bool includeLogicalLeftEdge, bool includeLogicalRightEdge, bool antialias = false);
+                          const class BorderEdge[], BackgroundBleedAvoidance, bool includeLogicalLeftEdge, bool includeLogicalRightEdge, bool antialias = false);
     void paintBorderSides(GraphicsContext*, const RenderStyle*, const RoundedIntRect& outerBorder, const RoundedIntRect& innerBorder,
-                          const class BorderEdge[], BorderEdgeFlags, bool includeLogicalLeftEdge, bool includeLogicalRightEdge, bool antialias = false, const Color* overrideColor = 0);
+                          const class BorderEdge[], BorderEdgeFlags, BackgroundBleedAvoidance,
+                          bool includeLogicalLeftEdge, bool includeLogicalRightEdge, bool antialias = false, const Color* overrideColor = 0);
     void drawBoxSideFromPath(GraphicsContext*, const IntRect&, const Path&, const class BorderEdge[],
                             float thickness, float drawThickness, BoxSide, const RenderStyle*, 
-                            Color, EBorderStyle, bool includeLogicalLeftEdge, bool includeLogicalRightEdge);
+                            Color, EBorderStyle, BackgroundBleedAvoidance, bool includeLogicalLeftEdge, bool includeLogicalRightEdge);
 
     friend class RenderView;
 

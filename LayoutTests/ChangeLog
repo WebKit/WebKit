@@ -1,3 +1,93 @@
+2011-04-19  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        background color of elements with border-radius shows around outer edge of border at corners
+        https://bugs.webkit.org/show_bug.cgi?id=21819
+
+        * fast/backgrounds/background-leakage-transforms.html: Added.
+        * platform/mac/fast/backgrounds/background-leakage-expected.checksum:
+        * platform/mac/fast/backgrounds/background-leakage-expected.png:
+        * platform/mac/fast/backgrounds/background-leakage-transforms-expected.checksum: Added.
+        * platform/mac/fast/backgrounds/background-leakage-transforms-expected.png: Added.
+        * platform/mac/fast/backgrounds/background-leakage-transforms-expected.txt: Added.
+        * platform/mac/fast/borders/border-radius-circle-expected.checksum:
+        * platform/mac/fast/borders/border-radius-circle-expected.png:
+        * platform/mac/fast/borders/border-radius-huge-assert-expected.checksum:
+        * platform/mac/fast/borders/border-radius-huge-assert-expected.png:
+        * platform/mac/fast/borders/border-radius-wide-border-01-expected.checksum:
+        * platform/mac/fast/borders/border-radius-wide-border-01-expected.png:
+        * platform/mac/fast/borders/borderRadiusAllStylesAllCorners-expected.checksum:
+        * platform/mac/fast/borders/borderRadiusAllStylesAllCorners-expected.png:
+        * platform/mac/fast/borders/borderRadiusArcs01-expected.checksum:
+        * platform/mac/fast/borders/borderRadiusArcs01-expected.png:
+        * platform/mac/fast/borders/borderRadiusDashed01-expected.checksum:
+        * platform/mac/fast/borders/borderRadiusDashed01-expected.png:
+        * platform/mac/fast/borders/borderRadiusDashed02-expected.checksum:
+        * platform/mac/fast/borders/borderRadiusDashed02-expected.png:
+        * platform/mac/fast/borders/borderRadiusDashed03-expected.checksum:
+        * platform/mac/fast/borders/borderRadiusDashed03-expected.png:
+        * platform/mac/fast/borders/borderRadiusDotted01-expected.checksum:
+        * platform/mac/fast/borders/borderRadiusDotted01-expected.png:
+        * platform/mac/fast/borders/borderRadiusDotted02-expected.checksum:
+        * platform/mac/fast/borders/borderRadiusDotted02-expected.png:
+        * platform/mac/fast/borders/borderRadiusDotted03-expected.checksum:
+        * platform/mac/fast/borders/borderRadiusDotted03-expected.png:
+        * platform/mac/fast/borders/borderRadiusDouble01-expected.checksum:
+        * platform/mac/fast/borders/borderRadiusDouble01-expected.png:
+        * platform/mac/fast/borders/borderRadiusDouble02-expected.checksum:
+        * platform/mac/fast/borders/borderRadiusDouble02-expected.png:
+        * platform/mac/fast/borders/borderRadiusDouble03-expected.checksum:
+        * platform/mac/fast/borders/borderRadiusDouble03-expected.png:
+        * platform/mac/fast/borders/borderRadiusGroove01-expected.checksum:
+        * platform/mac/fast/borders/borderRadiusGroove01-expected.png:
+        * platform/mac/fast/borders/borderRadiusGroove02-expected.checksum:
+        * platform/mac/fast/borders/borderRadiusGroove02-expected.png:
+        * platform/mac/fast/borders/borderRadiusInset01-expected.checksum:
+        * platform/mac/fast/borders/borderRadiusInset01-expected.png:
+        * platform/mac/fast/borders/borderRadiusInvalidColor-expected.checksum:
+        * platform/mac/fast/borders/borderRadiusInvalidColor-expected.png:
+        * platform/mac/fast/borders/borderRadiusOutset01-expected.checksum:
+        * platform/mac/fast/borders/borderRadiusOutset01-expected.png:
+        * platform/mac/fast/borders/borderRadiusRidge01-expected.checksum:
+        * platform/mac/fast/borders/borderRadiusRidge01-expected.png:
+        * platform/mac/fast/borders/borderRadiusSolid01-expected.checksum:
+        * platform/mac/fast/borders/borderRadiusSolid01-expected.png:
+        * platform/mac/fast/borders/borderRadiusSolid02-expected.checksum:
+        * platform/mac/fast/borders/borderRadiusSolid02-expected.png:
+        * platform/mac/fast/borders/borderRadiusSolid03-expected.checksum:
+        * platform/mac/fast/borders/borderRadiusSolid03-expected.png:
+        * platform/mac/fast/box-shadow/inset-expected.checksum:
+        * platform/mac/fast/box-shadow/inset-expected.png:
+        * platform/mac/fast/box-shadow/inset-with-extraordinary-radii-and-border-expected.checksum:
+        * platform/mac/fast/box-shadow/inset-with-extraordinary-radii-and-border-expected.png:
+        * platform/mac/fast/forms/basic-selects-expected.checksum:
+        * platform/mac/fast/forms/basic-selects-expected.png:
+        * platform/mac/fast/forms/menulist-clip-expected.checksum:
+        * platform/mac/fast/forms/menulist-clip-expected.png:
+        * platform/mac/fast/forms/menulist-narrow-width-expected.checksum:
+        * platform/mac/fast/forms/menulist-narrow-width-expected.png:
+        * platform/mac/fast/forms/menulist-option-wrap-expected.checksum:
+        * platform/mac/fast/forms/menulist-option-wrap-expected.png:
+        * platform/mac/fast/forms/menulist-restrict-line-height-expected.checksum:
+        * platform/mac/fast/forms/menulist-restrict-line-height-expected.png:
+        * platform/mac/fast/forms/menulist-separator-painting-expected.checksum:
+        * platform/mac/fast/forms/menulist-separator-painting-expected.png:
+        * platform/mac/fast/forms/menulist-style-color-expected.checksum:
+        * platform/mac/fast/forms/menulist-style-color-expected.png:
+        * platform/mac/fast/forms/select-baseline-expected.checksum:
+        * platform/mac/fast/forms/select-baseline-expected.png:
+        * platform/mac/fast/forms/select-empty-option-height-expected.checksum:
+        * platform/mac/fast/forms/select-empty-option-height-expected.png:
+        * platform/mac/fast/forms/select-style-expected.checksum:
+        * platform/mac/fast/forms/select-style-expected.png:
+        * platform/mac/fast/overflow/border-radius-clipping-expected.checksum:
+        * platform/mac/fast/overflow/border-radius-clipping-expected.png:
+        * platform/mac/fast/repaint/border-radius-repaint-expected.checksum:
+        * platform/mac/fast/repaint/border-radius-repaint-expected.png:
+        * platform/mac/fast/repaint/control-clip-expected.checksum:
+        * platform/mac/fast/repaint/control-clip-expected.png:
+
 2011-04-19  Dirk Pranke  <dpranke@chromium.org>
 
         Unreviewed, expectations change.

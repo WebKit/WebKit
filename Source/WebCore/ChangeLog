@@ -1,3 +1,89 @@
+2011-04-19  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        background color of elements with border-radius shows around outer edge of border at corners
+        https://bugs.webkit.org/show_bug.cgi?id=21819
+        
+        When drawing a background followed by a border with the same rounded
+        clip, some border color leaks out because of antialiasing.
+        
+        Fix this by using two different strategies depending on the colors.
+        If the border is opaque on all sides, we can inset the background by
+        a device pixel. If not, then we have to draw the unclipped background
+        and border into a transparency layer, and then clip that.
+        
+        A futher possible solution is mentioned in a comment in
+        determineBackgroundBleedAvoidance() but not yet implemented.
+        
+        Also don't try to paint shadows with zero offset, spread and blur.
+
+        Test: fast/backgrounds/background-leakage.html,
+              fast/backgrounds/background-leakage-transforms.html
+
+        * rendering/RenderBoxModelObject.h:
+        Add a BackgroundBleedAvoidance enum with a value for each
+        strategy.
+        * rendering/RenderBoxModelObject.cpp:
+        (WebCore::RenderBoxModelObject::paintFillLayerExtended):
+        Pass BackgroundBleedAvoidance, bail early if the border rect is empty.
+        If using the transparency layer solution, don't bother to clip
+        to the rounded rect for the background. If the strategy is to
+        shrink the background, do that.
+        (WebCore::BorderEdge::BorderEdge):
+        (WebCore::BorderEdge::obscuresBackgroundEdge):
+        Helper method to determine if this border side will totally
+        obscured by the border edge, allowing us to inset it.
+        (WebCore::RenderBoxModelObject::paintOneBorderSide):
+        Pass BackgroundBleedAvoidance through.
+        (WebCore::RenderBoxModelObject::paintBorderSides):
+        Ditto.
+        (WebCore::RenderBoxModelObject::paintTranslucentBorderSides):
+        Ditto.
+        (WebCore::RenderBoxModelObject::paintBorder):
+        Fill BorderEdges using getBorderEdgeInfo now.
+        Don't clip to the rounded border if we are using the
+        transparency layer solution.
+        (WebCore::RenderBoxModelObject::drawBoxSideFromPath):
+        Pass bleedAvoidance through, and use it for double borders.
+        (WebCore::RenderBoxModelObject::getBorderEdgeInfo):
+        Helper to fill in the BorderEdge array.
+        (WebCore::RenderBoxModelObject::borderObscuresBackgroundEdge):
+        Used to determine if we can use the background shrinkage solution.
+        (WebCore::RenderBoxModelObject::paintBoxShadow):
+        Don't paint shadows that should not be visible.
+
+        * rendering/RenderBox.h:
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::paintRootBoxFillLayers):
+        Pass BackgroundBleedNone for the root box.
+        
+        (WebCore::RenderBox::determineBackgroundBleedAvoidance):
+        Determine which bleed strategy we can use.
+        
+        (WebCore::RenderBox::paintBoxDecorationsWithSize):
+        Based on the bleedAvoidance, make a transparency layer
+        which will be clipped to the rounded border outside edge,
+        and pass bleedAvoidance to the background and border-painting
+        methods.        
+        (WebCore::RenderBox::paintMaskImages):
+        Use BackgroundBleedNone.
+        (WebCore::RenderBox::paintFillLayers):
+        (WebCore::RenderBox::paintFillLayer):
+        Pass bleedAvoidance through.
+
+        * rendering/InlineFlowBox.cpp:
+        (WebCore::InlineFlowBox::paintFillLayer):
+        (WebCore::InlineFlowBox::paintBoxDecorations):
+        Pass BackgroundBleedNone. At some point we may want to do the right
+        thing for split inlines.
+
+        * rendering/RenderFieldset.cpp:
+        (WebCore::RenderFieldset::paintBoxDecorations):
+        * rendering/RenderTableCell.cpp:
+        (WebCore::RenderTableCell::paintBackgroundsBehindCell):
+        Pass BackgroundBleedNone.
+
 2011-04-19  Yuta Kitamura  <yutak@chromium.org>
 
         Reviewed by Alexey Proskuryakov.
