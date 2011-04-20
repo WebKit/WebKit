@@ -1,3 +1,25 @@
+2011-04-20  Tony Chang  <tony@chromium.org>
+
+        Cleanup .checksum files that don't have .png files.
+
+        If the test is marked as failing, just delete the .checksum file.
+        If the test is marked as passing, put it in test_expectations.txt so
+        the bots will generate results.
+
+        * platform/chromium-mac-leopard/fast/borders/border-radius-split-inline-expected.checksum: Removed.
+        * platform/chromium-mac-leopard/fast/repaint/positioned-document-element-expected.checksum: Removed.
+        * platform/chromium-mac-leopard/fast/text/basic/014-expected.checksum: Removed.
+        * platform/chromium-mac/fast/dom/HTMLMeterElement/meter-appearances-capacity-expected.checksum: Removed.
+        * platform/chromium-mac/fast/dom/HTMLMeterElement/meter-element-expected.checksum: Removed.
+        * platform/chromium-mac/fast/dom/HTMLMeterElement/meter-optimums-expected.checksum: Removed.
+        * platform/chromium-mac/fast/dom/HTMLMeterElement/meter-styles-changing-pseudo-expected.checksum: Removed.
+        * platform/chromium-mac/fast/dom/HTMLMeterElement/meter-styles-expected.checksum: Removed.
+        * platform/chromium-mac/fast/forms/input-appearance-bkcolor-expected.checksum: Removed.
+        * platform/chromium-mac/fast/images/imagemap-focus-ring-expected.checksum: Removed.
+        * platform/chromium-mac/tables/mozilla/core/misc-expected.checksum: Removed.
+        * platform/chromium-win/fast/forms/searchfield-heights-expected.checksum: Removed.
+        * platform/chromium/test_expectations.txt:
+
 2011-04-20  Dirk Pranke  <dpranke@chromium.org>
 
         Unreviewed, fix duplicate expectations.
