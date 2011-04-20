@@ -1,3 +1,18 @@
+2011-04-19  Simon Fraser  <simon.fraser@apple.com>
+
+        Add missing results for fast/borders/table-borders.html, and
+        a new test that shows the background color leaking out through the
+        border (to facilitate image diffs for an upcoming change).
+        
+        * fast/backgrounds/background-leakage.html: Added.
+        * platform/mac/compositing/reflections/backface-hidden-reflection-expected.txt: Added.
+        * platform/mac/fast/backgrounds/background-leakage-expected.checksum: Added.
+        * platform/mac/fast/backgrounds/background-leakage-expected.png: Added.
+        * platform/mac/fast/backgrounds/background-leakage-expected.txt: Added.
+        * platform/mac/fast/borders/table-borders-expected.checksum: Added.
+        * platform/mac/fast/borders/table-borders-expected.png: Added.
+        * platform/mac/fast/borders/table-borders-expected.txt: Added.
+
 2011-04-19  Chris Rogers  <crogers@google.com>
 
         Unreviewed.
