@@ -2,6 +2,15 @@
 
         Unreviewed.
 
+        [Chromium] Remove crash expectation for http/tests/local/formdata/send-form-data-with-sliced-file.html
+        https://bugs.webkit.org/show_bug.cgi?id=59004
+
+        * platform/chromium/test_expectations.txt:
+
+2011-04-20  John Knottenbelt  <jknotten@chromium.org>
+
+        Unreviewed.
+
         [Chromium] Adjust test expectations.
         https://bugs.webkit.org/show_bug.cgi?id=59002
 

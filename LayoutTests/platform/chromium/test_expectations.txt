@@ -3678,7 +3678,6 @@ BUGDPRANKE MAC : http/tests/misc/image-error.html = TEXT
 BUGDPRANKE MAC : http/tests/ssl/verify-ssl-enabled.php = TEXT
 BUGDPRANKE MAC : fast/text/international/thai-line-breaks.html = IMAGE
 BUGDPRANKE MAC : css1/basic/grouping.html = CRASH
-BUGDPRANKE MAC : http/tests/local/formdata/send-form-data-with-sliced-file.html = CRASH
 BUGDPRANKE MAC : http/tests/media/video-served-as-text.html = CRASH
 BUGDPRANKE MAC : http/tests/misc/object-image-error.html = TIMEOUT
 BUGDPRANKE MAC : fast/text/international/thai-baht-space.html = IMAGE+TEXT
