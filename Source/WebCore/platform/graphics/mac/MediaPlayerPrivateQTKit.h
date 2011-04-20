@@ -76,6 +76,9 @@ private:
     static MediaPlayerPrivateInterface* create(MediaPlayer* player);
     static void getSupportedTypes(HashSet<String>& types);
     static MediaPlayer::SupportsType supportsType(const String& type, const String& codecs);
+    static void getSitesInMediaCache(Vector<String>&);
+    static void clearMediaCache();
+    static void clearMediaCacheForSite(const String&);
     static bool isAvailable();
 
     PlatformMedia platformMedia() const;

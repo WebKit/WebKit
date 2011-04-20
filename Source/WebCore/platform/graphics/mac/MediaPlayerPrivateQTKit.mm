@@ -209,7 +209,7 @@ MediaPlayerPrivateInterface* MediaPlayerPrivateQTKit::create(MediaPlayer* player
 void MediaPlayerPrivateQTKit::registerMediaEngine(MediaEngineRegistrar registrar)
 {
     if (isAvailable())
-        registrar(create, getSupportedTypes, supportsType, 0, 0, 0);
+        registrar(create, getSupportedTypes, supportsType, getSitesInMediaCache, clearMediaCache, clearMediaCacheForSite);
 }
 
 MediaPlayerPrivateQTKit::MediaPlayerPrivateQTKit(MediaPlayer* player)
@@ -1490,7 +1490,24 @@ bool MediaPlayerPrivateQTKit::isAvailable()
     return QTKitLibrary();
 #endif
 }
-    
+
+void MediaPlayerPrivateQTKit::getSitesInMediaCache(Vector<String>& sites) 
+{
+    NSArray *mediaSites = wkQTGetSitesInMediaDownloadCache();
+    for (NSString *site in mediaSites)
+        sites.append(site);
+}
+
+void MediaPlayerPrivateQTKit::clearMediaCache()
+{
+    wkQTClearMediaDownloadCache();
+}
+
+void MediaPlayerPrivateQTKit::clearMediaCacheForSite(const String& site)
+{
+    wkQTClearMediaDownloadCacheForSite(site);
+}
+
 void MediaPlayerPrivateQTKit::disableUnsupportedTracks()
 {
     if (!m_qtMovie) {
@@ -1644,7 +1661,6 @@ void MediaPlayerPrivateQTKit::setPrivateBrowsingMode(bool privateBrowsing)
         return;
     [m_qtMovie.get() setAttribute:[NSNumber numberWithBool:!privateBrowsing] forKey:@"QTMovieAllowPersistentCacheAttribute"];
 }
-
 
 } // namespace WebCore
 

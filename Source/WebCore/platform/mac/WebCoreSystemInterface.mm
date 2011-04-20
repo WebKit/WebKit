@@ -67,6 +67,10 @@ BOOL (*wkQTMovieHasClosedCaptions)(QTMovie*);
 void (*wkQTMovieSetShowClosedCaptions)(QTMovie*, BOOL);
 void (*wkQTMovieSelectPreferredAlternates)(QTMovie*);
 void (*wkQTMovieViewSetDrawSynchronously)(QTMovieView*, BOOL);
+NSArray *(*wkQTGetSitesInMediaDownloadCache)();
+void (*wkQTClearMediaDownloadCacheForSite)(NSString *site);
+void (*wkQTClearMediaDownloadCache)();
+
 void (*wkSetCGFontRenderingMode)(CGContextRef, NSFont*);
 void (*wkSetCookieStoragePrivateBrowsingEnabled)(BOOL);
 void (*wkSetDragImage)(NSImage*, NSPoint offset);

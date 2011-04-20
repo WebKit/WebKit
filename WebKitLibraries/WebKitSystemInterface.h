@@ -306,6 +306,10 @@ typedef enum {
     
 NSControl *WKCreateMediaUIControl(int controlType);
 
+NSArray *WKQTGetSitesInMediaDownloadCache();
+void WKQTClearMediaDownloadCacheForSite(NSString *site);
+void WKQTClearMediaDownloadCache();
+    
 #if !defined(BUILDING_ON_TIGER) && !defined(BUILDING_ON_LEOPARD)
 mach_port_t WKInitializeRenderServer(void);
     
@@ -456,6 +460,8 @@ void WKContentAreaResized(WKScrollbarPainterControllerRef);
 void WKWillEndLiveResize(WKScrollbarPainterControllerRef);
 void WKContentAreaDidShow(WKScrollbarPainterControllerRef);
 void WKContentAreaDidHide(WKScrollbarPainterControllerRef);
+void WKDidBeginScrollGesture(WKScrollbarPainterControllerRef);
+void WKDidEndScrollGesture(WKScrollbarPainterControllerRef);
 
 bool WKScrollbarPainterUsesOverlayScrollers(void);
 

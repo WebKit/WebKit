@@ -1,3 +1,13 @@
+2011-04-20  Eric Carlson  <eric.carlson@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        Adopt QTKit API for listing and deleting file in its media cache.
+        <rdar://problem/9130029> 
+
+        * WebCoreSupport/WebSystemInterface.mm:
+        (InitWebCoreSystemInterface): Initialize new functions.
+
 2011-04-19  Matthew Delaney  <mdelaney@apple.com>
 
         Reviewed by Simon Fraser.

@@ -1,3 +1,15 @@
+2011-04-20  Eric Carlson  <eric.carlson@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        Adopt QTKit API for listing and deleting file in its media cache.
+        <rdar://problem/9130029> 
+        https://bugs.webkit.org/show_bug.cgi?id=58795
+
+        * WebKitSystemInterface.h:
+        * libWebKitSystemInterfaceLeopard.a:
+        * libWebKitSystemInterfaceSnowLeopard.a:
+
 2011-04-19  Jessie Berlin  <jberlin@apple.com>
 
         Reviewed by Sam Weinig.

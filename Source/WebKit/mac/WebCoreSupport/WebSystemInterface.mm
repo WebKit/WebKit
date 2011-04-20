@@ -99,6 +99,9 @@ void InitWebCoreSystemInterface(void)
     INIT(QTMovieSetShowClosedCaptions);
     INIT(QTMovieSelectPreferredAlternates);
     INIT(QTMovieViewSetDrawSynchronously);
+    INIT(QTGetSitesInMediaDownloadCache);
+    INIT(QTClearMediaDownloadCacheForSite);
+    INIT(QTClearMediaDownloadCache);
 
 #ifndef BUILDING_ON_TIGER
     INIT(GetGlyphsForCharacters);

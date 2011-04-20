@@ -1,3 +1,26 @@
+2011-04-20  Eric Carlson  <eric.carlson@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        Adopt QTKit API for listing and deleting file in its media cache.
+        <rdar://problem/9130029> 
+        https://bugs.webkit.org/show_bug.cgi?id=58795
+
+        Not possible to test automatically, verified manually.
+
+        * WebCore.exp.in: Export new media download cache functions.
+
+        * platform/graphics/mac/MediaPlayerPrivateQTKit.h:
+        * platform/graphics/mac/MediaPlayerPrivateQTKit.mm:
+        (WebCore::MediaPlayerPrivateQTKit::registerMediaEngine): Register cache management functions.
+        (WebCore::MediaPlayerPrivateQTKit::getSitesInMediaCache): New, return cache origins.
+        (WebCore::MediaPlayerPrivateQTKit::clearMediaCache): New, empty the media cache.
+        (WebCore::MediaPlayerPrivateQTKit::clearMediaCacheForSite): New, delete files in the media
+            cache for one origin.
+
+        * platform/mac/WebCoreSystemInterface.h: Add new WKSI functions.
+        * platform/mac/WebCoreSystemInterface.mm: Ditto.
+
 2011-04-20  Dirk Schulze  <krit@webkit.org>
 
         Reviewed by Simon Fraser.

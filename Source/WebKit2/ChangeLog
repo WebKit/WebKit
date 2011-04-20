@@ -1,3 +1,13 @@
+2011-04-18  Eric Carlson  <eric.carlson@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        Adopt QTKit API for listing and deleting file in its media cache.
+        <rdar://problem/9130029> 
+
+        * WebProcess/WebCoreSupport/mac/WebSystemInterface.mm:
+        (InitWebCoreSystemInterface): Initialize new functions.
+
 2011-04-20  Alejandro G. Castro  <alex@igalia.com>
 
         Fixed GTK+ compilation after r84206.

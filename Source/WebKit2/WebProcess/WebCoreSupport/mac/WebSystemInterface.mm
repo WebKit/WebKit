@@ -79,6 +79,9 @@ void InitWebCoreSystemInterface(void)
         INIT(QTMovieSelectPreferredAlternates);
         INIT(QTMovieSetShowClosedCaptions);
         INIT(QTMovieViewSetDrawSynchronously);
+        INIT(QTGetSitesInMediaDownloadCache);
+        INIT(QTClearMediaDownloadCacheForSite);
+        INIT(QTClearMediaDownloadCache);
         INIT(SetCGFontRenderingMode);
         INIT(SetCONNECTProxyAuthorizationForStream);
         INIT(SetCONNECTProxyForStream);
