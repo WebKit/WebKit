@@ -859,7 +859,7 @@ PluginView::PluginView(Frame* parentFrame, const IntSize& size, PluginPackage* p
     , m_wmPrintHDC(0)
     , m_haveUpdatedPluginWidget(false)
 #endif
-#if (PLATFORM(QT) && OS(WINDOWS)) || defined(XP_MACOSX)
+#if (PLATFORM(QT) && OS(WINDOWS)) || defined(XP_MACOSX) || PLATFORM(EFL)
     , m_window(0)
 #endif
 #if defined(XP_MACOSX)
