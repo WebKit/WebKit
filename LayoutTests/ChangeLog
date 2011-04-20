@@ -1,3 +1,20 @@
+2011-04-19  Julien Chaffraix  <jchaffraix@codeaurora.org>
+
+        Reviewed by Alexey Proskuryakov.
+
+        https://bugs.webkit.org/show_bug.cgi?id=45425
+        HTMLLinkElement.disabled does not forward value to the Stylesheet's disabled attribute on setting
+
+        Test case by Bijan Amirzada <bijana@codeaurora.org>.
+
+        * fast/dom/HTMLLinkElement/disabled-attribute-expected.txt: Added.
+        * fast/dom/HTMLLinkElement/disabled-attribute.html: Added.
+        Test that the properties are properly forwarded to the stylesheet.
+
+        * fast/dom/boolean-attribute-reflection-expected.txt:
+        * fast/dom/script-tests/boolean-attribute-reflection.js: Removed link:disabled as it is
+        not reflected anymore.
+
 2011-04-19  Simon Fraser  <simon.fraser@apple.com>
 
         Rebaseline image results with diffs below the default tolerance,

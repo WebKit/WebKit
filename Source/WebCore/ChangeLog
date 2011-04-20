@@ -1,3 +1,26 @@
+2011-04-19  Julien Chaffraix  <jchaffraix@codeaurora.org>
+
+        Reviewed by Alexey Proskuryakov.
+
+        https://bugs.webkit.org/show_bug.cgi?id=45425
+        HTMLLinkElement.disabled does not forward value to the Stylesheet's disabled attribute on setting
+
+        Test: fast/html/htmllink-disable.html
+        Test: fast/dom/HTMLLinkElement/disabled-attribute.html
+
+        Match the HTML5 specification by forwarding the 'disabled' attribute to our stylesheet.
+
+        Based on previous work by Bijan Amirzada <bijana@codeaurora.org>.
+
+        * html/HTMLLinkElement.cpp:
+        (WebCore::HTMLLinkElement::disabled): Return our stylesheet's 'disabled' value or
+        false if we don't have a stylesheet.
+        (WebCore::HTMLLinkElement::setDisabled): Set our stylesheet's 'disabled' value or
+        ignore the call if we don't have a stylesheet.
+        * html/HTMLLinkElement.h:
+        * html/HTMLLinkElement.idl: Remove 'Reflect' as it is not a reflected attribute anymore in HTML5.
+        This matches the way FF4, Opera and IE9 handle the attribute.
+
 2011-04-19  Ryosuke Niwa  <rniwa@webkit.org>
 
         Reviewed by Eric Seidel.

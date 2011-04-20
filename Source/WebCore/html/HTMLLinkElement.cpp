@@ -512,4 +512,16 @@ void HTMLLinkElement::removePendingSheet()
     document()->removePendingSheet();
 }
 
+bool HTMLLinkElement::disabled() const
+{
+    return m_sheet && m_sheet->disabled();
+}
+
+void HTMLLinkElement::setDisabled(bool disabled)
+{
+    if (!m_sheet)
+        return;
+    m_sheet->setDisabled(disabled);
+}
+
 }

@@ -77,6 +77,8 @@ public:
     bool isDisabled() const { return m_disabledState == Disabled; }
     bool isEnabledViaScript() const { return m_disabledState == EnabledViaScript; }
     bool isIcon() const { return m_relAttribute.m_isIcon; }
+    bool disabled() const;
+    void setDisabled(bool);
 
 private:
     virtual void parseMappedAttribute(Attribute*);
