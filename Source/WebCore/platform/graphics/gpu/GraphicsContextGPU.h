@@ -28,8 +28,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef GLES2Canvas_h
-#define GLES2Canvas_h
+#ifndef GraphicsContextGPU_h
+#define GraphicsContextGPU_h
 
 #include "AffineTransform.h"
 #include "Color.h"
@@ -52,11 +52,11 @@ class GraphicsContext3D;
 class Path;
 class SharedGraphicsContext3D;
 
-class GLES2Canvas {
-    WTF_MAKE_NONCOPYABLE(GLES2Canvas);
+class GraphicsContextGPU {
+    WTF_MAKE_NONCOPYABLE(GraphicsContextGPU);
 public:
-    GLES2Canvas(SharedGraphicsContext3D*, DrawingBuffer*, const IntSize&);
-    ~GLES2Canvas();
+    GraphicsContextGPU(SharedGraphicsContext3D*, DrawingBuffer*, const IntSize&);
+    ~GraphicsContextGPU();
 
     void fillPath(const Path&);
     void fillRect(const FloatRect&, const Color&, ColorSpace);
@@ -137,4 +137,4 @@ private:
 
 }
 
-#endif // GLES2Canvas_h
+#endif // GraphicsContextGPU_h

@@ -30,7 +30,7 @@
 
 #include "config.h"
 
-#include "GLES2Canvas.h"
+#include "GraphicsContextGPU.h"
 
 #include "DrawingBuffer.h"
 #include "FloatRect.h"
@@ -73,7 +73,7 @@ struct PathAndTransform {
     AffineTransform transform;
 };
 
-struct GLES2Canvas::State {
+struct GraphicsContextGPU::State {
     State()
         : m_fillColor(0, 0, 0, 255)
         , m_shadowColor(0, 0, 0, 0)
@@ -194,7 +194,7 @@ class Cubic {
     FloatPoint m_a, m_b, m_c, m_d;
 };
 
-GLES2Canvas::GLES2Canvas(SharedGraphicsContext3D* context, DrawingBuffer* drawingBuffer, const IntSize& size)
+GraphicsContextGPU::GraphicsContextGPU(SharedGraphicsContext3D* context, DrawingBuffer* drawingBuffer, const IntSize& size)
     : m_size(size)
     , m_context(context)
     , m_drawingBuffer(drawingBuffer)
@@ -209,7 +209,7 @@ GLES2Canvas::GLES2Canvas(SharedGraphicsContext3D* context, DrawingBuffer* drawin
     m_state = &m_stateStack.last();
 }
 
-GLES2Canvas::~GLES2Canvas()
+GraphicsContextGPU::~GraphicsContextGPU()
 {
     if (m_pathIndexBuffer)
         m_context->graphicsContext3D()->deleteBuffer(m_pathIndexBuffer);
@@ -217,12 +217,12 @@ GLES2Canvas::~GLES2Canvas()
         m_context->graphicsContext3D()->deleteBuffer(m_pathVertexBuffer);
 }
 
-void GLES2Canvas::bindFramebuffer()
+void GraphicsContextGPU::bindFramebuffer()
 {
     m_drawingBuffer->bind();
 }
 
-void GLES2Canvas::clearRect(const FloatRect& rect)
+void GraphicsContextGPU::clearRect(const FloatRect& rect)
 {
     bindFramebuffer();
     if (m_state->m_ctm.isIdentity() && !m_state->clippingEnabled()) {
@@ -235,14 +235,14 @@ void GLES2Canvas::clearRect(const FloatRect& rect)
     }
 }
 
-void GLES2Canvas::applyState()
+void GraphicsContextGPU::applyState()
 {
     bindFramebuffer();
     m_context->applyCompositeOperator(m_state->m_compositeOp);
     applyClipping(m_state->clippingEnabled());
 }
 
-void GLES2Canvas::scissorClear(float x, float y, float width, float height)
+void GraphicsContextGPU::scissorClear(float x, float y, float width, float height)
 {
     int intX = static_cast<int>(x + 0.5f);
     int intY = static_cast<int>(y + 0.5f);
@@ -255,7 +255,7 @@ void GLES2Canvas::scissorClear(float x, float y, float width, float height)
     m_context->disable(GraphicsContext3D::SCISSOR_TEST);
 }
 
-void GLES2Canvas::fillPath(const Path& path)
+void GraphicsContextGPU::fillPath(const Path& path)
 {
     if (m_state->shadowActive()) {
         beginShadowDraw();
@@ -267,7 +267,7 @@ void GLES2Canvas::fillPath(const Path& path)
     fillPathInternal(path, m_state->applyAlpha(m_state->m_fillColor));
 }
 
-void GLES2Canvas::fillRect(const FloatRect& rect, const Color& color, ColorSpace colorSpace)
+void GraphicsContextGPU::fillRect(const FloatRect& rect, const Color& color, ColorSpace colorSpace)
 {
     if (m_state->shadowActive()) {
         beginShadowDraw();
@@ -279,12 +279,12 @@ void GLES2Canvas::fillRect(const FloatRect& rect, const Color& color, ColorSpace
     fillRectInternal(rect, color);
 }
 
-void GLES2Canvas::fillRect(const FloatRect& rect)
+void GraphicsContextGPU::fillRect(const FloatRect& rect)
 {
     fillRect(rect, m_state->applyAlpha(m_state->m_fillColor), ColorSpaceDeviceRGB);
 }
 
-void GLES2Canvas::fillRectInternal(const FloatRect& rect, const Color& color)
+void GraphicsContextGPU::fillRectInternal(const FloatRect& rect, const Color& color)
 {
     AffineTransform matrix(m_flipMatrix);
     matrix *= m_state->m_ctm;
@@ -296,62 +296,62 @@ void GLES2Canvas::fillRectInternal(const FloatRect& rect, const Color& color)
     m_context->drawArrays(GraphicsContext3D::TRIANGLE_STRIP, 0, 4);
 }
 
-void GLES2Canvas::setFillColor(const Color& color, ColorSpace colorSpace)
+void GraphicsContextGPU::setFillColor(const Color& color, ColorSpace colorSpace)
 {
     m_state->m_fillColor = color;
 }
 
-void GLES2Canvas::setAlpha(float alpha)
+void GraphicsContextGPU::setAlpha(float alpha)
 {
     m_state->m_alpha = alpha;
 }
 
-void GLES2Canvas::setShadowColor(const Color& color, ColorSpace)
+void GraphicsContextGPU::setShadowColor(const Color& color, ColorSpace)
 {
     m_state->m_shadowColor = color;
 }
 
-void GLES2Canvas::setShadowOffset(const FloatSize& offset)
+void GraphicsContextGPU::setShadowOffset(const FloatSize& offset)
 {
     m_state->m_shadowOffset = offset;
 }
 
-void GLES2Canvas::setShadowBlur(float shadowBlur)
+void GraphicsContextGPU::setShadowBlur(float shadowBlur)
 {
     m_state->m_shadowBlur = shadowBlur;
 }
 
-void GLES2Canvas::setShadowsIgnoreTransforms(bool shadowsIgnoreTransforms)
+void GraphicsContextGPU::setShadowsIgnoreTransforms(bool shadowsIgnoreTransforms)
 {
     m_state->m_shadowsIgnoreTransforms = shadowsIgnoreTransforms;
 }
 
-void GLES2Canvas::translate(float x, float y)
+void GraphicsContextGPU::translate(float x, float y)
 {
     m_state->m_ctm.translate(x, y);
 }
 
-void GLES2Canvas::rotate(float angleInRadians)
+void GraphicsContextGPU::rotate(float angleInRadians)
 {
     m_state->m_ctm.rotate(angleInRadians * (180.0f / M_PI));
 }
 
-void GLES2Canvas::scale(const FloatSize& size)
+void GraphicsContextGPU::scale(const FloatSize& size)
 {
     m_state->m_ctm.scale(size.width(), size.height());
 }
 
-void GLES2Canvas::concatCTM(const AffineTransform& affine)
+void GraphicsContextGPU::concatCTM(const AffineTransform& affine)
 {
     m_state->m_ctm *= affine;
 }
 
-void GLES2Canvas::setCTM(const AffineTransform& affine)
+void GraphicsContextGPU::setCTM(const AffineTransform& affine)
 {
     m_state->m_ctm = affine;
 }
 
-void GLES2Canvas::clipPath(const Path& path)
+void GraphicsContextGPU::clipPath(const Path& path)
 {
     bindFramebuffer();
     checkGLError("bindFramebuffer");
@@ -363,18 +363,18 @@ void GLES2Canvas::clipPath(const Path& path)
     m_state->m_numClippingPaths++;
 }
 
-void GLES2Canvas::clipOut(const Path& path)
+void GraphicsContextGPU::clipOut(const Path& path)
 {
-    ASSERT(!"clipOut is unsupported in GLES2Canvas.\n");
+    ASSERT(!"clipOut is unsupported in GraphicsContextGPU.\n");
 }
 
-void GLES2Canvas::save()
+void GraphicsContextGPU::save()
 {
     m_stateStack.append(State(m_stateStack.last()));
     m_state = &m_stateStack.last();
 }
 
-void GLES2Canvas::restore()
+void GraphicsContextGPU::restore()
 {
     ASSERT(!m_stateStack.isEmpty());
     const Vector<PathAndTransform>& clippingPaths = m_state->m_clippingPaths;
@@ -392,7 +392,7 @@ void GLES2Canvas::restore()
     m_state = &m_stateStack.last();
 }
 
-void GLES2Canvas::drawTexturedRect(unsigned texture, const IntSize& textureSize, const FloatRect& srcRect, const FloatRect& dstRect, ColorSpace colorSpace, CompositeOperator compositeOp)
+void GraphicsContextGPU::drawTexturedRect(unsigned texture, const IntSize& textureSize, const FloatRect& srcRect, const FloatRect& dstRect, ColorSpace colorSpace, CompositeOperator compositeOp)
 {
     bindFramebuffer();
     m_context->applyCompositeOperator(compositeOp);
@@ -405,13 +405,13 @@ void GLES2Canvas::drawTexturedRect(unsigned texture, const IntSize& textureSize,
     drawTexturedQuad(textureSize, srcRect, dstRect, m_state->m_ctm, m_state->m_alpha);
 }
 
-void GLES2Canvas::drawTexturedRect(Texture* texture, const FloatRect& srcRect, const FloatRect& dstRect, ColorSpace colorSpace, CompositeOperator compositeOp)
+void GraphicsContextGPU::drawTexturedRect(Texture* texture, const FloatRect& srcRect, const FloatRect& dstRect, ColorSpace colorSpace, CompositeOperator compositeOp)
 {
     drawTexturedRect(texture, srcRect, dstRect, m_state->m_ctm, m_state->m_alpha, colorSpace, compositeOp, m_state->clippingEnabled());
 }
 
 
-void GLES2Canvas::drawTexturedRect(Texture* texture, const FloatRect& srcRect, const FloatRect& dstRect, const AffineTransform& transform, float alpha, ColorSpace colorSpace, CompositeOperator compositeOp, bool clip)
+void GraphicsContextGPU::drawTexturedRect(Texture* texture, const FloatRect& srcRect, const FloatRect& dstRect, const AffineTransform& transform, float alpha, ColorSpace colorSpace, CompositeOperator compositeOp, bool clip)
 {
     bindFramebuffer();
     m_context->applyCompositeOperator(compositeOp);
@@ -427,7 +427,7 @@ void GLES2Canvas::drawTexturedRect(Texture* texture, const FloatRect& srcRect, c
     }
 }
 
-void GLES2Canvas::drawTexturedRectTile(Texture* texture, int tile, const FloatRect& srcRect, const FloatRect& dstRect, const AffineTransform& transform, float alpha)
+void GraphicsContextGPU::drawTexturedRectTile(Texture* texture, int tile, const FloatRect& srcRect, const FloatRect& dstRect, const AffineTransform& transform, float alpha)
 {
     if (dstRect.isEmpty())
         return;
@@ -445,7 +445,7 @@ void GLES2Canvas::drawTexturedRectTile(Texture* texture, int tile, const FloatRe
     drawTexturedQuad(tileBoundsWithBorder.size(), srcRectClippedInTileSpace, dstRectIntersected, transform, alpha);
 }
 
-void GLES2Canvas::convolveRect(unsigned texture, const IntSize& textureSize, const FloatRect& srcRect, const FloatRect& dstRect, float imageIncrement[2], const float* kernel, int kernelWidth)
+void GraphicsContextGPU::convolveRect(unsigned texture, const IntSize& textureSize, const FloatRect& srcRect, const FloatRect& dstRect, float imageIncrement[2], const float* kernel, int kernelWidth)
 {
     m_context->bindTexture(GraphicsContext3D::TEXTURE_2D, texture);
     m_context->texParameteri(GraphicsContext3D::TEXTURE_2D, GraphicsContext3D::TEXTURE_WRAP_S, GraphicsContext3D::CLAMP_TO_EDGE);
@@ -487,7 +487,7 @@ static void buildKernel(float sigma, float* kernel, int kernelWidth)
         kernel[i] *= scale;
 }
 
-void GLES2Canvas::drawTexturedQuad(const IntSize& textureSize, const FloatRect& srcRect, const FloatRect& dstRect, const AffineTransform& transform, float alpha)
+void GraphicsContextGPU::drawTexturedQuad(const IntSize& textureSize, const FloatRect& srcRect, const FloatRect& dstRect, const AffineTransform& transform, float alpha)
 {
     AffineTransform matrix(m_flipMatrix);
     matrix *= transform;
@@ -505,7 +505,7 @@ void GLES2Canvas::drawTexturedQuad(const IntSize& textureSize, const FloatRect& 
     checkGLError("glDrawArrays");
 }
 
-void GLES2Canvas::drawTexturedQuadMitchell(const IntSize& textureSize, const FloatRect& srcRect, const FloatRect& dstRect, const AffineTransform& transform, float alpha)
+void GraphicsContextGPU::drawTexturedQuadMitchell(const IntSize& textureSize, const FloatRect& srcRect, const FloatRect& dstRect, const AffineTransform& transform, float alpha)
 {
     static const float mitchellCoefficients[16] = {
          0.0f / 18.0f,   1.0f / 18.0f,  16.0f / 18.0f,   1.0f / 18.0f,
@@ -535,17 +535,17 @@ void GLES2Canvas::drawTexturedQuadMitchell(const IntSize& textureSize, const Flo
     checkGLError("glDrawArrays");
 }
 
-void GLES2Canvas::setCompositeOperation(CompositeOperator op)
+void GraphicsContextGPU::setCompositeOperation(CompositeOperator op)
 {
     m_state->m_compositeOp = op;
 }
 
-Texture* GLES2Canvas::createTexture(NativeImagePtr ptr, Texture::Format format, int width, int height)
+Texture* GraphicsContextGPU::createTexture(NativeImagePtr ptr, Texture::Format format, int width, int height)
 {
     return m_context->createTexture(ptr, format, width, height);
 }
 
-Texture* GLES2Canvas::getTexture(NativeImagePtr ptr)
+Texture* GraphicsContextGPU::getTexture(NativeImagePtr ptr)
 {
     return m_context->getTexture(ptr);
 }
@@ -609,7 +609,7 @@ static void combineData(GLdouble coords[3], void* vertexData[4],
 
 typedef void (*TESSCB)();
 
-void GLES2Canvas::tesselateAndFillPath(const Path& path, const Color& color)
+void GraphicsContextGPU::tesselateAndFillPath(const Path& path, const Color& color)
 {
     if (!m_pathVertexBuffer)
         m_pathVertexBuffer = m_context->graphicsContext3D()->createBuffer();
@@ -706,7 +706,7 @@ void GLES2Canvas::tesselateAndFillPath(const Path& path, const Color& color)
     m_context->graphicsContext3D()->drawElements(GraphicsContext3D::TRIANGLES, indices.size(), GraphicsContext3D::UNSIGNED_SHORT, 0);
 }
 
-void GLES2Canvas::fillPathInternal(const Path& path, const Color& color)
+void GraphicsContextGPU::fillPathInternal(const Path& path, const Color& color)
 {
     if (SharedGraphicsContext3D::useLoopBlinnForPathRendering()) {
         m_pathCache.clear();
@@ -740,7 +740,7 @@ void GLES2Canvas::fillPathInternal(const Path& path, const Color& color)
     }
 }
 
-FloatRect GLES2Canvas::flipRect(const FloatRect& rect)
+FloatRect GraphicsContextGPU::flipRect(const FloatRect& rect)
 {
     FloatRect flippedRect(rect);
     flippedRect.setY(m_size.height() - rect.y());
@@ -748,7 +748,7 @@ FloatRect GLES2Canvas::flipRect(const FloatRect& rect)
     return flippedRect;
 }
 
-void GLES2Canvas::clearBorders(const FloatRect& rect, int width)
+void GraphicsContextGPU::clearBorders(const FloatRect& rect, int width)
 {
     scissorClear(rect.x(), rect.y() - width, rect.width() + width, width);
     scissorClear(rect.maxX(), rect.y(), width, rect.height() + width);
@@ -756,7 +756,7 @@ void GLES2Canvas::clearBorders(const FloatRect& rect, int width)
     scissorClear(rect.x() - width, rect.y() - width, width, rect.height() + width);
 }
 
-void GLES2Canvas::beginShadowDraw()
+void GraphicsContextGPU::beginShadowDraw()
 {
     float offsetX = m_state->m_shadowOffset.width();
     float offsetY = m_state->m_shadowOffset.height();
@@ -782,7 +782,7 @@ void GLES2Canvas::beginShadowDraw()
     }
 }
 
-void GLES2Canvas::endShadowDraw(const FloatRect& boundingBox)
+void GraphicsContextGPU::endShadowDraw(const FloatRect& boundingBox)
 {
     if (m_state->m_shadowBlur > 0) {
         // Buffer 0 contains the primitive drawn with a hard shadow.
@@ -867,7 +867,7 @@ void GLES2Canvas::endShadowDraw(const FloatRect& boundingBox)
     restore();
 }
 
-void GLES2Canvas::beginStencilDraw(unsigned op)
+void GraphicsContextGPU::beginStencilDraw(unsigned op)
 {
     // Turn on stencil test.
     m_context->enableStencil(true);
@@ -882,7 +882,7 @@ void GLES2Canvas::beginStencilDraw(unsigned op)
     checkGLError("stencilOp");
 }
 
-void GLES2Canvas::applyClipping(bool enable)
+void GraphicsContextGPU::applyClipping(bool enable)
 {
     m_context->enableStencil(enable);
     if (enable) {
@@ -897,7 +897,7 @@ void GLES2Canvas::applyClipping(bool enable)
     }
 }
 
-void GLES2Canvas::checkGLError(const char* header)
+void GraphicsContextGPU::checkGLError(const char* header)
 {
 #ifndef NDEBUG
     unsigned err;

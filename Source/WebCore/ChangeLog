@@ -1,3 +1,30 @@
+2011-04-19  Stephen White  <senorblanco@chromium.org>
+
+        Reviewed by Kenneth Russell.
+
+        Move and rename GLES2Canvas.
+        https://bugs.webkit.org/show_bug.cgi?id=58927
+
+        Move GLES2Canvas to platform/graphcs/gpu, where all the other
+        gpu-related files live, and rename it to GraphicsContextGPU to better
+        reflect its purpose.
+
+        Covered by existing tests.
+
+        * WebCore.gypi:
+        * platform/graphics/chromium/GLES2Canvas.cpp:
+        * platform/graphics/chromium/GLES2Canvas.h:
+        * platform/graphics/skia/GraphicsContextSkia.cpp:
+        (WebCore::GraphicsContext::fillPath):
+        (WebCore::GraphicsContext::setPlatformShadow):
+        * platform/graphics/skia/ImageBufferSkia.cpp:
+        * platform/graphics/skia/ImageSkia.cpp:
+        (WebCore::drawBitmapGLES2):
+        * platform/graphics/skia/PlatformContextSkia.cpp:
+        (WebCore::PlatformContextSkia::setSharedGraphicsContext3D):
+        * platform/graphics/skia/PlatformContextSkia.h:
+        (WebCore::PlatformContextSkia::gpuCanvas):
+
 2011-04-20  Benjamin Poulain  <benjamin.poulain@nokia.com>
 
         Reviewed by Andreas Kling.

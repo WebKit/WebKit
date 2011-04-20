@@ -34,8 +34,8 @@
 #include "AffineTransform.h"
 #include "Color.h"
 #include "FloatRect.h"
-#include "GLES2Canvas.h"
 #include "Gradient.h"
+#include "GraphicsContextGPU.h"
 #include "GraphicsContextPlatformPrivate.h"
 #include "ImageBuffer.h"
 #include "IntRect.h"
@@ -733,7 +733,7 @@ void GraphicsContext::fillPath(const Path& pathToFill)
     if (paintingDisabled())
         return;
 
-    // FIXME: add support to GLES2Canvas for more than just solid fills.
+    // FIXME: add support to GraphicsContextGPU for more than just solid fills.
     if (platformContext()->useGPU() && platformContext()->canAccelerate()) {
         platformContext()->prepareForHardwareDraw();
         platformContext()->gpuCanvas()->fillPath(pathToFill);
@@ -1029,7 +1029,7 @@ void GraphicsContext::setPlatformShadow(const FloatSize& size,
         return;
 
     if (platformContext()->useGPU()) {
-        GLES2Canvas* canvas = platformContext()->gpuCanvas();
+        GraphicsContextGPU* canvas = platformContext()->gpuCanvas();
         canvas->setShadowOffset(size);
         canvas->setShadowBlur(blurFloat);
         canvas->setShadowColor(color, colorSpace);

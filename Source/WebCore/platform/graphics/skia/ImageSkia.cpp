@@ -35,8 +35,8 @@
 #include "BitmapImageSingleFrameSkia.h"
 #include "FloatConversion.h"
 #include "FloatRect.h"
-#include "GLES2Canvas.h"
 #include "GraphicsContext.h"
+#include "GraphicsContextGPU.h"
 #include "Logging.h"
 #include "NativeImageSkia.h"
 #include "PlatformContextSkia.h"
@@ -434,7 +434,7 @@ void Image::drawPattern(GraphicsContext* context,
 static void drawBitmapGLES2(GraphicsContext* ctxt, NativeImageSkia* bitmap, const FloatRect& srcRect, const FloatRect& dstRect, ColorSpace styleColorSpace, CompositeOperator compositeOp)
 {
     ctxt->platformContext()->prepareForHardwareDraw();
-    GLES2Canvas* gpuCanvas = ctxt->platformContext()->gpuCanvas();
+    GraphicsContextGPU* gpuCanvas = ctxt->platformContext()->gpuCanvas();
     Texture* texture = gpuCanvas->getTexture(bitmap);
     if (!texture) {
         ASSERT(bitmap->config() == SkBitmap::kARGB_8888_Config);

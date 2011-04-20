@@ -62,7 +62,7 @@
 #include <wtf/Vector.h>
 
 #if ENABLE(ACCELERATED_2D_CANVAS)
-#include "GLES2Canvas.h"
+#include "GraphicsContextGPU.h"
 #include "SharedGraphicsContext3D.h"
 #endif
 
@@ -729,7 +729,7 @@ void PlatformContextSkia::setSharedGraphicsContext3D(SharedGraphicsContext3D* co
 #if ENABLE(ACCELERATED_2D_CANVAS)
     if (context && drawingBuffer) {
         m_useGPU = true;
-        m_gpuCanvas = new GLES2Canvas(context, drawingBuffer, size);
+        m_gpuCanvas = new GraphicsContextGPU(context, drawingBuffer, size);
         m_uploadTexture.clear();
         drawingBuffer->setWillPublishCallback(WillPublishCallbackImpl::create(this));
 

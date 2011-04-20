@@ -46,8 +46,8 @@ namespace WebCore {
 
 enum CompositeOperator;
 class DrawingBuffer;
-class GLES2Canvas;
 class GraphicsContext3D;
+class GraphicsContextGPU;
 class Texture;
 
 // This class holds the platform-specific state for GraphicsContext. We put
@@ -181,12 +181,12 @@ public:
     bool useGPU() { return m_useGPU; }
     void setSharedGraphicsContext3D(SharedGraphicsContext3D*, DrawingBuffer*, const IntSize&);
 #if ENABLE(ACCELERATED_2D_CANVAS)
-    GLES2Canvas* gpuCanvas() const { return m_gpuCanvas.get(); }
+    GraphicsContextGPU* gpuCanvas() const { return m_gpuCanvas.get(); }
 #else
-    GLES2Canvas* gpuCanvas() const { return 0; }
+    GraphicsContextGPU* gpuCanvas() const { return 0; }
 #endif
     // Call these before making a call that manipulates the underlying
-    // SkCanvas or WebCore::GLES2Canvas
+    // SkCanvas or WebCore::GraphicsContextGPU
     void prepareForSoftwareDraw() const;
     void prepareForHardwareDraw() const;
     // Call to force the SkCanvas to contain all rendering results.
@@ -223,7 +223,7 @@ private:
     bool m_drawingToImageBuffer;
     bool m_useGPU;
 #if ENABLE(ACCELERATED_2D_CANVAS)
-    OwnPtr<GLES2Canvas> m_gpuCanvas;
+    OwnPtr<GraphicsContextGPU> m_gpuCanvas;
     mutable RefPtr<Texture> m_uploadTexture;
 #endif
     mutable enum { None, Software, Mixed, Hardware } m_backingStoreState;
