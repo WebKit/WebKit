@@ -2514,10 +2514,14 @@ void RenderLayer::paintLayer(RenderLayer* rootLayer, GraphicsContext* p,
             return;
 
         // If we have a transparency layer enclosing us and we are the root of a transform, then we need to establish the transparency
-        // layer from the parent now.
-        if (paintFlags & PaintLayerHaveTransparency)
-            parent()->beginTransparencyLayers(p, rootLayer, paintBehavior);
-  
+        // layer from the parent now, assuming there is a parent
+        if (paintFlags & PaintLayerHaveTransparency) {
+            if (parent())
+                parent()->beginTransparencyLayers(p, rootLayer, paintBehavior);
+            else
+                beginTransparencyLayers(p, rootLayer, paintBehavior);
+        }
+
         // Make sure the parent's clip rects have been calculated.
         IntRect clipRect = paintDirtyRect;
         if (parent()) {

@@ -1,3 +1,16 @@
+2011-04-19  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Antti Koivisto.
+
+        Reproducible crash two-finger zooming at multiple sites in WebCore::RenderLayer::isTransparent
+        https://bugs.webkit.org/show_bug.cgi?id=58868
+
+        I could not figure out how to make a test.
+
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::paintLayer): Check for existence of a
+        parent before calling a method on it.
+
 2011-04-20  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
         Reviewed by Daniel Bates.
