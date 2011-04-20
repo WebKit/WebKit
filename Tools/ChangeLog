@@ -1,3 +1,26 @@
+2011-04-20  Adam Roben  <aroben@apple.com>
+
+        Teach webkitdirs::winVersion about build numbers
+
+        The build number isn't currently used, but soon will be.
+
+        As a bonus, winVersion now works on non-Cygwin variants of Perl!
+
+        Fixes <http://webkit.org/b/58991> Need a way to distinguish between Windows 7 and Windows 7
+        SP1
+
+        Reviewed by Anders Carlsson.
+
+        * Scripts/webkitdirs.pm:
+        (isAnyWindows): Added. Returns true if we're running on any Windows-ish Perl.
+        (determineWinVersion): Use `cmd /c ver` to get the version number, including the build
+        number. Parse the version number into a hash, similar to how osXVersion() works.
+
+        (isWindows7):
+        (isWindowsVista):
+        (isWindowsXP):
+        Updated for changes to winVersion().
+
 2011-04-20  W. James MacLean  <wjmaclean@chromium.org>
 
         Reviewed by Kenneth Russell.

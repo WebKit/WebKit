@@ -888,18 +888,28 @@ sub isCygwin()
     return ($^O eq "cygwin") || 0;
 }
 
+sub isAnyWindows()
+{
+    return isWindows() || isCygwin() || isMsys();
+}
+
 sub determineWinVersion()
 {
     return if $winVersion;
 
-    if (!isCygwin()) {
+    if (!isAnyWindows()) {
         $winVersion = -1;
         return;
     }
 
-    my $versionString = `uname -s`;
-    $versionString =~ /(\d\.\d)/;
-    $winVersion = $1;
+    my $versionString = `cmd /c ver`;
+    $versionString =~ /(\d)\.(\d)\.(\d+)/;
+
+    $winVersion = {
+        major => $1,
+        minor => $2,
+        build => $3,
+    };
 }
 
 sub winVersion()
@@ -910,17 +920,17 @@ sub winVersion()
 
 sub isWindows7()
 {
-    return winVersion() eq "6.1";
+    return isAnyWindows() && winVersion()->{major} == 6 && winVersion()->{minor} == 1;
 }
 
 sub isWindowsVista()
 {
-    return winVersion() eq "6.0";
+    return isAnyWindows() && winVersion()->{major} == 6 && winVersion()->{minor} == 0;
 }
 
 sub isWindowsXP()
 {
-    return winVersion() eq "5.1";
+    return isAnyWindows() && winVersion()->{major} == 5 && winVersion()->{minor} == 1;
 }
 
 sub isDarwin()
