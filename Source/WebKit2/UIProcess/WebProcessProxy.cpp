@@ -169,7 +169,7 @@ PassRefPtr<WebPageProxy> WebProcessProxy::createWebPage(PageClient* pageClient, 
 {
     ASSERT(context->process() == this);
 
-    unsigned pageID = generatePageID();
+    uint64_t pageID = generatePageID();
     RefPtr<WebPageProxy> webPage = WebPageProxy::create(pageClient, this, pageGroup, pageID);
     m_pageMap.set(pageID, webPage.get());
     return webPage.release();

@@ -1987,6 +1987,9 @@ static void drawPageBackground(CGContextRef context, WebPageProxy* page, const I
 
 - (void)_resendKeyDownEvent:(NSEvent *)event
 {
+    // resending the event may destroy this WKView
+    RetainPtr<WKView> protect(self);
+
     ASSERT(!_data->_keyDownEventBeingResent);
     _data->_keyDownEventBeingResent = event;
     [NSApp _setCurrentEvent:event];

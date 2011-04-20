@@ -1,3 +1,18 @@
+2011-04-20  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Reproducible crash under WebPageProxy::didReceiveEvent
+        https://bugs.webkit.org/show_bug.cgi?id=59036
+        <rdar://problem/9252083>
+
+        * UIProcess/API/mac/WKView.mm:
+        (-[WKView _resendKeyDownEvent:]): Protect against self-destruction
+        when re-dispatching the event.        
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::createWebPage): Fixed a type mismatch
+        I noticed while debugging.
+
 2011-04-20  Timothy Hatcher  <timothy@apple.com>
 
         Make the Web Insepctor come to the front when a breakpoint is hit.
