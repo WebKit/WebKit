@@ -36,19 +36,12 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
-TreeScope::TreeScope(Document* document, ConstructionType constructionType)
-    : ContainerNode(0, constructionType)
+TreeScope::TreeScope(Document* document)
+    : ContainerNode(document)
     , m_parentTreeScope(0)
     , m_accessKeyMapValid(false)
     , m_numNodeListCaches(0)
 {
-    m_document = document;
-    if (document != this) {
-        // Assume document as parent scope
-        m_parentTreeScope = document;
-        // FIXME: This branch should be inert until shadow scopes are landed.
-        ASSERT_NOT_REACHED();
-    }
 }
 
 TreeScope::~TreeScope()
@@ -69,7 +62,6 @@ void TreeScope::setParentTreeScope(TreeScope* newParentScope)
     // A document node cannot be re-parented.
     ASSERT(!isDocumentNode());
     // Every scope other than document needs a parent scope.
-    ASSERT(m_parentTreeScope);
     ASSERT(newParentScope);
 
     m_parentTreeScope = newParentScope;

@@ -39,6 +39,7 @@ class TreeScope : public ContainerNode {
 
 public:
     TreeScope* parentTreeScope() const { return m_parentTreeScope; }
+    void setParentTreeScope(TreeScope*);
 
     Element* getElementById(const AtomicString&) const;
     bool hasElementWithId(AtomicStringImpl* id) const;
@@ -65,13 +66,10 @@ public:
     Element* findAnchor(const String& name);
 
 protected:
-    TreeScope(Document*, ConstructionType = CreateContainer);
-
+    TreeScope(Document*);
     virtual ~TreeScope();
 
     void destroyTreeScopeData();
-
-    void setParentTreeScope(TreeScope*);
 
 private:
     TreeScope* m_parentTreeScope;

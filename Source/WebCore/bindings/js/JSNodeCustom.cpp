@@ -63,6 +63,7 @@
 #include "Notation.h"
 #include "ProcessingInstruction.h"
 #include "RegisteredEventListener.h"
+#include "ShadowRoot.h"
 #include "StyleSheet.h"
 #include "StyledElement.h"
 #include "Text.h"
@@ -290,7 +291,11 @@ static ALWAYS_INLINE JSValue createWrapperInline(ExecState* exec, JSDOMGlobalObj
             wrapper = CREATE_DOM_NODE_WRAPPER(exec, globalObject, Notation, node);
             break;
         case Node::DOCUMENT_FRAGMENT_NODE:
-            wrapper = CREATE_DOM_NODE_WRAPPER(exec, globalObject, DocumentFragment, node);
+            // FIXME: remove 'if' once ShadowRoot gets its own node type (see bug 58704)
+            if (node->isShadowBoundary())
+                wrapper = CREATE_DOM_NODE_WRAPPER(exec, globalObject, Node, node);
+            else
+                wrapper = CREATE_DOM_NODE_WRAPPER(exec, globalObject, DocumentFragment, node);
             break;
         case Node::ENTITY_REFERENCE_NODE:
             wrapper = CREATE_DOM_NODE_WRAPPER(exec, globalObject, EntityReference, node);

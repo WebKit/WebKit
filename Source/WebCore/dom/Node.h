@@ -359,18 +359,16 @@ public:
     Document* document() const
     {
         ASSERT(this);
+        // FIXME: below ASSERT is useful, but prevents the use of document() in the constructor or destructor
+        // due to the virtual function call to nodeType().
         ASSERT(m_document || (nodeType() == DOCUMENT_TYPE_NODE && !inDocument()));
         return m_document;
     }
 
     TreeScope* treeScope() const;
 
-    // Do not use this method to change the scope of a node until after the node has been
-    // removed from its previous scope. Do not use to change documents.
-    void setTreeScope(TreeScope*);
-
     // Used by the basic DOM methods (e.g., appendChild()).
-    void setTreeScopeRecursively(TreeScope*);
+    void setTreeScopeRecursively(TreeScope*, bool includeRoot = true);
 
     // Returns true if this node is associated with a document and is in its associated document's
     // node tree, false otherwise.

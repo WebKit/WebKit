@@ -33,6 +33,7 @@
 
 #include "Document.h"
 #include "EventListener.h"
+#include "ShadowRoot.h"
 
 #include "V8AbstractEventListener.h"
 #include "V8Attr.h"
@@ -162,6 +163,9 @@ v8::Handle<v8::Value> toV8Slow(Node* impl, bool forceNewObject)
     case Node::DOCUMENT_TYPE_NODE:
         return toV8(static_cast<DocumentType*>(impl), forceNewObject);
     case Node::DOCUMENT_FRAGMENT_NODE:
+        // FIXME: remove 'if' once ShadowRoot gets its own node type (see bug 58704)
+        if (impl->isShadowBoundary())
+            return toV8(static_cast<ShadowRoot*>(impl), forceNewObject);
         return toV8(static_cast<DocumentFragment*>(impl), forceNewObject);
     case Node::NOTATION_NODE:
         return toV8(static_cast<Notation*>(impl), forceNewObject);
