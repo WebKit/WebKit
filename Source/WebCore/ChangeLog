@@ -1,5 +1,13 @@
 2011-04-20  Pavel Feldman  <pfeldman@google.com>
 
+        Not reviewed: fix Leopard compile.
+
+        * inspector/InspectorFrontendClient.h:
+        * inspector/InspectorFrontendClientLocal.h:
+        (WebCore::InspectorFrontendClientLocal::saveAs):
+
+2011-04-20  Pavel Feldman  <pfeldman@google.com>
+
         Reviewed by Yury Semikhatsky.
 
         Web Inspector: add saveAs into the InspectorFrontendHost binding.
