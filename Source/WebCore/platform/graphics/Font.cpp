@@ -283,8 +283,18 @@ Font::CodePath Font::codePath(const TextRun& run) const
     CodePath result = Simple;
 
     // Start from 0 since drawing and highlighting also measure the characters before run->from
+    // FIXME: Should use a UnicodeSet in ports where ICU is used. Note that we 
+    // can't simply use UnicodeCharacter Property/class because some characters
+    // are not 'combining', but still need to go to the complex path.
+    // Alternatively, we may as well consider binary search over a sorted
+    // list of ranges.
     for (int i = 0; i < run.length(); i++) {
         const UChar c = run[i];
+        if (c < 0x2E5) // U+02E5 through U+02E9 (Modifier Letters : Tone letters)  
+            continue;
+        if (c <= 0x2E9) 
+            return Complex;
+
         if (c < 0x300) // U+0300 through U+036F Combining diacritical marks
             continue;
         if (c <= 0x36F)
@@ -295,17 +305,27 @@ Font::CodePath Font::codePath(const TextRun& run) const
         if (c <= 0x05CF)
             return Complex;
 
-        if (c < 0x0600) // U+0600 through U+1059 Arabic, Syriac, Thaana, Devanagari, Bengali, Gurmukhi, Gujarati, Oriya, Tamil, Telugu, Kannada, Malayalam, Sinhala, Thai, Lao, Tibetan, Myanmar
+        // U+0600 through U+109F Arabic, Syriac, Thaana, NKo, Samaritan, Mandaic,
+        // Devanagari, Bengali, Gurmukhi, Gujarati, Oriya, Tamil, Telugu, Kannada, 
+        // Malayalam, Sinhala, Thai, Lao, Tibetan, Myanmar
+        if (c < 0x0600) 
             continue;
-        if (c <= 0x1059)
+        if (c <= 0x109F)
             return Complex;
 
-        if (c < 0x1100) // U+1100 through U+11FF Hangul Jamo (only Ancient Korean should be left here if you precompose; Modern Korean will be precomposed as a result of step A)
+        // U+1100 through U+11FF Hangul Jamo (only Ancient Korean should be left here if you precompose;
+        // Modern Korean will be precomposed as a result of step A)
+        if (c < 0x1100)
             continue;
         if (c <= 0x11FF)
             return Complex;
 
-        if (c < 0x1780) // U+1780 through U+18AF Khmer, Mongolian
+        if (c < 0x135D) // U+135D through U+135F Ethiopic combining marks
+            continue;
+        if (c <= 0x135F)
+            return Complex;
+
+        if (c < 0x1700) // U+1780 through U+18AF Tagalog, Hanunoo, Buhid, Taghanwa,Khmer, Mongolian
             continue;
         if (c <= 0x18AF)
             return Complex;
@@ -315,8 +335,22 @@ Font::CodePath Font::codePath(const TextRun& run) const
         if (c <= 0x194F)
             return Complex;
 
-        if (c < 0x1E00) // U+1E00 through U+2000 characters with diacritics and stacked diacritics
+        if (c < 0x1980) // U+1980 through U+19DF New Tai Lue
             continue;
+        if (c <= 0x19DF)
+            return Complex;
+
+        if (c < 0x1A00) // U+1A00 through U+1CFF Buginese, Tai Tham, Balinese, Batak, Lepcha, Vedic
+            continue;
+        if (c <= 0x1CFF)
+            return Complex;
+
+        if (c < 0x1DC0) // U+1DC0 through U+1DFF Comining diacritical mark supplement
+            continue;
+        if (c <= 0x1DFF)
+            return Complex;
+
+        // U+1E00 through U+2000 characters with diacritics and stacked diacritics
         if (c <= 0x2000) {
             result = SimpleWithGlyphOverflow;
             continue;
@@ -327,10 +361,45 @@ Font::CodePath Font::codePath(const TextRun& run) const
         if (c <= 0x20FF)
             return Complex;
 
+        if (c < 0x2CEF) // U+2CEF through U+2CF1 Combining marks for Coptic
+            continue;
+        if (c <= 0x2CF1)
+            return Complex;
+
+        if (c < 0x302A) // U+302A through U+302F Ideographic and Hangul Tone marks
+            continue;
+        if (c <= 0x302F)
+            return Complex;
+
+        if (c < 0xA67C) // U+A67C through U+A67D Combining marks for old Cyrillic
+            continue;
+        if (c <= 0xA67D)
+            return Complex;
+
+        if (c < 0xA6F0) // U+A6F0 through U+A6F1 Combining mark for Bamum
+            continue;
+        if (c <= 0xA6F1)
+            return Complex;
+
+       // U+A800 through U+ABFF Nagri, Phags-pa, Saurashtra, Devanagari Extended,
+       // Hangul Jamo Ext. A, Javanese, Myanmar Extended A, Tai Viet, Meetei Mayek,
+        if (c < 0xA800) 
+            continue;
+        if (c <= 0xABFF)
+            return Complex;
+
+        if (c < 0xD7B0) // U+D7B0 through U+D7FF Hangul Jamo Ext. B
+            continue;
+        if (c <= 0xD7FF)
+            return Complex;
+
         if (c < 0xFE20) // U+FE20 through U+FE2F Combining half marks
             continue;
         if (c <= 0xFE2F)
             return Complex;
+
+        // FIXME: Make this loop UTF-16-aware and check for Brahmi (U+11000 block)
+        // Kaithi (U+11080 block) and other complex scripts in plane 1 or higher.
     }
 
     if (typesettingFeatures())

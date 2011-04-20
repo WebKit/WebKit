@@ -1,3 +1,17 @@
+2011-04-19  Jungshik Shin  <jshin@chromium.org>
+
+        Reviewed by Adam Barth
+
+        Add a test to test sequences of IPA tone letters are 
+        ligated regardless of text-rendering mode (fast codepath or not).
+        The test explicitly specifies Arial because it's one of a few fonts
+        to have layout table entries to support the ligation of IPA tone
+        letters.
+
+        http://bugs.webkit.org/show_bug.cgi?id=39799
+
+        * fast/text/ipa-tone-letters.html: Added.
+
 2011-04-19  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Dan Bernstein.
