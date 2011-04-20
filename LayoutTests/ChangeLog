@@ -1,3 +1,10 @@
+2011-04-20  Philippe Normand  <pnormand@igalia.com>
+
+        Unreviewed, skip GTK crashing test
+        storage/open-database-set-empty-version.html.
+
+        * platform/gtk/Skipped:
+
 2011-04-20  Jessie Berlin  <jberlin@apple.com>
 
         WebKit2 needs layoutTestController.overridePreference
