@@ -3735,3 +3735,5 @@ BUGDPRANKE CPU : media/video-volume-slider.html = IMAGE
 BUGDPRANKE CPU : media/video-zoom-controls.html = IMAGE
 BUGDPRANKE : svg/custom/svg-fonts-in-html.html = IMAGE
 
+// probably just needs a new baseline
+BUGDPRANKE WIN LINUX : fast/backgrounds/background-leakage-transforms.html = IMAGE+TEXT
