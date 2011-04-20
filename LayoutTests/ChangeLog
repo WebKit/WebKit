@@ -1,3 +1,13 @@
+2011-04-20  Tony Chang  <tony@chromium.org>
+
+        Update 2 more tests that are missing png files.
+
+        * platform/chromium-mac/fast/borders/borderRadiusDotted06-expected.checksum: Removed.
+        * platform/chromium-mac/fast/borders/borderRadiusDotted06-expected.png: Added. png with embedded checksum pulled from the bot.
+        * platform/chromium-win/compositing/repaint/become-overlay-composited-layer-expected.checksum: Removed. This file is not used since we don't
+            run compositing tests w/CPU rendering and there's a GPU result in chromium-gpu-win.
+        * platform/chromium/test_expectations.txt:  Remove these tests.
+
 2011-04-20  Jian Li  <jianli@chromium.org>
 
         Unreviewed, fixed typo in the failed test added to chromium test

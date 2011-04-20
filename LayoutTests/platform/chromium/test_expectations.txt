@@ -3749,14 +3749,12 @@ BUGDPRANKE WIN LINUX : fast/backgrounds/background-leakage-transforms.html = IMA
 // These tests pass, but they are missing png files.  Mark them as failing so
 // the bots will generate results for them.
 BUGTONY MAC : editing/selection/extend-by-word-002.html = IMAGE
-BUGTONY MAC : fast/borders/borderRadiusDotted06.html = IMAGE
 BUGTONY MAC LEOPARD : fast/blockflow/english-bt-text.html = IMAGE
 BUGTONY MAC LEOPARD : fast/borders/svg-as-border-image.html = IMAGE
 BUGTONY MAC LEOPARD : fast/css/background-shorthand-invalid-url.html = IMAGE
 BUGTONY MAC LEOPARD : fast/css/value-list-out-of-bounds-crash.html = IMAGE
 BUGTONY MAC LEOPARD : svg/custom/group-opacity.svg = IMAGE
 BUGTONY MAC LEOPARD : svg/custom/image-with-transform-clip-filter.svg = IMAGE
-BUGTONY WIN : compositing/repaint/become-overlay-composited-layer.html = IMAGE
 
 // https://bugs.webkit.org/show_bug.cgi?id=58926
 BUGCR80011 WIN LINUX DEBUG : css2.1/t140201-c533-bgimage-00-a.html = CRASH
