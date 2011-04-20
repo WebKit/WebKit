@@ -1,3 +1,29 @@
+2011-04-20  John Knottenbelt  <jknotten@chromium.org>
+
+        Unreviewed.
+
+        [Chromium] Rebaseline some border-related tests on Mac
+        https://bugs.webkit.org/show_bug.cgi?id=58985
+
+	Most likely related to http://trac.webkit.org/changeset/84341/
+	"background color of elements with border-radius shows around outer edge of border at corners"
+
+        * platform/chromium-mac-leopard/fast/forms/menulist-clip-expected.png:
+        * platform/chromium-mac-leopard/fast/forms/menulist-narrow-width-expected.png:
+        * platform/chromium-mac-leopard/fast/forms/menulist-option-wrap-expected.png:
+        * platform/chromium-mac-leopard/fast/forms/menulist-restrict-line-height-expected.png:
+        * platform/chromium-mac-leopard/fast/forms/menulist-style-color-expected.png:
+        * platform/chromium-mac-leopard/fast/forms/select-baseline-expected.png:
+        * platform/chromium-mac/fast/borders/borderRadiusDashed01-expected.checksum: Removed.
+        * platform/chromium-mac/fast/borders/borderRadiusDashed01-expected.png:
+        * platform/chromium-mac/fast/forms/menulist-clip-expected.png: Removed.
+        * platform/chromium-mac/fast/forms/menulist-narrow-width-expected.png: Removed.
+        * platform/chromium-mac/fast/forms/menulist-option-wrap-expected.png: Removed.
+        * platform/chromium-mac/fast/forms/menulist-restrict-line-height-expected.png: Removed.
+        * platform/chromium-mac/fast/forms/menulist-style-color-expected.png: Removed.
+        * platform/chromium-mac/fast/forms/select-baseline-expected.png: Removed.
+        * platform/chromium-mac/fast/forms/select-empty-option-height-expected.png: Removed.
+
 2011-04-20  Yury Semikhatsky  <yurys@chromium.org>
 
         Reviewed by Tony Gentilcore.
