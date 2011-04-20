@@ -1,3 +1,12 @@
+2011-04-19  Dirk Pranke  <dpranke@chromium.org>
+
+        Unreviewed, attempting build fix.
+
+        Disable leveldb to work around
+        http://code.google.com/p/leveldb/issues/detail?id=1.
+
+        * features.gypi:
+
 2011-04-19  Dominic Cooney  <dominicc@chromium.org>
 
         Reviewed by Dimitri Glazkov.
