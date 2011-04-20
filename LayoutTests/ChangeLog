@@ -91,6 +91,14 @@
 2011-04-19  Dirk Pranke  <dpranke@chromium.org>
 
         Unreviewed, expectations change.
+
+        Add chromium suppressions resulting from r84341 - 84344.
+
+        * platform/chromium/test_expectations.txt:
+
+2011-04-19  Dirk Pranke  <dpranke@chromium.org>
+
+        Unreviewed, expectations change.
         
         * platform/chromium/test_expectations.txt:
 
