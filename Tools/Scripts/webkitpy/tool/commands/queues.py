@@ -353,6 +353,9 @@ class CommitQueue(AbstractPatchQueue, StepSequenceErrorHandler, CommitQueueTaskD
         zip_path = self._tool.workspace.find_unused_filename(self._log_directory(), "%s-%s" % (patch.bug_id(), results_name), "zip")
         if not zip_path:
             return None
+        if not self._tool.filesystem.isdir(results_directory):
+            log("%s does not exist, not archiving." % results_directory)
+            return None
         archive = self._tool.workspace.create_zip(zip_path, results_directory)
         # Remove the results directory to prevent http logs, etc. from getting huge between runs.
         # We could have create_zip remove the original, but this is more explicit.

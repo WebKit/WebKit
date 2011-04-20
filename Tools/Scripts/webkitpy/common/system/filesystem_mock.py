@@ -147,7 +147,7 @@ class MockFileSystem(object):
             return False
         path = self.normpath(path)
         if path in self.dirs:
-            return True
+            return self.dirs[path] is not None
 
         # We need to use a copy of the keys here in order to avoid switching
         # to a different thread and potentially modifying the dict in
@@ -267,12 +267,15 @@ class MockFileSystem(object):
         self.written_files[path] = None
 
     def rmtree(self, path):
-        if not path.endswith(self.sep):
-            path += self.sep
+        path = self.normpath(path)
 
         for f in self.files:
             if f.startswith(path):
                 self.files[f] = None
+
+        for d in self.dirs:
+            if d.startswith(path):
+                self.dirs[d] = None
 
     def splitext(self, path):
         idx = path.rfind('.')

@@ -728,7 +728,7 @@ class MockWorkspace(object):
         return "%s/%s.%s" % (directory, name, extension)
 
     def create_zip(self, zip_path, source_path):
-        pass
+        return object()  # Something that is not None
 
 
 class MockTool(object):

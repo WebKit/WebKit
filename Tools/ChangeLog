@@ -1,3 +1,27 @@
+2011-04-19  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Adam Barth.
+
+        The commit-queue is confused when non-layout tests fail
+        https://bugs.webkit.org/show_bug.cgi?id=58955
+
+        As seen in http://queues.webkit.org/results/8474435
+
+        It fails to create an archive of the layout test results
+        and then throws an exception.
+
+        I've fixed this by making it catch the exception as well
+        as made it so it never calls that path in the common case.
+
+        I've updated MockFileSystem to understand rmtree's affect on
+        directories as well as files.
+
+        * Scripts/webkitpy/common/system/filesystem_mock.py:
+        * Scripts/webkitpy/common/system/workspace.py:
+        * Scripts/webkitpy/tool/commands/queues.py:
+        * Scripts/webkitpy/tool/commands/queues_unittest.py:
+        * Scripts/webkitpy/tool/mocktool.py:
+
 2011-04-19  Ojan Vafai  <ojan@chromium.org>
 
         Fix check for whether a failure is expected to deal with

@@ -29,7 +29,12 @@
 # A home for file logic which should sit above FileSystem, but
 # below more complicated objects.
 
+import logging
 import zipfile
+
+
+_log = logging.getLogger(__name__)
+
 
 class Workspace(object):
     def __init__(self, filesystem, executive):
@@ -57,5 +62,10 @@ class Workspace(object):
         #         zip_file.write(os.path.relpath(path, source_path))
         # However, getting the paths, encoding and compression correct could be non-trivial.
         # So, for now we depend on the environment having "zip" installed (likely fails on Win32)
-        self._executive.run_command(['zip', '-r', zip_path, source_path])
+        try:
+            self._executive.run_command(['zip', '-r', zip_path, source_path])
+        except ScriptError, e:
+            _log.error("Workspace.create_zip failed:\n%s" % e.message_with_output())
+            return None
+
         return zip_class(zip_path)

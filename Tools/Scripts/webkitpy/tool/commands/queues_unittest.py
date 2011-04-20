@@ -403,10 +403,22 @@ The commit-queue is continuing to process your patch.
 
     def test_archive_last_layout_test_results(self):
         queue = CommitQueue()
-        queue.bind_to_tool(MockTool())
+        tool = MockTool()
+        queue.bind_to_tool(tool)
         patch = queue._tool.bugs.fetch_attachment(128)
-        # This is just to test that the method doesn't raise.
-        queue.archive_last_layout_test_results(patch)
+        # Should fail because the results_directory does not exist.
+        expected_stderr = "/mock does not exist, not archiving.\n"
+        archive = OutputCapture().assert_outputs(self, queue.archive_last_layout_test_results, [patch], expected_stderr=expected_stderr)
+        self.assertEqual(archive, None)
+
+        results_directory = "/mock"
+        # Sanity check what we assume our mock results directory is.
+        self.assertEqual(queue._results_directory(), results_directory)
+        tool.filesystem.maybe_make_directory(results_directory)
+        self.assertTrue(tool.filesystem.exists(results_directory))
+
+        self.assertNotEqual(queue.archive_last_layout_test_results(patch), None)
+        self.assertFalse(tool.filesystem.exists(results_directory))
 
     def test_upload_results_archive_for_patch(self):
         queue = CommitQueue()
