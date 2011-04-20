@@ -6,16 +6,21 @@ function log(message) {
   p.appendChild(document.createTextNode(message));
   document.getElementById("console").appendChild(p);
 }
+
+function handleScriptOnError()
+{
+    log('onerror called (good!)');
+}
 </script>
 </head>
-<body onerror="log('onerror called (good!)')">
+<body>
     <p>Test for <a href="http://bugs.webkit.org/show_bug.cgi?id=13584">bug 13584</a>:
     &lt;script> code wrongly assumes requests can't fail.</p>
     <p>No crash == SUCCESS.</p>
     
     <div id=console></div>
     
-    <script id=test_script></script>
+    <script onerror="handleScriptOnError()" id=test_script></script>
 
     <script>
         if (window.layoutTestController)
@@ -26,6 +31,7 @@ function log(message) {
         
         script = document.createElement("script");
         script.setAttribute("src", "file:///foobar");
+        script.setAttribute("onerror", "handleScriptOnError()");
         document.body.appendChild(script);
     </script>
 </body>
