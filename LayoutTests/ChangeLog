@@ -1,3 +1,12 @@
+2011-04-20  John Knottenbelt  <jknotten@chromium.org>
+
+        Unreviewed.
+
+        [Chromium] Adjust test expectations.
+        https://bugs.webkit.org/show_bug.cgi?id=59002
+
+        * platform/chromium/test_expectations.txt:
+
 2011-04-20  Adam Roben  <aroben@apple.com>
 
         Add Windows 7 SP1 baselines for some SVG tests that progressed in SP1

@@ -3743,4 +3743,9 @@ BUGDPRANKE : svg/custom/svg-fonts-in-html.html = IMAGE
 // probably just needs a new baseline
 BUGDPRANKE WIN LINUX : fast/backgrounds/background-leakage-transforms.html = IMAGE+TEXT
 
+// https://bugs.webkit.org/show_bug.cgi?id=58926
 BUGCR80011 WIN LINUX DEBUG : css2.1/t140201-c533-bgimage-00-a.html = CRASH
+BUGCR80011 WIN LINUX DEBUG : fast/backgrounds/solid-color-context-restore.html = CRASH
+BUGCR80011 WIN LINUX DEBUG : fast/css/acid2-pixel.html = CRASH
+BUGCR80011 WIN LINUX DEBUG : fast/frames/content-opacity-1.html = CRASH
+BUGCR80011 WIN LINUX DEBUG : fast/frames/content-opacity-2.html = CRASH
