@@ -1,3 +1,10 @@
+2011-04-20  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [Qt] REGRESSION(r84296): platform/qt/fast/history/back-to-unreachable-url-then-forward.html fails
+        https://bugs.webkit.org/show_bug.cgi?id=58977
+
+        * platform/qt/Skipped: Add platform/qt/fast/history/back-to-unreachable-url-then-forward.html.
+
 2011-04-20  Philippe Normand  <pnormand@igalia.com>
 
         Unreviewed, skip failing test on GTK.
