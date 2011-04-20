@@ -1,3 +1,17 @@
+2011-04-20  Pavel Feldman  <pfeldman@google.com>
+
+        Reviewed by Yury Semikhatsky.
+
+        Web Inspector: add saveAs into the InspectorFrontendHost binding.
+        https://bugs.webkit.org/show_bug.cgi?id=58979
+
+        * public/WebDevToolsFrontendClient.h:
+        (WebKit::WebDevToolsFrontendClient::saveAs):
+        * src/InspectorFrontendClientImpl.cpp:
+        (WebKit::InspectorFrontendClientImpl::saveAs):
+        * src/InspectorFrontendClientImpl.h:
+        * src/js/DevTools.js:
+
 2011-04-19  Naoki Takano  <takano.naoki@gmail.com>
 
         Reviewed by Kent Tamura.

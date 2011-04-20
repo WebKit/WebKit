@@ -74,6 +74,7 @@ public:
     String hiddenPanels();
 
     void copyText(const String& text);
+    void saveAs(const String& fileName, const String& content);
 
     void saveSessionSetting(const String& key, const String& value);
     String loadSessionSetting(const String& key);

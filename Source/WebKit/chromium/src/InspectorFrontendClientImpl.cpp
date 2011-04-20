@@ -125,6 +125,11 @@ void InspectorFrontendClientImpl::changeAttachedWindowHeight(unsigned)
     // Do nothing;
 }
     
+void InspectorFrontendClientImpl::saveAs(const String& fileName, const String& content)
+{
+    m_client->saveAs(fileName, content);
+}
+
 void InspectorFrontendClientImpl::inspectedURLChanged(const String& url)
 {
     m_frontendPage->mainFrame()->document()->setTitle("Developer Tools - " + url);

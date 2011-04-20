@@ -49,7 +49,8 @@ var Preferences = {
     showCookiesTab: false,
     debugMode: false,
     heapProfilerPresent: false,
-    detailedHeapProfiles: false
+    detailedHeapProfiles: false,
+    saveAsAvailable: false
 }
 
 WebInspector.Settings = function()

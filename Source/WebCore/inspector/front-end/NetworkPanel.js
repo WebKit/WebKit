@@ -997,24 +997,47 @@ WebInspector.NetworkPanel.prototype = {
         var contextMenu = new WebInspector.ContextMenu();
         var gridNode = this._dataGrid.dataGridNodeFromNode(event.target);
         var resource = gridNode && gridNode._resource;
+
         if (resource)
-            contextMenu.appendItem(WebInspector.UIString("Copy entry as HAR"), this._exportResource.bind(this, resource));
-        contextMenu.appendItem(WebInspector.UIString("Copy network log as HAR"), this._exportAll.bind(this));
+            contextMenu.appendItem(WebInspector.UIString("Copy entry as HAR"), this._copyResource.bind(this, resource));
+        contextMenu.appendItem(WebInspector.UIString("Copy all as HAR"), this._copyAll.bind(this));
+
+        if (Preferences.saveAsAvailable) {
+            contextMenu.appendSeparator();
+            if (resource)
+                contextMenu.appendItem(WebInspector.UIString("Save entry as HAR"), this._exportResource.bind(this, resource));
+            contextMenu.appendItem(WebInspector.UIString("Save all as HAR"), this._exportAll.bind(this));
+        }
+
         contextMenu.show(event);
+    },
+
+    _copyAll: function()
+    {
+        var harArchive = {
+            log: (new WebInspector.HARLog()).build()
+        };
+        InspectorFrontendHost.copyText(JSON.stringify(harArchive));
+    },
+
+    _copyResource: function(resource)
+    {
+        var har = (new WebInspector.HAREntry(resource)).build();
+        InspectorFrontendHost.copyText(JSON.stringify(har));
     },
 
     _exportAll: function()
     {
         var harArchive = {
             log: (new WebInspector.HARLog()).build()
-        }
-        InspectorFrontendHost.copyText(JSON.stringify(harArchive));
+        };
+        InspectorFrontendHost.saveAs(WebInspector.mainResource.domain + ".har", JSON.stringify(harArchive));
     },
 
     _exportResource: function(resource)
     {
         var har = (new WebInspector.HAREntry(resource)).build();
-        InspectorFrontendHost.copyText(JSON.stringify(har));
+        InspectorFrontendHost.saveAs(resource.displayName + ".har", JSON.stringify(har));
     },
 
     _updateOffscreenRows: function(e)

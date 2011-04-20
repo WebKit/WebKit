@@ -220,6 +220,12 @@ void InspectorFrontendHost::copyText(const String& text)
     Pasteboard::generalPasteboard()->writePlainText(text);
 }
 
+void InspectorFrontendHost::saveAs(const String& fileName, const String& content)
+{
+    if (m_client)
+        m_client->saveAs(fileName, content);
+}
+
 void InspectorFrontendHost::saveSessionSetting(const String& key, const String& value)
 {
     if (m_client)

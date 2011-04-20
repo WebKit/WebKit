@@ -115,6 +115,20 @@ WebInspector.InspectorFrontendHostStub.prototype = {
     {
     },
 
+    saveAs: function(fileName, content)
+    {
+        var builder = new WebKitBlobBuilder();
+        builder.append(content);
+        var blob = builder.getBlob("application/octet-stream");
+    
+        var fr = new FileReader();
+        fr.onload = function(e) {
+            // Force download
+            window.location = this.result;
+        }
+        fr.readAsDataURL(blob);
+    },
+
     canAttachWindow: function()
     {
         return false;

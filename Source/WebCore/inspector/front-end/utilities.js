@@ -1074,12 +1074,3 @@ function createSearchRegex(query, extraFlags)
     }
     return new RegExp(regex, "i" + (extraFlags || ""));
 }
-
-function offerFileForDownload(contents)
-{
-    var builder = new BlobBuilder();
-    builder.append(contents);
-    var blob = builder.getBlob("application/octet-stream");
-    var url = window.webkitURL.createObjectURL(blob);
-    window.open(url);
-}

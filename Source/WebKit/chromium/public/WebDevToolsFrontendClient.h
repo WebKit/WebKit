@@ -49,6 +49,7 @@ public:
     virtual void closeWindow() { }
     virtual void requestDockWindow() { }
     virtual void requestUndockWindow() { }
+    virtual void saveAs(const WebString& fileName, const WebString& content) { }
 
     virtual bool shouldHideScriptsPanel() { return false; }
 

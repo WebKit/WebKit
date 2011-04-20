@@ -1,3 +1,32 @@
+2011-04-20  Pavel Feldman  <pfeldman@google.com>
+
+        Reviewed by Yury Semikhatsky.
+
+        Web Inspector: add saveAs into the InspectorFrontendHost binding.
+        https://bugs.webkit.org/show_bug.cgi?id=58979
+
+        * English.lproj/localizedStrings.js:
+        * inspector/InspectorFrontendClient.h:
+        (WebCore::InspectorFrontendClient::saveAs):
+        (WebCore::InspectorFrontendClient::saveSessionSetting):
+        (WebCore::InspectorFrontendClient::loadSessionSetting):
+        * inspector/InspectorFrontendHost.cpp:
+        (WebCore::InspectorFrontendHost::saveAs):
+        * inspector/InspectorFrontendHost.h:
+        * inspector/InspectorFrontendHost.idl:
+        * inspector/front-end/InspectorFrontendHostStub.js:
+        (.WebInspector.InspectorFrontendHostStub.prototype.saveAs.fr.onload):
+        (.WebInspector.InspectorFrontendHostStub.prototype.saveAs):
+        * inspector/front-end/NetworkPanel.js:
+        (WebInspector.NetworkPanel.prototype._contextMenu):
+        (WebInspector.NetworkPanel.prototype._copyAll):
+        (WebInspector.NetworkPanel.prototype._copyResource):
+        (WebInspector.NetworkPanel.prototype._exportAll):
+        (WebInspector.NetworkPanel.prototype._exportResource):
+        * inspector/front-end/Settings.js:
+        * inspector/front-end/utilities.js:
+        ():
+
 2011-04-20  Yury Semikhatsky  <yurys@chromium.org>
 
         Reviewed by Tony Gentilcore.

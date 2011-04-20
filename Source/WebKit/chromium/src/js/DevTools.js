@@ -50,6 +50,7 @@ var context = {};  // Used by WebCore's inspector routines.
     Preferences.fileSystemEnabled = false;
     Preferences.showTimingTab = true;
     Preferences.showCookiesTab = true;
+    Preferences.saveAsAvailable = true;
 })();
 
 var devtools = devtools || {};
