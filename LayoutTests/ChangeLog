@@ -1,3 +1,14 @@
+2011-04-19  Dmitry Titov  <dimich@chromium.org>
+
+        Reviewed by David Levin.
+
+        new-run-webkit-tests: remove formerly flakey tests form test_expectations.
+        https://bugs.webkit.org/show_bug.cgi?id=57678
+
+        Tests fixed by http://trac.webkit.org/changeset/83900
+
+        * platform/mac/test_expectations.txt:
+
 2011-04-19  Dirk Pranke  <dpranke@chromium.org>
 
         Unreviewed, expectations change.

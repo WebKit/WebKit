@@ -60,14 +60,6 @@
 // Our slow tests, in alphabetical order.
 BUGWK57672 : http/tests/local/fileapi/send-sliced-dragged-file.html = TEXT PASS
 
-// Flaky tests that appear to be sporadically timing out.
-BUGWK57678 : fast/workers/dedicated-worker-lifecycle.html = TEXT PASS
-BUGWK57678 : fast/workers/shared-worker-frame-lifecycle.html = TEXT PASS
-BUGWK57678 : fast/workers/shared-worker-lifecycle.html = TEXT PASS
-BUGWK57678 : fast/workers/storage/interrupt-database.html = TEXT PASS
-BUGWK57678 : fast/workers/worker-close-more.html = TEXT PASS
-BUGWK57678 : fast/workers/worker-lifecycle.html = TEXT PASS
-
 BUGWK57799 : storage/domstorage/localstorage/storagetracker/storage-tracker-4-create.html = TEXT PASS
 BUGWK57799 : storage/domstorage/localstorage/storagetracker/storage-tracker-5-delete-one.html = TEXT PASS
 
