@@ -1,3 +1,18 @@
+2011-04-20  Pavel Feldman  <pfeldman@google.com>
+
+        Reviewed by Yury Semikhatsky.
+
+        Web Inspector: add Save As to the Resources panel context menu.
+        https://bugs.webkit.org/show_bug.cgi?id=58983
+
+        * English.lproj/localizedStrings.js:
+        * inspector/front-end/ResourcesPanel.js:
+        (WebInspector.FrameResourceTreeElement.prototype.onattach):
+        (WebInspector.FrameResourceTreeElement.prototype._handleContextMenuEvent.save):
+        (WebInspector.FrameResourceTreeElement.prototype._handleContextMenuEvent):
+        (WebInspector.ResourceRevisionTreeElement.prototype._handleContextMenuEvent.save):
+        (WebInspector.ResourceRevisionTreeElement.prototype._handleContextMenuEvent):
+
 2011-04-20  Balazs Kelemen  <kbalazs@webkit.org>
 
         Reviewed by Csaba Osztrogonác.

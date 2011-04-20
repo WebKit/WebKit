@@ -1093,6 +1093,7 @@ WebInspector.FrameResourceTreeElement.prototype = {
 
         this.listItemElement.draggable = true;
         this.listItemElement.addEventListener("dragstart", this._ondragstart.bind(this), false);
+        this.listItemElement.addEventListener("contextmenu", this._handleContextMenuEvent.bind(this), true);
     },
 
     _ondragstart: function(event)
@@ -1102,6 +1103,26 @@ WebInspector.FrameResourceTreeElement.prototype = {
         return true;
     },
 
+    _handleContextMenuEvent: function(event)
+    {
+        if (!Preferences.saveAsAvailable)
+            return;
+
+        if (this._resource.type !== WebInspector.Resource.Type.Document &&
+            this._resource.type !== WebInspector.Resource.Type.Stylesheet &&
+            this._resource.type !== WebInspector.Resource.Type.Script)
+            return;
+
+        function save()
+        {
+            var fileName = this._resource.displayName;
+            this._resource.requestContent(InspectorFrontendHost.saveAs.bind(InspectorFrontendHost, fileName));
+        }
+        var contextMenu = new WebInspector.ContextMenu();
+        contextMenu.appendItem(WebInspector.UIString("Save as..."), save.bind(this));
+        contextMenu.show(event);
+    },
+    
     _setBubbleText: function(x)
     {
         if (!this._bubbleElement) {
@@ -1352,6 +1373,17 @@ WebInspector.ResourceRevisionTreeElement.prototype = {
     {
         var contextMenu = new WebInspector.ContextMenu();
         contextMenu.appendItem(WebInspector.UIString("Revert to this revision"), this._revision.revertToThis.bind(this._revision));
+
+        if (Preferences.saveAsAvailable) {
+            function save()
+            {
+                var fileName = this._revision.resource.displayName;
+                this._revision.requestContent(InspectorFrontendHost.saveAs.bind(InspectorFrontendHost, fileName));
+            }
+            contextMenu.appendSeparator();
+            contextMenu.appendItem(WebInspector.UIString("Save as..."), save.bind(this));
+        }
+
         contextMenu.show(event);
     }
 }
