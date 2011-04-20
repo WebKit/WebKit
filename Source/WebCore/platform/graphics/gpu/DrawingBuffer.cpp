@@ -150,7 +150,7 @@ void DrawingBuffer::clearFramebuffer()
     const GraphicsContext3D::Attributes& attributes = m_context->getContextAttributes();
     float clearDepth = 0;
     int clearStencil = 0;
-    unsigned char depthMask = true;
+    unsigned char depthMask = false;
     unsigned int stencilMask = 0xffffffff;
     unsigned char isScissorEnabled = false;
     unsigned long clearMask = GraphicsContext3D::COLOR_BUFFER_BIT;
