@@ -106,6 +106,7 @@ label {
     vertical-align: top;
 }
 </style>
+<style id="unexpected-style"></style>
 
 <script>
 var g_state;
@@ -333,36 +334,11 @@ function tableRows()
     return html;
 }
 
-var html = '<div id=options>' +
-    '<a href="javascript:void()" class="expand-all" onclick="expandAllExpectations()">expand all</a> ' +
-    '<a href="javascript:void()" class="collapse-all" onclick="collapseAllExpectations()">collapse all</a>';
-
-if (globalState().results.uses_expectations_file)
-    html += '<label><input class="unexpected-results" type=checkbox checked onchange="updateExpectedResults()">Only show unexpected results</label>';
-
-html += '</div>';
-
-var tableRowsHtml = tableRows();
-
-if (tableRowsHtml) {
-    html += '<p>Tests where results did not match expected results:</p>' +
-        '<table id="results-table"><thead><tr>' +
-        '<th>test</th>' +
-        '<th id="text-results-header">text results</th>' +
-        '<th id="image-results-header">image results</th>' +
-        '<th>failure type</th>';
-        
-    if (globalState().results.uses_expectations_file)
-        html += '<th>expected failure type</th>';
-
-    html += '</tr></thead>' + tableRowsHtml + '</table>';
-}
-
-function appendTestList(tests, header, tableId, fileSuffix, linkName)
+function testList(tests, header, tableId, fileSuffix, linkName)
 {
     tests.sort();
 
-    html += '<p>' + header + '</p><table id="' + tableId + '">';
+    var html = '<p>' + header + '</p><table id="' + tableId + '">';
     for (var i = 0; i < tests.length; i++) {
         var test = tests[i];
         html += '<tbody><tr><td>' + testLink(test) + '</td><td>';
@@ -381,21 +357,9 @@ function appendTestList(tests, header, tableId, fileSuffix, linkName)
         
         html += '</td></tr></tbody>';
     }
-    html += '</table>'
+    html += '</table>';
+    return html;
 }
-
-if (globalState().newTests.length)
-    appendTestList(globalState().newTests, 'Tests that had no expected results (probably new):', 'new-tests-table', '-actual.txt', 'result');
-
-if (globalState().testsWithStderr.length)
-    appendTestList(globalState().testsWithStderr, 'Tests that had stderr output:', 'stderr-table', '-stderr.txt', 'stderr');
-
-if (globalState().hasHttpTests) {
-    html += '<p>httpd access log: <a href="access_log.txt">access_log.txt</a></p>' +
-        '<p>httpd error log: <a href="error_log.txt">error_log.txt</a></p>';
-}
-
-document.write(html);
 
 function toArray(nodeList)
 {
@@ -501,10 +465,6 @@ TableSorter._sort = function(newHeader)
     TableSorter._sortRows(newHeader, reversed);
 }
 
-if (document.getElementById('results-table'))
-    document.getElementById('results-table').addEventListener('click', TableSorter.handleClick, false);
-TableSorter.sortColumn(0);
-
 var PixelZoomer = {};
 
 PixelZoomer._createContainer = function(e)
@@ -565,25 +525,65 @@ PixelZoomer.handleMouseMove = function(e) {
     PixelZoomer._position(e);
 }
 
-document.body.addEventListener('mousemove', PixelZoomer.handleMouseMove, false);
-
-
-var unexpectedStyleNode = document.createElement('style');
-document.body.appendChild(unexpectedStyleNode);
+document.addEventListener('mousemove', PixelZoomer.handleMouseMove, false);
 
 function updateExpectedResults()
 {
     var checkBox = document.querySelector('.unexpected-results');
-    if (!checkBox || checkBox.checked)
-        unexpectedStyleNode.innerText = '.expected { display: none; }';
-    else
-        unexpectedStyleNode.innerText = '';
+    document.getElementById('unexpected-style').innerText = (!checkBox || checkBox.checked) ?
+        '.expected { display: none; }' : '';
 }
 
-updateExpectedResults();
+function generatePage()
+{
+    var html = '<div id=options>' +
+        '<a href="javascript:void()" class="expand-all" onclick="expandAllExpectations()">expand all</a> ' +
+        '<a href="javascript:void()" class="collapse-all" onclick="collapseAllExpectations()">collapse all</a>';
 
-if (!globalState().hasTextFailures)
-  document.body.getElementById('text-results-header').textContent = '';
-if (!globalState().hasImageFailures)
-  document.body.getElementById('image-results-header').textContent = '';
+    if (globalState().results.uses_expectations_file)
+        html += '<label><input class="unexpected-results" type=checkbox checked onchange="updateExpectedResults()">Only show unexpected results</label>';
+
+    html += '</div>';
+
+    var tableRowsHtml = tableRows();
+
+    if (tableRowsHtml) {
+        html += '<p>Tests where results did not match expected results:</p>' +
+            '<table id="results-table"><thead><tr>' +
+            '<th>test</th>' +
+            '<th id="text-results-header">text results</th>' +
+            '<th id="image-results-header">image results</th>' +
+            '<th>failure type</th>';
+
+        if (globalState().results.uses_expectations_file)
+            html += '<th>expected failure type</th>';
+
+        html += '</tr></thead>' + tableRowsHtml + '</table>';
+    }
+
+    if (globalState().newTests.length)
+        html += testList(globalState().newTests, 'Tests that had no expected results (probably new):', 'new-tests-table', '-actual.txt', 'result');
+
+    if (globalState().testsWithStderr.length)
+        html += testList(globalState().testsWithStderr, 'Tests that had stderr output:', 'stderr-table', '-stderr.txt', 'stderr');
+
+    if (globalState().hasHttpTests) {
+        html += '<p>httpd access log: <a href="access_log.txt">access_log.txt</a></p>' +
+            '<p>httpd error log: <a href="error_log.txt">error_log.txt</a></p>';
+    }
+
+    document.body.innerHTML = html;
+
+    if (document.getElementById('results-table'))
+        document.getElementById('results-table').addEventListener('click', TableSorter.handleClick, false);
+    TableSorter.sortColumn(0);
+    
+    updateExpectedResults();
+
+    if (!globalState().hasTextFailures)
+      document.body.getElementById('text-results-header').textContent = '';
+    if (!globalState().hasImageFailures)
+      document.body.getElementById('image-results-header').textContent = '';
+}
 </script>
+<body onload="generatePage()"></body>
