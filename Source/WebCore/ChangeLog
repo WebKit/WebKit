@@ -1,3 +1,26 @@
+2011-04-19  Naoki Takano  <takano.naoki@gmail.com>
+
+        Reviewed by Kent Tamura.
+
+        [Chromium]UI polishes and tweaks to Autofill dropdown menu.
+        https://bugs.webkit.org/show_bug.cgi?id=58505
+        http://code.google.com/p/chromium/issues/detail?id=51077
+
+        No new tests. Because this is autofill looking problem in Chromium.
+        Add m_menuType as PopupMenuStyle to change popup style change.
+        Put kLinePaddingHeight at the top and bottom of each line if m_menuType is AutofillPopup.
+        Change separator color to #dcdcdc and remove sparatorPadding at the edge if m_menuType is AutofillPopup.
+        Change the line height of separator as only the piece if m_menuType is AutofillPopup.
+        Change the label font size 0.9 time smaller than regular font size if m_menuType is AutofillPopup.
+
+        * platform/PopupMenuStyle.h: Add enum PopupMenuType;
+        (WebCore::PopupMenuStyle::PopupMenuStyle): Add m_menuType.
+        (WebCore::PopupMenuStyle::menuType): Add to change the style according to the return value.
+        * platform/chromium/PopupMenuChromium.cpp:
+        (WebCore::PopupListBox::paintRow):Change the separator color to #dcdcdc.
+        Change the edge padding according to menuStyle().
+        (WebCore::PopupListBox::getRowHeight): Add kLineHeightMargin*2 for each line height.
+
 2011-04-19  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Dan Bernstein.

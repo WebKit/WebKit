@@ -75,6 +75,7 @@ static const int kTextToLabelPadding = 10;
 static const int kLabelToIconPadding = 5;
 static const int kMinEndOfLinePadding = 2;
 static const TimeStamp kTypeAheadTimeoutMs = 1000;
+static const int kLinePaddingHeight = 3; // Padding height put at the top and bottom of each line.
 
 // The settings used for the drop down menu.
 // This is the delegate used if none is provided.
@@ -912,12 +913,15 @@ void PopupListBox::paintRow(GraphicsContext* gc, const IntRect& rect, int rowInd
 
     gc->fillRect(rowRect, backColor, ColorSpaceDeviceRGB);
 
+    // It doesn't look good but Autofill requires special style for separator.
+    // Autofill doesn't have padding and #dcdcdc color.
     if (m_popupClient->itemIsSeparator(rowIndex)) {
+        int padding = style.menuType() == PopupMenuStyle::AutofillPopup ? 0 : separatorPadding;
         IntRect separatorRect(
-            rowRect.x() + separatorPadding,
+            rowRect.x() + padding,
             rowRect.y() + (rowRect.height() - separatorHeight) / 2,
-            rowRect.width() - 2 * separatorPadding, separatorHeight);
-        gc->fillRect(separatorRect, textColor, ColorSpaceDeviceRGB);
+            rowRect.width() - 2 * padding, separatorHeight);
+        gc->fillRect(separatorRect, style.menuType() == PopupMenuStyle::AutofillPopup ? Color(0xdc, 0xdc, 0xdc) : textColor, ColorSpaceDeviceRGB);
         return;
     }
 
@@ -988,6 +992,16 @@ void PopupListBox::paintRow(GraphicsContext* gc, const IntRect& rect, int rowInd
     // Draw the the label if applicable.
     if (itemLabel.isEmpty())
         return;
+
+    // Autofill label is 0.9 smaller than regular font size.
+    if (style.menuType() == PopupMenuStyle::AutofillPopup) {
+        itemFont = m_popupClient->itemStyle(rowIndex).font();
+        FontDescription d = itemFont.fontDescription();
+        d.setComputedSize(d.computedSize() * 0.9);
+        itemFont = Font(d, itemFont.letterSpacing(), itemFont.wordSpacing());
+        itemFont.update(0);
+    }
+
     TextRun labelTextRun(itemLabel.characters(), itemLabel.length(), false, 0, 0, TextRun::AllowTrailingExpansion, rtl, style.hasTextDirectionOverride());
     if (rightAligned)
         textX = max(0, m_popupClient->clientPaddingLeft() - m_popupClient->clientInsetLeft());
@@ -1104,13 +1118,18 @@ int PopupListBox::getRowHeight(int index)
     if (m_popupClient->itemStyle(index).isDisplayNone())
         return 0;
 
+    // Separator row height is the same size as itself.
+    if (m_popupClient->itemIsSeparator(index))
+        return separatorHeight;
+
     String icon = m_popupClient->itemIcon(index);
     RefPtr<Image> image(Image::loadPlatformResource(icon.utf8().data()));
 
     int fontHeight = getRowFont(index).fontMetrics().height();
     int iconHeight = (image && !image->isNull()) ? image->rect().height() : 0;
 
-    return max(fontHeight, iconHeight);
+    int linePaddingHeight = m_popupClient->menuStyle().menuType() == PopupMenuStyle::AutofillPopup ? kLinePaddingHeight : 0;
+    return max(fontHeight, iconHeight) + linePaddingHeight * 2;
 }
 
 IntRect PopupListBox::getRowBounds(int index)
