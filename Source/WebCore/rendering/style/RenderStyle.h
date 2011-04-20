@@ -193,7 +193,7 @@ protected:
         unsigned _text_decorations : 4;
         unsigned _cursor_style : 6; // ECursor
         unsigned _direction : 1; // TextDirection
-        bool _border_collapse : 1 ;
+        unsigned _border_collapse : 1; // EBorderCollapse
         unsigned _white_space : 3; // EWhiteSpace
         unsigned _box_direction : 1; // EBoxDirection (CSS3 box_direction property, flexible box layout module)
         // 34 bits
@@ -592,8 +592,7 @@ public:
     const FillLayer* maskLayers() const { return &(rareNonInheritedData->m_mask); }
     const NinePieceImage& maskBoxImage() const { return rareNonInheritedData->m_maskBoxImage; }
 
-    // returns true for collapsing borders, false for separate borders
-    bool borderCollapse() const { return inherited_flags._border_collapse; }
+    EBorderCollapse borderCollapse() const { return static_cast<EBorderCollapse>(inherited_flags._border_collapse); }
     short horizontalBorderSpacing() const { return inherited->horizontal_border_spacing; }
     short verticalBorderSpacing() const { return inherited->vertical_border_spacing; }
     EEmptyCell emptyCells() const { return static_cast<EEmptyCell>(inherited_flags._empty_cells); }
@@ -968,7 +967,7 @@ public:
     void setMaskYPosition(Length l) { SET_VAR(rareNonInheritedData, m_mask.m_yPosition, l) }
     void setMaskSize(LengthSize l) { SET_VAR(rareNonInheritedData, m_mask.m_sizeLength, l) }
 
-    void setBorderCollapse(bool collapse) { inherited_flags._border_collapse = collapse; }
+    void setBorderCollapse(EBorderCollapse collapse) { inherited_flags._border_collapse = collapse; }
     void setHorizontalBorderSpacing(short v) { SET_VAR(inherited, horizontal_border_spacing, v) }
     void setVerticalBorderSpacing(short v) { SET_VAR(inherited, vertical_border_spacing, v) }
     void setEmptyCells(EEmptyCell v) { inherited_flags._empty_cells = v; }
@@ -1210,7 +1209,7 @@ public:
     const Color visitedDependentColor(int colorProperty) const;
 
     // Initial values for all the properties
-    static bool initialBorderCollapse() { return false; }
+    static EBorderCollapse initialBorderCollapse() { return BSEPARATE; }
     static EBorderStyle initialBorderStyle() { return BNONE; }
     static NinePieceImage initialNinePieceImage() { return NinePieceImage(); }
     static LengthSize initialBorderRadius() { return LengthSize(Length(0, Fixed), Length(0, Fixed)); }

@@ -2642,6 +2642,33 @@ template<> inline CSSPrimitiveValue::operator EAlignmentBaseline() const
     }
 }
 
+template<> inline CSSPrimitiveValue::CSSPrimitiveValue(EBorderCollapse e)
+    : m_type(CSS_IDENT)
+    , m_hasCachedCSSText(false)
+{
+    switch (e) {
+    case BSEPARATE:
+        m_value.ident = CSSValueSeparate;
+        break;
+    case BCOLLAPSE:
+        m_value.ident = CSSValueCollapse;
+        break;
+    }
+}
+
+template<> inline CSSPrimitiveValue::operator EBorderCollapse() const
+{
+    switch (m_value.ident) {
+    case CSSValueSeparate:
+        return BSEPARATE;
+    case CSSValueCollapse:
+        return BCOLLAPSE;
+    default:
+        ASSERT_NOT_REACHED();
+        return BSEPARATE;
+    }
+}
+
 template<> inline CSSPrimitiveValue::CSSPrimitiveValue(EColorInterpolation e)
     : m_type(CSS_IDENT)
     , m_hasCachedCSSText(false)

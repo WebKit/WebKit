@@ -80,6 +80,8 @@ enum PseudoId {
     PUBLIC_PSEUDOID_MASK = ((1 << FIRST_INTERNAL_PSEUDOID) - 1) & ~((1 << FIRST_PUBLIC_PSEUDOID) - 1)
 };
 
+enum EBorderCollapse { BSEPARATE = 0, BCOLLAPSE = 1 };
+
 // These have been defined in the order of their precedence for border-collapsing. Do
 // not change this order!
 enum EBorderStyle { BNONE, BHIDDEN, INSET, GROOVE, RIDGE, OUTSET, DOTTED, DASHED, SOLID, DOUBLE };

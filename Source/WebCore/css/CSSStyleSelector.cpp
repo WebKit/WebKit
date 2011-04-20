@@ -3586,19 +3586,7 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
     switch (property) {
 // ident only properties
     case CSSPropertyBorderCollapse:
-        HANDLE_INHERIT_AND_INITIAL(borderCollapse, BorderCollapse)
-        if (!primitiveValue)
-            return;
-        switch (primitiveValue->getIdent()) {
-            case CSSValueCollapse:
-                m_style->setBorderCollapse(true);
-                break;
-            case CSSValueSeparate:
-                m_style->setBorderCollapse(false);
-                break;
-            default:
-                return;
-        }
+        HANDLE_INHERIT_AND_INITIAL_AND_PRIMITIVE(borderCollapse, BorderCollapse)
         return;
     case CSSPropertyOutlineStyle:
         HANDLE_INHERIT_AND_INITIAL_WITH_VALUE(outlineStyle, OutlineStyle, BorderStyle)

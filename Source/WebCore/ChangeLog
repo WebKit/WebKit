@@ -1,3 +1,21 @@
+2011-04-20  Luke Macpherson   <macpherson@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        Allow casting between CSSPrimitiveValue and EBorderCollapse to remove special-case logic from CSSStyleSelector.
+        https://bugs.webkit.org/show_bug.cgi?id=58964
+
+        No new tests as no new functionality added.
+
+        * css/CSSPrimitiveValueMappings.h:
+        Support casting to/from EBorderCollapse.
+        * css/CSSStyleSelector.cpp:
+        Use new casting ability to simplify code.
+        * rendering/style/RenderStyle.h:
+        Use EBorderCollapse instead of a bool for representing border collapse member variable.
+        * rendering/style/RenderStyleConstants.h:
+        Added EBorderCollapse enum.
+
 2011-04-19  Stephen White  <senorblanco@chromium.org>
 
         Reviewed by Kenneth Russell.
