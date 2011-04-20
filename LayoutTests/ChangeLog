@@ -1,3 +1,64 @@
+2011-04-20  Adam Roben  <aroben@apple.com>
+
+        Add Windows 7 SP1 baselines for some SVG tests that progressed in SP1
+
+        These baselines were previously thought to be WebKit2-specific. However, it turned out that
+        the WebKit2 bots had Windows 7 SP1 installed, while the WebKit1 bots just had Windows 7
+        installed, and that was the crucial difference. So this patch reclassifies the new baselines
+        as being SP1 vs. not-SP1, rather than WK2 vs. WK1. I also added pixel results.
+
+        Fixes <http://webkit.org/b/56617> Several tests fail on Windows 7 SP1 due to font
+        differences from Windows 7 "SP0"
+
+        * platform/win-7sp0/svg/W3C-I18N/text-dirLTR-ubOverride-expected.checksum:
+        * platform/win-7sp0/svg/W3C-I18N/text-dirLTR-ubOverride-expected.png:
+        * platform/win-7sp0/svg/W3C-I18N/text-dirLTR-ubOverride-expected.txt:
+        * platform/win-7sp0/svg/W3C-I18N/tspan-dirLTR-ubOverride-in-default-context-expected.checksum:
+        * platform/win-7sp0/svg/W3C-I18N/tspan-dirLTR-ubOverride-in-default-context-expected.png:
+        * platform/win-7sp0/svg/W3C-I18N/tspan-dirLTR-ubOverride-in-default-context-expected.txt:
+        * platform/win-7sp0/svg/W3C-I18N/tspan-dirLTR-ubOverride-in-ltr-context-expected.checksum:
+        * platform/win-7sp0/svg/W3C-I18N/tspan-dirLTR-ubOverride-in-ltr-context-expected.png:
+        * platform/win-7sp0/svg/W3C-I18N/tspan-dirLTR-ubOverride-in-ltr-context-expected.txt:
+        * platform/win-7sp0/svg/W3C-I18N/tspan-dirNone-ubOverride-in-default-context-expected.checksum:
+        * platform/win-7sp0/svg/W3C-I18N/tspan-dirNone-ubOverride-in-default-context-expected.png:
+        * platform/win-7sp0/svg/W3C-I18N/tspan-dirNone-ubOverride-in-default-context-expected.txt:
+        * platform/win-7sp0/svg/W3C-I18N/tspan-dirNone-ubOverride-in-ltr-context-expected.checksum:
+        * platform/win-7sp0/svg/W3C-I18N/tspan-dirNone-ubOverride-in-ltr-context-expected.png:
+        * platform/win-7sp0/svg/W3C-I18N/tspan-dirNone-ubOverride-in-ltr-context-expected.txt:
+        * platform/win-7sp0/svg/text/bidi-text-query-expected.checksum:
+        * platform/win-7sp0/svg/text/bidi-text-query-expected.png:
+        * platform/win-7sp0/svg/text/bidi-text-query-expected.txt:
+        Copied these results from platform/win.
+
+        * platform/win-wk2/svg/W3C-I18N/text-dirLTR-ubOverride-expected.txt:
+        * platform/win-wk2/svg/W3C-I18N/tspan-dirLTR-ubOverride-in-default-context-expected.txt:
+        * platform/win-wk2/svg/W3C-I18N/tspan-dirLTR-ubOverride-in-ltr-context-expected.txt:
+        * platform/win-wk2/svg/W3C-I18N/tspan-dirNone-ubOverride-in-default-context-expected.txt:
+        * platform/win-wk2/svg/W3C-I18N/tspan-dirNone-ubOverride-in-ltr-context-expected.txt:
+        * platform/win-wk2/svg/text/bidi-text-query-expected.txt:
+        Moved these results to platform/win.
+
+        * platform/win/svg/W3C-I18N/text-dirLTR-ubOverride-expected.checksum:
+        * platform/win/svg/W3C-I18N/text-dirLTR-ubOverride-expected.png:
+        * platform/win/svg/W3C-I18N/text-dirLTR-ubOverride-expected.txt:
+        * platform/win/svg/W3C-I18N/tspan-dirLTR-ubOverride-in-default-context-expected.checksum:
+        * platform/win/svg/W3C-I18N/tspan-dirLTR-ubOverride-in-default-context-expected.png:
+        * platform/win/svg/W3C-I18N/tspan-dirLTR-ubOverride-in-default-context-expected.txt:
+        * platform/win/svg/W3C-I18N/tspan-dirLTR-ubOverride-in-ltr-context-expected.checksum:
+        * platform/win/svg/W3C-I18N/tspan-dirLTR-ubOverride-in-ltr-context-expected.png:
+        * platform/win/svg/W3C-I18N/tspan-dirLTR-ubOverride-in-ltr-context-expected.txt:
+        * platform/win/svg/W3C-I18N/tspan-dirNone-ubOverride-in-default-context-expected.checksum:
+        * platform/win/svg/W3C-I18N/tspan-dirNone-ubOverride-in-default-context-expected.png:
+        * platform/win/svg/W3C-I18N/tspan-dirNone-ubOverride-in-default-context-expected.txt:
+        * platform/win/svg/W3C-I18N/tspan-dirNone-ubOverride-in-ltr-context-expected.checksum:
+        * platform/win/svg/W3C-I18N/tspan-dirNone-ubOverride-in-ltr-context-expected.png:
+        * platform/win/svg/W3C-I18N/tspan-dirNone-ubOverride-in-ltr-context-expected.txt:
+        * platform/win/svg/text/bidi-text-query-expected.checksum:
+        * platform/win/svg/text/bidi-text-query-expected.png:
+        * platform/win/svg/text/bidi-text-query-expected.txt:
+        The .txt files came from platform/win-wk2, and the .png/.checksum files were
+        newly-generated.
+
 2011-04-20  Martin Robinson  <mrobinson@igalia.com>
 
         platform/gtk/fast/dom/gc-10-expected.png is corrupt
