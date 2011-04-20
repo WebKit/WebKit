@@ -1,3 +1,21 @@
+2011-04-19  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Reviewed by Ojan Vafai.
+
+        REGRESSION(r83967): Crash in selectionExtentRespectingEditingBoundary
+        https://bugs.webkit.org/show_bug.cgi?id=58910
+
+        The crash was caused by selectionExtentRespectingEditingBoundary's incorrectly assuming that
+        targetNode always have renderer when there selection has an editable root and the target node
+        is outside of the editable root.
+        
+        Fixed the bug by adding an early exit when the target node is null.
+
+        No new tests are added since we don't have a reduction for this crash.
+
+        * page/EventHandler.cpp:
+        (WebCore::selectionExtentRespectingEditingBoundary):
+
 2011-04-19  Geoffrey Garen  <ggaren@apple.com>
 
         Try to fix v8 build.
