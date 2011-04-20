@@ -1,3 +1,69 @@
+2011-04-19  Simon Fraser  <simon.fraser@apple.com>
+
+        Rebaseline image results with diffs below the default tolerance,
+        after earlier border drawing changes.
+
+        * platform/mac/fast/backgrounds/background-leakage-expected.checksum:
+        * platform/mac/fast/backgrounds/background-leakage-expected.png:
+        * platform/mac/fast/backgrounds/border-radius-split-background-expected.checksum:
+        * platform/mac/fast/backgrounds/border-radius-split-background-expected.png:
+        * platform/mac/fast/backgrounds/border-radius-split-background-image-expected.checksum:
+        * platform/mac/fast/backgrounds/border-radius-split-background-image-expected.png:
+        * platform/mac/fast/blockflow/border-radius-clipping-vertical-lr-expected.checksum:
+        * platform/mac/fast/blockflow/border-radius-clipping-vertical-lr-expected.png:
+        * platform/mac/fast/blockflow/border-vertical-lr-expected.checksum:
+        * platform/mac/fast/blockflow/border-vertical-lr-expected.png:
+        * platform/mac/fast/blockflow/box-shadow-horizontal-bt-expected.checksum:
+        * platform/mac/fast/blockflow/box-shadow-horizontal-bt-expected.png:
+        * platform/mac/fast/blockflow/box-shadow-vertical-lr-expected.checksum:
+        * platform/mac/fast/blockflow/box-shadow-vertical-lr-expected.png:
+        * platform/mac/fast/blockflow/box-shadow-vertical-rl-expected.checksum:
+        * platform/mac/fast/blockflow/box-shadow-vertical-rl-expected.png:
+        * platform/mac/fast/box-shadow/basic-shadows-expected.checksum:
+        * platform/mac/fast/box-shadow/basic-shadows-expected.png:
+        * platform/mac/fast/box-shadow/inset-box-shadows-expected.checksum:
+        * platform/mac/fast/box-shadow/inset-box-shadows-expected.png:
+        * platform/mac/fast/box-shadow/inset-expected.checksum:
+        * platform/mac/fast/box-shadow/inset-expected.png:
+        * platform/mac/fast/box-shadow/inset-with-extraordinary-radii-and-border-expected.checksum:
+        * platform/mac/fast/box-shadow/inset-with-extraordinary-radii-and-border-expected.png:
+        * platform/mac/fast/css/nested-rounded-corners-expected.checksum:
+        * platform/mac/fast/css/nested-rounded-corners-expected.png:
+        * platform/mac/fast/forms/001-expected.checksum:
+        * platform/mac/fast/forms/001-expected.png:
+        * platform/mac/fast/forms/basic-selects-expected.checksum:
+        * platform/mac/fast/forms/basic-selects-expected.png:
+        * platform/mac/fast/forms/menulist-clip-expected.checksum:
+        * platform/mac/fast/forms/menulist-clip-expected.png:
+        * platform/mac/fast/forms/menulist-narrow-width-expected.checksum:
+        * platform/mac/fast/forms/menulist-narrow-width-expected.png:
+        * platform/mac/fast/forms/menulist-option-wrap-expected.checksum:
+        * platform/mac/fast/forms/menulist-option-wrap-expected.png:
+        * platform/mac/fast/forms/menulist-restrict-line-height-expected.checksum:
+        * platform/mac/fast/forms/menulist-restrict-line-height-expected.png:
+        * platform/mac/fast/forms/menulist-separator-painting-expected.checksum:
+        * platform/mac/fast/forms/menulist-separator-painting-expected.png:
+        * platform/mac/fast/forms/menulist-style-color-expected.checksum:
+        * platform/mac/fast/forms/menulist-style-color-expected.png:
+        * platform/mac/fast/forms/select-background-none-expected.checksum:
+        * platform/mac/fast/forms/select-background-none-expected.png:
+        * platform/mac/fast/forms/select-baseline-expected.checksum:
+        * platform/mac/fast/forms/select-baseline-expected.png:
+        * platform/mac/fast/forms/select-empty-option-height-expected.checksum:
+        * platform/mac/fast/forms/select-empty-option-height-expected.png:
+        * platform/mac/fast/forms/select-style-expected.checksum:
+        * platform/mac/fast/forms/select-style-expected.png:
+        * platform/mac/fast/forms/validation-message-appearance-expected.checksum:
+        * platform/mac/fast/forms/validation-message-appearance-expected.png:
+        * platform/mac/fast/overflow/border-radius-clipping-expected.checksum:
+        * platform/mac/fast/overflow/border-radius-clipping-expected.png:
+        * platform/mac/fast/repaint/border-radius-repaint-expected.checksum:
+        * platform/mac/fast/repaint/border-radius-repaint-expected.png:
+        * platform/mac/fast/repaint/control-clip-expected.checksum:
+        * platform/mac/fast/repaint/control-clip-expected.png:
+        * platform/mac/fast/repaint/selection-after-remove-expected.checksum:
+        * platform/mac/fast/repaint/selection-after-remove-expected.png:
+
 2011-04-19  Chris Rogers  <crogers@google.com>
 
         Unreviewed.
