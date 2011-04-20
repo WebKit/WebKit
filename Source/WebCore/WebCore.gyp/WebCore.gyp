@@ -170,6 +170,7 @@
       '../platform/graphics',
       '../platform/graphics/chromium',
       '../platform/graphics/filters',
+      '../platform/graphics/filters/arm',
       '../platform/graphics/gpu',
       '../platform/graphics/opentype',
       '../platform/graphics/skia',

@@ -1,3 +1,14 @@
+2011-04-20  Charlie Lee  <chocobo@chromium.org>
+
+        Reviewed by Dirk Schulze.
+
+        LEFilter change doesn't compile on ARM neon targets
+        https://bugs.webkit.org/show_bug.cgi?id=58671
+
+        Build fix for Chromium ARM/NEON platform. Added platform/graphics/filters/arm directory to build system.
+
+        * WebCore.gyp/WebCore.gyp:
+
 2011-04-20  Xiaomei Ji  <xji@chromium.org>
 
         Reviewed by Ryosuke Niwa.
