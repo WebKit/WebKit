@@ -1,3 +1,23 @@
+2011-04-20  Leo Yang  <leo.yang@torchmobile.com.cn>
+
+        Reviewed by Eric Seidel.
+
+        Leaks beneath RenderSVGShadowTreeRootContainer::updateFromElement seen on SnowLeopard Intel Leaks
+        https://bugs.webkit.org/show_bug.cgi?id=56672
+
+        ~RenderSVGShadowTreeRootContainer() cleared shadow host only if
+        the shadow root is attached. This is wrong because it will
+        leak shadow root when the root is not attached. For example, it
+        leaks shadow root of <use> element which is pending on resource.
+
+        This patch is clearing shadow host if m_shadowRoot is valid to
+        prevent leaking.
+
+        Fixing leaking, no new tests.
+
+        * rendering/svg/RenderSVGShadowTreeRootContainer.cpp:
+        (WebCore::RenderSVGShadowTreeRootContainer::~RenderSVGShadowTreeRootContainer):
+
 2011-04-19  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Antti Koivisto.
