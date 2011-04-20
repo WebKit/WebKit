@@ -1,3 +1,9 @@
+2011-04-20  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Unreviewed typo fix.
+
+        * platform/qt-wk2/Skipped:
+
 2011-04-20  Tony Chang  <tony@chromium.org>
 
         Unreviewed, embedding checksums in png files in platform/google*,
