@@ -1,5 +1,25 @@
 2011-04-19  Anders Carlsson  <andersca@apple.com>
 
+        Reviewed by Sam Weinig.
+
+        UI process thinks the page is unresponsive when a plug-in is showing a context menu
+        https://bugs.webkit.org/show_bug.cgi?id=58943
+        <rdar://problem/9299901>
+
+        Change the HandleMouseEvent message to have a delayed reply and make the PluginControllerProxy
+        respond to it immediately, before even passing the event to the plug-in. Since it doesn't matter
+        for mouse events whether the plug-in handled them or not we can do this.
+
+        Another solution could have been to make handleMouseEvent an asynchronous message, but that could
+        mess up the message ordering so this seemed like the least intrusive change.
+
+        * PluginProcess/PluginControllerProxy.cpp:
+        (WebKit::PluginControllerProxy::handleMouseEvent):
+        * PluginProcess/PluginControllerProxy.h:
+        * PluginProcess/PluginControllerProxy.messages.in:
+
+2011-04-19  Anders Carlsson  <andersca@apple.com>
+
         Reviewed by Dan Bernstein.
 
         Terminate hung plug-in processes after 45 seconds

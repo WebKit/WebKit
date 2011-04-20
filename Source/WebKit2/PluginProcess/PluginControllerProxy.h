@@ -31,6 +31,7 @@
 #include "Connection.h"
 #include "Plugin.h"
 #include "PluginController.h"
+#include "PluginControllerProxyMessages.h"
 #include "RunLoop.h"
 #include "ShareableBitmap.h"
 #include <wtf/Noncopyable.h>
@@ -115,7 +116,7 @@ private:
     void manualStreamDidReceiveData(const CoreIPC::DataReference& data);
     void manualStreamDidFinishLoading();
     void manualStreamDidFail(bool wasCancelled);
-    void handleMouseEvent(const WebMouseEvent&, bool& handled);
+    void handleMouseEvent(const WebMouseEvent&, PassRefPtr<Messages::PluginControllerProxy::HandleMouseEvent::DelayedReply>);
     void handleWheelEvent(const WebWheelEvent&, bool& handled);
     void handleMouseEnterEvent(const WebMouseEvent&, bool& handled);
     void handleMouseLeaveEvent(const WebMouseEvent&, bool& handled);
