@@ -170,6 +170,9 @@ void tst_QGraphicsWebView::widgetsRenderingThroughCache()
     webView->setHtml(QLatin1String("<body style=\"background-color: white\"><input type=range></input><input type=checkbox></input><input type=radio></input><input type=file></input></body>"));
 
     QGraphicsView view;
+    // Disable the scrollbars on the graphics view because QtWebKit handles scrolling and scrollbar automatically
+    view.setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+    view.setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     view.show();
     QGraphicsScene* scene = new QGraphicsScene(&view);
     view.setScene(scene);
@@ -188,7 +191,6 @@ void tst_QGraphicsWebView::widgetsRenderingThroughCache()
     QPixmap viewWithTiling(view.size());
     widget->render(&viewWithTiling);
     QApplication::processEvents();
-    viewWithTiling.fill();
     widget->render(&viewWithTiling);
 
     QCOMPARE(referencePixmap.toImage(), viewWithTiling.toImage());

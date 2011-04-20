@@ -1,3 +1,16 @@
+2011-04-19  Yi Shen  <yi.4.shen@nokia.com>
+
+        Reviewed by Laszlo Gombos.
+
+        [Qt][Symbian] Fix Api test failure -- tst_QGraphicsWebView::widgetsRenderingThroughCache
+        https://bugs.webkit.org/show_bug.cgi?id=58044
+
+        Fixing this test by disabling the scrollbars on the graphics view 
+        since QtWebKit handles scrolling and scrollbar automatically and correctly.
+
+        * tests/qgraphicswebview/tst_qgraphicswebview.cpp:
+        (tst_QGraphicsWebView::widgetsRenderingThroughCache):
+
 2011-04-19  Igor Oliveira  <igor.oliveira@openbossa.org>
 
         Reviewed by Andreas Kling.
