@@ -1,3 +1,31 @@
+2011-04-21  Caio Marcelo de Oliveira Filho  <caio.oliveira@openbossa.org>
+
+        Reviewed by Csaba Osztrogonác.
+
+        [Qt] REGRESSION(84057): It made 4 API tests fail
+        https://bugs.webkit.org/show_bug.cgi?id=58848
+
+        After MIME sniffing support was added, some autotests are failing because
+        the sniffer doesn't recognize our HTML pages.
+
+        This fixes tst_QWebPage::backActionUpdate(), tst_QWebPage::errorPageExtensionInFrameset()
+        and tst_QWebFrame::horizontalScrollAfterBack().
+
+        * tests/qwebframe/resources/testiframe.html:
+        * tests/qwebframe/resources/testiframe2.html:
+        Remove spurious </html> in beginning of the document.
+
+        * tests/qwebpage/resources/framedindex.html:
+        * tests/qwebpage/resources/index.html:
+        Add <html> (and </html>) tags, <frameset> is not recognized by the sniffer as a
+        possible starting tag for HTML document.
+
+        * tests/qwebpage/tst_qwebpage.cpp:
+        (tst_QWebPage::errorPageExtensionInFrameset):
+        Verify if we do have a main frame and the main frame has the children frames we
+        expect. This will avoid crashing if for some reason children frames are not
+        loaded.
+
 2011-04-20  Dominic Cooney  <dominicc@chromium.org>
 
         Reviewed by Dimitri Glazkov.

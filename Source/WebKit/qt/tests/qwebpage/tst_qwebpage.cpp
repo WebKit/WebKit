@@ -2412,6 +2412,7 @@ void tst_QWebPage::errorPageExtensionInFrameset()
 
     QSignalSpy spyLoadFinished(m_view, SIGNAL(loadFinished(bool)));
     QTRY_COMPARE(spyLoadFinished.count(), 1);
+    QCOMPARE(page->mainFrame()->childFrames().count(), 2);
     QCOMPARE(page->mainFrame()->childFrames()[1]->toPlainText(), QString("error"));
 
     m_view->setPage(0);
