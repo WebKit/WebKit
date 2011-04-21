@@ -2583,7 +2583,7 @@ BUGCR62433 MAC LINUX : fast/images/gif-loop-count.html = IMAGE
 BUG_DRT MAC : fast/css/input-search-padding.html = IMAGE
 
 // Background color is wrong.
-BUG_DRT MAC RELEASE : fast/backgrounds/solid-color-context-restore.html = IMAGE
+BUG_DRT MAC : fast/backgrounds/solid-color-context-restore.html = IMAGE
 BUG_DRT MAC : fast/reflections/inline-crash.html = IMAGE
 // The background color of Apple Mac results also look wrong.
 BUG_DRT : http/tests/misc/slow-loading-image-in-pattern.html = IMAGE
@@ -2704,7 +2704,7 @@ BUGCR67540 WIN LINUX : fast/repaint/text-emphasis-v.html = IMAGE
 BUGCR67442 WIN LINUX : fast/canvas/fillText-shadow.html = TEXT
 
 BUGWK51720 DEBUG : http/tests/incremental/split-hex-entities.pl = CRASH PASS
-BUGWK51721 DEBUG SLOW: fast/encoding/parser-tests.html = PASS
+BUGWK51721 DEBUG : fast/encoding/parser-tests.html = PASS TIMEOUT
 BUGCR67463 MAC : editing/selection/caret-mode-paragraph-keys-navigation.html = TEXT
 
 BUGCR68436 LINUX DEBUG : fast/dom/DOMImplementation/createDocument-with-used-doctype.html = PASS TIMEOUT
@@ -3677,8 +3677,8 @@ BUGDPRANKE MAC GPU : media/video-volume-slider.html = IMAGE
 BUGDPRANKE MAC GPU : media/video-zoom.html = CRASH
 BUGDPRANKE MAC : plugins/mouse-click-iframe-to-plugin.html = TIMEOUT PASS
 BUGDPRANKE MAC : animations/3d/transform-origin-vs-functions.html = TEXT PASS
-BUGDPRANKE MAC : fast/encoding/parser-tests-10.html = TIMEOUT PASS
-BUGDPRANKE MAC : fast/encoding/parser-tests-120.html = TIMEOUT PASS
+BUGDPRANKE : fast/encoding/parser-tests-10.html = TIMEOUT PASS
+BUGDPRANKE : fast/encoding/parser-tests-120.html = TIMEOUT PASS
 BUGDPRANKE MAC : http/tests/loading/preload-slow-loading.php = TEXT
 BUGDPRANKE MAC : http/tests/misc/image-error.html = TEXT
 BUGDPRANKE MAC : http/tests/ssl/verify-ssl-enabled.php = TEXT
@@ -3758,7 +3758,7 @@ BUGCR80011 WIN LINUX DEBUG : fast/css/acid2-pixel.html = CRASH
 BUGCR80011 WIN LINUX DEBUG : fast/frames/content-opacity-1.html = CRASH
 BUGCR80011 WIN LINUX DEBUG : fast/frames/content-opacity-2.html = CRASH
 
-// webkit roll : 84350:84431 
+// webkit roll : 84350:84431
 BUGDPRANKE LINUX : fast/canvas/webgl/css-webkit-canvas-repaint.html = IMAGE
 BUGDPRANKE LINUX : fast/canvas/webgl/css-webkit-canvas.html = IMAGE
 BUGDPRANKE LINUX : fast/encoding/parser-tests-100.html = TIMEOUT PASS
@@ -3767,7 +3767,7 @@ BUGDPRANKE LINUX : fast/css/visited-link-hang.html = CRASH
 BUGDPRANKE CPU : media/media-document-audio-repaint.html = IMAGE
 BUGDPRANKE MAC LINUX : transitions/interrupt-zero-duration.html = TEXT PASS
 BUGDPRANKE : media/controls-css-overload.html = TIMEOUT PASS
-BUGDPRANKE : fast/borders/bidi-012.html = IMAGE+TEXT
+BUGDPRANKE : fast/borders/bidi-012.html = IMAGE+TEXT IMAGE
 BUGDPRANKE CPU : media/video-zoom.html = IMAGE
 BUGDPRANKE WIN LINUX : animations/change-one-anim.html = TEXT PASS
 BUGDPRANKE CPU : media/video-controls-rendering.html = IMAGE
@@ -3823,6 +3823,7 @@ BUGDPRANKE LINUX : canvas/philip/tests/2d.gradient.radial.touch2.html = TEXT
 
 BUGDPRANKE : editing/undo/undo-deleteWord.html = CRASH
 BUGDPRANKE : fast/encoding/parser-tests-70.html = TIMEOUT PASS
+BUGDPRANKE : fast/encoding/parser-tests-80.html = TIMEOUT PASS
 BUGDPRANKE MAC : http/tests/navigation/lockedhistory-iframe.html = TEXT
 BUGDPRANKE : fast/parser/iframe-sets-parent-to-javascript-url.html = TEXT PASS
 BUGDPRANKE : fast/repaint/moving-shadow-on-path.html = TEXT PASS
@@ -3848,12 +3849,22 @@ BUGWK59063 : fast/images/animated-gif-restored-from-bfcache.html = TEXT
 BUGWK59065 : fast/filesystem/op-copy.html = TEXT
 BUGWK59065 : fast/filesystem/op-move.html = TEXT
 
+// Introduced in r84454
+BUGDPRANKE : fast/transforms/selection-bounds-in-transformed-view.html = TEXT
+
 // Introduced in r84457
 BUGWK59067 : media/csp-blocks-video.html = TEXT
+
+// Introduced in r84457
+BUGDPRANKE : http/tests/security/contentSecurityPolicy/media-src-blocked.html = TEXT
 
 // seems to be failing because of a missing QT plugin?
 BUGWK59068 WIN LINUX : plugins/embed-attributes-style.html = IMAGE
 
 // more failures for triaging, fails on deps bots at least?
-BUGDPRANKE DEBUG WIN LINUX : inspector/debugger/live-edit.html = TEXT           
-BUGDPRANKE : inspector/console/console-object-constructor-name.html = TEXT PASS 
+BUGDPRANKE DEBUG WIN LINUX : inspector/debugger/live-edit.html = TEXT TIMEOUT
+BUGDPRANKE : inspector/console/console-object-constructor-name.html = TEXT PASS  TIMEOUT
+BUGDPRANKE DEBUG : http/tests/local/link-stylesheet-preferred.html = CRASH
+BUGDPRANKE DEBUG : editing/pasteboard/merge-end-2.html = CRASH
+BUGDPRANKE DEBUG : animations/keyframes-out-of-order.html = TEXT PASS
+
