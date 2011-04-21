@@ -432,7 +432,7 @@ QWKPage::QWKPage(QWKContext* context)
         qt_wk_didFinishDocumentLoadForFrame,
         qt_wk_didFinishLoadForFrame,
         qt_wk_didFailLoadWithErrorForFrame,
-        0, /* didSameDocumentNavigationForFrame */
+        qt_wk_didSameDocumentNavigationForFrame,
         qt_wk_didReceiveTitleForFrame,
         qt_wk_didFirstLayoutForFrame,
         qt_wk_didFirstVisuallyNonEmptyLayoutForFrame,

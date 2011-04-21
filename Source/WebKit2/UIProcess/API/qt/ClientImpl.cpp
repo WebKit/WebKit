@@ -179,3 +179,12 @@ void qt_wk_setStatusText(WKPageRef page, WKStringRef text, const void *clientInf
     QString qText = WKStringCopyQString(text);
     emit toQWKPage(clientInfo)->statusBarMessage(qText);
 }
+
+void qt_wk_didSameDocumentNavigationForFrame(WKPageRef page, WKFrameRef frame, WKSameDocumentNavigationType type, WKTypeRef userData, const void* clientInfo)
+{
+    WebFrameProxy* wkframe = toImpl(frame);
+    QString urlStr(wkframe->url());
+    QUrl qUrl = urlStr;
+    emit toQWKPage(clientInfo)->urlChanged(qUrl);
+    QWKPagePrivate::get(toQWKPage(clientInfo))->updateNavigationActions();
+}

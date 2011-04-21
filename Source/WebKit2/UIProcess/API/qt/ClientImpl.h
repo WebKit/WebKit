@@ -43,6 +43,7 @@ void qt_wk_didChangeProgress(WKPageRef, const void* clientInfo);
 void qt_wk_didFinishProgress(WKPageRef, const void* clientInfo);
 void qt_wk_didBecomeUnresponsive(WKPageRef, const void* clientInfo);
 void qt_wk_didBecomeResponsive(WKPageRef, const void* clientInfo);
+void qt_wk_didSameDocumentNavigationForFrame(WKPageRef, WKFrameRef, WKSameDocumentNavigationType, WKTypeRef, const void* clientInfo);
 
 // ui client
 WKPageRef qt_wk_createNewPage(WKPageRef page, WKDictionaryRef features, WKEventModifiers modifiers, WKEventMouseButton mouseButton, const void *clientInfo);
