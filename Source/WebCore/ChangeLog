@@ -1,3 +1,29 @@
+2011-04-20  Kenneth Russell  <kbr@google.com>
+
+        Reviewed by James Robinson.
+
+        Reduce size of GraphicsContext3D's compiled code
+        https://bugs.webkit.org/show_bug.cgi?id=59029
+
+        Changed format conversion operations to work line-by-line instead
+        of pixel-by-pixel, and passed them as function pointers rather
+        than template parameters. Simplified computation of source
+        increment, since elements per row is now all that is needed.
+
+        These changes reduce the size of GraphicsContext3D.o in release
+        mode on Linux from 299 KB to 53 KB.
+
+        No new tests. Existing layout tests cover these format conversions
+        well, and caught one typo in the restructuring. Also ran WebGL
+        conformance suite and other demos.
+
+        * platform/graphics/GraphicsContext3D.cpp:
+        (WebCore::doUnpackingAndPacking):
+        (WebCore::computeSourceElementsPerRow):
+        (WebCore::doPacking):
+        (WebCore::doFloatingPointPacking):
+        (WebCore::GraphicsContext3D::packPixels):
+
 2011-04-20  Dimitri Glazkov  <dglazkov@chromium.org>
 
         Reviewed by Kent Tamura.

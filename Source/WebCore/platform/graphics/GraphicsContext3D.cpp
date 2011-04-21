@@ -342,555 +342,809 @@ void GraphicsContext3D::flipVertically(void* imageData,
     delete[] tempRow;
 }
 
-// These functions can not be static, or gcc will not allow them to be
-// used as template parameters. Use an anonymous namespace to prevent
-// the need to declare prototypes for them.
+// The following packing and unpacking routines are expressed in terms
+// of line-by-line operations, and passed by function pointer rather
+// than template parameter, to achieve the majority of the speedups of
+// having them inlined while reducing code size.
+
 namespace {
 
 //----------------------------------------------------------------------
 // Pixel unpacking routines.
 
-void unpackRGBA8ToRGBA8(const uint8_t* source, uint8_t* destination)
+void unpackOneRowOfRGBA8ToRGBA8(const uint8_t* source, uint8_t* destination, unsigned int pixelsPerRow)
 {
-    destination[0] = source[0];
-    destination[1] = source[1];
-    destination[2] = source[2];
-    destination[3] = source[3];
+    for (unsigned int i = 0; i < pixelsPerRow; ++i) {
+        destination[0] = source[0];
+        destination[1] = source[1];
+        destination[2] = source[2];
+        destination[3] = source[3];
+        source += 4;
+        destination += 4;
+    }
 }
 
-void unpackRGBA16LittleToRGBA8(const uint16_t* source, uint8_t* destination)
+void unpackOneRowOfRGBA16LittleToRGBA8(const uint16_t* source, uint8_t* destination, unsigned int pixelsPerRow)
 {
-    destination[0] = convertColor16LittleTo8(source[0]);
-    destination[1] = convertColor16LittleTo8(source[1]);
-    destination[2] = convertColor16LittleTo8(source[2]);
-    destination[3] = convertColor16LittleTo8(source[3]);
+    for (unsigned int i = 0; i < pixelsPerRow; ++i) {
+        destination[0] = convertColor16LittleTo8(source[0]);
+        destination[1] = convertColor16LittleTo8(source[1]);
+        destination[2] = convertColor16LittleTo8(source[2]);
+        destination[3] = convertColor16LittleTo8(source[3]);
+        source += 4;
+        destination += 4;
+    }
 }
 
-void unpackRGBA16BigToRGBA8(const uint16_t* source, uint8_t* destination)
+void unpackOneRowOfRGBA16BigToRGBA8(const uint16_t* source, uint8_t* destination, unsigned int pixelsPerRow)
 {
-    destination[0] = convertColor16BigTo8(source[0]);
-    destination[1] = convertColor16BigTo8(source[1]);
-    destination[2] = convertColor16BigTo8(source[2]);
-    destination[3] = convertColor16BigTo8(source[3]);
+    for (unsigned int i = 0; i < pixelsPerRow; ++i) {
+        destination[0] = convertColor16BigTo8(source[0]);
+        destination[1] = convertColor16BigTo8(source[1]);
+        destination[2] = convertColor16BigTo8(source[2]);
+        destination[3] = convertColor16BigTo8(source[3]);
+        source += 4;
+        destination += 4;
+    }
 }
 
-void unpackRGB8ToRGBA8(const uint8_t* source, uint8_t* destination)
+void unpackOneRowOfRGB8ToRGBA8(const uint8_t* source, uint8_t* destination, unsigned int pixelsPerRow)
 {
-    destination[0] = source[0];
-    destination[1] = source[1];
-    destination[2] = source[2];
-    destination[3] = 0xFF;
+    for (unsigned int i = 0; i < pixelsPerRow; ++i) {
+        destination[0] = source[0];
+        destination[1] = source[1];
+        destination[2] = source[2];
+        destination[3] = 0xFF;
+        source += 3;
+        destination += 4;
+    }
 }
 
-void unpackRGB16LittleToRGBA8(const uint16_t* source, uint8_t* destination)
+void unpackOneRowOfRGB16LittleToRGBA8(const uint16_t* source, uint8_t* destination, unsigned int pixelsPerRow)
 {
-    destination[0] = convertColor16LittleTo8(source[0]);
-    destination[1] = convertColor16LittleTo8(source[1]);
-    destination[2] = convertColor16LittleTo8(source[2]);
-    destination[3] = 0xFF;
+    for (unsigned int i = 0; i < pixelsPerRow; ++i) {
+        destination[0] = convertColor16LittleTo8(source[0]);
+        destination[1] = convertColor16LittleTo8(source[1]);
+        destination[2] = convertColor16LittleTo8(source[2]);
+        destination[3] = 0xFF;
+        source += 3;
+        destination += 4;
+    }
 }
 
-void unpackRGB16BigToRGBA8(const uint16_t* source, uint8_t* destination)
+void unpackOneRowOfRGB16BigToRGBA8(const uint16_t* source, uint8_t* destination, unsigned int pixelsPerRow)
 {
-    destination[0] = convertColor16BigTo8(source[0]);
-    destination[1] = convertColor16BigTo8(source[1]);
-    destination[2] = convertColor16BigTo8(source[2]);
-    destination[3] = 0xFF;
+    for (unsigned int i = 0; i < pixelsPerRow; ++i) {
+        destination[0] = convertColor16BigTo8(source[0]);
+        destination[1] = convertColor16BigTo8(source[1]);
+        destination[2] = convertColor16BigTo8(source[2]);
+        destination[3] = 0xFF;
+        source += 3;
+        destination += 4;
+    }
 }
 
-void unpackBGR8ToRGBA8(const uint8_t* source, uint8_t* destination)
+void unpackOneRowOfBGR8ToRGBA8(const uint8_t* source, uint8_t* destination, unsigned int pixelsPerRow)
 {
-    destination[0] = source[2];
-    destination[1] = source[1];
-    destination[2] = source[0];
-    destination[3] = 0xFF;
+    for (unsigned int i = 0; i < pixelsPerRow; ++i) {
+        destination[0] = source[2];
+        destination[1] = source[1];
+        destination[2] = source[0];
+        destination[3] = 0xFF;
+        source += 3;
+        destination += 4;
+    }
 }
 
-void unpackARGB8ToRGBA8(const uint8_t* source, uint8_t* destination)
+void unpackOneRowOfARGB8ToRGBA8(const uint8_t* source, uint8_t* destination, unsigned int pixelsPerRow)
 {
-    destination[0] = source[1];
-    destination[1] = source[2];
-    destination[2] = source[3];
-    destination[3] = source[0];
+    for (unsigned int i = 0; i < pixelsPerRow; ++i) {
+        destination[0] = source[1];
+        destination[1] = source[2];
+        destination[2] = source[3];
+        destination[3] = source[0];
+        source += 4;
+        destination += 4;
+    }
 }
 
-void unpackARGB16LittleToRGBA8(const uint16_t* source, uint8_t* destination)
+void unpackOneRowOfARGB16LittleToRGBA8(const uint16_t* source, uint8_t* destination, unsigned int pixelsPerRow)
 {
-    destination[0] = convertColor16LittleTo8(source[1]);
-    destination[1] = convertColor16LittleTo8(source[2]);
-    destination[2] = convertColor16LittleTo8(source[3]);
-    destination[3] = convertColor16LittleTo8(source[0]);
+    for (unsigned int i = 0; i < pixelsPerRow; ++i) {
+        destination[0] = convertColor16LittleTo8(source[1]);
+        destination[1] = convertColor16LittleTo8(source[2]);
+        destination[2] = convertColor16LittleTo8(source[3]);
+        destination[3] = convertColor16LittleTo8(source[0]);
+        source += 4;
+        destination += 4;
+    }
 }
 
-void unpackARGB16BigToRGBA8(const uint16_t* source, uint8_t* destination)
+void unpackOneRowOfARGB16BigToRGBA8(const uint16_t* source, uint8_t* destination, unsigned int pixelsPerRow)
 {
-    destination[0] = convertColor16BigTo8(source[1]);
-    destination[1] = convertColor16BigTo8(source[2]);
-    destination[2] = convertColor16BigTo8(source[3]);
-    destination[3] = convertColor16BigTo8(source[0]);
+    for (unsigned int i = 0; i < pixelsPerRow; ++i) {
+        destination[0] = convertColor16BigTo8(source[1]);
+        destination[1] = convertColor16BigTo8(source[2]);
+        destination[2] = convertColor16BigTo8(source[3]);
+        destination[3] = convertColor16BigTo8(source[0]);
+        source += 4;
+        destination += 4;
+    }
 }
 
-void unpackABGR8ToRGBA8(const uint8_t* source, uint8_t* destination)
+void unpackOneRowOfABGR8ToRGBA8(const uint8_t* source, uint8_t* destination, unsigned int pixelsPerRow)
 {
-    destination[0] = source[3];
-    destination[1] = source[2];
-    destination[2] = source[1];
-    destination[3] = source[0];
+    for (unsigned int i = 0; i < pixelsPerRow; ++i) {
+        destination[0] = source[3];
+        destination[1] = source[2];
+        destination[2] = source[1];
+        destination[3] = source[0];
+        source += 4;
+        destination += 4;
+    }
 }
 
-void unpackBGRA8ToRGBA8(const uint8_t* source, uint8_t* destination)
+void unpackOneRowOfBGRA8ToRGBA8(const uint8_t* source, uint8_t* destination, unsigned int pixelsPerRow)
 {
-    destination[0] = source[2];
-    destination[1] = source[1];
-    destination[2] = source[0];
-    destination[3] = source[3];
+    for (unsigned int i = 0; i < pixelsPerRow; ++i) {
+        destination[0] = source[2];
+        destination[1] = source[1];
+        destination[2] = source[0];
+        destination[3] = source[3];
+        source += 4;
+        destination += 4;
+    }
 }
 
-void unpackBGRA16LittleToRGBA8(const uint16_t* source, uint8_t* destination)
+void unpackOneRowOfBGRA16LittleToRGBA8(const uint16_t* source, uint8_t* destination, unsigned int pixelsPerRow)
 {
-    destination[0] = convertColor16LittleTo8(source[2]);
-    destination[1] = convertColor16LittleTo8(source[1]);
-    destination[2] = convertColor16LittleTo8(source[0]);
-    destination[3] = convertColor16LittleTo8(source[3]);
+    for (unsigned int i = 0; i < pixelsPerRow; ++i) {
+        destination[0] = convertColor16LittleTo8(source[2]);
+        destination[1] = convertColor16LittleTo8(source[1]);
+        destination[2] = convertColor16LittleTo8(source[0]);
+        destination[3] = convertColor16LittleTo8(source[3]);
+        source += 4;
+        destination += 4;
+    }
 }
 
-void unpackBGRA16BigToRGBA8(const uint16_t* source, uint8_t* destination)
+void unpackOneRowOfBGRA16BigToRGBA8(const uint16_t* source, uint8_t* destination, unsigned int pixelsPerRow)
 {
-    destination[0] = convertColor16BigTo8(source[2]);
-    destination[1] = convertColor16BigTo8(source[1]);
-    destination[2] = convertColor16BigTo8(source[0]);
-    destination[3] = convertColor16BigTo8(source[3]);
+    for (unsigned int i = 0; i < pixelsPerRow; ++i) {
+        destination[0] = convertColor16BigTo8(source[2]);
+        destination[1] = convertColor16BigTo8(source[1]);
+        destination[2] = convertColor16BigTo8(source[0]);
+        destination[3] = convertColor16BigTo8(source[3]);
+        source += 4;
+        destination += 4;
+    }
 }
 
-void unpackRGBA5551ToRGBA8(const uint16_t* source, uint8_t* destination)
+void unpackOneRowOfRGBA5551ToRGBA8(const uint16_t* source, uint8_t* destination, unsigned int pixelsPerRow)
 {
-    uint16_t packedValue = source[0];
-    uint8_t r = packedValue >> 11;
-    uint8_t g = (packedValue >> 6) & 0x1F;
-    uint8_t b = (packedValue >> 1) & 0x1F;
-    destination[0] = (r << 3) | (r & 0x7);
-    destination[1] = (g << 3) | (g & 0x7);
-    destination[2] = (b << 3) | (b & 0x7);
-    destination[3] = (packedValue & 0x1) ? 0xFF : 0x0;
+    for (unsigned int i = 0; i < pixelsPerRow; ++i) {
+        uint16_t packedValue = source[0];
+        uint8_t r = packedValue >> 11;
+        uint8_t g = (packedValue >> 6) & 0x1F;
+        uint8_t b = (packedValue >> 1) & 0x1F;
+        destination[0] = (r << 3) | (r & 0x7);
+        destination[1] = (g << 3) | (g & 0x7);
+        destination[2] = (b << 3) | (b & 0x7);
+        destination[3] = (packedValue & 0x1) ? 0xFF : 0x0;
+        source += 1;
+        destination += 4;
+    }
 }
 
-void unpackRGBA4444ToRGBA8(const uint16_t* source, uint8_t* destination)
+void unpackOneRowOfRGBA4444ToRGBA8(const uint16_t* source, uint8_t* destination, unsigned int pixelsPerRow)
 {
-    uint16_t packedValue = source[0];
-    uint8_t r = packedValue >> 12;
-    uint8_t g = (packedValue >> 8) & 0x0F;
-    uint8_t b = (packedValue >> 4) & 0x0F;
-    uint8_t a = packedValue & 0x0F;
-    destination[0] = r << 4 | r;
-    destination[1] = g << 4 | g;
-    destination[2] = b << 4 | b;
-    destination[3] = a << 4 | a;
+    for (unsigned int i = 0; i < pixelsPerRow; ++i) {
+        uint16_t packedValue = source[0];
+        uint8_t r = packedValue >> 12;
+        uint8_t g = (packedValue >> 8) & 0x0F;
+        uint8_t b = (packedValue >> 4) & 0x0F;
+        uint8_t a = packedValue & 0x0F;
+        destination[0] = r << 4 | r;
+        destination[1] = g << 4 | g;
+        destination[2] = b << 4 | b;
+        destination[3] = a << 4 | a;
+        source += 1;
+        destination += 4;
+    }
 }
 
-void unpackRGB565ToRGBA8(const uint16_t* source, uint8_t* destination)
+void unpackOneRowOfRGB565ToRGBA8(const uint16_t* source, uint8_t* destination, unsigned int pixelsPerRow)
 {
-    uint16_t packedValue = source[0];
-    uint8_t r = packedValue >> 11;
-    uint8_t g = (packedValue >> 5) & 0x3F;
-    uint8_t b = packedValue & 0x1F;
-    destination[0] = (r << 3) | (r & 0x7);
-    destination[1] = (g << 2) | (g & 0x3);
-    destination[2] = (b << 3) | (b & 0x7);
-    destination[3] = 0xFF;
+    for (unsigned int i = 0; i < pixelsPerRow; ++i) {
+        uint16_t packedValue = source[0];
+        uint8_t r = packedValue >> 11;
+        uint8_t g = (packedValue >> 5) & 0x3F;
+        uint8_t b = packedValue & 0x1F;
+        destination[0] = (r << 3) | (r & 0x7);
+        destination[1] = (g << 2) | (g & 0x3);
+        destination[2] = (b << 3) | (b & 0x7);
+        destination[3] = 0xFF;
+        source += 1;
+        destination += 4;
+    }
 }
 
-void unpackR8ToRGBA8(const uint8_t* source, uint8_t* destination)
+void unpackOneRowOfR8ToRGBA8(const uint8_t* source, uint8_t* destination, unsigned int pixelsPerRow)
 {
-    destination[0] = source[0];
-    destination[1] = source[0];
-    destination[2] = source[0];
-    destination[3] = 0xFF;
+    for (unsigned int i = 0; i < pixelsPerRow; ++i) {
+        destination[0] = source[0];
+        destination[1] = source[0];
+        destination[2] = source[0];
+        destination[3] = 0xFF;
+        source += 1;
+        destination += 4;
+    }
 }
 
-void unpackR16LittleToRGBA8(const uint16_t* source, uint8_t* destination)
+void unpackOneRowOfR16LittleToRGBA8(const uint16_t* source, uint8_t* destination, unsigned int pixelsPerRow)
 {
-    destination[0] = convertColor16LittleTo8(source[0]);
-    destination[1] = convertColor16LittleTo8(source[0]);
-    destination[2] = convertColor16LittleTo8(source[0]);
-    destination[3] = 0xFF;
+    for (unsigned int i = 0; i < pixelsPerRow; ++i) {
+        destination[0] = convertColor16LittleTo8(source[0]);
+        destination[1] = convertColor16LittleTo8(source[0]);
+        destination[2] = convertColor16LittleTo8(source[0]);
+        destination[3] = 0xFF;
+        source += 1;
+        destination += 4;
+    }
 }
 
-void unpackR16BigToRGBA8(const uint16_t* source, uint8_t* destination)
+void unpackOneRowOfR16BigToRGBA8(const uint16_t* source, uint8_t* destination, unsigned int pixelsPerRow)
 {
-    destination[0] = convertColor16BigTo8(source[0]);
-    destination[1] = convertColor16BigTo8(source[0]);
-    destination[2] = convertColor16BigTo8(source[0]);
-    destination[3] = 0xFF;
+    for (unsigned int i = 0; i < pixelsPerRow; ++i) {
+        destination[0] = convertColor16BigTo8(source[0]);
+        destination[1] = convertColor16BigTo8(source[0]);
+        destination[2] = convertColor16BigTo8(source[0]);
+        destination[3] = 0xFF;
+        source += 1;
+        destination += 4;
+    }
 }
 
-void unpackRA8ToRGBA8(const uint8_t* source, uint8_t* destination)
+void unpackOneRowOfRA8ToRGBA8(const uint8_t* source, uint8_t* destination, unsigned int pixelsPerRow)
 {
-    destination[0] = source[0];
-    destination[1] = source[0];
-    destination[2] = source[0];
-    destination[3] = source[1];
+    for (unsigned int i = 0; i < pixelsPerRow; ++i) {
+        destination[0] = source[0];
+        destination[1] = source[0];
+        destination[2] = source[0];
+        destination[3] = source[1];
+        source += 2;
+        destination += 4;
+    }
 }
 
-void unpackRA16LittleToRGBA8(const uint16_t* source, uint8_t* destination)
+void unpackOneRowOfRA16LittleToRGBA8(const uint16_t* source, uint8_t* destination, unsigned int pixelsPerRow)
 {
-    destination[0] = convertColor16LittleTo8(source[0]);
-    destination[1] = convertColor16LittleTo8(source[0]);
-    destination[2] = convertColor16LittleTo8(source[0]);
-    destination[3] = convertColor16LittleTo8(source[1]);
+    for (unsigned int i = 0; i < pixelsPerRow; ++i) {
+        destination[0] = convertColor16LittleTo8(source[0]);
+        destination[1] = convertColor16LittleTo8(source[0]);
+        destination[2] = convertColor16LittleTo8(source[0]);
+        destination[3] = convertColor16LittleTo8(source[1]);
+        source += 2;
+        destination += 4;
+    }
 }
 
-void unpackRA16BigToRGBA8(const uint16_t* source, uint8_t* destination)
+void unpackOneRowOfRA16BigToRGBA8(const uint16_t* source, uint8_t* destination, unsigned int pixelsPerRow)
 {
-    destination[0] = convertColor16BigTo8(source[0]);
-    destination[1] = convertColor16BigTo8(source[0]);
-    destination[2] = convertColor16BigTo8(source[0]);
-    destination[3] = convertColor16BigTo8(source[1]);
+    for (unsigned int i = 0; i < pixelsPerRow; ++i) {
+        destination[0] = convertColor16BigTo8(source[0]);
+        destination[1] = convertColor16BigTo8(source[0]);
+        destination[2] = convertColor16BigTo8(source[0]);
+        destination[3] = convertColor16BigTo8(source[1]);
+        source += 2;
+        destination += 4;
+    }
 }
 
-void unpackAR8ToRGBA8(const uint8_t* source, uint8_t* destination)
+void unpackOneRowOfAR8ToRGBA8(const uint8_t* source, uint8_t* destination, unsigned int pixelsPerRow)
 {
-    destination[0] = source[1];
-    destination[1] = source[1];
-    destination[2] = source[1];
-    destination[3] = source[0];
+    for (unsigned int i = 0; i < pixelsPerRow; ++i) {
+        destination[0] = source[1];
+        destination[1] = source[1];
+        destination[2] = source[1];
+        destination[3] = source[0];
+        source += 2;
+        destination += 4;
+    }
 }
 
-void unpackAR16LittleToRGBA8(const uint16_t* source, uint8_t* destination)
+void unpackOneRowOfAR16LittleToRGBA8(const uint16_t* source, uint8_t* destination, unsigned int pixelsPerRow)
 {
-    destination[0] = convertColor16LittleTo8(source[1]);
-    destination[1] = convertColor16LittleTo8(source[1]);
-    destination[2] = convertColor16LittleTo8(source[1]);
-    destination[3] = convertColor16LittleTo8(source[0]);
+    for (unsigned int i = 0; i < pixelsPerRow; ++i) {
+        destination[0] = convertColor16LittleTo8(source[1]);
+        destination[1] = convertColor16LittleTo8(source[1]);
+        destination[2] = convertColor16LittleTo8(source[1]);
+        destination[3] = convertColor16LittleTo8(source[0]);
+        source += 2;
+        destination += 4;
+    }
 }
 
-void unpackAR16BigToRGBA8(const uint16_t* source, uint8_t* destination)
+void unpackOneRowOfAR16BigToRGBA8(const uint16_t* source, uint8_t* destination, unsigned int pixelsPerRow)
 {
-    destination[0] = convertColor16BigTo8(source[1]);
-    destination[1] = convertColor16BigTo8(source[1]);
-    destination[2] = convertColor16BigTo8(source[1]);
-    destination[3] = convertColor16BigTo8(source[0]);
+    for (unsigned int i = 0; i < pixelsPerRow; ++i) {
+        destination[0] = convertColor16BigTo8(source[1]);
+        destination[1] = convertColor16BigTo8(source[1]);
+        destination[2] = convertColor16BigTo8(source[1]);
+        destination[3] = convertColor16BigTo8(source[0]);
+        source += 2;
+        destination += 4;
+    }
 }
 
-void unpackA8ToRGBA8(const uint8_t* source, uint8_t* destination)
+void unpackOneRowOfA8ToRGBA8(const uint8_t* source, uint8_t* destination, unsigned int pixelsPerRow)
 {
-    destination[0] = 0x0;
-    destination[1] = 0x0;
-    destination[2] = 0x0;
-    destination[3] = source[0];
+    for (unsigned int i = 0; i < pixelsPerRow; ++i) {
+        destination[0] = 0x0;
+        destination[1] = 0x0;
+        destination[2] = 0x0;
+        destination[3] = source[0];
+        source += 1;
+        destination += 4;
+    }
 }
 
-void unpackA16LittleToRGBA8(const uint16_t* source, uint8_t* destination)
+void unpackOneRowOfA16LittleToRGBA8(const uint16_t* source, uint8_t* destination, unsigned int pixelsPerRow)
 {
-    destination[0] = 0x0;
-    destination[1] = 0x0;
-    destination[2] = 0x0;
-    destination[3] = convertColor16LittleTo8(source[0]);
+    for (unsigned int i = 0; i < pixelsPerRow; ++i) {
+        destination[0] = 0x0;
+        destination[1] = 0x0;
+        destination[2] = 0x0;
+        destination[3] = convertColor16LittleTo8(source[0]);
+        source += 1;
+        destination += 4;
+    }
 }
 
-void unpackA16BigToRGBA8(const uint16_t* source, uint8_t* destination)
+void unpackOneRowOfA16BigToRGBA8(const uint16_t* source, uint8_t* destination, unsigned int pixelsPerRow)
 {
-    destination[0] = 0x0;
-    destination[1] = 0x0;
-    destination[2] = 0x0;
-    destination[3] = convertColor16BigTo8(source[0]);
+    for (unsigned int i = 0; i < pixelsPerRow; ++i) {
+        destination[0] = 0x0;
+        destination[1] = 0x0;
+        destination[2] = 0x0;
+        destination[3] = convertColor16BigTo8(source[0]);
+        source += 1;
+        destination += 4;
+    }
 }
 
-void unpackRGB32FToRGBA32F(const float* source, float* destination)
+void unpackOneRowOfRGB32FToRGBA32F(const float* source, float* destination, unsigned int pixelsPerRow)
 {
-    destination[0] = source[0];
-    destination[1] = source[1];
-    destination[2] = source[2];
-    destination[3] = 1;
+    for (unsigned int i = 0; i < pixelsPerRow; ++i) {
+        destination[0] = source[0];
+        destination[1] = source[1];
+        destination[2] = source[2];
+        destination[3] = 1;
+        source += 3;
+        destination += 4;
+    }
 }
 
-void unpackR32FToRGBA32F(const float* source, float* destination)
+void unpackOneRowOfR32FToRGBA32F(const float* source, float* destination, unsigned int pixelsPerRow)
 {
-    destination[0] = source[0];
-    destination[1] = source[0];
-    destination[2] = source[0];
-    destination[3] = 1;
+    for (unsigned int i = 0; i < pixelsPerRow; ++i) {
+        destination[0] = source[0];
+        destination[1] = source[0];
+        destination[2] = source[0];
+        destination[3] = 1;
+        source += 1;
+        destination += 4;
+    }
 }
 
-void unpackRA32FToRGBA32F(const float* source, float* destination)
+void unpackOneRowOfRA32FToRGBA32F(const float* source, float* destination, unsigned int pixelsPerRow)
 {
-    destination[0] = source[0];
-    destination[1] = source[0];
-    destination[2] = source[0];
-    destination[3] = source[1];
+    for (unsigned int i = 0; i < pixelsPerRow; ++i) {
+        destination[0] = source[0];
+        destination[1] = source[0];
+        destination[2] = source[0];
+        destination[3] = source[1];
+        source += 2;
+        destination += 4;
+    }
 }
 
-void unpackA32FToRGBA32F(const float* source, float* destination)
+void unpackOneRowOfA32FToRGBA32F(const float* source, float* destination, unsigned int pixelsPerRow)
 {
-    destination[0] = 0;
-    destination[1] = 0;
-    destination[2] = 0;
-    destination[3] = source[0];
+    for (unsigned int i = 0; i < pixelsPerRow; ++i) {
+        destination[0] = 0;
+        destination[1] = 0;
+        destination[2] = 0;
+        destination[3] = source[0];
+        source += 1;
+        destination += 4;
+    }
 }
 
 //----------------------------------------------------------------------
 // Pixel packing routines.
 //
 
-void packRGBA8ToA8(const uint8_t* source, uint8_t* destination)
+void packOneRowOfRGBA8ToA8(const uint8_t* source, uint8_t* destination, unsigned int pixelsPerRow)
 {
-    destination[0] = source[3];
+    for (unsigned int i = 0; i < pixelsPerRow; ++i) {
+        destination[0] = source[3];
+        source += 4;
+        destination += 1;
+    }
 }
 
-void packRGBA8ToR8(const uint8_t* source, uint8_t* destination)
+void packOneRowOfRGBA8ToR8(const uint8_t* source, uint8_t* destination, unsigned int pixelsPerRow)
 {
-    destination[0] = source[0];
+    for (unsigned int i = 0; i < pixelsPerRow; ++i) {
+        destination[0] = source[0];
+        source += 4;
+        destination += 1;
+    }
 }
 
-void packRGBA8ToR8Premultiply(const uint8_t* source, uint8_t* destination)
+void packOneRowOfRGBA8ToR8Premultiply(const uint8_t* source, uint8_t* destination, unsigned int pixelsPerRow)
 {
-    float scaleFactor = source[3] / 255.0f;
-    uint8_t sourceR = static_cast<uint8_t>(static_cast<float>(source[0]) * scaleFactor);
-    destination[0] = sourceR;
-}
-
-// FIXME: this routine is lossy and must be removed.
-void packRGBA8ToR8Unmultiply(const uint8_t* source, uint8_t* destination)
-{
-    float scaleFactor = 1.0f / (source[3] ? source[3] / 255.0f : 1.0f);
-    uint8_t sourceR = static_cast<uint8_t>(static_cast<float>(source[0]) * scaleFactor);
-    destination[0] = sourceR;
-}
-
-void packRGBA8ToRA8(const uint8_t* source, uint8_t* destination)
-{
-    destination[0] = source[0];
-    destination[1] = source[3];
-}
-
-void packRGBA8ToRA8Premultiply(const uint8_t* source, uint8_t* destination)
-{
-    float scaleFactor = source[3] / 255.0f;
-    uint8_t sourceR = static_cast<uint8_t>(static_cast<float>(source[0]) * scaleFactor);
-    destination[0] = sourceR;
-    destination[1] = source[3];
+    for (unsigned int i = 0; i < pixelsPerRow; ++i) {
+        float scaleFactor = source[3] / 255.0f;
+        uint8_t sourceR = static_cast<uint8_t>(static_cast<float>(source[0]) * scaleFactor);
+        destination[0] = sourceR;
+        source += 4;
+        destination += 1;
+    }
 }
 
 // FIXME: this routine is lossy and must be removed.
-void packRGBA8ToRA8Unmultiply(const uint8_t* source, uint8_t* destination)
+void packOneRowOfRGBA8ToR8Unmultiply(const uint8_t* source, uint8_t* destination, unsigned int pixelsPerRow)
 {
-    float scaleFactor = 1.0f / (source[3] ? source[3] / 255.0f : 1.0f);
-    uint8_t sourceR = static_cast<uint8_t>(static_cast<float>(source[0]) * scaleFactor);
-    destination[0] = sourceR;
-    destination[1] = source[3];
+    for (unsigned int i = 0; i < pixelsPerRow; ++i) {
+        float scaleFactor = 1.0f / (source[3] ? source[3] / 255.0f : 1.0f);
+        uint8_t sourceR = static_cast<uint8_t>(static_cast<float>(source[0]) * scaleFactor);
+        destination[0] = sourceR;
+        source += 4;
+        destination += 1;
+    }
 }
 
-void packRGBA8ToRGB8(const uint8_t* source, uint8_t* destination)
+void packOneRowOfRGBA8ToRA8(const uint8_t* source, uint8_t* destination, unsigned int pixelsPerRow)
 {
-    destination[0] = source[0];
-    destination[1] = source[1];
-    destination[2] = source[2];
+    for (unsigned int i = 0; i < pixelsPerRow; ++i) {
+        destination[0] = source[0];
+        destination[1] = source[3];
+        source += 4;
+        destination += 2;
+    }
 }
 
-void packRGBA8ToRGB8Premultiply(const uint8_t* source, uint8_t* destination)
+void packOneRowOfRGBA8ToRA8Premultiply(const uint8_t* source, uint8_t* destination, unsigned int pixelsPerRow)
 {
-    float scaleFactor = source[3] / 255.0f;
-    uint8_t sourceR = static_cast<uint8_t>(static_cast<float>(source[0]) * scaleFactor);
-    uint8_t sourceG = static_cast<uint8_t>(static_cast<float>(source[1]) * scaleFactor);
-    uint8_t sourceB = static_cast<uint8_t>(static_cast<float>(source[2]) * scaleFactor);
-    destination[0] = sourceR;
-    destination[1] = sourceG;
-    destination[2] = sourceB;
+    for (unsigned int i = 0; i < pixelsPerRow; ++i) {
+        float scaleFactor = source[3] / 255.0f;
+        uint8_t sourceR = static_cast<uint8_t>(static_cast<float>(source[0]) * scaleFactor);
+        destination[0] = sourceR;
+        destination[1] = source[3];
+        source += 4;
+        destination += 2;
+    }
 }
 
 // FIXME: this routine is lossy and must be removed.
-void packRGBA8ToRGB8Unmultiply(const uint8_t* source, uint8_t* destination)
+void packOneRowOfRGBA8ToRA8Unmultiply(const uint8_t* source, uint8_t* destination, unsigned int pixelsPerRow)
 {
-    float scaleFactor = 1.0f / (source[3] ? source[3] / 255.0f : 1.0f);
-    uint8_t sourceR = static_cast<uint8_t>(static_cast<float>(source[0]) * scaleFactor);
-    uint8_t sourceG = static_cast<uint8_t>(static_cast<float>(source[1]) * scaleFactor);
-    uint8_t sourceB = static_cast<uint8_t>(static_cast<float>(source[2]) * scaleFactor);
-    destination[0] = sourceR;
-    destination[1] = sourceG;
-    destination[2] = sourceB;
+    for (unsigned int i = 0; i < pixelsPerRow; ++i) {
+        float scaleFactor = 1.0f / (source[3] ? source[3] / 255.0f : 1.0f);
+        uint8_t sourceR = static_cast<uint8_t>(static_cast<float>(source[0]) * scaleFactor);
+        destination[0] = sourceR;
+        destination[1] = source[3];
+        source += 4;
+        destination += 2;
+    }
+}
+
+void packOneRowOfRGBA8ToRGB8(const uint8_t* source, uint8_t* destination, unsigned int pixelsPerRow)
+{
+    for (unsigned int i = 0; i < pixelsPerRow; ++i) {
+        destination[0] = source[0];
+        destination[1] = source[1];
+        destination[2] = source[2];
+        source += 4;
+        destination += 3;
+    }
+}
+
+void packOneRowOfRGBA8ToRGB8Premultiply(const uint8_t* source, uint8_t* destination, unsigned int pixelsPerRow)
+{
+    for (unsigned int i = 0; i < pixelsPerRow; ++i) {
+        float scaleFactor = source[3] / 255.0f;
+        uint8_t sourceR = static_cast<uint8_t>(static_cast<float>(source[0]) * scaleFactor);
+        uint8_t sourceG = static_cast<uint8_t>(static_cast<float>(source[1]) * scaleFactor);
+        uint8_t sourceB = static_cast<uint8_t>(static_cast<float>(source[2]) * scaleFactor);
+        destination[0] = sourceR;
+        destination[1] = sourceG;
+        destination[2] = sourceB;
+        source += 4;
+        destination += 3;
+    }
+}
+
+// FIXME: this routine is lossy and must be removed.
+void packOneRowOfRGBA8ToRGB8Unmultiply(const uint8_t* source, uint8_t* destination, unsigned int pixelsPerRow)
+{
+    for (unsigned int i = 0; i < pixelsPerRow; ++i) {
+        float scaleFactor = 1.0f / (source[3] ? source[3] / 255.0f : 1.0f);
+        uint8_t sourceR = static_cast<uint8_t>(static_cast<float>(source[0]) * scaleFactor);
+        uint8_t sourceG = static_cast<uint8_t>(static_cast<float>(source[1]) * scaleFactor);
+        uint8_t sourceB = static_cast<uint8_t>(static_cast<float>(source[2]) * scaleFactor);
+        destination[0] = sourceR;
+        destination[1] = sourceG;
+        destination[2] = sourceB;
+        source += 4;
+        destination += 3;
+    }
 }
 
 // This is only used when the source format is different than SourceFormatRGBA8.
-void packRGBA8ToRGBA8(const uint8_t* source, uint8_t* destination)
+void packOneRowOfRGBA8ToRGBA8(const uint8_t* source, uint8_t* destination, unsigned int pixelsPerRow)
 {
-    destination[0] = source[0];
-    destination[1] = source[1];
-    destination[2] = source[2];
-    destination[3] = source[3];
+    for (unsigned int i = 0; i < pixelsPerRow; ++i) {
+        destination[0] = source[0];
+        destination[1] = source[1];
+        destination[2] = source[2];
+        destination[3] = source[3];
+        source += 4;
+        destination += 4;
+    }
 }
 
-void packRGBA8ToRGBA8Premultiply(const uint8_t* source, uint8_t* destination)
+void packOneRowOfRGBA8ToRGBA8Premultiply(const uint8_t* source, uint8_t* destination, unsigned int pixelsPerRow)
 {
-    float scaleFactor = source[3] / 255.0f;
-    uint8_t sourceR = static_cast<uint8_t>(static_cast<float>(source[0]) * scaleFactor);
-    uint8_t sourceG = static_cast<uint8_t>(static_cast<float>(source[1]) * scaleFactor);
-    uint8_t sourceB = static_cast<uint8_t>(static_cast<float>(source[2]) * scaleFactor);
-    destination[0] = sourceR;
-    destination[1] = sourceG;
-    destination[2] = sourceB;
-    destination[3] = source[3];
-}
-
-// FIXME: this routine is lossy and must be removed.
-void packRGBA8ToRGBA8Unmultiply(const uint8_t* source, uint8_t* destination)
-{
-    float scaleFactor = 1.0f / (source[3] ? source[3] / 255.0f : 1.0f);
-    uint8_t sourceR = static_cast<uint8_t>(static_cast<float>(source[0]) * scaleFactor);
-    uint8_t sourceG = static_cast<uint8_t>(static_cast<float>(source[1]) * scaleFactor);
-    uint8_t sourceB = static_cast<uint8_t>(static_cast<float>(source[2]) * scaleFactor);
-    destination[0] = sourceR;
-    destination[1] = sourceG;
-    destination[2] = sourceB;
-    destination[3] = source[3];
-}
-
-void packRGBA8ToUnsignedShort4444(const uint8_t* source, uint16_t* destination)
-{
-    *destination = (((source[0] & 0xF0) << 8)
-                    | ((source[1] & 0xF0) << 4)
-                    | (source[2] & 0xF0)
-                    | (source[3] >> 4));
-}
-
-void packRGBA8ToUnsignedShort4444Premultiply(const uint8_t* source, uint16_t* destination)
-{
-    float scaleFactor = source[3] / 255.0f;
-    uint8_t sourceR = static_cast<uint8_t>(static_cast<float>(source[0]) * scaleFactor);
-    uint8_t sourceG = static_cast<uint8_t>(static_cast<float>(source[1]) * scaleFactor);
-    uint8_t sourceB = static_cast<uint8_t>(static_cast<float>(source[2]) * scaleFactor);
-    *destination = (((sourceR & 0xF0) << 8)
-                    | ((sourceG & 0xF0) << 4)
-                    | (sourceB & 0xF0)
-                    | (source[3] >> 4));
+    for (unsigned int i = 0; i < pixelsPerRow; ++i) {
+        float scaleFactor = source[3] / 255.0f;
+        uint8_t sourceR = static_cast<uint8_t>(static_cast<float>(source[0]) * scaleFactor);
+        uint8_t sourceG = static_cast<uint8_t>(static_cast<float>(source[1]) * scaleFactor);
+        uint8_t sourceB = static_cast<uint8_t>(static_cast<float>(source[2]) * scaleFactor);
+        destination[0] = sourceR;
+        destination[1] = sourceG;
+        destination[2] = sourceB;
+        destination[3] = source[3];
+        source += 4;
+        destination += 4;
+    }
 }
 
 // FIXME: this routine is lossy and must be removed.
-void packRGBA8ToUnsignedShort4444Unmultiply(const uint8_t* source, uint16_t* destination)
+void packOneRowOfRGBA8ToRGBA8Unmultiply(const uint8_t* source, uint8_t* destination, unsigned int pixelsPerRow)
 {
-    float scaleFactor = 1.0f / (source[3] ? source[3] / 255.0f : 1.0f);
-    uint8_t sourceR = static_cast<uint8_t>(static_cast<float>(source[0]) * scaleFactor);
-    uint8_t sourceG = static_cast<uint8_t>(static_cast<float>(source[1]) * scaleFactor);
-    uint8_t sourceB = static_cast<uint8_t>(static_cast<float>(source[2]) * scaleFactor);
-    *destination = (((sourceR & 0xF0) << 8)
-                    | ((sourceG & 0xF0) << 4)
-                    | (sourceB & 0xF0)
-                    | (source[3] >> 4));
+    for (unsigned int i = 0; i < pixelsPerRow; ++i) {
+        float scaleFactor = 1.0f / (source[3] ? source[3] / 255.0f : 1.0f);
+        uint8_t sourceR = static_cast<uint8_t>(static_cast<float>(source[0]) * scaleFactor);
+        uint8_t sourceG = static_cast<uint8_t>(static_cast<float>(source[1]) * scaleFactor);
+        uint8_t sourceB = static_cast<uint8_t>(static_cast<float>(source[2]) * scaleFactor);
+        destination[0] = sourceR;
+        destination[1] = sourceG;
+        destination[2] = sourceB;
+        destination[3] = source[3];
+        source += 4;
+        destination += 4;
+    }
 }
 
-void packRGBA8ToUnsignedShort5551(const uint8_t* source, uint16_t* destination)
+void packOneRowOfRGBA8ToUnsignedShort4444(const uint8_t* source, uint16_t* destination, unsigned int pixelsPerRow)
 {
-    *destination = (((source[0] & 0xF8) << 8)
-                    | ((source[1] & 0xF8) << 3)
-                    | ((source[2] & 0xF8) >> 2)
-                    | (source[3] >> 7));
+    for (unsigned int i = 0; i < pixelsPerRow; ++i) {
+        *destination = (((source[0] & 0xF0) << 8)
+                        | ((source[1] & 0xF0) << 4)
+                        | (source[2] & 0xF0)
+                        | (source[3] >> 4));
+        source += 4;
+        destination += 1;
+    }
 }
 
-void packRGBA8ToUnsignedShort5551Premultiply(const uint8_t* source, uint16_t* destination)
+void packOneRowOfRGBA8ToUnsignedShort4444Premultiply(const uint8_t* source, uint16_t* destination, unsigned int pixelsPerRow)
 {
-    float scaleFactor = source[3] / 255.0f;
-    uint8_t sourceR = static_cast<uint8_t>(static_cast<float>(source[0]) * scaleFactor);
-    uint8_t sourceG = static_cast<uint8_t>(static_cast<float>(source[1]) * scaleFactor);
-    uint8_t sourceB = static_cast<uint8_t>(static_cast<float>(source[2]) * scaleFactor);
-    *destination = (((sourceR & 0xF8) << 8)
-                    | ((sourceG & 0xF8) << 3)
-                    | ((sourceB & 0xF8) >> 2)
-                    | (source[3] >> 7));
-}
-
-// FIXME: this routine is lossy and must be removed.
-void packRGBA8ToUnsignedShort5551Unmultiply(const uint8_t* source, uint16_t* destination)
-{
-    float scaleFactor = 1.0f / (source[3] ? source[3] / 255.0f : 1.0f);
-    uint8_t sourceR = static_cast<uint8_t>(static_cast<float>(source[0]) * scaleFactor);
-    uint8_t sourceG = static_cast<uint8_t>(static_cast<float>(source[1]) * scaleFactor);
-    uint8_t sourceB = static_cast<uint8_t>(static_cast<float>(source[2]) * scaleFactor);
-    *destination = (((sourceR & 0xF8) << 8)
-                    | ((sourceG & 0xF8) << 3)
-                    | ((sourceB & 0xF8) >> 2)
-                    | (source[3] >> 7));
-}
-
-void packRGBA8ToUnsignedShort565(const uint8_t* source, uint16_t* destination)
-{
-    *destination = (((source[0] & 0xF8) << 8)
-                    | ((source[1] & 0xFC) << 3)
-                    | ((source[2] & 0xF8) >> 3));
-}
-
-void packRGBA8ToUnsignedShort565Premultiply(const uint8_t* source, uint16_t* destination)
-{
-    float scaleFactor = source[3] / 255.0f;
-    uint8_t sourceR = static_cast<uint8_t>(static_cast<float>(source[0]) * scaleFactor);
-    uint8_t sourceG = static_cast<uint8_t>(static_cast<float>(source[1]) * scaleFactor);
-    uint8_t sourceB = static_cast<uint8_t>(static_cast<float>(source[2]) * scaleFactor);
-    *destination = (((sourceR & 0xF8) << 8)
-                    | ((sourceG & 0xFC) << 3)
-                    | ((sourceB & 0xF8) >> 3));
+    for (unsigned int i = 0; i < pixelsPerRow; ++i) {
+        float scaleFactor = source[3] / 255.0f;
+        uint8_t sourceR = static_cast<uint8_t>(static_cast<float>(source[0]) * scaleFactor);
+        uint8_t sourceG = static_cast<uint8_t>(static_cast<float>(source[1]) * scaleFactor);
+        uint8_t sourceB = static_cast<uint8_t>(static_cast<float>(source[2]) * scaleFactor);
+        *destination = (((sourceR & 0xF0) << 8)
+                        | ((sourceG & 0xF0) << 4)
+                        | (sourceB & 0xF0)
+                        | (source[3] >> 4));
+        source += 4;
+        destination += 1;
+    }
 }
 
 // FIXME: this routine is lossy and must be removed.
-void packRGBA8ToUnsignedShort565Unmultiply(const uint8_t* source, uint16_t* destination)
+void packOneRowOfRGBA8ToUnsignedShort4444Unmultiply(const uint8_t* source, uint16_t* destination, unsigned int pixelsPerRow)
 {
-    float scaleFactor = 1.0f / (source[3] ? source[3] / 255.0f : 1.0f);
-    uint8_t sourceR = static_cast<uint8_t>(static_cast<float>(source[0]) * scaleFactor);
-    uint8_t sourceG = static_cast<uint8_t>(static_cast<float>(source[1]) * scaleFactor);
-    uint8_t sourceB = static_cast<uint8_t>(static_cast<float>(source[2]) * scaleFactor);
-    *destination = (((sourceR & 0xF8) << 8)
-                    | ((sourceG & 0xFC) << 3)
-                    | ((sourceB & 0xF8) >> 3));
+    for (unsigned int i = 0; i < pixelsPerRow; ++i) {
+        float scaleFactor = 1.0f / (source[3] ? source[3] / 255.0f : 1.0f);
+        uint8_t sourceR = static_cast<uint8_t>(static_cast<float>(source[0]) * scaleFactor);
+        uint8_t sourceG = static_cast<uint8_t>(static_cast<float>(source[1]) * scaleFactor);
+        uint8_t sourceB = static_cast<uint8_t>(static_cast<float>(source[2]) * scaleFactor);
+        *destination = (((sourceR & 0xF0) << 8)
+                        | ((sourceG & 0xF0) << 4)
+                        | (sourceB & 0xF0)
+                        | (source[3] >> 4));
+        source += 4;
+        destination += 1;
+    }
 }
 
-void packRGBA32FToRGB32F(const float* source, float* destination)
+void packOneRowOfRGBA8ToUnsignedShort5551(const uint8_t* source, uint16_t* destination, unsigned int pixelsPerRow)
 {
-    destination[0] = source[0];
-    destination[1] = source[1];
-    destination[2] = source[2];
+    for (unsigned int i = 0; i < pixelsPerRow; ++i) {
+        *destination = (((source[0] & 0xF8) << 8)
+                        | ((source[1] & 0xF8) << 3)
+                        | ((source[2] & 0xF8) >> 2)
+                        | (source[3] >> 7));
+        source += 4;
+        destination += 1;
+    }
 }
 
-void packRGBA32FToRGB32FPremultiply(const float* source, float* destination)
+void packOneRowOfRGBA8ToUnsignedShort5551Premultiply(const uint8_t* source, uint16_t* destination, unsigned int pixelsPerRow)
 {
-    float scaleFactor = source[3];
-    destination[0] = source[0] * scaleFactor;
-    destination[1] = source[1] * scaleFactor;
-    destination[2] = source[2] * scaleFactor;
+    for (unsigned int i = 0; i < pixelsPerRow; ++i) {
+        float scaleFactor = source[3] / 255.0f;
+        uint8_t sourceR = static_cast<uint8_t>(static_cast<float>(source[0]) * scaleFactor);
+        uint8_t sourceG = static_cast<uint8_t>(static_cast<float>(source[1]) * scaleFactor);
+        uint8_t sourceB = static_cast<uint8_t>(static_cast<float>(source[2]) * scaleFactor);
+        *destination = (((sourceR & 0xF8) << 8)
+                        | ((sourceG & 0xF8) << 3)
+                        | ((sourceB & 0xF8) >> 2)
+                        | (source[3] >> 7));
+        source += 4;
+        destination += 1;
+    }
 }
 
-void packRGBA32FToRGBA32FPremultiply(const float* source, float* destination)
+// FIXME: this routine is lossy and must be removed.
+void packOneRowOfRGBA8ToUnsignedShort5551Unmultiply(const uint8_t* source, uint16_t* destination, unsigned int pixelsPerRow)
 {
-    float scaleFactor = source[3];
-    destination[0] = source[0] * scaleFactor;
-    destination[1] = source[1] * scaleFactor;
-    destination[2] = source[2] * scaleFactor;
-    destination[3] = source[3];
+    for (unsigned int i = 0; i < pixelsPerRow; ++i) {
+        float scaleFactor = 1.0f / (source[3] ? source[3] / 255.0f : 1.0f);
+        uint8_t sourceR = static_cast<uint8_t>(static_cast<float>(source[0]) * scaleFactor);
+        uint8_t sourceG = static_cast<uint8_t>(static_cast<float>(source[1]) * scaleFactor);
+        uint8_t sourceB = static_cast<uint8_t>(static_cast<float>(source[2]) * scaleFactor);
+        *destination = (((sourceR & 0xF8) << 8)
+                        | ((sourceG & 0xF8) << 3)
+                        | ((sourceB & 0xF8) >> 2)
+                        | (source[3] >> 7));
+        source += 4;
+        destination += 1;
+    }
 }
 
-void packRGBA32FToA32F(const float* source, float* destination)
+void packOneRowOfRGBA8ToUnsignedShort565(const uint8_t* source, uint16_t* destination, unsigned int pixelsPerRow)
 {
-    destination[0] = source[3];
+    for (unsigned int i = 0; i < pixelsPerRow; ++i) {
+        *destination = (((source[0] & 0xF8) << 8)
+                        | ((source[1] & 0xFC) << 3)
+                        | ((source[2] & 0xF8) >> 3));
+        source += 4;
+        destination += 1;
+    }
 }
 
-void packRGBA32FToR32F(const float* source, float* destination)
+void packOneRowOfRGBA8ToUnsignedShort565Premultiply(const uint8_t* source, uint16_t* destination, unsigned int pixelsPerRow)
 {
-    destination[0] = source[0];
+    for (unsigned int i = 0; i < pixelsPerRow; ++i) {
+        float scaleFactor = source[3] / 255.0f;
+        uint8_t sourceR = static_cast<uint8_t>(static_cast<float>(source[0]) * scaleFactor);
+        uint8_t sourceG = static_cast<uint8_t>(static_cast<float>(source[1]) * scaleFactor);
+        uint8_t sourceB = static_cast<uint8_t>(static_cast<float>(source[2]) * scaleFactor);
+        *destination = (((sourceR & 0xF8) << 8)
+                        | ((sourceG & 0xFC) << 3)
+                        | ((sourceB & 0xF8) >> 3));
+        source += 4;
+        destination += 1;
+    }
 }
 
-void packRGBA32FToR32FPremultiply(const float* source, float* destination)
+// FIXME: this routine is lossy and must be removed.
+void packOneRowOfRGBA8ToUnsignedShort565Unmultiply(const uint8_t* source, uint16_t* destination, unsigned int pixelsPerRow)
 {
-    float scaleFactor = source[3];
-    destination[0] = source[0] * scaleFactor;
+    for (unsigned int i = 0; i < pixelsPerRow; ++i) {
+        float scaleFactor = 1.0f / (source[3] ? source[3] / 255.0f : 1.0f);
+        uint8_t sourceR = static_cast<uint8_t>(static_cast<float>(source[0]) * scaleFactor);
+        uint8_t sourceG = static_cast<uint8_t>(static_cast<float>(source[1]) * scaleFactor);
+        uint8_t sourceB = static_cast<uint8_t>(static_cast<float>(source[2]) * scaleFactor);
+        *destination = (((sourceR & 0xF8) << 8)
+                        | ((sourceG & 0xFC) << 3)
+                        | ((sourceB & 0xF8) >> 3));
+        source += 4;
+        destination += 1;
+    }
+}
+
+void packOneRowOfRGBA32FToRGB32F(const float* source, float* destination, unsigned int pixelsPerRow)
+{
+    for (unsigned int i = 0; i < pixelsPerRow; ++i) {
+        destination[0] = source[0];
+        destination[1] = source[1];
+        destination[2] = source[2];
+        source += 4;
+        destination += 3;
+    }
+}
+
+void packOneRowOfRGBA32FToRGB32FPremultiply(const float* source, float* destination, unsigned int pixelsPerRow)
+{
+    for (unsigned int i = 0; i < pixelsPerRow; ++i) {
+        float scaleFactor = source[3];
+        destination[0] = source[0] * scaleFactor;
+        destination[1] = source[1] * scaleFactor;
+        destination[2] = source[2] * scaleFactor;
+        source += 4;
+        destination += 3;
+    }
+}
+
+void packOneRowOfRGBA32FToRGBA32FPremultiply(const float* source, float* destination, unsigned int pixelsPerRow)
+{
+    for (unsigned int i = 0; i < pixelsPerRow; ++i) {
+        float scaleFactor = source[3];
+        destination[0] = source[0] * scaleFactor;
+        destination[1] = source[1] * scaleFactor;
+        destination[2] = source[2] * scaleFactor;
+        destination[3] = source[3];
+        source += 4;
+        destination += 4;
+    }
+}
+
+void packOneRowOfRGBA32FToA32F(const float* source, float* destination, unsigned int pixelsPerRow)
+{
+    for (unsigned int i = 0; i < pixelsPerRow; ++i) {
+        destination[0] = source[3];
+        source += 4;
+        destination += 1;
+    }
+}
+
+void packOneRowOfRGBA32FToR32F(const float* source, float* destination, unsigned int pixelsPerRow)
+{
+    for (unsigned int i = 0; i < pixelsPerRow; ++i) {
+        destination[0] = source[0];
+        source += 4;
+        destination += 1;
+    }
+}
+
+void packOneRowOfRGBA32FToR32FPremultiply(const float* source, float* destination, unsigned int pixelsPerRow)
+{
+    for (unsigned int i = 0; i < pixelsPerRow; ++i) {
+        float scaleFactor = source[3];
+        destination[0] = source[0] * scaleFactor;
+        source += 4;
+        destination += 1;
+    }
 }
 
 
-void packRGBA32FToRA32F(const float* source, float* destination)
+void packOneRowOfRGBA32FToRA32F(const float* source, float* destination, unsigned int pixelsPerRow)
 {
-    destination[0] = source[0];
-    destination[1] = source[3];
+    for (unsigned int i = 0; i < pixelsPerRow; ++i) {
+        destination[0] = source[0];
+        destination[1] = source[3];
+        source += 4;
+        destination += 2;
+    }
 }
 
-void packRGBA32FToRA32FPremultiply(const float* source, float* destination)
+void packOneRowOfRGBA32FToRA32FPremultiply(const float* source, float* destination, unsigned int pixelsPerRow)
 {
-    float scaleFactor = source[3];
-    destination[0] = source[0] * scaleFactor;
-    destination[1] = scaleFactor;
+    for (unsigned int i = 0; i < pixelsPerRow; ++i) {
+        float scaleFactor = source[3];
+        destination[0] = source[0] * scaleFactor;
+        destination[1] = scaleFactor;
+        source += 4;
+        destination += 2;
+    }
 }
 
 } // anonymous namespace
@@ -898,48 +1152,31 @@ void packRGBA32FToRA32FPremultiply(const float* source, float* destination)
 // This is used whenever unpacking is necessary; i.e., the source data
 // is not in RGBA8/RGBA32F format, or the unpack alignment specifies
 // that rows are not tightly packed.
-template<typename SourceType, typename IntermediateType, typename DestType,
-         void unpackingFunc(const SourceType*, IntermediateType*),
-         void packingFunc(const IntermediateType*, DestType*)>
+template<typename SourceType, typename IntermediateType, typename DestType>
 static void doUnpackingAndPacking(const SourceType* sourceData,
+                                  void (*rowUnpackingFunc)(const SourceType*, IntermediateType*, unsigned int),
                                   unsigned int width,
                                   unsigned int height,
-                                  unsigned int sourceElementsPerPixel,
                                   unsigned int sourceElementsPerRow,
                                   DestType* destinationData,
+                                  void (*rowPackingFunc)(const IntermediateType*, DestType*, unsigned int),
                                   unsigned int destinationElementsPerPixel)
 {
-    if (!sourceElementsPerRow) {
-        unsigned int numElements = width * height * sourceElementsPerPixel;
-        const SourceType* endPointer = sourceData + numElements;
-        IntermediateType temporaryRGBAData[4];
-        while (sourceData < endPointer) {
-            unpackingFunc(sourceData, temporaryRGBAData);
-            packingFunc(temporaryRGBAData, destinationData);
-            sourceData += sourceElementsPerPixel;
-            destinationData += destinationElementsPerPixel;
-        }
-    } else {
-        IntermediateType temporaryRGBAData[4];
-        for (unsigned int y = 0; y < height; ++y) {
-            const SourceType* currentSource = sourceData;
-            for (unsigned int x = 0; x < width; ++x) {
-                unpackingFunc(currentSource, temporaryRGBAData);
-                packingFunc(temporaryRGBAData, destinationData);
-                currentSource += sourceElementsPerPixel;
-                destinationData += destinationElementsPerPixel;
-            }
-            sourceData += sourceElementsPerRow;
-        }
+    OwnArrayPtr<IntermediateType> temporaryRGBAData = adoptArrayPtr(new IntermediateType[width * 4]);
+    const SourceType* endPointer = sourceData + height * sourceElementsPerRow;
+    unsigned int destinationElementsPerRow = width * destinationElementsPerPixel;
+    while (sourceData < endPointer) {
+        rowUnpackingFunc(sourceData, temporaryRGBAData.get(), width);
+        rowPackingFunc(temporaryRGBAData.get(), destinationData, width);
+        sourceData += sourceElementsPerRow;
+        destinationData += destinationElementsPerRow;
     }
 }
 
 template<typename SourceType>
-static void computeIncrementParameters(unsigned int width,
-                                       unsigned int bytesPerPixel,
-                                       unsigned int unpackAlignment,
-                                       unsigned int* sourceElementsPerPixel,
-                                       unsigned int* sourceElementsPerRow)
+static unsigned int computeSourceElementsPerRow(unsigned int width,
+                                                unsigned int bytesPerPixel,
+                                                unsigned int unpackAlignment)
 {
     unsigned int elementSizeInBytes = sizeof(SourceType);
     ASSERT(elementSizeInBytes <= bytesPerPixel);
@@ -951,207 +1188,171 @@ static void computeIncrementParameters(unsigned int width,
         if (remainder)
             totalRowBytes += (unpackAlignment - remainder);
     }
-    *sourceElementsPerPixel = bytesPerPixel / elementSizeInBytes;
-    if (validRowBytes == totalRowBytes)
-        *sourceElementsPerRow = 0;
-    else
-        *sourceElementsPerRow = totalRowBytes / elementSizeInBytes;
+    return totalRowBytes / elementSizeInBytes;
 }
 
 // This handles all conversions with a faster path for tightly packed RGBA8 source data.
-template<typename DestType, void packingFunc(const uint8_t*, DestType*)>
+template<typename DestType>
 static void doPacking(const void* sourceData,
                       GraphicsContext3D::SourceDataFormat sourceDataFormat,
                       unsigned int width,
                       unsigned int height,
                       unsigned int sourceUnpackAlignment,
                       DestType* destinationData,
+                      void (*rowPackingFunc)(const uint8_t*, DestType*, unsigned int),
                       unsigned int destinationElementsPerPixel)
 {
     switch (sourceDataFormat) {
     case GraphicsContext3D::SourceFormatRGBA8: {
-        unsigned int sourceElementsPerPixel, sourceElementsPerRow;
-        computeIncrementParameters<uint8_t>(width, 4, sourceUnpackAlignment, &sourceElementsPerPixel, &sourceElementsPerRow);
-        if (!sourceElementsPerRow) {
-            const uint8_t* source = static_cast<const uint8_t*>(sourceData);
-            unsigned int numElements = width * height * 4;
-            const uint8_t* endPointer = source + numElements;
-            while (source < endPointer) {
-                packingFunc(source, destinationData);
-                source += sourceElementsPerPixel;
-                destinationData += destinationElementsPerPixel;
-            }
-        } else {
-            doUnpackingAndPacking<uint8_t, uint8_t, DestType, unpackRGBA8ToRGBA8, packingFunc>(static_cast<const uint8_t*>(sourceData), width, height, sourceElementsPerPixel, sourceElementsPerRow, destinationData, destinationElementsPerPixel);
+        unsigned int sourceElementsPerRow = computeSourceElementsPerRow<uint8_t>(width, 4, sourceUnpackAlignment);
+        const uint8_t* source = static_cast<const uint8_t*>(sourceData);
+        const uint8_t* endPointer = source + height * sourceElementsPerRow;
+        unsigned int destinationElementsPerRow = width * destinationElementsPerPixel;
+        while (source < endPointer) {
+            rowPackingFunc(source, destinationData, width);
+            source += sourceElementsPerRow;
+            destinationData += destinationElementsPerRow;
         }
         break;
     }
     case GraphicsContext3D::SourceFormatRGBA16Little: {
-        unsigned int sourceElementsPerPixel, sourceElementsPerRow;
-        computeIncrementParameters<uint16_t>(width, 8, sourceUnpackAlignment, &sourceElementsPerPixel, &sourceElementsPerRow);
-        doUnpackingAndPacking<uint16_t, uint8_t, DestType, unpackRGBA16LittleToRGBA8, packingFunc>(static_cast<const uint16_t*>(sourceData), width, height, sourceElementsPerPixel, sourceElementsPerRow, destinationData, destinationElementsPerPixel);
+        unsigned int sourceElementsPerRow = computeSourceElementsPerRow<uint16_t>(width, 8, sourceUnpackAlignment);
+        doUnpackingAndPacking<uint16_t, uint8_t, DestType>(static_cast<const uint16_t*>(sourceData), unpackOneRowOfRGBA16LittleToRGBA8, width, height, sourceElementsPerRow, destinationData, rowPackingFunc, destinationElementsPerPixel);
         break;
     }
     case GraphicsContext3D::SourceFormatRGBA16Big: {
-        unsigned int sourceElementsPerPixel, sourceElementsPerRow;
-        computeIncrementParameters<uint16_t>(width, 8, sourceUnpackAlignment, &sourceElementsPerPixel, &sourceElementsPerRow);
-        doUnpackingAndPacking<uint16_t, uint8_t, DestType, unpackRGBA16BigToRGBA8, packingFunc>(static_cast<const uint16_t*>(sourceData), width, height, sourceElementsPerPixel, sourceElementsPerRow, destinationData, destinationElementsPerPixel);
+        unsigned int sourceElementsPerRow = computeSourceElementsPerRow<uint16_t>(width, 8, sourceUnpackAlignment);
+        doUnpackingAndPacking<uint16_t, uint8_t, DestType>(static_cast<const uint16_t*>(sourceData), unpackOneRowOfRGBA16BigToRGBA8, width, height, sourceElementsPerRow, destinationData, rowPackingFunc, destinationElementsPerPixel);
         break;
     }
     case GraphicsContext3D::SourceFormatRGB8: {
-        unsigned int sourceElementsPerPixel, sourceElementsPerRow;
-        computeIncrementParameters<uint8_t>(width, 3, sourceUnpackAlignment, &sourceElementsPerPixel, &sourceElementsPerRow);
-        doUnpackingAndPacking<uint8_t, uint8_t, DestType, unpackRGB8ToRGBA8, packingFunc>(static_cast<const uint8_t*>(sourceData), width, height, sourceElementsPerPixel, sourceElementsPerRow, destinationData, destinationElementsPerPixel);
+        unsigned int sourceElementsPerRow = computeSourceElementsPerRow<uint8_t>(width, 3, sourceUnpackAlignment);
+        doUnpackingAndPacking<uint8_t, uint8_t, DestType>(static_cast<const uint8_t*>(sourceData), unpackOneRowOfRGB8ToRGBA8, width, height, sourceElementsPerRow, destinationData, rowPackingFunc, destinationElementsPerPixel);
         break;
     }
     case GraphicsContext3D::SourceFormatRGB16Little: {
-        unsigned int sourceElementsPerPixel, sourceElementsPerRow;
-        computeIncrementParameters<uint16_t>(width, 6, sourceUnpackAlignment, &sourceElementsPerPixel, &sourceElementsPerRow);
-        doUnpackingAndPacking<uint16_t, uint8_t, DestType, unpackRGB16LittleToRGBA8, packingFunc>(static_cast<const uint16_t*>(sourceData), width, height, sourceElementsPerPixel, sourceElementsPerRow, destinationData, destinationElementsPerPixel);
+        unsigned int sourceElementsPerRow = computeSourceElementsPerRow<uint16_t>(width, 6, sourceUnpackAlignment);
+        doUnpackingAndPacking<uint16_t, uint8_t, DestType>(static_cast<const uint16_t*>(sourceData), unpackOneRowOfRGB16LittleToRGBA8, width, height, sourceElementsPerRow, destinationData, rowPackingFunc, destinationElementsPerPixel);
         break;
     }
     case GraphicsContext3D::SourceFormatRGB16Big: {
-        unsigned int sourceElementsPerPixel, sourceElementsPerRow;
-        computeIncrementParameters<uint16_t>(width, 6, sourceUnpackAlignment, &sourceElementsPerPixel, &sourceElementsPerRow);
-        doUnpackingAndPacking<uint16_t, uint8_t, DestType, unpackRGB16BigToRGBA8, packingFunc>(static_cast<const uint16_t*>(sourceData), width, height, sourceElementsPerPixel, sourceElementsPerRow, destinationData, destinationElementsPerPixel);
+        unsigned int sourceElementsPerRow = computeSourceElementsPerRow<uint16_t>(width, 6, sourceUnpackAlignment);
+        doUnpackingAndPacking<uint16_t, uint8_t, DestType>(static_cast<const uint16_t*>(sourceData), unpackOneRowOfRGB16BigToRGBA8, width, height, sourceElementsPerRow, destinationData, rowPackingFunc, destinationElementsPerPixel);
         break;
     }
     case GraphicsContext3D::SourceFormatBGR8: {
-        unsigned int sourceElementsPerPixel, sourceElementsPerRow;
-        computeIncrementParameters<uint8_t>(width, 3, sourceUnpackAlignment, &sourceElementsPerPixel, &sourceElementsPerRow);
-        doUnpackingAndPacking<uint8_t, uint8_t, DestType, unpackBGR8ToRGBA8, packingFunc>(static_cast<const uint8_t*>(sourceData), width, height, sourceElementsPerPixel, sourceElementsPerRow, destinationData, destinationElementsPerPixel);
+        unsigned int sourceElementsPerRow = computeSourceElementsPerRow<uint8_t>(width, 3, sourceUnpackAlignment);
+        doUnpackingAndPacking<uint8_t, uint8_t, DestType>(static_cast<const uint8_t*>(sourceData), unpackOneRowOfBGR8ToRGBA8, width, height, sourceElementsPerRow, destinationData, rowPackingFunc, destinationElementsPerPixel);
         break;
     }
     case GraphicsContext3D::SourceFormatARGB8: {
-        unsigned int sourceElementsPerPixel, sourceElementsPerRow;
-        computeIncrementParameters<uint8_t>(width, 4, sourceUnpackAlignment, &sourceElementsPerPixel, &sourceElementsPerRow);
-        doUnpackingAndPacking<uint8_t, uint8_t, DestType, unpackARGB8ToRGBA8, packingFunc>(static_cast<const uint8_t*>(sourceData), width, height, sourceElementsPerPixel, sourceElementsPerRow, destinationData, destinationElementsPerPixel);
+        unsigned int sourceElementsPerRow = computeSourceElementsPerRow<uint8_t>(width, 4, sourceUnpackAlignment);
+        doUnpackingAndPacking<uint8_t, uint8_t, DestType>(static_cast<const uint8_t*>(sourceData), unpackOneRowOfARGB8ToRGBA8, width, height, sourceElementsPerRow, destinationData, rowPackingFunc, destinationElementsPerPixel);
         break;
     }
     case GraphicsContext3D::SourceFormatARGB16Little: {
-        unsigned int sourceElementsPerPixel, sourceElementsPerRow;
-        computeIncrementParameters<uint16_t>(width, 8, sourceUnpackAlignment, &sourceElementsPerPixel, &sourceElementsPerRow);
-        doUnpackingAndPacking<uint16_t, uint8_t, DestType, unpackARGB16LittleToRGBA8, packingFunc>(static_cast<const uint16_t*>(sourceData), width, height, sourceElementsPerPixel, sourceElementsPerRow, destinationData, destinationElementsPerPixel);
+        unsigned int sourceElementsPerRow = computeSourceElementsPerRow<uint16_t>(width, 8, sourceUnpackAlignment);
+        doUnpackingAndPacking<uint16_t, uint8_t, DestType>(static_cast<const uint16_t*>(sourceData), unpackOneRowOfARGB16LittleToRGBA8, width, height, sourceElementsPerRow, destinationData, rowPackingFunc, destinationElementsPerPixel);
         break;
     }
     case GraphicsContext3D::SourceFormatARGB16Big: {
-        unsigned int sourceElementsPerPixel, sourceElementsPerRow;
-        computeIncrementParameters<uint16_t>(width, 8, sourceUnpackAlignment, &sourceElementsPerPixel, &sourceElementsPerRow);
-        doUnpackingAndPacking<uint16_t, uint8_t, DestType, unpackARGB16BigToRGBA8, packingFunc>(static_cast<const uint16_t*>(sourceData), width, height, sourceElementsPerPixel, sourceElementsPerRow, destinationData, destinationElementsPerPixel);
+        unsigned int sourceElementsPerRow = computeSourceElementsPerRow<uint16_t>(width, 8, sourceUnpackAlignment);
+        doUnpackingAndPacking<uint16_t, uint8_t, DestType>(static_cast<const uint16_t*>(sourceData), unpackOneRowOfARGB16BigToRGBA8, width, height, sourceElementsPerRow, destinationData, rowPackingFunc, destinationElementsPerPixel);
         break;
     }
     case GraphicsContext3D::SourceFormatABGR8: {
-        unsigned int sourceElementsPerPixel, sourceElementsPerRow;
-        computeIncrementParameters<uint8_t>(width, 4, sourceUnpackAlignment, &sourceElementsPerPixel, &sourceElementsPerRow);
-        doUnpackingAndPacking<uint8_t, uint8_t, DestType, unpackABGR8ToRGBA8, packingFunc>(static_cast<const uint8_t*>(sourceData), width, height, sourceElementsPerPixel, sourceElementsPerRow, destinationData, destinationElementsPerPixel);
+        unsigned int sourceElementsPerRow = computeSourceElementsPerRow<uint8_t>(width, 4, sourceUnpackAlignment);
+        doUnpackingAndPacking<uint8_t, uint8_t, DestType>(static_cast<const uint8_t*>(sourceData), unpackOneRowOfABGR8ToRGBA8, width, height, sourceElementsPerRow, destinationData, rowPackingFunc, destinationElementsPerPixel);
         break;
     }
     case GraphicsContext3D::SourceFormatBGRA8: {
-        unsigned int sourceElementsPerPixel, sourceElementsPerRow;
-        computeIncrementParameters<uint8_t>(width, 4, sourceUnpackAlignment, &sourceElementsPerPixel, &sourceElementsPerRow);
-        doUnpackingAndPacking<uint8_t, uint8_t, DestType, unpackBGRA8ToRGBA8, packingFunc>(static_cast<const uint8_t*>(sourceData), width, height, sourceElementsPerPixel, sourceElementsPerRow, destinationData, destinationElementsPerPixel);
+        unsigned int sourceElementsPerRow = computeSourceElementsPerRow<uint8_t>(width, 4, sourceUnpackAlignment);
+        doUnpackingAndPacking<uint8_t, uint8_t, DestType>(static_cast<const uint8_t*>(sourceData), unpackOneRowOfBGRA8ToRGBA8, width, height, sourceElementsPerRow, destinationData, rowPackingFunc, destinationElementsPerPixel);
         break;
     }
     case GraphicsContext3D::SourceFormatBGRA16Little: {
-        unsigned int sourceElementsPerPixel, sourceElementsPerRow;
-        computeIncrementParameters<uint16_t>(width, 8, sourceUnpackAlignment, &sourceElementsPerPixel, &sourceElementsPerRow);
-        doUnpackingAndPacking<uint16_t, uint8_t, DestType, unpackBGRA16LittleToRGBA8, packingFunc>(static_cast<const uint16_t*>(sourceData), width, height, sourceElementsPerPixel, sourceElementsPerRow, destinationData, destinationElementsPerPixel);
+        unsigned int sourceElementsPerRow = computeSourceElementsPerRow<uint16_t>(width, 8, sourceUnpackAlignment);
+        doUnpackingAndPacking<uint16_t, uint8_t, DestType>(static_cast<const uint16_t*>(sourceData), unpackOneRowOfBGRA16LittleToRGBA8, width, height, sourceElementsPerRow, destinationData, rowPackingFunc, destinationElementsPerPixel);
         break;
     }
     case GraphicsContext3D::SourceFormatBGRA16Big: {
-        unsigned int sourceElementsPerPixel, sourceElementsPerRow;
-        computeIncrementParameters<uint16_t>(width, 8, sourceUnpackAlignment, &sourceElementsPerPixel, &sourceElementsPerRow);
-        doUnpackingAndPacking<uint16_t, uint8_t, DestType, unpackBGRA16BigToRGBA8, packingFunc>(static_cast<const uint16_t*>(sourceData), width, height, sourceElementsPerPixel, sourceElementsPerRow, destinationData, destinationElementsPerPixel);
+        unsigned int sourceElementsPerRow = computeSourceElementsPerRow<uint16_t>(width, 8, sourceUnpackAlignment);
+        doUnpackingAndPacking<uint16_t, uint8_t, DestType>(static_cast<const uint16_t*>(sourceData), unpackOneRowOfBGRA16BigToRGBA8, width, height, sourceElementsPerRow, destinationData, rowPackingFunc, destinationElementsPerPixel);
         break;
     }
     case GraphicsContext3D::SourceFormatRGBA5551: {
-        unsigned int sourceElementsPerPixel, sourceElementsPerRow;
-        computeIncrementParameters<uint16_t>(width, 2, sourceUnpackAlignment, &sourceElementsPerPixel, &sourceElementsPerRow);
-        doUnpackingAndPacking<uint16_t, uint8_t, DestType, unpackRGBA5551ToRGBA8, packingFunc>(static_cast<const uint16_t*>(sourceData), width, height, sourceElementsPerPixel, sourceElementsPerRow, destinationData, destinationElementsPerPixel);
+        unsigned int sourceElementsPerRow = computeSourceElementsPerRow<uint16_t>(width, 2, sourceUnpackAlignment);
+        doUnpackingAndPacking<uint16_t, uint8_t, DestType>(static_cast<const uint16_t*>(sourceData), unpackOneRowOfRGBA5551ToRGBA8, width, height, sourceElementsPerRow, destinationData, rowPackingFunc, destinationElementsPerPixel);
         break;
     }
     case GraphicsContext3D::SourceFormatRGBA4444: {
-        unsigned int sourceElementsPerPixel, sourceElementsPerRow;
-        computeIncrementParameters<uint16_t>(width, 2, sourceUnpackAlignment, &sourceElementsPerPixel, &sourceElementsPerRow);
-        doUnpackingAndPacking<uint16_t, uint8_t, DestType, unpackRGBA4444ToRGBA8, packingFunc>(static_cast<const uint16_t*>(sourceData), width, height, sourceElementsPerPixel, sourceElementsPerRow, destinationData, destinationElementsPerPixel);
+        unsigned int sourceElementsPerRow = computeSourceElementsPerRow<uint16_t>(width, 2, sourceUnpackAlignment);
+        doUnpackingAndPacking<uint16_t, uint8_t, DestType>(static_cast<const uint16_t*>(sourceData), unpackOneRowOfRGBA4444ToRGBA8, width, height, sourceElementsPerRow, destinationData, rowPackingFunc, destinationElementsPerPixel);
         break;
     }
     case GraphicsContext3D::SourceFormatRGB565: {
-        unsigned int sourceElementsPerPixel, sourceElementsPerRow;
-        computeIncrementParameters<uint16_t>(width, 2, sourceUnpackAlignment, &sourceElementsPerPixel, &sourceElementsPerRow);
-        doUnpackingAndPacking<uint16_t, uint8_t, DestType, unpackRGB565ToRGBA8, packingFunc>(static_cast<const uint16_t*>(sourceData), width, height, sourceElementsPerPixel, sourceElementsPerRow, destinationData, destinationElementsPerPixel);
+        unsigned int sourceElementsPerRow = computeSourceElementsPerRow<uint16_t>(width, 2, sourceUnpackAlignment);
+        doUnpackingAndPacking<uint16_t, uint8_t, DestType>(static_cast<const uint16_t*>(sourceData), unpackOneRowOfRGB565ToRGBA8, width, height, sourceElementsPerRow, destinationData, rowPackingFunc, destinationElementsPerPixel);
         break;
     }
     case GraphicsContext3D::SourceFormatR8: {
-        unsigned int sourceElementsPerPixel, sourceElementsPerRow;
-        computeIncrementParameters<uint8_t>(width, 1, sourceUnpackAlignment, &sourceElementsPerPixel, &sourceElementsPerRow);
-        doUnpackingAndPacking<uint8_t, uint8_t, DestType, unpackR8ToRGBA8, packingFunc>(static_cast<const uint8_t*>(sourceData), width, height, sourceElementsPerPixel, sourceElementsPerRow, destinationData, destinationElementsPerPixel);
+        unsigned int sourceElementsPerRow = computeSourceElementsPerRow<uint8_t>(width, 1, sourceUnpackAlignment);
+        doUnpackingAndPacking<uint8_t, uint8_t, DestType>(static_cast<const uint8_t*>(sourceData), unpackOneRowOfR8ToRGBA8, width, height, sourceElementsPerRow, destinationData, rowPackingFunc, destinationElementsPerPixel);
         break;
     }
     case GraphicsContext3D::SourceFormatR16Little: {
-        unsigned int sourceElementsPerPixel, sourceElementsPerRow;
-        computeIncrementParameters<uint16_t>(width, 2, sourceUnpackAlignment, &sourceElementsPerPixel, &sourceElementsPerRow);
-        doUnpackingAndPacking<uint16_t, uint8_t, DestType, unpackR16LittleToRGBA8, packingFunc>(static_cast<const uint16_t*>(sourceData), width, height, sourceElementsPerPixel, sourceElementsPerRow, destinationData, destinationElementsPerPixel);
+        unsigned int sourceElementsPerRow = computeSourceElementsPerRow<uint16_t>(width, 2, sourceUnpackAlignment);
+        doUnpackingAndPacking<uint16_t, uint8_t, DestType>(static_cast<const uint16_t*>(sourceData), unpackOneRowOfR16LittleToRGBA8, width, height, sourceElementsPerRow, destinationData, rowPackingFunc, destinationElementsPerPixel);
         break;
     }
     case GraphicsContext3D::SourceFormatR16Big: {
-        unsigned int sourceElementsPerPixel, sourceElementsPerRow;
-        computeIncrementParameters<uint16_t>(width, 2, sourceUnpackAlignment, &sourceElementsPerPixel, &sourceElementsPerRow);
-        doUnpackingAndPacking<uint16_t, uint8_t, DestType, unpackR16BigToRGBA8, packingFunc>(static_cast<const uint16_t*>(sourceData), width, height, sourceElementsPerPixel, sourceElementsPerRow, destinationData, destinationElementsPerPixel);
+        unsigned int sourceElementsPerRow = computeSourceElementsPerRow<uint16_t>(width, 2, sourceUnpackAlignment);
+        doUnpackingAndPacking<uint16_t, uint8_t, DestType>(static_cast<const uint16_t*>(sourceData), unpackOneRowOfR16BigToRGBA8, width, height, sourceElementsPerRow, destinationData, rowPackingFunc, destinationElementsPerPixel);
         break;
     }
     case GraphicsContext3D::SourceFormatRA8: {
-        unsigned int sourceElementsPerPixel, sourceElementsPerRow;
-        computeIncrementParameters<uint8_t>(width, 2, sourceUnpackAlignment, &sourceElementsPerPixel, &sourceElementsPerRow);
-        doUnpackingAndPacking<uint8_t, uint8_t, DestType, unpackRA8ToRGBA8, packingFunc>(static_cast<const uint8_t*>(sourceData), width, height, sourceElementsPerPixel, sourceElementsPerRow, destinationData, destinationElementsPerPixel);
+        unsigned int sourceElementsPerRow = computeSourceElementsPerRow<uint8_t>(width, 2, sourceUnpackAlignment);
+        doUnpackingAndPacking<uint8_t, uint8_t, DestType>(static_cast<const uint8_t*>(sourceData), unpackOneRowOfRA8ToRGBA8, width, height, sourceElementsPerRow, destinationData, rowPackingFunc, destinationElementsPerPixel);
         break;
     }
     case GraphicsContext3D::SourceFormatRA16Little: {
-        unsigned int sourceElementsPerPixel, sourceElementsPerRow;
-        computeIncrementParameters<uint16_t>(width, 4, sourceUnpackAlignment, &sourceElementsPerPixel, &sourceElementsPerRow);
-        doUnpackingAndPacking<uint16_t, uint8_t, DestType, unpackRA16LittleToRGBA8, packingFunc>(static_cast<const uint16_t*>(sourceData), width, height, sourceElementsPerPixel, sourceElementsPerRow, destinationData, destinationElementsPerPixel);
+        unsigned int sourceElementsPerRow = computeSourceElementsPerRow<uint16_t>(width, 4, sourceUnpackAlignment);
+        doUnpackingAndPacking<uint16_t, uint8_t, DestType>(static_cast<const uint16_t*>(sourceData), unpackOneRowOfRA16LittleToRGBA8, width, height, sourceElementsPerRow, destinationData, rowPackingFunc, destinationElementsPerPixel);
         break;
     }
     case GraphicsContext3D::SourceFormatRA16Big: {
-        unsigned int sourceElementsPerPixel, sourceElementsPerRow;
-        computeIncrementParameters<uint16_t>(width, 4, sourceUnpackAlignment, &sourceElementsPerPixel, &sourceElementsPerRow);
-        doUnpackingAndPacking<uint16_t, uint8_t, DestType, unpackRA16BigToRGBA8, packingFunc>(static_cast<const uint16_t*>(sourceData), width, height, sourceElementsPerPixel, sourceElementsPerRow, destinationData, destinationElementsPerPixel);
+        unsigned int sourceElementsPerRow = computeSourceElementsPerRow<uint16_t>(width, 4, sourceUnpackAlignment);
+        doUnpackingAndPacking<uint16_t, uint8_t, DestType>(static_cast<const uint16_t*>(sourceData), unpackOneRowOfRA16BigToRGBA8, width, height, sourceElementsPerRow, destinationData, rowPackingFunc, destinationElementsPerPixel);
         break;
     }
     case GraphicsContext3D::SourceFormatAR8: {
-        unsigned int sourceElementsPerPixel, sourceElementsPerRow;
-        computeIncrementParameters<uint8_t>(width, 2, sourceUnpackAlignment, &sourceElementsPerPixel, &sourceElementsPerRow);
-        doUnpackingAndPacking<uint8_t, uint8_t, DestType, unpackAR8ToRGBA8, packingFunc>(static_cast<const uint8_t*>(sourceData), width, height, sourceElementsPerPixel, sourceElementsPerRow, destinationData, destinationElementsPerPixel);
+        unsigned int sourceElementsPerRow = computeSourceElementsPerRow<uint8_t>(width, 2, sourceUnpackAlignment);
+        doUnpackingAndPacking<uint8_t, uint8_t, DestType>(static_cast<const uint8_t*>(sourceData), unpackOneRowOfAR8ToRGBA8, width, height, sourceElementsPerRow, destinationData, rowPackingFunc, destinationElementsPerPixel);
         break;
     }
     case GraphicsContext3D::SourceFormatAR16Little: {
-        unsigned int sourceElementsPerPixel, sourceElementsPerRow;
-        computeIncrementParameters<uint16_t>(width, 4, sourceUnpackAlignment, &sourceElementsPerPixel, &sourceElementsPerRow);
-        doUnpackingAndPacking<uint16_t, uint8_t, DestType, unpackAR16LittleToRGBA8, packingFunc>(static_cast<const uint16_t*>(sourceData), width, height, sourceElementsPerPixel, sourceElementsPerRow, destinationData, destinationElementsPerPixel);
+        unsigned int sourceElementsPerRow = computeSourceElementsPerRow<uint16_t>(width, 4, sourceUnpackAlignment);
+        doUnpackingAndPacking<uint16_t, uint8_t, DestType>(static_cast<const uint16_t*>(sourceData), unpackOneRowOfAR16LittleToRGBA8, width, height, sourceElementsPerRow, destinationData, rowPackingFunc, destinationElementsPerPixel);
         break;
     }
     case GraphicsContext3D::SourceFormatAR16Big: {
-        unsigned int sourceElementsPerPixel, sourceElementsPerRow;
-        computeIncrementParameters<uint16_t>(width, 4, sourceUnpackAlignment, &sourceElementsPerPixel, &sourceElementsPerRow);
-        doUnpackingAndPacking<uint16_t, uint8_t, DestType, unpackAR16BigToRGBA8, packingFunc>(static_cast<const uint16_t*>(sourceData), width, height, sourceElementsPerPixel, sourceElementsPerRow, destinationData, destinationElementsPerPixel);
+        unsigned int sourceElementsPerRow = computeSourceElementsPerRow<uint16_t>(width, 4, sourceUnpackAlignment);
+        doUnpackingAndPacking<uint16_t, uint8_t, DestType>(static_cast<const uint16_t*>(sourceData), unpackOneRowOfAR16BigToRGBA8, width, height, sourceElementsPerRow, destinationData, rowPackingFunc, destinationElementsPerPixel);
         break;
     }
     case GraphicsContext3D::SourceFormatA8: {
-        unsigned int sourceElementsPerPixel, sourceElementsPerRow;
-        computeIncrementParameters<uint8_t>(width, 1, sourceUnpackAlignment, &sourceElementsPerPixel, &sourceElementsPerRow);
-        doUnpackingAndPacking<uint8_t, uint8_t, DestType, unpackA8ToRGBA8, packingFunc>(static_cast<const uint8_t*>(sourceData), width, height, sourceElementsPerPixel, sourceElementsPerRow, destinationData, destinationElementsPerPixel);
+        unsigned int sourceElementsPerRow = computeSourceElementsPerRow<uint8_t>(width, 1, sourceUnpackAlignment);
+        doUnpackingAndPacking<uint8_t, uint8_t, DestType>(static_cast<const uint8_t*>(sourceData), unpackOneRowOfA8ToRGBA8, width, height, sourceElementsPerRow, destinationData, rowPackingFunc, destinationElementsPerPixel);
         break;
     }
     case GraphicsContext3D::SourceFormatA16Little: {
-        unsigned int sourceElementsPerPixel, sourceElementsPerRow;
-        computeIncrementParameters<uint16_t>(width, 2, sourceUnpackAlignment, &sourceElementsPerPixel, &sourceElementsPerRow);
-        doUnpackingAndPacking<uint16_t, uint8_t, DestType, unpackA16LittleToRGBA8, packingFunc>(static_cast<const uint16_t*>(sourceData), width, height, sourceElementsPerPixel, sourceElementsPerRow, destinationData, destinationElementsPerPixel);
+        unsigned int sourceElementsPerRow = computeSourceElementsPerRow<uint16_t>(width, 2, sourceUnpackAlignment);
+        doUnpackingAndPacking<uint16_t, uint8_t, DestType>(static_cast<const uint16_t*>(sourceData), unpackOneRowOfA16LittleToRGBA8, width, height, sourceElementsPerRow, destinationData, rowPackingFunc, destinationElementsPerPixel);
         break;
     }
     case GraphicsContext3D::SourceFormatA16Big: {
-        unsigned int sourceElementsPerPixel, sourceElementsPerRow;
-        computeIncrementParameters<uint16_t>(width, 2, sourceUnpackAlignment, &sourceElementsPerPixel, &sourceElementsPerRow);
-        doUnpackingAndPacking<uint16_t, uint8_t, DestType, unpackA16BigToRGBA8, packingFunc>(static_cast<const uint16_t*>(sourceData), width, height, sourceElementsPerPixel, sourceElementsPerRow, destinationData, destinationElementsPerPixel);
+        unsigned int sourceElementsPerRow = computeSourceElementsPerRow<uint16_t>(width, 2, sourceUnpackAlignment);
+        doUnpackingAndPacking<uint16_t, uint8_t, DestType>(static_cast<const uint16_t*>(sourceData), unpackOneRowOfA16BigToRGBA8, width, height, sourceElementsPerRow, destinationData, rowPackingFunc, destinationElementsPerPixel);
         break;
     }
     default:
@@ -1163,52 +1364,46 @@ static void doPacking(const void* sourceData,
 // does not need to be as general as doPacking, above; because there are
 // currently no native floating-point image formats in WebKit, there are only a
 // few upload paths.
-template<void packingFunc(const float*, float*)>
 static void doFloatingPointPacking(const void* sourceData,
                                    GraphicsContext3D::SourceDataFormat sourceDataFormat,
                                    unsigned int width,
                                    unsigned int height,
                                    unsigned int sourceUnpackAlignment,
                                    float* destinationData,
+                                   void rowPackingFunc(const float*, float*, unsigned int),
                                    unsigned int destinationElementsPerPixel)
 {
     switch (sourceDataFormat) {
     case GraphicsContext3D::SourceFormatRGBA8: {
-        unsigned int sourceElementsPerPixel, sourceElementsPerRow;
-        computeIncrementParameters<float>(width, 4, sourceUnpackAlignment, &sourceElementsPerPixel, &sourceElementsPerRow);
-        ASSERT(!sourceElementsPerRow); // Guaranteed because each color channel is sizeof(float) bytes.
+        unsigned int sourceElementsPerRow = computeSourceElementsPerRow<float>(width, 4, sourceUnpackAlignment);
         const float* source = static_cast<const float*>(sourceData);
-        unsigned int numElements = width * height * 4;
-        const float* endPointer = source + numElements;
+        const float* endPointer = source + height * sourceElementsPerRow;
+        unsigned int destinationElementsPerRow = width * destinationElementsPerPixel;
         while (source < endPointer) {
-            packingFunc(source, destinationData);
-            source += sourceElementsPerPixel;
-            destinationData += destinationElementsPerPixel;
+            rowPackingFunc(source, destinationData, width);
+            source += sourceElementsPerRow;
+            destinationData += destinationElementsPerRow;
         }
         break;
     }
     case GraphicsContext3D::SourceFormatRGB32F: {
-        unsigned int sourceElementsPerPixel, sourceElementsPerRow;
-        computeIncrementParameters<float>(width, 3, sourceUnpackAlignment, &sourceElementsPerPixel, &sourceElementsPerRow);
-        doUnpackingAndPacking<float, float, float, unpackRGB32FToRGBA32F, packingFunc>(static_cast<const float*>(sourceData), width, height, sourceElementsPerPixel, sourceElementsPerRow, destinationData, destinationElementsPerPixel);
+        unsigned int sourceElementsPerRow = computeSourceElementsPerRow<float>(width, 3, sourceUnpackAlignment);
+        doUnpackingAndPacking<float, float, float>(static_cast<const float*>(sourceData), unpackOneRowOfRGB32FToRGBA32F, width, height, sourceElementsPerRow, destinationData, rowPackingFunc, destinationElementsPerPixel);
         break;
     }
     case GraphicsContext3D::SourceFormatR32F: {
-        unsigned int sourceElementsPerPixel, sourceElementsPerRow;
-        computeIncrementParameters<float>(width, 1, sourceUnpackAlignment, &sourceElementsPerPixel, &sourceElementsPerRow);
-        doUnpackingAndPacking<float, float, float, unpackR32FToRGBA32F, packingFunc>(static_cast<const float*>(sourceData), width, height, sourceElementsPerPixel, sourceElementsPerRow, destinationData, destinationElementsPerPixel);
+        unsigned int sourceElementsPerRow = computeSourceElementsPerRow<float>(width, 1, sourceUnpackAlignment);
+        doUnpackingAndPacking<float, float, float>(static_cast<const float*>(sourceData), unpackOneRowOfR32FToRGBA32F, width, height, sourceElementsPerRow, destinationData, rowPackingFunc, destinationElementsPerPixel);
         break;
     }
     case GraphicsContext3D::SourceFormatRA32F: {
-        unsigned int sourceElementsPerPixel, sourceElementsPerRow;
-        computeIncrementParameters<float>(width, 2, sourceUnpackAlignment, &sourceElementsPerPixel, &sourceElementsPerRow);
-        doUnpackingAndPacking<float, float, float, unpackRA32FToRGBA32F, packingFunc>(static_cast<const float*>(sourceData), width, height, sourceElementsPerPixel, sourceElementsPerRow, destinationData, destinationElementsPerPixel);
+        unsigned int sourceElementsPerRow = computeSourceElementsPerRow<float>(width, 2, sourceUnpackAlignment);
+        doUnpackingAndPacking<float, float, float>(static_cast<const float*>(sourceData), unpackOneRowOfRA32FToRGBA32F, width, height, sourceElementsPerRow, destinationData, rowPackingFunc, destinationElementsPerPixel);
         break;
     }
     case GraphicsContext3D::SourceFormatA32F: {
-        unsigned int sourceElementsPerPixel, sourceElementsPerRow;
-        computeIncrementParameters<float>(width, 1, sourceUnpackAlignment, &sourceElementsPerPixel, &sourceElementsPerRow);
-        doUnpackingAndPacking<float, float, float, unpackA32FToRGBA32F, packingFunc>(static_cast<const float*>(sourceData), width, height, sourceElementsPerPixel, sourceElementsPerRow, destinationData, destinationElementsPerPixel);
+        unsigned int sourceElementsPerRow = computeSourceElementsPerRow<float>(width, 1, sourceUnpackAlignment);
+        doUnpackingAndPacking<float, float, float>(static_cast<const float*>(sourceData), unpackOneRowOfA32FToRGBA32F, width, height, sourceElementsPerRow, destinationData, rowPackingFunc, destinationElementsPerPixel);
         break;
     }
     default:
@@ -1238,13 +1433,13 @@ bool GraphicsContext3D::packPixels(const uint8_t* sourceData,
         case RGB:
             switch (alphaOp) {
             case AlphaDoNothing:
-                doPacking<uint8_t, packRGBA8ToRGB8>(sourceData, sourceDataFormat, width, height, sourceUnpackAlignment, destination, 3);
+                doPacking<uint8_t>(sourceData, sourceDataFormat, width, height, sourceUnpackAlignment, destination, packOneRowOfRGBA8ToRGB8, 3);
                 break;
             case AlphaDoPremultiply:
-                doPacking<uint8_t, packRGBA8ToRGB8Premultiply>(sourceData, sourceDataFormat, width, height, sourceUnpackAlignment, destination, 3);
+                doPacking<uint8_t>(sourceData, sourceDataFormat, width, height, sourceUnpackAlignment, destination, packOneRowOfRGBA8ToRGB8Premultiply, 3);
                 break;
             case AlphaDoUnmultiply:
-                doPacking<uint8_t, packRGBA8ToRGB8Unmultiply>(sourceData, sourceDataFormat, width, height, sourceUnpackAlignment, destination, 3);
+                doPacking<uint8_t>(sourceData, sourceDataFormat, width, height, sourceUnpackAlignment, destination, packOneRowOfRGBA8ToRGB8Unmultiply, 3);
                 break;
             }
             break;
@@ -1252,13 +1447,13 @@ bool GraphicsContext3D::packPixels(const uint8_t* sourceData,
             switch (alphaOp) {
             case AlphaDoNothing:
                 ASSERT(sourceDataFormat != SourceFormatRGBA8 || sourceUnpackAlignment > 4); // Handled above with fast case.
-                doPacking<uint8_t, packRGBA8ToRGBA8>(sourceData, sourceDataFormat, width, height, sourceUnpackAlignment, destination, 4);
+                doPacking<uint8_t>(sourceData, sourceDataFormat, width, height, sourceUnpackAlignment, destination, packOneRowOfRGBA8ToRGBA8, 4);
                 break;
             case AlphaDoPremultiply:
-                doPacking<uint8_t, packRGBA8ToRGBA8Premultiply>(sourceData, sourceDataFormat, width, height, sourceUnpackAlignment, destination, 4);
+                doPacking<uint8_t>(sourceData, sourceDataFormat, width, height, sourceUnpackAlignment, destination, packOneRowOfRGBA8ToRGBA8Premultiply, 4);
                 break;
             case AlphaDoUnmultiply:
-                doPacking<uint8_t, packRGBA8ToRGBA8Unmultiply>(sourceData, sourceDataFormat, width, height, sourceUnpackAlignment, destination, 4);
+                doPacking<uint8_t>(sourceData, sourceDataFormat, width, height, sourceUnpackAlignment, destination, packOneRowOfRGBA8ToRGBA8Unmultiply, 4);
                 break;
             default:
                 ASSERT_NOT_REACHED();
@@ -1268,7 +1463,7 @@ bool GraphicsContext3D::packPixels(const uint8_t* sourceData,
             // From the desktop OpenGL conversion rules (OpenGL 2.1
             // specification, Table 3.15), the alpha channel is chosen
             // from the RGBA data.
-            doPacking<uint8_t, packRGBA8ToA8>(sourceData, sourceDataFormat, width, height, sourceUnpackAlignment, destination, 1);
+            doPacking<uint8_t>(sourceData, sourceDataFormat, width, height, sourceUnpackAlignment, destination, packOneRowOfRGBA8ToA8, 1);
             break;
         case LUMINANCE:
             // From the desktop OpenGL conversion rules (OpenGL 2.1
@@ -1276,13 +1471,13 @@ bool GraphicsContext3D::packPixels(const uint8_t* sourceData,
             // from the RGBA data.
             switch (alphaOp) {
             case AlphaDoNothing:
-                doPacking<uint8_t, packRGBA8ToR8>(sourceData, sourceDataFormat, width, height, sourceUnpackAlignment, destination, 1);
+                doPacking<uint8_t>(sourceData, sourceDataFormat, width, height, sourceUnpackAlignment, destination, packOneRowOfRGBA8ToR8, 1);
                 break;
             case AlphaDoPremultiply:
-                doPacking<uint8_t, packRGBA8ToR8Premultiply>(sourceData, sourceDataFormat, width, height, sourceUnpackAlignment, destination, 1);
+                doPacking<uint8_t>(sourceData, sourceDataFormat, width, height, sourceUnpackAlignment, destination, packOneRowOfRGBA8ToR8Premultiply, 1);
                 break;
             case AlphaDoUnmultiply:
-                doPacking<uint8_t, packRGBA8ToR8Unmultiply>(sourceData, sourceDataFormat, width, height, sourceUnpackAlignment, destination, 1);
+                doPacking<uint8_t>(sourceData, sourceDataFormat, width, height, sourceUnpackAlignment, destination, packOneRowOfRGBA8ToR8Unmultiply, 1);
                 break;
             }
             break;
@@ -1292,13 +1487,13 @@ bool GraphicsContext3D::packPixels(const uint8_t* sourceData,
             // are chosen from the RGBA data.
             switch (alphaOp) {
             case AlphaDoNothing:
-                doPacking<uint8_t, packRGBA8ToRA8>(sourceData, sourceDataFormat, width, height, sourceUnpackAlignment, destination, 2);
+                doPacking<uint8_t>(sourceData, sourceDataFormat, width, height, sourceUnpackAlignment, destination, packOneRowOfRGBA8ToRA8, 2);
                 break;
             case AlphaDoPremultiply:
-                doPacking<uint8_t, packRGBA8ToRA8Premultiply>(sourceData, sourceDataFormat, width, height, sourceUnpackAlignment, destination, 2);
+                doPacking<uint8_t>(sourceData, sourceDataFormat, width, height, sourceUnpackAlignment, destination, packOneRowOfRGBA8ToRA8Premultiply, 2);
                 break;
             case AlphaDoUnmultiply:
-                doPacking<uint8_t, packRGBA8ToRA8Unmultiply>(sourceData, sourceDataFormat, width, height, sourceUnpackAlignment, destination, 2);
+                doPacking<uint8_t>(sourceData, sourceDataFormat, width, height, sourceUnpackAlignment, destination, packOneRowOfRGBA8ToRA8Unmultiply, 2);
                 break;
             }
             break;
@@ -1309,13 +1504,13 @@ bool GraphicsContext3D::packPixels(const uint8_t* sourceData,
         uint16_t* destination = static_cast<uint16_t*>(destinationData);
         switch (alphaOp) {
         case AlphaDoNothing:
-            doPacking<uint16_t, packRGBA8ToUnsignedShort4444>(sourceData, sourceDataFormat, width, height, sourceUnpackAlignment, destination, 1);
+            doPacking<uint16_t>(sourceData, sourceDataFormat, width, height, sourceUnpackAlignment, destination, packOneRowOfRGBA8ToUnsignedShort4444, 1);
             break;
         case AlphaDoPremultiply:
-            doPacking<uint16_t, packRGBA8ToUnsignedShort4444Premultiply>(sourceData, sourceDataFormat, width, height, sourceUnpackAlignment, destination, 1);
+            doPacking<uint16_t>(sourceData, sourceDataFormat, width, height, sourceUnpackAlignment, destination, packOneRowOfRGBA8ToUnsignedShort4444Premultiply, 1);
             break;
         case AlphaDoUnmultiply:
-            doPacking<uint16_t, packRGBA8ToUnsignedShort4444Unmultiply>(sourceData, sourceDataFormat, width, height, sourceUnpackAlignment, destination, 1);
+            doPacking<uint16_t>(sourceData, sourceDataFormat, width, height, sourceUnpackAlignment, destination, packOneRowOfRGBA8ToUnsignedShort4444Unmultiply, 1);
             break;
         }
         break;
@@ -1324,13 +1519,13 @@ bool GraphicsContext3D::packPixels(const uint8_t* sourceData,
         uint16_t* destination = static_cast<uint16_t*>(destinationData);
         switch (alphaOp) {
         case AlphaDoNothing:
-            doPacking<uint16_t, packRGBA8ToUnsignedShort5551>(sourceData, sourceDataFormat, width, height, sourceUnpackAlignment, destination, 1);
+            doPacking<uint16_t>(sourceData, sourceDataFormat, width, height, sourceUnpackAlignment, destination, packOneRowOfRGBA8ToUnsignedShort5551, 1);
             break;
         case AlphaDoPremultiply:
-            doPacking<uint16_t, packRGBA8ToUnsignedShort5551Premultiply>(sourceData, sourceDataFormat, width, height, sourceUnpackAlignment, destination, 1);
+            doPacking<uint16_t>(sourceData, sourceDataFormat, width, height, sourceUnpackAlignment, destination, packOneRowOfRGBA8ToUnsignedShort5551Premultiply, 1);
             break;
         case AlphaDoUnmultiply:
-            doPacking<uint16_t, packRGBA8ToUnsignedShort5551Unmultiply>(sourceData, sourceDataFormat, width, height, sourceUnpackAlignment, destination, 1);
+            doPacking<uint16_t>(sourceData, sourceDataFormat, width, height, sourceUnpackAlignment, destination, packOneRowOfRGBA8ToUnsignedShort5551Unmultiply, 1);
             break;
         }
         break;
@@ -1339,13 +1534,13 @@ bool GraphicsContext3D::packPixels(const uint8_t* sourceData,
         uint16_t* destination = static_cast<uint16_t*>(destinationData);
         switch (alphaOp) {
         case AlphaDoNothing:
-            doPacking<uint16_t, packRGBA8ToUnsignedShort565>(sourceData, sourceDataFormat, width, height, sourceUnpackAlignment, destination, 1);
+            doPacking<uint16_t>(sourceData, sourceDataFormat, width, height, sourceUnpackAlignment, destination, packOneRowOfRGBA8ToUnsignedShort565, 1);
             break;
         case AlphaDoPremultiply:
-            doPacking<uint16_t, packRGBA8ToUnsignedShort565Premultiply>(sourceData, sourceDataFormat, width, height, sourceUnpackAlignment, destination, 1);
+            doPacking<uint16_t>(sourceData, sourceDataFormat, width, height, sourceUnpackAlignment, destination, packOneRowOfRGBA8ToUnsignedShort565Premultiply, 1);
             break;
         case AlphaDoUnmultiply:
-            doPacking<uint16_t, packRGBA8ToUnsignedShort565Unmultiply>(sourceData, sourceDataFormat, width, height, sourceUnpackAlignment, destination, 1);
+            doPacking<uint16_t>(sourceData, sourceDataFormat, width, height, sourceUnpackAlignment, destination, packOneRowOfRGBA8ToUnsignedShort565Unmultiply, 1);
             break;
         }
         break;
@@ -1378,10 +1573,10 @@ bool GraphicsContext3D::packPixels(const uint8_t* sourceData,
         case RGB:
             switch (alphaOp) {
             case AlphaDoNothing:
-                doFloatingPointPacking<packRGBA32FToRGB32F>(sourceData, sourceDataFormat, width, height, sourceUnpackAlignment, destination, 3);
+                doFloatingPointPacking(sourceData, sourceDataFormat, width, height, sourceUnpackAlignment, destination, packOneRowOfRGBA32FToRGB32F, 3);
                 break;
             case AlphaDoPremultiply:
-                doFloatingPointPacking<packRGBA32FToRGB32FPremultiply>(sourceData, sourceDataFormat, width, height, sourceUnpackAlignment, destination, 3);
+                doFloatingPointPacking(sourceData, sourceDataFormat, width, height, sourceUnpackAlignment, destination, packOneRowOfRGBA32FToRGB32FPremultiply, 3);
                 break;
             default:
                 ASSERT_NOT_REACHED();
@@ -1390,13 +1585,13 @@ bool GraphicsContext3D::packPixels(const uint8_t* sourceData,
         case RGBA:
             // AlphaDoNothing is handled above with fast path.
             ASSERT(alphaOp == AlphaDoPremultiply);
-            doFloatingPointPacking<packRGBA32FToRGBA32FPremultiply>(sourceData, sourceDataFormat, width, height, sourceUnpackAlignment, destination, 4);
+            doFloatingPointPacking(sourceData, sourceDataFormat, width, height, sourceUnpackAlignment, destination, packOneRowOfRGBA32FToRGBA32FPremultiply, 4);
             break;
         case ALPHA:
             // From the desktop OpenGL conversion rules (OpenGL 2.1
             // specification, Table 3.15), the alpha channel is chosen
             // from the RGBA data.
-            doFloatingPointPacking<packRGBA32FToA32F>(sourceData, sourceDataFormat, width, height, sourceUnpackAlignment, destination, 1);
+            doFloatingPointPacking(sourceData, sourceDataFormat, width, height, sourceUnpackAlignment, destination, packOneRowOfRGBA32FToA32F, 1);
             break;
         case LUMINANCE:
             // From the desktop OpenGL conversion rules (OpenGL 2.1
@@ -1404,10 +1599,10 @@ bool GraphicsContext3D::packPixels(const uint8_t* sourceData,
             // from the RGBA data.
             switch (alphaOp) {
             case AlphaDoNothing:
-                doFloatingPointPacking<packRGBA32FToR32F>(sourceData, sourceDataFormat, width, height, sourceUnpackAlignment, destination, 1);
+                doFloatingPointPacking(sourceData, sourceDataFormat, width, height, sourceUnpackAlignment, destination, packOneRowOfRGBA32FToR32F, 1);
                 break;
             case AlphaDoPremultiply:
-                doFloatingPointPacking<packRGBA32FToR32FPremultiply>(sourceData, sourceDataFormat, width, height, sourceUnpackAlignment, destination, 1);
+                doFloatingPointPacking(sourceData, sourceDataFormat, width, height, sourceUnpackAlignment, destination, packOneRowOfRGBA32FToR32FPremultiply, 1);
                 break;
             default:
                 ASSERT_NOT_REACHED();
@@ -1419,10 +1614,10 @@ bool GraphicsContext3D::packPixels(const uint8_t* sourceData,
             // are chosen from the RGBA data.
             switch (alphaOp) {
             case AlphaDoNothing:
-                doFloatingPointPacking<packRGBA32FToRA32F>(sourceData, sourceDataFormat, width, height, sourceUnpackAlignment, destination, 2);
+                doFloatingPointPacking(sourceData, sourceDataFormat, width, height, sourceUnpackAlignment, destination, packOneRowOfRGBA32FToRA32F, 2);
                 break;
             case AlphaDoPremultiply:
-                doFloatingPointPacking<packRGBA32FToRA32FPremultiply>(sourceData, sourceDataFormat, width, height, sourceUnpackAlignment, destination, 2);
+                doFloatingPointPacking(sourceData, sourceDataFormat, width, height, sourceUnpackAlignment, destination, packOneRowOfRGBA32FToRA32FPremultiply, 2);
                 break;
             default:
                 ASSERT_NOT_REACHED();
