@@ -1,3 +1,13 @@
+2011-04-20  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Maciej Stachowiak.
+
+        <rdar://problem/9095366> With a non-1 page scale, scrolling to reveal selection fails
+        https://bugs.webkit.org/show_bug.cgi?id=59046
+
+        * fast/transforms/selection-bounds-in-transformed-view-expected.txt: Added.
+        * fast/transforms/selection-bounds-in-transformed-view.html: Added.
+
 2011-04-20  Dirk Pranke  <dpranke@chromium.org>
 
         Unreviewed, expectations change.

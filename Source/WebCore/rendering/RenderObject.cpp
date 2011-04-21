@@ -1157,8 +1157,12 @@ void RenderObject::repaintUsingContainer(RenderBoxModelObject* repaintContainer,
     RenderView* v = view();
     if (repaintContainer->isRenderView()) {
         ASSERT(repaintContainer == v);
-        if (!v->hasLayer() || !v->layer()->isComposited() || v->layer()->backing()->paintingGoesToWindow()) {
-            v->repaintViewRectangle(r, immediate);
+        bool viewHasCompositedLayer = v->hasLayer() && v->layer()->isComposited();
+        if (!viewHasCompositedLayer || v->layer()->backing()->paintingGoesToWindow()) {
+            IntRect repaintRectangle = r;
+            if (viewHasCompositedLayer &&  v->layer()->transform())
+                repaintRectangle = v->layer()->transform()->mapRect(r);
+            v->repaintViewRectangle(repaintRectangle, immediate);
             return;
         }
     }

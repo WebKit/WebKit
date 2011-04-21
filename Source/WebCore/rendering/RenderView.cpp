@@ -140,9 +140,9 @@ void RenderView::mapLocalToContainer(RenderBoxModelObject* repaintContainer, boo
 {
     // If a container was specified, and was not 0 or the RenderView,
     // then we should have found it by now.
-    ASSERT_UNUSED(repaintContainer, !repaintContainer || repaintContainer == this);
+    ASSERT_ARG(repaintContainer, !repaintContainer || repaintContainer == this);
 
-    if (useTransforms && shouldUseTransformFromContainer(0)) {
+    if (!repaintContainer && useTransforms && shouldUseTransformFromContainer(0)) {
         TransformationMatrix t;
         getTransformFromContainer(0, IntSize(), t);
         transformState.applyTransform(t);
@@ -299,7 +299,7 @@ void RenderView::computeRectForRepaint(RenderBoxModelObject* repaintContainer, I
 {
     // If a container was specified, and was not 0 or the RenderView,
     // then we should have found it by now.
-    ASSERT_UNUSED(repaintContainer, !repaintContainer || repaintContainer == this);
+    ASSERT_ARG(repaintContainer, !repaintContainer || repaintContainer == this);
 
     if (printing())
         return;
@@ -317,7 +317,7 @@ void RenderView::computeRectForRepaint(RenderBoxModelObject* repaintContainer, I
         rect.move(m_frameView->scrollXForFixedPosition(), m_frameView->scrollYForFixedPosition());
         
     // Apply our transform if we have one (because of full page zooming).
-    if (m_layer && m_layer->transform())
+    if (!repaintContainer && m_layer && m_layer->transform())
         rect = m_layer->transform()->mapRect(rect);
 }
 

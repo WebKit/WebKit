@@ -1,5 +1,24 @@
 2011-04-20  Dan Bernstein  <mitz@apple.com>
 
+        Reviewed by Maciej Stachowiak.
+
+        <rdar://problem/9095366> With a non-1 page scale, scrolling to reveal selection fails
+        https://bugs.webkit.org/show_bug.cgi?id=59046
+
+        Test: fast/transforms/selection-bounds-in-transformed-view.html
+
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::repaintUsingContainer): If the repaint container is the RenderView, and
+        it has a composited layer that paints straight to the window, then translate from view coordinates
+        to window coordinates here.
+        * rendering/RenderView.cpp:
+        (WebCore::RenderView::mapLocalToContainer): Do not apply our transform if we are the painting root.
+        (WebCore::RenderView::computeRectForRepaint): Ditto. Applying the transform here was compensating
+        for not applying it in RenderObject::repaintUsingContainer(), but for purposes other than repainting,
+        such as computing selection bounds, this function was returning the wrong results.
+
+2011-04-20  Dan Bernstein  <mitz@apple.com>
+
         Reviewed by Eric Carlson.
 
         <rdar://problem/9304956> media/broken-video.html crashes
