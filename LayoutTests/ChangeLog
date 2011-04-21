@@ -1,3 +1,29 @@
+2011-04-21  Tony Chang  <tony@chromium.org>
+
+        Embed checksums in more png files.  Not sure how these were missed earlier.
+
+        * animations/missing-values-first-keyframe-expected.png:
+        * animations/missing-values-last-keyframe-expected.png:
+        * animations/opacity-transform-animation-expected.png:
+        * animations/suspend-transform-animation-expected.png:
+        * compositing/backface-visibility-expected.png:
+        * compositing/checkerboard-expected.png:
+        * compositing/geometry/ancestor-overflow-change-expected.png:
+        * compositing/geometry/tall-page-composited-expected.png:
+        * compositing/iframes/composited-iframe-scroll-expected.png:
+        * compositing/iframes/iframe-content-flipping-expected.png:
+        * compositing/iframes/nested-iframe-scrolling-expected.png:
+        * compositing/images/direct-pdf-image-expected.png:
+        * compositing/images/direct-svg-image-expected.png:
+        * compositing/overflow/zero-size-overflow-expected.png:
+        * compositing/reflections/backface-hidden-reflection-expected.png:
+        * compositing/reflections/remove-add-reflection-expected.png:
+        * compositing/tiling/constrained-layer-size-expected.png:
+        * compositing/z-order/negative-z-index-expected.png:
+        * transforms/3d/general/cssmatrix-3d-zoom-expected.png:
+        * transforms/3d/general/matrix-with-zoom-3d-expected.png:
+        * transitions/suspend-transform-transition-expected.png:
+
 2011-04-21  Dirk Pranke  <dpranke@chromium.org>
 
         Unreviewed, expectations change - update chromium SVG baselines
