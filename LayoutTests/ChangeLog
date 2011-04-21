@@ -1,3 +1,12 @@
+2011-04-21  Philippe Normand  <pnormand@igalia.com>
+
+        Unreviewed, GTK baselines for
+        http/tests/security/contentSecurityPolicy tests that don't escape
+        the quote character.
+
+        * platform/gtk/http/tests/security/contentSecurityPolicy/report-uri-expected.txt: Added.
+        * platform/gtk/http/tests/security/contentSecurityPolicy/report-uri-from-child-frame-expected.txt: Added.
+
 2011-04-21  Csaba Osztrogonác  <ossy@webkit.org>
 
         [Qt] Missing eventSender.scalePageBy() implementation
