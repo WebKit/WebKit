@@ -683,7 +683,7 @@ BUGCR77630 WIN LINUX DEBUG SLOW : inspector/debugger/debugger-activation-crash.h
 // a caret in editable document even when none was requested programatically.
 // We don't intend to copy this feature (at least not for Beta).
 BUGCR20844 LINUX WIN RELEASE : editing/selection/designmode-no-caret.html = FAIL
-BUGCR20844 LINUX WIN DEBUG : editing/selection/designmode-no-caret.html = FAIL
+//BUGCR20844 LINUX WIN DEBUG : editing/selection/designmode-no-caret.html = FAIL
 
 // Regression from merge 41268:41286
 BUGCR10435 MAC : editing/selection/designmode-no-caret.html = FAIL
@@ -3838,3 +3838,10 @@ BUGDPRANKE WIN: http/tests/misc/empty-file-formdata.html = TIMEOUT PASS
 BUGDPRANKE WIN: http/tests/xmlhttprequest/access-control-preflight-headers-async.html = TIMEOUT PASS
 
 BUGDPRANKE WIN : http/tests/mime/standard-mode-does-not-load-stylesheet-with-text-plain.html = TIMEOUT PASS
+BUGDPRANKE DEBUG WIN LINUX : http/tests/misc/acid2-pixel.html = CRASH
+BUGDPRANKE MAC DEBUG : fast/css/only-of-type-pseudo-class.html = TEXT PASS
+BUGDPRANKE MAC DEBUG : fast/css/getPropertyValue-border.html = CRASH
+BUGDPRANKE LINUX DEBUG : editing/pasteboard/merge-end-3.html = CRASH
+BUGDPRANKE LINUX DEBUG : editing/selection/designmode-no-caret.html = CRASH
+BUGDPRANKE LINUX DEBUG : fullscreen/full-screen-iframe-allowed.html = TEXT PASS
+BUGDPRANKE LINUX DEBUG : jquery/deferred.html = TEXT PASS

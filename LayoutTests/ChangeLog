@@ -1,3 +1,12 @@
+2011-04-20  Dirk Pranke  <dpranke@chromium.org>
+
+        Unreviewed, expectations change.
+
+        Merge forward more suppressions from the chromium overrides
+        file.
+
+        * platform/chromium/test_expectations.txt:
+
 2011-04-20  Andy Estes  <aestes@apple.com>
 
         Reviewed by Maciej Stachowiak.
