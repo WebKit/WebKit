@@ -1,5 +1,14 @@
 2011-04-20  Gavin Barraclough  <barraclough@apple.com>
 
+        Rubber stamped by Geoff Garen
+
+        Bug 59069 - DFG JIT - register allocate r8, r9, r10
+
+        * dfg/DFGJITCompiler.h:
+        (JSC::DFG::JITCompiler::gprToRegisterID):
+
+2011-04-20  Gavin Barraclough  <barraclough@apple.com>
+
         Build fix - revert accidental change.
 
         * wtf/Platform.h:

@@ -51,7 +51,7 @@ struct SpeculationCheck;
 
 // Abstracted sequential numbering of available machine registers (as opposed to MacroAssembler::RegisterID,
 // which are non-sequential, and not abstracted from the register numbering used by the underlying processor).
-enum GPRReg { gpr0, gpr1, gpr2, gpr3, gpr4, gpr5, numberOfGPRs, InvalidGPRReg = 0xFFFFFFFF };
+enum GPRReg { gpr0, gpr1, gpr2, gpr3, gpr4, gpr5, gpr6, gpr7, gpr8, numberOfGPRs, InvalidGPRReg = 0xFFFFFFFF };
 enum FPRReg { fpr0, fpr1, fpr2, fpr3, fpr4, fpr5, numberOfFPRs, InvalidFPRReg = 0xFFFFFFFF };
 
 // GPRReg/FPRReg are enum types to provide type checking at compile time, use these method to iterate.
@@ -137,6 +137,9 @@ public:
     static const RegisterID regT3 = X86Registers::ebx;
     static const RegisterID regT4 = X86Registers::edi;
     static const RegisterID regT5 = X86Registers::esi;
+    static const RegisterID regT6 = X86Registers::r8;
+    static const RegisterID regT7 = X86Registers::r9;
+    static const RegisterID regT8 = X86Registers::r10;
     static const FPRegisterID fpRegT0 = X86Registers::xmm0;
     static const FPRegisterID fpRegT1 = X86Registers::xmm1;
     static const FPRegisterID fpRegT2 = X86Registers::xmm2;
@@ -222,7 +225,7 @@ public:
     static RegisterID gprToRegisterID(GPRReg reg)
     {
         ASSERT(reg < numberOfGPRs);
-        static const RegisterID idForRegister[numberOfGPRs] = { regT0, regT1, regT2, regT3, regT4, regT5 };
+        static const RegisterID idForRegister[numberOfGPRs] = { regT0, regT1, regT2, regT3, regT4, regT5, regT6, regT7, regT8 };
         return idForRegister[reg];
     }
     static FPRegisterID fprToRegisterID(FPRReg reg)
