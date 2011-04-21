@@ -53,6 +53,7 @@ inline bool isNumberedHeaderElement(ContainerNode* node)
 inline bool isRootNode(ContainerNode* node)
 {
     return node->nodeType() == Node::DOCUMENT_FRAGMENT_NODE
+        || node->nodeType() == Node::SHADOW_ROOT_NODE
         || node->hasTagName(htmlTag);
 }
 
@@ -281,7 +282,7 @@ void HTMLElementStack::popUntilForeignContentScopeMarker()
     
 void HTMLElementStack::pushRootNode(PassRefPtr<ContainerNode> rootNode)
 {
-    ASSERT(rootNode->nodeType() == Node::DOCUMENT_FRAGMENT_NODE);
+    ASSERT(rootNode->nodeType() == Node::DOCUMENT_FRAGMENT_NODE || rootNode->nodeType() == Node::SHADOW_ROOT_NODE);
     pushRootNodeCommon(rootNode);
 }
 

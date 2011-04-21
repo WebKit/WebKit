@@ -86,6 +86,7 @@ bool isValidContextNode(Node* node)
         case Node::ENTITY_NODE:
         case Node::ENTITY_REFERENCE_NODE:
         case Node::NOTATION_NODE:
+        case Node::SHADOW_ROOT_NODE:
             return false;
         case Node::TEXT_NODE:
             return !(node->parentNode() && node->parentNode()->isAttributeNode());

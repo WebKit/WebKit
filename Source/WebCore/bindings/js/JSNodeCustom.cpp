@@ -291,11 +291,10 @@ static ALWAYS_INLINE JSValue createWrapperInline(ExecState* exec, JSDOMGlobalObj
             wrapper = CREATE_DOM_NODE_WRAPPER(exec, globalObject, Notation, node);
             break;
         case Node::DOCUMENT_FRAGMENT_NODE:
-            // FIXME: remove 'if' once ShadowRoot gets its own node type (see bug 58704)
-            if (node->isShadowBoundary())
-                wrapper = CREATE_DOM_NODE_WRAPPER(exec, globalObject, Node, node);
-            else
-                wrapper = CREATE_DOM_NODE_WRAPPER(exec, globalObject, DocumentFragment, node);
+            wrapper = CREATE_DOM_NODE_WRAPPER(exec, globalObject, DocumentFragment, node);
+            break;
+        case Node::SHADOW_ROOT_NODE:
+            wrapper = CREATE_DOM_NODE_WRAPPER(exec, globalObject, Node, node);
             break;
         case Node::ENTITY_REFERENCE_NODE:
             wrapper = CREATE_DOM_NODE_WRAPPER(exec, globalObject, EntityReference, node);

@@ -1,3 +1,15 @@
+2011-04-20  Roland Steiner  <rolandsteiner@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        Bug 58704 - Decide on node type for ShadowRoot
+        https://bugs.webkit.org/show_bug.cgi?id=58704
+
+        Test node types of shadow host, shadow root and first shadow child.
+
+        * fast/dom/shadow/nodetype-expected.txt: Added.
+        * fast/dom/shadow/nodetype.html: Added.
+
 2011-04-20  Dimitri Glazkov  <dglazkov@chromium.org>
 
         Reviewed by Kent Tamura.

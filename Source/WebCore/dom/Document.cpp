@@ -133,6 +133,7 @@
 #include "SegmentedString.h"
 #include "SelectionController.h"
 #include "Settings.h"
+#include "ShadowRoot.h"
 #include "StaticHashSetNodeList.h"
 #include "StyleSheetList.h"
 #include "TextEvent.h"
@@ -850,9 +851,11 @@ PassRefPtr<Node> Document::importNode(Node* importedNode, bool deep, ExceptionCo
     case DOCUMENT_NODE:
     case DOCUMENT_TYPE_NODE:
     case XPATH_NAMESPACE_NODE:
+    case SHADOW_ROOT_NODE:
+        // ShadowRoot nodes should not be explicitly importable.
+        // Either they are imported along with their host node, or created implicitly.
         break;
     }
-
     ec = NOT_SUPPORTED_ERR;
     return 0;
 }
@@ -2715,6 +2718,7 @@ bool Document::childTypeAllowed(NodeType type) const
     case NOTATION_NODE:
     case TEXT_NODE:
     case XPATH_NAMESPACE_NODE:
+    case SHADOW_ROOT_NODE:
         return false;
     case COMMENT_NODE:
     case PROCESSING_INSTRUCTION_NODE:
@@ -2784,6 +2788,9 @@ bool Document::canReplaceChild(Node* newChild, Node* oldChild)
             case ELEMENT_NODE:
                 numElements++;
                 break;
+            case SHADOW_ROOT_NODE:
+                ASSERT_NOT_REACHED();
+                return false;
             }
         }
     } else {
@@ -2797,6 +2804,7 @@ bool Document::canReplaceChild(Node* newChild, Node* oldChild)
         case NOTATION_NODE:
         case TEXT_NODE:
         case XPATH_NAMESPACE_NODE:
+        case SHADOW_ROOT_NODE:
             return false;
         case COMMENT_NODE:
         case PROCESSING_INSTRUCTION_NODE:

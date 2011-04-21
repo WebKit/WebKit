@@ -56,8 +56,7 @@ String ShadowRoot::nodeName() const
 
 Node::NodeType ShadowRoot::nodeType() const
 {
-    // FIXME: Decide correct node type (bug 58704).
-    return DOCUMENT_FRAGMENT_NODE;
+    return SHADOW_ROOT_NODE;
 }
 
 PassRefPtr<Node> ShadowRoot::cloneNode(bool)

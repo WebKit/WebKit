@@ -152,6 +152,7 @@ void Node::dumpStatistics()
     size_t fragmentNodes = 0;
     size_t notationNodes = 0;
     size_t xpathNSNodes = 0;
+    size_t shadowRootNodes = 0;
 
     HashMap<String, size_t> perTagCount;
 
@@ -242,6 +243,10 @@ void Node::dumpStatistics()
                 ++xpathNSNodes;
                 break;
             }
+            case SHADOW_ROOT_NODE: {
+                ++shadowRootNodes;
+                break;
+            }
         }
     }
 
@@ -262,6 +267,7 @@ void Node::dumpStatistics()
     printf("  Number of DocumentFragment nodes: %zu\n", fragmentNodes);
     printf("  Number of Notation nodes: %zu\n", notationNodes);
     printf("  Number of XPathNS nodes: %zu\n", xpathNSNodes);
+    printf("  Number of ShadowRoot nodes: %zu\n", shadowRootNodes);
 
     printf("Element tag name distibution:\n");
     for (HashMap<String, size_t>::iterator it = perTagCount.begin(); it != perTagCount.end(); ++it)
@@ -2007,6 +2013,7 @@ bool Node::isDefaultNamespace(const AtomicString& namespaceURIMaybeEmpty) const
         case NOTATION_NODE:
         case DOCUMENT_TYPE_NODE:
         case DOCUMENT_FRAGMENT_NODE:
+        case SHADOW_ROOT_NODE:
             return false;
         case ATTRIBUTE_NODE: {
             const Attr* attr = static_cast<const Attr*>(this);
@@ -2040,6 +2047,7 @@ String Node::lookupPrefix(const AtomicString &namespaceURI) const
         case NOTATION_NODE:
         case DOCUMENT_FRAGMENT_NODE:
         case DOCUMENT_TYPE_NODE:
+        case SHADOW_ROOT_NODE:
             return String();
         case ATTRIBUTE_NODE: {
             const Attr *attr = static_cast<const Attr *>(this);
@@ -2100,6 +2108,7 @@ String Node::lookupNamespaceURI(const String &prefix) const
         case NOTATION_NODE:
         case DOCUMENT_TYPE_NODE:
         case DOCUMENT_FRAGMENT_NODE:
+        case SHADOW_ROOT_NODE:
             return String();
         case ATTRIBUTE_NODE: {
             const Attr *attr = static_cast<const Attr *>(this);
@@ -2168,6 +2177,7 @@ static void appendTextContent(const Node* node, bool convertBRsToNewlines, bool&
     case Node::ENTITY_NODE:
     case Node::ENTITY_REFERENCE_NODE:
     case Node::DOCUMENT_FRAGMENT_NODE:
+    case Node::SHADOW_ROOT_NODE:
         isNullString = false;
         for (Node* child = node->firstChild(); child; child = child->nextSibling()) {
             if (child->nodeType() == Node::COMMENT_NODE || child->nodeType() == Node::PROCESSING_INSTRUCTION_NODE)
@@ -2205,7 +2215,8 @@ void Node::setTextContent(const String& text, ExceptionCode& ec)
         case ATTRIBUTE_NODE:
         case ENTITY_NODE:
         case ENTITY_REFERENCE_NODE:
-        case DOCUMENT_FRAGMENT_NODE: {
+        case DOCUMENT_FRAGMENT_NODE:
+        case SHADOW_ROOT_NODE: {
             ContainerNode* container = toContainerNode(this);
             container->removeChildren();
             if (!text.isEmpty())

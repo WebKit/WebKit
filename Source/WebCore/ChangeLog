@@ -1,3 +1,56 @@
+2011-04-21  Roland Steiner  <rolandsteiner@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        Bug 58704 - Decide on node type for ShadowRoot
+        https://bugs.webkit.org/show_bug.cgi?id=58704
+
+        Add a new node type SHADOW_ROOT_NODE.
+        Adapt all calling sites of nodeType(). 
+
+        Test: fast/dom/shadow/nodetype.html
+
+        * bindings/js/JSNodeCustom.cpp:
+        (WebCore::createWrapperInline):
+        * bindings/objc/DOM.mm:
+        (kitClass):
+        * bindings/v8/custom/V8NodeCustom.cpp:
+        (WebCore::toV8Slow):
+        * dom/Document.cpp:
+        (WebCore::Document::importNode):
+        (WebCore::Document::childTypeAllowed):
+        (WebCore::Document::canReplaceChild):
+        * dom/Node.cpp:
+        (WebCore::Node::dumpStatistics):
+        (WebCore::Node::isDefaultNamespace):
+        (WebCore::Node::lookupPrefix):
+        (WebCore::Node::lookupNamespaceURI):
+        (WebCore::appendTextContent):
+        (WebCore::Node::setTextContent):
+        * dom/Node.h:
+        * dom/Range.cpp:
+        (WebCore::lengthOfContentsInNode):
+        (WebCore::Range::processContentsBetweenOffsets):
+        (WebCore::Range::insertNode):
+        (WebCore::Range::checkNodeWOffset):
+        (WebCore::Range::checkNodeBA):
+        (WebCore::Range::selectNode):
+        (WebCore::Range::selectNodeContents):
+        (WebCore::Range::surroundContents):
+        * dom/ShadowRoot.cpp:
+        (WebCore::ShadowRoot::nodeType):
+        * dom/Traversal.cpp:
+        (WebCore::Traversal::acceptNode):
+        * editing/MarkupAccumulator.cpp:
+        (WebCore::MarkupAccumulator::appendStartMarkup):
+        * html/parser/HTMLElementStack.cpp:
+        (WebCore::HTMLNames::isRootNode):
+        (WebCore::HTMLElementStack::pushRootNode):
+        * html/parser/HTMLElementStack.h:
+        (WebCore::isInHTMLNamespace):
+        * xml/XPathUtil.cpp:
+        (WebCore::XPath::isValidContextNode):
+
 2011-04-20  Dimitri Glazkov  <dglazkov@chromium.org>
 
         Reviewed by Kent Tamura.

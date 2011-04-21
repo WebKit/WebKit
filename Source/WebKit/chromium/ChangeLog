@@ -1,3 +1,17 @@
+2011-04-21  Roland Steiner  <rolandsteiner@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        Bug 58704 - Decide on node type for ShadowRoot
+        https://bugs.webkit.org/show_bug.cgi?id=58704
+
+        Add a new enum entry to WebNode::NodeType for shadow roots.
+        Adapt calling sites for new SHADOW_ROOT_NODE node type.
+
+        * public/WebNode.h:
+        * src/WebPageSerializerImpl.cpp:
+        (WebKit::WebPageSerializerImpl::buildContentForNode):
+
 2011-04-20  Dominic Cooney  <dominicc@chromium.org>
 
         Reviewed by Dimitri Glazkov.

@@ -43,7 +43,7 @@ short Traversal::acceptNode(ScriptState* state, Node* node) const
     // FIXME: To handle XML properly we would have to check m_expandEntityReferences.
 
     // The bit twiddling here is done to map DOM node types, which are given as integers from
-    // 1 through 12, to whatToShow bit masks.
+    // 1 through 14, to whatToShow bit masks.
     if (!(((1 << (node->nodeType() - 1)) & m_whatToShow)))
         return NodeFilter::FILTER_SKIP;
     if (!m_filter)

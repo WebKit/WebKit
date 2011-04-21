@@ -80,7 +80,8 @@ public:
         DocumentTypeNode,
         DocumentFragmentNode,
         NotationNode,
-        XPathNamespaceNode
+        XPathNamespaceNode,
+        ShadowRootNode
     };
     WEBKIT_API NodeType nodeType() const;
     WEBKIT_API WebNode parentNode() const;

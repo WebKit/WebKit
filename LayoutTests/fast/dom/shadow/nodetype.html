@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../js/resources/js-test-pre.js"></script>
+</head>
+<body>
+<keygen id="keys" />
+<pre id="console">
+This tests the shadow host's and shadow root's nodeType.
+</pre>
+<script>
+    if (window.layoutTestController) {
+        layoutTestController.dumpAsText();
+        
+        var keygen = document.getElementById('keys');
+        var shadow = layoutTestController.shadowRoot(keygen);
+        var shadowChild = shadow.firstChild;
+        shouldBe('keygen.nodeType', 'Node.ELEMENT_NODE');
+        shouldBe('shadow.nodeType', '14');
+        shouldBeNonNull('shadowChild');
+        shouldBeTrue('shadowChild.nodeType != 14');
+    }
+
+    var successfullyParsed = true;
+</script>
+<script src="../../js/resources/js-test-post.js"></script>
+</body>
+</html>
