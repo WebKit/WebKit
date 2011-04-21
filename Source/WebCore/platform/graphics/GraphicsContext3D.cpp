@@ -44,15 +44,15 @@ namespace WebCore {
 
 namespace {
 
-    uint8_t convertColor16LittleTo8(uint16_t value)
-    {
-        return value >> 8;
-    }
+uint8_t convertColor16LittleTo8(uint16_t value)
+{
+    return value >> 8;
+}
 
-    uint8_t convertColor16BigTo8(uint16_t value)
-    {
-        return static_cast<uint8_t>(value & 0x00FF);
-    }
+uint8_t convertColor16BigTo8(uint16_t value)
+{
+    return static_cast<uint8_t>(value & 0x00FF);
+}
 
 } // anonymous namespace
 
@@ -351,18 +351,6 @@ namespace {
 
 //----------------------------------------------------------------------
 // Pixel unpacking routines.
-
-void unpackOneRowOfRGBA8ToRGBA8(const uint8_t* source, uint8_t* destination, unsigned int pixelsPerRow)
-{
-    for (unsigned int i = 0; i < pixelsPerRow; ++i) {
-        destination[0] = source[0];
-        destination[1] = source[1];
-        destination[2] = source[2];
-        destination[3] = source[3];
-        source += 4;
-        destination += 4;
-    }
-}
 
 void unpackOneRowOfRGBA16LittleToRGBA8(const uint16_t* source, uint8_t* destination, unsigned int pixelsPerRow)
 {

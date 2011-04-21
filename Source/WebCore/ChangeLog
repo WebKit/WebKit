@@ -1,3 +1,13 @@
+2011-04-21  Jon Lee  <jonlee@apple.com>
+
+        Reviewed by Maciej Stachowiak.
+
+        remove unneeded function from graphicscontext3d.cpp (59076)
+        https://bugs.webkit.org/show_bug.cgi?id=59076
+        <rdar://problem/9315681>
+
+        * platform/graphics/GraphicsContext3D.cpp: removing unused function unpackOneRowOfRGBA8ToRGBA8
+
 2011-04-21  Alexey Proskuryakov  <ap@apple.com>
 
         Reviewed by Dan Bernstein.
