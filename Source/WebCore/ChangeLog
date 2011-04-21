@@ -1,3 +1,15 @@
+2011-04-20  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Anders Carlsson.
+
+        WebKit2: Can't scroll page after printing on Yahoo.com and other sites
+        <rdar://problem/9233291>
+        https://bugs.webkit.org/show_bug.cgi?id=59049
+
+        * page/Frame.cpp:
+        (WebCore::Frame::setPrinting): Match Mac WebKit1 code when ending printing,
+        and call forceLayout() instead of forceLayoutForPagination().
+
 2011-04-20  Kenneth Russell  <kbr@google.com>
 
         Reviewed by James Robinson.
