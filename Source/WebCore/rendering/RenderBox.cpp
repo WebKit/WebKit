@@ -1432,8 +1432,8 @@ void RenderBox::computeRectForRepaint(RenderBoxModelObject* repaintContainer, In
     // physical when we hit a repaintContainer boundary.  Therefore the final rect returned is always in the
     // physical coordinate space of the repaintContainer.
     if (RenderView* v = view()) {
-        // LayoutState is only valid for root-relative repainting
-        if (v->layoutStateEnabled() && !repaintContainer) {
+        // LayoutState is only valid for root-relative, non-fixed position repainting
+        if (v->layoutStateEnabled() && !repaintContainer && style()->position() != FixedPosition) {
             LayoutState* layoutState = v->layoutState();
 
             if (layer() && layer()->transform())
