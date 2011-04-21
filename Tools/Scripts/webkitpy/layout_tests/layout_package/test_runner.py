@@ -1117,8 +1117,8 @@ class TestRunner:
                     (len(results), desc[len(results) != 1], pct))
 
     def _copy_results_html_file(self):
-        base_dir = self._port.path_from_webkit_base('Tools', 'Scripts', 'webkitpy', 'layout_tests', 'layout_package')
-        results_file = self._fs.join(base_dir, 'json_results.html')
+        base_dir = self._port.path_from_webkit_base('LayoutTests', 'fast', 'harness')
+        results_file = self._fs.join(base_dir, 'results.html')
         # FIXME: What should we do if this doesn't exist (e.g., in unit tests)?
         if self._fs.exists(results_file):
             self._fs.copyfile(results_file, self._fs.join(self._results_directory, "results.html"))

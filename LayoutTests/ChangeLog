@@ -1,3 +1,14 @@
+2011-04-21  Ojan Vafai  <ojan@chromium.org>
+
+        Reviewed by Tony Chang.
+
+        move json_results.html over to LayoutTests/fast/harness
+        https://bugs.webkit.org/show_bug.cgi?id=59154
+
+        * fast/harness/resources/results-test.js:
+        * fast/harness/results-expected.txt: Added.
+        * fast/harness/results.html: Added.
+
 2011-04-21  Dirk Pranke  <dpranke@chromium.org>
 
         Update baselines to accomodate the change in r84506. I wonder
