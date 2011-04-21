@@ -61,7 +61,7 @@ class TestInstance:
 
         # We add the '\x8a' for the image file to prevent the value from
         # being treated as UTF-8 (the character is invalid)
-        self.actual_image = self.base + '\x8a' + '-png'
+        self.actual_image = self.base + '\x8a' + '-png' + 'tEXtchecksum\x00' + self.actual_checksum
 
         self.expected_text = self.actual_text
         self.expected_checksum = self.actual_checksum
@@ -109,8 +109,8 @@ def unit_test_list():
     tests.add('failures/expected/hang.html', hang=True)
     tests.add('failures/expected/missing_text.html', expected_text=None)
     tests.add('failures/expected/image.html',
-              actual_image='image_fail-png',
-              expected_image='image-png')
+              actual_image='image_fail-pngtEXtchecksum\x00checksum_fail',
+              expected_image='image-pngtEXtchecksum\x00checksum-png')
     tests.add('failures/expected/image_checksum.html',
               actual_checksum='image_checksum_fail-checksum',
               actual_image='image_checksum_fail-png')
@@ -214,8 +214,7 @@ def unit_test_filesystem(files=None):
     files[LAYOUT_TEST_DIR + '/platform/test/test_expectations.txt'] = """
 WONTFIX : failures/expected/checksum.html = IMAGE
 WONTFIX : failures/expected/crash.html = CRASH
-// This one actually passes because the checksums will match.
-WONTFIX : failures/expected/image.html = PASS
+WONTFIX : failures/expected/image.html = IMAGE
 WONTFIX : failures/expected/audio.html = AUDIO
 WONTFIX : failures/expected/image_checksum.html = IMAGE
 WONTFIX : failures/expected/mismatch.html = IMAGE

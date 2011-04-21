@@ -146,10 +146,8 @@ class SingleTestRunner:
         if driver_output.audio:
             self._save_baseline_data(driver_output.audio, '.wav',
                                      generate_new_baseline=self._options.new_baseline)
-        if self._options.pixel_tests and driver_output.image_hash:
+        if self._options.pixel_tests and driver_output.image:
             self._save_baseline_data(driver_output.image, ".png",
-                                     generate_new_baseline=self._options.new_baseline)
-            self._save_baseline_data(driver_output.image_hash, ".checksum",
                                      generate_new_baseline=self._options.new_baseline)
 
     def _save_baseline_data(self, data, modifier, generate_new_baseline=True):

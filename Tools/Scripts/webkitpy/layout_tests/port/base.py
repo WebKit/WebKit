@@ -342,10 +342,6 @@ class Port(object):
     def expected_checksum(self, test):
         """Returns the checksum of the image we expect the test to produce, or None if it is a text-only test."""
         png_path = self.expected_filename(test, '.png')
-        checksum_path = self._filesystem.splitext(png_path)[0] + '.checksum'
-
-        if self.path_exists(checksum_path):
-            return self._filesystem.read_binary_file(checksum_path)
 
         if self.path_exists(png_path):
             with self._filesystem.open_binary_file_for_reading(png_path) as filehandle:

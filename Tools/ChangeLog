@@ -1,3 +1,17 @@
+2011-04-21  Tony Chang  <tony@chromium.org>
+
+        Reviewed by Ojan Vafai.
+
+        old-run-webkit-tests/new-run-webkit-tests shouldn't read or write .checksum files
+        https://bugs.webkit.org/show_bug.cgi?id=58402
+
+        * Scripts/old-run-webkit-tests: Don't read or write .checksum files.
+        * Scripts/webkitpy/layout_tests/layout_package/single_test_runner.py: Don't write .checksum files.
+        * Scripts/webkitpy/layout_tests/port/base.py: Don't read .checksum files.
+        * Scripts/webkitpy/layout_tests/port/mock_drt_unittest.py:
+        * Scripts/webkitpy/layout_tests/port/test.py: Update passing pngs to include a checksum.
+        * Scripts/webkitpy/layout_tests/run_webkit_tests_unittest.py:
+
 2011-04-21  Ojan Vafai  <ojan@chromium.org>
 
         Reviewed by Tony Chang.

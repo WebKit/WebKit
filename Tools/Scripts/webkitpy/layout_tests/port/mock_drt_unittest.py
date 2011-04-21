@@ -204,8 +204,8 @@ class MockDRTTest(unittest.TestCase):
                         'ActualHash: checksum-checksum\n',
                         'ExpectedHash: wrong-checksum\n',
                         'Content-Type: image/png\n',
-                        'Content-Length: 13\n',
-                        'checksum\x8a-png',
+                        'Content-Length: 43\n',
+                        'checksum\x8a-pngtEXtchecksum\x00checksum-checksum',
                         '#EOF\n'])
 
     def test_textonly(self):
@@ -262,7 +262,7 @@ class MockChromiumDRTTest(MockDRTTest):
                         '#EOF\n'],
             filesystem=filesystem)
         self.assertEquals(filesystem.written_files,
-            {'/tmp/png_result0.png': 'checksum\x8a-png'})
+            {'/tmp/png_result0.png': 'checksum\x8a-pngtEXtchecksum\x00checksum-checksum'})
 
     def test_chromium_parse_options(self):
         options, args = mock_drt.parse_options(['--platform', 'chromium-mac',

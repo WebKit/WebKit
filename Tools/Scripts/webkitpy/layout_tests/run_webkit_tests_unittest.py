@@ -591,7 +591,7 @@ MainTest = skip_if(MainTest, sys.platform == 'cygwin' and compare_version(sys, '
 class RebaselineTest(unittest.TestCase):
     def assertBaselines(self, file_list, file):
         "assert that the file_list contains the baselines."""
-        for ext in [".txt", ".png", ".checksum"]:
+        for ext in (".txt", ".png"):
             baseline = file + "-expected" + ext
             self.assertTrue(any(f.find(baseline) != -1 for f in file_list))
 
@@ -609,11 +609,12 @@ class RebaselineTest(unittest.TestCase):
                         tests_included=True, filesystem=fs)
         file_list = fs.written_files.keys()
         file_list.remove('/tmp/layout-test-results/tests_run0.txt')
-        self.assertEqual(len(file_list), 6)
-        self.assertBaselines(file_list,
-            "/passes/image")
-        self.assertBaselines(file_list,
-            "/failures/expected/missing_image")
+        self.assertEqual(len(file_list), 4)
+        # Verify that we didn't touch any .checksum files.
+        self.assertEqual(0, len([filename for filename in fs.written_files.keys()
+                                 if filename.endswith('.checksum')]))
+        self.assertBaselines(file_list, "/passes/image")
+        self.assertBaselines(file_list, "/failures/expected/missing_image")
 
     def test_new_baseline(self):
         # Test that we update the platform expectations. If the expectation
@@ -626,7 +627,7 @@ class RebaselineTest(unittest.TestCase):
                     tests_included=True, filesystem=fs)
         file_list = fs.written_files.keys()
         file_list.remove('/tmp/layout-test-results/tests_run0.txt')
-        self.assertEqual(len(file_list), 6)
+        self.assertEqual(len(file_list), 4)
         self.assertBaselines(file_list,
             "/platform/test-mac-leopard/passes/image")
         self.assertBaselines(file_list,
