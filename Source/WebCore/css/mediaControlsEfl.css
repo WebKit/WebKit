@@ -26,8 +26,8 @@
 /* EFLWebKit media controls. Extends mediaControls.css */
 
 audio {
-    width: 200px;
-    height: 25px;
+    width: 300px;
+    height: 20px;
 }
 
 audio::-webkit-media-controls-panel, video::-webkit-media-controls-panel {
@@ -40,7 +40,7 @@ audio::-webkit-media-controls-panel, video::-webkit-media-controls-panel {
     width: 100%;
     z-index: 0;
     overflow: hidden;
-    height: 25px;
+    height: 20px;
     text-align: right;
 }
 
@@ -51,8 +51,8 @@ video:-webkit-full-page-media::-webkit-media-controls-panel {
 audio::-webkit-media-controls-mute-button, video::-webkit-media-controls-mute-button {
     -webkit-appearance: media-mute-button;
     display: -webkit-box;
-    width: 25px;
-    height: 25px;
+    width: 20px;
+    height: 20px;
     background-color: initial;
     border: initial;
     color: inherit;
@@ -61,8 +61,8 @@ audio::-webkit-media-controls-mute-button, video::-webkit-media-controls-mute-bu
 audio::-webkit-media-controls-play-button, video::-webkit-media-controls-play-button {
     -webkit-appearance: media-play-button;
     display: -webkit-box;
-    width: 25px;
-    height: 25px;
+    width: 20px;
+    height: 20px;
     background-color: initial;
     border: initial;
     color: inherit;
@@ -76,11 +76,19 @@ audio::-webkit-media-controls-timeline-container, video::-webkit-media-controls-
     -webkit-box-pack: end;
     -webkit-box-flex: 1;
     -webkit-user-select: none;
-    height: 25px;
+    height: 20px;
 }
 
 audio::-webkit-media-controls-current-time-display, video::-webkit-media-controls-current-time-display {
-    display: none;
+    -webkit-appearance: media-current-time-display;
+    -webkit-user-select: none;
+    display: inline-block;
+    height: 20px;
+
+    padding: 4px;
+
+    text-align: center;
+    font-size: 10px;
 }
 
 audio::-webkit-media-controls-time-remaining-display, video::-webkit-media-controls-time-remaining-display {
@@ -91,7 +99,7 @@ audio::-webkit-media-controls-timeline, video::-webkit-media-controls-timeline {
     -webkit-appearance: media-slider;
     display: -webkit-box;
     -webkit-box-flex: 1;
-    height: 25px;
+    height: 20px;
     padding: 0px 2px;
     background-color: initial;
     border: initial;
@@ -114,8 +122,8 @@ audio::-webkit-media-controls-volume-slider, video::-webkit-media-controls-volum
 audio::-webkit-media-controls-seek-back-button, video::-webkit-media-controls-seek-back-button {
     -webkit-appearance: media-seek-back-button;
     display: -webkit-box;
-    width: 25px;
-    height: 25px;
+    width: 20px;
+    height: 20px;
     background-color: initial;
     border: initial;
     color: inherit;
@@ -124,8 +132,8 @@ audio::-webkit-media-controls-seek-back-button, video::-webkit-media-controls-se
 audio::-webkit-media-controls-seek-forward-button, video::-webkit-media-controls-seek-forward-button {
     -webkit-appearance: media-seek-forward-button;
     display: -webkit-box;
-    width: 25px;
-    height: 25px;
+    width: 20px;
+    height: 20px;
     background-color: initial;
     border: initial;
     color: inherit;
@@ -134,8 +142,8 @@ audio::-webkit-media-controls-seek-forward-button, video::-webkit-media-controls
 audio::-webkit-media-controls-fullscreen-button, video::-webkit-media-controls-fullscreen-button {
     -webkit-appearance: media-fullscreen-button;
     display: -webkit-box;
-    width: 25px;
-    height: 25px;
+    width: 20px;
+    height: 20px;
     background-color: initial;
     border: initial;
     color: inherit;
@@ -158,8 +166,8 @@ audio::-webkit-media-controls-return-to-realtime-button, video::-webkit-media-co
 audio::-webkit-media-controls-toggle-closed-captions-button, video::-webkit-media-controls-toggle-closed-captions-button {
     -webkit-appearance: media-toggle-closed-captions-button;
     display: -webkit-box;
-    width: 25px;
-    height: 25px;
+    width: 20px;
+    height: 20px;
     background-color: initial;
     border: initial;
     color: inherit;
