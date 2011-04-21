@@ -317,10 +317,9 @@ WebInspector.NetworkDispatcher.prototype = {
 
     _createResource: function(identifier, frameId, loaderId, url, documentURL, stackTrace)
     {
-        var resource = new WebInspector.Resource(identifier, url);
+        var resource = new WebInspector.Resource(identifier, url, loaderId);
         resource.documentURL = documentURL;
         resource.frameId = frameId;
-        resource.loaderId = loaderId;
         resource.stackTrace = stackTrace;
         return resource;
     }

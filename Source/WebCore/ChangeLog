@@ -1,3 +1,13 @@
+2011-04-21  Pavel Feldman  <pfeldman@google.com>
+
+        Reviewed by Yury Semikhatsky.
+
+        Web Inspector: persist local resource history between inspector / browser launches.
+        https://bugs.webkit.org/show_bug.cgi?id=58993
+
+        * inspector/front-end/Resource.js:
+        (WebInspector.Resource.prototype._restoreRevisions):
+
 2011-04-20  Alexander Pavlov  <apavlov@chromium.org>
 
         Reviewed by Pavel Feldman.

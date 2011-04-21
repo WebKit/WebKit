@@ -123,6 +123,9 @@ WebInspector.ResourceTreeModel.prototype = {
 
         if (isMainFrame && this.resourceForURL(frame.url))
             WebInspector.mainResource = this.resourceForURL(frame.url);
+
+        if (isMainFrame)
+            WebInspector.Resource.clearRevisionHistory();
     },
 
     _onFrameDetachedFromParent: function(event)
@@ -299,9 +302,8 @@ WebInspector.ResourceTreeModel.prototype = {
 
     _createResource: function(frame, url)
     {
-        var resource = new WebInspector.Resource(null, url);
+        var resource = new WebInspector.Resource(null, url, frame.loaderId);
         resource.frameId = frame.id;
-        resource.loaderId = frame.loaderId;
         resource.documentURL = frame.url;
         return resource;
     }

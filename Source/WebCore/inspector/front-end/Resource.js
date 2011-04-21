@@ -25,15 +25,18 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-WebInspector.Resource = function(identifier, url)
+WebInspector.Resource = function(identifier, url, loaderId)
 {
     this.identifier = identifier;
     this.url = url;
+    this.loaderId = loaderId;
     this._startTime = -1;
     this._endTime = -1;
     this._category = WebInspector.resourceCategories.other;
     this._pendingContentCallbacks = [];
     this.history = [];
+
+    this._restoreRevisions();
 }
 
 // Keep these in sync with WebCore::InspectorResource::Type
@@ -106,6 +109,17 @@ WebInspector.Resource._domainModelBindings = [];
 WebInspector.Resource.registerDomainModelBinding = function(type, binding)
 {
     WebInspector.Resource._domainModelBindings[type] = binding;
+}
+
+WebInspector.Resource.clearRevisionHistory = function()
+{
+    if (!window.localStorage)
+        return;
+
+    for (var key in window.localStorage) {
+        if (key.indexOf("resource-history|") === 0)
+            delete window.localStorage[key];
+    }
 }
 
 WebInspector.Resource.Events = {
@@ -721,15 +735,68 @@ WebInspector.Resource.prototype = {
         binding.setContent(this, newContent, majorChange, callback);
     },
 
-    addRevision: function(newContent)
+    addRevision: function(newContent, timestamp, restoringHistory)
     {
         var revision = new WebInspector.ResourceRevision(this, this._content, this._contentTimestamp);
         this.history.push(revision);
 
         this._content = newContent;
-        this._contentTimestamp = new Date();
+        this._contentTimestamp = timestamp || new Date();
 
         this.dispatchEventToListeners(WebInspector.Resource.Events.RevisionAdded, revision);
+
+        if (!restoringHistory)
+            this._persistRevision();
+    },
+
+    _persistRevision: function()
+    {
+        if (!window.localStorage)
+            return;
+
+        var url = this.url;
+        var loaderId = this.loaderId;
+        var timestamp = this._contentTimestamp.getTime();
+        var content = this._content;
+        function persist()
+        {
+            var key = "resource-history|" + url + "|" + loaderId + "|" + timestamp;
+            window.localStorage[key] = content;
+        }
+    
+        // Schedule async storage.
+        setTimeout(persist, 0);
+    },
+
+    _restoreRevisions: function()
+    {
+        if (!window.localStorage)
+            return;
+
+        try {
+            var urlKey = "resource-history|" + this.url + "|" + this.loaderId + "|";
+
+            var content = {};
+            var timestamps = [];
+            for (var key in window.localStorage) {
+                if (key.indexOf(urlKey) !== 0)
+                    continue;
+                var timestamp = parseInt(key.substring(urlKey.length));
+                content[timestamp] = window.localStorage[key];
+                timestamps.push(timestamp);
+            }
+
+            if (!timestamps.length)
+                return;
+
+            timestamps.sort();
+            for (var i = 0; i < timestamps.length; ++i) {
+                var timestamp = timestamps[i];
+                this.addRevision(content[timestamp], new Date(timestamp), true);
+            }
+        } catch(e) {
+            console.error(e.toString());
+        }
     },
 
     requestContent: function(callback)
