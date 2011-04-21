@@ -615,9 +615,13 @@ const SkBitmap* PlatformContextSkia::bitmap() const
 
 bool PlatformContextSkia::isNativeFontRenderingAllowed()
 {
-#if ENABLE(SKIA_GPU)
+#if ENABLE(SKIA_TEXT)
     return false;
 #else
+#if ENABLE(SKIA_GPU)
+    if (!m_useGPU && m_gpuCanvas)
+        return false;
+#endif
     return skia::SupportsPlatformPaint(m_canvas);
 #endif
 }

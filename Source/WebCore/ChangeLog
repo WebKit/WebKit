@@ -1,3 +1,18 @@
+2011-04-21  Mike Reed  <reed@google.com>
+
+        Reviewed by Kenneth Russell.
+
+        only return false if we actually in a skia-gpu accelerated canvas for isNativeFontRenderingAllowed
+        https://bugs.webkit.org/show_bug.cgi?id=59024
+
+        No new tests. The bug (and fix) depend on enabling SKIA_GPU. When that is enabled, the bug
+        shows all text w/o lcd rendering. This is a regression from a recent CL when we switch to
+        calling skia::SupportsPlatformPaint. This CL fixes that.
+        There should be no change for the default builds when SKIA_GPU is not enabled.
+
+        * platform/graphics/skia/PlatformContextSkia.cpp:
+        (WebCore::PlatformContextSkia::isNativeFontRenderingAllowed):
+
 2011-04-21  Adrienne Walker  <enne@google.com>
 
         Reviewed by James Robinson.
