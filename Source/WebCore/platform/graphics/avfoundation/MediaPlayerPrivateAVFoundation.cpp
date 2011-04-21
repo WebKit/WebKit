@@ -290,13 +290,16 @@ float MediaPlayerPrivateAVFoundation::duration() const
 
 void MediaPlayerPrivateAVFoundation::seek(float time)
 {
-    LOG(Media, "MediaPlayerPrivateAVFoundation::seek(%p) - seeking to %f", this, time);
     if (!metaDataAvailable())
         return;
 
     if (time > duration())
         time = duration();
 
+    if (currentTime() == time)
+        return;
+
+    LOG(Media, "MediaPlayerPrivateAVFoundation::seek(%p) - seeking to %f", this, time);
     m_seekTo = time;
 
     seekToTime(time);
@@ -469,8 +472,12 @@ void MediaPlayerPrivateAVFoundation::updateStates()
                     m_readyState = MediaPlayer::HaveEnoughData;
                     break;
                 case MediaPlayerAVPlayerItemStatusReadyToPlay:
-                case MediaPlayerAVPlayerItemStatusPlaybackBufferEmpty:
                 case MediaPlayerAVPlayerItemStatusPlaybackBufferFull:
+                    // If the readyState is already HaveEnoughData, don't go lower because of this state change.
+                    if (m_readyState == MediaPlayer::HaveEnoughData)
+                        break;
+
+                case MediaPlayerAVPlayerItemStatusPlaybackBufferEmpty:
                     if (maxLoaded > currentTime())
                         m_readyState = MediaPlayer::HaveFutureData;
                     else
@@ -630,7 +637,7 @@ MediaPlayer::MovieLoadType MediaPlayerPrivateAVFoundation::movieLoadType() const
     if (!metaDataAvailable() || assetStatus() == MediaPlayerAVAssetStatusUnknown)
         return MediaPlayer::Unknown;
 
-    if (isinf(duration()))
+    if (isLiveStream())
         return MediaPlayer::LiveStream;
 
     return MediaPlayer::Download;

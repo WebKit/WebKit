@@ -220,6 +220,7 @@ protected:
     void setDelayCallbacks(bool);
     void setIgnoreLoadStateChanges(bool delay) { m_ignoreLoadStateChanges = delay; }
     void setNaturalSize(IntSize);
+    bool isLiveStream() const { return isinf(duration()); }
 
     enum MediaRenderingMode { MediaRenderingNone, MediaRenderingToContext, MediaRenderingToLayer };
     MediaRenderingMode currentRenderingMode() const;

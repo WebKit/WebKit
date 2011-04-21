@@ -1,3 +1,27 @@
+2011-04-21  Eric Carlson  <eric.carlson@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        Live streams won't play with AVFoundation backend
+        https://bugs.webkit.org/show_bug.cgi?id=58961
+        rdar://problem/9284748
+
+        Tested manually because we don't have any live streams to test in DRT.
+
+        * platform/graphics/avfoundation/MediaPlayerPrivateAVFoundation.cpp:
+        (WebCore::MediaPlayerPrivateAVFoundation::seek): Do nothing when asked to seek to the
+            current time.
+        (WebCore::MediaPlayerPrivateAVFoundation::updateStates): If the readyState is HaveEnoughData,
+            don't revert when the new state is "ready to play" or "buffer full".
+        (WebCore::MediaPlayerPrivateAVFoundation::movieLoadType): Use new convenience function isLiveStream.
+        * platform/graphics/avfoundation/MediaPlayerPrivateAVFoundation.h:
+        (WebCore::MediaPlayerPrivateAVFoundation::isLiveStream): New.
+
+        * platform/graphics/avfoundation/MediaPlayerPrivateAVFoundationObjC.mm:
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::tracksChanged): Don't use AVAsset's
+            tracksWithMediaCharacteristic because it doesn't give us what we need with live
+            streams.
+
 2011-04-21  Pavel Feldman  <pfeldman@google.com>
 
         Reviewed by Yury Semikhatsky.

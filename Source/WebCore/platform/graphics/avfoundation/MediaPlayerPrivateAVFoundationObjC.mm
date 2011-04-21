@@ -63,6 +63,8 @@ SOFT_LINK_CLASS(AVFoundation, AVAssetImageGenerator)
 SOFT_LINK_POINTER(AVFoundation, AVMediaCharacteristicVisual, NSString *)
 SOFT_LINK_POINTER(AVFoundation, AVMediaCharacteristicAudible, NSString *)
 SOFT_LINK_POINTER(AVFoundation, AVMediaTypeClosedCaption, NSString *)
+SOFT_LINK_POINTER(AVFoundation, AVMediaTypeVideo, NSString *)
+SOFT_LINK_POINTER(AVFoundation, AVMediaTypeAudio, NSString *)
 SOFT_LINK_POINTER(AVFoundation, AVPlayerItemDidPlayToEndTimeNotification, NSString *)
 SOFT_LINK_POINTER(AVFoundation, AVAssetImageGeneratorApertureModeCleanAperture, NSString *)
 
@@ -77,6 +79,8 @@ SOFT_LINK_CONSTANT(CoreMedia, kCMTimeZero, CMTime)
 #define AVMediaCharacteristicVisual getAVMediaCharacteristicVisual()
 #define AVMediaCharacteristicAudible getAVMediaCharacteristicAudible()
 #define AVMediaTypeClosedCaption getAVMediaTypeClosedCaption()
+#define AVMediaTypeVideo getAVMediaTypeVideo()
+#define AVMediaTypeAudio getAVMediaTypeAudio()
 #define AVPlayerItemDidPlayToEndTimeNotification getAVPlayerItemDidPlayToEndTimeNotification()
 #define AVAssetImageGeneratorApertureModeCleanAperture getAVAssetImageGeneratorApertureModeCleanAperture()
 
@@ -653,11 +657,26 @@ float MediaPlayerPrivateAVFoundationObjC::mediaTimeForTimeValue(float timeValue)
 
 void MediaPlayerPrivateAVFoundationObjC::tracksChanged()
 {
-    // This is called whenever the tracks collection changes so cache hasVideo and hasAudio since we get
+    // This is called whenever the tracks collection changes so cache hasVideo and hasAudio since we are
     // asked about those fairly fequently.
-    setHasVideo([[m_avAsset.get() tracksWithMediaCharacteristic:AVMediaCharacteristicVisual] count]);
-    setHasAudio([[m_avAsset.get() tracksWithMediaCharacteristic:AVMediaCharacteristicAudible] count]);
-    setHasClosedCaptions([[m_avAsset.get() tracksWithMediaType:AVMediaTypeClosedCaption] count]);
+    bool hasVideo = false;
+    bool hasAudio = false;
+    bool hasCaptions = false;
+    NSArray *tracks = [m_avPlayerItem.get() tracks];
+    for (AVPlayerItemTrack *track in tracks) {
+        if ([track isEnabled]) {
+            AVAssetTrack *assetTrack = [track assetTrack];
+            if ([[assetTrack mediaType] isEqualToString:AVMediaTypeVideo])
+                hasVideo = true;
+            else if ([[assetTrack mediaType] isEqualToString:AVMediaTypeAudio])
+                hasAudio = true;
+            else if ([[assetTrack mediaType] isEqualToString:AVMediaTypeClosedCaption])
+                hasCaptions = true;
+        }
+    }
+    setHasVideo(hasVideo);
+    setHasAudio(hasAudio);
+    setHasClosedCaptions(hasCaptions);
 
     sizeChanged();
 }
