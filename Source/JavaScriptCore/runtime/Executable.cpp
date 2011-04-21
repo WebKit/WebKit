@@ -135,11 +135,11 @@ JSObject* EvalExecutable::compileInternal(ExecState* exec, ScopeChainNode* scope
     return 0;
 }
 
-void EvalExecutable::markChildren(MarkStack& markStack)
+void EvalExecutable::visitChildren(SlotVisitor& visitor)
 {
-    ScriptExecutable::markChildren(markStack);
+    ScriptExecutable::visitChildren(visitor);
     if (m_evalCodeBlock)
-        m_evalCodeBlock->markAggregate(markStack);
+        m_evalCodeBlock->visitAggregate(visitor);
 }
 
 JSObject* ProgramExecutable::checkSyntax(ExecState* exec)
@@ -221,11 +221,11 @@ static bool tryDFGCompile(JSGlobalData* globalData, CodeBlock* codeBlock, JITCod
 }
 #endif
 
-void ProgramExecutable::markChildren(MarkStack& markStack)
+void ProgramExecutable::visitChildren(SlotVisitor& visitor)
 {
-    ScriptExecutable::markChildren(markStack);
+    ScriptExecutable::visitChildren(visitor);
     if (m_programCodeBlock)
-        m_programCodeBlock->markAggregate(markStack);
+        m_programCodeBlock->visitAggregate(visitor);
 }
 
 JSObject* FunctionExecutable::compileForCallInternal(ExecState* exec, ScopeChainNode* scopeChainNode)
@@ -321,13 +321,13 @@ JSObject* FunctionExecutable::compileForConstructInternal(ExecState* exec, Scope
     return 0;
 }
 
-void FunctionExecutable::markChildren(MarkStack& markStack)
+void FunctionExecutable::visitChildren(SlotVisitor& visitor)
 {
-    ScriptExecutable::markChildren(markStack);
+    ScriptExecutable::visitChildren(visitor);
     if (m_codeBlockForCall)
-        m_codeBlockForCall->markAggregate(markStack);
+        m_codeBlockForCall->visitAggregate(visitor);
     if (m_codeBlockForConstruct)
-        m_codeBlockForConstruct->markAggregate(markStack);
+        m_codeBlockForConstruct->visitAggregate(visitor);
 }
 
 void FunctionExecutable::discardCode()

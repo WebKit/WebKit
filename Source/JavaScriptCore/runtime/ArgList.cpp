@@ -39,7 +39,7 @@ void ArgList::getSlice(int startIndex, ArgList& result) const
     result = ArgList(m_args + startIndex, m_argCount - startIndex);
 }
 
-void MarkedArgumentBuffer::markLists(HeapRootMarker& heapRootMarker, ListSet& markSet)
+void MarkedArgumentBuffer::markLists(HeapRootVisitor& heapRootMarker, ListSet& markSet)
 {
     ListSet::iterator end = markSet.end();
     for (ListSet::iterator it = markSet.begin(); it != end; ++it) {

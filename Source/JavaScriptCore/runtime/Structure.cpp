@@ -198,7 +198,7 @@ const ClassInfo Structure::s_info = { "Structure", 0, 0, 0 };
 
 Structure::Structure(JSGlobalData& globalData)
     : JSCell(globalData, this)
-    , m_typeInfo(CompoundType, OverridesMarkChildren)
+    , m_typeInfo(CompoundType, OverridesVisitChildren)
     , m_prototype(globalData, this, jsNull())
     , m_classInfo(&s_info)
     , m_propertyStorageCapacity(0)
@@ -765,24 +765,24 @@ void Structure::getPropertyNames(JSGlobalData& globalData, PropertyNameArray& pr
     }
 }
 
-void Structure::markChildren(MarkStack& markStack)
+void Structure::visitChildren(SlotVisitor& visitor)
 {
-    JSCell::markChildren(markStack);
+    JSCell::visitChildren(visitor);
     if (m_prototype)
-        markStack.append(&m_prototype);
+        visitor.append(&m_prototype);
     if (m_cachedPrototypeChain)
-        markStack.append(&m_cachedPrototypeChain);
+        visitor.append(&m_cachedPrototypeChain);
     if (m_previous)
-        markStack.append(&m_previous);
+        visitor.append(&m_previous);
     if (m_specificValueInPrevious)
-        markStack.append(&m_specificValueInPrevious);
+        visitor.append(&m_specificValueInPrevious);
     if (m_enumerationCache)
-        markStack.append(&m_enumerationCache);
+        visitor.append(&m_enumerationCache);
     if (m_propertyTable) {
         PropertyTable::iterator end = m_propertyTable->end();
         for (PropertyTable::iterator ptr = m_propertyTable->begin(); ptr != end; ++ptr) {
             if (ptr->specificValue)
-                markStack.append(&ptr->specificValue);
+                visitor.append(&ptr->specificValue);
         }
     }
 }

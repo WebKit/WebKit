@@ -39,7 +39,7 @@ HandleStack::HandleStack()
     grow();
 }
 
-void HandleStack::mark(HeapRootMarker& heapRootMarker)
+void HandleStack::mark(HeapRootVisitor& heapRootMarker)
 {
     const Vector<HandleSlot>& blocks = m_blockStack.blocks();
     size_t blockLength = m_blockStack.blockLength;

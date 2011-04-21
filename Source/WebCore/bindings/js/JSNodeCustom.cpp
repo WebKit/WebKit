@@ -108,7 +108,7 @@ static bool isObservable(JSNode* jsNode, Node* node, DOMWrapperWorld* world)
     // the wrapper must be treated as observable, because future access to
     // those objects through the DOM must reflect those properties.
     // FIXME: It would be better if this logic could be in the node next to
-    // the custom markChildren functions rather than here.
+    // the custom visit functions rather than here.
     // Note that for some compound objects like stylesheets and CSSStyleDeclarations,
     // we don't descend to check children for custom properties, and just conservatively
     // keep the node wrappers protecting them alive.
@@ -147,7 +147,7 @@ static bool isObservable(JSNode* jsNode, Node* node, DOMWrapperWorld* world)
     return false;
 }
 
-static inline bool isReachableFromDOM(JSNode* jsNode, Node* node, DOMWrapperWorld* world, MarkStack& markStack)
+static inline bool isReachableFromDOM(JSNode* jsNode, Node* node, DOMWrapperWorld* world, SlotVisitor& visitor)
 {
     if (!node->inDocument()) {
         // If a wrapper is the last reference to an image or script element
@@ -170,14 +170,14 @@ static inline bool isReachableFromDOM(JSNode* jsNode, Node* node, DOMWrapperWorl
             return true;
     }
 
-    return isObservable(jsNode, node, world) && markStack.containsOpaqueRoot(root(node));
+    return isObservable(jsNode, node, world) && visitor.containsOpaqueRoot(root(node));
 }
 
-bool JSNodeOwner::isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown> handle, void* context, MarkStack& markStack)
+bool JSNodeOwner::isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown> handle, void* context, SlotVisitor& visitor)
 {
     JSNode* jsNode = static_cast<JSNode*>(handle.get().asCell());
     DOMWrapperWorld* world = static_cast<DOMWrapperWorld*>(context);
-    return isReachableFromDOM(jsNode, jsNode->impl(), world, markStack);
+    return isReachableFromDOM(jsNode, jsNode->impl(), world, visitor);
 }
 
 void JSNodeOwner::finalize(JSC::Handle<JSC::Unknown> handle, void* context)
@@ -236,14 +236,14 @@ ScopeChainNode* JSNode::pushEventHandlerScope(ExecState*, ScopeChainNode* node) 
     return node;
 }
 
-void JSNode::markChildren(MarkStack& markStack)
+void JSNode::visitChildren(SlotVisitor& visitor)
 {
-    Base::markChildren(markStack);
+    Base::visitChildren(visitor);
 
     Node* node = m_impl.get();
-    node->markJSEventListeners(markStack);
+    node->visitJSEventListeners(visitor);
 
-    markStack.addOpaqueRoot(root(node));
+    visitor.addOpaqueRoot(root(node));
 }
 
 static ALWAYS_INLINE JSValue createWrapperInline(ExecState* exec, JSDOMGlobalObject* globalObject, Node* node)

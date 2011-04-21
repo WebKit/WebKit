@@ -89,7 +89,7 @@ namespace WebCore {
         }
 
     protected:
-        static const unsigned StructureFlags = JSC::ImplementsHasInstance | JSC::OverridesMarkChildren | JSDOMWrapperWithGlobalPointer::StructureFlags;
+        static const unsigned StructureFlags = JSC::ImplementsHasInstance | JSC::OverridesVisitChildren | JSDOMWrapperWithGlobalPointer::StructureFlags;
         DOMConstructorObject(JSC::Structure* structure, JSDOMGlobalObject* globalObject)
             : JSDOMWrapperWithGlobalPointer(structure, globalObject)
         {
@@ -113,8 +113,8 @@ namespace WebCore {
         }
     };
     
-    void markActiveObjectsForContext(JSC::MarkStack&, JSC::JSGlobalData&, ScriptExecutionContext*);
-    void markDOMObjectWrapper(JSC::MarkStack&, JSC::JSGlobalData& globalData, void* object);
+    void visitActiveObjectsForContext(JSC::SlotVisitor&, JSC::JSGlobalData&, ScriptExecutionContext*);
+    void markDOMObjectWrapper(JSC::SlotVisitor&, JSC::JSGlobalData&, void*);
 
     JSC::Structure* getCachedDOMStructure(JSDOMGlobalObject*, const JSC::ClassInfo*);
     JSC::Structure* cacheDOMStructure(JSDOMGlobalObject*, JSC::Structure*, const JSC::ClassInfo*);

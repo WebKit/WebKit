@@ -68,17 +68,17 @@ static inline void getClassPropertyNames(ExecState* exec, const ClassInfo* class
     }
 }
 
-void JSObject::markChildren(MarkStack& markStack)
+void JSObject::visitChildren(SlotVisitor& visitor)
 {
 #ifndef NDEBUG
-    bool wasCheckingForDefaultMarkViolation = markStack.m_isCheckingForDefaultMarkViolation;
-    markStack.m_isCheckingForDefaultMarkViolation = false;
+    bool wasCheckingForDefaultMarkViolation = visitor.m_isCheckingForDefaultMarkViolation;
+    visitor.m_isCheckingForDefaultMarkViolation = false;
 #endif
 
-    markChildrenDirect(markStack);
+    visitChildrenDirect(visitor);
 
 #ifndef NDEBUG
-    markStack.m_isCheckingForDefaultMarkViolation = wasCheckingForDefaultMarkViolation;
+    visitor.m_isCheckingForDefaultMarkViolation = wasCheckingForDefaultMarkViolation;
 #endif
 }
 

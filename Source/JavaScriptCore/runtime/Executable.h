@@ -235,12 +235,12 @@ namespace JSC {
         static Structure* createStructure(JSGlobalData& globalData, JSValue proto) { return Structure::create(globalData, proto, TypeInfo(CompoundType, StructureFlags), AnonymousSlotCount, 0); }
 
     private:
-        static const unsigned StructureFlags = OverridesMarkChildren | ScriptExecutable::StructureFlags;
+        static const unsigned StructureFlags = OverridesVisitChildren | ScriptExecutable::StructureFlags;
         static const ClassInfo s_info;
         EvalExecutable(ExecState*, const SourceCode&, bool);
 
         JSObject* compileInternal(ExecState*, ScopeChainNode*);
-        virtual void markChildren(MarkStack&);
+        virtual void visitChildren(SlotVisitor&);
 
         OwnPtr<EvalCodeBlock> m_evalCodeBlock;
     };
@@ -282,12 +282,12 @@ namespace JSC {
         static Structure* createStructure(JSGlobalData& globalData, JSValue proto) { return Structure::create(globalData, proto, TypeInfo(CompoundType, StructureFlags), AnonymousSlotCount, 0); }
 
     private:
-        static const unsigned StructureFlags = OverridesMarkChildren | ScriptExecutable::StructureFlags;
+        static const unsigned StructureFlags = OverridesVisitChildren | ScriptExecutable::StructureFlags;
         static const ClassInfo s_info;
         ProgramExecutable(ExecState*, const SourceCode&);
 
         JSObject* compileInternal(ExecState*, ScopeChainNode*);
-        virtual void markChildren(MarkStack&);
+        virtual void visitChildren(SlotVisitor&);
 
         OwnPtr<ProgramCodeBlock> m_programCodeBlock;
     };
@@ -370,7 +370,7 @@ namespace JSC {
         SharedSymbolTable* symbolTable() const { return m_symbolTable; }
 
         void discardCode();
-        void markChildren(MarkStack&);
+        void visitChildren(SlotVisitor&);
         static FunctionExecutable* fromGlobalCode(const Identifier&, ExecState*, Debugger*, const SourceCode&, JSObject** exception);
         static Structure* createStructure(JSGlobalData& globalData, JSValue proto) { return Structure::create(globalData, proto, TypeInfo(CompoundType, StructureFlags), AnonymousSlotCount, 0); }
 
@@ -381,7 +381,7 @@ namespace JSC {
         JSObject* compileForCallInternal(ExecState*, ScopeChainNode*);
         JSObject* compileForConstructInternal(ExecState*, ScopeChainNode*);
         
-        static const unsigned StructureFlags = OverridesMarkChildren | ScriptExecutable::StructureFlags;
+        static const unsigned StructureFlags = OverridesVisitChildren | ScriptExecutable::StructureFlags;
         static const ClassInfo s_info;
         unsigned m_numCapturedVariables : 31;
         bool m_forceUsesArguments : 1;

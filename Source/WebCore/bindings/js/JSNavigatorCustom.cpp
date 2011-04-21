@@ -32,13 +32,13 @@ namespace WebCore {
 
 using namespace JSC;
 
-void JSNavigator::markChildren(MarkStack& markStack)
+void JSNavigator::visitChildren(SlotVisitor& visitor)
 {
-    Base::markChildren(markStack);
+    Base::visitChildren(visitor);
 
     JSGlobalData& globalData = *Heap::heap(this)->globalData();
 
-    markDOMObjectWrapper(markStack, globalData, impl()->optionalGeolocation());
+    markDOMObjectWrapper(visitor, globalData, impl()->optionalGeolocation());
 }
 
 #if ENABLE(MEDIA_STREAM)

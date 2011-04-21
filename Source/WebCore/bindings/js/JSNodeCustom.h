@@ -35,7 +35,7 @@ namespace WebCore {
 class CSSValue;
 
 class JSNodeOwner : public JSC::WeakHandleOwner {
-    virtual bool isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown>, void* context, JSC::MarkStack&);
+    virtual bool isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown>, void* context, JSC::SlotVisitor&);
     virtual void finalize(JSC::Handle<JSC::Unknown>, void* context);
 };
 

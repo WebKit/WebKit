@@ -39,14 +39,14 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
-void JSAttr::markChildren(MarkStack& markStack)
+void JSAttr::visitChildren(SlotVisitor& visitor)
 {
-    Base::markChildren(markStack);
+    Base::visitChildren(visitor);
 
     Element* element = impl()->ownerElement();
     if (!element)
         return;
-    markStack.addOpaqueRoot(root(element));
+    visitor.addOpaqueRoot(root(element));
 }
 
 } // namespace WebCore

@@ -47,12 +47,12 @@ namespace JSC {
         
         static Structure* createStructure(JSGlobalData& globalData, JSValue prototype)
         {
-            return Structure::create(globalData, prototype, TypeInfo(CompoundType, OverridesMarkChildren), AnonymousSlotCount, &s_info);
+            return Structure::create(globalData, prototype, TypeInfo(CompoundType, OverridesVisitChildren), AnonymousSlotCount, &s_info);
         }
 
         virtual bool isPropertyNameIterator() const { return true; }
 
-        virtual void markChildren(MarkStack&);
+        virtual void visitChildren(SlotVisitor&);
 
         bool getOffset(size_t i, int& offset)
         {

@@ -27,6 +27,7 @@
 #include "JSNamedNodeMap.h"
 
 #include "JSNode.h"
+
 #include "Element.h"
 #include "NamedNodeMap.h"
 
@@ -35,11 +36,11 @@ using namespace JSC;
 namespace WebCore {
 
 class JSNamedNodeMapOwner : public JSC::WeakHandleOwner {
-    virtual bool isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown>, void* context, JSC::MarkStack&);
+    virtual bool isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown>, void* context, JSC::SlotVisitor&);
     virtual void finalize(JSC::Handle<JSC::Unknown>, void* context);
 };
 
-bool JSNamedNodeMapOwner::isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown> handle, void*, MarkStack& markStack)
+bool JSNamedNodeMapOwner::isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown> handle, void*, SlotVisitor& visitor)
 {
     JSNamedNodeMap* jsNamedNodeMap = static_cast<JSNamedNodeMap*>(handle.get().asCell());
     if (!jsNamedNodeMap->hasCustomProperties())
@@ -47,7 +48,7 @@ bool JSNamedNodeMapOwner::isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown> h
     Element* element = jsNamedNodeMap->impl()->element();
     if (!element)
         return false;
-    return markStack.containsOpaqueRoot(root(element));
+    return visitor.containsOpaqueRoot(root(element));
 }
 
 void JSNamedNodeMapOwner::finalize(JSC::Handle<JSC::Unknown> handle, void* context)
@@ -79,9 +80,9 @@ JSValue JSNamedNodeMap::nameGetter(ExecState* exec, JSValue slotBase, const Iden
     return toJS(exec, thisObj->impl()->getNamedItem(identifierToString(propertyName)));
 }
 
-void JSNamedNodeMap::markChildren(MarkStack& markStack)
+void JSNamedNodeMap::visitChildren(SlotVisitor& visitor)
 {
-    Base::markChildren(markStack);
+    Base::visitChildren(visitor);
 
     // We need to keep the wrapper for our underlying NamedNodeMap's element
     // alive because NamedNodeMap and Attr rely on the element for data, and
@@ -90,7 +91,7 @@ void JSNamedNodeMap::markChildren(MarkStack& markStack)
     Element* element = impl()->element();
     if (!element)
         return;
-    markStack.addOpaqueRoot(root(element));
+    visitor.addOpaqueRoot(root(element));
 }
 
 JSC::JSValue toJS(JSC::ExecState* exec, JSDOMGlobalObject* globalObject, NamedNodeMap* impl)

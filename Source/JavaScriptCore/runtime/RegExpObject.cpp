@@ -72,11 +72,11 @@ RegExpObject::~RegExpObject()
 {
 }
 
-void RegExpObject::markChildren(MarkStack& markStack)
+void RegExpObject::visitChildren(SlotVisitor& visitor)
 {
-    Base::markChildren(markStack);
+    Base::visitChildren(visitor);
     if (UNLIKELY(!d->lastIndex.get().isInt32()))
-        markStack.append(&d->lastIndex);
+        visitor.append(&d->lastIndex);
 }
 
 bool RegExpObject::getOwnPropertySlot(ExecState* exec, const Identifier& propertyName, PropertySlot& slot)

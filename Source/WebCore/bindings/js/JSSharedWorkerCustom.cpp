@@ -43,12 +43,12 @@ using namespace JSC;
 
 namespace WebCore {
 
-void JSSharedWorker::markChildren(MarkStack& markStack)
+void JSSharedWorker::visitChildren(SlotVisitor& visitor)
 {
-    Base::markChildren(markStack);
+    Base::visitChildren(visitor);
 
     if (MessagePort* port = impl()->port())
-        markDOMObjectWrapper(markStack, *Heap::heap(this)->globalData(), port);
+        markDOMObjectWrapper(visitor, *Heap::heap(this)->globalData(), port);
 }
 
 EncodedJSValue JSC_HOST_CALL JSSharedWorkerConstructor::constructJSSharedWorker(ExecState* exec)

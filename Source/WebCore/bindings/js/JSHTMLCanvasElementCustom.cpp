@@ -40,14 +40,14 @@ using namespace JSC;
 
 namespace WebCore {
 
-void JSHTMLCanvasElement::markChildren(MarkStack& markStack)
+void JSHTMLCanvasElement::visitChildren(SlotVisitor& visitor)
 {
-    Base::markChildren(markStack);
+    Base::visitChildren(visitor);
 
     HTMLCanvasElement* canvas = static_cast<HTMLCanvasElement*>(impl());
     JSGlobalData& globalData = *Heap::heap(this)->globalData();
 
-    markDOMObjectWrapper(markStack, globalData, canvas->renderingContext());
+    markDOMObjectWrapper(visitor, globalData, canvas->renderingContext());
 }
 
 JSValue JSHTMLCanvasElement::getContext(ExecState* exec)

@@ -95,11 +95,11 @@ JSValue JSPropertyNameIterator::get(ExecState* exec, JSObject* base, size_t i)
     return identifier;
 }
 
-void JSPropertyNameIterator::markChildren(MarkStack& markStack)
+void JSPropertyNameIterator::visitChildren(SlotVisitor& visitor)
 {
-    markStack.appendValues(m_jsStrings.get(), m_jsStringsSize, MayContainNullValues);
+    visitor.appendValues(m_jsStrings.get(), m_jsStringsSize, MayContainNullValues);
     if (m_cachedPrototypeChain)
-        markStack.append(&m_cachedPrototypeChain);
+        visitor.append(&m_cachedPrototypeChain);
 }
 
 } // namespace JSC

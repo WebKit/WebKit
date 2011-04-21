@@ -48,7 +48,7 @@ public:
     virtual JSValue valueOf(ExecState*) const;
     virtual JSValue defaultValue(ExecState*, PreferredPrimitiveType) const;
 
-    void markAggregate(MarkStack&);
+    void visitAggregate(SlotVisitor&);
 
     virtual JSValue getMethod(ExecState* exec, const Identifier& propertyName);
     virtual JSValue invokeMethod(ExecState*, RuntimeMethod*);

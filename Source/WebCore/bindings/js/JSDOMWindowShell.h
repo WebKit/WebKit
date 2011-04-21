@@ -66,9 +66,9 @@ namespace WebCore {
         DOMWrapperWorld* world() { return m_world.get(); }
 
     private:
-        static const unsigned StructureFlags = JSC::OverridesGetOwnPropertySlot | JSC::OverridesMarkChildren | JSC::OverridesGetPropertyNames | Base::StructureFlags;
+        static const unsigned StructureFlags = JSC::OverridesGetOwnPropertySlot | JSC::OverridesVisitChildren | JSC::OverridesGetPropertyNames | Base::StructureFlags;
 
-        virtual void markChildren(JSC::MarkStack&);
+        virtual void visitChildren(JSC::SlotVisitor&);
         virtual JSC::UString className() const;
         virtual bool getOwnPropertySlot(JSC::ExecState*, const JSC::Identifier& propertyName, JSC::PropertySlot&);
         virtual bool getOwnPropertyDescriptor(JSC::ExecState*, const JSC::Identifier& propertyName, JSC::PropertyDescriptor&);

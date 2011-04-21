@@ -37,18 +37,18 @@ using namespace JSC;
 namespace WebCore {
 
 class JSNodeListOwner : public JSC::WeakHandleOwner {
-    virtual bool isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown>, void* context, JSC::MarkStack&);
+    virtual bool isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown>, void* context, JSC::SlotVisitor&);
     virtual void finalize(JSC::Handle<JSC::Unknown>, void* context);
 };
 
-bool JSNodeListOwner::isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown> handle, void*, MarkStack& markStack)
+bool JSNodeListOwner::isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown> handle, void*, SlotVisitor& visitor)
 {
     JSNodeList* jsNodeList = static_cast<JSNodeList*>(handle.get().asCell());
     if (!jsNodeList->hasCustomProperties())
         return false;
     if (!jsNodeList->impl()->isDynamicNodeList())
         return false;
-    return markStack.containsOpaqueRoot(root(static_cast<DynamicNodeList*>(jsNodeList->impl())->rootNode()));
+    return visitor.containsOpaqueRoot(root(static_cast<DynamicNodeList*>(jsNodeList->impl())->rootNode()));
 }
 
 void JSNodeListOwner::finalize(JSC::Handle<JSC::Unknown> handle, void* context)

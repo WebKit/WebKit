@@ -80,14 +80,14 @@ namespace JSC {
         void reset();
 
     private:
-        friend class HeapRootMarker; // Allowed to mark a JSValue* or JSCell** directly.
+        friend class HeapRootVisitor; // Allowed to mark a JSValue* or JSCell** directly.
         void append(JSValue*);
         void append(JSValue*, size_t count);
         void append(JSCell**);
 
         void internalAppend(JSCell*);
         void internalAppend(JSValue);
-        void markChildren(JSCell*);
+        void visitChildren(JSCell*);
 
         struct MarkSet {
             MarkSet(JSValue* values, JSValue* end, MarkSetProperties properties)
@@ -202,6 +202,8 @@ namespace JSC {
 #endif
     };
 
+    typedef MarkStack SlotVisitor;
+
     inline void MarkStack::append(JSValue* slot, size_t count)
     {
         if (!count)
@@ -243,10 +245,10 @@ namespace JSC {
     // this class to mark direct heap roots that are marked during every GC pass.
     // All other references should be wrapped in WriteBarriers and marked through
     // the MarkStack.
-    class HeapRootMarker {
+    class HeapRootVisitor {
     private:
         friend class Heap;
-        HeapRootMarker(MarkStack&);
+        HeapRootVisitor(SlotVisitor&);
         
     public:
         void mark(JSValue*);
@@ -254,40 +256,40 @@ namespace JSC {
         void mark(JSString**);
         void mark(JSCell**);
         
-        MarkStack& markStack();
+        SlotVisitor& visitor();
 
     private:
-        MarkStack& m_markStack;
+        SlotVisitor& m_visitor;
     };
 
-    inline HeapRootMarker::HeapRootMarker(MarkStack& markStack)
-        : m_markStack(markStack)
+    inline HeapRootVisitor::HeapRootVisitor(SlotVisitor& visitor)
+        : m_visitor(visitor)
     {
     }
 
-    inline void HeapRootMarker::mark(JSValue* slot)
+    inline void HeapRootVisitor::mark(JSValue* slot)
     {
-        m_markStack.append(slot);
+        m_visitor.append(slot);
     }
 
-    inline void HeapRootMarker::mark(JSValue* slot, size_t count)
+    inline void HeapRootVisitor::mark(JSValue* slot, size_t count)
     {
-        m_markStack.append(slot, count);
+        m_visitor.append(slot, count);
     }
 
-    inline void HeapRootMarker::mark(JSString** slot)
+    inline void HeapRootVisitor::mark(JSString** slot)
     {
-        m_markStack.append(reinterpret_cast<JSCell**>(slot));
+        m_visitor.append(reinterpret_cast<JSCell**>(slot));
     }
 
-    inline void HeapRootMarker::mark(JSCell** slot)
+    inline void HeapRootVisitor::mark(JSCell** slot)
     {
-        m_markStack.append(slot);
+        m_visitor.append(slot);
     }
 
-    inline MarkStack& HeapRootMarker::markStack()
+    inline SlotVisitor& HeapRootVisitor::visitor()
     {
-        return m_markStack;
+        return m_visitor;
     }
 
 } // namespace JSC

@@ -46,11 +46,11 @@ NativeErrorConstructor::NativeErrorConstructor(ExecState* exec, JSGlobalObject* 
     ASSERT(m_errorStructure->typeInfo().type() == ObjectType);
 }
 
-void NativeErrorConstructor::markChildren(MarkStack& markStack)
+void NativeErrorConstructor::visitChildren(SlotVisitor& visitor)
 {
-    InternalFunction::markChildren(markStack);
+    InternalFunction::visitChildren(visitor);
     if (m_errorStructure)
-        markStack.append(&m_errorStructure);
+        visitor.append(&m_errorStructure);
 }
 
 static EncodedJSValue JSC_HOST_CALL constructWithNativeErrorConstructor(ExecState* exec)

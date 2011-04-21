@@ -41,15 +41,15 @@ using namespace JSC;
 
 namespace WebCore {
 
-void JSMessagePort::markChildren(MarkStack& markStack)
+void JSMessagePort::visitChildren(SlotVisitor& visitor)
 {
-    Base::markChildren(markStack);
+    Base::visitChildren(visitor);
 
     // If we have a locally entangled port, we can directly mark it as reachable. Ports that are remotely entangled are marked in-use by markActiveObjectsForContext().
     if (MessagePort* entangledPort = m_impl->locallyEntangledPort())
-        markDOMObjectWrapper(markStack, *Heap::heap(this)->globalData(), entangledPort);
+        markDOMObjectWrapper(visitor, *Heap::heap(this)->globalData(), entangledPort);
 
-    m_impl->markJSEventListeners(markStack);
+    m_impl->visitJSEventListeners(visitor);
 }
 
 JSC::JSValue JSMessagePort::postMessage(JSC::ExecState* exec)

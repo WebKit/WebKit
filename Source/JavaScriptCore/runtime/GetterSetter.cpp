@@ -28,14 +28,14 @@
 
 namespace JSC {
 
-void GetterSetter::markChildren(MarkStack& markStack)
+void GetterSetter::visitChildren(SlotVisitor& visitor)
 {
-    JSCell::markChildren(markStack);
+    JSCell::visitChildren(visitor);
 
     if (m_getter)
-        markStack.append(&m_getter);
+        visitor.append(&m_getter);
     if (m_setter)
-        markStack.append(&m_setter);
+        visitor.append(&m_setter);
 }
 
 bool GetterSetter::isGetterSetter() const

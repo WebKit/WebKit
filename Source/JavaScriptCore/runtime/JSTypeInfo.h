@@ -41,7 +41,7 @@ namespace JSC {
     static const unsigned ImplementsDefaultHasInstance = 1 << 3;
     static const unsigned NeedsThisConversion = 1 << 4;
     static const unsigned OverridesGetOwnPropertySlot = 1 << 5;
-    static const unsigned OverridesMarkChildren = 1 << 6;
+    static const unsigned OverridesVisitChildren = 1 << 6;
     static const unsigned OverridesGetPropertyNames = 1 << 7;
     static const unsigned IsJSFinalObject = 1 << 8;
 
@@ -54,7 +54,7 @@ namespace JSC {
         {
             ASSERT(flags <= 0x1FF);
             ASSERT(type <= 0xFF);
-            ASSERT(type >= CompoundType || !(flags & OverridesMarkChildren));
+            ASSERT(type >= CompoundType || !(flags & OverridesVisitChildren));
             // ImplementsDefaultHasInstance means (ImplementsHasInstance & !OverridesHasInstance)
             if ((m_flags & (ImplementsHasInstance | OverridesHasInstance)) == ImplementsHasInstance)
                 m_flags |= ImplementsDefaultHasInstance;
@@ -67,7 +67,7 @@ namespace JSC {
         bool overridesHasInstance() const { return m_flags & OverridesHasInstance; }
         bool needsThisConversion() const { return m_flags & NeedsThisConversion; }
         bool overridesGetOwnPropertySlot() const { return m_flags & OverridesGetOwnPropertySlot; }
-        bool overridesMarkChildren() const { return m_flags & OverridesMarkChildren; }
+        bool overridesVisitChildren() const { return m_flags & OverridesVisitChildren; }
         bool overridesGetPropertyNames() const { return m_flags & OverridesGetPropertyNames; }
         unsigned flags() const { return m_flags; }
         unsigned isFinal() const { return m_flags2 && (IsJSFinalObject >> 8); }

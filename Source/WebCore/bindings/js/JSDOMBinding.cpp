@@ -134,7 +134,7 @@ const JSC::HashTable* getHashTableForGlobalData(JSGlobalData& globalData, const 
     return DOMObjectHashTableMap::mapFor(globalData).get(staticTable);
 }
 
-void markActiveObjectsForContext(MarkStack& markStack, JSGlobalData& globalData, ScriptExecutionContext* scriptExecutionContext)
+void visitActiveObjectsForContext(SlotVisitor& visitor, JSGlobalData& globalData, ScriptExecutionContext* scriptExecutionContext)
 {
     // If an element has pending activity that may result in event listeners being called
     // (e.g. an XMLHttpRequest), we need to keep JS wrappers alive.
@@ -145,7 +145,7 @@ void markActiveObjectsForContext(MarkStack& markStack, JSGlobalData& globalData,
         if (iter->first->hasPendingActivity()) {
             // Generally, an active object with pending activity must have a wrapper to mark its listeners.
             // However, some ActiveDOMObjects don't have JS wrappers.
-            markDOMObjectWrapper(markStack, globalData, iter->second);
+            markDOMObjectWrapper(visitor, globalData, iter->second);
         }
     }
 
@@ -154,11 +154,11 @@ void markActiveObjectsForContext(MarkStack& markStack, JSGlobalData& globalData,
     for (HashSet<MessagePort*>::const_iterator iter = messagePorts.begin(); iter != portsEnd; ++iter) {
         // If the message port is remotely entangled, then always mark it as in-use because we can't determine reachability across threads.
         if (!(*iter)->locallyEntangledPort() || (*iter)->hasPendingActivity())
-            markDOMObjectWrapper(markStack, globalData, *iter);
+            markDOMObjectWrapper(visitor, globalData, *iter);
     }
 }
 
-void markDOMObjectWrapper(MarkStack& markStack, JSGlobalData& globalData, void* object)
+void markDOMObjectWrapper(SlotVisitor& visitor, JSGlobalData& globalData, void* object)
 {
     // FIXME: This could be changed to only mark wrappers that are "observable"
     // as markDOMNodesForDocument does, allowing us to collect more wrappers,
@@ -168,7 +168,7 @@ void markDOMObjectWrapper(MarkStack& markStack, JSGlobalData& globalData, void* 
 
     for (JSGlobalDataWorldIterator worldIter(&globalData); worldIter; ++worldIter) {
         if (JSDOMWrapper* wrapper = worldIter->m_wrappers.get(object).get())
-            markStack.deprecatedAppend(reinterpret_cast<JSCell**>(&wrapper));
+            visitor.deprecatedAppend(reinterpret_cast<JSCell**>(&wrapper));
     }
 }
 

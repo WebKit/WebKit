@@ -34,7 +34,7 @@ WeakHandleOwner::~WeakHandleOwner()
 {
 }
 
-bool WeakHandleOwner::isReachableFromOpaqueRoots(Handle<Unknown>, void*, MarkStack&)
+bool WeakHandleOwner::isReachableFromOpaqueRoots(Handle<Unknown>, void*, SlotVisitor&)
 {
     return false;
 }
@@ -60,16 +60,16 @@ void HandleHeap::grow()
     }
 }
 
-void HandleHeap::markStrongHandles(HeapRootMarker& heapRootMarker)
+void HandleHeap::markStrongHandles(HeapRootVisitor& heapRootMarker)
 {
     Node* end = m_strongList.end();
     for (Node* node = m_strongList.begin(); node != end; node = node->next())
         heapRootMarker.mark(node->slot());
 }
 
-void HandleHeap::markWeakHandles(HeapRootMarker& heapRootMarker)
+void HandleHeap::markWeakHandles(HeapRootVisitor& heapRootVisitor)
 {
-    MarkStack& markStack = heapRootMarker.markStack();
+    SlotVisitor& visitor = heapRootVisitor.visitor();
 
     Node* end = m_weakList.end();
     for (Node* node = m_weakList.begin(); node != end; node = node->next()) {
@@ -82,10 +82,10 @@ void HandleHeap::markWeakHandles(HeapRootMarker& heapRootMarker)
         if (!weakOwner)
             continue;
 
-        if (!weakOwner->isReachableFromOpaqueRoots(Handle<Unknown>::wrapSlot(node->slot()), node->weakOwnerContext(), markStack))
+        if (!weakOwner->isReachableFromOpaqueRoots(Handle<Unknown>::wrapSlot(node->slot()), node->weakOwnerContext(), visitor))
             continue;
 
-        heapRootMarker.mark(node->slot());
+        heapRootVisitor.mark(node->slot());
     }
 }
 

@@ -51,12 +51,12 @@ public:
 
     static const ClassInfo s_info;
 
-    virtual void markChildren(MarkStack& markStack)
+    virtual void visitChildren(SlotVisitor& visitor)
     {
-        RuntimeObject::markChildren(markStack);
+        RuntimeObject::visitChildren(visitor);
         QtInstance* instance = static_cast<QtInstance*>(getInternalInstance());
         if (instance)
-            instance->markAggregate(markStack);
+            instance->visitAggregate(visitor);
     }
 
     static Structure* createStructure(JSGlobalData& globalData, JSValue prototype)
@@ -65,7 +65,7 @@ public:
     }
 
 protected:
-    static const unsigned StructureFlags = RuntimeObject::StructureFlags | OverridesMarkChildren;
+    static const unsigned StructureFlags = RuntimeObject::StructureFlags | OverridesVisitChildren;
 };
 
 const ClassInfo QtRuntimeObject::s_info = { "QtRuntimeObject", &RuntimeObject::s_info, 0, 0 };
@@ -185,12 +185,12 @@ RuntimeObject* QtInstance::newRuntimeObject(ExecState* exec)
     return new (exec) QtRuntimeObject(exec, exec->lexicalGlobalObject(), this);
 }
 
-void QtInstance::markAggregate(MarkStack& markStack)
+void QtInstance::visitAggregate(SlotVisitor& visitor)
 {
     if (m_defaultMethod)
-        markStack.append(&m_defaultMethod);
+        visitor.append(&m_defaultMethod);
     for (QHash<QByteArray, WriteBarrier<JSObject> >::Iterator it = m_methods.begin(), end = m_methods.end(); it != end; ++it)
-        markStack.append(&it.value());
+        visitor.append(&it.value());
 }
 
 void QtInstance::begin()

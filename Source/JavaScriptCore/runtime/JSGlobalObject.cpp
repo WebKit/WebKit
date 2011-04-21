@@ -78,10 +78,10 @@ static const int initialTickCountThreshold = 255;
 // Preferred number of milliseconds between each timeout check
 static const int preferredScriptCheckTimeInterval = 1000;
 
-template <typename T> static inline void markIfNeeded(MarkStack& markStack, WriteBarrier<T>* v)
+template <typename T> static inline void visitIfNeeded(SlotVisitor& visitor, WriteBarrier<T>* v)
 {
     if (*v)
-        markStack.append(v);
+        visitor.append(v);
 }
 
 JSGlobalObject::~JSGlobalObject()
@@ -307,60 +307,60 @@ void JSGlobalObject::resetPrototype(JSGlobalData& globalData, JSValue prototype)
         oldLastInPrototypeChain->setPrototype(globalData, objectPrototype);
 }
 
-void JSGlobalObject::markChildren(MarkStack& markStack)
+void JSGlobalObject::visitChildren(SlotVisitor& visitor)
 {
-    JSVariableObject::markChildren(markStack);
+    JSVariableObject::visitChildren(visitor);
 
-    markIfNeeded(markStack, &m_globalScopeChain);
-    markIfNeeded(markStack, &m_methodCallDummy);
+    visitIfNeeded(visitor, &m_globalScopeChain);
+    visitIfNeeded(visitor, &m_methodCallDummy);
 
-    markIfNeeded(markStack, &m_regExpConstructor);
-    markIfNeeded(markStack, &m_errorConstructor);
-    markIfNeeded(markStack, &m_evalErrorConstructor);
-    markIfNeeded(markStack, &m_rangeErrorConstructor);
-    markIfNeeded(markStack, &m_referenceErrorConstructor);
-    markIfNeeded(markStack, &m_syntaxErrorConstructor);
-    markIfNeeded(markStack, &m_typeErrorConstructor);
-    markIfNeeded(markStack, &m_URIErrorConstructor);
+    visitIfNeeded(visitor, &m_regExpConstructor);
+    visitIfNeeded(visitor, &m_errorConstructor);
+    visitIfNeeded(visitor, &m_evalErrorConstructor);
+    visitIfNeeded(visitor, &m_rangeErrorConstructor);
+    visitIfNeeded(visitor, &m_referenceErrorConstructor);
+    visitIfNeeded(visitor, &m_syntaxErrorConstructor);
+    visitIfNeeded(visitor, &m_typeErrorConstructor);
+    visitIfNeeded(visitor, &m_URIErrorConstructor);
 
-    markIfNeeded(markStack, &m_evalFunction);
-    markIfNeeded(markStack, &m_callFunction);
-    markIfNeeded(markStack, &m_applyFunction);
+    visitIfNeeded(visitor, &m_evalFunction);
+    visitIfNeeded(visitor, &m_callFunction);
+    visitIfNeeded(visitor, &m_applyFunction);
 
-    markIfNeeded(markStack, &m_objectPrototype);
-    markIfNeeded(markStack, &m_functionPrototype);
-    markIfNeeded(markStack, &m_arrayPrototype);
-    markIfNeeded(markStack, &m_booleanPrototype);
-    markIfNeeded(markStack, &m_stringPrototype);
-    markIfNeeded(markStack, &m_numberPrototype);
-    markIfNeeded(markStack, &m_datePrototype);
-    markIfNeeded(markStack, &m_regExpPrototype);
+    visitIfNeeded(visitor, &m_objectPrototype);
+    visitIfNeeded(visitor, &m_functionPrototype);
+    visitIfNeeded(visitor, &m_arrayPrototype);
+    visitIfNeeded(visitor, &m_booleanPrototype);
+    visitIfNeeded(visitor, &m_stringPrototype);
+    visitIfNeeded(visitor, &m_numberPrototype);
+    visitIfNeeded(visitor, &m_datePrototype);
+    visitIfNeeded(visitor, &m_regExpPrototype);
 
-    markIfNeeded(markStack, &m_argumentsStructure);
-    markIfNeeded(markStack, &m_arrayStructure);
-    markIfNeeded(markStack, &m_booleanObjectStructure);
-    markIfNeeded(markStack, &m_callbackConstructorStructure);
-    markIfNeeded(markStack, &m_callbackFunctionStructure);
-    markIfNeeded(markStack, &m_callbackObjectStructure);
-    markIfNeeded(markStack, &m_dateStructure);
-    markIfNeeded(markStack, &m_emptyObjectStructure);
-    markIfNeeded(markStack, &m_errorStructure);
-    markIfNeeded(markStack, &m_functionStructure);
-    markIfNeeded(markStack, &m_numberObjectStructure);
-    markIfNeeded(markStack, &m_regExpMatchesArrayStructure);
-    markIfNeeded(markStack, &m_regExpStructure);
-    markIfNeeded(markStack, &m_stringObjectStructure);
-    markIfNeeded(markStack, &m_internalFunctionStructure);
+    visitIfNeeded(visitor, &m_argumentsStructure);
+    visitIfNeeded(visitor, &m_arrayStructure);
+    visitIfNeeded(visitor, &m_booleanObjectStructure);
+    visitIfNeeded(visitor, &m_callbackConstructorStructure);
+    visitIfNeeded(visitor, &m_callbackFunctionStructure);
+    visitIfNeeded(visitor, &m_callbackObjectStructure);
+    visitIfNeeded(visitor, &m_dateStructure);
+    visitIfNeeded(visitor, &m_emptyObjectStructure);
+    visitIfNeeded(visitor, &m_errorStructure);
+    visitIfNeeded(visitor, &m_functionStructure);
+    visitIfNeeded(visitor, &m_numberObjectStructure);
+    visitIfNeeded(visitor, &m_regExpMatchesArrayStructure);
+    visitIfNeeded(visitor, &m_regExpStructure);
+    visitIfNeeded(visitor, &m_stringObjectStructure);
+    visitIfNeeded(visitor, &m_internalFunctionStructure);
 
     if (m_registerArray) {
         // Outside the execution of global code, when our variables are torn off,
         // we can mark the torn-off array.
-        markStack.appendValues(m_registerArray.get(), m_registerArraySize);
+        visitor.appendValues(m_registerArray.get(), m_registerArraySize);
     } else if (m_registers) {
         // During execution of global code, when our variables are in the register file,
         // the symbol table tells us how many variables there are, and registers
         // points to where they end, and the registers used for execution begin.
-        markStack.appendValues(m_registers - symbolTable().size(), symbolTable().size());
+        visitor.appendValues(m_registers - symbolTable().size(), symbolTable().size());
     }
 }
 

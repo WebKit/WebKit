@@ -32,6 +32,7 @@ namespace JSC {
     class JSObject;
     class MarkStack;
     class ScopeChainIterator;
+    typedef MarkStack SlotVisitor;
     
     class ScopeChainNode : public JSCell {
     public:
@@ -66,9 +67,9 @@ namespace JSC {
 #endif
         
         static Structure* createStructure(JSGlobalData& globalData, JSValue proto) { return Structure::create(globalData, proto, TypeInfo(CompoundType, StructureFlags), AnonymousSlotCount, &s_info); }
-        virtual void markChildren(MarkStack&);
+        virtual void visitChildren(SlotVisitor&);
     private:
-        static const unsigned StructureFlags = OverridesMarkChildren;
+        static const unsigned StructureFlags = OverridesVisitChildren;
         static const ClassInfo s_info;
     };
 

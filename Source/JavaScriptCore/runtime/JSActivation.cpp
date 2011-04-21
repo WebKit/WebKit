@@ -58,19 +58,19 @@ JSActivation::~JSActivation()
     static_cast<SharedSymbolTable*>(m_symbolTable)->deref();
 }
 
-void JSActivation::markChildren(MarkStack& markStack)
+void JSActivation::visitChildren(SlotVisitor& visitor)
 {
-    Base::markChildren(markStack);
+    Base::visitChildren(visitor);
 
     // No need to mark our registers if they're still in the RegisterFile.
     WriteBarrier<Unknown>* registerArray = m_registerArray.get();
     if (!registerArray)
         return;
 
-    markStack.appendValues(registerArray, m_numParametersMinusThis);
+    visitor.appendValues(registerArray, m_numParametersMinusThis);
 
     // Skip the call frame, which sits between the parameters and vars.
-    markStack.appendValues(registerArray + m_numParametersMinusThis + RegisterFile::CallFrameHeaderSize, m_numCapturedVars, MayContainNullValues);
+    visitor.appendValues(registerArray + m_numParametersMinusThis + RegisterFile::CallFrameHeaderSize, m_numCapturedVars, MayContainNullValues);
 }
 
 inline bool JSActivation::symbolTableGet(const Identifier& propertyName, PropertySlot& slot)

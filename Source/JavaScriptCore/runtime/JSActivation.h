@@ -45,7 +45,7 @@ namespace JSC {
         JSActivation(CallFrame*, FunctionExecutable*);
         virtual ~JSActivation();
 
-        virtual void markChildren(MarkStack&);
+        virtual void visitChildren(SlotVisitor&);
 
         virtual bool isDynamicScope(bool& requiresDynamicChecks) const;
 
@@ -69,7 +69,7 @@ namespace JSC {
         static Structure* createStructure(JSGlobalData& globalData, JSValue proto) { return Structure::create(globalData, proto, TypeInfo(ObjectType, StructureFlags), AnonymousSlotCount, &s_info); }
 
     protected:
-        static const unsigned StructureFlags = OverridesGetOwnPropertySlot | NeedsThisConversion | OverridesMarkChildren | OverridesGetPropertyNames | JSVariableObject::StructureFlags;
+        static const unsigned StructureFlags = OverridesGetOwnPropertySlot | NeedsThisConversion | OverridesVisitChildren | OverridesGetPropertyNames | JSVariableObject::StructureFlags;
 
     private:
         bool symbolTableGet(const Identifier&, PropertySlot&);

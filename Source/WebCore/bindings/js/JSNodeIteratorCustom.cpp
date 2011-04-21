@@ -29,12 +29,12 @@ using namespace JSC;
 
 namespace WebCore {
 
-void JSNodeIterator::markChildren(MarkStack& markStack)
+void JSNodeIterator::visitChildren(SlotVisitor& visitor)
 {
-    Base::markChildren(markStack);
+    Base::visitChildren(visitor);
 
     if (NodeFilter* filter = m_impl->filter())
-        markStack.addOpaqueRoot(filter);
+        visitor.addOpaqueRoot(filter);
 }
 
 }

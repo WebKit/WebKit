@@ -751,10 +751,10 @@ sub GenerateHeader
         "        return JSC::Structure::create(globalData, prototype, JSC::TypeInfo(JSC::ObjectType, StructureFlags), AnonymousSlotCount, &s_info);\n" .
         "    }\n\n");
 
-    # markChildren function
+    # visit function
     if ($needsMarkChildren) {
-        push(@headerContent, "    virtual void markChildren(JSC::MarkStack&);\n\n");
-        $structureFlags{"JSC::OverridesMarkChildren"} = 1;
+        push(@headerContent, "    virtual void visitChildren(JSC::SlotVisitor&);\n\n");
+        $structureFlags{"JSC::OverridesVisitChildren"} = 1;
     }
 
     # Custom pushEventHandlerScope function
@@ -955,7 +955,7 @@ sub GenerateHeader
         $structureFlags{"JSC::OverridesGetOwnPropertySlot"} = 1;
     }
     if ($dataNode->extendedAttributes->{"CustomMarkFunction"} or $needsMarkChildren) {
-        $structureFlags{"JSC::OverridesMarkChildren"} = 1;
+        $structureFlags{"JSC::OverridesVisitChildren"} = 1;
     }
     push(@headerContent,
         "    static JSC::Structure* createStructure(JSC::JSGlobalData& globalData, JSC::JSValue prototype)\n" .
@@ -1431,10 +1431,10 @@ sub GenerateImplementation
     push(@implContent, "}\n\n");
 
     if ($needsMarkChildren && !$dataNode->extendedAttributes->{"CustomMarkFunction"}) {
-        push(@implContent, "void ${className}::markChildren(MarkStack& markStack)\n");
+        push(@implContent, "void ${className}::visitChildren(SlotVisitor& visitor)\n");
         push(@implContent, "{\n");
-        push(@implContent, "    Base::markChildren(markStack);\n");
-        push(@implContent, "    impl()->markJSEventListeners(markStack);\n");
+        push(@implContent, "    Base::visitChildren(visitor);\n");
+        push(@implContent, "    impl()->visitJSEventListeners(visitor);\n");
         push(@implContent, "}\n\n");
     }
 

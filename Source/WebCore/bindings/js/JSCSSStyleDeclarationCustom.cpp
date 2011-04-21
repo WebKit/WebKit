@@ -73,10 +73,10 @@ inline void* wrapperContext(DOMWrapperWorld* world, CSSStyleDeclaration*)
     return world;
 }
 
-void JSCSSStyleDeclaration::markChildren(MarkStack& markStack)
+void JSCSSStyleDeclaration::visitChildren(SlotVisitor& visitor)
 {
-    Base::markChildren(markStack);
-    markStack.addOpaqueRoot(root(impl()));
+    Base::visitChildren(visitor);
+    visitor.addOpaqueRoot(root(impl()));
 }
 
 // Check for a CSS prefix.

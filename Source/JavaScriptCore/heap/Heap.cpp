@@ -151,7 +151,7 @@ bool Heap::unprotect(JSValue k)
     return m_protectedValues.remove(k.asCell());
 }
 
-void Heap::markProtectedObjects(HeapRootMarker& heapRootMarker)
+void Heap::markProtectedObjects(HeapRootVisitor& heapRootMarker)
 {
     ProtectCountSet::iterator end = m_protectedValues.end();
     for (ProtectCountSet::iterator it = m_protectedValues.begin(); it != end; ++it)
@@ -169,7 +169,7 @@ void Heap::popTempSortVector(Vector<ValueStringPair>* tempVector)
     m_tempSortingVectors.removeLast();
 }
     
-void Heap::markTempSortVectors(HeapRootMarker& heapRootMarker)
+void Heap::markTempSortVectors(HeapRootVisitor& heapRootMarker)
 {
     typedef Vector<Vector<ValueStringPair>* > VectorOfValueStringVectors;
 
@@ -207,8 +207,8 @@ void Heap::markRoots()
 
     m_operationInProgress = Collection;
 
-    MarkStack& markStack = m_markStack;
-    HeapRootMarker heapRootMarker(markStack);
+    MarkStack& visitor = m_markStack;
+    HeapRootVisitor heapRootMarker(visitor);
     
     // We gather conservative roots before clearing mark bits because
     // conservative gathering uses the mark bits from our last mark pass to
@@ -221,47 +221,47 @@ void Heap::markRoots()
 
     m_markedSpace.clearMarks();
 
-    markStack.append(machineThreadRoots);
-    markStack.drain();
+    visitor.append(machineThreadRoots);
+    visitor.drain();
 
-    markStack.append(registerFileRoots);
-    markStack.drain();
+    visitor.append(registerFileRoots);
+    visitor.drain();
 
     markProtectedObjects(heapRootMarker);
-    markStack.drain();
+    visitor.drain();
     
     markTempSortVectors(heapRootMarker);
-    markStack.drain();
+    visitor.drain();
 
     if (m_markListSet && m_markListSet->size())
         MarkedArgumentBuffer::markLists(heapRootMarker, *m_markListSet);
     if (m_globalData->exception)
         heapRootMarker.mark(&m_globalData->exception);
-    markStack.drain();
+    visitor.drain();
 
     m_handleHeap.markStrongHandles(heapRootMarker);
-    markStack.drain();
+    visitor.drain();
 
     m_handleStack.mark(heapRootMarker);
-    markStack.drain();
+    visitor.drain();
 
     // Mark the small strings cache as late as possible, since it will clear
     // itself if nothing else has marked it.
     // FIXME: Change the small strings cache to use Weak<T>.
-    m_globalData->smallStrings.markChildren(heapRootMarker);
-    markStack.drain();
+    m_globalData->smallStrings.visitChildren(heapRootMarker);
+    visitor.drain();
     
     // Weak handles must be marked last, because their owners use the set of
     // opaque roots to determine reachability.
     int lastOpaqueRootCount;
     do {
-        lastOpaqueRootCount = markStack.opaqueRootCount();
+        lastOpaqueRootCount = visitor.opaqueRootCount();
         m_handleHeap.markWeakHandles(heapRootMarker);
-        markStack.drain();
+        visitor.drain();
     // If the set of opaque roots has grown, more weak handles may have become reachable.
-    } while (lastOpaqueRootCount != markStack.opaqueRootCount());
+    } while (lastOpaqueRootCount != visitor.opaqueRootCount());
 
-    markStack.reset();
+    visitor.reset();
 
     m_operationInProgress = NoOperation;
 }

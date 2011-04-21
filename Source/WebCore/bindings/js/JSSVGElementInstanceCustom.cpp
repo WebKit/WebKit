@@ -33,10 +33,10 @@
 
 namespace WebCore {
 
-void JSSVGElementInstance::markChildren(JSC::MarkStack& markStack)
+void JSSVGElementInstance::visitChildren(JSC::SlotVisitor& visitor)
 {
-    Base::markChildren(markStack);
-    markStack.addOpaqueRoot(root(impl()->correspondingElement()));
+    Base::visitChildren(visitor);
+    visitor.addOpaqueRoot(root(impl()->correspondingElement()));
 }
 
 } // namespace WebCore

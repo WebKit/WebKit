@@ -1400,37 +1400,37 @@ CodeBlock::~CodeBlock()
 #endif
 }
 
-void CodeBlock::markStructures(MarkStack& markStack, Instruction* vPC) const
+void CodeBlock::visitStructures(SlotVisitor& visitor, Instruction* vPC) const
 {
     Interpreter* interpreter = m_globalData->interpreter;
 
     if (vPC[0].u.opcode == interpreter->getOpcode(op_get_by_id_self) || vPC[0].u.opcode == interpreter->getOpcode(op_get_by_id_getter_self) || vPC[0].u.opcode == interpreter->getOpcode(op_get_by_id_custom_self)) {
-        markStack.append(&vPC[4].u.structure);
+        visitor.append(&vPC[4].u.structure);
         return;
     }
     if (vPC[0].u.opcode == interpreter->getOpcode(op_get_by_id_proto) || vPC[0].u.opcode == interpreter->getOpcode(op_get_by_id_getter_proto) || vPC[0].u.opcode == interpreter->getOpcode(op_get_by_id_custom_proto)) {
-        markStack.append(&vPC[4].u.structure);
-        markStack.append(&vPC[5].u.structure);
+        visitor.append(&vPC[4].u.structure);
+        visitor.append(&vPC[5].u.structure);
         return;
     }
     if (vPC[0].u.opcode == interpreter->getOpcode(op_get_by_id_chain) || vPC[0].u.opcode == interpreter->getOpcode(op_get_by_id_getter_chain) || vPC[0].u.opcode == interpreter->getOpcode(op_get_by_id_custom_chain)) {
-        markStack.append(&vPC[4].u.structure);
-        markStack.append(&vPC[5].u.structureChain);
+        visitor.append(&vPC[4].u.structure);
+        visitor.append(&vPC[5].u.structureChain);
         return;
     }
     if (vPC[0].u.opcode == interpreter->getOpcode(op_put_by_id_transition)) {
-        markStack.append(&vPC[4].u.structure);
-        markStack.append(&vPC[5].u.structure);
-        markStack.append(&vPC[6].u.structureChain);
+        visitor.append(&vPC[4].u.structure);
+        visitor.append(&vPC[5].u.structure);
+        visitor.append(&vPC[6].u.structureChain);
         return;
     }
     if (vPC[0].u.opcode == interpreter->getOpcode(op_put_by_id_replace)) {
-        markStack.append(&vPC[4].u.structure);
+        visitor.append(&vPC[4].u.structure);
         return;
     }
     if (vPC[0].u.opcode == interpreter->getOpcode(op_resolve_global) || vPC[0].u.opcode == interpreter->getOpcode(op_resolve_global_dynamic)) {
         if (vPC[3].u.structure)
-            markStack.append(&vPC[3].u.structure);
+            visitor.append(&vPC[3].u.structure);
         return;
     }
     if ((vPC[0].u.opcode == interpreter->getOpcode(op_get_by_id_proto_list))
@@ -1440,7 +1440,7 @@ void CodeBlock::markStructures(MarkStack& markStack, Instruction* vPC) const
         || (vPC[0].u.opcode == interpreter->getOpcode(op_get_by_id_custom_proto_list))
         || (vPC[0].u.opcode == interpreter->getOpcode(op_get_by_id_custom_self_list))) {
         PolymorphicAccessStructureList* polymorphicStructures = vPC[4].u.polymorphicStructures;
-        polymorphicStructures->markAggregate(markStack, vPC[5].u.operand);
+        polymorphicStructures->visitAggregate(visitor, vPC[5].u.operand);
         delete polymorphicStructures;
         return;
     }
@@ -1449,48 +1449,48 @@ void CodeBlock::markStructures(MarkStack& markStack, Instruction* vPC) const
     ASSERT(vPC[0].u.opcode == interpreter->getOpcode(op_get_by_id) || vPC[0].u.opcode == interpreter->getOpcode(op_put_by_id) || vPC[0].u.opcode == interpreter->getOpcode(op_get_by_id_generic) || vPC[0].u.opcode == interpreter->getOpcode(op_put_by_id_generic) || vPC[0].u.opcode == interpreter->getOpcode(op_get_array_length) || vPC[0].u.opcode == interpreter->getOpcode(op_get_string_length));
 }
 
-void EvalCodeCache::markAggregate(MarkStack& markStack)
+void EvalCodeCache::visitAggregate(SlotVisitor& visitor)
 {
     EvalCacheMap::iterator end = m_cacheMap.end();
     for (EvalCacheMap::iterator ptr = m_cacheMap.begin(); ptr != end; ++ptr)
-        markStack.append(&ptr->second);
+        visitor.append(&ptr->second);
 }
 
-void CodeBlock::markAggregate(MarkStack& markStack)
+void CodeBlock::visitAggregate(SlotVisitor& visitor)
 {
-    markStack.append(&m_globalObject);
-    markStack.append(&m_ownerExecutable);
+    visitor.append(&m_globalObject);
+    visitor.append(&m_ownerExecutable);
     if (m_rareData)
-        m_rareData->m_evalCodeCache.markAggregate(markStack);
-    markStack.appendValues(m_constantRegisters.data(), m_constantRegisters.size());
+        m_rareData->m_evalCodeCache.visitAggregate(visitor);
+    visitor.appendValues(m_constantRegisters.data(), m_constantRegisters.size());
     for (size_t i = 0; i < m_functionExprs.size(); ++i)
-        markStack.append(&m_functionExprs[i]);
+        visitor.append(&m_functionExprs[i]);
     for (size_t i = 0; i < m_functionDecls.size(); ++i)
-        markStack.append(&m_functionDecls[i]);
+        visitor.append(&m_functionDecls[i]);
 #if ENABLE(JIT_OPTIMIZE_CALL)
     for (unsigned i = 0; i < numberOfCallLinkInfos(); ++i)
         if (callLinkInfo(i).isLinked())
-            markStack.append(&callLinkInfo(i).callee);
+            visitor.append(&callLinkInfo(i).callee);
 #endif
 #if ENABLE(INTERPRETER)
     for (size_t size = m_propertyAccessInstructions.size(), i = 0; i < size; ++i)
-        markStructures(markStack, &m_instructions[m_propertyAccessInstructions[i]]);
+        markStructures(visitor, &m_instructions[m_propertyAccessInstructions[i]]);
 #endif
 #if ENABLE(JIT)
     for (size_t size = m_globalResolveInfos.size(), i = 0; i < size; ++i) {
         if (m_globalResolveInfos[i].structure)
-            markStack.append(&m_globalResolveInfos[i].structure);
+            visitor.append(&m_globalResolveInfos[i].structure);
     }
 
     for (size_t size = m_structureStubInfos.size(), i = 0; i < size; ++i)
-        m_structureStubInfos[i].markAggregate(markStack);
+        m_structureStubInfos[i].visitAggregate(visitor);
 
     for (size_t size = m_methodCallLinkInfos.size(), i = 0; i < size; ++i) {
         if (m_methodCallLinkInfos[i].cachedStructure) {
             // Both members must be filled at the same time
-            markStack.append(&m_methodCallLinkInfos[i].cachedStructure);
+            visitor.append(&m_methodCallLinkInfos[i].cachedStructure);
             ASSERT(!!m_methodCallLinkInfos[i].cachedPrototypeStructure);
-            markStack.append(&m_methodCallLinkInfos[i].cachedPrototypeStructure);
+            visitor.append(&m_methodCallLinkInfos[i].cachedPrototypeStructure);
         }
     }
 #endif

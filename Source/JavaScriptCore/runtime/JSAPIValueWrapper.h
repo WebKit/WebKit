@@ -38,7 +38,7 @@ namespace JSC {
 
         static Structure* createStructure(JSGlobalData& globalData, JSValue prototype)
         {
-            return Structure::create(globalData, prototype, TypeInfo(CompoundType, OverridesMarkChildren | OverridesGetPropertyNames), AnonymousSlotCount, 0);
+            return Structure::create(globalData, prototype, TypeInfo(CompoundType, OverridesVisitChildren | OverridesGetPropertyNames), AnonymousSlotCount, 0);
         }
 
         

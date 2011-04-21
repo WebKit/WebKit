@@ -30,10 +30,10 @@
 namespace JSC {
 ASSERT_CLASS_FITS_IN_CELL(JSStaticScopeObject);
 
-void JSStaticScopeObject::markChildren(MarkStack& markStack)
+void JSStaticScopeObject::visitChildren(SlotVisitor& visitor)
 {
-    JSVariableObject::markChildren(markStack);
-    markStack.append(&m_registerStore);
+    JSVariableObject::visitChildren(visitor);
+    visitor.append(&m_registerStore);
 }
 
 JSObject* JSStaticScopeObject::toThisObject(ExecState* exec) const

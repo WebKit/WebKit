@@ -1,3 +1,130 @@
+2011-04-21  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Geoffrey Garen.
+
+        Start moving to a general visitor pattern for GC traversal
+        https://bugs.webkit.org/show_bug.cgi?id=59141
+
+        This is just a rename:
+            markChildren -> visitChildren
+            markAggregate -> visitAggregate
+            markStack -> visitor
+            MarkStack -> typedef'd to SlotVisitor
+
+        * API/JSCallbackObject.h:
+        (JSC::JSCallbackObjectData::visitChildren):
+        (JSC::JSCallbackObjectData::JSPrivatePropertyMap::visitChildren):
+        (JSC::JSCallbackObject::visitChildren):
+        * JavaScriptCore.exp:
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::visitStructures):
+        (JSC::EvalCodeCache::visitAggregate):
+        (JSC::CodeBlock::visitAggregate):
+        * bytecode/CodeBlock.h:
+        * bytecode/EvalCodeCache.h:
+        * bytecode/Instruction.h:
+        (JSC::PolymorphicAccessStructureList::visitAggregate):
+        * bytecode/StructureStubInfo.cpp:
+        (JSC::StructureStubInfo::visitAggregate):
+        * bytecode/StructureStubInfo.h:
+        * debugger/DebuggerActivation.cpp:
+        (JSC::DebuggerActivation::visitChildren):
+        * debugger/DebuggerActivation.h:
+        * heap/HandleHeap.cpp:
+        (JSC::WeakHandleOwner::isReachableFromOpaqueRoots):
+        (JSC::HandleHeap::markStrongHandles):
+        (JSC::HandleHeap::markWeakHandles):
+        * heap/HandleHeap.h:
+        * heap/HandleStack.cpp:
+        (JSC::HandleStack::mark):
+        * heap/HandleStack.h:
+        * heap/Heap.cpp:
+        (JSC::Heap::markProtectedObjects):
+        (JSC::Heap::markTempSortVectors):
+        (JSC::Heap::markRoots):
+        * heap/Heap.h:
+        * heap/MarkStack.cpp:
+        (JSC::MarkStack::visitChildren):
+        (JSC::MarkStack::drain):
+        * heap/MarkStack.h:
+        (JSC::HeapRootVisitor::HeapRootVisitor):
+        (JSC::HeapRootVisitor::mark):
+        (JSC::HeapRootVisitor::visitor):
+        * heap/MarkedSpace.h:
+        * runtime/ArgList.cpp:
+        (JSC::MarkedArgumentBuffer::markLists):
+        * runtime/ArgList.h:
+        * runtime/Arguments.cpp:
+        (JSC::Arguments::visitChildren):
+        * runtime/Arguments.h:
+        * runtime/Executable.cpp:
+        (JSC::EvalExecutable::visitChildren):
+        (JSC::ProgramExecutable::visitChildren):
+        (JSC::FunctionExecutable::visitChildren):
+        * runtime/Executable.h:
+        * runtime/GetterSetter.cpp:
+        (JSC::GetterSetter::visitChildren):
+        * runtime/GetterSetter.h:
+        (JSC::GetterSetter::createStructure):
+        * runtime/JSAPIValueWrapper.h:
+        (JSC::JSAPIValueWrapper::createStructure):
+        * runtime/JSActivation.cpp:
+        (JSC::JSActivation::visitChildren):
+        * runtime/JSActivation.h:
+        * runtime/JSArray.cpp:
+        (JSC::JSArray::visitChildren):
+        * runtime/JSArray.h:
+        (JSC::JSArray::visitDirect):
+        * runtime/JSCell.h:
+        (JSC::JSCell::JSCell::visitChildren):
+        * runtime/JSFunction.cpp:
+        (JSC::JSFunction::visitChildren):
+        * runtime/JSFunction.h:
+        * runtime/JSGlobalObject.cpp:
+        (JSC::visitIfNeeded):
+        (JSC::JSGlobalObject::visitChildren):
+        * runtime/JSGlobalObject.h:
+        * runtime/JSONObject.cpp:
+        * runtime/JSObject.cpp:
+        (JSC::JSObject::visitChildren):
+        * runtime/JSObject.h:
+        (JSC::JSObject::visitDirect):
+        * runtime/JSPropertyNameIterator.cpp:
+        (JSC::JSPropertyNameIterator::visitChildren):
+        * runtime/JSPropertyNameIterator.h:
+        (JSC::JSPropertyNameIterator::createStructure):
+        * runtime/JSStaticScopeObject.cpp:
+        (JSC::JSStaticScopeObject::visitChildren):
+        * runtime/JSStaticScopeObject.h:
+        * runtime/JSTypeInfo.h:
+        (JSC::TypeInfo::TypeInfo):
+        (JSC::TypeInfo::overridesVisitChildren):
+        * runtime/JSWrapperObject.cpp:
+        (JSC::JSWrapperObject::visitChildren):
+        * runtime/JSWrapperObject.h:
+        * runtime/JSZombie.h:
+        (JSC::JSZombie::visitChildren):
+        * runtime/NativeErrorConstructor.cpp:
+        (JSC::NativeErrorConstructor::visitChildren):
+        * runtime/NativeErrorConstructor.h:
+        * runtime/RegExpObject.cpp:
+        (JSC::RegExpObject::visitChildren):
+        * runtime/RegExpObject.h:
+        * runtime/ScopeChain.cpp:
+        (JSC::ScopeChainNode::visitChildren):
+        * runtime/ScopeChain.h:
+        * runtime/SmallStrings.cpp:
+        (JSC::SmallStrings::visitChildren):
+        * runtime/SmallStrings.h:
+        * runtime/Structure.cpp:
+        (JSC::Structure::Structure):
+        (JSC::Structure::visitChildren):
+        * runtime/Structure.h:
+        * runtime/StructureChain.cpp:
+        (JSC::StructureChain::visitChildren):
+        * runtime/StructureChain.h:
+        (JSC::StructureChain::createStructure):
+
 2011-04-21  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r84548.

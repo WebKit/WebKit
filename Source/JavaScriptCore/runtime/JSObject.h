@@ -79,8 +79,8 @@ namespace JSC {
         friend void setUpStaticFunctionSlot(ExecState* exec, const HashEntry* entry, JSObject* thisObj, const Identifier& propertyName, PropertySlot& slot);
 
     public:
-        virtual void markChildren(MarkStack&);
-        ALWAYS_INLINE void markChildrenDirect(MarkStack& markStack);
+        virtual void visitChildren(SlotVisitor&);
+        ALWAYS_INLINE void visitChildrenDirect(SlotVisitor&);
 
         // The inline virtual destructor cannot be the first virtual function declared
         // in the class as it results in the vtable being generated as a weak symbol
@@ -820,15 +820,15 @@ inline void JSValue::put(ExecState* exec, unsigned propertyName, JSValue value)
     asCell()->put(exec, propertyName, value);
 }
 
-ALWAYS_INLINE void JSObject::markChildrenDirect(MarkStack& markStack)
+ALWAYS_INLINE void JSObject::visitChildrenDirect(SlotVisitor& visitor)
 {
-    JSCell::markChildren(markStack);
+    JSCell::visitChildren(visitor);
 
     PropertyStorage storage = propertyStorage();
     size_t storageSize = m_structure->propertyStorageSize();
-    markStack.appendValues(storage, storageSize);
+    visitor.appendValues(storage, storageSize);
     if (m_inheritorID)
-        markStack.append(&m_inheritorID);
+        visitor.append(&m_inheritorID);
 }
 
 // --- JSValue inlines ----------------------------

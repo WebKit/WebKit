@@ -36,10 +36,10 @@ using namespace JSC;
 
 namespace WebCore {
 
-void JSNodeFilter::markChildren(MarkStack& markStack)
+void JSNodeFilter::visitChildren(SlotVisitor& visitor)
 {
-    Base::markChildren(markStack);
-    markStack.addOpaqueRoot(impl());
+    Base::visitChildren(visitor);
+    visitor.addOpaqueRoot(impl());
 }
 
 PassRefPtr<NodeFilter> toNodeFilter(JSGlobalData& globalData, JSValue value)

@@ -32,12 +32,12 @@ using namespace JSC;
 
 namespace WebCore {
 
-void JSHTMLLinkElement::markChildren(MarkStack& markStack)
+void JSHTMLLinkElement::visitChildren(SlotVisitor& visitor)
 {
-    Base::markChildren(markStack);
+    Base::visitChildren(visitor);
 
     if (StyleSheet* sheet = static_cast<HTMLLinkElement*>(impl())->sheet())
-        markDOMObjectWrapper(markStack, *Heap::heap(this)->globalData(), sheet);
+        markDOMObjectWrapper(visitor, *Heap::heap(this)->globalData(), sheet);
 }
 
 }

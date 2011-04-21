@@ -83,9 +83,9 @@ short JSNodeFilterCondition::acceptNode(JSC::ExecState* exec, Node* filterNode) 
     return intResult;
 }
 
-bool JSNodeFilterCondition::WeakOwner::isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown>, void* context, MarkStack& markStack)
+bool JSNodeFilterCondition::WeakOwner::isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown>, void* context, SlotVisitor& visitor)
 {
-    return markStack.containsOpaqueRoot(context);
+    return visitor.containsOpaqueRoot(context);
 }
 
 } // namespace WebCore

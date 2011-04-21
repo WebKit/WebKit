@@ -43,22 +43,22 @@ Arguments::~Arguments()
         delete [] d->extraArguments;
 }
 
-void Arguments::markChildren(MarkStack& markStack)
+void Arguments::visitChildren(SlotVisitor& visitor)
 {
-    JSObject::markChildren(markStack);
+    JSObject::visitChildren(visitor);
 
     if (d->registerArray)
-        markStack.appendValues(d->registerArray.get(), d->numParameters);
+        visitor.appendValues(d->registerArray.get(), d->numParameters);
 
     if (d->extraArguments) {
         unsigned numExtraArguments = d->numArguments - d->numParameters;
-        markStack.appendValues(d->extraArguments, numExtraArguments);
+        visitor.appendValues(d->extraArguments, numExtraArguments);
     }
 
-    markStack.append(&d->callee);
+    visitor.append(&d->callee);
 
     if (d->activation)
-        markStack.append(&d->activation);
+        visitor.append(&d->activation);
 }
 
 void Arguments::copyToRegisters(ExecState* exec, Register* buffer, uint32_t maxSize)

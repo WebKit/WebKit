@@ -30,6 +30,7 @@
 namespace JSC {
 
     class MarkStack;
+    typedef MarkStack SlotVisitor;
 
     class MarkedArgumentBuffer {
         WTF_MAKE_NONCOPYABLE(MarkedArgumentBuffer);
@@ -141,7 +142,7 @@ namespace JSC {
         const_iterator begin() const { return m_buffer; }
         const_iterator end() const { return m_buffer + m_size; }
 
-        static void markLists(HeapRootMarker&, ListSet&);
+        static void markLists(HeapRootVisitor&, ListSet&);
 
     private:
         void slowAppend(JSValue);

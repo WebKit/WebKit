@@ -42,7 +42,7 @@ namespace JSC {
         {
         }
 
-        virtual void markChildren(MarkStack&);
+        virtual void visitChildren(SlotVisitor&);
 
         JSObject* getter() const { return m_getter.get(); }
         void setGetter(JSGlobalData& globalData, JSObject* getter) { m_getter.set(globalData, this, getter); }
@@ -50,7 +50,7 @@ namespace JSC {
         void setSetter(JSGlobalData& globalData, JSObject* setter) { m_setter.set(globalData, this, setter); }
         static Structure* createStructure(JSGlobalData& globalData, JSValue prototype)
         {
-            return Structure::create(globalData, prototype, TypeInfo(GetterSetterType, OverridesMarkChildren), AnonymousSlotCount, 0);
+            return Structure::create(globalData, prototype, TypeInfo(GetterSetterType, OverridesVisitChildren), AnonymousSlotCount, 0);
         }
     private:
         virtual bool isGetterSetter() const;

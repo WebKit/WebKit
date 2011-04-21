@@ -34,6 +34,7 @@
 #include "JSTouch.h"
 #include "JSTouchList.h"
 #include "Location.h"
+#include "ScriptController.h"
 #include "TouchList.h"
 
 #if ENABLE(SVG)
@@ -47,15 +48,15 @@ using namespace JSC;
 
 namespace WebCore {
 
-void JSDocument::markChildren(MarkStack& markStack)
+void JSDocument::visitChildren(SlotVisitor& visitor)
 {
-    JSNode::markChildren(markStack);
+    JSNode::visitChildren(visitor);
 
     Document* document = impl();
     JSGlobalData& globalData = *Heap::heap(this)->globalData();
 
-    markActiveObjectsForContext(markStack, globalData, document);
-    markDOMObjectWrapper(markStack, globalData, document->implementation());
+    visitActiveObjectsForContext(visitor, globalData, document);
+    markDOMObjectWrapper(visitor, globalData, document->implementation());
 }
 
 JSValue JSDocument::location(ExecState* exec) const

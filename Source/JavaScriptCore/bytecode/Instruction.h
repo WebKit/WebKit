@@ -107,17 +107,17 @@ namespace JSC {
             list[0].set(globalData, owner, stubRoutine, firstBase, firstChain);
         }
 
-        void markAggregate(MarkStack& markStack, int count)
+        void visitAggregate(SlotVisitor& visitor, int count)
         {
             for (int i = 0; i < count; ++i) {
                 PolymorphicStubInfo& info = list[i];
                 ASSERT(info.base);
                 
-                markStack.append(&info.base);
+                visitor.append(&info.base);
                 if (info.u.proto && !info.isChain)
-                    markStack.append(&info.u.proto);
+                    visitor.append(&info.u.proto);
                 if (info.u.chain && info.isChain)
-                    markStack.append(&info.u.chain);
+                    visitor.append(&info.u.chain);
             }
         }
     };

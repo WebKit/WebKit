@@ -54,25 +54,25 @@ using namespace JSC;
 
 namespace WebCore {
 
-void JSXMLHttpRequest::markChildren(MarkStack& markStack)
+void JSXMLHttpRequest::visitChildren(SlotVisitor& visitor)
 {
-    Base::markChildren(markStack);
+    Base::visitChildren(visitor);
 
     if (XMLHttpRequestUpload* upload = m_impl->optionalUpload())
-        markDOMObjectWrapper(markStack, *Heap::heap(this)->globalData(), upload);
+        markDOMObjectWrapper(visitor, *Heap::heap(this)->globalData(), upload);
 
     if (Document* responseDocument = m_impl->optionalResponseXML())
-        markDOMObjectWrapper(markStack, *Heap::heap(this)->globalData(), responseDocument);
+        markDOMObjectWrapper(visitor, *Heap::heap(this)->globalData(), responseDocument);
 
     if (ArrayBuffer* responseArrayBuffer = m_impl->optionalResponseArrayBuffer())
-        markDOMObjectWrapper(markStack, *Heap::heap(this)->globalData(), responseArrayBuffer);
+        markDOMObjectWrapper(visitor, *Heap::heap(this)->globalData(), responseArrayBuffer);
 
 #if ENABLE(XHR_RESPONSE_BLOB)
     if (Blob* responseBlob = m_impl->optionalResponseBlob())
-        markDOMObjectWrapper(markStack, *Heap::heap(this)->globalData(), responseBlob);
+        markDOMObjectWrapper(visitor, *Heap::heap(this)->globalData(), responseBlob);
 #endif
 
-    m_impl->markJSEventListeners(markStack);
+    m_impl->visitJSEventListeners(visitor);
 }
 
 // Custom functions

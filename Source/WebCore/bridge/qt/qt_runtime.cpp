@@ -1400,14 +1400,14 @@ QtRuntimeMetaMethod::QtRuntimeMetaMethod(ExecState* exec, const Identifier& iden
     d->m_allowPrivate = allowPrivate;
 }
 
-void QtRuntimeMetaMethod::markChildren(MarkStack& markStack)
+void QtRuntimeMetaMethod::visitChildren(SlotVisitor& visitor)
 {
-    QtRuntimeMethod::markChildren(markStack);
+    QtRuntimeMethod::visitChildren(visitor);
     QW_D(QtRuntimeMetaMethod);
     if (d->m_connect)
-        markStack.append(&d->m_connect);
+        visitor.append(&d->m_connect);
     if (d->m_disconnect)
-        markStack.append(&d->m_disconnect);
+        visitor.append(&d->m_disconnect);
 }
 
 EncodedJSValue QtRuntimeMetaMethod::call(ExecState* exec)

@@ -42,10 +42,10 @@ namespace JSC {
         }
 
     protected:
-        static const unsigned StructureFlags = OverridesMarkChildren | JSNonFinalObject::StructureFlags;
+        static const unsigned StructureFlags = OverridesVisitChildren | JSNonFinalObject::StructureFlags;
 
     private:
-        virtual void markChildren(MarkStack&);
+        virtual void visitChildren(SlotVisitor&);
         
         WriteBarrier<Unknown> m_internalValue;
     };

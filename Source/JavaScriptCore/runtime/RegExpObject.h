@@ -64,10 +64,10 @@ namespace JSC {
         }
 
     protected:
-        static const unsigned StructureFlags = OverridesMarkChildren | OverridesGetOwnPropertySlot | JSObjectWithGlobalObject::StructureFlags;
+        static const unsigned StructureFlags = OverridesVisitChildren | OverridesGetOwnPropertySlot | JSObjectWithGlobalObject::StructureFlags;
 
     private:
-        virtual void markChildren(MarkStack&);
+        virtual void visitChildren(SlotVisitor&);
 
         bool match(ExecState*);
 

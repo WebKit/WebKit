@@ -26,6 +26,7 @@
 namespace JSC {
     class JSObject;
     class MarkStack;
+    typedef MarkStack SlotVisitor;
 }
 
 namespace WebCore {
@@ -53,7 +54,7 @@ namespace WebCore {
         virtual bool wasCreatedFromMarkup() const { return false; }
 
 #if USE(JSC)
-        virtual void markJSFunction(JSC::MarkStack&) { }
+        virtual void visitJSFunction(JSC::SlotVisitor&) { }
 #endif
 
         bool isAttribute() const { return virtualisAttribute(); }

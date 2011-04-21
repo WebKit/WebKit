@@ -66,10 +66,10 @@ inline void* wrapperContext(DOMWrapperWorld* world, StyleSheet*)
     return world;
 }
 
-void JSStyleSheet::markChildren(MarkStack& markStack)
+void JSStyleSheet::visitChildren(SlotVisitor& visitor)
 {
-    Base::markChildren(markStack);
-    markStack.addOpaqueRoot(root(impl()));
+    Base::visitChildren(visitor);
+    visitor.addOpaqueRoot(root(impl()));
 }
 
 JSValue toJS(ExecState* exec, JSDOMGlobalObject* globalObject, StyleSheet* styleSheet)

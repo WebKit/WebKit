@@ -151,7 +151,7 @@ namespace JSC {
     public:
         virtual ~JSGlobalObject();
 
-        virtual void markChildren(MarkStack&);
+        virtual void visitChildren(SlotVisitor&);
 
         virtual bool getOwnPropertySlot(ExecState*, const Identifier&, PropertySlot&);
         virtual bool getOwnPropertyDescriptor(ExecState*, const Identifier&, PropertyDescriptor&);
@@ -258,7 +258,7 @@ namespace JSC {
     protected:
 
         static const unsigned AnonymousSlotCount = JSVariableObject::AnonymousSlotCount + 1;
-        static const unsigned StructureFlags = OverridesGetOwnPropertySlot | OverridesMarkChildren | OverridesGetPropertyNames | JSVariableObject::StructureFlags;
+        static const unsigned StructureFlags = OverridesGetOwnPropertySlot | OverridesVisitChildren | OverridesGetPropertyNames | JSVariableObject::StructureFlags;
 
         struct GlobalPropertyInfo {
             GlobalPropertyInfo(const Identifier& i, JSValue v, unsigned a)

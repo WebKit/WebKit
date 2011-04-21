@@ -56,10 +56,10 @@ JSObject* JSEventListener::initializeJSFunction(ScriptExecutionContext*) const
     return 0;
 }
 
-void JSEventListener::markJSFunction(MarkStack& markStack)
+void JSEventListener::markJSFunction(SlotVisitor& visitor)
 {
     if (m_jsFunction)
-        markStack.append(&m_jsFunction);
+        visitor.append(&m_jsFunction);
 }
 
 void JSEventListener::handleEvent(ScriptExecutionContext* scriptExecutionContext, Event* event)

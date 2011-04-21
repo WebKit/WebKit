@@ -39,7 +39,7 @@ namespace JSC{
             symbolTable().add(ident.impl(), SymbolTableEntry(-1, attributes));
         }
 
-        virtual void markChildren(MarkStack&);
+        virtual void visitChildren(SlotVisitor&);
         bool isDynamicScope(bool& requiresDynamicChecks) const;
         virtual JSObject* toThisObject(ExecState*) const;
         virtual JSValue toStrictThisObject(ExecState*) const;
@@ -50,7 +50,7 @@ namespace JSC{
         static Structure* createStructure(JSGlobalData& globalData, JSValue proto) { return Structure::create(globalData, proto, TypeInfo(ObjectType, StructureFlags), AnonymousSlotCount, &s_info); }
 
     protected:
-        static const unsigned StructureFlags = OverridesGetOwnPropertySlot | NeedsThisConversion | OverridesMarkChildren | OverridesGetPropertyNames | JSVariableObject::StructureFlags;
+        static const unsigned StructureFlags = OverridesGetOwnPropertySlot | NeedsThisConversion | OverridesVisitChildren | OverridesGetPropertyNames | JSVariableObject::StructureFlags;
 
     private:
         SymbolTable m_symbolTable;

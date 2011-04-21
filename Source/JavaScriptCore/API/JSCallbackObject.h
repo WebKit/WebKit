@@ -68,11 +68,11 @@ struct JSCallbackObjectData : WeakHandleOwner {
         m_privateProperties->deletePrivateProperty(propertyName);
     }
 
-    void markChildren(MarkStack& markStack)
+    void visitChildren(SlotVisitor& visitor)
     {
         if (!m_privateProperties)
             return;
-        m_privateProperties->markChildren(markStack);
+        m_privateProperties->visitChildren(visitor);
     }
 
     void* privateData;
@@ -97,11 +97,11 @@ struct JSCallbackObjectData : WeakHandleOwner {
             m_propertyMap.remove(propertyName.impl());
         }
 
-        void markChildren(MarkStack& markStack)
+        void visitChildren(SlotVisitor& visitor)
         {
             for (PrivatePropertyMap::iterator ptr = m_propertyMap.begin(); ptr != m_propertyMap.end(); ++ptr) {
                 if (ptr->second)
-                    markStack.append(&ptr->second);
+                    visitor.append(&ptr->second);
             }
         }
 
@@ -149,7 +149,7 @@ public:
     }
 
 protected:
-    static const unsigned StructureFlags = OverridesGetOwnPropertySlot | ImplementsHasInstance | OverridesHasInstance | OverridesMarkChildren | OverridesGetPropertyNames | Base::StructureFlags;
+    static const unsigned StructureFlags = OverridesGetOwnPropertySlot | ImplementsHasInstance | OverridesHasInstance | OverridesVisitChildren | OverridesGetPropertyNames | Base::StructureFlags;
 
 private:
     virtual UString className() const;
@@ -172,10 +172,10 @@ private:
     virtual ConstructType getConstructData(ConstructData&);
     virtual CallType getCallData(CallData&);
 
-    virtual void markChildren(MarkStack& markStack)
+    virtual void visitChildren(SlotVisitor& visitor)
     {
-        Base::markChildren(markStack);
-        m_callbackObjectData->markChildren(markStack);
+        Base::visitChildren(visitor);
+        m_callbackObjectData->visitChildren(visitor);
     }
 
     void init(ExecState*);

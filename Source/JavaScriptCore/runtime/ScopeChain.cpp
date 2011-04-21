@@ -67,13 +67,13 @@ int ScopeChainNode::localDepth()
     return scopeDepth;
 }
 
-void ScopeChainNode::markChildren(MarkStack& markStack)
+void ScopeChainNode::visitChildren(SlotVisitor& visitor)
 {
     if (next)
-        markStack.append(&next);
-    markStack.append(&object);
-    markStack.append(&globalObject);
-    markStack.append(&globalThis);
+        visitor.append(&next);
+    visitor.append(&object);
+    visitor.append(&globalObject);
+    visitor.append(&globalThis);
 }
 
 } // namespace JSC

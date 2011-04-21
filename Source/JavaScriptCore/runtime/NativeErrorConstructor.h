@@ -43,10 +43,10 @@ namespace JSC {
         Structure* errorStructure() { return m_errorStructure.get(); }
 
     private:
-        static const unsigned StructureFlags = OverridesMarkChildren | InternalFunction::StructureFlags;
+        static const unsigned StructureFlags = OverridesVisitChildren | InternalFunction::StructureFlags;
         virtual ConstructType getConstructData(ConstructData&);
         virtual CallType getCallData(CallData&);
-        virtual void markChildren(MarkStack&);
+        virtual void visitChildren(SlotVisitor&);
 
         WriteBarrier<Structure> m_errorStructure;
     };

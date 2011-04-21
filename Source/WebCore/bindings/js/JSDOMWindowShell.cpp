@@ -32,6 +32,7 @@
 #include "Frame.h"
 #include "JSDOMWindow.h"
 #include "DOMWindow.h"
+#include "ScriptController.h"
 #include <runtime/JSObject.h>
 
 using namespace JSC;
@@ -72,11 +73,11 @@ void JSDOMWindowShell::setWindow(PassRefPtr<DOMWindow> domWindow)
 // JSObject methods
 // ----
 
-void JSDOMWindowShell::markChildren(MarkStack& markStack)
+void JSDOMWindowShell::visitChildren(SlotVisitor& visitor)
 {
-    Base::markChildren(markStack);
+    Base::visitChildren(visitor);
     if (m_window)
-        markStack.append(&m_window);
+        visitor.append(&m_window);
 }
 
 UString JSDOMWindowShell::className() const

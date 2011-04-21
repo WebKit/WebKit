@@ -56,7 +56,7 @@ static EncodedJSValue JSC_HOST_CALL constructAudio(ExecState* exec)
         return throwVMError(exec, createReferenceError(exec, "Audio constructor associated document is unavailable"));
 
     // Calling toJS on the document causes the JS document wrapper to be
-    // added to the window object. This is done to ensure that JSDocument::markChildren
+    // added to the window object. This is done to ensure that JSDocument::visitChildren
     // will be called, which will cause the audio element to be marked if necessary.
     toJS(exec, jsConstructor->globalObject(), document);
 

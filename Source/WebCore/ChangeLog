@@ -1,3 +1,118 @@
+2011-04-21  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Geoffrey Garen.
+
+        Start moving to a general visitor pattern for GC traversal
+        https://bugs.webkit.org/show_bug.cgi?id=59141
+
+        This is just a rename:
+            markChildren -> visitChildren
+            markAggregate -> visitAggregate
+            markStack -> visitor
+            MarkStack -> typedef'd to SlotVisitor
+
+        * bindings/js/JSAttrCustom.cpp:
+        (WebCore::JSAttr::visitChildren):
+        * bindings/js/JSAudioConstructor.cpp:
+        (WebCore::constructAudio):
+        * bindings/js/JSCSSRuleCustom.cpp:
+        (WebCore::JSCSSRule::visitChildren):
+        * bindings/js/JSCSSStyleDeclarationCustom.cpp:
+        (WebCore::JSCSSStyleDeclaration::visitChildren):
+        * bindings/js/JSDOMBinding.cpp:
+        (WebCore::visitActiveObjectsForContext):
+        (WebCore::markDOMObjectWrapper):
+        * bindings/js/JSDOMBinding.h:
+        * bindings/js/JSDOMGlobalObject.cpp:
+        (WebCore::JSDOMGlobalObject::visitChildren):
+        * bindings/js/JSDOMGlobalObject.h:
+        * bindings/js/JSDOMImplementationCustom.cpp:
+        (WebCore::JSDOMImplementation::visitChildren):
+        * bindings/js/JSDOMWindowCustom.cpp:
+        (WebCore::JSDOMWindow::visitChildren):
+        * bindings/js/JSDOMWindowShell.cpp:
+        (WebCore::JSDOMWindowShell::visitChildren):
+        * bindings/js/JSDOMWindowShell.h:
+        * bindings/js/JSDocumentCustom.cpp:
+        (WebCore::JSDocument::visitChildren):
+        * bindings/js/JSElementCustom.cpp:
+        (WebCore::JSElement::visitChildren):
+        * bindings/js/JSEventListener.cpp:
+        (WebCore::JSEventListener::markJSFunction):
+        * bindings/js/JSEventListener.h:
+        * bindings/js/JSHTMLCanvasElementCustom.cpp:
+        (WebCore::JSHTMLCanvasElement::visitChildren):
+        * bindings/js/JSHTMLLinkElementCustom.cpp:
+        (WebCore::JSHTMLLinkElement::visitChildren):
+        * bindings/js/JSHTMLStyleElementCustom.cpp:
+        (WebCore::JSHTMLStyleElement::visitChildren):
+        * bindings/js/JSImageConstructor.cpp:
+        (WebCore::constructImage):
+        * bindings/js/JSJavaScriptAudioNodeCustom.cpp:
+        (WebCore::JSJavaScriptAudioNode::visitChildren):
+        * bindings/js/JSMessageChannelCustom.cpp:
+        (WebCore::JSMessageChannel::visitChildren):
+        * bindings/js/JSMessagePortCustom.cpp:
+        (WebCore::JSMessagePort::visitChildren):
+        * bindings/js/JSNamedNodeMapCustom.cpp:
+        (WebCore::JSNamedNodeMapOwner::isReachableFromOpaqueRoots):
+        (WebCore::JSNamedNodeMap::visitChildren):
+        * bindings/js/JSNavigatorCustom.cpp:
+        (WebCore::JSNavigator::visitChildren):
+        * bindings/js/JSNodeCustom.cpp:
+        (WebCore::isObservable):
+        (WebCore::isReachableFromDOM):
+        (WebCore::JSNodeOwner::isReachableFromOpaqueRoots):
+        (WebCore::JSNode::visitChildren):
+        * bindings/js/JSNodeCustom.h:
+        * bindings/js/JSNodeFilterCondition.cpp:
+        (WebCore::JSNodeFilterCondition::WeakOwner::isReachableFromOpaqueRoots):
+        * bindings/js/JSNodeFilterCondition.h:
+        * bindings/js/JSNodeFilterCustom.cpp:
+        (WebCore::JSNodeFilter::visitChildren):
+        * bindings/js/JSNodeIteratorCustom.cpp:
+        (WebCore::JSNodeIterator::visitChildren):
+        * bindings/js/JSNodeListCustom.cpp:
+        (WebCore::JSNodeListOwner::isReachableFromOpaqueRoots):
+        * bindings/js/JSProcessingInstructionCustom.cpp:
+        (WebCore::JSProcessingInstruction::visitChildren):
+        * bindings/js/JSSVGElementInstanceCustom.cpp:
+        (WebCore::JSSVGElementInstance::visitChildren):
+        * bindings/js/JSSharedWorkerCustom.cpp:
+        (WebCore::JSSharedWorker::visitChildren):
+        * bindings/js/JSStyleSheetCustom.cpp:
+        (WebCore::JSStyleSheet::visitChildren):
+        * bindings/js/JSTreeWalkerCustom.cpp:
+        (WebCore::JSTreeWalker::visitChildren):
+        * bindings/js/JSWebGLRenderingContextCustom.cpp:
+        (WebCore::JSWebGLRenderingContext::visitChildren):
+        * bindings/js/JSWebKitAnimationListCustom.cpp:
+        (WebCore::JSWebKitAnimationList::visitChildren):
+        * bindings/js/JSWorkerContextCustom.cpp:
+        (WebCore::JSWorkerContext::visitChildren):
+        * bindings/js/JSXMLHttpRequestCustom.cpp:
+        (WebCore::JSXMLHttpRequest::visitChildren):
+        * bindings/js/JSXMLHttpRequestUploadCustom.cpp:
+        (WebCore::JSXMLHttpRequestUpload::visitChildren):
+        * bindings/scripts/CodeGeneratorJS.pm:
+        * bridge/qt/qt_instance.cpp:
+        (JSC::Bindings::QtRuntimeObject::visitChildren):
+        (JSC::Bindings::QtInstance::markAggregate):
+        * bridge/qt/qt_instance.h:
+        * bridge/qt/qt_pixmapruntime.cpp:
+        * bridge/qt/qt_runtime.cpp:
+        (JSC::Bindings::QtRuntimeMetaMethod::visitChildren):
+        * bridge/qt/qt_runtime.h:
+        * dom/EventListener.h:
+        (WebCore::EventListener::visitJSFunction):
+        * dom/EventTarget.h:
+        (WebCore::EventTarget::visitJSEventListeners):
+        * dom/Node.h:
+        * dom/NodeFilterCondition.h:
+        (WebCore::NodeFilterCondition::visitAggregate):
+        * page/DOMWindow.h:
+        * workers/WorkerContext.h:
+
 2011-04-21  Beth Dakin  <bdakin@apple.com>
 
         Reviewed by Dan Bernstein.

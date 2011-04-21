@@ -55,7 +55,7 @@ public:
     virtual double toNumber(ExecState*) const { ASSERT_NOT_REACHED(); return 0.0; }
     virtual UString toString(ExecState*) const { ASSERT_NOT_REACHED(); return ""; }
     virtual JSObject* toObject(ExecState*) const { ASSERT_NOT_REACHED(); return 0; }
-    virtual void markChildren(MarkStack&) { ASSERT_NOT_REACHED(); }
+    virtual void visitChildren(SlotVisitor&) { ASSERT_NOT_REACHED(); }
     virtual void put(ExecState*, const Identifier&, JSValue, PutPropertySlot&) { ASSERT_NOT_REACHED(); }
     virtual void put(ExecState*, unsigned, JSValue) { ASSERT_NOT_REACHED(); }
     virtual bool deleteProperty(ExecState*, const Identifier&) { ASSERT_NOT_REACHED(); return false; }

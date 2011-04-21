@@ -74,7 +74,7 @@ SmallStrings::~SmallStrings()
 {
 }
 
-void SmallStrings::markChildren(HeapRootMarker& heapRootMarker)
+void SmallStrings::visitChildren(HeapRootVisitor& heapRootMarker)
 {
     /*
        Our hypothesis is that small strings are very common. So, we cache them

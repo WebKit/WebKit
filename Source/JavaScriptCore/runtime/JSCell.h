@@ -118,7 +118,7 @@ namespace JSC {
         void* operator new(size_t, JSGlobalData*);
         void* operator new(size_t, void* placementNewDestination) { return placementNewDestination; }
 
-        virtual void markChildren(MarkStack&);
+        virtual void visitChildren(SlotVisitor&);
 #if ENABLE(JSC_ZOMBIES)
         virtual bool isZombie() const { return false; }
 #endif
@@ -178,9 +178,9 @@ namespace JSC {
         return m_structure.get();
     }
 
-    inline void JSCell::markChildren(MarkStack& markStack)
+    inline void JSCell::visitChildren(SlotVisitor& visitor)
     {
-        markStack.append(&m_structure);
+        visitor.append(&m_structure);
     }
 
     // --- JSValue inlines ----------------------------

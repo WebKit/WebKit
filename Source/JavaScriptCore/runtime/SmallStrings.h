@@ -33,11 +33,12 @@
 
 namespace JSC {
 
-    class HeapRootMarker;
+    class HeapRootVisitor;
     class JSGlobalData;
     class JSString;
     class MarkStack;
     class SmallStringsStorage;
+    typedef MarkStack SlotVisitor;
 
     static const unsigned maxSingleCharacterString = 0xFF;
 
@@ -63,7 +64,7 @@ namespace JSC {
 
         StringImpl* singleCharacterStringRep(unsigned char character);
 
-        void markChildren(HeapRootMarker&);
+        void visitChildren(HeapRootVisitor&);
         void clear();
 
         unsigned count() const;

@@ -29,14 +29,14 @@ using namespace JSC;
 
 namespace WebCore {
 
-void JSDOMImplementation::markChildren(MarkStack& markStack)
+void JSDOMImplementation::visitChildren(SlotVisitor& visitor)
 {
-    Base::markChildren(markStack);
+    Base::visitChildren(visitor);
 
     Document* ownerDocument = impl()->ownerDocument();
     if (!ownerDocument)
         return;
-    markStack.addOpaqueRoot(ownerDocument);
+    visitor.addOpaqueRoot(ownerDocument);
 }
 
 }

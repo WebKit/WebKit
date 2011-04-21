@@ -63,7 +63,7 @@ namespace WebCore {
         void setInjectedScript(JSObject*);
         JSObject* injectedScript() const;
 
-        virtual void markChildren(JSC::MarkStack&);
+        virtual void visitChildren(JSC::SlotVisitor&);
 
         DOMWrapperWorld* world() { return m_world.get(); }
 

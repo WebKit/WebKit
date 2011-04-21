@@ -211,7 +211,7 @@ namespace JSC {
     public:
         virtual ~CodeBlock();
 
-        void markAggregate(MarkStack&);
+        void visitAggregate(SlotVisitor&);
 
         static void dumpStatistics();
 
@@ -481,7 +481,7 @@ namespace JSC {
         void printGetByIdOp(ExecState*, int location, Vector<Instruction>::const_iterator&, const char* op) const;
         void printPutByIdOp(ExecState*, int location, Vector<Instruction>::const_iterator&, const char* op) const;
 #endif
-        void markStructures(MarkStack&, Instruction* vPC) const;
+        void visitStructures(SlotVisitor&, Instruction* vPC) const;
 
         void createRareDataIfNecessary()
         {

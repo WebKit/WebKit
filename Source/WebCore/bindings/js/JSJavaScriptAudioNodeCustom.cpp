@@ -34,10 +34,10 @@ using namespace JSC;
 
 namespace WebCore {
 
-void JSJavaScriptAudioNode::markChildren(MarkStack& markStack)
+void JSJavaScriptAudioNode::visitChildren(SlotVisitor& visitor)
 {
-    Base::markChildren(markStack);
-    static_cast<JavaScriptAudioNode*>(impl())->markJSEventListeners(markStack);
+    Base::visitChildren(visitor);
+    static_cast<JavaScriptAudioNode*>(impl())->markJSEventListeners(visitor);
 }
 
 } // namespace WebCore

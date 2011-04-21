@@ -54,32 +54,32 @@ void MarkStack::append(ConservativeRoots& conservativeRoots)
         internalAppend(roots[i]);
 }
 
-inline void MarkStack::markChildren(JSCell* cell)
+inline void MarkStack::visitChildren(JSCell* cell)
 {
     ASSERT(Heap::isMarked(cell));
     if (cell->structure()->typeInfo().type() < CompoundType) {
-        cell->JSCell::markChildren(*this);
+        cell->JSCell::visitChildren(*this);
         return;
     }
 
-    if (!cell->structure()->typeInfo().overridesMarkChildren()) {
+    if (!cell->structure()->typeInfo().overridesVisitChildren()) {
         ASSERT(cell->isObject());
 #ifdef NDEBUG
-        asObject(cell)->markChildrenDirect(*this);
+        asObject(cell)->visitChildrenDirect(*this);
 #else
         ASSERT(!m_isCheckingForDefaultMarkViolation);
         m_isCheckingForDefaultMarkViolation = true;
-        cell->markChildren(*this);
+        cell->visitChildren(*this);
         ASSERT(m_isCheckingForDefaultMarkViolation);
         m_isCheckingForDefaultMarkViolation = false;
 #endif
         return;
     }
     if (cell->vptr() == m_jsArrayVPtr) {
-        asArray(cell)->markChildrenDirect(*this);
+        asArray(cell)->visitChildrenDirect(*this);
         return;
     }
-    cell->markChildren(*this);
+    cell->visitChildren(*this);
 }
 
 void MarkStack::drain()
@@ -111,7 +111,7 @@ void MarkStack::drain()
             }
 
             if (cell->structure()->typeInfo().type() < CompoundType) {
-                cell->JSCell::markChildren(*this);
+                cell->JSCell::visitChildren(*this);
                 if (current.m_values == end) {
                     m_markSets.removeLast();
                     continue;
@@ -122,10 +122,10 @@ void MarkStack::drain()
             if (current.m_values == end)
                 m_markSets.removeLast();
 
-            markChildren(cell);
+            visitChildren(cell);
         }
         while (!m_values.isEmpty())
-            markChildren(m_values.removeLast());
+            visitChildren(m_values.removeLast());
     }
 #if !ASSERT_DISABLED
     m_isDraining = false;

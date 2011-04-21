@@ -43,7 +43,7 @@ namespace WebCore {
         virtual short acceptNode(ScriptState*, Node*) const;
 
         class WeakOwner : public JSC::WeakHandleOwner {
-            virtual bool isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown>, void* context, JSC::MarkStack&);
+            virtual bool isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown>, void* context, JSC::SlotVisitor&);
         };
         WeakOwner m_weakOwner;
         mutable JSC::Weak<JSC::Unknown> m_filter;

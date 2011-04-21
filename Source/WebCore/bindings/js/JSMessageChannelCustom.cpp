@@ -33,15 +33,15 @@ using namespace JSC;
 
 namespace WebCore {
     
-void JSMessageChannel::markChildren(MarkStack& markStack)
+void JSMessageChannel::visitChildren(SlotVisitor& visitor)
 {
-    Base::markChildren(markStack);
+    Base::visitChildren(visitor);
 
     if (MessagePort* port = m_impl->port1())
-        markDOMObjectWrapper(markStack, *Heap::heap(this)->globalData(), port);
+        markDOMObjectWrapper(visitor, *Heap::heap(this)->globalData(), port);
 
     if (MessagePort* port = m_impl->port2())
-        markDOMObjectWrapper(markStack, *Heap::heap(this)->globalData(), port);
+        markDOMObjectWrapper(visitor, *Heap::heap(this)->globalData(), port);
 }
 
 EncodedJSValue JSC_HOST_CALL JSMessageChannelConstructor::constructJSMessageChannel(ExecState* exec)

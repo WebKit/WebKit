@@ -53,18 +53,18 @@ using namespace JSC;
 
 namespace WebCore {
 
-void JSWorkerContext::markChildren(MarkStack& markStack)
+void JSWorkerContext::visitChildren(SlotVisitor& visitor)
 {
-    Base::markChildren(markStack);
+    Base::visitChildren(visitor);
 
     JSGlobalData& globalData = this->globalData();
 
-    markActiveObjectsForContext(markStack, globalData, scriptExecutionContext());
+    visitActiveObjectsForContext(visitor, globalData, scriptExecutionContext());
 
-    markDOMObjectWrapper(markStack, globalData, impl()->optionalLocation());
-    markDOMObjectWrapper(markStack, globalData, impl()->optionalNavigator());
+    markDOMObjectWrapper(visitor, globalData, impl()->optionalLocation());
+    markDOMObjectWrapper(visitor, globalData, impl()->optionalNavigator());
 
-    impl()->markJSEventListeners(markStack);
+    impl()->visitJSEventListeners(visitor);
 }
 
 bool JSWorkerContext::getOwnPropertySlotDelegate(ExecState* exec, const Identifier& propertyName, PropertySlot& slot)

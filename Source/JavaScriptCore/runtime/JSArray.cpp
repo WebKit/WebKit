@@ -857,9 +857,9 @@ void JSArray::unshiftCount(ExecState* exec, int count)
         vector[i].clear();
 }
 
-void JSArray::markChildren(MarkStack& markStack)
+void JSArray::visitChildren(SlotVisitor& visitor)
 {
-    markChildrenDirect(markStack);
+    visitChildrenDirect(visitor);
 }
 
 static int compareNumbersForQSort(const void* a, const void* b)

@@ -50,20 +50,20 @@ JSDOMGlobalObject::JSDOMGlobalObject(JSGlobalData& globalData, Structure* struct
     ASSERT(inherits(&s_info));
 }
 
-void JSDOMGlobalObject::markChildren(MarkStack& markStack)
+void JSDOMGlobalObject::visitChildren(SlotVisitor& visitor)
 {
-    Base::markChildren(markStack);
+    Base::visitChildren(visitor);
 
     JSDOMStructureMap::iterator end = structures().end();
     for (JSDOMStructureMap::iterator it = structures().begin(); it != end; ++it)
-        markStack.append(&it->second);
+        visitor.append(&it->second);
 
     JSDOMConstructorMap::iterator end2 = constructors().end();
     for (JSDOMConstructorMap::iterator it2 = constructors().begin(); it2 != end2; ++it2)
-        markStack.append(&it2->second);
+        visitor.append(&it2->second);
 
     if (m_injectedScript)
-        markStack.append(&m_injectedScript);
+        visitor.append(&m_injectedScript);
 }
 
 void JSDOMGlobalObject::setCurrentEvent(Event* currentEvent)

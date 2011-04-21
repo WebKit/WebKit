@@ -44,9 +44,9 @@ namespace JSC {
     public:
         static StructureChain* create(JSGlobalData& globalData, Structure* head) { return new (&globalData) StructureChain(globalData, globalData.structureChainStructure.get(), head); }
         WriteBarrier<Structure>* head() { return m_vector.get(); }
-        void markChildren(MarkStack&);
+        void visitChildren(SlotVisitor&);
 
-        static Structure* createStructure(JSGlobalData& globalData, JSValue prototype) { return Structure::create(globalData, prototype, TypeInfo(CompoundType, OverridesMarkChildren), 0, &s_info); }
+        static Structure* createStructure(JSGlobalData& globalData, JSValue prototype) { return Structure::create(globalData, prototype, TypeInfo(CompoundType, OverridesVisitChildren), 0, &s_info); }
 
     private:
         StructureChain(JSGlobalData&, Structure*, Structure* head);

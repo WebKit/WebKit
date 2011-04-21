@@ -34,7 +34,7 @@ namespace JSC {
 
     class GCActivityCallback;
     class GlobalCodeBlock;
-    class HeapRootMarker;
+    class HeapRootVisitor;
     class JSCell;
     class JSGlobalData;
     class JSValue;
@@ -44,6 +44,7 @@ namespace JSC {
     class RegisterFile;
     class UString;
     class WeakGCHandlePool;
+    typedef MarkStack SlotVisitor;
 
     typedef std::pair<JSValue, UString> ValueStringPair;
     typedef HashCountedSet<JSCell*> ProtectCountSet;
@@ -114,8 +115,8 @@ namespace JSC {
         void reportExtraMemoryCostSlowCase(size_t);
 
         void markRoots();
-        void markProtectedObjects(HeapRootMarker&);
-        void markTempSortVectors(HeapRootMarker&);
+        void markProtectedObjects(HeapRootVisitor&);
+        void markTempSortVectors(HeapRootVisitor&);
 
         enum SweepToggle { DoNotSweep, DoSweep };
         void reset(SweepToggle);

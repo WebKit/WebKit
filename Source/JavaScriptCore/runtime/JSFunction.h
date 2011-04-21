@@ -84,7 +84,7 @@ namespace JSC {
         virtual CallType getCallData(CallData&);
 
     protected:
-        const static unsigned StructureFlags = OverridesGetOwnPropertySlot | ImplementsHasInstance | OverridesMarkChildren | OverridesGetPropertyNames | JSObject::StructureFlags;
+        const static unsigned StructureFlags = OverridesGetOwnPropertySlot | ImplementsHasInstance | OverridesVisitChildren | OverridesGetPropertyNames | JSObject::StructureFlags;
 
     private:
         explicit JSFunction(VPtrStealingHackType);
@@ -97,7 +97,7 @@ namespace JSC {
         virtual void put(ExecState*, const Identifier& propertyName, JSValue, PutPropertySlot&);
         virtual bool deleteProperty(ExecState*, const Identifier& propertyName);
 
-        virtual void markChildren(MarkStack&);
+        virtual void visitChildren(SlotVisitor&);
 
         static JSValue argumentsGetter(ExecState*, JSValue, const Identifier&);
         static JSValue callerGetter(ExecState*, JSValue, const Identifier&);

@@ -51,19 +51,19 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
-void JSElement::markChildren(MarkStack& markStack)
+void JSElement::visitChildren(SlotVisitor& visitor)
 {
-    Base::markChildren(markStack);
+    Base::visitChildren(visitor);
 
     Element* element = impl();
     JSGlobalData& globalData = *Heap::heap(this)->globalData();
 
-    markDOMObjectWrapper(markStack, globalData, element->attributeMap());
-    markDOMObjectWrapper(markStack, globalData, element->optionalClassList());
-    markDOMObjectWrapper(markStack, globalData, element->optionalDataset());
+    markDOMObjectWrapper(visitor, globalData, element->attributeMap());
+    markDOMObjectWrapper(visitor, globalData, element->optionalClassList());
+    markDOMObjectWrapper(visitor, globalData, element->optionalDataset());
 
     if (element->isStyledElement())
-        markDOMObjectWrapper(markStack, globalData, static_cast<StyledElement*>(element)->inlineStyleDecl());
+        markDOMObjectWrapper(visitor, globalData, static_cast<StyledElement*>(element)->inlineStyleDecl());
 }
 
 JSValue toJSNewlyCreated(ExecState* exec, JSDOMGlobalObject* globalObject, Element* element)

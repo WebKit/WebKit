@@ -34,16 +34,17 @@
 namespace JSC {
 
 class HandleHeap;
-class HeapRootMarker;
+class HeapRootVisitor;
 class JSGlobalData;
 class JSValue;
 class MarkStack;
 class TypeCounter;
+typedef MarkStack SlotVisitor;
 
 class WeakHandleOwner {
 public:
     virtual ~WeakHandleOwner();
-    virtual bool isReachableFromOpaqueRoots(Handle<Unknown>, void* context, MarkStack&);
+    virtual bool isReachableFromOpaqueRoots(Handle<Unknown>, void* context, SlotVisitor&);
     virtual void finalize(Handle<Unknown>, void* context);
 };
 
@@ -61,8 +62,8 @@ public:
     void makeWeak(HandleSlot, WeakHandleOwner* = 0, void* context = 0);
     HandleSlot copyWeak(HandleSlot);
 
-    void markStrongHandles(HeapRootMarker&);
-    void markWeakHandles(HeapRootMarker&);
+    void markStrongHandles(HeapRootVisitor&);
+    void markWeakHandles(HeapRootVisitor&);
     void finalizeWeakHandles();
 
     void writeBarrier(HandleSlot, const JSValue&);

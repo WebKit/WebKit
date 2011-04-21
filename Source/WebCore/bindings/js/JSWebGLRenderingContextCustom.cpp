@@ -192,13 +192,13 @@ static JSValue toJS(ExecState* exec, JSDOMGlobalObject* globalObject, WebGLExten
     return jsNull();
 }
 
-void JSWebGLRenderingContext::markChildren(MarkStack& markStack)
+void JSWebGLRenderingContext::visitChildren(SlotVisitor& visitor)
 {
-    Base::markChildren(markStack);
+    Base::visitChildren(visitor);
 
     WebGLRenderingContext* context = static_cast<WebGLRenderingContext*>(impl());
     for (int i = 0; i < context->getNumberOfExtensions(); ++i)
-        markDOMObjectWrapper(markStack, *Heap::heap(this)->globalData(), context->getExtensionNumber(i));
+        markDOMObjectWrapper(visitor, *Heap::heap(this)->globalData(), context->getExtensionNumber(i));
 }
 
 JSValue JSWebGLRenderingContext::getAttachedShaders(ExecState* exec)

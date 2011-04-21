@@ -42,6 +42,7 @@
 namespace JSC {
 
     class MarkStack;
+    typedef MarkStack SlotVisitor;
 
     class EvalCodeCache {
     public:
@@ -67,7 +68,7 @@ namespace JSC {
 
         bool isEmpty() const { return m_cacheMap.isEmpty(); }
 
-        void markAggregate(MarkStack&);
+        void visitAggregate(SlotVisitor&);
 
     private:
         static const unsigned maxCacheableSourceLength = 256;

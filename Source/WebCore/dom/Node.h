@@ -37,6 +37,7 @@
 namespace JSC {
     class JSGlobalData;
     class MarkStack;
+    typedef MarkStack SlotVisitor;
 }
 #endif
 

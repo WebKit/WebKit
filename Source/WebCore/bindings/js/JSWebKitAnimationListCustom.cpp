@@ -32,16 +32,16 @@ using namespace JSC;
 
 namespace WebCore {
 
-void JSWebKitAnimationList::markChildren(MarkStack& markStack)
+void JSWebKitAnimationList::visitChildren(SlotVisitor& visitor)
 {
-    Base::markChildren(markStack);
+    Base::visitChildren(visitor);
 
     WebKitAnimationList* list = impl();
     JSGlobalData& globalData = *Heap::heap(this)->globalData();
 
     unsigned length = list->length();
     for (unsigned i = 0; i < length; ++i)
-        markDOMObjectWrapper(markStack, globalData, list->item(i));
+        markDOMObjectWrapper(visitor, globalData, list->item(i));
 }
 
 }

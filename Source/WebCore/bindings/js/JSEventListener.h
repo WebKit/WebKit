@@ -57,7 +57,7 @@ namespace WebCore {
 
     private:
         virtual JSC::JSObject* initializeJSFunction(ScriptExecutionContext*) const;
-        virtual void markJSFunction(JSC::MarkStack&);
+        virtual void markJSFunction(JSC::SlotVisitor&);
         virtual bool virtualisAttribute() const;
 
     protected:

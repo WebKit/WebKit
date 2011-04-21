@@ -54,13 +54,13 @@ public:
     virtual double toNumber(ExecState *exec) const;
     virtual UString toString(ExecState *exec) const;
 
-    virtual void markChildren(MarkStack&);
+    virtual void visitChildren(SlotVisitor&);
 
     JSUserObject *GetJSUserObject() const;
 
     static Structure* createStructure(JSGlobalData& globalData, JSValue prototype)
     {
-        return Structure::create(globalData, prototype, TypeInfo(ObjectType, OverridesGetOwnPropertySlot | OverridesMarkChildren | OverridesGetPropertyNames), AnonymousSlotCount, &s_info);
+        return Structure::create(globalData, prototype, TypeInfo(ObjectType, OverridesGetOwnPropertySlot | OverridesVisitChildren | OverridesGetPropertyNames), AnonymousSlotCount, &s_info);
     }
 
 private:

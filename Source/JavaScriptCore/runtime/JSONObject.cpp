@@ -79,7 +79,7 @@ public:
     Stringifier(ExecState*, const Local<Unknown>& replacer, const Local<Unknown>& space);
     Local<Unknown> stringify(Handle<Unknown>);
 
-    void markAggregate(MarkStack&);
+    void visitAggregate(SlotVisitor&);
 
 private:
     class Holder {

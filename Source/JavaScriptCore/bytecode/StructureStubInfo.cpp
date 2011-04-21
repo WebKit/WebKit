@@ -63,37 +63,37 @@ void StructureStubInfo::deref()
     }
 }
 
-void StructureStubInfo::markAggregate(MarkStack& markStack)
+void StructureStubInfo::visitAggregate(SlotVisitor& visitor)
 {
     switch (accessType) {
     case access_get_by_id_self:
-        markStack.append(&u.getByIdSelf.baseObjectStructure);
+        visitor.append(&u.getByIdSelf.baseObjectStructure);
         return;
     case access_get_by_id_proto:
-        markStack.append(&u.getByIdProto.baseObjectStructure);
-        markStack.append(&u.getByIdProto.prototypeStructure);
+        visitor.append(&u.getByIdProto.baseObjectStructure);
+        visitor.append(&u.getByIdProto.prototypeStructure);
         return;
     case access_get_by_id_chain:
-        markStack.append(&u.getByIdChain.baseObjectStructure);
-        markStack.append(&u.getByIdChain.chain);
+        visitor.append(&u.getByIdChain.baseObjectStructure);
+        visitor.append(&u.getByIdChain.chain);
         return;
     case access_get_by_id_self_list: {
         PolymorphicAccessStructureList* polymorphicStructures = u.getByIdSelfList.structureList;
-        polymorphicStructures->markAggregate(markStack, u.getByIdSelfList.listSize);
+        polymorphicStructures->visitAggregate(visitor, u.getByIdSelfList.listSize);
         return;
     }
     case access_get_by_id_proto_list: {
         PolymorphicAccessStructureList* polymorphicStructures = u.getByIdProtoList.structureList;
-        polymorphicStructures->markAggregate(markStack, u.getByIdProtoList.listSize);
+        polymorphicStructures->visitAggregate(visitor, u.getByIdProtoList.listSize);
         return;
     }
     case access_put_by_id_transition:
-        markStack.append(&u.putByIdTransition.previousStructure);
-        markStack.append(&u.putByIdTransition.structure);
-        markStack.append(&u.putByIdTransition.chain);
+        visitor.append(&u.putByIdTransition.previousStructure);
+        visitor.append(&u.putByIdTransition.structure);
+        visitor.append(&u.putByIdTransition.chain);
         return;
     case access_put_by_id_replace:
-        markStack.append(&u.putByIdReplace.baseObjectStructure);
+        visitor.append(&u.putByIdReplace.baseObjectStructure);
         return;
     case access_get_by_id:
     case access_put_by_id:

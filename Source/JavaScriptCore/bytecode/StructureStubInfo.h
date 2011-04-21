@@ -116,7 +116,7 @@ namespace JSC {
         }
 
         void deref();
-        void markAggregate(MarkStack&);
+        void visitAggregate(SlotVisitor&);
 
         bool seenOnce()
         {

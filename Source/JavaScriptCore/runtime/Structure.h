@@ -47,6 +47,7 @@ namespace JSC {
     class PropertyNameArray;
     class PropertyNameArrayData;
     class StructureChain;
+    typedef MarkStack SlotVisitor;
 
     struct ClassInfo;
 
@@ -99,7 +100,7 @@ namespace JSC {
         JSValue storedPrototype() const { return m_prototype.get(); }
         JSValue prototypeForLookup(ExecState*) const;
         StructureChain* prototypeChain(ExecState*) const;
-        void markChildren(MarkStack&);
+        void visitChildren(SlotVisitor&);
 
         Structure* previousID() const { return m_previous.get(); }
 

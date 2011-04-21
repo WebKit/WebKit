@@ -53,11 +53,11 @@ StructureChain::~StructureChain()
 {
 }
 
-void StructureChain::markChildren(MarkStack& markStack)
+void StructureChain::visitChildren(SlotVisitor& visitor)
 {
     size_t i = 0;
     while (m_vector[i])
-        markStack.append(&m_vector[i++]);
+        visitor.append(&m_vector[i++]);
 }
 
 } // namespace JSC

@@ -36,7 +36,7 @@ namespace JSC {
     public:
         DebuggerActivation(JSGlobalData&, JSObject*);
 
-        virtual void markChildren(MarkStack&);
+        virtual void visitChildren(SlotVisitor&);
         virtual UString className() const;
         virtual bool getOwnPropertySlot(ExecState*, const Identifier& propertyName, PropertySlot&);
         virtual void put(ExecState*, const Identifier& propertyName, JSValue, PutPropertySlot&);
@@ -55,7 +55,7 @@ namespace JSC {
         }
 
     protected:
-        static const unsigned StructureFlags = OverridesGetOwnPropertySlot | OverridesMarkChildren | JSObject::StructureFlags;
+        static const unsigned StructureFlags = OverridesGetOwnPropertySlot | OverridesVisitChildren | JSObject::StructureFlags;
 
     private:
         WriteBarrier<JSActivation> m_activation;

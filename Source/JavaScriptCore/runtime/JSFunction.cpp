@@ -133,16 +133,16 @@ const UString JSFunction::calculatedDisplayName(ExecState* exec)
     return name(exec);
 }
 
-void JSFunction::markChildren(MarkStack& markStack)
+void JSFunction::visitChildren(SlotVisitor& visitor)
 {
-    Base::markChildren(markStack);
+    Base::visitChildren(visitor);
 
-    markStack.append(&m_scopeChain);
+    visitor.append(&m_scopeChain);
     if (m_executable) {
         // Delightful race condition: m_executable may not have been initialised
         // if this is a host function, as the executable isn't necessarily created 
         // until after the function has been allocated.
-        markStack.append(&m_executable);
+        visitor.append(&m_executable);
     }
 }
 

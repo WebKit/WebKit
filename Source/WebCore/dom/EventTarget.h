@@ -170,7 +170,7 @@ namespace WebCore {
         bool isFiringEventListeners();
 
 #if USE(JSC)
-        void markJSEventListeners(JSC::MarkStack&);
+        void visitJSEventListeners(JSC::SlotVisitor&);
         void invalidateJSEventListeners(JSC::JSObject*);
 #endif
 
@@ -223,7 +223,7 @@ namespace WebCore {
 #endif
 
 #if USE(JSC)
-    inline void EventTarget::markJSEventListeners(JSC::MarkStack& markStack)
+    inline void EventTarget::visitJSEventListeners(JSC::SlotVisitor& visitor)
     {
         EventTargetData* d = eventTargetData();
         if (!d)
@@ -233,7 +233,7 @@ namespace WebCore {
         for (EventListenerMap::iterator it = d->eventListenerMap.begin(); it != end; ++it) {
             EventListenerVector& entry = *it->second;
             for (size_t i = 0; i < entry.size(); ++i)
-                entry[i].listener->markJSFunction(markStack);
+                entry[i].listener->visitJSFunction(visitor);
         }
     }
 #endif

@@ -79,10 +79,10 @@ inline void* wrapperContext(DOMWrapperWorld* world, CSSRule*)
     return world;
 }
 
-void JSCSSRule::markChildren(MarkStack& markStack)
+void JSCSSRule::visitChildren(SlotVisitor& visitor)
 {
-    Base::markChildren(markStack);
-    markStack.addOpaqueRoot(root(impl()));
+    Base::visitChildren(visitor);
+    visitor.addOpaqueRoot(root(impl()));
 }
 
 JSValue toJS(ExecState* exec, JSDOMGlobalObject* globalObject, CSSRule* rule)

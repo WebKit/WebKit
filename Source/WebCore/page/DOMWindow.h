@@ -340,7 +340,7 @@ namespace WebCore {
 
         void finishedLoading();
 
-        // These functions are used for GC marking. See JSDOMWindow::markChildren(MarkStack&) in JSDOMWindowCustom.cpp.
+        // These functions are used for GC marking. See JSDOMWindow::visitChildren(SlotVisitor&) in JSDOMWindowCustom.cpp.
         Screen* optionalScreen() const { return m_screen.get(); }
         DOMSelection* optionalSelection() const { return m_selection.get(); }
         History* optionalHistory() const { return m_history.get(); }

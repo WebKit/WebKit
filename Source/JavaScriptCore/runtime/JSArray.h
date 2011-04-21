@@ -128,7 +128,7 @@ namespace JSC {
             return Structure::create(globalData, prototype, TypeInfo(ObjectType, StructureFlags), AnonymousSlotCount, &s_info);
         }
         
-        inline void markChildrenDirect(MarkStack& markStack);
+        inline void visitChildrenDirect(SlotVisitor&);
 
         static ptrdiff_t storageOffset()
         {
@@ -141,12 +141,12 @@ namespace JSC {
         }
 
     protected:
-        static const unsigned StructureFlags = OverridesGetOwnPropertySlot | OverridesMarkChildren | OverridesGetPropertyNames | JSObject::StructureFlags;
+        static const unsigned StructureFlags = OverridesGetOwnPropertySlot | OverridesVisitChildren | OverridesGetPropertyNames | JSObject::StructureFlags;
         virtual void put(ExecState*, const Identifier& propertyName, JSValue, PutPropertySlot&);
         virtual bool deleteProperty(ExecState*, const Identifier& propertyName);
         virtual bool deleteProperty(ExecState*, unsigned propertyName);
         virtual void getOwnPropertyNames(ExecState*, PropertyNameArray&, EnumerationMode mode = ExcludeDontEnumProperties);
-        virtual void markChildren(MarkStack&);
+        virtual void visitChildren(SlotVisitor&);
 
         void* subclassData() const;
         void setSubclassData(void*);
@@ -185,19 +185,19 @@ namespace JSC {
     inline bool isJSArray(JSGlobalData* globalData, JSCell* cell) { return cell->vptr() == globalData->jsArrayVPtr; }
     inline bool isJSArray(JSGlobalData* globalData, JSValue v) { return v.isCell() && isJSArray(globalData, v.asCell()); }
 
-    inline void JSArray::markChildrenDirect(MarkStack& markStack)
+    inline void JSArray::visitChildrenDirect(SlotVisitor& visitor)
     {
-        JSObject::markChildrenDirect(markStack);
+        JSObject::visitChildrenDirect(visitor);
         
         ArrayStorage* storage = m_storage;
 
         unsigned usedVectorLength = std::min(storage->m_length, m_vectorLength);
-        markStack.appendValues(storage->m_vector, usedVectorLength, MayContainNullValues);
+        visitor.appendValues(storage->m_vector, usedVectorLength, MayContainNullValues);
 
         if (SparseArrayValueMap* map = storage->m_sparseValueMap) {
             SparseArrayValueMap::iterator end = map->end();
             for (SparseArrayValueMap::iterator it = map->begin(); it != end; ++it)
-                markStack.append(&it->second);
+                visitor.append(&it->second);
         }
     }
 
