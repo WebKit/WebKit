@@ -1,3 +1,14 @@
+2011-04-21  Adam Klein  <adamk@chromium.org>
+
+        Reviewed by David Levin.
+
+        [fileapi] Worker File API calls that create Blobs fail in debug builds due to random number generator thread assertion
+        https://bugs.webkit.org/show_bug.cgi?id=55728
+
+        Enable WTF_MULTIPLE_THREADS for Chromium.
+
+        * wtf/Platform.h:
+
 2011-04-20  Michael Saboff  <msaboff@apple.com>
 
         Reviewed by Geoff Garen.
