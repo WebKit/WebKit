@@ -10,8 +10,5 @@ if (window.layoutTestController) {
 </head>
 <body>
   <iframe src="http://127.0.0.1:8000/security/contentSecurityPolicy/resources/echo-script-src.pl?should_run=yes&q=http://127.0.0.1:8000/security/contentSecurityPolicy/resources/script.js&csp=script-src%20'self'"></iframe>
-  <iframe src="http://127.0.0.1:8000/security/contentSecurityPolicy/resources/echo-script-src.pl?should_run=no&q=http://localhost:8000/security/contentSecurityPolicy/resources/script.js&csp=script-src%20'self'"></iframe>
-  <iframe src="http://127.0.0.1:8000/security/contentSecurityPolicy/resources/echo-script-src.pl?should_run=no&q=http://127.0.0.1:8080/security/contentSecurityPolicy/resources/script.js&csp=script-src%20'self'"></iframe>
-  <iframe src="http://127.0.0.1:8000/security/contentSecurityPolicy/resources/echo-script-src.pl?should_run=no&q=https://127.0.0.1:8443/security/contentSecurityPolicy/resources/script.js&csp=script-src%20'self'"></iframe>
 </body>
 </html>

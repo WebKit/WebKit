@@ -4416,7 +4416,7 @@ void Document::initSecurityContext()
         // This can occur via document.implementation.createDocument().
         m_cookieURL = KURL(ParsedURLString, "");
         ScriptExecutionContext::setSecurityOrigin(SecurityOrigin::createEmpty());
-        m_contentSecurityPolicy = ContentSecurityPolicy::create();
+        m_contentSecurityPolicy = ContentSecurityPolicy::create(this);
         return;
     }
 
@@ -4424,7 +4424,7 @@ void Document::initSecurityContext()
     // loading URL with a fresh content security policy.
     m_cookieURL = m_url;
     ScriptExecutionContext::setSecurityOrigin(SecurityOrigin::create(m_url, m_frame->loader()->sandboxFlags()));
-    m_contentSecurityPolicy = ContentSecurityPolicy::create(securityOrigin());
+    m_contentSecurityPolicy = ContentSecurityPolicy::create(this);
 
     if (SecurityOrigin::allowSubstituteDataAccessToLocal()) {
         // If this document was loaded with substituteData, then the document can

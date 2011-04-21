@@ -26,9 +26,12 @@
 #include "config.h"
 #include "ContentSecurityPolicy.h"
 
+#include "DOMWindow.h"
 #include "Document.h"
+#include "Frame.h"
 #include "NotImplemented.h"
 #include "SecurityOrigin.h"
+#include <wtf/text/StringConcatenate.h>
 
 namespace WebCore {
 
@@ -459,9 +462,9 @@ void CSPOptions::parse(const String& value)
     }
 }
 
-ContentSecurityPolicy::ContentSecurityPolicy(SecurityOrigin* origin)
+ContentSecurityPolicy::ContentSecurityPolicy(Document* document)
     : m_havePolicy(false)
-    , m_origin(origin)
+    , m_document(document)
 {
 }
 
@@ -478,6 +481,12 @@ void ContentSecurityPolicy::didReceiveHeader(const String& header)
     m_havePolicy = true;
 }
 
+void ContentSecurityPolicy::reportViolation(const String& consoleMessage) const
+{
+    if (Frame* frame = m_document->frame())
+        frame->domWindow()->console()->addMessage(JSMessageSource, LogMessageType, ErrorMessageLevel, consoleMessage, 1, String());
+}
+
 bool ContentSecurityPolicy::protectAgainstXSS() const
 {
     return m_scriptSrc && (!m_options || !m_options->disableXSSProtection());
@@ -485,52 +494,96 @@ bool ContentSecurityPolicy::protectAgainstXSS() const
 
 bool ContentSecurityPolicy::allowJavaScriptURLs() const
 {
-    return !protectAgainstXSS();
+    if (!protectAgainstXSS())
+        return true;
+
+    DEFINE_STATIC_LOCAL(String, consoleMessage, ("Refused to execute JavaScript URL because of Content-Security-Policy.\n"));
+    reportViolation(consoleMessage);
+    return false;
 }
 
 bool ContentSecurityPolicy::allowInlineEventHandlers() const
 {
-    return !protectAgainstXSS();
+    if (!protectAgainstXSS())
+        return true;
+
+    DEFINE_STATIC_LOCAL(String, consoleMessage, ("Refused to execute inline event handler because of Content-Security-Policy.\n"));
+    reportViolation(consoleMessage);
+    return false;
 }
 
 bool ContentSecurityPolicy::allowInlineScript() const
 {
-    return !protectAgainstXSS();
+    if (!protectAgainstXSS())
+        return true;
+
+    DEFINE_STATIC_LOCAL(String, consoleMessage, ("Refused to execute inline script because of Content-Security-Policy.\n"));
+    reportViolation(consoleMessage);
+    return false;
 }
 
 bool ContentSecurityPolicy::allowEval() const
 {
-    return !m_scriptSrc || (m_options && m_options->evalScript());
+    if (!m_scriptSrc || (m_options && m_options->evalScript()))
+        return true;
+
+    DEFINE_STATIC_LOCAL(String, consoleMessage, ("Refused to evaluate script because of Content-Security-Policy.\n"));
+    reportViolation(consoleMessage);
+    return false;
 }
 
 bool ContentSecurityPolicy::allowScriptFromSource(const KURL& url) const
 {
-    return !m_scriptSrc || m_scriptSrc->allows(url);
+    if (!m_scriptSrc || m_scriptSrc->allows(url))
+        return true;
+
+    reportViolation(makeString("Refused to load script from '", url.string(), "' because of Content-Security-Policy.\n"));
+    return false;
 }
 
 bool ContentSecurityPolicy::allowObjectFromSource(const KURL& url) const
 {
-    return !m_objectSrc || m_objectSrc->allows(url);
+    if (!m_objectSrc || m_objectSrc->allows(url))
+        return true;
+
+    reportViolation(makeString("Refused to load object from '", url.string(), "' because of Content-Security-Policy.\n"));
+    return false;
 }
 
 bool ContentSecurityPolicy::allowImageFromSource(const KURL& url) const
 {
-    return !m_imgSrc || m_imgSrc->allows(url);
+    if (!m_imgSrc || m_imgSrc->allows(url))
+        return true;
+
+    reportViolation(makeString("Refused to load image from '", url.string(), "' because of Content-Security-Policy.\n"));
+    return false;
 }
 
 bool ContentSecurityPolicy::allowStyleFromSource(const KURL& url) const
 {
-    return !m_styleSrc || m_styleSrc->allows(url);
+    if (!m_styleSrc || m_styleSrc->allows(url))
+        return true;
+
+    reportViolation(makeString("Refused to load style from '", url.string(), "' because of Content-Security-Policy.\n"));
+    return false;
 }
 
 bool ContentSecurityPolicy::allowFontFromSource(const KURL& url) const
 {
-    return !m_fontSrc || m_fontSrc->allows(url);
+    if (!m_fontSrc || m_fontSrc->allows(url))
+        return true;
+
+    reportViolation(makeString("Refused to load font from '", url.string(), "' because of Content-Security-Policy.\n"));
+    return false;
 }
 
 bool ContentSecurityPolicy::allowMediaFromSource(const KURL& url) const
 {
-    return !m_mediaSrc || m_mediaSrc->allows(url);
+    if (!m_mediaSrc || m_mediaSrc->allows(url))
+        return true;
+
+    reportViolation(makeString("Refused to load media from '", url.string(), "' because of Content-Security-Policy.\n"));
+    return false;
 }
 
 // policy            = directive-list
@@ -617,17 +670,17 @@ void ContentSecurityPolicy::addDirective(const String& name, const String& value
     ASSERT(!name.isEmpty());
 
     if (!m_scriptSrc && equalIgnoringCase(name, scriptSrc))
-        m_scriptSrc = adoptPtr(new CSPDirective(value, m_origin.get()));
+        m_scriptSrc = adoptPtr(new CSPDirective(value, m_document->securityOrigin()));
     else if (!m_objectSrc && equalIgnoringCase(name, objectSrc))
-        m_objectSrc = adoptPtr(new CSPDirective(value, m_origin.get()));
+        m_objectSrc = adoptPtr(new CSPDirective(value, m_document->securityOrigin()));
     else if (!m_imgSrc && equalIgnoringCase(name, imgSrc))
-        m_imgSrc = adoptPtr(new CSPDirective(value, m_origin.get()));
+        m_imgSrc = adoptPtr(new CSPDirective(value, m_document->securityOrigin()));
     else if (!m_styleSrc && equalIgnoringCase(name, styleSrc))
-        m_styleSrc = adoptPtr(new CSPDirective(value, m_origin.get()));
+        m_styleSrc = adoptPtr(new CSPDirective(value, m_document->securityOrigin()));
     else if (!m_fontSrc && equalIgnoringCase(name, fontSrc))
-        m_fontSrc = adoptPtr(new CSPDirective(value, m_origin.get()));
+        m_fontSrc = adoptPtr(new CSPDirective(value, m_document->securityOrigin()));
     else if (!m_mediaSrc && equalIgnoringCase(name, mediaSrc))
-        m_mediaSrc = adoptPtr(new CSPDirective(value, m_origin.get()));
+        m_mediaSrc = adoptPtr(new CSPDirective(value, m_document->securityOrigin()));
     else if (!m_options && equalIgnoringCase(name, options))
         m_options = adoptPtr(new CSPOptions(value));
 }

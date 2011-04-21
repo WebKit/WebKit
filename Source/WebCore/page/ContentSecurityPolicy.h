@@ -33,14 +33,14 @@ namespace WebCore {
 
 class CSPDirective;
 class CSPOptions;
+class Document;
 class KURL;
-class SecurityOrigin;
 
 class ContentSecurityPolicy : public RefCounted<ContentSecurityPolicy> {
 public:
-    static PassRefPtr<ContentSecurityPolicy> create(SecurityOrigin* origin = 0)
+    static PassRefPtr<ContentSecurityPolicy> create(Document* document)
     {
-        return adoptRef(new ContentSecurityPolicy(origin));
+        return adoptRef(new ContentSecurityPolicy(document));
     }
     ~ContentSecurityPolicy();
 
@@ -59,7 +59,7 @@ public:
     bool allowMediaFromSource(const KURL&) const;
 
 private:
-    explicit ContentSecurityPolicy(SecurityOrigin*);
+    explicit ContentSecurityPolicy(Document*);
 
     bool protectAgainstXSS() const;
 
@@ -67,8 +67,10 @@ private:
     bool parseDirective(const UChar* begin, const UChar* end, String& name, String& value);
     void addDirective(const String& name, const String& value);
 
+    void reportViolation(const String& consoleMessage) const;
+
     bool m_havePolicy;
-    RefPtr<SecurityOrigin> m_origin;
+    Document* m_document;
     OwnPtr<CSPDirective> m_scriptSrc;
     OwnPtr<CSPDirective> m_objectSrc;
     OwnPtr<CSPDirective> m_imgSrc;

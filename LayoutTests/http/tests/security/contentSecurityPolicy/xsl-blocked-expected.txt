@@ -1,2 +1,4 @@
+CONSOLE MESSAGE: line 1: Refused to load style from 'http://127.0.0.1:8000/security/contentSecurityPolicy/resources/style.xsl' because of Content-Security-Policy.
+
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600

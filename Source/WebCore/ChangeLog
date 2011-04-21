@@ -1,3 +1,40 @@
+2011-04-20  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        CSP policy violations should log to the console
+        https://bugs.webkit.org/show_bug.cgi?id=58646
+
+        We now log policy violations to the JavaScript console to help
+        developers debug what's going on with their Content-Security-Policy.
+
+        Tests: http/tests/security/contentSecurityPolicy/inline-script-blocked-javascript-url.html
+               http/tests/security/contentSecurityPolicy/javascript-url-allowed.html
+               http/tests/security/contentSecurityPolicy/javascript-url-blocked.html
+               http/tests/security/contentSecurityPolicy/object-src-none-allowed.html
+               http/tests/security/contentSecurityPolicy/object-src-none-blocked.html
+               http/tests/security/contentSecurityPolicy/script-src-self-blocked-01.html
+               http/tests/security/contentSecurityPolicy/script-src-self-blocked-02.html
+               http/tests/security/contentSecurityPolicy/script-src-self-blocked-03.html
+
+        * dom/Document.cpp:
+        (WebCore::Document::initSecurityContext):
+        * page/ContentSecurityPolicy.cpp:
+        (WebCore::ContentSecurityPolicy::ContentSecurityPolicy):
+        (WebCore::ContentSecurityPolicy::allowJavaScriptURLs):
+        (WebCore::ContentSecurityPolicy::allowInlineEventHandlers):
+        (WebCore::ContentSecurityPolicy::allowInlineScript):
+        (WebCore::ContentSecurityPolicy::allowEval):
+        (WebCore::ContentSecurityPolicy::allowScriptFromSource):
+        (WebCore::ContentSecurityPolicy::allowObjectFromSource):
+        (WebCore::ContentSecurityPolicy::allowImageFromSource):
+        (WebCore::ContentSecurityPolicy::allowStyleFromSource):
+        (WebCore::ContentSecurityPolicy::allowFontFromSource):
+        (WebCore::ContentSecurityPolicy::allowMediaFromSource):
+        (WebCore::ContentSecurityPolicy::addDirective):
+        * page/ContentSecurityPolicy.h:
+        (WebCore::ContentSecurityPolicy::create):
+
 2011-04-20  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Maciej Stachowiak.
