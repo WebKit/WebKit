@@ -1,5 +1,14 @@
 2011-04-21  Tony Gentilcore  <tonyg@chromium.org>
 
+        BitmapImage::destroyMetadataAndNotify should clear m_checkedForSolidColor
+        https://bugs.webkit.org/show_bug.cgi?id=58926
+
+        Remove chromium's crashing expectations.
+
+        * platform/chromium/test_expectations.txt:
+
+2011-04-21  Tony Gentilcore  <tonyg@chromium.org>
+
         [chromium] Correct expecations for editing/selection/designmode-no-caret.html
         https://bugs.webkit.org/show_bug.cgi?id=59088
 

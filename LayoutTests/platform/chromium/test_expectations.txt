@@ -3750,13 +3750,6 @@ BUGTONY MAC LEOPARD : fast/css/value-list-out-of-bounds-crash.html = IMAGE
 BUGTONY MAC LEOPARD : svg/custom/group-opacity.svg = IMAGE
 BUGTONY MAC LEOPARD : svg/custom/image-with-transform-clip-filter.svg = IMAGE
 
-// https://bugs.webkit.org/show_bug.cgi?id=58926
-BUGCR80011 WIN LINUX DEBUG : css2.1/t140201-c533-bgimage-00-a.html = CRASH
-BUGCR80011 WIN LINUX DEBUG : fast/backgrounds/solid-color-context-restore.html = CRASH
-BUGCR80011 WIN LINUX DEBUG : fast/css/acid2-pixel.html = CRASH
-BUGCR80011 WIN LINUX DEBUG : fast/frames/content-opacity-1.html = CRASH
-BUGCR80011 WIN LINUX DEBUG : fast/frames/content-opacity-2.html = CRASH
-
 // webkit roll : 84350:84431
 BUGDPRANKE LINUX : fast/canvas/webgl/css-webkit-canvas-repaint.html = IMAGE
 BUGDPRANKE LINUX : fast/canvas/webgl/css-webkit-canvas.html = IMAGE
