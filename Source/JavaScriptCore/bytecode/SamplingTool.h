@@ -41,7 +41,6 @@ namespace JSC {
     class ScriptExecutable;
 
     class SamplingFlags {
-        friend class JIT;
     public:
         static void start();
         static void stop();
@@ -80,6 +79,11 @@ namespace JSC {
             int m_flag;
         };
     
+        static const void* addressOfFlags()
+        {
+            return &s_flags;
+        }
+
 #endif
     private:
         static uint32_t s_flags;

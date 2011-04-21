@@ -1,5 +1,22 @@
 2011-04-20  Gavin Barraclough  <barraclough@apple.com>
 
+        Reviewed by Sam Weinig.
+
+        Add SAMPLING_FLAGS tool to DFG JIT.
+
+        * bytecode/SamplingTool.h:
+        (JSC::SamplingFlags::addressOfFlags):
+        * dfg/DFGJITCompiler.cpp:
+        (JSC::DFG::JITCompiler::setSamplingFlag):
+        (JSC::DFG::JITCompiler::clearSamplingFlag):
+        * dfg/DFGJITCompiler.h:
+        * jit/JITInlineMethods.h:
+        (JSC::JIT::setSamplingFlag):
+        (JSC::JIT::clearSamplingFlag):
+        * wtf/Platform.h:
+
+2011-04-20  Gavin Barraclough  <barraclough@apple.com>
+
         Reviewed by Oliver Hunt.
 
         Bug 59022 - DFG JIT - Optimize branch-on-relational-compare

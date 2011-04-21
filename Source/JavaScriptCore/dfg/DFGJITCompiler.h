@@ -301,6 +301,11 @@ public:
     void emitCount(AbstractSamplingCounter&, uint32_t increment = 1);
 #endif
 
+#if ENABLE(SAMPLING_FLAGS)
+    void setSamplingFlag(int32_t flag);
+    void clearSamplingFlag(int32_t flag);
+#endif
+
 private:
     // These methods used in linking the speculative & non-speculative paths together.
     void fillNumericToDouble(NodeIndex, FPRReg, GPRReg temporary);

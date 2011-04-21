@@ -428,6 +428,22 @@ void JITCompiler::emitCount(AbstractSamplingCounter& counter, uint32_t increment
 }
 #endif
 
+#if ENABLE(SAMPLING_FLAGS)
+void JITCompiler::setSamplingFlag(int32_t flag)
+{
+    ASSERT(flag >= 1);
+    ASSERT(flag <= 32);
+    or32(TrustedImm32(1u << (flag - 1)), AbsoluteAddress(SamplingFlags::addressOfFlags()));
+}
+
+void JITCompiler::clearSamplingFlag(int32_t flag)
+{
+    ASSERT(flag >= 1);
+    ASSERT(flag <= 32);
+    and32(TrustedImm32(~(1u << (flag - 1))), AbsoluteAddress(SamplingFlags::addressOfFlags()));
+}
+#endif
+
 } } // namespace JSC::DFG
 
 #endif

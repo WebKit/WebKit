@@ -1024,7 +1024,7 @@
 #if ENABLE(JIT) && USE(JSVALUE64) && PLATFORM(MAC)
 #define ENABLE_DFG_JIT 1
 /* Enabled with restrictions to circumvent known performance regressions. */
-#define ENABLE_DFG_JIT_RESTRICTIONS 1
+#define ENABLE_DFG_JIT_RESTRICTIONS 0
 #endif
 
 /* Ensure that either the JIT or the interpreter has been enabled. */

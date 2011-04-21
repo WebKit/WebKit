@@ -303,14 +303,14 @@ ALWAYS_INLINE void JIT::setSamplingFlag(int32_t flag)
 {
     ASSERT(flag >= 1);
     ASSERT(flag <= 32);
-    or32(TrustedImm32(1u << (flag - 1)), AbsoluteAddress(&SamplingFlags::s_flags));
+    or32(TrustedImm32(1u << (flag - 1)), AbsoluteAddress(SamplingFlags::addressOfFlags()));
 }
 
 ALWAYS_INLINE void JIT::clearSamplingFlag(int32_t flag)
 {
     ASSERT(flag >= 1);
     ASSERT(flag <= 32);
-    and32(TrustedImm32(~(1u << (flag - 1))), AbsoluteAddress(&SamplingFlags::s_flags));
+    and32(TrustedImm32(~(1u << (flag - 1))), AbsoluteAddress(SamplingFlags::addressOfFlags()));
 }
 #endif
 
