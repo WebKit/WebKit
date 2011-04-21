@@ -1,3 +1,15 @@
+2011-04-20  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        Reviewed by Kent Tamura.
+
+        REGRESSION(r82376): Clicking on a label, associated with a disabled input element changes state of the element.
+        https://bugs.webkit.org/show_bug.cgi?id=59037
+
+        Test: fast/events/simulated-click-disabled.html
+
+        * dom/EventDispatcher.cpp:
+        (WebCore::EventDispatcher::dispatchSimulatedClick): Added check for disabled element.
+
 2011-04-20  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Ryosuke Niwa.
