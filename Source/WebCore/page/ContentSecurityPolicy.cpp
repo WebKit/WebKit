@@ -550,6 +550,15 @@ bool ContentSecurityPolicy::allowObjectFromSource(const KURL& url) const
     return false;
 }
 
+bool ContentSecurityPolicy::allowChildFrameFromSource(const KURL& url) const
+{
+    if (!m_frameSrc || m_frameSrc->allows(url))
+        return true;
+
+    reportViolation(makeString("Refused to load frame from '", url.string(), "' because of Content-Security-Policy.\n"));
+    return false;
+}
+
 bool ContentSecurityPolicy::allowImageFromSource(const KURL& url) const
 {
     if (!m_imgSrc || m_imgSrc->allows(url))
@@ -661,6 +670,7 @@ void ContentSecurityPolicy::addDirective(const String& name, const String& value
 {
     DEFINE_STATIC_LOCAL(String, scriptSrc, ("script-src"));
     DEFINE_STATIC_LOCAL(String, objectSrc, ("object-src"));
+    DEFINE_STATIC_LOCAL(String, frameSrc, ("frame-src"));
     DEFINE_STATIC_LOCAL(String, imgSrc, ("img-src"));
     DEFINE_STATIC_LOCAL(String, styleSrc, ("style-src"));
     DEFINE_STATIC_LOCAL(String, fontSrc, ("font-src"));
@@ -673,6 +683,8 @@ void ContentSecurityPolicy::addDirective(const String& name, const String& value
         m_scriptSrc = adoptPtr(new CSPDirective(value, m_document->securityOrigin()));
     else if (!m_objectSrc && equalIgnoringCase(name, objectSrc))
         m_objectSrc = adoptPtr(new CSPDirective(value, m_document->securityOrigin()));
+    else if (!m_frameSrc && equalIgnoringCase(name, frameSrc))
+        m_frameSrc = adoptPtr(new CSPDirective(value, m_document->securityOrigin()));
     else if (!m_imgSrc && equalIgnoringCase(name, imgSrc))
         m_imgSrc = adoptPtr(new CSPDirective(value, m_document->securityOrigin()));
     else if (!m_styleSrc && equalIgnoringCase(name, styleSrc))

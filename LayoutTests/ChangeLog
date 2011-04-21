@@ -1,3 +1,19 @@
+2011-04-20  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        CSP frame-src is missing
+        https://bugs.webkit.org/show_bug.cgi?id=58643
+
+        Tests the basic functionality of frame-src.
+
+        * http/tests/security/contentSecurityPolicy/frame-src-allowed-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/frame-src-allowed.html: Added.
+        * http/tests/security/contentSecurityPolicy/frame-src-blocked-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/frame-src-blocked.html: Added.
+        * http/tests/security/contentSecurityPolicy/resources/alert-fail.html: Added.
+        * http/tests/security/contentSecurityPolicy/resources/alert-pass.html: Added.
+
 2011-04-20  Dirk Pranke  <dpranke@chromium.org>
 
         Unreviewed, expectations change.

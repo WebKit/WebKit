@@ -53,6 +53,7 @@ public:
 
     bool allowScriptFromSource(const KURL&) const;
     bool allowObjectFromSource(const KURL&) const;
+    bool allowChildFrameFromSource(const KURL&) const;
     bool allowImageFromSource(const KURL&) const;
     bool allowStyleFromSource(const KURL&) const;
     bool allowFontFromSource(const KURL&) const;
@@ -73,6 +74,7 @@ private:
     Document* m_document;
     OwnPtr<CSPDirective> m_scriptSrc;
     OwnPtr<CSPDirective> m_objectSrc;
+    OwnPtr<CSPDirective> m_frameSrc;
     OwnPtr<CSPDirective> m_imgSrc;
     OwnPtr<CSPDirective> m_styleSrc;
     OwnPtr<CSPDirective> m_fontSrc;
