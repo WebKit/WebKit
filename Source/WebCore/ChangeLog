@@ -1,3 +1,121 @@
+2011-04-20  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        Removed a use of markDOMObjectWrapper: CSS Object Model
+        https://bugs.webkit.org/show_bug.cgi?id=59057
+
+        This is 24 hours of my life I will never get back. Thank you, W3C.
+
+        * GNUmakefile.list.am:
+        * WebCore.gypi:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj: Build!
+
+        * bindings/js/JSCSSFontFaceRuleCustom.cpp:
+        * bindings/js/JSCSSImportRuleCustom.cpp:
+        * bindings/js/JSCSSMediaRuleCustom.cpp:
+        * bindings/js/JSCSSPageRuleCustom.cpp:
+        * bindings/js/JSCSSRuleCustom.cpp:
+        (WebCore::JSCSSRuleOwner::isReachableFromOpaqueRoots):
+        (WebCore::JSCSSRuleOwner::finalize):
+        (WebCore::wrapperOwner):
+        (WebCore::wrapperContext):
+        (WebCore::JSCSSRule::markChildren):
+        * bindings/js/JSCSSRuleListCustom.cpp:
+        (WebCore::JSCSSRuleListOwner::isReachableFromOpaqueRoots):
+        (WebCore::JSCSSRuleListOwner::finalize):
+        (WebCore::wrapperOwner):
+        (WebCore::wrapperContext):
+        (WebCore::toJS):
+        * bindings/js/JSCSSStyleDeclarationCustom.cpp:
+        (WebCore::JSCSSStyleDeclarationOwner::isReachableFromOpaqueRoots):
+        (WebCore::JSCSSStyleDeclarationOwner::finalize):
+        (WebCore::wrapperOwner):
+        (WebCore::wrapperContext):
+        (WebCore::JSCSSStyleDeclaration::markChildren): Removed custom mark functions,
+        and replaced with use of the opaque roots system. This has the nice benefit
+        of allowing us to eagerly recycle far more CSS wrappers and their associated
+        DOM wrappers.
+
+        (WebCore::JSCSSStyleDeclaration::getPropertyCSSValue): Made this function
+        custom because it must maintain the sorrowful invariant that primitive
+        values can be mapped back to objects that are reachable through the DOM.
+        We maintain this invariant through an external hash table because
+        making all primitive values bigger would be a too-large memory use
+        penalty. Luckily, nobody uses this feature, so the cost of the hash table
+        is no big deal.
+
+        (WebCore::toJS): We need a custom toJS so we can specify our own WeakHandleOwner.
+
+        * bindings/js/JSCSSStyleRuleCustom.cpp: Removed custom mark, as above.
+
+        * bindings/js/JSCSSValueCustom.cpp:
+        (WebCore::cssValueRoots):
+        (WebCore::JSCSSValueOwner::isReachableFromOpaqueRoots):
+        (WebCore::JSCSSValueOwner::finalize):
+        (WebCore::wrapperOwner):
+        (WebCore::wrapperContext): Use the opaque roots system. Piggy-back on
+        the external hash table filled by JSCSSStyleDeclaration::getPropertyCSSValue.
+
+        * bindings/js/JSDocumentCustom.cpp:
+        (WebCore::JSDocument::markChildren): No need to mark our stylesheet list,
+        since all style-related objects can use our opaque root to determine
+        liveness.
+
+        * bindings/js/JSMediaListCustom.cpp: Added.
+        (WebCore::JSMediaListOwner::isReachableFromOpaqueRoots):
+        (WebCore::JSMediaListOwner::finalize):
+        (WebCore::wrapperOwner):
+        (WebCore::wrapperContext):
+        (WebCore::toJS): Use the opaque roots system.
+
+        * bindings/js/JSNodeCustom.h:
+        (WebCore::root): Added helpers for computing style-related roots.
+
+        * bindings/js/JSStyleSheetCustom.cpp:
+        (WebCore::JSStyleSheetOwner::isReachableFromOpaqueRoots):
+        (WebCore::JSStyleSheetOwner::finalize):
+        (WebCore::wrapperOwner):
+        (WebCore::wrapperContext):
+        (WebCore::JSStyleSheet::markChildren): Use the opaque roots system instead
+        of direct marking.
+        
+        * bindings/js/JSStyleSheetListCustom.cpp:
+        (WebCore::JSStyleSheetListOwner::isReachableFromOpaqueRoots):
+        (WebCore::JSStyleSheetListOwner::finalize):
+        (WebCore::wrapperOwner):
+        (WebCore::wrapperContext):
+        (WebCore::toJS): Ditto.
+
+        * bindings/js/JSWebKitCSSKeyframeRuleCustom.cpp:
+        * bindings/js/JSWebKitCSSKeyframesRuleCustom.cpp:
+        * css/CSSFontFaceRule.idl:
+        * css/CSSImportRule.idl: No more custom mark, since we use the opaque
+        roots system instead.
+
+        * css/CSSMediaRule.cpp:
+        (WebCore::CSSMediaRule::CSSMediaRule): Fixed a bug where a media rule
+        would incorrectly have no parent, since this got in the way of correctly
+        computing the media rule's root.
+
+        * css/CSSMediaRule.idl:
+        * css/CSSPageRule.idl:
+        * css/CSSRuleList.idl:
+        * css/CSSStyleDeclaration.idl:
+        * css/CSSStyleRule.idl:
+        * css/MediaList.idl: Match behavior changes above.
+
+        * css/StyleBase.cpp:
+        (WebCore::StyleBase::node): Helper function for computing roots of the
+        style system. This object model is pretty weird and not very well factored,
+        but I'm pretty sure this covers all the relevant cases.
+
+        * css/StyleBase.h:
+        * css/StyleSheetList.idl:
+        * css/WebKitCSSKeyframeRule.idl:
+        * css/WebKitCSSKeyframesRule.idl: Updated to match the behavior changes above.
+
 2011-04-21  Dirk Schulze  <krit@webkit.org>
 
         Reviewed by Nikolas Zimmermann.

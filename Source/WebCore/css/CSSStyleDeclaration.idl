@@ -23,6 +23,7 @@ module css {
     // Introduced in DOM Level 2:
     interface [
         CustomMarkFunction,
+        CustomToJS,
         DelegatingPutFunction,
         HasNameGetter,
         HasIndexGetter
@@ -31,7 +32,7 @@ module css {
                      setter raises(DOMException);
 
         [ConvertNullStringTo=Null] DOMString          getPropertyValue(in DOMString propertyName);
-        CSSValue           getPropertyCSSValue(in DOMString propertyName);
+        [JSCCustom] CSSValue           getPropertyCSSValue(in DOMString propertyName);
         [ConvertNullStringTo=Null] DOMString          removeProperty(in DOMString propertyName)
             raises(DOMException);
         [ConvertNullStringTo=Null] DOMString          getPropertyPriority(in DOMString propertyName);

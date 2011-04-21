@@ -32,12 +32,4 @@ using namespace JSC;
 
 namespace WebCore {
 
-void JSCSSStyleRule::markChildren(MarkStack& markStack)
-{
-    Base::markChildren(markStack);
-
-    if (CSSMutableStyleDeclaration* style = static_cast<CSSStyleRule*>(impl())->style())
-        markDOMObjectWrapper(markStack, *Heap::heap(this)->globalData(), style);
-}
-
 }

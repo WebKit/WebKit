@@ -27,9 +27,12 @@
 #define JSNodeCustom_h
 
 #include "JSDOMBinding.h"
+#include "StyleBase.h"
 #include <wtf/AlwaysInline.h>
 
 namespace WebCore {
+
+class CSSValue;
 
 class JSNodeOwner : public JSC::WeakHandleOwner {
     virtual bool isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown>, void* context, JSC::MarkStack&);
@@ -86,7 +89,7 @@ inline JSC::JSValue toJS(JSC::ExecState* exec, JSDOMGlobalObject* globalObject, 
     return createWrapper(exec, globalObject, node);
 }
 
-static inline Node* root(Node* node)
+static inline void* root(Node* node)
 {
     if (node->inDocument())
         return node->document();
@@ -95,6 +98,18 @@ static inline Node* root(Node* node)
         node = node->parentNode();
     return node;
 }
+
+static inline void* root(StyleBase* styleBase)
+{
+    while (styleBase->parent())
+        styleBase = styleBase->parent();
+
+    if (Node* node = styleBase->node())
+        return root(node);
+    return styleBase;
+}
+
+HashMap<CSSValue*, void*>& cssValueRoots();
 
 }
 

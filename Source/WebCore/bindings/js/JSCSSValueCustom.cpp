@@ -30,6 +30,7 @@
 #include "CSSValueList.h"
 #include "JSCSSPrimitiveValue.h"
 #include "JSCSSValueList.h"
+#include "JSNode.h"
 #include "JSWebKitCSSTransformValue.h"
 #include "WebKitCSSTransformValue.h"
 
@@ -43,6 +44,48 @@
 using namespace JSC;
 
 namespace WebCore {
+
+HashMap<CSSValue*, void*>& cssValueRoots()
+{
+    typedef HashMap<CSSValue*, void*> MapType;
+    DEFINE_STATIC_LOCAL(MapType, cssValueRoots, ());
+    return cssValueRoots;
+}
+
+class JSCSSValueOwner : public JSC::WeakHandleOwner {
+    virtual bool isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown>, void* context, JSC::MarkStack&);
+    virtual void finalize(JSC::Handle<JSC::Unknown>, void* context);
+};
+
+bool JSCSSValueOwner::isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown> handle, void*, MarkStack& markStack)
+{
+    JSCSSValue* jsCSSValue = static_cast<JSCSSValue*>(handle.get().asCell());
+    if (!jsCSSValue->hasCustomProperties())
+        return false;
+    void* root = cssValueRoots().get(jsCSSValue->impl());
+    if (!root)
+        return false;
+    return markStack.containsOpaqueRoot(root);
+}
+
+void JSCSSValueOwner::finalize(JSC::Handle<JSC::Unknown> handle, void* context)
+{
+    JSCSSValue* jsCSSValue = static_cast<JSCSSValue*>(handle.get().asCell());
+    DOMWrapperWorld* world = static_cast<DOMWrapperWorld*>(context);
+    uncacheWrapper(world, jsCSSValue->impl(), jsCSSValue);
+    cssValueRoots().remove(jsCSSValue->impl());
+}
+
+inline JSC::WeakHandleOwner* wrapperOwner(DOMWrapperWorld*, CSSValue*)
+{
+    DEFINE_STATIC_LOCAL(JSCSSValueOwner, jsCSSValueOwner, ());
+    return &jsCSSValueOwner;
+}
+
+inline void* wrapperContext(DOMWrapperWorld* world, CSSValue*)
+{
+    return world;
+}
 
 JSValue toJS(ExecState* exec, JSDOMGlobalObject* globalObject, CSSValue* value)
 {

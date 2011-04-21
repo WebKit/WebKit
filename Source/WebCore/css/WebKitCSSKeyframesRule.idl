@@ -30,7 +30,6 @@ module css {
 
     // Introduced in DOM Level ?:
     interface [
-        CustomMarkFunction,
         HasIndexGetter
     ] WebKitCSSKeyframesRule : CSSRule {
 

@@ -32,12 +32,4 @@ using namespace JSC;
 
 namespace WebCore {
 
-void JSCSSFontFaceRule::markChildren(MarkStack& markStack)
-{
-    Base::markChildren(markStack);
-
-    if (CSSMutableStyleDeclaration* style = static_cast<CSSFontFaceRule*>(impl())->style())
-        markDOMObjectWrapper(markStack, *Heap::heap(this)->globalData(), style);
-}
-
 }

@@ -2553,6 +2553,10 @@ sub HasCustomToV8Implementation {
     return 0 if $interfaceName eq "CanvasRenderingContext";
     return 0 if $interfaceName eq "SVGElementInstance";
     return 0 if $interfaceName eq "NodeList";
+    return 0 if $interfaceName eq "CSSRuleList";
+    return 0 if $interfaceName eq "CSSStyleDeclaration";
+    return 0 if $interfaceName eq "MediaList";
+    return 0 if $interfaceName eq "StyleSheetList";
 
     # For everything else, do what JSC does.
     return $dataNode->extendedAttributes->{"CustomToJS"};

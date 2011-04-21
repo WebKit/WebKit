@@ -32,15 +32,4 @@ using namespace JSC;
 
 namespace WebCore {
 
-void JSCSSMediaRule::markChildren(MarkStack& markStack)
-{
-    Base::markChildren(markStack);
-
-    if (MediaList* media = static_cast<CSSMediaRule*>(impl())->media())
-        markDOMObjectWrapper(markStack, *Heap::heap(this)->globalData(), media);
-
-    if (CSSRuleList* rules = static_cast<CSSMediaRule*>(impl())->cssRules())
-        markDOMObjectWrapper(markStack, *Heap::heap(this)->globalData(), rules);
-}
-
 }

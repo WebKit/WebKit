@@ -28,8 +28,9 @@
 
 namespace WebCore {
 
-    class StyleSheet;
     class KURL;
+    class Node;
+    class StyleSheet;
 
     // Base class for most CSS DOM objects.
 
@@ -71,6 +72,7 @@ namespace WebCore {
         virtual void insertedIntoParent() { }
 
         StyleSheet* stylesheet();
+        Node* node();
 
     protected:
         StyleBase(StyleBase* parent)

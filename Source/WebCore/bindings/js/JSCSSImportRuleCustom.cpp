@@ -32,15 +32,4 @@ using namespace JSC;
 
 namespace WebCore {
 
-void JSCSSImportRule::markChildren(MarkStack& markStack)
-{
-    Base::markChildren(markStack);
-
-    if (CSSStyleSheet* sheet = static_cast<CSSImportRule*>(impl())->styleSheet())
-        markDOMObjectWrapper(markStack, *Heap::heap(this)->globalData(), sheet);
-
-    if (MediaList* media = static_cast<CSSImportRule*>(impl())->media())
-        markDOMObjectWrapper(markStack, *Heap::heap(this)->globalData(), media);
-}
-
 }

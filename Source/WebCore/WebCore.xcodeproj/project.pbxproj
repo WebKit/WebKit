@@ -298,6 +298,7 @@
 		1432E8490C51493F00B1500F /* GCController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1432E8480C51493F00B1500F /* GCController.cpp */; };
 		1449E24C107D4A8400B5793F /* JSCallbackData.h in Headers */ = {isa = PBXBuildFile; fileRef = 1449E24A107D4A8400B5793F /* JSCallbackData.h */; };
 		1449E287107D4DB400B5793F /* JSCallbackData.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1449E286107D4DB400B5793F /* JSCallbackData.cpp */; };
+		1464E06C135EC10600FDB00A /* JSMediaListCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1464E06B135EC10600FDB00A /* JSMediaListCustom.cpp */; };
 		1477E7760BF4134A00152872 /* PageCache.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1477E7740BF4134A00152872 /* PageCache.cpp */; };
 		1477E7770BF4134A00152872 /* PageCache.h in Headers */ = {isa = PBXBuildFile; fileRef = 1477E7750BF4134A00152872 /* PageCache.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		1479FAED109AE37500DED655 /* RenderRuby.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1479FAE5109AE37500DED655 /* RenderRuby.cpp */; };
@@ -6747,6 +6748,7 @@
 		1432E8480C51493F00B1500F /* GCController.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = GCController.cpp; sourceTree = "<group>"; };
 		1449E24A107D4A8400B5793F /* JSCallbackData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSCallbackData.h; sourceTree = "<group>"; };
 		1449E286107D4DB400B5793F /* JSCallbackData.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSCallbackData.cpp; sourceTree = "<group>"; };
+		1464E06B135EC10600FDB00A /* JSMediaListCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSMediaListCustom.cpp; sourceTree = "<group>"; };
 		1477E7740BF4134A00152872 /* PageCache.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = PageCache.cpp; sourceTree = "<group>"; };
 		1477E7750BF4134A00152872 /* PageCache.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = PageCache.h; sourceTree = "<group>"; };
 		1479FAE5109AE37500DED655 /* RenderRuby.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RenderRuby.cpp; sourceTree = "<group>"; };
@@ -18203,6 +18205,7 @@
 				3314ACEA10892086000F0E56 /* JSExceptionBase.h */,
 				8F934D841189F1EE00508D5D /* JSMainThreadExecState.cpp */,
 				8F934D831189F1EE00508D5D /* JSMainThreadExecState.h */,
+				1464E06B135EC10600FDB00A /* JSMediaListCustom.cpp */,
 				9FDC8FF112FAB0060099AB1C /* JSMemoryInfoCustom.cpp */,
 				93B70D4F09EB0C7C009D8468 /* JSPluginElementFunctions.cpp */,
 				93B70D5009EB0C7C009D8468 /* JSPluginElementFunctions.h */,
@@ -25769,6 +25772,7 @@
 				93F19B0508245E59001E9ABC /* XSLTProcessorLibxslt.cpp in Sources */,
 				E1BE512D0CF6C512002EA959 /* XSLTUnicodeSort.cpp in Sources */,
 				977E2E0E12F0FC9C00C13379 /* XSSFilter.cpp in Sources */,
+				1464E06C135EC10600FDB00A /* JSMediaListCustom.cpp in Sources */,
 				087E0AF613606D0B00FA4BA8 /* SVGGlyph.cpp in Sources */,
 				4358E86B1360A21600E4748C /* DOMSVGFEDropShadowElement.mm in Sources */,
 				4358E87C1360A2EE00E4748C /* JSSVGFEDropShadowElement.cpp in Sources */,

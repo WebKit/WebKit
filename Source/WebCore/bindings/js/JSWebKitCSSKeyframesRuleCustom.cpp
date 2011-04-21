@@ -32,12 +32,4 @@ using namespace JSC;
 
 namespace WebCore {
 
-void JSWebKitCSSKeyframesRule::markChildren(MarkStack& markStack)
-{
-    Base::markChildren(markStack);
-
-    if (CSSRuleList* rules = static_cast<WebKitCSSKeyframesRule*>(impl())->cssRules())
-        markDOMObjectWrapper(markStack, *Heap::heap(this)->globalData(), rules);
-}
-
 }

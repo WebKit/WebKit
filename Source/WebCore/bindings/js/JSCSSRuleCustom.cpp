@@ -38,6 +38,7 @@
 #include "JSCSSMediaRule.h"
 #include "JSCSSPageRule.h"
 #include "JSCSSStyleRule.h"
+#include "JSNode.h"
 #include "JSWebKitCSSKeyframeRule.h"
 #include "JSWebKitCSSKeyframesRule.h"
 #include "WebKitCSSKeyframeRule.h"
@@ -47,15 +48,41 @@ using namespace JSC;
 
 namespace WebCore {
 
+class JSCSSRuleOwner : public JSC::WeakHandleOwner {
+    virtual bool isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown>, void* context, JSC::MarkStack&);
+    virtual void finalize(JSC::Handle<JSC::Unknown>, void* context);
+};
+
+bool JSCSSRuleOwner::isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown> handle, void*, MarkStack& markStack)
+{
+    JSCSSRule* jsCSSRule = static_cast<JSCSSRule*>(handle.get().asCell());
+    if (!jsCSSRule->hasCustomProperties())
+        return false;
+    return markStack.containsOpaqueRoot(root(jsCSSRule->impl()));
+}
+
+void JSCSSRuleOwner::finalize(JSC::Handle<JSC::Unknown> handle, void* context)
+{
+    JSCSSRule* jsCSSRule = static_cast<JSCSSRule*>(handle.get().asCell());
+    DOMWrapperWorld* world = static_cast<DOMWrapperWorld*>(context);
+    uncacheWrapper(world, jsCSSRule->impl(), jsCSSRule);
+}
+
+inline JSC::WeakHandleOwner* wrapperOwner(DOMWrapperWorld*, CSSRule*)
+{
+    DEFINE_STATIC_LOCAL(JSCSSRuleOwner, jsCSSRuleOwner, ());
+    return &jsCSSRuleOwner;
+}
+
+inline void* wrapperContext(DOMWrapperWorld* world, CSSRule*)
+{
+    return world;
+}
+
 void JSCSSRule::markChildren(MarkStack& markStack)
 {
     Base::markChildren(markStack);
-
-    if (CSSStyleSheet* parentStyleSheet = impl()->parentStyleSheet())
-        markDOMObjectWrapper(markStack, *Heap::heap(this)->globalData(), parentStyleSheet);
-
-    if (CSSRule* parentRule = impl()->parentRule())
-        markDOMObjectWrapper(markStack, *Heap::heap(this)->globalData(), parentRule);
+    markStack.addOpaqueRoot(root(impl()));
 }
 
 JSValue toJS(ExecState* exec, JSDOMGlobalObject* globalObject, CSSRule* rule)

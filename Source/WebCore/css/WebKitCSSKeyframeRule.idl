@@ -29,7 +29,7 @@
 module css {
 
     // Introduced in DOM Level ?:
-    interface [CustomMarkFunction] WebKitCSSKeyframeRule : CSSRule {
+    interface WebKitCSSKeyframeRule : CSSRule {
 
         attribute DOMString keyText;
         readonly attribute CSSStyleDeclaration style;

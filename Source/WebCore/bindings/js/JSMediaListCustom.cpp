@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009 Apple Inc. All right reserved.
+ * Copyright (C) 2011 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -20,59 +20,53 @@
  * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
 #include "config.h"
-#include "JSCSSRuleList.h"
+#include "JSMediaList.h"
 
-#include "CSSRule.h"
-#include "CSSRuleList.h"
 #include "JSNode.h"
-#include "StyleList.h"
+#include "MediaList.h"
 
 using namespace JSC;
 
 namespace WebCore {
 
-class JSCSSRuleListOwner : public JSC::WeakHandleOwner {
+class JSMediaListOwner : public JSC::WeakHandleOwner {
     virtual bool isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown>, void* context, JSC::MarkStack&);
     virtual void finalize(JSC::Handle<JSC::Unknown>, void* context);
 };
 
-bool JSCSSRuleListOwner::isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown> handle, void*, MarkStack& markStack)
+bool JSMediaListOwner::isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown> handle, void*, MarkStack& markStack)
 {
-    JSCSSRuleList* jsCSSRuleList = static_cast<JSCSSRuleList*>(handle.get().asCell());
-    if (!jsCSSRuleList->hasCustomProperties())
+    JSMediaList* jsMediaList = static_cast<JSMediaList*>(handle.get().asCell());
+    if (!jsMediaList->hasCustomProperties())
         return false;
-    if (StyleList* styleList = jsCSSRuleList->impl()->styleList())
-        return markStack.containsOpaqueRoot(root(styleList));
-    if (CSSRule* cssRule = jsCSSRuleList->impl()->item(0))
-        return markStack.containsOpaqueRoot(root(cssRule));
-    return false;
+    return markStack.containsOpaqueRoot(root(jsMediaList->impl()));
 }
 
-void JSCSSRuleListOwner::finalize(JSC::Handle<JSC::Unknown> handle, void* context)
+void JSMediaListOwner::finalize(JSC::Handle<JSC::Unknown> handle, void* context)
 {
-    JSCSSRuleList* jsCSSRuleList = static_cast<JSCSSRuleList*>(handle.get().asCell());
+    JSMediaList* jsMediaList = static_cast<JSMediaList*>(handle.get().asCell());
     DOMWrapperWorld* world = static_cast<DOMWrapperWorld*>(context);
-    uncacheWrapper(world, jsCSSRuleList->impl(), jsCSSRuleList);
+    uncacheWrapper(world, jsMediaList->impl(), jsMediaList);
 }
 
-inline JSC::WeakHandleOwner* wrapperOwner(DOMWrapperWorld*, CSSRuleList*)
+inline JSC::WeakHandleOwner* wrapperOwner(DOMWrapperWorld*, MediaList*)
 {
-    DEFINE_STATIC_LOCAL(JSCSSRuleListOwner, jsCSSRuleListOwner, ());
-    return &jsCSSRuleListOwner;
+    DEFINE_STATIC_LOCAL(JSMediaListOwner, jsMediaListOwner, ());
+    return &jsMediaListOwner;
 }
 
-inline void* wrapperContext(DOMWrapperWorld* world, CSSRuleList*)
+inline void* wrapperContext(DOMWrapperWorld* world, MediaList*)
 {
     return world;
 }
 
-JSValue toJS(ExecState* exec, JSDOMGlobalObject* globalObject, CSSRuleList* impl)
+JSValue toJS(ExecState* exec, JSDOMGlobalObject* globalObject, MediaList* rule)
 {
-    return wrap<JSCSSRuleList>(exec, globalObject, impl);
+    return wrap<JSMediaList>(exec, globalObject, rule);
 }
 
-}
+} // namespace WebCore

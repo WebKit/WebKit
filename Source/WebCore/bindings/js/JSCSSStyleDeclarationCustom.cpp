@@ -29,6 +29,8 @@
 #include "CSSMutableStyleDeclaration.h"
 #include "CSSPrimitiveValue.h"
 #include "CSSValue.h"
+#include "JSCSSValue.h"
+#include "JSNode.h"
 #include "PlatformString.h"
 #include <runtime/StringObjectThatMasqueradesAsUndefined.h>
 #include <runtime/StringPrototype.h>
@@ -42,22 +44,39 @@ using namespace WTF;
 
 namespace WebCore {
 
+class JSCSSStyleDeclarationOwner : public JSC::WeakHandleOwner {
+    virtual bool isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown>, void* context, JSC::MarkStack&);
+    virtual void finalize(JSC::Handle<JSC::Unknown>, void* context);
+};
+
+bool JSCSSStyleDeclarationOwner::isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown> handle, void*, MarkStack& markStack)
+{
+    JSCSSStyleDeclaration* jsCSSStyleDeclaration = static_cast<JSCSSStyleDeclaration*>(handle.get().asCell());
+    return markStack.containsOpaqueRoot(root(jsCSSStyleDeclaration->impl()));
+}
+
+void JSCSSStyleDeclarationOwner::finalize(JSC::Handle<JSC::Unknown> handle, void* context)
+{
+    JSCSSStyleDeclaration* jsCSSStyleDeclaration = static_cast<JSCSSStyleDeclaration*>(handle.get().asCell());
+    DOMWrapperWorld* world = static_cast<DOMWrapperWorld*>(context);
+    uncacheWrapper(world, jsCSSStyleDeclaration->impl(), jsCSSStyleDeclaration);
+}
+
+inline JSC::WeakHandleOwner* wrapperOwner(DOMWrapperWorld*, CSSStyleDeclaration*)
+{
+    DEFINE_STATIC_LOCAL(JSCSSStyleDeclarationOwner, jsCSSStyleDeclarationOwner, ());
+    return &jsCSSStyleDeclarationOwner;
+}
+
+inline void* wrapperContext(DOMWrapperWorld* world, CSSStyleDeclaration*)
+{
+    return world;
+}
+
 void JSCSSStyleDeclaration::markChildren(MarkStack& markStack)
 {
     Base::markChildren(markStack);
-
-    CSSStyleDeclaration* declaration = impl();
-    JSGlobalData& globalData = *Heap::heap(this)->globalData();
-
-    if (CSSRule* parentRule = declaration->parentRule())
-        markDOMObjectWrapper(markStack, globalData, parentRule);
-
-    if (declaration->isMutableStyleDeclaration()) {
-        CSSMutableStyleDeclaration* mutableDeclaration = static_cast<CSSMutableStyleDeclaration*>(declaration);
-        CSSMutableStyleDeclaration::const_iterator end = mutableDeclaration->end();
-        for (CSSMutableStyleDeclaration::const_iterator it = mutableDeclaration->begin(); it != end; ++it)
-            markDOMObjectWrapper(markStack, globalData, it->value());
-    }
+    markStack.addOpaqueRoot(root(impl()));
 }
 
 // Check for a CSS prefix.
@@ -175,7 +194,6 @@ JSValue JSCSSStyleDeclaration::nameGetter(ExecState* exec, JSValue slotBase, con
     return jsString(exec, thisObj->impl()->getPropertyValue(prop));
 }
 
-
 bool JSCSSStyleDeclaration::putDelegate(ExecState* exec, const Identifier& propertyName, JSValue value, PutPropertySlot&)
 {
     bool pixelOrPos;
@@ -190,6 +208,25 @@ bool JSCSSStyleDeclaration::putDelegate(ExecState* exec, const Identifier& prope
     impl()->setProperty(prop, propValue, ec);
     setDOMException(exec, ec);
     return true;
+}
+
+JSValue JSCSSStyleDeclaration::getPropertyCSSValue(ExecState* exec)
+{
+    const String& propertyName(ustringToString(exec->argument(0).toString(exec)));
+    if (exec->hadException())
+        return jsUndefined();
+
+    RefPtr<CSSValue> cssValue = impl()->getPropertyCSSValue(propertyName);
+    if (!cssValue)
+        return jsNull();
+
+    cssValueRoots().add(cssValue.get(), root(impl())); // Balanced by JSCSSValueOwner::finalize().
+    return toJS(exec, globalObject(), WTF::getPtr(cssValue));
+}
+
+JSValue toJS(ExecState* exec, JSDOMGlobalObject* globalObject, CSSStyleDeclaration* impl)
+{
+    return wrap<JSCSSStyleDeclaration>(exec, globalObject, impl);
 }
 
 } // namespace WebCore
