@@ -215,6 +215,7 @@ private:
     virtual void dispatchViewportDataDidChange(const WebCore::ViewportArguments&) const;
 
     virtual void didCompleteRubberBandForMainFrame(const WebCore::IntSize&) const;
+    virtual void notifyScrollerThumbIsVisibleInRect(const WebCore::IntRect&);
 
     String m_cachedToolTip;
     mutable RefPtr<WebFrame> m_cachedFrameSetLargestFrame;

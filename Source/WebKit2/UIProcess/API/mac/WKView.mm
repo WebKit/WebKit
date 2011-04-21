@@ -1590,6 +1590,13 @@ static void maybeCreateSandboxExtensionFromPasteboard(NSPasteboard *pasteboard, 
     return nil;
 }
 
+- (BOOL)_windowResizeMouseLocationIsInVisibleScrollerThumb:(NSPoint)loc
+{
+    NSPoint localPoint = [self convertPoint:loc fromView:nil];
+    NSRect visibleThumbRect = NSRect(_data->_page->visibleScrollerThumbRect());
+    return NSMouseInRect(localPoint, visibleThumbRect, [self isFlipped]);
+}
+
 - (void)_updateWindowVisibility
 {
     _data->_page->updateWindowIsVisible(![[self window] isMiniaturized]);

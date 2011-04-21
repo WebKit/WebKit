@@ -1,3 +1,38 @@
+2011-04-21  Beth Dakin  <bdakin@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        https://bugs.webkit.org/show_bug.cgi?id=59048
+        Need to track whether overlay scrollbar is currently visible and in lower-
+        righthand corner
+        -and corresponding-
+        <rdar://problem/9211232>
+
+        WebPageProxy now stores an IntRect of the scroller thumb set by WebCore through 
+        the client.
+
+        _windowResizeMouseLocationIsInVisibleScrollerThumb tests if the parameter point is 
+        inside the cached scroller thumb rect.
+        * UIProcess/API/mac/WKView.mm:
+        (-[WKView _windowResizeMouseLocationIsInVisibleScrollerThumb:]):
+
+        Client work to cache the rect.
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::WebPageProxy):
+        (WebKit::WebPageProxy::close):
+        (WebKit::WebPageProxy::processDidCrash):
+        (WebKit::WebPageProxy::notifyScrollerThumbIsVisibleInRect):
+        * UIProcess/WebPageProxy.h:
+        (WebKit::WebPageProxy::visibleScrollerThumbRect):
+        * UIProcess/WebPageProxy.messages.in:
+        * WebProcess/WebCoreSupport/WebChromeClient.cpp:
+        (WebKit::WebChromeClient::notifyScrollerThumbIsVisibleInRect):
+        * WebProcess/WebCoreSupport/WebChromeClient.h:
+
+        New WebSystemInterface is needed by WebCore for this.
+        * WebProcess/WebCoreSupport/mac/WebSystemInterface.mm:
+        (InitWebCoreSystemInterface):
+
 2011-04-21  Andreas Kling  <andreas.kling@nokia.com>
 
         Reviewed by Kenneth Rohde Christiansen.

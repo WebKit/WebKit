@@ -225,6 +225,7 @@ extern void (*wkSetScrollbarPainterKnobAlpha)(WKScrollbarPainterRef, CGFloat);
 extern CGFloat (*wkScrollbarPainterTrackAlpha)(WKScrollbarPainterRef);
 extern void (*wkSetScrollbarPainterTrackAlpha)(WKScrollbarPainterRef, CGFloat);
 extern bool (*wkScrollbarPainterIsHorizontal)(WKScrollbarPainterRef);
+extern CGRect (*wkScrollbarPainterKnobRect)(WKScrollbarPainterRef);
 extern void (*wkScrollbarPainterSetOverlayState)(WKScrollbarPainterRef, int overlayScrollerState);
 
 extern WKScrollbarPainterControllerRef (*wkMakeScrollbarPainterController)(id painterControllerDelegate);

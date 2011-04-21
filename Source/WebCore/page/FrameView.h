@@ -317,6 +317,7 @@ private:
     virtual void scrollTo(const IntSize&);
     virtual void didCompleteRubberBand(const IntSize&) const;
     virtual void scrollbarStyleChanged();
+    virtual void setVisibleScrollerThumbRect(const IntRect&);
 #if USE(ACCELERATED_COMPOSITING)
     virtual GraphicsLayer* layerForHorizontalScrollbar() const;
     virtual GraphicsLayer* layerForVerticalScrollbar() const;

@@ -1,3 +1,38 @@
+2011-04-21  Beth Dakin  <bdakin@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        https://bugs.webkit.org/show_bug.cgi?id=59048
+        Need to track whether overlay scrollbar is currently visible and in lower-
+        righthand corner
+        -and corresponding-
+        <rdar://problem/9211232>
+
+        Whenever we start a new ScrollbarPartAnimation, check if the scrollbar is vertical 
+        and showing (alpha of 1), and if so, call setVisibleScrollerThumbRect with the 
+        knob rect, otherwise with an empty rect. ScrollAnimatorMac has a local rect to 
+        track this value so that it can avoid sending messages across the ChromeClient to 
+        the UIProcess if the rect has not changed.
+        * platform/mac/ScrollAnimatorMac.h:
+        * platform/mac/ScrollAnimatorMac.mm:
+        (-[ScrollbarPainterDelegate setUpAnimation:scrollerPainter:part:WebCore::animateAlphaTo:duration:]):
+        (WebCore::ScrollAnimatorMac::ScrollAnimatorMac):
+        (WebCore::ScrollAnimatorMac::setVisibleScrollerThumbRect):
+
+        Plumbing for the chrome client.
+        * page/ChromeClient.h:
+        (WebCore::ChromeClient::notifyScrollerThumbIsVisibleInRect):
+        * page/FrameView.cpp:
+        (WebCore::FrameView::setVisibleScrollerThumbRect):
+        * page/FrameView.h:
+        * platform/ScrollableArea.h:
+        (WebCore::ScrollableArea::setVisibleScrollerThumbRect):
+
+        New WebCoreSystemInterface function to get the knob rect.
+        * WebCore.exp.in:
+        * platform/mac/WebCoreSystemInterface.h:
+        * platform/mac/WebCoreSystemInterface.mm:
+
 2011-04-21  Nat Duca  <nduca@chromium.org>
 
         Reviewed by James Robinson.

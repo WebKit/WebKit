@@ -30,7 +30,6 @@
 #include "ScrollAnimatorMac.h"
 
 #include "FloatPoint.h"
-#include "IntRect.h"
 #include "PlatformGestureEvent.h"
 #include "PlatformWheelEvent.h"
 #include "ScrollView.h"
@@ -417,6 +416,14 @@ static NSSize abs(NSSize size)
     if (scrollbarPartAnimation) {
         [scrollbarPartAnimation.get() stopAnimation];
         scrollbarPartAnimation = nil;
+    }
+
+    if (part == WebCore::ThumbPart && !wkScrollbarPainterIsHorizontal(scrollerPainter)) {
+        if (newAlpha == 1) {
+            IntRect thumbRect = IntRect(wkScrollbarPainterKnobRect(scrollerPainter));
+            _animator->setVisibleScrollerThumbRect(thumbRect);
+        } else
+            _animator->setVisibleScrollerThumbRect(IntRect());
     }
 
     [NSAnimationContext beginGrouping];
@@ -1207,6 +1214,19 @@ void ScrollAnimatorMac::initialScrollbarPaintTimerFired(Timer<ScrollAnimatorMac>
     wkScrollbarPainterForceFlashScrollers(m_scrollbarPainterController.get());
 }
 #endif
+
+void ScrollAnimatorMac::setVisibleScrollerThumbRect(const IntRect& scrollerThumb)
+{
+    IntRect rectInViewCoordinates = scrollerThumb;
+    if (Scrollbar* verticalScrollbar = m_scrollableArea->verticalScrollbar())
+        rectInViewCoordinates = verticalScrollbar->convertToContainingView(scrollerThumb);
+
+    if (rectInViewCoordinates == m_visibleScrollerThumbRect)
+        return;
+
+    m_scrollableArea->setVisibleScrollerThumbRect(rectInViewCoordinates);
+    m_visibleScrollerThumbRect = rectInViewCoordinates;
+}
 
 } // namespace WebCore
 

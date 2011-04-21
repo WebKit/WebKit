@@ -2122,6 +2122,15 @@ void FrameView::scrollbarStyleChanged()
     page->setNeedsRecalcStyleInAllFrames();
 }
 
+void FrameView::setVisibleScrollerThumbRect(const IntRect& scrollerThumb)
+{
+    Page* page = m_frame->page();
+    ASSERT(page);
+    if (page->mainFrame() != m_frame)
+        return;
+    return page->chrome()->client()->notifyScrollerThumbIsVisibleInRect(scrollerThumb);
+}
+
 bool FrameView::shouldSuspendScrollAnimations() const
 {
     return m_frame->loader()->state() != FrameStateComplete;

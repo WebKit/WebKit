@@ -144,6 +144,7 @@ void InitWebCoreSystemInterface(void)
     INIT(ScrollbarPainterTrackAlpha);
     INIT(SetScrollbarPainterTrackAlpha);
     INIT(ScrollbarPainterIsHorizontal);
+    INIT(ScrollbarPainterKnobRect);
     INIT(ScrollbarPainterSetOverlayState);
     INIT(MakeScrollbarPainterController);
     INIT(MakeScrollbarReplacementPainter);

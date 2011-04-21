@@ -307,6 +307,7 @@ namespace WebCore {
         virtual void postAccessibilityNotification(AccessibilityObject*, AXObjectCache::AXNotification) { }
 
         virtual void didCompleteRubberBandForMainFrame(const IntSize&) const { }
+        virtual void notifyScrollerThumbIsVisibleInRect(const IntRect&) { }
 
         enum DialogType {
             AlertDialog = 0,

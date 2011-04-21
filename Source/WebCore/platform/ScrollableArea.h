@@ -129,6 +129,7 @@ public:
     virtual void didCompleteRubberBand(const IntSize&) const { ASSERT_NOT_REACHED(); }
     virtual bool shouldSuspendScrollAnimations() const { return true; }
     virtual void scrollbarStyleChanged() { }
+    virtual void setVisibleScrollerThumbRect(const IntRect&) { }
 
     virtual void disconnectFromPage() { }
 

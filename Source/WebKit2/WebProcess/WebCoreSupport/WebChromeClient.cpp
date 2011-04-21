@@ -744,4 +744,9 @@ void WebChromeClient::didCompleteRubberBandForMainFrame(const IntSize& initialOv
     m_page->send(Messages::WebPageProxy::DidCompleteRubberBandForMainFrame(initialOverhang));
 }
 
+void WebChromeClient::notifyScrollerThumbIsVisibleInRect(const IntRect& scrollerThumb)
+{
+    m_page->send(Messages::WebPageProxy::NotifyScrollerThumbIsVisibleInRect(scrollerThumb));
+}
+
 } // namespace WebKit

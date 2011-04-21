@@ -28,6 +28,7 @@
 
 #if ENABLE(SMOOTH_SCROLLING)
 
+#include "IntRect.h"
 #include "FloatPoint.h"
 #include "FloatSize.h"
 #include "ScrollAnimator.h"
@@ -82,6 +83,8 @@ public:
     void startScrollbarPaintTimer();
     void stopScrollbarPaintTimer();
 #endif
+
+    void setVisibleScrollerThumbRect(const IntRect&);
 
 private:
     RetainPtr<id> m_scrollAnimationHelper;
@@ -146,6 +149,7 @@ private:
 #endif
     bool m_drawingIntoLayer;
     bool m_haveScrolledSincePageLoad;
+    IntRect m_visibleScrollerThumbRect;
 };
 
 } // namespace WebCore

@@ -1,3 +1,17 @@
+2011-04-21  Beth Dakin  <bdakin@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        https://bugs.webkit.org/show_bug.cgi?id=59048
+        Need to track whether overlay scrollbar is currently visible and in lower-
+        righthand corner
+        -and corresponding-
+        <rdar://problem/9211232>
+
+        A new WebSystemInterface is needed for this.
+        * WebCoreSupport/WebSystemInterface.mm:
+        (InitWebCoreSystemInterface):
+
 2011-04-21  Dirk Schulze  <krit@webkit.org>
 
         Reviewed by Nikolas Zimmermann.

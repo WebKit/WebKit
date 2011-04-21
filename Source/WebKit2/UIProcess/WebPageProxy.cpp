@@ -328,6 +328,8 @@ void WebPageProxy::close()
     m_mainFrameIsPinnedToLeftSide = false;
     m_mainFrameIsPinnedToRightSide = false;
 
+    m_visibleScrollerThumbRect = IntRect();
+
     invalidateCallbackMap(m_voidCallbacks);
     invalidateCallbackMap(m_dataCallbacks);
     invalidateCallbackMap(m_stringCallbacks);
@@ -2765,6 +2767,8 @@ void WebPageProxy::processDidCrash()
     m_mainFrameIsPinnedToLeftSide = false;
     m_mainFrameIsPinnedToRightSide = false;
 
+    m_visibleScrollerThumbRect = IntRect();
+
     invalidateCallbackMap(m_voidCallbacks);
     invalidateCallbackMap(m_dataCallbacks);
     invalidateCallbackMap(m_stringCallbacks);
@@ -2918,6 +2922,11 @@ void WebPageProxy::drawFooter(WebFrameProxy* frame, const FloatRect& rect)
 void WebPageProxy::didCompleteRubberBandForMainFrame(const IntSize& initialOverhang)
 {
     m_uiClient.didCompleteRubberBandForMainFrame(this, initialOverhang);
+}
+
+void WebPageProxy::notifyScrollerThumbIsVisibleInRect(const IntRect& scrollerThumb)
+{
+    m_visibleScrollerThumbRect = scrollerThumb;
 }
 
 void WebPageProxy::didChangeScrollbarsForMainFrame(bool hasHorizontalScrollbar, bool hasVerticalScrollbar)

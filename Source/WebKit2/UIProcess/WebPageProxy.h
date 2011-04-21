@@ -492,6 +492,8 @@ public:
 
     void linkClicked(const String&, const WebMouseEvent&);
 
+    WebCore::IntRect visibleScrollerThumbRect() const { return m_visibleScrollerThumbRect; }
+
     // FIXME: This is in violation of the no synchronous messages to the Web Process policy and
     // should be removed as soon as possible.
     PassRefPtr<WebImage> createSnapshotOfVisibleContent();
@@ -579,6 +581,7 @@ private:
     void requestGeolocationPermissionForFrame(uint64_t geolocationID, uint64_t frameID, String originIdentifier);
     void runModal() { m_uiClient.runModal(this); }
     void didCompleteRubberBandForMainFrame(const WebCore::IntSize&);
+    void notifyScrollerThumbIsVisibleInRect(const WebCore::IntRect&);
     void didChangeScrollbarsForMainFrame(bool hasHorizontalScrollbar, bool hasVerticalScrollbar);
     void didChangeScrollOffsetPinningForMainFrame(bool pinnedToLeftSide, bool pinnedToRightSide);
 
@@ -831,6 +834,8 @@ private:
 
     bool m_mainFrameIsPinnedToLeftSide;
     bool m_mainFrameIsPinnedToRightSide;
+
+    WebCore::IntRect m_visibleScrollerThumbRect;
 
     static WKPageDebugPaintFlags s_debugPaintFlags;
 };
