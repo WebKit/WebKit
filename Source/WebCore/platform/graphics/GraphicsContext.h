@@ -553,6 +553,34 @@ namespace WebCore {
         bool m_updatingControlTints;
     };
 
+    class GraphicsContextStateSaver {
+    public:
+        GraphicsContextStateSaver(GraphicsContext& context, bool saveAndRestore = true)
+        : m_context(context)
+        , m_saveAndRestore(saveAndRestore)
+        {
+            if (m_saveAndRestore)
+                m_context.save();
+        }
+        
+        ~GraphicsContextStateSaver()
+        {
+            if (m_saveAndRestore)
+                m_context.restore();
+        }
+        
+        void saveState()
+        {
+            ASSERT(!m_saveAndRestore);
+            m_context.save();
+            m_saveAndRestore = true;
+        }
+        
+    private:
+        GraphicsContext& m_context;
+        bool m_saveAndRestore;
+    };
+
 } // namespace WebCore
 
 #endif // GraphicsContext_h

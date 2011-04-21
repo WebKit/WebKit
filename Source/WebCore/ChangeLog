@@ -1,3 +1,28 @@
+2011-04-20  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Eric Seidel.
+
+        Create RIAA class for GraphicsContext::save() and restore()
+        https://bugs.webkit.org/show_bug.cgi?id=58807
+        
+        Make a stack-based class that can be used to save and restore
+        the graphics state. It has conditional behavior to deal with the many cases
+        where we decide to save/restore based on some runtime condition.
+
+        Change RenderBoxModelObject to use it for now; it can be used more widely
+        once committed.
+
+        * platform/graphics/GraphicsContext.h:
+        (WebCore::GraphicsContextStateSaver::GraphicsContextStateSaver):
+        (WebCore::GraphicsContextStateSaver::~GraphicsContextStateSaver):
+        (WebCore::GraphicsContextStateSaver::saveState):
+        * rendering/RenderBoxModelObject.cpp:
+        (WebCore::RenderBoxModelObject::paintFillLayerExtended):
+        (WebCore::RenderBoxModelObject::paintOneBorderSide):
+        (WebCore::RenderBoxModelObject::paintBorder):
+        (WebCore::RenderBoxModelObject::drawBoxSideFromPath):
+        (WebCore::RenderBoxModelObject::paintBoxShadow):
+
 2011-04-20  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Eric Seidel.
