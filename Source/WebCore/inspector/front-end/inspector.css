@@ -91,7 +91,7 @@ body.inactive #toolbar {
 
 body.detached.platform-mac-leopard:not(.remote) #toolbar,
 body.detached.platform-mac-snowleopard:not(.remote) #toolbar {
-    background: transparent !important;
+    background: transparent;
 }
 
 body.attached #toolbar {
