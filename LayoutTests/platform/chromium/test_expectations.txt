@@ -3149,7 +3149,7 @@ BUGCR76609 : animations/play-state.html = PASS TEXT CRASH
 BUGCR76610 WIN MAC DEBUG : canvas/philip/tests/2d.text.draw.align.center.html = PASS TEXT
 BUGCR76716 DEBUG : fast/css/first-child-pseudo-class.html = PASS TEXT
 BUGCR76979 WIN : inspector/console/console-dirxml.html = PASS TEXT
-BUGCR76979 LINUX DEBUG : inspector/console/console-dirxml.html = PASS TEXT
+BUGCR76979 LINUX DEBUG : inspector/console/console-dirxml.html = PASS TEXT TIMEOUT
 
 // New in WebKit r81404. Text orientation is wrong and emphasis marks are wrong.
 BUGCR76616 WIN LINUX : fast/text/emphasis-combined-text.html = IMAGE+TEXT
@@ -3864,3 +3864,7 @@ BUGDPRANKE MAC DEBUG : svg/custom/glyph-selection-lang-attribute.svg = CRASH
 // flakiness
 BUGDPRANKE WIN DEBUG : fast/css/only-of-type-pseudo-class.html = TEXT PASS
 BUGDPRANKE : fast/dom/Document/document-reopen.html = TEXT PASS
+
+BUGDPRANKE : svg/custom/font-face-name-without-name-attr.svg = CRASH
+BUGDPRANKE : fast/parser/javascript-url-compat-mode.html = TEXT PASS
+BUGDPRANKE : inspector/console/console-tests.html = TEXT PASS

@@ -1,3 +1,9 @@
+2011-04-21  Dirk Pranke  <dpranke@chromium.org>
+
+        Unreviewed, expectations change - flaky tests.
+
+        * platform/chromium/test_expectations.txt:
+
 2011-04-21  Adam Barth  <abarth@webkit.org>
 
         Update test results to show that we're using ogv.  I would have
