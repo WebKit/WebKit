@@ -1,3 +1,11 @@
+2011-04-21  Dirk Pranke  <dpranke@chromium.org>
+
+        Update baselines to accomodate the change in r84506. I wonder
+        how much having platform/mac in the search path hurts
+        chromium-win/-linux.
+
+        * platform/chromium-win/canvas/philip/tests/toDataURL.jpeg.alpha-expected.txt: Added.
+
 2011-04-21  Matthew Delaney  <mdelaney@apple.com>
 
         Reviewed by Simon Fraser.
