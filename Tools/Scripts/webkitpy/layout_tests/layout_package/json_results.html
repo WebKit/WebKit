@@ -298,8 +298,6 @@ function tableRows()
             continue;
         }
 
-        // FIXME: put unexpected passes in a separate table.
-
         var row = '<td>' + testLink(test) + '</td>';
         var test_prefix = stripExtension(test);
 
@@ -491,6 +489,8 @@ TableSorter._sort = function(newHeader)
 
 var PixelZoomer = {};
 
+PixelZoomer.showOnDelay = true;
+
 PixelZoomer._createContainer = function(e)
 {
     var tbody = parentOfType(e.target, 'tbody');
@@ -540,9 +540,14 @@ PixelZoomer.handleMouseMove = function(e) {
     }
     
     if (!container) {
-        PixelZoomer._mouseMoveTimeout = setTimeout(function() {
-            PixelZoomer._createContainer(e);
-        }, 200);
+        if (PixelZoomer.showOnDelay) {
+            PixelZoomer._mouseMoveTimeout = setTimeout(function() {
+                PixelZoomer._createContainer(e);
+            }, 200);
+            return;
+        }
+
+        PixelZoomer._createContainer(e);
         return;
     }
     
