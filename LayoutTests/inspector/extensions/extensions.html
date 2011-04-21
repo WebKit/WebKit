@@ -61,7 +61,6 @@ function extension_testSidebarWatchExpression(nextTest)
         function expression()
         {
             document.body.testProperty = 'foo';
-            inspect(document.body);
             return {
                 f0: 'expression',
                 f1: undefined,
@@ -77,9 +76,15 @@ function extension_testSidebarWatchExpression(nextTest)
                 f11: $0.testProperty
             };
         }
-        sidebar.setExpression("(" + expression.toString() + ")();", "title");
+        // Do an extra round-trip to the inspected page to assure inspect()'s round-trip to
+        // front-end is complete and $0 is properly updated with currently inspected node.
+        webInspector.inspectedWindow.eval("", function() {
+            sidebar.setExpression("(" + expression.toString() + ")();", "title");
+        });
     }
-    webInspector.panels.elements.createSidebarPane("Watch Test: Expression", onSidebarCreated);
+    webInspector.inspectedWindow.eval("inspect(document.body)", function() {
+        webInspector.panels.elements.createSidebarPane("Watch Test: Expression", onSidebarCreated);
+    });
 }
 
 </script>

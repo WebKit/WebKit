@@ -597,7 +597,7 @@ WebInspector.ConsoleView.prototype = {
 
     _formatobject: function(obj, elem)
     {
-        elem.appendChild(new WebInspector.ObjectPropertiesSection(obj, obj.description, null, true).element);
+        elem.appendChild(new WebInspector.ObjectPropertiesSection(obj, obj.description).element);
     },
 
     _formatnode: function(object, elem)

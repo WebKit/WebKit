@@ -115,7 +115,7 @@ WebInspector.ExtensionSidebarPane.prototype = {
     _setObject: function(object, title)
     {
         this.bodyElement.removeChildren();
-        var section = new WebInspector.ObjectPropertiesSection(object, title, null, true);
+        var section = new WebInspector.ObjectPropertiesSection(object, title);
         if (!title)
             section.headerElement.addStyleClass("hidden");
         section.expanded = true;

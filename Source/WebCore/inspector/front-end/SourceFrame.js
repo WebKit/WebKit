@@ -824,7 +824,7 @@ WebInspector.SourceFrame.prototype = {
                 titleElement.textContent = result.description;
                 popupContentElement.appendChild(titleElement);
 
-                var section = new WebInspector.ObjectPropertiesSection(result, "", null, false);
+                var section = new WebInspector.ObjectPropertiesSection(result);
                 section.expanded = true;
                 section.element.addStyleClass("source-frame-popover-tree");
                 section.headerElement.addStyleClass("hidden");

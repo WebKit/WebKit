@@ -1,3 +1,20 @@
+2011-04-21  Andrey Kosyakov  <caseq@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: fix calls to WebInspector.ObjectPropertiesSection constructor
+        https://bugs.webkit.org/show_bug.cgi?id=59105
+
+        * inspector/front-end/ConsoleView.js:
+        (WebInspector.ConsoleView.prototype._formatobject):
+        * inspector/front-end/ExtensionPanel.js:
+        (WebInspector.ExtensionSidebarPane.prototype._setObject):
+        * inspector/front-end/ResourceJSONView.js:
+        (WebInspector.ResourceJSONView.parseJSON.WebInspector.ResourceJSONView.prototype._initialize):
+        * inspector/front-end/SourceFrame.js:
+        (WebInspector.SourceFrame.prototype._showPopup.showObjectPopup):
+        (WebInspector.SourceFrame.prototype._showPopup):
+
 2011-04-21  Adam Barth  <abarth@webkit.org>
 
         Remove support for CSP's frame-src.  This approach causes too many

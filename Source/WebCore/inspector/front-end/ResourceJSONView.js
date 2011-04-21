@@ -68,7 +68,7 @@ WebInspector.ResourceJSONView.prototype = {
         this._initialized = true;
 
         var obj = WebInspector.RemoteObject.fromLocalObject(this._parsedJSON);
-        this.element.appendChild(new WebInspector.ObjectPropertiesSection(obj, obj.description, null, true).element);
+        this.element.appendChild(new WebInspector.ObjectPropertiesSection(obj, obj.description).element);
     }
 }
 
