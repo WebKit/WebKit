@@ -55,7 +55,16 @@ class ValidateChangeLogs(AbstractStep):
         return False
 
     def run(self, state):
-        parsed_diff = DiffParser(self.cached_lookup(state, "diff").splitlines())
-        for filename, diff_file in parsed_diff.files.items():
-            if not self._check_changelog_diff(diff_file):
-                error("ChangeLog entry in %s is not at the top of the file." % diff_file.filename)
+        changed_files = self.cached_lookup(state, "changed_files")
+        for filename in changed_files:
+            if not self._tool.checkout().is_path_to_changelog(filename):
+                continue
+            # Diff ChangeLogs directly because svn-create-patch will move
+            # ChangeLog entries to the # top automatically, defeating our
+            # validation here.
+            # FIXME: Should we diff all the ChangeLogs at once?
+            diff = self._tool.scm().diff_for_file(filename)
+            parsed_diff = DiffParser(diff.splitlines())
+            for filename, diff_file in parsed_diff.files.items():
+                if not self._check_changelog_diff(diff_file):
+                    error("ChangeLog entry in %s is not at the top of the file." % diff_file.filename)

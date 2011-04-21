@@ -535,6 +535,9 @@ class MockCheckout(object):
             "reviewer": self._committer_list.committer_by_name("Darin Adler"),
         })
 
+    def is_path_to_changelog(self, path):
+        return os.path.basename(path) == "ChangeLog"
+
     def bug_id_for_revision(self, svn_revision):
         return 12345
 

@@ -113,7 +113,7 @@ class DownloadCommandsTest(CommandsTest):
         mock_tool.checkout().modified_changelogs = Mock(return_value=[])
         self.assert_execute_outputs(Land(), [42], options=self._default_options(), expected_stderr=expected_stderr, tool=mock_tool)
         # Make sure we're not calling expensive calls too often.
-        self.assertEqual(mock_tool.scm().create_patch.call_count, 1)
+        self.assertEqual(mock_tool.scm().create_patch.call_count, 0)
         self.assertEqual(mock_tool.checkout().modified_changelogs.call_count, 1)
 
     def test_land_red_builders(self):
