@@ -1,3 +1,14 @@
+2011-04-21  Yi Shen  <yi.4.shen@nokia.com>
+
+        Reviewed by Antonio Gomes.
+
+        [Qt] Fix the style issue for Api/qwebkitplatformplugin.h
+        https://bugs.webkit.org/show_bug.cgi?id=59097
+
+        Fix the style issues for Api/qwebkitplatformplugin.h found by the webkit-check-style.
+
+        * Api/qwebkitplatformplugin.h:
+
 2011-04-21  Caio Marcelo de Oliveira Filho  <caio.oliveira@openbossa.org>
 
         Reviewed by Csaba Osztrogonác.

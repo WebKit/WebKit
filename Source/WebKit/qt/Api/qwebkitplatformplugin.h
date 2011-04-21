@@ -33,8 +33,7 @@
 #include <QMediaPlayer>
 #endif
 
-class QWebSelectData
-{
+class QWebSelectData {
 public:
     virtual ~QWebSelectData() {}
 
@@ -53,8 +52,7 @@ public:
     virtual QColor itemForegroundColor(int index) const = 0;
 };
 
-class QWebSelectMethod : public QObject
-{
+class QWebSelectMethod : public QObject {
     Q_OBJECT
 public:
     virtual ~QWebSelectMethod() {}
@@ -67,8 +65,7 @@ Q_SIGNALS:
     void didHide();
 };
 
-class QWebNotificationData
-{
+class QWebNotificationData {
 public:
     virtual ~QWebNotificationData() {}
 
@@ -78,8 +75,7 @@ public:
     virtual const QUrl openerPageUrl() const = 0;
 };
 
-class QWebNotificationPresenter : public QObject
-{
+class QWebNotificationPresenter : public QObject {
     Q_OBJECT
 public:
     QWebNotificationPresenter() {}
@@ -92,8 +88,7 @@ Q_SIGNALS:
     void notificationClicked();
 };
 
-class QWebHapticFeedbackPlayer: public QObject
-{
+class QWebHapticFeedbackPlayer: public QObject {
     Q_OBJECT
 public:
     QWebHapticFeedbackPlayer() {}
@@ -110,8 +105,7 @@ public:
     virtual void playHapticFeedback(const HapticEvent, const QString& hapticType, const HapticStrength) = 0;
 };
 
-class QWebTouchModifier : public QObject
-{
+class QWebTouchModifier : public QObject {
     Q_OBJECT
 public:
     virtual ~QWebTouchModifier() {}
@@ -140,8 +134,7 @@ public Q_SLOTS:
 };
 #endif
 
-class QWebKitPlatformPlugin
-{
+class QWebKitPlatformPlugin {
 public:
     virtual ~QWebKitPlatformPlugin() {}
 
@@ -153,8 +146,8 @@ public:
         FullScreenVideoPlayer
     };
 
-    virtual bool supportsExtension(Extension extension) const = 0;
-    virtual QObject* createExtension(Extension extension) const = 0;
+    virtual bool supportsExtension(Extension) const = 0;
+    virtual QObject* createExtension(Extension) const = 0;
 };
 
 QT_BEGIN_NAMESPACE
