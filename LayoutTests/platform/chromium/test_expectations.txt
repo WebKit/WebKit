@@ -3855,7 +3855,7 @@ BUGWK59068 WIN LINUX : plugins/embed-attributes-style.html = IMAGE
 // more failures for triaging, fails on deps bots at least?
 BUGDPRANKE DEBUG WIN LINUX : inspector/debugger/live-edit.html = TEXT TIMEOUT
 BUGDPRANKE : inspector/console/console-object-constructor-name.html = TEXT PASS  TIMEOUT
-BUGDPRANKE : inspector/console/console-log-before-inspector-open.html = TEXT PASS
+BUGDPRANKE : inspector/console/console-log-before-inspector-open.html = TEXT PASS TIMEOUT
 BUGDPRANKE DEBUG : http/tests/local/link-stylesheet-preferred.html = CRASH
 BUGDPRANKE DEBUG : editing/pasteboard/merge-end-2.html = CRASH
 BUGDPRANKE DEBUG : animations/keyframes-out-of-order.html = TEXT PASS

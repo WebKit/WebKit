@@ -1,3 +1,13 @@
+2011-04-21  Tony Gentilcore  <tonyg@chromium.org>
+
+        [chromium] inspector/console/console-log-before-inspector-open.html times out on mac
+        https://bugs.webkit.org/show_bug.cgi?id=59106
+
+        Seems to have started timing out in 84470-84471 which were expectations
+        updates.
+
+        * platform/chromium/test_expectations.txt:
+
 2011-04-21  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Tony Gentilcore.
