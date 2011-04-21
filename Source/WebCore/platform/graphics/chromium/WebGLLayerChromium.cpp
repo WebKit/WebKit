@@ -59,11 +59,13 @@ WebGLLayerChromium::~WebGLLayerChromium()
 
 void WebGLLayerChromium::updateCompositorResources()
 {
+    if (!m_context)
+        return;
+
     if (!m_contentsDirty)
         return;
 
     GraphicsContext3D* rendererContext = layerRendererContext();
-    ASSERT(m_context);
     if (m_textureChanged) {
         rendererContext->bindTexture(GraphicsContext3D::TEXTURE_2D, m_textureId);
         // Set the min-mag filters to linear and wrap modes to GL_CLAMP_TO_EDGE
@@ -101,6 +103,9 @@ void WebGLLayerChromium::setContext(const GraphicsContext3D* context)
     }
 
     m_context = const_cast<GraphicsContext3D*>(context);
+
+    if (!m_context)
+        return;
 
     unsigned int textureId = m_context->platformTexture();
     if (textureId != m_textureId) {

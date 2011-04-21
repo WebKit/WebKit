@@ -60,6 +60,10 @@ protected:
 
 private:
     explicit WebGLLayerChromium(GraphicsLayerChromium* owner);
+
+    // GraphicsContext3D::platformLayer has a side-effect of assigning itself
+    // to the layer. Because of that GraphicsContext3D's destructor will reset
+    // layer's context to 0.
     GraphicsContext3D* m_context;
     bool m_textureUpdated;
 };

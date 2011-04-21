@@ -1,3 +1,19 @@
+2011-04-20  Alexey Marinichev  <amarinichev@chromium.org>
+
+        Reviewed by Kenneth Russell.
+
+        Check for null m_context in WebGLLayerChromium and add resetting platform layer's context in the destructor of GraphicsContext3D.
+        https://bugs.webkit.org/show_bug.cgi?id=59045
+
+        Lose context extension test might not catch this bug, more reliable
+        way is forcing the crash of the GPU process, which is done by Chromium
+        browser tests.
+
+        * platform/graphics/chromium/WebGLLayerChromium.cpp:
+        (WebCore::WebGLLayerChromium::updateCompositorResources):
+        (WebCore::WebGLLayerChromium::setContext):
+        * platform/graphics/chromium/WebGLLayerChromium.h:
+
 2011-04-20  Jia Pu  <jpu@apple.com>
 
         Reviewed by Maciej Stachowiak.
