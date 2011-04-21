@@ -90,13 +90,12 @@ void EllipsisBox::paintSelection(GraphicsContext* context, int tx, int ty, Rende
     if (textColor == c)
         c = Color(0xff - c.red(), 0xff - c.green(), 0xff - c.blue());
 
-    context->save();
+    GraphicsContextStateSaver stateSaver(*context);
     int y = root()->selectionTop();
     int h = root()->selectionHeight();
     context->clip(IntRect(m_x + tx, y + ty, m_logicalWidth, h));
     context->drawHighlightForText(font, TextRun(m_str.characters(), m_str.length(), false, 0, 0, TextRun::AllowTrailingExpansion, false, style->visuallyOrdered()),
         IntPoint(m_x + tx, m_y + ty + y), h, c, style->colorSpace());
-    context->restore();
 }
 
 bool EllipsisBox::nodeAtPoint(const HitTestRequest& request, HitTestResult& result, int x, int y, int tx, int ty, int lineTop, int lineBottom)

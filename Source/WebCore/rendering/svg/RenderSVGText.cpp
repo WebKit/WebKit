@@ -240,10 +240,9 @@ void RenderSVGText::paint(PaintInfo& paintInfo, int, int)
          return;
 
     PaintInfo blockInfo(paintInfo);
-    blockInfo.context->save();
+    GraphicsContextStateSaver stateSaver(*blockInfo.context);
     blockInfo.applyTransform(localToParentTransform());
     RenderBlock::paint(blockInfo, 0, 0);
-    blockInfo.context->restore();
 }
 
 FloatRect RenderSVGText::strokeBoundingBox() const

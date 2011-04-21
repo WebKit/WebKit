@@ -666,7 +666,7 @@ void RenderBoxModelObject::paintFillLayerExtended(const PaintInfo& paintInfo, co
         int y = ty + borderTop() + (includePadding ? paddingTop() : 0);
         int width = w - bLeft - bRight - (includePadding ? pLeft + pRight : 0);
         int height = h - borderTop() - borderBottom() - (includePadding ? paddingTop() + paddingBottom() : 0);
-        backgroundClipStateSaver.saveState();
+        backgroundClipStateSaver.save();
         context->clip(IntRect(x, y, width, height));
     } else if (bgLayer->clip() == TextFillBox) {
         // We have to draw our text into a mask that can then be used to clip background drawing.
@@ -696,7 +696,7 @@ void RenderBoxModelObject::paintFillLayerExtended(const PaintInfo& paintInfo, co
         }
         
         // The mask has been created.  Now we just need to clip to it.
-        backgroundClipStateSaver.saveState();
+        backgroundClipStateSaver.save();
         context->clipToImageBuffer(maskImage.get(), maskRect);
     }
     
@@ -1618,7 +1618,7 @@ void RenderBoxModelObject::paintBorder(GraphicsContext* graphicsContext, int tx,
         border.includeLogicalEdges(style->getRoundedBorderFor(border.rect()).radii(),
                                    horizontal, includeLogicalLeftEdge, includeLogicalRightEdge);
         if (border.isRounded()) {
-            stateSaver.saveState();
+            stateSaver.save();
             graphicsContext->addRoundedRectClip(border);
         }
     }

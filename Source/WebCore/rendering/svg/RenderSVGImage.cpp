@@ -115,7 +115,7 @@ void RenderSVGImage::paint(PaintInfo& paintInfo, int, int)
     PaintInfo childPaintInfo(paintInfo);
     bool drawsOutline = style()->outlineWidth() && (childPaintInfo.phase == PaintPhaseOutline || childPaintInfo.phase == PaintPhaseSelfOutline);
     if (drawsOutline || childPaintInfo.phase == PaintPhaseForeground) {
-        childPaintInfo.context->save();
+        GraphicsContextStateSaver stateSaver(*childPaintInfo.context);
         childPaintInfo.applyTransform(m_localTransform);
 
         if (childPaintInfo.phase == PaintPhaseForeground) {
@@ -139,8 +139,6 @@ void RenderSVGImage::paint(PaintInfo& paintInfo, int, int)
         if (drawsOutline)
             paintOutline(childPaintInfo.context, static_cast<int>(boundingBox.x()), static_cast<int>(boundingBox.y()),
                 static_cast<int>(boundingBox.width()), static_cast<int>(boundingBox.height()));
-        
-        childPaintInfo.context->restore();
     }
 }
 

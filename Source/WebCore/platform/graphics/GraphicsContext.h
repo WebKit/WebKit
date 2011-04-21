@@ -569,11 +569,18 @@ namespace WebCore {
                 m_context.restore();
         }
         
-        void saveState()
+        void save()
         {
             ASSERT(!m_saveAndRestore);
             m_context.save();
             m_saveAndRestore = true;
+        }
+
+        void restore()
+        {
+            ASSERT(m_saveAndRestore);
+            m_context.restore();
+            m_saveAndRestore = false;
         }
         
     private:

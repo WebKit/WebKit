@@ -226,7 +226,7 @@ void SVGInlineTextBox::paintSelectionBackground(PaintInfo& paintInfo)
         if (!mapStartEndPositionsIntoFragmentCoordinates(fragment, fragmentStartPosition, fragmentEndPosition))
             continue;
 
-        paintInfo.context->save();
+        GraphicsContextStateSaver stateSaver(*paintInfo.context);
         fragment.buildFragmentTransform(fragmentTransform);
         if (!fragmentTransform.isIdentity())
             paintInfo.context->concatCTM(fragmentTransform);
@@ -235,7 +235,6 @@ void SVGInlineTextBox::paintSelectionBackground(PaintInfo& paintInfo)
         paintInfo.context->fillRect(selectionRectForTextFragment(fragment, fragmentStartPosition, fragmentEndPosition, style), backgroundColor, style->colorSpace());
 
         m_paintingResourceMode = ApplyToDefaultMode;
-        paintInfo.context->restore();
     }
 
     ASSERT(!m_paintingResource);
@@ -296,7 +295,7 @@ void SVGInlineTextBox::paint(PaintInfo& paintInfo, int, int, int, int)
         SVGTextFragment& fragment = m_textFragments.at(i);
         ASSERT(!m_paintingResource);
 
-        paintInfo.context->save();
+        GraphicsContextStateSaver stateSaver(*paintInfo.context);
         fragment.buildFragmentTransform(fragmentTransform);
         if (!fragmentTransform.isIdentity())
             paintInfo.context->concatCTM(fragmentTransform);
@@ -325,7 +324,6 @@ void SVGInlineTextBox::paint(PaintInfo& paintInfo, int, int, int, int)
             paintDecoration(paintInfo.context, LINE_THROUGH, fragment);
 
         m_paintingResourceMode = ApplyToDefaultMode;
-        paintInfo.context->restore();
     }
 
     ASSERT(!m_paintingResource);
@@ -568,7 +566,7 @@ void SVGInlineTextBox::paintDecorationWithStyle(GraphicsContext* context, ETextD
     float width = fragment.width;
     const FontMetrics& scaledFontMetrics = scaledFont.fontMetrics();
 
-    context->save();
+    GraphicsContextStateSaver stateSaver(*context);
     if (scalingFactor != 1) {
         width *= scalingFactor;
         decorationOrigin.scale(scalingFactor, scalingFactor);
@@ -587,8 +585,6 @@ void SVGInlineTextBox::paintDecorationWithStyle(GraphicsContext* context, ETextD
 
     if (acquirePaintingResource(context, scalingFactor, decorationRenderer, decorationStyle))
         releasePaintingResource(context, &path);
-
-    context->restore();
 }
 
 void SVGInlineTextBox::paintTextWithShadows(GraphicsContext* context, RenderStyle* style, TextRun& textRun, const SVGTextFragment& fragment, int startPosition, int endPosition)

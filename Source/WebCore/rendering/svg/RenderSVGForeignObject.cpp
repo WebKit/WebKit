@@ -50,7 +50,7 @@ void RenderSVGForeignObject::paint(PaintInfo& paintInfo, int, int)
         return;
 
     PaintInfo childPaintInfo(paintInfo);
-    childPaintInfo.context->save();
+    GraphicsContextStateSaver stateSaver(*childPaintInfo.context);
     childPaintInfo.applyTransform(localTransform());
 
     if (SVGRenderSupport::isOverflowHidden(this))
@@ -64,8 +64,6 @@ void RenderSVGForeignObject::paint(PaintInfo& paintInfo, int, int)
 
     if (opacity < 1.0f)
         childPaintInfo.context->endTransparencyLayer();
-
-    childPaintInfo.context->restore();
 }
 
 IntRect RenderSVGForeignObject::clippedOverflowRectForRepaint(RenderBoxModelObject* repaintContainer)

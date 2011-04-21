@@ -172,7 +172,8 @@ void RenderSVGPath::fillAndStrokePath(GraphicsContext* context)
     Path path;
 
     bool nonScalingStroke = style->svgStyle()->vectorEffect() == VE_NON_SCALING_STROKE;
-    bool restoreContext = false;
+
+    GraphicsContextStateSaver stateSaver(*context, false);
     if (nonScalingStroke) {
         SVGStyledTransformableElement* element = static_cast<SVGStyledTransformableElement*>(node());
         AffineTransform nonScalingStrokeTransform = element->getScreenCTM(SVGLocatable::DisallowStyleUpdate);
@@ -182,9 +183,8 @@ void RenderSVGPath::fillAndStrokePath(GraphicsContext* context)
         path = m_path;
         path.transform(nonScalingStrokeTransform);
 
-        context->save();
+        stateSaver.save();
         context->concatCTM(nonScalingStrokeTransform.inverse());
-        restoreContext = true;
     }
 
     if (strokePaintingResource->applyResource(this, style, context, ApplyToStrokeMode))
@@ -195,9 +195,6 @@ void RenderSVGPath::fillAndStrokePath(GraphicsContext* context)
         if (fallbackResource->applyResource(this, style, context, ApplyToStrokeMode))
             fallbackResource->postApplyResource(this, context, ApplyToStrokeMode, nonScalingStroke ? &path : &m_path);
     }
-
-    if (restoreContext)
-        context->restore();
 }
 
 void RenderSVGPath::paint(PaintInfo& paintInfo, int, int)
@@ -212,7 +209,7 @@ void RenderSVGPath::paint(PaintInfo& paintInfo, int, int)
     PaintInfo childPaintInfo(paintInfo);
     bool drawsOutline = style()->outlineWidth() && (childPaintInfo.phase == PaintPhaseOutline || childPaintInfo.phase == PaintPhaseSelfOutline);
     if (drawsOutline || childPaintInfo.phase == PaintPhaseForeground) {
-        childPaintInfo.context->save();
+        GraphicsContextStateSaver stateSaver(*childPaintInfo.context);
         childPaintInfo.applyTransform(m_localTransform);
 
         if (childPaintInfo.phase == PaintPhaseForeground) {
@@ -235,8 +232,6 @@ void RenderSVGPath::paint(PaintInfo& paintInfo, int, int)
         if (drawsOutline)
             paintOutline(childPaintInfo.context, static_cast<int>(boundingBox.x()), static_cast<int>(boundingBox.y()),
                 static_cast<int>(boundingBox.width()), static_cast<int>(boundingBox.height()));
-        
-        childPaintInfo.context->restore();
     }
 }
 

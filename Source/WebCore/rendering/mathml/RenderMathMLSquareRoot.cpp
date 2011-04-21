@@ -114,7 +114,7 @@ void RenderMathMLSquareRoot::paint(PaintInfo& info, int tx, int ty)
     FloatPoint topLeft(tx + frontWidth * gRadicalTopLeftPointXPos , ty + gRadicalTopLeftPointYPos * maxHeight);
     FloatPoint leftEnd(tx , topLeft.y() + gRadicalLeftEndYShift * style()->fontSize());
     
-    info.context->save();
+    GraphicsContextStateSaver stateSaver(*info.context);
     
     info.context->setStrokeThickness(gRadicalLineThickness * style()->fontSize());
     info.context->setStrokeStyle(SolidStroke);
@@ -136,7 +136,7 @@ void RenderMathMLSquareRoot::paint(PaintInfo& info, int tx, int ty)
 
     info.context->strokePath(root);
     
-    info.context->save();
+    GraphicsContextStateSaver maskStateSaver(*info.context);
     
     // Build a mask to draw the thick part of the root.
     Path mask;
@@ -157,10 +157,6 @@ void RenderMathMLSquareRoot::paint(PaintInfo& info, int tx, int ty)
     line.addLineTo(topLeft);
     
     info.context->strokePath(line);
-    
-    info.context->restore();
-    
-    info.context->restore();
 }
 
 void RenderMathMLSquareRoot::layout()

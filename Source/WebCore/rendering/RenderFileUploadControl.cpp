@@ -209,12 +209,13 @@ void RenderFileUploadControl::paintObject(PaintInfo& paintInfo, int tx, int ty)
     ASSERT(m_fileChooser);
     
     // Push a clip.
+    GraphicsContextStateSaver stateSaver(*paintInfo.context, false);
     if (paintInfo.phase == PaintPhaseForeground || paintInfo.phase == PaintPhaseChildBlockBackgrounds) {
         IntRect clipRect(tx + borderLeft(), ty + borderTop(),
                          width() - borderLeft() - borderRight(), height() - borderBottom() - borderTop() + buttonShadowHeight);
         if (clipRect.isEmpty())
             return;
-        paintInfo.context->save();
+        stateSaver.save();
         paintInfo.context->clip(clipRect);
     }
 
@@ -260,10 +261,6 @@ void RenderFileUploadControl::paintObject(PaintInfo& paintInfo, int tx, int ty)
 
     // Paint the children.
     RenderBlock::paintObject(paintInfo, tx, ty);
-
-    // Pop the clip.
-    if (paintInfo.phase == PaintPhaseForeground || paintInfo.phase == PaintPhaseChildBlockBackgrounds)
-        paintInfo.context->restore();
 }
 
 void RenderFileUploadControl::computePreferredLogicalWidths()

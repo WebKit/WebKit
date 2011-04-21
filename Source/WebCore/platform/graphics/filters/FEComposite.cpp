@@ -233,12 +233,12 @@ void FEComposite::apply()
         filterContext->drawImageBuffer(in2->asImageBuffer(), ColorSpaceDeviceRGB, drawingRegionOfInputImage(in2->absolutePaintRect()));
         filterContext->drawImageBuffer(in->asImageBuffer(), ColorSpaceDeviceRGB, drawingRegionOfInputImage(in->absolutePaintRect()));
         break;
-    case FECOMPOSITE_OPERATOR_IN:
-        filterContext->save();
+    case FECOMPOSITE_OPERATOR_IN: {
+        GraphicsContextStateSaver stateSaver(*filterContext);
         filterContext->clipToImageBuffer(in2->asImageBuffer(), drawingRegionOfInputImage(in2->absolutePaintRect()));
         filterContext->drawImageBuffer(in->asImageBuffer(), ColorSpaceDeviceRGB, drawingRegionOfInputImage(in->absolutePaintRect()));
-        filterContext->restore();
         break;
+    }
     case FECOMPOSITE_OPERATOR_OUT:
         filterContext->drawImageBuffer(in->asImageBuffer(), ColorSpaceDeviceRGB, drawingRegionOfInputImage(in->absolutePaintRect()));
         filterContext->drawImageBuffer(in2->asImageBuffer(), ColorSpaceDeviceRGB, drawingRegionOfInputImage(in2->absolutePaintRect()), srcRect, CompositeDestinationOut);

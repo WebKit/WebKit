@@ -1319,7 +1319,7 @@ void MediaPlayerPrivateQTKit::paint(GraphicsContext* context, const IntRect& r)
 
     [m_objcObserver.get() setDelayCallbacks:YES];
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
-    context->save();
+    GraphicsContextStateSaver stateSaver(*context);
     context->translate(r.x(), r.y() + r.height());
     context->scale(FloatSize(1.0f, -1.0f));
     context->setImageInterpolationQuality(InterpolationLow);
@@ -1384,7 +1384,6 @@ void MediaPlayerPrivateQTKit::paint(GraphicsContext* context, const IntRect& r)
     }
 #endif
 
-    context->restore();
     END_BLOCK_OBJC_EXCEPTIONS;
     [m_objcObserver.get() setDelayCallbacks:NO];
 }

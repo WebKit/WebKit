@@ -847,12 +847,14 @@ void RenderBox::paintBoxDecorationsWithSize(PaintInfo& paintInfo, int tx, int ty
     paintBoxShadow(paintInfo.context, tx, ty, width, height, style(), Normal);
 
     BackgroundBleedAvoidance bleedAvoidance = determineBackgroundBleedAvoidance(paintInfo.context);
+
+    GraphicsContextStateSaver stateSaver(*paintInfo.context, false);
     if (bleedAvoidance == BackgroundBleedUseTransparencyLayer) {
         // To avoid the background color bleeding out behind the border, we'll render background and border
         // into a transparency layer, and then clip that in one go (which requires setting up the clip before
         // beginning the layer).
         RoundedIntRect border = style()->getRoundedBorderFor(IntRect(tx, ty, width, height));
-        paintInfo.context->save();
+        stateSaver.save();
         paintInfo.context->addRoundedRectClip(border);
         paintInfo.context->beginTransparencyLayer(1);
     }
@@ -877,10 +879,8 @@ void RenderBox::paintBoxDecorationsWithSize(PaintInfo& paintInfo, int tx, int ty
     if ((!style()->hasAppearance() || (!themePainted && theme()->paintBorderOnly(this, paintInfo, IntRect(tx, ty, width, height)))) && style()->hasBorder())
         paintBorder(paintInfo.context, tx, ty, width, height, style(), bleedAvoidance);
 
-    if (bleedAvoidance == BackgroundBleedUseTransparencyLayer) {
+    if (bleedAvoidance == BackgroundBleedUseTransparencyLayer)
         paintInfo.context->endTransparencyLayer();
-        paintInfo.context->restore();
-    }
 }
 
 void RenderBox::paintMask(PaintInfo& paintInfo, int tx, int ty)

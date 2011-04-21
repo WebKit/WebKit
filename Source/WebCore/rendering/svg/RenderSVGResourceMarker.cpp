@@ -130,10 +130,9 @@ AffineTransform RenderSVGResourceMarker::markerTransformation(const FloatPoint& 
 void RenderSVGResourceMarker::draw(PaintInfo& paintInfo, const AffineTransform& transform)
 {
     PaintInfo info(paintInfo);
-    info.context->save();
+    GraphicsContextStateSaver stateSaver(*info.context);
     info.applyTransform(transform);
     RenderSVGContainer::paint(info, 0, 0);
-    info.context->restore();
 }
 
 AffineTransform RenderSVGResourceMarker::markerContentTransformation(const AffineTransform& contentTransformation, const FloatPoint& origin, float strokeWidth) const

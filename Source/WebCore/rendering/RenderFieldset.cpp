@@ -162,7 +162,7 @@ void RenderFieldset::paintBoxDecorations(PaintInfo& paintInfo, int tx, int ty)
     
     // Create a clipping region around the legend and paint the border as normal
     GraphicsContext* graphicsContext = paintInfo.context;
-    graphicsContext->save();
+    GraphicsContextStateSaver stateSaver(*graphicsContext);
 
     // FIXME: We need to work with "rl" and "bt" block flow directions.  In those
     // cases the legend is embedded in the right and bottom borders respectively.
@@ -178,8 +178,6 @@ void RenderFieldset::paintBoxDecorations(PaintInfo& paintInfo, int tx, int ty)
     }
 
     paintBorder(paintInfo.context, tx, ty, w, h, style());
-
-    graphicsContext->restore();
 }
 
 void RenderFieldset::paintMask(PaintInfo& paintInfo, int tx, int ty)

@@ -185,7 +185,7 @@ void BitmapImage::draw(GraphicsContext* ctxt, const FloatRect& destRect, const F
         return;
 
     CGContextRef context = ctxt->platformContext();
-    ctxt->save();
+    GraphicsContextStateSaver stateSaver(*ctxt);
 
     bool shouldUseSubimage = false;
 
@@ -245,7 +245,7 @@ void BitmapImage::draw(GraphicsContext* ctxt, const FloatRect& destRect, const F
     // Draw the image.
     CGContextDrawImage(context, adjustedDestRect, image.get());
 
-    ctxt->restore();
+    stateSaver.restore();
 
     if (imageObserver())
         imageObserver()->didDraw(this);
@@ -269,7 +269,7 @@ void Image::drawPattern(GraphicsContext* ctxt, const FloatRect& tileRect, const 
         return;
 
     CGContextRef context = ctxt->platformContext();
-    ctxt->save();
+    GraphicsContextStateSaver stateSaver(*ctxt);
     CGContextClipToRect(context, destRect);
     ctxt->setCompositeOperation(op);
     CGContextTranslateCTM(context, destRect.x(), destRect.y() + destRect.height());
@@ -328,10 +328,8 @@ void Image::drawPattern(GraphicsContext* ctxt, const FloatRect& tileRect, const 
     RetainPtr<CGPatternRef> pattern(AdoptCF, CGPatternCreate(subImage.get(), CGRectMake(0, 0, tileRect.width(), tileRect.height()),
                                              matrix, tileRect.width(), tileRect.height(), 
                                              kCGPatternTilingConstantSpacing, true, &patternCallbacks));
-    if (!pattern) {
-        ctxt->restore();
+    if (!pattern)
         return;
-    }
 
     RetainPtr<CGColorSpaceRef> patternSpace(AdoptCF, CGColorSpaceCreatePattern(0));
     
@@ -350,7 +348,7 @@ void Image::drawPattern(GraphicsContext* ctxt, const FloatRect& tileRect, const 
     }
 #endif
 
-    ctxt->restore();
+    stateSaver.restore();
 
     if (imageObserver())
         imageObserver()->didDraw(this);

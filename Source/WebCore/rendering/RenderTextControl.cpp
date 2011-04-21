@@ -626,8 +626,7 @@ void RenderTextControl::paintPlaceholder(PaintInfo& paintInfo, int tx, int ty)
     if (clipRect.isEmpty())
         return;
     
-    paintInfo.context->save();
-    
+    GraphicsContextStateSaver stateSaver(*paintInfo.context);
     paintInfo.context->clip(clipRect);
     
     RefPtr<RenderStyle> placeholderStyle = getCachedPseudoStyle(INPUT_PLACEHOLDER);
@@ -650,7 +649,6 @@ void RenderTextControl::paintPlaceholder(PaintInfo& paintInfo, int tx, int ty)
         
         paintInfo.context->drawBidiText(placeholderStyle->font(), textRun, textPoint);
     }
-    paintInfo.context->restore();    
 }
 
 void RenderTextControl::paintObject(PaintInfo& paintInfo, int tx, int ty)

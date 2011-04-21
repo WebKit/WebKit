@@ -786,7 +786,7 @@ bool RenderThemeMac::paintMenuList(RenderObject* o, const PaintInfo& paintInfo, 
     if (r.width() >= minimumMenuListSize(o->style()))
         inflatedRect = inflateRect(inflatedRect, size, popupButtonMargins(), zoomLevel);
 
-    paintInfo.context->save();
+    GraphicsContextStateSaver stateSaver(*paintInfo.context);
     
 #ifndef BUILDING_ON_TIGER
     // On Leopard, the cell will draw outside of the given rect, so we have to clip to the rect
@@ -803,8 +803,6 @@ bool RenderThemeMac::paintMenuList(RenderObject* o, const PaintInfo& paintInfo, 
 
     [popupButton drawWithFrame:inflatedRect inView:documentViewFor(o)];
     [popupButton setControlView:nil];
-
-    paintInfo.context->restore();
 
     return false;
 }
@@ -831,11 +829,10 @@ bool RenderThemeMac::paintMeter(RenderObject* renderObject, const PaintInfo& pai
     LocalCurrentGraphicsContext localContext(paintInfo.context);
 
     NSLevelIndicatorCell* cell = levelIndicatorFor(toRenderMeter(renderObject));
-    paintInfo.context->save();
+    GraphicsContextStateSaver stateSaver(*paintInfo.context);
+
     [cell drawWithFrame:rect inView:documentViewFor(renderObject)];
     [cell setControlView:nil];
-    paintInfo.context->restore();
-
     return false;
 }
 
@@ -955,7 +952,7 @@ bool RenderThemeMac::paintProgressBar(RenderObject* renderObject, const PaintInf
 
     HIThemeDrawTrack(&trackInfo, 0, imageBuffer->context()->platformContext(), kHIThemeOrientationNormal);
 
-    paintInfo.context->save();
+    GraphicsContextStateSaver stateSaver(*paintInfo.context);
 
     if (!renderProgress->style()->isLeftToRightDirection()) {
         paintInfo.context->translate(2 * rect.x() + rect.width(), 0);
@@ -963,8 +960,6 @@ bool RenderThemeMac::paintProgressBar(RenderObject* renderObject, const PaintInf
     }
     
     paintInfo.context->drawImageBuffer(imageBuffer.get(), ColorSpaceDeviceRGB, rect.location());
-
-    paintInfo.context->restore();
     return false;
 }    
 #endif
@@ -1028,7 +1023,7 @@ void RenderThemeMac::paintMenuListButtonGradients(RenderObject* o, const PaintIn
 
     CGContextRef context = paintInfo.context->platformContext();
 
-    paintInfo.context->save();
+    GraphicsContextStateSaver stateSaver(*paintInfo.context);
 
     RoundedIntRect border = o->style()->getRoundedBorderFor(r);
     int radius = border.radii().topLeft().width();
@@ -1052,34 +1047,35 @@ void RenderThemeMac::paintMenuListButtonGradients(RenderObject* o, const PaintIn
     RetainPtr<CGShadingRef> leftShading(AdoptCF, CGShadingCreateAxial(cspace, CGPointMake(r.x(),  r.y()), CGPointMake(r.x() + radius, r.y()), mainFunction.get(), false, false));
 
     RetainPtr<CGShadingRef> rightShading(AdoptCF, CGShadingCreateAxial(cspace, CGPointMake(r.maxX(),  r.y()), CGPointMake(r.maxX() - radius, r.y()), mainFunction.get(), false, false));
-    paintInfo.context->save();
-    CGContextClipToRect(context, r);
-    paintInfo.context->addRoundedRectClip(border);
-    CGContextDrawShading(context, mainShading.get());
-    paintInfo.context->restore();
 
-    paintInfo.context->save();
-    CGContextClipToRect(context, topGradient);
-    paintInfo.context->addRoundedRectClip(RoundedIntRect(enclosingIntRect(topGradient), border.radii().topLeft(), border.radii().topRight(), IntSize(), IntSize()));
-    CGContextDrawShading(context, topShading.get());
-    paintInfo.context->restore();
-
+    {
+        GraphicsContextStateSaver stateSaver(*paintInfo.context);
+        CGContextClipToRect(context, r);
+        paintInfo.context->addRoundedRectClip(border);
+        CGContextDrawShading(context, mainShading.get());
+    }
+    
+    {
+        GraphicsContextStateSaver stateSaver(*paintInfo.context);
+        CGContextClipToRect(context, topGradient);
+        paintInfo.context->addRoundedRectClip(RoundedIntRect(enclosingIntRect(topGradient), border.radii().topLeft(), border.radii().topRight(), IntSize(), IntSize()));
+        CGContextDrawShading(context, topShading.get());
+    }
+    
     if (!bottomGradient.isEmpty()) {
-        paintInfo.context->save();
+        GraphicsContextStateSaver stateSaver(*paintInfo.context);
         CGContextClipToRect(context, bottomGradient);
         paintInfo.context->addRoundedRectClip(RoundedIntRect(enclosingIntRect(bottomGradient), IntSize(), IntSize(), border.radii().bottomLeft(), border.radii().bottomRight()));
         CGContextDrawShading(context, bottomShading.get());
-        paintInfo.context->restore();
     }
 
-    paintInfo.context->save();
-    CGContextClipToRect(context, r);
-    paintInfo.context->addRoundedRectClip(border);
-    CGContextDrawShading(context, leftShading.get());
-    CGContextDrawShading(context, rightShading.get());
-    paintInfo.context->restore();
-
-    paintInfo.context->restore();
+    {
+        GraphicsContextStateSaver stateSaver(*paintInfo.context);
+        CGContextClipToRect(context, r);
+        paintInfo.context->addRoundedRectClip(border);
+        CGContextDrawShading(context, leftShading.get());
+        CGContextDrawShading(context, rightShading.get());
+    }
 }
 
 bool RenderThemeMac::paintMenuListButton(RenderObject* o, const PaintInfo& paintInfo, const IntRect& r)
@@ -1102,7 +1098,7 @@ bool RenderThemeMac::paintMenuListButton(RenderObject* o, const PaintInfo& paint
     if (bounds.width() < arrowWidth + arrowPaddingLeft * o->style()->effectiveZoom())
         return false;
     
-    paintInfo.context->save();
+    GraphicsContextStateSaver stateSaver(*paintInfo.context);
 
     paintInfo.context->setFillColor(o->style()->visitedDependentColor(CSSPropertyColor), o->style()->colorSpace());
     paintInfo.context->setStrokeStyle(NoStroke);
@@ -1140,8 +1136,6 @@ bool RenderThemeMac::paintMenuListButton(RenderObject* o, const PaintInfo& paint
     paintInfo.context->setStrokeColor(rightSeparatorColor, ColorSpaceDeviceRGB);
     paintInfo.context->drawLine(IntPoint(leftEdgeOfSeparator + separatorSpace, bounds.y()),
                                 IntPoint(leftEdgeOfSeparator + separatorSpace, bounds.maxY()));
-
-    paintInfo.context->restore();
     return false;
 }
 
@@ -1283,7 +1277,7 @@ bool RenderThemeMac::paintSliderTrack(RenderObject* o, const PaintInfo& paintInf
     CGContextRef context = paintInfo.context->platformContext();
     CGColorSpaceRef cspace = deviceRGBColorSpaceRef();
 
-    paintInfo.context->save();
+    GraphicsContextStateSaver stateSaver(*paintInfo.context);
     CGContextClipToRect(context, bounds);
 
     struct CGFunctionCallbacks mainCallbacks = { 0, TrackGradientInterpolate, NULL };
@@ -1297,7 +1291,6 @@ bool RenderThemeMac::paintSliderTrack(RenderObject* o, const PaintInfo& paintInf
     IntSize radius(trackRadius, trackRadius);
     paintInfo.context->addRoundedRectClip(RoundedIntRect(bounds, radius, radius, radius, radius));
     CGContextDrawShading(context, mainShading.get());
-    paintInfo.context->restore();
     
     return false;
 }
@@ -1350,7 +1343,7 @@ bool RenderThemeMac::paintSliderThumb(RenderObject* o, const PaintInfo& paintInf
     if (o->style()->appearance() == SliderThumbVerticalPart)
         bounds.setHeight(bounds.height() + verticalSliderHeightPadding * o->style()->effectiveZoom());
 
-    paintInfo.context->save();
+    GraphicsContextStateSaver stateSaver(*paintInfo.context);
     float zoomLevel = o->style()->effectiveZoom();
     
     FloatRect unzoomedRect = bounds;
@@ -1365,8 +1358,6 @@ bool RenderThemeMac::paintSliderThumb(RenderObject* o, const PaintInfo& paintInf
     [sliderThumbCell drawWithFrame:unzoomedRect inView:documentViewFor(o)];
     [sliderThumbCell setControlView:nil];
 
-    paintInfo.context->restore();
-
     return false;
 }
 
@@ -1377,7 +1368,7 @@ bool RenderThemeMac::paintSearchField(RenderObject* o, const PaintInfo& paintInf
 
     setSearchCellState(o, r);
 
-    paintInfo.context->save();
+    GraphicsContextStateSaver stateSaver(*paintInfo.context);
 
     float zoomLevel = o->style()->effectiveZoom();
 
@@ -1402,8 +1393,6 @@ bool RenderThemeMac::paintSearchField(RenderObject* o, const PaintInfo& paintInf
 
     [search setControlView:nil];
     [search resetSearchButtonCell];
-
-    paintInfo.context->restore();
 
     return false;
 }
@@ -1481,7 +1470,7 @@ bool RenderThemeMac::paintSearchFieldCancelButton(RenderObject* o, const PaintIn
     updateActiveState([search cancelButtonCell], o);
     updatePressedState([search cancelButtonCell], o);
 
-    paintInfo.context->save();
+    GraphicsContextStateSaver stateSaver(*paintInfo.context);
 
     float zoomLevel = o->style()->effectiveZoom();
 
@@ -1509,8 +1498,6 @@ bool RenderThemeMac::paintSearchFieldCancelButton(RenderObject* o, const PaintIn
 
     [[search cancelButtonCell] drawWithFrame:unzoomedRect inView:documentViewFor(o)];
     [[search cancelButtonCell] setControlView:nil];
-
-    paintInfo.context->restore();
     return false;
 }
 
@@ -1605,8 +1592,7 @@ bool RenderThemeMac::paintSearchFieldResultsButton(RenderObject* o, const PaintI
     if (![search searchMenuTemplate])
         [search setSearchMenuTemplate:searchMenuTemplate()];
 
-    paintInfo.context->save();
-
+    GraphicsContextStateSaver stateSaver(*paintInfo.context);
     float zoomLevel = o->style()->effectiveZoom();
 
     FloatRect localBounds = [search searchButtonRectForBounds:NSRect(input->renderBox()->borderBoxRect())];
@@ -1624,8 +1610,6 @@ bool RenderThemeMac::paintSearchFieldResultsButton(RenderObject* o, const PaintI
     [[search searchButtonCell] drawWithFrame:unzoomedRect inView:documentViewFor(o)];
     [[search searchButtonCell] setControlView:nil];
     
-    paintInfo.context->restore();
-
     return false;
 }
 
@@ -1816,12 +1800,10 @@ bool RenderThemeMac::paintMediaSliderTrack(RenderObject* o, const PaintInfo& pai
     if (isnan(duration))
         duration = 0;
  
-    paintInfo.context->save();
+    GraphicsContextStateSaver stateSaver(*paintInfo.context);
     FloatRect unzoomedRect = getUnzoomedRectAndAdjustCurrentContext(o, paintInfo, r);
     wkDrawMediaSliderTrack(mediaControllerTheme(), paintInfo.context->platformContext(), unzoomedRect, 
         timeLoaded, currentTime, duration, getMediaUIPartStateFlags(node));
-    
-    paintInfo.context->restore();
     return false;
 }
 
@@ -1891,10 +1873,9 @@ bool RenderThemeMac::paintMediaCurrentTime(RenderObject* o, const PaintInfo& pai
     if (!node)
         return false;
 
-    paintInfo.context->save();
+    GraphicsContextStateSaver stateSaver(*paintInfo.context);
     FloatRect unzoomedRect = getUnzoomedRectAndAdjustCurrentContext(o, paintInfo, r);
     wkDrawMediaUIPart(MediaCurrentTimeDisplay, mediaControllerTheme(), paintInfo.context->platformContext(), unzoomedRect, getMediaUIPartStateFlags(node));
-    paintInfo.context->restore();
     return false;
 }
 
@@ -1904,10 +1885,9 @@ bool RenderThemeMac::paintMediaTimeRemaining(RenderObject* o, const PaintInfo& p
     if (!node)
         return false;
 
-    paintInfo.context->save();
+    GraphicsContextStateSaver stateSaver(*paintInfo.context);
     FloatRect unzoomedRect = getUnzoomedRectAndAdjustCurrentContext(o, paintInfo, r);
     wkDrawMediaUIPart(MediaTimeRemainingDisplay, mediaControllerTheme(), paintInfo.context->platformContext(), unzoomedRect, getMediaUIPartStateFlags(node));
-    paintInfo.context->restore();
     return false;
 }
 

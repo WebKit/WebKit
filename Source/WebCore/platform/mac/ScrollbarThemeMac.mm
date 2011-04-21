@@ -450,7 +450,7 @@ bool ScrollbarThemeMac::paint(Scrollbar* scrollbar, GraphicsContext* context, co
     ScrollAnimatorMac* scrollAnimator = static_cast<ScrollAnimatorMac*>(scrollbar->scrollableArea()->scrollAnimator());
     scrollAnimator->setIsDrawingIntoLayer(context->isCALayerContext());
 
-    context->save();
+    GraphicsContextStateSaver stateSaver(*context);
     context->clip(damageRect);
     context->translate(scrollbar->frameRect().x(), scrollbar->frameRect().y());
     LocalCurrentGraphicsContext localContext(context);
@@ -461,8 +461,6 @@ bool ScrollbarThemeMac::paint(Scrollbar* scrollbar, GraphicsContext* context, co
                             scrollbar->frameRect());
 
     scrollAnimator->setIsDrawingIntoLayer(false);
-
-    context->restore();
     return true;
 #endif
 

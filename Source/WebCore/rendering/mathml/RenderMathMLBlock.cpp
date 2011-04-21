@@ -85,7 +85,7 @@ void RenderMathMLBlock::paint(PaintInfo& info, int tx, int ty)
     tx += x();
     ty += y();
     
-    info.context->save();
+    GraphicsContextStateSaver stateSaver(*info.context);
     
     info.context->setStrokeThickness(1.0f);
     info.context->setStrokeStyle(SolidStroke);
@@ -107,9 +107,6 @@ void RenderMathMLBlock::paint(PaintInfo& info, int tx, int ty)
     info.context->setStrokeColor(Color(255, 0, 0), ColorSpaceSRGB);
     
     info.context->drawLine(IntPoint(tx, ty + baseline), IntPoint(tx + offsetWidth(), ty + baseline));
-    
-    info.context->restore();
-    
 }
 #endif // ENABLE(DEBUG_MATH_LAYOUT)
 

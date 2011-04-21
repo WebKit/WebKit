@@ -2345,7 +2345,7 @@ void RenderLayer::paintResizer(GraphicsContext* context, int tx, int ty, const I
     // Draw a frame around the resizer (1px grey line) if there are any scrollbars present.
     // Clipping will exclude the right and bottom edges of this frame.
     if (!hasOverlayScrollbars() && (m_vBar || m_hBar)) {
-        context->save();
+        GraphicsContextStateSaver stateSaver(*context);
         context->clip(absRect);
         IntRect largerCorner = absRect;
         largerCorner.setSize(IntSize(largerCorner.width() + 1, largerCorner.height() + 1));
@@ -2353,7 +2353,6 @@ void RenderLayer::paintResizer(GraphicsContext* context, int tx, int ty, const I
         context->setStrokeThickness(1.0f);
         context->setFillColor(Color::transparent, ColorSpaceDeviceRGB);
         context->drawRect(largerCorner);
-        context->restore();
     }
 }
 
@@ -2541,14 +2540,14 @@ void RenderLayer::paintLayer(RenderLayer* rootLayer, GraphicsContext* p,
         transform.translateRight(x, y);
         
         // Apply the transform.
-        p->save();
-        p->concatCTM(transform.toAffineTransform());
+        {
+            GraphicsContextStateSaver stateSaver(*p);
+            p->concatCTM(transform.toAffineTransform());
 
-        // Now do a paint with the root layer shifted to be us.
-        paintLayer(this, p, transform.inverse().mapRect(paintDirtyRect), paintBehavior, paintingRoot, overlapTestRequests, paintFlags | PaintLayerAppliedTransform);
+            // Now do a paint with the root layer shifted to be us.
+            paintLayer(this, p, transform.inverse().mapRect(paintDirtyRect), paintBehavior, paintingRoot, overlapTestRequests, paintFlags | PaintLayerAppliedTransform);
+        }        
 
-        p->restore();
-        
         // Restore the clip.
         restoreClip(p, paintDirtyRect, clipRect);
         
@@ -2750,7 +2749,7 @@ void RenderLayer::paintChildLayerIntoColumns(RenderLayer* childLayer, RenderLaye
         localDirtyRect.intersect(colRect);
         
         if (!localDirtyRect.isEmpty()) {
-            context->save();
+            GraphicsContextStateSaver stateSaver(*context);
             
             // Each strip pushes a clip, since column boxes are specified as being
             // like overflow:hidden.
@@ -2788,8 +2787,6 @@ void RenderLayer::paintChildLayerIntoColumns(RenderLayer* childLayer, RenderLaye
                                            paintingRoot, overlapTestRequests, paintFlags, 
                                            columnLayers, colIndex - 1);
             }
-
-            context->restore();
         }
 
         // Move to the next position.

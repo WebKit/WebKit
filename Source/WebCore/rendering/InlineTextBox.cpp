@@ -672,8 +672,7 @@ void InlineTextBox::paint(PaintInfo& paintInfo, int tx, int ty, int /*lineTop*/,
     if (!paintSelectedTextOnly) {
         // For stroked painting, we have to change the text drawing mode.  It's probably dangerous to leave that mutated as a side
         // effect, so only when we know we're stroking, do a save/restore.
-        if (textStrokeWidth > 0)
-            context->save();
+        GraphicsContextStateSaver stateSaver(*context, textStrokeWidth > 0);
 
         updateGraphicsContext(context, textFillColor, textStrokeColor, textStrokeWidth, styleToUse->colorSpace());
         if (!paintSelectedTextSeparately || ePos <= sPos) {
@@ -700,15 +699,11 @@ void InlineTextBox::paint(PaintInfo& paintInfo, int tx, int ty, int /*lineTop*/,
             if (combinedText)
                 context->concatCTM(rotation(boxRect, Counterclockwise));
         }
-
-        if (textStrokeWidth > 0)
-            context->restore();
     }
 
     if ((paintSelectedTextOnly || paintSelectedTextSeparately) && sPos < ePos) {
         // paint only the text that is selected
-        if (selectionStrokeWidth > 0)
-            context->save();
+        GraphicsContextStateSaver stateSaver(*context, selectionStrokeWidth > 0);
 
         updateGraphicsContext(context, selectionFillColor, selectionStrokeColor, selectionStrokeWidth, styleToUse->colorSpace());
         paintTextWithShadows(context, font, textRun, nullAtom, 0, sPos, ePos, length, textOrigin, boxRect, selectionShadow, selectionStrokeWidth > 0, isHorizontal());
@@ -726,8 +721,6 @@ void InlineTextBox::paint(PaintInfo& paintInfo, int tx, int ty, int /*lineTop*/,
             if (combinedText)
                 context->concatCTM(rotation(boxRect, Counterclockwise));
         }
-        if (selectionStrokeWidth > 0)
-            context->restore();
     }
 
     // Paint decorations
@@ -806,7 +799,7 @@ void InlineTextBox::paintSelection(GraphicsContext* context, const FloatPoint& b
     if (textColor == c)
         c = Color(0xff - c.red(), 0xff - c.green(), 0xff - c.blue());
 
-    context->save();
+    GraphicsContextStateSaver stateSaver(*context);
     updateGraphicsContext(context, c, c, 0, style->colorSpace());  // Don't draw text at all!
     
     // If the text is truncated, let the thing being painted in the truncation
@@ -827,7 +820,6 @@ void InlineTextBox::paintSelection(GraphicsContext* context, const FloatPoint& b
     context->drawHighlightForText(font, TextRun(characters, length, textRenderer()->allowTabs(), textPos(), m_expansion, expansionBehavior(), 
                                   !isLeftToRightDirection(), m_dirOverride || style->visuallyOrdered()),
                                   localOrigin, selHeight, c, style->colorSpace(), sPos, ePos);
-    context->restore();
 }
 
 void InlineTextBox::paintCompositionBackground(GraphicsContext* context, const FloatPoint& boxOrigin, RenderStyle* style, const Font& font, int startPos, int endPos)
@@ -839,7 +831,7 @@ void InlineTextBox::paintCompositionBackground(GraphicsContext* context, const F
     if (sPos >= ePos)
         return;
 
-    context->save();
+    GraphicsContextStateSaver stateSaver(*context);
 
     Color c = Color(225, 221, 85);
     
@@ -851,7 +843,6 @@ void InlineTextBox::paintCompositionBackground(GraphicsContext* context, const F
     context->drawHighlightForText(font, TextRun(textRenderer()->text()->characters() + m_start, m_len, textRenderer()->allowTabs(), textPos(), m_expansion, expansionBehavior(),
                                   !isLeftToRightDirection(), m_dirOverride || style->visuallyOrdered()),
                                   localOrigin, selHeight, c, style->colorSpace(), sPos, ePos);
-    context->restore();
 }
 
 #if PLATFORM(MAC)
@@ -904,7 +895,7 @@ void InlineTextBox::paintDecoration(GraphicsContext* context, const FloatPoint& 
     bool setClip = false;
     int extraOffset = 0;
     if (!linesAreOpaque && shadow && shadow->next()) {
-        context->save();
+        context->save(); // FIXME: where is the balancing restore()?
         FloatRect clipRect(localOrigin, FloatSize(width, baseline + 2));
         for (const ShadowData* s = shadow; s; s = s->next()) {
             FloatRect shadowRect(localOrigin, FloatSize(width, baseline + 2));
@@ -1067,11 +1058,10 @@ void InlineTextBox::paintTextMatchMarker(GraphicsContext* pt, const FloatPoint& 
         Color color = marker.activeMatch ?
             renderer()->theme()->platformActiveTextSearchHighlightColor() :
             renderer()->theme()->platformInactiveTextSearchHighlightColor();
-        pt->save();
+        GraphicsContextStateSaver stateSaver(*pt);
         updateGraphicsContext(pt, color, color, 0, style->colorSpace());  // Don't draw text at all!
         pt->clip(FloatRect(boxOrigin.x(), boxOrigin.y() - deltaY, m_logicalWidth, selHeight));
         pt->drawHighlightForText(font, run, FloatPoint(boxOrigin.x(), boxOrigin.y() - deltaY), selHeight, color, style->colorSpace(), sPos, ePos);
-        pt->restore();
     }
 }
 

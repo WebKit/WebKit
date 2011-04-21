@@ -183,22 +183,19 @@ bool RenderSVGResourceClipper::applyClippingToContext(RenderObject* object, cons
         ASSERT(maskContext);
 
         // The save/restore pair is needed for clipToImageBuffer - it doesn't work without it on non-Cg platforms.
-        maskContext->save();
+        GraphicsContextStateSaver stateSaver(*maskContext);
         maskContext->translate(-clampedAbsoluteTargetRect.x(), -clampedAbsoluteTargetRect.y());
         maskContext->concatCTM(absoluteTransform);
 
         // clipPath can also be clipped by another clipPath.
         if (SVGResources* resources = SVGResourcesCache::cachedResourcesForRenderObject(this)) {
             if (RenderSVGResourceClipper* clipper = resources->clipper()) {
-                if (!clipper->applyClippingToContext(this, objectBoundingBox, repaintRect, maskContext)) {
-                    maskContext->restore();
+                if (!clipper->applyClippingToContext(this, objectBoundingBox, repaintRect, maskContext))
                     return false;
-                }
             }
         }
 
         drawContentIntoMaskImage(clipperData, objectBoundingBox);
-        maskContext->restore();
     }
 
     if (!clipperData->clipMaskImage)

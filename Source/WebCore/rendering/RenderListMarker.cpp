@@ -1255,11 +1255,12 @@ void RenderListMarker::paint(PaintInfo& paintInfo, int tx, int ty)
 
     TextRun textRun(m_text);
 
+    GraphicsContextStateSaver stateSaver(*context, false);
     if (!style()->isHorizontalWritingMode()) {
         marker.move(-boxOrigin.x(), -boxOrigin.y());
         marker = marker.transposedRect();
         marker.move(box.x(), box.y() - logicalHeight());
-        context->save();
+        stateSaver.save();
         context->translate(marker.x(), marker.maxY());
         context->rotate(static_cast<float>(deg2rad(90.)));
         context->translate(-marker.x(), -marker.maxY());
@@ -1297,9 +1298,6 @@ void RenderListMarker::paint(PaintInfo& paintInfo, int tx, int ty)
             context->drawText(style()->font(), textRun, textOrigin + IntSize(width, 0));
         }
     }
-    
-    if (!style()->isHorizontalWritingMode())
-        context->restore();
 }
 
 void RenderListMarker::layout()

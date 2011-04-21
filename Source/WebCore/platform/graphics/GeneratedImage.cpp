@@ -36,7 +36,7 @@ namespace WebCore {
 
 void GeneratedImage::draw(GraphicsContext* context, const FloatRect& dstRect, const FloatRect& srcRect, ColorSpace, CompositeOperator compositeOp)
 {
-    context->save();
+    GraphicsContextStateSaver stateSaver(*context);
     context->setCompositeOperation(compositeOp);
     context->clip(dstRect);
     context->translate(dstRect.x(), dstRect.y());
@@ -44,7 +44,6 @@ void GeneratedImage::draw(GraphicsContext* context, const FloatRect& dstRect, co
         context->scale(FloatSize(dstRect.width() / srcRect.width(), dstRect.height() / srcRect.height()));
     context->translate(-srcRect.x(), -srcRect.y());
     context->fillRect(FloatRect(FloatPoint(), m_size), *m_generator.get());
-    context->restore();
 }
 
 void GeneratedImage::drawPattern(GraphicsContext* context, const FloatRect& srcRect, const AffineTransform& patternTransform,

@@ -2328,7 +2328,7 @@ void RenderBlock::paintColumnContents(PaintInfo& paintInfo, int tx, int ty, bool
         info.rect.intersect(colRect);
         
         if (!info.rect.isEmpty()) {
-            context->save();
+            GraphicsContextStateSaver stateSaver(*context);
             
             // Each strip pushes a clip, since column boxes are specified as being
             // like overflow:hidden.
@@ -2341,8 +2341,6 @@ void RenderBlock::paintColumnContents(PaintInfo& paintInfo, int tx, int ty, bool
                 paintFloats(info, finalX, finalY, paintInfo.phase == PaintPhaseSelection || paintInfo.phase == PaintPhaseTextClip);
             else
                 paintContents(info, finalX, finalY);
-
-            context->restore();
         }
 
         int blockDelta = (isHorizontalWritingMode() ? colRect.height() : colRect.width());
@@ -2730,7 +2728,8 @@ void RenderBlock::paintSelection(PaintInfo& paintInfo, int tx, int ty)
         int lastTop = 0;
         int lastLeft = logicalLeftSelectionOffset(this, lastTop);
         int lastRight = logicalRightSelectionOffset(this, lastTop);
-        paintInfo.context->save();
+        GraphicsContextStateSaver stateSaver(*paintInfo.context);
+
         IntRect gapRectsBounds = selectionGaps(this, IntPoint(tx, ty), IntSize(), lastTop, lastLeft, lastRight, &paintInfo);
         if (!gapRectsBounds.isEmpty()) {
             if (RenderLayer* layer = enclosingLayer()) {
@@ -2744,7 +2743,6 @@ void RenderBlock::paintSelection(PaintInfo& paintInfo, int tx, int ty)
                 layer->addBlockSelectionGapsBounds(gapRectsBounds);
             }
         }
-        paintInfo.context->restore();
     }
 }
 

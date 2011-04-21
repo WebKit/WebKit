@@ -1056,10 +1056,10 @@ void InlineFlowBox::paintFillLayer(const PaintInfo& paintInfo, const Color& c, c
         int stripY = ty - (isHorizontal() ? 0 : logicalOffsetOnLine);
         int stripWidth = isHorizontal() ? totalLogicalWidth : width();
         int stripHeight = isHorizontal() ? height() : totalLogicalWidth;
-        paintInfo.context->save();
+
+        GraphicsContextStateSaver stateSaver(*paintInfo.context);
         paintInfo.context->clip(IntRect(tx, ty, width(), height()));
         boxModelObject()->paintFillLayerExtended(paintInfo, c, fillLayer, stripX, stripY, stripWidth, stripHeight, BackgroundBleedNone, this, w, h, op);
-        paintInfo.context->restore();
     }
 }
 
@@ -1147,10 +1147,10 @@ void InlineFlowBox::paintBoxDecorations(PaintInfo& paintInfo, int tx, int ty)
                 int stripY = ty - (isHorizontal() ? 0 : logicalOffsetOnLine);
                 int stripWidth = isHorizontal() ? totalLogicalWidth : w;
                 int stripHeight = isHorizontal() ? h : totalLogicalWidth;
-                context->save();
+
+                GraphicsContextStateSaver stateSaver(*context);
                 context->clip(IntRect(tx, ty, w, h));
                 boxModelObject()->paintBorder(context, stripX, stripY, stripWidth, stripHeight, renderer()->style());
-                context->restore();
             }
         }
     }
@@ -1227,10 +1227,10 @@ void InlineFlowBox::paintMask(PaintInfo& paintInfo, int tx, int ty)
         int stripY = ty - (isHorizontal() ? 0 : logicalOffsetOnLine);
         int stripWidth = isHorizontal() ? totalLogicalWidth : w;
         int stripHeight = isHorizontal() ? h : totalLogicalWidth;
-        paintInfo.context->save();
+
+        GraphicsContextStateSaver stateSaver(*paintInfo.context);
         paintInfo.context->clip(IntRect(tx, ty, w, h));
         boxModelObject()->paintNinePieceImage(paintInfo.context, stripX, stripY, stripWidth, stripHeight, renderer()->style(), maskNinePieceImage, compositeOp);
-        paintInfo.context->restore();
     }
     
     if (pushTransparencyLayer)

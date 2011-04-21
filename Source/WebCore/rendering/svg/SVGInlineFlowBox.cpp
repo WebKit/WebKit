@@ -57,7 +57,7 @@ void SVGInlineFlowBox::paint(PaintInfo& paintInfo, int, int, int, int)
     ASSERT(boxRenderer);
 
     PaintInfo childPaintInfo(paintInfo);
-    childPaintInfo.context->save();
+    GraphicsContextStateSaver stateSaver(*childPaintInfo.context);
 
     if (SVGRenderSupport::prepareToRenderSVGContent(boxRenderer, childPaintInfo)) {
         for (InlineBox* child = firstChild(); child; child = child->nextOnLine()) {
@@ -69,7 +69,6 @@ void SVGInlineFlowBox::paint(PaintInfo& paintInfo, int, int, int, int)
     }
 
     SVGRenderSupport::finishRenderSVGContent(boxRenderer, childPaintInfo, paintInfo.context);
-    childPaintInfo.context->restore();
 }
 
 IntRect SVGInlineFlowBox::calculateBoundaries() const

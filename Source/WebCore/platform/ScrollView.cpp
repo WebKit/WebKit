@@ -990,21 +990,21 @@ void ScrollView::paint(GraphicsContext* context, const IntRect& rect)
     IntRect documentDirtyRect = rect;
     documentDirtyRect.intersect(frameRect());
 
-    context->save();
+    {
+        GraphicsContextStateSaver stateSaver(*context);
 
-    context->translate(x(), y());
-    documentDirtyRect.move(-x(), -y());
+        context->translate(x(), y());
+        documentDirtyRect.move(-x(), -y());
 
-    if (!paintsEntireContents()) {
-        context->translate(-scrollX(), -scrollY());
-        documentDirtyRect.move(scrollX(), scrollY());
+        if (!paintsEntireContents()) {
+            context->translate(-scrollX(), -scrollY());
+            documentDirtyRect.move(scrollX(), scrollY());
 
-        context->clip(visibleContentRect());
+            context->clip(visibleContentRect());
+        }
+
+        paintContents(context, documentDirtyRect);
     }
-
-    paintContents(context, documentDirtyRect);
-
-    context->restore();
 
     IntRect horizontalOverhangRect;
     IntRect verticalOverhangRect;
@@ -1015,15 +1015,13 @@ void ScrollView::paint(GraphicsContext* context, const IntRect& rect)
 
     // Now paint the scrollbars.
     if (!m_scrollbarsSuppressed && (m_horizontalScrollbar || m_verticalScrollbar)) {
-        context->save();
+        GraphicsContextStateSaver stateSaver(*context);
         IntRect scrollViewDirtyRect = rect;
         scrollViewDirtyRect.intersect(frameRect());
         context->translate(x(), y());
         scrollViewDirtyRect.move(-x(), -y());
 
         paintScrollbars(context, scrollViewDirtyRect);
-
-        context->restore();
     }
 
     // Paint the panScroll Icon

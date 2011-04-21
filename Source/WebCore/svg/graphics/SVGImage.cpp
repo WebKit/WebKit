@@ -182,7 +182,7 @@ void SVGImage::draw(GraphicsContext* context, const FloatRect& dstRect, const Fl
 
     FrameView* view = m_page->mainFrame()->view();
 
-    context->save();
+    GraphicsContextStateSaver stateSaver(*context);
     context->setCompositeOperation(compositeOp);
     context->clip(enclosingIntRect(dstRect));
     if (compositeOp != CompositeSourceOver)
@@ -208,7 +208,7 @@ void SVGImage::draw(GraphicsContext* context, const FloatRect& dstRect, const Fl
     if (compositeOp != CompositeSourceOver)
         context->endTransparencyLayer();
 
-    context->restore();
+    stateSaver.restore();
 
     if (imageObserver())
         imageObserver()->didDraw(this);

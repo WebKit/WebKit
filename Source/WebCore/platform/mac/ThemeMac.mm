@@ -260,7 +260,7 @@ static void paintCheckbox(ControlStates states, GraphicsContext* context, const 
     NSButtonCell *checkboxCell = checkbox(states, zoomedRect, zoomFactor);
     LocalCurrentGraphicsContext localContext(context);
 
-    context->save();
+    GraphicsContextStateSaver stateSaver(*context);
 
     NSControlSize controlSize = [checkboxCell controlSize];
     IntSize zoomedSize = checkboxSizes()[controlSize];
@@ -278,8 +278,6 @@ static void paintCheckbox(ControlStates states, GraphicsContext* context, const 
     
     [checkboxCell drawWithFrame:NSRect(inflatedRect) inView:ThemeMac::ensuredView(scrollView)];
     [checkboxCell setControlView:nil];
-
-    context->restore();
     
     END_BLOCK_OBJC_EXCEPTIONS
 }
@@ -338,7 +336,7 @@ static void paintRadio(ControlStates states, GraphicsContext* context, const Int
     NSButtonCell *radioCell = radio(states, zoomedRect, zoomFactor);
     LocalCurrentGraphicsContext localContext(context);
 
-    context->save();
+    GraphicsContextStateSaver stateSaver(*context);
 
     NSControlSize controlSize = [radioCell controlSize];
     IntSize zoomedSize = radioSizes()[controlSize];
@@ -358,8 +356,6 @@ static void paintRadio(ControlStates states, GraphicsContext* context, const Int
     [radioCell drawWithFrame:NSRect(inflatedRect) inView:ThemeMac::ensuredView(scrollView)];
     [radioCell setControlView:nil];
     END_BLOCK_OBJC_EXCEPTIONS
-
-    context->restore();
 }
 
 // Buttons
@@ -532,7 +528,7 @@ static void paintStepper(ControlStates states, GraphicsContext* context, const I
         drawInfo.kind = kThemeIncDecButton;
 
     IntRect rect(zoomedRect);
-    context->save();
+    GraphicsContextStateSaver stateSaver(*context);
     if (zoomFactor != 1.0f) {
         rect.setWidth(rect.width() / zoomFactor);
         rect.setHeight(rect.height() / zoomFactor);
@@ -549,7 +545,6 @@ static void paintStepper(ControlStates states, GraphicsContext* context, const I
     if (bounds.origin.y != backgroundBounds.origin.y)
         bounds.origin.y += bounds.origin.y - backgroundBounds.origin.y;
     HIThemeDrawButton(&bounds, &drawInfo, context->platformContext(), kHIThemeOrientationNormal, 0);
-    context->restore();
 }
 
 // This will ensure that we always return a valid NSView, even if ScrollView doesn't have an associated document NSView.

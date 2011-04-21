@@ -380,7 +380,7 @@ void Font::drawTextUsingSVGFont(GraphicsContext* context, const TextRun& run,
             if (identifier.isValid) {
                 // FIXME: Support arbitary SVG content as glyph (currently limited to <glyph d="..."> situations).
                 if (!identifier.pathData.isEmpty()) {
-                    context->save();
+                    GraphicsContextStateSaver stateSaver(*context);
 
                     if (isVerticalText) {
                         glyphOrigin.setX(identifier.verticalOriginX * scale);
@@ -401,8 +401,6 @@ void Font::drawTextUsingSVGFont(GraphicsContext* context, const TextRun& run,
                         }
                         activePaintingResource->postApplyResource(referencingRenderObjectParent, context, resourceMode, &glyphPath);
                     }
-
-                    context->restore();
                 }
 
                 if (isVerticalText)

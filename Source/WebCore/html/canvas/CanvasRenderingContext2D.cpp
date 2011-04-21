@@ -1432,13 +1432,13 @@ void CanvasRenderingContext2D::drawImage(HTMLVideoElement* video, const FloatRec
     FloatRect sourceRect = c->roundToDevicePixels(srcRect);
     FloatRect destRect = c->roundToDevicePixels(dstRect);
 
-    c->save();
+    GraphicsContextStateSaver stateSaver(*c);
     c->clip(destRect);
     c->translate(destRect.x(), destRect.y());
     c->scale(FloatSize(destRect.width() / sourceRect.width(), destRect.height() / sourceRect.height()));
     c->translate(-sourceRect.x(), -sourceRect.y());
     video->paintCurrentFrameInContext(c, IntRect(IntPoint(), size(video)));
-    c->restore();
+    stateSaver.restore();
     didDraw(destRect);
 }
 #endif
@@ -1917,12 +1917,10 @@ void CanvasRenderingContext2D::drawTextInternal(const String& text, float x, flo
 
         maskImageContext->drawBidiText(font, textRun, location);
 
-        c->save();
+        GraphicsContextStateSaver stateSaver(*c);
         c->clipToImageBuffer(maskImage.get(), maskRect);
         drawStyle->applyFillColor(c);
         c->fillRect(maskRect);
-        c->restore();
-
         return;
     }
 #endif

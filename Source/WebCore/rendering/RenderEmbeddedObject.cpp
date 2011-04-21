@@ -166,7 +166,7 @@ void RenderEmbeddedObject::paintReplaced(PaintInfo& paintInfo, int tx, int ty)
     if (!getReplacementTextGeometry(tx, ty, contentRect, path, replacementTextRect, font, run, textWidth))
         return;
     
-    context->save();
+    GraphicsContextStateSaver stateSaver(*context);
     context->clip(contentRect);
     context->setAlpha(m_missingPluginIndicatorIsPressed ? replacementTextPressedRoundedRectOpacity : replacementTextRoundedRectOpacity);
     context->setFillColor(m_missingPluginIndicatorIsPressed ? replacementTextRoundedRectPressedColor() : Color::white, style()->colorSpace());
@@ -178,7 +178,6 @@ void RenderEmbeddedObject::paintReplaced(PaintInfo& paintInfo, int tx, int ty)
     context->setAlpha(m_missingPluginIndicatorIsPressed ? replacementTextPressedTextOpacity : replacementTextTextOpacity);
     context->setFillColor(Color::black, style()->colorSpace());
     context->drawBidiText(font, run, FloatPoint(labelX, labelY));
-    context->restore();
 }
 
 bool RenderEmbeddedObject::getReplacementTextGeometry(int tx, int ty, FloatRect& contentRect, Path& path, FloatRect& replacementTextRect, Font& font, TextRun& run, float& textWidth)

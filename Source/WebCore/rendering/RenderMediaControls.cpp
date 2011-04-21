@@ -106,7 +106,8 @@ void RenderMediaControls::adjustMediaSliderThumbSize(RenderObject* o)
 bool RenderMediaControls::paintMediaControlsPart(MediaControlElementType part, RenderObject* o, const PaintInfo& paintInfo, const IntRect& r)
 {
     static const int themeStyle = WKMediaControllerThemeQuickTime;
-    paintInfo.context->save();
+    GraphicsContextStateSaver stateSaver(*paintInfo.context);
+
     switch (part) {
         case MediaFullscreenButton:
             wkDrawMediaUIPart(WKMediaUIPartFullscreenButton, themeStyle, paintInfo.context->platformContext(), r, determineState(o));
@@ -173,7 +174,6 @@ bool RenderMediaControls::paintMediaControlsPart(MediaControlElementType part, R
             ASSERT_NOT_REACHED();
             break;
     }
-    paintInfo.context->restore();
 
     return false;
 }

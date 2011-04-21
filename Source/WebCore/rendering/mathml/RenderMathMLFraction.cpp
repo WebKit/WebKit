@@ -156,15 +156,13 @@ void RenderMathMLFraction::paint(PaintInfo& info, int tx, int ty)
     tx += x();
     ty += y() + verticalOffset;
     
-    info.context->save();
+    GraphicsContextStateSaver stateSaver(*info.context);
     
     info.context->setStrokeThickness(m_lineThickness);
     info.context->setStrokeStyle(SolidStroke);
     info.context->setStrokeColor(style()->visitedDependentColor(CSSPropertyColor), ColorSpaceSRGB);
     
     info.context->drawLine(IntPoint(tx, ty), IntPoint(tx + offsetWidth(), ty));
-    
-    info.context->restore();
 }
 
 int RenderMathMLFraction::baselinePosition(FontBaseline, bool firstLine, LineDirectionMode lineDirection, LinePositionMode linePositionMode) const

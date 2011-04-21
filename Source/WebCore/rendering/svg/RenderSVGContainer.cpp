@@ -105,28 +105,28 @@ void RenderSVGContainer::paint(PaintInfo& paintInfo, int, int)
         return;
 
     PaintInfo childPaintInfo(paintInfo);
-    childPaintInfo.context->save();
+    {
+        GraphicsContextStateSaver stateSaver(*childPaintInfo.context);
 
-    // Let the RenderSVGViewportContainer subclass clip if necessary
-    applyViewportClip(childPaintInfo);
+        // Let the RenderSVGViewportContainer subclass clip if necessary
+        applyViewportClip(childPaintInfo);
 
-    childPaintInfo.applyTransform(localToParentTransform());
+        childPaintInfo.applyTransform(localToParentTransform());
 
-    bool continueRendering = true;
-    if (childPaintInfo.phase == PaintPhaseForeground)
-        continueRendering = SVGRenderSupport::prepareToRenderSVGContent(this, childPaintInfo);
+        bool continueRendering = true;
+        if (childPaintInfo.phase == PaintPhaseForeground)
+            continueRendering = SVGRenderSupport::prepareToRenderSVGContent(this, childPaintInfo);
 
-    if (continueRendering) {
-        childPaintInfo.updatePaintingRootForChildren(this);
-        for (RenderObject* child = firstChild(); child; child = child->nextSibling())
-            child->paint(childPaintInfo, 0, 0);
+        if (continueRendering) {
+            childPaintInfo.updatePaintingRootForChildren(this);
+            for (RenderObject* child = firstChild(); child; child = child->nextSibling())
+                child->paint(childPaintInfo, 0, 0);
+        }
+
+        if (paintInfo.phase == PaintPhaseForeground)
+            SVGRenderSupport::finishRenderSVGContent(this, childPaintInfo, paintInfo.context);
     }
-
-    if (paintInfo.phase == PaintPhaseForeground)
-        SVGRenderSupport::finishRenderSVGContent(this, childPaintInfo, paintInfo.context);
-
-    childPaintInfo.context->restore();
-
+    
     // FIXME: This really should be drawn from local coordinates, but currently we hack it
     // to avoid our clip killing our outline rect.  Thus we translate our
     // outline rect into parent coords before drawing.
