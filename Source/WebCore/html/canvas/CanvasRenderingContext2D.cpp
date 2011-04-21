@@ -851,6 +851,17 @@ void CanvasRenderingContext2D::arc(float x, float y, float r, float sa, float ea
 
     if (!state().m_invertibleCTM)
         return;
+
+    // If 'sa' and 'ea' differ by more than 2Pi, just add a circle starting/ending at 'sa'
+    if (anticlockwise && sa - ea >= 2 * piFloat) {
+        m_path.addArc(FloatPoint(x, y), r, sa, sa - 2 * piFloat, anticlockwise);
+        return;
+    }
+    if (!anticlockwise && ea - sa >= 2 * piFloat) {
+        m_path.addArc(FloatPoint(x, y), r, sa, sa + 2 * piFloat, anticlockwise);
+        return;
+    }
+
     m_path.addArc(FloatPoint(x, y), r, sa, ea, anticlockwise);
 }
 

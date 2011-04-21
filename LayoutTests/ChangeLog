@@ -29,6 +29,16 @@
 
 2011-04-20  Matthew Delaney  <mdelaney@apple.com>
 
+        Reviewed by Maciej Stachowiak.
+
+        arc() should add a circle to the path when start and end angles are far enough apart
+        https://bugs.webkit.org/show_bug.cgi?id=58934
+
+        * fast/canvas/canvas_arc_largeangles-expected.txt: Added.
+        * fast/canvas/canvas_arc_largeangles.html: Added.
+
+2011-04-20  Matthew Delaney  <mdelaney@apple.com>
+
         Reviewed by Adam Roben.
 
         Move toDataURL.jpeg.alpha expected result out of /mac-snowleopard and into /mac
