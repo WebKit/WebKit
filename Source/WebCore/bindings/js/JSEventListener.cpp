@@ -56,7 +56,7 @@ JSObject* JSEventListener::initializeJSFunction(ScriptExecutionContext*) const
     return 0;
 }
 
-void JSEventListener::markJSFunction(SlotVisitor& visitor)
+void JSEventListener::visitJSFunction(SlotVisitor& visitor)
 {
     if (m_jsFunction)
         visitor.append(&m_jsFunction);

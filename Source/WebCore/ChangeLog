@@ -1,3 +1,9 @@
+2011-04-21  Oliver Hunt  <oliver@apple.com>
+
+        Whoops, change lost during merge
+
+        * bindings/js/JSEventListener.h:
+
 2011-04-21  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Sam Weinig.
