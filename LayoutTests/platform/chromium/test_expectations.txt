@@ -3674,7 +3674,7 @@ BUGDPRANKE WIN LINUX : transforms/2d/hindi-rotated.html = IMAGE IMAGE+TEXT
 BUGDPRANKE MAC : compositing/iframes/invisible-nested-iframe-show.html = TEXT
 BUGDPRANKE MAC GPU : compositing/geometry/video-fixed-scrolling.html = IMAGE
 BUGDPRANKE MAC GPU : media/video-volume-slider.html = IMAGE
-BUGDPRANKE MAC GPU : media/video-zoom.html = CRASH
+BUGDPRANKE GPU : media/video-zoom.html = CRASH TEXT
 BUGDPRANKE MAC : plugins/mouse-click-iframe-to-plugin.html = TIMEOUT PASS
 BUGDPRANKE MAC : animations/3d/transform-origin-vs-functions.html = TEXT PASS
 BUGDPRANKE : fast/encoding/parser-tests-10.html = TIMEOUT PASS
@@ -3702,7 +3702,6 @@ BUGDPRANKE LINUX DEBUG GPU : compositing/geometry/video-fixed-scrolling.html = I
 BUGDPRANKE LINUX DEBUG GPU : compositing/masks/masked-ancestor.html = IMAGE
 BUGDPRANKE LINUX DEBUG GPU : compositing/masks/simple-composited-mask.html = IMAGE
 BUGDPRANKE LINUX DEBUG GPU : fast/canvas/canvas-text-alignment.html = IMAGE
-BUGDPRANKE LINUX DEBUG GPU : media/video-zoom.html = IMAGE
 BUGDPRANKE LINUX DEBUG GPU : platform/chromium/compositing/layout-width-change.html = IMAGE
 
 // probably just needs new baselines after r84343
@@ -3870,3 +3869,5 @@ BUGDPRANKE DEBUG : http/tests/local/link-stylesheet-preferred.html = CRASH
 BUGDPRANKE DEBUG : editing/pasteboard/merge-end-2.html = CRASH
 BUGDPRANKE DEBUG : animations/keyframes-out-of-order.html = TEXT PASS
 BUGDPRANKE : fast/frames/meta-refresh-user-gesture.html = TIMEOUT PASS
+BUGDPRANKE : http/tests/navigation/redirect-on-back-updates-history-item.html = TIMEOUT PASS
+BUGDPRANKE : fast/files/create-blob-url-crash.html = CRASH
