@@ -128,7 +128,7 @@ WebInspector.ResourcesPanel.prototype = {
             this.showResource(WebInspector.mainResource);
     },
 
-    reset: function()
+    _reset: function()
     {
         delete this._initializedDefaultSelection;
         this._origins = {};
@@ -258,7 +258,7 @@ WebInspector.ResourcesPanel.prototype = {
             // Total update.
             this.resourcesListTreeElement.removeChildren();
             this._treeElementForFrameId = {};
-            this.reset();
+            this._reset();
             return;
         }
 
