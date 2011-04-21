@@ -112,7 +112,10 @@ void Image::drawTiled(GraphicsContext* ctxt, const FloatRect& destRect, const Fl
         return;
     }
 
+    // See <https://webkit.org/b/59041> and <https://webkit.org/b/59043>.
+#if !USE(SKIA) && !PLATFORM(WX)
     ASSERT(!isBitmapImage() || static_cast<BitmapImage*>(this)->notSolidColor());
+#endif
 
     FloatSize intrinsicTileSize = size();
     if (hasRelativeWidth())
