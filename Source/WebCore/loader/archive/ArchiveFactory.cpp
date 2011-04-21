@@ -76,7 +76,7 @@ bool ArchiveFactory::isArchiveMimeType(const String& mimeType)
 PassRefPtr<Archive> ArchiveFactory::create(SharedBuffer* data, const String& mimeType)
 {
     RawDataCreationFunction* function = mimeType.isEmpty() ? 0 : archiveMIMETypes().get(mimeType);
-    return function ? function(data) : 0;
+    return function ? function(data) : PassRefPtr<Archive>(0);
 }
 
 void ArchiveFactory::registerKnownArchiveMIMETypes()

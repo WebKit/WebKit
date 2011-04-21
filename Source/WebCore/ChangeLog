@@ -1,3 +1,28 @@
+2011-04-21  Ben Taylor  <bentaylor.solx86@gmail.com>
+
+        Reviewed by Alexey Proskuryakov.
+
+        https://bugs.webkit.org/show_bug.cgi?id=58725
+
+        Fix a compile issue on Solaris 10 with Sun Studio 12,
+        ternary operators (?:) must have the same types
+
+        * loader/DocumentLoader.cpp:
+        (WebCore::DocumentLoader::popArchiveForSubframe):
+        * loader/archive/ArchiveFactory.cpp:
+        (WebCore::ArchiveFactory::create):
+        * loader/icon/IconDatabase.cpp:
+        (WebCore::IconDatabase::setIconDataForIconURL):
+        * page/animation/AnimationBase.cpp:
+        (WebCore::blendFunc):
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::updateScrollCornerStyle):
+        (WebCore::RenderLayer::updateResizerStyle):
+        * rendering/RenderScrollbar.cpp:
+        (WebCore::RenderScrollbar::updateScrollbarPart):
+        * rendering/RenderTextFragment.cpp:
+        (WebCore::RenderTextFragment::RenderTextFragment):
+
 2011-04-21  Mike Reed  <reed@google.com>
 
         Reviewed by Kenneth Russell.

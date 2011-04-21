@@ -29,7 +29,7 @@
 namespace WebCore {
 
 RenderTextFragment::RenderTextFragment(Node* node, StringImpl* str, int startOffset, int length)
-    : RenderText(node, str ? str->substring(startOffset, length) : 0)
+    : RenderText(node, str ? str->substring(startOffset, length) : PassRefPtr<StringImpl>(0))
     , m_start(startOffset)
     , m_end(length)
     , m_firstLetter(0)

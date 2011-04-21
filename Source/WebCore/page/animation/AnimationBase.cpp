@@ -166,7 +166,7 @@ static inline TransformOperations blendFunc(const AnimationBase* anim, const Tra
         for (unsigned i = 0; i < size; i++) {
             RefPtr<TransformOperation> fromOp = (i < fromSize) ? from.operations()[i].get() : 0;
             RefPtr<TransformOperation> toOp = (i < toSize) ? to.operations()[i].get() : 0;
-            RefPtr<TransformOperation> blendedOp = toOp ? toOp->blend(fromOp.get(), progress) : (fromOp ? fromOp->blend(0, progress, true) : 0);
+            RefPtr<TransformOperation> blendedOp = toOp ? toOp->blend(fromOp.get(), progress) : (fromOp ? fromOp->blend(0, progress, true) : PassRefPtr<TransformOperation>(0));
             if (blendedOp)
                 result.operations().append(blendedOp);
             else {

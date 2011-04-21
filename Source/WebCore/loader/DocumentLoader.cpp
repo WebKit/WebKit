@@ -479,7 +479,7 @@ void DocumentLoader::addArchiveResource(PassRefPtr<ArchiveResource> resource)
 
 PassRefPtr<Archive> DocumentLoader::popArchiveForSubframe(const String& frameName)
 {
-    return m_archiveResourceCollection ? m_archiveResourceCollection->popSubframeArchive(frameName) : 0;
+    return m_archiveResourceCollection ? m_archiveResourceCollection->popSubframeArchive(frameName) : PassRefPtr<Archive>(0);
 }
 
 void DocumentLoader::clearArchiveResources()
