@@ -37,9 +37,8 @@ private:
 
     virtual RenderObject* createRenderer(RenderArena*, RenderStyle*);
     virtual void defaultEventHandler(Event*);
-    virtual void createShadowSubtree();
-    virtual bool canHaveLightChildRendererWithShadow() const { return true; }
 
+    void createShadowSubtree();
     HTMLDetailsElement* detailsElement() const;
 };
 

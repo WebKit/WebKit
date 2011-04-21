@@ -7,6 +7,10 @@
  *
  *     * Redistributions of source code must retain the above copyright
  * notice, this list of conditions and the following disclaimer.
+ *     * Redistributions in binary form must reproduce the above
+ * copyright notice, this list of conditions and the following disclaimer
+ * in the documentation and/or other materials provided with the
+ * distribution.
  *     * Neither the name of Google Inc. nor the names of its
  * contributors may be used to endorse or promote products derived from
  * this software without specific prior written permission.
@@ -24,48 +28,38 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef ShadowRoot_h
-#define ShadowRoot_h
+#ifndef ShadowContentElement_h
+#define ShadowContentElement_h
 
-#include "TreeScope.h"
+#include "HTMLDivElement.h"
+#include "HTMLNames.h"
+#include <wtf/Forward.h>
 
 namespace WebCore {
 
-class Document;
-
-class ShadowRoot : public TreeScope {
+// NOTE: Current implementation doesn't support dynamic insertion/deletion of ShadowContentElement.
+// You should create ShadowContentElement during the host construction.
+class ShadowContentElement : public HTMLDivElement {
 public:
-    static PassRefPtr<ShadowRoot> create(Document*);
+    ShadowContentElement(Document* document)
+        : HTMLDivElement(HTMLNames::divTag, document)
+    {
+    }
 
-    virtual bool isShadowBoundary() const { return true; }
-    virtual void recalcStyle(StyleChange = NoChange);
-
-    ContainerNode* contentContainerFor(Node*);
-    void hostChildrenChanged();
+    static PassRefPtr<ShadowContentElement> create(Document*);
 
 private:
-    ShadowRoot(Document*);
-    virtual ~ShadowRoot();
-
-    virtual String nodeName() const;
-    virtual NodeType nodeType() const;
-    virtual PassRefPtr<Node> cloneNode(bool deep);
-    virtual bool childTypeAllowed(NodeType) const;
-
-    ContainerNode* firstContentElement() const;
+    // FIXME: This should be replaced with tag-name checking once <content> is ready.
+    // See also http://webkit.org/b/56973
+    virtual bool isShadowBoundary() const { return true; }
+    virtual RenderObject* createRenderer(RenderArena*, RenderStyle*) { return 0; }
 };
 
-inline PassRefPtr<ShadowRoot> ShadowRoot::create(Document* document)
+inline PassRefPtr<ShadowContentElement> ShadowContentElement::create(Document* document)
 {
-    return adoptRef(new ShadowRoot(document));
+    return adoptRef(new ShadowContentElement(document));
 }
 
-inline ShadowRoot* toShadowRoot(Node* node)
-{
-    ASSERT(!node || node->isShadowBoundary());
-    return static_cast<ShadowRoot*>(node);
 }
-
-} // namespace
 
 #endif

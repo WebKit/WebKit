@@ -26,6 +26,7 @@
 
 #include "config.h"
 #include "ShadowRoot.h"
+#include "Element.h"
 
 #include "Document.h"
 #include "NodeRareData.h"
@@ -87,6 +88,37 @@ void ShadowRoot::recalcStyle(StyleChange change)
 
     clearNeedsStyleRecalc();
     clearChildNeedsStyleRecalc();
+}
+
+ContainerNode* ShadowRoot::contentContainerFor(Node*)
+{
+    // Current limitation:
+    // - There is at most one content element for each shadow tree
+    // - The shadow tree accepts any light node.
+    return firstContentElement();
+}
+
+void ShadowRoot::hostChildrenChanged()
+{
+    if (!firstContentElement())
+        return;
+    Element* host = shadowHost();
+    if (!host || !host->attached())
+        return;
+    host->detach();
+    host->lazyAttach();
+}
+
+ContainerNode* ShadowRoot::firstContentElement() const
+{
+    for (Node* n = firstChild(); n; n = n->traverseNextNode(this)) {
+        // FIXME: This should be replaced with tag-name checking once <content> is ready.
+        // See also http://webkit.org/b/56973
+        if (n->isShadowBoundary())
+            return toContainerNode(n);
+    }
+
+    return 0;
 }
 
 }

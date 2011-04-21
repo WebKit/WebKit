@@ -1,3 +1,49 @@
+2011-04-20  MORITA Hajime  <morrita@google.com>
+
+        Reviewed by Dimitri Glazkov.
+
+        Content of <summary> should be forwarded through the shadow DOM
+        https://bugs.webkit.org/show_bug.cgi?id=58914
+
+        - Introduced ShadowContentElement which hosts forwarded children of <summary>
+        - Encapsulated Node::parentNodeForRenderingAndStyle() and shouldCreateRendererFor()
+          into NodeVisualParentLookupResult class.
+        - The parent lookup is also aware of node forwarding. If the visual parent node has
+          a shadow root, the node is possibly forwarded to ShadowContentElement
+        - ShadowContentElement lookup is implemented inside ShadowRoot.
+        
+        Tests: fast/html/details-add-summary-child-1.html
+               fast/html/details-add-summary-child-2.html
+               fast/html/details-remove-summary-child-1.html
+               fast/html/details-remove-summary-child-2.html
+
+        * GNUmakefile.list.am:
+        * WebCore.gypi:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * dom/Element.cpp:
+        (WebCore::Element::childrenChanged):
+        * dom/Node.cpp:
+        (WebCore::NodeRenderParentDetector::NodeRenderParentDetector):
+        (WebCore::NodeRenderParentDetector::parentNodeForRenderingAndStyle):
+        (WebCore::NodeRenderParentDetector::findVisualParent):
+        (WebCore::NodeRenderParentDetector::shouldCreateRenderer):
+        (WebCore::Node::parentNodeForRenderingAndStyle):
+        (WebCore::Node::createRendererAndStyle):
+        * dom/ShadowRoot.cpp:
+        (WebCore::ShadowRoot::contentContainerFor):
+        (WebCore::ShadowRoot::hostChildrenChanged):
+        (WebCore::ShadowRoot::firstContentElement):
+        * dom/ShadowRoot.h:
+        * html/HTMLSummaryElement.cpp:
+        (WebCore::HTMLSummaryElement::createShadowSubtree):
+        * html/HTMLSummaryElement.h:
+        * html/shadow/ShadowContentElement.h: Copied from Source/WebCore/dom/ShadowRoot.h.
+        (WebCore::ShadowContentElement::ShadowContentElement):
+        (WebCore::ShadowContentElement::isShadowBoundary):
+        (WebCore::ShadowContentElement::createRenderer):
+        (WebCore::ShadowContentElement::create):
+
 2011-04-21  Andrey Kosyakov  <caseq@chromium.org>
 
         Reviewed by Pavel Feldman.

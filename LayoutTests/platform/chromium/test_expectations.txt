@@ -3506,6 +3506,13 @@ BUGCR79770 WIN : fast/html/details-add-summary-7.html = IMAGE
 BUGCR79770 WIN : fast/html/details-add-summary-8.html = IMAGE
 BUGCR79770 WIN : fast/forms/select-background-none.html = IMAGE
 
+// Need rebaselining
+BUGWK58914 : fast/html/details-add-summary-child-1.html = FAIL
+BUGWK58914 : fast/html/details-add-summary-child-2.html = FAIL
+BUGWK58914 : fast/html/details-remove-summary-child-1.html = FAIL
+BUGWK58914 : fast/html/details-remove-summary-child-2.html = FAIL
+BUGWK58914 : fast/html/details-open2.html = FAIL
+
 // Temporarily marked as failing for rebaselining.
 BUGCR79798 : fast/gradients/crash-on-zero-radius.html = FAIL
 BUGCR79798 : fast/gradients/generated-gradients.html = FAIL

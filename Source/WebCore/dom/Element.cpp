@@ -1307,6 +1307,8 @@ void Element::childrenChanged(bool changedByParser, Node* beforeChange, Node* af
         checkForEmptyStyleChange(this, renderStyle());
     else
         checkForSiblingStyleChanges(this, renderStyle(), false, beforeChange, afterChange, childCountDelta);
+    if (ShadowRoot* shadow = toShadowRoot(shadowRoot()))
+        shadow->hostChildrenChanged();
 }
 
 void Element::beginParsingChildren()

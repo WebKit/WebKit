@@ -56769,6 +56769,10 @@
 					>
 				</File>
 				<File
+					RelativePath="..\html\shadow\ShadowContentElement.h"
+					>
+				</File>
+				<File
 					RelativePath="..\html\shadow\SliderThumbElement.cpp"
 					>
 				</File>

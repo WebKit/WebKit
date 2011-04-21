@@ -27,6 +27,7 @@
 #include "MouseEvent.h"
 #include "PlatformMouseEvent.h"
 #include "RenderSummary.h"
+#include "ShadowContentElement.h"
 
 namespace WebCore {
 
@@ -54,6 +55,7 @@ void HTMLSummaryElement::createShadowSubtree()
 {
     ExceptionCode ec = 0;
     ensureShadowRoot()->appendChild(DetailsMarkerControl::create(document()), ec, true);
+    ensureShadowRoot()->appendChild(ShadowContentElement::create(document()), ec, true);
 }
 
 HTMLDetailsElement* HTMLSummaryElement::detailsElement() const

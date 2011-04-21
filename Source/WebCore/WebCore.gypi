@@ -3189,6 +3189,7 @@
             'html/shadow/MeterShadowElement.h',
             'html/shadow/ProgressShadowElement.cpp',
             'html/shadow/ProgressShadowElement.h',
+            'html/shadow/ShadowContentElement.h',
             'html/shadow/SliderThumbElement.cpp',
             'html/shadow/SliderThumbElement.h',
             'html/shadow/TextControlInnerElements.cpp',

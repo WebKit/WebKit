@@ -1446,33 +1446,91 @@ Node *Node::nextLeafNode() const
     return 0;
 }
 
-ContainerNode* Node::parentNodeForRenderingAndStyle() const
+
+class NodeRenderParentDetector {
+public:
+    enum Type {
+        NotFound,
+        AsLightChild,
+        AsShadowChild,
+        AsContentChild
+    };
+
+    NodeRenderParentDetector(Node* node)
+        : m_type(NotFound)
+        , m_node(node)
+        , m_visualParentShadowRoot(0)
+    {
+        m_parentNodeForRenderingAndStyle = findVisualParent();
+    }
+  
+    ContainerNode* parentNodeForRenderingAndStyle() const { return m_parentNodeForRenderingAndStyle; }
+    bool shouldCreateRenderer() const;
+
+private:
+    ContainerNode* findVisualParent();
+
+    Type m_type;
+    Node* m_node;
+    ContainerNode* m_parentNodeForRenderingAndStyle;
+    ShadowRoot* m_visualParentShadowRoot;
+};
+
+ContainerNode* NodeRenderParentDetector::findVisualParent()
 {
-    ContainerNode* parent = parentOrHostNode();
-    return parent && parent->isShadowBoundary() ? parent->shadowHost() : parent;
+    ContainerNode* parent = m_node->parentOrHostNode();
+    if (!parent)
+        return 0;
+
+    if (parent->isShadowBoundary()) {
+        m_type = AsShadowChild;
+        return parent->shadowHost();
+    }
+
+    if (parent->isElementNode()) {
+        m_visualParentShadowRoot = toShadowRoot(toElement(parent)->shadowRoot());
+        if (m_visualParentShadowRoot) {
+            if (ContainerNode* contentContainer = m_visualParentShadowRoot->contentContainerFor(m_node)) {
+                m_type = AsContentChild;
+                return NodeRenderParentDetector(contentContainer).parentNodeForRenderingAndStyle();
+            }
+
+            // FIXME: should be not found once light/shadow is mutual exclusive.
+        }
+    }
+
+    m_type = AsLightChild;
+    return parent;
 }
 
-static bool shouldCreateRendererFor(Node* node, ContainerNode* parentForRenderingAndStyle)
+bool NodeRenderParentDetector::shouldCreateRenderer() const
 {
-    RenderObject* parentRenderer = parentForRenderingAndStyle->renderer();
+    ASSERT(m_parentNodeForRenderingAndStyle);
+
+    RenderObject* parentRenderer = m_parentNodeForRenderingAndStyle->renderer();
     if (!parentRenderer)
         return false;
 
-    bool atShadowBoundary = node->parentOrHostNode()->isShadowBoundary();
+    if (m_type == AsLightChild) {
+        // FIXME: Ignoring canHaveChildren() in a case of shadow children might be wrong.
+        // See https://bugs.webkit.org/show_bug.cgi?id=52423
+        if (!parentRenderer->canHaveChildren())
+            return false;
+    
+        if (m_visualParentShadowRoot && !m_parentNodeForRenderingAndStyle->canHaveLightChildRendererWithShadow())
+            return false;
+    }
 
-    // FIXME: Ignoring canHaveChildren() in a case of isShadowRoot() might be wrong.
-    // See https://bugs.webkit.org/show_bug.cgi?id=52423
-    if (!parentRenderer->canHaveChildren() && !(node->isShadowRoot() || atShadowBoundary))
-        return false;
-
-    if (shadowRoot(parentForRenderingAndStyle) && !atShadowBoundary 
-        && !parentForRenderingAndStyle->canHaveLightChildRendererWithShadow())
-        return false;
-
-    if (!parentForRenderingAndStyle->childShouldCreateRenderer(node))
+    if (!m_parentNodeForRenderingAndStyle->childShouldCreateRenderer(m_node))
         return false;
 
     return true;
+}
+
+
+ContainerNode* Node::parentNodeForRenderingAndStyle() const
+{
+    return NodeRenderParentDetector(const_cast<Node*>(this)).parentNodeForRenderingAndStyle();
 }
 
 RenderObject* Node::createRendererAndStyle()
@@ -1480,10 +1538,8 @@ RenderObject* Node::createRendererAndStyle()
     ASSERT(!renderer());
     ASSERT(document()->shouldCreateRenderers());
 
-    ContainerNode* parent = parentNodeForRenderingAndStyle();
-    ASSERT(parent);
-
-    if (!shouldCreateRendererFor(this, parent))
+    NodeRenderParentDetector parentDetector(this);
+    if (!parentDetector.shouldCreateRenderer())
         return 0;
 
     RefPtr<RenderStyle> style = styleForRenderer();
@@ -1494,7 +1550,7 @@ RenderObject* Node::createRendererAndStyle()
     if (!newRenderer)
         return 0;
 
-    if (!parent->renderer()->isChildAllowed(newRenderer, style.get())) {
+    if (!parentDetector.parentNodeForRenderingAndStyle()->renderer()->isChildAllowed(newRenderer, style.get())) {
         newRenderer->destroy();
         return 0;
     }
