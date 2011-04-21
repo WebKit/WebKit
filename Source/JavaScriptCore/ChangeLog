@@ -1,3 +1,13 @@
+2011-04-21  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r84548.
+        http://trac.webkit.org/changeset/84548
+        https://bugs.webkit.org/show_bug.cgi?id=59144
+
+        Broke chromium-win build (Requested by aklein on #webkit).
+
+        * wtf/Platform.h:
+
 2011-04-21  Adam Klein  <adamk@chromium.org>
 
         Reviewed by David Levin.
