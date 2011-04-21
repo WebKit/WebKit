@@ -822,6 +822,7 @@
             'platform/graphics/Glyph.h',
             'platform/graphics/GlyphBuffer.h',
             'platform/graphics/GlyphMetricsMap.h',
+            'platform/graphics/GlyphPage.h',
             'platform/graphics/GlyphPageTreeNode.h',
             'platform/graphics/Gradient.h',
             'platform/graphics/GraphicsContext.h',

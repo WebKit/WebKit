@@ -2,6 +2,20 @@
 
         Reviewed by Dirk Schulze.
 
+        Split GlyphPage from GlyphPageTreeNode.h into its own header
+        https://bugs.webkit.org/show_bug.cgi?id=59096
+
+        * GNUmakefile.list.am: Add GlyphPage.h to build.
+        * WebCore.gypi: Ditto.
+        * WebCore.vcproj/WebCore.vcproj: Ditto.
+        * WebCore.xcodeproj/project.pbxproj: Ditto.
+        * platform/graphics/GlyphPage.h: Copied from platform/graphics/GlyphPageTreeNode.h. Removed GlyphPageTreeNode class, leaving only GlyphPage.
+        * platform/graphics/GlyphPageTreeNode.h: Removed GlyphPage class.
+
+2011-04-21  Nikolas Zimmermann  <nzimmermann@rim.com>
+
+        Reviewed by Dirk Schulze.
+
         Centralize typedef unsigned short Glyph in Glyph.h
         https://bugs.webkit.org/show_bug.cgi?id=59087
 

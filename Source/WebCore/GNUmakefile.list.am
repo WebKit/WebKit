@@ -2427,6 +2427,7 @@ webcore_sources += \
 	Source/WebCore/platform/graphics/Glyph.h \
 	Source/WebCore/platform/graphics/GlyphBuffer.h \
 	Source/WebCore/platform/graphics/GlyphMetricsMap.h \
+	Source/WebCore/platform/graphics/GlyphPage.h \
 	Source/WebCore/platform/graphics/GlyphPageTreeNode.cpp \
 	Source/WebCore/platform/graphics/GlyphPageTreeNode.h \
 	Source/WebCore/platform/graphics/Gradient.cpp \

@@ -137,6 +137,7 @@
 		087281560F26B9B600AFC596 /* OptionElement.h in Headers */ = {isa = PBXBuildFile; fileRef = 087281520F26B9B600AFC596 /* OptionElement.h */; };
 		087281570F26B9B600AFC596 /* OptionGroupElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 087281530F26B9B600AFC596 /* OptionGroupElement.cpp */; };
 		087281580F26B9B600AFC596 /* OptionGroupElement.h in Headers */ = {isa = PBXBuildFile; fileRef = 087281540F26B9B600AFC596 /* OptionGroupElement.h */; };
+		0873B86B136064EA00A522C2 /* GlyphPage.h in Headers */ = {isa = PBXBuildFile; fileRef = 0873B86A136064EA00A522C2 /* GlyphPage.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		08744BAA0EDB7D86004C9E63 /* WMLOnEventElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 08744BA90EDB7D86004C9E63 /* WMLOnEventElement.cpp */; };
 		08744BAE0EDB7D92004C9E63 /* WMLOnEventElement.h in Headers */ = {isa = PBXBuildFile; fileRef = 08744BAD0EDB7D92004C9E63 /* WMLOnEventElement.h */; };
 		087B84961272CEC800A14417 /* SVGAnimatedAngle.h in Headers */ = {isa = PBXBuildFile; fileRef = 087B84951272CEC700A14417 /* SVGAnimatedAngle.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -6570,6 +6571,7 @@
 		087281520F26B9B600AFC596 /* OptionElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OptionElement.h; sourceTree = "<group>"; };
 		087281530F26B9B600AFC596 /* OptionGroupElement.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = OptionGroupElement.cpp; sourceTree = "<group>"; };
 		087281540F26B9B600AFC596 /* OptionGroupElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OptionGroupElement.h; sourceTree = "<group>"; };
+		0873B86A136064EA00A522C2 /* GlyphPage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GlyphPage.h; sourceTree = "<group>"; };
 		08744BA90EDB7D86004C9E63 /* WMLOnEventElement.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WMLOnEventElement.cpp; sourceTree = "<group>"; };
 		08744BAD0EDB7D92004C9E63 /* WMLOnEventElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WMLOnEventElement.h; sourceTree = "<group>"; };
 		087B84951272CEC700A14417 /* SVGAnimatedAngle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SVGAnimatedAngle.h; sourceTree = "<group>"; };
@@ -17884,6 +17886,7 @@
 				086BBD0E136039C2008B15D8 /* Glyph.h */,
 				B2C3DA5B0D006CD600EF6F26 /* GlyphBuffer.h */,
 				C5D4AA78116BAFB60069CA93 /* GlyphMetricsMap.h */,
+				0873B86A136064EA00A522C2 /* GlyphPage.h */,
 				B2C3DA5C0D006CD600EF6F26 /* GlyphPageTreeNode.cpp */,
 				B2C3DA5D0D006CD600EF6F26 /* GlyphPageTreeNode.h */,
 				BC53C6070DA56C570021EB5D /* Gradient.cpp */,
@@ -23007,6 +23010,7 @@
 				E1BE512E0CF6C512002EA959 /* XSLTUnicodeSort.h in Headers */,
 				977E2E0F12F0FC9C00C13379 /* XSSFilter.h in Headers */,
 				086BBD0F136039C2008B15D8 /* Glyph.h in Headers */,
+				0873B86B136064EA00A522C2 /* GlyphPage.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -27069,6 +27069,10 @@
 					>
 				</File>
 				<File
+					RelativePath="..\platform\graphics\GlyphPage.h"
+					>
+				</File>
+				<File
 					RelativePath="..\platform\graphics\GlyphPageTreeNode.cpp"
 					>
 				</File>
