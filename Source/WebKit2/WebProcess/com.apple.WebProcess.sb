@@ -146,14 +146,13 @@
     (global-name "com.apple.metadata.mds")
 )
 
-;; FIXME: <rdar://problem/9263428> These rules are required to avoid
-;; sandbox violation spam, but some narrower rule should be
-;; sufficient.
-(allow network-outbound)
-(deny network-outbound (regex ""))
-(deny network-outbound (local ip))
-
+(allow system-socket (socket-domain AF_ROUTE))
+(allow system-socket (require-all (socket-domain AF_SYSTEM) (socket-protocol 2))) ; SYSPROTO_CONTROL
 (allow network-outbound
+   ;; Kernel controls
+   (control-name "com.apple.network.statistics")
+   (control-name "com.apple.netsrc")
+
    ;; Local mDNSResponder for DNS, arbitrary outbound TCP
    (literal "/private/var/run/mDNSResponder")
    (remote tcp)
