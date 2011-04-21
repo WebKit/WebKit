@@ -1231,12 +1231,13 @@ plugins/windowless_plugin_paint_test.html
 # https://bugs.webkit.org/show_bug.cgi?id=58421
 svg/W3C-SVG-1.1-SE/svgdom-over-01-f.svg    
 
-# scalePage is currently Mac-specific WebKit API.
+# scalePage is currently Mac-specific WebKit API. http://webkit.org/b/59098
 fast/dom/Element/scale-page-bounding-client-rect.html
 fast/dom/Element/scale-page-client-rects.html
 fast/dom/Range/scale-page-bounding-client-rect.html
 fast/dom/Range/scale-page-client-rects.html
 fast/repaint/scale-page-shrink.html
+fast/transforms/selection-bounds-in-transformed-view.html
 
 # Quota API is not supported.
 storage/storageinfo-query-usage.html
@@ -1254,3 +1255,6 @@ fast/images/animated-gif-restored-from-bfcache.html
 
 # https://bugs.webkit.org/show_bug.cgi?id=59081
 fast/dom/shadow/layout-tests-can-access-shadow.html
+
+# Causes the next test to fail http://webkit.org/b/59099
+http/tests/security/contentSecurityPolicy/frame-src-blocked.html

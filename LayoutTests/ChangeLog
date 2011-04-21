@@ -1,3 +1,12 @@
+2011-04-21  Adam Roben  <aroben@apple.com>
+
+        Skip some newly-failing tests on Windows
+
+        <http://webkit.org/b/59098> and <http://webkit.org/b/59099> track the failures.
+
+        * platform/win/Skipped: Added fast/transforms/selection-bounds-in-transformed-view.html and
+        http/tests/security/contentSecurityPolicy/frame-src-blocked.html.
+
 2011-04-21  Tony Gentilcore  <tonyg@chromium.org>
 
         BitmapImage::destroyMetadataAndNotify should clear m_checkedForSolidColor
