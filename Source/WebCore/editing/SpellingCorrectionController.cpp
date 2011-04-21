@@ -361,7 +361,15 @@ bool SpellingCorrectionController::isAutomaticSpellingCorrectionEnabled()
 FloatRect SpellingCorrectionController::windowRectForRange(const Range* range) const
 {
     FrameView* view = m_frame->view();
-    return view ? view->contentsToWindow(IntRect(range->boundingRect())) : FloatRect();
+    if (!view)
+        return FloatRect();
+    Vector<FloatQuad> textQuads;
+    range->textQuads(textQuads);
+    FloatRect boundingRect;
+    size_t size = textQuads.size();
+    for (size_t i = 0; i < size; ++i)
+        boundingRect.unite(textQuads[i].boundingBox());
+    return view->contentsToWindow(IntRect(boundingRect));
 }        
 
 void SpellingCorrectionController::respondToChangedSelection(const VisibleSelection& oldSelection)

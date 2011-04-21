@@ -1,3 +1,19 @@
+2011-04-20  Jia Pu  <jpu@apple.com>
+
+        Reviewed by Maciej Stachowiak.
+
+        [Mac] Correction panel shows up at incorrect location after webpage is scrolled.
+        https://bugs.webkit.org/show_bug.cgi?id=59052
+        <rdar://problem/9312513>
+        
+        Fixed a regression caused by interaction between patch for bug 57353 and patch for bug 55571.
+        See bug webpage for detail.
+
+        * editing/Editor.cpp:
+        (WebCore::Editor::selectionStartHasMarkerFor):
+        * editing/SpellingCorrectionController.cpp:
+        (WebCore::SpellingCorrectionController::windowRectForRange):
+
 2011-04-20  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Eric Seidel.
