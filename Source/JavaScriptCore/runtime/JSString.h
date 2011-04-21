@@ -359,6 +359,8 @@ namespace JSC {
         }
 
         void resolveRope(ExecState*) const;
+        void resolveRopeSlowCase(ExecState*, UChar*) const;
+        void outOfMemory(ExecState*) const;
         JSString* substringFromRope(ExecState*, unsigned offset, unsigned length);
 
         void appendStringInConstruct(unsigned& index, const UString& string)

@@ -34,6 +34,50 @@ namespace JSC {
     
 static const unsigned substringFromRopeCutoff = 4;
 
+void JSString::resolveRope(ExecState* exec) const
+{
+    ASSERT(isRope());
+
+    UChar* buffer;
+    if (PassRefPtr<StringImpl> newImpl = StringImpl::tryCreateUninitialized(m_length, buffer))
+        m_value = newImpl;
+    else {
+        outOfMemory(exec);
+        return;
+    }
+
+    RopeImpl::Fiber currentFiber = m_other.m_fibers[0];
+
+    if ((m_fiberCount > 2) || (RopeImpl::isRope(currentFiber)) 
+        || ((m_fiberCount == 2) && (RopeImpl::isRope(m_other.m_fibers[1])))) {
+        resolveRopeSlowCase(exec, buffer);
+        return;
+    }
+
+    UChar* position = buffer;
+    StringImpl* string = static_cast<StringImpl*>(currentFiber);
+    unsigned length = string->length();
+    StringImpl::copyChars(position, string->characters(), length);
+
+    if (m_fiberCount > 1) {
+        position += length;
+        currentFiber = m_other.m_fibers[1];
+        string = static_cast<StringImpl*>(currentFiber);
+        length = string->length();
+        StringImpl::copyChars(position, string->characters(), length);
+        position += length;
+    }
+
+    ASSERT((buffer + m_length) == position);
+    for (unsigned i = 0; i < m_fiberCount; ++i) {
+        RopeImpl::deref(m_other.m_fibers[i]);
+        m_other.m_fibers[i] = 0;
+    }
+    m_fiberCount = 0;
+
+    ASSERT(!isRope());
+}
+
 // Overview: this methods converts a JSString from holding a string in rope form
 // down to a simple UString representation.  It does so by building up the string
 // backwards, since we want to avoid recursion, we expect that the tree structure
@@ -43,27 +87,11 @@ static const unsigned substringFromRopeCutoff = 4;
 // we would likely have to place all of the constituent StringImpls into the
 // Vector before performing any concatenation, but by working backwards we likely
 // only fill the queue with the number of substrings at any given level in a
-// rope-of-ropes.)
-void JSString::resolveRope(ExecState* exec) const
+// rope-of-ropes.)    
+void JSString::resolveRopeSlowCase(ExecState* exec, UChar* buffer) const
 {
-    ASSERT(isRope());
+    UNUSED_PARAM(exec);
 
-    // Allocate the buffer to hold the final string, position initially points to the end.
-    UChar* buffer;
-    if (PassRefPtr<StringImpl> newImpl = StringImpl::tryCreateUninitialized(m_length, buffer))
-        m_value = newImpl;
-    else {
-        for (unsigned i = 0; i < m_fiberCount; ++i) {
-            RopeImpl::deref(m_other.m_fibers[i]);
-            m_other.m_fibers[i] = 0;
-        }
-        m_fiberCount = 0;
-        ASSERT(!isRope());
-        ASSERT(m_value == UString());
-        if (exec)
-            throwOutOfMemoryError(exec);
-        return;
-    }
     UChar* position = buffer + m_length;
 
     // Start with the current RopeImpl.
@@ -96,7 +124,7 @@ void JSString::resolveRope(ExecState* exec) const
                     m_other.m_fibers[i] = 0;
                 }
                 m_fiberCount = 0;
-
+                
                 ASSERT(!isRope());
                 return;
             }
@@ -107,7 +135,20 @@ void JSString::resolveRope(ExecState* exec) const
         }
     }
 }
-    
+
+void JSString::outOfMemory(ExecState* exec) const
+{
+    for (unsigned i = 0; i < m_fiberCount; ++i) {
+        RopeImpl::deref(m_other.m_fibers[i]);
+        m_other.m_fibers[i] = 0;
+    }
+    m_fiberCount = 0;
+    ASSERT(!isRope());
+    ASSERT(m_value == UString());
+    if (exec)
+        throwOutOfMemoryError(exec);
+}
+
 // This function construsts a substring out of a rope without flattening by reusing the existing fibers.
 // This can reduce memory usage substantially. Since traversing ropes is slow the function will revert 
 // back to flattening if the rope turns out to be long.

@@ -1,3 +1,22 @@
+2011-04-20  Michael Saboff  <msaboff@apple.com>
+
+        Reviewed by Geoff Garen.
+
+        JSString::resolveRope inefficient for common 2 fiber case
+        https://bugs.webkit.org/show_bug.cgi?id=58994
+
+        Split JSString::resolveRope into three routines.
+        resolveRope allocates the new buffer and handles the 1 or 2
+        fiber case with single level fibers.
+        resolveRopeSlowCase handles the general case.
+        outOfMemory handles the rare out of memory exception case.
+
+        * runtime/JSString.cpp:
+        (JSC::JSString::resolveRope):
+        (JSC::JSString::resolveRopeSlowCase):
+        (JSC::JSString::outOfMemory):
+        * runtime/JSString.h:
+
 2011-04-20  Adam Klein  <adamk@chromium.org>
 
         Reviewed by David Levin.
