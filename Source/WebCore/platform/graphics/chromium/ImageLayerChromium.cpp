@@ -86,7 +86,7 @@ void ImageLayerChromium::updateCompositorResources()
         m_tiler->invalidateRect(paintRect);
         m_dirtyRect = IntRect();
     }
-    m_tiler->updateFromPixels(paintRect, m_decodedImage.pixels());
+    m_tiler->updateFromPixels(paintRect, paintRect, m_decodedImage.pixels());
 }
 
 IntRect ImageLayerChromium::layerBounds() const

@@ -1,3 +1,27 @@
+2011-04-21  Adrienne Walker  <enne@google.com>
+
+        Reviewed by James Robinson.
+
+        [chromium] Don't upload partially drawn tiles in the compositor
+        https://bugs.webkit.org/show_bug.cgi?id=59112
+
+        Use the same set of tiles for painting as is used for updating.
+        Before, a larger set of tiles were being uploaded, causing some to
+        only be partially undirtied because they were not fully painted.
+        As tiles are clear their dirty rect after being unpainted, this caused
+        artifacts to appear when scrolling.
+
+        Unfortunately, no layout test can test this behavior yet because
+        scrolling invalidations are done differently in test shell.
+
+        * platform/graphics/chromium/ImageLayerChromium.cpp:
+        (WebCore::ImageLayerChromium::updateCompositorResources):
+        * platform/graphics/chromium/LayerTilerChromium.cpp:
+        (WebCore::LayerTilerChromium::update):
+        (WebCore::LayerTilerChromium::uploadCanvas):
+        (WebCore::LayerTilerChromium::updateFromPixels):
+        * platform/graphics/chromium/LayerTilerChromium.h:
+
 2011-04-21  Ben Taylor  <bentaylor.solx86@gmail.com>
 
         Reviewed by Alexey Proskuryakov.

@@ -252,10 +252,14 @@ void LayerTilerChromium::update(TilePaintInterface& painter, const IntRect& cont
         }
     }
 
-    if (dirtyLayerRect.isEmpty())
-        return;
+    // Due to borders, when the paint rect is extended to tile boundaries, it
+    // may end up overlapping more tiles than the original content rect. Record
+    // that original rect so we don't upload more tiles than necessary.
+    m_updateRect = contentRect;
 
     m_paintRect = layerRectToContentRect(dirtyLayerRect);
+    if (dirtyLayerRect.isEmpty())
+        return;
 
     m_canvas.resize(m_paintRect.size());
 
@@ -276,11 +280,11 @@ void LayerTilerChromium::uploadCanvas()
     PlatformCanvas::AutoLocker locker(&m_canvas);
     {
         TRACE_EVENT("LayerTilerChromium::updateFromPixels", this, 0);
-        updateFromPixels(m_paintRect, locker.pixels());
+        updateFromPixels(m_updateRect, m_paintRect, locker.pixels());
     }
 }
 
-void LayerTilerChromium::updateFromPixels(const IntRect& paintRect, const uint8_t* paintPixels)
+void LayerTilerChromium::updateFromPixels(const IntRect& contentRect, const IntRect& paintRect, const uint8_t* paintPixels)
 {
     // Painting could cause compositing to get turned off, which may cause the tiler to become invalidated mid-update.
     if (!m_tilingData.totalSizeX() || !m_tilingData.totalSizeY())
@@ -289,7 +293,7 @@ void LayerTilerChromium::updateFromPixels(const IntRect& paintRect, const uint8_
     GraphicsContext3D* context = layerRendererContext();
 
     int left, top, right, bottom;
-    contentRectToTileIndices(paintRect, left, top, right, bottom);
+    contentRectToTileIndices(contentRect, left, top, right, bottom);
     for (int j = top; j <= bottom; ++j) {
         for (int i = left; i <= right; ++i) {
             Tile* tile = tileAt(i, j);
