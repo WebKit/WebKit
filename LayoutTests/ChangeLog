@@ -1,3 +1,13 @@
+2011-04-20  Matthew Delaney  <mdelaney@apple.com>
+
+        Reviewed by Adam Roben.
+
+        Move toDataURL.jpeg.alpha expected result out of /mac-snowleopard and into /mac
+        https://bugs.webkit.org/show_bug.cgi?id=59038
+
+        * platform/mac-snowleopard/canvas/philip/tests/toDataURL.jpeg.alpha-expected.txt: Removed.
+        * platform/mac/canvas/philip/tests/toDataURL.jpeg.alpha-expected.txt: Copied from LayoutTests/platform/mac-snowleopard/canvas/philip/tests/toDataURL.jpeg.alpha-expected.txt.
+
 2011-04-21  Philippe Normand  <pnormand@igalia.com>
 
         Reviewed by Martin Robinson.
