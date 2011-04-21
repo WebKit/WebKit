@@ -417,6 +417,7 @@ IDL_BINDINGS += \
     svg/SVGFEDiffuseLightingElement.idl \
     svg/SVGFEDisplacementMapElement.idl \
     svg/SVGFEDistantLightElement.idl \
+    svg/SVGFEDropShadowElement.idl \
     svg/SVGFEFloodElement.idl \
     svg/SVGFEFuncAElement.idl \
     svg/SVGFEFuncBElement.idl \
