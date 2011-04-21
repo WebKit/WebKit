@@ -1,3 +1,7 @@
+2011-04-21  Tony Chang  <tony@chromium.org>
+
+        Unreviewed, embedding checksums in png files not in LayoutTests/platform.
+
 2011-04-21  Dirk Schulze  <krit@webkit.org>
 
         Uneviewed rebaseline of win.
