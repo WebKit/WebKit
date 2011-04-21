@@ -3841,10 +3841,6 @@ BUGWK59065 : fast/filesystem/op-move.html = TEXT
 BUGDPRANKE : fast/transforms/selection-bounds-in-transformed-view.html = TEXT
 
 // Introduced in r84457
-BUGWK59067 : media/csp-blocks-video.html = TEXT
-
-// Introduced in r84457
-BUGDPRANKE : http/tests/security/contentSecurityPolicy/media-src-blocked.html = TEXT
 BUGDPRANKE : http/tests/security/contentSecurityPolicy/image-allowed.html = TEXT PASS
 
 // seems to be failing because of a missing QT plugin?
