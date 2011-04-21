@@ -331,6 +331,7 @@ Never found SVGFEConvolveMatrixElement
 Never found SVGFEDiffuseLightingElement
 Never found SVGFEDisplacementMapElement
 Never found SVGFEDistantLightElement
+Never found SVGFEDropShadowElement
 Never found SVGFEFloodElement
 Never found SVGFEFuncAElement
 Never found SVGFEFuncBElement

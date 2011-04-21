@@ -1,3 +1,16 @@
+2011-04-21  Dirk Schulze  <krit@webkit.org>
+
+        Unreviewed rebaseline.
+
+        SVG feDropShadow implementation of SVG Filters 1.2
+        https://bugs.webkit.org/show_bug.cgi?id=52513
+
+        * fast/dom/Window/window-properties-expected.txt:
+        * fast/dom/Window/window-property-descriptors-expected.txt:
+        * fast/dom/prototype-inheritance-2-expected.txt:
+        * fast/dom/prototype-inheritance-expected.txt:
+        * fast/js/global-constructors-expected.txt:
+
 2011-04-21  Csaba Osztrogonác  <ossy@webkit.org>
 
         [Qt] Unreviewed. Update expected files after r84522.
