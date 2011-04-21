@@ -27057,6 +27057,10 @@
 					>
 				</File>
 				<File
+					RelativePath="..\platform\graphics\Glyph.h"
+					>
+				</File>
+				<File
 					RelativePath="..\platform\graphics\GlyphBuffer.h"
 					>
 				</File>

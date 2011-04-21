@@ -31,6 +31,7 @@
 #define GlyphBuffer_h
 
 #include "FloatSize.h"
+#include "Glyph.h"
 #include <wtf/UnusedParam.h>
 #include <wtf/Vector.h>
 
@@ -44,7 +45,6 @@
 
 namespace WebCore {
 
-typedef unsigned short Glyph;
 class SimpleFontData;
 
 #if USE(CAIRO)

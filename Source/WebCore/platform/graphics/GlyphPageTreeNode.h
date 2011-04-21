@@ -29,6 +29,7 @@
 #ifndef GlyphPageTreeNode_h
 #define GlyphPageTreeNode_h
 
+#include "Glyph.h"
 #include <string.h>
 #include <wtf/HashMap.h>
 #include <wtf/PassRefPtr.h>
@@ -45,8 +46,6 @@ namespace WebCore {
 class FontData;
 class GlyphPageTreeNode;
 class SimpleFontData;
-
-typedef unsigned short Glyph;
 
 // Holds the glyph index and the corresponding SimpleFontData information for a given
 // character.

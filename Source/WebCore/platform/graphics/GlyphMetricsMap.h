@@ -29,14 +29,13 @@
 #ifndef GlyphMetricsMap_h
 #define GlyphMetricsMap_h
 
+#include "Glyph.h"
 #include <wtf/FixedArray.h>
 #include <wtf/HashMap.h>
 #include <wtf/OwnPtr.h>
 #include <wtf/unicode/Unicode.h>
 
 namespace WebCore {
-
-typedef unsigned short Glyph;
 
 const float cGlyphSizeUnknown = -1;
 

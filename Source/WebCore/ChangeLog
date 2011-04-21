@@ -1,3 +1,19 @@
+2011-04-21  Nikolas Zimmermann  <nzimmermann@rim.com>
+
+        Reviewed by Dirk Schulze.
+
+        Centralize typedef unsigned short Glyph in Glyph.h
+        https://bugs.webkit.org/show_bug.cgi?id=59087
+
+        * GNUmakefile.list.am: Add Glyph.h to build.
+        * WebCore.gypi: Ditto.
+        * WebCore.vcproj/WebCore.vcproj: Ditto.
+        * WebCore.xcodeproj/project.pbxproj: Ditto.
+        * platform/graphics/Glyph.h: Added.
+        * platform/graphics/GlyphBuffer.h: Include Glyph.h instead of duplicating the Glyph typedef.
+        * platform/graphics/GlyphMetricsMap.h: Ditto.
+        * platform/graphics/GlyphPageTreeNode.h: Ditto.
+
 2011-04-21  Pavel Feldman  <pfeldman@google.com>
 
         Reviewed by Yury Semikhatsky.

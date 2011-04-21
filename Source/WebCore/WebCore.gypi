@@ -819,6 +819,7 @@
             'platform/graphics/FontTraitsMask.h',
             'platform/graphics/FontWidthVariant.h',
             'platform/graphics/Generator.h',
+            'platform/graphics/Glyph.h',
             'platform/graphics/GlyphBuffer.h',
             'platform/graphics/GlyphMetricsMap.h',
             'platform/graphics/GlyphPageTreeNode.h',
