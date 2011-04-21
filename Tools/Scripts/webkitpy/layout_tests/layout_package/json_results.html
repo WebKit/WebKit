@@ -8,7 +8,7 @@ body > p:first-of-type {
     margin-top: 0;
 }
 
-tr:first-of-type:hover {
+tbody tr:first-of-type:hover {
     opacity: 0.7
 }
 
@@ -119,7 +119,8 @@ function globalState()
             hasTextFailures: false,
             newTests: [],
             results: {},
-            testsWithStderr: []
+            testsWithStderr: [],
+            unexpectedPassTests: []
         }
     }
     return g_state;
@@ -269,8 +270,20 @@ function tableRows()
         }
 
         var expected = globalState().results.tests[test].expected || 'PASS';
-        if (actual == 'PASS' && (!globalState().results.uses_expectations_file || expected == 'PASS'))
-          continue;
+        var isExpected = actual == 'SKIP';
+        if (!isExpected && globalState().results.uses_expectations_file) {
+            var expectedArray = expected.split(' ');
+            if (expectedArray.indexOf(actual) != -1)
+                isExpected = true;
+            else if (expectedArray.indexOf('FAIL') != -1)
+                isExpected = actual == 'IMAGE' || actual == 'TEXT' || actual == 'IMAGE+TEXT';
+        }
+
+        if (actual == 'PASS') {
+            if (!isExpected && expected != 'PASS')
+                globalState().unexpectedPassTests.push(test);            
+            continue;
+        }
 
         // FIXME: put unexpected passes in a separate table.
 
@@ -321,36 +334,34 @@ function tableRows()
         if (globalState().results.uses_expectations_file)
           row += '<td>' + expected + '</td>';
 
-        var isExpected = actual == 'SKIP';
-        if (!isExpected && globalState().results.uses_expectations_file) {
-            var expectedArray = expected.split(' ');
-            if (expectedArray.indexOf(actual) != -1)
-                isExpected = true;
-            else if (expectedArray.indexOf('FAIL') != -1)
-                isExpected = actual == 'IMAGE' || actual == 'TEXT' || actual == 'IMAGE+TEXT';
-        }
         html += '<tbody class="' + (isExpected ? 'expected' : '') + '"><tr>' + row + '</tr></tbody>';
     }
     return html;
 }
 
-function testList(tests, header, tableId, fileSuffix, linkName)
+function testList(tests, header, tableId)
 {
     tests.sort();
 
     var html = '<p>' + header + '</p><table id="' + tableId + '">';
+
+    if (tableId == 'passes-table')
+        html += '<thead><th>test</th><th>expected failure type</th>';
+
     for (var i = 0; i < tests.length; i++) {
         var test = tests[i];
         html += '<tbody><tr><td>' + testLink(test) + '</td><td>';
         
-        if (fileSuffix.indexOf('actual') == -1)
-            html += resultLink(stripExtension(test), fileSuffix, linkName);
-        else {
+        if (tableId == 'stderr-table')
+            html += resultLink(stripExtension(test), '-stderr.txt', 'stderr');
+        else if (tableId == 'passes-table')
+            html += globalState().results.tests[test].expected;
+        else if (tableId == 'new-tests-table') {
             var testObject = globalState().results.tests[test];
             if (testObject.is_missing_audio)
                 html += resultLink(stripExtension(test), '-actual.wav', 'audio result');
             if (testObject.is_missing_text)
-                html += resultLink(stripExtension(test), fileSuffix, linkName);
+                html += resultLink(stripExtension(test), '-actual.txt', 'result');
             if (testObject.is_missing_image)
                 html += resultLink(stripExtension(test), '-actual.png', 'png result');
         } 
@@ -562,10 +573,13 @@ function generatePage()
     }
 
     if (globalState().newTests.length)
-        html += testList(globalState().newTests, 'Tests that had no expected results (probably new):', 'new-tests-table', '-actual.txt', 'result');
+        html += testList(globalState().newTests, 'Tests that had no expected results (probably new):', 'new-tests-table');
 
     if (globalState().testsWithStderr.length)
-        html += testList(globalState().testsWithStderr, 'Tests that had stderr output:', 'stderr-table', '-stderr.txt', 'stderr');
+        html += testList(globalState().testsWithStderr, 'Tests that had stderr output:', 'stderr-table');
+
+    if (globalState().unexpectedPassTests.length)
+        html += testList(globalState().unexpectedPassTests, 'Tests expected to fail but passed:', 'passes-table');
 
     if (globalState().hasHttpTests) {
         html += '<p>httpd access log: <a href="access_log.txt">access_log.txt</a></p>' +

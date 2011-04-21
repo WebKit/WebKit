@@ -2,6 +2,15 @@
 
         Reviewed by Tony Chang.
 
+        put unexpected passes into their own table
+        https://bugs.webkit.org/show_bug.cgi?id=59016
+
+        * Scripts/webkitpy/layout_tests/layout_package/json_results.html:
+
+2011-04-20  Ojan Vafai  <ojan@chromium.org>
+
+        Reviewed by Tony Chang.
+
         initial set of tests for new results.html file
         https://bugs.webkit.org/show_bug.cgi?id=59031
 

@@ -99,6 +99,25 @@ function runTests()
         assertTrue(document.querySelector('#stderr-table .result-link').textContent == 'stderr');
     });
 
+    results = mockResults();
+    results.tests['foo/bar.html'] = mockExpectation('TEXT', 'PASS');
+    results.tests['foo/bar1.html'] = mockExpectation('CRASH', 'PASS');
+    results.tests['foo/bar2.html'] = mockExpectation('IMAGE', 'PASS');
+    runTest(results, function() {
+        assertTrue(!document.getElementById('results-table'));
+
+        var testLinks = document.querySelectorAll('#passes-table .test-link');
+        assertTrue(testLinks[0].textContent == 'foo/bar.html');
+        assertTrue(testLinks[1].textContent == 'foo/bar1.html');
+        assertTrue(testLinks[2].textContent == 'foo/bar2.html');
+
+        var expectationTypes = document.querySelectorAll('#passes-table td:last-of-type');
+        assertTrue(expectationTypes[0].textContent == 'TEXT');
+        assertTrue(expectationTypes[1].textContent == 'CRASH');
+        assertTrue(expectationTypes[2].textContent == 'IMAGE');
+
+    });
+
     document.body.innerHTML = '<pre>' + g_log.join('\n') + '</pre>';
 }
 
