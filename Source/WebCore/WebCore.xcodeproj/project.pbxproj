@@ -141,6 +141,8 @@
 		08744BAA0EDB7D86004C9E63 /* WMLOnEventElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 08744BA90EDB7D86004C9E63 /* WMLOnEventElement.cpp */; };
 		08744BAE0EDB7D92004C9E63 /* WMLOnEventElement.h in Headers */ = {isa = PBXBuildFile; fileRef = 08744BAD0EDB7D92004C9E63 /* WMLOnEventElement.h */; };
 		087B84961272CEC800A14417 /* SVGAnimatedAngle.h in Headers */ = {isa = PBXBuildFile; fileRef = 087B84951272CEC700A14417 /* SVGAnimatedAngle.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		087E0AF613606D0B00FA4BA8 /* SVGGlyph.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 087E0AF413606D0B00FA4BA8 /* SVGGlyph.cpp */; };
+		087E0AF713606D0B00FA4BA8 /* SVGGlyph.h in Headers */ = {isa = PBXBuildFile; fileRef = 087E0AF513606D0B00FA4BA8 /* SVGGlyph.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		087FFA0F0EFF3ED3009DBD88 /* WMLInsertedLegendElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 087FFA0D0EFF3ED3009DBD88 /* WMLInsertedLegendElement.cpp */; };
 		087FFA100EFF3ED3009DBD88 /* WMLInsertedLegendElement.h in Headers */ = {isa = PBXBuildFile; fileRef = 087FFA0E0EFF3ED3009DBD88 /* WMLInsertedLegendElement.h */; };
 		08807B760ED709AB003F6975 /* WMLGoElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 08807B6A0ED709AB003F6975 /* WMLGoElement.cpp */; };
@@ -6575,6 +6577,8 @@
 		08744BA90EDB7D86004C9E63 /* WMLOnEventElement.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WMLOnEventElement.cpp; sourceTree = "<group>"; };
 		08744BAD0EDB7D92004C9E63 /* WMLOnEventElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WMLOnEventElement.h; sourceTree = "<group>"; };
 		087B84951272CEC700A14417 /* SVGAnimatedAngle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SVGAnimatedAngle.h; sourceTree = "<group>"; };
+		087E0AF413606D0B00FA4BA8 /* SVGGlyph.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SVGGlyph.cpp; sourceTree = "<group>"; };
+		087E0AF513606D0B00FA4BA8 /* SVGGlyph.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SVGGlyph.h; sourceTree = "<group>"; };
 		087FFA0D0EFF3ED3009DBD88 /* WMLInsertedLegendElement.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WMLInsertedLegendElement.cpp; sourceTree = "<group>"; };
 		087FFA0E0EFF3ED3009DBD88 /* WMLInsertedLegendElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WMLInsertedLegendElement.h; sourceTree = "<group>"; };
 		08807B6A0ED709AB003F6975 /* WMLGoElement.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WMLGoElement.cpp; sourceTree = "<group>"; };
@@ -17934,6 +17938,8 @@
 				B2C3DA540D006CD600EF6F26 /* SimpleFontData.h */,
 				B23540F00D00782E002382FA /* StringTruncator.cpp */,
 				B23540F10D00782E002382FA /* StringTruncator.h */,
+				087E0AF413606D0B00FA4BA8 /* SVGGlyph.cpp */,
+				087E0AF513606D0B00FA4BA8 /* SVGGlyph.h */,
 				930FC6891072B9280045293E /* TextRenderingMode.h */,
 				A824B4640E2EF2EA0081A7B7 /* TextRun.h */,
 				37C28A6710F659CC008C7813 /* TypesettingFeatures.h */,
@@ -23011,6 +23017,7 @@
 				977E2E0F12F0FC9C00C13379 /* XSSFilter.h in Headers */,
 				086BBD0F136039C2008B15D8 /* Glyph.h in Headers */,
 				0873B86B136064EA00A522C2 /* GlyphPage.h in Headers */,
+				087E0AF713606D0B00FA4BA8 /* SVGGlyph.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -25720,6 +25727,7 @@
 				93F19B0508245E59001E9ABC /* XSLTProcessorLibxslt.cpp in Sources */,
 				E1BE512D0CF6C512002EA959 /* XSLTUnicodeSort.cpp in Sources */,
 				977E2E0E12F0FC9C00C13379 /* XSSFilter.cpp in Sources */,
+				087E0AF613606D0B00FA4BA8 /* SVGGlyph.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

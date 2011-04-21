@@ -2472,6 +2472,8 @@ webcore_sources += \
 	Source/WebCore/platform/graphics/StringTruncator.cpp \
 	Source/WebCore/platform/graphics/StringTruncator.h \
 	Source/WebCore/platform/graphics/StrokeStyleApplier.h \
+	Source/WebCore/platform/graphics/SVGGlyph.cpp \
+	Source/WebCore/platform/graphics/SVGGlyph.h \
 	Source/WebCore/platform/graphics/TextRenderingMode.h \
 	Source/WebCore/platform/graphics/TextRun.h \
 	Source/WebCore/platform/graphics/transforms/AffineTransform.cpp \

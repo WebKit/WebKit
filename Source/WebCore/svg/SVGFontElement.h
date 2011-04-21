@@ -59,7 +59,7 @@ public:
 
     void invalidateGlyphCache();
 
-    void getGlyphIdentifiersForString(const String&, Vector<SVGGlyphIdentifier>&) const;
+    void getGlyphIdentifiersForString(const String&, Vector<SVGGlyph>&) const;
 
     float horizontalKerningForPairOfStringsAndGlyphs(const String& u1, const String& g1, const String& u2, const String& g2) const;
     float verticalKerningForPairOfStringsAndGlyphs(const String& u1, const String& g1, const String& u2, const String& g2) const;

@@ -173,7 +173,7 @@ float SVGFontElement::verticalKerningForPairOfStringsAndGlyphs(const String& u1,
     return kerningForPairOfStringsAndGlyphs(m_verticalKerningPairs, u1, g1, u2, g2);
 }
 
-void SVGFontElement::getGlyphIdentifiersForString(const String& string, Vector<SVGGlyphIdentifier>& glyphs) const
+void SVGFontElement::getGlyphIdentifiersForString(const String& string, Vector<SVGGlyph>& glyphs) const
 {
     ensureGlyphCache();
     m_glyphMap.get(string, glyphs);

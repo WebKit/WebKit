@@ -562,6 +562,7 @@ LOCAL_SRC_FILES := $(LOCAL_SRC_FILES) \
 
 ifeq ($(ENABLE_SVG), true)
 LOCAL_SRC_FILES := $(LOCAL_SRC_FILES) \
+	platform/graphics/SVGGlyph.cpp \
 	platform/graphics/filters/DistantLightSource.cpp \
 	platform/graphics/filters/FEBlend.cpp \
 	platform/graphics/filters/FEColorMatrix.cpp \

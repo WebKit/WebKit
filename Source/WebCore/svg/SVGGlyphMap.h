@@ -35,7 +35,7 @@ private:
 public:
     static PassRefPtr<GlyphMapNode> create() { return adoptRef(new GlyphMapNode); }
 
-    Vector<SVGGlyphIdentifier> glyphs;
+    Vector<SVGGlyph> glyphs;
 
     GlyphMapLayer children;
 };
@@ -45,7 +45,7 @@ class SVGGlyphMap {
 public:
     SVGGlyphMap() : m_currentPriority(0) { }
 
-    void add(const String& string, const SVGGlyphIdentifier& glyph) 
+    void add(const String& string, const SVGGlyph& glyph) 
     {
         size_t len = string.length();
         GlyphMapLayer* currentLayer = &m_rootLayer;
@@ -64,17 +64,17 @@ public:
         if (node) {
             node->glyphs.append(glyph);
             node->glyphs.last().priority = m_currentPriority++;
-            node->glyphs.last().nameLength = len;
+            node->glyphs.last().unicodeStringLength = len;
             node->glyphs.last().isValid = true;
         }
     }
 
-    static inline bool compareGlyphPriority(const SVGGlyphIdentifier& first, const SVGGlyphIdentifier& second)
+    static inline bool compareGlyphPriority(const SVGGlyph& first, const SVGGlyph& second)
     {
         return first.priority < second.priority;
     }
 
-    void get(const String& string, Vector<SVGGlyphIdentifier>& glyphs)
+    void get(const String& string, Vector<SVGGlyph>& glyphs)
     {
         GlyphMapLayer* currentLayer = &m_rootLayer;
 

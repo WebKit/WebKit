@@ -30825,6 +30825,14 @@
 					>
 				</File>
 				<File
+					RelativePath="..\platform\graphics\SVGGlyph.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\platform\graphics\SVGGlyph.h"
+					>
+				</File>
+				<File
 					RelativePath="..\platform\text\TextBoundaries.cpp"
 					>
 				</File>

@@ -996,6 +996,7 @@ SOURCES += \
     platform/graphics/RoundedIntRect.cpp \
     platform/graphics/SegmentedFontData.cpp \
     platform/graphics/ShadowBlur.cpp \
+    platform/graphics/SVGGlyph.cpp \
     platform/graphics/SimpleFontData.cpp \
     platform/graphics/TiledBackingStore.cpp \
     platform/graphics/transforms/AffineTransform.cpp \

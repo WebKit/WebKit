@@ -1,3 +1,55 @@
+2011-04-21  Nikolas Zimmermann  <nzimmermann@rim.com>
+
+        Reviewed by Dirk Schulze.
+
+        Split SVGGlyphIdentifier class out of SVGGlyphElement.h
+        https://bugs.webkit.org/show_bug.cgi?id=59101
+
+        Move SVGGlyphIdentifier class out of SVGGlyphElement.h, place it in platform/graphics/SVGGlyph.h
+        and rename the contained struct to SVGGlyph. It will be used in follow-up patches that will integrate SVGGlyph & GlyphPage.
+
+        Several utility functions are moved from SVGFont.cpp to SVGGlyph.cpp, as that's the place where they really belong to.
+        Renamed nameLength to unicodeStringLength in the SVGGlyph struct for clarity.
+
+        * Android.mk: Add SVGGlyph.cpp/h to build.
+        * CMakeLists.txt: Ditto.
+        * GNUmakefile.list.am: Ditto.
+        * WebCore.gypi: Ditto.
+        * WebCore.pro: Ditto.
+        * WebCore.vcproj/WebCore.vcproj: Ditto.
+        * WebCore.xcodeproj/project.pbxproj: Ditto.
+        * platform/graphics/SVGGlyph.cpp: Copied from svg/SVGFont.cpp. Removed everything except the methods listed below, that belong here.
+        (WebCore::processArabicFormDetection):
+        (WebCore::charactersWithArabicForm):
+        (WebCore::isCompatibleArabicForm):
+        (WebCore::isCompatibleGlyph):
+        * platform/graphics/SVGGlyph.h: Copied from svg/SVGGlyphElement.h. Renamed SVGGlyphIdentifier to SVGGlyph.
+        (WebCore::SVGGlyph::SVGGlyph):
+        (WebCore::SVGGlyph::operator==):
+        * platform/graphics/SimpleFontData.cpp: Adapt for SVGGlyphIdentifier -> SVGGlyph and nameLength -> unicodeStringLength rename.
+        (WebCore::SimpleFontData::SimpleFontData):
+        * svg/SVGFont.cpp: Ditto. Remove helper functions that are now living in SVGGlyph.cpp
+        (WebCore::SVGTextRunWalker::walk):
+        (WebCore::floatWidthUsingSVGFontCallback):
+        (WebCore::drawTextUsingSVGFontCallback):
+        (WebCore::drawTextMissingGlyphCallback):
+        (WebCore::Font::drawTextUsingSVGFont):
+        * svg/SVGFontElement.cpp: Ditto.
+        (WebCore::SVGFontElement::getGlyphIdentifiersForString):
+        * svg/SVGFontElement.h: Ditto.
+        * svg/SVGGlyphElement.cpp: Ditto.
+        (WebCore::parseArabicForm):
+        (WebCore::parseOrientation):
+        (WebCore::SVGGlyphElement::inheritUnspecifiedAttributes):
+        (WebCore::parseSVGGlyphAttribute):
+        (WebCore::SVGGlyphElement::buildGenericGlyphIdentifier):
+        (WebCore::SVGGlyphElement::buildGlyphIdentifier):
+        * svg/SVGGlyphElement.h: Ditto.
+        * svg/SVGGlyphMap.h: Ditto.
+        (WebCore::SVGGlyphMap::add):
+        (WebCore::SVGGlyphMap::compareGlyphPriority):
+        (WebCore::SVGGlyphMap::get):
+
 2011-04-21  Eric Carlson  <eric.carlson@apple.com>
 
         Reviewed by Dan Bernstein.

@@ -1565,6 +1565,7 @@ IF (ENABLE_SVG)
         css/SVGCSSComputedStyleDeclaration.cpp
         css/SVGCSSParser.cpp
         css/SVGCSSStyleSelector.cpp
+        platform/graphics/SVGGlyph.cpp
         rendering/PointerEventsHitRules.cpp
         rendering/style/SVGRenderStyle.cpp
         rendering/style/SVGRenderStyleDefs.cpp

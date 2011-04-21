@@ -89,7 +89,7 @@ SimpleFontData::SimpleFontData(PassOwnPtr<SVGFontData> svgFontData, int size, bo
     SVGFontElement* associatedFontElement = svgFontFaceElement->associatedFontElement();
     if (!xHeight) {    
         // Fallback if x_heightAttr is not specified for the font element.
-        Vector<SVGGlyphIdentifier> letterXGlyphs;
+        Vector<SVGGlyph> letterXGlyphs;
         associatedFontElement->getGlyphIdentifiersForString(String("x", 1), letterXGlyphs);
         xHeight = letterXGlyphs.isEmpty() ? 2 * ascent / 3 : letterXGlyphs.first().horizontalAdvanceX * scale;
     }
@@ -101,19 +101,19 @@ SimpleFontData::SimpleFontData(PassOwnPtr<SVGFontData> svgFontData, int size, bo
     m_fontMetrics.setLineSpacing(roundf(ascent) + roundf(descent) + roundf(lineGap));
     m_fontMetrics.setXHeight(xHeight);
 
-    Vector<SVGGlyphIdentifier> spaceGlyphs;
+    Vector<SVGGlyph> spaceGlyphs;
     associatedFontElement->getGlyphIdentifiersForString(String(" ", 1), spaceGlyphs);
     m_spaceWidth = spaceGlyphs.isEmpty() ? xHeight : spaceGlyphs.first().horizontalAdvanceX * scale;
 
-    Vector<SVGGlyphIdentifier> numeralZeroGlyphs;
+    Vector<SVGGlyph> numeralZeroGlyphs;
     associatedFontElement->getGlyphIdentifiersForString(String("0", 1), numeralZeroGlyphs);
     m_avgCharWidth = numeralZeroGlyphs.isEmpty() ? m_spaceWidth : numeralZeroGlyphs.first().horizontalAdvanceX * scale;
 
-    Vector<SVGGlyphIdentifier> letterWGlyphs;
+    Vector<SVGGlyph> letterWGlyphs;
     associatedFontElement->getGlyphIdentifiersForString(String("W", 1), letterWGlyphs);
     m_maxCharWidth = letterWGlyphs.isEmpty() ? ascent : letterWGlyphs.first().horizontalAdvanceX * scale;
 
-    // FIXME: is there a way we can get the space glyph from the SVGGlyphIdentifier above?
+    // FIXME: is there a way we can get the space glyph from the SVGGlyph above?
     m_spaceGlyph = 0;
     m_zeroWidthSpaceGlyph = 0;
     determinePitch();

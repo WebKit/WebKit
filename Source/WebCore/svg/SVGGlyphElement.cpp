@@ -76,28 +76,28 @@ void SVGGlyphElement::removedFromDocument()
     SVGStyledElement::removedFromDocument();
 }
 
-static inline SVGGlyphIdentifier::ArabicForm parseArabicForm(const AtomicString& value)
+static inline SVGGlyph::ArabicForm parseArabicForm(const AtomicString& value)
 {
     if (value == "medial")
-        return SVGGlyphIdentifier::Medial;
+        return SVGGlyph::Medial;
     if (value == "terminal")
-        return SVGGlyphIdentifier::Terminal;
+        return SVGGlyph::Terminal;
     if (value == "isolated")
-        return SVGGlyphIdentifier::Isolated;
+        return SVGGlyph::Isolated;
     if (value == "initial")
-        return SVGGlyphIdentifier::Initial;
+        return SVGGlyph::Initial;
 
-    return SVGGlyphIdentifier::None;
+    return SVGGlyph::None;
 }
 
-static inline SVGGlyphIdentifier::Orientation parseOrientation(const AtomicString& value)
+static inline SVGGlyph::Orientation parseOrientation(const AtomicString& value)
 {
     if (value == "h")
-        return SVGGlyphIdentifier::Horizontal;
+        return SVGGlyph::Horizontal;
     if (value == "v")
-        return SVGGlyphIdentifier::Vertical;
+        return SVGGlyph::Vertical;
 
-    return SVGGlyphIdentifier::Both;
+    return SVGGlyph::Both;
 }
 
 static inline Path parsePathData(const AtomicString& value)
@@ -108,18 +108,18 @@ static inline Path parsePathData(const AtomicString& value)
     return result;
 }
 
-void SVGGlyphElement::inheritUnspecifiedAttributes(SVGGlyphIdentifier& identifier, const SVGFontData* svgFontData)
+void SVGGlyphElement::inheritUnspecifiedAttributes(SVGGlyph& identifier, const SVGFontData* svgFontData)
 {
-    if (identifier.horizontalAdvanceX == SVGGlyphIdentifier::inheritedValue())
+    if (identifier.horizontalAdvanceX == SVGGlyph::inheritedValue())
         identifier.horizontalAdvanceX = svgFontData->horizontalAdvanceX();
 
-    if (identifier.verticalOriginX == SVGGlyphIdentifier::inheritedValue())
+    if (identifier.verticalOriginX == SVGGlyph::inheritedValue())
         identifier.verticalOriginX = svgFontData->verticalOriginX();
 
-    if (identifier.verticalOriginY == SVGGlyphIdentifier::inheritedValue())
+    if (identifier.verticalOriginY == SVGGlyph::inheritedValue())
         identifier.verticalOriginY = svgFontData->verticalOriginY();
 
-    if (identifier.verticalAdvanceY == SVGGlyphIdentifier::inheritedValue())
+    if (identifier.verticalAdvanceY == SVGGlyph::inheritedValue())
         identifier.verticalAdvanceY = svgFontData->verticalAdvanceY();
 }
 
@@ -127,7 +127,7 @@ static inline float parseSVGGlyphAttribute(const SVGElement* element, const WebC
 {
     AtomicString value(element->getAttribute(name));
     if (value.isEmpty())
-        return SVGGlyphIdentifier::inheritedValue();
+        return SVGGlyph::inheritedValue();
 
     return value.toFloat();
 }
@@ -146,9 +146,9 @@ void SVGGlyphElement::fillAttributeToPropertyTypeMap()
     attributeToPropertyTypeMap.set(SVGNames::dAttr, AnimatedPath);
 }
 
-SVGGlyphIdentifier SVGGlyphElement::buildGenericGlyphIdentifier(const SVGElement* element)
+SVGGlyph SVGGlyphElement::buildGenericGlyphIdentifier(const SVGElement* element)
 {
-    SVGGlyphIdentifier identifier;
+    SVGGlyph identifier;
     identifier.pathData = parsePathData(element->getAttribute(dAttr));
  
     // Spec: The horizontal advance after rendering the glyph in horizontal orientation.
@@ -175,9 +175,9 @@ SVGGlyphIdentifier SVGGlyphElement::buildGenericGlyphIdentifier(const SVGElement
     return identifier;
 }
 
-SVGGlyphIdentifier SVGGlyphElement::buildGlyphIdentifier() const
+SVGGlyph SVGGlyphElement::buildGlyphIdentifier() const
 {
-    SVGGlyphIdentifier identifier(buildGenericGlyphIdentifier(this));
+    SVGGlyph identifier(buildGenericGlyphIdentifier(this));
     identifier.glyphName = getAttribute(glyph_nameAttr);
     identifier.orientation = parseOrientation(getAttribute(orientationAttr));
     identifier.arabicForm = parseArabicForm(getAttribute(arabic_formAttr));
