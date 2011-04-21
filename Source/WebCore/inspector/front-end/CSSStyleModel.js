@@ -509,7 +509,7 @@ WebInspector.CSSProperty.prototype = {
                     return;
                 }
 
-                WebInspector.cssModel._fireStyleSheetChanged(style.id.styleSheetId, majorChange, userCallback.bind(this, style));
+                WebInspector.cssModel._fireStyleSheetChanged(style.id.styleSheetId, majorChange, userCallback ? userCallback.bind(this, style) : null);
             } else {
                 console.error(JSON.stringify(error));
                 if (userCallback)
@@ -524,10 +524,10 @@ WebInspector.CSSProperty.prototype = {
         CSSAgent.setPropertyText(this.ownerStyle.id, this.index, propertyText, this.index < this.ownerStyle.pastLastSourcePropertyIndex(), callback.bind(this));
     },
 
-    setValue: function(newValue, userCallback)
+    setValue: function(newValue, majorChange, userCallback)
     {
         var text = this.name + ": " + newValue + (this.priority ? " !" + this.priority : "") + ";"
-        this.setText(text, userCallback);
+        this.setText(text, majorChange, userCallback);
     },
 
     setDisabled: function(disabled, userCallback)
@@ -539,15 +539,16 @@ WebInspector.CSSProperty.prototype = {
 
         function callback(error, stylePayload)
         {
-            if (!userCallback)
+            if (error) {
+                if (userCallback)
+                    userCallback(null);
                 return;
-            if (error)
-                userCallback(null);
-            else {
+            }
+            if (userCallback) {
                 var style = WebInspector.CSSStyleDeclaration.parsePayload(stylePayload);
                 userCallback(style);
-                WebInspector.cssModel._fireStyleSheetChanged(this.ownerStyle.id.styleSheetId, false);
             }
+            WebInspector.cssModel._fireStyleSheetChanged(this.ownerStyle.id.styleSheetId, false);
         }
 
         CSSAgent.toggleProperty(this.ownerStyle.id, this.index, disabled, callback.bind(this));

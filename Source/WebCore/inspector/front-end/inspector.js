@@ -305,7 +305,7 @@ var WebInspector = {
             errorWarningElement.title = null;
     },
 
-    highlightDOMNode: function(nodeId)
+    highlightDOMNode: function(nodeId, mode)
     {
         if ("_hideDOMNodeHighlightTimeout" in this) {
             clearTimeout(this._hideDOMNodeHighlightTimeout);
@@ -317,7 +317,7 @@ var WebInspector = {
 
         this._highlightedDOMNodeId = nodeId;
         if (nodeId)
-            DOMAgent.highlightDOMNode(nodeId);
+            DOMAgent.highlightDOMNode(nodeId, mode || "all");
         else
             DOMAgent.hideDOMNodeHighlight();
     },

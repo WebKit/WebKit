@@ -926,7 +926,7 @@ void InspectorDOMAgent::mouseDidMoveOverElement(const HitTestResult& result, uns
         node = node->parentNode();
     if (node) {
         ErrorString error;
-        highlight(&error, node);
+        highlight(&error, node, "all");
     }
 }
 
@@ -946,24 +946,25 @@ void InspectorDOMAgent::setSearchingForNode(ErrorString*, bool enabled)
     setSearchingForNode(enabled);
 }
 
-void InspectorDOMAgent::highlight(ErrorString*, Node* node)
+void InspectorDOMAgent::highlight(ErrorString*, Node* node, const String& mode)
 {
     ASSERT_ARG(node, node);
     m_highlightedNode = node;
+    m_highlightMode = mode;
     m_client->highlight(node);
 }
 
-void InspectorDOMAgent::highlightDOMNode(ErrorString* error, int nodeId)
+void InspectorDOMAgent::highlightDOMNode(ErrorString* error, int nodeId, String* mode)
 {
     if (Node* node = nodeForId(nodeId))
-        highlight(error, node);
+        highlight(error, node, mode && !mode->isEmpty() ? *mode : "all");
 }
 
 void InspectorDOMAgent::highlightFrame(ErrorString* error, const String& frameId)
 {
     Frame* frame = m_instrumentingAgents->inspectorResourceAgent()->frameForId(frameId);
     if (frame && frame->ownerElement())
-        highlight(error, frame->ownerElement());
+        highlight(error, frame->ownerElement(), "all");
 }
 
 void InspectorDOMAgent::hideHighlight(ErrorString*)
@@ -1323,14 +1324,6 @@ Node* InspectorDOMAgent::nodeForPath(const String& path)
     return node;
 }
 
-PassRefPtr<InspectorArray> InspectorDOMAgent::toArray(const Vector<String>& data)
-{
-    RefPtr<InspectorArray> result = InspectorArray::create();
-    for (unsigned i = 0; i < data.size(); ++i)
-        result->pushString(data[i]);
-    return result.release();
-}
-
 void InspectorDOMAgent::onMatchJobsTimer(Timer<InspectorDOMAgent>*)
 {
     if (!m_pendingMatchJobs.size()) {
@@ -1395,7 +1388,16 @@ void InspectorDOMAgent::drawNodeHighlight(GraphicsContext& context) const
     if (!m_highlightedNode)
         return;
 
-    DOMNodeHighlighter::DrawNodeHighlight(context, m_highlightedNode.get());
+    DOMNodeHighlighter::HighlightMode mode = DOMNodeHighlighter::HighlightAll;
+    if (m_highlightMode == "content")
+        mode = DOMNodeHighlighter::HighlightContent;
+    else if (m_highlightMode == "padding")
+        mode = DOMNodeHighlighter::HighlightPadding;
+    else if (m_highlightMode == "border")
+        mode = DOMNodeHighlighter::HighlightBorder;
+    else if (m_highlightMode == "margin")
+        mode = DOMNodeHighlighter::HighlightMargin;
+    DOMNodeHighlighter::DrawNodeHighlight(context, m_highlightedNode.get(), mode);
 }
 
 } // namespace WebCore

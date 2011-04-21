@@ -896,7 +896,8 @@
             {
                 "name": "highlightDOMNode",
                 "parameters": [
-                    { "name": "nodeId", "type": "integer" }
+                    { "name": "nodeId", "type": "integer" },
+                    { "name": "mode", "type": "string", "enum": ["all", "content", "padding", "border", "margin"], "optional": true, "description": "The box model component(s) to highlight (default: \"all\")." },
                 ]
             },
             {

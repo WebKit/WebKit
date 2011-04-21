@@ -1792,8 +1792,13 @@ body.platform-windows .sidebar-pane-subtitle {
     padding-right: 2px;
 }
 
+.metrics .hovered > .label {
+    border: 1px solid black;
+}
+
 .metrics .position {
     border: 1px rgb(66%, 66%, 66%) dotted;
+    background-color: white;
     display: inline-block;
     text-align: center;
     padding: 3px;
@@ -1802,15 +1807,21 @@ body.platform-windows .sidebar-pane-subtitle {
 
 .metrics .margin {
     border: 1px dashed;
+    background-color: white;
     display: inline-block;
     text-align: center;
     vertical-align: middle;
     padding: 3px;
     margin: 3px;
+}
+
+.metrics .margin.hovered {
+    background-color: rgb(139, 182, 221);
 }
 
 .metrics .border {
     border: 1px black solid;
+    background-color: white;
     display: inline-block;
     text-align: center;
     vertical-align: middle;
@@ -1818,18 +1829,28 @@ body.platform-windows .sidebar-pane-subtitle {
     margin: 3px;
 }
 
+.metrics .border.hovered {
+    background-color: rgb(157, 193, 226);
+}
+
 .metrics .padding {
     border: 1px grey dashed;
+    background-color: white;
     display: inline-block;
     text-align: center;
     vertical-align: middle;
     padding: 3px;
     margin: 3px;
+}
+
+.metrics .padding.hovered {
+    background-color: rgb(173, 204, 231);
 }
 
 .metrics .content {
     position: static;
     border: 1px grey solid;
+    background-color: white;
     display: inline-block;
     text-align: center;
     vertical-align: middle;
@@ -1838,6 +1859,10 @@ body.platform-windows .sidebar-pane-subtitle {
     min-width: 80px;
     text-align: center;
     overflow: visible;
+}
+
+.metrics .content.hovered {
+    background-color: rgb(190, 214, 236);
 }
 
 .metrics .content span {

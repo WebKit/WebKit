@@ -36,7 +36,15 @@ class Node;
 
 namespace DOMNodeHighlighter {
 
-void DrawNodeHighlight(GraphicsContext&, Node*);
+enum HighlightMode {
+    HighlightAll,
+    HighlightContent,
+    HighlightPadding,
+    HighlightBorder,
+    HighlightMargin
+};
+
+void DrawNodeHighlight(GraphicsContext&, Node*, HighlightMode);
 
 } // namespace DOMNodeHighlighter
 

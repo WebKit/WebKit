@@ -110,6 +110,75 @@ WebInspector.StylesSidebarPane.PseudoIdNames = [
     "-webkit-resizer", "-webkit-input-list-button", "-webkit-inner-spin-button", "-webkit-outer-spin-button"
 ];
 
+WebInspector.StylesSidebarPane.alteredFloatNumber = function(number, event)
+{
+    var arrowKeyPressed = (event.keyIdentifier === "Up" || event.keyIdentifier === "Down");
+    // If the number is near zero or the number is one and the direction will take it near zero.
+    var numberNearZero = (number < 1 && number > -1);
+    if (number === 1 && event.keyIdentifier === "Down")
+        numberNearZero = true;
+    else if (number === -1 && event.keyIdentifier === "Up")
+        numberNearZero = true;
+
+    var result;
+    if (numberNearZero && event.altKey && arrowKeyPressed) {
+        if (event.keyIdentifier === "Down")
+            result = Math.ceil(number - 1);
+        else
+            result = Math.floor(number + 1);
+    } else {
+        // Jump by 10 when shift is down or jump by 0.1 when near zero or Alt/Option is down.
+        // Also jump by 10 for page up and down, or by 100 if shift is held with a page key.
+        var changeAmount = 1;
+        if (event.shiftKey && !arrowKeyPressed)
+            changeAmount = 100;
+        else if (event.shiftKey || !arrowKeyPressed)
+            changeAmount = 10;
+        else if (event.altKey || numberNearZero)
+            changeAmount = 0.1;
+
+        if (event.keyIdentifier === "Down" || event.keyIdentifier === "PageDown")
+            changeAmount *= -1;
+
+        // Make the new number and constrain it to a precision of 6, this matches numbers the engine returns.
+        // Use the Number constructor to forget the fixed precision, so 1.100000 will print as 1.1.
+        result = Number((number + changeAmount).toFixed(6));
+    }
+
+    return result;
+}
+
+WebInspector.StylesSidebarPane.alteredHexNumber = function(hexString, event)
+{
+    var number = parseInt(hexString, 16);
+    if (isNaN(number) || !isFinite(number))
+        return hexString;
+
+    var maxValue = Math.pow(16, hexString.length) - 1;
+    var arrowKeyPressed = (event.keyIdentifier === "Up" || event.keyIdentifier === "Down");
+
+    var delta;
+    if (arrowKeyPressed)
+        delta = (event.keyIdentifier === "Up") ? 1 : -1;
+    else
+        delta = (event.keyIdentifier === "PageUp") ? 16 : -16;
+
+    if (event.shiftKey)
+        delta *= 16;
+
+    var result = number + delta;
+    if (result < 0)
+        result = 0; // Color hex values are never negative, so clamp to 0.
+    else if (result > maxValue)
+        return hexString;
+
+    // Ensure the result length is the same as the original hex value.
+    var resultString = result.toString(16).toUpperCase();
+    for (var i = 0, lengthDelta = hexString.length - resultString.length; i < lengthDelta; ++i)
+        resultString = "0" + resultString;
+    return resultString;
+},
+
 WebInspector.StylesSidebarPane.prototype = {
     _contextMenuEventFired: function(event)
     {
@@ -1609,7 +1678,7 @@ WebInspector.StylePropertyTreeElement.prototype = {
             return "move-forward";
         }
 
-        this._parentPane.isModifyingStyle = true;
+        WebInspector.panels.elements.startEditingStyle();
         WebInspector.startEditing(selectElement, {
             context: context,
             commitHandler: this.editingCommitted.bind(this),
@@ -1649,7 +1718,7 @@ WebInspector.StylePropertyTreeElement.prototype = {
         if (matches && matches.length) {
             prefix = matches[1];
             suffix = matches[3];
-            number = this._alteredHexNumber(matches[2], event);
+            number = WebInspector.StylesSidebarPane.alteredHexNumber(matches[2], event);
 
             replacementString = prefix + number + suffix;
         } else {
@@ -1657,7 +1726,7 @@ WebInspector.StylePropertyTreeElement.prototype = {
             if (matches && matches.length) {
                 prefix = matches[1];
                 suffix = matches[3];
-                number = this._alteredFloatNumber(parseFloat(matches[2]), event);
+                number = WebInspector.StylesSidebarPane.alteredFloatNumber(parseFloat(matches[2]), event);
 
                 replacementString = prefix + number + suffix;
             }
@@ -1690,75 +1759,6 @@ WebInspector.StylePropertyTreeElement.prototype = {
         }
     },
 
-    _alteredFloatNumber: function(number, event)
-    {
-        var arrowKeyPressed = (event.keyIdentifier === "Up" || event.keyIdentifier === "Down");
-        // If the number is near zero or the number is one and the direction will take it near zero.
-        var numberNearZero = (number < 1 && number > -1);
-        if (number === 1 && event.keyIdentifier === "Down")
-            numberNearZero = true;
-        else if (number === -1 && event.keyIdentifier === "Up")
-            numberNearZero = true;
-
-        var result;
-        if (numberNearZero && event.altKey && arrowKeyPressed) {
-            if (event.keyIdentifier === "Down")
-                result = Math.ceil(number - 1);
-            else
-                result = Math.floor(number + 1);
-        } else {
-            // Jump by 10 when shift is down or jump by 0.1 when near zero or Alt/Option is down.
-            // Also jump by 10 for page up and down, or by 100 if shift is held with a page key.
-            var changeAmount = 1;
-            if (event.shiftKey && !arrowKeyPressed)
-                changeAmount = 100;
-            else if (event.shiftKey || !arrowKeyPressed)
-                changeAmount = 10;
-            else if (event.altKey || numberNearZero)
-                changeAmount = 0.1;
-
-            if (event.keyIdentifier === "Down" || event.keyIdentifier === "PageDown")
-                changeAmount *= -1;
-
-            // Make the new number and constrain it to a precision of 6, this matches numbers the engine returns.
-            // Use the Number constructor to forget the fixed precision, so 1.100000 will print as 1.1.
-            result = Number((number + changeAmount).toFixed(6));
-        }
-
-        return result;
-    },
-
-    _alteredHexNumber: function(hexString, event)
-    {
-        var number = parseInt(hexString, 16);
-        if (isNaN(number) || !isFinite(number))
-            return hexString;
-
-        var maxValue = Math.pow(16, hexString.length) - 1;
-        var arrowKeyPressed = (event.keyIdentifier === "Up" || event.keyIdentifier === "Down");
-
-        var delta;
-        if (arrowKeyPressed)
-            delta = (event.keyIdentifier === "Up") ? 1 : -1;
-        else
-            delta = (event.keyIdentifier === "PageUp") ? 16 : -16;
-
-        if (event.shiftKey)
-            delta *= 16;
-
-        var result = number + delta;
-        if (result < 0)
-            result = 0; // Color hex values are never negative, so clamp to 0.
-        else if (result > maxValue)
-            return hexString;
-
-        // Ensure the result length is the same as the original hex value.
-        var resultString = result.toString(16).toUpperCase();
-        for (var i = 0, lengthDelta = hexString.length - resultString.length; i < lengthDelta; ++i)
-            resultString = "0" + resultString;
-        return resultString;
-    },
-
     editingEnded: function(context)
     {
         this.hasChildren = context.hasChildren;
@@ -1771,7 +1771,7 @@ WebInspector.StylePropertyTreeElement.prototype = {
             editedElement.parentElement.removeStyleClass("child-editing");
 
         delete this.originalPropertyText;
-        delete this._parentPane.isModifyingStyle;
+        WebInspector.panels.elements.endEditingStyle();
     },
 
     editingCancelled: function(element, context)
@@ -1820,7 +1820,7 @@ WebInspector.StylePropertyTreeElement.prototype = {
         var isDirtyViaPaste = isDataPasted && (this.nameElement.textContent !== context.originalName || this.valueElement.textContent !== context.originalValue);
         var shouldCommitNewProperty = this._newProperty && (moveToOther || (!moveDirection && !isEditingName) || (isEditingName && blankInput));
         if (((userInput !== previousContent || isDirtyViaPaste) && !this._newProperty) || shouldCommitNewProperty) {
-            this._parentPane.isModifyingStyle = true;
+            WebInspector.panels.elements.startEditingStyle();
             this.treeOutline.section._afterUpdate = moveToNextCallback.bind(this, this._newProperty, !blankInput, this.treeOutline.section);
             var propertyText;
             if (blankInput || (this._newProperty && /^\s*$/.test(this.valueElement.textContent)))
@@ -1843,7 +1843,7 @@ WebInspector.StylePropertyTreeElement.prototype = {
         // The Callback to start editing the next/previous property/selector.
         function moveToNextCallback(alreadyNew, valueChanged, section)
         {
-            delete this._parentPane.isModifyingStyle;
+            WebInspector.panels.elements.endEditingStyle();
 
             if (!moveDirection)
                 return;

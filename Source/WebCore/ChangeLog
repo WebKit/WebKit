@@ -1,3 +1,66 @@
+2011-04-20  Alexander Pavlov  <apavlov@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: Metrics pane editing and visual feedback improvements
+        https://bugs.webkit.org/show_bug.cgi?id=58992
+
+        Added visual feedback when hovering over the box model components of the Metrics pane
+        and handling of the [Page]Up/Down keys when editing the box model values.
+
+        * inspector/DOMNodeHighlighter.cpp:
+        (WebCore::DOMNodeHighlighter::DrawNodeHighlight):
+        * inspector/DOMNodeHighlighter.h:
+        * inspector/Inspector.json:
+        * inspector/InspectorDOMAgent.cpp:
+        (WebCore::InspectorDOMAgent::mouseDidMoveOverElement):
+        (WebCore::InspectorDOMAgent::highlight):
+        (WebCore::InspectorDOMAgent::highlightDOMNode):
+        (WebCore::InspectorDOMAgent::highlightFrame):
+        (WebCore::InspectorDOMAgent::drawNodeHighlight):
+        * inspector/InspectorDOMAgent.h:
+        * inspector/front-end/CSSStyleModel.js:
+        (WebInspector.CSSProperty.prototype.setText.callback):
+        (WebInspector.CSSProperty.prototype.setText):
+        (WebInspector.CSSProperty.prototype.setValue):
+        (WebInspector.CSSProperty.prototype.setDisabled.callback):
+        (WebInspector.CSSProperty.prototype.setDisabled):
+        * inspector/front-end/ElementsPanel.js:
+        (WebInspector.ElementsPanel.prototype.startEditingStyle):
+        (WebInspector.ElementsPanel.prototype.endEditingStyle):
+        (WebInspector.ElementsPanel.prototype._attributesUpdated):
+        * inspector/front-end/MetricsSidebarPane.js:
+        (WebInspector.MetricsSidebarPane):
+        (WebInspector.MetricsSidebarPane.prototype._highlightDOMNode):
+        (WebInspector.MetricsSidebarPane.prototype._highlightDOMNode.getBoxRectangleElement):
+        (WebInspector.MetricsSidebarPane.prototype._update.createBoxPartElement):
+        (WebInspector.MetricsSidebarPane.prototype._update):
+        (WebInspector.MetricsSidebarPane.prototype.startEditing):
+        (WebInspector.MetricsSidebarPane.prototype._handleKeyDown):
+        (WebInspector.MetricsSidebarPane.prototype.editingEnded):
+        (WebInspector.MetricsSidebarPane.prototype.editingCancelled):
+        (WebInspector.MetricsSidebarPane.prototype._applyUserInput.callback):
+        (WebInspector.MetricsSidebarPane.prototype._applyUserInput):
+        (WebInspector.MetricsSidebarPane.prototype.editingCommitted):
+        * inspector/front-end/StylesSidebarPane.js:
+        (WebInspector.StylesSidebarPane.alteredFloatNumber):
+        (WebInspector.StylesSidebarPane.alteredHexNumber):
+        (WebInspector.StylePropertyTreeElement.prototype):
+        (WebInspector.StylePropertyTreeElement.prototype.element.userInput.previousContent.context.moveDirection):
+        * inspector/front-end/inspector.css:
+        (.metrics .hovered > .label):
+        (.metrics .position):
+        (.metrics .margin):
+        (.metrics .margin.hovered):
+        (.metrics .border):
+        (.metrics .border.hovered):
+        (.metrics .padding):
+        (.metrics .padding.hovered):
+        (.metrics .content):
+        (.metrics .content.hovered):
+        * inspector/front-end/inspector.js:
+        (WebInspector.highlightDOMNode):
+
 2011-04-21  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Eric Seidel.

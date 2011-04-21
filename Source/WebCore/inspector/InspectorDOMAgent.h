@@ -130,7 +130,7 @@ public:
     void pushNodeToFrontend(ErrorString*, const String& objectId, int* nodeId);
     void pushNodeByPathToFrontend(ErrorString*, const String& path, int* nodeId);
     void hideHighlight(ErrorString*);
-    void highlightDOMNode(ErrorString*, int nodeId);
+    void highlightDOMNode(ErrorString*, int nodeId, String* mode);
     void hideDOMNodeHighlight(ErrorString* error) { hideHighlight(error); }
     void highlightFrame(ErrorString*, const String& frameId);
     void hideFrameHighlight(ErrorString* error) { hideHighlight(error); }
@@ -178,7 +178,7 @@ private:
     InspectorDOMAgent(InstrumentingAgents*, Page*, InspectorClient*, InspectorState*, InjectedScriptManager*);
 
     void setSearchingForNode(bool enabled);
-    void highlight(ErrorString*, Node*);
+    void highlight(ErrorString*, Node*, const String& mode);
 
     // Node-related methods.
     typedef HashMap<RefPtr<Node>, int> NodeToIdMap;
@@ -204,7 +204,6 @@ private:
     void reportNodesAsSearchResults(ListHashSet<Node*>& resultCollector);
 
     Node* nodeForPath(const String& path);
-    PassRefPtr<InspectorArray> toArray(const Vector<String>& data);
 
     void discardBindings();
 
@@ -228,6 +227,7 @@ private:
     HashSet<RefPtr<Node> > m_searchResults;
     OwnPtr<RevalidateStyleAttributeTask> m_revalidateStyleAttrTask;
     RefPtr<Node> m_highlightedNode;
+    String m_highlightMode;
     RefPtr<Node> m_nodeToFocus;
     bool m_searchingForNode;
 };

@@ -421,13 +421,23 @@ WebInspector.ElementsPanel.prototype = {
         this.treeOutline.focusedDOMNode = x;
     },
 
+    startEditingStyle: function()
+    {
+        this._isEditingStyle = true;
+    },
+
+    endEditingStyle: function()
+    {
+        delete this._isEditingStyle;
+    },
+
     _attributesUpdated: function(event)
     {
         this.recentlyModifiedNodes.push({node: event.data, updated: true});
         if (this.visible)
             this._updateModifiedNodesSoon();
 
-        if (!this.sidebarPanes.styles.isModifyingStyle && event.data === this.focusedDOMNode)
+        if (!this._isEditingStyle && event.data === this.focusedDOMNode)
             this._styleSheetChanged();
     },
 

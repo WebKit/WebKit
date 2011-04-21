@@ -91,21 +91,30 @@ void drawOutlinedQuadWithClip(GraphicsContext& context, const FloatQuad& quad, c
     context.restore();
 }
 
-void drawHighlightForBox(GraphicsContext& context, const FloatQuad& contentQuad, const FloatQuad& paddingQuad, const FloatQuad& borderQuad, const FloatQuad& marginQuad)
+void drawHighlightForBox(GraphicsContext& context, const FloatQuad& contentQuad, const FloatQuad& paddingQuad, const FloatQuad& borderQuad, const FloatQuad& marginQuad, DOMNodeHighlighter::HighlightMode mode)
 {
     static const Color contentBoxColor(125, 173, 217, 128);
     static const Color paddingBoxColor(125, 173, 217, 160);
     static const Color borderBoxColor(125, 173, 217, 192);
     static const Color marginBoxColor(125, 173, 217, 228);
 
-    if (marginQuad != borderQuad)
+    FloatQuad clipQuad;
+    if (mode == DOMNodeHighlighter::HighlightMargin || (mode == DOMNodeHighlighter::HighlightAll && marginQuad != borderQuad)) {
         drawOutlinedQuadWithClip(context, marginQuad, borderQuad, marginBoxColor);
-    if (borderQuad != paddingQuad)
+        clipQuad = borderQuad;
+    }
+    if (mode == DOMNodeHighlighter::HighlightBorder || (mode == DOMNodeHighlighter::HighlightAll && borderQuad != paddingQuad)) {
         drawOutlinedQuadWithClip(context, borderQuad, paddingQuad, borderBoxColor);
-    if (paddingQuad != contentQuad)
+        clipQuad = paddingQuad;
+    }
+    if (mode == DOMNodeHighlighter::HighlightPadding || (mode == DOMNodeHighlighter::HighlightAll && paddingQuad != contentQuad)) {
         drawOutlinedQuadWithClip(context, paddingQuad, contentQuad, paddingBoxColor);
-
-    drawOutlinedQuad(context, contentQuad, contentBoxColor);
+        clipQuad = contentQuad;
+    }
+    if (mode == DOMNodeHighlighter::HighlightContent || mode == DOMNodeHighlighter::HighlightAll)
+        drawOutlinedQuad(context, contentQuad, contentBoxColor);
+    else
+        drawOutlinedQuadWithClip(context, clipQuad, clipQuad, contentBoxColor);
 }
 
 void drawHighlightForLineBoxesOrSVGRenderer(GraphicsContext& context, const Vector<FloatQuad>& lineBoxQuads)
@@ -212,8 +221,9 @@ void drawElementTitle(GraphicsContext& context, Node* node, const IntRect& bound
 
 namespace DOMNodeHighlighter {
 
-void DrawNodeHighlight(GraphicsContext& context, Node* node)
+void DrawNodeHighlight(GraphicsContext& context, Node* node, HighlightMode mode)
 {
+    node->document()->updateLayoutIgnorePendingStylesheets();
     RenderObject* renderer = node->renderer();
     Frame* containingFrame = node->document()->frame();
 
@@ -268,7 +278,7 @@ void DrawNodeHighlight(GraphicsContext& context, Node* node)
 
         titleAnchorBox = absMarginQuad.enclosingBoundingBox();
 
-        drawHighlightForBox(context, absContentQuad, absPaddingQuad, absBorderQuad, absMarginQuad);
+        drawHighlightForBox(context, absContentQuad, absPaddingQuad, absBorderQuad, absMarginQuad, mode);
     } else if (renderer->isRenderInline() || isSVGRenderer) {
         // FIXME: We should show margins/padding/border for inlines.
         Vector<FloatQuad> lineBoxQuads;
@@ -285,7 +295,8 @@ void DrawNodeHighlight(GraphicsContext& context, Node* node)
         return;
 
     WebCore::Settings* settings = containingFrame->settings();
-    drawElementTitle(context, node, boundingBox, titleAnchorBox, overlayRect, settings);
+    if (mode == DOMNodeHighlighter::HighlightAll)
+        drawElementTitle(context, node, boundingBox, titleAnchorBox, overlayRect, settings);
 }
 
 } // namespace DOMNodeHighlighter
