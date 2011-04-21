@@ -91,6 +91,24 @@ void PingLoader::sendPing(Frame* frame, const KURL& pingURL, const KURL& destina
     UNUSED_PARAM(leakedPingLoader);
 }
 
+void PingLoader::reportContentSecurityPolicyViolation(Frame* frame, const KURL& reportURL, PassRefPtr<FormData> report)
+{
+    ResourceRequest request(reportURL);
+    request.setTargetType(ResourceRequest::TargetIsSubresource);
+    request.setHTTPMethod("POST");
+    request.setHTTPContentType("application/x-www-form-urlencoded");
+    request.setHTTPBody(report);
+    frame->loader()->addExtraFieldsToSubresourceRequest(request);
+
+    if (!SecurityOrigin::shouldHideReferrer(reportURL, frame->loader()->outgoingReferrer()))
+        request.setHTTPReferrer(frame->loader()->outgoingReferrer());
+    OwnPtr<PingLoader> pingLoader = adoptPtr(new PingLoader(frame, request));
+
+    // Leak the ping loader, since it will kill itself as soon as it receives a response.
+    PingLoader* leakedPingLoader = pingLoader.leakPtr();
+    UNUSED_PARAM(leakedPingLoader);
+}
+
 PingLoader::PingLoader(Frame* frame, const ResourceRequest& request)
     : m_timeout(this, &PingLoader::timeout)
 {

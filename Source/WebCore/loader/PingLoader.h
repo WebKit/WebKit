@@ -32,6 +32,7 @@
 #ifndef PingLoader_h
 #define PingLoader_h
 
+#include "FormData.h"
 #include "ResourceHandleClient.h"
 #include "Timer.h"
 #include <wtf/Noncopyable.h>
@@ -55,6 +56,7 @@ class PingLoader : private ResourceHandleClient {
 public:
     static void loadImage(Frame*, const KURL& url);
     static void sendPing(Frame*, const KURL& pingURL, const KURL& destinationURL);
+    static void reportContentSecurityPolicyViolation(Frame*, const KURL& reportURL, PassRefPtr<FormData> report);
 
     ~PingLoader();
 

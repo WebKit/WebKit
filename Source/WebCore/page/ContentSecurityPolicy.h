@@ -66,12 +66,16 @@ private:
 
     void parse(const String&);
     bool parseDirective(const UChar* begin, const UChar* end, String& name, String& value);
+    void parseReportURI(const String&);
     void addDirective(const String& name, const String& value);
 
-    void reportViolation(const String& consoleMessage) const;
+    PassOwnPtr<CSPDirective> createCSPDirective(const String& name, const String& value);
+
+    void reportViolation(const String& directiveText, const String& consoleMessage) const;
 
     bool m_havePolicy;
     Document* m_document;
+
     OwnPtr<CSPDirective> m_scriptSrc;
     OwnPtr<CSPDirective> m_objectSrc;
     OwnPtr<CSPDirective> m_frameSrc;
@@ -80,6 +84,8 @@ private:
     OwnPtr<CSPDirective> m_fontSrc;
     OwnPtr<CSPDirective> m_mediaSrc;
     OwnPtr<CSPOptions> m_options;
+
+    Vector<KURL> m_reportURLs;
 };
 
 }

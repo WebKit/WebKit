@@ -1,3 +1,43 @@
+2011-04-21  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        CSP report-uri is missing
+        https://bugs.webkit.org/show_bug.cgi?id=58639
+
+        Our implementation of report-uri differs from what's currently in the
+        spec.  I sent the working group an email explaining why.  Generally,
+        we're using normal form encoding instead of JSON and we're sending less
+        information to a wider set of URLs.  Specifically, we send the current
+        document's URL as well as the directive that was violated.  The spec
+        (currently) tells us to send the raw HTTP headers and the URL that
+        caused the violation, but both of these pieces of data could contain
+        information that's sensitive, so we omit them for now.
+
+        Test: http/tests/security/contentSecurityPolicy/report-uri.html
+
+        * loader/PingLoader.cpp:
+        (WebCore::PingLoader::reportContentSecurityPolicyViolation):
+        * loader/PingLoader.h:
+        * page/ContentSecurityPolicy.cpp:
+        (WebCore::CSPDirective::CSPDirective):
+        (WebCore::CSPDirective::text):
+        (WebCore::ContentSecurityPolicy::reportViolation):
+        (WebCore::ContentSecurityPolicy::allowJavaScriptURLs):
+        (WebCore::ContentSecurityPolicy::allowInlineEventHandlers):
+        (WebCore::ContentSecurityPolicy::allowInlineScript):
+        (WebCore::ContentSecurityPolicy::allowEval):
+        (WebCore::ContentSecurityPolicy::allowScriptFromSource):
+        (WebCore::ContentSecurityPolicy::allowObjectFromSource):
+        (WebCore::ContentSecurityPolicy::allowChildFrameFromSource):
+        (WebCore::ContentSecurityPolicy::allowImageFromSource):
+        (WebCore::ContentSecurityPolicy::allowStyleFromSource):
+        (WebCore::ContentSecurityPolicy::allowFontFromSource):
+        (WebCore::ContentSecurityPolicy::allowMediaFromSource):
+        (WebCore::ContentSecurityPolicy::parseReportURI):
+        (WebCore::ContentSecurityPolicy::addDirective):
+        * page/ContentSecurityPolicy.h:
+
 2011-04-21  Jon Lee  <jonlee@apple.com>
 
         Reviewed by Maciej Stachowiak.

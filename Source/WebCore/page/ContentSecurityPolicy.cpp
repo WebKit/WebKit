@@ -28,9 +28,13 @@
 
 #include "DOMWindow.h"
 #include "Document.h"
+#include "FormData.h"
+#include "FormDataList.h"
 #include "Frame.h"
 #include "NotImplemented.h"
+#include "PingLoader.h"
 #include "SecurityOrigin.h"
+#include "TextEncoding.h"
 #include <wtf/text/StringConcatenate.h>
 
 namespace WebCore {
@@ -68,6 +72,11 @@ bool isOptionValueCharacter(UChar c)
 bool isSchemeContinuationCharacter(UChar c)
 {
     return isASCIIAlphanumeric(c) || c == '+' || c == '-' || c == '.';
+}
+
+bool isNotASCIISpace(UChar c)
+{
+    return !isASCIISpace(c);
 }
 
 } // namespace
@@ -398,8 +407,9 @@ void CSPSourceList::addSourceSelf()
 
 class CSPDirective {
 public:
-    CSPDirective(const String& value, SecurityOrigin* origin)
+    CSPDirective(const String& name, const String& value, SecurityOrigin* origin)
         : m_sourceList(origin)
+        , m_text(makeString(name, " ", value))
     {
         m_sourceList.parse(value);
     }
@@ -409,8 +419,11 @@ public:
         return m_sourceList.matches(url);
     }
 
+    const String& text() { return m_text; }
+
 private:
     CSPSourceList m_sourceList;
+    String m_text;
 };
 
 class CSPOptions {
@@ -481,10 +494,36 @@ void ContentSecurityPolicy::didReceiveHeader(const String& header)
     m_havePolicy = true;
 }
 
-void ContentSecurityPolicy::reportViolation(const String& consoleMessage) const
+void ContentSecurityPolicy::reportViolation(const String& directiveText, const String& consoleMessage) const
 {
-    if (Frame* frame = m_document->frame())
-        frame->domWindow()->console()->addMessage(JSMessageSource, LogMessageType, ErrorMessageLevel, consoleMessage, 1, String());
+    Frame* frame = m_document->frame();
+    if (!frame)
+        return;
+
+    frame->domWindow()->console()->addMessage(JSMessageSource, LogMessageType, ErrorMessageLevel, consoleMessage, 1, String());
+
+    if (m_reportURLs.isEmpty())
+        return;
+
+    // We need to be careful here when deciding what information to send to the
+    // report-uri. Currently, we send only the current document's URL and the
+    // directive that was violated. The document's URL is safe to send because
+    // it's the document itself that's requesting that it be sent. You could
+    // make an argument that we shouldn't send HTTPS document URLs to HTTP
+    // report-uris (for the same reasons that we supress the Referer in that
+    // case), but the Referer is sent implicitly whereas this request is only
+    // sent explicitly. As for which directive was violated, that's pretty
+    // harmless information.
+
+    FormDataList reportList(UTF8Encoding());
+    reportList.appendData("document-url", m_document->url());
+    if (!directiveText.isEmpty())
+        reportList.appendData("violated-directive", directiveText);
+
+    RefPtr<FormData> report = FormData::create(reportList, UTF8Encoding());
+
+    for (size_t i = 0; i < m_reportURLs.size(); ++i)
+        PingLoader::reportContentSecurityPolicyViolation(frame, m_reportURLs[i], report);
 }
 
 bool ContentSecurityPolicy::protectAgainstXSS() const
@@ -498,7 +537,7 @@ bool ContentSecurityPolicy::allowJavaScriptURLs() const
         return true;
 
     DEFINE_STATIC_LOCAL(String, consoleMessage, ("Refused to execute JavaScript URL because of Content-Security-Policy.\n"));
-    reportViolation(consoleMessage);
+    reportViolation(m_scriptSrc->text(), consoleMessage);
     return false;
 }
 
@@ -508,7 +547,7 @@ bool ContentSecurityPolicy::allowInlineEventHandlers() const
         return true;
 
     DEFINE_STATIC_LOCAL(String, consoleMessage, ("Refused to execute inline event handler because of Content-Security-Policy.\n"));
-    reportViolation(consoleMessage);
+    reportViolation(m_scriptSrc->text(), consoleMessage);
     return false;
 }
 
@@ -518,7 +557,7 @@ bool ContentSecurityPolicy::allowInlineScript() const
         return true;
 
     DEFINE_STATIC_LOCAL(String, consoleMessage, ("Refused to execute inline script because of Content-Security-Policy.\n"));
-    reportViolation(consoleMessage);
+    reportViolation(m_scriptSrc->text(), consoleMessage);
     return false;
 }
 
@@ -528,7 +567,7 @@ bool ContentSecurityPolicy::allowEval() const
         return true;
 
     DEFINE_STATIC_LOCAL(String, consoleMessage, ("Refused to evaluate script because of Content-Security-Policy.\n"));
-    reportViolation(consoleMessage);
+    reportViolation(m_scriptSrc->text(), consoleMessage);
     return false;
 }
 
@@ -537,7 +576,7 @@ bool ContentSecurityPolicy::allowScriptFromSource(const KURL& url) const
     if (!m_scriptSrc || m_scriptSrc->allows(url))
         return true;
 
-    reportViolation(makeString("Refused to load script from '", url.string(), "' because of Content-Security-Policy.\n"));
+    reportViolation(m_scriptSrc->text(), makeString("Refused to load script from '", url.string(), "' because of Content-Security-Policy.\n"));
     return false;
 }
 
@@ -546,7 +585,7 @@ bool ContentSecurityPolicy::allowObjectFromSource(const KURL& url) const
     if (!m_objectSrc || m_objectSrc->allows(url))
         return true;
 
-    reportViolation(makeString("Refused to load object from '", url.string(), "' because of Content-Security-Policy.\n"));
+    reportViolation(m_objectSrc->text(), makeString("Refused to load object from '", url.string(), "' because of Content-Security-Policy.\n"));
     return false;
 }
 
@@ -555,7 +594,7 @@ bool ContentSecurityPolicy::allowChildFrameFromSource(const KURL& url) const
     if (!m_frameSrc || m_frameSrc->allows(url))
         return true;
 
-    reportViolation(makeString("Refused to load frame from '", url.string(), "' because of Content-Security-Policy.\n"));
+    reportViolation(m_frameSrc->text(), makeString("Refused to load frame from '", url.string(), "' because of Content-Security-Policy.\n"));
     return false;
 }
 
@@ -564,7 +603,7 @@ bool ContentSecurityPolicy::allowImageFromSource(const KURL& url) const
     if (!m_imgSrc || m_imgSrc->allows(url))
         return true;
 
-    reportViolation(makeString("Refused to load image from '", url.string(), "' because of Content-Security-Policy.\n"));
+    reportViolation(m_imgSrc->text(), makeString("Refused to load image from '", url.string(), "' because of Content-Security-Policy.\n"));
     return false;
 }
 
@@ -573,7 +612,7 @@ bool ContentSecurityPolicy::allowStyleFromSource(const KURL& url) const
     if (!m_styleSrc || m_styleSrc->allows(url))
         return true;
 
-    reportViolation(makeString("Refused to load style from '", url.string(), "' because of Content-Security-Policy.\n"));
+    reportViolation(m_styleSrc->text(), makeString("Refused to load style from '", url.string(), "' because of Content-Security-Policy.\n"));
     return false;
 }
 
@@ -582,7 +621,7 @@ bool ContentSecurityPolicy::allowFontFromSource(const KURL& url) const
     if (!m_fontSrc || m_fontSrc->allows(url))
         return true;
 
-    reportViolation(makeString("Refused to load font from '", url.string(), "' because of Content-Security-Policy.\n"));
+    reportViolation(m_fontSrc->text(), makeString("Refused to load font from '", url.string(), "' because of Content-Security-Policy.\n"));
     return false;
 }
 
@@ -591,7 +630,7 @@ bool ContentSecurityPolicy::allowMediaFromSource(const KURL& url) const
     if (!m_mediaSrc || m_mediaSrc->allows(url))
         return true;
 
-    reportViolation(makeString("Refused to load media from '", url.string(), "' because of Content-Security-Policy.\n"));
+    reportViolation(m_mediaSrc->text(), makeString("Refused to load media from '", url.string(), "' because of Content-Security-Policy.\n"));
     return false;
 }
 
@@ -666,6 +705,29 @@ bool ContentSecurityPolicy::parseDirective(const UChar* begin, const UChar* end,
     return true;
 }
 
+void ContentSecurityPolicy::parseReportURI(const String& value)
+{
+    const UChar* position = value.characters();
+    const UChar* end = position + value.length();
+
+    while (position < end) {
+        skipWhile<isASCIISpace>(position, end);
+
+        const UChar* urlBegin = position;
+        skipWhile<isNotASCIISpace>(position, end);
+
+        if (urlBegin < position) {
+            String url = String(urlBegin, position - urlBegin);
+            m_reportURLs.append(m_document->completeURL(url));
+        }
+    }
+}
+
+PassOwnPtr<CSPDirective> ContentSecurityPolicy::createCSPDirective(const String& name, const String& value)
+{
+    return adoptPtr(new CSPDirective(name, value, m_document->securityOrigin()));
+}
+
 void ContentSecurityPolicy::addDirective(const String& name, const String& value)
 {
     DEFINE_STATIC_LOCAL(String, scriptSrc, ("script-src"));
@@ -675,24 +737,27 @@ void ContentSecurityPolicy::addDirective(const String& name, const String& value
     DEFINE_STATIC_LOCAL(String, styleSrc, ("style-src"));
     DEFINE_STATIC_LOCAL(String, fontSrc, ("font-src"));
     DEFINE_STATIC_LOCAL(String, mediaSrc, ("media-src"));
+    DEFINE_STATIC_LOCAL(String, reportURI, ("report-uri"));
     DEFINE_STATIC_LOCAL(String, options, ("options"));
 
     ASSERT(!name.isEmpty());
 
     if (!m_scriptSrc && equalIgnoringCase(name, scriptSrc))
-        m_scriptSrc = adoptPtr(new CSPDirective(value, m_document->securityOrigin()));
+        m_scriptSrc = createCSPDirective(name, value);
     else if (!m_objectSrc && equalIgnoringCase(name, objectSrc))
-        m_objectSrc = adoptPtr(new CSPDirective(value, m_document->securityOrigin()));
+        m_objectSrc = createCSPDirective(name, value);
     else if (!m_frameSrc && equalIgnoringCase(name, frameSrc))
-        m_frameSrc = adoptPtr(new CSPDirective(value, m_document->securityOrigin()));
+        m_frameSrc = createCSPDirective(name, value);
     else if (!m_imgSrc && equalIgnoringCase(name, imgSrc))
-        m_imgSrc = adoptPtr(new CSPDirective(value, m_document->securityOrigin()));
+        m_imgSrc = createCSPDirective(name, value);
     else if (!m_styleSrc && equalIgnoringCase(name, styleSrc))
-        m_styleSrc = adoptPtr(new CSPDirective(value, m_document->securityOrigin()));
+        m_styleSrc = createCSPDirective(name, value);
     else if (!m_fontSrc && equalIgnoringCase(name, fontSrc))
-        m_fontSrc = adoptPtr(new CSPDirective(value, m_document->securityOrigin()));
+        m_fontSrc = createCSPDirective(name, value);
     else if (!m_mediaSrc && equalIgnoringCase(name, mediaSrc))
-        m_mediaSrc = adoptPtr(new CSPDirective(value, m_document->securityOrigin()));
+        m_mediaSrc = createCSPDirective(name, value);
+    else if (m_reportURLs.isEmpty() && equalIgnoringCase(name, reportURI))
+        parseReportURI(value);
     else if (!m_options && equalIgnoringCase(name, options))
         m_options = adoptPtr(new CSPOptions(value));
 }
