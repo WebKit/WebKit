@@ -111,6 +111,7 @@ BUGWK55913 DEBUG SLOW : jquery/event.html = PASS
 BUGWK55913 DEBUG : jquery/manipulation.html = TIMEOUT PASS
 BUGWK55913 DEBUG SLOW : jquery/offset.html = PASS
 BUGWK55913 DEBUG SLOW : jquery/traversing.html = PASS
+BUGWK55913 DEBUG : jquery/dimensions.html = TIMEOUT PASS
 
 // -----------------------------------------------------------------
 // SKIPPED TESTS
@@ -2241,7 +2242,7 @@ BUGCR51869 : http/tests/websocket/tests/frame-length-overflow.html = TEXT PASS
 BUGCR51854 WIN SLOW : http/tests/storage/callbacks-are-called-in-correct-context.html = PASS
 
 // Regressions from r65229
-BUGWK43912 WIN LINUX : svg/custom/grayscale-gradient-mask.svg = IMAGE
+BUGWK43912 WIN LINUX : svg/custom/grayscale-gradient-mask.svg = IMAGE CRASH
 BUGWK43912 WIN LINUX : svg/custom/absolute-sized-content-with-resources.xhtml = IMAGE
 
 // Times out frequently since the test was added
@@ -3766,7 +3767,7 @@ BUGDPRANKE LINUX : fast/encoding/parser-tests-100.html = TIMEOUT PASS
 BUGDPRANKE LINUX : fast/encoding/parser-tests-50.html = TIMEOUT PASS
 BUGDPRANKE LINUX : fast/css/visited-link-hang.html = CRASH
 BUGDPRANKE WIN LINUX CPU : media/media-document-audio-repaint.html = IMAGE
-BUGDPRANKE LINUX : transitions/interrupt-zero-duration.html = TEXT PASS
+BUGDPRANKE MAC LINUX : transitions/interrupt-zero-duration.html = TEXT PASS
 BUGDPRANKE : media/controls-css-overload.html = TIMEOUT PASS
 BUGDPRANKE : fast/borders/bidi-012.html = IMAGE+TEXT
 BUGDPRANKE MAC CPU : media/video-zoom.html = IMAGE
@@ -3832,6 +3833,8 @@ BUGDPRANKE : fast/parser/iframe-sets-parent-to-javascript-url.html = TEXT PASS
 BUGDPRANKE : fast/repaint/moving-shadow-on-path.html = TEXT PASS
 
 BUGDPRANKE LINUX : fast/runin/nonblock-runin.html = CRASH
+BUGDPRANKE LINUX : fast/runin/001.html = CRASH
 BUGDPRANKE WIN: http/tests/misc/empty-file-formdata.html = TIMEOUT PASS
 BUGDPRANKE WIN: http/tests/xmlhttprequest/access-control-preflight-headers-async.html = TIMEOUT PASS
 
+BUGDPRANKE WIN : http/tests/mime/standard-mode-does-not-load-stylesheet-with-text-plain.html = TIMEOUT PASS

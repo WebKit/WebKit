@@ -1,5 +1,11 @@
 2011-04-20  Dirk Pranke  <dpranke@chromium.org>
 
+        Pull in more flaky expectations.
+
+        * platform/chromium/test_expectations.txt:
+
+2011-04-20  Dirk Pranke  <dpranke@chromium.org>
+
         Unreviewed, expectations change. Pull in expectations from
         overrides file.
 
