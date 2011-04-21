@@ -1,3 +1,15 @@
+2011-04-21  Dirk Schulze  <krit@webkit.org>
+
+        Uneviewed rebaseline of win.
+
+        SVG feDropShadow implementation of SVG Filters 1.2
+        https://bugs.webkit.org/show_bug.cgi?id=52513
+
+        * platform/win/fast/dom/Window/window-property-descriptors-expected.txt:
+        * platform/win/fast/dom/prototype-inheritance-2-expected.txt:
+        * platform/win/fast/dom/prototype-inheritance-expected.txt:
+        * platform/win/fast/js/global-constructors-expected.txt:
+
 2011-04-21  Martin Robinson  <mrobinson@igalia.com>
 
         [GTK] DRT: implement eventSender.scalePageBy
