@@ -1,3 +1,19 @@
+2011-04-20  Jia Pu  <jpu@apple.com>
+
+        Reviewed by Maciej Stachowiak.
+
+        [Mac]Regression: extending word that is already marked misspelled doesn't remove misspelling underline.
+        https://bugs.webkit.org/show_bug.cgi?id=59032
+        <rdar://problem/9312444>
+
+        This fixes a regression introduced in recent refactoring work in Editor. See bug webpage for detail.
+
+        manual test: Source/WebCore/manual-tests/autocorrection/remove-misspelling-marker-after-appending-letter.html
+
+        * editing/Editor.cpp:
+        (WebCore::Editor::insertTextWithoutSendingTextEvent):
+        * manual-tests/autocorrection/remove-misspelling-marker-after-appending-letter.html: Added.
+
 2011-04-20  Chris Fleizach  <cfleizach@apple.com>
 
         Reviewed by Beth Dakin.

@@ -1093,7 +1093,7 @@ bool Editor::insertTextWithoutSendingTextEvent(const String& text, bool selectIn
         return true;
 
     if (!text.isEmpty())
-        updateMarkersForWordsAffectedByEditing(text[0]);
+        updateMarkersForWordsAffectedByEditing(isSpaceOrNewline(text[0]));
 
     bool shouldConsiderApplyingAutocorrection = false;
     if (text == " " || text == "\t")
