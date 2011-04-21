@@ -1,5 +1,13 @@
 2011-04-21  Philippe Normand  <pnormand@igalia.com>
 
+        Unreviewed, GTK baselines for test added in r84398.
+
+        * platform/gtk/fast/borders/bidi-012-expected.checksum: Added.
+        * platform/gtk/fast/borders/bidi-012-expected.png: Added.
+        * platform/gtk/fast/borders/bidi-012-expected.txt: Added.
+
+2011-04-21  Philippe Normand  <pnormand@igalia.com>
+
         Unreviewed, GTK baselines for
         http/tests/security/contentSecurityPolicy tests that don't escape
         the quote character.
