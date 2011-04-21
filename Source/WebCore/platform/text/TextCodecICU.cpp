@@ -147,6 +147,7 @@ void TextCodecICU::registerEncodingNames(EncodingNameRegistrar registrar)
     registrar("x-cp1251", "windows-1251");
     registrar("x-euc", "EUC-JP");
     registrar("x-windows-949", "windows-949");
+    registrar("KSC5601", "KSC_5601");
     registrar("x-uhc", "windows-949");
     registrar("shift-jis", "Shift_JIS");
 

@@ -28,7 +28,8 @@ testDecode('shift-jis', '%82%d0', 'U+3072');
 // Test that all Korean encodings of EUC-KR family are treated as windows-949.
 var korean = {
     encodings: ['korean', 'EUC-KR', 'windows-949', 'x-windows-949', 'x-uhc',
-                'iso-ir-149', 'KS_C_5601-1987', 'KS_C_5601-1989' ],
+                'iso-ir-149', 'KS_C_5601-1987', 'KS_C_5601-1989',
+                'KSC5601', 'KSC_5601'],
     encoded: ['%A2%E6', '%A1%A4', '%A1%A9', '%A1%AA', '%A1%AD', '%A2%A6',
               '%A2%C1', '%1A',    '%1C',    '%8F%A1', '%B4%D3', '%A2%41'],
     unicode: ['U+20AC', 'U+00B7', 'U+00AD', 'U+2015', 'U+223C', 'U+FF5E', 

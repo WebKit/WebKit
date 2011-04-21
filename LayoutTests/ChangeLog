@@ -1,3 +1,15 @@
+2011-04-21  Alexey Proskuryakov  <ap@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        REGRESSION: Korean encoding alias KSC5601 does not work
+        https://bugs.webkit.org/show_bug.cgi?id=59075
+        <rdar://problem/9303233>
+
+        * fast/encoding/char-decoding-expected.txt:
+        * fast/encoding/char-decoding.html:
+        Added tests for KSC_5601 (which worked, but wasn't tested), and KSC5601 (which was broken).
+
 2011-04-20  Dominic Cooney  <dominicc@chromium.org>
 
         Reviewed by Dimitri Glazkov.
