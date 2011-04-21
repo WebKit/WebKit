@@ -83,6 +83,9 @@ void CachedFrameBase::restore()
 {
     ASSERT(m_document->view() == m_view);
 
+    if (m_isMainFrame)
+        m_view->setParentVisible(true);
+
     Frame* frame = m_view->frame();
     m_cachedFrameScriptData->restore(frame);
 

@@ -1,3 +1,17 @@
+2011-04-20  Andy Estes  <aestes@apple.com>
+
+        Reviewed by Maciej Stachowiak.
+
+        REGRESSION (WK2): Animated GIF stops when navigating forward, back
+        https://bugs.webkit.org/show_bug.cgi?id=59042
+
+        * fast/images/animated-gif-restored-from-bfcache-expected.txt: Added.
+        * fast/images/animated-gif-restored-from-bfcache.html: Added.
+        * fast/images/resources/animated-10color.gif: Added.
+        * platform/mac-wk2/Skipped: Sadly, this test for a WebKit2-specific fix
+        has to be skipped for now on WebKit2 since it doesn't implement
+        layoutTestController.overridePreference().
+
 2011-04-20  Dimitri Glazkov  <dglazkov@chromium.org>
 
         Reviewed by Kent Tamura.

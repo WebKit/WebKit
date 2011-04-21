@@ -1,3 +1,33 @@
+2011-04-20  Andy Estes  <aestes@apple.com>
+
+        Reviewed by Maciej Stachowiak.
+
+        REGRESSION (WK2): Animated GIF stops when navigating forward, back
+        https://bugs.webkit.org/show_bug.cgi?id=59042
+        
+        When loading the page from the b/f cache,
+        document()->view()->isOffscreen() returns true in
+        RenderObject::willRenderImage(), so BitmapImage::startAnimation()
+        returns without actually kicking off the animation.
+        
+        In WebKit1, the ScrollView is a platform widget, so
+        ScrollView::isOffscreen() calls [NSWindow isVisible]. In WebKit2, the
+        ScrollView isn't a platform widget so it asks the WebCore Widget
+        whether or not it is visible. It always returns false since
+        setParentVisible(false) was called on the old ScrollView before
+        navigating to a new page, but setParentVisible(true) is never called
+        when restoring it from the back/forward cache. This is probably a
+        long-standing bug.
+        
+        Fix this by calling setParentVisible(true) when a cached main frame is
+        being restored.
+
+        Test: fast/images/animated-gif-restored-from-bfcache.html
+
+        * history/CachedFrame.cpp:
+        (WebCore::CachedFrameBase::restore): If the cached frame is the main
+        frame, call setParentVisible(true) on the frame's view.
+
 2011-04-20  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Anders Carlsson.
