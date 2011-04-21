@@ -42,15 +42,9 @@ class UploadCommandsTest(CommandsTest):
 
     def test_assign_to_committer(self):
         tool = MockTool()
-        expected_stderr = """Warning, attachment 128 on bug 42 has invalid committer (non-committer@example.com)
-MOCK reassign_bug: bug_id=42, assignee=eric@webkit.org
--- Begin comment --
-Attachment 128 was posted by a committer and has review+, assigning to Eric Seidel for commit.
--- End comment --
-Bug 77 is already assigned to foo@foo.com (None).
-Bug 76 has no non-obsolete patches, ignoring.
-"""
+        expected_stderr = "Warning, attachment 128 on bug 42 has invalid committer (non-committer@example.com)\nBug 77 is already assigned to foo@foo.com (None).\nBug 76 has no non-obsolete patches, ignoring.\n"
         self.assert_execute_outputs(AssignToCommitter(), [], expected_stderr=expected_stderr, tool=tool)
+        tool.bugs.reassign_bug.assert_called_with(42, "eric@webkit.org", "Attachment 128 was posted by a committer and has review+, assigning to Eric Seidel for commit.")
 
     def test_obsolete_attachments(self):
         expected_stderr = "Obsoleting 2 old patches on bug 42\n"
@@ -68,7 +62,6 @@ Bug 76 has no non-obsolete patches, ignoring.
         expected_stderr = """MOCK: user.open_url: file://...
 Was that diff correct?
 Obsoleting 2 old patches on bug 42
-MOCK reassign_bug: bug_id=42, assignee=None
 MOCK add_patch_to_bug: bug_id=42, description=MOCK description, mark_for_review=True, mark_for_commit_queue=False, mark_for_landing=False
 MOCK: user.open_url: http://example.com/42
 """
@@ -116,7 +109,6 @@ extra comment
         expected_stderr = """MOCK: user.open_url: file://...
 Was that diff correct?
 Obsoleting 2 old patches on bug 42
-MOCK reassign_bug: bug_id=42, assignee=None
 MOCK add_patch_to_bug: bug_id=42, description=MOCK description, mark_for_review=True, mark_for_commit_queue=False, mark_for_landing=False
 MOCK: user.open_url: http://example.com/42
 """
