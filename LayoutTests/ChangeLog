@@ -1,3 +1,13 @@
+2011-04-21  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [Qt][WK2] Unreviewed.
+
+        REGRESSION (WK2): Animated GIF stops when navigating forward, back
+        https://bugs.webkit.org/show_bug.cgi?id=59042
+
+        * platform/qt-wk2/Skipped: Add fast/images/animated-gif-restored-from-bfcache.html,
+        because WebKit2 since it doesn't implement layoutTestController.overridePreference().
+
 2011-04-21  Philippe Normand  <pnormand@igalia.com>
 
         Unreviewed, GTK baselines for test added in r84398.
