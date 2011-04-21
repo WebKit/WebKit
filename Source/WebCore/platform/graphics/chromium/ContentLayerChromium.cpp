@@ -100,7 +100,11 @@ void ContentLayerChromium::paintContentsIfDirty(const IntRect& targetSurfaceRect
     IntRect layerRect = visibleLayerRect(targetSurfaceRect);
     if (layerRect.isEmpty())
         return;
-    m_tiler->invalidateRect(enclosingIntRect(m_dirtyRect));
+
+    IntRect dirty = enclosingIntRect(m_dirtyRect);
+    dirty.intersect(layerBounds());
+    m_tiler->invalidateRect(dirty);
+
     m_tiler->update(painter, layerRect);
     m_dirtyRect = FloatRect();
 }

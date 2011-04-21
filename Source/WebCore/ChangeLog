@@ -1,3 +1,16 @@
+2011-04-21  Adrienne Walker  <enne@google.com>
+
+        Reviewed by James Robinson.
+
+        [chromium] Clamp dirty regions on content layers to layer bounds
+        https://bugs.webkit.org/show_bug.cgi?id=58933
+
+        This prevents garbage being rendered when layers are resized and a
+        previous invalidation (now off-layer) is no longer valid.
+
+        * platform/graphics/chromium/ContentLayerChromium.cpp:
+        (WebCore::ContentLayerChromium::paintContentsIfDirty):
+
 2011-04-21  Roland Steiner  <rolandsteiner@chromium.org>
 
         Reviewed by Kent Tamura.
