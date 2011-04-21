@@ -1,3 +1,15 @@
+2011-04-21  Roland Steiner  <rolandsteiner@chromium.org>
+
+        Reviewed by Kent Tamura.
+
+        Bug 59012 - Shadows should be imported along with their host nodes
+        https://bugs.webkit.org/show_bug.cgi?id=59012
+
+        Verify that the shadow of a bound element is imported along with the element.
+
+        * fast/dom/shadow/import-shadowroot-expected.txt: Added.
+        * fast/dom/shadow/import-shadowroot.html: Added.
+
 2011-04-21  Dirk Schulze  <krit@webkit.org>
 
         Reviewed by Nikolas Zimmermann.

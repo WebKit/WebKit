@@ -223,7 +223,7 @@ public:
     void setAttributeMap(PassRefPtr<NamedNodeMap>, FragmentScriptingPermission = FragmentScriptingAllowed);
     NamedNodeMap* attributeMap() const { return m_attributeMap.get(); }
 
-    virtual void copyNonAttributeProperties(const Element* /*source*/) { }
+    virtual void copyNonAttributeProperties(const Element* source);
 
     virtual void attach();
     virtual void detach();

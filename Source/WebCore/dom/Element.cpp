@@ -210,6 +210,16 @@ PassRefPtr<Element> Element::cloneElementWithoutAttributesAndChildren() const
     return document()->createElement(tagQName(), false);
 }
 
+void Element::copyNonAttributeProperties(const Element* source)
+{
+    ContainerNode* sourceShadow = source->shadowRoot();
+    removeShadowRoot();
+    if (sourceShadow) {
+        ContainerNode* clonedShadow = ensureShadowRoot();
+        sourceShadow->cloneChildNodes(clonedShadow);
+    }
+}
+
 void Element::removeAttribute(const QualifiedName& name, ExceptionCode& ec)
 {
     if (m_attributeMap) {
