@@ -3689,7 +3689,8 @@ BUGDPRANKE MAC : http/tests/misc/object-image-error.html = TIMEOUT
 BUGDPRANKE MAC : fast/text/international/thai-baht-space.html = IMAGE+TEXT
 
 BUGDPRANKE LINUX DEBUG : svg/custom/foreignObject-crash-on-hover.xml = CRASH
-BUGDPRANKE LINUX DEBUG : fast/css/getComputedStyle/getComputedStyle-margin-percentage.html = CRASH
+BUGDPRANKE DEBUG : fast/css/getComputedStyle/getComputedStyle-margin-percentage.html = CRASH
+BUGDPRANKE DEBUG : fast/css/getComputedStyle/getComputedStyle-relayout.html = CRASH
 BUGDPRANKE LINUX DEBUG : fast/dom/Attr/access-after-element-destruction.html = CRASH
 BUGDPRANKE LINUX DEBUG : fast/css/last-child-pseudo-class.html = TEXT PASS
 BUGDPRANKE LINUX DEBUG : fast/dom/HTMLLinkElement/link-and-subresource-test.html = TEXT PASS
@@ -3786,7 +3787,6 @@ BUGDPRANKE : fast/multicol/client-rects.html = IMAGE
 
 BUGDPRANKE WIN DEBUG : fast/css/text-overflow-ellipsis.html = CRASH
 BUGDPRANKE MAC DEBUG : transitions/cancel-transition.html = TEXT PASS
-BUGDPRANKE LINUX DEBUG : fast/css/getComputedStyle/getComputedStyle-relayout.html = CRASH
 BUGDPRANKE LINUX DEBUG : fast/dom/HTMLFormElement/invalid-form-field.html = CRASH
 
 BUGDPRANKE LINUX DEBUG : perf/array-nested-loop.html = TEXT TIMEOUT PASS
@@ -3800,7 +3800,7 @@ BUGDPRANKE WIN DEBUG : http/tests/navigation/forward-to-fragment-fires-onload.ht
 BUGDPRANKE WIN DEBUG : perf/mouse-event.html = TEXT TIMEOUT PASS
 BUGDPRANKE LINUX DEBUG : http/tests/security/contentSecurityPolicy/media-src-allowed.html = TIMEOUT PASS
 BUGDPRANKE WIN DEBUG : perf/typing-at-end-of-line.html = TEXT TIMEOUT PASS
-BUGDPRANKE MAC DEBUG : fast/notifications/notifications-display-close-events.html = TIMEOUT PASS
+BUGDPRANKE DEBUG : fast/notifications/notifications-display-close-events.html = TIMEOUT PASS
 BUGDPRANKE MAC DEBUG : fast/css-generated-content/table-row-group-to-inline.html = IMAGE+TEXT PASS
 
 // Green on canary
@@ -3838,7 +3838,7 @@ BUGDPRANKE DEBUG WIN LINUX : http/tests/misc/acid2-pixel.html = CRASH
 BUGDPRANKE MAC DEBUG : fast/css/only-of-type-pseudo-class.html = TEXT PASS
 BUGDPRANKE MAC DEBUG : fast/css/getPropertyValue-border.html = CRASH
 BUGDPRANKE LINUX DEBUG : editing/pasteboard/merge-end-3.html = CRASH
-BUGDPRANKE LINUX DEBUG : editing/selection/designmode-no-caret.html = CRASH
+BUGDPRANKE LINUX DEBUG : editing/selection/designmode-no-caret.html = CRASH TEXT
 BUGDPRANKE LINUX DEBUG : fullscreen/full-screen-iframe-allowed.html = TEXT PASS
 BUGDPRANKE LINUX DEBUG : jquery/deferred.html = TEXT PASS
 
@@ -3857,6 +3857,7 @@ BUGWK59067 : media/csp-blocks-video.html = TEXT
 
 // Introduced in r84457
 BUGDPRANKE : http/tests/security/contentSecurityPolicy/media-src-blocked.html = TEXT
+BUGDPRANKE : http/tests/security/contentSecurityPolicy/image-allowed.html = TEXT PASS
 
 // seems to be failing because of a missing QT plugin?
 BUGWK59068 WIN LINUX : plugins/embed-attributes-style.html = IMAGE
@@ -3864,7 +3865,8 @@ BUGWK59068 WIN LINUX : plugins/embed-attributes-style.html = IMAGE
 // more failures for triaging, fails on deps bots at least?
 BUGDPRANKE DEBUG WIN LINUX : inspector/debugger/live-edit.html = TEXT TIMEOUT
 BUGDPRANKE : inspector/console/console-object-constructor-name.html = TEXT PASS  TIMEOUT
+BUGDPRANKE : inspector/console/console-log-before-inspector-open.html = TEXT PASS
 BUGDPRANKE DEBUG : http/tests/local/link-stylesheet-preferred.html = CRASH
 BUGDPRANKE DEBUG : editing/pasteboard/merge-end-2.html = CRASH
 BUGDPRANKE DEBUG : animations/keyframes-out-of-order.html = TEXT PASS
-
+BUGDPRANKE : fast/frames/meta-refresh-user-gesture.html = TIMEOUT PASS

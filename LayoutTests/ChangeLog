@@ -2,6 +2,12 @@
 
         Unreviewed, expectations change.
 
+        * platform/chromium/test_expectations.txt:
+
+2011-04-20  Dirk Pranke  <dpranke@chromium.org>
+
+        Unreviewed, expectations change.
+
         Add test failures for r84454, r84457, flakiness on deps bots.
 
         * platform/chromium/test_expectations.txt:
