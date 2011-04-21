@@ -61,7 +61,7 @@ double randomNumber()
     // that might not be cryptographically secure. Ideally, most ports would
     // define USE(OS_RANDOMNESS).
 
-#if !ENABLE(JSC_MULTIPLE_THREADS)
+#if !ENABLE(WTF_MULTIPLE_THREADS)
     static bool s_initialized = false;
     if (!s_initialized) {
         initializeRandomNumberGenerator();

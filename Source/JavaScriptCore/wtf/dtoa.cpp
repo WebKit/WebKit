@@ -90,7 +90,7 @@
 
 namespace WTF {
 
-#if ENABLE(JSC_MULTIPLE_THREADS)
+#if ENABLE(WTF_MULTIPLE_THREADS)
 Mutex* s_dtoaP5Mutex;
 #endif
 
@@ -435,7 +435,7 @@ static ALWAYS_INLINE void pow5mult(BigInt& b, int k)
     if (!(k >>= 2))
         return;
 
-#if ENABLE(JSC_MULTIPLE_THREADS)
+#if ENABLE(WTF_MULTIPLE_THREADS)
     s_dtoaP5Mutex->lock();
 #endif
     P5Node* p5 = p5s;
@@ -450,7 +450,7 @@ static ALWAYS_INLINE void pow5mult(BigInt& b, int k)
     }
 
     int p5sCountLocal = p5sCount;
-#if ENABLE(JSC_MULTIPLE_THREADS)
+#if ENABLE(WTF_MULTIPLE_THREADS)
     s_dtoaP5Mutex->unlock();
 #endif
     int p5sUsed = 0;
@@ -463,7 +463,7 @@ static ALWAYS_INLINE void pow5mult(BigInt& b, int k)
             break;
 
         if (++p5sUsed == p5sCountLocal) {
-#if ENABLE(JSC_MULTIPLE_THREADS)
+#if ENABLE(WTF_MULTIPLE_THREADS)
             s_dtoaP5Mutex->lock();
 #endif
             if (p5sUsed == p5sCount) {
@@ -476,7 +476,7 @@ static ALWAYS_INLINE void pow5mult(BigInt& b, int k)
             }
 
             p5sCountLocal = p5sCount;
-#if ENABLE(JSC_MULTIPLE_THREADS)
+#if ENABLE(WTF_MULTIPLE_THREADS)
             s_dtoaP5Mutex->unlock();
 #endif
         }

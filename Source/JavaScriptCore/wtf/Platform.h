@@ -582,6 +582,10 @@
 #define ENABLE_JSC_MULTIPLE_THREADS 1
 #endif
 
+#if ENABLE(JSC_MULTIPLE_THREADS)
+#define ENABLE_WTF_MULTIPLE_THREADS 1
+#endif
+
 /* On Windows, use QueryPerformanceCounter by default */
 #if OS(WINDOWS)
 #define WTF_USE_QUERY_PERFORMANCE_COUNTER  1

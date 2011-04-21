@@ -1,3 +1,27 @@
+2011-04-20  Adam Klein  <adamk@chromium.org>
+
+        Reviewed by David Levin.
+
+        Rename all uses of JSC_MULTIPLE_THREADS under wtf/... to WTF_MULTIPLE_THREADS
+        https://bugs.webkit.org/show_bug.cgi?id=59040
+
+        This will be used to fix https://bugs.webkit.org/show_bug.cgi?id=55728
+        by enabling WTF_MULTIPLE_THREADS for Chromium.
+
+        * wtf/CryptographicallyRandomNumber.cpp:
+        (WTF::ARC4Stream::ARC4RandomNumberGenerator::randomNumber):
+        (WTF::ARC4Stream::ARC4RandomNumberGenerator::randomValues):
+        * wtf/FastMalloc.cpp:
+        * wtf/Platform.h:
+        Enable WTF_MULTIPLE_THREADS whenever JSC_MULTIPLE_THREADS is enabled.
+        * wtf/RandomNumber.cpp:
+        (WTF::randomNumber):
+        * wtf/RefCountedLeakCounter.cpp:
+        (WTF::RefCountedLeakCounter::increment):
+        (WTF::RefCountedLeakCounter::decrement):
+        * wtf/dtoa.cpp:
+        (WTF::pow5mult):
+
 2011-04-20  Gavin Barraclough  <barraclough@apple.com>
 
         Rubber stamped by Geoff Garen
