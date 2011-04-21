@@ -232,8 +232,10 @@ IntRect ScrollView::visibleContentRect(bool includeScrollbars) const
     if (platformWidget())
         return platformVisibleContentRect(includeScrollbars);
 
+#if !PLATFORM(EFL)
     if (paintsEntireContents())
         return IntRect(IntPoint(0, 0), contentsSize());
+#endif
 
     int verticalScrollbarWidth = verticalScrollbar() && !verticalScrollbar()->isOverlayScrollbar()
         && !includeScrollbars ? verticalScrollbar()->width() : 0;

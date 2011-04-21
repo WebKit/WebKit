@@ -1,3 +1,17 @@
+2011-04-21  Eunsol Park  <eunsol47.park@samsung.com>
+
+        Reviewed by Antonio Gomes.
+
+        [EFL] Scroll doesn't work on tiled backing store.
+        https://bugs.webkit.org/show_bug.cgi?id=55021
+
+        It was added from Changeset 72242, but it worked wrong in EFL port.
+        The visible rect should not be returned as content rect for scrolling in EFL tiled backing store, 
+        because it works differently from QT.
+
+        * platform/ScrollView.cpp:
+        (WebCore::ScrollView::visibleContentRect):
+
 2011-04-21  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Eric Seidel.
