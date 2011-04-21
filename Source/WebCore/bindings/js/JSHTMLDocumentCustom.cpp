@@ -75,10 +75,10 @@ JSValue JSHTMLDocument::nameGetter(ExecState* exec, JSValue slotBase, const Iden
         if (node->hasTagName(iframeTag) && (frame = static_cast<HTMLIFrameElement*>(node)->contentFrame()))
             return toJS(exec, frame);
 
-        return toJS(exec, node);
+        return toJS(exec, thisObj->globalObject(), node);
     } 
 
-    return toJS(exec, collection.get());
+    return toJS(exec, thisObj->globalObject(), collection.get());
 }
 
 // Custom attributes
@@ -90,7 +90,7 @@ JSValue JSHTMLDocument::all(ExecState* exec) const
     if (v)
         return v;
 
-    return toJS(exec, static_cast<HTMLDocument*>(impl())->all().get());
+    return toJS(exec, globalObject(), static_cast<HTMLDocument*>(impl())->all().get());
 }
 
 void JSHTMLDocument::setAll(ExecState* exec, JSValue value)

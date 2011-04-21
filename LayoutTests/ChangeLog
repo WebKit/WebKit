@@ -1,3 +1,12 @@
+2011-04-21  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Fixed a failure seen in fast/dom/prototype-inheritance-2.html due to
+        wrong global object use.
+
+        * fast/dom/prototype-inheritance-2-expected.txt: Expect success!
+
 2011-04-21  Dirk Pranke  <dpranke@chromium.org>
 
         Unreviewed, expectations change - flaky tests.

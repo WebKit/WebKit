@@ -55,7 +55,7 @@ JSValue JSHTMLFormElement::nameGetter(ExecState* exec, JSValue slotBase, const I
     if (namedItems.isEmpty())
         return jsUndefined();
     if (namedItems.size() == 1)
-        return toJS(exec, namedItems[0].get());
+        return toJS(exec, jsForm->globalObject(), namedItems[0].get());
 
     // FIXME: HTML5 specifies that this should be a RadioNodeList.
     return toJS(exec, jsForm->globalObject(), StaticNodeList::adopt(namedItems).get());
