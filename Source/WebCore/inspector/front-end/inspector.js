@@ -1300,6 +1300,8 @@ WebInspector.linkifyURLAsNode = function(url, linkText, classes, isExternal, too
         a.title = tooltipText;
     a.textContent = linkText;
     a.style.maxWidth = "100%";
+    if (isExternal)
+        a.setAttribute("target", "_blank");
 
     return a;
 }

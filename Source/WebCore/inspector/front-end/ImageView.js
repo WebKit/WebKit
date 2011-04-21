@@ -99,7 +99,8 @@ WebInspector.ImageView.prototype = {
             dt.textContent = WebInspector.UIString("URL");
             infoListElement.appendChild(dt);
             var dd = document.createElement("dd");
-            dd.appendChild(WebInspector.linkifyURLAsNode(this.resource.url));
+            var externalResource = true;
+            dd.appendChild(WebInspector.linkifyURLAsNode(this.resource.url, null, null, externalResource));
             infoListElement.appendChild(dd);
 
             this._container.appendChild(infoListElement);

@@ -2,6 +2,19 @@
 
         Reviewed by Yury Semikhatsky.
 
+        Web Inspector: following Image URL link in the network panel does nothing.
+        https://bugs.webkit.org/show_bug.cgi?id=59092
+
+        * inspector/front-end/ImageView.js:
+        (WebInspector.ImageView.prototype._createContentIfNeeded.onImageLoad):
+        (WebInspector.ImageView.prototype._createContentIfNeeded):
+        * inspector/front-end/inspector.js:
+        (WebInspector.linkifyURLAsNode):
+
+2011-04-21  Pavel Feldman  <pfeldman@google.com>
+
+        Reviewed by Yury Semikhatsky.
+
         Web Inspector: implement Go To Line for network panel.
         https://bugs.webkit.org/show_bug.cgi?id=59090
 
