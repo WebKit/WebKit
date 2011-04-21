@@ -1,3 +1,20 @@
+2011-04-20  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Adam Barth.
+
+        Split out isIteratorTarget from bidiNext and bidiFirst
+        https://bugs.webkit.org/show_bug.cgi?id=59033
+
+        This is the first (tiny) step of many.  When I tried to
+        make larger changes to this function I broke stuff, so
+        doing this in tiny pieces so we know it's right.
+
+        * rendering/InlineIterator.h:
+        (WebCore::isIteratorTarget):
+        (WebCore::bidiNext):
+        (WebCore::bidiFirstSkippingInlines):
+        (WebCore::bidiFirstNotSkippingInlines):
+
 2011-04-20  Alexey Marinichev  <amarinichev@chromium.org>
 
         Reviewed by Kenneth Russell.

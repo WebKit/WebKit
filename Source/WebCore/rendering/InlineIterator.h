@@ -131,6 +131,12 @@ static inline void notifyResolverWillExitObject(InlineBidiResolver* resolver, Re
     resolver->embed(WTF::Unicode::PopDirectionalFormat, FromStyleOrDOM);
 }
 
+static inline bool isIteratorTarget(RenderObject* object)
+{
+    ASSERT(object); // The iterator will of course return 0, but its not an expected argument to this function.
+    return object->isText() || object->isFloating() || object->isPositioned() || object->isReplaced();
+}
+
 // FIXME: This function is misleadingly named. It has little to do with bidi.
 // This function will iterate over inlines within a block, optionally notifying
 // a bidi resolver as it enters/exits inlines (so it can push/pop embedding levels).
@@ -143,7 +149,7 @@ static inline RenderObject* bidiNext(RenderObject* root, RenderObject* current, 
 
     while (current) {
         next = 0;
-        if (!oldEndOfInline && !current->isFloating() && !current->isReplaced() && !current->isPositioned() && !current->isText()) {
+        if (!oldEndOfInline && !isIteratorTarget(current)) {
             next = current->firstChild();
             notifyResolverEnteredObject(resolver, next);
         }
@@ -178,7 +184,7 @@ static inline RenderObject* bidiNext(RenderObject* root, RenderObject* current, 
         if (!next)
             break;
 
-        if (next->isText() || next->isFloating() || next->isReplaced() || next->isPositioned()
+        if (isIteratorTarget(next)
             || ((!skipInlines || !next->firstChild()) // Always return EMPTY inlines.
                 && next->isRenderInline()))
             break;
@@ -211,7 +217,7 @@ static inline RenderObject* bidiFirstSkippingInlines(RenderObject* root, InlineB
     }
 
     // FIXME: Unify this with the bidiNext call above.
-    if (o && !o->isText() && !o->isReplaced() && !o->isFloating() && !o->isPositioned())
+    if (o && !isIteratorTarget(o))
         o = bidiNext(root, o, resolver, true);
 
     resolver->commitExplicitEmbedding();
@@ -224,7 +230,7 @@ static inline RenderObject* bidiFirstNotSkippingInlines(RenderObject* root)
     RenderObject* o = root->firstChild();
     // If either there are no children to walk, or the first one is correct
     // then just return it.
-    if (!o || o->isRenderInline() || o->isText() || o->isReplaced() || o->isFloating() || o->isPositioned())
+    if (!o || o->isRenderInline() || isIteratorTarget(o))
         return o;
 
     return bidiNext(root, o, 0, false);
