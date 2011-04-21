@@ -3849,10 +3849,6 @@ BUGWK59067 : media/csp-blocks-video.html = TEXT
 BUGDPRANKE : http/tests/security/contentSecurityPolicy/media-src-blocked.html = TEXT
 BUGDPRANKE : http/tests/security/contentSecurityPolicy/image-allowed.html = TEXT PASS
 
-// Introduced in r84478
-BUGCR80161 LINUX RELEASE : http/tests/security/contentSecurityPolicy/report-uri.html = TEXT
-BUGCR80161 LINUX RELEASE : http/tests/security/contentSecurityPolicy/report-uri-from-child-frame.html = TEXT
-
 // seems to be failing because of a missing QT plugin?
 BUGWK59068 WIN LINUX : plugins/embed-attributes-style.html = IMAGE
 

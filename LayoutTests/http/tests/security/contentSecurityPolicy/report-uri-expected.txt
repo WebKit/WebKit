@@ -6,4 +6,4 @@ HTTP_REFERER: http://127.0.0.1:8000/security/contentSecurityPolicy/report-uri.ht
 REQUEST_METHOD: POST
 === POST DATA ===
 document-url: http://127.0.0.1:8000/security/contentSecurityPolicy/report-uri.html
-violated-directive: script-src \'self\'
+violated-directive: script-src 'self'
