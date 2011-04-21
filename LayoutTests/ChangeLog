@@ -2,6 +2,15 @@
 
         Unreviewed, expectations change.
 
+        Suppress failures for inspector/debugger/live-edit.html
+        and inspector/console/console-object-constructor-name.html
+
+        * platform/chromium/test_expectations.txt:
+
+2011-04-20  Dirk Pranke  <dpranke@chromium.org>
+
+        Unreviewed, expectations change.
+
         Suppress failures for media/csp-blocks-video.html and
         plugins/embed-attributes-style.html
 
