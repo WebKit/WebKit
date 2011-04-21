@@ -275,7 +275,7 @@ static MediaPlayerFactory* nextMediaEngine(MediaPlayerFactory* current)
         return engines.first();
 
     size_t currentIndex = engines.find(current);
-    if (currentIndex == WTF::notFound || currentIndex == engines.size()) 
+    if (currentIndex == WTF::notFound || currentIndex + 1 >= engines.size()) 
         return 0;
 
     return engines[currentIndex + 1];

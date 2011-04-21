@@ -1,3 +1,12 @@
+2011-04-20  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Eric Carlson.
+
+        <rdar://problem/9304956> media/broken-video.html crashes
+
+        * platform/graphics/MediaPlayer.cpp:
+        (WebCore::nextMediaEngine): Fixed an off-by-one error.
+
 2011-04-20  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Adam Barth.
