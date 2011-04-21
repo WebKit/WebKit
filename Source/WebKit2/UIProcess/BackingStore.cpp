@@ -31,10 +31,6 @@
 
 using namespace WebCore;
 
-#if !PLATFORM(MAC) && !PLATFORM(WIN)
-#error "This class is not ready for use by other ports yet."
-#endif
-
 namespace WebKit {
 
 PassOwnPtr<BackingStore> BackingStore::create(const IntSize& size, WebPageProxy* webPageProxy)

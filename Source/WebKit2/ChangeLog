@@ -2,6 +2,20 @@
 
         Reviewed by Simon Fraser.
 
+        Remove warnings from DrawingAreaImpl and related classes
+        https://bugs.webkit.org/show_bug.cgi?id=59120
+
+        DrawingAreaImpl is mature enough for others to adopt. Remove warnings.
+
+        * UIProcess/BackingStore.cpp:
+        * UIProcess/DrawingAreaProxyImpl.cpp:
+        * WebProcess/WebPage/DrawingAreaImpl.cpp:
+        * WebProcess/WebPage/LayerTreeHost.cpp:
+
+2011-04-21  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Simon Fraser.
+
         Deploy GraphicsContextStateSaver in WebKit2
         https://bugs.webkit.org/show_bug.cgi?id=59116
 

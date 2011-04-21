@@ -34,10 +34,6 @@
 #include "WebPageProxy.h"
 #include "WebProcessProxy.h"
 
-#if !PLATFORM(MAC) && !PLATFORM(WIN)
-#error "This drawing area is not ready for use by other ports yet."
-#endif
-
 using namespace WebCore;
 
 namespace WebKit {

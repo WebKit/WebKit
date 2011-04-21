@@ -37,10 +37,6 @@
 #include <WebCore/Page.h>
 #include <WebCore/Settings.h>
 
-#if !PLATFORM(MAC) && !PLATFORM(WIN)
-#error "This drawing area is not ready for use by other ports yet."
-#endif
-
 using namespace WebCore;
 using namespace std;
 
