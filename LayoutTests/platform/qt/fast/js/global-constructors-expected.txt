@@ -187,6 +187,7 @@ PASS SVGFEConvolveMatrixElement.toString() is '[object SVGFEConvolveMatrixElemen
 PASS SVGFEDiffuseLightingElement.toString() is '[object SVGFEDiffuseLightingElementConstructor]'
 PASS SVGFEDisplacementMapElement.toString() is '[object SVGFEDisplacementMapElementConstructor]'
 PASS SVGFEDistantLightElement.toString() is '[object SVGFEDistantLightElementConstructor]'
+PASS SVGFEDropShadowElement.toString() is '[object SVGFEDropShadowElementConstructor]'
 PASS SVGFEFloodElement.toString() is '[object SVGFEFloodElementConstructor]'
 PASS SVGFEFuncAElement.toString() is '[object SVGFEFuncAElementConstructor]'
 PASS SVGFEFuncBElement.toString() is '[object SVGFEFuncBElementConstructor]'
