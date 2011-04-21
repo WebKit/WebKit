@@ -1,3 +1,18 @@
+2011-04-21  Ojan Vafai  <ojan@chromium.org>
+
+        Reviewed by Tony Chang.
+
+        only expand visible rows
+        https://bugs.webkit.org/show_bug.cgi?id=59130
+
+        For the chromium port, where there are many expected failures,
+        expanding all of them is quite slow. Only expand the visible ones.
+        This makes the default case. Also, make the expanding async to
+        avoid totally killing the process.
+
+        * Scripts/webkitpy/layout_tests/layout_package/json_results.html:
+        * Scripts/webkitpy/layout_tests/layout_package/json_results_test.js:
+
 2011-04-21  Martin Robinson  <mrobinson@igalia.com>
 
         [GTK] DRT: implement eventSender.scalePageBy

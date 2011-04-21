@@ -222,18 +222,31 @@ function expandExpectations(expandLink)
     parentTbody.appendChild(newRow);
 }
 
+function async(func, args)
+{
+    setTimeout(function() { func.apply(null, args); }, 100);
+}
+
+function visibleExpandLinks()
+{
+    if (onlyShowUnexpectedFailures())
+        return document.querySelectorAll('tbody:not(.expected) .expand-button-text');
+    else
+        return document.querySelectorAll('.expand-button-text');
+}
+
 function expandAllExpectations()
 {
-    var expandLinks = document.querySelectorAll('.expand-button-text');
+    var expandLinks = visibleExpandLinks();
     for (var i = 0, len = expandLinks.length; i < len; i++)
-        expandExpectations(expandLinks[i]);
+        async(expandExpectations, [expandLinks[i]]);
 }
 
 function collapseAllExpectations()
 {
-    var expandLinks = document.querySelectorAll('.expand-button-text');
+    var expandLinks = visibleExpandLinks();
     for (var i = 0, len = expandLinks.length; i < len; i++)
-        collapseExpectations(expandLinks[i]);
+        async(collapseExpectations, [expandLinks[i]]);
 }
 
 function testLink(test)
@@ -538,10 +551,15 @@ PixelZoomer.handleMouseMove = function(e) {
 
 document.addEventListener('mousemove', PixelZoomer.handleMouseMove, false);
 
-function updateExpectedResults()
+function onlyShowUnexpectedFailures()
 {
     var checkBox = document.querySelector('.unexpected-results');
-    document.getElementById('unexpected-style').innerText = (!checkBox || checkBox.checked) ?
+    return !checkBox || checkBox.checked;
+}
+
+function updateExpectedFailures()
+{
+    document.getElementById('unexpected-style').innerText = onlyShowUnexpectedFailures() ?
         '.expected { display: none; }' : '';
 }
 
@@ -552,7 +570,7 @@ function generatePage()
         '<a href="javascript:void()" class="collapse-all" onclick="collapseAllExpectations()">collapse all</a>';
 
     if (globalState().results.uses_expectations_file)
-        html += '<label><input class="unexpected-results" type=checkbox checked onchange="updateExpectedResults()">Only show unexpected results</label>';
+        html += '<label><input class="unexpected-results" type=checkbox checked onchange="updateExpectedFailures()">Only show unexpected results</label>';
 
     html += '</div>';
 
@@ -597,7 +615,7 @@ function generatePage()
             document.getElementById('image-results-header').textContent = '';
     }
     
-    updateExpectedResults();
+    updateExpectedFailures();
 }
 </script>
 <!-- HACK: when json_results_test.js is included, loading this page runs the tests.

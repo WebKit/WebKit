@@ -5,6 +5,12 @@ var g_testIndex = 0;
 var g_log = ["You should see a serios of PASS lines."];
 var g_currentTestSucceeded;
 
+// Make async actually be sync for the sake of simpler testing.
+function async(func, args)
+{
+    func.apply(null, args);
+}
+
 function mockResults()
 {
     return {
@@ -148,6 +154,27 @@ function runTests()
         collapseExpectations(expandLinks[1]);
         assertTrue(expandLinks[1].textContent == '+');
     });
+    
+    results = mockResults();
+    results.tests['foo/bar.html'] = mockExpectation('PASS', 'TEXT');
+    results.tests['foo/bar-expected-fail.html'] = mockExpectation('TEXT', 'TEXT');
+    runTest(results, function() {
+        assertTrue(document.querySelectorAll('.expected').length == 1);
+        assertTrue(document.querySelector('.expected .test-link').textContent == 'foo/bar-expected-fail.html');
+
+        expandAllExpectations();
+        assertTrue(visibleExpandLinks().length == 1);
+        assertTrue(document.querySelectorAll('.results-row').length == 1);
+        
+        document.querySelector('.unexpected-results').checked = false;
+
+        assertTrue(visibleExpandLinks().length == 2);
+        assertTrue(document.querySelectorAll('.results-row').length == 1);
+        
+        expandAllExpectations();
+        assertTrue(document.querySelectorAll('.results-row').length == 2);
+    });
+    
     document.body.innerHTML = '<pre>' + g_log.join('\n') + '</pre>';
 }
 
