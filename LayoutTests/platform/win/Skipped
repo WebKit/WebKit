@@ -1251,3 +1251,6 @@ plugins/mouse-click-iframe-to-plugin.html
 
 # https://bugs.webkit.org/show_bug.cgi?id=59062
 fast/images/animated-gif-restored-from-bfcache.html
+
+# https://bugs.webkit.org/show_bug.cgi?id=59081
+fast/dom/shadow/layout-tests-can-access-shadow.html
