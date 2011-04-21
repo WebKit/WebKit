@@ -70,7 +70,7 @@ namespace WebKit {
     macro(DOMPasteAllowed, domPasteAllowed, Bool, bool, false) \
     macro(JavaScriptCanAccessClipboard, javaScriptCanAccessClipboard, Bool, bool, false) \
     macro(ShouldPrintBackgrounds, shouldPrintBackgrounds, Bool, bool, false) \
-    macro(FullScreenEnabled, fullScreenEnabled, Bool, bool, true) \
+    macro(FullScreenEnabled, fullScreenEnabled, Bool, bool, false) \
     macro(WebSecurityEnabled, webSecurityEnabled, Bool, bool, true) \
     macro(AllowUniversalAccessFromFileURLs, allowUniversalAccessFromFileURLs, Bool, bool, false) \
     macro(AllowFileAccessFromFileURLs, allowFileAccessFromFileURLs, Bool, bool, false) \

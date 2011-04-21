@@ -386,7 +386,7 @@ static bool useQuickLookQuirks(void)
         [NSNumber numberWithBool:NO],   WebKitFrameFlatteningEnabledPreferenceKey,
         [NSNumber numberWithBool:NO],   WebKitSpatialNavigationEnabledPreferenceKey,
         [NSNumber numberWithBool:NO],  WebKitDNSPrefetchingEnabledPreferenceKey,
-        [NSNumber numberWithBool:YES],  WebKitFullScreenEnabledPreferenceKey,
+        [NSNumber numberWithBool:NO],   WebKitFullScreenEnabledPreferenceKey,
         [NSNumber numberWithBool:NO],   WebKitAsynchronousSpellCheckingEnabledPreferenceKey,
         [NSNumber numberWithBool:NO],   WebKitMemoryInfoEnabledPreferenceKey,
         [NSNumber numberWithBool:YES],  WebKitHyperlinkAuditingEnabledPreferenceKey,
