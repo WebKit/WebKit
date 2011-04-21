@@ -1,3 +1,12 @@
+2011-04-21  Adam Barth  <abarth@webkit.org>
+
+        Remove support for CSP's frame-src.  This approach causes too many
+        extra console messages to be logged.  I'm leaving in the test (which
+        now shows failure).
+
+        * html/HTMLFrameElementBase.cpp:
+        (WebCore::HTMLFrameElementBase::isURLAllowed):
+
 2011-04-21  Eunsol Park  <eunsol47.park@samsung.com>
 
         Reviewed by Antonio Gomes.

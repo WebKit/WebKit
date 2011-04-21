@@ -25,7 +25,6 @@
 #include "HTMLFrameElementBase.h"
 
 #include "Attribute.h"
-#include "ContentSecurityPolicy.h"
 #include "Document.h"
 #include "EventNames.h"
 #include "FocusController.h"
@@ -76,13 +75,6 @@ bool HTMLFrameElementBase::isURLAllowed() const
         if (parentFrame->page()->frameCount() >= Page::maxNumberOfFrames)
             return false;
     }
-
-    // FIXME: Currently the spec is ambiguous as to whether we should check
-    // the Content-Security-Policy of the parent frame or the requester.
-    // We're using the parent frame for now, but we might have to change
-    // this if the spec changes.
-    if (!document()->contentSecurityPolicy()->allowChildFrameFromSource(completeURL))
-        return false;
 
     // We allow one level of self-reference because some sites depend on that.
     // But we don't allow more than one.
