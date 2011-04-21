@@ -1,3 +1,16 @@
+2011-04-21  Philippe Normand  <pnormand@igalia.com>
+
+        Reviewed by Martin Robinson.
+
+        [GTK] DRT: implement eventSender.scalePageBy
+        https://bugs.webkit.org/show_bug.cgi?id=59082
+
+        Added support in DRT for webview scaling.
+
+        * WebCoreSupport/DumpRenderTreeSupportGtk.cpp:
+        (DumpRenderTreeSupportGtk::scalePageBy):
+        * WebCoreSupport/DumpRenderTreeSupportGtk.h:
+
 2011-04-20  Dominic Cooney  <dominicc@chromium.org>
 
         Reviewed by Dimitri Glazkov.

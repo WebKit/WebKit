@@ -783,3 +783,12 @@ void DumpRenderTreeSupportGtk::rectangleForSelection(WebKitWebFrame* frame, GdkR
     rectangle->width = bounds.width();
     rectangle->height = bounds.height();
 }
+
+void DumpRenderTreeSupportGtk::scalePageBy(WebKitWebView* webView, float scaleFactor, float x, float y)
+{
+    Frame* coreFrame = core(webView)->mainFrame();
+    if (!coreFrame)
+        return;
+
+    coreFrame->scalePage(scaleFactor, IntPoint(x, y));
+}
