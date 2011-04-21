@@ -641,20 +641,18 @@ void WebPage::scrollMainFrameIfNotAtMaxScrollPosition(const IntSize& scrollOffse
 
 void WebPage::drawRect(GraphicsContext& graphicsContext, const IntRect& rect)
 {
-    graphicsContext.save();
+    GraphicsContextStateSaver stateSaver(graphicsContext);
     graphicsContext.clip(rect);
     m_mainFrame->coreFrame()->view()->paint(&graphicsContext, rect);
-    graphicsContext.restore();
 }
 
 void WebPage::drawPageOverlay(GraphicsContext& graphicsContext, const IntRect& rect)
 {
     ASSERT(m_pageOverlay);
 
-    graphicsContext.save();
+    GraphicsContextStateSaver stateSaver(graphicsContext);
     graphicsContext.clip(rect);
     m_pageOverlay->drawRect(graphicsContext, rect);
-    graphicsContext.restore();
 }
 
 double WebPage::textZoomFactor() const

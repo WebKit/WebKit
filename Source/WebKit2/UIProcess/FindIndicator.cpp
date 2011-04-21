@@ -148,27 +148,31 @@ void FindIndicator::draw(GraphicsContext& graphicsContext, const IntRect& dirtyR
         FloatRect textRect = m_textRectsInSelectionRectCoordinates[i];
         textRect.move(leftBorderThickness, topBorderThickness);
 
-        graphicsContext.save();
         FloatRect outerPathRect = inflateRect(textRect, horizontalOutsetToCenterOfLightBorder, verticalOutsetToCenterOfLightBorder);
-        graphicsContext.setShadow(FloatSize(shadowOffsetX, shadowOffsetY), shadowBlurRadius, shadowColor(), ColorSpaceSRGB);
-        graphicsContext.setFillColor(lightBorderColor(), ColorSpaceDeviceRGB);
-        graphicsContext.fillPath(pathWithRoundedRect(outerPathRect, cornerRadius));
-        graphicsContext.restore();
-
-        graphicsContext.save();
         FloatRect innerPathRect = inflateRect(textRect, horizontalPaddingInsideLightBorder, verticalPaddingInsideLightBorder);
-        graphicsContext.clip(pathWithRoundedRect(innerPathRect, cornerRadius));
-        RefPtr<Gradient> gradient = Gradient::create(FloatPoint(innerPathRect.x(), innerPathRect.y()), FloatPoint(innerPathRect.x(), innerPathRect.maxY()));
-        gradient->addColorStop(0, gradientLightColor());
-        gradient->addColorStop(1, gradientDarkColor());
-        graphicsContext.setFillGradient(gradient);
-        graphicsContext.fillRect(outerPathRect);
-        graphicsContext.restore();
 
-        graphicsContext.save();
-        graphicsContext.translate(FloatSize(roundf(leftBorderThickness), roundf(topBorderThickness)));
-        m_contentImage->paint(graphicsContext, IntPoint(0, 0), m_contentImage->bounds());
-        graphicsContext.restore();
+        {
+            GraphicsContextStateSaver stateSaver(graphicsContext);
+            graphicsContext.setShadow(FloatSize(shadowOffsetX, shadowOffsetY), shadowBlurRadius, shadowColor(), ColorSpaceSRGB);
+            graphicsContext.setFillColor(lightBorderColor(), ColorSpaceDeviceRGB);
+            graphicsContext.fillPath(pathWithRoundedRect(outerPathRect, cornerRadius));
+        }
+
+        {
+            GraphicsContextStateSaver stateSaver(graphicsContext);
+            graphicsContext.clip(pathWithRoundedRect(innerPathRect, cornerRadius));
+            RefPtr<Gradient> gradient = Gradient::create(FloatPoint(innerPathRect.x(), innerPathRect.y()), FloatPoint(innerPathRect.x(), innerPathRect.maxY()));
+            gradient->addColorStop(0, gradientLightColor());
+            gradient->addColorStop(1, gradientDarkColor());
+            graphicsContext.setFillGradient(gradient);
+            graphicsContext.fillRect(outerPathRect);
+        }
+
+        {
+            GraphicsContextStateSaver stateSaver(graphicsContext);
+            graphicsContext.translate(FloatSize(roundf(leftBorderThickness), roundf(topBorderThickness)));
+            m_contentImage->paint(graphicsContext, IntPoint(0, 0), m_contentImage->bounds());
+        }
     }
 }
 

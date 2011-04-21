@@ -299,20 +299,20 @@ void FindController::drawRect(PageOverlay* pageOverlay, GraphicsContext& graphic
     // Draw the background.
     graphicsContext.fillRect(dirtyRect, overlayBackgroundColor(fractionFadedIn), ColorSpaceSRGB);
 
-    graphicsContext.save();
-    graphicsContext.setShadow(FloatSize(shadowOffsetX, shadowOffsetY), shadowBlurRadius, holeShadowColor(fractionFadedIn), ColorSpaceSRGB);
+    {
+        GraphicsContextStateSaver stateSaver(graphicsContext);
 
-    graphicsContext.setFillColor(holeFillColor(fractionFadedIn), ColorSpaceSRGB);
+        graphicsContext.setShadow(FloatSize(shadowOffsetX, shadowOffsetY), shadowBlurRadius, holeShadowColor(fractionFadedIn), ColorSpaceSRGB);
+        graphicsContext.setFillColor(holeFillColor(fractionFadedIn), ColorSpaceSRGB);
 
-    // Draw white frames around the holes.
-    for (size_t i = 0; i < rects.size(); ++i) {
-        IntRect whiteFrameRect = rects[i];
-        whiteFrameRect.inflate(1);
+        // Draw white frames around the holes.
+        for (size_t i = 0; i < rects.size(); ++i) {
+            IntRect whiteFrameRect = rects[i];
+            whiteFrameRect.inflate(1);
 
-        graphicsContext.fillRect(whiteFrameRect);
+            graphicsContext.fillRect(whiteFrameRect);
+        }
     }
-
-    graphicsContext.restore();
 
     graphicsContext.setFillColor(Color::transparent, ColorSpaceSRGB);
 

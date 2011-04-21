@@ -531,10 +531,10 @@ void PluginView::paint(GraphicsContext* context, const IntRect& dirtyRect)
         // this widget's frame is its parent (the document), so we have to offset the CTM by
         // the document's window coordinates.
         IntPoint documentOriginInWindowCoordinates = parent()->contentsToWindow(IntPoint());
-        context->save();
+        
+        GraphicsContextStateSaver stateSaver(*context);
         context->translate(-documentOriginInWindowCoordinates.x(), -documentOriginInWindowCoordinates.y());
         m_plugin->paint(context, paintRectInWindowCoordinates);
-        context->restore();
     }
 }
 

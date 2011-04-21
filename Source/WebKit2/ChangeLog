@@ -1,3 +1,22 @@
+2011-04-21  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Simon Fraser.
+
+        Deploy GraphicsContextStateSaver in WebKit2
+        https://bugs.webkit.org/show_bug.cgi?id=59116
+
+        * UIProcess/FindIndicator.cpp:
+        (WebKit::FindIndicator::draw):
+        * WebProcess/Plugins/PluginView.cpp:
+        (WebKit::PluginView::paint):
+        * WebProcess/WebPage/FindController.cpp:
+        (WebKit::FindController::drawRect):
+        * WebProcess/WebPage/PageOverlay.cpp:
+        (WebKit::PageOverlay::drawRect):
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::drawRect):
+        (WebKit::WebPage::drawPageOverlay):
+
 2011-04-21  Jessie Berlin  <jberlin@apple.com>
 
         Reviewed by Sam Weinig.
