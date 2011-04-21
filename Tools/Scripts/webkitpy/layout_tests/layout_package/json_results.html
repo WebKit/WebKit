@@ -225,14 +225,14 @@ function expandExpectations(expandLink)
 function expandAllExpectations()
 {
     var expandLinks = document.querySelectorAll('.expand-button-text');
-    for (var i = 0; len = expandLinks.length; i++)
+    for (var i = 0, len = expandLinks.length; i < len; i++)
         expandExpectations(expandLinks[i]);
 }
 
 function collapseAllExpectations()
 {
     var expandLinks = document.querySelectorAll('.expand-button-text');
-    for (var i = 0; len = expandLinks.length; i++)
+    for (var i = 0, len = expandLinks.length; i < len; i++)
         collapseExpectations(expandLinks[i]);
 }
 

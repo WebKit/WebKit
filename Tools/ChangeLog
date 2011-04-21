@@ -1,3 +1,13 @@
+2011-04-21  Ojan Vafai  <ojan@chromium.org>
+
+        Reviewed by Mihai Parparita.
+
+        fix another innocuous JS error in expand/collapseAllExpectations
+        https://bugs.webkit.org/show_bug.cgi?id=59122
+
+        * Scripts/webkitpy/layout_tests/layout_package/json_results.html:
+        * Scripts/webkitpy/layout_tests/layout_package/json_results_test.js:
+
 2011-04-20  Ojan Vafai  <ojan@chromium.org>
 
         Reviewed by Tony Chang.

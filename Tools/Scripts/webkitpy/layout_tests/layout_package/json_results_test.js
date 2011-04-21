@@ -115,9 +115,39 @@ function runTests()
         assertTrue(expectationTypes[0].textContent == 'TEXT');
         assertTrue(expectationTypes[1].textContent == 'CRASH');
         assertTrue(expectationTypes[2].textContent == 'IMAGE');
-
     });
 
+    results = mockResults();
+    results.tests['foo/bar.html'] = mockExpectation('TEXT', 'PASS');
+    results.tests['foo/bar-missing.html'] = mockExpectation('TEXT', 'MISSING');
+    results.tests['foo/bar-missing.html'].is_missing_text = true;
+    results.tests['foo/bar-stderr.html'] = mockExpectation('PASS', 'TEXT');
+    results.tests['foo/bar-stderr.html'].has_stderr = true;
+    results.tests['foo/bar-unexpected-pass.html'] = mockExpectation('TEXT', 'PASS');
+    runTest(results, function() {
+        assertTrue(document.querySelectorAll('tbody tr').length == 5);
+        expandAllExpectations();
+        assertTrue(document.querySelectorAll('tbody tr').length == 10);
+        var expandLinks = document.querySelectorAll('.expand-button-text');
+        var enDash = '\u2013';
+        for (var i = 0; i < expandLinks.length; i++) {
+            assertTrue(expandLinks[i].textContent == enDash);
+        }
+        
+        collapseAllExpectations();
+        // Collapsed expectations stay in the dom, but are display:none.
+        assertTrue(document.querySelectorAll('tbody tr').length == 10);
+        var expandLinks = document.querySelectorAll('.expand-button-text');
+        for (var i = 0; i < expandLinks.length; i++)
+            assertTrue(expandLinks[i].textContent == '+');
+            
+        expandExpectations(expandLinks[1]);
+        assertTrue(expandLinks[0].textContent == '+');
+        assertTrue(expandLinks[1].textContent == enDash);
+
+        collapseExpectations(expandLinks[1]);
+        assertTrue(expandLinks[1].textContent == '+');
+    });
     document.body.innerHTML = '<pre>' + g_log.join('\n') + '</pre>';
 }
 
