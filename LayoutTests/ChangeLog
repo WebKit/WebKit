@@ -1,3 +1,9 @@
+2011-04-21  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [Qt] Missing eventSender.scalePageBy() implementation
+
+        * platform/qt/Skipped: Add fast/transforms/selection-bounds-in-transformed-view.html.
+
 2011-04-21  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Eric Seidel.
