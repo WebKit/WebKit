@@ -2,6 +2,17 @@
 
         Reviewed by Yury Semikhatsky.
 
+        Web Inspector: rename De-obfuscate to Pretty print.
+        https://bugs.webkit.org/show_bug.cgi?id=59093
+
+        * English.lproj/localizedStrings.js:
+        * inspector/front-end/SourceFrame.js:
+        (WebInspector.SourceFrame.prototype._populateTextAreaContextMenu):
+
+2011-04-21  Pavel Feldman  <pfeldman@google.com>
+
+        Reviewed by Yury Semikhatsky.
+
         Web Inspector: following Image URL link in the network panel does nothing.
         https://bugs.webkit.org/show_bug.cgi?id=59092
 

@@ -663,7 +663,7 @@ WebInspector.SourceFrame.prototype = {
 
     _populateTextAreaContextMenu: function(contextMenu)
     {
-        contextMenu.appendCheckboxItem(WebInspector.UIString("De-obfuscate Source"), this._delegate.toggleFormatSourceFiles.bind(this._delegate), this._delegate.formatSourceFilesToggled());
+        contextMenu.appendCheckboxItem(WebInspector.UIString("Pretty print"), this._delegate.toggleFormatSourceFiles.bind(this._delegate), this._delegate.formatSourceFilesToggled());
     },
 
     _scroll: function(event)
