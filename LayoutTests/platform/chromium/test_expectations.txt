@@ -682,10 +682,12 @@ BUGCR77630 WIN LINUX DEBUG SLOW : inspector/debugger/debugger-activation-crash.h
 // Mac Safari under certain circumstances automatically places
 // a caret in editable document even when none was requested programatically.
 // We don't intend to copy this feature (at least not for Beta).
-BUGCR20844 LINUX WIN : editing/selection/designmode-no-caret.html = FAIL
+BUGCR20844 LINUX WIN RELEASE : editing/selection/designmode-no-caret.html = FAIL
 
 // Regression from merge 41268:41286
-BUGCR10435 MAC : editing/selection/designmode-no-caret.html = FAIL
+BUGCR10435 MAC RELEASE : editing/selection/designmode-no-caret.html = FAIL
+
+BUGDPRANKE DEBUG : editing/selection/designmode-no-caret.html = FAIL CRASH
 
 // Issue 3273: TextInputController::firstRectForCharacterRange not returning
 // the correct values for bidi/rtl text.
@@ -3786,7 +3788,6 @@ BUGDPRANKE WIN DEBUG : svg/custom/foreign-object-skew.svg = CRASH
 // flakiness
 BUGDPRANKE WIN DEBUG : http/tests/navigation/forward-to-fragment-fires-onload.html = TIMEOUT PASS
 BUGDPRANKE WIN DEBUG : perf/mouse-event.html = TEXT TIMEOUT PASS
-BUGDPRANKE LINUX DEBUG : http/tests/security/contentSecurityPolicy/media-src-allowed.html = TIMEOUT PASS
 BUGDPRANKE WIN DEBUG : perf/typing-at-end-of-line.html = TEXT TIMEOUT PASS
 BUGDPRANKE DEBUG : fast/notifications/notifications-display-close-events.html = TIMEOUT PASS
 BUGDPRANKE MAC DEBUG : fast/css-generated-content/table-row-group-to-inline.html = IMAGE+TEXT PASS
@@ -3859,3 +3860,11 @@ BUGDPRANKE DEBUG : animations/keyframes-out-of-order.html = TEXT PASS
 BUGDPRANKE : fast/frames/meta-refresh-user-gesture.html = TIMEOUT PASS
 BUGDPRANKE : http/tests/navigation/redirect-on-back-updates-history-item.html = TIMEOUT PASS
 BUGDPRANKE : fast/files/create-blob-url-crash.html = CRASH
+
+BUGDPRANKE DEBUG : http/tests/security/contentSecurityPolicy/media-src-allowed.html = TIMEOUT PASS
+
+BUGDPRANKE MAC DEBUG : svg/custom/glyph-selection-lang-attribute.svg = CRASH
+
+// flakiness
+BUGDPRANKE WIN DEBUG : fast/css/only-of-type-pseudo-class.html = TEXT PASS
+BUGDPRANKE : fast/dom/Document/document-reopen.html = TEXT PASS

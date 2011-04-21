@@ -1,3 +1,11 @@
+2011-04-21  Dirk Pranke  <dpranke@chromium.org>
+
+        Unreviewed, expectations change.
+
+        Roll in downstream failures as of Chromium r82532.
+
+        * platform/chromium/test_expectations.txt:
+
 2011-04-21  Roland Steiner  <rolandsteiner@chromium.org>
 
         Reviewed by Kent Tamura.
