@@ -1254,7 +1254,7 @@ plugins/mouse-click-iframe-to-plugin.html
 fast/images/animated-gif-restored-from-bfcache.html
 
 # https://bugs.webkit.org/show_bug.cgi?id=59081
-fast/dom/shadow/layout-tests-can-access-shadow.html
+fast/dom/shadow
 
 # Causes the next test to fail http://webkit.org/b/59099
 http/tests/security/contentSecurityPolicy/frame-src-blocked.html

@@ -1,3 +1,15 @@
+2011-04-21  Roland Steiner  <rolandsteiner@chromium.org>
+
+        Unreviewed: skip tests on Windows.
+
+        fast/dom/shadow/layout-tests-can-access-shadow.html is failing on Windows
+        https://bugs.webkit.org/show_bug.cgi?id=59081
+
+        Skip all tests in fast/dom/shadow on Windows.
+        (shadowRoot accessor is not implemented on Windows yet)
+
+        * platform/win/Skipped:
+
 2011-04-21  Dirk Pranke  <dpranke@chromium.org>
 
         Unreviewed, expectations change.
