@@ -95,7 +95,7 @@ WebInspector.ExtensionSidebarPane.prototype = {
 
     setExpression: function(expression, title)
     {
-        RuntimeAgent.evaluate(expression, "extension-watch", false, this._onEvaluate.bind(this, title));
+        RuntimeAgent.evaluate(expression, "extension-watch", true, this._onEvaluate.bind(this, title));
     },
 
     setPage: function(url)

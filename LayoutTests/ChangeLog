@@ -1,3 +1,15 @@
+2011-04-20  Andrey Kosyakov  <caseq@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Expose console API to the code evaluated by sidebar.setExpression()
+
+        Web Inspector: [Extensions API] console API is not exposed to code evaluated by sidebar.setExpression()
+        https://bugs.webkit.org/show_bug.cgi?id=59006
+
+        * inspector/extensions/extensions-expected.txt:
+        * inspector/extensions/extensions.html:
+
 2011-04-21  Tony Gentilcore  <tonyg@chromium.org>
 
         [chromium] Correct expecations for editing/selection/designmode-no-caret.html

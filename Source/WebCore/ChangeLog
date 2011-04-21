@@ -1,3 +1,13 @@
+2011-04-20  Andrey Kosyakov  <caseq@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: [Extensions API] console API is not exposed to code evaluated by sidebar.setExpression()
+        https://bugs.webkit.org/show_bug.cgi?id=59006
+
+        * inspector/front-end/ExtensionPanel.js:
+        (WebInspector.ExtensionSidebarPane.prototype.setExpression):
+
 2011-04-21  Nikolas Zimmermann  <nzimmermann@rim.com>
 
         Reviewed by Dirk Schulze.
