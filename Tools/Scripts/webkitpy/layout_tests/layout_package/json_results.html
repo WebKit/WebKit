@@ -574,16 +574,19 @@ function generatePage()
 
     document.body.innerHTML = html;
 
-    if (document.getElementById('results-table'))
+    if (document.getElementById('results-table')) {
         document.getElementById('results-table').addEventListener('click', TableSorter.handleClick, false);
-    TableSorter.sortColumn(0);
+        TableSorter.sortColumn(0);
+        if (!globalState().hasTextFailures)
+            document.getElementById('text-results-header').textContent = '';
+        if (!globalState().hasImageFailures)
+            document.getElementById('image-results-header').textContent = '';
+    }
     
     updateExpectedResults();
-
-    if (!globalState().hasTextFailures)
-      document.body.getElementById('text-results-header').textContent = '';
-    if (!globalState().hasImageFailures)
-      document.body.getElementById('image-results-header').textContent = '';
 }
 </script>
+<!-- HACK: when json_results_test.js is included, loading this page runs the tests.
+It is not copied to the layout-test-results output directory. -->
+<script src="json_results_test.js"></script>
 <body onload="generatePage()"></body>
