@@ -29,6 +29,7 @@
 
 """Wrapper around webkitpy/layout_tests/run_webkit_tests.py"""
 import os
+import signal
 import subprocess
 import sys
 
@@ -49,4 +50,8 @@ if __name__ == '__main__':
         env['PYTHONPATH'] = script_dir
     module_path = os.path.join(script_dir, 'webkitpy', 'layout_tests', 'run_webkit_tests.py')
     cmd = [sys.executable, module_path] + sys.argv[1:]
-    sys.exit(subprocess.call(cmd, env=env))
+    try:
+        sys.exit(subprocess.call(cmd, env=env))
+    except KeyboardInterrupt:
+        # this mirrors what the shell normally does
+        sys.exit(signal.SIGINT + 128)
