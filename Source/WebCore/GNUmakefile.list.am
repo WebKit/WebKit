@@ -2360,10 +2360,12 @@ webcore_sources += \
 	Source/WebCore/platform/graphics/filters/FEDiffuseLighting.h \
 	Source/WebCore/platform/graphics/filters/FEDisplacementMap.cpp \
 	Source/WebCore/platform/graphics/filters/FEDisplacementMap.h \
-	Source/WebCore/platform/graphics/filters/FEGaussianBlur.cpp \
-	Source/WebCore/platform/graphics/filters/FEGaussianBlur.h \
+	Source/WebCore/platform/graphics/filters/FEDropShadow.cpp \
+	Source/WebCore/platform/graphics/filters/FEDropShadow.h \
 	Source/WebCore/platform/graphics/filters/FEFlood.cpp \
 	Source/WebCore/platform/graphics/filters/FEFlood.h \
+	Source/WebCore/platform/graphics/filters/FEGaussianBlur.cpp \
+	Source/WebCore/platform/graphics/filters/FEGaussianBlur.h \
 	Source/WebCore/platform/graphics/filters/FELighting.cpp \
 	Source/WebCore/platform/graphics/filters/FELighting.h \
 	Source/WebCore/platform/graphics/filters/FEMerge.cpp \
@@ -3335,6 +3337,8 @@ webcore_sources += \
 	Source/WebCore/svg/SVGFEDisplacementMapElement.h \
 	Source/WebCore/svg/SVGFEDistantLightElement.cpp \
 	Source/WebCore/svg/SVGFEDistantLightElement.h \
+	Source/WebCore/svg/SVGFEDropShadowElement.cpp \
+	Source/WebCore/svg/SVGFEDropShadowElement.h \
 	Source/WebCore/svg/SVGFEFloodElement.cpp \
 	Source/WebCore/svg/SVGFEFloodElement.h \
 	Source/WebCore/svg/SVGFEFuncAElement.cpp \
@@ -4189,6 +4193,8 @@ webcore_built_sources += \
 	DerivedSources/WebCore/JSSVGFEDisplacementMapElement.h \
 	DerivedSources/WebCore/JSSVGFEDistantLightElement.cpp \
 	DerivedSources/WebCore/JSSVGFEDistantLightElement.h \
+	DerivedSources/WebCore/JSSVGFEDropShadowElement.cpp \
+	DerivedSources/WebCore/JSSVGFEDropShadowElement.h \
 	DerivedSources/WebCore/JSSVGFEFloodElement.cpp \
 	DerivedSources/WebCore/JSSVGFEFloodElement.h \
 	DerivedSources/WebCore/JSSVGFEFuncAElement.cpp \

@@ -1,3 +1,93 @@
+2011-04-21  Dirk Schulze  <krit@webkit.org>
+
+        Reviewed by Nikolas Zimmermann.
+
+        SVG feDropShadow implementation of SVG Filters 1.2
+        https://bugs.webkit.org/show_bug.cgi?id=52513
+
+        Added dynamic update tests for FEDropShadow as well as a basic pixel test.
+
+        * platform/mac/svg/dynamic-updates/SVGFEDropShadowElement-dom-dx-attr-expected.checksum: Added.
+        * platform/mac/svg/dynamic-updates/SVGFEDropShadowElement-dom-dx-attr-expected.png: Added.
+        * platform/mac/svg/dynamic-updates/SVGFEDropShadowElement-dom-dy-attr-expected.checksum: Added.
+        * platform/mac/svg/dynamic-updates/SVGFEDropShadowElement-dom-dy-attr-expected.png: Added.
+        * platform/mac/svg/dynamic-updates/SVGFEDropShadowElement-dom-in-attr-expected.checksum: Added.
+        * platform/mac/svg/dynamic-updates/SVGFEDropShadowElement-dom-in-attr-expected.png: Added.
+        * platform/mac/svg/dynamic-updates/SVGFEDropShadowElement-dom-shadow-color-attr-expected.checksum: Added.
+        * platform/mac/svg/dynamic-updates/SVGFEDropShadowElement-dom-shadow-color-attr-expected.png: Added.
+        * platform/mac/svg/dynamic-updates/SVGFEDropShadowElement-dom-shadow-opacity-attr-expected.checksum: Added.
+        * platform/mac/svg/dynamic-updates/SVGFEDropShadowElement-dom-shadow-opacity-attr-expected.png: Added.
+        * platform/mac/svg/dynamic-updates/SVGFEDropShadowElement-dom-stdDeviation-attr-expected.checksum: Added.
+        * platform/mac/svg/dynamic-updates/SVGFEDropShadowElement-dom-stdDeviation-attr-expected.png: Added.
+        * platform/mac/svg/dynamic-updates/SVGFEDropShadowElement-svgdom-dx-prop-expected.checksum: Added.
+        * platform/mac/svg/dynamic-updates/SVGFEDropShadowElement-svgdom-dx-prop-expected.png: Added.
+        * platform/mac/svg/dynamic-updates/SVGFEDropShadowElement-svgdom-dy-prop-expected.checksum: Added.
+        * platform/mac/svg/dynamic-updates/SVGFEDropShadowElement-svgdom-dy-prop-expected.png: Added.
+        * platform/mac/svg/dynamic-updates/SVGFEDropShadowElement-svgdom-in-prop-expected.checksum: Added.
+        * platform/mac/svg/dynamic-updates/SVGFEDropShadowElement-svgdom-in-prop-expected.png: Added.
+        * platform/mac/svg/dynamic-updates/SVGFEDropShadowElement-svgdom-shadow-color-prop-expected.checksum: Added.
+        * platform/mac/svg/dynamic-updates/SVGFEDropShadowElement-svgdom-shadow-color-prop-expected.png: Added.
+        * platform/mac/svg/dynamic-updates/SVGFEDropShadowElement-svgdom-shadow-opacity-prop-expected.checksum: Added.
+        * platform/mac/svg/dynamic-updates/SVGFEDropShadowElement-svgdom-shadow-opacity-prop-expected.png: Added.
+        * platform/mac/svg/dynamic-updates/SVGFEDropShadowElement-svgdom-stdDeviation-prop-expected.checksum: Added.
+        * platform/mac/svg/dynamic-updates/SVGFEDropShadowElement-svgdom-stdDeviation-prop-expected.png: Added.
+        * platform/mac/svg/filters/feDropShadow-expected.checksum: Added.
+        * platform/mac/svg/filters/feDropShadow-expected.png: Added.
+        * platform/mac/svg/filters/feDropShadow-expected.txt: Added.
+        * svg/dynamic-updates/SVGFEDropShadowElement-dom-dx-attr-expected.txt: Added.
+        * svg/dynamic-updates/SVGFEDropShadowElement-dom-dx-attr.html: Added.
+        * svg/dynamic-updates/SVGFEDropShadowElement-dom-dy-attr-expected.txt: Added.
+        * svg/dynamic-updates/SVGFEDropShadowElement-dom-dy-attr.html: Added.
+        * svg/dynamic-updates/SVGFEDropShadowElement-dom-in-attr-expected.txt: Added.
+        * svg/dynamic-updates/SVGFEDropShadowElement-dom-in-attr.html: Added.
+        * svg/dynamic-updates/SVGFEDropShadowElement-dom-shadow-color-attr-expected.txt: Added.
+        * svg/dynamic-updates/SVGFEDropShadowElement-dom-shadow-color-attr.html: Added.
+        * svg/dynamic-updates/SVGFEDropShadowElement-dom-shadow-opacity-attr-expected.txt: Added.
+        * svg/dynamic-updates/SVGFEDropShadowElement-dom-shadow-opacity-attr.html: Added.
+        * svg/dynamic-updates/SVGFEDropShadowElement-dom-stdDeviation-attr-expected.txt: Added.
+        * svg/dynamic-updates/SVGFEDropShadowElement-dom-stdDeviation-attr.html: Added.
+        * svg/dynamic-updates/SVGFEDropShadowElement-svgdom-dx-prop-expected.txt: Added.
+        * svg/dynamic-updates/SVGFEDropShadowElement-svgdom-dx-prop.html: Added.
+        * svg/dynamic-updates/SVGFEDropShadowElement-svgdom-dy-prop-expected.txt: Added.
+        * svg/dynamic-updates/SVGFEDropShadowElement-svgdom-dy-prop.html: Added.
+        * svg/dynamic-updates/SVGFEDropShadowElement-svgdom-in-prop-expected.txt: Added.
+        * svg/dynamic-updates/SVGFEDropShadowElement-svgdom-in-prop.html: Added.
+        * svg/dynamic-updates/SVGFEDropShadowElement-svgdom-shadow-color-prop-expected.txt: Added.
+        * svg/dynamic-updates/SVGFEDropShadowElement-svgdom-shadow-color-prop.html: Added.
+        * svg/dynamic-updates/SVGFEDropShadowElement-svgdom-shadow-opacity-prop-expected.txt: Added.
+        * svg/dynamic-updates/SVGFEDropShadowElement-svgdom-shadow-opacity-prop.html: Added.
+        * svg/dynamic-updates/SVGFEDropShadowElement-svgdom-stdDeviation-prop-expected.txt: Added.
+        * svg/dynamic-updates/SVGFEDropShadowElement-svgdom-stdDeviation-prop.html: Added.
+        * svg/dynamic-updates/SVGFETurbulenceElement-svgdom-numOctaves-prop.html:
+        * svg/dynamic-updates/SVGFETurbulenceElement-svgdom-seed-prop.html:
+        * svg/dynamic-updates/SVGFETurbulenceElement-svgdom-stitchTiles-prop.html:
+        * svg/dynamic-updates/SVGFETurbulenceElement-svgdom-type-prop.html:
+        * svg/dynamic-updates/script-tests/SVGFEDropShadowElement-dom-dx-attr.js: Added.
+        (executeTest):
+        * svg/dynamic-updates/script-tests/SVGFEDropShadowElement-dom-dy-attr.js: Added.
+        (executeTest):
+        * svg/dynamic-updates/script-tests/SVGFEDropShadowElement-dom-in-attr.js: Added.
+        (executeTest):
+        * svg/dynamic-updates/script-tests/SVGFEDropShadowElement-dom-shadow-color-attr.js: Added.
+        (executeTest):
+        * svg/dynamic-updates/script-tests/SVGFEDropShadowElement-dom-shadow-opacity-attr.js: Added.
+        (executeTest):
+        * svg/dynamic-updates/script-tests/SVGFEDropShadowElement-dom-stdDeviation-attr.js: Added.
+        (executeTest):
+        * svg/dynamic-updates/script-tests/SVGFEDropShadowElement-svgdom-dx-prop.js: Added.
+        (executeTest):
+        * svg/dynamic-updates/script-tests/SVGFEDropShadowElement-svgdom-dy-prop.js: Added.
+        (executeTest):
+        * svg/dynamic-updates/script-tests/SVGFEDropShadowElement-svgdom-in-prop.js: Added.
+        (executeTest):
+        * svg/dynamic-updates/script-tests/SVGFEDropShadowElement-svgdom-shadow-color-prop.js: Added.
+        (executeTest):
+        * svg/dynamic-updates/script-tests/SVGFEDropShadowElement-svgdom-shadow-opacity-prop.js: Added.
+        (executeTest):
+        * svg/dynamic-updates/script-tests/SVGFEDropShadowElement-svgdom-stdDeviation-prop.js: Added.
+        (executeTest):
+        * svg/filters/feDropShadow.svg: Added.
+
 2011-04-21  MORITA Hajime  <morrita@google.com>
 
         Unreviewed expectations update following r84511.

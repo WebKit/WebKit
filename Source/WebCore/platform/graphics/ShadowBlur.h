@@ -52,11 +52,12 @@ public:
     void drawRectShadow(GraphicsContext*, const FloatRect&, const RoundedIntRect::Radii&);
     void drawInsetShadow(GraphicsContext*, const FloatRect&, const FloatRect& holeRect, const RoundedIntRect::Radii& holeRadii);
 
+    void blurLayerImage(unsigned char*, const IntSize&, int stride);
+
 private:
     void drawShadowBuffer(GraphicsContext*);
 
     void adjustBlurRadius(GraphicsContext*);
-    void blurLayerImage(unsigned char*, const IntSize&, int stride);
     
     enum ShadowDirection {
         OuterShadow,

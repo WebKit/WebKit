@@ -1927,6 +1927,7 @@ HEADERS += \
     platform/graphics/filters/FEConvolveMatrix.h \
     platform/graphics/filters/FEDiffuseLighting.h \
     platform/graphics/filters/FEDisplacementMap.h \
+    platform/graphics/filters/FEDropShadow.h \
     platform/graphics/filters/FEFlood.h \
     platform/graphics/filters/FEGaussianBlur.h \
     platform/graphics/filters/FELighting.h \
@@ -2327,6 +2328,7 @@ HEADERS += \
     svg/SVGFEDiffuseLightingElement.h \
     svg/SVGFEDisplacementMapElement.h \
     svg/SVGFEDistantLightElement.h \
+    svg/SVGFEFDropShadowElement.h \
     svg/SVGFEFloodElement.h \
     svg/SVGFEFuncAElement.h \
     svg/SVGFEFuncBElement.h \
@@ -3059,6 +3061,7 @@ contains(DEFINES, ENABLE_FILTERS=1) {
         platform/graphics/filters/FEConvolveMatrix.cpp \
         platform/graphics/filters/FEDiffuseLighting.cpp \
         platform/graphics/filters/FEDisplacementMap.cpp \
+        platform/graphics/filters/FEDropShadow.cpp \
         platform/graphics/filters/FEFlood.cpp \
         platform/graphics/filters/FEGaussianBlur.cpp \
         platform/graphics/filters/FELighting.cpp \
@@ -3284,6 +3287,7 @@ contains(DEFINES, ENABLE_SVG=1) {
               svg/SVGFEDiffuseLightingElement.cpp \
               svg/SVGFEDisplacementMapElement.cpp \
               svg/SVGFEDistantLightElement.cpp \
+              svg/SVGFEDropShadowElement.cpp \
               svg/SVGFEFloodElement.cpp \
               svg/SVGFEFuncAElement.cpp \
               svg/SVGFEFuncBElement.cpp \

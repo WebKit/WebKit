@@ -571,6 +571,7 @@ LOCAL_SRC_FILES := $(LOCAL_SRC_FILES) \
 	platform/graphics/filters/FEConvolveMatrix.cpp \
 	platform/graphics/filters/FEDiffuseLighting.cpp \
 	platform/graphics/filters/FEDisplacementMap.cpp \
+	platform/graphics/filters/FEDropShadow.cpp \
 	platform/graphics/filters/FEFlood.cpp \
 	platform/graphics/filters/FEMerge.cpp \
 	platform/graphics/filters/FEMorphology.cpp \
@@ -917,6 +918,7 @@ LOCAL_SRC_FILES := $(LOCAL_SRC_FILES) \
 	svg/SVGFEDiffuseLightingElement.cpp \
 	svg/SVGFEDisplacementMapElement.cpp \
 	svg/SVGFEDistantLightElement.cpp \
+	svg/SVGFEDropShadowElement.cpp \
 	svg/SVGFEFloodElement.cpp \
 	svg/SVGFEFuncAElement.cpp \
 	svg/SVGFEFuncBElement.cpp \

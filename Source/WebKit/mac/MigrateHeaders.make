@@ -275,6 +275,8 @@ all : \
     $(INTERNAL_HEADERS_DIR)/DOMSVGFEDisplacementMapElementInternal.h \
     $(PRIVATE_HEADERS_DIR)/DOMSVGFEDistantLightElement.h \
     $(INTERNAL_HEADERS_DIR)/DOMSVGFEDistantLightElementInternal.h \
+    $(PRIVATE_HEADERS_DIR)/DOMSVGFEDropShadowElement.h \
+    $(INTERNAL_HEADERS_DIR)/DOMSVGFEDropShadowElementInternal.h \
     $(PRIVATE_HEADERS_DIR)/DOMSVGFEFloodElement.h \
     $(INTERNAL_HEADERS_DIR)/DOMSVGFEFloodElementInternal.h \
     $(PRIVATE_HEADERS_DIR)/DOMSVGFEFuncAElement.h \

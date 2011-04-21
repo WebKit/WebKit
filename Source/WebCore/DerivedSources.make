@@ -401,6 +401,7 @@ DOM_CLASSES = \
     SVGFEDiffuseLightingElement \
     SVGFEDisplacementMapElement \
     SVGFEDistantLightElement \
+    SVGFEDropShadowElement \
     SVGFEFloodElement \
     SVGFEFuncAElement \
     SVGFEFuncBElement \

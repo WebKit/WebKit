@@ -753,6 +753,7 @@ module window {
         attribute SVGFEDiffuseLightingElementConstructor SVGFEDiffuseLightingElement;
         attribute SVGFEDisplacementMapElementConstructor SVGFEDisplacementMapElement;
         attribute SVGFEDistantLightElementConstructor SVGFEDistantLightElement;
+        attribute SVGFEDropShadowElementConstructor SVGFEDropShadowElement;
         attribute SVGFEFloodElementConstructor SVGFEFloodElement;
         attribute SVGFEFuncAElementConstructor SVGFEFuncAElement;
         attribute SVGFEFuncBElementConstructor SVGFEFuncBElement;

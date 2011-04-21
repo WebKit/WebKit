@@ -169,6 +169,7 @@ static void createElementClassMap()
     addElementClass(SVGNames::feDiffuseLightingTag, [DOMSVGFEDiffuseLightingElement class]);
     addElementClass(SVGNames::feDisplacementMapTag, [DOMSVGFEDisplacementMapElement class]);
     addElementClass(SVGNames::feDistantLightTag, [DOMSVGFEDistantLightElement class]);
+    addElementClass(SVGNames::feDropShadowTag, [DOMSVGFEDropShadowElement class]);
     addElementClass(SVGNames::feFloodTag, [DOMSVGFEFloodElement class]);
     addElementClass(SVGNames::feFuncATag, [DOMSVGFEFuncAElement class]);
     addElementClass(SVGNames::feFuncBTag, [DOMSVGFEFuncBElement class]);

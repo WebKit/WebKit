@@ -129,7 +129,7 @@ inline void kernelPosition(int boxBlur, unsigned& std, int& dLeft, int& dRight)
     }
 }
 
-inline void calculateKernelSize(Filter* filter, unsigned& kernelSizeX, unsigned& kernelSizeY, float stdX, float stdY)
+void FEGaussianBlur::calculateKernelSize(Filter* filter, unsigned& kernelSizeX, unsigned& kernelSizeY, float stdX, float stdY)
 {
     stdX = filter->applyHorizontalScale(stdX);
     stdY = filter->applyVerticalScale(stdY);

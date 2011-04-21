@@ -332,6 +332,7 @@
 #include "JSSVGFEDiffuseLightingElement.cpp"
 #include "JSSVGFEDisplacementMapElement.cpp"
 #include "JSSVGFEDistantLightElement.cpp"
+#include "JSSVGFEDropShadowElement.cpp"
 #include "JSSVGFEFloodElement.cpp"
 #include "JSSVGFEFuncAElement.cpp"
 #include "JSSVGFEFuncBElement.cpp"

@@ -16166,6 +16166,62 @@
 				>
 			</File>
 			<File
+				RelativePath="$(ConfigurationBuildDir)\obj\$(ProjectName)\DerivedSources\JSSVGFEDropShadowElement.cpp"
+				>
+				<FileConfiguration
+					Name="Debug|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Debug_Cairo_CFLite|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release_Cairo_CFLite|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Debug_All|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release_LTCG|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="$(ConfigurationBuildDir)\obj\$(ProjectName)\DerivedSources\JSSVGFEDropShadowElement.h"
+				>
+			</File>
+			<File
 				RelativePath="$(ConfigurationBuildDir)\obj\$(ProjectName)\DerivedSources\JSSVGFEFloodElement.cpp"
 				>
 				<FileConfiguration
@@ -29257,6 +29313,14 @@
 					</File>
 					<File
 						RelativePath="..\platform\graphics\filters\FEDisplacementMap.h"
+						>
+					</File>
+					<File
+						RelativePath="..\platform\graphics\filters\FEDropShadow.cpp"
+						>
+					</File>
+					<File
+						RelativePath="..\platform\graphics\filters\FEDropShadow.h"
 						>
 					</File>
 					<File
@@ -64791,6 +64855,10 @@
 			</File>
 			<File
 				RelativePath="..\svg\SVGFEDistantLightElement.h"
+				>
+			</File>
+			<File
+				RelativePath="..\svg\SVGFEDropShadowElement.h"
 				>
 			</File>
 			<File

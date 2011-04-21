@@ -35,6 +35,7 @@ feConvolveMatrix
 feDiffuseLighting
 feDisplacementMap
 feDistantLight
+feDropShadow
 feFlood
 feFuncA
 feFuncB

@@ -1,8 +1,8 @@
 /*
- * Copyright (C) 2011 Apple Inc.
- * Copyright (C) 2010 Sencha, Inc.
- * Copyright (C) 2010 Igalia S.L.
- * All rights reserved.
+ * Copyright (C) 2011 Apple Inc. All rights reserved.
+ * Copyright (C) 2010 Sencha, Inc. All rights reserved.
+ * Copyright (C) 2010 Igalia S.L. All rights reserved.
+ * Copyright (C) Research In Motion Limited 2011. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions

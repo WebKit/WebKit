@@ -56,6 +56,7 @@
 #include "SVGFEDiffuseLightingElement.cpp"
 #include "SVGFEDisplacementMapElement.cpp"
 #include "SVGFEDistantLightElement.cpp"
+#include "SVGFEDropShadowElement.cpp"
 #include "SVGFEFloodElement.cpp"
 #include "SVGFEFuncAElement.cpp"
 #include "SVGFEFuncBElement.cpp"

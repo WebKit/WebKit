@@ -1121,6 +1121,7 @@ SET(WebCore_SOURCES
     platform/graphics/filters/FEConvolveMatrix.cpp
     platform/graphics/filters/FEDiffuseLighting.cpp
     platform/graphics/filters/FEDisplacementMap.cpp
+    platform/graphics/filters/FEDropShadow.cpp
     platform/graphics/filters/FEFlood.cpp
     platform/graphics/filters/FEGaussianBlur.cpp
     platform/graphics/filters/FELighting.cpp
@@ -1649,6 +1650,7 @@ IF (ENABLE_SVG)
         svg/SVGFEDiffuseLightingElement.cpp
         svg/SVGFEDisplacementMapElement.cpp
         svg/SVGFEDistantLightElement.cpp
+        svg/SVGFEDropShadowElement.cpp
         svg/SVGFEFloodElement.cpp
         svg/SVGFEFuncAElement.cpp
         svg/SVGFEFuncBElement.cpp
@@ -1801,6 +1803,7 @@ IF (ENABLE_SVG)
         svg/SVGFEDiffuseLightingElement.idl
         svg/SVGFEDisplacementMapElement.idl
         svg/SVGFEDistantLightElement.idl
+        svg/SVGFEDropShadowElement.idl
         svg/SVGFEFloodElement.idl
         svg/SVGFEFuncAElement.idl
         svg/SVGFEFuncBElement.idl

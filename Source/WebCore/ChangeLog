@@ -1,3 +1,85 @@
+2011-04-21  Dirk Schulze  <krit@webkit.org>
+
+        Reviewed by Nikolas Zimmermann.
+
+        SVG feDropShadow implementation of SVG Filters 1.2
+        https://bugs.webkit.org/show_bug.cgi?id=52513
+
+        This is the implementation of feDropShadow, a shorthand filter and a combination of feGaussianBlur,
+        feOffset, feFlood and feComposite to create a drop shadow of an input effect.
+        Creating this new filter effect makes it possible to optimize the often used workflow. ShadowBlur, with its
+        fast blurring algorithm, is used to blur the shadow and composite operators are responsible for combining the
+        source with different colored shadows.
+        Shadow color and opacity can be set with the properties flood-color and flood-opacity.
+
+        Tests: svg/dynamic-updates/SVGFEDropShadowElement-dom-dx-attr.html
+               svg/dynamic-updates/SVGFEDropShadowElement-dom-dy-attr.html
+               svg/dynamic-updates/SVGFEDropShadowElement-dom-in-attr.html
+               svg/dynamic-updates/SVGFEDropShadowElement-dom-shadow-color-attr.html
+               svg/dynamic-updates/SVGFEDropShadowElement-dom-shadow-opacity-attr.html
+               svg/dynamic-updates/SVGFEDropShadowElement-dom-stdDeviation-attr.html
+               svg/dynamic-updates/SVGFEDropShadowElement-svgdom-dx-prop.html
+               svg/dynamic-updates/SVGFEDropShadowElement-svgdom-dy-prop.html
+               svg/dynamic-updates/SVGFEDropShadowElement-svgdom-in-prop.html
+               svg/dynamic-updates/SVGFEDropShadowElement-svgdom-shadow-color-prop.html
+               svg/dynamic-updates/SVGFEDropShadowElement-svgdom-shadow-opacity-prop.html
+               svg/dynamic-updates/SVGFEDropShadowElement-svgdom-stdDeviation-prop.html
+               svg/filters/feDropShadow.svg
+
+        * Android.mk:
+        * CMakeLists.txt:
+        * DerivedSources.cpp:
+        * DerivedSources.make:
+        * GNUmakefile.list.am:
+        * WebCore.exp.in:
+        * WebCore.gypi:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/objc/DOM.mm:
+        (WebCore::createElementClassMap):
+        * bindings/objc/DOMSVG.h:
+        * page/DOMWindow.idl:
+        * platform/graphics/ShadowBlur.cpp: Added missing copyright after r84410.
+        * platform/graphics/ShadowBlur.h: Made blurLayerImage public.
+        * platform/graphics/filters/FEDropShadow.cpp: Added.
+        (WebCore::FEDropShadow::FEDropShadow):
+        (WebCore::FEDropShadow::create):
+        (WebCore::FEDropShadow::determineAbsolutePaintRect):
+        (WebCore::FEDropShadow::apply):
+        (WebCore::FEDropShadow::dump):
+        (WebCore::FEDropShadow::externalRepresentation):
+        * platform/graphics/filters/FEDropShadow.h: Added.
+        (WebCore::FEDropShadow::stdDeviationX):
+        (WebCore::FEDropShadow::setStdDeviationX):
+        (WebCore::FEDropShadow::stdDeviationY):
+        (WebCore::FEDropShadow::setStdDeviationY):
+        (WebCore::FEDropShadow::dx):
+        (WebCore::FEDropShadow::setDx):
+        (WebCore::FEDropShadow::dy):
+        (WebCore::FEDropShadow::setDy):
+        (WebCore::FEDropShadow::shadowColor):
+        (WebCore::FEDropShadow::setShadowColor):
+        (WebCore::FEDropShadow::shadowOpacity):
+        (WebCore::FEDropShadow::setShadowOpacity):
+        * platform/graphics/filters/FEGaussianBlur.cpp:
+        (WebCore::FEGaussianBlur::calculateKernelSize): Make kernel calculations accessible for feDropShadow.
+        * platform/graphics/filters/FEGaussianBlur.h:
+        * svg/SVGAllInOne.cpp:
+        * svg/SVGFEDropShadowElement.cpp: Added.
+        (WebCore::SVGFEDropShadowElement::SVGFEDropShadowElement):
+        (WebCore::SVGFEDropShadowElement::create):
+        (WebCore::SVGFEDropShadowElement::stdDeviationXIdentifier):
+        (WebCore::SVGFEDropShadowElement::stdDeviationYIdentifier):
+        (WebCore::SVGFEDropShadowElement::setStdDeviation):
+        (WebCore::SVGFEDropShadowElement::parseMappedAttribute):
+        (WebCore::SVGFEDropShadowElement::svgAttributeChanged):
+        (WebCore::SVGFEDropShadowElement::synchronizeProperty):
+        (WebCore::SVGFEDropShadowElement::build):
+        * svg/SVGFEDropShadowElement.h: Added.
+        * svg/SVGFEDropShadowElement.idl: Added.
+        * svg/svgtags.in:
+
 2011-04-21  Roland Steiner  <rolandsteiner@chromium.org>
 
         Reviewed by Dimitri Glazkov.

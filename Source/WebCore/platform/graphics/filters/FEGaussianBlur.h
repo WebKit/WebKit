@@ -47,6 +47,8 @@ public:
 
     virtual TextStream& externalRepresentation(TextStream&, int indention) const;
 
+    static void calculateKernelSize(Filter*, unsigned& kernelSizeX, unsigned& kernelSizeY, float stdX, float stdY);
+
 private:
     FEGaussianBlur(Filter*, float, float);
 

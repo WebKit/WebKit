@@ -961,6 +961,17 @@
 		41F584C7104652CB009CAA64 /* JSMessagePortCustom.h in Headers */ = {isa = PBXBuildFile; fileRef = 41F584C6104652CB009CAA64 /* JSMessagePortCustom.h */; };
 		41FA303E1316C29C00C0BFC5 /* RenderMediaControls.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 41FA303C1316C29C00C0BFC5 /* RenderMediaControls.cpp */; };
 		41FA303F1316C29C00C0BFC5 /* RenderMediaControls.h in Headers */ = {isa = PBXBuildFile; fileRef = 41FA303D1316C29C00C0BFC5 /* RenderMediaControls.h */; };
+		4358E86A1360A21600E4748C /* DOMSVGFEDropShadowElement.h in Headers */ = {isa = PBXBuildFile; fileRef = 4358E8671360A21600E4748C /* DOMSVGFEDropShadowElement.h */; };
+		4358E86B1360A21600E4748C /* DOMSVGFEDropShadowElement.mm in Sources */ = {isa = PBXBuildFile; fileRef = 4358E8681360A21600E4748C /* DOMSVGFEDropShadowElement.mm */; };
+		4358E86C1360A21600E4748C /* DOMSVGFEDropShadowElementInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = 4358E8691360A21600E4748C /* DOMSVGFEDropShadowElementInternal.h */; };
+		4358E86D1360A24500E4748C /* DOMSVGFEDropShadowElement.h in Copy Generated Headers */ = {isa = PBXBuildFile; fileRef = 4358E8671360A21600E4748C /* DOMSVGFEDropShadowElement.h */; };
+		4358E86F1360A24500E4748C /* DOMSVGFEDropShadowElementInternal.h in Copy Generated Headers */ = {isa = PBXBuildFile; fileRef = 4358E8691360A21600E4748C /* DOMSVGFEDropShadowElementInternal.h */; };
+		4358E87C1360A2EE00E4748C /* JSSVGFEDropShadowElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4358E87A1360A2EE00E4748C /* JSSVGFEDropShadowElement.cpp */; };
+		4358E87D1360A2EE00E4748C /* JSSVGFEDropShadowElement.h in Headers */ = {isa = PBXBuildFile; fileRef = 4358E87B1360A2EE00E4748C /* JSSVGFEDropShadowElement.h */; };
+		4358E8801360A31700E4748C /* FEDropShadow.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4358E87E1360A31700E4748C /* FEDropShadow.cpp */; };
+		4358E8811360A31700E4748C /* FEDropShadow.h in Headers */ = {isa = PBXBuildFile; fileRef = 4358E87F1360A31700E4748C /* FEDropShadow.h */; };
+		4358E8851360A33B00E4748C /* SVGFEDropShadowElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4358E8821360A33B00E4748C /* SVGFEDropShadowElement.cpp */; };
+		4358E8861360A33B00E4748C /* SVGFEDropShadowElement.h in Headers */ = {isa = PBXBuildFile; fileRef = 4358E8831360A33B00E4748C /* SVGFEDropShadowElement.h */; };
 		436708C112D9CA4B00044234 /* RenderSVGBlock.h in Headers */ = {isa = PBXBuildFile; fileRef = 4367088212D9CA4A00044234 /* RenderSVGBlock.h */; };
 		436708C312D9CA4B00044234 /* RenderSVGContainer.h in Headers */ = {isa = PBXBuildFile; fileRef = 4367088412D9CA4A00044234 /* RenderSVGContainer.h */; };
 		436708C512D9CA4B00044234 /* RenderSVGGradientStop.h in Headers */ = {isa = PBXBuildFile; fileRef = 4367088612D9CA4A00044234 /* RenderSVGGradientStop.h */; };
@@ -6039,6 +6050,8 @@
 			dstPath = Versions/A/PrivateHeaders;
 			dstSubfolderSpec = 1;
 			files = (
+				4358E86D1360A24500E4748C /* DOMSVGFEDropShadowElement.h in Copy Generated Headers */,
+				4358E86F1360A24500E4748C /* DOMSVGFEDropShadowElementInternal.h in Copy Generated Headers */,
 				5DF7F5C20F01F92A00526B4B /* CSSPropertyNames.h in Copy Generated Headers */,
 				8538F0300AD71CDB006A81D1 /* DOMAbstractView.h in Copy Generated Headers */,
 				1C11CCBC0AA6093700DADB20 /* DOMAttr.h in Copy Generated Headers */,
@@ -7469,6 +7482,16 @@
 		41F584C6104652CB009CAA64 /* JSMessagePortCustom.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSMessagePortCustom.h; sourceTree = "<group>"; };
 		41FA303C1316C29C00C0BFC5 /* RenderMediaControls.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RenderMediaControls.cpp; sourceTree = "<group>"; };
 		41FA303D1316C29C00C0BFC5 /* RenderMediaControls.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RenderMediaControls.h; sourceTree = "<group>"; };
+		4358E8671360A21600E4748C /* DOMSVGFEDropShadowElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DOMSVGFEDropShadowElement.h; sourceTree = "<group>"; };
+		4358E8681360A21600E4748C /* DOMSVGFEDropShadowElement.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = DOMSVGFEDropShadowElement.mm; sourceTree = "<group>"; };
+		4358E8691360A21600E4748C /* DOMSVGFEDropShadowElementInternal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DOMSVGFEDropShadowElementInternal.h; sourceTree = "<group>"; };
+		4358E87A1360A2EE00E4748C /* JSSVGFEDropShadowElement.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSSVGFEDropShadowElement.cpp; sourceTree = "<group>"; };
+		4358E87B1360A2EE00E4748C /* JSSVGFEDropShadowElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSSVGFEDropShadowElement.h; sourceTree = "<group>"; };
+		4358E87E1360A31700E4748C /* FEDropShadow.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = FEDropShadow.cpp; path = filters/FEDropShadow.cpp; sourceTree = "<group>"; };
+		4358E87F1360A31700E4748C /* FEDropShadow.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FEDropShadow.h; path = filters/FEDropShadow.h; sourceTree = "<group>"; };
+		4358E8821360A33B00E4748C /* SVGFEDropShadowElement.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SVGFEDropShadowElement.cpp; sourceTree = "<group>"; };
+		4358E8831360A33B00E4748C /* SVGFEDropShadowElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SVGFEDropShadowElement.h; sourceTree = "<group>"; };
+		4358E8841360A33B00E4748C /* SVGFEDropShadowElement.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = SVGFEDropShadowElement.idl; sourceTree = "<group>"; };
 		4367088112D9CA4A00044234 /* RenderSVGBlock.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RenderSVGBlock.cpp; sourceTree = "<group>"; };
 		4367088212D9CA4A00044234 /* RenderSVGBlock.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RenderSVGBlock.h; sourceTree = "<group>"; };
 		4367088312D9CA4A00044234 /* RenderSVGContainer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RenderSVGContainer.cpp; sourceTree = "<group>"; };
@@ -14774,6 +14797,9 @@
 				8502AB200AD438C000378540 /* DOMSVGFEDistantLightElement.h */,
 				8502AB210AD438C000378540 /* DOMSVGFEDistantLightElement.mm */,
 				A8E544790CA9D1C20097D09B /* DOMSVGFEDistantLightElementInternal.h */,
+				4358E8671360A21600E4748C /* DOMSVGFEDropShadowElement.h */,
+				4358E8681360A21600E4748C /* DOMSVGFEDropShadowElement.mm */,
+				4358E8691360A21600E4748C /* DOMSVGFEDropShadowElementInternal.h */,
 				8502AB220AD438C000378540 /* DOMSVGFEFloodElement.h */,
 				8502AB230AD438C000378540 /* DOMSVGFEFloodElement.mm */,
 				A8E544730CA9D1C20097D09B /* DOMSVGFEFloodElementInternal.h */,
@@ -16388,6 +16414,8 @@
 				84730D5E1248F0B300D3A9C9 /* FEDiffuseLighting.h */,
 				84730D5F1248F0B300D3A9C9 /* FEDisplacementMap.cpp */,
 				84730D601248F0B300D3A9C9 /* FEDisplacementMap.h */,
+				4358E87E1360A31700E4748C /* FEDropShadow.cpp */,
+				4358E87F1360A31700E4748C /* FEDropShadow.h */,
 				84730D611248F0B300D3A9C9 /* FEFlood.cpp */,
 				84730D621248F0B300D3A9C9 /* FEFlood.h */,
 				84801952108BAFB300CB2B1F /* FEGaussianBlur.cpp */,
@@ -16747,6 +16775,8 @@
 				B2FA3C8D0AB75A6E000E5AC4 /* JSSVGFEDisplacementMapElement.h */,
 				B2FA3C8E0AB75A6E000E5AC4 /* JSSVGFEDistantLightElement.cpp */,
 				B2FA3C8F0AB75A6E000E5AC4 /* JSSVGFEDistantLightElement.h */,
+				4358E87A1360A2EE00E4748C /* JSSVGFEDropShadowElement.cpp */,
+				4358E87B1360A2EE00E4748C /* JSSVGFEDropShadowElement.h */,
 				B2FA3C900AB75A6E000E5AC4 /* JSSVGFEFloodElement.cpp */,
 				B2FA3C910AB75A6E000E5AC4 /* JSSVGFEFloodElement.h */,
 				B2FA3C920AB75A6E000E5AC4 /* JSSVGFEFuncAElement.cpp */,
@@ -17405,6 +17435,9 @@
 				B22278430D00BF1F0071B782 /* SVGFEDistantLightElement.cpp */,
 				B22278440D00BF1F0071B782 /* SVGFEDistantLightElement.h */,
 				B22278450D00BF1F0071B782 /* SVGFEDistantLightElement.idl */,
+				4358E8821360A33B00E4748C /* SVGFEDropShadowElement.cpp */,
+				4358E8831360A33B00E4748C /* SVGFEDropShadowElement.h */,
+				4358E8841360A33B00E4748C /* SVGFEDropShadowElement.idl */,
 				B22278460D00BF1F0071B782 /* SVGFEFloodElement.cpp */,
 				B22278470D00BF1F0071B782 /* SVGFEFloodElement.h */,
 				B22278480D00BF1F0071B782 /* SVGFEFloodElement.idl */,
@@ -23022,6 +23055,11 @@
 				086BBD0F136039C2008B15D8 /* Glyph.h in Headers */,
 				0873B86B136064EA00A522C2 /* GlyphPage.h in Headers */,
 				087E0AF713606D0B00FA4BA8 /* SVGGlyph.h in Headers */,
+				4358E86A1360A21600E4748C /* DOMSVGFEDropShadowElement.h in Headers */,
+				4358E86C1360A21600E4748C /* DOMSVGFEDropShadowElementInternal.h in Headers */,
+				4358E87D1360A2EE00E4748C /* JSSVGFEDropShadowElement.h in Headers */,
+				4358E8811360A31700E4748C /* FEDropShadow.h in Headers */,
+				4358E8861360A33B00E4748C /* SVGFEDropShadowElement.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -25732,6 +25770,10 @@
 				E1BE512D0CF6C512002EA959 /* XSLTUnicodeSort.cpp in Sources */,
 				977E2E0E12F0FC9C00C13379 /* XSSFilter.cpp in Sources */,
 				087E0AF613606D0B00FA4BA8 /* SVGGlyph.cpp in Sources */,
+				4358E86B1360A21600E4748C /* DOMSVGFEDropShadowElement.mm in Sources */,
+				4358E87C1360A2EE00E4748C /* JSSVGFEDropShadowElement.cpp in Sources */,
+				4358E8801360A31700E4748C /* FEDropShadow.cpp in Sources */,
+				4358E8851360A33B00E4748C /* SVGFEDropShadowElement.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

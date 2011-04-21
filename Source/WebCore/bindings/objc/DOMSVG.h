@@ -65,6 +65,7 @@
 #import <WebCore/DOMSVGFEDiffuseLightingElement.h>
 #import <WebCore/DOMSVGFEDisplacementMapElement.h>
 #import <WebCore/DOMSVGFEDistantLightElement.h>
+#import <WebCore/DOMSVGFEDropShadowElement.h>
 #import <WebCore/DOMSVGFEFloodElement.h>
 #import <WebCore/DOMSVGFEFuncAElement.h>
 #import <WebCore/DOMSVGFEFuncBElement.h>
