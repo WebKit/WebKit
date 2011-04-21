@@ -32,6 +32,7 @@
 #include "FontDescription.h"
 #include "GraphicsContext3D.h"
 #include "LayerChromium.h"
+#include "LayerRendererChromium.h"
 #include "LayerTexture.h"
 #include "TextRun.h"
 #include "TextStream.h"
@@ -109,7 +110,7 @@ void CCHeadsUpDisplay::draw()
     }
 
     // Draw the HUD onto the default render surface.
-    const LayerTilerChromium::Program* program = m_layerRenderer->tilerProgram();
+    const Program* program = m_layerRenderer->headsUpDisplayProgram();
     ASSERT(program && program->initialized());
     GLC(context, context->activeTexture(GraphicsContext3D::TEXTURE0));
     m_hudTexture->bindTexture();

@@ -1,3 +1,23 @@
+2011-04-21  Nat Duca  <nduca@chromium.org>
+
+        Reviewed by James Robinson.
+
+        [chromium] Fix artefacts in compositor HUD when resizing
+        https://bugs.webkit.org/show_bug.cgi?id=58969
+
+        HUD was using the tiler program and not setting the texture
+        transform. The HUD would thus draw with a texture transform based
+        on the last tile drawn, leading sometimes to distortion.
+
+        * platform/graphics/chromium/LayerRendererChromium.cpp:
+        (WebCore::LayerRendererChromium::initializeSharedObjects):
+        (WebCore::LayerRendererChromium::cleanupSharedObjects):
+        * platform/graphics/chromium/LayerRendererChromium.h:
+        (WebCore::LayerRendererChromium::headsUpDisplayProgram):
+        * platform/graphics/chromium/cc/CCHeadsUpDisplay.cpp:
+        (WebCore::CCHeadsUpDisplay::draw):
+        * platform/graphics/chromium/cc/CCHeadsUpDisplay.h:
+
 2011-04-21  Mike Reed  <reed@google.com>
 
         Reviewed by Kenneth Russell.

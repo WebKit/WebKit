@@ -28,13 +28,15 @@
 #if USE(ACCELERATED_COMPOSITING)
 
 #include "Font.h"
-#include "LayerRendererChromium.h"
-
+#include "ProgramBinding.h"
+#include "ShaderChromium.h"
 
 namespace WebCore {
 
 class GeometryBinding;
 class GraphicsContext3D;
+class LayerRendererChromium;
+class LayerTexture;
 
 // Class that handles drawing of composited render layers using GL.
 class CCHeadsUpDisplay {
@@ -57,6 +59,8 @@ public:
 
     bool enabled() const { return m_showPlatformLayerTree || m_showFPSCounter; }
     void draw();
+
+    typedef ProgramBinding<VertexShaderPosTex, FragmentShaderBGRATexAlpha> Program;
 
 private:
     explicit CCHeadsUpDisplay(LayerRendererChromium* owner);

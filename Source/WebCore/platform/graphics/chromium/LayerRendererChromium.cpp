@@ -985,6 +985,7 @@ bool LayerRendererChromium::initializeSharedObjects()
 
     m_sharedGeometry = adoptPtr(new GeometryBinding(m_context.get()));
     m_borderProgram = adoptPtr(new LayerChromium::BorderProgram(m_context.get()));
+    m_headsUpDisplayProgram = adoptPtr(new CCHeadsUpDisplay::Program(m_context.get()));
     m_canvasLayerProgram = adoptPtr(new CCCanvasLayerImpl::Program(m_context.get()));
     m_videoLayerRGBAProgram = adoptPtr(new CCVideoLayerImpl::RGBAProgram(m_context.get()));
     m_videoLayerYUVProgram = adoptPtr(new CCVideoLayerImpl::YUVProgram(m_context.get()));
@@ -995,6 +996,7 @@ bool LayerRendererChromium::initializeSharedObjects()
 
     if (!m_sharedGeometry->initialized() || !m_borderProgram->initialized()
         || !m_canvasLayerProgram->initialized()
+        || !m_headsUpDisplayProgram->initialized()
         || !m_videoLayerRGBAProgram->initialized() || !m_videoLayerYUVProgram->initialized()
         || !m_pluginLayerProgram->initialized() || !m_renderSurfaceProgram->initialized()
         || !m_renderSurfaceMaskProgram->initialized() || !m_tilerProgram->initialized()) {
@@ -1014,6 +1016,7 @@ void LayerRendererChromium::cleanupSharedObjects()
     m_sharedGeometry.clear();
     m_borderProgram.clear();
     m_canvasLayerProgram.clear();
+    m_headsUpDisplayProgram.clear();
     m_videoLayerRGBAProgram.clear();
     m_videoLayerYUVProgram.clear();
     m_pluginLayerProgram.clear();

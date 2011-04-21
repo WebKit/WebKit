@@ -110,6 +110,7 @@ public:
 
     const GeometryBinding* sharedGeometry() const { return m_sharedGeometry.get(); }
     const LayerChromium::BorderProgram* borderProgram() const { return m_borderProgram.get(); }
+    const CCHeadsUpDisplay::Program* headsUpDisplayProgram() const { return m_headsUpDisplayProgram.get(); }
     const RenderSurfaceChromium::Program* renderSurfaceProgram() const { return m_renderSurfaceProgram.get(); }
     const RenderSurfaceChromium::MaskProgram* renderSurfaceMaskProgram() const { return m_renderSurfaceMaskProgram.get(); }
     const LayerTilerChromium::Program* tilerProgram() const { return m_tilerProgram.get(); }
@@ -205,6 +206,7 @@ private:
     // we cannot store these values in static variables.
     OwnPtr<GeometryBinding> m_sharedGeometry;
     OwnPtr<LayerChromium::BorderProgram> m_borderProgram;
+    OwnPtr<CCHeadsUpDisplay::Program> m_headsUpDisplayProgram;
     OwnPtr<RenderSurfaceChromium::Program> m_renderSurfaceProgram;
     OwnPtr<RenderSurfaceChromium::MaskProgram> m_renderSurfaceMaskProgram;
     OwnPtr<LayerTilerChromium::Program> m_tilerProgram;
