@@ -3766,15 +3766,13 @@ BUGDPRANKE LINUX : fast/canvas/webgl/css-webkit-canvas.html = IMAGE
 BUGDPRANKE LINUX : fast/encoding/parser-tests-100.html = TIMEOUT PASS
 BUGDPRANKE LINUX : fast/encoding/parser-tests-50.html = TIMEOUT PASS
 BUGDPRANKE LINUX : fast/css/visited-link-hang.html = CRASH
-BUGDPRANKE WIN LINUX CPU : media/media-document-audio-repaint.html = IMAGE
+BUGDPRANKE CPU : media/media-document-audio-repaint.html = IMAGE
 BUGDPRANKE MAC LINUX : transitions/interrupt-zero-duration.html = TEXT PASS
 BUGDPRANKE : media/controls-css-overload.html = TIMEOUT PASS
 BUGDPRANKE : fast/borders/bidi-012.html = IMAGE+TEXT
-BUGDPRANKE MAC CPU : media/video-zoom.html = IMAGE
-BUGDPRANKE WIN LINUX : fast/filesystem/op-copy.html = TEXT
-BUGDPRANKE WIN LINUX : fast/filesystem/op-move.html = TEXT
+BUGDPRANKE CPU : media/video-zoom.html = IMAGE
 BUGDPRANKE WIN LINUX : animations/change-one-anim.html = TEXT PASS
-BUGDPRANKE WIN LINUX CPU : media/video-controls-rendering.html = IMAGE
+BUGDPRANKE CPU : media/video-controls-rendering.html = IMAGE
 
 // pulled in from downstream during webkit roll 84350:84431
 BUGCASEQ MAC : svg/dynamic-updates/SVGFEDiffuseLightingElement-inherit-lighting-color-css-prop.html = IMAGE
@@ -3795,7 +3793,6 @@ BUGDPRANKE LINUX DEBUG : fast/dom/HTMLFormElement/invalid-form-field.html = CRAS
 
 BUGDPRANKE LINUX DEBUG : perf/array-nested-loop.html = TEXT TIMEOUT PASS
 BUGDPRANKE LINUX DEBUG : fast/dom/Node/mutation-blur.html = CRASH
-BUGDPRANKE WIN : media/video-zoom.html = IMAGE
 BUGDPRANKE WIN DEBUG : svg/custom/font-platformDestroy-crash.svg = CRASH
 BUGDPRANKE WIN DEBUG : svg/custom/foreignObject-crash-on-hover.xml = CRASH
 BUGDPRANKE WIN DEBUG : svg/custom/foreign-object-skew.svg = CRASH
@@ -3845,3 +3842,10 @@ BUGDPRANKE LINUX DEBUG : editing/pasteboard/merge-end-3.html = CRASH
 BUGDPRANKE LINUX DEBUG : editing/selection/designmode-no-caret.html = CRASH
 BUGDPRANKE LINUX DEBUG : fullscreen/full-screen-iframe-allowed.html = TEXT PASS
 BUGDPRANKE LINUX DEBUG : jquery/deferred.html = TEXT PASS
+
+// Introduced in r84443
+BUGWK59063 : fast/images/animated-gif-restored-from-bfcache.html = TEXT
+
+// Introduced in r84408
+BUGWK59065 : fast/filesystem/op-copy.html = TEXT
+BUGWK59065 : fast/filesystem/op-move.html = TEXT
