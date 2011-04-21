@@ -3747,16 +3747,6 @@ BUGDPRANKE : svg/custom/svg-fonts-in-html.html = IMAGE
 // probably just needs a new baseline
 BUGDPRANKE WIN LINUX : fast/backgrounds/background-leakage-transforms.html = IMAGE+TEXT
 
-// These tests pass, but they are missing png files.  Mark them as failing so
-// the bots will generate results for them.
-BUGTONY MAC : editing/selection/extend-by-word-002.html = IMAGE
-BUGTONY MAC LEOPARD : fast/blockflow/english-bt-text.html = IMAGE
-BUGTONY MAC LEOPARD : fast/borders/svg-as-border-image.html = IMAGE
-BUGTONY MAC LEOPARD : fast/css/background-shorthand-invalid-url.html = IMAGE
-BUGTONY MAC LEOPARD : fast/css/value-list-out-of-bounds-crash.html = IMAGE
-BUGTONY MAC LEOPARD : svg/custom/group-opacity.svg = IMAGE
-BUGTONY MAC LEOPARD : svg/custom/image-with-transform-clip-filter.svg = IMAGE
-
 // webkit roll : 84350:84431
 BUGDPRANKE LINUX : fast/canvas/webgl/css-webkit-canvas-repaint.html = IMAGE
 BUGDPRANKE LINUX : fast/canvas/webgl/css-webkit-canvas.html = IMAGE

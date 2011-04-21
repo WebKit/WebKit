@@ -1,3 +1,23 @@
+2011-04-21  Tony Chang  <tony@chromium.org>
+
+        Unreviewed.  Fixed the last set of tests that are missing pngs. 
+        Created new png baselines on my Leopard machine.
+
+        * platform/chromium-mac-leopard/fast/blockflow/english-bt-text-expected.checksum: Removed.
+        * platform/chromium-mac-leopard/fast/blockflow/english-bt-text-expected.png: Added.
+        * platform/chromium-mac-leopard/fast/borders/svg-as-border-image-expected.checksum: Removed.
+        * platform/chromium-mac-leopard/fast/borders/svg-as-border-image-expected.png: Added.
+        * platform/chromium-mac-leopard/fast/css/background-shorthand-invalid-url-expected.checksum: Removed.
+        * platform/chromium-mac-leopard/fast/css/background-shorthand-invalid-url-expected.png: Added.
+        * platform/chromium-mac-leopard/fast/css/value-list-out-of-bounds-crash-expected.checksum: Removed.
+        * platform/chromium-mac-leopard/fast/css/value-list-out-of-bounds-crash-expected.png: Added.
+        * platform/chromium-mac-leopard/svg/custom/group-opacity-expected.checksum: Removed.
+        * platform/chromium-mac-leopard/svg/custom/group-opacity-expected.png: Added.
+        * platform/chromium-mac-leopard/svg/custom/image-with-transform-clip-filter-expected.checksum: Removed.
+        * platform/chromium-mac-leopard/svg/custom/image-with-transform-clip-filter-expected.png: Added.
+        * platform/chromium-mac/editing/selection/extend-by-word-002-expected.checksum: Removed. Matches platform/mac.
+        * platform/chromium/test_expectations.txt:
+
 2011-04-20  MORITA Hajime  <morrita@google.com>
 
         Reviewed by Dimitri Glazkov.
