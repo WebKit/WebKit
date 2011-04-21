@@ -1,5 +1,11 @@
 2011-04-20  Gavin Barraclough  <barraclough@apple.com>
 
+        Build fix - revert accidental change.
+
+        * wtf/Platform.h:
+
+2011-04-20  Gavin Barraclough  <barraclough@apple.com>
+
         Reviewed by Sam Weinig.
 
         Add SAMPLING_FLAGS tool to DFG JIT.
