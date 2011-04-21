@@ -3829,7 +3829,6 @@ BUGDPRANKE DEBUG WIN LINUX : http/tests/misc/acid2-pixel.html = CRASH
 BUGDPRANKE MAC DEBUG : fast/css/only-of-type-pseudo-class.html = TEXT PASS
 BUGDPRANKE MAC DEBUG : fast/css/getPropertyValue-border.html = CRASH
 BUGDPRANKE LINUX DEBUG : editing/pasteboard/merge-end-3.html = CRASH
-BUGDPRANKE LINUX DEBUG : editing/selection/designmode-no-caret.html = CRASH FAIL
 BUGDPRANKE LINUX DEBUG : fullscreen/full-screen-iframe-allowed.html = TEXT PASS
 BUGDPRANKE LINUX DEBUG : jquery/deferred.html = TEXT PASS
 

@@ -1,3 +1,12 @@
+2011-04-21  Tony Gentilcore  <tonyg@chromium.org>
+
+        [chromium] Correct expecations for editing/selection/designmode-no-caret.html
+        https://bugs.webkit.org/show_bug.cgi?id=59088
+
+        Straighten out bad override in designmode-no-caret.html
+
+        * platform/chromium/test_expectations.txt:
+
 2011-04-21  Adam Roben  <aroben@apple.com>
 
         Skip some newly-failing tests on Windows
