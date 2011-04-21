@@ -84,6 +84,8 @@ WebInspector.NetworkPanel = function()
     WebInspector.networkManager.addEventListener(WebInspector.NetworkManager.EventTypes.ResourceUpdated, this._onResourceUpdated, this);
     WebInspector.networkManager.addEventListener(WebInspector.NetworkManager.EventTypes.ResourceFinished, this._onResourceUpdated, this);
     WebInspector.networkManager.addEventListener(WebInspector.NetworkManager.EventTypes.FrameCommittedLoad, this._onFrameCommitLoad, this);
+
+    this.registerShortcuts();
 }
 
 WebInspector.NetworkPanel.prototype = {

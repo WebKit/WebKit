@@ -47,7 +47,7 @@ WebInspector.TabbedPane.prototype = {
         this._tabsElement.appendChild(tabElement);
         this._contentElement.appendChild(view.element);
 
-        this._tabs[id] = { tabElement: tabElement, view: view }
+        this._tabs[id] = { tabElement: tabElement, view: view };
     },
 
     selectTab: function(id, userGesture)
@@ -63,10 +63,8 @@ WebInspector.TabbedPane.prototype = {
         var tab = this._tabs[id];
         this._showTab(tab);
         this._currentTab = tab;
-        if (userGesture) {
-            var event = {tabId: id};
-            this.dispatchEventToListeners("tab-selected", event);
-        }
+        var event = {tabId: id, view: tab.view, isUserGesture: userGesture};
+        this.dispatchEventToListeners("tab-selected", event);
         return true;
     },
 

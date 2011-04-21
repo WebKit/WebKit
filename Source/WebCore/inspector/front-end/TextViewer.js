@@ -108,6 +108,7 @@ WebInspector.TextViewer.prototype = {
 
     highlightLine: function(lineNumber)
     {
+        lineNumber = Math.min(lineNumber, this._textModel.linesCount - 1);
         this._mainPanel.highlightLine(lineNumber);
     },
 

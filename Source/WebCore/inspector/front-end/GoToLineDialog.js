@@ -45,9 +45,6 @@ WebInspector.GoToLineDialog = function(view)
     this._input = dialogWindow.createChild("input");
     this._input.setAttribute("type", "text");
     this._input.setAttribute("size", 6);
-    var linesCount = view.textModel.linesCount;
-    if (linesCount)
-        this._input.setAttribute("title", WebInspector.UIString("1 - %d", linesCount));
     var blurHandler = this._onBlur.bind(this);
     this._input.addEventListener("blur", blurHandler, false);
     
@@ -131,9 +128,7 @@ WebInspector.GoToLineDialog.prototype = {
     {
         var value = this._input.value;
         var lineNumber = parseInt(value, 10) - 1;
-        if (!isNaN(lineNumber) && lineNumber >= 0) {
-            lineNumber = Math.min(lineNumber, this._view.textModel.linesCount - 1);
+        if (!isNaN(lineNumber) && lineNumber >= 0)
             this._view.highlightLine(lineNumber);
-        }
     }
 };

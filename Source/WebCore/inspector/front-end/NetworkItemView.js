@@ -89,7 +89,17 @@ WebInspector.NetworkItemView.prototype = {
 
     _tabSelected: function(event)
     {
-        WebInspector.settings.resourceViewTab = event.data.tabId;
+        if (event.data.isUserGesture)
+            WebInspector.settings.resourceViewTab = event.data.tabId;
+        this._installHighlightSupport(event.data.view);
+    },
+
+    _installHighlightSupport: function(view)
+    {
+        if (typeof view.highlightLine === "function")
+            this.highlightLine = view.highlightLine.bind(view);
+        else
+            delete this.highlightLine;
     },
 
     resize: function()
