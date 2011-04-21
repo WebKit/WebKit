@@ -47,6 +47,8 @@ WK_EXPORT WKRect WKBundleNodeHandleGetRenderRect(WKBundleNodeHandleRef nodeHandl
 /* Element Specific Operations */
 WK_EXPORT WKRect WKBundleNodeHandleGetElementBounds(WKBundleNodeHandleRef elementHandle);
 WK_EXPORT WKBundleNodeHandleRef WKBundleNodeHandleCopyElementShadowRoot(WKBundleNodeHandleRef elementHandle);
+WK_EXPORT WKBundleNodeHandleRef WKBundleNodeHandleCopyElementEnsureShadowRoot(WKBundleNodeHandleRef elementHandle);
+WK_EXPORT void WKBundleNodeHandleRemoveShadowRoot(WKBundleNodeHandleRef elementHandle);
 
 /* HTMLInputElement Specific Operations */
 WK_EXPORT void WKBundleNodeHandleSetHTMLInputElementValueForUser(WKBundleNodeHandleRef htmlInputElementHandle, WKStringRef value);

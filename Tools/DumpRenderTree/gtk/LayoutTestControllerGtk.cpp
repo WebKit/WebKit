@@ -924,6 +924,16 @@ JSValueRef LayoutTestController::shadowRoot(JSContextRef context, JSValueRef ele
     return DumpRenderTreeSupportGtk::shadowRoot(context, element);
 }
 
+JSValueRef LayoutTestController::ensureShadowRoot(JSContextRef context, JSValueRef element)
+{
+    return DumpRenderTreeSupportGtk::ensureShadowRoot(context, element);
+}
+
+void LayoutTestController::removeShadowRoot(JSContextRef context, JSValueRef element)
+{
+    DumpRenderTreeSupportGtk::removeShadowRoot(context, element);
+}
+
 void LayoutTestController::abortModal()
 {
 }

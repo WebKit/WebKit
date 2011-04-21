@@ -33,6 +33,8 @@
 + (DOMElement *)_DOMElementFromJSContext:(JSContextRef)context value:(JSValueRef)value;
 - (NSString *)_markerTextForListItem;
 - (JSValueRef)_shadowRoot:(JSContextRef)context;
+- (JSValueRef)_ensureShadowRoot:(JSContextRef)context;
+- (void)_removeShadowRoot;
 @end
 
 @interface DOMDocument (WebDOMDocumentOperationsPrivate)

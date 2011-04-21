@@ -367,11 +367,45 @@ JSValueRef LayoutTestController::shadowRoot(JSValueRef element)
     if (!domElement)
         return JSValueMakeNull(context);
 
-    WKRetainPtr<WKBundleNodeHandleRef> shadowRootDOMElement = adoptWK(WKBundleNodeHandleCopyElementShadowRoot(domElement.get()));
-    if (!shadowRootDOMElement)
+    WKRetainPtr<WKBundleNodeHandleRef> shadowRootDOMNode = adoptWK(WKBundleNodeHandleCopyElementShadowRoot(domElement.get()));
+    if (!shadowRootDOMNode)
         return JSValueMakeNull(context);
 
-    return WKBundleFrameGetJavaScriptWrapperForNodeForWorld(mainFrame, shadowRootDOMElement.get(), WKBundleScriptWorldNormalWorld());
+    return WKBundleFrameGetJavaScriptWrapperForNodeForWorld(mainFrame, shadowRootDOMNode.get(), WKBundleScriptWorldNormalWorld());
+}
+
+JSValueRef LayoutTestController::ensureShadowRoot(JSValueRef element)
+{
+    WKBundleFrameRef mainFrame = WKBundlePageGetMainFrame(InjectedBundle::shared().page()->page());
+    JSContextRef context = WKBundleFrameGetJavaScriptContext(mainFrame);
+
+    if (!element || !JSValueIsObject(context, element))
+        return JSValueMakeNull(context);
+
+    WKRetainPtr<WKBundleNodeHandleRef> domElement = adoptWK(WKBundleNodeHandleCreate(context, const_cast<JSObjectRef>(element)));
+    if (!domElement)
+        return JSValueMakeNull(context);
+
+    WKRetainPtr<WKBundleNodeHandleRef> shadowRootDOMNode = adoptWK(WKBundleNodeHandleCopyElementEnsureShadowRoot(domElement.get()));
+    if (!shadowRootDOMNode)
+        return JSValueMakeNull(context);
+
+    return WKBundleFrameGetJavaScriptWrapperForNodeForWorld(mainFrame, shadowRootDOMNode.get(), WKBundleScriptWorldNormalWorld());
+}
+
+void LayoutTestController::removeShadowRoot(JSValueRef element)
+{
+    WKBundleFrameRef mainFrame = WKBundlePageGetMainFrame(InjectedBundle::shared().page()->page());
+    JSContextRef context = WKBundleFrameGetJavaScriptContext(mainFrame);
+
+    if (!element || !JSValueIsObject(context, element))
+        return;
+
+    WKRetainPtr<WKBundleNodeHandleRef> domElement = adoptWK(WKBundleNodeHandleCreate(context, const_cast<JSObjectRef>(element)));
+    if (!domElement)
+        return;
+
+    WKBundleNodeHandleRemoveShadowRoot(domElement.get());
 }
 
 void LayoutTestController::clearBackForwardList()

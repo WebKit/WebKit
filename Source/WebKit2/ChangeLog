@@ -1,3 +1,22 @@
+2011-04-20  Dominic Cooney  <dominicc@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        layoutTestController can create and destroy shadow DOM
+        https://bugs.webkit.org/show_bug.cgi?id=59058
+
+        Support for new methods in WK2 WebKitTestRunner.
+
+        * WebProcess/InjectedBundle/API/c/WKBundleNodeHandle.cpp:
+        (WKBundleNodeHandleCopyElementEnsureShadowRoot):
+        (WKBundleNodeHandleRemoveShadowRoot):
+        * WebProcess/InjectedBundle/API/c/WKBundleNodeHandlePrivate.h:
+        * WebProcess/InjectedBundle/DOM/InjectedBundleNodeHandle.cpp:
+        (WebKit::InjectedBundleNodeHandle::elementShadowRoot):
+        (WebKit::InjectedBundleNodeHandle::elementEnsureShadowRoot):
+        (WebKit::InjectedBundleNodeHandle::elementRemoveShadowRoot):
+        * WebProcess/InjectedBundle/DOM/InjectedBundleNodeHandle.h:
+
 2011-04-20  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Sam Weinig.

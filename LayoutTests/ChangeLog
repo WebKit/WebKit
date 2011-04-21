@@ -1,3 +1,15 @@
+2011-04-20  Dominic Cooney  <dominicc@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        layoutTestController can create and destroy shadow DOM
+        https://bugs.webkit.org/show_bug.cgi?id=59058
+
+        Exercise the new layoutTestController methods.
+
+        * fast/dom/shadow/layout-tests-can-access-shadow-expected.txt: Added.
+        * fast/dom/shadow/layout-tests-can-access-shadow.html: Added.
+
 2011-04-20  Dirk Pranke  <dpranke@chromium.org>
 
         Make video/image-zoom fail on GPU on all ports.

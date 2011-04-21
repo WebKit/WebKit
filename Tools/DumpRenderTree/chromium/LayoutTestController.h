@@ -272,6 +272,8 @@ public:
     void setAllowFileAccessFromFileURLs(const CppArgumentList&, CppVariant*);
 
     void shadowRoot(const CppArgumentList&, CppVariant*);
+    void ensureShadowRoot(const CppArgumentList&, CppVariant*);
+    void removeShadowRoot(const CppArgumentList&, CppVariant*);
 
     // The fallback method is called when a nonexistent method is called on
     // the layout test controller object.

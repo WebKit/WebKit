@@ -1447,6 +1447,17 @@ JSValueRef LayoutTestController::shadowRoot(JSContextRef context, JSValueRef jsE
     return JSValueMakeUndefined(context);
 }
 
+JSValueRef LayoutTestController::ensureShadowRoot(JSContextRef context, JSValueRef jsElement)
+{
+    // FIXME: Implement this.
+    return JSValueMakeUndefined(context);
+}
+
+void LayoutTestController::removeShadowRoot(JSContextRef context, JSValueRef jsElement)
+{
+    // FIXME: Implement this.
+}
+
 void LayoutTestController::abortModal()
 {
 }

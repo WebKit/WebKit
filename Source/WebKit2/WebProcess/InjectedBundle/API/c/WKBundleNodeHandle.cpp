@@ -67,6 +67,17 @@ WKBundleNodeHandleRef WKBundleNodeHandleCopyElementShadowRoot(WKBundleNodeHandle
     return toAPI(nodeHandle.release().releaseRef());
 }
 
+WKBundleNodeHandleRef WKBundleNodeHandleCopyElementEnsureShadowRoot(WKBundleNodeHandleRef elementHandleRef)
+{
+    RefPtr<InjectedBundleNodeHandle> nodeHandle = toImpl(elementHandleRef)->elementEnsureShadowRoot();
+    return toAPI(nodeHandle.release().releaseRef());
+}
+
+void WKBundleNodeHandleRemoveShadowRoot(WKBundleNodeHandleRef elementHandleRef)
+{
+    toImpl(elementHandleRef)->elementRemoveShadowRoot();
+}
+
 void WKBundleNodeHandleSetHTMLInputElementValueForUser(WKBundleNodeHandleRef htmlInputElementHandleRef, WKStringRef valueRef)
 {
     toImpl(htmlInputElementHandleRef)->setHTMLInputElementValueForUser(toWTFString(valueRef));

@@ -1,3 +1,17 @@
+2011-04-20  Dominic Cooney  <dominicc@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        layoutTestController can create and destroy shadow DOM
+        https://bugs.webkit.org/show_bug.cgi?id=59058
+
+        Support for new methods in GTK DRT.
+
+        * WebCoreSupport/DumpRenderTreeSupportGtk.cpp:
+        (DumpRenderTreeSupportGtk::ensureShadowRoot):
+        (DumpRenderTreeSupportGtk::removeShadowRoot):
+        * WebCoreSupport/DumpRenderTreeSupportGtk.h:
+
 2011-04-20  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Reviewed by Martin Robinson.

@@ -105,6 +105,7 @@ LayoutTestController::LayoutTestController(TestShell* shell)
     bindMethod("dumpStatusCallbacks", &LayoutTestController::dumpWindowStatusChanges);
     bindMethod("dumpTitleChanges", &LayoutTestController::dumpTitleChanges);
     bindMethod("elementDoesAutoCompleteForElementWithId", &LayoutTestController::elementDoesAutoCompleteForElementWithId);
+    bindMethod("ensureShadowRoot", &LayoutTestController::ensureShadowRoot);
     bindMethod("evaluateInWebInspector", &LayoutTestController::evaluateInWebInspector);
     bindMethod("evaluateScriptInIsolatedWorld", &LayoutTestController::evaluateScriptInIsolatedWorld);
     bindMethod("execCommand", &LayoutTestController::execCommand);
@@ -131,6 +132,7 @@ LayoutTestController::LayoutTestController(TestShell* shell)
     bindMethod("queueNonLoadingScript", &LayoutTestController::queueNonLoadingScript);
     bindMethod("queueReload", &LayoutTestController::queueReload);
     bindMethod("removeOriginAccessWhitelistEntry", &LayoutTestController::removeOriginAccessWhitelistEntry);
+    bindMethod("removeShadowRoot", &LayoutTestController::removeShadowRoot);
     bindMethod("repaintSweepHorizontally", &LayoutTestController::repaintSweepHorizontally);
     bindMethod("resumeAnimations", &LayoutTestController::resumeAnimations);
     bindMethod("sampleSVGAnimationForElementAtTime", &LayoutTestController::sampleSVGAnimationForElementAtTime);
@@ -670,6 +672,34 @@ void LayoutTestController::shadowRoot(const CppArgumentList& arguments, CppVaria
     }
 
     result->set(WebBindings::makeNode(shadowRoot));
+}
+
+void LayoutTestController::ensureShadowRoot(const CppArgumentList& arguments, CppVariant* result)
+{
+    if (arguments.size() != 1 || !arguments[0].isObject()) {
+        result->setNull();
+        return;
+    }
+
+    WebElement element;
+    if (!WebBindings::getElement(arguments[0].value.objectValue, &element)) {
+        result->setNull();
+        return;
+    }
+
+    result->set(WebBindings::makeNode(element.ensureShadowRoot()));
+}
+
+void LayoutTestController::removeShadowRoot(const CppArgumentList& arguments, CppVariant* result)
+{
+    if (arguments.size() != 1 || !arguments[0].isObject())
+        return;
+
+    WebElement element;
+    if (!WebBindings::getElement(arguments[0].value.objectValue, &element))
+        return;
+
+    element.removeShadowRoot();
 }
 
 void LayoutTestController::showWebInspector(const CppArgumentList&, CppVariant* result)

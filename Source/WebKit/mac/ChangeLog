@@ -1,3 +1,17 @@
+2011-04-20  Dominic Cooney  <dominicc@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        layoutTestController can create and destroy shadow DOM
+        https://bugs.webkit.org/show_bug.cgi?id=59058
+
+        Support for new methods in Mac DRT.
+
+        * DOM/WebDOMOperations.mm:
+        (-[DOMElement _ensureShadowRoot:]):
+        (-[DOMElement _removeShadowRoot]):
+        * DOM/WebDOMOperationsPrivate.h:
+
 2011-04-20  Eric Carlson  <eric.carlson@apple.com>
 
         Reviewed by Dan Bernstein.

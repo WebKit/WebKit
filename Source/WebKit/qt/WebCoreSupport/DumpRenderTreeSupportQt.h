@@ -202,6 +202,8 @@ public:
     static void setAlternateHtml(QWebFrame*, const QString& html, const QUrl& baseUrl, const QUrl& failingUrl);
 
     static QVariant shadowRoot(const QWebElement&);
+    static QVariant ensureShadowRoot(const QWebElement&);
+    static void removeShadowRoot(const QWebElement&);
 };
 
 #endif

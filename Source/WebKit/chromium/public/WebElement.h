@@ -58,7 +58,10 @@ class WebNamedNodeMap;
         WEBKIT_API bool setAttribute(const WebString& name, const WebString& value);
         WEBKIT_API WebNamedNodeMap attributes() const;
         WEBKIT_API WebString innerText() const;
+
         WEBKIT_API WebNode shadowRoot();
+        WEBKIT_API WebNode ensureShadowRoot();
+        WEBKIT_API void removeShadowRoot();
 
         // Returns the language code specified for this element.  This attribute
         // is inherited, so the returned value is drawn from the closest parent

@@ -1070,10 +1070,26 @@ void LayoutTestController::setEditingBehavior(const char* editingBehavior)
 
 JSValueRef LayoutTestController::shadowRoot(JSContextRef context, JSValueRef jsElement)
 {
-    DOMElement *element = [DOMElement _DOMElementFromJSContext:context value:jsElement];
+    DOMElement* element = [DOMElement _DOMElementFromJSContext:context value:jsElement];
     if (!element)
         return JSValueMakeNull(context);
     return [element _shadowRoot:context];
+}
+
+JSValueRef LayoutTestController::ensureShadowRoot(JSContextRef context, JSValueRef jsElement)
+{
+    DOMElement* element = [DOMElement _DOMElementFromJSContext:context value:jsElement];
+    if (!element)
+        return JSValueMakeNull(context);
+    return [element _ensureShadowRoot:context];
+}
+
+void LayoutTestController::removeShadowRoot(JSContextRef context, JSValueRef jsElement)
+{
+    DOMElement* element = [DOMElement _DOMElementFromJSContext:context value:jsElement];
+    if (!element)
+        return;
+    [element _removeShadowRoot];
 }
 
 void LayoutTestController::abortModal()

@@ -173,6 +173,22 @@ PassRefPtr<InjectedBundleNodeHandle> InjectedBundleNodeHandle::elementShadowRoot
     return getOrCreate(static_cast<Element*>(m_node.get())->shadowRoot());
 }
 
+PassRefPtr<InjectedBundleNodeHandle> InjectedBundleNodeHandle::elementEnsureShadowRoot()
+{
+    if (!m_node->isElementNode())
+        return 0;
+
+    return getOrCreate(static_cast<Element*>(m_node.get())->ensureShadowRoot());
+}
+
+void InjectedBundleNodeHandle::elementRemoveShadowRoot()
+{
+    if (!m_node->isElementNode())
+        return;
+
+    static_cast<Element*>(m_node.get())->removeShadowRoot();
+}
+
 PassRefPtr<WebFrame> InjectedBundleNodeHandle::documentFrame()
 {
     if (!m_node->isDocumentNode())

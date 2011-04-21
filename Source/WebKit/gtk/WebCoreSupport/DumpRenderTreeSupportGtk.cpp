@@ -664,6 +664,28 @@ JSValueRef DumpRenderTreeSupportGtk::shadowRoot(JSContextRef context, JSValueRef
     return toRef(exec, toJS(exec, element->shadowRoot()));
 }
 
+JSValueRef DumpRenderTreeSupportGtk::ensureShadowRoot(JSContextRef context, JSValueRef value)
+{
+    JSLock lock(SilenceAssertionsOnly);
+    JSC::ExecState* exec = toJS(context);
+    Element* element = toElement(toJS(exec, value));
+    if (!element)
+        return JSValueMakeNull(context);
+
+    return toRef(exec, toJS(exec, element->ensureShadowRoot()));
+}
+
+void DumpRenderTreeSupportGtk::removeShadowRoot(JSContextRef context, JSValueRef value)
+{
+    JSLock lock(SilenceAssertionsOnly);
+    JSC::ExecState* exec = toJS(context);
+    Element* element = toElement(toJS(exec, value));
+    if (!element)
+        return;
+
+    element->removeShadowRoot();
+}
+
 unsigned int DumpRenderTreeSupportGtk::workerThreadCount()
 {
 #if ENABLE(WORKERS)

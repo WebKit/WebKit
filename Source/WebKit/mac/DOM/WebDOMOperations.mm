@@ -81,6 +81,18 @@ using namespace JSC;
     return toRef(execState, toJS(execState, core(self)->shadowRoot()));
 }
 
+- (JSValueRef)_ensureShadowRoot:(JSContextRef)context
+{
+    JSLock lock(SilenceAssertionsOnly);
+    ExecState* execState = toJS(context);
+    return toRef(execState, toJS(execState, core(self)->ensureShadowRoot()));
+}
+
+- (void)_removeShadowRoot
+{
+    core(self)->removeShadowRoot();
+}
+
 @end
 
 @implementation DOMNode (WebDOMNodeOperations)

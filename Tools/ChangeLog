@@ -1,3 +1,43 @@
+2011-04-20  Dominic Cooney  <dominicc@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        layoutTestController can create and destroy shadow DOM
+        https://bugs.webkit.org/show_bug.cgi?id=59058
+
+        Chromium, Mac, GTK and Qt DRT; and WK2 test runner.
+
+        * DumpRenderTree/LayoutTestController.cpp:
+        (ensureShadowRootCallback):
+        (removeShadowRootCallback):
+        (LayoutTestController::staticFunctions):
+        * DumpRenderTree/LayoutTestController.h:
+        * DumpRenderTree/chromium/LayoutTestController.cpp:
+        (LayoutTestController::LayoutTestController):
+        (LayoutTestController::ensureShadowRoot):
+        (LayoutTestController::removeShadowRoot):
+        * DumpRenderTree/chromium/LayoutTestController.h:
+        * DumpRenderTree/gtk/LayoutTestControllerGtk.cpp:
+        (LayoutTestController::ensureShadowRoot):
+        (LayoutTestController::removeShadowRoot):
+        * DumpRenderTree/mac/LayoutTestControllerMac.mm:
+        (LayoutTestController::shadowRoot):
+        (LayoutTestController::ensureShadowRoot):
+        (LayoutTestController::removeShadowRoot):
+        * DumpRenderTree/qt/LayoutTestControllerQt.cpp:
+        (LayoutTestController::ensureShadowRoot):
+        (LayoutTestController::removeShadowRoot):
+        * DumpRenderTree/qt/LayoutTestControllerQt.h:
+        * DumpRenderTree/win/LayoutTestControllerWin.cpp:
+        (LayoutTestController::ensureShadowRoot):
+        (LayoutTestController::removeShadowRoot):
+        * WebKitTestRunner/InjectedBundle/Bindings/LayoutTestController.idl:
+        * WebKitTestRunner/InjectedBundle/LayoutTestController.cpp:
+        (WTR::LayoutTestController::shadowRoot):
+        (WTR::LayoutTestController::ensureShadowRoot):
+        (WTR::LayoutTestController::removeShadowRoot):
+        * WebKitTestRunner/InjectedBundle/LayoutTestController.h:
+
 2011-04-20  Dirk Pranke  <dpranke@chromium.org>
 
         Reviewed by Eric Seidel.

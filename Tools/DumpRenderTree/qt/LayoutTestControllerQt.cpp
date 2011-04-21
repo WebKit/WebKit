@@ -785,6 +785,16 @@ QVariant LayoutTestController::shadowRoot(const QWebElement& element)
     return DumpRenderTreeSupportQt::shadowRoot(element);
 }
 
+QVariant LayoutTestController::ensureShadowRoot(const QWebElement& element)
+{
+    return DumpRenderTreeSupportQt::ensureShadowRoot(element);
+}
+
+void LayoutTestController::removeShadowRoot(const QWebElement& element)
+{
+    DumpRenderTreeSupportQt::removeShadowRoot(element);
+}
+
 int LayoutTestController::numberOfPendingGeolocationPermissionRequests()
 {
     int pendingPermissionCount = 0;

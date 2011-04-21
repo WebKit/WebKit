@@ -250,6 +250,8 @@ public slots:
     void setEditingBehavior(const QString& editingBehavior);
 
     QVariant shadowRoot(const QWebElement&);
+    QVariant ensureShadowRoot(const QWebElement&);
+    void removeShadowRoot(const QWebElement&);
 
     void evaluateScriptInIsolatedWorld(int worldID, const QString& script);
     bool isPageBoxVisible(int pageIndex);

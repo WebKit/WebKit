@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../js/resources/js-test-pre.js"></script>
+</head>
+<body>
+<keygen id="keys" />
+<p id="peas" />
+<pre id="console">
+This tests that LayoutTestController can access shadow DOM.
+
+</pre>
+<script>
+if (window.layoutTestController) {
+    // Make assertions about a built-in shadow
+    var keygen = document.getElementById('keys');
+    var shadow = layoutTestController.shadowRoot(keygen);
+    shouldBe('shadow.nodeName', '"#shadow-root"');
+
+    // Shadow roots should not have shadows
+    shouldBe('layoutTestController.shadowRoot(shadow)', 'null');
+
+    // Ordinary element should not have shadow
+    var p = document.getElementById('peas');
+    shouldBe('layoutTestController.shadowRoot(p)', 'null');
+
+    // LayoutTestController can bless ordinary elements with shadows
+    shadow = layoutTestController.ensureShadowRoot(p);
+    shouldBe('shadow.nodeName', '"#shadow-root"');
+    shouldBe('shadow === layoutTestController.shadowRoot(p)', 'true');
+
+    // LayoutTestController can strip elements of shadows
+    layoutTestController.removeShadowRoot(keygen);
+    shouldBe('layoutTestController.shadowRoot(keygen)', 'null');
+}
+
+var successfullyParsed = true;
+</script>
+<script src="../../js/resources/js-test-post.js"></script>
+</body>
+</html>

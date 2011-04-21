@@ -1077,6 +1077,23 @@ QVariant DumpRenderTreeSupportQt::shadowRoot(const QWebElement& element)
     return QVariant::fromValue(QDRTNode(webShadowRoot));
 }
 
+QVariant DumpRenderTreeSupportQt::ensureShadowRoot(const QWebElement& element)
+{
+    WebCore::Element* webElement = element.m_element;
+    if (!webElement)
+        return QVariant();
+
+    return QVariant::fromValue(QDRTNode(webElement->ensureShadowRoot()));
+}
+
+void DumpRenderTreeSupportQt::removeShadowRoot(const QWebElement& element)
+{
+    WebCore::Element* webElement = element.m_element;
+    if (!webElement)
+        return;
+    webElement->removeShadowRoot();
+}
+
 // Provide a backward compatibility with previously exported private symbols as of QtWebKit 4.6 release
 
 void QWEBKIT_EXPORT qt_resumeActiveDOMObjects(QWebFrame* frame)

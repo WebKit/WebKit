@@ -60,6 +60,9 @@ public:
     static void clearOpener(WebKitWebFrame*);
 
     static JSValueRef shadowRoot(JSContextRef, JSValueRef);
+    static JSValueRef ensureShadowRoot(JSContextRef, JSValueRef);
+    static void removeShadowRoot(JSContextRef, JSValueRef);
+
     static WebKitDOMRange* jsValueToDOMRange(JSContextRef, JSValueRef);
 
     // FIXME: Move these to webkitwebframe.h once their API has been discussed.
