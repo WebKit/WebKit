@@ -1,3 +1,11 @@
+2011-04-20  Leo Yang  <leo.yang@torchmobile.com.cn>
+
+        Unreviewed.
+
+        Adding myself to committers.py.
+
+        * Scripts/webkitpy/common/config/committers.py:
+
 2011-04-20  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Eric Seidel.
