@@ -42,6 +42,7 @@
 #include "MessageSender.h"
 #include "Plugin.h"
 #include "SandboxExtension.h"
+#include "ShareableBitmap.h"
 #include "WebEditCommand.h"
 #include <WebCore/DragData.h>
 #include <WebCore/Editor.h>
@@ -268,6 +269,7 @@ public:
     PassRefPtr<WebImage> snapshotInViewCoordinates(const WebCore::IntRect&, ImageOptions);
     PassRefPtr<WebImage> snapshotInDocumentCoordinates(const WebCore::IntRect&, ImageOptions);
     PassRefPtr<WebImage> scaledSnapshotInDocumentCoordinates(const WebCore::IntRect&, double scaleFactor, ImageOptions);
+    void createSnapshotOfVisibleContent(ShareableBitmap::Handle&);
 
     static const WebEvent* currentEvent();
 

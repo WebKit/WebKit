@@ -1,3 +1,29 @@
+2011-04-21  Jessie Berlin  <jberlin@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        WebKit2: Need a way to get a snapshot of the visible contents of a page from the UI Process.
+        https://bugs.webkit.org/show_bug.cgi?id=59035
+
+        Added a sync call from the UI Process to the Web Process with comments saying that it should
+        be removed as soon as possible.
+
+        * UIProcess/API/C/WKPage.cpp:
+        (WKPageVisibleContentsSnapshot):
+        * UIProcess/API/C/WKPagePrivate.h:
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::createSnapshotOfVisibleContent):
+        * UIProcess/WebPageProxy.h:
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::createSnapshotOfVisibleContent):
+        Ask the FrameView for the visibleContentRect, and call scaledSnapshotInDocumentCoordinates
+        with a scale factor of 1 (which preserves the current scaling of the page - e.g. if the
+        page is already zoomed then the snapshot will reflect the zoomed content).
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/WebPage.messages.in:
+
 2011-04-20  Dominic Cooney  <dominicc@chromium.org>
 
         Reviewed by Dimitri Glazkov.

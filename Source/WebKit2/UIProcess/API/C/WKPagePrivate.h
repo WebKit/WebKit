@@ -64,6 +64,10 @@ typedef void (*WKPageDrawToPDFFunction)(WKDataRef data, WKErrorRef error, void* 
 WK_EXPORT void WKPageBeginPrinting(WKPageRef page, WKFrameRef frame, WKPrintInfo);
 WK_EXPORT void WKPageDrawPagesToPDF(WKPageRef page, WKFrameRef frame, uint32_t first, uint32_t count, WKPageDrawToPDFFunction callback, void* context);
 
+// FIXME: This is in violation of the no synchronous messages to the Web Process policy and should
+// be removed as soon as possible.
+WK_EXPORT WKImageRef WKPageCreateSnapshotOfVisibleContent(WKPageRef page);
+
 #ifdef __cplusplus
 }
 #endif

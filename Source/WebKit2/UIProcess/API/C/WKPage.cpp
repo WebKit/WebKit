@@ -31,6 +31,7 @@
 #include "WKAPICast.h"
 #include "WebBackForwardList.h"
 #include "WebData.h"
+#include "WebImage.h"
 #include "WebPageProxy.h"
 #include "WebProcessProxy.h"
 
@@ -549,4 +550,10 @@ void WKPageDrawPagesToPDF(WKPageRef page, WKFrameRef frame, uint32_t first, uint
     toImpl(page)->drawPagesToPDF(toImpl(frame), first, count, DataCallback::create(context, callback));
 }
 #endif
+
+WKImageRef WKPageCreateSnapshotOfVisibleContent(WKPageRef page)
+{
+    RefPtr<WebImage> webImage = toImpl(page)->createSnapshotOfVisibleContent();
+    return toAPI(webImage.release().leakRef());
+}
 

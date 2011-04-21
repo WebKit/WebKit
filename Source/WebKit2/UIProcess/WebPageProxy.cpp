@@ -3040,6 +3040,16 @@ void WebPageProxy::linkClicked(const String& url, const WebMouseEvent& event)
     process()->send(Messages::WebPage::LinkClicked(url, event), m_pageID, 0);
 }
 
+PassRefPtr<WebImage> WebPageProxy::createSnapshotOfVisibleContent()
+{
+    ShareableBitmap::Handle snapshotHandle;
+    // Do not wait for more than a second (arbitrary) for the WebProcess to get the snapshot so
+    // that the UI Process is not permanently stuck waiting on a potentially crashing Web Process.
+    static const double createSnapshotOfVisibleContentSyncMessageTimeout = 1.0;
+    process()->sendSync(Messages::WebPage::CreateSnapshotOfVisibleContent(), Messages::WebPage::CreateSnapshotOfVisibleContent::Reply(snapshotHandle), m_pageID, createSnapshotOfVisibleContentSyncMessageTimeout);
+    return WebImage::create(ShareableBitmap::create(snapshotHandle));
+}
+
 #if PLATFORM(MAC)
 
 void WebPageProxy::substitutionsPanelIsShowing(bool& isShowing)

@@ -490,6 +490,10 @@ public:
     void saveDataToFileInDownloadsFolder(const String& suggestedFilename, const String& mimeType, const String& originatingURLString, WebData*);
 
     void linkClicked(const String&, const WebMouseEvent&);
+
+    // FIXME: This is in violation of the no synchronous messages to the Web Process policy and
+    // should be removed as soon as possible.
+    PassRefPtr<WebImage> createSnapshotOfVisibleContent();
  
 private:
     WebPageProxy(PageClient*, PassRefPtr<WebProcessProxy>, WebPageGroup*, uint64_t pageID);
