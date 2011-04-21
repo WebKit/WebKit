@@ -1080,9 +1080,16 @@ void GraphicsContext::setPlatformShadow(const FloatSize& size,
     // lower layer contains our offset, blur, and colorfilter
     SkLayerDrawLooper::LayerInfo info;
 
+    /*
+        WebKit's interpretation of shadow color is that it does not pay
+        attention to the alpha in the fill color, so we pass kSrc_Mode for
+        fColorMode so that we overwrite the drawing paint's color and use ours,
+        which is 0xFF000000. This works fine, since by passing kSrcIn_Mode to
+        the colorfilter, we will only modulate with the alpha, which is 0xFF.
+     */
     info.fPaintBits |= SkLayerDrawLooper::kMaskFilter_Bit; // our blur
     info.fPaintBits |= SkLayerDrawLooper::kColorFilter_Bit;
-    info.fColorMode = SkXfermode::kDst_Mode;
+    info.fColorMode = SkXfermode::kSrc_Mode;
     info.fOffset.set(width, height);
     info.fPostTranslate = m_state.shadowsIgnoreTransforms;
 
