@@ -1,3 +1,10 @@
+2011-04-20  Andy Estes  <aestes@apple.com>
+
+        fast/images/animated-gif-restored-from-bfcache.html fails on Windows bots
+        https://bugs.webkit.org/show_bug.cgi?id=59062
+
+        * platform/win/Skipped:
+
 2011-04-20  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Maciej Stachowiak.
