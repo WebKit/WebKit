@@ -1,3 +1,57 @@
+2011-04-20  Alexey Proskuryakov  <ap@apple.com>
+
+        Reviewed by Maciej Stachowiak.
+
+        WebKit2: Unconfirmed inline input session persists after reload
+        https://bugs.webkit.org/show_bug.cgi?id=59054
+        <rdar://problem/9291086>
+
+        Makes the inline input get properly confirmed or discarded when changing selection,
+        navigating to another page, focusing another view in the window, or after a web process
+        crash.
+
+        * Shared/EditorState.h: (WebKit::EditorState::EditorState):
+        * WebProcess/WebPage/WebPage.cpp: (WebKit::WebPage::editorState):
+        Added a variable that Editor sets while processing input method calls. We don't want
+        selection changes caused by -setMarkedText: discard the composition!
+        
+        * UIProcess/PageClient.h:
+        * UIProcess/API/mac/PageClientImpl.h:
+        * UIProcess/API/mac/PageClientImpl.mm:
+        (WebKit::PageClientImpl::updateTextInputState):
+        (WebKit::PageClientImpl::resetTextInputState):
+        Extended updateSecureInputState() to potentially confirm the current inline input session.
+        Added resetTextInputState, which is to be called when we get out of the current web page.
+
+        * UIProcess/API/mac/WKView.mm:
+        (-[WKView resignFirstResponder]): Just call _resetTextInputState instead of dealing with
+        input state here.
+        (-[WKView _updateSecureInputState]): Use _isFocused to make the code simpler.
+        (-[WKView _updateTextInputStateIncludingSecureInputState:]): Confirm the current inline
+        input session if selection changed for any other reason but an input method changing the
+        composition. We will want to do other work here, like dismissing a dictionary pop-up,
+        updating a font panel etc.
+        (-[WKView _resetTextInputState]): Added. We don't want secure text input persist after
+        navigations, crashes an such, and we also don't want input methods to remember inline input
+        state. Relying on selection changed notifications is fragile and insufficient.
+
+        * UIProcess/API/mac/WKViewInternal.h: Added internal functions to keep the build unbroken.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::didCommitLoadForFrame): This is the best chance we have to reset input
+        state for a new page. This doesn't work well for cached page loads, but WK1 is quite broken
+        in that case, too.
+        (WebKit::WebPageProxy::editorStateChanged): Moved some logic up to the client, since the
+        function now does much more than before.
+
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/mac/WebPageProxyMac.mm: (WebKit::WebPageProxy::confirmCompositionWithoutDisturbingSelection):
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/WebPage.messages.in:
+        * WebProcess/WebPage/mac/WebPageMac.mm: (WebKit::WebPage::confirmCompositionWithoutDisturbingSelection):
+        Added confirmCompositionWithoutDisturbingSelection(). When we confirm the composition due
+        to selection change, we obvisouly don't want the selection to move back.
+
 2011-04-21  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Simon Fraser.

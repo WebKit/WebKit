@@ -247,6 +247,15 @@ void WebPage::confirmComposition(EditorState& newState)
     newState = editorState();
 }
 
+void WebPage::confirmCompositionWithoutDisturbingSelection(EditorState& newState)
+{
+    Frame* frame = m_page->focusController()->focusedOrMainFrame();
+
+    frame->editor()->confirmCompositionWithoutDisturbingSelection();
+
+    newState = editorState();
+}
+
 void WebPage::insertText(const String& text, uint64_t replacementRangeStart, uint64_t replacementRangeEnd, bool& handled, EditorState& newState)
 {
     Frame* frame = m_page->focusController()->focusedOrMainFrame();

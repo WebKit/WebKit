@@ -333,6 +333,7 @@ EditorState WebPage::editorState() const
     result.isContentRichlyEditable = frame->selection()->isContentRichlyEditable();
     result.isInPasswordField = frame->selection()->isInPasswordField();
     result.hasComposition = frame->editor()->hasComposition();
+    result.shouldIgnoreCompositionSelectionChange = frame->editor()->ignoreCompositionSelectionChange();
     
     return result;
 }

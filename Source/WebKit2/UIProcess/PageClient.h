@@ -103,7 +103,8 @@ public:
     virtual bool interpretKeyEvent(const NativeWebKeyboardEvent&, Vector<WebCore::KeypressCommand>&) = 0;
     virtual bool executeSavedCommandBySelector(const String& selector) = 0;
     virtual void setDragImage(const WebCore::IntPoint& clientPosition, PassRefPtr<ShareableBitmap> dragImage, bool isLinkDrag) = 0;
-    virtual void updateSecureInputState() = 0;
+    virtual void updateTextInputState(bool updateSecureInputState) = 0;
+    virtual void resetTextInputState() = 0;
 #endif
 #if PLATFORM(WIN)
     virtual void compositionSelectionChanged(bool) = 0;

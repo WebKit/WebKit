@@ -310,10 +310,8 @@ struct WKViewInterpretKeyEventsParameters {
 {
     _data->_inResignFirstResponder = true;
 
-    if (_data->_inSecureInputState) {
-        DisableSecureEventInput();
-        _data->_inSecureInputState = NO;
-    }
+    [self _resetTextInputState];
+    
     _data->_page->viewStateDidChange(WebPageProxy::ViewIsFocused);
 
     _data->_inResignFirstResponder = false;
@@ -2307,7 +2305,7 @@ static void drawPageBackground(CGContextRef context, WebPageProxy* page, const I
 
 - (void)_updateSecureInputState
 {
-    if (![[self window] isKeyWindow] || ([[self window] firstResponder] != self && !_data->_inBecomeFirstResponder)) {
+    if (![[self window] isKeyWindow] || ![self _isFocused]) {
         if (_data->_inSecureInputState) {
             DisableSecureEventInput();
             _data->_inSecureInputState = NO;
@@ -2329,6 +2327,33 @@ static void drawPageBackground(CGContextRef context, WebPageProxy* page, const I
         [context setAllowedInputSourceLocales:nil];
     }
     _data->_inSecureInputState = isInPasswordField;
+}
+
+- (void)_updateTextInputStateIncludingSecureInputState:(BOOL)updateSecureInputState
+{
+    const EditorState& editorState = _data->_page->editorState();
+    if (updateSecureInputState) {
+        // This is a temporary state when editing. Flipping secure input state too quickly can expose race conditions.
+        if (!editorState.selectionIsNone)
+            [self _updateSecureInputState];
+    }
+
+    if (!editorState.hasComposition || editorState.shouldIgnoreCompositionSelectionChange)
+        return;
+
+    _data->_page->confirmCompositionWithoutDisturbingSelection();
+    [[super inputContext] discardMarkedText];
+}
+
+- (void)_resetTextInputState
+{
+    _data->_page->confirmCompositionWithoutDisturbingSelection();
+    [[super inputContext] discardMarkedText];
+
+    if (_data->_inSecureInputState) {
+        DisableSecureEventInput();
+        _data->_inSecureInputState = NO;
+    }
 }
 
 - (void)_setDrawingAreaSize:(NSSize)size

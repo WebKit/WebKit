@@ -252,9 +252,14 @@ void PageClientImpl::setDragImage(const IntPoint& clientPosition, PassRefPtr<Sha
     [m_wkView _setDragImage:dragNSImage.get() at:clientPosition linkDrag:isLinkDrag];
 }
 
-void PageClientImpl::updateSecureInputState()
+void PageClientImpl::updateTextInputState(bool updateSecureInputState)
 {
-    [m_wkView _updateSecureInputState];
+    [m_wkView _updateTextInputStateIncludingSecureInputState:updateSecureInputState];
+}
+
+void PageClientImpl::resetTextInputState()
+{
+    [m_wkView _resetTextInputState];
 }
 
 FloatRect PageClientImpl::convertToDeviceSpace(const FloatRect& rect)

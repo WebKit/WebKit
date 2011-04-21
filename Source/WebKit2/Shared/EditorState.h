@@ -39,6 +39,7 @@ struct EditorState {
         , isContentRichlyEditable(false)
         , isInPasswordField(false)
         , hasComposition(false)
+        , shouldIgnoreCompositionSelectionChange(false)
     {
     }
 
@@ -48,6 +49,7 @@ struct EditorState {
     bool isContentRichlyEditable;
     bool isInPasswordField;
     bool hasComposition;
+    bool shouldIgnoreCompositionSelectionChange;
 };
 
 }

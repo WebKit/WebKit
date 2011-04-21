@@ -1537,13 +1537,19 @@ void WebPageProxy::didCommitLoadForFrame(uint64_t frameID, const String& mimeTyp
     if (!arguments->decode(messageDecoder))
         return;
 
-#if PLATFORM(MAC) && !defined(BUILDING_ON_SNOW_LEOPARD)
+    WebFrameProxy* frame = process()->webFrame(frameID);
+    MESSAGE_CHECK(frame);
+
+#if PLATFORM(MAC)
+    // FIXME (bug 59111): didCommitLoadForFrame comes too late when restoring a page from b/f cache, making us disable secure event mode in password fields.
+    // FIXME (bug 59121): A load going on in one frame shouldn't affect typing in sibling frames.
+    m_pageClient->resetTextInputState();
+#if !defined(BUILDING_ON_SNOW_LEOPARD)
+    // FIXME: Should this be moved inside resetTextInputState()?
     dismissCorrectionPanel(ReasonForDismissingCorrectionPanelIgnored);
     m_pageClient->dismissDictionaryLookupPanel();
 #endif
-
-    WebFrameProxy* frame = process()->webFrame(frameID);
-    MESSAGE_CHECK(frame);
+#endif
 
     clearLoadDependentCallbacks();
 
@@ -2151,12 +2157,7 @@ void WebPageProxy::editorStateChanged(const EditorState& editorState)
     m_editorState = editorState;
 
 #if PLATFORM(MAC)
-    // This is a temporary state. Flipping secure input state too quickly can expose race conditions.
-    if (editorState.selectionIsNone)
-        return;
-
-    if (couldChangeSecureInputState)
-        m_pageClient->updateSecureInputState();
+    m_pageClient->updateTextInputState(couldChangeSecureInputState);
 #endif
 }
 

@@ -74,7 +74,8 @@ private:
     virtual bool interpretKeyEvent(const NativeWebKeyboardEvent&, Vector<WebCore::KeypressCommand>&);
     virtual bool executeSavedCommandBySelector(const String& selector);
     virtual void setDragImage(const WebCore::IntPoint& clientPosition, PassRefPtr<ShareableBitmap> dragImage, bool isLinkDrag);
-    virtual void updateSecureInputState();
+    virtual void updateTextInputState(bool updateSecureInputState);
+    virtual void resetTextInputState();
 
     virtual WebCore::FloatRect convertToDeviceSpace(const WebCore::FloatRect&);
     virtual WebCore::FloatRect convertToUserSpace(const WebCore::FloatRect&);

@@ -151,6 +151,11 @@ void WebPageProxy::confirmComposition()
     process()->sendSync(Messages::WebPage::ConfirmComposition(), Messages::WebPage::ConfirmComposition::Reply(m_editorState), m_pageID);
 }
 
+void WebPageProxy::confirmCompositionWithoutDisturbingSelection()
+{
+    process()->sendSync(Messages::WebPage::ConfirmCompositionWithoutDisturbingSelection(), Messages::WebPage::ConfirmComposition::Reply(m_editorState), m_pageID);
+}
+
 bool WebPageProxy::insertText(const String& text, uint64_t replacementRangeStart, uint64_t replacementRangeEnd)
 {
     bool handled;
