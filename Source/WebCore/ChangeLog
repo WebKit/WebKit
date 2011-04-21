@@ -1,3 +1,10 @@
+2011-04-21  Geoffrey Garen  <ggaren@apple.com>
+
+        Try to fix the Qt build.
+
+        * UseJSC.cmake:
+        * WebCore.pro: Use correct file name.
+
 2011-04-21  Dirk Schulze  <krit@webkit.org>
 
         Unreviewed Qt build fix.

@@ -238,7 +238,6 @@ v8 {
         bindings/js/JSCDATASectionCustom.cpp \
         bindings/js/JSCSSFontFaceRuleCustom.cpp \
         bindings/js/JSCSSImportRuleCustom.cpp \
-        bindings/js/JSCSSMediaListCustom.cpp \
         bindings/js/JSCSSMediaRuleCustom.cpp \
         bindings/js/JSCSSPageRuleCustom.cpp \
         bindings/js/JSCSSRuleCustom.cpp \
@@ -315,6 +314,7 @@ v8 {
         bindings/js/JSLazyEventListener.cpp \
         bindings/js/JSLocationCustom.cpp \
         bindings/js/JSMainThreadExecState.cpp \
+        bindings/js/JSMediaListCustom.cpp \
         bindings/js/JSMemoryInfoCustom.cpp \
         bindings/js/JSMessageChannelCustom.cpp \
         bindings/js/JSMessageEventCustom.cpp \
