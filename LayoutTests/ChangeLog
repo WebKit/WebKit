@@ -3,6 +3,13 @@
         Unreviewed, expectations change - update chromium SVG baselines
         after r84522.
 
+        * platform/chromium/fast/dom/prototype-inheritance-expected.txt:
+
+2011-04-21  Dirk Pranke  <dpranke@chromium.org>
+
+        Unreviewed, expectations change - update chromium SVG baselines
+        after r84522.
+
         * platform/chromium-linux/svg/dynamic-updates/SVGFEDropShadowElement-dom-dx-attr-expected.png: Added.
         * platform/chromium-linux/svg/dynamic-updates/SVGFEDropShadowElement-dom-dy-attr-expected.png: Added.
         * platform/chromium-linux/svg/dynamic-updates/SVGFEDropShadowElement-dom-in-attr-expected.png: Added.

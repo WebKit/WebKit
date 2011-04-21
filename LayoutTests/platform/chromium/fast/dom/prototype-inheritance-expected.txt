@@ -393,6 +393,8 @@ PASS inner.SVGFEDisplacementMapElement.isInner is true
 PASS inner.SVGFEDisplacementMapElement.constructor.isInner is true
 PASS inner.SVGFEDistantLightElement.isInner is true
 PASS inner.SVGFEDistantLightElement.constructor.isInner is true
+PASS inner.SVGFEDropShadowElement.isInner is true
+PASS inner.SVGFEDropShadowElement.constructor.isInner is true
 PASS inner.SVGFEFloodElement.isInner is true
 PASS inner.SVGFEFloodElement.constructor.isInner is true
 PASS inner.SVGFEFuncAElement.isInner is true
