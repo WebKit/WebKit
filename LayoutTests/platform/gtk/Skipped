@@ -265,7 +265,6 @@ userscripts
 # Tests requiring 3D_RENDERING and ACCELERATED_COMPOSITING support
 transforms/3d
 compositing
-fast/transforms/selection-bounds-in-transformed-view.html
 
 # These tests require touch support
 fast/events/touch
@@ -1371,6 +1370,15 @@ plugins/embed-prefers-plugins-for-images.html
 
 # https://bugs.webkit.org/show_bug.cgi?id=57346
 fast/text/justify-ideograph-leading-expansion.html
+
+# scalePage is currently Mac-specific WebKit API.
+# https://bugs.webkit.org/show_bug.cgi?id=59082
+fast/dom/Element/scale-page-bounding-client-rect.html
+fast/dom/Element/scale-page-client-rects.html
+fast/dom/Range/scale-page-bounding-client-rect.html
+fast/dom/Range/scale-page-client-rects.html
+fast/repaint/scale-page-shrink.html
+fast/transforms/selection-bounds-in-transformed-view.html
 
 # https://bugs.webkit.org/show_bug.cgi?id=58020
 fast/forms/input-number-large-padding.html

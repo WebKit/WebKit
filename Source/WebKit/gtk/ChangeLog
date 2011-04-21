@@ -1,3 +1,13 @@
+2011-04-21  Martin Robinson  <mrobinson@igalia.com>
+
+        [GTK] DRT: implement eventSender.scalePageBy
+        https://bugs.webkit.org/show_bug.cgi?id=59082
+
+        Rolling out r84507 since it broke many GTK+ tests.
+
+        * WebCoreSupport/DumpRenderTreeSupportGtk.cpp:
+        * WebCoreSupport/DumpRenderTreeSupportGtk.h:
+
 2011-04-21  Philippe Normand  <pnormand@igalia.com>
 
         Reviewed by Martin Robinson.

@@ -1,3 +1,15 @@
+2011-04-21  Martin Robinson  <mrobinson@igalia.com>
+
+        [GTK] DRT: implement eventSender.scalePageBy
+        https://bugs.webkit.org/show_bug.cgi?id=59082
+
+        Rolling out r84507 since it broke many GTK+ tests.
+
+        * platform/gtk/Skipped:
+        * platform/gtk/fast/repaint/scale-page-shrink-expected.checksum: Removed.
+        * platform/gtk/fast/repaint/scale-page-shrink-expected.png: Removed.
+        * platform/gtk/fast/repaint/scale-page-shrink-expected.txt: Removed.
+
 2011-04-21  Dirk Schulze  <krit@webkit.org>
 
         Unreviewed rebaseline.
