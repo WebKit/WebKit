@@ -141,6 +141,16 @@ void InjectedBundle::didReceiveMessage(WKStringRef messageName, WKTypeRef messag
         beginTesting();
         return;
     } else if (WKStringIsEqualToUTF8CString(messageName, "Reset")) {
+        ASSERT(messageBody);
+        ASSERT(WKGetTypeID(messageBody) == WKDictionaryGetTypeID());
+        WKDictionaryRef messageBodyDictionary = static_cast<WKDictionaryRef>(messageBody);
+
+        WKRetainPtr<WKStringRef> shouldGCKey(AdoptWK, WKStringCreateWithUTF8CString("ShouldGC"));
+        bool shouldGC = WKBooleanGetValue(static_cast<WKBooleanRef>(WKDictionaryGetItemForKey(messageBodyDictionary, shouldGCKey.get())));
+
+        if (shouldGC)
+            WKBundleGarbageCollectJavaScriptObjects(m_bundle);
+
         m_state = Idle;
         m_dumpPixels = false;
 

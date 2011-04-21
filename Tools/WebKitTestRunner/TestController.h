@@ -99,6 +99,7 @@ private:
     bool m_verbose;
     bool m_printSeparators;
     bool m_usingServerMode;
+    bool m_gcBetweenTests;
     std::vector<std::string> m_paths;
     WKRetainPtr<WKStringRef> m_injectedBundlePath;
     WKRetainPtr<WKStringRef> m_testPluginDirectory;

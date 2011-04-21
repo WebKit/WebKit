@@ -166,6 +166,7 @@ my $tmpDir = "/tmp";
 my $testResultsDirectory = File::Spec->catdir($tmpDir, "layout-test-results");
 my $testsPerDumpTool = 1000;
 my $threaded = 0;
+my $gcBetweenTests = 0;
 # DumpRenderTree has an internal timeout of 30 seconds, so this must be > 30.
 my $timeoutSeconds = 35;
 my $tolerance = 0;
@@ -281,6 +282,7 @@ Usage: $programName [options] [testdir|testpath ...]
                                   Look in the specified directory before looking in any of the default platform-specific directories
   --complex-text                  Use the complex text code path for all text (Mac OS X and Windows only)
   -c|--configuration config       Set DumpRenderTree build configuration
+  --gc-between-tests              Force garbage collection between each test
   -g|--guard-malloc               Enable malloc guard
   --exit-after-n-failures N       Exit after the first N failures (includes crashes) instead of running all tests
   --exit-after-n-crashes-or-timeouts N
@@ -331,6 +333,7 @@ my $getOptionsResult = GetOptions(
     'complex-text' => \$complexText,
     'exit-after-n-failures=i' => \$exitAfterNFailures,
     'exit-after-n-crashes-or-timeouts=i' => \$exitAfterNCrashesOrTimeouts,
+    'gc-between-tests' => \$gcBetweenTests,
     'guard-malloc|g' => \$guardMalloc,
     'help|h' => \$showHelp,
     'http!' => \$testHTTP,
@@ -643,6 +646,7 @@ my @toolArgs = ();
 push @toolArgs, "--pixel-tests" if $pixelTests;
 push @toolArgs, "--threaded" if $threaded;
 push @toolArgs, "--complex-text" if $complexText;
+push @toolArgs, "--gc-between-tests" if $gcBetweenTests;
 push @toolArgs, "-";
 
 my @diffToolArgs = ();

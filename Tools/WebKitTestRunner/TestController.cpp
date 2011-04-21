@@ -29,11 +29,12 @@
 #include "PlatformWebView.h"
 #include "StringFunctions.h"
 #include "TestInvocation.h"
-#include <cstdio>
 #include <WebKit2/WKContextPrivate.h>
+#include <WebKit2/WKNumber.h>
 #include <WebKit2/WKPageGroup.h>
 #include <WebKit2/WKPreferencesPrivate.h>
 #include <WebKit2/WKRetainPtr.h>
+#include <cstdio>
 #include <wtf/PassOwnPtr.h>
 
 namespace WTR {
@@ -60,6 +61,7 @@ TestController::TestController(int argc, const char* argv[])
     , m_verbose(false)
     , m_printSeparators(false)
     , m_usingServerMode(false)
+    , m_gcBetweenTests(false)
     , m_state(Initial)
     , m_doneResetting(false)
     , m_longTimeout(defaultLongTimeout)
@@ -215,6 +217,10 @@ void TestController::initialize(int argc, const char* argv[])
             m_verbose = true;
             continue;
         }
+        if (argument == "--gc-between-tests") {
+            m_gcBetweenTests = true;
+            continue;
+        }
         if (argument == "--print-supported-features") {
             printSupportedFeatures = true;
             break;
@@ -348,8 +354,14 @@ bool TestController::resetStateToConsistentValues()
 {
     m_state = Resetting;
 
-    WKRetainPtr<WKStringRef> messageName(AdoptWK, WKStringCreateWithUTF8CString("Reset"));
-    WKContextPostMessageToInjectedBundle(TestController::shared().context(), messageName.get(), 0);
+    WKRetainPtr<WKStringRef> messageName = adoptWK(WKStringCreateWithUTF8CString("Reset"));
+    WKRetainPtr<WKMutableDictionaryRef> resetMessageBody = adoptWK(WKMutableDictionaryCreate());
+
+    WKRetainPtr<WKStringRef> shouldGCKey = adoptWK(WKStringCreateWithUTF8CString("ShouldGC"));
+    WKRetainPtr<WKBooleanRef> shouldGCValue = adoptWK(WKBooleanCreate(m_gcBetweenTests));
+    WKDictionaryAddItem(resetMessageBody.get(), shouldGCKey.get(), shouldGCValue.get());
+
+    WKContextPostMessageToInjectedBundle(TestController::shared().context(), messageName.get(), resetMessageBody.get());
 
     // FIXME: This function should also ensure that there is only one page open.
 

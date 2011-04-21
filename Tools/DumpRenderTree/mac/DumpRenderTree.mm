@@ -142,6 +142,7 @@ static int dumpPixels;
 static int threaded;
 static int dumpTree = YES;
 static int forceComplexText;
+static int gcBetweenTests;
 static BOOL printSeparators;
 static RetainPtr<CFStringRef> persistentUserStyleSheetLocation;
 
@@ -586,6 +587,7 @@ static void initializeGlobalsFromCommandLineOptions(int argc, const char *argv[]
         {"tree", no_argument, &dumpTree, YES},
         {"threaded", no_argument, &threaded, YES},
         {"complex-text", no_argument, &forceComplexText, YES},
+        {"gc-between-tests", no_argument, &gcBetweenTests, YES},
         {NULL, 0, NULL, 0}
     };
     
@@ -1202,6 +1204,9 @@ static void runTest(const string& testPathOrURL)
 
     if (ignoreWebCoreNodeLeaks)
         [WebCoreStatistics stopIgnoringWebCoreNodeLeaks];
+
+    if (gcBetweenTests)
+        [WebCoreStatistics garbageCollectJavaScriptObjects];
 }
 
 void displayWebView()

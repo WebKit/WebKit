@@ -1,3 +1,22 @@
+2011-04-21  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Simon Fraser.
+
+        Add way to garbage collect between each test when running layout tests
+        https://bugs.webkit.org/show_bug.cgi?id=59126
+
+        * DumpRenderTree/mac/DumpRenderTree.mm:
+        (initializeGlobalsFromCommandLineOptions):
+        (runTest):
+        * Scripts/old-run-webkit-tests:
+        * WebKitTestRunner/InjectedBundle/InjectedBundle.cpp:
+        (WTR::InjectedBundle::didReceiveMessage):
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::TestController::TestController):
+        (WTR::TestController::initialize):
+        (WTR::TestController::resetStateToConsistentValues):
+        * WebKitTestRunner/TestController.h:
+
 2011-04-21  Ojan Vafai  <ojan@chromium.org>
 
         Reviewed by Mihai Parparita.
