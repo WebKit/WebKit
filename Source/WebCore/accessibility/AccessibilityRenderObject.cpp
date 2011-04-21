@@ -2319,7 +2319,11 @@ bool AccessibilityRenderObject::isEnabled() const
 
 RenderView* AccessibilityRenderObject::topRenderer() const
 {
-    return m_renderer->document()->topDocument()->renderView();
+    Document* topDoc = topDocument();
+    if (!topDoc)
+        return 0;
+    
+    return topDoc->renderView();
 }
 
 Document* AccessibilityRenderObject::document() const
@@ -2329,9 +2333,19 @@ Document* AccessibilityRenderObject::document() const
     return m_renderer->document();
 }
 
+Document* AccessibilityRenderObject::topDocument() const
+{
+    if (!document())
+        return 0;
+    return document()->topDocument();
+}
+    
 FrameView* AccessibilityRenderObject::topDocumentFrameView() const
 {
-    return topRenderer()->view()->frameView();
+    RenderView* renderView = topRenderer();
+    if (!renderView || !renderView->view())
+        return 0;
+    return renderView->view()->frameView();
 }
 
 Widget* AccessibilityRenderObject::widget() const
@@ -2579,8 +2593,18 @@ VisiblePosition AccessibilityRenderObject::visiblePositionForPoint(const IntPoin
         return VisiblePosition();
     
     // convert absolute point to view coordinates
-    FrameView* frameView = m_renderer->document()->topDocument()->renderer()->view()->frameView();
+    Document* topDoc = topDocument();
+    if (!topDoc || !topDoc->renderer() || !topDoc->renderer()->view())
+        return VisiblePosition();
+    
+    FrameView* frameView = topDoc->renderer()->view()->frameView();
+    if (!frameView)
+        return VisiblePosition();
+    
     RenderView* renderView = topRenderer();
+    if (!renderView)
+        return VisiblePosition();
+    
     Node* innerNode = 0;
     
     // locate the node containing the point

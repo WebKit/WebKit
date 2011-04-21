@@ -1,3 +1,22 @@
+2011-04-20  Chris Fleizach  <cfleizach@apple.com>
+
+        Reviewed by Beth Dakin.
+
+        CrashTracer: 301 crashes in Safari at com.apple.WebCore: WebCore::AccessibilityRenderObject::visiblePositionForPoint const + 297
+        https://bugs.webkit.org/show_bug.cgi?id=57405
+
+        The offending line in this crash was a null pointer access in
+           m_renderer->document()->topDocument()->renderer()->view()->frameView();
+        It seems likely that one of those calls was invalid. I could not reproduce and there was no
+        information on reproducible steps, hence the absence of a layout test.
+
+        * accessibility/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::topRenderer):
+        (WebCore::AccessibilityRenderObject::topDocument):
+        (WebCore::AccessibilityRenderObject::topDocumentFrameView):
+        (WebCore::AccessibilityRenderObject::visiblePositionForPoint):
+        * accessibility/AccessibilityRenderObject.h:
+
 2011-04-20  Andy Estes  <aestes@apple.com>
 
         Reviewed by Maciej Stachowiak.

@@ -169,6 +169,7 @@ public:
     RenderTextControl* textControl() const;
     Document* document() const;
     FrameView* topDocumentFrameView() const;  
+    Document* topDocument() const;
     HTMLLabelElement* labelElementContainer() const;
     
     virtual KURL url() const;
