@@ -1,3 +1,11 @@
+2011-04-21  Philippe Normand  <pnormand@igalia.com>
+
+        Unreviewed, skip
+        fast/transforms/selection-bounds-in-transformed-view.html on GTK as it
+        depends on eventSender.scalePageBy().
+
+        * platform/gtk/Skipped:
+
 2011-04-21  Yuta Kitamura  <yutak@chromium.org>
 
         Unreviewed, skip fast/dom/shadow/layout-tests-can-access-shadow.html on Windows.
