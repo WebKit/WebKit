@@ -275,6 +275,7 @@ public:
             bool m_sameOriginOnly;
             PseudoId m_pseudoStyle;
             bool m_documentIsHTML;
+            mutable bool m_hasUnknownPseudoElements;
             mutable bool m_matchVisitedPseudoClass;
             mutable HashSet<LinkHash, LinkHashHash> m_linksCheckedForVisitedState;
         };

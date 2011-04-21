@@ -121,4 +121,9 @@ ContainerNode* ShadowRoot::firstContentElement() const
     return 0;
 }
 
+bool ShadowRoot::applyAuthorSheets() const
+{
+    return false;
+}
+
 }

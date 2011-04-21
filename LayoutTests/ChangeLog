@@ -1,3 +1,13 @@
+2011-04-20  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        Reviewed by Kent Tamura.
+
+        REGRESSION (r75543): Styles bleed into new shadow DOM (like slider and video)
+        https://bugs.webkit.org/show_bug.cgi?id=52917
+
+        * fast/css/shadow-dom-scope-expected.txt: Added.
+        * fast/css/shadow-dom-scope.html: Added.
+
 2011-04-21  Levi Weintraub  <leviw@chromium.org>
 
         Reviewed by Simon Fraser.

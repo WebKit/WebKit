@@ -51,6 +51,7 @@ private:
     virtual NodeType nodeType() const;
     virtual PassRefPtr<Node> cloneNode(bool deep);
     virtual bool childTypeAllowed(NodeType) const;
+    virtual bool applyAuthorSheets() const;
 
     ContainerNode* firstContentElement() const;
 };

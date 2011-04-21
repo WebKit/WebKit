@@ -1,3 +1,42 @@
+2011-04-20  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        Reviewed by Kent Tamura.
+
+        REGRESSION (r75543): Styles bleed into new shadow DOM (like slider and video)
+        https://bugs.webkit.org/show_bug.cgi?id=52917
+
+        In order to determine whether a rule should apply inside of a shadow DOM subtree,
+        we collect three pieces of information:
+
+        1) Are we parsing UA sheets?
+        2) Does the current tree scope allows applying author sheets?
+        3) Does the rule explicitly reach into shadow DOM (using pseudo-elements, for example)?
+
+        If the answer to all of these is no, we ignore the rule.
+
+        Test: fast/css/shadow-dom-scope.html
+
+        * css/CSSStyleSelector.cpp:
+        (WebCore::MatchingUARulesScope::MatchingUARulesScope): Added a scope helper to
+            track whether we are currently matching UA rules.
+        (WebCore::CSSStyleSelector::matchRulesForList): Added the check for three
+            conditions mentioned above.
+        (WebCore::CSSStyleSelector::SelectorChecker::SelectorChecker): Added
+            initializer for the flag, which helps us determine whether the rule
+            explicitly reaches into shadow DOM.
+        (WebCore::CSSStyleSelector::matchUARules): Started using the scope helper.
+        (WebCore::CSSStyleSelector::checkSelector): Added initializing of the
+            flag.
+        (WebCore::CSSStyleSelector::SelectorChecker::checkOneSelector): Added setting
+            of the flag when we encounter unknown pseudo-elements.
+        * css/CSSStyleSelector.h: Adjusted decls.
+        * dom/ShadowRoot.cpp:
+        (WebCore::ShadowRoot::applyAuthorSheets): Added.
+        * dom/ShadowRoot.h: Adjusted decls.
+        * dom/TreeScope.cpp:
+        (WebCore::TreeScope::applyAuthorSheets): Added.
+        * dom/TreeScope.h: Adjusted decls.
+
 2011-04-21  Levi Weintraub  <leviw@chromium.org>
 
         Reviewed by Simon Fraser.

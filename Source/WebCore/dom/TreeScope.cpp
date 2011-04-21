@@ -158,5 +158,10 @@ Element* TreeScope::findAnchor(const String& name)
     return 0;
 }
 
+bool TreeScope::applyAuthorSheets() const
+{
+    return true;
+}
+
 } // namespace WebCore
 

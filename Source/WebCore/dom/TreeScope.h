@@ -65,6 +65,8 @@ public:
     // quirks mode for historical compatibility reasons.
     Element* findAnchor(const String& name);
 
+    virtual bool applyAuthorSheets() const;
+
 protected:
     TreeScope(Document*);
     virtual ~TreeScope();

@@ -746,6 +746,40 @@ inline bool CSSStyleSelector::fastRejectSelector(const RuleData& ruleData) const
     return false;
 }
 
+class MatchingUARulesScope {
+public:
+    MatchingUARulesScope();
+    ~MatchingUARulesScope();
+
+    static bool isMatchingUARules();
+
+private:
+    static bool m_matchingUARules;
+};
+
+MatchingUARulesScope::MatchingUARulesScope()
+{
+    ASSERT(!m_matchingUARules);
+    m_matchingUARules = true;
+}
+
+MatchingUARulesScope::~MatchingUARulesScope()
+{
+    m_matchingUARules = false;
+}
+
+inline bool MatchingUARulesScope::isMatchingUARules()
+{
+    return m_matchingUARules;
+}
+
+bool MatchingUARulesScope::m_matchingUARules = false;
+
+inline static bool matchesInTreeScope(TreeScope* treeScope, bool ruleReachesIntoShadowDOM)
+{
+    return MatchingUARulesScope::isMatchingUARules() || treeScope->applyAuthorSheets() || ruleReachesIntoShadowDOM;
+}
+
 void CSSStyleSelector::matchRulesForList(const Vector<RuleData>* rules, int& firstRuleIndex, int& lastRuleIndex, bool includeEmptyRules)
 {
     if (!rules)
@@ -760,6 +794,8 @@ void CSSStyleSelector::matchRulesForList(const Vector<RuleData>* rules, int& fir
         if (canUseFastReject && fastRejectSelector(ruleData))
             continue;
         if (checkSelector(ruleData)) {
+            if (!matchesInTreeScope(m_element->treeScope(), m_checker.m_hasUnknownPseudoElements))
+                continue;
             // If the rule has no properties to apply, then ignore it in the non-debug mode.
             CSSStyleRule* rule = ruleData.rule();
             CSSMutableStyleDeclaration* decl = rule->declaration();
@@ -881,6 +917,7 @@ CSSStyleSelector::SelectorChecker::SelectorChecker(Document* document, bool stri
     , m_sameOriginOnly(false)
     , m_pseudoStyle(NOPSEUDO)
     , m_documentIsHTML(document->isHTMLDocument())
+    , m_hasUnknownPseudoElements(false)
     , m_matchVisitedPseudoClass(false)
 {
 }
@@ -1168,6 +1205,8 @@ ALWAYS_INLINE RenderStyle* CSSStyleSelector::locateSharedStyle()
 
 void CSSStyleSelector::matchUARules(int& firstUARule, int& lastUARule)
 {
+    MatchingUARulesScope scope;
+
     // First we match rules from the user agent sheet.
     RuleSet* userAgentStyleSheet = m_medium->mediaTypeMatchSpecific("print")
         ? defaultPrintStyle : defaultStyle;
@@ -2041,6 +2080,7 @@ PassRefPtr<CSSRuleList> CSSStyleSelector::pseudoStyleRulesForElement(Element* e,
 inline bool CSSStyleSelector::checkSelector(const RuleData& ruleData)
 {
     m_dynamicPseudo = NOPSEUDO;
+    m_checker.m_hasUnknownPseudoElements = false;
 
     // Let the slow path handle SVG as it has some additional rules regarding shadow trees.
     if (ruleData.hasFastCheckableSelector() && !m_element->isSVGElement()) {
@@ -2938,6 +2978,9 @@ bool CSSStyleSelector::SelectorChecker::checkOneSelector(CSSSelector* sel, Eleme
     if (sel->m_match == CSSSelector::PseudoElement) {
         if (!elementStyle && !m_collectRulesOnly)
             return false;
+
+        if (sel->isUnknownPseudoElement())
+            m_hasUnknownPseudoElements = true;
 
         PseudoId pseudoId = CSSSelector::pseudoId(sel->pseudoType());
         if (pseudoId == FIRST_LETTER) {
