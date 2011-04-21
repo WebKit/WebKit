@@ -75,6 +75,8 @@ WebInspector.ResourcesPanel = function(database)
     this.sidebarElement.addEventListener("mousemove", this._onmousemove.bind(this), false);
     this.sidebarElement.addEventListener("mouseout", this._onmouseout.bind(this), false);
 
+    this.registerShortcuts();
+
     WebInspector.networkManager.addEventListener(WebInspector.NetworkManager.EventTypes.ResourceUpdated, this._refreshResource, this);
 }
 

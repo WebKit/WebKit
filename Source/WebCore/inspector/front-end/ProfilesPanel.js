@@ -736,13 +736,14 @@ WebInspector.ProfilesPanel.prototype = {
 
     handleShortcut: function(event)
     {
-        if (!Preferences.heapProfilerPresent || Preferences.detailedHeapProfiles)
-            return;
-        var combo = ["U+004C", "U+0045", "U+0041", "U+004B", "U+005A"];  // "LEAKZ"
-        if (this._recognizeKeyboardCombo(combo, event)) {
-            this._displayDetailedHeapProfilesEnabledHint();          
-            this._enableDetailedHeapProfiles(true);
+        if (Preferences.heapProfilerPresent && Preferences.detailedHeapProfiles) {
+            var combo = ["U+004C", "U+0045", "U+0041", "U+004B", "U+005A"];  // "LEAKZ"
+            if (this._recognizeKeyboardCombo(combo, event)) {
+                this._displayDetailedHeapProfilesEnabledHint();          
+                this._enableDetailedHeapProfiles(true);
+            }
         }
+        WebInspector.Panel.prototype.handleShortcut.call(this, event);
     },
 
     _recognizeKeyboardCombo: function(combo, event)

@@ -71,9 +71,20 @@ WebInspector.GoToLineDialog = function(view)
 
 WebInspector.GoToLineDialog.show = function(sourceView)
 {
+    if (!sourceView || typeof sourceView.highlightLine !== "function")
+        return;
     if (this._instance)
         return;
     this._instance = new WebInspector.GoToLineDialog(sourceView);
+}
+
+WebInspector.GoToLineDialog.createShortcut = function()
+{
+    var isMac = WebInspector.isMac();
+    var shortcut;
+    if (isMac)
+        return WebInspector.KeyboardShortcut.makeDescriptor("l", WebInspector.KeyboardShortcut.Modifiers.Meta);
+    return WebInspector.KeyboardShortcut.makeDescriptor("g", WebInspector.KeyboardShortcut.Modifiers.Ctrl);
 }
 
 WebInspector.GoToLineDialog.prototype = {
@@ -105,6 +116,7 @@ WebInspector.GoToLineDialog.prototype = {
 
         if (this._closeKeys.indexOf(event.keyCode) >= 0) {
             this._hide();
+            event.preventDefault();
             event.stopPropagation();
         }
     },

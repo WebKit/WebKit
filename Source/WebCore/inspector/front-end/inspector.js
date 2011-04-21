@@ -681,6 +681,9 @@ WebInspector._registerShortcuts = function()
         ];
         section.addRelatedKeys(keys, WebInspector.UIString("Find next/previous"));
     }
+
+    var goToShortcut = WebInspector.GoToLineDialog.createShortcut();
+    section.addKey(goToShortcut.name, WebInspector.UIString("Go to Line"));
 }
 
 WebInspector.documentKeyDown = function(event)
@@ -708,7 +711,7 @@ WebInspector.documentKeyDown = function(event)
         }
     }
 
-    if (this.currentPanel && this.currentPanel.handleShortcut) {
+    if (this.currentPanel) {
         this.currentPanel.handleShortcut(event);
         if (event.handled) {
             event.preventDefault();

@@ -131,7 +131,10 @@ WebInspector.NetworkPanel.prototype = {
         if (this._viewingResourceMode && event.keyCode === WebInspector.KeyboardShortcut.Keys.Esc.code) {
             this._toggleGridMode();
             event.handled = true;
+            return;
         }
+
+        WebInspector.Panel.prototype.handleShortcut.call(this, event);
     },
 
     _createTimelineGrid: function()

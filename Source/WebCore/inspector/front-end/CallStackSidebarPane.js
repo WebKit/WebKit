@@ -83,16 +83,6 @@ WebInspector.CallStackSidebarPane.prototype = {
         }
     },
 
-    handleShortcut: function(event)
-    {
-        var shortcut = WebInspector.KeyboardShortcut.makeKeyFromEvent(event);
-        var handler = this._shortcuts[shortcut];
-        if (handler) {
-            handler(event);
-            event.handled = true;
-        }
-    },
-
     _selectNextCallFrameOnStack: function()
     {
         var index = this._selectedCallFrameIndex();
@@ -152,17 +142,15 @@ WebInspector.CallStackSidebarPane.prototype = {
         InspectorFrontendHost.copyText(text);
     },
 
-    registerShortcuts: function(section)
+    registerShortcuts: function(section, shortcuts)
     {
-        this._shortcuts = {};
-
         var nextCallFrame = WebInspector.KeyboardShortcut.makeDescriptor(WebInspector.KeyboardShortcut.Keys.Period,
             WebInspector.KeyboardShortcut.Modifiers.Ctrl);
-        this._shortcuts[nextCallFrame.key] = this._selectNextCallFrameOnStack.bind(this);
+        shortcuts[nextCallFrame.key] = this._selectNextCallFrameOnStack.bind(this);
 
         var prevCallFrame = WebInspector.KeyboardShortcut.makeDescriptor(WebInspector.KeyboardShortcut.Keys.Comma,
             WebInspector.KeyboardShortcut.Modifiers.Ctrl);
-        this._shortcuts[prevCallFrame.key] = this._selectPreviousCallFrameOnStack.bind(this);
+        shortcuts[prevCallFrame.key] = this._selectPreviousCallFrameOnStack.bind(this);
 
         section.addRelatedKeys([ nextCallFrame.name, prevCallFrame.name ], WebInspector.UIString("Next/previous call frame"));
     },

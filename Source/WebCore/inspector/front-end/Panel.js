@@ -34,6 +34,8 @@ WebInspector.Panel = function(name)
     this.element.addStyleClass(name);
     this._panelName = name;
 
+    this._shortcuts = {};
+
     WebInspector.settings.installApplicationSetting(this._sidebarWidthSettingName(), undefined);
 }
 
@@ -418,6 +420,31 @@ WebInspector.Panel.prototype = {
             if (container._scrollTop)
                 container.scrollTop = container._scrollTop;
         }
+    },
+
+    handleShortcut: function(event)
+    {
+        var shortcutKey = WebInspector.KeyboardShortcut.makeKeyFromEvent(event);
+        var handler = this._shortcuts[shortcutKey];
+        if (handler) {
+            handler(event);
+            event.handled = true;
+        }
+    },
+
+    registerShortcuts: function(shortcuts)
+    {
+        this._shortcuts = shortcuts || {};
+        var goToLineShortcut = WebInspector.GoToLineDialog.createShortcut();
+        this._shortcuts[goToLineShortcut.key] = this._showGoToLineDialog.bind(this);
+    },
+
+    _showGoToLineDialog: function(e)
+    {
+         var view = this.visibleView;
+         WebInspector.GoToLineDialog.show(view);
+         if (view)
+             WebInspector.GoToLineDialog.show(view);
     }
 }
 

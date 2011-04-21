@@ -503,17 +503,6 @@ WebInspector.ScriptsPanel.prototype = {
         sourceFrame.highlightLine(lineNumber);
     },
 
-    handleShortcut: function(event)
-    {
-        var shortcut = WebInspector.KeyboardShortcut.makeKeyFromEvent(event);
-        var handler = this._shortcuts[shortcut];
-        if (handler) {
-            handler(event);
-            event.handled = true;
-        } else
-            this.sidebarPanes.callstack.handleShortcut(event);
-    },
-
     _showSourceFrameAndAddToHistory: function(sourceFileId)
     {
         var sourceFrame = this._showSourceFrame(sourceFileId);
@@ -887,48 +876,42 @@ WebInspector.ScriptsPanel.prototype = {
         var handler, shortcut1, shortcut2;
         var platformSpecificModifier = WebInspector.KeyboardShortcut.Modifiers.CtrlOrMeta;
 
-        this._shortcuts = {};
+        var shortcuts = {};
 
         // Continue.
         handler = this.pauseButton.click.bind(this.pauseButton);
         shortcut1 = WebInspector.KeyboardShortcut.makeDescriptor(WebInspector.KeyboardShortcut.Keys.F8);
-        this._shortcuts[shortcut1.key] = handler;
+        shortcuts[shortcut1.key] = handler;
         shortcut2 = WebInspector.KeyboardShortcut.makeDescriptor(WebInspector.KeyboardShortcut.Keys.Slash, platformSpecificModifier);
-        this._shortcuts[shortcut2.key] = handler;
+        shortcuts[shortcut2.key] = handler;
         section.addAlternateKeys([ shortcut1.name, shortcut2.name ], WebInspector.UIString("Continue"));
 
         // Step over.
         handler = this.stepOverButton.click.bind(this.stepOverButton);
         shortcut1 = WebInspector.KeyboardShortcut.makeDescriptor(WebInspector.KeyboardShortcut.Keys.F10);
-        this._shortcuts[shortcut1.key] = handler;
+        shortcuts[shortcut1.key] = handler;
         shortcut2 = WebInspector.KeyboardShortcut.makeDescriptor(WebInspector.KeyboardShortcut.Keys.SingleQuote, platformSpecificModifier);
-        this._shortcuts[shortcut2.key] = handler;
+        shortcuts[shortcut2.key] = handler;
         section.addAlternateKeys([ shortcut1.name, shortcut2.name ], WebInspector.UIString("Step over"));
 
         // Step into.
         handler = this.stepIntoButton.click.bind(this.stepIntoButton);
         shortcut1 = WebInspector.KeyboardShortcut.makeDescriptor(WebInspector.KeyboardShortcut.Keys.F11);
-        this._shortcuts[shortcut1.key] = handler;
+        shortcuts[shortcut1.key] = handler;
         shortcut2 = WebInspector.KeyboardShortcut.makeDescriptor(WebInspector.KeyboardShortcut.Keys.Semicolon, platformSpecificModifier);
-        this._shortcuts[shortcut2.key] = handler;
+        shortcuts[shortcut2.key] = handler;
         section.addAlternateKeys([ shortcut1.name, shortcut2.name ], WebInspector.UIString("Step into"));
 
         // Step out.
         handler = this.stepOutButton.click.bind(this.stepOutButton);
         shortcut1 = WebInspector.KeyboardShortcut.makeDescriptor(WebInspector.KeyboardShortcut.Keys.F11, WebInspector.KeyboardShortcut.Modifiers.Shift);
-        this._shortcuts[shortcut1.key] = handler;
+        shortcuts[shortcut1.key] = handler;
         shortcut2 = WebInspector.KeyboardShortcut.makeDescriptor(WebInspector.KeyboardShortcut.Keys.Semicolon, WebInspector.KeyboardShortcut.Modifiers.Shift, platformSpecificModifier);
-        this._shortcuts[shortcut2.key] = handler;
+        shortcuts[shortcut2.key] = handler;
         section.addAlternateKeys([ shortcut1.name, shortcut2.name ], WebInspector.UIString("Step out"));
 
-        var isMac = WebInspector.isMac();
-        if (isMac)
-            shortcut1 = WebInspector.KeyboardShortcut.makeDescriptor("l", WebInspector.KeyboardShortcut.Modifiers.Meta);
-        else
-            shortcut1 = WebInspector.KeyboardShortcut.makeDescriptor("g", WebInspector.KeyboardShortcut.Modifiers.Ctrl);
-        this._shortcuts[shortcut1.key] = this.showGoToLineDialog.bind(this);
-        section.addAlternateKeys([ shortcut1.name ], WebInspector.UIString("Go to Line"));
-        this.sidebarPanes.callstack.registerShortcuts(section);
+        this.sidebarPanes.callstack.registerShortcuts(section, shortcuts);
+        this.registerShortcuts(shortcuts);
     },
 
     searchCanceled: function()
@@ -998,13 +981,6 @@ WebInspector.ScriptsPanel.prototype = {
         else
             this._searchView.jumpToPreviousSearchResult();
     },
-
-    showGoToLineDialog: function(e)
-    {
-         var view = this.visibleView;
-         if (view)
-             WebInspector.GoToLineDialog.show(view);
-    }
 }
 
 WebInspector.ScriptsPanel.prototype.__proto__ = WebInspector.Panel.prototype;

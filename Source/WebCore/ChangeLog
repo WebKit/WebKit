@@ -1,3 +1,35 @@
+2011-04-21  Pavel Feldman  <pfeldman@chromium.org>
+
+        Reviewed by Yury Semikhatsky.
+
+        Web Inspector: add support for Go To Line in Resources panel.
+        https://bugs.webkit.org/show_bug.cgi?id=59077
+
+        * inspector/front-end/CallStackSidebarPane.js:
+        (WebInspector.CallStackSidebarPane.prototype.registerShortcuts):
+        * inspector/front-end/GoToLineDialog.js:
+        (WebInspector.GoToLineDialog.show):
+        (WebInspector.GoToLineDialog.createShortcut):
+        (WebInspector.GoToLineDialog.prototype._onKeyDown):
+        * inspector/front-end/NetworkPanel.js:
+        (WebInspector.NetworkPanel.prototype.handleShortcut):
+        * inspector/front-end/Panel.js:
+        (WebInspector.Panel):
+        (WebInspector.Panel.prototype._restoreScrollPositions):
+        (WebInspector.Panel.prototype.handleShortcut):
+        (WebInspector.Panel.prototype.registerShortcuts):
+        (WebInspector.Panel.prototype._showGoToLineDialog):
+        * inspector/front-end/ProfilesPanel.js:
+        (WebInspector.ProfilesPanel.prototype.handleShortcut):
+        * inspector/front-end/ResourcesPanel.js:
+        (WebInspector.ResourcesPanel):
+        * inspector/front-end/ScriptsPanel.js:
+        (WebInspector.ScriptsPanel.prototype._registerShortcuts):
+        (WebInspector.ScriptsPanel.prototype.jumpToPreviousSearchResult):
+        * inspector/front-end/inspector.js:
+        (WebInspector._registerShortcuts):
+        (WebInspector.documentKeyDown):
+
 2011-04-21  Pavel Feldman  <pfeldman@google.com>
 
         Reviewed by Yury Semikhatsky.
