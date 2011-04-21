@@ -2,6 +2,18 @@
 
         Reviewed by Martin Robinson.
 
+        [GTK] missing LayoutTestController::callShouldCloseOnWebView()
+        https://bugs.webkit.org/show_bug.cgi?id=59086
+
+        callShouldCloseOnWebView() implementation.
+
+        * DumpRenderTree/gtk/LayoutTestControllerGtk.cpp:
+        (LayoutTestController::callShouldCloseOnWebView):
+
+2011-04-21  Philippe Normand  <pnormand@igalia.com>
+
+        Reviewed by Martin Robinson.
+
         [GTK] DRT: implement eventSender.scalePageBy
         https://bugs.webkit.org/show_bug.cgi?id=59082
 

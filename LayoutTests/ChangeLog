@@ -2,6 +2,15 @@
 
         Reviewed by Martin Robinson.
 
+        [GTK] missing LayoutTestController::callShouldCloseOnWebView()
+        https://bugs.webkit.org/show_bug.cgi?id=59086
+
+        * platform/gtk/Skipped: Unskip fast/events/onbeforeunload-focused-iframe.html
+
+2011-04-21  Philippe Normand  <pnormand@igalia.com>
+
+        Reviewed by Martin Robinson.
+
         [GTK] DRT: implement eventSender.scalePageBy
         https://bugs.webkit.org/show_bug.cgi?id=59082
 

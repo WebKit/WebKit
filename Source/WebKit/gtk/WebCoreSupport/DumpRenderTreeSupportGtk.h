@@ -90,6 +90,7 @@ public:
     static void layoutFrame(WebKitWebFrame*);
     static void setAutofilled(JSContextRef, JSValueRef, bool);
     static void setValueForUser(JSContextRef, JSValueRef, JSStringRef);
+    static bool shouldClose(WebKitWebFrame*);
 
     // WebKitWebView
     static void executeCoreCommandByName(WebKitWebView*, const gchar* name, const gchar* value);
