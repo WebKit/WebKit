@@ -1,3 +1,14 @@
+2011-04-21  Ivan Krstić  <ike@apple.com>
+
+        Reviewed by Maciej Stachowiak.
+
+        <rdar://problem/9033535>
+
+        Mute sandbox violations when attempting to read a temporary
+        CFNetwork keychain.
+
+        * WebProcess/com.apple.WebProcess.sb:
+
 2011-04-21  Ryosuke Niwa  <rniwa@webkit.org>
 
         Reviewed by Sam Weinig.
