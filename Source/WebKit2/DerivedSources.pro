@@ -96,6 +96,7 @@ VPATH = \
 MESSAGE_RECEIVERS = \
     AuthenticationManager.messages.in \
     DownloadProxy.messages.in \
+    DrawingAreaProxy.messages.in \
     PluginControllerProxy.messages.in \
     PluginProcess.messages.in \
     PluginProcessProxy.messages.in \
@@ -118,6 +119,7 @@ MESSAGE_RECEIVERS = \
     WebMediaCacheManagerProxy.messages.in \
     WebFullScreenManager.messages.in \
     WebFullScreenManagerProxy.messages.in \
+    WebPage/DrawingArea.messages.in \
     WebPage/WebInspector.messages.in \
     WebPage/WebPage.messages.in \
     WebPageProxy.messages.in \

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2011 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -24,51 +24,43 @@
  */
 
 #include "config.h"
-#include "DrawingArea.h"
+#include "LayerTreeContext.h"
 
-// Subclasses
-#include "ChunkedUpdateDrawingArea.h"
-
-#if PLATFORM(MAC) || PLATFORM(WIN) || PLATFORM(QT)
-#include "DrawingAreaImpl.h"
-#endif
-
-#if ENABLE(TILED_BACKING_STORE)
-#include "TiledDrawingArea.h"
-#endif
-
-#include "WebPageCreationParameters.h"
+#include "NotImplemented.h"
 
 namespace WebKit {
 
-PassOwnPtr<DrawingArea> DrawingArea::create(WebPage* webPage, const WebPageCreationParameters& parameters)
+LayerTreeContext::LayerTreeContext()
 {
-    switch (parameters.drawingAreaType) {
-    case DrawingAreaTypeImpl:
-#if PLATFORM(MAC) || PLATFORM(WIN) || PLATFORM(QT)
-        return DrawingAreaImpl::create(webPage, parameters);
-#else
-        return 0;
-#endif
-    case DrawingAreaTypeChunkedUpdate:
-        return adoptPtr(new ChunkedUpdateDrawingArea(webPage));
-#if ENABLE(TILED_BACKING_STORE)
-    case DrawingAreaTypeTiled:
-        return adoptPtr(new TiledDrawingArea(webPage));
-#endif
-    }
-
-    return 0;
+    notImplemented();
 }
 
-DrawingArea::DrawingArea(DrawingAreaType type, WebPage* webPage)
-    : m_type(type)
-    , m_webPage(webPage)
+LayerTreeContext::~LayerTreeContext()
 {
+    notImplemented();
 }
 
-DrawingArea::~DrawingArea()
+void LayerTreeContext::encode(CoreIPC::ArgumentEncoder*) const
 {
+    notImplemented();
+}
+
+bool LayerTreeContext::decode(CoreIPC::ArgumentDecoder*, LayerTreeContext&)
+{
+    notImplemented();
+    return true;
+}
+
+bool LayerTreeContext::isEmpty() const
+{
+    notImplemented();
+    return true;
+}
+
+bool operator==(const LayerTreeContext&, const LayerTreeContext&)
+{
+    notImplemented();
+    return true;
 }
 
 } // namespace WebKit

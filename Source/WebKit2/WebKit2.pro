@@ -56,6 +56,8 @@ WEBKIT2_GENERATED_HEADERS = \
 WEBKIT2_GENERATED_SOURCES = \
     $$WEBKIT2_GENERATED_SOURCES_DIR/AuthenticationManagerMessageReceiver.cpp \
     $$WEBKIT2_GENERATED_SOURCES_DIR/DownloadProxyMessageReceiver.cpp \
+    $$WEBKIT2_GENERATED_SOURCES_DIR/DrawingAreaMessageReceiver.cpp \
+    $$WEBKIT2_GENERATED_SOURCES_DIR/DrawingAreaProxyMessageReceiver.cpp \
     $$WEBKIT2_GENERATED_SOURCES_DIR/NPObjectMessageReceiverMessageReceiver.cpp \
     $$WEBKIT2_GENERATED_SOURCES_DIR/PluginControllerProxyMessageReceiver.cpp \
     $$WEBKIT2_GENERATED_SOURCES_DIR/PluginProcessMessageReceiver.cpp \
@@ -103,6 +105,7 @@ HEADERS += \
     Platform/Logging.h \
     Platform/Module.h \
     Platform/PlatformProcessIdentifier.h \
+    Platform/Region.h \
     Platform/RunLoop.h \
     Platform/SharedMemory.h \
     Platform/WorkItem.h \
@@ -120,6 +123,7 @@ HEADERS += \
     Shared/ImageOptions.h \
     Shared/ImmutableArray.h \
     Shared/ImmutableDictionary.h \
+    Shared/LayerTreeContext.h \
     Shared/MutableArray.h \
     Shared/MutableDictionary.h \
     Shared/NativeWebKeyboardEvent.h \
@@ -131,6 +135,7 @@ HEADERS += \
     Shared/SecurityOriginData.h \
     Shared/SessionState.h \
     Shared/StringPairVector.h \
+    Shared/UpdateInfo.h \
     Shared/UserMessageCoders.h \
     Shared/VisitedLinkTable.h \
     Shared/WebCoreArgumentCoders.h \
@@ -171,9 +176,11 @@ HEADERS += \
     UIProcess/Authentication/AuthenticationDecisionListener.h \
     UIProcess/Authentication/WebCredential.h \
     UIProcess/Authentication/WebProtectionSpace.h \
+    UIProcess/BackingStore.h \
     UIProcess/ChunkedUpdateDrawingAreaProxy.h \
     UIProcess/Downloads/DownloadProxy.h \
     UIProcess/DrawingAreaProxy.h \
+    UIProcess/DrawingAreaProxyImpl.h \
     UIProcess/FindIndicator.h \
     UIProcess/GenericCallback.h \
     UIProcess/GeolocationPermissionRequestManagerProxy.h \
@@ -283,6 +290,7 @@ HEADERS += \
     WebProcess/WebCoreSupport/qt/WebFrameNetworkingContext.h \
     WebProcess/WebPage/ChunkedUpdateDrawingArea.h \
     WebProcess/WebPage/DrawingArea.h \
+    WebProcess/WebPage/DrawingAreaImpl.h \
     WebProcess/WebPage/FindController.h \
     WebProcess/WebPage/PageOverlay.h \
     WebProcess/WebPage/WebContextMenu.h \
@@ -306,6 +314,7 @@ SOURCES += \
     Platform/CoreIPC/unix/ConnectionUnix.cpp \
     Platform/Logging.cpp \
     Platform/Module.cpp \
+    Platform/Region.cpp \
     Platform/RunLoop.cpp \
     Platform/WorkQueue.cpp \
     Platform/qt/ModuleQt.cpp \
@@ -339,6 +348,7 @@ SOURCES += \
     Shared/PrintInfo.cpp \
     Shared/SecurityOriginData.cpp \
     Shared/SessionState.cpp \
+    Shared/UpdateInfo.cpp \
     Shared/VisitedLinkTable.cpp \
     Shared/WebBackForwardListItem.cpp \
     Shared/WebContextMenuItem.cpp \
@@ -362,6 +372,7 @@ SOURCES += \
     Shared/WebURLRequest.cpp \
     Shared/WebURLResponse.cpp \
     Shared/WebWheelEvent.cpp \
+    Shared/qt/LayerTreeContextQt.cpp \
     Shared/qt/ShareableBitmapQt.cpp \
     Shared/qt/NativeWebKeyboardEventQt.cpp \
     Shared/qt/NativeWebMouseEventQt.cpp \
@@ -374,9 +385,12 @@ SOURCES += \
     UIProcess/Authentication/AuthenticationDecisionListener.cpp \
     UIProcess/Authentication/WebCredential.cpp \
     UIProcess/Authentication/WebProtectionSpace.cpp \
+    UIProcess/BackingStore.cpp \
+    UIProcess/qt/BackingStoreQt.cpp \
     UIProcess/ChunkedUpdateDrawingAreaProxy.cpp \
     UIProcess/Downloads/DownloadProxy.cpp \
     UIProcess/DrawingAreaProxy.cpp \
+    UIProcess/DrawingAreaProxyImpl.cpp \
     UIProcess/FindIndicator.cpp \
     UIProcess/GeolocationPermissionRequestManagerProxy.cpp \
     UIProcess/GeolocationPermissionRequestProxy.cpp \
@@ -507,8 +521,10 @@ SOURCES += \
     WebProcess/WebPage/ChunkedUpdateDrawingArea.cpp \
     WebProcess/WebPage/DecoderAdapter.cpp \
     WebProcess/WebPage/DrawingArea.cpp \
+    WebProcess/WebPage/DrawingAreaImpl.cpp \
     WebProcess/WebPage/EncoderAdapter.cpp \
     WebProcess/WebPage/FindController.cpp \
+    WebProcess/WebPage/LayerTreeHost.cpp \
     WebProcess/WebPage/PageOverlay.cpp \
     WebProcess/WebPage/TiledDrawingArea.cpp \
     WebProcess/WebPage/WebBackForwardListProxy.cpp \

@@ -26,6 +26,7 @@
 
 #include "ChunkedUpdateDrawingAreaProxy.h"
 #include "ClientImpl.h"
+#include "DrawingAreaProxyImpl.h"
 #include "qgraphicswkview.h"
 #include "qwkcontext.h"
 #include "qwkcontext_p.h"
@@ -36,6 +37,7 @@
 #include "NativeWebKeyboardEvent.h"
 #include "NativeWebMouseEvent.h"
 #include "NotImplemented.h"
+#include "Region.h"
 #include "TiledDrawingAreaProxy.h"
 #include "WebContext.h"
 #include "WebContextMenuProxyQt.h"
@@ -135,6 +137,8 @@ PassOwnPtr<DrawingAreaProxy> QWKPagePrivate::createDrawingAreaProxy()
     if (backingStoreType == QGraphicsWKView::Tiled)
         return TiledDrawingAreaProxy::create(wkView, page.get());
 #endif
+    if (backingStoreType == QGraphicsWKView::Impl)
+        return DrawingAreaProxyImpl::create(page.get());
     return ChunkedUpdateDrawingAreaProxy::create(wkView, page.get());
 }
 
@@ -274,9 +278,14 @@ void QWKPagePrivate::flashBackingStoreUpdates(const Vector<IntRect>&)
 
 void QWKPagePrivate::paint(QPainter* painter, QRect area)
 {
-    if (page->isValid() && page->drawingArea())
-        page->drawingArea()->paint(IntRect(area), painter);
-    else
+    if (page->isValid() && page->drawingArea()) {
+        if (page->drawingArea()->type() == DrawingAreaTypeImpl) {
+            // FIXME: Do something with the unpainted region?
+            WebKit::Region unpaintedRegion;
+            static_cast<DrawingAreaProxyImpl*>(page->drawingArea())->paint(painter, area, unpaintedRegion);
+        } else
+            page->drawingArea()->paint(IntRect(area), painter);
+    } else
         painter->fillRect(area, Qt::white);
 }
 

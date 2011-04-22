@@ -1,3 +1,49 @@
+2011-04-22  Andreas Kling  <andreas.kling@nokia.com>
+
+        Reviewed by Sam Weinig.
+
+        [Qt][WK2] Implement DrawingAreaImpl for Qt.
+        https://bugs.webkit.org/show_bug.cgi?id=59171
+
+        * WebKit2.pro: Build files necessary for DrawingAreaImpl.
+        * DerivedSources.pro: Build message receivers for DrawingArea and DrawingAreaProxy.
+
+        * Shared/qt/LayerTreeContextQt.cpp:
+        (WebKit::LayerTreeContext::LayerTreeContext): Stub.
+        (WebKit::LayerTreeContext::~LayerTreeContext): Stub.
+        (WebKit::LayerTreeContext::encode): Stub.
+        (WebKit::LayerTreeContext::decode): Stub.
+        (WebKit::LayerTreeContext::isEmpty): Stub.
+        (WebKit::operator==): Stub.
+
+        * Shared/qt/ShareableBitmapQt.cpp:
+        (WebKit::ShareableBitmap::paint): Don't translate the painter to accomodate the
+        source rect. The rect is already adjusted at the call site.
+
+        * UIProcess/API/qt/qgraphicswkview.h: Add "Impl" to QGraphicsWKView::BackingStoreType.
+
+        * UIProcess/API/qt/qwkpage.cpp:
+        (QWKPagePrivate::createDrawingAreaProxy): Create DrawingAreaProxyImpl if requested.
+        (QWKPagePrivate::paint): Call the correct paint() method for DrawingAreaProxyImpl,
+        since this drawing area will simple ASSERT_NOT_REACHED() in the "normal" paint().
+
+        * WebProcess/WebPage/DrawingArea.cpp:
+        (WebKit::DrawingArea::create): Allow creation of DrawingAreaImpl for Qt.
+
+        * UIProcess/BackingStore.h: Add Qt-specific types and backing store.
+
+        * UIProcess/qt/BackingStoreQt.cpp:
+        (WebKit::BackingStore::paint): Implemented.
+        (WebKit::BackingStore::incorporateUpdate): Implemented.
+        (WebKit::BackingStore::scroll): Implemented using QPixmap::scroll().
+
+        * UIProcess/DrawingAreaProxy.h: Enable drawing area message receivers for Qt.
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::didReceiveMessage): Ditto.
+        * WebProcess/WebPage/DrawingArea.h: Ditto.
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::didReceiveMessage): Ditto.
+
 2011-04-22  Jon Honeycutt  <jhoneycutt@apple.com>
 
         WinCairo build fix. Unreviewed.

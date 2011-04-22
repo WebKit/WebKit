@@ -1,5 +1,7 @@
 /*
- * Copyright (C) 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2011 Apple Inc. All rights reserved.
+ * Copyright (C) 2011 Nokia Corporation and/or its subsidiary(-ies)
+ * Copyright (C) 2011 Andreas Kling <kling@webkit.org>
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -24,34 +26,50 @@
  */
 
 #include "config.h"
-#include "ShareableBitmap.h"
+#include "BackingStore.h"
 
-#include <QImage>
-#include <QPainter>
+#include "UpdateInfo.h"
+#include "ShareableBitmap.h"
 #include <WebCore/GraphicsContext.h>
+#include <WebCore/IntRect.h>
 
 using namespace WebCore;
 
 namespace WebKit {
 
-static inline QImage createQImage(void* data, int width, int height)
+void BackingStore::paint(QPainter* painter, const IntRect& rect)
 {
-    return QImage(reinterpret_cast<uchar*>(data), width, height, width * 4, QImage::Format_RGB32);
+    ASSERT(!m_pixmap.isNull());
+    painter->drawPixmap(rect, m_pixmap, rect);
 }
 
-PassOwnPtr<GraphicsContext> ShareableBitmap::createGraphicsContext()
+void BackingStore::incorporateUpdate(ShareableBitmap* bitmap, const UpdateInfo& updateInfo)
 {
-    QImage* image = new QImage(createQImage(data(), m_size.width(), m_size.height()));
-    GraphicsContext* context = new GraphicsContext(new QPainter(image));
-    context->takeOwnershipOfPlatformContext();
-    return context;
+    if (m_pixmap.isNull())
+        m_pixmap = QPixmap(m_size);
+
+    scroll(updateInfo.scrollRect, updateInfo.scrollOffset);
+
+    IntPoint updateRectLocation = updateInfo.updateRectBounds.location();
+
+    QPainter painter(&m_pixmap);
+    GraphicsContext graphicsContext(&painter);
+
+    // Paint all update rects.
+    for (size_t i = 0; i < updateInfo.updateRects.size(); ++i) {
+        IntRect updateRect = updateInfo.updateRects[i];
+        IntRect srcRect = updateRect;
+        srcRect.move(-updateRectLocation.x(), -updateRectLocation.y());
+        bitmap->paint(graphicsContext, updateRect.location(), srcRect);
+    }
 }
 
-void ShareableBitmap::paint(GraphicsContext& context, const IntPoint& dstPoint, const IntRect& srcRect)
+void BackingStore::scroll(const IntRect& scrollRect, const IntSize& scrollOffset)
 {
-    QImage image = createQImage(data(), m_size.width(), m_size.height());
-    QPainter* painter = context.platformContext();
-    painter->drawImage(dstPoint, image, QRect(srcRect));
+    if (scrollOffset.isZero())
+        return;
+
+    m_pixmap.scroll(scrollOffset.width(), scrollOffset.height(), scrollRect);
 }
 
 } // namespace WebKit

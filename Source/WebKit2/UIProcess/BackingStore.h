@@ -36,6 +36,11 @@
 #include <wtf/OwnPtr.h>
 #endif
 
+#if PLATFORM(QT)
+#include <QtGui/QPainter>
+#include <QtGui/QPixmap>
+#endif
+
 namespace WebCore {
     class IntRect;
 }
@@ -59,6 +64,8 @@ public:
     typedef CGContextRef PlatformGraphicsContext;
 #elif PLATFORM(WIN)
     typedef HDC PlatformGraphicsContext;
+#elif PLATFORM(QT)
+    typedef QPainter* PlatformGraphicsContext;
 #endif
 
     void paint(PlatformGraphicsContext, const WebCore::IntRect&);
@@ -80,6 +87,8 @@ private:
     RetainPtr<CGContextRef> m_bitmapContext;
 #elif PLATFORM(WIN)
     OwnPtr<HBITMAP> m_bitmap;
+#elif PLATFORM(QT)
+    QPixmap m_pixmap;
 #endif
 };
 
