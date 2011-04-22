@@ -40,7 +40,6 @@ import sys
 from layout_package import json_results_generator
 from layout_package import printing
 from layout_package import test_runner
-from layout_package import test_runner2
 
 from webkitpy.common.system import user
 from webkitpy.thirdparty import simplejson
@@ -89,7 +88,7 @@ def run(port, options, args, regular_output=sys.stderr,
     # in a try/finally to ensure that we clean up the logging configuration.
     num_unexpected_results = -1
     try:
-        runner = test_runner2.TestRunner2(port, options, printer)
+        runner = test_runner.TestRunner(port, options, printer)
         runner._print_config()
 
         printer.print_update("Collecting tests ...")
