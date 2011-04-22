@@ -353,6 +353,8 @@ void WebPageProxy::close()
 
     m_drawingArea.clear();
 
+    process()->responsivenessTimer()->stop();
+
     process()->send(Messages::WebPage::Close(), m_pageID);
     process()->removeWebPage(m_pageID);
 }
@@ -2803,6 +2805,8 @@ void WebPageProxy::processDidCrash()
     dismissCorrectionPanel(ReasonForDismissingCorrectionPanelIgnored);
     m_pageClient->dismissDictionaryLookupPanel();
 #endif
+
+    process()->responsivenessTimer()->stop();
 }
 
 WebPageCreationParameters WebPageProxy::creationParameters() const
