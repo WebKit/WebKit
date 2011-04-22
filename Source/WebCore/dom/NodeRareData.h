@@ -49,12 +49,15 @@ public:
 
     typedef HashMap<String, NameNodeList*> NameNodeListCache;
     NameNodeListCache m_nameNodeListCache;
-    
-    typedef HashMap<RefPtr<QualifiedName::QualifiedNameImpl>, TagNodeList*> TagNodeListCache;
+ 
+    typedef HashMap<AtomicString, TagNodeList*> TagNodeListCache;
     TagNodeListCache m_tagNodeListCache;
 
+    typedef HashMap<RefPtr<QualifiedName::QualifiedNameImpl>, TagNodeList*> TagNodeListCacheNS;
+    TagNodeListCacheNS m_tagNodeListCacheNS;
+ 
     RefPtr<DynamicNodeList> m_labelsNodeListCache;
-    
+ 
     static PassOwnPtr<NodeListsNodeData> create()
     {
         return new NodeListsNodeData;

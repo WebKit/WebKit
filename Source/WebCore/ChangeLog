@@ -1,3 +1,35 @@
+2011-04-21  Michael Saboff  <msaboff@apple.com>
+
+        Reviewed by Maciej Stachowiak.
+
+        Qualified names used for all TagName access, yet namespace usage is rare
+        https://bugs.webkit.org/show_bug.cgi?id=58997
+
+        The methods getElementsByTagName and getElementsByTagNameNS where
+        always creating and using QualifiedNames.  QualifiedName::init
+        was consistently in the top 3 routines when running the Dromaeo
+        DOM-query benchmark.  Split out the functionality so that
+        getElementsByTagName uses just the local name, an implied "*"
+        namespace and a separate TagNodeListCache keyed by an atomic name
+        instead of a QualifiedName.  Access to elements via
+        getElementsByTagNameNS that have "*" namespace are forwarded to
+        getElementsByTagName as well.  This provides ~10% speed up in that
+        Dromaeo test.
+
+        No new tests added, existing tests have coverage.  The changes are
+        an optimization of existing functionality.
+
+        * dom/Node.cpp:
+        (WebCore::Node::removeCachedTagNodeList):
+        (WebCore::Node::getElementsByTagName):
+        (WebCore::Node::getElementsByTagNameNS):
+        (WebCore::NodeListsNodeData::invalidateCaches):
+        (WebCore::NodeListsNodeData::isEmpty):
+        * dom/Node.h:
+        * dom/NodeRareData.h:
+        * dom/TagNodeList.cpp:
+        (WebCore::TagNodeList::~TagNodeList):
+
 2011-04-21  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Oliver Hunt.
