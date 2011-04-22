@@ -1,3 +1,24 @@
+2011-04-21  Adam Roben  <aroben@apple.com>
+
+        Add a shared do-nothing window class that anyone can use
+
+        Fixes <http://webkit.org/b/59102> WebKit has too many dummy window classes
+
+        Reviewed by Anders Carlsson.
+
+        * WebCore.vcproj/WebCore.vcproj: Added DefWndProcWindowClass.{cpp,h}. Moved Arena.cpp out of
+        platform/win and into platform. Let VS reorder other files.
+
+        * platform/graphics/ca/win/CACFLayerTreeHost.cpp:
+        (WebCore::CACFLayerTreeHost::acceleratedCompositingAvailable): Changed to use the shared
+        dummy window class instead of creating our own.
+
+        * platform/win/DefWndProcWindowClass.cpp: Added.
+        (WebCore::registerClass): Register it!
+        (WebCore::defWndProcWindowClassName): Register it and return it!
+
+        * platform/win/DefWndProcWindowClass.h: Added.
+
 2011-04-21  MORITA Hajime  <morrita@google.com>
 
         Reviewed by Dimitri Glazkov.

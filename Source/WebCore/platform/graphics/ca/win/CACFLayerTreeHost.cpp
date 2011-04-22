@@ -29,6 +29,7 @@
 #if USE(ACCELERATED_COMPOSITING)
 
 #include "CACFLayerTreeHostClient.h"
+#include "DefWndProcWindowClass.h"
 #include "LayerChangesFlusher.h"
 #include "LegacyCACFLayerTreeHost.h"
 #include "PlatformCALayer.h"
@@ -92,13 +93,7 @@ bool CACFLayerTreeHost::acceleratedCompositingAvailable()
     FreeLibrary(library);
 
     // Make a dummy HWND.
-    WNDCLASSEX wcex = { 0 };
-    wcex.cbSize = sizeof(WNDCLASSEX);
-    wcex.lpfnWndProc = DefWindowProc;
-    wcex.hInstance = WebCore::instanceHandle();
-    wcex.lpszClassName = L"CoreAnimationTesterWindowClass";
-    ::RegisterClassEx(&wcex);
-    HWND testWindow = ::CreateWindow(L"CoreAnimationTesterWindowClass", L"CoreAnimationTesterWindow", WS_POPUP, -500, -500, 20, 20, 0, 0, 0, 0);
+    HWND testWindow = ::CreateWindow(defWndProcWindowClassName(), L"CoreAnimationTesterWindow", WS_POPUP, -500, -500, 20, 20, 0, 0, 0, 0);
 
     if (!testWindow) {
         available = false;

@@ -1,3 +1,14 @@
+2011-04-21  Adam Roben  <aroben@apple.com>
+
+        Use WebCore's do-nothing window class instead of creating our own
+
+        Fixes <http://webkit.org/b/59102> WebKit has too many dummy window classes
+
+        Reviewed by Anders Carlsson.
+
+        * WebProcess/WebPage/ca/win/LayerTreeHostCAWin.cpp:
+        (WebKit::createDummyWindow): Less code!
+
 2011-04-22  Balazs Kelemen  <kbalazs@webkit.org>
 
         Reviewed by Kenneth Rohde Christiansen.

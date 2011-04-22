@@ -5430,62 +5430,6 @@
 				>
 			</File>
 			<File
-				RelativePath="$(ConfigurationBuildDir)\obj\$(ProjectName)\DerivedSources\JSWebKitFlags.cpp"
-				>
-				<FileConfiguration
-					Name="Debug|Win32"
-					ExcludedFromBuild="true"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release|Win32"
-					ExcludedFromBuild="true"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Debug_Cairo_CFLite|Win32"
-					ExcludedFromBuild="true"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release_Cairo_CFLite|Win32"
-					ExcludedFromBuild="true"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Debug_All|Win32"
-					ExcludedFromBuild="true"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Production|Win32"
-					ExcludedFromBuild="true"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-					/>
-				</FileConfiguration>
-			</File>
-			<File
-				RelativePath="$(ConfigurationBuildDir)\obj\$(ProjectName)\DerivedSources\JSWebKitFlags.h"
-				>
-			</File>
-			<File
 				RelativePath="$(ConfigurationBuildDir)\obj\$(ProjectName)\DerivedSources\JSGeolocation.cpp"
 				>
 				<FileConfiguration
@@ -22326,6 +22270,62 @@
 				>
 			</File>
 			<File
+				RelativePath="$(ConfigurationBuildDir)\obj\$(ProjectName)\DerivedSources\JSWebKitFlags.cpp"
+				>
+				<FileConfiguration
+					Name="Debug|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Debug_Cairo_CFLite|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release_Cairo_CFLite|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Debug_All|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Production|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="$(ConfigurationBuildDir)\obj\$(ProjectName)\DerivedSources\JSWebKitFlags.h"
+				>
+			</File>
+			<File
 				RelativePath="$(ConfigurationBuildDir)\obj\$(ProjectName)\DerivedSources\JSWebKitPoint.cpp"
 				>
 				<FileConfiguration
@@ -25982,6 +25982,10 @@
 			Name="platform"
 			>
 			<File
+				RelativePath="..\platform\Arena.cpp"
+				>
+			</File>
+			<File
 				RelativePath="..\platform\Arena.h"
 				>
 			</File>
@@ -26437,10 +26441,6 @@
 				Name="win"
 				>
 				<File
-					RelativePath="..\platform\Arena.cpp"
-					>
-				</File>
-				<File
 					RelativePath="..\platform\win\BitmapInfo.cpp"
 					>
 				</File>
@@ -26486,6 +26486,14 @@
 				</File>
 				<File
 					RelativePath="..\platform\win\CursorWin.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\platform\win\DefWndProcWindowClass.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\platform\win\DefWndProcWindowClass.h"
 					>
 				</File>
 				<File
@@ -47410,58 +47418,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\dom\TreeWalker.cpp"
-				>
-				<FileConfiguration
-					Name="Debug|Win32"
-					ExcludedFromBuild="true"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release|Win32"
-					ExcludedFromBuild="true"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Debug_Cairo_CFLite|Win32"
-					ExcludedFromBuild="true"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release_Cairo_CFLite|Win32"
-					ExcludedFromBuild="true"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Debug_All|Win32"
-					ExcludedFromBuild="true"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Production|Win32"
-					ExcludedFromBuild="true"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-					/>
-				</FileConfiguration>
-			</File>
-			<File
 				RelativePath="..\dom\TreeScope.cpp"
 				>
 				<FileConfiguration
@@ -47516,6 +47472,58 @@
 			<File
 				RelativePath="..\dom\TreeScope.h"
 				>
+			</File>
+			<File
+				RelativePath="..\dom\TreeWalker.cpp"
+				>
+				<FileConfiguration
+					Name="Debug|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Debug_Cairo_CFLite|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release_Cairo_CFLite|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Debug_All|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Production|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+					/>
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath="..\dom\TreeWalker.h"
@@ -51799,10 +51807,6 @@
 			</File>
 			<File
 				RelativePath="..\fileapi\FileWriterSync.h"
-				>
-			</File>
-			<File
-				RelativePath="..\fileapi\WebKitFlags.h"
 				>
 			</File>
 			<File
@@ -56598,6 +56602,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\fileapi\WebKitFlags.h"
+				>
+			</File>
+			<File
 				RelativePath="..\html\WeekInputType.cpp"
 				>
 			</File>
@@ -56789,14 +56797,6 @@
 					>
 				</File>
 				<File
-					RelativePath="..\html\shadow\MediaControls.cpp"
-					>
-				</File>
-				<File
-					RelativePath="..\html\shadow\MediaControls.h"
-					>
-				</File>
-				<File
 					RelativePath="..\html\shadow\MediaControlElements.cpp"
 					>
 				</File>
@@ -56813,7 +56813,11 @@
 					>
 				</File>
 				<File
-					RelativePath="..\html\shadow\ProgressBarValueElement.h"
+					RelativePath="..\html\shadow\MediaControls.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\html\shadow\MediaControls.h"
 					>
 				</File>
 				<File
@@ -56822,6 +56826,10 @@
 				</File>
 				<File
 					RelativePath="..\html\shadow\MeterShadowElement.h"
+					>
+				</File>
+				<File
+					RelativePath="..\html\shadow\ProgressBarValueElement.h"
 					>
 				</File>
 				<File
@@ -66156,10 +66164,10 @@
 			<Filter
 				Name="heap"
 				>
-                                    <File
-                                            RelativePath="..\ForwardingHeaders\heap\Strong.h"
-                                            >
-                                    </File>
+				<File
+					RelativePath="..\ForwardingHeaders\heap\Strong.h"
+					>
+				</File>
 			</Filter>
 		</Filter>
 		<Filter
@@ -66854,19 +66862,19 @@
 				>
 			</File>
 			<File
-				RelativePath="..\inspector\EventsCollector.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\inspector\EventsCollector.h"
-				>
-			</File>
-			<File
 				RelativePath="..\inspector\DOMNodeHighlighter.cpp"
 				>
 			</File>
 			<File
 				RelativePath="..\inspector\DOMNodeHighlighter.h"
+				>
+			</File>
+			<File
+				RelativePath="..\inspector\EventsCollector.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\inspector\EventsCollector.h"
 				>
 			</File>
 			<File
@@ -67425,10 +67433,6 @@
 					>
 				</File>
 				<File
-					RelativePath="..\inspector\front-end\InspectorFrontendHostStub.js"
-					>
-				</File>
-				<File
 					RelativePath="..\inspector\front-end\inspector.css"
 					>
 				</File>
@@ -67438,6 +67442,10 @@
 				</File>
 				<File
 					RelativePath="..\inspector\front-end\inspector.js"
+					>
+				</File>
+				<File
+					RelativePath="..\inspector\front-end\InspectorFrontendHostStub.js"
 					>
 				</File>
 				<File

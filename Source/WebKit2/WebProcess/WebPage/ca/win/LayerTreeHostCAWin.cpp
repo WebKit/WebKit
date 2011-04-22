@@ -32,6 +32,7 @@
 #include "ShareableBitmap.h"
 #include "UpdateInfo.h"
 #include "WebPage.h"
+#include <WebCore/DefWndProcWindowClass.h>
 #include <WebCore/GraphicsLayerCA.h>
 #include <WebCore/LayerChangesFlusher.h>
 #include <WebCore/PlatformCALayer.h>
@@ -52,29 +53,12 @@ using namespace WebCore;
 namespace WebKit {
 
 static HWND dummyWindow;
-static LPCWSTR dummyWindowClass = L"LayerTreeHostCAWindowClass";
 static size_t validLayerTreeHostCount;
-
-static void registerDummyWindowClass()
-{
-    static bool didRegister;
-    if (didRegister)
-        return;
-    didRegister = true;
-
-    WNDCLASSW wndClass = {0};
-    wndClass.lpszClassName = dummyWindowClass;
-    wndClass.lpfnWndProc = ::DefWindowProcW;
-    wndClass.hInstance = instanceHandle();
-
-    ::RegisterClassW(&wndClass);
-}
 
 // This window is never shown. It is only needed so that D3D can determine the display mode, etc.
 static HWND createDummyWindow()
 {
-    registerDummyWindowClass();
-    return ::CreateWindowW(dummyWindowClass, 0, WS_POPUP, 0, 0, 10, 10, 0, 0, instanceHandle(), 0);
+    return ::CreateWindowW(defWndProcWindowClassName(), 0, WS_POPUP, 0, 0, 10, 10, 0, 0, instanceHandle(), 0);
 }
 
 bool LayerTreeHostCAWin::supportsAcceleratedCompositing()
