@@ -6311,8 +6311,8 @@
             'inspector/front-end/textViewer.css',
         ],
         'webinspector_uglifyjs_files': [
+            'inspector/front-end/UglifyJS/JavaScriptFormatter.js',
             'inspector/front-end/UglifyJS/parse-js.js',
-            'inspector/front-end/UglifyJS/process.js',
         ],
         'webinspector_image_files': [
             'inspector/front-end/Images/applicationCache.png',

@@ -137,13 +137,8 @@ WebInspector.SourceFile.prototype = {
                 return;
             }
 
-            if (resource.type === WebInspector.Resource.Type.Script)
-                this._didRequestContent("text/javascript", text);
-            else {
-                // WebKit html lexer normalizes line endings and scripts are passed to VM with "\n" line endings.
-                // However, resource content has original line endings, so we have to normalize line endings here.
-                this._didRequestContent("text/html", text.replace(/\r\n/g, "\n"));
-            }
+            var mimeType = resource.type === WebInspector.Resource.Type.Script ? "text/javascript" : "text/html";
+            this._didRequestContent(mimeType, text);
         }
         resource.requestContent(didRequestContent.bind(this));
     },
@@ -254,7 +249,7 @@ WebInspector.FormattedSourceFile.prototype = {
     {
         function didFormatContent(formattedText, mapping)
         {
-            this._mapping = new WebInspector.FormattedSourceMapping(this._scripts, text, formattedText, mapping);
+            this._mapping = new WebInspector.FormattedSourceMapping(this._scripts, mapping.originalLineEndings, formattedText.lineEndings(), mapping);
             WebInspector.SourceFile.prototype._didRequestContent.call(this, mimeType, formattedText);
         }
         this._formatter.formatContent(text, this._scripts, didFormatContent.bind(this));
@@ -293,11 +288,11 @@ WebInspector.SourceMapping.prototype = {
     }
 }
 
-WebInspector.FormattedSourceMapping = function(scripts, originalText, formattedText, mapping)
+WebInspector.FormattedSourceMapping = function(scripts, originalLineEndings, formattedLineEndings, mapping)
 {
     WebInspector.SourceMapping.call(this, scripts);
-    this._originalLineEndings = originalText.lineEndings();
-    this._formattedLineEndings = formattedText.lineEndings();
+    this._originalLineEndings = originalLineEndings;
+    this._formattedLineEndings = formattedLineEndings;
     this._mapping = mapping;
 }
 
@@ -305,18 +300,23 @@ WebInspector.FormattedSourceMapping.prototype = {
     scriptLocationToSourceLine: function(location)
     {
         var originalPosition = WebInspector.ScriptFormatter.locationToPosition(this._originalLineEndings, location);
-        var index = this._mapping.original.upperBound(originalPosition - 1);
-        var formattedPosition = this._mapping.formatted[index];
+        var formattedPosition = this._convertPosition(this._mapping.original, this._mapping.formatted, originalPosition);
         return WebInspector.ScriptFormatter.positionToLocation(this._formattedLineEndings, formattedPosition).lineNumber;
     },
 
     sourceLineToScriptLocation: function(lineNumber)
     {
         var formattedPosition = WebInspector.ScriptFormatter.lineToPosition(this._formattedLineEndings, lineNumber);
-        var index = this._mapping.formatted.upperBound(formattedPosition - 1);
-        var originalPosition = this._mapping.original[index];
+        var originalPosition = this._convertPosition(this._mapping.formatted, this._mapping.original, formattedPosition);
         var originalLocation = WebInspector.ScriptFormatter.positionToLocation(this._originalLineEndings, originalPosition);
         return WebInspector.SourceMapping.prototype._sourceLocationToScriptLocation.call(this, originalLocation.lineNumber, originalLocation.columnNumber);
+    },
+
+    _convertPosition: function(positions1, positions2, position)
+    {
+        var index = positions1.upperBound(position) - 1;
+        var delta = position - positions1[index];
+        return Math.min(positions2[index] + delta, positions2[index + 1]);
     }
 }
 

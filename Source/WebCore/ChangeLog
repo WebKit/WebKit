@@ -1,3 +1,42 @@
+2011-04-22  Pavel Podivilov  <podivilov@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: js formatter should never insert new tokens or remove existing tokens and comments.
+        https://bugs.webkit.org/show_bug.cgi?id=59191
+
+        * WebCore.gypi:
+        * WebCore.vcproj/WebCore.vcproj:
+        * inspector/front-end/ScriptFormatter.js:
+        (WebInspector.ScriptFormatter.prototype.formatContent.didFormatChunks):
+        (WebInspector.ScriptFormatter.prototype.formatContent):
+        * inspector/front-end/ScriptFormatterWorker.js:
+        (onmessage):
+        * inspector/front-end/SourceFile.js:
+        (WebInspector.SourceFile.prototype._loadResourceContent):
+        (WebInspector.FormattedSourceFile.prototype._didRequestContent):
+        (WebInspector.FormattedSourceMapping):
+        (WebInspector.FormattedSourceMapping.prototype.scriptLocationToSourceLine):
+        (WebInspector.FormattedSourceMapping.prototype.sourceLineToScriptLocation):
+        (WebInspector.FormattedSourceMapping.prototype._convertPosition):
+        * inspector/front-end/UglifyJS/JavaScriptFormatter.js: Added.
+        (FormattedContentBuilder): Helper class for building formatted script content.
+        (FormattedContentBuilder.prototype.addToken):
+        (FormattedContentBuilder.prototype.addSpace):
+        (FormattedContentBuilder.prototype.addNewLine):
+        (FormattedContentBuilder.prototype.increaseNestingLevel):
+        (FormattedContentBuilder.prototype.decreaseNestingLevel):
+        (FormattedContentBuilder.prototype.content):
+        (FormattedContentBuilder.prototype.mapping):
+        (Tokenizer): Wrapper class for UglifyJS tokenizer.
+        (Tokenizer.prototype.content):
+        (Tokenizer.prototype.next):
+        (Tokenizer.prototype._convertUglifyToken):
+        (JavaScriptFormatter): New formatter based on UglifyJS tokenizer.
+        (JavaScriptFormatter.prototype.format):
+        * inspector/front-end/UglifyJS/process.js: Removed.
+        * inspector/front-end/WebKit.qrc:
+
 2011-04-22  Mikhail Naganov  <mnaganov@chromium.org>
 
         Reviewed by Pavel Feldman.

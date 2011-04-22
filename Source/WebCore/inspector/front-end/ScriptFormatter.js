@@ -76,12 +76,14 @@ WebInspector.ScriptFormatter.findScriptRanges = function(lineEndings, scripts)
 WebInspector.ScriptFormatter.prototype = {
     formatContent: function(text, scripts, callback)
     {
+        text = text.replace(/\r\n?|[\n\u2028\u2029]/g, "\n").replace(/^\uFEFF/, '');
         var scriptRanges = WebInspector.ScriptFormatter.findScriptRanges(text.lineEndings(), scripts);
         var chunks = this._splitContentIntoChunks(text, scriptRanges);
 
         function didFormatChunks()
         {
             var result = this._buildContentFromChunks(chunks);
+            result.mapping.originalLineEndings = text.lineEndings();
             callback(result.text, result.mapping);
         }
         this._formatChunks(chunks, 0, didFormatChunks.bind(this));

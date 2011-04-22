@@ -67477,6 +67477,10 @@
 					>
 				</File>
 				<File
+					RelativePath="..\inspector\front-end\UglifyJS\JavaScriptFormatter.js"
+					>
+				</File>
+				<File
 					RelativePath="..\inspector\front-end\UglifyJS\parse-js.js"
 					>
 				</File>
@@ -67494,10 +67498,6 @@
 				</File>
 				<File
 					RelativePath="..\inspector\front-end\Popover.js"
-					>
-				</File>
-				<File
-					RelativePath="..\inspector\front-end\UglifyJS\process.js"
 					>
 				</File>
 				<File
