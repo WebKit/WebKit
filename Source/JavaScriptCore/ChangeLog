@@ -2,6 +2,19 @@
 
         Reviewed by Geoffrey Garen.
 
+        Object.create creates uncachable objects
+        https://bugs.webkit.org/show_bug.cgi?id=59164
+
+        Use the prototype object's inheritorID, as we
+        should always have done
+
+        * runtime/ObjectConstructor.cpp:
+        (JSC::objectConstructorCreate):
+
+2011-04-21  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Geoffrey Garen.
+
         Start moving to a general visitor pattern for GC traversal
         https://bugs.webkit.org/show_bug.cgi?id=59141
 
