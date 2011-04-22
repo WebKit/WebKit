@@ -13,6 +13,18 @@
 
         Reviewed by Maciej Stachowiak.
 
+        Crash at WebKit::WebFullScreenManagerMac::beginExitFullScreenAnimation + 79
+        https://bugs.webkit.org/show_bug.cgi?id=59225
+
+        * WebProcess/FullScreen/mac/WebFullScreenManagerMac.mm:
+        (WebKit::WebFullScreenManagerMac::beginEnterFullScreenAnimation): Guard against 
+            m_fullScreenRootLayer being NULL.
+        (WebKit::WebFullScreenManagerMac::beginExitFullScreenAnimation): Ditto.
+
+2011-04-22  Jer Noble  <jer.noble@apple.com>
+
+        Reviewed by Maciej Stachowiak.
+
         Allow MediaPlayerPrivateAVFoundation to be disabled via a preference.
         https://bugs.webkit.org/show_bug.cgi?id=59179
 

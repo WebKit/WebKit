@@ -173,7 +173,13 @@ void WebFullScreenManagerMac::setRootFullScreenLayer(WebCore::GraphicsLayer* lay
 void WebFullScreenManagerMac::beginEnterFullScreenAnimation(float duration)
 {
     ASSERT(m_element);
-    ASSERT(m_fullScreenRootLayer);
+    
+    if (!m_fullScreenRootLayer) {
+        // If we don't have a root layer, we can't animate in and out of full screen
+        this->beganEnterFullScreenAnimation();
+        this->finishedEnterFullScreenAnimation(true);
+        return;
+    }
 
     IntRect destinationFrame = getFullScreenRect();
     m_element->document()->setFullScreenRendererSize(destinationFrame.size());
@@ -222,7 +228,13 @@ void WebFullScreenManagerMac::beginEnterFullScreenAnimation(float duration)
 void WebFullScreenManagerMac::beginExitFullScreenAnimation(float duration)
 {
     ASSERT(m_element);
-    ASSERT(m_fullScreenRootLayer);
+    
+    if (!m_fullScreenRootLayer) {
+        // If we don't have a root layer, we can't animate in and out of full screen
+        this->beganExitFullScreenAnimation();
+        this->finishedExitFullScreenAnimation(true);
+        return;
+    }
 
     IntRect destinationFrame = getFullScreenRect();
     m_element->document()->setFullScreenRendererSize(destinationFrame.size());
