@@ -1,3 +1,10 @@
+2011-04-21  Dirk Pranke  <dpranke@chromium.org>
+
+        Unreviewed, expectations change. Suppress failures on chromium
+        win/linux from bug 59166.
+
+        * platform/chromium/test_expectations.txt:
+
 2011-04-21  Dimitri Glazkov  <dglazkov@chromium.org>
 
         Reviewed by Adele Peterson.
