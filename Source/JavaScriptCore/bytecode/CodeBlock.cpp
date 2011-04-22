@@ -1474,7 +1474,7 @@ void CodeBlock::visitAggregate(SlotVisitor& visitor)
 #endif
 #if ENABLE(INTERPRETER)
     for (size_t size = m_propertyAccessInstructions.size(), i = 0; i < size; ++i)
-        markStructures(visitor, &m_instructions[m_propertyAccessInstructions[i]]);
+        visitStructures(visitor, &m_instructions[m_propertyAccessInstructions[i]]);
 #endif
 #if ENABLE(JIT)
     for (size_t size = m_globalResolveInfos.size(), i = 0; i < size; ++i) {

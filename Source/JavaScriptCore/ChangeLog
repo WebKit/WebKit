@@ -1,3 +1,10 @@
+2011-04-22  Patrick Gansterer  <paroga@webkit.org>
+
+        Unreviewed. Build fix for ENABLE(INTERPRETER) after r84556.
+
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::visitAggregate):
+
 2011-04-21  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r84583.
