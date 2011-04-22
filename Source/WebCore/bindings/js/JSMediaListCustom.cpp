@@ -33,40 +33,12 @@ using namespace JSC;
 
 namespace WebCore {
 
-class JSMediaListOwner : public JSC::WeakHandleOwner {
-    virtual bool isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown>, void* context, JSC::MarkStack&);
-    virtual void finalize(JSC::Handle<JSC::Unknown>, void* context);
-};
-
 bool JSMediaListOwner::isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown> handle, void*, MarkStack& markStack)
 {
     JSMediaList* jsMediaList = static_cast<JSMediaList*>(handle.get().asCell());
     if (!jsMediaList->hasCustomProperties())
         return false;
     return markStack.containsOpaqueRoot(root(jsMediaList->impl()));
-}
-
-void JSMediaListOwner::finalize(JSC::Handle<JSC::Unknown> handle, void* context)
-{
-    JSMediaList* jsMediaList = static_cast<JSMediaList*>(handle.get().asCell());
-    DOMWrapperWorld* world = static_cast<DOMWrapperWorld*>(context);
-    uncacheWrapper(world, jsMediaList->impl(), jsMediaList);
-}
-
-inline JSC::WeakHandleOwner* wrapperOwner(DOMWrapperWorld*, MediaList*)
-{
-    DEFINE_STATIC_LOCAL(JSMediaListOwner, jsMediaListOwner, ());
-    return &jsMediaListOwner;
-}
-
-inline void* wrapperContext(DOMWrapperWorld* world, MediaList*)
-{
-    return world;
-}
-
-JSValue toJS(ExecState* exec, JSDOMGlobalObject* globalObject, MediaList* rule)
-{
-    return wrap<JSMediaList>(exec, globalObject, rule);
 }
 
 } // namespace WebCore

@@ -24,6 +24,8 @@ module core {
         CustomHeader,
         CustomMarkFunction,
         CustomPushEventHandlerScope,
+        CustomIsReachable,
+        CustomFinalize,
         CustomToJS,
         EventTarget,
         GenerateNativeConverter,

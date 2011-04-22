@@ -44,33 +44,10 @@ using namespace WTF;
 
 namespace WebCore {
 
-class JSCSSStyleDeclarationOwner : public JSC::WeakHandleOwner {
-    virtual bool isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown>, void* context, JSC::MarkStack&);
-    virtual void finalize(JSC::Handle<JSC::Unknown>, void* context);
-};
-
 bool JSCSSStyleDeclarationOwner::isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown> handle, void*, MarkStack& markStack)
 {
     JSCSSStyleDeclaration* jsCSSStyleDeclaration = static_cast<JSCSSStyleDeclaration*>(handle.get().asCell());
     return markStack.containsOpaqueRoot(root(jsCSSStyleDeclaration->impl()));
-}
-
-void JSCSSStyleDeclarationOwner::finalize(JSC::Handle<JSC::Unknown> handle, void* context)
-{
-    JSCSSStyleDeclaration* jsCSSStyleDeclaration = static_cast<JSCSSStyleDeclaration*>(handle.get().asCell());
-    DOMWrapperWorld* world = static_cast<DOMWrapperWorld*>(context);
-    uncacheWrapper(world, jsCSSStyleDeclaration->impl(), jsCSSStyleDeclaration);
-}
-
-inline JSC::WeakHandleOwner* wrapperOwner(DOMWrapperWorld*, CSSStyleDeclaration*)
-{
-    DEFINE_STATIC_LOCAL(JSCSSStyleDeclarationOwner, jsCSSStyleDeclarationOwner, ());
-    return &jsCSSStyleDeclarationOwner;
-}
-
-inline void* wrapperContext(DOMWrapperWorld* world, CSSStyleDeclaration*)
-{
-    return world;
 }
 
 void JSCSSStyleDeclaration::visitChildren(SlotVisitor& visitor)
@@ -222,11 +199,6 @@ JSValue JSCSSStyleDeclaration::getPropertyCSSValue(ExecState* exec)
 
     cssValueRoots().add(cssValue.get(), root(impl())); // Balanced by JSCSSValueOwner::finalize().
     return toJS(exec, globalObject(), WTF::getPtr(cssValue));
-}
-
-JSValue toJS(ExecState* exec, JSDOMGlobalObject* globalObject, CSSStyleDeclaration* impl)
-{
-    return wrap<JSCSSStyleDeclaration>(exec, globalObject, impl);
 }
 
 } // namespace WebCore

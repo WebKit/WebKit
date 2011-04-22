@@ -914,12 +914,27 @@ sub GenerateHeader
         push(@headerContent, "}\n\n");
     }
 
+    if ($dataNode->extendedAttributes->{"CustomIsReachable"} || $dataNode->extendedAttributes->{"CustomFinalize"}) {
+        push(@headerContent, "class JS${implType}Owner : public JSC::WeakHandleOwner {\n");
+        push(@headerContent, "    virtual bool isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown>, void* context, JSC::SlotVisitor&);\n");
+        push(@headerContent, "    virtual void finalize(JSC::Handle<JSC::Unknown>, void* context);\n");
+        push(@headerContent, "};\n");
+        push(@headerContent, "\n");
+        push(@headerContent, "inline JSC::WeakHandleOwner* wrapperOwner(DOMWrapperWorld*, $implType*)\n");
+        push(@headerContent, "{\n");
+        push(@headerContent, "    DEFINE_STATIC_LOCAL(JS${implType}Owner, js${implType}Owner, ());\n");
+        push(@headerContent, "    return &js${implType}Owner;\n");
+        push(@headerContent, "}\n");
+        push(@headerContent, "\n");
+        push(@headerContent, "inline void* wrapperContext(DOMWrapperWorld* world, $implType*)\n");
+        push(@headerContent, "{\n");
+        push(@headerContent, "    return world;\n");
+        push(@headerContent, "}\n");
+        push(@headerContent, "\n");
+    }
+
     if (!$hasParent || $dataNode->extendedAttributes->{"GenerateToJS"} || $dataNode->extendedAttributes->{"CustomToJS"}) {
-        if ($svgPropertyType) {
-            push(@headerContent, "JSC::JSValue toJS(JSC::ExecState*, JSDOMGlobalObject*, $implType*);\n");
-        } else {
-            push(@headerContent, "JSC::JSValue toJS(JSC::ExecState*, JSDOMGlobalObject*, $implType*);\n");
-        }
+        push(@headerContent, "JSC::JSValue toJS(JSC::ExecState*, JSDOMGlobalObject*, $implType*);\n");
     }
     if (!$hasParent || $dataNode->extendedAttributes->{"GenerateNativeConverter"}) {
         if ($interfaceName eq "NodeFilter") {
@@ -2111,12 +2126,17 @@ sub GenerateImplementation
         }
     }
 
+    if ($dataNode->extendedAttributes->{"CustomIsReachable"} && !$dataNode->extendedAttributes->{"CustomFinalize"}) {
+        push(@implContent, "void JS${implType}Owner::finalize(JSC::Handle<JSC::Unknown> handle, void* context)\n");
+        push(@implContent, "{\n");
+        push(@implContent, "    JS${implType}* js${implType} = static_cast<JS${implType}*>(handle.get().asCell());\n");
+        push(@implContent, "    DOMWrapperWorld* world = static_cast<DOMWrapperWorld*>(context);\n");
+        push(@implContent, "    uncacheWrapper(world, js${implType}->impl(), js${implType});\n");
+        push(@implContent, "}\n");
+    }
+
     if ((!$hasParent or $dataNode->extendedAttributes->{"GenerateToJS"}) and !$dataNode->extendedAttributes->{"CustomToJS"}) {
-        if ($svgPropertyType) {
-            push(@implContent, "JSC::JSValue toJS(JSC::ExecState* exec, JSDOMGlobalObject* globalObject, $implType* impl)\n");
-        } else {
-            push(@implContent, "JSC::JSValue toJS(JSC::ExecState* exec, JSDOMGlobalObject* globalObject, $implType* impl)\n");
-        }
+        push(@implContent, "JSC::JSValue toJS(JSC::ExecState* exec, JSDOMGlobalObject* globalObject, $implType* impl)\n");
         push(@implContent, "{\n");
         if ($svgPropertyType) {
             push(@implContent, "    return wrap<$className, $implType>(exec, globalObject, impl);\n");

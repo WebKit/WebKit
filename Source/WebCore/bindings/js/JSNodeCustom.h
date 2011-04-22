@@ -34,22 +34,6 @@ namespace WebCore {
 
 class CSSValue;
 
-class JSNodeOwner : public JSC::WeakHandleOwner {
-    virtual bool isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown>, void* context, JSC::SlotVisitor&);
-    virtual void finalize(JSC::Handle<JSC::Unknown>, void* context);
-};
-
-inline JSC::WeakHandleOwner* wrapperOwner(DOMWrapperWorld*, Node*)
-{
-    DEFINE_STATIC_LOCAL(JSNodeOwner, jsNodeOwner, ());
-    return &jsNodeOwner;
-}
-
-inline void* wrapperContext(DOMWrapperWorld* world, Node*)
-{
-    return world;
-}
-
 inline JSDOMWrapper* getInlineCachedWrapper(DOMWrapperWorld* world, Node* node)
 {
     if (!world->isNormal())

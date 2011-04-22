@@ -35,11 +35,6 @@ using namespace JSC;
 
 namespace WebCore {
 
-class JSStyleSheetListOwner : public JSC::WeakHandleOwner {
-    virtual bool isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown>, void* context, JSC::MarkStack&);
-    virtual void finalize(JSC::Handle<JSC::Unknown>, void* context);
-};
-
 bool JSStyleSheetListOwner::isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown> handle, void*, MarkStack& markStack)
 {
     JSStyleSheetList* jsStyleSheetList = static_cast<JSStyleSheetList*>(handle.get().asCell());
@@ -49,24 +44,6 @@ bool JSStyleSheetListOwner::isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown>
     if (!document)
         return false;
     return markStack.containsOpaqueRoot(document);
-}
-
-void JSStyleSheetListOwner::finalize(JSC::Handle<JSC::Unknown> handle, void* context)
-{
-    JSStyleSheetList* jsStyleSheetList = static_cast<JSStyleSheetList*>(handle.get().asCell());
-    DOMWrapperWorld* world = static_cast<DOMWrapperWorld*>(context);
-    uncacheWrapper(world, jsStyleSheetList->impl(), jsStyleSheetList);
-}
-
-inline JSC::WeakHandleOwner* wrapperOwner(DOMWrapperWorld*, StyleSheetList*)
-{
-    DEFINE_STATIC_LOCAL(JSStyleSheetListOwner, jsStyleSheetListOwner, ());
-    return &jsStyleSheetListOwner;
-}
-
-inline void* wrapperContext(DOMWrapperWorld* world, StyleSheetList*)
-{
-    return world;
 }
 
 bool JSStyleSheetList::canGetItemsForName(ExecState*, StyleSheetList* styleSheetList, const Identifier& propertyName)
@@ -80,11 +57,6 @@ JSValue JSStyleSheetList::nameGetter(ExecState* exec, JSValue slotBase, const Id
     HTMLStyleElement* element = thisObj->impl()->getNamedItem(identifierToString(propertyName));
     ASSERT(element);
     return toJS(exec, thisObj->globalObject(), element->sheet());
-}
-
-JSC::JSValue toJS(JSC::ExecState* exec, JSDOMGlobalObject* globalObject, StyleSheetList* impl)
-{
-    return wrap<JSStyleSheetList>(exec, globalObject, impl);
 }
 
 } // namespace WebCore

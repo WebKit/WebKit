@@ -21,7 +21,7 @@
 module core {
 
     interface [
-        CustomToJS
+        CustomIsReachable
     ] DOMImplementation {
 
         // DOM Level 1

@@ -52,11 +52,6 @@ HashMap<CSSValue*, void*>& cssValueRoots()
     return cssValueRoots;
 }
 
-class JSCSSValueOwner : public JSC::WeakHandleOwner {
-    virtual bool isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown>, void* context, JSC::MarkStack&);
-    virtual void finalize(JSC::Handle<JSC::Unknown>, void* context);
-};
-
 bool JSCSSValueOwner::isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown> handle, void*, MarkStack& markStack)
 {
     JSCSSValue* jsCSSValue = static_cast<JSCSSValue*>(handle.get().asCell());
@@ -74,17 +69,6 @@ void JSCSSValueOwner::finalize(JSC::Handle<JSC::Unknown> handle, void* context)
     DOMWrapperWorld* world = static_cast<DOMWrapperWorld*>(context);
     uncacheWrapper(world, jsCSSValue->impl(), jsCSSValue);
     cssValueRoots().remove(jsCSSValue->impl());
-}
-
-inline JSC::WeakHandleOwner* wrapperOwner(DOMWrapperWorld*, CSSValue*)
-{
-    DEFINE_STATIC_LOCAL(JSCSSValueOwner, jsCSSValueOwner, ());
-    return &jsCSSValueOwner;
-}
-
-inline void* wrapperContext(DOMWrapperWorld* world, CSSValue*)
-{
-    return world;
 }
 
 JSValue toJS(ExecState* exec, JSDOMGlobalObject* globalObject, CSSValue* value)

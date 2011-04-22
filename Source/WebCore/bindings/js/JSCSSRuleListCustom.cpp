@@ -35,11 +35,6 @@ using namespace JSC;
 
 namespace WebCore {
 
-class JSCSSRuleListOwner : public JSC::WeakHandleOwner {
-    virtual bool isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown>, void* context, JSC::MarkStack&);
-    virtual void finalize(JSC::Handle<JSC::Unknown>, void* context);
-};
-
 bool JSCSSRuleListOwner::isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown> handle, void*, MarkStack& markStack)
 {
     JSCSSRuleList* jsCSSRuleList = static_cast<JSCSSRuleList*>(handle.get().asCell());
@@ -50,29 +45,6 @@ bool JSCSSRuleListOwner::isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown> ha
     if (CSSRule* cssRule = jsCSSRuleList->impl()->item(0))
         return markStack.containsOpaqueRoot(root(cssRule));
     return false;
-}
-
-void JSCSSRuleListOwner::finalize(JSC::Handle<JSC::Unknown> handle, void* context)
-{
-    JSCSSRuleList* jsCSSRuleList = static_cast<JSCSSRuleList*>(handle.get().asCell());
-    DOMWrapperWorld* world = static_cast<DOMWrapperWorld*>(context);
-    uncacheWrapper(world, jsCSSRuleList->impl(), jsCSSRuleList);
-}
-
-inline JSC::WeakHandleOwner* wrapperOwner(DOMWrapperWorld*, CSSRuleList*)
-{
-    DEFINE_STATIC_LOCAL(JSCSSRuleListOwner, jsCSSRuleListOwner, ());
-    return &jsCSSRuleListOwner;
-}
-
-inline void* wrapperContext(DOMWrapperWorld* world, CSSRuleList*)
-{
-    return world;
-}
-
-JSValue toJS(ExecState* exec, JSDOMGlobalObject* globalObject, CSSRuleList* impl)
-{
-    return wrap<JSCSSRuleList>(exec, globalObject, impl);
 }
 
 }

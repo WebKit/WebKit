@@ -39,35 +39,12 @@ using namespace JSC;
 
 namespace WebCore {
 
-class JSCanvasRenderingContextOwner : public JSC::WeakHandleOwner {
-    virtual bool isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown>, void* context, JSC::MarkStack&);
-    virtual void finalize(JSC::Handle<JSC::Unknown>, void* context);
-};
-
 bool JSCanvasRenderingContextOwner::isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown> handle, void*, MarkStack& markStack)
 {
     JSCanvasRenderingContext* jsCanvasRenderingContext = static_cast<JSCanvasRenderingContext*>(handle.get().asCell());
     if (!jsCanvasRenderingContext->hasCustomProperties())
         return false;
     return markStack.containsOpaqueRoot(root(jsCanvasRenderingContext->impl()->canvas()));
-}
-
-void JSCanvasRenderingContextOwner::finalize(JSC::Handle<JSC::Unknown> handle, void* context)
-{
-    JSCanvasRenderingContext* jsCanvasRenderingContext = static_cast<JSCanvasRenderingContext*>(handle.get().asCell());
-    DOMWrapperWorld* world = static_cast<DOMWrapperWorld*>(context);
-    uncacheWrapper(world, jsCanvasRenderingContext->impl(), jsCanvasRenderingContext);
-}
-
-inline JSC::WeakHandleOwner* wrapperOwner(DOMWrapperWorld*, CanvasRenderingContext*)
-{
-    DEFINE_STATIC_LOCAL(JSCanvasRenderingContextOwner, jsCanvasRenderingContextOwner, ());
-    return &jsCanvasRenderingContextOwner;
-}
-
-inline void* wrapperContext(DOMWrapperWorld* world, CanvasRenderingContext*)
-{
-    return world;
 }
 
 void JSCanvasRenderingContext::visitChildren(SlotVisitor& visitor)

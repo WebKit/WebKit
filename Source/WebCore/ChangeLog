@@ -1,3 +1,43 @@
+2011-04-22  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        We have an autogenerator, so use it
+        https://bugs.webkit.org/show_bug.cgi?id=59247
+
+        * bindings/js/JSCSSRuleCustom.cpp:
+        * bindings/js/JSCSSRuleListCustom.cpp:
+        * bindings/js/JSCSSStyleDeclarationCustom.cpp:
+        * bindings/js/JSCSSValueCustom.cpp:
+        * bindings/js/JSCanvasRenderingContextCustom.cpp:
+        * bindings/js/JSDOMImplementationCustom.cpp:
+        * bindings/js/JSDOMStringMapCustom.cpp:
+        * bindings/js/JSHTMLCollectionCustom.cpp:
+        * bindings/js/JSNamedNodeMapCustom.cpp:
+        * bindings/js/JSNodeCustom.h:
+        * bindings/js/JSNodeListCustom.cpp:
+        * bindings/js/JSStyleSheetCustom.cpp:
+        * bindings/js/JSStyleSheetListCustom.cpp: Removed repetitive hand-written code.
+
+        * bindings/scripts/CodeGeneratorJS.pm: Augmented autogenerator to do the job.
+
+        * css/CSSRule.idl:
+        * css/CSSRuleList.idl:
+        * css/CSSStyleDeclaration.idl:
+        * css/CSSValue.idl:
+        * css/MediaList.idl:
+        * css/StyleSheet.idl:
+        * css/StyleSheetList.idl:
+        * dom/DOMImplementation.idl:
+        * dom/DOMStringMap.idl:
+        * dom/NamedNodeMap.idl:
+        * dom/Node.idl:
+        * dom/NodeList.idl:
+        * html/DOMTokenList.idl:
+        * html/HTMLCollection.idl:
+        * html/canvas/CanvasRenderingContext.idl: Updated attributes to plug into
+        the autogenerator.
+
 2011-04-22  Beth Dakin  <bdakin@apple.com>
 
         Reviewed by Maciej Stachowiak.

@@ -34,11 +34,6 @@ using namespace JSC;
 
 namespace WebCore {
 
-class JSDOMTokenListOwner : public JSC::WeakHandleOwner {
-    virtual bool isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown>, void* context, JSC::SlotVisitor&);
-    virtual void finalize(JSC::Handle<JSC::Unknown>, void* context);
-};
-
 bool JSDOMTokenListOwner::isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown> handle, void*, SlotVisitor& visitor)
 {
     JSDOMTokenList* jsDOMTokenList = static_cast<JSDOMTokenList*>(handle.get().asCell());
@@ -48,29 +43,6 @@ bool JSDOMTokenListOwner::isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown> h
     if (!element)
         return false;
     return visitor.containsOpaqueRoot(root(element));
-}
-
-void JSDOMTokenListOwner::finalize(JSC::Handle<JSC::Unknown> handle, void* context)
-{
-    JSDOMTokenList* jsDOMTokenList = static_cast<JSDOMTokenList*>(handle.get().asCell());
-    DOMWrapperWorld* world = static_cast<DOMWrapperWorld*>(context);
-    uncacheWrapper(world, jsDOMTokenList->impl(), jsDOMTokenList);
-}
-
-inline JSC::WeakHandleOwner* wrapperOwner(DOMWrapperWorld*, DOMTokenList*)
-{
-    DEFINE_STATIC_LOCAL(JSDOMTokenListOwner, jsDOMTokenListOwner, ());
-    return &jsDOMTokenListOwner;
-}
-
-inline void* wrapperContext(DOMWrapperWorld* world, DOMTokenList*)
-{
-    return world;
-}
-
-JSC::JSValue toJS(JSC::ExecState* exec, JSDOMGlobalObject* globalObject, DOMTokenList* impl)
-{
-    return wrap<JSDOMTokenList>(exec, globalObject, impl);
 }
 
 } // namespace WebCore

@@ -37,35 +37,12 @@ using namespace JSC;
 
 namespace WebCore {
 
-class JSHTMLCollectionOwner : public JSC::WeakHandleOwner {
-    virtual bool isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown>, void* context, JSC::MarkStack&);
-    virtual void finalize(JSC::Handle<JSC::Unknown>, void* context);
-};
-
 bool JSHTMLCollectionOwner::isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown> handle, void*, MarkStack& markStack)
 {
     JSHTMLCollection* jsHTMLCollection = static_cast<JSHTMLCollection*>(handle.get().asCell());
     if (!jsHTMLCollection->hasCustomProperties())
         return false;
     return markStack.containsOpaqueRoot(root(jsHTMLCollection->impl()->base()));
-}
-
-void JSHTMLCollectionOwner::finalize(JSC::Handle<JSC::Unknown> handle, void* context)
-{
-    JSHTMLCollection* jsHTMLCollection = static_cast<JSHTMLCollection*>(handle.get().asCell());
-    DOMWrapperWorld* world = static_cast<DOMWrapperWorld*>(context);
-    uncacheWrapper(world, jsHTMLCollection->impl(), jsHTMLCollection);
-}
-
-inline JSC::WeakHandleOwner* wrapperOwner(DOMWrapperWorld*, HTMLCollection*)
-{
-    DEFINE_STATIC_LOCAL(JSHTMLCollectionOwner, jsHTMLCollectionOwner, ());
-    return &jsHTMLCollectionOwner;
-}
-
-inline void* wrapperContext(DOMWrapperWorld* world, HTMLCollection*)
-{
-    return world;
 }
 
 static JSValue getNamedItems(ExecState* exec, JSHTMLCollection* collection, const Identifier& propertyName)

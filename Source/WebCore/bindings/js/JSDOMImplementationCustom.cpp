@@ -29,40 +29,12 @@ using namespace JSC;
 
 namespace WebCore {
 
-class JSDOMImplementationOwner : public JSC::WeakHandleOwner {
-    virtual bool isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown>, void* context, JSC::SlotVisitor&);
-    virtual void finalize(JSC::Handle<JSC::Unknown>, void* context);
-};
-
 bool JSDOMImplementationOwner::isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown> handle, void*, SlotVisitor& visitor)
 {
     JSDOMImplementation* jsDOMImplementation = static_cast<JSDOMImplementation*>(handle.get().asCell());
     if (!jsDOMImplementation->hasCustomProperties())
         return false;
     return visitor.containsOpaqueRoot(jsDOMImplementation->impl()->document());
-}
-
-void JSDOMImplementationOwner::finalize(JSC::Handle<JSC::Unknown> handle, void* context)
-{
-    JSDOMImplementation* jsDOMImplementation = static_cast<JSDOMImplementation*>(handle.get().asCell());
-    DOMWrapperWorld* world = static_cast<DOMWrapperWorld*>(context);
-    uncacheWrapper(world, jsDOMImplementation->impl(), jsDOMImplementation);
-}
-
-inline JSC::WeakHandleOwner* wrapperOwner(DOMWrapperWorld*, DOMImplementation*)
-{
-    DEFINE_STATIC_LOCAL(JSDOMImplementationOwner, jsDOMImplementationOwner, ());
-    return &jsDOMImplementationOwner;
-}
-
-inline void* wrapperContext(DOMWrapperWorld* world, DOMImplementation*)
-{
-    return world;
-}
-
-JSC::JSValue toJS(JSC::ExecState* exec, JSDOMGlobalObject* globalObject, DOMImplementation* impl)
-{
-    return wrap<JSDOMImplementation>(exec, globalObject, impl);
 }
 
 }

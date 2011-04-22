@@ -25,6 +25,7 @@ module html {
         HasNameGetter,
         CustomCall,
         CustomToJS,
+        CustomIsReachable,
         Polymorphic
     ] HTMLCollection {
         readonly attribute unsigned long length;

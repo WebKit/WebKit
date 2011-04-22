@@ -35,11 +35,6 @@ using namespace JSC;
 
 namespace WebCore {
 
-class JSNamedNodeMapOwner : public JSC::WeakHandleOwner {
-    virtual bool isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown>, void* context, JSC::SlotVisitor&);
-    virtual void finalize(JSC::Handle<JSC::Unknown>, void* context);
-};
-
 bool JSNamedNodeMapOwner::isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown> handle, void*, SlotVisitor& visitor)
 {
     JSNamedNodeMap* jsNamedNodeMap = static_cast<JSNamedNodeMap*>(handle.get().asCell());
@@ -49,24 +44,6 @@ bool JSNamedNodeMapOwner::isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown> h
     if (!element)
         return false;
     return visitor.containsOpaqueRoot(root(element));
-}
-
-void JSNamedNodeMapOwner::finalize(JSC::Handle<JSC::Unknown> handle, void* context)
-{
-    JSNamedNodeMap* jsNamedNodeMap = static_cast<JSNamedNodeMap*>(handle.get().asCell());
-    DOMWrapperWorld* world = static_cast<DOMWrapperWorld*>(context);
-    uncacheWrapper(world, jsNamedNodeMap->impl(), jsNamedNodeMap);
-}
-
-inline JSC::WeakHandleOwner* wrapperOwner(DOMWrapperWorld*, NamedNodeMap*)
-{
-    DEFINE_STATIC_LOCAL(JSNamedNodeMapOwner, jsNamedNodeMapOwner, ());
-    return &jsNamedNodeMapOwner;
-}
-
-inline void* wrapperContext(DOMWrapperWorld* world, NamedNodeMap*)
-{
-    return world;
 }
 
 bool JSNamedNodeMap::canGetItemsForName(ExecState*, NamedNodeMap* impl, const Identifier& propertyName)
@@ -92,11 +69,6 @@ void JSNamedNodeMap::visitChildren(SlotVisitor& visitor)
     if (!element)
         return;
     visitor.addOpaqueRoot(root(element));
-}
-
-JSC::JSValue toJS(JSC::ExecState* exec, JSDOMGlobalObject* globalObject, NamedNodeMap* impl)
-{
-    return wrap<JSNamedNodeMap>(exec, globalObject, impl);
 }
 
 } // namespace WebCore

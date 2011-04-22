@@ -35,35 +35,12 @@ using namespace JSC;
 
 namespace WebCore {
 
-class JSStyleSheetOwner : public JSC::WeakHandleOwner {
-    virtual bool isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown>, void* context, JSC::MarkStack&);
-    virtual void finalize(JSC::Handle<JSC::Unknown>, void* context);
-};
-
 bool JSStyleSheetOwner::isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown> handle, void*, MarkStack& markStack)
 {
     JSStyleSheet* jsStyleSheet = static_cast<JSStyleSheet*>(handle.get().asCell());
     if (!jsStyleSheet->hasCustomProperties())
         return false;
     return markStack.containsOpaqueRoot(root(jsStyleSheet->impl()));
-}
-
-void JSStyleSheetOwner::finalize(JSC::Handle<JSC::Unknown> handle, void* context)
-{
-    JSStyleSheet* jsStyleSheet = static_cast<JSStyleSheet*>(handle.get().asCell());
-    DOMWrapperWorld* world = static_cast<DOMWrapperWorld*>(context);
-    uncacheWrapper(world, jsStyleSheet->impl(), jsStyleSheet);
-}
-
-inline JSC::WeakHandleOwner* wrapperOwner(DOMWrapperWorld*, StyleSheet*)
-{
-    DEFINE_STATIC_LOCAL(JSStyleSheetOwner, jsStyleSheetOwner, ());
-    return &jsStyleSheetOwner;
-}
-
-inline void* wrapperContext(DOMWrapperWorld* world, StyleSheet*)
-{
-    return world;
 }
 
 void JSStyleSheet::visitChildren(SlotVisitor& visitor)

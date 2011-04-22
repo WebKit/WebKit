@@ -27,7 +27,7 @@ module css {
 
     // Introduced in DOM Level 2:
     interface [
-        CustomToJS,
+        CustomIsReachable,
         HasIndexGetter
     ] CSSRuleList {
         readonly attribute unsigned long    length;

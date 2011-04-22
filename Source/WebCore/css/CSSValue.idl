@@ -22,6 +22,8 @@ module css {
 
     interface [
         CustomToJS,
+        CustomIsReachable,
+        CustomFinalize,
         Polymorphic
     ] CSSValue {
 
