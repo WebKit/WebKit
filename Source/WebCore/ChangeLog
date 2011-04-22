@@ -1,3 +1,26 @@
+2011-04-22  Levi Weintraub  <leviw@chromium.org>
+
+        Reviewed by Darin Fisher.
+
+        REGRESSION: left property broken with position:fixed elements in RTL documents
+        https://bugs.webkit.org/show_bug.cgi?id=59204
+        http://code.google.com/p/chromium/issues/detail?id=80216
+
+        Test: fast/block/positioning/rtl-fixed-positioning.html
+              fast/block/positioning/vertical-rl/fixed-positioning.html
+
+        Returning the proper scroll offsets for fixed position content in RTL documents.
+        We regressed to X and Y offsets not updating while scrolling when we clamped to zero,
+        but RTL documents scroll in negative space.
+
+        * page/FrameView.cpp:
+        (WebCore::FrameView::scrollXForFixedPosition): Properly handling RTL documents where
+        the scroll origin and offsets are negative.
+        (WebCore::FrameView::scrollYForFixedPosition): Properly handling vertical writing-
+        mode RTL documents, like above.
+        * platform/ScrollView.h:
+        (WebCore::ScrollView::scrollOrigin): Changing this accessor to const.
+
 2011-04-22  Justin Schuh  <jschuh@chromium.org>
 
         Reviewed by Eric Seidel.
