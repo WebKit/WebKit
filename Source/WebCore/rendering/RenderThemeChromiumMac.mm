@@ -79,6 +79,28 @@ NSView* RenderThemeChromiumMac::documentViewFor(RenderObject*) const
     return FlippedView();
 }
 
+const int autofillPopupHorizontalPadding = 4;
+
+// These functions are called with MenuListPart or MenulistButtonPart appearance by RenderMenuList, or with TextFieldPart appearance by AutofillPopupMenuClient.
+// We assume only AutofillPopupMenuClient gives TexfieldPart appearance here.
+// We want to change only Autofill padding.
+// In the future, we have to separate Autofill popup window logic from WebKit to Chromium.
+int RenderThemeChromiumMac::popupInternalPaddingLeft(RenderStyle* style) const
+{
+    if (style->appearance() == TextFieldPart)
+        return autofillPopupHorizontalPadding;
+
+    return RenderThemeMac::popupInternalPaddingLeft(style);
+}
+
+int RenderThemeChromiumMac::popupInternalPaddingRight(RenderStyle* style) const
+{
+    if (style->appearance() == TextFieldPart)
+        return autofillPopupHorizontalPadding;
+
+    return RenderThemeMac::popupInternalPaddingRight(style);
+}
+
 // Updates the control tint (a.k.a. active state) of |cell| (from |o|).
 // In the Chromium port, the renderer runs as a background process and controls'
 // NSCell(s) lack a parent NSView. Therefore controls don't have their tint

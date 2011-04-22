@@ -54,6 +54,9 @@ protected:
 
     virtual bool usesTestModeFocusRingColor() const;
     virtual NSView* documentViewFor(RenderObject*) const;
+
+    virtual int popupInternalPaddingLeft(RenderStyle*) const;
+    virtual int popupInternalPaddingRight(RenderStyle*) const;
 private:
     virtual void updateActiveState(NSCell*, const RenderObject*);
 };

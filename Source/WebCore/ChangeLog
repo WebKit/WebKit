@@ -1,3 +1,21 @@
+2011-04-22  Naoki Takano  <takano.naoki@gmail.com>
+
+        Reviewed by Eric Seidel.
+
+        [Chromium]Mac UI polish to add left/right padding space for autofill popup window.
+        https://bugs.webkit.org/show_bug.cgi?id=58960
+        http://code.google.com/p/chromium/issues/detail?id=51077
+
+        No new test because Chromium Autofill popup window doesn't have any test framework.
+        This assumes only AutofillPopupMenuClient gives TexFieldPart appearance.
+        Only if Autofill popup window has right/left padding.
+        The code should be removed after Autofill popup window logic is separated from WebKit to Chromium.
+
+        * rendering/RenderThemeChromiumMac.h: Add popupInternalPaddingRight() and popupInternalPaddingLeft().
+        * rendering/RenderThemeChromiumMac.mm:
+        (WebCore::RenderThemeChromiumMac::popupInternalPaddingLeft): Return padding size only if TextFieldPart is specified.
+        (WebCore::RenderThemeChromiumMac::popupInternalPaddingRight): Return padding size only if TextFieldPart is specified.
+
 2011-04-21  Adam Roben  <aroben@apple.com>
 
         Add code to enumerate all the functions imported by a particular Windows binary
