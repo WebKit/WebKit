@@ -1,3 +1,18 @@
+2011-04-22  Adrienne Walker  <enne@google.com>
+
+        Reviewed by James Robinson.
+
+        [chromium] Remove minimum texture size for compositor tiling
+        https://bugs.webkit.org/show_bug.cgi?id=59236
+
+        This was mistakenly committed in r83915 and causes bad filtering
+        on very small textures.
+
+        Tests: compositing/images/content-image-change.html
+
+        * platform/graphics/chromium/LayerTilerChromium.cpp:
+        (WebCore::LayerTilerChromium::setTileSize):
+
 2011-04-22  Beth Dakin  <bdakin@apple.com>
 
         Reviewed by Maciej Stachowiak.

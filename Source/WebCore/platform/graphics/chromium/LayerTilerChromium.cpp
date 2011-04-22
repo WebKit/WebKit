@@ -40,8 +40,6 @@
 
 using namespace std;
 
-static int minTextureSize = 16;
-
 namespace WebCore {
 
 PassOwnPtr<LayerTilerChromium> LayerTilerChromium::create(LayerRendererChromium* layerRenderer, const IntSize& tileSize, BorderTexelOption border)
@@ -71,10 +69,8 @@ GraphicsContext3D* LayerTilerChromium::layerRendererContext() const
     return layerRenderer()->context();
 }
 
-void LayerTilerChromium::setTileSize(const IntSize& requestedSize)
+void LayerTilerChromium::setTileSize(const IntSize& size)
 {
-    IntSize size(max(minTextureSize, requestedSize.width()), max(minTextureSize, requestedSize.height()));
-
     if (m_tileSize == size)
         return;
 
