@@ -510,9 +510,17 @@ static NPError NPN_GetValue(NPP npp, NPNVariable variable, void *value)
        case NPNVToolkit: {
            const uint32_t expectedGTKToolKitVersion = 2;
 
-           RefPtr<NetscapePlugin> plugin = NetscapePlugin::fromNPP(npp);
-           *reinterpret_cast<uint32_t*>(value) = plugin->quirks().contains(PluginQuirks::RequiresGTKToolKit) ?
-                                                 expectedGTKToolKitVersion : 0;
+           // Set the expected GTK version if we know that this plugin needs it or if the plugin call us
+           // with a null instance. The latter is the case with NSPluginWrapper plugins.
+           bool requiresGTKToolKitVersion;
+           if (!npp)
+               requiresGTKToolKitVersion = true;
+           else {
+               RefPtr<NetscapePlugin> plugin = NetscapePlugin::fromNPP(npp);
+               requiresGTKToolKitVersion = plugin->quirks().contains(PluginQuirks::RequiresGTKToolKit);
+           }
+
+           *reinterpret_cast<uint32_t*>(value) = requiresGTKToolKitVersion ? expectedGTKToolKitVersion : 0;
            break;
        }
 
