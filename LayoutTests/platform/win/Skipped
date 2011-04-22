@@ -1253,8 +1253,10 @@ plugins/mouse-click-iframe-to-plugin.html
 # https://bugs.webkit.org/show_bug.cgi?id=59062
 fast/images/animated-gif-restored-from-bfcache.html
 
+# Windows DRT needs an implementation of shadowRoot
 # https://bugs.webkit.org/show_bug.cgi?id=59081
 fast/dom/shadow
+media/audio-controls-do-not-fade-out.html
 
 # Causes the next test to fail http://webkit.org/b/59099
 http/tests/security/contentSecurityPolicy/frame-src-blocked.html

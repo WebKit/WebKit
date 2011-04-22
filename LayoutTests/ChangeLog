@@ -1,5 +1,15 @@
 2011-04-22  Jessie Berlin  <jberlin@apple.com>
 
+        Windows DRT needs an implementation of shadowRoot.
+        https://bugs.webkit.org/show_bug.cgi?id=59081
+
+        Add media/audio-controls-do-not-fade-out.html, which uses layoutTestController.shadowRoot
+        to the win Skipped list to get the bots green.
+
+        * platform/win/Skipped:
+
+2011-04-22  Jessie Berlin  <jberlin@apple.com>
+
         Update the Windows-specific results after r84558.
 
         * platform/win/fast/dom/prototype-inheritance-2-expected.txt:
