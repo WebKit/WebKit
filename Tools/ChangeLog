@@ -1,3 +1,12 @@
+2011-04-22  Balazs Kelemen  <kbalazs@webkit.org>
+
+        Reviewed by Csaba Osztrogonác.
+
+        [Qt][WK2] Qt should use the mac-wk2 skipped list
+        https://bugs.webkit.org/show_bug.cgi?id=58536
+
+        * Scripts/old-run-webkit-tests:
+
 2011-04-21  Tony Chang  <tony@chromium.org>
 
         Reviewed by Mihai Parparita.
