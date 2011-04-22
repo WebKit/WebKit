@@ -3478,20 +3478,6 @@ BUGWK58632 GPU LINUX DEBUG : compositing/direct-image-compositing.html = IMAGE
 BUGWK58619 GPU LINUX WIN : media/video-volume-slider.html = IMAGE
 BUGWK58741 LINUX : fast/text/zero-width-characters-complex-script.html = FAIL
 
-// Broken by skia shadow code change in r83936
-BUGWK58772 WIN LINUX : fast/multicol/shadow-breaking.html = IMAGE
-BUGWK58772 WIN : fast/repaint/shadow-multiple-horizontal.html = IMAGE
-BUGWK58772 WIN : fast/repaint/shadow-multiple-strict-horizontal.html = IMAGE
-BUGWK58772 WIN : fast/repaint/shadow-multiple-strict-vertical.html = IMAGE
-BUGWK58772 WIN : fast/repaint/shadow-multiple-vertical.html = IMAGE
-BUGWK58772 WIN : fast/text/shadow-translucent-fill.html = IMAGE
-BUGWK58772 WIN : fast/transforms/shadows.html = IMAGE
-BUGWK58772 WIN : svg/css/group-with-shadow.svg = IMAGE
-BUGWK58772 WIN : svg/css/shadow-changes.svg = IMAGE
-BUGWK58772 WIN : svg/css/text-shadow-multiple.xhtml = IMAGE
-BUGWK58772 WIN : transitions/svg-text-shadow-transition.html = IMAGE
-BUGWK58772 WIN LINUX : svg/css/composite-shadow-text.svg = IMAGE
-
 // Need to be re-baselined BUGCR79770
 BUGCR79770 WIN : fast/box-shadow/inset-with-extraordinary-radii-and-border.html = IMAGE
 BUGCR79770 WIN : fast/forms/select-background-none.html = IMAGE
