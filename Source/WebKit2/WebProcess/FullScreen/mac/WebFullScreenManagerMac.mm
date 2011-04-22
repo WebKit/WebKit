@@ -117,6 +117,7 @@ PassRefPtr<WebFullScreenManagerMac> WebFullScreenManagerMac::create(WebPage* pag
 
 WebFullScreenManagerMac::WebFullScreenManagerMac(WebPage* page)
     : WebFullScreenManager(page)
+    , m_fullScreenRootLayer(0)
 {
     m_enterFullScreenListener.adoptNS([[WebFullScreenManagerAnimationListener alloc] initWithManager:this began:&WebFullScreenManagerMac::beganEnterFullScreenAnimation finished:&WebFullScreenManagerMac::finishedEnterFullScreenAnimation]);
     m_exitFullScreenListener.adoptNS([[WebFullScreenManagerAnimationListener alloc] initWithManager:this began:&WebFullScreenManagerMac::beganExitFullScreenAnimation finished:&WebFullScreenManagerMac::finishedExitFullScreenAnimation]);

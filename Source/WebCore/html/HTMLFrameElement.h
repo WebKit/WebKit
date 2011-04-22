@@ -46,6 +46,10 @@ private:
     
     virtual void parseMappedAttribute(Attribute*);
 
+#if ENABLE(FULLSCREEN_API)
+    virtual bool allowFullScreen() const { return false; }
+#endif
+
     bool m_frameBorder;
     bool m_frameBorderSet;
 

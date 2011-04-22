@@ -769,7 +769,7 @@ private:
 
 - (Document*)_document 
 {
-    return core([[[self webView] mainFrame] DOMDocument]);
+    return _element->document();
 }
 
 - (CFTimeInterval)_animationDuration

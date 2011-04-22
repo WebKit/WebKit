@@ -1,3 +1,38 @@
+2011-04-19  Jer Noble  <jer.noble@apple.com>
+
+        Reviewed by Daniel Bates.
+
+        Full Screen from within an <iframe> does not cause <iframe> to resize.
+        https://bugs.webkit.org/show_bug.cgi?id=58638
+
+        Tests: fullscreen/full-screen-frameset.html
+
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::SelectorChecker::checkOneSelector): Add the 
+            -webkit-full-screen pseudo class to frame elements which contain
+            full screen elements.
+        * css/fullscreen.css:
+        (iframe:-webkit-full-screen): Add iframe-specific styling rules.
+        * dom/Document.cpp:
+        (WebCore::Document::setContainsFullScreenElementRecursively): Added.  Walk up each
+            successive document owner element, calling setContainsFullScreenElement() if 
+            owner is a frame element.
+        (WebCore::Document::fullScreenIsAllowedForElement): Use the new Element::isFrameElementBase
+            call instead of checking the element's tag name.
+        (WebCore::Document::webkitWillEnterFullScreenForElement): Mark any containing
+            iframes as containing a full screen element.
+        (WebCore::Document::webkitWillExitFullScreenForElement): Ditto.
+        * dom/Element.h:
+        (WebCore::Element::isFrameElementBase): Added.
+        * html/HTMLFrameElement.h:
+        (WebCore::HTMLFrameElement::allowFullScreen): Disable full screen from within
+            HTMLFrameElements.
+        * html/HTMLFrameElementBase.cpp:
+        (WebCore::HTMLFrameElementBase::setContainsFullScreenElement): Added.
+        * html/HTMLFrameElementBase.h:
+        (WebCore::HTMLFrameElementBase::containsFullScreenElement): Added.
+        (WebCore::HTMLFrameElementBase::isFrameElementBase): Added.
+
 2011-04-22  Michael Saboff  <msaboff@apple.com>
 
         Reviewed by Maciej Stachowiak.

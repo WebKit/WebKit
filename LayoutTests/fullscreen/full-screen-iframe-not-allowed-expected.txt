@@ -1,6 +1,6 @@
 Test for bug 56264: Handle entering full screen security restrictions
 
-To test manually, press Space - the page should not enter full screen mode.
+To test manually, click the "Go full screen" button - the page should not enter full screen mode.
 
 SUCCEED - did not enter full screen!
 END OF TEST

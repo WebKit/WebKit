@@ -245,6 +245,11 @@ using namespace WebCore;
         NSView* animationView = [[self _fullScreenWindow] animationView];
         [animationView addSubview:_webView positioned:NSWindowBelow relativeTo:_layerHostingView.get()];
         [_webView setFrame:[animationView bounds]];
+
+        [CATransaction begin];
+        [CATransaction setDisableActions:YES];
+        [[[self _fullScreenWindow] backgroundLayer] setHidden:YES];
+        [CATransaction commit];
         
         // FIXME: In Barolo, orderIn will animate, which is not what we want.  Find a way
         // to work around this behavior.

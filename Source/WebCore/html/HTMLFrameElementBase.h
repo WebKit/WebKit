@@ -45,6 +45,8 @@ public:
     void setRemainsAliveOnRemovalFromTree(bool);
 #if ENABLE(FULLSCREEN_API)
     virtual bool allowFullScreen() const;
+    virtual void setContainsFullScreenElement(bool);
+    virtual bool containsFullScreenElement() const { return m_containsFullScreenElement; };
 #endif
 
 protected:
@@ -61,6 +63,7 @@ private:
     virtual void setFocus(bool);
     
     virtual bool isURLAttribute(Attribute*) const;
+    virtual bool isFrameElementBase() const { return true; }
 
     virtual void willRemove();
     void checkInDocumentTimerFired(Timer<HTMLFrameElementBase>*);
@@ -93,6 +96,10 @@ private:
 
     bool m_viewSource;
     bool m_remainsAliveOnRemovalFromTree;
+
+#if ENABLE(FULLSCREEN_API)
+    bool m_containsFullScreenElement;
+#endif
 };
 
 } // namespace WebCore

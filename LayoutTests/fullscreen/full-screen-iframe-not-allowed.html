@@ -1,6 +1,6 @@
 <p>Test for <a href="http://bugs.webkit.org/show_bug.cgi?id=56264">bug 56264</a>: 
 Handle entering full screen security restrictions</p>
-<p>To test manually, press Space - the page should not enter full screen mode.</p>
+<p>To test manually, click the "Go full screen" button - the page should not enter full screen mode.</p>
 <script src="full-screen-test.js"></script>
 <script>
 function runTest() {
@@ -22,5 +22,5 @@ function runTest() {
     });
 }
 </script>
-<iframe id="frame" src="about:blank" onload="runTest()">
+<iframe id="frame" src="resources/inner.html" onload="runTest()">
 </iframe>

@@ -59,6 +59,7 @@
 #include "FrameView.h"
 #include "HTMLDocument.h"
 #include "HTMLElement.h"
+#include "HTMLFrameElementBase.h"
 #include "HTMLInputElement.h"
 #include "HTMLNames.h"
 #include "HTMLTextAreaElement.h"
@@ -2945,6 +2946,8 @@ bool CSSStyleSelector::SelectorChecker::checkOneSelector(CSSSelector* sel, Eleme
                 // element is an element in the document, the 'full-screen' pseudoclass applies to 
                 // that element. Also, an <iframe>, <object> or <embed> element whose child browsing 
                 // context's Document is in the fullscreen state has the 'full-screen' pseudoclass applied.
+                if (e->isFrameElementBase() && static_cast<HTMLFrameElementBase*>(e)->containsFullScreenElement())
+                    return true;
                 if (!e->document()->webkitIsFullScreen())
                     return false;
                 if (e != e->document()->webkitCurrentFullScreenElement())

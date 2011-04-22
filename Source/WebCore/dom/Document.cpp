@@ -4774,7 +4774,7 @@ bool Document::fullScreenIsAllowedForElement(Element* element) const
 {
     ASSERT(element);
     while (HTMLFrameOwnerElement* ownerElement = element->document()->ownerElement()) {
-        if (!ownerElement->hasTagName(frameTag) && !ownerElement->hasTagName(iframeTag))
+        if (!ownerElement->isFrameElementBase())
             continue;
 
         if (!static_cast<HTMLFrameElementBase*>(ownerElement)->allowFullScreen())
@@ -4812,7 +4812,20 @@ void Document::webkitCancelFullScreen()
     
     page()->chrome()->client()->exitFullScreenForElement(m_fullScreenElement.get());
 }
-    
+
+static void setContainsFullScreenElementRecursively(Element* element, bool contains)
+{
+    if (!element)
+        return;
+
+    do {
+        if (!element->isFrameElementBase())
+            continue;
+        
+        static_cast<HTMLFrameElementBase*>(element)->setContainsFullScreenElement(contains);
+    } while ((element = element->document()->ownerElement()));
+}
+
 void Document::webkitWillEnterFullScreenForElement(Element* element)
 {
     ASSERT(element);
@@ -4823,6 +4836,8 @@ void Document::webkitWillEnterFullScreenForElement(Element* element)
     if (m_fullScreenElement != documentElement())
         m_fullScreenElement->detach();
 
+    setContainsFullScreenElementRecursively(ownerElement(), true);
+    
     recalcStyle(Force);
     
     if (m_fullScreenRenderer) {
@@ -4849,6 +4864,8 @@ void Document::webkitDidEnterFullScreenForElement(Element*)
 
 void Document::webkitWillExitFullScreenForElement(Element*)
 {
+    setContainsFullScreenElementRecursively(ownerElement(), false);
+    
     if (m_fullScreenRenderer) {
         m_fullScreenRenderer->setAnimating(true);
 #if USE(ACCELERATED_COMPOSITING)

@@ -288,6 +288,12 @@ bool HTMLFrameElementBase::allowFullScreen() const
 {
     return hasAttribute(webkitallowfullscreenAttr);
 }
+
+void HTMLFrameElementBase::setContainsFullScreenElement(bool contains)
+{
+    m_containsFullScreenElement = contains;
+    setNeedsStyleRecalc(SyntheticStyleChange);
+}
 #endif
 
 } // namespace WebCore

@@ -1,3 +1,19 @@
+2011-04-19  Jer Noble  <jer.noble@apple.com>
+
+        Reviewed by Daniel Bates.
+
+        Full Screen from within an <iframe> does not cause <iframe> to resize.
+        https://bugs.webkit.org/show_bug.cgi?id=58638
+
+        Tests: fullscreen/full-screen-frameset-allowed.html
+               fullscreen/full-screen-frameset-not-allowed.html
+
+        Return the _element's document instead of the WKView's document, which 
+        will be different in the case of elements within <iframe>s.
+
+        * WebView/WebFullScreenController.mm:
+        (-[WebFullScreenController _document]):
+
 2011-04-22  Jer Noble  <jer.noble@apple.com>
 
         Reviewed by Maciej Stachowiak.
