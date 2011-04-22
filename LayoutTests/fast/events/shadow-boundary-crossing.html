@@ -114,6 +114,24 @@ var tests = {
         document.body.removeEventListener('mouseout', countEventDispatch, false);
         fileInput.parentNode.removeChild(fileInput);
     },
+    mouseOverOnHost: function()
+    {
+        var count = 0;
+        var input = document.body.appendChild(document.createElement('input'));
+        var countEventDispatch = function()
+        {
+            count++;
+        }
+
+        moveOver(document.body);
+        input.addEventListener('mouseover', countEventDispatch, false);
+        moveOver(input);
+
+        log("The mouseover/mouseout event on a shadow subtree host should propagate out of the shadow DOM", count == 1);
+
+        document.body.removeEventListener('mouseover', countEventDispatch, false);
+        input.parentNode.removeChild(input);
+    },
     labelSyntheticClick: function()
     {
         var count = 0;

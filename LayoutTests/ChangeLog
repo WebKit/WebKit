@@ -1,3 +1,13 @@
+2011-04-21  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        Reviewed by Adele Peterson.
+
+        REGRESSION (r83386): Typing in WSJ.com search field doesn't clear placeholder text
+        https://bugs.webkit.org/show_bug.cgi?id=59053
+
+        * fast/events/shadow-boundary-crossing-expected.txt: Updated expected results.
+        * fast/events/shadow-boundary-crossing.html: Added new sub-test.
+
 2011-04-21  Dirk Pranke  <dpranke@chromium.org>
 
         Unreviwed, expecations change. Pick up chromium-win baselines

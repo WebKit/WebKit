@@ -1,3 +1,17 @@
+2011-04-21  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        Reviewed by Adele Peterson.
+
+        REGRESSION (r83386): Typing in WSJ.com search field doesn't clear placeholder text
+        https://bugs.webkit.org/show_bug.cgi?id=59053
+
+        Turns out, the relatedTarget of an event could be also an ancestor of an event,
+        not just its parent. Duh.
+
+        * dom/EventDispatcher.cpp:
+        (WebCore::EventDispatcher::adjustToShadowBoundaries): Changed to use shadowHost
+            explicitly.
+
 2011-04-21  Michael Saboff  <msaboff@apple.com>
 
         Reviewed by Maciej Stachowiak.
