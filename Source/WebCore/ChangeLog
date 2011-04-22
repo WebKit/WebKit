@@ -1,3 +1,21 @@
+2011-04-22  Luke Macpherson   <macpherson@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        Add FontItalics and FontSmallCaps enums to be used instead of boolean values.
+        https://bugs.webkit.org/show_bug.cgi?id=59080
+
+        No new tests as no new functionality added.
+
+        * css/CSSPrimitiveValueMappings.h:
+        Add casts to/from FontItalics and FontSmallCaps
+        * css/CSSStyleSelector.cpp:
+        Use new casts defined in PrimitiveValueMappings.h
+        * platform/graphics/Font.h:
+        Use FontItalics enum.
+        * platform/graphics/FontDescription.h:
+        Define and use FontItalics and FontSmallCaps enums.
+
 2011-04-21  Andrey Kosyakov  <caseq@chromium.org>
 
         Reviewed by Yury Semikhatsky.

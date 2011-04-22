@@ -3676,22 +3676,11 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
         if (isInherit)
             fontDescription.setItalic(m_parentStyle->fontDescription().italic());
         else if (isInitial)
-            fontDescription.setItalic(false);
+            fontDescription.setItalic(FontItalicOff);
         else {
             if (!primitiveValue)
                 return;
-            switch (primitiveValue->getIdent()) {
-                case CSSValueOblique:
-                // FIXME: oblique is the same as italic for the moment...
-                case CSSValueItalic:
-                    fontDescription.setItalic(true);
-                    break;
-                case CSSValueNormal:
-                    fontDescription.setItalic(false);
-                    break;
-                default:
-                    return;
-            }
+            fontDescription.setItalic((FontItalic)*primitiveValue);
         }
         if (m_style->setFontDescription(fontDescription))
             m_fontDirty = true;
@@ -3704,17 +3693,11 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
         if (isInherit) 
             fontDescription.setSmallCaps(m_parentStyle->fontDescription().smallCaps());
         else if (isInitial)
-            fontDescription.setSmallCaps(false);
+            fontDescription.setSmallCaps(FontSmallCapsOff);
         else {
             if (!primitiveValue)
                 return;
-            int id = primitiveValue->getIdent();
-            if (id == CSSValueNormal)
-                fontDescription.setSmallCaps(false);
-            else if (id == CSSValueSmallCaps)
-                fontDescription.setSmallCaps(true);
-            else
-                return;
+            fontDescription.setSmallCaps((FontSmallCaps)*primitiveValue);
         }
         if (m_style->setFontDescription(fontDescription))
             m_fontDirty = true;

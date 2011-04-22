@@ -33,6 +33,7 @@
 #include "ColorSpace.h"
 #include "CSSPrimitiveValue.h"
 #include "CSSValueKeywords.h"
+#include "FontDescription.h"
 #include "FontSmoothingMode.h"
 #include "GraphicsTypes.h"
 #include "Path.h"
@@ -2321,6 +2322,66 @@ template<> inline CSSPrimitiveValue::operator FontSmoothingMode() const
     
     ASSERT_NOT_REACHED();
     return AutoSmoothing;
+}
+
+template<> inline CSSPrimitiveValue::CSSPrimitiveValue(FontItalic italic)
+    : m_type(CSS_IDENT)
+    , m_hasCachedCSSText(false)
+{
+    switch (italic) {
+    case FontItalicOff:
+        m_value.ident = CSSValueNormal;
+        return;
+    case FontItalicOn:
+        m_value.ident = CSSValueItalic;
+        return;
+    }
+
+    ASSERT_NOT_REACHED();
+    m_value.ident = CSSValueNormal;
+}
+
+template<> inline CSSPrimitiveValue::operator FontItalic() const
+{
+    switch (m_value.ident) {
+    case CSSValueOblique:
+    // FIXME: oblique is the same as italic for the moment...
+    case CSSValueItalic:
+        return FontItalicOn;
+    case CSSValueNormal:
+        return FontItalicOff;
+    }
+    ASSERT_NOT_REACHED();
+    return FontItalicOff;
+}
+
+template<> inline CSSPrimitiveValue::CSSPrimitiveValue(FontSmallCaps smallCaps)
+    : m_type(CSS_IDENT)
+    , m_hasCachedCSSText(false)
+{
+    switch (smallCaps) {
+    case FontSmallCapsOff:
+        m_value.ident = CSSValueNormal;
+        return;
+    case FontSmallCapsOn:
+        m_value.ident = CSSValueSmallCaps;
+        return;
+    }
+
+    ASSERT_NOT_REACHED();
+    m_value.ident = CSSValueNormal;
+}
+
+template<> inline CSSPrimitiveValue::operator FontSmallCaps() const
+{
+    switch (m_value.ident) {
+    case CSSValueSmallCaps:
+        return FontSmallCapsOn;
+    case CSSValueNormal:
+        return FontSmallCapsOff;
+    }
+    ASSERT_NOT_REACHED();
+    return FontSmallCapsOff;
 }
 
 template<> inline CSSPrimitiveValue::CSSPrimitiveValue(TextRenderingMode e)

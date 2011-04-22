@@ -50,6 +50,16 @@ enum FontWeight {
     FontWeightBold = FontWeight700
 };
 
+enum FontItalic {
+    FontItalicOff = 0,
+    FontItalicOn = 1
+};
+
+enum FontSmallCaps {
+    FontSmallCapsOff = 0,
+    FontSmallCapsOn = 1
+};
+
 class FontDescription {
 public:
     enum GenericFamilyType { NoFamily, StandardFamily, SerifFamily, SansSerifFamily, 
@@ -61,8 +71,8 @@ public:
         , m_orientation(Horizontal)
         , m_textOrientation(TextOrientationVerticalRight)
         , m_widthVariant(RegularWidth)
-        , m_italic(false)
-        , m_smallCaps(false)
+        , m_italic(FontItalicOff)
+        , m_smallCaps(FontSmallCapsOff)
         , m_isAbsoluteSize(false)
         , m_weight(FontWeightNormal)
         , m_genericFamily(NoFamily)
@@ -82,9 +92,9 @@ public:
     FontFamily& firstFamily() { return m_familyList; }
     float specifiedSize() const { return m_specifiedSize; }
     float computedSize() const { return m_computedSize; }
-    bool italic() const { return m_italic; }
+    FontItalic italic() const { return static_cast<FontItalic>(m_italic); }
     int computedPixelSize() const { return int(m_computedSize + 0.5f); }
-    bool smallCaps() const { return m_smallCaps; }
+    FontSmallCaps smallCaps() const { return static_cast<FontSmallCaps>(m_smallCaps); }
     bool isAbsoluteSize() const { return m_isAbsoluteSize; }
     FontWeight weight() const { return static_cast<FontWeight>(m_weight); }
     FontWeight lighterWeight() const;
@@ -107,8 +117,10 @@ public:
     void setFamily(const FontFamily& family) { m_familyList = family; }
     void setComputedSize(float s) { m_computedSize = s; }
     void setSpecifiedSize(float s) { m_specifiedSize = s; }
-    void setItalic(bool i) { m_italic = i; }
-    void setSmallCaps(bool c) { m_smallCaps = c; }
+    void setItalic(FontItalic i) { m_italic = i; }
+    void setItalic(bool i) { setItalic(i ? FontItalicOn : FontItalicOff); }
+    void setSmallCaps(FontSmallCaps c) { m_smallCaps = c; }
+    void setSmallCaps(bool c) { setSmallCaps(c ? FontSmallCapsOn : FontSmallCapsOff); }
     void setIsAbsoluteSize(bool s) { m_isAbsoluteSize = s; }
     void setWeight(FontWeight w) { m_weight = w; }
     void setGenericFamily(GenericFamilyType genericFamily) { m_genericFamily = genericFamily; }
@@ -138,8 +150,8 @@ private:
 
     FontWidthVariant m_widthVariant;
 
-    bool m_italic : 1;
-    bool m_smallCaps : 1;
+    unsigned m_italic : 1; // FontItalic
+    unsigned m_smallCaps : 1; // FontSmallCaps
     bool m_isAbsoluteSize : 1;   // Whether or not CSS specified an explicit size
                                  // (logical sizes like "medium" don't count).
     unsigned m_weight : 8; // FontWeight
