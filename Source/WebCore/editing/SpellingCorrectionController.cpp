@@ -292,6 +292,8 @@ void SpellingCorrectionController::correctionPanelTimerFired(Timer<SpellingCorre
     }
         break;
     case CorrectionPanelInfo::PanelTypeReversion: {
+        if (!m_correctionPanelInfo.rangeToBeReplaced)
+            break;
         m_correctionPanelInfo.isActive = true;
         m_correctionPanelInfo.replacedString = plainText(m_correctionPanelInfo.rangeToBeReplaced.get());
         FloatRect boundingBox = windowRectForRange(m_correctionPanelInfo.rangeToBeReplaced.get());
@@ -300,7 +302,7 @@ void SpellingCorrectionController::correctionPanelTimerFired(Timer<SpellingCorre
     }
         break;
     case CorrectionPanelInfo::PanelTypeSpellingSuggestions: {
-        if (plainText(m_correctionPanelInfo.rangeToBeReplaced.get()) != m_correctionPanelInfo.replacedString)
+        if (!m_correctionPanelInfo.rangeToBeReplaced || plainText(m_correctionPanelInfo.rangeToBeReplaced.get()) != m_correctionPanelInfo.replacedString)
             break;
         String paragraphText = plainText(TextCheckingParagraph(m_correctionPanelInfo.rangeToBeReplaced).paragraphRange().get());
         Vector<String> suggestions;
@@ -397,7 +399,7 @@ void SpellingCorrectionController::respondToChangedSelection(const VisibleSelect
     size_t markerCount = markers.size();
     for (size_t i = 0; i < markerCount; ++i) {
         const DocumentMarker& marker = markers[i];
-        if (!shouldStartTimeFor(marker, endOffset))
+        if (!shouldStartTimerFor(marker, endOffset))
             continue;
         RefPtr<Range> wordRange = Range::create(m_frame->document(), node, marker.startOffset, node, marker.endOffset);
         String currentWord = plainText(wordRange.get());

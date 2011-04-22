@@ -428,11 +428,6 @@ private:
     void changeSelectionAfterCommand(const VisibleSelection& newSelection, bool closeTyping, bool clearTypingStyle);
 
     Node* findEventTargetFromSelection() const;
-    void stopCorrectionPanelTimer();
-
-    void applyCorrectionPanelInfo(const Vector<DocumentMarker::MarkerType>& markerTypesToAdd);
-    // Return true if correction was applied, false otherwise.
-    bool applyAutocorrectionBeforeTypingIfAppropriate();
 };
 
 inline void Editor::setStartNewKillRingSequence(bool flag)
