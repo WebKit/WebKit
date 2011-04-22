@@ -328,7 +328,15 @@ class SVNRepository:
             return False
         find_args = ["find", ".subversion", "-type", "f", "-exec", "grep", "-q", realm, "{}", ";", "-print"]
         find_output = self.run(find_args, cwd=home_directory, error_handler=Executive.ignore_error).rstrip()
-        return find_output and os.path.isfile(os.path.join(home_directory, find_output))
+        if not find_output or not os.path.isfile(os.path.join(home_directory, find_output)):
+            return False
+        # Subversion either stores the password in the credential file, indicated by the presence of the key "password",
+        # or uses the system password store (e.g. Keychain on Mac OS X) as indicated by the presence of the key "passtype".
+        # We assume that these keys will not coincide with the actual credential data (e.g. that a person's username
+        # isn't "password") so that we can use grep.
+        if self.run(["grep", "password", find_output], cwd=home_directory, return_exit_code=True) == 0:
+            return True
+        return self.run(["grep", "passtype", find_output], cwd=home_directory, return_exit_code=True) == 0
 
 
 class SVN(SCM, SVNRepository):

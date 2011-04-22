@@ -1,5 +1,6 @@
 # Copyright (C) 2009 Google Inc. All rights reserved.
 # Copyright (C) 2009 Apple Inc. All rights reserved.
+# Copyright (C) 2011 Daniel Bates (dbates@intudata.com). All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are
@@ -667,19 +668,70 @@ Q1dTBx0AAAB42itg4GlgYJjGwMDDyODMxMDw34GBgQEAJPQDJA==
         self.scm.has_authorization_for_realm = lambda realm: False
         self.assertRaises(AuthenticationError, self._shared_test_commit_with_message)
 
-    def test_has_authorization_for_realm(self):
+    def test_has_authorization_for_realm_using_credentials_with_passtype(self):
+        credentials = """
+K 8
+passtype
+V 8
+keychain
+K 15
+svn:realmstring
+V 39
+<http://svn.webkit.org:80> Mac OS Forge
+K 8
+username
+V 17
+dbates@webkit.org
+END
+"""
+        self.assertTrue(self._test_has_authorization_for_realm_using_credentials(SVN.svn_server_realm, credentials))
+
+    def test_has_authorization_for_realm_using_credentials_with_password(self):
+        credentials = """
+K 15
+svn:realmstring
+V 39
+<http://svn.webkit.org:80> Mac OS Forge
+K 8
+username
+V 17
+dbates@webkit.org
+K 8
+password
+V 4
+blah
+END
+"""
+        self.assertTrue(self._test_has_authorization_for_realm_using_credentials(SVN.svn_server_realm, credentials))
+
+    def _test_has_authorization_for_realm_using_credentials(self, realm, credentials):
         scm = detect_scm_system(self.svn_checkout_path)
         fake_home_dir = tempfile.mkdtemp(suffix="fake_home_dir")
         svn_config_dir_path = os.path.join(fake_home_dir, ".subversion")
         os.mkdir(svn_config_dir_path)
         fake_webkit_auth_file = os.path.join(svn_config_dir_path, "fake_webkit_auth_file")
-        write_into_file_at_path(fake_webkit_auth_file, SVN.svn_server_realm)
-        self.assertTrue(scm.has_authorization_for_realm(SVN.svn_server_realm, home_directory=fake_home_dir))
+        write_into_file_at_path(fake_webkit_auth_file, credentials)
+        result = scm.has_authorization_for_realm(realm, home_directory=fake_home_dir)
         os.remove(fake_webkit_auth_file)
         os.rmdir(svn_config_dir_path)
         os.rmdir(fake_home_dir)
+        return result
 
-    def test_not_have_authorization_for_realm(self):
+    def test_not_have_authorization_for_realm_with_credentials_missing_password_and_passtype(self):
+        credentials = """
+K 15
+svn:realmstring
+V 39
+<http://svn.webkit.org:80> Mac OS Forge
+K 8
+username
+V 17
+dbates@webkit.org
+END
+"""
+        self.assertFalse(self._test_has_authorization_for_realm_using_credentials(SVN.svn_server_realm, credentials))
+
+    def test_not_have_authorization_for_realm_when_missing_credentials_file(self):
         scm = detect_scm_system(self.svn_checkout_path)
         fake_home_dir = tempfile.mkdtemp(suffix="fake_home_dir")
         svn_config_dir_path = os.path.join(fake_home_dir, ".subversion")

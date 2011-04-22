@@ -1,3 +1,27 @@
+2011-04-22  Daniel Bates  <dbates@webkit.org>
+
+        Reviewed by Csaba Osztrogonác.
+
+        webkit-patch land hangs if svn prompts for credentials
+        https://bugs.webkit.org/show_bug.cgi?id=31500
+
+        Make has_authorization_for_realm() return True only if there exists a credentials file
+        that contains either the word "password" or "passtype". We assume that these words don't
+        coincide with the actual credential data (e.g. a person's username is "password").
+
+        * Scripts/webkitpy/common/checkout/scm.py:
+        * Scripts/webkitpy/common/checkout/scm_unittest.py:
+          - Added test cases:
+            test_has_authorization_for_realm_using_credentials_with_passtype(),
+            test_has_authorization_for_realm_using_credentials_with_password(),
+            test_not_have_authorization_for_realm_with_credentials_missing_password_and_passtype()
+          - Renamed test_not_have_authorization_for_realm() to test_not_have_authorization_for_realm_when_missing_credentials_file()
+            to better describe what it's testing.
+          - Repurposed test_has_authorization_for_realm() to take realm and credential data to use
+            and return the result of calling has_authorization_for_realm() so that the caller can
+            assert the result; Renamed to _test_has_authorization_for_realm_using_credentials() to
+            better reflect its new purpose.
+
 2011-04-22  Adam Barth  <abarth@webkit.org>
 
         Remove double-negative.  (Sorry this was bugging me.)
