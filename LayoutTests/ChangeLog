@@ -1,3 +1,21 @@
+2011-04-22  Roland Steiner  <rolandsteiner@chromium.org>
+
+        Unreviewed: update Chromium baselines.
+
+        * platform/chromium-mac-leopard/svg/dynamic-updates/SVGFEDropShadowElement-dom-dx-attr-expected.png: Added.
+        * platform/chromium-mac-leopard/svg/dynamic-updates/SVGFEDropShadowElement-dom-dy-attr-expected.png: Added.
+        * platform/chromium-mac-leopard/svg/dynamic-updates/SVGFEDropShadowElement-dom-in-attr-expected.png: Added.
+        * platform/chromium-mac-leopard/svg/dynamic-updates/SVGFEDropShadowElement-dom-shadow-color-attr-expected.png: Added.
+        * platform/chromium-mac-leopard/svg/dynamic-updates/SVGFEDropShadowElement-dom-shadow-opacity-attr-expected.png: Added.
+        * platform/chromium-mac-leopard/svg/dynamic-updates/SVGFEDropShadowElement-dom-stdDeviation-attr-expected.png: Added.
+        * platform/chromium-mac-leopard/svg/dynamic-updates/SVGFEDropShadowElement-svgdom-dx-prop-expected.png: Added.
+        * platform/chromium-mac-leopard/svg/dynamic-updates/SVGFEDropShadowElement-svgdom-dy-prop-expected.png: Added.
+        * platform/chromium-mac-leopard/svg/dynamic-updates/SVGFEDropShadowElement-svgdom-in-prop-expected.png: Added.
+        * platform/chromium-mac-leopard/svg/dynamic-updates/SVGFEDropShadowElement-svgdom-shadow-color-prop-expected.png: Added.
+        * platform/chromium-mac-leopard/svg/dynamic-updates/SVGFEDropShadowElement-svgdom-shadow-opacity-prop-expected.png: Added.
+        * platform/chromium-mac-leopard/svg/dynamic-updates/SVGFEDropShadowElement-svgdom-stdDeviation-prop-expected.png: Added.
+        * platform/chromium-mac-leopard/svg/filters/feDropShadow-expected.png: Added.
+
 2011-04-22  Tony Chang  <tony@chromium.org>
 
         Unreviewed, deleting remaining .checksum files.
