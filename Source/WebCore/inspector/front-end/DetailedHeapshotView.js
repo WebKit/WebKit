@@ -28,33 +28,6 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.HeapSnapshotContainmentDataGrid = function()
-{
-    var columns = {
-        object: { title: WebInspector.UIString("Object"), disclosure: true, sortable: true, sort: "ascending" },
-        shallowSize: { title: WebInspector.UIString("Shallow Size"), width: "90px", sortable: true },
-        retainedSize: { title: WebInspector.UIString("Retained Size"), width: "90px", sortable: true }
-    };
-    WebInspector.DataGrid.call(this, columns);
-    this.addEventListener("sorting changed", this.sort, this);
-}
-
-WebInspector.HeapSnapshotContainmentDataGrid.prototype = {
-    _defaultPopulateCount: 100,
-
-    setDataSource: function(snapshotView, snapshot)
-    {
-        this.snapshotView = snapshotView;
-        this.snapshot = snapshot;
-        this.snapshotNodeIndex = this.snapshot.rootNodeIndex;
-        this._provider = this._createProvider(snapshot, this.snapshotNodeIndex);
-        this.sort();
-    }
-};
-
-MixInSnapshotNodeFunctions(WebInspector.HeapSnapshotObjectNode.prototype, WebInspector.HeapSnapshotContainmentDataGrid.prototype);
-WebInspector.HeapSnapshotContainmentDataGrid.prototype.__proto__ = WebInspector.DataGrid.prototype;
-
 WebInspector.HeapSnapshotSortableDataGrid = function(columns)
 {
     WebInspector.DataGrid.call(this, columns);
@@ -89,12 +62,17 @@ WebInspector.HeapSnapshotSortableDataGrid.prototype = {
             return result;
         }
 
-        this._performSorting(SortByTwoFields);
+        WebInspector.PleaseWaitMessage.prototype.showAndWaitFor(this.element, this, "sorting complete");
+        function sort()
+        {
+            this._performSorting(SortByTwoFields);
+        }
+        setTimeout(sort.bind(this), 0);
     },
 
     _performSorting: function(sortFunction)
     {
-        this.dispatchEventToListeners("start sorting");
+        this.recursiveSortingEnter();
         var children = this.children;
         this.removeChildren();
         children.sort(sortFunction);
@@ -104,11 +82,60 @@ WebInspector.HeapSnapshotSortableDataGrid.prototype = {
             if (child.expanded)
                 child.sort();
         }
-        this.dispatchEventToListeners("sorting complete");
+        this.recursiveSortingLeave();
+    },
+
+    recursiveSortingEnter: function()
+    {
+        if (!("_recursiveSortingDepth" in this))
+            this._recursiveSortingDepth = 1;
+        else
+            ++this._recursiveSortingDepth;
+    },
+
+    recursiveSortingLeave: function()
+    {
+        if (!("_recursiveSortingDepth" in this))
+            return;
+        if (!--this._recursiveSortingDepth) {
+            delete this._recursiveSortingDepth;
+            this.dispatchEventToListeners("sorting complete");
+        }
     }
 };
 
 WebInspector.HeapSnapshotSortableDataGrid.prototype.__proto__ = WebInspector.DataGrid.prototype;
+
+WebInspector.HeapSnapshotContainmentDataGrid = function()
+{
+    var columns = {
+        object: { title: WebInspector.UIString("Object"), disclosure: true, sortable: true, sort: "ascending" },
+        shallowSize: { title: WebInspector.UIString("Shallow Size"), width: "90px", sortable: true },
+        retainedSize: { title: WebInspector.UIString("Retained Size"), width: "90px", sortable: true }
+    };
+    WebInspector.HeapSnapshotSortableDataGrid.call(this, columns);
+}
+
+WebInspector.HeapSnapshotContainmentDataGrid.prototype = {
+    _defaultPopulateCount: 100,
+
+    setDataSource: function(snapshotView, snapshot)
+    {
+        this.snapshotView = snapshotView;
+        this.snapshot = snapshot;
+        this.snapshotNodeIndex = this.snapshot.rootNodeIndex;
+        this._provider = this._createProvider(snapshot, this.snapshotNodeIndex);
+        this.sort();
+    },
+
+    sortingChanged: function()
+    {
+        this.sort();
+    }
+};
+
+MixInSnapshotNodeFunctions(WebInspector.HeapSnapshotObjectNode.prototype, WebInspector.HeapSnapshotContainmentDataGrid.prototype);
+WebInspector.HeapSnapshotContainmentDataGrid.prototype.__proto__ = WebInspector.HeapSnapshotSortableDataGrid.prototype;
 
 WebInspector.HeapSnapshotConstructorsDataGrid = function()
 {
@@ -196,8 +223,10 @@ WebInspector.HeapSnapshotDiffDataGrid.prototype = {
     {
         this.baseSnapshot = baseSnapshot;
         this.removeChildren();
-        if (this.baseSnapshot === this.snapshot)
+        if (this.baseSnapshot === this.snapshot) {
+            this.dispatchEventToListeners("sorting complete");
             return;
+        }
         this.populateChildren();        
     },
 
@@ -208,24 +237,24 @@ WebInspector.HeapSnapshotDiffDataGrid.prototype = {
             function aggregatesReceived(classes)
             {
                 var nodeCount = 0;
-                function addNodeIfNonZeroDiff(node, zeroDiff)
+                var nodes = [];
+                for (var clss in baseClasses)
+                    nodes.push(new WebInspector.HeapSnapshotDiffNode(this, clss, baseClasses[clss], classes[clss]));
+                for (clss in classes) {
+                    if (!(clss in baseClasses))
+                        nodes.push(new WebInspector.HeapSnapshotDiffNode(this, clss, null, classes[clss]));
+                }
+                nodeCount = nodes.length;
+                function addNodeIfNonZeroDiff(boundNode, zeroDiff)
                 {
                     if (!zeroDiff)
-                        this.appendChild(node);
+                        this.appendChild(boundNode);
                     if (!--nodeCount)
                         this.sortingChanged();
                 }
-                for (var clss in baseClasses) {
-                    var node = new WebInspector.HeapSnapshotDiffNode(this, clss, baseClasses[clss], classes[clss]);
-                    ++nodeCount;
+                for (var i = 0, l = nodes.length; i < l; ++i) {
+                    var node = nodes[i];
                     node.calculateDiff(this, addNodeIfNonZeroDiff.bind(this, node));
-                }
-                for (clss in classes) {
-                    if (!(clss in baseClasses)) {
-                        var node = new WebInspector.HeapSnapshotDiffNode(this, clss, null, classes[clss]);
-                        ++nodeCount;
-                        node.calculateDiff(this, addNodeIfNonZeroDiff.bind(this, node));
-                    }
                 }
             }
             this.snapshot.aggregates(true, aggregatesReceived.bind(this));
@@ -243,8 +272,7 @@ WebInspector.HeapSnapshotDominatorsDataGrid = function()
         shallowSize: { title: WebInspector.UIString("Shallow Size"), width: "90px", sortable: true },
         retainedSize: { title: WebInspector.UIString("Retained Size"), width: "90px", sort: "descending", sortable: true }
     };
-    WebInspector.DataGrid.call(this, columns);
-    this.addEventListener("sorting changed", this.sort, this);
+    WebInspector.HeapSnapshotSortableDataGrid.call(this, columns);
 }
 
 WebInspector.HeapSnapshotDominatorsDataGrid.prototype = {
@@ -257,11 +285,16 @@ WebInspector.HeapSnapshotDominatorsDataGrid.prototype = {
         this.snapshotNodeIndex = this.snapshot.rootNodeIndex;
         this._provider = this._createProvider(snapshot, this.snapshotNodeIndex);
         this.sort();
+    },
+
+    sortingChanged: function()
+    {
+        this.sort();
     }
 };
 
 MixInSnapshotNodeFunctions(WebInspector.HeapSnapshotDominatorObjectNode.prototype, WebInspector.HeapSnapshotDominatorsDataGrid.prototype);
-WebInspector.HeapSnapshotDominatorsDataGrid.prototype.__proto__ = WebInspector.DataGrid.prototype;
+WebInspector.HeapSnapshotDominatorsDataGrid.prototype.__proto__ = WebInspector.HeapSnapshotSortableDataGrid.prototype;
 
 WebInspector.HeapSnapshotRetainingPathsList = function()
 {
@@ -372,8 +405,9 @@ WebInspector.HeapSnapshotRetainingPathsList.prototype = {
         {
             return sortFunction(nodeA.data, nodeB.data);
         }
-
+        this.recursiveSortingEnter();
         this.sortNodes(DataExtractorWrapper);
+        this.recursiveSortingLeave();
     }
 };
 
@@ -723,11 +757,7 @@ WebInspector.DetailedHeapshotView.prototype = {
         {
             delete this._baseProfileWrapper;
             this.baseProfile._lastShown = Date.now();
-            WebInspector.PleaseWaitMessage.prototype.startAction(this.currentView.element, showDiffData.bind(this));
-        }
-
-        function showDiffData()
-        {
+            WebInspector.PleaseWaitMessage.prototype.showAndWaitFor(this.currentView.element, this.diffDataGrid, "sorting complete");
             this.diffDataGrid.setBaseDataSource(this.baseProfileWrapper);
         }
 
@@ -805,13 +835,10 @@ WebInspector.DetailedHeapshotView.prototype = {
             }
         } else {
             this.baseSelectElement.addStyleClass("hidden");
-            if (!this.dataGrid.snapshotView)
-                WebInspector.PleaseWaitMessage.prototype.startAction(this.currentView.element, loadData.bind(this));
-        }
-
-        function loadData()
-        {
-            this.dataGrid.setDataSource(this, this.profileWrapper);
+            if (!this.dataGrid.snapshotView) {
+                WebInspector.PleaseWaitMessage.prototype.showAndWaitFor(this.currentView.element, this.dataGrid, "sorting complete");
+                this.dataGrid.setDataSource(this, this.profileWrapper);
+            }
         }
 
         if (!this.currentQuery || !this._searchFinishedCallback || !this._searchResults)
@@ -867,13 +894,19 @@ WebInspector.DetailedHeapshotView.prototype = {
 
     _showStringContentPopup: function(span)
     {
-        var snapshotNode = new WebInspector.HeapSnapshotNode(this.profileWrapper, span.snapshotNodeIndex);
         var stringContentElement = document.createElement("span");
         stringContentElement.className = "monospace console-formatted-string";
         stringContentElement.style.whiteSpace = "pre";
-        stringContentElement.textContent = "\"" + snapshotNode.name + "\"";
+
         var popover = new WebInspector.Popover(stringContentElement);
-        popover.show(span);
+        function displayString(names)
+        {
+            if (names.length > 0) {
+                stringContentElement.textContent = "\"" + names[0] + "\"";          
+                popover.show(span);
+            }
+        }
+        this.profileWrapper.nodeFieldValuesByIndex("name", [span.snapshotNodeIndex], displayString);
         return popover;
     },
 

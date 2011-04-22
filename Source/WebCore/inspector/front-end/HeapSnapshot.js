@@ -526,7 +526,6 @@ WebInspector.HeapSnapshot.prototype = {
     {
         delete this._nodes;
         delete this._strings;
-        delete this._idsList;
         delete this._retainers;
         delete this._retainerIndex;
         delete this._nodeIndex;
@@ -577,18 +576,6 @@ WebInspector.HeapSnapshot.prototype = {
     get totalSize()
     {
         return this.rootNode.retainedSize;
-    },
-
-    hasId: function(id)
-    {
-        return this.nodeIds.binaryIndexOf(id, this._numbersComparator) >= 0;
-    },
-
-    get nodeIds()
-    {
-        if (!this._idsList)
-            this._buildIdsList();
-        return this._idsList;
     },
 
     _retainersForNode: function(node)
@@ -691,17 +678,6 @@ WebInspector.HeapSnapshot.prototype = {
         this._aggregatesWithIndexes = true;
     },
 
-    _buildIdsList: function()
-    {
-        var count = 0;
-        for (var nodesIter = this._allNodes; nodesIter.hasNext(); nodesIter.next(), ++count);
-        this._idsList = new Array(count);
-        count = 0;
-        for (nodesIter = this._allNodes; nodesIter.hasNext(); nodesIter.next(), ++count)
-            this._idsList[count] = nodesIter.node.id;
-        this._idsList.sort(this._numbersComparator);
-    },
-
     _buildNodeIndex: function()
     {
         var count = 0;
@@ -775,7 +751,7 @@ WebInspector.HeapSnapshot.prototype = {
         return this._baseNodeIds[baseSnapshotId][className].binaryIndexOf(nodeId, this._numbersComparator) !== -1;
     },
 
-    updateBaseNodeIds: function(baseSnapshotId, className, nodeIds)
+    pushBaseNodeIds: function(baseSnapshotId, className, nodeIds)
     {
         if (!this._baseNodeIds)
             this._baseNodeIds = [];
@@ -851,6 +827,25 @@ WebInspector.HeapSnapshotFilteredOrderedIterator.prototype = {
     {
         ++this._position;
     },
+
+    serializeNextItems: function(count)
+    {
+        var result = new Array(count);
+        for (var i = 0 ; i < count && this.hasNext(); ++i, this.next())
+            result[i] = this._serialize(this.item);
+        result.length = i;
+        result.hasNext = this.hasNext();
+        result.totalLength = this.length;
+        return result;
+    },
+
+    sortAndRewind: function(comparator)
+    {
+        var result = this.sort(comparator);
+        if (result)
+            this.first();
+        return result;
+    }
 }
 
 WebInspector.HeapSnapshotFilteredOrderedIterator.prototype.createComparator = function(fieldNames)
@@ -866,6 +861,11 @@ WebInspector.HeapSnapshotEdgesProvider = function(snapshot, nodeIndex, filter)
 }
 
 WebInspector.HeapSnapshotEdgesProvider.prototype = {
+    _serialize: function(edge)
+    {
+        return {name: edge.name, node: WebInspector.HeapSnapshotNodesProvider.prototype._serialize(edge.node), nodeIndex: edge.nodeIndex, type: edge.type};
+    },
+
     sort: function(comparator)
     {
         if (this._lastComparator === comparator)
@@ -949,6 +949,11 @@ WebInspector.HeapSnapshotNodesProvider = function(snapshot, filter)
 }
 
 WebInspector.HeapSnapshotNodesProvider.prototype = {
+    _serialize: function(node)
+    {
+        return {id: node.id, name: node.name, nodeIndex: node.nodeIndex, retainedSize: node.retainedSize, selfSize: node.selfSize, type: node.type};
+    },
+
     sort: function(comparator)
     {
         if (this._lastComparator === comparator)
@@ -1153,24 +1158,15 @@ WebInspector.HeapSnapshotsDiff = function(snapshot, className)
 };
 
 WebInspector.HeapSnapshotsDiff.prototype = {
-    set baseIds(baseIds)
-    {
-        this._baseIds = baseIds;
-    },
-
-    set baseSelfSizes(baseSelfSizes)
-    {
-        this._baseSelfSizes = baseSelfSizes;
-    },
-
     calculate: function()
     {
-        var indexes = this._snapshot.aggregates(true)[this._className].idxs;
+        var aggregates = this._snapshot.aggregates(true)[this._className];
+        var indexes = aggregates ? aggregates.idxs : [];
         var i = 0, l = this._baseIds.length;
         var j = 0, m = indexes.length;
         var diff = { addedCount: 0, removedCount: 0, addedSize: 0, removedSize: 0 };
            
-        var nodeB = new WebInspector.HeapSnapshotNode(this._snapshot);
+        var nodeB = new WebInspector.HeapSnapshotNode(this._snapshot, indexes[j]);
         while (i < l && j < m) {
             var nodeAId = this._baseIds[i];
             if (nodeAId < nodeB.id) {
@@ -1199,5 +1195,15 @@ WebInspector.HeapSnapshotsDiff.prototype = {
         diff.countDelta = diff.addedCount - diff.removedCount;
         diff.sizeDelta = diff.addedSize - diff.removedSize;
         return diff;
+    },
+
+    pushBaseIds: function(baseIds)
+    {
+        this._baseIds = baseIds;
+    },
+
+    pushBaseSelfSizes: function(baseSelfSizes)
+    {
+        this._baseSelfSizes = baseSelfSizes;
     }
 };

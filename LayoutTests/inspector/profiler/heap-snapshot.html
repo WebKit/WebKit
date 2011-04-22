@@ -95,17 +95,6 @@ function test()
             next();
         },
 
-        function heapSnapshotIdsTest(next)
-        {
-            var snapshot = new WebInspector.HeapSnapshot(InspectorTest.createHeapSnapshotMock());
-            InspectorTest.assertEquals(false, snapshot.hasId(0), "has id 0");
-            for (var i = 1; i <= 6; ++i)
-                InspectorTest.assertEquals(true, snapshot.hasId(i), "has id " + i);
-            InspectorTest.assertEquals(false, snapshot.hasId(7), "has id 7");
-            InspectorTest.assertEquals(false, snapshot.hasId(100), "has id 100");
-            next();
-        },
-
         function heapSnapshotRetainersTest(next)
         {
             var snapshot = new WebInspector.HeapSnapshot(InspectorTest.createHeapSnapshotMock());

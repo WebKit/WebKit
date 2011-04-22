@@ -169,6 +169,7 @@ InspectorTest.clickColumn = function(column, callback)
 
     function sortingComplete()
     {
+        InspectorTest._currentGrid().removeEventListener("sorting complete", sortingComplete, this);
         InspectorTest.assertEquals(column.identifier, this._currentGrid().sortColumnIdentifier, "unexpected sorting");
         column.sort = this._currentGrid().sortOrder;
         function callCallback()
@@ -177,7 +178,7 @@ InspectorTest.clickColumn = function(column, callback)
         }
         setTimeout(callCallback, 0);
     }
-    InspectorTest._prepareForRecursiveSort(sortingComplete.bind(this));
+    InspectorTest._currentGrid().addEventListener("sorting complete", sortingComplete, this);
     this._currentGrid()._clickInHeaderCell(event);
 };
 
@@ -294,7 +295,13 @@ InspectorTest.expandRow = function(row, callback)
         setTimeout(callCallback, 0);
     }
     row.addEventListener("populate complete", populateComplete, this);
-    row.expand();
+    (function expand()
+    {
+        if (row.hasChildren)
+            row.expand();
+        else
+            setTimeout(expand, 0);
+    })();
 };
 
 InspectorTest.findAndExpandGCRoots = function(callback)
@@ -358,7 +365,13 @@ InspectorTest.switchToView = function(title, callback)
         setTimeout(callback, 0);
         return;
     }
-    InspectorTest._prepareForRecursiveSort(callback, view.views[index].grid);
+    var grid = view.views[index].grid;
+    function sortingComplete()
+    {
+        grid.removeEventListener("sorting complete", sortingComplete, this);
+        setTimeout(callback, 0);
+    }
+    view.views[index].grid.addEventListener("sorting complete", sortingComplete, this);
     view._changeView({target: {selectedIndex: index}});
 };
 
@@ -392,44 +405,18 @@ InspectorTest._currentGrid = function()
     return WebInspector.panels.profiles.visibleView.dataGrid;
 };
 
-InspectorTest._prepareForRecursiveSort = function(callback, grid)
-{
-    if (InspectorTest._recursiveSortCallback)
-        console.error("Didn't finished with previous sorting");
-    InspectorTest._recursiveSortCallback = callback;
-    InspectorTest._recursiveSortDepth = 0;
-    grid = grid || InspectorTest._currentGrid();
-    grid.addEventListener("start sorting", InspectorTest._recursiveSortEnter, InspectorTest);
-    grid.addEventListener("sorting complete", InspectorTest._recursiveSortLeave, InspectorTest);
-    InspectorTest._recursiveSortGrid = grid;
-};
-
-InspectorTest._recursiveSortEnter = function()
-{
-    ++InspectorTest._recursiveSortDepth;
-    if (isNaN(InspectorTest._recursiveSortDepth))
-        console.error("Wasn't prepared to track sorting");
-};
-
-InspectorTest._recursiveSortLeave = function()
-{
-    if (!--InspectorTest._recursiveSortDepth) {
-        var callback = InspectorTest._recursiveSortCallback;
-        delete InspectorTest._recursiveSortCallback;
-        InspectorTest._recursiveSortGrid.removeEventListener("start sorting", InspectorTest._recursiveSortEnter, InspectorTest);
-        InspectorTest._recursiveSortGrid.removeEventListener("sorting complete", InspectorTest._recursiveSortLeave, InspectorTest);
-        setTimeout(callback, 0);
-    }
-    if (!(InspectorTest._recursiveSortDepth >= 0))
-        console.error("Bad sort nesting");
-};
-
 InspectorTest._snapshotViewShown = function()
 {
     if (InspectorTest._takeAndOpenSnapshotCallback) {
         var callback = InspectorTest._takeAndOpenSnapshotCallback;
         InspectorTest._takeAndOpenSnapshotCallback = null;
-        callback();
+        var dataGrid = this.dataGrid;
+        function sortingComplete()
+        {
+            dataGrid.removeEventListener("sorting complete", sortingComplete, null);
+            callback();
+        }
+        dataGrid.addEventListener("sorting complete", sortingComplete, null);
     }
 };
 

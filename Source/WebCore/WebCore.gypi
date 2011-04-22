@@ -6185,6 +6185,7 @@
             'inspector/front-end/AuditResultView.js',
             'inspector/front-end/AuditRules.js',
             'inspector/front-end/AuditsPanel.js',
+            'inspector/front-end/BinarySearch.js',
             'inspector/front-end/BottomUpProfileDataGridTree.js',
             'inspector/front-end/BreakpointsSidebarPane.js',
             'inspector/front-end/CallStackSidebarPane.js',

@@ -1,5 +1,78 @@
 2011-04-22  Mikhail Naganov  <mnaganov@chromium.org>
 
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: [Chromium] Refactor code prior to moving detailed heap snapshots into workers.
+        https://bugs.webkit.org/show_bug.cgi?id=59189
+
+        * WebCore.gypi:
+        * WebCore.vcproj/WebCore.vcproj:
+        * inspector/front-end/BinarySearch.js: Added.
+        * inspector/front-end/DetailedHeapshotGridNodes.js:
+        (WebInspector.HeapSnapshotGridNode.prototype._populate.sorted):
+        (WebInspector.HeapSnapshotGridNode.prototype._populate):
+        (WebInspector.HeapSnapshotGridNode.prototype.populateChildren):
+        (WebInspector.HeapSnapshotGridNode.prototype.sort.afterSort.afterPopulate):
+        (WebInspector.HeapSnapshotGridNode.prototype.sort.afterSort):
+        (WebInspector.HeapSnapshotGridNode.prototype.sort):
+        (WebInspector.HeapSnapshotObjectNode):
+        (WebInspector.HeapSnapshotObjectNode.prototype._createChildNode):
+        (WebInspector.HeapSnapshotInstanceNode.prototype._createChildNode):
+        (WebInspector.HeapSnapshotInstanceNode.prototype._enhanceData):
+        (WebInspector.HeapSnapshotInstanceNode.prototype.get isDeletedNode):
+        (WebInspector.HeapSnapshotDiffNode.prototype.calculateDiff.diffCalculated):
+        (WebInspector.HeapSnapshotDiffNode.prototype.calculateDiff.baseIdsReceived):
+        (WebInspector.HeapSnapshotDiffNode.prototype.get data):
+        * inspector/front-end/DetailedHeapshotView.js:
+        (WebInspector.HeapSnapshotSortableDataGrid.prototype.sortingChanged.sort):
+        (WebInspector.HeapSnapshotSortableDataGrid.prototype.sortingChanged):
+        (WebInspector.HeapSnapshotSortableDataGrid.prototype._performSorting):
+        (WebInspector.HeapSnapshotSortableDataGrid.prototype.recursiveSortingEnter):
+        (WebInspector.HeapSnapshotSortableDataGrid.prototype.recursiveSortingLeave):
+        (WebInspector.HeapSnapshotContainmentDataGrid):
+        (WebInspector.HeapSnapshotContainmentDataGrid.prototype._defaultPopulateCount.100.setDataSource):
+        (WebInspector.HeapSnapshotContainmentDataGrid.prototype.sortingChanged):
+        (WebInspector.HeapSnapshotDiffDataGrid.prototype.setBaseDataSource):
+        (WebInspector.HeapSnapshotDiffDataGrid.prototype.populateChildren.baseAggregatesReceived.aggregatesReceived.addNodeIfNonZeroDiff):
+        (WebInspector.HeapSnapshotDiffDataGrid.prototype.populateChildren.baseAggregatesReceived.aggregatesReceived):
+        (WebInspector.HeapSnapshotDiffDataGrid.prototype.populateChildren):
+        (WebInspector.HeapSnapshotDominatorsDataGrid):
+        (WebInspector.HeapSnapshotDominatorsDataGrid.prototype._defaultPopulateCount.25.setDataSource):
+        (WebInspector.HeapSnapshotDominatorsDataGrid.prototype.sortingChanged):
+        (WebInspector.HeapSnapshotRetainingPathsList.prototype._performSorting):
+        (WebInspector.DetailedHeapshotView.prototype._changeBase.baseProfileLoaded):
+        (WebInspector.DetailedHeapshotView.prototype._changeBase):
+        (WebInspector.DetailedHeapshotView.prototype._changeView):
+        (WebInspector.DetailedHeapshotView.prototype._showStringContentPopup.displayString):
+        (WebInspector.DetailedHeapshotView.prototype._showStringContentPopup):
+        * inspector/front-end/HeapSnapshot.js:
+        (WebInspector.HeapSnapshot.prototype.dispose):
+        (WebInspector.HeapSnapshot.prototype.pushBaseNodeIds):
+        (WebInspector.HeapSnapshotFilteredOrderedIterator.prototype.serializeNextItems):
+        (WebInspector.HeapSnapshotFilteredOrderedIterator.prototype.sortAndRewind):
+        (WebInspector.HeapSnapshotEdgesProvider.prototype._serialize):
+        (WebInspector.HeapSnapshotNodesProvider.prototype._serialize):
+        (WebInspector.HeapSnapshotsDiff.prototype.calculate):
+        (WebInspector.HeapSnapshotsDiff.prototype.pushBaseIds):
+        (WebInspector.HeapSnapshotsDiff.prototype.pushBaseSelfSizes):
+        * inspector/front-end/HeapSnapshotProxy.js:
+        (WebInspector.HeapSnapshotProxy.prototype.createEdgesProvider):
+        (WebInspector.HeapSnapshotProxy.prototype.createNodesProvider):
+        (WebInspector.HeapSnapshotProxy.prototype.pushBaseIds):
+        (WebInspector.HeapSnapshotProviderProxy):
+        (WebInspector.HeapSnapshotProviderProxy.prototype.serializeNextItems):
+        (WebInspector.HeapSnapshotProviderProxy.prototype.sortAndRewind):
+        (WebInspector.HeapSnapshotsDiffProxy.prototype.pushBaseIds):
+        (WebInspector.HeapSnapshotsDiffProxy.prototype.pushBaseSelfSizes):
+        * inspector/front-end/PleaseWaitMessage.js:
+        (WebInspector.PleaseWaitMessage.prototype.showAndWaitFor):
+        (WebInspector.PleaseWaitMessage.prototype.unlistenAndHide):
+        * inspector/front-end/WebKit.qrc:
+        * inspector/front-end/inspector.html:
+        * inspector/front-end/utilities.js:
+
+2011-04-22  Mikhail Naganov  <mnaganov@chromium.org>
+
         Unreviewed fix after r84484 -- conditional statement was inverted incorrectly.
 
         * inspector/front-end/ProfilesPanel.js:

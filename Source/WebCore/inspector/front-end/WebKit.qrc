@@ -8,6 +8,7 @@
     <file>AuditResultView.js</file>
     <file>AuditRules.js</file>
     <file>AuditsPanel.js</file>
+    <file>BinarySearch.js</file>
     <file>BottomUpProfileDataGridTree.js</file>
     <file>BreakpointsSidebarPane.js</file>
     <file>CallStackSidebarPane.js</file>

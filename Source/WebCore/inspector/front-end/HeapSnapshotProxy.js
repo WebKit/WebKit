@@ -52,16 +52,6 @@ WebInspector.HeapSnapshotProxy.prototype = {
         setTimeout(returnResult.bind(this), 0);
     },
 
-    _extractEdgeData: function(edge)
-    {
-        return {name: edge.name, node: this._extractNodeData(edge.node), nodeIndex: edge.nodeIndex, type: edge.type};
-    },
-
-    _extractNodeData: function(node)
-    {
-        return {id: node.id, name: node.name, nodeIndex: node.nodeIndex, retainedSize: node.retainedSize, selfSize: node.selfSize, type: node.type};
-    },
-
     createDiff: function(className)
     {
         return new WebInspector.HeapSnapshotsDiffProxy(new WebInspector.HeapSnapshotsDiff(this._snapshot, className));
@@ -75,7 +65,7 @@ WebInspector.HeapSnapshotProxy.prototype = {
                 filter = filter.bind(this._snapshot);
             return new WebInspector.HeapSnapshotEdgesProvider(this._snapshot, nodeIndex, filter);
         }
-        return new WebInspector.HeapSnapshotProviderProxy(createProvider.bind(this), this._extractEdgeData.bind(this));
+        return new WebInspector.HeapSnapshotProviderProxy(createProvider.bind(this));
     },
 
     createNodesProvider: function(filter)
@@ -86,7 +76,7 @@ WebInspector.HeapSnapshotProxy.prototype = {
                 filter = filter.bind(this._snapshot);
             return new WebInspector.HeapSnapshotNodesProvider(this._snapshot, filter);
         }
-        return new WebInspector.HeapSnapshotProviderProxy(createProvider.bind(this), this._extractNodeData.bind(this));
+        return new WebInspector.HeapSnapshotProviderProxy(createProvider.bind(this));
     },
 
     createPathFinder: function(targetNodeIndex)
@@ -140,11 +130,6 @@ WebInspector.HeapSnapshotProxy.prototype = {
         setTimeout(returnResult.bind(this), 0);
     },
 
-    nodeIds: function(callback)
-    {
-        this._invokeGetter("nodeIds", callback);
-    },
-
     pushJSONChunk: function(chunk)
     {
         if (this.loaded || !this._isLoading)
@@ -154,7 +139,7 @@ WebInspector.HeapSnapshotProxy.prototype = {
 
     pushBaseIds: function(snapshotId, className, nodeIds)
     {
-        this._snapshot.updateBaseNodeIds(snapshotId, className, nodeIds);
+        this._snapshot.pushBaseNodeIds(snapshotId, className, nodeIds);
     },
 
     get rootNodeIndex()
@@ -193,22 +178,17 @@ WebInspector.HeapSnapshotProxy.prototype = {
     }
 };
 
-WebInspector.HeapSnapshotProviderProxy = function(createProvider, extractData)
+WebInspector.HeapSnapshotProviderProxy = function(createProvider)
 {
     this._provider = createProvider();
-    this._extractData = extractData;
 }
 
 WebInspector.HeapSnapshotProviderProxy.prototype = {
-    getNextItems: function(count, callback)
+    serializeNextItems: function(count, callback)
     {
         function returnResult()
         {
-            var result = new Array(count);
-            for (var i = 0 ; i < count && this._provider.hasNext(); ++i, this._provider.next())
-                result[i] = this._extractData(this._provider.item);
-            result.length = i;
-            callback(result, this._provider.hasNext(), this._provider.length);
+            callback(this._provider.serializeNextItems(count));
         }
         setTimeout(returnResult.bind(this), 0);
     },
@@ -226,10 +206,7 @@ WebInspector.HeapSnapshotProviderProxy.prototype = {
     {
         function returnResult()
         {
-            var result = this._provider.sort(comparator);
-            if (result)
-                this._provider.first();
-            callback(result);
+            callback(this._provider.sortAndRewind(comparator));
         }
         setTimeout(returnResult.bind(this), 0);
     }
@@ -275,13 +252,13 @@ WebInspector.HeapSnapshotsDiffProxy.prototype = {
         setTimeout(returnResult.bind(this), 0);
     },
 
-    pushBaseIds: function(baseSnapshotId, baseIds)
+    pushBaseIds: function(baseIds)
     {
-        this._diff.baseIds = baseIds;
+        this._diff.pushBaseIds(baseIds);
     },
 
     pushBaseSelfSizes: function(baseSelfSizes)
     {
-        this._diff.baseSelfSizes = baseSelfSizes;
+        this._diff.pushBaseSelfSizes(baseSelfSizes);
     }
 };
