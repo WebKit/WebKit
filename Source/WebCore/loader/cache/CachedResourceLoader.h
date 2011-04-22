@@ -118,7 +118,7 @@ private:
     RevalidationPolicy determineRevalidationPolicy(CachedResource::Type, bool forPreload, CachedResource* existingResource) const;
     
     void notifyLoadedFromMemoryCache(CachedResource*);
-    bool canRequest(CachedResource::Type, const KURL&);
+    bool canRequest(CachedResource::Type, const KURL&, bool forPreload = false);
 
     void loadDoneActionTimerFired(Timer<CachedResourceLoader>*);
 

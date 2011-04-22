@@ -195,8 +195,15 @@ CachedResource* CachedResourceLoader::requestLinkResource(const String& url, Res
 }
 #endif
 
-bool CachedResourceLoader::canRequest(CachedResource::Type type, const KURL& url)
+bool CachedResourceLoader::canRequest(CachedResource::Type type, const KURL& url, bool forPreload)
 {
+    if (!document()->securityOrigin()->canDisplay(url)) {
+        if (!forPreload)
+            FrameLoader::reportLocalLoadFailed(document()->frame(), url.string());
+        LOG(ResourceLoading, "CachedResourceLoader::requestResource URL was not allowed by SecurityOrigin::canDisplay");
+        return 0;
+    }
+
     // Some types of resources can be loaded only from the same origin.  Other
     // types of resources, like Images, Scripts, and CSS, can be loaded from
     // any URL.
@@ -228,6 +235,8 @@ bool CachedResourceLoader::canRequest(CachedResource::Type type, const KURL& url
     //       callback to the FrameLoaderClient in case the embedder wants to
     //       update any security indicators.
     // 
+    // FIXME: Should we consider forPreload here?
+    //
     switch (type) {
     case CachedResource::Script:
 #if ENABLE(XSLT)
@@ -296,17 +305,9 @@ CachedResource* CachedResourceLoader::requestResource(CachedResource::Type type,
 
     if (!url.isValid())
         return 0;
-    
-    if (!canRequest(type, url))
-        return 0;
 
-    // FIXME: Figure out what is the correct way to merge this security check with the one above.
-    if (!document()->securityOrigin()->canDisplay(url)) {
-        if (!forPreload)
-            FrameLoader::reportLocalLoadFailed(document()->frame(), url.string());
-        LOG(ResourceLoading, "CachedResourceLoader::requestResource URL was not allowed by SecurityOrigin::canDisplay");
+    if (!canRequest(type, url, forPreload))
         return 0;
-    }
 
     if (memoryCache()->disabled()) {
         DocumentResourceMap::iterator it = m_documentResources.find(url.string());

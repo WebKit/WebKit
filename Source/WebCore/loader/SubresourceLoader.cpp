@@ -76,6 +76,10 @@ PassRefPtr<SubresourceLoader> SubresourceLoader::create(Frame* frame, Subresourc
         return 0;
     }
 
+    // Note: We skip the Content-Security-Policy check here because we check
+    // the Content-Security-Policy at the CachedResourceLoader layer so we can
+    // handle different resource types differently.
+
     String outgoingReferrer;
     String outgoingOrigin;
     if (optionalOutgoingReferrer.isNull()) {

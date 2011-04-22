@@ -1,3 +1,28 @@
+2011-04-22  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        CSP frame-src is missing
+        https://bugs.webkit.org/show_bug.cgi?id=58643
+
+        In this patch, I've audited all the callers to
+        SecurityOrigin::canDisplay to make sure they all the appropriate
+        Content-Security-Policy method as well.  I'm not sure how to test all
+        these cases, but making this changes fixed the frame-src test.
+
+        * loader/SubframeLoader.cpp:
+        (WebCore::SubframeLoader::loadMediaPlayerProxyPlugin):
+        (WebCore::SubframeLoader::createJavaAppletWidget):
+        (WebCore::SubframeLoader::loadSubframe):
+        (WebCore::SubframeLoader::loadPlugin):
+        * loader/SubresourceLoader.cpp:
+        (WebCore::SubresourceLoader::create):
+        * loader/cache/CachedResourceLoader.cpp:
+        (WebCore::CachedResourceLoader::canRequest):
+        (WebCore::CachedResourceLoader::requestResource):
+            - While I was understanding this code, I fixed the FIXME here.
+        * loader/cache/CachedResourceLoader.h:
+
 2011-04-22  Adrienne Walker  <enne@google.com>
 
         Reviewed by Simon Fraser.

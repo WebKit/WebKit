@@ -1,3 +1,14 @@
+2011-04-22  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        CSP frame-src is missing
+        https://bugs.webkit.org/show_bug.cgi?id=58643
+
+        Update expected result to show that this test is passing now.
+
+        * http/tests/security/contentSecurityPolicy/frame-src-blocked-expected.txt:
+
 2011-04-22  Levi Weintraub  <leviw@chromium.org>
 
         Reviewed by Ryosuke Niwa.

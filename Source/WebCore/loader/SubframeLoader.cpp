@@ -161,6 +161,9 @@ PassRefPtr<Widget> SubframeLoader::loadMediaPlayerProxyPlugin(Node* node, const 
         return 0;
     }
 
+    if (!m_frame->document()->contentSecurityPolicy()->allowMediaFromSource(completedURL))
+        return 0;
+
     HTMLMediaElement* mediaElement = static_cast<HTMLMediaElement*>(node);
     RenderPart* renderer = toRenderPart(node->renderer());
     IntSize size;
@@ -207,6 +210,9 @@ PassRefPtr<Widget> SubframeLoader::createJavaAppletWidget(const IntSize& size, H
             FrameLoader::reportLocalLoadFailed(m_frame, codeBaseURL.string());
             return 0;
         }
+
+        if (!element->document()->contentSecurityPolicy()->allowObjectFromSource(codeBaseURL))
+            return 0;
     }
 
     if (baseURLString.isEmpty())
@@ -249,6 +255,9 @@ Frame* SubframeLoader::loadSubframe(HTMLFrameOwnerElement* ownerElement, const K
         FrameLoader::reportLocalLoadFailed(m_frame, url.string());
         return 0;
     }
+
+    if (!ownerElement->document()->contentSecurityPolicy()->allowChildFrameFromSource(url))
+        return 0;
 
     bool hideReferrer = SecurityOrigin::shouldHideReferrer(url, referrer);
     RefPtr<Frame> frame = m_frame->loader()->client()->createFrame(url, name, ownerElement, hideReferrer ? String() : referrer, allowsScrolling, marginWidth, marginHeight);
@@ -338,6 +347,9 @@ bool SubframeLoader::loadPlugin(HTMLPlugInImageElement* pluginElement, const KUR
         FrameLoader::reportLocalLoadFailed(m_frame, url.string());
         return false;
     }
+
+    if (!document()->contentSecurityPolicy()->allowObjectFromSource(url))
+        return false;
 
     FrameLoader* frameLoader = m_frame->loader();
     frameLoader->checkIfRunInsecureContent(document()->securityOrigin(), url);
