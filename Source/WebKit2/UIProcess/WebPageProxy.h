@@ -558,6 +558,7 @@ private:
     void runJavaScriptAlert(uint64_t frameID, const String&);
     void runJavaScriptConfirm(uint64_t frameID, const String&, bool& result);
     void runJavaScriptPrompt(uint64_t frameID, const String&, const String&, String& result);
+    void shouldInterruptJavaScript(bool& result);
     void setStatusText(const String&);
     void mouseDidMoveOverElement(uint32_t modifiers, CoreIPC::ArgumentDecoder*);
     void missingPluginButtonClicked(const String& mimeType, const String& url, const String& pluginsPageURL);

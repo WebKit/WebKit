@@ -372,4 +372,12 @@ void WebUIClient::saveDataToFileInDownloadsFolder(WebPageProxy* page, const Stri
     m_client.saveDataToFileInDownloadsFolder(toAPI(page), toAPI(suggestedFilename.impl()), toAPI(mimeType.impl()), toURLRef(originatingURLString.impl()), toAPI(data), m_client.clientInfo);
 }
 
+bool WebUIClient::shouldInterruptJavaScript(WebPageProxy* page)
+{
+    if (!m_client.shouldInterruptJavaScript)
+        return false;
+
+    return m_client.shouldInterruptJavaScript(toAPI(page), m_client.clientInfo);
+}
+
 } // namespace WebKit

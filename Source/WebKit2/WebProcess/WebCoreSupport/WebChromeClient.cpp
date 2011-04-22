@@ -332,8 +332,11 @@ void WebChromeClient::setStatusbarText(const String& statusbarText)
 
 bool WebChromeClient::shouldInterruptJavaScript()
 {
-    notImplemented();
-    return false;
+    bool shouldInterrupt = false;
+    if (!WebProcess::shared().connection()->sendSync(Messages::WebPageProxy::ShouldInterruptJavaScript(), Messages::WebPageProxy::ShouldInterruptJavaScript::Reply(shouldInterrupt), m_page->pageID()))
+        return false;
+
+    return shouldInterrupt;
 }
 
 KeyboardUIMode WebChromeClient::keyboardUIMode()

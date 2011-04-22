@@ -499,8 +499,9 @@ QWKPage::QWKPage(QWKContext* context)
         0,  /* drawFooter */
         0,  /* printFrame */
         0,  /* runModal */
-        0,   /* didCompleteRubberBandForMainFrame */
-        0    /* saveDataToFileInDownloadsFolder */
+        0,  /* didCompleteRubberBandForMainFrame */
+        0,  /* saveDataToFileInDownloadsFolder */
+        0,  /* shouldInterruptJavaScript */
     };
     WKPageSetPageUIClient(pageRef(), &uiClient);
 }

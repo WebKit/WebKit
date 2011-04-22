@@ -1944,6 +1944,14 @@ void WebPageProxy::runJavaScriptPrompt(uint64_t frameID, const String& message, 
     result = m_uiClient.runJavaScriptPrompt(this, message, defaultValue, frame);
 }
 
+void WebPageProxy::shouldInterruptJavaScript(bool& result)
+{
+    // Since shouldInterruptJavaScript() can spin a nested run loop we need to turn off the responsiveness timer.
+    process()->responsivenessTimer()->stop();
+
+    result = m_uiClient.shouldInterruptJavaScript(this);
+}
+
 void WebPageProxy::setStatusText(const String& text)
 {
     m_uiClient.setStatusText(this, text);

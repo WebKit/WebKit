@@ -123,6 +123,7 @@ void BrowserView::create(RECT webViewRect, BrowserWindow* parentWindow)
         0,          /* exceededDatabaseQuota */
         0,          /* runOpenPanel */
         0,          /* decidePolicyForGeolocationPermissionRequest */
+        0,          /* shouldInterruptJavaScript */
     };
 
     WKPageSetPageUIClient(WKViewGetPage(m_webView), &uiClient);
