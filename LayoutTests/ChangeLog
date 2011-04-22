@@ -1,3 +1,18 @@
+2011-04-22  Levi Weintraub  <leviw@chromium.org>
+
+        Reviewed by Ryosuke Niwa.
+
+        End/Home keys do not work in a contentEditable element
+        https://bugs.webkit.org/show_bug.cgi?id=50564
+
+        Fixing modifying selection by lineboundary (home/end) for editable contexts that are
+        inline and share a line with non-editable content.
+
+        * editing/selection/modify-by-lineboundary-in-inline-editable-contexts-expected.txt: Added.
+        * editing/selection/modify-by-lineboundary-in-inline-editable-contexts.html: Added.
+        * editing/selection/script-tests/modify-by-lineboundary-in-inline-editable-contexts.js: Added.
+        (testModifyByLine):
+
 2011-04-22  Dimitri Glazkov  <dglazkov@chromium.org>
 
         [Gtk] Update expectations after r84511.

@@ -1074,7 +1074,11 @@ VisiblePosition logicalStartOfLine(const VisiblePosition& c)
     // TODO: this is the current behavior that might need to be fixed.
     // Please refer to https://bugs.webkit.org/show_bug.cgi?id=49107 for detail.
     VisiblePosition visPos = logicalStartPositionForLine(c);
-    
+
+    if (Node* editableRoot = highestEditableRoot(c.deepEquivalent())) {
+        if (!editableRoot->contains(visPos.deepEquivalent().containerNode()))
+            return firstPositionInNode(editableRoot);
+    }
     return c.honorEditableBoundaryAtOrBefore(visPos);
 }
 
@@ -1133,7 +1137,11 @@ VisiblePosition logicalEndOfLine(const VisiblePosition& c)
     // In this case, use the previous position of the computed logical end position.
     if (!inSameLogicalLine(c, visPos))
         visPos = visPos.previous();
-    
+
+    if (Node* editableRoot = highestEditableRoot(c.deepEquivalent())) {
+        if (!editableRoot->contains(visPos.deepEquivalent().containerNode()))
+            return lastPositionInNode(editableRoot);
+    }
     return c.honorEditableBoundaryAtOrAfter(visPos);
 }
 
