@@ -119,6 +119,7 @@ WebInspector.ExtensionSidebarPane.prototype = {
         if (!title)
             section.headerElement.addStyleClass("hidden");
         section.expanded = true;
+        section.editable = false;
         this.bodyElement.appendChild(section.element);
         WebInspector.extensionServer.notifyExtensionSidebarUpdated(this._id);
     }

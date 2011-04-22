@@ -21,11 +21,11 @@
               {
                 "name": "callback",
                 "type": "function",
-                "description": "A callback invoked when sidebar is created",
+                "description": "A callback invoked when sidebar is created.",
                 "parameters": [
                   {
                     "name": "result",
-                    "description": "An ExtensionSidebarPane object for created sidebar pane",
+                    "description": "An ExtensionSidebarPane object for created sidebar pane.",
                     "$ref": "ExtensionSidebarPane"
                   }
                 ]
@@ -42,7 +42,7 @@
         "events": [
           {
             "name": "onSelectionChanged",
-            "description": "Fired when an objects is selected in the panel."
+            "description": "Fired when an object is selected in the panel."
           }
         ]
       },
@@ -50,7 +50,7 @@
         "id": "ExtensionPanel",
         "type": "object",
         "isInstanceOf": "Panel",
-        "description": "Represents a panel created by extension",
+        "description": "Represents a panel created by extension.",
         "events": [
           {
             "name": "onSearch",
@@ -65,7 +65,7 @@
                 "name": "queryString",
                 "type": "string",
                 "optional": true,
-                "description": "Query string (only for 'performSearch')"
+                "description": "Query string (only for 'performSearch')."
               }
             ]
           }
@@ -84,7 +84,7 @@
               {
                 "name": "height",
                 "type": "string",
-                "description": "A CSS-like size specification, e.g. '10px' or '12pt'"
+                "description": "A CSS-like size specification, e.g. '10px' or '12pt'."
               }
             ]
           },
@@ -140,9 +140,9 @@
       }
     ],
     "properties": {
-      "scripts": {
-        "$ref": "ScriptsPanel",
-        "description": "Scripts panel"
+      "elements": {
+        "$ref": "ElementsPanel",
+        "description": "Elements panel."
       }
     },
     "functions": [
@@ -269,7 +269,7 @@
         "type": "function",
         "description": "Adds an audit category.",
         "parameters": [
-          { "name": "displayName", "type": "string", "description": "A display name for the category" },
+          { "name": "displayName", "type": "string", "description": "A display name for the category." },
           { "name": "resultCount", "type": "number", "description": "The expected number of audit results in the category." }
         ],
         "returns": {
@@ -296,12 +296,12 @@
       {
         "id": "FormattedValue",
         "type": "object",
-        "description": "A value returned from one of the formatters (an URL, code snippet etc), to be passed to createResult or addChild"
+        "description": "A value returned from one of the formatters (an URL, code snippet etc), to be passed to createResult or addChild."
       },
       {
         "id": "AuditResults",
         "type": "object",
-        "description": "A collection of audit results for current run of the audit category",
+        "description": "A collection of audit results for current run of the audit category.",
         "functions": [
           {
             "name": "addResult",
@@ -310,12 +310,12 @@
               {
                 "name": "displayName",
                 "type": "string",
-                "description": "A concise, high-level description of audit rule result"
+                "description": "A concise, high-level description of audit rule result."
               },
               {
                 "name": "description",
                 "type": "string",
-                "description": "A detailed description of what the displayName means"
+                "description": "A detailed description of what the displayName means."
               },
               {
                 "name": "severity",
@@ -325,14 +325,14 @@
                 "name": "details",
                 "$ref": "AuditResultNode",
                 "optional": true,
-                "description": "A subtree that appears under added result that may provide additional details on the violations found"
+                "description": "A subtree that appears under added result that may provide additional details on the violations found."
               }
             ]
           },
           {
             "name": "createResult",
             "type": "function",
-            "description": "Creates a result node that may be user as details parameters to addResult",
+            "description": "Creates a result node that may be user as details parameters to addResult.",
             "parameters": [
               {
                 "name": "content ...",
@@ -340,7 +340,7 @@
                   { "type": "string" },
                   { "$ref": "FormattedValue" }
                 ],
-                "description": "Either string or formatted values returned by one of AuditResult formatters (url, snippet etc)"
+                "description": "Either string or formatted values returned by one of AuditResult formatters (url, snippet etc)."
               }
             ],
             "returns": {
@@ -357,17 +357,17 @@
             "type": "function",
             "description": "Render passed value as an URL in the Audits panel",
             "parameters": [
-              { "name": "href", "type": "string", "description": "An URL that will appear as href value on resulting link" },
-              { "name": "displayText", "type": "string", "description": "A text that will appear to user", "optional": true }
+              { "name": "href", "type": "string", "description": "An URL that will appear as the href value on the resulting link." },
+              { "name": "displayText", "type": "string", "description": "A text that will appear to the user.", "optional": true }
             ],
             "returns": { "$ref": "FormattedValue" }
           },
           {
             "name": "snippet",
             "type": "function",
-            "description": "Render passed text as a code snippet in the Audits panel",
+            "description": "Render passed text as a code snippet in the Audits panel.",
             "parameters": [
-              { "name": "text", "type": "string", "description": "Snippet text" }
+              { "name": "text", "type": "string", "description": "Snippet text." }
             ],
             "returns": { "$ref": "FormattedValue" }
           }
@@ -397,11 +397,11 @@
       {
         "id": "AuditResultNode",
         "type": "object",
-        "description": "A node in the audit result trees. Displays some content and optionally has children node",
+        "description": "A node in the audit result tree. Displays some content and optionally has children node.",
         "functions": [
           {
             "name": "addChild",
-            "description": "Adds another child node to this node",
+            "description": "Adds another child node to this node.",
             "parameters": [
               {
                 "name": "content ...",
@@ -409,7 +409,7 @@
                   { "type": "string" },
                   { "$ref": "FormattedValue" }
                 ],
-                "description": "Either string or formatted values returned by one of AuditResult formatters (url, snippet etc)"
+                "description": "Either string or formatted values returned by one of AuditResult formatters (url, snippet etc)."
               }
             ],
             "returns": {
@@ -420,7 +420,7 @@
         "properties": {
           "expanded": {
             "type": "boolean",
-            "description": "If set, the subtree will always be expanded"
+            "description": "If set, the subtree will always be expanded."
           }
         }
       },

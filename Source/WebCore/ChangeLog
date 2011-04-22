@@ -1,3 +1,14 @@
+2011-04-22  Andrey Kosyakov  <caseq@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: [Extensions API] misc API cleanup
+        https://bugs.webkit.org/show_bug.cgi?id=59194
+
+        * inspector/front-end/ExtensionAPISchema.json:
+        * inspector/front-end/ExtensionPanel.js:
+        (WebInspector.ExtensionSidebarPane.prototype._setObject):
+
 2011-04-21  Pavel Feldman  <pfeldman@google.com>
 
         Reviewed by Yury Semikhatsky.
