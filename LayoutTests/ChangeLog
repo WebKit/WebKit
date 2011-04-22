@@ -1,5 +1,12 @@
 2011-04-22  Csaba Osztrogonác  <ossy@webkit.org>
 
+        [WK2] CSP reporting doesn't work
+        https://bugs.webkit.org/show_bug.cgi?id=59192
+
+        * platform/mac-wk2/Skipped: Add http/tests/security/contentSecurityPolicy/report-uri-from-child-frame.html.
+
+2011-04-22  Csaba Osztrogonác  <ossy@webkit.org>
+
         [Qt]fast/url/idna tests fail
         https://bugs.webkit.org/show_bug.cgi?id=59187
 

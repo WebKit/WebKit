@@ -1519,6 +1519,10 @@ fast/history/self-is-visited.html
 fast/history/sibling-visited-test.html
 fast/loader/stateobjects/state-url-sets-links-visited.html
 
+# [WK2] CSP reporting doesn't work
+# https://bugs.webkit.org/show_bug.cgi?id=59192
+http/tests/security/contentSecurityPolicy/report-uri-from-child-frame.html
+
 ### END OF (1) Classified failures with bug reports
 ########################################
 
