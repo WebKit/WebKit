@@ -201,6 +201,7 @@ public:
 #endif
     
     virtual bool shouldShowPlaceholderWhenFocused() const { return false; }
+    virtual bool shouldHaveSpinButton(InputElement*) const;
 
 protected:
     // The platform selection color.

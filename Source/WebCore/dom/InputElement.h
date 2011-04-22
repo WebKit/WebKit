@@ -45,9 +45,10 @@ public:
     virtual bool isTextField() const = 0;
     virtual bool isRadioButton() const = 0;
     virtual bool isCheckbox() const = 0;
+    virtual bool isRangeControl() const = 0;
     
     virtual bool supportsMaxLength() const = 0;
-    virtual bool hasSpinButton() const { return false; }
+    virtual bool isSteppable() const = 0;
 #if ENABLE(INPUT_SPEECH)
     virtual bool isSpeechEnabled() const = 0;
 #endif    

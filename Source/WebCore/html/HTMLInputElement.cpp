@@ -1493,6 +1493,11 @@ bool HTMLInputElement::isCheckbox() const
     return m_inputType->isCheckbox();
 }
 
+bool HTMLInputElement::isRangeControl() const
+{
+    return m_inputType->isRangeControl();
+}
+
 bool HTMLInputElement::isText() const
 {
     return m_inputType->isTextType();
@@ -1541,11 +1546,6 @@ bool HTMLInputElement::isEnumeratable() const
 bool HTMLInputElement::isChecked() const
 {
     return checked() && m_inputType->isCheckable();
-}
-
-bool HTMLInputElement::hasSpinButton() const
-{
-    return m_inputType->hasSpinButton();
 }
 
 bool HTMLInputElement::supportsPlaceholder() const

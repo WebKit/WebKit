@@ -179,9 +179,4 @@ String BaseDateAndTimeInputType::serialize(double value) const
     return date.toString(DateComponents::Millisecond);
 }
 
-bool BaseDateAndTimeInputType::hasSpinButton()
-{
-    return true;
-}
-
 } // namespace WebCore

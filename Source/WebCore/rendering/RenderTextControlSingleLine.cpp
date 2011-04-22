@@ -665,7 +665,7 @@ void RenderTextControlSingleLine::createSubtreeIfNeeded()
         }
 #endif
 
-        bool hasSpinButton = inputElement()->hasSpinButton();
+        bool hasSpinButton = theme()->shouldHaveSpinButton(inputElement());
 
         if (hasSpinButton && !m_innerSpinButton) {
             m_innerSpinButton = SpinButtonElement::create(toHTMLElement(node()));
@@ -722,7 +722,7 @@ PassRefPtr<RenderStyle> RenderTextControlSingleLine::createInnerTextStyle(const 
     if (textBlockStyle->fontMetrics().lineSpacing() > lineHeight(true, HorizontalLine, PositionOfInteriorLineBoxes))
         textBlockStyle->setLineHeight(Length(-100.0f, Percent));
 
-    WebCore::EDisplay display = (m_innerBlock || inputElement()->hasSpinButton() ? INLINE_BLOCK : BLOCK);
+    WebCore::EDisplay display = (m_innerBlock || theme()->shouldHaveSpinButton(inputElement()) ? INLINE_BLOCK : BLOCK);
 #if ENABLE(INPUT_SPEECH)
     if (inputElement()->isSpeechEnabled())
       display = INLINE_BLOCK;

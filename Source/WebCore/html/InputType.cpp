@@ -636,11 +636,6 @@ bool InputType::isSteppable() const
     return false;
 }
 
-bool InputType::hasSpinButton()
-{
-    return false;
-}
-
 bool InputType::shouldRespectHeightAndWidthAttributes()
 {
     return false;

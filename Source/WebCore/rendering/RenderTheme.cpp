@@ -965,6 +965,11 @@ void RenderTheme::adjustProgressBarStyle(CSSStyleSelector*, RenderStyle*, Elemen
 }
 #endif
 
+bool RenderTheme::shouldHaveSpinButton(InputElement* inputElement) const
+{
+    return inputElement->isSteppable() && !inputElement->isRangeControl();
+}
+
 void RenderTheme::adjustMenuListButtonStyle(CSSStyleSelector*, RenderStyle*, Element*) const
 {
 }

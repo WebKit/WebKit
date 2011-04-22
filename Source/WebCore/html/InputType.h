@@ -207,7 +207,6 @@ public:
     virtual bool isEnumeratable();
     virtual bool isCheckable();
     virtual bool isSteppable() const;
-    virtual bool hasSpinButton();
     virtual bool shouldRespectHeightAndWidthAttributes();
 
     // Parses the specified string for the type, and return

@@ -62,6 +62,45 @@
 
         Reviewed by Kent Tamura.
 
+        Let the RenderTheme decide if an input type should have a spinner
+        https://bugs.webkit.org/show_bug.cgi?id=59246
+
+        Whether an input should have a spinner or not should
+        be a UI decision made by the RenderTheme. Remove
+        WebCore's default hasSpinButton values and defer
+        to the RenderTheme.
+
+        No change in functionality, covered by existing tests.
+
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::isRangeControl): expose isRangeControl
+        for possible RenderTheme queries.
+        * html/HTMLInputElement.h:
+
+        * rendering/RenderTextControlSingleLine.cpp:
+        (WebCore::RenderTextControlSingleLine::createSubtreeIfNeeded):
+        (WebCore::RenderTextControlSingleLine::createInnerTextStyle):
+        For both of these ask the render theme if the input should
+        have a spinner.
+
+        * rendering/RenderTheme.cpp:
+        (WebCore::RenderTheme::shouldHaveSpinButtonForInputElement):
+        Steppable inputs (number, date, and range) but not range
+        should have spinners. This does not change existing behavior.
+        * rendering/RenderTheme.h:
+
+        * dom/InputElement.h:
+        * html/BaseDateAndTimeInputType.cpp: remove hasSpinButton.
+        * html/BaseDateAndTimeInputType.h: remove hasSpinButton.
+        * html/InputType.cpp: remove hasSpinButton.
+        * html/InputType.h: remove hasSpinButton.
+        * html/NumberInputType.cpp: remove hasSpinButton.
+        * html/NumberInputType.h: remove hasSpinButton.
+
+2011-04-22  Joseph Pecoraro  <joepeck@webkit.org>
+
+        Reviewed by Kent Tamura.
+
         Don't rely on hasSpinButton to check if an input type can be stepped
         https://bugs.webkit.org/show_bug.cgi?id=59224
 

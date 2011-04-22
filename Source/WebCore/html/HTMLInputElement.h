@@ -78,7 +78,7 @@ public:
     void stepUp(ExceptionCode& ec) { stepUp(1, ec); }
     void stepDown(ExceptionCode& ec) { stepDown(1, ec); }
     // stepUp()/stepDown() for user-interaction.
-    bool isSteppable() const;
+    virtual bool isSteppable() const;
     void stepUpFromRenderer(int);
 
     bool isTextButton() const;
@@ -89,6 +89,7 @@ public:
     virtual bool isInputTypeHidden() const;
     virtual bool isPasswordField() const;
     virtual bool isCheckbox() const;
+    virtual bool isRangeControl() const;
 
     // FIXME: It's highly likely that any call site calling this function should instead
     // be using a different one. Many input elements behave like text fields, and in addition
@@ -228,7 +229,6 @@ private:
 
     virtual bool isTextFormControl() const { return isTextField(); }
 
-    virtual bool hasSpinButton() const;
     virtual bool canTriggerImplicitSubmission() const { return isTextField(); }
 
     virtual const AtomicString& formControlType() const;

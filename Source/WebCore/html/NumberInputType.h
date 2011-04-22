@@ -71,7 +71,6 @@ private:
     virtual bool hasUnacceptableValue();
     virtual bool shouldRespectSpeechAttribute();
     virtual bool isNumberField() const;
-    virtual bool hasSpinButton();
 };
 
 } // namespace WebCore

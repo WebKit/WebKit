@@ -269,9 +269,4 @@ bool NumberInputType::isNumberField() const
     return true;
 }
 
-bool NumberInputType::hasSpinButton()
-{
-    return true;
-}
-
 } // namespace WebCore

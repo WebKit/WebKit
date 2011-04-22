@@ -62,7 +62,6 @@ private:
     virtual void handleKeydownEvent(KeyboardEvent*);
     virtual void handleWheelEvent(WheelEvent*);
     virtual String serialize(double) const;
-    virtual bool hasSpinButton();
 };
 
 } // namespace WebCore
