@@ -33,14 +33,10 @@ class RenderSummary : public RenderBlock {
 public:
     explicit RenderSummary(Node*);
 
-    virtual void destroy();
-
 private:
     virtual const char* renderName() const { return "RenderSummary"; }
     virtual bool isSummary() const { return true; }
     virtual void styleDidChange(StyleDifference, const RenderStyle* oldStyle);
-
-    RenderDetails* parentDetails();
 };
 
 inline RenderSummary* toRenderSummary(RenderObject* object)

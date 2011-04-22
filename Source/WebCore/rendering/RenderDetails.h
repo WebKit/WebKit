@@ -34,35 +34,12 @@ public:
     explicit RenderDetails(Node*);
 
     bool isOpen() const;
-    void summaryDestroyed(RenderObject*);
 
 private:
     virtual const char* renderName() const { return "RenderDetails"; }
     virtual bool isDetails() const { return true; }
-
     virtual void styleDidChange(StyleDifference, const RenderStyle* oldStyle);
-
     virtual void addChild(RenderObject* newChild, RenderObject *beforeChild = 0);
-    virtual void removeChild(RenderObject*);
-    virtual void removeLeftoverAnonymousBlock(RenderBlock*) { }
-    virtual bool createsAnonymousWrapper() const { return true; }
-
-    virtual bool requiresForcedStyleRecalcPropagation() const { return true; }
-
-    virtual void layout();
-
-    void replaceMainSummary(RenderObject*);
-    void moveSummaryToContents();
-    void checkMainSummary();
-    RenderObject* getRenderPosition(RenderObject*);
-
-    RenderBlock* summaryBlock();
-    RenderBlock* contentBlock();
-
-    RenderBlock* m_summaryBlock;
-    RenderBlock* m_contentBlock;
-
-    RenderObject* m_mainSummary;
 };
 
 inline RenderDetails* toRenderDetails(RenderObject* object)

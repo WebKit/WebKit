@@ -35,6 +35,24 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
+class SummaryContentElement : public ShadowContentElement {
+public:
+    static PassRefPtr<SummaryContentElement> create(Document*);
+
+private:
+    SummaryContentElement(Document* document)
+        : ShadowContentElement(document)
+    {
+    }
+
+    virtual bool shouldInclude(Node*) { return true; }
+};
+
+PassRefPtr<SummaryContentElement> SummaryContentElement::create(Document* document)
+{
+    return adoptRef(new SummaryContentElement(document));
+}
+
 PassRefPtr<HTMLSummaryElement> HTMLSummaryElement::create(const QualifiedName& tagName, Document* document)
 {
     RefPtr<HTMLSummaryElement> result = adoptRef(new HTMLSummaryElement(tagName, document));
@@ -57,7 +75,7 @@ void HTMLSummaryElement::createShadowSubtree()
 {
     ExceptionCode ec = 0;
     ensureShadowRoot()->appendChild(DetailsMarkerControl::create(document()), ec, true);
-    ensureShadowRoot()->appendChild(ShadowContentElement::create(document()), ec, true);
+    ensureShadowRoot()->appendChild(SummaryContentElement::create(document()), ec, true);
 }
 
 HTMLDetailsElement* HTMLSummaryElement::detailsElement() const

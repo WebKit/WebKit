@@ -1,3 +1,57 @@
+2011-04-21  MORITA Hajime  <morrita@google.com>
+
+        Reviewed by Dimitri Glazkov.
+        
+        Content of <details> should be forwarded through the shadow DOM
+        https://bugs.webkit.org/show_bug.cgi?id=59055
+
+        - Made ShadowContentElement abstract and added shouldInclude() pure virtual method.
+        - Added SummaryContentElement, DetailsContentElement, DetailsSummaryElement as
+          subclasses of ShadowContentElement.
+        - Gave two shadow children for HTMLDetailsElement. One is DetailsContentElement, that
+          handles non-summary contents of <details>. Another is SummaryContentElement, that
+          handles the main summary element.
+        - Removed most of RenderDetails custom layout mechanism, which is replaced by
+          ShadowContentElement subclasses.
+
+        Tests: fast/html/details-add-child-1.html
+               fast/html/details-add-child-2.html
+               fast/html/details-remove-child-1.html
+               fast/html/details-remove-child-2.html
+
+        * dom/ShadowRoot.cpp:
+        (WebCore::ShadowRoot::contentContainerFor):
+        (WebCore::ShadowRoot::hostChildrenChanged):
+        (WebCore::ShadowRoot::hasContentElement):
+        * dom/ShadowRoot.h:
+        * html/HTMLDetailsElement.cpp:
+        (WebCore::DetailsContentElement::DetailsContentElement):
+        (WebCore::DetailsContentElement::create):
+        (WebCore::DetailsContentElement::shouldInclude):
+        (WebCore::DetailsSummaryElement::DetailsSummaryElement):
+        (WebCore::DetailsSummaryElement::create):
+        (WebCore::DetailsSummaryElement::shouldInclude):
+        (WebCore::HTMLDetailsElement::create):
+        (WebCore::HTMLDetailsElement::HTMLDetailsElement):
+        (WebCore::HTMLDetailsElement::ensureShadowSubtreeOf):
+        (WebCore::findSummaryFor):
+        (WebCore::HTMLDetailsElement::ensureMainSummary):
+        (WebCore::HTMLDetailsElement::refreshMainSummary):
+        (WebCore::HTMLDetailsElement::createShadowSubtree):
+        * html/HTMLDetailsElement.h:
+        * html/HTMLSummaryElement.cpp:
+        (WebCore::SummaryContentElement::SummaryContentElement):
+        (WebCore::SummaryContentElement::shouldInclude):
+        (WebCore::SummaryContentElement::create):
+        (WebCore::HTMLSummaryElement::createShadowSubtree):
+        * html/shadow/ShadowContentElement.h:
+        * rendering/RenderDetails.cpp:
+        (WebCore::RenderDetails::RenderDetails):
+        (WebCore::RenderDetails::addChild):
+        * rendering/RenderDetails.h:
+        * rendering/RenderSummary.cpp:
+        * rendering/RenderSummary.h:
+
 2011-04-21  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Dan Bernstein.

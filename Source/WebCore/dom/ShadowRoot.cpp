@@ -30,6 +30,8 @@
 
 #include "Document.h"
 #include "NodeRareData.h"
+// FIXME: This dependency might look strange. But it should be sane. See https://bugs.webkit.org/show_bug.cgi?id=59117
+#include "ShadowContentElement.h"
 
 namespace WebCore {
 
@@ -89,17 +91,24 @@ void ShadowRoot::recalcStyle(StyleChange change)
     clearChildNeedsStyleRecalc();
 }
 
-ContainerNode* ShadowRoot::contentContainerFor(Node*)
+ContainerNode* ShadowRoot::contentContainerFor(Node* node)
 {
     // Current limitation:
     // - There is at most one content element for each shadow tree
     // - The shadow tree accepts any light node.
-    return firstContentElement();
+    for (Node* n = firstChild(); n; n = n->traverseNextNode(this)) {
+        // FIXME: This should be replaced with tag-name checking once <content> is ready.
+        // See also http://webkit.org/b/56973
+        if (n->isShadowBoundary() && static_cast<ShadowContentElement*>(n)->shouldInclude(node))
+            return toContainerNode(n);
+    }
+
+    return 0;
 }
 
 void ShadowRoot::hostChildrenChanged()
 {
-    if (!firstContentElement())
+    if (!hasContentElement())
         return;
     Element* host = shadowHost();
     if (!host || !host->attached())
@@ -108,16 +117,16 @@ void ShadowRoot::hostChildrenChanged()
     host->lazyAttach();
 }
 
-ContainerNode* ShadowRoot::firstContentElement() const
+bool ShadowRoot::hasContentElement() const
 {
     for (Node* n = firstChild(); n; n = n->traverseNextNode(this)) {
         // FIXME: This should be replaced with tag-name checking once <content> is ready.
         // See also http://webkit.org/b/56973
         if (n->isShadowBoundary())
-            return toContainerNode(n);
+            return true;
     }
 
-    return 0;
+    return false;
 }
 
 bool ShadowRoot::applyAuthorSheets() const

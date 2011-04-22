@@ -3501,7 +3501,10 @@ BUGWK58914 : fast/html/details-add-summary-child-1.html = FAIL
 BUGWK58914 : fast/html/details-add-summary-child-2.html = FAIL
 BUGWK58914 : fast/html/details-remove-summary-child-1.html = FAIL
 BUGWK58914 : fast/html/details-remove-summary-child-2.html = FAIL
-BUGWK58914 : fast/html/details-open2.html = FAIL
+BUGWK59055 : fast/html/details-add-child-1.html = FAIL
+BUGWK59055 : fast/html/details-add-child-2.html = FAIL
+BUGWK59055 : fast/html/details-remove-child-1.html = FAIL
+BUGWK59055 : fast/html/details-remove-child-2.html = FAIL
 
 // Temporarily marked as failing for rebaselining.
 BUGCR79798 : fast/gradients/crash-on-zero-radius.html = FAIL
@@ -3902,6 +3905,7 @@ BUGWK59172 : fast/html/details-no-summary3.html = IMAGE+TEXT
 BUGWK59172 : fast/html/details-no-summary4.html = IMAGE+TEXT
 BUGWK59172 : fast/html/details-open-javascript.html = IMAGE+TEXT
 BUGWK59172 : fast/html/details-open1.html = IMAGE+TEXT
+BUGWK58914 : fast/html/details-open2.html = FAIL
 BUGWK59172 : fast/html/details-open3.html = IMAGE+TEXT
 BUGWK59172 : fast/html/details-open4.html = IMAGE+TEXT
 BUGWK59172 : fast/html/details-open5.html = IMAGE+TEXT

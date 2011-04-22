@@ -53,7 +53,7 @@ private:
     virtual bool childTypeAllowed(NodeType) const;
     virtual bool applyAuthorSheets() const;
 
-    ContainerNode* firstContentElement() const;
+    bool hasContentElement() const;
 };
 
 inline PassRefPtr<ShadowRoot> ShadowRoot::create(Document* document)

@@ -46,7 +46,7 @@ public:
     {
     }
 
-    static PassRefPtr<ShadowContentElement> create(Document*);
+    virtual bool shouldInclude(Node*) = 0;
 
 private:
     // FIXME: This should be replaced with tag-name checking once <content> is ready.
@@ -54,11 +54,6 @@ private:
     virtual bool isShadowBoundary() const { return true; }
     virtual RenderObject* createRenderer(RenderArena*, RenderStyle*) { return 0; }
 };
-
-inline PassRefPtr<ShadowContentElement> ShadowContentElement::create(Document* document)
-{
-    return adoptRef(new ShadowContentElement(document));
-}
 
 }
 

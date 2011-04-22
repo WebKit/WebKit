@@ -37,22 +37,27 @@ private:
         RefreshRendererSupressed,
     };
 
+    enum SummaryType {
+        NoSummary,
+        DefaultSummary,
+        ForwardingSummary
+    };
+
     HTMLDetailsElement(const QualifiedName&, Document*);
 
     virtual RenderObject* createRenderer(RenderArena*, RenderStyle*);
     virtual void childrenChanged(bool changedByParser, Node* beforeChange, Node* afterChange, int childCountDelta);
     virtual void finishParsingChildren();
-    virtual bool canHaveLightChildRendererWithShadow() const { return true; }
 
     void parseMappedAttribute(Attribute*);
     bool childShouldCreateRenderer(Node*) const;
 
-    Node* findSummaryFor(ContainerNode*);
-    Node* findMainSummary();
+    Node* ensureMainSummary();
     void refreshMainSummary(RefreshRenderer);
-
+    void ensureShadowSubtreeOf(SummaryType);
     void createShadowSubtree();
 
+    SummaryType m_summaryType;
     Node* m_mainSummary;
     bool m_isOpen;
 

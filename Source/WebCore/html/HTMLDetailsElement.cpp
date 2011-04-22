@@ -28,19 +28,74 @@
 #include "LocalizedStrings.h"
 #include "MouseEvent.h"
 #include "RenderDetails.h"
+#include "ShadowContentElement.h"
 #include "Text.h"
 
 namespace WebCore {
 
 using namespace HTMLNames;
 
+class DetailsContentElement : public ShadowContentElement {
+public:
+    static PassRefPtr<DetailsContentElement> create(Document*);
+
+private:
+    DetailsContentElement(Document* document)
+        : ShadowContentElement(document)
+    {
+    }
+
+    virtual bool shouldInclude(Node*);
+};
+
+PassRefPtr<DetailsContentElement> DetailsContentElement::create(Document* document)
+{
+    return adoptRef(new DetailsContentElement(document));
+}
+
+bool DetailsContentElement::shouldInclude(Node* node)
+{
+    HTMLDetailsElement* details = static_cast<HTMLDetailsElement*>(shadowAncestorNode());
+    return details->mainSummary() != node;
+}
+
+
+class DetailsSummaryElement : public ShadowContentElement {
+public:
+    static PassRefPtr<DetailsSummaryElement> create(Document*);
+
+private:
+    DetailsSummaryElement(Document* document)
+        : ShadowContentElement(document)
+    {
+    }
+
+    virtual bool shouldInclude(Node*);
+};
+
+PassRefPtr<DetailsSummaryElement> DetailsSummaryElement::create(Document* document)
+{
+    return adoptRef(new DetailsSummaryElement(document));
+}
+
+bool DetailsSummaryElement::shouldInclude(Node* node)
+{
+    HTMLDetailsElement* details = static_cast<HTMLDetailsElement*>(shadowAncestorNode());
+    ASSERT(details->mainSummary());
+    return details->mainSummary() == node;
+}
+
+
 PassRefPtr<HTMLDetailsElement> HTMLDetailsElement::create(const QualifiedName& tagName, Document* document)
 {
-    return adoptRef(new HTMLDetailsElement(tagName, document));
+    RefPtr<HTMLDetailsElement> result = adoptRef(new HTMLDetailsElement(tagName, document));
+    result->ensureShadowSubtreeOf(ForwardingSummary);
+    return result;
 }
 
 HTMLDetailsElement::HTMLDetailsElement(const QualifiedName& tagName, Document* document)
     : HTMLElement(tagName, document)
+    , m_summaryType(NoSummary)
     , m_mainSummary(0)
     , m_isOpen(false)
 {
@@ -52,7 +107,16 @@ RenderObject* HTMLDetailsElement::createRenderer(RenderArena* arena, RenderStyle
     return new (arena) RenderDetails(this);
 }
 
-Node* HTMLDetailsElement::findSummaryFor(ContainerNode* container)
+void HTMLDetailsElement::ensureShadowSubtreeOf(SummaryType type)
+{
+    if (type == m_summaryType)
+        return;
+    m_summaryType = type;
+    removeShadowRoot();
+    createShadowSubtree();
+}
+
+static Node* findSummaryFor(PassRefPtr<ContainerNode> container)
 {
     for (Node* child = container->firstChild(); child; child = child->nextSibling()) {
         if (child->hasTagName(summaryTag))
@@ -62,24 +126,22 @@ Node* HTMLDetailsElement::findSummaryFor(ContainerNode* container)
     return 0;
 }
 
-Node* HTMLDetailsElement::findMainSummary()
+Node* HTMLDetailsElement::ensureMainSummary()
 {
-    Node* found = findSummaryFor(this);
-    if (found) {
-        removeShadowRoot();
-        return found;
+    Node* summary = findSummaryFor(this);
+    if (summary) {
+        ensureShadowSubtreeOf(ForwardingSummary);
+        return summary;
     }
-    
-    createShadowSubtree();
-    found = findSummaryFor(shadowRoot());
-    ASSERT(found);
-    return found;
+
+    ensureShadowSubtreeOf(DefaultSummary);
+    return findSummaryFor(shadowRoot());
 }
 
 void HTMLDetailsElement::refreshMainSummary(RefreshRenderer refreshRenderer)
 {
     RefPtr<Node> oldSummary = m_mainSummary;
-    m_mainSummary = findMainSummary();
+    m_mainSummary = ensureMainSummary();
 
     if (oldSummary == m_mainSummary || !attached())
         return;
@@ -89,7 +151,7 @@ void HTMLDetailsElement::refreshMainSummary(RefreshRenderer refreshRenderer)
         oldSummary->attach();
     }
         
-    if (refreshRenderer == RefreshRendererAllowed) {
+    if (m_mainSummary && refreshRenderer == RefreshRendererAllowed) {
         m_mainSummary->detach();
         m_mainSummary->attach();
     }
@@ -97,13 +159,18 @@ void HTMLDetailsElement::refreshMainSummary(RefreshRenderer refreshRenderer)
 
 void HTMLDetailsElement::createShadowSubtree()
 {
-    if (shadowRoot())
-        return;
-
-    RefPtr<HTMLSummaryElement> defaultSummary = HTMLSummaryElement::create(summaryTag, document());
+    ASSERT(!shadowRoot());
     ExceptionCode ec = 0;
-    defaultSummary->appendChild(Text::create(document(), defaultDetailsSummaryText()), ec);
-    ensureShadowRoot()->appendChild(defaultSummary, ec, true);
+    if (m_summaryType == DefaultSummary) {
+        RefPtr<HTMLSummaryElement> defaultSummary = HTMLSummaryElement::create(summaryTag, document());
+        defaultSummary->appendChild(Text::create(document(), defaultDetailsSummaryText()), ec);
+        ensureShadowRoot()->appendChild(defaultSummary, ec, true);
+        ensureShadowRoot()->appendChild(DetailsContentElement::create(document()), ec, true);
+    } else {
+        ASSERT(m_summaryType == ForwardingSummary);
+        ensureShadowRoot()->appendChild(DetailsSummaryElement::create(document()), ec, true);
+        ensureShadowRoot()->appendChild(DetailsContentElement::create(document()), ec, true);
+    }
 }
 
 

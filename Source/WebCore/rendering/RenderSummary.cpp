@@ -32,24 +32,6 @@ RenderSummary::RenderSummary(Node* node)
 {
 }
 
-void RenderSummary::destroy()
-{
-    RenderDetails* details = parentDetails();
-    if (details)
-        details->summaryDestroyed(this);
-
-    RenderBlock::destroy();
-}
-
-RenderDetails* RenderSummary::parentDetails()
-{
-    RenderObject* obj = parent();
-    while (obj && !obj->isDetails())
-        obj = obj->parent();
-
-    return static_cast<RenderDetails*>(obj);
-}
-
 void RenderSummary::styleDidChange(StyleDifference diff, const RenderStyle* oldStyle)
 {
     RenderBlock::styleDidChange(diff, oldStyle);
