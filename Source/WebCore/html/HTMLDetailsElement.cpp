@@ -81,7 +81,6 @@ PassRefPtr<DetailsSummaryElement> DetailsSummaryElement::create(Document* docume
 bool DetailsSummaryElement::shouldInclude(Node* node)
 {
     HTMLDetailsElement* details = static_cast<HTMLDetailsElement*>(shadowAncestorNode());
-    ASSERT(details->mainSummary());
     return details->mainSummary() == node;
 }
 

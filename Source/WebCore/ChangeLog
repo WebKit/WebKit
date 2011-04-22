@@ -1,3 +1,10 @@
+2011-04-22  MORITA Hajime  <morrita@google.com>
+
+        Unreviewed crash fix.
+
+        * html/HTMLDetailsElement.cpp:
+        (WebCore::DetailsSummaryElement::shouldInclude):
+
 2011-04-22  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Sam Weinig.
