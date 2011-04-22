@@ -2,6 +2,19 @@
 
         Reviewed by Tony Chang.
 
+        new-run-webkit-tests: obsolete old code, part 4: merge worker_mixin into worker
+        https://bugs.webkit.org/show_bug.cgi?id=58756
+
+        Since worker_mixin is now only used by worker, there's no point
+        in having it split across two files.
+
+        * Scripts/webkitpy/layout_tests/layout_package/worker.py:
+        * Scripts/webkitpy/layout_tests/layout_package/worker_mixin.py: Removed.
+
+2011-04-21  Dirk Pranke  <dpranke@chromium.org>
+
+        Reviewed by Tony Chang.
+
         new-run-webkit-tests: obsolete old code, part 3 - rename test_runner to manager
         https://bugs.webkit.org/show_bug.cgi?id=58754
 
