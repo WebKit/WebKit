@@ -736,8 +736,14 @@ class Bugzilla(object):
         self.browser['resolution'] = ['FIXED']
         self.browser.submit()
 
-    def reassign_bug(self, bug_id, assignee, comment_text=None):
+    def _has_control(self, form, id):
+        return id in [control.id for control in form.controls]
+
+    def reassign_bug(self, bug_id, assignee=None, comment_text=None):
         self.authenticate()
+
+        if not assignee:
+            assignee = self.username
 
         log("Assigning bug %s to %s" % (bug_id, assignee))
         if self.dryrun:
@@ -746,6 +752,16 @@ class Bugzilla(object):
 
         self.browser.open(self.bug_url_for_bug_id(bug_id))
         self.browser.select_form(name="changeform")
+
+        if not self._has_control(self.browser, "assigned_to"):
+            log("""Failed to assign bug to you (can't find assigned_to) control.
+Do you have EditBugs privilages at bugs.webkit.org?
+https://bugs.webkit.org/userprefs.cgi?tab=permissions
+
+If not, you should email webkit-committers@webkit.org or ask in #webkit for
+someone to add EditBugs to your bugs.webkit.org account.""")
+            return
+
         if comment_text:
             log(comment_text)
             self.browser["comment"] = comment_text

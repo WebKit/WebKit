@@ -45,6 +45,13 @@ class PostDiff(AbstractStep):
         diff = self.cached_lookup(state, "diff")
         description = self._options.description or "Patch"
         comment_text = self._options.comment
-        self._tool.bugs.add_patch_to_bug(state["bug_id"], diff, description, comment_text=comment_text, mark_for_review=self._options.review, mark_for_commit_queue=self._options.request_commit)
+        bug_id = state["bug_id"]
+
+        # FIXME: We should find some way of caching the Bug object instead of
+        # going back to the network here.
+        if self._tool.bugs.fetch_bug(bug_id).is_unassigned():
+            self._tool.bugs.reassign_bug(bug_id)
+
+        self._tool.bugs.add_patch_to_bug(bug_id, diff, description, comment_text=comment_text, mark_for_review=self._options.review, mark_for_commit_queue=self._options.request_commit)
         if self._options.open_bug:
-            self._tool.user.open_url(self._tool.bugs.bug_url_for_bug_id(state["bug_id"]))
+            self._tool.user.open_url(self._tool.bugs.bug_url_for_bug_id(bug_id))
