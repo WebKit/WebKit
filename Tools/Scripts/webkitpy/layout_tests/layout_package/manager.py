@@ -29,9 +29,9 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 """
-The TestRunner class runs a series of tests (TestType interface) against a set
-of test files.  If a test file fails a TestType, it returns a list TestFailure
-objects to the TestRunner.  The TestRunner then aggregates the TestFailures to
+The Manager runs a series of tests (TestType interface) against a set
+of test files.  If a test file fails a TestType, it returns a list of TestFailure
+objects to the Manager. The Manager then aggregates the TestFailures to
 create a final report.
 """
 
@@ -197,7 +197,7 @@ class TestRunInterruptedException(Exception):
         return self.__class__, (self.reason,)
 
 
-class TestRunner:
+class Manager:
     """A class for managing running a series of tests on a series of layout
     test files."""
 
@@ -1229,7 +1229,7 @@ class TestRunner:
         self._port.show_results_html_file(results_filename)
 
     def name(self):
-        return 'TestRunner'
+        return 'Manager'
 
     def is_done(self):
         worker_states = self._worker_states.values()
@@ -1303,8 +1303,7 @@ def read_test_files(fs, files):
 
 
 class _WorkerState(object):
-    """A class for the TestRunner/manager to use to track the current state
-    of the workers."""
+    """A class for the manager to use to track the current state of the workers."""
     def __init__(self, number, worker_connection):
         self.worker_connection = worker_connection
         self.number = number

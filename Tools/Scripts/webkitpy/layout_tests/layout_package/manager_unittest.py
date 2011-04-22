@@ -28,29 +28,28 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-"""Unit tests for TestRunner()."""
+"""Unit tests for manager.Manager()."""
 
 import unittest
 
 from webkitpy.common.system import filesystem_mock
 from webkitpy.thirdparty.mock import Mock
 
-import test_runner
+from webkitpy.layout_tests.layout_package import manager
 
 
-class TestRunnerWrapper(test_runner.TestRunner):
+class ManagerWrapper(manager.Manager):
     def _get_test_input_for_file(self, test_file):
         return test_file
 
 
-class TestRunnerTest(unittest.TestCase):
+class ManagerTest(unittest.TestCase):
     def test_shard_tests(self):
         # Test that _shard_tests in test_runner.TestRunner really
         # put the http tests first in the queue.
         port = Mock()
         port._filesystem = filesystem_mock.MockFileSystem()
-        runner = TestRunnerWrapper(port=port, options=Mock(),
-            printer=Mock())
+        manager = ManagerWrapper(port=port, options=Mock(), printer=Mock())
 
         test_list = [
           "LayoutTests/websocket/tests/unicode.htm",
@@ -72,8 +71,8 @@ class TestRunnerTest(unittest.TestCase):
         ])
 
         # FIXME: Ideally the HTTP tests don't have to all be in one shard.
-        single_thread_results = runner._shard_tests(test_list, False)
-        multi_thread_results = runner._shard_tests(test_list, True)
+        single_thread_results = manager._shard_tests(test_list, False)
+        multi_thread_results = manager._shard_tests(test_list, True)
 
         self.assertEqual("tests_to_http_lock", single_thread_results[0][0])
         self.assertEqual(expected_tests_to_http_lock, set(single_thread_results[0][1]))

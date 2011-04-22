@@ -37,9 +37,10 @@ import os
 import signal
 import sys
 
-from layout_package import json_results_generator
-from layout_package import printing
-from layout_package import test_runner
+from webkitpy.layout_tests import layout_package
+from webkitpy.layout_tests.layout_package import json_results_generator
+from webkitpy.layout_tests.layout_package import printing
+from webkitpy.layout_tests.layout_package import manager
 
 from webkitpy.common.system import user
 from webkitpy.thirdparty import simplejson
@@ -88,32 +89,32 @@ def run(port, options, args, regular_output=sys.stderr,
     # in a try/finally to ensure that we clean up the logging configuration.
     num_unexpected_results = -1
     try:
-        runner = test_runner.TestRunner(port, options, printer)
-        runner._print_config()
+        manager = layout_package.manager.Manager(port, options, printer)
+        manager._print_config()
 
         printer.print_update("Collecting tests ...")
         try:
-            runner.collect_tests(args, last_unexpected_results)
+            manager.collect_tests(args, last_unexpected_results)
         except IOError, e:
             if e.errno == errno.ENOENT:
                 return -1
             raise
 
         if options.lint_test_files:
-            return runner.lint()
+            return manager.lint()
 
         printer.print_update("Parsing expectations ...")
-        runner.parse_expectations()
+        manager.parse_expectations()
 
         printer.print_update("Checking build ...")
-        if not port.check_build(runner.needs_http()):
+        if not port.check_build(manager.needs_http()):
             _log.error("Build check failed")
             return -1
 
-        result_summary = runner.set_up_run()
+        result_summary = manager.set_up_run()
         if result_summary:
-            num_unexpected_results = runner.run(result_summary)
-            runner.clean_up_run()
+            num_unexpected_results = manager.run(result_summary)
+            manager.clean_up_run()
             _log.debug("Testing completed, Exit status: %d" %
                        num_unexpected_results)
     finally:
@@ -149,9 +150,9 @@ def _set_up_derived_options(port_obj, options):
 
     if not options.time_out_ms:
         if options.configuration == "Debug":
-            options.time_out_ms = str(2 * test_runner.TestRunner.DEFAULT_TEST_TIMEOUT_MS)
+            options.time_out_ms = str(2 * manager.Manager.DEFAULT_TEST_TIMEOUT_MS)
         else:
-            options.time_out_ms = str(test_runner.TestRunner.DEFAULT_TEST_TIMEOUT_MS)
+            options.time_out_ms = str(manager.Manager.DEFAULT_TEST_TIMEOUT_MS)
 
     options.slow_time_out_ms = str(5 * int(options.time_out_ms))
 

@@ -42,7 +42,7 @@ from webkitpy.layout_tests.layout_package import result_summary
 from webkitpy.layout_tests.layout_package import test_expectations
 from webkitpy.layout_tests.layout_package import test_failures
 from webkitpy.layout_tests.layout_package import test_results
-from webkitpy.layout_tests.layout_package import test_runner
+from webkitpy.layout_tests.layout_package import manager
 
 
 def get_options(args):
@@ -513,7 +513,7 @@ class  Testprinter(unittest.TestCase):
                 retry.add(self.get_result('passes/text.html'), True)
                 retry.add(self.get_result('failures/expected/timeout.html'), True)
                 retry.add(self.get_result('failures/expected/crash.html'), True)
-            unexpected_results = test_runner.summarize_results(self._port, exp, rs, retry, test_timings={}, only_unexpected=True)
+            unexpected_results = manager.summarize_results(self._port, exp, rs, retry, test_timings={}, only_unexpected=True)
             return unexpected_results
 
         tests = ['passes/text.html', 'failures/expected/timeout.html',
