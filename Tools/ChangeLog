@@ -1,3 +1,13 @@
+2011-04-21  Tony Chang  <tony@chromium.org>
+
+        Reviewed by Mihai Parparita.
+
+        Remove find-mismatched-layout-test-results since it's not needed in a
+        checksum free world.
+        https://bugs.webkit.org/show_bug.cgi?id=59156
+
+        * Scripts/find-mismatched-layout-test-results: Removed.
+
 2011-04-21  Brent Fulgham  <bfulgham@webkit.org>
 
         Reviewed by Martin Robinson.
