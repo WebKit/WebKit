@@ -291,6 +291,12 @@ Element.prototype.offsetRelativeToWindow = function(targetWindow)
     return elementOffset;
 }
 
+Element.prototype.setTextAndTitle = function(text)
+{
+    this.textContent = text;
+    this.title = text;
+}
+
 KeyboardEvent.prototype.__defineGetter__("data", function()
 {
     // Emulate "data" attribute from DOM 3 TextInput event.

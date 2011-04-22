@@ -156,29 +156,29 @@ WebInspector.NetworkPanel.prototype = {
 
         columns.method.title = WebInspector.UIString("Method");
         columns.method.sortable = true;
-        columns.method.width = "7%";
+        columns.method.width = "6%";
 
         columns.status.titleDOMFragment = this._makeHeaderFragment(WebInspector.UIString("Status"), WebInspector.UIString("Text"));
         columns.status.sortable = true;
-        columns.status.width = "8%";
+        columns.status.width = "6%";
 
         columns.type.title = WebInspector.UIString("Type");
         columns.type.sortable = true;
-        columns.type.width = "10%";
+        columns.type.width = "6%";
 
         columns.size.titleDOMFragment = this._makeHeaderFragment(WebInspector.UIString("Size"), WebInspector.UIString("Transfer"));
         columns.size.sortable = true;
-        columns.size.width = "10%";
+        columns.size.width = "6%";
         columns.size.aligned = "right";
 
         columns.time.titleDOMFragment = this._makeHeaderFragment(WebInspector.UIString("Time"), WebInspector.UIString("Latency"));
         columns.time.sortable = true;
-        columns.time.width = "10%";
+        columns.time.width = "6%";
         columns.time.aligned = "right";
 
         columns.timeline.title = "";
         columns.timeline.sortable = false;
-        columns.timeline.width = "37%";
+        columns.timeline.width = "50%";
         columns.timeline.sort = "ascending";
 
         this._dataGrid = new WebInspector.DataGrid(columns);
@@ -957,12 +957,12 @@ WebInspector.NetworkPanel.prototype = {
 
             var widths = {};
             widths.name = 20;
-            widths.method = 7;
-            widths.status = 8;
-            widths.type = 10;
-            widths.size = 10;
-            widths.time = 10;
-            widths.timeline = 37;
+            widths.method = 6;
+            widths.status = 6;
+            widths.type = 6;
+            widths.size = 6;
+            widths.time = 6;
+            widths.timeline = 50;
         }
 
         this._dataGrid.showColumn("timeline");
@@ -1465,16 +1465,16 @@ WebInspector.NetworkDataGridNode.prototype = {
     {
         this._refreshNameCell();
 
-        this._methodCell.textContent = this._resource.requestMethod;
+        this._methodCell.setTextAndTitle(this._resource.requestMethod);
 
         this._refreshStatusCell();
 
         if (this._resource.mimeType) {
             this._typeCell.removeStyleClass("network-dim-cell");
-            this._typeCell.textContent = this._resource.mimeType;
+            this._typeCell.setTextAndTitle(this._resource.mimeType);
         } else {
             this._typeCell.addStyleClass("network-dim-cell");
-            this._typeCell.textContent = WebInspector.UIString("Pending");
+            this._typeCell.setTextAndTitle(WebInspector.UIString("Pending"));
         }
 
         this._refreshSizeCell();
@@ -1535,17 +1535,17 @@ WebInspector.NetworkDataGridNode.prototype = {
         this._statusCell.removeChildren();
 
         if (this._resource.failed) {
-            if (this._resource.canceled) 
-                this._statusCell.textContent = WebInspector.UIString("(canceled)");
+            if (this._resource.canceled)
+                this._statusCell.setTextAndTitle(WebInspector.UIString("(canceled)"));
             else
-                this._statusCell.textContent = WebInspector.UIString("(failed)");
+                this._statusCell.setTextAndTitle(WebInspector.UIString("(failed)"));
             this._statusCell.addStyleClass("network-dim-cell");
             return;
         }
 
         var fromCache = this._resource.cached;
         if (fromCache) {
-            this._statusCell.textContent = WebInspector.UIString("(from cache)");
+            this._statusCell.setTextAndTitle(WebInspector.UIString("(from cache)"));
             this._statusCell.addStyleClass("network-dim-cell");
             return;
         }
@@ -1558,9 +1558,9 @@ WebInspector.NetworkDataGridNode.prototype = {
             this._statusCell.title = this._resource.statusCode + " " + this._resource.statusText;
         } else {
             if (this._resource.isDataURL() && this._resource.finished)
-                this._statusCell.textContent = WebInspector.UIString("(data url)");
+                this._statusCell.setTextAndTitle(WebInspector.UIString("(data url)"));
             else
-                this._statusCell.textContent = WebInspector.UIString("Pending");
+                this._statusCell.setTextAndTitle(WebInspector.UIString("(Pending)"));
             this._statusCell.addStyleClass("network-dim-cell");
         }
     },
@@ -1570,7 +1570,7 @@ WebInspector.NetworkDataGridNode.prototype = {
         var resourceSize = typeof this._resource.resourceSize === "number" ? Number.bytesToString(this._resource.resourceSize) : "?";
         var transferSize = typeof this._resource.transferSize === "number" ? Number.bytesToString(this._resource.transferSize) : "?";
         var fromCache = this._resource.cached;
-        this._sizeCell.textContent = !fromCache ? resourceSize : WebInspector.UIString("(from cache)");
+        this._sizeCell.setTextAndTitle(!fromCache ? resourceSize : WebInspector.UIString("(from cache)"));
         if (fromCache)
             this._sizeCell.addStyleClass("network-dim-cell");
         else
@@ -1583,11 +1583,11 @@ WebInspector.NetworkDataGridNode.prototype = {
     {
         if (this._resource.duration > 0) {
             this._timeCell.removeStyleClass("network-dim-cell");
-            this._timeCell.textContent = Number.secondsToString(this._resource.duration);
+            this._timeCell.setTextAndTitle(Number.secondsToString(this._resource.duration));
             this._appendSubtitle(this._timeCell, Number.secondsToString(this._resource.latency));
         } else {
             this._timeCell.addStyleClass("network-dim-cell");
-            this._timeCell.textContent = WebInspector.UIString("Pending");
+            this._timeCell.setTextAndTitle(WebInspector.UIString("Pending"));
         }
     },
 

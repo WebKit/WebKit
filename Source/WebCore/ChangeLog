@@ -1,3 +1,23 @@
+2011-04-22  Annie Sullivan  <sullivan@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: Timeline is too narrow
+        https://bugs.webkit.org/show_bug.cgi?id=58399
+
+        Changed Network Panel widths so that Timeline is 50%.
+        Added titles to the values in the other columns, so that a tooltip will show the value if the column is too narrow.
+
+        * inspector/front-end/NetworkPanel.js:
+        (WebInspector.NetworkPanel.prototype._createTable):  Changed column widths.
+        (WebInspector.NetworkPanel.prototype._toggleGridMode): Changed column widths.
+        (WebInspector.NetworkDataGridNode.prototype.refreshResource): Added titles to column values.
+        (WebInspector.NetworkDataGridNode.prototype._refreshStatusCell): Ditto
+        (WebInspector.NetworkDataGridNode.prototype._refreshSizeCell): Ditto
+        (WebInspector.NetworkDataGridNode.prototype._refreshTimeCell): Ditto
+        * inspector/front-end/utilities.js:
+        (Element.prototype.setTextAndTitle): Added new method to set the textContent and title of an Element at the same time, so that it can have a tooltip.
+
 2011-04-22  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Maciej Stachowiak.
