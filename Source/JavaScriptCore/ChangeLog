@@ -1,3 +1,17 @@
+2011-04-21  Vitaly Repeshko  <vitalyr@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        Provide default constructors for HashMap iterators.
+        https://bugs.webkit.org/show_bug.cgi?id=59151
+
+        These will be used to implement an iterator over EventTarget's
+        listeners.
+
+        * wtf/HashTable.h:
+        (WTF::HashTableConstIteratorAdapter::HashTableConstIteratorAdapter):
+        (WTF::HashTableIteratorAdapter::HashTableIteratorAdapter):
+
 2011-04-22  Gavin Barraclough  <barraclough@apple.com>
 
         Reviewed by Geoff Garen.
