@@ -1,5 +1,12 @@
 2011-04-21  Dirk Pranke  <dpranke@chromium.org>
 
+        Unreviewed, expectations change - new baselines needed as
+        a result of r84589.
+
+        * platform/chromium/test_expectations.txt:
+
+2011-04-21  Dirk Pranke  <dpranke@chromium.org>
+
         Unreviewed, expectations change. Triage failure for
         media/video-zoom.html on chromium gpu bots.
 
