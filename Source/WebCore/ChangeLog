@@ -1,3 +1,33 @@
+2011-04-21  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Adam Roben.
+
+        Add a feature define to allow <details> and <summary> to be disabled
+        https://bugs.webkit.org/show_bug.cgi?id=59118
+        <rdar://problem/9257045>
+
+        No new tests; no behavior change.
+
+        * Configurations/FeatureDefines.xcconfig:
+        * DerivedSources.make:
+        * GNUmakefile.am:
+        * features.pri:
+        * html/HTMLDetailsElement.cpp:
+        * html/HTMLSummaryElement.cpp:
+        * html/HTMLTagNames.in:
+        * html/shadow/DetailsMarkerControl.cpp:
+        * rendering/RenderBlock.cpp:
+        (WebCore::canMergeContiguousAnonymousBlocks):
+        * rendering/RenderDetails.cpp:
+        * rendering/RenderDetails.h:
+        * rendering/RenderDetailsMarker.cpp:
+        * rendering/RenderDetailsMarker.h:
+        * rendering/RenderObject.h:
+        * rendering/RenderSummary.cpp:
+        * rendering/RenderSummary.h:
+        * rendering/RenderTreeAsText.cpp:
+        (WebCore::RenderTreeAsText::writeRenderObject):
+
 2011-04-21  Dimitri Glazkov  <dglazkov@chromium.org>
 
         Reviewed by Adele Peterson.

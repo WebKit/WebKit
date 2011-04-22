@@ -374,6 +374,7 @@ void RenderTreeAsText::writeRenderObject(TextStream& ts, const RenderObject& o, 
         ts << " [r=" << c.row() << " c=" << c.col() << " rs=" << c.rowSpan() << " cs=" << c.colSpan() << "]";
     }
 
+#if ENABLE(DETAILS)
     if (o.isDetailsMarker()) {
         ts << ": ";
         switch (toRenderDetailsMarker(&o)->orientation()) {
@@ -391,6 +392,7 @@ void RenderTreeAsText::writeRenderObject(TextStream& ts, const RenderObject& o, 
             break;
         }
     }
+#endif
 
     if (o.isListMarker()) {
         String text = toRenderListMarker(&o)->text();

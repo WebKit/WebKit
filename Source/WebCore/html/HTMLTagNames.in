@@ -36,7 +36,7 @@ dcol interfaceName=HTMLDataGridColElement, conditional=DATAGRID
 drow interfaceName=HTMLDataGridRowElement, conditional=DATAGRID
 dd interfaceName=HTMLElement
 del interfaceName=HTMLModElement
-details
+details conditional=DETAILS
 dfn interfaceName=HTMLElement
 dir interfaceName=HTMLDirectoryElement
 div
@@ -115,7 +115,7 @@ strike interfaceName=HTMLElement
 strong interfaceName=HTMLElement
 style constructorNeedsCreatedByParser
 sub interfaceName=HTMLElement
-summary interfaceName=HTMLSummaryElement, JSInterfaceName=HTMLElement
+summary interfaceName=HTMLSummaryElement, JSInterfaceName=HTMLElement, conditional=DETAILS
 sup interfaceName=HTMLElement
 table
 tbody interfaceName=HTMLTableSectionElement

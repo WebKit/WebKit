@@ -145,6 +145,14 @@ webcore_cppflags += -DENABLE_DATAGRID=1
 endif
 
 # ----
+# HTML Details Element
+# ----
+if ENABLE_DETAILS
+FEATURE_DEFINES += ENABLE_DETAILS=1
+webcore_cppflags += -DENABLE_DETAILS=1
+endif # END ENABLE_DETAILS
+
+# ----
 # HTML Meter Element
 # ----
 if ENABLE_METER_TAG

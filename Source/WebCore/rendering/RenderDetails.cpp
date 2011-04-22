@@ -21,6 +21,8 @@
 #include "config.h"
 #include "RenderDetails.h"
 
+#if ENABLE(DETAILS)
+
 #include "CSSStyleSelector.h"
 #include "HTMLDetailsElement.h"
 #include "HTMLNames.h"
@@ -160,3 +162,5 @@ bool RenderDetails::isOpen() const
 }
 
 } // namespace WebCore
+
+#endif

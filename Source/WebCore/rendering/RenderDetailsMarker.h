@@ -21,6 +21,8 @@
 #ifndef RenderDetailsMarker_h
 #define RenderDetailsMarker_h
 
+#if ENABLE(DETAILS)
+
 #include "RenderBlock.h"
 
 namespace WebCore {
@@ -62,6 +64,8 @@ inline const RenderDetailsMarker* toRenderDetailsMarker(const RenderObject* obje
 void toRenderDetailsMarker(const RenderDetailsMarker*);
 
 }
+
+#endif
 
 #endif // RenderDetailsMarker_h
 

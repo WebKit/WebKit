@@ -1,3 +1,13 @@
+2011-04-21  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Adam Roben.
+
+        Add a feature define to allow <details> and <summary> to be disabled
+        https://bugs.webkit.org/show_bug.cgi?id=59118
+        <rdar://problem/9257045>
+
+        * configure.ac:
+
 2011-04-18  Evan Martin  <evan@chromium.org>
 
         Reviewed by Eric Seidel.

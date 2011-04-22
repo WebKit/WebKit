@@ -21,6 +21,8 @@
 #include "config.h"
 #include "HTMLSummaryElement.h"
 
+#if ENABLE(DETAILS)
+
 #include "DetailsMarkerControl.h"
 #include "HTMLDetailsElement.h"
 #include "HTMLNames.h"
@@ -89,3 +91,5 @@ void HTMLSummaryElement::defaultEventHandler(Event* event)
 }
 
 }
+
+#endif

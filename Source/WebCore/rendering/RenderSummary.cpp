@@ -21,6 +21,8 @@
 #include "config.h"
 #include "RenderSummary.h"
 
+#if ENABLE(DETAILS)
+
 #include "RenderDetails.h"
 
 namespace WebCore {
@@ -59,3 +61,5 @@ void RenderSummary::styleDidChange(StyleDifference diff, const RenderStyle* oldS
 }
 
 }
+
+#endif

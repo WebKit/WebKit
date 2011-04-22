@@ -252,8 +252,10 @@ public:
     virtual bool isBoxModelObject() const { return false; }
     virtual bool isCounter() const { return false; }
     virtual bool isQuote() const { return false; }
+#if ENABLE(DETAILS)
     virtual bool isDetails() const { return false; }
     virtual bool isDetailsMarker() const { return false; }
+#endif
     virtual bool isEmbeddedObject() const { return false; }
     virtual bool isFieldset() const { return false; }
     virtual bool isFileUploadControl() const { return false; }
@@ -287,7 +289,9 @@ public:
     virtual bool isRubyText() const { return false; }
 
     virtual bool isSlider() const { return false; }
+#if ENABLE(DETAILS)
     virtual bool isSummary() const { return false; }
+#endif
     virtual bool isTable() const { return false; }
     virtual bool isTableCell() const { return false; }
     virtual bool isTableCol() const { return false; }

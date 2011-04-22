@@ -21,6 +21,8 @@
 #ifndef RenderSummary_h
 #define RenderSummary_h
 
+#if ENABLE(DETAILS)
+
 #include "RenderBlock.h"
 
 namespace WebCore {
@@ -51,6 +53,8 @@ inline RenderSummary* toRenderSummary(RenderObject* object)
 void toRenderSummary(const RenderSummary*);
 
 }
+
+#endif
 
 #endif // RenderSummary_h
 

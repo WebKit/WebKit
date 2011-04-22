@@ -21,6 +21,8 @@
 #ifndef RenderDetails_h
 #define RenderDetails_h
 
+#if ENABLE(DETAILS)
+
 #include "RenderFlexibleBox.h"
 #include "Timer.h"
 #include <wtf/OwnPtr.h>
@@ -73,5 +75,7 @@ inline RenderDetails* toRenderDetails(RenderObject* object)
 void toRenderDetails(const RenderDetails*);
 
 } // namespace WebCore
+
+#endif
 
 #endif // RenderDetails_h
