@@ -1,3 +1,15 @@
+2011-04-22  Jon Honeycutt  <jhoneycutt@apple.com>
+
+        WinCairo build fix. Unreviewed.
+
+        * WebProcess/Downloads/curl/DownloadCurl.cpp:
+        (WebKit::Download::useCredential):
+        Stubbed.
+        (WebKit::Download::continueWithoutCredential):
+        Stubbed.
+        (WebKit::Download::cancelAuthenticationChallenge):
+        Stubbed.
+
 2011-04-21  Jon Honeycutt  <jhoneycutt@apple.com>
 
         Need to support authentication for downloads in WebKit2 on Windows

@@ -73,4 +73,19 @@ void Download::receivedCancellation(const AuthenticationChallenge& authenticatio
     notImplemented();
 }
 
+void Download::useCredential(const AuthenticationChallenge&, const Credential&)
+{
+    notImplemented();
+}
+
+void Download::continueWithoutCredential(const AuthenticationChallenge&)
+{
+    notImplemented();
+}
+
+void Download::cancelAuthenticationChallenge(const AuthenticationChallenge&)
+{
+    notImplemented();
+}
+
 } // namespace WebKit
