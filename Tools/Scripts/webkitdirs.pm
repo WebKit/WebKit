@@ -210,6 +210,10 @@ sub determineConfiguration
     } else {
         $configuration = "Release";
     }
+
+    if ($configuration && isWinCairo()) {
+        $configuration .= "_Cairo_CFLite";
+    }
 }
 
 sub determineArchitecture

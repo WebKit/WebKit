@@ -1,3 +1,21 @@
+2011-04-21  Brent Fulgham  <bfulgham@webkit.org>
+
+        Reviewed by Martin Robinson.
+
+        Teach build-webkit and update-webkit that the WinCairo port does
+        not need the non-redistributable WebKitSupportLibraries.zip file.
+        Also append the _Cairo_CFLite label to the build target for the
+        default (no argument) case when building with '--wincairo'
+    
+        https://bugs.webkit.org/show_bug.cgi?id=58801
+
+        * Scripts/build-webkit: Don't die if WebKitSupportLibraries.zip
+          doesn't exist.
+        * Scripts/webkitdirs.pm: Append '_Cairo_CFLite' to the default
+          'Release' build target when passed the '--wincairo' flag.
+        * Scripts/update-webkit: Don't die if WebKitSupportLibraries.zip
+          doesn't exist.
+
 2011-04-21  Dirk Pranke  <dpranke@chromium.org>
 
         Reviewed by Eric Seidel.
