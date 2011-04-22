@@ -1,3 +1,12 @@
+2011-04-22  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [Qt] REGRESSION(r84296): platform/qt/fast/history/back-to-unreachable-url-then-forward.html fails
+        https://bugs.webkit.org/show_bug.cgi?id=58977
+
+        r84604 fixed the bug, so we can unskip it.
+
+        * platform/qt/Skipped: Unskip platform/qt/fast/history/back-to-unreachable-url-then-forward.html.
+
 2011-04-22  Roland Steiner  <rolandsteiner@chromium.org>
 
         Unreviewed: Updated Chromium expectations after WK r84606
