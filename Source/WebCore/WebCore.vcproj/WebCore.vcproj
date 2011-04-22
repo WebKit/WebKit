@@ -26497,6 +26497,14 @@
 					>
 				</File>
 				<File
+					RelativePath="..\platform\win\DelayLoadedModulesEnumerator.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\platform\win\DelayLoadedModulesEnumerator.h"
+					>
+				</File>
+				<File
 					RelativePath="..\platform\win\DragDataWin.cpp"
 					>
 				</File>
@@ -26585,6 +26593,26 @@
 					>
 				</File>
 				<File
+					RelativePath="..\platform\win\ImportedFunctionsEnumerator.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\platform\win\ImportedFunctionsEnumerator.h"
+					>
+				</File>
+				<File
+					RelativePath="..\platform\win\ImportedModulesEnumerator.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\platform\win\ImportedModulesEnumerator.h"
+					>
+				</File>
+				<File
+					RelativePath="..\platform\win\ImportedModulesEnumeratorBase.h"
+					>
+				</File>
+				<File
 					RelativePath="..\platform\win\KeyEventWin.cpp"
 					>
 				</File>
@@ -26614,6 +26642,14 @@
 				</File>
 				<File
 					RelativePath="..\platform\win\PathWalker.h"
+					>
+				</File>
+				<File
+					RelativePath="..\platform\win\PEImage.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\platform\win\PEImage.h"
 					>
 				</File>
 				<File

@@ -1,5 +1,87 @@
 2011-04-21  Adam Roben  <aroben@apple.com>
 
+        Add code to enumerate all the functions imported by a particular Windows binary
+
+        PEImage is where all the logic starts. It represents a single Portable Executable (PE)
+        binary. The various enumerator classes are used in conjunction with PEImage to enumerate the
+        modules and functions imported by that image.
+
+        I couldn't figure out how to write a test for this. :-(
+
+        Part of <http://webkit.org/b/51063> <rdar://problem/8769281> REGRESSION (WebKit2): No
+        context menu appears when right-clicking on windowless Flash plugin
+
+        Reviewed by Sam Weinig, and given a good once-over by Jeff Miller.
+
+        * WebCore.vcproj/WebCore.vcproj: Added the new files.
+
+        * platform/win/PEImage.cpp: Added.
+        (WebCore::PEImage::PEImage): Checks that the module contains the expected magic numbers,
+        then initializes m_ntHeaders using the module.
+        (WebCore::PEImage::convertRVAToAddress): Converts a relative virtual address (RVA) to a
+        non-relative address, which can then be dereferenced. (The PE format uses RVAs in lots of
+        places.)
+        (WebCore::PEImage::dataDirectoryEntryAddress): Returns the address of the data associated
+        with the given entry in the image's DataDirectory.
+
+        * platform/win/PEImage.h: Added.
+        (WebCore::PEImage::isValid): We're a valid image if the validation code in our constructor
+        succeeded, in which case m_ntHeaders will be set.
+
+        * platform/win/ImportedFunctionsEnumerator.cpp: Added. This class enumerates all the
+        functions imported by the image from a single module by walking the Import Name Table (INT)
+        and Import Address Table (IAT).
+        (WebCore::ImportedFunctionsEnumerator::ImportedFunctionsEnumerator): Initialize our members.
+        (WebCore::ImportedFunctionsEnumerator::isAtEnd): The INT and IAT are both 0-terminated
+        arrays.
+        (WebCore::ImportedFunctionsEnumerator::next): Step to the next entries in the INT and IAT.
+        (WebCore::ImportedFunctionsEnumerator::currentFunctionName): Gets the address of the
+        function's name, if possible, using the INT.
+        (WebCore::ImportedFunctionsEnumerator::addressOfCurrentFunctionPointer): Returns the address
+        of the function pointer for the current function. This function pointer is used whenever
+        code in m_image calls the current function. (A future patch will take advantage of this by
+        overwriting this function pointer with another, thereby redirecting calls to that function.)
+
+        * platform/win/ImportedFunctionsEnumerator.h: Added.
+
+        * platform/win/ImportedModulesEnumeratorBase.h: Added. This base class is used by
+        ImportedModulesEnumerator and DelayLoadedModulesEnumerator, and allows code to be written
+        that works with either one.
+
+        * platform/win/ImportedModulesEnumerator.cpp: Added. This class enumerates all the
+        non-delay-loaded modules imported by the image by walking the image's import array.
+        (WebCore::ImportedModulesEnumerator::ImportedModulesEnumerator): Module import information
+        is stored in the IMAGE_DIRECTORY_ENTRY_IMPORT entry of the image's DataDirectory.
+        (WebCore::ImportedModulesEnumerator::isAtEnd): The import array is 0-terminated.
+        (WebCore::ImportedModulesEnumerator::next): Steps along the import array.
+        (WebCore::ImportedModulesEnumerator::currentModuleName): Gets the address of the module's
+        name.
+        (WebCore::ImportedModulesEnumerator::functionsEnumerator): Get's the addresses of the INT
+        and IAT for this module and wraps them in an ImportedFunctionsEnumerator.
+
+        * platform/win/ImportedModulesEnumerator.h: Added.
+
+        * platform/win/DelayLoadedModulesEnumerator.cpp: Added. This class enumerates all the
+        delay-loaded modules that are imported by the given PEImage by walking the image's
+        ImageDelayDescr array.
+        (WebCore::DelayLoadedModulesEnumerator::DelayLoadedModulesEnumerator): Delay-load
+        information is stored in the IMAGE_DIRECTORY_ENTRY_DELAY_IMPORT entry of the image's
+        DataDirectory.
+        (WebCore::DelayLoadedModulesEnumerator::isAtEnd): The delay-loaded modules array is
+        0-terminated.
+        (WebCore::DelayLoadedModulesEnumerator::next): Steps along the delay-loaded modules array.
+        (WebCore::DelayLoadedModulesEnumerator::currentModuleName): Gets the address of the module's
+        name out of the descriptor.
+        (WebCore::DelayLoadedModulesEnumerator::functionsEnumerator): Gets the INT and IAT for the
+        current module out of the descriptor and makes an ImportedFunctionsEnumerator from them.
+        (WebCore::DelayLoadedModulesEnumerator::convertPotentialRVAToAddress): Pre-VC7.0 images
+        stored non-relative addresses in the ImageDelayDescr structures, while VC7.0 and later
+        images store RVAs. This function abstracts away the difference.
+
+        * platform/win/DelayLoadedModulesEnumerator.h: Added.
+
+2011-04-21  Adam Roben  <aroben@apple.com>
+
         Add a shared do-nothing window class that anyone can use
 
         Fixes <http://webkit.org/b/59102> WebKit has too many dummy window classes
