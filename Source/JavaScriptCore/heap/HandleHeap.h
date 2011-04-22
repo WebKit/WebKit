@@ -173,8 +173,8 @@ inline HandleSlot HandleHeap::copyWeak(HandleSlot other)
 {
     Node* node = toNode(allocate());
     node->makeWeak(toNode(other)->weakOwner(), toNode(other)->weakOwnerContext());
-    writeBarrier(node->slot(), *other);
-    *node->slot() = *other;
+    writeBarrier(node->slot(), other->toJSValue());
+    node->slot()->fromJSValue(other->toJSValue());
     return toHandle(node);
 }
 
@@ -184,7 +184,7 @@ inline void HandleHeap::makeWeak(HandleSlot handle, WeakHandleOwner* weakOwner, 
     node->makeWeak(weakOwner, context);
 
     SentinelLinkedList<Node>::remove(node);
-    if (!*handle || !handle->isCell()) {
+    if (!handle->toJSValue() || !handle->toJSValue().isCell()) {
         m_immediateList.push(node);
         return;
     }
@@ -215,7 +215,7 @@ inline HandleHeap::Node::Node(WTF::SentinelTag)
 
 inline HandleSlot HandleHeap::Node::slot()
 {
-    return &m_value;
+    return reinterpret_cast<HandleSlot>(&m_value);
 }
 
 inline HandleHeap* HandleHeap::Node::handleHeap()

@@ -1,3 +1,56 @@
+2011-04-22  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Geoffrey Garen.
+
+        Make it harder to use HandleSlot incorrectly
+        https://bugs.webkit.org/show_bug.cgi?id=59205
+
+        Just add a little type fudging to make it harder to
+        incorrectly assign through a HandleSlot.
+
+        * API/JSCallbackObjectFunctions.h:
+        (JSC::::init):
+        * JavaScriptCore.exp:
+        * heap/Handle.h:
+        (JSC::HandleBase::operator!):
+        (JSC::HandleBase::operator UnspecifiedBoolType*):
+        (JSC::HandleTypes::getFromSlot):
+        * heap/HandleHeap.cpp:
+        (JSC::HandleHeap::markStrongHandles):
+        (JSC::HandleHeap::markWeakHandles):
+        (JSC::HandleHeap::finalizeWeakHandles):
+        (JSC::HandleHeap::writeBarrier):
+        (JSC::HandleHeap::protectedGlobalObjectCount):
+        (JSC::HandleHeap::isValidWeakNode):
+        * heap/HandleHeap.h:
+        (JSC::HandleHeap::copyWeak):
+        (JSC::HandleHeap::makeWeak):
+        (JSC::HandleHeap::Node::slot):
+        * heap/HandleStack.cpp:
+        (JSC::HandleStack::mark):
+        (JSC::HandleStack::grow):
+        * heap/HandleStack.h:
+        (JSC::HandleStack::zapTo):
+        (JSC::HandleStack::push):
+        * heap/Heap.cpp:
+        (JSC::HandleHeap::protectedObjectTypeCounts):
+        * heap/Local.h:
+        (JSC::::set):
+        * heap/Strong.h:
+        (JSC::Strong::set):
+        * heap/Weak.h:
+        (JSC::Weak::set):
+        * runtime/StructureTransitionTable.h:
+        (JSC::StructureTransitionTable::singleTransition):
+        (JSC::StructureTransitionTable::setSingleTransition):
+        * runtime/WeakGCMap.h:
+        (JSC::WeakGCMap::add):
+        (JSC::WeakGCMap::set):
+        * runtime/WriteBarrier.h:
+        (JSC::OpaqueJSValue::toJSValue):
+        (JSC::OpaqueJSValue::toJSValueRef):
+        (JSC::OpaqueJSValue::fromJSValue):
+
 2011-04-22  Patrick Gansterer  <paroga@webkit.org>
 
         Unreviewed. Build fix for ENABLE(INTERPRETER) after r84556.

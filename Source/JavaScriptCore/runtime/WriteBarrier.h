@@ -41,7 +41,13 @@ inline void writeBarrier(JSGlobalData&, const JSCell*, JSCell*)
 }
 
 typedef enum { } Unknown;
-typedef JSValue* HandleSlot;
+class OpaqueJSValue : private JSValue {
+public:
+    JSValue& toJSValue() { return *this; }
+    JSValue* toJSValueRef() { return this; }
+    void fromJSValue(const JSValue& value) { *this = static_cast<const OpaqueJSValue&>(value); }
+};
+typedef OpaqueJSValue* HandleSlot;
 
 template <typename T> struct JSValueChecker {
     static const bool IsJSValue = false;

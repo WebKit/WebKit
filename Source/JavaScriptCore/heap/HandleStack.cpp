@@ -41,21 +41,21 @@ HandleStack::HandleStack()
 
 void HandleStack::mark(HeapRootVisitor& heapRootMarker)
 {
-    const Vector<HandleSlot>& blocks = m_blockStack.blocks();
+    const Vector<JSValue*>& blocks = m_blockStack.blocks();
     size_t blockLength = m_blockStack.blockLength;
 
     int end = blocks.size() - 1;
     for (int i = 0; i < end; ++i) {
-        HandleSlot block = blocks[i];
+        JSValue* block = blocks[i];
         heapRootMarker.mark(block, blockLength);
     }
-    HandleSlot block = blocks[end];
+    JSValue* block = blocks[end];
     heapRootMarker.mark(block, m_frame.m_next - block);
 }
 
 void HandleStack::grow()
 {
-    HandleSlot block = m_blockStack.grow();
+    JSValue* block = m_blockStack.grow();
     m_frame.m_next = block;
     m_frame.m_end = block + m_blockStack.blockLength;
 }

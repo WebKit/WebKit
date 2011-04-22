@@ -140,7 +140,7 @@ private:
         ASSERT(slot());
         JSValue value = HandleTypes<T>::toJSValue(externalType);
         HandleHeap::heapFor(slot())->writeBarrier(slot(), value);
-        *slot() = value;
+        slot()->fromJSValue(value);
     }
 };
 

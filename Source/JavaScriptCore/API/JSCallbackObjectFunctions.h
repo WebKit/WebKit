@@ -96,7 +96,7 @@ void JSCallbackObject<Base>::init(ExecState* exec)
         HandleSlot slot = exec->globalData().allocateGlobalHandle();
         HandleHeap::heapFor(slot)->makeWeak(slot, m_callbackObjectData.get(), classRef());
         HandleHeap::heapFor(slot)->writeBarrier(slot, this);
-        *slot = this;
+        slot->fromJSValue(this);
     }
 }
 

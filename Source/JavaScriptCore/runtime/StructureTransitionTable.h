@@ -139,8 +139,8 @@ private:
     {
         ASSERT(isUsingSingleSlot());
         if (HandleSlot slot = this->slot()) {
-            if (*slot)
-                return reinterpret_cast<Structure*>(slot->asCell());
+            if (slot->toJSValue())
+                return reinterpret_cast<Structure*>(slot->toJSValue().asCell());
         }
         return 0;
     }
@@ -162,7 +162,7 @@ private:
             m_data = reinterpret_cast<intptr_t>(slot) | UsingSingleSlotFlag;
         }
         HandleHeap::heapFor(slot)->writeBarrier(slot, reinterpret_cast<JSCell*>(structure));
-        *slot = reinterpret_cast<JSCell*>(structure);
+        slot->fromJSValue(reinterpret_cast<JSCell*>(structure));
     }
 
     intptr_t m_data;
