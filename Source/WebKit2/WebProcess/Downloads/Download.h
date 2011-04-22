@@ -56,6 +56,7 @@ namespace WebCore {
 
 namespace WebKit {
 
+class DownloadAuthenticationClient;
 class SandboxExtension;
 class WebPage;
 
@@ -90,12 +91,17 @@ public:
 
 #if USE(CFNETWORK)
     const String& destination() const { return m_destination; }
+    DownloadAuthenticationClient* authenticationClient();
 #endif
 
     // Authentication
     static void receivedCredential(const WebCore::AuthenticationChallenge&, const WebCore::Credential&);
     static void receivedRequestToContinueWithoutCredential(const WebCore::AuthenticationChallenge&);
     static void receivedCancellation(const WebCore::AuthenticationChallenge&);
+
+    void useCredential(const WebCore::AuthenticationChallenge&, const WebCore::Credential&);
+    void continueWithoutCredential(const WebCore::AuthenticationChallenge&);
+    void cancelAuthenticationChallenge(const WebCore::AuthenticationChallenge&);
 
 private:
     Download(uint64_t downloadID, const WebCore::ResourceRequest&);
@@ -118,6 +124,7 @@ private:
     String m_bundlePath;
 #if USE(CFNETWORK)
     RetainPtr<CFURLDownloadRef> m_download;
+    RefPtr<DownloadAuthenticationClient> m_authenticationClient;
 #endif
 };
 

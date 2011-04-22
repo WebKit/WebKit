@@ -1,3 +1,62 @@
+2011-04-21  Jon Honeycutt  <jhoneycutt@apple.com>
+
+        Need to support authentication for downloads in WebKit2 on Windows
+        https://bugs.webkit.org/show_bug.cgi?id=59175
+        <rdar://problem/9206151>
+        <rdar://problem/8958280>
+
+        Reviewed by Maciej Stachowiak.
+
+        * WebProcess/Downloads/Download.cpp:
+        Include DownloadAuthenticationClient.h.
+
+        * WebProcess/Downloads/Download.h:
+        Declare a function to get or create the authentication client, a member
+        var to hold it, and functions that the client can call to use a
+        credential, continue without a credential, or cancel an auth challenge.
+
+        * WebProcess/Downloads/DownloadAuthenticationClient.cpp: Added.
+        (WebKit::DownloadAuthenticationClient::DownloadAuthenticationClient):
+        (WebKit::DownloadAuthenticationClient::receivedCredential):
+        Tell the Download to use the credential.
+        (WebKit::DownloadAuthenticationClient::receivedRequestToContinueWithoutCredential):
+        Tell the Download to continue with credentials.
+        (WebKit::DownloadAuthenticationClient::receivedCancellation):
+        Tell the Download to cancel the challenge.
+
+        * WebProcess/Downloads/DownloadAuthenticationClient.h: Added.
+        (WebKit::DownloadAuthenticationClient::create):
+        Return a new DownloadAuthenticationClient.
+        (WebKit::DownloadAuthenticationClient::detach):
+        Clear the Download.
+        (WebKit::DownloadAuthenticationClient::refAuthenticationClient):
+        (WebKit::DownloadAuthenticationClient::derefAuthenticationClient):
+
+        * WebProcess/Downloads/cfnet/DownloadCFNet.cpp:
+        (WebKit::Download::useCredential):
+        Create a CFURLCredentialRef from the WebCore credential, and tell
+        CFNetwork to use it for the auth challenge.
+        (WebKit::Download::continueWithoutCredential):
+        Call CFURLDownloadUseCredential with a null credential.
+        (WebKit::Download::cancelAuthenticationChallenge):
+        Cancel the download, and clear m_download.
+        (WebKit::Download::authenticationClient):
+        Create if needed and return a DownloadAuthenticationClient.
+        (WebKit::Download::platformInvalidate):
+        Detach the DownloadAuthenticationClient.
+        (WebKit::didReceiveAuthenticationChallengeCallback):
+        Call Download::didReceiveAuthenticationChallenge(), passing a
+        WebCore::AuthenticationChallenge with our DownloadAuthenticationClient.
+        (WebKit::Download::receivedCredential):
+        Get the client from the auth challenge, and call through to it.
+        (WebKit::Download::receivedRequestToContinueWithoutCredential):
+        Ditto.
+        (WebKit::Download::receivedCancellation):
+        Ditto.
+
+        * win/WebKit2.vcproj:
+        Add new files to project.
+
 2011-04-21  Alexey Proskuryakov  <ap@apple.com>
 
         Reviewed by Maciej Stachowiak.

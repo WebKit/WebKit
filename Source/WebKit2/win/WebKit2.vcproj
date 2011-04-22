@@ -2002,6 +2002,14 @@
 					>
 				</File>
 				<File
+					RelativePath="..\WebProcess\Downloads\DownloadAuthenticationClient.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\WebProcess\Downloads\DownloadAuthenticationClient.h"
+					>
+				</File>
+				<File
 					RelativePath="..\WebProcess\Downloads\DownloadManager.cpp"
 					>
 				</File>

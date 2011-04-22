@@ -29,6 +29,7 @@
 #include "AuthenticationManager.h"
 #include "Connection.h"
 #include "DataReference.h"
+#include "DownloadAuthenticationClient.h"
 #include "DownloadProxyMessages.h"
 #include "DownloadManager.h"
 #include "SandboxExtension.h"

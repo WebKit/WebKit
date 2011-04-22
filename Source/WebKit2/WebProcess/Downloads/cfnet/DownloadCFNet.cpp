@@ -27,8 +27,10 @@
 #include "Download.h"
 
 #include "DataReference.h"
+#include "DownloadAuthenticationClient.h"
 
 #pragma warning(push, 0)
+#include <WebCore/AuthenticationCF.h>
 #include <WebCore/DownloadBundle.h>
 #include <WebCore/LoaderRunLoopCF.h>
 #include <WebCore/NotImplemented.h>
@@ -53,6 +55,36 @@ static void decideDestinationWithSuggestedObjectNameCallback(CFURLDownloadRef do
 static void didCreateDestinationCallback(CFURLDownloadRef download, CFURLRef path, const void* clientInfo);
 static void didFinishCallback(CFURLDownloadRef download, const void* clientInfo);
 static void didFailCallback(CFURLDownloadRef download, CFErrorRef error, const void* clientInfo);
+
+void Download::useCredential(const WebCore::AuthenticationChallenge& challenge, const WebCore::Credential& credential)
+{
+    if (!m_download)
+        return;
+    RetainPtr<CFURLCredentialRef> cfCredential(AdoptCF, createCF(credential));
+    CFURLDownloadUseCredential(m_download.get(), cfCredential.get(), challenge.cfURLAuthChallengeRef());
+}
+
+void Download::continueWithoutCredential(const WebCore::AuthenticationChallenge& challenge)
+{
+    if (!m_download)
+        return;
+    CFURLDownloadUseCredential(m_download.get(), 0, challenge.cfURLAuthChallengeRef());
+}
+
+void Download::cancelAuthenticationChallenge(const WebCore::AuthenticationChallenge&)
+{
+    if (!m_download)
+        return;
+    CFURLDownloadCancel(m_download.get());
+    m_download = 0;
+}
+
+DownloadAuthenticationClient* Download::authenticationClient()
+{
+    if (!m_authenticationClient)
+        m_authenticationClient = DownloadAuthenticationClient::create(this);
+    return m_authenticationClient.get();
+}
 
 void Download::start(WebPage*)
 {
@@ -119,6 +151,8 @@ void Download::cancel()
 void Download::platformInvalidate()
 {
     m_download = nullptr;
+    if (m_authenticationClient)
+        m_authenticationClient->detach();
 }
 
 void Download::didDecideDestination(const String& destination, bool allowOverwrite)
@@ -155,9 +189,9 @@ CFURLRequestRef willSendRequestCallback(CFURLDownloadRef, CFURLRequestRef reques
 }
 
 void didReceiveAuthenticationChallengeCallback(CFURLDownloadRef, CFURLAuthChallengeRef challenge, const void* clientInfo)
-{ 
-    // FIXME: implement.
-    notImplemented();
+{
+    Download* download = downloadFromClientInfo(clientInfo);
+    download->didReceiveAuthenticationChallenge(AuthenticationChallenge(challenge, download->authenticationClient()));
 }
 
 void didReceiveResponseCallback(CFURLDownloadRef, CFURLResponseRef response, const void* clientInfo)
@@ -210,17 +244,20 @@ void didFailCallback(CFURLDownloadRef, CFErrorRef error, const void* clientInfo)
 
 void Download::receivedCredential(const AuthenticationChallenge& authenticationChallenge, const Credential& credential)
 {
-    notImplemented();
+    ASSERT(authenticationChallenge.authenticationClient());
+    authenticationChallenge.authenticationClient()->receivedCredential(authenticationChallenge, credential);
 }
 
 void Download::receivedRequestToContinueWithoutCredential(const AuthenticationChallenge& authenticationChallenge)
 {
-    notImplemented();
+    ASSERT(authenticationChallenge.authenticationClient());
+    authenticationChallenge.authenticationClient()->receivedRequestToContinueWithoutCredential(authenticationChallenge);
 }
 
 void Download::receivedCancellation(const AuthenticationChallenge& authenticationChallenge)
 {
-    notImplemented();
+    ASSERT(authenticationChallenge.authenticationClient());
+    authenticationChallenge.authenticationClient()->receivedCancellation(authenticationChallenge);
 }
 
 } // namespace WebKit
