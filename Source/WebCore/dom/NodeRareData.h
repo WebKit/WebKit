@@ -34,6 +34,7 @@
 
 namespace WebCore {
 
+class LabelsNodeList;
 class TreeScope;
 
 struct NodeListsNodeData {
@@ -56,7 +57,7 @@ public:
     typedef HashMap<RefPtr<QualifiedName::QualifiedNameImpl>, TagNodeList*> TagNodeListCacheNS;
     TagNodeListCacheNS m_tagNodeListCacheNS;
  
-    RefPtr<DynamicNodeList> m_labelsNodeListCache;
+    LabelsNodeList* m_labelsNodeListCache;
  
     static PassOwnPtr<NodeListsNodeData> create()
     {

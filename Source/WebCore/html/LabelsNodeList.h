@@ -32,14 +32,14 @@ namespace WebCore {
 
 class LabelsNodeList : public DynamicNodeList {
 public:
-    static PassRefPtr<LabelsNodeList> create(PassRefPtr<Node> forNode)
+    static PassRefPtr<LabelsNodeList> create(Node* forNode)
     {
         return adoptRef(new LabelsNodeList(forNode));
     }
     ~LabelsNodeList();
 
 protected:
-    LabelsNodeList(PassRefPtr<Node> forNode);
+    LabelsNodeList(Node* forNode);
 
     virtual bool nodeMatches(Element*) const;
 

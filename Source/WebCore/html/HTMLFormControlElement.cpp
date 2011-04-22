@@ -471,7 +471,12 @@ PassRefPtr<NodeList> HTMLFormControlElement::labels()
         document()->addNodeListCache();
     }
 
-    return LabelsNodeList::create(this);
+    if (data->nodeLists()->m_labelsNodeListCache)
+        return data->nodeLists()->m_labelsNodeListCache;
+
+    RefPtr<LabelsNodeList> list = LabelsNodeList::create(this);
+    data->nodeLists()->m_labelsNodeListCache = list.get();
+    return list.release();
 }
 
 HTMLFormControlElementWithState::HTMLFormControlElementWithState(const QualifiedName& tagName, Document* doc, HTMLFormElement* f)

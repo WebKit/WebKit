@@ -1,3 +1,13 @@
+2011-04-22  Yael Aharon  <yael.aharon@nokia.com>
+
+        Reviewed by Sam Weinig.
+
+        HTMLFormControlElement::labels should allow custom attributes.
+        https://bugs.webkit.org/show_bug.cgi?id=59128
+
+        * fast/forms/labels-custom-property-expected.txt: Added.
+        * fast/forms/labels-custom-property.html: Added.
+
 2011-04-22  Csaba Osztrogonác  <ossy@webkit.org>
 
         [Qt] REGRESSION(r84296): platform/qt/fast/history/back-to-unreachable-url-then-forward.html fails

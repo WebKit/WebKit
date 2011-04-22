@@ -1,3 +1,18 @@
+2011-04-22  Yael Aharon  <yael.aharon@nokia.com>
+
+        Reviewed by Sam Weinig.
+
+        HTMLFormControlElement::labels should allow custom attributes.
+        https://bugs.webkit.org/show_bug.cgi?id=59128
+
+        Cache the labels list when it is created and keep using it for future
+        labels calls.
+
+        Test: fast/forms/labels-custom-property.html
+
+        * html/HTMLFormControlElement.cpp:
+        (WebCore::HTMLFormControlElement::labels):
+
 2011-04-22  Adrienne Walker  <enne@google.com>
 
         Reviewed by James Robinson.
