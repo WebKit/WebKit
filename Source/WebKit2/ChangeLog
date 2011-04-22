@@ -2,6 +2,18 @@
 
         Reviewed by Maciej Stachowiak.
 
+        <rdar://problem/8774116>
+
+        The WebProcess sandbox should only allow access to the
+        parts of the Darwin cache directory needed by the Security
+        framework.
+
+        * WebProcess/com.apple.WebProcess.sb:
+
+2011-04-21  Ivan Krstić  <ike@apple.com>
+
+        Reviewed by Maciej Stachowiak.
+
         <rdar://problem/9311053>
 
         The WebProcess sandbox should not allow opening arbitrary

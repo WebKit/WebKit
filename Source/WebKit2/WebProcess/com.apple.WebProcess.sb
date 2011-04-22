@@ -87,9 +87,9 @@
     (subpath (string-append (param "HOME_DIR") "/Library/Keychains"))
 )
 
-;; Darwin temporary files and caches, if present
+;; Darwin temporary files and Security mds caches, if present
 (if (positive? (string-length (param "DARWIN_USER_CACHE_DIR")))
-    (allow file* (subpath (param "DARWIN_USER_CACHE_DIR"))))
+    (allow file* (subpath (string-append (param "DARWIN_USER_CACHE_DIR") "/mds"))))
 (if (positive? (string-length (param "DARWIN_USER_TEMP_DIR")))
     (allow file* (subpath (param "DARWIN_USER_TEMP_DIR"))))
 
