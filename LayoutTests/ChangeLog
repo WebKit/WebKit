@@ -1,3 +1,9 @@
+2011-04-22  Roland Steiner  <rolandsteiner@chromium.org>
+
+        Unreviewed: Chromium test expectations update.
+
+        * platform/chromium/test_expectations.txt:
+
 2011-04-22  Tony Chang  <tony@chromium.org>
 
         Unreviewed, deleting .checksum files in platform/mac.

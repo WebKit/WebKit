@@ -617,7 +617,7 @@ BUGCR8630 WIN LINUX : fast/repaint/body-background-image.html = FAIL
 
 // Relies on text metrics to pass. Rework to be meaningful for ports other than platform/mac.
 BUGCR8630 WIN LINUX : fast/repaint/overflow-outline-repaint.html = FAIL
-BUGCR8630 WIN LINUX RELEASE : fast/backgrounds/solid-color-context-restore.html = FAIL
+BUGCR8630 WIN LINUX : fast/backgrounds/solid-color-context-restore.html = FAIL
 BUGCR8630 WIN LINUX : fast/dynamic/containing-block-change.html = FAIL
 BUGCR8630 LINUX : fast/forms/listbox-clip.html = IMAGE+TEXT
 BUGCR8630 WIN LINUX : fast/overflow/hidden-scrollbar-resize.html = FAIL
@@ -3925,3 +3925,4 @@ BUGWK59172 : fast/html/details-remove-summary-6-and-click.html = IMAGE+TEXT
 BUGWK59172 : fast/html/details-remove-summary-6.html = IMAGE+TEXT
 BUGWK59172 : fast/html/details-writing-mode.html = IMAGE+TEXT
 
+BUGCR80301 MAC : fast/canvas/canvas-largedraws.html = TIMEOUT
