@@ -146,7 +146,6 @@
     (global-name "com.apple.window_proxies")
     (global-name "com.apple.windowserver.active")
     (global-name-regex #"^com\.apple\.WebKit\.WebProcess-")
-    (global-name-regex #"^com\.apple\.qtkitserver\.")
 
     ;; FIXME: This should be removed when <rdar://problem/9276393> is fixed.
     (global-name "com.apple.metadata.mds")
@@ -171,10 +170,6 @@
    (literal (string-append (param "HOME_DIR") "/Library/Preferences/com.apple.Safari.RSS.plist"))
    (literal (string-append (param "HOME_DIR") "/Library/Preferences/com.apple.Syndication.plist"))
 )
-
-;; FIXME: Investigate these.
-(allow appleevent-send (appleevent-destination "com.apple.WebProcess"))
-(allow mach-lookup (global-name-regex #"^EPPC-"))
 
 ;; Mute violations
 (deny file-write*

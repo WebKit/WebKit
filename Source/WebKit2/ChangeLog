@@ -2,6 +2,17 @@
 
         Reviewed by Maciej Stachowiak.
 
+        <rdar://problem/9311103>
+
+        Remove unnecessary QTKitServer and Apple Events permissions
+        from the WebProcess sandbox.
+
+        * WebProcess/com.apple.WebProcess.sb:
+
+2011-04-21  Ivan Krstić  <ike@apple.com>
+
+        Reviewed by Maciej Stachowiak.
+
         <rdar://problem/9033535>
 
         Mute sandbox violations when attempting to read a temporary
