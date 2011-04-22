@@ -46,7 +46,7 @@ void Graph::dump(NodeIndex nodeIndex, CodeBlock* codeBlock)
     Node& node = at(nodeIndex);
     NodeType op = node.op;
 
-    unsigned refCount = node.refCount;
+    unsigned refCount = node.refCount();
     if (!refCount)
         return;
     bool mustGenerate = node.mustGenerate();
@@ -70,7 +70,12 @@ void Graph::dump(NodeIndex nodeIndex, CodeBlock* codeBlock)
     //         $#   - the index in the CodeBlock of a constant { for numeric constants the value is displayed | for integers, in both decimal and hex }.
     //         id#  - the index in the CodeBlock of an identifier { if codeBlock is passed to dump(), the string representation is displayed }.
     //         var# - the index of a var on the global object, used by GetGlobalVar/PutGlobalVar operations.
-    printf("% 4d:\t<%c%u:%u>\t%s(", (int)nodeIndex, mustGenerate ? '!' : ' ', refCount, node.virtualRegister, dfgOpNames[op & NodeIdMask]);
+    printf("% 4d:\t<%c%u:", (int)nodeIndex, mustGenerate ? '!' : ' ', refCount);
+    if (node.hasResult())
+        printf("%u", node.virtualRegister());
+    else
+        printf("-");
+    printf(">\t%s(", dfgOpNames[op & NodeIdMask]);
     if (node.child1 != NoNode)
         printf("@%u", node.child1);
     if (node.child2 != NoNode)

@@ -71,15 +71,15 @@ public:
     {
         Node& node = at(nodeIndex);
         // If the value (before incrementing) was at refCount zero then we need to ref its children.
-        if (!node.refCount++)
+        if (node.ref())
             refChildren(nodeIndex);
     }
     void deref(NodeIndex nodeIndex)
     {
         Node& node = at(nodeIndex);
-        ASSERT(node.refCount);
+        ASSERT(node.refCount());
         // If the value (after decrementing) becomes refCount zero then we need to deref its children.
-        if (!--node.refCount)
+        if (node.deref())
             derefChildren(nodeIndex);
     }
 

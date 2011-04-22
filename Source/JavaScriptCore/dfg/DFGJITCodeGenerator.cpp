@@ -37,7 +37,7 @@ namespace JSC { namespace DFG {
 GPRReg JITCodeGenerator::fillInteger(NodeIndex nodeIndex, DataFormat& returnFormat)
 {
     Node& node = m_jit.graph()[nodeIndex];
-    VirtualRegister virtualRegister = node.virtualRegister;
+    VirtualRegister virtualRegister = node.virtualRegister();
     GenerationInfo& info = m_generationInfo[virtualRegister];
 
     if (info.registerFormat() == DataFormatNone) {
@@ -108,7 +108,7 @@ GPRReg JITCodeGenerator::fillInteger(NodeIndex nodeIndex, DataFormat& returnForm
 FPRReg JITCodeGenerator::fillDouble(NodeIndex nodeIndex)
 {
     Node& node = m_jit.graph()[nodeIndex];
-    VirtualRegister virtualRegister = node.virtualRegister;
+    VirtualRegister virtualRegister = node.virtualRegister();
     GenerationInfo& info = m_generationInfo[virtualRegister];
 
     if (info.registerFormat() == DataFormatNone) {
@@ -234,7 +234,7 @@ FPRReg JITCodeGenerator::fillDouble(NodeIndex nodeIndex)
 GPRReg JITCodeGenerator::fillJSValue(NodeIndex nodeIndex)
 {
     Node& node = m_jit.graph()[nodeIndex];
-    VirtualRegister virtualRegister = node.virtualRegister;
+    VirtualRegister virtualRegister = node.virtualRegister();
     GenerationInfo& info = m_generationInfo[virtualRegister];
 
     switch (info.registerFormat()) {
@@ -372,9 +372,15 @@ void JITCodeGenerator::dump(const char* label)
     for (unsigned i = 0; i < m_generationInfo.size(); ++i) {
         GenerationInfo& info = m_generationInfo[i];
         if (info.alive())
-            fprintf(stderr, "    % 3d:%s%s\n", i, dataFormatString(info.registerFormat()), dataFormatString(info.spillFormat()));
+            fprintf(stderr, "    % 3d:%s%s", i, dataFormatString(info.registerFormat()), dataFormatString(info.spillFormat()));
         else
-            fprintf(stderr, "    % 3d:[__][__]\n", i);
+            fprintf(stderr, "    % 3d:[__][__]", i);
+        if (info.registerFormat() == DataFormatDouble)
+            fprintf(stderr, ":fpr%d\n", info.fpr());
+        else if (info.registerFormat() != DataFormatNone)
+            fprintf(stderr, ":gpr%d\n", info.gpr());
+        else
+            fprintf(stderr, "\n");
     }
     if (label)
         fprintf(stderr, "</%s>\n", label);
@@ -385,13 +391,13 @@ void JITCodeGenerator::dump(const char* label)
 #if DFG_CONSISTENCY_CHECK
 void JITCodeGenerator::checkConsistency()
 {
-    VirtualRegister grpContents[numberOfGPRs];
-    VirtualRegister frpContents[numberOfFPRs];
+    VirtualRegister gprContents[numberOfGPRs];
+    VirtualRegister fprContents[numberOfFPRs];
 
     for (unsigned i = 0; i < numberOfGPRs; ++i)
-        grpContents[i] = InvalidVirtualRegister;
+        gprContents[i] = InvalidVirtualRegister;
     for (unsigned i = 0; i < numberOfFPRs; ++i)
-        frpContents[i] = InvalidVirtualRegister;
+        fprContents[i] = InvalidVirtualRegister;
     for (unsigned i = 0; i < m_generationInfo.size(); ++i) {
         GenerationInfo& info = m_generationInfo[i];
         if (!info.alive())
@@ -407,29 +413,44 @@ void JITCodeGenerator::checkConsistency()
         case DataFormatJSCell: {
             GPRReg gpr = info.gpr();
             ASSERT(gpr != InvalidGPRReg);
-            grpContents[gpr] = (VirtualRegister)i;
+            gprContents[gpr] = (VirtualRegister)i;
             break;
         }
         case DataFormatDouble: {
             FPRReg fpr = info.fpr();
             ASSERT(fpr != InvalidFPRReg);
-            frpContents[fpr] = (VirtualRegister)i;
+            fprContents[fpr] = (VirtualRegister)i;
             break;
         }
         }
     }
 
+    bool failed = false;
+
     for (GPRReg i = gpr0; i < numberOfGPRs; next(i)) {
-        if (m_gprs.isLocked(i) || m_gprs.name(i) != grpContents[i]) {
-            dump();
-            CRASH();
+        if (m_gprs.isLocked(i)) {
+            fprintf(stderr, "DFG_CONSISTENCY_CHECK failed: gpr%d is locked.\n", i);
+            failed = true;
+        }
+        if (m_gprs.name(i) != gprContents[i]) {
+            fprintf(stderr, "DFG_CONSISTENCY_CHECK failed: name mismatch for gpr%d (%d != %d).\n", i, m_gprs.name(i), gprContents[i]);
+            failed = true;
         }
     }
     for (FPRReg i = fpr0; i < numberOfFPRs; next(i)) {
-        if (m_fprs.isLocked(i) || m_fprs.name(i) != frpContents[i]) {
-            dump();
-            CRASH();
+        if (m_fprs.isLocked(i)) {
+            fprintf(stderr, "DFG_CONSISTENCY_CHECK failed: fpr%d is locked.\n", i);
+            failed = true;
         }
+        if (m_fprs.name(i) != fprContents[i]) {
+            fprintf(stderr, "DFG_CONSISTENCY_CHECK failed: name mismatch for fpr%d (%d != %d).\n", i, m_fprs.name(i), fprContents[i]);
+            failed = true;
+        }
+    }
+
+    if (failed) {
+        dump();
+        CRASH();
     }
 }
 #endif

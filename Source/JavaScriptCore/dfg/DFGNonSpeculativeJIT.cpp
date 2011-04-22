@@ -139,7 +139,7 @@ void NonSpeculativeJIT::numberToInt32(FPRReg fpr, GPRReg gpr)
 
 bool NonSpeculativeJIT::isKnownInteger(NodeIndex nodeIndex)
 {
-    GenerationInfo& info = m_generationInfo[m_jit.graph()[nodeIndex].virtualRegister];
+    GenerationInfo& info = m_generationInfo[m_jit.graph()[nodeIndex].virtualRegister()];
 
     DataFormat registerFormat = info.registerFormat();
     if (registerFormat != DataFormatNone)
@@ -155,7 +155,7 @@ bool NonSpeculativeJIT::isKnownInteger(NodeIndex nodeIndex)
 
 bool NonSpeculativeJIT::isKnownNumeric(NodeIndex nodeIndex)
 {
-    GenerationInfo& info = m_generationInfo[m_jit.graph()[nodeIndex].virtualRegister];
+    GenerationInfo& info = m_generationInfo[m_jit.graph()[nodeIndex].virtualRegister()];
 
     DataFormat registerFormat = info.registerFormat();
     if (registerFormat != DataFormatNone)
@@ -644,7 +644,7 @@ void NonSpeculativeJIT::compile(SpeculationCheckIndexIterator& checkIterator, No
     }
     }
 
-    if (node.mustGenerate())
+    if (node.hasResult() && node.mustGenerate())
         use(m_compileIndex);
 
     checkConsistency();
@@ -661,7 +661,7 @@ void NonSpeculativeJIT::compile(SpeculationCheckIndexIterator& checkIterator, Ba
 
     for (; m_compileIndex < block.end; ++m_compileIndex) {
         Node& node = m_jit.graph()[m_compileIndex];
-        if (!node.refCount)
+        if (!node.refCount())
             continue;
 
 #if DFG_DEBUG_VERBOSE

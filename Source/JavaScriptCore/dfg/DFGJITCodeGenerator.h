@@ -94,7 +94,7 @@ public:
     // and its machine registers may be reused.
     bool canReuse(NodeIndex nodeIndex)
     {
-        VirtualRegister virtualRegister = m_jit.graph()[nodeIndex].virtualRegister;
+        VirtualRegister virtualRegister = m_jit.graph()[nodeIndex].virtualRegister();
         GenerationInfo& info = m_generationInfo[virtualRegister];
         return info.canReuse();
     }
@@ -134,13 +134,13 @@ public:
     // avoid spilling values we will need immediately).
     bool isFilled(NodeIndex nodeIndex)
     {
-        VirtualRegister virtualRegister = m_jit.graph()[nodeIndex].virtualRegister;
+        VirtualRegister virtualRegister = m_jit.graph()[nodeIndex].virtualRegister();
         GenerationInfo& info = m_generationInfo[virtualRegister];
         return info.registerFormat() != DataFormatNone;
     }
     bool isFilledDouble(NodeIndex nodeIndex)
     {
-        VirtualRegister virtualRegister = m_jit.graph()[nodeIndex].virtualRegister;
+        VirtualRegister virtualRegister = m_jit.graph()[nodeIndex].virtualRegister();
         GenerationInfo& info = m_generationInfo[virtualRegister];
         return info.registerFormat() == DataFormatDouble;
     }
@@ -184,7 +184,7 @@ protected:
     // Called on an operand once it has been consumed by a parent node.
     void use(NodeIndex nodeIndex)
     {
-        VirtualRegister virtualRegister = m_jit.graph()[nodeIndex].virtualRegister;
+        VirtualRegister virtualRegister = m_jit.graph()[nodeIndex].virtualRegister();
         GenerationInfo& info = m_generationInfo[virtualRegister];
 
         // use() returns true when the value becomes dead, and any
@@ -383,38 +383,34 @@ protected:
         Node& node = m_jit.graph()[nodeIndex];
         useChildren(node);
 
-        VirtualRegister virtualRegister = node.virtualRegister;
+        VirtualRegister virtualRegister = node.virtualRegister();
         GenerationInfo& info = m_generationInfo[virtualRegister];
 
         if (format == DataFormatInteger) {
             m_jit.jitAssertIsInt32(reg);
             m_gprs.retain(reg, virtualRegister, SpillOrderInteger);
-            info.initInteger(nodeIndex, node.refCount, reg);
+            info.initInteger(nodeIndex, node.refCount(), reg);
         } else {
             ASSERT(format == DataFormatJSInteger);
             m_jit.jitAssertIsJSInt32(reg);
             m_gprs.retain(reg, virtualRegister, SpillOrderJS);
-            info.initJSValue(nodeIndex, node.refCount, reg, format);
+            info.initJSValue(nodeIndex, node.refCount(), reg, format);
         }
     }
     void noResult(NodeIndex nodeIndex)
     {
         Node& node = m_jit.graph()[nodeIndex];
         useChildren(node);
-
-        VirtualRegister virtualRegister = node.virtualRegister;
-        GenerationInfo& info = m_generationInfo[virtualRegister];
-        info.initNone(nodeIndex, node.refCount);
     }
     void cellResult(GPRReg reg, NodeIndex nodeIndex)
     {
         Node& node = m_jit.graph()[nodeIndex];
         useChildren(node);
 
-        VirtualRegister virtualRegister = node.virtualRegister;
+        VirtualRegister virtualRegister = node.virtualRegister();
         m_gprs.retain(reg, virtualRegister, SpillOrderCell);
         GenerationInfo& info = m_generationInfo[virtualRegister];
-        info.initCell(nodeIndex, node.refCount, reg);
+        info.initCell(nodeIndex, node.refCount(), reg);
     }
     void jsValueResult(GPRReg reg, NodeIndex nodeIndex, DataFormat format = DataFormatJS)
     {
@@ -424,26 +420,26 @@ protected:
         Node& node = m_jit.graph()[nodeIndex];
         useChildren(node);
 
-        VirtualRegister virtualRegister = node.virtualRegister;
+        VirtualRegister virtualRegister = node.virtualRegister();
         m_gprs.retain(reg, virtualRegister, SpillOrderJS);
         GenerationInfo& info = m_generationInfo[virtualRegister];
-        info.initJSValue(nodeIndex, node.refCount, reg, format);
+        info.initJSValue(nodeIndex, node.refCount(), reg, format);
     }
     void doubleResult(FPRReg reg, NodeIndex nodeIndex)
     {
         Node& node = m_jit.graph()[nodeIndex];
         useChildren(node);
 
-        VirtualRegister virtualRegister = node.virtualRegister;
+        VirtualRegister virtualRegister = node.virtualRegister();
         m_fprs.retain(reg, virtualRegister, SpillOrderDouble);
         GenerationInfo& info = m_generationInfo[virtualRegister];
-        info.initDouble(nodeIndex, node.refCount, reg);
+        info.initDouble(nodeIndex, node.refCount(), reg);
     }
     void initConstantInfo(NodeIndex nodeIndex)
     {
         ASSERT(isInt32Constant(nodeIndex) || isDoubleConstant(nodeIndex) || isJSConstant(nodeIndex));
         Node& node = m_jit.graph()[nodeIndex];
-        m_generationInfo[node.virtualRegister].initConstant(nodeIndex, node.refCount);
+        m_generationInfo[node.virtualRegister()].initConstant(nodeIndex, node.refCount());
     }
 
     // These methods used to sort arguments into the correct registers.

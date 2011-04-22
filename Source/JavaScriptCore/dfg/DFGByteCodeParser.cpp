@@ -1035,7 +1035,7 @@ bool ByteCodeParser::parse()
     size_t size = m_graph.size();
     for (size_t i = 0; i < size; ++i) {
         Node& node = nodes[i];
-        if (node.refCount) {
+        if (node.refCount()) {
             // First, call use on all of the current node's children, then
             // allocate a VirtualRegister for this node. We do so in this
             // order so that if a child is on its last use, and a
@@ -1043,7 +1043,11 @@ bool ByteCodeParser::parse()
             scoreBoard.use(node.child1);
             scoreBoard.use(node.child2);
             scoreBoard.use(node.child3);
-            node.virtualRegister = scoreBoard.allocate();
+            
+            if (!node.hasResult())
+                continue;
+
+            node.setVirtualRegister(scoreBoard.allocate());
             // 'mustGenerate' nodes have their useCount artificially elevated,
             // call use now to account for this.
             if (node.mustGenerate())

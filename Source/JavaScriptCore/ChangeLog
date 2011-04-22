@@ -1,3 +1,64 @@
+2011-04-22  Gavin Barraclough  <barraclough@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Bug 59222 - DFG JIT - don't allocate virtual registers to nodes with no result
+
+        We currently allocate virtual registers to nodes which have no result - these are
+        clearly unused, and may result in us allocating a larger than necessary stack frame.
+
+        Encapsulate Node::virtualRegister such that we can ASSERT this is only called on
+        nodes that have results, and improve the quality of output from the consistency check.
+
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::parse):
+        * dfg/DFGGraph.cpp:
+        (JSC::DFG::Graph::dump):
+        * dfg/DFGGraph.h:
+        (JSC::DFG::Graph::ref):
+        (JSC::DFG::Graph::deref):
+        * dfg/DFGJITCodeGenerator.cpp:
+        (JSC::DFG::JITCodeGenerator::fillInteger):
+        (JSC::DFG::JITCodeGenerator::fillDouble):
+        (JSC::DFG::JITCodeGenerator::fillJSValue):
+        (JSC::DFG::JITCodeGenerator::dump):
+        (JSC::DFG::JITCodeGenerator::checkConsistency):
+        * dfg/DFGJITCodeGenerator.h:
+        (JSC::DFG::JITCodeGenerator::canReuse):
+        (JSC::DFG::JITCodeGenerator::isFilled):
+        (JSC::DFG::JITCodeGenerator::isFilledDouble):
+        (JSC::DFG::JITCodeGenerator::use):
+        (JSC::DFG::JITCodeGenerator::integerResult):
+        (JSC::DFG::JITCodeGenerator::noResult):
+        (JSC::DFG::JITCodeGenerator::cellResult):
+        (JSC::DFG::JITCodeGenerator::jsValueResult):
+        (JSC::DFG::JITCodeGenerator::doubleResult):
+        (JSC::DFG::JITCodeGenerator::initConstantInfo):
+        * dfg/DFGJITCompiler.cpp:
+        (JSC::DFG::JITCompiler::fillNumericToDouble):
+        (JSC::DFG::JITCompiler::fillInt32ToInteger):
+        (JSC::DFG::JITCompiler::fillToJS):
+        (JSC::DFG::JITCompiler::jumpFromSpeculativeToNonSpeculative):
+        * dfg/DFGNode.h:
+        (JSC::DFG::Node::Node):
+        (JSC::DFG::Node::hasResult):
+        (JSC::DFG::Node::virtualRegister):
+        (JSC::DFG::Node::setVirtualRegister):
+        (JSC::DFG::Node::refCount):
+        (JSC::DFG::Node::ref):
+        (JSC::DFG::Node::deref):
+        (JSC::DFG::Node::adjustedRefCount):
+        * dfg/DFGNonSpeculativeJIT.cpp:
+        (JSC::DFG::NonSpeculativeJIT::isKnownInteger):
+        (JSC::DFG::NonSpeculativeJIT::isKnownNumeric):
+        (JSC::DFG::NonSpeculativeJIT::compile):
+        * dfg/DFGScoreBoard.h:
+        (JSC::DFG::ScoreBoard::use):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::fillSpeculateIntInternal):
+        (JSC::DFG::SpeculativeJIT::fillSpeculateCell):
+        (JSC::DFG::SpeculativeJIT::compile):
+
 2011-04-22  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Gavin Barraclough and Oliver Hunt.

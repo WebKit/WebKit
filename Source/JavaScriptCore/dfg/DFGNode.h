@@ -177,8 +177,8 @@ struct Node {
         , child1(child1)
         , child2(child2)
         , child3(child3)
-        , virtualRegister(InvalidVirtualRegister)
-        , refCount(0)
+        , m_virtualRegister(InvalidVirtualRegister)
+        , m_refCount(0)
     {
     }
 
@@ -189,8 +189,8 @@ struct Node {
         , child1(child1)
         , child2(child2)
         , child3(child3)
-        , virtualRegister(InvalidVirtualRegister)
-        , refCount(0)
+        , m_virtualRegister(InvalidVirtualRegister)
+        , m_refCount(0)
         , m_opInfo(imm.m_value)
     {
     }
@@ -202,8 +202,8 @@ struct Node {
         , child1(child1)
         , child2(child2)
         , child3(child3)
-        , virtualRegister(InvalidVirtualRegister)
-        , refCount(0)
+        , m_virtualRegister(InvalidVirtualRegister)
+        , m_refCount(0)
         , m_opInfo(imm1.m_value)
     {
         m_constantValue.opInfo2 = imm2.m_value;
@@ -256,6 +256,11 @@ struct Node {
     {
         ASSERT(hasVarNumber());
         return m_opInfo;
+    }
+
+    bool hasResult()
+    {
+        return op & NodeResultMask;
     }
 
     bool hasInt32Result()
@@ -327,11 +332,39 @@ struct Node {
         return m_constantValue.opInfo2;
     }
 
-    unsigned adjustedRefCount()
+    VirtualRegister virtualRegister()
     {
-        return mustGenerate() ? refCount - 1 : refCount;
+        ASSERT(hasResult());
+        ASSERT(m_virtualRegister != InvalidVirtualRegister);
+        return m_virtualRegister;
     }
 
+    void setVirtualRegister(VirtualRegister virtualRegister)
+    {
+        ASSERT(hasResult());
+        ASSERT(m_virtualRegister == InvalidVirtualRegister);
+        m_virtualRegister = virtualRegister;
+    }
+
+    unsigned refCount()
+    {
+        return m_refCount;
+    }
+
+    // returns true when ref count passes from 0 to 1.
+    bool ref()
+    {
+        return !m_refCount++;
+    }
+    bool deref()
+    {
+        return !--m_refCount;
+    }
+
+    unsigned adjustedRefCount()
+    {
+        return mustGenerate() ? m_refCount - 1 : m_refCount;
+    }
 
     // This enum value describes the type of the node.
     NodeType op;
@@ -339,12 +372,12 @@ struct Node {
     ExceptionInfo exceptionInfo;
     // References to up to 3 children (0 for no child).
     NodeIndex child1, child2, child3;
-    // The virtual register number (spill location) associated with this .
-    VirtualRegister virtualRegister;
-    // The number of uses of the result of this operation (+1 for 'must generate' nodes, which have side-effects).
-    unsigned refCount;
 
 private:
+    // The virtual register number (spill location) associated with this .
+    VirtualRegister m_virtualRegister;
+    // The number of uses of the result of this operation (+1 for 'must generate' nodes, which have side-effects).
+    unsigned m_refCount;
     // An immediate value, accesses type-checked via accessors above.
     unsigned m_opInfo;
     // The value of an int32/double constant.

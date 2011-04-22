@@ -50,7 +50,7 @@ void JITCompiler::fillNumericToDouble(NodeIndex nodeIndex, FPRReg fpr, GPRReg te
         move(MacroAssembler::ImmPtr(reinterpret_cast<void*>(reinterpretDoubleToIntptr(valueOfDoubleConstant(nodeIndex)))), tempReg);
         movePtrToDouble(tempReg, fprToRegisterID(fpr));
     } else {
-        loadPtr(addressFor(node.virtualRegister), tempReg);
+        loadPtr(addressFor(node.virtualRegister()), tempReg);
         Jump isInteger = branchPtr(MacroAssembler::AboveOrEqual, tempReg, tagTypeNumberRegister);
         jitAssertIsJSDouble(gpr0);
         addPtr(tagTypeNumberRegister, tempReg);
@@ -73,10 +73,10 @@ void JITCompiler::fillInt32ToInteger(NodeIndex nodeIndex, GPRReg gpr)
     } else {
 #if DFG_JIT_ASSERT
         // Redundant load, just so we can check the tag!
-        loadPtr(addressFor(node.virtualRegister), gprToRegisterID(gpr));
+        loadPtr(addressFor(node.virtualRegister()), gprToRegisterID(gpr));
         jitAssertIsJSInt32(gpr);
 #endif
-        load32(addressFor(node.virtualRegister), gprToRegisterID(gpr));
+        load32(addressFor(node.virtualRegister()), gprToRegisterID(gpr));
     }
 }
 
@@ -100,7 +100,7 @@ void JITCompiler::fillToJS(NodeIndex nodeIndex, GPRReg gpr)
         return;
     }
 
-    loadPtr(addressFor(node.virtualRegister), gprToRegisterID(gpr));
+    loadPtr(addressFor(node.virtualRegister()), gprToRegisterID(gpr));
 }
 
 void JITCompiler::jumpFromSpeculativeToNonSpeculative(const SpeculationCheck& check, const EntryLocation& entry, SpeculationRecovery* recovery)
@@ -134,7 +134,7 @@ void JITCompiler::jumpFromSpeculativeToNonSpeculative(const SpeculationCheck& ch
             continue;
 
         DataFormat dataFormat = check.m_gprInfo[gpr].format;
-        VirtualRegister virtualRegister = graph()[nodeIndex].virtualRegister;
+        VirtualRegister virtualRegister = graph()[nodeIndex].virtualRegister();
 
         ASSERT(dataFormat == DataFormatInteger || DataFormatCell || dataFormat & DataFormatJS);
         if (dataFormat == DataFormatInteger)
@@ -148,7 +148,7 @@ void JITCompiler::jumpFromSpeculativeToNonSpeculative(const SpeculationCheck& ch
         if (nodeIndex == NoNode)
             continue;
 
-        VirtualRegister virtualRegister = graph()[nodeIndex].virtualRegister;
+        VirtualRegister virtualRegister = graph()[nodeIndex].virtualRegister();
 
         moveDoubleToPtr(fprToRegisterID(fpr), regT0);
         subPtr(tagTypeNumberRegister, regT0);

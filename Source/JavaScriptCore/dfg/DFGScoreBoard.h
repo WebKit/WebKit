@@ -93,8 +93,8 @@ public:
 
         // Find the virtual register number for this child, increment its use count.
         Node& node = m_graph[child];
-        uint32_t index = node.virtualRegister - m_firstTemporary;
-        if (node.refCount == ++m_used[index]) {
+        uint32_t index = node.virtualRegister() - m_firstTemporary;
+        if (node.refCount() == ++m_used[index]) {
             // If the use count in the scoreboard reaches the use count for the node,
             // then this was its last use; the virtual register is now free.
             // Clear the use count & add to the free list.

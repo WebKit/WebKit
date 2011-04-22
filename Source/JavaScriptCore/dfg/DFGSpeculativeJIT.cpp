@@ -34,7 +34,7 @@ template<bool strict>
 GPRReg SpeculativeJIT::fillSpeculateIntInternal(NodeIndex nodeIndex, DataFormat& returnFormat)
 {
     Node& node = m_jit.graph()[nodeIndex];
-    VirtualRegister virtualRegister = node.virtualRegister;
+    VirtualRegister virtualRegister = node.virtualRegister();
     GenerationInfo& info = m_generationInfo[virtualRegister];
 
     switch (info.registerFormat()) {
@@ -181,7 +181,7 @@ GPRReg SpeculativeJIT::fillSpeculateIntStrict(NodeIndex nodeIndex)
 GPRReg SpeculativeJIT::fillSpeculateCell(NodeIndex nodeIndex)
 {
     Node& node = m_jit.graph()[nodeIndex];
-    VirtualRegister virtualRegister = node.virtualRegister;
+    VirtualRegister virtualRegister = node.virtualRegister();
     GenerationInfo& info = m_generationInfo[virtualRegister];
 
     switch (info.registerFormat()) {
@@ -845,7 +845,7 @@ bool SpeculativeJIT::compile(Node& node)
     if (m_didTerminate)
         return false;
 
-    if (node.mustGenerate())
+    if (node.hasResult() && node.mustGenerate())
         use(m_compileIndex);
 
     checkConsistency();
@@ -863,7 +863,7 @@ bool SpeculativeJIT::compile(BasicBlock& block)
 
     for (; m_compileIndex < block.end; ++m_compileIndex) {
         Node& node = m_jit.graph()[m_compileIndex];
-        if (!node.refCount)
+        if (!node.refCount())
             continue;
 
 #if DFG_DEBUG_VERBOSE

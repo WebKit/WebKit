@@ -115,14 +115,6 @@ public:
         m_canFill = false;
         u.fpr = fpr;
     }
-    void initNone(NodeIndex nodeIndex, uint32_t useCount)
-    {
-        m_nodeIndex = nodeIndex;
-        m_useCount = useCount;
-        m_registerFormat = DataFormatNone;
-        m_spillFormat = DataFormatNone;
-        m_canFill = false;
-    }
 
     // Get the index of the node that produced this value.
     NodeIndex nodeIndex() { return m_nodeIndex; }
