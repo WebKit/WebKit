@@ -103,6 +103,7 @@ public:
     static double defaultMinimumTimerInterval(); // Not really tied to WebView
     static void setMinimumTimerInterval(WebKitWebView*, double);
     static void rectangleForSelection(WebKitWebFrame*, GdkRectangle*);
+    static void scalePageBy(WebKitWebView*, float, float, float);
 
     // Accessibility
     static void incrementAccessibilityValue(AtkObject*);

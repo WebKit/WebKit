@@ -440,6 +440,7 @@ static void resetDefaultsToConsistentValues()
     webkit_set_cache_model(WEBKIT_CACHE_MODEL_DOCUMENT_BROWSER);
 
     DumpRenderTreeSupportGtk::clearMainFrameName(mainFrame);
+    DumpRenderTreeSupportGtk::scalePageBy(webView, 1, 0, 0);
 
     WebKitWebInspector* inspector = webkit_web_view_get_inspector(webView);
     g_object_set(G_OBJECT(inspector), "javascript-profiling-enabled", FALSE, NULL);

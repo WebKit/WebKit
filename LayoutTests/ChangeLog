@@ -1,3 +1,18 @@
+2011-04-22  Philippe Normand  <pnormand@igalia.com>
+
+        Reviewed by Martin Robinson.
+
+        [GTK] DRT: implement eventSender.scalePageBy
+        https://bugs.webkit.org/show_bug.cgi?id=59082
+
+        Unskipped tests that should pass now that
+        eventSender.scalePageBy() is supported in GTK.
+
+        * platform/gtk/Skipped:
+        * platform/gtk/fast/repaint/scale-page-shrink-expected.checksum: Added.
+        * platform/gtk/fast/repaint/scale-page-shrink-expected.png: Added.
+        * platform/gtk/fast/repaint/scale-page-shrink-expected.txt: Added.
+
 2011-04-21  MORITA Hajime  <morrita@google.com>
 
         Reviewed by Dimitri Glazkov.
