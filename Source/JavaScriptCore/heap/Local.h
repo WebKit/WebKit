@@ -95,7 +95,7 @@ template <typename T> inline void Local<T>::set(ExternalType externalType)
 {
     ASSERT(slot());
     ASSERT(!HandleTypes<T>::toJSValue(externalType) || !HandleTypes<T>::toJSValue(externalType).isCell() || Heap::isMarked(HandleTypes<T>::toJSValue(externalType).asCell()));
-    slot()->fromJSValue(externalType);
+    *slot() = externalType;
 }
 
 

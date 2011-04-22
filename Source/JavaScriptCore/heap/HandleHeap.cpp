@@ -64,7 +64,7 @@ void HandleHeap::markStrongHandles(HeapRootVisitor& heapRootMarker)
 {
     Node* end = m_strongList.end();
     for (Node* node = m_strongList.begin(); node != end; node = node->next())
-        heapRootMarker.mark(node->slot()->toJSValueRef());
+        heapRootMarker.mark(node->slot());
 }
 
 void HandleHeap::markWeakHandles(HeapRootVisitor& heapRootVisitor)
@@ -74,7 +74,7 @@ void HandleHeap::markWeakHandles(HeapRootVisitor& heapRootVisitor)
     Node* end = m_weakList.end();
     for (Node* node = m_weakList.begin(); node != end; node = node->next()) {
         ASSERT(isValidWeakNode(node));
-        JSCell* cell = node->slot()->toJSValue().asCell();
+        JSCell* cell = node->slot()->asCell();
         if (Heap::isMarked(cell))
             continue;
 
@@ -85,7 +85,7 @@ void HandleHeap::markWeakHandles(HeapRootVisitor& heapRootVisitor)
         if (!weakOwner->isReachableFromOpaqueRoots(Handle<Unknown>::wrapSlot(node->slot()), node->weakOwnerContext(), visitor))
             continue;
 
-        heapRootVisitor.mark(node->slot()->toJSValueRef());
+        heapRootVisitor.mark(node->slot());
     }
 }
 
@@ -96,7 +96,7 @@ void HandleHeap::finalizeWeakHandles()
         m_nextToFinalize = node->next();
 
         ASSERT(isValidWeakNode(node));
-        JSCell* cell = node->slot()->toJSValue().asCell();
+        JSCell* cell = node->slot()->asCell();
         if (Heap::isMarked(cell))
             continue;
 
@@ -106,7 +106,7 @@ void HandleHeap::finalizeWeakHandles()
                 continue;
         }
 
-        node->slot()->fromJSValue(JSValue());
+        *node->slot() = JSValue();
         SentinelLinkedList<Node>::remove(node);
         m_immediateList.push(node);
     }
@@ -118,7 +118,7 @@ void HandleHeap::writeBarrier(HandleSlot slot, const JSValue& value)
 {
     ASSERT(!m_nextToFinalize); // Forbid assignment to handles during the finalization phase, since it would violate many GC invariants.
 
-    if (!value == !slot->toJSValue() && slot->toJSValue().isCell() == value.isCell())
+    if (!value == !*slot && slot->isCell() == value.isCell())
         return;
 
     Node* node = toNode(slot);
@@ -141,7 +141,7 @@ unsigned HandleHeap::protectedGlobalObjectCount()
     unsigned count = 0;
     Node* end = m_strongList.end();
     for (Node* node = m_strongList.begin(); node != end; node = node->next()) {
-        JSValue value = node->slot()->toJSValue();
+        JSValue value = *node->slot();
         if (value.isObject() && asObject(value.asCell())->isGlobalObject())
             count++;
     }
@@ -154,7 +154,7 @@ bool HandleHeap::isValidWeakNode(Node* node)
     if (!node->isWeak())
         return false;
 
-    JSValue value = node->slot()->toJSValue();
+    JSValue value = *node->slot();
     if (!value || !value.isCell())
         return false;
 

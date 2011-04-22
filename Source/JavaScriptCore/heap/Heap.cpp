@@ -363,7 +363,7 @@ void HandleHeap::protectedObjectTypeCounts(TypeCounter& typeCounter)
 {
     Node* end = m_strongList.end();
     for (Node* node = m_strongList.begin(); node != end; node = node->next()) {
-        JSValue value = node->slot()->toJSValue();
+        JSValue value = *node->slot();
         if (value && value.isCell())
             typeCounter(value.asCell());
     }

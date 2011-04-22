@@ -41,8 +41,8 @@ class HandleStack {
 public:
     class Frame {
     public:
-        JSValue* m_next;
-        JSValue* m_end;
+        HandleSlot m_next;
+        HandleSlot m_end;
     };
 
     HandleStack();
@@ -82,7 +82,7 @@ inline void HandleStack::zapTo(Frame& lastFrame)
 #ifdef NDEBUG
     UNUSED_PARAM(lastFrame);
 #else
-    const Vector<JSValue*>& blocks = m_blockStack.blocks();
+    const Vector<HandleSlot>& blocks = m_blockStack.blocks();
     
     if (lastFrame.m_end != m_frame.m_end) { // Zapping to a frame in a different block.
         int i = blocks.size() - 1;
@@ -91,13 +91,13 @@ inline void HandleStack::zapTo(Frame& lastFrame)
                 blocks[i][j] = JSValue();
         }
         
-        for (JSValue* it = blocks[i] + m_blockStack.blockLength - 1; it != lastFrame.m_next - 1; --it)
+        for (HandleSlot it = blocks[i] + m_blockStack.blockLength - 1; it != lastFrame.m_next - 1; --it)
             *it = JSValue();
         
         return;
     }
     
-    for (JSValue* it = m_frame.m_next - 1; it != lastFrame.m_next - 1; --it)
+    for (HandleSlot it = m_frame.m_next - 1; it != lastFrame.m_next - 1; --it)
         *it = JSValue();
 #endif
 }
@@ -121,7 +121,7 @@ inline HandleSlot HandleStack::push()
     ASSERT(m_scopeDepth); // Creating a Local outside of a LocalScope is a memory leak.
     if (m_frame.m_next == m_frame.m_end)
         grow();
-    return reinterpret_cast<HandleSlot>(m_frame.m_next++);
+    return m_frame.m_next++;
 }
 
 }

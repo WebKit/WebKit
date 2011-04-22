@@ -129,7 +129,7 @@ public:
             iter.first->second = slot;
             HandleHeap::heapFor(slot)->makeWeak(slot, this, FinalizerCallback::finalizerContextFor(key));
             HandleHeap::heapFor(slot)->writeBarrier(slot, value);
-            slot->fromJSValue(value);
+            *slot = value;
         }
         return iter;
     }
@@ -139,7 +139,7 @@ public:
         HandleSlot slot = iter.m_iterator->second;
         ASSERT(slot);
         HandleHeap::heapFor(slot)->writeBarrier(slot, value);
-        slot->fromJSValue(value);
+        *slot = value;
     }
 
     void set(JSGlobalData& globalData, const KeyType& key, ExternalType value)
@@ -152,7 +152,7 @@ public:
             iter.first->second = slot;
         }
         HandleHeap::heapFor(slot)->writeBarrier(slot, value);
-        slot->fromJSValue(value);
+        *slot = value;
     }
 
     ExternalType take(const KeyType& key)

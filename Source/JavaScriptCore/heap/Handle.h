@@ -53,11 +53,11 @@ class HandleBase {
     template <typename KeyType, typename MappedType, typename FinalizerCallback, typename HashArg, typename KeyTraitsArg> friend class WeakGCMap;
 
 public:
-    bool operator!() const { return !m_slot || !m_slot->toJSValue(); }
+    bool operator!() const { return !m_slot || !*m_slot; }
 
     // This conversion operator allows implicit conversion to bool but not to other integer types.
     typedef JSValue (HandleBase::*UnspecifiedBoolType);
-    operator UnspecifiedBoolType*() const { return (m_slot && m_slot->toJSValue()) ? reinterpret_cast<UnspecifiedBoolType*>(1) : 0; }
+    operator UnspecifiedBoolType*() const { return (m_slot && *m_slot) ? reinterpret_cast<UnspecifiedBoolType*>(1) : 0; }
 
 protected:
     HandleBase(HandleSlot slot)
@@ -79,14 +79,14 @@ private:
 
 template <typename T> struct HandleTypes {
     typedef T* ExternalType;
-    static ExternalType getFromSlot(HandleSlot slot) { return (slot && slot->toJSValue()) ? reinterpret_cast<ExternalType>(slot->toJSValue().asCell()) : 0; }
+    static ExternalType getFromSlot(HandleSlot slot) { return (slot && *slot) ? reinterpret_cast<ExternalType>(slot->asCell()) : 0; }
     static JSValue toJSValue(T* cell) { return reinterpret_cast<JSCell*>(cell); }
     template <typename U> static void validateUpcast() { T* temp; temp = (U*)0; }
 };
 
 template <> struct HandleTypes<Unknown> {
     typedef JSValue ExternalType;
-    static ExternalType getFromSlot(HandleSlot slot) { return slot ? slot->toJSValue() : JSValue(); }
+    static ExternalType getFromSlot(HandleSlot slot) { return slot ? *slot : JSValue(); }
     static JSValue toJSValue(const JSValue& v) { return v; }
     template <typename U> static void validateUpcast() {}
 };
