@@ -47,9 +47,9 @@ PASS CSSValueList from inner.getComputedStyle(inner.document.body).getPropertyCS
 PASS CSSValueListConstructor from inner.getComputedStyle(inner.document.body).getPropertyCSSValue(background-position).constructor
 PASS CSSValueListPrototype from inner.getComputedStyle(inner.document.body).getPropertyCSSValue(-webkit-transition-timing-function).__proto__
 PASS CSSValuePrototype from inner.getComputedStyle(inner.document.body).getPropertyCSSValue(-webkit-line-box-contain).__proto__
-FAIL CanvasPattern from inner.document.getElementsByTagName("canvas")[0].getContext("2d").createPattern(inner.document.getElementsByTagName("img")[0], "")
-FAIL CanvasPatternConstructor from inner.document.getElementsByTagName("canvas")[0].getContext("2d").createPattern(inner.document.getElementsByTagName("img")[0], "").constructor
-FAIL CanvasPatternPrototype from inner.document.getElementsByTagName("canvas")[0].getContext("2d").createPattern(inner.document.getElementsByTagName("img")[0], "").__proto__
+PASS CanvasPattern from inner.document.getElementsByTagName("canvas")[0].getContext("2d").createPattern(inner.document.getElementsByTagName("img")[0], "")
+PASS CanvasPatternConstructor from inner.document.getElementsByTagName("canvas")[0].getContext("2d").createPattern(inner.document.getElementsByTagName("img")[0], "").constructor
+PASS CanvasPatternPrototype from inner.document.getElementsByTagName("canvas")[0].getContext("2d").createPattern(inner.document.getElementsByTagName("img")[0], "").__proto__
 PASS CanvasRenderingContext2D from inner.document.getElementsByTagName("canvas")[0].getContext("2d")
 PASS CanvasRenderingContext2DConstructor from inner.document.getElementsByTagName("canvas")[0].getContext("2d").constructor
 PASS CanvasRenderingContext2DPrototype from inner.document.getElementsByTagName("canvas")[0].getContext("2d").__proto__
