@@ -1,3 +1,12 @@
+2011-04-21  Dirk Pranke  <dpranke@chromium.org>
+
+        Unreviewed, expectations change.
+
+        Suppress failures possibly caused by bug 59158 on chromium win/linux:
+        fast/canvas/canvas-stroke{Path,Rect}-alpha-shadow.html = TEXT
+
+        * platform/chromium/test_expectations.txt:
+
 2011-04-21  Ojan Vafai  <ojan@chromium.org>
 
         Reviewed by Tony Chang.

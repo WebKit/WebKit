@@ -3868,3 +3868,6 @@ BUGDPRANKE : fast/dom/Document/document-reopen.html = TEXT PASS
 BUGDPRANKE : svg/custom/font-face-name-without-name-attr.svg = CRASH
 BUGDPRANKE : fast/parser/javascript-url-compat-mode.html = TEXT PASS
 BUGDPRANKE : inspector/console/console-tests.html = TEXT PASS
+
+BUGWK59158 CPU WIN LINUX : fast/canvas/canvas-strokePath-alpha-shadow.html = TEXT
+BUGWK59158 CPU WIN LINUX : fast/canvas/canvas-strokeRect-alpha-shadow.html = TEXT
