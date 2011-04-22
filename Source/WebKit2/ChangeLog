@@ -1,3 +1,14 @@
+2011-04-22  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Paint the bounding rect of the dirty region instead of individual rectangles when the region
+        covers at least 3/4 of its bounds.
+
+        * WebProcess/WebPage/DrawingAreaImpl.cpp:
+        (WebKit::shouldPaintBoundsRect): Use floating point math so that the logic that was supposed to
+        achieve this actually works.
+
 2011-04-22  Jer Noble  <jer.noble@apple.com>
 
         Reviewed by Maciej Stachowiak.

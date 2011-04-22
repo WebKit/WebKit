@@ -524,7 +524,7 @@ void DrawingAreaImpl::display()
 static bool shouldPaintBoundsRect(const IntRect& bounds, const Vector<IntRect>& rects)
 {
     const size_t rectThreshold = 10;
-    const float wastedSpaceThreshold = 0.75f;
+    const double wastedSpaceThreshold = 0.75;
 
     if (rects.size() <= 1 || rects.size() > rectThreshold)
         return true;
@@ -537,7 +537,7 @@ static bool shouldPaintBoundsRect(const IntRect& bounds, const Vector<IntRect>& 
     for (size_t i = 0; i < rects.size(); ++i)
         rectsArea += rects[i].width() * rects[i].height();
 
-    float wastedSpace = 1 - (rectsArea / boundsArea);
+    double wastedSpace = 1 - (static_cast<double>(rectsArea) / boundsArea);
 
     return wastedSpace <= wastedSpaceThreshold;
 }
