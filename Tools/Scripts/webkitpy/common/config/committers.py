@@ -1,3 +1,4 @@
+# Copyright (c) 2011, Apple Inc. All rights reserved.
 # Copyright (c) 2009, Google Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -29,6 +30,11 @@
 # WebKit's Python module for committer and reviewer validation
 
 
+class Contributor:
+
+    def __init__(self, name, email_or_emails, irc_nickname=None):
+        return
+
 class Committer:
 
     def __init__(self, name, email_or_emails, irc_nickname=None):
@@ -54,6 +60,17 @@ class Reviewer(Committer):
     def __init__(self, name, email_or_emails, irc_nickname=None):
         Committer.__init__(self, name, email_or_emails, irc_nickname)
         self.can_review = True
+
+
+# This is a list of people who are neither committers nor reviewers, but get
+# frequently CC'ed by others on Bugzilla bugs, so their names should be
+# supported by autocomplete. No review needed to add to the list.
+
+
+contributors_who_are_not_committers = [
+    Contributor("Anne van Kesteren", "annevankesteren+webkit@gmail.com", "annevk"),
+    Contributor("Ian Hickson", "ian@hixie.ch", "hixie"),
+]
 
 
 # This is intended as a canonical, machine-readable list of all non-reviewer

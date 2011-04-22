@@ -127,6 +127,7 @@ WebKitCommitters = (function() {
         var records = text.split('\n');
         parseType('Committer', records, 'c');
         parseType('Reviewer', records, 'r');
+        parseType('Contributor', records);
     }
 
     function loadCommitters(callback) {
@@ -246,7 +247,8 @@ WebKitCommitters = (function() {
                 contact.emails[0] + '>' + contact.name + ' - ' + contact.emails[0]);
             if (contact.irc)
                 html.push(' (:' + contact.irc + ')');
-            html.push(' (' + contact.type + ')');
+            if (contact.type)
+                html.push(' (' + contact.type + ')');
             html.push('</div>');
         }
         getMenu().innerHTML = html.join('');

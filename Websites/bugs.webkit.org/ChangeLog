@@ -1,3 +1,12 @@
+2011-04-22  Alexey Proskuryakov  <ap@apple.com>
+
+        Code changes by Adam Barth. Reviewed by Ojan Vafai.
+
+        Bugzilla autocomplete should support frequent contributors who are not committers
+        https://bugs.webkit.org/show_bug.cgi?id=59209
+
+        * committers-autocomplete.js: Support Contributor role in committers.py.
+
 2011-04-19  Caio Marcelo de Oliveira Filho  <caio.oliveira@openbossa.org>
 
         Reviewed by Adam Roben.
