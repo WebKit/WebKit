@@ -27,11 +27,13 @@ var successfullyParsed = false;
           shouldBe("slider.intValue", "50");
 
           slider.increment();
-          shouldBe("slider.intValue > 50", "true");
+          // As of now, there's no specification designed to update the DOM after an AX call.
+          shouldBe("slider.intValue", "50");
 
           slider.decrement();
           slider.decrement();
-          shouldBe("slider.intValue < 50", "true");
+          // As of now, there's no specification designed to update the DOM after an AX call.
+          shouldBe("slider.intValue", "50");
 
     }
 

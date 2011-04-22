@@ -1,3 +1,15 @@
+2011-04-21  Chris Fleizach  <cfleizach@apple.com>
+
+        Reviewed by Beth Dakin.
+
+        WebKit is erroneously modifying the DOM; adding 'aria-selected' to tables
+        https://bugs.webkit.org/show_bug.cgi?id=59140
+
+        * accessibility/aria-combobox.html:
+        * platform/mac/accessibility/aria-combobox-expected.txt:
+        * platform/mac/accessibility/aria-slider-value-change-expected.txt:
+        * platform/mac/accessibility/aria-slider-value-change.html:
+
 2011-04-21  Dirk Pranke  <dpranke@chromium.org>
 
         Unreviewed, expectations change - new baselines needed as

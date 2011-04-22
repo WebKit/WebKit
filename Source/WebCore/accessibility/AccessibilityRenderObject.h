@@ -101,7 +101,6 @@ public:
     virtual bool isVisited() const;        
     virtual bool isRequired() const;
     virtual bool isLinked() const;
-    virtual void setIsExpanded(bool);
 
     virtual bool canSetFocusAttribute() const;
     virtual bool canSetTextRangeAttributes() const;
@@ -200,7 +199,6 @@ public:
     virtual void setFocused(bool);
     virtual void setSelectedTextRange(const PlainTextRange&);
     virtual void setValue(const String&);
-    virtual void setSelected(bool);
     virtual void setSelectedRows(AccessibilityChildrenVector&);
     virtual void changeValueByPercent(float percentChange);
     virtual AccessibilityOrientation orientation() const;
@@ -231,7 +229,6 @@ public:
     virtual bool supportsARIADropping() const;
     virtual bool supportsARIADragging() const;
     virtual bool isARIAGrabbed();
-    virtual void setARIAGrabbed(bool);
     virtual void determineARIADropEffects(Vector<String>&);
     
     virtual VisiblePosition visiblePositionForPoint(const IntPoint&) const;

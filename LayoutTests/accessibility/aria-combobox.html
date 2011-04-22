@@ -36,7 +36,8 @@ var successfullyParsed = false;
     
           combobox.showMenu();
 
-          shouldBe("combobox.isExpanded", "true");
+          // As of now, the isExpanded value won't be updated through an AX call.
+          shouldBe("combobox.isExpanded", "false");
 
           var firstChild = combobox.childAtIndex(0);
           shouldBe("firstChild.role", "'AXRole: AXList'");

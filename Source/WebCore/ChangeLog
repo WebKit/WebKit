@@ -2,6 +2,22 @@
 
         Reviewed by Beth Dakin.
 
+        WebKit is erroneously modifying the DOM; adding 'aria-selected' to tables
+        https://bugs.webkit.org/show_bug.cgi?id=59140
+
+        WebKit should not modify the DOM when the screen reader requests certain things be set. There is no
+        specification that allows this behavior yet, but we are working on something for the future.
+
+        * accessibility/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::setARIAGrabbed):
+        (WebCore::AccessibilityRenderObject::setIsExpanded):
+        (WebCore::AccessibilityRenderObject::setSelected):
+        (WebCore::AccessibilityRenderObject::setValue):
+
+2011-04-21  Chris Fleizach  <cfleizach@apple.com>
+
+        Reviewed by Beth Dakin.
+
         AX: order AccessibilityRole alphabetically
         https://bugs.webkit.org/show_bug.cgi?id=31524
 

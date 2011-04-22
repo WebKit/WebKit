@@ -1634,11 +1634,6 @@ bool AccessibilityRenderObject::isARIAGrabbed()
     return elementAttributeValue(aria_grabbedAttr);
 }
 
-void AccessibilityRenderObject::setARIAGrabbed(bool grabbed)
-{
-    setElementAttributeValue(aria_grabbedAttr, grabbed);
-}
-
 void AccessibilityRenderObject::determineARIADropEffects(Vector<String>& effects)
 {
     const AtomicString& dropEffects = getAttribute(aria_dropeffectAttr);
@@ -2101,22 +2096,6 @@ bool AccessibilityRenderObject::elementAttributeValue(const QualifiedName& attri
     return equalIgnoringCase(getAttribute(attributeName), "true");
 }
     
-void AccessibilityRenderObject::setIsExpanded(bool isExpanded)
-{
-    // Combo boxes, tree items and rows can be expanded (in different ways on different platforms).
-    // That action translates into setting the aria-expanded attribute to true.
-    AccessibilityRole role = roleValue();
-    switch (role) {
-    case ComboBoxRole:
-    case TreeItemRole:
-    case RowRole:
-        setElementAttributeValue(aria_expandedAttr, isExpanded);
-        break;
-    default:
-        break;
-    }
-}
-    
 bool AccessibilityRenderObject::isRequired() const
 {
     if (equalIgnoringCase(getAttribute(aria_requiredAttr), "true"))
@@ -2235,11 +2214,6 @@ void AccessibilityRenderObject::changeValueByPercent(float percentChange)
     
     axObjectCache()->postNotification(m_renderer, AXObjectCache::AXValueChanged, true);
 }
-    
-void AccessibilityRenderObject::setSelected(bool enabled)
-{
-    setElementAttributeValue(aria_selectedAttr, enabled);
-}
 
 void AccessibilityRenderObject::setSelectedRows(AccessibilityChildrenVector& selectedRows)
 {
@@ -2262,9 +2236,6 @@ void AccessibilityRenderObject::setValue(const String& string)
     if (!m_renderer || !m_renderer->node() || !m_renderer->node()->isElementNode())
         return;
     Element* element = static_cast<Element*>(m_renderer->node());
-
-    if (roleValue() == SliderRole)
-        element->setAttribute(aria_valuenowAttr, string);
 
     if (!m_renderer->isBoxModelObject())
         return;
