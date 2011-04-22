@@ -1,3 +1,17 @@
+2011-04-22  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        Reviewed by Kent Tamura.
+
+        Make showTree/showTreeForThis aware of the shadow DOM
+        https://bugs.webkit.org/show_bug.cgi?id=52965
+
+        No new tests, because this code is only compiled in DEBUG.
+
+        * dom/Node.cpp:
+        (WebCore::traverseTreeAndMark): Moved tree traversal logic here, adding
+            recursive sub-traversal of the shadow tree.
+        (WebCore::Node::showTreeAndMark): Changed to use the new tree traversal function.
+
 2011-04-22  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Gavin Barraclough and Oliver Hunt.

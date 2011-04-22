@@ -2445,24 +2445,37 @@ void Node::showTreeForThis() const
     showTreeAndMark(this, "*");
 }
 
-void Node::showTreeAndMark(const Node* markedNode1, const char* markedLabel1, const Node* markedNode2, const char * markedLabel2) const
+static void traverseTreeAndMark(const String& baseIndent, const Node* rootNode, const Node* markedNode1, const char* markedLabel1, const Node* markedNode2, const char* markedLabel2)
 {
-    const Node* rootNode;
-    const Node* node = this;
-    while (node->parentNode() && !node->hasTagName(bodyTag))
-        node = node->parentNode();
-    rootNode = node;
-        
-    for (node = rootNode; node; node = node->traverseNextNode()) {
+    for (const Node* node = rootNode; node; node = node->traverseNextNode()) {
         if (node == markedNode1)
             fprintf(stderr, "%s", markedLabel1);
         if (node == markedNode2)
             fprintf(stderr, "%s", markedLabel2);
-                        
-        for (const Node* tmpNode = node; tmpNode && tmpNode != rootNode; tmpNode = tmpNode->parentNode())
-            fprintf(stderr, "\t");
+
+        String indent = baseIndent;
+        for (const Node* tmpNode = node; tmpNode && tmpNode != rootNode; tmpNode = tmpNode->parentOrHostNode())
+            indent += "\t";
+        fprintf(stderr, "%s", indent.utf8().data());
         node->showNode();
+
+        if (ContainerNode* shadow = shadowRoot(const_cast<Node*>(node))) {
+            indent += "\t";
+            traverseTreeAndMark(indent, shadow, markedNode1, markedLabel1, markedNode2, markedLabel2);
+        }
     }
+}
+
+void Node::showTreeAndMark(const Node* markedNode1, const char* markedLabel1, const Node* markedNode2, const char* markedLabel2) const
+{
+    const Node* rootNode;
+    const Node* node = this;
+    while (node->parentOrHostNode() && !node->hasTagName(bodyTag))
+        node = node->parentOrHostNode();
+    rootNode = node;
+
+    String startingIndent;
+    traverseTreeAndMark(startingIndent, rootNode, markedNode1, markedLabel1, markedNode2, markedLabel2);
 }
 
 void Node::formatForDebugger(char* buffer, unsigned length) const
