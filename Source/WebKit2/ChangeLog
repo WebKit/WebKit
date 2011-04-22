@@ -2,6 +2,17 @@
 
         Reviewed by Maciej Stachowiak.
 
+        <rdar://problem/9311037>
+
+        The WebProcess sandbox should not allow modification of the
+        CoreAudio component cache.
+
+        * WebProcess/com.apple.WebProcess.sb:
+
+2011-04-21  Ivan Krstić  <ike@apple.com>
+
+        Reviewed by Maciej Stachowiak.
+
         <rdar://problem/9263428>
 
         The WebProcess sandbox should only allow outbound networking

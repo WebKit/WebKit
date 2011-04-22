@@ -50,6 +50,7 @@
     ;; FIXME: These should be removed when <rdar://problem/9217757> is fixed.
     (subpath (string-append (param "HOME_DIR") "/Library/Audio/Plug-Ins/Components"))
     (subpath (string-append (param "HOME_DIR") "/Library/Preferences/QuickTime Preferences"))
+    (literal (string-append (param "HOME_DIR") "/Library/Caches/com.apple.coreaudio.components.plist"))
     (subpath "/Library/Audio/Plug-Ins/Components")
     (subpath "/Library/Audio/Plug-Ins/HAL")
     (subpath "/Library/Video/Plug-Ins")
@@ -84,9 +85,6 @@
     (regex (string-append "^" (param "HOME_DIR") "/Library/Preferences/ByHost/com\.apple\.HIToolbox\."))
     (regex (string-append "^" (param "HOME_DIR") "/Library/Preferences/com\.apple\.WebProcess\."))
     (subpath (string-append (param "HOME_DIR") "/Library/Keychains"))
-
-    ;; FIXME: This should be removed when <rdar://problem/9217757> is fixed.
-    (literal (string-append (param "HOME_DIR") "/Library/Caches/com.apple.coreaudio.components.plist"))
 )
 
 ;; Darwin temporary files and caches, if present
@@ -169,3 +167,8 @@
 ;; FIXME: Investigate these.
 (allow appleevent-send (appleevent-destination "com.apple.WebProcess"))
 (allow mach-lookup (global-name-regex #"^EPPC-"))
+
+;; Mute violations
+(deny file-write*
+      (literal (string-append (param "HOME_DIR") "/Library/Caches/com.apple.coreaudio.components.plist"))
+      (with no-log))
