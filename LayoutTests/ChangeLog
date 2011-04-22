@@ -1,3 +1,11 @@
+2011-04-22  Xiaomei Ji  <xji@chromium.org>
+
+        Rebaseline after r84659.
+
+        * platform/mac-wk2/fast/forms: Added.
+        * platform/mac-wk2/fast/forms/cursor-at-editable-content-boundary-expected.txt: Added.
+        * platform/win/fast/forms/cursor-at-editable-content-boundary-expected.txt: Added.
+
 2011-04-22  Yael Aharon  <yael.aharon@nokia.com>
 
         Reviewed by Sam Weinig.
