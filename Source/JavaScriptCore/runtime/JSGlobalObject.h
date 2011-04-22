@@ -95,6 +95,7 @@ namespace JSC {
         WriteBarrier<Structure> m_callbackObjectStructure;
         WriteBarrier<Structure> m_dateStructure;
         WriteBarrier<Structure> m_emptyObjectStructure;
+        WriteBarrier<Structure> m_nullPrototypeObjectStructure;
         WriteBarrier<Structure> m_errorStructure;
         WriteBarrier<Structure> m_functionStructure;
         WriteBarrier<Structure> m_numberObjectStructure;
@@ -202,6 +203,7 @@ namespace JSC {
         Structure* callbackObjectStructure() const { return m_callbackObjectStructure.get(); }
         Structure* dateStructure() const { return m_dateStructure.get(); }
         Structure* emptyObjectStructure() const { return m_emptyObjectStructure.get(); }
+        Structure* nullPrototypeObjectStructure() const { return m_nullPrototypeObjectStructure.get(); }
         Structure* errorStructure() const { return m_errorStructure.get(); }
         Structure* functionStructure() const { return m_functionStructure.get(); }
         Structure* numberObjectStructure() const { return m_numberObjectStructure.get(); }

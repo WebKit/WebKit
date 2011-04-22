@@ -1,3 +1,21 @@
+2011-04-22  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Geoffrey Garen.
+
+        Object.create creates uncachable objects
+        https://bugs.webkit.org/show_bug.cgi?id=59164
+
+        Use the prototype object's inheritorID, as we
+        should always have done
+
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::reset):
+        (JSC::JSGlobalObject::visitChildren):
+        * runtime/JSGlobalObject.h:
+        (JSC::JSGlobalObject::nullPrototypeObjectStructure):
+        * runtime/ObjectConstructor.cpp:
+        (JSC::objectConstructorCreate):
+
 2011-04-22  Gavin Barraclough  <barraclough@apple.com>
 
         Reviewed by Sam Weinig.

@@ -181,6 +181,7 @@ void JSGlobalObject::reset(JSValue prototype)
     m_functionPrototype->structure()->setPrototypeWithoutTransition(exec->globalData(), m_objectPrototype.get());
 
     m_emptyObjectStructure.set(exec->globalData(), this, m_objectPrototype->inheritorID(exec->globalData()));
+    m_nullPrototypeObjectStructure.set(exec->globalData(), this, createEmptyObjectStructure(exec->globalData(), jsNull()));
 
     m_callbackFunctionStructure.set(exec->globalData(), this, JSCallbackFunction::createStructure(exec->globalData(), m_functionPrototype.get()));
     m_argumentsStructure.set(exec->globalData(), this, Arguments::createStructure(exec->globalData(), m_objectPrototype.get()));
@@ -344,6 +345,7 @@ void JSGlobalObject::visitChildren(SlotVisitor& visitor)
     visitIfNeeded(visitor, &m_callbackObjectStructure);
     visitIfNeeded(visitor, &m_dateStructure);
     visitIfNeeded(visitor, &m_emptyObjectStructure);
+    visitIfNeeded(visitor, &m_nullPrototypeObjectStructure);
     visitIfNeeded(visitor, &m_errorStructure);
     visitIfNeeded(visitor, &m_functionStructure);
     visitIfNeeded(visitor, &m_numberObjectStructure);
