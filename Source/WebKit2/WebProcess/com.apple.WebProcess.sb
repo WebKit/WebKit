@@ -109,11 +109,19 @@
 (if (positive? (string-length (param "UI_PROCESS_BUNDLE_RESOURCE_DIR")))
     (allow file-read* (subpath (param "UI_PROCESS_BUNDLE_RESOURCE_DIR"))))
 
-;; FIXME: overly permissive since we can't pre-enumerate the client
-;; classes for graphics cards
+;; IOKit user clients
 (allow iokit-open
-   ;;(iokit-user-client-class "IOHIDParamUserClient")
-   ;;(iokit-user-client-class "RootDomainUserClient")
+    (iokit-connection "IOAccelerator")
+    (iokit-user-client-class "IOAccelerationUserClient")
+    (iokit-user-client-class "IOFramebufferSharedUserClient")
+    (iokit-user-client-class "AppleGraphicsControlClient")
+    (iokit-user-client-class "AGPMClient")
+    (iokit-user-client-class "IOHIDParamUserClient")
+    (iokit-user-client-class "RootDomainUserClient")
+    (iokit-user-client-class "IOSurfaceRootUserClient")
+    (iokit-user-client-class "IOSurfaceSendRight")
+    (iokit-user-client-class "IOAudioControlUserClient")
+    (iokit-user-client-class "IOAudioEngineUserClient")
 )
 
 ;; Various services required by AppKit and other frameworks
