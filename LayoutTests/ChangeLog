@@ -1,3 +1,14 @@
+2011-04-22  Xiaomei Ji  <xji@chromium.org>
+
+        Reviewed by David Hyatt.
+
+        Local caret rectangle calculation should be relative to its containing block.
+        https://bugs.webkit.org/show_bug.cgi?id=49508.
+
+        * fast/forms/cursor-at-editable-content-boundary-expected.txt: Added.
+        * fast/forms/cursor-at-editable-content-boundary.html: Added.
+        * platform/mac/fast/forms/cursor-at-editable-content-boundary-expected.txt: Added.
+
 2011-04-22  Roland Steiner  <rolandsteiner@chromium.org>
 
         Unreviewed: update Chromium baselines.
