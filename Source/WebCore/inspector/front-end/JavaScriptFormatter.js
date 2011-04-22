@@ -28,16 +28,18 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-function FormattedContentBuilder(content)
+function FormattedContentBuilder(content, mapping, originalOffset, formattedOffset)
 {
     this._originalContent = content;
-    this._originalPositions = [0];
+    this._originalOffset = originalOffset;
     this._lastOriginalPosition = 0;
 
     this._formattedContent = [];
     this._formattedContentLength = 0;
-    this._formattedPositions = [0];
-    this._lastFormattedlPosition = 0;
+    this._formattedOffset = formattedOffset;
+    this._lastFormattedPosition = 0;
+
+    this._mapping = mapping;
 
     this._lineNumber = 0;
     this._nestingLevelLevel = 0;
@@ -63,9 +65,9 @@ FormattedContentBuilder.prototype = {
         }
 
         if (token.pos - this._lastOriginalPosition !== this._formattedContentLength - this._lastFormattedPosition) {
-            this._originalPositions.push(token.pos);
-            this._formattedPositions.push(this._formattedContentLength);
+            this._mapping.original.push(this._originalOffset + token.pos);
             this._lastOriginalPosition = token.pos;
+            this._mapping.formatted.push(this._formattedOffset + this._formattedContentLength);
             this._lastFormattedPosition = this._formattedContentLength;
         }
 

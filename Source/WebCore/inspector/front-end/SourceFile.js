@@ -252,7 +252,7 @@ WebInspector.FormattedSourceFile.prototype = {
             this._mapping = new WebInspector.FormattedSourceMapping(this._scripts, mapping.originalLineEndings, formattedText.lineEndings(), mapping);
             WebInspector.SourceFile.prototype._didRequestContent.call(this, mimeType, formattedText);
         }
-        this._formatter.formatContent(text, this._scripts, didFormatContent.bind(this));
+        this._formatter.formatContent(mimeType, text, didFormatContent.bind(this));
     }
 }
 

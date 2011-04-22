@@ -58,6 +58,7 @@
     <file>InjectedFakeWorker.js</file>
     <file>inspector.js</file>
     <file>InspectorFrontendHostStub.js</file>
+    <file>JavaScriptFormatter.js</file>
     <file>KeyboardShortcut.js</file>
     <file>MetricsSidebarPane.js</file>
     <file>NetworkItemView.js</file>
@@ -123,7 +124,6 @@
     <file>WatchExpressionsSidebarPane.js</file>
     <file>WelcomeView.js</file>
     <file>WorkersSidebarPane.js</file>
-    <file>UglifyJS/JavaScriptFormatter.js</file>
     <file>UglifyJS/parse-js.js</file>
     <file>audits.css</file>
     <file>goToLineDialog.css</file>

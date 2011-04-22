@@ -5,5 +5,14 @@ Debugger was enabled.
 Running: testScriptFormatterWorker
 
 Running: testSourceMapping
+
+Running: testFormatInlinedScripts
+<html><body><script>
+function f() {
+}
+</script><script>
+function g() {
+}
+</script></body></html>
 Debugger was disabled.
 

@@ -6234,6 +6234,7 @@
             'inspector/front-end/InspectorFrontendHostStub.js',
             'inspector/front-end/InjectedFakeWorker.js',
             'inspector/front-end/inspector.js',
+            'inspector/front-end/JavaScriptFormatter.js',
             'inspector/front-end/KeyboardShortcut.js',
             'inspector/front-end/MetricsSidebarPane.js',
             'inspector/front-end/NetworkItemView.js',
@@ -6311,7 +6312,6 @@
             'inspector/front-end/textViewer.css',
         ],
         'webinspector_uglifyjs_files': [
-            'inspector/front-end/UglifyJS/JavaScriptFormatter.js',
             'inspector/front-end/UglifyJS/parse-js.js',
         ],
         'webinspector_image_files': [

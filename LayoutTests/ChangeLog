@@ -1,3 +1,14 @@
+2011-04-22  Pavel Podivilov  <podivilov@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: fix de-obfuscation of scripts inlined in html.
+        https://bugs.webkit.org/show_bug.cgi?id=58538
+
+        * inspector/debugger/resources/obfuscated.js:
+        * inspector/debugger/script-formatter-expected.txt:
+        * inspector/debugger/script-formatter.html: Renamed from LayoutTests/inspector/debugger/script-formatter.html-disabled.
+
 2011-04-22  Mikhail Naganov  <mnaganov@chromium.org>
 
         Reviewed by Pavel Feldman.

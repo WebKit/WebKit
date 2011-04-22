@@ -15,7 +15,7 @@ var test = function()
         {
             worker.onmessage = InspectorTest.safeWrap(function(event)
             {
-                InspectorTest.assertEquals("var x = 0;", event.data.formattedSource);
+                InspectorTest.assertEquals("var x = 0\n", event.data.content);
                 next();
             });
 
@@ -25,7 +25,7 @@ var test = function()
                 next();
             };
 
-            worker.postMessage("var x=0");
+            worker.postMessage({ mimeType: "text/javascript", content: "var x=0" });
         },
 
         function testSourceMapping(next)
@@ -33,13 +33,15 @@ var test = function()
             worker.onmessage = InspectorTest.safeWrap(function(event)
             {
                 var source = WebInspector.panels.scripts.visibleView._content;
-                var formattedSource = event.data.formattedSource;
+                var formattedSource = event.data.content;
                 var mapping = event.data.mapping;
 
                 function testMapping(string)
                 {
                     var position = source.indexOf(string);
-                    var formattedPosition = mapping.formatted[mapping.original.upperBound(position - 1)];
+                    var index = mapping.original.upperBound(position) - 1;
+                    var delta = position - mapping.original[index];
+                    var formattedPosition = Math.min(mapping.formatted[index] + delta, mapping.formatted[index + 1]);
                     InspectorTest.assertEquals(string, formattedSource.substr(formattedPosition, string.length));
                 }
 
@@ -62,8 +64,26 @@ var test = function()
 
             function didShowScriptSource(sourceFrame)
             {
-                worker.postMessage(sourceFrame._content);
+                worker.postMessage({ mimeType: "text/javascript", content: sourceFrame._content });
             }
+        },
+
+        function testFormatInlinedScripts(next)
+        {
+            worker.onmessage = InspectorTest.safeWrap(function(event)
+            {
+                InspectorTest.addResult(event.data.content);
+                next();
+            });
+
+            worker.onerror = function(event)
+            {
+                InspectorTest.addResult("Error in worker: " + event.data);
+                next();
+            };
+
+            var content = "<html><body><script>function f(){}<" + "/script><script>function g(){}<" + "/script></body></html>";
+            worker.postMessage({ mimeType: "text/html", content: content });
         }
     ]);
 }

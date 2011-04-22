@@ -29,13 +29,87 @@
  */
 
 onmessage = function(event) {
-    var source = event.data;
-    var tokenizer = new Tokenizer(source);
-    var builder = new FormattedContentBuilder(tokenizer.content());
-    var formatter = new JavaScriptFormatter(tokenizer, builder);
-    formatter.format();
-    postMessage({ formattedSource: builder.content(), mapping: builder.mapping() });
+    var result = {};
+    if (event.data.mimeType === "text/html") {
+        var formatter = new HTMLScriptFormatter();
+        result = formatter.format(event.data.content);
+    } else {
+        result.mapping = { original: [], formatted: [] };
+        result.content = formatScript(event.data.content, result.mapping, 0, 0);
+    }
+    postMessage(result);
 };
+
+function formatScript(content, mapping, offset, formattedOffset)
+{
+    var formattedContent;
+    try {
+        var tokenizer = new Tokenizer(content);
+        var builder = new FormattedContentBuilder(tokenizer.content(), mapping, offset, formattedOffset);
+        var formatter = new JavaScriptFormatter(tokenizer, builder);
+        formatter.format();
+        formattedContent = builder.content();
+    } catch (e) {
+        formattedContent = content;
+    }
+    return formattedContent;
+}
+
+WebInspector = {};
+importScripts("SourceTokenizer.js");
+importScripts("SourceHTMLTokenizer.js");
+
+HTMLScriptFormatter = function()
+{
+    WebInspector.SourceHTMLTokenizer.call(this);
+}
+
+HTMLScriptFormatter.prototype = {
+    format: function(content)
+    {
+        this.line = content;
+        this._content = content;
+        this._formattedContent = "";
+        this._mapping = { original: [], formatted: [] };
+        this._position = 0;
+
+        var cursor = 0;
+        while (cursor < this._content.length)
+            cursor = this.nextToken(cursor);
+
+        this._formattedContent += this._content.substring(this._position);
+        return { content: this._formattedContent, mapping: this._mapping };
+    },
+
+    scriptStarted: function(cursor)
+    {
+        this._formattedContent += this._content.substring(this._position, cursor);
+        this._formattedContent += "\n";
+        this._position = cursor;
+    },
+
+    scriptEnded: function(cursor)
+    {
+        if (cursor === this._position)
+            return;
+
+        var scriptContent = this._content.substring(this._position, cursor);
+        var formattedScriptContent = formatScript(scriptContent, this._mapping, this._position, this._formattedContent.length);
+
+        this._formattedContent += formattedScriptContent;
+        this._position = cursor;
+    },
+
+    styleSheetStarted: function(cursor)
+    {
+    },
+
+    styleSheetEnded: function(cursor)
+    {
+    }
+}
+
+HTMLScriptFormatter.prototype.__proto__ = WebInspector.SourceHTMLTokenizer.prototype;
 
 function require()
 {
@@ -46,4 +120,4 @@ var exports = {};
 importScripts("UglifyJS/parse-js.js");
 var parse = exports;
 
-importScripts("UglifyJS/JavaScriptFormatter.js");
+importScripts("JavaScriptFormatter.js");

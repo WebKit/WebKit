@@ -1,3 +1,41 @@
+2011-04-22  Pavel Podivilov  <podivilov@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: fix de-obfuscation of scripts inlined in html.
+        https://bugs.webkit.org/show_bug.cgi?id=58538
+
+        Use html tokenizer to find script boundaries instead of relying on scriptParsed events.
+
+        Test: inspector/debugger/script-formatter.html
+
+        * WebCore.gypi:
+        * WebCore.vcproj/WebCore.vcproj:
+        * inspector/front-end/JavaScriptFormatter.js: Renamed from Source/WebCore/inspector/front-end/UglifyJS/JavaScriptFormatter.js.
+        * inspector/front-end/ScriptFormatter.js:
+        (WebInspector.ScriptFormatter):
+        (WebInspector.ScriptFormatter.prototype.formatContent):
+        (WebInspector.ScriptFormatter.prototype._didFormatContent):
+        * inspector/front-end/ScriptFormatterWorker.js:
+        (onmessage):
+        (formatScript):
+        (HTMLScriptFormatter):
+        (HTMLScriptFormatter.prototype.format):
+        (HTMLScriptFormatter.prototype.scriptStarted):
+        (HTMLScriptFormatter.prototype.scriptEnded):
+        (HTMLScriptFormatter.prototype.styleSheetStarted):
+        (HTMLScriptFormatter.prototype.styleSheetEnded):
+        * inspector/front-end/SourceFile.js:
+        (WebInspector.FormattedSourceFile.prototype._didRequestContent):
+        * inspector/front-end/SourceHTMLTokenizer.js:
+        (WebInspector.SourceHTMLTokenizer.prototype.scriptStarted):
+        (WebInspector.SourceHTMLTokenizer.prototype.scriptEnded):
+        (WebInspector.SourceHTMLTokenizer.prototype.styleSheetStarted):
+        (WebInspector.SourceHTMLTokenizer.prototype.styleSheetEnded):
+        (WebInspector.SourceHTMLTokenizer.prototype.nextToken):
+        * inspector/front-end/SourceHTMLTokenizer.re2js:
+        * inspector/front-end/WebKit.qrc:
+
 2011-04-22  Andrey Kosyakov  <caseq@chromium.org>
 
         Reviewed by Pavel Feldman.

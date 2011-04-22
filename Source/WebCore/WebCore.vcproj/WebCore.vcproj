@@ -67437,6 +67437,10 @@
 					>
 				</File>
 				<File
+					RelativePath="..\inspector\front-end\JavaScriptFormatter.js"
+					>
+				</File>
+				<File
 					RelativePath="..\inspector\front-end\KeyboardShortcut.js"
 					>
 				</File>
