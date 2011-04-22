@@ -1,3 +1,20 @@
+2011-04-22  Mike West  <mkwst@google.com>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: Tiny improvement to UI for adding an XHR breakpoint
+        https://bugs.webkit.org/show_bug.cgi?id=59100
+
+        Improve web inspector UI around adding XHR breakpoints by adding
+        a textual label to the input-like `span` used to specify which
+        XHR requests the breakpoint ought to target.
+
+        * inspector/front-end/BreakpointsSidebarPane.js:
+        (WebInspector.XHRBreakpointsSidebarPane.prototype._addButtonClicked.finishEditing):
+        (WebInspector.XHRBreakpointsSidebarPane.prototype._addButtonClicked):
+        * inspector/front-end/inspector.css:
+        (#breakpoint-condition-input):
+
 2011-04-22  Pavel Podivilov  <podivilov@chromium.org>
 
         Reviewed by Pavel Feldman.

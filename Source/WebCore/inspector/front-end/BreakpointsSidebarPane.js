@@ -262,13 +262,18 @@ WebInspector.XHRBreakpointsSidebarPane.prototype = {
 
         this.expanded = true;
 
+        var inputElementContainer = document.createElement("p");
+        inputElementContainer.className = "breakpoint-condition";
         var inputElement = document.createElement("span");
-        inputElement.className = "breakpoint-condition editing";
-        this._addListElement(inputElement, this.listElement.firstChild);
+        inputElementContainer.textContent = WebInspector.UIString("Break when URL contains:");
+        inputElement.className = "editing";
+        inputElement.id = "breakpoint-condition-input";
+        inputElementContainer.appendChild(inputElement);
+        this._addListElement(inputElementContainer, this.listElement.firstChild);
 
         function finishEditing(accept, e, text)
         {
-            this._removeListElement(inputElement);
+            this._removeListElement(inputElementContainer);
             if (accept) {
                 this._setBreakpoint(text, true);
                 this._saveBreakpoints();

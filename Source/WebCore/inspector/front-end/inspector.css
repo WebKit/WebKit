@@ -1738,8 +1738,16 @@ li.editing .swatch, li.editing .enabled-button,  li.editing-sub-part .delete-but
     display: block;
     margin-top: 4px;
     margin-bottom: 4px;
-    margin-left: 25px;
-    margin-right: 10px;
+    margin-left: 23px;
+    margin-right: 8px;
+}
+
+#breakpoint-condition-input {
+    display: block;
+    margin-left: 0;
+    margin-right: 0;
+    outline: none !important;
+    border: 1px solid rgb(66%, 66%, 66%);
 }
 
 .pane.expanded:nth-last-of-type(1) {
