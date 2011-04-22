@@ -1,3 +1,19 @@
+2011-04-21  Beth Dakin  <bdakin@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        https://bugs.webkit.org/show_bug.cgi?id=57898
+        REGRESSION (r82185): Scroll position not restored on navigation back to a page in 
+        the page cache
+        -and corresponding-
+        <rdar://problem/9226652>
+
+        The original fix for this change broke scroll-position restore for pages that are 
+        *not* in the page cache. This patch fixes both cached and non-cached pages by 
+        using the cachedScrollPosition() only for cached pages.
+        * loader/HistoryController.cpp:
+        (WebCore::HistoryController::saveScrollPositionAndViewStateToItem):
+
 2011-04-21  Luke Macpherson   <macpherson@chromium.org>
 
         Reviewed by Eric Seidel.

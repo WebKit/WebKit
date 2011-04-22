@@ -78,8 +78,12 @@ void HistoryController::saveScrollPositionAndViewStateToItem(HistoryItem* item)
 {
     if (!item || !m_frame->view())
         return;
-        
-    item->setScrollPoint(m_frame->view()->cachedScrollPosition());
+
+    if (m_frame->document()->inPageCache())
+        item->setScrollPoint(m_frame->view()->cachedScrollPosition());
+    else
+        item->setScrollPoint(m_frame->view()->scrollPosition());
+
     item->setPageScaleFactor(m_frame->pageScaleFactor());
     
     // FIXME: It would be great to work out a way to put this code in WebCore instead of calling through to the client.
