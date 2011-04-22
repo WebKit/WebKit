@@ -1,3 +1,37 @@
+2011-04-22  Joseph Pecoraro  <joepeck@webkit.org>
+
+        Reviewed by Kent Tamura.
+
+        Don't rely on hasSpinButton to check if an input type can be stepped
+        https://bugs.webkit.org/show_bug.cgi?id=59224
+
+        Add isSteppable to know for certain if an input type can
+        be stepped or not. Previously we were checking if the input
+        has a spin control or is the range input type. These are UI
+        details, but the step functionality does not require there
+        to be a UI.
+
+        No change in behavior, covered by existing tests.
+
+        * html/BaseDateAndTimeInputType.cpp:
+        (WebCore::BaseDateAndTimeInputType::isSteppable):
+        * html/BaseDateAndTimeInputType.h:
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::isSteppable):
+        (WebCore::HTMLInputElement::stepUpFromRenderer): remove the
+        check for a spinner and range control and instead ASSERT
+        that the type is steppable.
+        * html/HTMLInputElement.h:
+        * html/InputType.cpp:
+        (WebCore::InputType::isSteppable):
+        * html/InputType.h:
+        * html/NumberInputType.cpp:
+        (WebCore::NumberInputType::isSteppable):
+        * html/NumberInputType.h:
+        * html/RangeInputType.cpp:
+        (WebCore::RangeInputType::isSteppable):
+        * html/RangeInputType.h:
+
 2011-04-22  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Eric Seidel.

@@ -108,6 +108,11 @@ double BaseDateAndTimeInputType::defaultValueForStepUp() const
     return ms + (offset * msPerMinute);
 }
 
+bool BaseDateAndTimeInputType::isSteppable() const
+{
+    return true;
+}
+
 bool BaseDateAndTimeInputType::stepMismatch(const String& value, double step) const
 {
     const double nan = numeric_limits<double>::quiet_NaN();

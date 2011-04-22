@@ -51,6 +51,7 @@ private:
     virtual bool supportsRangeLimitation() const;
     virtual double minimum() const;
     virtual double maximum() const;
+    virtual bool isSteppable() const;
     virtual bool stepMismatch(const String&, double) const;
     virtual double stepBase() const;
     virtual double stepBaseWithDecimalPlaces(unsigned*) const;

@@ -631,6 +631,11 @@ bool InputType::isCheckable()
     return false;
 }
 
+bool InputType::isSteppable() const
+{
+    return false;
+}
+
 bool InputType::hasSpinButton()
 {
     return false;

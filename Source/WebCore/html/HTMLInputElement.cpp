@@ -1326,6 +1326,11 @@ HTMLOptionElement* HTMLInputElement::selectedOption() const
 
 #endif // ENABLE(DATALIST)
 
+bool HTMLInputElement::isSteppable() const
+{
+    return m_inputType->isSteppable();
+}
+
 void HTMLInputElement::stepUpFromRenderer(int n)
 {
     // The differences from stepUp()/stepDown():
@@ -1363,8 +1368,8 @@ void HTMLInputElement::stepUpFromRenderer(int n)
     //
     // n is assumed as -n if step < 0.
 
-    ASSERT(hasSpinButton() || m_inputType->isRangeControl());
-    if (!hasSpinButton() && !m_inputType->isRangeControl())
+    ASSERT(isSteppable());
+    if (!isSteppable())
         return;
     ASSERT(n);
     if (!n)

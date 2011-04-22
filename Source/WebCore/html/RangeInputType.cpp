@@ -121,6 +121,11 @@ double RangeInputType::maximum() const
     return max;
 }
 
+bool RangeInputType::isSteppable() const
+{
+    return true;
+}
+
 bool RangeInputType::stepMismatch(const String&, double) const
 {
     // stepMismatch doesn't occur for type=range. RenderSlider guarantees the

@@ -78,6 +78,7 @@ public:
     void stepUp(ExceptionCode& ec) { stepUp(1, ec); }
     void stepDown(ExceptionCode& ec) { stepDown(1, ec); }
     // stepUp()/stepDown() for user-interaction.
+    bool isSteppable() const;
     void stepUpFromRenderer(int);
 
     bool isTextButton() const;

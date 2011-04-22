@@ -206,6 +206,7 @@ public:
     virtual bool shouldRespectSpeechAttribute();
     virtual bool isEnumeratable();
     virtual bool isCheckable();
+    virtual bool isSteppable() const;
     virtual bool hasSpinButton();
     virtual bool shouldRespectHeightAndWidthAttributes();
 

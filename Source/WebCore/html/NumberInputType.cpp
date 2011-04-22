@@ -121,6 +121,11 @@ double NumberInputType::maximum() const
     return parseToDouble(element()->fastGetAttribute(maxAttr), numeric_limits<float>::max());
 }
 
+bool NumberInputType::isSteppable() const
+{
+    return true;
+}
+
 bool NumberInputType::stepMismatch(const String& value, double step) const
 {
     double doubleValue;
