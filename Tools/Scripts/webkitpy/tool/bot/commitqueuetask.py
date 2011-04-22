@@ -45,7 +45,7 @@ class CommitQueueTask(PatchAnalysisTask):
             return False
         if not self._patch.committer():
             return False
-        if not self._patch.review() != "-":
+        if self._patch.review() == "-":
             return False
         # Reviewer is not required. Missing reviewers will be caught during
         # the ChangeLog check during landing.

@@ -1,5 +1,11 @@
 2011-04-22  Adam Barth  <abarth@webkit.org>
 
+        Remove double-negative.  (Sorry this was bugging me.)
+
+        * Scripts/webkitpy/tool/bot/commitqueuetask.py:
+
+2011-04-22  Adam Barth  <abarth@webkit.org>
+
         Reviewed by Eric Seidel.
 
         Factor LayoutTestResultsReader out of CommitQueue
