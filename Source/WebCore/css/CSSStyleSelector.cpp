@@ -3649,23 +3649,18 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
     case CSSPropertyDisplay:
         HANDLE_INHERIT_AND_INITIAL_AND_PRIMITIVE(display, Display)
 #if ENABLE(WCSS)
-        if (primitiveValue) {
-            if (primitiveValue->getIdent() == CSSValueWapMarquee) {
-                // Initialize WAP Marquee style
-                m_style->setOverflowX(OMARQUEE);
-                m_style->setOverflowY(OMARQUEE);
-                m_style->setWhiteSpace(NOWRAP);
-                m_style->setMarqueeDirection(MLEFT);
-                m_style->setMarqueeSpeed(85); // Normal speed
-                m_style->setMarqueeLoopCount(1);
-                m_style->setMarqueeBehavior(MSCROLL);
+        if (primitiveValue && primitiveValue->getIdent() == CSSValueWapMarquee) {
+            // Initialize WAP Marquee style
+            m_style->setOverflowX(OMARQUEE);
+            m_style->setOverflowY(OMARQUEE);
+            m_style->setWhiteSpace(NOWRAP);
+            m_style->setMarqueeDirection(MLEFT);
+            m_style->setMarqueeSpeed(85); // Normal speed
+            m_style->setMarqueeLoopCount(1);
+            m_style->setMarqueeBehavior(MSCROLL);
 
-                if (m_parentStyle)
-                    m_style->setDisplay(m_parentStyle->display());
-                else
-                    m_style->setDisplay(*primitiveValue);
-            } else
-                m_style->setDisplay(*primitiveValue);
+            if (m_parentStyle)
+                m_style->setDisplay(m_parentStyle->display());
         }
 #endif
         return;

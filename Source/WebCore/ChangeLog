@@ -1,3 +1,16 @@
+2011-04-21  Luke Macpherson   <macpherson@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        Remove redundant calls to RenderStyle::setDisplay()
+        https://bugs.webkit.org/show_bug.cgi?id=59060
+
+        No new tests / no new functionality added.
+
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::applyProperty):
+        Remove redundant calls to RenderStyle::setDisplay()
+
 2011-04-21  John Bauman  <jbauman@chromium.org>
 
         Reviewed by Kenneth Russell.
