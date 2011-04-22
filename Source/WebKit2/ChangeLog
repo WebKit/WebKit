@@ -1,3 +1,18 @@
+2011-04-21  Alexey Proskuryakov  <ap@apple.com>
+
+        Reviewed by Maciej Stachowiak.
+
+        Minimize synchronous calls during loading
+        https://bugs.webkit.org/show_bug.cgi?id=59169
+
+        <rdar://problem/9320128> REGRESSION(r84526): WK2 windows unresponsive
+
+        * UIProcess/API/mac/WKView.mm:
+        (-[WKView resignFirstResponder]):
+        (-[WKView _resetTextInputState]):
+        Made _resetTextInputState deal with client side state only, letting Editor composition be
+        discarded more discriminately.
+
 2011-04-21  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Adam Roben.

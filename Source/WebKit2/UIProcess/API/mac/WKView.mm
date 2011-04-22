@@ -310,6 +310,8 @@ struct WKViewInterpretKeyEventsParameters {
 {
     _data->_inResignFirstResponder = true;
 
+    if (_data->_page->editorState().hasComposition && !_data->_page->editorState().shouldIgnoreCompositionSelectionChange)
+        _data->_page->confirmCompositionWithoutDisturbingSelection();
     [self _resetTextInputState];
     
     _data->_page->viewStateDidChange(WebPageProxy::ViewIsFocused);
@@ -2354,7 +2356,6 @@ static void drawPageBackground(CGContextRef context, WebPageProxy* page, const I
 
 - (void)_resetTextInputState
 {
-    _data->_page->confirmCompositionWithoutDisturbingSelection();
     [[super inputContext] discardMarkedText];
 
     if (_data->_inSecureInputState) {
