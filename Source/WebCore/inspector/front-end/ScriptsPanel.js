@@ -278,7 +278,7 @@ WebInspector.ScriptsPanel.prototype = {
         var sourceFile = this._presentationModel.sourceFile(sourceFileId);
         var select = this._filesSelectElement;
         var option = document.createElement("option");
-        option.text = sourceFile.url ? WebInspector.displayNameForURL(sourceFile.url) : WebInspector.UIString("(program)");
+        option.text = sourceFile.displayName;
         option.isContentScript = sourceFile.isContentScript;
         if (sourceFile.isContentScript)
             option.addStyleClass("extension-script");
@@ -567,7 +567,7 @@ WebInspector.ScriptsPanel.prototype = {
     _createSourceFrame: function(sourceFileId)
     {
         var sourceFile = this._presentationModel.sourceFile(sourceFileId);
-        var delegate = new WebInspector.SourceFrameDelegateForScriptsPanel(this._presentationModel, sourceFileId);
+        var delegate = new WebInspector.SourceFrameDelegateForScriptsPanel(this._presentationModel, sourceFileId, sourceFile.displayName);
         var sourceFrame = new WebInspector.SourceFrame(delegate, sourceFile.url);
         sourceFrame._sourceFileId = sourceFileId;
         sourceFrame.addEventListener(WebInspector.SourceFrame.Events.Loaded, this._sourceFrameLoaded, this);
@@ -1004,12 +1004,13 @@ WebInspector.ScriptsPanel.prototype = {
 WebInspector.ScriptsPanel.prototype.__proto__ = WebInspector.Panel.prototype;
 
 
-WebInspector.SourceFrameDelegateForScriptsPanel = function(model, sourceFileId)
+WebInspector.SourceFrameDelegateForScriptsPanel = function(model, sourceFileId, scriptName)
 {
     WebInspector.SourceFrameDelegate.call(this);
     this._model = model;
     this._sourceFileId = sourceFileId;
     this._popoverObjectGroup = "popover";
+    this._scriptName = scriptName;
 }
 
 WebInspector.SourceFrameDelegateForScriptsPanel.prototype = {
@@ -1090,6 +1091,11 @@ WebInspector.SourceFrameDelegateForScriptsPanel.prototype = {
     formatSourceFilesToggled: function()
     {
         return this._model.formatSourceFilesToggled();
+    },
+
+    suggestedFileName: function()
+    {
+        return this._scriptName;
     }
 }
 

@@ -1,3 +1,33 @@
+2011-04-22  Pavel Feldman  <pfeldman@google.com>
+
+        Reviewed by Yury Semikhatsky.
+
+        Web Inspector: add Save As context menu item to the TextViewer.
+        https://bugs.webkit.org/show_bug.cgi?id=59196
+
+        * inspector/front-end/ResourceView.js:
+        (WebInspector.ResourceSourceFrame.prototype.requestContent):
+        (WebInspector.ResourceSourceFrame.prototype.suggestedFileName):
+        (WebInspector.RevisionSourceFrame.prototype.requestContent):
+        (WebInspector.RevisionSourceFrame.prototype.suggestedFileName):
+        * inspector/front-end/ScriptsPanel.js:
+        (WebInspector.ScriptsPanel.prototype._createSourceFrame):
+        (WebInspector.SourceFrameDelegateForScriptsPanel):
+        (WebInspector.SourceFrameDelegateForScriptsPanel.prototype.formatSourceFilesToggled):
+        (WebInspector.SourceFrameDelegateForScriptsPanel.prototype.suggestedFileName):
+        * inspector/front-end/SourceFrame.js:
+        (WebInspector.SourceFrame.prototype._initializeTextViewer):
+        (WebInspector.SourceFrame.prototype.populateTextAreaContextMenu):
+        (WebInspector.SourceFrame.prototype.suggestedFileName):
+        (WebInspector.SourceFrameDelegate.prototype.formatSourceFilesToggled):
+        (WebInspector.SourceFrameDelegate.prototype.suggestedFileName):
+        * inspector/front-end/TextViewer.js:
+        (WebInspector.TextViewer.prototype._contextMenu):
+        (WebInspector.TextViewerDelegate.prototype.cancelEditing):
+        (WebInspector.TextViewerDelegate.prototype.populateLineGutterContextMenu):
+        (WebInspector.TextViewerDelegate.prototype.populateTextAreaContextMenu):
+        (WebInspector.TextViewerDelegate.prototype.suggestedFileName):
+
 2011-04-22  Mikhail Naganov  <mnaganov@chromium.org>
 
         Reviewed by Pavel Feldman.

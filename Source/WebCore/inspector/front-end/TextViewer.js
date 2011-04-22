@@ -56,6 +56,7 @@ WebInspector.TextViewer = function(textModel, platform, url, delegate)
 
     this.element.addEventListener("dblclick", this._doubleClick.bind(this), true);
     this.element.addEventListener("keydown", this._handleKeyDown.bind(this), false);
+    this.element.addEventListener("contextmenu", this._contextMenu.bind(this), true);
 
     this._registerShortcuts();
 }
@@ -275,6 +276,26 @@ WebInspector.TextViewer.prototype = {
         }
     },
 
+    _contextMenu: function(event)
+    {
+        var selection = this._mainPanel._getSelection();
+        if (selection && !selection.isEmpty())
+            return; // Show default context menu for selection.
+
+        var contextMenu = new WebInspector.ContextMenu();
+        var target = event.target.enclosingNodeOrSelfWithClass("webkit-line-number");
+        if (target)
+            this._delegate.populateLineGutterContextMenu(target.lineNumber, contextMenu);
+        else
+            this._delegate.populateTextAreaContextMenu(contextMenu);
+
+        var fileName = this._delegate.suggestedFileName();
+        if (fileName)
+            contextMenu.appendItem(WebInspector.UIString("Save as..."), InspectorFrontendHost.saveAs.bind(InspectorFrontendHost, fileName, this._textModel.text));
+
+        contextMenu.show(event);
+    },
+
     _commitEditing: function()
     {
         if (this.readOnly)
@@ -336,6 +357,21 @@ WebInspector.TextViewerDelegate.prototype = {
     },
 
     cancelEditing: function()
+    {
+        // Should be implemented by subclasses.
+    },
+
+    populateLineGutterContextMenu: function(contextMenu)
+    {
+        // Should be implemented by subclasses.
+    },
+
+    populateTextAreaContextMenu: function(contextMenu)
+    {
+        // Should be implemented by subclasses.
+    },
+
+    suggestedFileName: function()
     {
         // Should be implemented by subclasses.
     }

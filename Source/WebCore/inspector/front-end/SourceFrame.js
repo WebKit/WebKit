@@ -312,7 +312,6 @@ WebInspector.SourceFrame.prototype = {
 
         var element = this._textViewer.element;
         if (this._delegate.debuggingSupported()) {
-            element.addEventListener("contextmenu", this._contextMenu.bind(this), true);
             element.addEventListener("mousedown", this._mouseDown.bind(this), true);
             element.addEventListener("mousemove", this._mouseMove.bind(this), true);
             element.addEventListener("scroll", this._scroll.bind(this), true);
@@ -605,18 +604,7 @@ WebInspector.SourceFrame.prototype = {
         this._textViewer.endUpdates();
     },
 
-    _contextMenu: function(event)
-    {
-        var contextMenu = new WebInspector.ContextMenu();
-        var target = event.target.enclosingNodeOrSelfWithClass("webkit-line-number");
-        if (target)
-            this._populateLineGutterContextMenu(target.lineNumber, contextMenu);
-        else
-            this._populateTextAreaContextMenu(contextMenu);
-        contextMenu.show(event);
-    },
-
-    _populateLineGutterContextMenu: function(lineNumber, contextMenu)
+    populateLineGutterContextMenu: function(lineNumber, contextMenu)
     {
         contextMenu.appendItem(WebInspector.UIString("Continue to Here"), this._delegate.continueToLine.bind(this._delegate, lineNumber));
 
@@ -661,9 +649,15 @@ WebInspector.SourceFrame.prototype = {
         }
     },
 
-    _populateTextAreaContextMenu: function(contextMenu)
+    populateTextAreaContextMenu: function(contextMenu)
     {
-        contextMenu.appendCheckboxItem(WebInspector.UIString("Pretty print"), this._delegate.toggleFormatSourceFiles.bind(this._delegate), this._delegate.formatSourceFilesToggled());
+        if (this._delegate.debuggingSupported())
+            contextMenu.appendCheckboxItem(WebInspector.UIString("Pretty print"), this._delegate.toggleFormatSourceFiles.bind(this._delegate), this._delegate.formatSourceFilesToggled());
+    },
+
+    suggestedFileName: function()
+    {
+        return this._delegate.suggestedFileName();
     },
 
     _scroll: function(event)
@@ -1024,6 +1018,11 @@ WebInspector.SourceFrameDelegate.prototype = {
     },
 
     formatSourceFilesToggled: function()
+    {
+        // Should be implemented by subclasses.
+    },
+
+    suggestedFileName: function()
     {
         // Should be implemented by subclasses.
     }

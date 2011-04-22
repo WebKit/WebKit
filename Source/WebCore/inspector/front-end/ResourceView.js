@@ -174,6 +174,11 @@ WebInspector.ResourceSourceFrame.prototype = {
             callback(mimeType, text);
         }
         this._resource.requestContent(contentLoaded.bind(this));
+    },
+
+    suggestedFileName: function()
+    {
+        return this._resource.displayName;
     }
 }
 
@@ -204,6 +209,11 @@ WebInspector.RevisionSourceFrame.prototype = {
             callback(mimeType, text);
         }
         this._revision.requestContent(contentLoaded.bind(this));
+    },
+
+    suggestedFileName: function()
+    {
+        return this._revision.resource.displayName;
     }
 }
 
