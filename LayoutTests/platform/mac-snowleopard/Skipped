@@ -176,3 +176,4 @@ media/media-fullscreen-inline.html
 # https://bugs.webkit.org/show_bug.cgi?id=51138
 media/invalid-media-url-crash.html
 http/tests/media/video-play-progress.html
+http/tests/media/video-load-twice.html
