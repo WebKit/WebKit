@@ -1,3 +1,23 @@
+2011-04-22  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        Rounded corners don't looks smooth when background-image is a gradient
+        https://bugs.webkit.org/show_bug.cgi?id=59213
+        
+        Add the "shrink background" behavior to the slow background
+        drawing code path.
+
+        Test: fast/backgrounds/gradient-background-leakage.html
+
+        * rendering/RenderBoxModelObject.cpp:
+        (WebCore::backgroundRectAdjustedForBleedAvoidance):
+        Utility function that returns a shrunk border rect based
+        on the context scale.
+        (WebCore::RenderBoxModelObject::paintFillLayerExtended):
+        Use backgroundRectAdjustedForBleedAvoidance() in both the fast
+        and slow paths.
+
 2011-04-22  Xiaomei Ji  <xji@chromium.org>
 
         Reviewed by David Hyatt.

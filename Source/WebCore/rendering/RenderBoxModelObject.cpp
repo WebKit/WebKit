@@ -571,6 +571,20 @@ RoundedIntRect RenderBoxModelObject::getBackgroundRoundedRect(const IntRect& bor
     return border;
 }
 
+static IntRect backgroundRectAdjustedForBleedAvoidance(GraphicsContext* context, const IntRect& borderRect, BackgroundBleedAvoidance bleedAvoidance)
+{
+    if (bleedAvoidance != BackgroundBleedShrinkBackground)
+        return borderRect;
+
+    IntRect adjustedRect = borderRect;
+    // We need to shrink the border by one device pixel on each side.
+    AffineTransform ctm = context->getCTM();
+    FloatSize contextScale(static_cast<float>(ctm.xScale()), static_cast<float>(ctm.yScale()));
+    adjustedRect.inflateX(-ceilf(1 / contextScale.width()));
+    adjustedRect.inflateY(-ceilf(1 / contextScale.height()));
+    return adjustedRect;
+}
+
 void RenderBoxModelObject::paintFillLayerExtended(const PaintInfo& paintInfo, const Color& color, const FillLayer* bgLayer, int tx, int ty, int w, int h,
     BackgroundBleedAvoidance bleedAvoidance, InlineFlowBox* box, int inlineBoxWidth, int inlineBoxHeight, CompositeOperator op, RenderObject* backgroundObject)
 {
@@ -617,15 +631,7 @@ void RenderBoxModelObject::paintFillLayerExtended(const PaintInfo& paintInfo, co
             return;
 
         if (hasRoundedBorder && bleedAvoidance != BackgroundBleedUseTransparencyLayer) {
-            IntRect roundedBorder = borderRect;
-            if (bleedAvoidance == BackgroundBleedShrinkBackground) {
-                // We need to shrink the border by one device pixel on each side.
-                AffineTransform ctm = context->getCTM();
-                FloatSize contextScale(static_cast<float>(ctm.xScale()), static_cast<float>(ctm.yScale()));
-                roundedBorder.inflateX(-ceilf(1.0f / contextScale.width()));
-                roundedBorder.inflateY(-ceilf(1.0f / contextScale.height()));
-            }
-            RoundedIntRect border = getBackgroundRoundedRect(roundedBorder, box, inlineBoxWidth, inlineBoxHeight, includeLeftEdge, includeRightEdge);
+            RoundedIntRect border = getBackgroundRoundedRect(backgroundRectAdjustedForBleedAvoidance(context, borderRect, bleedAvoidance), box, inlineBoxWidth, inlineBoxHeight, includeLeftEdge, includeRightEdge);
             context->fillRoundedRect(border, bgColor, style()->colorSpace());
         } else
             context->fillRect(borderRect, bgColor, style()->colorSpace());
@@ -636,7 +642,7 @@ void RenderBoxModelObject::paintFillLayerExtended(const PaintInfo& paintInfo, co
     bool clipToBorderRadius = hasRoundedBorder && bleedAvoidance != BackgroundBleedUseTransparencyLayer;
     GraphicsContextStateSaver clipToBorderStateSaver(*context, clipToBorderRadius);
     if (clipToBorderRadius) {
-        RoundedIntRect border = getBackgroundRoundedRect(borderRect, box, inlineBoxWidth, inlineBoxHeight, includeLeftEdge, includeRightEdge);
+        RoundedIntRect border = getBackgroundRoundedRect(backgroundRectAdjustedForBleedAvoidance(context, borderRect, bleedAvoidance), box, inlineBoxWidth, inlineBoxHeight, includeLeftEdge, includeRightEdge);
         context->addRoundedRectClip(border);
     }
     

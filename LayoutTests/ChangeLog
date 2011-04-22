@@ -1,3 +1,16 @@
+2011-04-22  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        Rounded corners don't looks smooth when background-image is a gradient
+        https://bugs.webkit.org/show_bug.cgi?id=59213
+
+        Testcase for rounded borders on an element with a gradient background.
+        
+        * fast/backgrounds/gradient-background-leakage.html: Added.
+        * platform/mac/fast/backgrounds/gradient-background-leakage-expected.png: Added.
+        * platform/mac/fast/backgrounds/gradient-background-leakage-expected.txt: Added.
+
 2011-04-22  Mike Reed  <reed@google.com>
 
         Reviewed by Eric Seidel.
