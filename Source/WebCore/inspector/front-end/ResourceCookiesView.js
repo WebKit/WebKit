@@ -35,14 +35,14 @@ WebInspector.ResourceCookiesView = function(resource)
 
     this._resource = resource;
 
-    resource.addEventListener("requestHeaders changed", this.show, this);
-    resource.addEventListener("responseHeaders changed", this.show, this);
+    resource.addEventListener("requestHeaders changed", this._refreshCookies, this);
+    resource.addEventListener("responseHeaders changed", this._refreshCookies, this);
 }
 
 WebInspector.ResourceCookiesView.prototype = {
     show: function(parentElement)
     {
-        if (!this._resource.requestCookies && !this._resource.responseCookies) {
+        if (!this._gotCookies) {
             if (!this._emptyMsgElement) {
                 this._emptyMsgElement = document.createElement("div");
                 this._emptyMsgElement.className = "storage-empty-view";
@@ -53,17 +53,33 @@ WebInspector.ResourceCookiesView.prototype = {
             return;
         }
 
-        if (this._emptyMsgElement)
-            this._emptyMsgElement.parentElement.removeChild(this._emptyMsgElement);
-
-        if (!this._cookiesTable) {
-            this._cookiesTable = new WebInspector.CookiesTable(null, true, true);
-            this._cookiesTable.addCookiesFolder(WebInspector.UIString("Request Cookies"), this._resource.requestCookies);
-            this._cookiesTable.addCookiesFolder(WebInspector.UIString("Response Cookies"), this._resource.responseCookies);
-            this.element.appendChild(this._cookiesTable.element);
-        }
-
+        if (!this._cookiesTable)
+            this._buildCookiesTable();
         WebInspector.View.prototype.show.call(this, parentElement);
+        this._cookiesTable.updateWidths();
+    },
+
+    get _gotCookies()
+    {
+        return !!(this._resource.requestCookies || this._resource.responseCookies);
+    },
+
+    _buildCookiesTable: function()
+    {
+        this.element.removeChildren();
+
+        this._cookiesTable = new WebInspector.CookiesTable(null, true, true);
+        this._cookiesTable.addCookiesFolder(WebInspector.UIString("Request Cookies"), this._resource.requestCookies);
+        this._cookiesTable.addCookiesFolder(WebInspector.UIString("Response Cookies"), this._resource.responseCookies);
+        this.element.appendChild(this._cookiesTable.element);
+    },
+
+    _refreshCookies: function()
+    {
+        delete this._cookiesTable;
+        if (!this._gotCookies || !this.visible)
+            return;
+        this._buildCookiesTable();
         this._cookiesTable.updateWidths();
     }
 }

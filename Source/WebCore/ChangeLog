@@ -1,3 +1,16 @@
+2011-04-21  Andrey Kosyakov  <caseq@chromium.org>
+
+        Reviewed by Yury Semikhatsky.
+
+        Web Inspector: exception in front-end when user selects resource info for resource that does not have response headers yet
+        https://bugs.webkit.org/show_bug.cgi?id=59123
+
+        * inspector/front-end/ResourceCookiesView.js:
+        (WebInspector.ResourceCookiesView):
+        (WebInspector.ResourceCookiesView.prototype.show):
+        (WebInspector.ResourceCookiesView.prototype.get _gotCookies):
+        (WebInspector.ResourceCookiesView.prototype._buildCookiesTable):
+
 2011-04-21  Beth Dakin  <bdakin@apple.com>
 
         Reviewed by Dan Bernstein.
