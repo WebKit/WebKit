@@ -1,3 +1,21 @@
+2011-04-22  Beth Dakin  <bdakin@apple.com>
+
+        Reviewed by Maciej Stachowiak.
+
+        https://bugs.webkit.org/show_bug.cgi?id=59223
+        REGRESSION (r82185): iframe not displayed after navigation back to cached page
+        -and corresponding-
+        <rdar://problem/9323763>
+
+        Cache the scroll position in Document::setInPageCache() instead of 
+        FrameView::resetScrollbarsAndClearContentsSize(), and only clear the contents size 
+        for the mainFrame(). Still resetScrollbars() for other frames, which matches pre-
+        r82185 code.
+        * dom/Document.cpp:
+        (WebCore::Document::setInPageCache):
+        * page/FrameView.cpp:
+        (WebCore::FrameView::resetScrollbarsAndClearContentsSize):
+
 2011-04-22  Joseph Pecoraro  <joepeck@webkit.org>
 
         Reviewed by Kent Tamura.

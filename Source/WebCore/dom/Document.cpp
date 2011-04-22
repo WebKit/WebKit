@@ -3871,8 +3871,13 @@ void Document::setInPageCache(bool flag)
     if (flag) {
         ASSERT(!m_savedRenderer);
         m_savedRenderer = renderer();
-        if (FrameView* v = view())
-            v->resetScrollbarsAndClearContentsSize();
+        if (FrameView* v = view()) {
+            v->cacheCurrentScrollPosition();
+            if (page() && page()->mainFrame() == m_frame)
+                v->resetScrollbarsAndClearContentsSize();
+            else
+                v->resetScrollbars();
+        }
         m_styleRecalcTimer.stop();
     } else {
         ASSERT(!renderer() || renderer() == m_savedRenderer);
