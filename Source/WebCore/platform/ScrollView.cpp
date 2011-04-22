@@ -988,11 +988,17 @@ void ScrollView::paint(GraphicsContext* context, const IntRect& rect)
 
     // If we encounter any overlay scrollbars as we paint, this will be set to true.
     m_containsScrollableAreaWithOverlayScrollbars = false;
-    
-    IntRect documentDirtyRect = rect;
-    documentDirtyRect.intersect(frameRect());
 
-    {
+    IntRect clipRect = frameRect();
+    if (verticalScrollbar() && !verticalScrollbar()->isOverlayScrollbar())
+        clipRect.setWidth(clipRect.width() - verticalScrollbar()->width());
+    if (horizontalScrollbar() && !horizontalScrollbar()->isOverlayScrollbar())
+        clipRect.setHeight(clipRect.height() - horizontalScrollbar()->height());
+
+    IntRect documentDirtyRect = rect;
+    documentDirtyRect.intersect(clipRect);
+
+    if (!documentDirtyRect.isEmpty()) {
         GraphicsContextStateSaver stateSaver(*context);
 
         context->translate(x(), y());

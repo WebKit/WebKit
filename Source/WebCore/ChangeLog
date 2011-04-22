@@ -1,3 +1,17 @@
+2011-04-22  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Exclude scrollbars from the dirty rect passed to the document
+        https://bugs.webkit.org/show_bug.cgi?id=59206
+
+        No test added because functionality is unchanged.
+
+        * platform/ScrollView.cpp:
+        (WebCore::ScrollView::paint): Compute a clip rectangle (analogous to the frame of the clip view
+        in an NSScrollView) by subtracting non-overlay scrollbars, and intersect the document dirty rect
+        with it. If the result is empty, avoid calling paintContents().
+
 2011-04-22  Jer Noble  <jer.noble@apple.com>
 
         Reviewed by Maciej Stachowiak.
