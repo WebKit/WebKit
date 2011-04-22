@@ -1,5 +1,12 @@
 2011-04-22  Gavin Barraclough  <barraclough@apple.com>
 
+        Errk, build fix.
+
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+
+2011-04-22  Gavin Barraclough  <barraclough@apple.com>
+
         Reviewed by Sam Weinig.
 
         Quick cleanup to SpeculativeJIT/NonSpeculativeJIT compile loop,

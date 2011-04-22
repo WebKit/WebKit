@@ -866,7 +866,7 @@ bool SpeculativeJIT::compile()
     ASSERT(!m_compileIndex);
     Vector<BasicBlock> blocks = m_jit.graph().m_blocks;
     for (m_block = 0; m_block < blocks.size(); ++m_block) {
-        compile(blocks[m_block])
+        compile(blocks[m_block]);
         if (!m_compileOkay)
             return false;
     }
