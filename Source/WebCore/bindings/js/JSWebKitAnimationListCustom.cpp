@@ -32,16 +32,4 @@ using namespace JSC;
 
 namespace WebCore {
 
-void JSWebKitAnimationList::visitChildren(SlotVisitor& visitor)
-{
-    Base::visitChildren(visitor);
-
-    WebKitAnimationList* list = impl();
-    JSGlobalData& globalData = *Heap::heap(this)->globalData();
-
-    unsigned length = list->length();
-    for (unsigned i = 0; i < length; ++i)
-        markDOMObjectWrapper(visitor, globalData, list->item(i));
-}
-
 }

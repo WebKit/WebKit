@@ -1,3 +1,40 @@
+2011-04-21  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        Removed a use of markDOMObjectWrapper: more style- and node-related stuff
+        https://bugs.webkit.org/show_bug.cgi?id=59127
+
+        * bindings/js/JSCanvasRenderingContextCustom.cpp:
+        * bindings/js/JSCanvasRenderingContextCustom.cpp:
+        (WebCore::JSCanvasRenderingContextOwner::isReachableFromOpaqueRoots):
+        (WebCore::JSCanvasRenderingContextOwner::finalize):
+        (WebCore::wrapperOwner):
+        (WebCore::wrapperContext): Use opaque roots for marking canvas rendering
+        contexts, so JSNode isn't responsible for it.
+
+        * bindings/js/JSElementCustom.cpp:
+        (WebCore::JSElement::markChildren):
+        * bindings/js/JSHTMLCanvasElementCustom.cpp:
+        * bindings/js/JSHTMLLinkElementCustom.cpp:
+        * bindings/js/JSHTMLStyleElementCustom.cpp: Removed obsolete marking code.
+
+        * bindings/js/JSNodeCustom.cpp:
+        (WebCore::isObservable):
+        (WebCore::isReachableFromDOM):
+        (WebCore::JSNodeOwner::isReachableFromOpaqueRoots): Removed a bunch of
+        CSS object model related special cases, since the CSS object model
+        now tracks its own lifetime through the opaque roots system. Removed
+        canvas special case, covered above.
+
+        * bindings/js/JSProcessingInstructionCustom.cpp:
+        * bindings/js/JSWebKitAnimationListCustom.cpp:
+        * dom/ProcessingInstruction.idl:
+        * html/HTMLCanvasElement.idl:
+        * html/HTMLLinkElement.idl:
+        * html/HTMLStyleElement.idl:
+        * page/WebKitAnimationList.idl: Removed obsolete marking code.
+
 2011-04-21  Vangelis Kokkevis  <vangelis@chromium.org>
 
         Reviewed by James Robinson.

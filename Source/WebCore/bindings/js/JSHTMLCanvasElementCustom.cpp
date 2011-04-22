@@ -40,16 +40,6 @@ using namespace JSC;
 
 namespace WebCore {
 
-void JSHTMLCanvasElement::visitChildren(SlotVisitor& visitor)
-{
-    Base::visitChildren(visitor);
-
-    HTMLCanvasElement* canvas = static_cast<HTMLCanvasElement*>(impl());
-    JSGlobalData& globalData = *Heap::heap(this)->globalData();
-
-    markDOMObjectWrapper(visitor, globalData, canvas->renderingContext());
-}
-
 JSValue JSHTMLCanvasElement::getContext(ExecState* exec)
 {
     HTMLCanvasElement* canvas = static_cast<HTMLCanvasElement*>(impl());

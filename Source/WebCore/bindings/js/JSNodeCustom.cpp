@@ -81,73 +81,26 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
-static bool isObservable(JSNode* jsNode, Node* node, DOMWrapperWorld* world)
+static inline bool isObservable(JSNode* jsNode, Node* node)
 {
-    // Certain conditions implicitly make existence of a JS DOM node wrapper observable
-    // through the DOM, even if no explicit reference to it remains.
-    
     // The DOM doesn't know how to keep a tree of nodes alive without the root
     // being explicitly referenced. So, we artificially treat the root of
     // every tree as observable.
-    // FIXME: Resolve this lifetime issue in the DOM, and remove this inefficiency.
+    // FIXME: Resolve this lifetime issue in the DOM, and remove this.
     if (!node->parentNode())
         return true;
 
-    // If a node is in the document, and its wrapper has custom properties,
-    // the wrapper is observable because future access to the node through the
-    // DOM must reflect those properties.
     if (jsNode->hasCustomProperties())
         return true;
 
-    // If a node is in the document, and has event listeners, its wrapper is
-    // observable because its wrapper is responsible for marking those event listeners.
+    // A node's JS wrapper is responsible for marking its JS event listeners.
     if (node->hasEventListeners())
         return true;
-
-    // If a node owns another object with a wrapper with custom properties,
-    // the wrapper must be treated as observable, because future access to
-    // those objects through the DOM must reflect those properties.
-    // FIXME: It would be better if this logic could be in the node next to
-    // the custom visit functions rather than here.
-    // Note that for some compound objects like stylesheets and CSSStyleDeclarations,
-    // we don't descend to check children for custom properties, and just conservatively
-    // keep the node wrappers protecting them alive.
-    if (node->isElementNode()) {
-        if (node->isStyledElement()) {
-            if (CSSMutableStyleDeclaration* style = static_cast<StyledElement*>(node)->inlineStyleDecl()) {
-                if (world->m_wrappers.get(style))
-                    return true;
-            }
-        }
-        if (static_cast<Element*>(node)->hasTagName(canvasTag)) {
-            if (CanvasRenderingContext* context = static_cast<HTMLCanvasElement*>(node)->renderingContext()) {
-                if (JSDOMWrapper* wrapper = world->m_wrappers.get(context).get()) {
-                    if (wrapper->hasCustomProperties())
-                        return true;
-                }
-            }
-        } else if (static_cast<Element*>(node)->hasTagName(linkTag)) {
-            if (StyleSheet* sheet = static_cast<HTMLLinkElement*>(node)->sheet()) {
-                if (world->m_wrappers.get(sheet))
-                    return true;
-            }
-        } else if (static_cast<Element*>(node)->hasTagName(styleTag)) {
-            if (StyleSheet* sheet = static_cast<HTMLStyleElement*>(node)->sheet()) {
-                if (world->m_wrappers.get(sheet))
-                    return true;
-            }
-        }
-    } else if (node->nodeType() == Node::PROCESSING_INSTRUCTION_NODE) {
-        if (StyleSheet* sheet = static_cast<ProcessingInstruction*>(node)->sheet()) {
-            if (world->m_wrappers.get(sheet))
-                return true;
-        }
-    }
 
     return false;
 }
 
-static inline bool isReachableFromDOM(JSNode* jsNode, Node* node, DOMWrapperWorld* world, SlotVisitor& visitor)
+static inline bool isReachableFromDOM(JSNode* jsNode, Node* node, SlotVisitor& visitor)
 {
     if (!node->inDocument()) {
         // If a wrapper is the last reference to an image or script element
@@ -170,14 +123,13 @@ static inline bool isReachableFromDOM(JSNode* jsNode, Node* node, DOMWrapperWorl
             return true;
     }
 
-    return isObservable(jsNode, node, world) && visitor.containsOpaqueRoot(root(node));
+    return isObservable(jsNode, node) && visitor.containsOpaqueRoot(root(node));
 }
 
-bool JSNodeOwner::isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown> handle, void* context, SlotVisitor& visitor)
+bool JSNodeOwner::isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown> handle, void*, SlotVisitor& visitor)
 {
     JSNode* jsNode = static_cast<JSNode*>(handle.get().asCell());
-    DOMWrapperWorld* world = static_cast<DOMWrapperWorld*>(context);
-    return isReachableFromDOM(jsNode, jsNode->impl(), world, visitor);
+    return isReachableFromDOM(jsNode, jsNode->impl(), visitor);
 }
 
 void JSNodeOwner::finalize(JSC::Handle<JSC::Unknown> handle, void* context)

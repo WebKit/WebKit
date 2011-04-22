@@ -32,12 +32,4 @@ using namespace JSC;
 
 namespace WebCore {
 
-void JSProcessingInstruction::visitChildren(SlotVisitor& visitor)
-{
-    Base::visitChildren(visitor);
-
-    if (StyleSheet* sheet = static_cast<ProcessingInstruction*>(impl())->sheet())
-        markDOMObjectWrapper(visitor, *Heap::heap(this)->globalData(), sheet);
-}
-
 }

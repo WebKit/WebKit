@@ -27,7 +27,6 @@
 module html {
 
     interface [
-        CustomMarkFunction,
         GenerateNativeConverter
     ] HTMLCanvasElement : HTMLElement {
 

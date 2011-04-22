@@ -58,12 +58,8 @@ void JSElement::visitChildren(SlotVisitor& visitor)
     Element* element = impl();
     JSGlobalData& globalData = *Heap::heap(this)->globalData();
 
-    markDOMObjectWrapper(visitor, globalData, element->attributeMap());
     markDOMObjectWrapper(visitor, globalData, element->optionalClassList());
     markDOMObjectWrapper(visitor, globalData, element->optionalDataset());
-
-    if (element->isStyledElement())
-        markDOMObjectWrapper(visitor, globalData, static_cast<StyledElement*>(element)->inlineStyleDecl());
 }
 
 JSValue toJSNewlyCreated(ExecState* exec, JSDOMGlobalObject* globalObject, Element* element)

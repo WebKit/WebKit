@@ -20,7 +20,7 @@
 
 module html {
 
-    interface [CustomMarkFunction] HTMLLinkElement : HTMLElement {
+    interface HTMLLinkElement : HTMLElement {
         attribute boolean disabled;
         attribute [Reflect] DOMString charset;
         attribute [Reflect, URL] DOMString href;

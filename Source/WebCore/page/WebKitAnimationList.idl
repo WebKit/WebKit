@@ -26,7 +26,6 @@
 module html {
 
     interface [
-        CustomMarkFunction,
         HasIndexGetter
     ] WebKitAnimationList {
         readonly attribute unsigned long length;
