@@ -112,7 +112,7 @@ PASS HTMLButtonElementPrototype from inner.document.getElementsByTagName("canvas
 PASS HTMLCanvasElement from inner.document.getElementsByTagName("canvas")[0].getContext("2d").canvas
 PASS HTMLCanvasElementConstructor from inner.document.getElementsByTagName("canvas")[0].getContext("2d").canvas.constructor
 PASS HTMLCanvasElementPrototype from inner.document.getElementsByTagName("canvas")[0].getContext("2d").canvas.__proto__
-FAIL HTMLCollection from inner.document.testForm
+PASS HTMLCollection from inner.document.testForm
 PASS HTMLDListElement from inner.document.getElementsByTagName("canvas")[0].getContext("2d").canvas.nextElementSibling
 PASS HTMLDListElementConstructor from inner.document.getElementsByTagName("canvas")[0].getContext("2d").canvas.nextElementSibling.constructor
 PASS HTMLDListElementPrototype from inner.document.getElementsByTagName("canvas")[0].getContext("2d").canvas.nextElementSibling.__proto__

@@ -1,3 +1,9 @@
+2011-04-22  Jessie Berlin  <jberlin@apple.com>
+
+        Update the Windows-specific results after r84558.
+
+        * platform/win/fast/dom/prototype-inheritance-2-expected.txt:
+
 2011-04-22  Pavel Podivilov  <podivilov@chromium.org>
 
         Reviewed by Pavel Feldman.
