@@ -46,6 +46,10 @@ _JSON_PREFIX = "ADD_RESULTS("
 _JSON_SUFFIX = ");"
 
 
+def has_json_wrapper(string):
+    return string.startswith(_JSON_PREFIX) and string.endswith(_JSON_SUFFIX)
+
+
 def strip_json_wrapper(json_content):
     return json_content[len(_JSON_PREFIX):len(json_content) - len(_JSON_SUFFIX)]
 

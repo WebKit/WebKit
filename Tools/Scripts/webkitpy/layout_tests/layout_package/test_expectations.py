@@ -41,6 +41,8 @@ _log = logging.getLogger("webkitpy.layout_tests.layout_package."
                          "test_expectations")
 
 # Test expectation and modifier constants.
+# FIXME: range() starts with 0 which makes if expectation checks harder
+# as PASS is 0.
 (PASS, FAIL, TEXT, IMAGE, IMAGE_PLUS_TEXT, AUDIO, TIMEOUT, CRASH, SKIP, WONTFIX,
  SLOW, REBASELINE, MISSING, FLAKY, NOW, NONE) = range(16)
 
@@ -146,6 +148,11 @@ class TestExpectations:
             if item[1] == expectation:
                 return item[0].upper()
         raise ValueError(expectation)
+
+    @classmethod
+    def expectation_from_string(cls, string):
+        assert(' ' not in string)  # This only handles one expectation at a time.
+        return TestExpectationsFile.EXPECTATIONS.get(string.lower())
 
     def get_tests_with_result_type(self, result_type):
         return self._expected_failures.get_tests_with_result_type(result_type)
@@ -531,11 +538,10 @@ class TestExpectationsFile:
     def _parse_expectations(self, expectations, lineno, test_list_path):
         result = set()
         for part in expectations:
-            if not part in self.EXPECTATIONS:
-                self._add_error(lineno, 'Unsupported expectation: %s' % part,
-                    test_list_path)
+            expectation = TestExpectations.expectation_from_string(part)
+            if expectation is None:  # Careful, PASS is currently 0.
+                self._add_error(lineno, 'Unsupported expectation: %s' % part, test_list_path)
                 continue
-            expectation = self.EXPECTATIONS[part]
             result.add(expectation)
         return result
 
