@@ -60,6 +60,10 @@ public:
     CFBundleRefNum bundleResourceMap();
 #endif
 
+#if PLATFORM(WIN)
+    void installIATHook(const char* importDLLName, const char* importFunctionName, const void* hookFunction);
+#endif
+
 private:
     void* platformFunctionPointer(const char* functionName) const;
 

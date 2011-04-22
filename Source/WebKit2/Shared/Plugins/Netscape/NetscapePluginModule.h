@@ -59,6 +59,8 @@ public:
     // Request that the plug-in clear the site data.
     bool clearSiteData(const String& site, uint64_t flags, uint64_t maxAge);
 
+    Module* module() const { return m_module.get(); }
+
 private:
     explicit NetscapePluginModule(const String& pluginPath);
 

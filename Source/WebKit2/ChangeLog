@@ -1,5 +1,72 @@
 2011-04-21  Adam Roben  <aroben@apple.com>
 
+        Give windowless plugins' context menus an owner window in the same thread as the plugin
+
+        In some cases, plugins pass the WKView's HWND to the ::TrackPopupMenu API. ::TrackPopupMenu
+        fails in this case because the WKView's HWND is owned by another process/thread. We work
+        around this by hooking the ::TrackPopupMenu API and providing our own window that's in the
+        same thread as the plugin instead.
+
+        I couldn't figure out how to write a test for this. :-(
+
+        Fixes <http://webkit.org/b/51063> <rdar://problem/8769281> REGRESSION (WebKit2): No context
+        menu appears when right-clicking on windowless Flash plugin
+
+        Reviewed by Brian Weinstein, and looked at suspiciously by Jeff Miller.
+
+        * Platform/Module.h: Added installIATHook on Windows.
+
+        * Platform/win/ModuleWin.cpp:
+        (WebKit::overwriteReadOnlyMemory): New helper function. Basically a wrapper around memcpy,
+        but uses ::VirtualProtect to allow writing to otherwise-read-only memory.
+        (WebKit::findFunctionPointerAddress): New helper function. The first overload iterates over
+        the imported modules and functions looking for the given one. If found, returns the address
+        of the function pointer that is used when calling that function. The second overload calls
+        the first, first passing it an enumerator for the image's imported modules, then passing it
+        an iterator for the image's delay-loaded modules.
+        (WebKit::Module::installIATHook): Added. Finds the address of the function pointer that's
+        used when code in this module calls the given function, then overwrites the function pointer
+        with the passed-in one. Future calls to the given function made by code in this module
+        should then end up calling to the passed-in function instead of the original one.
+
+        * Shared/Plugins/Netscape/NetscapePluginModule.h:
+        (WebKit::NetscapePluginModule::module): Added this simple getter.
+
+        * WebProcess/Plugins/Netscape/NetscapePlugin.h: Added some new Windows-only members.
+
+        * WebProcess/Plugins/Netscape/win/NetscapePluginWin.cpp:
+        (WebKit::CurrentPluginSetter::CurrentPluginSetter):
+        (WebKit::CurrentPluginSetter::~CurrentPluginSetter):
+        This RAII class sets/unsets the currentPlugin global.
+
+        (WebKit::registerPluginView): Changed to use instanceHandle() instead of the mysterious
+        gInstance.
+        (WebKit::NetscapePlugin::platformPostInitialize): For windowless plugins, hook the
+        ::TrackPopupMenu API and create a window to be used as the owner for context menus created
+        by this plugin. (Also changed the ::CreateWindowExW call for windowed plugins to pass an
+        instance handle so that the window will be associated with WebKit.dll instead of
+        WebKit2WebProcess.exe. This should have no visible effect, but is more correct.)
+        (WebKit::NetscapePlugin::platformDestroy): For windowless plugins, destroy the context menu
+        owner window we created above.
+
+        (WebKit::NetscapePlugin::platformPaint):
+        (WebKit::NetscapePlugin::platformHandleMouseEvent):
+        (WebKit::NetscapePlugin::platformHandleWheelEvent):
+        (WebKit::NetscapePlugin::platformSetFocus):
+        (WebKit::NetscapePlugin::platformHandleMouseEnterEvent):
+        (WebKit::NetscapePlugin::platformHandleMouseLeaveEvent):
+        (WebKit::NetscapePlugin::platformHandleKeyboardEvent):
+        Set ourselves as the current plugin.
+
+        (WebKit::NetscapePlugin::hookedTrackPopupMenu): Added. This is the function that actually
+        gets called when windowless plugins call ::TrackPopupMenu. If the passed-in owner window is
+        owned by the current thread, we have nothing to do; ::TrackPopupMenu should work just fine.
+        Otherwise, we use the current plugin's context menu owner window as the context menu's
+        owner. We also set focus to the new owner window because otherwise weird behavior results
+        (e.g., it's possible to scroll the WKView while the context menu is up).
+
+2011-04-21  Adam Roben  <aroben@apple.com>
+
         Use WebCore's do-nothing window class instead of creating our own
 
         Fixes <http://webkit.org/b/59102> WebKit has too many dummy window classes

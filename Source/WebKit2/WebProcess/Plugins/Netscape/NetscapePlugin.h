@@ -185,6 +185,10 @@ private:
 
     virtual PluginController* controller();
 
+#if PLUGIN_ARCHITECTURE(WIN)
+    static BOOL WINAPI hookedTrackPopupMenu(HMENU, UINT uFlags, int x, int y, int nReserved, HWND, const RECT*);
+#endif
+
     PluginController* m_pluginController;
     uint64_t m_nextRequestID;
 
@@ -234,6 +238,7 @@ private:
 #endif
 #elif PLUGIN_ARCHITECTURE(WIN)
     HWND m_window;
+    HWND m_contextMenuOwnerWindow;
 #elif PLUGIN_ARCHITECTURE(X11)
     Pixmap m_drawable;
     Display* m_pluginDisplay;

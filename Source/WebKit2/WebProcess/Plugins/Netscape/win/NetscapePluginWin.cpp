@@ -28,15 +28,38 @@
 
 #include "PluginController.h"
 #include "WebEvent.h"
+#include <WebCore/DefWndProcWindowClass.h>
 #include <WebCore/GraphicsContext.h>
 #include <WebCore/LocalWindowsContext.h>
 #include <WebCore/NotImplemented.h>
+#include <WebCore/WebCoreInstanceHandle.h>
 
 using namespace WebCore;
 
-extern "C" HINSTANCE gInstance;
-
 namespace WebKit {
+
+static NetscapePlugin* currentPlugin;
+
+class CurrentPluginSetter {
+    WTF_MAKE_NONCOPYABLE(CurrentPluginSetter);
+public:
+    explicit CurrentPluginSetter(NetscapePlugin* plugin)
+        : m_plugin(plugin)
+        , m_formerCurrentPlugin(currentPlugin)
+    {
+        currentPlugin = m_plugin;
+    }
+
+    ~CurrentPluginSetter()
+    {
+        ASSERT(currentPlugin == m_plugin);
+        currentPlugin = m_formerCurrentPlugin;
+    }
+
+private:
+    NetscapePlugin* m_plugin;
+    NetscapePlugin* m_formerCurrentPlugin;
+};
 
 static LPCWSTR windowClassName = L"org.webkit.NetscapePluginWindow";
 
@@ -50,7 +73,7 @@ static void registerPluginView()
     WNDCLASSW windowClass = {0};
     windowClass.style = CS_DBLCLKS;
     windowClass.lpfnWndProc = ::DefWindowProcW;
-    windowClass.hInstance = gInstance;
+    windowClass.hInstance = instanceHandle();
     windowClass.hCursor = ::LoadCursorW(0, IDC_ARROW);
     windowClass.hbrBackground = reinterpret_cast<HBRUSH>(COLOR_WINDOW + 1);
     windowClass.lpszClassName = windowClassName;
@@ -67,12 +90,18 @@ bool NetscapePlugin::platformPostInitialize()
 {
     if (!m_isWindowed) {
         m_window = 0;
+
+        // Windowless plugins need a little help showing context menus since our containingWindow()
+        // is in a different process. See <http://webkit.org/b/51063>.
+        m_pluginModule->module()->installIATHook("user32.dll", "TrackPopupMenu", hookedTrackPopupMenu);
+        m_contextMenuOwnerWindow = ::CreateWindowExW(0, defWndProcWindowClassName(), 0, WS_CHILD, 0, 0, 0, 0, containingWindow(), 0, instanceHandle(), 0);
+
         return true;
     }
 
     registerPluginView();
 
-    m_window = ::CreateWindowExW(0, windowClassName, 0, WS_CHILD | WS_VISIBLE, 0, 0, 0, 0, containingWindow(), 0, 0, 0);
+    m_window = ::CreateWindowExW(0, windowClassName, 0, WS_CHILD | WS_VISIBLE, 0, 0, 0, 0, containingWindow(), 0, instanceHandle(), 0);
     if (!m_window)
         return false;
 
@@ -88,6 +117,8 @@ bool NetscapePlugin::platformPostInitialize()
 void NetscapePlugin::platformDestroy()
 {
     if (!m_isWindowed) {
+        ASSERT(m_contextMenuOwnerWindow);
+        ::DestroyWindow(m_contextMenuOwnerWindow);
         ASSERT(!m_window);
         return;
     }
@@ -137,6 +168,8 @@ void NetscapePlugin::platformGeometryDidChange()
 
 void NetscapePlugin::platformPaint(GraphicsContext* context, const IntRect& dirtyRect, bool)
 {
+    CurrentPluginSetter setCurrentPlugin(this);
+
     // FIXME: Call SetWindow here if we haven't called it yet (see r59904).
 
     if (m_isWindowed) {
@@ -246,6 +279,8 @@ NPEvent toNP(const WebMouseEvent& event)
 
 bool NetscapePlugin::platformHandleMouseEvent(const WebMouseEvent& event)
 {
+    CurrentPluginSetter setCurrentPlugin(this);
+
     if (m_isWindowed)
         return false;
 
@@ -256,17 +291,23 @@ bool NetscapePlugin::platformHandleMouseEvent(const WebMouseEvent& event)
 
 bool NetscapePlugin::platformHandleWheelEvent(const WebWheelEvent&)
 {
+    CurrentPluginSetter setCurrentPlugin(this);
+
     notImplemented();
     return false;
 }
 
 void NetscapePlugin::platformSetFocus(bool)
 {
+    CurrentPluginSetter setCurrentPlugin(this);
+
     notImplemented();
 }
 
 bool NetscapePlugin::platformHandleMouseEnterEvent(const WebMouseEvent& event)
 {
+    CurrentPluginSetter setCurrentPlugin(this);
+
     if (m_isWindowed)
         return false;
 
@@ -277,6 +318,8 @@ bool NetscapePlugin::platformHandleMouseEnterEvent(const WebMouseEvent& event)
 
 bool NetscapePlugin::platformHandleMouseLeaveEvent(const WebMouseEvent& event)
 {
+    CurrentPluginSetter setCurrentPlugin(this);
+
     if (m_isWindowed)
         return false;
 
@@ -287,8 +330,40 @@ bool NetscapePlugin::platformHandleMouseLeaveEvent(const WebMouseEvent& event)
 
 bool NetscapePlugin::platformHandleKeyboardEvent(const WebKeyboardEvent&)
 {
+    CurrentPluginSetter setCurrentPlugin(this);
+
     notImplemented();
     return false;
+}
+
+BOOL NetscapePlugin::hookedTrackPopupMenu(HMENU hMenu, UINT uFlags, int x, int y, int nReserved, HWND hWnd, const RECT* prcRect)
+{
+    // ::TrackPopupMenu fails when it is passed a window that is owned by another thread. If this
+    // happens, we substitute a dummy window that is owned by this thread.
+
+    if (::GetWindowThreadProcessId(hWnd, 0) == ::GetCurrentThreadId())
+        return ::TrackPopupMenu(hMenu, uFlags, x, y, nReserved, hWnd, prcRect);
+
+    HWND originalFocusWindow = 0;
+
+    ASSERT(currentPlugin);
+    if (currentPlugin) {
+        ASSERT(!currentPlugin->m_isWindowed);
+        ASSERT(currentPlugin->m_contextMenuOwnerWindow);
+        ASSERT(::GetWindowThreadProcessId(currentPlugin->m_contextMenuOwnerWindow, 0) == ::GetCurrentThreadId());
+        hWnd = currentPlugin->m_contextMenuOwnerWindow;
+
+        // If we don't focus the dummy window, the user will be able to scroll the page while the
+        // context menu is up, e.g.
+        originalFocusWindow = ::SetFocus(hWnd);
+    }
+
+    BOOL result = ::TrackPopupMenu(hMenu, uFlags, x, y, nReserved, hWnd, prcRect);
+
+    if (originalFocusWindow)
+        ::SetFocus(originalFocusWindow);
+
+    return result;
 }
 
 } // namespace WebKit
