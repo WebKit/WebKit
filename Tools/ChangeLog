@@ -1,3 +1,17 @@
+2011-04-22  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        Factor LayoutTestResultsReader out of CommitQueue
+        https://bugs.webkit.org/show_bug.cgi?id=59244
+
+        This code will be shared with the EWS when they start running tests.
+
+        * Scripts/webkitpy/tool/bot/layouttestresultsreader.py: Added.
+        * Scripts/webkitpy/tool/bot/layouttestresultsreader_unittest.py: Added.
+        * Scripts/webkitpy/tool/commands/queues.py:
+        * Scripts/webkitpy/tool/commands/queues_unittest.py:
+
 2011-04-22  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Dimitri Glazkov.

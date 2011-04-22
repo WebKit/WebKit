@@ -31,7 +31,6 @@ import StringIO
 
 from webkitpy.common.checkout.scm import CheckoutNeedsUpdate
 from webkitpy.common.net.bugzilla import Attachment
-from webkitpy.common.system.filesystem_mock import MockFileSystem
 from webkitpy.common.system.outputcapture import OutputCapture
 from webkitpy.layout_tests.layout_package import test_results
 from webkitpy.layout_tests.layout_package import test_failures
@@ -40,7 +39,21 @@ from webkitpy.tool.commands.commandtest import CommandsTest
 from webkitpy.tool.commands.queues import *
 from webkitpy.tool.commands.queuestest import QueuesTest
 from webkitpy.tool.commands.stepsequence import StepSequence
-from webkitpy.tool.mocktool import MockTool, MockSCM, MockStatusServer
+from webkitpy.tool.mocktool import MockTool, MockOptions, MockSCM, MockStatusServer
+
+
+class TestCommitQueue(CommitQueue):
+    def __init__(self, tool=None):
+        CommitQueue.__init__(self)
+        if tool:
+            self.bind_to_tool(tool)
+        self._options = MockOptions(confirm=False, parent_command="commit-queue")
+
+    def begin_work_queue(self):
+        output_capture = OutputCapture()
+        output_capture.capture_output()
+        CommitQueue.begin_work_queue(self)
+        output_capture.restore_output()
 
 
 class TestQueue(AbstractPatchQueue):
@@ -171,10 +184,10 @@ class AlwaysCommitQueueTool(object):
         return CommitQueue
 
 
-class SecondThoughtsCommitQueue(CommitQueue):
-    def __init__(self):
+class SecondThoughtsCommitQueue(TestCommitQueue):
+    def __init__(self, tool=None):
         self._reject_patch = False
-        CommitQueue.__init__(self)
+        TestCommitQueue.__init__(self, tool)
 
     def run_command(self, command):
         # We want to reject the patch after the first validation,
@@ -320,8 +333,8 @@ MOCK: release_work_item: commit-queue 106
         self.assertEquals(options.test, False)
 
     def test_manual_reject_during_processing(self):
-        queue = SecondThoughtsCommitQueue()
-        queue.bind_to_tool(MockTool())
+        queue = SecondThoughtsCommitQueue(MockTool())
+        queue.begin_work_queue()
         queue._tool.filesystem.write_text_file('/mock/results.html', '')  # Otherwise the commit-queue will hit a KeyError trying to read the results from the MockFileSystem.
         queue._options = Mock()
         queue._options.port = None
@@ -336,8 +349,7 @@ MOCK: release_work_item: commit-queue 197
         OutputCapture().assert_outputs(self, queue.process_work_item, [QueuesTest.mock_work_item], expected_stderr=expected_stderr)
 
     def test_report_flaky_tests(self):
-        queue = CommitQueue()
-        queue.bind_to_tool(MockTool())
+        queue = TestCommitQueue(MockTool())
         expected_stderr = """MOCK bug comment: bug_id=76, cc=None
 --- Begin comment ---
 The commit-queue just saw foo/bar.html flake (Text diff mismatch) while processing attachment 197 on bug 42.
@@ -378,51 +390,9 @@ The commit-queue is continuing to process your patch.
 
         OutputCapture().assert_outputs(self, queue.report_flaky_tests, [QueuesTest.mock_work_item, test_results, MockZipFile()], expected_stderr=expected_stderr)
 
-    def test_missing_layout_test_results(self):
-        queue = CommitQueue()
-        tool = MockTool()
-        results_path = '/mock/results.html'
-        tool.filesystem = MockFileSystem({results_path: None})
-        queue.bind_to_tool(tool)
-        # Make sure that our filesystem mock functions as we expect.
-        self.assertRaises(IOError, tool.filesystem.read_text_file, results_path)
-        # layout_test_results shouldn't raise even if the results.html file is missing.
-        self.assertEquals(queue.layout_test_results(), None)
-
-    def test_layout_test_results(self):
-        queue = CommitQueue()
-        queue.bind_to_tool(MockTool())
-        queue._read_file_contents = lambda path: None
-        self.assertEquals(queue.layout_test_results(), None)
-        queue._read_file_contents = lambda path: ""
-        self.assertEquals(queue.layout_test_results(), None)
-        queue._create_layout_test_results = lambda: LayoutTestResults([])
-        results = queue.layout_test_results()
-        self.assertNotEquals(results, None)
-        self.assertEquals(results.failure_limit_count(), 10)  # This value matches RunTests.NON_INTERACTIVE_FAILURE_LIMIT_COUNT
-
-    def test_archive_last_layout_test_results(self):
-        queue = CommitQueue()
-        tool = MockTool()
-        queue.bind_to_tool(tool)
-        patch = queue._tool.bugs.fetch_attachment(128)
-        # Should fail because the results_directory does not exist.
-        expected_stderr = "/mock does not exist, not archiving.\n"
-        archive = OutputCapture().assert_outputs(self, queue.archive_last_layout_test_results, [patch], expected_stderr=expected_stderr)
-        self.assertEqual(archive, None)
-
-        results_directory = "/mock"
-        # Sanity check what we assume our mock results directory is.
-        self.assertEqual(queue._results_directory(), results_directory)
-        tool.filesystem.maybe_make_directory(results_directory)
-        self.assertTrue(tool.filesystem.exists(results_directory))
-
-        self.assertNotEqual(queue.archive_last_layout_test_results(patch), None)
-        self.assertFalse(tool.filesystem.exists(results_directory))
-
     def test_upload_results_archive_for_patch(self):
-        queue = CommitQueue()
-        queue.bind_to_tool(MockTool())
+        queue = TestCommitQueue(MockTool())
+        queue.begin_work_queue()
         patch = queue._tool.bugs.fetch_attachment(128)
         expected_stderr = """MOCK add_attachment_to_bug: bug_id=42, description=Archive of layout-test-results from bot filename=layout-test-results.zip
 -- Begin comment --

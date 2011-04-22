@@ -40,17 +40,16 @@ from StringIO import StringIO
 
 from webkitpy.common.config.committervalidator import CommitterValidator
 from webkitpy.common.net.bugzilla import Attachment
-from webkitpy.common.net.layouttestresults import LayoutTestResults
 from webkitpy.common.net.statusserver import StatusServer
 from webkitpy.common.system.deprecated_logging import error, log
 from webkitpy.common.system.executive import ScriptError
 from webkitpy.tool.bot.botinfo import BotInfo
 from webkitpy.tool.bot.commitqueuetask import CommitQueueTask, CommitQueueTaskDelegate
 from webkitpy.tool.bot.feeders import CommitQueueFeeder, EWSFeeder
+from webkitpy.tool.bot.layouttestresultsreader import LayoutTestResultsReader
 from webkitpy.tool.bot.queueengine import QueueEngine, QueueEngineDelegate
 from webkitpy.tool.bot.flakytestreporter import FlakyTestReporter
 from webkitpy.tool.commands.stepsequence import StepSequenceErrorHandler
-from webkitpy.tool.steps.runtests import RunTests
 from webkitpy.tool.multicommandtool import Command, TryAgain
 
 
@@ -169,7 +168,7 @@ class FeederQueue(AbstractQueue):
 
     _sleep_duration = 30  # seconds
 
-    # AbstractPatchQueue methods
+    # AbstractQueue methods
 
     def begin_work_queue(self):
         AbstractQueue.begin_work_queue(self)
@@ -251,6 +250,7 @@ class CommitQueue(AbstractPatchQueue, StepSequenceErrorHandler, CommitQueueTaskD
     def begin_work_queue(self):
         AbstractPatchQueue.begin_work_queue(self)
         self.committer_validator = CommitterValidator(self._tool.bugs)
+        self._layout_test_results_reader = LayoutTestResultsReader(self._tool, self._log_directory())
 
     def next_work_item(self):
         return self._next_patch()
@@ -311,56 +311,11 @@ class CommitQueue(AbstractPatchQueue, StepSequenceErrorHandler, CommitQueueTaskD
         failure_log = self._log_from_script_error_for_upload(script_error)
         return self._update_status(message, patch=patch, results_file=failure_log)
 
-    # FIXME: This exists for mocking, but should instead be mocked via
-    # tool.filesystem.read_text_file.  They have different error handling at the moment.
-    def _read_file_contents(self, path):
-        try:
-            return self._tool.filesystem.read_text_file(path)
-        except IOError, e:  # File does not exist or can't be read.
-            return None
-
-    # FIXME: This logic should move to the port object.
-    def _create_layout_test_results(self):
-        results_path = self._tool.port().layout_tests_results_path()
-        results_html = self._read_file_contents(results_path)
-        if not results_html:
-            return None
-        return LayoutTestResults.results_from_string(results_html)
-
     def layout_test_results(self):
-        results = self._create_layout_test_results()
-        # FIXME: We should not have to set failure_limit_count, but we
-        # do until run-webkit-tests can be updated save off the value
-        # of --exit-after-N-failures in results.html/results.json.
-        # https://bugs.webkit.org/show_bug.cgi?id=58481
-        if results:
-            results.set_failure_limit_count(RunTests.NON_INTERACTIVE_FAILURE_LIMIT_COUNT)
-        return results
-
-    def _results_directory(self):
-        results_path = self._tool.port().layout_tests_results_path()
-        # FIXME: This is wrong in two ways:
-        # 1. It assumes that results.html is at the top level of the results tree.
-        # 2. This uses the "old" ports.py infrastructure instead of the new layout_tests/port
-        # which will not support Chromium.  However the new arch doesn't work with old-run-webkit-tests
-        # so we have to use this for now.
-        return os.path.dirname(results_path)
+        return self._layout_test_results_reader.results()
 
     def archive_last_layout_test_results(self, patch):
-        results_directory = self._results_directory()
-        results_name, _ = os.path.splitext(os.path.basename(results_directory))
-        # Note: We name the zip with the bug_id instead of patch_id to match work_item_log_path().
-        zip_path = self._tool.workspace.find_unused_filename(self._log_directory(), "%s-%s" % (patch.bug_id(), results_name), "zip")
-        if not zip_path:
-            return None
-        if not self._tool.filesystem.isdir(results_directory):
-            log("%s does not exist, not archiving." % results_directory)
-            return None
-        archive = self._tool.workspace.create_zip(zip_path, results_directory)
-        # Remove the results directory to prevent http logs, etc. from getting huge between runs.
-        # We could have create_zip remove the original, but this is more explicit.
-        self._tool.filesystem.rmtree(results_directory)
-        return archive
+        return self._layout_test_results_reader.archive(patch)
 
     def refetch_patch(self, patch):
         return self._tool.bugs.fetch_attachment(patch.id())
