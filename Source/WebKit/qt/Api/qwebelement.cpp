@@ -739,7 +739,7 @@ static bool setupScriptContext(WebCore::Element* element, JSC::JSValue& thisValu
     if (!state)
         return false;
 
-    thisValue = toJS(state, element);
+    thisValue = toJS(state, deprecatedGlobalObjectForPrototype(state), element);
     if (!thisValue)
         return false;
 

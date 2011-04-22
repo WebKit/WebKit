@@ -1,3 +1,10 @@
+2011-04-22  Sam Weinig  <sam@webkit.org>
+
+        Fix qt build.
+
+        * Api/qwebelement.cpp:
+        (setupScriptContext):
+
 2011-04-22  Yi Shen  <yi.4.shen@nokia.com>
 
         Reviewed by Kenneth Rohde Christiansen.
