@@ -1,5 +1,11 @@
 2011-04-21  Ryosuke Niwa  <rniwa@webkit.org>
 
+        Windows build fix.
+
+        * WebCoreSupport/WebEditorClient.h:
+
+2011-04-21  Ryosuke Niwa  <rniwa@webkit.org>
+
         Reviewed by Sam Weinig.
 
         Add Frame* to the argument lists of canCopyCut and canPaste
