@@ -3161,7 +3161,7 @@ bool EventHandler::handleTouchEvent(const PlatformTouchEvent& event)
     }
     m_touchPressed = touches->length() > 0;
 
-    // Now iterate the changedTouches list and m_targets within it, sending events to the tagets as required.
+    // Now iterate the changedTouches list and m_targets within it, sending events to the targets as required.
     bool defaultPrevented = false;
     RefPtr<TouchList> emptyList = TouchList::create();
     for (unsigned state = 0; state != PlatformTouchPoint::TouchStateEnd; ++state) {

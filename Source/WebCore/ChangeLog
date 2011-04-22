@@ -1,3 +1,10 @@
+2011-04-22  Daniel Bates  <dbates@rim.com>
+
+        Fix misspelled word in comment; tagets => targets.
+
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::handleTouchEvent):
+
 2011-04-21  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Oliver Hunt.
