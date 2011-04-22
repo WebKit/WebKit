@@ -158,18 +158,18 @@ JSValue toJS(ExecState* exec, JSDOMGlobalObject* globalObject, EventTarget* targ
 
 #if ENABLE(NOTIFICATIONS)
     if (Notification* notification = target->toNotification())
-        return toJS(exec, notification);
+        return toJS(exec, globalObject, notification);
 #endif
 
 #if ENABLE(INDEXED_DATABASE)
     if (IDBDatabase* idbDatabase = target->toIDBDatabase())
-        return toJS(exec, idbDatabase);
+        return toJS(exec, globalObject, idbDatabase);
 
     if (IDBRequest* idbRequest = target->toIDBRequest())
-        return toJS(exec, idbRequest);
+        return toJS(exec, globalObject, idbRequest);
 
     if (IDBTransaction* idbTransaction = target->toIDBTransaction())
-        return toJS(exec, idbTransaction);
+        return toJS(exec, globalObject, idbTransaction);
 #endif
 
 #if ENABLE(WEB_AUDIO)
@@ -181,7 +181,7 @@ JSValue toJS(ExecState* exec, JSDOMGlobalObject* globalObject, EventTarget* targ
 
 #if ENABLE(WEB_SOCKETS)
     if (WebSocket* webSocket = target->toWebSocket())
-        return toJS(exec, webSocket);
+        return toJS(exec, globalObject, webSocket);
 #endif
 
 #if ENABLE(BLOB)

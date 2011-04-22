@@ -132,7 +132,7 @@ JSValue JSDocument::createTouchList(ExecState* exec)
     for (int i = 0; i < exec->argumentCount(); i++)
         touchList->append(toTouch(exec->argument(i)));
 
-    return toJS(exec, touchList.release());
+    return toJS(exec, globalObject(), touchList.release());
 }
 #endif
 

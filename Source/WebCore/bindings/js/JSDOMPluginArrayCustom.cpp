@@ -36,7 +36,7 @@ bool JSDOMPluginArray::canGetItemsForName(ExecState*, DOMPluginArray* pluginArra
 JSValue JSDOMPluginArray::nameGetter(ExecState* exec, JSValue slotBase, const Identifier& propertyName)
 {
     JSDOMPluginArray* thisObj = static_cast<JSDOMPluginArray*>(asObject(slotBase));
-    return toJS(exec, thisObj->impl()->namedItem(identifierToAtomicString(propertyName)));
+    return toJS(exec, thisObj->globalObject(), thisObj->impl()->namedItem(identifierToAtomicString(propertyName)));
 }
 
 } // namespace WebCore

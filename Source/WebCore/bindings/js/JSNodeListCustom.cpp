@@ -81,7 +81,8 @@ static EncodedJSValue JSC_HOST_CALL callNodeList(ExecState* exec)
     unsigned index = Identifier::toUInt32(exec->argument(0).toString(exec), ok);
     if (!ok)
         return JSValue::encode(jsUndefined());
-    return JSValue::encode(toJS(exec, static_cast<JSNodeList*>(exec->callee())->impl()->item(index)));
+    JSNodeList* thisObj = static_cast<JSNodeList*>(exec->callee());
+    return JSValue::encode(toJS(exec, thisObj->globalObject(), thisObj->impl()->item(index)));
 }
 
 CallType JSNodeList::getCallData(CallData& callData)
@@ -98,7 +99,7 @@ bool JSNodeList::canGetItemsForName(ExecState*, NodeList* impl, const Identifier
 JSValue JSNodeList::nameGetter(ExecState* exec, JSValue slotBase, const Identifier& propertyName)
 {
     JSNodeList* thisObj = static_cast<JSNodeList*>(asObject(slotBase));
-    return toJS(exec, thisObj->impl()->itemWithName(identifierToAtomicString(propertyName)));
+    return toJS(exec, thisObj->globalObject(), thisObj->impl()->itemWithName(identifierToAtomicString(propertyName)));
 }
 
 } // namespace WebCore

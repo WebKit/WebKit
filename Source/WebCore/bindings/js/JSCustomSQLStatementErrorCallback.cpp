@@ -51,8 +51,8 @@ bool JSSQLStatementErrorCallback::handleEvent(SQLTransaction* transaction, SQLEr
 
     ExecState* exec = m_data->globalObject()->globalExec();
     MarkedArgumentBuffer args;
-    args.append(toJS(exec, transaction));
-    args.append(toJS(exec, error));
+    args.append(toJS(exec, m_data->globalObject(), transaction));
+    args.append(toJS(exec, m_data->globalObject(), error));
 
     bool raisedException = false;
     JSValue result = m_data->invokeCallback(args, &raisedException);

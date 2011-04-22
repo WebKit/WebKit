@@ -71,7 +71,7 @@ Node* InjectedScriptHost::scriptValueAsNode(ScriptValue value)
 ScriptValue InjectedScriptHost::nodeAsScriptValue(ScriptState* state, Node* node)
 {
     JSLock lock(SilenceAssertionsOnly);
-    return ScriptValue(state->globalData(), toJS(state, node));
+    return ScriptValue(state->globalData(), toJS(state, deprecatedGlobalObjectForPrototype(state), node));
 }
 
 JSValue JSInjectedScriptHost::currentCallFrame(ExecState* exec)
@@ -82,7 +82,7 @@ JSValue JSInjectedScriptHost::currentCallFrame(ExecState* exec)
         return jsUndefined();
 
     JSLock lock(SilenceAssertionsOnly);
-    return toJS(exec, callFrame);
+    return toJS(exec, globalObject(), callFrame);
 #else
     UNUSED_PARAM(exec);
     return jsUndefined();
@@ -99,7 +99,7 @@ JSValue JSInjectedScriptHost::inspectedNode(ExecState* exec)
         return jsUndefined();
 
     JSLock lock(SilenceAssertionsOnly);
-    return toJS(exec, node);
+    return toJS(exec, globalObject(), node);
 }
 
 JSValue JSInjectedScriptHost::internalConstructorName(ExecState* exec)

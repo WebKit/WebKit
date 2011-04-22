@@ -50,7 +50,7 @@ JSValue JSConsole::profiles(ExecState* exec) const
 
     ProfilesArray::const_iterator end = profiles.end();
     for (ProfilesArray::const_iterator iter = profiles.begin(); iter != end; ++iter)
-        list.append(toJS(exec, iter->get()));
+        list.append(toJS(exec, globalObject(), iter->get()));
 
     return constructArray(exec, list);
 }

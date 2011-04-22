@@ -42,12 +42,12 @@ using namespace JSC;
 
 namespace WebCore {
 
-static JSValue toJS(ExecState* exec, CanvasStyle* style)
+static JSValue toJS(ExecState* exec, JSDOMGlobalObject* globalObject, CanvasStyle* style)
 {
     if (style->canvasGradient())
-        return toJS(exec, style->canvasGradient());
+        return toJS(exec, globalObject, style->canvasGradient());
     if (style->canvasPattern())
-        return toJS(exec, style->canvasPattern());
+        return toJS(exec, globalObject, style->canvasPattern());
     return jsString(exec, style->color());
 }
 
@@ -66,7 +66,7 @@ static PassRefPtr<CanvasStyle> toHTMLCanvasStyle(ExecState*, JSValue value)
 JSValue JSCanvasRenderingContext2D::strokeStyle(ExecState* exec) const
 {
     CanvasRenderingContext2D* context = static_cast<CanvasRenderingContext2D*>(impl());
-    return toJS(exec, context->strokeStyle());        
+    return toJS(exec, globalObject(), context->strokeStyle());        
 }
 
 void JSCanvasRenderingContext2D::setStrokeStyle(ExecState* exec, JSValue value)
@@ -82,7 +82,7 @@ void JSCanvasRenderingContext2D::setStrokeStyle(ExecState* exec, JSValue value)
 JSValue JSCanvasRenderingContext2D::fillStyle(ExecState* exec) const
 {
     CanvasRenderingContext2D* context = static_cast<CanvasRenderingContext2D*>(impl());
-    return toJS(exec, context->fillStyle());
+    return toJS(exec, globalObject(), context->fillStyle());
 }
 
 void JSCanvasRenderingContext2D::setFillStyle(ExecState* exec, JSValue value)
@@ -355,7 +355,7 @@ JSValue JSCanvasRenderingContext2D::createPattern(ExecState* exec)
 
     if (o->inherits(&JSHTMLImageElement::s_info)) {
         ExceptionCode ec;
-        JSValue pattern = toJS(exec,
+        JSValue pattern = toJS(exec, globalObject(), 
             context->createPattern(static_cast<HTMLImageElement*>(static_cast<JSHTMLElement*>(o)->impl()),
                                    valueToStringWithNullCheck(exec, exec->argument(1)), ec).get());
         setDOMException(exec, ec);
@@ -363,7 +363,7 @@ JSValue JSCanvasRenderingContext2D::createPattern(ExecState* exec)
     }
     if (o->inherits(&JSHTMLCanvasElement::s_info)) {
         ExceptionCode ec;
-        JSValue pattern = toJS(exec,
+        JSValue pattern = toJS(exec, globalObject(), 
             context->createPattern(static_cast<HTMLCanvasElement*>(static_cast<JSHTMLElement*>(o)->impl()),
                 valueToStringWithNullCheck(exec, exec->argument(1)), ec).get());
         setDOMException(exec, ec);

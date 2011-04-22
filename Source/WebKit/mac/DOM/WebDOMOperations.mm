@@ -78,14 +78,14 @@ using namespace JSC;
 {
     JSLock lock(SilenceAssertionsOnly);
     ExecState* execState = toJS(context);
-    return toRef(execState, toJS(execState, core(self)->shadowRoot()));
+    return toRef(execState, toJS(execState, deprecatedGlobalObjectForPrototype(execState), core(self)->shadowRoot()));
 }
 
 - (JSValueRef)_ensureShadowRoot:(JSContextRef)context
 {
     JSLock lock(SilenceAssertionsOnly);
     ExecState* execState = toJS(context);
-    return toRef(execState, toJS(execState, core(self)->ensureShadowRoot()));
+    return toRef(execState, toJS(execState, deprecatedGlobalObjectForPrototype(execState), core(self)->ensureShadowRoot()));
 }
 
 - (void)_removeShadowRoot

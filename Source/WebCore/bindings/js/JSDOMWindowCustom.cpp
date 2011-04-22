@@ -129,8 +129,8 @@ static JSValue namedItemGetter(ExecState* exec, JSValue slotBase, const Identifi
 
     RefPtr<HTMLCollection> collection = document->windowNamedItems(identifierToString(propertyName));
     if (collection->length() == 1)
-        return toJS(exec, collection->firstItem());
-    return toJS(exec, collection.get());
+        return toJS(exec, thisObj, collection->firstItem());
+    return toJS(exec, thisObj, collection.get());
 }
 
 bool JSDOMWindow::getOwnPropertySlot(ExecState* exec, const Identifier& propertyName, PropertySlot& slot)
@@ -490,7 +490,7 @@ JSValue JSDOMWindow::event(ExecState* exec) const
     Event* event = currentEvent();
     if (!event)
         return jsUndefined();
-    return toJS(exec, event);
+    return toJS(exec, const_cast<JSDOMWindow*>(this), event);
 }
 
 #if ENABLE(EVENTSOURCE)

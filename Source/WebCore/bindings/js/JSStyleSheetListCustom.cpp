@@ -79,7 +79,7 @@ JSValue JSStyleSheetList::nameGetter(ExecState* exec, JSValue slotBase, const Id
     JSStyleSheetList* thisObj = static_cast<JSStyleSheetList*>(asObject(slotBase));
     HTMLStyleElement* element = thisObj->impl()->getNamedItem(identifierToString(propertyName));
     ASSERT(element);
-    return toJS(exec, element->sheet());
+    return toJS(exec, thisObj->globalObject(), element->sheet());
 }
 
 JSC::JSValue toJS(JSC::ExecState* exec, JSDOMGlobalObject* globalObject, StyleSheetList* impl)

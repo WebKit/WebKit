@@ -661,7 +661,7 @@ JSValueRef DumpRenderTreeSupportGtk::shadowRoot(JSContextRef context, JSValueRef
     if (!element)
         return JSValueMakeNull(context);
 
-    return toRef(exec, toJS(exec, element->shadowRoot()));
+    return toRef(exec, toJS(exec, deprecatedGlobalObjectForPrototype(exec), element->shadowRoot()));
 }
 
 JSValueRef DumpRenderTreeSupportGtk::ensureShadowRoot(JSContextRef context, JSValueRef value)
@@ -672,7 +672,7 @@ JSValueRef DumpRenderTreeSupportGtk::ensureShadowRoot(JSContextRef context, JSVa
     if (!element)
         return JSValueMakeNull(context);
 
-    return toRef(exec, toJS(exec, element->ensureShadowRoot()));
+    return toRef(exec, toJS(exec, deprecatedGlobalObjectForPrototype(exec), element->ensureShadowRoot()));
 }
 
 void DumpRenderTreeSupportGtk::removeShadowRoot(JSContextRef context, JSValueRef value)

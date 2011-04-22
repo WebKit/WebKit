@@ -35,7 +35,7 @@ void MediaQueryListListener::queryChanged(ScriptState* state, MediaQueryList* qu
 {
     ScriptCallback callback(state, m_value);
 #if USE(JSC)
-    callback.appendArgument(toJS(state, query));
+    callback.appendArgument(toJS(state, deprecatedGlobalObjectForPrototype(state), query));
 #else
     v8::HandleScope handleScope;
     v8::Handle<v8::Context> context = state->context();

@@ -1,3 +1,15 @@
+2011-04-22  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Gavin Barraclough.
+
+        Remove remaining uses of deprecated version of toJS
+        https://bugs.webkit.org/show_bug.cgi?id=59170
+
+        * WebCoreSupport/DumpRenderTreeSupportGtk.cpp:
+        (DumpRenderTreeSupportGtk::shadowRoot):
+        (DumpRenderTreeSupportGtk::ensureShadowRoot):
+        Replace use of deprecated toJS overload with explicit call to deprecatedGlobalObjectForPrototype.
+
 2011-04-22  Philippe Normand  <pnormand@igalia.com>
 
         Reviewed by Martin Robinson.

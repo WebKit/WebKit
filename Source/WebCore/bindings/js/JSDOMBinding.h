@@ -251,23 +251,6 @@ namespace WebCore {
     // NaN if the value can't be converted to a date.
     double valueToDate(JSC::ExecState*, JSC::JSValue);
 
-    // FIXME: These are a stop-gap until all toJS calls can be converted to pass a globalObject
-    template <typename T>
-    inline JSC::JSValue toJS(JSC::ExecState* exec, T* ptr)
-    {
-        return toJS(exec, deprecatedGlobalObjectForPrototype(exec), ptr);
-    }
-    template <typename T>
-    inline JSC::JSValue toJS(JSC::ExecState* exec, PassRefPtr<T> ptr)
-    {
-        return toJS(exec, deprecatedGlobalObjectForPrototype(exec), ptr.get());
-    }
-    template <typename T>
-    inline JSC::JSValue toJSNewlyCreated(JSC::ExecState* exec, T* ptr)
-    {
-        return toJSNewlyCreated(exec, deprecatedGlobalObjectForPrototype(exec), ptr);
-    }
-
     template <typename T>
     inline JSC::JSValue toJS(JSC::ExecState* exec, JSDOMGlobalObject* globalObject, PassRefPtr<T> ptr)
     {

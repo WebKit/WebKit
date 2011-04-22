@@ -143,7 +143,7 @@ sub GenerateAttributeEventListenerCall
         $wrapperObject = "asObject(correspondingElementWrapper)";
 
         push(@GenerateEventListenerImpl, <<END);
-    JSValue correspondingElementWrapper = toJS(exec, imp->correspondingElement());
+    JSValue correspondingElementWrapper = toJS(exec, castedThis->globalObject(), imp->correspondingElement());
     if (correspondingElementWrapper.isObject())
 END
 
@@ -170,7 +170,7 @@ sub GenerateEventListenerCall
         $wrapperObject = "asObject(correspondingElementWrapper)";
 
         push(@GenerateEventListenerImpl, <<END);
-    JSValue correspondingElementWrapper = toJS(exec, imp->correspondingElement());
+    JSValue correspondingElementWrapper = toJS(exec, castedThis->globalObject(), imp->correspondingElement());
     if (!correspondingElementWrapper.isObject())
         return JSValue::encode(jsUndefined());
 END
@@ -1685,12 +1685,12 @@ sub GenerateImplementation
                         } elsif ($type eq "EventListener") {
                             $implIncludes{"JSEventListener.h"} = 1;
                             push(@implContent, "    UNUSED_PARAM(exec);\n");
+                            push(@implContent, "    ${className}* castedThis = static_cast<${className}*>(thisObject);\n");
                             my $windowEventListener = $attribute->signature->extendedAttributes->{"WindowEventListener"};
                             if ($windowEventListener) {
-                                push(@implContent, "    ${className}* castedThis = static_cast<${className}*>(thisObject);\n");
                                 push(@implContent, "    JSDOMGlobalObject* globalObject = castedThis->globalObject();\n");
                             }
-                            push(@implContent, "    $implClassName* imp = static_cast<$implClassName*>(static_cast<$className*>(thisObject)->impl());\n");
+                            push(@implContent, "    $implClassName* imp = static_cast<$implClassName*>(castedThis->impl());\n");
                             if ((($interfaceName eq "DOMWindow") or ($interfaceName eq "WorkerContext")) and $name eq "onerror") {
                                 $implIncludes{"JSErrorHandler.h"} = 1;
                                 push(@implContent, "    imp->set$implSetterFunctionName(createJSErrorHandler(exec, value, thisObject));\n");
@@ -2282,7 +2282,7 @@ sub GenerateCallbackImplementation
                 if ($param->type eq "DOMString") {
                     push(@implContent, "    args.append(jsString(exec, ${paramName}));\n");
                 } else {
-                    push(@implContent, "    args.append(toJS(exec, ${paramName}));\n");
+                    push(@implContent, "    args.append(toJS(exec, m_data->globalObject(), ${paramName}));\n");
                 }
             }
 

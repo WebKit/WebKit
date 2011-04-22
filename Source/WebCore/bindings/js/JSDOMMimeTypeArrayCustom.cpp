@@ -36,7 +36,7 @@ bool JSDOMMimeTypeArray::canGetItemsForName(ExecState*, DOMMimeTypeArray* mimeTy
 JSValue JSDOMMimeTypeArray::nameGetter(ExecState* exec, JSValue slotBase, const Identifier& propertyName)
 {
     JSDOMMimeTypeArray* thisObj = static_cast<JSDOMMimeTypeArray*>(asObject(slotBase));
-    return toJS(exec, thisObj->impl()->namedItem(identifierToAtomicString(propertyName)));
+    return toJS(exec, thisObj->globalObject(), thisObj->impl()->namedItem(identifierToAtomicString(propertyName)));
 }
 
 } // namespace WebCore
