@@ -70,6 +70,10 @@ public:
 private:
     // Parse a single basic block of bytecode instructions.
     bool parseBlock(unsigned limit);
+    // Setup predecessor links in the graph's BasicBlocks.
+    void setupPredecessors();
+    // Add spill locations to nodes.
+    void allocateVirtualRegisters();
 
     // Get/Set the operands/result of a bytecode instruction.
     NodeIndex get(int operand)
@@ -1001,6 +1005,57 @@ bool ByteCodeParser::parseBlock(unsigned limit)
     }
 }
 
+void ByteCodeParser::setupPredecessors()
+{
+    for (BlockIndex index = 0; index < m_graph.m_blocks.size(); ++index) {
+        BasicBlock* block = &m_graph.m_blocks[index];
+        ASSERT(block->end != NoNode);
+        Node& node = m_graph[block->end - 1];
+        ASSERT(node.isTerminal());
+
+        if (node.isJump())
+            m_graph.blockForBytecodeOffset(node.takenBytecodeOffset()).m_predecessors.append(index);
+        else if (node.isBranch()) {
+            m_graph.blockForBytecodeOffset(node.takenBytecodeOffset()).m_predecessors.append(index);
+            m_graph.blockForBytecodeOffset(node.notTakenBytecodeOffset()).m_predecessors.append(index);
+        }
+    }
+}
+
+void ByteCodeParser::allocateVirtualRegisters()
+{
+    ScoreBoard scoreBoard(m_graph, m_variables.size());
+    size_t size = m_graph.size();
+    for (size_t i = 0; i < size; ++i) {
+        Node& node = m_graph[i];
+        if (node.refCount()) {
+            // First, call use on all of the current node's children, then
+            // allocate a VirtualRegister for this node. We do so in this
+            // order so that if a child is on its last use, and a
+            // VirtualRegister is freed, then it may be reused for node.
+            scoreBoard.use(node.child1);
+            scoreBoard.use(node.child2);
+            scoreBoard.use(node.child3);
+            
+            if (!node.hasResult())
+                continue;
+
+            node.setVirtualRegister(scoreBoard.allocate());
+            // 'mustGenerate' nodes have their useCount artificially elevated,
+            // call use now to account for this.
+            if (node.mustGenerate())
+                scoreBoard.use(i);
+        }
+    }
+
+    // 'm_numCalleeRegisters' is the number of locals and temporaries allocated
+    // for the function (and checked for on entry). Since we perform a new and
+    // different allocation of temporaries, more registers may now be required.
+    unsigned calleeRegisters = scoreBoard.allocatedCount() + m_variables.size();
+    if ((unsigned)m_codeBlock->m_numCalleeRegisters < calleeRegisters)
+        m_codeBlock->m_numCalleeRegisters = calleeRegisters;
+}
+
 bool ByteCodeParser::parse()
 {
     // Set during construction.
@@ -1029,38 +1084,9 @@ bool ByteCodeParser::parse()
     // Should have reached the end of the instructions.
     ASSERT(m_currentIndex == m_codeBlock->instructions().size());
 
-    // Assign VirtualRegisters.
-    ScoreBoard scoreBoard(m_graph, m_variables.size());
-    Node* nodes = m_graph.begin();
-    size_t size = m_graph.size();
-    for (size_t i = 0; i < size; ++i) {
-        Node& node = nodes[i];
-        if (node.refCount()) {
-            // First, call use on all of the current node's children, then
-            // allocate a VirtualRegister for this node. We do so in this
-            // order so that if a child is on its last use, and a
-            // VirtualRegister is freed, then it may be reused for node.
-            scoreBoard.use(node.child1);
-            scoreBoard.use(node.child2);
-            scoreBoard.use(node.child3);
-            
-            if (!node.hasResult())
-                continue;
+    setupPredecessors();
 
-            node.setVirtualRegister(scoreBoard.allocate());
-            // 'mustGenerate' nodes have their useCount artificially elevated,
-            // call use now to account for this.
-            if (node.mustGenerate())
-                scoreBoard.use(i);
-        }
-    }
-
-    // 'm_numCalleeRegisters' is the number of locals and temporaries allocated
-    // for the function (and checked for on entry). Since we perform a new and
-    // different allocation of temporaries, more registers may now be required.
-    unsigned calleeRegisters = scoreBoard.allocatedCount() + m_variables.size();
-    if ((unsigned)m_codeBlock->m_numCalleeRegisters < calleeRegisters)
-        m_codeBlock->m_numCalleeRegisters = calleeRegisters;
+    allocateVirtualRegisters();
 
 #if DFG_DEBUG_VERBOSE
     m_graph.dump(m_codeBlock);

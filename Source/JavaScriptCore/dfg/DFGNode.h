@@ -71,6 +71,7 @@ typedef uint32_t ExceptionInfo;
 #define NodeIsConstant    0x20000
 #define NodeIsJump        0x40000
 #define NodeIsBranch      0x80000
+#define NodeIsTerminal   0x100000
 
 // These values record the result type of the node (as checked by NodeResultMask, above), 0 for no result.
 #define NodeResultJS      0x1000
@@ -138,9 +139,9 @@ typedef uint32_t ExceptionInfo;
     macro(LogicalNot, NodeResultJS) \
     \
     /* Block terminals. */\
-    macro(Jump, NodeMustGenerate | NodeIsJump) \
-    macro(Branch, NodeMustGenerate | NodeIsBranch) \
-    macro(Return, NodeMustGenerate)
+    macro(Jump, NodeMustGenerate | NodeIsTerminal | NodeIsJump) \
+    macro(Branch, NodeMustGenerate | NodeIsTerminal | NodeIsBranch) \
+    macro(Return, NodeMustGenerate | NodeIsTerminal)
 
 // This enum generates a monotonically increasing id for all Node types,
 // and is used by the subsequent enum to fill out the id (as accessed via the NodeIdMask).
@@ -318,6 +319,11 @@ struct Node {
     bool isBranch()
     {
         return op & NodeIsBranch;
+    }
+
+    bool isTerminal()
+    {
+        return op & NodeIsTerminal;
     }
 
     unsigned takenBytecodeOffset()

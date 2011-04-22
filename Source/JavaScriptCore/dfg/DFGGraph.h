@@ -40,6 +40,8 @@ namespace DFG {
 
 typedef uint32_t BlockIndex;
 
+typedef Vector <BlockIndex, 2> PredecessorList;
+
 struct BasicBlock {
     BasicBlock(unsigned bytecodeBegin, NodeIndex begin, NodeIndex end)
         : bytecodeBegin(bytecodeBegin)
@@ -56,6 +58,8 @@ struct BasicBlock {
     unsigned bytecodeBegin;
     NodeIndex begin;
     NodeIndex end;
+
+    PredecessorList m_predecessors;
 };
 
 // 
@@ -97,6 +101,11 @@ public:
         BasicBlock* block = binarySearch<BasicBlock, unsigned, BasicBlock::getBytecodeBegin>(begin, m_blocks.size(), bytecodeBegin);
         ASSERT(block >= m_blocks.begin() && block < m_blocks.end());
         return static_cast<BlockIndex>(block - begin);
+    }
+
+    BasicBlock& blockForBytecodeOffset(unsigned bytecodeBegin)
+    {
+        return m_blocks[blockIndexForBytecodeOffset(bytecodeBegin)];
     }
 
 private:

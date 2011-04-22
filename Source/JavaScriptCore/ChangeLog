@@ -1,3 +1,21 @@
+2011-04-22  Gavin Barraclough  <barraclough@apple.com>
+
+        Reviewed by Geoff Garen.
+
+        Bug 59232 - DFG JIT - Add predecessor links to BasicBlocks
+
+        These will be necessary for DCE support.
+        Also factor allocateVirtualRegisters out into its own method.
+
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::setupPredecessors):
+        (JSC::DFG::ByteCodeParser::allocateVirtualRegisters):
+        (JSC::DFG::ByteCodeParser::parse):
+        * dfg/DFGGraph.h:
+        (JSC::DFG::Graph::blockForBytecodeOffset):
+        * dfg/DFGNode.h:
+        (JSC::DFG::Node::isTerminal):
+
 2011-04-22  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Geoffrey Garen.
