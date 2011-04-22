@@ -851,7 +851,7 @@ void SpeculativeJIT::compile(BasicBlock& block)
         fprintf(stderr, "SpeculativeJIT generating Node @%d at JIT offset 0x%x\n", (int)m_compileIndex, m_jit.debugOffset());
 #endif
 #if DFG_JIT_BREAK_ON_EVERY_NODE
-    m_jit.breakpoint();
+        m_jit.breakpoint();
 #endif
         checkConsistency();
         compile(node);
@@ -864,9 +864,8 @@ void SpeculativeJIT::compile(BasicBlock& block)
 bool SpeculativeJIT::compile()
 {
     ASSERT(!m_compileIndex);
-    Vector<BasicBlock> blocks = m_jit.graph().m_blocks;
-    for (m_block = 0; m_block < blocks.size(); ++m_block) {
-        compile(blocks[m_block]);
+    for (m_block = 0; m_block < m_jit.graph().m_blocks.size(); ++m_block) {
+        compile(*m_jit.graph().m_blocks[m_block]);
         if (!m_compileOkay)
             return false;
     }

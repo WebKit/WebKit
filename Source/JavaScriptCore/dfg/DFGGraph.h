@@ -40,19 +40,35 @@ namespace DFG {
 
 typedef uint32_t BlockIndex;
 
-typedef Vector <BlockIndex, 2> PredecessorList;
-
-struct BasicBlock {
-    BasicBlock(unsigned bytecodeBegin, NodeIndex begin, NodeIndex end)
-        : bytecodeBegin(bytecodeBegin)
-        , begin(begin)
-        , end(end)
+// For every local variable we track any existing get or set of the value.
+// We track the get so that these may be shared, and we track the set to
+// retrieve the current value, and to reference the final definition.
+struct VariableRecord {
+    VariableRecord()
+        : get(NoNode)
+        , set(NoNode)
     {
     }
 
-    static inline BlockIndex getBytecodeBegin(BasicBlock* block)
+    NodeIndex get;
+    NodeIndex set;
+};
+
+typedef Vector <BlockIndex, 2> PredecessorList;
+
+struct BasicBlock {
+    BasicBlock(unsigned bytecodeBegin, NodeIndex begin, unsigned numArguments, unsigned numVariables)
+        : bytecodeBegin(bytecodeBegin)
+        , begin(begin)
+        , end(NoNode)
+        , m_arguments(numArguments)
+        , m_variables(numVariables)
     {
-        return block->bytecodeBegin;
+    }
+
+    static inline BlockIndex getBytecodeBegin(OwnPtr<BasicBlock>* block)
+    {
+        return (*block)->bytecodeBegin;
     }
 
     unsigned bytecodeBegin;
@@ -60,6 +76,8 @@ struct BasicBlock {
     NodeIndex end;
 
     PredecessorList m_predecessors;
+    Vector <VariableRecord, 8> m_arguments;
+    Vector <VariableRecord, 8> m_variables;
 };
 
 // 
@@ -93,19 +111,19 @@ public:
     void dump(NodeIndex, CodeBlock* = 0);
 #endif
 
-    Vector<BasicBlock> m_blocks;
+    Vector< OwnPtr<BasicBlock> , 8> m_blocks;
 
     BlockIndex blockIndexForBytecodeOffset(unsigned bytecodeBegin)
     {
-        BasicBlock* begin = m_blocks.begin();
-        BasicBlock* block = binarySearch<BasicBlock, unsigned, BasicBlock::getBytecodeBegin>(begin, m_blocks.size(), bytecodeBegin);
+        OwnPtr<BasicBlock>* begin = m_blocks.begin();
+        OwnPtr<BasicBlock>* block = binarySearch<OwnPtr<BasicBlock>, unsigned, BasicBlock::getBytecodeBegin>(begin, m_blocks.size(), bytecodeBegin);
         ASSERT(block >= m_blocks.begin() && block < m_blocks.end());
         return static_cast<BlockIndex>(block - begin);
     }
 
     BasicBlock& blockForBytecodeOffset(unsigned bytecodeBegin)
     {
-        return m_blocks[blockIndexForBytecodeOffset(bytecodeBegin)];
+        return *m_blocks[blockIndexForBytecodeOffset(bytecodeBegin)];
     }
 
 private:

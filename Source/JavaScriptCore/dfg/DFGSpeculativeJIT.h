@@ -167,7 +167,7 @@ private:
     bool detectPeepHoleBranch()
     {
         // Check if the block contains precisely one more node.
-        if (m_compileIndex + 2 != m_jit.graph().m_blocks[m_block].end)
+        if (m_compileIndex + 2 != m_jit.graph().m_blocks[m_block]->end)
             return false;
 
         // Check if the lastNode is a branch on this node.

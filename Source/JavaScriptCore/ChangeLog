@@ -1,5 +1,41 @@
 2011-04-22  Gavin Barraclough  <barraclough@apple.com>
 
+        Reviewed by Geoffrey Garen.
+
+        Bug 59254 - DFG JIT - retain VariableRecords for args/var in all basic blocks,
+        such that this information is available for DCE.  Also, since this enlarges the
+        size of BasicBlock, make Graph hold a vector of pointers to basic blocks, not a
+        vector of blocks.
+
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::ByteCodeParser):
+        (JSC::DFG::ByteCodeParser::get):
+        (JSC::DFG::ByteCodeParser::set):
+        (JSC::DFG::ByteCodeParser::getVariable):
+        (JSC::DFG::ByteCodeParser::setVariable):
+        (JSC::DFG::ByteCodeParser::getArgument):
+        (JSC::DFG::ByteCodeParser::setArgument):
+        (JSC::DFG::ByteCodeParser::parseBlock):
+        (JSC::DFG::ByteCodeParser::setupPredecessors):
+        (JSC::DFG::ByteCodeParser::allocateVirtualRegisters):
+        (JSC::DFG::ByteCodeParser::parse):
+        * dfg/DFGGraph.cpp:
+        (JSC::DFG::Graph::dump):
+        * dfg/DFGGraph.h:
+        (JSC::DFG::VariableRecord::VariableRecord):
+        (JSC::DFG::BasicBlock::BasicBlock):
+        (JSC::DFG::BasicBlock::getBytecodeBegin):
+        (JSC::DFG::Graph::blockIndexForBytecodeOffset):
+        (JSC::DFG::Graph::blockForBytecodeOffset):
+        * dfg/DFGNonSpeculativeJIT.cpp:
+        (JSC::DFG::NonSpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT.h:
+        (JSC::DFG::SpeculativeJIT::detectPeepHoleBranch):
+
+2011-04-22  Gavin Barraclough  <barraclough@apple.com>
+
         Errk, build fix.
 
         * dfg/DFGSpeculativeJIT.cpp:

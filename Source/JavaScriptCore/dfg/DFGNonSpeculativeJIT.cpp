@@ -665,7 +665,7 @@ void NonSpeculativeJIT::compile(SpeculationCheckIndexIterator& checkIterator, Ba
         fprintf(stderr, "NonSpeculativeJIT generating Node @%d at code offset 0x%x\n", (int)m_compileIndex, m_jit.debugOffset());
 #endif
 #if DFG_JIT_BREAK_ON_EVERY_NODE
-    m_jit.breakpoint();
+        m_jit.breakpoint();
 #endif
 
         checkConsistency();
@@ -677,9 +677,8 @@ void NonSpeculativeJIT::compile(SpeculationCheckIndexIterator& checkIterator, Ba
 void NonSpeculativeJIT::compile(SpeculationCheckIndexIterator& checkIterator)
 {
     ASSERT(!m_compileIndex);
-    Vector<BasicBlock> blocks = m_jit.graph().m_blocks;
-    for (m_block = 0; m_block < blocks.size(); ++m_block)
-        compile(checkIterator, blocks[m_block]);
+    for (m_block = 0; m_block < m_jit.graph().m_blocks.size(); ++m_block)
+        compile(checkIterator, *m_jit.graph().m_blocks[m_block]);
     linkBranches();
 }
 

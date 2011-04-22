@@ -56,9 +56,9 @@ public:
         , m_constantNull(UINT_MAX)
         , m_constant1(UINT_MAX)
         , m_constants(codeBlock->numberOfConstantRegisters())
-        , m_arguments(codeBlock->m_numParameters)
-        , m_variables(codeBlock->m_numVars)
         , m_temporaries(codeBlock->m_numCalleeRegisters - codeBlock->m_numVars)
+        , m_numArguments(codeBlock->m_numParameters)
+        , m_numVariables(codeBlock->m_numVars)
     {
         for (unsigned i = 0; i < m_temporaries.size(); ++i)
             m_temporaries[i] = NoNode;
@@ -90,12 +90,11 @@ private:
             return getArgument(operand);
 
         // Is this a variable?
-        unsigned numVariables = m_variables.size();
-        if ((unsigned)operand < numVariables)
+        if ((unsigned)operand < m_numVariables)
             return getVariable((unsigned)operand);
         
         // Must be a temporary.
-        unsigned temporary = (unsigned)operand - numVariables;
+        unsigned temporary = (unsigned)operand - m_numVariables;
         ASSERT(temporary < m_temporaries.size());
         return getTemporary(temporary);
     }
@@ -108,14 +107,13 @@ private:
         }
 
         // Is this a variable?
-        unsigned numVariables = m_variables.size();
-        if ((unsigned)operand < numVariables) {
+        if ((unsigned)operand < m_numVariables) {
             setVariable((unsigned)operand, value);
             return;
         }
         
         // Must be a temporary.
-        unsigned temporary = (unsigned)operand - numVariables;
+        unsigned temporary = (unsigned)operand - m_numVariables;
         ASSERT(temporary < m_temporaries.size());
         setTemporary(temporary, value);
     }
@@ -123,22 +121,22 @@ private:
     // Used in implementing get/set, above, where the operand is a local variable.
     NodeIndex getVariable(unsigned operand)
     {
-        NodeIndex setNode = m_variables[operand].set;
+        NodeIndex setNode = m_currentBlock->m_variables[operand].set;
         if (setNode != NoNode)
             return m_graph[setNode].child1;
 
-        NodeIndex getNode = m_variables[operand].get;
+        NodeIndex getNode = m_currentBlock->m_variables[operand].get;
         if (getNode != NoNode)
             return getNode;
 
         getNode = addToGraph(GetLocal, OpInfo(operand));
-        m_variables[operand].get = getNode;
+        m_currentBlock->m_variables[operand].get = getNode;
         return getNode;
     }
     void setVariable(unsigned operand, NodeIndex value)
     {
-        NodeIndex priorSet = m_variables[operand].set;
-        m_variables[operand].set = addToGraph(SetLocal, OpInfo(operand), value);
+        NodeIndex priorSet = m_currentBlock->m_variables[operand].set;
+        m_currentBlock->m_variables[operand].set = addToGraph(SetLocal, OpInfo(operand), value);
         if (priorSet != NoNode)
             m_graph.deref(priorSet);
     }
@@ -163,27 +161,27 @@ private:
     NodeIndex getArgument(unsigned operand)
     {
         unsigned argument = operand + m_codeBlock->m_numParameters + RegisterFile::CallFrameHeaderSize;
-        ASSERT(argument < m_arguments.size());
+        ASSERT(argument < m_numArguments);
 
-        NodeIndex setNode = m_arguments[argument].set;
+        NodeIndex setNode = m_currentBlock->m_arguments[argument].set;
         if (setNode != NoNode)
             return m_graph[setNode].child1;
 
-        NodeIndex getNode = m_arguments[argument].get;
+        NodeIndex getNode = m_currentBlock->m_arguments[argument].get;
         if (getNode != NoNode)
             return getNode;
 
         getNode = addToGraph(GetLocal, OpInfo(operand));
-        m_arguments[argument].get = getNode;
+        m_currentBlock->m_arguments[argument].get = getNode;
         return getNode;
     }
     void setArgument(int operand, NodeIndex value)
     {
         unsigned argument = operand + m_codeBlock->m_numParameters + RegisterFile::CallFrameHeaderSize;
-        ASSERT(argument < m_arguments.size());
+        ASSERT(argument < m_numArguments);
 
-        NodeIndex priorSet = m_arguments[argument].set;
-        m_arguments[argument].set = addToGraph(SetLocal, OpInfo(operand), value);
+        NodeIndex priorSet = m_currentBlock->m_arguments[argument].set;
+        m_currentBlock->m_arguments[argument].set = addToGraph(SetLocal, OpInfo(operand), value);
         if (priorSet != NoNode)
             m_graph.deref(priorSet);
     }
@@ -465,6 +463,8 @@ private:
     CodeBlock* m_codeBlock;
     Graph& m_graph;
 
+    // The current block being generated.
+    BasicBlock* m_currentBlock;
     // The bytecode index of the current instruction being generated.
     unsigned m_currentIndex;
 
@@ -495,26 +495,13 @@ private:
         NodeIndex asJSValue;
     };
 
-    // For every local variable we track any existing get or set of the value.
-    // We track the get so that these may be shared, and we track the set to
-    // retrieve the current value, and to reference the final definition.
-    struct VariableRecord {
-        VariableRecord()
-            : get(NoNode)
-            , set(NoNode)
-        {
-        }
-
-        NodeIndex get;
-        NodeIndex set;
-    };
-
     // Track the index of the node whose result is the current value for every
     // register value in the bytecode - argument, local, and temporary.
     Vector <ConstantRecord, 32> m_constants;
-    Vector <VariableRecord, 32> m_arguments;
-    Vector <VariableRecord, 32> m_variables;
     Vector <NodeIndex, 32> m_temporaries;
+
+    unsigned m_numArguments;
+    unsigned m_numVariables;
 
     // These maps are used to unique ToNumber and ToInt32 operations.
     typedef HashMap<NodeIndex, NodeIndex> UnaryOpMap;
@@ -536,10 +523,6 @@ bool ByteCodeParser::parseBlock(unsigned limit)
     if (m_currentIndex) {
         for (unsigned i = 0; i < m_constants.size(); ++i)
             m_constants[i] = ConstantRecord();
-        for (unsigned i = 0; i < m_variables.size(); ++i)
-            m_variables[i] = VariableRecord();
-        for (unsigned i = 0; i < m_arguments.size(); ++i)
-            m_arguments[i] = VariableRecord();
         for (unsigned i = 0; i < m_temporaries.size(); ++i)
             m_temporaries[i] = NoNode;
     }
@@ -989,8 +972,8 @@ bool ByteCodeParser::parseBlock(unsigned limit)
 
             // FIXME: throw away terminal definitions of variables;
             // should not be necessary once we have proper DCE!
-            for (unsigned i = 0; i < m_variables.size(); ++i) {
-                NodeIndex priorSet = m_variables[i].set;
+            for (unsigned i = 0; i < m_currentBlock->m_variables.size(); ++i) {
+                NodeIndex priorSet = m_currentBlock->m_variables[i].set;
                 if (priorSet != NoNode)
                     m_graph.deref(priorSet);
             }
@@ -1008,7 +991,7 @@ bool ByteCodeParser::parseBlock(unsigned limit)
 void ByteCodeParser::setupPredecessors()
 {
     for (BlockIndex index = 0; index < m_graph.m_blocks.size(); ++index) {
-        BasicBlock* block = &m_graph.m_blocks[index];
+        BasicBlock* block = m_graph.m_blocks[index].get();
         ASSERT(block->end != NoNode);
         Node& node = m_graph[block->end - 1];
         ASSERT(node.isTerminal());
@@ -1024,34 +1007,35 @@ void ByteCodeParser::setupPredecessors()
 
 void ByteCodeParser::allocateVirtualRegisters()
 {
-    ScoreBoard scoreBoard(m_graph, m_variables.size());
+    ScoreBoard scoreBoard(m_graph, m_numVariables);
     size_t size = m_graph.size();
     for (size_t i = 0; i < size; ++i) {
         Node& node = m_graph[i];
-        if (node.refCount()) {
-            // First, call use on all of the current node's children, then
-            // allocate a VirtualRegister for this node. We do so in this
-            // order so that if a child is on its last use, and a
-            // VirtualRegister is freed, then it may be reused for node.
-            scoreBoard.use(node.child1);
-            scoreBoard.use(node.child2);
-            scoreBoard.use(node.child3);
-            
-            if (!node.hasResult())
-                continue;
+        if (!node.refCount())
+            continue;
 
-            node.setVirtualRegister(scoreBoard.allocate());
-            // 'mustGenerate' nodes have their useCount artificially elevated,
-            // call use now to account for this.
-            if (node.mustGenerate())
-                scoreBoard.use(i);
-        }
+        // First, call use on all of the current node's children, then
+        // allocate a VirtualRegister for this node. We do so in this
+        // order so that if a child is on its last use, and a
+        // VirtualRegister is freed, then it may be reused for node.
+        scoreBoard.use(node.child1);
+        scoreBoard.use(node.child2);
+        scoreBoard.use(node.child3);
+        
+        if (!node.hasResult())
+            continue;
+
+        node.setVirtualRegister(scoreBoard.allocate());
+        // 'mustGenerate' nodes have their useCount artificially elevated,
+        // call use now to account for this.
+        if (node.mustGenerate())
+            scoreBoard.use(i);
     }
 
     // 'm_numCalleeRegisters' is the number of locals and temporaries allocated
     // for the function (and checked for on entry). Since we perform a new and
     // different allocation of temporaries, more registers may now be required.
-    unsigned calleeRegisters = scoreBoard.allocatedCount() + m_variables.size();
+    unsigned calleeRegisters = scoreBoard.allocatedCount() + m_numVariables;
     if ((unsigned)m_codeBlock->m_numCalleeRegisters < calleeRegisters)
         m_codeBlock->m_numCalleeRegisters = calleeRegisters;
 }
@@ -1068,16 +1052,15 @@ bool ByteCodeParser::parse()
 
         // Loop until we reach the current limit (i.e. next jump target).
         do {
-            unsigned bytecodeBegin = m_currentIndex;
-            NodeIndex begin = m_graph.size();
+            m_currentBlock = new BasicBlock(m_currentIndex, m_graph.size(), m_numArguments, m_numVariables);
 
             if (!parseBlock(limit))
                 return false;
             // We should not have gone beyond the limit.
             ASSERT(m_currentIndex <= limit);
 
-            NodeIndex end = m_graph.size();
-            m_graph.m_blocks.append(BasicBlock(bytecodeBegin, begin, end));
+            m_currentBlock->end = m_graph.size();
+            m_graph.m_blocks.append(m_currentBlock);
         } while (m_currentIndex < limit);
     }
 

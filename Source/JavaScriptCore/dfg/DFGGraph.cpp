@@ -131,8 +131,7 @@ void Graph::dump(CodeBlock* codeBlock)
 {
     for (size_t b = 0; b < m_blocks.size(); ++b) {
         printf("Block #%u:\n", (int)b);
-        BasicBlock& block = m_blocks[b];
-        for (size_t i = block.begin; i < block.end; ++i)
+        for (size_t i = m_blocks[b]->begin; i < m_blocks[b]->end; ++i)
             dump(i, codeBlock);
     }
 }
