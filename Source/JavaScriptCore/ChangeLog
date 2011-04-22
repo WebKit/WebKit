@@ -1,3 +1,9 @@
+2011-04-22  Brian Weinstein  <bweinstein@apple.com>
+
+        Part of Windows build fix from r84650.
+
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.def:
+
 2011-04-22  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Geoffrey Garen.
