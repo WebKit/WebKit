@@ -1,5 +1,12 @@
 2011-04-21  Dirk Pranke  <dpranke@chromium.org>
 
+        Unreviewed, expectations change. Triage failure for
+        media/video-zoom.html on chromium gpu bots.
+
+        * platform/chromium/test_expectations.txt:
+
+2011-04-21  Dirk Pranke  <dpranke@chromium.org>
+
         Unreviewed, expectations change. Suppress failures on chromium
         win/linux from bug 59166.
 

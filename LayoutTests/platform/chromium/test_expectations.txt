@@ -3682,7 +3682,6 @@ BUGDPRANKE WIN LINUX : transforms/2d/hindi-rotated.html = IMAGE IMAGE+TEXT
 BUGDPRANKE MAC : compositing/iframes/invisible-nested-iframe-show.html = TEXT
 BUGDPRANKE MAC GPU : compositing/geometry/video-fixed-scrolling.html = IMAGE
 BUGDPRANKE MAC GPU : media/video-volume-slider.html = IMAGE
-BUGDPRANKE GPU : media/video-zoom.html = CRASH TEXT
 BUGDPRANKE MAC : plugins/mouse-click-iframe-to-plugin.html = TIMEOUT PASS
 BUGDPRANKE MAC : animations/3d/transform-origin-vs-functions.html = TEXT PASS
 BUGDPRANKE : fast/encoding/parser-tests-10.html = TIMEOUT PASS
@@ -3759,7 +3758,6 @@ BUGDPRANKE CPU : media/media-document-audio-repaint.html = IMAGE
 BUGDPRANKE MAC LINUX : transitions/interrupt-zero-duration.html = TEXT PASS
 BUGDPRANKE : media/controls-css-overload.html = TIMEOUT PASS
 BUGDPRANKE : fast/borders/bidi-012.html = IMAGE+TEXT IMAGE
-BUGDPRANKE CPU : media/video-zoom.html = IMAGE
 BUGDPRANKE WIN LINUX : animations/change-one-anim.html = TEXT PASS
 BUGDPRANKE CPU : media/video-controls-rendering.html = IMAGE
 
@@ -3887,3 +3885,5 @@ BUGWK59166 WIN LINUX DEBUG CPU : svg/dynamic-updates/SVGFEDropShadowElement-svgd
 BUGWK59166 WIN LINUX DEBUG CPU : svg/dynamic-updates/SVGFEDropShadowElement-svgdom-shadow-opacity-prop.html = TIMEOUT
 BUGWK59166 WIN LINUX DEBUG CPU : svg/dynamic-updates/SVGFEDropShadowElement-svgdom-stdDeviation-prop.html = TIMEOUT
 BUGWK59166 WIN LINUX DEBUG CPU : svg/filters/feDropShadow.svg = TIMEOUT
+
+BUGWK59167 GPU : media/video-zoom.html = IMAGE
