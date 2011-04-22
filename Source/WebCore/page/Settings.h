@@ -355,6 +355,11 @@ namespace WebCore {
         bool fullScreenEnabled() const  { return m_fullScreenAPIEnabled; }
 #endif
 
+#if USE(AVFOUNDATION)
+        static void setAVFoundationEnabled(bool flag) { gAVFoundationEnabled = flag; }
+        static bool isAVFoundationEnabled() { return gAVFoundationEnabled; }
+#endif
+
         void setAsynchronousSpellCheckingEnabled(bool flag) { m_asynchronousSpellCheckingEnabled = flag; }
         bool asynchronousSpellCheckingEnabled() const  { return m_asynchronousSpellCheckingEnabled; }
 
@@ -497,6 +502,10 @@ namespace WebCore {
         bool m_useQuickLookResourceCachingQuirks : 1;
         bool m_forceCompositingMode : 1;
         bool m_shouldInjectUserScriptsInInitialEmptyDocument : 1;
+
+#if USE(AVFOUNDATION)
+        static bool gAVFoundationEnabled;
+#endif
 
 #if USE(SAFARI_THEME)
         static bool gShouldPaintNativeControls;

@@ -243,4 +243,9 @@ extern NSString *WebPreferencesChangedInternalNotification;
 - (void)setLoadsSiteIconsIgnoringImageLoadingPreference: (BOOL)flag;
 - (BOOL)loadsSiteIconsIgnoringImageLoadingPreference;
 
+// AVFoundation support is dependent on WebCore/WebKit being
+// compiled with USE_AVFOUNDATION.
+- (void)setAVFoundationEnabled:(BOOL)flag;
+- (BOOL)isAVFoundationEnabled;
+
 @end

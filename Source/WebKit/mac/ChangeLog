@@ -1,3 +1,26 @@
+2011-04-22  Jer Noble  <jer.noble@apple.com>
+
+        Reviewed by Maciej Stachowiak.
+
+        Disable MediaPlayerPrivateAVFoundation when using old full screen mode.
+        https://bugs.webkit.org/show_bug.cgi?id=59147
+
+        Add a new user default preference, and plumb that preference down to WebCore
+        Settings. Allow the fullScreenEnabled preference to override the new 
+        isAVFoundationEnabled preference, so that clients of the legacy full screen
+        mode will continue to use that mode normally.
+
+        * WebView/WebPreferenceKeysPrivate.h: Add new preference key.
+        * WebView/WebPreferences.mm:
+        (+[WebPreferences initialize]): Set the default value of new
+            preference.
+        (-[WebPreferences setAVFoundationEnabled:]): Added.
+        (-[WebPreferences isAVFoundationEnabled]): Added.
+        * WebView/WebPreferencesPrivate.h:
+        * WebView/WebView.mm:
+        (-[WebView _preferencesChanged:]): Update the WebCore settings with the
+            new values from WebPreferences.
+
 2011-04-22  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Gavin Barraclough.

@@ -55,6 +55,10 @@ static void setLoadsImagesAutomaticallyInAllFrames(Page* page)
 bool Settings::gShouldPaintNativeControls = true;
 #endif
 
+#if USE(AVFOUNDATION)
+bool Settings::gAVFoundationEnabled(false);
+#endif
+
 #if PLATFORM(WIN) || (OS(WINDOWS) && PLATFORM(WX))
 bool Settings::gShouldUseHighResolutionTimers = true;
 #endif

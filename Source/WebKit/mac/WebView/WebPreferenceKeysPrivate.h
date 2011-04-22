@@ -107,6 +107,7 @@
 #define WebKitMemoryInfoEnabledPreferenceKey @"WebKitMemoryInfoEnabled"
 #define WebKitHyperlinkAuditingEnabledPreferenceKey @"WebKitHyperlinkAuditingEnabled"
 #define WebKitUseQuickLookResourceCachingQuirksPreferenceKey @"WebKitUseQuickLookResourceCachingQuirks"
+#define WebKitAVFoundationEnabledKey @"WebKitAVFoundationEnabled"
 
 // These are private both because callers should be using the cover methods and because the
 // cover methods themselves are private.

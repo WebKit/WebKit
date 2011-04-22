@@ -1557,6 +1557,13 @@ static bool fastDocumentTeardownEnabled()
     settings->setCrossOriginCheckInGetMatchedCSSRulesDisabled([self _needsUnrestrictedGetMatchedCSSRules]);
     settings->setInteractiveFormValidationEnabled([self interactiveFormValidationEnabled]);
     settings->setValidationMessageTimerMagnification([self validationMessageTimerMagnification]);
+#if USE(AVFOUNDATION)
+#if ENABLE(FULLSCREEN_API)
+    settings->setAVFoundationEnabled([preferences isAVFoundationEnabled] && [preferences fullScreenEnabled]);
+#else
+    settings->setAVFoundationEnabled(false);
+#endif
+#endif
 
     // Application Cache Preferences are stored on the global cache storage manager, not in Settings.
     [WebApplicationCache setDefaultOriginQuota:[preferences applicationCacheDefaultOriginQuota]];

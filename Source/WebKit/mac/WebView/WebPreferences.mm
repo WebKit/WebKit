@@ -391,6 +391,7 @@ static bool useQuickLookQuirks(void)
         [NSNumber numberWithBool:NO],   WebKitMemoryInfoEnabledPreferenceKey,
         [NSNumber numberWithBool:YES],  WebKitHyperlinkAuditingEnabledPreferenceKey,
         [NSNumber numberWithBool:NO],   WebKitUsePreHTML5ParserQuirksKey,
+        [NSNumber numberWithBool:YES],  WebKitAVFoundationEnabledKey,
         [NSNumber numberWithBool:useQuickLookQuirks()], WebKitUseQuickLookResourceCachingQuirksPreferenceKey,
         [NSNumber numberWithLongLong:WebCore::ApplicationCacheStorage::noQuota()], WebKitApplicationCacheTotalQuota,
         [NSNumber numberWithLongLong:WebCore::ApplicationCacheStorage::noQuota()], WebKitApplicationCacheDefaultOriginQuota,
@@ -1484,6 +1485,15 @@ static NSString *classIBCreatorID = nil;
     return [self _boolValueForKey: WebKitLoadSiteIconsKey];
 }
 
+- (void)setAVFoundationEnabled:(BOOL)flag
+{
+    [self _setBoolValue:flag forKey:WebKitAVFoundationEnabledKey];
+}
+
+- (BOOL)isAVFoundationEnabled
+{
+    return [self _boolValueForKey:WebKitAVFoundationEnabledKey];
+}
 @end
 
 @implementation WebPreferences (WebInternal)

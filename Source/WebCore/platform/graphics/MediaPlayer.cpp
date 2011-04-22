@@ -35,6 +35,7 @@
 #include "IntRect.h"
 #include "MIMETypeRegistry.h"
 #include "MediaPlayerPrivate.h"
+#include "Settings.h"
 #include "TimeRanges.h"
 
 #if PLATFORM(QT)
@@ -190,7 +191,8 @@ static Vector<MediaPlayerFactory*>& installedMediaEngines()
 #endif
 
 #if USE(AVFOUNDATION) && PLATFORM(MAC)
-        MediaPlayerPrivateAVFoundationObjC::registerMediaEngine(addMediaEngine);
+        if (Settings::isAVFoundationEnabled())
+            MediaPlayerPrivateAVFoundationObjC::registerMediaEngine(addMediaEngine);
 #endif
 
 #if !PLATFORM(GTK) && !PLATFORM(EFL) && !(PLATFORM(QT) && USE(GSTREAMER))
