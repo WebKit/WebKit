@@ -522,6 +522,16 @@ bool WKPreferencesGetFullScreenEnabled(WKPreferencesRef preferencesRef)
     return toImpl(preferencesRef)->fullScreenEnabled();
 }
 
+void WKPreferencesSetAVFoundationEnabled(WKPreferencesRef preferencesRef, bool enabled)
+{
+    toImpl(preferencesRef)->setAVFoundationEnabled(enabled);
+}
+
+bool WKPreferencesGetAVFoundationEnabled(WKPreferencesRef preferencesRef)
+{
+    return toImpl(preferencesRef)->isAVFoundationEnabled();
+}
+
 void WKPreferencesSetWebSecurityEnabled(WKPreferencesRef preferencesRef, bool enabled)
 {
     toImpl(preferencesRef)->setWebSecurityEnabled(enabled);

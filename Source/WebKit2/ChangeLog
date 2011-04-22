@@ -1,3 +1,21 @@
+2011-04-22  Jer Noble  <jer.noble@apple.com>
+
+        Reviewed by Maciej Stachowiak.
+
+        Allow MediaPlayerPrivateAVFoundation to be disabled via a preference.
+        https://bugs.webkit.org/show_bug.cgi?id=59179
+
+        Add API to allow the WebCore Settings preference to be called from the UIProcess.
+
+        * Shared/WebPreferencesStore.h: Added new preference definition macro.
+        * UIProcess/API/C/WKPreferences.cpp:
+        (WKPreferencesSetAVFoundationEnabled): Added.
+        (WKPreferencesGetAVFoundationEnabled): Added.
+        * UIProcess/API/C/WKPreferences.h:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::updatePreferences): Pass new preference along to WebCore
+            Settings.
+
 2011-04-22  Brian Weinstein  <bweinstein@apple.com>
 
         Reviewed by Sam Weinig.

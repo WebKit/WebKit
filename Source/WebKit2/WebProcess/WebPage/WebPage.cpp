@@ -1467,6 +1467,10 @@ void WebPage::updatePreferences(const WebPreferencesStore& store)
     settings->setLocalStorageDatabasePath(WebProcess::shared().localStorageDirectory());
 #endif
 
+#if USE(AVFOUNDATION)
+    settings->setAVFoundationEnabled(store.getBoolValueForKey(WebPreferencesKey::isAVFoundationEnabledKey()));
+#endif
+
     platformPreferencesDidChange(store);
 }
 
