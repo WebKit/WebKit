@@ -1,3 +1,10 @@
+2011-04-22  Mikhail Naganov  <mnaganov@chromium.org>
+
+        Unreviewed fix after r84484 -- conditional statement was inverted incorrectly.
+
+        * inspector/front-end/ProfilesPanel.js:
+        (WebInspector.ProfilesPanel.prototype.handleShortcut):
+
 2011-04-22  Annie Sullivan  <sullivan@chromium.org>
 
         Reviewed by Pavel Feldman.
