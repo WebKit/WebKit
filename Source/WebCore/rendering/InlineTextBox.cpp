@@ -895,7 +895,6 @@ void InlineTextBox::paintDecoration(GraphicsContext* context, const FloatPoint& 
     bool setClip = false;
     int extraOffset = 0;
     if (!linesAreOpaque && shadow && shadow->next()) {
-        context->save(); // FIXME: where is the balancing restore()?
         FloatRect clipRect(localOrigin, FloatSize(width, baseline + 2));
         for (const ShadowData* s = shadow; s; s = s->next()) {
             FloatRect shadowRect(localOrigin, FloatSize(width, baseline + 2));

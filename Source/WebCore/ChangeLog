@@ -1,3 +1,45 @@
+2011-04-21  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        Extra GraphicsContext::save() in InlineTextBox::paintDecoration()
+        https://bugs.webkit.org/show_bug.cgi?id=59109
+        
+        Remove an extraneous GraphicsContext::save() in InlineTextBox::paintDecoration().
+        
+        Add an assertion that fires when a GraphicsContext() is destroyed with a non-
+        empty state stack. Fix canvas to avoid this assertion, since bad content might
+        trigger it.
+        
+        Also add an assertion that fires for mismatched begin/endTransparencyLayers.
+
+        Test: fast/text/multiple-text-shadow-alpha.html
+
+        * html/HTMLCanvasElement.cpp:
+        (WebCore::HTMLCanvasElement::~HTMLCanvasElement):
+        Make sure that the CanvasRenderingContext goes away before the ImageBuffer,
+        so that CanvasRenderingContext2D has a chance to unwind the state stack in
+        the ImageBuffer's GraphicsContext.
+        
+        * html/canvas/CanvasRenderingContext2D.cpp:
+        (WebCore::CanvasRenderingContext2D::~CanvasRenderingContext2D):
+        Balance unmatched state saves in the canvas context.
+        
+        * platform/graphics/GraphicsContext.cpp:
+        (WebCore::GraphicsContext::~GraphicsContext):
+        Assert that the stack is empty.
+        
+        * platform/graphics/cg/GraphicsContextPlatformPrivateCG.h:
+        (WebCore::GraphicsContextPlatformPrivate::GraphicsContextPlatformPrivate):
+        (WebCore::GraphicsContextPlatformPrivate::~GraphicsContextPlatformPrivate):
+        (WebCore::GraphicsContextPlatformPrivate::beginTransparencyLayer):
+        (WebCore::GraphicsContextPlatformPrivate::endTransparencyLayer):
+        Changes to allow for asserting for unmatched transparency layer begin/ends.
+        
+        * rendering/InlineTextBox.cpp:
+        (WebCore::InlineTextBox::paintDecoration):
+        Remove an unbalanced save().
+
 2011-04-22  Pavel Feldman  <pfeldman@google.com>
 
         Reviewed by Yury Semikhatsky.

@@ -145,6 +145,17 @@ CanvasRenderingContext2D::CanvasRenderingContext2D(HTMLCanvasElement* canvas, bo
 
 CanvasRenderingContext2D::~CanvasRenderingContext2D()
 {
+#if !ASSERT_DISABLED
+    // Ensure that the state stack in the ImageBuffer's context
+    // is cleared before destruction, to avoid assertions in the
+    // GraphicsContext dtor.
+    if (size_t stackSize = m_stateStack.size()) {
+        if (GraphicsContext* context = drawingContext()) {
+            while (--stackSize)
+                context->restore();
+        }
+    }
+#endif
 }
 
 bool CanvasRenderingContext2D::isAccelerated() const

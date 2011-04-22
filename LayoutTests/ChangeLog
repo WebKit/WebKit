@@ -1,3 +1,15 @@
+2011-04-21  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        Extra GraphicsContext::save() in InlineTextBox::paintDecoration()
+        https://bugs.webkit.org/show_bug.cgi?id=59109
+        
+        Testcase that exercises the fixed InlineTextBox::paintDecoration() code.
+
+        * fast/text/multiple-text-shadow-alpha-expected.txt: Added.
+        * fast/text/multiple-text-shadow-alpha.html: Added.
+
 2011-04-22  Jessie Berlin  <jberlin@apple.com>
 
         Windows DRT needs an implementation of shadowRoot.

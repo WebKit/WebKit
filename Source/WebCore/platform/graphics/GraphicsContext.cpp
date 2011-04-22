@@ -84,6 +84,7 @@ GraphicsContext::GraphicsContext(PlatformGraphicsContext* platformGraphicsContex
 
 GraphicsContext::~GraphicsContext()
 {
+    ASSERT(m_stack.isEmpty());
     platformDestroy();
 }
 

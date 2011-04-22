@@ -44,8 +44,10 @@ public:
         : m_cgContext(cgContext)
 #if PLATFORM(WIN)
         , m_hdc(0)
-        , m_transparencyCount(0)
         , m_shouldIncludeChildWindows(false)
+#endif
+#if PLATFORM(WIN) || !ASSERT_DISABLED
+        , m_transparencyCount(0)
 #endif
         , m_userToDeviceTransformKnownToBeIdentity(false)
         , m_contextFlags(flags)
@@ -54,6 +56,7 @@ public:
     
     ~GraphicsContextPlatformPrivate()
     {
+        ASSERT(!m_transparencyCount);
     }
 
 #if PLATFORM(MAC) || PLATFORM(CHROMIUM)
@@ -68,8 +71,6 @@ public:
     void translate(float, float) {}
     void concatCTM(const AffineTransform&) {}
     void setCTM(const AffineTransform&) {}
-    void beginTransparencyLayer() {}
-    void endTransparencyLayer() {}
 #endif
 
 #if PLATFORM(WIN)
@@ -84,15 +85,29 @@ public:
     void translate(float, float);
     void concatCTM(const AffineTransform&);
     void setCTM(const AffineTransform&);
-    void beginTransparencyLayer() { m_transparencyCount++; }
-    void endTransparencyLayer() { m_transparencyCount--; }
 
     HDC m_hdc;
-    unsigned m_transparencyCount;
     bool m_shouldIncludeChildWindows;
 #endif
 
+    void beginTransparencyLayer()
+    {
+#if PLATFORM(WIN) || !ASSERT_DISABLED
+        m_transparencyCount++;
+#endif
+    }
+    void endTransparencyLayer()
+    {
+#if PLATFORM(WIN) || !ASSERT_DISABLED
+        ASSERT(m_transparencyCount > 0);
+        m_transparencyCount--;
+#endif
+    }
+
     RetainPtr<CGContextRef> m_cgContext;
+#if PLATFORM(WIN) || !ASSERT_DISABLED
+    int m_transparencyCount;
+#endif
     bool m_userToDeviceTransformKnownToBeIdentity;
     GraphicsContextCGFlags m_contextFlags;
 };

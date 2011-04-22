@@ -101,6 +101,8 @@ HTMLCanvasElement::~HTMLCanvasElement()
     HashSet<CanvasObserver*>::iterator end = m_observers.end();
     for (HashSet<CanvasObserver*>::iterator it = m_observers.begin(); it != end; ++it)
         (*it)->canvasDestroyed(this);
+
+    m_context.clear(); // Ensure this goes away before the ImageBuffer.
 }
 
 void HTMLCanvasElement::parseMappedAttribute(Attribute* attr)
