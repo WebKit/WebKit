@@ -1,3 +1,127 @@
+2011-04-22  Mikhail Naganov  <mnaganov@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: [Chromium] Move detailed heap snapshots storage and processing into workers.
+        https://bugs.webkit.org/show_bug.cgi?id=59094
+
+        * WebCore.gypi:
+        * WebCore.vcproj/WebCore.vcproj:
+        * gyp/streamline-inspector-source.sh:
+        * inspector/front-end/DetailedHeapshotGridNodes.js:
+        (WebInspector.HeapSnapshotGridNode.prototype.dispose):
+        (WebInspector.HeapSnapshotObjectNode.prototype._createProvider):
+        (WebInspector.HeapSnapshotInstanceNode.prototype._createProvider):
+        (WebInspector.HeapSnapshotConstructorNode.prototype._createNodesProvider):
+        (WebInspector.HeapSnapshotIteratorsTuple.prototype.dispose):
+        (WebInspector.HeapSnapshotDiffNode.prototype.calculateDiff.diffCalculated):
+        (WebInspector.HeapSnapshotDiffNode.prototype._createNodesProvider.createProvider):
+        (WebInspector.HeapSnapshotDiffNode.prototype._createNodesProvider):
+        (WebInspector.HeapSnapshotDominatorObjectNode.prototype._createProvider):
+        (MixInSnapshotNodeFunctions):
+        * inspector/front-end/DetailedHeapshotView.js:
+        (WebInspector.HeapSnapshotSortableDataGrid.prototype.dispose):
+        (WebInspector.HeapSnapshotSortableDataGrid.prototype.resetSortingCache):
+        (WebInspector.HeapSnapshotDiffDataGrid.prototype.setBaseDataSource):
+        (WebInspector.HeapSnapshotRetainingPathsList.prototype.dispose):
+        (WebInspector.HeapSnapshotRetainingPathsList.prototype._resetPaths):
+        (WebInspector.HeapSnapshotRetainingPathsList.prototype.setDataSource):
+        (WebInspector.HeapSnapshotRetainingPathsList.prototype.showNext):
+        (WebInspector.HeapSnapshotRetainingPathsList.prototype.searchCancelled):
+        (WebInspector.HeapSnapshotRetainingPathsList.prototype._setRootChildrenForFinder):
+        (WebInspector.DetailedHeapshotView.prototype.dispose):
+        (WebInspector.DetailedHeapshotView.prototype.get profileWrapper):
+        (WebInspector.DetailedHeapshotView.prototype.get baseProfileWrapper):
+        * inspector/front-end/HeapSnapshot.js:
+        (WebInspector.HeapSnapshotLoader):
+        (WebInspector.HeapSnapshotLoader.prototype.finishLoading):
+        (WebInspector.HeapSnapshotLoader.prototype.pushJSONChunk):
+        (WebInspector.HeapSnapshot.prototype.pushBaseIds):
+        (WebInspector.HeapSnapshot.prototype.createDiff):
+        (WebInspector.HeapSnapshot.prototype._parseFilter):
+        (WebInspector.HeapSnapshot.prototype.createEdgesProvider):
+        (WebInspector.HeapSnapshot.prototype.createNodesProvider):
+        (WebInspector.HeapSnapshot.prototype.createPathFinder):
+        (WebInspector.HeapSnapshot.prototype.updateStaticData):
+        (WebInspector.HeapSnapshotPathFinder):
+        (WebInspector.HeapSnapshotPathFinder.prototype.updateRoots):
+        (WebInspector.HeapSnapshotPathFinder.prototype._reset):
+        * inspector/front-end/HeapSnapshotProxy.js:
+        (WebInspector.HeapSnapshotRealWorker):
+        (WebInspector.HeapSnapshotRealWorker.prototype._messageReceived):
+        (WebInspector.HeapSnapshotRealWorker.prototype.postMessage):
+        (WebInspector.HeapSnapshotRealWorker.prototype.terminate):
+        (WebInspector.HeapSnapshotFakeWorker):
+        (WebInspector.HeapSnapshotFakeWorker.prototype.postMessage):
+        (WebInspector.HeapSnapshotFakeWorker.prototype.terminate):
+        (WebInspector.HeapSnapshotFakeWorker.prototype._postMessageFromWorker):
+        (WebInspector.HeapSnapshotWorker):
+        (WebInspector.HeapSnapshotWorker.prototype.createObject):
+        (WebInspector.HeapSnapshotWorker.prototype.dispose):
+        (WebInspector.HeapSnapshotWorker.prototype.disposeObject):
+        (WebInspector.HeapSnapshotWorker.prototype.callGetter):
+        (WebInspector.HeapSnapshotWorker.prototype.callFactoryMethod.wrapCallback):
+        (WebInspector.HeapSnapshotWorker.prototype.callFactoryMethod):
+        (WebInspector.HeapSnapshotWorker.prototype.callMethod):
+        (WebInspector.HeapSnapshotWorker.prototype._findFunction):
+        (WebInspector.HeapSnapshotWorker.prototype._messageReceived):
+        (WebInspector.HeapSnapshotWorker.prototype._postMessage):
+        (WebInspector.HeapSnapshotProxyObject):
+        (WebInspector.HeapSnapshotProxyObject.prototype._callWorker):
+        (WebInspector.HeapSnapshotProxyObject.prototype.dispose):
+        (WebInspector.HeapSnapshotProxyObject.prototype.disposeWorker):
+        (WebInspector.HeapSnapshotProxyObject.prototype.callFactoryMethod):
+        (WebInspector.HeapSnapshotProxyObject.prototype.callGetter):
+        (WebInspector.HeapSnapshotProxyObject.prototype.callMethod):
+        (WebInspector.HeapSnapshotLoaderProxy):
+        (WebInspector.HeapSnapshotLoaderProxy.prototype.finishLoading.callLoadCallbacks):
+        (WebInspector.HeapSnapshotLoaderProxy.prototype.finishLoading.updateStaticData):
+        (WebInspector.HeapSnapshotLoaderProxy.prototype.finishLoading):
+        (WebInspector.HeapSnapshotLoaderProxy.prototype.get loaded):
+        (WebInspector.HeapSnapshotLoaderProxy.prototype.startLoading):
+        (WebInspector.HeapSnapshotLoaderProxy.prototype.pushJSONChunk):
+        (WebInspector.HeapSnapshotProxy):
+        (WebInspector.HeapSnapshotProxy.prototype.aggregates):
+        (WebInspector.HeapSnapshotProxy.prototype.createDiff):
+        (WebInspector.HeapSnapshotProxy.prototype.createEdgesProvider):
+        (WebInspector.HeapSnapshotProxy.prototype.createNodesProvider):
+        (WebInspector.HeapSnapshotProxy.prototype.createPathFinder):
+        (WebInspector.HeapSnapshotProxy.prototype.dispose):
+        (WebInspector.HeapSnapshotProxy.prototype.finishLoading):
+        (WebInspector.HeapSnapshotProxy.prototype.get loaded):
+        (WebInspector.HeapSnapshotProxy.prototype.get nodeCount):
+        (WebInspector.HeapSnapshotProxy.prototype.nodeFieldValuesByIndex):
+        (WebInspector.HeapSnapshotProxy.prototype.pushBaseIds):
+        (WebInspector.HeapSnapshotProxy.prototype.get rootNodeIndex):
+        (WebInspector.HeapSnapshotProxy.prototype.updateStaticData):
+        (WebInspector.HeapSnapshotProxy.prototype.startLoading):
+        (WebInspector.HeapSnapshotProxy.prototype.get totalSize):
+        (WebInspector.HeapSnapshotProxy.prototype.get uid):
+        (WebInspector.HeapSnapshotProviderProxy):
+        (WebInspector.HeapSnapshotProviderProxy.prototype.isEmpty):
+        (WebInspector.HeapSnapshotProviderProxy.prototype.serializeNextItems):
+        (WebInspector.HeapSnapshotProviderProxy.prototype.sortAndRewind):
+        (WebInspector.HeapSnapshotPathFinderProxy):
+        (WebInspector.HeapSnapshotPathFinderProxy.prototype.findNext):
+        (WebInspector.HeapSnapshotPathFinderProxy.prototype.updateRoots):
+        (WebInspector.HeapSnapshotsDiffProxy):
+        (WebInspector.HeapSnapshotsDiffProxy.prototype.calculate):
+        (WebInspector.HeapSnapshotsDiffProxy.prototype.pushBaseIds):
+        (WebInspector.HeapSnapshotsDiffProxy.prototype.pushBaseSelfSizes):
+        * inspector/front-end/HeapSnapshotWorker.js: Added.
+        (WebInspector.UIString):
+        (postMessageWrapper):
+        * inspector/front-end/HeapSnapshotWorkerDispatcher.js: Added.
+        (WebInspector.HeapSnapshotWorkerDispatcher):
+        (WebInspector.HeapSnapshotWorkerDispatcher.prototype._findFunction):
+        (WebInspector.HeapSnapshotWorkerDispatcher.prototype.dispatchMessage):
+        * inspector/front-end/ProfilesPanel.js:
+        (WebInspector.ProfilesPanel.prototype.loadHeapSnapshot):
+        (WebInspector.ProfilesPanel.prototype._finishHeapSnapshot.else.parsed):
+        (WebInspector.ProfilesPanel.prototype._finishHeapSnapshot):
+        * inspector/front-end/WebKit.qrc:
+        * inspector/front-end/inspector.html:
+
 2011-04-22  Pavel Podivilov  <podivilov@chromium.org>
 
         Reviewed by Pavel Feldman.

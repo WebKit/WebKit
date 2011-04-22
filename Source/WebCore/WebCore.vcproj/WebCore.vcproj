@@ -67401,6 +67401,14 @@
 					>
 				</File>
 				<File
+					RelativePath="..\inspector\front-end\HeapSnapshotWorker.js"
+					>
+				</File>
+				<File
+					RelativePath="..\inspector\front-end\HeapSnapshotWorkerDispatcher.js"
+					>
+				</File>
+				<File
 					RelativePath="..\inspector\front-end\helpScreen.css"
 					>
 				</File>

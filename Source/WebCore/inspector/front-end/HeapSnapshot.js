@@ -28,6 +28,27 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+WebInspector.HeapSnapshotLoader = function()
+{
+    this._json = "";
+}
+
+WebInspector.HeapSnapshotLoader.prototype = {
+    finishLoading: function()
+    {
+        if (!this._json)
+            return null;
+        var rawSnapshot = JSON.parse(this._json);
+        this._json = "";
+        return new WebInspector.HeapSnapshot(rawSnapshot);
+    },
+
+    pushJSONChunk: function(chunk)
+    {
+        this._json += chunk;
+    }
+};
+
 WebInspector.HeapSnapshotArraySlice = function(snapshot, arrayName, start, end)
 {
     // Note: we don't reference snapshot contents directly to avoid
@@ -751,13 +772,46 @@ WebInspector.HeapSnapshot.prototype = {
         return this._baseNodeIds[baseSnapshotId][className].binaryIndexOf(nodeId, this._numbersComparator) !== -1;
     },
 
-    pushBaseNodeIds: function(baseSnapshotId, className, nodeIds)
+    pushBaseIds: function(baseSnapshotId, className, nodeIds)
     {
         if (!this._baseNodeIds)
             this._baseNodeIds = [];
         if (!this._baseNodeIds[baseSnapshotId])
             this._baseNodeIds[baseSnapshotId] = {};
         this._baseNodeIds[baseSnapshotId][className] = nodeIds;
+    },
+
+    createDiff: function(className)
+    {
+        return new WebInspector.HeapSnapshotsDiff(this, className);
+    },
+
+    _parseFilter: function(filter)
+    {
+        if (!filter)
+            return null;
+        var parsedFilter = eval("(function(){return " + filter + "})()");
+        return parsedFilter.bind(this);
+    },
+
+    createEdgesProvider: function(nodeIndex, filter)
+    {
+        return new WebInspector.HeapSnapshotEdgesProvider(this, nodeIndex, this._parseFilter(filter));
+    },
+
+    createNodesProvider: function(filter)
+    {
+        return new WebInspector.HeapSnapshotNodesProvider(this, this._parseFilter(filter));
+    },
+
+    createPathFinder: function(targetNodeIndex, skipHidden)
+    {
+        return new WebInspector.HeapSnapshotPathFinder(this, targetNodeIndex, skipHidden);
+    },
+
+    updateStaticData: function()
+    {
+        return {nodeCount: this.nodeCount, rootNodeIndex: this._rootNodeIndex, totalSize: this.totalSize, uid: this.uid};
     }
 };
 
@@ -994,14 +1048,14 @@ WebInspector.HeapSnapshotNodesProvider.prototype = {
 
 WebInspector.HeapSnapshotNodesProvider.prototype.__proto__ = WebInspector.HeapSnapshotFilteredOrderedIterator.prototype;
 
-WebInspector.HeapSnapshotPathFinder = function(snapshot, targetNodeIndex)
+WebInspector.HeapSnapshotPathFinder = function(snapshot, targetNodeIndex, skipHidden)
 {
     this._snapshot = snapshot;
     this._maxLength = 1;
     this._lengthLimit = 15;
     this._targetNodeIndex = targetNodeIndex;
     this._currentPath = null;
-    this._skipHidden = !WebInspector.DetailedHeapshotView.prototype.showHiddenData;
+    this._skipHidden = skipHidden;
     this._rootChildren = this._fillRootChildren();
 }
 
@@ -1025,7 +1079,16 @@ WebInspector.HeapSnapshotPathFinder.prototype = {
 
     updateRoots: function(filter)
     {
+        if (filter)
+            filter = eval("(function(){return " + filter + "})()");
         this._rootChildren = this._fillRootChildren(filter);  
+        this._reset();
+    },
+
+    _reset: function()
+    {
+        this._maxLength = 1;
+        this._currentPath = null;
     },
 
     _fillRootChildren: function(filter)

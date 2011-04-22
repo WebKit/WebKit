@@ -1,3 +1,12 @@
+2011-04-22  Mikhail Naganov  <mnaganov@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: [Chromium] Move detailed heap snapshots storage and processing into workers.
+        https://bugs.webkit.org/show_bug.cgi?id=59094
+
+        * WebKit.gyp:
+
 2011-04-22  Andrey Kosyakov  <caseq@chromium.org>
 
         Reviewed by Pavel Feldman.

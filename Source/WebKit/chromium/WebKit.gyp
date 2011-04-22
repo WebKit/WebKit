@@ -774,6 +774,7 @@
             'conditions': [
                 ['debug_devtools==0', {
                     'dependencies': ['concatenated_devtools_js',
+                                     'concatenated_heap_snapshot_worker_js',
                                      'concatenated_script_formatter_worker_js',
                                      'concatenated_devtools_css'],
                 },{
@@ -789,6 +790,7 @@
                 'input_pages': [
                     '<(PRODUCT_DIR)/resources/inspector/devtools.html',
                     '<(PRODUCT_DIR)/resources/inspector/DevTools.js',
+                    '<(PRODUCT_DIR)/resources/inspector/HeapSnapshotWorker.js',
                     '<(PRODUCT_DIR)/resources/inspector/ScriptFormatterWorker.js',
                     '<(PRODUCT_DIR)/resources/inspector/devTools.css',
                 ],
@@ -1193,6 +1195,24 @@
                         ],
                         'outputs': ['<(PRODUCT_DIR)/resources/inspector/DevTools.js'],
                         'action': ['python', '<@(_script_name)', '<@(_input_page)', '<@(_search_path)', '<@(_outputs)'],
+                    }],
+                },
+                {
+                    'target_name': 'concatenated_heap_snapshot_worker_js',
+                    'type': 'none',
+                    'actions': [{
+                        'action_name': 'concatenate_heap_snapshot_worker_js',
+                        'script_name': 'scripts/inline_js_imports.py',
+                        'input_file': '../../WebCore/inspector/front-end/HeapSnapshotWorker.js',
+                        'inputs': [
+                            '<@(_script_name)',
+                            '../../WebCore/inspector/front-end/BinarySearch.js',
+                            '../../WebCore/inspector/front-end/HeapSnapshot.js',
+                            '../../WebCore/inspector/front-end/HeapSnapshotWorkerDispatcher.js',
+                        ],
+                        'search_path': '../../WebCore/inspector/front-end',
+                        'outputs': ['<(PRODUCT_DIR)/resources/inspector/HeapSnapshotWorker.js'],
+                        'action': ['python', '<@(_script_name)', '<@(_input_file)', '<@(_search_path)', '<@(_outputs)'],
                     }],
                 },
                 {

@@ -45,6 +45,15 @@ WebInspector.HeapSnapshotGridNode.prototype = {
         return cell;
     },
 
+    dispose: function()
+    {
+        if (this._provider)
+            this._provider.dispose();
+        for (var node = this.children[0]; node; node = node.traverseNextNode(true, this, true))
+            if (node.dispose)
+                node.dispose();
+    },
+
     _populate: function(event)
     {
         this.removeEventListener("populate", this._populate, this);
@@ -275,10 +284,10 @@ WebInspector.HeapSnapshotObjectNode.prototype = {
         var showHiddenData = WebInspector.DetailedHeapshotView.prototype.showHiddenData;
         return snapshot.createEdgesProvider(
             nodeIndex,
-            function(edge) {
-                return !edge.isInvisible
-                    && (showHiddenData || (!edge.isHidden && !edge.node.isHidden));
-            });
+            "function(edge) {" +
+            "    return !edge.isInvisible" +
+            "        && (" + showHiddenData + " || (!edge.isHidden && !edge.node.isHidden));" +
+            "}");
     },
 
     _childHashForEntity: function(edge)
@@ -362,10 +371,10 @@ WebInspector.HeapSnapshotInstanceNode.prototype = {
         var showHiddenData = WebInspector.DetailedHeapshotView.prototype.showHiddenData;
         return snapshot.createEdgesProvider(
             nodeIndex,
-            function(edge) {
-                return !edge.isInvisible
-                    && (showHiddenData || (!edge.isHidden && !edge.node.isHidden));
-            });
+            "function(edge) {" +
+            "    return !edge.isInvisible" +
+            "        && (" + showHiddenData + " || (!edge.isHidden && !edge.node.isHidden));" +
+            "}");
     },
 
     _childHashForEntity: function(edge)
@@ -441,10 +450,10 @@ WebInspector.HeapSnapshotConstructorNode.prototype = {
     _createNodesProvider: function(snapshot, nodeType, nodeClassName)
     {
         return snapshot.createNodesProvider(
-            function (node) {
-                 return node.type === nodeType
-                    && (nodeClassName === null || node.className === nodeClassName);
-            });
+            "function (node) {" + 
+            "     return node.type === \"" + nodeType + "\" " +
+            (nodeClassName !== null ? "&& node.className === \"" + nodeClassName + "\"" : "") +
+            "}");
     },
 
     comparator: function()
@@ -505,6 +514,12 @@ WebInspector.HeapSnapshotIteratorsTuple = function(it1, it2)
 }
 
 WebInspector.HeapSnapshotIteratorsTuple.prototype = {
+    dispose: function()
+    {
+        this._it1.dispose();
+        this._it2.dispose();
+    },
+
     sortAndRewind: function(comparator, callback)
     {
         function afterSort(ignored)
@@ -531,6 +546,7 @@ WebInspector.HeapSnapshotDiffNode.prototype = {
         
         function diffCalculated(diffResult)
         {
+            diff.dispose();
             this._addedCount = diffResult.addedCount;
             this._removedCount = diffResult.removedCount;
             this._countDelta = diffResult.countDelta;
@@ -578,11 +594,11 @@ WebInspector.HeapSnapshotDiffNode.prototype = {
         {
             var otherSnapshotId = otherSnapshot.uid;
             var provider = snapshot.createNodesProvider(
-                function (node) {
-                     return node.type === nodeType
-                         && (nodeClassName === null || node.className === nodeClassName)
-                         && !this.baseSnapshotHasNode(otherSnapshotId, className, node.id);
-                });
+                "function (node) {" +
+                "     return node.type === \"" + nodeType + "\" " +
+                (nodeClassName !== null ? "&& node.className === \"" + nodeClassName + "\"" : "") +
+                "         && !this.baseSnapshotHasNode(" + otherSnapshotId + ", \"" + className + "\", node.id);" +
+                "}");
             provider.snapshot = snapshot;
             return provider;
         }
@@ -676,12 +692,12 @@ WebInspector.HeapSnapshotDominatorObjectNode.prototype = {
     {
         var showHiddenData = WebInspector.DetailedHeapshotView.prototype.showHiddenData;
         return snapshot.createNodesProvider(
-            function (node) {
-                 var dominatorIndex = node.dominatorIndex;
-                 return dominatorIndex === nodeIndex
-                     && dominatorIndex !== node.nodeIndex
-                     && (showHiddenData || !node.isHidden);
-            });
+            "function (node) {" +
+            "     var dominatorIndex = node.dominatorIndex;" +
+            "     return dominatorIndex === " + nodeIndex + 
+            "         && dominatorIndex !== node.nodeIndex" +
+            "         && (" + showHiddenData + " || !node.isHidden);" +
+            "}");
     },
 
     _childHashForEntity: function(node)
@@ -721,6 +737,7 @@ function MixInSnapshotNodeFunctions(sourcePrototype, targetPrototype)
     targetPrototype.comparator = sourcePrototype.comparator;
     targetPrototype._createChildNode = sourcePrototype._createChildNode;
     targetPrototype._createProvider = sourcePrototype._createProvider;
+    targetPrototype.dispose = sourcePrototype.dispose;
     targetPrototype.populateChildren = sourcePrototype.populateChildren;
     targetPrototype._saveChildren = sourcePrototype._saveChildren;
     targetPrototype.sort = sourcePrototype.sort;

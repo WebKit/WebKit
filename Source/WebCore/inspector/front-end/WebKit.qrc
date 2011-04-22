@@ -53,6 +53,8 @@
     <file>HeapSnapshot.js</file>
     <file>HeapSnapshotProxy.js</file>
     <file>HeapSnapshotView.js</file>
+    <file>HeapSnapshotWorker.js</file>
+    <file>HeapSnapshotWorkerDispatcher.js</file>
     <file>HelpScreen.js</file>
     <file>ImageView.js</file>
     <file>InjectedFakeWorker.js</file>

@@ -35,6 +35,18 @@ WebInspector.HeapSnapshotSortableDataGrid = function(columns)
 }
 
 WebInspector.HeapSnapshotSortableDataGrid.prototype = {
+    dispose: function()
+    {
+        for (var i = 0, l = this.children.length; i < l; ++i)
+            this.children[i].dispose();
+    },
+
+    resetSortingCache: function()
+    {
+        delete this._lastSortColumnIdentifier;
+        delete this._lastSortAscending;
+    },
+
     sortingChanged: function()
     {
         var sortAscending = this.sortOrder === "ascending";
@@ -222,7 +234,9 @@ WebInspector.HeapSnapshotDiffDataGrid.prototype = {
     setBaseDataSource: function(baseSnapshot)
     {
         this.baseSnapshot = baseSnapshot;
+        this.dispose();
         this.removeChildren();
+        this.resetSortingCache();
         if (this.baseSnapshot === this.snapshot) {
             this.dispatchEventToListeners("sorting complete");
             return;
@@ -307,6 +321,12 @@ WebInspector.HeapSnapshotRetainingPathsList = function()
 }
 
 WebInspector.HeapSnapshotRetainingPathsList.prototype = {
+    dispose: function()
+    {
+        if (this.pathFinder)
+            this.pathFinder.dispose();
+    }, 
+
     _sortFields: function(sortColumn, sortAscending)
     {
         return {
@@ -319,6 +339,7 @@ WebInspector.HeapSnapshotRetainingPathsList.prototype = {
     {
         this._setRootChildrenForFinder();
         this.removeChildren();
+        this.resetSortingCache();
         this._counter = 0;
         this.showNext(this._defaultPopulateCount);
     },
@@ -328,9 +349,11 @@ WebInspector.HeapSnapshotRetainingPathsList.prototype = {
         this.snapshotView = snapshotView;
         this._prefix = prefix;
 
-        if (this.pathFinder)
+        if (this.pathFinder) {
             this.searchCancelled();
-        this.pathFinder = snapshot.createPathFinder(nodeIndex);
+            this.pathFinder.dispose();
+        }
+        this.pathFinder = snapshot.createPathFinder(nodeIndex, !WebInspector.DetailedHeapshotView.prototype.showHiddenData);
         this._resetPaths();
     },
 
@@ -372,7 +395,7 @@ WebInspector.HeapSnapshotRetainingPathsList.prototype = {
                 delete this._cancel;
             }
         }
-        setTimeout(startSearching.bind(this), 0);
+        startSearching.call(this);
     },
 
     searchCancelled: function(pathsCount)
@@ -382,19 +405,16 @@ WebInspector.HeapSnapshotRetainingPathsList.prototype = {
         this._cancel = this.pathFinder;
         if (pathsCount) {
             this.appendChild(new WebInspector.ShowMoreDataGridNode(this.showNext.bind(this), pathsCount));
+            this.resetSortingCache();
             this.sortingChanged();
         }
     },
 
     _setRootChildrenForFinder: function()
     {
-        function FilterDOMWindow(node)
-        {
-            return node.name === "DOMWindow";
-        }
-
         if (this.snapshotView.isTracingToWindowObjects)
-            this.pathFinder.updateRoots(FilterDOMWindow);
+            this.pathFinder.updateRoots(
+                "function (node) { return node.name === \"DOMWindow\"; }");
         else
             this.pathFinder.updateRoots();
     },
@@ -534,10 +554,14 @@ WebInspector.DetailedHeapshotView = function(parent, profile)
 WebInspector.DetailedHeapshotView.prototype = {
     dispose: function()
     {
-        if (this._profileWrapper)
-            this._profileWrapper.dispose();
-        if (this._baseProfileWrapper)
-            this._baseProfileWrapper.dispose();
+        this.profileWrapper.dispose();
+        if (this.baseProfile)
+            this.baseProfileWrapper.dispose();
+        this.containmentDataGrid.dispose();
+        this.constructorsDataGrid.dispose();
+        this.diffDataGrid.dispose();
+        this.dominatorDataGrid.dispose();
+        this.retainmentDataGrid.dispose();
     },
 
     get statusBarItems()
@@ -552,9 +576,7 @@ WebInspector.DetailedHeapshotView.prototype = {
 
     get profileWrapper()
     {
-        if (!this._profileWrapper)
-            this._profileWrapper = this.profile.proxy;
-        return this._profileWrapper;
+        return this.profile.proxy;
     },
 
     get baseProfile()
@@ -564,9 +586,7 @@ WebInspector.DetailedHeapshotView.prototype = {
 
     get baseProfileWrapper()
     {
-        if (!this._baseProfileWrapper)
-            this._baseProfileWrapper = this.baseProfile.proxy;
-        return this._baseProfileWrapper;
+        return this.baseProfile.proxy;
     },
 
     show: function(parentElement)

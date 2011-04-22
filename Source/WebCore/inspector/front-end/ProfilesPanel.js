@@ -459,7 +459,7 @@ WebInspector.ProfilesPanel.prototype = {
             }
         } else {
             if (!profile.proxy)
-                profile.proxy = new WebInspector.HeapSnapshotProxy();
+                profile.proxy = (new WebInspector.HeapSnapshotWorker()).createObject("WebInspector.HeapSnapshotLoader");
             var proxy = profile.proxy;
             if (proxy.startLoading(callback)) {
                 profile.sideBarElement.subtitle = WebInspector.UIString("Loading\u2026");
@@ -517,9 +517,10 @@ WebInspector.ProfilesPanel.prototype = {
             if (!profile.proxy)
                 return;
             var proxy = profile.proxy;
-            function parsed()
+            function parsed(snapshotProxy)
             {
-                profile.sideBarElement.subtitle = Number.bytesToString(proxy.totalSize);
+                profile.proxy = snapshotProxy;
+                profile.sideBarElement.subtitle = Number.bytesToString(snapshotProxy.totalSize);
             }
             if (proxy.finishLoading(parsed))
                 profile.sideBarElement.subtitle = WebInspector.UIString("Parsing\u2026");
