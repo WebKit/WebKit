@@ -2330,7 +2330,7 @@ HEADERS += \
     svg/SVGFEDiffuseLightingElement.h \
     svg/SVGFEDisplacementMapElement.h \
     svg/SVGFEDistantLightElement.h \
-    svg/SVGFEFDropShadowElement.h \
+    svg/SVGFEDropShadowElement.h \
     svg/SVGFEFloodElement.h \
     svg/SVGFEFuncAElement.h \
     svg/SVGFEFuncBElement.h \

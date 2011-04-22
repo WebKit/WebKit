@@ -1,3 +1,9 @@
+2011-04-22  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [Qt] Unreviewed typo fix after r84522.
+
+        * WebCore.pro:
+
 2011-04-22  Daniel Bates  <dbates@rim.com>
 
         Fix misspelled word in comment; tagets => targets.
