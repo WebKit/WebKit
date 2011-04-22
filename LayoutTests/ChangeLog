@@ -1,3 +1,27 @@
+2011-04-21  Chris Weber  <chris@lookout.net>
+
+        Reviewed by Adam Barth.
+
+        Add more test coverage to fast/url
+        https://bugs.webkit.org/show_bug.cgi?id=59142
+
+        The PASS/FAIL results for host, path, and port are set to match
+        Chromium.  The PASS/FAIL results for idna2003 and idna2008 are set to
+        match those specifications.
+
+        * fast/url/host-expected.txt:
+        * fast/url/idna2003-expected.txt: Added.
+        * fast/url/idna2003.html: Added.
+        * fast/url/idna2008-expected.txt: Added.
+        * fast/url/idna2008.html: Added.
+        * fast/url/path-expected.txt:
+        * fast/url/port-expected.txt:
+        * fast/url/script-tests/host.js:
+        * fast/url/script-tests/idna2003.js: Added.
+        * fast/url/script-tests/idna2008.js: Added.
+        * fast/url/script-tests/path.js:
+        * fast/url/script-tests/port.js:
+
 2011-04-21  Beth Dakin  <bdakin@apple.com>
 
         Reviewed by Dan Bernstein.

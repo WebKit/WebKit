@@ -9,6 +9,10 @@ cases = [
   ["8080", ":8080"],
   // Empty ports (just a colon) should also be removed
   ["", ""],
+  // Code point with a numeric value U+1369 ETHIOPIC DIGIT ONE
+  ["\u1369", ":%E1%8D%A9"],
+  // Code point with a numerical mapping and value U+1D7D6 MATHEMATICAL BOLD DIGIT EIGHT
+  ["\uD835\uDFD6", ":%F0%9D%9F%96"],
 ];
 
 for (var i = 0; i < cases.length; ++i) {

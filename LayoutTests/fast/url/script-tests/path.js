@@ -43,7 +43,7 @@ cases = [
   // Regular characters that are escaped should be unescaped
   ["/foo%41%7a", "/fooAz"],
   // Funny characters that are unescaped should be escaped
-  ["/foo\u0009\u0091%91", "/foo%09%C2%91%91"],
+  ["/foo\u0009\u0091%91", "/foo%C2%91%91"],
   // Invalid characters that are escaped should cause a failure.
   ["/foo%00%51", "/foo%00Q"],
   // Some characters should be passed through unchanged regardless of esc.
@@ -52,7 +52,7 @@ cases = [
   // of hex letters.
   ["/%3A%3a%3C%3c", "/%3A%3a%3C%3c"],
   // Funny characters that are unescaped should be escaped
-  ["/foo\tbar", "/foo%09bar"],
+  ["/foo\tbar", "/foobar"],
   // Backslashes should get converted to forward slashes
   ["\\\\foo\\\\bar", "/foo/bar"],
   // Hashes found in paths (possibly only when the caller explicitly sets
@@ -71,6 +71,16 @@ cases = [
   // Invalid unicode characters should fail. We only do validation on
   // UTF-16 input, so this doesn't happen on 8-bit.
   ["/\ufdd0zyx", "/%EF%BF%BDzyx"],
+  // U+2025 TWO DOT LEADER should not be normalized to .. in the path
+  ["/\u2025/foo", "/%E2%80%A5/foo"],
+  // A half-surrogate is an error by itself U+DEAD
+  // FIXME: ["/\uDEAD/foo", "/\uFFFD/foo"],
+  // BOM code point with special meaning U+FEFF ZERO WIDTH NO-BREAK SPACE
+  ["/\uFEFF/foo", "/%EF%BB%BF/foo"],
+  // The BIDI override code points RLO and LRO
+  ["/\u202E/foo/\u202D/bar", "/%E2%80%AE/foo/%E2%80%AD/bar"],
+  // U+FF0F FULLWIDTH SOLIDUS should normalize to / in a hostname
+  ["\uFF0Ffoo/", "%2Ffoo/"],
 
 ];
 

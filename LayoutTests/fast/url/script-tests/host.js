@@ -59,7 +59,24 @@ cases = [
   ["[google.com]", "[google.com]"],
   // Cyrillic letter followed buy ( should return punicode for ( escaped before punicode string was created. I.e.
   // if ( is escaped after punicode is created we would get xn--%28-8tb (incorrect).
-  ["\u0442(", "xn--%28-7ed"]
+  ["\u0442(", "xn--%28-7ed"],
+  ["go\\\\@ogle.com","go/@ogle.com"],
+  ["go/@ogle.com","go/@ogle.com"],
+  ["www.lookout.net::==80::==443::","www.lookout.net::%3D%3D80::%3D%3D443:"],
+  ["www.lookout.net::80::443","www.lookout.net::80::443"],
+  // From http://eaea.sirdarckcat.net/uritest.html
+  ["\\./","./"],
+  ["//:@/","/"],
+  ["\\google.com/foo","google.com/foo"],
+  ["\\\\google.com/foo","google.com/foo"],
+  ["//asdf@/","asdf@/"],
+  ["//:81",":81"],
+  ["://","//"],
+  ["c:","c"],
+  ["xxxx:","xxxx"],
+  [".:.",".:."],
+  ["////@google.com/","google.com/"],
+  ["@google.com","google.com"]
 ];
 
 for (var i = 0; i < cases.length; ++i) {
