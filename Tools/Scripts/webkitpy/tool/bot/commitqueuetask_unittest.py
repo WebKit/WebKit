@@ -32,6 +32,7 @@ import unittest
 from webkitpy.common.net import bugzilla
 from webkitpy.common.net.layouttestresults import LayoutTestResults
 from webkitpy.common.system.deprecated_logging import error, log
+from webkitpy.common.system.executive import ScriptError
 from webkitpy.common.system.outputcapture import OutputCapture
 from webkitpy.layout_tests.layout_package import test_results
 from webkitpy.layout_tests.layout_package import test_failures
@@ -376,7 +377,7 @@ command_failed: failure_message='Unable to land patch' script_error='MOCK land f
                 return patch
 
         task = CommitQueueTask(MockDelegate(), patch)
-        self.assertEquals(task._validate(), is_valid)
+        self.assertEquals(task.validate(), is_valid)
 
     def _mock_patch(self, attachment_dict={}, bug_dict={'bug_status': 'NEW'}, committer="fake"):
         bug = bugzilla.Bug(bug_dict, None)

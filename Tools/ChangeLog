@@ -1,3 +1,16 @@
+2011-04-22  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        Factor PatchAnalysis task out of CommitQueueTask
+        https://bugs.webkit.org/show_bug.cgi?id=59220
+
+        This is a first step towards teaching the EWS to run tests.
+
+        * Scripts/webkitpy/tool/bot/commitqueuetask.py:
+        * Scripts/webkitpy/tool/bot/commitqueuetask_unittest.py:
+        * Scripts/webkitpy/tool/bot/patchanalysistask.py: Added.
+
 2011-04-22  Philippe Normand  <pnormand@igalia.com>
 
         Reviewed by Martin Robinson.
