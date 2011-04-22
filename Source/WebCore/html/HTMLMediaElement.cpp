@@ -1615,7 +1615,7 @@ void HTMLMediaElement::playbackProgressTimerFired(Timer<HTMLMediaElement>*)
 
     scheduleTimeupdateEvent(true);
     if (hasMediaControls()) {
-        if (!m_mouseOver && controls())
+        if (!m_mouseOver && controls() && hasVideo())
             mediaControls()->makeTransparent();
         mediaControls()->playbackProgressed();
     }

@@ -1,3 +1,13 @@
+2011-04-22  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Maciej Stachowiak.
+
+        <rdar://problem/9322486> REGRESSION (r83397): Default controls fade out when playing audio-only media
+        https://bugs.webkit.org/show_bug.cgi?id=59180
+
+        * media/audio-controls-do-not-fade-out-expected.txt: Added.
+        * media/audio-controls-do-not-fade-out.html: Added.
+
 2011-04-22  Ojan Vafai  <ojan@chromium.org>
 
         Reviewed by Eric Seidel.
