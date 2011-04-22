@@ -1,3 +1,15 @@
+2011-04-22  Justin Schuh  <jschuh@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        Should assert on invalid type in FEComponentTransfer::apply
+        https://bugs.webkit.org/show_bug.cgi?id=57959
+
+        No functional change. No new tests needed.
+
+        * platform/graphics/filters/FEComponentTransfer.cpp:
+        (WebCore::FEComponentTransfer::apply):
+
 2011-04-22  MORITA Hajime  <morrita@google.com>
 
         Unreviewed crash fix.

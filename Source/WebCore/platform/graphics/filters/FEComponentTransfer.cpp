@@ -33,6 +33,7 @@
 
 #include <wtf/ByteArray.h>
 #include <wtf/MathExtras.h>
+#include <wtf/StdLibExtras.h>
 
 namespace WebCore {
 
@@ -169,8 +170,10 @@ void FEComponentTransfer::apply()
     ComponentTransferFunction transferFunction[] = {m_redFunc, m_greenFunc, m_blueFunc, m_alphaFunc};
     TransferType callEffect[] = {identity, identity, table, discrete, linear, gamma};
 
-    for (unsigned channel = 0; channel < 4; channel++)
+    for (unsigned channel = 0; channel < 4; channel++) {
+        ASSERT(static_cast<size_t>(transferFunction[channel].type) < WTF_ARRAY_LENGTH(callEffect));
         (*callEffect[transferFunction[channel].type])(tables[channel], transferFunction[channel]);
+    }
 
     IntRect drawingRect = requestedRegionOfInputImageData(in->absolutePaintRect());
     in->copyUnmultipliedImage(pixelArray, drawingRect);
