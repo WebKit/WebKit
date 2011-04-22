@@ -177,7 +177,6 @@ void NonSpeculativeJIT::compile(SpeculationCheckIndexIterator& checkIterator, No
     if (checkIterator.hasCheckAtIndex(m_compileIndex))
         trackEntry(m_jit.label());
 
-    checkConsistency();
     NodeType op = node.op;
 
     switch (op) {
@@ -646,8 +645,6 @@ void NonSpeculativeJIT::compile(SpeculationCheckIndexIterator& checkIterator, No
 
     if (node.hasResult() && node.mustGenerate())
         use(m_compileIndex);
-
-    checkConsistency();
 }
 
 void NonSpeculativeJIT::compile(SpeculationCheckIndexIterator& checkIterator, BasicBlock& block)
@@ -671,7 +668,9 @@ void NonSpeculativeJIT::compile(SpeculationCheckIndexIterator& checkIterator, Ba
     m_jit.breakpoint();
 #endif
 
+        checkConsistency();
         compile(checkIterator, node);
+        checkConsistency();
     }
 }
 

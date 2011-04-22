@@ -106,7 +106,7 @@ class SpeculativeJIT : public JITCodeGenerator {
 public:
     SpeculativeJIT(JITCompiler& jit)
         : JITCodeGenerator(jit, true)
-        , m_didTerminate(false)
+        , m_compileOkay(true)
     {
     }
 
@@ -132,8 +132,8 @@ public:
     GPRReg fillSpeculateCell(NodeIndex);
 
 private:
-    bool compile(Node&);
-    bool compile(BasicBlock&);
+    void compile(Node&);
+    void compile(BasicBlock&);
 
     bool isDoubleConstantWithInt32Value(NodeIndex nodeIndex, int32_t& out)
     {
@@ -194,7 +194,7 @@ private:
     {
         // FIXME: in cases where we can statically determine we're going to bail out from the speculative
         // JIT we should probably rewind code generation and only produce the non-speculative path.
-        m_didTerminate = true;
+        m_compileOkay = false;
         speculationCheck(m_jit.jump());
     }
 
@@ -204,8 +204,8 @@ private:
     // It is possible, during speculative generation, to reach a situation in which we
     // can statically determine a speculation will fail (for example, when two nodes
     // will make conflicting speculations about the same operand). In such cases this
-    // flag is set, indicating no further code generation should take place.
-    bool m_didTerminate;
+    // flag is cleared, indicating no further code generation should take place.
+    bool m_compileOkay;
     // This vector tracks bail-outs from the speculative path to the non-speculative one.
     SpeculationCheckVector m_speculationChecks;
     // Some bail-outs need to record additional information recording specific recovery

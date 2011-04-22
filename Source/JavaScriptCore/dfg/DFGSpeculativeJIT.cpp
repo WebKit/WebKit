@@ -272,9 +272,8 @@ void SpeculativeJIT::compilePeepHoleBranch(Node& node, JITCompiler::RelationalCo
         addBranch(m_jit.jump(), notTaken);
 }
 
-bool SpeculativeJIT::compile(Node& node)
+void SpeculativeJIT::compile(Node& node)
 {
-    checkConsistency();
     NodeType op = node.op;
 
     switch (op) {
@@ -533,11 +532,7 @@ bool SpeculativeJIT::compile(Node& node)
             use(node.child1);
             use(node.child2);
             ++m_compileIndex;
-
-            if (m_didTerminate)
-                return false;
-            checkConsistency();
-            return true;
+            return;
         }
 
         // Normal case, not fused to branch.
@@ -565,11 +560,7 @@ bool SpeculativeJIT::compile(Node& node)
             use(node.child1);
             use(node.child2);
             ++m_compileIndex;
-
-            if (m_didTerminate)
-                return false;
-            checkConsistency();
-            return true;
+            return;
         }
 
         // Normal case, not fused to branch.
@@ -839,21 +830,11 @@ bool SpeculativeJIT::compile(Node& node)
     }
     }
 
-    // Check if generation for the speculative path has failed catastrophically. :-)
-    // In the future, we may want to throw away the code we've generated in this case.
-    // For now, there is no point generating any further code, return immediately.
-    if (m_didTerminate)
-        return false;
-
     if (node.hasResult() && node.mustGenerate())
         use(m_compileIndex);
-
-    checkConsistency();
-
-    return true;
 }
 
-bool SpeculativeJIT::compile(BasicBlock& block)
+void SpeculativeJIT::compile(BasicBlock& block)
 {
     ASSERT(m_compileIndex == block.begin);
     m_blockHeads[m_block] = m_jit.label();
@@ -872,10 +853,12 @@ bool SpeculativeJIT::compile(BasicBlock& block)
 #if DFG_JIT_BREAK_ON_EVERY_NODE
     m_jit.breakpoint();
 #endif
-        if (!compile(node))
-            return false;
+        checkConsistency();
+        compile(node);
+        if (!m_compileOkay)
+            return;
+        checkConsistency();
     }
-    return true;
 }
 
 bool SpeculativeJIT::compile()
@@ -883,7 +866,8 @@ bool SpeculativeJIT::compile()
     ASSERT(!m_compileIndex);
     Vector<BasicBlock> blocks = m_jit.graph().m_blocks;
     for (m_block = 0; m_block < blocks.size(); ++m_block) {
-        if (!compile(blocks[m_block]))
+        compile(blocks[m_block])
+        if (!m_compileOkay)
             return false;
     }
     linkBranches();

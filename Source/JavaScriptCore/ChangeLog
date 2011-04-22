@@ -1,3 +1,18 @@
+2011-04-22  Gavin Barraclough  <barraclough@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Quick cleanup to SpeculativeJIT/NonSpeculativeJIT compile loop,
+        move out the call to checkConsistency().
+
+        * dfg/DFGNonSpeculativeJIT.cpp:
+        (JSC::DFG::NonSpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT.h:
+        (JSC::DFG::SpeculativeJIT::SpeculativeJIT):
+        (JSC::DFG::SpeculativeJIT::terminateSpeculativeExecution):
+
 2011-04-21  Vitaly Repeshko  <vitalyr@chromium.org>
 
         Reviewed by Adam Barth.
