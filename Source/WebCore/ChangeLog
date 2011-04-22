@@ -1,3 +1,15 @@
+2011-04-21  Pavel Feldman  <pfeldman@google.com>
+
+        Reviewed by Yury Semikhatsky.
+
+        Web Inspector: group content scripts in the scripts panel drop down.
+        https://bugs.webkit.org/show_bug.cgi?id=59108
+
+        * English.lproj/localizedStrings.js:
+        * inspector/front-end/ScriptsPanel.js:
+        (WebInspector.ScriptsPanel.prototype._addOptionToFilesSelect.optionCompare):
+        (WebInspector.ScriptsPanel.prototype._addOptionToFilesSelect):
+
 2011-04-22  Mike West  <mkwst@google.com>
 
         Reviewed by Pavel Feldman.

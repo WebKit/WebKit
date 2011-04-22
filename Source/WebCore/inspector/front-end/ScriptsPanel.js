@@ -279,20 +279,38 @@ WebInspector.ScriptsPanel.prototype = {
         var select = this._filesSelectElement;
         var option = document.createElement("option");
         option.text = sourceFile.url ? WebInspector.displayNameForURL(sourceFile.url) : WebInspector.UIString("(program)");
+        option.isContentScript = sourceFile.isContentScript;
         if (sourceFile.isContentScript)
             option.addStyleClass("extension-script");
         function optionCompare(a, b)
         {
+            if (a === select.contentScriptSection)
+                return b.isContentScript ? -1 : 1;
+            if (b === select.contentScriptSection)
+                return a.isContentScript ? 1 : -1;
+
+            if (a.isContentScript && !b.isContentScript)
+                return 1; 
+            if (!a.isContentScript && b.isContentScript)
+                return -1; 
+
             if (a.text === b.text)
                 return 0;
             return a.text < b.text ? -1 : 1;
         }
-        var insertionIndex = insertionIndexForObjectInListSortedByFunction(option, select.childNodes, optionCompare);
-        if (insertionIndex < 0)
-            select.appendChild(option);
-        else
-            select.insertBefore(option, select.childNodes.item(insertionIndex));
 
+        var insertionIndex = insertionIndexForObjectInListSortedByFunction(option, select.childNodes, optionCompare);
+        select.insertBefore(option, insertionIndex < 0 ? null : select.childNodes.item(insertionIndex));
+
+        if (sourceFile.isContentScript && !select.contentScriptSection) {
+            var contentScriptSection = document.createElement("option");
+            contentScriptSection.text = WebInspector.UIString("Content scripts");
+            contentScriptSection.disabled = true;
+            select.contentScriptSection = contentScriptSection;
+
+            var insertionIndex = insertionIndexForObjectInListSortedByFunction(contentScriptSection, select.childNodes, optionCompare);
+            select.insertBefore(contentScriptSection, insertionIndex < 0 ? null : select.childNodes.item(insertionIndex));
+        }
         option._sourceFileId = sourceFileId;
         this._sourceFileIdToFilesSelectOption[sourceFileId] = option;
     },
