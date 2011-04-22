@@ -1,3 +1,14 @@
+2011-04-22  Roland Steiner  <rolandsteiner@chromium.org>
+
+        Unreviewed: Updated Chromium expectations after WK r84606
+
+        * platform/chromium-mac/fast/multicol/span/clone-anonymous-block-non-inline-child-crash-expected.txt:
+        * platform/chromium-mac/fast/url/host-expected.txt: Removed.
+        * platform/chromium-mac/fast/url/path-expected.txt: Removed.
+        * platform/chromium-win/fast/multicol/span/clone-anonymous-block-non-inline-child-crash-expected.txt:
+        * platform/chromium-win/fast/url/host-expected.txt: Removed.
+        * platform/chromium-win/fast/url/path-expected.txt: Removed.
+
 2011-04-22  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Eric Seidel.
