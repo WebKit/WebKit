@@ -159,12 +159,12 @@ void EditorClientWinCE::clearUndoRedoOperations()
     notImplemented();
 }
 
-bool EditorClientWinCE::canCopyCut(bool defaultValue) const
+bool EditorClientWinCE::canCopyCut(WebCore::Frame*, bool defaultValue) const
 {
     return defaultValue;
 }
 
-bool EditorClientWinCE::canPaste(bool defaultValue) const
+bool EditorClientWinCE::canPaste(WebCore::Frame*, bool defaultValue) const
 {
     return defaultValue;
 }

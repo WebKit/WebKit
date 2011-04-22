@@ -1,3 +1,12 @@
+2011-04-21  Ryosuke Niwa  <rniwa@webkit.org>
+
+        WinCE build fix after r84574.
+
+        * WebCoreSupport/EditorClientWinCE.cpp:
+        (WebKit::EditorClientWinCE::canCopyCut):
+        (WebKit::EditorClientWinCE::canPaste):
+        * WebCoreSupport/EditorClientWinCE.h:
+
 2011-04-19  Vsevolod Vlasov  <vsevik@chromium.org>
 
         Reviewed by Pavel Feldman.
