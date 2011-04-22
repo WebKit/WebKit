@@ -156,6 +156,11 @@ CanvasRenderingContext2D::~CanvasRenderingContext2D()
         }
     }
 #endif
+
+#if ENABLE(ACCELERATED_2D_CANVAS)
+    if (GraphicsContext* context = drawingContext())
+        context->setSharedGraphicsContext3D(0, 0, IntSize());
+#endif
 }
 
 bool CanvasRenderingContext2D::isAccelerated() const
