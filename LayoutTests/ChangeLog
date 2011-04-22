@@ -1,3 +1,14 @@
+2011-04-22  Tony Chang  <tony@chromium.org>
+
+        Landing new baselines for plugins/embedded-attributes-style.html after
+        border changes (r84273).
+
+        https://bugs.webkit.org/show_bug.cgi?id=59068
+
+        * platform/chromium-linux/plugins/embed-attributes-style-expected.png:
+        * platform/chromium-win/plugins/embed-attributes-style-expected.png:
+        * platform/chromium/test_expectations.txt:
+
 2011-04-22  Csaba Osztrogonác  <ossy@webkit.org>
 
         [Qt] Update expected files after r84632.

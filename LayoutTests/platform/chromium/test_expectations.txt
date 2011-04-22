@@ -3815,9 +3815,6 @@ BUGDPRANKE : fast/transforms/selection-bounds-in-transformed-view.html = TEXT
 // Introduced in r84457
 BUGDPRANKE : http/tests/security/contentSecurityPolicy/image-allowed.html = TEXT PASS
 
-// seems to be failing because of a missing QT plugin?
-BUGWK59068 WIN LINUX : plugins/embed-attributes-style.html = IMAGE
-
 // more failures for triaging, fails on deps bots at least?
 BUGDPRANKE DEBUG WIN LINUX : inspector/debugger/live-edit.html = TEXT TIMEOUT
 BUGDPRANKE : inspector/console/console-object-constructor-name.html = TEXT PASS  TIMEOUT
