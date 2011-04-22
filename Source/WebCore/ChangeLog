@@ -1,3 +1,22 @@
+2011-04-21  John Bauman  <jbauman@chromium.org>
+
+        Reviewed by Kenneth Russell.
+
+        WebGL context drawing buffer may not be cleared if FBO bound
+        https://bugs.webkit.org/show_bug.cgi?id=58956
+
+        Clear the drawing buffer even if it's not currently bound, by
+        switching between FBOs around the clear. Also, make sure that we
+        handle depth and stencil masks properly.
+
+        No new tests, because testing this under DRT doesn't work.
+
+        * html/canvas/WebGLRenderingContext.cpp:
+        (WebCore::WebGLRenderingContext::initializeNewContext):
+        (WebCore::WebGLRenderingContext::clearIfComposited):
+        (WebCore::WebGLRenderingContext::depthMask):
+        * html/canvas/WebGLRenderingContext.h:
+        *
 2011-04-21  Chris Fleizach  <cfleizach@apple.com>
 
         Reviewed by Beth Dakin.

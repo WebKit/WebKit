@@ -406,6 +406,7 @@ void WebGLRenderingContext::initializeNewContext()
     m_currentProgram = 0;
     m_framebufferBinding = 0;
     m_renderbufferBinding = 0;
+    m_depthMask = true;
     m_stencilMask = 0xFFFFFFFF;
     m_stencilMaskBack = 0xFFFFFFFF;
     m_stencilFuncRef = 0;
@@ -503,7 +504,7 @@ bool WebGLRenderingContext::clearIfComposited(GC3Dbitfield mask)
         return false;
 
     if (!m_context->layerComposited() || m_layerCleared
-        || m_attributes.preserveDrawingBuffer || m_framebufferBinding)
+        || m_attributes.preserveDrawingBuffer || (mask && m_framebufferBinding))
         return false;
 
     RefPtr<WebGLContextAttributes> contextAttributes = getContextAttributes();
@@ -511,6 +512,8 @@ bool WebGLRenderingContext::clearIfComposited(GC3Dbitfield mask)
     // Determine if it's possible to combine the clear the user asked for and this clear.
     bool combinedClear = mask && !m_scissorEnabled;
 
+    if (m_framebufferBinding)
+        m_context->bindFramebuffer(GraphicsContext3D::FRAMEBUFFER, 0);
     m_context->disable(GraphicsContext3D::SCISSOR_TEST);
     if (combinedClear && (mask & GraphicsContext3D::COLOR_BUFFER_BIT))
         m_context->clearColor(m_colorMask[0] ? m_clearColor[0] : 0,
@@ -520,15 +523,21 @@ bool WebGLRenderingContext::clearIfComposited(GC3Dbitfield mask)
     else
         m_context->clearColor(0, 0, 0, 0);
     m_context->colorMask(true, true, true, true);
-    if (contextAttributes->depth() && (!combinedClear || !(mask & GraphicsContext3D::DEPTH_BUFFER_BIT)))
-        m_context->clearDepth(1.0f);
-    if (contextAttributes->stencil() && (!combinedClear || !(mask & GraphicsContext3D::STENCIL_BUFFER_BIT)))
-        m_context->clearStencil(0);
     GC3Dbitfield clearMask = GraphicsContext3D::COLOR_BUFFER_BIT;
-    if (contextAttributes->depth())
+    if (contextAttributes->depth()) {
+        if (!combinedClear || !m_depthMask || !(mask & GraphicsContext3D::DEPTH_BUFFER_BIT))
+            m_context->clearDepth(1.0f);
         clearMask |= GraphicsContext3D::DEPTH_BUFFER_BIT;
-    if (contextAttributes->stencil())
+        m_context->depthMask(true);
+    }
+    if (contextAttributes->stencil()) {
+        if (combinedClear && (mask & GraphicsContext3D::STENCIL_BUFFER_BIT))
+            m_context->clearStencil(m_clearStencil & m_stencilMask);
+        else
+            m_context->clearStencil(0);
         clearMask |= GraphicsContext3D::STENCIL_BUFFER_BIT;
+        m_context->stencilMaskSeparate(GraphicsContext3D::FRONT, 0xFFFFFFFF);
+    }
     m_context->clear(clearMask);
 
     // Restore the state that the context set.
@@ -540,6 +549,10 @@ bool WebGLRenderingContext::clearIfComposited(GC3Dbitfield mask)
                          m_colorMask[2], m_colorMask[3]);
     m_context->clearDepth(m_clearDepth);
     m_context->clearStencil(m_clearStencil);
+    m_context->stencilMaskSeparate(GraphicsContext3D::FRONT, m_stencilMask);
+    m_context->depthMask(m_depthMask);
+    if (m_framebufferBinding)
+        m_context->bindFramebuffer(GraphicsContext3D::FRAMEBUFFER, objectOrZero(m_framebufferBinding.get()));
     m_layerCleared = true;
 
     return combinedClear;
@@ -1290,6 +1303,7 @@ void WebGLRenderingContext::depthMask(GC3Dboolean flag)
 {
     if (isContextLost())
         return;
+    m_depthMask = flag;
     m_context->depthMask(flag);
     cleanupAfterGraphicsCall(false);
 }

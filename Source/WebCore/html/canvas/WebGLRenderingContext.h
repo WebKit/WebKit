@@ -451,6 +451,7 @@ public:
     GC3Dfloat m_clearDepth;
     GC3Dint m_clearStencil;
     GC3Dboolean m_colorMask[4];
+    GC3Dboolean m_depthMask;
 
     long m_stencilBits;
     GC3Duint m_stencilMask, m_stencilMaskBack;
