@@ -57,7 +57,7 @@ JSValue JSScriptProfileNode::children(ExecState* exec) const
     for (ProfileNodesList::const_iterator iter = children.begin(); iter != end; ++iter)
         list.append(toJS(exec, globalObject(), iter->get()));
 
-    return constructArray(exec, list);
+    return constructArray(exec, globalObject(), list);
 }
 
 #endif

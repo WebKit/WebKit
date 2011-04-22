@@ -81,7 +81,8 @@ function constructorNamesForWindow(globalObject)
             type =="Uint32ArrayConstructor" ||
             type == "FileErrorConstructor" ||
             type == "FileReaderConstructor" ||
-            type == "WebKitBlobBuilderConstructor")
+            type == "WebKitBlobBuilderConstructor" ||
+            type == "HTMLProgressElementConstructor")
             continue; // We ignore WebGLRenderingContext and test it elsewhere, since it is not in all builds
         if (!type.match('Constructor$'))
             continue;
@@ -158,6 +159,12 @@ function crawl(crawlStarts) {
                 if (object.isInner || object.isInner === resultsByType[type].value)
                     continue;
             }
+            if (typeof(object) == "string")
+                continue;
+            if (typeof(object) == "boolean")
+                continue;
+            if (typeof(object) == "number")
+                continue;
 
             resultsByType[type] = makeCrawlObject(object.isInner, crawlTarget.valuePath);
             pushPropertyValuesWithUnseenTypes(toCrawl, object, crawlTarget.valuePath);
@@ -223,6 +230,7 @@ inner.document.body.style.display = "none";
 inner.document.body.innerHTML = htmlToAdd;
 
 var crawlStartPaths = [
+    evalToCrawlObject('inner.document.createElement'),
     evalToCrawlObject('inner.document.location'), // window.location is tested by other tests, so test document.location in this one.
     //evalToCrawlObject('inner.testForm'), // Causes many failures
     evalToCrawlObject('inner.document.forms.testForm'), // NamedNodesCollection has the wrong prototype, test that.

@@ -1,3 +1,15 @@
+2011-04-22  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Gavin Barraclough and Oliver Hunt.
+
+        Arrays should participate in global object forwarding fun
+        https://bugs.webkit.org/show_bug.cgi?id=59215
+
+        * runtime/JSGlobalObject.h:
+        (JSC::constructEmptyArray):
+        (JSC::constructArray):
+        Add variants of constructArray that take a global object.
+
 2011-04-22  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r84650 and r84654.

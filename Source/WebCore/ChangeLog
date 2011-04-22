@@ -1,3 +1,28 @@
+2011-04-22  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Gavin Barraclough and Oliver Hunt.
+
+        Arrays should participate in global object forwarding fun
+        https://bugs.webkit.org/show_bug.cgi?id=59215
+
+        Change callers of constructArray to use the new variant that takes
+        a global object.
+
+        * bindings/js/JSClipboardCustom.cpp:
+        (WebCore::JSClipboard::types):
+        * bindings/js/JSConsoleCustom.cpp:
+        (WebCore::JSConsole::profiles):
+        * bindings/js/JSJavaScriptCallFrameCustom.cpp:
+        (WebCore::JSJavaScriptCallFrame::scopeChain):
+        * bindings/js/JSMessageEventCustom.cpp:
+        (WebCore::JSMessageEvent::ports):
+        * bindings/js/JSScriptProfileNodeCustom.cpp:
+        (WebCore::JSScriptProfileNode::children):
+        * bindings/js/JSWebGLRenderingContextCustom.cpp:
+        (WebCore::toJS):
+        (WebCore::JSWebGLRenderingContext::getAttachedShaders):
+        (WebCore::JSWebGLRenderingContext::getSupportedExtensions):
+
 2011-04-22  Csaba Osztrogonác  <ossy@webkit.org>
 
         [Qt] Unreviewed typo fix after r84522.

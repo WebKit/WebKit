@@ -404,32 +404,47 @@ namespace JSC {
     {
         return constructEmptyObject(exec, exec->lexicalGlobalObject());
     }
-    
-    inline JSArray* constructEmptyArray(ExecState* exec)
-    {
-        return new (exec) JSArray(exec->globalData(), exec->lexicalGlobalObject()->arrayStructure());
-    }
-    
+
     inline JSArray* constructEmptyArray(ExecState* exec, JSGlobalObject* globalObject)
     {
         return new (exec) JSArray(exec->globalData(), globalObject->arrayStructure());
     }
+    
+    inline JSArray* constructEmptyArray(ExecState* exec)
+    {
+        return constructEmptyArray(exec, exec->lexicalGlobalObject());
+    }
+
+    inline JSArray* constructEmptyArray(ExecState* exec, JSGlobalObject* globalObject, unsigned initialLength)
+    {
+        return new (exec) JSArray(exec->globalData(), globalObject->arrayStructure(), initialLength, CreateInitialized);
+    }
 
     inline JSArray* constructEmptyArray(ExecState* exec, unsigned initialLength)
     {
-        return new (exec) JSArray(exec->globalData(), exec->lexicalGlobalObject()->arrayStructure(), initialLength, CreateInitialized);
+        return constructEmptyArray(exec, exec->lexicalGlobalObject(), initialLength);
+    }
+
+    inline JSArray* constructArray(ExecState* exec, JSGlobalObject* globalObject, JSValue singleItemValue)
+    {
+        MarkedArgumentBuffer values;
+        values.append(singleItemValue);
+        return new (exec) JSArray(exec->globalData(), globalObject->arrayStructure(), values);
     }
 
     inline JSArray* constructArray(ExecState* exec, JSValue singleItemValue)
     {
-        MarkedArgumentBuffer values;
-        values.append(singleItemValue);
-        return new (exec) JSArray(exec->globalData(), exec->lexicalGlobalObject()->arrayStructure(), values);
+        return constructArray(exec, exec->lexicalGlobalObject(), singleItemValue);
+    }
+
+    inline JSArray* constructArray(ExecState* exec, JSGlobalObject* globalObject, const ArgList& values)
+    {
+        return new (exec) JSArray(exec->globalData(), globalObject->arrayStructure(), values);
     }
 
     inline JSArray* constructArray(ExecState* exec, const ArgList& values)
     {
-        return new (exec) JSArray(exec->globalData(), exec->lexicalGlobalObject()->arrayStructure(), values);
+        return constructArray(exec, exec->lexicalGlobalObject(), values);
     }
 
     class DynamicGlobalObjectScope {

@@ -60,7 +60,7 @@ JSValue JSClipboard::types(ExecState* exec) const
     HashSet<String>::const_iterator end = types.end();
     for (HashSet<String>::const_iterator it = types.begin(); it != end; ++it)
         list.append(jsString(exec, stringToUString(*it)));
-    return constructArray(exec, list);
+    return constructArray(exec, globalObject(), list);
 }
 
 JSValue JSClipboard::clearData(ExecState* exec)

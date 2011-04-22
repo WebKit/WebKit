@@ -89,7 +89,7 @@ static JSValue toJS(ExecState* exec, JSDOMGlobalObject* globalObject, const WebG
         const Vector<bool>& value = info.getBoolArray();
         for (size_t ii = 0; ii < value.size(); ++ii)
             list.append(jsBoolean(value[ii]));
-        return constructArray(exec, list);
+        return constructArray(exec, globalObject, list);
     }
     case WebGLGetInfo::kTypeFloat:
         return jsNumber(info.getFloat());
@@ -223,7 +223,7 @@ JSValue JSWebGLRenderingContext::getAttachedShaders(ExecState* exec)
     MarkedArgumentBuffer list;
     for (size_t ii = 0; ii < shaders.size(); ++ii)
         list.append(toJS(exec, globalObject(), shaders[ii]));
-    return constructArray(exec, list);
+    return constructArray(exec, globalObject(), list);
 }
 
 JSValue JSWebGLRenderingContext::getExtension(ExecState* exec)
@@ -342,7 +342,7 @@ JSValue JSWebGLRenderingContext::getSupportedExtensions(ExecState* exec)
     MarkedArgumentBuffer list;
     for (size_t ii = 0; ii < value.size(); ++ii)
         list.append(jsString(exec, value[ii]));
-    return constructArray(exec, list);
+    return constructArray(exec, globalObject(), list);
 }
 
 JSValue JSWebGLRenderingContext::getTexParameter(ExecState* exec)
