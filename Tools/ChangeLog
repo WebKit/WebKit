@@ -1,3 +1,19 @@
+2011-04-22  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        CommitQueue should remember the expected failures from patch to patch
+        https://bugs.webkit.org/show_bug.cgi?id=59253
+
+        Previously, we stored the set of expected failures on the task object,
+        which meant the commit-queue forgot about them after each patch.  This
+        patch moves them to the CommitQueue object so they will have a longer
+        lifetime.
+
+        * Scripts/webkitpy/tool/bot/commitqueuetask_unittest.py:
+        * Scripts/webkitpy/tool/bot/patchanalysistask.py:
+        * Scripts/webkitpy/tool/commands/queues.py:
+
 2011-04-22  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Brian Weinstein.

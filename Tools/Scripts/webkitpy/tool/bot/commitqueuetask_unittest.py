@@ -38,6 +38,7 @@ from webkitpy.layout_tests.layout_package import test_results
 from webkitpy.layout_tests.layout_package import test_failures
 from webkitpy.thirdparty.mock import Mock
 from webkitpy.tool.bot.commitqueuetask import *
+from webkitpy.tool.bot.expectedfailures import ExpectedFailures
 from webkitpy.tool.mocktool import MockTool
 
 
@@ -63,6 +64,9 @@ class MockCommitQueue(CommitQueueTaskDelegate):
 
     def refetch_patch(self, patch):
         return patch
+
+    def expected_failures(self):
+        return ExpectedFailures()
 
     def layout_test_results(self):
         return None
@@ -375,6 +379,9 @@ command_failed: failure_message='Unable to land patch' script_error='MOCK land f
         class MockDelegate(object):
             def refetch_patch(self, patch):
                 return patch
+
+            def expected_failures(self):
+                return ExpectedFailures()
 
         task = CommitQueueTask(MockDelegate(), patch)
         self.assertEquals(task.validate(), is_valid)

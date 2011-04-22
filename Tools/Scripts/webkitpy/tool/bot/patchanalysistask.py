@@ -28,7 +28,6 @@
 
 from webkitpy.common.system.executive import ScriptError
 from webkitpy.common.net.layouttestresults import LayoutTestResults
-from webkitpy.tool.bot.expectedfailures import ExpectedFailures
 
 
 class PatchAnalysisTaskDelegate(object):
@@ -45,6 +44,9 @@ class PatchAnalysisTaskDelegate(object):
         raise NotImplementedError("subclasses must implement")
 
     def refetch_patch(self, patch):
+        raise NotImplementedError("subclasses must implement")
+
+    def expected_failures(self):
         raise NotImplementedError("subclasses must implement")
 
     def layout_test_results(self):
@@ -64,7 +66,8 @@ class PatchAnalysisTask(object):
         self._patch = patch
         self._script_error = None
         self._results_archive_from_patch_test_run = None
-        self._expected_failures = ExpectedFailures()
+        self._expected_failures = delegate.expected_failures()
+        assert(self._expected_failures)
 
     def _run_command(self, command, success_message, failure_message):
         try:

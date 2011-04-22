@@ -45,6 +45,7 @@ from webkitpy.common.system.deprecated_logging import error, log
 from webkitpy.common.system.executive import ScriptError
 from webkitpy.tool.bot.botinfo import BotInfo
 from webkitpy.tool.bot.commitqueuetask import CommitQueueTask, CommitQueueTaskDelegate
+from webkitpy.tool.bot.expectedfailures import ExpectedFailures
 from webkitpy.tool.bot.feeders import CommitQueueFeeder, EWSFeeder
 from webkitpy.tool.bot.layouttestresultsreader import LayoutTestResultsReader
 from webkitpy.tool.bot.queueengine import QueueEngine, QueueEngineDelegate
@@ -250,6 +251,7 @@ class CommitQueue(AbstractPatchQueue, StepSequenceErrorHandler, CommitQueueTaskD
     def begin_work_queue(self):
         AbstractPatchQueue.begin_work_queue(self)
         self.committer_validator = CommitterValidator(self._tool.bugs)
+        self._expected_failures = ExpectedFailures()
         self._layout_test_results_reader = LayoutTestResultsReader(self._tool, self._log_directory())
 
     def next_work_item(self):
@@ -310,6 +312,9 @@ class CommitQueue(AbstractPatchQueue, StepSequenceErrorHandler, CommitQueueTaskD
     def command_failed(self, message, script_error, patch):
         failure_log = self._log_from_script_error_for_upload(script_error)
         return self._update_status(message, patch=patch, results_file=failure_log)
+
+    def expected_failures(self):
+        return self._expected_failures
 
     def layout_test_results(self):
         return self._layout_test_results_reader.results()
