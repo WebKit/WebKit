@@ -1,3 +1,15 @@
+2011-04-22  Beth Dakin  <bdakin@apple.com>
+
+        Reviewed by Maciej Stachowiak.
+
+        https://bugs.webkit.org/show_bug.cgi?id=59223
+        REGRESSION (r82185): iframe not displayed after navigation back to cached page
+
+        Manual test added.
+        * manual-tests/frame-layout-on-back.html: Added.
+        * manual-tests/resources/empty-document-goes-back.html: Added.
+        * manual-tests/resources/simple-iframe.html: Added.
+
 2011-04-22  Yael Aharon  <yael.aharon@nokia.com>
 
         Reviewed by Sam Weinig.
