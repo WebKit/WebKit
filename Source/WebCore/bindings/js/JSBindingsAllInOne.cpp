@@ -62,6 +62,7 @@
 #include "JSDOMPluginArrayCustom.cpp"
 #include "JSDOMPluginCustom.cpp"
 #include "JSDOMStringMapCustom.cpp"
+#include "JSDOMTokenListCustom.cpp"
 #include "JSDOMWindowBase.cpp"
 #include "JSDOMWindowCustom.cpp"
 #include "JSDOMWindowShell.cpp"

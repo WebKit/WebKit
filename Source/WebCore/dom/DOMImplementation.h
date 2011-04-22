@@ -24,6 +24,7 @@
 #ifndef DOMImplementation_h
 #define DOMImplementation_h
 
+#include "Document.h"
 #include <wtf/Forward.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
@@ -39,9 +40,13 @@ class KURL;
 
 typedef int ExceptionCode;
 
-class DOMImplementation : public RefCounted<DOMImplementation> {
+class DOMImplementation {
 public:
-    static PassRefPtr<DOMImplementation> create(Document* ownerDocument) { return adoptRef(new DOMImplementation(ownerDocument)); }
+    static PassOwnPtr<DOMImplementation> create(Document* document) { return adoptPtr(new DOMImplementation(document)); }
+    
+    void ref() { m_document->ref(); }
+    void deref() { m_document->deref(); }
+    Document* document() { return m_document; }
 
     // DOM methods & attributes for DOMImplementation
     static bool hasFeature(const String& feature, const String& version);
@@ -62,15 +67,12 @@ public:
     static bool isXMLMIMEType(const String& MIMEType);
     static bool isTextMIMEType(const String& MIMEType);
 
-    Document* ownerDocument() { return m_ownerDocument; }
-    void ownerDocumentDestroyed() { m_ownerDocument = 0; }
-
 private:
-    DOMImplementation(Document* ownerDocument);
+    DOMImplementation(Document*);
 
-    Document* m_ownerDocument;
+    Document* m_document;
 };
 
-} //namespace
+} // namespace WebCore
 
 #endif

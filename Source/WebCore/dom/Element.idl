@@ -21,7 +21,6 @@
 module core {
 
     interface [
-        CustomMarkFunction,
         GenerateNativeConverter,
         InlineGetOwnPropertySlot
     ] Element : Node {

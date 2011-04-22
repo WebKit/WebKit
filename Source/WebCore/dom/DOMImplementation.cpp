@@ -171,10 +171,9 @@ static bool isSVG11Feature(const String &feature)
 }
 #endif
 
-DOMImplementation::DOMImplementation(Document* ownerDocument)
-    : m_ownerDocument(ownerDocument)
+DOMImplementation::DOMImplementation(Document* document)
+    : m_document(document)
 {
-    ASSERT(m_ownerDocument);
 }
 
 bool DOMImplementation::hasFeature(const String& feature, const String& version)
@@ -246,11 +245,7 @@ PassRefPtr<Document> DOMImplementation::createDocument(const String& namespaceUR
     else
         doc = Document::create(0, KURL());
 
-    if (!m_ownerDocument) {
-        ec = INVALID_STATE_ERR;
-        return 0;
-    }
-    doc->setSecurityOrigin(m_ownerDocument->securityOrigin());
+    doc->setSecurityOrigin(m_document->securityOrigin());
 
     RefPtr<Node> documentElement;
     if (!qualifiedName.isEmpty()) {
@@ -313,9 +308,7 @@ PassRefPtr<HTMLDocument> DOMImplementation::createHTMLDocument(const String& tit
     d->open();
     d->write("<!doctype html><html><body></body></html>");
     d->setTitle(title);
-    ASSERT(m_ownerDocument);
-    if (m_ownerDocument)
-        d->setSecurityOrigin(m_ownerDocument->securityOrigin());
+    d->setSecurityOrigin(m_document->securityOrigin());
     return d.release();
 }
 

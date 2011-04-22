@@ -21,7 +21,7 @@
 module core {
 
     interface [
-        CustomMarkFunction
+        CustomToJS
     ] DOMImplementation {
 
         // DOM Level 1

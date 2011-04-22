@@ -25,6 +25,7 @@
 module core {
 
     interface [
+        CustomToJS,
         GenerateConstructor,
         HasIndexGetter
     ] DOMTokenList {

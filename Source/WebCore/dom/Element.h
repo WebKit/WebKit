@@ -297,7 +297,6 @@ public:
     DOMTokenList* optionalClassList() const;
 
     DOMStringMap* dataset();
-    DOMStringMap* optionalDataset() const;
 
 #if ENABLE(MATHML)
     virtual bool isMathMLElement() const { return false; }

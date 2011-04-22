@@ -2557,6 +2557,9 @@ sub HasCustomToV8Implementation {
     return 0 if $interfaceName eq "CSSStyleDeclaration";
     return 0 if $interfaceName eq "MediaList";
     return 0 if $interfaceName eq "StyleSheetList";
+    return 0 if $interfaceName eq "DOMImplementation";
+    return 0 if $interfaceName eq "DOMStringMap";
+    return 0 if $interfaceName eq "DOMTokenList";
 
     # For everything else, do what JSC does.
     return $dataNode->extendedAttributes->{"CustomToJS"};

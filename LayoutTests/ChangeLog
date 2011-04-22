@@ -1,3 +1,17 @@
+2011-04-21  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        Removed a use of markDOMObjectWrapper: Element and Document
+        https://bugs.webkit.org/show_bug.cgi?id=59178
+
+        * fast/dom/dataset-gc-expected.txt:
+        * fast/dom/script-tests/dataset-gc.js: Changed this test not to be
+        specific to __proto__. We have a general bug in the DOM that assignment
+        to __proto__ does not persist after garbage collection. While we should
+        fix that bug, we don't want existing tests to tickle it, because it makes
+        them flaky.
+
 2011-04-22  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Dan Bernstein.

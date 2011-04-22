@@ -56,7 +56,6 @@ void JSDocument::visitChildren(SlotVisitor& visitor)
     JSGlobalData& globalData = *Heap::heap(this)->globalData();
 
     visitActiveObjectsForContext(visitor, globalData, document);
-    markDOMObjectWrapper(visitor, globalData, document->implementation());
 }
 
 JSValue JSDocument::location(ExecState* exec) const

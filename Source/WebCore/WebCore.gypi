@@ -1748,6 +1748,7 @@
             'bindings/js/JSDOMPluginCustom.cpp',
             'bindings/js/JSDOMStringMapCustom.cpp',
             'bindings/js/JSDOMStringMapCustom.h',
+            'bindings/js/JSDOMTokenListCustom.cpp',
             'bindings/js/JSDOMWindowBase.cpp',
             'bindings/js/JSDOMWindowCustom.cpp',
             'bindings/js/JSDOMWindowCustom.h',

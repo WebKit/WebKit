@@ -27,11 +27,44 @@
 #include "JSDOMStringMap.h"
 
 #include "DOMStringMap.h"
+#include "Element.h"
+#include "JSNode.h"
 #include <wtf/text/AtomicString.h>
 
 using namespace JSC;
 
 namespace WebCore {
+
+class JSDOMStringMapOwner : public JSC::WeakHandleOwner {
+    virtual bool isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown>, void* context, JSC::SlotVisitor&);
+    virtual void finalize(JSC::Handle<JSC::Unknown>, void* context);
+};
+
+bool JSDOMStringMapOwner::isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown> handle, void*, SlotVisitor& visitor)
+{
+    JSDOMStringMap* jsDOMStringMap = static_cast<JSDOMStringMap*>(handle.get().asCell());
+    if (!jsDOMStringMap->hasCustomProperties())
+        return false;
+    return visitor.containsOpaqueRoot(root(jsDOMStringMap->impl()->element()));
+}
+
+void JSDOMStringMapOwner::finalize(JSC::Handle<JSC::Unknown> handle, void* context)
+{
+    JSDOMStringMap* jsDOMStringMap = static_cast<JSDOMStringMap*>(handle.get().asCell());
+    DOMWrapperWorld* world = static_cast<DOMWrapperWorld*>(context);
+    uncacheWrapper(world, jsDOMStringMap->impl(), jsDOMStringMap);
+}
+
+inline JSC::WeakHandleOwner* wrapperOwner(DOMWrapperWorld*, DOMStringMap*)
+{
+    DEFINE_STATIC_LOCAL(JSDOMStringMapOwner, jsDOMStringMapOwner, ());
+    return &jsDOMStringMapOwner;
+}
+
+inline void* wrapperContext(DOMWrapperWorld* world, DOMStringMap*)
+{
+    return world;
+}
 
 bool JSDOMStringMap::canGetItemsForName(ExecState*, DOMStringMap* impl, const Identifier& propertyName)
 {
@@ -97,6 +130,11 @@ bool JSDOMStringMap::putDelegate(ExecState* exec, const Identifier& propertyName
     setDOMException(exec, ec);
 
     return true;
+}
+
+JSC::JSValue toJS(JSC::ExecState* exec, JSDOMGlobalObject* globalObject, DOMStringMap* impl)
+{
+    return wrap<JSDOMStringMap>(exec, globalObject, impl);
 }
 
 } // namespace WebCore

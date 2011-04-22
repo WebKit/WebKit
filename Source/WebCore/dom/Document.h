@@ -1165,7 +1165,7 @@ private:
     String m_baseTarget;
 
     RefPtr<DocumentType> m_docType;
-    mutable RefPtr<DOMImplementation> m_implementation;
+    OwnPtr<DOMImplementation> m_implementation;
 
     // Track the number of currently loading top-level stylesheets needed for rendering.
     // Sheets loaded using the @import directive are not included in this count.

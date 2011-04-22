@@ -13,22 +13,17 @@ function gc()
 
 var d = document.createElement("div");
 
-// Ensure the dataset is created.
 var dataset = d.dataset;
+dataset.__proto__.customProperty = 1; // Add a property to our prototype, so it won't forward to our element.
+dataset.customProperty = 1; // Now set a property on ourselves.
+shouldBe("d.getAttribute('data-custom-property')", "null");
+shouldBe("d.dataset.customProperty", "1");
 
-// Ensure there is a __proto__ before test.
-shouldBeNonNull("d.dataset.__proto__");
-
-// Set __proto__ to non-starting value. (Must be null do to __proto__ restrictions).
-d.dataset.__proto__ = null;
-shouldBeNull("d.dataset.__proto__");
-
-// Null out reference to the dataset. 
 dataset = null;
 
 gc();
 
-// Test that the null persisted the GC.
-shouldBeNull("d.dataset.__proto__");
+// Test that the custom property persisted the GC.
+shouldBe("d.dataset.customProperty", "1");
 
 var successfullyParsed = true;

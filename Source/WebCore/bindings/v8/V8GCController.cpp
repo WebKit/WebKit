@@ -346,7 +346,7 @@ public:
         } else if (typeInfo->isSubclass(&V8DOMImplementation::info)) {
             DOMImplementation* domImplementation = static_cast<DOMImplementation*>(object);
             GroupId groupId(domImplementation);
-            if (Document* document = domImplementation->ownerDocument())
+            if (Document* document = domImplementation->document())
                 groupId = GroupId(document);
             m_grouper.append(GrouperItem(groupId, wrapper));
 

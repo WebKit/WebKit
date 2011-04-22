@@ -1,3 +1,69 @@
+2011-04-21  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        Removed a use of markDOMObjectWrapper: Element and Document
+        https://bugs.webkit.org/show_bug.cgi?id=59178
+
+        * GNUmakefile.list.am:
+        * UseJSC.cmake:
+        * WebCore.gypi:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/JSBindingsAllInOne.cpp: Build!
+
+        * bindings/js/JSDOMImplementationCustom.cpp:
+        (WebCore::JSDOMImplementationOwner::isReachableFromOpaqueRoots):
+        (WebCore::JSDOMImplementationOwner::finalize):
+        (WebCore::wrapperOwner):
+        (WebCore::wrapperContext):
+        (WebCore::toJS): Use the opaque roots system for DOMImplementation. Also,
+        DOMImplementation does not need to keep its document wrapper alive, since
+        there's no DOM API for getting a DOMImplementation's document.
+
+        * bindings/js/JSDOMStringMapCustom.cpp:
+        (WebCore::JSDOMStringMapOwner::isReachableFromOpaqueRoots):
+        (WebCore::JSDOMStringMapOwner::finalize):
+        (WebCore::wrapperOwner):
+        (WebCore::wrapperContext):
+        (WebCore::toJS): Use the opaque roots system for DOMStringMap.
+
+        * bindings/js/JSDOMTokenListCustom.cpp: Added.
+        (WebCore::JSDOMTokenListOwner::isReachableFromOpaqueRoots):
+        (WebCore::JSDOMTokenListOwner::finalize):
+        (WebCore::wrapperOwner):
+        (WebCore::wrapperContext):
+        (WebCore::toJS): Use the opaque roots system for DOMTokenList.
+
+        * bindings/js/JSDocumentCustom.cpp:
+        (WebCore::JSDocument::visitChildren):
+        * bindings/js/JSElementCustom.cpp: No more need for explicit marking.
+
+        * bindings/scripts/CodeGeneratorV8.pm: Boo on whoever made this design decision.
+
+        * dom/DOMImplementation.cpp:
+        (WebCore::DOMImplementation::DOMImplementation):
+        (WebCore::DOMImplementation::createDocument):
+        (WebCore::DOMImplementation::createHTMLDocument):
+        * dom/DOMImplementation.h:
+        (WebCore::DOMImplementation::create):
+        (WebCore::DOMImplementation::ref):
+        (WebCore::DOMImplementation::deref):
+        (WebCore::DOMImplementation::document): Fixed the DOMImplementation
+        ownership model to match other satellite objects in the DOM. This was
+        necessary to fix some crashes due to incorrect reference counting.
+
+        * dom/DOMImplementation.idl:
+        * dom/DOMStringMap.idl:
+        * dom/Document.cpp:
+        (WebCore::Document::~Document):
+        * dom/Document.h:
+        * dom/Element.cpp:
+        * dom/Element.h:
+        * dom/Element.idl:
+        * html/DOMTokenList.idl: Updated to match changes above.
+
 2011-04-22  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Dan Bernstein.

@@ -558,9 +558,6 @@ Document::~Document()
 
     if (m_mediaQueryMatcher)
         m_mediaQueryMatcher->documentDestroyed();
-
-    if (m_implementation)
-        m_implementation->ownerDocumentDestroyed();
 }
 
 void Document::removedLastRef()

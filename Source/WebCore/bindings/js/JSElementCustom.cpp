@@ -51,17 +51,6 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
-void JSElement::visitChildren(SlotVisitor& visitor)
-{
-    Base::visitChildren(visitor);
-
-    Element* element = impl();
-    JSGlobalData& globalData = *Heap::heap(this)->globalData();
-
-    markDOMObjectWrapper(visitor, globalData, element->optionalClassList());
-    markDOMObjectWrapper(visitor, globalData, element->optionalDataset());
-}
-
 JSValue toJSNewlyCreated(ExecState* exec, JSDOMGlobalObject* globalObject, Element* element)
 {
     if (!element)
