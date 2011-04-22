@@ -366,12 +366,13 @@ bool ContainerNode::replaceChild(PassRefPtr<Node> newChild, Node* oldChild, Exce
 
 void ContainerNode::willRemove()
 {
-    Vector<RefPtr<Node>, 10> nodes;
-    nodes.reserveInitialCapacity(childNodeCount());
-    for (Node* n = m_lastChild; n; n = n->previousSibling())
-        nodes.append(n);
-    for (; nodes.size(); nodes.removeLast())
-        nodes.last().get()->willRemove();
+    RefPtr<Node> protect(this);
+
+    for (RefPtr<Node> child = firstChild(); child; child = child->nextSibling()) {
+        if (child->parentNode() != this) // Check for child being removed from subtree while removing.
+            break;
+        child->willRemove();
+    }
     Node::willRemove();
 }
 
@@ -745,16 +746,17 @@ void ContainerNode::detach()
 
 void ContainerNode::insertedIntoDocument()
 {
+    RefPtr<Node> protect(this);
+
     Node::insertedIntoDocument();
     insertedIntoTree(false);
 
-    // Determine set of children before operating on any of them.
-    NodeVector children;
-    collectNodes(this, children);
-
-    NodeVector::iterator it;
-    for (it = children.begin(); it != children.end() && inDocument(); ++it) {
-        Node* child = it->get();
+    for (RefPtr<Node> child = m_firstChild; child; child = child->nextSibling()) {
+        // Guard against mutation during re-parenting.
+        if (!inDocument()) // Check for self being removed from document while reparenting.
+            break;
+        if (child->parentNode() != this) // Check for child being removed from subtree while reparenting.
+            break;
         child->insertedIntoDocument();
     }
 }
