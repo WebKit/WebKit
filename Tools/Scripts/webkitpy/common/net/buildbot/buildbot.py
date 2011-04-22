@@ -237,10 +237,16 @@ class Build(object):
 
     def _fetch_results_html(self):
         results_html = "%s/results.html" % (self.results_url())
-        # FIXME: This should use NetworkTransaction's 404 handling instead.
+        # FIXME: This should use NetworkTransaction's 404 handling or at least move
+        # to mechanize's to be more consistent with the rest of our code.
         try:
             # It seems this can return None if the url redirects and then returns 404.
-            return urllib2.urlopen(results_html)
+            result = urllib2.urlopen(results_html)
+            if not result:
+                return None
+            # urlopen returns a file-like object which sometimes works fine with str()
+            # but sometimes is a addinfourl object.  In either case calling read() is correct.
+            return result.read()
         except urllib2.HTTPError, error:
             if error.code != 404:
                 raise

@@ -1,3 +1,24 @@
+2011-04-22  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        webkit-patch rebaseline is broken
+        https://bugs.webkit.org/show_bug.cgi?id=59207
+
+        My recent changes to how LayoutTestResults.results_from_string
+        uncovered a bug in our use of urllib2.
+        We now are treating the return value from _fetch_results_html()
+        (which returns urllib2.openurl()) as a string.  That's incorrect,
+        the return value is a file-like object (which auto-converts to a
+        string in most cases).
+
+        I've updated our urllib2-using code to correctly call .read() on the
+        resulting object before treating it like a string.
+        Unfortunately there is no easy way to test this mis-understanding
+        of the openurl() semantics.
+
+        * Scripts/webkitpy/common/net/buildbot/buildbot.py:
+
 2011-04-22  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Eric Seidel.
