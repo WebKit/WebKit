@@ -1,3 +1,41 @@
+2011-04-21  Vangelis Kokkevis  <vangelis@chromium.org>
+
+        Reviewed by James Robinson.
+
+        [chromium] Only update the contents of layers that are going to
+        be drawn. Remove individual texture unreserves that happen
+        after the layer draw calls with a single unreserve for all the
+        textures in the texture manager.
+        https://bugs.webkit.org/show_bug.cgi?id=59129
+
+        Tests: No new functionality.  Covered by existing layout tests.
+
+        * platform/graphics/chromium/ContentLayerChromium.cpp:
+        (WebCore::ContentLayerChromium::draw):
+        * platform/graphics/chromium/ContentLayerChromium.h:
+        * platform/graphics/chromium/ImageLayerChromium.cpp:
+        (WebCore::ImageLayerChromium::paintContentsIfDirty):
+        (WebCore::ImageLayerChromium::updateCompositorResources):
+        * platform/graphics/chromium/LayerRendererChromium.cpp:
+        (WebCore::LayerRendererChromium::drawRootLayer):
+        (WebCore::LayerRendererChromium::updateAndDrawLayers):
+        (WebCore::LayerRendererChromium::updateLayers):
+        (WebCore::LayerRendererChromium::paintLayerContents):
+        * platform/graphics/chromium/LayerRendererChromium.h:
+        * platform/graphics/chromium/LayerTexture.cpp:
+        * platform/graphics/chromium/LayerTexture.h:
+        * platform/graphics/chromium/LayerTilerChromium.cpp:
+        * platform/graphics/chromium/LayerTilerChromium.h:
+        * platform/graphics/chromium/RenderSurfaceChromium.cpp:
+        (WebCore::RenderSurfaceChromium::drawSurface):
+        * platform/graphics/chromium/TextureManager.cpp:
+        (WebCore::TextureManager::unprotectAllTextures):
+        * platform/graphics/chromium/TextureManager.h:
+        * platform/graphics/chromium/cc/CCHeadsUpDisplay.cpp:
+        (WebCore::CCHeadsUpDisplay::draw):
+        * platform/graphics/chromium/cc/CCLayerImpl.h:
+        (WebCore::CCLayerImpl::owner):
+
 2011-04-21  Ryosuke Niwa  <rniwa@webkit.org>
 
         Reviewed by Sam Weinig.

@@ -144,7 +144,7 @@ private:
     void updateRootLayerContents();
     void updatePropertiesAndRenderSurfaces(LayerChromium*, const TransformationMatrix& parentMatrix, LayerList& renderSurfaceLayerList, LayerList& layers);
 
-    void paintContentsRecursive(LayerChromium*);
+    void paintLayerContents(const LayerList&);
     void updateCompositorResourcesRecursive(LayerChromium*);
 
     void drawLayers(const LayerList& renderSurfaceLayerList);

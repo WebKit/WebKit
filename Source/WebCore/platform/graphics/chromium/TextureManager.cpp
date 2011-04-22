@@ -84,17 +84,10 @@ void TextureManager::protectTexture(TextureToken token)
     m_textures.add(token, info);
 }
 
-void TextureManager::unprotectTexture(TextureToken token)
+void TextureManager::unprotectAllTextures()
 {
-    TextureMap::iterator it = m_textures.find(token);
-    if (it != m_textures.end()) {
-        TextureInfo info = it->second;
-        if (info.isProtected) {
-            info.isProtected = false;
-            m_textures.remove(it);
-            m_textures.add(token, info);
-        }
-    }
+    for (TextureMap::iterator it = m_textures.begin(); it != m_textures.end(); ++it)
+        it->second.isProtected = false;
 }
 
 bool TextureManager::reduceMemoryToLimit(size_t limit)

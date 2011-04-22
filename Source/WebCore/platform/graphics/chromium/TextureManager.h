@@ -52,7 +52,7 @@ public:
     unsigned requestTexture(TextureToken, IntSize, unsigned textureFormat, bool* newTexture = 0);
 
     void protectTexture(TextureToken);
-    void unprotectTexture(TextureToken);
+    void unprotectAllTextures();
     bool isProtected(TextureToken);
 
 private:

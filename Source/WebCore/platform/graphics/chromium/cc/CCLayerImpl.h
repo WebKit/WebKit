@@ -51,6 +51,7 @@ public:
     // When this class gets subclasses, remember to add 'virtual' here.
     virtual ~CCLayerImpl();
     void resetOwner() { m_owner = 0; }
+    LayerChromium* owner() const { return m_owner; }
 
 #ifndef NDEBUG
     int debugID() const { return m_debugID; }

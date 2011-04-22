@@ -171,7 +171,6 @@ void LayerRendererChromium::drawRootLayer()
 
     m_rootLayerContentTiler->uploadCanvas();
     m_rootLayerContentTiler->draw(m_viewportVisibleRect, scroll, 1.0f);
-    m_rootLayerContentTiler->unreserveTextures();
 }
 
 void LayerRendererChromium::setViewport(const IntRect& visibleRect, const IntRect& contentRect, const IntPoint& scrollPosition)
@@ -235,6 +234,8 @@ void LayerRendererChromium::updateAndDrawLayers()
 
     drawLayers(renderSurfaceLayerList);
 
+    m_textureManager->unprotectAllTextures();
+
     // After drawLayers:
     if (hardwareCompositing() && m_contextSupportsLatch) {
         Extensions3DChromium* parentExt = static_cast<Extensions3DChromium*>(m_context->getExtensions());
@@ -282,7 +283,7 @@ void LayerRendererChromium::updateLayers(LayerList& renderSurfaceLayerList)
     // concept of a large content layer.
     updatePropertiesAndRenderSurfaces(m_rootLayer.get(), identityMatrix, renderSurfaceLayerList, m_defaultRenderSurface->m_layerList);
 
-    paintContentsRecursive(m_rootLayer.get());
+    paintLayerContents(renderSurfaceLayerList);
 
     // FIXME: Before updateCompositorResourcesRecursive, when the compositor runs in
     // its own thread, and when the copyTexImage2D bug is fixed, insert
@@ -324,6 +325,46 @@ void LayerRendererChromium::updateLayers(LayerList& renderSurfaceLayerList)
             ext->getChildToParentLatchCHROMIUM(&childToParentLatchId);
             ext->setLatchCHROMIUM(childToParentLatchId);
             ext->waitLatchCHROMIUM(parentToChildLatchId);
+        }
+    }
+}
+
+void LayerRendererChromium::paintLayerContents(const LayerList& renderSurfaceLayerList)
+{
+    for (int surfaceIndex = renderSurfaceLayerList.size() - 1; surfaceIndex >= 0 ; --surfaceIndex) {
+        CCLayerImpl* renderSurfaceLayer = renderSurfaceLayerList[surfaceIndex].get();
+        RenderSurfaceChromium* renderSurface = renderSurfaceLayer->renderSurface();
+        ASSERT(renderSurface);
+
+        // Render surfaces whose drawable area has zero width or height
+        // will have no layers associated with them and should be skipped.
+        if (!renderSurface->m_layerList.size())
+            continue;
+
+        LayerList& layerList = renderSurface->m_layerList;
+        ASSERT(layerList.size());
+        for (unsigned layerIndex = 0; layerIndex < layerList.size(); ++layerIndex) {
+            CCLayerImpl* ccLayerImpl = layerList[layerIndex].get();
+
+            // Layers that start a new render surface will be painted when the render
+            // surface's list is processed.
+            if (ccLayerImpl->renderSurface() && ccLayerImpl->renderSurface() != renderSurface)
+                continue;
+
+            LayerChromium* layer = ccLayerImpl->owner();
+            if (layer->bounds().isEmpty())
+                continue;
+
+            const IntRect targetSurfaceRect = layer->ccLayerImpl()->scissorRect();
+
+            if (layer->drawsContent())
+                layer->paintContentsIfDirty(targetSurfaceRect);
+            if (layer->maskLayer() && layer->maskLayer()->drawsContent())
+                layer->maskLayer()->paintContentsIfDirty(targetSurfaceRect);
+            if (layer->replicaLayer() && layer->replicaLayer()->drawsContent())
+                layer->replicaLayer()->paintContentsIfDirty(targetSurfaceRect);
+            if (layer->replicaLayer() && layer->replicaLayer()->maskLayer() && layer->replicaLayer()->maskLayer()->drawsContent())
+                layer->replicaLayer()->maskLayer()->paintContentsIfDirty(targetSurfaceRect);
         }
     }
 }
@@ -759,27 +800,6 @@ void LayerRendererChromium::updatePropertiesAndRenderSurfaces(LayerChromium* lay
     // skip the sorting as the superlayer will sort all the descendants anyway.
     if (drawLayer->preserves3D() && (!drawLayer->superlayer() || !drawLayer->superlayer()->preserves3D()))
         std::stable_sort(&descendants.at(thisLayerIndex), descendants.end(), compareLayerZ);
-}
-
-void LayerRendererChromium::paintContentsRecursive(LayerChromium* layer)
-{
-    const Vector<RefPtr<LayerChromium> >& sublayers = layer->getSublayers();
-    for (size_t i = 0; i < sublayers.size(); ++i)
-        paintContentsRecursive(sublayers[i].get());
-
-    if (layer->bounds().isEmpty())
-        return;
-
-    const IntRect targetSurfaceRect = layer->ccLayerImpl()->scissorRect();
-
-    if (layer->drawsContent())
-        layer->paintContentsIfDirty(targetSurfaceRect);
-    if (layer->maskLayer() && layer->maskLayer()->drawsContent())
-        layer->maskLayer()->paintContentsIfDirty(targetSurfaceRect);
-    if (layer->replicaLayer() && layer->replicaLayer()->drawsContent())
-        layer->replicaLayer()->paintContentsIfDirty(targetSurfaceRect);
-    if (layer->replicaLayer() && layer->replicaLayer()->maskLayer() && layer->replicaLayer()->maskLayer()->drawsContent())
-        layer->replicaLayer()->maskLayer()->paintContentsIfDirty(targetSurfaceRect);
 }
 
 void LayerRendererChromium::updateCompositorResourcesRecursive(LayerChromium* layer)

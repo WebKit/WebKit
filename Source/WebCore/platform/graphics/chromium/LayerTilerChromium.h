@@ -73,10 +73,6 @@ public:
     // Draw all tiles that intersect with the content rect.
     void draw(const IntRect& contentRect, const TransformationMatrix&, float opacity);
 
-    // If uploadCanvas/updateFromPixels is called, this must be called after
-    // draw() to unreserve any textures that were reserved prior to uploading.
-    void unreserveTextures();
-
     // Set position of this tiled layer in content space.
     void setLayerPosition(const IntPoint& position);
     // Change the tile size.  This may invalidate all the existing tiles.

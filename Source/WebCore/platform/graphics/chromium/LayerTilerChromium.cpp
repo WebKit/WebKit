@@ -411,16 +411,6 @@ void LayerTilerChromium::draw(const IntRect& contentRect, const TransformationMa
     }
 }
 
-void LayerTilerChromium::unreserveTextures()
-{
-    for (TileMap::iterator iter = m_tiles.begin(); iter != m_tiles.end(); ++iter) {
-        Tile* tile = iter->second.get();
-        if (!tile)
-            continue;
-        tile->texture()->unreserve();
-    }
-}
-
 void LayerTilerChromium::growLayerToContain(const IntRect& contentRect)
 {
     // Grow the tile array to contain this content rect.

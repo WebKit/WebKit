@@ -55,7 +55,6 @@ public:
     virtual void paintContentsIfDirty(const IntRect& targetSurfaceRect);
     virtual void updateCompositorResources();
     virtual void setIsMask(bool);
-    virtual void unreserveContentsTexture();
     virtual void bindContentsTexture();
 
     virtual void draw(const IntRect& targetSurfaceRect);

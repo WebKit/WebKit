@@ -136,11 +136,6 @@ void RenderSurfaceChromium::drawSurface(CCLayerImpl* maskLayer, const Transforma
     LayerChromium::drawTexturedQuad(layerRenderer()->context(), layerRenderer()->projectionMatrix(), drawTransform,
                                         m_contentRect.width(), m_contentRect.height(), m_drawOpacity,
                                         shaderMatrixLocation, shaderAlphaLocation);
-
-    m_contentsTexture->unreserve();
-
-    if (maskLayer)
-        maskLayer->unreserveContentsTexture();
 }
 
 void RenderSurfaceChromium::draw(const IntRect&)

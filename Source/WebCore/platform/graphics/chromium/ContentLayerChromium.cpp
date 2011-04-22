@@ -186,7 +186,6 @@ void ContentLayerChromium::draw(const IntRect& targetSurfaceRect)
     IntRect layerRect = visibleLayerRect(targetSurfaceRect);
     if (!layerRect.isEmpty())
         m_tiler->draw(layerRect, transform, ccLayerImpl()->drawOpacity());
-    m_tiler->unreserveTextures();
 }
 
 void ContentLayerChromium::createTilerIfNeeded()
@@ -217,11 +216,6 @@ void ContentLayerChromium::bindContentsTexture()
     ASSERT(texture);
 
     texture->bindTexture();
-}
-
-void ContentLayerChromium::unreserveContentsTexture()
-{
-    m_tiler->unreserveTextures();
 }
 
 void ContentLayerChromium::setIsMask(bool isMask)
