@@ -1,3 +1,9 @@
+2011-04-22  Tony Chang  <tony@chromium.org>
+
+        Unreviewed, deleting remaining .checksum files.
+        More will probably creep in over the next few days-- I'll do
+        another pass in a week or so.
+
 2011-04-22  Levi Weintraub  <leviw@chromium.org>
 
         Reviewed by Darin Fisher.
