@@ -1,3 +1,18 @@
+2011-04-22  Xiaomei Ji  <xji@chromium.org>
+
+        Rebase after r84659.
+
+        * platform/chromium-linux/editing/deleting/table-cells-expected.png:
+        * platform/chromium-linux/fast/forms/cursor-at-editable-content-boundary-expected.txt: Added.
+        * platform/chromium-linux/fast/inline-block/14498-positionForCoordinates-expected.png:
+        * platform/chromium-mac-leopard/editing/deleting/table-cells-expected.png:
+        * platform/chromium-mac-leopard/fast/inline-block/14498-positionForCoordinates-expected.png:
+        * platform/chromium-mac/editing/deleting/table-cells-expected.png: Added.
+        * platform/chromium-mac/fast/inline-block/14498-positionForCoordinates-expected.png: Added.
+        * platform/chromium-win/editing/deleting/table-cells-expected.png:
+        * platform/chromium-win/fast/forms/cursor-at-editable-content-boundary-expected.txt: Added.
+        * platform/chromium-win/fast/inline-block/14498-positionForCoordinates-expected.png:
+
 2011-04-22  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Eric Carlson.
