@@ -28,30 +28,30 @@
 
 import unittest
 
-from webkitpy.layout_tests.layout_package import message_broker2
+from webkitpy.layout_tests.layout_package import message_broker
 
 # This file exists to test routines that aren't necessarily covered elsewhere;
-# most of the testing of message_broker2 will be covered under the tests in
+# most of the testing of message_broker will be covered under the tests in
 # the manager_worker_broker module.
 
 
 class MessageTest(unittest.TestCase):
     def test__no_body(self):
-        msg = message_broker2._Message('src', 'topic_name', 'message_name', None)
+        msg = message_broker._Message('src', 'topic_name', 'message_name', None)
         self.assertTrue(repr(msg))
         s = msg.dumps()
-        new_msg = message_broker2._Message.loads(s)
+        new_msg = message_broker._Message.loads(s)
         self.assertEqual(new_msg.name, 'message_name')
         self.assertEqual(new_msg.args, None)
         self.assertEqual(new_msg.topic_name, 'topic_name')
         self.assertEqual(new_msg.src, 'src')
 
     def test__body(self):
-        msg = message_broker2._Message('src', 'topic_name', 'message_name',
+        msg = message_broker._Message('src', 'topic_name', 'message_name',
                                       ('body', 0))
         self.assertTrue(repr(msg))
         s = msg.dumps()
-        new_msg = message_broker2._Message.loads(s)
+        new_msg = message_broker._Message.loads(s)
         self.assertEqual(new_msg.name, 'message_name')
         self.assertEqual(new_msg.args, ('body', 0))
         self.assertEqual(new_msg.topic_name, 'topic_name')
@@ -66,9 +66,9 @@ class InterfaceTest(unittest.TestCase):
 
     def test_brokerclient_is_abstract(self):
         # Test that we can't create an instance directly.
-        self.assertRaises(NotImplementedError, message_broker2.BrokerClient)
+        self.assertRaises(NotImplementedError, message_broker.BrokerClient)
 
-        class TestClient(message_broker2.BrokerClient):
+        class TestClient(message_broker.BrokerClient):
             def __init__(self):
                 pass
 

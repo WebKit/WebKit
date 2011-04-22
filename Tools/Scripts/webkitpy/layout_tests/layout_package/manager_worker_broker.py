@@ -30,7 +30,7 @@
 
 This module implements a message broker that connects the manager
 (TestRunner2) to the workers: it provides a messaging abstraction and
-message loops (building on top of message_broker2), and handles starting
+message loops (building on top of message_broker), and handles starting
 workers by launching threads and/or processes depending on the
 requested configuration.
 
@@ -62,7 +62,7 @@ except ImportError:
 
 from webkitpy.common.system import stack_utils
 from webkitpy.layout_tests import port
-from webkitpy.layout_tests.layout_package import message_broker2
+from webkitpy.layout_tests.layout_package import message_broker
 
 
 _log = logging.getLogger(__name__)
@@ -91,7 +91,7 @@ def get(port, options, client, worker_class):
     Args:
         port - handle to layout_tests/port object for port-specific stuff
         options - optparse argument for command-line options
-        client - message_broker2.BrokerClient implementation to dispatch
+        client - message_broker.BrokerClient implementation to dispatch
             replies to.
         worker_class - type of workers to create. This class must implement
             the methods in AbstractWorker.
@@ -113,11 +113,11 @@ def get(port, options, client, worker_class):
         raise ValueError("unsupported value for --worker-model: %s" %
                          worker_model)
 
-    broker = message_broker2.Broker(options, queue_class)
+    broker = message_broker.Broker(options, queue_class)
     return manager_class(broker, port, options, client, worker_class)
 
 
-class AbstractWorker(message_broker2.BrokerClient):
+class AbstractWorker(message_broker.BrokerClient):
     def __init__(self, broker_connection, worker_number, options):
         """The constructor should be used to do any simple initialization
         necessary, but should not do anything that creates data structures
@@ -145,17 +145,17 @@ class AbstractWorker(message_broker2.BrokerClient):
         raise NotImplementedError
 
 
-class _ManagerConnection(message_broker2.BrokerConnection):
+class _ManagerConnection(message_broker.BrokerConnection):
     def __init__(self, broker, options, client, worker_class):
         """Base initialization for all Manager objects.
 
         Args:
-            broker: handle to the message_broker2 object
+            broker: handle to the message_broker object
             options: command line options object
             client: callback object (the caller)
             worker_class: class object to use to create workers.
         """
-        message_broker2.BrokerConnection.__init__(self, broker, client,
+        message_broker.BrokerConnection.__init__(self, broker, client,
             MANAGER_TOPIC, ANY_WORKER_TOPIC)
         self._options = options
         self._worker_class = worker_class
@@ -210,12 +210,12 @@ class _MultiProcessManager(_ManagerConnection):
         return worker_connection
 
 
-class _WorkerConnection(message_broker2.BrokerConnection):
+class _WorkerConnection(message_broker.BrokerConnection):
     def __init__(self, broker, worker_class, worker_number, options):
         self._client = worker_class(self, worker_number, options)
         self.name = self._client.name()
-        message_broker2.BrokerConnection.__init__(self, broker, self._client,
-                                                  ANY_WORKER_TOPIC, MANAGER_TOPIC)
+        message_broker.BrokerConnection.__init__(self, broker, self._client,
+                                                 ANY_WORKER_TOPIC, MANAGER_TOPIC)
 
     def cancel(self):
         raise NotImplementedError
