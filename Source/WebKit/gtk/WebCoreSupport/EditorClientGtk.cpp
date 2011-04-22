@@ -501,12 +501,12 @@ void EditorClient::clearUndoRedoOperations()
     redoStack.clear();
 }
 
-bool EditorClient::canCopyCut(bool defaultValue) const
+bool EditorClient::canCopyCut(WebCore::Frame*, bool defaultValue) const
 {
     return defaultValue;
 }
 
-bool EditorClient::canPaste(bool defaultValue) const
+bool EditorClient::canPaste(WebCore::Frame*, bool defaultValue) const
 {
     return defaultValue;
 }

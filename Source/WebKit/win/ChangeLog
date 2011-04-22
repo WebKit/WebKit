@@ -1,3 +1,15 @@
+2011-04-21  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Reviewed by Sam Weinig.
+
+        Add Frame* to the argument lists of canCopyCut and canPaste
+        https://bugs.webkit.org/show_bug.cgi?id=59153
+
+        * WebCoreSupport/WebEditorClient.cpp:
+        (WebEditorClient::canCopyCut):
+        (WebEditorClient::canPaste):
+        * WebCoreSupport/WebEditorClient.h:
+
 2011-04-20  Brent Fulgham  <bfulgham@webkit.org>
 
         Reviewed by Martin Robinson.

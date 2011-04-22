@@ -259,12 +259,12 @@ void EditorClientQt::clearUndoRedoOperations()
 #endif
 }
 
-bool EditorClientQt::canCopyCut(bool defaultValue) const
+bool EditorClientQt::canCopyCut(WebCore::Frame*, bool defaultValue) const
 {
     return defaultValue;
 }
 
-bool EditorClientQt::canPaste(bool defaultValue) const
+bool EditorClientQt::canPaste(WebCore::Frame*, bool defaultValue) const
 {
     return defaultValue;
 }

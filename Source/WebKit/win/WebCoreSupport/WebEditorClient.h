@@ -78,8 +78,8 @@ public:
     void registerCommandForRedo(PassRefPtr<WebCore::EditCommand>);
     void clearUndoRedoOperations();
 
-    bool canCopyCut(bool defaultValue) const;
-    bool canPaste(bool defaultValue) const;
+    bool canCopyCut(Frame*, bool defaultValue) const;
+    bool canPaste(Frame*, bool defaultValue) const;
     bool canUndo() const;
     bool canRedo() const;
     

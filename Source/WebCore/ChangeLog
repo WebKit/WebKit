@@ -1,3 +1,21 @@
+2011-04-21  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Reviewed by Sam Weinig.
+
+        Add Frame* to the argument lists of canCopyCut and canPaste
+        https://bugs.webkit.org/show_bug.cgi?id=59153
+
+        canCopyCut and canPaste now takes Frame* for which supportedCopyCut and supportedPaste are called.
+        This allows editor client to grant copy/cut and paste permissions per origin.
+
+        * editing/EditorCommand.cpp:
+        (WebCore::supportedCopyCut):
+        (WebCore::supportedPaste):
+        * loader/EmptyClients.h:
+        (WebCore::EmptyEditorClient::canCopyCut):
+        (WebCore::EmptyEditorClient::canPaste):
+        * page/EditorClient.h:
+
 2011-04-21  Oliver Hunt  <oliver@apple.com>
 
         Whoops, change lost during merge

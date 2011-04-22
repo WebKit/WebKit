@@ -243,12 +243,12 @@ void WebEditorClient::clearUndoRedoOperations()
     m_page->send(Messages::WebPageProxy::ClearAllEditCommands());
 }
 
-bool WebEditorClient::canCopyCut(bool defaultValue) const
+bool WebEditorClient::canCopyCut(Frame*, bool defaultValue) const
 {
     return defaultValue;
 }
 
-bool WebEditorClient::canPaste(bool defaultValue) const
+bool WebEditorClient::canPaste(Frame*, bool defaultValue) const
 {
     return defaultValue;
 }

@@ -204,12 +204,12 @@ void EditorClientHaiku::clearUndoRedoOperations()
     notImplemented();
 }
 
-bool EditorClientHaiku::canCopyCut(bool defaultValue) const
+bool EditorClientHaiku::canCopyCut(WebCore::Frame*, bool defaultValue) const
 {
     return defaultValue;
 }
 
-bool EditorClientHaiku::canPaste(bool defaultValue) const
+bool EditorClientHaiku::canPaste(WebCore::Frame*, bool defaultValue) const
 {
     return defaultValue;
 }

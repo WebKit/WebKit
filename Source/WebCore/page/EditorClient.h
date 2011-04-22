@@ -108,8 +108,8 @@ public:
     virtual void registerCommandForRedo(PassRefPtr<EditCommand>) = 0;
     virtual void clearUndoRedoOperations() = 0;
 
-    virtual bool canCopyCut(bool defaultValue) const = 0;
-    virtual bool canPaste(bool defaultValue) const = 0;
+    virtual bool canCopyCut(Frame*, bool defaultValue) const = 0;
+    virtual bool canPaste(Frame*, bool defaultValue) const = 0;
     virtual bool canUndo() const = 0;
     virtual bool canRedo() const = 0;
     

@@ -1,3 +1,15 @@
+2011-04-21  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Reviewed by Sam Weinig.
+
+        Add Frame* to the argument lists of canCopyCut and canPaste
+        https://bugs.webkit.org/show_bug.cgi?id=59153
+
+        * WebCoreSupport/EditorClientHaiku.cpp:
+        (WebCore::EditorClientHaiku::canCopyCut):
+        (WebCore::EditorClientHaiku::canPaste):
+        * WebCoreSupport/EditorClientHaiku.h:
+
 2011-04-04  MORITA Hajime  <morrita@google.com>
 
         Reviewed by Ryosuke Niwa.

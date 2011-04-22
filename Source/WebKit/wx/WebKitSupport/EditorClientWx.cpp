@@ -313,12 +313,12 @@ void EditorClientWx::clearUndoRedoOperations()
     }
 }
 
-bool EditorClientWx::canCopyCut(bool defaultValue) const
+bool EditorClientWx::canCopyCut(Frame*, bool defaultValue) const
 {
     return defaultValue;
 }
 
-bool EditorClientWx::canPaste(bool defaultValue) const
+bool EditorClientWx::canPaste(Frame*, bool defaultValue) const
 {
     return defaultValue;
 }

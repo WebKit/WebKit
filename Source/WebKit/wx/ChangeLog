@@ -1,3 +1,15 @@
+2011-04-21  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Reviewed by Sam Weinig.
+
+        Add Frame* to the argument lists of canCopyCut and canPaste
+        https://bugs.webkit.org/show_bug.cgi?id=59153
+
+        * WebKitSupport/EditorClientWx.cpp:
+        (WebCore::EditorClientWx::canCopyCut):
+        (WebCore::EditorClientWx::canPaste):
+        * WebKitSupport/EditorClientWx.h:
+
 2011-04-14  Kevin Ollivier  <kevino@theolliviers.com>
 
         [wx] Unreviewed build fixes for wxMSW and wx 2.9.1.1.

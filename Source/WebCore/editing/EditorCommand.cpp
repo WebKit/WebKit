@@ -1131,7 +1131,7 @@ static bool supportedCopyCut(Frame* frame)
     bool defaultValue = settings && settings->javaScriptCanAccessClipboard();
 
     EditorClient* client = frame->editor()->client();
-    return client ? client->canCopyCut(defaultValue) : defaultValue;
+    return client ? client->canCopyCut(frame, defaultValue) : defaultValue;
 }
 
 static bool supportedPaste(Frame* frame)
@@ -1143,7 +1143,7 @@ static bool supportedPaste(Frame* frame)
     bool defaultValue = settings && settings->javaScriptCanAccessClipboard() && settings->isDOMPasteAllowed();
 
     EditorClient* client = frame->editor()->client();
-    return client ? client->canPaste(defaultValue) : defaultValue;
+    return client ? client->canPaste(frame, defaultValue) : defaultValue;
 }
 
 // Enabled functions

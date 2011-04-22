@@ -320,12 +320,12 @@ void EditorClientImpl::clearUndoRedoOperations()
     m_redoStack.clear();
 }
 
-bool EditorClientImpl::canCopyCut(bool defaultValue) const
+bool EditorClientImpl::canCopyCut(Frame*, bool defaultValue) const
 {
     return defaultValue;
 }
 
-bool EditorClientImpl::canPaste(bool defaultValue) const
+bool EditorClientImpl::canPaste(Frame*, bool defaultValue) const
 {
     return defaultValue;
 }

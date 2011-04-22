@@ -1,3 +1,15 @@
+2011-04-21  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Reviewed by Sam Weinig.
+
+        Add Frame* to the argument lists of canCopyCut and canPaste
+        https://bugs.webkit.org/show_bug.cgi?id=59153
+
+        * WebCoreSupport/EditorClientGtk.cpp:
+        (WebKit::EditorClient::canCopyCut):
+        (WebKit::EditorClient::canPaste):
+        * WebCoreSupport/EditorClientGtk.h:
+
 2011-04-21  Martin Robinson  <mrobinson@igalia.com>
 
         [GTK] DRT: implement eventSender.scalePageBy

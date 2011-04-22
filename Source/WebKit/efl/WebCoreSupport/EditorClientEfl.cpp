@@ -160,12 +160,12 @@ void EditorClientEfl::clearUndoRedoOperations()
     notImplemented();
 }
 
-bool EditorClientEfl::canCopyCut(bool defaultValue) const
+bool EditorClientEfl::canCopyCut(Frame*, bool defaultValue) const
 {
     return defaultValue;
 }
 
-bool EditorClientEfl::canPaste(bool defaultValue) const
+bool EditorClientEfl::canPaste(Frame*, bool defaultValue) const
 {
     return defaultValue;
 }
