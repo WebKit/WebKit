@@ -30,7 +30,6 @@
 #include "KURL.h"
 #include "MessagePort.h"
 #include "SecurityOrigin.h"
-#include "Timer.h"
 
 namespace WebCore {
 
@@ -420,8 +419,6 @@ namespace WebCore {
         virtual EventTargetData* eventTargetData();
         virtual EventTargetData* ensureEventTargetData();
 
-        void printTimerFired(Timer<DOMWindow>*);
-
         static Frame* createWindow(const String& urlString, const AtomicString& frameName, const WindowFeatures&,
             DOMWindow* activeWindow, Frame* firstFrame, Frame* openerFrame,
             PrepareDialogFunction = 0, void* functionContext = 0);
@@ -446,8 +443,6 @@ namespace WebCore {
         mutable RefPtr<Navigator> m_navigator;
         mutable RefPtr<Location> m_location;
         mutable RefPtr<StyleMedia> m_media;
-
-        Timer<DOMWindow> m_printTimer;
 
         EventTargetData m_eventTargetData;
 

@@ -430,6 +430,7 @@ void Chrome::setToolTip(const HitTestResult& result)
 
 void Chrome::print(Frame* frame)
 {
+    // FIXME: This should have PageGroupLoadDeferrer, like runModal() or runJavaScriptAlert(), becasue it's no different from those.
     m_client->print(frame);
 }
 

@@ -2,6 +2,7 @@ http://localhost:8000/security/XFrameOptions/resources/x-frame-options-parent-sa
 <unknown> - didFinishLoading
 CONSOLE MESSAGE: line 1: Refused to display document because display forbidden by X-Frame-Options.
 
+http://localhost:8000/security/XFrameOptions/resources/x-frame-options-parent-same-origin-allow.cgi - didFailLoadingWithError: <NSError domain NSURLErrorDomain, code -999, failing URL "http://localhost:8000/security/XFrameOptions/resources/x-frame-options-parent-same-origin-allow.cgi">
 There should be no content in the iframe below
 
 

@@ -100,17 +100,20 @@ void MainResourceLoader::didCancel(const ResourceError& error)
 {
     m_dataLoadTimer.stop();
 
-    // Calling receivedMainResourceError will likely result in the last reference to this object to go away.
-    RefPtr<MainResourceLoader> protect(this);
+    // FrameLoader won't be reachable after calling ResourceLoader::didCancel().
+    FrameLoader* frameLoader = this->frameLoader();
 
     if (m_waitingForContentPolicy) {
-        frameLoader()->policyChecker()->cancelCheck();
+        frameLoader->policyChecker()->cancelCheck();
         ASSERT(m_waitingForContentPolicy);
         m_waitingForContentPolicy = false;
         deref(); // balances ref in didReceiveResponse
     }
-    frameLoader()->receivedMainResourceError(error, true);
     ResourceLoader::didCancel(error);
+
+    // We should notify the frame loader after fully canceling the load, because it can do complicated work
+    // like calling DOMWindow::print(), during which a half-canceled load could try to finish.
+    frameLoader->receivedMainResourceError(error, true);
 }
 
 ResourceError MainResourceLoader::interruptionForPolicyChangeError() const
