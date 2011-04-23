@@ -57,8 +57,6 @@ public:
     virtual String userAgent() const;
 
     Geolocation* geolocation() const;
-    // This is used for GC marking.
-    Geolocation* optionalGeolocation() const { return m_geolocation.get(); }
 
 #if ENABLE(DOM_STORAGE)
     // Relinquishes the storage lock, if one exists.

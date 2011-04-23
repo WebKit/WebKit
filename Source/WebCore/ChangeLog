@@ -1,3 +1,36 @@
+2011-04-22  Geoffrey Garen  <ggaren@apple.com>
+        
+        Rolled back in r84725 and r84728 with appcache crash fixed.
+
+        Reviewed by Oliver Hunt.
+
+        Removed a use of markDOMObjectWrapper: DOMWindow
+        https://bugs.webkit.org/show_bug.cgi?id=59260
+
+        * bindings/js/JSDOMWindowCustom.cpp:
+        (WebCore::JSDOMWindow::visitChildren): No need to mark explicitly, since
+        we use the opaque roots system now.
+
+        * bindings/js/JSNavigatorCustom.cpp: Ditto.
+
+        * bindings/scripts/CodeGeneratorJS.pm: Added autogeneration for objects
+        whose opaque roots are frames.
+
+        * css/StyleMedia.h:
+        (WebCore::StyleMedia::frame): Added an accessor for the sake of GC.
+
+        * css/StyleMedia.idl:
+        * loader/appcache/DOMApplicationCache.idl:
+        * page/BarInfo.idl:
+        * page/Console.idl:
+        * page/DOMSelection.idl:
+        * page/Geolocation.idl:
+        * page/History.idl:
+        * page/Location.idl:
+        * page/Navigator.idl:
+        * page/Screen.idl:
+        * storage/Storage.idl: Updated to use the opaque roots system.
+
 2011-04-22  Nate Chapin  <japhet@chromium.org>
 
         Reviewed by Adam Barth.
@@ -72,6 +105,14 @@
         (WebCore::ShadowTreeUpdateBlocker::while): Ditto.
         * svg/animation/SVGSMILElement.cpp:
         (WebCore::SVGSMILElement::insertedIntoDocument): Ditto.
+
+2011-04-22  Geoffrey Garen  <ggaren@apple.com>
+
+        Mac build fix.
+
+        * page/DOMWindow.h:
+        (WebCore::DOMWindow::optionalApplicationCache): Restored this function,
+        which is used after all.
 
 2011-04-22  Geoffrey Garen  <ggaren@apple.com>
 

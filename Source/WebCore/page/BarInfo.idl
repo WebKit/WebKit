@@ -28,7 +28,10 @@
 
 module window {
 
-    interface [OmitConstructor] BarInfo {
+    interface [
+        CustomIsReachable=Frame,
+        OmitConstructor
+    ] BarInfo {
         readonly attribute boolean visible;
     };
 

@@ -42,6 +42,25 @@ using namespace JSC;
 
 namespace WebCore {
 
+static inline bool isObservable(JSDOMApplicationCache* jsDOMApplicationCache, DOMApplicationCache* domApplicationCache)
+{
+    if (!jsDOMApplicationCache->hasCustomProperties())
+        return true;
+    if (domApplicationCache->hasEventListeners())
+        return true;
+    return false;
+}
+
+bool JSDOMApplicationCacheOwner::isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown> handle, void*, SlotVisitor& visitor)
+{
+    JSDOMApplicationCache* jsDOMApplicationCache = static_cast<JSDOMApplicationCache*>(handle.get().asCell());
+    DOMApplicationCache* domApplicationCache = jsDOMApplicationCache->impl();
+    Frame* frame = jsDOMApplicationCache->impl()->frame();
+    if (!frame)
+        return false;
+    return isObservable(jsDOMApplicationCache, domApplicationCache) && visitor.containsOpaqueRoot(frame);
+}
+
 #if ENABLE(APPLICATION_CACHE_DYNAMIC_ENTRIES)
 
 JSValue JSDOMApplicationCache::hasItem(ExecState* exec)
