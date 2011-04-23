@@ -1,3 +1,15 @@
+2011-04-22  Alejandro G. Castro  <alex@igalia.com> and Martin Robinson  <mrobinson@igalia.com>
+
+        Reviewed by Xan Lopez.
+
+        [GTK] Use the libWebCore.a convenience library when compiling WebKit2
+        https://bugs.webkit.org/show_bug.cgi?id=59258
+
+        * GNUmakefile.am: Remove the libWebKit2 convenience library and use the
+        libWebCore convenience library when compiling WebKit2. Not only does this
+        maintain the CPPFLAGS isolation, it prevents double-compilation of WebCore
+        in some cases.
+
 2011-04-19  Jer Noble  <jer.noble@apple.com>
 
         Reviewed by Daniel Bates.
