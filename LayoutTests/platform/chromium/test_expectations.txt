@@ -1540,8 +1540,7 @@ BUGCR12361 LINUX RELEASE : http/tests/cookies/double-quoted-value-with-semi-colo
 BUGCR12361 SLOW MAC RELEASE : http/tests/cookies/double-quoted-value-with-semi-colon.html = FAIL
 
 BUGCR14207 LINUX : tables/mozilla/bugs/bug28341.html = FAIL
-BUGCR32231 WIN DEBUG : tables/mozilla/bugs/bug28341.html = IMAGE PASS
-BUGCR32231 MAC : tables/mozilla/bugs/bug28341.html = IMAGE PASS
+BUGCR32231 WIN MAC : tables/mozilla/bugs/bug28341.html = IMAGE PASS
 
 // Newly added test http://trac.webkit.org/changeset/44816
 BUGCR18733 WIN SLOW : http/tests/xmlhttprequest/cross-origin-no-authorization.html = PASS
@@ -2214,7 +2213,7 @@ BUGWK20011 : printing/setPrinting.html = FAIL
 BUGCR49343 : fast/js/reserved-words-as-property.html = TEXT
 
 BUGWK42598 : http/tests/misc/401-alternative-content.php = TEXT
-BUGWK42598 : http/tests/xmlhttprequest/failed-auth.html = TEXT
+BUGWK42598 : http/tests/xmlhttprequest/failed-auth.html = TEXT TIMEOUT
 
 BUGWK42769 : http/tests/xmlhttprequest/remember-bad-password.html = TEXT
 BUGWK42769 : http/tests/security/401-logout/401-logout.php = TIMEOUT
@@ -3909,3 +3908,32 @@ BUGWK59172 : fast/html/details-remove-summary-6.html = IMAGE+TEXT
 BUGWK59172 : fast/html/details-writing-mode.html = IMAGE+TEXT
 
 BUGCR80301 MAC : fast/canvas/canvas-largedraws.html = TIMEOUT
+
+// roll up from r84685:r84721??
+BUGDPRANKE : fast/dom/dataset-gc.html = TEXT
+BUGDPRANKE : fast/forms/cursor-at-editable-content-boundary.html = TEXT
+BUGDPRANKE : editing/deleting/table-cells.html = IMAGE
+BUGDPRANKE : fast/backgrounds/gradient-background-leakage.html = IMAGE
+BUGDPRANKE : fast/forms/validation-message-appearance.html = IMAGE
+BUGDPRANKE : fast/inline-block/14498-positionForCoordinates.html = IMAGE
+BUGDPRANKE : fast/multicol/shadow-breaking.html = IMAGE
+BUGDPRANKE : fast/block/positioning/rtl-fixed-positioning.html = MISSING
+BUGDPRANKE : fast/block/positioning/vertical-rl/fixed-positioning.html = MISSING
+BUGDPRANKE WIN : fast/repaint/shadow-multiple-horizontal.html = IMAGE
+BUGDPRANKE WIN : fast/repaint/shadow-multiple-strict-horizontal.html = IMAGE
+BUGDPRANKE WIN : fast/repaint/shadow-multiple-strict-vertical.html = IMAGE
+BUGDPRANKE WIN : fast/repaint/shadow-multiple-vertical.html = IMAGE
+BUGDPRANKE WIN : fast/text/shadow-translucent-fill.html = IMAGE
+BUGDPRANKE WIN : fast/transforms/shadows.html = IMAGE
+BUGDPRANKE WIN : svg/css/group-with-shadow.svg = IMAGE
+BUGDPRANKE WIN : svg/css/text-shadow-multiple.xhtml = IMAGE
+BUGDPRANKE WIN : transitions/svg-text-shadow-transition.html = IMAGE
+
+// flakiness on deps bots from r84685:r84721??
+BUGDPRANKE MAC LEOPARD DEBUG : http/tests/local/stylesheet-and-script-load-order.html = CRASH PASS
+BUGDPRANKE LINUX DEBUG : fast/encoding/parser-tests-60.html = TIMEOUT PASS
+BUGDPRANKE LINUX DEBUG : editing/execCommand/append-node-under-document.html = TEXT PASS
+BUGDPRANKE LINUX DEBUG : svg/batik/text/textOnPath2.svg = IMAGE PASS
+BUGDPRANKE LINUX DEBUG : svg/batik/text/textOnPath3.svg = IMAGE PASS
+BUGDPRANKE WIN DEBUG : svg/dom/SVGScriptElement/script-set-href.svg = TEXT PASS
+BUGDPRANKE WIN DEBUG : http/tests/navigation/ping-cross-origin-from-https.html = TIMEOUT PASS
