@@ -25,7 +25,9 @@
  */
 
 module view {
-    interface StyleMedia {
+    interface [
+        CustomIsReachable=Frame
+    ] StyleMedia {
         readonly attribute DOMString type;
         boolean matchMedium(in DOMString mediaquery);
     };

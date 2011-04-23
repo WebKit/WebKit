@@ -20,7 +20,7 @@
 module window {
 
     interface [
-        CustomMarkFunction,
+        CustomIsReachable=Frame,
         OmitConstructor
     ] Navigator {
         readonly attribute DOMString appCodeName;

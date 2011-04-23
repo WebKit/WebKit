@@ -29,7 +29,10 @@
 
 module window {
 
-    interface [OmitConstructor] Screen {
+    interface [
+        CustomIsReachable=Frame,
+        OmitConstructor
+    ] Screen {
         readonly attribute unsigned long height;
         readonly attribute unsigned long width;
         readonly attribute unsigned long colorDepth;
