@@ -123,10 +123,7 @@ symbian {
          DEPLOYMENT += declarativeImport
     }
 
-    platformplugin.sources = $$OUTPUT_DIR/plugins/QtWebKit/platformplugin$${QT_LIBINFIX}.dll
-    platformplugin.path = c:$$QT_PLUGINS_BASE_DIR/QtWebKit
-
-    DEPLOYMENT += webkitsisheader webkitlibs webkitbackup platformplugin
+    DEPLOYMENT += webkitsisheader webkitlibs webkitbackup
     !CONFIG(production):CONFIG-=def_files
 
     # Need to build these sources here because of exported symbols
