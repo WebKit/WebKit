@@ -1648,7 +1648,7 @@ BUGWK45957 MAC LEOPARD : fast/multicol/column-rules-stacking.html = IMAGE
 
 // ==== WebKit roll 50258:50313 ====
 BUGCR26291 MAC LEOPARD : fast/text/atsui-multiple-renderers.html = IMAGE
-BUGCR26291 MAC : transforms/2d/hindi-rotated.html = IMAGE
+BUGCR26291 : transforms/2d/hindi-rotated.html = IMAGE IMAGE+TEXT
 
 // The following upstream patches add -Webkit-color-correction support:
 // http://trac.webkit.org/changeset/50760
@@ -3651,7 +3651,6 @@ BUGDPRANKE MAC : editing/selection/move-by-word-visually.html = TEXT
 BUGDPRANKE MAC : fast/borders/border-radius-constraints.html = IMAGE
 BUGDPRANKE MAC LEOPARD : fast/canvas/canvasDrawingIntoSelf.html = IMAGE
 BUGDPRANKE MAC : fast/forms/select-background-none.html = IMAGE
-BUGDPRANKE WIN LINUX : transforms/2d/hindi-rotated.html = IMAGE IMAGE+TEXT
 BUGDPRANKE MAC : compositing/iframes/invisible-nested-iframe-show.html = TEXT
 BUGDPRANKE MAC GPU : compositing/geometry/video-fixed-scrolling.html = IMAGE
 BUGDPRANKE MAC GPU : media/video-volume-slider.html = IMAGE
@@ -3835,7 +3834,7 @@ BUGDPRANKE : fast/dom/Document/document-reopen.html = TEXT PASS
 
 BUGDPRANKE : svg/custom/font-face-name-without-name-attr.svg = CRASH
 BUGDPRANKE : fast/parser/javascript-url-compat-mode.html = TEXT PASS
-BUGDPRANKE : inspector/console/console-tests.html = TEXT PASS
+BUGDPRANKE : inspector/console/console-tests.html = TEXT PASS TIMEOUT
 
 BUGWK59158 CPU WIN LINUX : fast/canvas/canvas-strokePath-alpha-shadow.html = TEXT
 BUGWK59158 CPU WIN LINUX : fast/canvas/canvas-strokeRect-alpha-shadow.html = TEXT
