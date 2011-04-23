@@ -121,24 +121,26 @@ private:
     // Used in implementing get/set, above, where the operand is a local variable.
     NodeIndex getVariable(unsigned operand)
     {
-        NodeIndex setNode = m_currentBlock->m_variables[operand].set;
-        if (setNode != NoNode)
-            return m_graph[setNode].child1;
+        NodeIndex nodeIndex = m_currentBlock->m_variables[operand].value;
 
-        NodeIndex getNode = m_currentBlock->m_variables[operand].get;
-        if (getNode != NoNode)
-            return getNode;
+        if (nodeIndex != NoNode) {
+            Node& node = m_graph[nodeIndex];
+            if (node.op == GetLocal)
+                return nodeIndex;
+            ASSERT(node.op == SetLocal);
+            return node.child1;
+        }
 
-        getNode = addToGraph(GetLocal, OpInfo(operand));
-        m_currentBlock->m_variables[operand].get = getNode;
-        return getNode;
+        nodeIndex = addToGraph(GetLocal, OpInfo(operand));
+        m_currentBlock->m_variables[operand].value = nodeIndex;
+        return nodeIndex;
     }
     void setVariable(unsigned operand, NodeIndex value)
     {
-        NodeIndex priorSet = m_currentBlock->m_variables[operand].set;
-        m_currentBlock->m_variables[operand].set = addToGraph(SetLocal, OpInfo(operand), value);
-        if (priorSet != NoNode)
-            m_graph.deref(priorSet);
+        NodeIndex priorValue = m_currentBlock->m_variables[operand].value;
+        m_currentBlock->m_variables[operand].value = addToGraph(SetLocal, OpInfo(operand), value);
+        if (priorValue != NoNode && m_graph[priorValue].op == SetLocal)
+            m_graph.deref(priorValue);
     }
 
     // Used in implementing get/set, above, where the operand is a temporary.
@@ -163,27 +165,29 @@ private:
         unsigned argument = operand + m_codeBlock->m_numParameters + RegisterFile::CallFrameHeaderSize;
         ASSERT(argument < m_numArguments);
 
-        NodeIndex setNode = m_currentBlock->m_arguments[argument].set;
-        if (setNode != NoNode)
-            return m_graph[setNode].child1;
+        NodeIndex nodeIndex = m_currentBlock->m_arguments[argument].value;
 
-        NodeIndex getNode = m_currentBlock->m_arguments[argument].get;
-        if (getNode != NoNode)
-            return getNode;
+        if (nodeIndex != NoNode) {
+            Node& node = m_graph[nodeIndex];
+            if (node.op == GetLocal)
+                return nodeIndex;
+            ASSERT(node.op == SetLocal);
+            return node.child1;
+        }
 
-        getNode = addToGraph(GetLocal, OpInfo(operand));
-        m_currentBlock->m_arguments[argument].get = getNode;
-        return getNode;
+        nodeIndex = addToGraph(GetLocal, OpInfo(operand));
+        m_currentBlock->m_arguments[argument].value = nodeIndex;
+        return nodeIndex;
     }
     void setArgument(int operand, NodeIndex value)
     {
         unsigned argument = operand + m_codeBlock->m_numParameters + RegisterFile::CallFrameHeaderSize;
         ASSERT(argument < m_numArguments);
 
-        NodeIndex priorSet = m_currentBlock->m_arguments[argument].set;
-        m_currentBlock->m_arguments[argument].set = addToGraph(SetLocal, OpInfo(operand), value);
-        if (priorSet != NoNode)
-            m_graph.deref(priorSet);
+        NodeIndex priorValue = m_currentBlock->m_arguments[argument].value;
+        m_currentBlock->m_arguments[argument].value = addToGraph(SetLocal, OpInfo(operand), value);
+        if (priorValue != NoNode && m_graph[priorValue].op == SetLocal)
+            m_graph.deref(priorValue);
     }
 
     // Get an operand, and perform a ToInt32/ToNumber conversion on it.
@@ -973,9 +977,9 @@ bool ByteCodeParser::parseBlock(unsigned limit)
             // FIXME: throw away terminal definitions of variables;
             // should not be necessary once we have proper DCE!
             for (unsigned i = 0; i < m_currentBlock->m_variables.size(); ++i) {
-                NodeIndex priorSet = m_currentBlock->m_variables[i].set;
-                if (priorSet != NoNode)
-                    m_graph.deref(priorSet);
+                NodeIndex priorValue = m_currentBlock->m_variables[i].value;
+                if (priorValue != NoNode && m_graph[priorValue].op == SetLocal)
+                    m_graph.deref(priorValue);
             }
 
             LAST_OPCODE(op_ret);

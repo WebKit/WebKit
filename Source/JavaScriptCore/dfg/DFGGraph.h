@@ -45,13 +45,11 @@ typedef uint32_t BlockIndex;
 // retrieve the current value, and to reference the final definition.
 struct VariableRecord {
     VariableRecord()
-        : get(NoNode)
-        , set(NoNode)
+        : value(NoNode)
     {
     }
 
-    NodeIndex get;
-    NodeIndex set;
+    NodeIndex value;
 };
 
 typedef Vector <BlockIndex, 2> PredecessorList;

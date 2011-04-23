@@ -1,5 +1,23 @@
 2011-04-22  Gavin Barraclough  <barraclough@apple.com>
 
+        Reviewed by Sam Weinig.
+
+        Bug 59262 - DFG JIT - reduce size of VariableRecord
+
+        We never need both the get & set node, only the most recent
+        (which is always a set, if both exist).
+
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::getVariable):
+        (JSC::DFG::ByteCodeParser::setVariable):
+        (JSC::DFG::ByteCodeParser::getArgument):
+        (JSC::DFG::ByteCodeParser::setArgument):
+        (JSC::DFG::ByteCodeParser::parseBlock):
+        * dfg/DFGGraph.h:
+        (JSC::DFG::VariableRecord::VariableRecord):
+
+2011-04-22  Gavin Barraclough  <barraclough@apple.com>
+
         Reviewed by Geoffrey Garen.
 
         Bug 59254 - DFG JIT - retain VariableRecords for args/var in all basic blocks,
