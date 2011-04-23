@@ -3,7 +3,5 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x143
   RenderBlock {HTML} at (0,0) size 800x143
     RenderBody {BODY} at (8,8) size 784x127
-      RenderListBox {SELECT} at (0,0) size 38x127 [bgcolor=#FFFFFF] [border: (1px inset #808080)]
-      RenderText {#text} at (0,0) size 0x0
-      RenderText {#text} at (0,0) size 0x0
+      RenderListBox {SELECT} at (0,0) size 36x127 [bgcolor=#FFFFFF] [border: (1px inset #808080)]
       RenderText {#text} at (0,0) size 0x0

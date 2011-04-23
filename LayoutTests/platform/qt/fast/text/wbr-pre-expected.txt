@@ -2,14 +2,14 @@ layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
-    RenderBody {BODY} at (8,8) size 784x578
-      RenderBlock {PRE} at (0,0) size 784x57
-        RenderText {#text} at (0,0) size 134x19
-          text run at (0,0) width 134: "[ONE] This is the first"
+    RenderBody {BODY} at (8,8) size 784x579
+      RenderBlock {PRE} at (0,0) size 784x51
+        RenderText {#text} at (0,0) size 127x17
+          text run at (0,0) width 127: "[ONE] This is the first"
         RenderWordBreak {WBR} at (0,0) size 0x0
-        RenderText {#text} at (134,0) size 410x57
-          text run at (134,0) width 30: " line."
-          text run at (164,0) width 0: " "
-          text run at (0,19) width 410: "[TWO] If this on the same line as the first line, this test has failed."
-          text run at (410,19) width 0: " "
-          text run at (0,38) width 16: "    "
+        RenderText {#text} at (127,0) size 384x51
+          text run at (127,0) width 28: " line."
+          text run at (155,0) width 0: " "
+          text run at (0,17) width 384: "[TWO] If this on the same line as the first line, this test has failed."
+          text run at (384,17) width 0: " "
+          text run at (0,34) width 16: "    "

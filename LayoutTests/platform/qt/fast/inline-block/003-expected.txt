@@ -3,32 +3,30 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock (anonymous) at (0,0) size 784x19
-        RenderText {#text} at (0,0) size 524x19
-          text run at (0,0) width 524: "The two divs below should be on the same line, since they are display: inline-block."
-      RenderBlock {CENTER} at (0,19) size 784x23
-        RenderBlock {DIV} at (88,0) size 304x23 [border: (2px solid #0000FF)]
-          RenderText {#text} at (104,2) size 95x19
-            text run at (104,2) width 95: "This is div one."
-        RenderBlock {DIV} at (392,0) size 304x23 [border: (2px solid #0000FF)]
-          RenderText {#text} at (105,2) size 93x19
-            text run at (105,2) width 93: "This is div two."
+      RenderBlock (anonymous) at (0,0) size 784x22
+        RenderText {#text} at (0,0) size 556x22
+          text run at (0,0) width 556: "The two divs below should be on the same line, since they are display: inline-block."
+      RenderBlock {CENTER} at (0,22) size 784x26
+        RenderBlock {DIV} at (88,0) size 304x26 [border: (2px solid #0000FF)]
+          RenderText {#text} at (101,2) size 102x22
+            text run at (101,2) width 102: "This is div one."
+        RenderBlock {DIV} at (392,0) size 304x26 [border: (2px solid #0000FF)]
+          RenderText {#text} at (101,2) size 102x22
+            text run at (101,2) width 102: "This is div two."
         RenderText {#text} at (0,0) size 0x0
-      RenderBlock (anonymous) at (0,42) size 784x65
-        RenderText {#text} at (0,0) size 730x19
-          text run at (0,0) width 730: "The two marquees below should be on separate lines, since marquees fill the width of a containing block by default."
-        RenderInline {SPAN} at (0,0) size 784x37
+      RenderBlock (anonymous) at (0,48) size 784x74
+        RenderText {#text} at (0,0) size 776x22
+          text run at (0,0) width 776: "The two marquees below should be on separate lines, since marquees fill the width of a containing block by default."
+        RenderInline {SPAN} at (0,0) size 784x48
           RenderText {#text} at (0,0) size 0x0
           RenderText {#text} at (0,0) size 0x0
           RenderText {#text} at (0,0) size 0x0
         RenderText {#text} at (0,0) size 0x0
-        RenderText {#text} at (0,0) size 0x0
-        RenderText {#text} at (0,0) size 0x0
-layer at (8,69) size 784x23 clip at (10,71) size 780x19 scrollX -780
-  RenderBlock {MARQUEE} at (0,19) size 784x23 [border: (2px solid #008000)]
-    RenderText {#text} at (2,2) size 95x19
-      text run at (2,2) width 95: "This is div one."
-layer at (8,92) size 784x23 clip at (10,94) size 780x19 scrollX -780
-  RenderBlock {MARQUEE} at (0,42) size 784x23 [border: (2px solid #008000)]
-    RenderText {#text} at (2,2) size 93x19
-      text run at (2,2) width 93: "This is div two."
+layer at (8,78) size 784x26 clip at (10,80) size 780x22 scrollX -780
+  RenderBlock {MARQUEE} at (0,22) size 784x26 [border: (2px solid #008000)]
+    RenderText {#text} at (2,2) size 101x22
+      text run at (2,2) width 101: "This is div one."
+layer at (8,104) size 784x26 clip at (10,106) size 780x22 scrollX -780
+  RenderBlock {MARQUEE} at (0,48) size 784x26 [border: (2px solid #008000)]
+    RenderText {#text} at (2,2) size 102x22
+      text run at (2,2) width 102: "This is div two."

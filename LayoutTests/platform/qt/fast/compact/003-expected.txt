@@ -2,14 +2,14 @@ layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
-    RenderBody {BODY} at (8,8) size 784x578
-      RenderBlock {DL} at (0,0) size 784x38
-        RenderBlock (compact) {DT} at (0,0) size 784x19
-          RenderText {#text} at (0,0) size 58x19
-            text run at (0,0) width 58: "Line One"
-        RenderBlock (compact) {DT} at (0,19) size 784x19
-          RenderText {#text} at (0,0) size 31x19
-            text run at (0,0) width 31: "Line "
-          RenderInline {SPAN} at (0,0) size 27x19
-            RenderText {#text} at (31,0) size 27x19
-              text run at (31,0) width 27: "Two"
+    RenderBody {BODY} at (8,8) size 784x576
+      RenderBlock {DL} at (0,0) size 784x44
+        RenderBlock {DT} at (0,0) size 784x22
+          RenderText {#text} at (0,0) size 63x22
+            text run at (0,0) width 63: "Line One"
+        RenderBlock {DT} at (0,22) size 784x22
+          RenderText {#text} at (0,0) size 35x22
+            text run at (0,0) width 35: "Line "
+          RenderInline {SPAN} at (0,0) size 31x22
+            RenderText {#text} at (35,0) size 31x22
+              text run at (35,0) width 31: "Two"

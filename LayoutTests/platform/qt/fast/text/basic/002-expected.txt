@@ -2,24 +2,26 @@ layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
-    RenderBody {BODY} at (8,8) size 784x578
-      RenderBlock {P} at (0,0) size 100x152
-        RenderText {#text} at (0,0) size 100x152
-          text run at (0,0) width 100: "This paragraph"
-          text run at (0,19) width 53: "contains"
-          text run at (0,38) width 100: "justified text."
-          text run at (0,57) width 100: "Within the"
-          text run at (0,76) width 74: "constrained"
-          text run at (0,95) width 100: "width, this text"
-          text run at (0,114) width 100: "should be"
-          text run at (0,133) width 52: "justified."
-      RenderBlock {P} at (0,166) size 100x152
-        RenderText {#text} at (0,0) size 100x152
-          text run at (0,0) width 100: "This paragraph"
-          text run at (0,19) width 100: "also contains"
-          text run at (0,38) width 100: "justified text."
-          text run at (0,57) width 100: "Within the"
-          text run at (0,76) width 74: "constrained"
-          text run at (0,95) width 100: "width, this text"
-          text run at (0,114) width 100: "should be"
-          text run at (0,133) width 52: "justified."
+    RenderBody {BODY} at (8,8) size 784x576
+      RenderBlock {P} at (0,0) size 100x198
+        RenderText {#text} at (0,0) size 100x198
+          text run at (0,0) width 30: "This"
+          text run at (0,22) width 73: "paragraph"
+          text run at (0,44) width 56: "contains"
+          text run at (0,66) width 100: "justified text."
+          text run at (0,88) width 100: "Within the"
+          text run at (0,110) width 79: "constrained"
+          text run at (0,132) width 100: "width, this text"
+          text run at (0,154) width 100: "should be"
+          text run at (0,176) width 58: "justified."
+      RenderBlock {P} at (0,214) size 100x198
+        RenderText {#text} at (0,0) size 100x198
+          text run at (0,0) width 30: "This"
+          text run at (0,22) width 73: "paragraph"
+          text run at (0,44) width 100: "also contains"
+          text run at (0,66) width 100: "justified text."
+          text run at (0,88) width 100: "Within the"
+          text run at (0,110) width 79: "constrained"
+          text run at (0,132) width 100: "width, this text"
+          text run at (0,154) width 100: "should be"
+          text run at (0,176) width 58: "justified."

@@ -1,23 +1,23 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x274
-  RenderBlock {HTML} at (0,0) size 800x274
-    RenderBody {BODY} at (8,14) size 784x246
-      RenderBlock {P} at (0,0) size 784x19
-        RenderText {#text} at (0,0) size 245x19
-          text run at (0,0) width 245: "These <h1>s should all be left-aligned:"
-      RenderBlock {H1} at (0,37) size 784x44 [border: (3px solid #FF0000)]
-        RenderText {#text} at (3,3) size 98x38
-          text run at (3,3) width 98: "sample"
-      RenderBlock {H1} at (0,99) size 286x44 [border: (3px solid #FF0000)]
-        RenderText {#text} at (3,3) size 98x38
-          text run at (3,3) width 98: "sample"
-      RenderBlock {P} at (0,161) size 784x19
-        RenderText {#text} at (0,0) size 282x19
-          text run at (0,0) width 282: "These <p>s should be (and are) left-aligned:"
-      RenderBlock {P} at (0,194) size 784x19
-        RenderText {#text} at (0,0) size 46x19
-          text run at (0,0) width 46: "sample"
-      RenderBlock {P} at (0,227) size 140x19
-        RenderText {#text} at (0,0) size 46x19
-          text run at (0,0) width 46: "sample"
+layer at (0,0) size 800x311
+  RenderBlock {HTML} at (0,0) size 800x311
+    RenderBody {BODY} at (8,16) size 784x279
+      RenderBlock {P} at (0,0) size 784x22
+        RenderText {#text} at (0,0) size 258x22
+          text run at (0,0) width 258: "These <h1>s should all be left-aligned:"
+      RenderBlock {H1} at (0,43) size 784x48 [border: (3px solid #FF0000)]
+        RenderText {#text} at (3,3) size 96x42
+          text run at (3,3) width 96: "sample"
+      RenderBlock {H1} at (0,112) size 326x48 [border: (3px solid #FF0000)]
+        RenderText {#text} at (3,3) size 96x42
+          text run at (3,3) width 96: "sample"
+      RenderBlock {P} at (0,181) size 784x22
+        RenderText {#text} at (0,0) size 296x22
+          text run at (0,0) width 296: "These <p>s should be (and are) left-aligned:"
+      RenderBlock {P} at (0,219) size 784x22
+        RenderText {#text} at (0,0) size 47x22
+          text run at (0,0) width 47: "sample"
+      RenderBlock {P} at (0,257) size 160x22
+        RenderText {#text} at (0,0) size 47x22
+          text run at (0,0) width 47: "sample"

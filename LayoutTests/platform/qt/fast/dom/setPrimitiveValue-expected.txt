@@ -1,14 +1,3 @@
-layer at (0,0) size 800x600
-  RenderView at (0,0) size 800x600
-layer at (0,0) size 800x600
-  RenderBlock {HTML} at (0,0) size 800x600
-    RenderBody {BODY} at (8,8) size 784x578
-      RenderBlock (anonymous) at (0,0) size 784x19
-        RenderText {#text} at (0,0) size 556x19
-          text run at (0,0) width 556: "This test checks that a primitive CSS values can be set without generating an exception."
-        RenderText {#text} at (0,0) size 0x0
-      RenderBlock {PRE} at (0,33) size 784x0
-layer at (250,100) size 70x19
-  RenderBlock (positioned) {DIV} at (250,100) size 70x19
-    RenderText {#text} at (0,0) size 70x19
-      text run at (0,0) width 70: "Hello world"
+Test CSSPrimitiveValue setters.
+setFloatValue NO_MODIFICATION_ALLOWED_ERR: DOM Exception 7
+setStringValue NO_MODIFICATION_ALLOWED_ERR: DOM Exception 7

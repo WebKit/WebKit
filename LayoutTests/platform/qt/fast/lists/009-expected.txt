@@ -2,15 +2,15 @@ layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
-    RenderBody {BODY} at (8,8) size 784x578
-      RenderBlock {DIV} at (0,0) size 784x52
-        RenderBlock {DL} at (0,0) size 784x52
-          RenderBlock {DT} at (0,0) size 784x19
-            RenderText {#text} at (0,0) size 155x19
-              text run at (0,0) width 155: "DT text is rendered here"
-          RenderBlock {DD} at (0,33) size 784x19
-            RenderBlock {UL} at (0,0) size 784x19
-              RenderListItem {LI} at (0,0) size 784x19
-                RenderListMarker at (0,5) size 12x9
-                RenderText {#text} at (19,0) size 110x19
-                  text run at (19,0) width 110: "LI text is here too"
+    RenderBody {BODY} at (8,8) size 784x576
+      RenderBlock {DIV} at (0,0) size 784x60
+        RenderBlock {DL} at (0,0) size 784x60
+          RenderBlock {DT} at (0,0) size 784x22
+            RenderText {#text} at (0,0) size 166x22
+              text run at (0,0) width 166: "DT text is rendered here"
+          RenderBlock {DD} at (0,38) size 784x22
+            RenderBlock {UL} at (0,0) size 784x22
+              RenderListItem {LI} at (0,0) size 784x22
+                RenderListMarker at (0,7) size 12x9
+                RenderText {#text} at (19,0) size 119x22
+                  text run at (19,0) width 119: "LI text is here too"

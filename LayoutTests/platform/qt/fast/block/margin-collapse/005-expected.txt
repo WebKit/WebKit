@@ -1,52 +1,52 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x492
-  RenderBlock {HTML} at (0,0) size 800x492
-    RenderBody {BODY} at (8,14) size 784x464
-      RenderBlock {P} at (0,0) size 784x19
-        RenderText {#text} at (0,0) size 491x19
-          text run at (0,0) width 491: "The following two columns should be pixel perfect identical with no red visible."
-      RenderTable {TABLE} at (0,33) size 78x398 [border: (3px solid #000000)]
-        RenderTableSection {TBODY} at (3,3) size 72x392
-          RenderTableRow {TR} at (0,0) size 72x392
-            RenderTableCell {TD} at (0,0) size 36x392 [bgcolor=#FFA500] [r=0 c=0 rs=1 cs=1]
-            RenderTableCell {TD} at (36,0) size 36x392 [bgcolor=#FFA500] [r=0 c=1 rs=1 cs=1]
-              RenderBlock {DIV} at (0,50) size 36x292 [bgcolor=#0000FF]
-                RenderBlock {DIV} at (0,0) size 36x64 [bgcolor=#FFFF00]
-                  RenderText {#text} at (0,0) size 33x64
-                    text run at (0,0) width 33: "A"
-                RenderBlock {DIV} at (0,114) size 36x64 [bgcolor=#00FF00]
-                  RenderText {#text} at (0,0) size 33x64
+layer at (0,0) size 800x512
+  RenderBlock {HTML} at (0,0) size 800x512
+    RenderBody {BODY} at (8,16) size 784x480
+      RenderBlock {P} at (0,0) size 784x22
+        RenderText {#text} at (0,0) size 531x22
+          text run at (0,0) width 531: "The following two columns should be pixel perfect identical with no red visible."
+      RenderTable {TABLE} at (0,38) size 78x404 [border: (3px solid #000000)]
+        RenderTableSection {TBODY} at (3,3) size 72x398
+          RenderTableRow {TR} at (0,0) size 72x398
+            RenderTableCell {TD} at (0,0) size 36x398 [bgcolor=#FFA500] [r=0 c=0 rs=1 cs=1]
+            RenderTableCell {TD} at (36,0) size 36x398 [bgcolor=#FFA500] [r=0 c=1 rs=1 cs=1]
+              RenderBlock {DIV} at (0,50) size 36x298 [bgcolor=#0000FF]
+                RenderBlock {DIV} at (0,0) size 36x66 [bgcolor=#FFFF00]
+                  RenderText {#text} at (0,0) size 36x66
+                    text run at (0,0) width 36: "A"
+                RenderBlock {DIV} at (0,116) size 36x66 [bgcolor=#00FF00]
+                  RenderText {#text} at (0,0) size 33x66
                     text run at (0,0) width 33: "B"
-                RenderBlock {DIV} at (0,228) size 36x64 [bgcolor=#00FFFF]
-                  RenderText {#text} at (0,0) size 36x64
+                RenderBlock {DIV} at (0,232) size 36x66 [bgcolor=#00FFFF]
+                  RenderText {#text} at (0,0) size 36x66
                     text run at (0,0) width 36: "C"
-      RenderBlock {P} at (0,445) size 784x19
-        RenderText {#text} at (0,0) size 263x19
-          text run at (0,0) width 263: "This test is meaningless if you don't pass "
-        RenderInline {A} at (0,0) size 51x19 [color=#0000EE]
-          RenderText {#text} at (263,0) size 51x19
-            text run at (263,0) width 51: "test 006"
-        RenderText {#text} at (314,0) size 4x19
-          text run at (314,0) width 4: "."
-layer at (11,100) size 36x292
-  RenderBlock (relative positioned) {DIV} at (0,50) size 36x292 [bgcolor=#0000FF]
-layer at (11,100) size 36x64
-  RenderBlock (relative positioned) {DIV} at (0,0) size 36x64 [bgcolor=#FF0000]
-layer at (11,100) size 36x64
-  RenderBlock (relative positioned) {DIV} at (0,0) size 36x64
-layer at (11,100) size 36x64
-  RenderBlock (relative positioned) {DIV} at (0,0) size 36x64 [bgcolor=#FFFF00]
-    RenderText {#text} at (0,0) size 33x64
-      text run at (0,0) width 33: "A"
-layer at (11,214) size 36x64
-  RenderBlock (relative positioned) {DIV} at (0,114) size 36x64 [bgcolor=#FF0000]
-layer at (11,214) size 36x64
-  RenderBlock (relative positioned) {DIV} at (0,0) size 36x64 [bgcolor=#00FF00]
-    RenderBlock (anonymous) at (0,0) size 36x64
-      RenderText {#text} at (0,0) size 33x64
+      RenderBlock {P} at (0,458) size 784x22
+        RenderText {#text} at (0,0) size 274x22
+          text run at (0,0) width 274: "This test is meaningless if you don't pass "
+        RenderInline {A} at (0,0) size 51x22 [color=#0000EE]
+          RenderText {#text} at (274,0) size 51x22
+            text run at (274,0) width 51: "test 006"
+        RenderText {#text} at (325,0) size 4x22
+          text run at (325,0) width 4: "."
+layer at (11,107) size 36x298
+  RenderBlock (relative positioned) {DIV} at (0,50) size 36x298 [bgcolor=#0000FF]
+layer at (11,107) size 36x66
+  RenderBlock (relative positioned) {DIV} at (0,0) size 36x66 [bgcolor=#FF0000]
+layer at (11,107) size 36x66
+  RenderBlock (relative positioned) {DIV} at (0,0) size 36x66
+layer at (11,107) size 36x66
+  RenderBlock (relative positioned) {DIV} at (0,0) size 36x66 [bgcolor=#FFFF00]
+    RenderText {#text} at (0,0) size 36x66
+      text run at (0,0) width 36: "A"
+layer at (11,223) size 36x66
+  RenderBlock (relative positioned) {DIV} at (0,116) size 36x66 [bgcolor=#FF0000]
+layer at (11,223) size 36x66
+  RenderBlock (relative positioned) {DIV} at (0,0) size 36x66 [bgcolor=#00FF00]
+    RenderBlock (anonymous) at (0,0) size 36x66
+      RenderText {#text} at (0,0) size 33x66
         text run at (0,0) width 33: "B"
-layer at (11,328) size 36x64
-  RenderBlock (relative positioned) {DIV} at (0,228) size 36x64 [bgcolor=#00FFFF]
-    RenderText {#text} at (0,0) size 36x64
+layer at (11,339) size 36x66
+  RenderBlock (relative positioned) {DIV} at (0,232) size 36x66 [bgcolor=#00FFFF]
+    RenderText {#text} at (0,0) size 36x66
       text run at (0,0) width 36: "C"

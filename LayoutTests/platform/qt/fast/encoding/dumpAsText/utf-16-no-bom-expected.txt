@@ -1,1 +1,1 @@
-Should be "CYRILLIC SMALL LETTER IO" (like e with diaeresis): \x{451}
+Should be "CYRILLIC SMALL LETTER IO" (like e with diaeresis): ё

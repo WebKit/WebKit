@@ -3,22 +3,22 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {P} at (0,0) size 784x20
-        RenderText {#text} at (0,0) size 53x19
-          text run at (0,0) width 53: "Test for "
-        RenderInline {I} at (0,0) size 596x19
-          RenderInline {A} at (0,0) size 337x19 [color=#0000EE]
-            RenderText {#text} at (53,0) size 337x19
-              text run at (53,0) width 337: "http://bugzilla.opendarwin.org/show_bug.cgi?id=6795"
-          RenderText {#text} at (390,0) size 259x19
-            text run at (390,0) width 4: " "
-            text run at (394,0) width 255: "Slow image load causes render problem"
-        RenderText {#text} at (649,0) size 4x19
-          text run at (649,0) width 4: "."
-      RenderBlock {P} at (0,34) size 784x19
-        RenderText {#text} at (0,0) size 286x19
-          text run at (0,0) width 286: "There should be only one blue square below:"
-      RenderBlock {DIV} at (0,67) size 784x140
+      RenderBlock {P} at (0,0) size 784x22
+        RenderText {#text} at (0,0) size 57x22
+          text run at (0,0) width 57: "Test for "
+        RenderInline {I} at (0,0) size 614x22
+          RenderInline {A} at (0,0) size 352x22 [color=#0000EE]
+            RenderText {#text} at (57,0) size 352x22
+              text run at (57,0) width 352: "http://bugzilla.opendarwin.org/show_bug.cgi?id=6795"
+          RenderText {#text} at (409,0) size 262x22
+            text run at (409,0) width 4: " "
+            text run at (413,0) width 258: "Slow image load causes render problem"
+        RenderText {#text} at (671,0) size 4x22
+          text run at (671,0) width 4: "."
+      RenderBlock {P} at (0,38) size 784x22
+        RenderText {#text} at (0,0) size 303x22
+          text run at (0,0) width 303: "There should be only one blue square below:"
+      RenderBlock {DIV} at (0,76) size 784x140
         RenderBlock (anonymous) at (0,0) size 784x120
           RenderBlock (floating) {DIV} at (0,0) size 100x100 [bgcolor=#87CEEB]
           RenderBlock {DIV} at (100,0) size 50x120

@@ -1,14 +1,14 @@
-layer at (0,0) size 848x600
-  RenderView at (0,0) size 800x600
-layer at (0,0) size 848x600
-  RenderBlock {HTML} at (0,0) size 800x600
-    RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {P} at (0,0) size 784x19 [color=#008000]
-        RenderText {#text} at (0,0) size 731x19
-          text run at (0,0) width 731: "This text should be green if viewport is narrower than 60em. This tests that (min-width: 60em) can evaluate to false."
-      RenderBlock {DIV} at (0,33) size 840x19 [bgcolor=#ADD8E6]
-        RenderText {#text} at (0,0) size 121x19
-          text run at (0,0) width 121: "div of length 60 em"
-      RenderBlock {DIV} at (0,52) size 800x19 [bgcolor=#ADD8E6]
-        RenderText {#text} at (0,0) size 120x19
-          text run at (0,0) width 120: "div of length 800px"
+layer at (0,0) size 968x584
+  RenderView at (0,0) size 800x584
+layer at (0,0) size 800x584
+  RenderBlock {HTML} at (0,0) size 800x584
+    RenderBody {BODY} at (8,8) size 784x568
+      RenderBlock {P} at (0,0) size 784x22 [color=#008000]
+        RenderText {#text} at (0,0) size 779x22
+          text run at (0,0) width 779: "This text should be green if viewport is narrower than 60em. This tests that (min-width: 60em) can evaluate to false."
+      RenderBlock {DIV} at (0,38) size 960x22 [bgcolor=#ADD8E6]
+        RenderText {#text} at (0,0) size 128x22
+          text run at (0,0) width 128: "div of length 60 em"
+      RenderBlock {DIV} at (0,60) size 800x22 [bgcolor=#ADD8E6]
+        RenderText {#text} at (0,0) size 129x22
+          text run at (0,0) width 129: "div of length 800px"

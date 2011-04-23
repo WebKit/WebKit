@@ -1,3 +1,12 @@
+2011-04-22  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [Qt] Unskip a bunch of passing tests and update their expected files.
+        This patch based on work of Kristóf Kosztyó <Kosztyo.Kristof@stud.u-szeged.hu>
+
+        * platform/qt/Skipped:
+        * platform/qt/fast/[...]: Added, updated.
+        * platform/qt/scrollbars/[...]: Added, updated.
+
 2011-04-22  Dirk Pranke  <dpranke@chromium.org>
 
         Unreviewed, expectations change - clean up some flakiness.

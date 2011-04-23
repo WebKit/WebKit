@@ -1,15 +1,15 @@
-layer at (0,0) size 1728x600
-  RenderView at (0,0) size 800x600
-layer at (0,0) size 1728x600
-  RenderBlock {HTML} at (0,0) size 800x600
-    RenderBody {BODY} at (8,8) size 784x578
-      RenderBlock {OL} at (0,0) size 784x19
-        RenderListItem {LI} at (40,0) size 744x19
-          RenderListMarker at (-20,0) size 16x19: "1"
-          RenderText {#text} at (0,0) size 1680x19
+layer at (0,0) size 1728x584
+  RenderView at (0,0) size 800x584
+layer at (0,0) size 800x584
+  RenderBlock {HTML} at (0,0) size 800x584
+    RenderBody {BODY} at (8,8) size 784x560
+      RenderBlock {OL} at (0,0) size 784x22
+        RenderListItem {LI} at (40,0) size 744x22
+          RenderListMarker at (-21,0) size 16x22: "1"
+          RenderText {#text} at (0,0) size 1680x22
             text run at (0,0) width 1680: "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
-      RenderBlock {OL} at (0,33) size 784x38
-        RenderListItem {LI} at (40,0) size 744x38
-          RenderListMarker at (0,0) size 16x19: "1"
-          RenderText {#text} at (0,19) size 1680x19
-            text run at (0,19) width 1680: "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+      RenderBlock {OL} at (0,38) size 784x44
+        RenderListItem {LI} at (40,0) size 744x44
+          RenderListMarker at (0,0) size 16x22: "1"
+          RenderText {#text} at (0,22) size 1680x22
+            text run at (0,22) width 1680: "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"

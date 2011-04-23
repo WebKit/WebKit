@@ -2,35 +2,35 @@ layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
-    RenderBody {BODY} at (8,8) size 784x576
-      RenderBlock (anonymous) at (0,0) size 784x19
-        RenderText {#text} at (0,0) size 565x19
-          text run at (0,0) width 565: "In this sample, the H3s should be nested. This matches Firefox, IE, and the HTML5 spec."
-      RenderBlock {H3} at (0,35) size 784x280 [border: (2px solid #FF0000)]
-        RenderBlock (anonymous) at (4,4) size 776x23
-          RenderInline {I} at (0,0) size 31x22
-            RenderText {#text} at (0,0) size 31x22
-              text run at (0,0) width 31: "One"
-        RenderBlock (anonymous) at (4,46) size 776x211
-          RenderBlock {H3} at (0,0) size 776x211 [border: (2px solid #FF0000)]
-            RenderBlock (anonymous) at (4,4) size 768x26
-              RenderInline {I} at (0,0) size 39x26
-                RenderText {#text} at (0,0) size 39x26
+    RenderBody {BODY} at (8,8) size 784x574
+      RenderBlock (anonymous) at (0,0) size 784x22
+        RenderText {#text} at (0,0) size 601x22
+          text run at (0,0) width 601: "In this sample, the H3s should be nested. This matches Firefox, IE, and the HTML5 spec."
+      RenderBlock {H3} at (0,40) size 784x312 [border: (2px solid #FF0000)]
+        RenderBlock (anonymous) at (4,4) size 776x26
+          RenderInline {I} at (0,0) size 33x26
+            RenderText {#text} at (0,0) size 33x26
+              text run at (0,0) width 33: "One"
+        RenderBlock (anonymous) at (4,51) size 776x236
+          RenderBlock {H3} at (0,0) size 776x236 [border: (2px solid #FF0000)]
+            RenderBlock (anonymous) at (4,4) size 768x30
+              RenderInline {I} at (0,0) size 39x30
+                RenderText {#text} at (0,0) size 39x30
                   text run at (0,0) width 39: "Two"
-            RenderBlock (anonymous) at (4,52) size 768x133
-              RenderBlock {H3} at (0,0) size 768x133 [border: (2px solid #FF0000)]
-                RenderBlock (anonymous) at (4,4) size 760x30
-                  RenderInline {I} at (0,0) size 59x30
-                    RenderText {#text} at (0,0) size 59x30
-                      text run at (0,0) width 59: "Three"
-                RenderBlock (anonymous) at (4,60) size 760x43
-                  RenderBlock {H3} at (0,0) size 760x43 [border: (2px solid #FF0000)]
-                    RenderInline {I} at (0,0) size 58x36
-                      RenderText {#text} at (4,4) size 58x36
-                        text run at (4,4) width 58: "Four"
-                RenderBlock (anonymous) at (4,129) size 760x0
+            RenderBlock (anonymous) at (4,59) size 768x148
+              RenderBlock {H3} at (0,0) size 768x148 [border: (2px solid #FF0000)]
+                RenderBlock (anonymous) at (4,4) size 760x35
+                  RenderInline {I} at (0,0) size 64x35
+                    RenderText {#text} at (0,0) size 64x35
+                      text run at (0,0) width 64: "Three"
+                RenderBlock (anonymous) at (4,68) size 760x47
+                  RenderBlock {H3} at (0,0) size 760x47 [border: (2px solid #FF0000)]
+                    RenderInline {I} at (0,0) size 64x39
+                      RenderText {#text} at (4,4) size 64x39
+                        text run at (4,4) width 64: "Four"
+                RenderBlock (anonymous) at (4,144) size 760x0
                   RenderInline {I} at (0,0) size 0x0
-            RenderBlock (anonymous) at (4,207) size 768x0
+            RenderBlock (anonymous) at (4,232) size 768x0
               RenderInline {I} at (0,0) size 0x0
-        RenderBlock (anonymous) at (4,276) size 776x0
+        RenderBlock (anonymous) at (4,308) size 776x0
           RenderInline {I} at (0,0) size 0x0

@@ -2,32 +2,30 @@ layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
-    RenderBody {BODY} at (8,8) size 784x578
-      RenderBlock {P} at (0,0) size 784x54
-        RenderInline {FONT} at (0,0) size 295x54
-          RenderText {#text} at (0,0) size 295x54
-            text run at (0,0) width 295: "First paragraph."
-      RenderBlock (anonymous) at (0,68) size 784x0
+    RenderBody {BODY} at (8,8) size 784x576
+      RenderBlock {P} at (0,0) size 784x64
+        RenderInline {FONT} at (0,0) size 341x64
+          RenderText {#text} at (0,0) size 341x64
+            text run at (0,0) width 341: "First paragraph."
+      RenderBlock (anonymous) at (0,80) size 784x0
         RenderInline {FONT} at (0,0) size 0x0
           RenderText {#text} at (0,0) size 0x0
-      RenderBlock (anonymous) at (0,96) size 784x54
-        RenderBlock {P} at (0,0) size 784x54
-          RenderText {#text} at (0,0) size 354x54
-            text run at (0,0) width 354: "Second paragraph."
-      RenderBlock (anonymous) at (0,192) size 784x0
+      RenderBlock (anonymous) at (0,112) size 784x64
+        RenderBlock {P} at (0,0) size 784x64
+          RenderText {#text} at (0,0) size 390x64
+            text run at (0,0) width 390: "Second paragraph."
+      RenderBlock (anonymous) at (0,224) size 784x0
         RenderInline {FONT} at (0,0) size 0x0
         RenderText {#text} at (0,0) size 0x0
         RenderInline {B} at (0,0) size 0x0
-      RenderBlock (anonymous) at (0,192) size 784x0
-      RenderBlock (anonymous) at (0,192) size 784x0
+      RenderBlock (anonymous) at (0,224) size 784x0
+      RenderBlock (anonymous) at (0,224) size 784x0
         RenderInline {B} at (0,0) size 0x0
-      RenderBlock {P} at (0,192) size 784x20
-        RenderInline {B} at (0,0) size 99x20
-          RenderInline {I} at (0,0) size 99x20
-            RenderText {#text} at (0,0) size 99x20
-              text run at (0,0) width 99: "Bold and Italic"
-        RenderInline {I} at (0,0) size 33x19
-          RenderText {#text} at (99,0) size 33x19
-            text run at (99,0) width 33: " Italic"
-      RenderBlock (anonymous) at (0,226) size 784x0
-        RenderInline {I} at (0,0) size 0x0
+      RenderBlock {P} at (0,224) size 784x22
+        RenderInline {B} at (0,0) size 97x22
+          RenderInline {I} at (0,0) size 97x22
+            RenderText {#text} at (0,0) size 97x22
+              text run at (0,0) width 97: "Bold and Italic"
+        RenderInline {I} at (0,0) size 37x22
+          RenderText {#text} at (97,0) size 37x22
+            text run at (97,0) width 37: " Italic"

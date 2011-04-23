@@ -3,102 +3,102 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock (anonymous) at (0,0) size 784x20
-        RenderInline {SPAN} at (0,0) size 90x19
-          RenderInline {B} at (0,0) size 90x20
-            RenderText {#text} at (0,0) size 90x20
-              text run at (0,0) width 90: "This markup:"
+      RenderBlock (anonymous) at (0,0) size 784x22
+        RenderInline {SPAN} at (0,0) size 94x22
+          RenderInline {B} at (0,0) size 94x22
+            RenderText {#text} at (0,0) size 94x22
+              text run at (0,0) width 94: "This markup:"
           RenderText {#text} at (0,0) size 0x0
-      RenderBlock (anonymous) at (0,34) size 784x399
-        RenderBlock {XMP} at (0,0) size 784x399
-          RenderText {#text} at (0,0) size 437x399
-            text run at (0,0) width 34: "<div>"
-            text run at (34,0) width 0: " "
-            text run at (0,19) width 437: "<table style=\"border-style:solid; border-width:2px; border-color:red;\">"
-            text run at (437,19) width 0: " "
-            text run at (0,38) width 52: "<thead>"
-            text run at (52,38) width 0: " "
-            text run at (0,57) width 25: "<tr>"
-            text run at (25,57) width 0: " "
-            text run at (0,76) width 84: "<td>one</td>"
-            text run at (84,76) width 0: " "
-            text run at (0,95) width 82: "<td>two</td>"
-            text run at (82,95) width 0: " "
-            text run at (0,114) width 93: "<td>three</td>"
-            text run at (93,114) width 0: " "
-            text run at (0,133) width 29: "</tr>"
-            text run at (29,133) width 0: " "
-            text run at (0,152) width 25: "<tr>"
-            text run at (25,152) width 0: " "
-            text run at (0,171) width 85: "<td>four</td>"
-            text run at (85,171) width 0: " "
-            text run at (0,190) width 82: "<td>five</td>"
-            text run at (82,190) width 0: " "
-            text run at (0,209) width 77: "<td>six</td>"
-            text run at (77,209) width 0: " "
-            text run at (0,228) width 29: "</tr>"
-            text run at (29,228) width 0: " "
-            text run at (0,247) width 25: "<tr>"
-            text run at (25,247) width 0: " "
-            text run at (0,266) width 98: "<td>seven</td>"
-            text run at (98,266) width 0: " "
-            text run at (0,285) width 91: "<td>eight</td>"
-            text run at (91,285) width 0: " "
-            text run at (0,304) width 87: "<td>nine</td>"
-            text run at (87,304) width 0: " "
-            text run at (0,323) width 29: "</tr>"
-            text run at (29,323) width 0: " "
-            text run at (0,342) width 44: "<tfoot>"
-            text run at (44,342) width 0: " "
-            text run at (0,361) width 51: "</table>"
-            text run at (51,361) width 0: " "
-            text run at (0,380) width 38: "</div>"
-            text run at (38,380) width 0: " "
-      RenderBlock (anonymous) at (0,447) size 784x0
+      RenderBlock (anonymous) at (0,35) size 784x357
+        RenderBlock {XMP} at (0,0) size 784x357
+          RenderText {#text} at (0,0) size 398x357
+            text run at (0,0) width 33: "<div>"
+            text run at (33,0) width 0: " "
+            text run at (0,17) width 398: "<table style=\"border-style:solid; border-width:2px; border-color:red;\">"
+            text run at (398,17) width 0: " "
+            text run at (0,34) width 48: "<thead>"
+            text run at (48,34) width 0: " "
+            text run at (0,51) width 24: "<tr>"
+            text run at (24,51) width 0: " "
+            text run at (0,68) width 79: "<td>one</td>"
+            text run at (79,68) width 0: " "
+            text run at (0,85) width 78: "<td>two</td>"
+            text run at (78,85) width 0: " "
+            text run at (0,102) width 87: "<td>three</td>"
+            text run at (87,102) width 0: " "
+            text run at (0,119) width 28: "</tr>"
+            text run at (28,119) width 0: " "
+            text run at (0,136) width 24: "<tr>"
+            text run at (24,136) width 0: " "
+            text run at (0,153) width 80: "<td>four</td>"
+            text run at (80,153) width 0: " "
+            text run at (0,170) width 79: "<td>five</td>"
+            text run at (79,170) width 0: " "
+            text run at (0,187) width 75: "<td>six</td>"
+            text run at (75,187) width 0: " "
+            text run at (0,204) width 28: "</tr>"
+            text run at (28,204) width 0: " "
+            text run at (0,221) width 24: "<tr>"
+            text run at (24,221) width 0: " "
+            text run at (0,238) width 93: "<td>seven</td>"
+            text run at (93,238) width 0: " "
+            text run at (0,255) width 86: "<td>eight</td>"
+            text run at (86,255) width 0: " "
+            text run at (0,272) width 82: "<td>nine</td>"
+            text run at (82,272) width 0: " "
+            text run at (0,289) width 28: "</tr>"
+            text run at (28,289) width 0: " "
+            text run at (0,306) width 42: "<tfoot>"
+            text run at (42,306) width 0: " "
+            text run at (0,323) width 48: "</table>"
+            text run at (48,323) width 0: " "
+            text run at (0,340) width 37: "</div>"
+            text run at (37,340) width 0: " "
+      RenderBlock (anonymous) at (0,405) size 784x0
         RenderInline {SPAN} at (0,0) size 0x0
         RenderText {#text} at (0,0) size 0x0
-      RenderBlock {DIV} at (0,447) size 784x103
-        RenderBlock (anonymous) at (0,0) size 784x20
-          RenderInline {B} at (0,0) size 199x20
-            RenderText {#text} at (0,0) size 199x20
-              text run at (0,0) width 199: "Should produce a table here:"
-          RenderInline {SPAN} at (0,0) size 0x19
-        RenderBlock (anonymous) at (0,20) size 784x83
-          RenderBlock {DIV} at (0,0) size 784x83
-            RenderTable {TABLE} at (0,0) size 126x83 [border: (2px solid #FF0000)]
-              RenderTableSection {THEAD} at (2,2) size 122x77
-                RenderTableRow {TR} at (0,2) size 122x23
-                  RenderTableCell {TD} at (2,2) size 42x23 [border: (1px solid #000000)] [r=0 c=0 rs=1 cs=1]
-                    RenderText {#text} at (2,2) size 24x19
+      RenderBlock {DIV} at (0,405) size 784x114
+        RenderBlock (anonymous) at (0,0) size 784x22
+          RenderInline {B} at (0,0) size 196x22
+            RenderText {#text} at (0,0) size 196x22
+              text run at (0,0) width 196: "Should produce a table here:"
+          RenderInline {SPAN} at (0,0) size 0x22
+        RenderBlock (anonymous) at (0,22) size 784x92
+          RenderBlock {DIV} at (0,0) size 784x92
+            RenderTable {TABLE} at (0,0) size 129x92 [border: (2px solid #FF0000)]
+              RenderTableSection {THEAD} at (2,2) size 125x86
+                RenderTableRow {TR} at (0,2) size 125x26
+                  RenderTableCell {TD} at (2,2) size 41x26 [border: (1px solid #000000)] [r=0 c=0 rs=1 cs=1]
+                    RenderText {#text} at (2,2) size 24x22
                       text run at (2,2) width 24: "one"
-                  RenderTableCell {TD} at (46,2) size 35x23 [border: (1px solid #000000)] [r=0 c=1 rs=1 cs=1]
-                    RenderText {#text} at (2,2) size 22x19
-                      text run at (2,2) width 22: "two"
-                  RenderTableCell {TD} at (83,2) size 37x23 [border: (1px solid #000000)] [r=0 c=2 rs=1 cs=1]
-                    RenderText {#text} at (2,2) size 33x19
-                      text run at (2,2) width 33: "three"
-                RenderTableRow {TR} at (0,27) size 122x23
-                  RenderTableCell {TD} at (2,27) size 42x23 [border: (1px solid #000000)] [r=1 c=0 rs=1 cs=1]
-                    RenderText {#text} at (2,2) size 25x19
-                      text run at (2,2) width 25: "four"
-                  RenderTableCell {TD} at (46,27) size 35x23 [border: (1px solid #000000)] [r=1 c=1 rs=1 cs=1]
-                    RenderText {#text} at (2,2) size 22x19
-                      text run at (2,2) width 22: "five"
-                  RenderTableCell {TD} at (83,27) size 37x23 [border: (1px solid #000000)] [r=1 c=2 rs=1 cs=1]
-                    RenderText {#text} at (2,2) size 17x19
-                      text run at (2,2) width 17: "six"
-                RenderTableRow {TR} at (0,52) size 122x23
-                  RenderTableCell {TD} at (2,52) size 42x23 [border: (1px solid #000000)] [r=2 c=0 rs=1 cs=1]
-                    RenderText {#text} at (2,2) size 38x19
-                      text run at (2,2) width 38: "seven"
-                  RenderTableCell {TD} at (46,52) size 35x23 [border: (1px solid #000000)] [r=2 c=1 rs=1 cs=1]
-                    RenderText {#text} at (2,2) size 31x19
-                      text run at (2,2) width 31: "eight"
-                  RenderTableCell {TD} at (83,52) size 37x23 [border: (1px solid #000000)] [r=2 c=2 rs=1 cs=1]
-                    RenderText {#text} at (2,2) size 27x19
-                      text run at (2,2) width 27: "nine"
-              RenderTableSection {TFOOT} at (2,79) size 122x2
-        RenderBlock (anonymous) at (0,103) size 784x0
+                  RenderTableCell {TD} at (45,2) size 37x26 [border: (1px solid #000000)] [r=0 c=1 rs=1 cs=1]
+                    RenderText {#text} at (2,2) size 25x22
+                      text run at (2,2) width 25: "two"
+                  RenderTableCell {TD} at (84,2) size 39x26 [border: (1px solid #000000)] [r=0 c=2 rs=1 cs=1]
+                    RenderText {#text} at (2,2) size 35x22
+                      text run at (2,2) width 35: "three"
+                RenderTableRow {TR} at (0,30) size 125x26
+                  RenderTableCell {TD} at (2,30) size 41x26 [border: (1px solid #000000)] [r=1 c=0 rs=1 cs=1]
+                    RenderText {#text} at (2,2) size 29x22
+                      text run at (2,2) width 29: "four"
+                  RenderTableCell {TD} at (45,30) size 37x26 [border: (1px solid #000000)] [r=1 c=1 rs=1 cs=1]
+                    RenderText {#text} at (2,2) size 24x22
+                      text run at (2,2) width 24: "five"
+                  RenderTableCell {TD} at (84,30) size 39x26 [border: (1px solid #000000)] [r=1 c=2 rs=1 cs=1]
+                    RenderText {#text} at (2,2) size 18x22
+                      text run at (2,2) width 18: "six"
+                RenderTableRow {TR} at (0,58) size 125x26
+                  RenderTableCell {TD} at (2,58) size 41x26 [border: (1px solid #000000)] [r=2 c=0 rs=1 cs=1]
+                    RenderText {#text} at (2,2) size 37x22
+                      text run at (2,2) width 37: "seven"
+                  RenderTableCell {TD} at (45,58) size 37x26 [border: (1px solid #000000)] [r=2 c=1 rs=1 cs=1]
+                    RenderText {#text} at (2,2) size 33x22
+                      text run at (2,2) width 33: "eight"
+                  RenderTableCell {TD} at (84,58) size 39x26 [border: (1px solid #000000)] [r=2 c=2 rs=1 cs=1]
+                    RenderText {#text} at (2,2) size 29x22
+                      text run at (2,2) width 29: "nine"
+              RenderTableSection {TFOOT} at (2,88) size 125x2
+        RenderBlock (anonymous) at (0,114) size 784x0
           RenderInline {SPAN} at (0,0) size 0x0
-      RenderBlock (anonymous) at (0,550) size 784x19
-        RenderBR {BR} at (0,0) size 0x19
+      RenderBlock (anonymous) at (0,519) size 784x22
+        RenderBR {BR} at (0,0) size 0x22
