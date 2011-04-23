@@ -21,6 +21,7 @@
 #define FEDropShadow_h
 
 #if ENABLE(FILTERS)
+#include "Color.h"
 #include "Filter.h"
 #include "FilterEffect.h"
 

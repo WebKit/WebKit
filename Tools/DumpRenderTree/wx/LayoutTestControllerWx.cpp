@@ -618,3 +618,14 @@ const OpaqueJSValue* LayoutTestController::shadowRoot(const OpaqueJSContext*, co
     // FIXME: Implement.
     return 0;
 }
+
+JSValueRef LayoutTestController::ensureShadowRoot(JSContextRef context, JSValueRef jsElement)
+{
+    // FIXME: Implement this.
+    return JSValueMakeUndefined(context);
+}
+
+void LayoutTestController::removeShadowRoot(JSContextRef context, JSValueRef jsElement)
+{
+    // FIXME: Implement this.
+}

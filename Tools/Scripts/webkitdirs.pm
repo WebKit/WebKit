@@ -1323,7 +1323,7 @@ sub downloadWafIfNeeded
 {
     # get / update waf if needed
     my $waf = "$sourceDir/Tools/wx/waf";
-    my $wafURL = 'http://wxwebkit.wxcommunity.com/downloads/deps/waf';
+    my $wafURL = 'http://wxwebkit.kosoftworks.com/downloads/deps/waf';
     if (!-f $waf) {
         my $result = system "curl -o $waf $wafURL";
         chmod 0755, $waf;

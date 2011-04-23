@@ -1,3 +1,13 @@
+2011-04-23  Kevin Ollivier  <kevino@theolliviers.com>
+
+        [wx] Unreviewed build fixes. Add new methods to wx LayoutTestController,
+        and update the URL for downloading waf.
+        
+        * DumpRenderTree/wx/LayoutTestControllerWx.cpp:
+        (LayoutTestController::ensureShadowRoot):
+        (LayoutTestController::removeShadowRoot):
+        * Scripts/webkitdirs.pm:
+
 2011-04-22  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r84627.
