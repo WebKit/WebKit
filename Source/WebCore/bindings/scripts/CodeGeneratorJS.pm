@@ -2126,28 +2126,13 @@ sub GenerateImplementation
         }
     }
 
-    if ($dataNode->extendedAttributes->{"CustomIsReachable"}) {
-        if ($dataNode->extendedAttributes->{"CustomIsReachable"} eq "Frame") {
-            push(@implContent, "bool JS${implType}Owner::isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown> handle, void*, SlotVisitor& visitor)\n");
-            push(@implContent, "{\n");
-            push(@implContent, "    JS${implType}* js${implType} = static_cast<JS${implType}*>(handle.get().asCell());\n");
-            push(@implContent, "    if (!js${implType}->hasCustomProperties())\n");
-            push(@implContent, "        return false;\n");
-            push(@implContent, "    Frame* frame = js${implType}->impl()->frame();\n");
-            push(@implContent, "    if (!frame)\n");
-            push(@implContent, "        return false;\n");
-            push(@implContent, "    return visitor.containsOpaqueRoot(frame);\n");
-            push(@implContent, "}\n\n");
-        }
-
-        if (!$dataNode->extendedAttributes->{"CustomFinalize"}) {
-            push(@implContent, "void JS${implType}Owner::finalize(JSC::Handle<JSC::Unknown> handle, void* context)\n");
-            push(@implContent, "{\n");
-            push(@implContent, "    JS${implType}* js${implType} = static_cast<JS${implType}*>(handle.get().asCell());\n");
-            push(@implContent, "    DOMWrapperWorld* world = static_cast<DOMWrapperWorld*>(context);\n");
-            push(@implContent, "    uncacheWrapper(world, js${implType}->impl(), js${implType});\n");
-            push(@implContent, "}\n\n");
-        }
+    if ($dataNode->extendedAttributes->{"CustomIsReachable"} && !$dataNode->extendedAttributes->{"CustomFinalize"}) {
+        push(@implContent, "void JS${implType}Owner::finalize(JSC::Handle<JSC::Unknown> handle, void* context)\n");
+        push(@implContent, "{\n");
+        push(@implContent, "    JS${implType}* js${implType} = static_cast<JS${implType}*>(handle.get().asCell());\n");
+        push(@implContent, "    DOMWrapperWorld* world = static_cast<DOMWrapperWorld*>(context);\n");
+        push(@implContent, "    uncacheWrapper(world, js${implType}->impl(), js${implType});\n");
+        push(@implContent, "}\n");
     }
 
     if ((!$hasParent or $dataNode->extendedAttributes->{"GenerateToJS"}) and !$dataNode->extendedAttributes->{"CustomToJS"}) {

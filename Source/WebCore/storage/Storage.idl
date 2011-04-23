@@ -27,7 +27,6 @@ module storage {
 
     interface [
         HasNameGetter,
-        CustomIsReachable=Frame,
         CustomDeleteProperty,
         CustomGetPropertyNames,
         DelegatingPutFunction,

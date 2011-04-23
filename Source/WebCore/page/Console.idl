@@ -28,10 +28,7 @@
 
 module window {
 
-    interface [
-        CustomIsReachable=Frame,
-        OmitConstructor
-    ] Console {
+    interface [OmitConstructor] Console {
 
         [CustomArgumentHandling] void debug();
         [CustomArgumentHandling] void error();

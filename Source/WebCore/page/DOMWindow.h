@@ -340,6 +340,22 @@ namespace WebCore {
 
         void finishedLoading();
 
+        // These functions are used for GC marking. See JSDOMWindow::visitChildren(SlotVisitor&) in JSDOMWindowCustom.cpp.
+        Screen* optionalScreen() const { return m_screen.get(); }
+        DOMSelection* optionalSelection() const { return m_selection.get(); }
+        History* optionalHistory() const { return m_history.get(); }
+        Crypto* optionalCrypto() const { return m_crypto.get(); }
+        BarInfo* optionalLocationbar() const { return m_locationbar.get(); }
+        BarInfo* optionalMenubar() const { return m_menubar.get(); }
+        BarInfo* optionalPersonalbar() const { return m_personalbar.get(); }
+        BarInfo* optionalScrollbars() const { return m_scrollbars.get(); }
+        BarInfo* optionalStatusbar() const { return m_statusbar.get(); }
+        BarInfo* optionalToolbar() const { return m_toolbar.get(); }
+        Console* optionalConsole() const { return m_console.get(); }
+        Navigator* optionalNavigator() const { return m_navigator.get(); }
+        Location* optionalLocation() const { return m_location.get(); }
+        StyleMedia* optionalMedia() const { return m_media.get(); }
+
         using RefCounted<DOMWindow>::ref;
         using RefCounted<DOMWindow>::deref;
 
@@ -361,6 +377,8 @@ namespace WebCore {
         // HTML 5 key/value storage
         Storage* sessionStorage(ExceptionCode&) const;
         Storage* localStorage(ExceptionCode&) const;
+        Storage* optionalSessionStorage() const { return m_sessionStorage.get(); }
+        Storage* optionalLocalStorage() const { return m_localStorage.get(); }
 #endif
 
 #if ENABLE(FILE_SYSTEM)
@@ -410,6 +428,7 @@ namespace WebCore {
 
 #if ENABLE(WEB_TIMING)
         Performance* performance() const;
+        Performance* optionalPerformance() const { return m_performance.get(); }
 #endif
 
     private:

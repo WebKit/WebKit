@@ -31,10 +31,7 @@ module window {
 
     // This is based off of Mozilla's Selection interface
     // https://developer.mozilla.org/En/DOM/Selection
-    interface [
-        CustomIsReachable=Frame,
-        OmitConstructor
-    ] DOMSelection {
+    interface [OmitConstructor] DOMSelection {
         readonly attribute Node anchorNode;
         readonly attribute long anchorOffset;
         readonly attribute Node focusNode;

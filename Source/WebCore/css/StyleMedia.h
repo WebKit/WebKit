@@ -40,7 +40,6 @@ public:
         return adoptRef(new StyleMedia(frame));
     }
 
-    Frame* frame() { return m_frame; }
     void disconnectFrame() { m_frame = 0; }
 
     String type() const;

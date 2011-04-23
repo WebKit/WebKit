@@ -32,6 +32,15 @@ namespace WebCore {
 
 using namespace JSC;
 
+void JSNavigator::visitChildren(SlotVisitor& visitor)
+{
+    Base::visitChildren(visitor);
+
+    JSGlobalData& globalData = *Heap::heap(this)->globalData();
+
+    markDOMObjectWrapper(visitor, globalData, impl()->optionalGeolocation());
+}
+
 #if ENABLE(MEDIA_STREAM)
 JSValue JSNavigator::webkitGetUserMedia(ExecState* exec)
 {

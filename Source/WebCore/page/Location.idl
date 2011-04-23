@@ -34,7 +34,6 @@ module window {
 #endif
         DelegatingGetOwnPropertySlot,
         DelegatingPutFunction,
-        CustomIsReachable=Frame,
         CustomDeleteProperty,
         CustomGetPropertyNames,
         CustomDefineGetter,
