@@ -161,7 +161,7 @@ class TestResultWriter(object):
         fs = self._port._filesystem
         filename = self.output_filename("-stderr.txt")
         fs.maybe_make_directory(fs.dirname(filename))
-        fs.write_text_file(filename, error)
+        fs.write_binary_file(filename, error)
 
     def write_crash_report(self, error):
         """Write crash information."""
