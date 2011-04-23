@@ -70,6 +70,7 @@ class Reviewer(Committer):
 contributors_who_are_not_committers = [
     Contributor("Anne van Kesteren", "annevankesteren+webkit@gmail.com", "annevk"),
     Contributor("Ian Hickson", "ian@hixie.ch", "hixie"),
+    Contributor("Ilya Sherman", "isherman@chromium.org", "isherman"),
 ]
 
 
