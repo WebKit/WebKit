@@ -1,5 +1,19 @@
 2011-04-22  Xiaomei Ji  <xji@chromium.org>
 
+        Reviewed by Ryosuke Niwa.
+
+        move caret by word in visual order returns wrong result when caret itself is at word boundary.
+        https://bugs.webkit.org/show_bug.cgi?id=58504.
+
+        Add test case to test moving left/right by word visually on every character position.
+        Remove a specific test added before for testing a specific code path since the test case
+        is covered now.
+
+        * editing/selection/move-by-word-visually-expected.txt:
+        * editing/selection/move-by-word-visually.html:
+
+2011-04-22  Xiaomei Ji  <xji@chromium.org>
+
         Rebaseline after r84655.
 
         * platform/chromium-linux/fast/block/positioning/rtl-fixed-positioning-expected.png: Added.

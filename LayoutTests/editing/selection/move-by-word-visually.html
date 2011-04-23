@@ -77,8 +77,9 @@ function nodeOfWordBreak(nodeAndOffset)
 
 var wordBreaks;
 
-function logWordBreak(index)
+function logWordBreak(index, first)
 {
+    var withNodeData = false;
     var wordBreak = wordBreaks[index];
     if (wordBreak.search(',') == -1)
         log(wordBreak);
@@ -87,16 +88,21 @@ function logWordBreak(index)
         var node = nodeOfWordBreak(nodeAndOffset);
 
         var differentNode = false;
-        if (index != 0) {
+        if (first == false) {
             differentNode = nodeOfWordBreak(nodeAndOffset) != nodeOfWordBreak(wordBreaks[index - 1].split(','));
         
         }
+
         if (differentNode == true)
             log("]");
-        if (index == 0 || differentNode == true)
+
+        if (first == true || differentNode == true) {
+            withNodeData = (node instanceof Text);
             log((node instanceof Text ? '"' + fold(node.data) + '"' : "<" + node.tagName + ">") + "[");
+        }
         log(nodeAndOffset[1]);
     }
+    return withNodeData;
 }
 
 function positionEqualToWordBreak(position, wordBreak)
@@ -123,7 +129,7 @@ function validateData(positions)
     if (equal == false) {
         log("    FAIL expected: [");
         for (var i = 0; i < wordBreaks.length; ++i) {
-            logWordBreak(i);
+            logWordBreak(i, i == 0);
             if (i != wordBreaks.length - 1)
                 log(", ");
         }
@@ -182,6 +188,66 @@ function moveByWord(sel, test, searchDirection, dir)
     log("\n");
 }
 
+function positionPassWordBreak(position, wordBreak, searchDirection)
+{
+    // Hack for space collapse.
+    // sel.modify("move", dir, "character") not reach multi-space.
+    var node = position.node;
+    if (node.parentNode.id == "multispace") {
+        if (searchDirection == "right" && position.offset >= wordBreak
+            || searchDirection == "left" && position.offset <= wordBreak) 
+            return true;
+    }
+    return false;
+}
+
+function moveByWordOnEveryChar(sel, test, searchDirection, dir)
+{
+    collectWordBreaks(test, searchDirection);
+    var wordBreakIndex = 1;
+    var prevOffset = sel.anchorOffset;
+    var prevNode = sel.anchorNode;
+
+    while (1) {
+        var positions = [];
+        positions.push({ node: sel.anchorNode, offset: sel.anchorOffset });
+        sel.modify("move", searchDirection, "-webkit-visual-word");
+
+        var position = { node: sel.anchorNode, offset: sel.anchorOffset };
+
+        if (wordBreakIndex >= wordBreaks.length) {
+            if (sel.anchorNode != prevNode || sel.anchorOffset != prevOffset) {
+                positions.push(position);
+                logPositions(positions);
+                log("   FAIL expected to stay in the same position\n");
+            }
+        } else if (!positionEqualToWordBreak(position, wordBreaks[wordBreakIndex])) {
+            positions.push(position);
+            logPositions(positions);
+            log("   FAIL expected ");
+            var withNodeData = logWordBreak(wordBreakIndex, true);
+            if (withNodeData)
+                log("]");
+            log("\n");
+        }
+
+        // Restore position and move by 1 character.
+        sel.setPosition(prevNode, prevOffset);
+        sel.modify("move", searchDirection, "character");
+        if (prevNode == sel.anchorNode && prevOffset == sel.anchorOffset)
+            break;
+
+        position = { node: sel.anchorNode, offset: sel.anchorOffset };
+        if (wordBreakIndex < wordBreaks.length 
+            && (positionEqualToWordBreak(position, wordBreaks[wordBreakIndex]) 
+            || positionPassWordBreak(position, wordBreaks[wordBreakIndex], searchDirection)))
+            ++wordBreakIndex;
+
+        prevNode = sel.anchorNode;
+        prevOffset = sel.anchorOffset;
+    };
+}
+
 function moveByWordForEveryPosition(sel, test, dir)
 {
     // Check ctrl-right-arrow works for every position.
@@ -190,6 +256,8 @@ function moveByWordForEveryPosition(sel, test, dir)
     if (dir == "rtl")
         direction = "left";    
     moveByWord(sel, test, direction, dir);    
+    sel.setPosition(test, 0);
+    moveByWordOnEveryChar(sel, test, direction, dir);
 
     sel.modify("move", "forward", "lineBoundary");
     // Check ctrl-left-arrow works for every position.
@@ -198,6 +266,8 @@ function moveByWordForEveryPosition(sel, test, dir)
     else
         direction = "right";    
     moveByWord(sel, test, direction, dir);    
+    sel.modify("move", "forward", "lineBoundary");
+    moveByWordOnEveryChar(sel, test, direction, dir);
 }
 
 function runMoveLeftRight(tests, unit)
@@ -215,39 +285,8 @@ function runMoveLeftRight(tests, unit)
             log("Test " + (i + 1) + ", RTL:\n");
             moveByWordForEveryPosition(sel, tests[i], "rtl");
         }
-
     }
-}
 
-function runSpecificTest(tests)
-{
-    var sel = getSelection();
-    log("\n======== Move By Word Specific Test ====\n");
-    for (var i = 0; i < tests.length; ++i) {
-        log("Test " + (i + 1) + "\n");
-        var components = tests[i].title.split(" ");
-        var startOffset = components[0];
-        var movingDirection = components[1];
-        var endingNode = components[2];
-        var endingOffset = components[3];
- 
-        log("Move " + movingDirection + " by one word\n");
-
-        var positions = [];
-        sel.setPosition(tests[i].firstChild, startOffset);
-        positions.push({ node: sel.anchorNode, offset: sel.anchorOffset });
-
-        sel.modify("move", movingDirection, "-webkit-visual-word");
-        positions.push({ node: sel.anchorNode, offset: sel.anchorOffset });
-
-        logPositions(positions);
-
-        if (sel.anchorNode.parentNode != document.getElementById(endingNode) || sel.anchorOffset != endingOffset) {
-            log("    FAIL: expected ");
-            var endingChildNode = document.getElementById(endingNode).firstChild;
-            log((endingChildNode instanceof Text ? '"' + fold(endingChildNode.data) + '"' : "<" + endingChildNode.tagName + ">") + "[" + endingOffset + "]");
-        }
-    }
     document.getElementById("testMoveByWord").style.display = "none";
 }
 
@@ -255,9 +294,6 @@ function runTest() {
     log("\n======== Move By Word ====\n");
     var tests = document.getElementsByClassName("test_move_by_word");
     runMoveLeftRight(tests, "word");
-    
-    tests = document.getElementsByClassName("specific_test");
-    runSpecificTest(tests);
 }
 
 onload = function() {
@@ -319,7 +355,7 @@ where child_node_index is optional, default is the first child of the anchor nod
 <!-- multiple spaces between word. 
      FAILED: word break between "def" and "hij" is unreachable.
 -->
-<div dir=ltr class="test_move_by_word" title="0 4 11 15|18 15 11 4 0" contenteditable>abc def    hij opq</div>
+<div id="multispace" dir=ltr class="test_move_by_word" title="0 4 11 15|18 15 11 4 0" contenteditable>abc def    hij opq</div>
 
 <!-- Inline element -->
 <div dir=ltr id="div_1" class="test_move_by_word" title="[div_1, 0][div_1, 3]|[span_1, 2][div_1, 3][div_1,0]" contenteditable>אאא <span id="span_1">בב</span></div>
@@ -329,10 +365,10 @@ where child_node_index is optional, default is the first child of the anchor nod
 <div dir=ltr id="div_3" class="test_move_by_word" title="[div_3, 0][div_3, 4][div_3, 8][span_3, 4][div_3, 1, 3][div_3, 5, 3]|[div_3, 8, 3][div_3, 5, 3][div_3, 1, 3][span_3, 4][div_3, 8][div_3, 4][div_3, 0]" contenteditable>abc def <span id="span_3">hij opq</span> rst uvw</div>
 
 <!-- FAILED -->
-<div dir=rtl id="div_4" class="test_move_by_word" title="[div_4, 8, 3][div_4, 3, 1][div_4, 7, 1][span_4, 3, 1][div_4, 0, 3][div_4, 4, 3][div_4, 0, 1]|[div_4, 0, 1][div_4, 4, 3][div_4, 0, 3][span_4, 3, 1][div_4, 7, 1][div_4, 3, 1]" contenteditable>abc def <span id="span_4">hij opq</span> rst uvw</div>
+<div dir=rtl id="div_4" class="test_move_by_word" title="[div_4, 8, 3][div_4, 3, 1][div_4, 7, 1][span_4, 3, 1][span_4, 7, 1][div_4, 4, 3][div_4, 0, 1]|[div_4, 0, 1][div_4, 4, 3][span_4, 7, 1][span_4, 3, 1][div_4, 7, 1][div_4, 3, 1]" contenteditable>abc def <span id="span_4">hij opq</span> rst uvw</div>
 
-<!-- FAILED -->
-<div id="div_5" dir=rtl class="test_move_by_word" title="[div_5, 8, 3][div_5, 3, 1][div_5, 7, 1][span_5, 3, 1][div_5, 0, 3][div_5, 4, 3][div_5, 0, 1]|[div_5, 0, 1][div_5, 4, 3][div_5, 0, 3][span_5, 3, 1][div_5, 7, 1][div_5, 3, 1]"contenteditable>abc def <span dir=ltr id="span_5">hij opq</span> rst uvw</div>
+<!-- FAILED. The render result is the same as div_4. -->
+<div id="div_5" dir=rtl class="test_move_by_word" title="[div_5, 8, 3][div_5, 3, 1][div_5, 7, 1][span_5, 3, 1][span_5, 7, 1][div_5, 4, 3][div_5, 0, 1]|[div_5, 0, 1][div_5, 4, 3][span_5, 7, 1][span_5, 3, 1][div_5, 7, 1][div_5, 3, 1]"contenteditable>abc def <span dir=ltr id="span_5">hij opq</span> rst uvw</div>
 
 <div id="div_6" dir=ltr class="test_move_by_word" title="[div_6, 0, 1][div_6, 4, 1][div_6, 8, 1][span_6, 4, 1][div_6, 1, 3][div_6, 5, 3]|[div_6, 8, 3][div_6, 5, 3][div_6, 1, 3][span_6, 4, 1][div_6, 8, 1][div_6, 4, 1][div_6, 0, 1]" contenteditable>abc def <span dir=rtl id="span_6">hij opq</span> rst uvw</div>
 
@@ -354,11 +390,10 @@ where child_node_index is optional, default is the first child of the anchor nod
 
 <div id="div_13" dir=rtl class="test_move_by_word" title="[div_13, 7, 3][div_13, 4, 3][span_13, 3, 1][div_13, 8, 1][div_13, 4, 1][div_13, 0, 1]|[div_13, 0, 1][div_13, 4, 1][div_13, 8, 1][span_13, 3, 1][div_13, 4, 3]" contenteditable>אבד דעפ <span id="span_13">abc def</span>ווש כטז</div>
 
-<div id="div_14" dir=ltr class="test_move_by_word" title="[div_14, 0, 1][div_14, 3, 1][div_14, 8, 1][span_14, 4, 1][div_14, 3, 3]|[div_14, 7, 3][div_14, 3, 3][span_14, 4, 1][div_14, 8, 1][div_14, 4, 1][div_14, 0, 1]" contenteditable>אבד דעפ <span id="span_14">abc def</span>ווש כטז</div>
+<div id="div_14" dir=ltr class="test_move_by_word" title="[div_14, 0, 1][div_14, 3, 1][div_14, 8, 1][span_14, 4, 1][div_14, 3, 3]|[div_14, 7, 3][div_14, 3, 3][span_14, 4, 1][div_14, 8, 1][div_14, 3, 1][div_14, 0, 1]" contenteditable>אבד דעפ <span id="span_14">abc def</span>ווש כטז</div>
 
 <!-- FAILED -->
-<div id="div_15" dir=rtl class="test_move_by_word" title="[div_15, 11, 3][div_15, 8, 3][div_15, 4, 3][span_15, 3, 1][span_15, 4, 1][div_15, 12, 1][div_15, 8, 1][div_15, 4, 1][div_15, 0, 1]|[div_15, 0, 1][div_15, 4, 1][div_15, 8, 1][div_15, 12, 1][span_15, 4, 1][span_15, 3, 1][div_15, 4, 3][div_15, 8, 3]"
-contenteditable>אבד opq דעפ <span dir=ltr id="span_15">abc אאא def</span>ווש rst כטז</div>
+<div id="div_15" dir=rtl class="test_move_by_word" title="[div_15, 11, 3][div_15, 8, 3][div_15, 4, 3][span_15, 3, 1][span_15, 4, 1][div_15, 12, 1][div_15, 8, 1][div_15, 4, 1][div_15, 0, 1]|[div_15, 0, 1][div_15, 4, 1][div_15, 8, 1][div_15, 12, 1][span_15, 4, 1][span_15, 3, 1][div_15, 4, 3][div_15, 8, 3]" contenteditable>אבד opq דעפ <span dir=ltr id="span_15">abc אאא def</span>ווש rst כטז</div>
 
 <!-- FAILED, and wrong printing result -->
 <div id="div_16" dir=ltr class="test_move_by_word" title="[div_16, 0, 1][div_16, 4, 1][div_16, 8, 1][span_16, 8, 1][span_16, 7, 1][div_16, 12, 1][div_16, 11, 1][div_16, 4, 3][div_16, 8, 3][div_16, 11, 3]|[div_16, 11, 3][div_16, 8, 3][div_16, 4, 3][div_16, 11, 1][div_16, 12, 1][span_16, 7, 1][span_16, 8, 1][div_16, 8, 1][div_16, 4, 1][div_16, 0, 1]" contenteditable>אבד opq דעפ <span dir=rtl id="span_16">abc אאא def</span>ווש rst כטז</div>
@@ -370,8 +405,6 @@ contenteditable>אבד opq דעפ <span dir=ltr id="span_15">abc אאא def</spa
 
 <div id="div_19" dir=ltr class="test_move_by_word" title="[div_19, 0, 1][div_19, 4, 1][span_19, 4, 1][span_19, 7, 1]|[div_19, 3, 3][span_19, 7, 1][span_19, 4, 1][div_19, 4, 1][div_19, 0, 1]" contenteditable>aaa <span id="span_19">bbb אאא </span>ווש</div>
 
-<!-- The content in title means "startOffsetInCurrentNode movingDirectionByWord endingNode endingOffsetInEndingNode" -->
-<div id="div_100" contenteditable>אאא <span id="span_100" class="specific_test" title="1 left div_100 0">בב</span></div>
 </div>
 
 <pre id="console"></pre>

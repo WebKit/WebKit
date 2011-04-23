@@ -1480,7 +1480,11 @@ static bool positionIsInsideBox(const VisiblePosition& wordBreak, const InlineBo
 
 static VisiblePosition positionBeforeNextWord(const VisiblePosition& position)
 {
-    VisiblePosition positionAfterCurrentWord = nextWordPosition(position);
+    VisiblePosition positionAfterCurrentWord;
+    if (nextWordPosition(previousWordPosition(position)) == position)
+        positionAfterCurrentWord = position;
+    else
+        positionAfterCurrentWord = nextWordPosition(position);
     VisiblePosition positionAfterNextWord = nextWordPosition(positionAfterCurrentWord);
     if (positionAfterCurrentWord == positionAfterNextWord)
         return positionAfterCurrentWord;
@@ -1489,7 +1493,11 @@ static VisiblePosition positionBeforeNextWord(const VisiblePosition& position)
 
 static VisiblePosition positionAfterPreviousWord(const VisiblePosition& position)
 {
-    VisiblePosition positionBeforeCurrentWord = previousWordPosition(position);
+    VisiblePosition positionBeforeCurrentWord;
+    if (previousWordPosition(nextWordPosition(position)) == position)
+        positionBeforeCurrentWord = position;
+    else
+        positionBeforeCurrentWord = previousWordPosition(position);
     VisiblePosition positionBeforePreviousWord = previousWordPosition(positionBeforeCurrentWord);
     if (positionBeforeCurrentWord == positionBeforePreviousWord)
         return positionBeforeCurrentWord;
