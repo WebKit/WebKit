@@ -185,6 +185,23 @@ namespace WebCore {
         virtual void derefEventTarget() = 0;
         
         void fireEventListeners(Event*, EventTargetData*, EventListenerVector&);
+
+        friend class EventListenerIterator;
+    };
+
+    class EventListenerIterator {
+    public:
+        EventListenerIterator();
+
+        // EventTarget must not be modified while an iterator is active.
+        EventListenerIterator(EventTarget*);
+
+        EventListener* nextListener();
+
+    private:
+        EventListenerMap::iterator m_mapIterator;
+        EventListenerMap::iterator m_mapEnd;
+        unsigned m_index;
     };
 
     // FIXME: These macros should be split into separate DEFINE and DECLARE

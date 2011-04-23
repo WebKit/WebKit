@@ -1,3 +1,28 @@
+2011-04-19  Vitaly Repeshko  <vitalyr@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        [V8] Use implicit references for V8 listeners on DOM nodes.
+        https://bugs.webkit.org/show_bug.cgi?id=58953
+
+        Instead of allocating an auxiliary V8 array referencing V8
+        listener objects associated with a DOM node and using an extra
+        pointer in every DOM node wrapper, we can register implicit
+        references between nodes and their listeners during GC. This also
+        makes V8 bindings more aligned with JSC bindings.
+
+        No new tests because this is a refactoring.
+
+        * bindings/scripts/CodeGeneratorV8.pm: Stopped generating the
+        listener cache internal field for DOM nodes.
+        * bindings/v8/V8AbstractEventListener.h: Exposed the lister handle
+        to the GC.
+        (WebCore::V8AbstractEventListener::existingListenerObjectPeristentHandle):
+        * bindings/v8/V8GCController.cpp: Started using implicit references.
+        (WebCore::GrouperVisitor::visitDOMWrapper):
+        * dom/EventTarget.h: Implemented an iterator over all listeners.
+        (WebCore::EventListenerIterator):
+
 2011-04-22  Jon Lee  <jonlee@apple.com>
 
         Reviewed by Beth Dakin.

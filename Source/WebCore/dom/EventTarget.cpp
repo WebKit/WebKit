@@ -35,6 +35,7 @@
 #include "Event.h"
 #include "EventException.h"
 #include <wtf/StdLibExtras.h>
+#include <wtf/Vector.h>
 
 using namespace WTF;
 
@@ -388,6 +389,32 @@ void EventTarget::removeAllEventListeners()
         d->firingEventIterators[i].iterator = 0;
         d->firingEventIterators[i].end = 0;
     }
+}
+
+EventListenerIterator::EventListenerIterator()
+    : m_index(0)
+{
+}
+
+EventListenerIterator::EventListenerIterator(EventTarget* target)
+    : m_index(0)
+{
+    EventTargetData* data = target->eventTargetData();
+    if (!data)
+        return;
+    m_mapIterator = data->eventListenerMap.begin();
+    m_mapEnd = data->eventListenerMap.end();
+}
+
+EventListener* EventListenerIterator::nextListener()
+{
+    for (; m_mapIterator != m_mapEnd; ++m_mapIterator) {
+        EventListenerVector& listeners = *m_mapIterator->second;
+        if (m_index < listeners.size())
+            return listeners[m_index++].listener.get();
+        m_index = 0;
+    }
+    return 0;
 }
 
 } // namespace WebCore

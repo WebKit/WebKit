@@ -441,10 +441,14 @@ sub GetInternalFields
     
     my @customInternalFields = ();
  
-    # We can't ask whether a parent type has a given extendedAttribute, so special-case Node, AbstractWorker and WorkerContext to include all sub-types.
+    # We can't ask whether a parent type has a given extendedAttribute, so special-case AbstractWorker and WorkerContext to include all sub-types.
+    # Event listeners on DOM nodes are explicitly supported in the GC controller.
     # FIXME: SVGElementInstance should probably have the EventTarget extended attribute, but doesn't.
-    if ($dataNode->extendedAttributes->{"EventTarget"} || IsNodeSubType($dataNode) || IsSubType($dataNode, "AbstractWorker") || IsSubType($dataNode, "WorkerContext")
-        || $name eq "SVGElementInstance") {
+    if (!IsNodeSubType($dataNode) &&
+        ($dataNode->extendedAttributes->{"EventTarget"} ||
+         IsSubType($dataNode, "AbstractWorker") ||
+         IsSubType($dataNode, "WorkerContext") ||
+         $name eq "SVGElementInstance")) {
         push(@customInternalFields, "eventListenerCacheIndex");
     }
 
@@ -996,7 +1000,9 @@ END
         if ($attribute->signature->type eq "EventListener") {
             my $implSetterFunctionName = $codeGenerator->WK_ucfirst($attrName);
             $implIncludes{"V8AbstractEventListener.h"} = 1;
-            push(@implContentDecls, "    transferHiddenDependency(info.Holder(), imp->$attrName(), value, V8${interfaceName}::eventListenerCacheIndex);\n");
+            if (!IsNodeSubType($dataNode)) {
+                push(@implContentDecls, "    transferHiddenDependency(info.Holder(), imp->$attrName(), value, V8${interfaceName}::eventListenerCacheIndex);\n");
+            }
             if ($interfaceName eq "WorkerContext" and $attribute->signature->name eq "onerror") {
                 $implIncludes{"V8EventListenerList.h"} = 1;
                 $implIncludes{"V8WorkerContextErrorHandler.h"} = 1;
@@ -1067,6 +1073,7 @@ sub GenerateNewFunctionTemplate
 sub GenerateEventListenerCallback
 {
     my $implClassName = shift;
+    my $requiresHiddenDependency = shift;
     my $functionName = shift;
     my $lookupType = ($functionName eq "add") ? "OrCreate" : "Only";
     my $passRefPtrHandling = ($functionName eq "add") ? "" : ".get()";
@@ -1079,7 +1086,13 @@ static v8::Handle<v8::Value> ${functionName}EventListenerCallback(const v8::Argu
     RefPtr<EventListener> listener = V8DOMWrapper::getEventListener(args[1], false, ListenerFind${lookupType});
     if (listener) {
         V8${implClassName}::toNative(args.Holder())->${functionName}EventListener(v8ValueToAtomicWebCoreString(args[0]), listener${passRefPtrHandling}, args[2]->BooleanValue());
+END
+    if ($requiresHiddenDependency) {
+        push(@implContentDecls, <<END);
         ${hiddenDependencyAction}HiddenDependency(args.Holder(), args[1], V8${implClassName}::eventListenerCacheIndex);
+END
+    }
+    push(@implContentDecls, <<END);
     }
     return v8::Undefined();
 }
@@ -1185,10 +1198,10 @@ sub GenerateFunctionCallback
     # but they are extremely consistent across the various classes that take event listeners,
     # so we can generate them as a "special case".
     if ($name eq "addEventListener") {
-        GenerateEventListenerCallback($implClassName, "add");
+        GenerateEventListenerCallback($implClassName, !IsNodeSubType($dataNode), "add");
         return;
     } elsif ($name eq "removeEventListener") {
-        GenerateEventListenerCallback($implClassName, "remove");
+        GenerateEventListenerCallback($implClassName, !IsNodeSubType($dataNode), "remove");
         return;
     }
 

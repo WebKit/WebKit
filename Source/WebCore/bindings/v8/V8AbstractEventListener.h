@@ -88,6 +88,14 @@ namespace WebCore {
             return v8::Local<v8::Object>::New(m_listener);
         }
 
+        // Provides access to the underlying handle for GC. Returned
+        // value might be a weak handle and so not guaranteed to stay
+        // alive.
+        v8::Persistent<v8::Object> existingListenerObjectPersistentHandle()
+        {
+            return m_listener;
+        }
+
         bool hasExistingListenerObject()
         {
             return !m_listener.IsEmpty();

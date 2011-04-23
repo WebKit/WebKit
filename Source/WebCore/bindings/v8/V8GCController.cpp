@@ -326,6 +326,21 @@ class GrouperVisitor : public DOMWrapperMap<Node>::Visitor, public DOMWrapperMap
 public:
     void visitDOMWrapper(DOMDataStore* store, Node* node, v8::Persistent<v8::Object> wrapper)
     {
+        if (node->hasEventListeners()) {
+            Vector<v8::Persistent<v8::Value> > listeners;
+            EventListenerIterator iterator(node);
+            while (EventListener* listener = iterator.nextListener()) {
+                if (listener->type() != EventListener::JSEventListenerType)
+                    continue;
+                V8AbstractEventListener* v8listener = static_cast<V8AbstractEventListener*>(listener);
+                if (!v8listener->hasExistingListenerObject())
+                    continue;
+                listeners.append(v8listener->existingListenerObjectPersistentHandle());
+            }
+            if (!listeners.isEmpty())
+                v8::V8::AddImplicitReferences(wrapper, listeners.data(), listeners.size());
+        }
+
         GroupId groupId = calculateGroupId(node);
         if (!groupId)
             return;
