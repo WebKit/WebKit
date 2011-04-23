@@ -126,7 +126,7 @@ namespace WTF {
     public:
         HashTableConstIterator()
         {
-            addIterator(0, this);
+            addIterator(static_cast<const HashTableType*>(0), this);
         }
 
         // default copy, assignment and destructor are OK if CHECK_HASHTABLE_ITERATORS is 0

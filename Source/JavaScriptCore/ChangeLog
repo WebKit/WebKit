@@ -1,3 +1,15 @@
+2011-04-22  Vitaly Repeshko  <vitalyr@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        Add missing default constructors for HashMap iterator specializations.
+        https://bugs.webkit.org/show_bug.cgi?id=59250
+
+        * wtf/HashIterators.h:
+        * wtf/HashTable.h:
+        (WTF::HashTableConstIterator::HashTableConstIterator): Added cast
+        to help compiler find the function template.
+
 2011-04-22  Gavin Barraclough  <barraclough@apple.com>
 
         Reviewed by Sam Weinig.

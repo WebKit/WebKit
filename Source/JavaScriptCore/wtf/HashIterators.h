@@ -40,6 +40,7 @@ namespace WTF {
         typedef HashTableConstKeysIterator<HashTableType, KeyType, MappedType> Keys;
         typedef HashTableConstValuesIterator<HashTableType, KeyType, MappedType> Values;
 
+        HashTableConstIteratorAdapter() {}
         HashTableConstIteratorAdapter(const typename HashTableType::const_iterator& impl) : m_impl(impl) {}
 
         const ValueType* get() const { return (const ValueType*)m_impl.get(); }
@@ -62,6 +63,7 @@ namespace WTF {
         typedef HashTableKeysIterator<HashTableType, KeyType, MappedType> Keys;
         typedef HashTableValuesIterator<HashTableType, KeyType, MappedType> Values;
 
+        HashTableIteratorAdapter() {}
         HashTableIteratorAdapter(const typename HashTableType::iterator& impl) : m_impl(impl) {}
 
         ValueType* get() const { return (ValueType*)m_impl.get(); }
