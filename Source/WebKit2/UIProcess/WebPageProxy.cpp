@@ -2066,6 +2066,9 @@ void WebPageProxy::runOpenPanel(uint64_t frameID, const WebOpenPanelParameters::
 
     m_openPanelResultListener = WebOpenPanelResultListenerProxy::create(this);
 
+    // Since runOpenPanel() can spin a nested run loop we need to turn off the responsiveness timer.
+    process()->responsivenessTimer()->stop();
+
     if (!m_uiClient.runOpenPanel(this, frame, data, m_openPanelResultListener.get()))
         didCancelForOpenPanel();
 }

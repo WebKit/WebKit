@@ -1,3 +1,15 @@
+2011-04-22  Brian Weinstein  <bweinstein@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        WebKit2: Stop responsiveness timer before calling runOpenPanel
+        https://bugs.webkit.org/show_bug.cgi?id=59268
+        <rdar://problem/9327944>
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::runOpenPanel): Stop the timer before calling WebUIClient::runOpenPanel,
+            because runOpenPanel can spin a nested run loop.
+
 2011-04-22  Chang Shu  <cshu@webkit.org>
 
         Reviewed by Kenneth Rohde Christiansen.
