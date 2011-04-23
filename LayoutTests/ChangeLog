@@ -1,3 +1,12 @@
+2011-04-22  Ojan Vafai  <ojan@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        don't white-space:nowrap the results iframes
+        https://bugs.webkit.org/show_bug.cgi?id=59259
+
+        * fast/harness/results.html:
+
 2011-04-22  Dirk Pranke  <dpranke@chromium.org>
 
         Unreviewed, expectations change. Roll in deps bots failures.
