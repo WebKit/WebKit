@@ -1,3 +1,27 @@
+2011-04-22  Dirk Pranke  <dpranke@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        rebaseline-chromium-webkit-tests: clean up output
+        https://bugs.webkit.org/show_bug.cgi?id=59240
+
+        This change dramatically changes the output the tool provides
+        by default. The previous output (more or less) is still there
+        in -v / verbose / debug mode, but the default output is
+        way terser and more readable. It mostly says which files are
+        updated, which are duplicates, and which are not found in an
+        archive. Feedback desired :).
+
+        This change also adds a scm.exists() method to the SCM object
+        so that we can cleanly figure out what we're doing while
+        rebaselining.
+
+        * Scripts/webkitpy/layout_tests/rebaseline_chromium_webkit_tests.py:
+        * Scripts/webkitpy/layout_tests/rebaseline_chromium_webkit_tests_unittest.py:
+        * Scripts/webkitpy/common/system/filesystem_mock.py:
+        * Scripts/webkitpy/common/checkout/scm.py:
+        * Scripts/webkitpy/common/checkout/scm_unittest.py:
+
 2011-04-22  Ilya Sherman  <isherman@chromium.org>
 
         Reviewed by Alexey Proskuryakov.

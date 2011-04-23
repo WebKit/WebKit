@@ -202,6 +202,7 @@ class TestRebaseliner(unittest.TestCase):
         url_fetcher = test_url_fetcher(filesystem)
         zip_factory = test_zip_factory()
         mock_scm = mocktool.MockSCM(filesystem)
+        filesystem.maybe_make_directory(mock_scm.checkout_root)
         rebaseliner = rebaseline_chromium_webkit_tests.Rebaseliner(host_port_obj,
             target_port_obj, platform, options, url_fetcher, zip_factory, mock_scm)
         return rebaseliner, filesystem
@@ -336,6 +337,7 @@ class TestRealMain(unittest.TestCase):
         url_fetcher = test_url_fetcher(filesystem)
         zip_factory = test_zip_factory()
         mock_scm = mocktool.MockSCM()
+        filesystem.maybe_make_directory(mock_scm.checkout_root)
         oc = outputcapture.OutputCapture()
         oc.capture_output()
         res = rebaseline_chromium_webkit_tests.real_main(options, options,

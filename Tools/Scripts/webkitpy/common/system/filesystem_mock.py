@@ -125,7 +125,7 @@ class MockFileSystem(object):
 
         return files
 
-    def getcwd(self, path):
+    def getcwd(self):
         return self.cwd
 
     def glob(self, path):

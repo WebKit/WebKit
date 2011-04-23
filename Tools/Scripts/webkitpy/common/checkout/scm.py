@@ -250,6 +250,9 @@ class SCM:
     def delete(self, path):
         self._subclass_must_implement()
 
+    def exists(self, path):
+        self._subclass_must_implement()
+
     def changed_files(self, git_commit=None):
         self._subclass_must_implement()
 
@@ -450,6 +453,9 @@ class SVN(SCM, SVNRepository):
         parent, base = os.path.split(os.path.abspath(path))
         return self.run(["svn", "delete", "--force", base], cwd=parent)
 
+    def exists(self, path):
+        return not self.run(["svn", "info", path], return_exit_code=True, decode_output=False)
+
     def changed_files(self, git_commit=None):
         status_command = ["svn", "status"]
         status_command.extend(self._patch_directories)
@@ -611,6 +617,11 @@ class SVN(SCM, SVNRepository):
 
 # All git-specific logic should go here.
 class Git(SCM, SVNRepository):
+
+    # Git doesn't appear to document error codes, but seems to return
+    # 1 or 128, mostly.
+    ERROR_FILE_IS_MISSING = 128
+
     def __init__(self, cwd, executive=None):
         SCM.__init__(self, cwd, executive)
         self._check_git_architecture()
@@ -711,6 +722,10 @@ class Git(SCM, SVNRepository):
 
     def delete(self, path):
         return self.run(["git", "rm", "-f", path])
+
+    def exists(self, path):
+        return_code = self.run(["git", "show", "HEAD:%s" % path], return_exit_code=True, decode_output=False)
+        return return_code != self.ERROR_FILE_IS_MISSING
 
     def merge_base(self, git_commit):
         if git_commit:

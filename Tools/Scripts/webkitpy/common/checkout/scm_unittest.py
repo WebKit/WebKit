@@ -176,7 +176,11 @@ class SVNTestRepository:
 
         # Now that we've deleted the checkout paths, cwddir may be invalid
         # Change back to a valid directory so that later calls to os.getcwd() do not fail.
-        os.chdir(detect_scm_system(os.path.dirname(__file__)).checkout_root)
+        if os.path.isabs(__file__):
+            path = __file__
+        else:
+            path = sys.path[0]
+        os.chdir(detect_scm_system(path).checkout_root)
 
 
 class StandaloneFunctionsTest(unittest.TestCase):
@@ -457,6 +461,18 @@ OcmYex&reD$;sO8*F9L)B
         write_into_file_at_path("added_dir/added_file", "new stuff")
         self.scm.add("added_dir/added_file")
         self.assertTrue("added_dir/added_file" in self.scm.added_files())
+
+    def _shared_test_exists(self, scm, commit_function):
+        os.chdir(scm.checkout_root)
+        self.assertFalse(scm.exists('foo.txt'))
+        write_into_file_at_path('foo.txt', 'some stuff')
+        self.assertFalse(scm.exists('foo.txt'))
+        scm.add('foo.txt')
+        commit_function('adding foo')
+        self.assertTrue(scm.exists('foo.txt'))
+        scm.delete('foo.txt')
+        commit_function('deleting foo')
+        self.assertFalse(scm.exists('foo.txt'))
 
 
 class SVNTest(SCMTest):
@@ -830,6 +846,8 @@ END
         self.assertFalse(os.path.exists(svn_root_lock_path))
         run_command(['svn', 'update'])  # Should succeed and not raise.
 
+    def test_exists(self):
+        self._shared_test_exists(self.scm, self.scm.commit_with_message)
 
 class GitTest(SCMTest):
 
@@ -877,6 +895,10 @@ class GitTest(SCMTest):
 
         patch = scm.create_patch()
         self.assertFalse(re.search(r'Subversion Revision:', patch))
+
+    def test_exists(self):
+        scm = self.untracking_scm
+        self._shared_test_exists(scm, scm.commit_locally_with_message)
 
 
 class GitSVNTest(SCMTest):
@@ -1397,6 +1419,10 @@ class GitSVNTest(SCMTest):
         cached_diff = self.scm.diff_for_file('test_file_commit1')
         self.assertTrue("+Updated" in cached_diff)
         self.assertTrue("-more test content" in cached_diff)
+
+    def test_exists(self):
+        scm = detect_scm_system(self.git_checkout_path)
+        self._shared_test_exists(scm, scm.commit_locally_with_message)
 
 
 # We need to split off more of these SCM tests to use mocks instead of the filesystem.
