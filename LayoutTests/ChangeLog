@@ -1,3 +1,12 @@
+2011-04-22  Xiaomei Ji  <xji@chromium.org>
+
+        [QT] move-by-word-visually.html failed in QT.
+        https://bugs.webkit.org/show_bug.cgi?id=59265
+ 
+        Temporarily skip the test in QT while investigating.
+
+        * platform/qt/Skipped:
+
 2011-04-22  Alejandro G. Castro  <alex@igalia.com>
 
         Undo rebaseline done in r84677 for this test, it was a flaky

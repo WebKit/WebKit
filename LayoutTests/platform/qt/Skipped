@@ -3507,3 +3507,6 @@ fast/text/zero-width-characters-complex-script.html
 # https://bugs.webkit.org/show_bug.cgi?id=59187
 fast/url/idna2003.html
 fast/url/idna2008.html
+
+# https://bugs.webkit.org/show_bug.cgi?id=59265
+editing/selection/move-by-word-visually.html
