@@ -1,5 +1,11 @@
 2011-04-22  Csaba Osztrogonác  <ossy@webkit.org>
 
+        [Qt][WK2] Add some failing tests to the Skipped list because of a WTR sideeffect bug.
+
+        * platform/qt-wk2/Skipped:
+
+2011-04-22  Csaba Osztrogonác  <ossy@webkit.org>
+
         [Qt] Unskip a bunch of passing tests and update their expected files.
         This patch based on work of Kristóf Kosztyó <Kosztyo.Kristof@stud.u-szeged.hu>
 
