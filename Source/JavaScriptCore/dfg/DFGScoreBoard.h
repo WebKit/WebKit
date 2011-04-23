@@ -53,16 +53,12 @@ public:
     {
         // Every VirtualRegister that was allocated should now be free.
         ASSERT(m_used.size() == m_free.size());
-        // For every entry in the free list, the use count of the virtual register should be zero.
-        // * By using the virtual register numbers from m_free, we are checking that all values
-        //   in m_free are < m_used.size(), and correspond to an allocated VirtualRegsiter.
-        // * By setting m_used to a non-zero value after checking it, we are checking that all
-        //   entries in m_free are unique (otherwise the second test of m_used will fail).
-        for (size_t i = 0; i < m_free.size(); ++i) {
-            uint32_t virtualRegister = m_free[i];
-            ASSERT(!m_used[virtualRegister]);
-            m_used[virtualRegister] = 1;
-        }
+        // Every entry in the used list should be available in the free list.
+        for (size_t i = 0; i < m_used.size(); ++i)
+            ASSERT(m_free.contains(i))
+        // For every entry in the used list the use count of the virtual register should be zero.
+        for (size_t i = 0; i < m_free.size(); ++i)
+            ASSERT(!m_used[i]);
     }
 #endif
 
@@ -108,6 +104,28 @@ public:
         // m_used contains an entry for every allocated VirtualRegister.
         return m_used.size();
     }
+
+#ifndef NDEBUG
+    void dump()
+    {
+        printf("    USED: [ ");
+        for (unsigned i = 0; i < m_used.size(); ++i) {
+            if (!m_free.contains(i))
+                printf("%d:%d ", m_firstTemporary + i, m_used[i]);
+        }
+        printf("]\n");
+
+        printf("    FREE: [ ");
+        for (unsigned i = 0; i < m_used.size(); ++i) {
+            if (m_free.contains(i)) {
+                ASSERT(!m_used[i]);
+                printf("%d ", m_firstTemporary + i);
+            }
+        }
+        printf("]\n");
+    }
+
+#endif
 
 private:
     // The graph, so we can get refCounts for nodes, to determine when values are dead.

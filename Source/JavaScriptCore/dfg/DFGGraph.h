@@ -94,14 +94,6 @@ public:
         if (node.ref())
             refChildren(nodeIndex);
     }
-    void deref(NodeIndex nodeIndex)
-    {
-        Node& node = at(nodeIndex);
-        ASSERT(node.refCount());
-        // If the value (after decrementing) becomes refCount zero then we need to deref its children.
-        if (node.deref())
-            derefChildren(nodeIndex);
-    }
 
 #ifndef NDEBUG
     // CodeBlock is optional, but may allow additional information to be dumped (e.g. Identifier names).
@@ -127,7 +119,6 @@ public:
 private:
     // When a node's refCount goes from 0 to 1, it must (logically) recursively ref all of its children, and vice versa.
     void refChildren(NodeIndex);
-    void derefChildren(NodeIndex);
 };
 
 } } // namespace JSC::DFG

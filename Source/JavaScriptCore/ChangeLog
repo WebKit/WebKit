@@ -1,3 +1,39 @@
+2011-04-22  Gavin Barraclough  <barraclough@apple.com>
+
+        Reviewed by Sam Weinig & Geoff Garen.
+
+        Bug 59266 - DFG JIT - Add SSA style DCE
+
+        This works by making GetLocal nodes reference SetLocal nodes from prior blocks,
+        via intermediate Phi nodes. Whenever we add a GetLocal to the graph, also add a
+        matching child Phi, and add the Phi to a work queue to add references to prior
+        definitions once we have the full CFG & can determine predecessors. This process
+        is iterative, inserting new phis into predecessors as necessary.
+
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::getVariable):
+        (JSC::DFG::ByteCodeParser::setVariable):
+        (JSC::DFG::ByteCodeParser::getArgument):
+        (JSC::DFG::ByteCodeParser::setArgument):
+        (JSC::DFG::ByteCodeParser::parseBlock):
+        (JSC::DFG::ByteCodeParser::processWorkQueue):
+        (JSC::DFG::ByteCodeParser::allocateVirtualRegisters):
+        (JSC::DFG::ByteCodeParser::parse):
+        * dfg/DFGGraph.cpp:
+        (JSC::DFG::Graph::dump):
+        (JSC::DFG::Graph::refChildren):
+        * dfg/DFGGraph.h:
+        (JSC::DFG::Graph::ref):
+        * dfg/DFGNode.h:
+        (JSC::DFG::Node::ref):
+        * dfg/DFGNonSpeculativeJIT.cpp:
+        (JSC::DFG::NonSpeculativeJIT::compile):
+        * dfg/DFGScoreBoard.h:
+        (JSC::DFG::ScoreBoard::~ScoreBoard):
+        (JSC::DFG::ScoreBoard::dump):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+
 2011-04-22  Vitaly Repeshko  <vitalyr@chromium.org>
 
         Reviewed by Adam Barth.

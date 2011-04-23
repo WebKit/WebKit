@@ -88,7 +88,8 @@ typedef uint32_t ExceptionInfo;
     \
     /* Nodes for local variable access. */\
     macro(GetLocal, NodeResultJS) \
-    macro(SetLocal, NodeMustGenerate) \
+    macro(SetLocal, 0) \
+    macro(Phi, 0) \
     \
     /* Nodes for bitwise operations. */\
     macro(BitAnd, NodeResultInt32) \
@@ -352,6 +353,11 @@ struct Node {
         m_virtualRegister = virtualRegister;
     }
 
+    bool shouldGenerate()
+    {
+        return m_refCount && op != Phi;
+    }
+
     unsigned refCount()
     {
         return m_refCount;
@@ -361,10 +367,6 @@ struct Node {
     bool ref()
     {
         return !m_refCount++;
-    }
-    bool deref()
-    {
-        return !--m_refCount;
     }
 
     unsigned adjustedRefCount()

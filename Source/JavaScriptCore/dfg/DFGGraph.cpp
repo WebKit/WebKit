@@ -134,11 +134,14 @@ void Graph::dump(CodeBlock* codeBlock)
         for (size_t i = m_blocks[b]->begin; i < m_blocks[b]->end; ++i)
             dump(i, codeBlock);
     }
+    printf("Phi Nodes:\n");
+    for (size_t i = m_blocks.last()->end; i < size(); ++i)
+        dump(i, codeBlock);
 }
 
 #endif
 
-// FIXME: Convert these methods to be iterative, not recursive.
+// FIXME: Convert this method to be iterative, not recursive.
 void Graph::refChildren(NodeIndex op)
 {
     Node& node = at(op);
@@ -158,26 +161,6 @@ void Graph::refChildren(NodeIndex op)
     if (node.child3 == NoNode)
         return;
     ref(node.child3);
-}
-void Graph::derefChildren(NodeIndex op)
-{
-    Node& node = at(op);
-
-    if (node.child1 == NoNode) {
-        ASSERT(node.child2 == NoNode && node.child3 == NoNode);
-        return;
-    }
-    deref(node.child1);
-
-    if (node.child2 == NoNode) {
-        ASSERT(node.child3 == NoNode);
-        return;
-    }
-    deref(node.child2);
-
-    if (node.child3 == NoNode)
-        return;
-    deref(node.child3);
 }
 
 } } // namespace JSC::DFG

@@ -72,6 +72,13 @@ private:
     bool parseBlock(unsigned limit);
     // Setup predecessor links in the graph's BasicBlocks.
     void setupPredecessors();
+    // Link GetLocal & SetLocal nodes, to ensure live values are generated.
+    enum PhiStackType {
+        VariablePhiStack,
+        ArgumentPhiStack
+    };
+    template<PhiStackType stackType>
+    void processPhiStack();
     // Add spill locations to nodes.
     void allocateVirtualRegisters();
 
@@ -131,16 +138,15 @@ private:
             return node.child1;
         }
 
-        nodeIndex = addToGraph(GetLocal, OpInfo(operand));
+        NodeIndex phi = addToGraph(Phi);
+        m_variablePhiStack.append(PhiStackEntry(m_currentBlock, phi, operand));
+        nodeIndex = addToGraph(GetLocal, OpInfo(operand), phi);
         m_currentBlock->m_variables[operand].value = nodeIndex;
         return nodeIndex;
     }
     void setVariable(unsigned operand, NodeIndex value)
     {
-        NodeIndex priorValue = m_currentBlock->m_variables[operand].value;
         m_currentBlock->m_variables[operand].value = addToGraph(SetLocal, OpInfo(operand), value);
-        if (priorValue != NoNode && m_graph[priorValue].op == SetLocal)
-            m_graph.deref(priorValue);
     }
 
     // Used in implementing get/set, above, where the operand is a temporary.
@@ -175,7 +181,9 @@ private:
             return node.child1;
         }
 
-        nodeIndex = addToGraph(GetLocal, OpInfo(operand));
+        NodeIndex phi = addToGraph(Phi);
+        m_argumentPhiStack.append(PhiStackEntry(m_currentBlock, phi, argument));
+        nodeIndex = addToGraph(GetLocal, OpInfo(operand), phi);
         m_currentBlock->m_arguments[argument].value = nodeIndex;
         return nodeIndex;
     }
@@ -184,10 +192,7 @@ private:
         unsigned argument = operand + m_codeBlock->m_numParameters + RegisterFile::CallFrameHeaderSize;
         ASSERT(argument < m_numArguments);
 
-        NodeIndex priorValue = m_currentBlock->m_arguments[argument].value;
         m_currentBlock->m_arguments[argument].value = addToGraph(SetLocal, OpInfo(operand), value);
-        if (priorValue != NoNode && m_graph[priorValue].op == SetLocal)
-            m_graph.deref(priorValue);
     }
 
     // Get an operand, and perform a ToInt32/ToNumber conversion on it.
@@ -501,11 +506,26 @@ private:
 
     // Track the index of the node whose result is the current value for every
     // register value in the bytecode - argument, local, and temporary.
-    Vector <ConstantRecord, 32> m_constants;
-    Vector <NodeIndex, 32> m_temporaries;
+    Vector<ConstantRecord, 16> m_constants;
+    Vector<NodeIndex, 16> m_temporaries;
 
     unsigned m_numArguments;
     unsigned m_numVariables;
+
+    struct PhiStackEntry {
+        PhiStackEntry(BasicBlock* block, NodeIndex phi, unsigned varNo)
+            : m_block(block)
+            , m_phi(phi)
+            , m_varNo(varNo)
+        {
+        }
+
+        BasicBlock* m_block;
+        NodeIndex m_phi;
+        unsigned m_varNo;
+    };
+    Vector<PhiStackEntry, 16> m_argumentPhiStack;
+    Vector<PhiStackEntry, 16> m_variablePhiStack;
 
     // These maps are used to unique ToNumber and ToInt32 operations.
     typedef HashMap<NodeIndex, NodeIndex> UnaryOpMap;
@@ -973,21 +993,71 @@ bool ByteCodeParser::parseBlock(unsigned limit)
 
         case op_ret: {
             addToGraph(Return, get(currentInstruction[1].u.operand));
-
-            // FIXME: throw away terminal definitions of variables;
-            // should not be necessary once we have proper DCE!
-            for (unsigned i = 0; i < m_currentBlock->m_variables.size(); ++i) {
-                NodeIndex priorValue = m_currentBlock->m_variables[i].value;
-                if (priorValue != NoNode && m_graph[priorValue].op == SetLocal)
-                    m_graph.deref(priorValue);
-            }
-
             LAST_OPCODE(op_ret);
         }
 
         default:
             // Parse failed!
             return false;
+        }
+    }
+}
+
+template<ByteCodeParser::PhiStackType stackType>
+void ByteCodeParser::processPhiStack()
+{
+    Vector<PhiStackEntry, 16>& phiStack = (stackType == ArgumentPhiStack) ? m_argumentPhiStack : m_variablePhiStack;
+
+    while (!phiStack.isEmpty()) {
+        PhiStackEntry entry = phiStack.last();
+        phiStack.removeLast();
+        
+        Node& phiNode = m_graph[entry.m_phi];
+        PredecessorList& predecessors = entry.m_block->m_predecessors;
+        unsigned varNo = entry.m_varNo;
+
+        for (size_t i = 0; i < predecessors.size(); ++i) {
+            BasicBlock* predecessorBlock = m_graph.m_blocks[predecessors[i]].get();
+
+            VariableRecord& var = (stackType == ArgumentPhiStack) ? predecessorBlock->m_arguments[varNo] : predecessorBlock->m_variables[varNo];
+
+            NodeIndex valueInPredecessor = var.value;
+            if (valueInPredecessor == NoNode) {
+                valueInPredecessor = addToGraph(Phi);
+                var.value = valueInPredecessor;
+                phiStack.append(PhiStackEntry(predecessorBlock, valueInPredecessor, varNo));
+            } else if (m_graph[valueInPredecessor].op == GetLocal)
+                valueInPredecessor = m_graph[valueInPredecessor].child1;
+            ASSERT(m_graph[valueInPredecessor].op == SetLocal || m_graph[valueInPredecessor].op == Phi);
+
+            if (phiNode.refCount())
+                m_graph.ref(valueInPredecessor);
+
+            if (phiNode.child1 == NoNode) {
+                phiNode.child1 = valueInPredecessor;
+                continue;
+            }
+            if (phiNode.child2 == NoNode) {
+                phiNode.child2 = valueInPredecessor;
+                continue;
+            }
+            if (phiNode.child3 == NoNode) {
+                phiNode.child3 = valueInPredecessor;
+                continue;
+            }
+
+            NodeIndex newPhi = addToGraph(Phi);
+            Node& newPhiNode = m_graph[newPhi];
+            if (phiNode.refCount())
+                m_graph.ref(newPhi);
+
+            newPhiNode.child1 = phiNode.child1;
+            newPhiNode.child2 = phiNode.child2;
+            newPhiNode.child3 = phiNode.child3;
+
+            phiNode.child1 = newPhi;
+            phiNode.child1 = valueInPredecessor;
+            phiNode.child3 = NoNode;
         }
     }
 }
@@ -1012,20 +1082,24 @@ void ByteCodeParser::setupPredecessors()
 void ByteCodeParser::allocateVirtualRegisters()
 {
     ScoreBoard scoreBoard(m_graph, m_numVariables);
-    size_t size = m_graph.size();
-    for (size_t i = 0; i < size; ++i) {
+    unsigned sizeExcludingPhiNodes = m_graph.m_blocks.last()->end;
+    for (size_t i = 0; i < sizeExcludingPhiNodes; ++i) {
         Node& node = m_graph[i];
-        if (!node.refCount())
+        if (!node.shouldGenerate())
             continue;
 
-        // First, call use on all of the current node's children, then
-        // allocate a VirtualRegister for this node. We do so in this
-        // order so that if a child is on its last use, and a
-        // VirtualRegister is freed, then it may be reused for node.
-        scoreBoard.use(node.child1);
-        scoreBoard.use(node.child2);
-        scoreBoard.use(node.child3);
-        
+        // GetLocal nodes are effectively phi nodes in the graph, referencing
+        // results from prior blocks.
+        if (node.op != GetLocal) {
+            // First, call use on all of the current node's children, then
+            // allocate a VirtualRegister for this node. We do so in this
+            // order so that if a child is on its last use, and a
+            // VirtualRegister is freed, then it may be reused for node.
+            scoreBoard.use(node.child1);
+            scoreBoard.use(node.child2);
+            scoreBoard.use(node.child3);
+        }
+
         if (!node.hasResult())
             continue;
 
@@ -1072,6 +1146,8 @@ bool ByteCodeParser::parse()
     ASSERT(m_currentIndex == m_codeBlock->instructions().size());
 
     setupPredecessors();
+    processPhiStack<VariablePhiStack>();
+    processPhiStack<ArgumentPhiStack>();
 
     allocateVirtualRegisters();
 

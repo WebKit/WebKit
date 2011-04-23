@@ -286,7 +286,11 @@ void SpeculativeJIT::compile(Node& node)
     case GetLocal: {
         GPRTemporary result(this);
         m_jit.loadPtr(JITCompiler::addressFor(node.local()), result.registerID());
-        jsValueResult(result.gpr(), m_compileIndex);
+
+        // jsValueResult, but don't useChildren!
+        VirtualRegister virtualRegister = node.virtualRegister();
+        m_gprs.retain(result.gpr(), virtualRegister, SpillOrderJS);
+        m_generationInfo[virtualRegister].initJSValue(m_compileIndex, node.refCount(), result.gpr(), DataFormatJS);
         break;
     }
 
@@ -828,6 +832,9 @@ void SpeculativeJIT::compile(Node& node)
         noResult(m_compileIndex);
         break;
     }
+
+    case Phi:
+        ASSERT_NOT_REACHED();
     }
 
     if (node.hasResult() && node.mustGenerate())
@@ -844,7 +851,7 @@ void SpeculativeJIT::compile(BasicBlock& block)
 
     for (; m_compileIndex < block.end; ++m_compileIndex) {
         Node& node = m_jit.graph()[m_compileIndex];
-        if (!node.refCount())
+        if (!node.shouldGenerate())
             continue;
 
 #if DFG_DEBUG_VERBOSE
