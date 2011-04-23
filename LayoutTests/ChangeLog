@@ -1,5 +1,20 @@
 2011-04-22  Xiaomei Ji  <xji@chromium.org>
 
+        Rebaseline after r84655.
+
+        * platform/chromium-linux/fast/block/positioning/rtl-fixed-positioning-expected.png: Added.
+        * platform/chromium-linux/fast/block/positioning/vertical-rl/fixed-positioning-expected.png: Added.
+        * platform/chromium-mac-leopard/fast/block/positioning/rtl-fixed-positioning-expected.png: Added.
+        * platform/chromium-mac/fast/block/positioning/rtl-fixed-positioning-expected.checksum: Added.
+        * platform/chromium-mac/fast/block/positioning/vertical-rl: Added.
+        * platform/chromium-mac/fast/block/positioning/vertical-rl/fixed-positioning-expected.checksum: Added.
+        * platform/chromium-mac/fast/block/positioning/vertical-rl/fixed-positioning-expected.txt: Added.
+        * platform/chromium-win/fast/block/positioning/rtl-fixed-positioning-expected.png: Added.
+        * platform/chromium-win/fast/block/positioning/vertical-rl/fixed-positioning-expected.png: Added.
+        * platform/chromium-win/fast/block/positioning/vertical-rl/fixed-positioning-expected.txt: Added.
+
+2011-04-22  Xiaomei Ji  <xji@chromium.org>
+
         Rebase after r84659.
 
         * platform/chromium-linux/editing/deleting/table-cells-expected.png:
