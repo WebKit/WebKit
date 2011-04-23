@@ -1,3 +1,20 @@
+2011-04-23  MORITA Hajime  <morrita@google.com>
+
+        Reviewed by Kent Tamura.
+
+        REGRESSION: (non-Mac) <meter>'s bar part isn't rendered for with -webkit-writing-mode: vertical-lr from r82899
+        https://bugs.webkit.org/show_bug.cgi?id=59281
+
+        Styles for -webkit-meter-bar and -webkit-progress-bar missed width property, which caused unexpected layout results
+        for vertical writing modes. This fix added a width property for each of them.
+        
+        Tests: fast/dom/HTMLMeterElement/meter-writing-mode.html
+               fast/dom/HTMLProgressElement/progress-writing-mode.html
+
+        * css/html.css:
+        (meter::-webkit-meter-bar):
+        (progress::-webkit-progress-bar):
+
 2011-04-23  Kevin Ollivier  <kevino@theolliviers.com>
 
         [wx] Unreviewed build fix. Added missing header.

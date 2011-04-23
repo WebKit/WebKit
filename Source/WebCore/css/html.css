@@ -687,6 +687,7 @@ meter {
 meter::-webkit-meter-bar {
     background: -webkit-gradient(linear, left top, left bottom, from(#ddd), to(#ddd), color-stop(0.20, #eee), color-stop(0.45, #ccc), color-stop(0.55, #ccc));
     height: 100%;
+    width: 100%;
     -webkit-box-sizing: border-box;
 }
 
@@ -722,6 +723,7 @@ progress {
 progress::-webkit-progress-bar {
     background-color: gray;
     height: 100%;
+    width: 100%;
     -webkit-box-sizing: border-box;
 }
 

@@ -1,3 +1,18 @@
+2011-04-23  MORITA Hajime  <morrita@google.com>
+
+        Reviewed by Kent Tamura.
+
+        REGRESSION: (non-Mac) <meter>'s bar part isn't rendered for with -webkit-writing-mode: vertical-lr from r82899
+        https://bugs.webkit.org/show_bug.cgi?id=59281
+        
+        * fast/dom/HTMLMeterElement/meter-writing-mode.html: Added.
+        * fast/dom/HTMLProgressElement/progress-writing-mode.html: Added.
+        * platform/chromium/test_expectations.txt:
+        * platform/mac/fast/dom/HTMLMeterElement/meter-writing-mode-expected.png: Added.
+        * platform/mac/fast/dom/HTMLMeterElement/meter-writing-mode-expected.txt: Added.
+        * platform/mac/fast/dom/HTMLProgressElement/progress-writing-mode-expected.png: Added.
+        * platform/mac/fast/dom/HTMLProgressElement/progress-writing-mode-expected.txt: Added.
+
 2011-04-23  Alexey Proskuryakov  <ap@apple.com>
 
         Unreviewed.

@@ -3264,9 +3264,11 @@ BUGWK50661 WIN LINUX : fast/forms/input-appearance-spinbutton-visibility.html = 
 BUGWK50661 MAC : fast/forms/input-appearance-spinbutton-visibility.html = IMAGE+TEXT PASS
 BUGWK50661 WIN LINUX : fast/speech/input-appearance-numberandspeech.html = TEXT PASS
 BUGWK50661 MAC LEOPARD : fast/speech/input-appearance-numberandspeech.html = IMAGE PASS
-BUGWK50661 WIN LINUX : fast/dom/HTMLMeterElement/meter-element.html = IMAGE+TEXT PASS
 BUGWK50661 WIN LINUX : fast/dom/HTMLMeterElement/meter-styles.html = IMAGE+TEXT PASS
 
+// Need expectations
+BUGWK59281 : fast/dom/HTMLMeterElement/meter-writing-mode.html = FAIL
+BUGWK59281 : fast/dom/HTMLProgressElement/progress-writing-mode.html = FAIL
 
 // We need to skip Geeza Pro quirk in SimpleFontDataMac.mm for non-Leopard.
 // http://trac.webkit.org/changeset/83126
