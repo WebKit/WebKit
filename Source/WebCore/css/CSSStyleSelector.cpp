@@ -2230,7 +2230,7 @@ CSSStyleSelector::SelectorMatch CSSStyleSelector::SelectorChecker::checkSelector
 #if ENABLE(SVG)
     // Spec: CSS2 selectors cannot be applied to the (conceptually) cloned DOM tree
     // because its contents are not part of the formal document structure.
-    if (e->isSVGElement() && e->isShadowRoot())
+    if (e->isSVGShadowRoot())
         return SelectorFailsCompletely;
 #endif
 

@@ -171,7 +171,7 @@ void SVGSMILElement::insertedIntoDocument()
 #ifndef NDEBUG
     // Verify we are not in <use> instance tree.
     for (ContainerNode* n = this; n; n = n->parentNode())
-        ASSERT(!n->isShadowRoot());
+        ASSERT(!n->isSVGShadowRoot());
 #endif
     m_attributeName = constructQualifiedName(this, getAttribute(SVGNames::attributeNameAttr));
     SVGSVGElement* owner = ownerSVGElement();

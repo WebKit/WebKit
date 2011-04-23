@@ -1,3 +1,19 @@
+2011-04-22  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        Reviewed by Kent Tamura.
+
+        Change SVG-related shadow root checks to use isSVGShadowRoot.
+        https://bugs.webkit.org/show_bug.cgi?id=59237
+
+        Covered by existing tests, no behavior change.
+
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::SelectorChecker::checkSelector): Use isSVGShadowRoot.
+        * svg/SVGUseElement.cpp:
+        (WebCore::ShadowTreeUpdateBlocker::while): Ditto.
+        * svg/animation/SVGSMILElement.cpp:
+        (WebCore::SVGSMILElement::insertedIntoDocument): Ditto.
+
 2011-04-22  Geoffrey Garen  <ggaren@apple.com>
 
         Mac build fix.
