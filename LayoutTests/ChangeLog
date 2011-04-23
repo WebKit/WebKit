@@ -1,3 +1,10 @@
+2011-04-22  Alejandro G. Castro  <alex@igalia.com>
+
+        Undo rebaseline done in r84677 for this test, it was a flaky
+        execution.
+
+        * platform/gtk/media/video-controls-rendering-expected.txt:
+
 2011-04-22  Mahesh Kulkarni  <mahesh.kulkarni@nokia.com>
 
         Unreviewed: Updated bug ID for geolocation skipped cases
