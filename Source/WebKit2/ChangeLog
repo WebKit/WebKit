@@ -1,3 +1,17 @@
+2011-04-22  Chang Shu  <cshu@webkit.org>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        WebKitTestRunner needs layoutTestController.setFrameFlatteningEnabled
+        https://bugs.webkit.org/show_bug.cgi?id=42536
+
+        * WebProcess/InjectedBundle/API/c/WKBundle.cpp:
+        (WKBundleSetFrameFlatteningEnabled):
+        * WebProcess/InjectedBundle/API/c/WKBundlePrivate.h:
+        * WebProcess/InjectedBundle/InjectedBundle.cpp:
+        (WebKit::InjectedBundle::setFrameFlatteningEnabled):
+        * WebProcess/InjectedBundle/InjectedBundle.h:
+
 2011-04-22  Alejandro G. Castro  <alex@igalia.com> and Martin Robinson  <mrobinson@igalia.com>
 
         Reviewed by Xan Lopez.

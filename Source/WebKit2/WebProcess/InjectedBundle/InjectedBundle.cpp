@@ -135,6 +135,13 @@ void InjectedBundle::setAllowFileAccessFromFileURLs(WebPageGroupProxy* pageGroup
         (*iter)->settings()->setAllowFileAccessFromFileURLs(enabled);
 }
 
+void InjectedBundle::setFrameFlatteningEnabled(WebPageGroupProxy* pageGroup, bool enabled)
+{
+    const HashSet<Page*>& pages = PageGroup::pageGroup(pageGroup->identifier())->pages();
+    for (HashSet<Page*>::iterator iter = pages.begin(); iter != pages.end(); ++iter)
+        (*iter)->settings()->setFrameFlatteningEnabled(enabled);
+}
+
 void InjectedBundle::clearAllDatabases()
 {
     WebDatabaseManager::shared().deleteAllDatabases();

@@ -49,6 +49,7 @@ module WTR {
         void setXSSAuditorEnabled(in boolean value);
         void setAllowUniversalAccessFromFileURLs(in boolean value);
         void setAllowFileAccessFromFileURLs(in boolean value);
+        void setFrameFlatteningEnabled(in boolean value);
 
         // Special DOM functions.
         void clearBackForwardList();
