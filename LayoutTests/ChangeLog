@@ -1,3 +1,10 @@
+2011-04-22  Mahesh Kulkarni  <mahesh.kulkarni@nokia.com>
+
+        Unreviewed: Updated bug ID for geolocation skipped cases
+
+        * platform/mac-wk2/Skipped:
+        * platform/qt-wk2/Skipped:
+
 2011-04-22  Martin Robinson  <mrobinson@igalia.com>
 
         Reviewed by Xan Lopez.
