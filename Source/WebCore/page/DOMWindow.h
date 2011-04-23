@@ -389,6 +389,7 @@ namespace WebCore {
 
 #if ENABLE(OFFLINE_WEB_APPLICATIONS)
         DOMApplicationCache* applicationCache() const;
+        DOMApplicationCache* optionalApplicationCache() const { return m_applicationCache.get(); }
 #endif
 
 #if ENABLE(ORIENTATION_EVENTS)
