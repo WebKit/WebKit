@@ -44,7 +44,7 @@ namespace WebCore {
 
 static inline bool isObservable(JSDOMApplicationCache* jsDOMApplicationCache, DOMApplicationCache* domApplicationCache)
 {
-    if (!jsDOMApplicationCache->hasCustomProperties())
+    if (jsDOMApplicationCache->hasCustomProperties())
         return true;
     if (domApplicationCache->hasEventListeners())
         return true;

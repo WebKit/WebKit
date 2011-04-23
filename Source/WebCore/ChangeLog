@@ -1,4 +1,11 @@
 2011-04-22  Geoffrey Garen  <ggaren@apple.com>
+
+        Fixed an upside-down conditional in my last check-in.
+
+        * bindings/js/JSDOMApplicationCacheCustom.cpp:
+        (WebCore::isObservable):
+
+2011-04-22  Geoffrey Garen  <ggaren@apple.com>
         
         Rolled back in r84725 and r84728 with appcache crash fixed.
 
