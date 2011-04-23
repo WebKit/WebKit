@@ -1,3 +1,14 @@
+2011-04-22  Martin Robinson  <mrobinson@igalia.com>
+
+        Reviewed by Xan Lopez.
+
+        [GTK] fast/events/overflow-viewport-renderer-deleted.html crashes
+        https://bugs.webkit.org/show_bug.cgi?id=58976
+
+        * WebCoreSupport/DumpRenderTreeSupportGtk.cpp:
+        (DumpRenderTreeSupportGtk::getInnerText): Guard against situations when the documentElement
+        method of the document returns null.
+
 2011-04-22  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Gavin Barraclough.

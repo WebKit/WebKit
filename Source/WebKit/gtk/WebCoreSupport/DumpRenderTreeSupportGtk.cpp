@@ -183,11 +183,12 @@ CString DumpRenderTreeSupportGtk::getInnerText(WebKitWebFrame* frame)
         return CString("");
 
     FrameView* view = coreFrame->view();
-
     if (view && view->layoutPending())
         view->layout();
 
     Element* documentElement = coreFrame->document()->documentElement();
+    if (!documentElement)
+        return CString("");
     return documentElement->innerText().utf8();
 }
 
