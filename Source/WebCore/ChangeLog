@@ -1,3 +1,17 @@
+2011-04-22  Chris Evans  <cevans@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        Upgrade CSS loads from mixed content warning (displayed) to mixed
+        content error (ran)
+        https://bugs.webkit.org/show_bug.cgi?id=59056
+
+        Test: http/tests/security/mixedContent/insecure-css-in-iframe.html
+        Test: http/tests/security/mixedContent/insecure-css-in-main-frame.html
+
+        * loader/cache/CachedResourceLoader.cpp:
+        (WebCore::CachedResourceLoader::canRequest): CSS loads are running rather than displaying content.
+
 2011-04-22  Geoffrey Garen  <ggaren@apple.com>
 
         Fixed an upside-down conditional in my last check-in.

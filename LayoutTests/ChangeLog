@@ -1,3 +1,17 @@
+2011-04-22  Chris Evans  <cevans@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        Upgrade CSS loads from mixed content warning (displayed) to mixed
+        content error (ran)
+        https://bugs.webkit.org/show_bug.cgi?id=59056
+
+        * http/tests/security/mixedContent/insecure-css-in-iframe-expected.txt: Update expectation.
+        * http/tests/security/mixedContent/insecure-css-in-main-frame-expected.txt: Update expectation.
+        * http/tests/security/mixedContent/insecure-css-in-iframe.html: Update expectation.
+        * http/tests/security/mixedContent/insecure-css-in-main-frame.html: Update expectation.
+        * http/tests/security/mixedContent/resources/frame-with-insecure-css.html: Fix typo.
+
 2011-04-22  Csaba Osztrogonác  <ossy@webkit.org>
 
         [Qt][WK2] Add some failing tests to the Skipped list because of a WTR sideeffect bug.

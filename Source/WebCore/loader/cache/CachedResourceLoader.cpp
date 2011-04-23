@@ -242,12 +242,13 @@ bool CachedResourceLoader::canRequest(CachedResource::Type type, const KURL& url
 #if ENABLE(XSLT)
     case CachedResource::XSLStyleSheet:
 #endif
-        // These resource can inject script into the current document.
+    case CachedResource::CSSStyleSheet:
+        // These resource can inject script into the current document (Script,
+        // XSL) or exfiltrate the content of the current document (CSS).
         if (Frame* f = frame())
             f->loader()->checkIfRunInsecureContent(m_document->securityOrigin(), url);
         break;
     case CachedResource::ImageResource:
-    case CachedResource::CSSStyleSheet:
     case CachedResource::FontResource: {
         // These resources can corrupt only the frame's pixels.
         if (Frame* f = frame()) {
