@@ -133,6 +133,7 @@ public:
     void resetScrollbars();
     void resetScrollbarsAndClearContentsSize();
     void detachCustomScrollbars();
+    virtual ScrollbarOverlayStyle recommendedScrollbarOverlayStyle();
 
     void clear();
 

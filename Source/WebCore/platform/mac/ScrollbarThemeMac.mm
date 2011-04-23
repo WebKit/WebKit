@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2008, 2011 Apple Inc. All Rights Reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -446,10 +446,24 @@ bool ScrollbarThemeMac::paint(Scrollbar* scrollbar, GraphicsContext* context, co
         else
             value = 0;
     }
-
+    
     ScrollAnimatorMac* scrollAnimator = static_cast<ScrollAnimatorMac*>(scrollbar->scrollableArea()->scrollAnimator());
     scrollAnimator->setIsDrawingIntoLayer(context->isCALayerContext());
 
+#if USE(WK_SCROLLBAR_PAINTER)
+    switch (scrollbar->scrollableArea()->recommendedScrollbarOverlayStyle()) {
+        case ScrollbarOverlayStyleDefault:
+            wkSetScrollbarPainterKnobStyle(painterForScrollbar(scrollbar), wkScrollerKnobStyleDefault);
+            break;
+        case ScrollbarOverlayStyleDark:
+            wkSetScrollbarPainterKnobStyle(painterForScrollbar(scrollbar), wkScrollerKnobStyleDark);
+            break;
+        case ScrollbarOverlayStyleLight:
+            wkSetScrollbarPainterKnobStyle(painterForScrollbar(scrollbar), wkScrollerKnobStyleLight);
+            break;
+    }
+#endif
+    
     GraphicsContextStateSaver stateSaver(*context);
     context->clip(damageRect);
     context->translate(scrollbar->frameRect().x(), scrollbar->frameRect().y());

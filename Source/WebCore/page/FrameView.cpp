@@ -306,6 +306,32 @@ void FrameView::detachCustomScrollbars()
     }
 }
 
+ScrollbarOverlayStyle FrameView::recommendedScrollbarOverlayStyle()
+{
+    Document* document = m_frame->document();
+    Element* rootElementToUse = document->body();
+    if (!rootElementToUse)
+        rootElementToUse = document->documentElement();
+    if (!rootElementToUse)
+        return ScrollbarOverlayStyleDefault;
+    
+    RenderObject* renderer = rootElementToUse->renderer();
+    if (!renderer)
+        return ScrollbarOverlayStyleDefault;
+    Color color = renderer->style()->visitedDependentColor(CSSPropertyBackgroundColor);
+    if (!color.isValid())
+        return ScrollbarOverlayStyleDefault;
+    
+    // reduce the background color from RGB to a lightness value
+    // and determine which scrollbar style to use based on a magic
+    // lightness heuristic
+    double hue, saturation, lightness;
+    color.getHSL(hue, saturation, lightness);
+    if (lightness < .5)
+        return ScrollbarOverlayStyleLight;
+    return ScrollbarOverlayStyleDefault;
+}
+
 void FrameView::clear()
 {
     setCanBlitOnScroll(true);

@@ -150,6 +150,12 @@ namespace WebCore {
         ScrollbarButtonsDoubleBoth
     };
     
+    enum ScrollbarOverlayStyle {
+        ScrollbarOverlayStyleDefault,
+        ScrollbarOverlayStyleDark,
+        ScrollbarOverlayStyleLight
+    };
+    
     typedef unsigned ScrollbarControlPartMask;
 
 }

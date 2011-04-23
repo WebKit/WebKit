@@ -1,3 +1,14 @@
+2011-04-22  Jon Lee  <jonlee@apple.com>
+
+        Reviewed by Beth Dakin.
+
+        Overlay scroller hard to see on pages with dark background (59183)
+        https://bugs.webkit.org/show_bug.cgi?id=59183
+        <rdar://problem/8975367>
+        
+        * WebCoreSupport/WebSystemInterface.mm:
+        (InitWebCoreSystemInterface): adding method to allow changing style
+
 2011-04-19  Jer Noble  <jer.noble@apple.com>
 
         Reviewed by Daniel Bates.
