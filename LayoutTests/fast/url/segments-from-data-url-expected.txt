@@ -4,7 +4,7 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 
 
 PASS segments('http://user:pass@foo:21/bar;par?b#c') is '["http:","foo","21","/bar;par","?b","#c"]'
-FAIL segments('http:foo.com') should be ["http:","foo.com","0","/","",""]. Was ["http:","","0","foo.com","",""].
+PASS segments('http:foo.com') is '["http:","foo.com","0","/","",""]'
 PASS segments('\t   :foo.com   \n') is '[":","","0","","",""]'
 PASS segments(' foo.com  ') is '[":","","0","","",""]'
 PASS segments('a:\t foo.com') is '["a:","","0"," foo.com","",""]'
@@ -41,7 +41,7 @@ PASS segments('::') is '[":","","0","","",""]'
 PASS segments('::23') is '[":","","0","","",""]'
 PASS segments('foo://') is '["foo:","","0","//","",""]'
 PASS segments('http://a:b@c:29/d') is '["http:","c","29","/d","",""]'
-FAIL segments('http::@c:29') should be ["http:","c","29","/","",""]. Was ["http:","","0",":@c:29","",""].
+PASS segments('http::@c:29') is '["http:","c","29","/","",""]'
 FAIL segments('http://&a:foo(b]c@d:2/') should be ["http:","d","2","/","",""]. Was [":","","0","","",""].
 FAIL segments('http://::@c@d:2') should be ["http:","d","2","/","",""]. Was [":","","0","","",""].
 PASS segments('http://foo.com:b@d/') is '["http:","d","0","/","",""]'
@@ -60,7 +60,7 @@ PASS segments('http://foo/abcd?efgh?ijkl') is '["http:","foo","0","/abcd","?efgh
 PASS segments('http://foo/abcd#foo?bar') is '["http:","foo","0","/abcd","","#foo?bar"]'
 FAIL segments('[61:24:74]:98') should be ["data:","","0","text/[61:24:74]:98","",""]. Was [":","","0","","",""].
 FAIL segments('http://[61:27]:98') should be [":","","0","","",""]. Was ["http:","[61:27]","98","/","",""].
-FAIL segments('http:[61:27]/:foo') should be [":","","0","","",""]. Was ["http:","","0","[61:27]/:foo","",""].
+FAIL segments('http:[61:27]/:foo') should be [":","","0","","",""]. Was ["http:","[61:27]","0","/:foo","",""].
 PASS segments('http://[1::2]:3:4') is '[":","","0","","",""]'
 PASS segments('http://2001::1') is '[":","","0","","",""]'
 PASS segments('http://[2001::1') is '[":","","0","","",""]'

@@ -1,3 +1,21 @@
+2011-04-24  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by George Staikos.
+
+        Handling of URLs like http:/example.com/ is incorrect
+        https://bugs.webkit.org/show_bug.cgi?id=59300
+        <rdar://problem/9231956>
+        
+        Added some new test cases. Also updated results for the
+        change. The changes are progressions.
+
+        * fast/url/relative-expected.txt:
+        * fast/url/script-tests/segments.js:
+        * fast/url/script-tests/standard-url.js:
+        * fast/url/segments-expected.txt:
+        * fast/url/segments-from-data-url-expected.txt:
+        * fast/url/standard-url-expected.txt:
+
 2011-04-24  Adam Barth  <abarth@webkit.org>
 
         Update Chromium results for standard-url.html

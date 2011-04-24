@@ -1,3 +1,25 @@
+2011-04-24  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by George Staikos.
+
+        Handling of URLs like http:/example.com/ is incorrect
+        https://bugs.webkit.org/show_bug.cgi?id=59300
+        <rdar://problem/9231956>
+
+        URLs like http:/example.com/ or http:example.com/ are now correctly
+        canonicalized as http://example.com/
+        
+        The code still doesn't quite match other browsers - at least some
+        other browsers seem to base parsing behavior on whether they
+        recongize a scheme from a fixed list, and ignore whether // is
+        present in the URL or not.
+        
+        * platform/KURL.cpp:
+        (WebCore::isNonFileHierarchicalScheme): New helper function.
+        (WebCore::KURL::parse): For a particular list of whitelisted schemes,
+        assume they are hierarchical and need an authority even if there is no //
+        after the :/
+
 2011-04-24  Dan Bernstein  <mitz@apple.com>
 
         LLVM Compiler build fix.

@@ -1137,6 +1137,23 @@ static inline bool hostPortIsEmptyButCredentialsArePresent(int hostStart, int po
     return userEndChar == '@' && hostStart == portEnd;
 }
 
+static bool isNonFileHierarchicalScheme(const char* scheme, size_t schemeLength)
+{
+    switch (schemeLength) {
+    case 2:
+        return equal("ws", 2, scheme, schemeLength);
+    case 3:
+        return equal("ftp", 3, scheme, schemeLength) || equal("wss", 3, scheme, schemeLength);
+    case 4:
+        return equal("http", 4, scheme, schemeLength);
+    case 5:
+        return equal("https", 5, scheme, schemeLength);
+    case 6:
+        return equal("gopher", 6, scheme, schemeLength);
+    }
+    return false;
+}
+
 void KURL::parse(const char* url, const String* originalString)
 {
     if (!url || url[0] == '\0') {
@@ -1173,6 +1190,7 @@ void KURL::parse(const char* url, const String* originalString)
     int portEnd;
 
     bool hierarchical = url[schemeEnd + 1] == '/';
+    bool hasSecondSlash = hierarchical && url[schemeEnd + 2] == '/';
 
     bool isFile = schemeEnd == 4
         && matchLetter(url[0], 'f')
@@ -1186,12 +1204,15 @@ void KURL::parse(const char* url, const String* originalString)
         && matchLetter(url[3], 'p')
         && (url[4] == ':' || (matchLetter(url[4], 's') && url[5] == ':'));
 
-    if (hierarchical && url[schemeEnd + 2] == '/') {
+    if ((hierarchical && hasSecondSlash) || isNonFileHierarchicalScheme(url, schemeEnd)) {
         // The part after the scheme is either a net_path or an abs_path whose first path segment is empty.
         // Attempt to find an authority.
-
         // FIXME: Authority characters may be scanned twice, and it would be nice to be faster.
-        userStart += 2;
+
+        if (hierarchical)
+            userStart++;
+        if (hasSecondSlash)
+            userStart++;
         userEnd = userStart;
 
         int colonPos = 0;
@@ -1394,8 +1415,8 @@ void KURL::parse(const char* url, const String* originalString)
         m_userStart = m_userEnd = m_passwordEnd = m_hostEnd = m_portEnd = p - buffer.data();
 
     // For canonicalization, ensure we have a '/' for no path.
-    // Do this only for hierarchical URL with protocol http or https.
-    if (m_protocolInHTTPFamily && hierarchical && pathEnd == pathStart)
+    // Do this only for URL with protocol http or https.
+    if (m_protocolInHTTPFamily && pathEnd == pathStart)
         *p++ = '/';
 
     // add path, escaping bad characters

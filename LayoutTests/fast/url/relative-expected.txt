@@ -13,9 +13,9 @@ PASS canonicalize('  .  ') is 'http://foo/'
 PASS canonicalize(' 	 ') is 'http://foo/bar'
 PASS canonicalize('http:path') is 'http://host/path'
 PASS canonicalize('http:path') is 'http://host/a/path'
-FAIL canonicalize('http:/path') should be http://host/path. Was http:/path.
+FAIL canonicalize('http:/path') should be http://host/path. Was http://path/.
 FAIL canonicalize('HTTP:/path') should be http://host/path. Was http:/path.
-FAIL canonicalize('https:host2') should be https://host2/. Was https:host2.
+PASS canonicalize('https:host2') is 'https://host2/'
 PASS canonicalize('htto:/host2') is 'htto:/host2'
 PASS canonicalize('/b/c/d') is 'http://host/b/c/d'
 PASS canonicalize('\\b\\c\\d') is 'http://host/b/c/d'
@@ -42,7 +42,7 @@ FAIL canonicalize('baz.html') should be . Was baz.html.
 PASS canonicalize('data:baz') is 'data:baz'
 PASS canonicalize('data:/base') is 'data:/base'
 PASS canonicalize('http://host/') is 'http://host/'
-FAIL canonicalize('http:host') should be http://host/. Was http:host.
+PASS canonicalize('http:host') is 'http://host/'
 PASS canonicalize('./asd:fgh') is 'http://foo/asd:fgh'
 PASS canonicalize(':foo') is 'http://foo/:foo'
 PASS canonicalize(' hello world') is 'http://foo/hello%20world'

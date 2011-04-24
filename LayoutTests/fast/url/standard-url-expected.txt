@@ -30,18 +30,29 @@ PASS canonicalize('wss://foo:80/') is 'wss://foo:80/'
 PASS canonicalize('wss://foo:81/') is 'wss://foo:81/'
 PASS canonicalize('wss://foo:443/') is 'wss://foo/'
 PASS canonicalize('wss://foo:815/') is 'wss://foo:815/'
-FAIL canonicalize('http:/example.com/') should be http://example.com/. Was http:/example.com/.
-FAIL canonicalize('ftp:/example.com/') should be ftp://example.com/. Was ftp:/example.com/.
-FAIL canonicalize('https:/example.com/') should be https://example.com/. Was https:/example.com/.
+PASS canonicalize('http:/example.com/') is 'http://example.com/'
+PASS canonicalize('ftp:/example.com/') is 'ftp://example.com/'
+PASS canonicalize('https:/example.com/') is 'https://example.com/'
 PASS canonicalize('madeupscheme:/example.com/') is 'madeupscheme:/example.com/'
 FAIL canonicalize('file:/example.com/') should be file://localhost/example.com/. Was file:///example.com/.
-PASS canonicalize('fops:/example.com/') is 'fops:/example.com/'
-FAIL canonicalize('gopher:/example.com/') should be gopher://example.com/. Was gopher:/example.com/.
-FAIL canonicalize('ws:/example.com/') should be ws://example.com/. Was ws:/example.com/.
-FAIL canonicalize('wss:/example.com/') should be wss://example.com/. Was wss:/example.com/.
+PASS canonicalize('ftps:/example.com/') is 'ftps:/example.com/'
+PASS canonicalize('gopher:/example.com/') is 'gopher://example.com/'
+PASS canonicalize('ws:/example.com/') is 'ws://example.com/'
+PASS canonicalize('wss:/example.com/') is 'wss://example.com/'
 PASS canonicalize('data:/example.com/') is 'data:/example.com/'
 PASS canonicalize('javascript:/example.com/') is 'javascript:/example.com/'
 PASS canonicalize('mailto:/example.com/') is 'mailto:/example.com/'
+PASS canonicalize('http:example.com/') is 'http://example.com/'
+PASS canonicalize('ftp:example.com/') is 'ftp://example.com/'
+PASS canonicalize('https:example.com/') is 'https://example.com/'
+PASS canonicalize('madeupscheme:example.com/') is 'madeupscheme:example.com/'
+PASS canonicalize('ftps:example.com/') is 'ftps:example.com/'
+PASS canonicalize('gopher:example.com/') is 'gopher://example.com/'
+PASS canonicalize('ws:example.com/') is 'ws://example.com/'
+PASS canonicalize('wss:example.com/') is 'wss://example.com/'
+PASS canonicalize('data:example.com/') is 'data:example.com/'
+PASS canonicalize('javascript:example.com/') is 'javascript:example.com/'
+PASS canonicalize('mailto:example.com/') is 'mailto:example.com/'
 PASS successfullyParsed is true
 
 TEST COMPLETE
