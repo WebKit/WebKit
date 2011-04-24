@@ -460,7 +460,7 @@ public:
     virtual bool rendererIsNeeded(RenderStyle*);
     virtual bool childShouldCreateRenderer(Node*) const { return true; }
     virtual RenderObject* createRenderer(RenderArena*, RenderStyle*);
-    ContainerNode* parentNodeForRenderingAndStyle() const;
+    ContainerNode* parentNodeForRenderingAndStyle();
     
     // Wrapper for nodes that don't have a renderer, but still cache the style (like HTMLOptionElement).
     RenderStyle* renderStyle() const;
@@ -662,8 +662,6 @@ private:
 
     // Used to share code between lazyAttach and setNeedsStyleRecalc.
     void markAncestorsWithChildNeedsStyleRecalc();
-
-    RenderObject* createRendererAndStyle();
 
     virtual void refEventTarget();
     virtual void derefEventTarget();

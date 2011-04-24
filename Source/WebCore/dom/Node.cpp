@@ -1464,7 +1464,7 @@ Node *Node::nextLeafNode() const
 }
 
 
-class NodeRenderParentDetector {
+class NodeRendererFactory {
 public:
     enum Type {
         NotFound,
@@ -1473,7 +1473,7 @@ public:
         AsContentChild
     };
 
-    NodeRenderParentDetector(Node* node)
+    NodeRendererFactory(Node* node)
         : m_type(NotFound)
         , m_node(node)
         , m_visualParentShadowRoot(0)
@@ -1482,10 +1482,14 @@ public:
     }
   
     ContainerNode* parentNodeForRenderingAndStyle() const { return m_parentNodeForRenderingAndStyle; }
-    bool shouldCreateRenderer() const;
+    void createRendererIfNeeded();
 
 private:
+    Document* document() { return m_node->document(); }
     ContainerNode* findVisualParent();
+    RenderObject* nextRenderer() const { return m_node->nextRenderer(); }
+    RenderObject* createRendererAndStyle();
+    bool shouldCreateRenderer() const;
 
     Type m_type;
     Node* m_node;
@@ -1493,7 +1497,7 @@ private:
     ShadowRoot* m_visualParentShadowRoot;
 };
 
-ContainerNode* NodeRenderParentDetector::findVisualParent()
+ContainerNode* NodeRendererFactory::findVisualParent()
 {
     ContainerNode* parent = m_node->parentOrHostNode();
     if (!parent)
@@ -1509,7 +1513,7 @@ ContainerNode* NodeRenderParentDetector::findVisualParent()
         if (m_visualParentShadowRoot) {
             if (ContainerNode* contentContainer = m_visualParentShadowRoot->contentContainerFor(m_node)) {
                 m_type = AsContentChild;
-                return NodeRenderParentDetector(contentContainer).parentNodeForRenderingAndStyle();
+                return NodeRendererFactory(contentContainer).parentNodeForRenderingAndStyle();
             }
 
             // FIXME: should be not found once light/shadow is mutual exclusive.
@@ -1520,7 +1524,7 @@ ContainerNode* NodeRenderParentDetector::findVisualParent()
     return parent;
 }
 
-bool NodeRenderParentDetector::shouldCreateRenderer() const
+bool NodeRendererFactory::shouldCreateRenderer() const
 {
     ASSERT(m_parentNodeForRenderingAndStyle);
 
@@ -1544,34 +1548,28 @@ bool NodeRenderParentDetector::shouldCreateRenderer() const
     return true;
 }
 
-
-ContainerNode* Node::parentNodeForRenderingAndStyle() const
+RenderObject* NodeRendererFactory::createRendererAndStyle()
 {
-    return NodeRenderParentDetector(const_cast<Node*>(this)).parentNodeForRenderingAndStyle();
-}
-
-RenderObject* Node::createRendererAndStyle()
-{
-    ASSERT(!renderer());
+    ASSERT(!m_node->renderer());
     ASSERT(document()->shouldCreateRenderers());
 
-    NodeRenderParentDetector parentDetector(this);
-    if (!parentDetector.shouldCreateRenderer())
+    if (!shouldCreateRenderer())
         return 0;
 
-    RefPtr<RenderStyle> style = styleForRenderer();
-    if (!rendererIsNeeded(style.get()))
+    RefPtr<RenderStyle> style = m_node->styleForRenderer();
+    if (!m_node->rendererIsNeeded(style.get()))
         return 0;
 
-    RenderObject* newRenderer = createRenderer(document()->renderArena(), style.get());
+    RenderObject* newRenderer = m_node->createRenderer(document()->renderArena(), style.get());
     if (!newRenderer)
         return 0;
 
-    if (!parentDetector.parentNodeForRenderingAndStyle()->renderer()->isChildAllowed(newRenderer, style.get())) {
+    if (!m_parentNodeForRenderingAndStyle->renderer()->isChildAllowed(newRenderer, style.get())) {
         newRenderer->destroy();
         return 0;
     }
-    setRenderer(newRenderer);
+
+    m_node->setRenderer(newRenderer);
     newRenderer->setAnimatableStyle(style.release()); // setAnimatableStyle() can depend on renderer() already being set.
     return newRenderer;
 }
@@ -1590,17 +1588,17 @@ static RenderFullScreen* wrapWithRenderFullScreen(RenderObject* object, Document
 }
 #endif
 
-void Node::createRendererIfNeeded()
+void NodeRendererFactory::createRendererIfNeeded()
 {
     if (!document()->shouldCreateRenderers())
         return;
 
-    ASSERT(!renderer());
+    ASSERT(!m_node->renderer());
 
     RenderObject* newRenderer = createRendererAndStyle();
 
 #if ENABLE(FULLSCREEN_API)
-    if (document()->webkitIsFullScreen() && document()->webkitCurrentFullScreenElement() == this)
+    if (document()->webkitIsFullScreen() && document()->webkitCurrentFullScreenElement() == m_node)
         newRenderer = wrapWithRenderFullScreen(newRenderer, document());
 #endif
 
@@ -1608,7 +1606,17 @@ void Node::createRendererIfNeeded()
         return;
 
     // Note: Adding newRenderer instead of renderer(). renderer() may be a child of newRenderer.
-    parentNodeForRenderingAndStyle()->renderer()->addChild(newRenderer, nextRenderer());
+    m_parentNodeForRenderingAndStyle->renderer()->addChild(newRenderer, nextRenderer());
+}
+
+ContainerNode* Node::parentNodeForRenderingAndStyle()
+{
+    return NodeRendererFactory(this).parentNodeForRenderingAndStyle();
+}
+
+void Node::createRendererIfNeeded()
+{
+    NodeRendererFactory(this).createRendererIfNeeded();
 }
 
 PassRefPtr<RenderStyle> Node::styleForRenderer()

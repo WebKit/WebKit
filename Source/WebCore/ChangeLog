@@ -1,3 +1,30 @@
+2011-04-23  MORITA Hajime <morrita@google.com>
+
+        Reviewed by Dimitri Glazkov.
+
+        [Refactoring] NodeRenderParentDetector should be NodeRenderFactory
+        https://bugs.webkit.org/show_bug.cgi?id=59280
+        
+        - Rename NodeRenderParentDetector to NodeRendererFactory
+        - move createRendererAndStyle() and createRendererIfNeeded to
+          NodeRendererFactory
+
+        No new test, no behavioral change.
+        
+        * dom/Node.cpp:
+        (WebCore::NodeRendererFactory::NodeRendererFactory):
+        (WebCore::NodeRendererFactory::document):
+        (WebCore::NodeRendererFactory::nextRenderer):
+        (WebCore::NodeRendererFactory::findVisualParent):
+        (WebCore::NodeRendererFactory::shouldCreateRenderer):
+        (WebCore::NodeRendererFactory::createRendererAndStyle):
+        (WebCore::NodeRendererFactory::createRendererIfNeeded):
+        (WebCore::Node::parentNodeForRenderingAndStyle):
+        (WebCore::Node::createRendererIfNeeded):
+        * dom/Node.h:
+        * html/HTMLDetailsElement.cpp:
+        (WebCore::DetailsSummaryElement::detailsElement): Added const_cast due to the chage on parentNodeForRenderingAndStyle() 
+
 2011-04-23  MORITA Hajime  <morrita@google.com>
 
         Reviewed by Kent Tamura.
