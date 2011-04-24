@@ -1,3 +1,13 @@
+2011-04-23  Dominic Cooney  <dominicc@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        [V8] Nodes in shadow DOM should not be GCed while their hosts are alive
+        https://bugs.webkit.org/show_bug.cgi?id=59284
+
+        * fast/dom/shadow/gc-shadow-expected.txt: Added.
+        * fast/dom/shadow/gc-shadow.html: Added.
+
 2011-04-23  MORITA Hajime <morrita@google.com>
 
         Unreviewed test_expectations.txt update.

@@ -1,0 +1,8 @@
+This tests that the JavaScript wrapper objects of shadow DOM objects
+are not prematurely garbage collected.
+
+PASS shadow.tattoo is "I <3 WebKit"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

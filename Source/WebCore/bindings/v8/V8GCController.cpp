@@ -279,7 +279,7 @@ static GroupId calculateGroupId(Node* node)
         if (!root)
             return GroupId();
     } else {
-        while (Node* parent = root->parentNode())
+        while (Node* parent = root->parentOrHostNode())
             root = parent;
     }
 

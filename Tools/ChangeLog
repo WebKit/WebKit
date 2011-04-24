@@ -1,3 +1,19 @@
+2011-04-23  Dominic Cooney  <dominicc@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        [V8] Nodes in shadow DOM should not be GCed while their hosts are alive
+        https://bugs.webkit.org/show_bug.cgi?id=59284
+
+        Chromium DRT over-refcounted the NPObject wrappers it used to
+        marshal shadowRoot nodes back to tests (WebBindings::makeNode
+        births NPObjects with referenceCount == 1). This masked the GC bug
+        59284 in tests by making shadowRoot nodes live forever.
+
+        * DumpRenderTree/chromium/LayoutTestController.cpp:
+        (LayoutTestController::shadowRoot):
+        (LayoutTestController::ensureShadowRoot):
+
 2011-04-23  Kevin Ollivier  <kevino@theolliviers.com>
 
         [wx] Unreviewed build fixes. Add new methods to wx LayoutTestController,

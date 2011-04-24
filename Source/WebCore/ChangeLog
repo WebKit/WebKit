@@ -1,3 +1,15 @@
+2011-04-23  Dominic Cooney  <dominicc@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        [V8] Nodes in shadow DOM should not be GCed while their hosts are alive
+        https://bugs.webkit.org/show_bug.cgi?id=59284
+
+        Test: fast/dom/shadow/gc-shadow.html
+
+        * bindings/v8/V8GCController.cpp:
+        (WebCore::calculateGroupId): group shadow nodes with their hosts
+
 2011-04-23  MORITA Hajime <morrita@google.com>
 
         Reviewed by Dimitri Glazkov.

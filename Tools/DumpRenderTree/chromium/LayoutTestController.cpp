@@ -665,13 +665,14 @@ void LayoutTestController::shadowRoot(const CppArgumentList& arguments, CppVaria
         return;
     }
 
-    WebNode shadowRoot = element.shadowRoot();
-    if (shadowRoot.isNull()) {
+    NPObject* shadowRoot = WebBindings::makeNode(element.shadowRoot());
+    if (!shadowRoot) {
         result->setNull();
         return;
     }
 
-    result->set(WebBindings::makeNode(shadowRoot));
+    result->set(shadowRoot);
+    WebBindings::releaseObject(shadowRoot);
 }
 
 void LayoutTestController::ensureShadowRoot(const CppArgumentList& arguments, CppVariant* result)
@@ -687,7 +688,14 @@ void LayoutTestController::ensureShadowRoot(const CppArgumentList& arguments, Cp
         return;
     }
 
-    result->set(WebBindings::makeNode(element.ensureShadowRoot()));
+    NPObject* shadowRoot = WebBindings::makeNode(element.ensureShadowRoot());
+    if (!shadowRoot) {
+        result->setNull();
+        return;
+    }
+
+    result->set(shadowRoot);
+    WebBindings::releaseObject(shadowRoot);
 }
 
 void LayoutTestController::removeShadowRoot(const CppArgumentList& arguments, CppVariant* result)
