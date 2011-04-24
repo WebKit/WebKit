@@ -1,3 +1,15 @@
+2011-04-24  Rik Cabanier  <cabanier@adobe.com>
+
+        Reviewed by Simon Fraser.
+
+        Tables are not rendered correctly
+        https://bugs.webkit.org/show_bug.cgi?id=59138
+
+        Test: fast/table/auto-100-percent-width.html
+
+        * rendering/AutoTableLayout.cpp:
+        (WebCore::AutoTableLayout::computePreferredLogicalWidths):
+
 2011-04-23  Simon Fraser  <simon.fraser@apple.com>
 
         Fix Windows build, which complains about unreachable code.

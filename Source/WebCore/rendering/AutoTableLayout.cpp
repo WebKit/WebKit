@@ -265,11 +265,10 @@ void AutoTableLayout::computePreferredLogicalWidths(int& minWidth, int& maxWidth
     if (tableLogicalWidth.isFixed() && tableLogicalWidth.value() > 0) {
         minWidth = max(minWidth, tableLogicalWidth.value());
         maxWidth = minWidth;
-    }
-    
-    // if there was no remaining percent, maxWidth is invalid.
-    if (!remainingPercent && maxNonPercent)
+    } else if (!remainingPercent && maxNonPercent) {
+        // if there was no remaining percent, maxWidth is invalid.
         maxWidth = intMaxForLength;        
+    }
 }
 
 /*
