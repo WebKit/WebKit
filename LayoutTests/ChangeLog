@@ -1,3 +1,13 @@
+2011-04-23  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Simon Fraser.
+
+        <rdar://problem/8970549> WebFindOptionsAtWordStarts fails with Japanese words
+        https://bugs.webkit.org/show_bug.cgi?id=59288
+
+        * editing/text-iterator/findString-expected.txt:
+        * editing/text-iterator/findString.html:
+
 2011-04-23  Dominic Cooney  <dominicc@chromium.org>
 
         Reviewed by Dimitri Glazkov.

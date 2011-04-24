@@ -49,6 +49,7 @@ PASS: Got a match at 0,2 as expected.
 PASS: Got no match as expected.
 
 Searching for ‘org’ in ‘webkit.org’ with options [AtWordStarts]:
+PASS: Got a match at 7,10 as expected.
 PASS: Got no match as expected.
 
 Searching for ‘.org’ in ‘webkit.org’ with options [AtWordStarts]:
@@ -100,6 +101,16 @@ PASS: Got a match at 2,4 as expected.
 PASS: Got no match as expected.
 
 Searching for ‘P64’ in ‘LP64’ with options [AtWordStarts, TreatMedialCapitalAsWordStart]:
+PASS: Got no match as expected.
+
+Searching for ‘動戦士’ in ‘起動戦士’ with options [AtWordStarts]:
+PASS: Got no match as expected.
+
+Searching for ‘戦士’ in ‘起動戦士’ with options [AtWordStarts]:
+PASS: Got a match at 2,4 as expected.
+PASS: Got no match as expected.
+
+Searching for ‘士’ in ‘起動戦士’ with options [AtWordStarts]:
 PASS: Got no match as expected.
 
 Searching for ‘a’ in long string with options [AtWordStarts]:

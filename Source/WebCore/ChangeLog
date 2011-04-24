@@ -1,3 +1,15 @@
+2011-04-23  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Simon Fraser.
+
+        <rdar://problem/8970549> WebFindOptionsAtWordStarts fails with Japanese words
+        https://bugs.webkit.org/show_bug.cgi?id=59288
+
+        * platform/text/mac/TextBoundaries.mm:
+        (WebCore::wordStringTokenizer): Added this helper function.
+        (WebCore::findNextWordFromIndex): Changed to use a CFStringTokenizer with kCFStringTokenizerUnitWord,
+        whose behavior is not locale-dependent.
+
 2011-04-23  Dominic Cooney  <dominicc@chromium.org>
 
         Reviewed by Dimitri Glazkov.
