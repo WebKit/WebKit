@@ -35,6 +35,18 @@ cases = [
   ["wss://foo:81/", "wss://foo:81/"],
   ["wss://foo:443/", "wss://foo/"],
   ["wss://foo:815/", "wss://foo:815/"],
+  ["http:/example.com/", "http://example.com/"],
+  ["ftp:/example.com/", "ftp://example.com/"],
+  ["https:/example.com/", "https://example.com/"],
+  ["madeupscheme:/example.com/", "madeupscheme:/example.com/"],
+  ["file:/example.com/", "file://localhost/example.com/"],
+  ["fops:/example.com/", "fops:/example.com/"],
+  ["gopher:/example.com/", "gopher://example.com/"],
+  ["ws:/example.com/", "ws://example.com/"],
+  ["wss:/example.com/", "wss://example.com/"],
+  ["data:/example.com/", "data:/example.com/"],
+  ["javascript:/example.com/", "javascript:/example.com/"],
+  ["mailto:/example.com/", "mailto:/example.com/"],
 ];
 
 for (var i = 0; i < cases.length; ++i) {

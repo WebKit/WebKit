@@ -68,6 +68,19 @@ cases = [
   ["http://[2001::1]",                       ["http:","[2001::1]","0","/","",""]],
   ["http://[2001::1]:80",                    ["http:","[2001::1]","0","/","",""]],
   ["http://[[::]]",                          [":","","0","","",""]],
+  ["http:/example.com/",                     ["http:","example.org","0","/example.com/","",""]],
+  ["ftp:/example.com/",                      ["ftp:","example.com","0","/","",""]],
+  ["https:/example.com/",                    ["https:","example.com","0","/","",""]],
+  ["madeupscheme:/example.com/",             ["madeupscheme:","","0","/example.com/","",""]],
+  ["file:/example.com/",                     ["file:","","0","/example.com/","",""]],
+  ["fops:/example.com/",                     ["fops:","","0","/example.com/","",""]],
+  ["gopher:/example.com/",                   ["gopher:","example.com","0","/","",""]],
+  ["ws:/example.com/",                       ["ws:","example.com","0","/","",""]],
+  ["wss:/example.com/",                      ["wss:","example.com","0","/","",""]],
+  ["data:/example.com/",                     ["data:","","0","/example.com/","",""]],
+  ["javascript:/example.com/",               ["javascript:","","0","/example.com/","",""]],
+  ["mailto:/example.com/",                   ["mailto:","","0","/example.com/","",""]],
+  
 ];
 
 var originalBaseURL = canonicalize(".");

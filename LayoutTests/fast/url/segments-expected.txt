@@ -69,6 +69,18 @@ PASS segments('http://2001::1]:80') is '[":","","0","","",""]'
 PASS segments('http://[2001::1]') is '["http:","[2001::1]","0","/","",""]'
 PASS segments('http://[2001::1]:80') is '["http:","[2001::1]","0","/","",""]'
 PASS segments('http://[[::]]') is '[":","","0","","",""]'
+FAIL segments('http:/example.com/') should be ["http:","example.org","0","/example.com/","",""]. Was ["http:","","0","/example.com/","",""].
+FAIL segments('ftp:/example.com/') should be ["ftp:","example.com","0","/","",""]. Was ["ftp:","","0","/example.com/","",""].
+FAIL segments('https:/example.com/') should be ["https:","example.com","0","/","",""]. Was ["https:","","0","/example.com/","",""].
+PASS segments('madeupscheme:/example.com/') is '["madeupscheme:","","0","/example.com/","",""]'
+PASS segments('file:/example.com/') is '["file:","","0","/example.com/","",""]'
+PASS segments('fops:/example.com/') is '["fops:","","0","/example.com/","",""]'
+FAIL segments('gopher:/example.com/') should be ["gopher:","example.com","0","/","",""]. Was ["gopher:","","0","/example.com/","",""].
+FAIL segments('ws:/example.com/') should be ["ws:","example.com","0","/","",""]. Was ["ws:","","0","/example.com/","",""].
+FAIL segments('wss:/example.com/') should be ["wss:","example.com","0","/","",""]. Was ["wss:","","0","/example.com/","",""].
+PASS segments('data:/example.com/') is '["data:","","0","/example.com/","",""]'
+PASS segments('javascript:/example.com/') is '["javascript:","","0","/example.com/","",""]'
+PASS segments('mailto:/example.com/') is '["mailto:","","0","/example.com/","",""]'
 PASS successfullyParsed is true
 
 TEST COMPLETE
