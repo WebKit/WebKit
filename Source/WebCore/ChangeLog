@@ -1,3 +1,19 @@
+2011-04-24  Dominic Cooney  <dominicc@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        Crash when adding a text node to a shadow root
+        https://bugs.webkit.org/show_bug.cgi?id=59304
+
+        Text nodes need to consult their host element for style.
+
+        Test: fast/dom/shadow/append-child-text.html
+
+        * dom/Node.cpp:
+        (WebCore::NodeRendererFactory::styleForRenderer):
+        (WebCore::NodeRendererFactory::createRendererAndStyle):
+        (WebCore::Node::styleForRenderer): forward to NodeRendererFactory
+
 2011-04-24  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Eric Seidel.

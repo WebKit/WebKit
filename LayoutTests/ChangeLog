@@ -1,3 +1,13 @@
+2011-04-24  Dominic Cooney  <dominicc@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        Crash when adding a text node to a shadow root
+        https://bugs.webkit.org/show_bug.cgi?id=59304
+
+        * fast/dom/shadow/append-child-text-expected.txt: Added.
+        * fast/dom/shadow/append-child-text.html: Added.
+
 2011-04-24  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Eric Seidel.
