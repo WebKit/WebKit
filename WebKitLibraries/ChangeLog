@@ -1,3 +1,13 @@
+2011-04-23  Brent Fulgham  <bfulgham@webkit.org>
+
+        [WinCairo] Unreviewed build change.
+
+        Activate Geolocation API, as it will work with WinCairo assuming
+        an appropriate Geolocation Provider is registered.
+
+        * win/tools/vsprops/FeatureDefinesCairo.vsprops: Activate the
+          Geolocation features.
+
 2011-04-21  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Adam Roben.
