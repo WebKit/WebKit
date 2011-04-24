@@ -599,6 +599,19 @@ void ScrollView::updateScrollbars(const IntSize& desiredOffset)
 
 const int panIconSizeLength = 16;
 
+IntRect ScrollView::rectToCopyOnScroll() const
+{
+    IntRect scrollViewRect = convertToContainingWindow(IntRect(0, 0, visibleWidth(), visibleHeight()));
+    if (hasOverlayScrollbars()) {
+        int verticalScrollbarWidth = (verticalScrollbar() && !hasLayerForVerticalScrollbar()) ? verticalScrollbar()->width() : 0;
+        int horizontalScrollbarHeight = (horizontalScrollbar() && !hasLayerForHorizontalScrollbar()) ? horizontalScrollbar()->height() : 0;
+        
+        scrollViewRect.setWidth(scrollViewRect.width() - verticalScrollbarWidth);
+        scrollViewRect.setHeight(scrollViewRect.height() - horizontalScrollbarHeight);
+    }
+    return scrollViewRect;
+}
+
 void ScrollView::scrollContents(const IntSize& scrollDelta)
 {
     if (!hostWindow())
@@ -607,15 +620,7 @@ void ScrollView::scrollContents(const IntSize& scrollDelta)
     // Since scrolling is double buffered, we will be blitting the scroll view's intersection
     // with the clip rect every time to keep it smooth.
     IntRect clipRect = windowClipRect();
-    IntRect scrollViewRect = convertToContainingWindow(IntRect(0, 0, visibleWidth(), visibleHeight()));
-    if (hasOverlayScrollbars()) {
-        int verticalScrollbarWidth = verticalScrollbar() ? verticalScrollbar()->width() : 0;
-        int horizontalScrollbarHeight = horizontalScrollbar() ? horizontalScrollbar()->height() : 0;
-
-        scrollViewRect.setWidth(scrollViewRect.width() - verticalScrollbarWidth);
-        scrollViewRect.setHeight(scrollViewRect.height() - horizontalScrollbarHeight);
-    }
-    
+    IntRect scrollViewRect = rectToCopyOnScroll();    
     IntRect updateRect = clipRect;
     updateRect.intersect(scrollViewRect);
 
@@ -884,7 +889,6 @@ void ScrollView::positionScrollbarLayers()
     positionScrollCornerLayer(layerForScrollCorner(), scrollCornerRect());
 #endif
 }
-
 
 void ScrollView::repaintContentRectangle(const IntRect& rect, bool now)
 {

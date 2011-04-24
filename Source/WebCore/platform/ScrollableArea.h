@@ -155,6 +155,9 @@ protected:
     virtual GraphicsLayer* layerForVerticalScrollbar() const { return 0; }
     virtual GraphicsLayer* layerForScrollCorner() const { return 0; }
 #endif
+    bool hasLayerForHorizontalScrollbar() const;
+    bool hasLayerForVerticalScrollbar() const;
+    bool hasLayerForScrollCorner() const;
 
     // There are 8 possible combinations of writing mode and direction. Scroll origin will be non-zero in the x or y axis
     // if there is any reversed direction or writing-mode. The combinations are:

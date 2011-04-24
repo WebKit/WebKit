@@ -227,4 +227,28 @@ void ScrollableArea::invalidateScrollCorner()
     invalidateScrollCornerRect(scrollCornerRect());
 }
 
+bool ScrollableArea::hasLayerForHorizontalScrollbar() const
+{
+#if USE(ACCELERATED_COMPOSITING)
+    return layerForHorizontalScrollbar();
+#endif
+    return false;
+}
+
+bool ScrollableArea::hasLayerForVerticalScrollbar() const
+{
+#if USE(ACCELERATED_COMPOSITING)
+    return layerForVerticalScrollbar();
+#endif
+    return false;
+}
+
+bool ScrollableArea::hasLayerForScrollCorner() const
+{
+#if USE(ACCELERATED_COMPOSITING)
+    return layerForScrollCorner();
+#endif
+    return false;
+}
+
 } // namespace WebCore

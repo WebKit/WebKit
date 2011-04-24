@@ -368,6 +368,7 @@ private:
 
     // Called to update the scrollbars to accurately reflect the state of the view.
     void updateScrollbars(const IntSize& desiredOffset);
+    IntRect rectToCopyOnScroll() const;
 
     // Called when the scroll position within this view changes.  FrameView overrides this to generate repaint invalidations.
     virtual void repaintFixedElementsAfterScrolling() {}
