@@ -1,3 +1,10 @@
+2011-04-23  MORITA Hajime <morrita@google.com>
+
+        Unreviewed test_expectations.txt update.
+        r84745 didn't fix meter-element.html break on chromium.
+        
+        * platform/chromium/test_expectations.txt:
+
 2011-04-23  MORITA Hajime  <morrita@google.com>
 
         Reviewed by Kent Tamura.
