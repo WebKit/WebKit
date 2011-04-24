@@ -1,5 +1,26 @@
 2011-04-24  Adam Barth  <abarth@webkit.org>
 
+        Reviewed by Eric Seidel.
+
+        Update Content-Security-Policy syntax to match new version of spec
+        https://bugs.webkit.org/show_bug.cgi?id=59291
+
+        Update tests to use the new syntax.
+
+        * http/tests/security/contentSecurityPolicy/eval-scripts-setInterval-allowed.html:
+        * http/tests/security/contentSecurityPolicy/eval-scripts-setInterval-blocked.html:
+        * http/tests/security/contentSecurityPolicy/eval-scripts-setTimeout-allowed.html:
+        * http/tests/security/contentSecurityPolicy/eval-scripts-setTimeout-blocked.html:
+        * http/tests/security/contentSecurityPolicy/image-allowed.html:
+        * http/tests/security/contentSecurityPolicy/image-blocked.html:
+        * http/tests/security/contentSecurityPolicy/inline-script-allowed.html:
+        * http/tests/security/contentSecurityPolicy/style-allowed.html:
+        * http/tests/security/contentSecurityPolicy/style-blocked.html:
+        * http/tests/security/contentSecurityPolicy/xsl-allowed.php:
+        * http/tests/security/contentSecurityPolicy/xsl-blocked.php:
+
+2011-04-24  Adam Barth  <abarth@webkit.org>
+
         Reviewed by Maciej Stachowiak.
 
         Test canonicalization of scheme:/host

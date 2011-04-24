@@ -1,3 +1,30 @@
+2011-04-24  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        Update Content-Security-Policy syntax to match new version of spec
+        https://bugs.webkit.org/show_bug.cgi?id=59291
+
+        Brandon removed disable-xss-protection in favor of unsafe-inline and
+        allow-eval in favor of unsafe-eval.  This change in syntax also means
+        the options directive no longer exists.
+
+        * page/ContentSecurityPolicy.cpp:
+        (WebCore::CSPSourceList::allowInline):
+        (WebCore::CSPSourceList::allowEval):
+        (WebCore::CSPSourceList::CSPSourceList):
+        (WebCore::CSPSourceList::parseSource):
+        (WebCore::CSPSourceList::addSourceUnsafeInline):
+        (WebCore::CSPSourceList::addSourceUnsafeEval):
+        (WebCore::CSPDirective::allowInline):
+        (WebCore::CSPDirective::allowEval):
+        (WebCore::ContentSecurityPolicy::allowJavaScriptURLs):
+        (WebCore::ContentSecurityPolicy::allowInlineEventHandlers):
+        (WebCore::ContentSecurityPolicy::allowInlineScript):
+        (WebCore::ContentSecurityPolicy::allowEval):
+        (WebCore::ContentSecurityPolicy::addDirective):
+        * page/ContentSecurityPolicy.h:
+
 2011-04-24  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Maciej Stachowiak.

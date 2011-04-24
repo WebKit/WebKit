@@ -32,7 +32,6 @@
 namespace WebCore {
 
 class CSPDirective;
-class CSPOptions;
 class Document;
 class KURL;
 
@@ -62,8 +61,6 @@ public:
 private:
     explicit ContentSecurityPolicy(Document*);
 
-    bool protectAgainstXSS() const;
-
     void parse(const String&);
     bool parseDirective(const UChar* begin, const UChar* end, String& name, String& value);
     void parseReportURI(const String&);
@@ -83,7 +80,6 @@ private:
     OwnPtr<CSPDirective> m_styleSrc;
     OwnPtr<CSPDirective> m_fontSrc;
     OwnPtr<CSPDirective> m_mediaSrc;
-    OwnPtr<CSPOptions> m_options;
 
     Vector<KURL> m_reportURLs;
 };

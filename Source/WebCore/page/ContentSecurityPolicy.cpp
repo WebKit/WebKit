@@ -172,6 +172,8 @@ public:
 
     void parse(const String&);
     bool matches(const KURL&);
+    bool allowInline() const { return m_allowInline; }
+    bool allowEval() const { return m_allowEval; }
 
 private:
     void parse(const UChar* begin, const UChar* end);
@@ -182,13 +184,19 @@ private:
     bool parsePort(const UChar* begin, const UChar* end, int& port, bool& portHasWildcard);
 
     void addSourceSelf();
+    void addSourceUnsafeInline();
+    void addSourceUnsafeEval();
 
     SecurityOrigin* m_origin;
     Vector<CSPSource> m_list;
+    bool m_allowInline;
+    bool m_allowEval;
 };
 
 CSPSourceList::CSPSourceList(SecurityOrigin* origin)
     : m_origin(origin)
+    , m_allowInline(false)
+    , m_allowEval(false)
 {
 }
 
@@ -251,6 +259,16 @@ bool CSPSourceList::parseSource(const UChar* begin, const UChar* end,
 
     if (equalIgnoringCase("'self'", begin, end - begin)) {
         addSourceSelf();
+        return false;
+    }
+
+    if (equalIgnoringCase("'unsafe-inline'", begin, end - begin)) {
+        addSourceUnsafeInline();
+        return false;
+    }
+
+    if (equalIgnoringCase("'unsafe-eval'", begin, end - begin)) {
+        addSourceUnsafeEval();
         return false;
     }
 
@@ -405,6 +423,16 @@ void CSPSourceList::addSourceSelf()
     m_list.append(CSPSource(m_origin->protocol(), m_origin->host(), m_origin->port(), false, false));
 }
 
+void CSPSourceList::addSourceUnsafeInline()
+{
+    m_allowInline = true;
+}
+
+void CSPSourceList::addSourceUnsafeEval()
+{
+    m_allowEval = true;
+}
+
 class CSPDirective {
 public:
     CSPDirective(const String& name, const String& value, SecurityOrigin* origin)
@@ -419,61 +447,15 @@ public:
         return m_sourceList.matches(url);
     }
 
+    bool allowInline() const { return m_sourceList.allowInline(); }
+    bool allowEval() const { return m_sourceList.allowEval(); }
+
     const String& text() { return m_text; }
 
 private:
     CSPSourceList m_sourceList;
     String m_text;
 };
-
-class CSPOptions {
-public:
-    explicit CSPOptions(const String& value)
-        : m_disableXSSProtection(false)
-        , m_evalScript(false)
-    {
-        parse(value);
-    }
-
-    bool disableXSSProtection() const { return m_disableXSSProtection; }
-    bool evalScript() const { return m_evalScript; }
-
-private:
-    void parse(const String&);
-
-    bool m_disableXSSProtection;
-    bool m_evalScript;
-};
-
-// options           = "options" *( 1*WSP option-value ) *WSP
-// option-value      = 1*( ALPHA / DIGIT / "-" )
-//
-void CSPOptions::parse(const String& value)
-{
-    DEFINE_STATIC_LOCAL(String, disableXSSProtection, ("disable-xss-protection"));
-    DEFINE_STATIC_LOCAL(String, evalScript, ("eval-script"));
-
-    const UChar* position = value.characters();
-    const UChar* end = position + value.length();
-
-    while (position < end) {
-        skipWhile<isASCIISpace>(position, end);
-
-        const UChar* optionsValueBegin = position;
-
-        if (!skipExactly<isOptionValueCharacter>(position, end))
-            return;
-
-        skipWhile<isOptionValueCharacter>(position, end);
-
-        String optionsValue(optionsValueBegin, position - optionsValueBegin);
-
-        if (equalIgnoringCase(optionsValue, disableXSSProtection))
-            m_disableXSSProtection = true;
-        else if (equalIgnoringCase(optionsValue, evalScript))
-            m_evalScript = true;
-    }
-}
 
 ContentSecurityPolicy::ContentSecurityPolicy(Document* document)
     : m_havePolicy(false)
@@ -526,14 +508,9 @@ void ContentSecurityPolicy::reportViolation(const String& directiveText, const S
         PingLoader::reportContentSecurityPolicyViolation(frame, m_reportURLs[i], report);
 }
 
-bool ContentSecurityPolicy::protectAgainstXSS() const
-{
-    return m_scriptSrc && (!m_options || !m_options->disableXSSProtection());
-}
-
 bool ContentSecurityPolicy::allowJavaScriptURLs() const
 {
-    if (!protectAgainstXSS())
+    if (!m_scriptSrc || m_scriptSrc->allowInline())
         return true;
 
     DEFINE_STATIC_LOCAL(String, consoleMessage, ("Refused to execute JavaScript URL because of Content-Security-Policy.\n"));
@@ -543,7 +520,7 @@ bool ContentSecurityPolicy::allowJavaScriptURLs() const
 
 bool ContentSecurityPolicy::allowInlineEventHandlers() const
 {
-    if (!protectAgainstXSS())
+    if (!m_scriptSrc || m_scriptSrc->allowInline())
         return true;
 
     DEFINE_STATIC_LOCAL(String, consoleMessage, ("Refused to execute inline event handler because of Content-Security-Policy.\n"));
@@ -553,7 +530,7 @@ bool ContentSecurityPolicy::allowInlineEventHandlers() const
 
 bool ContentSecurityPolicy::allowInlineScript() const
 {
-    if (!protectAgainstXSS())
+    if (!m_scriptSrc || m_scriptSrc->allowInline())
         return true;
 
     DEFINE_STATIC_LOCAL(String, consoleMessage, ("Refused to execute inline script because of Content-Security-Policy.\n"));
@@ -563,7 +540,7 @@ bool ContentSecurityPolicy::allowInlineScript() const
 
 bool ContentSecurityPolicy::allowEval() const
 {
-    if (!m_scriptSrc || (m_options && m_options->evalScript()))
+    if (!m_scriptSrc || m_scriptSrc->allowEval())
         return true;
 
     DEFINE_STATIC_LOCAL(String, consoleMessage, ("Refused to evaluate script because of Content-Security-Policy.\n"));
@@ -738,7 +715,6 @@ void ContentSecurityPolicy::addDirective(const String& name, const String& value
     DEFINE_STATIC_LOCAL(String, fontSrc, ("font-src"));
     DEFINE_STATIC_LOCAL(String, mediaSrc, ("media-src"));
     DEFINE_STATIC_LOCAL(String, reportURI, ("report-uri"));
-    DEFINE_STATIC_LOCAL(String, options, ("options"));
 
     ASSERT(!name.isEmpty());
 
@@ -758,8 +734,6 @@ void ContentSecurityPolicy::addDirective(const String& name, const String& value
         m_mediaSrc = createCSPDirective(name, value);
     else if (m_reportURLs.isEmpty() && equalIgnoringCase(name, reportURI))
         parseReportURI(value);
-    else if (!m_options && equalIgnoringCase(name, options))
-        m_options = adoptPtr(new CSPOptions(value));
 }
 
 }
