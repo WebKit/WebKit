@@ -64,11 +64,6 @@ bool isHostCharacter(UChar c)
     return isASCIIAlphanumeric(c) || c == '-';
 }
 
-bool isOptionValueCharacter(UChar c)
-{
-    return isASCIIAlphanumeric(c) || c == '-';
-}
-
 bool isSchemeContinuationCharacter(UChar c)
 {
     return isASCIIAlphanumeric(c) || c == '+' || c == '-' || c == '.';

@@ -1,3 +1,9 @@
+2011-04-24  Dan Bernstein  <mitz@apple.com>
+
+        LLVM Compiler build fix.
+
+        * page/ContentSecurityPolicy.cpp: Removed an unused function.
+
 2011-04-24  Dominic Cooney  <dominicc@chromium.org>
 
         Reviewed by Dimitri Glazkov.
