@@ -1,5 +1,14 @@
 2011-04-23  Simon Fraser  <simon.fraser@apple.com>
 
+        Fix Windows build, which complains about unreachable code.
+
+        * platform/ScrollableArea.cpp:
+        (WebCore::ScrollableArea::hasLayerForHorizontalScrollbar):
+        (WebCore::ScrollableArea::hasLayerForVerticalScrollbar):
+        (WebCore::ScrollableArea::hasLayerForScrollCorner):
+
+2011-04-23  Simon Fraser  <simon.fraser@apple.com>
+
         Reviewed by Dan Bernstein.
 
         Area under composited scrollbars not repainted in WebKit2 on scrolling
