@@ -150,7 +150,6 @@ void (*wkSetScrollbarPainterTrackAlpha)(WKScrollbarPainterRef, CGFloat);
 bool (*wkScrollbarPainterIsHorizontal)(WKScrollbarPainterRef);
 CGRect (*wkScrollbarPainterKnobRect)(WKScrollbarPainterRef);
 void (*wkScrollbarPainterSetOverlayState)(WKScrollbarPainterRef, int overlayScrollerState);
-void (*wkSetScrollbarPainterKnobStyle)(WKScrollbarPainterRef, wkScrollerKnobStyle);
 
 WKScrollbarPainterControllerRef (*wkMakeScrollbarPainterController)(id painterControllerDelegate);
 void (*wkSetPainterForPainterController)(WKScrollbarPainterControllerRef, WKScrollbarPainterRef, bool isHorizontal);

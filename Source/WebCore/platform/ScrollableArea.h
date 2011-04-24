@@ -77,7 +77,6 @@ public:
     void willRemoveHorizontalScrollbar(Scrollbar*);
 
     bool hasOverlayScrollbars() const;
-    virtual ScrollbarOverlayStyle recommendedScrollbarOverlayStyle() { return ScrollbarOverlayStyleDefault; }
 
     ScrollAnimator* scrollAnimator() const { return m_scrollAnimator.get(); }
     const IntPoint& scrollOrigin() const { return m_scrollOrigin; }
