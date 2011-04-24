@@ -1,3 +1,25 @@
+2011-04-23  Gavin Barraclough  <barraclough@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        Bug 59287 - DFG JIT - Handle temporaries as vars, allowing support for ?:
+
+        SetLocals to temporaries will only be generated if they are used within other
+        blocks, due to the SSA based DCE.
+
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::ByteCodeParser):
+        (JSC::DFG::ByteCodeParser::get):
+        (JSC::DFG::ByteCodeParser::set):
+        (JSC::DFG::ByteCodeParser::getLocal):
+        (JSC::DFG::ByteCodeParser::setLocal):
+        (JSC::DFG::ByteCodeParser::parseBlock):
+        (JSC::DFG::ByteCodeParser::processPhiStack):
+        (JSC::DFG::ByteCodeParser::allocateVirtualRegisters):
+        (JSC::DFG::ByteCodeParser::parse):
+        * dfg/DFGGraph.h:
+        (JSC::DFG::BasicBlock::BasicBlock):
+
 2011-04-22  Gavin Barraclough  <barraclough@apple.com>
 
         Reviewed by Sam Weinig & Geoff Garen.

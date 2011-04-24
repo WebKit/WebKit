@@ -55,12 +55,12 @@ struct VariableRecord {
 typedef Vector <BlockIndex, 2> PredecessorList;
 
 struct BasicBlock {
-    BasicBlock(unsigned bytecodeBegin, NodeIndex begin, unsigned numArguments, unsigned numVariables)
+    BasicBlock(unsigned bytecodeBegin, NodeIndex begin, unsigned numArguments, unsigned numLocals)
         : bytecodeBegin(bytecodeBegin)
         , begin(begin)
         , end(NoNode)
         , m_arguments(numArguments)
-        , m_variables(numVariables)
+        , m_locals(numLocals)
     {
     }
 
@@ -75,7 +75,7 @@ struct BasicBlock {
 
     PredecessorList m_predecessors;
     Vector <VariableRecord, 8> m_arguments;
-    Vector <VariableRecord, 8> m_variables;
+    Vector <VariableRecord, 16> m_locals;
 };
 
 // 

@@ -56,12 +56,10 @@ public:
         , m_constantNull(UINT_MAX)
         , m_constant1(UINT_MAX)
         , m_constants(codeBlock->numberOfConstantRegisters())
-        , m_temporaries(codeBlock->m_numCalleeRegisters - codeBlock->m_numVars)
         , m_numArguments(codeBlock->m_numParameters)
-        , m_numVariables(codeBlock->m_numVars)
+        , m_numLocals(codeBlock->m_numCalleeRegisters)
+        , m_preservedVars(codeBlock->m_numVars)
     {
-        for (unsigned i = 0; i < m_temporaries.size(); ++i)
-            m_temporaries[i] = NoNode;
     }
 
     // Parse a full CodeBlock of bytecode.
@@ -74,7 +72,7 @@ private:
     void setupPredecessors();
     // Link GetLocal & SetLocal nodes, to ensure live values are generated.
     enum PhiStackType {
-        VariablePhiStack,
+        LocalPhiStack,
         ArgumentPhiStack
     };
     template<PhiStackType stackType>
@@ -96,14 +94,8 @@ private:
         if (operand < 0)
             return getArgument(operand);
 
-        // Is this a variable?
-        if ((unsigned)operand < m_numVariables)
-            return getVariable((unsigned)operand);
-        
-        // Must be a temporary.
-        unsigned temporary = (unsigned)operand - m_numVariables;
-        ASSERT(temporary < m_temporaries.size());
-        return getTemporary(temporary);
+        // Must be a local.
+        return getLocal((unsigned)operand);
     }
     void set(int operand, NodeIndex value)
     {
@@ -113,22 +105,14 @@ private:
             return;
         }
 
-        // Is this a variable?
-        if ((unsigned)operand < m_numVariables) {
-            setVariable((unsigned)operand, value);
-            return;
-        }
-        
-        // Must be a temporary.
-        unsigned temporary = (unsigned)operand - m_numVariables;
-        ASSERT(temporary < m_temporaries.size());
-        setTemporary(temporary, value);
+        // Must be a local.
+        setLocal((unsigned)operand, value);
     }
 
     // Used in implementing get/set, above, where the operand is a local variable.
-    NodeIndex getVariable(unsigned operand)
+    NodeIndex getLocal(unsigned operand)
     {
-        NodeIndex nodeIndex = m_currentBlock->m_variables[operand].value;
+        NodeIndex nodeIndex = m_currentBlock->m_locals[operand].value;
 
         if (nodeIndex != NoNode) {
             Node& node = m_graph[nodeIndex];
@@ -138,31 +122,19 @@ private:
             return node.child1;
         }
 
+        // Check for reads of temporaries from prior blocks,
+        // expand m_preservedVars to cover these.
+        m_preservedVars = std::max(m_preservedVars, operand + 1);
+
         NodeIndex phi = addToGraph(Phi);
-        m_variablePhiStack.append(PhiStackEntry(m_currentBlock, phi, operand));
+        m_localPhiStack.append(PhiStackEntry(m_currentBlock, phi, operand));
         nodeIndex = addToGraph(GetLocal, OpInfo(operand), phi);
-        m_currentBlock->m_variables[operand].value = nodeIndex;
+        m_currentBlock->m_locals[operand].value = nodeIndex;
         return nodeIndex;
     }
-    void setVariable(unsigned operand, NodeIndex value)
+    void setLocal(unsigned operand, NodeIndex value)
     {
-        m_currentBlock->m_variables[operand].value = addToGraph(SetLocal, OpInfo(operand), value);
-    }
-
-    // Used in implementing get/set, above, where the operand is a temporary.
-    NodeIndex getTemporary(unsigned operand)
-    {
-        NodeIndex index = m_temporaries[operand];
-        if (index != NoNode)
-            return index;
-        
-        // Detect a read of an temporary that is not a yet defined within this block (e.g. use of ?:).
-        m_parseFailed = true;
-        return constantUndefined();
-    }
-    void setTemporary(unsigned operand, NodeIndex value)
-    {
-        m_temporaries[operand] = value;
+        m_currentBlock->m_locals[operand].value = addToGraph(SetLocal, OpInfo(operand), value);
     }
 
     // Used in implementing get/set, above, where the operand is an argument.
@@ -507,10 +479,15 @@ private:
     // Track the index of the node whose result is the current value for every
     // register value in the bytecode - argument, local, and temporary.
     Vector<ConstantRecord, 16> m_constants;
-    Vector<NodeIndex, 16> m_temporaries;
 
+    // The number of arguments passed to the function.
     unsigned m_numArguments;
-    unsigned m_numVariables;
+    // The number of locals (vars + temporaries) used in the function.
+    unsigned m_numLocals;
+    // The number of registers we need to preserve across BasicBlock boundaries;
+    // typically equal to the number vars, but we expand this to cover all
+    // temporaries that persist across blocks (dues to ?:, &&, ||, etc).
+    unsigned m_preservedVars;
 
     struct PhiStackEntry {
         PhiStackEntry(BasicBlock* block, NodeIndex phi, unsigned varNo)
@@ -525,7 +502,7 @@ private:
         unsigned m_varNo;
     };
     Vector<PhiStackEntry, 16> m_argumentPhiStack;
-    Vector<PhiStackEntry, 16> m_variablePhiStack;
+    Vector<PhiStackEntry, 16> m_localPhiStack;
 
     // These maps are used to unique ToNumber and ToInt32 operations.
     typedef HashMap<NodeIndex, NodeIndex> UnaryOpMap;
@@ -547,8 +524,6 @@ bool ByteCodeParser::parseBlock(unsigned limit)
     if (m_currentIndex) {
         for (unsigned i = 0; i < m_constants.size(); ++i)
             m_constants[i] = ConstantRecord();
-        for (unsigned i = 0; i < m_temporaries.size(); ++i)
-            m_temporaries[i] = NoNode;
     }
 
     AliasTracker aliases(m_graph);
@@ -1006,7 +981,7 @@ bool ByteCodeParser::parseBlock(unsigned limit)
 template<ByteCodeParser::PhiStackType stackType>
 void ByteCodeParser::processPhiStack()
 {
-    Vector<PhiStackEntry, 16>& phiStack = (stackType == ArgumentPhiStack) ? m_argumentPhiStack : m_variablePhiStack;
+    Vector<PhiStackEntry, 16>& phiStack = (stackType == ArgumentPhiStack) ? m_argumentPhiStack : m_localPhiStack;
 
     while (!phiStack.isEmpty()) {
         PhiStackEntry entry = phiStack.last();
@@ -1019,7 +994,7 @@ void ByteCodeParser::processPhiStack()
         for (size_t i = 0; i < predecessors.size(); ++i) {
             BasicBlock* predecessorBlock = m_graph.m_blocks[predecessors[i]].get();
 
-            VariableRecord& var = (stackType == ArgumentPhiStack) ? predecessorBlock->m_arguments[varNo] : predecessorBlock->m_variables[varNo];
+            VariableRecord& var = (stackType == ArgumentPhiStack) ? predecessorBlock->m_arguments[varNo] : predecessorBlock->m_locals[varNo];
 
             NodeIndex valueInPredecessor = var.value;
             if (valueInPredecessor == NoNode) {
@@ -1081,7 +1056,7 @@ void ByteCodeParser::setupPredecessors()
 
 void ByteCodeParser::allocateVirtualRegisters()
 {
-    ScoreBoard scoreBoard(m_graph, m_numVariables);
+    ScoreBoard scoreBoard(m_graph, m_preservedVars);
     unsigned sizeExcludingPhiNodes = m_graph.m_blocks.last()->end;
     for (size_t i = 0; i < sizeExcludingPhiNodes; ++i) {
         Node& node = m_graph[i];
@@ -1113,7 +1088,7 @@ void ByteCodeParser::allocateVirtualRegisters()
     // 'm_numCalleeRegisters' is the number of locals and temporaries allocated
     // for the function (and checked for on entry). Since we perform a new and
     // different allocation of temporaries, more registers may now be required.
-    unsigned calleeRegisters = scoreBoard.allocatedCount() + m_numVariables;
+    unsigned calleeRegisters = scoreBoard.allocatedCount() + m_preservedVars;
     if ((unsigned)m_codeBlock->m_numCalleeRegisters < calleeRegisters)
         m_codeBlock->m_numCalleeRegisters = calleeRegisters;
 }
@@ -1130,7 +1105,7 @@ bool ByteCodeParser::parse()
 
         // Loop until we reach the current limit (i.e. next jump target).
         do {
-            m_currentBlock = new BasicBlock(m_currentIndex, m_graph.size(), m_numArguments, m_numVariables);
+            m_currentBlock = new BasicBlock(m_currentIndex, m_graph.size(), m_numArguments, m_numLocals);
 
             if (!parseBlock(limit))
                 return false;
@@ -1146,7 +1121,7 @@ bool ByteCodeParser::parse()
     ASSERT(m_currentIndex == m_codeBlock->instructions().size());
 
     setupPredecessors();
-    processPhiStack<VariablePhiStack>();
+    processPhiStack<LocalPhiStack>();
     processPhiStack<ArgumentPhiStack>();
 
     allocateVirtualRegisters();
