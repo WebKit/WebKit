@@ -1483,7 +1483,6 @@ public:
   
     ContainerNode* parentNodeForRenderingAndStyle() const { return m_parentNodeForRenderingAndStyle; }
     void createRendererIfNeeded();
-    PassRefPtr<RenderStyle> styleForRenderer();
 
 private:
     Document* document() { return m_node->document(); }
@@ -1497,20 +1496,6 @@ private:
     ContainerNode* m_parentNodeForRenderingAndStyle;
     ShadowRoot* m_visualParentShadowRoot;
 };
-
-PassRefPtr<RenderStyle> NodeRendererFactory::styleForRenderer()
-{
-    if (m_node->isElementNode()) {
-        bool allowSharing = true;
-#if ENABLE(XHTMLMP)
-        // noscript needs the display property protected - it's a special case
-        allowSharing = m_node->localName() != HTMLNames::noscriptTag.localName();
-#endif
-        return m_node->document()->styleSelector()->styleForElement(static_cast<Element*>(m_node), 0, allowSharing);
-    }
-    ContainerNode* parentNodeForStyle = parentNodeForRenderingAndStyle();
-    return parentNodeForStyle && parentNodeForStyle->renderer() ? parentNodeForStyle->renderer()->style() : 0;
-}
 
 ContainerNode* NodeRendererFactory::findVisualParent()
 {
@@ -1571,7 +1556,7 @@ RenderObject* NodeRendererFactory::createRendererAndStyle()
     if (!shouldCreateRenderer())
         return 0;
 
-    RefPtr<RenderStyle> style = styleForRenderer();
+    RefPtr<RenderStyle> style = m_node->styleForRenderer();
     if (!m_node->rendererIsNeeded(style.get()))
         return 0;
 
@@ -1636,7 +1621,15 @@ void Node::createRendererIfNeeded()
 
 PassRefPtr<RenderStyle> Node::styleForRenderer()
 {
-    return NodeRendererFactory(this).styleForRenderer();
+    if (isElementNode()) {
+        bool allowSharing = true;
+#if ENABLE(XHTMLMP)
+        // noscript needs the display property protected - it's a special case
+        allowSharing = localName() != HTMLNames::noscriptTag.localName();
+#endif
+        return document()->styleSelector()->styleForElement(static_cast<Element*>(this), 0, allowSharing);
+    }
+    return parentNode() && parentNode()->renderer() ? parentNode()->renderer()->style() : 0;
 }
 
 bool Node::rendererIsNeeded(RenderStyle *style)

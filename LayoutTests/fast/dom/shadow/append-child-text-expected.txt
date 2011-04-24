@@ -1,3 +1,0 @@
-This tests that adding text nodes to a shadow root does not crash.
-
-PASS
