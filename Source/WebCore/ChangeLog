@@ -1,5 +1,15 @@
 2011-04-25  Adam Barth  <abarth@webkit.org>
 
+        Reviewed by Darin Adler.
+
+        CheckedRadioButton should play nice with strict OwnPtr
+        https://bugs.webkit.org/show_bug.cgi?id=59386
+
+        * dom/CheckedRadioButtons.cpp:
+        (WebCore::CheckedRadioButtons::addButton):
+
+2011-04-25  Adam Barth  <abarth@webkit.org>
+
         Reviewed by David Levin.
 
         Resource*.cpp should play nice with strict OwnPtrs

@@ -42,7 +42,7 @@ void CheckedRadioButtons::addButton(HTMLFormControlElement* element)
         return;
 
     if (!m_nameToCheckedRadioButtonMap)
-        m_nameToCheckedRadioButtonMap.set(new NameToInputMap);
+        m_nameToCheckedRadioButtonMap = adoptPtr(new NameToInputMap);
 
     pair<NameToInputMap::iterator, bool> result = m_nameToCheckedRadioButtonMap->add(element->name().impl(), inputElement);
     if (result.second)
