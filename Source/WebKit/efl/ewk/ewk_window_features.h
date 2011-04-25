@@ -26,8 +26,6 @@
 #ifndef ewk_window_features_h
 #define ewk_window_features_h
 
-#include "ewk_eapi.h"
-
 #include <Eina.h>
 
 #ifdef __cplusplus

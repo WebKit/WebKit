@@ -26,7 +26,6 @@
 #ifndef ewk_cookies_h
 #define ewk_cookies_h
 
-#include "ewk_eapi.h"
 #include <Eina.h>
 
 #ifdef __cplusplus

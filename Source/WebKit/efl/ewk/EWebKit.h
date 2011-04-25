@@ -31,7 +31,6 @@
 
 #include "ewk_contextmenu.h"
 #include "ewk_cookies.h"
-#include "ewk_eapi.h"
 #include "ewk_frame.h"
 #include "ewk_history.h"
 #include "ewk_main.h"

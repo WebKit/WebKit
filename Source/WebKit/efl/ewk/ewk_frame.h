@@ -21,7 +21,6 @@
 #ifndef ewk_frame_h
 #define ewk_frame_h
 
-#include "ewk_eapi.h"
 #include <Evas.h>
 
 #ifdef __cplusplus

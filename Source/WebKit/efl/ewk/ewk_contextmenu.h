@@ -26,8 +26,6 @@
 #ifndef ewk_contextmenu_h
 #define ewk_contextmenu_h
 
-#include "ewk_eapi.h"
-
 #include <Eina.h>
 #include <Evas.h>
 

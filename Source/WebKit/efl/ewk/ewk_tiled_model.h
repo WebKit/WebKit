@@ -21,7 +21,6 @@
 #ifndef ewk_tiled_model_h
 #define ewk_tiled_model_h
 
-#include "ewk_eapi.h"
 #include "ewk_tiled_backing_store.h"
 
 #include <Evas.h>

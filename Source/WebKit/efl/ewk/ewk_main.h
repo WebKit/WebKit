@@ -26,7 +26,7 @@
 #ifndef ewk_main_h
 #define ewk_main_h
 
-#include "ewk_eapi.h"
+#include <Eina.h>
 
 #ifdef __cplusplus
 extern "C" {

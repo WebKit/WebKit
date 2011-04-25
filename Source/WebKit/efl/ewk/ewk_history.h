@@ -21,8 +21,6 @@
 #ifndef ewk_history_h
 #define ewk_history_h
 
-#include "ewk_eapi.h"
-
 #include <Eina.h>
 #include <Evas.h>
 #include <cairo.h>
