@@ -1,3 +1,15 @@
+2011-04-25  Martin Robinson  <mrobinson@igalia.com>
+
+        Reviewed by Xan Lopez.
+
+        [GTK] Crash in WebCore::FrameView::notifyPageThatContentAreaWillPaint()
+        https://bugs.webkit.org/show_bug.cgi?id=59311
+
+        * platform/gtk/MainFrameScrollbarGtk.cpp:
+        (MainFrameScrollbarGtk::attachAdjustment): Before connecting an adjustment to a scrollbar
+        disconnect any lingering signal handlers. This prevents an adjustment from controlling the
+        active ScrollView and some zombie ScrollView.
+
 2011-04-25  Geoffrey Garen  <ggaren@apple.com>
 
         Another shot at fixing the EFL build.

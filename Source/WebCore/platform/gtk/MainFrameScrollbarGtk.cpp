@@ -69,6 +69,11 @@ void MainFrameScrollbarGtk::attachAdjustment(GtkAdjustment* adjustment)
     if (!m_adjustment)
         return;
 
+    // In some cases this adjustment may still be attached to a living MainFrameScrollbar.
+    // If that's the case we want to force a disconnection now, before we modify the values.
+    g_signal_handlers_disconnect_matched(m_adjustment.get(), G_SIGNAL_MATCH_FUNC, 0, 0, 0,
+                                         reinterpret_cast<void*>(MainFrameScrollbarGtk::gtkValueChanged), 0);
+
     updateThumbProportion();
     updateThumbPosition();
     g_signal_connect(m_adjustment.get(), "value-changed", G_CALLBACK(MainFrameScrollbarGtk::gtkValueChanged), this);
