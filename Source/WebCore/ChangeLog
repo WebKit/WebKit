@@ -1,3 +1,13 @@
+2011-04-25  Adrienne Walker  <enne@google.com>
+
+        Reviewed by David Levin.
+
+        Make ActiveDOMCallback play nice with OwnPtr strict mode
+        https://bugs.webkit.org/show_bug.cgi?id=59398
+
+        * bindings/generic/ActiveDOMCallback.cpp:
+        (WebCore::ActiveDOMCallback::ActiveDOMCallback):
+
 2011-04-25  Adam Klein  <adamk@chromium.org>
 
         Reviewed by James Robinson.
