@@ -376,7 +376,7 @@ namespace WTF {
     inline ListHashSet<T, inlineCapacity, U>::ListHashSet()
         : m_head(0)
         , m_tail(0)
-        , m_allocator(new NodeAllocator)
+        , m_allocator(adoptPtr(new NodeAllocator))
     {
     }
 
@@ -384,7 +384,7 @@ namespace WTF {
     inline ListHashSet<T, inlineCapacity, U>::ListHashSet(const ListHashSet& other)
         : m_head(0)
         , m_tail(0)
-        , m_allocator(new NodeAllocator)
+        , m_allocator(adoptPtr(new NodeAllocator))
     {
         const_iterator end = other.end();
         for (const_iterator it = other.begin(); it != end; ++it)

@@ -1,3 +1,13 @@
+2011-04-25  James Robinson  <jamesr@chromium.org>
+
+        Reviewed by David Levin.
+
+        Fix strict OwnPtr violations in ListHashSet and RenderLayerCompositor
+        https://bugs.webkit.org/show_bug.cgi?id=59353
+
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::RenderLayerCompositor):
+
 2011-04-25  Adam Barth  <abarth@webkit.org>
 
         Reviewed by James Robinson.

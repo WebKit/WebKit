@@ -1,3 +1,13 @@
+2011-04-25  James Robinson  <jamesr@chromium.org>
+
+        Reviewed by David Levin.
+
+        Fix strict OwnPtr violations in ListHashSet and RenderLayerCompositor
+        https://bugs.webkit.org/show_bug.cgi?id=59353
+
+        * wtf/ListHashSet.h:
+        (WTF::::ListHashSet):
+
 2011-04-25  David Levin  <levin@chromium.org>
 
         Reviewed by Adam Barth.
