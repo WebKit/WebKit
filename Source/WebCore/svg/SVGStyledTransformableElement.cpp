@@ -65,7 +65,7 @@ AffineTransform SVGStyledTransformableElement::animatedLocalTransform() const
 AffineTransform* SVGStyledTransformableElement::supplementalTransform()
 {
     if (!m_supplementalTransform)
-        m_supplementalTransform.set(new AffineTransform());
+        m_supplementalTransform = adoptPtr(new AffineTransform);
     return m_supplementalTransform.get();
 }
 

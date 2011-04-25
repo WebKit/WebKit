@@ -21,6 +21,9 @@
 
 #include "config.h"
 
+#define ADAMK
+#include "OwnPtr.h"
+#undef ADAMK
 #if ENABLE(SVG)
 #include "SVGDocumentExtensions.h"
 
@@ -240,7 +243,7 @@ PassOwnPtr<HashSet<RefPtr<SVGStyledElement> > > SVGDocumentExtensions::removePen
 {
     ASSERT(m_pendingResources.contains(id));
 
-    OwnPtr<SVGPendingElements> set(m_pendingResources.get(id));
+    OwnPtr<SVGPendingElements> set(adoptPtr(m_pendingResources.get(id)));
     m_pendingResources.remove(id);
     return set.release();
 }
