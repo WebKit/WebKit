@@ -1,3 +1,22 @@
+2011-04-25  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Convert a test to dump as text.
+
+        * fast/dom/jsDevicePixelRatio-expected.txt: Added.
+        * fast/dom/jsDevicePixelRatio.html:
+        * platform/chromium-linux/fast/dom/jsDevicePixelRatio-expected.png: Removed.
+        * platform/chromium-win/fast/dom/jsDevicePixelRatio-expected.png: Removed.
+        * platform/chromium-win/fast/dom/jsDevicePixelRatio-expected.txt: Removed.
+        * platform/gtk/fast/dom/jsDevicePixelRatio-expected.png: Removed.
+        * platform/gtk/fast/dom/jsDevicePixelRatio-expected.txt: Removed.
+        * platform/mac-leopard/fast/dom/jsDevicePixelRatio-expected.png: Removed.
+        * platform/mac/fast/dom/jsDevicePixelRatio-expected.png: Removed.
+        * platform/mac/fast/dom/jsDevicePixelRatio-expected.txt: Removed.
+        * platform/qt/fast/dom/jsDevicePixelRatio-expected.png: Removed.
+        * platform/qt/fast/dom/jsDevicePixelRatio-expected.txt: Removed.
+
 2011-04-25  Philippe Normand  <pnormand@igalia.com>
 
         Unreviewed, GTK rebaseline and skip a couple of failing tests.
