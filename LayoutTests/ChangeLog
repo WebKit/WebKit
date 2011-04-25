@@ -1,3 +1,17 @@
+2011-04-25  Daniel Bates  <dbates@webkit.org>
+
+        Reviewed by Sam Weinig.
+
+        Convert LayoutTests/fast/events/onloadFrameCrash.html from pixel test to text-based test
+        https://bugs.webkit.org/show_bug.cgi?id=59362
+
+        * fast/events/onloadFrameCrash-expected.txt: Added.
+        * fast/events/onloadFrameCrash.html: Modified to dump as text.
+        * platform/gtk/fast/events/onloadFrameCrash-expected.png: Removed.
+        * platform/gtk/fast/events/onloadFrameCrash-expected.txt: Removed.
+        * platform/mac/fast/events/onloadFrameCrash-expected.png: Removed.
+        * platform/mac/fast/events/onloadFrameCrash-expected.txt: Removed.
+
 2011-04-25  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Adam Roben.
