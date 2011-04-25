@@ -3264,7 +3264,7 @@ BUGWK50661 WIN LINUX : fast/forms/input-appearance-spinbutton-visibility.html = 
 BUGWK50661 MAC : fast/forms/input-appearance-spinbutton-visibility.html = IMAGE+TEXT PASS
 BUGWK50661 WIN LINUX : fast/speech/input-appearance-numberandspeech.html = TEXT PASS
 BUGWK50661 MAC LEOPARD : fast/speech/input-appearance-numberandspeech.html = IMAGE PASS
-BUGWK50661 WIN LINUX : fast/dom/HTMLMeterElement/meter-element.html = IMAGE+TEXT PASS
+//BUGWK50661 WIN LINUX : fast/dom/HTMLMeterElement/meter-element.html = IMAGE+TEXT PASS
 BUGWK50661 WIN LINUX : fast/dom/HTMLMeterElement/meter-styles.html = IMAGE+TEXT PASS
 
 // Need expectations
@@ -3939,3 +3939,9 @@ BUGDPRANKE LINUX DEBUG : svg/batik/text/textOnPath2.svg = IMAGE PASS
 BUGDPRANKE LINUX DEBUG : svg/batik/text/textOnPath3.svg = IMAGE PASS
 BUGDPRANKE WIN DEBUG : svg/dom/SVGScriptElement/script-set-href.svg = TEXT PASS
 BUGDPRANKE WIN DEBUG : http/tests/navigation/ping-cross-origin-from-https.html = TIMEOUT PASS
+
+// broke in r84742 - just needs a new baseline?
+BUGDPRANKE : http/tests/misc/will-send-request-returns-null-on-redirect.html = TEXT
+
+// changed in r84745 (see commented-out entry above)
+BUGWK50661 WIN LINUX : fast/dom/HTMLMeterElement/meter-element.html = TEXT

@@ -1,3 +1,16 @@
+2011-04-24  Dirk Pranke  <dpranke@chromium.org>
+
+        Unreviewed, expectations change.
+
+        Add Chromium baselines for fast/table/auto-100-percent-width.html.
+        Mark fast/dom/HTMLMeterElement/meter-element.html and
+        http/tests/misc/will-send-request-returns-null-on-redirect.html
+        as failing - need triage.
+
+        * platform/chromium-mac/fast/table/auto-100-percent-width-expected.png: Added.
+        * platform/chromium-win/fast/table/auto-100-percent-width-expected.png: Added.
+        * platform/chromium/test_expectations.txt:
+
 2011-04-24  Adam Barth  <abarth@webkit.org>
 
         Update Chromium results for standard-url.html (again).
