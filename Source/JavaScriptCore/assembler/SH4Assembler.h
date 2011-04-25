@@ -702,7 +702,7 @@ public:
         oneShortOp(opc);
     }
 
-    void cmpEqImmR0(int imm, RegisterID dst, Condition cond)
+    void cmpEqImmR0(int imm, RegisterID dst)
     {
         uint16_t opc = getOpcodeGroup5(CMPEQIMM_OPCODE, imm);
         oneShortOp(opc);

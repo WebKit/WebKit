@@ -31,36 +31,6 @@
 #include "MacroAssemblerSH4.h"
 
 namespace JSC {
-const Condition MacroAssemblerSH4::Equal = SH4Assembler::EQ;
-const Condition MacroAssemblerSH4::NotEqual = SH4Assembler::NE;
-const Condition MacroAssemblerSH4::GreaterThan = SH4Assembler::GT;
-const Condition MacroAssemblerSH4::GreaterThanOrEqual = SH4Assembler::GE;
-const Condition MacroAssemblerSH4::LessThan = SH4Assembler::LT;
-const Condition MacroAssemblerSH4::LessThanOrEqual = SH4Assembler::LE;
-const Condition MacroAssemblerSH4::UGreaterThan = SH4Assembler::HI;
-const Condition MacroAssemblerSH4::UGreaterThanOrEqual = SH4Assembler::HS;
-const Condition MacroAssemblerSH4::ULessThan = SH4Assembler::LI;
-const Condition MacroAssemblerSH4::ULessThanOrEqual = SH4Assembler::LS;
-const Condition MacroAssemblerSH4::Zero = SH4Assembler::EQ;
-const Condition MacroAssemblerSH4::NonZero = SH4Assembler::NE;
-const Condition MacroAssemblerSH4::Overflow = SH4Assembler::OF;
-const Condition MacroAssemblerSH4::Above = SH4Assembler::HI;
-const Condition MacroAssemblerSH4::AboveOrEqual = SH4Assembler::HS;
-const Condition MacroAssemblerSH4::Below = SH4Assembler::LI;
-const Condition MacroAssemblerSH4::BelowOrEqual = SH4Assembler::LS;
-const Condition MacroAssemblerSH4::DoubleEqual = SH4Assembler::EQ;
-const Condition MacroAssemblerSH4::DoubleNotEqual = SH4Assembler::NE;
-const Condition MacroAssemblerSH4::DoubleGreaterThan = SH4Assembler::GT;
-const Condition MacroAssemblerSH4::DoubleGreaterThanOrEqual = SH4Assembler::GE;
-const Condition MacroAssemblerSH4::DoubleLessThan = SH4Assembler::LT;
-const Condition MacroAssemblerSH4::DoubleLessThanOrEqual = SH4Assembler::LE;
-const Condition MacroAssemblerSH4::DoubleEqualOrUnordered = SH4Assembler::EQU;
-const Condition MacroAssemblerSH4::DoubleNotEqualOrUnordered = SH4Assembler::NEU;
-const Condition MacroAssemblerSH4::DoubleGreaterThanOrUnordered = SH4Assembler::GTU;
-const Condition MacroAssemblerSH4::DoubleGreaterThanOrEqualOrUnordered = SH4Assembler::GEU;
-const Condition MacroAssemblerSH4::DoubleLessThanOrUnordered = SH4Assembler::LTU;
-const Condition MacroAssemblerSH4::DoubleLessThanOrEqualOrUnordered = SH4Assembler::LEU;
-const Condition MacroAssemblerSH4::Signed = SH4Assembler::SI;
 
 void MacroAssemblerSH4::linkCall(void* code, Call call, FunctionPtr function)
 {

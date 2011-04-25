@@ -1,3 +1,35 @@
+2011-04-25  Thouraya ANDOLSI  <thouraya.andolsi@st.com>
+
+        Reviewed by Gavin Barraclough.
+
+        Rationalize MacroAssembler branch methods
+        https://bugs.webkit.org/show_bug.cgi?id=58950
+
+        split out the 'Condition' enum into 'RelationalCondition' and 'ResultCondition' 
+        and apply related changes (only for SH4 platforms).
+
+        * assembler/MacroAssemblerSH4.cpp:
+        * assembler/MacroAssemblerSH4.h:
+        (JSC::MacroAssemblerSH4::compare32):
+        (JSC::MacroAssemblerSH4::branch32WithUnalignedHalfWords):
+        (JSC::MacroAssemblerSH4::branchDouble):
+        (JSC::MacroAssemblerSH4::branch32):
+        (JSC::MacroAssemblerSH4::branchTest8):
+        (JSC::MacroAssemblerSH4::branch8):
+        (JSC::MacroAssemblerSH4::branchTruncateDoubleToInt32):
+        (JSC::MacroAssemblerSH4::test8):
+        (JSC::MacroAssemblerSH4::branch16):
+        (JSC::MacroAssemblerSH4::branchTest32):
+        (JSC::MacroAssemblerSH4::branchAdd32):
+        (JSC::MacroAssemblerSH4::branchMul32):
+        (JSC::MacroAssemblerSH4::branchSub32):
+        (JSC::MacroAssemblerSH4::branchOr32):
+        (JSC::MacroAssemblerSH4::branchConvertDoubleToInt32):
+        (JSC::MacroAssemblerSH4::branchPtrWithPatch):
+        (JSC::MacroAssemblerSH4::SH4Condition):
+        * assembler/SH4Assembler.h:
+        (JSC::SH4Assembler::cmpEqImmR0):
+
 2011-04-25  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Eric Seidel.
