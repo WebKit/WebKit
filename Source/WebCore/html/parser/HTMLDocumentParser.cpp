@@ -290,7 +290,7 @@ void HTMLDocumentParser::pumpTokenizer(SynchronousMode mode)
     if (isWaitingForScripts()) {
         ASSERT(m_tokenizer->state() == HTMLTokenizer::DataState);
         if (!m_preloadScanner) {
-            m_preloadScanner.set(new HTMLPreloadScanner(document()));
+            m_preloadScanner = adoptPtr(new HTMLPreloadScanner(document()));
             m_preloadScanner->appendToEnd(m_input.current());
         }
         m_preloadScanner->scan();
