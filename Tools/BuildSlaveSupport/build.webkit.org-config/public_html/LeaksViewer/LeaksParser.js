@@ -25,16 +25,23 @@
 
 function LeaksParser(didParseLeaksFileCallback) {
     this._didParseLeaksFileCallback = didParseLeaksFileCallback;
-    this._worker = new Worker("LeaksParserWorker.js");
+    
+    if (workersSupportCyclicStructures()) {
+        this._worker = new Worker("LeaksParserWorker.js");
 
-    var self = this;
-    this._worker.onmessage = function(e) {
-        self._didParseLeaksFileCallback(e.data);
-    };
+        var self = this;
+        this._worker.onmessage = function(e) {
+            self._didParseLeaksFileCallback(e.data);
+        };
+    } else
+        this._parserImpl = new LeaksParserImpl(this._didParseLeaksFileCallback);
 }
 
 LeaksParser.prototype = {
     addLeaksFile: function(leaksText) {
-        this._worker.postMessage(leaksText);
+        if (this._worker)
+            this._worker.postMessage(leaksText);
+        else
+            this._parserImpl.addLeaksFile(leaksText);
     },
 };

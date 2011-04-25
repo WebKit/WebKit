@@ -23,79 +23,12 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-function LeaksParserWorker() {
-    this.profile = this._createNode("top level");
-}
+importScripts("LeaksParserImpl.js");
 
-LeaksParserWorker.prototype = {
-    addLeaksFile: function(leaksText) {
-        this._incorporateLeaks(this._parseLeaks(leaksText));
-    },
-
-    _parseLeaks: function(text) {
-        var leaks = [];
-        var currentSize = 0;
-        text.split("\n").forEach(function(line) {
-            var match = /^Leak:.*\ssize=(\d+)\s/.exec(line);
-            if (match) {
-                currentSize = parseInt(match[1], 10);
-                return;
-            }
-            if (!/^\s+Call stack:/.test(line))
-                return;
-
-            // The first frame is not really a frame at all ("Call stack: thread 0xNNNNN:"), so we omit it.
-            leaks.push({ size: currentSize, stack: line.split(" | ").slice(1).map(function(str) { return str.trim(); }) });
-            currentSize = 0;
-        });
-        return leaks;
-    },
-
-    _createNode: function(functionName) {
-        return {
-            functionName: functionName,
-            selfTime: 0,
-            totalTime: 0,
-            averageTime: 0,
-            numberOfCalls: 0,
-            children: [],
-            childrenByName: {},
-            callUID: functionName,
-        };
-    },
-
-    // This function creates a fake "profile" from a set of leak stacks. "selfTime" is the number of
-    // stacks in which this function was at the top (in theory, only functions like malloc should have a
-    // non-zero selfTime). "totalTime" is the number of stacks which contain this function (and thus is
-    // the number of leaks that occurred in or beneath this function).
-    // FIXME: This is expensive! Can we parallelize it?
-    _incorporateLeaks: function(leaks) {
-        var self = this;
-        leaks.forEach(function(leak) {
-            leak.stack.reduce(function(node, frame, index, array) {
-                var childNode;
-                if (frame in node.childrenByName)
-                    childNode = node.childrenByName[frame];
-                else {
-                    childNode = self._createNode(frame);
-                    childNode.head = self.profile;
-                    node.childrenByName[frame] = childNode;
-                    node.children.push(childNode);
-                }
-                if (index === array.length - 1)
-                    childNode.selfTime += leak.size;
-                childNode.totalTime += leak.size;
-                ++childNode.numberOfCalls;
-                return childNode;
-            }, self.profile);
-        });
-        self.profile.totalTime = self.profile.children.reduce(function(sum, child) { return sum + child.totalTime; }, 0);
-    },
-};
-
-var parser = new LeaksParserWorker();
+var parser = new LeaksParserImpl(function(profile) {
+    postMessage(profile);
+});
 
 onmessage = function(e) {
     parser.addLeaksFile(e.data);
-    postMessage(parser.profile);
 }

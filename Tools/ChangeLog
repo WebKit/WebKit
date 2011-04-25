@@ -1,3 +1,34 @@
+2011-04-25  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Adam Roben.
+
+        Leaks Viewer throws "Cannot post cyclic structures" in Safari 5
+        https://bugs.webkit.org/show_bug.cgi?id=56090
+
+        Make LeaksViewer work with versions of browsers that don't support message
+        passing of cyclic structures.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/LeaksViewer/LeaksParser.js:
+        (LeaksParser.this._worker.onmessage):
+        (LeaksParser):
+        (LeaksParser.prototype.addLeaksFile):
+        Use LeaksParserImpl directly if we don't support passing cyclic structures.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/LeaksViewer/LeaksParserImpl.js: Copied from BuildSlaveSupport/build.webkit.org-config/public_html/LeaksViewer/LeaksParserWorker.js.
+        (LeaksParserImpl):
+        (LeaksParserImpl.prototype.addLeaksFile):
+        (LeaksParserImpl.prototype._incorporateLeaks):
+        * BuildSlaveSupport/build.webkit.org-config/public_html/LeaksViewer/LeaksParserWorker.js:
+        (onmessage):
+        Factor out LeaksParser implementation into LeaksParserImpl.js.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/LeaksViewer/Utilities.js:
+        (workersSupportCyclicStructures):
+        Add function to detect if workers support passing cyclic structures.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/LeaksViewer/index.html:
+        Add LeaksParserImpl.js include.
+
 2011-04-25  Jeff Miller  <jeffm@apple.com>
 
         Reviewed by Timothy Hatcher.

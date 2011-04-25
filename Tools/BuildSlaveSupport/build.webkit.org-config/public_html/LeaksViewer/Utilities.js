@@ -41,6 +41,22 @@ function range(n) {
     return result;
 }
 
+function workersSupportCyclicStructures() {
+    var worker = new Worker("Utilities.js");
+    var supportsCyclicStructures = true;
+
+    try {
+        var cyclicStructure = { cycle: null };
+        cyclicStructure.cycle = cyclicStructure;
+
+        worker.postMessage(cyclicStructure);
+    } catch(e) {
+        supportsCyclicStructures = false;
+    }
+
+    return supportsCyclicStructures;
+}
+
 Array.prototype.first = function(predicate) {
     for (var i = 0; i < this.length; ++i) {
         if (predicate(this[i]))
