@@ -492,8 +492,6 @@
 		1AB7FC6F0A8B92EC00D9D37B /* XPathExpressionNode.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AB7FC4E0A8B92EC00D9D37B /* XPathExpressionNode.h */; };
 		1AB7FC700A8B92EC00D9D37B /* XPathFunctions.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1AB7FC4F0A8B92EC00D9D37B /* XPathFunctions.cpp */; };
 		1AB7FC710A8B92EC00D9D37B /* XPathFunctions.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AB7FC500A8B92EC00D9D37B /* XPathFunctions.h */; };
-		1AB7FC730A8B92EC00D9D37B /* XPathNamespace.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1AB7FC520A8B92EC00D9D37B /* XPathNamespace.cpp */; };
-		1AB7FC740A8B92EC00D9D37B /* XPathNamespace.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AB7FC530A8B92EC00D9D37B /* XPathNamespace.h */; };
 		1AB7FC750A8B92EC00D9D37B /* XPathNSResolver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1AB7FC540A8B92EC00D9D37B /* XPathNSResolver.cpp */; };
 		1AB7FC760A8B92EC00D9D37B /* XPathNSResolver.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AB7FC550A8B92EC00D9D37B /* XPathNSResolver.h */; };
 		1AB7FC780A8B92EC00D9D37B /* XPathParser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1AB7FC570A8B92EC00D9D37B /* XPathParser.cpp */; };
@@ -6975,8 +6973,6 @@
 		1AB7FC4F0A8B92EC00D9D37B /* XPathFunctions.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = XPathFunctions.cpp; sourceTree = "<group>"; };
 		1AB7FC500A8B92EC00D9D37B /* XPathFunctions.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = XPathFunctions.h; sourceTree = "<group>"; };
 		1AB7FC510A8B92EC00D9D37B /* XPathGrammar.y */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.yacc; path = XPathGrammar.y; sourceTree = "<group>"; };
-		1AB7FC520A8B92EC00D9D37B /* XPathNamespace.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = XPathNamespace.cpp; sourceTree = "<group>"; };
-		1AB7FC530A8B92EC00D9D37B /* XPathNamespace.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = XPathNamespace.h; sourceTree = "<group>"; };
 		1AB7FC540A8B92EC00D9D37B /* XPathNSResolver.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = XPathNSResolver.cpp; sourceTree = "<group>"; };
 		1AB7FC550A8B92EC00D9D37B /* XPathNSResolver.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = XPathNSResolver.h; sourceTree = "<group>"; };
 		1AB7FC560A8B92EC00D9D37B /* XPathNSResolver.idl */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; path = XPathNSResolver.idl; sourceTree = "<group>"; };
@@ -18921,8 +18917,6 @@
 				1AB7FC4F0A8B92EC00D9D37B /* XPathFunctions.cpp */,
 				1AB7FC500A8B92EC00D9D37B /* XPathFunctions.h */,
 				1AB7FC510A8B92EC00D9D37B /* XPathGrammar.y */,
-				1AB7FC520A8B92EC00D9D37B /* XPathNamespace.cpp */,
-				1AB7FC530A8B92EC00D9D37B /* XPathNamespace.h */,
 				E1EC299D0BB04C6B00EA187B /* XPathNodeSet.cpp */,
 				E1EC299E0BB04C6B00EA187B /* XPathNodeSet.h */,
 				1AB7FC540A8B92EC00D9D37B /* XPathNSResolver.cpp */,
@@ -23058,7 +23052,6 @@
 				1AB7FC6F0A8B92EC00D9D37B /* XPathExpressionNode.h in Headers */,
 				1AB7FC710A8B92EC00D9D37B /* XPathFunctions.h in Headers */,
 				1A7629D60A07425100989F5B /* XPathGrammar.h in Headers */,
-				1AB7FC740A8B92EC00D9D37B /* XPathNamespace.h in Headers */,
 				E1EC29A00BB04C6B00EA187B /* XPathNodeSet.h in Headers */,
 				1AB7FC760A8B92EC00D9D37B /* XPathNSResolver.h in Headers */,
 				1AB7FC790A8B92EC00D9D37B /* XPathParser.h in Headers */,
@@ -25776,7 +25769,6 @@
 				1AB7FC6E0A8B92EC00D9D37B /* XPathExpressionNode.cpp in Sources */,
 				1AB7FC700A8B92EC00D9D37B /* XPathFunctions.cpp in Sources */,
 				1A7629D50A07425100989F5B /* XPathGrammar.cpp in Sources */,
-				1AB7FC730A8B92EC00D9D37B /* XPathNamespace.cpp in Sources */,
 				E1EC299F0BB04C6B00EA187B /* XPathNodeSet.cpp in Sources */,
 				1AB7FC750A8B92EC00D9D37B /* XPathNSResolver.cpp in Sources */,
 				1AB7FC780A8B92EC00D9D37B /* XPathParser.cpp in Sources */,

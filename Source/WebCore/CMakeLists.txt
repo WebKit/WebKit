@@ -1387,7 +1387,6 @@ SET(WebCore_SOURCES
     xml/XPathExpressionNode.cpp
     xml/XPathFunctions.cpp
     xml/XPathNSResolver.cpp
-    xml/XPathNamespace.cpp
     xml/XPathNodeSet.cpp
     xml/XPathParser.cpp
     xml/XPathPath.cpp

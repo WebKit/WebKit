@@ -6109,8 +6109,6 @@
             'xml/XPathFunctions.h',
             'xml/XPathNSResolver.cpp',
             'xml/XPathNSResolver.h',
-            'xml/XPathNamespace.cpp',
-            'xml/XPathNamespace.h',
             'xml/XPathNodeSet.cpp',
             'xml/XPathNodeSet.h',
             'xml/XPathParser.cpp',

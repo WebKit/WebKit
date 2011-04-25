@@ -354,7 +354,7 @@ public:
 
     // Returns the DOM ownerDocument attribute. This method never returns NULL, except in the case 
     // of (1) a Document node or (2) a DocumentType node that is not used with any Document yet. 
-    virtual Document* ownerDocument() const;
+    Document* ownerDocument() const;
 
     // Returns the document associated with this node. This method never returns NULL, except in the case 
     // of a DocumentType node that is not used with any Document yet. A Document node returns itself.

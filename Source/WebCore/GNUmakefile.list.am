@@ -3677,8 +3677,6 @@ webcore_sources += \
 	Source/WebCore/xml/XPathExpressionNode.h \
 	Source/WebCore/xml/XPathFunctions.cpp \
 	Source/WebCore/xml/XPathFunctions.h \
-	Source/WebCore/xml/XPathNamespace.cpp \
-	Source/WebCore/xml/XPathNamespace.h \
 	Source/WebCore/xml/XPathNodeSet.cpp \
 	Source/WebCore/xml/XPathNodeSet.h \
 	Source/WebCore/xml/XPathNSResolver.cpp \

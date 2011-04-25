@@ -41744,14 +41744,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\xml\XPathNamespace.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\xml\XPathNamespace.h"
-				>
-			</File>
-			<File
 				RelativePath="..\xml\XPathNodeSet.cpp"
 				>
 			</File>

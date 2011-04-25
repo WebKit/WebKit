@@ -2494,7 +2494,6 @@ HEADERS += \
     xml/XPathExpression.h \
     xml/XPathExpressionNode.h \
     xml/XPathFunctions.h \
-    xml/XPathNamespace.h \
     xml/XPathNodeSet.h \
     xml/XPathNSResolver.h \
     xml/XPathParser.h \
@@ -3027,7 +3026,6 @@ contains(DEFINES, ENABLE_XPATH=1) {
         xml/XPathExpression.cpp \
         xml/XPathExpressionNode.cpp \
         xml/XPathFunctions.cpp \
-        xml/XPathNamespace.cpp \
         xml/XPathNodeSet.cpp \
         xml/XPathNSResolver.cpp \
         xml/XPathParser.cpp \
