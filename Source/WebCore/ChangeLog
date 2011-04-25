@@ -1,3 +1,13 @@
+2011-04-25  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        HistoryItemMac should play nice with OwnPtrs
+        https://bugs.webkit.org/show_bug.cgi?id=59388
+
+        * history/mac/HistoryItemMac.mm:
+        (WebCore::HistoryItem::setTransientProperty):
+
 2011-04-25  David Levin  <levin@chromium.org>
 
         Reviewed by Kenneth Russell.

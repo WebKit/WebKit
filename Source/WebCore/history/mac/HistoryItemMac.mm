@@ -59,7 +59,7 @@ void HistoryItem::setTransientProperty(const String& key, id value)
         }
     } else {
         if (!m_transientProperties)
-            m_transientProperties.set(new HashMap<String, RetainPtr<id> >);
+            m_transientProperties = adoptPtr(new HashMap<String, RetainPtr<id> >);
         m_transientProperties->set(key, value);
     }
 }
