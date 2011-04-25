@@ -1,3 +1,13 @@
+2011-04-25  Gavin Barraclough  <barraclough@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        Bug 59370 - DFG JIT - fix leak of BlocksBlocks
+        (put the blocks immediately into an OwnPtr).
+
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::parse):
+
 2011-04-25  James Robinson  <jamesr@chromium.org>
 
         Reviewed by David Levin.

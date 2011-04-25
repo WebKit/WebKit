@@ -1106,6 +1106,7 @@ bool ByteCodeParser::parse()
         // Loop until we reach the current limit (i.e. next jump target).
         do {
             m_currentBlock = new BasicBlock(m_currentIndex, m_graph.size(), m_numArguments, m_numLocals);
+            m_graph.m_blocks.append(m_currentBlock);
 
             if (!parseBlock(limit))
                 return false;
@@ -1113,7 +1114,6 @@ bool ByteCodeParser::parse()
             ASSERT(m_currentIndex <= limit);
 
             m_currentBlock->end = m_graph.size();
-            m_graph.m_blocks.append(m_currentBlock);
         } while (m_currentIndex < limit);
     }
 
