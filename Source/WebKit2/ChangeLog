@@ -1,5 +1,17 @@
 2011-04-25  Brian Weinstein  <bweinstein@apple.com>
 
+        Reviewed by Adam Roben.
+
+        WebKit2: Should be able to inspect Web Inspector in Debug Builds
+        https://bugs.webkit.org/show_bug.cgi?id=59378
+
+        * UIProcess/WebInspectorProxy.cpp:
+        (WebKit::createInspectorPageGroup): Creates an inspector page group and enables
+            developer extras in a debug build.
+        (WebKit::WebInspectorProxy::inspectorPageGroup): Calls createInspectorPageGroup.
+
+2011-04-25  Brian Weinstein  <bweinstein@apple.com>
+
         Reviewed by Timothy Hatcher.
 
         WebKit2: Web Inspector's style sidebar fails to display when inspecting element

@@ -31,6 +31,7 @@
 #include "WebInspectorMessages.h"
 #include "WebPageProxy.h"
 #include "WebPageCreationParameters.h"
+#include "WebPreferences.h"
 #include "WebProcessProxy.h"
 #include "WebPageGroup.h"
 
@@ -44,9 +45,21 @@ using namespace WebCore;
 
 namespace WebKit {
 
+static PassRefPtr<WebPageGroup> createInspectorPageGroup()
+{
+    RefPtr<WebPageGroup> pageGroup = WebPageGroup::create("__WebInspectorPageGroup__", false, false);
+
+#ifndef NDEBUG
+    // Allow developers to inspect the Web Inspector in debug builds.
+    pageGroup->preferences()->setDeveloperExtrasEnabled(true);
+#endif
+
+    return pageGroup.release();
+}
+
 WebPageGroup* WebInspectorProxy::inspectorPageGroup()
 {
-    static WebPageGroup* pageGroup = WebPageGroup::create("__WebInspectorPageGroup__", false, false).leakRef();
+    static WebPageGroup* pageGroup = createInspectorPageGroup().leakRef();
     return pageGroup;
 }
 
