@@ -76,6 +76,8 @@ extern const double Inf = NaNInf.doubles.Inf_Double;
  
 #endif // !(defined NAN && defined INFINITY)
 
+const ClassInfo JSCell::s_dummyCellInfo = { "DummyCell", 0, 0, 0 };
+
 bool JSCell::getUInt32(uint32_t&) const
 {
     return false;

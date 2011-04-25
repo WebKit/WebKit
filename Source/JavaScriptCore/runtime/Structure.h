@@ -62,6 +62,7 @@ namespace JSC {
         static Structure* create(JSGlobalData& globalData, JSValue prototype, const TypeInfo& typeInfo, unsigned anonymousSlotCount, const ClassInfo* classInfo)
         {
             ASSERT(globalData.structureStructure);
+            ASSERT(classInfo);
             return new (&globalData) Structure(globalData, prototype, typeInfo, anonymousSlotCount, classInfo);
         }
 
@@ -167,7 +168,7 @@ namespace JSC {
             ASSERT(globalData.structureStructure);
             return new (&globalData) Structure(globalData, structure);
         }
-
+        
         static const ClassInfo s_info;
 
         typedef enum { 
@@ -276,7 +277,7 @@ namespace JSC {
 
     inline Structure* JSCell::createDummyStructure(JSGlobalData& globalData)
     {
-        return Structure::create(globalData, jsNull(), TypeInfo(UnspecifiedType), AnonymousSlotCount, 0);
+        return Structure::create(globalData, jsNull(), TypeInfo(UnspecifiedType), AnonymousSlotCount, &s_dummyCellInfo);
     }
 
     inline bool JSValue::needsThisConversion() const

@@ -78,6 +78,7 @@ namespace JSC {
         explicit JSCell(VPtrStealingHackType) { }
         JSCell(JSGlobalData&, Structure*);
         virtual ~JSCell();
+        static const ClassInfo s_dummyCellInfo;
 
     public:
         static Structure* createDummyStructure(JSGlobalData&);

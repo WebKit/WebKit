@@ -349,7 +349,10 @@ namespace JSC {
 
         JSValue replaceCharacter(ExecState*, UChar, const UString& replacement);
 
-        static Structure* createStructure(JSGlobalData& globalData, JSValue proto) { return Structure::create(globalData, proto, TypeInfo(StringType, OverridesGetOwnPropertySlot | NeedsThisConversion), AnonymousSlotCount, 0); }
+        static Structure* createStructure(JSGlobalData& globalData, JSValue proto)
+        {
+            return Structure::create(globalData, proto, TypeInfo(StringType, OverridesGetOwnPropertySlot | NeedsThisConversion), AnonymousSlotCount, &s_info);
+        }
 
     private:
         JSString(VPtrStealingHackType) 
@@ -357,6 +360,7 @@ namespace JSC {
             , m_fiberCount(0)
         {
         }
+        static const ClassInfo s_info;
 
         void resolveRope(ExecState*) const;
         void resolveRopeSlowCase(ExecState*, UChar*) const;

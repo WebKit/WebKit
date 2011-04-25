@@ -1,3 +1,33 @@
+2011-04-25  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Geoffrey Garen.
+
+        Make ClassInfo required when creating a Structure
+        https://bugs.webkit.org/show_bug.cgi?id=59340
+
+        Add ClassInfo to all those types which currently don't
+        have it, and add an assertion to Structure::create to
+        ensure that the provided classInfo is not null.
+
+        * runtime/Executable.h:
+        (JSC::EvalExecutable::createStructure):
+        (JSC::ProgramExecutable::createStructure):
+        (JSC::FunctionExecutable::createStructure):
+        * runtime/GetterSetter.cpp:
+        * runtime/GetterSetter.h:
+        (JSC::GetterSetter::createStructure):
+        * runtime/JSAPIValueWrapper.cpp:
+        * runtime/JSAPIValueWrapper.h:
+        (JSC::JSAPIValueWrapper::createStructure):
+        * runtime/JSCell.cpp:
+        * runtime/JSCell.h:
+        * runtime/JSString.cpp:
+        * runtime/JSString.h:
+        (JSC::RopeBuilder::createStructure):
+        * runtime/Structure.h:
+        (JSC::Structure::create):
+        (JSC::JSCell::createDummyStructure):
+
 2011-04-25  David Levin  <levin@chromium.org>
 
         Reviewed by Adam Barth.

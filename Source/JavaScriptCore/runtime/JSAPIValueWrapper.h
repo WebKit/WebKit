@@ -38,7 +38,7 @@ namespace JSC {
 
         static Structure* createStructure(JSGlobalData& globalData, JSValue prototype)
         {
-            return Structure::create(globalData, prototype, TypeInfo(CompoundType, OverridesVisitChildren | OverridesGetPropertyNames), AnonymousSlotCount, 0);
+            return Structure::create(globalData, prototype, TypeInfo(CompoundType, OverridesVisitChildren | OverridesGetPropertyNames), AnonymousSlotCount, &s_info);
         }
 
         
@@ -49,6 +49,7 @@ namespace JSC {
             m_value.set(exec->globalData(), this, value);
             ASSERT(!value.isCell());
         }
+        static const ClassInfo s_info;
 
         WriteBarrier<Unknown> m_value;
     };

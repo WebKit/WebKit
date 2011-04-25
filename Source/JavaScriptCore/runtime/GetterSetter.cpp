@@ -28,6 +28,8 @@
 
 namespace JSC {
 
+const ClassInfo GetterSetter::s_info = { "GetterSetter", 0, 0, 0 };
+
 void GetterSetter::visitChildren(SlotVisitor& visitor)
 {
     JSCell::visitChildren(visitor);
