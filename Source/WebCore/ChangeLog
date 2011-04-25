@@ -1,5 +1,11 @@
 2011-04-25  Geoffrey Garen  <ggaren@apple.com>
 
+        Try to fix EFL build.
+
+        * UseJSC.cmake: Added a missing file.
+
+2011-04-25  Geoffrey Garen  <ggaren@apple.com>
+
         Reviewed by Oliver Hunt.
 
         Removed a use of markDOMObjectWrapper: ActiveDOMObjects, Workers, and MessagePorts

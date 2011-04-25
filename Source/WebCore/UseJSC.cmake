@@ -63,6 +63,7 @@ LIST(APPEND WebCore_SOURCES
     bindings/js/JSEventSourceCustom.cpp
     bindings/js/JSEventTarget.cpp
     bindings/js/JSExceptionBase.cpp
+    bindings/js/JSFileException.cpp
     bindings/js/JSFileReaderCustom.cpp
     bindings/js/JSFloat32ArrayCustom.cpp
     bindings/js/JSGeolocationCustom.cpp
