@@ -1,3 +1,18 @@
+2011-04-25  Steve Falkenburg  <sfalken@apple.com>
+
+        Reviewed by Brian Weinstein.
+
+        WebCore build on Windows should include windows.h in its precompiled header to speed builds
+        https://bugs.webkit.org/show_bug.cgi?id=59339
+
+        windows.h is included by several of the underlying wtf headers, including Atomics.h and
+        ThreadingPrimitives.h anyway, so include it in the WebCorePrefix.h to speed up compilation.
+        
+        On my 8 core Mac Pro, this reduces a clean rebuild of debug WebCore from 8 minutes to 7 minutes
+        (a 12% speedup).
+
+        * WebCorePrefix.h: Include windows.h
+
 2011-04-25  Martin Robinson  <mrobinson@igalia.com>
 
         Reviewed by Xan Lopez.

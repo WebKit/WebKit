@@ -132,6 +132,7 @@
 /* Windows doesn't include CFNetwork.h via CoreServices.h, so we do
    it explicitly here to make Windows more consistent with Mac. */
 #include <CFNetwork/CFNetwork.h>
+#include <windows.h>
 #else
 #include <CoreServices/CoreServices.h>
 #endif
