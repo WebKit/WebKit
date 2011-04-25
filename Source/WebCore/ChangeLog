@@ -1,3 +1,14 @@
+2011-04-25  David Levin  <levin@chromium.org>
+
+        Reviewed by Kenneth Russell.
+
+        Fix strict OwnPtrs in ContextMenuController.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=59375
+
+        * page/ContextMenuController.cpp:
+        (WebCore::ContextMenuController::createContextMenu):
+        (WebCore::separatorItem):
+
 2011-04-25  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Darin Adler.

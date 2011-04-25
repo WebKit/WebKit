@@ -123,7 +123,7 @@ void ContextMenuController::showContextMenu(Event* event, PassRefPtr<ContextMenu
 PassOwnPtr<ContextMenu> ContextMenuController::createContextMenu(Event* event)
 {
     if (!event->isMouseEvent())
-        return 0;
+        return PassOwnPtr<ContextMenu>();
 
     MouseEvent* mouseEvent = static_cast<MouseEvent*>(event);
     HitTestResult result(mouseEvent->absoluteLocation());
@@ -132,11 +132,11 @@ PassOwnPtr<ContextMenu> ContextMenuController::createContextMenu(Event* event)
         result = frame->eventHandler()->hitTestResultAtPoint(mouseEvent->absoluteLocation(), false);
 
     if (!result.innerNonSharedNode())
-        return 0;
+        return PassOwnPtr<ContextMenu>();
 
     m_hitTestResult = result;
 
-    return new ContextMenu;
+    return adoptPtr(new ContextMenu);
 }
 
 void ContextMenuController::showContextMenu(Event* event)
@@ -433,7 +433,7 @@ void ContextMenuController::appendItem(ContextMenuItem& menuItem, ContextMenu* p
 
 static PassOwnPtr<ContextMenuItem> separatorItem()
 {
-    return new ContextMenuItem(SeparatorType, ContextMenuItemTagNoAction, String());
+    return adoptPtr(new ContextMenuItem(SeparatorType, ContextMenuItemTagNoAction, String()));
 }
 
 void ContextMenuController::createAndAppendFontSubMenu(ContextMenuItem& fontMenuItem)
