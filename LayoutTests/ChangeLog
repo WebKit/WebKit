@@ -1,3 +1,22 @@
+2011-04-25  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Adam Roben.
+
+        Changed a test to dump as text.
+
+        * fast/css/zoom-property-parsing-expected.txt: Added.
+        * fast/css/zoom-property-parsing.html:
+        * platform/chromium-linux/fast/css/zoom-property-parsing-expected.png: Removed.
+        * platform/chromium-win/fast/css/zoom-property-parsing-expected.png: Removed.
+        * platform/chromium-win/fast/css/zoom-property-parsing-expected.txt: Removed.
+        * platform/gtk/fast/css/zoom-property-parsing-expected.png: Removed.
+        * platform/gtk/fast/css/zoom-property-parsing-expected.txt: Removed.
+        * platform/mac-leopard/fast/css/zoom-property-parsing-expected.png: Removed.
+        * platform/mac/fast/css/zoom-property-parsing-expected.png: Removed.
+        * platform/mac/fast/css/zoom-property-parsing-expected.txt: Removed.
+        * platform/qt/fast/css/zoom-property-parsing-expected.png: Removed.
+        * platform/qt/fast/css/zoom-property-parsing-expected.txt: Removed.
+
 2011-04-25  Dirk Pranke  <dpranke@chromium.org>
 
         Unreviewed, expectations change.
