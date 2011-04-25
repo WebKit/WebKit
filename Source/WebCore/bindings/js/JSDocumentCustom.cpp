@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007, 2008, 2009 Apple Inc. All rights reserved.
+ * Copyright (C) 2007, 2008, 2009, 2011 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -47,16 +47,6 @@
 using namespace JSC;
 
 namespace WebCore {
-
-void JSDocument::visitChildren(SlotVisitor& visitor)
-{
-    JSNode::visitChildren(visitor);
-
-    Document* document = impl();
-    JSGlobalData& globalData = *Heap::heap(this)->globalData();
-
-    visitActiveObjectsForContext(visitor, globalData, document);
-}
 
 JSValue JSDocument::location(ExecState* exec) const
 {

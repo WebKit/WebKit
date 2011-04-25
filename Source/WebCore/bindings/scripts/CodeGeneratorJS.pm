@@ -914,7 +914,10 @@ sub GenerateHeader
         push(@headerContent, "}\n\n");
     }
 
-    if ($dataNode->extendedAttributes->{"GenerateIsReachable"} || $dataNode->extendedAttributes->{"CustomIsReachable"} || $dataNode->extendedAttributes->{"CustomFinalize"}) {
+    if ($dataNode->extendedAttributes->{"GenerateIsReachable"} || 
+        $dataNode->extendedAttributes->{"CustomIsReachable"} || 
+        $dataNode->extendedAttributes->{"CustomFinalize"} ||
+        $dataNode->extendedAttributes->{"ActiveDOMObject"}) {
         push(@headerContent, "class JS${implType}Owner : public JSC::WeakHandleOwner {\n");
         push(@headerContent, "    virtual bool isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown>, void* context, JSC::SlotVisitor&);\n");
         push(@headerContent, "    virtual void finalize(JSC::Handle<JSC::Unknown>, void* context);\n");
@@ -2126,7 +2129,7 @@ sub GenerateImplementation
         }
     }
 
-    if ($dataNode->extendedAttributes->{"GenerateIsReachable"}) {
+    if ($dataNode->extendedAttributes->{"GenerateIsReachable"} || $dataNode->extendedAttributes->{"ActiveDOMObject"}) {
         push(@implContent, "static inline bool isObservable(JS${implType}* js${implType})\n");
         push(@implContent, "{\n");
         push(@implContent, "    if (js${implType}->hasCustomProperties())\n");
@@ -2138,43 +2141,60 @@ sub GenerateImplementation
         push(@implContent, "    return false;\n");
         push(@implContent, "}\n\n");
 
-        my $rootString;
-        if ($dataNode->extendedAttributes->{"GenerateIsReachable"} eq "Impl") {
-            $rootString  = "    ${implType}* root = js${implType}->impl();\n";
-        } elsif ($dataNode->extendedAttributes->{"GenerateIsReachable"} eq "ImplContext") {
-            $rootString  = "    WebGLRenderingContext* root = js${implType}->impl()->context();\n";
-        } elsif ($dataNode->extendedAttributes->{"GenerateIsReachable"} eq "ImplFrame") {
-            $rootString  = "    Frame* root = js${implType}->impl()->frame();\n";
-            $rootString .= "    if (!root)\n";
-            $rootString .= "        return false;\n";
-        } elsif ($dataNode->extendedAttributes->{"GenerateIsReachable"} eq "ImplDocument") {
-            $rootString  = "    Document* root = js${implType}->impl()->document();\n";
-            $rootString .= "    if (!root)\n";
-            $rootString .= "        return false;\n";
-        } elsif ($dataNode->extendedAttributes->{"GenerateIsReachable"} eq "ImplElementRoot") {
-            $rootString  = "    Element* element = js${implType}->impl()->element();\n";
-            $rootString .= "    if (!element)\n";
-            $rootString .= "        return false;\n";
-            $rootString .= "    void* root = WebCore::root(element);\n";
-        } elsif ($interfaceName eq "CanvasRenderingContext") {
-            $rootString  = "    void* root = WebCore::root(js${implType}->impl()->canvas());\n";
-        } elsif ($interfaceName eq "HTMLCollection") {
-            $rootString  = "    void* root = WebCore::root(js${implType}->impl()->base());\n";
-        } else {
-            $rootString  = "    void* root = WebCore::root(js${implType}->impl());\n";
-        }
-
         push(@implContent, "bool JS${implType}Owner::isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown> handle, void*, SlotVisitor& visitor)\n");
         push(@implContent, "{\n");
         push(@implContent, "    JS${implType}* js${implType} = static_cast<JS${implType}*>(handle.get().asCell());\n");
+        # Not all ActiveDOMObjects with pending activity maintain their reference
+        # counts correctly, so JavaScript wrappers must unconditionally keep
+        # ActiveDOMObjects with pending activity alive.
+        # FIXME: Fix this lifetime issue in the DOM, and move this hasPendingActivity
+        # check below the isObservable check.
+        if ($dataNode->extendedAttributes->{"ActiveDOMObject"}) {
+            push(@implContent, "    if (js${implType}->impl()->hasPendingActivity())\n");
+            push(@implContent, "        return true;\n");
+        }
         push(@implContent, "    if (!isObservable(js${implType}))\n");
         push(@implContent, "        return false;\n");
-        push(@implContent, $rootString);
-        push(@implContent, "    return visitor.containsOpaqueRoot(root);\n");
+        if ($dataNode->extendedAttributes->{"GenerateIsReachable"}) {
+            my $rootString;
+            if ($dataNode->extendedAttributes->{"GenerateIsReachable"} eq "Impl") {
+                $rootString  = "    ${implType}* root = js${implType}->impl();\n";
+            } elsif ($dataNode->extendedAttributes->{"GenerateIsReachable"} eq "ImplContext") {
+                $rootString  = "    WebGLRenderingContext* root = js${implType}->impl()->context();\n";
+            } elsif ($dataNode->extendedAttributes->{"GenerateIsReachable"} eq "ImplFrame") {
+                $rootString  = "    Frame* root = js${implType}->impl()->frame();\n";
+                $rootString .= "    if (!root)\n";
+                $rootString .= "        return false;\n";
+            } elsif ($dataNode->extendedAttributes->{"GenerateIsReachable"} eq "ImplDocument") {
+                $rootString  = "    Document* root = js${implType}->impl()->document();\n";
+                $rootString .= "    if (!root)\n";
+                $rootString .= "        return false;\n";
+            } elsif ($dataNode->extendedAttributes->{"GenerateIsReachable"} eq "ImplElementRoot") {
+                $rootString  = "    Element* element = js${implType}->impl()->element();\n";
+                $rootString .= "    if (!element)\n";
+                $rootString .= "        return false;\n";
+                $rootString .= "    void* root = WebCore::root(element);\n";
+            } elsif ($interfaceName eq "CanvasRenderingContext") {
+                $rootString  = "    void* root = WebCore::root(js${implType}->impl()->canvas());\n";
+            } elsif ($interfaceName eq "HTMLCollection") {
+                $rootString  = "    void* root = WebCore::root(js${implType}->impl()->base());\n";
+            } else {
+                $rootString  = "    void* root = WebCore::root(js${implType}->impl());\n";
+            }
+
+            push(@implContent, $rootString);
+            push(@implContent, "    return visitor.containsOpaqueRoot(root);\n");
+        } else {
+            push(@implContent, "    UNUSED_PARAM(visitor);\n");
+            push(@implContent, "    return false;\n");
+        }
         push(@implContent, "}\n\n");
     }
 
-    if ($dataNode->extendedAttributes->{"GenerateIsReachable"} || $dataNode->extendedAttributes->{"CustomIsReachable"} && !$dataNode->extendedAttributes->{"CustomFinalize"}) {
+    if (!$dataNode->extendedAttributes->{"CustomFinalize"} &&
+        ($dataNode->extendedAttributes->{"GenerateIsReachable"} || 
+         $dataNode->extendedAttributes->{"CustomIsReachable"} ||
+         $dataNode->extendedAttributes->{"ActiveDOMObject"})) {
         push(@implContent, "void JS${implType}Owner::finalize(JSC::Handle<JSC::Unknown> handle, void* context)\n");
         push(@implContent, "{\n");
         push(@implContent, "    JS${implType}* js${implType} = static_cast<JS${implType}*>(handle.get().asCell());\n");

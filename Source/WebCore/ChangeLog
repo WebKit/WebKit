@@ -1,3 +1,53 @@
+2011-04-25  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        Removed a use of markDOMObjectWrapper: ActiveDOMObjects, Workers, and MessagePorts
+        https://bugs.webkit.org/show_bug.cgi?id=59333
+
+        * WebCore.xcodeproj/project.pbxproj: Added .idl files for easier editing.
+
+        * bindings/js/JSDOMBinding.cpp:
+        * bindings/js/JSDOMBinding.h:
+        * bindings/js/JSDocumentCustom.cpp:
+        * bindings/js/JSWorkerContextCustom.cpp:
+        (WebCore::JSWorkerContext::visitChildren): Removed now-unused functions.
+
+        * bindings/scripts/CodeGeneratorJS.pm: Added support for ActiveDOMObject
+        lifetime management.
+
+        * dom/Document.idl: No need for a custom mark function anymore, since
+        ActiveDOMObjets now manage their own lifetimes.
+
+        * dom/MessagePort.cpp:
+        (WebCore::MessagePort::hasPendingActivity): Correctly report that we
+        have pending activity when we're remotely entangled, instead of relying
+        on our clients to know this about us and do the check for us.
+
+        * dom/MessagePort.h: FIXME!
+
+        * dom/MessagePort.idl:
+        * fileapi/DOMFileSystem.idl:
+        * fileapi/FileReader.idl:
+        * fileapi/FileWriter.idl:
+        * notifications/Notification.idl:
+        * notifications/NotificationCenter.idl:
+        * page/EventSource.idl:
+        * storage/IDBDatabase.idl:
+        * storage/IDBRequest.idl:
+        * storage/IDBTransaction.idl:
+        * webaudio/AudioContext.idl:
+        * websockets/WebSocket.idl:
+        * workers/AbstractWorker.idl:
+        * workers/SharedWorker.idl:
+        * workers/Worker.idl: Opt in to ActiveDOMObject lifetime management.
+
+        * workers/WorkerContext.cpp:
+        (WebCore::WorkerContext::hasPendingActivity): No need to make up for
+        MessagePort::hasPendingActivity being wrong anymore, since it's now right.
+
+        * xml/XMLHttpRequest.idl: Opt in to ActiveDOMObject lifetime management.
+
 2011-04-25  Yury Semikhatsky  <yurys@chromium.org>
 
         Reviewed by Pavel Feldman.

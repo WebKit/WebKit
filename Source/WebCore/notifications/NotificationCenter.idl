@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2009 Google Inc. All rights reserved.
+ * Copyright (C) 2011 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -32,6 +33,7 @@ module threads {
 
     interface [
         Conditional=NOTIFICATIONS,
+        ActiveDOMObject,
         OmitConstructor
     ] NotificationCenter {
        [V8Custom] Notification createHTMLNotification(in DOMString url) raises(Exception);

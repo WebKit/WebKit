@@ -6771,6 +6771,9 @@
 		14993BE30B2F2B1C0050497F /* FocusController.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = FocusController.cpp; sourceTree = "<group>"; };
 		14993BE40B2F2B1C0050497F /* FocusController.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = FocusController.h; sourceTree = "<group>"; };
 		14A98E05136386A200C9FED2 /* Blob.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = Blob.idl; path = ../../../webkit/Source/WebCore/fileapi/Blob.idl; sourceTree = SOURCE_ROOT; };
+		14BDF5971365392C00148393 /* DOMFileSystem.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = DOMFileSystem.idl; path = ../../../webkit/Source/WebCore/fileapi/DOMFileSystem.idl; sourceTree = SOURCE_ROOT; };
+		14BDF59A1365399100148393 /* FileReader.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = FileReader.idl; path = ../../../webkit/Source/WebCore/fileapi/FileReader.idl; sourceTree = SOURCE_ROOT; };
+		14BDF59C136539BE00148393 /* FileWriter.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = FileWriter.idl; path = ../../../webkit/Source/WebCore/fileapi/FileWriter.idl; sourceTree = SOURCE_ROOT; };
 		14C9A5E90B3D105F005A0232 /* Settings.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = Settings.cpp; sourceTree = "<group>"; };
 		14CD8D81106B529000A46D23 /* JSSharedWorkerCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSSharedWorkerCustom.cpp; sourceTree = "<group>"; };
 		14CF787109F587CA00EB3665 /* CSSValue.idl */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; path = CSSValue.idl; sourceTree = "<group>"; };
@@ -16276,6 +16279,7 @@
 				8987853E122CA064003AABDA /* DOMFilePath.h */,
 				8987853F122CA064003AABDA /* DOMFileSystem.cpp */,
 				89878540122CA064003AABDA /* DOMFileSystem.h */,
+				14BDF5971365392C00148393 /* DOMFileSystem.idl */,
 				893C47F41248BD39002B3D86 /* DOMFileSystemBase.cpp */,
 				893C47F51248BD39002B3D86 /* DOMFileSystemBase.h */,
 				893C47F61248BD39002B3D86 /* DOMFileSystemSync.cpp */,
@@ -16307,6 +16311,7 @@
 				4689F1AE1267BAE100E8D380 /* FileMetadata.h */,
 				976D6C69122B8A3D001FD1F7 /* FileReader.cpp */,
 				976D6C6A122B8A3D001FD1F7 /* FileReader.h */,
+				14BDF59A1365399100148393 /* FileReader.idl */,
 				2E75841A12779ADA0062628B /* FileReaderLoader.cpp */,
 				2E75841B12779ADA0062628B /* FileReaderLoader.h */,
 				2E75841C12779ADA0062628B /* FileReaderLoaderClient.h */,
@@ -16322,6 +16327,7 @@
 				976D6C70122B8A3D001FD1F7 /* FileThreadTask.h */,
 				976D6C71122B8A3D001FD1F7 /* FileWriter.cpp */,
 				976D6C72122B8A3D001FD1F7 /* FileWriter.h */,
+				14BDF59C136539BE00148393 /* FileWriter.idl */,
 				46BC724B129B104C0071C07E /* FileWriterBase.cpp */,
 				46BC724C129B104C0071C07E /* FileWriterBase.h */,
 				46BC724D129B104C0071C07E /* FileWriterBaseCallback.h */,

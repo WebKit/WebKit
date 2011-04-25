@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006, 2007 Apple Inc. All rights reserved.
+ * Copyright (C) 2006, 2007, 2011 Apple Inc. All rights reserved.
  * Copyright (C) 2006, 2007 Samuel Weinig <sam@webkit.org>
  *
  * This library is free software; you can redistribute it and/or
@@ -23,7 +23,6 @@ module core {
     interface [
         CustomToJS,
         GenerateNativeConverter,
-        CustomMarkFunction,
         InlineGetOwnPropertySlot
     ] Document : Node {
 

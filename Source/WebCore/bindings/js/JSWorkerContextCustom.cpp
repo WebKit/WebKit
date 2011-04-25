@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008, 2009 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2008, 2009, 2011 Apple Inc. All Rights Reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -56,10 +56,6 @@ namespace WebCore {
 void JSWorkerContext::visitChildren(SlotVisitor& visitor)
 {
     Base::visitChildren(visitor);
-
-    JSGlobalData& globalData = this->globalData();
-
-    visitActiveObjectsForContext(visitor, globalData, scriptExecutionContext());
 
     if (WorkerLocation* location = impl()->optionalLocation())
         visitor.addOpaqueRoot(location);

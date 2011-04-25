@@ -48,6 +48,10 @@ namespace WebCore {
     // The overwhelmingly common case is sending a single port, so handle that efficiently with an inline buffer of size 1.
     typedef Vector<RefPtr<MessagePort>, 1> MessagePortArray;
 
+    // FIXME: This class should inherit from ActiveDOMObject and use
+    // setPendingActivity / unsetPendingActivity instead of duplicating
+    // ActiveDOMObject's features and relying on JavaScript garbage collection
+    // to get its lifetime right.
     class MessagePort : public RefCounted<MessagePort>, public EventTarget {
     public:
         static PassRefPtr<MessagePort> create(ScriptExecutionContext& scriptExecutionContext) { return adoptRef(new MessagePort(scriptExecutionContext)); }

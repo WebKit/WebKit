@@ -33,6 +33,7 @@ module threads {
 
     interface [
         Conditional=SHARED_WORKERS,
+        ActiveDOMObject,
         CanBeConstructed,
         CustomConstructFunction,
         ConstructorParameters=2,

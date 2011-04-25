@@ -194,10 +194,9 @@ bool WorkerContext::hasPendingActivity() const
             return true;
     }
 
-    // Keep the worker active as long as there is a MessagePort with pending activity or that is remotely entangled.
     HashSet<MessagePort*>::const_iterator messagePortsEnd = messagePorts().end();
     for (HashSet<MessagePort*>::const_iterator iter = messagePorts().begin(); iter != messagePortsEnd; ++iter) {
-        if ((*iter)->hasPendingActivity() || ((*iter)->isEntangled() && !(*iter)->locallyEntangledPort()))
+        if ((*iter)->hasPendingActivity())
             return true;
     }
 

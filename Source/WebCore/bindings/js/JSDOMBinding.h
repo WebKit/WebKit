@@ -116,9 +116,6 @@ namespace WebCore {
         }
     };
     
-    void visitActiveObjectsForContext(JSC::SlotVisitor&, JSC::JSGlobalData&, ScriptExecutionContext*);
-    void markDOMObjectWrapper(JSC::SlotVisitor&, JSC::JSGlobalData&, void*);
-
     JSC::Structure* getCachedDOMStructure(JSDOMGlobalObject*, const JSC::ClassInfo*);
     JSC::Structure* cacheDOMStructure(JSDOMGlobalObject*, JSC::Structure*, const JSC::ClassInfo*);
 

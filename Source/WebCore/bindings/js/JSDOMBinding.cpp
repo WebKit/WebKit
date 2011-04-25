@@ -1,6 +1,6 @@
 /*
  *  Copyright (C) 1999-2001 Harri Porten (porten@kde.org)
- *  Copyright (C) 2004, 2005, 2006, 2007, 2008, 2009, 2010 Apple Inc. All rights reserved.
+ *  Copyright (C) 2004, 2005, 2006, 2007, 2008, 2009, 2010, 2011 Apple Inc. All rights reserved.
  *  Copyright (C) 2007 Samuel Weinig <sam@webkit.org>
  *
  *  This library is free software; you can redistribute it and/or
@@ -21,155 +21,40 @@
 #include "config.h"
 #include "JSDOMBinding.h"
 
-#include "debugger/DebuggerCallFrame.h"
-
-#include "ActiveDOMObject.h"
 #include "DOMCoreException.h"
 #include "DOMObjectHashTableMap.h"
-#include "Document.h"
 #include "EventException.h"
 #include "ExceptionBase.h"
-#include "ExceptionCode.h"
+#include "FileException.h"
 #include "Frame.h"
-#include "HTMLAudioElement.h"
-#include "HTMLCanvasElement.h"
-#include "HTMLFrameElementBase.h"
-#include "HTMLImageElement.h"
-#include "HTMLLinkElement.h"
-#include "HTMLNames.h"
-#include "HTMLScriptElement.h"
-#include "HTMLStyleElement.h"
+#include "IDBDatabaseException.h"
 #include "JSDOMCoreException.h"
 #include "JSDOMWindowCustom.h"
 #include "JSEventException.h"
 #include "JSExceptionBase.h"
-#include "JSMainThreadExecState.h"
+#include "JSFileException.h"
 #include "JSRangeException.h"
+#include "JSSQLException.h"
+#include "JSSVGException.h"
 #include "JSXMLHttpRequestException.h"
-#include "KURL.h"
-#include "MessagePort.h"
-#include "ProcessingInstruction.h"
+#include "JSXPathException.h"
 #include "RangeException.h"
-#include "ScriptCachedFrameData.h"
+#include "SQLException.h"
+#include "SVGException.h"
 #include "ScriptCallStack.h"
-#include "ScriptController.h"
-#include "Settings.h"
-#include "WebCoreJSClientData.h"
 #include "XMLHttpRequestException.h"
+#include "XPathException.h"
 #include <runtime/DateInstance.h>
 #include <runtime/Error.h>
 #include <runtime/JSFunction.h>
-#include <wtf/MathExtras.h>
-#include <wtf/StdLibExtras.h>
-
-#if ENABLE(SVG)
-#include "JSSVGException.h"
-#include "SVGException.h"
-#endif
-
-#if ENABLE(XPATH)
-#include "JSXPathException.h"
-#include "XPathException.h"
-#endif
-
-#if ENABLE(DATABASE)
-#include "JSSQLException.h"
-#include "SQLException.h"
-#endif
-
-#if ENABLE(BLOB) || ENABLE(FILE_SYSTEM)
-#include "FileException.h"
-#include "JSFileException.h"
-#endif
-
-#if ENABLE(INDEXED_DATABASE)
-#include "IDBDatabaseException.h"
-#include "JSIDBDatabaseException.h"
-#endif
 
 using namespace JSC;
 
 namespace WebCore {
 
-using namespace HTMLNames;
-
-class JSGlobalDataWorldIterator {
-public:
-    JSGlobalDataWorldIterator(JSGlobalData* globalData)
-        : m_pos(static_cast<WebCoreJSClientData*>(globalData->clientData)->m_worldSet.begin())
-        , m_end(static_cast<WebCoreJSClientData*>(globalData->clientData)->m_worldSet.end())
-    {
-    }
-
-    operator bool()
-    {
-        return m_pos != m_end;
-    }
-
-    DOMWrapperWorld* operator*()
-    {
-        ASSERT(m_pos != m_end);
-        return *m_pos;
-    }
-
-    DOMWrapperWorld* operator->()
-    {
-        ASSERT(m_pos != m_end);
-        return *m_pos;
-    }
-
-    JSGlobalDataWorldIterator& operator++()
-    {
-        ++m_pos;
-        return *this;
-    }
-
-private:
-    HashSet<DOMWrapperWorld*>::iterator m_pos;
-    HashSet<DOMWrapperWorld*>::iterator m_end;
-};
-
 const JSC::HashTable* getHashTableForGlobalData(JSGlobalData& globalData, const JSC::HashTable* staticTable)
 {
     return DOMObjectHashTableMap::mapFor(globalData).get(staticTable);
-}
-
-void visitActiveObjectsForContext(SlotVisitor& visitor, JSGlobalData& globalData, ScriptExecutionContext* scriptExecutionContext)
-{
-    // If an element has pending activity that may result in event listeners being called
-    // (e.g. an XMLHttpRequest), we need to keep JS wrappers alive.
-
-    const HashMap<ActiveDOMObject*, void*>& activeObjects = scriptExecutionContext->activeDOMObjects();
-    HashMap<ActiveDOMObject*, void*>::const_iterator activeObjectsEnd = activeObjects.end();
-    for (HashMap<ActiveDOMObject*, void*>::const_iterator iter = activeObjects.begin(); iter != activeObjectsEnd; ++iter) {
-        if (iter->first->hasPendingActivity()) {
-            // Generally, an active object with pending activity must have a wrapper to mark its listeners.
-            // However, some ActiveDOMObjects don't have JS wrappers.
-            markDOMObjectWrapper(visitor, globalData, iter->second);
-        }
-    }
-
-    const HashSet<MessagePort*>& messagePorts = scriptExecutionContext->messagePorts();
-    HashSet<MessagePort*>::const_iterator portsEnd = messagePorts.end();
-    for (HashSet<MessagePort*>::const_iterator iter = messagePorts.begin(); iter != portsEnd; ++iter) {
-        // If the message port is remotely entangled, then always mark it as in-use because we can't determine reachability across threads.
-        if (!(*iter)->locallyEntangledPort() || (*iter)->hasPendingActivity())
-            markDOMObjectWrapper(visitor, globalData, *iter);
-    }
-}
-
-void markDOMObjectWrapper(SlotVisitor& visitor, JSGlobalData& globalData, void* object)
-{
-    // FIXME: This could be changed to only mark wrappers that are "observable"
-    // as markDOMNodesForDocument does, allowing us to collect more wrappers,
-    // but doing this correctly would be challenging.
-    if (!object)
-        return;
-
-    for (JSGlobalDataWorldIterator worldIter(&globalData); worldIter; ++worldIter) {
-        if (JSDOMWrapper* wrapper = worldIter->m_wrappers.get(object).get())
-            visitor.deprecatedAppend(reinterpret_cast<JSCell**>(&wrapper));
-    }
 }
 
 static void stringWrapperDestroyed(JSString*, void* context)

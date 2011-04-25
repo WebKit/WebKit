@@ -192,7 +192,11 @@ bool MessagePort::hasPendingActivity()
 {
     // The spec says that entangled message ports should always be treated as if they have a strong reference.
     // We'll also stipulate that the queue needs to be open (if the app drops its reference to the port before start()-ing it, then it's not really entangled as it's unreachable).
-    return m_started && m_entangledChannel && m_entangledChannel->hasPendingActivity();
+    if (m_started && m_entangledChannel && m_entangledChannel->hasPendingActivity())
+        return true;
+    if (isEntangled() && !locallyEntangledPort())
+        return true;
+    return false;
 }
 
 MessagePort* MessagePort::locallyEntangledPort()
