@@ -68,9 +68,13 @@ class Reviewer(Committer):
 
 
 contributors_who_are_not_committers = [
+    Contributor("Ami Fischman", "fischman@chromium.org", "amifischman0"),
+    Contributor("Anna Cavender", "annacc@chromium.org", "annacc"),
     Contributor("Anne van Kesteren", "annevankesteren+webkit@gmail.com", "annevk"),
+    Contributor("David Dorwin", "ddorwin@chromium.org", "ddorwin"),
     Contributor("Ian Hickson", "ian@hixie.ch", "hixie"),
     Contributor("Ilya Sherman", "isherman@chromium.org", "isherman"),
+    Contributor("Steve Lacey", "sjl@chromium.org", "stevela"),
 ]
 
 
@@ -224,6 +228,7 @@ committers_unable_to_review = [
     Committer("Tristan O'Tierney", ["tristan@otierney.net", "tristan@apple.com"]),
     Committer("Vangelis Kokkevis", "vangelis@chromium.org", "vangelis"),
     Committer("Victor Wang", "victorw@chromium.org", "victorw"),
+    Committer("Victoria Kirst", "vrk@chromium.org", "vrk"),
     Committer("Vitaly Repeshko", "vitalyr@chromium.org"),
     Committer("William Siegrist", "wsiegrist@apple.com", "wms"),
     Committer("W. James MacLean", "wjmaclean@chromium.org", "wjmaclean"),
