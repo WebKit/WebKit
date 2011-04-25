@@ -141,13 +141,13 @@ JSValue toJS(ExecState* exec, JSDOMGlobalObject* globalObject, HTMLCollection* c
 
     switch (collection->type()) {
         case SelectOptions:
-            wrapper = CREATE_DOM_OBJECT_WRAPPER(exec, globalObject, HTMLOptionsCollection, collection);
+            wrapper = CREATE_DOM_WRAPPER(exec, globalObject, HTMLOptionsCollection, collection);
             break;
         case DocAll:
-            wrapper = CREATE_DOM_OBJECT_WRAPPER(exec, globalObject, HTMLAllCollection, collection);
+            wrapper = CREATE_DOM_WRAPPER(exec, globalObject, HTMLAllCollection, collection);
             break;
         default:
-            wrapper = CREATE_DOM_OBJECT_WRAPPER(exec, globalObject, HTMLCollection, collection);
+            wrapper = CREATE_DOM_WRAPPER(exec, globalObject, HTMLCollection, collection);
             break;
     }
 

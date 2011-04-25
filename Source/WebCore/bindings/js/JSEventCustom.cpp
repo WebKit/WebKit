@@ -127,80 +127,80 @@ JSValue toJS(ExecState* exec, JSDOMGlobalObject* globalObject, Event* event)
 
     if (event->isUIEvent()) {
         if (event->isKeyboardEvent())
-            wrapper = CREATE_DOM_OBJECT_WRAPPER(exec, globalObject, KeyboardEvent, event);
+            wrapper = CREATE_DOM_WRAPPER(exec, globalObject, KeyboardEvent, event);
         else if (event->isTextEvent())
-            wrapper = CREATE_DOM_OBJECT_WRAPPER(exec, globalObject, TextEvent, event);
+            wrapper = CREATE_DOM_WRAPPER(exec, globalObject, TextEvent, event);
         else if (event->isMouseEvent())
-            wrapper = CREATE_DOM_OBJECT_WRAPPER(exec, globalObject, MouseEvent, event);
+            wrapper = CREATE_DOM_WRAPPER(exec, globalObject, MouseEvent, event);
         else if (event->isWheelEvent())
-            wrapper = CREATE_DOM_OBJECT_WRAPPER(exec, globalObject, WheelEvent, event);
+            wrapper = CREATE_DOM_WRAPPER(exec, globalObject, WheelEvent, event);
 #if ENABLE(SVG)
         else if (event->isSVGZoomEvent())
-            wrapper = CREATE_DOM_OBJECT_WRAPPER(exec, globalObject, SVGZoomEvent, event);
+            wrapper = CREATE_DOM_WRAPPER(exec, globalObject, SVGZoomEvent, event);
 #endif
         else if (event->isCompositionEvent())
-            wrapper = CREATE_DOM_OBJECT_WRAPPER(exec, globalObject, CompositionEvent, event);
+            wrapper = CREATE_DOM_WRAPPER(exec, globalObject, CompositionEvent, event);
 #if ENABLE(TOUCH_EVENTS)
         else if (event->isTouchEvent())
-            wrapper = CREATE_DOM_OBJECT_WRAPPER(exec, globalObject, TouchEvent, event);
+            wrapper = CREATE_DOM_WRAPPER(exec, globalObject, TouchEvent, event);
 #endif
         else
-            wrapper = CREATE_DOM_OBJECT_WRAPPER(exec, globalObject, UIEvent, event);
+            wrapper = CREATE_DOM_WRAPPER(exec, globalObject, UIEvent, event);
     } else if (event->isMutationEvent())
-        wrapper = CREATE_DOM_OBJECT_WRAPPER(exec, globalObject, MutationEvent, event);
+        wrapper = CREATE_DOM_WRAPPER(exec, globalObject, MutationEvent, event);
     else if (event->isOverflowEvent())
-        wrapper = CREATE_DOM_OBJECT_WRAPPER(exec, globalObject, OverflowEvent, event);
+        wrapper = CREATE_DOM_WRAPPER(exec, globalObject, OverflowEvent, event);
     else if (event->isMessageEvent())
-        wrapper = CREATE_DOM_OBJECT_WRAPPER(exec, globalObject, MessageEvent, event);
+        wrapper = CREATE_DOM_WRAPPER(exec, globalObject, MessageEvent, event);
     else if (event->isPageTransitionEvent())
-        wrapper = CREATE_DOM_OBJECT_WRAPPER(exec, globalObject, PageTransitionEvent, event);
+        wrapper = CREATE_DOM_WRAPPER(exec, globalObject, PageTransitionEvent, event);
     else if (event->isProgressEvent()) {
         if (event->isXMLHttpRequestProgressEvent())
-            wrapper = CREATE_DOM_OBJECT_WRAPPER(exec, globalObject, XMLHttpRequestProgressEvent, event);
+            wrapper = CREATE_DOM_WRAPPER(exec, globalObject, XMLHttpRequestProgressEvent, event);
         else
-            wrapper = CREATE_DOM_OBJECT_WRAPPER(exec, globalObject, ProgressEvent, event);
+            wrapper = CREATE_DOM_WRAPPER(exec, globalObject, ProgressEvent, event);
     } else if (event->isBeforeLoadEvent())
-        wrapper = CREATE_DOM_OBJECT_WRAPPER(exec, globalObject, BeforeLoadEvent, event);
+        wrapper = CREATE_DOM_WRAPPER(exec, globalObject, BeforeLoadEvent, event);
 #if ENABLE(DOM_STORAGE)
     else if (event->isStorageEvent())
-        wrapper = CREATE_DOM_OBJECT_WRAPPER(exec, globalObject, StorageEvent, event);
+        wrapper = CREATE_DOM_WRAPPER(exec, globalObject, StorageEvent, event);
 #endif
 #if ENABLE(INDEXED_DATABASE)
     else if (event->isIDBVersionChangeEvent())
-        wrapper = CREATE_DOM_OBJECT_WRAPPER(exec, globalObject, IDBVersionChangeEvent, event);
+        wrapper = CREATE_DOM_WRAPPER(exec, globalObject, IDBVersionChangeEvent, event);
 #endif
     else if (event->isWebKitAnimationEvent())
-        wrapper = CREATE_DOM_OBJECT_WRAPPER(exec, globalObject, WebKitAnimationEvent, event);
+        wrapper = CREATE_DOM_WRAPPER(exec, globalObject, WebKitAnimationEvent, event);
     else if (event->isWebKitTransitionEvent())
-        wrapper = CREATE_DOM_OBJECT_WRAPPER(exec, globalObject, WebKitTransitionEvent, event);
+        wrapper = CREATE_DOM_WRAPPER(exec, globalObject, WebKitTransitionEvent, event);
 #if ENABLE(WORKERS)
     else if (event->isErrorEvent())
-        wrapper = CREATE_DOM_OBJECT_WRAPPER(exec, globalObject, ErrorEvent, event);
+        wrapper = CREATE_DOM_WRAPPER(exec, globalObject, ErrorEvent, event);
 #endif
     else if (event->isHashChangeEvent())
-        wrapper = CREATE_DOM_OBJECT_WRAPPER(exec, globalObject, HashChangeEvent, event);
+        wrapper = CREATE_DOM_WRAPPER(exec, globalObject, HashChangeEvent, event);
     else if (event->isPopStateEvent())
-        wrapper = CREATE_DOM_OBJECT_WRAPPER(exec, globalObject, PopStateEvent, event);
+        wrapper = CREATE_DOM_WRAPPER(exec, globalObject, PopStateEvent, event);
     else if (event->isCustomEvent())
-        wrapper = CREATE_DOM_OBJECT_WRAPPER(exec, globalObject, CustomEvent, event);
+        wrapper = CREATE_DOM_WRAPPER(exec, globalObject, CustomEvent, event);
 #if ENABLE(DEVICE_ORIENTATION)
     else if (event->isDeviceMotionEvent())
-        wrapper = CREATE_DOM_OBJECT_WRAPPER(exec, globalObject, DeviceMotionEvent, event);
+        wrapper = CREATE_DOM_WRAPPER(exec, globalObject, DeviceMotionEvent, event);
     else if (event->isDeviceOrientationEvent())
-        wrapper = CREATE_DOM_OBJECT_WRAPPER(exec, globalObject, DeviceOrientationEvent, event);
+        wrapper = CREATE_DOM_WRAPPER(exec, globalObject, DeviceOrientationEvent, event);
 #endif
 #if ENABLE(WEB_AUDIO)
     else if (event->isAudioProcessingEvent())
-        wrapper = CREATE_DOM_OBJECT_WRAPPER(exec, globalObject, AudioProcessingEvent, event);
+        wrapper = CREATE_DOM_WRAPPER(exec, globalObject, AudioProcessingEvent, event);
     else if (event->isOfflineAudioCompletionEvent())
-        wrapper = CREATE_DOM_OBJECT_WRAPPER(exec, globalObject, OfflineAudioCompletionEvent, event);
+        wrapper = CREATE_DOM_WRAPPER(exec, globalObject, OfflineAudioCompletionEvent, event);
 #endif
 #if ENABLE(INPUT_SPEECH)
     else if (event->isSpeechInputEvent())
-        wrapper = CREATE_DOM_OBJECT_WRAPPER(exec, globalObject, SpeechInputEvent, event);
+        wrapper = CREATE_DOM_WRAPPER(exec, globalObject, SpeechInputEvent, event);
 #endif
     else
-        wrapper = CREATE_DOM_OBJECT_WRAPPER(exec, globalObject, Event, event);
+        wrapper = CREATE_DOM_WRAPPER(exec, globalObject, Event, event);
 
     return wrapper;
 }

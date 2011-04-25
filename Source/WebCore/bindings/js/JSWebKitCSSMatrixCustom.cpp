@@ -42,7 +42,7 @@ EncodedJSValue JSC_HOST_CALL JSWebKitCSSMatrixConstructor::constructJSWebKitCSSM
     ExceptionCode ec = 0;
     RefPtr<WebKitCSSMatrix> matrix = WebKitCSSMatrix::create(s, ec);
     setDOMException(exec, ec);
-    return JSValue::encode(CREATE_DOM_OBJECT_WRAPPER(exec, jsConstructor->globalObject(), WebKitCSSMatrix, matrix.get()));
+    return JSValue::encode(CREATE_DOM_WRAPPER(exec, jsConstructor->globalObject(), WebKitCSSMatrix, matrix.get()));
 }
 
 } // namespace WebCore

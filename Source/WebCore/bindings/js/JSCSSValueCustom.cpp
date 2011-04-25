@@ -82,19 +82,19 @@ JSValue toJS(ExecState* exec, JSDOMGlobalObject* globalObject, CSSValue* value)
         return wrapper;
 
     if (value->isWebKitCSSTransformValue())
-        wrapper = CREATE_DOM_OBJECT_WRAPPER(exec, globalObject, WebKitCSSTransformValue, value);
+        wrapper = CREATE_DOM_WRAPPER(exec, globalObject, WebKitCSSTransformValue, value);
     else if (value->isValueList())
-        wrapper = CREATE_DOM_OBJECT_WRAPPER(exec, globalObject, CSSValueList, value);
+        wrapper = CREATE_DOM_WRAPPER(exec, globalObject, CSSValueList, value);
 #if ENABLE(SVG)
     else if (value->isSVGPaint())
-        wrapper = CREATE_DOM_OBJECT_WRAPPER(exec, globalObject, SVGPaint, value);
+        wrapper = CREATE_DOM_WRAPPER(exec, globalObject, SVGPaint, value);
     else if (value->isSVGColor())
-        wrapper = CREATE_DOM_OBJECT_WRAPPER(exec, globalObject, SVGColor, value);
+        wrapper = CREATE_DOM_WRAPPER(exec, globalObject, SVGColor, value);
 #endif
     else if (value->isPrimitiveValue())
-        wrapper = CREATE_DOM_OBJECT_WRAPPER(exec, globalObject, CSSPrimitiveValue, value);
+        wrapper = CREATE_DOM_WRAPPER(exec, globalObject, CSSPrimitiveValue, value);
     else
-        wrapper = CREATE_DOM_OBJECT_WRAPPER(exec, globalObject, CSSValue, value);
+        wrapper = CREATE_DOM_WRAPPER(exec, globalObject, CSSValue, value);
 
     return wrapper;
 }

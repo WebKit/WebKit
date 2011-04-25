@@ -1,3 +1,45 @@
+2011-04-25  Geoffrey Garen  <ggaren@apple.com>
+
+        Rubber-stamped by Beth Dakin.
+
+        Merged CREATE_DOM_NODE_WRAPPER and CREATE_DOM_OBJECT_WRAPPER into 
+        CREATE_DOM_WRAPPER because there's no meaningful difference between
+        them anymore.
+
+        * bindings/js/JSCDATASectionCustom.cpp:
+        (WebCore::toJSNewlyCreated):
+        * bindings/js/JSCSSRuleCustom.cpp:
+        (WebCore::toJS):
+        * bindings/js/JSCSSValueCustom.cpp:
+        (WebCore::toJS):
+        * bindings/js/JSDOMBinding.h:
+        * bindings/js/JSDocumentCustom.cpp:
+        (WebCore::toJS):
+        * bindings/js/JSElementCustom.cpp:
+        (WebCore::toJSNewlyCreated):
+        * bindings/js/JSEventCustom.cpp:
+        (WebCore::toJS):
+        * bindings/js/JSHTMLCollectionCustom.cpp:
+        (WebCore::toJS):
+        * bindings/js/JSImageDataCustom.cpp:
+        (WebCore::toJS):
+        * bindings/js/JSNodeCustom.cpp:
+        (WebCore::createWrapperInline):
+        * bindings/js/JSSVGPathSegCustom.cpp:
+        (WebCore::toJS):
+        * bindings/js/JSStyleSheetCustom.cpp:
+        (WebCore::toJS):
+        * bindings/js/JSTextCustom.cpp:
+        (WebCore::toJSNewlyCreated):
+        * bindings/js/JSWebKitCSSMatrixCustom.cpp:
+        (WebCore::JSWebKitCSSMatrixConstructor::constructJSWebKitCSSMatrix):
+        * bindings/js/JSWebSocketCustom.cpp:
+        (WebCore::JSWebSocketConstructor::constructJSWebSocket):
+        * bindings/js/JSXMLHttpRequestCustom.cpp:
+        (WebCore::JSXMLHttpRequestConstructor::constructJSXMLHttpRequest):
+        * bindings/js/JSXSLTProcessorCustom.cpp:
+        (WebCore::JSXSLTProcessorConstructor::constructJSXSLTProcessor):
+
 2011-04-25  Adam Barth  <abarth@webkit.org>
 
         Reviewed by James Robinson.

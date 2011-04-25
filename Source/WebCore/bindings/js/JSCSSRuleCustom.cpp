@@ -65,31 +65,31 @@ JSValue toJS(ExecState* exec, JSDOMGlobalObject* globalObject, CSSRule* rule)
 
     switch (rule->type()) {
         case CSSRule::STYLE_RULE:
-            wrapper = CREATE_DOM_OBJECT_WRAPPER(exec, globalObject, CSSStyleRule, rule);
+            wrapper = CREATE_DOM_WRAPPER(exec, globalObject, CSSStyleRule, rule);
             break;
         case CSSRule::MEDIA_RULE:
-            wrapper = CREATE_DOM_OBJECT_WRAPPER(exec, globalObject, CSSMediaRule, rule);
+            wrapper = CREATE_DOM_WRAPPER(exec, globalObject, CSSMediaRule, rule);
             break;
         case CSSRule::FONT_FACE_RULE:
-            wrapper = CREATE_DOM_OBJECT_WRAPPER(exec, globalObject, CSSFontFaceRule, rule);
+            wrapper = CREATE_DOM_WRAPPER(exec, globalObject, CSSFontFaceRule, rule);
             break;
         case CSSRule::PAGE_RULE:
-            wrapper = CREATE_DOM_OBJECT_WRAPPER(exec, globalObject, CSSPageRule, rule);
+            wrapper = CREATE_DOM_WRAPPER(exec, globalObject, CSSPageRule, rule);
             break;
         case CSSRule::IMPORT_RULE:
-            wrapper = CREATE_DOM_OBJECT_WRAPPER(exec, globalObject, CSSImportRule, rule);
+            wrapper = CREATE_DOM_WRAPPER(exec, globalObject, CSSImportRule, rule);
             break;
         case CSSRule::CHARSET_RULE:
-            wrapper = CREATE_DOM_OBJECT_WRAPPER(exec, globalObject, CSSCharsetRule, rule);
+            wrapper = CREATE_DOM_WRAPPER(exec, globalObject, CSSCharsetRule, rule);
             break;
         case CSSRule::WEBKIT_KEYFRAME_RULE:
-            wrapper = CREATE_DOM_OBJECT_WRAPPER(exec, globalObject, WebKitCSSKeyframeRule, rule);
+            wrapper = CREATE_DOM_WRAPPER(exec, globalObject, WebKitCSSKeyframeRule, rule);
             break;
         case CSSRule::WEBKIT_KEYFRAMES_RULE:
-            wrapper = CREATE_DOM_OBJECT_WRAPPER(exec, globalObject, WebKitCSSKeyframesRule, rule);
+            wrapper = CREATE_DOM_WRAPPER(exec, globalObject, WebKitCSSKeyframesRule, rule);
             break;
         default:
-            wrapper = CREATE_DOM_OBJECT_WRAPPER(exec, globalObject, CSSRule, rule);
+            wrapper = CREATE_DOM_WRAPPER(exec, globalObject, CSSRule, rule);
     }
 
     return wrapper;

@@ -203,7 +203,7 @@ static ALWAYS_INLINE JSValue createWrapperInline(ExecState* exec, JSDOMGlobalObj
     ASSERT(node);
     ASSERT(!getCachedWrapper(currentWorld(exec), node));
     
-    JSNode* wrapper;    
+    JSDOMWrapper* wrapper;    
     switch (node->nodeType()) {
         case Node::ELEMENT_NODE:
             if (node->isHTMLElement())
@@ -213,46 +213,46 @@ static ALWAYS_INLINE JSValue createWrapperInline(ExecState* exec, JSDOMGlobalObj
                 wrapper = createJSSVGWrapper(exec, globalObject, static_cast<SVGElement*>(node));
 #endif
             else
-                wrapper = CREATE_DOM_NODE_WRAPPER(exec, globalObject, Element, node);
+                wrapper = CREATE_DOM_WRAPPER(exec, globalObject, Element, node);
             break;
         case Node::ATTRIBUTE_NODE:
-            wrapper = CREATE_DOM_NODE_WRAPPER(exec, globalObject, Attr, node);
+            wrapper = CREATE_DOM_WRAPPER(exec, globalObject, Attr, node);
             break;
         case Node::TEXT_NODE:
-            wrapper = CREATE_DOM_NODE_WRAPPER(exec, globalObject, Text, node);
+            wrapper = CREATE_DOM_WRAPPER(exec, globalObject, Text, node);
             break;
         case Node::CDATA_SECTION_NODE:
-            wrapper = CREATE_DOM_NODE_WRAPPER(exec, globalObject, CDATASection, node);
+            wrapper = CREATE_DOM_WRAPPER(exec, globalObject, CDATASection, node);
             break;
         case Node::ENTITY_NODE:
-            wrapper = CREATE_DOM_NODE_WRAPPER(exec, globalObject, Entity, node);
+            wrapper = CREATE_DOM_WRAPPER(exec, globalObject, Entity, node);
             break;
         case Node::PROCESSING_INSTRUCTION_NODE:
-            wrapper = CREATE_DOM_NODE_WRAPPER(exec, globalObject, ProcessingInstruction, node);
+            wrapper = CREATE_DOM_WRAPPER(exec, globalObject, ProcessingInstruction, node);
             break;
         case Node::COMMENT_NODE:
-            wrapper = CREATE_DOM_NODE_WRAPPER(exec, globalObject, Comment, node);
+            wrapper = CREATE_DOM_WRAPPER(exec, globalObject, Comment, node);
             break;
         case Node::DOCUMENT_NODE:
             // we don't want to cache the document itself in the per-document dictionary
             return toJS(exec, globalObject, static_cast<Document*>(node));
         case Node::DOCUMENT_TYPE_NODE:
-            wrapper = CREATE_DOM_NODE_WRAPPER(exec, globalObject, DocumentType, node);
+            wrapper = CREATE_DOM_WRAPPER(exec, globalObject, DocumentType, node);
             break;
         case Node::NOTATION_NODE:
-            wrapper = CREATE_DOM_NODE_WRAPPER(exec, globalObject, Notation, node);
+            wrapper = CREATE_DOM_WRAPPER(exec, globalObject, Notation, node);
             break;
         case Node::DOCUMENT_FRAGMENT_NODE:
-            wrapper = CREATE_DOM_NODE_WRAPPER(exec, globalObject, DocumentFragment, node);
+            wrapper = CREATE_DOM_WRAPPER(exec, globalObject, DocumentFragment, node);
             break;
         case Node::SHADOW_ROOT_NODE:
-            wrapper = CREATE_DOM_NODE_WRAPPER(exec, globalObject, Node, node);
+            wrapper = CREATE_DOM_WRAPPER(exec, globalObject, Node, node);
             break;
         case Node::ENTITY_REFERENCE_NODE:
-            wrapper = CREATE_DOM_NODE_WRAPPER(exec, globalObject, EntityReference, node);
+            wrapper = CREATE_DOM_WRAPPER(exec, globalObject, EntityReference, node);
             break;
         default:
-            wrapper = CREATE_DOM_NODE_WRAPPER(exec, globalObject, Node, node);
+            wrapper = CREATE_DOM_WRAPPER(exec, globalObject, Node, node);
     }
 
     return wrapper;    

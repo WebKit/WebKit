@@ -207,7 +207,7 @@ EncodedJSValue JSC_HOST_CALL JSXMLHttpRequestConstructor::constructJSXMLHttpRequ
         return throwVMError(exec, createReferenceError(exec, "XMLHttpRequest constructor associated document is unavailable"));
 
     RefPtr<XMLHttpRequest> xmlHttpRequest = XMLHttpRequest::create(context);
-    return JSValue::encode(CREATE_DOM_OBJECT_WRAPPER(exec, jsConstructor->globalObject(), XMLHttpRequest, xmlHttpRequest.get()));
+    return JSValue::encode(CREATE_DOM_WRAPPER(exec, jsConstructor->globalObject(), XMLHttpRequest, xmlHttpRequest.get()));
 }
 
 } // namespace WebCore

@@ -69,7 +69,7 @@ EncodedJSValue JSC_HOST_CALL JSWebSocketConstructor::constructJSWebSocket(ExecSt
         webSocket->connect(url, protocol, ec);
     }
     setDOMException(exec, ec);
-    return JSValue::encode(CREATE_DOM_OBJECT_WRAPPER(exec, jsConstructor->globalObject(), WebSocket, webSocket.get()));
+    return JSValue::encode(CREATE_DOM_WRAPPER(exec, jsConstructor->globalObject(), WebSocket, webSocket.get()));
 }
 
 } // namespace WebCore

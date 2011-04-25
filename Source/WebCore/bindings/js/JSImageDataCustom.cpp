@@ -45,7 +45,7 @@ JSValue toJS(ExecState* exec, JSDOMGlobalObject* globalObject, ImageData* imageD
     if (wrapper)
         return wrapper;
     
-    wrapper = CREATE_DOM_OBJECT_WRAPPER(exec, globalObject, ImageData, imageData);
+    wrapper = CREATE_DOM_WRAPPER(exec, globalObject, ImageData, imageData);
     Identifier dataName(exec, "data");
     static const ClassInfo cpaClassInfo = { "CanvasPixelArray", &JSByteArray::Base::s_info, 0, 0 };
     DEFINE_STATIC_LOCAL(Strong<Structure>, cpaStructure, (exec->globalData(), JSByteArray::createStructure(exec->globalData(), jsNull(), &cpaClassInfo)));

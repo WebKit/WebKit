@@ -177,8 +177,7 @@ namespace WebCore {
         world->m_wrappers.remove(domObject);
     }
     
-    #define CREATE_DOM_OBJECT_WRAPPER(exec, globalObject, className, object) createWrapper<JS##className>(exec, globalObject, static_cast<className*>(object))
-    #define CREATE_DOM_NODE_WRAPPER(exec, globalObject, className, object) static_cast<JSNode*>(createWrapper<JS##className>(exec, globalObject, static_cast<className*>(object)))
+    #define CREATE_DOM_WRAPPER(exec, globalObject, className, object) createWrapper<JS##className>(exec, globalObject, static_cast<className*>(object))
     template<class WrapperClass, class DOMClass> inline JSDOMWrapper* createWrapper(JSC::ExecState* exec, JSDOMGlobalObject* globalObject, DOMClass* node)
     {
         ASSERT(node);

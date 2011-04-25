@@ -119,7 +119,7 @@ JSValue JSXSLTProcessor::removeParameter(ExecState* exec)
 EncodedJSValue JSC_HOST_CALL JSXSLTProcessorConstructor::constructJSXSLTProcessor(ExecState* exec)
 {
     JSXSLTProcessorConstructor* jsConstructor = static_cast<JSXSLTProcessorConstructor*>(exec->callee());
-    return JSValue::encode(CREATE_DOM_OBJECT_WRAPPER(exec, jsConstructor->globalObject(), XSLTProcessor, XSLTProcessor::create().get()));
+    return JSValue::encode(CREATE_DOM_WRAPPER(exec, jsConstructor->globalObject(), XSLTProcessor, XSLTProcessor::create().get()));
 }
 
 } // namespace WebCore

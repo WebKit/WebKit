@@ -37,7 +37,7 @@ JSValue toJSNewlyCreated(ExecState* exec, JSDOMGlobalObject* globalObject, Text*
     if (!text)
         return jsNull();
     
-    return CREATE_DOM_NODE_WRAPPER(exec, globalObject, Text, text);
+    return CREATE_DOM_WRAPPER(exec, globalObject, Text, text);
 }
 
 } // namespace WebCore
