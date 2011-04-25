@@ -47,7 +47,7 @@ HTTPHeaderMap::~HTTPHeaderMap()
 
 PassOwnPtr<CrossThreadHTTPHeaderMapData> HTTPHeaderMap::copyData() const
 {
-    OwnPtr<CrossThreadHTTPHeaderMapData> data(new CrossThreadHTTPHeaderMapData());
+    OwnPtr<CrossThreadHTTPHeaderMapData> data = adoptPtr(new CrossThreadHTTPHeaderMapData());
     data->reserveInitialCapacity(size());
 
     HTTPHeaderMap::const_iterator end_it = end();

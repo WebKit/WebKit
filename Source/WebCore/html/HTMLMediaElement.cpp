@@ -138,7 +138,6 @@ HTMLMediaElement::HTMLMediaElement(const QualifiedName& tagName, Document* docum
     , m_loadState(WaitingForSource)
     , m_currentSourceNode(0)
     , m_nextChildNodeToConsider(0)
-    , m_player(0)
 #if ENABLE(PLUGIN_PROXY_FOR_VIDEO)
     , m_proxyWidget(0)
 #endif

@@ -1,3 +1,15 @@
+2011-04-25  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by David Levin.
+
+        Fix strict OwnPtrs in HTMLMediaElement and HTTPHeaderMap
+        https://bugs.webkit.org/show_bug.cgi?id=59368
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::HTMLMediaElement):
+        * platform/network/HTTPHeaderMap.cpp:
+        (WebCore::HTTPHeaderMap::copyData):
+
 2011-04-25  James Robinson  <jamesr@chromium.org>
 
         Reviewed by Adam Barth.
