@@ -265,7 +265,7 @@ inline PropertyTable::PropertyTable(JSGlobalData& globalData, JSCell* owner, con
     // Copy the m_deletedOffsets vector.
     Vector<unsigned>* otherDeletedOffsets = other.m_deletedOffsets.get();
     if (otherDeletedOffsets)
-        m_deletedOffsets.set(new Vector<unsigned>(*otherDeletedOffsets));
+        m_deletedOffsets = adoptPtr(new Vector<unsigned>(*otherDeletedOffsets));
 }
 
 inline PropertyTable::PropertyTable(JSGlobalData& globalData, JSCell* owner, unsigned initialCapacity, const PropertyTable& other)
@@ -289,7 +289,7 @@ inline PropertyTable::PropertyTable(JSGlobalData& globalData, JSCell* owner, uns
     // Copy the m_deletedOffsets vector.
     Vector<unsigned>* otherDeletedOffsets = other.m_deletedOffsets.get();
     if (otherDeletedOffsets)
-        m_deletedOffsets.set(new Vector<unsigned>(*otherDeletedOffsets));
+        m_deletedOffsets = adoptPtr(new Vector<unsigned>(*otherDeletedOffsets));
 }
 
 inline PropertyTable::~PropertyTable()
@@ -444,7 +444,7 @@ inline unsigned PropertyTable::getDeletedOffset()
 inline void PropertyTable::addDeletedOffset(unsigned offset)
 {
     if (!m_deletedOffsets)
-        m_deletedOffsets.set(new Vector<unsigned>);
+        m_deletedOffsets = adoptPtr(new Vector<unsigned>);
     m_deletedOffsets->append(offset);
 }
 
