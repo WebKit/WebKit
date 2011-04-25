@@ -1,3 +1,15 @@
+2011-04-25  David Levin  <levin@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        PropertyMapHashTable.h should use adoptPtr instead of implicit conversions to PassRefPtr.
+        https://bugs.webkit.org/show_bug.cgi?id=59342
+
+        This patch is to prepare for the strict OwnPtr hack-a-thon.
+
+        * runtime/PropertyMapHashTable.h:
+        (JSC::PropertyTable::copy):
+
 2011-04-25  Thouraya ANDOLSI  <thouraya.andolsi@st.com>
 
         Reviewed by Gavin Barraclough.

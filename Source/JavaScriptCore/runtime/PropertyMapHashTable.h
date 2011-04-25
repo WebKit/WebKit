@@ -455,8 +455,8 @@ inline PassOwnPtr<PropertyTable> PropertyTable::copy(JSGlobalData& globalData, J
     // Fast case; if the new table will be the same m_indexSize as this one, we can memcpy it,
     // save rehashing all keys.
     if (sizeForCapacity(newCapacity) == m_indexSize)
-        return new PropertyTable(globalData, owner, *this);
-    return new PropertyTable(globalData, owner, newCapacity, *this);
+        return adoptPtr(new PropertyTable(globalData, owner, *this));
+    return adoptPtr(new PropertyTable(globalData, owner, newCapacity, *this));
 }
 
 #ifndef NDEBUG
