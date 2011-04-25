@@ -77,11 +77,12 @@ shouldBe("a.href", "'https://www.otherdom/ain.com/path/'");
 debug("Exception: " + e.description);
 }
 
-// Firefox 3.5.2 add the missing '/' thus gets a different result than IE8 and Webkit.
+// WebKit fails to strip the \r in the authority, and therefore treats the URL as invalid
+// and gets a different result than Firefox or Chrome; we should probably strip it
 debug("Set host to a malformed URL");
 a.href = "https:/\rww.my@domain.com:8080/path/";
 a.host = "www.other!domain.com:15";
-shouldBe("a.href", "'https://www.other!domain.com:15/ww.my@domain.com:8080/path/'");
+shouldBe("a.href", "'https:/\\rww.my@domain.com:8080/path/'");
 
 // IE8 throws an "Object Error" exception.
 // Firefox 3.5.2 accepts this but throws an exception later

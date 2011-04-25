@@ -60,11 +60,11 @@ shouldBe("a.href", "'https://www.mydomain.com/path/'");
 debug("Exception: " + e.description);
 }
 
-// Firefox 3.5.2 tries to build a hierarchical URL.
+// Firefox 4 adds three slashes, unlike Safari and Chrome
 debug("Set protocol to http on malformed URL");
 a.href = "foo:??bar";
 a.protocol = "http";
-shouldBe("a.href", "'http:??bar'");
+shouldBe("a.href", "'http:/??bar'");
 
 // IE8 keeps the protocol if it is 'c:'.
 debug("Set protocol to a URL which points to a local file");

@@ -1,3 +1,20 @@
+2011-04-25  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Cameron Zwarich.
+
+        Fix tests after URL parsing fix
+        https://bugs.webkit.org/show_bug.cgi?id=59317
+
+        * fast/dom/HTMLAnchorElement/script-tests/set-href-attribute-host.js: Update
+        expected behavior.
+        * fast/dom/HTMLAnchorElement/script-tests/set-href-attribute-protocol.js: Update expected
+        behavior.
+        * fast/dom/HTMLAnchorElement/set-href-attribute-host-expected.txt: Update expectations.
+        * fast/dom/HTMLAnchorElement/set-href-attribute-protocol-expected.txt: Update expectations.
+        * fast/loader/url-parse-1-expected.txt: Update expectations.
+        * http/tests/loading/cross-origin-XHR-willLoadRequest.html: Replace single slash
+        in an http: URL with a double slash - the single slash seemed to be erroneous.
+
 2011-04-24  Dirk Pranke  <dpranke@chromium.org>
 
         Unreviewed, expectations change.

@@ -1,9 +1,9 @@
 <script>
     layoutTestController.dumpAsText();
-    layoutTestController.addURLToRedirect("http:/localhost:8000/loading/resources/bar.txt", "http://localhost:8000/loading/resources/foo.txt");
+    layoutTestController.addURLToRedirect("http://localhost:8000/loading/resources/bar.txt", "http://localhost:8000/loading/resources/foo.txt");
 
     var request = new XMLHttpRequest();
-    request.open("GET", "http:/localhost:8000/loading/resources/bar.txt");
+    request.open("GET", "http://localhost:8000/loading/resources/bar.txt");
     request.send();
 </script>
 <p>
