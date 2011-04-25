@@ -79,7 +79,6 @@ void InspectorPageAgent::setFrontend(InspectorFrontend* frontend)
 void InspectorPageAgent::clearFrontend()
 {
     m_instrumentingAgents->setInspectorPageAgent(0);
-    m_userAgentOverride = "";
     m_frontend = 0;
 }
 
@@ -93,38 +92,31 @@ void InspectorPageAgent::removeAllScriptsToEvaluateOnLoad(ErrorString*)
     m_scriptsToEvaluateOnLoad.clear();
 }
 
-void InspectorPageAgent::reloadPage(ErrorString*, const bool* const optionalIgnoreCache)
+void InspectorPageAgent::reload(ErrorString*, const bool* const optionalIgnoreCache)
 {
     m_inspectedPage->mainFrame()->loader()->reload(optionalIgnoreCache ? *optionalIgnoreCache : false);
 }
 
-void InspectorPageAgent::openInInspectedWindow(ErrorString*, const String& url)
+void InspectorPageAgent::open(ErrorString*, const String& url, const bool* const inNewWindow)
 {
     Frame* mainFrame = m_inspectedPage->mainFrame();
+    Frame* frame;
+    if (inNewWindow && *inNewWindow) {
+        FrameLoadRequest request(mainFrame->document()->securityOrigin(), ResourceRequest(), "_blank");
 
-    FrameLoadRequest request(mainFrame->document()->securityOrigin(), ResourceRequest(), "_blank");
+        bool created;
+        WindowFeatures windowFeatures;
+        frame = WebCore::createWindow(mainFrame, mainFrame, request, windowFeatures, created);
+        if (!frame)
+            return;
 
-    bool created;
-    WindowFeatures windowFeatures;
-    Frame* newFrame = WebCore::createWindow(mainFrame, mainFrame, request, windowFeatures, created);
-    if (!newFrame)
-        return;
+        frame->loader()->setOpener(mainFrame);
+        frame->page()->setOpenedByDOM();
+    } else
+        frame = mainFrame;
 
     UserGestureIndicator indicator(DefinitelyProcessingUserGesture);
-    newFrame->loader()->setOpener(mainFrame);
-    newFrame->page()->setOpenedByDOM();
-    newFrame->loader()->changeLocation(mainFrame->document()->securityOrigin(), newFrame->loader()->completeURL(url), "", false, false);
-}
-
-void InspectorPageAgent::setUserAgentOverride(ErrorString*, const String& userAgent)
-{
-    m_userAgentOverride = userAgent;
-}
-
-void InspectorPageAgent::applyUserAgentOverride(String* userAgent) const
-{
-    if (!m_userAgentOverride.isEmpty())
-        *userAgent = m_userAgentOverride;
+    frame->loader()->changeLocation(mainFrame->document()->securityOrigin(), frame->loader()->completeURL(url), "", false, false);
 }
 
 static PassRefPtr<InspectorObject> buildObjectForCookie(const Cookie& cookie)

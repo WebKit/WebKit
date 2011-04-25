@@ -1405,7 +1405,7 @@ WebInspector.NetworkDataGridNode.prototype = {
 
     _openInNewTab: function()
     {
-        PageAgent.openInInspectedWindow(this._resource.url);
+        PageAgent.open(this._resource.url, true);
     },
 
     get selectable()

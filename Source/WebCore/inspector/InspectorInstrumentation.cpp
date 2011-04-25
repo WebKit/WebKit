@@ -390,8 +390,8 @@ void InspectorInstrumentation::didRecalculateStyleImpl(const InspectorInstrument
 
 void InspectorInstrumentation::applyUserAgentOverrideImpl(InspectorAgent* inspectorAgent, String* userAgent)
 {
-    if (InspectorPageAgent* pageAgent = retrievePageAgent(inspectorAgent))
-        pageAgent->applyUserAgentOverride(userAgent);
+    if (InspectorResourceAgent* resourceAgent = retrieveResourceAgent(inspectorAgent))
+        resourceAgent->applyUserAgentOverride(userAgent);
 }
 
 void InspectorInstrumentation::willSendRequestImpl(InspectorAgent* inspectorAgent, unsigned long identifier, DocumentLoader* loader, ResourceRequest& request, const ResourceResponse& redirectResponse)

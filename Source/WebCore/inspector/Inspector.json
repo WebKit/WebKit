@@ -58,6 +58,7 @@
     },
     {
         "domain": "Page",
+        "description": "Actions and events related to the inspected page belong to the page domain.",
         "types": [],
         "commands": [
             {
@@ -70,36 +71,35 @@
                 "name": "removeAllScriptsToEvaluateOnLoad"
             },
             {
-                "name": "reloadPage",
+                "name": "reload",
                 "parameters": [
                     { "name": "ignoreCache", "type": "boolean", "optional": true }
-                ]
+                ],
+                "description": "Reloads given page optionally ignoring the cache."
             },
             {
-                "name": "openInInspectedWindow",
+                "name": "open",
                 "parameters": [
-                    { "name": "url", "type": "string" }
-                ]
-            },
-            {
-                "name": "setUserAgentOverride",
-                "parameters": [
-                    { "name": "userAgent", "type": "string" }
-                ]
+                    { "name": "url", "type": "string", "description": "URL to open." },
+                    { "name": "newWindow", "optional": true, "type": "boolean", "description": "If True, opens given URL in a new window or tab." }
+                ],
+                "description": "Opens given URL either in the inspected page or in a new tab / window."
             },
             {
                 "name": "getCookies",
                 "returns": [
-                    { "name": "cookies", "type": "array", "items": { "$ref": "Cookie"} },
-                    { "name": "cookiesString", "type": "string" }
-                ]
+                    { "name": "cookies", "type": "array", "items": { "$ref": "Cookie"}, "description": "Array of cookie objects." },
+                    { "name": "cookiesString", "type": "string", "description": "document.cookie string representation of the cookies." }
+                ],
+                "description": "Returns all browser cookies. Depending on the backend support, will either return detailed cookie information in the <code>cookie</code> field or string cookie representation using <code>cookieString</code>."
             },
             {
                 "name": "deleteCookie",
                 "parameters": [
-                    { "name": "cookieName", "type": "string" },
-                    { "name": "domain", "type": "string" }
-                ]
+                    { "name": "cookieName", "type": "string", "description": "Name of the cookie to remove." },
+                    { "name": "domain", "type": "string", "description": "Domain of the cookie to remove." }
+                ],
+                "description": "Deletes browser cookie with given name for the given domain."
             }
         ],
         "events": [
@@ -415,12 +415,19 @@
                 "name": "getResourceContent",
                 "description": "Returns content of the given resource.",
                 "parameters": [
-                    { "name": "frameId", "type": "string", "description": "Frame id to get resource for."  },
-                    { "name": "url", "type": "string", "description": "URL of the resource to get content for."  },
-                    { "name": "base64Encode", "type": "boolean", "optional": true, "description": "Requests that resource content is served as base64."  }
+                    { "name": "frameId", "type": "string", "description": "Frame id to get resource for." },
+                    { "name": "url", "type": "string", "description": "URL of the resource to get content for." },
+                    { "name": "base64Encode", "type": "boolean", "optional": true, "description": "Requests that resource content is served as base64." }
                 ],
                 "returns": [
                     { "name": "content", "type": "string", "description": "Resource content." }
+                ]
+            },
+            {
+                "name": "setUserAgentOverride",
+                "description": "Allows overriding user agent with the given string.",
+                "parameters": [
+                    { "name": "userAgent", "type": "string", "description": "User agent to use." }
                 ]
             },
             {
@@ -888,29 +895,34 @@
                 "description": "Requests that the node is sent to the caller given the JavaScript node object reference."
             },
             {
-                "name": "setSearchingForNode",
+                "name": "setInspectModeEnabled",
                 "parameters": [
-                    { "name": "enabled", "type": "boolean" }
-                ]
+                    { "name": "enabled", "type": "boolean", "description": "True to enable inspection mode, false to disable it." }
+                ],
+                "description": "Enters the 'inspect' mode. In this mode, elements that user is hovering over are highlighted. Backend then generates 'inspect' command upon element selection."
             },
             {
-                "name": "highlightDOMNode",
+                "name": "highlightNode",
                 "parameters": [
-                    { "name": "nodeId", "type": "integer" },
+                    { "name": "nodeId", "type": "integer", "description": "Identifier of the node to highlight" },
                     { "name": "mode", "type": "string", "enum": ["all", "content", "padding", "border", "margin"], "optional": true, "description": "The box model component(s) to highlight (default: \"all\")." },
-                ]
+                ],
+                "description": "Highlights DOM node with given id."
             },
             {
-                "name": "hideDOMNodeHighlight"
+                "name": "hideNodeHighlight",
+                "description": "Hides DOM node highlight."
             },
             {
                 "name": "highlightFrame",
                 "parameters": [
-                    { "name": "frameId", "type": "string" }
-                ]
+                    { "name": "frameId", "type": "string", "description": "Identifier of the frame to highlight" }
+                ],
+                "description": "Highlights owner element of the frame with given id."
             },
             {
-                "name": "hideFrameHighlight"
+                "name": "hideFrameHighlight",
+                "description": "Hides frame owner highlight."
             },
             {
                 "name": "pushNodeByPathToFrontend",

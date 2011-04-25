@@ -126,12 +126,12 @@ public:
     void performSearch(ErrorString*, const String& whitespaceTrimmedQuery, const bool* const runSynchronously);
     void cancelSearch(ErrorString*);
     void resolveNode(ErrorString*, int nodeId, RefPtr<InspectorObject>* result);
-    void setSearchingForNode(ErrorString*, bool enabled);
+    void setInspectModeEnabled(ErrorString*, bool enabled);
     void pushNodeToFrontend(ErrorString*, const String& objectId, int* nodeId);
     void pushNodeByPathToFrontend(ErrorString*, const String& path, int* nodeId);
     void hideHighlight(ErrorString*);
-    void highlightDOMNode(ErrorString*, int nodeId, String* mode);
-    void hideDOMNodeHighlight(ErrorString* error) { hideHighlight(error); }
+    void highlightNode(ErrorString*, int nodeId, String* mode);
+    void hideNodeHighlight(ErrorString* error) { hideHighlight(error); }
     void highlightFrame(ErrorString*, const String& frameId);
     void hideFrameHighlight(ErrorString* error) { hideHighlight(error); }
     Node* highlightedNode() const { return m_highlightedNode.get(); }

@@ -941,7 +941,7 @@ void InspectorDOMAgent::setSearchingForNode(bool enabled)
     }
 }
 
-void InspectorDOMAgent::setSearchingForNode(ErrorString*, bool enabled)
+void InspectorDOMAgent::setInspectModeEnabled(ErrorString*, bool enabled)
 {
     setSearchingForNode(enabled);
 }
@@ -954,7 +954,7 @@ void InspectorDOMAgent::highlight(ErrorString*, Node* node, const String& mode)
     m_client->highlight(node);
 }
 
-void InspectorDOMAgent::highlightDOMNode(ErrorString* error, int nodeId, String* mode)
+void InspectorDOMAgent::highlightNode(ErrorString* error, int nodeId, String* mode)
 {
     if (Node* node = nodeForId(nodeId))
         highlight(error, node, mode && !mode->isEmpty() ? *mode : "all");

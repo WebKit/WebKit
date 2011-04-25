@@ -86,6 +86,7 @@ public:
 
     static void resourceContent(ErrorString*, Frame*, const KURL&, String* result);
     static void resourceContentBase64(ErrorString*, Frame*, const KURL&, String* result);
+
     static PassRefPtr<SharedBuffer> resourceData(Frame*, const KURL&, String* textEncodingName);
     static CachedResource* cachedResource(Frame*, const KURL&);
 
@@ -104,6 +105,7 @@ public:
     void loadEventFired();
     void didCommitLoad(DocumentLoader*);
     void frameDetachedFromParent(Frame*);
+    void applyUserAgentOverride(String* userAgent);
 
 #if ENABLE(WEB_SOCKETS)
     void didCreateWebSocket(unsigned long identifier, const KURL& requestURL);
@@ -120,7 +122,9 @@ public:
     void disable(ErrorString*);
     void getCachedResources(ErrorString*, RefPtr<InspectorObject>*);
     void getResourceContent(ErrorString*, const String& frameId, const String& url, const bool* const base64Encode, String* content);
+    void setUserAgentOverride(ErrorString*, const String& userAgent);
     void setExtraHeaders(ErrorString*, PassRefPtr<InspectorObject>);
+
 
 private:
     InspectorResourceAgent(InstrumentingAgents*, Page*, InspectorState*);
@@ -134,6 +138,7 @@ private:
     InspectorFrontend::Network* m_frontend;
     OwnPtr<InspectorFrontend::Network> m_mockFrontend;
     OwnPtr<InspectorFrontendProxy> m_inspectorFrontendProxy;
+    String m_userAgentOverride;
 };
 
 } // namespace WebCore

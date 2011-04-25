@@ -257,7 +257,7 @@ WebInspector.ExtensionServer.prototype = {
         if (typeof message.userAgent === "string")
             PageAgent.setUserAgentOverride(message.userAgent);
 
-        PageAgent.reloadPage(false);
+        PageAgent.reload(false);
         return this._status.OK();
     },
 

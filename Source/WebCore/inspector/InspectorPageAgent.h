@@ -58,9 +58,8 @@ public:
     // Page API for InspectorFrontend
     void addScriptToEvaluateOnLoad(ErrorString*, const String& source);
     void removeAllScriptsToEvaluateOnLoad(ErrorString*);
-    void reloadPage(ErrorString*, const bool* const optionalIgnoreCache);
-    void openInInspectedWindow(ErrorString*, const String& url);
-    void setUserAgentOverride(ErrorString*, const String& userAgent);
+    void reload(ErrorString*, const bool* const optionalIgnoreCache);
+    void open(ErrorString*, const String& url, const bool* const inNewWindow);
     void getCookies(ErrorString*, RefPtr<InspectorArray>* cookies, WTF::String* cookiesString);
     void deleteCookie(ErrorString*, const String& cookieName, const String& domain);
 
@@ -84,7 +83,6 @@ private:
     InjectedScriptManager* m_injectedScriptManager;
     InspectorFrontend* m_frontend;
     Vector<String> m_scriptsToEvaluateOnLoad;
-    String m_userAgentOverride;
 };
 
 

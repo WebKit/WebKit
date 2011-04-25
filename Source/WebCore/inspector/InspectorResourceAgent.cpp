@@ -107,6 +107,8 @@ void InspectorResourceAgent::clearFrontend()
         m_frontend = m_mockFrontend.get();
     } else
         m_frontend = 0;
+
+    m_userAgentOverride = "";
     disable(0);
 }
 
@@ -462,6 +464,12 @@ void InspectorResourceAgent::frameDetachedFromParent(Frame* frame)
     m_frontend->frameDetached(pointerAsId(frame));
 }
 
+void InspectorResourceAgent::applyUserAgentOverride(String* userAgent)
+{
+    if (!m_userAgentOverride.isEmpty())
+        *userAgent = m_userAgentOverride;
+}
+
 #if ENABLE(WEB_SOCKETS)
 
 // FIXME: More this into the front-end?
@@ -561,6 +569,11 @@ void InspectorResourceAgent::getResourceContent(ErrorString* errorString, const 
         InspectorResourceAgent::resourceContentBase64(errorString, frame, KURL(ParsedURLString, url), content);
     else
         InspectorResourceAgent::resourceContent(errorString, frame, KURL(ParsedURLString, url), content);
+}
+
+void InspectorResourceAgent::setUserAgentOverride(ErrorString*, const String& userAgent)
+{
+    m_userAgentOverride = userAgent;
 }
 
 void InspectorResourceAgent::setExtraHeaders(ErrorString*, PassRefPtr<InspectorObject> headers)

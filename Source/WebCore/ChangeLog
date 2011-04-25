@@ -1,3 +1,50 @@
+2011-04-25  Pavel Feldman  <pfeldman@google.com>
+
+        Reviewed by Yury Semikhatsky.
+
+        Web Inspector: few protocol improvements.
+        https://bugs.webkit.org/show_bug.cgi?id=59319
+
+        - Page domain is documented
+        - setUserAgentOverride is moved to the Network agent
+        - setSearchingForNode -> setInspectModeEnabled
+        - highlightDOMNode -> highlightNode
+        - reloadPage -> reload
+        - openInNewWindow -> open with optional parameter
+
+        * inspector/Inspector.json:
+        * inspector/InspectorDOMAgent.cpp:
+        (WebCore::InspectorDOMAgent::setInspectModeEnabled):
+        (WebCore::InspectorDOMAgent::highlightNode):
+        * inspector/InspectorDOMAgent.h:
+        (WebCore::InspectorDOMAgent::hideNodeHighlight):
+        * inspector/InspectorInstrumentation.cpp:
+        (WebCore::InspectorInstrumentation::applyUserAgentOverrideImpl):
+        * inspector/InspectorPageAgent.cpp:
+        (WebCore::InspectorPageAgent::clearFrontend):
+        (WebCore::InspectorPageAgent::reload):
+        (WebCore::InspectorPageAgent::open):
+        * inspector/InspectorPageAgent.h:
+        * inspector/InspectorResourceAgent.cpp:
+        (WebCore::InspectorResourceAgent::clearFrontend):
+        (WebCore::InspectorResourceAgent::applyUserAgentOverride):
+        (WebCore::InspectorResourceAgent::setUserAgentOverride):
+        * inspector/InspectorResourceAgent.h:
+        * inspector/front-end/AuditsPanel.js:
+        (WebInspector.AuditsPanel.prototype._reloadResources):
+        * inspector/front-end/ElementsPanel.js:
+        (WebInspector.ElementsPanel.prototype.setSearchingForNode):
+        * inspector/front-end/ExtensionServer.js:
+        (WebInspector.ExtensionServer.prototype._onReload):
+        * inspector/front-end/NetworkPanel.js:
+        (WebInspector.NetworkDataGridNode.prototype._openInNewTab):
+        * inspector/front-end/ResourcesPanel.js:
+        (WebInspector.FrameResourceTreeElement.prototype.ondblclick):
+        * inspector/front-end/inspector.js:
+        (WebInspector.highlightDOMNode):
+        (WebInspector.openResource):
+        (WebInspector.documentKeyDown):
+
 2011-04-25  Jon Lee  <jonlee@apple.com>
 
         Reviewed by Maciej Stachowiak.

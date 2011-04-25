@@ -317,9 +317,9 @@ var WebInspector = {
 
         this._highlightedDOMNodeId = nodeId;
         if (nodeId)
-            DOMAgent.highlightDOMNode(nodeId, mode || "all");
+            DOMAgent.highlightNode(nodeId, mode || "all");
         else
-            DOMAgent.hideDOMNodeHighlight();
+            DOMAgent.hideNodeHighlight();
     },
 
     highlightDOMNodeForTwoSeconds: function(nodeId)
@@ -660,7 +660,7 @@ WebInspector.openResource = function(resourceURL, inResourcesPanel)
         WebInspector.panels.resources.showResource(resource);
         WebInspector.showPanel("resources");
     } else
-        PageAgent.openInInspectedWindow(resource ? resource.url : resourceURL);
+        PageAgent.open(resource ? resource.url : resourceURL, true);
 }
 
 WebInspector._registerShortcuts = function()
@@ -787,13 +787,13 @@ WebInspector.documentKeyDown = function(event)
 
         case "U+0052": // R key
             if ((event.metaKey && isMac) || (event.ctrlKey && !isMac)) {
-                PageAgent.reloadPage(event.shiftKey);
+                PageAgent.reload(event.shiftKey);
                 event.preventDefault();
             }
             break;
         case "F5":
             if (!isMac)
-                PageAgent.reloadPage(event.ctrlKey || event.shiftKey);
+                PageAgent.reload(event.ctrlKey || event.shiftKey);
             break;
     }
 }
