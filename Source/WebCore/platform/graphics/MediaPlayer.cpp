@@ -143,9 +143,9 @@ public:
     virtual bool hasSingleSecurityOrigin() const { return true; }
 };
 
-static MediaPlayerPrivateInterface* createNullMediaPlayer(MediaPlayer* player) 
+static PassOwnPtr<MediaPlayerPrivateInterface> createNullMediaPlayer(MediaPlayer* player) 
 { 
-    return new NullMediaPlayerPrivate(player); 
+    return adoptPtr(new NullMediaPlayerPrivate(player)); 
 }
 
 

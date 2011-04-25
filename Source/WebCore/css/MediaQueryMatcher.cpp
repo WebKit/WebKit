@@ -120,7 +120,7 @@ void MediaQueryMatcher::addListener(PassRefPtr<MediaQueryListListener> listener,
             return;
     }
 
-    m_listeners.append(new Listener(listener, query));
+    m_listeners.append(adoptPtr(new Listener(listener, query)));
 }
 
 void MediaQueryMatcher::removeListener(MediaQueryListListener* listener, MediaQueryList* query)

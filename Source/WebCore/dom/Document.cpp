@@ -401,9 +401,6 @@ Document::Document(Frame* frame, const KURL& url, bool isXHTML, bool isHTML)
     , m_xmlStandalone(false)
     , m_savedRenderer(0)
     , m_designMode(inherit)
-#if ENABLE(SVG)
-    , m_svgExtensions(0)
-#endif
 #if ENABLE(DASHBOARD_SUPPORT)
     , m_hasDashboardRegions(false)
     , m_dashboardRegionsDirty(false)
@@ -1668,8 +1665,8 @@ void Document::createStyleSelector()
     bool matchAuthorAndUserStyles = true;
     if (Settings* docSettings = settings())
         matchAuthorAndUserStyles = docSettings->authorAndUserStylesEnabled();
-    m_styleSelector.set(new CSSStyleSelector(this, m_styleSheets.get(), m_mappedElementSheet.get(), pageUserSheet(), pageGroupUserSheets(), 
-                                             !inQuirksMode(), matchAuthorAndUserStyles));
+    m_styleSelector = adoptPtr(new CSSStyleSelector(this, m_styleSheets.get(), m_mappedElementSheet.get(), pageUserSheet(), pageGroupUserSheets(), 
+                                                    !inQuirksMode(), matchAuthorAndUserStyles));
     // Delay resetting the flags until after next style recalc since unapplying the style may not work without these set (this is true at least with before/after).
     m_usesSiblingRules = m_usesSiblingRules || m_styleSelector->usesSiblingRules();
     m_usesFirstLineRules = m_usesFirstLineRules || m_styleSelector->usesFirstLineRules();
@@ -2396,7 +2393,7 @@ const Vector<RefPtr<CSSStyleSheet> >* Document::pageGroupUserSheets() const
             parsedSheet->setIsUserStyleSheet(sheet->level() == UserStyleUserLevel);
             parsedSheet->parseString(sheet->source(), !inQuirksMode());
             if (!m_pageGroupUserSheets)
-                m_pageGroupUserSheets.set(new Vector<RefPtr<CSSStyleSheet> >);
+                m_pageGroupUserSheets = adoptPtr(new Vector<RefPtr<CSSStyleSheet> >);
             m_pageGroupUserSheets->append(parsedSheet.release());
         }
     }
