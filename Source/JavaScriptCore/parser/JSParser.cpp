@@ -291,7 +291,6 @@ private:
             , m_isValidStrictMode(true)
             , m_loopDepth(0)
             , m_switchDepth(0)
-            , m_labels(0)
         {
         }
 
@@ -307,7 +306,6 @@ private:
             , m_isValidStrictMode(rhs.m_isValidStrictMode)
             , m_loopDepth(rhs.m_loopDepth)
             , m_switchDepth(rhs.m_switchDepth)
-            , m_labels(0)
         {
             if (rhs.m_labels) {
                 m_labels = adoptPtr(new LabelStack);

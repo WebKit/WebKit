@@ -752,7 +752,7 @@ __asm void ctiOpThrowNotCaught()
 #endif
 
 JITThunks::JITThunks(JSGlobalData* globalData)
-    : m_hostFunctionStubMap(new HostFunctionStubMap)
+    : m_hostFunctionStubMap(adoptPtr(new HostFunctionStubMap))
 {
     if (!globalData->executableAllocator.isValid())
         return;

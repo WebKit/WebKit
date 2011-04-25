@@ -417,11 +417,13 @@ class YarrGenerator : private MacroAssembler {
 
         ParenthesesTail* addParenthesesTail(PatternTerm& term, JumpList* jumpListToPriorParen)
         {
-            ParenthesesTail* parenthesesTail = new ParenthesesTail(term, m_parenNestingLevel, jumpListToPriorParen);
-            m_parenTails.append(parenthesesTail);
-            m_parenTailsForIteration.append(parenthesesTail);
+            OwnPtr<ParenthesesTail> tail = adoptPtr(new ParenthesesTail(term, m_parenNestingLevel, jumpListToPriorParen));
+            ParenthesesTail* rawTail = tail.get();
 
-            return parenthesesTail;
+            m_parenTails.append(tail.release());
+            m_parenTailsForIteration.append(rawTail);
+
+            return rawTail;
         }
 
         void emitParenthesesTail(YarrGenerator* generator)

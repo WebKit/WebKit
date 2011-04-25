@@ -316,7 +316,7 @@ private:
 };
 
 inline TypeCounter::TypeCounter()
-    : m_typeCountSet(new TypeCountSet)
+    : m_typeCountSet(adoptPtr(new TypeCountSet))
 {
 }
 
