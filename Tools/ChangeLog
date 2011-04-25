@@ -1,3 +1,12 @@
+2011-04-25  Jeff Miller  <jeffm@apple.com>
+
+        Reviewed by Timothy Hatcher.
+
+        Treat strings defined with UI_STRING_LOCALIZE_LATER_KEY() as debugging strings in extract-localizable-strings
+        https://bugs.webkit.org/show_bug.cgi?id=59373
+
+        * Scripts/extract-localizable-strings: Add UI_STRING_LOCALIZE_LATER_KEY() to isDebugMacro var.
+
 2011-04-25  Andrew Scherkus  <scherkus@chromium.org>
 
         Reviewed by Dimitri Glazkov.
