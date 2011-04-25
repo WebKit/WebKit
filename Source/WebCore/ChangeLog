@@ -2,7 +2,7 @@
 
         Reviewed by Maciej Stachowiak.
 
-        REGRESSION (WK2): Holding down Option while dragging scrollbar thumb has no effect (should make scroll distance equal mouse translation)
+        <rdar://problem/9113516> REGRESSION (WK2): Holding down Option while dragging scrollbar thumb has no effect (should make scroll distance equal mouse translation)
         https://bugs.webkit.org/show_bug.cgi?id=59315
 
         * platform/Scrollbar.cpp:
