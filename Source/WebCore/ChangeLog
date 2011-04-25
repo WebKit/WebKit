@@ -1,3 +1,14 @@
+2011-04-25  Ojan Vafai  <ojan@chromium.org>
+
+        Reviewed by James Robinson.
+
+        fix OwnPtr strict error in FrameView.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=59402
+
+        * page/FrameView.cpp:
+        (WebCore::FrameView::FrameView):
+        (WebCore::FrameView::addWidgetToUpdate):
+
 2011-04-25  Adam Klein  <adamk@chromium.org>
 
         Unreviewed, rolling out r84844.

@@ -123,7 +123,7 @@ FrameView::FrameView(Frame* frame)
     , m_isTransparent(false)
     , m_baseBackgroundColor(Color::white)
     , m_mediaType("screen")
-    , m_actionScheduler(new FrameActionScheduler())
+    , m_actionScheduler(adoptPtr(new FrameActionScheduler))
     , m_overflowStatusDirty(true)
     , m_viewportRenderer(0)
     , m_wasScrolledByUser(false)
@@ -1044,7 +1044,7 @@ void FrameView::layout(bool allowSubtree)
 void FrameView::addWidgetToUpdate(RenderEmbeddedObject* object)
 {
     if (!m_widgetUpdateSet)
-        m_widgetUpdateSet.set(new RenderEmbeddedObjectSet);
+        m_widgetUpdateSet = adoptPtr(new RenderEmbeddedObjectSet);
 
     m_widgetUpdateSet->add(object);
 }
