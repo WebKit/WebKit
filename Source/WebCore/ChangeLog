@@ -1,3 +1,24 @@
+2011-04-25  Adam Klein  <adamk@chromium.org>
+
+        Unreviewed, rolling out r84844.
+        http://trac.webkit.org/changeset/84844
+        https://bugs.webkit.org/show_bug.cgi?id=59395
+
+        Checked in too much.
+
+        * rendering/style/SVGRenderStyleDefs.cpp:
+        (WebCore::StyleShadowSVGData::StyleShadowSVGData):
+        * svg/SVGDocumentExtensions.cpp:
+        (WebCore::SVGDocumentExtensions::removePendingResource):
+        * svg/SVGSVGElement.cpp:
+        (WebCore::SVGSVGElement::SVGSVGElement):
+        * svg/SVGStyledTransformableElement.cpp:
+        (WebCore::SVGStyledTransformableElement::supplementalTransform):
+        * svg/SVGTextElement.cpp:
+        (WebCore::SVGTextElement::supplementalTransform):
+        * svg/graphics/SVGImage.cpp:
+        (WebCore::SVGImage::dataChanged):
+
 2011-04-25  Adrienne Walker  <enne@google.com>
 
         Reviewed by David Levin.

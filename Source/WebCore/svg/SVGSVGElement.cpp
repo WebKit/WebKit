@@ -71,6 +71,7 @@ inline SVGSVGElement::SVGSVGElement(const QualifiedName& tagName, Document* doc)
     , m_useCurrentView(false)
     , m_timeContainer(SMILTimeContainer::create(this))
     , m_scale(1)
+    , m_viewSpec(0)
     , m_containerSize(300, 150)
     , m_hasSetContainerSize(false)
 {
