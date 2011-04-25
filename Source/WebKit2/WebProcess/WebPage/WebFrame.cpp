@@ -540,24 +540,11 @@ bool WebFrame::getDocumentBackgroundColor(double* red, double* green, double* bl
 {
     if (!m_coreFrame)
         return false;
-    Document* document = m_coreFrame->document();
-    if (!document)
+    Color bgColor = m_coreFrame->getDocumentBackgroundColor();
+    if (!bgColor.isValid())
         return false;
 
-    Element* rootElementToUse = document->body();
-    if (!rootElementToUse)
-        rootElementToUse = document->documentElement();
-    if (!rootElementToUse)
-        return false;
-
-    RenderObject* renderer = rootElementToUse->renderer();
-    if (!renderer)
-        return false;
-    Color color = renderer->style()->visitedDependentColor(CSSPropertyBackgroundColor);
-    if (!color.isValid())
-        return false;
-
-    color.getRGBA(*red, *green, *blue, *alpha);
+    bgColor.getRGBA(*red, *green, *blue, *alpha);
     return true;
 }
 

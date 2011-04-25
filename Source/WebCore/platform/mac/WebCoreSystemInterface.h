@@ -228,6 +228,14 @@ extern bool (*wkScrollbarPainterIsHorizontal)(WKScrollbarPainterRef);
 extern CGRect (*wkScrollbarPainterKnobRect)(WKScrollbarPainterRef);
 extern void (*wkScrollbarPainterSetOverlayState)(WKScrollbarPainterRef, int overlayScrollerState);
 
+enum {
+    wkScrollerKnobStyleDefault = 0,
+    wkScrollerKnobStyleDark = 1,
+    wkScrollerKnobStyleLight = 2
+};
+typedef uint32 wkScrollerKnobStyle;
+extern void (*wkSetScrollbarPainterKnobStyle)(WKScrollbarPainterRef, wkScrollerKnobStyle);
+    
 extern WKScrollbarPainterControllerRef (*wkMakeScrollbarPainterController)(id painterControllerDelegate);
 extern void (*wkSetPainterForPainterController)(WKScrollbarPainterControllerRef, WKScrollbarPainterRef, bool isHorizontal);
 extern WKScrollbarPainterRef (*wkVerticalScrollbarPainterForController)(WKScrollbarPainterControllerRef);

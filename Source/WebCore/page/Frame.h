@@ -190,6 +190,8 @@ namespace WebCore {
         String searchForLabelsBeforeElement(const Vector<String>& labels, Element*, size_t* resultDistance, bool* resultIsInCellAbove);
         String matchLabelsAgainstElement(const Vector<String>& labels, Element*);
 
+        Color getDocumentBackgroundColor() const;
+        
 #if PLATFORM(MAC)
         NSString* searchForLabelsBeforeElement(NSArray* labels, Element*, size_t* resultDistance, bool* resultIsInCellAbove);
         NSString* matchLabelsAgainstElement(NSArray* labels, Element*);

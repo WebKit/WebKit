@@ -1,3 +1,30 @@
+2011-04-25  Jon Lee  <jonlee@apple.com>
+
+        Reviewed by Maciej Stachowiak.
+
+        Overlay scroller hard to see on pages with dark background (59183)
+        https://bugs.webkit.org/show_bug.cgi?id=59183
+        <rdar://problem/8975367>
+
+        Switch the scrollbar's overlay style depending on its frame's background color.
+        This refactors the getDocumentBackgroundColor method needed for gestures. The style
+        is determined and set on every paint() call to the Mac scrollbar theme.
+
+        * WebCore.exp.in: adding method to allow changing style
+        * page/Frame.cpp:
+        (WebCore::Frame::getDocumentBackgroundColor): moving code from WebFrame for reuse by FrameView
+        * page/Frame.h:
+        * page/FrameView.cpp:
+        (WebCore::FrameView::recommendedScrollbarOverlayStyle): overridden to suggest a style based on CSS background color
+        * page/FrameView.h:
+        * platform/ScrollTypes.h: new enum to represent different overlay scrollbar styles
+        * platform/ScrollableArea.h:
+        (WebCore::ScrollableArea::recommendedScrollbarOverlayStyle): new virtual function to return a suggested overlay style
+        * platform/mac/ScrollbarThemeMac.mm:
+        (WebCore::ScrollbarThemeMac::paint):
+        * platform/mac/WebCoreSystemInterface.h:
+        * platform/mac/WebCoreSystemInterface.mm:
+
 2011-04-25  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Maciej Stachowiak.

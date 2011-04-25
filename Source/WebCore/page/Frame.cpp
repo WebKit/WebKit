@@ -500,6 +500,31 @@ String Frame::matchLabelsAgainstElement(const Vector<String>& labels, Element* e
     
     return matchLabelsAgainstString(labels, element->getAttribute(idAttr));
 }
+    
+Color Frame::getDocumentBackgroundColor() const
+{
+    // FIXME: This is a basic implementation adopted originally from WebFrame,
+    // but ultimately is wrong. Body painting propagates up to the document (see
+    // RenderBox::paintRootBoxDecorations()), so code from that method should be
+    // adopted here to get the style used to paint the root background.
+
+    // Return invalid Color objects if we are not able to obtain the color
+    // for whatever reason.
+    if (!m_doc)
+        return Color();
+    
+    Element* rootElementToUse = m_doc->body();
+    if (!rootElementToUse)
+        rootElementToUse = m_doc->documentElement();
+    if (!rootElementToUse)
+        return Color();
+    
+    RenderObject* renderer = rootElementToUse->renderer();
+    if (!renderer)
+        return Color();
+    
+    return renderer->style()->visitedDependentColor(CSSPropertyBackgroundColor);
+}
 
 void Frame::setPrinting(bool printing, const FloatSize& pageSize, float maximumShrinkRatio, AdjustViewSizeOrNot shouldAdjustViewSize)
 {

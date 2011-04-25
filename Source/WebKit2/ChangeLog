@@ -1,3 +1,16 @@
+2011-04-25  Jon Lee  <jonlee@apple.com>
+
+        Reviewed by Maciej Stachowiak.
+
+        Overlay scroller hard to see on pages with dark background (59183)
+        https://bugs.webkit.org/show_bug.cgi?id=59183
+        <rdar://problem/8975367>
+
+        * WebProcess/WebCoreSupport/mac/WebSystemInterface.mm:
+        (InitWebCoreSystemInterface): adding method to allow changing style
+        * WebProcess/WebPage/WebFrame.cpp:
+        (WebKit::WebFrame::getDocumentBackgroundColor): refactoring to use common code for retrieving background color
+
 2011-04-24  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Maciej Stachowiak.

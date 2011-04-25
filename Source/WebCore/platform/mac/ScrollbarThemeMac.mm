@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2008, 2011 Apple Inc. All Rights Reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -429,6 +429,20 @@ static int scrollbarPartToHIPressedState(ScrollbarPart part)
     }
 }
 
+#if USE(WK_SCROLLBAR_PAINTER)
+static inline wkScrollerKnobStyle toScrollbarPainterKnobStyle(ScrollbarOverlayStyle style)
+{
+    switch (style) {
+    case ScrollbarOverlayStyleDark:
+        return wkScrollerKnobStyleDark;
+    case ScrollbarOverlayStyleLight:
+        return wkScrollerKnobStyleLight;
+    default:
+        return wkScrollerKnobStyleDefault;
+    }
+}
+#endif
+
 bool ScrollbarThemeMac::paint(Scrollbar* scrollbar, GraphicsContext* context, const IntRect& damageRect)
 {
 #if USE(WK_SCROLLBAR_PAINTER)
@@ -451,10 +465,14 @@ bool ScrollbarThemeMac::paint(Scrollbar* scrollbar, GraphicsContext* context, co
         else
             value = 0;
     }
-
+    
     ScrollAnimatorMac* scrollAnimator = static_cast<ScrollAnimatorMac*>(scrollbar->scrollableArea()->scrollAnimator());
     scrollAnimator->setIsDrawingIntoLayer(context->isCALayerContext());
 
+#if USE(WK_SCROLLBAR_PAINTER)
+    wkSetScrollbarPainterKnobStyle(painterForScrollbar(scrollbar), toScrollbarPainterKnobStyle(scrollbar->scrollableArea()->recommendedScrollbarOverlayStyle()));
+#endif
+    
     GraphicsContextStateSaver stateSaver(*context);
     context->clip(damageRect);
     context->translate(scrollbar->frameRect().x(), scrollbar->frameRect().y());
