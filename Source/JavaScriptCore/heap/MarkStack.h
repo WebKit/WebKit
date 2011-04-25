@@ -60,7 +60,6 @@ namespace JSC {
             ASSERT(m_values.isEmpty());
         }
 
-        void deprecatedAppend(JSCell**);
         template <typename T> void append(WriteBarrierBase<T>*);
 
         void appendValues(WriteBarrierBase<Unknown>* barriers, size_t count, MarkSetProperties properties = NoNullValues)
@@ -214,12 +213,6 @@ namespace JSC {
     template <typename T> inline void MarkStack::append(WriteBarrierBase<T>* slot)
     {
         internalAppend(*slot->slot());
-    }
-
-    ALWAYS_INLINE void MarkStack::deprecatedAppend(JSCell** value)
-    {
-        ASSERT(value);
-        internalAppend(*value);
     }
 
     ALWAYS_INLINE void MarkStack::append(JSValue* value)

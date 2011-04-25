@@ -1,3 +1,11 @@
+2011-04-25  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Nixed MarkStack::deprecatedAppend, since it has no clients left.
+
+        * heap/MarkStack.h:
+
 2011-04-23  Gavin Barraclough  <barraclough@apple.com>
 
         Reviewed by Oliver Hunt.
