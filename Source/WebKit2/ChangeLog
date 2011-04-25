@@ -1,5 +1,23 @@
 2011-04-25  Brian Weinstein  <bweinstein@apple.com>
 
+        Reviewed by Timothy Hatcher.
+
+        WebKit2: Web Inspector's style sidebar fails to display when inspecting element
+        https://bugs.webkit.org/show_bug.cgi?id=58071
+        <rdar://problem/9243093>
+        
+        When creating our WebKit2 inspector views, we were creating them on both Mac and Windows
+        with the empty rect for their initial size. Before we sized them correctly, the inspector
+        was calling window.innerWidth on them, which returned 0, making the sidebar take up 0 pixels.
+
+        * UIProcess/mac/WebInspectorProxyMac.mm:
+        (WebKit::WebInspectorProxy::platformCreateInspectorPage): Create the window with the initial window width
+            and height.
+        * UIProcess/win/WebInspectorProxyWin.cpp:
+        (WebKit::WebInspectorProxy::platformCreateInspectorPage): Ditto.
+
+2011-04-25  Brian Weinstein  <bweinstein@apple.com>
+
         Reviewed by Adam Roben.
 
         Windows part of - WebKit2: Support docked mode for Web Inspector

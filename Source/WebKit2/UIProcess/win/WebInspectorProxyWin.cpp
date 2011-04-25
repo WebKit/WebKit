@@ -187,8 +187,8 @@ WebPageProxy* WebInspectorProxy::platformCreateInspectorPage()
     ASSERT(!m_inspectorView);
     ASSERT(!m_inspectorWindow);
 
-    RECT emptyRect = { 0 };
-    m_inspectorView = WebView::create(emptyRect, m_page->process()->context(), inspectorPageGroup(), 0);
+    RECT initialRect = { 0, 0, initialWindowWidth, initialWindowHeight };
+    m_inspectorView = WebView::create(initialRect, m_page->process()->context(), inspectorPageGroup(), 0);
 
     return m_inspectorView->page();
 }
