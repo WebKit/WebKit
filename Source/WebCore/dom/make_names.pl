@@ -903,8 +903,8 @@ static JSDOMWrapper* create${JSInterfaceName}Wrapper(ExecState* exec, JSDOMGloba
 {
     Settings* settings = element->document()->settings();
     if (!MediaPlayer::isAvailable() || (settings && !settings->isMediaEnabled()))
-        return CREATE_DOM_NODE_WRAPPER(exec, globalObject, $parameters{namespace}Element, element.get());
-    return CREATE_DOM_NODE_WRAPPER(exec, globalObject, ${JSInterfaceName}, element.get());
+        return CREATE_DOM_WRAPPER(exec, globalObject, $parameters{namespace}Element, element.get());
+    return CREATE_DOM_WRAPPER(exec, globalObject, ${JSInterfaceName}, element.get());
 }
 
 END
@@ -913,7 +913,7 @@ END
                 print F <<END
 static JSDOMWrapper* create${JSInterfaceName}Wrapper(ExecState* exec, JSDOMGlobalObject* globalObject, PassRefPtr<$parameters{namespace}Element> element)
 {
-    return CREATE_DOM_NODE_WRAPPER(exec, globalObject, ${JSInterfaceName}, element.get());
+    return CREATE_DOM_WRAPPER(exec, globalObject, ${JSInterfaceName}, element.get());
 }
 
 END
@@ -1071,7 +1071,7 @@ END
     if ($wrapperFactoryType eq "JS") {
         print F <<END
         return createWrapperFunction(exec, globalObject, element);
-    return CREATE_DOM_NODE_WRAPPER(exec, globalObject, $parameters{namespace}Element, element.get());
+    return CREATE_DOM_WRAPPER(exec, globalObject, $parameters{namespace}Element, element.get());
 END
 ;
     } elsif ($wrapperFactoryType eq "V8") {
