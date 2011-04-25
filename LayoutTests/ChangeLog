@@ -1,3 +1,9 @@
+2011-04-25  Jer Noble  <jer.noble@apple.com>
+
+        Unreviewed; add failing test to mac-wk2/Skipped list.
+
+        * platform/mac-wk2/Skipped:
+
 2011-04-25  Jessie Berlin  <jberlin@webkit.org>
 
         [Snow Leopard Intel WebKit2 Release Tests] editing/undo/undo-iframe-location-change.html and
