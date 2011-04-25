@@ -1,3 +1,11 @@
+2011-04-25  Jessie Berlin  <jberlin@webkit.org>
+
+        Add another HTMLProgressElement test to the Windows Skipped list to get the bots green,
+        since Windows does not have an implementation of HTMLProgressElement.
+
+        * platform/win/Skipped:
+        Add fast/dom/HTMLProgressElement/progress-writing-mode.html.
+
 2011-04-25  Alexander Pavlov  <apavlov@chromium.org>
 
         Reviewed by Yury Semikhatsky.
