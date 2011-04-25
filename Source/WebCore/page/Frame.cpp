@@ -324,7 +324,7 @@ Settings* Frame::settings() const
     return m_page ? m_page->settings() : 0;
 }
 
-static RegularExpression* createRegExpForLabels(const Vector<String>& labels)
+static PassOwnPtr<RegularExpression> createRegExpForLabels(const Vector<String>& labels)
 {
     // REVIEW- version of this call in FrameMac.mm caches based on the NSArray ptrs being
     // the same across calls.  We can't do that.
@@ -355,7 +355,7 @@ static RegularExpression* createRegExpForLabels(const Vector<String>& labels)
             pattern.append("\\b");
     }
     pattern.append(")");
-    return new RegularExpression(pattern, TextCaseInsensitive);
+    return adoptPtr(new RegularExpression(pattern, TextCaseInsensitive));
 }
 
 String Frame::searchForLabelsAboveCell(RegularExpression* regExp, HTMLTableCellElement* cell, size_t* resultDistanceFromStartOfCell)
