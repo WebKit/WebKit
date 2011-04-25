@@ -67,6 +67,90 @@
 
         Reviewed by Yury Semikhatsky.
 
+        Web Inspector: move Frame and Resource Tree management into the Page agent.
+        https://bugs.webkit.org/show_bug.cgi?id=59321
+
+        Network agent should only handle network-related activities.
+        Frame structure should be managed by the Page agent instead.
+
+        * inspector/Inspector.json:
+        * inspector/InspectorAgent.cpp:
+        (WebCore::InspectorAgent::InspectorAgent):
+        * inspector/InspectorDOMAgent.cpp:
+        (WebCore::InspectorDOMAgent::InspectorDOMAgent):
+        (WebCore::InspectorDOMAgent::setFrontend):
+        (WebCore::InspectorDOMAgent::restore):
+        (WebCore::InspectorDOMAgent::highlightFrame):
+        * inspector/InspectorDOMAgent.h:
+        (WebCore::InspectorDOMAgent::create):
+        * inspector/InspectorInstrumentation.cpp:
+        (WebCore::InspectorInstrumentation::domContentLoadedEventFiredImpl):
+        (WebCore::InspectorInstrumentation::loadEventFiredImpl):
+        (WebCore::InspectorInstrumentation::frameDetachedFromParentImpl):
+        (WebCore::InspectorInstrumentation::didCommitLoadImpl):
+        * inspector/InspectorPageAgent.cpp:
+        (WebCore::InspectorPageAgent::create):
+        (WebCore::InspectorPageAgent::resourceContent):
+        (WebCore::InspectorPageAgent::resourceContentBase64):
+        (WebCore::InspectorPageAgent::resourceData):
+        (WebCore::InspectorPageAgent::cachedResource):
+        (WebCore::InspectorPageAgent::resourceTypeString):
+        (WebCore::InspectorPageAgent::cachedResourceType):
+        (WebCore::InspectorPageAgent::cachedResourceTypeString):
+        (WebCore::InspectorPageAgent::InspectorPageAgent):
+        (WebCore::InspectorPageAgent::setFrontend):
+        (WebCore::InspectorPageAgent::reload):
+        (WebCore::InspectorPageAgent::open):
+        (WebCore::InspectorPageAgent::getCookies):
+        (WebCore::InspectorPageAgent::deleteCookie):
+        (WebCore::InspectorPageAgent::getResourceTree):
+        (WebCore::InspectorPageAgent::getResourceContent):
+        (WebCore::InspectorPageAgent::restore):
+        (WebCore::InspectorPageAgent::domContentEventFired):
+        (WebCore::InspectorPageAgent::loadEventFired):
+        (WebCore::InspectorPageAgent::frameNavigated):
+        (WebCore::InspectorPageAgent::frameDetached):
+        (WebCore::InspectorPageAgent::didClearWindowObjectInWorld):
+        (WebCore::InspectorPageAgent::mainFrame):
+        (WebCore::pointerAsId):
+        (WebCore::InspectorPageAgent::frameForId):
+        (WebCore::InspectorPageAgent::frameId):
+        (WebCore::InspectorPageAgent::loaderId):
+        (WebCore::InspectorPageAgent::buildObjectForFrame):
+        (WebCore::InspectorPageAgent::buildObjectForFrameTree):
+        * inspector/InspectorPageAgent.h:
+        * inspector/InspectorResourceAgent.cpp:
+        (WebCore::buildObjectForCachedResource):
+        (WebCore::InspectorResourceAgent::willSendRequest):
+        (WebCore::InspectorResourceAgent::didReceiveResponse):
+        (WebCore::InspectorResourceAgent::didLoadResourceFromMemoryCache):
+        (WebCore::InspectorResourceAgent::setInitialScriptContent):
+        (WebCore::InspectorResourceAgent::setInitialXHRContent):
+        (WebCore::InspectorResourceAgent::InspectorResourceAgent):
+        * inspector/InspectorResourceAgent.h:
+        (WebCore::InspectorResourceAgent::create):
+        * inspector/InspectorStyleSheet.cpp:
+        (WebCore::InspectorStyleSheet::resourceStyleSheetText):
+        * inspector/front-end/NetworkManager.js:
+        (WebInspector.NetworkManager.prototype.requestContent):
+        * inspector/front-end/NetworkPanel.js:
+        (WebInspector.NetworkPanel):
+        (WebInspector.NetworkPanel.prototype.frameNavigated):
+        * inspector/front-end/ResourceTreeModel.js:
+        (WebInspector.ResourceTreeModel):
+        (WebInspector.ResourceTreeModel.prototype.frontendReused):
+        (WebInspector.ResourceTreeModel.prototype.frameNavigated):
+        (WebInspector.ResourceTreeModel.prototype.frameDetached):
+        * inspector/front-end/inspector.js:
+        (WebInspector.domContentEventFired):
+        (WebInspector.loadEventFired):
+        (WebInspector.frameNavigated):
+        (WebInspector.frameDetached):
+
+2011-04-25  Pavel Feldman  <pfeldman@google.com>
+
+        Reviewed by Yury Semikhatsky.
+
         Web Inspector: few protocol improvements.
         https://bugs.webkit.org/show_bug.cgi?id=59319
 

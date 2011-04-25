@@ -531,9 +531,6 @@ void InspectorInstrumentation::domContentLoadedEventFiredImpl(InspectorAgent* in
     if (InspectorTimelineAgent* timelineAgent = inspectorAgent->instrumentingAgents()->inspectorTimelineAgent())
         timelineAgent->didMarkDOMContentEvent();
 
-    if (InspectorResourceAgent* resourceAgent = inspectorAgent->instrumentingAgents()->inspectorResourceAgent())
-        resourceAgent->domContentEventFired();
-
     if (InspectorPageAgent* pageAgent = inspectorAgent->instrumentingAgents()->inspectorPageAgent())
         pageAgent->domContentEventFired();
 }
@@ -552,17 +549,14 @@ void InspectorInstrumentation::loadEventFiredImpl(InspectorAgent* inspectorAgent
     if (InspectorTimelineAgent* timelineAgent = inspectorAgent->instrumentingAgents()->inspectorTimelineAgent())
         timelineAgent->didMarkLoadEvent();
 
-    if (InspectorResourceAgent* resourceAgent = inspectorAgent->instrumentingAgents()->inspectorResourceAgent())
-        resourceAgent->loadEventFired();
-
     if (InspectorPageAgent* pageAgent = inspectorAgent->instrumentingAgents()->inspectorPageAgent())
         pageAgent->loadEventFired();
 }
 
 void InspectorInstrumentation::frameDetachedFromParentImpl(InspectorAgent* inspectorAgent, Frame* frame)
 {
-    if (InspectorResourceAgent* resourceAgent = retrieveResourceAgent(inspectorAgent))
-        resourceAgent->frameDetachedFromParent(frame);
+    if (InspectorPageAgent* pageAgent = inspectorAgent->instrumentingAgents()->inspectorPageAgent())
+        pageAgent->frameDetached(frame);
 }
 
 void InspectorInstrumentation::didCommitLoadImpl(Page* page, InspectorAgent* inspectorAgent, DocumentLoader* loader)
@@ -571,8 +565,9 @@ void InspectorInstrumentation::didCommitLoadImpl(Page* page, InspectorAgent* ins
         return;
 
     InstrumentingAgents* instrumentingAgents = inspectorAgent->instrumentingAgents();
-    if (InspectorResourceAgent* resourceAgent = instrumentingAgents->inspectorResourceAgent())
-        resourceAgent->didCommitLoad(loader);
+
+    if (InspectorPageAgent* pageAgent = instrumentingAgents->inspectorPageAgent())
+        pageAgent->frameNavigated(loader);
 
     Frame* mainFrame = page->mainFrame();
     if (loader->frame() != mainFrame)
@@ -604,9 +599,6 @@ void InspectorInstrumentation::didCommitLoadImpl(Page* page, InspectorAgent* ins
 #endif
     if (InspectorDOMAgent* domAgent = instrumentingAgents->inspectorDOMAgent())
         domAgent->setDocument(mainFrame->document());
-
-    if (InspectorPageAgent* pageAgent = instrumentingAgents->inspectorPageAgent())
-        pageAgent->inspectedURLChanged(loader->url().string());
 
     inspectorAgent->didCommitLoad();
 }

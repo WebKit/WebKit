@@ -34,33 +34,163 @@
 
 #if ENABLE(INSPECTOR)
 
+#include "Base64.h"
 #include "CachedResourceLoader.h"
 #include "Cookie.h"
 #include "CookieJar.h"
+#include "Document.h"
 #include "DocumentLoader.h"
 #include "Frame.h"
 #include "FrameLoadRequest.h"
+#include "HTMLFrameOwnerElement.h"
+#include "HTMLNames.h"
 #include "InjectedScriptManager.h"
 #include "InspectorFrontend.h"
 #include "InspectorValues.h"
 #include "InstrumentingAgents.h"
+#include "MemoryCache.h"
 #include "Page.h"
 #include "ScriptObject.h"
+#include "SharedBuffer.h"
+#include "TextEncoding.h"
 #include "UserGestureIndicator.h"
 #include "WindowFeatures.h"
+
 #include <wtf/CurrentTime.h>
 #include <wtf/ListHashSet.h>
 
 namespace WebCore {
 
-PassOwnPtr<InspectorPageAgent> InspectorPageAgent::create(InstrumentingAgents* instrumentingAgents, Page* inspectedPage, InjectedScriptManager* injectedScriptManager)
+PassOwnPtr<InspectorPageAgent> InspectorPageAgent::create(InstrumentingAgents* instrumentingAgents, Page* page, InjectedScriptManager* injectedScriptManager)
 {
-    return adoptPtr(new InspectorPageAgent(instrumentingAgents, inspectedPage, injectedScriptManager));
+    return adoptPtr(new InspectorPageAgent(instrumentingAgents, page, injectedScriptManager));
 }
 
-InspectorPageAgent::InspectorPageAgent(InstrumentingAgents* instrumentingAgents, Page* inspectedPage, InjectedScriptManager* injectedScriptManager)
+void InspectorPageAgent::resourceContent(ErrorString* errorString, Frame* frame, const KURL& url, String* result)
+{
+    if (!frame) {
+        *errorString = "No frame to get resource content for";
+        return;
+    }
+
+    String textEncodingName;
+    RefPtr<SharedBuffer> buffer = InspectorPageAgent::resourceData(frame, url, &textEncodingName);
+
+    if (buffer) {
+        TextEncoding encoding(textEncodingName);
+        if (!encoding.isValid())
+            encoding = WindowsLatin1Encoding();
+        *result = encoding.decode(buffer->data(), buffer->size());
+        return;
+    }
+    *errorString = "No resource with given URL found";
+}
+
+void InspectorPageAgent::resourceContentBase64(ErrorString* errorString, Frame* frame, const KURL& url, String* result)
+{
+    String textEncodingName;
+    RefPtr<SharedBuffer> data = InspectorPageAgent::resourceData(frame, url, &textEncodingName);
+    if (!data) {
+        *result = String();
+        *errorString = "No resource with given URL found";
+        return;
+    }
+
+    *result = base64Encode(data->data(), data->size());
+}
+
+PassRefPtr<SharedBuffer> InspectorPageAgent::resourceData(Frame* frame, const KURL& url, String* textEncodingName)
+{
+    FrameLoader* frameLoader = frame->loader();
+    DocumentLoader* loader = frameLoader->documentLoader();
+    if (equalIgnoringFragmentIdentifier(url, loader->url())) {
+        *textEncodingName = frame->document()->inputEncoding();
+        return frameLoader->documentLoader()->mainResourceData();
+    }
+
+    CachedResource* cachedResource = InspectorPageAgent::cachedResource(frame, url);
+    if (!cachedResource)
+        return 0;
+
+    // Zero-sized resources don't have data at all -- so fake the empty buffer, insted of indicating error by returning 0.
+    if (!cachedResource->encodedSize())
+        return SharedBuffer::create();
+
+    if (cachedResource->isPurgeable()) {
+        // If the resource is purgeable then make it unpurgeable to get
+        // get its data. This might fail, in which case we return an
+        // empty String.
+        // FIXME: should we do something else in the case of a purged
+        // resource that informs the user why there is no data in the
+        // inspector?
+        if (!cachedResource->makePurgeable(false))
+            return 0;
+    }
+
+    *textEncodingName = cachedResource->encoding();
+    return cachedResource->data();
+}
+
+CachedResource* InspectorPageAgent::cachedResource(Frame* frame, const KURL& url)
+{
+    CachedResource* cachedResource = frame->document()->cachedResourceLoader()->cachedResource(url);
+    if (!cachedResource)
+        cachedResource = memoryCache()->resourceForURL(url);
+    return cachedResource;
+}
+
+String InspectorPageAgent::resourceTypeString(InspectorPageAgent::ResourceType resourceType)
+{
+    switch (resourceType) {
+    case DocumentResource:
+        return "Document";
+    case ImageResource:
+        return "Image";
+    case FontResource:
+        return "Font";
+    case StylesheetResource:
+        return "Stylesheet";
+    case ScriptResource:
+        return "Script";
+    case XHRResource:
+        return "XHR";
+    case WebSocketResource:
+        return "WebSocket";
+    case OtherResource:
+        return "Other";
+    }
+    return "Other";
+}
+
+InspectorPageAgent::ResourceType InspectorPageAgent::cachedResourceType(const CachedResource& cachedResource)
+{
+    switch (cachedResource.type()) {
+    case CachedResource::ImageResource:
+        return InspectorPageAgent::ImageResource;
+    case CachedResource::FontResource:
+        return InspectorPageAgent::FontResource;
+    case CachedResource::CSSStyleSheet:
+        // Fall through.
+#if ENABLE(XSLT)
+    case CachedResource::XSLStyleSheet:
+#endif
+        return InspectorPageAgent::StylesheetResource;
+    case CachedResource::Script:
+        return InspectorPageAgent::ScriptResource;
+    default:
+        break;
+    }
+    return InspectorPageAgent::OtherResource;
+}
+
+String InspectorPageAgent::cachedResourceTypeString(const CachedResource& cachedResource)
+{
+    return resourceTypeString(cachedResourceType(cachedResource));
+}
+
+InspectorPageAgent::InspectorPageAgent(InstrumentingAgents* instrumentingAgents, Page* page, InjectedScriptManager* injectedScriptManager)
     : m_instrumentingAgents(instrumentingAgents)
-    , m_inspectedPage(inspectedPage)
+    , m_page(page)
     , m_injectedScriptManager(injectedScriptManager)
     , m_frontend(0)
 {
@@ -68,12 +198,11 @@ InspectorPageAgent::InspectorPageAgent(InstrumentingAgents* instrumentingAgents,
 
 void InspectorPageAgent::setFrontend(InspectorFrontend* frontend)
 {
-    m_frontend = frontend;
+    m_frontend = frontend->page();
     m_instrumentingAgents->setInspectorPageAgent(this);
 
     // Initialize Web Inspector title.
-    m_frontend->page()->inspectedURLChanged(m_inspectedPage->mainFrame()->document()->url().string());
-
+    m_frontend->inspectedURLChanged(m_page->mainFrame()->document()->url().string());
 }
 
 void InspectorPageAgent::clearFrontend()
@@ -94,12 +223,12 @@ void InspectorPageAgent::removeAllScriptsToEvaluateOnLoad(ErrorString*)
 
 void InspectorPageAgent::reload(ErrorString*, const bool* const optionalIgnoreCache)
 {
-    m_inspectedPage->mainFrame()->loader()->reload(optionalIgnoreCache ? *optionalIgnoreCache : false);
+    m_page->mainFrame()->loader()->reload(optionalIgnoreCache ? *optionalIgnoreCache : false);
 }
 
 void InspectorPageAgent::open(ErrorString*, const String& url, const bool* const inNewWindow)
 {
-    Frame* mainFrame = m_inspectedPage->mainFrame();
+    Frame* mainFrame = m_page->mainFrame();
     Frame* frame;
     if (inNewWindow && *inNewWindow) {
         FrameLoadRequest request(mainFrame->document()->securityOrigin(), ResourceRequest(), "_blank");
@@ -159,7 +288,7 @@ void InspectorPageAgent::getCookies(ErrorString*, RefPtr<InspectorArray>* cookie
     // always return the same true/false value.
     bool rawCookiesImplemented = false;
 
-    for (Frame* frame = m_inspectedPage->mainFrame(); frame; frame = frame->tree()->traverseNext(m_inspectedPage->mainFrame())) {
+    for (Frame* frame = mainFrame(); frame; frame = frame->tree()->traverseNext(mainFrame())) {
         Document* document = frame->document();
         const CachedResourceLoader::DocumentResourceMap& allResources = document->cachedResourceLoader()->allCachedResources();
         CachedResourceLoader::DocumentResourceMap::const_iterator end = allResources.end();
@@ -192,7 +321,7 @@ void InspectorPageAgent::getCookies(ErrorString*, RefPtr<InspectorArray>* cookie
 
 void InspectorPageAgent::deleteCookie(ErrorString*, const String& cookieName, const String& domain)
 {
-    for (Frame* frame = m_inspectedPage->mainFrame(); frame; frame = frame->tree()->traverseNext(m_inspectedPage->mainFrame())) {
+    for (Frame* frame = m_page->mainFrame(); frame; frame = frame->tree()->traverseNext(m_page->mainFrame())) {
         Document* document = frame->document();
         if (document->url().host() != domain)
             continue;
@@ -203,29 +332,48 @@ void InspectorPageAgent::deleteCookie(ErrorString*, const String& cookieName, co
     }
 }
 
-void InspectorPageAgent::inspectedURLChanged(const String& url)
+void InspectorPageAgent::getResourceTree(ErrorString*, RefPtr<InspectorObject>* object)
 {
-    m_frontend->page()->inspectedURLChanged(url);
+    *object = buildObjectForFrameTree(m_page->mainFrame());
+}
+
+void InspectorPageAgent::getResourceContent(ErrorString* errorString, const String& frameId, const String& url, const bool* const optionalBase64Encode, String* content)
+{
+    Frame* frame = frameForId(frameId);
+    if (!frame) {
+        *errorString = "No frame for given id found";
+        return;
+    }
+    if (optionalBase64Encode ? *optionalBase64Encode : false)
+        InspectorPageAgent::resourceContentBase64(errorString, frame, KURL(ParsedURLString, url), content);
+    else
+        InspectorPageAgent::resourceContent(errorString, frame, KURL(ParsedURLString, url), content);
 }
 
 void InspectorPageAgent::restore()
 {
-    inspectedURLChanged(m_inspectedPage->mainFrame()->document()->url().string());
-}
-
-void InspectorPageAgent::didCommitLoad(const String& url)
-{
-    inspectedURLChanged(url);
+    m_frontend->inspectedURLChanged(mainFrame()->document()->url().string());
 }
 
 void InspectorPageAgent::domContentEventFired()
 {
-     m_frontend->page()->domContentEventFired(currentTime());
+     m_frontend->domContentEventFired(currentTime());
 }
 
 void InspectorPageAgent::loadEventFired()
 {
-     m_frontend->page()->loadEventFired(currentTime());
+     m_frontend->loadEventFired(currentTime());
+}
+
+void InspectorPageAgent::frameNavigated(DocumentLoader* loader)
+{
+    m_frontend->frameNavigated(buildObjectForFrame(loader->frame()), loaderId(loader));
+    m_frontend->inspectedURLChanged(loader->url().string());
+}
+
+void InspectorPageAgent::frameDetached(Frame* frame)
+{
+    m_frontend->frameDetached(frameId(frame));
 }
 
 void InspectorPageAgent::didClearWindowObjectInWorld(Frame* frame, DOMWrapperWorld* world)
@@ -233,7 +381,7 @@ void InspectorPageAgent::didClearWindowObjectInWorld(Frame* frame, DOMWrapperWor
     if (world != mainThreadNormalWorld())
         return;
 
-    if (frame == m_inspectedPage->mainFrame())
+    if (frame == m_page->mainFrame())
         m_injectedScriptManager->discardInjectedScripts();
 
     if (m_scriptsToEvaluateOnLoad.size()) {
@@ -243,6 +391,84 @@ void InspectorPageAgent::didClearWindowObjectInWorld(Frame* frame, DOMWrapperWor
             m_injectedScriptManager->injectScript(*it, scriptState);
         }
     }
+}
+
+Frame* InspectorPageAgent::mainFrame()
+{
+    return m_page->mainFrame();
+}
+
+static String pointerAsId(void* pointer)
+{
+    unsigned long long address = reinterpret_cast<uintptr_t>(pointer);
+    // We want 0 to be "", so that JavaScript checks for if (frameId) worked.
+    return String::format("%.0llX", address);
+}
+
+Frame* InspectorPageAgent::frameForId(const String& frameId)
+{
+    Frame* mainFrame = m_page->mainFrame();
+    for (Frame* frame = mainFrame; frame; frame = frame->tree()->traverseNext(mainFrame)) {
+        if (pointerAsId(frame) == frameId)
+            return frame;
+    }
+    return 0;
+}
+
+String InspectorPageAgent::frameId(Frame* frame)
+{
+    return pointerAsId(frame);
+}
+
+String InspectorPageAgent::loaderId(DocumentLoader* loader)
+{
+    return pointerAsId(loader);
+}
+
+PassRefPtr<InspectorObject> InspectorPageAgent::buildObjectForFrame(Frame* frame)
+{
+    RefPtr<InspectorObject> frameObject = InspectorObject::create();
+    frameObject->setString("id", frameId(frame));
+    frameObject->setString("parentId", frameId(frame->tree()->parent()));
+    if (frame->ownerElement()) {
+        String name = frame->ownerElement()->getAttribute(HTMLNames::nameAttr);
+        if (name.isEmpty())
+            name = frame->ownerElement()->getAttribute(HTMLNames::idAttr);
+        frameObject->setString("name", name);
+    }
+    frameObject->setString("url", frame->document()->url().string());
+    frameObject->setString("loaderId", loaderId(frame->loader()->documentLoader()));
+
+    return frameObject;
+}
+
+PassRefPtr<InspectorObject> InspectorPageAgent::buildObjectForFrameTree(Frame* frame)
+{
+    RefPtr<InspectorObject> result = InspectorObject::create();
+    RefPtr<InspectorObject> frameObject = buildObjectForFrame(frame);
+    result->setObject("frame", frameObject);
+
+    RefPtr<InspectorArray> subresources = InspectorArray::create();
+    result->setArray("resources", subresources);
+    const CachedResourceLoader::DocumentResourceMap& allResources = frame->document()->cachedResourceLoader()->allCachedResources();
+    CachedResourceLoader::DocumentResourceMap::const_iterator end = allResources.end();
+    for (CachedResourceLoader::DocumentResourceMap::const_iterator it = allResources.begin(); it != end; ++it) {
+        CachedResource* cachedResource = it->second.get();
+        RefPtr<InspectorObject> resourceObject = InspectorObject::create();
+        resourceObject->setString("url", cachedResource->url());
+        resourceObject->setString("type", cachedResourceTypeString(*cachedResource));
+        subresources->pushValue(resourceObject);
+    }
+
+    RefPtr<InspectorArray> childrenArray;
+    for (Frame* child = frame->tree()->firstChild(); child; child = child->tree()->nextSibling()) {
+        if (!childrenArray) {
+            childrenArray = InspectorArray::create();
+            result->setArray("childFrames", childrenArray);
+        }
+        childrenArray->pushObject(buildObjectForFrameTree(child));
+    }
+    return result;
 }
 
 } // namespace WebCore

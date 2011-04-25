@@ -57,6 +57,7 @@ class GraphicsContext;
 class InspectorClient;
 class InspectorDOMAgent;
 class InspectorFrontend;
+class InspectorPageAgent;
 class HitTestResult;
 class MatchJob;
 class HTMLElement;
@@ -64,7 +65,6 @@ class InspectorState;
 class InstrumentingAgents;
 class NameNodeMap;
 class Node;
-class Page;
 class RevalidateStyleAttributeTask;
 class ScriptValue;
 
@@ -96,9 +96,9 @@ public:
         virtual void didModifyDOMAttr(Element*) = 0;
     };
 
-    static PassOwnPtr<InspectorDOMAgent> create(InstrumentingAgents* instrumentingAgents, Page* page, InspectorClient* client, InspectorState* inspectorState, InjectedScriptManager* injectedScriptManager)
+    static PassOwnPtr<InspectorDOMAgent> create(InstrumentingAgents* instrumentingAgents, InspectorPageAgent* pageAgent, InspectorClient* client, InspectorState* inspectorState, InjectedScriptManager* injectedScriptManager)
     {
-        return adoptPtr(new InspectorDOMAgent(instrumentingAgents, page, client, inspectorState, injectedScriptManager));
+        return adoptPtr(new InspectorDOMAgent(instrumentingAgents, pageAgent, client, inspectorState, injectedScriptManager));
     }
 
     ~InspectorDOMAgent();
@@ -175,7 +175,7 @@ public:
     static bool isWhitespace(Node*);
 
 private:
-    InspectorDOMAgent(InstrumentingAgents*, Page*, InspectorClient*, InspectorState*, InjectedScriptManager*);
+    InspectorDOMAgent(InstrumentingAgents*, InspectorPageAgent*, InspectorClient*, InspectorState*, InjectedScriptManager*);
 
     void setSearchingForNode(bool enabled);
     void highlight(ErrorString*, Node*, const String& mode);
@@ -208,7 +208,7 @@ private:
     void discardBindings();
 
     InstrumentingAgents* m_instrumentingAgents;
-    Page* m_inspectedPage;
+    InspectorPageAgent* m_pageAgent;
     InspectorClient* m_client;
     InspectorState* m_inspectorState;
     InjectedScriptManager* m_injectedScriptManager;

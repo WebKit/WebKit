@@ -114,7 +114,7 @@ InspectorAgent::InspectorAgent(Page* page, InspectorClient* client, InjectedScri
     , m_injectedScriptManager(injectedScriptManager)
     , m_state(new InspectorState(client))
     , m_pageAgent(InspectorPageAgent::create(m_instrumentingAgents.get(), page, injectedScriptManager))
-    , m_domAgent(InspectorDOMAgent::create(m_instrumentingAgents.get(), page, m_client, m_state.get(), injectedScriptManager))
+    , m_domAgent(InspectorDOMAgent::create(m_instrumentingAgents.get(), m_pageAgent.get(), m_client, m_state.get(), injectedScriptManager))
     , m_cssAgent(new InspectorCSSAgent(m_instrumentingAgents.get(), m_domAgent.get()))
 #if ENABLE(DATABASE)
     , m_databaseAgent(InspectorDatabaseAgent::create(m_instrumentingAgents.get(), m_state.get()))
@@ -126,7 +126,7 @@ InspectorAgent::InspectorAgent(Page* page, InspectorClient* client, InjectedScri
 #if ENABLE(OFFLINE_WEB_APPLICATIONS)
     , m_applicationCacheAgent(new InspectorApplicationCacheAgent(m_instrumentingAgents.get(), page))
 #endif
-    , m_resourceAgent(InspectorResourceAgent::create(m_instrumentingAgents.get(), page, m_state.get()))
+    , m_resourceAgent(InspectorResourceAgent::create(m_instrumentingAgents.get(), m_pageAgent.get(), m_state.get()))
     , m_runtimeAgent(adoptPtr(new PageRuntimeAgent(m_injectedScriptManager, page)))
     , m_consoleAgent(new InspectorConsoleAgent(m_instrumentingAgents.get(), this, m_state.get(), injectedScriptManager, m_domAgent.get()))
 #if ENABLE(JAVASCRIPT_DEBUGGER)

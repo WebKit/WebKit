@@ -34,8 +34,6 @@ WebInspector.ResourceTreeModel = function(networkManager)
     WebInspector.networkManager.addEventListener(WebInspector.NetworkManager.EventTypes.ResourceStarted, this._onResourceStarted, this);
     WebInspector.networkManager.addEventListener(WebInspector.NetworkManager.EventTypes.ResourceUpdated, this._onResourceUpdated, this);
     WebInspector.networkManager.addEventListener(WebInspector.NetworkManager.EventTypes.ResourceFinished, this._onResourceUpdated, this);
-    WebInspector.networkManager.addEventListener(WebInspector.NetworkManager.EventTypes.FrameDetached, this._onFrameDetachedFromParent, this);
-    WebInspector.networkManager.addEventListener(WebInspector.NetworkManager.EventTypes.FrameCommittedLoad, this._onCommitLoad, this);
 
     this.frontendReused();
 }
@@ -54,7 +52,7 @@ WebInspector.ResourceTreeModel.prototype = {
         this._resourcesByURL = {};
         this._resourcesByFrameId = {};
         this._subframes = {};
-        NetworkAgent.getCachedResources(this._processCachedResources.bind(this));
+        PageAgent.getResourceTree(this._processCachedResources.bind(this));
     },
 
     _processCachedResources: function(error, mainFramePayload)
@@ -101,13 +99,11 @@ WebInspector.ResourceTreeModel.prototype = {
         return result;
     },
 
-    _onCommitLoad: function(event)
+    frameNavigated: function(frame, loaderId)
     {
         if (!this._cachedResourcesProcessed)
             return;
 
-        var frame = event.data.frame;
-        var loaderId = event.data.loaderId;
         var isMainFrame = !frame.parentId;
 
         // frame.parentId === 0 is when main frame navigation happens.
@@ -128,12 +124,11 @@ WebInspector.ResourceTreeModel.prototype = {
             WebInspector.Resource.clearRevisionHistory();
     },
 
-    _onFrameDetachedFromParent: function(event)
+    frameDetached: function(frameId)
     {
         if (!this._cachedResourcesProcessed)
             return;
 
-        var frameId = event.data;
         this._clearChildFramesAndResources(frameId, 0);
         this.dispatchEventToListeners(WebInspector.ResourceTreeModel.EventTypes.FrameDetached, frameId);
     },

@@ -83,7 +83,6 @@ WebInspector.NetworkPanel = function()
     WebInspector.networkManager.addEventListener(WebInspector.NetworkManager.EventTypes.ResourceStarted, this._onResourceStarted, this);
     WebInspector.networkManager.addEventListener(WebInspector.NetworkManager.EventTypes.ResourceUpdated, this._onResourceUpdated, this);
     WebInspector.networkManager.addEventListener(WebInspector.NetworkManager.EventTypes.ResourceFinished, this._onResourceUpdated, this);
-    WebInspector.networkManager.addEventListener(WebInspector.NetworkManager.EventTypes.FrameCommittedLoad, this._onFrameCommitLoad, this);
 
     this.registerShortcuts();
 }
@@ -807,9 +806,9 @@ WebInspector.NetworkPanel.prototype = {
         this._reset();
     },
 
-    _onFrameCommitLoad: function(event)
+    frameNavigated: function(frame, loaderId)
     {
-        if (event.data.frame.parentId)
+        if (frame.parentId)
             return;
 
         // Main frame committed load.
@@ -817,7 +816,6 @@ WebInspector.NetworkPanel.prototype = {
             return;
 
         // Preserve provisional load resources.
-        var loaderId = event.data.loaderId;
         var resourcesToPreserve = [];
         for (var i = 0; i < this._resources.length; ++i) {
             var resource = this._resources[i];

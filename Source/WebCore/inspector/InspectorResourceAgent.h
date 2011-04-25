@@ -54,6 +54,7 @@ class InspectorArray;
 class InspectorFrontend;
 class InspectorFrontendProxy;
 class InspectorObject;
+class InspectorPageAgent;
 class InspectorState;
 class InstrumentingAgents;
 class KURL;
@@ -73,9 +74,9 @@ typedef String ErrorString;
 
 class InspectorResourceAgent : public RefCounted<InspectorResourceAgent> {
 public:
-    static PassRefPtr<InspectorResourceAgent> create(InstrumentingAgents* instrumentingAgents, Page* page, InspectorState* state)
+    static PassRefPtr<InspectorResourceAgent> create(InstrumentingAgents* instrumentingAgents, InspectorPageAgent* pageAgent, InspectorState* state)
     {
-        return adoptRef(new InspectorResourceAgent(instrumentingAgents, page, state));
+        return adoptRef(new InspectorResourceAgent(instrumentingAgents, pageAgent, state));
     }
 
     void setFrontend(InspectorFrontend*);
@@ -83,12 +84,6 @@ public:
     void restore();
 
     static PassRefPtr<InspectorResourceAgent> restore(Page*, InspectorState*, InspectorFrontend*);
-
-    static void resourceContent(ErrorString*, Frame*, const KURL&, String* result);
-    static void resourceContentBase64(ErrorString*, Frame*, const KURL&, String* result);
-
-    static PassRefPtr<SharedBuffer> resourceData(Frame*, const KURL&, String* textEncodingName);
-    static CachedResource* cachedResource(Frame*, const KURL&);
 
     ~InspectorResourceAgent();
 
@@ -101,10 +96,6 @@ public:
     void didLoadResourceFromMemoryCache(DocumentLoader*, const CachedResource*);
     void setInitialScriptContent(unsigned long identifier, const String& sourceString);
     void setInitialXHRContent(unsigned long identifier, const String& sourceString);
-    void domContentEventFired();
-    void loadEventFired();
-    void didCommitLoad(DocumentLoader*);
-    void frameDetachedFromParent(Frame*);
     void applyUserAgentOverride(String* userAgent);
 
 #if ENABLE(WEB_SOCKETS)
@@ -114,25 +105,22 @@ public:
     void didCloseWebSocket(unsigned long identifier);
 #endif
 
-    Frame* frameForId(const String& frameId);
     bool backgroundEventsCollectionEnabled();
 
     // Called from frontend 
     void enable(ErrorString*);
     void disable(ErrorString*);
-    void getCachedResources(ErrorString*, RefPtr<InspectorObject>*);
-    void getResourceContent(ErrorString*, const String& frameId, const String& url, const bool* const base64Encode, String* content);
     void setUserAgentOverride(ErrorString*, const String& userAgent);
     void setExtraHeaders(ErrorString*, PassRefPtr<InspectorObject>);
 
 
 private:
-    InspectorResourceAgent(InstrumentingAgents*, Page*, InspectorState*);
+    InspectorResourceAgent(InstrumentingAgents*, InspectorPageAgent*, InspectorState*);
 
     void enable();
 
     InstrumentingAgents* m_instrumentingAgents;
-    Page* m_page;
+    InspectorPageAgent* m_pageAgent;
     InspectorState* m_state;
     OwnPtr<EventsCollector> m_eventsCollector;
     InspectorFrontend::Network* m_frontend;

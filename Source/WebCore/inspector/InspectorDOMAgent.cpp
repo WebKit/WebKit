@@ -64,7 +64,7 @@
 #include "InjectedScriptManager.h"
 #include "InspectorClient.h"
 #include "InspectorFrontend.h"
-#include "InspectorResourceAgent.h"
+#include "InspectorPageAgent.h"
 #include "InspectorState.h"
 #include "InstrumentingAgents.h"
 #include "MutationEvent.h"
@@ -257,9 +257,9 @@ void RevalidateStyleAttributeTask::onTimer(Timer<RevalidateStyleAttributeTask>*)
     m_elements.clear();
 }
 
-InspectorDOMAgent::InspectorDOMAgent(InstrumentingAgents* instrumentingAgents, Page* inspectedPage, InspectorClient* client, InspectorState* inspectorState, InjectedScriptManager* injectedScriptManager)
+InspectorDOMAgent::InspectorDOMAgent(InstrumentingAgents* instrumentingAgents, InspectorPageAgent* pageAgent, InspectorClient* client, InspectorState* inspectorState, InjectedScriptManager* injectedScriptManager)
     : m_instrumentingAgents(instrumentingAgents)
-    , m_inspectedPage(inspectedPage)
+    , m_pageAgent(pageAgent)
     , m_client(client)
     , m_inspectorState(inspectorState)
     , m_injectedScriptManager(injectedScriptManager)
@@ -283,7 +283,7 @@ void InspectorDOMAgent::setFrontend(InspectorFrontend* frontend)
     ASSERT(!m_frontend);
     m_frontend = frontend->dom();
     m_instrumentingAgents->setInspectorDOMAgent(this);
-    m_document = m_inspectedPage->mainFrame()->document();
+    m_document = m_pageAgent->mainFrame()->document();
 
     if (m_nodeToFocus)
         focusNode();
@@ -307,7 +307,7 @@ void InspectorDOMAgent::restore()
 {
     // Reset document to avoid early return from setDocument.
     m_document = 0;
-    setDocument(m_inspectedPage->mainFrame()->document());
+    setDocument(m_pageAgent->mainFrame()->document());
 }
 
 Vector<Document*> InspectorDOMAgent::documents()
@@ -962,7 +962,7 @@ void InspectorDOMAgent::highlightNode(ErrorString* error, int nodeId, String* mo
 
 void InspectorDOMAgent::highlightFrame(ErrorString* error, const String& frameId)
 {
-    Frame* frame = m_instrumentingAgents->inspectorResourceAgent()->frameForId(frameId);
+    Frame* frame = m_pageAgent->frameForId(frameId);
     if (frame && frame->ownerElement())
         highlight(error, frame->ownerElement(), "all");
 }

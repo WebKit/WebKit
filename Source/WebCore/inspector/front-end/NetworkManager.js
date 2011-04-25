@@ -38,9 +38,7 @@ WebInspector.NetworkManager = function()
 WebInspector.NetworkManager.EventTypes = {
     ResourceStarted: "ResourceStarted",
     ResourceUpdated: "ResourceUpdated",
-    ResourceFinished: "ResourceFinished",
-    FrameCommittedLoad: "FrameCommittedLoad",
-    FrameDetached: "FrameDetached"
+    ResourceFinished: "ResourceFinished"
 }
 
 WebInspector.NetworkManager.prototype = {
@@ -55,7 +53,7 @@ WebInspector.NetworkManager.prototype = {
         {
             callback(!error ? content : null);
         }
-        NetworkAgent.getResourceContent(resource.frameId, resource.url, base64Encode, callbackWrapper);
+        PageAgent.getResourceContent(resource.frameId, resource.url, base64Encode, callbackWrapper);
     },
 
     inflightResourceForURL: function(url)
@@ -153,18 +151,6 @@ WebInspector.NetworkDispatcher.prototype = {
         this._updateResource(resource);
     },
 
-    domContentEventFired: function(time)
-    {
-        if (WebInspector.panels.network)
-            WebInspector.panels.network.mainResourceDOMContentTime = time;
-    },
-
-    loadEventFired: function(time)
-    {
-        if (WebInspector.panels.network)
-            WebInspector.panels.network.mainResourceLoadTime = time;
-    },
-
     dataReceived: function(identifier, time, dataLength, encodedDataLength)
     {
         var resource = this._inflightResourcesById[identifier];
@@ -211,11 +197,6 @@ WebInspector.NetworkDispatcher.prototype = {
         this._finishResource(resource, time);
     },
 
-    frameDetached: function(frameId)
-    {
-        this._dispatchEventToListeners(WebInspector.NetworkManager.EventTypes.FrameDetached, frameId);
-    },
-
     initialContentSet: function(identifier, sourceString, type)
     {
         var resource = WebInspector.networkResourceById(identifier);
@@ -225,11 +206,6 @@ WebInspector.NetworkDispatcher.prototype = {
         resource.type = WebInspector.Resource.Type[type];
         resource.setInitialContent(sourceString);
         this._updateResource(resource);
-    },
-
-    frameNavigated: function(frame, loaderId)
-    {
-        this._dispatchEventToListeners(WebInspector.NetworkManager.EventTypes.FrameCommittedLoad, { frame: frame, loaderId: loaderId });
     },
 
     webSocketCreated: function(identifier, requestURL)

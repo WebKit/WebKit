@@ -983,24 +983,29 @@ WebInspector.startUserInitiatedDebugging = function()
 WebInspector.domContentEventFired = function(time)
 {
     this.panels.audits.mainResourceDOMContentTime = time;
+    this.panels.network.mainResourceDOMContentTime = time;
+
     this.mainResourceDOMContentTime = time;
 }
 
 WebInspector.loadEventFired = function(time)
 {
     this.panels.audits.mainResourceLoadTime = time;
+    this.panels.network.mainResourceLoadTime = time;
     this.panels.resources.loadEventFired();
+
     this.mainResourceLoadTime = time;
 }
 
-WebInspector.searchingForNodeWasEnabled = function()
+// FIXME: move these into the dedicated dispatcher.
+WebInspector.frameNavigated = function(frame, loaderId)
 {
-    this.panels.elements.searchingForNodeWasEnabled();
+    this.resourceTreeModel.frameNavigated(frame, loaderId);
+    this.panels.network.frameNavigated(frame, loaderId);
 }
-
-WebInspector.searchingForNodeWasDisabled = function()
+WebInspector.frameDetached = function(frameId)
 {
-    this.panels.elements.searchingForNodeWasDisabled();
+    this.resourceTreeModel.frameDetached(loaderId);
 }
 
 WebInspector.reset = function()

@@ -59,7 +59,45 @@
     {
         "domain": "Page",
         "description": "Actions and events related to the inspected page belong to the page domain.",
-        "types": [],
+        "types": [
+            {
+                "id": "ResourceType",
+                "type": "string",
+                "enum": ["Document", "Stylesheet", "Image", "Font", "Script", "XHR", "WebSocket", "Other"],
+                "description": "Resource type as it was perceived by the rendering enging."
+            },
+            {
+                "id": "Frame",
+                "type": "object",
+                "description": "Information about the Frame on the page.",
+                "properties": [
+                    { "name": "id", "type": "string", "description": "Frame unique identifier." },
+                    { "name": "parentId", "type": "string", "description": "Parent frame identifier." },
+                    { "name": "loaderId", "type": "string", "description": "Identifier of the loader associated with this frame." },
+                    { "name": "name", "type": "string", "optional": true, "description": "Frame's name as specified in the tag." },
+                    { "name": "url", "type": "string", "description": "Frame document's URL." }
+                ]
+            },
+            {
+                "id": "FrameResourceTree",
+                "type": "object",
+                "description": "Information about the Frame hierarchy along with their cached resources.",
+                "properties": [
+                    { "name": "frame", "$ref": "Frame", "description": "Frame information for this tree item." },
+                    { "name": "childFrames", "type": "array", "optional": true, "items": { "$ref": "FrameResourceTree" }, "description": "Child frames." },
+                    { "name": "resources", "type": "array",
+                        "items": {
+                            "type": "object",
+                            "properties": [
+                                { "name": "url", "type": "string", "description": "Resource URL." },
+                                { "name": "type", "$ref": "ResourceType", "description": "Type of this resource." }
+                            ]
+                        },
+                        "description": "Information about frame resources."
+                    }
+                ]
+            }
+        ],
         "commands": [
             {
                 "name": "addScriptToEvaluateOnLoad",
@@ -100,6 +138,25 @@
                     { "name": "domain", "type": "string", "description": "Domain of the cookie to remove." }
                 ],
                 "description": "Deletes browser cookie with given name for the given domain."
+            },
+            {
+                "name": "getResourceTree",
+                "description": "Returns present frame / resource tree structure.",
+                "returns": [
+                    { "name": "frameTree", "$ref": "FrameResourceTree", "description": "Present frame / resource tree structure." }
+                ]
+            },
+            {
+                "name": "getResourceContent",
+                "description": "Returns content of the given resource.",
+                "parameters": [
+                    { "name": "frameId", "type": "string", "description": "Frame id to get resource for." },
+                    { "name": "url", "type": "string", "description": "URL of the resource to get content for." },
+                    { "name": "base64Encode", "type": "boolean", "optional": true, "description": "Requests that resource content is served as base64." }
+                ],
+                "returns": [
+                    { "name": "content", "type": "string", "description": "Resource content." }
+                ]
             }
         ],
         "events": [
@@ -119,6 +176,21 @@
                 "name": "loadEventFired",
                 "parameters": [
                     { "name": "timestamp", "type": "number" }
+                ]
+            },
+            {
+                "name": "frameNavigated",
+                "description": "Fired once navigation of the frame has completed. Frame is now associated with the new loader.",
+                "parameters": [
+                    { "name": "frame", "$ref": "Frame", "description": "Frame object." },
+                    { "name": "loaderId", "type": "string", "description": "Loader identifier." }
+                ]
+            },
+            {
+                "name": "frameDetached",
+                "description": "Fired when frame has been detached from its parent.",
+                "parameters": [
+                    { "name": "frameId", "type": "string", "description": "Id of the frame that has been detached." }
                 ]
             }
         ]
@@ -347,51 +419,14 @@
                 ]
             },
             {
-                "id": "ResourceType",
-                "type": "string",
-                "enum": ["Document", "Stylesheet", "Image", "Font", "Script", "XHR", "WebSocket", "Other"],
-                "description": "Resource type as it was perceived by the rendering enging."
-            },
-            {
                 "id": "CachedResource",
                 "type": "object",
                 "description": "Information about the cached resource.",
                 "properties": [
                     { "name": "url", "type": "string", "description": "Resource URL." },
-                    { "name": "type", "$ref": "ResourceType", "description": "Type of this resource." },
+                    { "name": "type", "$ref": "Page.ResourceType", "description": "Type of this resource." },
                     { "name": "response", "$ref": "ResourceResponse", "description": "Cached response data." },
                     { "name": "bodySize", "type": "number", "description": "Cached response body size." }
-                ]
-            },
-            {
-                "id": "Frame",
-                "type": "object",
-                "description": "Information about the Frame on the page.",
-                "properties": [
-                    { "name": "id", "type": "string", "description": "Frame unique identifier." },
-                    { "name": "parentId", "type": "string", "description": "Parent frame identifier." },
-                    { "name": "loaderId", "type": "string", "description": "Identifier of the loader associated with this frame." },
-                    { "name": "name", "type": "string", "optional": true, "description": "Frame's name as specified in the tag." },
-                    { "name": "url", "type": "string", "description": "Frame document's URL." }
-                ]
-            },
-            {
-                "id": "FrameResourceTree",
-                "type": "object",
-                "description": "Information about the Frame hierarchy along with their cached resources.",
-                "properties": [
-                    { "name": "frame", "$ref": "Frame", "description": "Frame information for this tree item." },
-                    { "name": "childFrames", "type": "array", "optional": true, "items": { "$ref": "FrameResourceTree" }, "description": "Child frames." },
-                    { "name": "resources", "type": "array",
-                        "items": {
-                            "type": "object",
-                            "properties": [
-                                { "name": "url", "type": "string", "description": "Resource URL." },
-                                { "name": "type", "$ref": "ResourceType", "description": "Type of this resource." }
-                            ]
-                        },
-                        "description": "Information about frame resources."
-                    }
                 ]
             }
         ],
@@ -403,25 +438,6 @@
             {
                 "name": "disable",
                 "description": "Disables network tracking, prevents network events from being sent to the client."
-            },
-            {
-                "name": "getCachedResources",
-                "description": "Returns present frame / resource tree structure.",
-                "returns": [
-                    { "name": "frameTree", "$ref": "FrameResourceTree", "description": "Present frame / resource tree structure." }
-                ]
-            },
-            {
-                "name": "getResourceContent",
-                "description": "Returns content of the given resource.",
-                "parameters": [
-                    { "name": "frameId", "type": "string", "description": "Frame id to get resource for." },
-                    { "name": "url", "type": "string", "description": "URL of the resource to get content for." },
-                    { "name": "base64Encode", "type": "boolean", "optional": true, "description": "Requests that resource content is served as base64." }
-                ],
-                "returns": [
-                    { "name": "content", "type": "string", "description": "Resource content." }
-                ]
             },
             {
                 "name": "setUserAgentOverride",
@@ -439,25 +455,6 @@
             }
         ],
         "events": [
-            {
-                "name": "domContentEventFired",
-                "parameters": [
-                    { "name": "time", "type": "number" }
-                ]
-            },
-            {
-                "name": "loadEventFired",
-                "parameters": [
-                    { "name": "time", "type": "number" }
-                ]
-            },
-            {
-                "name": "frameDetached",
-                "description": "Fired when frame has been detached from its parent.",
-                "parameters": [
-                    { "name": "frameId", "type": "string", "description": "Id of the frame that has been detached." }
-                ]
-            },
             {
                 "name": "requestWillBeSent",
                 "description": "Fired when page is about to send HTTP request.",
@@ -485,7 +482,7 @@
                 "parameters": [
                     { "name": "identifier", "type": "integer", "description": "Request identifier." },
                     { "name": "timestamp", "type": "number", "description": "Timestamp." },
-                    { "name": "type", "$ref": "ResourceType", "description": "Resource type." },
+                    { "name": "type", "$ref": "Page.ResourceType", "description": "Resource type." },
                     { "name": "response", "$ref": "ResourceResponse", "description": "Response data." }
                 ]
             },
@@ -534,15 +531,7 @@
                 "parameters": [
                     { "name": "identifier", "type": "integer", "description": "Request identifier." },
                     { "name": "content", "type": "string", "description": "Resource content." },
-                    { "name": "type", "$ref": "ResourceType", "description": "Resource type." }
-                ]
-            },
-            {
-                "name": "frameNavigated",
-                "description": "Fired once navigation of the frame has completed. Frame is now associated with the new loader.",
-                "parameters": [
-                    { "name": "frame", "$ref": "Frame", "description": "Frame identifier." },
-                    { "name": "loaderId", "type": "string", "description": "Loader identifier." }
+                    { "name": "type", "$ref": "Page.ResourceType", "description": "Resource type." }
                 ]
             },
             {

@@ -41,7 +41,7 @@
 #include "HTMLHeadElement.h"
 #include "HTMLParserIdioms.h"
 #include "InspectorCSSAgent.h"
-#include "InspectorResourceAgent.h"
+#include "InspectorPageAgent.h"
 #include "InspectorValues.h"
 #include "Node.h"
 #include "StyleSheetList.h"
@@ -1072,7 +1072,7 @@ bool InspectorStyleSheet::resourceStyleSheetText(String* result) const
         return false;
 
     String error;
-    InspectorResourceAgent::resourceContent(&error, ownerDocument()->frame(), m_pageStyleSheet->finalURL(), result);
+    InspectorPageAgent::resourceContent(&error, ownerDocument()->frame(), m_pageStyleSheet->finalURL(), result);
     return error.isEmpty();
 }
 
