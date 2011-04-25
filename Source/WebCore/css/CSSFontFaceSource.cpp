@@ -154,7 +154,7 @@ SimpleFontData* CSSFontFaceSource::getFontData(const FontDescription& fontDescri
                         m_svgFontFaceElement = fontFaceElement;
                     }
 
-                    fontData.set(new SimpleFontData(adoptPtr(new SVGFontData(fontFaceElement)), fontDescription.computedPixelSize(), syntheticBold, syntheticItalic));
+                    fontData = adoptPtr(new SimpleFontData(adoptPtr(new SVGFontData(fontFaceElement)), fontDescription.computedPixelSize(), syntheticBold, syntheticItalic));
                 }
             } else
 #endif
@@ -163,14 +163,14 @@ SimpleFontData* CSSFontFaceSource::getFontData(const FontDescription& fontDescri
                 if (!m_font->ensureCustomFontData())
                     return 0;
 
-                fontData.set(new SimpleFontData(m_font->platformDataFromCustomData(fontDescription.computedPixelSize(), syntheticBold, syntheticItalic, fontDescription.orientation(),
+                fontData = adoptPtr(new SimpleFontData(m_font->platformDataFromCustomData(fontDescription.computedPixelSize(), syntheticBold, syntheticItalic, fontDescription.orientation(),
                                                                                    fontDescription.textOrientation(), fontDescription.widthVariant(), fontDescription.renderingMode()), true, false));
             }
         } else {
 #if ENABLE(SVG_FONTS)
             // In-Document SVG Fonts
             if (m_svgFontFaceElement)
-                fontData.set(new SimpleFontData(adoptPtr(new SVGFontData(m_svgFontFaceElement.get())), fontDescription.computedPixelSize(), syntheticBold, syntheticItalic));
+                fontData = adoptPtr(new SimpleFontData(adoptPtr(new SVGFontData(m_svgFontFaceElement.get())), fontDescription.computedPixelSize(), syntheticBold, syntheticItalic));
 #endif
         }
     } else {
@@ -182,7 +182,7 @@ SimpleFontData* CSSFontFaceSource::getFontData(const FontDescription& fontDescri
         if (!tempData)
             tempData = fontCache()->getLastResortFallbackFont(fontDescription);
 
-        fontData.set(new SimpleFontData(tempData->platformData(), true, true));
+        fontData = adoptPtr(new SimpleFontData(tempData->platformData(), true, true));
     }
 
     SimpleFontData* fontDataRawPtr = fontData.leakPtr();

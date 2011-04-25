@@ -1,3 +1,16 @@
+2011-04-25  Adrienne Walker  <enne@google.com>
+
+        Reviewed by David Levin.
+
+        WebCore/css/CSS* files should play nice with strict OwnPtrs
+        https://bugs.webkit.org/show_bug.cgi?id=59382
+
+        * css/CSSFontFaceSource.cpp:
+        (WebCore::CSSFontFaceSource::getFontData):
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::addProperty):
+        (WebCore::CSSParser::parseValue):
+
 2011-04-25  Adam Barth  <abarth@webkit.org>
 
         Reviewed by James Robinson.
