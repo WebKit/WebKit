@@ -379,7 +379,7 @@ void MediaPlayer::loadWithNextMediaEngine(MediaPlayerFactory* current)
     if (m_private)
         m_private->load(m_url);
     else {
-        m_private.set(createNullMediaPlayer(this));
+        m_private = createNullMediaPlayer(this);
         if (m_mediaPlayerClient)
             m_mediaPlayerClient->mediaPlayerEngineUpdated(this);
     }

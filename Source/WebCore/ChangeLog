@@ -1,3 +1,10 @@
+2011-04-25  Adam Barth  <abarth@webkit.org>
+
+        Attempt to fix the compile.
+
+        * platform/graphics/MediaPlayer.cpp:
+        (WebCore::MediaPlayer::loadWithNextMediaEngine):
+
 2011-04-25  Geoffrey Garen  <ggaren@apple.com>
 
         Rubber-stamped by Beth Dakin.
