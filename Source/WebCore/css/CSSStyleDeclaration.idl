@@ -23,7 +23,7 @@ module css {
     // Introduced in DOM Level 2:
     interface [
         CustomMarkFunction,
-        CustomIsReachable,
+        GenerateIsReachable=ImplRoot,
         DelegatingPutFunction,
         HasNameGetter,
         HasIndexGetter

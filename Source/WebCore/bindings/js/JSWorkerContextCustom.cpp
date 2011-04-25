@@ -61,8 +61,10 @@ void JSWorkerContext::visitChildren(SlotVisitor& visitor)
 
     visitActiveObjectsForContext(visitor, globalData, scriptExecutionContext());
 
-    markDOMObjectWrapper(visitor, globalData, impl()->optionalLocation());
-    markDOMObjectWrapper(visitor, globalData, impl()->optionalNavigator());
+    if (WorkerLocation* location = impl()->optionalLocation())
+        visitor.addOpaqueRoot(location);
+    if (WorkerNavigator* navigator = impl()->optionalNavigator())
+        visitor.addOpaqueRoot(navigator);
 
     impl()->visitJSEventListeners(visitor);
 }

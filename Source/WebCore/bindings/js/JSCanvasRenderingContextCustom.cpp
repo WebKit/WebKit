@@ -39,14 +39,6 @@ using namespace JSC;
 
 namespace WebCore {
 
-bool JSCanvasRenderingContextOwner::isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown> handle, void*, MarkStack& markStack)
-{
-    JSCanvasRenderingContext* jsCanvasRenderingContext = static_cast<JSCanvasRenderingContext*>(handle.get().asCell());
-    if (!jsCanvasRenderingContext->hasCustomProperties())
-        return false;
-    return markStack.containsOpaqueRoot(root(jsCanvasRenderingContext->impl()->canvas()));
-}
-
 void JSCanvasRenderingContext::visitChildren(SlotVisitor& visitor)
 {
     Base::visitChildren(visitor);

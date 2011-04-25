@@ -194,9 +194,6 @@ XMLHttpRequest::XMLHttpRequest(ScriptExecutionContext* context)
 
 XMLHttpRequest::~XMLHttpRequest()
 {
-    if (m_upload)
-        m_upload->disconnectXMLHttpRequest();
-
 #ifndef NDEBUG
     xmlHttpRequestCounter.decrement();
 #endif

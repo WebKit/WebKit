@@ -27,20 +27,19 @@
 #define OESStandardDerivatives_h
 
 #include "WebGLExtension.h"
-#include <wtf/PassRefPtr.h>
-#include <wtf/RefCounted.h>
+#include <wtf/PassOwnPtr.h>
 
 namespace WebCore {
 
 class OESStandardDerivatives : public WebGLExtension {
 public:
-    static PassRefPtr<OESStandardDerivatives> create();
+    static PassOwnPtr<OESStandardDerivatives> create(WebGLRenderingContext*);
 
     virtual ~OESStandardDerivatives();
     virtual ExtensionName getName() const;
 
 private:
-    OESStandardDerivatives();
+    OESStandardDerivatives(WebGLRenderingContext*);
 };
 
 } // namespace WebCore

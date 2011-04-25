@@ -33,12 +33,4 @@ using namespace JSC;
 
 namespace WebCore {
 
-bool JSMediaListOwner::isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown> handle, void*, MarkStack& markStack)
-{
-    JSMediaList* jsMediaList = static_cast<JSMediaList*>(handle.get().asCell());
-    if (!jsMediaList->hasCustomProperties())
-        return false;
-    return markStack.containsOpaqueRoot(root(jsMediaList->impl()));
-}
-
 } // namespace WebCore

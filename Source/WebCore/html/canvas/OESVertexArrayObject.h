@@ -30,9 +30,7 @@
 #include "GraphicsTypes3D.h"
 #include "WebGLExtension.h"
 #include "WebGLVertexArrayObjectOES.h"
-
-#include <wtf/PassRefPtr.h>
-#include <wtf/RefCounted.h>
+#include <wtf/PassOwnPtr.h>
 #include <wtf/UnusedParam.h>
 
 namespace WebCore {
@@ -42,7 +40,7 @@ class WebGLVertexArrayObjectOES;
 
 class OESVertexArrayObject : public WebGLExtension {
 public:
-    static PassRefPtr<OESVertexArrayObject> create(WebGLRenderingContext*);
+    static PassOwnPtr<OESVertexArrayObject> create(WebGLRenderingContext*);
 
     virtual ~OESVertexArrayObject();
     virtual ExtensionName getName() const;
@@ -54,8 +52,6 @@ public:
 
 private:
     OESVertexArrayObject(WebGLRenderingContext*);
-    
-    WebGLRenderingContext* m_context;
 };
 
 } // namespace WebCore

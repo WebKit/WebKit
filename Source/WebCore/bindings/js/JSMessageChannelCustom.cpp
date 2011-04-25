@@ -38,10 +38,10 @@ void JSMessageChannel::visitChildren(SlotVisitor& visitor)
     Base::visitChildren(visitor);
 
     if (MessagePort* port = m_impl->port1())
-        markDOMObjectWrapper(visitor, *Heap::heap(this)->globalData(), port);
+        visitor.addOpaqueRoot(port);
 
     if (MessagePort* port = m_impl->port2())
-        markDOMObjectWrapper(visitor, *Heap::heap(this)->globalData(), port);
+        visitor.addOpaqueRoot(port);
 }
 
 EncodedJSValue JSC_HOST_CALL JSMessageChannelConstructor::constructJSMessageChannel(ExecState* exec)

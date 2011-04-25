@@ -1,3 +1,172 @@
+2011-04-24  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Removed a use of markDOMObjectWrapper: WebGL, XHR, workers; plus, more autogeneration
+        https://bugs.webkit.org/show_bug.cgi?id=59307
+
+        * WebCore.xcodeproj/project.pbxproj: Added Blob.idl, so it's easier to edit.
+
+        * bindings/js/JSCSSRuleCustom.cpp:
+        * bindings/js/JSCSSStyleDeclarationCustom.cpp:
+        * bindings/js/JSCanvasRenderingContextCustom.cpp:
+        * bindings/js/JSDOMApplicationCacheCustom.cpp: Autogenerate these instead
+        of hand-coding them.
+
+        * bindings/js/JSDOMBinding.h:
+        (WebCore::root): Moved some GC helpers here from JSNodeCustom.h, because
+        they're reasonably generic.
+
+        * bindings/js/JSDOMImplementationCustom.cpp:
+        * bindings/js/JSDOMStringMapCustom.cpp:
+        * bindings/js/JSDOMTokenListCustom.cpp:
+        * bindings/js/JSHTMLCollectionCustom.cpp:
+        * bindings/js/JSMediaListCustom.cpp: Autogenerate these instead of
+        hand-coding them.
+
+        * bindings/js/JSMessageChannelCustom.cpp:
+        (WebCore::JSMessageChannel::visitChildren):
+        * bindings/js/JSMessagePortCustom.cpp:
+        (WebCore::JSMessagePort::visitChildren): Use addOpaqueRoot instead of
+        markDOMObjectWrapper. This is one of the few cases where a DOM object is
+        considered a stand-alone root. It's not as efficient as the shared root
+        case, but workers and message ports are very rare objects, so it's no
+        big deal.
+
+        * bindings/js/JSNamedNodeMapCustom.cpp: Autogenerate!
+
+        * bindings/js/JSNodeCustom.h: Moved to JSDOMBinding.h.
+
+        * bindings/js/JSSharedWorkerCustom.cpp:
+        (WebCore::JSSharedWorker::visitChildren): Use addOpaqueRoot instead of
+        markDOMObjectWrapper, as above. Once again, a stand-alone root.
+
+        * bindings/js/JSStyleSheetCustom.cpp:
+        * bindings/js/JSStyleSheetListCustom.cpp: Autogenerate!
+
+        * bindings/js/JSWebGLRenderingContextCustom.cpp:
+        (WebCore::JSWebGLRenderingContext::visitChildren): Use the opaque roots
+        system for marking WebGL contexts and their associated satellite objects.
+
+        * bindings/js/JSWorkerContextCustom.cpp:
+        (WebCore::JSWorkerContext::visitChildren):
+        * bindings/js/JSXMLHttpRequestCustom.cpp: Use addOpaqueRoot instead of
+        markDOMObjectWrapper, as above. Once again, stand-alone roots.
+
+        (WebCore::JSXMLHttpRequest::visitChildren):
+        * bindings/js/JSXMLHttpRequestUploadCustom.cpp: No need to mark our owner
+        XHR because it is not reachable from us.
+
+        * bindings/scripts/CodeGeneratorJS.pm: Added autogeneration support for a
+        bunch of repetitive cases of isReachableFromOpaqueRoots callbacks.
+
+        * css/CSSRule.idl:
+        * css/CSSStyleDeclaration.idl:
+        * css/MediaList.idl:
+        * css/StyleMedia.idl:
+        * css/StyleSheet.idl:
+        * css/StyleSheetList.idl:
+        * dom/DOMImplementation.idl:
+        * dom/DOMStringMap.idl:
+        * dom/MessagePort.idl:
+        * dom/NamedNodeMap.idl:
+        * fileapi/Blob.idl:
+        * html/DOMTokenList.idl: Opt in to autogeneration.
+
+        * html/HTMLCanvasElement.cpp:
+        (WebCore::HTMLCanvasElement::getContext): Standardized on PassOwnPtr/OwnPtr
+        usage, to reduce human error and make ownership rules more obvious.
+
+        * html/HTMLCollection.idl:
+        * html/canvas/ArrayBuffer.idl: Opt in to autogeneration.
+
+        * html/canvas/CanvasRenderingContext.cpp:
+        * html/canvas/CanvasRenderingContext.h:
+        (WebCore::CanvasRenderingContext::ref):
+        (WebCore::CanvasRenderingContext::deref):
+        * html/canvas/CanvasRenderingContext2D.h:
+        (WebCore::CanvasRenderingContext2D::create):
+        (WebCore::CanvasRenderingContext2D::state): Standardized on PassOwnPtr/OwnPtr
+        usage, to reduce human error and make ownership rules more obvious.
+        
+        Inlined some functions to match our standard idiom and to make the code
+        in the header document itself.
+
+        * html/canvas/CanvasRenderingContext.idl: Opt in to autogeneration.
+
+        * html/canvas/OESStandardDerivatives.cpp:
+        (WebCore::OESStandardDerivatives::OESStandardDerivatives):
+        (WebCore::OESStandardDerivatives::create):
+        * html/canvas/OESStandardDerivatives.h:
+        * html/canvas/OESStandardDerivatives.idl:
+        * html/canvas/OESTextureFloat.cpp:
+        (WebCore::OESTextureFloat::OESTextureFloat):
+        (WebCore::OESTextureFloat::create):
+        * html/canvas/OESTextureFloat.h:
+        * html/canvas/OESTextureFloat.idl:
+        * html/canvas/OESVertexArrayObject.cpp:
+        (WebCore::OESVertexArrayObject::OESVertexArrayObject):
+        (WebCore::OESVertexArrayObject::create):
+        * html/canvas/OESVertexArrayObject.h:
+        * html/canvas/OESVertexArrayObject.idl:
+        * html/canvas/WebGLExtension.cpp:
+        (WebCore::WebGLExtension::WebGLExtension):
+        * html/canvas/WebGLExtension.h:
+        (WebCore::WebGLExtension::ref):
+        (WebCore::WebGLExtension::deref):
+        (WebCore::WebGLExtension::context):
+        * html/canvas/WebGLRenderingContext.cpp:
+        (WebCore::WebGLRenderingContext::~WebGLRenderingContext):
+        (WebCore::WebGLRenderingContext::getExtension):
+        * html/canvas/WebGLRenderingContext.h:
+        * html/canvas/WebKitLoseContext.cpp:
+        (WebCore::WebKitLoseContext::WebKitLoseContext):
+        (WebCore::WebKitLoseContext::create):
+        (WebCore::WebKitLoseContext::loseContext):
+        * html/canvas/WebKitLoseContext.h:
+        * html/canvas/WebKitLoseContext.idl: Updated the ownership model for WebGL
+        canavs rendering contexts to match the model for 2D canvas rendering
+        contexts. This makes garbage collection a lot more straightforward, but
+        it also makes the behavior of these objects more reliable. (Previously,
+        satellite objects would magically stop working when the last reference
+        to their owner object was dropped. Now, satellite objects keep their owner
+        alive through reference counting.)
+
+        * loader/appcache/DOMApplicationCache.idl:
+        * page/BarInfo.idl:
+        * page/Console.idl:
+        * page/DOMSelection.idl:
+        * page/Geolocation.idl:
+        * page/History.idl:
+        * page/Location.idl:
+        * page/Navigator.idl:
+        * page/Screen.idl:
+        * page/WorkerNavigator.idl:
+        * plugins/DOMMimeTypeArray.h:
+        (WebCore::DOMMimeTypeArray::frame):
+        * plugins/DOMMimeTypeArray.idl:
+        * plugins/DOMPluginArray.h:
+        (WebCore::DOMPluginArray::frame):
+        * plugins/DOMPluginArray.idl:
+        * storage/Storage.idl:
+        * workers/WorkerLocation.idl: Opt in to autogeneration.
+
+        * xml/XMLHttpRequest.cpp:
+        (WebCore::XMLHttpRequest::~XMLHttpRequest):
+        * xml/XMLHttpRequest.h:
+        * xml/XMLHttpRequestUpload.cpp:
+        (WebCore::XMLHttpRequestUpload::scriptExecutionContext):
+        * xml/XMLHttpRequestUpload.h:
+        (WebCore::XMLHttpRequestUpload::create):
+        (WebCore::XMLHttpRequestUpload::ref):
+        (WebCore::XMLHttpRequestUpload::deref):
+        (WebCore::XMLHttpRequestUpload::xmlHttpRequest):
+        (WebCore::XMLHttpRequestUpload::toXMLHttpRequestUpload):
+        * xml/XMLHttpRequestUpload.idl: Updated the ownership model for XHR and
+        its associated upload object to match the model for canvas. This makes
+        garbage collection a lot more straightforward, but it also makes the
+        behavior of these objects more reliable.
+
 2011-04-24  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r84759.

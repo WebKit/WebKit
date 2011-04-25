@@ -35,17 +35,6 @@ using namespace JSC;
 
 namespace WebCore {
 
-bool JSStyleSheetListOwner::isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown> handle, void*, MarkStack& markStack)
-{
-    JSStyleSheetList* jsStyleSheetList = static_cast<JSStyleSheetList*>(handle.get().asCell());
-    if (!jsStyleSheetList->hasCustomProperties())
-        return false;
-    Document* document = jsStyleSheetList->impl()->document();
-    if (!document)
-        return false;
-    return markStack.containsOpaqueRoot(document);
-}
-
 bool JSStyleSheetList::canGetItemsForName(ExecState*, StyleSheetList* styleSheetList, const Identifier& propertyName)
 {
     return styleSheetList->getNamedItem(identifierToString(propertyName));

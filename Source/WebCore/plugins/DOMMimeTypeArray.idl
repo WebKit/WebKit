@@ -21,6 +21,7 @@
 module window {
 
     interface [
+        GenerateIsReachable=ImplFrame,
         HasNameGetter,
         HasIndexGetter
     ] DOMMimeTypeArray {

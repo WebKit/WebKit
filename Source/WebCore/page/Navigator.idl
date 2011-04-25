@@ -20,7 +20,7 @@
 module window {
 
     interface [
-        CustomIsReachable=Frame,
+        GenerateIsReachable=ImplFrame,
         OmitConstructor
     ] Navigator {
         readonly attribute DOMString appCodeName;

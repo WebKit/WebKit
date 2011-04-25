@@ -37,14 +37,6 @@ using namespace JSC;
 
 namespace WebCore {
 
-bool JSHTMLCollectionOwner::isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown> handle, void*, MarkStack& markStack)
-{
-    JSHTMLCollection* jsHTMLCollection = static_cast<JSHTMLCollection*>(handle.get().asCell());
-    if (!jsHTMLCollection->hasCustomProperties())
-        return false;
-    return markStack.containsOpaqueRoot(root(jsHTMLCollection->impl()->base()));
-}
-
 static JSValue getNamedItems(ExecState* exec, JSHTMLCollection* collection, const Identifier& propertyName)
 {
     Vector<RefPtr<Node> > namedItems;

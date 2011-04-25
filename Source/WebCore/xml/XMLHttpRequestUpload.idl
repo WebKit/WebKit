@@ -29,7 +29,7 @@
 module xml {
 
     interface [
-        CustomMarkFunction,
+        GenerateIsReachable=Impl,
         EventTarget,
         NoStaticTables
     ] XMLHttpRequestUpload {

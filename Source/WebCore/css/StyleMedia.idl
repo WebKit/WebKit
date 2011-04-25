@@ -26,7 +26,7 @@
 
 module view {
     interface [
-        CustomIsReachable=Frame
+        GenerateIsReachable=ImplFrame
     ] StyleMedia {
         readonly attribute DOMString type;
         boolean matchMedium(in DOMString mediaquery);

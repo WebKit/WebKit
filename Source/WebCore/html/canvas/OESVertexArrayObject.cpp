@@ -36,8 +36,7 @@
 namespace WebCore {
 
 OESVertexArrayObject::OESVertexArrayObject(WebGLRenderingContext* context)
-    : WebGLExtension()
-    , m_context(context)
+    : WebGLExtension(context)
 {
 }
 
@@ -50,9 +49,9 @@ WebGLExtension::ExtensionName OESVertexArrayObject::getName() const
     return OESVertexArrayObjectName;
 }
 
-PassRefPtr<OESVertexArrayObject> OESVertexArrayObject::create(WebGLRenderingContext* context)
+PassOwnPtr<OESVertexArrayObject> OESVertexArrayObject::create(WebGLRenderingContext* context)
 {
-    return adoptRef(new OESVertexArrayObject(context));
+    return adoptPtr(new OESVertexArrayObject(context));
 }
 
 PassRefPtr<WebGLVertexArrayObjectOES> OESVertexArrayObject::createVertexArrayOES()

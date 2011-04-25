@@ -34,15 +34,4 @@ using namespace JSC;
 
 namespace WebCore {
 
-bool JSDOMTokenListOwner::isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown> handle, void*, SlotVisitor& visitor)
-{
-    JSDOMTokenList* jsDOMTokenList = static_cast<JSDOMTokenList*>(handle.get().asCell());
-    if (!jsDOMTokenList->hasCustomProperties())
-        return false;
-    Element* element = jsDOMTokenList->impl()->element();
-    if (!element)
-        return false;
-    return visitor.containsOpaqueRoot(root(element));
-}
-
 } // namespace WebCore

@@ -28,6 +28,7 @@ module events {
 
     interface [
         CustomMarkFunction,
+        GenerateIsReachable=Impl,
         EventTarget,
         NoStaticTables
     ] MessagePort {

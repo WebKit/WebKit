@@ -26,11 +26,11 @@
 #ifndef WebGLExtension_h
 #define WebGLExtension_h
 
-#include <wtf/RefCounted.h>
+#include "WebGLRenderingContext.h"
 
 namespace WebCore {
 
-class WebGLExtension : public RefCounted<WebGLExtension> {
+class WebGLExtension {
 public:
     // Extension names are needed to properly wrap instances in JavaScript objects.
     enum ExtensionName {
@@ -40,11 +40,16 @@ public:
         OESVertexArrayObjectName,
     };
 
+    void ref() { m_context->ref(); }
+    void deref() { m_context->deref(); }
+    WebGLRenderingContext* context() { return m_context; }
+
     virtual ~WebGLExtension();
     virtual ExtensionName getName() const = 0;
 
 protected:
-    WebGLExtension();
+    WebGLExtension(WebGLRenderingContext*);
+    WebGLRenderingContext* m_context;
 };
 
 } // namespace WebCore

@@ -41,14 +41,4 @@ using namespace JSC;
 
 namespace WebCore {
 
-void JSXMLHttpRequestUpload::visitChildren(SlotVisitor& visitor)
-{
-    Base::visitChildren(visitor);
-
-    if (XMLHttpRequest* xmlHttpRequest = m_impl->associatedXMLHttpRequest())
-        markDOMObjectWrapper(visitor, *Heap::heap(this)->globalData(), xmlHttpRequest);
-
-    m_impl->visitJSEventListeners(visitor);
-}
-
 } // namespace WebCore

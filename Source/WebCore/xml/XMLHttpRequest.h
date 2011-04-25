@@ -178,7 +178,7 @@ private:
     void networkError();
     void abortError();
 
-    RefPtr<XMLHttpRequestUpload> m_upload;
+    OwnPtr<XMLHttpRequestUpload> m_upload;
 
     KURL m_url;
     String m_method;

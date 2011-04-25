@@ -44,12 +44,6 @@ using namespace WTF;
 
 namespace WebCore {
 
-bool JSCSSStyleDeclarationOwner::isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown> handle, void*, MarkStack& markStack)
-{
-    JSCSSStyleDeclaration* jsCSSStyleDeclaration = static_cast<JSCSSStyleDeclaration*>(handle.get().asCell());
-    return markStack.containsOpaqueRoot(root(jsCSSStyleDeclaration->impl()));
-}
-
 void JSCSSStyleDeclaration::visitChildren(SlotVisitor& visitor)
 {
     Base::visitChildren(visitor);

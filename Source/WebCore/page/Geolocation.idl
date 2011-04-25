@@ -27,7 +27,7 @@ module core {
 
     interface [
         Conditional=GEOLOCATION, 
-        CustomIsReachable=Frame,
+        GenerateIsReachable=ImplFrame,
         OmitConstructor
     ] Geolocation {
         [Custom] void getCurrentPosition(in PositionCallback successCallback, in PositionErrorCallback errorCallback, in PositionOptions options);

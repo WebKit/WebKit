@@ -31,7 +31,8 @@
 
 namespace WebCore {
 
-OESStandardDerivatives::OESStandardDerivatives() : WebGLExtension()
+OESStandardDerivatives::OESStandardDerivatives(WebGLRenderingContext* context)
+    : WebGLExtension(context)
 {
 }
 
@@ -44,9 +45,9 @@ WebGLExtension::ExtensionName OESStandardDerivatives::getName() const
     return OESStandardDerivativesName;
 }
 
-PassRefPtr<OESStandardDerivatives> OESStandardDerivatives::create()
+PassOwnPtr<OESStandardDerivatives> OESStandardDerivatives::create(WebGLRenderingContext* context)
 {
-    return adoptRef(new OESStandardDerivatives);
+    return adoptPtr(new OESStandardDerivatives(context));
 }
 
 } // namespace WebCore

@@ -22,7 +22,7 @@ module stylesheets {
 
     // Introduced in DOM Level 2:
     interface [
-        CustomIsReachable,
+        GenerateIsReachable=ImplDocument,
         HasIndexGetter,
         HasNameGetter
     ] StyleSheetList {

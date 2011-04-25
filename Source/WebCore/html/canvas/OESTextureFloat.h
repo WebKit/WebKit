@@ -27,20 +27,19 @@
 #define OESTextureFloat_h
 
 #include "WebGLExtension.h"
-#include <wtf/PassRefPtr.h>
-#include <wtf/RefCounted.h>
+#include <wtf/PassOwnPtr.h>
 
 namespace WebCore {
 
 class OESTextureFloat : public WebGLExtension {
 public:
-    static PassRefPtr<OESTextureFloat> create();
+    static PassOwnPtr<OESTextureFloat> create(WebGLRenderingContext*);
 
     virtual ~OESTextureFloat();
     virtual ExtensionName getName() const;
 
 private:
-    OESTextureFloat();
+    OESTextureFloat(WebGLRenderingContext*);
 };
 
 } // namespace WebCore

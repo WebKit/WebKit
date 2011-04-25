@@ -41,16 +41,6 @@ CanvasRenderingContext::CanvasRenderingContext(HTMLCanvasElement* canvas)
 {
 }
 
-void CanvasRenderingContext::ref()
-{
-    m_canvas->ref();
-}
-
-void CanvasRenderingContext::deref()
-{
-    m_canvas->deref(); 
-}
-
 void CanvasRenderingContext::checkOrigin(const CanvasPattern* pattern)
 {
     if (canvas()->originClean() && pattern && !pattern->originClean())

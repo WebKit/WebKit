@@ -35,14 +35,6 @@ using namespace JSC;
 
 namespace WebCore {
 
-bool JSDOMStringMapOwner::isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown> handle, void*, SlotVisitor& visitor)
-{
-    JSDOMStringMap* jsDOMStringMap = static_cast<JSDOMStringMap*>(handle.get().asCell());
-    if (!jsDOMStringMap->hasCustomProperties())
-        return false;
-    return visitor.containsOpaqueRoot(root(jsDOMStringMap->impl()->element()));
-}
-
 bool JSDOMStringMap::canGetItemsForName(ExecState*, DOMStringMap* impl, const Identifier& propertyName)
 {
     return impl->contains(identifierToAtomicString(propertyName));

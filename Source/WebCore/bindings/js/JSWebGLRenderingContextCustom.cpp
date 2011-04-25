@@ -195,10 +195,7 @@ static JSValue toJS(ExecState* exec, JSDOMGlobalObject* globalObject, WebGLExten
 void JSWebGLRenderingContext::visitChildren(SlotVisitor& visitor)
 {
     Base::visitChildren(visitor);
-
-    WebGLRenderingContext* context = static_cast<WebGLRenderingContext*>(impl());
-    for (int i = 0; i < context->getNumberOfExtensions(); ++i)
-        markDOMObjectWrapper(visitor, *Heap::heap(this)->globalData(), context->getExtensionNumber(i));
+    visitor.addOpaqueRoot(impl());
 }
 
 JSValue JSWebGLRenderingContext::getAttachedShaders(ExecState* exec)

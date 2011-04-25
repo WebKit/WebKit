@@ -59,17 +59,17 @@ void JSXMLHttpRequest::visitChildren(SlotVisitor& visitor)
     Base::visitChildren(visitor);
 
     if (XMLHttpRequestUpload* upload = m_impl->optionalUpload())
-        markDOMObjectWrapper(visitor, *Heap::heap(this)->globalData(), upload);
+        visitor.addOpaqueRoot(upload);
 
     if (Document* responseDocument = m_impl->optionalResponseXML())
-        markDOMObjectWrapper(visitor, *Heap::heap(this)->globalData(), responseDocument);
+        visitor.addOpaqueRoot(responseDocument);
 
     if (ArrayBuffer* responseArrayBuffer = m_impl->optionalResponseArrayBuffer())
-        markDOMObjectWrapper(visitor, *Heap::heap(this)->globalData(), responseArrayBuffer);
+        visitor.addOpaqueRoot(responseArrayBuffer);
 
 #if ENABLE(XHR_RESPONSE_BLOB)
     if (Blob* responseBlob = m_impl->optionalResponseBlob())
-        markDOMObjectWrapper(visitor, *Heap::heap(this)->globalData(), responseBlob);
+        visitor.addOpaqueRoot(responseBlob);
 #endif
 
     m_impl->visitJSEventListeners(visitor);

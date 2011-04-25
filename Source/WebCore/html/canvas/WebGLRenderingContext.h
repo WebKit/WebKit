@@ -293,10 +293,6 @@ public:
     
     unsigned getMaxVertexAttribs() const { return m_maxVertexAttribs; }
 
-    // Helpers for JSC bindings.
-    int getNumberOfExtensions();
-    WebGLExtension* getExtensionNumber(int i);
-
   private:
     friend class WebGLObject;
     friend class OESVertexArrayObject;
@@ -465,10 +461,10 @@ public:
     bool m_isDepthStencilSupported;
 
     // Enabled extension objects.
-    RefPtr<OESTextureFloat> m_oesTextureFloat;
-    RefPtr<OESStandardDerivatives> m_oesStandardDerivatives;
-    RefPtr<OESVertexArrayObject> m_oesVertexArrayObject;
-    RefPtr<WebKitLoseContext> m_webkitLoseContext;
+    OwnPtr<OESTextureFloat> m_oesTextureFloat;
+    OwnPtr<OESStandardDerivatives> m_oesStandardDerivatives;
+    OwnPtr<OESVertexArrayObject> m_oesVertexArrayObject;
+    OwnPtr<WebKitLoseContext> m_webkitLoseContext;
 
     // Helpers for getParameter and others
     WebGLGetInfo getBooleanParameter(GC3Denum);

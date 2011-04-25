@@ -6767,6 +6767,7 @@
 		14947FFC12F80CD200A0F631 /* DocumentOrderedMap.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DocumentOrderedMap.h; sourceTree = "<group>"; };
 		14993BE30B2F2B1C0050497F /* FocusController.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = FocusController.cpp; sourceTree = "<group>"; };
 		14993BE40B2F2B1C0050497F /* FocusController.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = FocusController.h; sourceTree = "<group>"; };
+		14A98E05136386A200C9FED2 /* Blob.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = Blob.idl; path = ../../../webkit/Source/WebCore/fileapi/Blob.idl; sourceTree = SOURCE_ROOT; };
 		14C9A5E90B3D105F005A0232 /* Settings.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = Settings.cpp; sourceTree = "<group>"; };
 		14CD8D81106B529000A46D23 /* JSSharedWorkerCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSSharedWorkerCustom.cpp; sourceTree = "<group>"; };
 		14CF787109F587CA00EB3665 /* CSSValue.idl */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; path = CSSValue.idl; sourceTree = "<group>"; };
@@ -16250,6 +16251,7 @@
 				976D6C74122B8A3D001FD1F7 /* AsyncFileWriterClient.h */,
 				976D6C59122B8A3D001FD1F7 /* Blob.cpp */,
 				976D6C5A122B8A3D001FD1F7 /* Blob.h */,
+				14A98E05136386A200C9FED2 /* Blob.idl */,
 				976D6C5F122B8A3D001FD1F7 /* BlobURL.cpp */,
 				976D6C60122B8A3D001FD1F7 /* BlobURL.h */,
 				89878539122CA064003AABDA /* DirectoryEntry.cpp */,

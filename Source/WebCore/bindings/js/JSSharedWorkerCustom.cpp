@@ -48,7 +48,7 @@ void JSSharedWorker::visitChildren(SlotVisitor& visitor)
     Base::visitChildren(visitor);
 
     if (MessagePort* port = impl()->port())
-        markDOMObjectWrapper(visitor, *Heap::heap(this)->globalData(), port);
+        visitor.addOpaqueRoot(port);
 }
 
 EncodedJSValue JSC_HOST_CALL JSSharedWorkerConstructor::constructJSSharedWorker(ExecState* exec)

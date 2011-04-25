@@ -35,17 +35,6 @@ using namespace JSC;
 
 namespace WebCore {
 
-bool JSNamedNodeMapOwner::isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown> handle, void*, SlotVisitor& visitor)
-{
-    JSNamedNodeMap* jsNamedNodeMap = static_cast<JSNamedNodeMap*>(handle.get().asCell());
-    if (!jsNamedNodeMap->hasCustomProperties())
-        return false;
-    Element* element = jsNamedNodeMap->impl()->element();
-    if (!element)
-        return false;
-    return visitor.containsOpaqueRoot(root(element));
-}
-
 bool JSNamedNodeMap::canGetItemsForName(ExecState*, NamedNodeMap* impl, const Identifier& propertyName)
 {
     return impl->getNamedItem(identifierToString(propertyName));

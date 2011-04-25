@@ -37,6 +37,7 @@ public:
     static PassRefPtr<DOMPluginArray> create(Frame* frame) { return adoptRef(new DOMPluginArray(frame)); }
     ~DOMPluginArray();
 
+    Frame* frame() { return m_frame; }
     void disconnectFrame() { m_frame = 0; }
 
     unsigned length() const;

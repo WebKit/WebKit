@@ -27,7 +27,7 @@
 #define CanvasRenderingContext_h
 
 #include "GraphicsLayer.h"
-
+#include "HTMLCanvasElement.h"
 #include <wtf/HashSet.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/text/StringHash.h>
@@ -44,13 +44,10 @@ class WebGLObject;
 class CanvasRenderingContext {
     WTF_MAKE_NONCOPYABLE(CanvasRenderingContext); WTF_MAKE_FAST_ALLOCATED;
 public:
-    CanvasRenderingContext(HTMLCanvasElement*);
     virtual ~CanvasRenderingContext() { }
 
-    // Ref and deref the m_canvas
-    void ref();
-    void deref();
-
+    void ref() { m_canvas->ref(); }
+    void deref() { m_canvas->deref(); }
     HTMLCanvasElement* canvas() const { return m_canvas; }
 
     virtual bool is2d() const { return false; }
@@ -65,6 +62,7 @@ public:
 #endif
 
 protected:
+    CanvasRenderingContext(HTMLCanvasElement*);
     void checkOrigin(const CanvasPattern*);
     void checkOrigin(const HTMLCanvasElement*);
     void checkOrigin(const HTMLImageElement*);

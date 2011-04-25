@@ -26,6 +26,8 @@
 #include "JSDOMWrapper.h"
 #include "DOMWrapperWorld.h"
 #include "Document.h"
+#include "Element.h"
+#include "StyleBase.h"
 #include <heap/Weak.h>
 #include <runtime/Completion.h>
 #include <runtime/Lookup.h>
@@ -39,6 +41,7 @@ namespace JSC {
 
 namespace WebCore {
 
+    class CSSValue;
     class Document;
     class Frame;
     class JSNode;
@@ -198,6 +201,28 @@ namespace WebCore {
             return wrapper;
         return createWrapper<WrapperClass>(exec, globalObject, domObject);
     }
+
+    inline void* root(Node* node)
+    {
+        if (node->inDocument())
+            return node->document();
+
+        while (node->parentNode())
+            node = node->parentNode();
+        return node;
+    }
+
+    inline void* root(StyleBase* styleBase)
+    {
+        while (styleBase->parent())
+            styleBase = styleBase->parent();
+
+        if (Node* node = styleBase->node())
+            return root(node);
+        return styleBase;
+    }
+
+    HashMap<CSSValue*, void*>& cssValueRoots();
 
     const JSC::HashTable* getHashTableForGlobalData(JSC::JSGlobalData&, const JSC::HashTable* staticTable);
 

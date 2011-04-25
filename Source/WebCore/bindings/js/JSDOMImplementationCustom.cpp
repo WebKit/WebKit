@@ -29,12 +29,4 @@ using namespace JSC;
 
 namespace WebCore {
 
-bool JSDOMImplementationOwner::isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown> handle, void*, SlotVisitor& visitor)
-{
-    JSDOMImplementation* jsDOMImplementation = static_cast<JSDOMImplementation*>(handle.get().asCell());
-    if (!jsDOMImplementation->hasCustomProperties())
-        return false;
-    return visitor.containsOpaqueRoot(jsDOMImplementation->impl()->document());
-}
-
 }

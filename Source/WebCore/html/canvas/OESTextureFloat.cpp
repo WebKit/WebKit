@@ -31,7 +31,8 @@
 
 namespace WebCore {
 
-OESTextureFloat::OESTextureFloat() : WebGLExtension()
+OESTextureFloat::OESTextureFloat(WebGLRenderingContext* context)
+    : WebGLExtension(context)
 {
 }
 
@@ -44,9 +45,9 @@ WebGLExtension::ExtensionName OESTextureFloat::getName() const
     return OESTextureFloatName;
 }
 
-PassRefPtr<OESTextureFloat> OESTextureFloat::create()
+PassOwnPtr<OESTextureFloat> OESTextureFloat::create(WebGLRenderingContext* context)
 {
-    return adoptRef(new OESTextureFloat);
+    return adoptPtr(new OESTextureFloat(context));
 }
 
 } // namespace WebCore

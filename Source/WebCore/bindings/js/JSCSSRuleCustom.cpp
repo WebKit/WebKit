@@ -48,14 +48,6 @@ using namespace JSC;
 
 namespace WebCore {
 
-bool JSCSSRuleOwner::isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown> handle, void*, MarkStack& markStack)
-{
-    JSCSSRule* jsCSSRule = static_cast<JSCSSRule*>(handle.get().asCell());
-    if (!jsCSSRule->hasCustomProperties())
-        return false;
-    return markStack.containsOpaqueRoot(root(jsCSSRule->impl()));
-}
-
 void JSCSSRule::visitChildren(SlotVisitor& visitor)
 {
     Base::visitChildren(visitor);

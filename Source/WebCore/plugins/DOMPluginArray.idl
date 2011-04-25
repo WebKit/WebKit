@@ -21,7 +21,8 @@
 module window {
 
     interface [
-        HasNameGetter, 
+        GenerateIsReachable=ImplFrame,
+        HasNameGetter,
         HasIndexGetter
     ] DOMPluginArray {
         readonly attribute unsigned long length;

@@ -21,7 +21,7 @@
 module core {
 
     interface [
-        CustomIsReachable
+        GenerateIsReachable=ImplDocument
     ] DOMImplementation {
 
         // DOM Level 1

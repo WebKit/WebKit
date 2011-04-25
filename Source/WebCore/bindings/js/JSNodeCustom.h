@@ -32,8 +32,6 @@
 
 namespace WebCore {
 
-class CSSValue;
-
 inline JSDOMWrapper* getInlineCachedWrapper(DOMWrapperWorld* world, Node* node)
 {
     if (!world->isNormal())
@@ -72,28 +70,6 @@ inline JSC::JSValue toJS(JSC::ExecState* exec, JSDOMGlobalObject* globalObject, 
 
     return createWrapper(exec, globalObject, node);
 }
-
-static inline void* root(Node* node)
-{
-    if (node->inDocument())
-        return node->document();
-
-    while (node->parentNode())
-        node = node->parentNode();
-    return node;
-}
-
-static inline void* root(StyleBase* styleBase)
-{
-    while (styleBase->parent())
-        styleBase = styleBase->parent();
-
-    if (Node* node = styleBase->node())
-        return root(node);
-    return styleBase;
-}
-
-HashMap<CSSValue*, void*>& cssValueRoots();
 
 }
 

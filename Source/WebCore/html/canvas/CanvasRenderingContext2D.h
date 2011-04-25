@@ -67,8 +67,10 @@ typedef int ExceptionCode;
 
 class CanvasRenderingContext2D : public CanvasRenderingContext {
 public:
-    CanvasRenderingContext2D(HTMLCanvasElement*, bool usesCSSCompatibilityParseMode, bool usesDashboardCompatibilityMode);
-
+    static PassOwnPtr<CanvasRenderingContext2D> create(HTMLCanvasElement* canvas, bool usesCSSCompatibilityParseMode, bool usesDashboardCompatibilityMode)
+    {
+        return adoptPtr(new CanvasRenderingContext2D(canvas, usesCSSCompatibilityParseMode, usesDashboardCompatibilityMode));
+    }
     virtual ~CanvasRenderingContext2D();
 
     virtual bool is2d() const { return true; }
@@ -261,12 +263,6 @@ private:
         Font m_font;
         bool m_realizedFont;
     };
-    Path m_path;
-
-    State& state() { return m_stateStack.last(); }
-    const State& state() const { return m_stateStack.last(); }
-
-    void applyShadow();
 
     enum CanvasDidDrawOption {
         CanvasDidDrawApplyNone = 0,
@@ -275,6 +271,15 @@ private:
         CanvasDidDrawApplyClip = 1 << 2,
         CanvasDidDrawApplyAll = 0xffffffff
     };
+
+    CanvasRenderingContext2D(HTMLCanvasElement*, bool usesCSSCompatibilityParseMode, bool usesDashboardCompatibilityMode);
+
+    Path m_path;
+
+    State& state() { return m_stateStack.last(); }
+    const State& state() const { return m_stateStack.last(); }
+
+    void applyShadow();
 
     void didDraw(const FloatRect&, unsigned options = CanvasDidDrawApplyAll);
 

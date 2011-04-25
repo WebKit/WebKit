@@ -24,6 +24,10 @@
  */
 
 module html {
-    interface [Conditional=WEBGL, OmitConstructor] OESTextureFloat {
+    interface [
+        Conditional=WEBGL,
+        GenerateIsReachable=ImplContext,
+        OmitConstructor
+    ] OESTextureFloat {
     };
 }

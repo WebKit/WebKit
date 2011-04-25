@@ -34,8 +34,7 @@
 namespace WebCore {
 
 WebKitLoseContext::WebKitLoseContext(WebGLRenderingContext* context)
-    : WebGLExtension()
-    , m_context(context)
+    : WebGLExtension(context)
 {
 }
 
@@ -48,15 +47,14 @@ WebGLExtension::ExtensionName WebKitLoseContext::getName() const
     return WebKitLoseContextName;
 }
 
-PassRefPtr<WebKitLoseContext> WebKitLoseContext::create(WebGLRenderingContext* context)
+PassOwnPtr<WebKitLoseContext> WebKitLoseContext::create(WebGLRenderingContext* context)
 {
-    return adoptRef(new WebKitLoseContext(context));
+    return adoptPtr(new WebKitLoseContext(context));
 }
 
 void WebKitLoseContext::loseContext()
 {
-    if (m_context)
-        m_context->forceLostContext();
+    m_context->forceLostContext();
 }
 
 } // namespace WebCore

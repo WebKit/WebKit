@@ -43,10 +43,7 @@ XMLHttpRequestUpload::XMLHttpRequestUpload(XMLHttpRequest* xmlHttpRequest)
 
 ScriptExecutionContext* XMLHttpRequestUpload::scriptExecutionContext() const
 {
-    XMLHttpRequest* xmlHttpRequest = associatedXMLHttpRequest();
-    if (!xmlHttpRequest)
-        return 0;
-    return xmlHttpRequest->scriptExecutionContext();
+    return m_xmlHttpRequest->scriptExecutionContext();
 }
 
 EventTargetData* XMLHttpRequestUpload::eventTargetData()

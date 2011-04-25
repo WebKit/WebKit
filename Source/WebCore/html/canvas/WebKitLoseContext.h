@@ -27,8 +27,7 @@
 #define WebKitLoseContext_h
 
 #include "WebGLExtension.h"
-#include <wtf/PassRefPtr.h>
-#include <wtf/RefCounted.h>
+#include <wtf/PassOwnPtr.h>
 
 namespace WebCore {
 
@@ -36,18 +35,15 @@ class WebGLRenderingContext;
 
 class WebKitLoseContext : public WebGLExtension {
 public:
-    static PassRefPtr<WebKitLoseContext> create(WebGLRenderingContext*);
+    static PassOwnPtr<WebKitLoseContext> create(WebGLRenderingContext*);
 
     virtual ~WebKitLoseContext();
     virtual ExtensionName getName() const;
 
     void loseContext();
-    void contextDestroyed() { m_context = 0; }
 
 private:
     WebKitLoseContext(WebGLRenderingContext*);
-
-    WebGLRenderingContext* m_context;
 };
 
 } // namespace WebCore

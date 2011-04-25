@@ -474,8 +474,6 @@ WebGLRenderingContext::~WebGLRenderingContext()
 {
     detachAndRemoveAllObjects();
     m_context->setContextLostCallback(0);
-    if (m_webkitLoseContext)
-        m_webkitLoseContext->contextDestroyed();
 }
 
 void WebGLRenderingContext::markContextChanged()
@@ -1959,7 +1957,7 @@ WebGLExtension* WebGLRenderingContext::getExtension(const String& name)
         && m_context->getExtensions()->supports("GL_OES_standard_derivatives")) {
         if (!m_oesStandardDerivatives) {
             m_context->getExtensions()->ensureEnabled("GL_OES_standard_derivatives");
-            m_oesStandardDerivatives = OESStandardDerivatives::create();
+            m_oesStandardDerivatives = OESStandardDerivatives::create(this);
         }
         return m_oesStandardDerivatives.get();
     }
@@ -1967,7 +1965,7 @@ WebGLExtension* WebGLRenderingContext::getExtension(const String& name)
         && m_context->getExtensions()->supports("GL_OES_texture_float")) {
         if (!m_oesTextureFloat) {
             m_context->getExtensions()->ensureEnabled("GL_OES_texture_float");
-            m_oesTextureFloat = OESTextureFloat::create();
+            m_oesTextureFloat = OESTextureFloat::create(this);
         }
         return m_oesTextureFloat.get();
     }
@@ -4794,37 +4792,6 @@ void WebGLRenderingContext::restoreStatesAfterVertexAttrib0Simulation()
         m_context->vertexAttribPointer(0, state.size, state.type, state.normalized, state.originalStride, state.offset);
     }
     m_context->bindBuffer(GraphicsContext3D::ARRAY_BUFFER, objectOrZero(m_boundArrayBuffer.get()));
-}
-
-int WebGLRenderingContext::getNumberOfExtensions()
-{
-    return (m_oesVertexArrayObject ? 1 : 0) + (m_oesStandardDerivatives ? 1 : 0) + (m_webkitLoseContext ? 1 : 0) + (m_oesTextureFloat ? 1 : 0);
-}
-
-WebGLExtension* WebGLRenderingContext::getExtensionNumber(int i)
-{
-    if (m_oesVertexArrayObject) {
-        if (!i)
-            return m_oesVertexArrayObject.get();
-        --i;
-    }
-    if (m_oesStandardDerivatives) {
-        if (!i)
-            return m_oesStandardDerivatives.get();
-        --i;
-    }
-    if (m_webkitLoseContext) {
-        if (!i)
-            return m_webkitLoseContext.get();
-        --i;
-    }
-    if (m_oesTextureFloat) {
-        if (!i)
-            return m_oesTextureFloat.get();
-        --i;
-    }
-    // Similar tests for other extensions would go here.
-    return 0;
 }
 
 WebGLRenderingContext::LRUImageBufferCache::LRUImageBufferCache(int capacity)

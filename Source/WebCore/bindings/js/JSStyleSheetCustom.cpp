@@ -35,14 +35,6 @@ using namespace JSC;
 
 namespace WebCore {
 
-bool JSStyleSheetOwner::isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown> handle, void*, MarkStack& markStack)
-{
-    JSStyleSheet* jsStyleSheet = static_cast<JSStyleSheet*>(handle.get().asCell());
-    if (!jsStyleSheet->hasCustomProperties())
-        return false;
-    return markStack.containsOpaqueRoot(root(jsStyleSheet->impl()));
-}
-
 void JSStyleSheet::visitChildren(SlotVisitor& visitor)
 {
     Base::visitChildren(visitor);

@@ -46,8 +46,8 @@ void JSMessagePort::visitChildren(SlotVisitor& visitor)
     Base::visitChildren(visitor);
 
     // If we have a locally entangled port, we can directly mark it as reachable. Ports that are remotely entangled are marked in-use by markActiveObjectsForContext().
-    if (MessagePort* entangledPort = m_impl->locallyEntangledPort())
-        markDOMObjectWrapper(visitor, *Heap::heap(this)->globalData(), entangledPort);
+    if (MessagePort* port = m_impl->locallyEntangledPort())
+        visitor.addOpaqueRoot(port);
 
     m_impl->visitJSEventListeners(visitor);
 }

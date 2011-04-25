@@ -37,6 +37,7 @@ public:
     static PassRefPtr<DOMMimeTypeArray> create(Frame* frame) { return adoptRef(new DOMMimeTypeArray(frame)); }
     ~DOMMimeTypeArray();
 
+    Frame* frame() { return m_frame; }
     void disconnectFrame() { m_frame = 0; }
 
     unsigned length() const;

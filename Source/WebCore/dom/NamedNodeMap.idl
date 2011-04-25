@@ -21,7 +21,7 @@
 module core {
 
     interface [
-        CustomIsReachable,
+        GenerateIsReachable=ImplElementRoot,
         CustomMarkFunction,
         HasIndexGetter,
         HasNameGetter
