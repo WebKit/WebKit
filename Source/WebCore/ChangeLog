@@ -2,6 +2,16 @@
 
         Reviewed by David Levin.
 
+        Fix strict OwnPtr in Element.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=59357
+
+        * dom/NodeRareData.h:
+        (WebCore::NodeRareData::ensureEventTargetData):
+
+2011-04-25  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by David Levin.
+
         Fix strict OwnPtr issues in Media*.cpp
         https://bugs.webkit.org/show_bug.cgi?id=59354
 

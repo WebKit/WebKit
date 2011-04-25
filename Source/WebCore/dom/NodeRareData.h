@@ -120,7 +120,7 @@ public:
     EventTargetData* ensureEventTargetData()
     {
         if (!m_eventTargetData)
-            m_eventTargetData.set(new EventTargetData);
+            m_eventTargetData = adoptPtr(new EventTargetData);
         return m_eventTargetData.get();
     }
 
