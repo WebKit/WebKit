@@ -899,7 +899,7 @@ sub printWrapperFunctions
             # FIXME: This should have been done via a CustomWrapper attribute and a separate *Custom file.
             if ($enabledTags{$tagName}{wrapperOnlyIfMediaIsAvailable}) {
                 print F <<END
-static JSNode* create${JSInterfaceName}Wrapper(ExecState* exec, JSDOMGlobalObject* globalObject, PassRefPtr<$parameters{namespace}Element> element)
+static JSDOMWrapper* create${JSInterfaceName}Wrapper(ExecState* exec, JSDOMGlobalObject* globalObject, PassRefPtr<$parameters{namespace}Element> element)
 {
     Settings* settings = element->document()->settings();
     if (!MediaPlayer::isAvailable() || (settings && !settings->isMediaEnabled()))
@@ -911,7 +911,7 @@ END
 ;
             } else {
                 print F <<END
-static JSNode* create${JSInterfaceName}Wrapper(ExecState* exec, JSDOMGlobalObject* globalObject, PassRefPtr<$parameters{namespace}Element> element)
+static JSDOMWrapper* create${JSInterfaceName}Wrapper(ExecState* exec, JSDOMGlobalObject* globalObject, PassRefPtr<$parameters{namespace}Element> element)
 {
     return CREATE_DOM_NODE_WRAPPER(exec, globalObject, ${JSInterfaceName}, element.get());
 }
@@ -1010,7 +1010,7 @@ END
 ;
     if ($wrapperFactoryType eq "JS") {
         print F <<END
-typedef JSNode* (*Create$parameters{namespace}ElementWrapperFunction)(ExecState*, JSDOMGlobalObject*, PassRefPtr<$parameters{namespace}Element>);
+typedef JSDOMWrapper* (*Create$parameters{namespace}ElementWrapperFunction)(ExecState*, JSDOMGlobalObject*, PassRefPtr<$parameters{namespace}Element>);
 
 END
 ;
@@ -1026,7 +1026,7 @@ END
 
     if ($wrapperFactoryType eq "JS") {
         print F <<END
-JSNode* createJS$parameters{namespace}Wrapper(ExecState* exec, JSDOMGlobalObject* globalObject, PassRefPtr<$parameters{namespace}Element> element)
+JSDOMWrapper* createJS$parameters{namespace}Wrapper(ExecState* exec, JSDOMGlobalObject* globalObject, PassRefPtr<$parameters{namespace}Element> element)
 {
     typedef HashMap<WTF::AtomicStringImpl*, Create$parameters{namespace}ElementWrapperFunction> FunctionMap;
     DEFINE_STATIC_LOCAL(FunctionMap, map, ());
@@ -1119,11 +1119,11 @@ namespace JSC {
                                              
 namespace WebCore {
 
-    class JSNode;
+    class JSDOMWrapper;
     class JSDOMGlobalObject;
     class $parameters{namespace}Element;
 
-    JSNode* createJS$parameters{namespace}Wrapper(JSC::ExecState*, JSDOMGlobalObject*, PassRefPtr<$parameters{namespace}Element>);
+    JSDOMWrapper* createJS$parameters{namespace}Wrapper(JSC::ExecState*, JSDOMGlobalObject*, PassRefPtr<$parameters{namespace}Element>);
 
 }
  

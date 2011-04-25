@@ -1,3 +1,10 @@
+2011-04-25  Geoffrey Garen  <ggaren@apple.com>
+
+        Build fix: Let's edit the script instead of the autogenrated file. That
+        way, our change will stand the test of time.
+
+        * dom/make_names.pl:
+
 2011-04-25  Adam Barth  <abarth@webkit.org>
 
         Reviewed by David Levin.
