@@ -782,7 +782,7 @@ bool RenderView::usesCompositing() const
 RenderLayerCompositor* RenderView::compositor()
 {
     if (!m_compositor)
-        m_compositor.set(new RenderLayerCompositor(this));
+        m_compositor = adoptPtr(new RenderLayerCompositor(this));
 
     return m_compositor.get();
 }

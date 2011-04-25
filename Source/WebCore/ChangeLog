@@ -1,3 +1,37 @@
+2011-04-25  James Robinson  <jamesr@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        Fix strict OwnPtr violations in Render*.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=59361
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::RenderBlock):
+        (WebCore::RenderBlock::finishDelayUpdateScrollInfo):
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::addLayoutOverflow):
+        (WebCore::RenderBox::addVisualOverflow):
+        * rendering/RenderButton.cpp:
+        (WebCore::RenderButton::styleDidChange):
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::updateTransform):
+        (WebCore::RenderLayer::paintChildLayerIntoColumns):
+        (WebCore::RenderLayer::hitTestChildLayerColumns):
+        (WebCore::RenderLayer::ensureBacking):
+        * rendering/RenderTable.cpp:
+        (WebCore::RenderTable::styleDidChange):
+        * rendering/RenderView.cpp:
+        (WebCore::RenderView::compositor):
+        * rendering/style/RenderStyle.cpp:
+        (WebCore::RenderStyle::addCachedPseudoStyle):
+        (WebCore::RenderStyle::accessCounterDirectives):
+        (WebCore::RenderStyle::accessAnimations):
+        (WebCore::RenderStyle::accessTransitions):
+        * rendering/svg/RenderSVGResourceFilter.cpp:
+        (WebCore::RenderSVGResourceFilter::applyResource):
+        * rendering/svg/SVGResources.cpp:
+        (WebCore::SVGResources::SVGResources):
+
 2011-04-25  Adam Barth  <abarth@webkit.org>
 
         Attempt to fix the compile.

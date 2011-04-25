@@ -112,9 +112,6 @@ RenderBlock::MarginInfo::MarginInfo(RenderBlock* block, int beforeBorderPadding,
 
 RenderBlock::RenderBlock(Node* node)
       : RenderBox(node)
-      , m_floatingObjects(0)
-      , m_positionedObjects(0)
-      , m_rareData(0)
       , m_lineHeight(-1)
       , m_beingDestroyed(false)
 {
@@ -1092,7 +1089,7 @@ void RenderBlock::finishDelayUpdateScrollInfo()
     if (gDelayUpdateScrollInfo == 0) {
         ASSERT(gDelayedUpdateScrollInfoSet);
 
-        OwnPtr<DelayedUpdateScrollInfoSet> infoSet(gDelayedUpdateScrollInfoSet);
+        OwnPtr<DelayedUpdateScrollInfoSet> infoSet(adoptPtr(gDelayedUpdateScrollInfoSet));
         gDelayedUpdateScrollInfoSet = 0;
 
         for (DelayedUpdateScrollInfoSet::iterator it = infoSet->begin(); it != infoSet->end(); ++it) {

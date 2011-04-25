@@ -250,7 +250,7 @@ RenderStyle* RenderStyle::addCachedPseudoStyle(PassRefPtr<RenderStyle> pseudo)
     RenderStyle* result = pseudo.get();
 
     if (!m_cachedPseudoStyles)
-        m_cachedPseudoStyles.set(new PseudoStyleCache);
+        m_cachedPseudoStyles = adoptPtr(new PseudoStyleCache);
 
     m_cachedPseudoStyles->append(pseudo);
 
@@ -849,8 +849,8 @@ CounterDirectiveMap& RenderStyle::accessCounterDirectives()
 {
     OwnPtr<CounterDirectiveMap>& map = rareNonInheritedData.access()->m_counterDirectives;
     if (!map)
-        map.set(new CounterDirectiveMap);
-    return *map.get();
+        map = adoptPtr(new CounterDirectiveMap);
+    return *map;
 }
 
 const AtomicString& RenderStyle::hyphenString() const
@@ -996,14 +996,14 @@ void RenderStyle::adjustTransitions()
 AnimationList* RenderStyle::accessAnimations()
 {
     if (!rareNonInheritedData.access()->m_animations)
-        rareNonInheritedData.access()->m_animations.set(new AnimationList());
+        rareNonInheritedData.access()->m_animations = adoptPtr(new AnimationList());
     return rareNonInheritedData->m_animations.get();
 }
 
 AnimationList* RenderStyle::accessTransitions()
 {
     if (!rareNonInheritedData.access()->m_transitions)
-        rareNonInheritedData.access()->m_transitions.set(new AnimationList());
+        rareNonInheritedData.access()->m_transitions = adoptPtr(new AnimationList());
     return rareNonInheritedData->m_transitions.get();
 }
 

@@ -153,7 +153,7 @@ bool RenderSVGResourceFilter::applyResource(RenderObject* object, RenderStyle*, 
         delete m_filter.take(object); // Oops, have to rebuild, go through normal code path
     }
 
-    OwnPtr<FilterData> filterData(new FilterData);
+    OwnPtr<FilterData> filterData(adoptPtr(new FilterData));
     FloatRect targetBoundingBox = object->objectBoundingBox();
 
     SVGFilterElement* filterElement = static_cast<SVGFilterElement*>(node());

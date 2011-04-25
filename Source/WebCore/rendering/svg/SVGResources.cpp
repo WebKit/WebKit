@@ -36,10 +36,7 @@
 namespace WebCore {
 
 SVGResources::SVGResources()
-    : m_clipperFilterMaskerData(0)
-    , m_markerData(0)
-    , m_fillStrokeData(0)
-    , m_linkedResource(0)
+    : m_linkedResource(0)
 {
 }
 

@@ -426,7 +426,7 @@ void RenderLayer::updateTransform()
     bool hadTransform = m_transform;
     if (hasTransform != hadTransform) {
         if (hasTransform)
-            m_transform.set(new TransformationMatrix);
+            m_transform = adoptPtr(new TransformationMatrix);
         else
             m_transform.clear();
     }
@@ -2764,10 +2764,10 @@ void RenderLayer::paintChildLayerIntoColumns(RenderLayer* childLayer, RenderLaye
                 TransformationMatrix newTransform(oldTransform);
                 newTransform.translateRight(offset.width(), offset.height());
                 
-                childLayer->m_transform.set(new TransformationMatrix(newTransform));
+                childLayer->m_transform = adoptPtr(new TransformationMatrix(newTransform));
                 childLayer->paintLayer(rootLayer, context, localDirtyRect, paintBehavior, paintingRoot, overlapTestRequests, paintFlags);
                 if (oldHasTransform)
-                    childLayer->m_transform.set(new TransformationMatrix(oldTransform));
+                    childLayer->m_transform = adoptPtr(new TransformationMatrix(oldTransform));
                 else
                     childLayer->m_transform.clear();
             } else {
@@ -3248,10 +3248,10 @@ RenderLayer* RenderLayer::hitTestChildLayerColumns(RenderLayer* childLayer, Rend
                 TransformationMatrix newTransform(oldTransform);
                 newTransform.translateRight(offset.width(), offset.height());
                 
-                childLayer->m_transform.set(new TransformationMatrix(newTransform));
+                childLayer->m_transform = adoptPtr(new TransformationMatrix(newTransform));
                 hitLayer = childLayer->hitTestLayer(rootLayer, columnLayers[0], request, result, localClipRect, hitTestPoint, false, transformState, zOffset);
                 if (oldHasTransform)
-                    childLayer->m_transform.set(new TransformationMatrix(oldTransform));
+                    childLayer->m_transform = adoptPtr(new TransformationMatrix(oldTransform));
                 else
                     childLayer->m_transform.clear();
             } else {
@@ -3609,7 +3609,7 @@ void RenderLayer::clearClipRects()
 RenderLayerBacking* RenderLayer::ensureBacking()
 {
     if (!m_backing)
-        m_backing.set(new RenderLayerBacking(this));
+        m_backing = adoptPtr(new RenderLayerBacking(this));
     return m_backing.get();
 }
 

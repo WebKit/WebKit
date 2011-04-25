@@ -85,9 +85,9 @@ void RenderTable::styleDidChange(StyleDifference diff, const RenderStyle* oldSty
         // According to the CSS2 spec, you only use fixed table layout if an
         // explicit width is specified on the table.  Auto width implies auto table layout.
         if (style()->tableLayout() == TFIXED && !style()->logicalWidth().isAuto())
-            m_tableLayout.set(new FixedTableLayout(this));
+            m_tableLayout = adoptPtr(new FixedTableLayout(this));
         else
-            m_tableLayout.set(new AutoTableLayout(this));
+            m_tableLayout = adoptPtr(new AutoTableLayout(this));
     }
 }
 

@@ -3269,7 +3269,7 @@ void RenderBox::addLayoutOverflow(const IntRect& rect)
     }
 
     if (!m_overflow)
-        m_overflow.set(new RenderOverflow(clientBox, borderBoxRect()));
+        m_overflow = adoptPtr(new RenderOverflow(clientBox, borderBoxRect()));
     
     m_overflow->addLayoutOverflow(overflowRect);
 }
@@ -3281,7 +3281,7 @@ void RenderBox::addVisualOverflow(const IntRect& rect)
         return;
         
     if (!m_overflow)
-        m_overflow.set(new RenderOverflow(clientBoxRect(), borderBox));
+        m_overflow = adoptPtr(new RenderOverflow(clientBoxRect(), borderBox));
     
     m_overflow->addVisualOverflow(rect);
 }
