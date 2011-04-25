@@ -81,6 +81,7 @@ public:
 
     virtual bool shouldCenterOnThumb(Scrollbar*, const PlatformMouseEvent&) { return false; }
     virtual bool shouldSnapBackToDragOrigin(Scrollbar*, const PlatformMouseEvent&) { return false; }
+    virtual bool shouldDragDocumentInsteadOfThumb(Scrollbar*, const PlatformMouseEvent&) { return false; }
     virtual int thumbPosition(Scrollbar*) { return 0; } // The position of the thumb relative to the track.
     virtual int thumbLength(Scrollbar*) { return 0; } // The length of the thumb along the axis of the scrollbar.
     virtual int trackPosition(Scrollbar*) { return 0; } // The position of the track relative to the scrollbar.

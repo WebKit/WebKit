@@ -140,7 +140,7 @@ protected:
     ScrollDirection pressedPartScrollDirection();
     ScrollGranularity pressedPartScrollGranularity();
     
-    void moveThumb(int pos);
+    void moveThumb(int pos, bool draggingDocument = false);
 
     ScrollableArea* m_scrollableArea;
     ScrollbarOrientation m_orientation;
@@ -158,7 +158,9 @@ protected:
     ScrollbarPart m_hoveredPart;
     ScrollbarPart m_pressedPart;
     int m_pressedPos;
-    
+    bool m_draggingDocument;
+    int m_documentDragPos;
+
     bool m_enabled;
 
     Timer<Scrollbar> m_scrollTimer;

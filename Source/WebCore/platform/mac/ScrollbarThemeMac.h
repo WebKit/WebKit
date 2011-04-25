@@ -69,6 +69,7 @@ protected:
     virtual int minimumThumbLength(Scrollbar*);
     
     virtual bool shouldCenterOnThumb(Scrollbar*, const PlatformMouseEvent&);
+    virtual bool shouldDragDocumentInsteadOfThumb(Scrollbar*, const PlatformMouseEvent&);
     
 public:
     void preferencesChanged();

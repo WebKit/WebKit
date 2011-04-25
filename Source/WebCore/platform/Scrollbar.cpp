@@ -33,6 +33,7 @@
 #include "FrameView.h"
 #include "GraphicsContext.h"
 #include "PlatformMouseEvent.h"
+#include "ScrollAnimator.h"
 #include "ScrollableArea.h"
 #include "ScrollbarTheme.h"
 
@@ -77,6 +78,8 @@ Scrollbar::Scrollbar(ScrollableArea* scrollableArea, ScrollbarOrientation orient
     , m_hoveredPart(NoPart)
     , m_pressedPart(NoPart)
     , m_pressedPos(0)
+    , m_draggingDocument(false)
+    , m_documentDragPos(0)
     , m_enabled(true)
     , m_scrollTimer(this, &Scrollbar::autoscrollTimerFired)
     , m_overlapsResizer(false)
@@ -253,14 +256,38 @@ ScrollGranularity Scrollbar::pressedPartScrollGranularity()
     return ScrollByPage;
 }
 
-void Scrollbar::moveThumb(int pos)
+void Scrollbar::moveThumb(int pos, bool draggingDocument)
 {
+    if (!m_scrollableArea)
+        return;
+
+    int delta = pos - m_pressedPos;
+
+    if (draggingDocument) {
+        if (m_draggingDocument)
+            delta = pos - m_documentDragPos;
+        m_draggingDocument = true;
+        FloatPoint currentPosition = m_scrollableArea->scrollAnimator()->currentPosition();
+        int destinationPosition = (m_orientation == HorizontalScrollbar ? currentPosition.x() : currentPosition.y()) + delta;
+        if (delta > 0)
+            destinationPosition = min(destinationPosition + delta, maximum());
+        else if (delta < 0)
+            destinationPosition = max(destinationPosition + delta, 0);
+        m_scrollableArea->scrollToOffsetWithoutAnimation(m_orientation, destinationPosition);
+        m_documentDragPos = pos;
+        return;
+    }
+
+    if (m_draggingDocument) {
+        delta += m_pressedPos - m_documentDragPos;
+        m_draggingDocument = false;
+    }
+
     // Drag the thumb.
     int thumbPos = theme()->thumbPosition(this);
     int thumbLen = theme()->thumbLength(this);
     int trackLen = theme()->trackLength(this);
     int maxPos = trackLen - thumbLen;
-    int delta = pos - m_pressedPos;
     if (delta > 0)
         delta = min(maxPos - thumbPos, delta);
     else if (delta < 0)
@@ -268,8 +295,7 @@ void Scrollbar::moveThumb(int pos)
     
     if (delta) {
         float newPosition = static_cast<float>(thumbPos + delta) * maximum() / (trackLen - thumbLen);
-        if (m_scrollableArea)
-            m_scrollableArea->scrollToOffsetWithoutAnimation(m_orientation, newPosition);
+        m_scrollableArea->scrollToOffsetWithoutAnimation(m_orientation, newPosition);
     }
 }
 
@@ -307,7 +333,7 @@ bool Scrollbar::mouseMoved(const PlatformMouseEvent& evt)
         } else {
             moveThumb(m_orientation == HorizontalScrollbar ? 
                       convertFromContainingWindow(evt.pos()).x() :
-                      convertFromContainingWindow(evt.pos()).y());
+                      convertFromContainingWindow(evt.pos()).y(), theme()->shouldDragDocumentInsteadOfThumb(this, evt));
         }
         return true;
     }
@@ -347,6 +373,7 @@ bool Scrollbar::mouseUp()
 {
     setPressedPart(NoPart);
     m_pressedPos = 0;
+    m_draggingDocument = false;
     stopTimerIfNeeded();
 
     if (parent() && parent()->isFrameView())

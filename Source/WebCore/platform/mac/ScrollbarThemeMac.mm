@@ -406,6 +406,11 @@ bool ScrollbarThemeMac::shouldCenterOnThumb(Scrollbar*, const PlatformMouseEvent
     return evt.altKey();
 }
 
+bool ScrollbarThemeMac::shouldDragDocumentInsteadOfThumb(Scrollbar*, const PlatformMouseEvent& event)
+{
+    return event.altKey();
+}
+
 static int scrollbarPartToHIPressedState(ScrollbarPart part)
 {
     switch (part) {
