@@ -1,3 +1,12 @@
+2011-04-25  Philippe Normand  <pnormand@igalia.com>
+
+        Unreviewed, GTK rebaseline and skip a couple of failing tests.
+
+        * platform/gtk/Skipped: skip
+        http/tests/security/mixedContent/insecure-css-in-main-frame.html
+        and editing/text-iterator/findString.html
+        * platform/gtk/fast/dom/HTMLMeterElement/meter-element-expected.txt:
+
 2011-04-25  Dan Bernstein  <mitz@apple.com>
 
         Move text-only results of a test that was switched to dump as text in r72166
