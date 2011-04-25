@@ -635,9 +635,9 @@ inline void Structure::checkConsistency()
 
 #endif
 
-PropertyTable* Structure::copyPropertyTable(JSGlobalData& globalData, Structure* owner)
+PassOwnPtr<PropertyTable> Structure::copyPropertyTable(JSGlobalData& globalData, Structure* owner)
 {
-    return m_propertyTable ? new PropertyTable(globalData, owner, *m_propertyTable) : 0;
+    return adoptPtr(m_propertyTable ? new PropertyTable(globalData, owner, *m_propertyTable) : 0);
 }
 
 size_t Structure::get(JSGlobalData& globalData, StringImpl* propertyName, unsigned& attributes, JSCell*& specificValue)
@@ -741,7 +741,7 @@ void Structure::createPropertyMap(unsigned capacity)
     ASSERT(!m_propertyTable);
 
     checkConsistency();
-    m_propertyTable = new PropertyTable(capacity);
+    m_propertyTable = adoptPtr(new PropertyTable(capacity));
     checkConsistency();
 }
 

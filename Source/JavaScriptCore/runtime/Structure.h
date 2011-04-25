@@ -37,6 +37,7 @@
 #include "JSTypeInfo.h"
 #include "UString.h"
 #include "Weak.h"
+#include <wtf/PassOwnPtr.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
 
@@ -187,7 +188,7 @@ namespace JSC {
         bool despecifyFunction(JSGlobalData&, const Identifier&);
         void despecifyAllFunctions(JSGlobalData&);
 
-        PropertyTable* copyPropertyTable(JSGlobalData&, Structure* owner);
+        PassOwnPtr<PropertyTable> copyPropertyTable(JSGlobalData&, Structure* owner);
         void materializePropertyMap(JSGlobalData&);
         void materializePropertyMapIfNecessary(JSGlobalData& globalData)
         {

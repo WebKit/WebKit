@@ -1,3 +1,17 @@
+2011-04-25  David Levin  <levin@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        Fix PassOwnPtr issues in Structure and JSGlobalData.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=59347
+
+        * runtime/JSGlobalData.cpp:
+        (JSC::JSGlobalData::JSGlobalData):
+        * runtime/Structure.cpp:
+        (JSC::Structure::copyPropertyTable):
+        (JSC::Structure::createPropertyMap):
+        * runtime/Structure.h:
+
 2011-04-25  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Geoffrey Garen.

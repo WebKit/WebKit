@@ -234,7 +234,7 @@ JSGlobalData::JSGlobalData(GlobalDataType globalDataType, ThreadStackType thread
     if (m_canUseJIT)
         m_canUseJIT = executableAllocator.isValid();
 #endif
-    jitStubs = new JITThunks(this);
+    jitStubs = adoptPtr(new JITThunks(this));
 #endif
 }
 
