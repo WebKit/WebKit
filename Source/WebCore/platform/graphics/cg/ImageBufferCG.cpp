@@ -153,7 +153,7 @@ ImageBuffer::ImageBuffer(const IntSize& size, ColorSpace imageColorSpace, Render
     if (!cgContext)
         return;
 
-    m_context.set(new GraphicsContext(cgContext.get()));
+    m_context= adoptPtr(new GraphicsContext(cgContext.get()));
     m_context->scale(FloatSize(1, -1));
     m_context->translate(0, -size.height());
     success = true;
