@@ -1,3 +1,17 @@
+2011-04-25  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Changed a test to dump as text.
+
+        * fast/css/affected-by-hover-after-style-change.html:
+        * platform/gtk/fast/css/affected-by-hover-after-style-change-expected.png: Removed.
+        * platform/gtk/fast/css/affected-by-hover-after-style-change-expected.txt: Removed.
+        * platform/mac/fast/css/affected-by-hover-after-style-change-expected.png: Removed.
+        * platform/mac/fast/css/affected-by-hover-after-style-change-expected.txt: Removed.
+        * platform/qt/fast/css/affected-by-hover-after-style-change-expected.png: Removed.
+        * platform/qt/fast/css/affected-by-hover-after-style-change-expected.txt: Removed.
+
 2011-04-25  Daniel Bates  <dbates@webkit.org>
 
         Reviewed by Sam Weinig.
