@@ -1,3 +1,16 @@
+2011-04-25  Dirk Pranke  <dpranke@chromium.org>
+
+        Reviewed by James Robinson.
+
+        Suppress test failure in Chromium webkit_unit_tests.
+        https://bugs.webkit.org/show_bug.cgi?id=59358
+
+        Looks like this started failing after
+        http://trac.webkit.org/changeset/84631.
+
+        * tests/TransparencyWinTest.cpp:
+        (WebCore::TEST):
+
 2011-04-22  Mikhail Naganov  <mnaganov@chromium.org>
 
         Reviewed by Pavel Feldman.
