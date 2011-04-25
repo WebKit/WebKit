@@ -95,7 +95,7 @@ const KURL& WorkerScriptLoader::responseURL() const
 
 PassOwnPtr<ResourceRequest> WorkerScriptLoader::createResourceRequest()
 {
-    OwnPtr<ResourceRequest> request(new ResourceRequest(m_url));
+    OwnPtr<ResourceRequest> request = adoptPtr(new ResourceRequest(m_url));
     request->setHTTPMethod("GET");
     request->setTargetType(m_targetType);
     return request.release();

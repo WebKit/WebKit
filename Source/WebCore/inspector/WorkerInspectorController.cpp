@@ -70,8 +70,8 @@ private:
 
 WorkerInspectorController::WorkerInspectorController(WorkerContext* workerContext)
     : m_workerContext(workerContext)
-    , m_state(new InspectorState(0))
-    , m_instrumentingAgents(new InstrumentingAgents())
+    , m_state(adoptPtr(new InspectorState(0)))
+    , m_instrumentingAgents(adoptPtr(new InstrumentingAgents()))
     , m_injectedScriptManager(InjectedScriptManager::createForWorker())
 #if ENABLE(JAVASCRIPT_DEBUGGER)
     , m_debuggerAgent(WorkerDebuggerAgent::create(m_instrumentingAgents.get(), m_state.get(), workerContext, m_injectedScriptManager.get()))

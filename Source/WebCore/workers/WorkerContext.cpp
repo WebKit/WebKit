@@ -105,10 +105,10 @@ public:
 WorkerContext::WorkerContext(const KURL& url, const String& userAgent, WorkerThread* thread)
     : m_url(url)
     , m_userAgent(userAgent)
-    , m_script(new WorkerScriptController(this))
+    , m_script(adoptPtr(new WorkerScriptController(this)))
     , m_thread(thread)
 #if ENABLE(INSPECTOR)
-    , m_workerInspectorController(new WorkerInspectorController(this))
+    , m_workerInspectorController(adoptPtr(new WorkerInspectorController(this)))
 #endif
     , m_closing(false)
 {
