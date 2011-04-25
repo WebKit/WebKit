@@ -2,6 +2,21 @@
 
         Reviewed by David Levin.
 
+        Resource*.cpp should play nice with strict OwnPtrs
+        https://bugs.webkit.org/show_bug.cgi?id=59383
+
+        * bridge/runtime_method.cpp:
+        (JSC::RuntimeMethod::RuntimeMethod):
+        * platform/network/ResourceHandle.cpp:
+        (WebCore::ResourceHandle::ResourceHandle):
+        * platform/network/ResourceResponseBase.cpp:
+        (WebCore::ResourceResponseBase::adopt):
+        (WebCore::ResourceResponseBase::copyData):
+
+2011-04-25  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by David Levin.
+
         Page*.cpp and objc_runtime.mm should play nice with strict OwnPtrs
         https://bugs.webkit.org/show_bug.cgi?id=59374
 

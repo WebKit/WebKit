@@ -40,7 +40,7 @@ namespace WebCore {
 static bool shouldForceContentSniffing;
 
 ResourceHandle::ResourceHandle(const ResourceRequest& request, ResourceHandleClient* client, bool defersLoading, bool shouldContentSniff)
-    : d(new ResourceHandleInternal(this, request, client, defersLoading, shouldContentSniff && shouldContentSniffURL(request.url())))
+    : d(adoptPtr(new ResourceHandleInternal(this, request, client, defersLoading, shouldContentSniff && shouldContentSniffURL(request.url()))))
 {
     if (!request.url().isValid()) {
         scheduleFailure(InvalidURLFailure);

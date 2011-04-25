@@ -98,7 +98,7 @@ ResourceResponseBase::ResourceResponseBase(const KURL& url, const String& mimeTy
 
 PassOwnPtr<ResourceResponse> ResourceResponseBase::adopt(PassOwnPtr<CrossThreadResourceResponseData> data)
 {
-    OwnPtr<ResourceResponse> response(new ResourceResponse());
+    OwnPtr<ResourceResponse> response = adoptPtr(new ResourceResponse);
     response->setURL(data->m_url);
     response->setMimeType(data->m_mimeType);
     response->setExpectedContentLength(data->m_expectedContentLength);
@@ -118,7 +118,7 @@ PassOwnPtr<ResourceResponse> ResourceResponseBase::adopt(PassOwnPtr<CrossThreadR
 
 PassOwnPtr<CrossThreadResourceResponseData> ResourceResponseBase::copyData() const
 {
-    OwnPtr<CrossThreadResourceResponseData> data(new CrossThreadResourceResponseData());
+    OwnPtr<CrossThreadResourceResponseData> data = adoptPtr(new CrossThreadResourceResponseData);
     data->m_url = url().copy();
     data->m_mimeType = mimeType().crossThreadString();
     data->m_expectedContentLength = expectedContentLength();
