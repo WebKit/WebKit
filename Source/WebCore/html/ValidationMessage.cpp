@@ -70,9 +70,9 @@ void ValidationMessage::setMessage(const String& message)
     ASSERT(!message.isEmpty());
     m_message = message;
     if (!m_bubble)
-        m_timer = adoptPtr(new Timer<ValidationMessage>(this, &ValidationMessage::buildBubbleTree));
+        m_timer.set(new Timer<ValidationMessage>(this, &ValidationMessage::buildBubbleTree));
     else
-        m_timer = adoptPtr(new Timer<ValidationMessage>(this, &ValidationMessage::setMessageDOMAndStartTimer));
+        m_timer.set(new Timer<ValidationMessage>(this, &ValidationMessage::setMessageDOMAndStartTimer));
     m_timer->startOneShot(0);
 }
 
@@ -99,7 +99,7 @@ void ValidationMessage::setMessageDOMAndStartTimer(Timer<ValidationMessage>*)
     if (magnification <= 0)
         m_timer.clear();
     else {
-        m_timer = adoptPtr(new Timer<ValidationMessage>(this, &ValidationMessage::deleteBubbleTree));
+        m_timer.set(new Timer<ValidationMessage>(this, &ValidationMessage::deleteBubbleTree));
         m_timer->startOneShot(max(5.0, static_cast<double>(m_message.length()) * magnification / 1000));
     }
 }
@@ -148,7 +148,7 @@ void ValidationMessage::buildBubbleTree(Timer<ValidationMessage>*)
 void ValidationMessage::requestToHideMessage()
 {
     // We must not modify the DOM tree in this context by the same reason as setMessage().
-    m_timer = adoptPtr(new Timer<ValidationMessage>(this, &ValidationMessage::deleteBubbleTree));
+    m_timer.set(new Timer<ValidationMessage>(this, &ValidationMessage::deleteBubbleTree));
     m_timer->startOneShot(0);
 }
 
