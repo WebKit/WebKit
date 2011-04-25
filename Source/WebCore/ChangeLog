@@ -1,3 +1,21 @@
+2011-04-25  Annie Sullivan  <sullivan@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: [Resources panel] Should be easy to copy data.
+        https://bugs.webkit.org/show_bug.cgi?id=45662
+
+        Adds context menu items to copy resource location, resource request headers, and resource response headers.
+
+        * inspector/front-end/NetworkPanel.js:
+        (WebInspector.NetworkPanel.prototype._contextMenu): Add new items to context menu.
+        (WebInspector.NetworkPanel.prototype._exportLocation): Copy resource location to clipboard.
+        (WebInspector.NetworkPanel.prototype._exportRequestHeaders): Copy resource request headers to clipboard.
+        (WebInspector.NetworkPanel.prototype._exportResponseHeaders): Copy resource response headers to clipboard.
+        * inspector/front-end/Resource.js:
+        (WebInspector.Resource.prototype.get requestHeadersText): If _requestHeadersText is undefined, generate it from requestHeaders.
+        (WebInspector.Resource.prototype.get responseHeadersText): If _responseHeadersText is undefined, generate it form responseHeaders.
+
 2011-04-25  Alexander Pavlov  <apavlov@chromium.org>
 
         Reviewed by Yury Semikhatsky.

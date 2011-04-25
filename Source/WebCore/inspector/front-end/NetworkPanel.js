@@ -1001,8 +1001,14 @@ WebInspector.NetworkPanel.prototype = {
         var gridNode = this._dataGrid.dataGridNodeFromNode(event.target);
         var resource = gridNode && gridNode._resource;
 
-        if (resource)
+        if (resource) {
+            contextMenu.appendItem(WebInspector.UIString("Copy location"), this._copyLocation.bind(this, resource));
+            if (resource.requestHeadersText)
+                contextMenu.appendItem(WebInspector.UIString("Copy request headers"), this._copyRequestHeaders.bind(this, resource));
+            if (resource.responseHeadersText)
+                contextMenu.appendItem(WebInspector.UIString("Copy response headers"), this._copyResponseHeaders.bind(this, resource));
             contextMenu.appendItem(WebInspector.UIString("Copy entry as HAR"), this._copyResource.bind(this, resource));
+        }
         contextMenu.appendItem(WebInspector.UIString("Copy all as HAR"), this._copyAll.bind(this));
 
         if (Preferences.saveAsAvailable) {
@@ -1027,6 +1033,21 @@ WebInspector.NetworkPanel.prototype = {
     {
         var har = (new WebInspector.HAREntry(resource)).build();
         InspectorFrontendHost.copyText(JSON.stringify(har));
+    },
+
+    _copyLocation: function(resource)
+    {
+        InspectorFrontendHost.copyText(resource.url);
+    },
+
+    _copyRequestHeaders: function(resource)
+    {
+        InspectorFrontendHost.copyText(resource.requestHeadersText);
+    },
+
+    _copyResponseHeaders: function(resource)
+    {
+        InspectorFrontendHost.copyText(resource.responseHeadersText);
     },
 
     _exportAll: function()

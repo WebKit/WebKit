@@ -435,6 +435,12 @@ WebInspector.Resource.prototype = {
 
     get requestHeadersText()
     {
+        if (this._requestHeadersText !== undefined)
+            return this._requestHeadersText;
+
+        this._requestHeadersText = "";
+        for (var key in this.requestHeaders)
+            this._requestHeadersText += key + ": " + this.requestHeaders[key] + "\n"; 
         return this._requestHeadersText;
     },
 
@@ -510,6 +516,12 @@ WebInspector.Resource.prototype = {
     
     get responseHeadersText()
     {
+        if (this._responseHeadersText !== undefined)
+            return this._responseHeadersText;
+        
+        this._responseHeadersText = "";
+        for (var key in this.responseHeaders)
+            this._responseHeadersText += key + ": " + this.responseHeaders[key] + "\n"; 
         return this._responseHeadersText;
     },
 
