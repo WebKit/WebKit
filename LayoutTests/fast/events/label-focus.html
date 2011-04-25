@@ -1,12 +1,14 @@
 <html>
-<body>
-<label id="label">Label: <input type=text onfocus="document.getElementById('output').innerHTML = 'THIS TEST HAS PASSED'"></label>
-<div id="output">
-THIS TEST HAS FAILED
-</div>
-<script>
-document.getElementById('label').focus()
-</script>
-</body>
+    <body>
+        <script>
+            if (window.layoutTestController)
+                layoutTestController.dumpAsText();
+        </script>
+        <label id="label">Label: <input type=text onfocus="document.getElementById('output').innerHTML = 'THIS TEST HAS PASSED'"></label>
+        <div id="output">THIS TEST HAS FAILED</div>
+        <script>
+            document.getElementById('label').focus()
+        </script>
+    </body>
 </html>
 

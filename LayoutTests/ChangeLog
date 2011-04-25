@@ -1,3 +1,22 @@
+2011-04-25  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Adam Roben.
+
+        Convert fast/events/label-focus.html to a text only test
+        https://bugs.webkit.org/show_bug.cgi?id=59364
+
+        * fast/events/label-focus-expected.txt: Copied from LayoutTests/platform/mac/fast/events/label-focus-expected.txt.
+        * fast/events/label-focus.html:
+        * platform/chromium-linux/fast/events/label-focus-expected.png: Removed.
+        * platform/chromium-win/fast/events/label-focus-expected.png: Removed.
+        * platform/chromium-win/fast/events/label-focus-expected.txt: Removed.
+        * platform/gtk/fast/events/label-focus-expected.png: Removed.
+        * platform/gtk/fast/events/label-focus-expected.txt: Removed.
+        * platform/mac-leopard/fast/events/label-focus-expected.png: Removed.
+        * platform/mac/fast/events/label-focus-expected.png: Removed.
+        * platform/mac/fast/events/label-focus-expected.txt: Removed.
+        * platform/qt/fast/events/label-focus-expected.txt: Removed.
+
 2011-04-25  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Sam Weinig.
