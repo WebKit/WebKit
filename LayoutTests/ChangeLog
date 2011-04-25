@@ -1,10 +1,15 @@
 2011-04-25  Jessie Berlin  <jberlin@webkit.org>
 
-        Add another HTMLProgressElement test to the Windows Skipped list to get the bots green,
-        since Windows does not have an implementation of HTMLProgressElement.
+        [Snow Leopard Intel WebKit2 Release Tests] editing/undo/undo-iframe-location-change.html and
+        compositing/iframes/invisible-nested-iframe-show.html failing since r84037.
+        https://bugs.webkit.org/show_bug.cgi?id=58990
 
-        * platform/win/Skipped:
-        Add fast/dom/HTMLProgressElement/progress-writing-mode.html.
+        Add failing expected results for SL WK2 to get the bots green.
+
+        These tests are already Skipped on Windows or have their own expected results.
+
+        * platform/mac-wk2/compositing/iframes/invisible-nested-iframe-show-expected.txt: Added.
+        * platform/mac-wk2/editing/undo/undo-iframe-location-change-expected.txt: Added.
 
 2011-04-25  Alexander Pavlov  <apavlov@chromium.org>
 
