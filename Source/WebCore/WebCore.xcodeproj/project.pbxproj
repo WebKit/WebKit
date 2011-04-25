@@ -5729,6 +5729,9 @@
 		F36E07A41358A8BE00AACBC9 /* WorkerInspectorController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F36E07A21358A8BE00AACBC9 /* WorkerInspectorController.cpp */; };
 		F36E07A51358A8BE00AACBC9 /* WorkerInspectorController.h in Headers */ = {isa = PBXBuildFile; fileRef = F36E07A31358A8BE00AACBC9 /* WorkerInspectorController.h */; };
 		F375CC071150D300008DDB81 /* InspectorWorkerResource.h in Headers */ = {isa = PBXBuildFile; fileRef = F375CC061150D300008DDB81 /* InspectorWorkerResource.h */; };
+		F3810C1B1365A49600ED6E33 /* InspectorWorkerAgent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F3810C191365A49600ED6E33 /* InspectorWorkerAgent.cpp */; };
+		F3810C1C1365A49600ED6E33 /* InspectorWorkerAgent.h in Headers */ = {isa = PBXBuildFile; fileRef = F3810C1A1365A49600ED6E33 /* InspectorWorkerAgent.h */; };
+		F3810C1E1365A4D400ED6E33 /* WorkerContextInspectorProxy.h in Headers */ = {isa = PBXBuildFile; fileRef = F3810C1D1365A4D400ED6E33 /* WorkerContextInspectorProxy.h */; };
 		F392249C126F11AE00A926D9 /* ScriptCallStackFactory.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F392249A126F11AE00A926D9 /* ScriptCallStackFactory.cpp */; };
 		F392249D126F11AE00A926D9 /* ScriptCallStackFactory.h in Headers */ = {isa = PBXBuildFile; fileRef = F392249B126F11AE00A926D9 /* ScriptCallStackFactory.h */; };
 		F39BE95B12673BF400E0A674 /* ScriptArguments.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F39BE95912673BF400E0A674 /* ScriptArguments.cpp */; };
@@ -12295,6 +12298,9 @@
 		F36E07A21358A8BE00AACBC9 /* WorkerInspectorController.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WorkerInspectorController.cpp; sourceTree = "<group>"; };
 		F36E07A31358A8BE00AACBC9 /* WorkerInspectorController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WorkerInspectorController.h; sourceTree = "<group>"; };
 		F375CC061150D300008DDB81 /* InspectorWorkerResource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InspectorWorkerResource.h; sourceTree = "<group>"; };
+		F3810C191365A49600ED6E33 /* InspectorWorkerAgent.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = InspectorWorkerAgent.cpp; sourceTree = "<group>"; };
+		F3810C1A1365A49600ED6E33 /* InspectorWorkerAgent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InspectorWorkerAgent.h; sourceTree = "<group>"; };
+		F3810C1D1365A4D400ED6E33 /* WorkerContextInspectorProxy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WorkerContextInspectorProxy.h; path = workers/WorkerContextInspectorProxy.h; sourceTree = "<group>"; };
 		F392249A126F11AE00A926D9 /* ScriptCallStackFactory.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ScriptCallStackFactory.cpp; sourceTree = "<group>"; };
 		F392249B126F11AE00A926D9 /* ScriptCallStackFactory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScriptCallStackFactory.h; sourceTree = "<group>"; };
 		F39BE95912673BF400E0A674 /* ScriptArguments.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ScriptArguments.cpp; sourceTree = "<group>"; };
@@ -13372,6 +13378,8 @@
 				754133A7102E00E800075D00 /* InspectorTimelineAgent.h */,
 				4F3289B311A42AAB005ABE7E /* InspectorValues.cpp */,
 				4F3289B411A42AAB005ABE7E /* InspectorValues.h */,
+				F3810C191365A49600ED6E33 /* InspectorWorkerAgent.cpp */,
+				F3810C1A1365A49600ED6E33 /* InspectorWorkerAgent.h */,
 				F375CC061150D300008DDB81 /* InspectorWorkerResource.h */,
 				F3ABFE0B130E9DA000E7F7D1 /* InstrumentingAgents.h */,
 				1C81BA050E97348300266E07 /* JavaScriptCallFrame.idl */,
@@ -13508,6 +13516,7 @@
 				2E4346360F546A8200B0F1BA /* WorkerContext.cpp */,
 				2E4346370F546A8200B0F1BA /* WorkerContext.h */,
 				2E4346380F546A8200B0F1BA /* WorkerContext.idl */,
+				F3810C1D1365A4D400ED6E33 /* WorkerContextInspectorProxy.h */,
 				2E4346390F546A8200B0F1BA /* WorkerContextProxy.h */,
 				18F831B70FD48C7800D8C56B /* WorkerLoaderProxy.h */,
 				2E43463A0F546A8200B0F1BA /* WorkerLocation.cpp */,
@@ -23068,6 +23077,8 @@
 				4358E87D1360A2EE00E4748C /* JSSVGFEDropShadowElement.h in Headers */,
 				4358E8811360A31700E4748C /* FEDropShadow.h in Headers */,
 				4358E8861360A33B00E4748C /* SVGFEDropShadowElement.h in Headers */,
+				F3810C1C1365A49600ED6E33 /* InspectorWorkerAgent.h in Headers */,
+				F3810C1E1365A4D400ED6E33 /* WorkerContextInspectorProxy.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -25784,6 +25795,7 @@
 				4358E8801360A31700E4748C /* FEDropShadow.cpp in Sources */,
 				4358E8851360A33B00E4748C /* SVGFEDropShadowElement.cpp in Sources */,
 				14E0BC56136148A8002AD12E /* JSDOMTokenListCustom.cpp in Sources */,
+				F3810C1B1365A49600ED6E33 /* InspectorWorkerAgent.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -89,7 +89,8 @@ macro_traits = {
     "ApplicationCache": "OFFLINE_WEB_APPLICATIONS",
     "Debugger": "JAVASCRIPT_DEBUGGER",
     "BrowserDebugger": "JAVASCRIPT_DEBUGGER",
-    "Profiler": "JAVASCRIPT_DEBUGGER"
+    "Profiler": "JAVASCRIPT_DEBUGGER",
+    "Worker": "WORKERS"
 }
 
 def full_qualified_type_id(domain_name, type_id):

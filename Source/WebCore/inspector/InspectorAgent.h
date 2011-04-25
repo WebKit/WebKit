@@ -70,6 +70,7 @@ class InspectorState;
 class InspectorStorageAgent;
 class InspectorTimelineAgent;
 class InspectorValue;
+class InspectorWorkerAgent;
 class InspectorWorkerResource;
 class InstrumentingAgents;
 class IntRect;
@@ -138,6 +139,9 @@ public:
 #endif
 #if ENABLE(OFFLINE_WEB_APPLICATIONS)
     InspectorApplicationCacheAgent* applicationCacheAgent() { return m_applicationCacheAgent.get(); }
+#endif
+#if ENABLE(WORKERS)
+    InspectorWorkerAgent* workerAgent() { return m_workerAgent.get(); }
 #endif
 
     void didClearWindowObjectInWorld(Frame*, DOMWrapperWorld*);
@@ -222,6 +226,7 @@ private:
 #if ENABLE(WORKERS)
     typedef HashMap<intptr_t, RefPtr<InspectorWorkerResource> > WorkersMap;
     WorkersMap m_workers;
+    OwnPtr<InspectorWorkerAgent> m_workerAgent;
 #endif
     bool m_canIssueEvaluateForTestInFrontend;
 };

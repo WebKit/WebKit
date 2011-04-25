@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009 Google Inc. All rights reserved.
+ * Copyright (C) 2011 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -28,45 +28,49 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WorkerContextProxy_h
-#define WorkerContextProxy_h
+#ifndef InspectorWorkerAgent_h
+#define InspectorWorkerAgent_h
 
 #if ENABLE(WORKERS)
 
-#include "MessagePort.h"
 #include <wtf/Forward.h>
-#include <wtf/PassOwnPtr.h>
+#include <wtf/HashMap.h>
 
 namespace WebCore {
+class InspectorFrontend;
+class InspectorObject;
+class InstrumentingAgents;
+class WorkerContextProxy;
+class WorkerContextInspectorProxy;
 
-    class KURL;
-    class Worker;
-    class WorkerContextInspectorProxy;
+typedef String ErrorString;
 
-    // A proxy to talk to the worker context.
-    class WorkerContextProxy {
-    public:
-        static WorkerContextProxy* create(Worker*);
+class InspectorWorkerAgent {
+public:
+    static PassOwnPtr<InspectorWorkerAgent> create(InstrumentingAgents*);
+    ~InspectorWorkerAgent();
 
-        virtual ~WorkerContextProxy() {}
+    void setFrontend(InspectorFrontend*);
+    void clearFrontend();
 
-        virtual void startWorkerContext(const KURL& scriptURL, const String& userAgent, const String& sourceCode) = 0;
+    // Called from InspectorInstrumentation
+    void didStartWorkerContext(WorkerContextProxy*);
 
-        virtual void terminateWorkerContext() = 0;
+    // Called from InspectorBackendDispatcher
+    void sendMessageToWorker(ErrorString*, int workerId, PassRefPtr<InspectorObject> message);
 
-        virtual void postMessageToWorkerContext(PassRefPtr<SerializedScriptValue>, PassOwnPtr<MessagePortChannelArray>) = 0;
+private:
+    explicit InspectorWorkerAgent(InstrumentingAgents*);
 
-        virtual bool hasPendingActivity() const = 0;
+    InstrumentingAgents* m_instrumentingAgents;
+    InspectorFrontend* m_inspectorFrontend;
 
-        virtual void workerObjectDestroyed() = 0;
-
-#if ENABLE(INSPECTOR)
-        virtual WorkerContextInspectorProxy* inspectorProxy() { return 0; }
-#endif
-    };
+    class WorkerFrontendChannel;
+    HashMap<int, WorkerFrontendChannel*> m_idToChannel;
+};
 
 } // namespace WebCore
 
-#endif // ENABLE(WORKERS)
+#endif // !defined(InspectorWorkerAgent_h)
 
-#endif // WorkerContextProxy_h
+#endif // ENABLE(WORKERS)

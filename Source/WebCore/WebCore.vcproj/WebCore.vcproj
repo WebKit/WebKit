@@ -48266,6 +48266,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\workers\WorkerContextInspectorProxy.h"
+				>
+			</File>
+			<File
 				RelativePath="..\workers\WorkerContextProxy.h"
 				>
 			</File>
@@ -67203,6 +67207,14 @@
 			</File>
 			<File
 				RelativePath="..\inspector\InspectorValues.h"
+				>
+			</File>
+			<File
+				RelativePath="..\inspector\InspectorWorkerAgent.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\inspector\InspectorWorkerAgent.h"
 				>
 			</File>
 			<File

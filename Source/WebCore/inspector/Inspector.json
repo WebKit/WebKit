@@ -1674,5 +1674,33 @@
                 ]
             }
         ]
-    }
+    },
+    {
+        "domain": "Worker",
+        "types": [],
+        "commands": [
+            {
+                "name": "sendMessageToWorker",
+                "parameters": [
+                    { "name": "workerId", "type": "integer" },
+                    { "name": "message", "type": "object" }
+                ]
+            }
+        ],
+        "events": [
+            {
+                "name": "workerCreated",
+                "parameters": [
+                    { "name": "workerId", "type": "integer" }
+                ]
+            },
+            {
+                "name": "dispatchMessageFromWorker",
+                "parameters": [
+                    { "name": "workerId", "type": "integer" },
+                    { "name": "message", "type": "object" }
+                ]
+            }
+        ]
+    },
 ]

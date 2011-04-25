@@ -48,9 +48,11 @@
 #include "InspectorInstrumentation.h"
 #include "InspectorProfilerAgent.h"
 #include "InspectorTimelineAgent.h"
+#include "InspectorWorkerAgent.h"
 #include "Page.h"
 #include "ScriptObject.h"
 #include "Settings.h"
+#include <wtf/UnusedParam.h>
 
 namespace WebCore {
 
@@ -138,7 +140,11 @@ void InspectorController::connectFrontend()
         m_inspectorAgent->profilerAgent(),
 #endif
         m_inspectorAgent->runtimeAgent(),
-        m_inspectorAgent->timelineAgent());
+        m_inspectorAgent->timelineAgent()
+#if ENABLE(WORKERS)
+        , m_inspectorAgent->workerAgent()
+#endif
+    );
 
     if (m_startUserInitiatedDebuggingWhenFrontedIsConnected) {
         m_inspectorFrontend->inspector()->startUserInitiatedDebugging();
@@ -160,7 +166,6 @@ void InspectorController::disconnectFrontend()
     InspectorInstrumentation::frontendDeleted();
     if (!InspectorInstrumentation::hasFrontends())
         ScriptController::setCaptureCallStackForUncaughtExceptions(false);
-
 }
 
 void InspectorController::show()

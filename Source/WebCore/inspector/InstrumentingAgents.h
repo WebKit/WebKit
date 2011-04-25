@@ -50,6 +50,7 @@ class InspectorProfilerAgent;
 class InspectorResourceAgent;
 class InspectorRuntimeAgent;
 class InspectorTimelineAgent;
+class InspectorWorkerAgent;
 
 class InstrumentingAgents {
     WTF_MAKE_NONCOPYABLE(InstrumentingAgents);
@@ -77,6 +78,9 @@ public:
         , m_inspectorDebuggerAgent(0)
         , m_inspectorBrowserDebuggerAgent(0)
         , m_inspectorProfilerAgent(0)
+#endif
+#if ENABLE(WORKERS)
+        , m_inspectorWorkerAgent(0)
 #endif
     { }
     ~InstrumentingAgents() { }
@@ -127,6 +131,10 @@ public:
     InspectorProfilerAgent* inspectorProfilerAgent() const { return m_inspectorProfilerAgent; }
     void setInspectorProfilerAgent(InspectorProfilerAgent* agent) { m_inspectorProfilerAgent = agent; }
 #endif
+#if ENABLE(WORKERS)
+    InspectorWorkerAgent* inspectorWorkerAgent() const { return m_inspectorWorkerAgent; }
+    void setInspectorWorkerAgent(InspectorWorkerAgent* agent) { m_inspectorWorkerAgent = agent; }
+#endif
 
 private:
     InspectorAgent* m_inspectorAgent;
@@ -150,6 +158,9 @@ private:
     InspectorDebuggerAgent* m_inspectorDebuggerAgent;
     InspectorBrowserDebuggerAgent* m_inspectorBrowserDebuggerAgent;
     InspectorProfilerAgent* m_inspectorProfilerAgent;
+#endif
+#if ENABLE(WORKERS)
+    InspectorWorkerAgent* m_inspectorWorkerAgent;
 #endif
 };
 

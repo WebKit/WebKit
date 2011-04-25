@@ -85,6 +85,11 @@ $typeTransform{"Timeline"} = {
     "header" => "InspectorTimelineAgent.h",
     "domainAccessor" => "m_timelineAgent",
 };
+$typeTransform{"Worker"} = {
+    "forward" => "InspectorWorkerAgent",
+    "header" => "InspectorWorkerAgent.h",
+    "domainAccessor" => "m_workerAgent",
+};
 
 $typeTransform{"Frontend"} = {
     "forward" => "InspectorFrontend",

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009 Google Inc. All rights reserved.
+ * Copyright (C) 2011 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -28,45 +28,28 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WorkerContextProxy_h
-#define WorkerContextProxy_h
+#ifndef WorkerContextInspectorProxy_h
+#define WorkerContextInspectorProxy_h
 
-#if ENABLE(WORKERS)
+#if ENABLE(WORKERS) && ENABLE(INSPECTOR)
 
-#include "MessagePort.h"
 #include <wtf/Forward.h>
-#include <wtf/PassOwnPtr.h>
 
 namespace WebCore {
 
-    class KURL;
-    class Worker;
-    class WorkerContextInspectorProxy;
+class InspectorFrontendChannel;
 
-    // A proxy to talk to the worker context.
-    class WorkerContextProxy {
-    public:
-        static WorkerContextProxy* create(Worker*);
-
-        virtual ~WorkerContextProxy() {}
-
-        virtual void startWorkerContext(const KURL& scriptURL, const String& userAgent, const String& sourceCode) = 0;
-
-        virtual void terminateWorkerContext() = 0;
-
-        virtual void postMessageToWorkerContext(PassRefPtr<SerializedScriptValue>, PassOwnPtr<MessagePortChannelArray>) = 0;
-
-        virtual bool hasPendingActivity() const = 0;
-
-        virtual void workerObjectDestroyed() = 0;
-
-#if ENABLE(INSPECTOR)
-        virtual WorkerContextInspectorProxy* inspectorProxy() { return 0; }
-#endif
-    };
+class WorkerContextInspectorProxy {
+public:
+    virtual void connectFrontend(InspectorFrontendChannel*) { }
+    virtual void disconnectFrontend() { }
+    virtual void sendMessageToWorkerContextInspector(const String&) { }
+protected:
+    virtual ~WorkerContextInspectorProxy() { }
+};
 
 } // namespace WebCore
 
 #endif // ENABLE(WORKERS)
 
-#endif // WorkerContextProxy_h
+#endif // WorkerContextInspectorProxy_h

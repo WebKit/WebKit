@@ -127,7 +127,8 @@ void WorkerInspectorController::connectFrontend(InspectorFrontendChannel* channe
         0, // InspectorProfilerAgent
 #endif
         m_runtimeAgent.get(),
-        0 // InspectorTimelineAgent
+        0, // InspectorTimelineAgent
+        0 // InspectorWorkerAgent
     );
 
     m_injectedScriptManager->injectedScriptHost()->setFrontend(m_frontend.get());

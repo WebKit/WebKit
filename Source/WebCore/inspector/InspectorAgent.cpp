@@ -54,6 +54,7 @@
 #include "InspectorState.h"
 #include "InspectorTimelineAgent.h"
 #include "InspectorValues.h"
+#include "InspectorWorkerAgent.h"
 #include "InspectorWorkerResource.h"
 #include "InstrumentingAgents.h"
 #include "Page.h"
@@ -132,6 +133,9 @@ InspectorAgent::InspectorAgent(Page* page, InspectorClient* client, InjectedScri
     , m_debuggerAgent(PageDebuggerAgent::create(m_instrumentingAgents.get(), m_state.get(), page, injectedScriptManager))
     , m_browserDebuggerAgent(InspectorBrowserDebuggerAgent::create(m_instrumentingAgents.get(), m_state.get(), m_domAgent.get(), m_debuggerAgent.get(), this))
     , m_profilerAgent(InspectorProfilerAgent::create(m_instrumentingAgents.get(), m_consoleAgent.get(), page, m_state.get()))
+#endif
+#if ENABLE(WORKERS)
+    , m_workerAgent(InspectorWorkerAgent::create(m_instrumentingAgents.get()))
 #endif
     , m_canIssueEvaluateForTestInFrontend(false)
 {
@@ -252,6 +256,10 @@ void InspectorAgent::setFrontend(InspectorFrontend* inspectorFrontend)
         m_frontend->inspector()->didCreateWorker(worker->id(), worker->url(), worker->isSharedWorker());
     }
 #endif
+#if ENABLE(WORKERS)
+    m_workerAgent->setFrontend(m_frontend);
+#endif
+
     // Dispatch pending frontend commands
     issueEvaluateForTestCommands();
 }
@@ -291,6 +299,9 @@ void InspectorAgent::disconnectFrontend()
     m_domStorageAgent->clearFrontend();
 #endif
     m_pageAgent->clearFrontend();
+#if ENABLE(WORKERS)
+    m_workerAgent->clearFrontend();
+#endif
 }
 
 void InspectorAgent::didCommitLoad()

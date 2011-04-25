@@ -59,6 +59,7 @@ class ScriptArguments;
 class ScriptCallStack;
 class ScriptExecutionContext;
 class StorageArea;
+class WorkerContextProxy;
 class XMLHttpRequest;
 
 #if ENABLE(WEB_SOCKETS)
@@ -157,6 +158,8 @@ public:
 #endif
 
 #if ENABLE(WORKERS)
+    static bool willStartWorkerContext(ScriptExecutionContext*, WorkerContextProxy*);
+    static void didStartWorkerContext(ScriptExecutionContext*, WorkerContextProxy*, bool paused);
     static void didCreateWorker(ScriptExecutionContext*, intptr_t id, const String& url, bool isSharedWorker);
     static void didDestroyWorker(ScriptExecutionContext*, intptr_t id);
 #endif
@@ -277,6 +280,7 @@ private:
 #endif
 
 #if ENABLE(WORKERS)
+    static void didStartWorkerContextImpl(InspectorAgent*, WorkerContextProxy*);
     static void didCreateWorkerImpl(InspectorAgent*, intptr_t id, const String& url, bool isSharedWorker);
     static void didDestroyWorkerImpl(InspectorAgent*, intptr_t id);
 #endif
@@ -801,6 +805,25 @@ inline void InspectorInstrumentation::didUseDOMStorage(Page* page, StorageArea* 
 #endif
 
 #if ENABLE(WORKERS)
+inline bool InspectorInstrumentation::willStartWorkerContext(ScriptExecutionContext* context, WorkerContextProxy*)
+{
+#if ENABLE(INSPECTOR)
+    return inspectorAgentWithFrontendForContext(context);
+#else
+    return false;
+#endif
+}
+
+inline void InspectorInstrumentation::didStartWorkerContext(ScriptExecutionContext* context, WorkerContextProxy* proxy, bool paused)
+{
+#if ENABLE(INSPECTOR)
+    if (!paused)
+        return;
+    if (InspectorAgent* inspectorAgent = inspectorAgentWithFrontendForContext(context))
+        didStartWorkerContextImpl(inspectorAgent, proxy);
+#endif
+}
+
 inline void InspectorInstrumentation::didCreateWorker(ScriptExecutionContext* context, intptr_t id, const String& url, bool isSharedWorker)
 {
 #if ENABLE(INSPECTOR)

@@ -1,3 +1,68 @@
+2011-04-25  Yury Semikhatsky  <yurys@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: introduce InspectorWorkerAgent
+        https://bugs.webkit.org/show_bug.cgi?id=59320
+
+        InspectorWorkerAgent is responsible for routing inspector messages
+        between worker context inspector agents and corresponding worker
+        inspector front-end.
+
+        * CMakeLists.txt:
+        * GNUmakefile.list.am:
+        * WebCore.gypi:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * inspector/CodeGeneratorInspector.pm:
+        * inspector/Inspector.json:
+        * inspector/InspectorAgent.cpp:
+        (WebCore::InspectorAgent::InspectorAgent):
+        (WebCore::InspectorAgent::setFrontend):
+        (WebCore::InspectorAgent::disconnectFrontend):
+        * inspector/InspectorAgent.h:
+        (WebCore::InspectorAgent::workerAgent):
+        * inspector/InspectorController.cpp:
+        (WebCore::InspectorController::connectFrontend):
+        (WebCore::InspectorController::disconnectFrontend):
+        * inspector/InspectorInstrumentation.cpp:
+        (WebCore::InspectorInstrumentation::didStartWorkerContextImpl):
+        * inspector/InspectorInstrumentation.h:
+        (WebCore::InspectorInstrumentation::willStartWorkerContext):
+        (WebCore::InspectorInstrumentation::didStartWorkerContext):
+        * inspector/InspectorWorkerAgent.cpp: Added.
+        (WebCore::InspectorWorkerAgent::WorkerFrontendChannel::WorkerFrontendChannel):
+        (WebCore::InspectorWorkerAgent::WorkerFrontendChannel::~WorkerFrontendChannel):
+        (WebCore::InspectorWorkerAgent::WorkerFrontendChannel::id):
+        (WebCore::InspectorWorkerAgent::WorkerFrontendChannel::inspectorProxy):
+        (WebCore::InspectorWorkerAgent::WorkerFrontendChannel::sendMessageToFrontend):
+        (WebCore::InspectorWorkerAgent::create):
+        (WebCore::InspectorWorkerAgent::InspectorWorkerAgent):
+        (WebCore::InspectorWorkerAgent::~InspectorWorkerAgent):
+        (WebCore::InspectorWorkerAgent::setFrontend):
+        (WebCore::InspectorWorkerAgent::clearFrontend):
+        (WebCore::InspectorWorkerAgent::dispatchMessageOnWorkerInspector):
+        (WebCore::InspectorWorkerAgent::didStartWorkerContext):
+        * inspector/InspectorWorkerAgent.h: Added.
+        * inspector/InstrumentingAgents.h:
+        (WebCore::InstrumentingAgents::InstrumentingAgents):
+        (WebCore::InstrumentingAgents::inspectorWorkerAgent):
+        (WebCore::InstrumentingAgents::setInspectorWorkerAgent):
+        * inspector/WorkerInspectorController.cpp:
+        (WebCore::WorkerInspectorController::connectFrontend):
+        * inspector/generate-inspector-idl:
+        * workers/Worker.cpp:
+        (WebCore::Worker::notifyFinished):
+        * workers/WorkerContextInspectorProxy.h: Added. Platform-specific transport for inspector
+        messages sent from the inspected page worker agent to the worker context inspector agents.
+        (WebCore::WorkerContextInspectorProxy::connectFrontend):
+        (WebCore::WorkerContextInspectorProxy::disconnectFrontend):
+        (WebCore::WorkerContextInspectorProxy::sendMessageToWorkerContextInspector):
+        (WebCore::WorkerContextInspectorProxy::~WorkerContextInspectorProxy):
+        * workers/WorkerContextProxy.h:
+        (WebCore::WorkerContextProxy::inspectorProxy):
+
 2011-04-25  Pavel Feldman  <pfeldman@google.com>
 
         Reviewed by Yury Semikhatsky.

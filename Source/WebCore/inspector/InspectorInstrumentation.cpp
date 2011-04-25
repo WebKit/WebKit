@@ -51,6 +51,7 @@
 #include "InspectorProfilerAgent.h"
 #include "InspectorResourceAgent.h"
 #include "InspectorTimelineAgent.h"
+#include "InspectorWorkerAgent.h"
 #include "InstrumentingAgents.h"
 #include "ScriptArguments.h"
 #include "ScriptCallStack.h"
@@ -710,6 +711,12 @@ void InspectorInstrumentation::didUseDOMStorageImpl(InspectorAgent* inspectorAge
 #endif
 
 #if ENABLE(WORKERS)
+void InspectorInstrumentation::didStartWorkerContextImpl(InspectorAgent* inspectorAgent, WorkerContextProxy* workerContextProxy)
+{
+    if (InspectorWorkerAgent* workerAgent = inspectorAgent->instrumentingAgents()->inspectorWorkerAgent())
+        workerAgent->didStartWorkerContext(workerContextProxy);
+}
+
 void InspectorInstrumentation::didCreateWorkerImpl(InspectorAgent* inspectorAgent, intptr_t id, const String& url, bool isSharedWorker)
 {
     inspectorAgent->didCreateWorker(id, url, isSharedWorker);

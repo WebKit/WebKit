@@ -923,6 +923,7 @@ SET(WebCore_SOURCES
     inspector/InspectorStyleSheet.cpp
     inspector/InspectorTimelineAgent.cpp
     inspector/InspectorValues.cpp
+    inspector/InspectorWorkerAgent.cpp
     inspector/PageDebuggerAgent.cpp
     inspector/ScriptArguments.cpp
     inspector/ScriptCallFrame.cpp

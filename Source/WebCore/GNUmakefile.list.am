@@ -1993,6 +1993,8 @@ webcore_sources += \
 	Source/WebCore/inspector/InspectorTimelineAgent.h \
 	Source/WebCore/inspector/InspectorValues.cpp \
 	Source/WebCore/inspector/InspectorValues.h \
+	Source/WebCore/inspector/InspectorWorkerAgent.cpp \
+	Source/WebCore/inspector/InspectorWorkerAgent.h \
 	Source/WebCore/inspector/InspectorWorkerResource.h \
 	Source/WebCore/inspector/InstrumentingAgents.h \
 	Source/WebCore/inspector/PageDebuggerAgent.cpp \
@@ -3632,6 +3634,7 @@ webcore_sources += \
 	Source/WebCore/workers/SharedWorkerThread.h \
 	Source/WebCore/workers/WorkerContext.cpp \
 	Source/WebCore/workers/WorkerContext.h \
+	Source/WebCore/workers/WorkerContextInspectorProxy.h \
 	Source/WebCore/workers/WorkerContextProxy.h \
 	Source/WebCore/workers/Worker.cpp \
 	Source/WebCore/workers/Worker.h \
