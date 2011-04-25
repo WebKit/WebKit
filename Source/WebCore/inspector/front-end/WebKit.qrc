@@ -125,6 +125,7 @@
     <file>View.js</file>
     <file>WatchExpressionsSidebarPane.js</file>
     <file>WelcomeView.js</file>
+    <file>WorkerManager.js</file>
     <file>WorkersSidebarPane.js</file>
     <file>UglifyJS/parse-js.js</file>
     <file>audits.css</file>

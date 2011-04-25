@@ -1,3 +1,30 @@
+2011-04-25  Yury Semikhatsky  <yurys@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: worker messages should be routed to corresponding worker front-end
+        https://bugs.webkit.org/show_bug.cgi?id=59323
+
+        Added WorkerManager which is responsible for routing messages between
+        Page inspector front-end and Worker inspector front-ends.
+
+        * WebCore.gypi:
+        * inspector/front-end/WebKit.qrc:
+        * inspector/front-end/WorkerManager.js: Added.
+        (WebInspector.WorkerManager):
+        (WebInspector.WorkerManager.loaded.InspectorFrontendHost.sendMessageToBackend):
+        (WebInspector.WorkerManager.loaded.InspectorFrontendHost.loaded):
+        (WebInspector.WorkerManager.loaded):
+        (WebInspector.WorkerFrontendStub):
+        (WebInspector.WorkerFrontendStub.prototype._receiveMessage):
+        (WebInspector.WorkerDispatcher):
+        (WebInspector.WorkerDispatcher.prototype._receiveMessage):
+        (WebInspector.WorkerDispatcher.prototype.workerCreated):
+        (WebInspector.WorkerDispatcher.prototype.dispatchMessageFromWorker):
+        * inspector/front-end/inspector.html:
+        * inspector/front-end/inspector.js:
+        (WebInspector.loaded):
+
 2011-04-25  Annie Sullivan  <sullivan@chromium.org>
 
         Reviewed by Pavel Feldman.

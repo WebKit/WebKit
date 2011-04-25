@@ -6306,6 +6306,7 @@
             'inspector/front-end/View.js',
             'inspector/front-end/WatchExpressionsSidebarPane.js',
             'inspector/front-end/WelcomeView.js',
+            'inspector/front-end/WorkerManager.js',
             'inspector/front-end/WorkersSidebarPane.js',
             'inspector/front-end/audits.css',
             'inspector/front-end/goToLineDialog.css',

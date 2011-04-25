@@ -402,6 +402,7 @@ WebInspector.loaded = function()
         }
         return;
     }
+    WebInspector.WorkerManager.loaded();
     WebInspector.doLoadedDone();
 }
 

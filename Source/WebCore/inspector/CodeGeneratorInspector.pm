@@ -781,9 +781,13 @@ InspectorBackendStub.prototype = {
         if (window.dumpInspectorProtocolMessages)
             console.log("frontend: " + JSON.stringify(request));
 
-        var message = JSON.stringify(request);
-
         ++this._pendingResponsesCount;
+        this.sendMessageObjectToBackend(request);
+    },
+
+    sendMessageObjectToBackend: function(messageObject)
+    {
+        var message = JSON.stringify(messageObject);
         InspectorFrontendHost.sendMessageToBackend(message);
     },
 
