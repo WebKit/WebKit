@@ -1,3 +1,21 @@
+2011-04-25  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by David Levin.
+
+        Page*.cpp and objc_runtime.mm should play nice with strict OwnPtrs
+        https://bugs.webkit.org/show_bug.cgi?id=59374
+
+        * bridge/objc/objc_runtime.mm:
+        (JSC::Bindings::callObjCFallbackObject):
+        * page/Page.cpp:
+        (WebCore::Page::Page):
+        (WebCore::Page::initGroup):
+        * page/PageGroup.cpp:
+        (WebCore::PageGroup::addUserScriptToWorld):
+        (WebCore::PageGroup::addUserStyleSheetToWorld):
+        * page/mac/PageMac.cpp:
+        (WebCore::Page::addSchedulePair):
+
 2011-04-25  Geoffrey Garen  <ggaren@apple.com>
 
         Build fix: This time for sure!

@@ -282,9 +282,9 @@ void PageGroup::addUserScriptToWorld(DOMWrapperWorld* world, const String& sourc
 {
     ASSERT_ARG(world, world);
 
-    OwnPtr<UserScript> userScript(new UserScript(source, url, whitelist, blacklist, injectionTime, injectedFrames));
+    OwnPtr<UserScript> userScript = adoptPtr(new UserScript(source, url, whitelist, blacklist, injectionTime, injectedFrames));
     if (!m_userScripts)
-        m_userScripts.set(new UserScriptMap);
+        m_userScripts = adoptPtr(new UserScriptMap);
     UserScriptVector*& scriptsInWorld = m_userScripts->add(world, 0).first->second;
     if (!scriptsInWorld)
         scriptsInWorld = new UserScriptVector;
@@ -299,9 +299,9 @@ void PageGroup::addUserStyleSheetToWorld(DOMWrapperWorld* world, const String& s
 {
     ASSERT_ARG(world, world);
 
-    OwnPtr<UserStyleSheet> userStyleSheet(new UserStyleSheet(source, url, whitelist, blacklist, injectedFrames, level));
+    OwnPtr<UserStyleSheet> userStyleSheet = adoptPtr(new UserStyleSheet(source, url, whitelist, blacklist, injectedFrames, level));
     if (!m_userStyleSheets)
-        m_userStyleSheets.set(new UserStyleSheetMap);
+        m_userStyleSheets = adoptPtr(new UserStyleSheetMap);
     UserStyleSheetVector*& styleSheetsInWorld = m_userStyleSheets->add(world, 0).first->second;
     if (!styleSheetsInWorld)
         styleSheetsInWorld = new UserStyleSheetVector;

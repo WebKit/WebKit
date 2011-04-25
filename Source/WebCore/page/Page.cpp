@@ -173,7 +173,7 @@ Page::Page(const PageClients& pageClients)
     allPages->add(this);
 
     if (pageClients.pluginHalterClient) {
-        m_pluginHalter.set(new PluginHalter(pageClients.pluginHalterClient));
+        m_pluginHalter = adoptPtr(new PluginHalter(pageClients.pluginHalterClient));
         m_pluginHalter->setPluginAllowedRunTime(m_settings->pluginAllowedRunTime());
     }
 
@@ -376,7 +376,7 @@ void Page::initGroup()
 {
     ASSERT(!m_singlePageGroup);
     ASSERT(!m_group);
-    m_singlePageGroup.set(new PageGroup(this));
+    m_singlePageGroup = adoptPtr(new PageGroup(this));
     m_group = m_singlePageGroup.get();
 }
 

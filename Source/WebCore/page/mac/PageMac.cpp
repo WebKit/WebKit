@@ -40,7 +40,7 @@ void Page::addSchedulePair(PassRefPtr<SchedulePair> prpPair)
     RefPtr<SchedulePair> pair = prpPair;
 
     if (!m_scheduledRunLoopPairs)
-        m_scheduledRunLoopPairs.set(new SchedulePairHashSet);
+        m_scheduledRunLoopPairs = adoptPtr(new SchedulePairHashSet);
     m_scheduledRunLoopPairs->add(pair);
 
 #ifndef BUILDING_ON_TIGER
