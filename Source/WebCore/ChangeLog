@@ -1,3 +1,15 @@
+2011-04-25  James Robinson  <jamesr@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        Remove bad use of OwnPtr::set() in IconDatabase.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=59344
+
+        Needed for strict OwnPtr compliance.
+
+        * loader/icon/IconDatabase.cpp:
+        (WebCore::readySQLiteStatement):
+
 2011-04-25  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Maciej Stachowiak.

@@ -1851,7 +1851,7 @@ inline void readySQLiteStatement(OwnPtr<SQLiteStatement>& statement, SQLiteDatab
     if (statement && (statement->database() != &db || statement->isExpired())) {
         if (statement->isExpired())
             LOG(IconDatabase, "SQLiteStatement associated with %s is expired", str.ascii().data());
-        statement.set(0);
+        statement.clear();
     }
     if (!statement) {
         statement = adoptPtr(new SQLiteStatement(db, str));
