@@ -64,7 +64,7 @@
                 "id": "ResourceType",
                 "type": "string",
                 "enum": ["Document", "Stylesheet", "Image", "Font", "Script", "XHR", "WebSocket", "Other"],
-                "description": "Resource type as it was perceived by the rendering enging."
+                "description": "Resource type as it was perceived by the rendering engine."
             },
             {
                 "id": "Frame",
@@ -894,7 +894,7 @@
                 "name": "highlightNode",
                 "parameters": [
                     { "name": "nodeId", "type": "integer", "description": "Identifier of the node to highlight" },
-                    { "name": "mode", "type": "string", "enum": ["all", "content", "padding", "border", "margin"], "optional": true, "description": "The box model component(s) to highlight (default: \"all\")." },
+                    { "name": "mode", "type": "string", "enum": ["all", "content", "padding", "border", "margin"], "optional": true, "description": "The box model component(s) to highlight (default: \"all\")." }
                 ],
                 "description": "Highlights DOM node with given id."
             },
@@ -1691,5 +1691,5 @@
                 ]
             }
         ]
-    },
+    }
 ]
