@@ -958,7 +958,7 @@ bool InspectorStyleSheet::ensureSourceData()
     CSSParser p;
     StyleRuleRangeMap ruleRangeMap;
     p.parseSheet(newStyleSheet.get(), m_parsedStyleSheet->text(), 0, &ruleRangeMap);
-    OwnPtr<ParsedStyleSheet::SourceData> rangesVector(new ParsedStyleSheet::SourceData());
+    OwnPtr<ParsedStyleSheet::SourceData> rangesVector(adoptPtr(new ParsedStyleSheet::SourceData));
 
     Vector<CSSStyleRule*> rules;
     RefPtr<CSSRuleList> ruleList = asCSSRuleList(newStyleSheet.get());
