@@ -2,6 +2,14 @@
 
         Unreviewed, expectations change.
 
+        Missed the Chromium Mac baseline in the previous change.
+
+        * platform/chromium-mac/fast/dom/HTMLAnchorElement/set-href-attribute-host-expected.txt:
+
+2011-04-25  Dirk Pranke  <dpranke@chromium.org>
+
+        Unreviewed, expectations change.
+
         * platform/chromium-win/fast/dom/HTMLAnchorElement/set-href-attribute-host-expected.txt:
 
 2011-04-25  Csaba Osztrogonác  <ossy@webkit.org>

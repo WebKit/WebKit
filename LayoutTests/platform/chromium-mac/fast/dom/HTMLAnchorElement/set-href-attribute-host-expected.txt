@@ -26,7 +26,8 @@ PASS a.href is 'file://mydomain.com/path/'
 Set host containing slashes in it
 FAIL a.href should be https://www.otherdom/ain.com/path/. Was https://www.otherdom%2Fain.com/path/.
 Set host to a malformed URL
-FAIL a.href should be https://www.other!domain.com:15/ww.my@domain.com:8080/path/. Was https://ww.my@www.other%21domain.com:15/path/.
+FAIL a.href should be https:/
+ww.my@domain.com:8080/path/. Was https://ww.my@www.other%21domain.com:15/path/.
 Set host that starts with ':'
 PASS a.href is 'https://domain.com:8080/path/'
 Set host to URL containing username and ..
