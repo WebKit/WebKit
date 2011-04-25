@@ -1,3 +1,18 @@
+2011-04-25  Dan Bernstein  <mitz@apple.com>
+
+        Move text-only results of a test that was switched to dump as text in r72166
+        alongside the test, and remove old expected pixel results.
+
+        * fast/dom/setPrimitiveValue-expected.txt: Added.
+        * platform/chromium-linux/fast/dom/setPrimitiveValue-expected.png: Removed.
+        * platform/chromium-win/fast/dom/setPrimitiveValue-expected.png: Removed.
+        * platform/gtk/fast/dom/setPrimitiveValue-expected.txt: Removed.
+        * platform/mac-leopard/fast/dom/setPrimitiveValue-expected.png: Removed.
+        * platform/mac/fast/dom/setPrimitiveValue-expected.png: Removed.
+        * platform/mac/fast/dom/setPrimitiveValue-expected.txt: Removed.
+        * platform/qt/fast/dom/setPrimitiveValue-expected.png: Removed.
+        * platform/qt/fast/dom/setPrimitiveValue-expected.txt: Removed.
+
 2011-04-25  Adele Peterson  <adele@apple.com>
 
         Reviewed by Adam Roben.
