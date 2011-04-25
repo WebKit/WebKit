@@ -32,7 +32,9 @@
 #include "JSDOMWindowCustom.h"
 #include "JSEventException.h"
 #include "JSExceptionBase.h"
+#if ENABLE(BLOB) || ENABLE(FILE_SYSTEM)
 #include "JSFileException.h"
+#endif
 #include "JSRangeException.h"
 #include "JSSQLException.h"
 #include "JSSVGException.h"

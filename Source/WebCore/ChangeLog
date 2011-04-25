@@ -1,5 +1,12 @@
 2011-04-25  Geoffrey Garen  <ggaren@apple.com>
 
+        Another shot at fixing the EFL build.
+
+        * UseJSC.cmake:
+        * bindings/js/JSDOMBinding.cpp:
+
+2011-04-25  Geoffrey Garen  <ggaren@apple.com>
+
         Try to fix EFL build.
 
         * UseJSC.cmake: Added a missing file.
