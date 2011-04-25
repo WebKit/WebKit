@@ -1,0 +1,9 @@
+﻿@import './parse-utf8-bom-reset.css';
+
+h1 {
+    color: red;
+}
+
+h2 {
+    color: blue;
+}

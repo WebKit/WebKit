@@ -1,3 +1,17 @@
+2011-04-25  Alexander Pavlov  <apavlov@chromium.org>
+
+        Reviewed by Yury Semikhatsky.
+
+        Web Inspector: CSS is parsed improperly when saved in UTF-8 with a BOM
+        https://bugs.webkit.org/show_bug.cgi?id=59322
+
+        * inspector/styles/parse-utf8-bom-expected.txt: Added.
+        * inspector/styles/parse-utf8-bom.html: Added.
+        * inspector/styles/resources/parse-utf8-bom-main.css: Added.
+        (h1):
+        (h2):
+        * inspector/styles/resources/parse-utf8-bom-reset.css: Added.
+
 2011-04-25  Jessie Berlin  <jberlin@webkit.org>
 
         Add another HTMLProgressElement test to the Windows Skipped list to get the bots green,
