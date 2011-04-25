@@ -28,6 +28,10 @@ messages -> WebInspectorProxy {
     DidClose()
     BringToFront()
     InspectedURLChanged(WTF::String urlString)
+    
+    Attach()
+    Detach()
+    SetAttachedWindowHeight(unsigned height)
 }
 
 #endif

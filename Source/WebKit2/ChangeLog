@@ -1,5 +1,62 @@
 2011-04-25  Brian Weinstein  <bweinstein@apple.com>
 
+        Reviewed by Adam Roben.
+
+        Windows part of - WebKit2: Support docked mode for Web Inspector
+        https://bugs.webkit.org/show_bug.cgi?id=59134
+        <rdar://problem/8739005>
+        
+        Implement attaching and detaching of the Web Inspector on Windows,
+        and also support setAttachedWindowHeight when the user changes the height
+        of the docked inspector.
+        
+        This patch doesn't remember whether the user prefers attached or detached, and
+        doesn't remember the user's preferred docked height, but that will be a separate
+        bug.
+        
+        * UIProcess/WebInspectorProxy.cpp:
+        (WebKit::WebInspectorProxy::attach): Set the attached flag and call platform-specific code.
+        (WebKit::WebInspectorProxy::detach): Ditto.
+        (WebKit::WebInspectorProxy::setAttachedWindowHeight): Call platform-specific code.
+        (WebKit::WebInspectorProxy::didClose): Set m_isVisible before calling platformClose. platformClose
+            calls detach if the inspector was docked, and detach needs to know whether or not the window is
+            visible.
+        * UIProcess/WebInspectorProxy.h:
+        * UIProcess/WebInspectorProxy.messages.in: Add new messages.
+        * UIProcess/WebPageProxy.h:
+        (WebKit::WebPageProxy::pageClient): Add a getter for the page client.
+        * UIProcess/win/WebInspectorProxyWin.cpp:
+        (WebKit::WebInspectorProxy::windowReceivedMessage): Relay WM_WINDOWPOSCHANGING messages from the inspected
+            web view to the WebInspectorProxy.
+        (WebKit::WebInspectorProxy::onWebViewWindowPosChangingEvent): Resize the inspected web view to behave well
+            with the docked inspector.
+        (WebKit::WebInspectorProxy::platformClose): If we are attached, detach before destroying.
+        (WebKit::WebInspectorProxy::platformAttach): Set the inspector's host window to be the inspected web view's parent
+            window, so the inspected web view and the inspector are siblings.
+        (WebKit::WebInspectorProxy::platformDetach): Set the inspector's host window to be the standalone inspector window.
+        (WebKit::WebInspectorProxy::platformSetAttachedWindowHeight): Size the views.
+        * WebProcess/WebCoreSupport/WebInspectorClient.cpp:
+        * WebProcess/WebCoreSupport/WebInspectorClient.h:
+        * WebProcess/WebCoreSupport/WebInspectorFrontendClient.cpp:
+        (WebKit::WebInspectorFrontendClient::attachWindow): Call WebInspector::attach.
+        (WebKit::WebInspectorFrontendClient::closeWindow): Add a call to the InspectorController to disconnect the inspector frontend
+            from the inspector backend. Without this line, when we close the attached inspector, it won't re-open, because the
+            inspector controller still thinks there is a frontend. This matches WebKit1's behavior, although it seems like this is
+            something WebCore should handle.
+        (WebKit::WebInspectorFrontendClient::detachWindow): Call WebInspector::detach.
+        (WebKit::WebInspectorFrontendClient::setAttachedWindowHeight): Call WebInspector::setAttachedWindowHeight.
+        * UIProcess/DrawingAreaProxyImpl.cpp:
+        (WebKit::DrawingAreaImpl::sendUpdateBackingStoreState): Add an early return if the WebPageProxy's viewSize is empty. 
+            This can be needed if the inspector takes up the whole view, and it is useful to prevent a possible synchronous message
+            from the UIProcess -> WebProcess to update a backing store that isn't visible in the first place.
+        * WebProcess/WebPage/WebInspector.cpp:
+        (WebKit::WebInspector::attach): Send a message to the UIProcess.
+        (WebKit::WebInspector::detach): Ditto.
+        (WebKit::WebInspector::setAttachedWindowHeight): Ditto.
+        * WebProcess/WebPage/WebInspector.h: Remove some dead code.
+
+2011-04-25  Brian Weinstein  <bweinstein@apple.com>
+
         Reviewed by Alice Liu.
 
         WebKit2: Web Inspector: Support highlighting page elements

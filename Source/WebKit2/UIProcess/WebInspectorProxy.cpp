@@ -107,12 +107,21 @@ void WebInspectorProxy::showConsole()
 
 void WebInspectorProxy::attach()
 {
-    notImplemented();
+    m_isAttached = true;
+
+    platformAttach();
 }
 
 void WebInspectorProxy::detach()
 {
-    notImplemented();
+    m_isAttached = false;
+
+    platformDetach();
+}
+
+void WebInspectorProxy::setAttachedWindowHeight(unsigned height)
+{
+    platformSetAttachedWindowHeight(height);
 }
 
 void WebInspectorProxy::toggleJavaScriptDebugging()
@@ -190,9 +199,15 @@ void WebInspectorProxy::didLoadInspectorPage()
 
 void WebInspectorProxy::didClose()
 {
-    platformClose();
-
     m_isVisible = false;
+
+    if (m_isAttached) {
+        // Detach here so we only need to have one code path that is responsible for cleaning up the inspector
+        // state.
+        detach();
+    }
+
+    platformClose();
 }
 
 void WebInspectorProxy::bringToFront()

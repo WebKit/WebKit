@@ -76,6 +76,11 @@ private:
     void bringToFront();
     void inspectedURLChanged(const String&);
 
+    void attach();
+    void detach();
+
+    void setAttachedWindowHeight(unsigned);
+
     // Implemented in platform WebInspector file
     String localizedStringsURL() const;
 

@@ -96,6 +96,21 @@ void WebInspector::inspectedURLChanged(const String& urlString)
     WebProcess::shared().connection()->send(Messages::WebInspectorProxy::InspectedURLChanged(urlString), m_page->pageID());
 }
 
+void WebInspector::attach()
+{
+    WebProcess::shared().connection()->send(Messages::WebInspectorProxy::Attach(), m_page->pageID());
+}
+
+void WebInspector::detach()
+{
+    WebProcess::shared().connection()->send(Messages::WebInspectorProxy::Detach(), m_page->pageID());
+}
+
+void WebInspector::setAttachedWindowHeight(unsigned height)
+{
+    WebProcess::shared().connection()->send(Messages::WebInspectorProxy::SetAttachedWindowHeight(height), m_page->pageID());
+}
+
 // Called by WebInspector messages
 void WebInspector::show()
 {

@@ -34,6 +34,7 @@
 #import "WebProcessProxy.h"
 #import <WebKitSystemInterface.h>
 #import <WebCore/LocalizedStrings.h>
+#import <WebCore/NotImplemented.h>
 #import <wtf/text/WTFString.h>
 
 using namespace WebCore;
@@ -145,6 +146,21 @@ void WebInspectorProxy::platformInspectedURLChanged(const String& urlString)
 {
     NSString *title = [NSString stringWithFormat:WEB_UI_STRING("Web Inspector — %@", "Web Inspector window title"), (NSString *)urlString];
     [m_inspectorWindow.get() setTitle:title];
+}
+
+void WebInspectorProxy::platformAttach()
+{
+    notImplemented();
+}
+
+void WebInspectorProxy::platformDetach()
+{
+    notImplemented();
+}
+
+void WebInspectorProxy::platformSetAttachedWindowHeight(unsigned)
+{
+    notImplemented();
 }
 
 String WebInspectorProxy::inspectorPageURL() const

@@ -25,6 +25,8 @@
 
 #include "config.h"
 #include "WebPageProxy.h"
+
+#include "PageClient.h"
 #include "WebPopupMenuProxyWin.h"
 
 #include "resource.h"
@@ -61,6 +63,11 @@ void WebPageProxy::setPopupMenuSelectedIndex(int32_t selectedIndex)
         return;
 
     static_cast<WebPopupMenuProxyWin*>(m_activePopupMenu.get())->setFocusedIndex(selectedIndex);
+}
+
+HWND WebPageProxy::nativeWindow() const
+{
+    return m_pageClient->nativeWindow();
 }
 
 } // namespace WebKit

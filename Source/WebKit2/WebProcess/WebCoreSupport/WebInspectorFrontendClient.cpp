@@ -30,6 +30,7 @@
 
 #include "WebInspector.h"
 #include "WebPage.h"
+#include <WebCore/InspectorController.h>
 #include <WebCore/NotImplemented.h>
 #include <WebCore/Page.h>
 #include <wtf/text/WTFString.h>
@@ -69,6 +70,7 @@ void WebInspectorFrontendClient::bringToFront()
 
 void WebInspectorFrontendClient::closeWindow()
 {
+    m_page->corePage()->inspectorController()->disconnectFrontend();
     m_page->inspector()->didClose();
 }
 
@@ -79,17 +81,17 @@ void WebInspectorFrontendClient::disconnectFromBackend()
 
 void WebInspectorFrontendClient::attachWindow()
 {
-    notImplemented();
+    m_page->inspector()->attach();
 }
 
 void WebInspectorFrontendClient::detachWindow()
 {
-    notImplemented();
+    m_page->inspector()->detach();
 }
 
-void WebInspectorFrontendClient::setAttachedWindowHeight(unsigned)
+void WebInspectorFrontendClient::setAttachedWindowHeight(unsigned height)
 {
-    notImplemented();
+    m_page->inspector()->setAttachedWindowHeight(height);
 }
 
 void WebInspectorFrontendClient::inspectedURLChanged(const String& urlString)

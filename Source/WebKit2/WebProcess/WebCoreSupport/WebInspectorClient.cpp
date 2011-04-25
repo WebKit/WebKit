@@ -70,16 +70,6 @@ void WebInspectorClient::hideHighlight()
         m_page->uninstallPageOverlay(m_highlightOverlay, false);
 }
 
-void WebInspectorClient::populateSetting(const String& key, String*)
-{
-    notImplemented();
-}
-
-void WebInspectorClient::storeSetting(const String&, const String&)
-{
-    notImplemented();
-}
-
 bool WebInspectorClient::sendMessageToFrontend(const String& message)
 {
     WebInspector* inspector = m_page->inspector();

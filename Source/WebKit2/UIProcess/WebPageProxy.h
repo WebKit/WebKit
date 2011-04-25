@@ -284,6 +284,8 @@ public:
     void gestureDidEnd();
 
     void setGestureReachedScrollingLimit(bool);
+
+    HWND nativeWindow() const;
 #endif
 #if ENABLE(TILED_BACKING_STORE)
     void setActualVisibleContentRect(const WebCore::IntRect& rect);

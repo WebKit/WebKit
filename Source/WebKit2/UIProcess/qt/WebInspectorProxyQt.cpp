@@ -59,6 +59,21 @@ void WebInspectorProxy::platformInspectedURLChanged(const String&)
     notImplemented();
 }
 
+void WebInspectorProxy::platformAttach()
+{
+    notImplemented();
+}
+
+void WebInspectorProxy::platformDetach()
+{
+    notImplemented();
+}
+
+void WebInspectorProxy::platformSetAttachedWindowHeight(unsigned)
+{
+    notImplemented();
+}
+
 String WebInspectorProxy::inspectorPageURL() const
 {
     notImplemented();

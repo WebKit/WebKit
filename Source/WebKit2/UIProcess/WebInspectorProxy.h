@@ -42,6 +42,10 @@ OBJC_CLASS WKView;
 OBJC_CLASS WebInspectorProxyObjCAdapter;
 #endif
 
+#if PLATFORM(WIN)
+#include <WebCore/WindowMessageListener.h>
+#endif
+
 namespace WebKit {
 
 class WebPageGroup;
@@ -52,7 +56,11 @@ struct WebPageCreationParameters;
 class WebView;
 #endif
 
-class WebInspectorProxy : public APIObject {
+class WebInspectorProxy : public APIObject
+#if PLATFORM(WIN)
+    , public WebCore::WindowMessageListener
+#endif
+{
 public:
     static const Type APIType = TypeInspector;
 
@@ -77,6 +85,7 @@ public:
     bool isAttached() const { return m_isAttached; }
     void attach();
     void detach();
+    void setAttachedWindowHeight(unsigned);
 
     bool isDebuggingJavaScript() const { return m_isDebuggingJavaScript; }
     void toggleJavaScriptDebugging();
@@ -105,6 +114,9 @@ private:
     void platformClose();
     void platformBringToFront();
     void platformInspectedURLChanged(const String&);
+    void platformAttach();
+    void platformDetach();
+    void platformSetAttachedWindowHeight(unsigned);
 
     // Implemented the platform WebInspectorProxy file
     String inspectorPageURL() const;
@@ -127,6 +139,9 @@ private:
     LRESULT onMinMaxInfoEvent(HWND hWnd, UINT message, WPARAM, LPARAM, bool& handled);
     LRESULT onSetFocusEvent(HWND hWnd, UINT message, WPARAM, LPARAM, bool& handled);
     LRESULT onCloseEvent(HWND hWnd, UINT message, WPARAM, LPARAM, bool& handled);
+
+    void onWebViewWindowPosChangingEvent(WPARAM, LPARAM);
+    virtual void windowReceivedMessage(HWND, UINT message, WPARAM, LPARAM);
 #endif
 
     static const unsigned minimumWindowWidth = 500;
