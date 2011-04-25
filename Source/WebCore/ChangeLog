@@ -1,3 +1,15 @@
+2011-04-25  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Maciej Stachowiak.
+
+        ImageBuffer.h should work with strict OwnPtrs
+        https://bugs.webkit.org/show_bug.cgi?id=59341
+
+        This patch is to prepare for the strict OwnPtr hack-a-thon.
+
+        * platform/graphics/ImageBuffer.h:
+        (WebCore::ImageBuffer::create):
+
 2011-04-25  Steve Falkenburg  <sfalken@apple.com>
 
         Reviewed by Brian Weinstein.

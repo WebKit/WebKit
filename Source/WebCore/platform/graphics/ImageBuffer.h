@@ -66,7 +66,7 @@ namespace WebCore {
         static PassOwnPtr<ImageBuffer> create(const IntSize& size, ColorSpace colorSpace = ColorSpaceDeviceRGB, RenderingMode renderingMode = Unaccelerated)
         {
             bool success = false;
-            OwnPtr<ImageBuffer> buf(new ImageBuffer(size, colorSpace, renderingMode, success));
+            OwnPtr<ImageBuffer> buf = adoptPtr(new ImageBuffer(size, colorSpace, renderingMode, success));
             if (success)
                 return buf.release();
             return 0;
