@@ -25,6 +25,7 @@
 #include "Assertions.h"
 #include "HashSet.h"
 #include "OwnPtr.h"
+#include "PassOwnPtr.h"
 #include "StdLibExtras.h"
 
 namespace WTF {
