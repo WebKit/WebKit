@@ -56,12 +56,18 @@ void WebInspectorClient::openInspectorFrontend(InspectorController*)
 
 void WebInspectorClient::highlight(Node*)
 {
-    notImplemented();
+    if (!m_highlightOverlay) {
+        RefPtr<PageOverlay> highlightOverlay = PageOverlay::create(this);
+        m_highlightOverlay = highlightOverlay.get();
+        m_page->installPageOverlay(highlightOverlay.release());
+    } else
+        m_highlightOverlay->setNeedsDisplay();
 }
 
 void WebInspectorClient::hideHighlight()
 {
-    notImplemented();
+    if (m_highlightOverlay)
+        m_page->uninstallPageOverlay(m_highlightOverlay, false);
 }
 
 void WebInspectorClient::populateSetting(const String& key, String*)
@@ -83,6 +89,34 @@ bool WebInspectorClient::sendMessageToFrontend(const String& message)
     if (!inspectorPage)
         return false;
     return doDispatchMessageOnFrontendPage(inspectorPage->corePage(), message);
+}
+
+void WebInspectorClient::pageOverlayDestroyed(PageOverlay*)
+{
+}
+
+void WebInspectorClient::willMoveToWebPage(PageOverlay*, WebPage* webPage)
+{
+    if (webPage)
+        return;
+
+    // The page overlay is moving away from the web page, reset it.
+    ASSERT(m_highlightOverlay);
+    m_highlightOverlay = 0;
+}
+
+void WebInspectorClient::didMoveToWebPage(PageOverlay*, WebPage*)
+{
+}
+
+void WebInspectorClient::drawRect(PageOverlay* overlay, WebCore::GraphicsContext& context, const WebCore::IntRect& dirtyRect)
+{
+    m_page->corePage()->inspectorController()->drawNodeHighlight(context);
+}
+
+bool WebInspectorClient::mouseEvent(PageOverlay*, const WebMouseEvent&)
+{
+    return false;
 }
 
 } // namespace WebKit

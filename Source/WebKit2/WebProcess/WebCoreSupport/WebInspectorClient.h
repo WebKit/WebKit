@@ -28,16 +28,24 @@
 
 #if ENABLE(INSPECTOR)
 
+#include "PageOverlay.h"
+
 #include <WebCore/InspectorClient.h>
+
+namespace WebCore {
+    class GraphicsContext;
+    class IntRect;
+}
 
 namespace WebKit {
 
 class WebPage;
 
-class WebInspectorClient : public WebCore::InspectorClient {
+class WebInspectorClient : public WebCore::InspectorClient, private PageOverlay::Client {
 public:
     WebInspectorClient(WebPage* page)
         : m_page(page)
+        , m_highlightOverlay(0)
     {
     }
 
@@ -54,7 +62,15 @@ private:
 
     virtual bool sendMessageToFrontend(const String&);
 
+    // PageOverlay::Client
+    virtual void pageOverlayDestroyed(PageOverlay*);
+    virtual void willMoveToWebPage(PageOverlay*, WebPage*);
+    virtual void didMoveToWebPage(PageOverlay*, WebPage*);
+    virtual void drawRect(PageOverlay*, WebCore::GraphicsContext&, const WebCore::IntRect&);
+    virtual bool mouseEvent(PageOverlay*, const WebMouseEvent&);
+
     WebPage* m_page;
+    PageOverlay* m_highlightOverlay;
 };
 
 } // namespace WebKit
