@@ -3912,3 +3912,6 @@ BUGSENORBLANCO MAC LINUX : fast/css/string-quote-binary.html = CRASH PASS
 BUGSENORBLANCO : fast/events/panScroll-click-hyperlink.html = TEXT
 BUGSENORBLANCO : fast/files/domurl-script-execution-context-crash.html = CRASH PASS
 BUGSENORBLANCO : fast/loader/file-protocol-fragment.html = TEXT
+BUGSENORBLANCO : fast/filesystem/file-writer-write-overlapped.html = CRASH PASS
+BUGSENORBLANCO : editing/selection/drag-select-rapidly.html = CRASH PASS
+BUGSENORBLANCO LINUX DEBUG : fast/css/transform-default-parameter.html = CRASH PASS
