@@ -344,7 +344,7 @@ private:
     OwnPtr<WebKit::WebDeviceOrientationClientMock> m_deviceOrientationClientMock;
     OwnPtr<WebKit::WebSpeechInputControllerMock> m_speechInputControllerMock;
 
-    OwnPtr<TestNavigationController*> m_navigationController;
+    OwnPtr<TestNavigationController> m_navigationController;
 
     WebKit::WebString m_lastRequestedTextCheckString;
     WebKit::WebTextCheckingCompletion* m_lastRequestedTextCheckingCompletion;

@@ -1,3 +1,12 @@
+2011-04-26  Adrienne Walker  <enne@google.com>
+
+        Reviewed by Kent Tamura.
+
+        [chromium] Fix memory leak in DRT due to OwnPtr<T*>
+        https://bugs.webkit.org/show_bug.cgi?id=59489
+
+        * DumpRenderTree/chromium/WebViewHost.h:
+
 2011-04-26  Mario Sanchez Prada  <msanchez@igalia.com>
 
         Reviewed by Eric Seidel.
