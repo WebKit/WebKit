@@ -1,3 +1,20 @@
+2011-04-25  David Levin  <levin@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        Fix OwnPtr strict errors in CrossThreadTask.h
+        https://bugs.webkit.org/show_bug.cgi?id=59427
+
+        * dom/CrossThreadTask.h:
+        (WebCore::CrossThreadTask1::create):
+        (WebCore::CrossThreadTask2::create):
+        (WebCore::CrossThreadTask3::create):
+        (WebCore::CrossThreadTask4::create):
+        (WebCore::CrossThreadTask5::create):
+        (WebCore::CrossThreadTask6::create):
+        (WebCore::CrossThreadTask7::create):
+        (WebCore::CrossThreadTask8::create):
+
 2011-04-25  Mark Rowe  <mrowe@apple.com>
 
         Reviewed by Dan Bernstein.

@@ -66,7 +66,7 @@ public:
 
     static PassOwnPtr<CrossThreadTask> create(Method method, Param1 parameter1)
     {
-        return new CrossThreadTask(method, parameter1);
+        return adoptPtr(new CrossThreadTask(method, parameter1));
     }
 
 private:
@@ -96,7 +96,7 @@ public:
 
     static PassOwnPtr<CrossThreadTask> create(Method method, Param1 parameter1, Param2 parameter2)
     {
-        return new CrossThreadTask(method, parameter1, parameter2);
+        return adoptPtr(new CrossThreadTask(method, parameter1, parameter2));
     }
 
 private:
@@ -129,7 +129,7 @@ public:
 
     static PassOwnPtr<CrossThreadTask> create(Method method, Param1 parameter1, Param2 parameter2, Param3 parameter3)
     {
-        return new CrossThreadTask(method, parameter1, parameter2, parameter3);
+        return adoptPtr(new CrossThreadTask(method, parameter1, parameter2, parameter3));
     }
 
 private:
@@ -165,7 +165,7 @@ public:
 
     static PassOwnPtr<CrossThreadTask> create(Method method, Param1 parameter1, Param2 parameter2, Param3 parameter3, Param4 parameter4)
     {
-        return new CrossThreadTask(method, parameter1, parameter2, parameter3, parameter4);
+        return adoptPtr(new CrossThreadTask(method, parameter1, parameter2, parameter3, parameter4));
     }
 
 private:
@@ -204,7 +204,7 @@ public:
 
     static PassOwnPtr<CrossThreadTask> create(Method method, Param1 parameter1, Param2 parameter2, Param3 parameter3, Param4 parameter4, Param5 parameter5)
     {
-        return new CrossThreadTask(method, parameter1, parameter2, parameter3, parameter4, parameter5);
+        return adoptPtr(new CrossThreadTask(method, parameter1, parameter2, parameter3, parameter4, parameter5));
     }
 
 private:
@@ -246,7 +246,7 @@ public:
 
     static PassOwnPtr<CrossThreadTask> create(Method method, Param1 parameter1, Param2 parameter2, Param3 parameter3, Param4 parameter4, Param5 parameter5, Param6 parameter6)
     {
-        return new CrossThreadTask(method, parameter1, parameter2, parameter3, parameter4, parameter5, parameter6);
+        return adoptPtr(new CrossThreadTask(method, parameter1, parameter2, parameter3, parameter4, parameter5, parameter6));
     }
 
 private:
@@ -291,7 +291,7 @@ public:
 
     static PassOwnPtr<CrossThreadTask> create(Method method, Param1 parameter1, Param2 parameter2, Param3 parameter3, Param4 parameter4, Param5 parameter5, Param6 parameter6, Param7 parameter7)
     {
-        return new CrossThreadTask(method, parameter1, parameter2, parameter3, parameter4, parameter5, parameter6, parameter7);
+        return adoptPtr(new CrossThreadTask(method, parameter1, parameter2, parameter3, parameter4, parameter5, parameter6, parameter7));
     }
 
 private:
@@ -339,7 +339,7 @@ public:
     
     static PassOwnPtr<CrossThreadTask> create(Method method, Param1 parameter1, Param2 parameter2, Param3 parameter3, Param4 parameter4, Param5 parameter5, Param6 parameter6, Param7 parameter7, Param8 parameter8)
     {
-        return new CrossThreadTask(method, parameter1, parameter2, parameter3, parameter4, parameter5, parameter6, parameter7, parameter8);
+        return adoptPtr(new CrossThreadTask(method, parameter1, parameter2, parameter3, parameter4, parameter5, parameter6, parameter7, parameter8));
     }
     
 private:
