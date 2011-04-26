@@ -1,3 +1,14 @@
+2011-04-26  Christian Dywan  <christian@lanedo.com>
+
+        Reviewed by Eric Seidel.
+
+        Extra separator after Select All in context menu
+        https://bugs.webkit.org/show_bug.cgi?id=54092
+
+        * page/ContextMenuController.cpp: Move separator to non-GTK+
+            port guards since it is for the spelling options menu
+            which the GTK+ port doesn't use.
+
 2011-04-26  James Robinson  <jamesr@chromium.org>
 
         Reviewed by Kenneth Russell.

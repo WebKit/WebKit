@@ -923,9 +923,9 @@ void ContextMenuController::populate()
 #endif
 
         if (!inPasswordField) {
-            appendItem(*separatorItem(), m_contextMenu.get());
 #ifndef BUILDING_ON_TIGER
 #if !PLATFORM(GTK)
+            appendItem(*separatorItem(), m_contextMenu.get());
             ContextMenuItem SpellingAndGrammarMenuItem(SubmenuType, ContextMenuItemTagSpellingMenu, 
                 contextMenuItemTagSpellingMenu());
             createAndAppendSpellingAndGrammarSubMenu(SpellingAndGrammarMenuItem);
