@@ -28,6 +28,7 @@
 
 #if ENABLE(DFG_JIT)
 
+#include <RegisterFile.h>
 #include <dfg/DFGNode.h>
 #include <wtf/Vector.h>
 #include <wtf/StdLibExtras.h>
@@ -37,6 +38,24 @@ namespace JSC {
 class CodeBlock;
 
 namespace DFG {
+
+// helper function to distinguish vars & temporaries from arguments.
+inline bool operandIsArgument(int operand) { return operand < 0; }
+
+typedef uint8_t PredictedType;
+static const PredictedType PredictNone  = 0;
+static const PredictedType PredictCell  = 0x01;
+static const PredictedType PredictArray = 0x03;
+static const PredictedType PredictInt32 = 0x04;
+
+struct PredictionSlot {
+public:
+    PredictionSlot()
+        : m_value(PredictNone)
+    {
+    }
+    PredictedType m_value;
+};
 
 typedef uint32_t BlockIndex;
 
@@ -86,6 +105,12 @@ struct BasicBlock {
 // Nodes that are 'dead' remain in the vector with refCount 0.
 class Graph : public Vector<Node, 64> {
 public:
+    Graph(unsigned numArguments, unsigned numVariables)
+        : m_argumentPredictions(numArguments)
+        , m_variablePredictions(numVariables)
+    {
+    }
+
     // Mark a node as being referenced.
     void ref(NodeIndex nodeIndex)
     {
@@ -101,8 +126,6 @@ public:
     void dump(NodeIndex, CodeBlock* = 0);
 #endif
 
-    Vector< OwnPtr<BasicBlock> , 8> m_blocks;
-
     BlockIndex blockIndexForBytecodeOffset(unsigned bytecodeBegin)
     {
         OwnPtr<BasicBlock>* begin = m_blocks.begin();
@@ -116,9 +139,35 @@ public:
         return *m_blocks[blockIndexForBytecodeOffset(bytecodeBegin)];
     }
 
+    void predict(int operand, PredictedType prediction)
+    {
+        if (operandIsArgument(operand)) {
+            unsigned argument = operand + m_argumentPredictions.size() + RegisterFile::CallFrameHeaderSize;
+            m_argumentPredictions[argument].m_value |= prediction;
+        } else if ((unsigned)operand < m_variablePredictions.size())
+            m_variablePredictions[operand].m_value |= prediction;
+            
+    }
+
+    PredictedType getPrediction(int operand)
+    {
+        if (operandIsArgument(operand)) {
+            unsigned argument = operand + m_argumentPredictions.size() + RegisterFile::CallFrameHeaderSize;
+            return m_argumentPredictions[argument].m_value;
+        }
+        if ((unsigned)operand < m_variablePredictions.size())
+            return m_variablePredictions[operand].m_value;
+        return PredictNone;
+    }
+
+    Vector< OwnPtr<BasicBlock> , 8> m_blocks;
 private:
+
     // When a node's refCount goes from 0 to 1, it must (logically) recursively ref all of its children, and vice versa.
     void refChildren(NodeIndex);
+
+    Vector<PredictionSlot, 16> m_argumentPredictions;
+    Vector<PredictionSlot, 16> m_variablePredictions;
 };
 
 } } // namespace JSC::DFG

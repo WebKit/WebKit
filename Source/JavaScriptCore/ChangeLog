@@ -1,3 +1,48 @@
+2011-04-25  Gavin Barraclough  <barraclough@apple.com>
+
+        Reviewed by Geoff Garen.
+
+        https://bugs.webkit.org/show_bug.cgi?id=59405
+        DFG JIT - add type speculation for integer & array types, for vars & args.
+
+        If a var or argument is used as the base for a GetByVal or PutByVal access
+        we are speculating that it is of type Array (we only generate code on the
+        speculative path to perform array accesses). By typing the var or args slot
+        as Array, and checking on entry to the function (in the case of args), and
+        each time the local is written to, we can avoid a type check at each point
+        the array is accessed. This will typically hoist type checks out of loops.
+
+        Similarly, any local that is incremented or decremented, or is the input or
+        output or a bitwise operator, is likely to be an integer. By typing the
+        local as int32 we can avoid speculation checks on access, and tagging when
+        writing to the slot. All accesses can become 32bit instead of 64.
+
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::set):
+        (JSC::DFG::ByteCodeParser::predictArray):
+        (JSC::DFG::ByteCodeParser::predictInt32):
+        (JSC::DFG::ByteCodeParser::parseBlock):
+        * dfg/DFGGraph.h:
+        (JSC::DFG::PredictionSlot::PredictionSlot):
+        (JSC::DFG::Graph::Graph):
+        (JSC::DFG::Graph::predict):
+        (JSC::DFG::Graph::getPrediction):
+        * dfg/DFGJITCompiler.cpp:
+        (JSC::DFG::JITCompiler::compileFunction):
+        * dfg/DFGJITCompiler.h:
+        (JSC::DFG::JITCompiler::tagFor):
+        (JSC::DFG::JITCompiler::payloadFor):
+        * dfg/DFGNode.h:
+        * dfg/DFGNonSpeculativeJIT.cpp:
+        (JSC::DFG::NonSpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        (JSC::DFG::SpeculativeJIT::checkArgumentTypes):
+        (JSC::DFG::SpeculativeJIT::initializeVariableTypes):
+        * dfg/DFGSpeculativeJIT.h:
+        * runtime/Executable.cpp:
+        (JSC::tryDFGCompile):
+
 2011-04-25  David Levin  <levin@chromium.org>
 
         Reviewed by James Robinson.

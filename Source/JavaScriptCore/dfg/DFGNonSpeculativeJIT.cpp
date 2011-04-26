@@ -173,8 +173,13 @@ bool NonSpeculativeJIT::isKnownNumeric(NodeIndex nodeIndex)
 
 void NonSpeculativeJIT::compile(SpeculationCheckIndexIterator& checkIterator, Node& node)
 {
-    // ...
-    if (checkIterator.hasCheckAtIndex(m_compileIndex))
+    // Check for speculation checks from the corresponding instruction in the
+    // speculative path. Do not check for NodeIndex 0, since this is checked
+    // in the outermost compile layer, at the head of the non-speculative path
+    // (for index 0 we may need to check regardless of whether or not the node
+    // will be generated, since argument type speculation checks will appear
+    // as speculation checks at this index).
+    if (m_compileIndex && checkIterator.hasCheckAtIndex(m_compileIndex))
         trackEntry(m_jit.label());
 
     NodeType op = node.op;
@@ -201,7 +206,8 @@ void NonSpeculativeJIT::compile(SpeculationCheckIndexIterator& checkIterator, No
         GPRTemporary result(this);
         m_jit.loadPtr(JITCompiler::addressFor(node.local()), result.registerID());
 
-        // jsValueResult, but don't useChildren!
+        // Like jsValueResult, but don't useChildren - our children are phi nodes,
+        // and don't represent values within this dataflow with virtual registers.
         VirtualRegister virtualRegister = node.virtualRegister();
         m_gprs.retain(result.gpr(), virtualRegister, SpillOrderJS);
         m_generationInfo[virtualRegister].initJSValue(m_compileIndex, node.refCount(), result.gpr(), DataFormatJS);
@@ -683,6 +689,10 @@ void NonSpeculativeJIT::compile(SpeculationCheckIndexIterator& checkIterator, Ba
 
 void NonSpeculativeJIT::compile(SpeculationCheckIndexIterator& checkIterator)
 {
+    // Check for speculation checks added at function entry (checking argument types).
+    if (checkIterator.hasCheckAtIndex(m_compileIndex))
+        trackEntry(m_jit.label());
+
     ASSERT(!m_compileIndex);
     for (m_block = 0; m_block < m_jit.graph().m_blocks.size(); ++m_block)
         compile(checkIterator, *m_jit.graph().m_blocks[m_block]);

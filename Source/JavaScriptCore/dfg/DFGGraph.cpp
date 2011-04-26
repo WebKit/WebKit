@@ -97,7 +97,7 @@ void Graph::dump(NodeIndex nodeIndex, CodeBlock* codeBlock)
     }
     if (node.hasLocal()) {
         int local = node.local();
-        if (local < 0)
+        if (operandIsArgument(local))
             printf("%sarg%u", hasPrinted ? ", " : "", local - codeBlock->thisRegister());
         else
             printf("%sr%u", hasPrinted ? ", " : "", local);

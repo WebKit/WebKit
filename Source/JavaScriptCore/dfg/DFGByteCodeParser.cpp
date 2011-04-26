@@ -91,16 +91,18 @@ private:
         }
 
         // Is this an argument?
-        if (operand < 0)
+        if (operandIsArgument(operand))
             return getArgument(operand);
 
         // Must be a local.
         return getLocal((unsigned)operand);
     }
-    void set(int operand, NodeIndex value)
+    void set(int operand, NodeIndex value, PredictedType prediction = PredictNone)
     {
+        m_graph.predict(operand, prediction);
+
         // Is this an argument?
-        if (operand < 0) {
+        if (operandIsArgument(operand)) {
             setArgument(operand, value);
             return;
         }
@@ -440,6 +442,31 @@ private:
         return resultIndex;
     }
 
+    void predictArray(NodeIndex nodeIndex)
+    {
+        Node* nodePtr = &m_graph[nodeIndex];
+
+        if (nodePtr->op == GetLocal)
+            m_graph.predict(nodePtr->local(), PredictArray);
+    }
+
+    void predictInt32(NodeIndex nodeIndex)
+    {
+        Node* nodePtr = &m_graph[nodeIndex];
+
+        if (nodePtr->op == ValueToNumber)
+            nodePtr = &m_graph[nodePtr->child1];
+
+        if (nodePtr->op == ValueToInt32)
+            nodePtr = &m_graph[nodePtr->child1];
+
+        if (nodePtr->op == NumberToInt32)
+            nodePtr = &m_graph[nodePtr->child1];
+
+        if (nodePtr->op == GetLocal)
+            m_graph.predict(nodePtr->local(), PredictInt32);
+    }
+
     JSGlobalData* m_globalData;
     CodeBlock* m_codeBlock;
     Graph& m_graph;
@@ -560,53 +587,65 @@ bool ByteCodeParser::parseBlock(unsigned limit)
         case op_bitand: {
             NodeIndex op1 = getToInt32(currentInstruction[2].u.operand);
             NodeIndex op2 = getToInt32(currentInstruction[3].u.operand);
-            set(currentInstruction[1].u.operand, addToGraph(BitAnd, op1, op2));
+            predictInt32(op1);
+            predictInt32(op2);
+            set(currentInstruction[1].u.operand, addToGraph(BitAnd, op1, op2), PredictInt32);
             NEXT_OPCODE(op_bitand);
         }
 
         case op_bitor: {
             NodeIndex op1 = getToInt32(currentInstruction[2].u.operand);
             NodeIndex op2 = getToInt32(currentInstruction[3].u.operand);
-            set(currentInstruction[1].u.operand, addToGraph(BitOr, op1, op2));
+            predictInt32(op1);
+            predictInt32(op2);
+            set(currentInstruction[1].u.operand, addToGraph(BitOr, op1, op2), PredictInt32);
             NEXT_OPCODE(op_bitor);
         }
 
         case op_bitxor: {
             NodeIndex op1 = getToInt32(currentInstruction[2].u.operand);
             NodeIndex op2 = getToInt32(currentInstruction[3].u.operand);
-            set(currentInstruction[1].u.operand, addToGraph(BitXor, op1, op2));
+            predictInt32(op1);
+            predictInt32(op2);
+            set(currentInstruction[1].u.operand, addToGraph(BitXor, op1, op2), PredictInt32);
             NEXT_OPCODE(op_bitxor);
         }
 
         case op_rshift: {
             NodeIndex op1 = getToInt32(currentInstruction[2].u.operand);
             NodeIndex op2 = getToInt32(currentInstruction[3].u.operand);
+            predictInt32(op1);
+            predictInt32(op2);
             NodeIndex result;
             // Optimize out shifts by zero.
             if (isInt32Constant(op2) && !(valueOfInt32Constant(op2) & 0x1f))
                 result = op1;
             else
                 result = addToGraph(BitRShift, op1, op2);
-            set(currentInstruction[1].u.operand, result);
+            set(currentInstruction[1].u.operand, result, PredictInt32);
             NEXT_OPCODE(op_rshift);
         }
 
         case op_lshift: {
             NodeIndex op1 = getToInt32(currentInstruction[2].u.operand);
             NodeIndex op2 = getToInt32(currentInstruction[3].u.operand);
+            predictInt32(op1);
+            predictInt32(op2);
             NodeIndex result;
             // Optimize out shifts by zero.
             if (isInt32Constant(op2) && !(valueOfInt32Constant(op2) & 0x1f))
                 result = op1;
             else
                 result = addToGraph(BitLShift, op1, op2);
-            set(currentInstruction[1].u.operand, result);
+            set(currentInstruction[1].u.operand, result, PredictInt32);
             NEXT_OPCODE(op_lshift);
         }
 
         case op_urshift: {
             NodeIndex op1 = getToInt32(currentInstruction[2].u.operand);
             NodeIndex op2 = getToInt32(currentInstruction[3].u.operand);
+            predictInt32(op1);
+            predictInt32(op2);
             NodeIndex result;
             // The result of a zero-extending right shift is treated as an unsigned value.
             // This means that if the top bit is set, the result is not in the int32 range,
@@ -627,7 +666,7 @@ bool ByteCodeParser::parseBlock(unsigned limit)
                 result = addToGraph(BitURShift, op1, op2);
                 result = addToGraph(UInt32ToNumber, result);
             }
-            set(currentInstruction[1].u.operand, result);
+            set(currentInstruction[1].u.operand, result, PredictInt32);
             NEXT_OPCODE(op_urshift);
         }
 
@@ -636,6 +675,7 @@ bool ByteCodeParser::parseBlock(unsigned limit)
         case op_pre_inc: {
             unsigned srcDst = currentInstruction[1].u.operand;
             NodeIndex op = getToNumber(srcDst);
+            predictInt32(op);
             set(srcDst, addToGraph(ArithAdd, op, one()));
             NEXT_OPCODE(op_pre_inc);
         }
@@ -644,6 +684,7 @@ bool ByteCodeParser::parseBlock(unsigned limit)
             unsigned result = currentInstruction[1].u.operand;
             unsigned srcDst = currentInstruction[2].u.operand;
             NodeIndex op = getToNumber(srcDst);
+            predictInt32(op);
             set(result, op);
             set(srcDst, addToGraph(ArithAdd, op, one()));
             NEXT_OPCODE(op_post_inc);
@@ -652,6 +693,7 @@ bool ByteCodeParser::parseBlock(unsigned limit)
         case op_pre_dec: {
             unsigned srcDst = currentInstruction[1].u.operand;
             NodeIndex op = getToNumber(srcDst);
+            predictInt32(op);
             set(srcDst, addToGraph(ArithSub, op, one()));
             NEXT_OPCODE(op_pre_dec);
         }
@@ -660,6 +702,7 @@ bool ByteCodeParser::parseBlock(unsigned limit)
             unsigned result = currentInstruction[1].u.operand;
             unsigned srcDst = currentInstruction[2].u.operand;
             NodeIndex op = getToNumber(srcDst);
+            predictInt32(op);
             set(result, op);
             set(srcDst, addToGraph(ArithSub, op, one()));
             NEXT_OPCODE(op_post_dec);
@@ -794,6 +837,8 @@ bool ByteCodeParser::parseBlock(unsigned limit)
         case op_get_by_val: {
             NodeIndex base = get(currentInstruction[2].u.operand);
             NodeIndex property = get(currentInstruction[3].u.operand);
+            predictArray(base);
+            predictInt32(property);
 
             NodeIndex getByVal = addToGraph(GetByVal, base, property, aliases.lookupGetByVal(base, property));
             set(currentInstruction[1].u.operand, getByVal);
@@ -806,6 +851,8 @@ bool ByteCodeParser::parseBlock(unsigned limit)
             NodeIndex base = get(currentInstruction[1].u.operand);
             NodeIndex property = get(currentInstruction[2].u.operand);
             NodeIndex value = get(currentInstruction[3].u.operand);
+            predictArray(base);
+            predictInt32(property);
 
             NodeIndex aliasedGet = aliases.lookupGetByVal(base, property);
             NodeIndex putByVal = addToGraph(aliasedGet != NoNode ? PutByValAlias : PutByVal, base, property, value);

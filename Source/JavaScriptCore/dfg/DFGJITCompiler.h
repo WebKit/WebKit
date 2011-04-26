@@ -205,11 +205,6 @@ public:
     }
 #endif
 
-    Address addressForArgument(int32_t argument)
-    {
-        return Address(callFrameRegister, (argument - (m_codeBlock->m_numParameters + RegisterFile::CallFrameHeaderSize)) * sizeof(Register));
-    }
-
     static Address addressForGlobalVar(RegisterID global, int32_t varNumber)
     {
         return Address(global, varNumber * sizeof(Register));
@@ -218,6 +213,16 @@ public:
     static Address addressFor(VirtualRegister virtualRegister)
     {
         return Address(callFrameRegister, virtualRegister * sizeof(Register));
+    }
+
+    static Address tagFor(VirtualRegister virtualRegister)
+    {
+        return Address(callFrameRegister, virtualRegister * sizeof(Register) + OBJECT_OFFSETOF(EncodedValueDescriptor, asBits.tag));
+    }
+
+    static Address payloadFor(VirtualRegister virtualRegister)
+    {
+        return Address(callFrameRegister, virtualRegister * sizeof(Register) + OBJECT_OFFSETOF(EncodedValueDescriptor, asBits.payload));
     }
 
     // These methods provide mapping from sequential register numbering (GPRReg/FPRReg)

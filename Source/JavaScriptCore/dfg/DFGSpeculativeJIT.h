@@ -135,6 +135,9 @@ private:
     void compile(Node&);
     void compile(BasicBlock&);
 
+    void checkArgumentTypes();
+    void initializeVariableTypes();
+
     bool isDoubleConstantWithInt32Value(NodeIndex nodeIndex, int32_t& out)
     {
         if (!m_jit.isDoubleConstant(nodeIndex))

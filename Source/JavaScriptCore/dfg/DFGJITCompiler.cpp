@@ -264,7 +264,11 @@ void JITCompiler::compileFunction(JITCode& entry, MacroAssemblerCodePtr& entryWi
     // First generate the speculative path.
     Label speculativePathBegin = label();
     SpeculativeJIT speculative(*this);
+#if !DFG_DEBUG_LOCAL_DISBALE_SPECULATIVE
     bool compiledSpeculative = speculative.compile();
+#else
+    bool compiledSpeculative = false;
+#endif
 
     // Next, generate the non-speculative path. We pass this a SpeculationCheckIndexIterator
     // to allow it to check which nodes in the graph may bail out, and may need to reenter the

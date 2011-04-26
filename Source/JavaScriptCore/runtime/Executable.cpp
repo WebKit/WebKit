@@ -204,7 +204,7 @@ static bool tryDFGCompile(JSGlobalData* globalData, CodeBlock* codeBlock, JITCod
         return false;
 #endif
 
-    DFG::Graph dfg;
+    DFG::Graph dfg(codeBlock->m_numParameters, codeBlock->m_numVars);
     if (!parse(dfg, globalData, codeBlock))
         return false;
 

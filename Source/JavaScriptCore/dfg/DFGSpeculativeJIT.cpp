@@ -285,19 +285,49 @@ void SpeculativeJIT::compile(Node& node)
 
     case GetLocal: {
         GPRTemporary result(this);
-        m_jit.loadPtr(JITCompiler::addressFor(node.local()), result.registerID());
+        PredictedType prediction = m_jit.graph().getPrediction(node.local());
+        if (prediction == PredictInt32) {
+            m_jit.load32(JITCompiler::payloadFor(node.local()), result.registerID());
 
-        // jsValueResult, but don't useChildren!
-        VirtualRegister virtualRegister = node.virtualRegister();
-        m_gprs.retain(result.gpr(), virtualRegister, SpillOrderJS);
-        m_generationInfo[virtualRegister].initJSValue(m_compileIndex, node.refCount(), result.gpr(), DataFormatJS);
+            // Like integerResult, but don't useChildren - our children are phi nodes,
+            // and don't represent values within this dataflow with virtual registers.
+            VirtualRegister virtualRegister = node.virtualRegister();
+            m_gprs.retain(result.gpr(), virtualRegister, SpillOrderInteger);
+            m_generationInfo[virtualRegister].initInteger(m_compileIndex, node.refCount(), result.gpr());
+        } else {
+            m_jit.loadPtr(JITCompiler::addressFor(node.local()), result.registerID());
+
+            // Like jsValueResult, but don't useChildren - our children are phi nodes,
+            // and don't represent values within this dataflow with virtual registers.
+            VirtualRegister virtualRegister = node.virtualRegister();
+            m_gprs.retain(result.gpr(), virtualRegister, SpillOrderJS);
+            m_generationInfo[virtualRegister].initJSValue(m_compileIndex, node.refCount(), result.gpr(), (prediction == PredictArray) ? DataFormatJSCell : DataFormatJS);
+        }
         break;
     }
 
     case SetLocal: {
-        JSValueOperand value(this, node.child1);
-        m_jit.storePtr(value.registerID(), JITCompiler::addressFor(node.local()));
-        noResult(m_compileIndex);
+        switch (m_jit.graph().getPrediction(node.local())) {
+        case PredictInt32: {
+            SpeculateIntegerOperand value(this, node.child1);
+            m_jit.store32(value.registerID(), JITCompiler::payloadFor(node.local()));
+            noResult(m_compileIndex);
+            break;
+        }
+        case PredictArray: {
+            SpeculateCellOperand cell(this, node.child1);
+            m_jit.storePtr(cell.registerID(), JITCompiler::addressFor(node.local()));
+            noResult(m_compileIndex);
+            break;
+        }
+
+        default: {
+            JSValueOperand value(this, node.child1);
+            m_jit.storePtr(value.registerID(), JITCompiler::addressFor(node.local()));
+            noResult(m_compileIndex);
+            break;
+        }
+        }
         break;
     }
 
@@ -630,7 +660,10 @@ void SpeculativeJIT::compile(Node& node)
         m_jit.loadPtr(MacroAssembler::Address(baseReg, JSArray::storageOffset()), storageReg);
 
         // Check that base is an array, and that property is contained within m_vector (< m_vectorLength).
-        speculationCheck(m_jit.branchPtr(MacroAssembler::NotEqual, MacroAssembler::Address(baseReg), MacroAssembler::TrustedImmPtr(m_jit.globalData()->jsArrayVPtr)));
+        // If we have predicted the base to be type array, we can skip the check.
+        Node& baseNode = m_jit.graph()[node.child1];
+        if (baseNode.op != GetLocal || m_jit.graph().getPrediction(baseNode.local()) != PredictArray)
+            speculationCheck(m_jit.branchPtr(MacroAssembler::NotEqual, MacroAssembler::Address(baseReg), MacroAssembler::TrustedImmPtr(m_jit.globalData()->jsArrayVPtr)));
         speculationCheck(m_jit.branch32(MacroAssembler::AboveOrEqual, propertyReg, MacroAssembler::Address(baseReg, JSArray::vectorLengthOffset())));
 
         // FIXME: In cases where there are subsequent by_val accesses to the same base it might help to cache
@@ -657,7 +690,10 @@ void SpeculativeJIT::compile(Node& node)
         MacroAssembler::RegisterID storageReg = storage.registerID();
 
         // Check that base is an array, and that property is contained within m_vector (< m_vectorLength).
-        speculationCheck(m_jit.branchPtr(MacroAssembler::NotEqual, MacroAssembler::Address(baseReg), MacroAssembler::TrustedImmPtr(m_jit.globalData()->jsArrayVPtr)));
+        // If we have predicted the base to be type array, we can skip the check.
+        Node& baseNode = m_jit.graph()[node.child1];
+        if (baseNode.op != GetLocal || m_jit.graph().getPrediction(baseNode.local()) != PredictArray)
+            speculationCheck(m_jit.branchPtr(MacroAssembler::NotEqual, MacroAssembler::Address(baseReg), MacroAssembler::TrustedImmPtr(m_jit.globalData()->jsArrayVPtr)));
         speculationCheck(m_jit.branch32(MacroAssembler::AboveOrEqual, propertyReg, MacroAssembler::Address(baseReg, JSArray::vectorLengthOffset())));
 
         // Get the array storage.
@@ -868,8 +904,51 @@ void SpeculativeJIT::compile(BasicBlock& block)
     }
 }
 
+// If we are making type predictions about our arguments then
+// we need to check that they are correct on function entry.
+void SpeculativeJIT::checkArgumentTypes()
+{
+    ASSERT(!m_compileIndex);
+    for (int i = 0; i < m_jit.codeBlock()->m_numParameters; ++i) {
+        VirtualRegister virtualRegister = (VirtualRegister)(m_jit.codeBlock()->thisRegister() + i);
+        if (m_jit.graph().getPrediction(virtualRegister) == PredictInt32)
+        switch (m_jit.graph().getPrediction(virtualRegister)) {
+        case PredictInt32:
+            speculationCheck(m_jit.branchPtr(MacroAssembler::Below, JITCompiler::addressFor(virtualRegister), JITCompiler::tagTypeNumberRegister));
+            break;
+
+        case PredictArray: {
+            GPRTemporary temp(this);
+            m_jit.loadPtr(JITCompiler::addressFor(virtualRegister), temp.registerID());
+            speculationCheck(m_jit.branchTestPtr(MacroAssembler::NonZero, temp.registerID(), JITCompiler::tagMaskRegister));
+            speculationCheck(m_jit.branchPtr(MacroAssembler::NotEqual, MacroAssembler::Address(temp.registerID()), MacroAssembler::TrustedImmPtr(m_jit.globalData()->jsArrayVPtr)));
+            break;
+        }
+
+        default:
+            break;
+        }
+    }
+}
+
+// For any vars that we will be treating as numeric, write 0 to
+// the var on entry. Throughout the block we will only read/write
+// to the payload, by writing the tag now we prevent the GC from
+// misinterpreting values as pointers.
+void SpeculativeJIT::initializeVariableTypes()
+{
+    ASSERT(!m_compileIndex);
+    for (int var = 0; var < m_jit.codeBlock()->m_numVars; ++var) {
+        if (m_jit.graph().getPrediction(var) == PredictInt32)
+            m_jit.storePtr(JITCompiler::tagTypeNumberRegister, JITCompiler::addressFor((VirtualRegister)var));
+    }
+}
+
 bool SpeculativeJIT::compile()
 {
+    checkArgumentTypes();
+    initializeVariableTypes();
+
     ASSERT(!m_compileIndex);
     for (m_block = 0; m_block < m_jit.graph().m_blocks.size(); ++m_block) {
         compile(*m_jit.graph().m_blocks[m_block]);

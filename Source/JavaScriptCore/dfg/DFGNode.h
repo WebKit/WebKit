@@ -40,6 +40,8 @@
 #define DFG_JIT_BREAK_ON_EVERY_NODE 0
 // Disable the DFG JIT without having to touch Platform.h!
 #define DFG_DEBUG_LOCAL_DISBALE 0
+// Disable the SpeculativeJIT without having to touch Platform.h!
+#define DFG_DEBUG_LOCAL_DISBALE_SPECULATIVE 0
 // Generate stats on how successful we were in making use of the DFG jit, and remaining on the hot path.
 #define DFG_SUCCESS_STATS 0
 
