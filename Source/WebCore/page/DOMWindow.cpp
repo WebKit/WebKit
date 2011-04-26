@@ -140,7 +140,8 @@ public:
 private:
     virtual void fired()
     {
-        m_window->postMessageTimerFired(this);
+        m_window->postMessageTimerFired(adoptPtr(this));
+        // This object is deleted now.
     }
 
     RefPtr<DOMWindow> m_window;
@@ -833,7 +834,7 @@ void DOMWindow::postMessage(PassRefPtr<SerializedScriptValue> message, const Mes
     timer->startOneShot(0);
 }
 
-void DOMWindow::postMessageTimerFired(PostMessageTimer* t)
+void DOMWindow::postMessageTimerFired(PassOwnPtr<PostMessageTimer> t)
 {
     OwnPtr<PostMessageTimer> timer(t);
 

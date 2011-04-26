@@ -228,7 +228,7 @@ namespace WebCore {
         void postMessage(PassRefPtr<SerializedScriptValue> message, const MessagePortArray*, const String& targetOrigin, DOMWindow* source, ExceptionCode&);
         // FIXME: remove this when we update the ObjC bindings (bug #28774).
         void postMessage(PassRefPtr<SerializedScriptValue> message, MessagePort*, const String& targetOrigin, DOMWindow* source, ExceptionCode&);
-        void postMessageTimerFired(PostMessageTimer*);
+        void postMessageTimerFired(PassOwnPtr<PostMessageTimer>);
 
         void scrollBy(int x, int y) const;
         void scrollTo(int x, int y) const;

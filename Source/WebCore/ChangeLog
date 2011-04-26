@@ -1,3 +1,15 @@
+2011-04-25  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by James Robinson.
+
+        DOMWindow.cpp should work with strict OwnPtrs
+        https://bugs.webkit.org/show_bug.cgi?id=59356
+
+        * page/DOMWindow.cpp:
+        (WebCore::PostMessageTimer::fired):
+        (WebCore::DOMWindow::postMessageTimerFired):
+        * page/DOMWindow.h:
+
 2011-04-25  Adam Klein  <adamk@chromium.org>
 
         Reviewed by James Robinson.
