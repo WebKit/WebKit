@@ -3,6 +3,7 @@ function test()
 {
     if (!window.layoutTestController)
         return;
+    layoutTestController.dumpAsText();
     document.body.offsetTop;    // Force layout. The mouse is not tracked before first layout.
     eventSender.mouseMoveTo(20, 20);
 }

@@ -1,3 +1,21 @@
+2011-04-25  Mihai Parparita  <mihaip@chromium.org>
+
+        Reviewed by Ojan Vafai.
+
+        Convert fast/events/event-sender-mouse-moved.html to dumpAsText
+        https://bugs.webkit.org/show_bug.cgi?id=59366
+
+        * fast/events/event-sender-mouse-moved-expected.txt: Added.
+        * fast/events/event-sender-mouse-moved.html:
+        * platform/chromium-linux/fast/events/event-sender-mouse-moved-expected.png: Removed.
+        * platform/chromium-win/fast/events/event-sender-mouse-moved-expected.png: Removed.
+        * platform/chromium-win/fast/events/event-sender-mouse-moved-expected.txt: Removed.
+        * platform/gtk/fast/events/event-sender-mouse-moved-expected.txt: Removed.
+        * platform/mac-leopard/fast/events/event-sender-mouse-moved-expected.png: Removed.
+        * platform/mac/fast/events/event-sender-mouse-moved-expected.png: Removed.
+        * platform/mac/fast/events/event-sender-mouse-moved-expected.txt: Removed.
+        * platform/qt/fast/events/event-sender-mouse-moved-expected.txt: Removed.
+
 2011-04-25  Dirk Pranke  <dpranke@chromium.org>
 
         Unreviewed, expectations change. Remove tests that are no longer
@@ -259,7 +277,7 @@
         Handling of URLs like http:/example.com/ is incorrect
         https://bugs.webkit.org/show_bug.cgi?id=59300
         <rdar://problem/9231956>
-        
+
         Added some new test cases. Also updated results for the
         change. The changes are progressions.
 
@@ -355,7 +373,7 @@
 
         Unreviewed test_expectations.txt update.
         r84745 didn't fix meter-element.html break on chromium.
-        
+
         * platform/chromium/test_expectations.txt:
 
 2011-04-23  MORITA Hajime  <morrita@google.com>
@@ -364,7 +382,7 @@
 
         REGRESSION: (non-Mac) <meter>'s bar part isn't rendered for with -webkit-writing-mode: vertical-lr from r82899
         https://bugs.webkit.org/show_bug.cgi?id=59281
-        
+
         * fast/dom/HTMLMeterElement/meter-writing-mode.html: Added.
         * fast/dom/HTMLProgressElement/progress-writing-mode.html: Added.
         * platform/chromium/test_expectations.txt:
@@ -453,7 +471,7 @@
 
         [QT] move-by-word-visually.html failed in QT.
         https://bugs.webkit.org/show_bug.cgi?id=59265
- 
+
         Temporarily skip the test in QT while investigating.
 
         * platform/qt/Skipped:
@@ -774,7 +792,7 @@
         https://bugs.webkit.org/show_bug.cgi?id=59213
 
         Testcase for rounded borders on an element with a gradient background.
-        
+
         * fast/backgrounds/gradient-background-leakage.html: Added.
         * platform/mac/fast/backgrounds/gradient-background-leakage-expected.png: Added.
         * platform/mac/fast/backgrounds/gradient-background-leakage-expected.txt: Added.
@@ -911,13 +929,13 @@
         Reviewed by Dimitri Glazkov.
 
         Content of <details> should be forwarded through the shadow DOM
-        https://bugs.webkit.org/show_bug.cgi?id=59055        
+        https://bugs.webkit.org/show_bug.cgi?id=59055
 
         * fast/html/details-add-child-1.html: Added.
         * fast/html/details-add-child-2.html: Added.
         * fast/html/details-remove-child-1.html: Added.
         * fast/html/details-remove-child-2.html: Added.
-        * platform/chromium/test_expectations.txt:        
+        * platform/chromium/test_expectations.txt:
         * platform/mac/fast/html/details-add-child-1-expected.checksum: Added.
         * platform/mac/fast/html/details-add-child-1-expected.png: Added.
         * platform/mac/fast/html/details-add-child-1-expected.txt: Added.
@@ -986,7 +1004,7 @@
 
         Extra GraphicsContext::save() in InlineTextBox::paintDecoration()
         https://bugs.webkit.org/show_bug.cgi?id=59109
-        
+
         Testcase that exercises the fixed InlineTextBox::paintDecoration() code.
 
         * fast/text/multiple-text-shadow-alpha-expected.txt: Added.
@@ -1096,7 +1114,7 @@
         Reviewed by Dan Bernstein.
 
         https://bugs.webkit.org/show_bug.cgi?id=57898
-        REGRESSION (r82185): Scroll position not restored on navigation back to a page in 
+        REGRESSION (r82185): Scroll position not restored on navigation back to a page in
         the page cache
         -and corresponding-
         <rdar://problem/9226652>
@@ -1512,7 +1530,7 @@
 
 2011-04-21  Tony Chang  <tony@chromium.org>
 
-        Unreviewed.  Fixed the last set of tests that are missing pngs. 
+        Unreviewed.  Fixed the last set of tests that are missing pngs.
         Created new png baselines on my Leopard machine.
 
         * platform/chromium-mac-leopard/fast/blockflow/english-bt-text-expected.checksum: Removed.
@@ -2454,7 +2472,7 @@
 
         Reviewed by Adam Barth
 
-        Add a test to test sequences of IPA tone letters are 
+        Add a test to test sequences of IPA tone letters are
         ligated regardless of text-rendering mode (fast codepath or not).
         The test explicitly specifies Arial because it's one of a few fonts
         to have layout table entries to support the ligation of IPA tone
@@ -2565,7 +2583,7 @@
 2011-04-19  Dirk Pranke  <dpranke@chromium.org>
 
         Unreviewed, expectations change.
-        
+
         * platform/chromium/test_expectations.txt:
 
 2011-04-19  Dirk Pranke  <dpranke@chromium.org>
@@ -2711,7 +2729,7 @@
         Add missing results for fast/borders/table-borders.html, and
         a new test that shows the background color leaking out through the
         border (to facilitate image diffs for an upcoming change).
-        
+
         * fast/backgrounds/background-leakage.html: Added.
         * platform/mac/compositing/reflections/backface-hidden-reflection-expected.txt: Added.
         * platform/mac/fast/backgrounds/background-leakage-expected.checksum: Added.
@@ -2852,7 +2870,7 @@
 
         The following test checks that when we copy a text node surrounded by an element that
         has non transparent background color we preserve the background color as well.
-        
+
         * editing/pasteboard/copy-text-with-backgroundcolor-expected.txt: Added.
         * editing/pasteboard/copy-text-with-backgroundcolor.html: Added.
 
@@ -2924,7 +2942,7 @@
         Reviewed by Maciej Stachowiak.
 
         https://bugs.webkit.org/show_bug.cgi?id=57898
-        REGRESSION (r82185): Scroll position not restored on navigation back to a page in 
+        REGRESSION (r82185): Scroll position not restored on navigation back to a page in
         the page cache
         -and corresponding-
         <rdar://problem/9226652>
@@ -2962,7 +2980,7 @@
 
         Background radius is wrong for split inline
         https://bugs.webkit.org/show_bug.cgi?id=58843
-        
+
         New tests for split inline with border-radius, with background color and image,
         in both horizontal and vertical text.
 
@@ -3031,15 +3049,15 @@
 
         Fix multiple border rendering issues
         https://bugs.webkit.org/show_bug.cgi?id=58761
-        
+
         New results for progressions, and some new tests.
-        
+
         * fast/blockflow/border-styles-vertical-lr.html:
         * fast/blockflow/border-styles-vertical-rl.html:
         * fast/borders/border-styles-split.html:
         Adjusted to fit in the pixel result without scrollbars, and added
         double border test.
-        
+
         * fast/borders/border-radius-different-width-001.html: Added.
         * fast/borders/border-radius-inset-outset.html: Added.
         * fast/borders/table-borders.html: Added.
@@ -3150,12 +3168,12 @@
         Reviewed by David Levin
 
         Add a complex-script version of zero-width-characters.html.
-        and add U+FEFF to zero-width-characters.html 
+        and add U+FEFF to zero-width-characters.html
         Chromium Linux fails the test because U+FEFF is rendered
         with a non-zero width glyph.
         Filed http://bugs.webkit.org/show_bug.cgi?id=58741 and noted
         as such in test_expectation.txt.
-        
+
         https://bugs.webkit.org/show_bug.cgi?id=48860
 
         * fast/text/zero-width-characters-complex-script-expected.txt: Added.
@@ -3561,7 +3579,7 @@
         WebKit2: WKTR should support WebKit2 full screen APIs
         https://bugs.webkit.org/show_bug.cgi?id=56318
 
-        WKTR does not support the eventSender.keyDown() method, so use mouseDown() 
+        WKTR does not support the eventSender.keyDown() method, so use mouseDown()
         in those cases that keyDown() does not exist.
 
         * fullscreen/full-screen-test.js:
@@ -4077,7 +4095,7 @@
 
         Fix border drawing tests to drop -webkit prefix on border-radius, and make the tests compatible with Firefox
         https://bugs.webkit.org/show_bug.cgi?id=58734
-        
+
         Add result for new test.
 
         * platform/mac/fast/borders/webkit-border-radius-expected.checksum: Added.
@@ -4090,13 +4108,13 @@
 
         Fix border drawing tests to drop -webkit prefix on border-radius, and make the tests compatible with Firefox
         https://bugs.webkit.org/show_bug.cgi?id=58734
-        
+
         Drop the -webkit prefix on border-radius in the tests, and remove -moz-border-radius,
         since Firefox supports the unprefixed property now. This avoids the problem where
         -moz-border-radius and -webkit-border-radius had different behaviors when given two values.
-        
+
         Also unprefix box-sizing for WebKit, and add a -moz prefixed version for Firefox.
-        
+
         Add a test that compares the behavior of -webkit-border-radius and border-radius with
         two values.
 
@@ -4406,9 +4424,9 @@
 
         * Render tree structure has changed.
         * Changed style rule on details-writing-mode.html to avoid to hit shadow CSS leak bug.
-        
+
         * fast/html/details-writing-mode.html:
-        * platform/chromium/test_expectations.txt:        
+        * platform/chromium/test_expectations.txt:
         * platform/mac/fast/html/details-add-summary-1-and-click-expected.checksum:
         * platform/mac/fast/html/details-add-summary-1-and-click-expected.png:
         * platform/mac/fast/html/details-add-summary-1-and-click-expected.txt:
@@ -4640,7 +4658,7 @@
 
         Some borders with border-radius do not have rounded inner edges
         https://bugs.webkit.org/show_bug.cgi?id=58457
-        
+
         Pixel tests for various combinations of border styles and radii.
         Update pixel results for affected tests.
 
@@ -6147,7 +6165,7 @@
 
         Test that 'display: block' and 'display: table' on generated :before/:after content
         within <ruby> doesn't crash.
-        
+
         * fast/ruby/after-block-doesnt-crash-expected.txt: Added.
         * fast/ruby/after-block-doesnt-crash.html: Added.
         * fast/ruby/after-table-doesnt-crash-expected.txt: Added.
@@ -6709,7 +6727,7 @@
         Reviewed by Dan Bernstein.
 
         https://bugs.webkit.org/show_bug.cgi?id=58176
-        
+
         Inline replaced elements following positioned elements on lines are not rendered. Make sure the
         logic for skipping run construction in appendRunsForObject matches the new logic that I added
         to findNextLineBreak. If they don't match up, you risk confusing the run construction code and
@@ -6768,7 +6786,7 @@
 
         Reviewed by Nikolas Zimmermann.
 
-        Tests for crash when non-svg inline text boxes exist in the list of text boxes. 
+        Tests for crash when non-svg inline text boxes exist in the list of text boxes.
         https://bugs.webkit.org/show_bug.cgi?id=57933
 
         * svg/text/svg-rtl-text-crash-expected.txt: Added.
@@ -6824,7 +6842,7 @@
 
         https://bugs.webkit.org/show_bug.cgi?id=58334
         LayoutTestController.computedStyleIncludingVisitedInfo-based tests don't work in WK2
-        
+
         * platform/mac-wk2/Skipped: Skip a new test due to an identified bug in WKTR and classify
           three other skipped tests with that same bug.
 
@@ -7480,7 +7498,7 @@
 
         Divide by zero in calcColumnWidth
         https://bugs.webkit.org/show_bug.cgi?id=58230
-        
+
         Testcase for the bug.
 
         * fast/multicol/huge-column-count.html: Added.
@@ -7627,7 +7645,7 @@
 
         Car model dropdowns at audiusa.com lay out incorrectly with compositing enabled
         https://bugs.webkit.org/show_bug.cgi?id=56660
-        
+
         Test that toggles overflow on an element with a composited descendent.
 
         * compositing/geometry/ancestor-overflow-change-expected.checksum: Added.
@@ -7910,7 +7928,7 @@
         Reviewed by Simon Fraser.
 
         https://bugs.webkit.org/show_bug.cgi?id=57971
-        
+
         Rework visited/unvisited links for before/after content. Propagate the bits earlier so that we don't lose
         them when we throw away the visited style. Don't throw away the visited link style for pseudo elements
         either, so that the styles are consistent.
@@ -8014,7 +8032,7 @@
 
         Reviewed by Tony Gentilcore.
 
-        Incoming source should be preload scanned when the parser is blocked 
+        Incoming source should be preload scanned when the parser is blocked
         https://bugs.webkit.org/show_bug.cgi?id=58117
 
         * http/tests/loading/preload-append-scan-expected.txt: Added.
@@ -8549,7 +8567,7 @@
         Reviewed by Dan Bernstein.
 
         https://bugs.webkit.org/show_bug.cgi?id=57736
-        
+
         Crash on openstreetmap.org while using the map. Fix a bad interaction between the positioned movement layout
         optimization and the simplified layout optimization that could lead to blocks remaining marked as dirty when
         layout finished. This would eventually lead to an inability to properly determine the correct layout root and
@@ -9252,7 +9270,7 @@
         Reviewed by Dan Bernstein.
 
         https://bugs.webkit.org/show_bug.cgi?id=41445
-        
+
         Visited links painting with black background. Make sure that if the visited style has
         the initial background color (transparent) set that we just use the unvisited color.
 
@@ -9304,7 +9322,7 @@
         Reviewed by Dan Bernstein.
 
         https://bugs.webkit.org/show_bug.cgi?id=57916
-        
+
         Implement an optimization to the line box tree to cull out most of the intermediate
         line boxes that can occur between the root line box and the leaves of the tree (images
         and text).
@@ -10102,7 +10120,7 @@
 
         [Windows]  fast/blockflow/Kusa-Makura-background-canvas.html failing since introduction in r82903
         https://bugs.webkit.org/show_bug.cgi?id=57880
-        
+
         Update Windows expected results (with pixel tests) to greenify the bots.
 
         * platform/win/fast/blockflow/Kusa-Makura-background-canvas-expected.checksum:
@@ -10487,7 +10505,7 @@
 
         Convert <meter> shadow DOM to a DOM-based shadow.
         https://bugs.webkit.org/show_bug.cgi?id=50661
-        
+
         Updated expectations due to shadow structure chagne.
         Also updated meter-styles.html pixel result because the render tree is now laid out
         as normal flexboxes and its layout result is actually different,
@@ -10608,7 +10626,7 @@
 
         Convert <meter> shadow DOM to a DOM-based shadow.
         https://bugs.webkit.org/show_bug.cgi?id=50661
-        
+
         Updated expectations due to shadow structure chagne.
         Also updated meter-styles.html pixel result because the render tree is now laid out
         as normal flexboxes and its layout result is actually different,
@@ -11186,7 +11204,7 @@
 
 2011-04-04  Pavel Podivilov  <podivilov@chromium.org>
 
-        Unreviewed, add chromium test expectations for tests added in r82780. 
+        Unreviewed, add chromium test expectations for tests added in r82780.
 
         * platform/chromium-mac/fast/dom/Element/scale-page-bounding-client-rect-expected.txt: Added.
         * platform/chromium-mac/fast/dom/Element/scale-page-client-rects-expected.txt: Added.
@@ -11846,7 +11864,7 @@
         Reviewed by Sam Weinig.
 
         https://bugs.webkit.org/show_bug.cgi?id=57605
-        Frame::pageScaleFactor() should not affect getBoundingClientRect() or 
+        Frame::pageScaleFactor() should not affect getBoundingClientRect() or
         getClientRects()
         -and corresponding-
         <rdar://problem/9194541>
@@ -12594,15 +12612,15 @@
 
         Unreviewed unskipping. This will make some tests fail on GTK port, whoese
         results should be updated using layout-test-results.zip compiled by the buildbot.
-        
+
         * platform/gtk/Skipped:
 
 2011-04-01  MORITA Hajime  <morrita@google.com>
 
         Unreviewed expectation/skip update that follows r82686.
-        
+
         - Updated expectataions for gtk port.
-        - Skipped some win tests whose expectations are need to be updated but 
+        - Skipped some win tests whose expectations are need to be updated but
           the result isn't available from build.webit.org.
 
         * platform/gtk/fast/dom/HTMLMeterElement/meter-appearances-capacity-expected.txt:
@@ -12639,11 +12657,11 @@
 
         <meter> can only support horizontal indicator
         https://bugs.webkit.org/show_bug.cgi?id=56001
-        
+
         - Simpflied some test cases which had vertical indicators.
         - Updated expectations due to shadow structure change
         - Skipped tetsts which need expectations update.
-        
+
         * fast/dom/HTMLMeterElement/meter-element.html:
         * fast/dom/HTMLMeterElement/meter-styles-changing-pseudo.html:
         * fast/dom/HTMLMeterElement/meter-styles.html:
@@ -12748,7 +12766,7 @@
         Web Inspector: provide front-end wrappers for DOMAgent.querySelector[All]() that take care of fetching the document
         https://bugs.webkit.org/show_bug.cgi?id=57466
 
-        * inspector/elements/dom-agent-query-selector.html: removed documentWide parameter to querySelectorAll 
+        * inspector/elements/dom-agent-query-selector.html: removed documentWide parameter to querySelectorAll
 
 2011-03-31  Adam Barth  <abarth@webkit.org>
 
@@ -13095,7 +13113,7 @@
 
         Optimize overflow computations on lines to avoid allocating RenderOverflows in nearly all cases and to avoid even having
         to check the line for overflow in the first place.
-        
+
         Updated results for tests that progressed.
 
         * fast/text/emphasis-avoid-ruby-expected.txt:
@@ -13187,7 +13205,7 @@
 
         Reviewed by Eric Seidel.
 
-        Test that script inside an SVG can delete a range containing 
+        Test that script inside an SVG can delete a range containing
         itself when invoked on top of script manipulating it.
         https://bugs.webkit.org/show_bug.cgi?id=57265
 
@@ -13235,7 +13253,7 @@
 
         <meter> can only support horizontal indicator
         https://bugs.webkit.org/show_bug.cgi?id=56001
-        
+
         - Simpflied some test cases which had vertical indicators.
         - Updated expectations due to shadow structure change
 
@@ -13953,7 +13971,7 @@
 
         box-shadow radii stays the same regardless of any spread set
         https://bugs.webkit.org/show_bug.cgi?id=49726
-        
+
         - Added test for multiple inset shadows.
         - Updated wrong expectations which are fixed by this change.
         - Moved some expectation file location to platform/mac because they don't match
@@ -13979,7 +13997,7 @@
         https://bugs.webkit.org/show_bug.cgi?id=53134
 
         * fast/canvas/canvas-getImageData-expected.txt: Resetting expected results for this test due to test change.
-        * fast/canvas/canvas-getImageData.html: Removed the section of this test that incorrectly assumes the 
+        * fast/canvas/canvas-getImageData.html: Removed the section of this test that incorrectly assumes the
           rounding behavior of initial inputed data.
         * fast/canvas/getPutImageDataPairTest-expected.txt: Added.
         * fast/canvas/getPutImageDataPairTest.html: A new test to make sure that a batch of paired putImageData(getImageData)
@@ -14031,7 +14049,7 @@
 2011-03-30  Mihai Parparita  <mihaip@chromium.org>
 
         Fix remaining unexpected Chromium Snow Leopard image failures.
-        
+
         Current Leopard baselines in chromium-mac/ are moved to
         chromium-mac-leopard/.
 
@@ -14087,7 +14105,7 @@
 2011-03-30  Mihai Parparita  <mihaip@chromium.org>
 
         Fix more tests for Chromium Snow Leopard.
-        
+
         Most are due to mismatched checksum files (like r82480), some also
         needed updated chromium-mac baselines.
 
@@ -14164,7 +14182,7 @@
 2011-03-30  Mihai Parparita  <mihaip@chromium.org>
 
         Fix editing/deleting for Chromium Snow Leopard.
-        
+
         Same mismatched checksum story as r82480.
 
         * platform/chromium-mac-leopard/editing/deleting/4845371-expected.png: Renamed from LayoutTests/platform/chromium-mac/editing/deleting/4845371-expected.png.
@@ -14177,10 +14195,10 @@
 2011-03-30  Mihai Parparita  <mihaip@chromium.org>
 
         Fix svg/dynamic-updates/SVGFEConvolveMatrixElement* for Chromium Snow Leopard.
-        
+
         There were lone .checksum files in chromium-mac-leopard/ (similar to
         r82480), now they should have corresponding .pngs too.
-        
+
         * platform/chromium-mac-leopard/svg/dynamic-updates/SVGFEConvolveMatrixElement-dom-bias-attr-expected.png: Copied from LayoutTests/platform/chromium-mac/svg/dynamic-updates/SVGFEConvolveMatrixElement-dom-bias-attr-expected.png.
         * platform/chromium-mac-leopard/svg/dynamic-updates/SVGFEConvolveMatrixElement-dom-divisor-attr-expected.png: Copied from LayoutTests/platform/chromium-mac/svg/dynamic-updates/SVGFEConvolveMatrixElement-dom-divisor-attr-expected.png.
         * platform/chromium-mac-leopard/svg/dynamic-updates/SVGFEConvolveMatrixElement-dom-edgeMode-attr-expected.png: Copied from LayoutTests/platform/chromium-mac/svg/dynamic-updates/SVGFEConvolveMatrixElement-dom-edgeMode-attr-expected.png.
@@ -16281,7 +16299,7 @@
         Reviewed by Simon Fraser.
 
         <rdar://problem/9194927> REGRESSION (r81691): Page at www.mondaynote.com lays out incorrectly
-        
+
         Back out the optimization that stopped when it hit the first float. This was an incorrect optimization
         and can't be done without more work.
 
@@ -17032,14 +17050,14 @@
 
         https://bugs.webkit.org/show_bug.cgi?id=57221, memory corruption/crashes when positioned objects
         occur at the end of a line.
-        
+
         The old code and new code for dealing with a trailing space object midpoint manipulated a raw
         array instead of the Vector. Otherwise this corruption would have been caught prior to check-in.
-        
+
         I have patched the code to only go through the Vector and to make it handle the case that led to
         the corruption. Trailing positioned objects can occur both prior to and following the trailing space
         object's midpoint, so we have to be prepared to deal with both cases.
-        
+
         This is already tested by fast/block/positioning/052.html, and that test now properly progresses
         like the other positioning tests did.
 
@@ -17720,7 +17738,7 @@
 
         plugins/embed-prefers-plugins-for-images.html only passing on SnowLeopard.
         https://bugs.webkit.org/show_bug.cgi?id=57137
-        
+
         Check in failing results for this test (except for on SnowLeopard) until
         the failure can be diagnosed.
 
@@ -17830,15 +17848,15 @@
         This patch adds a new type of style difference called SimplifiedLayout that is
         returned when only overflow needs to be recomputed. Whenever a transform changes,
         this is the hint returned now instead of a full layout.
-        
+
         In addition, when positioned objects need layout and start marking up the
         containing block chain, we now propagate the fact that the layout is simplified
         all the way up to the root, even when we encounter normal flow containing
         blocks.
-        
+
         The layoutOnlyPositionedObjects function has been renamed to simplifiedLayout()
         and is now used for all of these cases (in addition to what it handled before).
-        
+
         The simplified layout optimization (even in ToT) did not work correctly when
         static distances needed to be recomputed. In order to make static distance
         computations work with simplified layout, positioned objects now always compute
@@ -18250,7 +18268,7 @@
 
         Pixel rebaselines after r80582 (vertical text was shifted by one pixel
         vertical).
-        
+
         Make Snow Leopard check added by r80740 into a runtime check for
         Chromium, since it uses the same binary on both Leopard and Snow Leopard.
 
@@ -18674,7 +18692,7 @@
 
 2011-03-23  Mihai Parparita  <mihaip@chromium.org>
 
-        Rebaseline transitions/default-timing-function.html for Chromium Snow 
+        Rebaseline transitions/default-timing-function.html for Chromium Snow
         Leopard.
 
         * platform/chromium-mac-leopard/transitions/default-timing-function-expected.checksum: Copied from LayoutTests/platform/chromium-mac/transitions/default-timing-function-expected.checksum.
@@ -19111,7 +19129,7 @@
 
         Reviewed by David Hyatt.
 
-        Added new test to expose failure to correctly find the 
+        Added new test to expose failure to correctly find the
         before/after container when creating a CSS counter.
 
         CSS 2.1 failure: various before-after-* tests fail
@@ -19615,7 +19633,7 @@
 
         Incorrect rendering of composited element with negative z-index child
         https://bugs.webkit.org/show_bug.cgi?id=56846
-        
+
         Testcases for content with a foreground layer, and a foreground layer which is
         partially repainted.
 
@@ -19749,7 +19767,7 @@
         Reviewed by Simon Fraser.
 
         https://bugs.webkit.org/show_bug.cgi?id=56388
-        
+
         Implement the CSS3 line-box-contain property. This property provides authors with more control over spacing between lines. For example,
         you can fix the height of lines and cause all line contents to be ignored. You can make lines fit to glyphs. You can ignore leading and
         fit to the font size. You can ignore replaced elements, etc.
@@ -19757,11 +19775,11 @@
         Refactor the code in computeLogicalBoxHeights into helper methods on RootInlineBox. verticalPositionForBox moved over to RootInlineBox
         so that it could be called from RenderBlockLineLayout. ascentAndDescentForBox is the new method that computes the appropriate box
         height based off the block's line-box-contain value.
-        
+
         GlyphOverflow can now have a computeBounds parameter set, in which case glyph bounds will be computed and stored in the overflow struct.
-        
+
         RenderInline no longer returns 0 margins in the block direction, since line-box-contain can size around the margin box.
-    
+
         * fast/block/lineboxcontain: Added.
         * fast/block/lineboxcontain/block-font.html: Added.
         * fast/block/lineboxcontain/block-glyphs-replaced.html: Added.
@@ -20784,7 +20802,7 @@
         Widen the threshold for this test, which doesn't seem to allow for
         a true Gaussian blur implementation.
         * platform/chromium/test_expectations.txt:
-        Update some tests which are now passing on GPU, and some which time out 
+        Update some tests which are now passing on GPU, and some which time out
         due to Mesa slowness.
 
 2011-03-18  James Simonsen  <simonjam@chromium.org>
@@ -21032,7 +21050,7 @@
         [Chromium] Canvas shadow is not working with drawImage
         https://bugs.webkit.org/show_bug.cgi?id=55506
 
-        Patch also fixes shadow blur quality and color. 
+        Patch also fixes shadow blur quality and color.
         Affects Chromium win/linux. Also fixes the following bugs:
         https://bugs.webkit.org/show_bug.cgi?id=50112
         https://bugs.webkit.org/show_bug.cgi?id=51989
@@ -21641,7 +21659,7 @@
         Widen the threshold for this test, which doesn't seem to allow for
         a true Gaussian blur implementation.
         * platform/chromium/test_expectations.txt:
-        Update some tests which are now passing on GPU, and some which time out 
+        Update some tests which are now passing on GPU, and some which time out
         due to Mesa slowness.
 
 2011-03-17  Alexander Pavlov  <apavlov@chromium.org>
@@ -22291,7 +22309,7 @@
 
 2011-03-16  Sam Weinig  <sam@webkit.org>
 
-        Skip test fast/forms/input-autofilled.html in mac-wk2 since 
+        Skip test fast/forms/input-autofilled.html in mac-wk2 since
         layoutTestController.setAutofilled is not yet supported.
 
         * platform/mac-wk2/Skipped:
@@ -22303,7 +22321,7 @@
         * platform/win/fast/dynamic/text-combine-expected.checksum: Added.
         * platform/win/fast/dynamic/text-combine-expected.png: Added.
         * platform/win/fast/text/international/text-combine-image-test-expected.txt:
-        
+
         * platform/win/fast/international: Removed. This was the wrong directory.
         * platform/win/fast/international/text-combine-image-test-expected.txt: Removed. This was the wrong directory.
 
@@ -23950,7 +23968,7 @@
 
         Crash when dragging and dropping in a document with an invalid XHTML header
         https://bugs.webkit.org/show_bug.cgi?id=48799
-        
+
         * editing/pasteboard/drop-file-svg.html: Added.
         * editing/pasteboard/resources/drop-file-svg.svg: Added.
 
@@ -24292,7 +24310,7 @@
         https://bugs.webkit.org/show_bug.cgi?id=45164
 
         REGRESSION: <a><img align=top></a> Clickable area too large
-        
+
         Make sure to clamp hit testing of quirky inline flow boxes the same way we already clamped
         painting.
 
@@ -24334,7 +24352,7 @@
         Reviewed by Beth Dakin.
 
         https://bugs.webkit.org/show_bug.cgi?id=56246
-        
+
         Add support for relative positioning to table cells.   Back out the code that hacked around the lack of support
         for offsetLeft, and add new tests to demonstrate that relative positioning works.
 
@@ -25082,7 +25100,7 @@
 
         REGRESSION: Soft hyphen is not always rendered
         https://bugs.webkit.org/show_bug.cgi?id=56017
-        
+
         Adding new test that verifies soft hyphen is rendered
         when it is the last breakable point in a line.
 
@@ -25520,9 +25538,9 @@
         Reviewed by Simon Fraser.
 
         https://bugs.webkit.org/show_bug.cgi?id=52987
-        
+
         REGRESSION: Overflowing columns not repainted correctly
-        
+
         Make sure to add in column overflow as visual overflow as well.  It was only propagating layout overflow, which is obviously not
         sufficient, since blocks paint their own columns.
 
@@ -25593,7 +25611,7 @@
         Reviewed by Dan Bernstein.
 
         https://bugs.webkit.org/show_bug.cgi?id=47206
-        
+
         Table rows don't support ::before/::after.  Add support to RenderTableRow::styleDidChange so that ::before/::after content gets
         properly constructed.
 
@@ -25609,23 +25627,23 @@
         Reviewed by Simon Fraser.
 
         https://bugs.webkit.org/show_bug.cgi?id=47159
-        
+
         CSS2.1 failures in background position parsing.
-        
+
         Rewrite background position component parsing to match the spec.  Our old parsing would allow "100% left" to be valid
         when it should not have.  Rename parseFillPositionXY to parseFillPositionComponent and pass in enough information for
         it to understand what the first component was.
-        
+
         For individual property parsing using background-position-x/y, I added new functions that just handle that without
         worrying about the other component.
-        
+
         In order to pass the CSS2.1 test, I also had to fix multiple background parsing.  The number of layers in multiple
         backgrounds is determined solely by the background-image property and not by any of the other properties.  cullEmptyLayers
         has been changed to always consider a layer empty if it has no image set, even if other properties are set.
-        
+
         A number of layout tests had to be patched as they were invalid.  A couple of them relied on incorrect background-position
         parsing (e.g., "50 left") and another relied on incorrect multiple background parsing.  It's not clear if the computed style
-        should actually include the additional values when no image is set though, so that should perhaps be the subject of a 
+        should actually include the additional values when no image is set though, so that should perhaps be the subject of a
         follow-up bug.
 
         Added fast/backgrounds/background-position-parsing.html
@@ -25723,7 +25741,7 @@
 
         https://bugs.webkit.org/show_bug.cgi?id=54151
         Implement an API to play/pause/scrub animations
-        
+
         This is Part 1. Adds the new WebKitAnimation and WebKitAnimationList
         APIs, exposed via Element.getWebKitAnimations(). This first pass
         is read-only. One new layout test that examines animation
@@ -26055,7 +26073,7 @@
         Reviewed by Simon Fraser.
 
         https://bugs.webkit.org/show_bug.cgi?id=47151
-        
+
         Percentage heights should skip anonymous containing blocks when computing the used value.
 
         Added fast/block/basic/percentage-height-inside-anonymous-block.html
@@ -26159,7 +26177,7 @@
         Reviewed by Beth Dakin.
 
         https://bugs.webkit.org/show_bug.cgi?id=47143
-        
+
         Static distance computation is wrong when an ancestor is also positioned.  We need to go up the container()
         chain (after initially starting with the parent()) when doing this computation, so that we properly skip
         intermediate boxes between two positioned blocks.
@@ -26176,7 +26194,7 @@
         Reviewed by Simon Fraser.
 
         https://bugs.webkit.org/show_bug.cgi?id=47147
-        
+
         Fix for repaint issues when the root element is a table and needs to paint a background that
         covers the entire canvas.  Remove paintRootBoxDecorations and replace with paintRootBoxFillLayers,
         so that it can be called only for fill layer painting.  Make tables and normal boxes both
@@ -26195,17 +26213,17 @@
 2011-03-10  Mihai Parparita  <mihaip@chromium.org>
 
         Update chromium Snow Leopard expectations.
-        
+
         * platform/chromium/test_expectations.txt:
 
 2011-03-10  David Hyatt  <hyatt@apple.com>
 
         Reviewed by Simon Fraser.
-        
+
         https://bugs.webkit.org/show_bug.cgi?id=47157
-        
+
         CSS2.1 test suite failures because the ex unit is broken with the Ahem font.
-        
+
         Remove the code that tries to also include the maxX of the glyph bounds for the
         'x' glyph, since it just causes the x-height to be way too large in cases where the 'x' glyph extends
         below the baseline.
@@ -26213,7 +26231,7 @@
         Remove the Apple Symbol hack for ex units, since the person who added that was confused by another
         issue, namely that CGFontGetXHeight wasn't being properly multiplied by the pointSize.  That's why
         the value was too small.  Patched the code to just multiply by pointSize and took out the hack.
-        
+
         Fix causes many tests in the css2.1 directory to progress, so no new tests required.  Many other
         layout tests change because the xHeight for Lucida Grande gets smaller by a little bit, and radio
         buttons use ex horizontal margins by default.
@@ -26399,7 +26417,7 @@
         https://bugs.webkit.org/show_bug.cgi?id=56113
 
         It seems this was introduced in http://src.chromium.org/viewvc/chrome?view=rev&revision=77637
-        Updating test expectations for now. 
+        Updating test expectations for now.
 
         * platform/chromium/test_expectations.txt:
 
@@ -27110,7 +27128,7 @@
 
 2011-03-08  Kenji Imasaki  <imasaki@chromium.org>
 
-        Reviewed by David Levin. 
+        Reviewed by David Levin.
 
         [Chromium] Clean up Media GPU test expectation since
         http://crbug.com?id=74887 was fixed. These expectations are based
@@ -27158,16 +27176,16 @@
         Reviewed by Dan Bernstein.
 
         https://bugs.webkit.org/show_bug.cgi?id=48540, support the text-orientation CSS property.
-        
+
         This patch adds support for two values of the text-orientation property (the ones that actually matter): vertical-right and upright.
         The TextOrientation is part of the FontDescription and used to look up fonts (similar to FontOrientation).
-        
+
         Orientation of non-CJK characters is done using fallback font data of the appropriate orientation type, e.g., verticalRightOrientation and
         uprightOrientation fallback font data.  Vertical right is just implemented as a normal horizontal font.  Upright is implemented as a
         vertically oriented font that rotates all glyphs.
-        
+
         The main complication implementing text-orientation is that fonts have "baked-in" vertical glyphs for letters that are hardcoded to
-        a vertical right facing.  This means that you can use those special vertical glyphs for vertical-right orientation without having to 
+        a vertical right facing.  This means that you can use those special vertical glyphs for vertical-right orientation without having to
         fall back, but then for upright orientation you have to ignore them and still fall back.  As you can see from the test case, this doesn't
         work very well, but hopefully it won't be all that common.  Limitations of CoreText prevent this case from rendering properly in either the
         simple or complex code paths, although the simple code path at least gets close.
