@@ -59,19 +59,10 @@ const JSC::HashTable* getHashTableForGlobalData(JSGlobalData& globalData, const 
     return DOMObjectHashTableMap::mapFor(globalData).get(staticTable);
 }
 
-static void stringWrapperDestroyed(JSString*, void* context)
-{
-    StringImpl* cacheKey = static_cast<StringImpl*>(context);
-    cacheKey->deref();
-}
-
 JSValue jsStringSlowCase(ExecState* exec, JSStringCache& stringCache, StringImpl* stringImpl)
 {
-    JSString* wrapper = jsStringWithFinalizer(exec, UString(stringImpl), stringWrapperDestroyed, stringImpl);
-    stringCache.set(exec->globalData(), stringImpl, wrapper);
-    // ref explicitly instead of using a RefPtr-keyed hashtable because the wrapper can
-    // outlive the cache, so the stringImpl has to match the wrapper's lifetime.
-    stringImpl->ref();
+    JSString* wrapper = jsString(exec, UString(stringImpl));
+    stringCache.add(stringImpl, Weak<JSString>(exec->globalData(), wrapper, currentWorld(exec)->stringWrapperOwner(), stringImpl));
     return wrapper;
 }
 

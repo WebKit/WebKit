@@ -33,7 +33,7 @@ class JSDOMWrapper;
 class ScriptController;
 
 typedef HashMap<void*, JSC::Weak<JSDOMWrapper> > DOMObjectWrapperMap;
-typedef JSC::WeakGCMap<StringImpl*, JSC::JSString> JSStringCache;
+typedef HashMap<StringImpl*, JSC::Weak<JSC::JSString> > JSStringCache;
 
 class JSDOMWrapperOwner : public JSC::WeakHandleOwner {
 public:
@@ -45,6 +45,20 @@ private:
 };
 
 inline JSDOMWrapperOwner::JSDOMWrapperOwner(DOMWrapperWorld* world)
+    : m_world(world)
+{
+}
+
+class JSStringOwner : public JSC::WeakHandleOwner {
+public:
+    JSStringOwner(DOMWrapperWorld*);
+    virtual void finalize(JSC::Handle<JSC::Unknown>, void* context);
+
+private:
+    DOMWrapperWorld* m_world;
+};
+
+inline JSStringOwner::JSStringOwner(DOMWrapperWorld* world)
     : m_world(world)
 {
 }
@@ -71,6 +85,7 @@ public:
 
     JSC::JSGlobalData* globalData() const { return m_globalData; }
     JSDOMWrapperOwner* defaultWrapperOwner() { return &m_defaultWrapperOwner; }
+    JSStringOwner* stringWrapperOwner() { return &m_stringWrapperOwner; }
 
 protected:
     DOMWrapperWorld(JSC::JSGlobalData*, bool isNormal);
@@ -80,6 +95,7 @@ private:
     HashSet<ScriptController*> m_scriptControllersWithWindowShells;
     bool m_isNormal;
     JSDOMWrapperOwner m_defaultWrapperOwner;
+    JSStringOwner m_stringWrapperOwner;
 };
 
 DOMWrapperWorld* normalWorld(JSC::JSGlobalData&);

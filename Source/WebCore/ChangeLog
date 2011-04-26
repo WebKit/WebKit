@@ -1,3 +1,29 @@
+2011-04-25  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        Nixed special finalizer handling for WebCore strings
+        https://bugs.webkit.org/show_bug.cgi?id=59425
+
+        Not needed anymore, since weak handles have finalizers.
+
+        * WebCore.exp.in: Exports!
+
+        * bindings/js/DOMWrapperWorld.cpp:
+        (WebCore::JSStringOwner::finalize):
+        (WebCore::DOMWrapperWorld::DOMWrapperWorld): Use a weak handle finalizer,
+        so we don't need special treatment anymore.
+
+        * bindings/js/DOMWrapperWorld.h:
+        (WebCore::JSStringOwner::JSStringOwner):
+        (WebCore::DOMWrapperWorld::stringWrapperOwner): Use a HashMap of Weak<T>
+        instead of a WeakGCMap, so we can specify a custom finalizer.
+
+        * bindings/js/JSDOMBinding.cpp:
+        (WebCore::jsStringSlowCase):
+        * bindings/js/JSDOMBinding.h:
+        (WebCore::jsString): Updated for string map change.
+
 2011-04-26  David Kilzer  <ddkilzer@apple.com>
 
         <http://webkit.org/b/59372> Restore user default for enabling HTTP pipelining

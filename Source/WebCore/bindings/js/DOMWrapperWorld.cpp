@@ -36,10 +36,19 @@ void JSDOMWrapperOwner::finalize(JSC::Handle<JSC::Unknown> handle, void* context
     uncacheWrapper(m_world, domObject, wrapper);
 }
 
+void JSStringOwner::finalize(JSC::Handle<JSC::Unknown> handle, void* context)
+{
+    JSString* jsString = static_cast<JSString*>(handle.get().asCell());
+    StringImpl* stringImpl = static_cast<StringImpl*>(context);
+    ASSERT_UNUSED(jsString, m_world->m_stringCache.find(stringImpl)->second.get() == jsString);
+    m_world->m_stringCache.remove(stringImpl);
+}
+
 DOMWrapperWorld::DOMWrapperWorld(JSC::JSGlobalData* globalData, bool isNormal)
     : m_globalData(globalData)
     , m_isNormal(isNormal)
     , m_defaultWrapperOwner(this)
+    , m_stringWrapperOwner(this)
 {
     JSGlobalData::ClientData* clientData = m_globalData->clientData;
     ASSERT(clientData);

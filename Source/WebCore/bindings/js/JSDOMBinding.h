@@ -308,8 +308,9 @@ namespace WebCore {
             return jsString(exec, stringToUString(s));
 
         JSStringCache& stringCache = currentWorld(exec)->m_stringCache;
-        if (JSC::JSString* wrapper = stringCache.get(stringImpl))
-            return wrapper;
+        JSStringCache::iterator it = stringCache.find(stringImpl);
+        if (it != stringCache.end())
+            return it->second.get();
 
         return jsStringSlowCase(exec, stringCache, stringImpl);
     }
