@@ -1,3 +1,13 @@
+2011-04-25  David Levin  <levin@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        Fix OwnPtr strict error in ImageBuffer.h
+        https://bugs.webkit.org/show_bug.cgi?id=59422
+
+        * platform/graphics/ImageBuffer.h:
+        (WebCore::ImageBuffer::create):
+
 2011-04-25  Adam Barth  <abarth@webkit.org>
 
         Reviewed by David Levin.

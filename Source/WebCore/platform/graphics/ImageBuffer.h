@@ -69,7 +69,7 @@ namespace WebCore {
             OwnPtr<ImageBuffer> buf = adoptPtr(new ImageBuffer(size, colorSpace, renderingMode, success));
             if (success)
                 return buf.release();
-            return 0;
+            return PassOwnPtr<ImageBuffer>();
         }
 
         ~ImageBuffer();
