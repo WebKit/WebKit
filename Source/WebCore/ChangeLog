@@ -2,6 +2,17 @@
 
         Reviewed by David Levin.
 
+        Fix OwnPtr strict errors in InlineFlowBox.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=59392
+
+        * rendering/InlineFlowBox.cpp:
+        (WebCore::InlineFlowBox::setLayoutOverflow):
+        (WebCore::InlineFlowBox::setVisualOverflow):
+
+2011-04-25  Kenneth Russell  <kbr@google.com>
+
+        Reviewed by David Levin.
+
         Fix OwnPtr strict errors in TransformState.cpp
         https://bugs.webkit.org/show_bug.cgi?id=59380
 
