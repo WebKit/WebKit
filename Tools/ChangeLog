@@ -1,3 +1,14 @@
+2011-04-26  Alejandro G. Castro  <alex@igalia.com>
+
+        Unreviewed, rolling out r84949.
+        http://trac.webkit.org/changeset/84949
+        https://bugs.webkit.org/show_bug.cgi?id=58852
+
+        Broke GTK+ compilation
+
+        * GtkLauncher/main.c:
+        (main):
+
 2011-04-26  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Mihai Parparita.
