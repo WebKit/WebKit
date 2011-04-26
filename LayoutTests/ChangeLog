@@ -1,3 +1,10 @@
+2011-04-26  Stephen White  <senorblanco@chromium.org>
+
+        Unreviewed; chromium test expectations update.
+
+        * platform/chromium/test_expectations.txt:
+        Add failing expectations for new test introduced in r84930.
+
 2011-04-26  Daniel Bates  <dbates@webkit.org>
 
         Add expected results for GTK and Qt ports for the test panScroll-click-hyperlink.html
