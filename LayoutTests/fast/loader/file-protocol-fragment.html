@@ -4,6 +4,8 @@
     if (window.layoutTestController) {
         layoutTestController.dumpAsText();
         layoutTestController.dumpResourceLoadCallbacks();
+        if (layoutTestController.setSerializeHTTPLoads)
+            layoutTestController.setSerializeHTTPLoads();
     } else {
         document.write ('This test must be run through DumpRenderTree.')
     }
