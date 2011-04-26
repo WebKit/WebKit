@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2011 Google Inc. All rights reserved.
+ * Copyright (C) 2011 Nokia Corporation and/or its subsidiary(-ies)
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -28,43 +29,76 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef DataTransferItemChromium_h
-#define DataTransferItemChromium_h
+#include "config.h"
+#include "DataTransferItems.h"
+
+#include "DataTransferItem.h"
+#include "ExceptionCode.h"
 
 #if ENABLE(DATA_TRANSFER_ITEMS)
 
-#include "DataTransferItem.h"
-#include <wtf/RefPtr.h>
-#include <wtf/text/WTFString.h>
-
 namespace WebCore {
 
-class Clipboard;
-class ScriptExecutionContext;
+DataTransferItems::DataTransferItems(RefPtr<Clipboard> clipboard, ScriptExecutionContext* context)
+    : m_owner(clipboard)
+    , m_context(context)
+{
+}
 
-class DataTransferItemChromium : public DataTransferItem {
-public:
-    static PassRefPtr<DataTransferItemChromium> createFromPasteboard(PassRefPtr<Clipboard> owner, ScriptExecutionContext*, const String& type);
-    static PassRefPtr<DataTransferItemChromium> create(PassRefPtr<Clipboard> owner, ScriptExecutionContext*, const String& data, const String& type);
+size_t DataTransferItems::length() const
+{
+    if (m_owner->policy() == ClipboardNumb)
+        return 0;
 
-    virtual void getAsString(PassRefPtr<StringCallback>);
-    virtual PassRefPtr<Blob> getAsFile();
+    return m_items.size();
+}
 
-private:
-    enum DataSource {
-        PasteboardSource,
-        InternalSource,
-    };
+PassRefPtr<DataTransferItem> DataTransferItems::item(unsigned long index)
+{
+    if (m_owner->policy() == ClipboardNumb || index >= length())
+        return 0;
 
-    DataTransferItemChromium(PassRefPtr<Clipboard> owner, ScriptExecutionContext*, DataSource, const String& kind, const String& type, const String& data);
+    return m_items[index];
+}
 
-    ScriptExecutionContext* m_context;
-    const DataSource m_source;
-    const String m_data;
-};
+void DataTransferItems::deleteItem(unsigned long index, ExceptionCode& ec)
+{
+    if (m_owner->policy() != ClipboardWritable) {
+        ec = INVALID_STATE_ERR;
+        return;
+    }
 
-} // namespace WebCore
+    if (index >= length())
+        return;
 
-#endif // ENABLE(DATA_TRANSFER_ITEMS)
+    m_items.remove(index);
+}
 
-#endif // DataTransferItem_h
+void DataTransferItems::clear()
+{
+    if (m_owner->policy() != ClipboardWritable)
+        return;
+
+    m_items.clear();
+
+}
+
+void DataTransferItems::add(const String& data, const String& type, ExceptionCode& ec)
+{
+    if (m_owner->policy() != ClipboardWritable)
+        return;
+
+    // Only one 'string' item with a given type is allowed in the collection.
+    for (size_t i = 0; i < m_items.size(); ++i) {
+        if (m_items[i]->type() == type && m_items[i]->kind() == DataTransferItem::kindString) {
+            ec = INVALID_STATE_ERR;
+            return;
+        }
+    }
+
+    m_items.append(DataTransferItem::create(m_owner, m_context, data, type));
+}
+
+}
+
+#endif

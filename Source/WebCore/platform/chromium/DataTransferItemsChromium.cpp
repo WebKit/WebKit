@@ -45,60 +45,8 @@ PassRefPtr<DataTransferItemsChromium> DataTransferItemsChromium::create(PassRefP
 }
 
 DataTransferItemsChromium::DataTransferItemsChromium(PassRefPtr<Clipboard> owner, ScriptExecutionContext* context)
-    : m_owner(owner)
-    , m_context(context)
+    : DataTransferItems(owner, context)
 {
-}
-
-unsigned long DataTransferItemsChromium::length() const
-{
-    if (m_owner->policy() == ClipboardNumb)
-        return 0;
-    return m_items.size();
-}
-
-PassRefPtr<DataTransferItem> DataTransferItemsChromium::item(unsigned long index) const
-{
-    if (m_owner->policy() == ClipboardNumb || index >= length())
-        return 0;
-    return m_items[index];
-}
-
-void DataTransferItemsChromium::deleteItem(unsigned long index, ExceptionCode& ec)
-{
-    if (m_owner->policy() != ClipboardWritable) {
-        ec = INVALID_STATE_ERR;
-        return;
-    }
-
-    if (index >= length())
-        return;
-
-    m_items.remove(index);
-}
-
-void DataTransferItemsChromium::clear()
-{
-    if (m_owner->policy() != ClipboardWritable)
-        return;
-
-    m_items.clear();
-}
-
-void DataTransferItemsChromium::add(const String& data, const String& type, ExceptionCode& ec)
-{
-    if (m_owner->policy() != ClipboardWritable)
-        return;
-
-    // Only one 'string' item with a given type is allowed in the collection.
-    for (size_t i = 0; i < m_items.size(); ++i) {
-        if (m_items[i]->type() == type && m_items[i]->kind() == DataTransferItem::kindString) {
-            ec = INVALID_STATE_ERR;
-            return;
-        }
-    }
-
-    m_items.append(DataTransferItemChromium::create(m_owner, m_context, data, type));
 }
 
 void DataTransferItemsChromium::addPasteboardItem(const String& type)

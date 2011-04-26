@@ -49,24 +49,12 @@ class DataTransferItemsChromium : public DataTransferItems {
 public:
     static PassRefPtr<DataTransferItemsChromium> create(PassRefPtr<Clipboard>, ScriptExecutionContext*);
 
-    virtual unsigned long length() const;
-    virtual PassRefPtr<DataTransferItem> item(unsigned long index) const;
-    virtual void deleteItem(unsigned long index, ExceptionCode&);
-    virtual void clear();
-
-    virtual void add(const String& data, const String& type, ExceptionCode&);
-
 private:
     friend class ClipboardChromium;
 
     DataTransferItemsChromium(PassRefPtr<Clipboard>, ScriptExecutionContext*);
 
     virtual void addPasteboardItem(const String& type);
-
-    RefPtr<Clipboard> m_owner;
-    // Indirectly owned by our parent.
-    ScriptExecutionContext* m_context;
-    Vector<RefPtr<DataTransferItemChromium> > m_items;
 };
 
 } // namespace WebCore

@@ -33,12 +33,13 @@
 
 #if ENABLE(DATA_TRANSFER_ITEMS)
 
+#include "DataTransferItem.h"
 #include <wtf/Forward.h>
 #include <wtf/RefCounted.h>
 
 namespace WebCore {
 
-class DataTransferItem;
+class Clipboard;
 
 typedef int ExceptionCode;
 
@@ -46,12 +47,21 @@ class DataTransferItems : public RefCounted<DataTransferItems> {
 public:
     ~DataTransferItems() {}
 
-    virtual unsigned long length() const = 0;
-    virtual PassRefPtr<DataTransferItem> item(unsigned long index) const = 0;
-    virtual void deleteItem(unsigned long index, ExceptionCode&) = 0;
-    virtual void clear() = 0;
+    virtual size_t length() const;
+    virtual PassRefPtr<DataTransferItem> item(unsigned long index);
+    virtual void deleteItem(unsigned long index, ExceptionCode&);
+    virtual void clear();
+    virtual void add(const String& data, const String& type, ExceptionCode&);
 
-    virtual void add(const String& data, const String& type, ExceptionCode&) = 0;
+protected:
+    DataTransferItems(RefPtr<Clipboard>, ScriptExecutionContext*);
+
+protected:
+    RefPtr<Clipboard> m_owner;
+    // Indirectly owned by our parent.
+    ScriptExecutionContext* m_context;
+    Vector<RefPtr<DataTransferItem> > m_items;
+
 };
 
 } // namespace WebCore

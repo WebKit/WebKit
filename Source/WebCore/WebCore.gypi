@@ -2433,6 +2433,7 @@
             'dom/DOMStringMap.h',
             'dom/DataTransferItem.cpp',
             'dom/DataTransferItem.h',
+            'dom/DataTransferItems.cpp',
             'dom/DataTransferItems.h',
             'dom/DatasetDOMStringMap.cpp',
             'dom/DatasetDOMStringMap.h',

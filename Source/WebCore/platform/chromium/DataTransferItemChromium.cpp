@@ -57,34 +57,26 @@ PassRefPtr<DataTransferItemChromium> DataTransferItemChromium::create(PassRefPtr
     return adoptRef(new DataTransferItemChromium(owner, context, InternalSource, DataTransferItem::kindString, type, data));
 }
 
+PassRefPtr<DataTransferItem> DataTransferItem::create(PassRefPtr<Clipboard> owner,
+                                                      ScriptExecutionContext* context,
+                                                      const String& data,
+                                                      const String& type)
+{
+    return DataTransferItemChromium::create(owner, context, data, type);
+}
+
 DataTransferItemChromium::DataTransferItemChromium(PassRefPtr<Clipboard> owner, ScriptExecutionContext* context, DataSource source, const String& kind, const String& type, const String& data)
-    : m_owner(owner)
+    : DataTransferItem(owner, kind, type)
     , m_context(context)
     , m_source(source)
-    , m_kind(kind)
-    , m_type(type)
     , m_data(data)
 {
 }
 
-String DataTransferItemChromium::kind() const
-{
-    if (m_owner->policy() == ClipboardNumb)
-        return String();
-    return m_kind;
-}
-
-String DataTransferItemChromium::type() const
-{
-    if (m_owner->policy() == ClipboardNumb)
-        return String();
-    return m_type;
-}
-
 void DataTransferItemChromium::getAsString(PassRefPtr<StringCallback> callback)
 {
-    if ((m_owner->policy() != ClipboardReadable && m_owner->policy() != ClipboardWritable)
-        || m_kind != kindString)
+    if ((owner()->policy() != ClipboardReadable && owner()->policy() != ClipboardWritable)
+        || kind() != kindString)
         return;
     if (m_source == InternalSource) {
         callback->scheduleCallback(m_context, m_data);
@@ -93,11 +85,11 @@ void DataTransferItemChromium::getAsString(PassRefPtr<StringCallback> callback)
 
     ASSERT(m_source == PasteboardSource);
     // This is ugly but there's no real alternative.
-    if (m_type == mimeTypeTextPlain) {
+    if (type() == mimeTypeTextPlain) {
         callback->scheduleCallback(m_context, PlatformBridge::clipboardReadPlainText(PasteboardPrivate::StandardBuffer));
         return;
     }
-    if (m_type == mimeTypeTextHTML) {
+    if (type() == mimeTypeTextHTML) {
         String html;
         KURL ignoredSourceURL;
         PlatformBridge::clipboardReadHTML(PasteboardPrivate::StandardBuffer, &html, &ignoredSourceURL);
@@ -113,7 +105,7 @@ PassRefPtr<Blob> DataTransferItemChromium::getAsFile()
         return 0;
 
     ASSERT(m_source == PasteboardSource);
-    if (m_type == mimeTypeImagePng) {
+    if (type() == mimeTypeImagePng) {
         // FIXME: This is pretty inefficient. We copy the data from the browser
         // to the renderer. We then place it in a blob in WebKit, which
         // registers it and copies it *back* to the browser. When a consumer

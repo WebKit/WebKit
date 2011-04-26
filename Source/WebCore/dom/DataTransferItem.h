@@ -33,6 +33,8 @@
 
 #if ENABLE(DATA_TRANSFER_ITEMS)
 
+#include "Clipboard.h"
+
 #include <wtf/Forward.h>
 #include <wtf/RefCounted.h>
 
@@ -40,19 +42,31 @@ namespace WebCore {
 
 class Blob;
 class StringCallback;
+class ScriptExecutionContext;
 
 class DataTransferItem : public RefCounted<DataTransferItem> {
 public:
     ~DataTransferItem() {}
 
+    static PassRefPtr<DataTransferItem> create(PassRefPtr<Clipboard> owner, ScriptExecutionContext*, const String& data, const String& type);
+
     static const char kindString[];
     static const char kindFile[];
 
-    virtual String kind() const = 0;
-    virtual String type() const = 0;
+    String kind() const;
+    String type() const;
 
     virtual void getAsString(PassRefPtr<StringCallback>) = 0;
     virtual PassRefPtr<Blob> getAsFile() = 0;
+
+protected:
+    DataTransferItem(RefPtr<Clipboard> owner, const String& kind, const String& type);
+    Clipboard* owner();
+
+private:
+    const RefPtr<Clipboard> m_owner;
+    const String m_kind;
+    const String m_type;
 };
 
 } // namespace WebCore

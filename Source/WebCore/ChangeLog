@@ -1,3 +1,45 @@
+2011-04-25  Igor Oliveira  <igor.oliveira@openbossa.org>
+
+        Reviewed by Tony Chang.
+
+        Move complexity from DataTransferItemsChromium and DataTransferItemChromium for base class
+        https://bugs.webkit.org/show_bug.cgi?id=59028
+
+        The DataTransferItemsChromium and DataTransferItemChromium code can be reused by other platforms.
+        Moving the code for base class we can reduce the efforts to support DataTransferItems
+        element in different platforms.
+
+        * Android.mk:
+        * CMakeLists.txt:
+        * GNUmakefile.list.am:
+        * WebCore.gypi:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * dom/DataTransferItem.cpp:
+        (WebCore::DataTransferItem::DataTransferItem):
+        (WebCore::DataTransferItem::owner):
+        (WebCore::DataTransferItem::kind):
+        (WebCore::DataTransferItem::type):
+        * dom/DataTransferItem.h:
+        * dom/DataTransferItems.cpp: Copied from Source/WebCore/platform/chromium/DataTransferItemsChromium.cpp.
+        (WebCore::DataTransferItems::DataTransferItems):
+        (WebCore::DataTransferItems::length):
+        (WebCore::DataTransferItems::item):
+        (WebCore::DataTransferItems::deleteItem):
+        (WebCore::DataTransferItems::clear):
+        (WebCore::DataTransferItems::add):
+        * dom/DataTransferItems.h:
+        * platform/chromium/DataTransferItemChromium.cpp:
+        (WebCore::DataTransferItem::create):
+        (WebCore::DataTransferItemChromium::DataTransferItemChromium):
+        (WebCore::DataTransferItemChromium::getAsString):
+        (WebCore::DataTransferItemChromium::getAsFile):
+        * platform/chromium/DataTransferItemChromium.h:
+        * platform/chromium/DataTransferItemsChromium.cpp:
+        (WebCore::DataTransferItemsChromium::DataTransferItemsChromium):
+        * platform/chromium/DataTransferItemsChromium.h:
+
 2011-04-25  Chris Marrin  <cmarrin@apple.com>
 
         Reviewed by Simon Fraser.

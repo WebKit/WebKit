@@ -2776,6 +2776,7 @@ contains(DEFINES, ENABLE_DATA_TRANSFER_ITEMS=1) {
         dom/StringCallback.h
     SOURCES += \
         dom/DataTransferItem.cpp \
+        dom/DataTransferItems.cpp \
         dom/StringCallback.cpp
 }
 
