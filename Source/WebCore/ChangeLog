@@ -1,3 +1,16 @@
+2011-04-26  Mihai Parparita  <mihaip@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        Turn off make built-in implicit rules for derived sources makefile
+        https://bugs.webkit.org/show_bug.cgi?id=59418
+
+        We don't use any of make's built-in implicit rules, turning them off
+        speeds up parsing of the makefile.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * gyp/generate-derived-sources.sh:
+
 2011-04-26  Leo Yang  <leo.yang@torchmobile.com.cn>
 
         Reviewed by Nikolas Zimmermann.

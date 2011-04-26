@@ -1,3 +1,15 @@
+2011-04-26  Mihai Parparita  <mihaip@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        Turn off make built-in implicit rules for derived sources makefile
+        https://bugs.webkit.org/show_bug.cgi?id=59418
+
+        We don't use any of make's built-in implicit rules, turning them off
+        speeds up parsing of the makefile.
+
+        * WebKit2.xcodeproj/project.pbxproj:
+
 2011-04-26  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed. Fix WebKit2 GTK build after r84785.
