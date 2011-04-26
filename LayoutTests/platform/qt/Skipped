@@ -716,10 +716,6 @@ plugins/windowless_plugin_paint_test.html
 # Missing layoutTestController.findString() http://webkit.org/b/50236
 editing/text-iterator/findString.html
 
-# Missing layoutTestController.overridePreference()
-fast/events/pageshow-pagehide-on-back-cached.html
-fast/events/pageshow-pagehide-on-back-cached-with-frames.html
-
 # layoutTestController.waitForPolicyDelegate() does not report the origin node
 fast/encoding/mailto-always-utf-8.html
 
