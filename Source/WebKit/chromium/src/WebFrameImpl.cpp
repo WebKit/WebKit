@@ -157,7 +157,7 @@
 #include <algorithm>
 #include <wtf/CurrentTime.h>
 
-#if OS(LINUX) || OS(FREEBSD)
+#if OS(UNIX) && !OS(DARWIN)
 #include <gdk/gdk.h>
 #endif
 
@@ -332,7 +332,7 @@ public:
         float scale = m_printedPageWidth / pageRect.width();
 
         ctx.save();
-#if OS(LINUX) || OS(FREEBSD)
+#if OS(UNIX) && !OS(DARWIN)
         ctx.scale(WebCore::FloatSize(scale, scale));
 #endif
         ctx.translate(static_cast<float>(-pageRect.x()),

@@ -134,7 +134,7 @@
 #if OS(WINDOWS)
 #include "RenderThemeChromiumWin.h"
 #else
-#if OS(LINUX) || OS(FREEBSD)
+#if OS(UNIX) && !OS(DARWIN)
 #include "RenderThemeChromiumLinux.h"
 #endif
 #include "RenderTheme.h"
@@ -482,7 +482,7 @@ void WebViewImpl::mouseDown(const WebMouseEvent& event)
         || (event.button == WebMouseEvent::ButtonLeft
             && event.modifiers & WebMouseEvent::ControlKey))
         mouseContextMenu(event);
-#elif OS(LINUX) || OS(FREEBSD)
+#elif OS(UNIX)
     if (event.button == WebMouseEvent::ButtonRight)
         mouseContextMenu(event);
 #endif
@@ -521,7 +521,7 @@ void WebViewImpl::mouseUp(const WebMouseEvent& event)
     if (!mainFrameImpl() || !mainFrameImpl()->frameView())
         return;
 
-#if OS(LINUX) || OS(FREEBSD)
+#if OS(UNIX) && !OS(DARWIN)
     // If the event was a middle click, attempt to copy text into the focused
     // frame. We execute this before we let the page have a go at the event
     // because the page may change what is focused during in its event handler.
@@ -605,11 +605,11 @@ bool WebViewImpl::keyEvent(const WebKeyboardEvent& event)
     if (!handler)
         return keyEventDefault(event);
 
-#if OS(WINDOWS) || OS(LINUX) || OS(FREEBSD)
+#if !OS(DARWIN)
     const WebInputEvent::Type contextMenuTriggeringEventType =
 #if OS(WINDOWS)
         WebInputEvent::KeyUp;
-#elif OS(LINUX) || OS(FREEBSD)
+#elif OS(UNIX)
         WebInputEvent::RawKeyDown;
 #endif
 
@@ -619,7 +619,7 @@ bool WebViewImpl::keyEvent(const WebKeyboardEvent& event)
         sendContextMenuEvent(event);
         return true;
     }
-#endif // OS(WINDOWS) || OS(LINUX) || OS(FREEBSD)
+#endif // !OS(DARWIN)
 
     PlatformKeyboardEventBuilder evt(event);
 
@@ -748,7 +748,7 @@ bool WebViewImpl::touchEvent(const WebTouchEvent& event)
 }
 #endif
 
-#if OS(WINDOWS) || OS(LINUX) || OS(FREEBSD)
+#if !OS(DARWIN)
 // Mac has no way to open a context menu based on a keyboard event.
 bool WebViewImpl::sendContextMenuEvent(const WebKeyboardEvent& event)
 {
@@ -2095,7 +2095,7 @@ void WebViewImpl::setDomainRelaxationForbidden(bool forbidden, const WebString& 
 void WebViewImpl::setScrollbarColors(unsigned inactiveColor,
                                      unsigned activeColor,
                                      unsigned trackColor) {
-#if OS(LINUX) || OS(FREEBSD)
+#if OS(UNIX) && !OS(DARWIN)
     PlatformThemeChromiumGtk::setScrollbarColors(inactiveColor,
                                                  activeColor,
                                                  trackColor);
@@ -2106,7 +2106,7 @@ void WebViewImpl::setSelectionColors(unsigned activeBackgroundColor,
                                      unsigned activeForegroundColor,
                                      unsigned inactiveBackgroundColor,
                                      unsigned inactiveForegroundColor) {
-#if OS(LINUX) || OS(FREEBSD)
+#if OS(UNIX) && !OS(DARWIN)
     RenderThemeChromiumLinux::setSelectionColors(activeBackgroundColor,
                                                  activeForegroundColor,
                                                  inactiveBackgroundColor,
@@ -2182,10 +2182,10 @@ bool WebViewImpl::navigationPolicyFromMouseEvent(unsigned short button,
                                                  bool alt, bool meta,
                                                  WebNavigationPolicy* policy)
 {
-#if OS(WINDOWS) || OS(LINUX) || OS(FREEBSD) || OS(SOLARIS)
-    const bool newTabModifier = (button == 1) || ctrl;
-#elif OS(DARWIN)
+#if OS(DARWIN)
     const bool newTabModifier = (button == 1) || meta;
+#else
+    const bool newTabModifier = (button == 1) || ctrl;
 #endif
     if (!newTabModifier && !shift && !alt)
       return false;

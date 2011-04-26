@@ -70,14 +70,12 @@
 #include "win/WebThemeEngine.h"
 #endif
 
-#if OS(LINUX) || OS(FREEBSD)
+#if OS(DARWIN)
+#include "mac/WebThemeEngine.h"
+#elif OS(UNIX)
 #include "linux/WebThemeEngine.h"
 #include "WebFontInfo.h"
 #include "WebFontRenderStyle.h"
-#endif
-
-#if OS(DARWIN)
-#include "mac/WebThemeEngine.h"
 #endif
 
 #if WEBKIT_USING_SKIA
@@ -442,7 +440,21 @@ bool PlatformBridge::ensureFontLoaded(HFONT font)
 }
 #endif
 
-#if OS(LINUX) || OS(FREEBSD)
+#if OS(DARWIN)
+bool PlatformBridge::loadFont(NSFont* srcFont, ATSFontContainerRef* out)
+{
+    WebSandboxSupport* ss = webKitClient()->sandboxSupport();
+    if (ss)
+        return ss->loadFont(srcFont, out);
+
+    // This function should only be called in response to an error loading a
+    // font due to being blocked by the sandbox.
+    // This by definition shouldn't happen if there is no sandbox support.
+    ASSERT_NOT_REACHED();
+    *out = 0;
+    return false;
+}
+#elif OS(UNIX)
 String PlatformBridge::getFontFamilyForCharacters(const UChar* characters, size_t numCharacters, const char* preferredLocale)
 {
     if (webKitClient()->sandboxSupport())
@@ -465,22 +477,6 @@ void PlatformBridge::getRenderStyleForStrike(const char* font, int sizeAndStyle,
         WebFontInfo::renderStyleForStrike(font, sizeAndStyle, &style);
 
     style.toFontRenderStyle(result);
-}
-#endif
-
-#if OS(DARWIN)
-bool PlatformBridge::loadFont(NSFont* srcFont, ATSFontContainerRef* out)
-{
-    WebSandboxSupport* ss = webKitClient()->sandboxSupport();
-    if (ss)
-        return ss->loadFont(srcFont, out);
-
-    // This function should only be called in response to an error loading a
-    // font due to being blocked by the sandbox.
-    // This by definition shouldn't happen if there is no sandbox support.
-    ASSERT_NOT_REACHED();
-    *out = 0;
-    return false;
 }
 #endif
 
@@ -783,7 +779,29 @@ void PlatformBridge::paintProgressBar(
         gc->platformContext()->canvas(), barRect, valueRect, determinate, animatedSeconds);
 }
 
-#elif OS(LINUX)
+#elif OS(DARWIN)
+
+void PlatformBridge::paintScrollbarThumb(
+    GraphicsContext* gc, ThemePaintState state, ThemePaintSize size, const IntRect& rect, const ThemePaintScrollbarInfo& scrollbarInfo)
+{
+    WebThemeEngine::ScrollbarInfo webThemeScrollbarInfo;
+
+    webThemeScrollbarInfo.orientation = static_cast<WebThemeEngine::ScrollbarOrientation>(scrollbarInfo.orientation);
+    webThemeScrollbarInfo.parent = static_cast<WebThemeEngine::ScrollbarParent>(scrollbarInfo.parent);
+    webThemeScrollbarInfo.maxValue = scrollbarInfo.maxValue;
+    webThemeScrollbarInfo.currentValue = scrollbarInfo.currentValue;
+    webThemeScrollbarInfo.visibleSize = scrollbarInfo.visibleSize;
+    webThemeScrollbarInfo.totalSize = scrollbarInfo.totalSize;
+
+    webKitClient()->themeEngine()->paintScrollbarThumb(
+        gc->platformContext(),
+        static_cast<WebThemeEngine::State>(state),
+        static_cast<WebThemeEngine::Size>(size),
+        rect,
+        webThemeScrollbarInfo);
+}
+
+#elif OS(UNIX)
 
 static WebThemeEngine::Part WebThemePart(PlatformBridge::ThemePart part)
 {
@@ -889,28 +907,6 @@ void PlatformBridge::paintThemePart(
     GetWebThemeExtraParams(part, state, extraParams, &webThemeExtraParams);
     webKitClient()->themeEngine()->paint(
         gc->platformContext()->canvas(), WebThemePart(part), WebThemeState(state), rect, &webThemeExtraParams);
-}
-
-#elif OS(DARWIN)
-
-void PlatformBridge::paintScrollbarThumb(
-    GraphicsContext* gc, ThemePaintState state, ThemePaintSize size, const IntRect& rect, const ThemePaintScrollbarInfo& scrollbarInfo)
-{
-    WebThemeEngine::ScrollbarInfo webThemeScrollbarInfo;
-
-    webThemeScrollbarInfo.orientation = static_cast<WebThemeEngine::ScrollbarOrientation>(scrollbarInfo.orientation);
-    webThemeScrollbarInfo.parent = static_cast<WebThemeEngine::ScrollbarParent>(scrollbarInfo.parent);
-    webThemeScrollbarInfo.maxValue = scrollbarInfo.maxValue;
-    webThemeScrollbarInfo.currentValue = scrollbarInfo.currentValue;
-    webThemeScrollbarInfo.visibleSize = scrollbarInfo.visibleSize;
-    webThemeScrollbarInfo.totalSize = scrollbarInfo.totalSize;
-
-    webKitClient()->themeEngine()->paintScrollbarThumb(
-        gc->platformContext(),
-        static_cast<WebThemeEngine::State>(state),
-        static_cast<WebThemeEngine::Size>(size),
-        rect,
-        webThemeScrollbarInfo);
 }
 
 #endif

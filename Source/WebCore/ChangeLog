@@ -1,3 +1,25 @@
+2011-04-26  Ruben  <chromium@hybridsource.org>
+
+        Reviewed by Tony Chang.
+
+        Change linux ifdefs for Chromium to Unix instead, allowing
+        new Unix ports to be enabled by default
+        https://bugs.webkit.org/show_bug.cgi?id=59297
+
+        No new tests, just changing preprocessor defines.
+
+        * bindings/js/JSInspectorFrontendHostCustom.cpp:
+        * bindings/v8/custom/V8InspectorFrontendHostCustom.cpp:
+        * dom/SelectElement.cpp:
+        * loader/cache/CachedFont.cpp:
+        * page/EventHandler.cpp:
+        * page/chromium/EventHandlerChromium.cpp:
+        * platform/Scrollbar.cpp:
+        * platform/chromium/PlatformBridge.h:
+        * platform/graphics/chromium/FontPlatformData.h:
+        * platform/graphics/skia/FontCustomPlatformData.cpp:
+        * platform/graphics/skia/FontCustomPlatformData.h:
+
 2011-04-26  Ryosuke Niwa  <rniwa@webkit.org>
 
         Reviewed by Dan Bernstein.

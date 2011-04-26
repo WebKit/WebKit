@@ -50,6 +50,10 @@ v8::Handle<v8::Value> V8InspectorFrontendHost::platformCallback(const v8::Argume
     return v8String("linux");
 #elif defined(OS_FREEBSD)
     return v8String("freebsd");
+#elif defined(OS_OPENBSD)
+    return v8String("openbsd");
+#elif defined(OS_SOLARIS)
+    return v8String("solaris");
 #elif defined(OS_WIN)
     return v8String("windows");
 #else

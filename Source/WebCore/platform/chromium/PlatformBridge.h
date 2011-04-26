@@ -149,12 +149,11 @@ public:
 #if OS(WINDOWS)
     static bool ensureFontLoaded(HFONT);
 #endif
-#if OS(LINUX) || OS(FREEBSD)
-    static void getRenderStyleForStrike(const char* family, int sizeAndStyle, FontRenderStyle* result);
-    static String getFontFamilyForCharacters(const UChar*, size_t numCharacters, const char* preferredLocale);
-#endif
 #if OS(DARWIN)
     static bool loadFont(NSFont* srcFont, ATSFontContainerRef* out);
+#elif OS(UNIX)
+    static void getRenderStyleForStrike(const char* family, int sizeAndStyle, FontRenderStyle* result);
+    static String getFontFamilyForCharacters(const UChar*, size_t numCharacters, const char* preferredLocale);
 #endif
 
     // Forms --------------------------------------------------------------
@@ -266,7 +265,40 @@ public:
         GraphicsContext*, int part, int state, int classicState, const IntRect&);
     static void paintProgressBar(
         GraphicsContext*, const IntRect& barRect, const IntRect& valueRect, bool determinate, double animatedSeconds);
-#elif OS(LINUX)
+#elif OS(DARWIN)
+    enum ThemePaintState {
+        StateDisabled,
+        StateInactive,
+        StateActive,
+        StatePressed,
+    };
+
+    enum ThemePaintSize {
+        SizeRegular,
+        SizeSmall,
+    };
+
+    enum ThemePaintScrollbarOrientation {
+        ScrollbarOrientationHorizontal,
+        ScrollbarOrientationVertical,
+    };
+
+    enum ThemePaintScrollbarParent {
+        ScrollbarParentScrollView,
+        ScrollbarParentRenderLayer,
+    };
+
+    struct ThemePaintScrollbarInfo {
+        ThemePaintScrollbarOrientation orientation;
+        ThemePaintScrollbarParent parent;
+        int maxValue;
+        int currentValue;
+        int visibleSize;
+        int totalSize;
+    };
+
+    static void paintScrollbarThumb(GraphicsContext*, ThemePaintState, ThemePaintSize, const IntRect&, const ThemePaintScrollbarInfo&);
+#elif OS(UNIX)
     // The UI part which is being accessed.
     enum ThemePart {
         // ScrollbarTheme parts
@@ -363,39 +395,6 @@ public:
     static IntSize getThemePartSize(ThemePart);
     // Paint the given the given theme part.
     static void paintThemePart(GraphicsContext*, ThemePart, ThemePaintState, const IntRect&, const ThemePaintExtraParams*);
-#elif OS(DARWIN)
-    enum ThemePaintState {
-        StateDisabled,
-        StateInactive,
-        StateActive,
-        StatePressed,
-    };
-
-    enum ThemePaintSize {
-        SizeRegular,
-        SizeSmall,
-    };
-
-    enum ThemePaintScrollbarOrientation {
-        ScrollbarOrientationHorizontal,
-        ScrollbarOrientationVertical,
-    };
-
-    enum ThemePaintScrollbarParent {
-        ScrollbarParentScrollView,
-        ScrollbarParentRenderLayer,
-    };
-
-    struct ThemePaintScrollbarInfo {
-        ThemePaintScrollbarOrientation orientation;
-        ThemePaintScrollbarParent parent;
-        int maxValue;
-        int currentValue;
-        int visibleSize;
-        int totalSize;
-    };
-
-    static void paintScrollbarThumb(GraphicsContext*, ThemePaintState, ThemePaintSize, const IntRect&, const ThemePaintScrollbarInfo&);
 #endif
 
     // Trace Event --------------------------------------------------------

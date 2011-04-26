@@ -42,7 +42,7 @@
 #if OS(WINDOWS)
 #include "PlatformString.h"
 #include <windows.h>
-#elif OS(LINUX) || OS(FREEBSD) || PLATFORM(BREWMP)
+#elif OS(UNIX) || PLATFORM(BREWMP)
 #include "SkTypeface.h"
 #endif
 
@@ -59,7 +59,7 @@ public:
         : m_fontReference(fontReference)
         , m_name(name)
     {}
-#elif OS(LINUX) || OS(FREEBSD) || PLATFORM(BREWMP)
+#elif OS(UNIX) || PLATFORM(BREWMP)
     explicit FontCustomPlatformData(SkTypeface* typeface)
         : m_fontReference(typeface)
     {}
@@ -75,7 +75,7 @@ public:
 #if OS(WINDOWS)
     HANDLE m_fontReference;
     String m_name;
-#elif OS(LINUX) || OS(FREEBSD) || PLATFORM(BREWMP)
+#elif OS(UNIX) || PLATFORM(BREWMP)
     SkTypeface* m_fontReference;
 #endif
 };
