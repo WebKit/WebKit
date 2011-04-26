@@ -318,7 +318,7 @@ void LayoutTestController::setXSSAuditorEnabled(bool enabled)
 
 void LayoutTestController::setAllowUniversalAccessFromFileURLs(bool enabled)
 {
-    WKBundleOverrideAllowUniversalAccessFromFileURLsForTestRunner(InjectedBundle::shared().bundle(), InjectedBundle::shared().pageGroup(), enabled);
+    WKBundleSetAllowUniversalAccessFromFileURLs(InjectedBundle::shared().bundle(), InjectedBundle::shared().pageGroup(), enabled);
 }
 
 void LayoutTestController::setAllowFileAccessFromFileURLs(bool enabled)

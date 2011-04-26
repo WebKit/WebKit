@@ -128,9 +128,9 @@ void WKBundleOverrideXSSAuditorEnabledForTestRunner(WKBundleRef bundleRef, WKBun
     toImpl(bundleRef)->overrideXSSAuditorEnabledForTestRunner(toImpl(pageGroupRef), enabled);
 }
 
-void WKBundleOverrideAllowUniversalAccessFromFileURLsForTestRunner(WKBundleRef bundleRef, WKBundlePageGroupRef pageGroupRef, bool enabled)
+void WKBundleSetAllowUniversalAccessFromFileURLs(WKBundleRef bundleRef, WKBundlePageGroupRef pageGroupRef, bool enabled)
 {
-    toImpl(bundleRef)->overrideAllowUniversalAccessFromFileURLsForTestRunner(toImpl(pageGroupRef), enabled);
+    toImpl(bundleRef)->setAllowUniversalAccessFromFileURLs(toImpl(pageGroupRef), enabled);
 }
 
 void WKBundleSetAllowFileAccessFromFileURLs(WKBundleRef bundleRef, WKBundlePageGroupRef pageGroupRef, bool enabled)

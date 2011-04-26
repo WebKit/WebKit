@@ -177,7 +177,7 @@ void InjectedBundle::beginTesting()
 
     WKBundleSetShouldTrackVisitedLinks(m_bundle, false);
     WKBundleRemoveAllVisitedLinks(m_bundle);
-    WKBundleOverrideAllowUniversalAccessFromFileURLsForTestRunner(m_bundle, m_pageGroup, true);
+    WKBundleSetAllowUniversalAccessFromFileURLs(m_bundle, m_pageGroup, true);
 
     WKBundleRemoveAllUserContent(m_bundle, m_pageGroup);
 

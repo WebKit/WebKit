@@ -91,7 +91,7 @@ public:
     void removeAllVisitedLinks();
     void activateMacFontAscentHack();
     void overrideXSSAuditorEnabledForTestRunner(WebPageGroupProxy* pageGroup, bool enabled);
-    void overrideAllowUniversalAccessFromFileURLsForTestRunner(WebPageGroupProxy*, bool);
+    void setAllowUniversalAccessFromFileURLs(WebPageGroupProxy*, bool);
     void setAllowFileAccessFromFileURLs(WebPageGroupProxy*, bool);
     void setFrameFlatteningEnabled(WebPageGroupProxy*, bool);
     int numberOfPages(WebFrame*, double, double);

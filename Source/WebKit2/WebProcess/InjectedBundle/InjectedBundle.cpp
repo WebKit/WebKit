@@ -113,12 +113,8 @@ void InjectedBundle::overrideXSSAuditorEnabledForTestRunner(WebPageGroupProxy* p
         (*iter)->settings()->setXSSAuditorEnabled(enabled);
 }
 
-void InjectedBundle::overrideAllowUniversalAccessFromFileURLsForTestRunner(WebPageGroupProxy* pageGroup, bool enabled)
+void InjectedBundle::setAllowUniversalAccessFromFileURLs(WebPageGroupProxy* pageGroup, bool enabled)
 {
-    // Override the preference for all future pages.
-    WebPreferencesStore::overrideAllowUniversalAccessFromFileURLsForTestRunner(enabled);
-
-    // Change the setting for existing ones.
     const HashSet<Page*>& pages = PageGroup::pageGroup(pageGroup->identifier())->pages();
     for (HashSet<Page*>::iterator iter = pages.begin(); iter != pages.end(); ++iter)
         (*iter)->settings()->setAllowUniversalAccessFromFileURLs(enabled);
@@ -126,10 +122,6 @@ void InjectedBundle::overrideAllowUniversalAccessFromFileURLsForTestRunner(WebPa
 
 void InjectedBundle::setAllowFileAccessFromFileURLs(WebPageGroupProxy* pageGroup, bool enabled)
 {
-    // Override the preference for all future pages.
-    WebPreferencesStore::overrideAllowFileAccessFromFileURLsForTestRunner(enabled);
-
-    // Change the setting for existing ones.
     const HashSet<Page*>& pages = PageGroup::pageGroup(pageGroup->identifier())->pages();
     for (HashSet<Page*>::iterator iter = pages.begin(); iter != pages.end(); ++iter)
         (*iter)->settings()->setAllowFileAccessFromFileURLs(enabled);

@@ -1,3 +1,23 @@
+2011-04-26  Chang Shu  <cshu@webkit.org>
+
+        Reviewed by Laszlo Gombos.
+
+        WebKitTestRunner needs layoutTestController.setAllowFileAccessFromFileURLs
+        https://bugs.webkit.org/show_bug.cgi?id=57572
+
+        Remove the unnecessary code that updates preference.
+
+        * Shared/WebPreferencesStore.cpp:
+        (WebKit::WebPreferencesStore::decode):
+        * Shared/WebPreferencesStore.h:
+        * WebProcess/InjectedBundle/API/c/WKBundle.cpp:
+        (WKBundleSetAllowUniversalAccessFromFileURLs):
+        * WebProcess/InjectedBundle/API/c/WKBundlePrivate.h:
+        * WebProcess/InjectedBundle/InjectedBundle.cpp:
+        (WebKit::InjectedBundle::setAllowUniversalAccessFromFileURLs):
+        (WebKit::InjectedBundle::setAllowFileAccessFromFileURLs):
+        * WebProcess/InjectedBundle/InjectedBundle.h:
+
 2011-04-26  Brian Weinstein  <bweinstein@apple.com>
 
         Reviewed by Steve Falkenburg.
