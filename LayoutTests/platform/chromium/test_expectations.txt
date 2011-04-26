@@ -1026,7 +1026,7 @@ BUGCR10318 : fast/canvas/toDataURL-supportedTypes.html = FAIL
 BUGCR8402 MAC : fast/forms/drag-out-of-textarea.html = FAIL
 
 // GURL doesn't handle switching from standard URL to path URL correctly
-BUGWK27914 : fast/dom/HTMLAnchorElement/set-href-attribute-protocol.html = TEXT
+BUGWK27914 WIN : fast/dom/HTMLAnchorElement/set-href-attribute-protocol.html = TEXT
 
 // ----------------------------------------------------------------------------
 // NEW FOR THE MERGE
@@ -2568,9 +2568,6 @@ BUG_YUTAK MAC : fast/images/imagemap-circle-focus-ring.html = IMAGE
 BUG_YUTAK WIN LINUX : fast/images/imagemap-polygon-focus-ring.html = IMAGE+TEXT
 BUG_YUTAK MAC : fast/images/imagemap-polygon-focus-ring.html = IMAGE
 
-// Started to produce text difference occasionally since r68528.
-// BUGCR65279 LINUX DEBUG : fast/css/visited-link-hang.html = TEXT PASS
-
 ///////////////////////////////////////////////////////////////////////////
 // Regressions caused by switching to DRT.
 ///////////////////////////////////////////////////////////////////////////
@@ -3716,12 +3713,14 @@ BUGDPRANKE : svg/custom/svg-fonts-in-html.html = IMAGE
 // probably just needs a new baseline
 BUGDPRANKE WIN LINUX : fast/backgrounds/background-leakage-transforms.html = IMAGE+TEXT
 
+// figure out why this is slow.
+BUGDPRANKE SLOW : fast/css/visited-link-hang.html = PASS
+
 // webkit roll : 84350:84431
 BUGDPRANKE LINUX : fast/canvas/webgl/css-webkit-canvas-repaint.html = IMAGE
 BUGDPRANKE LINUX : fast/canvas/webgl/css-webkit-canvas.html = IMAGE
 BUGDPRANKE LINUX : fast/encoding/parser-tests-100.html = TIMEOUT PASS
 BUGDPRANKE LINUX : fast/encoding/parser-tests-50.html = TIMEOUT PASS
-BUGDPRANKE LINUX : fast/css/visited-link-hang.html = CRASH
 BUGDPRANKE CPU : media/media-document-audio-repaint.html = IMAGE
 BUGDPRANKE MAC LINUX : transitions/interrupt-zero-duration.html = TEXT PASS
 BUGDPRANKE : media/controls-css-overload.html = TIMEOUT PASS
@@ -3741,15 +3740,12 @@ BUGCASEQ MAC : fast/canvas/image-object-in-canvas.html = IMAGE
 BUGDPRANKE : fast/backgrounds/background-leakage.html = IMAGE+TEXT IMAGE
 BUGDPRANKE MAC : fast/multicol/client-rects.html = IMAGE
 
-BUGDPRANKE WIN DEBUG : fast/css/text-overflow-ellipsis.html = CRASH
 BUGDPRANKE MAC DEBUG : transitions/cancel-transition.html = TEXT PASS
-BUGDPRANKE LINUX DEBUG : fast/dom/HTMLFormElement/invalid-form-field.html = CRASH
 
 BUGDPRANKE LINUX DEBUG : perf/array-nested-loop.html = TEXT TIMEOUT PASS
 BUGDPRANKE LINUX DEBUG : fast/dom/Node/mutation-blur.html = CRASH
-BUGDPRANKE WIN DEBUG : svg/custom/font-platformDestroy-crash.svg = CRASH
 BUGDPRANKE WIN DEBUG : svg/custom/foreignObject-crash-on-hover.xml = CRASH
-BUGDPRANKE WIN DEBUG : svg/custom/foreign-object-skew.svg = CRASH
+BUGDPRANKE LINUX DEBUG : svg/custom/foreign-object-skew.svg = CRASH
 
 // flakiness
 BUGDPRANKE WIN DEBUG : http/tests/navigation/forward-to-fragment-fires-onload.html = TIMEOUT PASS
@@ -3770,10 +3766,6 @@ BUGJKNOTTEN MAC : fast/forms/select-baseline.html = IMAGE PASS
 BUGJKNOTTEN MAC : fast/forms/select-empty-option-height.html = IMAGE PASS
 BUGJKNOTTEN : http/tests/local/formdata/send-form-data-with-sliced-file.html = PASS
 
-BUGDPRANKE DEBUG WIN LINUX : fast/table/stale-grid-crash.html = CRASH
-BUGDPRANKE DEBUG MAC : fast/css/background-clip-values.html = CRASH
-BUGDPRANKE DEBUG MAC : fast/css/background-currentcolor.html = CRASH
-
 BUGDPRANKE LINUX : canvas/philip/tests/2d.gradient.radial.touch2.html = TEXT
 
 BUGDPRANKE : fast/encoding/parser-tests-70.html = TIMEOUT PASS
@@ -3782,16 +3774,11 @@ BUGDPRANKE MAC : http/tests/navigation/lockedhistory-iframe.html = TEXT
 BUGDPRANKE : fast/parser/iframe-sets-parent-to-javascript-url.html = TEXT PASS
 BUGDPRANKE : fast/repaint/moving-shadow-on-path.html = TEXT PASS
 
-BUGDPRANKE LINUX : fast/runin/nonblock-runin.html = CRASH
-BUGDPRANKE LINUX : fast/runin/001.html = CRASH
 BUGDPRANKE WIN: http/tests/misc/empty-file-formdata.html = TIMEOUT PASS
 BUGDPRANKE WIN: http/tests/xmlhttprequest/access-control-preflight-headers-async.html = TIMEOUT PASS
 
 BUGDPRANKE WIN : http/tests/mime/standard-mode-does-not-load-stylesheet-with-text-plain.html = TIMEOUT PASS
-BUGDPRANKE DEBUG WIN LINUX : http/tests/misc/acid2-pixel.html = CRASH
 BUGDPRANKE MAC DEBUG : fast/css/only-of-type-pseudo-class.html = TEXT PASS
-BUGDPRANKE MAC DEBUG : fast/css/getPropertyValue-border.html = CRASH
-BUGDPRANKE LINUX DEBUG : editing/pasteboard/merge-end-3.html = CRASH
 BUGDPRANKE LINUX DEBUG : fullscreen/full-screen-iframe-allowed.html = TEXT PASS
 BUGDPRANKE LINUX DEBUG : jquery/deferred.html = TEXT PASS
 
@@ -3808,22 +3795,19 @@ BUGDPRANKE : http/tests/security/contentSecurityPolicy/image-allowed.html = TEXT
 BUGDPRANKE DEBUG WIN LINUX : inspector/debugger/live-edit.html = TEXT TIMEOUT
 BUGDPRANKE : inspector/console/console-object-constructor-name.html = TEXT PASS  TIMEOUT
 BUGDPRANKE : inspector/console/console-log-before-inspector-open.html = TEXT PASS TIMEOUT
-BUGDPRANKE DEBUG : http/tests/local/link-stylesheet-preferred.html = CRASH
-BUGDPRANKE DEBUG : editing/pasteboard/merge-end-2.html = CRASH
+BUGDPRANKE DEBUG : http/tests/local/link-stylesheet-preferred.html = PASS TIMEOUT
+BUGDPRANKE DEBUG LINUX : editing/pasteboard/merge-end-2.html = CRASH PASS
 BUGDPRANKE DEBUG : animations/keyframes-out-of-order.html = TEXT PASS
 BUGDPRANKE : fast/frames/meta-refresh-user-gesture.html = TIMEOUT PASS
 BUGDPRANKE : http/tests/navigation/redirect-on-back-updates-history-item.html = TIMEOUT PASS
-BUGDPRANKE : fast/files/create-blob-url-crash.html = CRASH
+BUGDPRANKE : fast/files/create-blob-url-crash.html = CRASH PASS
 
 BUGDPRANKE DEBUG : http/tests/security/contentSecurityPolicy/media-src-allowed.html = TIMEOUT PASS
-
-BUGDPRANKE MAC DEBUG : svg/custom/glyph-selection-lang-attribute.svg = CRASH
 
 // flakiness
 BUGDPRANKE WIN DEBUG : fast/css/only-of-type-pseudo-class.html = TEXT PASS
 BUGDPRANKE : fast/dom/Document/document-reopen.html = TEXT PASS
 
-BUGDPRANKE : svg/custom/font-face-name-without-name-attr.svg = CRASH
 BUGDPRANKE : fast/parser/javascript-url-compat-mode.html = TEXT PASS
 BUGDPRANKE : inspector/console/console-tests.html = TEXT PASS TIMEOUT
 
@@ -3904,8 +3888,6 @@ BUGDPRANKE : fast/dom/dataset-gc.html = TEXT
 BUGDPRANKE : fast/backgrounds/gradient-background-leakage.html = IMAGE
 BUGDPRANKE : fast/forms/validation-message-appearance.html = IMAGE
 BUGDPRANKE : fast/multicol/shadow-breaking.html = IMAGE
-BUGDPRANKE REBASELINE MAC CPU : fast/block/positioning/rtl-fixed-positioning.html = MISSING
-BUGDPRANKE REBASELINE MAC CPU : fast/block/positioning/vertical-rl/fixed-positioning.html = MISSING
 BUGDPRANKE WIN : fast/repaint/shadow-multiple-horizontal.html = IMAGE
 BUGDPRANKE WIN : fast/repaint/shadow-multiple-strict-horizontal.html = IMAGE
 BUGDPRANKE WIN : fast/repaint/shadow-multiple-strict-vertical.html = IMAGE
@@ -3930,3 +3912,6 @@ BUGDPRANKE : http/tests/misc/will-send-request-returns-null-on-redirect.html = T
 
 // changed in r84745 (see commented-out entry above)
 BUGWK50661 WIN LINUX : fast/dom/HTMLMeterElement/meter-element.html = TEXT
+
+BUGDPRANKE GPU SLOW : compositing/tiling/huge-layer-img.html = PASS TEXT
+BUGDPRANKE GPU : media/video-aspect-ratio.html = IMAGE PASS

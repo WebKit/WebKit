@@ -1,3 +1,13 @@
+2011-04-25  Dirk Pranke  <dpranke@chromium.org>
+
+        Unreviewed, expectations change. Remove tests that are no longer
+        failing, add missing baselines for Chromium Mac SL.
+
+        * platform/chromium/test_expectations.txt:
+        * platform/chromium-mac/fast/block/positioning/rtl-fixed-positioning-expected.png: Added.
+        * platform/chromium-mac/fast/block/positioning/rtl-fixed-positioning-expected.txt: Added.
+        * platform/chromium-mac/fast/block/positioning/vertical-rl/fixed-positioning-expected.png: Added.
+
 2011-04-25  Mihai Parparita  <mihaip@chromium.org>
 
         Reviewed by Ojan Vafai.
