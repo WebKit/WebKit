@@ -291,29 +291,20 @@ void AutoFillPopupMenuClient::initialize(
     regularFont.update(textField->document()->styleSelector()->fontSelector());
     // The direction of text in popup menu is set the same as the direction of
     // the input element: textField.
-    m_regularStyle.set(new PopupMenuStyle(Color::black,
-                                          Color::white,
-                                          regularFont,
-                                          true,
-                                          false,
-                                          Length(WebCore::Fixed),
-                                          textField->renderer()->style()->direction(),
-                                          textField->renderer()->style()->unicodeBidi() == Override,
-                                          PopupMenuStyle::AutofillPopup));
+    m_regularStyle = adoptPtr(new PopupMenuStyle(Color::black, Color::white, regularFont, true, false,
+                                                 Length(WebCore::Fixed), textField->renderer()->style()->direction(),
+                                                 textField->renderer()->style()->unicodeBidi() == Override,
+                                                 PopupMenuStyle::AutofillPopup));
 
     FontDescription warningFontDescription = regularFont.fontDescription();
     warningFontDescription.setItalic(true);
     Font warningFont(warningFontDescription, regularFont.letterSpacing(), regularFont.wordSpacing());
     warningFont.update(regularFont.fontSelector());
-    m_warningStyle.set(new PopupMenuStyle(Color::darkGray,
-                                          m_regularStyle->backgroundColor(),
-                                          warningFont,
-                                          m_regularStyle->isVisible(),
-                                          m_regularStyle->isDisplayNone(),
-                                          m_regularStyle->textIndent(),
-                                          m_regularStyle->textDirection(),
-                                          m_regularStyle->hasTextDirectionOverride(),
-                                          PopupMenuStyle::AutofillPopup));
+    m_warningStyle = adoptPtr(new PopupMenuStyle(Color::darkGray, m_regularStyle->backgroundColor(), warningFont,
+                                                 m_regularStyle->isVisible(), m_regularStyle->isDisplayNone(),
+                                                 m_regularStyle->textIndent(), m_regularStyle->textDirection(),
+                                                 m_regularStyle->hasTextDirectionOverride(),
+                                                 PopupMenuStyle::AutofillPopup));
 }
 
 void AutoFillPopupMenuClient::setSuggestions(const WebVector<WebString>& names,

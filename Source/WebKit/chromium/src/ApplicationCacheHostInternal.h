@@ -50,7 +50,7 @@ public:
     {
         WebKit::WebFrameImpl* webFrame = WebKit::WebFrameImpl::fromFrame(host->m_documentLoader->frame());
         ASSERT(webFrame);
-        m_outerHost.set(webFrame->client()->createApplicationCacheHost(webFrame, this));
+        m_outerHost = adoptPtr(webFrame->client()->createApplicationCacheHost(webFrame, this));
     }
 
     virtual void didChangeCacheAssociation()

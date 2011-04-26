@@ -104,7 +104,7 @@ void ResourceHandleInternal::start()
         CRASH();
     m_state = ConnectionStateStarted;
 
-    m_loader.set(webKitClient()->createURLLoader());
+    m_loader = adoptPtr(webKitClient()->createURLLoader());
     ASSERT(m_loader.get());
 
     WrappedResourceRequest wrappedRequest(m_request);
@@ -201,7 +201,7 @@ ResourceHandle::ResourceHandle(const ResourceRequest& request,
                                ResourceHandleClient* client,
                                bool defersLoading,
                                bool shouldContentSniff)
-    : d(new ResourceHandleInternal(request, client))
+    : d(adoptPtr(new ResourceHandleInternal(request, client)))
 {
     d->m_owner = this;
 
@@ -292,7 +292,7 @@ void ResourceHandle::loadResourceSynchronously(NetworkingContext* context,
                                                ResourceResponse& response,
                                                Vector<char>& data)
 {
-    OwnPtr<WebURLLoader> loader(webKitClient()->createURLLoader());
+    OwnPtr<WebURLLoader> loader = adoptPtr(webKitClient()->createURLLoader());
     ASSERT(loader.get());
 
     WrappedResourceRequest requestIn(request);

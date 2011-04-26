@@ -79,7 +79,7 @@ void ApplicationCacheHost::maybeLoadMainResource(ResourceRequest& request, Subst
     if (!isApplicationCacheEnabled())
         return;
 
-    m_internal.set(new ApplicationCacheHostInternal(this));
+    m_internal = adoptPtr(new ApplicationCacheHostInternal(this));
     if (m_internal->m_outerHost) {
         WrappedResourceRequest wrapped(request);
         m_internal->m_outerHost->willStartMainResourceRequest(wrapped, WebFrameImpl::fromFrame(m_documentLoader->frame()));
