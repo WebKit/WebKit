@@ -1,5 +1,14 @@
 2011-04-26  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        Unreviewed. Fix WebKit2 GTK build after r84785.
+
+        * UIProcess/gtk/WebInspectorGtk.cpp:
+        (WebKit::WebInspectorProxy::platformAttach):
+        (WebKit::WebInspectorProxy::platformDetach):
+        (WebKit::WebInspectorProxy::platformSetAttachedWindowHeight):
+
+2011-04-26  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         Unreviewed. Fix WebKit2 GTK build after r84886
 
         * Platform/gtk/RunLoopGtk.cpp: Include WorkItem.h

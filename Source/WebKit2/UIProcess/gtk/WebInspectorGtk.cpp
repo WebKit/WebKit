@@ -66,6 +66,21 @@ String WebInspectorProxy::inspectorPageURL() const
     return String();
 }
 
+void WebInspectorProxy::platformAttach()
+{
+    notImplemented();
+}
+
+void WebInspectorProxy::platformDetach()
+{
+    notImplemented();
+}
+
+void WebInspectorProxy::platformSetAttachedWindowHeight(unsigned)
+{
+    notImplemented();
+}
+
 } // namespace WebKit
 
 #endif // ENABLE(INSPECTOR)
