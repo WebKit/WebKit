@@ -3572,7 +3572,7 @@ BUGCR79917 WIN LINUX : fast/block/positioning/absolute-in-inline-rtl.html = IMAG
 BUGCR79917 WIN LINUX : fast/block/positioning/absolute-in-inline-short-ltr.html = IMAGE
 BUGCR79917 WIN LINUX : fast/block/positioning/absolute-in-inline-short-rtl.html = IMAGE
 BUGCR79917 WIN LINUX : fast/borders/border-radius-different-width-001.html = IMAGE
-BUGCR79917 WIN LINUX : fast/borders/borderRadiusDashed01.html = IMAGE
+BUGCR79917 WIN : fast/borders/borderRadiusDashed01.html = IMAGE
 BUGCR79917 WIN LINUX : fast/borders/borderRadiusDotted02.html = IMAGE
 BUGCR79917 WIN LINUX : fast/borders/borderRadiusDotted03.html = IMAGE
 BUGCR79917 WIN LINUX : fast/borders/webkit-border-radius.html = IMAGE
@@ -3754,17 +3754,8 @@ BUGDPRANKE WIN DEBUG : perf/typing-at-end-of-line.html = TEXT TIMEOUT PASS
 BUGDPRANKE DEBUG : fast/notifications/notifications-display-close-events.html = TIMEOUT PASS
 BUGDPRANKE MAC DEBUG : fast/css-generated-content/table-row-group-to-inline.html = IMAGE+TEXT PASS
 
-// Green on canary
-BUGJKNOTTEN MAC : fast/borders/borderRadiusDashed01.html = IMAGE PASS
-BUGJKNOTTEN MAC : fast/forms/menulist-clip.html = IMAGE PASS
-BUGJKNOTTEN MAC : fast/forms/menulist-narrow-width.html = IMAGE PASS
-BUGJKNOTTEN MAC : fast/forms/menulist-option-wrap.html = IMAGE PASS
-BUGJKNOTTEN MAC : fast/forms/menulist-restrict-line-height.html = IMAGE PASS
-BUGJKNOTTEN MAC : fast/forms/menulist-separator-painting.html = IMAGE PASS
-BUGJKNOTTEN MAC : fast/forms/menulist-style-color.html = IMAGE PASS
-BUGJKNOTTEN MAC : fast/forms/select-baseline.html = IMAGE PASS
-BUGJKNOTTEN MAC : fast/forms/select-empty-option-height.html = IMAGE PASS
-BUGJKNOTTEN : http/tests/local/formdata/send-form-data-with-sliced-file.html = PASS
+// Occasionally times out on linux debug
+BUGWK59442 LINUX DEBUG : fast/forms/select-empty-option-height.html = PASS TIMEOUT
 
 BUGDPRANKE LINUX : canvas/philip/tests/2d.gradient.radial.touch2.html = TEXT
 
