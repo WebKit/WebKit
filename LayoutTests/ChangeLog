@@ -1,3 +1,12 @@
+2011-04-26  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Unreviewed.
+
+        [WK2] editing/pasteboard/paste-before-tab-span.html introdueced in r84885, but
+        it doesn't work with WK2 because of missing eventSender.keyDown() implementation.
+
+        * platform/mac-wk2/Skipped: Add editing/pasteboard/paste-before-tab-span.html until fix.
+
 2011-04-26  John Knottenbelt  <jknotten@chromium.org>
 
         Unreviewed.
