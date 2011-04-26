@@ -355,9 +355,6 @@ CSSStyleApplyProperty::CSSStyleApplyProperty()
                     &FillLayer::isRepeatYSet, &FillLayer::repeatY, &FillLayer::setRepeatY, &FillLayer::clearRepeatY, &FillLayer::initialFillRepeatY, &CSSStyleSelector::mapFillRepeatY));
     setPropertyValue(CSSPropertyWebkitMaskRepeat, new ApplyPropertyExpandingSuppressValue(propertyValue(CSSPropertyBackgroundRepeatX), propertyValue(CSSPropertyBackgroundRepeatY)));
 
-    setPropertyValue(CSSPropertyWebkitMaskSize, new ApplyPropertyFillLayer<FillSize>(CSSPropertyWebkitMaskSize, MaskFillLayer, &RenderStyle::accessMaskLayers, &RenderStyle::maskLayers,
-            &FillLayer::isSizeSet, &FillLayer::size, &FillLayer::setSize, &FillLayer::clearSize, &FillLayer::initialFillSize, &CSSStyleSelector::mapFillSize));
-
     setPropertyValue(CSSPropertyBackgroundColor, new ApplyPropertyColorBase(&RenderStyle::backgroundColor, 0, &RenderStyle::setBackgroundColor));
     setPropertyValue(CSSPropertyBorderBottomColor, new ApplyPropertyColorBase(&RenderStyle::borderBottomColor, &RenderStyle::color, &RenderStyle::setBorderBottomColor));
     setPropertyValue(CSSPropertyBorderLeftColor, new ApplyPropertyColorBase(&RenderStyle::borderLeftColor, &RenderStyle::color, &RenderStyle::setBorderLeftColor));

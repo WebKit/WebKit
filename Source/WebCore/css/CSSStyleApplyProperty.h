@@ -88,6 +88,7 @@ private:
     void setPropertyValue(CSSPropertyID property, ApplyPropertyBase* value)
     {
         ASSERT(valid(property));
+        ASSERT(!propertyValue(property));
         m_propertyMap[index(property)] = value;
     }
 
@@ -95,6 +96,7 @@ private:
     {
         ASSERT(valid(newProperty));
         ASSERT(valid(equivalentProperty));
+        ASSERT(!propertyValue(newProperty));
         m_propertyMap[index(newProperty)] = m_propertyMap[index(equivalentProperty)];
     }
 

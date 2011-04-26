@@ -1,3 +1,14 @@
+2011-04-25  Mark Rowe  <mrowe@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        <rdar://problem/9330337> Leak of 'WebCore::ApplyPropertyFillLayer<WebCore::FillSize>'
+
+        * css/CSSStyleApplyProperty.cpp:
+        (WebCore::CSSStyleApplyProperty::CSSStyleApplyProperty): Don't initialize CSSPropertyWebkitMaskSize twice.
+        * css/CSSStyleApplyProperty.h:
+        (WebCore::CSSStyleApplyProperty::setPropertyValue): Add some asserts to catch this class of leak.
+
 2011-04-25  Levi Weintraub  <leviw@chromium.org>
 
         Reviewed by Ryosuke Niwa.
