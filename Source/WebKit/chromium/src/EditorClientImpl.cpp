@@ -320,14 +320,14 @@ void EditorClientImpl::clearUndoRedoOperations()
     m_redoStack.clear();
 }
 
-bool EditorClientImpl::canCopyCut(Frame*, bool defaultValue) const
+bool EditorClientImpl::canCopyCut(Frame* frame, bool defaultValue) const
 {
-    return defaultValue;
+    return (m_webView->client() && m_webView->client()->canTriggerClipboardRead(frame->document()->url())) || defaultValue;
 }
 
-bool EditorClientImpl::canPaste(Frame*, bool defaultValue) const
+bool EditorClientImpl::canPaste(Frame* frame, bool defaultValue) const
 {
-    return defaultValue;
+    return (m_webView->client() && m_webView->client()->canTriggerClipboardWrite(frame->document()->url())) || defaultValue;
 }
 
 bool EditorClientImpl::canUndo() const
