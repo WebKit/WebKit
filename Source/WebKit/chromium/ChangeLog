@@ -1,3 +1,14 @@
+2011-04-26  Stephen White  <senorblanco@chromium.org>
+
+        Reviewed by Kenneth Russell.
+
+        Partial revert of http://trac.webkit.org/changeset/84893, since it
+        triggered a large number of layout test failures.
+        https://bugs.webkit.org/show_bug.cgi?id=59459
+
+        * src/GraphicsContext3DChromium.cpp:
+        (WebCore::GraphicsContext3DInternal::initialize):
+
 2011-04-26  Hans Wennborg  <hans@chromium.org>
 
         Reviewed by Tony Gentilcore.

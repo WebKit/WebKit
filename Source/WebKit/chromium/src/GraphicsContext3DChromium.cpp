@@ -109,7 +109,7 @@ bool GraphicsContext3DInternal::initialize(GraphicsContext3D::Attributes attrs, 
     webAttributes.antialias = attrs.antialias;
     webAttributes.premultipliedAlpha = attrs.premultipliedAlpha;
     webAttributes.canRecoverFromContextLoss = attrs.canRecoverFromContextLoss;
-    OwnPtr<WebKit::WebGraphicsContext3D> webContext = adoptPtr(WebKit::webKitClient()->createGraphicsContext3D());
+    WebKit::WebGraphicsContext3D* webContext = WebKit::webKitClient()->createGraphicsContext3D();
     if (!webContext)
         return false;
 
@@ -120,9 +120,11 @@ bool GraphicsContext3DInternal::initialize(GraphicsContext3D::Attributes attrs, 
 
     if (!m_webViewImpl)
         return false;
-    if (!webContext->initialize(webAttributes, m_webViewImpl, renderDirectlyToHostWindow))
+    if (!webContext->initialize(webAttributes, m_webViewImpl, renderDirectlyToHostWindow)) {
+        delete webContext;
         return false;
-    m_impl = webContext;
+    }
+    m_impl.set(webContext);
 
 #if USE(ACCELERATED_COMPOSITING)
     m_compositingLayer = WebGLLayerChromium::create(0);
