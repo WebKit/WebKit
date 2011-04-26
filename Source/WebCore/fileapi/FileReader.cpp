@@ -168,7 +168,7 @@ void FileReader::terminate()
 {
     if (m_loader) {
         m_loader->cancel();
-        m_loader = 0;
+        m_loader = nullptr;
     }
     m_state = Completed;
 }

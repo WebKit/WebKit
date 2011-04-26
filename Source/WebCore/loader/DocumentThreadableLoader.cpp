@@ -331,7 +331,7 @@ void DocumentThreadableLoader::preflightSuccess()
 
 void DocumentThreadableLoader::preflightFailure(const String& url, const String& errorDescription)
 {
-    m_actualRequest = 0; // Prevent didFinishLoading() from bypassing access check.
+    m_actualRequest = nullptr; // Prevent didFinishLoading() from bypassing access check.
     m_client->didFail(ResourceError(errorDomainWebKitInternal, 0, url, errorDescription));
 }
 

@@ -1,3 +1,21 @@
+2011-04-26  David Levin  <levin@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        Fix more strict OwnPtr in WebCore (round N).
+        https://bugs.webkit.org/show_bug.cgi?id=59464
+
+        * dom/Document.cpp:
+        (WebCore::Document::Document):
+        (WebCore::Document::attach):
+        * fileapi/FileReader.cpp:
+        (WebCore::FileReader::terminate):
+        * loader/DocumentThreadableLoader.cpp:
+        (WebCore::DocumentThreadableLoader::preflightFailure):
+        * workers/DefaultSharedWorkerRepository.cpp:
+        (WebCore::SharedWorkerConnectTask::create):
+        (WebCore::SharedWorkerScriptLoader::load):
+
 2011-04-26  Ruben  <chromium@hybridsource.org>
 
         Reviewed by Tony Chang.

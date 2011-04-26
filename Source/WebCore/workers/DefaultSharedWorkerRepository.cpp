@@ -225,7 +225,7 @@ class SharedWorkerConnectTask : public ScriptExecutionContext::Task {
 public:
     static PassOwnPtr<SharedWorkerConnectTask> create(PassOwnPtr<MessagePortChannel> channel)
     {
-        return new SharedWorkerConnectTask(channel);
+        return adoptPtr(new SharedWorkerConnectTask(channel));
     }
 
 private:
@@ -275,7 +275,7 @@ SharedWorkerScriptLoader::SharedWorkerScriptLoader(PassRefPtr<SharedWorker> work
 void SharedWorkerScriptLoader::load(const KURL& url)
 {
     // Mark this object as active for the duration of the load.
-    m_scriptLoader = new WorkerScriptLoader(ResourceRequestBase::TargetIsSharedWorker);
+    m_scriptLoader = adoptPtr(new WorkerScriptLoader(ResourceRequestBase::TargetIsSharedWorker));
     m_scriptLoader->loadAsynchronously(m_worker->scriptExecutionContext(), url, DenyCrossOriginRequests, this);
 
     // Stay alive (and keep the SharedWorker and JS wrapper alive) until the load finishes.

@@ -453,9 +453,9 @@ Document::Document(Frame* frame, const KURL& url, bool isXHTML, bool isHTML)
 
     m_axObjectCache = 0;
 
-    m_markers = new DocumentMarkerController();
+    m_markers = adoptPtr(new DocumentMarkerController);
 
-    m_cachedResourceLoader = new CachedResourceLoader(this);
+    m_cachedResourceLoader = adoptPtr(new CachedResourceLoader(this));
 
     m_visuallyOrdered = false;
     m_bParsing = false;
@@ -1681,7 +1681,7 @@ void Document::attach()
     ASSERT(!m_axObjectCache);
 
     if (!m_renderArena)
-        m_renderArena = new RenderArena();
+        m_renderArena = adoptPtr(new RenderArena);
     
     // Create the rendering tree
     setRenderer(new (m_renderArena.get()) RenderView(this, view()));
