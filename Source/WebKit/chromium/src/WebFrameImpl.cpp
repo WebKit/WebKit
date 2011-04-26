@@ -1390,9 +1390,9 @@ int WebFrameImpl::printBegin(const WebSize& pageSize,
     }
 
     if (pluginContainer && pluginContainer->supportsPaginatedPrint())
-        m_printContext.set(new ChromePluginPrintContext(frame(), pluginContainer, printerDPI));
+        m_printContext = adoptPtr(new ChromePluginPrintContext(frame(), pluginContainer, printerDPI));
     else
-        m_printContext.set(new ChromePrintContext(frame()));
+        m_printContext = adoptPtr(new ChromePrintContext(frame()));
 
     FloatRect rect(0, 0, static_cast<float>(pageSize.width),
                          static_cast<float>(pageSize.height));

@@ -25,6 +25,10 @@
  */
 
 #include "config.h"
+
+// FIXME: Remove this define!
+#define LOOSE_OWN_PTR
+
 #include "StorageAreaProxy.h"
 
 #if ENABLE(DOM_STORAGE)

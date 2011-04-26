@@ -314,11 +314,10 @@ WebViewImpl::WebViewImpl(WebViewClient* client)
     , m_operationsAllowed(WebDragOperationNone)
     , m_dragOperation(WebDragOperationNone)
     , m_autoFillPopupShowing(false)
-    , m_autoFillPopupClient(0)
     , m_autoFillPopup(0)
     , m_isTransparent(false)
     , m_tabsToLinks(false)
-    , m_dragScrollTimer(new DragScrollTimer())
+    , m_dragScrollTimer(adoptPtr(new DragScrollTimer))
 #if USE(ACCELERATED_COMPOSITING)
     , m_layerRenderer(0)
     , m_isAcceleratedCompositingActive(false)
@@ -328,8 +327,8 @@ WebViewImpl::WebViewImpl(WebViewClient* client)
 #if ENABLE(INPUT_SPEECH)
     , m_speechInputClient(SpeechInputClientImpl::create(client))
 #endif
-    , m_deviceOrientationClientProxy(new DeviceOrientationClientProxy(client ? client->deviceOrientationClient() : 0))
-    , m_geolocationClientProxy(new GeolocationClientProxy(client ? client->geolocationClient() : 0))
+    , m_deviceOrientationClientProxy(adoptPtr(new DeviceOrientationClientProxy(client ? client->deviceOrientationClient() : 0)))
+    , m_geolocationClientProxy(adoptPtr(new GeolocationClientProxy(client ? client->geolocationClient() : 0)))
 {
     // WebKit/win/WebView.cpp does the same thing, except they call the
     // KJS specific wrapper around this method. We need to have threading
@@ -353,13 +352,13 @@ WebViewImpl::WebViewImpl(WebViewClient* client)
     pageClients.geolocationClient = m_geolocationClientProxy.get();
     pageClients.backForwardClient = BackForwardListChromium::create(this);
 
-    m_page.set(new Page(pageClients));
+    m_page = adoptPtr(new Page(pageClients));
 
     m_geolocationClientProxy->setController(m_page->geolocationController());
 
     m_page->setGroupName(pageGroupName);
 
-    m_inspectorSettingsMap.set(new SettingsMap);
+    m_inspectorSettingsMap = adoptPtr(new SettingsMap);
 }
 
 WebViewImpl::~WebViewImpl()
@@ -1532,8 +1531,8 @@ bool WebViewImpl::isAcceleratedCompositingActive() const
 
 WebSettings* WebViewImpl::settings()
 {
-    if (!m_webSettings.get())
-        m_webSettings.set(new WebSettingsImpl(m_page->settings()));
+    if (!m_webSettings)
+        m_webSettings = adoptPtr(new WebSettingsImpl(m_page->settings()));
     ASSERT(m_webSettings.get());
     return m_webSettings.get();
 }
@@ -2017,8 +2016,8 @@ void WebViewImpl::applyAutoFillSuggestions(
 
     // The first time the AutoFill popup is shown we'll create the client and
     // the popup.
-    if (!m_autoFillPopupClient.get())
-        m_autoFillPopupClient.set(new AutoFillPopupMenuClient);
+    if (!m_autoFillPopupClient)
+        m_autoFillPopupClient = adoptPtr(new AutoFillPopupMenuClient);
 
     m_autoFillPopupClient->initialize(
         inputElem, names, labels, icons, uniqueIDs, separatorIndex);
@@ -2120,7 +2119,7 @@ void WebView::addUserScript(const WebString& sourceCode,
                             WebView::UserScriptInjectAt injectAt,
                             WebView::UserContentInjectIn injectIn)
 {
-    OwnPtr<Vector<String> > patterns(new Vector<String>);
+    OwnPtr<Vector<String> > patterns = adoptPtr(new Vector<String>);
     for (size_t i = 0; i < patternsIn.size(); ++i)
         patterns->append(patternsIn[i]);
 
@@ -2136,7 +2135,7 @@ void WebView::addUserStyleSheet(const WebString& sourceCode,
                                 WebView::UserContentInjectIn injectIn,
                                 WebView::UserStyleInjectionTime injectionTime)
 {
-    OwnPtr<Vector<String> > patterns(new Vector<String>);
+    OwnPtr<Vector<String> > patterns = adoptPtr(new Vector<String>);
     for (size_t i = 0; i < patternsIn.size(); ++i)
         patterns->append(patternsIn[i]);
 

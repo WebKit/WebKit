@@ -51,14 +51,13 @@ using namespace WebCore;
 
 namespace WebKit {
 
-static WebMediaPlayer* createWebMediaPlayer(
-    WebMediaPlayerClient* client, Frame* frame)
+static PassOwnPtr<WebMediaPlayer> createWebMediaPlayer(WebMediaPlayerClient* client, Frame* frame)
 {
     WebFrameImpl* webFrame = WebFrameImpl::fromFrame(frame);
 
     if (!webFrame->client())
-        return 0;
-    return webFrame->client()->createMediaPlayer(webFrame, client);
+        return PassOwnPtr<WebMediaPlayer>();
+    return adoptPtr(webFrame->client()->createMediaPlayer(webFrame, client));
 }
 
 bool WebMediaPlayerClientImpl::m_isEnabled = false;
@@ -219,7 +218,7 @@ void WebMediaPlayerClientImpl::load(const String& url)
 void WebMediaPlayerClientImpl::loadInternal()
 {
     Frame* frame = static_cast<HTMLMediaElement*>(m_mediaPlayer->mediaPlayerClient())->document()->frame();
-    m_webMediaPlayer.set(createWebMediaPlayer(this, frame));
+    m_webMediaPlayer = createWebMediaPlayer(this, frame);
     if (m_webMediaPlayer.get())
         m_webMediaPlayer->load(KURL(ParsedURLString, m_url));
 }

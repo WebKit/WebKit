@@ -38,6 +38,7 @@
 
 #include "WebStorageAreaImpl.h"
 #include "WebURL.h"
+#include <wtf/PassOwnPtr.h>
 
 namespace WebKit {
 
@@ -49,7 +50,7 @@ WebStorageEventDispatcher* WebStorageEventDispatcher::create()
 }
 
 WebStorageEventDispatcherImpl::WebStorageEventDispatcherImpl()
-    : m_eventDispatcher(new WebCore::StorageEventDispatcherImpl(pageGroupName))
+    : m_eventDispatcher(adoptPtr(new WebCore::StorageEventDispatcherImpl(pageGroupName)))
 {
     ASSERT(m_eventDispatcher);
 }

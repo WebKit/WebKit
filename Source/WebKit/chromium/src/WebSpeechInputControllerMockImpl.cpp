@@ -36,6 +36,7 @@
 #include "SpeechInputClientMock.h"
 #include "WebRect.h"
 #include "WebSecurityOrigin.h"
+#include <wtf/PassOwnPtr.h>
 
 namespace WebKit {
 
@@ -46,7 +47,7 @@ WebSpeechInputControllerMock* WebSpeechInputControllerMock::create(WebSpeechInpu
 
 WebSpeechInputControllerMockImpl::WebSpeechInputControllerMockImpl(
     WebSpeechInputListener* listener)
-    : m_webcoreMock(new WebCore::SpeechInputClientMock())
+    : m_webcoreMock(adoptPtr(new WebCore::SpeechInputClientMock()))
     , m_listener(listener)
 {
     m_webcoreMock->setListener(this);

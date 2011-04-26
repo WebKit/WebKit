@@ -184,8 +184,7 @@ void WebDevToolsAgentImpl::attach()
     if (!m_client->exposeV8DebuggerProtocol())
         ClientMessageLoopAdapter::ensureClientMessageLoopCreated(m_client);
 
-    m_debuggerAgentImpl.set(
-        new DebuggerAgentImpl(m_webViewImpl, this, m_client));
+    m_debuggerAgentImpl = adoptPtr(new DebuggerAgentImpl(m_webViewImpl, this, m_client));
     m_attached = true;
 }
 
@@ -196,7 +195,7 @@ void WebDevToolsAgentImpl::detach()
     ic->disconnectFrontend();
     ic->hideHighlight();
     ic->close();
-    m_debuggerAgentImpl.set(0);
+    m_debuggerAgentImpl.clear();
     m_attached = false;
 }
 
@@ -317,21 +316,30 @@ void WebDevToolsAgent::debuggerPauseScript()
     DebuggerAgentManager::pauseScript();
 }
 
-void WebDevToolsAgent::interruptAndDispatch(MessageDescriptor* d)
+void WebDevToolsAgent::interruptAndDispatch(MessageDescriptor* rawDescriptor)
 {
+    // rawDescriptor can't be a PassOwnPtr because interruptAndDispatch is a WebKit API function.
+    OwnPtr<MessageDescriptor> descriptor = adoptPtr(rawDescriptor);
+
     class DebuggerTask : public PageScriptDebugServer::Task {
     public:
-        DebuggerTask(WebDevToolsAgent::MessageDescriptor* descriptor) : m_descriptor(descriptor) { }
+        DebuggerTask(PassOwnPtr<WebDevToolsAgent::MessageDescriptor> descriptor)
+            : m_descriptor(descriptor)
+        {
+        }
+
         virtual ~DebuggerTask() { }
         virtual void run()
         {
             if (WebDevToolsAgent* webagent = m_descriptor->agent())
                 webagent->dispatchOnInspectorBackend(m_descriptor->message());
         }
+
     private:
         OwnPtr<WebDevToolsAgent::MessageDescriptor> m_descriptor;
     };
-    PageScriptDebugServer::interruptAndRun(new DebuggerTask(d));
+
+    PageScriptDebugServer::interruptAndRun(new DebuggerTask(descriptor.release()));
 }
 
 bool WebDevToolsAgent::shouldInterruptForMessage(const WebString& message)

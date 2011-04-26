@@ -40,7 +40,11 @@ using namespace WebCore;
 
 namespace WebKit {
 
-WebPluginLoadObserver* WebDataSourceImpl::m_nextPluginLoadObserver = 0;
+static OwnPtr<WebPluginLoadObserver>& nextPluginLoadObserver()
+{
+    DEFINE_STATIC_LOCAL(OwnPtr<WebPluginLoadObserver>, nextPluginLoadObserver, ());
+    return nextPluginLoadObserver;
+}
 
 PassRefPtr<WebDataSourceImpl> WebDataSourceImpl::create(const ResourceRequest& request, const SubstituteData& data)
 {
@@ -111,7 +115,8 @@ WebDataSource::ExtraData* WebDataSourceImpl::extraData() const
 
 void WebDataSourceImpl::setExtraData(ExtraData* extraData)
 {
-    m_extraData.set(extraData);
+    // extraData can't be a PassOwnPtr because setExtraData is a WebKit API function.
+    m_extraData = adoptPtr(extraData);
 }
 
 WebApplicationCacheHost* WebDataSourceImpl::applicationCacheHost()
@@ -165,25 +170,23 @@ void WebDataSourceImpl::appendRedirect(const KURL& url)
 
 void WebDataSourceImpl::setNextPluginLoadObserver(PassOwnPtr<WebPluginLoadObserver> observer)
 {
-    // This call should always be followed up with the creation of a
-    // WebDataSourceImpl, so we should never leak this object.
-    m_nextPluginLoadObserver = observer.leakPtr();
+    nextPluginLoadObserver() = observer;
 }
 
 WebDataSourceImpl::WebDataSourceImpl(const ResourceRequest& request, const SubstituteData& data)
     : DocumentLoader(request, data)
 {
-    if (m_nextPluginLoadObserver) {
-        // When a new frame is created, it initially gets a data source for an
-        // empty document.  Then it is navigated to the source URL of the
-        // frame, which results in a second data source being created.  We want
-        // to wait to attach the WebPluginLoadObserver to that data source.
-        if (!request.url().isEmpty()) {
-            ASSERT(m_nextPluginLoadObserver->url() == WebURL(request.url()));
-            m_pluginLoadObserver.set(m_nextPluginLoadObserver);
-            m_nextPluginLoadObserver = 0;
-        }
-    }
+    if (!nextPluginLoadObserver())
+        return;
+    // When a new frame is created, it initially gets a data source for an
+    // empty document. Then it is navigated to the source URL of the
+    // frame, which results in a second data source being created. We want
+    // to wait to attach the WebPluginLoadObserver to that data source.
+    if (request.url().isEmpty())
+        return;
+
+    ASSERT(nextPluginLoadObserver()->url() == WebURL(request.url()));
+    m_pluginLoadObserver = nextPluginLoadObserver().release();
 }
 
 WebDataSourceImpl::~WebDataSourceImpl()

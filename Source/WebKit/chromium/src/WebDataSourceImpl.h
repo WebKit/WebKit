@@ -98,8 +98,6 @@ private:
 
     OwnPtr<ExtraData> m_extraData;
     OwnPtr<WebPluginLoadObserver> m_pluginLoadObserver;
-
-    static WebPluginLoadObserver* m_nextPluginLoadObserver;
 };
 
 } // namespace WebKit

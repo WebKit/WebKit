@@ -1,3 +1,37 @@
+2011-04-26  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by David Levin.
+
+        Moar strict OwnPtr fixes for WebKit/chromium
+        https://bugs.webkit.org/show_bug.cgi?id=59437
+
+        This patch fixes all but two strict OwnPtr issues in WebKit/chromium.
+
+        * src/WebDataSourceImpl.cpp:
+        (WebKit::WebDataSourceImpl::setExtraData):
+        (WebKit::WebDataSourceImpl::setNextPluginLoadObserver):
+        (WebKit::WebDataSourceImpl::WebDataSourceImpl):
+        * src/WebDataSourceImpl.h:
+        * src/WebDevToolsAgentImpl.cpp:
+        (WebKit::WebDevToolsAgentImpl::attach):
+        (WebKit::WebDevToolsAgentImpl::detach):
+        (WebKit::WebDevToolsAgent::interruptAndDispatch):
+        * src/WebFrameImpl.cpp:
+        (WebKit::WebFrameImpl::printBegin):
+        * src/WebMediaPlayerClientImpl.cpp:
+        (WebKit::createWebMediaPlayer):
+        (WebKit::WebMediaPlayerClientImpl::loadInternal):
+        * src/WebSpeechInputControllerMockImpl.cpp:
+        (WebKit::WebSpeechInputControllerMockImpl::WebSpeechInputControllerMockImpl):
+        * src/WebStorageEventDispatcherImpl.cpp:
+        (WebKit::WebStorageEventDispatcherImpl::WebStorageEventDispatcherImpl):
+        * src/WebViewImpl.cpp:
+        (WebKit::WebViewImpl::WebViewImpl):
+        (WebKit::WebViewImpl::settings):
+        (WebKit::WebViewImpl::applyAutoFillSuggestions):
+        (WebKit::WebView::addUserScript):
+        (WebKit::WebView::addUserStyleSheet):
+
 2011-04-26  Ruben  <chromium@hybridsource.org>
 
         Reviewed by Tony Chang.
