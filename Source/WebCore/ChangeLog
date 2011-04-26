@@ -1,3 +1,13 @@
+2011-04-26  Adrienne Walker  <enne@google.com>
+
+        Reviewed by Geoffrey Garen.
+
+        Use OwnArrayPtr<T> instead of OwnPtr<T*> in ScopeTracer
+        https://bugs.webkit.org/show_bug.cgi?id=59469
+
+        * platform/chromium/TraceEvent.h:
+        (WebCore::internal::ScopeTracer::ScopeTracer):
+
 2011-04-25  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Oliver Hunt.

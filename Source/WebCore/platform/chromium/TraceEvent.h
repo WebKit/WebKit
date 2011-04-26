@@ -50,7 +50,7 @@ public:
 private:
     const char* m_name;
     void* m_id;
-    OwnPtr<char*> m_extra;
+    OwnArrayPtr<char> m_extra;
 };
 
 inline ScopeTracer::ScopeTracer(const char* name, void* id, const char* extra)
@@ -59,7 +59,7 @@ inline ScopeTracer::ScopeTracer(const char* name, void* id, const char* extra)
 {
     PlatformBridge::traceEventBegin(name, id, extra); \
     if (extra)
-        m_extra = adoptPtr(strdup(extra));
+        m_extra = adoptArrayPtr(strdup(extra));
 }
 
 inline ScopeTracer::~ScopeTracer()
