@@ -45,25 +45,24 @@ extern "C" {
  *
  * The following signals (see evas_object_smart_callback_add()) are emitted:
  *
- *  - "title,changed", const char*: title of the main frame changed.
- *  - "uri,changed", const char*: uri of the main frame changed.
- *  - "load,document,finished", void: loading of a document has
- *    finished on this frame.
+ *  - "title,changed", const char*: title of the main frame was changed.
+ *  - "uri,changed", const char*: uri of the main frame was changed.
+ *  - "load,document,finished", void: frame finished loading the document.
  *  - "load,nonemptylayout,finished", void: frame finished first
  *    non-empty layout.
- *  - "load,started", void: frame started loading.
- *  - "load,progress", double*: load progress changed (overall value
+ *  - "load,started", void: frame started loading the document.
+ *  - "load,progress", double*: load progress is changed (overall value
  *    from 0.0 to 1.0, connect to individual frames for fine grained).
  *  - "load,finished", const Ewk_Frame_Load_Error*: reports load
- *    finished and as argument @c NULL if successfully or pointer to
+ *    finished and it gives @c NULL on success or pointer to
  *    structure defining the error.
  *  - "load,provisional", void: frame started provisional load.
  *  - "load,firstlayout,finished", void: frame finished first layout.
  *  - "load,error", const Ewk_Frame_Load_Error*: reports load failed
- *    and as argument a pointer to structure defining the error.
+ *    and it gives a pointer to structure defining the error as an argument.
  *  - "contents,size,changed", Evas_Coord[2]: reports contents size
- *    changed due new layout, script actions or any other events.
- *  - "navigation,first", void: first navigation occurred.
+ *     were changed due new layout, script actions or any other events.
+ *  - "navigation,first", void: first navigation was occurred.
  *  - "resource,request,new", Ewk_Frame_Resource_Request*: reports that
  *    there's a new resource request.
  *  - "resource,request,willsend", Ewk_Frame_Resource_Request*: a resource will

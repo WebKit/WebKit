@@ -47,48 +47,48 @@ extern "C" {
  * The following signals (see evas_object_smart_callback_add()) are emitted:
  *
  *  - "ready", void: page is fully loaded.
- *  - "title,changed", const char*: title of the main frame changed.
- *  - "uri,changed", const char*: uri of the main frame changed.
- *  - "load,started", void: frame started loading.
- *  - "load,progress", double*: load progress changed (overall value
+ *  - "title,changed", const char*: title of the main frame was changed.
+ *  - "uri,changed", const char*: uri of the main frame was changed.
+ *  - "load,started", void: frame started loading the document.
+ *  - "load,progress", double*: load progress is changed (overall value
  *    from 0.0 to 1.0, connect to individual frames for fine grained).
  *  - "load,finished", const Ewk_Frame_Load_Error*: reports load
- *    finished and as argument @c NULL if successfully or pointer to
+ *    finished and it gives @c NULL on success or pointer to
  *    structure defining the error.
  *  - "load,provisional", void: view started provisional load.
  *  - "load,error", const Ewk_Frame_Load_Error*: reports load failed
- *    and as argument a pointer to structure defining the error.
- *  - "frame,created", Evas_Object*: when frames are created, they are
- *    emitted in this signal.
+ *    and it gives a pointer to structure defining the error as an argument.
+ *  - "frame,created", Evas_Object*: a new frame is created.
  *  - "zoom,animated,end", void: requested animated zoom is finished.
- *  - "menubar,visible,set", Eina_Bool: set menubar visibility.
- *  - "menubar,visible,get", Eina_Bool *: expects a @c EINA_TRUE if menubar is
- *    visible; otherwise, @c EINA_FALSE.
- *  - "menubar,visible,set", Eina_Bool: set menubar visibility.
+ *  - "menubar,visible,set", Eina_Bool: sets menubar visibility.
  *  - "menubar,visible,get", Eina_Bool *: expects a @c EINA_TRUE if menubar is
  *    visible; @c EINA_FALSE, otherwise.
- *  - "scrollbars,visible,set", Eina_Bool: set scrollbars visibility.
+ *  - "scrollbars,visible,set", Eina_Bool: sets scrollbars visibility.
  *  - "scrollbars,visible,get", Eina_Bool *: expects a @c EINA_TRUE if scrollbars
  *    are visible; @c EINA_FALSE, otherwise.
- *  - "statusbar,visible,set", Eina_Bool: set statusbar visibility.
+ *  - "statusbar,visible,set", Eina_Bool: sets statusbar visibility.
  *  - "statusbar,visible,get", Eina_Bool *: expects a @c EINA_TRUE if statusbar is
  *    visible; @c EINA_FALSE, otherwise.
- *  - "toolbar,visible,set", Eina_Bool: set toolbar visibility.
- *  - "toolbar,visible,get", Eina_Bool *: expects a @c EINA_TRUE if toolbar
+ *  - "statusbar,text,set", const char *: sets statusbar text.
+ *  - "toolbars,visible,set", Eina_Bool: sets toolbar visibility.
+ *  - "toolbars,visible,get", Eina_Bool *: expects a @c EINA_TRUE if toolbar
  *    is visible; @c EINA_FALSE, otherwise.
- *  - "link,hover,in", const char *link[2]: reports mouse is over a link and as
- *    argument gives the url in link[0] and link's title in link[1].
- *  - "link,hover,out", const char *link[2]: reports mouse moved out from a link
- *    and as argument gives the url in link[0] and link's title in link[1].
+ *  - "link,hover,in", const char *link[2]: reports mouse is over a link.
+ *    It gives the url in link[0] and link's title in link[1] as an argument.
+ *  - "link,hover,out", void: reports mouse moved out from a link.
  *  - "popup,create", Ewk_Menu: reports that a new menu was created.
- *  - "popup,willdeleted", Ewk_Menu: reports that a previously created menu is
- *    about to be deleted.
+ *  - "popup,willdeleted", Ewk_Menu: reports that a previously created menu
+ *    will be deleted.
  *  - "download,request", Ewk_Download: reports a download is being requested
- *    and as arguments gives its details.
  *  - "icon,received", void: main frame received an icon.
- *  - "viewport,changed", void: Report that viewport has changed.
- *  - "inputmethods,changed" with a boolean indicating whether it's enabled or not.
- *  - "view,resized", void: view object's size has changed.
+ *  - "viewport,changed", void: reports that viewport was changed.
+ *  - "inputmethod,changed", Eina_Bool: reports that input method was changed and
+ *    it gives a boolean value whether it's enabled or not as an argument.
+ *  - "view,resized", void: view object's size was changed.
+ *  - "load,newwindow,show", void: reports that a new window was created and can be shown.
+ *  - "restore", Evas_Object *: reports that view should be restored to default conditions
+ *    and it gives a frame that originated restore as an argument.
+ *  - "tooltip,text,set", const char*: sets tooltip text and displays if it is currently hidden.
  */
 
 typedef struct _Ewk_View_Smart_Data Ewk_View_Smart_Data;
