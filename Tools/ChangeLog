@@ -1,3 +1,10 @@
+2011-04-26  Dan Bernstein  <mitz@apple.com>
+
+        REGRESSION (84876): build-webkit produces an error message
+        https://bugs.webkit.org/show_bug.cgi?id=59460
+
+        * Scripts/webkitdirs.pm:
+
 2011-04-26  Mihai Parparita  <mihaip@chromium.org>
 
         Reviewed by Eric Seidel.
