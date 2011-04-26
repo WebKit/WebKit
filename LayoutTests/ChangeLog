@@ -1,3 +1,17 @@
+2011-04-25  Daniel Bates  <dbates@webkit.org>
+
+        Update some call sites that referenced the old location for
+        the scripts {animation, transition}-test-helpers.js. These
+        scripts were moved in <http://trac.webkit.org/changeset/84872>,
+        and <http://trac.webkit.org/changeset/84874>, respectively.
+
+        * compositing/animation/computed-style-during-delay.html:
+        * compositing/reflections/animation-inside-reflection.html:
+        * compositing/reflections/nested-reflection-animated.html:
+        * compositing/reflections/nested-reflection-transition.html:
+        * compositing/transitions/scale-transition-no-start.html:
+        * compositing/transitions/singular-scale-transition.html:
+
 2011-04-25  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Dan Bernstein.
