@@ -1,3 +1,13 @@
+2011-04-25  Kenneth Russell  <kbr@google.com>
+
+        Reviewed by David Levin.
+
+        Fix OwnPtr strict errors in TransformState.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=59380
+
+        * rendering/TransformState.cpp:
+        (WebCore::TransformState::applyTransform):
+
 2011-04-25  Adam Barth  <abarth@webkit.org>
 
         Reviewed by James Robinson.
