@@ -1,3 +1,13 @@
+2011-04-26  Adam Klein  <adamk@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        Fix last strict OwnPtr violation under svg/...
+        https://bugs.webkit.org/show_bug.cgi?id=59429
+
+        * svg/SVGDocumentExtensions.cpp:
+        (WebCore::SVGDocumentExtensions::removePendingResource):
+
 2011-04-26  Adam Barth  <abarth@webkit.org>
 
         Reviewed by David Levin.

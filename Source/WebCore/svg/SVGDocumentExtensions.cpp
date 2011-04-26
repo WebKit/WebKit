@@ -21,9 +21,6 @@
 
 #include "config.h"
 
-// FIXME: Remove this define!
-#define LOOSE_OWN_PTR
-
 #if ENABLE(SVG)
 #include "SVGDocumentExtensions.h"
 
@@ -243,7 +240,7 @@ PassOwnPtr<HashSet<RefPtr<SVGStyledElement> > > SVGDocumentExtensions::removePen
 {
     ASSERT(m_pendingResources.contains(id));
 
-    OwnPtr<SVGPendingElements> set(m_pendingResources.get(id));
+    OwnPtr<SVGPendingElements> set = adoptPtr(m_pendingResources.get(id));
     m_pendingResources.remove(id);
     return set.release();
 }
