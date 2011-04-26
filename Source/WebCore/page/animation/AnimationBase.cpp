@@ -329,7 +329,7 @@ public:
 
 class PropertyWrapperShadow : public PropertyWrapperBase {
 public:
-    PropertyWrapperShadow(int prop, const ShadowData* (RenderStyle::*getter)() const, void (RenderStyle::*setter)(ShadowData*, bool))
+    PropertyWrapperShadow(int prop, const ShadowData* (RenderStyle::*getter)() const, void (RenderStyle::*setter)(PassOwnPtr<ShadowData>, bool))
         : PropertyWrapperBase(prop)
         , m_getter(getter)
         , m_setter(setter)
@@ -365,7 +365,7 @@ public:
         ShadowData defaultShadowData(0, 0, 0, 0, Normal, property() == CSSPropertyWebkitBoxShadow, Color::transparent);
         ShadowData defaultInsetShadowData(0, 0, 0, 0, Inset, property() == CSSPropertyWebkitBoxShadow, Color::transparent);
 
-        ShadowData* newShadowData = 0;
+        OwnPtr<ShadowData> newShadowData;
         ShadowData* lastShadow = 0;
         
         while (shadowA || shadowB) {
@@ -374,7 +374,7 @@ public:
 
             ShadowData* blendedShadow = blendFunc(anim, srcShadow, dstShadow, progress);
             if (!lastShadow)
-                newShadowData = blendedShadow;
+                newShadowData = adoptPtr(blendedShadow);
             else
                 lastShadow->setNext(blendedShadow);
 
@@ -384,12 +384,12 @@ public:
             shadowB = shadowB ? shadowB->next() : 0;
         }
         
-        (dst->*m_setter)(newShadowData, false);
+        (dst->*m_setter)(newShadowData.release(), false);
     }
 
 private:
     const ShadowData* (RenderStyle::*m_getter)() const;
-    void (RenderStyle::*m_setter)(ShadowData*, bool);
+    void (RenderStyle::*m_setter)(PassOwnPtr<ShadowData>, bool);
 };
 
 class PropertyWrapperMaybeInvalidColor : public PropertyWrapperBase {

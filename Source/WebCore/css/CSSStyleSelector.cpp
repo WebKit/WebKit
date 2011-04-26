@@ -5145,7 +5145,7 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
         if (isInherit) {
             if (id == CSSPropertyTextShadow)
                 return m_style->setTextShadow(m_parentStyle->textShadow() ? new ShadowData(*m_parentStyle->textShadow()) : 0);
-            return m_style->setBoxShadow(m_parentStyle->boxShadow() ? new ShadowData(*m_parentStyle->boxShadow()) : 0);
+            return m_style->setBoxShadow(m_parentStyle->boxShadow() ? adoptPtr(new ShadowData(*m_parentStyle->boxShadow())) : PassOwnPtr<ShadowData>());
         }
         if (isInitial || primitiveValue) // initial | none
             return id == CSSPropertyTextShadow ? m_style->setTextShadow(0) : m_style->setBoxShadow(0);

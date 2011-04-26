@@ -1,3 +1,27 @@
+2011-04-25  James Robinson  <jamesr@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        Fix OwnPtr strict errors in RenderStyle and make StyleRareInheritedData::textShadow an OwnPtr
+        https://bugs.webkit.org/show_bug.cgi?id=59377
+
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::applyProperty):
+        * page/animation/AnimationBase.cpp:
+        (WebCore::PropertyWrapperShadow::PropertyWrapperShadow):
+        (WebCore::PropertyWrapperShadow::blend):
+        * rendering/style/RenderStyle.cpp:
+        (WebCore::RenderStyle::setTextShadow):
+        (WebCore::RenderStyle::setBoxShadow):
+        * rendering/style/RenderStyle.h:
+        (WebCore::InheritedFlags::textShadow):
+        * rendering/style/StyleRareInheritedData.cpp:
+        (WebCore::StyleRareInheritedData::StyleRareInheritedData):
+        (WebCore::StyleRareInheritedData::~StyleRareInheritedData):
+        * rendering/style/StyleRareInheritedData.h:
+        * rendering/style/StyleRareNonInheritedData.cpp:
+        (WebCore::StyleRareNonInheritedData::StyleRareNonInheritedData):
+
 2011-04-25  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r84864.
