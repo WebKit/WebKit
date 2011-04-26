@@ -847,6 +847,7 @@ WebInspector.DetailedHeapshotView.prototype = {
         this.dataGrid = view.grid;
         this.currentView.show();
         this.refreshVisibleData();
+        this.dataGrid.updateWidths();
         if (this.currentView === this.diffView) {
             this.baseSelectElement.removeStyleClass("hidden");
             if (!this.dataGrid.snapshotView) {

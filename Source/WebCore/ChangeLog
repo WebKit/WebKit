@@ -1,3 +1,13 @@
+2011-04-26  Mikhail Naganov  <mnaganov@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: [Chromium] Fix columns resizing in the detailed heap snapshot grids.
+        https://bugs.webkit.org/show_bug.cgi?id=59438
+
+        * inspector/front-end/DetailedHeapshotView.js:
+        (WebInspector.DetailedHeapshotView.prototype._changeView):
+
 2011-04-26  David Levin  <levin@chromium.org>
 
         Reviewed by Adam Barth.
