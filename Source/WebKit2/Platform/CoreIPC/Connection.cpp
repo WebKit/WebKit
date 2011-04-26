@@ -311,11 +311,11 @@ PassOwnPtr<ArgumentDecoder> Connection::waitForMessage(MessageID messageID, uint
         MutexLocker locker(m_incomingMessagesLock);
 
         for (size_t i = 0; i < m_incomingMessages.size(); ++i) {
-            const IncomingMessage& message = m_incomingMessages[i];
+            IncomingMessage& message = m_incomingMessages[i];
 
             if (message.messageID() == messageID && message.arguments()->destinationID() == destinationID) {
-                OwnPtr<ArgumentDecoder> arguments(message.arguments());
-                
+                OwnPtr<ArgumentDecoder> arguments = message.releaseArguments();
+
                 // Erase the incoming message.
                 m_incomingMessages.remove(i);
                 return arguments.release();
@@ -343,7 +343,9 @@ PassOwnPtr<ArgumentDecoder> Connection::waitForMessage(MessageID messageID, uint
 
         HashMap<std::pair<unsigned, uint64_t>, ArgumentDecoder*>::iterator it = m_waitForMessageMap.find(messageAndDestination);
         if (it->second) {
-            OwnPtr<ArgumentDecoder> arguments(it->second);
+            // FIXME: m_waitForMessageMap should really hold OwnPtrs to
+            // ArgumentDecoders, but HashMap doesn't currently support OwnPtrs.
+            OwnPtr<ArgumentDecoder> arguments = adoptPtr(it->second);
             m_waitForMessageMap.remove(it);
             
             return arguments.release();

@@ -25,8 +25,8 @@
 
 #import "WebDeviceOrientationProviderMockInternal.h"
 
-#import <wtf/PassOwnPtr.h>
 #import "WebDeviceOrientationInternal.h"
+#import <wtf/PassOwnPtr.h>
 
 using namespace WebCore;
 

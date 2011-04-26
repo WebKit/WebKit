@@ -34,7 +34,7 @@
 void WorkQueue::executeWorkItem(void* item)
 {
     WorkQueue* queue = static_cast<WorkQueue*>(dispatch_get_context(dispatch_get_current_queue()));
-    OwnPtr<WorkItem> workItem(static_cast<WorkItem*>(item));
+    OwnPtr<WorkItem> workItem = adoptPtr(static_cast<WorkItem*>(item));
     
     {
         MutexLocker locker(queue->m_isValidMutex);

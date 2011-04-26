@@ -137,7 +137,7 @@ private:
     void wakeUp();
 
     Mutex m_workItemQueueLock;
-    Vector<WorkItem*> m_workItemQueue;
+    Vector<OwnPtr<WorkItem> > m_workItemQueue;
 
 #if PLATFORM(WIN)
     static bool registerRunLoopMessageWindowClass();

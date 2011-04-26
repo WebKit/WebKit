@@ -52,14 +52,14 @@ RunLoop* RunLoop::main()
 
 void RunLoop::performWork()
 {
-    Vector<WorkItem*> workItemQueue;
+    Vector<OwnPtr<WorkItem> > workItemQueue;
     {
         MutexLocker locker(m_workItemQueueLock);
         m_workItemQueue.swap(workItemQueue);
     }
 
     for (size_t i = 0; i < workItemQueue.size(); ++i) {
-        OwnPtr<WorkItem> item(workItemQueue[i]);
+        OwnPtr<WorkItem> item = workItemQueue[i].release();
         item->execute();
     }
 }
@@ -67,7 +67,7 @@ void RunLoop::performWork()
 void RunLoop::scheduleWork(PassOwnPtr<WorkItem> item)
 {
     MutexLocker locker(m_workItemQueueLock);
-    m_workItemQueue.append(item.leakPtr());
+    m_workItemQueue.append(item);
 
     wakeUp();
 }

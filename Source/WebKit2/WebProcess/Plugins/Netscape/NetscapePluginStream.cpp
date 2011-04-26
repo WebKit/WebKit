@@ -183,7 +183,7 @@ void NetscapePluginStream::deliverData(const char* bytes, int length)
 
     if (m_transferMode != NP_ASFILEONLY) {
         if (!m_deliveryData)
-            m_deliveryData.set(new Vector<uint8_t>);
+            m_deliveryData = adoptPtr(new Vector<uint8_t>);
 
         m_deliveryData->reserveCapacity(m_deliveryData->size() + length);
         m_deliveryData->append(bytes, length);

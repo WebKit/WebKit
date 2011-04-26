@@ -1,3 +1,23 @@
+2011-04-25  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by David Levin.
+
+        WebKit2 should play nice with strict OwnPtrs
+        https://bugs.webkit.org/show_bug.cgi?id=59426
+
+        * Platform/CoreIPC/Connection.cpp:
+        (CoreIPC::Connection::waitForMessage):
+            - Lack of OwnPtr in HashMap is sad face.  This code becomes very
+              pretty if we could use OwnPtr in HashMap...
+        * Platform/RunLoop.cpp:
+        (RunLoop::performWork):
+        (RunLoop::scheduleWork):
+        * Platform/RunLoop.h:
+        * Platform/mac/WorkQueueMac.cpp:
+        (WorkQueue::executeWorkItem):
+        * WebProcess/Plugins/Netscape/NetscapePluginStream.cpp:
+        (WebKit::NetscapePluginStream::deliverData):
+
 2011-04-25  Brian Weinstein  <bweinstein@apple.com>
 
         Reviewed by Adam Roben.
