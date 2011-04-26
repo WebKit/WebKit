@@ -1165,11 +1165,6 @@
             'include_dirs++': ['../dom'],
           },
         }],
-        ['(OS=="linux" or OS=="win") and branding=="Chrome"', {
-          'dependencies': [
-            '<(chromium_src_dir)/third_party/mkl/google/mkl.gyp:mkl_libs',
-          ],
-        }],
         ['(OS=="linux" or OS=="win") and "WTF_USE_WEBAUDIO_FFTW=1" in feature_defines', {
           # This directory needs to be on the include path for multiple sub-targets of webcore.
           'direct_dependent_settings': {
@@ -1177,6 +1172,17 @@
               '<(chromium_src_dir)/third_party/fftw/api',
             ],
           },
+        }],
+        ['(OS=="mac" or OS=="linux" or OS=="win") and "WTF_USE_WEBAUDIO_FFMPEG=1" in feature_defines', {
+          # This directory needs to be on the include path for multiple sub-targets of webcore.
+          'direct_dependent_settings': {
+            'include_dirs': [
+              '<(chromium_src_dir)/third_party/ffmpeg/patched-ffmpeg-mt',
+            ],
+          },
+          'dependencies': [
+            '<(chromium_src_dir)/third_party/ffmpeg/ffmpeg.gyp:ffmpeg',
+          ],
         }],
         ['"ENABLE_LEVELDB=1" in feature_defines', {
           'dependencies': [
