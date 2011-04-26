@@ -1,3 +1,21 @@
+2011-04-26  Daniel Bates  <dbates@rim.com>
+
+        Reviewed by Adam Barth.
+
+        Add layout test to ensure we don't regress clicking when exiting pan scrolling
+        https://bugs.webkit.org/show_bug.cgi?id=58702
+
+        On ports that build with PAN_SCROLLING enabled (includes all Windows ports at
+        the time of writing), ensure that a mouse click is ignored when in pan scroll mode.
+
+        This test is expected to fail on ports either built with PAN_SCROLLING disabled
+        or don't support pan scrolling. In particular, this test is expected to fail on
+        the Apple Mac and Chromium Mac port.
+
+        * fast/events/panScroll-click-hyperlink.html: Added.
+        * platform/mac/fast/events/panScroll-click-hyperlink-expected.txt: Added.
+        * platform/win/fast/events/panScroll-click-hyperlink-expected.txt: Added.
+
 2011-04-26  John Knottenbelt  <jknotten@chromium.org>
 
         Reviewed by Ojan Vafai.
