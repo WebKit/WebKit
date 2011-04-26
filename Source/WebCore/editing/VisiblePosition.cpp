@@ -33,6 +33,7 @@
 #include "InlineTextBox.h"
 #include "Logging.h"
 #include "Range.h"
+#include "RootInlineBox.h"
 #include "Text.h"
 #include "htmlediting.h"
 #include "visible_units.h"
@@ -134,8 +135,18 @@ Position VisiblePosition::leftVisuallyDistinctCandidate() const
             if (box->isLeftToRightDirection() ? offset < caretMinOffset : offset > caretMaxOffset) {
                 // Overshot to the left.
                 InlineBox* prevBox = box->prevLeafChild();
-                if (!prevBox)
-                    return primaryDirection == LTR ? previousVisuallyDistinctCandidate(m_deepPosition) : nextVisuallyDistinctCandidate(m_deepPosition);
+                if (!prevBox) {
+                    Position positionOnLeft = primaryDirection == LTR ? previousVisuallyDistinctCandidate(m_deepPosition) : nextVisuallyDistinctCandidate(m_deepPosition);
+                    if (positionOnLeft.isNull())
+                        return Position();
+
+                    InlineBox* boxOnLeft;
+                    int offsetOnLeft;
+                    positionOnLeft.getInlineBoxAndOffset(m_affinity, primaryDirection, boxOnLeft, offsetOnLeft);
+                    if (boxOnLeft && boxOnLeft->root() == box->root())
+                        return Position();
+                    return positionOnLeft;
+                }
 
                 // Reposition at the other logical position corresponding to our edge's visual position and go for another round.
                 box = prevBox;
@@ -150,7 +161,16 @@ Position VisiblePosition::leftVisuallyDistinctCandidate() const
             InlineBox* prevBox = box->prevLeafChild();
 
             if (box->direction() == primaryDirection) {
-                if (!prevBox || prevBox->bidiLevel() >= level)
+                if (!prevBox) {
+                    InlineBox* logicalStart = 0;
+                    if (primaryDirection == LTR ? box->root()->getLogicalStartBoxWithNode(logicalStart) : box->root()->getLogicalEndBoxWithNode(logicalStart)) {
+                        box = logicalStart;
+                        renderer = box->renderer();
+                        offset = primaryDirection == LTR ? box->caretMinOffset() : box->caretMaxOffset();
+                    }
+                    break;
+                }
+                if (prevBox->bidiLevel() >= level)
                     break;
 
                 level = prevBox->bidiLevel();
@@ -163,11 +183,7 @@ Position VisiblePosition::leftVisuallyDistinctCandidate() const
                 if (nextBox && nextBox->bidiLevel() == level)
                     break;
 
-                while (InlineBox* prevBox = box->prevLeafChild()) {
-                    if (prevBox->bidiLevel() < level)
-                        break;
-                    box = prevBox;
-                }
+                box = prevBox;
                 renderer = box->renderer();
                 offset = box->caretRightmostOffset();
                 if (box->direction() == primaryDirection)
@@ -270,8 +286,18 @@ Position VisiblePosition::rightVisuallyDistinctCandidate() const
             if (box->isLeftToRightDirection() ? offset > caretMaxOffset : offset < caretMinOffset) {
                 // Overshot to the right.
                 InlineBox* nextBox = box->nextLeafChild();
-                if (!nextBox)
-                    return primaryDirection == LTR ? nextVisuallyDistinctCandidate(m_deepPosition) : previousVisuallyDistinctCandidate(m_deepPosition);
+                if (!nextBox) {
+                    Position positionOnRight = primaryDirection == LTR ? nextVisuallyDistinctCandidate(m_deepPosition) : previousVisuallyDistinctCandidate(m_deepPosition);
+                    if (positionOnRight.isNull())
+                        return Position();
+
+                    InlineBox* boxOnRight;
+                    int offsetOnRight;
+                    positionOnRight.getInlineBoxAndOffset(m_affinity, primaryDirection, boxOnRight, offsetOnRight);
+                    if (boxOnRight && boxOnRight->root() == box->root())
+                        return Position();
+                    return positionOnRight;
+                }
 
                 // Reposition at the other logical position corresponding to our edge's visual position and go for another round.
                 box = nextBox;
@@ -286,7 +312,16 @@ Position VisiblePosition::rightVisuallyDistinctCandidate() const
             InlineBox* nextBox = box->nextLeafChild();
 
             if (box->direction() == primaryDirection) {
-                if (!nextBox || nextBox->bidiLevel() >= level)
+                if (!nextBox) {
+                    InlineBox* logicalEnd = 0;
+                    if (primaryDirection == LTR ? box->root()->getLogicalEndBoxWithNode(logicalEnd) : box->root()->getLogicalStartBoxWithNode(logicalEnd)) {
+                        box = logicalEnd;
+                        renderer = box->renderer();
+                        offset = primaryDirection == LTR ? box->caretMaxOffset() : box->caretMinOffset();
+                    }
+                    break;
+                }
+                if (nextBox->bidiLevel() >= level)
                     break;
 
                 level = nextBox->bidiLevel();
@@ -299,12 +334,8 @@ Position VisiblePosition::rightVisuallyDistinctCandidate() const
                 if (prevBox && prevBox->bidiLevel() == level)   // For example, abc FED 123 ^ CBA
                     break;
 
-                // For example, abc 123 ^ CBA
-                while (InlineBox* nextBox = box->nextLeafChild()) {
-                    if (nextBox->bidiLevel() < level)
-                        break;
-                    box = nextBox;
-                }
+                // For example, abc 123 ^ CBA or 123 ^ CBA abc
+                box = nextBox;
                 renderer = box->renderer();
                 offset = box->caretLeftmostOffset();
                 if (box->direction() == primaryDirection)

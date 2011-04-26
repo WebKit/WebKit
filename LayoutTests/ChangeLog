@@ -1,3 +1,19 @@
+2011-04-26  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Reviewed by Dan Bernstein.
+
+        [RTL] Arabic/AB - after typing a date, cursors doesn't go back
+        https://bugs.webkit.org/show_bug.cgi?id=49111
+
+        Added a test to move left and right within Arabic numerals and Arabic letters.
+
+        We still fail to set the position offset properly when we moving to the left from before B
+        to before A in "ABC123" (logical order) in a LTR block where ABC and 123 are Arabic letters
+        and numerals respectively. This bug is to be fixed in the followup bugs.
+
+        * editing/selection/move-left-right-expected.txt:
+        * editing/selection/move-left-right.html:
+
 2011-04-26  Stephen White  <senorblanco@chromium.org>
 
         Unreviewed; chromium test_expectations update.

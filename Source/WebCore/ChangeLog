@@ -1,3 +1,29 @@
+2011-04-26  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Reviewed by Dan Bernstein.
+
+        [RTL] Arabic/AB - after typing a date, cursors doesn't go back
+        https://bugs.webkit.org/show_bug.cgi?id=49111
+
+        Even when the offset corresponds to a position visually left of the box
+        and there aren't any inline boxes on the left, the previous/next position
+        may still correspond to some position in the same line.
+
+        The bug was caused by our ignoring such cases. Fixed the bug by comparing
+        previous/next position's inline box to the current box. If they match,
+        then we stay on the same position because moving to the left visually at
+        the left edge should not result in a position on the same line.
+
+        Also fixed a bug that WebKit uses offsets that are not extrema when moved to
+        the left edge or to the right edge, and a bug that WebKit could not move to
+        the left from 12^3 CBA abc to 123 C^BA abc (there is no offset between 3 and C).
+
+        Test cases are added to editing/selection/move-left-right.html
+
+        * editing/VisiblePosition.cpp:
+        (WebCore::VisiblePosition::leftVisuallyDistinctCandidate):
+        (WebCore::VisiblePosition::rightVisuallyDistinctCandidate):
+
 2011-04-26  Gabor Loki  <loki@webkit.org>
 
         Reviewed by Csaba Osztrogonác.

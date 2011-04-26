@@ -54,7 +54,11 @@
             var result = "";
             for (var i = 0; i < string.length; ++i) {
                 var char = string.charCodeAt(i);
-                if (char >= 0x05d0)
+                if (char >= 0x0660) // Arabic numeral 0
+                    char = char - 0x660 + '0'.charCodeAt(0);
+                else if (char >= 0x0627) // Alif
+                    char = char - 0x0627 + 'A'.charCodeAt(0);
+                else if (char >= 0x05d0)
                     char -= 0x058f;
                 else if (char == 10) {
                     result += "\\n";
@@ -217,6 +221,10 @@
         אבגabcdef
     </div>
 
+    <div class="test">١٢٣ابة</div>
+
+    <div class="test">ابة١٢٣</div>
+
     <div class="test">
         <span>abc</span>אבגdef
     </div>
@@ -343,6 +351,8 @@
     <div class="test" style="white-space: pre;">אבג<!-- -->
 <!-- -->דהו</div>
 
+    <div class="test">
+        <span dir="rtl">abcקקק123נננdef</span>
     </div>
 
     </div>
