@@ -1,3 +1,15 @@
+2011-04-25  David Levin  <levin@chromium.org>
+
+        Reviewed by James Robinson.
+
+        Fix OwnPtr strict mode violation in MessageQueue.h
+        https://bugs.webkit.org/show_bug.cgi?id=59400
+
+        * wtf/MessageQueue.h:
+        (WTF::::waitForMessage):
+        (WTF::::waitForMessageFilteredWithTimeout):
+        (WTF::::tryGetMessage):
+
 2011-04-25  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Darin Adler.

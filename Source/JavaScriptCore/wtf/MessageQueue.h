@@ -120,9 +120,9 @@ namespace WTF {
     inline PassOwnPtr<DataType> MessageQueue<DataType>::waitForMessage()
     {
         MessageQueueWaitResult exitReason; 
-        PassOwnPtr<DataType> result = waitForMessageFilteredWithTimeout(exitReason, MessageQueue<DataType>::alwaysTruePredicate, infiniteTime());
+        OwnPtr<DataType> result = waitForMessageFilteredWithTimeout(exitReason, MessageQueue<DataType>::alwaysTruePredicate, infiniteTime());
         ASSERT(exitReason == MessageQueueTerminated || exitReason == MessageQueueMessageReceived);
-        return result;
+        return result.release();
     }
 
     template<typename DataType>
@@ -140,19 +140,19 @@ namespace WTF {
 
         if (m_killed) {
             result = MessageQueueTerminated;
-            return 0;
+            return PassOwnPtr<DataType>();
         }
 
         if (timedOut) {
             result = MessageQueueTimeout;
-            return 0;
+            return PassOwnPtr<DataType>();
         }
 
         ASSERT(found != m_queue.end());
-        DataType* message = *found;
+        OwnPtr<DataType> message = adoptPtr(*found);
         m_queue.remove(found);
         result = MessageQueueMessageReceived;
-        return message;
+        return message.release();
     }
 
     template<typename DataType>
@@ -160,11 +160,11 @@ namespace WTF {
     {
         MutexLocker lock(m_mutex);
         if (m_killed)
-            return 0;
+            return PassOwnPtr<DataType>();
         if (m_queue.isEmpty())
-            return 0;
+            return PassOwnPtr<DataType>();
 
-        return m_queue.takeFirst();
+        return adoptPtr(m_queue.takeFirst());
     }
 
     template<typename DataType>
