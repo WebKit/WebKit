@@ -40,8 +40,7 @@
 namespace WebCore {
 
 MessagePort::MessagePort(ScriptExecutionContext& scriptExecutionContext)
-    : m_entangledChannel(0)
-    , m_started(false)
+    : m_started(false)
     , m_closed(false)
     , m_scriptExecutionContext(&scriptExecutionContext)
 {

@@ -21,6 +21,9 @@
 
 #include "config.h"
 
+// FIXME: Remove this define!
+#define LOOSE_OWN_PTR
+
 #if ENABLE(SVG)
 #include "SVGDocumentExtensions.h"
 

@@ -1,3 +1,25 @@
+2011-04-25  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by David Levin.
+
+        Fix strict OwnPtr violations and whitelist known-tricky files
+        https://bugs.webkit.org/show_bug.cgi?id=59421
+
+        With this patch, WebCore builds cleanly with strict OwnPtrs.
+
+        * dom/MessagePort.cpp:
+        (WebCore::MessagePort::MessagePort):
+        * dom/XMLDocumentParserLibxml2.cpp:
+        * page/ContextMenuController.cpp:
+        (WebCore::ContextMenuController::ContextMenuController):
+        (WebCore::ContextMenuController::clearContextMenu):
+        * page/PluginHalter.cpp:
+        * platform/graphics/MediaPlayer.cpp:
+        * platform/network/ResourceRequestBase.cpp:
+        (WebCore::ResourceRequestBase::adopt):
+        (WebCore::ResourceRequestBase::copyData):
+        * svg/SVGDocumentExtensions.cpp:
+
 2011-04-25  David Levin  <levin@chromium.org>
 
         Reviewed by Adam Barth.

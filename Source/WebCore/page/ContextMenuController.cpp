@@ -76,7 +76,6 @@ namespace WebCore {
 ContextMenuController::ContextMenuController(Page* page, ContextMenuClient* client)
     : m_page(page)
     , m_client(client)
-    , m_contextMenu(0)
 {
     ASSERT_ARG(page, page);
     ASSERT_ARG(client, client);
@@ -89,7 +88,7 @@ ContextMenuController::~ContextMenuController()
 
 void ContextMenuController::clearContextMenu()
 {
-    m_contextMenu.set(0);
+    m_contextMenu.clear();
     if (m_menuProvider)
         m_menuProvider->contextMenuCleared();
     m_menuProvider = 0;

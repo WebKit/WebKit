@@ -46,7 +46,7 @@ inline const ResourceRequest& ResourceRequestBase::asResourceRequest() const
 
 PassOwnPtr<ResourceRequest> ResourceRequestBase::adopt(PassOwnPtr<CrossThreadResourceRequestData> data)
 {
-    OwnPtr<ResourceRequest> request(new ResourceRequest());
+    OwnPtr<ResourceRequest> request = adoptPtr(new ResourceRequest());
     request->setURL(data->m_url);
     request->setCachePolicy(data->m_cachePolicy);
     request->setTimeoutInterval(data->m_timeoutInterval);
@@ -79,7 +79,7 @@ PassOwnPtr<ResourceRequest> ResourceRequestBase::adopt(PassOwnPtr<CrossThreadRes
 
 PassOwnPtr<CrossThreadResourceRequestData> ResourceRequestBase::copyData() const
 {
-    OwnPtr<CrossThreadResourceRequestData> data(new CrossThreadResourceRequestData());
+    OwnPtr<CrossThreadResourceRequestData> data = adoptPtr(new CrossThreadResourceRequestData());
     data->m_url = url().copy();
     data->m_cachePolicy = cachePolicy();
     data->m_timeoutInterval = timeoutInterval();
