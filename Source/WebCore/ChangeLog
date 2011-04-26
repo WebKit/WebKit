@@ -1,3 +1,13 @@
+2011-04-25  Jocelyn Turcotte  <jocelyn.turcotte@nokia.com>
+
+        Reviewed by Eric Seidel.
+
+        KeyboardEvent.cpp should work with strict OwnPtrs.
+        https://bugs.webkit.org/show_bug.cgi?id=59403
+
+        * dom/KeyboardEvent.cpp:
+        (WebCore::KeyboardEvent::KeyboardEvent):
+
 2011-04-25  James Robinson  <jamesr@chromium.org>
 
         Reviewed by Eric Seidel.
