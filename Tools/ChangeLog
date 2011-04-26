@@ -1,3 +1,11 @@
+2011-04-25  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Mark Rowe.
+
+        Teach build-webkit where newer Xcode versions store the application-wide build settings user default.
+
+        * Scripts/webkitdirs.pm:
+
 2011-04-25  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Adam Roben.

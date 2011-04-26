@@ -140,22 +140,17 @@ sub determineBaseProductDir
             unlink($personalPlistFile) || die "Could not delete $personalPlistFile: $!";
         }
 
-        open PRODUCT, "defaults read com.apple.Xcode PBXApplicationwideBuildSettings 2> " . File::Spec->devnull() . " |" or die;
+        my $xcodebuildVersionOutput = `xcodebuild -version`;
+        my $xcodeVersion = ($xcodebuildVersionOutput =~ /Xcode ([0-9](\.[0-9]+)*)/) ? $1 : undef;
+        my $xcodeDefaultsDomain = $xcodeVersion < 4 ? "com.apple.Xcode" : "com.apple.dt.Xcode";
+        my $xcodeDefaultsPrefix = $xcodeVersion < 4 ? "PBX" : "IDE";
+
+        open PRODUCT, "defaults read $xcodeDefaultsDomain ${xcodeDefaultsPrefix}ApplicationwideBuildSettings 2> " . File::Spec->devnull() . " |" or die;
         $baseProductDir = join '', <PRODUCT>;
         close PRODUCT;
 
         $baseProductDir = $1 if $baseProductDir =~ /SYMROOT\s*=\s*\"(.*?)\";/s;
         undef $baseProductDir unless $baseProductDir =~ /^\//;
-
-        if (!defined($baseProductDir)) {
-            open PRODUCT, "defaults read com.apple.Xcode PBXProductDirectory 2> " . File::Spec->devnull() . " |" or die;
-            $baseProductDir = <PRODUCT>;
-            close PRODUCT;
-            if ($baseProductDir) {
-                chomp $baseProductDir;
-                undef $baseProductDir unless $baseProductDir =~ /^\//;
-            }
-        }
     } elsif (isSymbian()) {
         # Shadow builds are not supported on Symbian
         $baseProductDir = $sourceDir;
