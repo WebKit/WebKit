@@ -629,13 +629,10 @@
                             ],
                             'sources': [
                                 '<@(webkit_unittest_files)',
-                                'tests/PopupMenuTest.cpp',
-                                'tests/TransparencyWinTest.cpp',
-                                'tests/UniscribeHelperTest.cpp',
-                                'tests/WebUnitTests.cpp'
+                                'tests/WebUnitTests.cpp',   # Components test runner support.
                             ],
                             'sources!' : [
-                                # We should not include files dpending on webkit_support.
+                                # We should not include files depending on webkit_support.
                                 'tests/CCThreadTest.cpp',
                                 # WebFrameTest.cpp depends on webkit_support and
                                 # functions defined only in !WEBKIT_IMPLEMENTATION.
@@ -844,25 +841,7 @@
                         '<@(webkit_unittest_files)',
                     ],
                     'conditions': [
-                        ['OS=="win"', {
-                            'sources': [
-                                # FIXME: Port PopupMenuTest to Linux and Mac.
-                                'tests/PopupMenuTest.cpp',
-                                'tests/TransparencyWinTest.cpp',
-                                'tests/UniscribeHelperTest.cpp',
-                                'tests/WebPageSerializerTest.cpp',
-                            ],
-                        }],
-                        ['OS=="mac"', {
-                            'sources!': [
-                                # FIXME: Port DragImageTest to Mac.
-                                'tests/DragImageTest.cpp',
-                            ],
-                        }],
                         ['OS=="linux" or OS=="freebsd"', {
-                            'sources': [
-                                'tests/WebInputEventFactoryTestGtk.cpp',
-                            ],
                             'include_dirs': [
                                 'public/gtk',
                             ],

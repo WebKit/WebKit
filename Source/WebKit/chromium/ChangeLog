@@ -1,3 +1,19 @@
+2011-04-26  Evan Martin  <evan@chromium.org>
+
+        Reviewed by Tony Chang.
+
+        [chromium] refactor duplicated list of test source files
+        https://bugs.webkit.org/show_bug.cgi?id=59478
+
+        The platform-specific unit test files were listed twice in
+        WebKit.gyp: once for the components build, once for the normal
+        build.  Refactor this into the unified webkit_unittest_files
+        variable.  (It appears the omission of WebPageSerializerTest
+        in one instance was an oversight.)
+
+        * WebKit.gyp:
+        * WebKit.gypi:
+
 2011-04-26  Robert Sesek  <rsesek@chromium.org>
 
         Reviewed by Dimitri Glazkov.
