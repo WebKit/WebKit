@@ -1,5 +1,12 @@
 2011-04-26  Stephen White  <senorblanco@chromium.org>
 
+        Unreviewed; chromium test expectations update.
+
+        * platform/chromium/test_expectations.txt:
+        fast/css/table-border-spacing.html is flaky in Debug.
+
+2011-04-26  Stephen White  <senorblanco@chromium.org>
+
         Unreviewed; test expectations update.
 
         * platform/chromium/test_expectations.txt:
