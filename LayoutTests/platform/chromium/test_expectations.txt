@@ -3139,7 +3139,7 @@ BUGCR76578 LINUX DEBUG : svg/filters/big-sized-filter.svg = PASS TIMEOUT
 BUGCR76552 DEBUG : fast/dom/HTMLScriptElement/dont-load-unknown-type.html = PASS TEXT
 
 // Flaky
-BUGCR76609 : animations/play-state.html = PASS TEXT CRASH
+BUGCR76609 DEBUG : animations/play-state.html = PASS TEXT
 BUGCR76610 WIN MAC DEBUG : canvas/philip/tests/2d.text.draw.align.center.html = PASS TEXT
 BUGCR76716 DEBUG : fast/css/first-child-pseudo-class.html = PASS TEXT
 BUGCR76979 WIN : inspector/console/console-dirxml.html = PASS TEXT
