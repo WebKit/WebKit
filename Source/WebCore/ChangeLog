@@ -1,3 +1,9 @@
+2011-04-26  Jeff Miller  <jeffm@apple.com>
+
+        Add a newline at the end of SVGFEDropShadowElement.idl.
+
+        * svg/SVGFEDropShadowElement.idl:
+
 2011-04-26  Mihai Parparita  <mihaip@chromium.org>
 
         Reviewed by Eric Seidel.
