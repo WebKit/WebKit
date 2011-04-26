@@ -1,3 +1,13 @@
+2011-04-26  Mario Sanchez Prada  <msanchez@igalia.com>
+
+        Reviewed by Eric Seidel.
+
+        [GTK] Implement isChecked in DRT
+        https://bugs.webkit.org/show_bug.cgi?id=59385
+
+        * platform/gtk/Skipped: Unskip the layout test
+        accessibility/aria-checkbox-checked.html.
+
 2011-04-26  Alejandro G. Castro  <alex@igalia.com>
 
         Skipped insecure-css-in-iframe.html, we are missing
