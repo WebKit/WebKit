@@ -1,3 +1,11 @@
+2011-04-26  Stephen White  <senorblanco@chromium.org>
+
+        Unreviewed; test expectations update.
+
+        * platform/chromium/test_expectations.txt:
+        Mark a test that seems to be passing IMAGE CRASH (I don't trust it
+        enough yet to remove the CRASH).
+
 2011-04-26  Csaba Osztrogonác  <ossy@webkit.org>
 
         [Qt] Add Qt specific expected result for new test introduced in r84930.
