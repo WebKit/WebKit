@@ -35,6 +35,7 @@
 #include "Page.h"
 #include "PaintInfo.h"
 #include "RenderArena.h"
+#include "RenderBR.h"
 #include "RenderBlock.h"
 #include "RenderCombineText.h"
 #include "RenderRubyRun.h"

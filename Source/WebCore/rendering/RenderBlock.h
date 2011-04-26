@@ -39,6 +39,7 @@ class LayoutStateMaintainer;
 class LazyLineBreakIterator;
 class LineWidth;
 class RenderInline;
+class RenderText;
 
 struct BidiRun;
 struct PaintInfo;

@@ -21,7 +21,6 @@
 #ifndef InlineBox_h
 #define InlineBox_h
 
-#include "RenderBR.h"
 #include "RenderBoxModelObject.h"
 #include "TextDirection.h"
 
