@@ -73,7 +73,7 @@ class IconDatabase : public IconDatabaseBase {
     
 // *** Main Thread Only ***
 public:
-    static PassOwnPtr<IconDatabase> create() { return new IconDatabase; }
+    static PassOwnPtr<IconDatabase> create() { return adoptPtr(new IconDatabase); }
     ~IconDatabase();
 
     virtual void setClient(IconDatabaseClient*);

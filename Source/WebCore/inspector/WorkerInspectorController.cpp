@@ -100,8 +100,8 @@ void WorkerInspectorController::connectFrontend(InspectorFrontendChannel* channe
 {
     ASSERT(!m_frontend);
     m_state->unmute();
-    m_frontend = new InspectorFrontend(channel);
-    m_backendDispatcher = new InspectorBackendDispatcher(
+    m_frontend = adoptPtr(new InspectorFrontend(channel));
+    m_backendDispatcher = adoptPtr(new InspectorBackendDispatcher(
         channel,
 #if ENABLE(OFFLINE_WEB_APPLICATIONS)
         0, // InspectorApplicationCacheAgent
@@ -129,7 +129,7 @@ void WorkerInspectorController::connectFrontend(InspectorFrontendChannel* channe
         m_runtimeAgent.get(),
         0, // InspectorTimelineAgent
         0 // InspectorWorkerAgent
-    );
+    ));
 
     m_injectedScriptManager->injectedScriptHost()->setFrontend(m_frontend.get());
 #if ENABLE(JAVASCRIPT_DEBUGGER)

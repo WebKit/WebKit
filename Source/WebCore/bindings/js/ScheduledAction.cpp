@@ -53,14 +53,14 @@ PassOwnPtr<ScheduledAction> ScheduledAction::create(ExecState* exec, DOMWrapperW
     CallData callData;
     if (getCallData(v, callData) == CallTypeNone) {
         if (policy && !policy->allowEval())
-            return 0;
+            return PassOwnPtr<ScheduledAction>();
         UString string = v.toString(exec);
         if (exec->hadException())
-            return 0;
-        return new ScheduledAction(ustringToString(string), isolatedWorld);
+            return PassOwnPtr<ScheduledAction>();
+        return adoptPtr(new ScheduledAction(ustringToString(string), isolatedWorld));
     }
 
-    return new ScheduledAction(exec, v, isolatedWorld);
+    return adoptPtr(new ScheduledAction(exec, v, isolatedWorld));
 }
 
 ScheduledAction::ScheduledAction(ExecState* exec, JSValue function, DOMWrapperWorld* isolatedWorld)

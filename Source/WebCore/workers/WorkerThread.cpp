@@ -66,7 +66,7 @@ struct WorkerThreadStartupData {
 public:
     static PassOwnPtr<WorkerThreadStartupData> create(const KURL& scriptURL, const String& userAgent, const String& sourceCode)
     {
-        return new WorkerThreadStartupData(scriptURL, userAgent, sourceCode);
+        return adoptPtr(new WorkerThreadStartupData(scriptURL, userAgent, sourceCode));
     }
 
     KURL m_scriptURL;
@@ -167,7 +167,7 @@ class WorkerThreadShutdownFinishTask : public ScriptExecutionContext::Task {
 public:
     static PassOwnPtr<WorkerThreadShutdownFinishTask> create()
     {
-        return new WorkerThreadShutdownFinishTask();
+        return adoptPtr(new WorkerThreadShutdownFinishTask());
     }
 
     virtual void performTask(ScriptExecutionContext *context)
@@ -186,7 +186,7 @@ class WorkerThreadShutdownStartTask : public ScriptExecutionContext::Task {
 public:
     static PassOwnPtr<WorkerThreadShutdownStartTask> create()
     {
-        return new WorkerThreadShutdownStartTask();
+        return adoptPtr(new WorkerThreadShutdownStartTask());
     }
 
     virtual void performTask(ScriptExecutionContext *context)

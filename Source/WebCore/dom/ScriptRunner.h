@@ -29,6 +29,7 @@
 #include "CachedResourceHandle.h"
 #include "Timer.h"
 #include <wtf/Noncopyable.h>
+#include <wtf/PassOwnPtr.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/Vector.h>
 
@@ -42,7 +43,7 @@ class ScriptElement;
 class ScriptRunner {
     WTF_MAKE_NONCOPYABLE(ScriptRunner); WTF_MAKE_FAST_ALLOCATED;
 public:
-    static PassOwnPtr<ScriptRunner> create(Document* document) { return new ScriptRunner(document); }
+    static PassOwnPtr<ScriptRunner> create(Document* document) { return adoptPtr(new ScriptRunner(document)); }
     ~ScriptRunner();
 
     enum ExecutionType { ASYNC_EXECUTION, IN_ORDER_EXECUTION };

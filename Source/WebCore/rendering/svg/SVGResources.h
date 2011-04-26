@@ -118,7 +118,7 @@ private:
 
         static PassOwnPtr<ClipperFilterMaskerData> create()
         {
-            return new ClipperFilterMaskerData;
+            return adoptPtr(new ClipperFilterMaskerData);
         }
 
         RenderSVGResourceClipper* clipper;
@@ -140,7 +140,7 @@ private:
 
         static PassOwnPtr<MarkerData> create()
         {
-            return new MarkerData;
+            return adoptPtr(new MarkerData);
         }
 
         RenderSVGResourceMarker* markerStart;
@@ -161,7 +161,7 @@ private:
 
         static PassOwnPtr<FillStrokeData> create()
         {
-            return new FillStrokeData;
+            return adoptPtr(new FillStrokeData);
         }
 
         RenderSVGResourceContainer* fill;

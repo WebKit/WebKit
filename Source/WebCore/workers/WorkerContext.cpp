@@ -88,7 +88,7 @@ class CloseWorkerContextTask : public ScriptExecutionContext::Task {
 public:
     static PassOwnPtr<CloseWorkerContextTask> create()
     {
-        return new CloseWorkerContextTask;
+        return adoptPtr(new CloseWorkerContextTask);
     }
 
     virtual void performTask(ScriptExecutionContext *context)

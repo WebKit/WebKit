@@ -1,3 +1,50 @@
+2011-04-26  David Levin  <levin@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        Fix a few OwnPtr strict errors in WebCore headers.
+        https://bugs.webkit.org/show_bug.cgi?id=59431
+
+        * bindings/js/ScheduledAction.cpp:
+        (WebCore::ScheduledAction::create):
+        * css/MediaQueryMatcher.cpp:
+        (WebCore::MediaQueryMatcher::prepareEvaluator):
+        * dom/NodeRareData.h:
+        (WebCore::NodeListsNodeData::create):
+        * dom/ScriptRunner.h:
+        (WebCore::ScriptRunner::create):
+        * inspector/WorkerInspectorController.cpp:
+        (WebCore::WorkerInspectorController::connectFrontend):
+        * loader/icon/IconDatabase.h:
+        (WebCore::IconDatabase::create):
+        * platform/graphics/SimpleFontData.cpp:
+        (WebCore::SimpleFontData::verticalRightOrientationFontData):
+        (WebCore::SimpleFontData::uprightOrientationFontData):
+        (WebCore::SimpleFontData::brokenIdeographFontData):
+        * rendering/style/StyleRareInheritedData.cpp:
+        (WebCore::StyleRareInheritedData::StyleRareInheritedData):
+        * rendering/svg/SVGResources.h:
+        (WebCore::SVGResources::ClipperFilterMaskerData::create):
+        (WebCore::SVGResources::MarkerData::create):
+        (WebCore::SVGResources::FillStrokeData::create):
+        * storage/StorageSyncManager.cpp:
+        (WebCore::StorageSyncManager::close):
+        * workers/WorkerContext.cpp:
+        (WebCore::CloseWorkerContextTask::create):
+        * workers/WorkerMessagingProxy.cpp:
+        (WebCore::MessageWorkerContextTask::create):
+        (WebCore::MessageWorkerTask::create):
+        (WebCore::WorkerExceptionTask::create):
+        (WebCore::WorkerContextDestroyedTask::create):
+        (WebCore::WorkerTerminateTask::create):
+        (WebCore::WorkerThreadActivityReportTask::create):
+        * workers/WorkerRunLoop.cpp:
+        (WebCore::WorkerRunLoop::Task::create):
+        * workers/WorkerThread.cpp:
+        (WebCore::WorkerThreadStartupData::create):
+        (WebCore::WorkerThreadShutdownFinishTask::create):
+        (WebCore::WorkerThreadShutdownStartTask::create):
+
 2011-04-26  Adam Klein  <adamk@chromium.org>
 
         Reviewed by Adam Barth.

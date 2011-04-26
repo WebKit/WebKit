@@ -61,7 +61,7 @@ public:
  
     static PassOwnPtr<NodeListsNodeData> create()
     {
-        return new NodeListsNodeData;
+        return adoptPtr(new NodeListsNodeData);
     }
     
     void invalidateCaches();

@@ -79,7 +79,7 @@ void StorageSyncManager::close()
 
     if (m_thread) {
         m_thread->terminate();
-        m_thread = 0;
+        m_thread.clear();
     }
 }
 

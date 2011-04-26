@@ -49,7 +49,7 @@ class MessageWorkerContextTask : public ScriptExecutionContext::Task {
 public:
     static PassOwnPtr<MessageWorkerContextTask> create(PassRefPtr<SerializedScriptValue> message, PassOwnPtr<MessagePortChannelArray> channels)
     {
-        return new MessageWorkerContextTask(message, channels);
+        return adoptPtr(new MessageWorkerContextTask(message, channels));
     }
 
 private:
@@ -77,7 +77,7 @@ class MessageWorkerTask : public ScriptExecutionContext::Task {
 public:
     static PassOwnPtr<MessageWorkerTask> create(PassRefPtr<SerializedScriptValue> message, PassOwnPtr<MessagePortChannelArray> channels, WorkerMessagingProxy* messagingProxy)
     {
-        return new MessageWorkerTask(message, channels, messagingProxy);
+        return adoptPtr(new MessageWorkerTask(message, channels, messagingProxy));
     }
 
 private:
@@ -108,7 +108,7 @@ class WorkerExceptionTask : public ScriptExecutionContext::Task {
 public:
     static PassOwnPtr<WorkerExceptionTask> create(const String& errorMessage, int lineNumber, const String& sourceURL, WorkerMessagingProxy* messagingProxy)
     {
-        return new WorkerExceptionTask(errorMessage, lineNumber, sourceURL, messagingProxy);
+        return adoptPtr(new WorkerExceptionTask(errorMessage, lineNumber, sourceURL, messagingProxy));
     }
 
 private:
@@ -144,7 +144,7 @@ class WorkerContextDestroyedTask : public ScriptExecutionContext::Task {
 public:
     static PassOwnPtr<WorkerContextDestroyedTask> create(WorkerMessagingProxy* messagingProxy)
     {
-        return new WorkerContextDestroyedTask(messagingProxy);
+        return adoptPtr(new WorkerContextDestroyedTask(messagingProxy));
     }
 
 private:
@@ -165,7 +165,7 @@ class WorkerTerminateTask : public ScriptExecutionContext::Task {
 public:
     static PassOwnPtr<WorkerTerminateTask> create(WorkerMessagingProxy* messagingProxy)
     {
-        return new WorkerTerminateTask(messagingProxy);
+        return adoptPtr(new WorkerTerminateTask(messagingProxy));
     }
 
 private:
@@ -186,7 +186,7 @@ class WorkerThreadActivityReportTask : public ScriptExecutionContext::Task {
 public:
     static PassOwnPtr<WorkerThreadActivityReportTask> create(WorkerMessagingProxy* messagingProxy, bool confirmingMessage, bool hasPendingActivity)
     {
-        return new WorkerThreadActivityReportTask(messagingProxy, confirmingMessage, hasPendingActivity);
+        return adoptPtr(new WorkerThreadActivityReportTask(messagingProxy, confirmingMessage, hasPendingActivity));
     }
 
 private:

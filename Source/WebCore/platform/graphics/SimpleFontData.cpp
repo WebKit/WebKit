@@ -211,7 +211,7 @@ SimpleFontData* SimpleFontData::verticalRightOrientationFontData() const
     if (!m_derivedFontData->verticalRightOrientation) {
         FontPlatformData verticalRightPlatformData(m_platformData);
         verticalRightPlatformData.setOrientation(Horizontal);
-        m_derivedFontData->verticalRightOrientation = new SimpleFontData(verticalRightPlatformData, isCustomFont(), false, true);
+        m_derivedFontData->verticalRightOrientation = adoptPtr(new SimpleFontData(verticalRightPlatformData, isCustomFont(), false, true));
     }
     return m_derivedFontData->verticalRightOrientation.get();
 }
@@ -221,7 +221,7 @@ SimpleFontData* SimpleFontData::uprightOrientationFontData() const
     if (!m_derivedFontData)
         m_derivedFontData = DerivedFontData::create(isCustomFont());
     if (!m_derivedFontData->uprightOrientation)
-        m_derivedFontData->uprightOrientation = new SimpleFontData(m_platformData, isCustomFont(), false, true);
+        m_derivedFontData->uprightOrientation = adoptPtr(new SimpleFontData(m_platformData, isCustomFont(), false, true));
     return m_derivedFontData->uprightOrientation.get();
 }
 
@@ -230,7 +230,7 @@ SimpleFontData* SimpleFontData::brokenIdeographFontData() const
     if (!m_derivedFontData)
         m_derivedFontData = DerivedFontData::create(isCustomFont());
     if (!m_derivedFontData->brokenIdeograph) {
-        m_derivedFontData->brokenIdeograph = new SimpleFontData(m_platformData, isCustomFont(), false);
+        m_derivedFontData->brokenIdeograph = adoptPtr(new SimpleFontData(m_platformData, isCustomFont(), false));
         m_derivedFontData->brokenIdeograph->m_isBrokenIdeographFallback = true;
     }
     return m_derivedFontData->brokenIdeograph.get();
