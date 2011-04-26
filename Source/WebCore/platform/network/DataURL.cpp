@@ -57,10 +57,13 @@ void handleDataURL(ResourceHandle* handle)
         mediaType = mediaType.left(mediaType.length() - 7);
 
     if (mediaType.isEmpty())
-        mediaType = "text/plain;charset=US-ASCII";
+        mediaType = "text/plain";
 
     String mimeType = extractMIMETypeFromMediaType(mediaType);
     String charset = extractCharsetFromMediaType(mediaType);
+
+    if (charset.isEmpty())
+        charset = "US-ASCII";
 
     ResourceResponse response;
     response.setMimeType(mimeType);
@@ -77,10 +80,11 @@ void handleDataURL(ResourceHandle* handle)
             handle->client()->didReceiveData(handle, out.data(), out.size(), 0);
         }
     } else {
-        data = decodeURLEscapeSequences(data, TextEncoding(charset));
+        TextEncoding encoding(charset);
+        data = decodeURLEscapeSequences(data, encoding);
         handle->client()->didReceiveResponse(handle, response);
 
-        CString encodedData = TextEncoding().encode(data.characters(), data.length(), URLEncodedEntitiesForUnencodables);
+        CString encodedData = encoding.encode(data.characters(), data.length(), URLEncodedEntitiesForUnencodables);
         response.setExpectedContentLength(encodedData.length());
         if (encodedData.length())
             handle->client()->didReceiveData(handle, encodedData.data(), encodedData.length(), 0);

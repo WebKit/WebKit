@@ -1,3 +1,22 @@
+2011-04-26  Patrick Gansterer  <paroga@webkit.org>
+
+        Reviewed by Adam Barth.
+
+        Respect charset in handleDataURL
+        https://bugs.webkit.org/show_bug.cgi?id=47746
+
+        Original patch by Kwang Yul Seo <skyul@company100.net>
+
+        We must use TextEncoding(charset) to encode data URL again. Otherwise TextEncoding::encode()
+        returns an empty string because encoding name is not specified.
+
+        Also use "US-ASCII" as fallback charset as extractCharsetFromMediaType can be empty.
+
+        This change fixes over 130 layout tests when running GTK port with cURL network backend.
+
+        * platform/network/DataURL.cpp:
+        (WebCore::handleDataURL):
+
 2011-04-26  Anders Carlsson  <andersca@apple.com>
 
         Fix clang++ build.
