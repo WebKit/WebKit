@@ -1,7 +1,6 @@
 <html>
 <head>
-  <title>Transition End Events</title>
-  <style type="text/css" media="screen">
+  <style>
     .box {
       position: relative;
       left: 0;
@@ -30,8 +29,8 @@
     }
     
   </style>
-  <script src="transition-end-event-helpers.js" type="text/javascript" charset="utf-8"></script>
-  <script type="text/javascript" charset="utf-8">
+  <script src="transition-end-event-helpers.js"></script>
+  <script type="text/javascript">
     
     var expectedEndEvents = [
       // [property-name, element-id, elapsed-time, listen]
@@ -53,7 +52,6 @@
     }
     
     runTransitionTest(expectedEndEvents, setupTest);
-    
   </script>
 </head>
 <body>

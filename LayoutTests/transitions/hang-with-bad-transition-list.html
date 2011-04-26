@@ -1,7 +1,6 @@
 <html>
 <head>
-  <title>Testing hang when running a bad transition</title>
-  <style type="text/css" media="screen">
+  <style>
     span {
         background: blue;
         color: white;
@@ -9,7 +8,7 @@
         -webkit-transition: opacity, .25s, .15s ease-out;
     }
   </style>
-  <script type="text/javascript" charset="utf-8">
+  <script>
     function checkRunning()
     {
       var current = layoutTestController.numberOfActiveAnimations();

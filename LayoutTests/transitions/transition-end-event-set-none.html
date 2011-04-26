@@ -1,7 +1,6 @@
 <html>
 <head>
-  <title>Transition End Events</title>
-  <style type="text/css" media="screen">
+  <style>
     .box {
       position: relative;
       left: 0;
@@ -22,8 +21,8 @@
       left: 100px;
     }
   </style>
-  <script src="transition-end-event-helpers.js" type="text/javascript" charset="utf-8"></script>
-  <script type="text/javascript" charset="utf-8">
+  <script src="transition-end-event-helpers.js"></script>
+  <script type="text/javascript">
     
     var expectedEndEvents = [
       // [property-name, element-id, elapsed-time, listen]
@@ -58,7 +57,6 @@
     // We need to pass an explicit maxTime because we use two sequential
     // transitions that each take 0.2s.
     runTransitionTest(expectedEndEvents, setupTest, 0.5);
-    
   </script>
 </head>
 <body>

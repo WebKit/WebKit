@@ -1,5 +1,88 @@
 2011-04-25  Simon Fraser  <simon.fraser@apple.com>
 
+        Reviewed by Dan Bernstein.
+
+        Clean up transition tests
+        https://bugs.webkit.org/show_bug.cgi?id=59410
+        
+        General test cleanup: use the named variables as
+        arguments to runTransitionTest() for readability,
+        remove unnecessary titles and meta tags, remove
+        style and script tag attributes etc. No substantive
+        changes.
+
+        * transitions/background-transitions.html:
+        * transitions/bad-transition-shorthand-crash.html:
+        * transitions/border-radius-transition.html:
+        * transitions/cancel-transition.html:
+        * transitions/change-values-during-transition.html:
+        * transitions/clip-transition.html:
+        * transitions/color-transition-all.html:
+        * transitions/color-transition-premultiplied.html:
+        * transitions/default-timing-function.html:
+        * transitions/extra-transition.html:
+        * transitions/hang-with-bad-transition-list.html:
+        * transitions/inherit-other-props.html:
+        * transitions/inherit.html:
+        * transitions/interrupt-transform-transition.html:
+        * transitions/interrupt-zero-duration.html:
+        * transitions/interrupted-accelerated-transition.html:
+        * transitions/interrupted-all-transition.html:
+        * transitions/mask-transitions.html:
+        * transitions/matched-transform-functions.html:
+        * transitions/min-max-width-height-transitions.html:
+        * transitions/mismatched-shadow-styles.html:
+        * transitions/move-after-transition.html:
+        * transitions/multiple-background-size-transitions.html:
+        * transitions/multiple-background-transitions.html:
+        * transitions/multiple-mask-transitions.html:
+        * transitions/multiple-shadow-transitions.html:
+        * transitions/multiple-text-shadow-transition.html:
+        * transitions/negative-delay.html:
+        * transitions/opacity-transition-zindex.html:
+        * transitions/override-transition-crash.html:
+        * transitions/remove-transition-style.html:
+        * transitions/repeated-firing-background-color.html:
+        * transitions/retargetted-transition.html:
+        * transitions/shadow.html:
+        * transitions/shorthand-border-transitions.html:
+        * transitions/shorthand-transitions.html:
+        * transitions/start-transform-transition.html:
+        * transitions/steps-timing-function.html:
+        * transitions/suspend-transform-transition.html:
+        * transitions/svg-text-shadow-transition.html:
+        * transitions/text-indent-transition.html:
+        * transitions/transform-op-list-match.html:
+        * transitions/transform-op-list-no-match.html:
+        * transitions/transition-drt-api-delay.html:
+        * transitions/transition-drt-api.html:
+        * transitions/transition-duration-cleared-in-transitionend-crash.html:
+        * transitions/transition-end-event-all-properties.html:
+        * transitions/transition-end-event-attributes.html:
+        * transitions/transition-end-event-container.html:
+        * transitions/transition-end-event-destroy-iframe.html:
+        * transitions/transition-end-event-destroy-renderer.html:
+        * transitions/transition-end-event-left.html:
+        * transitions/transition-end-event-multiple-01.html:
+        * transitions/transition-end-event-multiple-02.html:
+        * transitions/transition-end-event-multiple-03.html:
+        * transitions/transition-end-event-multiple-04.html:
+        * transitions/transition-end-event-nested.html:
+        * transitions/transition-end-event-rendering.html:
+        * transitions/transition-end-event-set-none.html:
+        * transitions/transition-end-event-transform.html:
+        * transitions/transition-end-event-window.html:
+        * transitions/transition-hit-test-transform.html:
+        * transitions/transition-hit-test.html:
+        * transitions/transition-shorthand-delay.html:
+        * transitions/transition-timing-function.html:
+        * transitions/zero-duration-in-list.html:
+        * transitions/zero-duration-with-non-zero-delay-end.html:
+        * transitions/zero-duration-with-non-zero-delay-start.html:
+        * transitions/zero-duration-without-units.html:
+
+2011-04-25  Simon Fraser  <simon.fraser@apple.com>
+
         Reviewed by Daniel Bates.
 
         Move transition-test-helpers.js to resources/

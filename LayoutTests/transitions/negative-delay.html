@@ -1,9 +1,7 @@
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN"
-        "http://www.w3.org/TR/html4/strict.dtd">
+<!DOCTYPE html>
 <html>
 <head>
-  <title>For Bug 26150 - Negative values for animation-delay are ignored</title>
-  <style type="text/css">
+  <style>
     .square {
       position: absolute;
       background: blue;
@@ -55,7 +53,7 @@
     }
   </style>
 
-  <script src="resources/transition-test-helpers.js" type="text/javascript" charset="utf-8"></script>
+  <script src="resources/transition-test-helpers.js"></script>
 
   <script>
     // The delay of square1 is negative so square1 should be in ahead of square2.
@@ -79,7 +77,7 @@
       document.getElementById('square4').className = 'translated square';
     }
   
-    runTransitionTest(expectedValues, setupTest, true);
+    runTransitionTest(expectedValues, setupTest, usePauseAPI);
   </script>
 </head>
 

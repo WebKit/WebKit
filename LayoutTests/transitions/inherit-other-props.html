@@ -1,7 +1,6 @@
 <html>
 <head>
-  <title>Testing inherit transitions</title>
-  <style type="text/css" media="screen">
+  <style>
     .box {
       position: relative;
       left: 0;
@@ -21,7 +20,7 @@
       -webkit-transition-timing-function: inherit;
     }
   </style>
-  <script type="text/javascript" charset="utf-8">
+  <script>
     if (window.layoutTestController) {
         layoutTestController.dumpAsText();
         layoutTestController.waitUntilDone();
@@ -79,7 +78,6 @@
       document.getElementById('result').innerHTML = result;
       if (window.layoutTestController)
           layoutTestController.notifyDone();
-
     }
 
     window.addEventListener('load', testProperties, false);

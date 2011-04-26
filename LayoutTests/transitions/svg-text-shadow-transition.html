@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <style type="text/css" media="screen">
+    <style>
         .text {
             -webkit-transition-duration: 1s;
             -webkit-transition-timing-function: linear;
@@ -17,8 +17,8 @@
         }
     </style>
 
-    <script src="resources/transition-test-helpers.js" type="text/javascript" charset="utf-8"></script>
-    <script type="text/javascript" charset="utf-8">
+    <script src="resources/transition-test-helpers.js"></script>
+    <script type="text/javascript">
         const expectedValues = [
             // [time, element-id, property, expected-value, tolerance]
             [0, 'text', 'text-shadow', [-25, -5, 0, 15], 4],
@@ -30,7 +30,8 @@
             document.getElementById('text').className.baseVal = 'text final';
         }
 
-        runTransitionTest(expectedValues, setupTest, true, true);
+        var doPixelTest = true;
+        runTransitionTest(expectedValues, setupTest, usePauseAPI, doPixelTest);
     </script>
 </head>
 <body>

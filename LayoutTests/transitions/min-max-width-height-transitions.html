@@ -1,9 +1,7 @@
 <!DOCTYPE>
 <html>
 <head>
-  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-  <title>Testing transitions of min-, max-width, height</title>
-  <style type="text/css" media="screen">
+  <style>
     #container {
       border: 1px solid black;
       width: 300px;
@@ -41,8 +39,8 @@
     }
 
   </style>
-  <script src="resources/transition-test-helpers.js" type="text/javascript" charset="utf-8"></script>
-  <script type="text/javascript" charset="utf-8">
+  <script src="resources/transition-test-helpers.js"></script>
+  <script type="text/javascript">
 
     const expectedValues = [
       // [time, element-id, property, expected-value, tolerance]
@@ -57,8 +55,7 @@
       document.getElementById('container').className = 'final';
     }
   
-    runTransitionTest(expectedValues, setupTest, true);
-    
+    runTransitionTest(expectedValues, setupTest, usePauseAPI);
   </script>
 </head>
 <body>

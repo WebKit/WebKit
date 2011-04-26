@@ -2,7 +2,7 @@
 
 <html>
 <head>
-  <style type="text/css" media="screen">
+  <style>
     #box {
       position: absolute;
       height: 100px;
@@ -16,8 +16,8 @@
       clip: rect(30px, 70px, 70px, 30px);
     }
   </style>
-  <script src="resources/transition-test-helpers.js" type="text/javascript" charset="utf-8"></script>
-  <script type="text/javascript" charset="utf-8">
+  <script src="resources/transition-test-helpers.js"></script>
+  <script type="text/javascript">
     
     const expectedValues = [
       // [time, element-id, property, expected-value, tolerance]
@@ -29,7 +29,7 @@
       document.getElementById('box').className = 'changed';
     }
 
-    runTransitionTest(expectedValues, setupTest, true);
+    runTransitionTest(expectedValues, setupTest, usePauseAPI);
   </script>
 </head>
 <body>

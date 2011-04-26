@@ -1,9 +1,8 @@
 <!DOCTYPE>
 
-<html lang="en">
+<html>
 <head>
-  <title>Color transition with transition-property: all</title>
-  <style type="text/css" media="screen">
+  <style>
     #outer {
       font-size: 200%;
       color: #00F;
@@ -18,8 +17,8 @@
       color: #0F0;
     }
   </style>
-  <script src="resources/transition-test-helpers.js" type="text/javascript" charset="utf-8"></script>
-  <script type="text/javascript" charset="utf-8">
+  <script src="resources/transition-test-helpers.js"></script>
+  <script type="text/javascript">
     const expectedValues = [
       // [time, element-id, property, expected-value, tolerance, post-completion callback, should-be-transitioning]
       [0.5, 'outer', 'color', [0, 127, 127], 2, null, shouldBeTransitioning],
