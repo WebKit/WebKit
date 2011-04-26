@@ -1,5 +1,20 @@
 2011-04-26  Sam Weinig  <sam@webkit.org>
 
+        Nope, roll out r84950 and r84952. Working on a laptop is clearly not something
+        I should do.
+
+        * bindings/js/JSDOMBinding.h:
+        (WebCore::JSDOMWrapperWithGlobalPointer::globalObject):
+        (WebCore::JSDOMWrapperWithGlobalPointer::scriptExecutionContext):
+        (WebCore::JSDOMWrapperWithGlobalPointer::createStructure):
+        (WebCore::JSDOMWrapperWithGlobalPointer::JSDOMWrapperWithGlobalPointer):
+        (WebCore::DOMConstructorObject::DOMConstructorObject):
+        * bindings/js/JSDOMWrapper.h:
+        (WebCore::JSDOMWrapper::JSDOMWrapper):
+        * bindings/scripts/CodeGeneratorJS.pm:
+
+2011-04-26  Sam Weinig  <sam@webkit.org>
+
         Fix build.
 
         * bindings/js/JSDOMWrapper.h:

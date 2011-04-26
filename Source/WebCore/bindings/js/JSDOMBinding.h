@@ -52,8 +52,39 @@ namespace WebCore {
 
     typedef int ExceptionCode;
 
+    // FIXME: This class should collapse into JSDOMWrapper once all JSDOMWrappers are
+    // updated to store a globalObject pointer.
+    class JSDOMWrapperWithGlobalPointer : public JSDOMWrapper {
+    public:
+        JSDOMGlobalObject* globalObject() const
+        {
+            return static_cast<JSDOMGlobalObject*>(JSDOMWrapper::globalObject());
+        }
+
+        ScriptExecutionContext* scriptExecutionContext() const
+        {
+            // FIXME: Should never be 0, but can be due to bug 27640.
+            return globalObject()->scriptExecutionContext();
+        }
+
+        static JSC::Structure* createStructure(JSC::JSGlobalData& globalData, JSC::JSValue prototype)
+        {
+            return JSC::Structure::create(globalData, prototype, JSC::TypeInfo(JSC::ObjectType, StructureFlags), AnonymousSlotCount, &s_info);
+        }
+
+    protected:
+        JSDOMWrapperWithGlobalPointer(JSC::Structure* structure, JSDOMGlobalObject* globalObject)
+            : JSDOMWrapper(globalObject, structure)
+        {
+            // FIXME: This ASSERT is valid, but fires in fast/dom/gc-6.html when trying to create
+            // new JavaScript objects on detached windows due to DOMWindow::document()
+            // needing to reach through the frame to get to the Document*.  See bug 27640.
+            // ASSERT(globalObject->scriptExecutionContext());
+        }
+    };
+
     // Base class for all constructor objects in the JSC bindings.
-    class DOMConstructorObject : public JSDOMWrapper {
+    class DOMConstructorObject : public JSDOMWrapperWithGlobalPointer {
     public:
         static JSC::Structure* createStructure(JSC::JSGlobalData& globalData, JSC::JSValue prototype)
         {
@@ -61,9 +92,9 @@ namespace WebCore {
         }
 
     protected:
-        static const unsigned StructureFlags = JSC::ImplementsHasInstance | JSC::OverridesVisitChildren | JSDOMWrapper::StructureFlags;
+        static const unsigned StructureFlags = JSC::ImplementsHasInstance | JSC::OverridesVisitChildren | JSDOMWrapperWithGlobalPointer::StructureFlags;
         DOMConstructorObject(JSC::Structure* structure, JSDOMGlobalObject* globalObject)
-            : JSDOMWrapper(structure, globalObject)
+            : JSDOMWrapperWithGlobalPointer(structure, globalObject)
         {
         }
     };
