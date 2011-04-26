@@ -41,7 +41,7 @@ private slots:
     void renderingEnabled();
     void setHtml();
     void settings();
-#if QT_VERSION >= 0x040703
+#if QT_VERSION >= 0x040704
     void backgroundColor();
 #endif
 
@@ -491,7 +491,7 @@ void tst_QDeclarativeWebView::settings()
     }
 }
 
-#if QT_VERSION >= 0x040703
+#if QT_VERSION >= 0x040704
 void tst_QDeclarativeWebView::backgroundColor()
 {
     // We test here the rendering of the background.

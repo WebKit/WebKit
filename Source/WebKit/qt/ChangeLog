@@ -1,3 +1,18 @@
+2011-04-26  Siddharth Mathur  <siddharth.mathur@nokia.com>
+
+        Reviewed by Andreas Kling.
+
+        [Qt] Build fix: QtDeclarative Webview element has a fixed white background
+        https://bugs.webkit.org/show_bug.cgi?id=40918
+
+        Macro Q_REVISION and associated qdeclarativeitem.h signals are not available in 4.7.3 headers in Nokia Qt SDK.
+
+        * declarative/plugin.cpp: Bump up required version to 4.7.4+
+        (WebKitQmlPlugin::registerTypes):
+        * declarative/qdeclarativewebview.cpp: ditto
+        * declarative/qdeclarativewebview_p.h: ditto
+        * tests/qdeclarativewebview/tst_qdeclarativewebview.cpp: ditto
+
 2011-04-26  Kristóf Kosztyó  <Kosztyo.Kristof@stud.u-szeged.hu>
 
         Reviewed by Csaba Osztrogonác.
