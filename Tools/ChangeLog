@@ -1,3 +1,18 @@
+2011-04-26  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Mark Rowe.
+
+        Choose the compiler based on the Xcode version for Snow Leopard debug builds.
+
+        * DumpRenderTree/mac/Configurations/Base.xcconfig:
+        * DumpRenderTree/mac/Configurations/CompilerVersion.xcconfig: Added.
+        * MiniBrowser/Configurations/Base.xcconfig:
+        * MiniBrowser/Configurations/CompilerVersion.xcconfig: Added.
+        * TestWebKitAPI/Configurations/Base.xcconfig:
+        * TestWebKitAPI/Configurations/CompilerVersion.xcconfig: Added.
+        * WebKitTestRunner/Configurations/Base.xcconfig:
+        * WebKitTestRunner/Configurations/CompilerVersion.xcconfig: Added.
+
 2011-04-26  Finnur Thorarinsson  <finnur.webkit@gmail.com>
 
         Reviewed by David Levin.

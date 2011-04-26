@@ -1,3 +1,12 @@
+2011-04-26  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Mark Rowe.
+
+        Choose the compiler based on the Xcode version for Snow Leopard debug builds.
+
+        * Configurations/Base.xcconfig:
+        * Configurations/CompilerVersion.xcconfig: Added.
+
 2011-04-25  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Oliver Hunt.
