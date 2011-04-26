@@ -1,3 +1,39 @@
+2011-04-26  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        DumpRenderTree/chromium should play nice with strict OwnPtrs
+        https://bugs.webkit.org/show_bug.cgi?id=59458
+
+        All these changes are pretty straight forward.
+
+        * DumpRenderTree/chromium/CppBoundClass.cpp:
+        (GetterPropertyCallback::GetterPropertyCallback):
+        (CppBoundClass::bindGetterCallback):
+        * DumpRenderTree/chromium/CppBoundClass.h:
+        (CppBoundClass::bindProperty):
+        (CppBoundClass::bindFallbackCallback):
+        (CppBoundClass::bindFallbackMethod):
+        * DumpRenderTree/chromium/DRTDevToolsClient.cpp:
+        (DRTDevToolsClient::DRTDevToolsClient):
+        * DumpRenderTree/chromium/TestEventPrinter.cpp:
+        (TestEventPrinter::createDRTPrinter):
+        (TestEventPrinter::createTestShellPrinter):
+        * DumpRenderTree/chromium/TestEventPrinter.h:
+        * DumpRenderTree/chromium/TestShell.cpp:
+        (TestShell::TestShell):
+        (TestShell::createMainWindow):
+        (TestShell::createDRTDevToolsClient):
+        * DumpRenderTree/chromium/WebViewHost.cpp:
+        (WebViewHost::geolocationClientMock):
+        (WebViewHost::speechInputController):
+        (WebViewHost::deviceOrientationClientMock):
+        (WebViewHost::reset):
+        (WebViewHost::navigate):
+        (WebViewHost::setPendingExtraData):
+        (WebViewHost::canvas):
+        * DumpRenderTree/chromium/WebViewHost.h:
+
 2011-04-26  Adam Roben  <aroben@apple.com>
 
         Make DRT/win log loading errors the same way DRT/mac does

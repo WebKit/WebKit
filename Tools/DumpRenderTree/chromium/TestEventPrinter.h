@@ -31,10 +31,12 @@
 #ifndef TestEventPrinter_h
 #define TestEventPrinter_h
 
+#include <wtf/PassOwnPtr.h>
+
 class TestEventPrinter {
 public:
-    static TestEventPrinter* createDRTPrinter();
-    static TestEventPrinter* createTestShellPrinter();
+    static PassOwnPtr<TestEventPrinter> createDRTPrinter();
+    static PassOwnPtr<TestEventPrinter> createTestShellPrinter();
 
     virtual void handleTestHeader(const char* url) const = 0;
     virtual void handleTimedOut() const = 0;

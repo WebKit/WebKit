@@ -606,21 +606,21 @@ WebKit::WebGeolocationClient* WebViewHost::geolocationClient()
 WebKit::WebGeolocationClientMock* WebViewHost::geolocationClientMock()
 {
     if (!m_geolocationClientMock)
-        m_geolocationClientMock.set(WebGeolocationClientMock::create());
+        m_geolocationClientMock = adoptPtr(WebGeolocationClientMock::create());
     return m_geolocationClientMock.get();
 }
 
 WebSpeechInputController* WebViewHost::speechInputController(WebKit::WebSpeechInputListener* listener)
 {
     if (!m_speechInputControllerMock)
-        m_speechInputControllerMock.set(WebSpeechInputControllerMock::create(listener));
+        m_speechInputControllerMock = adoptPtr(WebSpeechInputControllerMock::create(listener));
     return m_speechInputControllerMock.get();
 }
 
 WebDeviceOrientationClientMock* WebViewHost::deviceOrientationClientMock()
 {
     if (!m_deviceOrientationClientMock.get())
-        m_deviceOrientationClientMock.set(WebDeviceOrientationClientMock::create());
+        m_deviceOrientationClientMock = adoptPtr(WebDeviceOrientationClientMock::create());
     return m_deviceOrientationClientMock.get();
 }
 
@@ -1196,7 +1196,7 @@ void WebViewHost::reset()
     m_isPainting = false;
     m_canvas.clear();
 
-    m_navigationController.set(new TestNavigationController(this));
+    m_navigationController = adoptPtr(new TestNavigationController(this));
 
     m_pendingExtraData.clear();
     m_resourceIdentifierMap.clear();
@@ -1282,7 +1282,7 @@ bool WebViewHost::navigate(const TestNavigationEntry& entry, bool reload)
     // treated as a browser initiated event.  Instead, we want it to look as if
     // the page initiated any load resulting from JS execution.
     if (!GURL(entry.URL()).SchemeIs("javascript"))
-        setPendingExtraData(new TestShellExtraData(entry.pageID()));
+        setPendingExtraData(adoptPtr(new TestShellExtraData(entry.pageID())));
 
     // If we are reloading, then WebKit will use the state of the current page.
     // Otherwise, we give it the state to navigate to.
@@ -1297,7 +1297,7 @@ bool WebViewHost::navigate(const TestNavigationEntry& entry, bool reload)
     }
 
     // In case LoadRequest failed before DidCreateDataSource was called.
-    setPendingExtraData(0);
+    setPendingExtraData(PassOwnPtr<TestShellExtraData>());
 
     // Restore focus to the main frame prior to loading new request.
     // This makes sure that we don't have a focused iframe. Otherwise, that
@@ -1432,9 +1432,9 @@ void WebViewHost::printResourceDescription(unsigned identifier)
     printf("%s", it != m_resourceIdentifierMap.end() ? it->second.c_str() : "<unknown>");
 }
 
-void WebViewHost::setPendingExtraData(TestShellExtraData* extraData)
+void WebViewHost::setPendingExtraData(PassOwnPtr<TestShellExtraData> extraData)
 {
-    m_pendingExtraData.set(extraData);
+    m_pendingExtraData = extraData;
 }
 
 void WebViewHost::setPageTitle(const WebString&)
@@ -1519,8 +1519,7 @@ SkCanvas* WebViewHost::canvas()
         return m_canvas.get();
     WebSize widgetSize = webWidget()->size();
     resetScrollRect();
-    m_canvas.set(skia::CreateBitmapCanvas(
-        widgetSize.width, widgetSize.height, true));
+    m_canvas = adoptPtr(skia::CreateBitmapCanvas(widgetSize.width, widgetSize.height, true));
     return m_canvas.get();
 }
 

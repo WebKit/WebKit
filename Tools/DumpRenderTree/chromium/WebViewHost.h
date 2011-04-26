@@ -81,7 +81,7 @@ class WebViewHost : public WebKit::WebSpellCheckClient, public WebKit::WebViewCl
     void setRequestReturnNull(bool returnNull) { m_requestReturnNull = returnNull; }
     void setEditCommand(const std::string& name, const std::string& value);
     void clearEditCommand();
-    void setPendingExtraData(TestShellExtraData*);
+    void setPendingExtraData(PassOwnPtr<TestShellExtraData>);
 
     void paintRect(const WebKit::WebRect&);
     void updatePaintRect(const WebKit::WebRect&);

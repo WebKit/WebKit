@@ -32,13 +32,13 @@
 #include "DRTDevToolsClient.h"
 
 #include "DRTDevToolsAgent.h"
-
 #include "WebDevToolsAgent.h"
 #include "WebDevToolsFrontend.h"
 #include "WebFrame.h"
 #include "WebScriptSource.h"
 #include "WebView.h"
 #include "webkit/support/webkit_support.h"
+#include <wtf/PassOwnPtr.h>
 
 using namespace WebKit;
 
@@ -46,9 +46,7 @@ DRTDevToolsClient::DRTDevToolsClient(DRTDevToolsAgent* agent, WebView* webView)
     : m_webView(webView)
     , m_drtDevToolsAgent(agent)
 {
-    m_webDevToolsFrontend.set(WebDevToolsFrontend::create(m_webView,
-                                                          this,
-                                                          WebString::fromUTF8("en-US")));
+    m_webDevToolsFrontend = adoptPtr(WebDevToolsFrontend::create(m_webView, this, WebString::fromUTF8("en-US")));
     m_drtDevToolsAgent->attach(this);
 }
 

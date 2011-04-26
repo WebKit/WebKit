@@ -47,6 +47,7 @@
 #include <wtf/HashMap.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/OwnPtr.h>
+#include <wtf/PassOwnPtr.h>
 #include <wtf/Vector.h>
 
 namespace WebKit {
@@ -159,7 +160,7 @@ protected:
 
     // Bind Javascript property |name| to the C++ getter callback |callback|.
     // This can be used to create read-only properties.
-    void bindGetterCallback(const std::string&, GetterCallback*);
+    void bindGetterCallback(const std::string&, PassOwnPtr<GetterCallback>);
 
     // A wrapper for BindGetterCallback, to simplify the common case of binding a
     // property on the current object.  Though not verified here, |method|
@@ -167,8 +168,8 @@ protected:
     template<class T>
     void bindProperty(const std::string& name, void (T::*method)(CppVariant*))
     {
-        GetterCallback* callback = new MemberGetterCallback<T>(static_cast<T*>(this), method);
-        bindGetterCallback(name, callback);
+        OwnPtr<GetterCallback> callback = adoptPtr(new MemberGetterCallback<T>(static_cast<T*>(this), method));
+        bindGetterCallback(name, callback.release());
     }
 
     // Bind the Javascript property called |name| to a CppVariant.
@@ -188,9 +189,9 @@ protected:
     // as it may cause unexpected behaviors (a JavaScript object with a
     // fallback always returns true when checked for a method's
     // existence).
-    void bindFallbackCallback(Callback* fallbackCallback)
+    void bindFallbackCallback(PassOwnPtr<Callback> fallbackCallback)
     {
-        m_fallbackCallback.set(fallbackCallback);
+        m_fallbackCallback = fallbackCallback;
     }
 
     // A wrapper for BindFallbackCallback, to simplify the common case of
@@ -201,10 +202,10 @@ protected:
     void bindFallbackMethod(void (T::*method)(const CppArgumentList&, CppVariant*))
     {
         if (method) {
-            Callback* callback = new MemberCallback<T>(static_cast<T*>(this), method);
-            bindFallbackCallback(callback);
+            OwnPtr<Callback> callback = adoptPtr(new MemberCallback<T>(static_cast<T*>(this), method));
+            bindFallbackCallback(callback.release());
         } else
-            bindFallbackCallback(0);
+            bindFallbackCallback(PassOwnPtr<Callback>());
     }
 
     // Some fields are protected because some tests depend on accessing them,

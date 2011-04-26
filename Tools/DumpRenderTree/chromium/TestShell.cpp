@@ -111,13 +111,13 @@ TestShell::TestShell(bool testShellMode)
     WebRuntimeFeatures::enableIndexedDatabase(true);
     WebRuntimeFeatures::enableFileSystem(true);
     WebRuntimeFeatures::enableJavaScriptI18NAPI(true);
-    m_accessibilityController.set(new AccessibilityController(this));
-    m_layoutTestController.set(new LayoutTestController(this));
-    m_eventSender.set(new EventSender(this));
-    m_plainTextController.set(new PlainTextController());
-    m_textInputController.set(new TextInputController(this));
-    m_notificationPresenter.set(new NotificationPresenter(this));
-    m_printer.set(m_testShellMode ? TestEventPrinter::createTestShellPrinter() : TestEventPrinter::createDRTPrinter());
+    m_accessibilityController = adoptPtr(new AccessibilityController(this));
+    m_layoutTestController = adoptPtr(new LayoutTestController(this));
+    m_eventSender = adoptPtr(new EventSender(this));
+    m_plainTextController = adoptPtr(new PlainTextController());
+    m_textInputController = adoptPtr(new TextInputController(this));
+    m_notificationPresenter = adoptPtr(new NotificationPresenter(this));
+    m_printer = m_testShellMode ? TestEventPrinter::createTestShellPrinter() : TestEventPrinter::createDRTPrinter();
 
     // 30 second is the same as the value in Mac DRT.
     // If we use a value smaller than the timeout value of
@@ -130,7 +130,7 @@ TestShell::TestShell(bool testShellMode)
 
 void TestShell::createMainWindow()
 {
-    m_drtDevToolsAgent.set(new DRTDevToolsAgent);
+    m_drtDevToolsAgent = adoptPtr(new DRTDevToolsAgent);
     m_webViewHost = createNewWindow(WebURL(), m_drtDevToolsAgent.get());
     m_webView = m_webViewHost->webView();
     m_drtDevToolsAgent->setWebView(m_webView);
@@ -147,7 +147,7 @@ TestShell::~TestShell()
 
 void TestShell::createDRTDevToolsClient(DRTDevToolsAgent* agent)
 {
-    m_drtDevToolsClient.set(new DRTDevToolsClient(agent, m_devTools->webView()));
+    m_drtDevToolsClient = adoptPtr(new DRTDevToolsClient(agent, m_devTools->webView()));
 }
 
 void TestShell::showDevTools()

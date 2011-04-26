@@ -73,8 +73,10 @@ private:
 
 class GetterPropertyCallback : public CppBoundClass::PropertyCallback {
 public:
-    GetterPropertyCallback(CppBoundClass::GetterCallback* callback)
-        : m_callback(callback) { }
+    GetterPropertyCallback(PassOwnPtr<CppBoundClass::GetterCallback> callback)
+        : m_callback(callback)
+    {
+    }
 
     virtual bool getValue(CppVariant* value)
     {
@@ -290,7 +292,7 @@ void CppBoundClass::bindCallback(const string& name, Callback* callback)
     m_methods.set(ident, callback);
 }
 
-void CppBoundClass::bindGetterCallback(const string& name, GetterCallback* callback)
+void CppBoundClass::bindGetterCallback(const string& name, PassOwnPtr<GetterCallback> callback)
 {
     PropertyCallback* propertyCallback = callback ? new GetterPropertyCallback(callback) : 0;
     bindProperty(name, propertyCallback);
