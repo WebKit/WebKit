@@ -1,3 +1,13 @@
+2011-04-26  Antti Koivisto  <antti@apple.com>
+
+        Reviewed by Adele Peterson.
+
+        Don't strip fragments from file: urls in memory cache
+        https://bugs.webkit.org/show_bug.cgi?id=59463
+
+        * fast/loader/file-protocol-fragment-expected.txt: Added.
+        * fast/loader/file-protocol-fragment.html: Added.
+
 2011-04-26  Stephen White  <senorblanco@chromium.org>
 
         Unreviewed; chromium test expectations update.
