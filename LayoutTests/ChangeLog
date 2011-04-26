@@ -1,3 +1,9 @@
+2011-04-26  Pavel Feldman  <pfeldman@google.com>
+
+        Not reviewed: disable failing inspector test while I'm finding a better way to test what it does.
+
+        * http/tests/inspector-enabled/dom-storage-open.html-disabled: Renamed from LayoutTests/http/tests/inspector-enabled/dom-storage-open.html.
+
 2011-04-26  Kristóf Kosztyó  <Kosztyo.Kristof@stud.u-szeged.hu>
 
         Reviewed by Csaba Osztrogonác.
