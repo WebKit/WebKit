@@ -132,8 +132,8 @@ Page::Page(const PageClients& pageClients)
     , m_geolocationController(adoptPtr(new GeolocationController(this, pageClients.geolocationClient)))
 #endif
 #if ENABLE(DEVICE_ORIENTATION)
-    , m_deviceMotionController(RuntimeEnabledFeatures::deviceMotionEnabled() ? new DeviceMotionController(pageClients.deviceMotionClient) : 0)
-    , m_deviceOrientationController(RuntimeEnabledFeatures::deviceOrientationEnabled() ? new DeviceOrientationController(this, pageClients.deviceOrientationClient) : 0)
+    , m_deviceMotionController(RuntimeEnabledFeatures::deviceMotionEnabled() ? adoptPtr(new DeviceMotionController(pageClients.deviceMotionClient)) : PassOwnPtr<DeviceMotionController>())
+    , m_deviceOrientationController(RuntimeEnabledFeatures::deviceOrientationEnabled() ? adoptPtr(new DeviceOrientationController(this, pageClients.deviceOrientationClient)) : PassOwnPtr<DeviceOrientationController>())
 #endif
 #if ENABLE(INPUT_SPEECH)
     , m_speechInputClient(pageClients.speechInputClient)
@@ -845,7 +845,7 @@ SpeechInput* Page::speechInput()
 {
     ASSERT(m_speechInputClient);
     if (!m_speechInput.get())
-        m_speechInput.set(new SpeechInput(m_speechInputClient));
+        m_speechInput = adoptPtr(new SpeechInput(m_speechInputClient));
     return m_speechInput.get();
 }
 #endif

@@ -38,9 +38,9 @@ PlatformGestureRecognizer::~PlatformGestureRecognizer() { }
 
 // To get a useful GestureRecognizer, a specific platform should return something
 // here that meets its needs. EventHandler will ignore null GestureRecognizers.
-PlatformGestureRecognizer* PlatformGestureRecognizer::create()
+PassOwnPtr<PlatformGestureRecognizer> PlatformGestureRecognizer::create()
 {
-    return 0;
+    return PassOwnPtr<PlatformGestureRecognizer>();
 }
 
 } // namespace WebCore

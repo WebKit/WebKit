@@ -112,7 +112,7 @@ ScriptController::ScriptController(Frame* frame)
     , m_processingTimerCallback(false)
     , m_paused(false)
     , m_allowPopupsFromPlugin(false)
-    , m_proxy(new V8Proxy(frame))
+    , m_proxy(adoptPtr(new V8Proxy(frame)))
 #if ENABLE(NETSCAPE_PLUGIN_API)
     , m_windowScriptNPObject(0)
 #endif

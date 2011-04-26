@@ -1,3 +1,47 @@
+2011-04-26  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by David Levin.
+
+        Fix more strict OwnPtr violations in WebCore
+        https://bugs.webkit.org/show_bug.cgi?id=59433
+
+        These manifest in the Chromium build.
+
+        * bindings/v8/ScriptController.cpp:
+        (WebCore::ScriptController::ScriptController):
+        * bindings/v8/ScriptDebugServer.cpp:
+        (WebCore::ScriptDebugServer::editScriptSource):
+        * bindings/v8/V8DOMMap.cpp:
+        (WebCore::DOMDataStoreHandle::DOMDataStoreHandle):
+        * bindings/v8/V8Proxy.cpp:
+        (WebCore::V8Proxy::precompileScript):
+        * bindings/v8/WorkerScriptController.cpp:
+        (WebCore::WorkerScriptController::WorkerScriptController):
+        * page/Page.cpp:
+        (WebCore::Page::Page):
+        (WebCore::Page::speechInput):
+        * platform/PlatformGestureRecognizer.cpp:
+        (WebCore::PlatformGestureRecognizer::create):
+        * platform/PlatformGestureRecognizer.h:
+        * platform/graphics/chromium/DrawingBufferChromium.cpp:
+        (WebCore::DrawingBuffer::DrawingBuffer):
+        * platform/graphics/chromium/cc/CCLayerImpl.cpp:
+        (WebCore::CCLayerImpl::CCLayerImpl):
+        * platform/graphics/gpu/Texture.cpp:
+        (WebCore::Texture::create):
+        * platform/image-decoders/bmp/BMPImageDecoder.cpp:
+        (WebCore::BMPImageDecoder::decodeHelper):
+        * platform/image-decoders/gif/GIFImageDecoder.cpp:
+        (WebCore::GIFImageDecoder::decode):
+        * platform/image-decoders/ico/ICOImageDecoder.cpp:
+        (WebCore::ICOImageDecoder::decodeAtIndex):
+        * platform/image-decoders/jpeg/JPEGImageDecoder.cpp:
+        (WebCore::JPEGImageDecoder::decode):
+        * platform/image-decoders/png/PNGImageDecoder.cpp:
+        (WebCore::PNGImageDecoder::decode):
+        * storage/chromium/DatabaseTrackerChromium.cpp:
+        (WebCore::DatabaseTracker::addOpenDatabase):
+
 2011-04-25  David Levin  <levin@chromium.org>
 
         Reviewed by Adam Barth.

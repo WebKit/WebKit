@@ -92,7 +92,7 @@ PassRefPtr<Texture> Texture::create(GraphicsContext3D* context, Format format, i
     TilingData tiling(maxTextureSize, width, height, true);
     int numTiles = tiling.numTiles();
 
-    OwnPtr<Vector<unsigned int> > textureIds(new Vector<unsigned int>(numTiles));
+    OwnPtr<Vector<unsigned int> > textureIds = adoptPtr(new Vector<unsigned int>(numTiles));
     textureIds->fill(0, numTiles);
 
     for (int i = 0; i < numTiles; i++) {

@@ -76,7 +76,7 @@ void DatabaseTracker::addOpenDatabase(AbstractDatabase* database)
     ASSERT(database->scriptExecutionContext()->isContextThread());
     MutexLocker openDatabaseMapLock(m_openDatabaseMapGuard);
     if (!m_openDatabaseMap)
-        m_openDatabaseMap.set(new DatabaseOriginMap());
+        m_openDatabaseMap = adoptPtr(new DatabaseOriginMap());
 
     DatabaseNameMap* nameMap = m_openDatabaseMap->get(database->securityOrigin());
     if (!nameMap) {

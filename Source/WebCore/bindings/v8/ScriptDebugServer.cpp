@@ -218,7 +218,7 @@ bool ScriptDebugServer::editScriptSource(const String& sourceID, const String& n
 
     OwnPtr<v8::Context::Scope> contextScope;
     if (!isPaused())
-        contextScope.set(new v8::Context::Scope(v8::Debug::GetDebugContext()));
+        contextScope = adoptPtr(new v8::Context::Scope(v8::Debug::GetDebugContext()));
 
     v8::Handle<v8::Function> function = v8::Local<v8::Function>::Cast(m_debuggerScript.get()->Get(v8::String::New("editScriptSource")));
     v8::Handle<v8::Value> argv[] = { v8String(sourceID), v8String(newContent) };

@@ -25,7 +25,9 @@
 
 #include "config.h"
 #include "GIFImageDecoder.h"
+
 #include "GIFImageReader.h"
+#include <wtf/PassOwnPtr.h>
 
 namespace WebCore {
 
@@ -312,7 +314,7 @@ void GIFImageDecoder::decode(unsigned haltAtFrame, GIFQuery query)
         return;
 
     if (!m_reader)
-        m_reader.set(new GIFImageReader(this));
+        m_reader = adoptPtr(new GIFImageReader(this));
 
     // If we couldn't decode the image but we've received all the data, decoding
     // has failed.

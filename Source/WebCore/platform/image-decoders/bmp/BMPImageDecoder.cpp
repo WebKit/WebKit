@@ -32,6 +32,7 @@
 #include "BMPImageDecoder.h"
 
 #include "BMPImageReader.h"
+#include <wtf/PassOwnPtr.h>
 
 namespace WebCore {
 
@@ -109,7 +110,7 @@ bool BMPImageDecoder::decodeHelper(bool onlySize)
         return false;
 
     if (!m_reader) {
-        m_reader.set(new BMPImageReader(this, m_decodedOffset, imgDataOffset, false));
+        m_reader = adoptPtr(new BMPImageReader(this, m_decodedOffset, imgDataOffset, false));
         m_reader->setData(m_data.get());
     }
 

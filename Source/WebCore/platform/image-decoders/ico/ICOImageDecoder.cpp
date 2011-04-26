@@ -35,6 +35,7 @@
 
 #include "BMPImageReader.h"
 #include "PNGImageDecoder.h"
+#include <wtf/PassOwnPtr.h>
 
 namespace WebCore {
 
@@ -191,7 +192,7 @@ bool ICOImageDecoder::decodeAtIndex(size_t index)
             // We need to have already sized m_frameBufferCache before this, and
             // we must not resize it again later (see caution in frameCount()).
             ASSERT(m_frameBufferCache.size() == m_dirEntries.size());
-            m_bmpReaders[index].set(new BMPImageReader(this, dirEntry.m_imageOffset, 0, true));
+            m_bmpReaders[index] = adoptPtr(new BMPImageReader(this, dirEntry.m_imageOffset, 0, true));
             m_bmpReaders[index]->setData(m_data.get());
             m_bmpReaders[index]->setBuffer(&m_frameBufferCache[index]);
         }
@@ -202,7 +203,7 @@ bool ICOImageDecoder::decodeAtIndex(size_t index)
     }
 
     if (!m_pngDecoders[index]) {
-        m_pngDecoders[index].set(
+        m_pngDecoders[index] = adoptPtr(
             new PNGImageDecoder(m_premultiplyAlpha ? ImageSource::AlphaPremultiplied : ImageSource::AlphaNotPremultiplied,
                                 m_ignoreGammaAndColorProfile ? ImageSource::GammaAndColorProfileIgnored : ImageSource::GammaAndColorProfileApplied));
         setDataForPNGDecoderAtIndex(index);

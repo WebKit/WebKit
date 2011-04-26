@@ -39,7 +39,7 @@
 namespace WebCore {
 
 DOMDataStoreHandle::DOMDataStoreHandle()
-    : m_store(new ScopedDOMDataStore(DOMData::getCurrent()))
+    : m_store(adoptPtr(new ScopedDOMDataStore(DOMData::getCurrent())))
 {
 }
 

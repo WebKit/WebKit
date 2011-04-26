@@ -39,7 +39,9 @@
 
 #include "config.h"
 #include "PNGImageDecoder.h"
+
 #include "png.h"
+#include <wtf/PassOwnPtr.h>
 
 #if defined(PNG_LIBPNG_VER_MAJOR) && defined(PNG_LIBPNG_VER_MINOR) && (PNG_LIBPNG_VER_MAJOR > 1 || (PNG_LIBPNG_VER_MAJOR == 1 && PNG_LIBPNG_VER_MINOR >= 4))
 #define JMPBUF(png_ptr) png_jmpbuf(png_ptr)
@@ -424,7 +426,7 @@ void PNGImageDecoder::decode(bool onlySize)
         return;
 
     if (!m_reader)
-        m_reader.set(new PNGImageReader(this));
+        m_reader = adoptPtr(new PNGImageReader(this));
 
     // If we couldn't decode the image but we've received all the data, decoding
     // has failed.

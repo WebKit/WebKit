@@ -40,6 +40,7 @@
 #include "config.h"
 #include "JPEGImageDecoder.h"
 #include <stdio.h>  // Needed by jpeglib.h for FILE.
+#include <wtf/PassOwnPtr.h>
 
 #if OS(WINCE) || PLATFORM(BREWMP_SIMULATOR)
 // Remove warning: 'FAR' macro redefinition
@@ -528,7 +529,7 @@ void JPEGImageDecoder::decode(bool onlySize)
         return;
 
     if (!m_reader)
-        m_reader.set(new JPEGImageReader(this));
+        m_reader = adoptPtr(new JPEGImageReader(this));
 
     // If we couldn't decode the image but we've received all the data, decoding
     // has failed.

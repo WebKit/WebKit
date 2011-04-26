@@ -86,7 +86,7 @@ DrawingBuffer::DrawingBuffer(GraphicsContext3D* context,
     , m_stencilBuffer(0)
     , m_multisampleFBO(0)
     , m_multisampleColorBuffer(0)
-    , m_internal(new DrawingBufferInternal)
+    , m_internal(adoptPtr(new DrawingBufferInternal))
 #if ENABLE(SKIA_GPU)
     , m_grContext(0)
 #endif

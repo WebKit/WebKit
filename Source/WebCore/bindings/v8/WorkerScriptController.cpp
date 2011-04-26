@@ -51,7 +51,7 @@ namespace WebCore {
 
 WorkerScriptController::WorkerScriptController(WorkerContext* workerContext)
     : m_workerContext(workerContext)
-    , m_proxy(new WorkerContextExecutionProxy(workerContext))
+    , m_proxy(adoptPtr(new WorkerContextExecutionProxy(workerContext)))
     , m_executionForbidden(false)
 {
 }
