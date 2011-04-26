@@ -1,3 +1,16 @@
+2011-04-26  Xan Lopez  <xlopez@igalia.com>
+
+        Reviewed by Daniel Bates.
+
+        Unused but set variable warning in MacroAssembelX86_64
+        https://bugs.webkit.org/show_bug.cgi?id=59482
+
+        * assembler/MacroAssemblerX86_64.h:
+        (JSC::MacroAssemblerX86_64::call): do not declare the label
+        variable if we are not going to use it.
+        (JSC::MacroAssemblerX86_64::tailRecursiveCall): ditto.
+        (JSC::MacroAssemblerX86_64::makeTailRecursiveCall): ditto.
+
 2011-04-26  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Mark Rowe.
