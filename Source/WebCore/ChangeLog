@@ -1,3 +1,12 @@
+2011-04-25  Adam Barth  <abarth@webkit.org>
+
+        Re-land changes to ValidationMessage.
+
+        * html/ValidationMessage.cpp:
+        (WebCore::ValidationMessage::setMessage):
+        (WebCore::ValidationMessage::setMessageDOMAndStartTimer):
+        (WebCore::ValidationMessage::requestToHideMessage):
+
 2011-04-25  Ojan Vafai  <ojan@chromium.org>
 
         Reviewed by James Robinson.
