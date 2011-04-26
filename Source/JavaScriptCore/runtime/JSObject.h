@@ -173,7 +173,7 @@ namespace JSC {
         void transitionTo(JSGlobalData&, Structure*);
 
         void removeDirect(JSGlobalData&, const Identifier& propertyName);
-        bool hasCustomProperties() { return !m_structure->isEmpty(); }
+        bool hasCustomProperties() { return m_structure->didTransition(); }
         bool hasGetterSetterProperties() { return m_structure->hasGetterSetterProperties(); }
 
         bool putDirect(JSGlobalData&, const Identifier& propertyName, JSValue, unsigned attr, bool checkReadOnly, PutPropertySlot&);

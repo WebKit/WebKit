@@ -189,6 +189,7 @@ Structure::Structure(JSGlobalData& globalData, JSValue prototype, const TypeInfo
     , m_specificFunctionThrashCount(0)
     , m_anonymousSlotCount(anonymousSlotCount)
     , m_preventExtensions(false)
+    , m_didTransition(false)
 {
     ASSERT(m_prototype);
     ASSERT(m_prototype.isObject() || m_prototype.isNull());
@@ -211,6 +212,7 @@ Structure::Structure(JSGlobalData& globalData)
     , m_specificFunctionThrashCount(0)
     , m_anonymousSlotCount(0)
     , m_preventExtensions(false)
+    , m_didTransition(false)
 {
     ASSERT(m_prototype);
     ASSERT(m_prototype.isNull());
@@ -232,6 +234,7 @@ Structure::Structure(JSGlobalData& globalData, const Structure* previous)
     , m_specificFunctionThrashCount(previous->m_specificFunctionThrashCount)
     , m_anonymousSlotCount(previous->anonymousSlotCount())
     , m_preventExtensions(previous->m_preventExtensions)
+    , m_didTransition(true)
 {
     ASSERT(m_prototype);
     ASSERT(m_prototype.isObject() || m_prototype.isNull());

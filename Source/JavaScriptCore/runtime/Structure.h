@@ -84,6 +84,7 @@ namespace JSC {
         bool isSealed(JSGlobalData&);
         bool isFrozen(JSGlobalData&);
         bool isExtensible() const { return !m_preventExtensions; }
+        bool didTransition() const { return m_didTransition; }
 
         Structure* flattenDictionaryStructure(JSGlobalData&, JSObject*);
 
@@ -247,7 +248,8 @@ namespace JSC {
         unsigned m_specificFunctionThrashCount : 2;
         unsigned m_anonymousSlotCount : 5;
         unsigned m_preventExtensions : 1;
-        // 4 free bits
+        unsigned m_didTransition : 1;
+        // 3 free bits
     };
 
     inline size_t Structure::get(JSGlobalData& globalData, const Identifier& propertyName)

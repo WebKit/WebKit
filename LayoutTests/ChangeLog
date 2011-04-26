@@ -1,3 +1,14 @@
+2011-04-25  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        Custom prototypes on DOM objects don't persist after garbage collection
+        https://bugs.webkit.org/show_bug.cgi?id=59412
+
+        * fast/dom/gc-custom-prototype-expected.txt: Added.
+        * fast/dom/gc-custom-prototype.html: Added.
+        * fast/dom/script-tests/dataset-gc.js:
+
 2011-04-25  Daniel Bates  <dbates@webkit.org>
 
         Update some call sites that referenced the old location for

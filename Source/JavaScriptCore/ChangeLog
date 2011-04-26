@@ -1,3 +1,25 @@
+2011-04-25  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        Custom prototypes on DOM objects don't persist after garbage collection
+        https://bugs.webkit.org/show_bug.cgi?id=59412
+        
+        SunSpider reports no change.
+        
+        The hasCustomProperties() check didn't check for a custom prototype.
+
+        * runtime/JSObject.h:
+        (JSC::JSObject::hasCustomProperties): Changed to delegate to Structure
+        because it is the "truth" about an object's pedigree.
+
+        * runtime/Structure.cpp:
+        (JSC::Structure::Structure):
+        * runtime/Structure.h:
+        (JSC::Structure::didTransition): Track whether a Structure has ever
+        transitioned for any reason. If so, we have to assume that the object
+        holding it is custom in some way.
+
 2011-04-25  Gavin Barraclough  <barraclough@apple.com>
 
         Reviewed by Geoff Garen.
