@@ -757,10 +757,6 @@ http/tests/misc/willCacheResponse-delegate-callback.html
 # Missing layoutTestController.setHandlesAuthenticationChallenges()
 http/tests/misc/authentication-sent-to-redirect.html
 
-# Missing layoutTestController.setAutofilled()
-fast/forms/input-autofilled.html
-fast/forms/reset-autofilled.html
-
 # ------- broken ICO file decoding
 fast/images/favicon-as-image.html
 fast/images/icon-0colors.html

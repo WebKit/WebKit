@@ -109,6 +109,7 @@ public:
 
     static void garbageCollectorCollect();
     static void garbageCollectorCollectOnAlternateThread(bool waitUntilDone);
+    static void setAutofilled(const QWebElement&, bool enabled);
     static void setJavaScriptProfilingEnabled(QWebFrame*, bool enabled);
     static int javaScriptObjectsCount();
     static void clearScriptWorlds();

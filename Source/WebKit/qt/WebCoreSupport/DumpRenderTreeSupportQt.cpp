@@ -53,6 +53,7 @@
 #include "GeolocationPosition.h"
 #include "HistoryItem.h"
 #include "HTMLInputElement.h"
+#include "InputElement.h"
 #include "InspectorController.h"
 #include "NodeList.h"
 #include "NotificationPresenterClientQt.h"
@@ -233,6 +234,18 @@ void DumpRenderTreeSupportQt::setTimelineProfilingEnabled(QWebPage* page, bool e
 bool DumpRenderTreeSupportQt::hasDocumentElement(QWebFrame* frame)
 {
     return QWebFramePrivate::core(frame)->document()->documentElement();
+}
+
+void DumpRenderTreeSupportQt::setAutofilled(const QWebElement& element, bool isAutofilled)
+{
+    WebCore::Element* webElement = element.m_element;
+    if (!webElement)
+        return;
+    InputElement* inputElement = webElement->toInputElement();
+    if (!inputElement)
+        return;
+
+    static_cast<HTMLInputElement*>(inputElement)->setAutofilled(isAutofilled);
 }
 
 void DumpRenderTreeSupportQt::setJavaScriptProfilingEnabled(QWebFrame* frame, bool enabled)

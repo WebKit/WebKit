@@ -425,6 +425,11 @@ void LayoutTestController::setAppCacheMaximumSize(unsigned long long quota)
     m_drt->webPage()->settings()->setOfflineWebApplicationCacheQuota(quota);
 }
 
+void LayoutTestController::setAutofilled(const QWebElement& element, bool isAutofilled)
+{
+    return DumpRenderTreeSupportQt::setAutofilled(element, isAutofilled);
+}
+
 void LayoutTestController::setJavaScriptProfilingEnabled(bool enable)
 {
     setDeveloperExtrasEnabled(enable);

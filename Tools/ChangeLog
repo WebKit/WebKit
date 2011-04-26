@@ -1,3 +1,14 @@
+2011-04-26  Kristóf Kosztyó  <Kosztyo.Kristof@stud.u-szeged.hu>
+
+        Reviewed by Csaba Osztrogonác.
+
+        [Qt] Implement LayoutTestController::setAutofilled
+        https://bugs.webkit.org/show_bug.cgi?id=59439
+
+        * DumpRenderTree/qt/LayoutTestControllerQt.cpp:
+        (LayoutTestController::setAutofilled):
+        * DumpRenderTree/qt/LayoutTestControllerQt.h:
+
 2011-04-25  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Mark Rowe.
