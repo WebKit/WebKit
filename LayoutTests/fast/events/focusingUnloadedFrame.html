@@ -1,26 +1,21 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Frameset//EN"
-"http://www.w3.org/TR/html4/frameset.dtd"> 
+"http://www.w3.org/TR/html4/frameset.dtd">
 <html>
 <head>
 
 
 <script>
-function step2() {
+onload = function() {
+    if (!window.layoutTestController)
+        return;
+
+    layoutTestController.dumpAsText();
+    layoutTestController.dumpChildFramesAsText();
+    
     var modifiers = ["altKey"];
     eventSender.keyDown("\t", modifiers);
     eventSender.keyDown("\t", modifiers);
-    window.layoutTestController.notifyDone();
 }
-
-function foo() {
-    if (!window.layoutTestController)
-        return;
-    
-    window.layoutTestController.waitUntilDone();
-    window.setTimeout('step2()', 100);
-}
-
-window.onload = foo;
 </script>
 
 </head>
