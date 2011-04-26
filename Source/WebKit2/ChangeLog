@@ -1,3 +1,18 @@
+2011-04-26  Brian Weinstein  <bweinstein@apple.com>
+
+        Reviewed by Steve Falkenburg.
+
+        WebKit2: Docked Inspector doesn't behave well if inspected web view isn't at 0,0
+        https://bugs.webkit.org/show_bug.cgi?id=59554
+        <rdar://problem/9341188>
+        
+        Use GetWindowRect and ScreenToClient to properly place our inspector and inspected
+        web views instead of using GetClientRect. We need to correctly handle the case where
+        the inspected web view isn't at 0, 0.
+
+        * UIProcess/win/WebInspectorProxyWin.cpp:
+        (WebKit::WebInspectorProxy::platformSetAttachedWindowHeight):
+
 2011-04-26  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Mark Rowe.

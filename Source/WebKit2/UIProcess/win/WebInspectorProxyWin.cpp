@@ -275,20 +275,23 @@ void WebInspectorProxy::platformSetAttachedWindowHeight(unsigned height)
     HWND parentWindow = ::GetParent(inspectedWindow);
 
     RECT parentWindowRect;
-    ::GetClientRect(parentWindow, &parentWindowRect);
+    ::GetWindowRect(parentWindow, &parentWindowRect);
 
-    RECT inspectedRect;
-    ::GetClientRect(inspectedWindow, &inspectedRect);
+    RECT inspectedWindowRect;
+    ::GetWindowRect(inspectedWindow, &inspectedWindowRect);
 
     int totalHeight = parentWindowRect.bottom - parentWindowRect.top;
-    int webViewWidth = inspectedRect.right - inspectedRect.left;
+    int webViewWidth = inspectedWindowRect.right - inspectedWindowRect.left;
+
+    POINT inspectedWindowOrigin = { inspectedWindowRect.left, inspectedWindowRect.top };
+    ::ScreenToClient(parentWindow, &inspectedWindowOrigin);
 
     HWND inspectorWindow = m_inspectorView->window();
-    ::SetWindowPos(inspectorWindow, 0, 0, totalHeight - height, webViewWidth, height, SWP_NOZORDER);
+    ::SetWindowPos(inspectorWindow, 0, inspectedWindowOrigin.x, totalHeight - height, webViewWidth, height, SWP_NOZORDER);
 
     // We want to set the inspected web view height to the totalHeight, because the height adjustment
     // of the inspected WebView happens in onWindowPosChanging, not here.
-    ::SetWindowPos(inspectedWindow, 0, 0, 0, webViewWidth, totalHeight, SWP_NOZORDER);
+    ::SetWindowPos(inspectedWindow, 0, inspectedWindowOrigin.x, inspectedWindowOrigin.y, webViewWidth, totalHeight, SWP_NOZORDER);
 
     ::RedrawWindow(inspectorWindow, 0, 0, RDW_INVALIDATE | RDW_ALLCHILDREN | RDW_UPDATENOW); 
     ::RedrawWindow(inspectedWindow, 0, 0, RDW_INVALIDATE | RDW_ALLCHILDREN | RDW_UPDATENOW);
