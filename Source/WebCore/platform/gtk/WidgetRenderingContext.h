@@ -52,10 +52,11 @@ public:
     void gtkPaintVLine(const IntRect&, GtkWidget*, GtkStateType, const gchar*);
 
 private:
+    void calculateClipRect(const IntRect&, GdkRectangle*);
+
     GraphicsContext* m_graphicsContext;
     IntRect m_targetRect;
-    GdkRectangle m_paintRect;
-    IntSize m_extraSpace;
+    IntSize m_paintOffset;
     bool m_hadError;
     GdkDrawable* m_target;
 

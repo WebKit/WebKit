@@ -1,3 +1,35 @@
+2011-04-26  Martin Robinson  <mrobinson@igalia.com>
+
+        Reviewed by Eric Seidel.
+
+        [GTK]  fast/block/float/overhanging-tall-block.html crashes in the bots
+        https://bugs.webkit.org/show_bug.cgi?id=58818
+
+        Prevent allocating scratch buffers larger than the target GdkDrawable
+        when creating a WidgetRenderingContext. This prevents incredibly large
+        widgets from crashing the X Server. This change also allowed greatly
+        simplifying the way that the painting offset is calculated.
+
+        * platform/gtk/WidgetRenderingContext.cpp:
+        (WebCore::WidgetRenderingContext::WidgetRenderingContext): Never allocate a pixmap
+        larger than the target GdkDrawable.
+        (WebCore::WidgetRenderingContext::~WidgetRenderingContext): Calculate the offset of the
+        blit by looking at the location of the target rect itself, rather than delaying the
+        calculation up to this point.
+        (WebCore::WidgetRenderingContext::calculateClipRect): Added.
+        (WebCore::WidgetRenderingContext::gtkPaintBox): Use the new calculateClipRectHelper.
+        (WebCore::WidgetRenderingContext::gtkPaintFlatBox): Ditto.
+        (WebCore::WidgetRenderingContext::gtkPaintFocus): Ditto.
+        (WebCore::WidgetRenderingContext::gtkPaintSlider): Ditto.
+        (WebCore::WidgetRenderingContext::gtkPaintCheck): Ditto.
+        (WebCore::WidgetRenderingContext::gtkPaintOption): Ditto.
+        (WebCore::WidgetRenderingContext::gtkPaintShadow): Ditto.
+        (WebCore::WidgetRenderingContext::gtkPaintArrow): Ditto.
+        (WebCore::WidgetRenderingContext::gtkPaintVLine): Ditto.
+        * platform/gtk/WidgetRenderingContext.h: Remove some now unused members. Add
+        a member to store the IntSize mapping from the coordinates of the target to the coordinates
+        of the scratch buffer.
+
 2011-04-26  Patrick Gansterer  <paroga@webkit.org>
 
         Reviewed by Adam Barth.

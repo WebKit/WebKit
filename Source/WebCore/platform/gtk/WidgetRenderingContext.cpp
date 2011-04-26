@@ -77,21 +77,26 @@ WidgetRenderingContext::WidgetRenderingContext(GraphicsContext* graphicsContext,
     // to a temporary surface and preserve transparency. To ensure decent widget rendering, just
     // paint directly to the target drawable. This will not render CSS rotational transforms properly.
     if (!theme->m_themePartsHaveRGBAColormap && graphicsContext->gdkWindow()) {
-        m_paintRect = graphicsContext->getCTM().mapRect(targetRect);
         m_target = graphicsContext->gdkWindow();
         return;
     }
 
+    // We never want to create a scratch buffer larger than the size of our target GdkDrawable.
+    // This prevents giant pixmap allocations for very large widgets in smaller views.
+    int maxWidth = 0, maxHeight = 0;
+    gdk_drawable_get_size(graphicsContext->gdkWindow(), &maxWidth, &maxHeight);
+    m_targetRect.setSize(m_targetRect.size().shrunkTo(IntSize(maxWidth, maxHeight)));
+
     // Widgets sometimes need to draw outside their boundaries for things such as
     // exterior focus. We want to allocate a some extra pixels in our surface for this.
-    m_extraSpace = IntSize(15, 15);
+    static int extraSpace = 15;
+    m_targetRect.inflate(extraSpace);
 
-    // Offset the target rectangle so that the extra space is within the boundaries of the scratch buffer.
-    m_paintRect = IntRect(IntPoint(m_extraSpace.width(), m_extraSpace.height()),
-                                   m_targetRect.size());
+    // This offset will map a point in the coordinate system of the widget to the coordinate system of the painting buffer.
+    m_paintOffset = targetRect.location() - m_targetRect.location();
 
-    int width = m_targetRect.width() + (m_extraSpace.width() * 2);
-    int height = m_targetRect.height() + (m_extraSpace.height() * 2);
+    int width = m_targetRect.width() + (extraSpace * 2);
+    int height = m_targetRect.height() + (extraSpace * 2);
     int scratchWidth = 0;
     int scratchHeight = 0;
     if (gScratchBuffer)
@@ -132,88 +137,100 @@ WidgetRenderingContext::~WidgetRenderingContext()
     cairo_t* cairoContext = m_graphicsContext->platformContext()->cr();
     RefPtr<cairo_pattern_t> previousSource(cairo_get_source(cairoContext));
 
-    // The blit rectangle is the original target rectangle adjusted for any extra space.
-    IntRect fullTargetRect(m_targetRect);
-    fullTargetRect.inflateX(m_extraSpace.width());
-    fullTargetRect.inflateY(m_extraSpace.height());
-
-    gdk_cairo_set_source_pixmap(cairoContext, gScratchBuffer, fullTargetRect.x(), fullTargetRect.y());
-    cairo_rectangle(cairoContext, fullTargetRect.x(), fullTargetRect.y(), fullTargetRect.width(), fullTargetRect.height());
+    gdk_cairo_set_source_pixmap(cairoContext, gScratchBuffer, m_targetRect.x(), m_targetRect.y());
+    cairo_rectangle(cairoContext, m_targetRect.x(), m_targetRect.y(), m_targetRect.width(), m_targetRect.height());
     cairo_fill(cairoContext);
     cairo_set_source(cairoContext, previousSource.get());
     scheduleScratchBufferPurge();
 }
 
+void WidgetRenderingContext::calculateClipRect(const IntRect& rect, GdkRectangle* clipRect)
+{
+    clipRect->x = m_paintOffset.width() + rect.x();
+    clipRect->y = m_paintOffset.height() + rect.y();
+    clipRect->width = m_targetRect.width();
+    clipRect->height = m_targetRect.height();
+}
+
 void WidgetRenderingContext::gtkPaintBox(const IntRect& rect, GtkWidget* widget, GtkStateType stateType, GtkShadowType shadowType, const gchar* detail)
 {
-    GdkRectangle paintRect = { m_paintRect.x + rect.x(), m_paintRect.y + rect.y(), rect.width(), rect.height() };
+    GdkRectangle clipRect;
+    calculateClipRect(rect, &clipRect);
 
     // Some widgets also need their allocation adjusted to account for extra space.
     // Right now only scrollbar buttons have significant allocations.
     GtkAllocation allocation;
     gtk_widget_get_allocation(widget, &allocation);
-    allocation.x += m_paintRect.x;
-    allocation.y += m_paintRect.y;
+    allocation.x += clipRect.x;
+    allocation.y += clipRect.y;
     gtk_widget_set_allocation(widget, &allocation);
 
-    gtk_paint_box(gtk_widget_get_style(widget), m_target, stateType, shadowType, &paintRect,
-                  widget, detail, paintRect.x, paintRect.y, paintRect.width, paintRect.height);
+    gtk_paint_box(gtk_widget_get_style(widget), m_target, stateType, shadowType, &clipRect,
+                  widget, detail, clipRect.x, clipRect.y, rect.width(), rect.height());
 }
 
 void WidgetRenderingContext::gtkPaintFlatBox(const IntRect& rect, GtkWidget* widget, GtkStateType stateType, GtkShadowType shadowType, const gchar* detail)
 {
-    GdkRectangle paintRect = { m_paintRect.x + rect.x(), m_paintRect.y + rect.y(), rect.width(), rect.height() };
-    gtk_paint_flat_box(gtk_widget_get_style(widget), m_target, stateType, shadowType, &paintRect,
-                       widget, detail, paintRect.x, paintRect.y, paintRect.width, paintRect.height);
+    GdkRectangle clipRect;
+    calculateClipRect(rect, &clipRect);
+    gtk_paint_flat_box(gtk_widget_get_style(widget), m_target, stateType, shadowType, &clipRect,
+                       widget, detail, clipRect.x, clipRect.y, rect.width(), rect.height());
 }
 
 void WidgetRenderingContext::gtkPaintFocus(const IntRect& rect, GtkWidget* widget, GtkStateType stateType, const gchar* detail)
 {
-    GdkRectangle paintRect = { m_paintRect.x + rect.x(), m_paintRect.y + rect.y(), rect.width(), rect.height() };
-    gtk_paint_focus(gtk_widget_get_style(widget), m_target, stateType, &paintRect, widget,
-                    detail, paintRect.x, paintRect.y, paintRect.width, paintRect.height);
+    GdkRectangle clipRect;
+    calculateClipRect(rect, &clipRect);
+    gtk_paint_focus(gtk_widget_get_style(widget), m_target, stateType, &clipRect, widget,
+                    detail, clipRect.x, clipRect.y, rect.width(), rect.height());
 }
 
 void WidgetRenderingContext::gtkPaintSlider(const IntRect& rect, GtkWidget* widget, GtkStateType stateType, GtkShadowType shadowType, const gchar* detail, GtkOrientation orientation)
 {
-    GdkRectangle paintRect = { m_paintRect.x + rect.x(), m_paintRect.y + rect.y(), rect.width(), rect.height() };
-    gtk_paint_slider(gtk_widget_get_style(widget), m_target, stateType, shadowType, &m_paintRect, widget,
-                     detail, paintRect.x, paintRect.y, paintRect.width, paintRect.height, orientation);
+    GdkRectangle clipRect;
+    calculateClipRect(rect, &clipRect);
+    gtk_paint_slider(gtk_widget_get_style(widget), m_target, stateType, shadowType, &clipRect, widget,
+                     detail, clipRect.x, clipRect.y, rect.width(), rect.height(), orientation);
 }
 
 void WidgetRenderingContext::gtkPaintCheck(const IntRect& rect, GtkWidget* widget, GtkStateType stateType, GtkShadowType shadowType, const gchar* detail)
 {
-    GdkRectangle paintRect = { m_paintRect.x + rect.x(), m_paintRect.y + rect.y(), rect.width(), rect.height() };
-    gtk_paint_check(gtk_widget_get_style(widget), m_target, stateType, shadowType, &paintRect, widget,
-                    detail, paintRect.x, paintRect.y, paintRect.width, paintRect.height);
+    GdkRectangle clipRect;
+    calculateClipRect(rect, &clipRect);
+    gtk_paint_check(gtk_widget_get_style(widget), m_target, stateType, shadowType, &clipRect, widget,
+                    detail, clipRect.x, clipRect.y, rect.width(), rect.height());
 }
 
 void WidgetRenderingContext::gtkPaintOption(const IntRect& rect, GtkWidget* widget, GtkStateType stateType, GtkShadowType shadowType, const gchar* detail)
 {
-    GdkRectangle paintRect = { m_paintRect.x + rect.x(), m_paintRect.y + rect.y(), rect.width(), rect.height() };
-    gtk_paint_option(gtk_widget_get_style(widget), m_target, stateType, shadowType, &paintRect, widget,
-                     detail, paintRect.x, paintRect.y, paintRect.width, paintRect.height);
+    GdkRectangle clipRect;
+    calculateClipRect(rect, &clipRect);
+    gtk_paint_option(gtk_widget_get_style(widget), m_target, stateType, shadowType, &clipRect, widget,
+                     detail, clipRect.x, clipRect.y, rect.width(), rect.height());
 }
 
 void WidgetRenderingContext::gtkPaintShadow(const IntRect& rect, GtkWidget* widget, GtkStateType stateType, GtkShadowType shadowType, const gchar* detail)
 {
-    GdkRectangle paintRect = { m_paintRect.x + rect.x(), m_paintRect.y + rect.y(), rect.width(), rect.height() };
-    gtk_paint_shadow(gtk_widget_get_style(widget), m_target, stateType, shadowType, &paintRect, widget,
-                     detail, paintRect.x, paintRect.y, paintRect.width, paintRect.height);
+    GdkRectangle clipRect;
+    calculateClipRect(rect, &clipRect);
+    gtk_paint_shadow(gtk_widget_get_style(widget), m_target, stateType, shadowType, &clipRect, widget,
+                     detail, clipRect.x, clipRect.y, rect.width(), rect.height());
 }
 
 void WidgetRenderingContext::gtkPaintArrow(const IntRect& rect, GtkWidget* widget, GtkStateType stateType, GtkShadowType shadowType, int arrowDirection, const gchar* detail)
 {
-    GdkRectangle paintRect = { m_paintRect.x + rect.x(), m_paintRect.y + rect.y(), rect.width(), rect.height() };
-    gtk_paint_arrow(gtk_widget_get_style(widget), m_target, stateType, shadowType, &paintRect, widget, detail,
-                    static_cast<GtkArrowType>(arrowDirection), TRUE, paintRect.x, paintRect.y, paintRect.width, paintRect.height);
+    GdkRectangle clipRect;
+    calculateClipRect(rect, &clipRect);
+    gtk_paint_arrow(gtk_widget_get_style(widget), m_target, stateType, shadowType, &clipRect, widget, detail,
+                    static_cast<GtkArrowType>(arrowDirection), TRUE, clipRect.x, clipRect.y, rect.width(), rect.height());
 }
 
 void WidgetRenderingContext::gtkPaintVLine(const IntRect& rect, GtkWidget* widget, GtkStateType stateType, const gchar* detail)
 {
-    GdkRectangle paintRect = { m_paintRect.x + rect.x(), m_paintRect.y + rect.y(), rect.width(), rect.height() };
-    gtk_paint_vline(gtk_widget_get_style(widget), m_target, stateType, &paintRect, widget, detail,
-                    paintRect.y, paintRect.y + paintRect.height, paintRect.x);
+    GdkRectangle clipRect;
+    calculateClipRect(rect, &clipRect);
+    gtk_paint_vline(gtk_widget_get_style(widget), m_target, stateType, &clipRect, widget, detail,
+                    clipRect.y, clipRect.y + rect.height(), clipRect.x);
 
 }
 
