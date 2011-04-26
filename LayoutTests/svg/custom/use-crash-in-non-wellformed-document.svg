@@ -1,0 +1,8 @@
+<?xml version="1.0" standalone="no"?>
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.0" width="400" height="400">
+    <script>
+        if (window.layoutTestController)
+            layoutTestController.dumpAsText();
+    </script>
+    <use xlink:href="#undefined">
+</svg>
