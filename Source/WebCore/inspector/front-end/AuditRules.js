@@ -711,11 +711,7 @@ WebInspector.AuditRules.ImageDimensionsRule.prototype = {
 
         function getStyles(nodeIds)
         {
-            if (!nodeIds) {
-                console.error("Failed to get styles");
-                return;
-            }
-            for (var i = 0; i < nodeIds.length; ++i)
+            for (var i = 0; nodeIds && i < nodeIds.length; ++i)
                 WebInspector.cssModel.getStylesAsync(nodeIds[i], imageStylesReady.bind(this, nodeIds[i], i === nodeIds.length - 1));
         }
 
@@ -763,6 +759,8 @@ WebInspector.AuditRules.CssInHeadRule.prototype = {
 
         function externalStylesheetsReceived(root, inlineStyleNodeIds, nodeIds)
         {
+            if (!nodeIds)
+                return;
             var externalStylesheetNodeIds = nodeIds;
             var result = null;
             if (inlineStyleNodeIds.length || externalStylesheetNodeIds.length) {
@@ -781,6 +779,8 @@ WebInspector.AuditRules.CssInHeadRule.prototype = {
 
         function inlineStylesReceived(root, nodeIds)
         {
+            if (!nodeIds)
+                return;
             WebInspector.domAgent.querySelectorAll(root.id, "body link[rel~='stylesheet'][href]", externalStylesheetsReceived.bind(null, root, nodeIds));
         }
 
@@ -825,6 +825,9 @@ WebInspector.AuditRules.StylesScriptsOrderRule.prototype = {
 
         function cssBeforeInlineReceived(lateStyleIds, nodeIds)
         {
+            if (!nodeIds)
+                return;
+
             var cssBeforeInlineCount = nodeIds.length;
             var result = null;
             if (lateStyleIds.length || cssBeforeInlineCount) {
@@ -842,6 +845,9 @@ WebInspector.AuditRules.StylesScriptsOrderRule.prototype = {
 
         function lateStylesReceived(root, nodeIds)
         {
+            if (!nodeIds)
+                return;
+
             WebInspector.domAgent.querySelectorAll(root.id, "head link[rel~='stylesheet'][href] ~ script:not([src])", cssBeforeInlineReceived.bind(null, nodeIds));
         }
 

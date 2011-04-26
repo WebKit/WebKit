@@ -122,9 +122,9 @@ WebInspector.CSSStyleModel.prototype = {
 
     setRuleSelector: function(ruleId, nodeId, newSelector, successCallback, failureCallback)
     {
-        function checkAffectsCallback(nodeId, successCallback, rulePayload, error, selectedNodeIds)
+        function checkAffectsCallback(nodeId, successCallback, rulePayload, selectedNodeIds)
         {
-            if (error)
+            if (!selectedNodeIds)
                 return;
             var doesAffectSelectedNode = (selectedNodeIds.indexOf(nodeId) >= 0);
             var rule = WebInspector.CSSRule.parsePayload(rulePayload);
@@ -137,8 +137,13 @@ WebInspector.CSSStyleModel.prototype = {
             // FIXME: looks like rulePayload is always null.
             if (error)
                 failureCallback();
-            else
-                WebInspector.domAgent.querySelectorAll(nodeId, newSelector, checkAffectsCallback.bind(this, nodeId, successCallback, rulePayload));
+            else {
+                var documentElementId = this._documentElementId(nodeId);
+                if (documentElementId)
+                    WebInspector.domAgent.querySelectorAll(documentElementId, newSelector, checkAffectsCallback.bind(this, nodeId, successCallback, rulePayload));
+                else
+                    failureCallback();
+            }
         }
 
         CSSAgent.setRuleSelector(ruleId, newSelector, callback.bind(this, nodeId, successCallback, failureCallback, newSelector));
@@ -146,8 +151,11 @@ WebInspector.CSSStyleModel.prototype = {
 
     addRule: function(nodeId, selector, successCallback, failureCallback)
     {
-        function checkAffectsCallback(nodeId, successCallback, rulePayload, error, selectedNodeIds)
+        function checkAffectsCallback(nodeId, successCallback, rulePayload, selectedNodeIds)
         {
+            if (!selectedNodeIds)
+                return;
+
             var doesAffectSelectedNode = (selectedNodeIds.indexOf(nodeId) >= 0);
             var rule = WebInspector.CSSRule.parsePayload(rulePayload);
             successCallback(rule, doesAffectSelectedNode);
@@ -159,11 +167,24 @@ WebInspector.CSSStyleModel.prototype = {
             if (error) {
                 // Invalid syntax for a selector
                 failureCallback();
-            } else
-                WebInspector.domAgent.querySelectorAll(nodeId, selector, checkAffectsCallback.bind(this, nodeId, successCallback, rulePayload));
+            } else {
+                var documentElementId = this._documentElementId(nodeId);
+                if (documentElementId)
+                    WebInspector.domAgent.querySelectorAll(documentElementId, selector, checkAffectsCallback.bind(this, nodeId, successCallback, rulePayload));
+                else
+                    failureCallback();
+            }
         }
 
         CSSAgent.addRule(nodeId, selector, callback.bind(this, successCallback, failureCallback, selector));
+    },
+
+    _documentElementId: function(nodeId)
+    {
+        var node = WebInspector.domAgent.nodeForId(nodeId);
+        if (!node)
+            return null;
+        return node.ownerDocumentElement().id;
     },
 
     _fireStyleSheetChanged: function(styleSheetId, majorChange, callback)

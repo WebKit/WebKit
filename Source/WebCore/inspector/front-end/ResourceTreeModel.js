@@ -347,6 +347,6 @@ WebInspector.PageDispatcher.prototype = {
 
     frameDetached: function(frameId)
     {
-        this._resourceTreeModel._frameDetached(loaderId);
+        this._resourceTreeModel._frameDetached(frameId);
     }
 }

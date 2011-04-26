@@ -2,6 +2,35 @@
 
         Reviewed by Yury Semikhatsky.
 
+        Web Inspector: New Style is not working (UI glitch)
+        https://bugs.webkit.org/show_bug.cgi?id=59451
+
+        * inspector/InspectorDOMStorageAgent.cpp:
+        (WebCore::InspectorDOMStorageAgent::setFrontend):
+        * inspector/front-end/AuditRules.js:
+        (WebInspector.AuditRules.ImageDimensionsRule.prototype.doRun.getStyles):
+        (WebInspector.AuditRules.CssInHeadRule.prototype.doRun.externalStylesheetsReceived):
+        (WebInspector.AuditRules.CssInHeadRule.prototype.doRun.inlineStylesReceived):
+        (WebInspector.AuditRules.StylesScriptsOrderRule.prototype.doRun.cssBeforeInlineReceived):
+        (WebInspector.AuditRules.StylesScriptsOrderRule.prototype.doRun.lateStylesReceived):
+        * inspector/front-end/CSSStyleModel.js:
+        (WebInspector.CSSStyleModel.prototype.setRuleSelector):
+        (WebInspector.CSSStyleModel.prototype.setRuleSelector.callback):
+        (WebInspector.CSSStyleModel.prototype.addRule):
+        (WebInspector.CSSStyleModel.prototype.addRule.callback):
+        (WebInspector.CSSStyleModel.prototype._documentElementId):
+        * inspector/front-end/DOMAgent.js:
+        (WebInspector.DOMNode.prototype._addAttribute):
+        (WebInspector.DOMNode.prototype.documentElement):
+        * inspector/front-end/ResourceTreeModel.js:
+        (WebInspector.PageDispatcher.prototype.frameDetached):
+        * inspector/front-end/StylesSidebarPane.js:
+        (WebInspector.StylesSidebarPane.prototype._createNewRule):
+
+2011-04-26  Pavel Feldman  <pfeldman@google.com>
+
+        Reviewed by Yury Semikhatsky.
+
         Web Inspector: introduce DOMStorage::enable and disable.
         https://bugs.webkit.org/show_bug.cgi?id=59445
 

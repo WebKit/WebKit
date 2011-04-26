@@ -73,9 +73,6 @@ InspectorDOMStorageAgent::~InspectorDOMStorageAgent()
 void InspectorDOMStorageAgent::setFrontend(InspectorFrontend* frontend)
 {
     m_frontend = frontend;
-    DOMStorageResourcesMap::iterator resourcesEnd = m_resources.end();
-    for (DOMStorageResourcesMap::iterator it = m_resources.begin(); it != resourcesEnd; ++it)
-        it->second->bind(m_frontend);
 }
 
 void InspectorDOMStorageAgent::clearFrontend()

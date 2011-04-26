@@ -312,6 +312,16 @@ WebInspector.DOMNode.prototype = {
         };
         this._attributesMap[name] = attr;
         this._attributes.push(attr);
+    },
+
+    ownerDocumentElement: function()
+    {
+        // document element is the child of the document / frame owner node that has documentURL property.
+        // FIXME: return document nodes as a part of the DOM tree structure.
+        var node = this;
+        while (node.parentNode && !node.parentNode.documentURL)
+            node = node.parentNode;
+        return node;
     }
 }
 
@@ -387,6 +397,8 @@ WebInspector.DOMAgent.prototype = {
             return;
         return function(error, result)
         {
+            if (error)
+                console.error("Error during DOMAgent operation: " + error);
             callback(error ? null : result);
         }
     },

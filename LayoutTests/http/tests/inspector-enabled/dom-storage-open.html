@@ -18,12 +18,16 @@ function onload()
 
 function test()
 {
-    var storages = WebInspector.panels.resources._domStorage;
-    for (var i = 0; i < storages.length; ++i) {
-        InspectorTest.addResult("Domain: " + storages[i].domain);
-        InspectorTest.addResult("IsLocalStorage: " + storages[i].isLocalStorage);
+    function callback()
+    {
+        var storages = WebInspector.panels.resources._domStorage;
+        for (var i = 0; i < storages.length; ++i) {
+            InspectorTest.addResult("Domain: " + storages[i].domain);
+            InspectorTest.addResult("IsLocalStorage: " + storages[i].isLocalStorage);
+        }
+        InspectorTest.completeTest();
     }
-    InspectorTest.completeTest();
+    InspectorBackend.runAfterPendingDispatches(callback);
 }
 
 </script>
