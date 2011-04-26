@@ -3915,3 +3915,6 @@ BUGSENORBLANCO : fast/loader/file-protocol-fragment.html = TEXT
 BUGSENORBLANCO : fast/filesystem/file-writer-write-overlapped.html = CRASH PASS
 BUGSENORBLANCO : editing/selection/drag-select-rapidly.html = CRASH PASS
 BUGSENORBLANCO LINUX DEBUG : fast/css/transform-default-parameter.html = CRASH PASS
+BUGSENORBLANCO MAC LINUX DEBUG : editing/execCommand/outdent-nested-lists-2.html = CRASH PASS
+BUGSENORBLANCO MAC DEBUG : fast/css/table-text-align-strict.html = CRASH PASS
+
