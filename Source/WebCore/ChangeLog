@@ -1,5 +1,19 @@
 2011-04-26  Sam Weinig  <sam@webkit.org>
 
+        Rollout previous patch. It broke stuff.
+
+        * bindings/js/JSDOMBinding.h:
+        (WebCore::JSDOMWrapperWithGlobalPointer::globalObject):
+        (WebCore::JSDOMWrapperWithGlobalPointer::scriptExecutionContext):
+        (WebCore::JSDOMWrapperWithGlobalPointer::createStructure):
+        (WebCore::JSDOMWrapperWithGlobalPointer::JSDOMWrapperWithGlobalPointer):
+        (WebCore::DOMConstructorObject::DOMConstructorObject):
+        * bindings/js/JSDOMWrapper.h:
+        (WebCore::JSDOMWrapper::JSDOMWrapper):
+        * bindings/scripts/CodeGeneratorJS.pm:
+
+2011-04-26  Sam Weinig  <sam@webkit.org>
+
         Reviewed by Maciej Stachowiak.
 
         Remove JSDOMWrapperWithGlobalPointer now that all JSDOMWrappers have global objects

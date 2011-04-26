@@ -200,7 +200,7 @@ sub GetParentClassName
     my $dataNode = shift;
 
     return $dataNode->extendedAttributes->{"LegacyParent"} if $dataNode->extendedAttributes->{"LegacyParent"};
-    return "JSDOMWrapper" if (@{$dataNode->parents} eq 0);
+    return "JSDOMWrapperWithGlobalPointer" if (@{$dataNode->parents} eq 0);
     return "JS" . $codeGenerator->StripModule($dataNode->parents(0));
 }
 
