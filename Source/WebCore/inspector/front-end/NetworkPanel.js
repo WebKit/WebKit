@@ -84,6 +84,10 @@ WebInspector.NetworkPanel = function()
     WebInspector.networkManager.addEventListener(WebInspector.NetworkManager.EventTypes.ResourceUpdated, this._onResourceUpdated, this);
     WebInspector.networkManager.addEventListener(WebInspector.NetworkManager.EventTypes.ResourceFinished, this._onResourceUpdated, this);
 
+    WebInspector.resourceTreeModel.addEventListener(WebInspector.ResourceTreeModel.EventTypes.FrameNavigated, this._frameNavigated, this);
+    WebInspector.resourceTreeModel.addEventListener(WebInspector.ResourceTreeModel.EventTypes.OnLoad, this._onLoadEventFired, this);
+    WebInspector.resourceTreeModel.addEventListener(WebInspector.ResourceTreeModel.EventTypes.DOMContentLoaded, this._domContentLoadedEventFired, this);
+
     this.registerShortcuts();
 }
 
@@ -607,22 +611,16 @@ WebInspector.NetworkPanel.prototype = {
         this._largerResourcesButton.addEventListener("click", this._toggleLargerResources.bind(this), false);
     },
 
-    set mainResourceLoadTime(x)
+    _onLoadEventFired: function(event)
     {
-        if (this._mainResourceLoadTime === x)
-            return;
-
-        this._mainResourceLoadTime = x || -1;
+        this._mainResourceLoadTime = event.data || -1;
         // Update the dividers to draw the new line
         this._updateDividersIfNeeded(true);
     },
 
-    set mainResourceDOMContentTime(x)
+    _domContentLoadedEventFired: function(event)
     {
-        if (this._mainResourceDOMContentTime === x)
-            return;
-
-        this._mainResourceDOMContentTime = x || -1;
+        this._mainResourceDOMContentTime = event.data || -1;
         this._updateDividersIfNeeded(true);
     },
 
@@ -806,11 +804,12 @@ WebInspector.NetworkPanel.prototype = {
         this._reset();
     },
 
-    frameNavigated: function(frame, loaderId)
+    _frameNavigated: function(event)
     {
-        if (frame.parentId)
+        if (!event.data.isMainFrame)
             return;
 
+        var loaderId = event.data.loaderId;
         // Main frame committed load.
         if (this._preserveLogToggle.toggled)
             return;

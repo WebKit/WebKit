@@ -608,7 +608,7 @@ WebInspector.CSSStyleModelResourceBinding = function(cssModel)
     this._urlToStyleSheetId = {};
     this._styleSheetIdToURL = {};
     this._cssModel.addEventListener(WebInspector.CSSStyleModel.Events.StyleSheetChanged, this._styleSheetChanged, this);
-    WebInspector.resourceTreeModel.addEventListener(WebInspector.ResourceTreeModel.EventTypes.FrameNavigated, this._frameNavigated, this);
+    WebInspector.resourceTreeModel.addEventListener(WebInspector.ResourceTreeModel.EventTypes.InspectedURLChanged, this._inspectedURLChanged, this);
     WebInspector.Resource.registerDomainModelBinding(WebInspector.Resource.Type.Stylesheet, this);
 }
 
@@ -622,14 +622,11 @@ WebInspector.CSSStyleModelResourceBinding.prototype = {
         this._loadStyleSheetHeaders(this._innerSetContent.bind(this, resource.url, content, majorChange, userCallback));
     },
 
-    _frameNavigated: function(event)
+    _inspectedURLChanged: function(event)
     {
-        var frameId = event.data;
-        if (!frameId) {
-            // Main frame navigation - clear history.
-            this._urlToStyleSheetId = {};
-            this._styleSheetIdToURL = {};
-        }
+        // Main frame navigation - clear history.
+        this._urlToStyleSheetId = {};
+        this._styleSheetIdToURL = {};
     },
 
     _innerSetContent: function(url, content, majorChange, userCallback, error)

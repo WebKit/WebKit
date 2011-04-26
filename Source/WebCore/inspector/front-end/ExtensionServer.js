@@ -79,8 +79,9 @@ WebInspector.ExtensionServer.prototype = {
         this._postNotification("panel-hidden-" + panelId);
     },
 
-    notifyInspectedURLChanged: function(url)
+    _inspectedURLChanged: function(event)
     {
+        var url = event.data;
         this._postNotification("inspectedURLChanged", url);
     },
 
@@ -376,6 +377,7 @@ WebInspector.ExtensionServer.prototype = {
     {
         // The networkManager is normally created after the ExtensionServer is constructed, but before initExtensions() is called.
         WebInspector.networkManager.addEventListener(WebInspector.NetworkManager.EventTypes.ResourceFinished, this._notifyResourceFinished, this);
+        WebInspector.resourceTreeModel.addEventListener(WebInspector.ResourceTreeModel.EventTypes.InspectedURLChanged, this._inspectedURLChanged, this);
 
         InspectorExtensionRegistry.getExtensionsAsync();
     },

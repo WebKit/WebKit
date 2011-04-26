@@ -101,7 +101,6 @@ public:
     // Inspector Controller API
     void setFrontend(InspectorFrontend*);
     void clearFrontend();
-    void restore();
 
     // Cross-agents API
     Frame* mainFrame();

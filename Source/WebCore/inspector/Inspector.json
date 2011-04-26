@@ -161,12 +161,6 @@
         ],
         "events": [
             {
-                "name": "inspectedURLChanged",
-                "parameters": [
-                    { "name": "url", "type": "string" }
-                ]
-            },
-            {
                 "name": "domContentEventFired",
                 "parameters": [
                     { "name": "timestamp", "type": "number" }

@@ -73,8 +73,6 @@ WebInspector.DOMStorageDispatcher = function()
 WebInspector.DOMStorageDispatcher.prototype = {
     addDOMStorage: function(payload)
     {
-        if (!WebInspector.panels.resources)
-            return;
         var domStorage = new WebInspector.DOMStorage(
             payload.id,
             payload.host,

@@ -194,7 +194,6 @@ void InspectorAgent::restoreInspectorStateFromCookie(const String& inspectorStat
     m_state->loadFromCookie(inspectorStateCookie);
 
     m_frontend->inspector()->frontendReused();
-    m_pageAgent->restore();
 
     m_domAgent->restore();
     m_resourceAgent->restore();

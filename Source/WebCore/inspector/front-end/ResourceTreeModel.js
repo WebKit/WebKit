@@ -36,6 +36,7 @@ WebInspector.ResourceTreeModel = function(networkManager)
     WebInspector.networkManager.addEventListener(WebInspector.NetworkManager.EventTypes.ResourceFinished, this._onResourceUpdated, this);
 
     this.frontendReused();
+    InspectorBackend.registerDomainDispatcher("Page", new WebInspector.PageDispatcher(this));
 }
 
 WebInspector.ResourceTreeModel.EventTypes = {
@@ -43,7 +44,10 @@ WebInspector.ResourceTreeModel.EventTypes = {
     FrameNavigated: "FrameNavigated",
     FrameDetached: "FrameDetached",
     ResourceAdded: "ResourceAdded",
-    CachedResourcesLoaded: "CachedResourcesLoaded"
+    CachedResourcesLoaded: "CachedResourcesLoaded",
+    DOMContentLoaded: "DOMContentLoaded",
+    OnLoad: "OnLoad",
+    InspectedURLChanged: "InspectedURLChanged"
 }
 
 WebInspector.ResourceTreeModel.prototype = {
@@ -60,12 +64,18 @@ WebInspector.ResourceTreeModel.prototype = {
         if (error)
             return;
 
-        this.dispatchEventToListeners(WebInspector.ResourceTreeModel.EventTypes.FrameNavigated, 0);
-
         WebInspector.mainResource = this._addFramesRecursively(mainFramePayload);
         this._cachedResourcesProcessed = true;
 
+        this._dispatchInspectedURLChanged(WebInspector.mainResource.url);
+
         this.dispatchEventToListeners(WebInspector.ResourceTreeModel.EventTypes.CachedResourcesLoaded);
+    },
+
+    _dispatchInspectedURLChanged: function(url)
+    {
+        InspectorFrontendHost.inspectedURLChanged(url);
+        this.dispatchEventToListeners(WebInspector.ResourceTreeModel.EventTypes.InspectedURLChanged, url);
     },
 
     _addOrUpdateFrame: function(frame)
@@ -99,12 +109,16 @@ WebInspector.ResourceTreeModel.prototype = {
         return result;
     },
 
-    frameNavigated: function(frame, loaderId)
+    _frameNavigated: function(frame, loaderId)
     {
         if (!this._cachedResourcesProcessed)
             return;
 
         var isMainFrame = !frame.parentId;
+        if (isMainFrame)
+            this._dispatchInspectedURLChanged(WebInspector.mainResource.url);
+
+        this.dispatchEventToListeners(WebInspector.ResourceTreeModel.EventTypes.FrameNavigated, { frame: frame, loaderId: loaderId, isMainFrame: isMainFrame });
 
         // frame.parentId === 0 is when main frame navigation happens.
         this._clearChildFramesAndResources(isMainFrame ? 0 : frame.id, loaderId);
@@ -124,7 +138,7 @@ WebInspector.ResourceTreeModel.prototype = {
             WebInspector.Resource.clearRevisionHistory();
     },
 
-    frameDetached: function(frameId)
+    _frameDetached: function(frameId)
     {
         if (!this._cachedResourcesProcessed)
             return;
@@ -211,8 +225,6 @@ WebInspector.ResourceTreeModel.prototype = {
 
     _clearChildFramesAndResources: function(frameId, loaderToPreserveId)
     {
-        this.dispatchEventToListeners(WebInspector.ResourceTreeModel.EventTypes.FrameNavigated, frameId);
-
         this._clearResources(frameId, loaderToPreserveId);
         var subframes = this._subframes[frameId];
         for (var i = 0; subframes && i < subframes.length; ++ i) {
@@ -305,3 +317,36 @@ WebInspector.ResourceTreeModel.prototype = {
 }
 
 WebInspector.ResourceTreeModel.prototype.__proto__ = WebInspector.Object.prototype;
+
+WebInspector.PageDispatcher = function(resourceTreeModel)
+{
+    this._resourceTreeModel = resourceTreeModel;
+}
+
+WebInspector.PageDispatcher.prototype = {
+    domContentEventFired: function(time)
+    {
+        this._resourceTreeModel.dispatchEventToListeners(WebInspector.ResourceTreeModel.EventTypes.DOMContentLoaded, time);
+      
+        // FIXME: the only client is HAR, fix it there.
+        WebInspector.mainResourceDOMContentTime = time;
+    },
+
+    loadEventFired: function(time)
+    {
+        this._resourceTreeModel.dispatchEventToListeners(WebInspector.ResourceTreeModel.EventTypes.OnLoad, time);
+
+        // FIXME: the only client is HAR, fix it there.
+        WebInspector.mainResourceLoadTime = time;
+    },
+
+    frameNavigated: function(frame, loaderId)
+    {
+        this._resourceTreeModel._frameNavigated(frame, loaderId);
+    },
+
+    frameDetached: function(frameId)
+    {
+        this._resourceTreeModel._frameDetached(loaderId);
+    }
+}

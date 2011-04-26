@@ -1,3 +1,55 @@
+2011-04-26  Pavel Feldman  <pfeldman@google.com>
+
+        Reviewed by Yury Semikhatsky.
+
+        Web Inspector: extract Page agent dispatcher into the ResourceTreeModel.
+        https://bugs.webkit.org/show_bug.cgi?id=59440
+
+        * inspector/Inspector.json:
+        * inspector/InspectorAgent.cpp:
+        (WebCore::InspectorAgent::restoreInspectorStateFromCookie):
+        * inspector/InspectorPageAgent.cpp:
+        (WebCore::InspectorPageAgent::setFrontend):
+        (WebCore::InspectorPageAgent::frameNavigated):
+        * inspector/InspectorPageAgent.h:
+        * inspector/front-end/AuditsPanel.js:
+        (WebInspector.AuditsPanel):
+        (WebInspector.AuditsPanel.prototype._onLoadEventFired):
+        (WebInspector.AuditsPanel.prototype._domContentLoadedEventFired):
+        * inspector/front-end/CSSStyleModel.js:
+        (WebInspector.CSSStyleModelResourceBinding):
+        (WebInspector.CSSStyleModelResourceBinding.prototype._inspectedURLChanged):
+        * inspector/front-end/DOMBreakpointsSidebarPane.js:
+        (WebInspector.DOMBreakpointsSidebarPane):
+        (WebInspector.DOMBreakpointsSidebarPane.prototype._inspectedURLChanged):
+        * inspector/front-end/DOMStorage.js:
+        (WebInspector.DOMStorageDispatcher.prototype.addDOMStorage):
+        * inspector/front-end/ExtensionServer.js:
+        (WebInspector.ExtensionServer.prototype._inspectedURLChanged):
+        (WebInspector.ExtensionServer.prototype.initExtensions):
+        * inspector/front-end/NetworkPanel.js:
+        (WebInspector.NetworkPanel):
+        (WebInspector.NetworkPanel.prototype._onLoadEventFired):
+        (WebInspector.NetworkPanel.prototype._domContentLoadedEventFired):
+        (WebInspector.NetworkPanel.prototype._frameNavigated):
+        * inspector/front-end/ResourceTreeModel.js:
+        (WebInspector.ResourceTreeModel):
+        (WebInspector.ResourceTreeModel.prototype._processCachedResources):
+        (WebInspector.ResourceTreeModel.prototype._dispatchInspectedURLChanged):
+        (WebInspector.ResourceTreeModel.prototype._frameNavigated):
+        (WebInspector.ResourceTreeModel.prototype._frameDetached):
+        (WebInspector.ResourceTreeModel.prototype._clearChildFramesAndResources):
+        (WebInspector.PageDispatcher):
+        (WebInspector.PageDispatcher.prototype.domContentEventFired):
+        (WebInspector.PageDispatcher.prototype.loadEventFired):
+        (WebInspector.PageDispatcher.prototype.frameNavigated):
+        (WebInspector.PageDispatcher.prototype.frameDetached):
+        * inspector/front-end/ResourcesPanel.js:
+        (WebInspector.ResourcesPanel):
+        (WebInspector.ResourcesPanel.prototype._onLoadEventFired):
+        (WebInspector.ResourcesPanel.prototype._frameNavigated):
+        * inspector/front-end/inspector.js:
+
 2011-04-26  Csaba Osztrogonác  <ossy@webkit.org>
 
         Unreviewed rollout r84877 and StyleRareInheritedData.cpp changes of r84892,

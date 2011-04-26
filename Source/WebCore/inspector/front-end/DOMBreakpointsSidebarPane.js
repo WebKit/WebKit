@@ -49,12 +49,14 @@ WebInspector.DOMBreakpointsSidebarPane = function()
         WebInspector.UIString("Break on Attributes Modifications"),
         WebInspector.UIString("Break on Node Removal")
     ];
+    WebInspector.resourceTreeModel.addEventListener(WebInspector.ResourceTreeModel.EventTypes.InspectedURLChanged, this._inspectedURLChanged, this);
 }
 
 WebInspector.DOMBreakpointsSidebarPane.prototype = {
-    setInspectedURL: function(url)
+    _inspectedURLChanged: function(event)
     {
         this._reset();
+        var url = event.data;
         this._inspectedURL = url.removeURLFragment();
     },
 

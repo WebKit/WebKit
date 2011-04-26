@@ -57,6 +57,9 @@ WebInspector.AuditsPanel = function()
     this._launcherView = new WebInspector.AuditLauncherView(this.initiateAudit.bind(this));
     for (id in this.categoriesById)
         this._launcherView.addCategory(this.categoriesById[id]);
+
+    WebInspector.resourceTreeModel.addEventListener(WebInspector.ResourceTreeModel.EventTypes.OnLoad, this._onLoadEventFired, this);
+    WebInspector.resourceTreeModel.addEventListener(WebInspector.ResourceTreeModel.EventTypes.DOMContentLoaded, this._domContentLoadedEventFired, this);
 }
 
 WebInspector.AuditsPanel.prototype = {
@@ -75,9 +78,9 @@ WebInspector.AuditsPanel.prototype = {
         return this._mainResourceLoadTime;
     },
 
-    set mainResourceLoadTime(x)
+    _onLoadEventFired: function(event)
     {
-        this._mainResourceLoadTime = x;
+        this._mainResourceLoadTime = event.data;
         this._didMainResourceLoad();
     },
 
@@ -86,9 +89,9 @@ WebInspector.AuditsPanel.prototype = {
         return this._mainResourceDOMContentTime;
     },
 
-    set mainResourceDOMContentTime(x)
+    _domContentLoadedEventFired: function(event)
     {
-        this._mainResourceDOMContentTime = x;
+        this._mainResourceDOMContentTime = event.data;
     },
 
     get categoriesById()

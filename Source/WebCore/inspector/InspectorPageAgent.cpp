@@ -200,9 +200,6 @@ void InspectorPageAgent::setFrontend(InspectorFrontend* frontend)
 {
     m_frontend = frontend->page();
     m_instrumentingAgents->setInspectorPageAgent(this);
-
-    // Initialize Web Inspector title.
-    m_frontend->inspectedURLChanged(m_page->mainFrame()->document()->url().string());
 }
 
 void InspectorPageAgent::clearFrontend()
@@ -350,11 +347,6 @@ void InspectorPageAgent::getResourceContent(ErrorString* errorString, const Stri
         InspectorPageAgent::resourceContent(errorString, frame, KURL(ParsedURLString, url), content);
 }
 
-void InspectorPageAgent::restore()
-{
-    m_frontend->inspectedURLChanged(mainFrame()->document()->url().string());
-}
-
 void InspectorPageAgent::domContentEventFired()
 {
      m_frontend->domContentEventFired(currentTime());
@@ -368,7 +360,6 @@ void InspectorPageAgent::loadEventFired()
 void InspectorPageAgent::frameNavigated(DocumentLoader* loader)
 {
     m_frontend->frameNavigated(buildObjectForFrame(loader->frame()), loaderId(loader));
-    m_frontend->inspectedURLChanged(loader->url().string());
 }
 
 void InspectorPageAgent::frameDetached(Frame* frame)

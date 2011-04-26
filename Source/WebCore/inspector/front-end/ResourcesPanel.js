@@ -78,6 +78,8 @@ WebInspector.ResourcesPanel = function(database)
     this.registerShortcuts();
 
     WebInspector.networkManager.addEventListener(WebInspector.NetworkManager.EventTypes.ResourceUpdated, this._refreshResource, this);
+
+    WebInspector.resourceTreeModel.addEventListener(WebInspector.ResourceTreeModel.EventTypes.OnLoad, this._onLoadEventFired, this);
 }
 
 WebInspector.ResourcesPanel.prototype = {
@@ -106,7 +108,7 @@ WebInspector.ResourcesPanel.prototype = {
             this._showResourceView(this.visibleView.resource);
     },
 
-    loadEventFired: function()
+    _onLoadEventFired: function()
     {
         this._initDefaultSelection();
     },
@@ -253,8 +255,7 @@ WebInspector.ResourcesPanel.prototype = {
 
     _frameNavigated: function(event)
     {
-        var frameId = event.data;
-        if (!frameId) {
+        if (event.data.isMainFrame) {
             // Total update.
             this.resourcesListTreeElement.removeChildren();
             this._treeElementForFrameId = {};
@@ -262,6 +263,7 @@ WebInspector.ResourcesPanel.prototype = {
             return;
         }
 
+        var frameId = event.data.frame.id;
         var frameTreeElement = this._treeElementForFrameId[frameId];
         if (frameTreeElement)
             frameTreeElement.removeChildren();        

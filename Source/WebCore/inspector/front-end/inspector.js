@@ -436,7 +436,6 @@ WebInspector.doLoadedDone = function()
     this.domAgent = new WebInspector.DOMAgent();
 
     InspectorBackend.registerDomainDispatcher("Inspector", this);
-    InspectorBackend.registerDomainDispatcher("Page", this);
 
     this.resourceCategories = {
         documents: new WebInspector.ResourceCategory("documents", WebInspector.UIString("Documents"), "rgb(47,102,236)"),
@@ -981,34 +980,6 @@ WebInspector.startUserInitiatedDebugging = function()
     WebInspector.debuggerModel.enableDebugger();
 }
 
-WebInspector.domContentEventFired = function(time)
-{
-    this.panels.audits.mainResourceDOMContentTime = time;
-    this.panels.network.mainResourceDOMContentTime = time;
-
-    this.mainResourceDOMContentTime = time;
-}
-
-WebInspector.loadEventFired = function(time)
-{
-    this.panels.audits.mainResourceLoadTime = time;
-    this.panels.network.mainResourceLoadTime = time;
-    this.panels.resources.loadEventFired();
-
-    this.mainResourceLoadTime = time;
-}
-
-// FIXME: move these into the dedicated dispatcher.
-WebInspector.frameNavigated = function(frame, loaderId)
-{
-    this.resourceTreeModel.frameNavigated(frame, loaderId);
-    this.panels.network.frameNavigated(frame, loaderId);
-}
-WebInspector.frameDetached = function(frameId)
-{
-    this.resourceTreeModel.frameDetached(loaderId);
-}
-
 WebInspector.reset = function()
 {
     this.debuggerModel.reset();
@@ -1029,13 +1000,6 @@ WebInspector.reset = function()
 WebInspector.bringToFront = function()
 {
     InspectorFrontendHost.bringToFront();
-}
-
-WebInspector.inspectedURLChanged = function(url)
-{
-    InspectorFrontendHost.inspectedURLChanged(url);
-    this.domBreakpointsSidebarPane.setInspectedURL(url);
-    this.extensionServer.notifyInspectedURLChanged(url);
 }
 
 WebInspector.didCreateWorker = function()
