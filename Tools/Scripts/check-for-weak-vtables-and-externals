@@ -56,7 +56,7 @@ my $executablePathAge = -M $executablePath;
 
 my $sawError = 0;
 
-if (!defined $executablePathAge || !defined $buildTimestampAge || $executablePathAge > $buildTimestampAge) {
+if (!defined $executablePathAge || !defined $buildTimestampAge || $executablePathAge < $buildTimestampAge) {
     if (!open NM, "(nm -m '$executablePath' | c++filt | sed 's/^/STDOUT:/') 2>&1 |") {
         print "ERROR: Could not open $executablePath\n";
         $sawError = 1;

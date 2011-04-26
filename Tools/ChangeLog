@@ -1,3 +1,15 @@
+2011-04-26  Mihai Parparita  <mihaip@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        Fix timestamp comparison in check-for-weak-vtables-and-externals
+        https://bugs.webkit.org/show_bug.cgi?id=59416
+        
+        We should only re-run the check-for-weak-vtables-and-externals script
+        if the executable is more recent than the last run.
+
+        * Scripts/check-for-weak-vtables-and-externals:
+
 2011-04-26  Kristóf Kosztyó  <Kosztyo.Kristof@stud.u-szeged.hu>
 
         Reviewed by Csaba Osztrogonác.
