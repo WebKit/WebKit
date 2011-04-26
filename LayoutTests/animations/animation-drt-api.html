@@ -38,7 +38,7 @@
         if (paused)
           result = "PASS: correctly paused animation";
         else
-          result = "PASS: correctly paused animation";
+          result = "FAIL: failed to pause animation";
 
         document.getElementById('results').innerText = result;
         layoutTestController.notifyDone();

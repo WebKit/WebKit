@@ -8,62 +8,29 @@
       width: 100px;
       margin: 10px;
       background-color: blue;
-      -webkit-transition-duration: 5s;
-      -webkit-transition-timing-function: linear;
+      -webkit-transition: left 1s linear;
+    }
+    .animating > .box {
+      left: 400px;
     }
   </style>
+  <script src="resources/transition-test-helpers.js"></script>
   <script>
-    if (window.layoutTestController) {
-        layoutTestController.dumpAsText();
-        layoutTestController.waitUntilDone();
-    }
-
-    var kExpecteds = {
-      'box1' : 200,
-      'box2' : 320,
-      'box3' : 125,
-      'box4' : 272,
-      'box5' : 200
+    const expectedValues = [
+      // [time, element-id, property, expected-value, tolerance]
+      [0.5, "box1", "left", 200, 4],
+      [0.5, "box2", "left", 322, 4],
+      [0.5, "box3", "left", 126, 4],
+      [0.5, "box4", "left", 273, 4],
+      [0.5, "box5", "left", 200, 4],
+    ];
+    
+    function setupTest()
+    {
+      document.getElementById('container').className = 'animating';
     }
     
-    function measurePosition()
-    {
-      var boxes = document.body.getElementsByClassName('box');
-
-      var result = '';
-      for (var i = 0; i < boxes.length; ++i)
-      {
-        var curBox = boxes[i];
-        var curLeft = parseInt(window.getComputedStyle(curBox).left);
-        
-        var expected = kExpecteds[curBox.id];
-        var passed = (Math.abs(curLeft - expected) / expected) < 0.05;
-        var thisResult;
-        if (passed)
-          thisResult = curBox.id + ': within 5% of ' + expected + ': PASSED';
-        else
-          thisResult = curBox.id + ': expected ' + expected + ', got ' + curLeft + '; outside 5%: FAIL';
-
-        result += thisResult + '<br>';
-      }
-
-      document.body.removeChild(document.getElementById('container'));
-
-      document.getElementById('result').innerHTML = result;
-
-      if (window.layoutTestController)
-          layoutTestController.notifyDone();
-    }
-
-    function startTransition()
-    {
-      var boxes = document.body.getElementsByClassName('box');
-      for (var i = 0; i < boxes.length; ++i)
-        boxes[i].style.left = '400px';
-      
-      window.setTimeout(measurePosition, 2500);
-    }
-    window.addEventListener('load', startTransition, false);
+    runTransitionTest(expectedValues, setupTest, usePauseAPI);
   </script>
 </head>
 <body>

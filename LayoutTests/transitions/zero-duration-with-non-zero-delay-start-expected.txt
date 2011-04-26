@@ -1,3 +1,2 @@
-Test that transitions with a zero-duration and but a non-zero delay effectively work
+PASS - "left" property for "target" element at 1s saw something close to: 200
 
-PASS - left property is 200px as expected

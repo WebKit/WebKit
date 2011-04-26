@@ -3,33 +3,38 @@
 <html>
 <head>
   <style>
-    body {
-      margin: 0;
-    }
-    
-    div {
+    #target {
       position: relative;
       left: 100px;
-      height: 200px;
-      width: 200px;
-      background-color: red;
+      height: 100px;
+      width: 100px;
+      background-color: blue;
       -webkit-transition-property: left;
       -webkit-transition-duration: 4s;
       -webkit-transition-timing-function: linear;
     }
     
-    .moved {
+    #target.moved {
       left: 200px;
     }
-     </style>
+   </style>
    <script>
+    if (window.layoutTestController)
+      layoutTestController.dumpAsText();
+
     function endTest() {
       if (window.layoutTestController) {
-        if (!layoutTestController.pauseTransitionAtTimeOnElementWithId("left", 1.0, "target"))
-          throw("Transition is not running");
-        
+        var paused = layoutTestController.pauseTransitionAtTimeOnElementWithId("left", 1.0, "target");
+        var result = "";
+        if (paused)
+          result = "PASS: correctly paused transition";
+        else
+          result = "FAIL: failed to pause transition";
+
+        document.getElementById('results').innerText = result;
         layoutTestController.notifyDone();
-      }
+      } else
+        document.getElementById('results').innerText = "This test requires DRT";
     }
     
     function startTest() {
@@ -42,10 +47,9 @@
    </script>
 </head>
 <body onload="startTest()">
-  <h1>Test for DRT pauseTransitionAtTimeOnElementWithId() API</h1>
-
-  <div id="target">
-  </div>
+  <!-- Test for DRT pauseTransitionAtTimeOnElementWithId() API -->
+  <div id="target"></div>
+  <div id="results"></div>
 
 </body>
 </html>

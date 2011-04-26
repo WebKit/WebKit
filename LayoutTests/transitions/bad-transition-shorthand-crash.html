@@ -20,21 +20,22 @@
     
     function finish()
     {
-        layoutTestController.notifyDone();
+        if (window.layoutTestController)
+            layoutTestController.notifyDone();
     }
     
     function returnToStart()
     {
         var box = document.getElementById('box');
         box.style.webkitTransform = 'rotate(0)';
-        setTimeout(finish, 100);
+        setTimeout(finish, 20);
     }
     
     function start()
     {
         var box = document.getElementById('box');
         box.style.webkitTransform = 'rotate(180deg)';
-        setTimeout(returnToStart, 100);
+        setTimeout(returnToStart, 20);
     }
     
     window.addEventListener('load', start, false);
