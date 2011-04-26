@@ -38,6 +38,7 @@
 #include "Frame.h"
 #include "InspectorDOMStorageResource.h"
 #include "InspectorFrontend.h"
+#include "InspectorState.h"
 #include "InspectorValues.h"
 #include "InstrumentingAgents.h"
 #include "Storage.h"
@@ -48,11 +49,17 @@
 
 namespace WebCore {
 
+namespace DOMStorageAgentState {
+static const char domStorageAgentEnabled[] = "domStorageAgentEnabled";
+};
+
 typedef HashMap<int, RefPtr<InspectorDOMStorageResource> > DOMStorageResourcesMap;
 
-InspectorDOMStorageAgent::InspectorDOMStorageAgent(InstrumentingAgents* instrumentingAgents)
+InspectorDOMStorageAgent::InspectorDOMStorageAgent(InstrumentingAgents* instrumentingAgents, InspectorState* state)
     : m_instrumentingAgents(instrumentingAgents)
+    , m_inspectorState(state)
     , m_frontend(0)
+    , m_enabled(false)
 {
     m_instrumentingAgents->setInspectorDOMStorageAgent(this);
 }
@@ -77,6 +84,31 @@ void InspectorDOMStorageAgent::clearFrontend()
     for (DOMStorageResourcesMap::iterator it = m_resources.begin(); it != domStorageEnd; ++it)
         it->second->unbind();
     m_frontend = 0;
+}
+
+void InspectorDOMStorageAgent::restore()
+{
+    m_enabled =  m_inspectorState->getBoolean(DOMStorageAgentState::domStorageAgentEnabled);
+}
+
+void InspectorDOMStorageAgent::enable(ErrorString*)
+{
+    if (m_enabled)
+        return;
+    m_enabled = true;
+    m_inspectorState->setBoolean(DOMStorageAgentState::domStorageAgentEnabled, m_enabled);
+
+    DOMStorageResourcesMap::iterator resourcesEnd = m_resources.end();
+    for (DOMStorageResourcesMap::iterator it = m_resources.begin(); it != resourcesEnd; ++it)
+        it->second->bind(m_frontend);
+}
+
+void InspectorDOMStorageAgent::disable(ErrorString*)
+{
+    if (!m_enabled)
+        return;
+    m_enabled = false;
+    m_inspectorState->setBoolean(DOMStorageAgentState::domStorageAgentEnabled, m_enabled);
 }
 
 void InspectorDOMStorageAgent::getDOMStorageEntries(ErrorString*, int storageId, RefPtr<InspectorArray>* entries)

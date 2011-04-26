@@ -39,6 +39,7 @@ class Frame;
 class InspectorArray;
 class InspectorDOMStorageResource;
 class InspectorFrontend;
+class InspectorState;
 class InstrumentingAgents;
 class Storage;
 class StorageArea;
@@ -47,9 +48,9 @@ typedef String ErrorString;
 
 class InspectorDOMStorageAgent {
 public:
-    static PassOwnPtr<InspectorDOMStorageAgent> create(InstrumentingAgents* instrumentingAgents)
+    static PassOwnPtr<InspectorDOMStorageAgent> create(InstrumentingAgents* instrumentingAgents, InspectorState* state)
     {
-        return adoptPtr(new InspectorDOMStorageAgent(instrumentingAgents));
+        return adoptPtr(new InspectorDOMStorageAgent(instrumentingAgents, state));
     }
     ~InspectorDOMStorageAgent();
 
@@ -57,8 +58,11 @@ public:
     void clearFrontend();
 
     void clearResources();
+    void restore();
 
     // Called from the front-end.
+    void enable(ErrorString*);
+    void disable(ErrorString*);
     void getDOMStorageEntries(ErrorString*, int storageId, RefPtr<InspectorArray>* entries);
     void setDOMStorageItem(ErrorString*, int storageId, const String& key, const String& value, bool* success);
     void removeDOMStorageItem(ErrorString*, int storageId, const String& key, bool* success);
@@ -70,14 +74,16 @@ public:
     void didUseDOMStorage(StorageArea*, bool isLocalStorage, Frame*);
 
 private:
-    explicit InspectorDOMStorageAgent(InstrumentingAgents*);
+    InspectorDOMStorageAgent(InstrumentingAgents*, InspectorState*);
 
     InspectorDOMStorageResource* getDOMStorageResourceForId(int storageId);
 
     InstrumentingAgents* m_instrumentingAgents;
+    InspectorState* m_inspectorState;
     typedef HashMap<int, RefPtr<InspectorDOMStorageResource> > DOMStorageResourcesMap;
     DOMStorageResourcesMap m_resources;
     InspectorFrontend* m_frontend;
+    bool m_enabled;
 };
 
 } // namespace WebCore

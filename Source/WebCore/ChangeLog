@@ -2,6 +2,30 @@
 
         Reviewed by Yury Semikhatsky.
 
+        Web Inspector: introduce DOMStorage::enable and disable.
+        https://bugs.webkit.org/show_bug.cgi?id=59445
+
+        * inspector/Inspector.json:
+        * inspector/InspectorAgent.cpp:
+        (WebCore::InspectorAgent::InspectorAgent):
+        (WebCore::InspectorAgent::restoreInspectorStateFromCookie):
+        * inspector/InspectorDOMStorageAgent.cpp:
+        (WebCore::InspectorDOMStorageAgent::InspectorDOMStorageAgent):
+        (WebCore::InspectorDOMStorageAgent::restore):
+        (WebCore::InspectorDOMStorageAgent::enable):
+        (WebCore::InspectorDOMStorageAgent::disable):
+        * inspector/InspectorDOMStorageAgent.h:
+        (WebCore::InspectorDOMStorageAgent::create):
+        * inspector/front-end/DOMStorage.js:
+        (WebInspector.DOMStorageDispatcher.prototype.addDOMStorage):
+        * inspector/front-end/ResourcesPanel.js:
+        (WebInspector.ResourcesPanel.prototype._reset):
+        * inspector/front-end/inspector.js:
+
+2011-04-26  Pavel Feldman  <pfeldman@google.com>
+
+        Reviewed by Yury Semikhatsky.
+
         Web Inspector: extract Page agent dispatcher into the ResourceTreeModel.
         https://bugs.webkit.org/show_bug.cgi?id=59440
 

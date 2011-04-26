@@ -626,6 +626,14 @@
         "types": [],
         "commands": [
             {
+                "name": "enable",
+                "description": "Enables storage tracking, storage events will now be delivered to the client."
+            },
+            {
+                "name": "disable",
+                "description": "Disables storage tracking, prevents storage events from being sent to the client."
+            },
+            {
                 "name": "getDOMStorageEntries",
                 "parameters": [
                     { "name": "storageId", "type": "integer" }

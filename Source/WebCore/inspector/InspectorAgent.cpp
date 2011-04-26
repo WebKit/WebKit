@@ -120,7 +120,7 @@ InspectorAgent::InspectorAgent(Page* page, InspectorClient* client, InjectedScri
     , m_databaseAgent(InspectorDatabaseAgent::create(m_instrumentingAgents.get(), m_state.get()))
 #endif
 #if ENABLE(DOM_STORAGE)
-    , m_domStorageAgent(InspectorDOMStorageAgent::create(m_instrumentingAgents.get()))
+    , m_domStorageAgent(InspectorDOMStorageAgent::create(m_instrumentingAgents.get(), m_state.get()))
 #endif
     , m_timelineAgent(InspectorTimelineAgent::create(m_instrumentingAgents.get(), m_state.get()))
 #if ENABLE(OFFLINE_WEB_APPLICATIONS)
@@ -201,6 +201,10 @@ void InspectorAgent::restoreInspectorStateFromCookie(const String& inspectorStat
 
 #if ENABLE(DATABASE)
     m_databaseAgent->restore();
+#endif
+
+#if ENABLE(DOM_STORAGE)
+    m_domStorageAgent->restore();
 #endif
 
 #if ENABLE(JAVASCRIPT_DEBUGGER)

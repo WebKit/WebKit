@@ -5,8 +5,8 @@ Running tests...
 RUNNING TEST: extension_testOnNavigated
 Page reloaded.
 Page reloaded.
-Navigated to: extensions-events.html?navigated
 Navigated to: extensions-events.html
+Navigated to: extensions-events.html?navigated
 RUNNING TEST: extension_testOnResourceFinished
 onFinished fired
 RUNNING TEST: extension_testOnSelectionChanged

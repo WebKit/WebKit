@@ -500,6 +500,7 @@ WebInspector.doLoadedDone = function()
     ConsoleAgent.enable(this.console.setConsoleMessageExpiredCount.bind(this.console));
 
     DatabaseAgent.enable();
+    DOMStorageAgent.enable();
 
     WebInspector.showPanel(WebInspector.settings.lastActivePanel);
 
