@@ -27,6 +27,7 @@
 #include "config.h"
 #include "RunLoop.h"
 
+#include "WorkItem.h"
 #include "WKBase.h"
 #include <glib.h>
 
