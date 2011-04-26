@@ -3907,3 +3907,5 @@ BUGDPRANKE GPU : media/video-aspect-ratio.html = IMAGE PASS
 BUGSENORBLANCO : animations/animation-drt-api-multiple-keyframes.html = TEXT
 BUGSENORBLANCO : animations/animation-drt-api.html = TEXT
 BUGSENORBLANCO GPU : compositing/animation/animated-composited-inside-hidden.html = MISSING
+BUGSENORBLANCO GPU MAC : compositing/direct-image-compositing.html = CRASH
+BUGSENORBLANCO MAC LINUX : fast/css/string-quote-binary.html = CRASH PASS
