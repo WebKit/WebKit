@@ -1,3 +1,29 @@
+2011-04-26  Robert Sesek  <rsesek@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        [Chromium] Implement WebKit methods to assist with Cocoa NSTextInput implementation
+        https://bugs.webkit.org/show_bug.cgi?id=54969
+
+        * WebKit.gyp:
+        * public/WebFrame.h:
+        * public/WebWidget.h:
+        * public/mac/WebSubstringUtil.h: Added.
+        * src/WebFrameImpl.cpp:
+        (WebKit::WebFrameImpl::firstRectForCharacterRange): Return the result rect in window coordinates
+        (WebKit::WebFrameImpl::characterIndexForPoint): New method on WebFrame
+        * src/WebFrameImpl.h:
+        * src/WebPopupMenuImpl.cpp:
+        (WebKit::WebPopupMenuImpl::compositionRange): New method on WebWidget; empty impl
+        (WebKit::WebPopupMenuImpl::caretOrSelectionRange): New method on WebWidget; empty impl
+        * src/WebPopupMenuImpl.h:
+        * src/WebViewImpl.cpp:
+        (WebKit::WebViewImpl::compositionRange): New method on WebWidget
+        (WebKit::WebViewImpl::caretOrSelectionRange): New method on WebWidget
+        * src/WebViewImpl.h:
+        * src/mac/WebSubstringUtil.mm: Added.
+        (WebKit::WebSubstringUtil::attributedSubstringInRange):
+
 2011-04-26  Adam Barth  <abarth@webkit.org>
 
         Reviewed by David Levin.

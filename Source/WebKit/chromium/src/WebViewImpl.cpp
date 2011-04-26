@@ -91,6 +91,7 @@
 #include "SelectionController.h"
 #include "Settings.h"
 #include "SpeechInputClientImpl.h"
+#include "TextIterator.h"
 #include "Timer.h"
 #include "TraceEvent.h"
 #include "TypingCommand.h"
@@ -115,6 +116,7 @@
 #include "WebPluginContainerImpl.h"
 #include "WebPoint.h"
 #include "WebPopupMenuImpl.h"
+#include "WebRange.h"
 #include "WebRect.h"
 #include "WebRuntimeFeatures.h"
 #include "WebSettingsImpl.h"
@@ -1394,6 +1396,24 @@ bool WebViewImpl::confirmComposition(const WebString& text)
     return true;
 }
 
+bool WebViewImpl::compositionRange(size_t* location, size_t* length)
+{
+    Frame* focused = focusedWebCoreFrame();
+    if (!focused || !m_imeAcceptEvents)
+        return false;
+    Editor* editor = focused->editor();
+    if (!editor || !editor->hasComposition())
+        return false;
+
+    RefPtr<Range> range = editor->compositionRange();
+    if (!range.get())
+        return false;
+
+    if (TextIterator::locationAndLengthFromRange(range.get(), *location, *length))
+        return true;
+    return false;
+}
+
 WebTextInputType WebViewImpl::textInputType()
 {
     WebTextInputType type = WebTextInputTypeNone;
@@ -1483,6 +1503,25 @@ bool WebViewImpl::selectionRange(WebPoint& start, WebPoint& end) const
     start = frame->view()->contentsToWindow(start);
     end = frame->view()->contentsToWindow(end);
     return true;
+}
+
+bool WebViewImpl::caretOrSelectionRange(size_t* location, size_t* length)
+{
+    const Frame* focused = focusedWebCoreFrame();
+    if (!focused)
+        return false;
+
+    SelectionController* controller = focused->selection();
+    if (!controller)
+        return false;
+
+    RefPtr<Range> range = controller->selection().firstRange();
+    if (!range.get())
+        return false;
+
+    if (TextIterator::locationAndLengthFromRange(range.get(), *location, *length))
+        return true;
+    return false;
 }
 
 void WebViewImpl::setTextDirection(WebTextDirection direction)
