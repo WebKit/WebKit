@@ -154,19 +154,12 @@ wstring ResourceLoadDelegate::descriptionSuitableForTestResult(IWebError* error,
     if (FAILED(error->failingURL(&failingURLSTR)))
         return wstring();
 
-    wstring failingURL;
-    
-    // If the error doesn't have a failing URL, we fake one by using the URL the resource had 
-    // at creation time. This seems to work fine for now.
-    // See <rdar://problem/5064234> CFErrors should have failingURL key.
-    if (failingURLSTR)
-        failingURL = wstringFromBSTR(failingURLSTR);
-    else
-        failingURL = descriptionSuitableForTestResult(identifier);
+    if (failingURLSTR) {
+        result += L", failing URL \"" + urlSuitableForTestResult(wstringFromBSTR(failingURLSTR)) + L"\"";
+        ::SysFreeString(failingURLSTR);
+    }
 
-    ::SysFreeString(failingURLSTR);
-
-    result += L", failing URL \"" + urlSuitableForTestResult(failingURL) + L"\">";
+    result += L">";
 
     return result;
 }

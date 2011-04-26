@@ -1,3 +1,17 @@
+2011-04-26  Adam Roben  <aroben@apple.com>
+
+        Make DRT/win log loading errors the same way DRT/mac does
+
+        Fixes <http://webkit.org/b/59303> [Windows WebKit1 Tests]
+        http/tests/misc/will-send-request-returns-null-on-redirect.html failing since r84742
+
+        Reviewed by Alexey Proskuryakov.
+
+        * DumpRenderTree/win/ResourceLoadDelegate.cpp:
+        (ResourceLoadDelegate::descriptionSuitableForTestResult): Removed the workaround for
+        <rdar://problem/5064234>, which has long since been fixed, and then made this function match
+        -[NSError(DRTExtras) _drt_descriptionSuitableForTestResult] more closely.
+
 2011-04-26  Dan Bernstein  <mitz@apple.com>
 
         REGRESSION (84876): build-webkit produces an error message
