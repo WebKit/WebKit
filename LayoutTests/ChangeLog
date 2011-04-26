@@ -2,6 +2,21 @@
 
         Reviewed by Eric Seidel.
 
+        [GTK] accessibility/aria-combobox-expected.txt
+        https://bugs.webkit.org/show_bug.cgi?id=59399
+
+        Unskip the test and provide expectations for Mac and GTK.
+
+        * accessibility/aria-combobox.html: Do not check roles to be the
+        right ones, print them and leave the check for the expected file.
+        * platform/gtk/Skipped: Unskip the test.
+        * platform/gtk/accessibility/aria-combobox-expected.txt: New.
+        * platform/mac/accessibility/aria-combobox-expected.txt: Updated.
+
+2011-04-26  Mario Sanchez Prada  <msanchez@igalia.com>
+
+        Reviewed by Eric Seidel.
+
         [GTK] Implement isChecked in DRT
         https://bugs.webkit.org/show_bug.cgi?id=59385
 

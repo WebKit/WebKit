@@ -324,7 +324,6 @@ http/tests/security/mixedContent/insecure-css-in-iframe.html
 ###############################################################################
 # TESTS FAILING
 ###############################################################################
-accessibility/aria-combobox.html
 accessibility/aria-help.html
 accessibility/aria-hidden.html
 accessibility/aria-hidden-with-elements.html

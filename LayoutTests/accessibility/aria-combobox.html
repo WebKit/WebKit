@@ -31,7 +31,7 @@ var successfullyParsed = false;
 
           combobox = accessibilityController.focusedElement;
 
-          shouldBe("combobox.role", "'AXRole: AXComboBox'");
+          debug("Role: " + combobox.role);
           shouldBe("combobox.isExpanded", "false");
     
           combobox.showMenu();
@@ -40,7 +40,7 @@ var successfullyParsed = false;
           shouldBe("combobox.isExpanded", "false");
 
           var firstChild = combobox.childAtIndex(0);
-          shouldBe("firstChild.role", "'AXRole: AXList'");
+          debug("Role: " + firstChild.role);
     }
 
     successfullyParsed = true;

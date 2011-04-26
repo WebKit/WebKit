@@ -1,3 +1,15 @@
+2011-04-26  Mario Sanchez Prada  <msanchez@igalia.com>
+
+        Reviewed by Eric Seidel.
+
+        [GTK] accessibility/aria-combobox-expected.txt
+        https://bugs.webkit.org/show_bug.cgi?id=59399
+
+        Implement isExpanded(), as it's used in the layout test.
+
+        * DumpRenderTree/gtk/AccessibilityUIElementGtk.cpp:
+        (AccessibilityUIElement::isExpanded): Implemented.
+
 2011-04-26  Adrienne Walker  <enne@google.com>
 
         Reviewed by Kent Tamura.

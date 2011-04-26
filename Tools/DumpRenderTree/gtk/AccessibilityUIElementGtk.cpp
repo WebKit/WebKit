@@ -436,8 +436,13 @@ JSStringRef AccessibilityUIElement::ariaDropEffects() const
 
 bool AccessibilityUIElement::isExpanded() const
 {
-    // FIXME: implement
-    return false;
+    if (!ATK_IS_OBJECT(m_element))
+        return false;
+
+    GRefPtr<AtkStateSet> stateSet = adoptGRef(atk_object_ref_state_set(ATK_OBJECT(m_element)));
+    gboolean isExpanded = atk_state_set_contains_state(stateSet.get(), ATK_STATE_EXPANDED);
+
+    return isExpanded;
 }
 
 bool AccessibilityUIElement::isChecked() const
