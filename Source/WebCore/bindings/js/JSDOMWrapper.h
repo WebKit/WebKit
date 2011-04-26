@@ -33,7 +33,7 @@ class JSDOMWrapper : public JSC::JSObjectWithGlobalObject {
 public:
     JSDOMGlobalObject* globalObject() const
     {
-        return static_cast<JSDOMGlobalObject*>(JSC::JSObjectWithGlobalObjects::globalObject());
+        return static_cast<JSDOMGlobalObject*>(JSC::JSObjectWithGlobalObject::globalObject());
     }
 
     ScriptExecutionContext* scriptExecutionContext() const

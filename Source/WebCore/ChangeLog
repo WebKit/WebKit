@@ -1,5 +1,12 @@
 2011-04-26  Sam Weinig  <sam@webkit.org>
 
+        Fix build.
+
+        * bindings/js/JSDOMWrapper.h:
+        (WebCore::JSDOMWrapper::globalObject):
+
+2011-04-26  Sam Weinig  <sam@webkit.org>
+
         Roll r84945 back in with infinite recursion removed.
 
         * bindings/js/JSDOMBinding.h:
