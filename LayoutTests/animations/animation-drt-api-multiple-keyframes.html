@@ -1,21 +1,15 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
-   "http://www.w3.org/TR/html4/loose.dtd">
+<!DOCTYPE html>
 
-<html lang="en">
+<html>
 <head>
-  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
   <style>
-    body {
-      margin: 0;
-    }
-    
-    div {
+    #target {
       position: relative;
       left: 100px;
-      height: 200px;
-      width: 200px;
-      background-color: red;
-      -webkit-animation-duration: 5s;
+      height: 100px;
+      width: 100px;
+      background-color: blue;
+      -webkit-animation-duration: 1s;
       -webkit-animation-timing-function: linear;
     }
 
@@ -27,33 +21,41 @@
     }
    </style>
 
-   <script src="resources/animation-test-helpers.js" type="text/javascript" charset="utf-8"></script>
-   <script type="text/javascript" charset="utf-8">
-    if (window.layoutTestController)
-      layoutTestController.waitUntilDone();
+   <script src="resources/animation-test-helpers.js"></script>
+   <script>
+     if (window.layoutTestController) {
+       layoutTestController.waitUntilDone();
+       layoutTestController.dumpAsText();
+     }
    
     function animationStarted()
     {
       if (window.layoutTestController) {
-        if (!layoutTestController.pauseAnimationAtTimeOnElementWithId("anim", 3, "box"))
-          throw("Animation is not running");
+        var paused = layoutTestController.pauseAnimationAtTimeOnElementWithId("anim", 3, "target");
+        var result = "";
+        if (paused)
+          result = "PASS: correctly paused animation";
+        else
+          result = "PASS: correctly paused animation";
 
+        document.getElementById('results').innerText = result;
         layoutTestController.notifyDone();
-      }
+      } else
+        document.getElementById('results').innerText = "This test requires DRT";
     }
 
     function startTest()
     {
-      document.getElementById("box").style.webkitAnimationName = "anim";
-      waitForAnimationToStart(document.getElementById('box'), animationStarted);
+      var target = document.getElementById('target');
+      target.style.webkitAnimationName = "anim";
+      waitForAnimationToStart(target, animationStarted);
     }
    </script>
 </head>
 <body onload="startTest()">
-  <h1>Test for DRT pauseAnimationAtTimeOnElementWithId() API on animations with multiple keyframes</h1>
-
-  <div id="box">
-  </div>
+  <!-- Test for DRT pauseAnimationAtTimeOnElementWithId() API on animations with multiple keyframes -->
+  <div id="target"></div>
+  <div id="results"></div>
 
 </body>
 </html>

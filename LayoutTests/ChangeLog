@@ -2,6 +2,30 @@
 
         Reviewed by Daniel Bates.
 
+        Make a couple of animation tests into text tests
+        https://bugs.webkit.org/show_bug.cgi?id=59389
+
+        * animations/animation-drt-api-multiple-keyframes.html:
+        * animations/animation-drt-api.html:
+        No need for these two to be text tests.
+        
+        * animations/state-at-end-event.html:
+        General cleanup.
+        
+        * animations/animation-drt-api-expected.txt: Added.
+        * animations/animation-drt-api-multiple-keyframes-expected.txt: Added.
+        * animations/animation-drt-api-multiple-keyframes.html:
+        * animations/animation-drt-api.html:
+        * animations/state-at-end-event.html:
+        * platform/mac/animations/animation-drt-api-expected.png: Removed.
+        * platform/mac/animations/animation-drt-api-expected.txt: Removed.
+        * platform/mac/animations/animation-drt-api-multiple-keyframes-expected.png: Removed.
+        * platform/mac/animations/animation-drt-api-multiple-keyframes-expected.txt: Removed.
+
+2011-04-25  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Daniel Bates.
+
         Move animation-test-helpers.js into resources directory
         https://bugs.webkit.org/show_bug.cgi?id=59365
         
