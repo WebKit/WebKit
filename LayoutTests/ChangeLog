@@ -1,3 +1,12 @@
+2011-04-25  Tony Chang  <tony@chromium.org>
+
+        Reviewed by Antonio Gomes.
+
+        replace a setTimeout with a onload event to save 2 seconds in a test
+        https://bugs.webkit.org/show_bug.cgi?id=59350
+
+        * http/tests/security/xssAuditor/meta-tag-http-refresh-javascript-url.html:
+
 2011-04-25  Mihai Parparita  <mihaip@chromium.org>
 
         Reviewed by Ojan Vafai.
