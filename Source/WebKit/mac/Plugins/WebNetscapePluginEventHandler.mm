@@ -28,22 +28,23 @@
 #import "WebNetscapePluginEventHandler.h"
 
 #import <wtf/Assertions.h>
+#import <wtf/PassOwnPtr.h>
 #import "WebNetscapePluginView.h"
 #import "WebNetscapePluginEventHandlerCarbon.h"
 #import "WebNetscapePluginEventHandlerCocoa.h"
 
-WebNetscapePluginEventHandler* WebNetscapePluginEventHandler::create(WebNetscapePluginView* pluginView)
+PassOwnPtr<WebNetscapePluginEventHandler> WebNetscapePluginEventHandler::create(WebNetscapePluginView* pluginView)
 {
     switch ([pluginView eventModel]) {
 #ifndef NP_NO_CARBON
         case NPEventModelCarbon:
-            return new WebNetscapePluginEventHandlerCarbon(pluginView);
+            return adoptPtr(new WebNetscapePluginEventHandlerCarbon(pluginView));
 #endif // NP_NO_CARBON
         case NPEventModelCocoa:
-            return new WebNetscapePluginEventHandlerCocoa(pluginView);
+            return adoptPtr(new WebNetscapePluginEventHandlerCocoa(pluginView));
         default:
             ASSERT_NOT_REACHED();
-            return 0;
+            return PassOwnPtr<WebNetscapePluginEventHandler>();
     }
 }
 

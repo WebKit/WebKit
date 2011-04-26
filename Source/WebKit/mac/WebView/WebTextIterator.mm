@@ -71,7 +71,7 @@ using namespace WebCore;
         return self;
     
     _private = [[WebTextIteratorPrivate alloc] init];
-    _private->_textIterator.set(new TextIterator(core(range)));
+    _private->_textIterator = adoptPtr(new TextIterator(core(range)));
     return self;
 }
 

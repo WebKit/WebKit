@@ -378,7 +378,7 @@ static WebWindowWatcher *_windowWatcher = nil;
 
     if (NSArray *redirectURLs = [dict _webkit_arrayForKey:redirectURLsKey]) {
         NSUInteger size = [redirectURLs count];
-        OwnPtr<Vector<String> > redirectURLsVector(new Vector<String>(size));
+        OwnPtr<Vector<String> > redirectURLsVector = adoptPtr(new Vector<String>(size));
         for (NSUInteger i = 0; i < size; ++i)
             (*redirectURLsVector)[i] = String([redirectURLs _webkit_stringAtIndex:i]);
         core(_private)->setRedirectURLs(redirectURLsVector.release());

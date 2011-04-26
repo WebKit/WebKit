@@ -37,7 +37,7 @@ struct CGRect;
 
 class WebNetscapePluginEventHandler {
 public:
-    static WebNetscapePluginEventHandler* create(WebNetscapePluginView*);
+    static PassOwnPtr<WebNetscapePluginEventHandler> create(WebNetscapePluginView*);
     virtual ~WebNetscapePluginEventHandler() { }
     
     virtual void drawRect(CGContextRef, const NSRect&) = 0;

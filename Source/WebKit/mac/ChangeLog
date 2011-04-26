@@ -1,3 +1,21 @@
+2011-04-25  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by David Levin.
+
+        WebKit1 should build cleanly with strict OwnPtrs
+        https://bugs.webkit.org/show_bug.cgi?id=59424
+
+        * History/WebHistoryItem.mm:
+        (-[WebHistoryItem initFromDictionaryRepresentation:]):
+        * Plugins/WebNetscapePluginEventHandler.h:
+        * Plugins/WebNetscapePluginEventHandler.mm:
+        (WebNetscapePluginEventHandler::create):
+        * Plugins/WebNetscapePluginView.mm:
+        (-[WebNetscapePluginView createPlugin]):
+        * WebView/WebDeviceOrientationProviderMock.mm:
+        * WebView/WebTextIterator.mm:
+        (-[WebTextIterator initWithRange:]):
+
 2011-04-25  Jon Lee  <jonlee@apple.com>
 
         Reviewed by Maciej Stachowiak.

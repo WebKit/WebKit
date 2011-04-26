@@ -1129,8 +1129,8 @@ static inline void getNPRect(const NSRect& nr, NPRect& npr)
 #endif
     
     // Create the event handler
-    _eventHandler.set(WebNetscapePluginEventHandler::create(self));
-        
+    _eventHandler = WebNetscapePluginEventHandler::create(self);
+
     return YES;
 }
 
