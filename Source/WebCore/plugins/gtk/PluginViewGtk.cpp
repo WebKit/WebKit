@@ -493,26 +493,27 @@ void PluginView::setNPWindowIfNeeded()
     if (m_isWindowed && !platformPluginWidget())
         return;
 
-    if (m_isWindowed) {
-        m_npWindow.x = m_windowRect.x();
-        m_npWindow.y = m_windowRect.y();
-        m_npWindow.width = m_windowRect.width();
-        m_npWindow.height = m_windowRect.height();
-
-        m_npWindow.clipRect.left = max(0, m_clipRect.x());
-        m_npWindow.clipRect.top = max(0, m_clipRect.y());
-        m_npWindow.clipRect.right = m_clipRect.x() + m_clipRect.width();
-        m_npWindow.clipRect.bottom = m_clipRect.y() + m_clipRect.height();
-    } else {
-        m_npWindow.x = 0;
-        m_npWindow.y = 0;
-        m_npWindow.width = m_windowRect.width();
-        m_npWindow.height = m_windowRect.height();
-
+    // If width or height are null, set the clipRect to null, indicating that
+    // the plugin is not visible/scrolled out.
+    if (!m_clipRect.isEmpty()) {
         m_npWindow.clipRect.left = 0;
-        m_npWindow.clipRect.top = 0;
         m_npWindow.clipRect.right = 0;
+        m_npWindow.clipRect.top = 0;
         m_npWindow.clipRect.bottom = 0;
+    } else {
+        // Clipping rectangle of the plug-in; the origin is the top left corner of the drawable or window. 
+        m_npWindow.clipRect.left = m_npWindow.x + m_clipRect.x();
+        m_npWindow.clipRect.top = m_npWindow.y + m_clipRect.y();
+        m_npWindow.clipRect.right = m_npWindow.x + m_clipRect.x() + m_clipRect.width();
+        m_npWindow.clipRect.bottom = m_npWindow.y + m_clipRect.y() + m_clipRect.height();
+    }
+
+    // FLASH WORKAROUND: Only set initially. Multiple calls to
+    // setNPWindow() cause the plugin to crash in windowed mode.
+    if (!m_plugin->quirks().contains(PluginQuirkDontCallSetWindowMoreThanOnce) || !m_isWindowed
+        || m_npWindow.width == static_cast<uint32_t>(-1) || m_npWindow.height == static_cast<uint32_t>(-1)) {
+        m_npWindow.width = m_windowRect.width();
+        m_npWindow.height = m_windowRect.height();
     }
 
     PluginView::setCurrentPluginView(this);
@@ -534,15 +535,34 @@ void PluginView::setNPWindowIfNeeded()
     }
 #endif
 
-    GtkAllocation allocation = { m_windowRect.x(), m_windowRect.y(), m_windowRect.width(), m_windowRect.height() };
+    m_delayedAllocation = m_windowRect;
+    updateWidgetAllocationAndClip();
+}
 
+void PluginView::updateWidgetAllocationAndClip()
+{
     // If the window has not been embedded yet (the plug added), we delay setting its allocation until 
     // that point. This fixes issues with some Java plugin instances not rendering immediately.
-    if (!m_plugAdded) {
-        m_delayedAllocation = allocation;
+    if (!m_plugAdded || m_delayedAllocation.isEmpty())
         return;
+
+    GtkWidget* widget = platformPluginWidget();
+    if (gtk_widget_get_realized(widget)) {
+        GdkRectangle clipRect = m_clipRect;
+#ifdef GTK_API_VERSION_2
+        GdkRegion* clipRegion = gdk_region_rectangle(&clipRect);
+        gdk_window_shape_combine_region(gtk_widget_get_window(widget), clipRegion, 0, 0);
+        gdk_region_destroy(clipRegion);
+#else
+        cairo_region_t* clipRegion = cairo_region_create_rectangle(&clipRect);
+        gdk_window_shape_combine_region(gtk_widget_get_window(widget), clipRegion, 0, 0);
+        cairo_region_destroy(clipRegion);
+#endif
     }
-    gtk_widget_size_allocate(platformPluginWidget(), &allocation);
+
+    GtkAllocation allocation(m_delayedAllocation);
+    gtk_widget_size_allocate(widget, &allocation);
+    m_delayedAllocation = IntRect();
 }
 
 void PluginView::setParentVisible(bool visible)
@@ -773,13 +793,8 @@ void PluginView::plugAddedCallback(GtkSocket* socket, PluginView* view)
 {
     ASSERT(socket);
     ASSERT(view);
-
     view->m_plugAdded = true;
-    if (!view->m_delayedAllocation.isEmpty()) {
-        GtkAllocation allocation(view->m_delayedAllocation);
-        gtk_widget_size_allocate(GTK_WIDGET(socket), &allocation);
-        view->m_delayedAllocation.setSize(IntSize());
-    }
+    view->updateWidgetAllocationAndClip();
 }
 
 bool PluginView::platformStart()

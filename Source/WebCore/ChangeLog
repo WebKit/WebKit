@@ -1,5 +1,25 @@
 2011-04-26  Martin Robinson  <mrobinson@igalia.com>
 
+        Reviewed by Dirk Schulze.
+
+        [GTK] Flash in divs with overflow: auto is not positioned and clipped properly
+        https://bugs.webkit.org/show_bug.cgi?id=57644
+
+        Manual test: plugins/windowed-in-iframe-2.html
+
+        * manual-tests/plugins/windowed-in-iframe-2.html: Added.
+        * platform/gtk/WidgetGtk.cpp:
+        (WebCore::Widget::setFrameRect): Like the Qt port, we notify the widget via frameRectsChanged.
+        * plugins/PluginView.h: Added helper method to set the allocation and clip.
+        * plugins/gtk/PluginViewGtk.cpp:
+        (WebCore::PluginView::setNPWindowIfNeeded):Call the helper method instead of setting
+        the allocation immediately. Bring this method into sync with the implementation in
+        the Qt port.
+        (WebCore::PluginView::updateWidgetAllocationAndClip): Added.
+        (WebCore::PluginView::plugAddedCallback): Call the new helper method.
+
+2011-04-26  Martin Robinson  <mrobinson@igalia.com>
+
         Reviewed by Eric Seidel.
 
         [GTK]  fast/block/float/overhanging-tall-block.html crashes in the bots
