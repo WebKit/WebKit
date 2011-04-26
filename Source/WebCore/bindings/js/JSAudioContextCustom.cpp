@@ -39,6 +39,12 @@ using namespace JSC;
 
 namespace WebCore {
 
+void JSAudioContext::visitChildren(SlotVisitor& visitor)
+{
+    Base::visitChildren(visitor);
+    m_impl->visitJSEventListeners(visitor);
+}
+
 EncodedJSValue JSC_HOST_CALL JSAudioContextConstructor::constructJSAudioContext(ExecState* exec)
 {
     JSAudioContextConstructor* jsConstructor = static_cast<JSAudioContextConstructor*>(exec->callee());

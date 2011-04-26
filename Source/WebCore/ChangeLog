@@ -2,6 +2,22 @@
 
         Reviewed by Kenneth Russell.
 
+        Fix web audio build on mac port
+        https://bugs.webkit.org/show_bug.cgi?id=59355
+
+        No new tests since audio API is not yet implemented.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/JSAudioContextCustom.cpp:
+        (WebCore::JSAudioContext::visitChildren):
+        * bindings/js/JSJavaScriptAudioNodeCustom.cpp:
+        (WebCore::JSJavaScriptAudioNode::visitChildren):
+        * webaudio/AudioContext.idl:
+
+2011-04-26  Chris Rogers  <crogers@google.com>
+
+        Reviewed by Kenneth Russell.
+
         Add FFTFrame implementation for FFmpeg
         https://bugs.webkit.org/show_bug.cgi?id=59408
 

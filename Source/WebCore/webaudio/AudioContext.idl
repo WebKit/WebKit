@@ -30,6 +30,7 @@ module webaudio {
         CanBeConstructed,
         CustomConstructFunction,
         V8CustomConstructor,
+        CustomMarkFunction,
 #if defined(V8_BINDING) && V8_BINDING
         EventTarget
 #endif        

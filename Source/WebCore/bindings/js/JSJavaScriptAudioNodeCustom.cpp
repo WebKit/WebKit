@@ -37,7 +37,7 @@ namespace WebCore {
 void JSJavaScriptAudioNode::visitChildren(SlotVisitor& visitor)
 {
     Base::visitChildren(visitor);
-    static_cast<JavaScriptAudioNode*>(impl())->markJSEventListeners(visitor);
+    static_cast<JavaScriptAudioNode*>(impl())->visitJSEventListeners(visitor);
 }
 
 } // namespace WebCore
