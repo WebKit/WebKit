@@ -37,7 +37,7 @@ class DatasetDOMStringMap : public DOMStringMap {
 public:
     static PassOwnPtr<DatasetDOMStringMap> create(Element* element)
     {
-        return new DatasetDOMStringMap(element);
+        return adoptPtr(new DatasetDOMStringMap(element));
     }
 
     virtual void ref();

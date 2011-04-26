@@ -1,3 +1,13 @@
+2011-04-25  David Levin  <levin@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        Fix OwnPtr strict errors in DatasetDOMStringMap.h.
+        https://bugs.webkit.org/show_bug.cgi?id=59419
+
+        * dom/DatasetDOMStringMap.h:
+        (WebCore::DatasetDOMStringMap::create):
+
 2011-04-25  Jocelyn Turcotte  <jocelyn.turcotte@nokia.com>
 
         Reviewed by Eric Seidel.
