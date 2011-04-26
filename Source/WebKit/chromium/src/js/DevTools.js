@@ -53,6 +53,9 @@ var context = {};  // Used by WebCore's inspector routines.
     Preferences.saveAsAvailable = true;
 })();
 
+// Recognize WebP as a valid image mime type.
+WebInspector.MIMETypes["image/webp"] = {2: true};
+
 var devtools = devtools || {};
 
 devtools.domContentLoaded = function()
