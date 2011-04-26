@@ -1052,6 +1052,7 @@ webarchive/loading/missing-data.html
 # WebKitTestRunner needs layoutTestController.dumpResourceLoadCallbacks
 # <https://bugs.webkit.org/show_bug.cgi?id=42332>
 fast/images/support-broken-image-delegate.html
+fast/loader/file-protocol-fragment.html
 fast/loader/main-document-url-for-non-http-loads.html
 fast/loader/user-style-sheet-resource-load-callbacks.html
 http/tests/loading/307-after-303-after-post.html

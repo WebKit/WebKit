@@ -1,3 +1,12 @@
+2011-04-26  Antti Koivisto  <antti@apple.com>
+
+        Not reviewed.
+
+        Add fast/loader/file-protocol-fragment.html to WebKit2 skip list
+        (uses layoutTestController.dumpResourceLoadCallbacks).
+
+        * platform/mac-wk2/Skipped:
+
 2011-04-26  Stephen White  <senorblanco@chromium.org>
 
         Unreviewed; chromium test expectations update.
