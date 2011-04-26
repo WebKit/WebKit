@@ -1,3 +1,17 @@
+2011-04-26  Daniel Bates  <dbates@webkit.org>
+
+        Add expected results for GTK and Qt ports for the test panScroll-click-hyperlink.html
+        (added in <http://trac.webkit.org/changeset/84922>).
+
+        * platform/gtk/fast/events/panScroll-click-hyperlink-expected.txt: Added; expected
+          failure results since this port doesn't build with pan scrolling enabled.
+        * platform/qt-win/fast: Added.
+        * platform/qt-win/fast/events: Added.
+        * platform/qt-win/fast/events/panScroll-click-hyperlink-expected.txt: Added.
+        * platform/qt/fast/events/panScroll-click-hyperlink-expected.txt: Added; expected
+          failure results since the port for the Linux platform doesn't build with pan scrolling
+          enabled.
+
 2011-04-26  Antti Koivisto  <antti@apple.com>
 
         Reviewed by Adele Peterson.
