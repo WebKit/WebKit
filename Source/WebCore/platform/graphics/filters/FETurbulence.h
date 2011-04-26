@@ -58,6 +58,10 @@ public:
     bool stitchTiles() const;
     bool setStitchTiles(bool);
 
+#if ENABLE(PARALLEL_JOBS)
+    static void fillRegionWorker(void*);
+#endif
+
     virtual void apply();
     virtual void dump();
     
@@ -68,6 +72,9 @@ public:
 private:
     static const int s_blockSize = 256;
     static const int s_blockMask = s_blockSize - 1;
+#if ENABLE(PARALLEL_JOBS)
+    static const int s_minimalRectDimension = (100 * 100); // Empirical data limit for parallel jobs
+#endif
 
     struct PaintingData {
         long seed;
@@ -77,18 +84,33 @@ private:
         int height;
         int wrapX; // Minimum value to wrap.
         int wrapY;
-        int channel;
         IntSize filterSize;
 
         PaintingData(long paintingSeed, const IntSize& paintingSize);
         inline long random();
     };
 
+#if ENABLE(PARALLEL_JOBS)
+    template<typename Type>
+    friend class ParallelJobs;
+
+    struct FillRegionParameters {
+        FETurbulence* filter;
+        ByteArray* pixelArray;
+        PaintingData* paintingData;
+        int startY;
+        int endY;
+    };
+
+    static void fillRegionWorker(FillRegionParameters*);
+#endif
+
     FETurbulence(Filter*, TurbulenceType, float, float, int, float, bool);
 
     inline void initPaint(PaintingData&);
-    float noise2D(PaintingData&, const FloatPoint&);
-    unsigned char calculateTurbulenceValueForPoint(PaintingData&, const FloatPoint&);
+    float noise2D(int channel, PaintingData&, const FloatPoint&);
+    unsigned char calculateTurbulenceValueForPoint(int channel, PaintingData&, const FloatPoint&);
+    inline void fillRegion(ByteArray*, PaintingData&, int, int);
 
     TurbulenceType m_type;
     float m_baseFrequencyX;

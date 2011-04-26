@@ -845,6 +845,26 @@
 			>
 		</File>
 		<File
+			RelativePath="..\..\wtf\ParallelJobs.h"
+			>
+		</File>
+		<File
+			RelativePath="..\..\wtf\ParallelJobsGeneric.cpp"
+			>
+		</File>
+		<File
+			RelativePath="..\..\wtf\ParallelJobsGeneric.h"
+			>
+		</File>
+		<File
+			RelativePath="..\..\wtf\ParallelJobsLibdispatch.h"
+			>
+		</File>
+		<File
+			RelativePath="..\..\wtf\ParallelJobsOpenMP.h"
+			>
+		</File>
+		<File
 			RelativePath="..\..\wtf\Platform.h"
 			>
 		</File>

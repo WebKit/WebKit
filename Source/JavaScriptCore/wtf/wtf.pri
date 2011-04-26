@@ -21,6 +21,7 @@ SOURCES += \
     wtf/qt/ThreadingQt.cpp \
     wtf/PageAllocationAligned.cpp \
     wtf/PageBlock.cpp \
+    wtf/ParallelJobsGeneric.cpp \
     wtf/RandomNumber.cpp \
     wtf/RefCountedLeakCounter.cpp \
     wtf/SHA1.cpp \

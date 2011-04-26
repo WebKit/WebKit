@@ -4,6 +4,7 @@
  * Copyright (C) 2005 Eric Seidel <eric@webkit.org>
  * Copyright (C) 2009 Dirk Schulze <krit@webkit.org>
  * Copyright (C) 2010 Renata Hodovan <reni@inf.u-szeged.hu>
+ * Copyright (C) 2011 Gabor Loki <loki@webkit.org>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -32,6 +33,7 @@
 
 #include <wtf/ByteArray.h>
 #include <wtf/MathExtras.h>
+#include <wtf/ParallelJobs.h>
 
 namespace WebCore {
 
@@ -152,7 +154,6 @@ FETurbulence::PaintingData::PaintingData(long paintingSeed, const IntSize& paint
     , height(0)
     , wrapX(0)
     , wrapY(0)
-    , channel(0)
     , filterSize(paintingSize)
 {
 }
@@ -224,7 +225,7 @@ inline void checkNoise(int& noiseValue, int limitValue, int newValue)
         noiseValue -= newValue - 1;
 }
 
-float FETurbulence::noise2D(PaintingData& paintingData, const FloatPoint& noiseVector)
+float FETurbulence::noise2D(int channel, PaintingData& paintingData, const FloatPoint& noiseVector)
 {
     struct Noise {
         int noisePositionIntegerValue;
@@ -259,23 +260,23 @@ float FETurbulence::noise2D(PaintingData& paintingData, const FloatPoint& noiseV
 
     // This is taken 1:1 from SVG spec: http://www.w3.org/TR/SVG11/filters.html#feTurbulenceElement.
     int temp = paintingData.latticeSelector[latticeIndex + noiseY.noisePositionIntegerValue];
-    q = paintingData.gradient[paintingData.channel][temp];
+    q = paintingData.gradient[channel][temp];
     u = noiseX.noisePositionFractionValue * q[0] + noiseY.noisePositionFractionValue * q[1];
     temp = paintingData.latticeSelector[nextLatticeIndex + noiseY.noisePositionIntegerValue];
-    q = paintingData.gradient[paintingData.channel][temp];
+    q = paintingData.gradient[channel][temp];
     v = (noiseX.noisePositionFractionValue - 1) * q[0] + noiseY.noisePositionFractionValue * q[1];
     a = linearInterpolation(sx, u, v);
     temp = paintingData.latticeSelector[latticeIndex + noiseY.noisePositionIntegerValue + 1];
-    q = paintingData.gradient[paintingData.channel][temp];
+    q = paintingData.gradient[channel][temp];
     u = noiseX.noisePositionFractionValue * q[0] + (noiseY.noisePositionFractionValue - 1) * q[1];
     temp = paintingData.latticeSelector[nextLatticeIndex + noiseY.noisePositionIntegerValue + 1];
-    q = paintingData.gradient[paintingData.channel][temp];
+    q = paintingData.gradient[channel][temp];
     v = (noiseX.noisePositionFractionValue - 1) * q[0] + (noiseY.noisePositionFractionValue - 1) * q[1];
     b = linearInterpolation(sx, u, v);
     return linearInterpolation(sy, a, b);
 }
 
-unsigned char FETurbulence::calculateTurbulenceValueForPoint(PaintingData& paintingData, const FloatPoint& point)
+unsigned char FETurbulence::calculateTurbulenceValueForPoint(int channel, PaintingData& paintingData, const FloatPoint& point)
 {
     float tileWidth = paintingData.filterSize.width();
     ASSERT(tileWidth > 0);
@@ -313,9 +314,9 @@ unsigned char FETurbulence::calculateTurbulenceValueForPoint(PaintingData& paint
     float ratio = 1;
     for (int octave = 0; octave < m_numOctaves; ++octave) {
         if (m_type == FETURBULENCE_TYPE_FRACTALNOISE)
-            turbulenceFunctionResult += noise2D(paintingData, noiseVector) / ratio;
+            turbulenceFunctionResult += noise2D(channel, paintingData, noiseVector) / ratio;
         else
-            turbulenceFunctionResult += fabsf(noise2D(paintingData, noiseVector)) / ratio;
+            turbulenceFunctionResult += fabsf(noise2D(channel, paintingData, noiseVector)) / ratio;
         noiseVector.setX(noiseVector.x() * 2);
         noiseVector.setY(noiseVector.y() * 2);
         ratio *= 2;
@@ -338,6 +339,31 @@ unsigned char FETurbulence::calculateTurbulenceValueForPoint(PaintingData& paint
     return static_cast<unsigned char>(turbulenceFunctionResult * 255);
 }
 
+inline void FETurbulence::fillRegion(ByteArray* pixelArray, PaintingData& paintingData, int startY, int endY)
+{
+    IntRect filterRegion = absolutePaintRect();
+    IntPoint point(0, filterRegion.y() + startY);
+    int indexOfPixelChannel = startY * (filterRegion.width() << 2);
+    int channel;
+
+    for (int y = startY; y < endY; ++y) {
+        point.setY(point.y() + 1);
+        point.setX(filterRegion.x());
+        for (int x = 0; x < filterRegion.width(); ++x) {
+            point.setX(point.x() + 1);
+            for (channel = 0; channel < 4; ++channel, ++indexOfPixelChannel)
+                pixelArray->set(indexOfPixelChannel, calculateTurbulenceValueForPoint(channel, paintingData, filter()->mapAbsolutePointToLocalPoint(point)));
+        }
+    }
+}
+
+#if ENABLE(PARALLEL_JOBS)
+void FETurbulence::fillRegionWorker(FillRegionParameters* parameters)
+{
+    parameters->filter->fillRegion(parameters->pixelArray, *parameters->paintingData, parameters->startY, parameters->endY);
+}
+#endif // ENABLE(PARALLEL_JOBS)
+
 void FETurbulence::apply()
 {
     if (hasResult())
@@ -352,19 +378,42 @@ void FETurbulence::apply()
     PaintingData paintingData(m_seed, roundedIntSize(filterPrimitiveSubregion().size()));
     initPaint(paintingData);
 
-    FloatRect filterRegion = absolutePaintRect();
-    FloatPoint point;
-    point.setY(filterRegion.y());
-    int indexOfPixelChannel = 0;
-    for (int y = 0; y < absolutePaintRect().height(); ++y) {
-        point.setY(point.y() + 1);
-        point.setX(filterRegion.x());
-        for (int x = 0; x < absolutePaintRect().width(); ++x) {
-            point.setX(point.x() + 1);
-            for (paintingData.channel = 0; paintingData.channel < 4; ++paintingData.channel, ++indexOfPixelChannel)
-                pixelArray->set(indexOfPixelChannel, calculateTurbulenceValueForPoint(paintingData, filter()->mapAbsolutePointToLocalPoint(point)));
+#if ENABLE(PARALLEL_JOBS)
+
+    int optimalThreadNumber = (absolutePaintRect().width() * absolutePaintRect().height()) / s_minimalRectDimension;
+    if (optimalThreadNumber > 1) {
+        // Initialize parallel jobs
+        ParallelJobs<FillRegionParameters> parallelJobs(&WebCore::FETurbulence::fillRegionWorker, optimalThreadNumber);
+
+        // Fill the parameter array
+        int i = parallelJobs.numberOfJobs();
+        if (i > 1) {
+            int startY = 0;
+            int stepY = absolutePaintRect().height() / i;
+            for (; i > 0; --i) {
+                FillRegionParameters& params = parallelJobs.parameter(i-1);
+                params.filter = this;
+                params.pixelArray = pixelArray;
+                params.paintingData = &paintingData;
+                params.startY = startY;
+                if (i != 1) {
+                    params.endY = startY + stepY;
+                    startY = startY + stepY;
+                } else
+                    params.endY = absolutePaintRect().height();
+            }
+
+            // Execute parallel jobs
+            parallelJobs.execute();
+
+            return;
         }
     }
+    // Fallback to sequential mode if there is no room for a new thread or the paint area is too small
+
+#endif // ENABLE(PARALLEL_JOBS)
+
+    fillRegion(pixelArray, paintingData, 0, absolutePaintRect().height());
 }
 
 void FETurbulence::dump()

@@ -224,6 +224,11 @@
 		7186A6EC13100BA5004479E1 /* HexNumber.h in Headers */ = {isa = PBXBuildFile; fileRef = 7186A6E813100B57004479E1 /* HexNumber.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		76FB9F0F12E851860051A2EB /* SHA1.h in Headers */ = {isa = PBXBuildFile; fileRef = 76FB9F0E12E851860051A2EB /* SHA1.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		76FB9F1112E851960051A2EB /* SHA1.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 76FB9F1012E851960051A2EB /* SHA1.cpp */; };
+		7934BB7B1361979300CB99A1 /* ParallelJobs.h in Headers */ = {isa = PBXBuildFile; fileRef = 7934BB761361979300CB99A1 /* ParallelJobs.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		7934BB7C1361979400CB99A1 /* ParallelJobsGeneric.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7934BB771361979300CB99A1 /* ParallelJobsGeneric.cpp */; };
+		7934BB7D1361979400CB99A1 /* ParallelJobsGeneric.h in Headers */ = {isa = PBXBuildFile; fileRef = 7934BB781361979300CB99A1 /* ParallelJobsGeneric.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		7934BB7E1361979400CB99A1 /* ParallelJobsLibdispatch.h in Headers */ = {isa = PBXBuildFile; fileRef = 7934BB791361979300CB99A1 /* ParallelJobsLibdispatch.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		7934BB7F1361979400CB99A1 /* ParallelJobsOpenMP.h in Headers */ = {isa = PBXBuildFile; fileRef = 7934BB7A1361979300CB99A1 /* ParallelJobsOpenMP.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		7E4EE7090EBB7963005934AA /* StructureChain.h in Headers */ = {isa = PBXBuildFile; fileRef = 7E4EE7080EBB7963005934AA /* StructureChain.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		7E4EE70F0EBB7A5B005934AA /* StructureChain.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7E4EE70E0EBB7A5B005934AA /* StructureChain.cpp */; };
 		7EFF00640EC05A9A00AA7C93 /* NodeInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = 7EFF00630EC05A9A00AA7C93 /* NodeInfo.h */; };
@@ -890,6 +895,11 @@
 		7186A6E813100B57004479E1 /* HexNumber.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HexNumber.h; sourceTree = "<group>"; };
 		76FB9F0E12E851860051A2EB /* SHA1.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SHA1.h; sourceTree = "<group>"; };
 		76FB9F1012E851960051A2EB /* SHA1.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SHA1.cpp; sourceTree = "<group>"; };
+		7934BB761361979300CB99A1 /* ParallelJobs.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ParallelJobs.h; sourceTree = "<group>"; };
+		7934BB771361979300CB99A1 /* ParallelJobsGeneric.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ParallelJobsGeneric.cpp; sourceTree = "<group>"; };
+		7934BB781361979300CB99A1 /* ParallelJobsGeneric.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ParallelJobsGeneric.h; sourceTree = "<group>"; };
+		7934BB791361979300CB99A1 /* ParallelJobsLibdispatch.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ParallelJobsLibdispatch.h; sourceTree = "<group>"; };
+		7934BB7A1361979300CB99A1 /* ParallelJobsOpenMP.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ParallelJobsOpenMP.h; sourceTree = "<group>"; };
 		7E2C6C980D31C6B6002D44E2 /* ScopeChainMark.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScopeChainMark.h; sourceTree = "<group>"; };
 		7E4EE7080EBB7963005934AA /* StructureChain.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StructureChain.h; sourceTree = "<group>"; };
 		7E4EE70E0EBB7A5B005934AA /* StructureChain.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = StructureChain.cpp; sourceTree = "<group>"; };
@@ -1689,6 +1699,11 @@
 				BCFBE695122560E800309E9D /* PassOwnArrayPtr.h */,
 				44DD48520FAEA85000D6B4EB /* PassOwnPtr.h */,
 				6580F795094070560082C219 /* PassRefPtr.h */,
+				7934BB761361979300CB99A1 /* ParallelJobs.h */,
+				7934BB771361979300CB99A1 /* ParallelJobsGeneric.cpp */,
+				7934BB781361979300CB99A1 /* ParallelJobsGeneric.h */,
+				7934BB791361979300CB99A1 /* ParallelJobsLibdispatch.h */,
+				7934BB7A1361979300CB99A1 /* ParallelJobsOpenMP.h */,
 				65D6D87E09B5A32E0002E4D7 /* Platform.h */,
 				A7D649A91015224E009B2E1B /* PossiblyNull.h */,
 				E4D8CE9B12FC42E100BC9F5A /* BloomFilter.h */,
@@ -2552,6 +2567,10 @@
 				A1D764521354448B00C5C7C0 /* Alignment.h in Headers */,
 				86AE64A9135E5E1C00963012 /* MacroAssemblerSH4.h in Headers */,
 				86AE64AA135E5E1C00963012 /* SH4Assembler.h in Headers */,
+				7934BB7B1361979300CB99A1 /* ParallelJobs.h in Headers */,
+				7934BB7D1361979400CB99A1 /* ParallelJobsGeneric.h in Headers */,
+				7934BB7E1361979400CB99A1 /* ParallelJobsLibdispatch.h in Headers */,
+				7934BB7F1361979400CB99A1 /* ParallelJobsOpenMP.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2998,6 +3017,7 @@
 				142D6F1113539A4100B02E86 /* MarkStack.cpp in Sources */,
 				142D6F1313539A4100B02E86 /* MarkStackPosix.cpp in Sources */,
 				86AE64A8135E5E1C00963012 /* MacroAssemblerSH4.cpp in Sources */,
+				7934BB7C1361979400CB99A1 /* ParallelJobsGeneric.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

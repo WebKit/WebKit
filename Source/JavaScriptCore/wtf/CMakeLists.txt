@@ -58,6 +58,10 @@ SET(WTF_HEADERS
     PassOwnArrayPtr.h
     PassOwnPtr.h
     PassRefPtr.h
+    ParallelJobs.h
+    ParallelJobsGeneric.h
+    ParallelJobsLibdispatch.h
+    ParallelJobsOpenMP.h
     Platform.h
     PossiblyNull.h
     RandomNumber.h
@@ -119,6 +123,7 @@ SET(WTF_SOURCES
     MainThread.cpp
     MD5.cpp
     OSRandomSource.cpp
+    ParallelJobsGeneric.cpp
     RandomNumber.cpp
     RefCountedLeakCounter.cpp
     SHA1.cpp

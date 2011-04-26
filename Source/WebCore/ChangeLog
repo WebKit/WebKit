@@ -1,3 +1,30 @@
+2011-04-26  Gabor Loki  <loki@webkit.org>
+
+        Reviewed by Csaba Osztrogonác.
+
+        Speeding up SVG filters with multicore (SMP) support
+        https://bugs.webkit.org/show_bug.cgi?id=43903
+
+        Some SVG filters execute a huge number of pixel manipulations, which
+        cannot be sped up by graphics accelerators, since their algorithm is
+        too complex. Using the power of Symmetric Multi Processing (SMP) we
+        can split up a task to smaller (data independent) tasks, which can be
+        executed independently.
+
+        The ParallelJobs framework provides a simple way for distributed
+        programming. The framework is based on WebKit's threading infrastructure,
+        Open Multi-Processing's (OpenMP) API, and libdispatch API.
+
+        * ForwardingHeaders/wtf/ParallelJobs.h: Added.
+        * platform/graphics/filters/FETurbulence.cpp:
+        (WebCore::FETurbulence::PaintingData::PaintingData):
+        (WebCore::FETurbulence::noise2D):
+        (WebCore::FETurbulence::calculateTurbulenceValueForPoint):
+        (WebCore::FETurbulence::fillRegion):
+        (WebCore::FETurbulence::fillRegionWorker):
+        (WebCore::FETurbulence::apply):
+        * platform/graphics/filters/FETurbulence.h:
+
 2011-04-26  Pavel Feldman  <pfeldman@google.com>
 
         Reviewed by Yury Semikhatsky.

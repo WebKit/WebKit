@@ -1,3 +1,54 @@
+2011-04-26  Gabor Loki  <loki@webkit.org>
+
+        Reviewed by Csaba Osztrogonác.
+
+        Speeding up SVG filters with multicore (SMP) support
+        https://bugs.webkit.org/show_bug.cgi?id=43903
+
+        Some SVG filters execute a huge number of pixel manipulations, which
+        cannot be sped up by graphics accelerators, since their algorithm is
+        too complex. Using the power of Symmetric Multi Processing (SMP) we
+        can split up a task to smaller (data independent) tasks, which can be
+        executed independently.
+
+        The ParallelJobs framework provides a simple way for distributed
+        programming. The framework is based on WebKit's threading infrastructure,
+        Open Multi-Processing's (OpenMP) API, and libdispatch API.
+
+        * GNUmakefile.list.am:
+        * JavaScriptCore.vcproj/WTF/WTF.vcproj:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * wtf/CMakeLists.txt:
+        * wtf/ParallelJobs.h: Added.
+        (WTF::ParallelJobs::ParallelJobs):
+        (WTF::ParallelJobs::numberOfJobs):
+        (WTF::ParallelJobs::parameterForJob):
+        (WTF::ParallelJobs::executeJobs):
+        * wtf/ParallelJobsGeneric.cpp: Added.
+        (WTF::ParallelEnvironment::ThreadPrivate::tryLockFor):
+        (WTF::ParallelEnvironment::ThreadPrivate::executeJob):
+        (WTF::ParallelEnvironment::ThreadPrivate::waitForFinish):
+        (WTF::ParallelEnvironment::ThreadPrivate::workerThread):
+        * wtf/ParallelJobsGeneric.h: Added.
+        (WTF::ParallelEnvironment::ParallelEnvironment):
+        (WTF::ParallelEnvironment::numberOfJobs):
+        (WTF::ParallelEnvironment::parameterForJob):
+        (WTF::ParallelEnvironment::executeJobs):
+        (WTF::ParallelEnvironment::ThreadPrivate::ThreadPrivate):
+        (WTF::ParallelEnvironment::ThreadPrivate::create):
+        * wtf/ParallelJobsLibdispatch.h: Added.
+        (WTF::ParallelEnvironment::ParallelEnvironment):
+        (WTF::ParallelEnvironment::numberOfJobs):
+        (WTF::ParallelEnvironment::parameterForJob):
+        (WTF::ParallelEnvironment::executeJobs):
+        * wtf/ParallelJobsOpenMP.h: Added.
+        (WTF::ParallelEnvironment::ParallelEnvironment):
+        (WTF::ParallelEnvironment::numberOfJobs):
+        (WTF::ParallelEnvironment::parameterForJob):
+        (WTF::ParallelEnvironment::executeJobs):
+        * wtf/Platform.h:
+        * wtf/wtf.pri:
+
 2011-04-26  Mihai Parparita  <mihaip@chromium.org>
 
         Reviewed by Adam Barth.

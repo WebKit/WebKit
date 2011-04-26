@@ -478,6 +478,11 @@ javascriptcore_sources += \
 	Source/JavaScriptCore/wtf/PassOwnArrayPtr.h \
 	Source/JavaScriptCore/wtf/PassOwnPtr.h \
 	Source/JavaScriptCore/wtf/PassRefPtr.h \
+	Source/JavaScriptCore/wtf/ParallelJobs.h \
+	Source/JavaScriptCore/wtf/ParallelJobsGeneric.cpp \
+	Source/JavaScriptCore/wtf/ParallelJobsGeneric.h \
+	Source/JavaScriptCore/wtf/ParallelJobsLibdispatch.h \
+	Source/JavaScriptCore/wtf/ParallelJobsOpenMP.h \
 	Source/JavaScriptCore/wtf/Platform.h \
 	Source/JavaScriptCore/wtf/PossiblyNull.h \
 	Source/JavaScriptCore/wtf/RandomNumber.cpp \
