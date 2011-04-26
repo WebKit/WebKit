@@ -1,3 +1,12 @@
+2011-04-26  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Convert LayoutTests/fast/events/onloadFrameCrash.html from pixel test to text-based test
+        https://bugs.webkit.org/show_bug.cgi?id=59362
+
+        We don't need Qt specific expected file after r84817.
+
+        * platform/qt/fast/events/onloadFrameCrash-expected.txt: Removed.
+
 2011-04-25  Levi Weintraub  <leviw@chromium.org>
 
         Reviewed by Ryosuke Niwa.
