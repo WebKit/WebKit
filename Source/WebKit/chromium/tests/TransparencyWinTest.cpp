@@ -476,7 +476,7 @@ TEST(TransparencyWin, RotateOpaqueCompositeLayer)
     src->context()->restore();
 }
 
-TEST(TransparencyWin, FAILS_TranslateScaleOpaqueCompositeLayer)
+TEST(TransparencyWin, DISABLED_TranslateScaleOpaqueCompositeLayer)
 {
     OwnPtr<ImageBuffer> src(ImageBuffer::create(IntSize(16, 16), ColorSpaceDeviceRGB));
 
