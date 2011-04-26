@@ -97,7 +97,7 @@ AffineTransform SVGTextElement::animatedLocalTransform() const
 AffineTransform* SVGTextElement::supplementalTransform()
 {
     if (!m_supplementalTransform)
-        m_supplementalTransform.set(new AffineTransform());
+        m_supplementalTransform = adoptPtr(new AffineTransform);
     return m_supplementalTransform.get();
 }
 

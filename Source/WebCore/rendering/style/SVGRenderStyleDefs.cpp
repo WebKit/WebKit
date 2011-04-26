@@ -163,7 +163,7 @@ StyleShadowSVGData::StyleShadowSVGData()
 
 StyleShadowSVGData::StyleShadowSVGData(const StyleShadowSVGData& other)
     : RefCounted<StyleShadowSVGData>()
-    , shadow(other.shadow ? new ShadowData(*other.shadow) : 0)
+    , shadow(other.shadow ? adoptPtr(new ShadowData(*other.shadow)) : PassOwnPtr<ShadowData>())
 {
 }
 

@@ -1,3 +1,21 @@
+2011-04-25  Adam Klein  <adamk@chromium.org>
+
+        Reviewed by James Robinson.
+
+        Fix OwnPtr strict errors in some SVG classes.
+        https://bugs.webkit.org/show_bug.cgi?id=59395
+
+        * rendering/style/SVGRenderStyleDefs.cpp:
+        (WebCore::StyleShadowSVGData::StyleShadowSVGData):
+        * svg/SVGSVGElement.cpp:
+        (WebCore::SVGSVGElement::SVGSVGElement):
+        * svg/SVGStyledTransformableElement.cpp:
+        (WebCore::SVGStyledTransformableElement::supplementalTransform):
+        * svg/SVGTextElement.cpp:
+        (WebCore::SVGTextElement::supplementalTransform):
+        * svg/graphics/SVGImage.cpp:
+        (WebCore::SVGImage::dataChanged):
+
 2011-04-25  Adam Barth  <abarth@webkit.org>
 
         Re-land changes to ValidationMessage.
