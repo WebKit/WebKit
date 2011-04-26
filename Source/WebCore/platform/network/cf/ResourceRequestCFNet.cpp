@@ -221,15 +221,28 @@ void ResourceRequest::setHTTPPipeliningEnabled(bool flag)
     s_httpPipeliningEnabled = flag;
 }
 
+#if PLATFORM(MAC) && !defined(BUILDING_ON_TIGER) && !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOW_LEOPARD)
+static inline bool readBooleanPreference(CFStringRef key)
+{
+    Boolean keyExistsAndHasValidFormat;
+    Boolean result = CFPreferencesGetAppBooleanValue(key, kCFPreferencesCurrentApplication, &keyExistsAndHasValidFormat);
+    return keyExistsAndHasValidFormat ? result : false;
+}
+#endif
+
 unsigned initializeMaximumHTTPConnectionCountPerHost()
 {
     static const unsigned preferredConnectionCount = 6;
-    static const unsigned unlimitedConnectionCount = 10000;
 
     // Always set the connection count per host, even when pipelining.
     unsigned maximumHTTPConnectionCountPerHost = wkInitializeMaximumHTTPConnectionCountPerHost(preferredConnectionCount);
 
-#if PLATFORM(MAC)
+#if PLATFORM(MAC) && !defined(BUILDING_ON_TIGER) && !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOW_LEOPARD)
+    static const unsigned unlimitedConnectionCount = 10000;
+
+    if (!ResourceRequest::httpPipeliningEnabled() && readBooleanPreference(CFSTR("WebKitEnableHTTPPipelining")))
+        ResourceRequest::setHTTPPipeliningEnabled(true);
+
     if (ResourceRequest::httpPipeliningEnabled()) {
         wkSetHTTPPipeliningMaximumPriority(ResourceLoadPriorityHighest);
         wkSetHTTPPipeliningMinimumFastLanePriority(ResourceLoadPriorityMedium);

@@ -1,3 +1,20 @@
+2011-04-26  David Kilzer  <ddkilzer@apple.com>
+
+        <http://webkit.org/b/59372> Restore user default for enabling HTTP pipelining
+
+        Reviewed by Antti Koivisto.
+
+        To enable HTTP pipelining post-SnowLeopard, use this command:
+
+            defaults write BUNDLE.ID WebKitEnableHTTPPipelining -bool YES
+
+        * platform/network/cf/ResourceRequestCFNet.cpp:
+        (WebCore::readBooleanPreference): Re-added.  Originally added in
+        r76756 and removed in r84120.
+        (WebCore::initializeMaximumHTTPConnectionCountPerHost): Enable
+        HTTP pipelining if use default is set to true.  Added macro
+        guards to match those in ResourceRequestMac.mm.
+
 2011-04-26  Antti Koivisto  <antti@apple.com>
 
         Reviewed by Adele Peterson.
