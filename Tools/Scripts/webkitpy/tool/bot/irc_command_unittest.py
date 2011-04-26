@@ -29,6 +29,7 @@
 import unittest
 
 from webkitpy.tool.bot.irc_command import *
+from webkitpy.tool.mocktool import MockTool
 
 
 class IRCCommandTest(unittest.TestCase):
@@ -49,3 +50,18 @@ class IRCCommandTest(unittest.TestCase):
                           whois.execute("tom", ["tonyg@chromium.org"], None, None))
         self.assertEquals("tom: vicki@apple.com hasn't told me their nick. Boo hoo :-(",
                           whois.execute("tom", ["vicki@apple.com"], None, None))
+
+    def test_create_bug(self):
+        create_bug = CreateBug()
+        self.assertEquals("tom: Usage: BUG_TITLE",
+                          create_bug.execute("tom", [], None, None))
+
+        tool = MockTool()
+        self.assertEquals("tom: Created bug: http://example.com/78",
+                          create_bug.execute("tom", ["sherrif-bot", "should", "have", "a", "create-bug", "command"], tool, None))
+
+        def mock_create_bug(title, description):
+            raise Exception("Exception from bugzilla!")
+        tool.bugs.create_bug = mock_create_bug
+        self.assertEquals("tom: Failed to create bug:\nException from bugzilla!",
+                          create_bug.execute("tom", ["sherrif-bot", "should", "have", "a", "create-bug", "command"], tool, None))

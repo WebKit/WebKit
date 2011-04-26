@@ -1,3 +1,17 @@
+2011-04-26  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Mihai Parparita.
+
+        sheriff-bot should have a create-bug command
+        https://bugs.webkit.org/show_bug.cgi?id=59491
+
+        This patch has some stderr unittest spew, but I will
+        fix it after my live demo.
+
+        * Scripts/webkitpy/tool/bot/irc_command.py:
+        * Scripts/webkitpy/tool/bot/irc_command_unittest.py:
+        * Scripts/webkitpy/tool/bot/sheriffircbot_unittest.py:
+
 2011-04-26  Ryuan Choi  <ryuan.choi@samsung.com>
 
         Reviewed by Martin Robinson.

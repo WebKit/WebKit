@@ -135,6 +135,22 @@ class Eliza(IRCCommand):
         return "%s: %s" % (nick, self.therapist.respond(" ".join(args)))
 
 
+class CreateBug(IRCCommand):
+    def execute(self, nick, args, tool, sheriff):
+        if not args:
+            return "%s: Usage: BUG_TITLE" % nick
+
+        bug_title = " ".join(args)
+        bug_description = "%s\nRequested by %s on %s." % (bug_title, nick, config_irc.channel)
+
+        try:
+            bug_id = tool.bugs.create_bug(bug_title, bug_description)
+            bug_url = tool.bugs.bug_url_for_bug_id(bug_id)
+            return "%s: Created bug: %s" % (nick, bug_url)
+        except Exception, e:
+            return "%s: Failed to create bug:\n%s" % (nick, e)
+
+
 # FIXME: Lame.  We should have an auto-registering CommandCenter.
 commands = {
     "help": Help,
@@ -143,4 +159,5 @@ commands = {
     "restart": Restart,
     "rollout": Rollout,
     "whois": Whois,
+    "create-bug": CreateBug,
 }
