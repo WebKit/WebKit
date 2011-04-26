@@ -1,5 +1,18 @@
 2011-04-26  Sam Weinig  <sam@webkit.org>
 
+        Roll r84945 back in with infinite recursion removed.
+
+        * bindings/js/JSDOMBinding.h:
+        (WebCore::DOMConstructorObject::DOMConstructorObject):
+        * bindings/js/JSDOMWrapper.h:
+        (WebCore::JSDOMWrapper::globalObject):
+        (WebCore::JSDOMWrapper::scriptExecutionContext):
+        (WebCore::JSDOMWrapper::createStructure):
+        (WebCore::JSDOMWrapper::JSDOMWrapper):
+        * bindings/scripts/CodeGeneratorJS.pm:
+
+2011-04-26  Sam Weinig  <sam@webkit.org>
+
         Rollout previous patch. It broke stuff.
 
         * bindings/js/JSDOMBinding.h:
