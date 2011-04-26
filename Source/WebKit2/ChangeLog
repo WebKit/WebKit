@@ -1,3 +1,10 @@
+2011-04-26  Balazs Kelemen  <kbalazs@webkit.org>
+
+        Unreviewed build fix.
+
+        * Platform/Region.cpp: Need to include stdio.h for printf
+        (at least in my Qt-Linux environment).
+
 2011-04-26  Mihai Parparita  <mihaip@chromium.org>
 
         Reviewed by Adam Barth.

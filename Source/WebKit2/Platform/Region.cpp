@@ -25,6 +25,7 @@
 
 #include "config.h"
 #include "Region.h"
+#include <stdio.h>
 
 // A region class based on the paper "Scanline Coherent Shape Algebra"
 // by Jonathan E. Steinhart from the book "Graphics Gems II".
