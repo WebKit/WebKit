@@ -1161,7 +1161,7 @@ static NSMutableArray* convertToNSArray(const AccessibilityObject::Accessibility
     return [self textMarkerRangeFromVisiblePositions:selection.visibleStart() endPosition:selection.visibleEnd()];
 }
 
-- (NSValue*)position
+- (NSValue *)position
 {
     IntRect rect = m_object->elementRect();
     NSPoint point;
@@ -1175,7 +1175,7 @@ static NSMutableArray* convertToNSArray(const AccessibilityObject::Accessibility
         NSSize remoteSize = [[remoteParent accessibilityAttributeValue:NSAccessibilitySizeAttribute] sizeValue];
 
         // Get the y position of the WKView (we have to screen-flip and go from bottom left to top left).
-        CGFloat screenHeight = [[[NSScreen screens] objectAtIndex:0] frame].size.height;
+        CGFloat screenHeight = [(NSScreen *)[[NSScreen screens] objectAtIndex:0] frame].size.height;
         remotePosition.y = (screenHeight - remotePosition.y) - remoteSize.height;
         
         NSPoint scrollPosition = NSMakePoint(0, 0);
