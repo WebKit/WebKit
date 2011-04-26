@@ -1,3 +1,25 @@
+2011-04-25  Chris Marrin  <cmarrin@apple.com>
+
+        Reviewed by Simon Fraser.
+
+        REGRESSION(75137): directly composited images are double-drawn sometimes
+        https://bugs.webkit.org/show_bug.cgi?id=58632
+
+        Depending on the order of operations (layout, creating compositing 
+        layers and creating simple image layers) a layer can have both image
+        content and have m_drawsContent=true. In this case 2 copies of the image
+        are drawn in the layer. If the image has alpha, it looks wrong.
+
+        I added an updateDrawsContent() call after setting the image contents
+        to make sure it's correct.
+
+        I couldn't create a test case that shows the problem because layerTreeAsText()
+        doesn't emit enough info to show this level of detail. I've opened
+        https://bugs.webkit.org/show_bug.cgi?id=59352 to fix that.
+
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::updateImageContents):
+
 2011-04-25  Kenneth Russell  <kbr@google.com>
 
         Reviewed by David Levin.
