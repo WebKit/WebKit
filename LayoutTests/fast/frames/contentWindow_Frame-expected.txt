@@ -1,0 +1,12 @@
+
+
+--------
+Frame: 'top'
+--------
+Testing contentWindow on Frames. Test passes if there is a 'PASS' line.
+PASS
+
+--------
+Frame: 'bottom'
+--------
+

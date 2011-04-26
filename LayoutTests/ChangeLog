@@ -1,3 +1,31 @@
+2011-04-26  Dmitry Titov  <dimich@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        Convert fast/frames/contentWindow_Frame.html and fast/frames/contentWindow_IFrame.html to 'dumpAsText'
+        https://bugs.webkit.org/show_bug.cgi?id=59436
+
+        * fast/frames/contentWindow_Frame-expected.txt: Added.
+        * fast/frames/contentWindow_Frame.html:
+        * fast/frames/contentWindow_iFrame-expected.txt: Added.
+        * fast/frames/contentWindow_iFrame.html:
+        * platform/chromium-linux/fast/frames/contentWindow_Frame-expected.png: Removed.
+        * platform/chromium-linux/fast/frames/contentWindow_iFrame-expected.png: Removed.
+        * platform/chromium-win/fast/frames/contentWindow_Frame-expected.png: Removed.
+        * platform/chromium-win/fast/frames/contentWindow_Frame-expected.txt: Removed.
+        * platform/chromium-win/fast/frames/contentWindow_iFrame-expected.png: Removed.
+        * platform/chromium-win/fast/frames/contentWindow_iFrame-expected.txt: Removed.
+        * platform/gtk/fast/frames/contentWindow_Frame-expected.txt: Removed.
+        * platform/gtk/fast/frames/contentWindow_iFrame-expected.txt: Removed.
+        * platform/mac-leopard/fast/frames/contentWindow_Frame-expected.png: Removed.
+        * platform/mac-leopard/fast/frames/contentWindow_iFrame-expected.png: Removed.
+        * platform/mac/fast/frames/contentWindow_Frame-expected.png: Removed.
+        * platform/mac/fast/frames/contentWindow_Frame-expected.txt: Removed.
+        * platform/mac/fast/frames/contentWindow_iFrame-expected.png: Removed.
+        * platform/mac/fast/frames/contentWindow_iFrame-expected.txt: Removed.
+        * platform/qt/fast/frames/contentWindow_Frame-expected.txt: Removed.
+        * platform/qt/fast/frames/contentWindow_iFrame-expected.txt: Removed.
+
 2011-04-26  Stephen White  <senorblanco@chromium.org>
 
         Unreviewed; chromium test expectations update.

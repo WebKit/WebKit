@@ -1,31 +1,21 @@
 <html>
-
 <head>
-
-	<title>Testing contentWindow on an iFrame</title>
-
-	<script>
-		function putText()
-		{
-			var w = document.getElementById("my_iframe").contentWindow;
-			var d = document.getElementById("my_div");
-			d.innerText = w.location;
-		}
-	</script>
-
+<script>
+    function putText() {
+        if (window.layoutTestController) {
+            layoutTestController.dumpAsText();
+        }
+        var w = document.getElementById("my_iframe").contentWindow;
+        var d = document.getElementById("my_div");
+        var result = w.location == "about:blank" ? "PASS" : "FAIL";
+        d.innerText = result;
+    }
+</script>
 </head>
-
 <body onload="putText()">
-
-	<div>
-	Here is the iFrame:
-	<iframe id="my_iframe" src="about:blank" width=200 height=200 frameborder=1></iframe>
-	</div>
-
-	<div id="my_div">
-	div text will be replaced
-	</div>
-
+<div>Testing contentWindow on Frames. Test passes if there is a 'PASS' line.
+<iframe id="my_iframe" src="about:blank"></iframe>
+</div>
+<div id="my_div">div text will be replaced</div>
 </body>
-
 </html>
