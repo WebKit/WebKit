@@ -1,3 +1,16 @@
+2011-04-26  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Adam Barth.
+
+        [Windows and Leopard Tests] media/invalid-media-url-crash.html failing since r84762
+        https://bugs.webkit.org/show_bug.cgi?id=59324
+        
+        Use a properly invalid URL, instead of http:aa. This also allows the test to
+        be unskipped on SL.
+
+        * media/invalid-media-url-crash.html:
+        * platform/mac-snowleopard/Skipped:
+
 2011-04-26  Stephen White  <senorblanco@chromium.org>
 
         Unreviewed; chromium test expectations update.

@@ -3,7 +3,7 @@
         <p>Tests that invalid media src url does not result in crash.</p>
         <script src=video-test.js></script>
         <script>
-            var invalid_url = "http:aa" + String.fromCharCode(0) + "%aa#aa";
+            var invalid_url = "!:/" + String.fromCharCode(0) + "%aa#aa";
             var error_count = 0;
 
             function errorEvent()
