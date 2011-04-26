@@ -1,0 +1,14 @@
+This test ensures pasting content before a tab span isn't pasted into the tab span.
+
+Result:
+| <span>
+|   id="test"
+|   "hello"
+|   "helloa<#selection-caret>"
+|   <span>
+|     class="Apple-tab-span"
+|     style="white-space:pre"
+|     "		"
+|   "world"
+| " 
+"

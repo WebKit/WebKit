@@ -1,3 +1,20 @@
+2011-04-25  Levi Weintraub  <leviw@chromium.org>
+
+        Reviewed by Ryosuke Niwa.
+
+        REGRESSION: a character appears after tab span when typing immediately before the tab span
+        https://bugs.webkit.org/show_bug.cgi?id=58132
+
+        Correcting the order of operations we use to avoid inserting into invalid positions in
+        ReplaceSelectionCommand to avoid inserting into tab-spans.
+
+        Test: editing/pasteboard/paste-before-tab-span.html
+
+        * editing/ReplaceSelectionCommand.cpp:
+        (WebCore::ReplaceSelectionCommand::doApply): Moving positionOutsideTabSpan to after
+        positionAvoidingPrecedingNodes, since that function could once again put our position
+        inside a tab span.
+
 2011-04-25  David Levin  <levin@chromium.org>
 
         Reviewed by Adam Barth.

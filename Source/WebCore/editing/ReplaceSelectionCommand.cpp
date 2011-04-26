@@ -927,9 +927,6 @@ void ReplaceSelectionCommand::doApply()
         else if (isStartOfBlock(visibleInsertionPos))
             insertionPos = positionInParentBeforeNode(startBlock);
     }
-
-    // Paste into run of tabs splits the tab span.
-    insertionPos = positionOutsideTabSpan(insertionPos);
     
     // Paste at start or end of link goes outside of link.
     insertionPos = positionAvoidingSpecialElementBoundary(insertionPos);
@@ -945,6 +942,9 @@ void ReplaceSelectionCommand::doApply()
     // position forward without changing the visible position so we're still at the same visible location, but
     // outside of preceding tags.
     insertionPos = positionAvoidingPrecedingNodes(insertionPos);
+
+    // Paste into run of tabs splits the tab span.
+    insertionPos = positionOutsideTabSpan(insertionPos);
 
     // If we are not trying to match the destination style we prefer a position
     // that is outside inline elements that provide style.
