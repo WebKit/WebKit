@@ -2914,7 +2914,6 @@ BUGWK55918 : media/controls-after-reload.html = IMAGE
 BUGWK55918 : media/controls-strict.html = IMAGE
 BUGWK55918 : media/controls-styling.html = IMAGE
 BUGWK55918 : media/controls-without-preload.html = IMAGE
-BUGWK55918 : media/video-aspect-ratio.html = IMAGE
 BUGWK55918 : media/video-transformed.html = IMAGE
 BUGWK55918 : media/video-zoom-controls.html = IMAGE
 
@@ -3049,7 +3048,6 @@ BUGV8_1168 : fast/js/mozilla/strict/10.4.3.html = TEXT
 BUGV8_1168 : fast/js/mozilla/strict/10.6.html = TEXT
 BUGV8_1168 : fast/js/mozilla/strict/15.5.5.2.html = TEXT
 BUGV8_1168 : fast/js/mozilla/strict/8.12.5.html = TEXT
-BUGV8_1168 : fast/js/mozilla/strict/8.7.2.html = TEXT
 BUGV8_1168 : fast/js/mozilla/strict/B.1.2.html = TEXT
 BUGV8_1168 : fast/js/mozilla/strict/eval-variable-environment.html = TEXT
 BUGV8_1168 : fast/js/mozilla/strict/this-for-function-expression-recursion.html = TEXT
@@ -3482,7 +3480,6 @@ BUGWK58741 LINUX : fast/text/zero-width-characters-complex-script.html = FAIL
 
 // Need to be re-baselined BUGCR79770
 BUGCR79770 WIN : fast/box-shadow/inset-with-extraordinary-radii-and-border.html = IMAGE
-BUGCR79770 WIN : fast/forms/select-background-none.html = IMAGE
 
 // Need rebaselining
 BUGWK58914 : fast/html/details-add-summary-child-1.html = FAIL
@@ -3614,7 +3611,6 @@ BUGCR79917 WIN LINUX : fast/transforms/matrix-02.html = IMAGE
 BUGCR79917 WIN LINUX : fast/transforms/skew-with-unitless-zero.html = IMAGE
 BUGCR79917 WIN LINUX : fast/transforms/transformed-caret.html = IMAGE
 BUGCR79917 WIN LINUX : svg/custom/no-inherited-dashed-stroke.xhtml = IMAGE
-BUGCR79917 WIN MAC LINUX : svg/custom/use-css-no-effect-on-shadow-tree.svg = IMAGE
 BUGCR79917 WIN LINUX : svg/transforms/animated-path-inside-transformed-html.xhtml = IMAGE
 BUGCR79917 WIN LINUX : svg/transforms/text-with-pattern-inside-transformed-html.xhtml = IMAGE
 BUGCR79917 WIN LINUX : tables/mozilla/bugs/bug22019.html = IMAGE
@@ -3648,12 +3644,9 @@ BUGCR79917 WIN LINUX : tables/mozilla_expected_failures/marvin/backgr_position-t
 BUGCR79917 WIN LINUX : tables/mozilla_expected_failures/marvin/backgr_position-table-row.html = IMAGE
 BUGCR79917 WIN LINUX : transforms/svg-vs-css.xhtml = IMAGE
 
-BUGCR79948 WIN MAC LINUX : fast/loader/scroll-position-restored-on-back.html = TEXT
-
 BUGDPRANKE MAC : editing/selection/move-by-word-visually.html = TEXT
 BUGDPRANKE MAC : fast/borders/border-radius-constraints.html = IMAGE
 BUGDPRANKE MAC LEOPARD : fast/canvas/canvasDrawingIntoSelf.html = IMAGE
-BUGDPRANKE MAC : fast/forms/select-background-none.html = IMAGE
 BUGDPRANKE MAC : compositing/iframes/invisible-nested-iframe-show.html = TEXT
 BUGDPRANKE MAC GPU : compositing/geometry/video-fixed-scrolling.html = IMAGE
 BUGDPRANKE MAC GPU : media/video-volume-slider.html = IMAGE
@@ -3707,7 +3700,7 @@ BUGDPRANKE : fast/borders/borderRadiusSolid02.html = IMAGE
 BUGDPRANKE : fast/borders/borderRadiusSolid03.html = IMAGE
 BUGDPRANKE MAC LINUX : fast/box-shadow/inset-with-extraordinary-radii-and-border.html = IMAGE
 BUGDPRANKE : fast/box-shadow/inset.html = IMAGE
-BUGDPRANKE : fast/css/text-input-with-webkit-border-radius.html = IMAGE
+BUGDPRANKE WIN LINUX : fast/css/text-input-with-webkit-border-radius.html = IMAGE
 BUGDPRANKE : fast/forms/basic-selects.html = IMAGE
 BUGDPRANKE : fast/layers/video-layer.html = IMAGE
 BUGDPRANKE : fast/overflow/border-radius-clipping.html = IMAGE
@@ -3746,7 +3739,7 @@ BUGCASEQ WIN LINUX : fast/forms/input-text-drag-down.html = IMAGE+TEXT
 BUGCASEQ MAC : fast/canvas/image-object-in-canvas.html = IMAGE
 
 BUGDPRANKE : fast/backgrounds/background-leakage.html = IMAGE+TEXT IMAGE
-BUGDPRANKE : fast/multicol/client-rects.html = IMAGE
+BUGDPRANKE MAC : fast/multicol/client-rects.html = IMAGE
 
 BUGDPRANKE WIN DEBUG : fast/css/text-overflow-ellipsis.html = CRASH
 BUGDPRANKE MAC DEBUG : transitions/cancel-transition.html = TEXT PASS
@@ -3783,7 +3776,6 @@ BUGDPRANKE DEBUG MAC : fast/css/background-currentcolor.html = CRASH
 
 BUGDPRANKE LINUX : canvas/philip/tests/2d.gradient.radial.touch2.html = TEXT
 
-BUGDPRANKE : editing/undo/undo-deleteWord.html = CRASH
 BUGDPRANKE : fast/encoding/parser-tests-70.html = TIMEOUT PASS
 BUGDPRANKE : fast/encoding/parser-tests-80.html = TIMEOUT PASS
 BUGDPRANKE MAC : http/tests/navigation/lockedhistory-iframe.html = TEXT
@@ -3805,10 +3797,6 @@ BUGDPRANKE LINUX DEBUG : jquery/deferred.html = TEXT PASS
 
 // Introduced in r84443
 BUGWK59063 : fast/images/animated-gif-restored-from-bfcache.html = TEXT
-
-// Introduced in r84408
-BUGWK59065 : fast/filesystem/op-copy.html = TEXT
-BUGWK59065 : fast/filesystem/op-move.html = TEXT
 
 // Introduced in r84454
 BUGDPRANKE : fast/transforms/selection-bounds-in-transformed-view.html = TEXT
@@ -3913,14 +3901,11 @@ BUGCR80301 MAC : fast/canvas/canvas-largedraws.html = TIMEOUT
 
 // roll up from r84685:r84721??
 BUGDPRANKE : fast/dom/dataset-gc.html = TEXT
-BUGDPRANKE : fast/forms/cursor-at-editable-content-boundary.html = TEXT
-BUGDPRANKE : editing/deleting/table-cells.html = IMAGE
 BUGDPRANKE : fast/backgrounds/gradient-background-leakage.html = IMAGE
 BUGDPRANKE : fast/forms/validation-message-appearance.html = IMAGE
-BUGDPRANKE : fast/inline-block/14498-positionForCoordinates.html = IMAGE
 BUGDPRANKE : fast/multicol/shadow-breaking.html = IMAGE
-BUGDPRANKE : fast/block/positioning/rtl-fixed-positioning.html = MISSING
-BUGDPRANKE : fast/block/positioning/vertical-rl/fixed-positioning.html = MISSING
+BUGDPRANKE REBASELINE MAC CPU : fast/block/positioning/rtl-fixed-positioning.html = MISSING
+BUGDPRANKE REBASELINE MAC CPU : fast/block/positioning/vertical-rl/fixed-positioning.html = MISSING
 BUGDPRANKE WIN : fast/repaint/shadow-multiple-horizontal.html = IMAGE
 BUGDPRANKE WIN : fast/repaint/shadow-multiple-strict-horizontal.html = IMAGE
 BUGDPRANKE WIN : fast/repaint/shadow-multiple-strict-vertical.html = IMAGE
