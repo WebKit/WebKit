@@ -1,3 +1,15 @@
+2011-04-26  Chang Shu  <cshu@webkit.org>
+
+        Reviewed by Sam Weinig.
+
+        Convert fast/dom/keydown-1.html to dumpAsText test
+        https://bugs.webkit.org/show_bug.cgi?id=59390
+
+        * fast/events/keydown-1-expected.txt: Added.
+        * fast/events/keydown-1.html:
+        * platform/mac/fast/events/keydown-1-expected.png: Removed.
+        * platform/mac/fast/events/keydown-1-expected.txt: Removed.
+
 2011-04-26  Csaba Osztrogonác  <ossy@webkit.org>
 
         Convert LayoutTests/fast/events/onloadFrameCrash.html from pixel test to text-based test

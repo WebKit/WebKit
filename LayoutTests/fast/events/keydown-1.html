@@ -44,13 +44,16 @@ function step2() {
     eventSender.keyDown("b", Array("ctrlKey"));
     // Delete forward by one character.
     eventSender.keyDown("d", Array("ctrlKey"));
+
+    log(window.frames[0].document.body.innerText);
     window.layoutTestController.notifyDone();
 }
 
 function runTest() {
-    if (window.layoutTestController)
+    if (window.layoutTestController) {
+        layoutTestController.dumpAsText();
         window.layoutTestController.waitUntilDone();
-    
+    }
     window.setTimeout(step2, 200);
 }
 
