@@ -85,12 +85,12 @@
 #include "DocumentMarkerController.h"
 #include "Editor.h"
 #include "EventHandler.h"
-#include "FocusController.h"
 #include "FormState.h"
 #include "FrameLoadRequest.h"
 #include "FrameLoader.h"
 #include "FrameTree.h"
 #include "FrameView.h"
+#include "HitTestResult.h"
 #include "HTMLCollection.h"
 #include "HTMLFormElement.h"
 #include "HTMLFrameOwnerElement.h"
@@ -99,7 +99,6 @@
 #include "HTMLLinkElement.h"
 #include "HTMLNames.h"
 #include "HistoryItem.h"
-#include "HitTestResult.h"
 #include "InspectorController.h"
 #include "Page.h"
 #include "painting/GraphicsContextBuilder.h"
@@ -1164,28 +1163,9 @@ bool WebFrameImpl::firstRectForCharacterRange(unsigned location, unsigned length
     if (!range)
         return false;
     IntRect intRect = frame()->editor()->firstRectForRange(range.get());
-    rect = WebRect(intRect);
-    // When inside an text control, don't adjust the range.
-    if (!selectionRoot)
-        rect = frame()->view()->contentsToWindow(rect);
+    rect = WebRect(intRect.x(), intRect.y(), intRect.width(), intRect.height());
 
     return true;
-}
-
-size_t WebFrameImpl::characterIndexForPoint(const WebPoint& webPoint) const
-{
-    if (!frame())
-        return notFound;
-
-    IntPoint point = frame()->view()->windowToContents(webPoint);
-    HitTestResult result = frame()->eventHandler()->hitTestResultAtPoint(point, false);
-    RefPtr<Range> range = frame()->rangeForPoint(result.point());
-    if (!range.get())
-        return notFound;
-
-    size_t location, length;
-    TextIterator::locationAndLengthFromRange(range.get(), location, length);
-    return location;
 }
 
 bool WebFrameImpl::executeCommand(const WebString& name)

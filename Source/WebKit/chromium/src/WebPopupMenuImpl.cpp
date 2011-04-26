@@ -43,7 +43,6 @@
 
 #include "WebInputEvent.h"
 #include "WebInputEventConversion.h"
-#include "WebRange.h"
 #include "WebRect.h"
 #include "WebWidgetClient.h"
 
@@ -253,13 +252,6 @@ bool WebPopupMenuImpl::confirmComposition(const WebString& text)
     return false;
 }
 
-bool WebPopupMenuImpl::compositionRange(size_t* location, size_t* length)
-{
-    *location = 0;
-    *length = 0;
-    return false;
-}
-
 WebTextInputType WebPopupMenuImpl::textInputType()
 {
     return WebTextInputTypeNone;
@@ -268,13 +260,6 @@ WebTextInputType WebPopupMenuImpl::textInputType()
 WebRect WebPopupMenuImpl::caretOrSelectionBounds()
 {
     return WebRect();
-}
-
-bool WebPopupMenuImpl::caretOrSelectionRange(size_t* location, size_t* length)
-{
-    *location = 0;
-    *length = 0;
-    return false;
 }
 
 void WebPopupMenuImpl::setTextDirection(WebTextDirection direction)

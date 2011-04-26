@@ -1,3 +1,24 @@
+2011-04-26  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r84951.
+        http://trac.webkit.org/changeset/84951
+        https://bugs.webkit.org/show_bug.cgi?id=59558
+
+        "breaks chromium compile" (Requested by dpranke on #webkit).
+
+        * WebKit.gyp:
+        * public/WebFrame.h:
+        * public/WebWidget.h:
+        * public/mac/WebSubstringUtil.h: Removed.
+        * src/WebFrameImpl.cpp:
+        (WebKit::WebFrameImpl::firstRectForCharacterRange):
+        * src/WebFrameImpl.h:
+        * src/WebPopupMenuImpl.cpp:
+        * src/WebPopupMenuImpl.h:
+        * src/WebViewImpl.cpp:
+        * src/WebViewImpl.h:
+        * src/mac/WebSubstringUtil.mm: Removed.
+
 2011-04-26  Daniel Cheng  <dcheng@chromium.org>
 
         Reviewed by Eric Seidel.
