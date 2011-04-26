@@ -3754,9 +3754,6 @@ BUGDPRANKE WIN DEBUG : perf/typing-at-end-of-line.html = TEXT TIMEOUT PASS
 BUGDPRANKE DEBUG : fast/notifications/notifications-display-close-events.html = TIMEOUT PASS
 BUGDPRANKE MAC DEBUG : fast/css-generated-content/table-row-group-to-inline.html = IMAGE+TEXT PASS
 
-// Occasionally times out on linux debug
-BUGWK59442 LINUX DEBUG : fast/forms/select-empty-option-height.html = PASS TIMEOUT
-
 BUGDPRANKE LINUX : canvas/philip/tests/2d.gradient.radial.touch2.html = TEXT
 
 BUGDPRANKE : fast/encoding/parser-tests-70.html = TIMEOUT PASS

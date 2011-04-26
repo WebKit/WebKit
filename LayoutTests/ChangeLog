@@ -1,3 +1,11 @@
+2011-04-26  Stephen White  <senorblanco@chromium.org>
+
+        Unreviewed; chromium test_expectations update.
+
+        Remove duplicate expectations.
+
+        * platform/chromium/test_expectations.txt:
+
 2011-04-26  Pavel Feldman  <pfeldman@google.com>
 
         Not reviewed: disable failing inspector test while I'm finding a better way to test what it does.
