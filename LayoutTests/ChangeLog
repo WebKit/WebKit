@@ -3,6 +3,14 @@
         Unreviewed; chromium test expectations update.
 
         * platform/chromium/test_expectations.txt:
+        Added expectations for new test
+        fast/events/panScroll-click-hyperlink.html.  Added a flaky test.
+
+2011-04-26  Stephen White  <senorblanco@chromium.org>
+
+        Unreviewed; chromium test expectations update.
+
+        * platform/chromium/test_expectations.txt:
         Add some failing and flaky tests.
 
 2011-04-26  Simon Fraser  <simon.fraser@apple.com>
