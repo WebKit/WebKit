@@ -380,6 +380,10 @@ body:not(.platform-mac) .toolbar-item.close-left {
     display: none;
 }
 
+.toolbar-item.close-left {
+    margin-top: 5px;
+}
+
 #main {
     position: absolute;
     z-index: 1;

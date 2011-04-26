@@ -2,6 +2,16 @@
 
         Reviewed by Yury Semikhatsky.
 
+        Web Inspector: close button is off in docked mode on a mac.
+        https://bugs.webkit.org/show_bug.cgi?id=59453
+
+        * inspector/front-end/inspector.css:
+        (.toolbar-item.close-left):
+
+2011-04-26  Pavel Feldman  <pfeldman@google.com>
+
+        Reviewed by Yury Semikhatsky.
+
         Web Inspector: New Style is not working (UI glitch)
         https://bugs.webkit.org/show_bug.cgi?id=59451
 
