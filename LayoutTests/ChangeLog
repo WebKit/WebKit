@@ -1,5 +1,12 @@
 2011-04-26  Jessie Berlin  <jberlin@webkit.org>
 
+        editing/text-iterator/findString.html passes on Leopard after r84750, so remove the expected
+        failing results to get the bots green.
+
+        * platform/mac-leopard/editing/text-iterator/findString-expected.txt: Removed.
+
+2011-04-26  Jessie Berlin  <jberlin@webkit.org>
+
         [Windows Tests] media/invalid-media-url-crash.html failing since r84726.
         https://bugs.webkit.org/show_bug.cgi?id=59324
 
