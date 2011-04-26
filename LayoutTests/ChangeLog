@@ -1,3 +1,9 @@
+2011-04-26  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [Qt] Add Qt specific expected result for new test introduced in r84930.
+
+        * platform/qt/fast/loader/file-protocol-fragment-expected.txt: Added.
+
 2011-04-26  Jessie Berlin  <jberlin@webkit.org>
 
         editing/text-iterator/findString.html passes on Leopard after r84750, so remove the expected
