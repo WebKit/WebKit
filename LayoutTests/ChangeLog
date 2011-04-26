@@ -1,3 +1,10 @@
+2011-04-26  Alejandro G. Castro  <alex@igalia.com>
+
+        Skipped insecure-css-in-iframe.html, we are missing
+        didRunInsecureContent notification.
+
+        * platform/gtk/Skipped:
+
 2011-04-26  Csaba Osztrogonác  <ossy@webkit.org>
 
         [Qt] Add platform specific expected results for new passing tests.
