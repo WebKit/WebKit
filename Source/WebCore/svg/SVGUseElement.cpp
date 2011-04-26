@@ -127,19 +127,12 @@ void SVGUseElement::parseMappedAttribute(Attribute* attr)
     }
 }
 
-static inline bool isWellFormedDocument(Document* document)
-{
-    if (document->isSVGDocument() || document->isXHTMLDocument())
-        return static_cast<XMLDocumentParser*>(document->parser())->wellFormed();
-    return true;
-}
-
 void SVGUseElement::insertedIntoDocument()
 {
     // This functions exists to assure assumptions made in the code regarding SVGElementInstance creation/destruction are satisfied.
     SVGStyledTransformableElement::insertedIntoDocument();
-    ASSERT(!m_targetElementInstance || !isWellFormedDocument(document()));
-    ASSERT(!m_isPendingResource || !isWellFormedDocument(document()));
+    ASSERT(!m_targetElementInstance || ((document()->isSVGDocument() || document()->isXHTMLDocument()) && !static_cast<XMLDocumentParser*>(document()->parser())->wellFormed()));
+    ASSERT(!m_isPendingResource);
 }
 
 void SVGUseElement::removedFromDocument()
