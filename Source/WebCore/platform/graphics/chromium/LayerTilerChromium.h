@@ -77,7 +77,7 @@ public:
     void setLayerPosition(const IntPoint& position);
     // Change the tile size.  This may invalidate all the existing tiles.
     void setTileSize(const IntSize& size);
-    void setLayerRenderer(LayerRendererChromium* layerRenderer) { m_layerRenderer = layerRenderer; }
+    void setLayerRenderer(LayerRendererChromium* layerRenderer) { m_layerRenderer = layerRenderer; reset(); }
 
     bool skipsDraw() const { return m_skipsDraw; }
 

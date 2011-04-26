@@ -1,3 +1,18 @@
+2011-04-26  James Robinson  <jamesr@chromium.org>
+
+        Reviewed by Kenneth Russell.
+
+        [chromium] Clear out LayerTilerChromium's tiles on lost context
+        https://bugs.webkit.org/show_bug.cgi?id=59233
+
+        Clears out the LayerTilerChromium's tile set when the LayerRendererChromium is reset.  In this case the tiles are
+        no longer valid since they exist in the previous LayerRendererChromium.
+
+        Will be tested by a chrome test since we don't have any way to exercise the context lost case in layout tests.
+
+        * platform/graphics/chromium/LayerTilerChromium.h:
+        (WebCore::LayerTilerChromium::setLayerRenderer):
+
 2011-04-26  Martin Robinson  <mrobinson@igalia.com>
 
         Reviewed by Dirk Schulze.
