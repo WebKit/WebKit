@@ -1,3 +1,22 @@
+2011-04-26  Leo Yang  <leo.yang@torchmobile.com.cn>
+
+        Reviewed by Nikolas Zimmermann.
+
+        ASSERT failure in SVGUseElement
+        https://bugs.webkit.org/show_bug.cgi?id=59313
+
+        In SVGUseElement::insertedIntoDocument(), ASSERT(!m_isPendingResource)
+        was wrong because the document may not be well-formed.
+
+        This patch asserts the element is not pending on resource or the
+        document is not well-formed.
+
+        Test: svg/custom/use-crash-in-non-wellformed-document.svg
+
+        * svg/SVGUseElement.cpp:
+        (WebCore::isWellFormedDocument):
+        (WebCore::SVGUseElement::insertedIntoDocument):
+
 2011-04-26  Mikhail Naganov  <mnaganov@chromium.org>
 
         Reviewed by Pavel Feldman.
