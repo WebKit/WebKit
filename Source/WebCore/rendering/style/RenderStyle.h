@@ -650,7 +650,7 @@ public:
         return m_background->outline().offset();
     }
 
-    const ShadowData* textShadow() const { return rareInheritedData->textShadow.get(); }
+    const ShadowData* textShadow() const { return rareInheritedData->textShadow; }
     void getTextShadowExtent(int& top, int& right, int& bottom, int& left) const { getShadowExtent(textShadow(), top, right, bottom, left); }
     void getTextShadowHorizontalExtent(int& left, int& right) const { getShadowHorizontalExtent(textShadow(), left, right); }
     void getTextShadowVerticalExtent(int& top, int& bottom) const { getShadowVerticalExtent(textShadow(), top, bottom); }
@@ -1019,7 +1019,7 @@ public:
 
     // CSS3 Setters
     void setOutlineOffset(int v) { SET_VAR(m_background, m_outline.m_offset, v) }
-    void setTextShadow(PassOwnPtr<ShadowData>, bool add = false);
+    void setTextShadow(ShadowData* val, bool add=false);
     void setTextStrokeColor(const Color& c) { SET_VAR(rareInheritedData, textStrokeColor, c) }
     void setTextStrokeWidth(float w) { SET_VAR(rareInheritedData, textStrokeWidth, w) }
     void setTextFillColor(const Color& c) { SET_VAR(rareInheritedData, textFillColor, c) }
@@ -1034,7 +1034,7 @@ public:
     void setBoxOrdinalGroup(unsigned int og) { SET_VAR(rareNonInheritedData.access()->flexibleBox, ordinal_group, og); }
     void setBoxOrient(EBoxOrient o) { SET_VAR(rareNonInheritedData.access()->flexibleBox, orient, o); }
     void setBoxPack(EBoxAlignment p) { SET_VAR(rareNonInheritedData.access()->flexibleBox, pack, p); }
-    void setBoxShadow(PassOwnPtr<ShadowData>, bool add = false);
+    void setBoxShadow(ShadowData* val, bool add=false);
     void setBoxReflect(PassRefPtr<StyleReflection> reflect) { if (rareNonInheritedData->m_boxReflect != reflect) rareNonInheritedData.access()->m_boxReflect = reflect; }
     void setBoxSizing(EBoxSizing s) { SET_VAR(m_box, m_boxSizing, s); }
     void setMarqueeIncrement(const Length& f) { SET_VAR(rareNonInheritedData.access()->marquee, increment, f); }

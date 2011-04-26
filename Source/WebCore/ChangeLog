@@ -1,3 +1,28 @@
+2011-04-26  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Unreviewed rollout r84877 and StyleRareInheritedData.cpp changes of r84892,
+        because it broke transitions/multiple-text-shadow-transition.html
+
+        Fix OwnPtr strict errors in RenderStyle and make StyleRareInheritedData::textShadow an OwnPtr
+        https://bugs.webkit.org/show_bug.cgi?id=59377
+
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::applyProperty):
+        * page/animation/AnimationBase.cpp:
+        (WebCore::PropertyWrapperShadow::PropertyWrapperShadow):
+        (WebCore::PropertyWrapperShadow::blend):
+        * rendering/style/RenderStyle.cpp:
+        (WebCore::RenderStyle::setTextShadow):
+        (WebCore::RenderStyle::setBoxShadow):
+        * rendering/style/RenderStyle.h:
+        (WebCore::InheritedFlags::textShadow):
+        * rendering/style/StyleRareInheritedData.cpp:
+        (WebCore::StyleRareInheritedData::StyleRareInheritedData):
+        (WebCore::StyleRareInheritedData::~StyleRareInheritedData):
+        * rendering/style/StyleRareInheritedData.h:
+        * rendering/style/StyleRareNonInheritedData.cpp:
+        (WebCore::StyleRareNonInheritedData::StyleRareNonInheritedData):
+
 2011-04-26  Mihai Parparita  <mihaip@chromium.org>
 
         Reviewed by Adam Barth.
