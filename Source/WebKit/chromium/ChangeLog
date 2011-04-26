@@ -1,5 +1,13 @@
 2011-04-26  Evan Martin  <evan@chromium.org>
 
+        Unreviewed, Chrome/Mac build fix.
+
+        * WebKit.gypi: Remove extra file.  (I removed a subtraction, but
+        forgot to remove the corresponding addition that the subtraction
+        was counteracting.)
+
+2011-04-26  Evan Martin  <evan@chromium.org>
+
         Reviewed by Tony Chang.
 
         [chromium] refactor duplicated list of test source files
