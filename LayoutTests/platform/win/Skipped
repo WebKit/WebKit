@@ -1261,3 +1261,6 @@ media/audio-controls-do-not-fade-out.html
 
 # Causes the next test to fail http://webkit.org/b/59099
 http/tests/security/contentSecurityPolicy/frame-src-blocked.html
+
+# Times out https://bugs.webkit.org/show_bug.cgi?id=59324
+media/invalid-media-url-crash.html

@@ -1,3 +1,12 @@
+2011-04-26  Jessie Berlin  <jberlin@webkit.org>
+
+        [Windows Tests] media/invalid-media-url-crash.html failing since r84726.
+        https://bugs.webkit.org/show_bug.cgi?id=59324
+
+        The test is timing out on all of the Windows bots, so skip it to get them green.
+
+        * platform/win/Skipped:
+
 2011-04-26  Antti Koivisto  <antti@apple.com>
 
         Not reviewed.
