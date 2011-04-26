@@ -3572,7 +3572,7 @@ BUGCR79917 WIN LINUX : fast/block/positioning/absolute-in-inline-rtl.html = IMAG
 BUGCR79917 WIN LINUX : fast/block/positioning/absolute-in-inline-short-ltr.html = IMAGE
 BUGCR79917 WIN LINUX : fast/block/positioning/absolute-in-inline-short-rtl.html = IMAGE
 BUGCR79917 WIN LINUX : fast/borders/border-radius-different-width-001.html = IMAGE
-BUGCR79917 WIN : fast/borders/borderRadiusDashed01.html = IMAGE
+BUGCR79917 WIN LINUX : fast/borders/borderRadiusDashed01.html = IMAGE
 BUGCR79917 WIN LINUX : fast/borders/borderRadiusDotted02.html = IMAGE
 BUGCR79917 WIN LINUX : fast/borders/borderRadiusDotted03.html = IMAGE
 BUGCR79917 WIN LINUX : fast/borders/webkit-border-radius.html = IMAGE
@@ -3903,3 +3903,7 @@ BUGWK50661 WIN LINUX : fast/dom/HTMLMeterElement/meter-element.html = TEXT
 
 BUGDPRANKE GPU SLOW : compositing/tiling/huge-layer-img.html = PASS TEXT
 BUGDPRANKE GPU : media/video-aspect-ratio.html = IMAGE PASS
+
+BUGSENORBLANCO : animations/animation-drt-api-multiple-keyframes.html = TEXT
+BUGSENORBLANCO : animations/animation-drt-api.html = TEXT
+BUGSENORBLANCO GPU : compositing/animation/animated-composited-inside-hidden.html = MISSING

@@ -2,6 +2,14 @@
 
         Unreviewed; chromium test_expectations update.
 
+        Updated expectations for newly-failing tests.
+
+        * platform/chromium/test_expectations.txt:
+
+2011-04-26  Stephen White  <senorblanco@chromium.org>
+
+        Unreviewed; chromium test_expectations update.
+
         Remove duplicate expectations.
 
         * platform/chromium/test_expectations.txt:
