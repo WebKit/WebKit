@@ -1,5 +1,12 @@
 2011-04-27  Martin Robinson  <mrobinson@igalia.com>
 
+        Skip another test on GTK+ because we are still missing frame loader delegate output
+        in the DRT.
+
+        * platform/gtk/Skipped: Update skipped list.
+
+2011-04-27  Martin Robinson  <mrobinson@igalia.com>
+
         Update GTK+ specific expected results after r85011.
 
         * platform/gtk/css2.1/t0905-c414-flt-00-d-expected.txt:
