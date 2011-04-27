@@ -3950,6 +3950,7 @@ BUGWK59581 : fast/backgrounds/background-position-parsing.html = TEXT
 BUGWK59581 : fast/block/float/029.html = TEXT
 BUGWK59581 : fast/block/float/031.html = TEXT
 BUGWK59581 : fast/block/float/clamped-right-float.html = TEXT
+BUGWK59581 : fast/block/float/float-overhangs-root.html = MISSING
 BUGWK59581 : fast/block/float/nested-clearance.html = TEXT
 BUGWK59581 : fast/block/margin-collapse/062.html = TEXT
 BUGWK59581 : fast/block/margin-collapse/063.html = TEXT
@@ -4001,3 +4002,5 @@ BUGDPRANKE LINUX : svg/W3C-I18N/text-anchor-no-markup.svg = IMAGE
 BUGDPRANKE LINUX : svg/W3C-SVG-1.1-SE/text-intro-05-t.svg = IMAGE
 BUGDPRANKE LINUX : svg/text/text-intro-05-t.svg = IMAGE
 
+BUGDPRANKE WIN LINUX : media/video-controls-transformed.html = TEXT
+BUGDPRANKE MAC CPU : media/video-controls-transformed.html = TEXT

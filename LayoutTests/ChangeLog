@@ -1,3 +1,11 @@
+2011-04-26  Dirk Pranke  <dpranke@chromium.org>
+
+        Unreviewed, expectations change.
+
+        Suppress more failures resulting from r85011
+
+        * platform/chromium/test_expectations.txt:
+
 2011-04-26  Chang Shu  <cshu@webkit.org>
 
         Reviewed by Laszlo Gombos.
