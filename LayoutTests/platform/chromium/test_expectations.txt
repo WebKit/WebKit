@@ -2699,7 +2699,6 @@ BUGCR67540 WIN LINUX : fast/repaint/text-emphasis-v.html = IMAGE
 BUGCR67442 WIN LINUX : fast/canvas/fillText-shadow.html = TEXT
 
 BUGWK51720 DEBUG : http/tests/incremental/split-hex-entities.pl = CRASH PASS
-BUGWK51721 DEBUG : fast/encoding/parser-tests.html = PASS TIMEOUT
 BUGCR67463 MAC : editing/selection/caret-mode-paragraph-keys-navigation.html = TEXT
 
 BUGCR68436 LINUX DEBUG : fast/dom/DOMImplementation/createDocument-with-used-doctype.html = PASS TIMEOUT
@@ -2799,8 +2798,8 @@ BUGCR71022 MAC LEOPARD : fast/text/justify-ideograph-vertical.html = IMAGE
 BUGWK53347 WIN LINUX DEBUG : fast/repaint/4774354.html = PASS TIMEOUT
 
 BUGCR71418 MAC : fast/borders/border-radius-split-inline.html = IMAGE
-BUGCR71418 MAC : fast/repaint/box-shadow-h.html = IMAGE PASS
-BUGCR71418 MAC : fast/repaint/box-shadow-v.html = IMAGE PASS
+//BUGCR71418 MAC : fast/repaint/box-shadow-h.html = IMAGE PASS
+//BUGCR71418 MAC : fast/repaint/box-shadow-v.html = IMAGE PASS
 BUGCR71418 MAC : fast/transforms/shadows.html = IMAGE PASS
 
 BUGWK53446 WIN LINUX DEBUG : http/tests/navigation/forward-and-cancel.html = PASS TEXT
@@ -2967,12 +2966,10 @@ BUGWK54322 MAC SNOWLEOPARD : fast/forms/preserveFormDuringResidualStyle.html = I
 BUGWK54322 MAC SNOWLEOPARD : fast/forms/search-transformed.html = IMAGE
 BUGWK54322 MAC SNOWLEOPARD : fast/forms/slider-padding.html = IMAGE
 BUGWK54322 MAC SNOWLEOPARD : fast/images/favicon-as-image.html = IMAGE+TEXT
-BUGWK54322 MAC SNOWLEOPARD : fast/inline/inline-box-background-long-image.html = IMAGE
+//BUGWK54322 MAC SNOWLEOPARD : fast/inline/inline-box-background-long-image.html = IMAGE
 BUGWK54322 MAC SNOWLEOPARD : fast/media/mq-transform-02.html = IMAGE+TEXT
 BUGWK54322 MAC SNOWLEOPARD : fast/media/mq-transform-03.html = IMAGE+TEXT
 BUGWK54322 MAC SNOWLEOPARD : fast/replaced/width100percent-textarea.html = IMAGE
-BUGWK54322 MAC SNOWLEOPARD : fast/speech/input-appearance-numberandspeech.html = IMAGE
-BUGWK54322 MAC SNOWLEOPARD : fast/speech/input-appearance-searchandspeech.html = IMAGE
 BUGWK54322 MAC SNOWLEOPARD : fast/text/international/pop-up-button-text-alignment-and-direction.html = IMAGE
 BUGWK54322 MAC SNOWLEOPARD : fast/text/international/text-combine-image-test.html = IMAGE
 BUGWK54322 MAC SNOWLEOPARD : fast/text/justify-nbsp.html = IMAGE
@@ -3068,7 +3065,7 @@ BUGCR74710 LINUX MAC : svg/text/font-size-below-point-five.svg = TEXT PASS
 BUGCR74766 WIN DEBUG : http/tests/security/javascriptURL/xss-ALLOWED-from-javascript-url-sub-frame-to-javascript-url-sub-frame.html = PASS CRASH
 
 BUGCR75109 WIN LINUX : fast/css/getComputedStyle/computed-style-without-renderer.html = TEXT
-BUGCR75109 WIN LINUX : fast/css/getComputedStyle/computed-style.html = TEXT
+BUGCR75109 WIN LINUX : fast/css/getComputedStyle/computed-style.html = TEXT CRASH
 BUGCR75109 WIN LINUX MAC : platform/chromium/fast/text/international/complex-text-rectangle.html = TEXT
 BUGCR75109 WIN LINUX : svg/css/getComputedStyle-basic.xhtml = TEXT
 BUGCR75019 WIN LINUX MAC :fast/text/hyphenate-limit-before-after.html = IMAGE+TEXT
@@ -3234,8 +3231,18 @@ BUGWK57259 : http/tests/misc/link-rel-icon-beforeload.html = FAIL PASS
 
 // This test is very flaky on Mac and a little flaky on Win and Linux.
 BUGXXX : media/video-delay-load-event.html = PASS TEXT
-// This test appears to timeout every 10 or 20 runs.
-BUGXXX : fast/encoding/parser-tests-20.html = PASS TIMEOUT
+
+// These tests appears to timeout every 10 or 20 runs.
+BUGWK51721 : fast/encoding/parser-tests.html = TIMEOUT PASS
+BUGDPRANKE : fast/encoding/parser-tests-10.html = TIMEOUT PASS
+BUGDPRANKE : fast/encoding/parser-tests-20.html = TIMEOUT PASS
+BUGDPRANKE : fast/encoding/parser-tests-50.html = TIMEOUT PASS
+BUGDPRANKE : fast/encoding/parser-tests-60.html = TIMEOUT PASS
+BUGDPRANKE : fast/encoding/parser-tests-70.html = TIMEOUT PASS
+BUGDPRANKE : fast/encoding/parser-tests-80.html = TIMEOUT PASS
+BUGDPRANKE : fast/encoding/parser-tests-100.html = TIMEOUT PASS
+BUGDPRANKE : fast/encoding/parser-tests-110.html = TIMEOUT PASS
+BUGDPRANKE : fast/encoding/parser-tests-120.html = TIMEOUT PASS
 
 BUGWK57547 WIN LINUX GPU : fast/canvas/canvas-strokePath-gradient-shadow.html = TIMEOUT
 BUGWK57547 WIN LINUX GPU : fast/canvas/canvas-strokeRect-gradient-shadow.html = TIMEOUT
@@ -3255,7 +3262,6 @@ BUGWK50661 MAC : fast/forms/input-appearance-spinbutton-disabled-readonly.html =
 BUGWK50661 WIN LINUX : fast/forms/input-appearance-spinbutton-layer.html = IMAGE+TEXT TEXT PASS
 BUGWK50661 WIN LINUX : fast/forms/input-appearance-spinbutton-visibility.html = TEXT PASS
 BUGWK50661 MAC : fast/forms/input-appearance-spinbutton-visibility.html = IMAGE+TEXT PASS
-BUGWK50661 WIN LINUX : fast/speech/input-appearance-numberandspeech.html = TEXT PASS
 BUGWK50661 MAC LEOPARD : fast/speech/input-appearance-numberandspeech.html = IMAGE PASS
 //BUGWK50661 WIN LINUX : fast/dom/HTMLMeterElement/meter-element.html = IMAGE+TEXT PASS
 BUGWK50661 WIN LINUX : fast/dom/HTMLMeterElement/meter-styles.html = IMAGE+TEXT PASS
@@ -3553,7 +3559,7 @@ BUGCR79917 WIN LINUX : css2.1/t170602-bdr-conflct-w-94-d.html = IMAGE
 BUGCR79917 WIN LINUX : editing/execCommand/5138441.html = IMAGE
 BUGCR79917 WIN LINUX : editing/inserting/editing-empty-divs.html = IMAGE
 BUGCR79917 WIN LINUX : editing/selection/transformed-selection-rects.html = IMAGE
-BUGCR79917 WIN LINUX : fast/backgrounds/repeat/negative-offset-repeat.html = IMAGE
+BUGCR79917 WIN LINUX : fast/backgrounds/repeat/negative-offset-repeat.html = IMAGE IMAGE+TEXT
 BUGCR79917 WIN LINUX : fast/block/positioning/absolute-in-inline-ltr-2.html = IMAGE
 BUGCR79917 WIN LINUX : fast/block/positioning/absolute-in-inline-ltr-3.html = IMAGE
 BUGCR79917 WIN LINUX : fast/block/positioning/absolute-in-inline-ltr.html = IMAGE
@@ -3640,8 +3646,6 @@ BUGDPRANKE MAC GPU : compositing/geometry/video-fixed-scrolling.html = IMAGE
 BUGDPRANKE MAC GPU : media/video-volume-slider.html = IMAGE
 BUGDPRANKE MAC : plugins/mouse-click-iframe-to-plugin.html = TIMEOUT PASS
 BUGDPRANKE MAC : animations/3d/transform-origin-vs-functions.html = TEXT PASS
-BUGDPRANKE : fast/encoding/parser-tests-10.html = TIMEOUT PASS
-BUGDPRANKE : fast/encoding/parser-tests-120.html = TIMEOUT PASS
 BUGDPRANKE MAC : http/tests/loading/preload-slow-loading.php = TEXT
 BUGDPRANKE MAC : http/tests/misc/image-error.html = TEXT
 BUGDPRANKE MAC : http/tests/ssl/verify-ssl-enabled.php = TEXT
@@ -3710,8 +3714,6 @@ BUGDPRANKE SLOW : fast/css/visited-link-hang.html = PASS
 // webkit roll : 84350:84431
 BUGDPRANKE LINUX : fast/canvas/webgl/css-webkit-canvas-repaint.html = IMAGE
 BUGDPRANKE LINUX : fast/canvas/webgl/css-webkit-canvas.html = IMAGE
-BUGDPRANKE LINUX : fast/encoding/parser-tests-100.html = TIMEOUT PASS
-BUGDPRANKE LINUX : fast/encoding/parser-tests-50.html = TIMEOUT PASS
 BUGDPRANKE CPU : media/media-document-audio-repaint.html = IMAGE
 BUGDPRANKE MAC LINUX : transitions/interrupt-zero-duration.html = TEXT PASS
 BUGDPRANKE : media/controls-css-overload.html = TIMEOUT PASS
@@ -3747,8 +3749,6 @@ BUGDPRANKE MAC DEBUG : fast/css-generated-content/table-row-group-to-inline.html
 
 BUGDPRANKE LINUX : canvas/philip/tests/2d.gradient.radial.touch2.html = TEXT
 
-BUGDPRANKE : fast/encoding/parser-tests-70.html = TIMEOUT PASS
-BUGDPRANKE : fast/encoding/parser-tests-80.html = TIMEOUT PASS
 BUGDPRANKE MAC : http/tests/navigation/lockedhistory-iframe.html = TEXT
 BUGDPRANKE LINUX DEBUG : http/tests/navigation/lockedhistory-iframe.html = TEXT PASS
 BUGDPRANKE : fast/parser/iframe-sets-parent-to-javascript-url.html = TEXT PASS
@@ -3881,7 +3881,6 @@ BUGDPRANKE WIN XP : transitions/svg-text-shadow-transition.html = IMAGE
 
 // flakiness on deps bots from r84685:r84721??
 BUGDPRANKE MAC LEOPARD DEBUG : http/tests/local/stylesheet-and-script-load-order.html = CRASH PASS
-BUGDPRANKE LINUX DEBUG : fast/encoding/parser-tests-60.html = TIMEOUT PASS
 BUGDPRANKE LINUX DEBUG : editing/execCommand/append-node-under-document.html = TEXT PASS
 BUGDPRANKE LINUX DEBUG : svg/batik/text/textOnPath2.svg = IMAGE PASS
 BUGDPRANKE LINUX DEBUG : svg/batik/text/textOnPath3.svg = IMAGE PASS
@@ -3921,6 +3920,7 @@ BUGDPRANKE MAC CPU DEBUG : fast/block/float/overhanging-tall-block.html = PASS C
 BUGDPRANKE MAC CPU DEBUG : fast/css/import_with_baseurl.html = PASS CRASH
 BUGDPRANKE WIN CPU DEBUG : http/tests/eventsource/eventsource-reconnect.html = PASS TEXT
 BUGDPRANKE WIN : http/tests/navigation/ping-same-origin.html = PASS TIMEOUT TEXT
+BUGDPRANKE WIN CPU DEBUG : svg/custom/getscreenctm-in-scrollable-div-area-nested.xhtml = PASS CRASH
 
 // flakiness on canaries (noted ~ r85006)
 BUGDPRANKE CPU : svg/hixie/rendering-model/003.xhtml = IMAGE+TEXT PASS
@@ -3933,4 +3933,71 @@ BUGDPRANKE CPU LINUX DEBUG : editing/pasteboard/drop-text-events.html = PASS CRA
 
 // start skipping platform tests
 BUGNONE WONTFIX SKIP : platform/qt/fast/forms = PASS FAIL CRASH TIMEOUT
+
+// probably needs new baselines due to r85011
+BUGWK59581 : css2.1/t0905-c414-flt-00-d.html = TEXT
+BUGWK59581 : css2.1/t0905-c414-flt-01-d-g.html = TEXT
+BUGWK59581 : css2.1/t0905-c414-flt-02-c.html = TEXT
+BUGWK59581 : css2.1/t0905-c414-flt-03-c.html = TEXT
+BUGWK59581 : css2.1/t0905-c414-flt-04-c.html = TEXT
+BUGWK59581 : css2.1/t0905-c414-flt-wrap-01-d-g.html = TEXT
+BUGWK59581 : css2.1/t0905-c5525-fltcont-00-d-g.html = TEXT
+BUGWK59581 : css2.1/t0905-c5525-fltwidth-02-c-g.html = TEXT
+BUGWK59581 : css2.1/t0905-c5525-fltwidth-03-c-g.html = TEXT
+BUGWK59581 : css2.1/t090501-c414-flt-02-d-g.html = TEXT
+BUGWK59581 : css2.1/t090501-c414-flt-03-b-g.html = TEXT
+BUGWK59581 : fast/backgrounds/background-position-parsing.html = TEXT
+BUGWK59581 : fast/block/float/029.html = TEXT
+BUGWK59581 : fast/block/float/031.html = TEXT
+BUGWK59581 : fast/block/float/clamped-right-float.html = TEXT
+BUGWK59581 : fast/block/float/nested-clearance.html = TEXT
+BUGWK59581 : fast/block/margin-collapse/062.html = TEXT
+BUGWK59581 : fast/block/margin-collapse/063.html = TEXT
+BUGWK59581 : fast/box-shadow/basic-shadows.html = TEXT
+BUGWK59581 : fast/css/h1-in-section-elements.html = TEXT
+BUGWK59581 : fast/forms/basic-textareas-quirks.html = TEXT
+BUGWK59581 : fast/inline/inline-box-background-long-image.html = TEXT
+BUGWK59581 : fast/inline/inline-box-background-repeat-x.html = TEXT
+BUGWK59581 : fast/inline/inline-box-background-repeat-y.html = TEXT
+BUGWK59581 : fast/inline/inline-box-background.html = TEXT
+BUGWK59581 : fast/lists/003-vertical.html = TEXT
+BUGWK59581 : fast/lists/003.html = TEXT
+BUGWK59581 : fast/media/mq-relative-constraints-08.html = TEXT
+BUGWK59581 : fast/repaint/box-shadow-h.html = TEXT
+BUGWK59581 : fast/repaint/box-shadow-v.html = TEXT
+BUGWK59581 : fast/text/whitespace/012.html = TEXT
+BUGWK59581 : tables/mozilla/bugs/bug120364.html = TEXT
+BUGWK59581 : tables/mozilla/bugs/bug45055-2.html = TEXT
+BUGWK59581 : tables/mozilla/bugs/bug72359.xml = TEXT
+BUGWK59581 : tables/mozilla/marvin/x_table_align_left.xml = TEXT
+BUGWK59581 : tables/mozilla/marvin/x_table_align_right.xml = TEXT
+
+// rebaselines introduced by r85011 or r85013?
+BUGDPRANKE LINUX : fast/speech/input-appearance-numberandspeech.html = IMAGE+TEXT PASS TEXT
+BUGDPRANKE LINUX : fast/speech/input-appearance-searchandspeech.html = IMAGE+TEXT PASS
+BUGDPRANKE LINUX : fast/speech/input-appearance-speechbutton.html = IMAGE+TEXT PASS
+BUGDPRANKE LINUX : fast/text/atsui-negative-spacing-features.html = IMAGE
+BUGDPRANKE LINUX : fast/text/atsui-spacing-features.html = IMAGE
+BUGDPRANKE LINUX : fast/text/international/hebrew-vowels.html = IMAGE
+BUGDPRANKE LINUX : fast/text/international/thai-baht-space.html = IMAGE
+BUGDPRANKE LINUX : fast/text/international/thai-line-breaks.html = IMAGE
+BUGDPRANKE LINUX : platform/chromium-linux/fast/text/international/complex-joining-using-gpos.html = IMAGE
+BUGDPRANKE LINUX : svg/W3C-I18N/text-anchor-dirLTR-anchorEnd.svg = IMAGE
+BUGDPRANKE LINUX : svg/W3C-I18N/text-anchor-dirLTR-anchorMiddle.svg = IMAGE
+BUGDPRANKE LINUX : svg/W3C-I18N/text-anchor-dirLTR-anchorStart.svg = IMAGE
+BUGDPRANKE LINUX : svg/W3C-I18N/text-anchor-dirNone-anchorEnd.svg = IMAGE
+BUGDPRANKE LINUX : svg/W3C-I18N/text-anchor-dirNone-anchorMiddle.svg = IMAGE
+BUGDPRANKE LINUX : svg/W3C-I18N/text-anchor-dirNone-anchorStart.svg = IMAGE
+BUGDPRANKE LINUX : svg/W3C-I18N/text-anchor-dirRTL-anchorEnd.svg = IMAGE
+BUGDPRANKE LINUX : svg/W3C-I18N/text-anchor-dirRTL-anchorMiddle.svg = IMAGE
+BUGDPRANKE LINUX : svg/W3C-I18N/text-anchor-dirRTL-anchorStart.svg = IMAGE
+BUGDPRANKE LINUX : svg/W3C-I18N/text-anchor-inherited-dirLTR-anchorEnd.svg = IMAGE
+BUGDPRANKE LINUX : svg/W3C-I18N/text-anchor-inherited-dirLTR-anchorMiddle.svg = IMAGE
+BUGDPRANKE LINUX : svg/W3C-I18N/text-anchor-inherited-dirLTR-anchorStart.svg = IMAGE
+BUGDPRANKE LINUX : svg/W3C-I18N/text-anchor-inherited-dirRTL-anchorEnd.svg = IMAGE
+BUGDPRANKE LINUX : svg/W3C-I18N/text-anchor-inherited-dirRTL-anchorMiddle.svg = IMAGE
+BUGDPRANKE LINUX : svg/W3C-I18N/text-anchor-inherited-dirRTL-anchorStart.svg = IMAGE
+BUGDPRANKE LINUX : svg/W3C-I18N/text-anchor-no-markup.svg = IMAGE
+BUGDPRANKE LINUX : svg/W3C-SVG-1.1-SE/text-intro-05-t.svg = IMAGE
+BUGDPRANKE LINUX : svg/text/text-intro-05-t.svg = IMAGE
 
