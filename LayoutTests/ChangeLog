@@ -1,3 +1,16 @@
+2011-04-27  Mark Pilgrim  <pilgrim@chromium.org>
+
+        Reviewed by Tony Chang.
+
+        Port Mozilla's IndexedDB tests: objectStoreNames
+        https://bugs.webkit.org/show_bug.cgi?id=59484
+
+        * storage/indexeddb/mozilla: Added.
+        * storage/indexeddb/mozilla/global-data-expected.txt: Added.
+        * storage/indexeddb/mozilla/global-data.html: Added.
+        * storage/indexeddb/mozilla/objectstorenames-expected.txt: Added.
+        * storage/indexeddb/mozilla/objectstorenames.html: Added.
+
 2011-04-27  Dimitri Glazkov  <dglazkov@chromium.org>
 
         Skip crashing/failing shadow DOM tests until they are fixed.
