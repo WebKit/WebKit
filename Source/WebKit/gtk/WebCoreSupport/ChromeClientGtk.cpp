@@ -586,13 +586,13 @@ void ChromeClient::print(Frame* frame)
 #if ENABLE(DATABASE)
 void ChromeClient::exceededDatabaseQuota(Frame* frame, const String& databaseName)
 {
-    DatabaseTracker::tracker().setQuota(frame->document()->securityOrigin(),
-                                        webkit_get_default_web_database_quota());
+    guint64 defaultQuota = webkit_get_default_web_database_quota();
+    DatabaseTracker::tracker().setQuota(frame->document()->securityOrigin(), defaultQuota);
 
-    GRefPtr<WebKitSecurityOrigin> origin = adoptGRef(kit(frame->document()->securityOrigin()));
-    g_signal_emit_by_name(m_webView, "database-quota-exceeded", kit(frame),
-                          webkit_security_origin_get_web_database(origin.get(),
-                          databaseName.utf8().data()));
+    WebKitWebFrame* webFrame = kit(frame);
+    WebKitSecurityOrigin* origin = webkit_web_frame_get_security_origin(webFrame);
+    WebKitWebDatabase* webDatabase = webkit_security_origin_get_web_database(origin, databaseName.utf8().data());
+    g_signal_emit_by_name(m_webView, "database-quota-exceeded", webFrame, webDatabase);
 }
 #endif
 
