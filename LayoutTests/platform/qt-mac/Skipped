@@ -4099,12 +4099,14 @@ http/tests/ssl/verify-ssl-enabled.php
 canvas/philip/tests/2d.text.draw.align.end.ltr.html
 canvas/philip/tests/2d.text.draw.align.end.rtl.html
 canvas/philip/tests/2d.text.draw.align.left.html
+canvas/philip/tests/2d.text.draw.align.right.html
 canvas/philip/tests/2d.text.draw.align.start.ltr.html
 canvas/philip/tests/2d.text.draw.align.start.rtl.html
 canvas/philip/tests/2d.text.draw.baseline.alphabetic.html
 canvas/philip/tests/2d.text.draw.fontface.html
 canvas/philip/tests/2d.text.draw.fontface.repeat.html
 canvas/philip/tests/2d.text.draw.space.basic.html
+canvas/philip/tests/2d.text.measure.width.basic.html
 canvas/philip/tests/2d.text.measure.width.empty.html
 fast/css/font-face-data-uri.html
 fast/css/font-face-opentype.html
