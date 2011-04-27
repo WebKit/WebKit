@@ -35,7 +35,7 @@
 #include <CFNetwork/CFURLResponsePriv.h>
 #endif
 
-#if PLATFORM(WIN)
+#if PLATFORM(WIN) && USE(CFNETWORK)
 #include <ConditionalMacros.h>
 #endif
 
