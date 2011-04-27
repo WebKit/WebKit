@@ -1,5 +1,12 @@
 2011-04-27  Ojan Vafai  <ojan@chromium.org>
 
+        Forgot to upload the new times_ms.json file after splitting
+        it out from full_results.json.
+
+        * Scripts/webkitpy/layout_tests/layout_package/manager.py:
+
+2011-04-27  Ojan Vafai  <ojan@chromium.org>
+
         Fix snafu in generating the JSON for the chromium tests.
 
         * Scripts/webkitpy/layout_tests/layout_package/json_results_generator.py:

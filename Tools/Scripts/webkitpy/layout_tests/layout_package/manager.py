@@ -941,7 +941,7 @@ class Manager:
 
         _log.debug("Finished writing JSON files.")
 
-        json_files = ["expectations.json", "incremental_results.json", "full_results.json"]
+        json_files = ["expectations.json", "incremental_results.json", "full_results.json", "times_ms.json"]
 
         generator.upload_json_files(json_files)
 
