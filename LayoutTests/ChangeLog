@@ -1,3 +1,9 @@
+2011-04-26  Dirk Pranke  <dpranke@chromium.org>
+
+        Unreviewed, expectations change. Remove tests that are passing.
+
+        * platform/chromium/test_expectations.txt:
+
 2011-04-26  Alejandro G. Castro  <alex@igalia.com>
 
         Remove gtk specific render expectations after the tests were
