@@ -82,7 +82,12 @@ def test_timings_trie(port, individual_test_timings):
     """
     trie = {}
     for test_result in individual_test_timings:
-        test = port.relative_test_filename(test_result.filename)
+        try:
+            test = port.relative_test_filename(test_result.filename)
+        except AssertionError:
+            # FIXME: Handle this better. Non-layout tests shouldn't be relativized.
+            test = test_result.filename
+
         parts = test.split(os.sep)
         current_map = trie
         for i, part in enumerate(parts):

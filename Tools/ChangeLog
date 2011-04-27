@@ -1,5 +1,11 @@
 2011-04-27  Ojan Vafai  <ojan@chromium.org>
 
+        Fix snafu in generating the JSON for the chromium tests.
+
+        * Scripts/webkitpy/layout_tests/layout_package/json_results_generator.py:
+
+2011-04-27  Ojan Vafai  <ojan@chromium.org>
+
         Fix bad merge. This broke the chromium tests generating JSON files.
         * Scripts/webkitpy/layout_tests/layout_package/json_results_generator.py:
 
