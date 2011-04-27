@@ -1,3 +1,52 @@
+2011-04-27  Victoria Kirst  <vrk@chromium.org>
+
+        Unreviewed.
+
+        [chromium] Rebaseline and add baselines for a few media layout tests
+        and update test_expectations.txt.
+
+        * platform/chromium-gpu-linux/media/controls-after-reload-expected.png: Added.
+        * platform/chromium-gpu-linux/media/controls-strict-expected.png: Added.
+        * platform/chromium-gpu-linux/media/controls-styling-expected.png: Added.
+        * platform/chromium-gpu-linux/media/controls-without-preload-expected.png: Added.
+        * platform/chromium-gpu-linux/media/video-transformed-expected.png: Added.
+        * platform/chromium-gpu-linux/media/video-zoom-controls-expected.png: Added.
+        * platform/chromium-gpu-mac/media/controls-after-reload-expected.png: Added.
+        * platform/chromium-gpu-mac/media/controls-strict-expected.png: Added.
+        * platform/chromium-gpu-mac/media/controls-styling-expected.png: Added.
+        * platform/chromium-gpu-mac/media/controls-without-preload-expected.png: Added.
+        * platform/chromium-gpu-mac/media/video-transformed-expected.png: Added.
+        * platform/chromium-gpu-mac/media/video-zoom-controls-expected.png:
+        * platform/chromium-gpu-win/media/controls-after-reload-expected.png: Added.
+        * platform/chromium-gpu-win/media/controls-strict-expected.png: Added.
+        * platform/chromium-gpu-win/media/controls-styling-expected.png: Added.
+        * platform/chromium-gpu-win/media/controls-without-preload-expected.png: Added.
+        * platform/chromium-gpu-win/media/video-transformed-expected.png: Added.
+        * platform/chromium-gpu-win/media/video-zoom-controls-expected.png: Added.
+        * platform/chromium-linux/media/controls-after-reload-expected.png:
+        * platform/chromium-linux/media/controls-strict-expected.png:
+        * platform/chromium-linux/media/controls-styling-expected.png:
+        * platform/chromium-linux/media/controls-without-preload-expected.png:
+        * platform/chromium-linux/media/video-transformed-expected.png:
+        * platform/chromium-linux/media/video-zoom-controls-expected.png:
+        * platform/chromium-mac-leopard/media/controls-after-reload-expected.png:
+        * platform/chromium-mac-leopard/media/controls-strict-expected.png:
+        * platform/chromium-mac-leopard/media/controls-styling-expected.png:
+        * platform/chromium-mac-leopard/media/controls-without-preload-expected.png:
+        * platform/chromium-mac-leopard/media/video-zoom-controls-expected.png:
+        * platform/chromium-mac/media/controls-after-reload-expected.png:
+        * platform/chromium-mac/media/controls-strict-expected.png:
+        * platform/chromium-mac/media/controls-styling-expected.png:
+        * platform/chromium-mac/media/controls-without-preload-expected.png:
+        * platform/chromium-mac/media/video-zoom-controls-expected.png:
+        * platform/chromium-win/media/controls-after-reload-expected.png:
+        * platform/chromium-win/media/controls-strict-expected.png:
+        * platform/chromium-win/media/controls-styling-expected.png:
+        * platform/chromium-win/media/controls-without-preload-expected.png:
+        * platform/chromium-win/media/video-transformed-expected.png:
+        * platform/chromium-win/media/video-zoom-controls-expected.png:
+        * platform/chromium/test_expectations.txt:
+
 2011-04-27  Adrienne Walker  <enne@google.com>
 
         [chromium] Unreviewed, rollout r85075 (scissor rect changes)

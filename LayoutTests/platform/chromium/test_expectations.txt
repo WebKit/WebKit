@@ -2902,15 +2902,6 @@ BUGWK53469 GPU MAC : compositing/scroll-painted-composited-content.html = CRASH
 
 BUGCR74979 GPU MAC: media/video-canvas-alpha.html = IMAGE
 
-// Any tests that render controls will need rebaselining after the patch on
-// bug 55918 lands.
-BUGWK55918 : media/controls-after-reload.html = IMAGE
-BUGWK55918 : media/controls-strict.html = IMAGE
-BUGWK55918 : media/controls-styling.html = IMAGE
-BUGWK55918 : media/controls-without-preload.html = IMAGE
-BUGWK55918 : media/video-transformed.html = IMAGE
-BUGWK55918 : media/video-zoom-controls.html = IMAGE
-
 BUGWK55708 BUGCR75345 GPU MAC : media/video-controls-rendering.html = CRASH IMAGE
 BUGWK55718 BUGCR75354 GPU : media/media-document-audio-repaint.html = IMAGE+TEXT
 
