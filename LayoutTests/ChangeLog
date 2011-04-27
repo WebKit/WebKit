@@ -1,3 +1,14 @@
+2011-04-27  Martin Robinson  <mrobinson@igalia.com>
+
+        Skip a failing test. Add GTK+-specific results for another and organize
+        the Skipped file a bit. Remove platform-specific results for a test which
+        is now a text dumping test.
+
+        * platform/gtk/Skipped: Organize and skip a new test.
+        * platform/gtk/fast/events/keydown-1-expected.png: Removed.
+        * platform/gtk/fast/events/keydown-1-expected.txt: Removed.
+        * platform/gtk/fast/events/overflow-viewport-renderer-deleted-expected.txt: Added.
+
 2011-04-27  Csaba Osztrogonác  <ossy@webkit.org>
 
         Root element should establish a new block formatting context
