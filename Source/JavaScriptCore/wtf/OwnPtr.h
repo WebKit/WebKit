@@ -29,7 +29,9 @@
 #include <memory>
 
 // Remove this once we make all WebKit code compatible with stricter rules about OwnPtr.
+#if !PLATFORM(MAC)
 #define LOOSE_OWN_PTR
+#endif
 
 namespace WTF {
 

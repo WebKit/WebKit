@@ -1,3 +1,14 @@
+2011-04-27  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by David Levin.
+
+        Enable strict mode for OwnPtr
+        https://bugs.webkit.org/show_bug.cgi?id=59428
+
+        This patch enables strict mode for OwnPtr on PLATFORM(MAC) only.
+
+        * wtf/OwnPtr.h:
+
 2011-04-27  Steve Block  <steveblock@google.com>
 
         Reviewed by David Levin.
