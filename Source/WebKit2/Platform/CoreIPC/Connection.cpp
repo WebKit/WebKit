@@ -435,6 +435,13 @@ PassOwnPtr<ArgumentDecoder> Connection::waitForSyncReply(uint64_t syncRequestID,
                 return pendingSyncReply.releaseReplyDecoder();
         }
 
+        // Processing a sync message could cause the connection to be invalidated.
+        // (If the handler ends up calling Connection::invalidate).
+        // If that happens, we need to stop waiting, or we'll hang since we won't get
+        // any more incoming messages.
+        if (!isValid())
+            return 0;
+
         // We didn't find a sync reply yet, keep waiting.
 #if PLATFORM(WIN)
         timedOut = !m_syncMessageState->waitWhileDispatchingSentWin32Messages(absoluteTime, m_client->windowsToReceiveSentMessagesWhileWaitingForSyncReply());

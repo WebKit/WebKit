@@ -1,3 +1,16 @@
+2011-04-27  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        Hang if a sync message handler invalidates the connection
+        https://bugs.webkit.org/show_bug.cgi?id=59627
+
+        If dispatching incoming messages while waiting for the sync reply caused the connection to be invalidated,
+        we need to return early or we'll wait forever.
+
+        * Platform/CoreIPC/Connection.cpp:
+        (CoreIPC::Connection::waitForSyncReply):
+
 2011-04-27  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Reviewed by Martin Robinson.
