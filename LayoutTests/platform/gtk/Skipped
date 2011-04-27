@@ -391,10 +391,6 @@ fast/forms/select-double-onchange.html
 fast/forms/select-script-onchange.html
 fast/html/tab-order.html
 
-# Images do not seem to copy and paste properly
-# https://bugs.webkit.org/show_bug.cgi?id=53645
-editing/pasteboard/copy-standalone-image.html
-
 # The box isn't empty after a test run with this test.
 # https://bugs.webkit.org/show_bug.cgi?id=53644
  editing/deleting/5408255.html

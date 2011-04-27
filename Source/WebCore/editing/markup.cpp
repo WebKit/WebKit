@@ -1,5 +1,7 @@
 /*
  * Copyright (C) 2004, 2005, 2006, 2007, 2008, 2009 Apple Inc. All rights reserved.
+ * Copyright (C) 2008, 2009 Google Inc.
+ * Copyright (C) 2011 Igalia S.L.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -911,6 +913,30 @@ String urlToMarkup(const KURL& url, const String& title)
     append(markup, "\">");
     appendCharactersReplacingEntities(markup, title.characters(), title.length(), EntityMaskInPCDATA);
     append(markup, "</a>");
+    return String::adopt(markup);
+}
+
+String imageToMarkup(const KURL& url, Element* element)
+{
+    Vector<UChar> markup;
+    append(markup, "<img src=\"");
+    append(markup, url.string());
+    append(markup, "\"");
+
+    NamedNodeMap* attrs = element->attributes();
+    unsigned length = attrs->length();
+    for (unsigned i = 0; i < length; ++i) {
+        Attribute* attr = attrs->attributeItem(i);
+        if (attr->localName() == "src")
+            continue;
+        append(markup, " ");
+        append(markup, attr->localName());
+        append(markup, "=\"");
+        appendCharactersReplacingEntities(markup, attr->value().characters(), attr->value().length(), EntityMaskInAttributeValue);
+        append(markup, "\"");
+    }
+
+    append(markup, "/>");
     return String::adopt(markup);
 }
 

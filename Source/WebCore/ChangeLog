@@ -1,3 +1,31 @@
+2011-02-03  Martin Robinson  <mrobinson@igalia.com>
+
+        Reviewed by Xan Lopez.
+
+        [GTK] editing/pasteboard/copy-standalone-image.html fails
+        https://bugs.webkit.org/show_bug.cgi?id=53645
+
+        When writing an image to the clipboard, also write the URL and title
+        into the markup and URL portion. This change also abstracts a helper
+        imageToMarkup into markup.{cpp/h} from several different locations
+        throughout the platform layer.
+
+        * editing/markup.h: Added new function definition.
+        * editing/markup.cpp:
+        (WebCore::imageToMarkup): Add this function which turns an image URL 
+        and element into some markup representing that image, while preserving
+        non-src attributes.
+        * platform/chromium/ClipboardChromium.cpp: Move the imageToMarkup helper
+        to markup.cpp.
+        * platform/gtk/PasteboardGtk.cpp:
+        (WebCore::getURLForImageNode): Add this helper which gets the appropriate
+        image URL for a variety of image tag types.
+        (WebCore::Pasteboard::writeImage): Write the image URL and title to the
+        markup and URL portions of the clipboard. This will ensure that images
+        paste properly back into WebKit.
+        * platform/win/ClipboardWin.cpp: Remove the imageToMarkup helper and the
+        one from markup.h
+
 2011-04-27  Steve Block  <steveblock@google.com>
 
         Reviewed by David Levin.

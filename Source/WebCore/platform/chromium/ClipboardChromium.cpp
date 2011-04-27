@@ -195,33 +195,6 @@ DragImageRef ClipboardChromium::createDragImage(IntPoint& loc) const
     return result;
 }
 
-static String imageToMarkup(const String& url, Element* element)
-{
-    StringBuilder markup;
-    markup.append("<img src=\"");
-    markup.append(url);
-    markup.append('"');
-    // Copy over attributes.  If we are dragging an image, we expect things like
-    // the id to be copied as well.
-    NamedNodeMap* attrs = element->attributes();
-    unsigned length = attrs->length();
-    for (unsigned i = 0; i < length; ++i) {
-        Attribute* attr = attrs->attributeItem(i);
-        if (attr->localName() == "src")
-            continue;
-        markup.append(' ');
-        markup.append(attr->localName());
-        markup.append("=\"");
-        String escapedAttr = attr->value();
-        escapedAttr.replace("\"", "&quot;");
-        markup.append(escapedAttr);
-        markup.append('"');
-    }
-
-    markup.append("/>");
-    return markup.toString();
-}
-
 static CachedImage* getCachedImage(Element* element)
 {
     // Attempt to pull CachedImage from element
@@ -281,7 +254,7 @@ void ClipboardChromium::declareAndWriteDragImage(Element* element, const KURL& u
     if (imageURL.isEmpty())
         return;
 
-    String fullURL = frame->document()->completeURL(stripLeadingAndTrailingHTMLSpaces(imageURL));
+    KURL fullURL = frame->document()->completeURL(stripLeadingAndTrailingHTMLSpaces(imageURL));
     if (fullURL.isEmpty())
         return;
 

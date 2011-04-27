@@ -1,3 +1,17 @@
+2011-02-03  Martin Robinson  <mrobinson@igalia.com>
+
+        Reviewed by Xan Lopez.
+
+        [GTK] editing/pasteboard/copy-standalone-image.html fails
+        https://bugs.webkit.org/show_bug.cgi?id=53645
+
+        Unskip the test and add new expected results for it.
+
+        * platform/gtk/Skipped: Unskip this test as it is now passing.
+        * platform/gtk/editing/pasteboard/copy-standalone-image-expected.checksum:
+        * platform/gtk/editing/pasteboard/copy-standalone-image-expected.png:
+        * platform/gtk/editing/pasteboard/copy-standalone-image-expected.txt:
+
 2011-04-27  Kenneth Russell  <kbr@google.com>
 
         Not reviewed. Rebaseline test to get the tree green.

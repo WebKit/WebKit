@@ -631,14 +631,6 @@ DragImageRef ClipboardWin::createDragImage(IntPoint& loc) const
     return result;
 }
 
-static String imageToMarkup(const String& url)
-{
-    String markup("<img src=\"");
-    markup.append(url);
-    markup.append("\"/>");
-    return markup;
-}
-
 static CachedImage* getCachedImage(Element* element)
 {
     // Attempt to pull CachedImage from element
@@ -698,7 +690,7 @@ void ClipboardWin::declareAndWriteDragImage(Element* element, const KURL& url, c
     if (imageURL.isEmpty()) 
         return;
 
-    String fullURL = frame->document()->completeURL(stripLeadingAndTrailingHTMLSpaces(imageURL)).string();
+    KURL fullURL = frame->document()->completeURL(stripLeadingAndTrailingHTMLSpaces(imageURL));
     if (fullURL.isEmpty()) 
         return;
     STGMEDIUM medium = {0};
@@ -706,7 +698,7 @@ void ClipboardWin::declareAndWriteDragImage(Element* element, const KURL& url, c
 
     // Put img tag on the clipboard referencing the image
     Vector<char> data;
-    markupToCFHTML(imageToMarkup(fullURL), "", data);
+    markupToCFHTML(imageToMarkup(fullURL, element), "", data);
     medium.hGlobal = createGlobalData(data);
     if (medium.hGlobal && FAILED(m_writableDataObject->SetData(htmlFormat(), &medium, TRUE)))
         ::GlobalFree(medium.hGlobal);

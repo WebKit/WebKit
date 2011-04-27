@@ -23,17 +23,24 @@
 #include "DataObjectGtk.h"
 #include "DocumentFragment.h"
 #include "Frame.h"
+#include "GOwnPtrGtk.h"
+#include "HTMLNames.h"
+#include "HTMLParserIdioms.h"
+#include "KURL.h"
 #include "NotImplemented.h"
 #include "PlatformString.h"
 #include "TextResourceDecoder.h"
 #include "Image.h"
 #include "RenderImage.h"
-#include "KURL.h"
 #include "markup.h"
+#include <gtk/gtk.h>
 #include <wtf/gobject/GRefPtr.h>
 #include <wtf/text/CString.h>
 
-#include <gtk/gtk.h>
+#if ENABLE(SVG)
+#include "SVGNames.h"
+#include "XLinkNames.h"
+#endif
 
 namespace WebCore {
 
@@ -91,11 +98,27 @@ void Pasteboard::writeURL(const KURL& url, const String& label, Frame* frame)
     m_helper->writeClipboardContents(clipboard);
 }
 
-void Pasteboard::writeImage(Node* node, const KURL&, const String&)
+static KURL getURLForImageNode(Node* node)
 {
-    GtkClipboard* clipboard = gtk_clipboard_get_for_display(gdk_display_get_default(), GDK_SELECTION_CLIPBOARD);
+    // FIXME: Later this code should be shared with Chromium somehow. Chances are all platforms want it.
+    AtomicString urlString;
+    if (node->hasTagName(HTMLNames::imgTag) || node->hasTagName(HTMLNames::inputTag))
+        urlString = static_cast<Element*>(node)->getAttribute(HTMLNames::srcAttr);
+#if ENABLE(SVG)
+    else if (node->hasTagName(SVGNames::imageTag))
+        urlString = static_cast<Element*>(node)->getAttribute(XLinkNames::hrefAttr);
+#endif
+    else if (node->hasTagName(HTMLNames::embedTag) || node->hasTagName(HTMLNames::objectTag)) {
+        Element* element = static_cast<Element*>(node);
+        urlString = element->getAttribute(element->imageSourceAttributeName());
+    }
+    return urlString.isEmpty() ? KURL() : node->document()->completeURL(stripLeadingAndTrailingHTMLSpaces(urlString));
+}
 
-    ASSERT(node && node->renderer() && node->renderer()->isImage());
+void Pasteboard::writeImage(Node* node, const KURL&, const String& title)
+{
+    ASSERT(node);
+    ASSERT(node->renderer());
     RenderImage* renderer = toRenderImage(node->renderer());
     CachedImage* cachedImage = renderer->cachedImage();
     if (!cachedImage || cachedImage->errorOccurred())
@@ -103,9 +126,23 @@ void Pasteboard::writeImage(Node* node, const KURL&, const String&)
     Image* image = cachedImage->image();
     ASSERT(image);
 
-    GRefPtr<GdkPixbuf> pixbuf = adoptGRef(image->getGdkPixbuf());
+    GtkClipboard* clipboard = gtk_clipboard_get_for_display(gdk_display_get_default(), GDK_SELECTION_CLIPBOARD);
     DataObjectGtk* dataObject = DataObjectGtk::forClipboard(clipboard);
+
+    KURL url = getURLForImageNode(node);
+    if (!url.isEmpty()) {
+        dataObject->setURL(url, title);
+
+        // This image may be an SVG, embed, or object tag, so do not write the image
+        // tag markup in those cases. Eventually we may want to support passing markup
+        // for these tag types.
+        if (node->hasTagName(HTMLNames::imgTag))
+            dataObject->setMarkup(imageToMarkup(url, static_cast<Element*>(node)));
+    }
+
+    GRefPtr<GdkPixbuf> pixbuf = adoptGRef(image->getGdkPixbuf());
     dataObject->setImage(pixbuf.get());
+
     m_helper->writeClipboardContents(clipboard);
 }
 
