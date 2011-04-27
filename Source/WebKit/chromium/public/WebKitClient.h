@@ -271,7 +271,8 @@ public:
     }
 
     // Delayed work is driven by a shared timer.
-    virtual void setSharedTimerFiredFunction(void (*func)()) { }
+    typedef void (*SharedTimerFunction)();
+    virtual void setSharedTimerFiredFunction(SharedTimerFunction timerFunction) { }
     virtual void setSharedTimerFireTime(double fireTime) { }
     virtual void stopSharedTimer() { }
 

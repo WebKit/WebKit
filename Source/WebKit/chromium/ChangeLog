@@ -1,3 +1,13 @@
+2011-04-26  Jay Civelli  <jcivelli@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        Typedefing the shared timer function.
+        https://bugs.webkit.org/show_bug.cgi?id=59564
+
+        * public/WebKitClient.h:
+        (WebKit::WebKitClient::setSharedTimerFiredFunction):
+
 2011-04-26  Dirk Pranke  <dpranke@chromium.org>
 
         Unreviewed, rolling out r84982.
