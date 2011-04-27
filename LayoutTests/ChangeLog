@@ -1,3 +1,10 @@
+2011-04-27  Jessie Berlin  <jberlin@apple.com>
+
+        Update the Windows-XP-specific platform results after r85011 and r85052 to get the bots green.
+
+        * platform/win-xp/fast/text/emphasis-expected.txt:
+        * platform/win-xp/fast/text/emphasis-vertical-expected.txt:
+
 2011-04-27  Yury Semikhatsky  <yurys@chromium.org>
 
         Reviewed by Pavel Feldman.
