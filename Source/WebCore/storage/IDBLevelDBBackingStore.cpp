@@ -303,10 +303,12 @@ static int64_t getNewObjectStoreId(LevelDBDatabase* db, int64_t databaseId)
         return freeListKey.objectStoreId();
     }
 
-    int64_t maxObjectStoreId;
+    int64_t maxObjectStoreId = -1;
     const Vector<char> maxObjectStoreIdKey = DatabaseMetaDataKey::encode(databaseId, DatabaseMetaDataKey::kMaxObjectStoreId);
     if (!getInt(db, maxObjectStoreIdKey, maxObjectStoreId))
         maxObjectStoreId = 0;
+
+    ASSERT(maxObjectStoreId >= 0);
 
     int64_t objectStoreId = maxObjectStoreId + 1;
     bool ok = putInt(db, maxObjectStoreIdKey, objectStoreId);
@@ -641,10 +643,12 @@ static int64_t getNewIndexId(LevelDBDatabase* db, int64_t databaseId, int64_t ob
         return freeListKey.indexId();
     }
 
-    int64_t maxIndexId;
+    int64_t maxIndexId = -1;
     const Vector<char> maxIndexIdKey = ObjectStoreMetaDataKey::encode(databaseId, objectStoreId, 5);
     if (!getInt(db, maxIndexIdKey, maxIndexId))
         maxIndexId = kMinimumIndexId;
+
+    ASSERT(maxIndexId >= 0);
 
     int64_t indexId = maxIndexId + 1;
     bool ok = putInt(db, maxIndexIdKey, indexId);
