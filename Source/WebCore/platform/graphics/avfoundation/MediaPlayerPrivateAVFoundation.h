@@ -184,6 +184,7 @@ protected:
     };
     virtual AVAssetStatus assetStatus() const = 0;
 
+    virtual void platformSetVisible(bool) = 0;
     virtual void platformPlay() = 0;
     virtual void platformPause() = 0;
     virtual void checkPlayability() = 0;

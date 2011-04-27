@@ -1,3 +1,21 @@
+2011-04-26  Jer Noble  <jer.noble@apple.com>
+
+        Reviewed by Brady Eidson.
+
+        HTML5 video fullscreen transition causes an audio stutter
+        https://bugs.webkit.org/show_bug.cgi?id=59544
+
+        AVFoundation will momentarily stutter when you disconnect a AVPlayerLayer 
+        from its AVPlayer.  Since you shouldn't necessarily have to destroy the
+        layer to render it invisible, instead just set the layer as hidden.
+
+        * platform/graphics/avfoundation/MediaPlayerPrivateAVFoundation.cpp:
+        (WebCore::MediaPlayerPrivateAVFoundation::setVisible): Call through to platformSetVisible().
+        * platform/graphics/avfoundation/MediaPlayerPrivateAVFoundation.h:
+        * platform/graphics/avfoundation/MediaPlayerPrivateAVFoundationObjC.h:
+        * platform/graphics/avfoundation/MediaPlayerPrivateAVFoundationObjC.mm:
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::platformSetVisible): Added.
+
 2011-04-26  Christian Dywan  <christian@lanedo.com>
 
         Reviewed by Eric Seidel.

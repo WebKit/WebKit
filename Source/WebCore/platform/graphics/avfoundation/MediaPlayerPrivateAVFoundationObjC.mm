@@ -355,6 +355,12 @@ PlatformLayer* MediaPlayerPrivateAVFoundationObjC::platformLayer() const
     return m_videoLayer.get();
 }
 
+void MediaPlayerPrivateAVFoundationObjC::platformSetVisible(bool isVisible)
+{
+    if (m_videoLayer)
+        [m_videoLayer.get() setHidden:!isVisible];
+}
+    
 void MediaPlayerPrivateAVFoundationObjC::platformPlay()
 {
     LOG(Media, "MediaPlayerPrivateAVFoundationObjC::platformPlay(%p)", this);

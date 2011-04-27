@@ -73,6 +73,7 @@ private:
 
     virtual PlatformMedia platformMedia() const;
 
+    virtual void platformSetVisible(bool);
     virtual void platformPlay();
     virtual void platformPause();
     virtual float currentTime() const;

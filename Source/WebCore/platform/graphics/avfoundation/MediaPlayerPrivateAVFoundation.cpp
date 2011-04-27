@@ -526,8 +526,8 @@ void MediaPlayerPrivateAVFoundation::setVisible(bool visible)
     m_visible = visible;
     if (visible)
         setUpVideoRendering();
-    else
-        tearDownVideoRendering();
+    
+    platformSetVisible(visible);
 }
 
 bool MediaPlayerPrivateAVFoundation::hasAvailableVideoFrame() const
