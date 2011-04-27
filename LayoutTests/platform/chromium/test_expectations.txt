@@ -276,7 +276,7 @@ WONTFIX : fast/canvas/canvas-gradient-addStop-error.html = FAIL
 // Chrome uses different keyboard accelerators from those used by Safari, so
 // these tests will always fail.
 // TODO(ericroman): can the following 2 tests be removed from this list, since they pass?
-WONTFIX : fast/events/keydown-1.html = FAIL
+WONTFIX : fast/events/keydown-1.html = FAIL TIMEOUT
 WONTFIX LINUX WIN : fast/events/option-tab.html = FAIL
 
 // Chrome does not support WebArchives.
@@ -651,7 +651,8 @@ WONTFIX SKIP : http/tests/inspector/extensions-resources-redirect.html = FAIL
 BUG_DRT WIN LINUX DEBUG SLOW : inspector = PASS
 BUG_DRT WIN LINUX DEBUG SLOW : http/tests/inspector = PASS
 BUG_DRT WIN LINUX DEBUG SLOW : http/tests/inspector-enabled = PASS
-BUG_DRT WIN LINUX DEBUG : http/tests/inspector/network-preflight-options.html = PASS TIMEOUT
+BUG_DRT WIN LINUX DEBUG : http/tests/inspector/network-preflight-options.html = PASS TIMEOUT TEXT
+BUG_DRT WIN LINUX DEBUG SLOW : inspector/protocol/console-agent.html = PASS CRASH
 
 // Add support for inspector layout tests on non-Windows.
 BUGCR26734 MAC SKIP : inspector = PASS
@@ -3923,7 +3924,7 @@ BUGDPRANKE WIN CPU DEBUG : svg/text/select-textLength-spacingAndGlyphs-squeeze-3
 BUGDPRANKE MAC CPU DEBUG : fast/block/float/overhanging-tall-block.html = PASS CRASH
 BUGDPRANKE MAC CPU DEBUG : fast/css/import_with_baseurl.html = PASS CRASH
 BUGDPRANKE WIN CPU DEBUG : http/tests/eventsource/eventsource-reconnect.html = PASS TEXT
-BUGDPRANKE WIN : http/tests/inspector/network-preflight-options.html = PASS TEXT
+BUGDPRANKE WIN : http/tests/navigation/ping-same-origin.html = PASS TIMEOUT TEXT
 
 // flakiness on canaries (noted ~ r85006)
 BUGDPRANKE CPU : svg/hixie/rendering-model/003.xhtml = IMAGE+TEXT PASS
@@ -3931,3 +3932,9 @@ BUGDPRANKE CPU : svg/in-html/by-reference.html = IMAGE+TEXT PASS
 BUGDPRANKE CPU : fast/dom/HTMLFormElement/document-deactivation-callback-crash.html = PASS TEXT
 BUGDPRANKE LINUX DEBUG CPU : svg/custom/font-platformDestroy-crash.svg = PASS CRASH
 BUGDPRANKE CPU MAC DEBUG : http/tests/media/text-served-as-text.html = PASS CRASH
+BUGDPRANKE CPU : fast/dom/HTMLObjectElement/object-as-frame.html = PASS TEXT
+BUGDPRANKE CPU LINUX DEBUG : editing/pasteboard/drop-text-events.html = PASS CRASH
+
+// start skipping platform tests
+BUGNONE WONTFIX SKIP : platform/qt/fast/forms = PASS FAIL CRASH TIMEOUT
+

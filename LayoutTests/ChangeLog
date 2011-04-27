@@ -1,3 +1,9 @@
+2011-04-26  Dirk Pranke  <dpranke@chromium.org>
+
+        Unreviewed, expectations change. Update w/ more flakiness.
+
+        * platform/chromium/test_expectations.txt:
+
 2011-04-26  Kenichi Ishibashi  <bashi@chromium.org>
 
         Reviewed by Tony Chang.
