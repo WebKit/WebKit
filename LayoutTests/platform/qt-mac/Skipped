@@ -836,6 +836,7 @@ editing/pasteboard/cut-text-001.html
 editing/pasteboard/displaced-generic-placeholder.html
 editing/pasteboard/displaced-placeholder.html
 editing/pasteboard/display-block-on-spans.html
+editing/pasteboard/do-not-copy-body-color.html
 editing/pasteboard/emacs-cntl-y-001.html
 editing/pasteboard/innerText-inline-table.html
 editing/pasteboard/interchange-newline-1.html
@@ -4103,6 +4104,7 @@ canvas/philip/tests/2d.text.draw.align.right.html
 canvas/philip/tests/2d.text.draw.align.start.ltr.html
 canvas/philip/tests/2d.text.draw.align.start.rtl.html
 canvas/philip/tests/2d.text.draw.baseline.alphabetic.html
+canvas/philip/tests/2d.text.draw.fill.maxWidth.bound.html
 canvas/philip/tests/2d.text.draw.fontface.html
 canvas/philip/tests/2d.text.draw.fontface.repeat.html
 canvas/philip/tests/2d.text.draw.space.basic.html
@@ -4112,6 +4114,7 @@ fast/css/font-face-data-uri.html
 fast/css/font-face-opentype.html
 fast/css/font-face-remote.html
 fast/css/font-face-unused-source-loaded.html
+fast/css/font-face-zero-hash-key.html
 inspector/extensions/extensions-resources.html
 plugins/private-browsing-mode-2.html
 plugins/private-browsing-mode.html
