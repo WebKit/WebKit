@@ -1,3 +1,11 @@
+2011-04-26  Dan Bernstein  <mitz@apple.com>
+
+        Build fix.
+
+        * DumpRenderTree/mac/Configurations/CompilerVersion.xcconfig:
+        * MiniBrowser/Configurations/CompilerVersion.xcconfig:
+        * WebKitTestRunner/Configurations/CompilerVersion.xcconfig:
+
 2011-04-26  Kevin Ollivier  <kevino@theolliviers.com>
 
         Rubberstamped by Eric Seidel.

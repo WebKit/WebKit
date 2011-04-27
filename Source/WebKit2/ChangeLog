@@ -1,3 +1,9 @@
+2011-04-26  Dan Bernstein  <mitz@apple.com>
+
+        Build fix.
+
+        * Configurations/CompilerVersion.xcconfig:
+
 2011-04-26  Anders Carlsson  <andersca@apple.com>
 
         Fix 32-bit clang build.

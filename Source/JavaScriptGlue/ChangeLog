@@ -1,5 +1,11 @@
 2011-04-26  Dan Bernstein  <mitz@apple.com>
 
+        Build fix.
+
+        * Configurations/CompilerVersion.xcconfig:
+
+2011-04-26  Dan Bernstein  <mitz@apple.com>
+
         Reviewed by Mark Rowe.
 
         Choose the compiler based on the Xcode version for Snow Leopard debug builds.
