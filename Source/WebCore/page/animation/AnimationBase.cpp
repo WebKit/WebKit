@@ -139,19 +139,19 @@ static inline ShadowStyle blendFunc(const AnimationBase* anim, ShadowStyle from,
     return result > 0 ? Normal : Inset;
 }
 
-static inline ShadowData* blendFunc(const AnimationBase* anim, const ShadowData* from, const ShadowData* to, double progress)
+static inline PassOwnPtr<ShadowData> blendFunc(const AnimationBase* anim, const ShadowData* from, const ShadowData* to, double progress)
 {  
     ASSERT(from && to);
     if (from->style() != to->style())
-        return new ShadowData(*to);
+        return adoptPtr(new ShadowData(*to));
 
-    return new ShadowData(blendFunc(anim, from->x(), to->x(), progress),
-                          blendFunc(anim, from->y(), to->y(), progress), 
-                          blendFunc(anim, from->blur(), to->blur(), progress),
-                          blendFunc(anim, from->spread(), to->spread(), progress),
-                          blendFunc(anim, from->style(), to->style(), progress),
-                          from->isWebkitBoxShadow(),
-                          blendFunc(anim, from->color(), to->color(), progress));
+    return adoptPtr(new ShadowData(blendFunc(anim, from->x(), to->x(), progress),
+                                   blendFunc(anim, from->y(), to->y(), progress), 
+                                   blendFunc(anim, from->blur(), to->blur(), progress),
+                                   blendFunc(anim, from->spread(), to->spread(), progress),
+                                   blendFunc(anim, from->style(), to->style(), progress),
+                                   from->isWebkitBoxShadow(),
+                                   blendFunc(anim, from->color(), to->color(), progress)));
 }
 
 static inline TransformOperations blendFunc(const AnimationBase* anim, const TransformOperations& from, const TransformOperations& to, double progress)
@@ -329,7 +329,7 @@ public:
 
 class PropertyWrapperShadow : public PropertyWrapperBase {
 public:
-    PropertyWrapperShadow(int prop, const ShadowData* (RenderStyle::*getter)() const, void (RenderStyle::*setter)(ShadowData*, bool))
+    PropertyWrapperShadow(int prop, const ShadowData* (RenderStyle::*getter)() const, void (RenderStyle::*setter)(PassOwnPtr<ShadowData>, bool))
         : PropertyWrapperBase(prop)
         , m_getter(getter)
         , m_setter(setter)
@@ -365,31 +365,33 @@ public:
         ShadowData defaultShadowData(0, 0, 0, 0, Normal, property() == CSSPropertyWebkitBoxShadow, Color::transparent);
         ShadowData defaultInsetShadowData(0, 0, 0, 0, Inset, property() == CSSPropertyWebkitBoxShadow, Color::transparent);
 
-        ShadowData* newShadowData = 0;
+        OwnPtr<ShadowData> newShadowData;
         ShadowData* lastShadow = 0;
         
         while (shadowA || shadowB) {
             const ShadowData* srcShadow = shadowA ? shadowA : (shadowB->style() == Inset ? &defaultInsetShadowData : &defaultShadowData);
             const ShadowData* dstShadow = shadowB ? shadowB : (shadowA->style() == Inset ? &defaultInsetShadowData : &defaultShadowData);
 
-            ShadowData* blendedShadow = blendFunc(anim, srcShadow, dstShadow, progress);
-            if (!lastShadow)
-                newShadowData = blendedShadow;
-            else
-                lastShadow->setNext(blendedShadow);
+            OwnPtr<ShadowData> blendedShadow = blendFunc(anim, srcShadow, dstShadow, progress);
+            ShadowData* blendedShadowPtr = blendedShadow.get();
 
-            lastShadow = blendedShadow;
+            if (!lastShadow)
+                newShadowData = blendedShadow.release();
+            else
+                lastShadow->setNext(blendedShadow.release());
+            
+            lastShadow = blendedShadowPtr;
 
             shadowA = shadowA ? shadowA->next() : 0;
             shadowB = shadowB ? shadowB->next() : 0;
         }
         
-        (dst->*m_setter)(newShadowData, false);
+        (dst->*m_setter)(newShadowData.release(), false);
     }
 
 private:
     const ShadowData* (RenderStyle::*m_getter)() const;
-    void (RenderStyle::*m_setter)(ShadowData*, bool);
+    void (RenderStyle::*m_setter)(PassOwnPtr<ShadowData>, bool);
 };
 
 class PropertyWrapperMaybeInvalidColor : public PropertyWrapperBase {

@@ -26,6 +26,8 @@
 #define ShadowData_h
 
 #include "Color.h"
+#include <wtf/OwnPtr.h>
+#include <wtf/PassOwnPtr.h>
 
 namespace WebCore {
 
@@ -34,7 +36,7 @@ class IntRect;
 
 enum ShadowStyle { Normal, Inset };
 
-// This struct holds information about shadows for the text-shadow and box-shadow properties.
+// This class holds information about shadows for the text-shadow and box-shadow properties.
 
 class ShadowData {
     WTF_MAKE_FAST_ALLOCATED;
@@ -46,7 +48,6 @@ public:
         , m_spread(0)
         , m_style(Normal)
         , m_isWebkitBoxShadow(false)
-        , m_next(0)
     {
     }
 
@@ -58,12 +59,10 @@ public:
         , m_color(color)
         , m_style(style)
         , m_isWebkitBoxShadow(isWebkitBoxShadow)
-        , m_next(0)
     {
     }
 
     ShadowData(const ShadowData& o);
-    ~ShadowData() { delete m_next; }
 
     bool operator==(const ShadowData& o) const;
     bool operator!=(const ShadowData& o) const
@@ -79,8 +78,8 @@ public:
     const Color& color() const { return m_color; }
     bool isWebkitBoxShadow() const { return m_isWebkitBoxShadow; }
 
-    const ShadowData* next() const { return m_next; }
-    void setNext(ShadowData* shadow) { m_next = shadow; }
+    const ShadowData* next() const { return m_next.get(); }
+    void setNext(PassOwnPtr<ShadowData> shadow) { m_next = shadow; }
 
     void adjustRectForShadow(IntRect&, int additionalOutlineSize = 0) const;
     void adjustRectForShadow(FloatRect&, int additionalOutlineSize = 0) const;
@@ -93,7 +92,7 @@ private:
     Color m_color;
     ShadowStyle m_style;
     bool m_isWebkitBoxShadow;
-    ShadowData* m_next;
+    OwnPtr<ShadowData> m_next;
 };
 
 } // namespace WebCore

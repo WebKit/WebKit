@@ -37,8 +37,8 @@ ShadowData::ShadowData(const ShadowData& o)
     , m_color(o.m_color)
     , m_style(o.m_style)
     , m_isWebkitBoxShadow(o.m_isWebkitBoxShadow)
+    , m_next(o.m_next ? adoptPtr(new ShadowData(*o.m_next)) : PassOwnPtr<ShadowData>())
 {
-    m_next = o.m_next ? new ShadowData(*o.m_next) : 0;
 }
 
 bool ShadowData::operator==(const ShadowData& o) const

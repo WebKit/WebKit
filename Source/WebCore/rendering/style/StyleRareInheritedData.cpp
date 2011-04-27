@@ -32,7 +32,6 @@ namespace WebCore {
 
 StyleRareInheritedData::StyleRareInheritedData()
     : textStrokeWidth(RenderStyle::initialTextStrokeWidth())
-    , textShadow(0)
     , indent(RenderStyle::initialTextIndent())
     , m_effectiveZoom(RenderStyle::initialZoom())
     , widows(RenderStyle::initialWidows())
@@ -64,7 +63,7 @@ StyleRareInheritedData::StyleRareInheritedData(const StyleRareInheritedData& o)
     , textStrokeWidth(o.textStrokeWidth)
     , textFillColor(o.textFillColor)
     , textEmphasisColor(o.textEmphasisColor)
-    , textShadow(o.textShadow ? new ShadowData(*o.textShadow) : 0)
+    , textShadow(o.textShadow ? adoptPtr(new ShadowData(*o.textShadow)) : PassOwnPtr<ShadowData>())
     , highlight(o.highlight)
     , cursorData(o.cursorData)
     , indent(o.indent)
@@ -97,7 +96,6 @@ StyleRareInheritedData::StyleRareInheritedData(const StyleRareInheritedData& o)
 
 StyleRareInheritedData::~StyleRareInheritedData()
 {
-    delete textShadow;
 }
 
 static bool cursorDataEquivalent(const CursorList* c1, const CursorList* c2)

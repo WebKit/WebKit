@@ -728,31 +728,30 @@ void RenderStyle::setPageScaleTransform(float scale)
     setTransformOriginY(Length(0, Fixed));
 }
 
-void RenderStyle::setTextShadow(ShadowData* val, bool add)
+void RenderStyle::setTextShadow(PassOwnPtr<ShadowData> shadowData, bool add)
 {
-    ASSERT(!val || (!val->spread() && val->style() == Normal));
+    ASSERT(!shadowData || (!shadowData->spread() && shadowData->style() == Normal));
 
     StyleRareInheritedData* rareData = rareInheritedData.access();
     if (!add) {
-        delete rareData->textShadow;
-        rareData->textShadow = val;
+        rareData->textShadow = shadowData;
         return;
     }
 
-    val->setNext(rareData->textShadow);
-    rareData->textShadow = val;
+    shadowData->setNext(rareData->textShadow.release());
+    rareData->textShadow = shadowData;
 }
 
-void RenderStyle::setBoxShadow(ShadowData* shadowData, bool add)
+void RenderStyle::setBoxShadow(PassOwnPtr<ShadowData> shadowData, bool add)
 {
     StyleRareNonInheritedData* rareData = rareNonInheritedData.access();
     if (!add) {
-        rareData->m_boxShadow.set(shadowData);
+        rareData->m_boxShadow = shadowData;
         return;
     }
 
-    shadowData->setNext(rareData->m_boxShadow.leakPtr());
-    rareData->m_boxShadow.set(shadowData);
+    shadowData->setNext(rareData->m_boxShadow.release());
+    rareData->m_boxShadow = shadowData;
 }
 
 static RoundedIntRect::Radii calcRadiiFor(const BorderData& border, int width, int height)

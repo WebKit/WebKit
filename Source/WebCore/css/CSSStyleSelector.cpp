@@ -5128,11 +5128,11 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
     case CSSPropertyWebkitBoxShadow: {
         if (isInherit) {
             if (id == CSSPropertyTextShadow)
-                return m_style->setTextShadow(m_parentStyle->textShadow() ? new ShadowData(*m_parentStyle->textShadow()) : 0);
-            return m_style->setBoxShadow(m_parentStyle->boxShadow() ? new ShadowData(*m_parentStyle->boxShadow()) : 0);
+                return m_style->setTextShadow(m_parentStyle->textShadow() ? adoptPtr(new ShadowData(*m_parentStyle->textShadow())) : PassOwnPtr<ShadowData>());
+            return m_style->setBoxShadow(m_parentStyle->boxShadow() ? adoptPtr(new ShadowData(*m_parentStyle->boxShadow())) : PassOwnPtr<ShadowData>());
         }
         if (isInitial || primitiveValue) // initial | none
-            return id == CSSPropertyTextShadow ? m_style->setTextShadow(0) : m_style->setBoxShadow(0);
+            return id == CSSPropertyTextShadow ? m_style->setTextShadow(PassOwnPtr<ShadowData>()) : m_style->setBoxShadow(PassOwnPtr<ShadowData>());
 
         if (!value->isValueList())
             return;
@@ -5152,11 +5152,11 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
             Color color;
             if (item->color)
                 color = getColorFromPrimitiveValue(item->color.get());
-            ShadowData* shadowData = new ShadowData(x, y, blur, spread, shadowStyle, id == CSSPropertyWebkitBoxShadow, color.isValid() ? color : Color::transparent);
+            OwnPtr<ShadowData> shadowData = adoptPtr(new ShadowData(x, y, blur, spread, shadowStyle, id == CSSPropertyWebkitBoxShadow, color.isValid() ? color : Color::transparent));
             if (id == CSSPropertyTextShadow)
-                m_style->setTextShadow(shadowData, i != 0);
+                m_style->setTextShadow(shadowData.release(), i /* add to the list if this is not the firsty entry */);
             else
-                m_style->setBoxShadow(shadowData, i != 0);
+                m_style->setBoxShadow(shadowData.release(), i /* add to the list if this is not the firsty entry */);
         }
         return;
     }
