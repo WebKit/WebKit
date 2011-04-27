@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2008 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2011 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -412,6 +413,12 @@ WebInspector.ScriptsPanel.prototype = {
         } else {
             function didGetSourceLocation(sourceFileId, lineNumber)
             {
+                var exception = WebInspector.debuggerModel.debuggerPausedDetails.exception;
+                if (exception) {
+                    this.sidebarPanes.callstack.setStatus(WebInspector.UIString("Paused on exception: '%s'.", exception.description));
+                    return;
+                }
+
                 if (!sourceFileId || !this._presentationModel.findBreakpoint(sourceFileId, lineNumber))
                     return;
                 this.sidebarPanes.jsBreakpoints.highlightBreakpoint(sourceFileId, lineNumber);

@@ -1,3 +1,21 @@
+2011-04-27  Yury Semikhatsky  <yurys@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: expose exception details when script is paused on exception
+        https://bugs.webkit.org/show_bug.cgi?id=59591
+
+        When script is paused on an exception, the exception value is added as <exception>
+        property in the local scope and the breakpoint details message says
+        "Paused on excepion: '<exception to strin value>'."
+
+        * English.lproj/localizedStrings.js:
+        * inspector/front-end/ScopeChainSidebarPane.js:
+        (WebInspector.ScopeChainSidebarPane.prototype.update):
+        * inspector/front-end/ScriptsPanel.js:
+        (WebInspector.ScriptsPanel.prototype._debuggerPaused.else.didGetSourceLocation):
+        (WebInspector.ScriptsPanel.prototype._debuggerPaused):
+
 2011-04-26  Yury Semikhatsky  <yurys@chromium.org>
 
         Reviewed by Pavel Feldman.

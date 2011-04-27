@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2008 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2011 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -73,6 +74,13 @@ WebInspector.ScopeChainSidebarPane.prototype = {
                     subtitle = null;
                     if (scope.this)
                         extraProperties = [ new WebInspector.RemoteObjectProperty("this", WebInspector.RemoteObject.fromPayload(scope.this)) ];
+                    if (i == 0) {
+                        var exception = WebInspector.debuggerModel.debuggerPausedDetails.exception;
+                        if (exception) {
+                            extraProperties = extraProperties || [];
+                            extraProperties.push(new WebInspector.RemoteObjectProperty("<exception>", WebInspector.RemoteObject.fromPayload(exception)));
+                        }
+                    }
                     break;
                 case "closure":
                     title = WebInspector.UIString("Closure");
