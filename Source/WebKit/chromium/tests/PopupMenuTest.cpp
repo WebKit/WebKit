@@ -120,32 +120,6 @@ private:
     TestWebPopupMenuImpl(WebWidgetClient* client) : WebPopupMenuImpl(client) { }
 };
 
-class TestWebWidget : public WebWidget {
-public:
-    virtual ~TestWebWidget() { }
-    virtual void close() { }
-    virtual WebSize size() { return WebSize(100, 100); }
-    virtual void resize(const WebSize&) { }
-    virtual void layout() { }
-    virtual void paint(WebCanvas*, const WebRect&) { }
-    virtual void themeChanged() { }
-    virtual void composite(bool finish) { }
-    virtual bool handleInputEvent(const WebInputEvent&) { return true; }
-    virtual void mouseCaptureLost() { }
-    virtual void setFocus(bool) { }
-    virtual bool setComposition(
-        const WebString& text,
-        const WebVector<WebCompositionUnderline>& underlines,
-        int selectionStart,
-        int selectionEnd) { return true; }
-    virtual bool confirmComposition() { return true; }
-    virtual bool confirmComposition(const WebString& text) { return true; }
-    virtual WebTextInputType textInputType() { return WebKit::WebTextInputTypeNone; }
-    virtual WebRect caretOrSelectionBounds() { return WebRect(); }
-    virtual bool selectionRange(WebPoint& start, WebPoint& end) const { return false; }
-    virtual void setTextDirection(WebTextDirection) { }
-};
-
 class TestWebViewClient : public WebViewClient {
 public:
     TestWebViewClient() : m_webPopupMenu(TestWebPopupMenuImpl::create(&m_webWidgetClient)) { }
