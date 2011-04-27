@@ -1,3 +1,22 @@
+2011-04-27  Steve Block  <steveblock@google.com>
+
+        Reviewed by David Levin.
+
+        Remove Android build system
+        https://bugs.webkit.org/show_bug.cgi?id=48111
+
+        This is to avoid the maintenance burden until the Android port is
+        fully upstreamed.
+
+        No new tests, build change only.
+
+        * Android.derived.jscbindings.mk: Removed.
+        * Android.derived.mk: Removed.
+        * Android.derived.v8bindings.mk: Removed.
+        * Android.jscbindings.mk: Removed.
+        * Android.mk: Removed.
+        * Android.v8bindings.mk: Removed.
+
 2011-04-27  Darin Adler  <darin@apple.com>
 
         Reviewed by Sam Weinig.

@@ -1,3 +1,16 @@
+2011-04-27  Steve Block  <steveblock@google.com>
+
+        Reviewed by David Levin.
+
+        Remove Android build system
+        https://bugs.webkit.org/show_bug.cgi?id=48111
+
+        This is to avoid the maintenance burden until the Android port is
+        fully upstreamed.
+
+        * Android.mk: Removed.
+        * Android.v8.wtf.mk: Removed.
+
 2011-04-27  Mark Rowe  <mrowe@apple.com>
 
         Fix 32-bit build after r85036.
