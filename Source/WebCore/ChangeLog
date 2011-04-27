@@ -1,3 +1,59 @@
+2011-04-27  Darin Adler  <darin@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Somehow about:blank gets into the icon database
+        https://bugs.webkit.org/show_bug.cgi?id=58067
+        rdar://problem/6751446
+
+        Implemented the policy Brady suggested, where only http and https URLs can
+        be associated with and icon, guarding both on the way in to the database,
+        and on the way out.
+
+        * loader/icon/IconDatabase.cpp:
+        (WebCore::pageCanHaveIcon): Added.
+        (WebCore::IconDatabase::synchronousIconForPageURL): Call pageCanHaveIcon
+        instead of just checking for an empty URL.
+        (WebCore::IconDatabase::synchronousIconURLForPageURL): Ditto.
+        (WebCore::IconDatabase::retainIconForPageURL): Ditto.
+        (WebCore::IconDatabase::releaseIconForPageURL): Ditto.
+        (WebCore::IconDatabase::setIconURLForPageURL): Ditto.
+        (WebCore::IconDatabase::getOrCreatePageURLRecord): Ditto.
+        (WebCore::IconDatabase::importIconURLForPageURL): Broke assertion into
+        two separate assertions and added a third.
+        (WebCore::IconDatabase::performURLImport): Call pageCanHaveIcon.
+
+        * platform/KURL.cpp: Sorted includes. Moved a FIXME to the top of the file.
+        (WebCore::isLetterMatchIgnoringCase): Renamed matchLetter to this name,
+        overloaded it to work on both UChar and char, and added an assertion to it.
+        Also moved this to the top of the file and made the UChar version usable
+        in the shared code used even by Google.
+        (WebCore::KURL::invalidate): Updated for name change.
+        (WebCore::KURL::protocolIs): Use isLetterMatchIgnoringCase instead of
+        toASCIILower since it's faster.
+        (WebCore::KURL::parse): Updated for name changes.
+        (WebCore::protocolIs):Use isLetterMatchIgnoringCase instead of toASCIILower
+        since it's faster.
+        (WebCore::protocolIsInHTTPFamily): Added.
+
+        * platform/KURL.h: Tweaked formatting. Renamed protocolInHTTPFamily
+        to protocolIsInHTTPFamily and added a version that works on a string.
+        Kept the old name as an inline function so we don't have to rename
+        all the cal sites now.
+
+        * platform/KURLGoogle.cpp: Renamed as above.
+        (WebCore::KURLGooglePrivate::KURLGooglePrivate): Updated for rename.
+        (WebCore::KURLGooglePrivate::setUtf8): Ditto.
+        (WebCore::KURLGooglePrivate::setAscii): Ditto.
+        (WebCore::KURLGooglePrivate::initProtocolIsInHTTPFamily): Ditto.
+        (WebCore::KURLGooglePrivate::copyTo): Ditto.
+        (WebCore::KURL::KURL): Ditto.
+        (WebCore::KURL::protocolIsInHTTPFamily): Ditto.
+        (WebCore::KURL::invalidate): Ditto.
+        * platform/KURLGooglePrivate.h: Ditto.
+
+        * WebCore.exp.in: Updated for above changes.
+
 2011-04-27  Yury Semikhatsky  <yurys@chromium.org>
 
         Reviewed by Pavel Feldman.

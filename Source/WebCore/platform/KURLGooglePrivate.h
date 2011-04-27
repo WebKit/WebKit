@@ -91,11 +91,11 @@ namespace WebCore {
         const String& string() const;
 
         bool m_isValid;
-        bool m_protocolInHTTPFamily;
+        bool m_protocolIsInHTTPFamily;
         url_parse::Parsed m_parsed; // Indexes into the UTF-8 version of the string.
 
     private:
-        void initProtocolInHTTPFamily();
+        void initProtocolIsInHTTPFamily();
 
         CString m_utf8;
 

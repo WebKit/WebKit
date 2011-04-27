@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004, 2007, 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2004, 2007, 2008, 2011 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -24,14 +24,14 @@
  */
 
 #include "config.h"
-
 #include "KURL.h"
 
 #include "TextEncoding.h"
-#include <wtf/text/CString.h>
+#include <stdio.h>
 #include <wtf/HashMap.h>
 #include <wtf/HexNumber.h>
 #include <wtf/StdLibExtras.h>
+#include <wtf/text/CString.h>
 #include <wtf/text/StringHash.h>
 
 #if USE(ICU_UNICODE)
@@ -43,7 +43,9 @@
 #include "GOwnPtr.h"
 #endif
 
-#include <stdio.h>
+// FIXME: This file makes too much use of the + operator on String.
+// We either have to optimize that operator so it doesn't involve
+// so many allocations, or change this to use StringBuffer instead.
 
 using namespace std;
 using namespace WTF;
@@ -56,11 +58,19 @@ typedef Vector<UChar, 512> UCharBuffer;
 static const unsigned maximumValidPortNumber = 0xFFFE;
 static const unsigned invalidPortNumber = 0xFFFF;
 
+static inline bool isLetterMatchIgnoringCase(UChar character, char lowercaseLetter)
+{
+    ASSERT(isASCIILower(lowercaseLetter));
+    return (character | 0x20) == lowercaseLetter;
+}
+
 #if !USE(GOOGLEURL)
 
-// FIXME: This file makes too much use of the + operator on String.
-// We either have to optimize that operator so it doesn't involve
-// so many allocations, or change this to use Vector<UChar> instead.
+static inline bool isLetterMatchIgnoringCase(char character, char lowercaseLetter)
+{
+    ASSERT(isASCIILower(lowercaseLetter));
+    return (character | 0x20) == lowercaseLetter;
+}
 
 enum URLCharacterClasses {
     // alpha 
@@ -295,7 +305,7 @@ inline bool KURL::protocolIs(const String& string, const char* protocol)
 void KURL::invalidate()
 {
     m_isValid = false;
-    m_protocolInHTTPFamily = false;
+    m_protocolIsInHTTPFamily = false;
     m_schemeEnd = 0;
     m_userStart = 0;
     m_userEnd = 0;
@@ -692,7 +702,7 @@ bool KURL::protocolIs(const char* protocol) const
 
     // Do the comparison without making a new string object.
     for (int i = 0; i < m_schemeEnd; ++i) {
-        if (!protocol[i] || toASCIILower(m_string[i]) != protocol[i])
+        if (!protocol[i] || !isLetterMatchIgnoringCase(m_string[i], protocol[i]))
             return false;
     }
     return !protocol[m_schemeEnd]; // We should have consumed all characters in the argument.
@@ -1085,11 +1095,6 @@ static inline bool hasSlashDotOrDotDot(const char* str)
     return false;
 }
 
-static inline bool matchLetter(char c, char lowercaseLetter)
-{
-    return (c | 0x20) == lowercaseLetter;
-}
-
 void KURL::parse(const String& string)
 {
     checkEncodedString(string);
@@ -1193,16 +1198,16 @@ void KURL::parse(const char* url, const String* originalString)
     bool hasSecondSlash = hierarchical && url[schemeEnd + 2] == '/';
 
     bool isFile = schemeEnd == 4
-        && matchLetter(url[0], 'f')
-        && matchLetter(url[1], 'i')
-        && matchLetter(url[2], 'l')
-        && matchLetter(url[3], 'e');
+        && isLetterMatchIgnoringCase(url[0], 'f')
+        && isLetterMatchIgnoringCase(url[1], 'i')
+        && isLetterMatchIgnoringCase(url[2], 'l')
+        && isLetterMatchIgnoringCase(url[3], 'e');
 
-    m_protocolInHTTPFamily = matchLetter(url[0], 'h')
-        && matchLetter(url[1], 't')
-        && matchLetter(url[2], 't')
-        && matchLetter(url[3], 'p')
-        && (url[4] == ':' || (matchLetter(url[4], 's') && url[5] == ':'));
+    m_protocolIsInHTTPFamily = isLetterMatchIgnoringCase(url[0], 'h')
+        && isLetterMatchIgnoringCase(url[1], 't')
+        && isLetterMatchIgnoringCase(url[2], 't')
+        && isLetterMatchIgnoringCase(url[3], 'p')
+        && (url[4] == ':' || (isLetterMatchIgnoringCase(url[4], 's') && url[5] == ':'));
 
     if ((hierarchical && hasSecondSlash) || isNonFileHierarchicalScheme(url, schemeEnd)) {
         // The part after the scheme is either a net_path or an abs_path whose first path segment is empty.
@@ -1289,7 +1294,7 @@ void KURL::parse(const char* url, const String* originalString)
             hostStart = userEnd;
         }
 
-        if (userStart == portEnd && !m_protocolInHTTPFamily && !isFile) {
+        if (userStart == portEnd && !m_protocolIsInHTTPFamily && !isFile) {
             // No authority found, which means that this is not a net_path, but rather an abs_path whose first two
             // path segments are empty. For file, http and https only, an empty authority is allowed.
             userStart -= 2;
@@ -1344,15 +1349,15 @@ void KURL::parse(const char* url, const String* originalString)
     m_schemeEnd = p - buffer.data();
 
     bool hostIsLocalHost = portEnd - userStart == 9
-        && matchLetter(url[userStart], 'l')
-        && matchLetter(url[userStart+1], 'o')
-        && matchLetter(url[userStart+2], 'c')
-        && matchLetter(url[userStart+3], 'a')
-        && matchLetter(url[userStart+4], 'l')
-        && matchLetter(url[userStart+5], 'h')
-        && matchLetter(url[userStart+6], 'o')
-        && matchLetter(url[userStart+7], 's')
-        && matchLetter(url[userStart+8], 't');
+        && isLetterMatchIgnoringCase(url[userStart], 'l')
+        && isLetterMatchIgnoringCase(url[userStart+1], 'o')
+        && isLetterMatchIgnoringCase(url[userStart+2], 'c')
+        && isLetterMatchIgnoringCase(url[userStart+3], 'a')
+        && isLetterMatchIgnoringCase(url[userStart+4], 'l')
+        && isLetterMatchIgnoringCase(url[userStart+5], 'h')
+        && isLetterMatchIgnoringCase(url[userStart+6], 'o')
+        && isLetterMatchIgnoringCase(url[userStart+7], 's')
+        && isLetterMatchIgnoringCase(url[userStart+8], 't');
 
     // File URLs need a host part unless it is just file:// or file://localhost
     bool degenFilePath = pathStart == pathEnd && (hostStart == hostEnd || hostIsLocalHost);
@@ -1416,7 +1421,7 @@ void KURL::parse(const char* url, const String* originalString)
 
     // For canonicalization, ensure we have a '/' for no path.
     // Do this only for URL with protocol http or https.
-    if (m_protocolInHTTPFamily && pathEnd == pathStart)
+    if (m_protocolIsInHTTPFamily && pathEnd == pathStart)
         *p++ = '/';
 
     // add path, escaping bad characters
@@ -1773,7 +1778,7 @@ bool protocolIs(const String& url, const char* protocol)
     for (int i = 0; ; ++i) {
         if (!protocol[i])
             return url[i] == ':';
-        if (toASCIILower(url[i]) != protocol[i])
+        if (!isLetterMatchIgnoringCase(url[i], protocol[i]))
             return false;
     }
 }
@@ -1963,6 +1968,19 @@ String mimeTypeFromDataURL(const String& url)
         return "text/plain"; // Data URLs with no MIME type are considered text/plain.
     }
     return "";
+}
+
+bool protocolIsInHTTPFamily(const String& url)
+{
+    unsigned length = url.length();
+    const UChar* characters = url.characters();
+    return length > 4
+        && isLetterMatchIgnoringCase(characters[0], 'h')
+        && isLetterMatchIgnoringCase(characters[1], 't')
+        && isLetterMatchIgnoringCase(characters[2], 't')
+        && isLetterMatchIgnoringCase(characters[3], 'p')
+        && (characters[4] == ':'
+            || (isLetterMatchIgnoringCase(characters[4], 's') && length > 5 && characters[5] == ':'));
 }
 
 }

@@ -154,7 +154,7 @@ bool isValidProtocol(const String& protocol)
 
 KURLGooglePrivate::KURLGooglePrivate()
     : m_isValid(false)
-    , m_protocolInHTTPFamily(false)
+    , m_protocolIsInHTTPFamily(false)
     , m_utf8IsASCII(true)
     , m_stringIsValid(false)
 {
@@ -162,7 +162,7 @@ KURLGooglePrivate::KURLGooglePrivate()
 
 KURLGooglePrivate::KURLGooglePrivate(const url_parse::Parsed& parsed, bool isValid)
     : m_isValid(isValid)
-    , m_protocolInHTTPFamily(false)
+    , m_protocolIsInHTTPFamily(false)
     , m_parsed(parsed)
     , m_utf8IsASCII(true)
     , m_stringIsValid(false)
@@ -196,7 +196,7 @@ void KURLGooglePrivate::setUtf8(const CString& str)
 
     m_utf8 = str;
     m_stringIsValid = false;
-    initProtocolInHTTPFamily();
+    initProtocolIsInHTTPFamily();
 }
 
 void KURLGooglePrivate::setAscii(const CString& str)
@@ -204,7 +204,7 @@ void KURLGooglePrivate::setAscii(const CString& str)
     m_utf8 = str;
     m_utf8IsASCII = true;
     m_stringIsValid = false;
-    initProtocolInHTTPFamily();
+    initProtocolIsInHTTPFamily();
 }
 
 void KURLGooglePrivate::init(const KURL& base,
@@ -258,26 +258,26 @@ void KURLGooglePrivate::init(const KURL& base, const CHAR* rel, int relLength,
     }
 }
 
-void KURLGooglePrivate::initProtocolInHTTPFamily()
+void KURLGooglePrivate::initProtocolIsInHTTPFamily()
 {
     if (!m_isValid) {
-        m_protocolInHTTPFamily = false;
+        m_protocolIsInHTTPFamily = false;
         return;
     }
 
     const char* scheme = m_utf8.data() + m_parsed.scheme.begin;
     if (m_parsed.scheme.len == 4)
-        m_protocolInHTTPFamily = lowerCaseEqualsASCII(scheme, scheme + 4, "http");
+        m_protocolIsInHTTPFamily = lowerCaseEqualsASCII(scheme, scheme + 4, "http");
     else if (m_parsed.scheme.len == 5)
-        m_protocolInHTTPFamily = lowerCaseEqualsASCII(scheme, scheme + 5, "https");
+        m_protocolIsInHTTPFamily = lowerCaseEqualsASCII(scheme, scheme + 5, "https");
     else
-        m_protocolInHTTPFamily = false;
+        m_protocolIsInHTTPFamily = false;
 }
 
 void KURLGooglePrivate::copyTo(KURLGooglePrivate* dest) const
 {
     dest->m_isValid = m_isValid;
-    dest->m_protocolInHTTPFamily = m_protocolInHTTPFamily;
+    dest->m_protocolIsInHTTPFamily = m_protocolIsInHTTPFamily;
     dest->m_parsed = m_parsed;
 
     // Don't copy the 16-bit string since that will be regenerated as needed.
@@ -370,7 +370,7 @@ KURL::KURL(ParsedURLStringTag, const String& url)
         // constructor is used. In all other cases, it expects a non-null
         // empty string, which is what init() will create.
         m_url.m_isValid = false;
-        m_url.m_protocolInHTTPFamily = false;
+        m_url.m_protocolIsInHTTPFamily = false;
     }
 }
 
@@ -443,9 +443,9 @@ bool KURL::hasPort() const
     return hostEnd() < pathStart();
 }
 
-bool KURL::protocolInHTTPFamily() const
+bool KURL::protocolIsInHTTPFamily() const
 {
-    return m_url.m_protocolInHTTPFamily;
+    return m_url.m_protocolIsInHTTPFamily;
 }
 
 bool KURL::hasPath() const
@@ -883,7 +883,7 @@ void KURL::invalidate()
     // This is only called from the constructor so resetting the (automatically
     // initialized) string and parsed structure would be a waste of time.
     m_url.m_isValid = false;
-    m_url.m_protocolInHTTPFamily = false;
+    m_url.m_protocolIsInHTTPFamily = false;
 }
 
 // Equal up to reference fragments, if any.

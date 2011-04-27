@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2003, 2004, 2005, 2006, 2007, 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2003, 2004, 2005, 2006, 2007, 2008, 2011 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -93,13 +93,11 @@ public:
     KURL(const KURL& base, const String& relative);
     KURL(const KURL& base, const String& relative, const TextEncoding&);
 
-
 #if USE(GOOGLEURL)
-    // For conversions for other structures that have already parsed and
+    // For conversions from other structures that have already parsed and
     // canonicalized the URL. The input must be exactly what KURL would have
     // done with the same input.
-    KURL(const CString& canonicalSpec,
-         const url_parse::Parsed& parsed, bool isValid);
+    KURL(const CString& canonicalSpec, const url_parse::Parsed&, bool isValid);
 #endif
 
     String strippedForUseAsReferrer() const;
@@ -159,7 +157,7 @@ public:
     // terminated ASCII argument. The argument must be lower-case.
     bool protocolIs(const char*) const;
     bool protocolIsData() const { return protocolIs("data"); }
-    bool protocolInHTTPFamily() const;
+    bool protocolIsInHTTPFamily() const;
     bool isLocalFile() const;
 
     bool setProtocol(const String&);
@@ -196,6 +194,7 @@ public:
     unsigned pathStart() const;
     unsigned pathEnd() const;
     unsigned pathAfterLastSlash() const;
+
     operator const String&() const { return string(); }
 
 #if USE(CF)
@@ -226,6 +225,9 @@ public:
     void print() const;
 #endif
 
+    // FIXME: Remove this after changing all callers to use protocolIsInHTTPFamily.
+    bool protocolInHTTPFamily() const { return protocolIsInHTTPFamily(); }
+
 private:
     void invalidate();
     bool isHierarchical() const;
@@ -247,7 +249,7 @@ private:
 
     String m_string;
     bool m_isValid : 1;
-    bool m_protocolInHTTPFamily : 1;
+    bool m_protocolIsInHTTPFamily : 1;
 
     int m_schemeEnd;
     int m_userStart;
@@ -280,6 +282,7 @@ const KURL& blankURL();
 // This is especially important because valid javascript URLs are not necessarily considered valid by KURL.
 
 bool protocolIs(const String& url, const char* protocol);
+bool protocolIsInHTTPFamily(const String& url);
 bool protocolIsJavaScript(const String& url);
 
 bool isDefaultPortForProtocol(unsigned short port, const String& protocol);
@@ -354,9 +357,9 @@ inline bool KURL::hasPort() const
     return m_hostEnd < m_portEnd;
 }
 
-inline bool KURL::protocolInHTTPFamily() const
+inline bool KURL::protocolIsInHTTPFamily() const
 {
-    return m_protocolInHTTPFamily;
+    return m_protocolIsInHTTPFamily;
 }
 
 inline unsigned KURL::hostStart() const
