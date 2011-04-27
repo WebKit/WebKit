@@ -1,5 +1,22 @@
 2011-04-26  Sam Weinig  <sam@webkit.org>
 
+        Reviewed by Eric Seidel.
+
+        Try again:
+            Remove JSDOMWrapperWithGlobalPointer now that all JSDOMWrappers have global objects
+            https://bugs.webkit.org/show_bug.cgi?id=59310
+
+        * bindings/js/JSDOMBinding.h:
+        (WebCore::DOMConstructorObject::DOMConstructorObject):
+        * bindings/js/JSDOMWrapper.h:
+        (WebCore::JSDOMWrapper::globalObject):
+        (WebCore::JSDOMWrapper::scriptExecutionContext):
+        (WebCore::JSDOMWrapper::createStructure):
+        (WebCore::JSDOMWrapper::JSDOMWrapper):
+        * bindings/scripts/CodeGeneratorJS.pm:
+
+2011-04-26  Sam Weinig  <sam@webkit.org>
+
         Reviewed by David Hyatt.
 
         Remove Datagrid from the tree
