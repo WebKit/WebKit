@@ -69,7 +69,7 @@ protected:
 #endif
 
 private:
-    OwnPtr<DefaultGCActivityCallbackPlatformData*> d;
+    OwnPtr<DefaultGCActivityCallbackPlatformData> d;
 };
 
 inline PassOwnPtr<DefaultGCActivityCallback> DefaultGCActivityCallback::create(Heap* heap)
