@@ -1414,7 +1414,7 @@ void RenderBlock::addOverflowFromPositionedObjects()
 bool RenderBlock::expandsToEncloseOverhangingFloats() const
 {
     return isInlineBlockOrInlineTable() || isFloatingOrPositioned() || hasOverflowClip() || (parent() && parent()->isFlexibleBox())
-           || hasColumns() || isTableCell() || isFieldset() || isWritingModeRoot();
+           || hasColumns() || isTableCell() || isFieldset() || isWritingModeRoot() || isRoot();
 }
 
 void RenderBlock::adjustPositionedBlock(RenderBox* child, const MarginInfo& marginInfo)

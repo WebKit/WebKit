@@ -1,3 +1,17 @@
+2011-04-26  Levi Weintraub  <leviw@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        Root element should establish a new block formatting context
+        https://bugs.webkit.org/show_bug.cgi?id=54573
+
+        Always expanding the root renderer to include overhanging floats.
+
+        Test: fast/block/float/float-overhangs-root.html
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::expandsToEncloseOverhangingFloats):
+
 2011-04-26  Dawit Alemayehu  <adawit@kde.org>
 
         Reviewed by Andreas Kling.
