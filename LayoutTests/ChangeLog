@@ -1,3 +1,9 @@
+2011-04-27  Pavel Feldman  <pfeldman@google.com>
+
+        Not reviewed: rebaselining inspector test.
+
+        * inspector/extensions/extensions-events-expected.txt:
+
 2011-04-27  Martin Robinson  <mrobinson@igalia.com>
 
         Skip another test on GTK+ because we are still missing frame loader delegate output
