@@ -113,10 +113,7 @@ GCC_ENABLE_CPP_EXCEPTIONS_LLVM_COMPILER = YES;
 
 // If the target Mac OS X version does not match the current Mac OS X version then we'll want to build using the target version's SDK.
 SDKROOT = $(SDKROOT_$(MAC_OS_X_VERSION_MAJOR)_$(TARGET_MAC_OS_X_VERSION_MAJOR));
-SDKROOT_1050_1040 = macosx10.4;
-SDKROOT_1060_1040 = macosx10.4;
 SDKROOT_1060_1050 = macosx10.5;
-SDKROOT_1070_1040 = macosx10.4;
 SDKROOT_1070_1050 = macosx10.5;
 SDKROOT_1070_1060 = macosx10.6;
 
@@ -126,8 +123,6 @@ HAVE_DTRACE = $(HAVE_DTRACE_$(REAL_PLATFORM_NAME));
 HAVE_DTRACE_iphoneos = 1;
 HAVE_DTRACE_iphonesimulator = 1;
 HAVE_DTRACE_macosx = $(HAVE_DTRACE_macosx_$(TARGET_MAC_OS_X_VERSION_MAJOR));
-HAVE_DTRACE_macosx_ = $(HAVE_DTRACE_macosx_1040);
-HAVE_DTRACE_macosx_1040 = 0;
 HAVE_DTRACE_macosx_1050 = 0;
 HAVE_DTRACE_macosx_1060 = 1;
 HAVE_DTRACE_macosx_1070 = 1;

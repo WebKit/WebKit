@@ -44,9 +44,6 @@ TARGET_MAC_OS_X_VERSION_MAJOR = $(MAC_OS_X_VERSION_MAJOR);
 
 // If the target Mac OS X version does not match the current Mac OS X version then we'll want to build using the target version's SDK.
 SDKROOT = $(SDKROOT_$(MAC_OS_X_VERSION_MAJOR)_$(TARGET_MAC_OS_X_VERSION_MAJOR));
-SDKROOT_1050_1040 = macosx10.4;
-SDKROOT_1060_1040 = macosx10.4;
 SDKROOT_1060_1050 = macosx10.5;
-SDKROOT_1070_1040 = macosx10.4;
 SDKROOT_1070_1050 = macosx10.5;
 SDKROOT_1070_1060 = macosx10.6;
