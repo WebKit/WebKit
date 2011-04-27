@@ -1418,8 +1418,8 @@ BUGCR10430 WIN LINUX : svg/W3C-SVG-1.1/text-intro-05-t.svg = IMAGE+TEXT
 
 // Flakey. Not clear when it started, but it was before 3/9/09.
 // This test also started failing with the merge of March 25th 2009
-BUGCR10441 WIN DEBUG : transitions/transition-end-event-transform.html = FAIL PASS
-BUGCR10441 MAC WIN RELEASE : transitions/transition-end-event-transform.html = FAIL PASS
+BUGCR10441 WIN : transitions/transition-end-event-transform.html = TEXT PASS
+BUGCR10441 MAC RELEASE : transitions/transition-end-event-transform.html = TEXT PASS
 
 // Merge 41768:41807
 // Perhaps just needs new baseline?
@@ -2256,6 +2256,7 @@ BUGCR52573 LINUX RELEASE : fast/js/array-every.html = PASS CRASH
 
 BUGWK44199 : perf = PASS TEXT
 BUGWK44199 DEBUG : perf/array-binary-search.html = PASS TEXT TIMEOUT
+BUGWK44199 DEBUG : perf/class-list-remove.html = PASS TEXT TIMEOUT
 
 // Failing after http://trac.webkit.org/changeset/65665/
 BUGWK44278 WIN LINUX : svg/transforms/text-with-mask-with-svg-transform.svg = IMAGE+TEXT
@@ -3653,7 +3654,7 @@ BUGDPRANKE MAC : http/tests/media/video-served-as-text.html = CRASH
 BUGDPRANKE MAC : http/tests/misc/object-image-error.html = TIMEOUT
 BUGDPRANKE MAC : fast/text/international/thai-baht-space.html = IMAGE+TEXT
 
-BUGDPRANKE LINUX DEBUG : svg/custom/foreignObject-crash-on-hover.xml = CRASH
+BUGDPRANKE LINUX DEBUG : svg/custom/foreignObject-crash-on-hover.xml = CRASH PASS
 BUGDPRANKE DEBUG : fast/css/getComputedStyle/getComputedStyle-margin-percentage.html = CRASH
 BUGDPRANKE DEBUG : fast/css/getComputedStyle/getComputedStyle-relayout.html = CRASH
 BUGDPRANKE LINUX DEBUG : fast/dom/Attr/access-after-element-destruction.html = CRASH
@@ -3738,7 +3739,7 @@ BUGDPRANKE MAC DEBUG : transitions/cancel-transition.html = TEXT PASS
 BUGDPRANKE LINUX DEBUG : perf/array-nested-loop.html = TEXT TIMEOUT PASS
 BUGDPRANKE LINUX DEBUG : fast/dom/Node/mutation-blur.html = CRASH
 BUGDPRANKE WIN DEBUG : svg/custom/foreignObject-crash-on-hover.xml = CRASH PASS
-BUGDPRANKE LINUX DEBUG : svg/custom/foreign-object-skew.svg = CRASH
+BUGDPRANKE LINUX DEBUG : svg/custom/foreign-object-skew.svg = CRASH IMAGE PASS
 
 // flakiness
 BUGDPRANKE WIN DEBUG : http/tests/navigation/forward-to-fragment-fires-onload.html = TIMEOUT PASS
@@ -3752,6 +3753,7 @@ BUGDPRANKE LINUX : canvas/philip/tests/2d.gradient.radial.touch2.html = TEXT
 BUGDPRANKE : fast/encoding/parser-tests-70.html = TIMEOUT PASS
 BUGDPRANKE : fast/encoding/parser-tests-80.html = TIMEOUT PASS
 BUGDPRANKE MAC : http/tests/navigation/lockedhistory-iframe.html = TEXT
+BUGDPRANKE LINUX DEBUG : http/tests/navigation/lockedhistory-iframe.html = TEXT PASS
 BUGDPRANKE : fast/parser/iframe-sets-parent-to-javascript-url.html = TEXT PASS
 BUGDPRANKE : fast/repaint/moving-shadow-on-path.html = TEXT PASS
 
@@ -3774,9 +3776,9 @@ BUGDPRANKE : http/tests/security/contentSecurityPolicy/image-allowed.html = TEXT
 
 // more failures for triaging, fails on deps bots at least?
 BUGDPRANKE DEBUG WIN LINUX : inspector/debugger/live-edit.html = TEXT TIMEOUT PASS
+BUGDPRANKE RELEASE LINUX : inspector/debugger/live-edit.html = TEXT PASS
 BUGDPRANKE : inspector/console/console-object-constructor-name.html = TEXT PASS TIMEOUT
 BUGDPRANKE : inspector/console/console-log-before-inspector-open.html = TEXT PASS TIMEOUT
-BUGDPRANKE DEBUG : http/tests/local/link-stylesheet-preferred.html = PASS TIMEOUT
 BUGDPRANKE DEBUG LINUX : editing/pasteboard/merge-end-2.html = CRASH PASS
 BUGDPRANKE DEBUG : animations/keyframes-out-of-order.html = TEXT PASS
 BUGDPRANKE : fast/frames/meta-refresh-user-gesture.html = TIMEOUT PASS
@@ -3906,7 +3908,7 @@ BUGSENORBLANCO MAC LINUX : fast/css/string-quote-binary.html = CRASH PASS
 BUGSENORBLANCO LINUX : fast/events/panScroll-click-hyperlink.html = TEXT
 BUGSENORBLANCO : fast/files/domurl-script-execution-context-crash.html = CRASH PASS
 BUGSENORBLANCO : fast/loader/file-protocol-fragment.html = TEXT
-BUGSENORBLANCO : fast/filesystem/file-writer-write-overlapped.html = CRASH PASS
+BUGSENORBLANCO : fast/filesystem/file-writer-write-overlapped.html = CRASH PASS TEXT
 BUGSENORBLANCO : editing/selection/drag-select-rapidly.html = CRASH PASS
 BUGSENORBLANCO LINUX DEBUG : fast/css/transform-default-parameter.html = CRASH PASS
 BUGSENORBLANCO MAC LINUX DEBUG : editing/execCommand/outdent-nested-lists-2.html = CRASH PASS
@@ -3916,8 +3918,14 @@ BUGSENORBLANCO DEBUG : fast/css/table-border-spacing.html = CRASH PASS
 // flakiness on deps bots (noted in r83108)
 BUGDPRANKE WIN CPU DEBUG : editing/selection/select-line.html = PASS CRASH
 BUGDPRANKE WIN CPU DEBUG : fast/css/last-of-type-pseudo-class.html = PASS TEXT
-BUGDPRANKE WIN CPU DEBUG : fast/filesystem/file-writer-write-overlapped.html = TEXT PASS
 BUGDPRANKE WIN CPU DEBUG : http/tests/local/stylesheet-and-script-load-order-media-print.html = PASS CRASH
 BUGDPRANKE WIN CPU DEBUG : svg/text/select-textLength-spacingAndGlyphs-squeeze-3.svg = PASS CRASH
 BUGDPRANKE MAC CPU DEBUG : fast/block/float/overhanging-tall-block.html = PASS CRASH
 BUGDPRANKE MAC CPU DEBUG : fast/css/import_with_baseurl.html = PASS CRASH
+
+// flakiness on canaries (noted in r850X)
+BUGDPRANKE CPU : svg/hixie/rendering-model/003.xhtml = IMAGE+TEXT PASS
+BUGDPRANKE CPU : svg/in-html/by-reference.html = IMAGE+TEXT PASS
+BUGDPRANKE CPU : fast/dom/HTMLFormElement/document-deactivation-callback-crash.html = PASS TEXT
+BUGDPRANKE LINUX DEBUG CPU : svg/custom/font-platformDestroy-crash.svg = PASS CRASH
+BUGDPRANKE CPU MAC DEBUG : http/tests/media/text-served-as-text.html = PASS CRASH
