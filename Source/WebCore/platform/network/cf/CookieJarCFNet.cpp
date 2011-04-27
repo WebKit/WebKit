@@ -37,18 +37,25 @@
 #include "SoftLinking.h"
 #include <CFNetwork/CFHTTPCookiesPriv.h>
 #include <CoreFoundation/CoreFoundation.h>
+
+#if PLATFORM(WIN)
 #include <WebKitSystemInterface/WebKitSystemInterface.h>
 #include <windows.h>
+#endif
 
 namespace WebCore {
 
 static const CFStringRef s_setCookieKeyCF = CFSTR("Set-Cookie");
 static const CFStringRef s_cookieCF = CFSTR("Cookie");
 
+#if PLATFORM(WIN)
 #ifdef DEBUG_ALL
 SOFT_LINK_DEBUG_LIBRARY(CFNetwork)
 #else
 SOFT_LINK_LIBRARY(CFNetwork)
+#endif
+#else
+SOFT_LINK_FRAMEWORK_IN_CORESERVICES_UMBRELLA(CFNetwork)
 #endif
 
 SOFT_LINK_OPTIONAL(CFNetwork, CFHTTPCookieCopyDomain, CFStringRef, __cdecl, (CFHTTPCookieRef))

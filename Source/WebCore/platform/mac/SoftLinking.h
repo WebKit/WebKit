@@ -45,6 +45,14 @@
         return frameworkLibrary; \
     }
 
+#define SOFT_LINK_FRAMEWORK_IN_CORESERVICES_UMBRELLA(framework) \
+    static void* framework##Library() \
+    { \
+        static void* frameworkLibrary = dlopen("/System/Library/Frameworks/CoreServices.framework/Frameworks/" #framework ".framework/" #framework, RTLD_NOW); \
+        ASSERT(frameworkLibrary); \
+        return frameworkLibrary; \
+    }
+
 #define SOFT_LINK(framework, functionName, resultType, parameterDeclarations, parameterNames) \
     static resultType init##functionName parameterDeclarations; \
     static resultType (*softLink##functionName) parameterDeclarations = init##functionName; \
@@ -59,6 +67,16 @@
     inline resultType functionName parameterDeclarations \
     {\
         return softLink##functionName parameterNames; \
+    }
+
+/* callingConvention is unused on Mac but is here to keep the macro prototype the same between Mac and Windows. */
+#define SOFT_LINK_OPTIONAL(framework, functionName, resultType, callingConvention, parameterDeclarations) \
+    typedef resultType (*functionName##PtrType) parameterDeclarations; \
+    \
+    static functionName##PtrType functionName##Ptr() \
+    { \
+        static functionName##PtrType ptr = reinterpret_cast<functionName##PtrType>(dlsym(framework##Library(), #functionName)); \
+        return ptr; \
     }
 
 #define SOFT_LINK_CLASS(framework, className) \

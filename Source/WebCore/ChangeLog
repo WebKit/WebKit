@@ -1,3 +1,14 @@
+2011-04-27  Pratik Solanki  <psolanki@apple.com>
+
+        Reviewed by Antti Koivisto.
+
+        Part of WebCore should use CFNetwork-based loader on Mac
+        https://bugs.webkit.org/show_bug.cgi?id=51836
+
+        * Configurations/WebCore.xcconfig: Add location of CFNetwork.framework.
+        * platform/mac/SoftLinking.h:
+        * platform/network/cf/CookieJarCFNet.cpp: Soft-link in CFNetwork functions on Mac.
+
 2011-04-27  Nikolas Zimmermann  <nzimmermann@rim.com>
 
         Reviewed by Antti Koivisto.
