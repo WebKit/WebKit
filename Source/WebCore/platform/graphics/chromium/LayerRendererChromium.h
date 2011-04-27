@@ -134,6 +134,9 @@ public:
     void addChildContext(GraphicsContext3D*);
     void removeChildContext(GraphicsContext3D*);
 
+#ifndef NDEBUG
+    static bool s_inPaintLayerContents;
+#endif
 private:
     typedef Vector<RefPtr<CCLayerImpl> > LayerList;
     typedef HashMap<GraphicsContext3D*, int> ChildContextMap;

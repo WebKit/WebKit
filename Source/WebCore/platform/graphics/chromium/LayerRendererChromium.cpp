@@ -59,6 +59,10 @@ namespace WebCore {
 // FIXME: Make this limit adjustable and give it a useful value.
 static size_t textureMemoryLimitBytes = 64 * 1024 * 1024;
 
+#ifndef NDEBUG
+bool LayerRendererChromium::s_inPaintLayerContents = false;
+#endif
+
 static TransformationMatrix orthoMatrix(float left, float right, float bottom, float top)
 {
     float deltaX = right - left;
@@ -283,7 +287,13 @@ void LayerRendererChromium::updateLayers(LayerList& renderSurfaceLayerList)
     // concept of a large content layer.
     updatePropertiesAndRenderSurfaces(m_rootLayer.get(), identityMatrix, renderSurfaceLayerList, m_defaultRenderSurface->m_layerList);
 
+#ifndef NDEBUG
+    s_inPaintLayerContents = true;
+#endif
     paintLayerContents(renderSurfaceLayerList);
+#ifndef NDEBUG
+    s_inPaintLayerContents = false;
+#endif
 
     // FIXME: Before updateCompositorResourcesRecursive, when the compositor runs in
     // its own thread, and when the copyTexImage2D bug is fixed, insert

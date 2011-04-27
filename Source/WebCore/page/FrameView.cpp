@@ -585,7 +585,7 @@ static bool isDocumentRunningFullScreenAnimation(Document* document)
 #endif
     
 #if USE(ACCELERATED_COMPOSITING)
-void FrameView::updateCompositingLayers()
+void FrameView::updateCompositingLayers(CompositingUpdateType updateType)
 {
     RenderView* view = m_frame->contentRenderer();
     if (!view)
@@ -593,12 +593,12 @@ void FrameView::updateCompositingLayers()
 
     // This call will make sure the cached hasAcceleratedCompositing is updated from the pref
     view->compositor()->cacheAcceleratedCompositingFlags();
-    view->compositor()->updateCompositingLayers(CompositingUpdateAfterLayoutOrStyleChange);
+    view->compositor()->updateCompositingLayers(updateType);
     
 #if ENABLE(FULLSCREEN_API)
     Document* document = m_frame->document();
     if (isDocumentRunningFullScreenAnimation(document))
-        view->compositor()->updateCompositingLayers(CompositingUpdateAfterLayoutOrStyleChange, document->fullScreenRenderer()->layer());
+        view->compositor()->updateCompositingLayers(updateType, document->fullScreenRenderer()->layer());
 #endif
 }
 
