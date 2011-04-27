@@ -1696,18 +1696,38 @@ WebInspector.StylePropertyTreeElement.prototype = {
     {
         if (event.handled)
             return;
+        if (this._handleUpOrDownKeyPressed(event))
+            return;
+
+        this._applyFreeFlowStyleTextEdit();
+    },
+
+    _applyFreeFlowStyleTextEdit: function()
+    {
+        if (this._applyFreeFlowStyleTextEditTimer)
+            clearTimeout(this._applyFreeFlowStyleTextEditTimer);
+
+        function apply()
+        {
+            this.applyStyleText(this.nameElement.textContent + ": " + this.valueElement.textContent);
+        }
+        this._applyFreeFlowStyleTextEditTimer = setTimeout(apply.bind(this), 100);
+    },
+
+    _handleUpOrDownKeyPressed: function(event)
+    {
         var arrowKeyPressed = (event.keyIdentifier === "Up" || event.keyIdentifier === "Down");
         var pageKeyPressed = (event.keyIdentifier === "PageUp" || event.keyIdentifier === "PageDown");
         if (!arrowKeyPressed && !pageKeyPressed)
-            return;
+            return false;
 
         var selection = window.getSelection();
         if (!selection.rangeCount)
-            return;
+            return false;
 
         var selectionRange = selection.getRangeAt(0);
         if (selectionRange.commonAncestorContainer !== this.valueElement && !selectionRange.commonAncestorContainer.isDescendant(this.valueElement))
-            return;
+            return false;
 
         var wordRange = selectionRange.startContainer.rangeOfWord(selectionRange.startOffset, WebInspector.StylesSidebarPane.StyleValueDelimiters, this.valueElement);
         var wordString = wordRange.toString();
@@ -1758,10 +1778,14 @@ WebInspector.StylePropertyTreeElement.prototype = {
             // Synthesize property text disregarding any comments, custom whitespace etc.
             this.applyStyleText(this.nameElement.textContent + ": " + this.valueElement.textContent);
         }
+        return true;
     },
 
     editingEnded: function(context)
     {
+        if (this._applyFreeFlowStyleTextEditTimer)
+            clearTimeout(this._applyFreeFlowStyleTextEditTimer);
+
         this.hasChildren = context.hasChildren;
         if (context.expanded)
             this.expand();
