@@ -166,7 +166,7 @@ using namespace WebKit;
     NSSize remoteSize = [[self accessibilityAttributeValue:NSAccessibilitySizeAttribute] sizeValue];
     
     // Get the y position of the WKView (we have to screen-flip and go from bottom left to top left).
-    CGFloat screenHeight = [[[NSScreen screens] objectAtIndex:0] frame].size.height;
+    CGFloat screenHeight = [(NSScreen *)[[NSScreen screens] objectAtIndex:0] frame].size.height;
     remotePosition.y = (screenHeight - remotePosition.y) - remoteSize.height;
     
     point.y = screenHeight - point.y;

@@ -69,7 +69,7 @@ static bool windowCoversAnyScreen(WindowRef window)
     HIWindowGetBounds(window, kWindowStructureRgn, kHICoordSpaceScreenPixel, &bounds);
 
     // Convert to Cocoa-style screen coordinates that use a Y offset relative to the zeroth screen's origin.
-    bounds.origin.y = NSHeight([[[NSScreen screens] objectAtIndex:0] frame]) - CGRectGetMaxY(bounds);
+    bounds.origin.y = NSHeight([(NSScreen *)[[NSScreen screens] objectAtIndex:0] frame]) - CGRectGetMaxY(bounds);
 
     return rectCoversAnyScreen(NSRectFromCGRect(bounds));
 }

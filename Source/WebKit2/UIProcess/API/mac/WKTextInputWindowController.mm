@@ -62,10 +62,10 @@
      
     [self setFrame:frame display:NO];
         
-    _inputTextView = [[NSTextView alloc] initWithFrame:[self.contentView frame]];        
+    _inputTextView = [[NSTextView alloc] initWithFrame:[(NSView *)self.contentView frame]];        
     _inputTextView.autoresizingMask = NSViewWidthSizable | NSViewHeightSizable | NSViewMaxXMargin | NSViewMinXMargin | NSViewMaxYMargin | NSViewMinYMargin;
         
-    NSScrollView* scrollView = [[NSScrollView alloc] initWithFrame:[self.contentView frame]];
+    NSScrollView* scrollView = [[NSScrollView alloc] initWithFrame:[(NSView *)self.contentView frame]];
     scrollView.documentView = _inputTextView;
     self.contentView = scrollView;
     [scrollView release];

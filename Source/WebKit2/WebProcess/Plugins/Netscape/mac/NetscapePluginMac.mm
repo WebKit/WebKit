@@ -89,7 +89,7 @@ NPError NetscapePlugin::setEventModel(NPEventModel eventModel)
 
 static double flipScreenYCoordinate(double y)
 {
-    return [[[NSScreen screens] objectAtIndex:0] frame].size.height - y;
+    return [(NSScreen *)[[NSScreen screens] objectAtIndex:0] frame].size.height - y;
 }
 
 NPBool NetscapePlugin::convertPoint(double sourceX, double sourceY, NPCoordinateSpace sourceSpace, double& destX, double& destY, NPCoordinateSpace destSpace)
@@ -825,7 +825,7 @@ void NetscapePlugin::windowFocusChanged(bool hasFocus)
 static Rect computeFakeWindowBoundsRect(const WebCore::IntRect& windowFrameInScreenCoordinates, const WebCore::IntRect& viewFrameInWindowCoordinates)
 {
     // Carbon global coordinates has the origin set at the top left corner of the main viewing screen, so we want to flip the y coordinate.
-    CGFloat maxY = NSMaxY([[[NSScreen screens] objectAtIndex:0] frame]);
+    CGFloat maxY = NSMaxY([(NSScreen *)[[NSScreen screens] objectAtIndex:0] frame]);
 
     int flippedWindowFrameYCoordinate = maxY - windowFrameInScreenCoordinates.maxY();
     int flippedViewFrameYCoordinate = windowFrameInScreenCoordinates.height() - viewFrameInWindowCoordinates.maxY();
