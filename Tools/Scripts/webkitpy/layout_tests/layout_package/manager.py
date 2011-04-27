@@ -71,7 +71,7 @@ TestExpectationsFile = test_expectations.TestExpectationsFile
 
 
 def summarize_results(port_obj, expectations, result_summary, retry_summary, test_timings, only_unexpected):
-    """Summarize any unexpected results as a dict.
+    """Summarize failing results as a dict.
 
     FIXME: split this data structure into a separate class?
 
@@ -125,9 +125,15 @@ def summarize_results(port_obj, expectations, result_summary, retry_summary, tes
         result_type = result.type
         actual = [keywords[result_type]]
 
-        # FIXME: only include passing tests that have stderr output.
+        test_dict = {}
+        if False:
+            test_dict['has_stderr'] = True
+
         if result_type == test_expectations.PASS:
             num_passes += 1
+            # FIXME: include passing tests that have stderr output.
+            if expected == 'PASS':
+                continue
         elif result_type == test_expectations.CRASH:
             num_regressions += 1
         elif filename in result_summary.unexpected_results:
@@ -142,33 +148,34 @@ def summarize_results(port_obj, expectations, result_summary, retry_summary, tes
                 else:
                     num_regressions += 1
 
-        tests[test] = {}
-        tests[test]['expected'] = expected
-        tests[test]['actual'] = " ".join(actual)
+        test_dict['expected'] = expected
+        test_dict['actual'] = " ".join(actual)
         # FIXME: Set this correctly once https://webkit.org/b/37739 is fixed
         # and only set it if there actually is stderr data.
-        if False:
-            tests[test]['has_stderr'] = True
 
         failure_types = [type(f) for f in result.failures]
+        # FIXME: get rid of all this is_* values once there is a 1:1 map between
+        # TestFailure type and test_expectations.EXPECTATION.
         if test_failures.FailureMissingAudio in failure_types:
-            tests[test]['is_missing_audio'] = True
+            test_dict['is_missing_audio'] = True
 
         if test_failures.FailureReftestMismatch in failure_types:
-            tests[test]['is_reftest'] = True
+            test_dict['is_reftest'] = True
 
         for f in result.failures:
             if 'is_reftest' in result.failures:
-                tests[test]['is_reftest'] = True
+                test_dict['is_reftest'] = True
 
         if test_failures.FailureReftestMismatchDidNotOccur in failure_types:
-            tests[test]['is_mismatch_reftest'] = True
+            test_dict['is_mismatch_reftest'] = True
 
         if test_failures.FailureMissingResult in failure_types:
-            tests[test]['is_missing_text'] = True
+            test_dict['is_missing_text'] = True
 
         if test_failures.FailureMissingImage in failure_types or test_failures.FailureMissingImageHash in failure_types:
-            tests[test]['is_missing_image'] = True
+            test_dict['is_missing_image'] = True
+
+        tests[test] = test_dict
 
     results['tests'] = tests
     results['num_passes'] = num_passes
