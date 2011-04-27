@@ -1,5 +1,14 @@
 2011-04-27  Kenneth Russell  <kbr@google.com>
 
+        Web Inspector: regression in inspector/console/console-dir.html after r85054
+        https://bugs.webkit.org/show_bug.cgi?id=59620
+
+        Unreviewed. Missed updating chromium-specific expectations in earlier rebaseline.
+
+        * platform/chromium/inspector/console/console-dir-expected.txt:
+
+2011-04-27  Kenneth Russell  <kbr@google.com>
+
         [chromium] Rebaseline direct-image-compositing.html after r85011
         https://bugs.webkit.org/show_bug.cgi?id=59624
 
