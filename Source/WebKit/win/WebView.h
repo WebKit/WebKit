@@ -1,5 +1,7 @@
 /*
- * Copyright (C) 2006, 2007 Apple Inc.  All rights reserved.
+ * Copyright (C) 2006, 2007, 2008, 2009, 2010, 2011 Apple Inc.  All rights reserved.
+ * Copyright (C) 2009, 2010, 2011 Appcelerator, Inc. All rights reserved.
+ * Copyright (C) 2011 Brent Fulgham. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -123,7 +125,7 @@ public:
         /* [in] */ RECT frame,
         /* [in] */ BSTR frameName,
         /* [in] */ BSTR groupName);
-    
+
     virtual HRESULT STDMETHODCALLTYPE setUIDelegate( 
         /* [in] */ IWebUIDelegate *d);
     
@@ -823,6 +825,9 @@ public:
     virtual HRESULT STDMETHODCALLTYPE setMinimumTimerInterval(
         /* [in] */ double);
 
+    virtual HRESULT STDMETHODCALLTYPE setUsesLayeredWindow(BOOL);
+    virtual HRESULT STDMETHODCALLTYPE usesLayeredWindow(BOOL*);
+
     // WebView
     bool shouldUseEmbeddedView(const WTF::String& mimeType) const;
 
@@ -859,6 +864,7 @@ public:
     bool didClose() const { return m_didClose; }
 
     bool transparent() const { return m_transparent; }
+    bool usesLayeredWindow() const { return m_usesLayeredWindow; }
 
     bool onIMEStartComposition();
     bool onIMEComposition(LPARAM);
@@ -946,6 +952,8 @@ private:
     enum WindowsToPaint { PaintWebViewOnly, PaintWebViewAndChildren };
     void paintIntoBackingStore(WebCore::FrameView*, HDC bitmapDC, const WebCore::IntRect& dirtyRect, WindowsToPaint);
     void updateBackingStore(WebCore::FrameView*, HDC = 0, bool backingStoreCompletelyDirty = false, WindowsToPaint = PaintWebViewOnly);
+
+    void performLayeredWindowUpdate();
 
     WebCore::DragOperation keyStateToDragOperation(DWORD grfKeyState) const;
 
@@ -1077,6 +1085,7 @@ protected:
 #endif
 
     bool m_nextDisplayIsSynchronous;
+    bool m_usesLayeredWindow;
 
     HCURSOR m_lastSetCursor;
 

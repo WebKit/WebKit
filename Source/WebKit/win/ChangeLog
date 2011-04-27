@@ -1,3 +1,38 @@
+2011-04-26  Brent Fulgham  <bfulgham@webkit.org>
+
+        Reviewed by Adam Roben.
+
+        Implement a transparent WebView under Windows.  This feature
+        allows the user to create small web-based applications, similar
+        to the dashboard on Mac OS X.
+        https://bugs.webkit.org/show_bug.cgi?id=58300
+
+        * Interfaces/IWebViewPrivate.idl: Add new set/get accessors to
+        change the state of a WebView into a Layered Window, or back
+        into a standard window.
+        * Interfaces/WebKit.idl: touch to force clean build
+        * WebView.cpp:
+        (WebView::WebView): Set layered window state in constructor.
+        (WebView::updateBackingStore): Cleanup old bitmap when finished.
+        (WebView::performLayeredWindowUpdate): New method to do the work
+        of calling ::UpdateLayeredWindow for the WebView with proper
+        alpha blending.
+        (WebView::paint): Small change to prevent accelerated compositing
+        when using a layered window.  DirectX is not compatible with
+        ::UpdateLayeredWindow (at least currently).
+        (WebView::WebViewWndProc): Adjust main window procedure to avoid
+        painting a default background on a layered window (this is handled
+        by Windows during compositing), and to deal with paint messages
+        properly in the layered window case.
+        (WebView::active): The layered window is not a child window,
+        so the active state logic is slightly different.
+        (WebView::setUsesLayeredWindow): New set method for layered stated.
+        When called, it will convert a WebView into a Layered Window.
+        (WebView::usesLayeredWindow): Accessor
+        * WebView.h:
+        (WebView::setUsesLayeredWindow): Declare new accessor
+        (WebView::usesLayeredWindow): Declare new accessor
+
 2011-04-21  Ryosuke Niwa  <rniwa@webkit.org>
 
         Windows build fix.

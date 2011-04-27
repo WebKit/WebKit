@@ -153,6 +153,9 @@ interface IWebViewPrivate : IUnknown
     HRESULT setTransparent([in] BOOL transparent);
     HRESULT transparent([out, retval] BOOL* transparent);
 
+    HRESULT setUsesLayeredWindow([in] BOOL usesLayeredWindow);
+    HRESULT usesLayeredWindow([out, retval] BOOL* usesLayeredWindow);
+
     HRESULT setAlwaysUsesComplexTextCodePath([in] BOOL complex);
     HRESULT alwaysUsesComplexTextCodePath([out, retval] BOOL* complex);
 

@@ -1,6 +1,7 @@
 /*
  * Copyright (C) 2006, 2008 Apple Computer, Inc.  All rights reserved.
- * Copyright (C) 2009 Brent Fulgha.  All rights reserved.
+ * Copyright (C) 2009, 2011 Brent Fulgham.  All rights reserved.
+ * Copyright (C) 2009, 2010, 2011 Appcelerator, Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -28,9 +29,12 @@
 #include "WinLauncher.h"
 #include <WebKit/WebKitCOMAPI.h>
 
+#include <string>
+
 #include <commctrl.h>
 #include <commdlg.h>
 #include <objbase.h>
+#include <shellapi.h>
 #include <shlwapi.h>
 #include <wininet.h>
 
@@ -43,13 +47,21 @@
 HINSTANCE hInst;                                // current instance
 HWND hMainWnd;
 HWND hURLBarWnd;
-long DefEditProc;
+WNDPROC DefEditProc = 0;
+WNDPROC DefWebKitProc = 0;
 IWebView* gWebView = 0;
+IWebViewPrivate* gWebViewPrivate = 0;
 HWND gViewWindow = 0;
 WinLauncherWebHost* gWebHost = 0;
 PrintWebUIDelegate* gPrintDelegate = 0;
 TCHAR szTitle[MAX_LOADSTRING];                    // The title bar text
 TCHAR szWindowClass[MAX_LOADSTRING];            // the main window class name
+
+// Support moving the transparent window
+POINT s_windowPosition = { 100, 100 };
+SIZE s_windowSize = { 800, 400 };
+bool s_usesLayeredWebView = false;
+bool s_fullDesktop = false;
 
 // Forward declarations of functions included in this code module:
 ATOM                MyRegisterClass(HINSTANCE hInstance);
@@ -59,6 +71,16 @@ INT_PTR CALLBACK    About(HWND, UINT, WPARAM, LPARAM);
 LRESULT CALLBACK    MyEditProc(HWND, UINT, WPARAM, LPARAM);
 
 static void loadURL(BSTR urlBStr);
+
+static bool usesLayeredWebView()
+{
+    return s_usesLayeredWebView;
+}
+
+static bool shouldUseFullDesktop()
+{
+    return s_fullDesktop;
+}
 
 HRESULT WinLauncherWebHost::updateAddressBar(IWebView* webView)
 {
@@ -130,10 +152,32 @@ ULONG STDMETHODCALLTYPE WinLauncherWebHost::Release(void)
 
 static void resizeSubViews()
 {
+    if (usesLayeredWebView() || !gViewWindow)
+        return;
+
     RECT rcClient;
     GetClientRect(hMainWnd, &rcClient);
     MoveWindow(hURLBarWnd, 0, 0, rcClient.right, URLBAR_HEIGHT, TRUE);
     MoveWindow(gViewWindow, 0, URLBAR_HEIGHT, rcClient.right, rcClient.bottom - URLBAR_HEIGHT, TRUE);
+}
+
+static void subclassForLayeredWindow()
+{
+    hMainWnd = gViewWindow;
+    DefWebKitProc = reinterpret_cast<WNDPROC>(::GetWindowLongPtr(hMainWnd, GWL_WNDPROC));
+    ::SetWindowLongPtr(hMainWnd, GWL_WNDPROC, reinterpret_cast<LONG_PTR>(WndProc));
+}
+
+static void computeFullDesktopFrame()
+{
+    RECT desktop;
+    if (!::SystemParametersInfo(SPI_GETWORKAREA, 0, static_cast<void*>(&desktop), 0))
+        return;
+
+    s_windowPosition.x = 0;
+    s_windowPosition.y = 0;
+    s_windowSize.cx = desktop.right - desktop.left;
+    s_windowSize.cy = desktop.bottom - desktop.top;
 }
 
 int APIENTRY _tWinMain(HINSTANCE hInstance,
@@ -159,10 +203,22 @@ int APIENTRY _tWinMain(HINSTANCE hInstance,
     InitCtrlEx.dwICC  = 0x00004000; //ICC_STANDARD_CLASSES;
     InitCommonControlsEx(&InitCtrlEx);
 
+    int argc = 0;
+    WCHAR** argv = CommandLineToArgvW(GetCommandLineW(), &argc);
+    for (int i = 1; i < argc; ++i) {
+        if (!wcsicmp(argv[i], L"--transparent"))
+            s_usesLayeredWebView = true;
+        else if (!wcsicmp(argv[i], L"--desktop"))
+            s_fullDesktop = true;
+    }
+
     // Initialize global strings
     LoadString(hInstance, IDS_APP_TITLE, szTitle, MAX_LOADSTRING);
     LoadString(hInstance, IDC_WINLAUNCHER, szWindowClass, MAX_LOADSTRING);
     MyRegisterClass(hInstance);
+
+    if (shouldUseFullDesktop())
+        computeFullDesktopFrame();
 
     // Perform application initialization:
     if (!InitInstance (hInstance, nCmdShow))
@@ -171,18 +227,43 @@ int APIENTRY _tWinMain(HINSTANCE hInstance,
     // Init COM
     OleInitialize(NULL);
 
-    hURLBarWnd = CreateWindow(L"EDIT", 0,
-                        WS_CHILD | WS_VISIBLE | WS_BORDER | ES_LEFT | ES_AUTOVSCROLL, 
-                        0, 0, 0, 0,
-                        hMainWnd,
-                        0,
-                        hInstance, 0);
+    if (usesLayeredWebView()) {
+        hURLBarWnd = CreateWindow(L"EDIT", L"Type URL Here",
+                    WS_OVERLAPPEDWINDOW | WS_VISIBLE | WS_BORDER | ES_LEFT | ES_AUTOVSCROLL, 
+                    s_windowPosition.x, s_windowPosition.y + s_windowSize.cy, s_windowSize.cx, URLBAR_HEIGHT,
+                    0,
+                    0,
+                    hInstance, 0);
+    } else {
+        hURLBarWnd = CreateWindow(L"EDIT", 0,
+                    WS_CHILD | WS_VISIBLE | WS_BORDER | ES_LEFT | ES_AUTOVSCROLL, 
+                    0, 0, 0, 0,
+                    hMainWnd,
+                    0,
+                    hInstance, 0);
+    }
 
-    DefEditProc = GetWindowLong(hURLBarWnd, GWL_WNDPROC);
-    SetWindowLong(hURLBarWnd, GWL_WNDPROC,(long)MyEditProc);
+    DefEditProc = reinterpret_cast<WNDPROC>(GetWindowLongPtr(hURLBarWnd, GWL_WNDPROC));
+    SetWindowLongPtr(hURLBarWnd, GWL_WNDPROC, reinterpret_cast<LONG_PTR>(MyEditProc));
     SetFocus(hURLBarWnd);
 
-    HRESULT hr = WebKitCreateInstance(CLSID_WebView, 0, IID_IWebView, (void**)&gWebView);
+    RECT clientRect = { s_windowPosition.x, s_windowPosition.y, s_windowPosition.x + s_windowSize.cx, s_windowPosition.y + s_windowSize.cy };
+
+    IWebPreferences* tmpPreferences = 0;
+    IWebPreferences* standardPreferences = 0;
+    if (FAILED(WebKitCreateInstance(CLSID_WebPreferences, 0, IID_IWebPreferences, reinterpret_cast<void**>(&tmpPreferences))))
+        goto exit;
+
+    if (FAILED(tmpPreferences->standardPreferences(&standardPreferences)))
+        goto exit;
+
+    standardPreferences->setAcceleratedCompositingEnabled(TRUE);
+
+    HRESULT hr = WebKitCreateInstance(CLSID_WebView, 0, IID_IWebView, reinterpret_cast<void**>(&gWebView));
+    if (FAILED(hr))
+        goto exit;
+
+    hr = gWebView->QueryInterface(IID_IWebViewPrivate, reinterpret_cast<void**>(&gWebViewPrivate));
     if (FAILED(hr))
         goto exit;
 
@@ -198,12 +279,10 @@ int APIENTRY _tWinMain(HINSTANCE hInstance,
     if (FAILED (hr))
         goto exit;
 
-    hr = gWebView->setHostWindow((OLE_HANDLE) hMainWnd);
+    hr = gWebView->setHostWindow(reinterpret_cast<OLE_HANDLE>(hMainWnd));
     if (FAILED(hr))
         goto exit;
 
-    RECT clientRect;
-    GetClientRect(hMainWnd, &clientRect);
     hr = gWebView->initWithFrame(clientRect, 0, 0);
     if (FAILED(hr))
         goto exit;
@@ -213,19 +292,24 @@ int APIENTRY _tWinMain(HINSTANCE hInstance,
     if (FAILED(hr))
         goto exit;
 
-    static BSTR defaultHTML = SysAllocString(TEXT("<p style=\"background-color: #00FF00\">Testing</p><img src=\"http://webkit.org/images/icon-gold.png\" alt=\"Face\"><div style=\"border: solid blue\" contenteditable=\"true\">div with blue border</div><ul><li>foo<li>bar<li>baz</ul>"));
+    static BSTR defaultHTML = SysAllocString(TEXT("<p style=\"background-color: #00FF00\">Testing</p><img src=\"http://webkit.org/images/icon-gold.png\" alt=\"Face\"><div style=\"border: solid blue; background: white;\" contenteditable=\"true\">div with blue border</div><ul><li>foo<li>bar<li>baz</ul>"));
     frame->loadHTMLString(defaultHTML, 0);
     frame->Release();
 
-    IWebViewPrivate* viewExt;
-    hr = gWebView->QueryInterface(IID_IWebViewPrivate, (void**)&viewExt);
+    hr = gWebViewPrivate->setTransparent(usesLayeredWebView());
     if (FAILED(hr))
         goto exit;
 
-    hr = viewExt->viewWindow((OLE_HANDLE*) &gViewWindow);
-    viewExt->Release();
+    hr = gWebViewPrivate->setUsesLayeredWindow(usesLayeredWebView());
+    if (FAILED(hr))
+        goto exit;
+
+    hr = gWebViewPrivate->viewWindow(reinterpret_cast<OLE_HANDLE*>(&gViewWindow));
     if (FAILED(hr) || !gViewWindow)
         goto exit;
+
+    if (usesLayeredWebView())
+        subclassForLayeredWindow();
 
     resizeSubViews();
 
@@ -244,7 +328,13 @@ int APIENTRY _tWinMain(HINSTANCE hInstance,
 
 exit:
     gPrintDelegate->Release();
+    if (gWebViewPrivate)
+        gWebViewPrivate->Release();
     gWebView->Release();
+    if (standardPreferences)
+        standardPreferences->Release();
+    tmpPreferences->Release();
+
     shutDownWebKit();
 #ifdef _CRTDBG_MAP_ALLOC
     _CrtDumpMemoryLeaks();
@@ -279,18 +369,21 @@ ATOM MyRegisterClass(HINSTANCE hInstance)
 
 BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
 {
-   hInst = hInstance; // Store instance handle in our global variable
+    hInst = hInstance; // Store instance handle in our global variable
 
-   hMainWnd = CreateWindow(szWindowClass, szTitle, WS_OVERLAPPEDWINDOW,
-      CW_USEDEFAULT, 0, CW_USEDEFAULT, 0, NULL, NULL, hInstance, NULL);
+    if (usesLayeredWebView())
+        return TRUE;
 
-   if (!hMainWnd)
-      return FALSE;
+    hMainWnd = CreateWindow(szWindowClass, szTitle, WS_OVERLAPPEDWINDOW,
+                   CW_USEDEFAULT, 0, CW_USEDEFAULT, 0, 0, 0, hInstance, 0);
 
-   ShowWindow(hMainWnd, nCmdShow);
-   UpdateWindow(hMainWnd);
+    if (!hMainWnd)
+        return FALSE;
 
-   return TRUE;
+    ShowWindow(hMainWnd, nCmdShow);
+    UpdateWindow(hMainWnd);
+
+    return TRUE;
 }
 
 static BOOL CALLBACK AbortProc(HDC hDC, int Error)
@@ -373,43 +466,67 @@ exit:
         framePrivate->Release();
 }
 
+static const int dragBarHeight = 30;
+
 LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
-    int wmId, wmEvent;
+    WNDPROC parentProc = usesLayeredWebView() ? DefWebKitProc : DefWindowProc;
 
     switch (message) {
-    case WM_COMMAND:
-        wmId    = LOWORD(wParam);
-        wmEvent = HIWORD(wParam);
+    case WM_NCHITTEST:
+        if (usesLayeredWebView()) {
+            RECT window;
+            ::GetWindowRect(hWnd, &window);
+            // For testing our transparent window, we need a region to use as a handle for
+            // dragging. The right way to do this would be to query the web view to see what's
+            // under the mouse. However, for testing purposes we just use an arbitrary
+            // 30 pixel band at the top of the view as an arbitrary gripping location.
+            //
+            // When we are within this bad, return HT_CAPTION to tell Windows we want to
+            // treat this region as if it were the title bar on a normal window.
+            int y = HIWORD(lParam);
+
+            if ((y > window.top) && (y < window.top + dragBarHeight))
+                return HTCAPTION;
+
+            return CallWindowProc(parentProc, hWnd, message, wParam, lParam);
+        }
+        break;
+    case WM_COMMAND: {
+        int wmId = LOWORD(wParam);
+        int wmEvent = HIWORD(wParam);
         // Parse the menu selections:
         switch (wmId) {
-            case IDM_ABOUT:
-                DialogBox(hInst, MAKEINTRESOURCE(IDD_ABOUTBOX), hWnd, About);
-                break;
-            case IDM_EXIT:
-                DestroyWindow(hWnd);
-                break;
-            case IDM_PRINT:
-                PrintView(hWnd, message, wParam, lParam);
-                break;
-            default:
-                return DefWindowProc(hWnd, message, wParam, lParam);
+        case IDM_ABOUT:
+            DialogBox(hInst, MAKEINTRESOURCE(IDD_ABOUTBOX), hWnd, About);
+            break;
+        case IDM_EXIT:
+            DestroyWindow(hWnd);
+            break;
+        case IDM_PRINT:
+            PrintView(hWnd, message, wParam, lParam);
+            break;
+        default:
+            return CallWindowProc(parentProc, hWnd, message, wParam, lParam);
+        }
         }
         break;
     case WM_DESTROY:
         PostQuitMessage(0);
         break;
     case WM_SIZE:
-        if (!gWebView)
-            break;
+        if (!gWebView || usesLayeredWebView())
+           return CallWindowProc(parentProc, hWnd, message, wParam, lParam);
+
         resizeSubViews();
-        break; 
+        break;
     default:
-        return DefWindowProc(hWnd, message, wParam, lParam);
+        return CallWindowProc(parentProc, hWnd, message, wParam, lParam);
+        break;
     }
+
     return 0;
 }
-
 
 #define MAX_URL_LENGTH  1024
 

@@ -1,3 +1,36 @@
+2011-04-26  Brent Fulgham  <bfulgham@webkit.org>
+
+        Reviewed by Adam Roben.
+
+        Update WinLauncher with command-line arguments to allow the
+        transparency to be tested.  Use --transparent to create a
+        transparent view.  Use --desktop to have the view fill the
+        desktop area of the screen.
+        https://bugs.webkit.org/show_bug.cgi?id=58300
+
+        * WinLauncher/WinLauncher.cpp:
+        (usesLayeredWebView): New method to indicate that the
+        program is running with layered windows (alpha-blended
+        transparent windows).
+        (shouldUseFullDesktop): New method to indicate that the
+        program is running across the full desktop (less any
+        task bars.)
+        (resizeSubViews): Layered window mode doesn't have any
+        winapi child windows, so this routine is exited early
+        for that case.
+        (subclassForLayeredWindow): Subclass the window so we can
+        override its defaut message loop.
+        (computeFullDesktopFrame): Convenience function to get the
+        desktop region and update the frame dimensions appropriately.
+        (_tWinMain): Updated to accept the new '--transparent' and
+        '--desktop' arguments.
+        (InitInstance): Modified to exit early for the transparent
+        background case.  WebKit will construct our primary window (with
+        appropriate settings) so we don't need to create one ourselves.
+        (WndProc): 
+        (TransparentWndProc): New message loop for transparent windows,
+        since they need special handling to support dragging.
+
 2011-04-26  Alexandre MAzari  <amazari@igalia.com>
 
         Reviewed by Xan Lopez.

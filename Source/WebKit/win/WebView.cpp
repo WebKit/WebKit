@@ -1,5 +1,7 @@
 /*
  * Copyright (C) 2006, 2007, 2008, 2009, 2010 Apple, Inc.  All rights reserved.
+ * Copyright (C) 2009, 2010, 2011 Appcelerator, Inc. All rights reserved.
+ * Copyright (C) 2011 Brent Fulgham. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -358,6 +360,7 @@ WebView::WebView()
 #endif
     , m_nextDisplayIsSynchronous(false)
     , m_lastSetCursor(0)
+    , m_usesLayeredWindow(false)
 {
     JSC::initializeThreading();
     WTF::initializeMainThread();
@@ -949,10 +952,11 @@ void WebView::updateBackingStore(FrameView* frameView, HDC dc, bool backingStore
 
     HDC windowDC = 0;
     HDC bitmapDC = dc;
+    HGDIOBJ oldBitmap = 0;
     if (!dc) {
         windowDC = ::GetDC(m_viewWindow);
         bitmapDC = ::CreateCompatibleDC(windowDC);
-        ::SelectObject(bitmapDC, m_backingStoreBitmap->handle());
+        oldBitmap = ::SelectObject(bitmapDC, m_backingStoreBitmap->handle());
     }
 
     if (m_backingStoreBitmap && (m_backingStoreDirtyRegion || backingStoreCompletelyDirty)) {
@@ -982,6 +986,7 @@ void WebView::updateBackingStore(FrameView* frameView, HDC dc, bool backingStore
     }
 
     if (!dc) {
+        ::SelectObject(bitmapDC, oldBitmap);
         ::DeleteDC(bitmapDC);
         ::ReleaseDC(m_viewWindow, windowDC);
     }
@@ -989,12 +994,35 @@ void WebView::updateBackingStore(FrameView* frameView, HDC dc, bool backingStore
     GdiFlush();
 }
 
+void WebView::performLayeredWindowUpdate()
+{
+    HDC hdcScreen = ::GetDC(m_viewWindow);
+    OwnPtr<HDC> hdcMem = adoptPtr(::CreateCompatibleDC(hdcScreen));
+    HBITMAP hbmOld = static_cast<HBITMAP>(::SelectObject(hdcMem.get(), m_backingStoreBitmap->handle()));
+
+    BITMAP bmpInfo;
+    ::GetObject(m_backingStoreBitmap->handle(), sizeof(bmpInfo), &bmpInfo);
+    SIZE windowSize = { bmpInfo.bmWidth, bmpInfo.bmHeight };
+
+    BLENDFUNCTION blendFunction;
+    blendFunction.BlendOp = AC_SRC_OVER;
+    blendFunction.BlendFlags = 0;
+    blendFunction.SourceConstantAlpha = 0xFF;
+    blendFunction.AlphaFormat = AC_SRC_ALPHA;
+
+    POINT layerPos = { 0, 0 };
+    ::UpdateLayeredWindow(m_viewWindow, hdcScreen, 0, &windowSize, hdcMem.get(), &layerPos, 0, &blendFunction, ULW_ALPHA);
+
+    ::SelectObject(hdcMem.get(), hbmOld);
+    ::ReleaseDC(0, hdcScreen);
+}
+
 void WebView::paint(HDC dc, LPARAM options)
 {
     LOCAL_GDI_COUNTER(0, __FUNCTION__);
 
 #if USE(ACCELERATED_COMPOSITING)
-    if (isAcceleratedCompositing()) {
+    if (isAcceleratedCompositing() && !usesLayeredWindow()) {
         m_layerTreeHost->flushPendingLayerChangesNow();
         // Flushing might have taken us out of compositing mode.
         if (isAcceleratedCompositing()) {
@@ -2097,8 +2125,17 @@ LRESULT CALLBACK WebView::WebViewWndProc(HWND hWnd, UINT message, WPARAM wParam,
     switch (message) {
         case WM_PAINT: {
             webView->paint(0, 0);
+            if (webView->usesLayeredWindow())
+                webView->performLayeredWindowUpdate();
             break;
         }
+        case WM_ERASEBKGND:
+            if (webView->usesLayeredWindow()) {
+                // Don't perform a background erase for transparent views.
+                handled = true;
+                lResult = 1;
+            }
+            break;
         case WM_PRINTCLIENT:
             webView->paint((HDC)wParam, lParam);
             break;
@@ -3314,6 +3351,9 @@ HRESULT STDMETHODCALLTYPE WebView::searchFor(
 bool WebView::active()
 {
     HWND activeWindow = GetActiveWindow();
+    if (usesLayeredWindow() && activeWindow == m_viewWindow)
+        return true;
+
     return (activeWindow && m_topLevelParent == findTopLevelParent(activeWindow));
 }
 
@@ -5785,6 +5825,84 @@ HRESULT STDMETHODCALLTYPE WebView::transparent(BOOL* transparent)
         return E_POINTER;
 
     *transparent = this->transparent() ? TRUE : FALSE;
+    return S_OK;
+}
+
+static bool setWindowStyle(HWND window, int index, LONG_PTR newValue)
+{
+    // According to MSDN, if the last value of the flag we are setting was zero,
+    // then SetWindowLongPtr returns zero, even though the call succeeded. So,
+    // we have to clear the error state, then check the last error after
+    // setting the value to see if it actually was a failure.
+    ::SetLastError(0);
+    return ::SetWindowLongPtr(window, index, newValue) || !::GetLastError();
+}
+
+HRESULT WebView::setUsesLayeredWindow(BOOL usesLayeredWindow)
+{
+    if (m_usesLayeredWindow == !!usesLayeredWindow)
+        return S_OK;
+
+    if (!m_viewWindow)
+        return E_FAIL;
+
+    RECT rect;
+    ::GetWindowRect(m_viewWindow, &rect);
+
+    LONG_PTR origExStyle = ::GetWindowLongPtr(m_viewWindow, GWL_EXSTYLE);
+    LONG_PTR origStyle = ::GetWindowLongPtr(m_viewWindow, GWL_STYLE);
+
+    // The logic here has to account for the way SetParent works.
+    // According to MSDN, to go from a child window to a popup window,
+    // you must clear the child bit after setting the parent to 0.
+    // On the other hand, to go from a popup window to a child, you
+    // must clear the popup state before setting the parent.
+    if (usesLayeredWindow) {
+        LONG_PTR newExStyle = origExStyle | WS_EX_LAYERED;
+        LONG_PTR newStyle = (origStyle & ~(WS_CHILD | WS_CLIPSIBLINGS | WS_CLIPCHILDREN)) | WS_POPUP;
+
+        HWND origParent = ::SetParent(m_viewWindow, 0);
+
+        if (!setWindowStyle(m_viewWindow, GWL_STYLE, newStyle)) {
+            ::SetParent(m_viewWindow, origParent);
+            return E_FAIL;
+        }
+
+        if (!setWindowStyle(m_viewWindow, GWL_EXSTYLE, newExStyle)) {
+            setWindowStyle(m_viewWindow, GWL_STYLE, origStyle);
+            ::SetParent(m_viewWindow, origParent);
+            return E_FAIL;
+        }
+    } else {
+        LONG_PTR newExStyle = origExStyle & ~WS_EX_LAYERED;
+        LONG_PTR newStyle = (origStyle & ~WS_POPUP) | WS_CHILD | WS_CLIPSIBLINGS | WS_CLIPCHILDREN;
+
+        if (!setWindowStyle(m_viewWindow, GWL_EXSTYLE, newExStyle))
+            return E_FAIL;
+
+        if (!setWindowStyle(m_viewWindow, GWL_STYLE, newStyle)) {
+            setWindowStyle(m_viewWindow, GWL_EXSTYLE, origExStyle);
+            return E_FAIL;
+        }
+
+        ::SetParent(m_viewWindow, m_hostWindow ? m_hostWindow : HWND_MESSAGE);
+    }
+
+    // MSDN indicates that SetWindowLongPtr doesn't take effect for some settings until a
+    // SetWindowPos is called.
+    ::SetWindowPos(m_viewWindow, 0, rect.left, rect.top, rect.right - rect.left, rect.bottom - rect.top,
+        SWP_NOMOVE | SWP_NOSIZE | SWP_NOZORDER | SWP_FRAMECHANGED);
+
+    m_usesLayeredWindow = usesLayeredWindow;
+    return S_OK;
+}
+
+HRESULT WebView::usesLayeredWindow(BOOL* usesLayeredWindow)
+{
+    if (!usesLayeredWindow)
+        return E_POINTER;
+
+    *usesLayeredWindow = this->usesLayeredWindow() ? TRUE : FALSE;
     return S_OK;
 }
 
