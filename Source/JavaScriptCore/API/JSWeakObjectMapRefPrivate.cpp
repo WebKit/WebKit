@@ -68,6 +68,13 @@ JSObjectRef JSWeakObjectMapGet(JSContextRef ctx, JSWeakObjectMapRef map, void* k
     return toRef(static_cast<JSObject*>(map->map().get(key)));
 }
 
+void JSWeakObjectMapRemove(JSContextRef ctx, JSWeakObjectMapRef map, void* key)
+{
+    ExecState* exec = toJS(ctx);
+    APIEntryShim entryShim(exec);
+    map->map().take(key);
+}
+
 // We need to keep this function in the build to keep the nightlies running.
 JS_EXPORT bool JSWeakObjectMapClear(JSContextRef, JSWeakObjectMapRef, void*, JSObjectRef);
 bool JSWeakObjectMapClear(JSContextRef, JSWeakObjectMapRef, void*, JSObjectRef)

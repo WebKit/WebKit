@@ -87,6 +87,7 @@ _JSValueUnprotect
 _JSWeakObjectMapClear
 _JSWeakObjectMapCreate
 _JSWeakObjectMapGet
+_JSWeakObjectMapRemove
 _JSWeakObjectMapSet
 _WTFLog
 _WTFLogVerbose

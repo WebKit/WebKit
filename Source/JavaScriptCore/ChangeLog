@@ -1,3 +1,16 @@
+2011-04-27  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Geoffrey Garen.
+
+        Add ability to remove keys from weakmap API
+        https://bugs.webkit.org/show_bug.cgi?id=59645
+
+        Add JSWeakObjectMapRemove API
+
+        * API/JSWeakObjectMapRefPrivate.cpp:
+        * API/JSWeakObjectMapRefPrivate.h:
+        * JavaScriptCore.exp:
+
 2011-04-27  Adam Barth  <abarth@webkit.org>
 
         Reviewed by David Levin.

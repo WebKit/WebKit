@@ -76,6 +76,15 @@ JS_EXPORT void JSWeakObjectMapSet(JSContextRef ctx, JSWeakObjectMapRef map, void
  */
 JS_EXPORT JSObjectRef JSWeakObjectMapGet(JSContextRef ctx, JSWeakObjectMapRef map, void* key);
 
+/*!
+ @function
+ @abstract Removes the entry for the given key if the key is present, otherwise it has no effect.
+ @param ctx The execution context to use.
+ @param map The map to use.
+ @param key The key to remove.
+ */
+JS_EXPORT void JSWeakObjectMapRemove(JSContextRef ctx, JSWeakObjectMapRef map, void* key);
+
 #ifdef __cplusplus
 }
 #endif
