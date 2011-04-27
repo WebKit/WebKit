@@ -1,3 +1,11 @@
+2011-04-27  Mark Rowe  <mrowe@apple.com>
+
+        Rubber-stamped by Geoff Garen.
+
+        Don't look for results in a location that no longer exists.
+
+        * Scripts/old-run-webkit-tests:
+
 2011-04-27  Adrienne Walker  <enne@google.com>
 
         Unreviewed, add Chrome GPU folks to contributors that I'm tired of manually CCing

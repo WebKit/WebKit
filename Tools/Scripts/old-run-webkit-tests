@@ -208,14 +208,11 @@ my %previousWindowsPostMortemDebuggerValues;
 
 my $realPlatform;
 
-my @macPlatforms = ("mac-tiger", "mac-leopard", "mac-snowleopard", "mac");
+my @macPlatforms = ("mac-leopard", "mac-snowleopard", "mac");
 my @winPlatforms = ("win-xp", "win-vista", "win-7sp0", "win");
 
 if (isAppleMacWebKit()) {
-    if (isTiger()) {
-        $platform = "mac-tiger";
-        $tolerance = 1.0;
-    } elsif (isLeopard()) {
+    if (isLeopard()) {
         $platform = "mac-leopard";
         $tolerance = 0.1;
     } elsif (isSnowLeopard()) {
@@ -1219,32 +1216,6 @@ sub countAndPrintLeaks($$$)
     my @callStacksToExclude = (
         "Flash_EnforceLocalSecurity" # leaks in Flash plug-in code, rdar://problem/4449747
     );
-
-    if (isTiger()) {
-        # Leak list for the version of Tiger used on the build bot.
-        push @callStacksToExclude, (
-            "CFRunLoopRunSpecific \\| malloc_zone_malloc", "CFRunLoopRunSpecific \\| CFAllocatorAllocate ", # leak in CFRunLoopRunSpecific, rdar://problem/4670839
-            "CGImageSourceGetPropertiesAtIndex", # leak in ImageIO, rdar://problem/4628809
-            "FOGetCoveredUnicodeChars", # leak in ATS, rdar://problem/3943604
-            "GetLineDirectionPreference", "InitUnicodeUtilities", # leaks tool falsely reporting leak in CFNotificationCenterAddObserver, rdar://problem/4964790
-            "ICCFPrefWrapper::GetPrefDictionary", # leaks in Internet Config. code, rdar://problem/4449794
-            "NSHTTPURLProtocol setResponseHeader:", # leak in multipart/mixed-replace handling in Foundation, no Radar, but fixed in Leopard
-            "NSURLCache cachedResponseForRequest", # leak in CFURL cache, rdar://problem/4768430
-            "PCFragPrepareClosureFromFile", # leak in Code Fragment Manager, rdar://problem/3426998
-            "WebCore::Selection::toRange", # bug in 'leaks', rdar://problem/4967949
-            "WebCore::SubresourceLoader::create", # bug in 'leaks', rdar://problem/4985806
-            "_CFPreferencesDomainDeepCopyDictionary", # leak in CFPreferences, rdar://problem/4220786
-            "_objc_msgForward", # leak in NSSpellChecker, rdar://problem/4965278
-            "gldGetString", # leak in OpenGL, rdar://problem/5013699
-            "_setDefaultUserInfoFromURL", # leak in NSHTTPAuthenticator, rdar://problem/5546453 
-            "SSLHandshake", # leak in SSL, rdar://problem/5546440 
-            "SecCertificateCreateFromData", # leak in SSL code, rdar://problem/4464397
-        );
-        push @typesToExclude, (
-            "THRD", # bug in 'leaks', rdar://problem/3387783
-            "DRHT", # ditto (endian little hate i)
-        );
-    }
 
     if (isLeopard()) {
         # Leak list for the version of Leopard used on the build bot.
