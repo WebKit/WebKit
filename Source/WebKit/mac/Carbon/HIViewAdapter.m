@@ -134,14 +134,14 @@ static void _webkit_NSView_setNeedsDisplay(id self, SEL _cmd, BOOL flag)
     }
 }
 
-static void _webkit_NSView_setNeedsDisplayInRect(NSView *self, SEL _cmd, NSRect invalidRect)
+static void _webkit_NSView_setNeedsDisplayInRect(id self, SEL _cmd, NSRect invalidRect)
 {
     invalidRect = NSUnionRect(invalidRect, [self _dirtyRect]);
     oldNSViewSetNeedsDisplayInRectIMP(self, _cmd, invalidRect);
     
     if (!NSIsEmptyRect(invalidRect)) {
         HIViewRef hiView = NULL;
-        NSRect targetBounds = [self bounds];
+        NSRect targetBounds = [(NSView *)self bounds];
         NSView *view = self;
         
         while (view) {

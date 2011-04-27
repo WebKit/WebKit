@@ -1,5 +1,12 @@
 2011-04-27  Anders Carlsson  <andersca@apple.com>
 
+        Follow-up Leopard build fix.
+
+        * Carbon/HIViewAdapter.m:
+        (_webkit_NSView_setNeedsDisplayInRect):
+
+2011-04-27  Anders Carlsson  <andersca@apple.com>
+
         More clang++ 32-bit build fixes.
 
         * Carbon/CarbonWindowAdapter.mm:
