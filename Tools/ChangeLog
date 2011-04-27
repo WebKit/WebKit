@@ -1,3 +1,23 @@
+2011-04-27  Tony Chang  <tony@chromium.org>
+
+        Reviewed by Ojan Vafai.
+
+        lazily autoinstall thirdparty python libraries
+        https://bugs.webkit.org/show_bug.cgi?id=55723
+
+        This helps by only having pywebsocket installed when the bots run.  It
+        doesn't help much for devs since webkit-patch pulls in almost everything.
+
+        * Scripts/webkitpy/common/net/bugzilla/bugzilla.py:
+        * Scripts/webkitpy/common/net/buildbot/buildbot.py:
+        * Scripts/webkitpy/common/net/networktransaction.py:
+        * Scripts/webkitpy/common/net/networktransaction_unittest.py:
+        * Scripts/webkitpy/common/net/statusserver.py:
+        * Scripts/webkitpy/layout_tests/port/websocket_server.py:
+        * Scripts/webkitpy/thirdparty/__init__.py: Add an import hook so we can install based on
+            the import command rather than just installing everything.
+        * Scripts/webkitpy/thirdparty/__init___unittest.py: Added.
+
 2011-04-27  Girish Ramakrishnan  <girish@forwardbias.in>
 
         Add my IRC nick.

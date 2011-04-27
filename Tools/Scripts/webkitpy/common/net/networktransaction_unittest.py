@@ -30,7 +30,6 @@ import unittest
 
 from webkitpy.common.net.networktransaction import NetworkTransaction, NetworkTimeout
 from webkitpy.common.system.logtesting import LoggingTestCase
-from webkitpy.thirdparty.autoinstalled.mechanize import HTTPError
 
 
 class NetworkTransactionTest(LoggingTestCase):
@@ -59,10 +58,12 @@ class NetworkTransactionTest(LoggingTestCase):
     def _raise_500_error(self):
         self._run_count += 1
         if self._run_count < 3:
+            from webkitpy.thirdparty.autoinstalled.mechanize import HTTPError
             raise HTTPError("http://example.com/", 500, "internal server error", None, None)
         return 42
 
     def _raise_404_error(self):
+        from webkitpy.thirdparty.autoinstalled.mechanize import HTTPError
         raise HTTPError("http://foo.com/", 404, "not found", None, None)
 
     def test_retry(self):

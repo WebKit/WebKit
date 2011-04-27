@@ -29,7 +29,6 @@
 import logging
 import time
 
-from webkitpy.thirdparty.autoinstalled import mechanize
 from webkitpy.common.system.deprecated_logging import log
 
 
@@ -50,6 +49,7 @@ class NetworkTransaction(object):
     def run(self, request):
         self._total_sleep = 0
         self._backoff_seconds = self._initial_backoff_seconds
+        from webkitpy.thirdparty.autoinstalled import mechanize
         while True:
             try:
                 return request()

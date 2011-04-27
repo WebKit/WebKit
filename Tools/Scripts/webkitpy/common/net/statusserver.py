@@ -30,7 +30,6 @@
 
 from webkitpy.common.net.networktransaction import NetworkTransaction
 from webkitpy.common.system.deprecated_logging import log
-from webkitpy.thirdparty.autoinstalled.mechanize import Browser
 from webkitpy.thirdparty.BeautifulSoup import BeautifulSoup
 
 import logging
@@ -46,6 +45,7 @@ class StatusServer:
 
     def __init__(self, host=default_host, browser=None, bot_id=None):
         self.set_host(host)
+        from webkitpy.thirdparty.autoinstalled.mechanize import Browser
         self._browser = browser or Browser()
         self.set_bot_id(bot_id)
 

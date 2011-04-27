@@ -46,7 +46,6 @@ from webkitpy.common.net.testoutputset import TestOutputSet
 from webkitpy.common.system.logutils import get_logger
 from webkitpy.common.system.zipfileset import ZipFileSet
 from webkitpy.thirdparty.BeautifulSoup import BeautifulSoup
-from webkitpy.thirdparty.autoinstalled.mechanize import Browser
 
 _log = get_logger(__file__)
 
@@ -57,6 +56,7 @@ class Builder(object):
         self._buildbot = buildbot
         self._builds_cache = {}
         self._revision_to_build_number = None
+        from webkitpy.thirdparty.autoinstalled.mechanize import Browser
         self._browser = Browser()
         self._browser.set_handle_robots(False) # The builder pages are excluded by robots.txt
 

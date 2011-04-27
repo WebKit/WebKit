@@ -46,7 +46,6 @@ import factory
 import http_server
 
 from webkitpy.common.system.executive import Executive
-from webkitpy.thirdparty.autoinstalled.pywebsocket import mod_pywebsocket
 
 
 _log = logging.getLogger("webkitpy.layout_tests.port.websocket_server")
@@ -157,6 +156,7 @@ class PyWebSocket(http_server.Lighttpd):
         output_log = os.path.join(self._output_dir, log_file_name + "-out.txt")
         self._wsout = codecs.open(output_log, "w", "utf-8")
 
+        from webkitpy.thirdparty.autoinstalled.pywebsocket import mod_pywebsocket
         python_interp = sys.executable
         pywebsocket_base = os.path.join(
             os.path.dirname(os.path.dirname(os.path.dirname(

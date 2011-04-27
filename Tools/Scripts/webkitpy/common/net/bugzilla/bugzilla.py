@@ -45,7 +45,6 @@ from webkitpy.common.system.deprecated_logging import log
 from webkitpy.common.config import committers
 from webkitpy.common.net.credentials import Credentials
 from webkitpy.common.system.user import User
-from webkitpy.thirdparty.autoinstalled.mechanize import Browser
 from webkitpy.thirdparty.BeautifulSoup import BeautifulSoup, BeautifulStoneSoup, SoupStrainer
 
 
@@ -215,6 +214,7 @@ class Bugzilla(object):
 
         # FIXME: We should use some sort of Browser mock object when in dryrun
         # mode (to prevent any mistakes).
+        from webkitpy.thirdparty.autoinstalled.mechanize import Browser
         self.browser = Browser()
         # Ignore bugs.webkit.org/robots.txt until we fix it to allow this
         # script.
