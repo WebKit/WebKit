@@ -114,10 +114,10 @@ void FontPlatformData::platformDataInit(HFONT font, float size, HDC hdc, WCHAR* 
     m_cgFont.adoptCF(CGFontCreateWithPlatformFont(&logfont));
 }
 
-FontPlatformData::FontPlatformData(HFONT hfont, CGFontRef font, float size, bool bold, bool oblique, bool useGDI, FontOrientation orientation)
+FontPlatformData::FontPlatformData(HFONT hfont, CGFontRef font, float size, bool bold, bool oblique, bool useGDI)
     : m_syntheticBold(bold)
     , m_syntheticOblique(oblique)
-    , m_orientation(orientation)
+    , m_orientation(Horizontal)
     , m_textOrientation(TextOrientationVerticalRight)
     , m_size(size)
     , m_widthVariant(RegularWidth)

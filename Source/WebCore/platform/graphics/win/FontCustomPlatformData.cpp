@@ -59,24 +59,16 @@ FontCustomPlatformData::~FontCustomPlatformData()
     }
 }
 
-FontPlatformData FontCustomPlatformData::fontPlatformData(int size, bool bold, bool italic, FontOrientation orientation, TextOrientation, FontWidthVariant, FontRenderingMode renderingMode)
+FontPlatformData FontCustomPlatformData::fontPlatformData(int size, bool bold, bool italic, FontOrientation, TextOrientation, FontWidthVariant, FontRenderingMode renderingMode)
 {
     ASSERT(m_fontReference);
     ASSERT(T2embedLibrary());
 
     LOGFONT& logFont = *static_cast<LOGFONT*>(malloc(sizeof(LOGFONT)));
-    if (m_name.isNull()) {
+    if (m_name.isNull())
         TTGetNewFontName(&m_fontReference, logFont.lfFaceName, LF_FACESIZE, 0, 0);
-        m_name = logFont.lfFaceName;
-    }
-
-    // Take the orientation into consideration. For vertical: add "@" in front of the family name. (Windows)
-    String newName;
-    if (orientation == Vertical && !m_name.startsWith("@"))
-        newName = "@" + m_name; 
     else
-        newName = m_name;
-    memcpy(logFont.lfFaceName, newName.charactersWithNullTermination(), sizeof(logFont.lfFaceName[0]) * min(static_cast<size_t>(LF_FACESIZE), 1 + newName.length()));
+        memcpy(logFont.lfFaceName, m_name.charactersWithNullTermination(), sizeof(logFont.lfFaceName[0]) * min(static_cast<size_t>(LF_FACESIZE), 1 + m_name.length()));
 
     logFont.lfHeight = -size;
     if (renderingMode == NormalRenderingMode)
@@ -96,7 +88,7 @@ FontPlatformData FontCustomPlatformData::fontPlatformData(int size, bool bold, b
     HFONT hfont = CreateFontIndirect(&logFont);
 
     RetainPtr<CGFontRef> cgFont(AdoptCF, CGFontCreateWithPlatformFont(&logFont));
-    return FontPlatformData(hfont, cgFont.get(), size, bold, italic, renderingMode == AlternateRenderingMode, orientation);
+    return FontPlatformData(hfont, cgFont.get(), size, bold, italic, renderingMode == AlternateRenderingMode);
 }
 
 // Streams the concatenation of a header and font data.

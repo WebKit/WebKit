@@ -196,9 +196,9 @@ public:
 #endif
 #endif
 #if PLATFORM(WIN)
-    FontPlatformData(HFONT, float size, bool syntheticBold, bool syntheticOblique, bool useGDI, FontOrientation = Horizontal);
+    FontPlatformData(HFONT, float size, bool syntheticBold, bool syntheticOblique, bool useGDI);
 #if USE(CG)
-    FontPlatformData(HFONT, CGFontRef, float size, bool syntheticBold, bool syntheticOblique, bool useGDI, FontOrientation = Horizontal);
+    FontPlatformData(HFONT, CGFontRef, float size, bool syntheticBold, bool syntheticOblique, bool useGDI);
 #endif
 #endif
 #if USE(CAIRO)
