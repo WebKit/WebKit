@@ -84,7 +84,11 @@ public:
 template <typename T>
 class ApplyPropertyDefault : public ApplyPropertyBase {
 public:
-    ApplyPropertyDefault(T (RenderStyle::*getter)() const, void (RenderStyle::*setter)(T), T (*initial)())
+    typedef T (RenderStyle::*GetterFunction)() const;
+    typedef void (RenderStyle::*SetterFunction)(T);
+    typedef T (*InitialFunction)();
+
+    ApplyPropertyDefault(GetterFunction getter, SetterFunction setter, InitialFunction initial)
         : m_getter(getter)
         , m_setter(setter)
         , m_initial(initial)
@@ -108,69 +112,57 @@ public:
     }
 
 protected:
-    T (RenderStyle::*m_getter)() const;
-    void (RenderStyle::*m_setter)(T);
-    T (*m_initial)();
+    GetterFunction m_getter;
+    SetterFunction m_setter;
+    InitialFunction m_initial;
 };
 
 // CSSPropertyColor
-class ApplyPropertyColorBase : public ApplyPropertyBase {
+class ApplyPropertyColor : public ApplyPropertyBase {
 public:
-    ApplyPropertyColorBase(const Color& (RenderStyle::*getter)() const, const Color& (RenderStyle::*defaultValue)() const, void (RenderStyle::*setter)(const Color&))
+    typedef const Color& (RenderStyle::*GetterFunction)() const;
+    typedef void (RenderStyle::*SetterFunction)(const Color&);
+    typedef const Color& (RenderStyle::*DefaultFunction)() const;
+    typedef Color (*InitialFunction)();
+
+    ApplyPropertyColor(GetterFunction getter, SetterFunction setter, DefaultFunction defaultFunction, InitialFunction initialFunction = 0)
         : m_getter(getter)
-        , m_defaultValue(defaultValue)
         , m_setter(setter)
+        , m_default(defaultFunction)
+        , m_initial(initialFunction)
     {
     }
+
     virtual void applyInheritValue(CSSStyleSelector* selector) const
     {
         const Color& color = (selector->parentStyle()->*m_getter)();
-        if (m_defaultValue && !color.isValid())
-            (selector->style()->*m_setter)((selector->parentStyle()->*m_defaultValue)());
+        if (m_default && !color.isValid())
+            (selector->style()->*m_setter)((selector->parentStyle()->*m_default)());
         else
             (selector->style()->*m_setter)(color);
     }
-    virtual void applyInitialValue(CSSStyleSelector* selector) const
-    {
-        Color color;
-        (selector->style()->*m_setter)(color);
-    }
-    virtual void applyValue(CSSStyleSelector* selector, CSSValue* value) const
-    {
-        if (value->isPrimitiveValue())
-            (selector->style()->*m_setter)(selector->getColorFromPrimitiveValue(static_cast<CSSPrimitiveValue*>(value)));
-    }
-protected:
-    const Color& (RenderStyle::*m_getter)() const;
-    const Color& (RenderStyle::*m_defaultValue)() const;
-    void (RenderStyle::*m_setter)(const Color&);
-};
-
-class ApplyPropertyColor : public ApplyPropertyColorBase {
-public:
-    ApplyPropertyColor(const Color& (RenderStyle::*getter)() const, void (RenderStyle::*setter)(const Color&), Color (*initialValue)())
-        : ApplyPropertyColorBase(getter, 0, setter)
-        , m_initialValue(initialValue)
-    {
-    }
 
     virtual void applyInitialValue(CSSStyleSelector* selector) const
     {
-        (selector->style()->*m_setter)(m_initialValue());
+        (selector->style()->*m_setter)(m_initial ? m_initial() : Color());
     }
 
     virtual void applyValue(CSSStyleSelector* selector, CSSValue* value) const
     {
         if (!value->isPrimitiveValue())
             return;
-
-        if ((static_cast<CSSPrimitiveValue*>(value))->getIdent() == CSSValueCurrentcolor)
+        CSSPrimitiveValue* primitiveValue = static_cast<CSSPrimitiveValue*>(value);
+        if (m_initial && primitiveValue->getIdent() == CSSValueCurrentcolor)
             applyInheritValue(selector);
         else
-            ApplyPropertyColorBase::applyValue(selector, value);
+            (selector->style()->*m_setter)(selector->getColorFromPrimitiveValue(primitiveValue));
     }
-protected:
-    Color (*m_initialValue)();
+
+private:
+    GetterFunction m_getter;
+    SetterFunction m_setter;
+    DefaultFunction m_default;
+    InitialFunction m_initial;
 };
 
 // CSSPropertyDirection
@@ -294,7 +286,7 @@ CSSStyleApplyProperty::CSSStyleApplyProperty()
     for (int i = 0; i < numCSSProperties; ++i)
        m_propertyMap[i] = 0;
 
-    setPropertyValue(CSSPropertyColor, new ApplyPropertyColor(&RenderStyle::color, &RenderStyle::setColor, RenderStyle::initialColor));
+    setPropertyValue(CSSPropertyColor, new ApplyPropertyColor(&RenderStyle::color, &RenderStyle::setColor, 0, RenderStyle::initialColor));
     setPropertyValue(CSSPropertyDirection, new ApplyPropertyDirection(&RenderStyle::direction, &RenderStyle::setDirection, RenderStyle::initialDirection));
 
     setPropertyValue(CSSPropertyBackgroundAttachment, new ApplyPropertyFillLayer<EFillAttachment>(CSSPropertyBackgroundAttachment, BackgroundFillLayer, &RenderStyle::accessBackgroundLayers, &RenderStyle::backgroundLayers,
@@ -355,27 +347,27 @@ CSSStyleApplyProperty::CSSStyleApplyProperty()
                     &FillLayer::isRepeatYSet, &FillLayer::repeatY, &FillLayer::setRepeatY, &FillLayer::clearRepeatY, &FillLayer::initialFillRepeatY, &CSSStyleSelector::mapFillRepeatY));
     setPropertyValue(CSSPropertyWebkitMaskRepeat, new ApplyPropertyExpandingSuppressValue(propertyValue(CSSPropertyBackgroundRepeatX), propertyValue(CSSPropertyBackgroundRepeatY)));
 
-    setPropertyValue(CSSPropertyBackgroundColor, new ApplyPropertyColorBase(&RenderStyle::backgroundColor, 0, &RenderStyle::setBackgroundColor));
-    setPropertyValue(CSSPropertyBorderBottomColor, new ApplyPropertyColorBase(&RenderStyle::borderBottomColor, &RenderStyle::color, &RenderStyle::setBorderBottomColor));
-    setPropertyValue(CSSPropertyBorderLeftColor, new ApplyPropertyColorBase(&RenderStyle::borderLeftColor, &RenderStyle::color, &RenderStyle::setBorderLeftColor));
-    setPropertyValue(CSSPropertyBorderRightColor, new ApplyPropertyColorBase(&RenderStyle::borderRightColor, &RenderStyle::color, &RenderStyle::setBorderRightColor));
-    setPropertyValue(CSSPropertyBorderTopColor, new ApplyPropertyColorBase(&RenderStyle::borderTopColor, &RenderStyle::color, &RenderStyle::setBorderTopColor));
+    setPropertyValue(CSSPropertyBackgroundColor, new ApplyPropertyColor(&RenderStyle::backgroundColor, &RenderStyle::setBackgroundColor, 0));
+    setPropertyValue(CSSPropertyBorderBottomColor, new ApplyPropertyColor(&RenderStyle::borderBottomColor, &RenderStyle::setBorderBottomColor, &RenderStyle::color));
+    setPropertyValue(CSSPropertyBorderLeftColor, new ApplyPropertyColor(&RenderStyle::borderLeftColor, &RenderStyle::setBorderLeftColor, &RenderStyle::color));
+    setPropertyValue(CSSPropertyBorderRightColor, new ApplyPropertyColor(&RenderStyle::borderRightColor, &RenderStyle::setBorderRightColor, &RenderStyle::color));
+    setPropertyValue(CSSPropertyBorderTopColor, new ApplyPropertyColor(&RenderStyle::borderTopColor, &RenderStyle::setBorderTopColor, &RenderStyle::color));
 
     setPropertyValue(CSSPropertyBorderTopStyle, new ApplyPropertyDefault<EBorderStyle>(&RenderStyle::borderTopStyle, &RenderStyle::setBorderTopStyle, &RenderStyle::initialBorderStyle));
     setPropertyValue(CSSPropertyBorderRightStyle, new ApplyPropertyDefault<EBorderStyle>(&RenderStyle::borderRightStyle, &RenderStyle::setBorderRightStyle, &RenderStyle::initialBorderStyle));
     setPropertyValue(CSSPropertyBorderBottomStyle, new ApplyPropertyDefault<EBorderStyle>(&RenderStyle::borderBottomStyle, &RenderStyle::setBorderBottomStyle, &RenderStyle::initialBorderStyle));
     setPropertyValue(CSSPropertyBorderLeftStyle, new ApplyPropertyDefault<EBorderStyle>(&RenderStyle::borderLeftStyle, &RenderStyle::setBorderLeftStyle, &RenderStyle::initialBorderStyle));
 
-    setPropertyValue(CSSPropertyOutlineColor, new ApplyPropertyColorBase(&RenderStyle::outlineColor, &RenderStyle::color, &RenderStyle::setOutlineColor));
+    setPropertyValue(CSSPropertyOutlineColor, new ApplyPropertyColor(&RenderStyle::outlineColor, &RenderStyle::setOutlineColor, &RenderStyle::color));
 
     setPropertyValue(CSSPropertyOverflowX, new ApplyPropertyDefault<EOverflow>(&RenderStyle::overflowX, &RenderStyle::setOverflowX, &RenderStyle::initialOverflowX));
     setPropertyValue(CSSPropertyOverflowY, new ApplyPropertyDefault<EOverflow>(&RenderStyle::overflowY, &RenderStyle::setOverflowY, &RenderStyle::initialOverflowY));
     setPropertyValue(CSSPropertyOverflow, new ApplyPropertyExpanding(propertyValue(CSSPropertyOverflowX), propertyValue(CSSPropertyOverflowY)));
 
-    setPropertyValue(CSSPropertyWebkitColumnRuleColor, new ApplyPropertyColorBase(&RenderStyle::columnRuleColor, &RenderStyle::color, &RenderStyle::setColumnRuleColor));
-    setPropertyValue(CSSPropertyWebkitTextEmphasisColor, new ApplyPropertyColorBase(&RenderStyle::textEmphasisColor, &RenderStyle::color, &RenderStyle::setTextEmphasisColor));
-    setPropertyValue(CSSPropertyWebkitTextFillColor, new ApplyPropertyColorBase(&RenderStyle::textFillColor, &RenderStyle::color, &RenderStyle::setTextFillColor));
-    setPropertyValue(CSSPropertyWebkitTextStrokeColor, new ApplyPropertyColorBase(&RenderStyle::textStrokeColor, &RenderStyle::color, &RenderStyle::setTextStrokeColor));
+    setPropertyValue(CSSPropertyWebkitColumnRuleColor, new ApplyPropertyColor(&RenderStyle::columnRuleColor, &RenderStyle::setColumnRuleColor, &RenderStyle::color));
+    setPropertyValue(CSSPropertyWebkitTextEmphasisColor, new ApplyPropertyColor(&RenderStyle::textEmphasisColor, &RenderStyle::setTextEmphasisColor, &RenderStyle::color));
+    setPropertyValue(CSSPropertyWebkitTextFillColor, new ApplyPropertyColor(&RenderStyle::textFillColor, &RenderStyle::setTextFillColor, &RenderStyle::color));
+    setPropertyValue(CSSPropertyWebkitTextStrokeColor, new ApplyPropertyColor(&RenderStyle::textStrokeColor, &RenderStyle::setTextStrokeColor, &RenderStyle::color));
 }
 
 
