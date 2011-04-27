@@ -424,7 +424,7 @@ bool TestController::runTest(const char* test)
 
     m_state = RunningTest;
 
-    m_currentInvocation.set(new TestInvocation(pathOrURL));
+    m_currentInvocation = adoptPtr(new TestInvocation(pathOrURL));
     if (m_dumpPixels)
         m_currentInvocation->setIsPixelTest(expectedPixelHash);    
 
