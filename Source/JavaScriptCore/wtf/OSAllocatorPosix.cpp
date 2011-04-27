@@ -56,6 +56,8 @@ void* OSAllocator::reserveAndCommit(size_t bytes, Usage usage, bool writable, bo
 
 #if OS(DARWIN)
     int fd = usage;
+#else
+    int fd = -1;
 #endif
 
     void* result = 0;
