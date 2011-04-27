@@ -1,3 +1,14 @@
+2011-04-27  Adrienne Walker  <enne@google.com>
+
+        [chromium] Unreviewed, rollout r85075 (scissor rect changes)
+        https://bugs.webkit.org/show_bug.cgi?id=59020
+
+        * compositing/flat-with-transformed-child-expected.txt: Removed.
+        * compositing/flat-with-transformed-child.html: Removed.
+        * platform/chromium-gpu-linux/compositing/flat-with-transformed-child-expected.checksum: Removed.
+        * platform/chromium-gpu-linux/compositing/flat-with-transformed-child-expected.png: Removed.
+        * platform/chromium/test_expectations.txt:
+
 2011-04-27  Csaba Osztrogonác  <ossy@webkit.org>
 
         [Qt][Mac] Unreviewed. Add more failing tests to the Skipped list.

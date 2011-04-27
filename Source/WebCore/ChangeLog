@@ -1,3 +1,11 @@
+2011-04-27  Adrienne Walker  <enne@google.com>
+
+        [chromium] Unreviewed, rollout r85075 (scissor rect changes)
+        https://bugs.webkit.org/show_bug.cgi?id=59020
+
+        * platform/graphics/chromium/LayerRendererChromium.cpp:
+        (WebCore::LayerRendererChromium::updatePropertiesAndRenderSurfaces):
+
 2011-04-27  Darin Adler  <darin@apple.com>
 
         Reviewed by David Levin.
