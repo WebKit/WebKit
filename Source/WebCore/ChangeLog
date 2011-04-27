@@ -1,3 +1,40 @@
+2011-04-27  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by David Levin.
+
+        Fix OwnPtr issues in IndexedDB
+        https://bugs.webkit.org/show_bug.cgi?id=59656
+
+        I didn't do an exhaustive review of this code, but I fixed the problems
+        caught by turning on strict OwnPtr and all their antecedents.  This
+        patch is entirely tighter bookkeeping.  There shouldn't be any actual
+        behavior change.
+
+        * platform/leveldb/LevelDBDatabase.cpp:
+        (WebCore::LevelDBDatabase::LevelDBDatabase):
+        (WebCore::LevelDBDatabase::open):
+        (WebCore::LevelDBDatabase::createIterator):
+        * platform/leveldb/LevelDBDatabase.h:
+        * platform/leveldb/LevelDBIterator.cpp:
+        (WebCore::LevelDBIterator::LevelDBIterator):
+        * platform/leveldb/LevelDBIterator.h:
+        * storage/IDBLevelDBBackingStore.cpp:
+        (WebCore::IDBLevelDBBackingStore::IDBLevelDBBackingStore):
+        (WebCore::IDBLevelDBBackingStore::open):
+        (WebCore::getNewDatabaseId):
+        (WebCore::IDBLevelDBBackingStore::getObjectStores):
+        (WebCore::getNewObjectStoreId):
+        (WebCore::deleteRange):
+        (WebCore::IDBLevelDBBackingStore::nextAutoIncrementNumber):
+        (WebCore::IDBLevelDBBackingStore::forEachObjectStoreRecord):
+        (WebCore::IDBLevelDBBackingStore::getIndexes):
+        (WebCore::getNewIndexId):
+        (WebCore::findGreatestKeyLessThan):
+        (WebCore::IDBLevelDBBackingStore::getPrimaryKeyViaIndex):
+        (WebCore::IDBLevelDBBackingStore::keyExistsInIndex):
+        (WebCore::findLastIndexKeyEqualTo):
+        * storage/IDBLevelDBBackingStore.h:
+
 2011-04-19  MORITA Hajime  <morrita@google.com>
 
         Reviewed by Tony Chang.

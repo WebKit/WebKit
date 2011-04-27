@@ -74,7 +74,7 @@ public:
     virtual PassRefPtr<Transaction> createTransaction();
 
 private:
-    IDBLevelDBBackingStore(String identifier, IDBFactoryBackendImpl*, LevelDBDatabase*);
+    IDBLevelDBBackingStore(String identifier, IDBFactoryBackendImpl*, PassOwnPtr<LevelDBDatabase>);
 
     String m_identifier;
     RefPtr<IDBFactoryBackendImpl> m_factory;

@@ -115,7 +115,7 @@ static bool setUpMetadata(LevelDBDatabase* db)
     return true;
 }
 
-IDBLevelDBBackingStore::IDBLevelDBBackingStore(String identifier, IDBFactoryBackendImpl* factory, LevelDBDatabase* db)
+IDBLevelDBBackingStore::IDBLevelDBBackingStore(String identifier, IDBFactoryBackendImpl* factory, PassOwnPtr<LevelDBDatabase> db)
     : m_identifier(identifier)
     , m_factory(factory)
     , m_db(db)
@@ -134,28 +134,28 @@ PassRefPtr<IDBBackingStore> IDBLevelDBBackingStore::open(SecurityOrigin* securit
 
     if (pathBase.isEmpty()) {
         ASSERT_NOT_REACHED(); // FIXME: We need to handle this case for incognito and DumpRenderTree.
-        return 0;
+        return PassRefPtr<IDBBackingStore>();
     }
 
     if (!makeAllDirectories(pathBase)) {
         LOG_ERROR("Unable to create IndexedDB database path %s", pathBase.utf8().data());
-        return 0;
+        return PassRefPtr<IDBBackingStore>();
     }
     // FIXME: We should eventually use the same LevelDB database for all origins.
     String path = pathByAppendingComponent(pathBase, securityOrigin->databaseIdentifier() + ".indexeddb.leveldb");
 
-    OwnPtr<LevelDBComparator> comparator(new Comparator());
-    LevelDBDatabase* db = LevelDBDatabase::open(path, comparator.get());
+    OwnPtr<LevelDBComparator> comparator = adoptPtr(new Comparator());
+    OwnPtr<LevelDBDatabase> db = LevelDBDatabase::open(path, comparator.get());
     if (!db)
-        return 0;
+        return PassRefPtr<IDBBackingStore>();
 
     // FIXME: Handle comparator name changes.
 
-    RefPtr<IDBLevelDBBackingStore> backingStore(adoptRef(new IDBLevelDBBackingStore(fileIdentifier, factory, db)));
+    RefPtr<IDBLevelDBBackingStore> backingStore(adoptRef(new IDBLevelDBBackingStore(fileIdentifier, factory, db.release())));
     backingStore->m_comparator = comparator.release();
 
     if (!setUpMetadata(backingStore->m_db.get()))
-        return 0;
+        return PassRefPtr<IDBBackingStore>();
 
     return backingStore.release();
 }
@@ -180,7 +180,7 @@ static int64_t getNewDatabaseId(LevelDBDatabase* db)
     const Vector<char> freeListStartKey = DatabaseFreeListKey::encode(0);
     const Vector<char> freeListStopKey = DatabaseFreeListKey::encode(INT64_MAX);
 
-    OwnPtr<LevelDBIterator> it(db->newIterator());
+    OwnPtr<LevelDBIterator> it = db->createIterator();
     for (it->seek(freeListStartKey); it->isValid() && compareKeys(it->key(), freeListStopKey) < 0; it->next()) {
         const char *p = it->key().begin();
         const char *limit = it->key().end();
@@ -231,7 +231,7 @@ void IDBLevelDBBackingStore::getObjectStores(int64_t databaseId, Vector<int64_t>
     const Vector<char> startKey = ObjectStoreMetaDataKey::encode(databaseId, 1, 0);
     const Vector<char> stopKey = ObjectStoreMetaDataKey::encode(databaseId, INT64_MAX, 0);
 
-    OwnPtr<LevelDBIterator> it(m_db->newIterator());
+    OwnPtr<LevelDBIterator> it = m_db->createIterator();
     for (it->seek(startKey); it->isValid() && compareKeys(it->key(), stopKey) < 0; it->next()) {
         const char *p = it->key().begin();
         const char *limit = it->key().end();
@@ -288,7 +288,7 @@ static int64_t getNewObjectStoreId(LevelDBDatabase* db, int64_t databaseId)
     const Vector<char> freeListStartKey = ObjectStoreFreeListKey::encode(databaseId, 0);
     const Vector<char> freeListStopKey = ObjectStoreFreeListKey::encode(databaseId, INT64_MAX);
 
-    OwnPtr<LevelDBIterator> it(db->newIterator());
+    OwnPtr<LevelDBIterator> it = db->createIterator();
     for (it->seek(freeListStartKey); it->isValid() && compareKeys(it->key(), freeListStopKey) < 0; it->next()) {
         const char* p = it->key().begin();
         const char* limit = it->key().end();
@@ -379,7 +379,7 @@ bool IDBLevelDBBackingStore::createObjectStore(int64_t databaseId, const String&
 static bool deleteRange(LevelDBDatabase* db, const Vector<char>& begin, const Vector<char>& end)
 {
     // FIXME: LevelDB may be able to provide a bulk operation that we can do first.
-    OwnPtr<LevelDBIterator> it(db->newIterator());
+    OwnPtr<LevelDBIterator> it = db->createIterator();
     for (it->seek(begin); it->isValid() && compareKeys(it->key(), end) < 0; it->next()) {
         if (!db->remove(it->key()))
             return false;
@@ -511,7 +511,7 @@ double IDBLevelDBBackingStore::nextAutoIncrementNumber(int64_t databaseId, int64
     const Vector<char> startKey = ObjectStoreDataKey::encode(databaseId, objectStoreId, minIDBKey());
     const Vector<char> stopKey = ObjectStoreDataKey::encode(databaseId, objectStoreId, maxIDBKey());
 
-    OwnPtr<LevelDBIterator> it(m_db->newIterator());
+    OwnPtr<LevelDBIterator> it = m_db->createIterator();
 
     int maxNumericKey = 0;
 
@@ -558,7 +558,7 @@ bool IDBLevelDBBackingStore::forEachObjectStoreRecord(int64_t databaseId, int64_
     const Vector<char> startKey = ObjectStoreDataKey::encode(databaseId, objectStoreId, minIDBKey());
     const Vector<char> stopKey = ObjectStoreDataKey::encode(databaseId, objectStoreId, maxIDBKey());
 
-    OwnPtr<LevelDBIterator> it(m_db->newIterator());
+    OwnPtr<LevelDBIterator> it = m_db->createIterator();
     for (it->seek(startKey); it->isValid() && compareKeys(it->key(), stopKey) < 0; it->next()) {
         const char *p = it->key().begin();
         const char *limit = it->key().end();
@@ -587,7 +587,7 @@ void IDBLevelDBBackingStore::getIndexes(int64_t databaseId, int64_t objectStoreI
     const Vector<char> startKey = IndexMetaDataKey::encode(databaseId, objectStoreId, 0, 0);
     const Vector<char> stopKey = IndexMetaDataKey::encode(databaseId, objectStoreId + 1, 0, 0);
 
-    OwnPtr<LevelDBIterator> it(m_db->newIterator());
+    OwnPtr<LevelDBIterator> it = m_db->createIterator();
     for (it->seek(startKey); it->isValid() && compareKeys(it->key(), stopKey) < 0; it->next()) {
         const char* p = it->key().begin();
         const char* limit = it->key().end();
@@ -627,7 +627,7 @@ static int64_t getNewIndexId(LevelDBDatabase* db, int64_t databaseId, int64_t ob
     const Vector<char> startKey = IndexFreeListKey::encode(databaseId, objectStoreId, 0);
     const Vector<char> stopKey = IndexFreeListKey::encode(databaseId, objectStoreId, INT64_MAX);
 
-    OwnPtr<LevelDBIterator> it(db->newIterator());
+    OwnPtr<LevelDBIterator> it = db->createIterator();
     for (it->seek(startKey); it->isValid() && compareKeys(it->key(), stopKey) < 0; it->next()) {
         const char* p = it->key().begin();
         const char* limit = it->key().end();
@@ -710,7 +710,7 @@ bool IDBLevelDBBackingStore::putIndexDataForRecord(int64_t databaseId, int64_t o
 
 static bool findGreatestKeyLessThan(LevelDBDatabase* db, const Vector<char>& target, Vector<char>& foundKey)
 {
-    OwnPtr<LevelDBIterator> it(db->newIterator());
+    OwnPtr<LevelDBIterator> it = db->createIterator();
     it->seek(target);
 
     if (!it->isValid()) {
@@ -759,7 +759,7 @@ static bool versionExists(LevelDBDatabase* db, int64_t databaseId, int64_t objec
 PassRefPtr<IDBKey> IDBLevelDBBackingStore::getPrimaryKeyViaIndex(int64_t databaseId, int64_t objectStoreId, int64_t indexId, const IDBKey& key)
 {
     const Vector<char> leveldbKey = IndexDataKey::encode(databaseId, objectStoreId, indexId, key, 0);
-    OwnPtr<LevelDBIterator> it(m_db->newIterator());
+    OwnPtr<LevelDBIterator> it = m_db->createIterator();
     it->seek(leveldbKey);
 
     for (;;) {
@@ -791,7 +791,7 @@ PassRefPtr<IDBKey> IDBLevelDBBackingStore::getPrimaryKeyViaIndex(int64_t databas
 bool IDBLevelDBBackingStore::keyExistsInIndex(int64_t databaseId, int64_t objectStoreId, int64_t indexId, const IDBKey& key)
 {
     const Vector<char> levelDBKey = IndexDataKey::encode(databaseId, objectStoreId, indexId, key, 0);
-    OwnPtr<LevelDBIterator> it(m_db->newIterator());
+    OwnPtr<LevelDBIterator> it = m_db->createIterator();
 
     bool found = false;
 
@@ -840,7 +840,7 @@ protected:
 
 bool CursorImplCommon::firstSeek()
 {
-    m_iterator = m_db->newIterator();
+    m_iterator = m_db->createIterator();
 
     if (m_forward)
         m_iterator->seek(m_lowKey);
@@ -1117,7 +1117,7 @@ bool IndexCursorImpl::loadCurrentRow()
 
 static bool findLastIndexKeyEqualTo(LevelDBDatabase* db, const Vector<char>& target, Vector<char>& foundKey)
 {
-    OwnPtr<LevelDBIterator> it(db->newIterator());
+    OwnPtr<LevelDBIterator> it = db->createIterator();
     it->seek(target);
 
     if (!it->isValid())

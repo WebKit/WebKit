@@ -28,9 +28,10 @@
 
 #if ENABLE(LEVELDB)
 
-#include "PlatformString.h"
-#include <OwnPtr.h>
-#include <Vector.h>
+#include <wtf/OwnPtr.h>
+#include <wtf/PassOwnPtr.h>
+#include <wtf/Vector.h>
+#include <wtf/text/WTFString.h>
 
 namespace leveldb {
 class Comparator;
@@ -45,13 +46,13 @@ class LevelDBSlice;
 
 class LevelDBDatabase {
 public:
-    static LevelDBDatabase* open(const String& fileName, const LevelDBComparator*);
+    static PassOwnPtr<LevelDBDatabase> open(const String& fileName, const LevelDBComparator*);
     ~LevelDBDatabase();
 
     bool put(const LevelDBSlice& key, const Vector<char>& value);
     bool remove(const LevelDBSlice& key);
     bool get(const LevelDBSlice& key, Vector<char>& value);
-    LevelDBIterator* newIterator();
+    PassOwnPtr<LevelDBIterator> createIterator();
 
 private:
     LevelDBDatabase();
@@ -60,7 +61,7 @@ private:
     OwnPtr<leveldb::Comparator> m_comparatorAdapter;
 };
 
-} // namespace WebCore
+}
 
-#endif // ENABLE(LEVELDB)
-#endif // LevelDBDatabase_h
+#endif
+#endif

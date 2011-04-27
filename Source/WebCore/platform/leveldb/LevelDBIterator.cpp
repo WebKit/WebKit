@@ -30,6 +30,7 @@
 
 #include <leveldb/iterator.h>
 #include <leveldb/slice.h>
+#include <wtf/PassOwnPtr.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/WTFString.h>
 
@@ -39,7 +40,7 @@ LevelDBIterator::~LevelDBIterator()
 {
 }
 
-LevelDBIterator::LevelDBIterator(leveldb::Iterator* it)
+LevelDBIterator::LevelDBIterator(PassOwnPtr<leveldb::Iterator> it)
     : m_iterator(it)
 {
 }

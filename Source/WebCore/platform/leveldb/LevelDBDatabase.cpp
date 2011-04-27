@@ -88,7 +88,6 @@ private:
 }
 
 LevelDBDatabase::LevelDBDatabase()
-    : m_db(0)
 {
 }
 
@@ -96,11 +95,11 @@ LevelDBDatabase::~LevelDBDatabase()
 {
 }
 
-LevelDBDatabase* LevelDBDatabase::open(const String& fileName, const LevelDBComparator* comparator)
+PassOwnPtr<LevelDBDatabase> LevelDBDatabase::open(const String& fileName, const LevelDBComparator* comparator)
 {
-    OwnPtr<ComparatorAdapter> comparatorAdapter(new ComparatorAdapter(comparator));
+    OwnPtr<ComparatorAdapter> comparatorAdapter = adoptPtr(new ComparatorAdapter(comparator));
 
-    LevelDBDatabase* result = new LevelDBDatabase();
+    OwnPtr<LevelDBDatabase> result = adoptPtr(new LevelDBDatabase);
 
     leveldb::Options options;
     options.comparator = comparatorAdapter.get();
@@ -108,15 +107,13 @@ LevelDBDatabase* LevelDBDatabase::open(const String& fileName, const LevelDBComp
     leveldb::DB* db;
     leveldb::Status s = leveldb::DB::Open(options, fileName.utf8().data(), &db);
 
-    if (!s.ok()) {
-        delete result;
-        return 0;
-    }
+    if (!s.ok())
+        return PassOwnPtr<LevelDBDatabase>();
 
-    result->m_db = WTF::adoptPtr(db);
+    result->m_db = adoptPtr(db);
     result->m_comparatorAdapter = comparatorAdapter.release();
 
-    return result;
+    return result.release();
 }
 
 
@@ -146,14 +143,14 @@ bool LevelDBDatabase::get(const LevelDBSlice& key, Vector<char>& value)
     return true;
 }
 
-LevelDBIterator* LevelDBDatabase::newIterator()
+PassOwnPtr<LevelDBIterator> LevelDBDatabase::createIterator()
 {
-    leveldb::Iterator* i = m_db->NewIterator(leveldb::ReadOptions());
+    OwnPtr<leveldb::Iterator> i = adoptPtr(m_db->NewIterator(leveldb::ReadOptions()));
     if (!i) // FIXME: Double check if we actually need to check this.
         return 0;
-    return new LevelDBIterator(i);
+    return adoptPtr(new LevelDBIterator(i.release()));
 }
 
-} // namespace WebCore
+}
 
-#endif // ENABLE(LEVELDB)
+#endif

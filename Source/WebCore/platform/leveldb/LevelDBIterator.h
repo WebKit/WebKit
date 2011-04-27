@@ -52,7 +52,7 @@ public:
     LevelDBSlice value() const;
 
 private:
-    LevelDBIterator(leveldb::Iterator*);
+    LevelDBIterator(PassOwnPtr<leveldb::Iterator>);
     friend class LevelDBDatabase;
 
     OwnPtr<leveldb::Iterator> m_iterator;
