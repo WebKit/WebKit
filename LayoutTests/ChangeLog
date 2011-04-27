@@ -1,3 +1,15 @@
+2011-04-26  Tony Chang  <tony@chromium.org>
+
+        Reviewed by Ojan Vafai.
+
+        Fix http/tests/security/cross-frame-access-document-direct.html timeout in chromium
+        https://bugs.webkit.org/show_bug.cgi?id=59376
+
+        * http/tests/security/cross-frame-access-document-direct.html: Include a try/catch for invalid access.
+        * platform/chromium/http/tests/security/cross-frame-access-document-direct-expected.txt: Added. Chromium includes a console.log
+            statement of the invalid access.
+        * platform/chromium/test_expectations.txt: Remove passing test.
+
 2011-04-26  Levi Weintraub  <leviw@chromium.org>
 
         Reviewed by Eric Seidel.

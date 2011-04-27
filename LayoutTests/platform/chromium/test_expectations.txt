@@ -1470,7 +1470,6 @@ BUGCR9786 WIN DEBUG : http/tests/security/cross-frame-access-history-prototype.h
 BUGCR9786 SLOW WIN RELEASE : http/tests/security/cross-frame-access-history-prototype.html = FAIL
 BUGCR9786 LINUX MAC : http/tests/security/cross-frame-access-history-prototype.html = FAIL
 BUGCR9786 : http/tests/security/cross-frame-access-location-prototype.html = FAIL
-BUGCR9786 : http/tests/security/cross-frame-access-document-direct.html = TIMEOUT
 
 BUGCR9798 SLOW WIN DEBUG : fast/dom/Window/slow-unload-handler.html = PASS
 

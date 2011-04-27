@@ -7,7 +7,11 @@
 
     addEventListener("message", function() {
         // Call injected function.
-        attack();
+        try {
+            attack();
+        } catch (e) {
+            // V8 throws a TypeError: Cannot set property 'fail' of undefined.
+        }
 
         // Post message to victim to check if it was accessed.
         document.getElementById('theFrame').contentWindow.postMessage("test", "*");
