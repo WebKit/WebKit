@@ -345,9 +345,10 @@ void TestController::initialize(int argc, const char* argv[])
         0, // didFinishProgress
         0, // didBecomeUnresponsive
         0, // didBecomeResponsive
-        processDidCrash, // processDidCrash
+        processDidCrash,
         0, // didChangeBackForwardList
-        0 // shouldGoToBackForwardListItem
+        0, // shouldGoToBackForwardListItem
+        0  // didFailToInitializePlugin
     };
     WKPageSetPageLoaderClient(m_mainWebView->page(), &pageLoaderClient);
 }

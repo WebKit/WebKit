@@ -231,4 +231,12 @@ bool WebLoaderClient::shouldGoToBackForwardListItem(WebPageProxy* page, WebBackF
     return m_client.shouldGoToBackForwardListItem(toAPI(page), toAPI(item), m_client.clientInfo);
 }
 
+void WebLoaderClient::didFailToInitializePlugin(WebPageProxy* page, const String& mimeType)
+{
+    if (!m_client.didFailToInitializePlugin)
+        return;
+
+    m_client.didFailToInitializePlugin(toAPI(page), toAPI(mimeType.impl()), m_client.clientInfo);
+}
+
 } // namespace WebKit

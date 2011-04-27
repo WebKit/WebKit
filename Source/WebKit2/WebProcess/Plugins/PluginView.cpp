@@ -441,6 +441,7 @@ void PluginView::initializePlugin()
         // We failed to initialize the plug-in.
         m_plugin = 0;
 
+        m_webPage->send(Messages::WebPageProxy::DidFailToInitializePlugin(m_parameters.mimeType));
         return;
     }
     

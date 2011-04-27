@@ -587,6 +587,7 @@ private:
     void notifyScrollerThumbIsVisibleInRect(const WebCore::IntRect&);
     void didChangeScrollbarsForMainFrame(bool hasHorizontalScrollbar, bool hasVerticalScrollbar);
     void didChangeScrollOffsetPinningForMainFrame(bool pinnedToLeftSide, bool pinnedToRightSide);
+    void didFailToInitializePlugin(const String& mimeType);
 
     void reattachToWebProcess();
     void reattachToWebProcessWithItem(WebBackForwardListItem*);

@@ -1,3 +1,26 @@
+2011-04-27  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Adam Roben.
+
+        WebKit2 needs to notify the client when a plugin fails to initialize
+        https://bugs.webkit.org/show_bug.cgi?id=59657
+
+        Add didFailToInitializePlugin client function and call it when a plugin
+        fails to initialize.
+
+        * UIProcess/API/C/WKPage.h:
+        * UIProcess/API/qt/qwkpage.cpp:
+        (QWKPage::QWKPage):
+        * UIProcess/WebLoaderClient.cpp:
+        (WebKit::WebLoaderClient::didFailToInitializePlugin):
+        * UIProcess/WebLoaderClient.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::didFailToInitializePlugin):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPageProxy.messages.in:
+        * WebProcess/Plugins/PluginView.cpp:
+        (WebKit::PluginView::initializePlugin):
+
 2011-04-27  Pratik Solanki  <psolanki@apple.com>
 
         Reviewed by Antti Koivisto.

@@ -2958,6 +2958,11 @@ void WebPageProxy::didChangeScrollOffsetPinningForMainFrame(bool pinnedToLeftSid
     m_mainFrameIsPinnedToRightSide = pinnedToRightSide;
 }
 
+void WebPageProxy::didFailToInitializePlugin(const String& mimeType)
+{
+    m_loaderClient.didFailToInitializePlugin(this, mimeType);
+}
+
 void WebPageProxy::didFinishLoadingDataForCustomRepresentation(const String& suggestedFilename, const CoreIPC::DataReference& dataReference)
 {
     m_pageClient->didFinishLoadingDataForCustomRepresentation(suggestedFilename, dataReference);

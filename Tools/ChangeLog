@@ -1,3 +1,16 @@
+2011-04-27  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Adam Roben.
+
+        WebKit2 needs to notify the client when a plugin fails to initialize
+        https://bugs.webkit.org/show_bug.cgi?id=59657
+
+        * MiniBrowser/mac/BrowserWindowController.m:
+        (-[BrowserWindowController awakeFromNib]):
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::TestController::initialize):
+        Add stubs.
+
 2011-04-26  Sam Weinig  <sam@webkit.org>
 
         Reviewed by David Levin.

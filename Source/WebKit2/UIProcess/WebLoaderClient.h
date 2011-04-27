@@ -78,6 +78,8 @@ public:
 
     void didChangeBackForwardList(WebPageProxy*, WebBackForwardListItem* addedItem, Vector<RefPtr<APIObject> >* removedItems);
     bool shouldGoToBackForwardListItem(WebPageProxy*, WebBackForwardListItem*);
+
+    void didFailToInitializePlugin(WebPageProxy*, const String& mimeType);
 };
 
 } // namespace WebKit
