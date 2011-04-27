@@ -39,6 +39,7 @@
 #include "InstrumentingAgents.h"
 #include "PlatformString.h"
 #include "ScriptDebugServer.h"
+#include "ScriptObject.h"
 #include <wtf/text/StringConcatenate.h>
 
 namespace WebCore {
@@ -279,7 +280,7 @@ PassRefPtr<InspectorObject> InspectorDebuggerAgent::resolveBreakpoint(const Stri
 
 void InspectorDebuggerAgent::editScriptSource(ErrorString* error, const String& sourceID, const String& newContent, RefPtr<InspectorArray>* newCallFrames)
 {
-    if (scriptDebugServer().editScriptSource(sourceID, newContent, error))
+    if (scriptDebugServer().editScriptSource(sourceID, newContent, error, &m_currentCallStack))
         *newCallFrames = currentCallFrames();
 }
 
@@ -355,7 +356,7 @@ void InspectorDebuggerAgent::evaluateOnCallFrame(ErrorString* errorString, const
 {
     InjectedScript injectedScript = m_injectedScriptManager->injectedScriptForObjectId(callFrameId);
     if (!injectedScript.hasNoValue())
-        injectedScript.evaluateOnCallFrame(errorString, callFrameId, expression, objectGroup ? *objectGroup : "", includeCommandLineAPI ? *includeCommandLineAPI : false, result);
+        injectedScript.evaluateOnCallFrame(errorString, m_currentCallStack, callFrameId, expression, objectGroup ? *objectGroup : "", includeCommandLineAPI ? *includeCommandLineAPI : false, result);
 }
 
 PassRefPtr<InspectorArray> InspectorDebuggerAgent::currentCallFrames()
@@ -367,7 +368,7 @@ PassRefPtr<InspectorArray> InspectorDebuggerAgent::currentCallFrames()
         ASSERT_NOT_REACHED();
         return InspectorArray::create();
     }
-    return injectedScript.callFrames();
+    return injectedScript.wrapCallFrames(m_currentCallStack);
 }
 
 // JavaScriptDebugListener functions
@@ -404,14 +405,21 @@ void InspectorDebuggerAgent::failedToParseSource(const String& url, const String
     m_frontend->scriptFailedToParse(url, data, firstLine, errorLine, errorMessage);
 }
 
-void InspectorDebuggerAgent::didPause(ScriptState* scriptState)
+void InspectorDebuggerAgent::didPause(ScriptState* scriptState, const ScriptValue& callFrames, const ScriptValue& exception)
 {
     ASSERT(scriptState && !m_pausedScriptState);
     m_pausedScriptState = scriptState;
+    m_currentCallStack = callFrames;
 
     if (!m_breakProgramDetails)
         m_breakProgramDetails = InspectorObject::create();
     m_breakProgramDetails->setValue("callFrames", currentCallFrames());
+
+    if (!exception.hasNoValue()) {
+        InjectedScript injectedScript = m_injectedScriptManager->injectedScriptFor(scriptState);
+        if (!injectedScript.hasNoValue())
+            m_breakProgramDetails->setValue("exception", injectedScript.wrapObject(exception, "backtrace"));
+    }
 
     m_frontend->paused(m_breakProgramDetails);
     m_javaScriptPauseScheduled = false;
@@ -425,6 +433,7 @@ void InspectorDebuggerAgent::didPause(ScriptState* scriptState)
 void InspectorDebuggerAgent::didContinue()
 {
     m_pausedScriptState = 0;
+    m_currentCallStack = ScriptValue();
     m_breakProgramDetails = 0;
     m_frontend->resumed();
 }
@@ -440,6 +449,7 @@ void InspectorDebuggerAgent::breakProgram(DebuggerEventType type, PassRefPtr<Ins
 void InspectorDebuggerAgent::clear()
 {
     m_pausedScriptState = 0;
+    m_currentCallStack = ScriptValue();
     m_scripts.clear();
     m_breakpointIdToDebugServerBreakpointIds.clear();
     m_continueToLocationBreakpointId = String();

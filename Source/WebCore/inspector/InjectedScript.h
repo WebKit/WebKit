@@ -57,14 +57,14 @@ public:
 
     void evaluate(ErrorString*, const String& expression, const String& objectGroup, bool includeCommandLineAPI, RefPtr<InspectorObject>* result);
     void evaluateOn(ErrorString*, const String& objectId, const String& expression, RefPtr<InspectorObject>* result);
-    void evaluateOnCallFrame(ErrorString*, const String& callFrameId, const String& expression, const String& objectGroup, bool includeCommandLineAPI, RefPtr<InspectorObject>* result);
+    void evaluateOnCallFrame(ErrorString*, const ScriptValue& callFrames, const String& callFrameId, const String& expression, const String& objectGroup, bool includeCommandLineAPI, RefPtr<InspectorObject>* result);
     void getProperties(ErrorString*, const String& objectId, bool ignoreHasOwnProperty, RefPtr<InspectorArray>* result);
     Node* nodeForObjectId(const String& objectId);
     void setPropertyValue(ErrorString*, const String& objectId, const String& propertyName, const String& expression);
     void releaseObject(const String& objectId);
 
 #if ENABLE(JAVASCRIPT_DEBUGGER)
-    PassRefPtr<InspectorArray> callFrames();
+    PassRefPtr<InspectorArray> wrapCallFrames(const ScriptValue&);
 #endif
 
     PassRefPtr<InspectorObject> wrapObject(ScriptValue, const String& groupName);

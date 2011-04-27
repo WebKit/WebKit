@@ -47,10 +47,6 @@
 #include "InspectorValues.h"
 #include "Pasteboard.h"
 
-#if ENABLE(JAVASCRIPT_DEBUGGER)
-#include "ScriptDebugServer.h"
-#endif
-
 #if ENABLE(DATABASE)
 #include "Database.h"
 #endif

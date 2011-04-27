@@ -36,6 +36,7 @@
 #include <wtf/Forward.h>
 
 namespace WebCore {
+class ScriptValue;
 
 class ScriptDebugListener {
 public:
@@ -43,7 +44,7 @@ public:
 
     virtual void didParseSource(const String&  sourceID, const String& url, const String& data, int lineOffset, int columnOffset, bool isContentScript) = 0;
     virtual void failedToParseSource(const String& url, const String& data, int firstLine, int errorLine, const String& errorMessage) = 0;
-    virtual void didPause(ScriptState*) = 0;
+    virtual void didPause(ScriptState*, const ScriptValue& callFrames, const ScriptValue& exception) = 0;
     virtual void didContinue() = 0;
 };
 

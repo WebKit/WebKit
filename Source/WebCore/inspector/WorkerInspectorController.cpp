@@ -86,9 +86,6 @@ WorkerInspectorController::WorkerInspectorController(WorkerContext* workerContex
 #if ENABLE(DOM_STORAGE)
         , 0
 #endif
-#if ENABLE(JAVASCRIPT_DEBUGGER)
-        , m_debuggerAgent.get()
-#endif
     );
 }
  

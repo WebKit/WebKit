@@ -293,9 +293,8 @@ InjectedScript.prototype = {
         }
     },
 
-    callFrames: function()
+    wrapCallFrames: function(callFrame)
     {
-        var callFrame = InjectedScriptHost.currentCallFrame();
         if (!callFrame)
             return false;
     
@@ -308,19 +307,19 @@ InjectedScript.prototype = {
         return result;
     },
 
-    evaluateOnCallFrame: function(callFrameId, expression, objectGroup, injectCommandLineAPI)
+    evaluateOnCallFrame: function(topCallFrame, callFrameId, expression, objectGroup, injectCommandLineAPI)
     {
-        var callFrame = this._callFrameForId(callFrameId);
+        var callFrame = this._callFrameForId(topCallFrame, callFrameId);
         if (!callFrame)
             return "Could not find call frame with given id";
         return this._evaluateAndWrap(callFrame.evaluate, callFrame, expression, objectGroup, true, injectCommandLineAPI);
     },
 
-    _callFrameForId: function(callFrameId)
+    _callFrameForId: function(topCallFrame, callFrameId)
     {
         var parsedCallFrameId = eval("(" + callFrameId + ")");
         var ordinal = parsedCallFrameId.ordinal;
-        var callFrame = InjectedScriptHost.currentCallFrame();
+        var callFrame = topCallFrame;
         while (--ordinal >= 0 && callFrame)
             callFrame = callFrame.caller;
         return callFrame;

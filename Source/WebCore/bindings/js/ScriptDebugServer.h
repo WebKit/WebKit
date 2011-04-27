@@ -50,8 +50,9 @@ class JSGlobalObject;
 }
 namespace WebCore {
 
-class ScriptDebugListener;
 class JavaScriptCallFrame;
+class ScriptDebugListener;
+class ScriptValue;
 
 class ScriptDebugServer : protected JSC::Debugger {
     WTF_MAKE_NONCOPYABLE(ScriptDebugServer); WTF_MAKE_FAST_ALLOCATED;
@@ -78,12 +79,10 @@ public:
     void stepOverStatement();
     void stepOutOfFunction();
 
-    bool editScriptSource(const String& sourceID, const String& newContent, String* error);
+    bool editScriptSource(const String& sourceID, const String& newContent, String* error, ScriptValue* newCallFrames);
 
     void recompileAllJSFunctionsSoon();
     virtual void recompileAllJSFunctions(Timer<ScriptDebugServer>* = 0) = 0;
-
-    JavaScriptCallFrame* currentCallFrame();
 
 protected:
     typedef HashSet<ScriptDebugListener*> ListenerSet;

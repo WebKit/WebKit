@@ -34,6 +34,7 @@
 
 #include "EventLoop.h"
 #include "Frame.h"
+#include "JSJavaScriptCallFrame.h"
 #include "JavaScriptCallFrame.h"
 #include "ScriptBreakpoint.h"
 #include "ScriptDebugListener.h"
@@ -188,24 +189,27 @@ void ScriptDebugServer::stepOutOfFunction()
     m_doneProcessingDebuggerEvents = true;
 }
 
-bool ScriptDebugServer::editScriptSource(const String&, const String&, String*)
+bool ScriptDebugServer::editScriptSource(const String&, const String&, String*, ScriptValue*)
 {
     // FIXME(40300): implement this.
     return false;
 }
 
-JavaScriptCallFrame* ScriptDebugServer::currentCallFrame()
-{
-    if (!m_paused)
-        return 0;
-    return m_currentCallFrame.get();
-}
-
 void ScriptDebugServer::dispatchDidPause(ScriptDebugListener* listener)
 {
     ASSERT(m_paused);
-    ScriptState* state = m_currentCallFrame->scopeChain()->globalObject->globalExec();
-    listener->didPause(state);
+    JSGlobalObject* globalObject = m_currentCallFrame->scopeChain()->globalObject.get();
+    ScriptState* state = globalObject->globalExec();
+    JSValue jsCallFrame;
+    {
+        if (m_currentCallFrame->isValid() && globalObject->inherits(&JSDOMGlobalObject::s_info)) {
+            JSDOMGlobalObject* domGlobalObject = static_cast<JSDOMGlobalObject*>(globalObject);
+            JSLock lock(SilenceAssertionsOnly);
+            jsCallFrame = toJS(state, domGlobalObject, m_currentCallFrame.get());
+        } else
+            jsCallFrame = jsUndefined();
+    }
+    listener->didPause(state, ScriptValue(state->globalData(), jsCallFrame), ScriptValue());
 }
 
 void ScriptDebugServer::dispatchDidContinue(ScriptDebugListener* listener)

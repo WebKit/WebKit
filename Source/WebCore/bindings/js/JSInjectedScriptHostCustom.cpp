@@ -51,12 +51,6 @@
 #endif
 #include <runtime/JSLock.h>
 
-#if ENABLE(JAVASCRIPT_DEBUGGER)
-#include "JavaScriptCallFrame.h"
-#include "JSJavaScriptCallFrame.h"
-#include "ScriptDebugServer.h"
-#endif
-
 using namespace JSC;
 
 namespace WebCore {
@@ -72,21 +66,6 @@ ScriptValue InjectedScriptHost::nodeAsScriptValue(ScriptState* state, Node* node
 {
     JSLock lock(SilenceAssertionsOnly);
     return ScriptValue(state->globalData(), toJS(state, deprecatedGlobalObjectForPrototype(state), node));
-}
-
-JSValue JSInjectedScriptHost::currentCallFrame(ExecState* exec)
-{
-#if ENABLE(JAVASCRIPT_DEBUGGER)
-    JavaScriptCallFrame* callFrame = impl()->debuggerAgent()->scriptDebugServer().currentCallFrame();
-    if (!callFrame || !callFrame->isValid())
-        return jsUndefined();
-
-    JSLock lock(SilenceAssertionsOnly);
-    return toJS(exec, globalObject(), callFrame);
-#else
-    UNUSED_PARAM(exec);
-    return jsUndefined();
-#endif
 }
 
 JSValue JSInjectedScriptHost::inspectedNode(ExecState* exec)

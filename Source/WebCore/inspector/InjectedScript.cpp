@@ -71,9 +71,10 @@ void InjectedScript::evaluateOn(ErrorString* errorString, const String& objectId
     makeObjectCall(errorString, function, result);
 }
 
-void InjectedScript::evaluateOnCallFrame(ErrorString* errorString, const String& callFrameId, const String& expression, const String& objectGroup, bool includeCommandLineAPI, RefPtr<InspectorObject>* result)
+void InjectedScript::evaluateOnCallFrame(ErrorString* errorString, const ScriptValue& callFrames, const String& callFrameId, const String& expression, const String& objectGroup, bool includeCommandLineAPI, RefPtr<InspectorObject>* result)
 {
     ScriptFunctionCall function(m_injectedScriptObject, "evaluateOnCallFrame");
+    function.appendArgument(callFrames);
     function.appendArgument(callFrameId);
     function.appendArgument(expression);
     function.appendArgument(objectGroup);
@@ -131,10 +132,11 @@ void InjectedScript::releaseObject(const String& objectId)
 }
 
 #if ENABLE(JAVASCRIPT_DEBUGGER)
-PassRefPtr<InspectorArray> InjectedScript::callFrames()
+PassRefPtr<InspectorArray> InjectedScript::wrapCallFrames(const ScriptValue& callFrames)
 {
     ASSERT(!hasNoValue());
-    ScriptFunctionCall function(m_injectedScriptObject, "callFrames");
+    ScriptFunctionCall function(m_injectedScriptObject, "wrapCallFrames");
+    function.appendArgument(callFrames);
     ScriptValue callFramesValue = function.call();
     RefPtr<InspectorValue> result = callFramesValue.toInspectorValue(m_injectedScriptObject.scriptState());
     if (result->type() == InspectorValue::TypeArray)

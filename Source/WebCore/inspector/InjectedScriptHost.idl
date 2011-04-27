@@ -39,7 +39,6 @@ module core {
         [Custom] DOMObject inspectedNode(in int num);
         [Custom] DOMObject internalConstructorName(in DOMObject object);
 
-        [Custom] DOMObject currentCallFrame();
         [Custom] int databaseId(in DOMObject database);
         [Custom] int storageId(in DOMObject storage);
 

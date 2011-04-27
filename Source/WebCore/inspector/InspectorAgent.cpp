@@ -152,9 +152,6 @@ InspectorAgent::InspectorAgent(Page* page, InspectorClient* client, InjectedScri
 #if ENABLE(DOM_STORAGE)
         , m_domStorageAgent.get()
 #endif
-#if ENABLE(JAVASCRIPT_DEBUGGER)
-        , m_debuggerAgent.get()
-#endif
     );
 }
 

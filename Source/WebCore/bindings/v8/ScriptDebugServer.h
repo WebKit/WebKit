@@ -33,7 +33,7 @@
 
 #if ENABLE(JAVASCRIPT_DEBUGGER)
 
-#include "JavaScriptCallFrame.h"
+#include "OwnHandle.h"
 #include "PlatformString.h"
 #include "ScriptBreakpoint.h"
 #include "Timer.h"
@@ -46,6 +46,7 @@
 namespace WebCore {
 
 class ScriptDebugListener;
+class ScriptValue;
 
 class ScriptDebugServer {
     WTF_MAKE_NONCOPYABLE(ScriptDebugServer);
@@ -72,12 +73,10 @@ public:
     void stepOverStatement();
     void stepOutOfFunction();
 
-    bool editScriptSource(const String& sourceID, const String& newContent, String* error);
+    bool editScriptSource(const String& sourceID, const String& newContent, String* error, ScriptValue* newCallFrames);
 
     void recompileAllJSFunctionsSoon() { }
     void recompileAllJSFunctions(Timer<ScriptDebugServer>* = 0) { }
-
-    PassRefPtr<JavaScriptCallFrame> currentCallFrame();
 
     class Task {
     public:
@@ -91,12 +90,14 @@ protected:
     ScriptDebugServer();
     ~ScriptDebugServer() { }
     
+    ScriptValue currentCallFrame();
+
     virtual ScriptDebugListener* getDebugListenerForContext(v8::Handle<v8::Context>) = 0;
     virtual void runMessageLoopOnPause(v8::Handle<v8::Context>) = 0;
     virtual void quitMessageLoopOnPause() = 0;
 
     static v8::Handle<v8::Value> breakProgramCallback(const v8::Arguments& args);
-    void breakProgram(v8::Handle<v8::Object> executionState);
+    void breakProgram(v8::Handle<v8::Object> executionState, v8::Handle<v8::Value> exception);
 
     static void v8DebugEventCallback(const v8::Debug::EventDetails& eventDetails);
     void handleV8DebugEvent(const v8::Debug::EventDetails& eventDetails);
@@ -109,9 +110,8 @@ protected:
 
     PauseOnExceptionsState m_pauseOnExceptionsState;
     OwnHandle<v8::Object> m_debuggerScript;
-    RefPtr<JavaScriptCallFrame> m_currentCallFrame;
     OwnHandle<v8::Object> m_executionState;
-    v8::Local<v8::Context> m_pausedPageContext;
+    v8::Local<v8::Context> m_pausedContext;
 
     bool m_breakpointsActivated;
     OwnHandle<v8::FunctionTemplate> m_breakProgramCallbackTemplate;

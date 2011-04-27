@@ -34,15 +34,12 @@
 #include "Database.h"
 #include "InjectedScript.h"
 #include "InjectedScriptHost.h"
-#include "InspectorDebuggerAgent.h"
 #include "InspectorValues.h"
-#include "ScriptDebugServer.h"
 #include "ScriptValue.h"
 #include "V8Binding.h"
 #include "V8BindingState.h"
 #include "V8Database.h"
 #include "V8HiddenPropertyName.h"
-#include "V8JavaScriptCallFrame.h"
 #include "V8Node.h"
 #include "V8Proxy.h"
 #include "V8Storage.h"
@@ -104,18 +101,6 @@ v8::Handle<v8::Value> V8InjectedScriptHost::inspectCallback(const v8::Arguments&
     host->inspectImpl(object.toInspectorValue(ScriptState::current()), hints.toInspectorValue(ScriptState::current()));
 
     return v8::Undefined();
-}
-
-v8::Handle<v8::Value> V8InjectedScriptHost::currentCallFrameCallback(const v8::Arguments& args)
-{
-#if ENABLE(JAVASCRIPT_DEBUGGER)
-    INC_STATS("InjectedScriptHost.currentCallFrame()");
-    InjectedScriptHost* host = V8InjectedScriptHost::toNative(args.Holder());
-    return toV8(host->debuggerAgent()->scriptDebugServer().currentCallFrame());
-#else
-    UNUSED_PARAM(args);
-    return v8::Undefined();
-#endif
 }
 
 v8::Handle<v8::Value> V8InjectedScriptHost::databaseIdCallback(const v8::Arguments& args)

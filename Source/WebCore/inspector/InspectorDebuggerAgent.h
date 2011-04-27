@@ -53,6 +53,7 @@ class InspectorState;
 class InspectorValue;
 class InstrumentingAgents;
 class ScriptDebugServer;
+class ScriptValue;
 
 typedef String ErrorString;
 
@@ -121,7 +122,7 @@ private:
 
     virtual void didParseSource(const String& sourceID, const String& url, const String& data, int lineOffset, int columnOffset, bool isContentScript);
     virtual void failedToParseSource(const String& url, const String& data, int firstLine, int errorLine, const String& errorMessage);
-    virtual void didPause(ScriptState*);
+    virtual void didPause(ScriptState*, const ScriptValue& callFrames, const ScriptValue& exception);
     virtual void didContinue();
 
     PassRefPtr<InspectorObject> resolveBreakpoint(const String& breakpointId, const String& sourceId, const ScriptBreakpoint&);
@@ -160,6 +161,7 @@ private:
     InjectedScriptManager* m_injectedScriptManager;
     InspectorFrontend::Debugger* m_frontend;
     ScriptState* m_pausedScriptState;
+    ScriptValue m_currentCallStack;
     ScriptsMap m_scripts;
     BreakpointIdToDebugServerBreakpointIdsMap m_breakpointIdToDebugServerBreakpointIds;
     String m_continueToLocationBreakpointId;
