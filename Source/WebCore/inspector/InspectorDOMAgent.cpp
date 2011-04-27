@@ -346,7 +346,11 @@ void InspectorDOMAgent::setDocument(Document* doc)
 
     m_document = doc;
 
-    if (!doc && m_inspectorState->getBoolean(DOMAgentState::documentRequested))
+    if (!m_inspectorState->getBoolean(DOMAgentState::documentRequested))
+        return;
+
+    // Immediately communicate 0 document or document that has finished loading.
+    if (!doc || !doc->parsing())
         m_frontend->documentUpdated();
 }
 

@@ -1,3 +1,13 @@
+2011-04-27  Pavel Feldman  <pfeldman@google.com>
+
+        Reviewed by Yury Semikhatsky.
+
+        Web Inspector: opening bookmarklet disconnects DOM agent.
+        https://bugs.webkit.org/show_bug.cgi?id=59588
+
+        * inspector/InspectorDOMAgent.cpp:
+        (WebCore::InspectorDOMAgent::setDocument):
+
 2011-04-27  Hans Wennborg  <hans@chromium.org>
 
         Reviewed by Tony Gentilcore.
