@@ -283,7 +283,14 @@ const SimpleFontData* FontCache::getFontDataForCharacters(const Font& font, cons
 
     if (hfont) {
         if (!familyName.isEmpty()) {
-            FontPlatformData* result = getCachedFontPlatformData(font.fontDescription(), familyName);
+            FontPlatformData* result;
+            // Take the orientation into consideration. For vertical: add "@" in front of the family name.
+            // "@" is a built-in behaviour for Windows platform. http://msdn.microsoft.com/en-us/goglobal/bb688137
+            if (font.fontDescription().orientation() == Vertical && !familyName.startsWith("@"))
+                result = getCachedFontPlatformData(font.fontDescription(), "@" + String(familyName));
+            else
+                result = getCachedFontPlatformData(font.fontDescription(), familyName); 
+            
             if (result)
                 fontData = getCachedFontData(result);
         }
@@ -559,13 +566,30 @@ FontPlatformData* FontCache::createFontPlatformData(const FontDescription& fontD
 
     bool useGDI = fontDescription.renderingMode() == AlternateRenderingMode && !isLucidaGrande;
 
+    // Take the orientation into consideration. For vertical: add "@" in front of the family name.
+    // "@" is a built-in behaviour for Windows platform. http://msdn.microsoft.com/en-us/goglobal/bb688137
+    AtomicString updatedFamilyName;
+    if (fontDescription.orientation() == Vertical && !family.startsWith("@"))
+        updatedFamilyName = "@" + String(family);
+    else
+        updatedFamilyName = family; 
+
     // The logical size constant is 32. We do this for subpixel precision when rendering using Uniscribe.
     // This masks rounding errors related to the HFONT metrics being  different from the CGFont metrics.
     // FIXME: We will eventually want subpixel precision for GDI mode, but the scaled rendering doesn't
     // look as nice. That may be solvable though.
-    LONG weight = adjustedGDIFontWeight(toGDIFontWeight(fontDescription.weight()), family);
-    HFONT hfont = createGDIFont(family, weight, fontDescription.italic(),
+    LONG weight = adjustedGDIFontWeight(toGDIFontWeight(fontDescription.weight()), updatedFamilyName);
+    HFONT hfont = createGDIFont(updatedFamilyName, weight, fontDescription.italic(),
                                 fontDescription.computedPixelSize() * (useGDI ? 1 : 32), useGDI);
+
+    // Some fonts do not need to be rotated when displayed vertically.
+    // Or "@font-family-name" is not supported on user's platform.
+    // (e.g. no "@Times New Romain" or "@Arial"). Try to create hfont with original family name.
+    if (updatedFamilyName.startsWith("@") && !hfont) {
+        weight = adjustedGDIFontWeight(toGDIFontWeight(fontDescription.weight()), family);
+        hfont = createGDIFont(family, weight, fontDescription.italic(),
+        fontDescription.computedPixelSize() * (useGDI ? 1 : 32), useGDI);
+    }
 
     if (!hfont)
         return 0;
@@ -579,7 +603,7 @@ FontPlatformData* FontCache::createFontPlatformData(const FontDescription& fontD
     bool synthesizeBold = isGDIFontWeightBold(weight) && !isGDIFontWeightBold(logFont.lfWeight);
     bool synthesizeItalic = fontDescription.italic() && !logFont.lfItalic;
 
-    FontPlatformData* result = new FontPlatformData(hfont, fontDescription.computedPixelSize(), synthesizeBold, synthesizeItalic, useGDI);
+    FontPlatformData* result = new FontPlatformData(hfont, fontDescription.computedPixelSize(), synthesizeBold, synthesizeItalic, useGDI, fontDescription.orientation());
 
 #if USE(CG)
     bool fontCreationFailed = !result->cgFont();

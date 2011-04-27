@@ -35,10 +35,10 @@ using std::min;
 
 namespace WebCore {
 
-FontPlatformData::FontPlatformData(HFONT font, float size, bool bold, bool oblique, bool useGDI)
+FontPlatformData::FontPlatformData(HFONT font, float size, bool bold, bool oblique, bool useGDI, FontOrientation orientation)
     : m_font(RefCountedGDIHandle<HFONT>::create(font))
     , m_size(size)
-    , m_orientation(Horizontal)
+    , m_orientation(orientation)
     , m_textOrientation(TextOrientationVerticalRight)
     , m_widthVariant(RegularWidth)
 #if USE(CG)
