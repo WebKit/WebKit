@@ -25,7 +25,7 @@ include("../header.inc");
 <p>If you are building from Vista, install <a target="installtools" href="http://www.microsoft.com/downloads/details.aspx?FamilyID=90e2942d-3ad1-4873-a2ee-4acc0aace5b6&amp;displaylang=en">Service Pack 1 Update for Windows Vista</a>.</p>
 <p>Install <a target="installtools" href="http://www.microsoft.com/downloads/details.aspx?FamilyID=7c8729dc-06a2-4538-a90d-ff9464dc0197&amp;displaylang=en">Visual Studio 2005 Service Pack 1 ATL Security Update</a>.</p>
 <p>Install the following hotfixes to improve Visual Studio's performance and responsiveness:</p>
-<ol>
+<ol style="list-style-type: lower-alpha">
 <li><a target="installtools" href="http://code.msdn.microsoft.com/KB918559">KB918559</a></li>
 <li><a target="installtools" href="http://code.msdn.microsoft.com/KB935225">KB935225</a></li>
 <li><a target="installtools" href="http://code.msdn.microsoft.com/KB943969">KB943969</a></li>
@@ -49,20 +49,38 @@ have made a downloader available that automatically collects all of the required
 packages.
 <p>Download <a
 href="http://svn.webkit.org/repository/webkit/trunk/Tools/CygwinDownloader/cygwin-downloader.zip">cygwin-downloader.zip</a>.</p>
-<p>Right-click <code>cygwin-downloader.zip</code> and choose <b>Extract All...</b>.
-Keep all the default options and click <b>Next</b> until the file is extracted and the cygwin-downloader folder opens.</p>
-<p>Double-click <code>cygwin-downloader.exe</code>. This will download all the Cygwin packages you need.</p>
-<p>When all the packages have finished downloading, the Cygwin installer will launch. Choose <b>Install from Local Directory</b>, then click <b>Next</b> until the install is complete. If you are running Vista, the installer won't be able to launch automatically, so you will have to manually launch Cygwin's Setup.exe.</p>
-<P>Vista may warn you that Cygwin did not install correctly. Ignore this warning and tell Vista that the install was successful.</p>
-<p>If you are running Vista, click on the Start menu, enter the following command, and press Enter:</p>
-<p class="code">C:\cygwin\bin\ash -c /bin/rebaseall</p>
-<p>Remove the following lines from <code>/home/[username]/.bashrc</code>:
+<p>Extract the content of the archive to some folder and start <code>cygwin-downloader.exe</code> from that folder.
+This will download all the Cygwin packages you need.</p>
+<p>When all the packages have finished downloading, the Cygwin installer will launch. Choose <b>Install from Local Directory</b>, then click <b>Next</b> until the
+install is complete. If you are running Vista, the installer won't be able to launch automatically, so you will have to manually launch Cygwin's Setup.exe.</p>
+<p><b>Note:</b> If you are behind a proxy you need to set the <code>http_proxy</code> environment variable to the URL of the proxy. This would
+likely match this pattern: <code>http[s]://[username[:password]@]somehost.com[:port]</code>. Where the square brackets ([]) are not part of the url but enclose url elements that are optional indicating that those elements might be missing in your case together with their enclosed delimiter such as @ and :.</p>
+<p><b>Note:</b> Vista may warn you that Cygwin did not install correctly. Ignore this warning and tell Vista that the install was successful.</p>
+<p><b>Warning:</b> If you are running Vista or Windows 7, Cygwin may have trouble with implementing <code>fork</code>
+(the POSIX function frequently used to start child processes, needed by many of the WebKit build tools).
+In order to enable <code>cygwin1.dll</code> to implement fork successfully it is better if no DLL loaded in the parent process is relocated at runtime.
+One way to achive this is to rebase all cygwin dlls except <code>cyglsa64.dll</code> and <code>cygwin1.dll</code> to base addresses that cause them to not overlap in memory.
+<p>In order to rebase all cygwin dlls a <code>rebaseall</code> script is provided in the cygwin installation's <code>bin</code> directory
+(usually <code>C:\cygwin\bin</code>).
+This script must be run from <code>ash.exe</code> (found in the same directory) while no other cygwin application is running.<br>
+<code>ash.exe</code> has very limited command line editing features so cutting and pasting to the commandline is recommended.<br>
+The <code>PATH</code> environment variable may not contain the <code>/bin</code> directory by default
+thus the script should be launched as <code>/bin/rebaseall</code>.<br>
+If <code>rebaseall</code> is complaining about failure to write to a Windows Temp directory (i.e. <code>/cygdrive/c/Users/you/AppData/Local/Temp</code>),
+fix the permissions on that folder (i.e. <code>/bin/chown you /cygdrive/c/Users/you/AppData/Local/Temp</code>) or
+change the TMP environment variable to point to a directory with the appropriate permission flags (i.e.: <code>export TMP=/tmp</code>).
+<p><b>Note:</b> The rebase process may need to be repeated to include any new libraries added later to cygwin by listing these libraries by full cygwin path in a file 
+and passing the file to <code>rebaseall</code> via the <code>-T fileName</code> commandline argument.
+The dlls under <code>LayoutTests/http/conf</code> are a relevant use case.</p>
+<p>Remove the following lines from <code>/home/[username]/.bashrc</code> (if present):
 <p class=code>
 <div>unset TMP</div>
 <div>unset TEMP</div>
 </p>
 Those lines would prevent picking up the Windows TMP and TEMP environment variables.</p>
-
+<p>If you are behind a proxy you need to do the following to allow cygwin svn to get through the proxy (similar steps are available for your Windows svn):
+<ul><li>In bash (Cygwin) run: <code>svn help</code>. This will create in your cygwin home directory the file .subversion/servers.</li>
+<li>Edit the file mentioned above and follow the instructions in the file to set up your proxy settings.</li></ul></p>
 <li><p>Install QuickTime SDK</p>
 <p>Download QuickTime SDK for Windows from <a href="http://developer.apple.com/quicktime/download/">http://developer.apple.com/quicktime/download/</a> and install it to the default location (\Program Files\QuickTime SDK). This is needed for media support.
 
