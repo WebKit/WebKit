@@ -982,7 +982,7 @@ static NSURL* uniqueURLWithRelativePart(NSString *relativePart)
     // Usually, we hack AK's hitTest method to catch all events at the topmost WebHTMLView.  
     // Callers of this method, however, want to query the deepest view instead.
     forceNSViewHitTest = YES;
-    NSView *hitView = [[[self window] contentView] hitTest:[event locationInWindow]];
+    NSView *hitView = [(NSView *)[[self window] contentView] hitTest:[event locationInWindow]];
     forceNSViewHitTest = NO;    
     return hitView;
 }
@@ -5045,7 +5045,7 @@ static CGPoint coreGraphicsScreenPointForAppKitScreenPoint(NSPoint point)
     }
     
     // Flip the y coordinate from the top of the menu bar screen -- see 4636390
-    return CGPointMake(point.x, NSMaxY([[screens objectAtIndex:0] frame]) - point.y);
+    return CGPointMake(point.x, NSMaxY([(NSScreen *)[screens objectAtIndex:0] frame]) - point.y);
 }
 
 

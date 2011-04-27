@@ -1,3 +1,33 @@
+2011-04-27  Anders Carlsson  <andersca@apple.com>
+
+        More clang++ 32-bit build fixes.
+
+        * Carbon/CarbonWindowAdapter.mm:
+        (-[CarbonWindowAdapter reconcileToCarbonWindowBounds]):
+        (-[CarbonWindowAdapter setContentView:]):
+        (-[CarbonWindowAdapter _handleContentBoundsChanged]):
+        * Carbon/HIViewAdapter.m:
+        (_webkit_NSView_setNeedsDisplayInRect):
+        * Panels/WebAuthenticationPanel.h:
+        * Plugins/WebBaseNetscapePluginView.mm:
+        (-[WebBaseNetscapePluginView convertFromX:andY:space:toX:andY:space:]):
+        * Plugins/WebNetscapePluginEventHandlerCarbon.mm:
+        (getCarbonEvent):
+        * WebCoreSupport/WebChromeClient.mm:
+        (WebChromeClient::scrollRectIntoView):
+        * WebCoreSupport/WebViewFactory.mm:
+        (-[WebViewFactory accessibilityConvertScreenRect:]):
+        * WebView/WebFrameView.mm:
+        (-[WebFrameView _scrollToBeginningOfDocument]):
+        (-[WebFrameView _scrollToEndOfDocument]):
+        * WebView/WebFullScreenController.mm:
+        (-[WebFullScreenController windowDidEnterFullscreen:]):
+        * WebView/WebHTMLView.mm:
+        (-[WebHTMLView _hitViewForEvent:]):
+        (coreGraphicsScreenPointForAppKitScreenPoint):
+        * WebView/WebPDFView.mm:
+        (-[WebPDFView setScrollPoint:]):
+
 2011-04-27  Yury Semikhatsky  <yurys@chromium.org>
 
         Reviewed by Pavel Feldman.

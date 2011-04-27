@@ -362,7 +362,7 @@ static OSStatus NSCarbonWindowHandleEvent(EventHandlerCallRef inEventHandlerCall
 
     // Set the frame rectangle of the border view and this window from the Carbon window's structure region bounds.
     newWindowFrameRect.origin.x = windowStructureBoundsRect.left;
-    newWindowFrameRect.origin.y = NSMaxY([[[NSScreen screens] objectAtIndex:0] frame]) - windowStructureBoundsRect.bottom;
+    newWindowFrameRect.origin.y = NSMaxY([(NSScreen *)[[NSScreen screens] objectAtIndex:0] frame]) - windowStructureBoundsRect.bottom;
     newWindowFrameRect.size.width = windowStructureBoundsRect.right - windowStructureBoundsRect.left;
     newWindowFrameRect.size.height = windowStructureBoundsRect.bottom - windowStructureBoundsRect.top;
     if (!NSEqualRects(newWindowFrameRect, _frame)) {
@@ -376,9 +376,9 @@ static OSStatus NSCarbonWindowHandleEvent(EventHandlerCallRef inEventHandlerCall
     newContentFrameRect.origin.y = windowStructureBoundsRect.bottom - windowContentBoundsRect.bottom;
     newContentFrameRect.size.width = windowContentBoundsRect.right - windowContentBoundsRect.left;
     newContentFrameRect.size.height = windowContentBoundsRect.bottom - windowContentBoundsRect.top;
-    oldContentFrameRect = [_contentView frame];
+    oldContentFrameRect = [(NSView *)_contentView frame];
     if (!NSEqualRects(newContentFrameRect, oldContentFrameRect)) {
-        [_contentView setFrame:newContentFrameRect];
+        [(NSView *)_contentView setFrame:newContentFrameRect];
         reconciliationWasNecessary = YES;
     }
 
@@ -779,7 +779,7 @@ static OSStatus NSCarbonWindowHandleEvent(EventHandlerCallRef inEventHandlerCall
 
     // Record the content view, and size it to this window's content frame.
     _contentView = aView;
-    [_contentView setFrame:contentFrameRect];
+    [(NSView *)_contentView setFrame:contentFrameRect];
 
     // Make the content view a subview of the border view.
     [_borderView addSubview:_contentView];
@@ -943,9 +943,9 @@ CleanUp:
     // Set the content view's frame rect from the Carbon window's content region bounds.
     contentFrame.origin.y = rootBounds.size.height - CGRectGetMaxY( contentFrame );
 
-    oldContentFrameRect = [_contentView frame];
+    oldContentFrameRect = [(NSView *)_contentView frame];
     if ( !NSEqualRects( *(NSRect*)&contentFrame, oldContentFrameRect ) ) {
-        [_contentView setFrame:*(NSRect*)&contentFrame];
+        [(NSView *)_contentView setFrame:*(NSRect*)&contentFrame];
     }
 }
 

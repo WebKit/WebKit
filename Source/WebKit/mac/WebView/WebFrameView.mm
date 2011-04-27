@@ -569,7 +569,7 @@ static inline void addTypesFromClass(NSMutableDictionary *allTypes, Class objCCl
         return YES;
     if (![self _isScrollable])
         return NO;
-    NSPoint point = [[[self _scrollView] documentView] frame].origin;
+    NSPoint point = [(NSView *)[[self _scrollView] documentView] frame].origin;
     point.x += [[self _scrollView] scrollOrigin].x;
     point.y += [[self _scrollView] scrollOrigin].y;
     return [[self _contentView] _scrollTo:&point animate:YES];
@@ -581,7 +581,7 @@ static inline void addTypesFromClass(NSMutableDictionary *allTypes, Class objCCl
         return YES;
     if (![self _isScrollable])
         return NO;
-    NSRect frame = [[[self _scrollView] documentView] frame];
+    NSRect frame = [(NSView *)[[self _scrollView] documentView] frame];
     
     bool isVertical = [self _isVerticalDocument];
     bool isFlipped = [self _isFlippedDocument];

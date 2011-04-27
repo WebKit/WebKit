@@ -629,7 +629,7 @@ void WebChromeClient::scrollRectIntoView(const IntRect& r, const ScrollView*) co
     // FIXME: This scrolling behavior should be under the control of the embedding client,
     // perhaps in a delegate method, rather than something WebKit does unconditionally.
     NSView *coordinateView = [m_webView _usesDocumentViews]
-        ? [[[m_webView mainFrame] frameView] documentView] : m_webView;
+        ? (NSView *)[[[m_webView mainFrame] frameView] documentView] : m_webView;
     NSRect rect = r;
     for (NSView *view = m_webView; view; view = [view superview]) {
         if ([view isKindOfClass:[NSClipView class]]) {

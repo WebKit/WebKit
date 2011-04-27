@@ -888,7 +888,7 @@ String WebHaltablePlugin::pluginName() const
             break;
             
         case NPCoordinateSpaceFlippedScreen:
-            sourcePoint.y = [[[NSScreen screens] objectAtIndex:0] frame].size.height - sourcePoint.y;
+            sourcePoint.y = [(NSScreen *)[[NSScreen screens] objectAtIndex:0] frame].size.height - sourcePoint.y;
             sourcePointInScreenSpace = sourcePoint;
             break;
         default:
@@ -919,7 +919,7 @@ String WebHaltablePlugin::pluginName() const
             
         case NPCoordinateSpaceFlippedScreen:
             destPoint = sourcePointInScreenSpace;
-            destPoint.y = [[[NSScreen screens] objectAtIndex:0] frame].size.height - destPoint.y;
+            destPoint.y = [(NSScreen *)[[NSScreen screens] objectAtIndex:0] frame].size.height - destPoint.y;
             break;
             
         default:

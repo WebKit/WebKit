@@ -771,7 +771,7 @@ static BOOL isFrameInRange(WebFrame *frame, DOMRange *range)
     // PDFKit calling display from within its drawRect:. See bugzilla 4164.
     if (![frame parentFrame]) {
         NSView *realDocView = [PDFSubview documentView];
-        [[[realDocView enclosingScrollView] documentView] scrollPoint:p];
+        [(NSView *)[[realDocView enclosingScrollView] documentView] scrollPoint:p];
     }
 }
 

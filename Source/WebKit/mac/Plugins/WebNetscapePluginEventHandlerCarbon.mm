@@ -94,7 +94,7 @@ static void getCarbonEvent(EventRecord *carbonEvent, NSEvent *cocoaEvent)
     carbonEvent->message = 0;
     carbonEvent->when = (UInt32)([cocoaEvent timestamp] * 60); // seconds to ticks
     carbonEvent->where.h = (short)where.x;
-    carbonEvent->where.v = (short)(NSMaxY([[[NSScreen screens] objectAtIndex:0] frame]) - where.y);
+    carbonEvent->where.v = (short)(NSMaxY([(NSScreen *)[[NSScreen screens] objectAtIndex:0] frame]) - where.y);
     carbonEvent->modifiers = modifiersForEvent(cocoaEvent);
 }
 

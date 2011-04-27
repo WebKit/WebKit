@@ -120,7 +120,7 @@
 {
     NSArray *screens = [NSScreen screens];
     if ([screens count]) {
-        CGFloat screenHeight = NSHeight([[screens objectAtIndex:0] frame]);
+        CGFloat screenHeight = NSHeight([(NSScreen *)[screens objectAtIndex:0] frame]);
         bounds.origin.y = (screenHeight - (bounds.origin.y + bounds.size.height));
     } else
         bounds = CGRectZero;    

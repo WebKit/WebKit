@@ -282,7 +282,7 @@ private:
             
             [[[self window] contentView] addSubview:webView];
             [webView setAutoresizingMask:NSViewWidthSizable|NSViewHeightSizable];
-            [webView setFrame:[[[self window] contentView] bounds]];
+            [webView setFrame:[(NSView *)[[self window] contentView] bounds]];
         }
         
         WebFullscreenWindow* window = [self _fullscreenWindow];
