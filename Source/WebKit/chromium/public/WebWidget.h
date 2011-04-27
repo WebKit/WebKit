@@ -40,6 +40,7 @@
 namespace WebKit {
 
 class WebInputEvent;
+class WebRange;
 class WebString;
 struct WebPoint;
 struct WebRect;
@@ -120,6 +121,11 @@ public:
     // Returns true if there is an ongoing composition or the text is inserted.
     virtual bool confirmComposition(const WebString& text) = 0;
 
+    // Fetches the character range of the current composition, also called the
+    // "marked range." Returns true and fills the out-paramters on success;
+    // returns false on failure.
+    virtual bool compositionRange(size_t* location, size_t* length) = 0;
+
     // Returns the current text input type of this WebWidget.
     virtual WebTextInputType textInputType() = 0;
 
@@ -130,6 +136,12 @@ public:
     // Returns the start and end point for the current selection, aligned to the
     // bottom of the selected line.
     virtual bool selectionRange(WebPoint& start, WebPoint& end) const = 0;
+
+    // Fetch the current selection range of this WebWidget. If there is no
+    // selection, it will output a 0-length range with the location at the
+    // caret. Returns true and fills the out-paramters on success; returns false
+    // on failure.
+    virtual bool caretOrSelectionRange(size_t* location, size_t* length) = 0;
 
     // Changes the text direction of the selected input node.
     virtual void setTextDirection(WebTextDirection) = 0;
