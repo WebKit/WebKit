@@ -1,3 +1,17 @@
+2011-04-26  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r84977.
+        http://trac.webkit.org/changeset/84977
+        https://bugs.webkit.org/show_bug.cgi?id=59568
+
+        caused crashes on the SL WK2 bots (Requested by jessieberlin
+        on #webkit).
+
+        * assembler/MacroAssemblerX86_64.h:
+        (JSC::MacroAssemblerX86_64::call):
+        (JSC::MacroAssemblerX86_64::tailRecursiveCall):
+        (JSC::MacroAssemblerX86_64::makeTailRecursiveCall):
+
 2011-04-26  Kevin Ollivier  <kevino@theolliviers.com>
 
         Rubberstamped by Eric Seidel.
