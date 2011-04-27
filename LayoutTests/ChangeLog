@@ -1,3 +1,11 @@
+2011-04-26  Alejandro G. Castro  <alex@igalia.com>
+
+        Remove gtk specific render expectations after the tests were
+        converted in text tests (r84873).
+
+        * platform/gtk/animations/animation-drt-api-expected.txt: Removed.
+        * platform/gtk/animations/animation-drt-api-multiple-keyframes-expected.txt: Removed.
+
 2011-04-26  Martin Robinson  <mrobinson@igalia.com>
 
         Reviewed by Eric Seidel.
