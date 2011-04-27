@@ -1,3 +1,20 @@
+2011-04-26  Dinesh K Garg  <dineshg@codeaurora.org>
+
+        Reviewed by Eric Seidel.
+
+        beginElement broken by setAttribute
+        https://bugs.webkit.org/show_bug.cgi?id=26019
+
+        Test: svg/animations/animate-beginElementAt.svg
+
+        * svg/SVGAnimationElement.cpp:
+        (WebCore::SVGAnimationElement::attributeChanged):
+        Reset the animation state here as the rest of the code reads it and would still
+        think we are animating when we are not.
+
+        * svg/animation/SVGSMILElement.h:
+        (WebCore::SVGSMILElement::setInactive): Helper function to reset the state.
+
 2011-04-26  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r84989.

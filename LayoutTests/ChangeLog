@@ -1,3 +1,15 @@
+2011-04-26  Dinesh K Garg  <dineshg@codeaurora.org>
+
+        Reviewed by Eric Seidel.
+
+        Test case for: beginElement broken by setAttribute
+        https://bugs.webkit.org/show_bug.cgi?id=26019
+
+        * svg/animations/animate-beginElementAt-expected.txt: Added.
+        * svg/animations/animate-beginElementAt.svg: Added.
+        * svg/animations/animate-dynamic-update-attributeName-expected.txt:
+        Nice side effect of the patch, we are now fully passing this test.
+
 2011-04-26  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Oliver Hunt.

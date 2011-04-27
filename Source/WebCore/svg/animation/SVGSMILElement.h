@@ -111,6 +111,8 @@ protected:
     void addBeginTime(SMILTime);
     void addEndTime(SMILTime);
 
+    void setInactive() { m_activeState = Inactive; }
+
 private:
     virtual void startedActiveInterval() = 0;
     virtual void updateAnimation(float percent, unsigned repeat, SVGSMILElement* resultElement) = 0;

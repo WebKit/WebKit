@@ -161,6 +161,7 @@ void SVGAnimationElement::attributeChanged(Attribute* attr, bool preserveDecls)
 {
     // Assumptions may not hold after an attribute change.
     m_animationValid = false;
+    setInactive();
     SVGSMILElement::attributeChanged(attr, preserveDecls);
 }
 
