@@ -1,3 +1,13 @@
+2011-04-26  Chris Fleizach  <cfleizach@apple.com>
+
+        Reviewed by Adele Peterson.
+
+        AX: Add more text marker routines to DRT
+        https://bugs.webkit.org/show_bug.cgi?id=58949
+
+        * platform/mac/accessibility/textmarker-string-for-range-expected.txt: Added.
+        * platform/mac/accessibility/textmarker-string-for-range.html: Added.
+
 2011-04-26  Dirk Pranke  <dpranke@chromium.org>
 
         Unreviewed, even more expectations change for flaky tests.

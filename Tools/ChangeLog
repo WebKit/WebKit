@@ -1,3 +1,27 @@
+2011-04-26  Chris Fleizach  <cfleizach@apple.com>
+
+        Reviewed by Adele Peterson.
+
+        AX: Add more text marker routines to DRT
+        https://bugs.webkit.org/show_bug.cgi?id=58949
+
+        Add a few more methods to help test the text marker system, including nextMarker, previousMarker and
+        stringForMarkerRange.
+
+        * DumpRenderTree/AccessibilityUIElement.cpp:
+        (nextTextMarkerCallback):
+        (previousTextMarkerCallback):
+        (stringForTextMarkerRangeCallback):
+        (AccessibilityUIElement::previousTextMarker):
+        (AccessibilityUIElement::nextTextMarker):
+        (AccessibilityUIElement::stringForTextMarkerRange):
+        (AccessibilityUIElement::getJSClass):
+        * DumpRenderTree/AccessibilityUIElement.h:
+        * DumpRenderTree/mac/AccessibilityUIElementMac.mm:
+        (AccessibilityUIElement::previousTextMarker):
+        (AccessibilityUIElement::nextTextMarker):
+        (AccessibilityUIElement::stringForTextMarkerRange):
+
 2011-04-26  Dan Bernstein  <mitz@apple.com>
 
         Build fix.
