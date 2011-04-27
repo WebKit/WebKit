@@ -1,5 +1,66 @@
 2011-04-27  Martin Robinson  <mrobinson@igalia.com>
 
+        Update GTK+ specific expected results after r85011.
+
+        * platform/gtk/css2.1/t0905-c414-flt-00-d-expected.txt:
+        * platform/gtk/css2.1/t0905-c414-flt-01-d-g-expected.txt:
+        * platform/gtk/css2.1/t0905-c414-flt-02-c-expected.txt:
+        * platform/gtk/css2.1/t0905-c414-flt-03-c-expected.txt:
+        * platform/gtk/css2.1/t0905-c414-flt-04-c-expected.txt:
+        * platform/gtk/css2.1/t0905-c414-flt-wrap-01-d-g-expected.txt:
+        * platform/gtk/css2.1/t0905-c5525-fltcont-00-d-g-expected.txt:
+        * platform/gtk/css2.1/t0905-c5525-fltwidth-02-c-g-expected.txt:
+        * platform/gtk/css2.1/t0905-c5525-fltwidth-03-c-g-expected.txt:
+        * platform/gtk/css2.1/t090501-c414-flt-02-d-g-expected.txt:
+        * platform/gtk/css2.1/t090501-c414-flt-03-b-g-expected.txt:
+        * platform/gtk/fast/backgrounds/background-position-parsing-expected.txt:
+        * platform/gtk/fast/backgrounds/repeat/mask-negative-offset-repeat-expected.png: Added.
+        * platform/gtk/fast/backgrounds/repeat/mask-negative-offset-repeat-expected.txt:
+        * platform/gtk/fast/backgrounds/repeat/negative-offset-repeat-expected.png: Added.
+        * platform/gtk/fast/backgrounds/repeat/negative-offset-repeat-expected.txt:
+        * platform/gtk/fast/block/float/008-expected.txt:
+        * platform/gtk/fast/block/float/029-expected.txt:
+        * platform/gtk/fast/block/float/031-expected.txt:
+        * platform/gtk/fast/block/float/033-expected.txt:
+        * platform/gtk/fast/block/float/035-expected.txt:
+        * platform/gtk/fast/block/float/clamped-right-float-expected.txt:
+        * platform/gtk/fast/block/float/float-forced-below-other-floats-expected.txt:
+        * platform/gtk/fast/block/float/nested-clearance-expected.txt:
+        * platform/gtk/fast/block/margin-collapse/062-expected.txt:
+        * platform/gtk/fast/block/margin-collapse/063-expected.txt:
+        * platform/gtk/fast/blockflow/block-level-images-expected.png:
+        * platform/gtk/fast/blockflow/block-level-images-expected.txt:
+        * platform/gtk/fast/blockflow/floats-in-block-layout-expected.txt:
+        * platform/gtk/fast/borders/bidi-012-expected.png:
+        * platform/gtk/fast/borders/bidi-012-expected.txt:
+        * platform/gtk/fast/box-shadow/basic-shadows-expected.txt:
+        * platform/gtk/fast/css/color-correction-on-background-image-expected.txt:
+        * platform/gtk/fast/css/h1-in-section-elements-expected.png:
+        * platform/gtk/fast/css/h1-in-section-elements-expected.txt:
+        * platform/gtk/fast/forms/basic-textareas-quirks-expected.png:
+        * platform/gtk/fast/forms/basic-textareas-quirks-expected.txt:
+        * platform/gtk/fast/inline/inline-box-background-expected.txt:
+        * platform/gtk/fast/inline/inline-box-background-long-image-expected.txt:
+        * platform/gtk/fast/inline/inline-box-background-repeat-x-expected.txt:
+        * platform/gtk/fast/inline/inline-box-background-repeat-y-expected.txt:
+        * platform/gtk/fast/lists/003-expected.txt:
+        * platform/gtk/fast/lists/003-vertical-expected.png: Added.
+        * platform/gtk/fast/lists/003-vertical-expected.txt:
+        * platform/gtk/fast/media/mq-relative-constraints-08-expected.txt:
+        * platform/gtk/fast/repaint/box-shadow-h-expected.txt:
+        * platform/gtk/fast/repaint/box-shadow-v-expected.txt:
+        * platform/gtk/fast/repaint/subtree-root-clip-expected.txt:
+        * platform/gtk/fast/text/emphasis-vertical-expected.txt:
+        * platform/gtk/fast/text/whitespace/012-expected.txt:
+        * platform/gtk/plugins/resize-from-plugin-expected.txt:
+        * platform/gtk/tables/mozilla/bugs/bug120364-expected.txt:
+        * platform/gtk/tables/mozilla/bugs/bug45055-2-expected.txt:
+        * platform/gtk/tables/mozilla/bugs/bug72359-expected.txt:
+        * platform/gtk/tables/mozilla/marvin/x_table_align_left-expected.txt:
+        * platform/gtk/tables/mozilla/marvin/x_table_align_right-expected.txt:
+
+2011-04-27  Martin Robinson  <mrobinson@igalia.com>
+
         Skip a failing test. Add GTK+-specific results for another and organize
         the Skipped file a bit. Remove platform-specific results for a test which
         is now a text dumping test.
