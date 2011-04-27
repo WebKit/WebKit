@@ -71,6 +71,7 @@ contributors_who_are_not_committers = [
     Contributor("Ami Fischman", "fischman@chromium.org", "amifischman0"),
     Contributor("Anna Cavender", "annacc@chromium.org", "annacc"),
     Contributor("Anne van Kesteren", "annevankesteren+webkit@gmail.com", "annevk"),
+    Contributor("Annie Sullivan", "sullivan@chromium.org", "annie"),
     Contributor("David Dorwin", "ddorwin@chromium.org", "ddorwin"),
     Contributor("David Grogan", "dgrogan@chromium.org", "dgrogan"),
     Contributor("Finnur Thorarinsson", "finnur@chromium.org", "finnur"),

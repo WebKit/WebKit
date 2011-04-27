@@ -1,3 +1,13 @@
+2011-04-27  Annie Sullivan  <sullivan@chromium.org>
+
+        Reviewed by David Levin.
+
+        Adding myself as a Chromium contributor to committers.py.
+
+        https://bugs.webkit.org/show_bug.cgi?id=59576
+
+        * Scripts/webkitpy/common/config/committers.py:
+
 2011-04-26  David Grogan  <dgrogan@chromium.org>
 
         Reviewed by David Levin.
