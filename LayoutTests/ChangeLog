@@ -1,3 +1,16 @@
+2011-04-20  Adrienne Walker  <enne@google.com>
+
+        Reviewed by Kenneth Russell.
+
+        [chromium] Fix incorrect scissor rect for layers that render into a rendersurface
+        https://bugs.webkit.org/show_bug.cgi?id=59020
+
+        * compositing/flat-with-transformed-child-expected.txt: Added.
+        * compositing/flat-with-transformed-child.html: Added.
+        * platform/chromium-gpu-linux/compositing/flat-with-transformed-child-expected.checksum: Added.
+        * platform/chromium-gpu-linux/compositing/flat-with-transformed-child-expected.png: Added.
+        * platform/chromium/test_expectations.txt:
+
 2011-04-27  Martin Robinson  <mrobinson@igalia.com>
 
         Rebaseline some tests which differ on the bots after r85066.

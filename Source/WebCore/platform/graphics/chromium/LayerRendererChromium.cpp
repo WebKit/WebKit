@@ -628,9 +628,13 @@ void LayerRendererChromium::updatePropertiesAndRenderSurfaces(LayerChromium* lay
         layerOriginTransform.translate3d(-0.5 * bounds.width(), -0.5 * bounds.height(), 0);
         renderSurface->m_originTransform = layerOriginTransform;
         if (layerOriginTransform.isInvertible() && drawLayer->superlayer()) {
+            // Transform parent scissor rect into the space of the layer.
+            IntRect parentScissor = drawLayer->superlayer()->scissorRect();
+            parentScissor.intersect(layerOriginTransform.mapRect(transformedLayerRect));
             TransformationMatrix parentToLayer = layerOriginTransform.inverse();
-
-            drawLayer->setScissorRect(parentToLayer.mapRect(drawLayer->superlayer()->scissorRect()));
+            IntRect scissor = parentToLayer.projectQuad(FloatQuad(FloatRect(parentScissor))).enclosingBoundingBox();
+            scissor.intersect(transformedLayerRect);
+            drawLayer->setScissorRect(scissor);
         } else
             drawLayer->setScissorRect(IntRect());
 

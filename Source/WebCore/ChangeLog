@@ -1,3 +1,18 @@
+2011-04-20  Adrienne Walker  <enne@google.com>
+
+        Reviewed by Kenneth Russell.
+
+        [chromium] Fix incorrect scissor rect for layers that render into a rendersurface
+        https://bugs.webkit.org/show_bug.cgi?id=59020
+
+        mapRect is the incorrect transform here.  The parent scissor rect
+        needs to be projected into layer space instead.
+
+        Test: compositing/flat-with-transformed-child.html
+
+        * platform/graphics/chromium/LayerRendererChromium.cpp:
+        (WebCore::LayerRendererChromium::updatePropertiesAndRenderSurfaces):
+
 2011-04-27  Pratik Solanki  <psolanki@apple.com>
 
         Reviewed by Antti Koivisto.

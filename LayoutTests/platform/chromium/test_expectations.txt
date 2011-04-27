@@ -3967,3 +3967,6 @@ BUGDPRANKE LINUX : svg/text/text-intro-05-t.svg = IMAGE
 
 BUGDPRANKE WIN LINUX : media/video-controls-transformed.html = TEXT
 BUGDPRANKE MAC CPU : media/video-controls-transformed.html = TEXT
+
+// Needs baselines everywhere
+BUGENNE : compositing/flat-with-transformed-child.html = FAIL
