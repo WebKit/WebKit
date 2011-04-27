@@ -442,7 +442,7 @@ WebInspector.ScriptsPanel.prototype = {
 
     _debuggerWasEnabled: function()
     {
-        this._setPauseOnExceptions(WebInspector.settings.pauseOnExceptionStateString);
+        this._setPauseOnExceptions(WebInspector.settings.pauseOnExceptionState);
 
         if (this._debuggerEnabled)
             return;
@@ -711,7 +711,7 @@ WebInspector.ScriptsPanel.prototype = {
                 this._pauseOnExceptionButton.title = WebInspector.UIString("Pause on uncaught exceptions.\nClick to Not pause on exceptions.");
 
             this._pauseOnExceptionButton.state = pauseOnExceptionsState;
-            WebInspector.settings.pauseOnExceptionStateString = pauseOnExceptionsState;
+            WebInspector.settings.pauseOnExceptionState = pauseOnExceptionsState;
         }
         DebuggerAgent.setPauseOnExceptions(pauseOnExceptionsState, callback.bind(this));
     },

@@ -1,3 +1,17 @@
+2011-04-27  Ilya Tikhonovsky  <loislo@chromium.org>
+
+        Reviewed by Brian Weinstein.
+
+        Web Inspector: Stop on Exception state does not persist.
+
+        A wrong property name was used when we persist PauseOnExceptionState property to Local Storage.
+        https://bugs.webkit.org/show_bug.cgi?id=59630
+
+        * inspector/front-end/ScriptsPanel.js:
+        (WebInspector.ScriptsPanel.prototype._debuggerWasEnabled):
+        (WebInspector.ScriptsPanel.prototype._setPauseOnExceptions.callback):
+        (WebInspector.ScriptsPanel.prototype._setPauseOnExceptions):
+
 2011-04-27  Adrienne Walker  <enne@google.com>
 
         [chromium] Unreviewed, rollout r85075 (scissor rect changes)
