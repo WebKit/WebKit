@@ -45,9 +45,6 @@ class JSONTestResult(object):
         self._test_name = test_name
         self._result_dict = result_dict
 
-    def test_runtime(self):
-        return self._result_dict.get('time_ms')
-
     def did_pass(self):
         return self._actual_as_expectation() == test_expectations.PASS
 
@@ -83,7 +80,8 @@ class JSONTestResult(object):
             return []
 
     def test_result(self):
-        return test_results.TestResult(self._test_name, self._failures(), test_run_time=self.test_runtime())
+        # FIXME: Optionally pull in the test runtime from times_ms.json.
+        return test_results.TestResult(self._test_name, self._failures())
 
 
 class ResultsJSONParser(object):

@@ -27,6 +27,7 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 import logging
+import os
 import subprocess
 import sys
 import time
@@ -66,6 +67,34 @@ def write_json(filesystem, json_object, file_path):
     json_string = _JSON_PREFIX + json_data + _JSON_SUFFIX
     filesystem.write_text_file(file_path, json_string)
 
+def test_timings_trie(port, individual_test_timings):
+    """Breaks a filename into chunks by directory and puts the test time as a value in the lowest part, e.g.
+    foo/bar/baz.html: 1ms
+    foo/bar/baz1.html: 3ms
+
+    becomes
+    foo: {
+        bar: {
+            baz.html: 1,
+            baz1.html: 3
+        }
+    }
+    """
+    trie = {}
+    for test_result in individual_test_timings:
+        test = port.relative_test_filename(test_result.filename)
+        parts = test.split(os.sep)
+        current_map = trie
+        for i, part in enumerate(parts):
+            if i == (len(parts) - 1):
+                current_map[part] = int(1000 * test_result.test_run_time)
+                break
+
+            if part not in current_map:
+                current_map[part] = {}
+            current_map = current_map[part]
+    return trie
+
 # FIXME: We already have a TestResult class in test_results.py
 class TestResult(object):
     """A simple class that represents a single test result."""
@@ -74,9 +103,10 @@ class TestResult(object):
     (NONE, FAILS, FLAKY, DISABLED) = range(4)
 
     def __init__(self, name, failed=False, elapsed_time=0):
-        self.name = name
+        # FIXME: s/filename/name to be consistent with the rest of layout_package.
+        self.filename = name
         self.failed = failed
-        self.time = elapsed_time
+        self.test_run_time = elapsed_time
 
         test_name = name
         try:
@@ -131,7 +161,7 @@ class JSONResultsGeneratorBase(object):
     ALL_FIXABLE_COUNT = "allFixableCount"
 
     RESULTS_FILENAME = "results.json"
-    FULL_RESULTS_FILENAME = "full_results.json"
+    TIMES_MS_FILENAME = "times_ms.json"
     INCREMENTAL_RESULTS_FILENAME = "incremental_results.json"
 
     URL_FOR_TEST_LIST_JSON = \
@@ -188,29 +218,22 @@ class JSONResultsGeneratorBase(object):
 
         self._archived_results = None
 
-    def generate_json_output(self):
+    def generate_times_ms_file(self):
         json = self.get_json()
         if json:
             file_path = self._fs.join(self._results_directory, self.INCREMENTAL_RESULTS_FILENAME)
             write_json(self._fs, json, file_path)
 
+    # FIXME: Remove this function once the chromium buildbots stop calling it.
+    def generate_json_output(self):
+        self.generate_times_ms_file()
+
     def generate_full_results_file(self):
-        # Use the same structure as the compacted version of TestRunner.summarize_results.
-        # For now we only include the times as this is only used for treemaps and
-        # expected/actual don't make sense for gtests.
-        results = {}
-        results['version'] = 1
-
-        tests = {}
-
-        for test in self._test_results_map:
-            time_seconds = self._test_results_map[test].time
-            tests[test] = {}
-            tests[test]['time_ms'] = int(1000 * time_seconds)
-
-        results['tests'] = tests
-        file_path = self._fs.join(self._results_directory, self.FULL_RESULTS_FILENAME)
-        write_json(self._fs, results, file_path)
+        # FIXME: rename to generate_times_ms_file. This needs to be coordinated with
+        # changing the calls to this on the chromium build slaves.
+        times = test_timings_trie(self._port, self._test_results_map.values())
+        file_path = self._fs.join(self._results_directory, self.TIMES_MS_FILENAME)
+        write_json(self._fs, times, file_path)
 
     def get_json(self):
         """Gets the results for the results.json file."""
@@ -291,12 +314,12 @@ class JSONResultsGeneratorBase(object):
         for the given test_name."""
         if test_name in self._test_results_map:
             # Floor for now to get time in seconds.
-            return int(self._test_results_map[test_name].time)
+            return int(self._test_results_map[test_name].test_run_time)
         return 0
 
     def _get_failed_test_names(self):
         """Returns a set of failed test names."""
-        return set([r.name for r in self._test_results if r.failed])
+        return set([r.filename for r in self._test_results if r.failed])
 
     def _get_modifier_char(self, test_name):
         """Returns a single char (e.g. SKIP_RESULT, FAIL_RESULT,

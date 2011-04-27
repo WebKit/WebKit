@@ -85,18 +85,16 @@ def summarize_results(port_obj, expectations, result_summary, retry_summary, tes
     Returns:
         A dictionary containing a summary of the unexpected results from the
         run, with the following fields:
-        'version': a version indicator (1 in this version)
+        'version': a version indicator
         'fixable': # of fixable tests (NOW - PASS)
         'skipped': # of skipped tests (NOW & SKIPPED)
         'num_regressions': # of non-flaky failures
         'num_flaky': # of flaky failures
         'num_passes': # of unexpected passes
-        'tests': a dict of tests -> {'expected': '...', 'actual': '...', 'time_ms': ...}
+        'tests': a dict of tests -> {'expected': '...', 'actual': '...'}
     """
     results = {}
-    results['version'] = 1
-
-    test_timings_map = dict((test_result.filename, test_result.test_run_time) for test_result in test_timings)
+    results['version'] = 2
 
     tbe = result_summary.tests_by_expectation
     tbt = result_summary.tests_by_timeline
@@ -127,6 +125,7 @@ def summarize_results(port_obj, expectations, result_summary, retry_summary, tes
         result_type = result.type
         actual = [keywords[result_type]]
 
+        # FIXME: only include passing tests that have stderr output.
         if result_type == test_expectations.PASS:
             num_passes += 1
         elif result_type == test_expectations.CRASH:
@@ -148,7 +147,8 @@ def summarize_results(port_obj, expectations, result_summary, retry_summary, tes
         tests[test]['actual'] = " ".join(actual)
         # FIXME: Set this correctly once https://webkit.org/b/37739 is fixed
         # and only set it if there actually is stderr data.
-        tests[test]['has_stderr'] = False
+        if False:
+            tests[test]['has_stderr'] = True
 
         failure_types = [type(f) for f in result.failures]
         if test_failures.FailureMissingAudio in failure_types:
@@ -169,10 +169,6 @@ def summarize_results(port_obj, expectations, result_summary, retry_summary, tes
 
         if test_failures.FailureMissingImage in failure_types or test_failures.FailureMissingImageHash in failure_types:
             tests[test]['is_missing_image'] = True
-
-        if filename in test_timings_map:
-            time_seconds = test_timings_map[filename]
-            tests[test]['time_ms'] = int(1000 * time_seconds)
 
     results['tests'] = tests
     results['num_passes'] = num_passes
@@ -908,6 +904,10 @@ class Manager:
             dashboard).
         """
         _log.debug("Writing JSON files in %s." % self._results_directory)
+
+        times_trie = json_results_generator.test_timings_trie(self._port, individual_test_timings)
+        times_json_path = self._fs.join(self._results_directory, "times_ms.json")
+        json_results_generator.write_json(self._fs, times_trie, times_json_path)
 
         unexpected_json_path = self._fs.join(self._results_directory, "unexpected_results.json")
         json_results_generator.write_json(self._fs, unexpected_results, unexpected_json_path)

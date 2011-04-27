@@ -39,15 +39,12 @@ class ResultsJSONParserTest(unittest.TestCase):
     "tests": {
         "fast\/dom\/prototype-inheritance.html": {
             "expected": "PASS",
-            "time_ms": 225,
-            "actual": "TEXT",
-            "has_stderr": false
+            "actual": "TEXT"
         },
         "svg\/dynamic-updates\/SVGFEDropShadowElement-dom-stdDeviation-attr.html": {
             "expected": "PASS",
-            "time_ms": 110,
             "actual": "IMAGE",
-            "has_stderr": false
+            "has_stderr": true
         }
     },
     "skipped": 450,
@@ -64,8 +61,8 @@ class ResultsJSONParserTest(unittest.TestCase):
 
     def test_basic(self):
         expected_results = [
-            test_results.TestResult("svg/dynamic-updates/SVGFEDropShadowElement-dom-stdDeviation-attr.html", [test_failures.FailureImageHashMismatch()], 110),
-            test_results.TestResult("fast/dom/prototype-inheritance.html", [test_failures.FailureTextMismatch()], 225),
+            test_results.TestResult("svg/dynamic-updates/SVGFEDropShadowElement-dom-stdDeviation-attr.html", [test_failures.FailureImageHashMismatch()], 0),
+            test_results.TestResult("fast/dom/prototype-inheritance.html", [test_failures.FailureTextMismatch()], 0),
         ]
         results = ResultsJSONParser.parse_results_json(self._example_unexpected_results_json)
         self.assertEqual(expected_results, results)

@@ -35,8 +35,9 @@ import random
 from webkitpy.common.system import filesystem_mock
 from webkitpy.layout_tests.layout_package import json_results_generator
 from webkitpy.layout_tests.layout_package import test_expectations
+from webkitpy.layout_tests.port import test
 from webkitpy.thirdparty.mock import Mock
-
+from webkitpy.thirdparty import simplejson
 
 class JSONGeneratorTest(unittest.TestCase):
     def setUp(self):
@@ -84,6 +85,7 @@ class JSONGeneratorTest(unittest.TestCase):
                 elapsed_time=test_timings[test])
 
         port = Mock()
+        port.relative_test_filename = lambda filename: filename
         port._filesystem = filesystem_mock.MockFileSystem()
         generator = json_results_generator.JSONResultsGeneratorBase(port,
             self.builder_name, self.build_name, self.build_number,
@@ -194,6 +196,26 @@ class JSONGeneratorTest(unittest.TestCase):
         self._test_json_generation(
             ['FLAKY_B', 'DISABLED_C', 'FAILS_D'],
             ['A', 'FLAKY_E'])
+
+    def test_test_timings_trie(self):
+        test_port = test.TestPort()
+        individual_test_timings = []
+        individual_test_timings.append(json_results_generator.TestResult('/test.checkout/LayoutTests/foo/bar/baz.html', elapsed_time=1.2))
+        individual_test_timings.append(json_results_generator.TestResult('/test.checkout/LayoutTests/bar.html', elapsed_time=0.0001))
+        trie = json_results_generator.test_timings_trie(test_port, individual_test_timings)
+        
+        expected_trie = {
+          'bar.html': 0,
+          'foo': {
+              'bar': {
+                  'baz.html': 1200,
+              }
+          }
+        }
+        
+        self.assertEqual(simplejson.dumps(trie), simplejson.dumps(expected_trie))
+        
+        
 
 if __name__ == '__main__':
     unittest.main()

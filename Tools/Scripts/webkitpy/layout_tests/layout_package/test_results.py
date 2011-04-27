@@ -39,6 +39,7 @@ class TestResult(object):
         return cPickle.loads(str)
 
     def __init__(self, filename, failures=None, test_run_time=None):
+        # FIXME: s/filename/name to be consistent with the rest of layout_package.
         self.filename = filename
         self.failures = failures or []
         self.test_run_time = test_run_time or 0
