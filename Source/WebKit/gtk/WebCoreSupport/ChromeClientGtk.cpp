@@ -686,12 +686,12 @@ void ChromeClient::cancelGeolocationPermissionRequestForFrame(WebCore::Frame* fr
 
 bool ChromeClient::selectItemWritingDirectionIsNatural()
 {
-    return true;
+    return false;
 }
 
 bool ChromeClient::selectItemAlignmentFollowsMenuWritingDirection()
 {
-    return false;
+    return true;
 }
 
 PassRefPtr<WebCore::PopupMenu> ChromeClient::createPopupMenu(WebCore::PopupMenuClient* client) const

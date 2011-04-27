@@ -1,3 +1,15 @@
+2011-04-27  Martin Robinson  <mrobinson@igalia.com>
+
+        Reviewed by Eric Seidel.
+
+        [GTK] Menulists do not follow text direction when rendering options with right-to-left text
+        https://bugs.webkit.org/show_bug.cgi?id=54038
+
+        * platform/gtk/Skipped: Unskip passing test.
+        * platform/gtk/fast/text/international/pop-up-button-text-alignment-and-direction-expected.checksum: Added.
+        * platform/gtk/fast/text/international/pop-up-button-text-alignment-and-direction-expected.png: Added.
+        * platform/gtk/fast/text/international/pop-up-button-text-alignment-and-direction-expected.txt: Added.
+
 2011-02-03  Martin Robinson  <mrobinson@igalia.com>
 
         Reviewed by Xan Lopez.
