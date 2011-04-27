@@ -3921,6 +3921,7 @@ BUGDPRANKE LINUX DEBUG CPU : svg/custom/font-platformDestroy-crash.svg = PASS CR
 BUGDPRANKE CPU MAC DEBUG : http/tests/media/text-served-as-text.html = PASS CRASH
 BUGDPRANKE CPU : fast/dom/HTMLObjectElement/object-as-frame.html = PASS TEXT
 BUGDPRANKE CPU LINUX DEBUG : editing/pasteboard/drop-text-events.html = PASS CRASH
+BUGDPRANKE MAC DEBUG :   transitions/transition-end-event-transform.html = TEXT PASS
 
 // start skipping platform tests
 BUGNONE WONTFIX SKIP : platform/qt/fast/forms = PASS FAIL CRASH TIMEOUT
@@ -3958,3 +3959,12 @@ BUGDPRANKE LINUX : svg/text/text-intro-05-t.svg = IMAGE
 
 BUGDPRANKE WIN LINUX : media/video-controls-transformed.html = TEXT
 BUGDPRANKE MAC CPU : media/video-controls-transformed.html = TEXT
+BUGDPRANKE MAC : fast/lists/003-vertical.html = TEXT
+BUGDPRANKE MAC : fast/repaint/box-shadow-h.html = IMAGE
+BUGDPRANKE MAC : fast/block/float/float-overhangs-root.html = MISSING
+BUGDPRANKE MAC DEBUG : fast/blockflow/Kusa-Makura-background-canvas.html = CRASH
+BUGDPRANKE MAC DEBUG : storage/domstorage/events/documentURI.html = CRASH
+BUGDPRANKE MAC DEBUG : svg/W3C-SVG-1.1-SE/types-dom-04-b.svg = CRASH
+BUGDPRANKE MAC DEBUG : http/tests/media/remove-while-loading.html = TIMEOUT
+
+BUGKBR WIN7 : fast/speech/input-readonly-and-disabled.html = CRASH
