@@ -1,3 +1,20 @@
+2011-04-27  Enrica Casucci  <enrica@apple.com>
+
+        Reviewed by Darin Adler.
+
+        REGRESSION (r84311): Copy should preserve background color if specified in the body only if the entire content is selected.
+        https://bugs.webkit.org/show_bug.cgi?id=59251
+        <rdar://problem/9327044>
+
+        When we are looking for wrapping elements that are presentational, we should
+        include elements that have a non transparent background color only if they
+        are not blocks.
+
+        Test: editing/pasteboard/do-not-copy-body-color.html
+
+        * editing/markup.cpp:
+        (WebCore::isElementPresentational):
+
 2011-04-20  Dimitri Glazkov  <dglazkov@chromium.org>
 
         Reviewed by Antti Koivisto.

@@ -1,3 +1,14 @@
+2011-04-27  Enrica Casucci  <enrica@apple.com>
+
+        Reviewed by Darin Adler.
+
+        REGRESSION (r84311): Copy should preserve background color if specified in the body only if the entire content is selected.
+        https://bugs.webkit.org/show_bug.cgi?id=59251
+        <rdar://problem/9327044>
+
+        * editing/pasteboard/do-not-copy-body-color-expected.txt: Added.
+        * editing/pasteboard/do-not-copy-body-color.html: Added.
+
 2011-04-27  Ojan Vafai  <ojan@chromium.org>
 
         Reviewed by Eric Seidel.

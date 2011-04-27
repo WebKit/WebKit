@@ -467,7 +467,7 @@ static bool isElementPresentational(const Node* node)
     RefPtr<CSSMutableStyleDeclaration> style = styleFromMatchedRulesAndInlineDecl(node);
     if (!style)
         return false;
-    return !propertyMissingOrEqualToNone(style.get(), CSSPropertyTextDecoration) || !Editor::hasTransparentBackgroundColor(style.get());
+    return !propertyMissingOrEqualToNone(style.get(), CSSPropertyTextDecoration) || (!node->isBlockFlow() && !Editor::hasTransparentBackgroundColor(style.get()));
 }
 
 static bool shouldIncludeWrapperForFullySelectedRoot(Node* fullySelectedRoot, CSSMutableStyleDeclaration* style)
