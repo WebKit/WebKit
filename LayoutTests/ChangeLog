@@ -5,6 +5,15 @@
 
         Update Qt specific expected files after r85009.
 
+        * platform/qt/fast/replaced/table-percent-height-expected.txt:
+
+2011-04-26  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [Qt] Improper rendering of <button> tag when it contains a <br>
+        https://bugs.webkit.org/show_bug.cgi?id=50521
+
+        Update Qt specific expected files after r85009.
+
         * platform/qt/editing/selection/3690703-2-expected.png:
         * platform/qt/editing/selection/3690703-2-expected.txt:
         * platform/qt/editing/selection/3690703-expected.png:
