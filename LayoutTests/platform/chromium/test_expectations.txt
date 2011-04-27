@@ -3969,4 +3969,4 @@ BUGDPRANKE WIN LINUX : media/video-controls-transformed.html = TEXT
 BUGDPRANKE MAC CPU : media/video-controls-transformed.html = TEXT
 
 // Needs baselines everywhere
-BUGENNE : compositing/flat-with-transformed-child.html = FAIL
+BUGENNE GPU : compositing/flat-with-transformed-child.html = FAIL MISSING

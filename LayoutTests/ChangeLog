@@ -1,3 +1,9 @@
+2011-04-27  Adrienne Walker  <enne@google.com>
+
+        [chromium] Unreviewed, update flat-with-transformed-child expectations.
+
+        * platform/chromium/test_expectations.txt:
+
 2011-04-27  Enrica Casucci  <enrica@apple.com>
 
         Reviewed by Darin Adler.
