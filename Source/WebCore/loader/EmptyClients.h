@@ -395,7 +395,8 @@ public:
     virtual RemoteAXObjectRef accessibilityRemoteObject() { return 0; }
     virtual NSCachedURLResponse* willCacheResponse(DocumentLoader*, unsigned long, NSCachedURLResponse* response) const { return response; }
 #endif
-#if USE(CFNETWORK)
+#if PLATFORM(WIN) && USE(CFNETWORK)
+    // FIXME: Windows should use willCacheResponse - <https://bugs.webkit.org/show_bug.cgi?id=57257>.
     virtual bool shouldCacheResponse(DocumentLoader*, unsigned long, const ResourceResponse&, const unsigned char*, unsigned long long) { return true; }
 #endif
 

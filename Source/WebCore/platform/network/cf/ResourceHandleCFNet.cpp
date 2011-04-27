@@ -251,12 +251,18 @@ void didFail(CFURLConnectionRef conn, CFErrorRef error, const void* clientInfo)
         handle->client()->didFail(handle, ResourceError(error));
 }
 
-CFCachedURLResponseRef willCacheResponse(CFURLConnectionRef conn, CFCachedURLResponseRef cachedResponse, const void* clientInfo) 
+static CFCachedURLResponseRef willCacheResponse(CFURLConnectionRef, CFCachedURLResponseRef cachedResponse, const void* clientInfo)
 {
     ResourceHandle* handle = static_cast<ResourceHandle*>(const_cast<void*>(clientInfo));
 
+#if PLATFORM(WIN)
     if (handle->client() && !handle->client()->shouldCacheResponse(handle, cachedResponse))
         return 0;
+#else
+    CFCachedURLResponseRef newResponse = handle->client()->willCacheResponse(handle, cachedResponse);
+    if (newResponse != cachedResponse)
+        return newResponse;
+#endif
 
     CacheStoragePolicy policy = static_cast<CacheStoragePolicy>(CFCachedURLResponseGetStoragePolicy(cachedResponse));
 

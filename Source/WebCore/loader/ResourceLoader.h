@@ -119,9 +119,14 @@ namespace WebCore {
         virtual void receivedCancellation(ResourceHandle*, const AuthenticationChallenge& challenge) { receivedCancellation(challenge); }
         virtual void willCacheResponse(ResourceHandle*, CacheStoragePolicy&);
 #if PLATFORM(MAC)
+#if USE(CFNETWORK)
+        virtual CFCachedURLResponseRef willCacheResponse(ResourceHandle*, CFCachedURLResponseRef);
+#else
         virtual NSCachedURLResponse* willCacheResponse(ResourceHandle*, NSCachedURLResponse*);
 #endif
-#if USE(CFNETWORK)
+#endif // PLATFORM(MAC)
+#if PLATFORM(WIN) && USE(CFNETWORK)
+        // FIXME: Windows should use willCacheResponse - <https://bugs.webkit.org/show_bug.cgi?id=57257>.
         virtual bool shouldCacheResponse(ResourceHandle*, CFCachedURLResponseRef);
 #endif
 #if ENABLE(BLOB)

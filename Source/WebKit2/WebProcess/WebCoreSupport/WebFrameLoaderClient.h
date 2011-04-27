@@ -209,7 +209,8 @@ private:
 #endif
     virtual NSCachedURLResponse* willCacheResponse(WebCore::DocumentLoader*, unsigned long identifier, NSCachedURLResponse*) const;
 #endif
-#if USE(CFNETWORK)
+#if PLATFORM(WIN) && USE(CFNETWORK)
+    // FIXME: Windows should use willCacheResponse - <https://bugs.webkit.org/show_bug.cgi?id=57257>.
     virtual bool shouldCacheResponse(WebCore::DocumentLoader*, unsigned long identifier, const WebCore::ResourceResponse&, const unsigned char* data, unsigned long long length);
 #endif
     

@@ -33,6 +33,8 @@
 
 namespace WebCore {
 
+#if PLATFORM(WIN)
+
 bool ResourceLoader::shouldCacheResponse(ResourceHandle*, CFCachedURLResponseRef cachedResponse)
 {
     if (!m_sendResourceLoadCallbacks)
@@ -42,6 +44,8 @@ bool ResourceLoader::shouldCacheResponse(ResourceHandle*, CFCachedURLResponseRef
     CFDataRef data = CFCachedURLResponseGetReceiverData(cachedResponse);
     return frameLoader()->client()->shouldCacheResponse(documentLoader(), identifier(), response, CFDataGetBytePtr(data), CFDataGetLength(data));
 }
+
+#endif
 
 } // namespace WebCore
 

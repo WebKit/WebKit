@@ -29,8 +29,6 @@
 #include "config.h"
 #include "ResourceLoader.h"
 
-#if !USE(CFNETWORK)
-
 #include "FrameLoader.h"
 #include "FrameLoaderClient.h"
 #include "ResourceHandle.h"
@@ -39,7 +37,27 @@
 #include "InspectorInstrumentation.h"
 #endif
 
+#if USE(CFNETWORK)
+@interface NSCachedURLResponse (Details)
+-(id)_initWithCFCachedURLResponse:(CFCachedURLResponseRef)cachedResponse;
+-(CFCachedURLResponseRef)_CFCachedURLResponse;
+@end
+#endif
+
 namespace WebCore {
+
+#if USE(CFNETWORK)
+
+CFCachedURLResponseRef ResourceLoader::willCacheResponse(ResourceHandle*, CFCachedURLResponseRef cachedResponse)
+{
+    if (!m_sendResourceLoadCallbacks)
+        return 0;
+
+    RetainPtr<NSCachedURLResponse> nsCachedResponse(AdoptNS, [[NSCachedURLResponse alloc] _initWithCFCachedURLResponse:cachedResponse]);
+    return [frameLoader()->client()->willCacheResponse(documentLoader(), identifier(), nsCachedResponse.get()) _CFCachedURLResponse];
+}
+
+#else
 
 NSCachedURLResponse* ResourceLoader::willCacheResponse(ResourceHandle*, NSCachedURLResponse* response)
 {
@@ -47,6 +65,8 @@ NSCachedURLResponse* ResourceLoader::willCacheResponse(ResourceHandle*, NSCached
         return 0;
     return frameLoader()->client()->willCacheResponse(documentLoader(), identifier(), response);
 }
+
+#endif
 
 #if HAVE(CFNETWORK_DATA_ARRAY_CALLBACK)
 
@@ -87,5 +107,3 @@ void ResourceLoader::didReceiveDataArray(ResourceHandle*, CFArrayRef dataArray)
 #endif
 
 }
-
-#endif // !USE(CFNETWORK)

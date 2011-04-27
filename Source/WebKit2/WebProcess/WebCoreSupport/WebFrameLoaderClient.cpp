@@ -1362,7 +1362,7 @@ NSCachedURLResponse* WebFrameLoaderClient::willCacheResponse(DocumentLoader*, un
 }
 
 #endif
-#if USE(CFNETWORK)
+#if PLATFORM(WIN) && USE(CFNETWORK)
 bool WebFrameLoaderClient::shouldCacheResponse(DocumentLoader*, unsigned long identifier, const ResourceResponse&, const unsigned char* data, unsigned long long length)
 {
     return true;

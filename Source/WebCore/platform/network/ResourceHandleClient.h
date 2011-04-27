@@ -31,9 +31,12 @@
 #include <wtf/RefPtr.h>
 
 #if USE(CFNETWORK)
-#include <ConditionalMacros.h>
 #include <CFNetwork/CFURLCachePriv.h>
 #include <CFNetwork/CFURLResponsePriv.h>
+#endif
+
+#if PLATFORM(WIN)
+#include <ConditionalMacros.h>
 #endif
 
 #if PLATFORM(MAC)
@@ -93,12 +96,16 @@ namespace WebCore {
 #endif
         virtual void receivedCancellation(ResourceHandle*, const AuthenticationChallenge&) { }
 
-#if PLATFORM(MAC)        
-        virtual NSCachedURLResponse* willCacheResponse(ResourceHandle*, NSCachedURLResponse* response) { return response; }
-        virtual void willStopBufferingData(ResourceHandle*, const char*, int) { } 
-#endif
+#if PLATFORM(MAC)
 #if USE(CFNETWORK)
-        virtual bool shouldCacheResponse(ResourceHandle*, CFCachedURLResponseRef response) { return true; }
+        virtual CFCachedURLResponseRef willCacheResponse(ResourceHandle*, CFCachedURLResponseRef response) { return response; }
+#else
+        virtual NSCachedURLResponse* willCacheResponse(ResourceHandle*, NSCachedURLResponse* response) { return response; }
+#endif
+        virtual void willStopBufferingData(ResourceHandle*, const char*, int) { }
+#endif // PLATFORM(MAC)
+#if PLATFORM(WIN) && USE(CFNETWORK)
+        virtual bool shouldCacheResponse(ResourceHandle*, CFCachedURLResponseRef) { return true; }
 #endif
 #if ENABLE(BLOB)
         virtual AsyncFileStream* createAsyncFileStream(FileStreamClient*) { return 0; }
