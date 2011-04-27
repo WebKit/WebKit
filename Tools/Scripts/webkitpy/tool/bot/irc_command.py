@@ -115,7 +115,8 @@ class Whois(IRCCommand):
         if len(args) != 1:
             return "%s: Usage: BUGZILLA_EMAIL" % nick
         email = args[0]
-        committer = CommitterList().committer_by_email(email)
+        # FIXME: We should get the ContributorList off the tool somewhere.
+        committer = CommitterList().contributor_by_email(email)
         if not committer:
             return "%s: Sorry, I don't know %s. Maybe you could introduce me?" % (nick, email)
         if not committer.irc_nickname:
@@ -143,8 +144,13 @@ class CreateBug(IRCCommand):
         bug_title = " ".join(args)
         bug_description = "%s\nRequested by %s on %s." % (bug_title, nick, config_irc.channel)
 
+        # There happens to be a committers list hung off of Bugzilla, so
+        # re-using that one makes things easiest for now.
+        requester = tool.bugs.committers.contributor_by_irc_nickname(nick)
+        requester_email = requester.bugzilla_email() if requester else None
+
         try:
-            bug_id = tool.bugs.create_bug(bug_title, bug_description)
+            bug_id = tool.bugs.create_bug(bug_title, bug_description, cc=requester_email, assignee=requester_email)
             bug_url = tool.bugs.bug_url_for_bug_id(bug_id)
             return "%s: Created bug: %s" % (nick, bug_url)
         except Exception, e:

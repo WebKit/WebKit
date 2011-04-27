@@ -1,5 +1,5 @@
 # Copyright (c) 2011, Apple Inc. All rights reserved.
-# Copyright (c) 2009, Google Inc. All rights reserved.
+# Copyright (c) 2009, 2011 Google Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are
@@ -27,23 +27,20 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #
-# WebKit's Python module for committer and reviewer validation
+# WebKit's Python module for committer and reviewer validation.
 
 
-class Contributor:
-
+class Contributor(object):
     def __init__(self, name, email_or_emails, irc_nickname=None):
-        return
-
-class Committer:
-
-    def __init__(self, name, email_or_emails, irc_nickname=None):
+        assert(name)
+        assert(email_or_emails)
         self.full_name = name
         if isinstance(email_or_emails, str):
             self.emails = [email_or_emails]
         else:
             self.emails = email_or_emails
         self.irc_nickname = irc_nickname
+        self.can_commit = False
         self.can_review = False
 
     def bugzilla_email(self):
@@ -55,8 +52,13 @@ class Committer:
         return '"%s" <%s>' % (self.full_name, self.emails[0])
 
 
-class Reviewer(Committer):
+class Committer(Contributor):
+    def __init__(self, name, email_or_emails, irc_nickname=None):
+        Contributor.__init__(self, name, email_or_emails, irc_nickname)
+        self.can_commit = True
 
+
+class Reviewer(Committer):
     def __init__(self, name, email_or_emails, irc_nickname=None):
         Committer.__init__(self, name, email_or_emails, irc_nickname)
         self.can_review = True
@@ -346,16 +348,20 @@ reviewers_list = [
 ]
 
 
-class CommitterList:
+class CommitterList(object):
 
     # Committers and reviewers are passed in to allow easy testing
-
     def __init__(self,
                  committers=committers_unable_to_review,
-                 reviewers=reviewers_list):
+                 reviewers=reviewers_list,
+                 contributors=contributors_who_are_not_committers):
+        self._contributors = contributors + committers + reviewers
         self._committers = committers + reviewers
         self._reviewers = reviewers
-        self._committers_by_email = {}
+        self._contributors_by_email = {}
+
+    def contributors(self):
+        return self._contributors
 
     def committers(self):
         return self._committers
@@ -363,24 +369,45 @@ class CommitterList:
     def reviewers(self):
         return self._reviewers
 
-    def _email_to_committer_map(self):
-        if not len(self._committers_by_email):
-            for committer in self._committers:
-                for email in committer.emails:
-                    self._committers_by_email[email] = committer
-        return self._committers_by_email
+    def _email_to_contributor_map(self):
+        if not len(self._contributors_by_email):
+            for contributor in self._contributors:
+                for email in contributor.emails:
+                    assert(email not in self._contributors_by_email)  # We should never have duplicate emails.
+                    self._contributors_by_email[email] = contributor
+        return self._contributors_by_email
+
+    def _committer_only(self, record):
+        if record and not record.can_commit:
+            return None
+        return record
+
+    def _reviewer_only(self, record):
+        if record and not record.can_review:
+            return None
+        return record
+
+    def contributor_by_name(self, name):
+        # This could be made into a hash lookup if callers need it to be fast.
+        for contributor in self.contributors():
+            if contributor.full_name and contributor.full_name == name:
+                return contributor
+        return None
 
     def committer_by_name(self, name):
-        # This could be made into a hash lookup if callers need it to be fast.
-        for committer in self.committers():
-            if committer.full_name == name:
-                return committer
+        return self._committer_only(self.contributor_by_name(name))
+
+    def contributor_by_irc_nickname(self, irc_nickname):
+        for contributor in self.contributors():
+            if contributor.irc_nickname and contributor.irc_nickname == irc_nickname:
+                return contributor
+        return None
+
+    def contributor_by_email(self, email):
+        return self._email_to_contributor_map().get(email)
 
     def committer_by_email(self, email):
-        return self._email_to_committer_map().get(email)
+        return self._committer_only(self.contributor_by_email(email))
 
     def reviewer_by_email(self, email):
-        committer = self.committer_by_email(email)
-        if committer and not committer.can_review:
-            return None
-        return committer
+        return self._reviewer_only(self.contributor_by_email(email))

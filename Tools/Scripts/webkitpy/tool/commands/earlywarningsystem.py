@@ -159,12 +159,8 @@ class ChromiumWindowsEWS(AbstractChromiumEWS):
 # For platforms that we can't run inside a VM (like Mac OS X), we require
 # patches to be uploaded by committers, who are generally trustworthy folk. :)
 class AbstractCommitterOnlyEWS(AbstractEarlyWarningSystem):
-    def __init__(self, committers=CommitterList()):
-        AbstractEarlyWarningSystem.__init__(self)
-        self._committers = committers
-
     def process_work_item(self, patch):
-        if not self._committers.committer_by_email(patch.attacher_email()):
+        if not patch.attacher() or not patch.attacher().can_commit:
             self._did_error(patch, "%s cannot process patches from non-committers :(" % self.name)
             return False
         return AbstractEarlyWarningSystem.process_work_item(self, patch)

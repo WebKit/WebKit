@@ -64,7 +64,7 @@ class ChangeLogEntry(object):
         self._reviewer_text = match.group("reviewer") if match else None
 
         self._reviewer = self._committer_list.committer_by_name(self._reviewer_text)
-        self._author = self._committer_list.committer_by_email(self._author_email) or self._committer_list.committer_by_name(self._author_name)
+        self._author = self._committer_list.contributor_by_email(self._author_email) or self._committer_list.contributor_by_name(self._author_name)
 
     def author_name(self):
         return self._author_name
@@ -73,7 +73,7 @@ class ChangeLogEntry(object):
         return self._author_email
 
     def author(self):
-        return self._author # Might be None
+        return self._author  # Might be None
 
     # FIXME: Eventually we would like to map reviwer names to reviewer objects.
     # See https://bugs.webkit.org/show_bug.cgi?id=26533
@@ -81,7 +81,7 @@ class ChangeLogEntry(object):
         return self._reviewer_text
 
     def reviewer(self):
-        return self._reviewer # Might be None
+        return self._reviewer  # Might be None, might also not be a Reviewer!
 
     def contents(self):
         return self._contents

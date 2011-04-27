@@ -537,7 +537,7 @@ class MockCheckout(object):
             "bug_id": 42,
             "author_name": "Adam Barth",
             "author_email": "abarth@webkit.org",
-            "author": self._committer_list.committer_by_email("abarth@webkit.org"),
+            "author": self._committer_list.contributor_by_email("abarth@webkit.org"),
             "reviewer_text": "Darin Adler",
             "reviewer": self._committer_list.committer_by_name("Darin Adler"),
         })

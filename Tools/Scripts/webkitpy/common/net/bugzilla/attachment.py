@@ -28,6 +28,7 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+from webkitpy.common.memoized import memoized
 from webkitpy.common.system.deprecated_logging import log
 
 
@@ -38,6 +39,7 @@ class Attachment(object):
     def __init__(self, attachment_dictionary, bug):
         self._attachment_dictionary = attachment_dictionary
         self._bug = bug
+        # FIXME: These should be replaced with @memoized after updating mocks.
         self._reviewer = None
         self._committer = None
 
@@ -47,9 +49,9 @@ class Attachment(object):
     def id(self):
         return int(self._attachment_dictionary.get("id"))
 
-    def attacher_is_committer(self):
-        return self._bugzilla.committers.committer_by_email(
-            patch.attacher_email())
+    @memoized
+    def attacher(self):
+        return self._bugzilla().committers.contributor_by_email(self.attacher_email())
 
     def attacher_email(self):
         return self._attachment_dictionary.get("attacher_email")
@@ -95,6 +97,7 @@ class Attachment(object):
         email = self._attachment_dictionary.get("%s_email" % flag)
         if not email:
             return None
+        # FIXME: This is not a robust way to call committer_by_email
         committer = getattr(self._bugzilla().committers,
                             "%s_by_email" % flag)(email)
         if committer:
@@ -103,6 +106,7 @@ class Attachment(object):
                  self._attachment_dictionary['id'],
                  self._attachment_dictionary['bug_id'], flag, email))
 
+    # FIXME: These could use @memoized like attacher(), but unit tests would need updates.
     def reviewer(self):
         if not self._reviewer:
             self._reviewer = self._validate_flag_value("reviewer")

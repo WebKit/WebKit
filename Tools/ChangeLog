@@ -1,3 +1,30 @@
+2011-04-27  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Mihai Parparita.
+
+        sherrifbot create-bug shouldn't assign bugs to webkit.review.bot
+        https://bugs.webkit.org/show_bug.cgi?id=59545
+
+        To do this, I needed a way to look up contributors by irc-name
+        (since anyone in #webkit who might use this command may not be a committer).
+        To lookup contributors, I had to make Contributor a real object.
+        Which led me to redesign parts of committers.py...
+        and finally fix one spot in changelog.py where we wanted to be
+        looking up contributors and not committers.
+
+        Overall a pretty simple fix, once you wade through the yak-hair.
+
+        This may not prevent *all* possible ways that bugs would get assigned
+        to webkit.review.bot.  If we don't recognize the requester we will
+        go through the previous code path (which shouldn't change the assignee
+        on the bug from the default as far as I can tell).
+
+        * Scripts/webkitpy/common/checkout/changelog.py:
+        * Scripts/webkitpy/common/config/committers.py:
+        * Scripts/webkitpy/common/config/committers_unittest.py:
+        * Scripts/webkitpy/tool/bot/irc_command.py:
+        * Scripts/webkitpy/tool/bot/irc_command_unittest.py:
+
 2011-04-27  Yi Shen  <yi.4.shen@nokia.com>
 
         Reviewed by Kenneth Rohde Christiansen.

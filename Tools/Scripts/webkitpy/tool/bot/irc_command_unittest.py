@@ -56,12 +56,16 @@ class IRCCommandTest(unittest.TestCase):
         self.assertEquals("tom: Usage: BUG_TITLE",
                           create_bug.execute("tom", [], None, None))
 
+        example_args = ["sherrif-bot", "should", "have", "a", "create-bug", "command"]
         tool = MockTool()
-        self.assertEquals("tom: Created bug: http://example.com/78",
-                          create_bug.execute("tom", ["sherrif-bot", "should", "have", "a", "create-bug", "command"], tool, None))
 
-        def mock_create_bug(title, description):
+        # MockBugzilla has a create_bug, but it logs to stderr, this avoids any logging.
+        tool.bugs.create_bug = lambda a, b, cc=None, assignee=None: 78
+        self.assertEquals("tom: Created bug: http://example.com/78",
+                          create_bug.execute("tom", example_args, tool, None))
+
+        def mock_create_bug(title, description, cc=None, assignee=None):
             raise Exception("Exception from bugzilla!")
         tool.bugs.create_bug = mock_create_bug
         self.assertEquals("tom: Failed to create bug:\nException from bugzilla!",
-                          create_bug.execute("tom", ["sherrif-bot", "should", "have", "a", "create-bug", "command"], tool, None))
+                          create_bug.execute("tom", example_args, tool, None))
