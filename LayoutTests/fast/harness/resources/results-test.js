@@ -188,7 +188,7 @@ function runTests()
         collapseExpectations(expandLinks[1]);
         assertTrue(expandLinks[1].textContent == '+');
     });
-    
+
     results = mockResults();
     results.tests['foo/bar.html'] = mockExpectation('PASS', 'TEXT');
     results.tests['foo/bar-expected-fail.html'] = mockExpectation('TEXT', 'TEXT');
@@ -233,6 +233,16 @@ function runTests()
     runTest(results, function() {
         // FIXME: should a PASS FAIL test that passes go in the unexpected passes table?
         assertTrue(document.body.textContent.indexOf('foo/bar-flaky-pass.html') == -1);
+    });
+
+    results = mockResults();
+    results.tests['foo/bar-really-long-path-that-should-probably-wrap-because-otherwise-the-table-will-be-too-wide.html'] = mockExpectation('PASS', 'TEXT');
+    runTest(results, function() {
+        document.body.style.width = '800px';
+        var links = document.querySelectorAll('tbody a');
+        assertTrue(links[0].getClientRects().length == 2);
+        assertTrue(links[1].getClientRects().length == 1);
+        document.body.style.width = '';
     });
 
     results = mockResults();

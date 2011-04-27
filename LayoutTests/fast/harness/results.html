@@ -8,16 +8,24 @@ body > p:first-of-type {
     margin-top: 0;
 }
 
+p {
+    margin-bottom: 0.3em;
+}
+
 tbody tr:first-of-type:hover {
-    opacity: 0.7
+    opacity: 0.7;
 }
 
-thead, tbody {
-    background-color: #eee;
-}
-
-tr:not(.results-row) {
+tr:not(.results-row) td {
     white-space: nowrap;
+}
+
+tr:not(.results-row) td:first-of-type {
+    white-space: normal;
+}
+
+td:not(:first-of-type) {
+    text-transform: lowercase;
 }
 
 td {
@@ -404,9 +412,9 @@ function trim(string)
 // Just a namespace for code management.
 var TableSorter = {};
 
-TableSorter._forwardArrow = '<svg style="width:10px;height:10px"><polygon points="0,0 10,0 5,10" style="fill:#aaa"></svg>';
+TableSorter._forwardArrow = '<svg style="width:10px;height:10px"><polygon points="0,0 10,0 5,10" style="fill:#ccc"></svg>';
 
-TableSorter._backwardArrow = '<svg style="width:10px;height:10px"><polygon points="0,10 10,10 5,0" style="fill:#aaa"></svg>';
+TableSorter._backwardArrow = '<svg style="width:10px;height:10px"><polygon points="0,10 10,10 5,0" style="fill:#ccc"></svg>';
 
 TableSorter._sortedContents = function(header, arrow)
 {
