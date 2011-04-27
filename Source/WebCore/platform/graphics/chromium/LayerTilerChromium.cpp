@@ -58,6 +58,13 @@ LayerTilerChromium::LayerTilerChromium(LayerRendererChromium* layerRenderer, con
     setTileSize(tileSize);
 }
 
+void LayerTilerChromium::setLayerRenderer(LayerRendererChromium* layerRenderer)
+{
+    if (m_layerRenderer != layerRenderer)
+        reset();
+    m_layerRenderer = layerRenderer;
+}
+
 LayerTilerChromium::~LayerTilerChromium()
 {
     reset();
