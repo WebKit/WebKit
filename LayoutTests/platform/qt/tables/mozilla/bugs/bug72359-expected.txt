@@ -1,7 +1,7 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x8
-  RenderBlock {html} at (0,0) size 800x8
+layer at (0,0) size 800x74
+  RenderBlock {html} at (0,0) size 800x74
     RenderBody {body} at (8,8) size 784x0
       RenderBlock (floating) {float} at (0,0) size 161x66 [bgcolor=#FF0000]
         RenderTable at (0,0) size 161x66

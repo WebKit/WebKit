@@ -1,7 +1,7 @@
 layer at (0,0) size 784x708
   RenderView at (0,0) size 784x600
-layer at (0,0) size 784x694
-  RenderBlock {HTML} at (0,0) size 784x694
+layer at (0,0) size 784x708
+  RenderBlock {HTML} at (0,0) size 784x708
     RenderBody {BODY} at (8,8) size 768x670
       RenderBlock (anonymous) at (0,0) size 768x150
         RenderInline {SPAN} at (0,0) size 286x132 [border: (5px solid #000000)]

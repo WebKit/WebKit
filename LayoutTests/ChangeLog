@@ -1,3 +1,70 @@
+2011-04-27  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Root element should establish a new block formatting context
+        https://bugs.webkit.org/show_bug.cgi?id=54573
+
+        Update Qt specific expected results after r85011.
+
+        * platform/qt/css2.1/t0905-c414-flt-00-d-expected.png:
+        * platform/qt/css2.1/t0905-c414-flt-00-d-expected.txt:
+        * platform/qt/css2.1/t0905-c414-flt-01-d-g-expected.png:
+        * platform/qt/css2.1/t0905-c414-flt-01-d-g-expected.txt:
+        * platform/qt/css2.1/t0905-c414-flt-02-c-expected.png:
+        * platform/qt/css2.1/t0905-c414-flt-02-c-expected.txt:
+        * platform/qt/css2.1/t0905-c414-flt-03-c-expected.png:
+        * platform/qt/css2.1/t0905-c414-flt-03-c-expected.txt:
+        * platform/qt/css2.1/t0905-c414-flt-04-c-expected.png:
+        * platform/qt/css2.1/t0905-c414-flt-04-c-expected.txt:
+        * platform/qt/css2.1/t0905-c5525-fltcont-00-d-g-expected.png:
+        * platform/qt/css2.1/t0905-c5525-fltcont-00-d-g-expected.txt:
+        * platform/qt/css2.1/t0905-c5525-fltwidth-02-c-g-expected.png:
+        * platform/qt/css2.1/t0905-c5525-fltwidth-02-c-g-expected.txt:
+        * platform/qt/css2.1/t0905-c5525-fltwidth-03-c-g-expected.png:
+        * platform/qt/css2.1/t0905-c5525-fltwidth-03-c-g-expected.txt:
+        * platform/qt/css2.1/t090501-c414-flt-02-d-g-expected.png:
+        * platform/qt/css2.1/t090501-c414-flt-02-d-g-expected.txt:
+        * platform/qt/css2.1/t090501-c414-flt-03-b-g-expected.png:
+        * platform/qt/css2.1/t090501-c414-flt-03-b-g-expected.txt:
+        * platform/qt/fast/backgrounds/repeat/mask-negative-offset-repeat-expected.png: Added.
+        * platform/qt/fast/backgrounds/repeat/mask-negative-offset-repeat-expected.txt:
+        * platform/qt/fast/backgrounds/repeat/negative-offset-repeat-expected.png:
+        * platform/qt/fast/backgrounds/repeat/negative-offset-repeat-expected.txt:
+        * platform/qt/fast/block/float/008-expected.png:
+        * platform/qt/fast/block/float/008-expected.txt:
+        * platform/qt/fast/block/float/029-expected.txt:
+        * platform/qt/fast/block/float/031-expected.txt:
+        * platform/qt/fast/block/float/033-expected.png:
+        * platform/qt/fast/block/float/033-expected.txt:
+        * platform/qt/fast/block/float/035-expected.png:
+        * platform/qt/fast/block/float/035-expected.txt:
+        * platform/qt/fast/block/float/clamped-right-float-expected.txt:
+        * platform/qt/fast/block/float/nested-clearance-expected.txt:
+        * platform/qt/fast/block/margin-collapse/062-expected.txt:
+        * platform/qt/fast/block/margin-collapse/063-expected.txt:
+        * platform/qt/fast/blockflow/block-level-images-expected.png:
+        * platform/qt/fast/blockflow/block-level-images-expected.txt:
+        * platform/qt/fast/blockflow/floats-in-block-layout-expected.png:
+        * platform/qt/fast/blockflow/floats-in-block-layout-expected.txt:
+        * platform/qt/fast/borders/bidi-012-expected.txt:
+        * platform/qt/fast/box-shadow/basic-shadows-expected.png:
+        * platform/qt/fast/box-shadow/basic-shadows-expected.txt:
+        * platform/qt/fast/lists/003-vertical-expected.png:
+        * platform/qt/fast/lists/003-vertical-expected.txt:
+        * platform/qt/fast/media/mq-relative-constraints-08-expected.png: Added.
+        * platform/qt/fast/media/mq-relative-constraints-08-expected.txt:
+        * platform/qt/fast/text/whitespace/012-expected.png: Added.
+        * platform/qt/fast/text/whitespace/012-expected.txt:
+        * platform/qt/tables/mozilla/bugs/bug120364-expected.png:
+        * platform/qt/tables/mozilla/bugs/bug120364-expected.txt:
+        * platform/qt/tables/mozilla/bugs/bug45055-2-expected.png:
+        * platform/qt/tables/mozilla/bugs/bug45055-2-expected.txt:
+        * platform/qt/tables/mozilla/bugs/bug72359-expected.png:
+        * platform/qt/tables/mozilla/bugs/bug72359-expected.txt:
+        * platform/qt/tables/mozilla/marvin/x_table_align_left-expected.png:
+        * platform/qt/tables/mozilla/marvin/x_table_align_left-expected.txt:
+        * platform/qt/tables/mozilla/marvin/x_table_align_right-expected.png:
+        * platform/qt/tables/mozilla/marvin/x_table_align_right-expected.txt:
+
 2011-04-26  Csaba Osztrogonác  <ossy@webkit.org>
 
         [Qt] Improper rendering of <button> tag when it contains a <br>
