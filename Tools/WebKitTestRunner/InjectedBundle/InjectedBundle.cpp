@@ -184,6 +184,7 @@ void InjectedBundle::beginTesting()
     page()->reset();
 
     WKBundleClearAllDatabases(m_bundle);
+    WKBundleResetOriginAccessWhitelists(m_bundle);
 }
 
 void InjectedBundle::done()

@@ -50,6 +50,8 @@ module WTR {
         void setAllowUniversalAccessFromFileURLs(in boolean value);
         void setAllowFileAccessFromFileURLs(in boolean value);
         void setFrameFlatteningEnabled(in boolean value);
+        void addOriginAccessWhitelistEntry(in DOMString sourceOrigin, in DOMString destinationProtocol, in DOMString destinationHost, in boolean allowDestinationSubdomains);
+        void removeOriginAccessWhitelistEntry(in DOMString sourceOrigin, in DOMString destinationProtocol, in DOMString destinationHost, in boolean allowDestinationSubdomains);
 
         // Special DOM functions.
         void clearBackForwardList();

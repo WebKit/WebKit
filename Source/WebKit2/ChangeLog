@@ -1,3 +1,23 @@
+2011-04-26  Chang Shu  <cshu@webkit.org>
+
+        Reviewed by Laszlo Gombos.
+
+        WebKitTestRunner needs layoutTestController.addOriginAccessWhitelistEntry
+        https://bugs.webkit.org/show_bug.cgi?id=42544
+
+        Also implemented removeOriginAccessWhitelistEntry and resetOriginAccessWhitelists.
+
+        * WebProcess/InjectedBundle/API/c/WKBundle.cpp:
+        (WKBundleAddOriginAccessWhitelistEntry):
+        (WKBundleRemoveOriginAccessWhitelistEntry):
+        (WKBundleResetOriginAccessWhitelists):
+        * WebProcess/InjectedBundle/API/c/WKBundlePrivate.h:
+        * WebProcess/InjectedBundle/InjectedBundle.cpp:
+        (WebKit::InjectedBundle::addOriginAccessWhitelistEntry):
+        (WebKit::InjectedBundle::removeOriginAccessWhitelistEntry):
+        (WebKit::InjectedBundle::resetOriginAccessWhitelists):
+        * WebProcess/InjectedBundle/InjectedBundle.h:
+
 2011-04-26  Dan Bernstein  <mitz@apple.com>
 
         Build fix.
