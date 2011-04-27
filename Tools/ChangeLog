@@ -1,3 +1,14 @@
+2011-04-27  Anders Carlsson  <andersca@apple.com>
+
+        More casts and more clang++ build fixes.
+
+        * DumpRenderTree/mac/DumpRenderTree.mm:
+        (createWebViewAndOffscreenWindow):
+        * TestWebKitAPI/mac/PlatformWebViewMac.mm:
+        (TestWebKitAPI::PlatformWebView::PlatformWebView):
+        * WebKitTestRunner/mac/PlatformWebViewMac.mm:
+        (WTR::PlatformWebView::PlatformWebView):
+
 2011-04-27  Tony Chang  <tony@chromium.org>
 
         Reviewed by Ojan Vafai.
