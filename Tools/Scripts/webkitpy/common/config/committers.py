@@ -188,7 +188,7 @@ committers_unable_to_review = [
     Committer("Leandro Pereira", ["leandro@profusion.mobi", "leandro@webkit.org"], "acidx"),
     Committer("Leo Yang", ["leo.yang@torchmobile.com.cn", "leoyang@webkit.org", "leoyang.webkit@gmail.com"], "leoyang"),
     Committer("Levi Weintraub", ["leviw@chromium.org", "leviw@google.com", "lweintraub@apple.com"], "leviw"),
-    Committer("Lucas De Marchi", ["lucas.demarchi@profusion.mobi", "demarchi@webkit.org"], "demarchi"),
+    Committer("Lucas De Marchi", ["demarchi@webkit.org", "lucas.demarchi@profusion.mobi"], "demarchi"),
     Committer("Lucas Forschler", ["lforschler@apple.com"], "lforschler"),
     Committer("Luiz Agostini", ["luiz@webkit.org", "luiz.agostini@openbossa.org"], "lca"),
     Committer("Mads Ager", "ager@chromium.org"),
