@@ -1,3 +1,15 @@
+2011-04-27  Yury Semikhatsky  <yurys@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: browser crash on evaluation of 'throw undefined'
+        https://bugs.webkit.org/show_bug.cgi?id=59611
+
+        Test: inspector/console/console-eval-throw-undefined.html
+
+        * inspector/InjectedScriptSource.js: use try/catch to protect from
+        exception during conversion of another exception to string.
+
 2011-04-27  Pavel Feldman  <pfeldman@google.com>
 
         Reviewed by Yury Semikhatsky.

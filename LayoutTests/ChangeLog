@@ -1,3 +1,13 @@
+2011-04-27  Yury Semikhatsky  <yurys@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: browser crash on evaluation of 'throw undefined'
+        https://bugs.webkit.org/show_bug.cgi?id=59611
+
+        * inspector/console/console-eval-throw-undefined-expected.txt: Added.
+        * inspector/console/console-eval-throw-undefined.html: Added.
+
 2011-04-27  Csaba Osztrogonác  <ossy@webkit.org>
 
         [Qt] Migrate to Debian Squeeze

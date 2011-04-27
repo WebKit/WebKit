@@ -452,7 +452,12 @@ InjectedScript.RemoteObject = function(objectId, type, description, hasChildren)
 
 InjectedScript.RemoteObject.fromException = function(e)
 {
-    return new InjectedScript.RemoteObject(null, "error", e.toString());
+    try {
+        var description = injectedScript._describe(e);
+    } catch (ex) {
+        var description = "<failed to convert exception to string>";
+    }
+    return new InjectedScript.RemoteObject(null, "error", description);
 }
 
 InjectedScript.RemoteObject.fromObject = function(object, objectId)
