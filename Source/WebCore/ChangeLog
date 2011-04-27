@@ -1,3 +1,16 @@
+2011-04-26  Dawit Alemayehu  <adawit@kde.org>
+
+        Reviewed by Andreas Kling.
+
+        [Qt] Improper rendering of <button> tag when it contains a <br>
+        https://bugs.webkit.org/show_bug.cgi?id=50521
+
+        Test: platform/qt/fast/forms/button-line-break.html
+
+        * platform/qt/RenderThemeQt.cpp:
+        (WebCore::RenderThemeQt::computeSizeBasedOnStyle):
+        (WebCore::RenderThemeQt::setButtonPadding):
+
 2011-04-26  James Robinson  <jamesr@chromium.org>
 
         Reviewed by Kenneth Russell.
