@@ -1,3 +1,58 @@
+2011-04-27  Levi Weintraub  <leviw@chromium.org>
+
+        new baselines needed after r85011
+        https://bugs.webkit.org/show_bug.cgi?id=59581
+
+        * platform/chromium-linux/css2.1/t0905-c414-flt-02-c-expected.txt:
+        * platform/chromium-linux/css2.1/t0905-c414-flt-03-c-expected.txt:
+        * platform/chromium-linux/css2.1/t0905-c414-flt-04-c-expected.txt:
+        * platform/chromium-linux/css2.1/t0905-c5525-fltcont-00-d-g-expected.txt:
+        * platform/chromium-linux/css2.1/t0905-c5525-fltwidth-02-c-g-expected.txt:
+        * platform/chromium-linux/css2.1/t0905-c5525-fltwidth-03-c-g-expected.txt:
+        * platform/chromium-linux/css2.1/t090501-c414-flt-03-b-g-expected.txt:
+        * platform/chromium-mac-leopard/fast/repaint/box-shadow-h-expected.png:
+        * platform/chromium-mac-leopard/fast/repaint/box-shadow-v-expected.png:
+        * platform/chromium-mac/fast/inline/inline-box-background-long-image-expected.png:
+        * platform/chromium-mac/fast/repaint/box-shadow-v-expected.png:
+        * platform/chromium-win/css2.1/t0905-c414-flt-00-d-expected.txt:
+        * platform/chromium-win/css2.1/t0905-c414-flt-01-d-g-expected.txt:
+        * platform/chromium-win/css2.1/t0905-c414-flt-02-c-expected.txt:
+        * platform/chromium-win/css2.1/t0905-c414-flt-03-c-expected.txt:
+        * platform/chromium-win/css2.1/t0905-c414-flt-04-c-expected.txt:
+        * platform/chromium-win/css2.1/t0905-c414-flt-wrap-01-d-g-expected.txt:
+        * platform/chromium-win/css2.1/t0905-c5525-fltcont-00-d-g-expected.txt:
+        * platform/chromium-win/css2.1/t0905-c5525-fltwidth-02-c-g-expected.txt:
+        * platform/chromium-win/css2.1/t0905-c5525-fltwidth-03-c-g-expected.txt:
+        * platform/chromium-win/css2.1/t090501-c414-flt-02-d-g-expected.txt:
+        * platform/chromium-win/css2.1/t090501-c414-flt-03-b-g-expected.txt:
+        * platform/chromium-win/fast/backgrounds/background-position-parsing-expected.txt:
+        * platform/chromium-win/fast/block/float/029-expected.txt:
+        * platform/chromium-win/fast/block/float/031-expected.txt:
+        * platform/chromium-win/fast/block/float/clamped-right-float-expected.txt:
+        * platform/chromium-win/fast/block/float/float-overhangs-root-expected.png: Added.
+        * platform/chromium-win/fast/block/float/nested-clearance-expected.txt:
+        * platform/chromium-win/fast/block/margin-collapse/062-expected.txt:
+        * platform/chromium-win/fast/block/margin-collapse/063-expected.txt:
+        * platform/chromium-win/fast/box-shadow/basic-shadows-expected.txt:
+        * platform/chromium-win/fast/css/h1-in-section-elements-expected.txt:
+        * platform/chromium-win/fast/forms/basic-textareas-quirks-expected.txt:
+        * platform/chromium-win/fast/inline/inline-box-background-expected.txt:
+        * platform/chromium-win/fast/inline/inline-box-background-long-image-expected.txt:
+        * platform/chromium-win/fast/inline/inline-box-background-repeat-x-expected.txt:
+        * platform/chromium-win/fast/inline/inline-box-background-repeat-y-expected.txt:
+        * platform/chromium-win/fast/lists/003-expected.txt:
+        * platform/chromium-win/fast/lists/003-vertical-expected.txt:
+        * platform/chromium-win/fast/media/mq-relative-constraints-08-expected.txt:
+        * platform/chromium-win/fast/repaint/box-shadow-h-expected.txt:
+        * platform/chromium-win/fast/repaint/box-shadow-v-expected.txt:
+        * platform/chromium-win/fast/text/whitespace/012-expected.txt:
+        * platform/chromium-win/tables/mozilla/bugs/bug120364-expected.txt:
+        * platform/chromium-win/tables/mozilla/bugs/bug45055-2-expected.txt:
+        * platform/chromium-win/tables/mozilla/bugs/bug72359-expected.txt:
+        * platform/chromium-win/tables/mozilla/marvin/x_table_align_left-expected.txt:
+        * platform/chromium-win/tables/mozilla/marvin/x_table_align_right-expected.txt:
+        * platform/chromium/test_expectations.txt:
+
 2011-04-27  Darin Adler  <darin@apple.com>
 
         * platform/chromium-mac/fast/block/positioning/rtl-fixed-positioning-expected.checksum: Removed.

@@ -1,7 +1,7 @@
 layer at (0,0) size 785x1526
   RenderView at (0,0) size 785x600
-layer at (0,0) size 785x1465
-  RenderBlock {HTML} at (0,0) size 785x1465
+layer at (0,0) size 785x1526
+  RenderBlock {HTML} at (0,0) size 785x1526
     RenderBody {BODY} at (8,8) size 769x1449
       RenderBlock (floating) {DIV} at (0,0) size 64x69
         RenderImage {IMG} at (0,0) size 64x64

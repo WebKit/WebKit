@@ -1,7 +1,7 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x396
-  RenderBlock {HTML} at (0,0) size 800x396
+layer at (0,0) size 800x568
+  RenderBlock {HTML} at (0,0) size 800x568
     RenderBody {BODY} at (8,21) size 784x356
       RenderBlock {H1} at (0,0) size 784x37 [color=#990000]
         RenderText {#text} at (0,0) size 699x36

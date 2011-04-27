@@ -3934,49 +3934,7 @@ BUGDPRANKE CPU LINUX DEBUG : editing/pasteboard/drop-text-events.html = PASS CRA
 // start skipping platform tests
 BUGNONE WONTFIX SKIP : platform/qt/fast/forms = PASS FAIL CRASH TIMEOUT
 
-// probably needs new baselines due to r85011
-BUGWK59581 : css2.1/t0905-c414-flt-00-d.html = TEXT
-BUGWK59581 : css2.1/t0905-c414-flt-01-d-g.html = TEXT
-BUGWK59581 : css2.1/t0905-c414-flt-02-c.html = TEXT
-BUGWK59581 : css2.1/t0905-c414-flt-03-c.html = TEXT
-BUGWK59581 : css2.1/t0905-c414-flt-04-c.html = TEXT
-BUGWK59581 : css2.1/t0905-c414-flt-wrap-01-d-g.html = TEXT
-BUGWK59581 : css2.1/t0905-c5525-fltcont-00-d-g.html = TEXT
-BUGWK59581 : css2.1/t0905-c5525-fltwidth-02-c-g.html = TEXT
-BUGWK59581 : css2.1/t0905-c5525-fltwidth-03-c-g.html = TEXT
-BUGWK59581 : css2.1/t090501-c414-flt-02-d-g.html = TEXT
-BUGWK59581 : css2.1/t090501-c414-flt-03-b-g.html = TEXT
-BUGWK59581 : fast/backgrounds/background-position-parsing.html = TEXT
-BUGWK59581 : fast/block/float/029.html = TEXT
-BUGWK59581 : fast/block/float/031.html = TEXT
-BUGWK59581 : fast/block/float/clamped-right-float.html = TEXT
-BUGWK59581 : fast/block/float/float-overhangs-root.html = MISSING
-BUGWK59581 : fast/block/float/nested-clearance.html = TEXT
-BUGWK59581 : fast/block/margin-collapse/062.html = TEXT
-BUGWK59581 : fast/block/margin-collapse/063.html = TEXT
-BUGWK59581 : fast/box-shadow/basic-shadows.html = TEXT
-BUGWK59581 : fast/css/h1-in-section-elements.html = TEXT
-BUGWK59581 : fast/forms/basic-textareas-quirks.html = TEXT
-BUGWK59581 WIN LINUX : fast/inline/inline-box-background-long-image.html = TEXT
-BUGWK59581 MAC : fast/inline/inline-box-background-long-image.html = IMAGE
-BUGWK59581 : fast/inline/inline-box-background-repeat-x.html = TEXT
-BUGWK59581 : fast/inline/inline-box-background-repeat-y.html = TEXT
-BUGWK59581 : fast/inline/inline-box-background.html = TEXT
-BUGWK59581 : fast/lists/003-vertical.html = TEXT
-BUGWK59581 : fast/lists/003.html = TEXT
-BUGWK59581 : fast/media/mq-relative-constraints-08.html = TEXT
-BUGWK59581 WIN LINUX : fast/repaint/box-shadow-h.html = TEXT IMAGE
-BUGWK59581 WIN LINUX : fast/repaint/box-shadow-v.html = TEXT IMAGE
-BUGWK59581 MAC : fast/repaint/box-shadow-h.html = IMAGE
-BUGWK59581 MAC : fast/repaint/box-shadow-v.html = IMAGE
-BUGWK59581 : fast/text/whitespace/012.html = TEXT
-BUGWK59581 : tables/mozilla/bugs/bug120364.html = TEXT
-BUGWK59581 : tables/mozilla/bugs/bug45055-2.html = TEXT
-BUGWK59581 : tables/mozilla/bugs/bug72359.xml = TEXT
-BUGWK59581 : tables/mozilla/marvin/x_table_align_left.xml = TEXT
-BUGWK59581 : tables/mozilla/marvin/x_table_align_right.xml = TEXT
-
-// rebaselines introduced by r85011 or r85013?
+// rebaselines introduced by r85013
 BUGDPRANKE MAC SNOWLEOPARD : fast/speech/input-appearance-numberandspeech.html = IMAGE
 BUGDPRANKE MAC SNOWLEOPARD : fast/speech/input-appearance-searchandspeech.html = IMAGE
 BUGDPRANKE LINUX : fast/speech/input-appearance-numberandspeech.html = IMAGE+TEXT PASS TEXT
