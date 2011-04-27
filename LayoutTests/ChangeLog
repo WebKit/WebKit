@@ -1,5 +1,11 @@
 2011-04-26  Dirk Pranke  <dpranke@chromium.org>
 
+        Unreviewed, even more expectations change for flaky tests.
+
+        * platform/chromium/test_expectations.txt:
+
+2011-04-26  Dirk Pranke  <dpranke@chromium.org>
+
         Unreviewed, expectations change for flaky and passing tests.
 
         * platform/chromium/test_expectations.txt:

@@ -651,6 +651,7 @@ WONTFIX SKIP : http/tests/inspector/extensions-resources-redirect.html = FAIL
 BUG_DRT WIN LINUX DEBUG SLOW : inspector = PASS
 BUG_DRT WIN LINUX DEBUG SLOW : http/tests/inspector = PASS
 BUG_DRT WIN LINUX DEBUG SLOW : http/tests/inspector-enabled = PASS
+BUG_DRT WIN LINUX DEBUG : http/tests/inspector/network-preflight-options.html = PASS TIMEOUT
 
 // Add support for inspector layout tests on non-Windows.
 BUGCR26734 MAC SKIP : inspector = PASS
@@ -3739,7 +3740,7 @@ BUGDPRANKE MAC DEBUG : transitions/cancel-transition.html = TEXT PASS
 BUGDPRANKE LINUX DEBUG : perf/array-nested-loop.html = TEXT TIMEOUT PASS
 BUGDPRANKE LINUX DEBUG : fast/dom/Node/mutation-blur.html = CRASH
 BUGDPRANKE WIN DEBUG : svg/custom/foreignObject-crash-on-hover.xml = CRASH PASS
-BUGDPRANKE LINUX DEBUG : svg/custom/foreign-object-skew.svg = CRASH IMAGE PASS
+BUGDPRANKE WIN LINUX DEBUG : svg/custom/foreign-object-skew.svg = CRASH IMAGE PASS
 
 // flakiness
 BUGDPRANKE WIN DEBUG : http/tests/navigation/forward-to-fragment-fires-onload.html = TIMEOUT PASS
@@ -3915,15 +3916,17 @@ BUGSENORBLANCO MAC LINUX DEBUG : editing/execCommand/outdent-nested-lists-2.html
 BUGSENORBLANCO MAC DEBUG : fast/css/table-text-align-strict.html = CRASH PASS
 BUGSENORBLANCO DEBUG : fast/css/table-border-spacing.html = CRASH PASS
 
-// flakiness on deps bots (noted in r83108)
+// flakiness on deps bots (noted ~ r83108)
 BUGDPRANKE WIN CPU DEBUG : editing/selection/select-line.html = PASS CRASH
 BUGDPRANKE WIN CPU DEBUG : fast/css/last-of-type-pseudo-class.html = PASS TEXT
 BUGDPRANKE WIN CPU DEBUG : http/tests/local/stylesheet-and-script-load-order-media-print.html = PASS CRASH
 BUGDPRANKE WIN CPU DEBUG : svg/text/select-textLength-spacingAndGlyphs-squeeze-3.svg = PASS CRASH
 BUGDPRANKE MAC CPU DEBUG : fast/block/float/overhanging-tall-block.html = PASS CRASH
 BUGDPRANKE MAC CPU DEBUG : fast/css/import_with_baseurl.html = PASS CRASH
+BUGDPRANKE WIN CPU DEBUG : http/tests/eventsource/eventsource-reconnect.html = PASS TEXT
+BUGDPRANKE WIN : http/tests/inspector/network-preflight-options.html = PASS TEXT
 
-// flakiness on canaries (noted in r850X)
+// flakiness on canaries (noted ~ r85006)
 BUGDPRANKE CPU : svg/hixie/rendering-model/003.xhtml = IMAGE+TEXT PASS
 BUGDPRANKE CPU : svg/in-html/by-reference.html = IMAGE+TEXT PASS
 BUGDPRANKE CPU : fast/dom/HTMLFormElement/document-deactivation-callback-crash.html = PASS TEXT
