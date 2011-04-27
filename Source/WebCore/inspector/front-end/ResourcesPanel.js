@@ -178,6 +178,7 @@ WebInspector.ResourcesPanel.prototype = {
         WebInspector.resourceTreeModel.addEventListener(WebInspector.ResourceTreeModel.EventTypes.FrameDetached, this._frameDetached, this);
         WebInspector.resourceTreeModel.addEventListener(WebInspector.ResourceTreeModel.EventTypes.ResourceAdded, this._resourceAdded, this);
         WebInspector.resourceTreeModel.addEventListener(WebInspector.ResourceTreeModel.EventTypes.CachedResourcesLoaded, this._cachedResourcesLoaded, this); 
+        WebInspector.resourceTreeModel.addEventListener(WebInspector.ResourceTreeModel.EventTypes.WillLoadCachedResources, this._resetResourcesTree, this); 
 
         function populateFrame(frameId)
         {
@@ -192,6 +193,8 @@ WebInspector.ResourcesPanel.prototype = {
                 this._resourceAdded({data:resources[i]});
         }
         populateFrame.call(this, 0);
+
+        this._initDefaultSelection();
     },
 
     _frameAdded: function(event)
@@ -257,9 +260,7 @@ WebInspector.ResourcesPanel.prototype = {
     {
         if (event.data.isMainFrame) {
             // Total update.
-            this.resourcesListTreeElement.removeChildren();
-            this._treeElementForFrameId = {};
-            this._reset();
+            this._resetResourcesTree();
             return;
         }
 
@@ -267,6 +268,13 @@ WebInspector.ResourcesPanel.prototype = {
         var frameTreeElement = this._treeElementForFrameId[frameId];
         if (frameTreeElement)
             frameTreeElement.removeChildren();        
+    },
+
+    _resetResourcesTree: function()
+    {
+        this.resourcesListTreeElement.removeChildren();
+        this._treeElementForFrameId = {};
+        this._reset();
     },
 
     _cachedResourcesLoaded: function()
@@ -926,6 +934,7 @@ WebInspector.FrameTreeElement = function(storagePanel, frameId, title, subtitle)
     this._frameId = frameId;
     this.setTitles(title, subtitle);
     this._categoryElements = {};
+    this._treeElementForResource = {};
 }
 
 WebInspector.FrameTreeElement.prototype = {
@@ -991,6 +1000,9 @@ WebInspector.FrameTreeElement.prototype = {
 
     appendResource: function(resource)
     {
+        if (this._treeElementForResource[resource.url])
+            return;
+
         var categoryName = resource.category.name;
         var categoryElement = resource.category === WebInspector.resourceCategories.documents ? this : this._categoryElements[categoryName];
         if (!categoryElement) {
@@ -1001,6 +1013,14 @@ WebInspector.FrameTreeElement.prototype = {
         var resourceTreeElement = new WebInspector.FrameResourceTreeElement(this._storagePanel, resource);
         this._insertInPresentationOrder(categoryElement, resourceTreeElement);
         resourceTreeElement._populateRevisions();
+
+        this._treeElementForResource[resource.url] = resourceTreeElement;
+    },
+
+    removeChildren: function()
+    {
+        WebInspector.BaseStorageTreeElement.prototype.removeChildren.call(this);
+        this._treeElementForResource = [];
     },
 
     appendChild: function(treeElement)

@@ -1367,6 +1367,10 @@ WebInspector.addMainEventListeners = function(doc)
 
 WebInspector.frontendReused = function()
 {
+    ConsoleAgent.enable(this.console.setConsoleMessageExpiredCount.bind(this.console));
+    DatabaseAgent.enable();
+    DOMStorageAgent.enable();
+
     this.networkManager.frontendReused();
     this.resourceTreeModel.frontendReused();
     WebInspector.panels.network.clear();

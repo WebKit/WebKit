@@ -44,6 +44,7 @@ WebInspector.ResourceTreeModel.EventTypes = {
     FrameNavigated: "FrameNavigated",
     FrameDetached: "FrameDetached",
     ResourceAdded: "ResourceAdded",
+    WillLoadCachedResources: "WillLoadCachedResources",
     CachedResourcesLoaded: "CachedResourcesLoaded",
     DOMContentLoaded: "DOMContentLoaded",
     OnLoad: "OnLoad",
@@ -64,12 +65,12 @@ WebInspector.ResourceTreeModel.prototype = {
         if (error)
             return;
 
+        this.dispatchEventToListeners(WebInspector.ResourceTreeModel.EventTypes.WillLoadCachedResources);
         WebInspector.mainResource = this._addFramesRecursively(mainFramePayload);
-        this._cachedResourcesProcessed = true;
-
         this._dispatchInspectedURLChanged(WebInspector.mainResource.url);
-
         this.dispatchEventToListeners(WebInspector.ResourceTreeModel.EventTypes.CachedResourcesLoaded);
+
+        this._cachedResourcesProcessed = true;
     },
 
     _dispatchInspectedURLChanged: function(url)
@@ -115,8 +116,6 @@ WebInspector.ResourceTreeModel.prototype = {
             return;
 
         var isMainFrame = !frame.parentId;
-        if (isMainFrame)
-            this._dispatchInspectedURLChanged(WebInspector.mainResource.url);
 
         this.dispatchEventToListeners(WebInspector.ResourceTreeModel.EventTypes.FrameNavigated, { frame: frame, loaderId: loaderId, isMainFrame: isMainFrame });
 
@@ -131,11 +130,11 @@ WebInspector.ResourceTreeModel.prototype = {
                 this.dispatchEventToListeners(WebInspector.ResourceTreeModel.EventTypes.ResourceAdded, resourcesForFrame[url]);
         }
 
-        if (isMainFrame && this.resourceForURL(frame.url))
+        if (isMainFrame && this.resourceForURL(frame.url)) {
             WebInspector.mainResource = this.resourceForURL(frame.url);
-
-        if (isMainFrame)
+            this._dispatchInspectedURLChanged(frame.url);
             WebInspector.Resource.clearRevisionHistory();
+        }
     },
 
     _frameDetached: function(frameId)
