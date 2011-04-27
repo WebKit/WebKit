@@ -5492,6 +5492,8 @@
             'storage/IDBKeyPathBackendImpl.h',
             'storage/IDBKeyRange.cpp',
             'storage/IDBKeyRange.h',
+            'storage/IDBLevelDBCoding.cpp',
+            'storage/IDBLevelDBCoding.h',
             'storage/IDBLevelDBBackingStore.cpp',
             'storage/IDBLevelDBBackingStore.h',
             'storage/IDBObjectStore.cpp',
