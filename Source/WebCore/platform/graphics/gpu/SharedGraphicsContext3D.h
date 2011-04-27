@@ -43,7 +43,7 @@
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
 
-#if ENABLE(SKIA_GPU)
+#if USE(SKIA)
 class GrContext;
 #endif
 
@@ -65,7 +65,13 @@ typedef HashMap<NativeImagePtr, RefPtr<Texture> > TextureHashMap;
 
 class SharedGraphicsContext3D : public RefCounted<SharedGraphicsContext3D> {
 public:
-    static PassRefPtr<SharedGraphicsContext3D> create(HostWindow*);
+
+    enum CreationFlagBits {
+        UseSkiaGPU = 1
+    };
+    typedef unsigned CreationFlags;
+
+    static PassRefPtr<SharedGraphicsContext3D> create(HostWindow*, CreationFlags);
     ~SharedGraphicsContext3D();
 
     // Functions that delegate directly to GraphicsContext3D, with caching
@@ -116,6 +122,7 @@ public:
     void bindTexture(GC3Denum target, Platform3DObject texture);
 
     bool supportsBGRA();
+    bool supportsCompositeOp(CompositeOperator) const;
 
     // Creates a texture associated with the given image.  Is owned by this context's
     // TextureHashMap.
@@ -139,12 +146,12 @@ public:
     void useLoopBlinnExteriorProgram(unsigned vertexOffset, unsigned klmOffset, const AffineTransform&, const Color&);
     DrawingBuffer* getOffscreenBuffer(unsigned index, const IntSize&);
 
-#if ENABLE(SKIA_GPU)
+#if USE(SKIA)
     GrContext* grContext();
 #endif
 
 private:
-    SharedGraphicsContext3D(PassRefPtr<GraphicsContext3D>, PassOwnPtr<SolidFillShader>, PassOwnPtr<TexShader>, PassOwnPtr<BicubicShader>, PassOwnArrayPtr<OwnPtr<ConvolutionShader> >);
+    SharedGraphicsContext3D(PassRefPtr<GraphicsContext3D>, PassOwnPtr<SolidFillShader>, PassOwnPtr<TexShader>, PassOwnPtr<BicubicShader>, PassOwnArrayPtr<OwnPtr<ConvolutionShader> >, CreationFlags);
 
     // Used to implement removeTexturesFor(), see the comment above.
     static HashSet<SharedGraphicsContext3D*>* allContexts();
@@ -170,7 +177,8 @@ private:
 
     WTF::Vector<RefPtr<DrawingBuffer> > m_offscreenBuffers;
 
-#if ENABLE(SKIA_GPU)
+    unsigned m_flags;
+#if USE(SKIA)
     GrContext* m_grContext;
 #endif
 };

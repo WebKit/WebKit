@@ -66,7 +66,6 @@ enum ResamplingMode {
     RESAMPLE_AWESOME,
 };
 
-#if !ENABLE(SKIA_GPU)
 static ResamplingMode computeResamplingMode(PlatformContextSkia* platformContext, const NativeImageSkia& bitmap, int srcWidth, int srcHeight, float destWidth, float destHeight)
 {
     if (platformContext->hasImageResamplingHint()) {
@@ -151,7 +150,6 @@ static ResamplingMode computeResamplingMode(PlatformContextSkia* platformContext
     
     return RESAMPLE_LINEAR;
 }
-#endif
 
 // Draws the given bitmap to the given canvas. The subset of the source bitmap
 // identified by src_rect is drawn to the given destination rect. The bitmap
@@ -267,14 +265,11 @@ static void paintSkBitmap(PlatformContextSkia* platformContext, const NativeImag
     SkCanvas* canvas = platformContext->canvas();
 
     ResamplingMode resampling;
-#if ENABLE(SKIA_GPU)
-    resampling = RESAMPLE_LINEAR;
-#else
-    resampling = platformContext->printing() ? RESAMPLE_NONE :
-        computeResamplingMode(platformContext, bitmap, srcRect.width(), srcRect.height(),
-                              SkScalarToFloat(destRect.width()),
-                              SkScalarToFloat(destRect.height()));
-#endif
+    if (platformContext->useSkiaGPU())
+        resampling = RESAMPLE_LINEAR;
+    else
+        resampling = platformContext->printing() ? RESAMPLE_NONE :
+            computeResamplingMode(platformContext, bitmap, srcRect.width(), srcRect.height(), SkScalarToFloat(destRect.width()), SkScalarToFloat(destRect.height()));
     if (resampling == RESAMPLE_AWESOME) {
         drawResampledBitmap(*canvas, paint, bitmap, srcRect, destRect);
     } else {
@@ -370,17 +365,14 @@ void Image::drawPattern(GraphicsContext* context,
 
     // Compute the resampling mode.
     ResamplingMode resampling;
-#if ENABLE(SKIA_GPU)
-    resampling = RESAMPLE_LINEAR;
-#else
-    if (context->platformContext()->printing())
-      resampling = RESAMPLE_LINEAR;
+    if (context->platformContext()->useSkiaGPU())
+        resampling = RESAMPLE_LINEAR;
     else {
-      resampling = computeResamplingMode(context->platformContext(), *bitmap,
-                                         srcRect.width(), srcRect.height(),
-                                         destBitmapWidth, destBitmapHeight);
+        if (context->platformContext()->printing())
+            resampling = RESAMPLE_LINEAR;
+        else
+            resampling = computeResamplingMode(context->platformContext(), *bitmap, srcRect.width(), srcRect.height(), destBitmapWidth, destBitmapHeight);
     }
-#endif
 
     // Load the transform WebKit requested.
     SkMatrix matrix(patternTransform);

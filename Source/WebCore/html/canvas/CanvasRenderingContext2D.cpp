@@ -554,8 +554,8 @@ void CanvasRenderingContext2D::setGlobalCompositeOperation(const String& operati
     if (!c)
         return;
     c->setCompositeOperation(op);
-#if ENABLE(ACCELERATED_2D_CANVAS) && !ENABLE(SKIA_GPU)
-    if (isAccelerated() && op != CompositeSourceOver) {
+#if ENABLE(ACCELERATED_2D_CANVAS)
+    if (isAccelerated() && !m_context3D->supportsCompositeOp(op)) {
         c->setSharedGraphicsContext3D(0, 0, IntSize());
         m_drawingBuffer.clear();
         m_context3D.clear();

@@ -70,6 +70,12 @@ class Texture;
 class PlatformContextSkia {
     WTF_MAKE_NONCOPYABLE(PlatformContextSkia);
 public:
+    enum AccelerationMode {
+        NoAcceleration,
+        GPU,
+        SkiaGPU
+    };
+
     // For printing, there shouldn't be any canvas. canvas can be NULL. If you
     // supply a NULL canvas, you can also call setCanvas later.
     PlatformContextSkia(SkCanvas*);
@@ -178,7 +184,9 @@ public:
 
     bool canAccelerate() const;
     bool canvasClipApplied() const;
-    bool useGPU() { return m_useGPU; }
+    AccelerationMode accelerationMode() const { return m_accelerationMode; }
+    bool useGPU() const { return m_accelerationMode == GPU; }
+    bool useSkiaGPU() const { return m_accelerationMode == SkiaGPU; }
     void setSharedGraphicsContext3D(SharedGraphicsContext3D*, DrawingBuffer*, const IntSize&);
 #if ENABLE(ACCELERATED_2D_CANVAS)
     GraphicsContextGPU* gpuCanvas() const { return m_gpuCanvas.get(); }
@@ -221,7 +229,7 @@ private:
     FloatSize m_imageResamplingHintDstSize;
     bool m_printing;
     bool m_drawingToImageBuffer;
-    bool m_useGPU;
+    AccelerationMode m_accelerationMode;
 #if ENABLE(ACCELERATED_2D_CANVAS)
     OwnPtr<GraphicsContextGPU> m_gpuCanvas;
     mutable RefPtr<Texture> m_uploadTexture;

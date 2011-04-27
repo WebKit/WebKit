@@ -36,7 +36,7 @@
 #include "GraphicsContext3D.h"
 #include "SharedGraphicsContext3D.h"
 
-#if ENABLE(SKIA_GPU)
+#if USE(SKIA)
 #include "GrContext.h"
 #endif
 
@@ -87,7 +87,7 @@ DrawingBuffer::DrawingBuffer(GraphicsContext3D* context,
     , m_multisampleFBO(0)
     , m_multisampleColorBuffer(0)
     , m_internal(adoptPtr(new DrawingBufferInternal))
-#if ENABLE(SKIA_GPU)
+#if USE(SKIA)
     , m_grContext(0)
 #endif
 {
@@ -135,7 +135,7 @@ void DrawingBuffer::publishToPlatformLayer()
     // happens before the compositor draws.  This means we might draw stale frames sometimes.  Ideally this
     // would insert a fence into the child command stream that the compositor could wait for.
     m_context->makeContextCurrent();
-#if ENABLE(SKIA_GPU)
+#if USE(SKIA)
     if (m_grContext)
         m_grContext->flush(0);
 #endif
@@ -166,7 +166,7 @@ Platform3DObject DrawingBuffer::platformColorBuffer() const
     return m_colorBuffer;
 }
 
-#if ENABLE(SKIA_GPU)
+#if USE(SKIA)
 void DrawingBuffer::setGrContext(GrContext* context)
 {
     // We just take a ptr without referencing it, as we require that we never outlive

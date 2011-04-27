@@ -31,7 +31,6 @@
 #include "config.h"
 
 #if ENABLE(ACCELERATED_2D_CANVAS)
-
 #include "SharedGraphicsContext3D.h"
 
 #include "AffineTransform.h"
@@ -46,13 +45,14 @@
 #include "SolidFillShader.h"
 #include "TexShader.h"
 
-#if ENABLE(SKIA_GPU)
+#if USE(SKIA)
 #include "GrContext.h"
+#endif
+
 // Limit the number of textures we hold in the bitmap->texture cache.
 static const int maxTextureCacheCount = 512;
 // Limit the bytes allocated toward textures in the bitmap->texture cache.
 static const size_t maxTextureCacheBytes = 50 * 1024 * 1024;
-#endif
 
 #include <wtf/OwnArrayPtr.h>
 #include <wtf/text/CString.h>
@@ -61,7 +61,7 @@ static const size_t maxTextureCacheBytes = 50 * 1024 * 1024;
 namespace WebCore {
 
 // static
-PassRefPtr<SharedGraphicsContext3D> SharedGraphicsContext3D::create(HostWindow* hostWindow)
+PassRefPtr<SharedGraphicsContext3D> SharedGraphicsContext3D::create(HostWindow* hostWindow, CreationFlags flags)
 {
     GraphicsContext3D::Attributes attr;
     attr.depth = false;
@@ -86,10 +86,11 @@ PassRefPtr<SharedGraphicsContext3D> SharedGraphicsContext3D::create(HostWindow* 
         if (!convolutionShaders[i])
             return 0;
     }
-    return adoptRef(new SharedGraphicsContext3D(context.release(), solidFillShader.release(), texShader.release(), bicubicShader.release(), convolutionShaders.release()));
+    return adoptRef(new SharedGraphicsContext3D(context.release(), solidFillShader.release(), texShader.release(), bicubicShader.release(), convolutionShaders.release(), flags));
 }
 
-SharedGraphicsContext3D::SharedGraphicsContext3D(PassRefPtr<GraphicsContext3D> context, PassOwnPtr<SolidFillShader> solidFillShader, PassOwnPtr<TexShader> texShader, PassOwnPtr<BicubicShader> bicubicShader, PassOwnArrayPtr<OwnPtr<ConvolutionShader> > convolutionShaders)
+
+SharedGraphicsContext3D::SharedGraphicsContext3D(PassRefPtr<GraphicsContext3D> context, PassOwnPtr<SolidFillShader> solidFillShader, PassOwnPtr<TexShader> texShader, PassOwnPtr<BicubicShader> bicubicShader, PassOwnArrayPtr<OwnPtr<ConvolutionShader> > convolutionShaders, CreationFlags flags)
     : m_context(context)
     , m_bgraSupported(false)
     , m_quadVertices(0)
@@ -98,7 +99,8 @@ SharedGraphicsContext3D::SharedGraphicsContext3D(PassRefPtr<GraphicsContext3D> c
     , m_bicubicShader(bicubicShader)
     , m_convolutionShaders(convolutionShaders)
     , m_oesStandardDerivativesSupported(false)
-#if ENABLE(SKIA_GPU)
+    , m_flags(flags)
+#if USE(SKIA)
     , m_grContext(0)
 #endif
 {
@@ -118,7 +120,7 @@ SharedGraphicsContext3D::~SharedGraphicsContext3D()
 {
     m_context->deleteBuffer(m_quadVertices);
     allContexts()->remove(this);
-#if ENABLE(SKIA_GPU)
+#if USE(SKIA)
     GrSafeUnref(m_grContext);
 #endif
 }
@@ -230,6 +232,15 @@ void SharedGraphicsContext3D::readPixels(GC3Dint x, GC3Dint y, GC3Dsizei width, 
 bool SharedGraphicsContext3D::supportsBGRA()
 {
     return m_bgraSupported;
+}
+
+bool SharedGraphicsContext3D::supportsCompositeOp(CompositeOperator op) const
+{   
+#if USE(SKIA)
+    return m_flags & UseSkiaGPU || op == CompositeSourceOver;
+#else
+    return op == CompositeSourceOver;
+#endif
 }
 
 Texture* SharedGraphicsContext3D::createTexture(NativeImagePtr ptr, Texture::Format format, int width, int height)
@@ -465,9 +476,11 @@ DrawingBuffer* SharedGraphicsContext3D::getOffscreenBuffer(unsigned index, const
     return m_offscreenBuffers[index].get();
 }
 
-#if ENABLE(SKIA_GPU)
+#if USE(SKIA)
 GrContext* SharedGraphicsContext3D::grContext()
 {
+    if (!(m_flags & UseSkiaGPU))
+        return 0;
     if (!m_grContext) {
         m_grContext = GrContext::CreateGLShaderContext();
         m_grContext->setTextureCacheLimits(maxTextureCacheCount, maxTextureCacheBytes);

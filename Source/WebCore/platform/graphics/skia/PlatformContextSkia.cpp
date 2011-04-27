@@ -51,11 +51,9 @@
 #include "SkDashPathEffect.h"
 #include "SkShader.h"
 
-#if ENABLE(SKIA_GPU)
 #include "GrContext.h"
 #include "SkGpuDevice.h"
 #include "SkGpuDeviceFactory.h"
-#endif
 
 #include <wtf/MathExtras.h>
 #include <wtf/Vector.h>
@@ -216,7 +214,7 @@ PlatformContextSkia::PlatformContextSkia(SkCanvas* canvas)
     : m_canvas(canvas)
     , m_printing(false)
     , m_drawingToImageBuffer(false)
-    , m_useGPU(false)
+    , m_accelerationMode(NoAcceleration)
 #if ENABLE(ACCELERATED_2D_CANVAS)
     , m_gpuCanvas(0)
 #endif
@@ -230,14 +228,12 @@ PlatformContextSkia::~PlatformContextSkia()
 {
 #if ENABLE(ACCELERATED_2D_CANVAS)
     if (m_gpuCanvas) {
-#if ENABLE(SKIA_GPU)
         // make sure everything related to this platform context has been flushed
-        if (!m_useGPU) {
+        if (useSkiaGPU()) {
             SharedGraphicsContext3D* context = m_gpuCanvas->context();
             context->makeContextCurrent();
             context->grContext()->flush(0);
         }
-#endif
         m_gpuCanvas->drawingBuffer()->setWillPublishCallback(0);
     }
 #endif
@@ -617,10 +613,8 @@ bool PlatformContextSkia::isNativeFontRenderingAllowed()
 #if ENABLE(SKIA_TEXT)
     return false;
 #else
-#if ENABLE(SKIA_GPU)
-    if (!m_useGPU && m_gpuCanvas)
+    if (m_accelerationMode == SkiaGPU)
         return false;
-#endif
     return skia::SupportsPlatformPaint(m_canvas);
 #endif
 }
@@ -729,45 +723,47 @@ private:
 
 void PlatformContextSkia::setSharedGraphicsContext3D(SharedGraphicsContext3D* context, DrawingBuffer* drawingBuffer, const WebCore::IntSize& size)
 {
+    m_accelerationMode = NoAcceleration;
 #if ENABLE(ACCELERATED_2D_CANVAS)
     if (context && drawingBuffer) {
-        m_useGPU = true;
         m_gpuCanvas = new GraphicsContextGPU(context, drawingBuffer, size);
         m_uploadTexture.clear();
         drawingBuffer->setWillPublishCallback(WillPublishCallbackImpl::create(this));
 
-#if ENABLE(SKIA_GPU)
-        m_useGPU = false;
-        context->makeContextCurrent();
-        m_gpuCanvas->bindFramebuffer();
-
+        // use skia gpu rendering if available
         GrContext* gr = context->grContext();
-        gr->resetContext();
-        drawingBuffer->setGrContext(gr);
+        if (gr) {
+            m_accelerationMode = SkiaGPU;
+            
+            context->makeContextCurrent();
+            m_gpuCanvas->bindFramebuffer();
 
-        GrPlatformSurfaceDesc drawBufDesc;
-        drawingBuffer->getGrPlatformSurfaceDesc(&drawBufDesc);
-        GrTexture* drawBufTex = static_cast<GrTexture*>(gr->createPlatformSurface(drawBufDesc));
-        SkDeviceFactory* factory = new SkGpuDeviceFactory(gr, drawBufTex);
-        drawBufTex->unref();
+            gr->resetContext();
+            drawingBuffer->setGrContext(gr);
 
-        SkDevice* device = factory->newDevice(m_canvas, SkBitmap::kARGB_8888_Config, drawingBuffer->size().width(), drawingBuffer->size().height(), false, false);
-        m_canvas->setDevice(device)->unref();
-        m_canvas->setDeviceFactory(factory);
-#endif
+            GrPlatformSurfaceDesc drawBufDesc;
+            drawingBuffer->getGrPlatformSurfaceDesc(&drawBufDesc);
+            GrTexture* drawBufTex = static_cast<GrTexture*>(gr->createPlatformSurface(drawBufDesc));
+            SkDeviceFactory* factory = new SkGpuDeviceFactory(gr, drawBufTex);
+            drawBufTex->unref();
+
+            SkDevice* device = factory->newDevice(m_canvas, SkBitmap::kARGB_8888_Config, drawingBuffer->size().width(), drawingBuffer->size().height(), false, false);
+            m_canvas->setDevice(device)->unref();
+            m_canvas->setDeviceFactory(factory);
+        } else
+            m_accelerationMode = GPU;
     } else {
         syncSoftwareCanvas();
         m_uploadTexture.clear();
         m_gpuCanvas.clear();
-        m_useGPU = false;
     }
 #endif
 }
 
 void PlatformContextSkia::prepareForSoftwareDraw() const
 {
-    if (!m_useGPU) {
-#if ENABLE(SKIA_GPU)
+    if (m_accelerationMode == SkiaGPU) {
+#if ENABLE(ACCELERATED_2D_CANVAS)
         if (m_gpuCanvas)
             m_gpuCanvas->context()->makeContextCurrent();
 #endif
@@ -809,7 +805,7 @@ void PlatformContextSkia::prepareForSoftwareDraw() const
 
 void PlatformContextSkia::prepareForHardwareDraw() const
 {
-    if (!m_useGPU)
+    if (!(m_accelerationMode == GPU))
         return;
 
     if (m_backingStoreState == Software) {
@@ -825,8 +821,8 @@ void PlatformContextSkia::prepareForHardwareDraw() const
 
 void PlatformContextSkia::syncSoftwareCanvas() const
 {
-    if (!m_useGPU) {
-#if ENABLE(SKIA_GPU)
+    if (m_accelerationMode == SkiaGPU) {
+#if ENABLE(ACCELERATED_2D_CANVAS)
         if (m_gpuCanvas)
             m_gpuCanvas->context()->makeContextCurrent();
 #endif
@@ -847,7 +843,7 @@ void PlatformContextSkia::syncSoftwareCanvas() const
 
 void PlatformContextSkia::markDirtyRect(const IntRect& rect)
 {
-    if (!m_useGPU)
+    if (m_accelerationMode != GPU)
         return;
 
     switch (m_backingStoreState) {

@@ -42,7 +42,7 @@
 #include <wtf/RetainPtr.h>
 #endif
 
-#if ENABLE(SKIA_GPU)
+#if USE(SKIA)
 class GrContext;
 struct GrPlatformSurfaceDesc;
 #endif
@@ -103,7 +103,7 @@ public:
     void setWillPublishCallback(PassOwnPtr<WillPublishCallback> callback) { m_callback = callback; }
 #endif
 
-#if ENABLE(SKIA_GPU)
+#if USE(SKIA)
     void setGrContext(GrContext* ctx);
     void getGrPlatformSurfaceDesc(GrPlatformSurfaceDesc*);
 #endif
@@ -145,7 +145,7 @@ private:
     RetainPtr<WebGLLayer> m_platformLayer;
 #endif
 
-#if ENABLE(SKIA_GPU)
+#if USE(SKIA)
     GrContext* m_grContext;
 #endif
 };
