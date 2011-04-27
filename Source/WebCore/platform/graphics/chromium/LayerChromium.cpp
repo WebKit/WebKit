@@ -81,12 +81,10 @@ LayerChromium::LayerChromium(GraphicsLayerChromium* owner)
     , m_doubleSided(true)
     , m_replicaLayer(0)
 {
-    ASSERT(!LayerRendererChromium::s_inPaintLayerContents);
 }
 
 LayerChromium::~LayerChromium()
 {
-    ASSERT(!LayerRendererChromium::s_inPaintLayerContents);
     // Our superlayer should be holding a reference to us so there should be no
     // way for us to be destroyed while we still have a superlayer.
     ASSERT(!superlayer());

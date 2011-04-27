@@ -588,9 +588,8 @@ void GraphicsLayerChromium::updateLayerPreserves3D()
         updateSublayerList();
     } else if (!m_preserves3D && m_transformLayer) {
         // Relace the transformLayer in the parent with this layer.
-        if (m_transformLayer->superlayer())
-            m_transformLayer->superlayer()->replaceSublayer(m_transformLayer.get(), m_layer.get());
         m_layer->removeFromSuperlayer();
+        m_transformLayer->superlayer()->replaceSublayer(m_transformLayer.get(), m_layer.get());
 
         // Release the transform layer.
         m_transformLayer = 0;

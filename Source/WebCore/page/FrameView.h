@@ -33,10 +33,6 @@
 #include <wtf/Forward.h>
 #include <wtf/OwnPtr.h>
 
-#if USE(ACCELERATED_COMPOSITING)
-#include "RenderLayerCompositor.h" // For CompositingUpdateType
-#endif
-
 namespace WebCore {
 
 class Color;
@@ -109,7 +105,7 @@ public:
 #endif
 
 #if USE(ACCELERATED_COMPOSITING)
-    void updateCompositingLayers(CompositingUpdateType = CompositingUpdateAfterLayoutOrStyleChange);
+    void updateCompositingLayers();
     bool syncCompositingStateForThisFrame();
 
     // Called when changes to the GraphicsLayer hierarchy have to be synchronized with
