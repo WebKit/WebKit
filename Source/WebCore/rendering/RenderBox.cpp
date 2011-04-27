@@ -820,7 +820,7 @@ BackgroundBleedAvoidance RenderBox::determineBackgroundBleedAvoidance(GraphicsCo
 
     const RenderStyle* style = this->style();
 
-    if (!style->hasBackground() || !style->hasBorder() || !style->hasBorderRadius())
+    if (!style->hasBackground() || !style->hasBorder() || !style->hasBorderRadius() || borderImageIsLoadedAndCanBeRendered())
         return BackgroundBleedNone;
 
     AffineTransform ctm = context->getCTM();

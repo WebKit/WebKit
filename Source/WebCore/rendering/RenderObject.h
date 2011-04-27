@@ -416,6 +416,7 @@ public:
     bool hasLayer() const { return m_hasLayer; }
     
     bool hasBoxDecorations() const { return m_paintBackground; }
+    bool borderImageIsLoadedAndCanBeRendered() const;
     bool mustRepaintBackgroundOrBorder() const;
     bool hasBackground() const { return style()->hasBackground(); }
     bool needsLayout() const { return m_needsLayout || m_normalChildNeedsLayout || m_posChildNeedsLayout || m_needsSimplifiedNormalFlowLayout || m_needsPositionedMovementLayout; }

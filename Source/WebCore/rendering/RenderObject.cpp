@@ -677,6 +677,14 @@ static bool mustRepaintFillLayers(const RenderObject* renderer, const FillLayer*
     return false;
 }
 
+bool RenderObject::borderImageIsLoadedAndCanBeRendered() const
+{
+    ASSERT(style()->hasBorder());
+
+    StyleImage* borderImage = style()->borderImage().image();
+    return borderImage && borderImage->canRender(style()->effectiveZoom()) && borderImage->isLoaded();
+}
+
 bool RenderObject::mustRepaintBackgroundOrBorder() const
 {
     if (hasMask() && mustRepaintFillLayers(this, style()->maskLayers()))
@@ -690,15 +698,8 @@ bool RenderObject::mustRepaintBackgroundOrBorder() const
         return true;
      
     // Our fill layers are ok.  Let's check border.
-    if (style()->hasBorder()) {
-        // Border images are not ok.
-        StyleImage* borderImage = style()->borderImage().image();
-        bool shouldPaintBorderImage = borderImage && borderImage->canRender(style()->effectiveZoom());
-
-        // If the image hasn't loaded, we're still using the normal border style.
-        if (shouldPaintBorderImage && borderImage->isLoaded())
-            return true;
-    }
+    if (style()->hasBorder() && borderImageIsLoadedAndCanBeRendered())
+        return true;
 
     return false;
 }

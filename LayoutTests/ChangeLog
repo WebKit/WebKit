@@ -1,3 +1,14 @@
+2011-04-27  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Anders Carlsson.
+
+        <rdar://problem/9335973> REGRESSION (r84341): Buttons in the Mac App store are rendered incorrectly
+        https://bugs.webkit.org/show_bug.cgi?id=59622
+
+        * fast/borders/border-image-trumps-radius-expected.png: Added.
+        * fast/borders/border-image-trumps-radius-expected.txt: Added.
+        * fast/borders/border-image-trumps-radius.html: Added.
+
 2011-04-27  Martin Robinson  <mrobinson@igalia.com>
 
         Reviewed by Eric Seidel.
