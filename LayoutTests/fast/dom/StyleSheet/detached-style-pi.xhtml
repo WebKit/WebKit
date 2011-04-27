@@ -10,6 +10,7 @@
 Test that &lt;xml-stylesheet> processing instructions only have stylesheets when in document.</p>
 <div id="console"></div>
 <script>
+window.onload = function () {
     sheet = document.styleSheets[0];
     pi = document.firstChild;
 
@@ -29,9 +30,7 @@ Test that &lt;xml-stylesheet> processing instructions only have stylesheets when
     shouldBe('pi.sheet === sheet', 'false')
     shouldBe('pi.sheet.ownerNode', 'pi')
 
-    successfullyParsed = true;
-
+}
 </script>
-<script src="../../js/resources/js-test-post.js"></script>
 </body>
 </html>

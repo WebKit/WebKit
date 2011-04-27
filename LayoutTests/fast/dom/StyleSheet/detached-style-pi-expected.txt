@@ -10,7 +10,4 @@ Re-adding <pi>...
 PASS sheet.ownerNode is null
 PASS pi.sheet === sheet is false
 PASS pi.sheet.ownerNode is pi
-PASS successfullyParsed is true
-
-TEST COMPLETE
 

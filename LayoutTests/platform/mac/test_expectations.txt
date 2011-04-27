@@ -69,8 +69,6 @@ BUGWK57688 : fast/text/international/bidi-AN-after-empty-run.html = PASS TEXT
 BUGWK57688 : fast/text/international/bidi-CS-after-AN.html = PASS TEXT
 BUGWK57688 : fast/text/international/thai-line-breaks.html = PASS TEXT
 
-BUGWK58192 : fast/text/international/bold-bengali.html = TEXT
-BUGWK58192 : fast/text/international/khmer-selection.html = TEXT
 BUGWK58192 : plugins/npp-set-window-called-during-destruction.html = TEXT
 
 // Flaky tests when run multi-process
