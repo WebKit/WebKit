@@ -104,7 +104,7 @@ void TextCodecLatin1::registerEncodingNames(EncodingNameRegistrar registrar)
 
 static PassOwnPtr<TextCodec> newStreamingTextDecoderWindowsLatin1(const TextEncoding&, const void*)
 {
-    return new TextCodecLatin1;
+    return adoptPtr(new TextCodecLatin1);
 }
 
 void TextCodecLatin1::registerCodecs(TextCodecRegistrar registrar)

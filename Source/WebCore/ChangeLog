@@ -1,3 +1,27 @@
+2011-04-26  David Levin  <levin@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        Fix some strict PassOwnPtr issues in WebCore.
+        https://bugs.webkit.org/show_bug.cgi?id=59563
+
+        * css/SVGCSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::applySVGProperty):
+        * html/canvas/WebGLRenderingContext.cpp:
+        (WebCore::WebGLRenderingContext::create):
+        (WebCore::WebGLRenderingContext::~WebGLRenderingContext):
+        * platform/text/TextCodecLatin1.cpp:
+        (WebCore::newStreamingTextDecoderWindowsLatin1):
+        * platform/text/TextCodecUTF16.cpp:
+        (WebCore::newStreamingTextDecoderUTF16LE):
+        (WebCore::newStreamingTextDecoderUTF16BE):
+        * platform/text/TextCodecUserDefined.cpp:
+        (WebCore::newStreamingTextDecoderUserDefined):
+        * platform/text/mac/TextCodecMac.cpp:
+        (WebCore::newTextCodecMac):
+        * workers/Worker.cpp:
+        (WebCore::Worker::notifyFinished):
+
 2011-04-26  Justin Novosad  <junov@chromium.org>
 
         Reviewed by Kenneth Russell.

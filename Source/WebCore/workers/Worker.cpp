@@ -136,7 +136,7 @@ void Worker::notifyFinished()
         InspectorInstrumentation::didStartWorkerContext(scriptExecutionContext(), m_contextProxy, shouldStartPaused);
         InspectorInstrumentation::scriptImported(scriptExecutionContext(), m_scriptLoader->identifier(), m_scriptLoader->script());
     }
-    m_scriptLoader = 0;
+    m_scriptLoader = nullptr;
 
     unsetPendingActivity(this);
 }

@@ -562,9 +562,9 @@ void CSSStyleSelector::applySVGProperty(int id, CSSValue* value)
             break;
         case CSSPropertyWebkitSvgShadow: {
             if (isInherit)
-                return svgstyle->setShadow(m_parentStyle->svgStyle()->shadow() ? new ShadowData(*m_parentStyle->svgStyle()->shadow()) : 0);
+                return svgstyle->setShadow(adoptPtr(m_parentStyle->svgStyle()->shadow() ? new ShadowData(*m_parentStyle->svgStyle()->shadow()) : 0));
             if (isInitial || primitiveValue) // initial | none
-                return svgstyle->setShadow(0);
+                return svgstyle->setShadow(PassOwnPtr<ShadowData>());
 
             if (!value->isValueList())
                 return;
@@ -588,8 +588,8 @@ void CSSStyleSelector::applySVGProperty(int id, CSSValue* value)
             ASSERT(!item->spread);
             ASSERT(!item->style);
                 
-            ShadowData* shadowData = new ShadowData(x, y, blur, 0, Normal, false, color.isValid() ? color : Color::transparent);
-            svgstyle->setShadow(shadowData);
+            OwnPtr<ShadowData> shadowData = adoptPtr(new ShadowData(x, y, blur, 0, Normal, false, color.isValid() ? color : Color::transparent));
+            svgstyle->setShadow(shadowData.release());
             return;
         }
         case CSSPropertyVectorEffect: {

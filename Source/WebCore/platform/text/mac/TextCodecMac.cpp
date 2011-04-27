@@ -67,7 +67,7 @@ void TextCodecMac::registerEncodingNames(EncodingNameRegistrar registrar)
 
 static PassOwnPtr<TextCodec> newTextCodecMac(const TextEncoding&, const void* additionalData)
 {
-    return new TextCodecMac(*static_cast<const TECTextEncodingID*>(additionalData));
+    return adoptPtr(new TextCodecMac(*static_cast<const TECTextEncodingID*>(additionalData)));
 }
 
 void TextCodecMac::registerCodecs(TextCodecRegistrar registrar)

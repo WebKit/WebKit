@@ -41,7 +41,7 @@ void TextCodecUserDefined::registerEncodingNames(EncodingNameRegistrar registrar
 
 static PassOwnPtr<TextCodec> newStreamingTextDecoderUserDefined(const TextEncoding&, const void*)
 {
-    return new TextCodecUserDefined;
+    return adoptPtr(new TextCodecUserDefined);
 }
 
 void TextCodecUserDefined::registerCodecs(TextCodecRegistrar registrar)

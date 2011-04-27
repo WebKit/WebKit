@@ -52,12 +52,12 @@ void TextCodecUTF16::registerEncodingNames(EncodingNameRegistrar registrar)
 
 static PassOwnPtr<TextCodec> newStreamingTextDecoderUTF16LE(const TextEncoding&, const void*)
 {
-    return new TextCodecUTF16(true);
+    return adoptPtr(new TextCodecUTF16(true));
 }
 
 static PassOwnPtr<TextCodec> newStreamingTextDecoderUTF16BE(const TextEncoding&, const void*)
 {
-    return new TextCodecUTF16(false);
+    return adoptPtr(new TextCodecUTF16(false));
 }
 
 void TextCodecUTF16::registerCodecs(TextCodecRegistrar registrar)
