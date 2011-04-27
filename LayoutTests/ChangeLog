@@ -1,3 +1,14 @@
+2011-04-27  Mark Pilgrim  <pilgrim@chromium.org>
+
+        Reviewed by Tony Chang.
+
+        Port Mozilla's IndexedDB tests: bad keypath
+        https://bugs.webkit.org/show_bug.cgi?id=59497
+
+        * storage/indexeddb/mozilla: Added.
+        * storage/indexeddb/mozilla/bad-keypath-expected.txt: Added.
+        * storage/indexeddb/mozilla/bad-keypath.html: Added.
+
 2011-04-27  Kenneth Russell  <kbr@google.com>
 
         [chromium] Rebaseline direct-image-compositing.html after r85011
