@@ -54,10 +54,8 @@ void* OSAllocator::reserveAndCommit(size_t bytes, Usage usage, bool writable, bo
 
     int flags = MAP_PRIVATE | MAP_ANON;
 
-#if OS(DARWIN) && !defined(BUILDING_ON_TIGER)
+#if OS(DARWIN)
     int fd = usage;
-#else
-    int fd = -1;
 #endif
 
     void* result = 0;

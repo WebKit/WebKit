@@ -861,7 +861,7 @@ void WebChromeClient::formDidBlur(const WebCore::Node* node)
 
 bool WebChromeClient::selectItemWritingDirectionIsNatural()
 {
-#if !defined(BUILDING_ON_TIGER) && !defined(BUILDING_ON_LEOPARD)
+#ifndef BUILDING_ON_LEOPARD
     return false;
 #else
     return true;
@@ -870,7 +870,7 @@ bool WebChromeClient::selectItemWritingDirectionIsNatural()
 
 bool WebChromeClient::selectItemAlignmentFollowsMenuWritingDirection()
 {
-#if !defined(BUILDING_ON_TIGER) && !defined(BUILDING_ON_LEOPARD)
+#ifndef BUILDING_ON_LEOPARD
     return true;
 #else
     return false;

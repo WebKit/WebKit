@@ -74,7 +74,7 @@ using namespace WebCore;
 
 using namespace HTMLNames;
 
-#if !defined(BUILDING_ON_TIGER) && !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOW_LEOPARD)
+#if !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOW_LEOPARD)
 @interface NSSpellChecker (WebNSSpellCheckerDetails)
 - (NSString *)languageForWordRange:(NSRange)range inString:(NSString *)string orthography:(NSOrthography *)orthography;
 @end
@@ -92,11 +92,6 @@ static WebViewInsertAction kit(EditorInsertAction coreAction)
 
 static const int InvalidCorrectionPanelTag = 0;
 
-#ifdef BUILDING_ON_TIGER
-@interface NSSpellChecker (NotYetPublicMethods)
-- (void)learnWord:(NSString *)word;
-@end
-#endif
 
 @interface WebEditCommand : NSObject
 {
@@ -114,9 +109,7 @@ static const int InvalidCorrectionPanelTag = 0;
 {
     JSC::initializeThreading();
     WTF::initializeMainThreadToProcessMainThread();
-#ifndef BUILDING_ON_TIGER
     WebCoreObjCFinalizeOnMainThread(self);
-#endif
 }
 
 - (id)initWithEditCommand:(PassRefPtr<EditCommand>)command
@@ -193,7 +186,7 @@ WebEditorClient::WebEditorClient(WebView *webView)
 
 WebEditorClient::~WebEditorClient()
 {
-#if !defined(BUILDING_ON_TIGER) && !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOW_LEOPARD)
+#if !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOW_LEOPARD)
     dismissCorrectionPanel(ReasonForDismissingCorrectionPanelIgnored);
 #endif
 }
@@ -210,18 +203,12 @@ void WebEditorClient::toggleContinuousSpellChecking()
 
 bool WebEditorClient::isGrammarCheckingEnabled()
 {
-#ifdef BUILDING_ON_TIGER
-    return false;
-#else
     return [m_webView isGrammarCheckingEnabled];
-#endif
 }
 
 void WebEditorClient::toggleGrammarChecking()
 {
-#ifndef BUILDING_ON_TIGER
     [m_webView toggleGrammarChecking:nil];
-#endif
 }
 
 int WebEditorClient::spellCheckerDocumentTag()
@@ -386,15 +373,8 @@ void WebEditorClient::setInsertionPasteboard(NSPasteboard *pasteboard)
     [m_webView _setInsertionPasteboard:pasteboard];
 }
 
-#ifdef BUILDING_ON_TIGER
-NSArray *WebEditorClient::pasteboardTypesForSelection(Frame* selectedFrame)
-{
-    WebFrame* frame = kit(selectedFrame);
-    return [[[frame frameView] documentView] pasteboardTypesForSelection];
-}
-#endif
 
-#if !defined(BUILDING_ON_TIGER) && !defined(BUILDING_ON_LEOPARD)
+#ifndef BUILDING_ON_LEOPARD
 void WebEditorClient::uppercaseWord()
 {
     [m_webView uppercaseWord:nil];
@@ -748,7 +728,6 @@ String WebEditorClient::getAutoCorrectSuggestionForMisspelledWord(const String& 
 
 void WebEditorClient::checkGrammarOfString(const UChar* text, int length, Vector<GrammarDetail>& details, int* badGrammarLocation, int* badGrammarLength)
 {
-#ifndef BUILDING_ON_TIGER
     NSArray *grammarDetails;
     NSString* textString = [[NSString alloc] initWithCharactersNoCopy:const_cast<UChar*>(text) length:length freeWhenDone:NO];
     NSRange range = [[NSSpellChecker sharedSpellChecker] checkGrammarOfString:textString startingAt:0 language:nil wrap:NO inSpellDocumentWithTag:spellCheckerDocumentTag() details:&grammarDetails];
@@ -774,10 +753,9 @@ void WebEditorClient::checkGrammarOfString(const UChar* text, int length, Vector
             grammarDetail.guesses.append(String(guess));
         details.append(grammarDetail);
     }
-#endif
 }
 
-#if !defined(BUILDING_ON_TIGER) && !defined(BUILDING_ON_LEOPARD)
+#ifndef BUILDING_ON_LEOPARD
 static Vector<TextCheckingResult> core(NSArray *incomingResults, TextCheckingTypeMask checkingTypes)
 {
     Vector<TextCheckingResult> results;
@@ -860,7 +838,7 @@ static Vector<TextCheckingResult> core(NSArray *incomingResults, TextCheckingTyp
 
 void WebEditorClient::checkTextOfParagraph(const UChar* text, int length, TextCheckingTypeMask checkingTypes, Vector<TextCheckingResult>& results)
 {
-#if !defined(BUILDING_ON_TIGER) && !defined(BUILDING_ON_LEOPARD)
+#ifndef BUILDING_ON_LEOPARD
     NSString *textString = [[NSString alloc] initWithCharactersNoCopy:const_cast<UChar*>(text) length:length freeWhenDone:NO];
     NSArray *incomingResults = [[NSSpellChecker sharedSpellChecker] checkString:textString range:NSMakeRange(0, [textString length]) types:(checkingTypes|NSTextCheckingTypeOrthography) options:nil inSpellDocumentWithTag:spellCheckerDocumentTag() orthography:NULL wordCount:NULL];
     [textString release];
@@ -870,7 +848,6 @@ void WebEditorClient::checkTextOfParagraph(const UChar* text, int length, TextCh
 
 void WebEditorClient::updateSpellingUIWithGrammarString(const String& badGrammarPhrase, const GrammarDetail& grammarDetail)
 {
-#ifndef BUILDING_ON_TIGER
     NSMutableArray* corrections = [NSMutableArray array];
     for (unsigned i = 0; i < grammarDetail.guesses.size(); i++) {
         NSString* guess = grammarDetail.guesses[i];
@@ -881,10 +858,9 @@ void WebEditorClient::updateSpellingUIWithGrammarString(const String& badGrammar
     NSMutableDictionary* grammarDetailDict = [NSDictionary dictionaryWithObjectsAndKeys:[NSValue valueWithRange:grammarRange], NSGrammarRange, grammarUserDescription, NSGrammarUserDescription, corrections, NSGrammarCorrections, nil];
     
     [[NSSpellChecker sharedSpellChecker] updateSpellingPanelWithGrammarString:badGrammarPhrase detail:grammarDetailDict];
-#endif
 }
 
-#if !defined(BUILDING_ON_TIGER) && !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOW_LEOPARD)
+#if !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOW_LEOPARD)
 void WebEditorClient::showCorrectionPanel(CorrectionPanelInfo::PanelType panelType, const FloatRect& boundingBoxOfReplacedString, const String& replacedString, const String& replacementString, const Vector<String>& alternativeReplacementStrings)
 {
     m_correctionPanel.show(m_webView, panelType, boundingBoxOfReplacedString, replacedString, replacementString, alternativeReplacementStrings);
@@ -928,7 +904,7 @@ bool WebEditorClient::spellingUIIsShowing()
 
 void WebEditorClient::getGuessesForWord(const String& word, const String& context, Vector<String>& guesses) {
     guesses.clear();
-#if !defined(BUILDING_ON_TIGER) && !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOW_LEOPARD)
+#if !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOW_LEOPARD)
     NSString* language = nil;
     NSOrthography* orthography = nil;
     NSSpellChecker *checker = [NSSpellChecker sharedSpellChecker];
@@ -958,7 +934,7 @@ void WebEditorClient::setInputMethodState(bool)
 {
 }
 
-#if !defined(BUILDING_ON_TIGER) && !defined(BUILDING_ON_LEOPARD)
+#ifndef BUILDING_ON_LEOPARD
 @interface WebEditorSpellCheckResponder : NSObject
 {
     WebCore::SpellChecker* _sender;
@@ -993,7 +969,7 @@ void WebEditorClient::setInputMethodState(bool)
 
 void WebEditorClient::requestCheckingOfString(WebCore::SpellChecker* sender, int sequence, WebCore::TextCheckingTypeMask checkingTypes, const String& text)
 {
-#if !defined(BUILDING_ON_TIGER) && !defined(BUILDING_ON_LEOPARD)
+#ifndef BUILDING_ON_LEOPARD
     NSRange range = NSMakeRange(0, text.length());
     NSRunLoop* currentLoop = [NSRunLoop currentRunLoop];
     [[NSSpellChecker sharedSpellChecker] requestCheckingOfString:text range:range types:NSTextCheckingAllSystemTypes options:0 inSpellDocumentWithTag:0 

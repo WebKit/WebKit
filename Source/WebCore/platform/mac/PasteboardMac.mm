@@ -69,7 +69,6 @@ NSString *WebURLNamePboardType = @"public.url-name";
 NSString *WebURLPboardType = @"public.url";
 NSString *WebURLsWithTitlesPboardType = @"WebURLsWithTitlesPboardType";
 
-#ifndef BUILDING_ON_TIGER
 static NSArray* selectionPasteboardTypes(bool canSmartCopyOrDelete, bool selectionContainsAttachments)
 {
     if (selectionContainsAttachments) {
@@ -84,7 +83,6 @@ static NSArray* selectionPasteboardTypes(bool canSmartCopyOrDelete, bool selecti
             return [NSArray arrayWithObjects:WebArchivePboardType, NSRTFPboardType, NSStringPboardType, nil];
     }
 }
-#endif
 
 static NSArray* writableTypesForURL()
 {
@@ -149,7 +147,7 @@ void Pasteboard::writeSelection(NSPasteboard* pasteboard, NSArray* pasteboardTyp
     NSAttributedString *attributedString = nil;
     if (frame->view()->platformWidget())
         attributedString = [[[NSAttributedString alloc] _initWithDOMRange:kit(selectedRange)] autorelease];
-#if !defined(BUILDING_ON_TIGER) && !defined(BUILDING_ON_LEOPARD)
+#ifndef BUILDING_ON_LEOPARD
     else {
         // In WebKit2 we are using a different way to create the NSAttributedString from the DOMrange that doesn't require access to the WebView.
         RetainPtr<WebHTMLConverter> converter = [[WebHTMLConverter alloc] initWithDOMRange:kit(selectedRange)];
@@ -158,26 +156,9 @@ void Pasteboard::writeSelection(NSPasteboard* pasteboard, NSArray* pasteboardTyp
     }
 #endif
 
-#ifdef BUILDING_ON_TIGER
-    // 4930197: Mail overrides [WebHTMLView pasteboardTypesForSelection] in order to add another type to the pasteboard
-    // after WebKit does.  On Tiger we must call this function so that Mail code will be executed, meaning that 
-    // we can't call WebCore::Pasteboard's method for setting types. 
-    UNUSED_PARAM(canSmartCopyOrDelete);
-
-    NSArray *types = pasteboardTypes ? pasteboardTypes : frame->editor()->client()->pasteboardTypesForSelection(frame);
-    // Don't write RTFD to the pasteboard when the copied attributed string has no attachments.
-    NSMutableArray *mutableTypes = nil;
-    if (![attributedString containsAttachments]) {
-        mutableTypes = [[types mutableCopy] autorelease];
-        [mutableTypes removeObject:NSRTFDPboardType];
-        types = mutableTypes;
-    }
-    [pasteboard declareTypes:types owner:nil];    
-#else
     NSArray *types = pasteboardTypes ? pasteboardTypes : selectionPasteboardTypes(canSmartCopyOrDelete, [attributedString containsAttachments]);
     [pasteboard declareTypes:types owner:nil];
     frame->editor()->client()->didSetSelectionTypesForPasteboard();
-#endif
     
     // Put HTML on the pasteboard.
     if ([types containsObject:WebArchivePboardType]) {
@@ -571,7 +552,7 @@ PassRefPtr<DocumentFragment> Pasteboard::documentFragment(Frame* frame, PassRefP
         (fragment = documentFragmentWithImageResource(frame, ArchiveResource::create(SharedBuffer::wrapNSData([[[m_pasteboard.get() dataForType:NSPDFPboardType] copy] autorelease]), uniqueURLWithRelativePart(@"application.pdf"), "application/pdf", "", ""))))
         return fragment.release();
 
-#if defined(BUILDING_ON_TIGER) || defined(BUILDING_ON_LEOPARD)
+#ifdef BUILDING_ON_LEOPARD
     if ([types containsObject:NSPICTPboardType] &&
         (fragment = documentFragmentWithImageResource(frame, ArchiveResource::create(SharedBuffer::wrapNSData([[[m_pasteboard.get() dataForType:NSPICTPboardType] copy] autorelease]), uniqueURLWithRelativePart(@"image.pict"), "image/pict", "", ""))))
         return fragment.release();

@@ -359,7 +359,7 @@ void HTMLLinkElement::setCSSStyleSheet(const String& href, const KURL& baseURL, 
     if (enforceMIMEType && document()->page() && !document()->page()->settings()->enforceCSSMIMETypeInNoQuirksMode())
         enforceMIMEType = false;
 
-#if defined(BUILDING_ON_TIGER) || defined(BUILDING_ON_LEOPARD)
+#ifdef BUILDING_ON_LEOPARD
     if (enforceMIMEType && needsSiteSpecificQuirks) {
         // Covers both http and https, with or without "www."
         if (baseURL.string().contains("mcafee.com/japan/", false))

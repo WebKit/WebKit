@@ -43,11 +43,7 @@ typedef struct DOMObjectInternal DOMObjectInternal;
 @end
 
 @interface DOMObject (DOMLinkStyle)
-#ifndef BUILDING_ON_TIGER
 @property(readonly, retain) DOMStyleSheet *sheet;
-#else
-- (DOMStyleSheet *)sheet;
-#endif
 @end
 
 #endif

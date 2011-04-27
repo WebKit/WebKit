@@ -34,7 +34,7 @@
 #define WebNSUInteger NSUInteger
 #endif
 
-#if defined(BUILDING_ON_TIGER) || defined(BUILDING_ON_LEOPARD)
+#ifdef BUILDING_ON_LEOPARD
 typedef int WebSourceId;
 #else
 typedef intptr_t WebSourceId;

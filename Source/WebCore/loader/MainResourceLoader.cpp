@@ -42,15 +42,16 @@
 #include "HTMLFormElement.h"
 #include "InspectorInstrumentation.h"
 #include "Page.h"
-#if PLATFORM(QT)
-#include "PluginDatabase.h"
-#endif
 #include "ResourceError.h"
 #include "ResourceHandle.h"
 #include "ResourceLoadScheduler.h"
 #include "SchemeRegistry.h"
 #include "Settings.h"
 #include <wtf/CurrentTime.h>
+
+#if PLATFORM(QT)
+#include "PluginDatabase.h"
+#endif
 
 // FIXME: More that is in common with SubresourceLoader should move up into ResourceLoader.
 
@@ -429,7 +430,7 @@ void MainResourceLoader::didReceiveData(const char* data, int length, long long 
 
     ASSERT(!m_response.isNull());
 
-#if USE(CFNETWORK) || (PLATFORM(MAC) && !defined(BUILDING_ON_TIGER))
+#if USE(CFNETWORK) || PLATFORM(MAC)
     // Workaround for <rdar://problem/6060782>
     if (m_response.isNull()) {
         m_response = ResourceResponse(KURL(), "text/html", 0, String(), String());

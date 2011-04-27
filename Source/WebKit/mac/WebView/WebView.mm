@@ -448,10 +448,8 @@ NSString *_WebViewDidStartAcceleratedCompositingNotification = @"_WebViewDidStar
 @end
 
 static BOOL continuousSpellCheckingEnabled;
-#ifndef BUILDING_ON_TIGER
 static BOOL grammarCheckingEnabled;
-#endif
-#if !defined(BUILDING_ON_TIGER) && !defined(BUILDING_ON_LEOPARD)
+#ifndef BUILDING_ON_LEOPARD
 static BOOL automaticQuoteSubstitutionEnabled;
 static BOOL automaticLinkDetectionEnabled;
 static BOOL automaticDashSubstitutionEnabled;
@@ -595,9 +593,6 @@ static bool runningLeopardMail()
 
 static bool runningTigerMail()
 {
-#ifdef BUILDING_ON_TIGER
-    return applicationIsAppleMail();
-#endif
     return NO;    
 }
 
@@ -746,11 +741,7 @@ static NSString *leakOutlookQuirksUserScriptContents()
 
     [WebFrame _createMainFrameWithPage:_private->page frameName:frameName frameView:frameView];
 
-#ifndef BUILDING_ON_TIGER
     NSRunLoop *runLoop = [NSRunLoop mainRunLoop];
-#else
-    NSRunLoop *runLoop = [NSRunLoop currentRunLoop];
-#endif
 
     if (WebKitLinkedOnOrAfter(WEBKIT_FIRST_VERSION_WITH_LOADING_DURING_COMMON_RUNLOOP_MODES))
         [self scheduleInRunLoop:runLoop forMode:(NSString *)kCFRunLoopCommonModes];
@@ -894,18 +885,12 @@ static NSString *leakOutlookQuirksUserScriptContents()
     [super setFrameSize:size];
 }
 
-#if USE(ACCELERATED_COMPOSITING) || !defined(BUILDING_ON_TIGER)
-
 - (void)_viewWillDrawInternal
 {
     Frame* frame = [self _mainCoreFrame];
     if (frame && frame->view())
         frame->view()->updateLayoutAndStyleIfNeededRecursive();
 }
-
-#endif
-
-#ifndef BUILDING_ON_TIGER
 
 - (void)viewWillDraw
 {
@@ -914,7 +899,6 @@ static NSString *leakOutlookQuirksUserScriptContents()
     [super viewWillDraw];
 }
 
-#endif
 
 
 - (void)drawRect:(NSRect)rect
@@ -1546,7 +1530,7 @@ static bool fastDocumentTeardownEnabled()
 #if ENABLE(FULLSCREEN_API)
     settings->setFullScreenEnabled([preferences fullScreenEnabled]);
 #endif
-#if !defined(BUILDING_ON_TIGER) && !defined(BUILDING_ON_LEOPARD)
+#ifndef BUILDING_ON_LEOPARD
     // Asynchronous spell checking API is available for 10.6 or later.
     settings->setAsynchronousSpellCheckingEnabled([preferences asynchronousSpellCheckingEnabled]);
 #endif
@@ -2905,11 +2889,9 @@ static PassOwnPtr<Vector<String> > toStringVector(NSArray* patterns)
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_preferencesRemovedNotification:) name:WebPreferencesRemovedNotification object:nil];    
 
     continuousSpellCheckingEnabled = [[NSUserDefaults standardUserDefaults] boolForKey:WebContinuousSpellCheckingEnabled];
-#ifndef BUILDING_ON_TIGER
     grammarCheckingEnabled = [[NSUserDefaults standardUserDefaults] boolForKey:WebGrammarCheckingEnabled];
-#endif
 
-#if !defined(BUILDING_ON_TIGER) && !defined(BUILDING_ON_LEOPARD)
+#ifndef BUILDING_ON_LEOPARD
     automaticQuoteSubstitutionEnabled = [[NSUserDefaults standardUserDefaults] boolForKey:WebAutomaticQuoteSubstitutionEnabled];
     automaticLinkDetectionEnabled = [[NSUserDefaults standardUserDefaults] boolForKey:WebAutomaticLinkDetectionEnabled];
     automaticDashSubstitutionEnabled = [[NSUserDefaults standardUserDefaults] boolForKey:WebAutomaticDashSubstitutionEnabled];
@@ -2917,7 +2899,7 @@ static PassOwnPtr<Vector<String> > toStringVector(NSArray* patterns)
     automaticSpellingCorrectionEnabled = [[NSUserDefaults standardUserDefaults] boolForKey:WebAutomaticSpellingCorrectionEnabled];
 #endif
 
-#if !defined(BUILDING_ON_TIGER) && !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOW_LEOPARD)
+#if !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOW_LEOPARD)
     if (![[NSUserDefaults standardUserDefaults] objectForKey:WebAutomaticTextReplacementEnabled])
         automaticTextReplacementEnabled = [NSSpellChecker isAutomaticTextReplacementEnabled];
     if (![[NSUserDefaults standardUserDefaults] objectForKey:WebAutomaticSpellingCorrectionEnabled])
@@ -3124,7 +3106,7 @@ static bool clientNeedsWebViewInitThreadWorkaround()
     if ([bundleIdentifier _webkit_hasCaseInsensitivePrefix:@"com.apple.Automator."])
         return true;
 
-#if defined(BUILDING_ON_TIGER) || defined(BUILDING_ON_LEOPARD)
+#ifdef BUILDING_ON_LEOPARD
     // Mail.
     if ([bundleIdentifier _webkit_isCaseInsensitiveEqualToString:@"com.apple.Mail"])
         return true;
@@ -4386,7 +4368,6 @@ static WebFrame *incrementFrame(WebFrame *frame, WebFindOptions options = 0)
             [menuItem setState:checkMark ? NSOnState : NSOffState];
         }
         return YES;
-#ifndef BUILDING_ON_TIGER
     } else if (action == @selector(toggleGrammarChecking:)) {
         BOOL checkMark = [self isGrammarCheckingEnabled];
         if ([(NSObject *)item isKindOfClass:[NSMenuItem class]]) {
@@ -4394,8 +4375,7 @@ static WebFrame *incrementFrame(WebFrame *frame, WebFindOptions options = 0)
             [menuItem setState:checkMark ? NSOnState : NSOffState];
         }
         return YES;
-#endif
-#if !defined(BUILDING_ON_TIGER) && !defined(BUILDING_ON_LEOPARD)
+#ifndef BUILDING_ON_LEOPARD
     } else if (action == @selector(toggleAutomaticQuoteSubstitution:)) {
         BOOL checkMark = [self isAutomaticQuoteSubstitutionEnabled];
         if ([(NSObject *)item isKindOfClass:[NSMenuItem class]]) {
@@ -5225,14 +5205,9 @@ static NSAppleEventDescriptor* aeDescFromJSValue(ExecState* exec, JSValue jsValu
 // FIXME: This method should be merged into WebViewEditing when we're not in API freeze
 - (BOOL)isGrammarCheckingEnabled
 {
-#ifdef BUILDING_ON_TIGER
-    return NO;
-#else
     return grammarCheckingEnabled;
-#endif
 }
 
-#ifndef BUILDING_ON_TIGER
 // FIXME: This method should be merged into WebViewEditing when we're not in API freeze
 - (void)setGrammarCheckingEnabled:(BOOL)flag
 {
@@ -5262,7 +5237,6 @@ static NSAppleEventDescriptor* aeDescFromJSValue(ExecState* exec, JSValue jsValu
 {
     [self setGrammarCheckingEnabled:![self isGrammarCheckingEnabled]];
 }
-#endif
 
 @end
 
@@ -5270,7 +5244,7 @@ static NSAppleEventDescriptor* aeDescFromJSValue(ExecState* exec, JSValue jsValu
 
 - (BOOL)isAutomaticQuoteSubstitutionEnabled
 {
-#if defined(BUILDING_ON_TIGER) || defined(BUILDING_ON_LEOPARD)
+#ifdef BUILDING_ON_LEOPARD
     return NO;
 #else
     return automaticQuoteSubstitutionEnabled;
@@ -5279,7 +5253,7 @@ static NSAppleEventDescriptor* aeDescFromJSValue(ExecState* exec, JSValue jsValu
 
 - (BOOL)isAutomaticLinkDetectionEnabled
 {
-#if defined(BUILDING_ON_TIGER) || defined(BUILDING_ON_LEOPARD)
+#ifdef BUILDING_ON_LEOPARD
     return NO;
 #else
     return automaticLinkDetectionEnabled;
@@ -5288,7 +5262,7 @@ static NSAppleEventDescriptor* aeDescFromJSValue(ExecState* exec, JSValue jsValu
 
 - (BOOL)isAutomaticDashSubstitutionEnabled
 {
-#if defined(BUILDING_ON_TIGER) || defined(BUILDING_ON_LEOPARD)
+#ifdef BUILDING_ON_LEOPARD
     return NO;
 #else
     return automaticDashSubstitutionEnabled;
@@ -5297,7 +5271,7 @@ static NSAppleEventDescriptor* aeDescFromJSValue(ExecState* exec, JSValue jsValu
 
 - (BOOL)isAutomaticTextReplacementEnabled
 {
-#if defined(BUILDING_ON_TIGER) || defined(BUILDING_ON_LEOPARD)
+#ifdef BUILDING_ON_LEOPARD
     return NO;
 #else
     return automaticTextReplacementEnabled;
@@ -5306,14 +5280,14 @@ static NSAppleEventDescriptor* aeDescFromJSValue(ExecState* exec, JSValue jsValu
 
 - (BOOL)isAutomaticSpellingCorrectionEnabled
 {
-#if defined(BUILDING_ON_TIGER) || defined(BUILDING_ON_LEOPARD)
+#ifdef BUILDING_ON_LEOPARD
     return NO;
 #else
     return automaticSpellingCorrectionEnabled;
 #endif
 }
 
-#if !defined(BUILDING_ON_TIGER) && !defined(BUILDING_ON_LEOPARD)
+#ifndef BUILDING_ON_LEOPARD
 
 - (void)setAutomaticQuoteSubstitutionEnabled:(BOOL)flag
 {
@@ -5387,7 +5361,7 @@ static NSAppleEventDescriptor* aeDescFromJSValue(ExecState* exec, JSValue jsValu
 
 #endif
 
-#if !defined(BUILDING_ON_TIGER) && !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOW_LEOPARD)
+#if !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOW_LEOPARD)
 - (void)handleCorrectionPanelResult:(NSString*)result
 {
     WebFrame *webFrame = [self _selectedOrMainFrame];
@@ -5687,11 +5661,6 @@ static inline uint64_t roundUpToPowerOf2(uint64_t num)
         ASSERT_NOT_REACHED();
     };
 
-#ifdef BUILDING_ON_TIGER
-    // Don't use a big Foundation disk cache on Tiger because, according to the 
-    // PLT, the Foundation disk cache on Tiger is slower than the network. 
-    nsurlCacheDiskCapacity = [nsurlCache diskCapacity];
-#endif
 
     // Don't shrink a big disk cache, since that would cause churn.
     nsurlCacheDiskCapacity = max(nsurlCacheDiskCapacity, [nsurlCache diskCapacity]);
@@ -5872,7 +5841,7 @@ static inline uint64_t roundUpToPowerOf2(uint64_t num)
     if (![selectedString length])
         return;
 
-#if !defined(BUILDING_ON_TIGER) && !defined(BUILDING_ON_LEOPARD)
+#ifndef BUILDING_ON_LEOPARD
     [[NSWorkspace sharedWorkspace] showSearchResultsForQueryString:selectedString];
 #else
     (void)HISearchWindowShow((CFStringRef)selectedString, kNilOptions);

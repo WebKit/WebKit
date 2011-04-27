@@ -102,26 +102,9 @@ void (*wkSetCONNECTProxyForStream)(CFReadStreamRef, CFStringRef proxyHost, CFNum
 void (*wkSetCONNECTProxyAuthorizationForStream)(CFReadStreamRef, CFStringRef proxyAuthorizationString);
 CFHTTPMessageRef (*wkCopyCONNECTProxyResponse)(CFReadStreamRef, CFURLRef responseURL);
 
-#ifndef BUILDING_ON_TIGER
 void (*wkGetGlyphsForCharacters)(CGFontRef, const UniChar[], CGGlyph[], size_t);
-#else
-void (*wkClearGlyphVector)(void* glyphs);
-OSStatus (*wkConvertCharToGlyphs)(void* styleGroup, const UniChar*, unsigned numCharacters, void* glyphs);
-CFStringRef (*wkCopyFullFontName)(CGFontRef font);
-OSStatus (*wkGetATSStyleGroup)(ATSUStyle, void** styleGroup);
-CGFontRef (*wkGetCGFontFromNSFont)(NSFont*);
-void (*wkGetFontMetrics)(CGFontRef, int* ascent, int* descent, int* lineGap, unsigned* unitsPerEm);
-ATSLayoutRecord* (*wkGetGlyphVectorFirstRecord)(void* glyphVector);
-void* wkGetGlyphsForCharacters;
-int (*wkGetGlyphVectorNumGlyphs)(void* glyphVector);
-size_t (*wkGetGlyphVectorRecordSize)(void* glyphVector);
-OSStatus (*wkInitializeGlyphVector)(int count, void* glyphs);
-void (*wkReleaseStyleGroup)(void* group);
-ATSUFontID (*wkGetNSFontATSUFontId)(NSFont*);
-BOOL (*wkSupportsMultipartXMixedReplace)(NSMutableURLRequest *);
-#endif
 
-#if !defined(BUILDING_ON_TIGER) && !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOW_LEOPARD)
+#if !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOW_LEOPARD)
 void* wkGetHyphenationLocationBeforeIndex;
 #else
 CFIndex (*wkGetHyphenationLocationBeforeIndex)(CFStringRef string, CFIndex index);
@@ -129,7 +112,7 @@ int (*wkGetNSEventMomentumPhase)(NSEvent *);
 #endif
 
 CTLineRef (*wkCreateCTLineWithUniCharProvider)(const UniChar* (*provide)(CFIndex stringIndex, CFIndex* charCount, CFDictionaryRef* attributes, void*), void (*dispose)(const UniChar* chars, void*), void*);
-#if !defined(BUILDING_ON_TIGER) && !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOW_LEOPARD)
+#if !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOW_LEOPARD)
 CTTypesetterRef (*wkCreateCTTypesetterWithUniCharProviderAndOptions)(const UniChar* (*provide)(CFIndex stringIndex, CFIndex* charCount, CFDictionaryRef* attributes, void*), void (*dispose)(const UniChar* chars, void*), void*, CFDictionaryRef options);
 
 CGContextRef (*wkIOSurfaceContextCreate)(IOSurfaceRef surface, unsigned width, unsigned height, CGColorSpaceRef colorSpace);

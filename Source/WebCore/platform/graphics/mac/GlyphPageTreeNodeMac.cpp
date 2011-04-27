@@ -36,7 +36,6 @@
 
 namespace WebCore {
 
-#ifndef BUILDING_ON_TIGER
 static bool shouldUseCoreText(UChar* buffer, unsigned bufferLength, const SimpleFontData* fontData)
 {
     if (fontData->platformData().widthVariant() != RegularWidth || fontData->hasVerticalGlyphs()) {
@@ -49,13 +48,11 @@ static bool shouldUseCoreText(UChar* buffer, unsigned bufferLength, const Simple
 
     return false;
 }
-#endif
 
 bool GlyphPage::fill(unsigned offset, unsigned length, UChar* buffer, unsigned bufferLength, const SimpleFontData* fontData)
 {
     bool haveGlyphs = false;
 
-#ifndef BUILDING_ON_TIGER
     if (!shouldUseCoreText(buffer, bufferLength, fontData)) {
         Vector<CGGlyph, 512> glyphs(bufferLength);
         wkGetGlyphsForCharacters(fontData->platformData().cgFont(), buffer, glyphs.data(), bufferLength);
@@ -127,39 +124,6 @@ bool GlyphPage::fill(unsigned offset, unsigned length, UChar* buffer, unsigned b
             }
         }
     }
-#else
-    // Use an array of long so we get good enough alignment.
-    long glyphVector[(GLYPH_VECTOR_SIZE + sizeof(long) - 1) / sizeof(long)];
-    
-    OSStatus status = wkInitializeGlyphVector(GlyphPage::size, &glyphVector);
-    if (status != noErr)
-        // This should never happen, perhaps indicates a bad font!  If it does the
-        // font substitution code will find an alternate font.
-        return false;
-
-    wkConvertCharToGlyphs(fontData->m_styleGroup, buffer, bufferLength, &glyphVector);
-
-    unsigned numGlyphs = wkGetGlyphVectorNumGlyphs(&glyphVector);
-    if (numGlyphs != length) {
-        // This should never happen, perhaps indicates a bad font?
-        // If it does happen, the font substitution code will find an alternate font.
-        wkClearGlyphVector(&glyphVector);
-        return false;
-    }
-
-    ATSLayoutRecord* glyphRecord = (ATSLayoutRecord*)wkGetGlyphVectorFirstRecord(glyphVector);
-    for (unsigned i = 0; i < length; i++) {
-        Glyph glyph = glyphRecord->glyphID;
-        if (!glyph)
-            setGlyphDataForIndex(offset + i, 0, 0);
-        else {
-            setGlyphDataForIndex(offset + i, glyph, fontData);
-            haveGlyphs = true;
-        }
-        glyphRecord = (ATSLayoutRecord *)((char *)glyphRecord + wkGetGlyphVectorRecordSize(glyphVector));
-    }
-    wkClearGlyphVector(&glyphVector);
-#endif
 
     return haveGlyphs;
 }

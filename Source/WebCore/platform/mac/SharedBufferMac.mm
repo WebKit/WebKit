@@ -31,9 +31,6 @@
 #include <string.h>
 #include <wtf/PassRefPtr.h>
 
-#ifdef BUILDING_ON_TIGER
-typedef unsigned NSUInteger;
-#endif
 
 using namespace WebCore;
 
@@ -51,9 +48,7 @@ using namespace WebCore;
 {
     JSC::initializeThreading();
     WTF::initializeMainThreadToProcessMainThread();
-#ifndef BUILDING_ON_TIGER
     WebCoreObjCFinalizeOnMainThread(self);
-#endif
 }
 
 - (void)dealloc

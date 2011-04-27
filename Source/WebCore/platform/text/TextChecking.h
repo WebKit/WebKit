@@ -33,11 +33,9 @@
 
 namespace WebCore {
 
-#if !defined(BUILDING_ON_TIGER)
 #define WTF_USE_GRAMMAR_CHECKING 1
-#endif
 
-#if PLATFORM(MAC) && !defined(BUILDING_ON_TIGER) && !defined(BUILDING_ON_LEOPARD)
+#if PLATFORM(MAC) && !defined(BUILDING_ON_LEOPARD)
 #define WTF_USE_UNIFIED_TEXT_CHECKING 1
 #define WTF_USE_AUTOMATIC_TEXT_REPLACEMENT 1
 #endif

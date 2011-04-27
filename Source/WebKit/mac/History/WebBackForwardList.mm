@@ -104,9 +104,7 @@ WebBackForwardList *kit(BackForwardListImpl* backForwardList)
 {
     JSC::initializeThreading();
     WTF::initializeMainThreadToProcessMainThread();
-#ifndef BUILDING_ON_TIGER
     WebCoreObjCFinalizeOnMainThread(self);
-#endif
 }
 
 - (id)init

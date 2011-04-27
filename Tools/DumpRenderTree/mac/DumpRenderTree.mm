@@ -222,7 +222,7 @@ static bool shouldIgnoreWebCoreNodeLeaks(const string& URLString)
 
 static void activateFonts()
 {
-#if defined(BUILDING_ON_LEOPARD) || defined(BUILDING_ON_TIGER)
+#ifdef BUILDING_ON_LEOPARD
     static const char* fontSectionNames[] = {
         "Ahem",
         "WeightWatcher100",
@@ -316,7 +316,7 @@ WebView *createWebViewAndOffscreenWindow()
     NSRect windowRect = NSOffsetRect(rect, -10000, [[[NSScreen screens] objectAtIndex:0] frame].size.height - rect.size.height + 10000);
     DumpRenderTreeWindow *window = [[DumpRenderTreeWindow alloc] initWithContentRect:windowRect styleMask:NSBorderlessWindowMask backing:NSBackingStoreBuffered defer:YES];
 
-#if !defined(BUILDING_ON_TIGER) && !defined(BUILDING_ON_LEOPARD)
+#ifndef BUILDING_ON_LEOPARD
     [window setColorSpace:[[NSScreen mainScreen] colorSpace]];
 #endif
 
@@ -470,7 +470,7 @@ static void resetDefaultsToConsistentValues()
     // So, turn it off for now, but we might want to turn it back on some day.
     [preferences setUsesPageCache:NO];
     [preferences setAcceleratedCompositingEnabled:YES];
-#if USE(CA) && !defined(BUILDING_ON_TIGER) && !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOW_LEOPARD)
+#if USE(CA) && !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOW_LEOPARD)
     [preferences setCanvasUsesAcceleratedDrawing:YES];
     [preferences setAcceleratedDrawingEnabled:NO];
 #endif
@@ -666,10 +666,6 @@ void dumpRenderTree(int argc, const char *argv[])
 
     // <http://webkit.org/b/31200> In order to prevent extra frame load delegate logging being generated if the first test to use SSL
     // is set to log frame load delegate calls we ignore SSL certificate errors on localhost and 127.0.0.1.
-#if BUILDING_ON_TIGER
-    // Initialize internal NSURLRequest data for setAllowsAnyHTTPSCertificate:forHost: to work properly.
-    [[[[NSURLRequest alloc] init] autorelease] HTTPMethod];
-#endif
     [NSURLRequest setAllowsAnyHTTPSCertificate:YES forHost:@"localhost"];
     [NSURLRequest setAllowsAnyHTTPSCertificate:YES forHost:@"127.0.0.1"];
 

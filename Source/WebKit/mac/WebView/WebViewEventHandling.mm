@@ -43,7 +43,7 @@ using namespace WebCore;
 - (NSTextInputContext *)inputContext;
 @end
 
-#if !defined(BUILDING_ON_TIGER) && !defined(BUILDING_ON_LEOPARD)
+#ifndef BUILDING_ON_LEOPARD
 @interface NSObject (NSTextInputContextDetails)
 - (BOOL)wantsToHandleMouseEvents;
 - (BOOL)handleMouseEvent:(NSEvent *)event;

@@ -29,9 +29,6 @@
 #if ENABLE(NETSCAPE_PLUGIN_API)
 #import "WebBasePluginPackage.h"
 
-#ifdef BUILDING_ON_TIGER
-typedef short ResFileRefNum;
-#endif
 
 #if defined(__ppc__) && !defined(__LP64__)
 #define SUPPORT_CFM

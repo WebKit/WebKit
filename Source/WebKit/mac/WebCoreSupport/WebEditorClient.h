@@ -75,11 +75,8 @@ public:
     virtual void setInsertionPasteboard(NSPasteboard *);
     virtual NSURL* canonicalizeURL(NSURL*);
     virtual NSURL* canonicalizeURLString(NSString*);
-#ifdef BUILDING_ON_TIGER
-    virtual NSArray *pasteboardTypesForSelection(WebCore::Frame*);
-#endif
     
-#if !defined(BUILDING_ON_TIGER) && !defined(BUILDING_ON_LEOPARD)
+#ifndef BUILDING_ON_LEOPARD
     virtual void uppercaseWord();
     virtual void lowercaseWord();
     virtual void capitalizeWord();
@@ -139,7 +136,7 @@ public:
     virtual void willSetInputMethodState();
     virtual void setInputMethodState(bool enabled);
     virtual void requestCheckingOfString(WebCore::SpellChecker*, int, WebCore::TextCheckingTypeMask, const WTF::String&);
-#if !defined(BUILDING_ON_TIGER) && !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOW_LEOPARD)
+#if !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOW_LEOPARD)
     virtual void showCorrectionPanel(WebCore::CorrectionPanelInfo::PanelType, const WebCore::FloatRect& boundingBoxOfReplacedString, const String& replacedString, const String& replacementString, const Vector<String>& alternativeReplacementStrings);
     virtual void dismissCorrectionPanel(WebCore::ReasonForDismissingCorrectionPanel);
     virtual String dismissCorrectionPanelSoon(WebCore::ReasonForDismissingCorrectionPanel);
@@ -153,7 +150,7 @@ private:
     RetainPtr<WebEditorUndoTarget> m_undoTarget;
     bool m_haveUndoRedoOperations;
 
-#if !defined(BUILDING_ON_TIGER) && !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOW_LEOPARD)
+#if !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOW_LEOPARD)
     CorrectionPanel m_correctionPanel;
 #endif
 };

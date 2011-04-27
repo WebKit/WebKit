@@ -193,9 +193,7 @@ typedef struct {
 {
     JSC::initializeThreading();
     WTF::initializeMainThreadToProcessMainThread();
-#ifndef BUILDING_ON_TIGER
     WebCoreObjCFinalizeOnMainThread(self);
-#endif
     WKSendUserChangeNotifications();
 }
 
@@ -1088,7 +1086,6 @@ static inline void getNPRect(const NSRect& nr, NPRect& npr)
     }        
 #endif // NP_NO_CARBON
     
-#ifndef BUILDING_ON_TIGER
     if (drawingModel == NPDrawingModelCoreAnimation) {
         void *value = 0;
         if ([_pluginPackage.get() pluginFuncs]->getvalue(plugin, NPPVpluginCoreAnimationLayer, &value) == NPERR_NO_ERROR && value) {
@@ -1126,7 +1123,6 @@ static inline void getNPRect(const NSRect& nr, NPRect& npr)
 
         ASSERT(_pluginLayer);
     }
-#endif
     
     // Create the event handler
     _eventHandler = WebNetscapePluginEventHandler::create(self);
@@ -1134,7 +1130,6 @@ static inline void getNPRect(const NSRect& nr, NPRect& npr)
     return YES;
 }
 
-#ifndef BUILDING_ON_TIGER
 // FIXME: This method is an ideal candidate to move up to the base class
 - (CALayer *)pluginLayer
 {
@@ -1151,7 +1146,6 @@ static inline void getNPRect(const NSRect& nr, NPRect& npr)
         [newLayer addSublayer:_pluginLayer.get()];
     }
 }
-#endif
 
 - (void)loadStream
 {
@@ -1202,9 +1196,7 @@ static inline void getNPRect(const NSRect& nr, NPRect& npr)
     // Setting the window type to 0 ensures that NPP_SetWindow will be called if the plug-in is restarted.
     lastSetWindow.type = (NPWindowType)0;
     
-#ifndef BUILDING_ON_TIGER
     _pluginLayer = 0;
-#endif
     
     [self _destroyPlugin];
     [_pluginPackage.get() close];
@@ -1328,19 +1320,6 @@ static inline void getNPRect(const NSRect& nr, NPRect& npr)
     [self cancelCheckIfAllowedToLoadURL:[[check contextInfo] checkRequestID]];
 }
 
-#ifdef BUILDING_ON_TIGER
-// The Tiger compiler requires these two methods be present. Otherwise it doesn't think WebNetscapePluginView
-// conforms to the WebPluginContainerCheckController protocol.
-- (WebView *)webView
-{
-    return [super webView];   
-}
-
-- (WebFrame *)webFrame
-{
-    return [super webFrame];   
-}
-#endif
 
 // MARK: NSVIEW
 
@@ -2060,11 +2039,7 @@ static inline void getNPRect(const NSRect& nr, NPRect& npr)
         
         case NPNVsupportsCoreAnimationBool:
         {
-#ifdef BUILDING_ON_TIGER
-            *(NPBool *)value = FALSE;
-#else
             *(NPBool *)value = TRUE;
-#endif
             return NPERR_NO_ERROR;
         }
             
@@ -2124,9 +2099,7 @@ static inline void getNPRect(const NSRect& nr, NPRect& npr)
                 case NPDrawingModelQuickDraw:
 #endif
                 case NPDrawingModelCoreGraphics:
-#ifndef BUILDING_ON_TIGER
                 case NPDrawingModelCoreAnimation:
-#endif
                     drawingModel = newDrawingModel;
                     return NPERR_NO_ERROR;
                     
@@ -2238,7 +2211,7 @@ static inline void getNPRect(const NSRect& nr, NPRect& npr)
             break;
         }
         case NPNURLVProxy: {
-#if !defined(BUILDING_ON_TIGER) && !defined(BUILDING_ON_LEOPARD)
+#ifndef BUILDING_ON_LEOPARD
             if (!value)
                 break;
             
@@ -2348,7 +2321,7 @@ static inline void getNPRect(const NSRect& nr, NPRect& npr)
 // For now, we'll distinguish older broken versions of Silverlight by asking the plug-in if it resolved its full screen badness.
 - (void)_workaroundSilverlightFullscreenBug:(BOOL)initializedPlugin
 {
-#if !defined(BUILDING_ON_TIGER) && !defined(BUILDING_ON_LEOPARD)
+#ifndef BUILDING_ON_LEOPARD
     ASSERT(_isSilverlight);
     NPBool isFullscreenPerformanceIssueFixed = 0;
     NPPluginFuncs *pluginFuncs = [_pluginPackage.get() pluginFuncs];

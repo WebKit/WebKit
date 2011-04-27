@@ -256,12 +256,6 @@ private:
     float m_syntheticBoldOffset;
 #endif
 
-#ifdef BUILDING_ON_TIGER
-public:
-    void* m_styleGroup;
-
-private:
-#endif
 
 #if USE(ATSUI)
 public:

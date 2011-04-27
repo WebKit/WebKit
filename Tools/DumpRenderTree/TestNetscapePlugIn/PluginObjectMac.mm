@@ -25,7 +25,6 @@
 
 #include "PluginObject.h"
 
-#if !defined(BUILDING_ON_TIGER)
 
 #include <QuartzCore/QuartzCore.h>
 
@@ -98,5 +97,4 @@ void* createCoreAnimationLayer()
     return caLayer;
 }
 
-#endif // !defined(BUILDING_ON_TIGER)
 

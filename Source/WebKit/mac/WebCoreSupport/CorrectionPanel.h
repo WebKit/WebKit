@@ -26,7 +26,7 @@
 #ifndef CorrectionPanel_h
 #define CorrectionPanel_h
 
-#if !defined(BUILDING_ON_TIGER) && !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOW_LEOPARD)
+#if !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOW_LEOPARD)
 #import <AppKit/NSSpellChecker.h>
 #import <WebCore/SpellingCorrectionController.h>
 #import <wtf/RetainPtr.h>
@@ -55,6 +55,6 @@ private:
     RetainPtr<NSCondition> m_resultCondition;
 };
 
-#endif // !defined(BUILDING_ON_TIGER) && !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOW_LEOPARD)
+#endif // !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOW_LEOPARD)
 
 #endif // CorrectionPanel_h

@@ -117,9 +117,7 @@ String WebHaltablePlugin::pluginName() const
 {
     JSC::initializeThreading();
     WTF::initializeMainThreadToProcessMainThread();
-#ifndef BUILDING_ON_TIGER
     WebCoreObjCFinalizeOnMainThread(self);
-#endif
     WKSendUserChangeNotifications();
 }
 
@@ -143,7 +141,7 @@ String WebHaltablePlugin::pluginName() const
     _baseURL.adoptNS([baseURL copy]);
     _MIMEType.adoptNS([MIME copy]);
     
-#if !defined(BUILDING_ON_TIGER) && !defined(BUILDING_ON_LEOPARD)
+#ifndef BUILDING_ON_LEOPARD
     // Enable "kiosk mode" when instantiating the QT plug-in inside of Dashboard. See <rdar://problem/6878105>
     if ([[[NSBundle mainBundle] bundleIdentifier] isEqualToString:@"com.apple.dashboard.client"] &&
         [_pluginPackage.get() bundleIdentifier] == "com.apple.QuickTime Plugin.plugin") {
@@ -507,7 +505,7 @@ String WebHaltablePlugin::pluginName() const
     ASSERT(!_isHalted);
     ASSERT(_isStarted);
     Element *element = [self element];
-#if !defined(BUILDING_ON_TIGER) && !defined(BUILDING_ON_LEOPARD)
+#ifndef BUILDING_ON_LEOPARD
     CGImageRef cgImage = CGImageRetain([core([self webFrame])->nodeImage(element).get() CGImageForProposedRect:nil context:nil hints:nil]);
 #else
     RetainPtr<CGImageSourceRef> imageRef(AdoptCF, CGImageSourceCreateWithData((CFDataRef)[core([self webFrame])->nodeImage(element).get() TIFFRepresentation], 0));
@@ -983,13 +981,11 @@ String WebHaltablePlugin::pluginName() const
     return intersection(toRenderWidget(renderer)->windowClipRect(), widgetRect);
 }
 
-#ifndef BUILDING_ON_TIGER
 - (CALayer *)pluginLayer
 {
     ASSERT_NOT_REACHED();
     return nil;
 }
-#endif
 
 @end
 

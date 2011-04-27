@@ -39,14 +39,10 @@ static NSMapTable* DOMWrapperCache;
 
 NSMapTable* createWrapperCache()
 {
-#ifdef BUILDING_ON_TIGER
-    return NSCreateMapTable(NSNonOwnedPointerMapKeyCallBacks, NSNonRetainedObjectMapValueCallBacks, 0);
-#else
     // NSMapTable with zeroing weak pointers is the recommended way to build caches like this under garbage collection.
     NSPointerFunctionsOptions keyOptions = NSPointerFunctionsOpaqueMemory | NSPointerFunctionsOpaquePersonality;
     NSPointerFunctionsOptions valueOptions = NSPointerFunctionsZeroingWeakMemory | NSPointerFunctionsObjectPersonality;
     return [[NSMapTable alloc] initWithKeyOptions:keyOptions valueOptions:valueOptions capacity:0];
-#endif
 }
 
 NSObject* getDOMWrapper(DOMObjectInternal* impl)

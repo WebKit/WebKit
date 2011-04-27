@@ -45,19 +45,13 @@ void WebCoreObjCFinalizeOnMainThread(Class cls)
 {
     // This method relies on threading being initialized by the caller, otherwise
     // WebCoreObjCScheduleDeallocateOnMainThread will crash.
-#if !defined(BUILDING_ON_TIGER) && !defined(DONT_FINALIZE_ON_MAIN_THREAD)
+#ifndef DONT_FINALIZE_ON_MAIN_THREAD
     objc_finalizeOnMainThread(cls);
 #else
     UNUSED_PARAM(cls);
 #endif
 }
 
-#ifdef BUILDING_ON_TIGER
-static inline IMP method_getImplementation(Method method) 
-{
-    return method->method_imp;
-}
-#endif
 
 typedef std::pair<Class, id> ClassAndIdPair;
 

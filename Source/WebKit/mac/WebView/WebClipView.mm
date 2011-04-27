@@ -51,7 +51,7 @@ using namespace WebCore;
 - (void)_immediateScrollToPoint:(NSPoint)newOrigin;
 @end
 
-#if !defined(BUILDING_ON_TIGER) && !defined(BUILDING_ON_LEOPARD)
+#ifndef BUILDING_ON_LEOPARD
 @interface NSWindow (WebNSWindowDetails)
 - (void)_disableDelayedWindowDisplay;
 - (void)_enableDelayedWindowDisplay;
@@ -104,13 +104,13 @@ using namespace WebCore;
 {
     _isScrolling = YES;
 
-#if !defined(BUILDING_ON_TIGER) && !defined(BUILDING_ON_LEOPARD)
+#ifndef BUILDING_ON_LEOPARD
     [[self window] _disableDelayedWindowDisplay];
 #endif
 
     [super _immediateScrollToPoint:newOrigin];
 
-#if !defined(BUILDING_ON_TIGER) && !defined(BUILDING_ON_LEOPARD)
+#ifndef BUILDING_ON_LEOPARD
     [[self window] _enableDelayedWindowDisplay];
 #endif
 

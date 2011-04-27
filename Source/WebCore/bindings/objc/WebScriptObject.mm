@@ -52,9 +52,6 @@
 #import <runtime/Completion.h>
 #import <wtf/Threading.h>
 
-#ifdef BUILDING_ON_TIGER
-typedef unsigned NSUInteger;
-#endif
 
 using namespace JSC;
 using namespace JSC::Bindings;
@@ -112,9 +109,7 @@ static void addExceptionToConsole(ExecState* exec)
 {
     JSC::initializeThreading();
     WTF::initializeMainThreadToProcessMainThread();
-#ifndef BUILDING_ON_TIGER
     WebCoreObjCFinalizeOnMainThread(self);
-#endif
 }
 
 + (id)scriptObjectForJSObject:(JSObjectRef)jsObject originRootObject:(RootObject*)originRootObject rootObject:(RootObject*)rootObject

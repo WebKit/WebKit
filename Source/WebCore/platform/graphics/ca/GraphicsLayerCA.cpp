@@ -45,7 +45,7 @@
 
 using namespace std;
 
-#define HAVE_MODERN_QUARTZCORE (!defined(BUILDING_ON_TIGER) && !defined(BUILDING_ON_LEOPARD))
+#define HAVE_MODERN_QUARTZCORE (!defined(BUILDING_ON_LEOPARD))
 
 namespace WebCore {
 
@@ -1263,7 +1263,7 @@ void GraphicsLayerCA::updateContentsImage()
 
         // FIXME: maybe only do trilinear if the image is being scaled down,
         // but then what if the layer size changes?
-#if !defined(BUILDING_ON_TIGER) && !defined(BUILDING_ON_LEOPARD)
+#ifndef BUILDING_ON_LEOPARD
         m_contentsLayer->setMinificationFilter(PlatformCALayer::Trilinear);
 #endif
         m_contentsLayer->setContents(m_pendingContentsImage.get());

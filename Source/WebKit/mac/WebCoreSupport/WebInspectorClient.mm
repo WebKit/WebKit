@@ -233,7 +233,7 @@ void WebInspectorFrontendClient::updateWindowTitle() const
     [preferences setTabsToLinks:NO];
     [preferences setMinimumFontSize:0];
     [preferences setMinimumLogicalFontSize:9];
-#if !defined(BUILDING_ON_TIGER) && !defined(BUILDING_ON_LEOPARD)
+#ifndef BUILDING_ON_LEOPARD
     [preferences setFixedFontFamily:@"Menlo"];
     [preferences setDefaultFixedFontSize:11];
 #else
@@ -289,20 +289,16 @@ void WebInspectorFrontendClient::updateWindowTitle() const
 
     NSUInteger styleMask = (NSTitledWindowMask | NSClosableWindowMask | NSMiniaturizableWindowMask | NSResizableWindowMask);
 
-#ifndef BUILDING_ON_TIGER
     styleMask |= NSTexturedBackgroundWindowMask;
-#endif
 
     window = [[NSWindow alloc] initWithContentRect:NSMakeRect(60.0, 200.0, 750.0, 650.0) styleMask:styleMask backing:NSBackingStoreBuffered defer:NO];
     [window setDelegate:self];
     [window setMinSize:NSMakeSize(400.0, 400.0)];
 
-#ifndef BUILDING_ON_TIGER
     [window setAutorecalculatesContentBorderThickness:NO forEdge:NSMaxYEdge];
     [window setContentBorderThickness:55. forEdge:NSMaxYEdge];
 
     WKNSWindowMakeBottomCornersSquare(window);
-#endif
 
     [self setWindow:window];
     [window release];

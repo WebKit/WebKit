@@ -46,9 +46,7 @@ int pluginDatabaseClientCount = 0;
 {
     JSC::initializeThreading();
     WTF::initializeMainThreadToProcessMainThread();
-#ifndef BUILDING_ON_TIGER
     WebCoreObjCFinalizeOnMainThread(self);
-#endif
 }
 
 - (id)init 
@@ -73,11 +71,7 @@ int pluginDatabaseClientCount = 0;
     dashboardBehaviorAllowWheelScrolling = YES;
 #endif
 
-#if !defined(BUILDING_ON_TIGER)
     shouldCloseWithWindow = objc_collectingEnabled();
-#else
-    shouldCloseWithWindow = NO;
-#endif
 
     smartInsertDeleteEnabled = ![[NSUserDefaults standardUserDefaults] objectForKey:WebSmartInsertDeleteEnabled]
         || [[NSUserDefaults standardUserDefaults] boolForKey:WebSmartInsertDeleteEnabled];

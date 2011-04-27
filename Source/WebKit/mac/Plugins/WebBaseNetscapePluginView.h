@@ -144,9 +144,7 @@ class WebHaltablePlugin;
 
 - (NSRect)actualVisibleRectInWindow; // takes transforms into account.
 
-#ifndef BUILDING_ON_TIGER
 - (CALayer *)pluginLayer;
-#endif
 
 @end
 

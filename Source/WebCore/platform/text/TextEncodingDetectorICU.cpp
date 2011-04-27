@@ -34,10 +34,8 @@
 #include "TextEncoding.h"
 #include <wtf/UnusedParam.h>
 
-#ifndef BUILDING_ON_TIGER
 #include "unicode/ucnv.h"
 #include "unicode/ucsdet.h"
-#endif
 
 namespace WebCore {
 
@@ -46,13 +44,6 @@ bool detectTextEncoding(const char* data, size_t len,
                         TextEncoding* detectedEncoding)
 {
     *detectedEncoding = TextEncoding();
-#ifdef BUILDING_ON_TIGER
-    // Tiger came with ICU 3.2 and does not have the encoding detector.
-    UNUSED_PARAM(data);
-    UNUSED_PARAM(len);
-    UNUSED_PARAM(hintEncodingName);
-    return false;
-#else
     int matchesCount = 0; 
     UErrorCode status = U_ZERO_ERROR;
     UCharsetDetector* detector = ucsdet_open(&status);
@@ -123,7 +114,6 @@ bool detectTextEncoding(const char* data, size_t len,
     }    
     ucsdet_close(detector);
     return false;
-#endif
 }
 
 }

@@ -61,7 +61,6 @@ private:
     void createStreams();
     void scheduleStreams();
     void chooseProxy();
-#ifndef BUILDING_ON_TIGER
     void chooseProxyFromArray(CFArrayRef);
     void executePACFileURL(CFURLRef);
     void removePACRunLoopSource();
@@ -69,7 +68,6 @@ private:
     static void pacExecutionCallback(void* client, CFArrayRef proxyList, CFErrorRef error);
     static void pacExecutionCallbackMainThread(void*);
     static CFStringRef copyPACExecutionDescription(void*);
-#endif
 
     bool shouldUseSSL() const { return m_url.protocolIs("wss"); }
     unsigned short port() const;
@@ -86,9 +84,7 @@ private:
     void readStreamCallback(CFStreamEventType);
     void writeStreamCallback(CFStreamEventType);
 
-#ifndef BUILDING_ON_TIGER
     void reportErrorToClient(CFErrorRef);
-#endif
 
     // No authentication for streams per se, but proxy may ask for credentials.
     virtual void receivedCredential(const AuthenticationChallenge&, const Credential&);

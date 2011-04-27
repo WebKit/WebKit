@@ -169,11 +169,6 @@ using namespace std;
 #define NSAccessibilityPlaceholderValueAttribute @"AXPlaceholderValue"
 #endif
 
-#ifdef BUILDING_ON_TIGER
-typedef unsigned NSUInteger;
-#define NSAccessibilityValueDescriptionAttribute @"AXValueDescription"
-#define NSAccessibilityTimelineSubrole @"AXTimeline"
-#endif
 
 @interface NSObject (WebKitAccessibilityArrayCategory)
 
@@ -1256,10 +1251,8 @@ static const AccessibilityRoleMap& createAccessibilityRoleMap()
         { RulerRole, NSAccessibilityRulerRole },
         { RulerMarkerRole, NSAccessibilityRulerMarkerRole },
         { LinkRole, NSAccessibilityLinkRole },
-#ifndef BUILDING_ON_TIGER        
         { DisclosureTriangleRole, NSAccessibilityDisclosureTriangleRole },
         { GridRole, NSAccessibilityGridRole },
-#endif
         { WebCoreLinkRole, NSAccessibilityLinkRole }, 
         { ImageMapLinkRole, NSAccessibilityLinkRole },
         { ImageMapRole, @"AXImageMap" },

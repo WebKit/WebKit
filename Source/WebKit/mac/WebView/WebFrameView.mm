@@ -311,7 +311,7 @@ static inline void addTypesFromClass(NSMutableDictionary *allTypes, Class objCCl
 
 // FIXME: Remove the NSAppKitVersionNumberWithDeferredWindowDisplaySupport check once
 // once AppKit's Deferred Window Display support is available.
-#if defined(BUILDING_ON_TIGER) || defined(BUILDING_ON_LEOPARD) || !defined(NSAppKitVersionNumberWithDeferredWindowDisplaySupport)
+#if defined(BUILDING_ON_LEOPARD) || !defined(NSAppKitVersionNumberWithDeferredWindowDisplaySupport)
         // CoreGraphics deferred updates are disabled if WebKitEnableCoalescedUpdatesPreferenceKey is NO
         // or has no value. For compatibility with Mac OS X 10.5 and lower, deferred updates are off by default.
         if (![[NSUserDefaults standardUserDefaults] boolForKey:WebKitEnableDeferredUpdatesPreferenceKey])

@@ -41,7 +41,7 @@
 #include <wtf/MainThread.h>
 #include <wtf/text/StringConcatenate.h>
 
-#if defined(BUILDING_ON_TIGER) || defined(BUILDING_ON_LEOPARD)
+#ifdef BUILDING_ON_LEOPARD
 #include <SystemConfiguration/SystemConfiguration.h>
 #endif
 
@@ -53,9 +53,6 @@
 #include "WebCoreSystemInterface.h"
 #endif
 
-#ifdef BUILDING_ON_TIGER
-#define CFN_EXPORT extern
-#endif
 
 namespace WebCore {
 
@@ -101,15 +98,12 @@ void SocketStreamHandle::scheduleStreams()
     CFReadStreamOpen(m_readStream.get());
     CFWriteStreamOpen(m_writeStream.get());
 
-#ifndef BUILDING_ON_TIGER
     if (m_pacRunLoopSource)
         removePACRunLoopSource();
-#endif
 
     m_connectingSubstate = WaitingForConnect;
 }
 
-#ifndef BUILDING_ON_TIGER
 CFStringRef SocketStreamHandle::copyPACExecutionDescription(void*)
 {
     return CFSTR("WebSocket proxy PAC file execution");
@@ -250,56 +244,6 @@ void SocketStreamHandle::chooseProxyFromArray(CFArrayRef proxyArray)
     m_connectionType = Direct;
 }
 
-#else // BUILDING_ON_TIGER
-
-void SocketStreamHandle::chooseProxy()
-{
-    // We don't need proxy information often, so there is no need to set up a permanent dynamic store session.
-    RetainPtr<CFDictionaryRef> proxyDictionary(AdoptCF, SCDynamicStoreCopyProxies(0));
-
-    // SOCKS or HTTPS (AKA CONNECT) proxies are supported.
-    // WebSocket protocol relies on handshake being transferred unchanged, so we need a proxy that will not modify headers.
-    // Since HTTP proxies must add Via headers, they are highly unlikely to work.
-    // Many CONNECT proxies limit connectivity to port 443, so we prefer SOCKS, if configured.
-
-    if (!proxyDictionary) {
-        m_connectionType = Direct;
-        return;
-    }
-
-    // FIXME: check proxy bypass list and ExcludeSimpleHostnames.
-    // FIXME: Support PAC files.
-
-    CFTypeRef socksEnableCF = CFDictionaryGetValue(proxyDictionary.get(), kSCPropNetProxiesSOCKSEnable);
-    int socksEnable;
-    if (socksEnableCF && CFGetTypeID(socksEnableCF) == CFNumberGetTypeID() && CFNumberGetValue(static_cast<CFNumberRef>(socksEnableCF), kCFNumberIntType, &socksEnable) && socksEnable) {
-        CFTypeRef proxyHost = CFDictionaryGetValue(proxyDictionary.get(), kSCPropNetProxiesSOCKSProxy);
-        CFTypeRef proxyPort = CFDictionaryGetValue(proxyDictionary.get(), kSCPropNetProxiesSOCKSPort);
-        if (proxyHost && CFGetTypeID(proxyHost) == CFStringGetTypeID() && proxyPort && CFGetTypeID(proxyPort) == CFNumberGetTypeID()) {
-            m_proxyHost = static_cast<CFStringRef>(proxyHost);
-            m_proxyPort = static_cast<CFNumberRef>(proxyPort);
-            m_connectionType = SOCKSProxy;
-            return;
-        }
-    }
-
-    CFTypeRef httpsEnableCF = CFDictionaryGetValue(proxyDictionary.get(), kSCPropNetProxiesHTTPSEnable);
-    int httpsEnable;
-    if (httpsEnableCF && CFGetTypeID(httpsEnableCF) == CFNumberGetTypeID() && CFNumberGetValue(static_cast<CFNumberRef>(httpsEnableCF), kCFNumberIntType, &httpsEnable) && httpsEnable) {
-        CFTypeRef proxyHost = CFDictionaryGetValue(proxyDictionary.get(), kSCPropNetProxiesHTTPSProxy);
-        CFTypeRef proxyPort = CFDictionaryGetValue(proxyDictionary.get(), kSCPropNetProxiesHTTPSPort);
-
-        if (proxyHost && CFGetTypeID(proxyHost) == CFStringGetTypeID() && proxyPort && CFGetTypeID(proxyPort) == CFNumberGetTypeID()) {
-            m_proxyHost = static_cast<CFStringRef>(proxyHost);
-            m_proxyPort = static_cast<CFNumberRef>(proxyPort);
-            m_connectionType = CONNECTProxy;
-            return;
-        }
-    }
-
-    m_connectionType = Direct;
-}
-#endif // BUILDING_ON_TIGER
 
 void SocketStreamHandle::createStreams()
 {
@@ -371,12 +315,10 @@ static ProtectionSpaceAuthenticationScheme authenticationSchemeFromAuthenticatio
         return ProtectionSpaceAuthenticationSchemeHTTPBasic;
     if (CFEqual(method, kCFHTTPAuthenticationSchemeDigest))
         return ProtectionSpaceAuthenticationSchemeHTTPDigest;
-#ifndef BUILDING_ON_TIGER
     if (CFEqual(method, kCFHTTPAuthenticationSchemeNTLM))
         return ProtectionSpaceAuthenticationSchemeNTLM;
     if (CFEqual(method, kCFHTTPAuthenticationSchemeNegotiate))
         return ProtectionSpaceAuthenticationSchemeNegotiate;
-#endif
     ASSERT_NOT_REACHED();
     return ProtectionSpaceAuthenticationSchemeUnknown;
 }
@@ -529,13 +471,8 @@ void SocketStreamHandle::readStreamCallback(CFStreamEventType type)
         ASSERT_NOT_REACHED();
         break;
     case kCFStreamEventErrorOccurred: {
-#ifndef BUILDING_ON_TIGER
         RetainPtr<CFErrorRef> error(AdoptCF, CFReadStreamCopyError(m_readStream.get()));
         reportErrorToClient(error.get());
-#else
-        CFStreamError error = CFReadStreamGetError(m_readStream.get());
-        m_client->didFail(this, SocketStreamError(error.error)); // FIXME: Provide a sensible error.
-#endif
         break;
     }
     case kCFStreamEventEndEncountered:
@@ -578,13 +515,8 @@ void SocketStreamHandle::writeStreamCallback(CFStreamEventType type)
         break;
     }
     case kCFStreamEventErrorOccurred: {
-#ifndef BUILDING_ON_TIGER
         RetainPtr<CFErrorRef> error(AdoptCF, CFWriteStreamCopyError(m_writeStream.get()));
         reportErrorToClient(error.get());
-#else
-        CFStreamError error = CFWriteStreamGetError(m_writeStream.get());
-        m_client->didFail(this, SocketStreamError(error.error)); // FIXME: Provide a sensible error.
-#endif
         break;
     }
     case kCFStreamEventEndEncountered:
@@ -593,7 +525,6 @@ void SocketStreamHandle::writeStreamCallback(CFStreamEventType type)
     }
 }
 
-#ifndef BUILDING_ON_TIGER
 void SocketStreamHandle::reportErrorToClient(CFErrorRef error)
 {
     CFIndex errorCode = CFErrorGetCode(error);
@@ -614,15 +545,12 @@ void SocketStreamHandle::reportErrorToClient(CFErrorRef error)
 
     m_client->didFail(this, SocketStreamError(static_cast<int>(errorCode), m_url.string(), description));
 }
-#endif // BUILDING_ON_TIGER
 
 SocketStreamHandle::~SocketStreamHandle()
 {
     LOG(Network, "SocketStreamHandle %p dtor", this);
 
-#ifndef BUILDING_ON_TIGER
     ASSERT(!m_pacRunLoopSource);
-#endif
 }
 
 int SocketStreamHandle::platformSend(const char* data, int length)
@@ -637,10 +565,8 @@ void SocketStreamHandle::platformClose()
 {
     LOG(Network, "SocketStreamHandle %p platformClose", this);
 
-#ifndef BUILDING_ON_TIGER
     if (m_pacRunLoopSource) 
         removePACRunLoopSource();
-#endif
 
     ASSERT(!m_readStream == !m_writeStream);
     if (!m_readStream)

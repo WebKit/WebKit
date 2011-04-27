@@ -26,9 +26,5 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifdef BUILDING_ON_TIGER
-typedef int NSInteger;
-typedef unsigned int NSUInteger;
-#endif
 
 

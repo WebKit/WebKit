@@ -145,15 +145,6 @@ static inline bool needsLineBreakIterator(UChar ch)
     return ch > asciiLineBreakTableLastChar && ch != noBreakSpace;
 }
 
-#if PLATFORM(MAC) && defined(BUILDING_ON_TIGER)
-static inline TextBreakLocatorRef lineBreakLocator()
-{
-    TextBreakLocatorRef locator = 0;
-    UCCreateTextBreakLocator(0, 0, kUCTextBreakLineMask, &locator);
-    return locator;
-}
-#endif
-
 int nextBreakablePosition(LazyLineBreakIterator& lazyBreakIterator, int pos, bool treatNoBreakSpaceAsBreak)
 {
     const UChar* str = lazyBreakIterator.string();
@@ -169,18 +160,9 @@ int nextBreakablePosition(LazyLineBreakIterator& lazyBreakIterator, int pos, boo
 
         if (needsLineBreakIterator(ch) || needsLineBreakIterator(lastCh)) {
             if (nextBreak < i && i) {
-#if !PLATFORM(MAC) || !defined(BUILDING_ON_TIGER)
                 TextBreakIterator* breakIterator = lazyBreakIterator.get();
                 if (breakIterator)
                     nextBreak = textBreakFollowing(breakIterator, i - 1);
-#else
-                static TextBreakLocatorRef breakLocator = lineBreakLocator();
-                if (breakLocator) {
-                    UniCharArrayOffset nextUCBreak;
-                    if (UCFindTextBreak(breakLocator, kUCTextBreakLineMask, 0, str, len, i, &nextUCBreak) == 0)
-                        nextBreak = nextUCBreak;
-                }
-#endif
             }
             if (i == nextBreak && !isBreakableSpace(lastCh, treatNoBreakSpaceAsBreak))
                 return i;

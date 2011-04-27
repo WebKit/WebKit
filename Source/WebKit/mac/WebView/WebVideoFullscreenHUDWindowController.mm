@@ -42,7 +42,7 @@ static inline CGFloat webkit_CGFloor(CGFloat value)
     return floor(value);
 }
 
-#define HAVE_MEDIA_CONTROL (!defined(BUILDING_ON_TIGER) && !defined(BUILDING_ON_LEOPARD))
+#define HAVE_MEDIA_CONTROL (!defined(BUILDING_ON_LEOPARD))
 
 @interface WebVideoFullscreenHUDWindowController (Private) <NSWindowDelegate>
 
@@ -161,9 +161,7 @@ static const NSTimeInterval HUDWindowFadeOutDelay = 3;
 - (void)dealloc
 {
     ASSERT(!_timelineUpdateTimer);
-#if !defined(BUILDING_ON_TIGER)
     ASSERT(!_area);
-#endif
     ASSERT(!_isScrubbing);
     [_timeline release];
     [_remainingTimeText release];
@@ -173,7 +171,6 @@ static const NSTimeInterval HUDWindowFadeOutDelay = 3;
     [super dealloc];
 }
 
-#if !defined(BUILDING_ON_TIGER)
 - (void)setArea:(NSTrackingArea *)area
 {
     if (area == _area)
@@ -181,7 +178,6 @@ static const NSTimeInterval HUDWindowFadeOutDelay = 3;
     [_area release];
     _area = [area retain];
 }
-#endif
 
 - (void)keyDown:(NSEvent *)event
 {
@@ -234,11 +230,7 @@ static const NSTimeInterval HUDWindowFadeOutDelay = 3;
 
     // Note that this creates a retain cycle between the window and us.
     _timelineUpdateTimer = [[NSTimer timerWithTimeInterval:0.25 target:self selector:@selector(updateTime) userInfo:nil repeats:YES] retain];
-#if defined(BUILDING_ON_TIGER)
-    [[NSRunLoop currentRunLoop] addTimer:_timelineUpdateTimer forMode:(NSString *)kCFRunLoopCommonModes];
-#else
     [[NSRunLoop currentRunLoop] addTimer:_timelineUpdateTimer forMode:NSRunLoopCommonModes];
-#endif
 }
 
 - (void)unscheduleTimeUpdate
@@ -257,11 +249,7 @@ static const NSTimeInterval HUDWindowFadeOutDelay = 3;
         [window setAlphaValue:0];
 
     [window makeKeyAndOrderFront:self];
-#if defined(BUILDING_ON_TIGER)
-    [window setAlphaValue:1];
-#else
     [[window animator] setAlphaValue:1];
-#endif
     [self scheduleTimeUpdate];
 
     [NSObject cancelPreviousPerformRequestsWithTarget:self selector:@selector(fadeWindowOut) object:nil];
@@ -272,11 +260,7 @@ static const NSTimeInterval HUDWindowFadeOutDelay = 3;
 - (void)fadeWindowOut
 {
     [NSCursor setHiddenUntilMouseMoves:YES];
-#if defined(BUILDING_ON_TIGER)
-    [[self window] setAlphaValue:0];
-#else
     [[[self window] animator] setAlphaValue:0];
-#endif
     [self performSelector:@selector(unscheduleTimeUpdate) withObject:nil afterDelay:1];
 }
 
@@ -285,10 +269,8 @@ static const NSTimeInterval HUDWindowFadeOutDelay = 3;
     [NSObject cancelPreviousPerformRequestsWithTarget:self selector:@selector(fadeWindowOut) object:nil];
     [self unscheduleTimeUpdate];
     NSWindow *window = [self window];
-#if !defined(BUILDING_ON_TIGER)
     [[window contentView] removeTrackingArea:_area];
     [self setArea:nil];
-#endif
     [window close];
     [window setDelegate:nil];
     [self setWindow:nil];
@@ -364,10 +346,8 @@ static NSTextField *createTimeTextField(NSRect frame)
     NSView *background = [[NSView alloc] init];
 #endif
     [window setContentView:background];
-#if !defined(BUILDING_ON_TIGER)
     _area = [[NSTrackingArea alloc] initWithRect:[background bounds] options:NSTrackingMouseEnteredAndExited | NSTrackingActiveAlways owner:self userInfo:nil];
     [background addTrackingArea:_area];
-#endif
     [background release];    
 
     NSView *contentView = [window contentView];

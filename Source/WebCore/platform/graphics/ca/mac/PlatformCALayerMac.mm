@@ -41,7 +41,7 @@
 #import <wtf/CurrentTime.h>
 #import <wtf/UnusedParam.h>
 
-#define HAVE_MODERN_QUARTZCORE (!defined(BUILDING_ON_TIGER) && !defined(BUILDING_ON_LEOPARD))
+#define HAVE_MODERN_QUARTZCORE (!defined(BUILDING_ON_LEOPARD))
 
 using namespace WebCore;
 
@@ -91,7 +91,7 @@ static double mediaTimeToCurrentTime(CFTimeInterval t)
 
 @interface CALayer(Private)
 - (void)setContentsChanged;
-#if !defined(BUILDING_ON_TIGER) && !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOW_LEOPARD)
+#if !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOW_LEOPARD)
 - (void)setAcceleratesDrawing:(BOOL)flag;
 - (BOOL)acceleratesDrawing;
 #endif
@@ -557,7 +557,7 @@ void PlatformCALayer::setMasksToBounds(bool value)
 
 bool PlatformCALayer::acceleratesDrawing() const
 {
-#if !defined(BUILDING_ON_TIGER) && !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOW_LEOPARD)
+#if !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOW_LEOPARD)
     return [m_layer.get() acceleratesDrawing];
 #else
     return false;
@@ -566,7 +566,7 @@ bool PlatformCALayer::acceleratesDrawing() const
 
 void PlatformCALayer::setAcceleratesDrawing(bool acceleratesDrawing)
 {
-#if !defined(BUILDING_ON_TIGER) && !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOW_LEOPARD)
+#if !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOW_LEOPARD)
     BEGIN_BLOCK_OBJC_EXCEPTIONS
     [m_layer.get() setAcceleratesDrawing:acceleratesDrawing];
     END_BLOCK_OBJC_EXCEPTIONS

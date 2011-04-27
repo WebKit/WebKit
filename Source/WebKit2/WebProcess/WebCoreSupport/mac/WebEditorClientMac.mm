@@ -131,13 +131,6 @@ void WebEditorClient::setInsertionPasteboard(NSPasteboard *)
     notImplemented();
 }
 
-#ifdef BUILDING_ON_TIGER
-NSArray *WebEditorClient::pasteboardTypesForSelection(Frame*)
-{
-    notImplemented();
-    return nil;
-}
-#endif
 
 static void changeWordCase(WebPage* page, SEL selector)
 {

@@ -36,9 +36,6 @@
 
 #import <Foundation/Foundation.h>
 
-#ifdef BUILDING_ON_TIGER
-typedef unsigned NSUInteger;
-#endif
 
 @interface NSURLRequest (WebNSURLRequestDetails)
 - (NSArray *)contentDispositionEncodingFallbackArray;
@@ -69,7 +66,7 @@ void ResourceRequest::doUpdateResourceRequest()
         m_httpMethod = method;
     m_allowCookies = [m_nsRequest.get() HTTPShouldHandleCookies];
 
-#if !defined(BUILDING_ON_TIGER) && !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOW_LEOPARD)
+#if !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOW_LEOPARD)
     if (ResourceRequest::httpPipeliningEnabled())
         m_priority = toResourceLoadPriority(wkGetHTTPPipeliningPriority(m_nsRequest.get()));
 #endif
@@ -115,11 +112,8 @@ void ResourceRequest::doUpdatePlatformRequest()
     else
         nsRequest = [[NSMutableURLRequest alloc] initWithURL:url()];
 
-#ifdef BUILDING_ON_TIGER
-    wkSupportsMultipartXMixedReplace(nsRequest);
-#endif
 
-#if !defined(BUILDING_ON_TIGER) && !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOW_LEOPARD)
+#if !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOW_LEOPARD)
     if (ResourceRequest::httpPipeliningEnabled())
         wkSetHTTPPipeliningPriority(nsRequest, toHTTPPipeliningPriority(m_priority));
 #endif

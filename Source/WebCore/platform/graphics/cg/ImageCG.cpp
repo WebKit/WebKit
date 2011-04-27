@@ -299,11 +299,9 @@ void Image::drawPattern(GraphicsContext* ctxt, const FloatRect& tileRect, const 
     // Adjust the color space.
     subImage = imageWithColorSpace(subImage.get(), styleColorSpace);
     
-#ifndef BUILDING_ON_TIGER
     // Leopard has an optimized call for the tiling of image patterns, but we can only use it if the image has been decoded enough that
     // its buffer is the same size as the overall image.  Because a partially decoded CGImageRef with a smaller width or height than the
     // overall image buffer needs to tile with "gaps", we can't use the optimized tiling call in that case.
-    // FIXME: Could create WebKitSystemInterface SPI for CGCreatePatternWithImage2 and probably make Tiger tile faster as well.
     // FIXME: We cannot use CGContextDrawTiledImage with scaled tiles on Leopard, because it suffers from rounding errors.  Snow Leopard is ok.
     float scaledTileWidth = tileRect.width() * narrowPrecisionToFloat(patternTransform.a());
     float w = CGImageGetWidth(tileImage);
@@ -314,12 +312,8 @@ void Image::drawPattern(GraphicsContext* ctxt, const FloatRect& tileRect, const 
 #endif
         CGContextDrawTiledImage(context, FloatRect(adjustedX, adjustedY, scaledTileWidth, scaledTileHeight), subImage.get());
     else {
-#endif
 
-    // On Leopard, this code now only runs for partially decoded images whose buffers do not yet match the overall size of the image.
-    // On Tiger this code runs all the time.  This code is suboptimal because the pattern does not reference the image directly, and the
-    // pattern is destroyed before exiting the function.  This means any decoding the pattern does doesn't end up cached anywhere, so we
-    // redecode every time we paint.
+    // On Leopard and newer, this code now only runs for partially decoded images whose buffers do not yet match the overall size of the image.
     static const CGPatternCallbacks patternCallbacks = { 0, drawPatternCallback, NULL };
     CGAffineTransform matrix = CGAffineTransformMake(narrowPrecisionToCGFloat(patternTransform.a()), 0, 0, narrowPrecisionToCGFloat(patternTransform.d()), adjustedX, adjustedY);
     matrix = CGAffineTransformConcat(matrix, CGContextGetCTM(context));
@@ -344,9 +338,7 @@ void Image::drawPattern(GraphicsContext* ctxt, const FloatRect& tileRect, const 
     CGContextSetFillColorWithColor(context, color.get());
     CGContextFillRect(context, CGContextGetClipBoundingBox(context));
 
-#ifndef BUILDING_ON_TIGER
     }
-#endif
 
     stateSaver.restore();
 

@@ -37,7 +37,7 @@ NSDate *WKGetNSURLResponseLastModifiedDate(NSURLResponse *response);
 NSTimeInterval WKGetNSURLResponseFreshnessLifetime(NSURLResponse *response);
 NSString *WKCopyNSURLResponseStatusLine(NSURLResponse *response);
 
-#if !defined(BUILDING_ON_TIGER) && !defined(BUILDING_ON_LEOPARD)
+#ifndef BUILDING_ON_LEOPARD
 CFArrayRef WKCopyNSURLResponseCertificateChain(NSURLResponse *response);
 #endif
 
@@ -87,7 +87,7 @@ AXUIElementRef WKCreateAXUIElementRef(id element);
 void WKUnregisterUniqueIdForElement(id element);
 
 
-#if !defined(BUILDING_ON_TIGER) && !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOW_LEOPARD)
+#if !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOW_LEOPARD)
 // Remote Accessibility API.
 void WKAXRegisterRemoteApp(void);
 void WKAXInitializeElementWithPresenterPid(id, pid_t);
@@ -141,38 +141,15 @@ NSFont *WKGetFontInLanguageForCharacter(NSFont *font, UniChar ch);
 void WKSetCGFontRenderingMode(CGContextRef cgContext, NSFont *font);
 BOOL WKCGContextGetShouldSmoothFonts(CGContextRef cgContext);
 
-#ifdef BUILDING_ON_TIGER
-// CGFontGetAscent, CGFontGetDescent, CGFontGetLeading and CGFontGetUnitsPerEm were not available until Leopard
-void WKGetFontMetrics(CGFontRef font, int *ascent, int *descent, int *lineGap, unsigned *unitsPerEm);
-// CTFontCopyGraphicsFont was not available until Leopard
-CGFontRef WKGetCGFontFromNSFont(NSFont *font);
-// CTFontGetPlatformFont was not available until Leopard
-ATSUFontID WKGetNSFontATSUFontId(NSFont *font);
-// CGFontCopyFullName was not available until Leopard
-CFStringRef WKCopyFullFontName(CGFontRef font);
-#endif
 
 void WKSetPatternBaseCTM(CGContextRef, CGAffineTransform);
 void WKSetPatternPhaseInUserSpace(CGContextRef, CGPoint);
 CGAffineTransform WKGetUserToBaseCTM(CGContextRef);
 
-#ifndef BUILDING_ON_TIGER
 void WKGetGlyphsForCharacters(CGFontRef, const UniChar[], CGGlyph[], size_t);
-#else
-typedef void *WKGlyphVectorRef;
-OSStatus WKConvertCharToGlyphs(void *styleGroup, const UniChar* characters, unsigned numCharacters, WKGlyphVectorRef glyphs);
-OSStatus WKGetATSStyleGroup(ATSUStyle fontStyle, void **styleGroup);
-void WKReleaseStyleGroup(void *group);
-OSStatus WKInitializeGlyphVector(int count, WKGlyphVectorRef glyphs);
-void WKClearGlyphVector(WKGlyphVectorRef glyphs);
-
-int WKGetGlyphVectorNumGlyphs(WKGlyphVectorRef glyphVector);
-ATSLayoutRecord *WKGetGlyphVectorFirstRecord(WKGlyphVectorRef glyphVector);
-size_t WKGetGlyphVectorRecordSize(WKGlyphVectorRef glyphVector);
-#endif
 
 CTLineRef WKCreateCTLineWithUniCharProvider(const UniChar* (*provide)(CFIndex stringIndex, CFIndex* charCount, CFDictionaryRef* attributes, void*), void (*dispose)(const UniChar* chars, void*), void*);
-#if !defined(BUILDING_ON_TIGER) && !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOW_LEOPARD)
+#if !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOW_LEOPARD)
 CTTypesetterRef WKCreateCTTypesetterWithUniCharProviderAndOptions(const UniChar* (*provide)(CFIndex stringIndex, CFIndex* charCount, CFDictionaryRef* attributes, void*), void (*dispose)(const UniChar* chars, void*), void*, CFDictionaryRef options);
 
 CGContextRef WKIOSurfaceContextCreate(IOSurfaceRef, unsigned width, unsigned height, CGColorSpaceRef);
@@ -201,10 +178,6 @@ typedef enum {
 
 OSStatus WKThemeDrawTrack(const HIThemeTrackDrawInfo* inDrawInfo, CGContextRef inContext, int inArrowStyle);
 
-#ifdef BUILDING_ON_TIGER
-// WKSupportsMultipartXMixedReplace is not required on Leopard as multipart/x-mixed-replace is always handled by NSURLRequest
-BOOL WKSupportsMultipartXMixedReplace(NSMutableURLRequest *request);
-#endif
 
 BOOL WKCGContextIsBitmapContext(CGContextRef context);
 
@@ -310,7 +283,7 @@ NSArray *WKQTGetSitesInMediaDownloadCache();
 void WKQTClearMediaDownloadCacheForSite(NSString *site);
 void WKQTClearMediaDownloadCache();
     
-#if !defined(BUILDING_ON_TIGER) && !defined(BUILDING_ON_LEOPARD)
+#ifndef BUILDING_ON_LEOPARD
 mach_port_t WKInitializeRenderServer(void);
     
 @class CALayer;
@@ -349,7 +322,7 @@ CFRunLoopSourceRef WKCreateMIGServerSource(mig_subsystem_t subsystem, mach_port_
 
 NSUInteger WKGetInputPanelWindowStyle(void);
 UInt8 WKGetNSEventKeyChar(NSEvent *);
-#endif // !defined(BUILDING_ON_TIGER) && !defined(BUILDING_ON_LEOPARD)
+#endif // !defined(BUILDING_ON_LEOPARD)
 
 @class CAPropertyAnimation;
 void WKSetCAAnimationValueFunction(CAPropertyAnimation*, NSString* function);
@@ -364,7 +337,7 @@ void WKSetCONNECTProxyForStream(CFReadStreamRef, CFStringRef proxyHost, CFNumber
 void WKSetCONNECTProxyAuthorizationForStream(CFReadStreamRef, CFStringRef proxyAuthorizationString);
 CFHTTPMessageRef WKCopyCONNECTProxyResponse(CFReadStreamRef, CFURLRef responseURL);
 
-#if defined(BUILDING_ON_TIGER) || defined(BUILDING_ON_LEOPARD) || defined(BUILDING_ON_SNOW_LEOPARD)
+#if defined(BUILDING_ON_LEOPARD) || defined(BUILDING_ON_SNOW_LEOPARD)
 typedef enum {
     WKEventPhaseNone = 0,
     WKEventPhaseBegan = 1,
@@ -375,12 +348,10 @@ typedef enum {
 int WKGetNSEventMomentumPhase(NSEvent *);
 #endif
 
-#ifndef BUILDING_ON_TIGER
 void WKWindowSetAlpha(NSWindow *window, float alphaValue);
 void WKWindowSetScaledFrame(NSWindow *window, NSRect scaleFrame, NSRect nonScaledFrame);
-#endif
 
-#if !defined(BUILDING_ON_TIGER) && !defined(BUILDING_ON_LEOPARD)
+#ifndef BUILDING_ON_LEOPARD
 void WKSyncSurfaceToView(NSView *view);
 
 void WKEnableSettingCursorWhenInBackground(void);
@@ -397,7 +368,7 @@ ScriptCode WKGetScriptCodeFromCurrentKeyboardInputSource(void);
 
 #endif
 
-#if defined(BUILDING_ON_TIGER) || defined(BUILDING_ON_LEOPARD) || defined(BUILDING_ON_SNOW_LEOPARD)
+#if defined(BUILDING_ON_LEOPARD) || defined(BUILDING_ON_SNOW_LEOPARD)
 CFIndex WKGetHyphenationLocationBeforeIndex(CFStringRef string, CFIndex index);
 #endif
 
@@ -410,7 +381,7 @@ CFHTTPMessageRef WKGetCFURLResponseHTTPResponse(CFURLResponseRef);
 CFStringRef WKCopyCFURLResponseSuggestedFilename(CFURLResponseRef);
 void WKSetCFURLResponseMIMEType(CFURLResponseRef, CFStringRef mimeType);
 
-#if !defined(BUILDING_ON_TIGER) && !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOW_LEOPARD)
+#if !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOW_LEOPARD)
 typedef enum {
     WKSandboxExtensionTypeReadOnly,
     WKSandboxExtensionTypeWriteOnly,    

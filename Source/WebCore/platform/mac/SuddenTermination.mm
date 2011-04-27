@@ -26,7 +26,7 @@
 #import "config.h"
 #import "SuddenTermination.h"
 
-#if !defined(BUILDING_ON_TIGER) && !defined(BUILDING_ON_LEOPARD)
+#ifndef BUILDING_ON_LEOPARD
 
 namespace WebCore {
 

@@ -105,9 +105,6 @@ static const OSType NSViewCarbonControlFirstResponderViewPropertyTag = 'frvw';
 */
 static const OSType NSCarbonWindowPropertyTag = 'win ';
 
-#ifdef BUILDING_ON_TIGER
-const int typeByteCount = typeSInt32;
-#endif
 
 static SEL _NSSelectorForHICommand( const HICommand* hiCommand );
 

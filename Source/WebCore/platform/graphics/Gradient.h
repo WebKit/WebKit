@@ -39,7 +39,7 @@
 
 typedef struct CGContext* CGContextRef;
 
-#define USE_CG_SHADING defined(BUILDING_ON_TIGER) || defined(BUILDING_ON_LEOPARD)
+#define USE_CG_SHADING defined(BUILDING_ON_LEOPARD)
 
 #if USE_CG_SHADING
 typedef struct CGShading* CGShadingRef;

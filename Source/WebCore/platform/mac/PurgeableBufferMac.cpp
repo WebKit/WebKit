@@ -153,4 +153,4 @@ const char* PurgeableBuffer::data() const
     
 }
 
-#endif // BUILDING_ON_TIGER
+#endif

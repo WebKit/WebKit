@@ -26,7 +26,7 @@
 
 #import "WebViewPrivate.h"
 
-#if !defined(BUILDING_ON_TIGER) && !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOW_LEOPARD)
+#if !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOW_LEOPARD)
 using namespace WebCore;
 
 static inline NSCorrectionIndicatorType correctionIndicatorType(CorrectionPanelInfo::PanelType panelType)
@@ -153,5 +153,5 @@ void CorrectionPanel::handleAcceptedReplacement(NSString* acceptedReplacement, N
     [m_resultCondition.get() unlock];
 }
 
-#endif // !defined(BUILDING_ON_TIGER) && !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOW_LEOPARD)
+#endif // !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOW_LEOPARD)
 

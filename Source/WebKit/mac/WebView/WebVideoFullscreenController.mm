@@ -51,7 +51,7 @@ SOFT_LINK_POINTER(QTKit, QTMovieRateDidChangeNotification, NSString *)
 static const NSTimeInterval tickleTimerInterval = 1.0;
 
 @interface WebVideoFullscreenWindow : NSWindow
-#if !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_TIGER)
+#ifndef BUILDING_ON_LEOPARD
 <NSAnimationDelegate>
 #endif
 {
@@ -119,10 +119,6 @@ static const NSTimeInterval tickleTimerInterval = 1.0;
 
 - (void)windowDidLoad
 {
-#ifdef BUILDING_ON_TIGER
-    // WebVideoFullscreenController is not supported on Tiger:
-    ASSERT_NOT_REACHED();
-#else
     WebVideoFullscreenWindow *window = [self fullscreenWindow];
     [window setHasShadow:YES]; // This is nicer with a shadow.
     [window setLevel:NSPopUpMenuWindowLevel-1];
@@ -135,7 +131,6 @@ static const NSTimeInterval tickleTimerInterval = 1.0;
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(applicationDidResignActive:) name:NSApplicationDidResignActiveNotification object:NSApp];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(applicationDidChangeScreenParameters:) name:NSApplicationDidChangeScreenParametersNotification object:NSApp];
 #endif
-#endif
 }
 
 - (WebCore::HTMLMediaElement*)mediaElement
@@ -145,10 +140,6 @@ static const NSTimeInterval tickleTimerInterval = 1.0;
 
 - (void)setMediaElement:(WebCore::HTMLMediaElement*)mediaElement
 {
-#ifdef BUILDING_ON_TIGER
-    // WebVideoFullscreenController is not supported on Tiger:
-    ASSERT_NOT_REACHED();
-#else
     _mediaElement = mediaElement;
     if ([self isWindowLoaded]) {
         QTMovieLayer *movieLayer = (QTMovieLayer *)[[[self fullscreenWindow] contentView] layer];
@@ -163,7 +154,6 @@ static const NSTimeInterval tickleTimerInterval = 1.0;
                                                    object:[movieLayer movie]];
 #endif
     }
-#endif
 }
 
 - (id <WebVideoFullscreenControllerDelegate>)delegate
@@ -348,7 +338,7 @@ static NSWindow *createBackgroundFullscreenWindow(NSRect frame, int level)
 - (void)updateMenuAndDockForFullscreen
 {
     // NSApplicationPresentationOptions is available on > 10.6 only:
-#if !defined(BUILDING_ON_TIGER) && !defined(BUILDING_ON_LEOPARD)
+#ifndef BUILDING_ON_LEOPARD
     NSApplicationPresentationOptions options = NSApplicationPresentationDefault;
     NSScreen* fullscreenScreen = [[self window] screen];
 
@@ -372,7 +362,6 @@ static NSWindow *createBackgroundFullscreenWindow(NSRect frame, int level)
         SetSystemUIMode(_isEndingFullscreen ? kUIModeNormal : kUIModeAllHidden, 0);
 }
 
-#if !defined(BUILDING_ON_TIGER) // IOPMAssertionCreateWithName not defined on < 10.5
 - (void)_disableIdleDisplaySleep
 {
     if (_idleDisplaySleepAssertion == kIOPMNullAssertionID) 
@@ -427,11 +416,9 @@ static NSWindow *createBackgroundFullscreenWindow(NSRect frame, int level)
 {
     UpdateSystemActivity(OverallAct);
 }
-#endif
 
 - (void)updatePowerAssertions
 {
-#if !defined(BUILDING_ON_TIGER) 
     float rate = 0;
     if (_mediaElement && _mediaElement->platformMedia().type == WebCore::PlatformMedia::QTMovieType)
         rate = [_mediaElement->platformMedia().media.qtMovie rate];
@@ -445,7 +432,6 @@ static NSWindow *createBackgroundFullscreenWindow(NSRect frame, int level)
         [self _enableIdleDisplaySleep];
         [self _disableTickleTimer];
     }
-#endif
 }
 
 // MARK: -
@@ -594,12 +580,10 @@ static NSWindow *createBackgroundFullscreenWindow(NSRect frame, int level)
 
 - (void)animationDidEnd:(NSAnimation *)animation
 {
-#if !defined(BUILDING_ON_TIGER) // Animations are never threaded on Tiger.
     if (![NSThread isMainThread]) {
         [self performSelectorOnMainThread:@selector(animationDidEnd:) withObject:animation waitUntilDone:NO];
         return;
     }
-#endif
     if (animation != _fullscreenAnimation)
         return;
 

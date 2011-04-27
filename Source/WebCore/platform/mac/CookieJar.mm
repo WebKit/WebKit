@@ -34,9 +34,6 @@
 #import "WebCoreSystemInterface.h"
 #import <wtf/RetainPtr.h>
 
-#ifdef BUILDING_ON_TIGER
-typedef unsigned NSUInteger;
-#endif
 
 @interface NSHTTPCookie (WebCoreHTTPOnlyCookies)
 - (BOOL)isHTTPOnly;

@@ -194,9 +194,6 @@ struct WebDynamicScrollBarsViewPrivate {
 {
     _private->suppressScrollers = suppressed;
 
-    // This code was originally changes for a Leopard performance imporvement. We decided to 
-    // ifdef it to fix correctness issues on Tiger documented in <rdar://problem/5441823>.
-#ifndef BUILDING_ON_TIGER
     if (suppressed) {
         [[self verticalScroller] setNeedsDisplay:NO];
         [[self horizontalScroller] setNeedsDisplay:NO];
@@ -204,12 +201,6 @@ struct WebDynamicScrollBarsViewPrivate {
 
     if (!suppressed && repaint)
         [super reflectScrolledClipView:[self contentView]];
-#else
-    if (suppressed || repaint) {
-        [[self verticalScroller] setNeedsDisplay:!suppressed];
-        [[self horizontalScroller] setNeedsDisplay:!suppressed];
-    }
-#endif
 }
 
 - (void)adjustForScrollOriginChange
@@ -385,21 +376,9 @@ static const unsigned cMaxUpdateScrollbarsPass = 2;
             [self updateScrollers];
     }
 
-    // This code was originally changed for a Leopard performance imporvement. We decided to 
-    // ifdef it to fix correctness issues on Tiger documented in <rdar://problem/5441823>.
-#ifndef BUILDING_ON_TIGER
     // Update the scrollers if they're not being suppressed.
     if (!_private->suppressScrollers)
         [super reflectScrolledClipView:clipView];
-#else
-    [super reflectScrolledClipView:clipView];
-
-    // Validate the scrollers if they're being suppressed.
-    if (_private->suppressScrollers) {
-        [[self verticalScroller] setNeedsDisplay:NO];
-        [[self horizontalScroller] setNeedsDisplay:NO];
-    }
-#endif
 
     // The call to [NSView reflectScrolledClipView] sets the scrollbar thumb
     // position to 0 (the left) when the view is initially displayed.
@@ -515,7 +494,7 @@ static const unsigned cMaxUpdateScrollbarsPass = 2;
     BOOL isContinuous;
     WKGetWheelEventDeltas(event, &deltaX, &deltaY, &isContinuous);
 
-#if !defined(BUILDING_ON_TIGER) && !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOW_LEOPARD)
+#if !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOW_LEOPARD)
     NSEventPhase momentumPhase = [event momentumPhase];
     BOOL isLatchingEvent = momentumPhase & NSEventPhaseBegan || momentumPhase & NSEventPhaseChanged;
 #else

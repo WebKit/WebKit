@@ -58,10 +58,6 @@
 #include "HTMLMeterElement.h"
 #endif
 
-#ifdef BUILDING_ON_TIGER
-typedef int NSInteger;
-typedef unsigned NSUInteger;
-#endif
 
 using namespace std;
 
@@ -788,10 +784,8 @@ bool RenderThemeMac::paintMenuList(RenderObject* o, const PaintInfo& paintInfo, 
 
     GraphicsContextStateSaver stateSaver(*paintInfo.context);
     
-#ifndef BUILDING_ON_TIGER
     // On Leopard, the cell will draw outside of the given rect, so we have to clip to the rect
     paintInfo.context->clip(inflatedRect);
-#endif
 
     if (zoomLevel != 1.0f) {
         inflatedRect.setWidth(inflatedRect.width() / zoomLevel);
@@ -1386,10 +1380,6 @@ bool RenderThemeMac::paintSearchField(RenderObject* o, const PaintInfo& paintInf
     [search setSearchButtonCell:nil];
 
     [search drawWithFrame:NSRect(unzoomedRect) inView:documentViewFor(o)];
-#ifdef BUILDING_ON_TIGER
-    if ([search showsFirstResponder])
-        wkDrawTextFieldCellFocusRing(search, NSRect(unzoomedRect));
-#endif
 
     [search setControlView:nil];
     [search resetSearchButtonCell];
@@ -1631,13 +1621,8 @@ static int mediaControllerTheme()
     Boolean validKey;
     Boolean useQTMediaUIPref = CFPreferencesGetAppBooleanValue(CFSTR("UseQuickTimeMediaUI"), CFSTR("com.apple.WebCore"), &validKey);
 
-#if !defined(BUILDING_ON_TIGER)
     if (validKey && !useQTMediaUIPref)
         return controllerTheme;
-#else
-    if (!validKey || !useQTMediaUIPref)
-        return controllerTheme;
-#endif
 
     controllerTheme = MediaControllerThemeQuickTime;
     return controllerTheme;
@@ -1977,7 +1962,7 @@ IntPoint RenderThemeMac::volumeSliderOffsetFromMuteButton(RenderBox* muteButtonB
 
 bool RenderThemeMac::shouldShowPlaceholderWhenFocused() const
 {
-#if !defined(BUILDING_ON_TIGER) && !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOW_LEOPARD)
+#if !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOW_LEOPARD)
     return true;
 #else
     return false;

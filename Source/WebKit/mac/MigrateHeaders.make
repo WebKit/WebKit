@@ -464,13 +464,7 @@ all : \
 endif
 
 REPLACE_RULES = -e s/\<WebCore/\<WebKit/ -e s/DOMDOMImplementation/DOMImplementation/
-HEADER_MIGRATE_CMD = sed $(REPLACE_RULES) $< $(PROCESS_HEADER_FOR_MACOSX_TARGET_CMD) > $@
-
-ifeq ($(MACOSX_DEPLOYMENT_TARGET),10.4)
-PROCESS_HEADER_FOR_MACOSX_TARGET_CMD = | ( unifdef -DBUILDING_ON_TIGER || exit 0 )
-else
-PROCESS_HEADER_FOR_MACOSX_TARGET_CMD = | ( unifdef -UBUILDING_ON_TIGER || exit 0 )
-endif
+HEADER_MIGRATE_CMD = sed $(REPLACE_RULES) $< > $@
 
 $(PUBLIC_HEADERS_DIR)/DOM% : DOMDOM% MigrateHeaders.make
 	$(HEADER_MIGRATE_CMD)

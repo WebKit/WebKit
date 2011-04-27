@@ -97,12 +97,7 @@
 #endif
 
 // Use a background thread to periodically scavenge memory to release back to the system
-// https://bugs.webkit.org/show_bug.cgi?id=27900: don't turn this on for Tiger until we have figured out why it caused a crash.
-#if defined(BUILDING_ON_TIGER)
-#define USE_BACKGROUND_THREAD_TO_SCAVENGE_MEMORY 0
-#else
 #define USE_BACKGROUND_THREAD_TO_SCAVENGE_MEMORY 1
-#endif
 
 #ifndef NDEBUG
 namespace WTF {
@@ -4584,10 +4579,10 @@ extern "C" {
 malloc_introspection_t jscore_fastmalloc_introspection = { &FastMallocZone::enumerate, &FastMallocZone::goodSize, &FastMallocZone::check, &FastMallocZone::print,
     &FastMallocZone::log, &FastMallocZone::forceLock, &FastMallocZone::forceUnlock, &FastMallocZone::statistics
 
-#if !defined(BUILDING_ON_TIGER) && !defined(BUILDING_ON_LEOPARD)
+#ifndef BUILDING_ON_LEOPARD
     , 0 // zone_locked will not be called on the zone unless it advertises itself as version five or higher.
 #endif
-#if !defined(BUILDING_ON_TIGER) && !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOW_LEOPARD)
+#if !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOW_LEOPARD)
     , 0, 0, 0, 0 // These members will not be used unless the zone advertises itself as version seven or higher.
 #endif
 

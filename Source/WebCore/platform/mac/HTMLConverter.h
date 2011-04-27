@@ -79,7 +79,7 @@ namespace WebCore {
     } _flags;
 }
 
-#if !defined(BUILDING_ON_TIGER) && !defined(BUILDING_ON_LEOPARD)
+#if !defined(BUILDING_ON_LEOPARD)
 - (id)init;
 - (id)initWithDOMRange:(DOMRange *)domRange;
 

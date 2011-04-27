@@ -116,7 +116,7 @@ static NSMutableDictionary *descriptions = nil;
         [userInfo setObject:localizedDescription forKey:NSLocalizedDescriptionKey];
     if (contentURL) {
         [userInfo setObject:contentURL forKey:@"NSErrorFailingURLKey"];
-#if defined(BUILDING_ON_TIGER) || defined(BUILDING_ON_LEOPARD)
+#ifdef BUILDING_ON_LEOPARD
         [userInfo setObject:[contentURL _web_userVisibleString] forKey:NSErrorFailingURLStringKey];
 #else
         [userInfo setObject:[contentURL _web_userVisibleString] forKey:NSURLErrorFailingURLStringErrorKey];

@@ -28,7 +28,7 @@
 #include <wtf/PassRefPtr.h>
 #include <wtf/Threading.h>
 
-#if PLATFORM(MAC) && !defined(BUILDING_ON_TIGER)
+#if PLATFORM(MAC)
 #include <objc/objc-auto.h>
 #endif
 
@@ -114,7 +114,7 @@ namespace StringWrapperCFAllocator {
 
     static CFAllocatorRef create()
     {
-#if PLATFORM(MAC) && !defined(BUILDING_ON_TIGER)
+#if PLATFORM(MAC)
         // Since garbage collection isn't compatible with custom allocators, don't use this at all when garbage collection is active.
         if (objc_collectingEnabled())
             return 0;

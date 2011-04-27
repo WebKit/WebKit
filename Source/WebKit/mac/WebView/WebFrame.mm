@@ -393,7 +393,6 @@ WebView *getWebView(WebFrame *webFrame)
     return _private->internalLoadDelegate;
 }
 
-#ifndef BUILDING_ON_TIGER
 - (void)_unmarkAllBadGrammar
 {
     Frame* coreFrame = _private->coreFrame;
@@ -402,7 +401,6 @@ WebView *getWebView(WebFrame *webFrame)
             document->markers()->removeMarkers(DocumentMarker::Grammar);
     }
 }
-#endif
 
 - (void)_unmarkAllMisspellings
 {

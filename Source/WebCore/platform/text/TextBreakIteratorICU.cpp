@@ -148,7 +148,6 @@ bool isTextBreak(TextBreakIterator* iterator, int position)
     return ubrk_isBoundary(reinterpret_cast<UBreakIterator*>(iterator), position);
 }
 
-#ifndef BUILDING_ON_TIGER
 static TextBreakIterator* setUpIteratorWithRules(bool& createdIterator, TextBreakIterator*& iterator,
     const char* breakRules, const UChar* string, int length)
 {
@@ -173,14 +172,9 @@ static TextBreakIterator* setUpIteratorWithRules(bool& createdIterator, TextBrea
 
     return iterator;
 }
-#endif // BUILDING_ON_TIGER
 
 TextBreakIterator* cursorMovementIterator(const UChar* string, int length)
 {
-#ifdef BUILDING_ON_TIGER
-    // ICU 3.2 cannot compile the below rules.
-    return characterBreakIterator(string, length);
-#else
     // This rule set is based on character-break iterator rules of ICU 4.0
     // <http://source.icu-project.org/repos/icu/icu/tags/release-4-0/source/data/brkitr/char.txt>.
     // The major differences from the original ones are listed below:
@@ -260,7 +254,6 @@ TextBreakIterator* cursorMovementIterator(const UChar* string, int length)
     static bool createdCursorMovementIterator = false;
     static TextBreakIterator* staticCursorMovementIterator;
     return setUpIteratorWithRules(createdCursorMovementIterator, staticCursorMovementIterator, kRules, string, length);
-#endif // BUILDING_ON_TIGER
 }
 
 }

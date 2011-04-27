@@ -181,9 +181,7 @@ NPError NPP_New(NPMIMEType pluginType, NPP instance, uint16_t mode, int16_t argc
 
 #ifdef XP_MACOSX
     obj->eventModel = eventModel;
-#if !defined(BUILDING_ON_TIGER)
     obj->coreAnimationLayer = 0;
-#endif
 #endif // XP_MACOSX
 
     string testIdentifier;
@@ -227,7 +225,7 @@ NPError NPP_New(NPMIMEType pluginType, NPP instance, uint16_t mode, int16_t argc
         else if (strcasecmp(argn[i], "testwindowopen") == 0)
             obj->testWindowOpen = TRUE;
         else if (strcasecmp(argn[i], "drawingmodel") == 0) {
-#if defined(XP_MACOSX) && !defined(BUILDING_ON_TIGER)
+#ifdef XP_MACOSX
             const char* value = argv[i];
             if (strcasecmp(value, "coreanimation") == 0) {
                 if (supportsCoreAnimation)
@@ -274,10 +272,8 @@ NPError NPP_New(NPMIMEType pluginType, NPP instance, uint16_t mode, int16_t argc
 
 #ifdef XP_MACOSX
     browser->setvalue(instance, NPPVpluginDrawingModel, (void *)drawingModelToUse);
-#if !defined(BUILDING_ON_TIGER)
     if (drawingModelToUse == NPDrawingModelCoreAnimation)
         obj->coreAnimationLayer = createCoreAnimationLayer();
-#endif
 #endif
 
     browser->getvalue(instance, NPNVprivateModeBool, (void *)&obj->cachedPrivateBrowsingMode);
@@ -330,7 +326,7 @@ NPError NPP_Destroy(NPP instance, NPSavedData **save)
         if (obj->logDestroy)
             pluginLog(instance, "NPP_Destroy");
 
-#if defined(XP_MACOSX) && !defined(BUILDING_ON_TIGER)
+#ifdef XP_MACOSX
         if (obj->coreAnimationLayer)
             CFRelease(obj->coreAnimationLayer);
 #endif
@@ -756,7 +752,7 @@ NPError NPP_GetValue(NPP instance, NPPVariable variable, void *value)
         return NPERR_NO_ERROR;
     }
     
-#if defined(XP_MACOSX) && !defined(BUILDING_ON_TIGER)
+#ifdef XP_MACOSX
     if (variable == NPPVpluginCoreAnimationLayer) {
         if (!obj->coreAnimationLayer)
             return NPERR_GENERIC_ERROR;

@@ -29,7 +29,7 @@
 #ifndef AccessibilityList_h
 #define AccessibilityList_h
 
-#if PLATFORM(MAC) && (defined(BUILDING_ON_TIGER) || defined(BUILDING_ON_LEOPARD))
+#if PLATFORM(MAC) && defined(BUILDING_ON_LEOPARD)
 #define ACCESSIBILITY_LISTS 0
 #else
 #define ACCESSIBILITY_LISTS 1

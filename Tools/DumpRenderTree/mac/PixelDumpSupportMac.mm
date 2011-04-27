@@ -44,10 +44,6 @@
 #import <WebKit/WebKit.h>
 #import <WebKit/WebViewPrivate.h>
 
-#if defined(BUILDING_ON_TIGER)
-#include <OpenGL/OpenGL.h>
-#include <OpenGL/CGLMacro.h>
-#endif
 
 // To ensure pixel tests consistency, we need to always render in the same colorspace.
 // Unfortunately, because of AppKit / WebKit constraints, we can't render directly in the colorspace of our choice.
@@ -167,7 +163,6 @@ PassRefPtr<BitmapContext> createBitmapContextFromWebView(bool onscreen, bool inc
     } else {
 
         if (onscreen) {
-#if !defined(BUILDING_ON_TIGER)
             // displayIfNeeded does not update the CA layers if the layer-hosting view was not marked as needing display, so
             // we're at the mercy of CA's display-link callback to update layers in time. So we need to force a display of the view
             // to get AppKit to update the CA layers synchronously.
@@ -180,60 +175,6 @@ PassRefPtr<BitmapContext> createBitmapContextFromWebView(bool onscreen, bool inc
             CGImageRef image = CGWindowListCreateImage(CGRectNull, kCGWindowListOptionIncludingWindow, [[view window] windowNumber], kCGWindowImageBoundsIgnoreFraming | kCGWindowImageShouldBeOpaque);
             CGContextDrawImage(context, CGRectMake(0, 0, CGImageGetWidth(image), CGImageGetHeight(image)), image);
             CGImageRelease(image);
-#else
-            // On 10.4 and earlier, we have to move the window temporarily "onscreen" and read directly from the display framebuffer using OpenGL
-            // In this code path, we need to ensure the window is above any other window or captured result will be corrupted
-            
-            NSWindow *window = [view window];
-            int oldLevel = [window level];
-            NSRect oldFrame = [window frame];
-            
-            NSRect newFrame = [[[NSScreen screens] objectAtIndex:0] frame];
-            newFrame = NSMakeRect(newFrame.origin.x + (newFrame.size.width - oldFrame.size.width) / 2, newFrame.origin.y + (newFrame.size.height - oldFrame.size.height) / 2, oldFrame.size.width, oldFrame.size.height);
-            [window setLevel:NSScreenSaverWindowLevel];
-            [window setFrame:newFrame display:NO animate:NO];
-            
-            CGRect rect = CGRectMake(newFrame.origin.x, newFrame.origin.y, webViewSize.width, webViewSize.height);
-            CGDirectDisplayID displayID;
-            CGDisplayCount count;
-            if (CGGetDisplaysWithRect(rect, 1, &displayID, &count) == kCGErrorSuccess) {
-                CGRect bounds = CGDisplayBounds(displayID);
-                rect.origin.x -= bounds.origin.x;
-                rect.origin.y -= bounds.origin.y;
-                
-                CGLPixelFormatAttribute attributes[] = {kCGLPFAAccelerated, kCGLPFANoRecovery, kCGLPFAFullScreen, kCGLPFADisplayMask, (CGLPixelFormatAttribute)CGDisplayIDToOpenGLDisplayMask(displayID), (CGLPixelFormatAttribute)0};
-                CGLPixelFormatObj pixelFormat;
-                GLint num;
-                if (CGLChoosePixelFormat(attributes, &pixelFormat, &num) == kCGLNoError) {
-                    CGLContextObj cgl_ctx;
-                    if (CGLCreateContext(pixelFormat, 0, &cgl_ctx) == kCGLNoError) {
-                        if (CGLSetFullScreen(cgl_ctx) == kCGLNoError) {
-                            void *flipBuffer = calloc(pixelsHigh, rowBytes);
-                            if (flipBuffer) {
-                                glPixelStorei(GL_PACK_ROW_LENGTH, rowBytes / 4);
-                                glPixelStorei(GL_PACK_ALIGNMENT, 4);
-#if __BIG_ENDIAN__
-                                glReadPixels(rect.origin.x, rect.origin.y, rect.size.width, rect.size.height, GL_RGBA, GL_UNSIGNED_INT_8_8_8_8, flipBuffer);
-#else
-                                glReadPixels(rect.origin.x, rect.origin.y, rect.size.width, rect.size.height, GL_RGBA, GL_UNSIGNED_INT_8_8_8_8_REV, flipBuffer);
-#endif
-                                if (!glGetError()) {
-                                    for(size_t i = 0; i < pixelsHigh; ++i)
-                                    bcopy((char*)flipBuffer + rowBytes * i, (char*)buffer + rowBytes * (pixelsHigh - i - 1), pixelsWide * 4);
-                                }
-                                
-                                free(flipBuffer);
-                            }
-                        }
-                        CGLDestroyContext(cgl_ctx);
-                    }
-                    CGLDestroyPixelFormat(pixelFormat);
-                }
-            }
-            
-            [window setFrame:oldFrame display:NO animate:NO];
-            [window setLevel:oldLevel];
-#endif
         } else {
             // Make sure the view has been painted.
             [view displayIfNeeded];

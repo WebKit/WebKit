@@ -58,9 +58,7 @@ static CGFloat squaredDistance(NSPoint point1, NSPoint point2)
     self = [super init];
     if (!self)
         return nil;
-#ifndef BUILDING_ON_TIGER
     [self setAnimationBlockingMode:NSAnimationNonblockingThreaded];
-#endif
     [self setFrameRate:60.];
     return self;
 }
@@ -112,11 +110,7 @@ static CGFloat squaredDistance(NSPoint point1, NSPoint point2)
     [super setCurrentProgress:progress];
 
     NSRect currentRect = [self currentFrame];
-#ifndef BUILDING_ON_TIGER
     WKWindowSetScaledFrame(_window, currentRect, _realFrame);
-#else
-    [_window setFrame:currentRect display:YES];
-#endif
     [_subAnimation setCurrentProgress:progress];
 }
 
@@ -174,9 +168,7 @@ static CGFloat squaredDistance(NSPoint point1, NSPoint point2)
     self = [super init];
     if (!self)
         return nil;
-#ifndef BUILDING_ON_TIGER
     [self setAnimationBlockingMode:NSAnimationNonblockingThreaded];
-#endif
     [self setFrameRate:60];
     [self setAnimationCurve:NSAnimationEaseInOut];
     return self;
@@ -211,11 +203,7 @@ static CGFloat squaredDistance(NSPoint point1, NSPoint point2)
     ASSERT(_window);
     [super setCurrentProgress:progress];
 
-#ifndef BUILDING_ON_TIGER
     WKWindowSetAlpha(_window, [self currentAlpha]);
-#else
-    [_window setAlphaValue:[self currentAlpha]];
-#endif
 }
 
 - (void)setWindow:(NSWindow*)window

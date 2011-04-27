@@ -59,16 +59,12 @@ static NSThread* mainThreadNSThread;
 
 void initializeMainThreadPlatform()
 {
-#if !defined(BUILDING_ON_TIGER)
     ASSERT(!staticMainThreadCaller);
     staticMainThreadCaller = [[WTFMainThreadCaller alloc] init];
 
     mainThreadEstablishedAsPthreadMain = false;
     mainThreadPthread = pthread_self();
     mainThreadNSThread = [[NSThread currentThread] retain];
-#else
-    ASSERT_NOT_REACHED();
-#endif
 }
 
 void initializeMainThreadToProcessMainThreadPlatform()
@@ -117,12 +113,8 @@ void scheduleDispatchFunctionsOnMainThread()
         return;
     }
 
-#if !defined(BUILDING_ON_TIGER)
     ASSERT(mainThreadNSThread);
     [staticMainThreadCaller performSelector:@selector(call) onThread:mainThreadNSThread withObject:nil waitUntilDone:NO];
-#else
-    ASSERT_NOT_REACHED();
-#endif
 }
 
 bool isMainThread()
@@ -132,13 +124,8 @@ bool isMainThread()
         return pthread_main_np();
     }
 
-#if !defined(BUILDING_ON_TIGER)
     ASSERT(mainThreadPthread);
     return pthread_equal(pthread_self(), mainThreadPthread);
-#else
-    ASSERT_NOT_REACHED();
-    return false;
-#endif
 }
 
 } // namespace WTF

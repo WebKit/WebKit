@@ -61,9 +61,7 @@ typedef union PluginPort {
 @interface WebNetscapePluginView : WebBaseNetscapePluginView<WebPluginManualLoader, WebPluginContainerCheckController>
 {
     RefPtr<WebNetscapePluginStream> _manualStream;
-#ifndef BUILDING_ON_TIGER
     RetainPtr<CALayer> _pluginLayer;
-#endif
     unsigned _dataLengthReceived;
     RetainPtr<NSError> _error;
         
@@ -154,9 +152,7 @@ typedef union PluginPort {
 @interface WebNetscapePluginView (WebInternal)
 - (BOOL)sendEvent:(void*)event isDrawRect:(BOOL)eventIsDrawRect;
 - (NPEventModel)eventModel;
-#ifndef BUILDING_ON_TIGER
 - (CALayer *)pluginLayer;
-#endif
 - (NPError)loadRequest:(NSURLRequest *)request inTarget:(NSString *)target withNotifyData:(void *)notifyData sendNotification:(BOOL)sendNotification;
 - (NPError)getURLNotify:(const char *)URL target:(const char *)target notifyData:(void *)notifyData;
 - (NPError)getURL:(const char *)URL target:(const char *)target;

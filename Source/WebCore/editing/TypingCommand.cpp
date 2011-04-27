@@ -321,7 +321,7 @@ EditAction TypingCommand::editingAction() const
 
 void TypingCommand::markMisspellingsAfterTyping(ETypingCommand commandType)
 {
-#if PLATFORM(MAC) && !defined(BUILDING_ON_TIGER) && !defined(BUILDING_ON_LEOPARD)
+#if PLATFORM(MAC) && !defined(BUILDING_ON_LEOPARD)
     if (!document()->frame()->editor()->isContinuousSpellCheckingEnabled()
      && !document()->frame()->editor()->isAutomaticQuoteSubstitutionEnabled()
      && !document()->frame()->editor()->isAutomaticLinkDetectionEnabled()
@@ -356,7 +356,7 @@ void TypingCommand::typingAddedToOpenCommand(ETypingCommand commandTypeForAddedT
 {
     updatePreservesTypingStyle(commandTypeForAddedTyping);
 
-#if PLATFORM(MAC) && !defined(BUILDING_ON_TIGER) && !defined(BUILDING_ON_LEOPARD)
+#if PLATFORM(MAC) && !defined(BUILDING_ON_LEOPARD)
     document()->frame()->editor()->appliedEditing(this);
     // Since the spellchecking code may also perform corrections and other replacements, it should happen after the typing changes.
     if (!m_shouldPreventSpellChecking)

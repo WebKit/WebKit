@@ -471,8 +471,6 @@ static int buildModifierFlags(const WebScriptObject* modifiers)
 
 - (void)mouseScrollByX:(int)x andY:(int)y continuously:(BOOL)c
 {
-    // CGEventCreateScrollWheelEvent() was introduced in 10.5
-#if !defined(BUILDING_ON_TIGER)
     CGScrollEventUnit unit = c?kCGScrollEventUnitPixel:kCGScrollEventUnitLine;
     CGEventRef cgScrollEvent = CGEventCreateScrollWheelEvent(NULL, unit, 2, y, x);
     
@@ -489,7 +487,6 @@ static int buildModifierFlags(const WebScriptObject* modifiers)
     NSView *subView = [[mainFrame webView] hitTest:[scrollEvent locationInWindow]];
     if (subView)
         [subView scrollWheel:scrollEvent];
-#endif
 }
 
 - (void)continuousMouseScrollByX:(int)x andY:(int)y

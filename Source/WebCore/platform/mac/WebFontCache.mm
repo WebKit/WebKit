@@ -38,9 +38,6 @@
 
 using namespace WebCore;
 
-#ifdef BUILDING_ON_TIGER
-typedef int NSInteger;
-#endif
 
 #define SYNTHESIZED_FONT_TRAITS (NSBoldFontMask | NSItalicFontMask)
 
@@ -107,7 +104,7 @@ static BOOL betterChoice(NSFontTraitMask desiredTraits, int desiredWeight,
 // Workaround for <rdar://problem/5781372>.
 static inline void fixUpWeight(NSInteger& weight, NSString *fontName)
 {
-#if !defined(BUILDING_ON_TIGER) && !defined(BUILDING_ON_LEOPARD)
+#ifndef BUILDING_ON_LEOPARD
     UNUSED_PARAM(weight);
     UNUSED_PARAM(fontName);
 #else
@@ -293,7 +290,6 @@ static inline FontTraitsMask toTraitsMask(NSFontTraitMask appKitTraits, NSIntege
 
 + (NSFont *)fontWithFamily:(NSString *)desiredFamily traits:(NSFontTraitMask)desiredTraits weight:(int)desiredWeight size:(float)size
 {
-#ifndef BUILDING_ON_TIGER
     NSFont *font = [self internalFontWithFamily:desiredFamily traits:desiredTraits weight:desiredWeight size:size];
     if (font)
         return font;
@@ -301,7 +297,6 @@ static inline FontTraitsMask toTraitsMask(NSFontTraitMask appKitTraits, NSIntege
     // Auto activate the font before looking for it a second time.
     // Ignore the result because we want to use our own algorithm to actually find the font.
     [NSFont fontWithName:desiredFamily size:size];
-#endif
 
     return [self internalFontWithFamily:desiredFamily traits:desiredTraits weight:desiredWeight size:size];
 }

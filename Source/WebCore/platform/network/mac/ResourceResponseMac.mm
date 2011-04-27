@@ -40,9 +40,6 @@
 - (NSTimeInterval)_calculatedExpiration;
 @end
 
-#ifdef BUILDING_ON_TIGER
-typedef int NSInteger;
-#endif
 
 namespace WebCore {
 

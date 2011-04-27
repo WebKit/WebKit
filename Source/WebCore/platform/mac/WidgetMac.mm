@@ -26,9 +26,6 @@
 #import "config.h"
 #import "Widget.h"
 
-#ifdef BUILDING_ON_TIGER
-#import "AutodrainedPool.h"
-#endif
 
 #import "BlockExceptions.h"
 #import "Chrome.h"
@@ -305,9 +302,6 @@ void Widget::paint(GraphicsContext* p, const IntRect& r)
 
         BEGIN_BLOCK_OBJC_EXCEPTIONS;
         {
-#ifdef BUILDING_ON_TIGER
-            AutodrainedPool pool;
-#endif
             NSGraphicsContext *nsContext = [NSGraphicsContext graphicsContextWithGraphicsPort:cgContext flipped:YES];
             [view displayRectIgnoringOpacity:dirtyRect inContext:nsContext];
         }

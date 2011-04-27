@@ -1426,14 +1426,6 @@ int RenderText::previousOffset(int current) const
     if (result == TextBreakDone)
         result = current - 1;
 
-#ifdef BUILDING_ON_TIGER
-    // ICU 3.2 allows character breaks before a half-width Katakana voiced mark.
-    if (static_cast<unsigned>(result) < si->length()) {
-        UChar character = (*si)[result];
-        if (character == 0xFF9E || character == 0xFF9F)
-            --result;
-    }
-#endif
 
     return result;
 }
@@ -1561,14 +1553,6 @@ int RenderText::nextOffset(int current) const
     if (result == TextBreakDone)
         result = current + 1;
 
-#ifdef BUILDING_ON_TIGER
-    // ICU 3.2 allows character breaks before a half-width Katakana voiced mark.
-    if (static_cast<unsigned>(result) < si->length()) {
-        UChar character = (*si)[result];
-        if (character == 0xFF9E || character == 0xFF9F)
-            ++result;
-    }
-#endif
 
     return result;
 }

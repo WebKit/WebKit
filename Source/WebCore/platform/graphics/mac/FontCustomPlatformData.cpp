@@ -31,7 +31,7 @@ namespace WebCore {
 
 FontCustomPlatformData::~FontCustomPlatformData()
 {
-#if defined(BUILDING_ON_TIGER) || defined(BUILDING_ON_LEOPARD)
+#ifdef BUILDING_ON_LEOPARD
     if (m_atsContainer)
         ATSFontDeactivate(m_atsContainer, NULL, kATSOptionFlagsDefault);
 #endif
@@ -69,7 +69,7 @@ FontCustomPlatformData* createFontCustomPlatformData(SharedBuffer* buffer)
 
     RetainPtr<CGFontRef> cgFontRef;
 
-#if !defined(BUILDING_ON_TIGER) && !defined(BUILDING_ON_LEOPARD)
+#ifndef BUILDING_ON_LEOPARD
     RetainPtr<CFDataRef> bufferData(AdoptCF, buffer->createCFData());
     RetainPtr<CGDataProviderRef> dataProvider(AdoptCF, CGDataProviderCreateWithCFData(bufferData.get()));
 
@@ -100,16 +100,14 @@ FontCustomPlatformData* createFontCustomPlatformData(SharedBuffer* buffer)
     }
     
     cgFontRef.adoptCF(CGFontCreateWithPlatformFont(&fontRef));
-#ifndef BUILDING_ON_TIGER
     // Workaround for <rdar://problem/5675504>.
     if (cgFontRef && !CGFontGetNumberOfGlyphs(cgFontRef.get()))
         cgFontRef = 0;
-#endif
     if (!cgFontRef) {
         ATSFontDeactivate(containerRef, NULL, kATSOptionFlagsDefault);
         return 0;
     }
-#endif // !defined(BUILDING_ON_TIGER) && !defined(BUILDING_ON_LEOPARD)
+#endif // !defined(BUILDING_ON_LEOPARD)
 
     return new FontCustomPlatformData(containerRef, cgFontRef.releaseRef());
 }

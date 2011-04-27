@@ -37,9 +37,6 @@
 #import <wtf/RetainPtr.h>
 #import <wtf/Vector.h>
 
-#ifdef BUILDING_ON_TIGER
-#define NSAccessibilityValueDescriptionAttribute @"AXValueDescription"
-#endif
 
 #ifndef NSAccessibilityOwnsAttribute
 #define NSAccessibilityOwnsAttribute @"AXOwns"

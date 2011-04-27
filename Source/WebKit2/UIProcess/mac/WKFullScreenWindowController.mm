@@ -380,7 +380,7 @@ using namespace WebCore;
 - (void)_updateMenuAndDockForFullScreen
 {
     // NSApplicationPresentationOptions is available on > 10.6 only:
-#if !defined(BUILDING_ON_TIGER) && !defined(BUILDING_ON_LEOPARD)
+#ifndef BUILDING_ON_LEOPARD
     NSApplicationPresentationOptions options = NSApplicationPresentationDefault;
     NSScreen* fullScreenScreen = [[self window] screen];
     
@@ -404,7 +404,6 @@ using namespace WebCore;
         SetSystemUIMode(_isFullScreen ? kUIModeNormal : kUIModeAllHidden, 0);
 }
 
-#if !defined(BUILDING_ON_TIGER) // IOPMAssertionCreateWithName not defined on < 10.5
 - (void)_disableIdleDisplaySleep
 {
     if (_idleDisplaySleepAssertion == kIOPMNullAssertionID) 
@@ -459,11 +458,9 @@ using namespace WebCore;
 {
     UpdateSystemActivity(OverallAct);
 }
-#endif
 
 - (void)_updatePowerAssertions
 {
-#if !defined(BUILDING_ON_TIGER) 
     if (_isPlaying && _isFullScreen) {
         [self _disableIdleSystemSleep];
         [self _disableIdleDisplaySleep];
@@ -473,7 +470,6 @@ using namespace WebCore;
         [self _enableIdleDisplaySleep];
         [self _disableTickleTimer];
     }
-#endif
 }
 
 - (WebFullScreenManagerProxy*)_manager
@@ -518,7 +514,7 @@ using namespace WebCore;
 {
     static const CFTimeInterval defaultDuration = 0.5;
     CFTimeInterval duration = defaultDuration;
-#if !defined(BUILDING_ON_TIGER) && !defined(BUILDING_ON_LEOPARD)
+#ifndef BUILDING_ON_LEOPARD
     NSUInteger modifierFlags = [NSEvent modifierFlags];
 #else
     NSUInteger modifierFlags = [[NSApp currentEvent] modifierFlags];
@@ -551,7 +547,7 @@ using namespace WebCore;
     [self setAcceptsMouseMovedEvents:YES];
     [self setReleasedWhenClosed:NO];
     [self setHasShadow:YES];
-#if !defined(BUILDING_ON_TIGER) && !defined(BUILDING_ON_LEOPARD)
+#ifndef BUILDING_ON_LEOPARD
     [self setMovable:NO];
 #else
     [self setMovableByWindowBackground:NO];

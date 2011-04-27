@@ -51,9 +51,7 @@
 class NSFont;
 #endif
 
-#ifndef BUILDING_ON_TIGER
 inline CTFontRef toCTFontRef(NSFont *nsFont) { return reinterpret_cast<CTFontRef>(nsFont); }
-#endif
 
 #endif
 

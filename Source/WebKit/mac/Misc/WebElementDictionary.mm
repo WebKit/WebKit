@@ -66,9 +66,7 @@ static void cacheValueForKey(const void *key, const void *value, void *self)
 {
     JSC::initializeThreading();
     WTF::initializeMainThreadToProcessMainThread();
-#ifndef BUILDING_ON_TIGER
     WebCoreObjCFinalizeOnMainThread(self);
-#endif
 }
 
 + (void)initializeLookupTable

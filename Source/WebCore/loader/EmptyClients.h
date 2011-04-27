@@ -490,11 +490,8 @@ public:
     virtual void setInsertionPasteboard(NSPasteboard*) { };
     virtual NSURL* canonicalizeURL(NSURL*) { return 0; }
     virtual NSURL* canonicalizeURLString(NSString*) { return 0; }
-#ifdef BUILDING_ON_TIGER
-    virtual NSArray* pasteboardTypesForSelection(Frame*) { return 0; }
 #endif
-#endif
-#if PLATFORM(MAC) && !defined(BUILDING_ON_TIGER) && !defined(BUILDING_ON_LEOPARD)
+#if PLATFORM(MAC) && !defined(BUILDING_ON_LEOPARD)
     virtual void uppercaseWord() { }
     virtual void lowercaseWord() { }
     virtual void capitalizeWord() { }

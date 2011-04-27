@@ -46,12 +46,7 @@ PassRefPtr<Icon> Icon::createIconForFiles(const Vector<String>& filenames)
         return 0;
 
     bool useIconFromFirstFile;
-#ifdef BUILDING_ON_TIGER
-    // FIXME: find a better image for multiple files to use on Tiger.
-    useIconFromFirstFile = true;
-#else
     useIconFromFirstFile = filenames.size() == 1;
-#endif
     if (useIconFromFirstFile) {
         // Don't pass relative filenames -- we don't want a result that depends on the current directory.
         // Need 0U here to disambiguate String::operator[] from operator(NSString*, int)[]
@@ -64,15 +59,11 @@ PassRefPtr<Icon> Icon::createIconForFiles(const Vector<String>& filenames)
 
         return adoptRef(new Icon(image));
     }
-#ifdef BUILDING_ON_TIGER
-    return 0;
-#else
     NSImage* image = [NSImage imageNamed:NSImageNameMultipleDocuments];
     if (!image)
         return 0;
 
     return adoptRef(new Icon(image));
-#endif
 }
 
 void Icon::paint(GraphicsContext* context, const IntRect& rect)

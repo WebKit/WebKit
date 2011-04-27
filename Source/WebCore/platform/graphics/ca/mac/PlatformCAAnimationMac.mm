@@ -35,7 +35,7 @@
 #import <QuartzCore/QuartzCore.h>
 #import <wtf/UnusedParam.h>
 
-#define HAVE_MODERN_QUARTZCORE (!defined(BUILDING_ON_TIGER) && !defined(BUILDING_ON_LEOPARD))
+#define HAVE_MODERN_QUARTZCORE (!defined(BUILDING_ON_LEOPARD))
 
 using namespace WebCore;
 

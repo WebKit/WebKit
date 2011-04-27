@@ -29,7 +29,7 @@
 #include <ApplicationServices/ApplicationServices.h>
 #include <objc/objc.h>
 
-#if PLATFORM(MAC) && USE(CA) && !defined(BUILDING_ON_TIGER) && !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOW_LEOPARD)
+#if PLATFORM(MAC) && USE(CA) && !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOW_LEOPARD)
 #include <IOSurface/IOSurface.h>
 #endif
 
@@ -165,29 +165,11 @@ extern void (*wkSetCONNECTProxyForStream)(CFReadStreamRef, CFStringRef proxyHost
 extern void (*wkSetCONNECTProxyAuthorizationForStream)(CFReadStreamRef, CFStringRef proxyAuthorizationString);
 extern CFHTTPMessageRef (*wkCopyCONNECTProxyResponse)(CFReadStreamRef, CFURLRef responseURL);
 
-#ifndef BUILDING_ON_TIGER
 extern void (*wkGetGlyphsForCharacters)(CGFontRef, const UniChar[], CGGlyph[], size_t);
-#else
-#define GLYPH_VECTOR_SIZE (50 * 32)
-
-extern void (*wkClearGlyphVector)(void* glyphs);
-extern OSStatus (*wkConvertCharToGlyphs)(void* styleGroup, const UniChar*, unsigned numCharacters, void* glyphs);
-extern CFStringRef (*wkCopyFullFontName)(CGFontRef font);
-extern OSStatus (*wkGetATSStyleGroup)(ATSUStyle, void** styleGroup);
-extern CGFontRef (*wkGetCGFontFromNSFont)(NSFont*);
-extern void (*wkGetFontMetrics)(CGFontRef, int* ascent, int* descent, int* lineGap, unsigned* unitsPerEm);
-extern ATSLayoutRecord* (*wkGetGlyphVectorFirstRecord)(void* glyphVector);
-extern void* wkGetGlyphsForCharacters;
-extern int (*wkGetGlyphVectorNumGlyphs)(void* glyphVector);
-extern size_t (*wkGetGlyphVectorRecordSize)(void* glyphVector);
-extern OSStatus (*wkInitializeGlyphVector)(int count, void* glyphs);
-extern void (*wkReleaseStyleGroup)(void* group);
-extern BOOL (*wkSupportsMultipartXMixedReplace)(NSMutableURLRequest *);
-#endif
 
 extern BOOL (*wkUseSharedMediaUI)();
 
-#if !defined(BUILDING_ON_TIGER) && !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOW_LEOPARD)
+#if !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOW_LEOPARD)
 extern void* wkGetHyphenationLocationBeforeIndex;
 #else
 extern CFIndex (*wkGetHyphenationLocationBeforeIndex)(CFStringRef string, CFIndex index);
@@ -203,7 +185,7 @@ extern int (*wkGetNSEventMomentumPhase)(NSEvent *);
 #endif
 
 extern CTLineRef (*wkCreateCTLineWithUniCharProvider)(const UniChar* (*provide)(CFIndex stringIndex, CFIndex* charCount, CFDictionaryRef* attributes, void*), void (*dispose)(const UniChar* chars, void*), void*);
-#if !defined(BUILDING_ON_TIGER) && !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOW_LEOPARD)
+#if !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOW_LEOPARD)
 extern CTTypesetterRef (*wkCreateCTTypesetterWithUniCharProviderAndOptions)(const UniChar* (*provide)(CFIndex stringIndex, CFIndex* charCount, CFDictionaryRef* attributes, void*), void (*dispose)(const UniChar* chars, void*), void*, CFDictionaryRef options);
 
 extern CGContextRef (*wkIOSurfaceContextCreate)(IOSurfaceRef surface, unsigned width, unsigned height, CGColorSpaceRef colorSpace);

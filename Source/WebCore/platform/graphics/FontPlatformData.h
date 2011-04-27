@@ -62,9 +62,7 @@ class NSFont;
 #endif
 
 typedef struct CGFont* CGFontRef;
-#ifndef BUILDING_ON_TIGER
 typedef const struct __CTFont* CTFontRef;
-#endif
 
 #include <CoreFoundation/CFBase.h>
 #include <objc/objc-auto.h>
@@ -87,11 +85,9 @@ typedef struct HFONT__* HFONT;
 #if USE(CG) || USE(SKIA_ON_MAC_CHROME)
 typedef struct CGFont* CGFontRef;
 #if OS(DARWIN)
-#ifndef BUILDING_ON_TIGER
 typedef const struct __CTFont* CTFontRef;
 typedef UInt32 ATSUFontID;
 typedef UInt32 ATSFontRef;
-#endif
 #endif
 #endif
 
@@ -99,7 +95,7 @@ namespace WebCore {
 
 class FontDescription;
 
-#if OS(DARWIN) && !defined(BUILDING_ON_TIGER)
+#if OS(DARWIN)
 inline CTFontRef toCTFontRef(NSFont *nsFont) { return reinterpret_cast<CTFontRef>(nsFont); }
 #endif
 
@@ -117,7 +113,7 @@ public:
 #elif OS(DARWIN)
         , m_font(hashTableDeletedFontValue())
 #endif
-#if USE(CG) && (defined(BUILDING_ON_TIGER) || PLATFORM(WIN))
+#if USE(CG) && PLATFORM(WIN)
         , m_cgFont(0)
 #elif USE(CAIRO)
         , m_scaledFont(hashTableDeletedFontValue())
@@ -139,7 +135,7 @@ public:
 #if OS(DARWIN)
         , m_font(0)
 #endif
-#if USE(CG) && (defined(BUILDING_ON_TIGER) || PLATFORM(WIN))
+#if USE(CG) && PLATFORM(WIN)
         , m_cgFont(0)
 #elif USE(CAIRO)
         , m_scaledFont(0)
@@ -164,7 +160,7 @@ public:
 #if OS(DARWIN)
         , m_font(0)
 #endif
-#if USE(CG) && (defined(BUILDING_ON_TIGER) || PLATFORM(WIN))
+#if USE(CG) && PLATFORM(WIN)
         , m_cgFont(0)
 #elif USE(CAIRO)
         , m_scaledFont(0)
@@ -217,11 +213,7 @@ public:
 
 #if USE(CG) || USE(SKIA_ON_MAC_CHROME)
 #if OS(DARWIN)
-#ifndef BUILDING_ON_TIGER
     CGFontRef cgFont() const { return m_cgFont.get(); }
-#else
-    CGFontRef cgFont() const { return m_cgFont; }
-#endif
     CTFontRef ctFont() const;
 
     bool roundsGlyphAdvances() const;
@@ -332,11 +324,7 @@ private:
 #if PLATFORM(WIN)
     RetainPtr<CGFontRef> m_cgFont;
 #else
-#ifndef BUILDING_ON_TIGER
     RetainPtr<CGFontRef> m_cgFont;
-#else
-    CGFontRef m_cgFont; // It is not necessary to refcount this, since either an NSFont owns it or some CachedFont has it referenced.
-#endif
     mutable RetainPtr<CTFontRef> m_CTFont;
 #endif
 #endif

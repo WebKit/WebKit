@@ -99,12 +99,9 @@ private:
     virtual void setInsertionPasteboard(NSPasteboard *);
     virtual NSURL* canonicalizeURL(NSURL*);
     virtual NSURL* canonicalizeURLString(NSString*);
-#ifdef BUILDING_ON_TIGER
-    virtual NSArray *pasteboardTypesForSelection(WebCore::Frame*);
-#endif
 #endif
 
-#if PLATFORM(MAC) && !defined(BUILDING_ON_TIGER) && !defined(BUILDING_ON_LEOPARD)
+#if PLATFORM(MAC) && !defined(BUILDING_ON_LEOPARD)
     virtual void uppercaseWord();
     virtual void lowercaseWord();
     virtual void capitalizeWord();
@@ -135,7 +132,7 @@ private:
     virtual void checkSpellingOfString(const UChar*, int length, int* misspellingLocation, int* misspellingLength);
     virtual String getAutoCorrectSuggestionForMisspelledWord(const String& misspelledWord);
     virtual void checkGrammarOfString(const UChar*, int length, Vector<WebCore::GrammarDetail>&, int* badGrammarLocation, int* badGrammarLength);
-#if PLATFORM(MAC) && !defined(BUILDING_ON_TIGER) && !defined(BUILDING_ON_LEOPARD)
+#if PLATFORM(MAC) && !defined(BUILDING_ON_LEOPARD)
     virtual void checkTextOfParagraph(const UChar* text, int length, WebCore::TextCheckingTypeMask checkingTypes, Vector<WebCore::TextCheckingResult>& results);
 #endif
     virtual void updateSpellingUIWithGrammarString(const String&, const WebCore::GrammarDetail& detail);

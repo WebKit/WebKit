@@ -36,7 +36,7 @@
 #include <stdio.h>
 
 // On Snow Leopard and newer we'll ask IOKit to deliver notifications on a queue.
-#if defined(BUILDING_ON_TIGER) || defined(BUILDING_ON_LEOPARD)
+#ifdef BUILDING_ON_LEOPARD
 #define IOKIT_WITHOUT_LIBDISPATCH 1
 #endif
 

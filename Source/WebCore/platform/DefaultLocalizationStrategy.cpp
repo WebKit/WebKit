@@ -298,7 +298,7 @@ String DefaultLocalizationStrategy::contextMenuItemTagSearchWeb()
 
 String DefaultLocalizationStrategy::contextMenuItemTagLookUpInDictionary(const String& selectedString)
 {
-#if defined(BUILDING_ON_TIGER) || defined(BUILDING_ON_LEOPARD) || defined(BUILDING_ON_SNOW_LEOPARD)
+#if defined(BUILDING_ON_LEOPARD) || defined(BUILDING_ON_SNOW_LEOPARD)
     UNUSED_PARAM(selectedString);
     return WEB_UI_STRING("Look Up in Dictionary", "Look Up in Dictionary context menu item");
 #else

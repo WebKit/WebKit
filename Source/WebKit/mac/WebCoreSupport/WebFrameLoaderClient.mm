@@ -2028,9 +2028,7 @@ jobject WebFrameLoaderClient::javaApplet(NSView* view)
 {
     JSC::initializeThreading();
     WTF::initializeMainThreadToProcessMainThread();
-#ifndef BUILDING_ON_TIGER
     WebCoreObjCFinalizeOnMainThread(self);
-#endif
 }
 
 - (id)initWithWebCoreFrame:(Frame*)frame

@@ -82,7 +82,7 @@ static CGColorSpaceRef createColorSpace(const ColorProfile& colorProfile)
         return CGColorSpaceCreateDeviceRGB();
 
     RetainPtr<CFDataRef> data(AdoptCF, CFDataCreate(kCFAllocatorDefault, reinterpret_cast<const UInt8*>(colorProfile.data()), colorProfile.size()));
-#if !defined(TARGETING_TIGER) && !defined(TARGETING_LEOPARD)
+#ifndef TARGETING_LEOPARD
     return CGColorSpaceCreateWithICCProfile(data.get());
 #else
     RetainPtr<CGDataProviderRef> profileDataProvider(AdoptCF, CGDataProviderCreateWithCFData(data.get()));

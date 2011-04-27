@@ -53,7 +53,7 @@ static void* checkedRealloc(malloc_zone_t* zone, void* ptr, size_t size)
     return savedRealloc(zone, ptr, size);
 }
 
-#if !defined(BUILDING_ON_TIGER) && !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOW_LEOPARD)
+#if !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOW_LEOPARD)
 static vm_prot_t protectionOfRegion(mach_vm_address_t address)
 {
     mach_vm_size_t regionSize = 0;
@@ -70,7 +70,7 @@ void makeLargeMallocFailSilently()
 {
     malloc_zone_t* zone = malloc_default_zone();
 
-#if !defined(BUILDING_ON_TIGER) && !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOW_LEOPARD)
+#if !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOW_LEOPARD)
     mach_vm_address_t pageStart = reinterpret_cast<vm_address_t>(zone) & static_cast<vm_size_t>(~(getpagesize() - 1));
     vm_prot_t initialProtection = protectionOfRegion(pageStart);
 
@@ -84,7 +84,7 @@ void makeLargeMallocFailSilently()
     zone->malloc = checkedMalloc;
     zone->realloc = checkedRealloc;
 
-#if !defined(BUILDING_ON_TIGER) && !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOW_LEOPARD)
+#if !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOW_LEOPARD)
     if (mach_vm_protect(mach_task_self(), pageStart, len, 0, initialProtection))
         CRASH();
 #endif

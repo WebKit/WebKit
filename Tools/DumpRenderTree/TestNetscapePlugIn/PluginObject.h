@@ -30,9 +30,7 @@
 #include <stdarg.h>
 
 #if defined(XP_MACOSX)
-#if !defined(MAC_OS_X_VERSION_10_5) || MAC_OS_X_VERSION_MAX_ALLOWED < MAC_OS_X_VERSION_10_5
-#define BUILDING_ON_TIGER 1
-#elif !defined(MAC_OS_X_VERSION_10_6) || MAC_OS_X_VERSION_MAX_ALLOWED < MAC_OS_X_VERSION_10_6
+#if !defined(MAC_OS_X_VERSION_10_6) || MAC_OS_X_VERSION_MAX_ALLOWED < MAC_OS_X_VERSION_10_6
 #define BUILDING_ON_LEOPARD 1
 #elif !defined(MAC_OS_X_VERSION_10_7) || MAC_OS_X_VERSION_MAX_ALLOWED < MAC_OS_X_VERSION_10_7
 #define BUILDING_ON_SNOW_LEOPARD 1
@@ -77,7 +75,7 @@ typedef struct {
 #ifdef XP_MACOSX
     NPEventModel eventModel;
 #endif
-#if defined(XP_MACOSX) && !defined(BUILDING_ON_TIGER)
+#ifdef XP_MACOSX
     void* coreAnimationLayer;
 #endif
     NPWindow lastWindow;
@@ -92,7 +90,7 @@ extern void pluginLogWithArguments(NPP instance, const char* format, va_list arg
 extern bool testDocumentOpen(NPP npp);
 extern bool testWindowOpen(NPP npp);
 
-#if defined(XP_MACOSX) && !defined(BUILDING_ON_TIGER)
+#ifdef XP_MACOSX
 extern void* createCoreAnimationLayer();
 #endif
 

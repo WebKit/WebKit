@@ -37,11 +37,7 @@ enum TextSpacingCTFeatureSelector { TextSpacingProportional, TextSpacingFullWidt
 void FontPlatformData::loadFont(NSFont* nsFont, float, NSFont*& outNSFont, CGFontRef& cgFont)
 {
     outNSFont = nsFont;
-#ifndef BUILDING_ON_TIGER
     cgFont = CTFontCopyGraphicsFont(toCTFontRef(nsFont), 0);
-#else
-    cgFont = wkGetCGFontFromNSFont(nsFont);
-#endif
 }
 #endif  // PLATFORM(MAC)
 
@@ -54,7 +50,7 @@ FontPlatformData::FontPlatformData(NSFont *nsFont, float size, bool syntheticBol
     , m_size(size)
     , m_widthVariant(widthVariant)
     , m_font(nsFont)
-#if !defined(BUILDING_ON_TIGER) && !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOW_LEOPARD)
+#if !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOW_LEOPARD)
     // FIXME: Chromium: The following code isn't correct for the Chromium port since the sandbox might
     // have blocked font loading, in which case we'll only have the real loaded font file after the call to loadFont().
     , m_isColorBitmapFont(CTFontGetSymbolicTraits(toCTFontRef(nsFont)) & kCTFontColorGlyphsTrait)
@@ -70,11 +66,7 @@ FontPlatformData::FontPlatformData(NSFont *nsFont, float size, bool syntheticBol
     if (m_font)
         CFRetain(m_font);
 
-#ifndef BUILDING_ON_TIGER
     m_cgFont.adoptCF(cgFont);
-#else
-    m_cgFont = cgFont;
-#endif
 }
 
 FontPlatformData:: ~FontPlatformData()
@@ -146,12 +138,8 @@ void FontPlatformData::setFont(NSFont *font)
     }
 #endif
     
-#ifndef BUILDING_ON_TIGER
     m_cgFont.adoptCF(cgFont);
-#else
-    m_cgFont = cgFont;
-#endif
-#if !defined(BUILDING_ON_TIGER) && !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOW_LEOPARD)
+#if !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOW_LEOPARD)
     m_isColorBitmapFont = CTFontGetSymbolicTraits(toCTFontRef(m_font)) & kCTFontColorGlyphsTrait;
 #endif
     m_CTFont = 0;

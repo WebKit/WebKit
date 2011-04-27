@@ -26,7 +26,7 @@
 #ifndef SpellingCorrectionController_h
 #define SpellingCorrectionController_h
 
-#if PLATFORM(MAC) && !defined(BUILDING_ON_TIGER) && !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOW_LEOPARD)
+#if PLATFORM(MAC) && !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOW_LEOPARD)
 // Some platforms provide UI for suggesting autocorrection.
 #define SUPPORT_AUTOCORRECTION_PANEL 1
 // Some platforms use spelling and autocorrection markers to provide visual cue.
@@ -35,7 +35,7 @@
 #else
 #define SUPPORT_AUTOCORRECTION_PANEL 0
 #define REMOVE_MARKERS_UPON_EDITING 0
-#endif // #if PLATFORM(MAC) && !defined(BUILDING_ON_TIGER) && !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOW_LEOPARD)
+#endif // #if PLATFORM(MAC) && !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOW_LEOPARD)
 
 #include "DocumentMarker.h"
 #include "EditCommand.h"

@@ -80,7 +80,7 @@ using namespace WebCore;
 #endif
 
 @interface WebFullscreenWindow : NSWindow
-#if !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_TIGER)
+#ifndef BUILDING_ON_LEOPARD
 <NSAnimationDelegate>
 #endif
 {
@@ -151,14 +151,9 @@ private:
 
 - (void)windowDidLoad
 {
-#ifdef BUILDING_ON_TIGER
-    // WebFullScreenController is not supported on Tiger:
-    ASSERT_NOT_REACHED();
-#else
     
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(applicationDidResignActive:) name:NSApplicationDidResignActiveNotification object:NSApp];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(applicationDidChangeScreenParameters:) name:NSApplicationDidChangeScreenParametersNotification object:NSApp];
-#endif
 }
 
 #pragma mark -
@@ -183,10 +178,6 @@ private:
 
 - (void)setElement:(PassRefPtr<Element>)element
 {
-#ifdef BUILDING_ON_TIGER
-    // WebFullScreenController is not supported on Tiger:
-    ASSERT_NOT_REACHED();
-#else
     // When a new Element is set as the current full screen element, register event
     // listeners on that Element's window, listening for changes in media play states.
     // We will use these events to determine whether to disable the screensaver and 
@@ -214,7 +205,6 @@ private:
             window->addEventListener(eventNames.endedEvent, _mediaEventListener, true);
         }
     }
-#endif
 }
 
 - (RenderBox*)renderer 
@@ -224,12 +214,7 @@ private:
 
 - (void)setRenderer:(RenderBox*)renderer
 {
-#ifdef BUILDING_ON_TIGER
-    // WebFullScreenController is not supported on Tiger:
-    ASSERT_NOT_REACHED();
-#else
     _renderer = renderer;
-#endif
 }
 
 #pragma mark -
@@ -628,7 +613,7 @@ private:
 - (void)_updateMenuAndDockForFullscreen
 {
     // NSApplicationPresentationOptions is available on > 10.6 only:
-#if !defined(BUILDING_ON_TIGER) && !defined(BUILDING_ON_LEOPARD)
+#ifndef BUILDING_ON_LEOPARD
     NSApplicationPresentationOptions options = NSApplicationPresentationDefault;
     NSScreen* fullscreenScreen = [[self window] screen];
     
@@ -652,7 +637,6 @@ private:
         SetSystemUIMode(_isFullscreen ? kUIModeNormal : kUIModeAllHidden, 0);
 }
 
-#if !defined(BUILDING_ON_TIGER) // IOPMAssertionCreateWithName not defined on < 10.5
 - (void)_disableIdleDisplaySleep
 {
     if (_idleDisplaySleepAssertion == kIOPMNullAssertionID) 
@@ -707,11 +691,9 @@ private:
 {
     UpdateSystemActivity(OverallAct);
 }
-#endif
 
 - (void)_updatePowerAssertions
 {
-#if !defined(BUILDING_ON_TIGER) 
     BOOL isPlaying = [self _isAnyMoviePlaying];
     
     if (isPlaying && _isFullscreen) {
@@ -723,7 +705,6 @@ private:
         [self _enableIdleDisplaySleep];
         [self _disableTickleTimer];
     }
-#endif
 }
 
 - (void)_requestExit
@@ -776,7 +757,7 @@ private:
 {
     static const CFTimeInterval defaultDuration = 0.5;
     CFTimeInterval duration = defaultDuration;
-#if !defined(BUILDING_ON_TIGER) && !defined(BUILDING_ON_LEOPARD)
+#ifndef BUILDING_ON_LEOPARD
     NSUInteger modifierFlags = [NSEvent modifierFlags];
 #else
     NSUInteger modifierFlags = [[NSApp currentEvent] modifierFlags];
@@ -809,7 +790,7 @@ private:
     [self setAcceptsMouseMovedEvents:YES];
     [self setReleasedWhenClosed:NO];
     [self setHasShadow:YES];
-#if !defined(BUILDING_ON_TIGER) && !defined(BUILDING_ON_LEOPARD)
+#ifndef BUILDING_ON_LEOPARD
     [self setMovable:NO];
 #else
     [self setMovableByWindowBackground:NO];
@@ -826,7 +807,7 @@ private:
     
     _backgroundLayer = [[CALayer alloc] init];
     [contentLayer addSublayer:_backgroundLayer];
-#if !defined(BUILDING_ON_TIGER) && !defined(BUILDING_ON_LEOPARD)
+#ifndef BUILDING_ON_LEOPARD
     [contentLayer setGeometryFlipped:YES];
 #else
     [contentLayer setSublayerTransform:CATransform3DMakeScale(1, -1, 1)];

@@ -66,7 +66,7 @@ JSGlobalContextRef JSGlobalContextCreate(JSClassRef globalObjectClass)
 #if OS(DARWIN)
     // When running on Tiger or Leopard, or if the application was linked before JSGlobalContextCreate was changed
     // to use a unique JSGlobalData, we use a shared one for compatibility.
-#if !defined(BUILDING_ON_TIGER) && !defined(BUILDING_ON_LEOPARD)
+#ifndef BUILDING_ON_LEOPARD
     if (NSVersionOfLinkTimeLibrary("JavaScriptCore") <= webkitFirstVersionWithConcurrentGlobalContexts) {
 #else
     {

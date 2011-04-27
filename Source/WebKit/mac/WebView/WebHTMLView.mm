@@ -227,7 +227,6 @@ static bool needsCursorRectsSupportAtPoint(NSWindow* window, NSPoint point)
     return true;
 }
 
-#ifndef BUILDING_ON_TIGER
 
 static IMP oldSetCursorForMouseLocationIMP;
 
@@ -238,26 +237,6 @@ static void setCursor(NSWindow *self, SEL cmd, NSPoint point)
         oldSetCursorForMouseLocationIMP(self, cmd, point);
 }
 
-#else
-
-static IMP oldResetCursorRectsIMP;
-static IMP oldSetCursorIMP;
-static BOOL canSetCursor = YES;
-
-static void resetCursorRects(NSWindow* self, SEL cmd)
-{
-    canSetCursor = needsCursorRectsSupportAtPoint(self, [self mouseLocationOutsideOfEventStream]);
-    oldResetCursorRectsIMP(self, cmd);
-    canSetCursor = YES;
-}
-
-static void setCursor(NSCursor* self, SEL cmd)
-{
-    if (canSetCursor)
-        oldSetCursorIMP(self, cmd);
-}
-
-#endif
 
 extern "C" {
 
@@ -404,7 +383,7 @@ static CachedResourceClient* promisedDataClient()
 - (void)_web_clearPrintingModeRecursive;
 @end
 
-#if !defined(BUILDING_ON_TIGER) && !defined(BUILDING_ON_LEOPARD)
+#ifndef BUILDING_ON_LEOPARD
 
 @interface WebHTMLView (WebHTMLViewTextCheckingInternal)
 - (void)orderFrontSubstitutionsPanel:(id)sender;
@@ -502,9 +481,7 @@ struct WebHTMLViewInterpretKeyEventsParameters {
     BOOL _forceUpdateSecureInputState;
 
     NSPoint lastScrollPosition;
-#ifndef BUILDING_ON_TIGER
     BOOL inScrollPositionChanged;
-#endif
 
     WebPluginController *pluginController;
     
@@ -520,9 +497,6 @@ struct WebHTMLViewInterpretKeyEventsParameters {
 
     NSMutableDictionary *highlighters;
 
-#ifdef BUILDING_ON_TIGER
-    BOOL nextResponderDisabledOnce;
-#endif
     
     WebTextCompletionController *completionController;
     
@@ -574,11 +548,8 @@ static FindOptions coreOptions(WebFindOptions options)
 {
     JSC::initializeThreading();
     WTF::initializeMainThreadToProcessMainThread();
-#ifndef BUILDING_ON_TIGER
     WebCoreObjCFinalizeOnMainThread(self);
-#endif
     
-#ifndef BUILDING_ON_TIGER
     if (!oldSetCursorForMouseLocationIMP) {
         Method setCursorMethod = class_getInstanceMethod([NSWindow class], @selector(_setCursorForMouseLocation:));
         ASSERT(setCursorMethod);
@@ -595,20 +566,6 @@ static FindOptions coreOptions(WebFindOptions options)
     }
 #endif // USE(ACCELERATED_COMPOSITING)
 
-#else // defined(BUILDING_ON_TIGER)
-    if (!oldSetCursorIMP) {
-        Method setCursorMethod = class_getInstanceMethod([NSCursor class], @selector(set));
-        ASSERT(setCursorMethod);
-        oldSetCursorIMP = method_setImplementation(setCursorMethod, (IMP)setCursor);
-        ASSERT(oldSetCursorIMP);
-    }
-    if (!oldResetCursorRectsIMP) {
-        Method resetCursorRectsMethod = class_getInstanceMethod([NSWindow class], @selector(resetCursorRects));
-        ASSERT(resetCursorRectsMethod);
-        oldResetCursorRectsIMP = method_setImplementation(resetCursorRectsMethod, (IMP)resetCursorRects);
-        ASSERT(oldResetCursorRectsIMP);
-    }
-#endif
 
 }
 
@@ -816,7 +773,7 @@ static NSURL* uniqueURLWithRelativePart(NSString *relativePart)
                                              subresources:0]))
         return fragment;
 
-#if defined(BUILDING_ON_TIGER) || defined(BUILDING_ON_LEOPARD)
+#ifdef BUILDING_ON_LEOPARD
     if ([types containsObject:NSPICTPboardType] &&
         (fragment = [self _documentFragmentFromPasteboard:pasteboard 
                                                   forType:NSPICTPboardType
@@ -897,7 +854,7 @@ static NSURL* uniqueURLWithRelativePart(NSString *relativePart)
     DOMRange *range = [self _selectedRange];
     Frame* coreFrame = core([self _frame]);
     
-#if !defined(BUILDING_ON_TIGER) && !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOW_LEOPARD)
+#if !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOW_LEOPARD)
     DOMDocumentFragment *fragment = [self _documentFragmentFromPasteboard:pasteboard inContext:range allowPlainText:allowPlainText];
     if (fragment && [self _shouldInsertFragment:fragment replacingDOMRange:range givenAction:WebViewInsertActionPasted])
         coreFrame->editor()->pasteAsFragment(core(fragment), [self _canSmartReplaceWithPasteboard:pasteboard], false);
@@ -1258,13 +1215,9 @@ static void _updateMouseoverTimerCallback(CFRunLoopTimerRef timer, void *info)
     if (!NSEqualPoints(_private->lastScrollPosition, origin) && ![scrollView inProgrammaticScroll]) {
         if (Frame* coreFrame = core([self _frame])) {
             if (FrameView* coreView = coreFrame->view()) {
-#ifndef BUILDING_ON_TIGER
                 _private->inScrollPositionChanged = YES;
-#endif
                 coreView->scrollPositionChangedViaPlatformWidget();
-#ifndef BUILDING_ON_TIGER
                 _private->inScrollPositionChanged = NO;
-#endif
             }
         }
     
@@ -1335,21 +1288,6 @@ static void _updateMouseoverTimerCallback(CFRunLoopTimerRef timer, void *info)
 }
 #endif
 
-#ifdef BUILDING_ON_TIGER
-
-// This is called when we are about to draw, but before our dirty rect is propagated to our ancestors.
-// That's the perfect time to do a layout, except that ideally we'd want to be sure that we're dirty
-// before doing it. As a compromise, when we're opaque we do the layout only when actually asked to
-// draw, but when we're transparent we do the layout at this stage so views behind us know that they
-// need to be redrawn (in case the layout causes some things to get dirtied).
-- (void)_propagateDirtyRectsToOpaqueAncestors
-{
-    if (![[self _webView] drawsBackground])
-        [self _web_updateLayoutAndStyleIfNeededRecursive];
-    [super _propagateDirtyRectsToOpaqueAncestors];
-}
-
-#else
 
 - (void)viewWillDraw
 {
@@ -1361,7 +1299,6 @@ static void _updateMouseoverTimerCallback(CFRunLoopTimerRef timer, void *info)
     [super viewWillDraw];
 }
 
-#endif
 
 // Don't let AppKit even draw subviews. We take care of that.
 - (void)_recursiveDisplayRectIfNeededIgnoringOpacity:(NSRect)rect isVisibleRect:(BOOL)isVisibleRect rectIsVisibleRectForView:(NSView *)visibleView topView:(BOOL)topView
@@ -1373,14 +1310,11 @@ static void _updateMouseoverTimerCallback(CFRunLoopTimerRef timer, void *info)
     if (isPrinting) {
         if (!wasInPrintingMode)
             [self _web_setPrintingModeRecursive];
-#ifndef BUILDING_ON_TIGER
         else
             [self _web_updateLayoutAndStyleIfNeededRecursive];
-#endif
     } else if (wasInPrintingMode)
         [self _web_clearPrintingModeRecursive];
 
-#ifndef BUILDING_ON_TIGER
     // There are known cases where -viewWillDraw is not called on all views being drawn.
     // See <rdar://problem/6964278> for example. Performing layout at this point prevents us from
     // trying to paint without layout (which WebCore now refuses to do, instead bailing out without
@@ -1394,11 +1328,6 @@ static void _updateMouseoverTimerCallback(CFRunLoopTimerRef timer, void *info)
             [self _web_updateLayoutAndStyleIfNeededRecursive];
         }
     }
-#else
-    // Because Tiger does not have viewWillDraw we need to do layout here.
-    [self _web_updateLayoutAndStyleIfNeededRecursive];
-    [_subviews makeObjectsPerformSelector:@selector(_propagateDirtyRectsToOpaqueAncestors)];
-#endif
 
     [self _setAsideSubviews];
     [super _recursiveDisplayRectIfNeededIgnoringOpacity:rect isVisibleRect:isVisibleRect rectIsVisibleRectForView:visibleView topView:topView];
@@ -1426,28 +1355,11 @@ static void _updateMouseoverTimerCallback(CFRunLoopTimerRef timer, void *info)
         if (isPrinting) {
             if (!wasInPrintingMode)
                 [self _web_setPrintingModeRecursive];
-#ifndef BUILDING_ON_TIGER
             else
                 [self _web_updateLayoutAndStyleIfNeededRecursive];
-#endif
         } else if (wasInPrintingMode)
             [self _web_clearPrintingModeRecursive];
 
-#ifdef BUILDING_ON_TIGER
-
-        // Because Tiger does not have viewWillDraw we need to do layout here.
-        NSRect boundsBeforeLayout = [self bounds];
-        if (!NSIsEmptyRect(visRect))
-            [self _web_updateLayoutAndStyleIfNeededRecursive];
-
-        // If layout changes the view's bounds, then we need to recompute the visRect.
-        // That's because the visRect passed to us was based on the bounds at the time
-        // we were called. This method is only displayed to draw "all", so it's safe
-        // to just call visibleRect to compute the entire rectangle.
-        if (!NSEqualRects(boundsBeforeLayout, [self bounds]))
-            visRect = [self visibleRect];
-
-#endif
 
         [self _setAsideSubviews];
     }
@@ -1469,10 +1381,6 @@ static void _updateMouseoverTimerCallback(CFRunLoopTimerRef timer, void *info)
 // Don't let AppKit even draw subviews. We take care of that.
 - (void)_recursive:(BOOL)recurse displayRectIgnoringOpacity:(NSRect)displayRect inContext:(NSGraphicsContext *)context topView:(BOOL)topView
 {
-#ifdef BUILDING_ON_TIGER 
-    // Because Tiger does not have viewWillDraw we need to do layout here.
-    [self _web_updateLayoutAndStyleIfNeededRecursive];
-#endif
 
     [self _setAsideSubviews];
     [super _recursive:recurse displayRectIgnoringOpacity:displayRect inContext:context topView:topView];
@@ -1717,7 +1625,7 @@ static void _updateMouseoverTimerCallback(CFRunLoopTimerRef timer, void *info)
     static NSArray *types = nil;
     if (!types) {
         types = [[NSArray alloc] initWithObjects:WebArchivePboardType, NSHTMLPboardType, NSFilenamesPboardType, NSTIFFPboardType, NSPDFPboardType,
-#if defined(BUILDING_ON_TIGER) || defined(BUILDING_ON_LEOPARD)
+#ifdef BUILDING_ON_LEOPARD
             NSPICTPboardType,
 #endif
             NSURLPboardType, NSRTFDPboardType, NSRTFPboardType, NSStringPboardType, NSColorPboardType, kUTTypePNG, nil];
@@ -2107,7 +2015,7 @@ static void _updateMouseoverTimerCallback(CFRunLoopTimerRef timer, void *info)
         [resource release];
         return fragment;
     }
-#if defined(BUILDING_ON_TIGER) || defined(BUILDING_ON_LEOPARD)
+#ifdef BUILDING_ON_LEOPARD
     if (pboardType == NSPICTPboardType) {
         WebResource *resource = [[WebResource alloc] initWithData:[pasteboard dataForType:NSPICTPboardType]
                                                               URL:uniqueURLWithRelativePart(@"image.pict")
@@ -2349,30 +2257,6 @@ static bool matchesExtensionOrEquivalent(NSString *filename, NSString *extension
             && [filename _webkit_hasCaseInsensitiveSuffix:@".jpg"]);
 }
 
-#ifdef BUILDING_ON_TIGER
-
-// The following is a workaround for
-// <rdar://problem/3429631> window stops getting mouse moved events after first tooltip appears
-// The trick is to define a category on NSToolTipPanel that implements setAcceptsMouseMovedEvents:.
-// Since the category will be searched before the real class, we'll prevent the flag from being
-// set on the tool tip panel.
-
-@interface NSToolTipPanel : NSPanel
-@end
-
-@interface NSToolTipPanel (WebHTMLViewFileInternal)
-@end
-
-@implementation NSToolTipPanel (WebHTMLViewFileInternal)
-
-- (void)setAcceptsMouseMovedEvents:(BOOL)flag
-{
-    // Do nothing, preventing the tool tip panel from trying to accept mouse-moved events.
-}
-
-@end
-
-#endif
 
 @implementation WebHTMLView
 
@@ -2382,9 +2266,7 @@ static bool matchesExtensionOrEquivalent(NSString *filename, NSString *extension
                              returnTypes:[[self class] _insertablePasteboardTypes]];
     JSC::initializeThreading();
     WTF::initializeMainThreadToProcessMainThread();
-#ifndef BUILDING_ON_TIGER
     WebCoreObjCFinalizeOnMainThread(self);
-#endif
 }
 
 - (id)initWithFrame:(NSRect)frame
@@ -2687,7 +2569,6 @@ WEBCORE_COMMAND(yankAndSelect)
         return [self _canEdit];
 
     if (action == @selector(showGuessPanel:)) {
-#ifndef BUILDING_ON_TIGER
         // Match OS X AppKit behavior for post-Tiger. Don't change Tiger behavior.
         NSMenuItem *menuItem = (NSMenuItem *)item;
         if ([menuItem isKindOfClass:[NSMenuItem class]]) {
@@ -2696,7 +2577,6 @@ WEBCORE_COMMAND(yankAndSelect)
                 ? UI_STRING_INTERNAL("Hide Spelling and Grammar", "menu item title")
                 : UI_STRING_INTERNAL("Show Spelling and Grammar", "menu item title")];
         }
-#endif
         return [self _canEdit];
     }
     
@@ -2780,7 +2660,6 @@ WEBCORE_COMMAND(yankAndSelect)
     if (action == @selector(stopSpeaking:))
         return [NSApp isSpeaking];
 
-#ifndef BUILDING_ON_TIGER
     if (action == @selector(toggleGrammarChecking:)) {
         // FIXME 4799134: WebView is the bottleneck for this grammar-checking logic, but we must validate 
         // the selector here because we implement it here, and we must implement it here because the AppKit 
@@ -2790,9 +2669,8 @@ WEBCORE_COMMAND(yankAndSelect)
             [menuItem setState:[self isGrammarCheckingEnabled] ? NSOnState : NSOffState];
         return YES;
     }
-#endif
 
-#if !defined(BUILDING_ON_TIGER) && !defined(BUILDING_ON_LEOPARD)
+#ifndef BUILDING_ON_LEOPARD
     if (action == @selector(orderFrontSubstitutionsPanel:)) {
         NSMenuItem *menuItem = (NSMenuItem *)item;
         if ([menuItem isKindOfClass:[NSMenuItem class]]) {
@@ -3293,7 +3171,6 @@ static void setMenuTargets(NSMenu* menu)
 }
 #endif
 
-#ifndef BUILDING_ON_TIGER
 - (void)setNeedsDisplayInRect:(NSRect)invalidRect
 {
     if (_private->inScrollPositionChanged) {
@@ -3307,7 +3184,6 @@ static void setMenuTargets(NSMenu* menu)
     }
     [super setNeedsDisplayInRect:invalidRect];
 }
-#endif
 
 - (void)setNeedsLayout: (BOOL)flag
 {
@@ -4804,14 +4680,10 @@ NSStrokeColorAttributeName        /* NSColor, default nil: same as foreground co
     }
     
     NSPanel *spellingPanel = [checker spellingPanel];
-#ifndef BUILDING_ON_TIGER
-    // Post-Tiger, this menu item is a show/hide toggle, to match AppKit. Leave Tiger behavior alone
-    // to match rest of OS X.
     if ([spellingPanel isVisible]) {
         [spellingPanel orderOut:sender];
         return;
     }
-#endif
     
     if (Frame* coreFrame = core([self _frame]))
         coreFrame->editor()->advanceToNextMisspelling(true);
@@ -4918,7 +4790,7 @@ NSStrokeColorAttributeName        /* NSColor, default nil: same as foreground co
 
 static BOOL writingDirectionKeyBindingsEnabled()
 {
-#if !defined(BUILDING_ON_TIGER) && !defined(BUILDING_ON_LEOPARD)
+#ifndef BUILDING_ON_LEOPARD
     return YES;
 #else
     NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
@@ -4956,7 +4828,7 @@ static BOOL writingDirectionKeyBindingsEnabled()
     [self _changeBaseWritingDirectionTo:NSWritingDirectionRightToLeft];
 }
 
-#if defined(BUILDING_ON_TIGER) || defined(BUILDING_ON_LEOPARD)
+#ifdef BUILDING_ON_LEOPARD
 - (void)changeBaseWritingDirectionToLTR:(id)sender
 {
     [self makeBaseWritingDirectionLeftToRight:sender];
@@ -4996,7 +4868,6 @@ static BOOL writingDirectionKeyBindingsEnabled()
 
 #endif
 
-#ifndef BUILDING_ON_TIGER
 
 // Override this so that AppKit will send us arrow keys as key down events so we can
 // support them via the key bindings mechanism.
@@ -5011,76 +4882,6 @@ static BOOL writingDirectionKeyBindingsEnabled()
     return haveWebCoreFrame;
 }
 
-#else
-
-// Super-hack alert.
-// All this code accomplishes the same thing as the _wantsKeyDownForEvent method above.
-
-// Returns a selector only if called while:
-//   1) first responder is self
-//   2) handling a key down event
-//   3) not yet inside keyDown: method
-//   4) key is an arrow key
-// The selector is the one that gets sent by -[NSWindow _processKeyboardUIKey] for this key.
-- (SEL)_arrowKeyDownEventSelectorIfPreprocessing
-{
-    NSWindow *w = [self window];
-    if ([w firstResponder] != self)
-        return NULL;
-    NSEvent *e = [w currentEvent];
-    if ([e type] != NSKeyDown)
-        return NULL;
-    if (e == _private->keyDownEvent)
-        return NULL;
-    NSString *s = [e charactersIgnoringModifiers];
-    if ([s length] == 0)
-        return NULL;
-    switch ([s characterAtIndex:0]) {
-        case NSDownArrowFunctionKey:
-            return @selector(moveDown:);
-        case NSLeftArrowFunctionKey:
-            return @selector(moveLeft:);
-        case NSRightArrowFunctionKey:
-            return @selector(moveRight:);
-        case NSUpArrowFunctionKey:
-            return @selector(moveUp:);
-        default:
-            return NULL;
-    }
-}
-
-// Returns NO instead of YES if called on the selector that the
-// _arrowKeyDownEventSelectorIfPreprocessing method returns.
-// This should only happen inside -[NSWindow _processKeyboardUIKey],
-// and together with the change below should cause that method
-// to return NO rather than handling the key.
-// Also set a 1-shot flag for the nextResponder check below.
-- (BOOL)respondsToSelector:(SEL)selector
-{
-    if (![super respondsToSelector:selector])
-        return NO;
-    SEL arrowKeySelector = [self _arrowKeyDownEventSelectorIfPreprocessing];
-    if (selector != arrowKeySelector)
-        return YES;
-    _private->nextResponderDisabledOnce = YES;
-    return NO;
-}
-
-// Returns nil instead of the next responder if called when the
-// one-shot flag is set, and _arrowKeyDownEventSelectorIfPreprocessing
-// returns something other than NULL. This should only happen inside
-// -[NSWindow _processKeyboardUIKey] and together with the change above
-// should cause that method to return NO rather than handling the key.
-- (NSResponder *)nextResponder
-{
-    BOOL disabled = _private->nextResponderDisabledOnce;
-    _private->nextResponderDisabledOnce = NO;
-    if (disabled && [self _arrowKeyDownEventSelectorIfPreprocessing] != NULL)
-        return nil;
-    return [super nextResponder];
-}
-
-#endif
 
 - (void)_updateControlTints
 {
@@ -5210,7 +5011,6 @@ static BOOL writingDirectionKeyBindingsEnabled()
     return [self _documentFragmentFromPasteboard:pasteboard inContext:nil allowPlainText:NO];
 }
 
-#ifndef BUILDING_ON_TIGER
 
 - (BOOL)isGrammarCheckingEnabled
 {
@@ -5248,9 +5048,8 @@ static CGPoint coreGraphicsScreenPointForAppKitScreenPoint(NSPoint point)
     return CGPointMake(point.x, NSMaxY([[screens objectAtIndex:0] frame]) - point.y);
 }
 
-#endif
 
-#if !defined(BUILDING_ON_TIGER) && !defined(BUILDING_ON_LEOPARD)
+#ifndef BUILDING_ON_LEOPARD
 
 - (void)orderFrontSubstitutionsPanel:(id)sender
 {
@@ -5380,14 +5179,12 @@ static CGPoint coreGraphicsScreenPointForAppKitScreenPoint(NSPoint point)
 
     NSRect rect = coreFrame->selection()->bounds();
 
-#ifndef BUILDING_ON_TIGER
     NSDictionary *attributes = [attrString fontAttributesInRange:NSMakeRange(0,1)];
     NSFont *font = [attributes objectForKey:NSFontAttributeName];
     if (font)
         rect.origin.y += [font ascender];
-#endif
 
-#if !defined(BUILDING_ON_TIGER) && !defined(BUILDING_ON_LEOPARD)
+#ifndef BUILDING_ON_LEOPARD
     [self showDefinitionForAttributedString:attrString atPoint:rect.origin];
     return;
 #endif
@@ -5396,15 +5193,9 @@ static CGPoint coreGraphicsScreenPointForAppKitScreenPoint(NSPoint point)
     // penalty of linking to another framework. This function changed signature as well as framework between Tiger and Leopard,
     // so the two cases are handled separately.
 
-#ifdef BUILDING_ON_TIGER
-    typedef OSStatus (*ServiceWindowShowFunction)(id inWordString, NSRect inWordBoundary, UInt16 inLineDirection);
-    const char *frameworkPath = "/System/Library/Frameworks/ApplicationServices.framework/Frameworks/LangAnalysis.framework/LangAnalysis";
-    const char *functionName = "DCMDictionaryServiceWindowShow";
-#else
     typedef void (*ServiceWindowShowFunction)(id unusedDictionaryRef, id inWordString, CFRange selectionRange, id unusedFont, CGPoint textOrigin, Boolean verticalText, id unusedTransform);
     const char *frameworkPath = "/System/Library/Frameworks/Carbon.framework/Frameworks/HIToolbox.framework/HIToolbox";
     const char *functionName = "HIDictionaryWindowShow";
-#endif
 
     static bool lookedForFunction = false;
     static ServiceWindowShowFunction dictionaryServiceWindowShow = NULL;
@@ -5423,18 +5214,6 @@ static CGPoint coreGraphicsScreenPointForAppKitScreenPoint(NSPoint point)
         return;
     }
 
-#ifdef BUILDING_ON_TIGER
-    // FIXME: must check for right-to-left here
-    NSWritingDirection writingDirection = NSWritingDirectionLeftToRight;
-
-    // FIXME: the dictionary API expects the rect for the first line of selection. Passing
-    // the rect for the entire selection, as we do here, positions the pop-up window near
-    // the bottom of the selection rather than at the selected word.
-    rect = [self convertRect:rect toView:nil];
-    rect.origin = [[self window] convertBaseToScreen:rect.origin];
-    NSData *data = [attrString RTFFromRange:NSMakeRange(0, [attrString length]) documentAttributes:nil];
-    dictionaryServiceWindowShow(data, rect, (writingDirection == NSWritingDirectionRightToLeft) ? 1 : 0);
-#else
     // The HIDictionaryWindowShow function requires the origin, in CG screen coordinates, of the first character of text in the selection.
     // FIXME 4945808: We approximate this in a way that works well when a single word is selected, and less well in some other cases
     // (but no worse than we did in Tiger)
@@ -5443,7 +5222,6 @@ static CGPoint coreGraphicsScreenPointForAppKitScreenPoint(NSPoint point)
 
     dictionaryServiceWindowShow(nil, attrString, CFRangeMake(0, [attrString length]), nil, 
                                 coreGraphicsScreenPointForAppKitScreenPoint(screenPoint), false, nil);
-#endif
 }
 
 - (void)_hoverFeedbackSuspendedChanged
@@ -5601,7 +5379,7 @@ static CGPoint coreGraphicsScreenPointForAppKitScreenPoint(NSPoint point)
 {
     if (!_private->layerHostingView) {
         NSView* hostingView = [[NSView alloc] initWithFrame:[self bounds]];
-#if !defined(BUILDING_ON_LEOPARD)
+#ifndef BUILDING_ON_LEOPARD
         [hostingView setAutoresizingMask:(NSViewWidthSizable | NSViewHeightSizable)];
 #endif
         [self addSubview:hostingView];
@@ -5613,7 +5391,7 @@ static CGPoint coreGraphicsScreenPointForAppKitScreenPoint(NSPoint point)
     // Make a container layer, which will get sized/positioned by AppKit and CA.
     CALayer* viewLayer = [CALayer layer];
 
-#if defined(BUILDING_ON_LEOPARD)
+#ifdef BUILDING_ON_LEOPARD
     // Turn off default animations.
     NSNull *nullValue = [NSNull null];
     NSDictionary *actions = [NSDictionary dictionaryWithObjectsAndKeys:
@@ -5630,12 +5408,12 @@ static CGPoint coreGraphicsScreenPointForAppKitScreenPoint(NSPoint point)
     [viewLayer setStyle:[NSDictionary dictionaryWithObject:actions forKey:@"actions"]];
 #endif
 
-#if !defined(BUILDING_ON_LEOPARD)
+#ifndef BUILDING_ON_LEOPARD
     // If we aren't in the window yet, we'll use the screen's scale factor now, and reset the scale 
     // via -viewDidMoveToWindow.
     NSWindow *window = [self window];
     CGFloat scaleFactor;
-#if !defined(BUILDING_ON_SNOW_LEOPARD)
+#ifndef BUILDING_ON_SNOW_LEOPARD
     if (window)
         scaleFactor = [window backingScaleFactor];
     else
@@ -5667,7 +5445,7 @@ static CGPoint coreGraphicsScreenPointForAppKitScreenPoint(NSPoint point)
     if ([[self _webView] _postsAcceleratedCompositingNotifications])
         [[NSNotificationCenter defaultCenter] postNotificationName:_WebViewDidStartAcceleratedCompositingNotification object:[self _webView] userInfo:nil];
     
-#if defined(BUILDING_ON_LEOPARD)
+#ifdef BUILDING_ON_LEOPARD
     [viewLayer setSublayerTransform:CATransform3DMakeScale(1, -1, 1)]; // setGeometryFlipped: doesn't exist on Leopard.
     [self _updateLayerHostingViewPosition];
 #else
@@ -5686,7 +5464,7 @@ static CGPoint coreGraphicsScreenPointForAppKitScreenPoint(NSPoint point)
     }
 }
 
-#if defined(BUILDING_ON_LEOPARD)
+#ifdef BUILDING_ON_LEOPARD
 // This method is necessary on Leopard to work around <rdar://problem/7067892>.
 - (void)_updateLayerHostingViewPosition
 {
@@ -5889,18 +5667,10 @@ static CGPoint coreGraphicsScreenPointForAppKitScreenPoint(NSPoint point)
     return result;
 }
 
-// test for 10.4 because of <rdar://problem/4243463>
-#ifdef BUILDING_ON_TIGER
-- (long)conversationIdentifier
-{
-    return (long)self;
-}
-#else
 - (NSInteger)conversationIdentifier
 {
     return (NSInteger)self;
 }
-#endif
 
 - (BOOL)hasMarkedText
 {

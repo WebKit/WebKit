@@ -67,7 +67,7 @@ void CSSImportRule::setCSSStyleSheet(const String& href, const KURL& baseURL, co
     bool enforceMIMEType = strict;
     bool needsSiteSpecificQuirks = parent && parent->document() && parent->document()->settings() && parent->document()->settings()->needsSiteSpecificQuirks();
 
-#if defined(BUILDING_ON_TIGER) || defined(BUILDING_ON_LEOPARD)
+#ifdef BUILDING_ON_LEOPARD
     if (enforceMIMEType && needsSiteSpecificQuirks) {
         // Covers both http and https, with or without "www."
         if (baseURL.string().contains("mcafee.com/japan/", false))

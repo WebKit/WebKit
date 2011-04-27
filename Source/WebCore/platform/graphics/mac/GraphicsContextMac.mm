@@ -46,15 +46,9 @@ namespace WebCore {
 
 static void drawFocusRingToContext(CGContextRef context, CGPathRef focusRingPath, CGColorRef color, int radius)
 {
-#ifdef BUILDING_ON_TIGER
-    CGContextBeginTransparencyLayer(context, 0);
-#endif
     CGContextBeginPath(context);
     CGContextAddPath(context, focusRingPath);
     wkDrawFocusRing(context, color, radius);
-#ifdef BUILDING_ON_TIGER
-    CGContextEndTransparencyLayer(context);
-#endif
 }
 
 void GraphicsContext::drawFocusRing(const Path& path, int width, int /*offset*/, const Color& color)
@@ -87,17 +81,6 @@ void GraphicsContext::drawFocusRing(const Vector<IntRect>& rects, int width, int
     drawFocusRingToContext(platformContext(), focusRingPath.get(), colorRef, radius);
 }
 
-#ifdef BUILDING_ON_TIGER // Post-Tiger's setPlatformCompositeOperation() is defined in GraphicsContextCG.cpp.
-void GraphicsContext::setPlatformCompositeOperation(CompositeOperator op)
-{
-    if (paintingDisabled())
-        return;
-    NSAutoreleasePool* pool = [[NSAutoreleasePool alloc] init];
-    [[NSGraphicsContext graphicsContextWithGraphicsPort:platformContext() flipped:YES]
-        setCompositingOperation:(NSCompositingOperation)op];
-    [pool drain];
-}
-#endif
 
 static NSColor* createPatternColor(NSString* name, NSColor* defaultColor, bool& usingDot)
 {
@@ -142,7 +125,7 @@ void GraphicsContext::drawLineForTextChecking(const FloatPoint& point, float wid
             patternColor = grammarPatternColor.get();
             break;
         }
-#if PLATFORM(MAC) && !defined(BUILDING_ON_TIGER) && !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOW_LEOPARD)
+#if PLATFORM(MAC) && !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOW_LEOPARD)
         // To support correction panel.
         case TextCheckingReplacementLineStyle:
         {

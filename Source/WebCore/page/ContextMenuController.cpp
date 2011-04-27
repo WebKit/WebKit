@@ -361,11 +361,9 @@ void ContextMenuController::contextMenuItemSelected(ContextMenuItem* item)
     case ContextMenuItemTagCheckSpellingWhileTyping:
         frame->editor()->toggleContinuousSpellChecking();
         break;
-#ifndef BUILDING_ON_TIGER
     case ContextMenuItemTagCheckGrammarWithSpelling:
         frame->editor()->toggleGrammarChecking();
         break;
-#endif
 #if PLATFORM(MAC)
     case ContextMenuItemTagShowFonts:
         frame->editor()->showFontPanel();
@@ -377,7 +375,7 @@ void ContextMenuController::contextMenuItemSelected(ContextMenuItem* item)
         frame->editor()->showColorPanel();
         break;
 #endif
-#if PLATFORM(MAC) && !defined(BUILDING_ON_TIGER) && !defined(BUILDING_ON_LEOPARD)
+#if PLATFORM(MAC) && !defined(BUILDING_ON_LEOPARD)
     case ContextMenuItemTagMakeUpperCase:
         frame->editor()->uppercaseWord();
         break;
@@ -467,7 +465,6 @@ void ContextMenuController::createAndAppendFontSubMenu(ContextMenuItem& fontMenu
     fontMenuItem.setSubMenu(&fontMenu);
 }
 
-#if !defined(BUILDING_ON_TIGER)
 
 #if !PLATFORM(GTK)
 
@@ -504,27 +501,6 @@ void ContextMenuController::createAndAppendSpellingAndGrammarSubMenu(ContextMenu
 
 #endif // !PLATFORM(GTK)
 
-#else
-
-void ContextMenuController::createAndAppendSpellingAndGrammarSubMenu(ContextMenuItem& spellingAndGrammarMenuItem)
-{
-    ContextMenu spellingMenu;
-
-    ContextMenuItem showSpellingPanel(ActionType, ContextMenuItemTagShowSpellingPanel, 
-        contextMenuItemTagShowSpellingPanel(true));
-    ContextMenuItem checkSpelling(ActionType, ContextMenuItemTagCheckSpelling, 
-        contextMenuItemTagCheckSpelling());
-    ContextMenuItem checkAsYouType(CheckableActionType, ContextMenuItemTagCheckSpellingWhileTyping, 
-        contextMenuItemTagCheckSpellingWhileTyping());
-
-    appendItem(showSpellingPanel, &spellingMenu);
-    appendItem(checkSpelling, &spellingMenu);
-    appendItem(checkAsYouType, &spellingMenu);
-
-    spellingMenuItem.setSubMenu(&spellingMenu);
-}
-
-#endif
 
 #if PLATFORM(MAC)
 
@@ -578,7 +554,7 @@ void ContextMenuController::createAndAppendTextDirectionSubMenu(ContextMenuItem&
 
 #endif
 
-#if PLATFORM(MAC) && !defined(BUILDING_ON_TIGER) && !defined(BUILDING_ON_LEOPARD)
+#if PLATFORM(MAC) && !defined(BUILDING_ON_LEOPARD)
 
 void ContextMenuController::createAndAppendSubstitutionsSubMenu(ContextMenuItem& substitutionsMenuItem)
 {
@@ -633,7 +609,7 @@ static bool selectionContainsPossibleWord(Frame* frame)
 }
 
 #if PLATFORM(MAC)
-#if defined(BUILDING_ON_TIGER) || defined(BUILDING_ON_LEOPARD) || defined(BUILDING_ON_SNOW_LEOPARD)
+#if defined(BUILDING_ON_LEOPARD) || defined(BUILDING_ON_SNOW_LEOPARD)
 #define INCLUDE_SPOTLIGHT_CONTEXT_MENU_ITEM 1
 #else
 #define INCLUDE_SPOTLIGHT_CONTEXT_MENU_ITEM 0
@@ -863,7 +839,7 @@ void ContextMenuController::populate()
                 } else
                     appendItem(IgnoreGrammarItem, m_contextMenu.get());
                 appendItem(*separatorItem(), m_contextMenu.get());
-#if PLATFORM(MAC) && !defined(BUILDING_ON_TIGER) && !defined(BUILDING_ON_LEOPARD)
+#if PLATFORM(MAC) && !defined(BUILDING_ON_LEOPARD)
             } else {
                 // If the string was autocorrected, generate a contextual menu item allowing it to be changed back.
                 String replacedString = m_hitTestResult.replacedString();
@@ -923,7 +899,6 @@ void ContextMenuController::populate()
 #endif
 
         if (!inPasswordField) {
-#ifndef BUILDING_ON_TIGER
 #if !PLATFORM(GTK)
             appendItem(*separatorItem(), m_contextMenu.get());
             ContextMenuItem SpellingAndGrammarMenuItem(SubmenuType, ContextMenuItemTagSpellingMenu, 
@@ -931,13 +906,7 @@ void ContextMenuController::populate()
             createAndAppendSpellingAndGrammarSubMenu(SpellingAndGrammarMenuItem);
             appendItem(SpellingAndGrammarMenuItem, m_contextMenu.get());
 #endif
-#else
-            ContextMenuItem SpellingMenuItem(SubmenuType, ContextMenuItemTagSpellingMenu, 
-                contextMenuItemTagSpellingMenu());
-            createAndAppendSpellingSubMenu(SpellingMenuItem);
-            appendItem(SpellingMenuItem, m_contextMenu.get());
-#endif
-#if PLATFORM(MAC) && !defined(BUILDING_ON_TIGER) && !defined(BUILDING_ON_LEOPARD)
+#if PLATFORM(MAC) && !defined(BUILDING_ON_LEOPARD)
             ContextMenuItem substitutionsMenuItem(SubmenuType, ContextMenuItemTagSubstitutionsMenu, 
                 contextMenuItemTagSubstitutionsMenu());
             createAndAppendSubstitutionsSubMenu(substitutionsMenuItem);
@@ -1090,11 +1059,9 @@ void ContextMenuController::checkOrEnableIfNeeded(ContextMenuItem& item) const
             shouldEnable = frame->selection()->isRange();
             break;
         case ContextMenuItemTagCheckGrammarWithSpelling:
-#ifndef BUILDING_ON_TIGER
             if (frame->editor()->isGrammarCheckingEnabled())
                 shouldCheck = true;
             shouldEnable = true;
-#endif
             break;
         case ContextMenuItemTagItalic: {
             shouldCheck = frame->editor()->selectionHasStyle(CSSPropertyFontStyle, "italic") != FalseTriState;
@@ -1110,12 +1077,10 @@ void ContextMenuController::checkOrEnableIfNeeded(ContextMenuItem& item) const
             shouldEnable = false;
             break;
         case ContextMenuItemTagShowSpellingPanel:
-#ifndef BUILDING_ON_TIGER
             if (frame->editor()->spellingPanelIsShowing())
                 item.setTitle(contextMenuItemTagShowSpellingPanel(false));
             else
                 item.setTitle(contextMenuItemTagShowSpellingPanel(true));
-#endif
             shouldEnable = frame->editor()->canEdit();
             break;
         case ContextMenuItemTagNoGuessesFound:
@@ -1129,7 +1094,7 @@ void ContextMenuController::checkOrEnableIfNeeded(ContextMenuItem& item) const
         case ContextMenuItemTagTransformationsMenu:
             break;
         case ContextMenuItemTagShowSubstitutions:
-#if !defined(BUILDING_ON_TIGER) && !defined(BUILDING_ON_LEOPARD)
+#ifndef BUILDING_ON_LEOPARD
             if (frame->editor()->substitutionsPanelIsShowing())
                 item.setTitle(contextMenuItemTagShowSubstitutions(false));
             else
@@ -1144,32 +1109,32 @@ void ContextMenuController::checkOrEnableIfNeeded(ContextMenuItem& item) const
             shouldEnable = frame->editor()->canEdit();
             break;
         case ContextMenuItemTagCorrectSpellingAutomatically:
-#if !defined(BUILDING_ON_TIGER) && !defined(BUILDING_ON_LEOPARD)
+#ifndef BUILDING_ON_LEOPARD
             shouldCheck = frame->editor()->isAutomaticSpellingCorrectionEnabled();
 #endif
             break;
         case ContextMenuItemTagSmartCopyPaste:
-#if !defined(BUILDING_ON_TIGER) && !defined(BUILDING_ON_LEOPARD)
+#ifndef BUILDING_ON_LEOPARD
             shouldCheck = frame->editor()->smartInsertDeleteEnabled();
 #endif
             break;
         case ContextMenuItemTagSmartQuotes:
-#if !defined(BUILDING_ON_TIGER) && !defined(BUILDING_ON_LEOPARD)
+#ifndef BUILDING_ON_LEOPARD
             shouldCheck = frame->editor()->isAutomaticQuoteSubstitutionEnabled();
 #endif
             break;
         case ContextMenuItemTagSmartDashes:
-#if !defined(BUILDING_ON_TIGER) && !defined(BUILDING_ON_LEOPARD)
+#ifndef BUILDING_ON_LEOPARD
             shouldCheck = frame->editor()->isAutomaticDashSubstitutionEnabled();
 #endif
             break;
         case ContextMenuItemTagSmartLinks:
-#if !defined(BUILDING_ON_TIGER) && !defined(BUILDING_ON_LEOPARD)
+#ifndef BUILDING_ON_LEOPARD
             shouldCheck = frame->editor()->isAutomaticLinkDetectionEnabled();
 #endif
             break;
         case ContextMenuItemTagTextReplacement:
-#if !defined(BUILDING_ON_TIGER) && !defined(BUILDING_ON_LEOPARD)
+#ifndef BUILDING_ON_LEOPARD
             shouldCheck = frame->editor()->isAutomaticTextReplacementEnabled();
 #endif
             break;

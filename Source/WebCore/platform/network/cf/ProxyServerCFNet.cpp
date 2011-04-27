@@ -35,7 +35,7 @@
 
 namespace WebCore {
 
-#if !defined(BUILDING_ON_TIGER) && !defined(BUILDING_ON_LEOPARD)
+#ifndef BUILDING_ON_LEOPARD
 static void addProxyServersForURL(Vector<ProxyServer>& proxyServers, const KURL& url)
 {
     RetainPtr<CFDictionaryRef> proxySettings(AdoptCF, CFNetworkCopySystemProxySettings());

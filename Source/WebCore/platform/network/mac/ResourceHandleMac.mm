@@ -54,9 +54,6 @@
 #import <wtf/text/CString.h>
 #import <wtf/UnusedParam.h>
 
-#ifdef BUILDING_ON_TIGER
-typedef int NSInteger;
-#endif
 
 using namespace WebCore;
 
@@ -86,7 +83,6 @@ using namespace WebCore;
 - (id)_propertyForKey:(NSString *)key;
 @end
 
-#ifndef BUILDING_ON_TIGER
 
 class WebCoreSynchronousLoaderClient : public ResourceHandleClient {
 public:
@@ -133,13 +129,9 @@ private:
 
 static NSString *WebCoreSynchronousLoaderRunLoopMode = @"WebCoreSynchronousLoaderRunLoopMode";
 
-#endif
 
 namespace WebCore {
 
-#ifdef BUILDING_ON_TIGER
-static unsigned inNSURLConnectionCallback;
-#endif
 
 #ifndef NDEBUG
 static bool isInitializingConnection;
@@ -149,25 +141,16 @@ class CallbackGuard {
 public:
     CallbackGuard()
     {
-#ifdef BUILDING_ON_TIGER
-        ++inNSURLConnectionCallback;
-#endif
     }
     ~CallbackGuard()
     {
-#ifdef BUILDING_ON_TIGER
-        ASSERT(inNSURLConnectionCallback > 0);
-        --inNSURLConnectionCallback;
-#endif
     }
 };
 
-#ifndef BUILDING_ON_TIGER
 static String encodeBasicAuthorization(const String& user, const String& password)
 {
     return base64Encode((user + ":" + password).utf8());
 }
-#endif
 
 ResourceHandleInternal::~ResourceHandleInternal()
 {
@@ -219,11 +202,7 @@ static bool shouldRelaxThirdPartyCookiePolicy(const KURL& url)
 void ResourceHandle::createNSURLConnection(id delegate, bool shouldUseCredentialStorage, bool shouldContentSniff)
 {
     // Credentials for ftp can only be passed in URL, the connection:didReceiveAuthenticationChallenge: delegate call won't be made.
-    if ((!d->m_user.isEmpty() || !d->m_pass.isEmpty())
-#ifndef BUILDING_ON_TIGER
-     && !firstRequest().url().protocolInHTTPFamily() // On Tiger, always pass credentials in URL, so that they get stored even if the request gets cancelled right away.
-#endif
-    ) {
+    if ((!d->m_user.isEmpty() || !d->m_pass.isEmpty()) && !firstRequest().url().protocolInHTTPFamily()) {
         KURL urlWithCredentials(firstRequest().url());
         urlWithCredentials.setUser(d->m_user);
         urlWithCredentials.setPass(d->m_pass);
@@ -233,7 +212,6 @@ void ResourceHandle::createNSURLConnection(id delegate, bool shouldUseCredential
     if (shouldRelaxThirdPartyCookiePolicy(firstRequest().url()))
         firstRequest().setFirstPartyForCookies(firstRequest().url());
 
-#if !defined(BUILDING_ON_TIGER)
     if (shouldUseCredentialStorage && firstRequest().url().protocolInHTTPFamily()) {
         if (d->m_user.isEmpty() && d->m_pass.isEmpty()) {
             // <rdar://problem/7174050> - For URLs that match the paths of those previously challenged for HTTP Basic authentication, 
@@ -282,12 +260,6 @@ void ResourceHandle::createNSURLConnection(id delegate, bool shouldUseCredential
     d->m_connection.adoptNS([[NSURLConnection alloc] initWithRequest:nsRequest delegate:delegate startImmediately:NO]);
     return;
 
-#else
-    // Building on Tiger. Don't use WebCore credential storage, don't try to disable content sniffing.
-    UNUSED_PARAM(shouldUseCredentialStorage);
-    UNUSED_PARAM(shouldContentSniff);
-    d->m_connection.adoptNS([[NSURLConnection alloc] initWithRequest:firstRequest().nsURLRequest() delegate:delegate]);
-#endif
 }
 
 bool ResourceHandle::start(NetworkingContext* context)
@@ -315,12 +287,6 @@ bool ResourceHandle::start(NetworkingContext* context)
     if (!ResourceHandle::didSendBodyDataDelegateExists())
         associateStreamWithResourceHandle([firstRequest().nsURLRequest() HTTPBodyStream], this);
 
-#ifdef BUILDING_ON_TIGER
-    // A conditional request sent by WebCore (e.g. to update appcache) can be for a resource that is not cacheable by NSURLConnection,
-    // which can get confused and fail to load it in this case.
-    if (firstRequest().isConditional())
-        firstRequest().setCachePolicy(ReloadIgnoringCacheData);
-#endif
 
     d->m_needsSiteSpecificQuirks = context->needsSiteSpecificQuirks();
 
@@ -329,7 +295,6 @@ bool ResourceHandle::start(NetworkingContext* context)
         shouldUseCredentialStorage,
         d->m_shouldContentSniff || context->localFileContentSniffingEnabled());
 
-#ifndef BUILDING_ON_TIGER
     bool scheduled = false;
     if (SchedulePairHashSet* scheduledPairs = context->scheduledRunLoopPairs()) {
         SchedulePairHashSet::iterator end = scheduledPairs->end();
@@ -347,7 +312,6 @@ bool ResourceHandle::start(NetworkingContext* context)
         [connection() start];
     else
         d->m_startWhenScheduled = true;
-#endif
 
 #ifndef NDEBUG
     isInitializingConnection = NO;
@@ -388,7 +352,6 @@ void ResourceHandle::platformSetDefersLoading(bool defers)
 
 void ResourceHandle::schedule(SchedulePair* pair)
 {
-#ifndef BUILDING_ON_TIGER
     NSRunLoop *runLoop = pair->nsRunLoop();
     if (!runLoop)
         return;
@@ -397,19 +360,12 @@ void ResourceHandle::schedule(SchedulePair* pair)
         [d->m_connection.get() start];
         d->m_startWhenScheduled = false;
     }
-#else
-    UNUSED_PARAM(pair);
-#endif
 }
 
 void ResourceHandle::unschedule(SchedulePair* pair)
 {
-#ifndef BUILDING_ON_TIGER
     if (NSRunLoop *runLoop = pair->nsRunLoop())
         [d->m_connection.get() unscheduleFromRunLoop:runLoop forMode:(NSString *)pair->mode()];
-#else
-    UNUSED_PARAM(pair);
-#endif
 }
 
 WebCoreResourceHandleAsDelegate *ResourceHandle::delegate()
@@ -461,19 +417,11 @@ NSURLConnection *ResourceHandle::connection() const
 
 bool ResourceHandle::loadsBlocked()
 {
-#ifndef BUILDING_ON_TIGER
     return false;
-#else
-    // On Tiger, if we're in an NSURLConnection callback, that blocks all other NSURLConnection callbacks.
-    // On Leopard and newer, it blocks only callbacks on that same NSURLConnection object, which is not
-    // a problem in practice.
-    return inNSURLConnectionCallback != 0;
-#endif
 }
 
 bool ResourceHandle::willLoadFromCache(ResourceRequest& request, Frame*)
 {
-#ifndef BUILDING_ON_TIGER
     request.setCachePolicy(ReturnCacheDataDontLoad);
     NSURLResponse *nsURLResponse = nil;
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
@@ -483,11 +431,6 @@ bool ResourceHandle::willLoadFromCache(ResourceRequest& request, Frame*)
     END_BLOCK_OBJC_EXCEPTIONS;
     
     return nsURLResponse;
-#else
-    // <rdar://problem/6803217> - Re-enable after <rdar://problem/6786454> is resolved.
-    UNUSED_PARAM(request);
-    return false;
-#endif
 }
 
 void ResourceHandle::loadResourceSynchronously(NetworkingContext* context, const ResourceRequest& request, StoredCredentials storedCredentials, ResourceError& error, ResourceResponse& response, Vector<char>& data)
@@ -506,7 +449,6 @@ void ResourceHandle::loadResourceSynchronously(NetworkingContext* context, const
 
     ASSERT(!request.isEmpty());
     
-#ifndef BUILDING_ON_TIGER
     OwnPtr<WebCoreSynchronousLoaderClient> client = WebCoreSynchronousLoaderClient::create();
     client->setAllowStoredCredentials(storedCredentials == AllowStoredCredentials);
 
@@ -534,21 +476,6 @@ void ResourceHandle::loadResourceSynchronously(NetworkingContext* context, const
     
     [handle->connection() cancel];
 
-#else
-    UNUSED_PARAM(storedCredentials);
-    UNUSED_PARAM(context);
-    NSURLRequest *firstRequest = request.nsURLRequest();
-
-    if (shouldRelaxThirdPartyCookiePolicy([firstRequest URL])) {
-        NSMutableURLRequest *mutableRequest = [[firstRequest mutableCopy] autorelease];
-        [mutableRequest setMainDocumentURL:[mutableRequest URL]];
-        firstRequest = mutableRequest;
-    }
-
-    BEGIN_BLOCK_OBJC_EXCEPTIONS;
-    result = [NSURLConnection sendSynchronousRequest:firstRequest returningResponse:&nsURLResponse error:&nsError];
-    END_BLOCK_OBJC_EXCEPTIONS;
-#endif
 
     if (!nsError)
         response = nsURLResponse;
@@ -621,7 +548,6 @@ void ResourceHandle::didReceiveAuthenticationChallenge(const AuthenticationChall
         return;
     }
 
-#ifndef BUILDING_ON_TIGER
     if (!client() || client()->shouldUseCredentialStorage(this)) {
         if (!d->m_initialCredential.isEmpty() || challenge.previousFailureCount()) {
             // The stored credential wasn't accepted, stop using it.
@@ -643,7 +569,6 @@ void ResourceHandle::didReceiveAuthenticationChallenge(const AuthenticationChall
             }
         }
     }
-#endif
 
     d->m_currentMacChallenge = challenge.nsURLAuthenticationChallenge();
     d->m_currentWebChallenge = core(d->m_currentMacChallenge);
@@ -685,13 +610,6 @@ void ResourceHandle::receivedCredential(const AuthenticationChallenge& challenge
         return;
     }
 
-#ifdef BUILDING_ON_TIGER
-    if (credential.persistence() == CredentialPersistenceNone) {
-        // NSURLCredentialPersistenceNone doesn't work on Tiger, so we have to use session persistence.
-        Credential webCredential(credential.user(), credential.password(), CredentialPersistenceForSession);
-        [[d->m_currentMacChallenge sender] useCredential:mac(webCredential) forAuthenticationChallenge:d->m_currentMacChallenge];
-    } else
-#else
     if (credential.persistence() == CredentialPersistenceForSession && (!d->m_needsSiteSpecificQuirks || ![[[mac(challenge) protectionSpace] host] isEqualToString:@"gallery.me.com"])) {
         // Manage per-session credentials internally, because once NSURLCredentialPersistenceForSession is used, there is no way
         // to ignore it for a particular request (short of removing it altogether).
@@ -703,7 +621,6 @@ void ResourceHandle::receivedCredential(const AuthenticationChallenge& challenge
         CredentialStorage::set(webCredential, core([d->m_currentMacChallenge protectionSpace]), urlToStore);
         [[d->m_currentMacChallenge sender] useCredential:mac(webCredential) forAuthenticationChallenge:d->m_currentMacChallenge];
     } else
-#endif
         [[d->m_currentMacChallenge sender] useCredential:mac(credential) forAuthenticationChallenge:d->m_currentMacChallenge];
 
     clearAuthentication();
@@ -1011,45 +928,12 @@ String ResourceHandle::privateBrowsingStorageSessionIdentifierDefaultBase()
     m_handle->client()->didFail(m_handle, error);
 }
 
-#ifdef BUILDING_ON_TIGER
-- (void)_callConnectionWillCacheResponseWithInfo:(NSMutableDictionary *)info
-{
-    NSURLConnection *connection = [info objectForKey:@"connection"];
-    NSCachedURLResponse *cachedResponse = [info objectForKey:@"cachedResponse"];
-    NSCachedURLResponse *result = [self connection:connection willCacheResponse:cachedResponse];
-    if (result)
-        [info setObject:result forKey:@"result"];
-}
-#endif
 
 - (NSCachedURLResponse *)connection:(NSURLConnection *)connection willCacheResponse:(NSCachedURLResponse *)cachedResponse
 {
     LOG(Network, "Handle %p delegate connection:%p willCacheResponse:%p", m_handle, connection, cachedResponse);
 
-#ifdef BUILDING_ON_TIGER
-    // On Tiger CFURLConnection can sometimes call the connection:willCacheResponse: delegate method on
-    // a secondary thread instead of the main thread. If this happens perform the work on the main thread.
-    if (!pthread_main_np()) {
-        NSMutableDictionary *info = [[NSMutableDictionary alloc] init];
-        if (connection)
-            [info setObject:connection forKey:@"connection"];
-        if (cachedResponse)
-            [info setObject:cachedResponse forKey:@"cachedResponse"];
-
-        // Include synchronous url connection's mode as an acceptable run loopmode
-        // <rdar://problem/5511842>
-        NSArray *modes = [[NSArray alloc] initWithObjects:(NSString *)kCFRunLoopCommonModes, @"NSSynchronousURLConnection_PrivateMode", nil];        
-        [self performSelectorOnMainThread:@selector(_callConnectionWillCacheResponseWithInfo:) withObject:info waitUntilDone:YES modes:modes];
-        [modes release];
-
-        NSCachedURLResponse *result = [[info valueForKey:@"result"] retain];
-        [info release];
-
-        return [result autorelease];
-    }
-#else
     UNUSED_PARAM(connection);
-#endif
 
 #ifndef NDEBUG
     if (isInitializingConnection)
@@ -1080,7 +964,6 @@ String ResourceHandle::privateBrowsingStorageSessionIdentifierDefaultBase()
 
 @end
 
-#ifndef BUILDING_ON_TIGER
 
 WebCoreSynchronousLoaderClient::~WebCoreSynchronousLoaderClient()
 {
@@ -1147,6 +1030,5 @@ void WebCoreSynchronousLoaderClient::didFail(ResourceHandle*, const ResourceErro
     m_isDone = true;
 }
 
-#endif // BUILDING_ON_TIGER
 
 #endif // !USE(CFNETWORK)

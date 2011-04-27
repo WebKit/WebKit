@@ -238,10 +238,6 @@ typedef float CGFloat;
 #endif
 #endif /* USE(CG) */
 
-#ifdef BUILDING_ON_TIGER
-#undef ENABLE_FTPDIR
-#define ENABLE_FTPDIR 0
-#endif
 
 #if PLATFORM(WIN) && USE(CG)
 #define WTF_USE_SAFARI_THEME 1

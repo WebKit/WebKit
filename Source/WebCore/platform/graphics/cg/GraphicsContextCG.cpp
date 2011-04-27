@@ -53,12 +53,12 @@
 
 #if PLATFORM(MAC) || (PLATFORM(CHROMIUM) && OS(DARWIN))
 
-#if !defined(BUILDING_ON_TIGER) && !defined(BUILDING_ON_LEOPARD)
+#ifndef BUILDING_ON_LEOPARD
 // Building on 10.6 or later: kCGInterpolationMedium is defined in the CGInterpolationQuality enum.
 #define HAVE_CG_INTERPOLATION_MEDIUM 1
 #endif
 
-#if !defined(TARGETING_TIGER) && !defined(TARGETING_LEOPARD)
+#ifndef TARGETING_LEOPARD
 // Targeting 10.6 or later: use kCGInterpolationMedium.
 #define WTF_USE_CG_INTERPOLATION_MEDIUM 1
 #endif
@@ -93,7 +93,7 @@ CGColorSpaceRef deviceRGBColorSpaceRef()
 CGColorSpaceRef sRGBColorSpaceRef()
 {
     // FIXME: Windows should be able to use kCGColorSpaceSRGB, this is tracked by http://webkit.org/b/31363.
-#if PLATFORM(WIN) || defined(BUILDING_ON_TIGER)
+#if PLATFORM(WIN)
     return deviceRGBColorSpaceRef();
 #else
     static CGColorSpaceRef sRGBSpace = CGColorSpaceCreateWithName(kCGColorSpaceSRGB);
@@ -104,7 +104,7 @@ CGColorSpaceRef sRGBColorSpaceRef()
 CGColorSpaceRef linearRGBColorSpaceRef()
 {
     // FIXME: Windows should be able to use kCGColorSpaceGenericRGBLinear, this is tracked by http://webkit.org/b/31363.
-#if PLATFORM(WIN) || defined(BUILDING_ON_TIGER)
+#if PLATFORM(WIN)
     return deviceRGBColorSpaceRef();
 #else
     static CGColorSpaceRef linearRGBSpace = CGColorSpaceCreateWithName(kCGColorSpaceGenericRGBLinear);
@@ -1353,7 +1353,7 @@ InterpolationQuality GraphicsContext::imageInterpolationQuality() const
 void GraphicsContext::setAllowsFontSmoothing(bool allowsFontSmoothing)
 {
     UNUSED_PARAM(allowsFontSmoothing);
-#if !defined(BUILDING_ON_TIGER) && !defined(BUILDING_ON_LEOPARD)
+#if !defined(BUILDING_ON_LEOPARD)
     CGContextRef context = platformContext();
     CGContextSetAllowsFontSmoothing(context, allowsFontSmoothing);
 #endif
@@ -1457,7 +1457,6 @@ void GraphicsContext::setPlatformShouldSmoothFonts(bool enable)
     CGContextSetShouldSmoothFonts(platformContext(), enable);
 }
 
-#ifndef BUILDING_ON_TIGER // Tiger's setPlatformCompositeOperation() is defined in GraphicsContextMac.mm.
 void GraphicsContext::setPlatformCompositeOperation(CompositeOperator mode)
 {
     if (paintingDisabled())
@@ -1510,6 +1509,5 @@ void GraphicsContext::setPlatformCompositeOperation(CompositeOperator mode)
     }
     CGContextSetBlendMode(platformContext(), target);
 }
-#endif
 
 }

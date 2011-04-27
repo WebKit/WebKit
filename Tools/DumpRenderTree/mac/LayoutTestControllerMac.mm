@@ -965,7 +965,6 @@ void LayoutTestController::setWebViewEditable(bool editable)
     [view setEditable:editable];
 }
 
-#ifndef BUILDING_ON_TIGER
 static NSString *SynchronousLoaderRunLoopMode = @"DumpRenderTreeSynchronousLoaderRunLoopMode";
 
 #if defined(BUILDING_ON_LEOPARD) || defined(BUILDING_ON_SNOW_LEOPARD)
@@ -1040,12 +1039,11 @@ static NSString *SynchronousLoaderRunLoopMode = @"DumpRenderTreeSynchronousLoade
 }
 
 @end
-#endif
 
 void LayoutTestController::authenticateSession(JSStringRef url, JSStringRef username, JSStringRef password)
 {
     // See <rdar://problem/7880699>.
-#if !defined(BUILDING_ON_TIGER) && !defined(BUILDING_ON_LEOPARD)
+#ifndef BUILDING_ON_LEOPARD
     RetainPtr<CFStringRef> urlStringCF(AdoptCF, JSStringCopyCFString(kCFAllocatorDefault, url));
     RetainPtr<CFStringRef> usernameCF(AdoptCF, JSStringCopyCFString(kCFAllocatorDefault, username));
     RetainPtr<CFStringRef> passwordCF(AdoptCF, JSStringCopyCFString(kCFAllocatorDefault, password));

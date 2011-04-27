@@ -68,23 +68,14 @@ String openTemporaryFile(const String& prefix, PlatformFileHandle& platformFileH
 
 bool canExcludeFromBackup()
 {
-#ifdef BUILDING_ON_TIGER
-    return false;
-#else
     return true;
-#endif
 }
 
 bool excludeFromBackup(const String& path)
 {
-#ifdef BUILDING_ON_TIGER
-    UNUSED_PARAM(path);
-    return false;
-#else
     // It is critical to pass FALSE for excludeByPath because excluding by path requires root privileges.
     CSBackupSetItemExcluded(pathAsURL(path).get(), TRUE, FALSE); 
     return true;
-#endif
 }
 
 } // namespace WebCore

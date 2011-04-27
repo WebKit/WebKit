@@ -103,32 +103,16 @@ void InitWebCoreSystemInterface(void)
     INIT(QTClearMediaDownloadCacheForSite);
     INIT(QTClearMediaDownloadCache);
 
-#ifndef BUILDING_ON_TIGER
     INIT(GetGlyphsForCharacters);
-#else
-    INIT(ClearGlyphVector);
-    INIT(ConvertCharToGlyphs);
-    INIT(CopyFullFontName);
-    INIT(GetATSStyleGroup);
-    INIT(GetCGFontFromNSFont);
-    INIT(GetFontMetrics);
-    INIT(GetGlyphVectorFirstRecord);
-    INIT(GetGlyphVectorNumGlyphs);
-    INIT(GetGlyphVectorRecordSize);
-    INIT(GetNSFontATSUFontId);
-    INIT(InitializeGlyphVector);
-    INIT(ReleaseStyleGroup);
-    INIT(SupportsMultipartXMixedReplace);
-#endif
 
-#if defined(BUILDING_ON_TIGER) || defined(BUILDING_ON_LEOPARD) || defined(BUILDING_ON_SNOW_LEOPARD)
+#if defined(BUILDING_ON_LEOPARD) || defined(BUILDING_ON_SNOW_LEOPARD)
     INIT(GetHyphenationLocationBeforeIndex);
     INIT(GetNSEventMomentumPhase);
 #endif
 
     INIT(CreateCTLineWithUniCharProvider);
 
-#if !defined(BUILDING_ON_TIGER) && !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOW_LEOPARD)
+#if !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOW_LEOPARD)
     INIT(IOSurfaceContextCreate);
     INIT(IOSurfaceContextCreateImage);
     INIT(CreateCTTypesetterWithUniCharProviderAndOptions);

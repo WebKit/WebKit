@@ -63,33 +63,6 @@ static bool initFontData(SimpleFontData* fontData)
     if (!fontData->platformData().cgFont())
         return false;
 
-#ifdef BUILDING_ON_TIGER
-    ATSUStyle fontStyle;
-    if (ATSUCreateStyle(&fontStyle) != noErr)
-        return false;
-
-    ATSUFontID fontId = fontData->platformData().m_atsuFontID;
-    if (!fontId) {
-        ATSUDisposeStyle(fontStyle);
-        return false;
-    }
-
-    ATSUAttributeTag tag = kATSUFontTag;
-    ByteCount size = sizeof(ATSUFontID);
-    ATSUFontID *valueArray[1] = {&fontId};
-    OSStatus status = ATSUSetAttributes(fontStyle, 1, &tag, &size, (void* const*)valueArray);
-    if (status != noErr) {
-        ATSUDisposeStyle(fontStyle);
-        return false;
-    }
-
-    if (wkGetATSStyleGroup(fontStyle, &fontData->m_styleGroup) != noErr) {
-        ATSUDisposeStyle(fontStyle);
-        return false;
-    }
-
-    ATSUDisposeStyle(fontStyle);
-#endif
 
     return true;
 }
@@ -101,7 +74,7 @@ static NSString *webFallbackFontFamily(void)
 }
 
 #if !ERROR_DISABLED
-#if defined(__LP64__) || (!defined(BUILDING_ON_TIGER) && !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOW_LEOPARD))
+#if defined(__LP64__) || (!defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOW_LEOPARD))
 static NSString* pathFromFont(NSFont*)
 {
     // FMGetATSFontRefFromFont is not available. As pathFromFont is only used for debugging purposes,
@@ -111,27 +84,12 @@ static NSString* pathFromFont(NSFont*)
 #else
 static NSString* pathFromFont(NSFont *font)
 {
-#ifndef BUILDING_ON_TIGER
     ATSFontRef atsFont = FMGetATSFontRefFromFont(CTFontGetPlatformFont(toCTFontRef(font), 0));
-#else
-    ATSFontRef atsFont = FMGetATSFontRefFromFont(wkGetNSFontATSUFontId(font));
-#endif
     FSRef fileRef;
 
-#ifndef BUILDING_ON_TIGER
     OSStatus status = ATSFontGetFileReference(atsFont, &fileRef);
     if (status != noErr)
         return nil;
-#else
-    FSSpec oFile;
-    OSStatus status = ATSFontGetFileSpecification(atsFont, &oFile);
-    if (status != noErr)
-        return nil;
-
-    status = FSpMakeFSRef(&oFile, &fileRef);
-    if (status != noErr)
-        return nil;
-#endif
 
     UInt8 filePathBuffer[PATH_MAX];
     status = FSRefMakePath(&fileRef, filePathBuffer, PATH_MAX);
@@ -145,9 +103,6 @@ static NSString* pathFromFont(NSFont *font)
 
 void SimpleFontData::platformInit()
 {
-#ifdef BUILDING_ON_TIGER
-    m_styleGroup = 0;
-#endif
 #if USE(ATSUI)
     m_ATSUMirrors = false;
     m_checkedShapesArabic = false;
@@ -219,14 +174,10 @@ void SimpleFontData::platformInit()
     int iDescent;
     int iLineGap;
     unsigned unitsPerEm;
-#ifdef BUILDING_ON_TIGER
-    wkGetFontMetrics(m_platformData.cgFont(), &iAscent, &iDescent, &iLineGap, &unitsPerEm);
-#else
     iAscent = CGFontGetAscent(m_platformData.cgFont());
     iDescent = CGFontGetDescent(m_platformData.cgFont());
     iLineGap = CGFontGetLeading(m_platformData.cgFont());
     unitsPerEm = CGFontGetUnitsPerEm(m_platformData.cgFont());
-#endif
 
     float pointSize = m_platformData.m_size;
     float ascent = scaleEmToUnits(iAscent, unitsPerEm) * pointSize;
@@ -297,27 +248,7 @@ void SimpleFontData::platformInit()
 
 static CFDataRef copyFontTableForTag(FontPlatformData& platformData, FourCharCode tableName)
 {
-#ifdef BUILDING_ON_TIGER
-    ATSFontRef atsFont = FMGetATSFontRefFromFont(platformData.m_atsuFontID);
-
-    ByteCount tableSize;
-    if (ATSFontGetTable(atsFont, tableName, 0, 0, NULL, &tableSize) != noErr)
-        return 0;
-    
-    CFMutableDataRef data = CFDataCreateMutable(kCFAllocatorDefault, tableSize);
-    if (!data)
-        return 0;
-    
-    CFDataIncreaseLength(data, tableSize);
-    if (ATSFontGetTable(atsFont, tableName, 0, tableSize, CFDataGetMutableBytePtr(data), &tableSize) != noErr) {
-        CFRelease(data);
-        return 0;
-    }
-    
-    return data;
-#else
     return CGFontCopyTableForTag(platformData.cgFont(), tableName);
-#endif
 }
 
 void SimpleFontData::platformCharWidthInit()
@@ -358,10 +289,6 @@ void SimpleFontData::platformDestroy()
             fontCache()->releaseFontData(m_derivedFontData->emphasisMark.leakPtr());
     }
 
-#ifdef BUILDING_ON_TIGER
-    if (m_styleGroup)
-        wkReleaseStyleGroup(m_styleGroup);
-#endif
 #if USE(ATSUI)
     HashMap<unsigned, ATSUStyle>::iterator end = m_ATSUStyleMap.end();
     for (HashMap<unsigned, ATSUStyle>::iterator it = m_ATSUStyleMap.begin(); it != end; ++it)

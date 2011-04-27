@@ -31,7 +31,7 @@
 #import <PDFKit/PDFDocument.h>
 #import <objc/objc-runtime.h>
 
-#if defined(BUILDING_ON_TIGER) || defined(BUILDING_ON_LEOPARD)
+#ifdef BUILDING_ON_LEOPARD
 @interface PDFDocument (Internal)
 - (CGPDFDocumentRef)documentRef;
 @end

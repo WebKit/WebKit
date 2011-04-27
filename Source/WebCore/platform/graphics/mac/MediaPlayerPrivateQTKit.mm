@@ -35,9 +35,6 @@
 #include "DocumentLoader.h"
 #endif
 
-#ifdef BUILDING_ON_TIGER
-#import "AutodrainedPool.h"
-#endif
 
 #import "BlockExceptions.h"
 #import "DocumentLoader.h"
@@ -64,14 +61,6 @@
 #import "RenderStyle.h"
 #endif
 
-#ifdef BUILDING_ON_TIGER
-static IMP method_setImplementation(Method m, IMP imp)
-{
-    IMP result = m->method_imp;
-    m->method_imp = imp;
-    return result;
-}
-#endif
 
 SOFT_LINK_FRAMEWORK(QTKit)
 
@@ -110,10 +99,8 @@ SOFT_LINK_POINTER(QTKit, QTMovieURLAttribute, NSString *)
 SOFT_LINK_POINTER(QTKit, QTMovieVolumeDidChangeNotification, NSString *)
 SOFT_LINK_POINTER(QTKit, QTSecurityPolicyNoCrossSiteAttribute, NSString *)
 SOFT_LINK_POINTER(QTKit, QTVideoRendererWebKitOnlyNewImageAvailableNotification, NSString *)
-#ifndef BUILDING_ON_TIGER
 SOFT_LINK_POINTER(QTKit, QTMovieApertureModeClean, NSString *)
 SOFT_LINK_POINTER(QTKit, QTMovieApertureModeAttribute, NSString *)
-#endif
 
 #define QTMovie getQTMovieClass()
 #define QTMovieView getQTMovieViewClass()
@@ -148,10 +135,8 @@ SOFT_LINK_POINTER(QTKit, QTMovieApertureModeAttribute, NSString *)
 #define QTMovieVolumeDidChangeNotification getQTMovieVolumeDidChangeNotification()
 #define QTSecurityPolicyNoCrossSiteAttribute getQTSecurityPolicyNoCrossSiteAttribute()
 #define QTVideoRendererWebKitOnlyNewImageAvailableNotification getQTVideoRendererWebKitOnlyNewImageAvailableNotification()
-#ifndef BUILDING_ON_TIGER
 #define QTMovieApertureModeClean getQTMovieApertureModeClean()
 #define QTMovieApertureModeAttribute getQTMovieApertureModeAttribute()
-#endif
 
 // Older versions of the QTKit header don't have these constants.
 #if !defined QTKIT_VERSION_MAX_ALLOWED || QTKIT_VERSION_MAX_ALLOWED <= QTKIT_VERSION_7_0
@@ -196,9 +181,6 @@ using namespace std;
 
 namespace WebCore {
 
-#ifdef BUILDING_ON_TIGER
-static const long minimumQuickTimeVersion = 0x07300000; // 7.3
-#endif
 
 
 MediaPlayerPrivateInterface* MediaPlayerPrivateQTKit::create(MediaPlayer* player) 
@@ -259,9 +241,7 @@ NSMutableDictionary* MediaPlayerPrivateQTKit::commonMovieAttributes()
             [NSNumber numberWithBool:NO], QTMovieAskUnresolvedDataRefsAttribute,
             [NSNumber numberWithBool:NO], QTMovieLoopsAttribute,
             [NSNumber numberWithBool:!m_privateBrowsing], @"QTMovieAllowPersistentCacheAttribute",
-#ifndef BUILDING_ON_TIGER
             QTMovieApertureModeClean, QTMovieApertureModeAttribute,
-#endif
             nil];
 }
 
@@ -469,12 +449,7 @@ void MediaPlayerPrivateQTKit::createQTMovieView()
     setSize(m_player->size());
     NSView* parentView = m_player->frameView()->documentView();
     [parentView addSubview:m_qtMovieView.get()];
-#ifdef BUILDING_ON_TIGER
-    // setDelegate: isn't a public call in Tiger, so use performSelector to keep the compiler happy
-    [m_qtMovieView.get() performSelector:@selector(setDelegate:) withObject:m_objcObserver.get()];    
-#else
     [m_qtMovieView.get() setDelegate:m_objcObserver.get()];
-#endif
     [m_objcObserver.get() setView:m_qtMovieView.get()];
     [m_qtMovieView.get() setMovie:m_qtMovie.get()];
     [m_qtMovieView.get() setControllerVisible:NO];
@@ -495,12 +470,7 @@ void MediaPlayerPrivateQTKit::detachQTMovieView()
 {
     if (m_qtMovieView) {
         [m_objcObserver.get() setView:nil];
-#ifdef BUILDING_ON_TIGER
-        // setDelegate: isn't a public call in Tiger, so use performSelector to keep the compiler happy
-        [m_qtMovieView.get() performSelector:@selector(setDelegate:) withObject:nil];    
-#else
         [m_qtMovieView.get() setDelegate:nil];
-#endif
         [m_qtMovieView.get() removeFromSuperview];
         m_qtMovieView = nil;
     }
@@ -907,7 +877,7 @@ bool MediaPlayerPrivateQTKit::hasAudio() const
 
 bool MediaPlayerPrivateQTKit::supportsFullscreen() const
 {
-#if !defined(BUILDING_ON_TIGER) && !defined(BUILDING_ON_LEOPARD)
+#ifndef BUILDING_ON_LEOPARD
     return true;
 #else
     // See <rdar://problem/7389945>
@@ -933,7 +903,7 @@ void MediaPlayerPrivateQTKit::setClosedCaptionsVisible(bool closedCaptionsVisibl
     if (metaDataAvailable()) {
         wkQTMovieSetShowClosedCaptions(m_qtMovie.get(), closedCaptionsVisible);
 
-#if USE(ACCELERATED_COMPOSITING) && (!defined(BUILDING_ON_TIGER) && !defined(BUILDING_ON_LEOPARD))
+#if USE(ACCELERATED_COMPOSITING) && !defined(BUILDING_ON_LEOPARD)
     if (closedCaptionsVisible && m_qtVideoLayer) {
         // Captions will be rendered upside down unless we flag the movie as flipped (again). See <rdar://7408440>.
         [m_qtVideoLayer.get() setGeometryFlipped:YES];
@@ -1026,7 +996,7 @@ void MediaPlayerPrivateQTKit::cacheMovieScale()
     NSSize initialSize = NSZeroSize;
     NSSize naturalSize = [[m_qtMovie.get() attributeForKey:QTMovieNaturalSizeAttribute] sizeValue];
 
-#if !defined(BUILDING_ON_TIGER) && !defined(BUILDING_ON_LEOPARD)
+#ifndef BUILDING_ON_LEOPARD
     // QTMovieCurrentSizeAttribute is not allowed with instances of QTMovie that have been 
     // opened with QTMovieOpenForPlaybackAttribute, so ask for the display transform attribute instead.
     NSAffineTransform *displayTransform = [m_qtMovie.get() attributeForKey:@"QTMoviePreferredTransformAttribute"];
@@ -1325,9 +1295,6 @@ void MediaPlayerPrivateQTKit::paint(GraphicsContext* context, const IntRect& r)
     context->setImageInterpolationQuality(InterpolationLow);
     IntRect paintRect(IntPoint(0, 0), IntSize(r.width(), r.height()));
     
-#ifdef BUILDING_ON_TIGER
-    AutodrainedPool pool;
-#endif
     NSGraphicsContext* newContext = [NSGraphicsContext graphicsContextWithGraphicsPort:context->platformContext() flipped:NO];
 
     // draw the current video frame
@@ -1471,23 +1438,8 @@ MediaPlayer::SupportsType MediaPlayerPrivateQTKit::supportsType(const String& ty
 
 bool MediaPlayerPrivateQTKit::isAvailable()
 {
-#ifdef BUILDING_ON_TIGER
-    SInt32 version;
-    OSErr result;
-    result = Gestalt(gestaltQuickTime, &version);
-    if (result != noErr) {
-        LOG_ERROR("No QuickTime available. Disabling <video> and <audio> support.");
-        return false;
-    }
-    if (version < minimumQuickTimeVersion) {
-        LOG_ERROR("QuickTime version %x detected, at least %x required. Disabling <video> and <audio> support.", version, minimumQuickTimeVersion);
-        return false;
-    }
-    return true;
-#else
     // On 10.5 and higher, QuickTime will always be new enough for <video> and <audio> support, so we just check that the framework can be loaded.
     return QTKitLibrary();
-#endif
 }
 
 void MediaPlayerPrivateQTKit::getSitesInMediaCache(Vector<String>& sites) 

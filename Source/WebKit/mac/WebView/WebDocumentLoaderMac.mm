@@ -42,24 +42,9 @@ WebDocumentLoaderMac::WebDocumentLoaderMac(const ResourceRequest& request, const
 
 static inline bool needsDataLoadWorkaround(WebView *webView)
 {
-#ifdef BUILDING_ON_TIGER
-    // Tiger has to be a little less efficient.
-    id frameLoadDelegate = [webView frameLoadDelegate];
-    if (!frameLoadDelegate)
-        return false;
-
-    NSString *bundleIdentifier = [[NSBundle bundleForClass:[frameLoadDelegate class]] bundleIdentifier];
-
-    if ([bundleIdentifier isEqualToString:@"com.apple.AppKit"])
-        return true;
-    if ([bundleIdentifier isEqualToString:@"com.adobe.Installers.Setup"])
-        return true;
-    return false;
-#else
     static bool needsWorkaround = !WebKitLinkedOnOrAfter(WEBKIT_FIRST_VERSION_WITHOUT_ADOBE_INSTALLER_QUIRK) 
                                   && [[[NSBundle mainBundle] bundleIdentifier] isEqualToString:@"com.adobe.Installers.Setup"];
     return needsWorkaround;
-#endif
 }
 
 void WebDocumentLoaderMac::setDataSource(WebDataSource *dataSource, WebView *webView)

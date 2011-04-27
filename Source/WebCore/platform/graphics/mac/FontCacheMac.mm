@@ -38,13 +38,10 @@
 #import <AppKit/AppKit.h>
 #import <wtf/StdLibExtras.h>
 
-#ifdef BUILDING_ON_TIGER
-typedef int NSInteger;
-#endif
 
 namespace WebCore {
 
-#if !defined(BUILDING_ON_TIGER) && !defined(BUILDING_ON_LEOPARD)
+#if !defined(BUILDING_ON_LEOPARD)
 static void fontCacheRegisteredFontsChangedNotificationCallback(CFNotificationCenterRef, void* observer, CFStringRef name, const void *, CFDictionaryRef)
 {
     ASSERT_UNUSED(observer, observer == fontCache());
@@ -61,7 +58,7 @@ static void fontCacheATSNotificationCallback(ATSFontNotificationInfoRef, void*)
 void FontCache::platformInit()
 {
     wkSetUpFontCache();
-#if !defined(BUILDING_ON_TIGER) && !defined(BUILDING_ON_LEOPARD)
+#if !defined(BUILDING_ON_LEOPARD)
     CFNotificationCenterAddObserver(CFNotificationCenterGetLocalCenter(), this, fontCacheRegisteredFontsChangedNotificationCallback, kCTFontManagerRegisteredFontsChangedNotification, 0, CFNotificationSuspensionBehaviorDeliverImmediately);
 #else
     // kCTFontManagerRegisteredFontsChangedNotification does not exist on Leopard and earlier.

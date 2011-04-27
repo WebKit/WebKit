@@ -35,9 +35,7 @@ namespace WebCore {
 {
     id <WebVideoFullscreenHUDWindowControllerDelegate> _delegate;
     NSTimer *_timelineUpdateTimer;
-#if !defined(BUILDING_ON_TIGER)
     NSTrackingArea *_area;
-#endif
     BOOL _mouseIsInHUD;
     BOOL _isEndingFullscreen;
     BOOL _isScrubbing;

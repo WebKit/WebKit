@@ -29,7 +29,7 @@
 #import "WebResourcePrivate.h"
 #import <wtf/PassRefPtr.h>
 
-#if defined(BUILDING_ON_TIGER) || defined(BUILDING_ON_LEOPARD)
+#ifdef BUILDING_ON_LEOPARD
 #define MAIL_THREAD_WORKAROUND 1
 #endif
 
