@@ -35,7 +35,7 @@
 #include "WebContext.h"
 #include "WebContextMenuProxy.h"
 #include "WebEventFactory.h"
-#include "WebViewWidget.h"
+#include "WebKitWebViewBase.h"
 #include "WebPageProxy.h"
 #include <wtf/text/WTFString.h>
 
@@ -243,13 +243,13 @@ WebView::WebView(WebContext* context, WebPageGroup* pageGroup)
 {
     m_page = context->createWebPage(this, pageGroup);
 
-    m_viewWidget = static_cast<GtkWidget*>(g_object_new(WEB_VIEW_TYPE_WIDGET, NULL));
+    m_viewWidget = static_cast<GtkWidget*>(g_object_new(WEBKIT_TYPE_WEB_VIEW_BASE, NULL));
     ASSERT(m_viewWidget);
 
     m_page->initializeWebPage();
 
-    WebViewWidget* webViewWidget = WEB_VIEW_WIDGET(m_viewWidget);
-    webViewWidgetSetWebViewInstance(webViewWidget, this);
+    WebKitWebViewBase* webViewWidget = WEBKIT_WEB_VIEW_BASE(m_viewWidget);
+    webkitWebViewBaseSetWebViewInstance(webViewWidget, this);
 
     g_signal_connect(m_nativeWidget.get(), "backspace", G_CALLBACK(backspaceCallback), this);
     g_signal_connect(m_nativeWidget.get(), "cut-clipboard", G_CALLBACK(cutClipboardCallback), this);

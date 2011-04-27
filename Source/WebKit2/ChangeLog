@@ -1,3 +1,41 @@
+2011-04-27  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Reviewed by Martin Robinson.
+
+        [GTK] Move WebViewWidget to UIProcess/API/gtk
+        https://bugs.webkit.org/show_bug.cgi?id=59594
+
+        API files should be under the API directory. This view widget will
+        be used by both C and gtk high level API, so it has been renamed
+        to WebKitWebViewBase.
+
+        * GNUmakefile.am:
+        * UIProcess/API/gtk/WebKitWebViewBase.cpp: Renamed from Source/WebKit2/UIProcess/gtk/WebViewWidget.cpp.
+        (webkitWebViewBaseRealize):
+        (webkitWebViewBaseContainerAdd):
+        (webkitWebViewBaseDispose):
+        (webkitWebViewBaseInit):
+        (webViewExpose):
+        (webViewDraw):
+        (webViewSizeAllocate):
+        (webViewFocusInEvent):
+        (webViewFocusOutEvent):
+        (webViewKeyPressEvent):
+        (webViewKeyReleaseEvent):
+        (getEventTime):
+        (webViewButtonPressEvent):
+        (webViewButtonReleaseEvent):
+        (webViewScrollEvent):
+        (webViewMotionNotifyEvent):
+        (webkitWebViewBaseClassInit):
+        (webkitWebViewBaseGetType):
+        (webkitWebViewBaseGetWebViewInstance):
+        (webkitWebViewBaseSetWebViewInstance):
+        (webkitWebViewBaseGetIMContext):
+        * UIProcess/API/gtk/WebKitWebViewBase.h: Renamed from Source/WebKit2/UIProcess/gtk/WebViewWidget.h.
+        * UIProcess/gtk/WebView.cpp:
+        (WebKit::WebView::WebView):
+
 2011-04-26  Chang Shu  <cshu@webkit.org>
 
         Reviewed by Laszlo Gombos.

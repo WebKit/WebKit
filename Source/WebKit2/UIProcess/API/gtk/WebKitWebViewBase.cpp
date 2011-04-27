@@ -26,7 +26,7 @@
  */
 
 #include "config.h"
-#include "WebViewWidget.h"
+#include "WebKitWebViewBase.h"
 
 #include "GOwnPtrGtk.h"
 #include "GtkVersioning.h"
@@ -36,9 +36,9 @@
 using namespace WebKit;
 using namespace WebCore;
 
-static gpointer webViewWidgetParentClass = 0;
+static gpointer webkitWebViewBaseParentClass = 0;
 
-struct _WebViewWidgetPrivate {
+struct _WebKitWebViewBasePrivate {
     WebView* webViewInstance;
     GtkIMContext* imContext;
     gint currentClickCount;
@@ -47,7 +47,7 @@ struct _WebViewWidgetPrivate {
     guint32 previousClickTime;
 };
 
-static void webViewWidgetRealize(GtkWidget* widget)
+static void webkitWebViewBaseRealize(GtkWidget* widget)
 {
     gtk_widget_set_realized(widget, TRUE);
 
@@ -96,35 +96,35 @@ static void webViewWidgetRealize(GtkWidget* widget)
     gtk_style_context_set_background(gtk_widget_get_style_context(widget), window);
 #endif
 
-    WebViewWidget* webView = WEB_VIEW_WIDGET(widget);
-    WebViewWidgetPrivate* priv = webView->priv;
+    WebKitWebViewBase* webView = WEBKIT_WEB_VIEW_BASE(widget);
+    WebKitWebViewBasePrivate* priv = webView->priv;
     gtk_im_context_set_client_window(priv->imContext, window);
 }
 
-static void webViewWidgetContainerAdd(GtkContainer* container, GtkWidget* widget)
+static void webkitWebViewBaseContainerAdd(GtkContainer* container, GtkWidget* widget)
 {
     gtk_widget_set_parent(widget, GTK_WIDGET(container));
 }
 
-static void webViewWidgetDispose(GObject* gobject)
+static void webkitWebViewBaseDispose(GObject* gobject)
 {
-    WebViewWidget* webViewWidget = WEB_VIEW_WIDGET(gobject);
-    WebViewWidgetPrivate* priv = webViewWidget->priv;
+    WebKitWebViewBase* webkitWebViewBase = WEBKIT_WEB_VIEW_BASE(gobject);
+    WebKitWebViewBasePrivate* priv = webkitWebViewBase->priv;
 
     if (priv->imContext) {
         g_object_unref(priv->imContext);
         priv->imContext = 0;
     }
 
-    G_OBJECT_CLASS(webViewWidgetParentClass)->dispose(gobject);
+    G_OBJECT_CLASS(webkitWebViewBaseParentClass)->dispose(gobject);
 }
 
-static void webViewWidgetInit(WebViewWidget* webViewWidget)
+static void webkitWebViewBaseInit(WebKitWebViewBase* webkitWebViewBase)
 {
-    WebViewWidgetPrivate* priv = G_TYPE_INSTANCE_GET_PRIVATE(webViewWidget, WEB_VIEW_TYPE_WIDGET, WebViewWidgetPrivate);
-    webViewWidget->priv = priv;
+    WebKitWebViewBasePrivate* priv = G_TYPE_INSTANCE_GET_PRIVATE(webkitWebViewBase, WEBKIT_TYPE_WEB_VIEW_BASE, WebKitWebViewBasePrivate);
+    webkitWebViewBase->priv = priv;
 
-    gtk_widget_set_can_focus(GTK_WIDGET(webViewWidget), TRUE);
+    gtk_widget_set_can_focus(GTK_WIDGET(webkitWebViewBase), TRUE);
     priv->imContext = gtk_im_multicontext_new();
 
     priv->currentClickCount = 0;
@@ -135,7 +135,7 @@ static void webViewWidgetInit(WebViewWidget* webViewWidget)
 #ifdef GTK_API_VERSION_2
 static gboolean webViewExpose(GtkWidget* widget, GdkEventExpose* event)
 {
-    WebView* webView = webViewWidgetGetWebViewInstance(WEB_VIEW_WIDGET(widget));
+    WebView* webView = webkitWebViewBaseGetWebViewInstance(WEBKIT_WEB_VIEW_BASE(widget));
     GdkRectangle clipRect;
     gdk_region_get_clipbox(event->region, &clipRect);
 
@@ -149,7 +149,7 @@ static gboolean webViewExpose(GtkWidget* widget, GdkEventExpose* event)
 #else
 static gboolean webViewDraw(GtkWidget* widget, cairo_t* cr)
 {
-    WebView* webView = webViewWidgetGetWebViewInstance(WEB_VIEW_WIDGET(widget));
+    WebView* webView = webkitWebViewBaseGetWebViewInstance(WEBKIT_WEB_VIEW_BASE(widget));
     GdkRectangle clipRect;
 
     if (!gdk_cairo_get_clip_rectangle(cr, &clipRect))
@@ -163,57 +163,57 @@ static gboolean webViewDraw(GtkWidget* widget, cairo_t* cr)
 
 static void webViewSizeAllocate(GtkWidget* widget, GtkAllocation* allocation)
 {
-    WebView* webView = webViewWidgetGetWebViewInstance(WEB_VIEW_WIDGET(widget));
-    GTK_WIDGET_CLASS(webViewWidgetParentClass)->size_allocate(widget, allocation);
+    WebView* webView = webkitWebViewBaseGetWebViewInstance(WEBKIT_WEB_VIEW_BASE(widget));
+    GTK_WIDGET_CLASS(webkitWebViewBaseParentClass)->size_allocate(widget, allocation);
     webView->setSize(widget, IntSize(allocation->width, allocation->height));
 }
 
 static gboolean webViewFocusInEvent(GtkWidget* widget, GdkEventFocus* event)
 {
-    WebViewWidget* webViewWidget = WEB_VIEW_WIDGET(widget);
-    WebView* webView = webViewWidgetGetWebViewInstance(webViewWidget);
+    WebKitWebViewBase* webkitWebViewBase = WEBKIT_WEB_VIEW_BASE(widget);
+    WebView* webView = webkitWebViewBaseGetWebViewInstance(webkitWebViewBase);
 
     GtkWidget* toplevel = gtk_widget_get_toplevel(widget);
     if (gtk_widget_is_toplevel(toplevel) && gtk_window_has_toplevel_focus(GTK_WINDOW(toplevel))) {
-        gtk_im_context_focus_in(webViewWidgetGetIMContext(webViewWidget));
+        gtk_im_context_focus_in(webkitWebViewBaseGetIMContext(webkitWebViewBase));
         webView->handleFocusInEvent(widget);
     }
 
-    return GTK_WIDGET_CLASS(webViewWidgetParentClass)->focus_in_event(widget, event);
+    return GTK_WIDGET_CLASS(webkitWebViewBaseParentClass)->focus_in_event(widget, event);
 }
 
 static gboolean webViewFocusOutEvent(GtkWidget* widget, GdkEventFocus* event)
 {
-    WebViewWidget* webViewWidget = WEB_VIEW_WIDGET(widget);
-    WebView* webView = webViewWidgetGetWebViewInstance(webViewWidget);
+    WebKitWebViewBase* webkitWebViewBase = WEBKIT_WEB_VIEW_BASE(widget);
+    WebView* webView = webkitWebViewBaseGetWebViewInstance(webkitWebViewBase);
 
     webView->handleFocusOutEvent(widget);
-    GtkIMContext* imContext = webViewWidgetGetIMContext(webViewWidget);
+    GtkIMContext* imContext = webkitWebViewBaseGetIMContext(webkitWebViewBase);
     if (imContext)
         gtk_im_context_focus_out(imContext);
 
-    return GTK_WIDGET_CLASS(webViewWidgetParentClass)->focus_out_event(widget, event);
+    return GTK_WIDGET_CLASS(webkitWebViewBaseParentClass)->focus_out_event(widget, event);
 }
 
 static gboolean webViewKeyPressEvent(GtkWidget* widget, GdkEventKey* event)
 {
-    WebView* webView = webViewWidgetGetWebViewInstance(WEB_VIEW_WIDGET(widget));
+    WebView* webView = webkitWebViewBaseGetWebViewInstance(WEBKIT_WEB_VIEW_BASE(widget));
     webView->handleKeyboardEvent(event);
 
-    return GTK_WIDGET_CLASS(webViewWidgetParentClass)->key_press_event(widget, event);
+    return GTK_WIDGET_CLASS(webkitWebViewBaseParentClass)->key_press_event(widget, event);
 }
 
 static gboolean webViewKeyReleaseEvent(GtkWidget* widget, GdkEventKey* event)
 {
-    WebViewWidget* webViewWidget = WEB_VIEW_WIDGET(widget);
-    WebView* webView = webViewWidgetGetWebViewInstance(webViewWidget);
+    WebKitWebViewBase* webkitWebViewBase = WEBKIT_WEB_VIEW_BASE(widget);
+    WebView* webView = webkitWebViewBaseGetWebViewInstance(webkitWebViewBase);
 
-    if (gtk_im_context_filter_keypress(webViewWidgetGetIMContext(webViewWidget), event))
+    if (gtk_im_context_filter_keypress(webkitWebViewBaseGetIMContext(webkitWebViewBase), event))
         return TRUE;
 
     webView->handleKeyboardEvent(event);
 
-    return GTK_WIDGET_CLASS(webViewWidgetParentClass)->key_release_event(widget, event);
+    return GTK_WIDGET_CLASS(webkitWebViewBaseParentClass)->key_release_event(widget, event);
 }
 
 // Copied from webkitwebview.cpp
@@ -264,8 +264,8 @@ static gboolean webViewButtonPressEvent(GtkWidget* widget, GdkEventButton* butto
     // GDK logic for counting clicks.
     GdkEvent* event(reinterpret_cast<GdkEvent*>(buttonEvent));
     guint32 eventTime = getEventTime(event);
-    WebViewWidget* webViewWidget = WEB_VIEW_WIDGET(widget);
-    WebViewWidgetPrivate* priv = webViewWidget->priv;
+    WebKitWebViewBase* webkitWebViewBase = WEBKIT_WEB_VIEW_BASE(widget);
+    WebKitWebViewBasePrivate* priv = webkitWebViewBase->priv;
     if ((event->type == GDK_2BUTTON_PRESS || event->type == GDK_3BUTTON_PRESS)
         || ((abs(buttonEvent->x - priv->previousClickPoint.x()) < doubleClickDistance)
             && (abs(buttonEvent->y - priv->previousClickPoint.y()) < doubleClickDistance)
@@ -275,7 +275,7 @@ static gboolean webViewButtonPressEvent(GtkWidget* widget, GdkEventButton* butto
     else
         priv->currentClickCount = 1;
 
-    WebView* webView = webViewWidgetGetWebViewInstance(webViewWidget);
+    WebView* webView = webkitWebViewBaseGetWebViewInstance(webkitWebViewBase);
     webView->handleMouseEvent(event, priv->currentClickCount);
 
     gdouble x, y;
@@ -289,7 +289,7 @@ static gboolean webViewButtonPressEvent(GtkWidget* widget, GdkEventButton* butto
 
 static gboolean webViewButtonReleaseEvent(GtkWidget* widget, GdkEventButton* event)
 {
-    WebView* webView = webViewWidgetGetWebViewInstance(WEB_VIEW_WIDGET(widget));
+    WebView* webView = webkitWebViewBaseGetWebViewInstance(WEBKIT_WEB_VIEW_BASE(widget));
     gtk_widget_grab_focus(widget);
     webView->handleMouseEvent(reinterpret_cast<GdkEvent*>(event), 0 /* currentClickCount */);
 
@@ -298,7 +298,7 @@ static gboolean webViewButtonReleaseEvent(GtkWidget* widget, GdkEventButton* eve
 
 static gboolean webViewScrollEvent(GtkWidget* widget, GdkEventScroll* event)
 {
-    WebView* webView = webViewWidgetGetWebViewInstance(WEB_VIEW_WIDGET(widget));
+    WebView* webView = webkitWebViewBaseGetWebViewInstance(WEBKIT_WEB_VIEW_BASE(widget));
     webView->handleWheelEvent(event);
 
     return FALSE;
@@ -306,18 +306,18 @@ static gboolean webViewScrollEvent(GtkWidget* widget, GdkEventScroll* event)
 
 static gboolean webViewMotionNotifyEvent(GtkWidget* widget, GdkEventMotion* event)
 {
-    WebView* webView = webViewWidgetGetWebViewInstance(WEB_VIEW_WIDGET(widget));
+    WebView* webView = webkitWebViewBaseGetWebViewInstance(WEBKIT_WEB_VIEW_BASE(widget));
     webView->handleMouseEvent(reinterpret_cast<GdkEvent*>(event), 0 /* currentClickCount */);
 
     return FALSE;
 }
 
-static void webViewWidgetClassInit(WebViewWidgetClass* webViewWidgetClass)
+static void webkitWebViewBaseClassInit(WebKitWebViewBaseClass* webkitWebViewBaseClass)
 {
-    webViewWidgetParentClass = g_type_class_peek_parent(webViewWidgetClass);
+    webkitWebViewBaseParentClass = g_type_class_peek_parent(webkitWebViewBaseClass);
 
-    GtkWidgetClass* widgetClass = GTK_WIDGET_CLASS(webViewWidgetClass);
-    widgetClass->realize = webViewWidgetRealize;
+    GtkWidgetClass* widgetClass = GTK_WIDGET_CLASS(webkitWebViewBaseClass);
+    widgetClass->realize = webkitWebViewBaseRealize;
 #ifdef GTK_API_VERSION_2
     widgetClass->expose_event = webViewExpose;
 #else
@@ -333,16 +333,16 @@ static void webViewWidgetClassInit(WebViewWidgetClass* webViewWidgetClass)
     widgetClass->scroll_event = webViewScrollEvent;
     widgetClass->motion_notify_event = webViewMotionNotifyEvent;
 
-    GObjectClass* gobjectClass = G_OBJECT_CLASS(webViewWidgetClass);
-    gobjectClass->dispose = webViewWidgetDispose;
+    GObjectClass* gobjectClass = G_OBJECT_CLASS(webkitWebViewBaseClass);
+    gobjectClass->dispose = webkitWebViewBaseDispose;
 
-    GtkContainerClass* containerClass = GTK_CONTAINER_CLASS(webViewWidgetClass);
-    containerClass->add = webViewWidgetContainerAdd;
+    GtkContainerClass* containerClass = GTK_CONTAINER_CLASS(webkitWebViewBaseClass);
+    containerClass->add = webkitWebViewBaseContainerAdd;
 
-    g_type_class_add_private(webViewWidgetClass, sizeof(WebViewWidgetPrivate));
+    g_type_class_add_private(webkitWebViewBaseClass, sizeof(WebKitWebViewBasePrivate));
 }
 
-GType webViewWidgetGetType()
+GType webkitWebViewBaseGetType()
 {
     static volatile gsize gDefineTypeIdVolatile = 0;
 
@@ -350,28 +350,28 @@ GType webViewWidgetGetType()
         return gDefineTypeIdVolatile;
 
     GType gDefineTypeId = g_type_register_static_simple(GTK_TYPE_CONTAINER,
-                                                        g_intern_static_string("WebViewWidget"),
-                                                        sizeof(WebViewWidgetClass),
-                                                        reinterpret_cast<GClassInitFunc>(webViewWidgetClassInit),
-                                                        sizeof(WebViewWidget),
-                                                        reinterpret_cast<GInstanceInitFunc>(webViewWidgetInit),
+                                                        g_intern_static_string("WebKitWebViewBase"),
+                                                        sizeof(WebKitWebViewBaseClass),
+                                                        reinterpret_cast<GClassInitFunc>(webkitWebViewBaseClassInit),
+                                                        sizeof(WebKitWebViewBase),
+                                                        reinterpret_cast<GInstanceInitFunc>(webkitWebViewBaseInit),
                                                         static_cast<GTypeFlags>(0));
     g_once_init_leave(&gDefineTypeIdVolatile, gDefineTypeId);
 
     return gDefineTypeIdVolatile;
 }
 
-WebView* webViewWidgetGetWebViewInstance(WebViewWidget* webViewWidget)
+WebView* webkitWebViewBaseGetWebViewInstance(WebKitWebViewBase* webkitWebViewBase)
 {
-    return webViewWidget->priv->webViewInstance;
+    return webkitWebViewBase->priv->webViewInstance;
 }
 
-void webViewWidgetSetWebViewInstance(WebViewWidget* webViewWidget, WebView* webViewInstance)
+void webkitWebViewBaseSetWebViewInstance(WebKitWebViewBase* webkitWebViewBase, WebView* webViewInstance)
 {
-    webViewWidget->priv->webViewInstance = webViewInstance;
+    webkitWebViewBase->priv->webViewInstance = webViewInstance;
 }
 
-GtkIMContext* webViewWidgetGetIMContext(WebViewWidget* webViewWidget)
+GtkIMContext* webkitWebViewBaseGetIMContext(WebKitWebViewBase* webkitWebViewBase)
 {
-    return webViewWidget->priv->imContext;
+    return webkitWebViewBase->priv->imContext;
 }

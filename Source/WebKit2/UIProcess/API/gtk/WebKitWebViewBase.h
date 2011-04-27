@@ -25,8 +25,8 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebViewWidget_h
-#define WebViewWidget_h
+#ifndef WebKitWebViewBase_h
+#define WebKitWebViewBase_h
 
 #include "WebView.h"
 
@@ -36,35 +36,35 @@ using namespace WebKit;
 
 G_BEGIN_DECLS
 
-#define WEB_VIEW_TYPE_WIDGET              (webViewWidgetGetType())
-#define WEB_VIEW_WIDGET(object)           (G_TYPE_CHECK_INSTANCE_CAST((object), WEB_VIEW_TYPE_WIDGET, WebViewWidget))
-#define WEB_VIEW_WIDGET_CLASS(klass)      (G_TYPE_CHECK_CLASS_CAST((klass), WEB_VIEW_TYPE_WIDGET, WebViewWidgetClass))
-#define WEB_VIEW_IS_WIDGET(object)        (G_TYPE_CHECK_INSTANCE_TYPE((object), WEB_VIEW_TYPE_WIDGET))
-#define WEB_VIEW_IS_CLASS(klass)          (G_TYPE_CHECK_CLASS_TYPE((klass), WEB_VIEW_TYPE_WIDGET))
-#define WEB_VIEW_WIDGET_GET_CLASS(object) (G_TYPE_INSTANCE_GET_CLASS((object), WEB_VIEW_TYPE_WIDGET, WebViewWidgetClass))
+#define WEBKIT_TYPE_WEB_VIEW_BASE              (webkitWebViewBaseGetType())
+#define WEBKIT_WEB_VIEW_BASE(object)           (G_TYPE_CHECK_INSTANCE_CAST((object), WEBKIT_TYPE_WEB_VIEW_BASE, WebKitWebViewBase))
+#define WEBKIT_WEB_VIEW_BASE_CLASS(klass)      (G_TYPE_CHECK_CLASS_CAST((klass), WEBKIT_TYPE_WEB_VIEW_BASE, WebKitWebViewBaseClass))
+#define WEBKIT_IS_WEB_VIEW_BASE(object)        (G_TYPE_CHECK_INSTANCE_TYPE((object), WEBKIT_TYPE_WEB_VIEW_BASE))
+#define WEBKIT_IS_WEB_VIEW_BASE_CLASS(klass)   (G_TYPE_CHECK_CLASS_TYPE((klass), WEBKIT_TYPE_WEB_VIEW_BASE))
+#define WEBKIT_WEB_VIEW_BASE_GET_CLASS(object) (G_TYPE_INSTANCE_GET_CLASS((object), WEBKIT_TYPE_WEB_VIEW_BASE, WebKitWebViewBaseClass))
 
-typedef struct _WebViewWidget WebViewWidget;
-typedef struct _WebViewWidgetClass WebViewWidgetClass;
-typedef struct _WebViewWidgetPrivate WebViewWidgetPrivate;
+typedef struct _WebKitWebViewBase WebKitWebViewBase;
+typedef struct _WebKitWebViewBaseClass WebKitWebViewBaseClass;
+typedef struct _WebKitWebViewBasePrivate WebKitWebViewBasePrivate;
 
-struct _WebViewWidget {
+struct _WebKitWebViewBase {
     GtkContainer parentInstance;
     /*< private >*/
-    WebViewWidgetPrivate* priv;
+    WebKitWebViewBasePrivate* priv;
 };
 
-struct _WebViewWidgetClass {
+struct _WebKitWebViewBaseClass {
     GtkContainerClass parentClass;
 };
 
-GType webViewWidgetGetType();
+GType webkitWebViewBaseGetType();
 
-WebView* webViewWidgetGetWebViewInstance(WebViewWidget*);
+WebView* webkitWebViewBaseGetWebViewInstance(WebKitWebViewBase*);
 
-void webViewWidgetSetWebViewInstance(WebViewWidget*, WebView*);
+void webkitWebViewBaseSetWebViewInstance(WebKitWebViewBase*, WebView*);
 
-GtkIMContext* webViewWidgetGetIMContext(WebViewWidget*);
+GtkIMContext* webkitWebViewBaseGetIMContext(WebKitWebViewBase*);
 
 G_END_DECLS
 
-#endif // WebViewWidget_h
+#endif // WebKitWebViewBase_h
