@@ -116,14 +116,22 @@ public:
     CSSSelector::PseudoType pseudoType() const { return m_selector->pseudoType(); }
     bool isUnknownPseudoElement() const { return m_selector->isUnknownPseudoElement(); }
     bool isSimple() const { return !m_tagHistory && m_selector->isSimple(); }
+    bool hasShadowDescendant() const;
 
     CSSParserSelector* tagHistory() const { return m_tagHistory.get(); }
     void setTagHistory(PassOwnPtr<CSSParserSelector> selector) { m_tagHistory = selector; }
+    void insertTagHistory(CSSSelector::Relation before, PassOwnPtr<CSSParserSelector>, CSSSelector::Relation after);
+    void appendTagHistory(CSSSelector::Relation, PassOwnPtr<CSSParserSelector>);
 
 private:
     OwnPtr<CSSSelector> m_selector;
     OwnPtr<CSSParserSelector> m_tagHistory;
 };
+
+inline bool CSSParserSelector::hasShadowDescendant() const
+{
+    return m_selector->relation() == CSSSelector::ShadowDescendant;
+}
 
 }
 

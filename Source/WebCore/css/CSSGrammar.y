@@ -979,24 +979,8 @@ specifier_list:
     | specifier_list specifier {
         if (!$2)
             $$ = 0;
-        else if ($1) {
-            CSSParser* p = static_cast<CSSParser*>(parser);
-            CSSParserSelector* end;
-            CSSParserSelector* history;
-            // Ensure that unknown pseudo element always stays at the top of selector chain.
-            if ($2->isUnknownPseudoElement()) {
-                end = $2;
-                history = $1;
-            } else {
-                end = $1;
-                history = $2;
-            }
-            $$ = end;
-            while(end->tagHistory())
-                end = end->tagHistory();
-            end->setRelation(CSSSelector::SubSelector);
-            end->setTagHistory(p->sinkFloatingSelector(history));
-        }
+        else if ($1)
+            $$ = static_cast<CSSParser*>(parser)->updateSpecifiers($1, $2);
     }
     | specifier_list error {
         $$ = 0;

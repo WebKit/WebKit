@@ -1,3 +1,38 @@
+2011-04-20  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        Reviewed by Antti Koivisto.
+
+        Teach sub-selector chains about shadow descendants
+        https://bugs.webkit.org/show_bug.cgi?id=58342
+
+        The primary change is to the logic of parsing specifiers:
+        1) The shadow descendant selectors (those specifiers that are unknown
+        pseudo element selectors) are always kept at the top of the chain.
+        2) The sub-selectors after shadow descendant selectors are stashed right
+        behind the sub-selector, but not at the end of the chain.
+        3) Other sub-selectors are appended at the end of the chain.
+
+        * css/CSSGrammar.y: Changed specifier_list collection to use new
+            CSSParser::updateSpecifier helper.
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::updateSpecifiersWithElementName): Added logic to
+            look for the last ShadowDescendant relation in the chain of selectors,
+            because the next selector after it is the one that should get the
+            element name.
+        (WebCore::CSSParser::updateSpecifiers): Moved and modified the logic from
+            CSSGrammar.y. The new logic adjusts the selector chain to allow
+            shadow descendant selectors have sub-selectors (and have multiple shadow
+            descendants in the chain).
+        * css/CSSParser.h: Added decl.
+        * css/CSSParserValues.cpp:
+        (WebCore::CSSParserSelector::insertTagHistory): Added.
+        (WebCore::CSSParserSelector::appendTagHistory): Aded.
+        * css/CSSParserValues.h: Added decls.
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::SelectorChecker::checkOneSelector): Added
+            shadow descendant selector match check, since now there could be many
+            of them in the selector chain.
+
 2011-04-20  Adrienne Walker  <enne@google.com>
 
         Reviewed by Kenneth Russell.

@@ -1,5 +1,6 @@
 Tests various selector combinations, containing unknown pseudo element selectors.
 
+Basic selector tests:
 ::-webkit-slider-thumb should match: PASS
 ::-webkit-slider-thumb, where HTML is not default namespace should not match: PASS
 *|::-webkit-slider-thumb, where HTML is not default namespace should match: PASS
@@ -24,3 +25,27 @@ html|input.bar::-webkit-slider-thumb, where HTML is not default namespace should
 input[type=range]::-webkit-slider-thumb should match: PASS
 input#foo[type=range]::-webkit-slider-thumb should match: PASS
 input.bar[type=range]::-webkit-slider-thumb should match: PASS
+
+Shouldn't ignore selector after the unknown pseudo element:
+::-webkit-slider-thumb:disabled should not match: PASS
+input::-webkit-slider-thumb:disabled should not match: PASS
+#foo::-webkit-slider-thumb:disabled should not match: PASS
+input#foo::-webkit-slider-thumb:disabled should not match: PASS
+input.bar::-webkit-slider-thumb:disabled should not match: PASS
+input[type=range]::-webkit-slider-thumb:disabled should not match: PASS
+
+Should not match disabled input, because the disabled state is on the input, not the thumb:
+::-webkit-slider-thumb:disabled should not match: PASS
+input::-webkit-slider-thumb:disabled should not match: PASS
+#foo::-webkit-slider-thumb:disabled should not match: PASS
+input#foo::-webkit-slider-thumb:disabled should not match: PASS
+input.bar::-webkit-slider-thumb:disabled should not match: PASS
+input[type=range]::-webkit-slider-thumb:disabled should not match: PASS
+
+Should match :hover when the mouse is over the slider thumb:
+::-webkit-slider-thumb:hover should match: PASS
+input::-webkit-slider-thumb:hover should match: PASS
+#foo::-webkit-slider-thumb:hover should match: PASS
+input#foo::-webkit-slider-thumb:hover should match: PASS
+input.bar::-webkit-slider-thumb:hover should match: PASS
+input[type=range]::-webkit-slider-thumb:hover should match: PASS

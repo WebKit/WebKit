@@ -2966,8 +2966,10 @@ bool CSSStyleSelector::SelectorChecker::checkOneSelector(CSSSelector* sel, Eleme
         if (!elementStyle && !m_collectRulesOnly)
             return false;
 
-        if (sel->isUnknownPseudoElement())
+        if (sel->isUnknownPseudoElement()) {
             m_hasUnknownPseudoElements = true;
+            return e->shadowPseudoId() == sel->value();
+        }
 
         PseudoId pseudoId = CSSSelector::pseudoId(sel->pseudoType());
         if (pseudoId == FIRST_LETTER) {

@@ -220,6 +220,7 @@ namespace WebCore {
 
         void addNamespace(const AtomicString& prefix, const AtomicString& uri);
         void updateSpecifiersWithElementName(const AtomicString& namespacePrefix, const AtomicString& elementName, CSSParserSelector*);
+        CSSParserSelector* updateSpecifiers(CSSParserSelector*, CSSParserSelector*);
 
         void invalidBlockHit();
 

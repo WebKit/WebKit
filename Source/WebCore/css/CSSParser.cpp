@@ -6369,9 +6369,16 @@ void CSSParser::updateSpecifiersWithElementName(const AtomicString& namespacePre
         return;
     }
 
-    specifiers->setRelation(CSSSelector::ShadowDescendant);
-    if (CSSParserSelector* history = specifiers->tagHistory()) {
-        history->setTag(tag);
+    CSSParserSelector* lastShadowDescendant = specifiers;
+    CSSParserSelector* history = specifiers;
+    while (history->tagHistory()) {
+        history = history->tagHistory();
+        if (history->hasShadowDescendant())
+            lastShadowDescendant = history;
+    }
+
+    if (lastShadowDescendant->tagHistory()) {
+        lastShadowDescendant->tagHistory()->setTag(tag);
         return;
     }
 
@@ -6382,9 +6389,25 @@ void CSSParser::updateSpecifiersWithElementName(const AtomicString& namespacePre
 
     CSSParserSelector* elementNameSelector = new CSSParserSelector;
     elementNameSelector->setTag(tag);
-    specifiers->setTagHistory(elementNameSelector);
+    lastShadowDescendant->setTagHistory(elementNameSelector);
+    lastShadowDescendant->setRelation(CSSSelector::ShadowDescendant);
 }
 
+CSSParserSelector* CSSParser::updateSpecifiers(CSSParserSelector* specifiers, CSSParserSelector* newSpecifier)
+{
+    if (newSpecifier->isUnknownPseudoElement()) {
+        // Unknown pseudo element always goes at the top of selector chain.
+        newSpecifier->appendTagHistory(CSSSelector::ShadowDescendant, sinkFloatingSelector(specifiers));
+        return newSpecifier;
+    }
+    if (specifiers->isUnknownPseudoElement()) {
+        // Specifiers for unknown pseudo element go right behind it in the chain.
+        specifiers->insertTagHistory(CSSSelector::SubSelector, sinkFloatingSelector(newSpecifier), CSSSelector::ShadowDescendant);
+        return specifiers;
+    }
+    specifiers->appendTagHistory(CSSSelector::SubSelector, sinkFloatingSelector(newSpecifier));
+    return specifiers;
+}
 
 CSSRule* CSSParser::createPageRule(PassOwnPtr<CSSParserSelector> pageSelector)
 {

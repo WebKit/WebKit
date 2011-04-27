@@ -114,5 +114,24 @@ void CSSParserSelector::adoptSelectorVector(Vector<OwnPtr<CSSParserSelector> >& 
     selectorList->adoptSelectorVector(selectorVector);
     m_selector->setSelectorList(adoptPtr(selectorList));
 }
+
+void CSSParserSelector::insertTagHistory(CSSSelector::Relation before, PassOwnPtr<CSSParserSelector> selector, CSSSelector::Relation after)
+{
+    if (m_tagHistory)
+        selector->setTagHistory(m_tagHistory.release());
+    setRelation(before);
+    selector->setRelation(after);
+    m_tagHistory = selector;
+}
+
+void CSSParserSelector::appendTagHistory(CSSSelector::Relation relation, PassOwnPtr<CSSParserSelector> selector)
+{
+    CSSParserSelector* end = this;
+    while (end->tagHistory())
+        end = end->tagHistory();
+    end->setRelation(relation);
+    end->setTagHistory(selector);
+}
+
 }
 
