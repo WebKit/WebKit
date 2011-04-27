@@ -32,6 +32,8 @@
 
 import sys
 
+from webkitpy.layout_tests.port import builders
+
 
 def all_port_names():
     """Return a list of all valid, fully-specified, "real" port names.
@@ -40,18 +42,7 @@ def all_port_names():
     by real ports. This does not include any "fake" names like "test"
     or "mock-mac", and it does not include any directories that are not ."""
     # FIXME: There's probably a better way to generate this list ...
-    return ['chromium-gpu-linux',
-            'chromium-gpu-mac-snowleopard', 'chromium-gpu-mac-leopard',
-            'chromium-gpu-win-xp', 'chromium-gpu-win-vista', 'chromium-gpu-win-win7',
-            'chromium-linux-x86_64', 'chromium-linux-x86',
-            'chromium-mac-leopard', 'chromium-mac-snowleopard',
-            'chromium-win-xp', 'chromium-win-vista', 'chromium-win-win7',
-            'google-chrome-linux32', 'google-chrome-linux64',
-            'gtk',
-            'mac-tiger', 'mac-leopard', 'mac-snowleopard', 'mac-wk2',
-            'qt-linux', 'qt-mac', 'qt-win', 'qt-wk2',
-            'win-xp', 'win', 'win-wk2',
-    ]
+    return builders.PORT_TO_BUILDER_NAME.keys()
 
 
 def get(port_name=None, options=None, **kwargs):
