@@ -83,6 +83,8 @@ namespace WTF {
 #endif
 
     private:
+        OwnPtr& operator=(const OwnPtr<T>&);
+
         PtrType m_ptr;
     };
 
