@@ -1,3 +1,9 @@
+2011-04-27  Mark Rowe  <mrowe@apple.com>
+
+        Build fix.
+
+        * WebCore.xcodeproj/project.pbxproj: Make RenderLayerCompositor.h accessbile to WebKit and WebKit2.
+
 2011-04-27  Pratik Solanki  <psolanki@apple.com>
 
         Unreviewed. Fix WinCE build. The include should be guarded inside USE(CFNETWORK).
