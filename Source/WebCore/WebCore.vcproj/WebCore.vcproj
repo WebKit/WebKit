@@ -46034,6 +46034,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\dom\RenderedDocumentMarker.h"
+				>
+			</File>
+			<File
 				RelativePath="..\dom\ScopedEventQueue.cpp"
 				>
 				<FileConfiguration

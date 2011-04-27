@@ -3262,6 +3262,7 @@
 		A75E8B8D0E1DE2D6007F2481 /* FEComponentTransfer.h in Headers */ = {isa = PBXBuildFile; fileRef = A75E8B850E1DE2D6007F2481 /* FEComponentTransfer.h */; };
 		A75E8B8E0E1DE2D6007F2481 /* FEComposite.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A75E8B860E1DE2D6007F2481 /* FEComposite.cpp */; };
 		A75E8B8F0E1DE2D6007F2481 /* FEComposite.h in Headers */ = {isa = PBXBuildFile; fileRef = A75E8B870E1DE2D6007F2481 /* FEComposite.h */; };
+		A76E5F7F135E0DCF00A69837 /* RenderedDocumentMarker.h in Headers */ = {isa = PBXBuildFile; fileRef = A76E5F7E135E0DCF00A69837 /* RenderedDocumentMarker.h */; };
 		A77979190D6B9D0C003851B9 /* ImageData.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A77979130D6B9D0C003851B9 /* ImageData.cpp */; };
 		A779791A0D6B9D0C003851B9 /* ImageData.h in Headers */ = {isa = PBXBuildFile; fileRef = A77979140D6B9D0C003851B9 /* ImageData.h */; };
 		A77979280D6B9E64003851B9 /* JSImageData.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A77979240D6B9E64003851B9 /* JSImageData.cpp */; };
@@ -9823,6 +9824,7 @@
 		A75E8B850E1DE2D6007F2481 /* FEComponentTransfer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FEComponentTransfer.h; path = filters/FEComponentTransfer.h; sourceTree = "<group>"; };
 		A75E8B860E1DE2D6007F2481 /* FEComposite.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = FEComposite.cpp; path = filters/FEComposite.cpp; sourceTree = "<group>"; };
 		A75E8B870E1DE2D6007F2481 /* FEComposite.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FEComposite.h; path = filters/FEComposite.h; sourceTree = "<group>"; };
+		A76E5F7E135E0DCF00A69837 /* RenderedDocumentMarker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RenderedDocumentMarker.h; sourceTree = "<group>"; };
 		A77979130D6B9D0C003851B9 /* ImageData.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ImageData.cpp; sourceTree = "<group>"; };
 		A77979140D6B9D0C003851B9 /* ImageData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ImageData.h; sourceTree = "<group>"; };
 		A77979150D6B9D0C003851B9 /* ImageData.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = ImageData.idl; sourceTree = "<group>"; };
@@ -19522,6 +19524,7 @@
 				A84D827B11D333ED00972990 /* RawDataDocumentParser.h */,
 				85031B350A44EFC700F992E0 /* RegisteredEventListener.cpp */,
 				85031B360A44EFC700F992E0 /* RegisteredEventListener.h */,
+				A76E5F7E135E0DCF00A69837 /* RenderedDocumentMarker.h */,
 				9BD0BF9212A42BF50072FD43 /* ScopedEventQueue.cpp */,
 				9BD0BF9112A42BF50072FD43 /* ScopedEventQueue.h */,
 				A84D82C011D3474800972990 /* ScriptableDocumentParser.cpp */,
@@ -22140,6 +22143,7 @@
 				D06C0D8F0CFD11460065F43F /* RemoveFormatCommand.h in Headers */,
 				93309E05099E64920056E581 /* RemoveNodeCommand.h in Headers */,
 				93309E07099E64920056E581 /* RemoveNodePreservingChildrenCommand.h in Headers */,
+				A76E5F7F135E0DCF00A69837 /* RenderedDocumentMarker.h in Headers */,
 				BCEA485C097D93020094C9E4 /* RenderApplet.h in Headers */,
 				BCEA485E097D93020094C9E4 /* RenderArena.h in Headers */,
 				BCEA4860097D93020094C9E4 /* RenderBlock.h in Headers */,

@@ -545,6 +545,7 @@
             'dom/Range.h',
             'dom/RangeBoundaryPoint.h',
             'dom/RegisteredEventListener.h',
+            'dom/RenderedDocumentMarker.h',
             'dom/ScriptExecutionContext.h',
             'dom/ScriptRunner.h',
             'dom/ShadowRoot.h',

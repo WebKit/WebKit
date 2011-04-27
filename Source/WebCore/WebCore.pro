@@ -1495,6 +1495,7 @@ HEADERS += \
     dom/QualifiedName.h \
     dom/Range.h \
     dom/RegisteredEventListener.h \
+    dom/RenderedDocumentMarker.h \
     dom/ScriptElement.h \
     dom/ScriptExecutionContext.h \
     dom/SelectElement.h \

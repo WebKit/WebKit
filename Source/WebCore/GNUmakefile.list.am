@@ -1218,6 +1218,7 @@ webcore_sources += \
 	Source/WebCore/dom/RawDataDocumentParser.h \
 	Source/WebCore/dom/RegisteredEventListener.cpp \
 	Source/WebCore/dom/RegisteredEventListener.h \
+	Source/WebCore/dom/RenderedDocumentMarker.h \
 	Source/WebCore/dom/ScopedEventQueue.cpp \
 	Source/WebCore/dom/ScopedEventQueue.h \
 	Source/WebCore/dom/ScriptableDocumentParser.cpp \

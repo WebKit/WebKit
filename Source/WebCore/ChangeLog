@@ -1,3 +1,47 @@
+2011-04-19  MORITA Hajime  <morrita@google.com>
+
+        Reviewed by Tony Chang.
+
+        [Refactoring] DocumentMarkerController::MarkerMapVectorPair should be replaced with a list of some class.
+        https://bugs.webkit.org/show_bug.cgi?id=58113
+
+        * Introduced RenderedDocumentMarker, a subclass of DocumentMarker.
+        * Eliminated Vector<IntRect> and move the IntRect into RenderedDocumentMarker
+        * Now MarkerMapVectorPair is no longer used.
+        
+        No new tests, No behavior change.
+
+        * GNUmakefile.list.am:
+        * WebCore.gypi:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * dom/DocumentMarker.h:
+        * dom/DocumentMarkerController.cpp:
+        (WebCore::DocumentMarkerController::addMarker):
+        (WebCore::DocumentMarkerController::copyMarkers):
+        (WebCore::DocumentMarkerController::removeMarkers):
+        (WebCore::DocumentMarkerController::markerContainingPoint):
+        (WebCore::DocumentMarkerController::markersForNode):
+        (WebCore::DocumentMarkerController::renderedRectsForMarkers):
+        (WebCore::DocumentMarkerController::removeMarkersFromList):
+        (WebCore::DocumentMarkerController::repaintMarkers):
+        (WebCore::DocumentMarkerController::setRenderedRectForMarker):
+        (WebCore::DocumentMarkerController::invalidateRenderedRectsForMarkersInRect):
+        (WebCore::DocumentMarkerController::shiftMarkers):
+        (WebCore::DocumentMarkerController::setMarkersActive):
+        (WebCore::DocumentMarkerController::clearDescriptionOnMarkersIntersectingRange):
+        (WebCore::DocumentMarkerController::showMarkers):
+        * dom/DocumentMarkerController.h:
+        * dom/RenderedDocumentMarker.h: Added.
+        (WebCore::RenderedDocumentMarker::RenderedDocumentMarker):
+        (WebCore::RenderedDocumentMarker::isRendered):
+        (WebCore::RenderedDocumentMarker::contains):
+        (WebCore::RenderedDocumentMarker::setRenderedRect):
+        (WebCore::RenderedDocumentMarker::renderedRect):
+        (WebCore::RenderedDocumentMarker::invalidate):
+        (WebCore::RenderedDocumentMarker::invalidMarkerRect):
+
 2011-04-27  James Robinson  <jamesr@chromium.org>
 
         Unreviewed, rolling out r85112.

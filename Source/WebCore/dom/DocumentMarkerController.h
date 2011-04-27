@@ -37,16 +37,18 @@ class IntPoint;
 class IntRect;
 class Node;
 class Range;
+class RenderedDocumentMarker;
 
 class DocumentMarkerController {
     WTF_MAKE_NONCOPYABLE(DocumentMarkerController); WTF_MAKE_FAST_ALLOCATED;
 public:
+
     DocumentMarkerController();
     ~DocumentMarkerController() { detach(); }
 
     void detach();
     void addMarker(Range*, DocumentMarker::MarkerType, String description = String());
-    void addMarker(Node*, DocumentMarker);
+    void addMarker(Node*, const DocumentMarker&);
     void copyMarkers(Node* srcNode, unsigned startOffset, int length, Node* dstNode, int delta);
     bool hasMarkers(Range*, DocumentMarker::MarkerTypes = DocumentMarker::AllMarkers());
 
@@ -77,10 +79,10 @@ public:
 #endif
 
 private:
-    typedef std::pair<Vector<DocumentMarker>, Vector<IntRect> > MarkerMapVectorPair;
-    typedef HashMap<RefPtr<Node>, MarkerMapVectorPair*> MarkerMap;
+    typedef Vector<RenderedDocumentMarker> MarkerList;
+    typedef HashMap<RefPtr<Node>, MarkerList*> MarkerMap;
     bool possiblyHasMarkers(DocumentMarker::MarkerTypes);
-    void removeMarkersFromMarkerMapVectorPair(Node*, MarkerMapVectorPair*, DocumentMarker::MarkerTypes);
+    void removeMarkersFromList(Node*, MarkerList*, DocumentMarker::MarkerTypes);
 
     MarkerMap m_markers;
     // Provide a quick way to determine whether a particular marker type is absent without going through the map.
