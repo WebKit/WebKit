@@ -29,25 +29,26 @@ import commands
 
 from settings import *
 
-jscore_excludes = ['jsc.cpp', 'ProfilerServer.mm', 'ExecutableAllocatorPosix.cpp']
-jscore_excludes.extend(get_excludes(jscore_dir, ['*Brew.cpp', '*CF.cpp', '*Symbian.cpp']))
-
-sources = []
-
-jscore_excludes.extend(get_excludes(jscore_dir, ['*None.cpp']))
-
-if build_port == "wx":
-    if building_on_win32:
-        jscore_excludes += ['MarkStackPosix.cpp', 'OSAllocatorPosix.cpp', 'ThreadingPthreads.cpp']
-        sources += ['heap/MarkStackWin.cpp']
-    else:
-        jscore_excludes.append('JSStringRefBSTR.cpp')
-        jscore_excludes.extend(get_excludes(jscore_dir, ['*Win.cpp']))
-    
 def build(bld):
+
     import Options
 
-    full_dirs = get_dirs_for_features(jscore_dir, features=[build_port], dirs=jscore_dirs)
+    jscore_excludes = ['jsc.cpp', 'ProfilerServer.mm', 'ExecutableAllocatorPosix.cpp']
+    jscore_excludes.extend(get_excludes(jscore_dir, ['*Brew.cpp', '*CF.cpp', '*Symbian.cpp']))
+
+    jscore_excludes.extend(get_excludes(jscore_dir, ['*None.cpp']))
+
+    sources = []
+
+    if Options.options.port == "wx":
+        if building_on_win32:
+            jscore_excludes += ['MarkStackPosix.cpp', 'OSAllocatorPosix.cpp', 'ThreadingPthreads.cpp']
+            sources += ['heap/MarkStackWin.cpp']
+        else:
+            jscore_excludes.append('JSStringRefBSTR.cpp')
+            jscore_excludes.extend(get_excludes(jscore_dir, ['*Win.cpp']))
+
+    full_dirs = get_dirs_for_features(jscore_dir, features=[Options.options.port.lower()], dirs=jscore_dirs)
 
     includes = common_includes + full_dirs
     if sys.platform.startswith('darwin'):

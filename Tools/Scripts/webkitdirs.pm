@@ -1317,7 +1317,7 @@ sub buildVisualStudioProject
 sub downloadWafIfNeeded
 {
     # get / update waf if needed
-    my $waf = "$sourceDir/Tools/wx/waf";
+    my $waf = "$sourceDir/Tools/waf/waf";
     my $wafURL = 'http://wxwebkit.kosoftworks.com/downloads/deps/waf';
     if (!-f $waf) {
         my $result = system "curl -o $waf $wafURL";
@@ -1335,7 +1335,7 @@ sub buildWafProject
         $pythonPath = '';
     }
     my $sourceDir = sourceDir();
-    my $newPythonPath = "$sourceDir/Tools/wx/build:$pythonPath";
+    my $newPythonPath = "$sourceDir/Tools/waf/build:$pythonPath";
     if (isCygwin()) {
         $newPythonPath = `cygpath --mixed --path $newPythonPath`;
     }
@@ -1343,7 +1343,7 @@ sub buildWafProject
     
     print "Building $project\n";
 
-    my $wafCommand = "$sourceDir/Tools/wx/waf";
+    my $wafCommand = "$sourceDir/Tools/waf/waf";
     if ($ENV{'WXWEBKIT_WAF'}) {
         $wafCommand = $ENV{'WXWEBKIT_WAF'};
     }

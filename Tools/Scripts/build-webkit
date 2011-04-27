@@ -542,6 +542,8 @@ if (isInspectorFrontend()) {
 }
 
 if (isWx()) {
+    $makeArgs .= " --port=wx";
+
     downloadWafIfNeeded();
     @options = split(/ /, $makeArgs);
     @projects = ();
