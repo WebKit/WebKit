@@ -1,3 +1,17 @@
+2011-04-27  Jessie Berlin  <jberlin@webkit.org>
+
+        Update the Windows-specific platform results after r85011 to get the bots green.
+
+        * platform/win/fast/borders/bidi-012-expected.txt:
+        * platform/win/fast/forms/basic-textareas-quirks-expected.txt:
+        * platform/win/fast/inline/inline-box-background-expected.txt:
+        * platform/win/fast/inline/inline-box-background-long-image-expected.txt:
+        * platform/win/fast/inline/inline-box-background-repeat-x-expected.txt:
+        * platform/win/fast/inline/inline-box-background-repeat-y-expected.txt:
+        * platform/win/fast/lists/003-vertical-expected.txt:
+        * platform/win/fast/text/emphasis-expected.txt:
+        * platform/win/fast/text/emphasis-vertical-expected.txt:
+
 2011-04-27  Pavel Feldman  <pfeldman@google.com>
 
         Not reviewed: rebaselining inspector test.
