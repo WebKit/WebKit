@@ -1,3 +1,16 @@
+2011-04-27  Ryuan Choi  <ryuan.choi@samsung.com>
+
+        Reviewed by Martin Robinson.
+
+        [GTK] Add proxy support to GtkLauncher
+        https://bugs.webkit.org/show_bug.cgi?id=58852
+
+        Add SOUP_TYPE_PROXY_RESOLVER_DEFAULT feature or set SOUP_SESSION_PROXY_URI for developers behind proxy.
+
+        * GNUmakefile.am:
+        * GtkLauncher/main.c:
+        (main):
+
 2011-04-27  Annie Sullivan  <sullivan@chromium.org>
 
         Reviewed by David Levin.

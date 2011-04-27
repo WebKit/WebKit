@@ -239,6 +239,17 @@ int main(int argc, char* argv[])
     if (!g_thread_supported())
         g_thread_init(NULL);
 
+#ifdef SOUP_TYPE_PROXY_RESOLVER_DEFAULT
+    soup_session_add_feature_by_type(webkit_get_default_session(), SOUP_TYPE_PROXY_RESOLVER_DEFAULT);
+#else
+    const char *httpProxy = g_getenv("http_proxy");
+    if (httpProxy) {
+        SoupURI *proxyUri = soup_uri_new(httpProxy);
+        g_object_set(webkit_get_default_session(), SOUP_SESSION_PROXY_URI, proxyUri, NULL);
+        soup_uri_free(proxyUri);
+    }
+#endif
+
     main_window = createWindow(&webView);
 
     gchar *uri =(gchar*)(argc > 1 ? argv[1] : "http://www.google.com/");
