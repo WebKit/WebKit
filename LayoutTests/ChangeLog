@@ -1,3 +1,16 @@
+2011-04-26  Ami Fischman  <fischman@google.com>
+
+        Reviewed by David Levin.
+
+        Fix media/video-controls-transformed.html layouttest to compute the click
+        location of the play button instead of hard-coding pixel values that have
+        been wrong for a long time.  Start expecting the test to pass in chromium
+        (it's currently Skipped on all platforms).
+        https://bugs.webkit.org/show_bug.cgi?id=58590
+
+        * media/video-controls-transformed.html:
+        * platform/chromium/test_expectations.txt:
+
 2011-04-26  Dirk Pranke  <dpranke@chromium.org>
 
         Unreviewed, expectations change. Update w/ more flakiness.
