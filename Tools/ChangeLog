@@ -1,3 +1,13 @@
+2011-04-26  Alexandre MAzari  <amazari@igalia.com>
+
+        Reviewed by Xan Lopez.
+
+        [Gtk] Implement LayoutTestController::setPluginsEnabled
+        https://bugs.webkit.org/show_bug.cgi?id=59184
+
+        * DumpRenderTree/gtk/LayoutTestControllerGtk.cpp:
+        (LayoutTestController::setPluginsEnabled):
+
 2011-04-26  Chang Shu  <cshu@webkit.org>
 
         Reviewed by Laszlo Gombos.

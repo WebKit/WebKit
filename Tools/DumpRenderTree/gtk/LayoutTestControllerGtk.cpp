@@ -543,7 +543,11 @@ void LayoutTestController::setPopupBlockingEnabled(bool flag)
 
 void LayoutTestController::setPluginsEnabled(bool flag)
 {
-    // FIXME: Implement
+    WebKitWebView* view = webkit_web_frame_get_web_view(mainFrame);
+    ASSERT(view);
+
+    WebKitWebSettings* settings = webkit_web_view_get_settings(view);
+    g_object_set(G_OBJECT(settings), "enable-plugins", flag, NULL);
 }
 
 bool LayoutTestController::elementDoesAutoCompleteForElementWithId(JSStringRef id) 
