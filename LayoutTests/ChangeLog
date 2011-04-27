@@ -1,3 +1,142 @@
+2011-04-26  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [Qt] Improper rendering of <button> tag when it contains a <br>
+        https://bugs.webkit.org/show_bug.cgi?id=50521
+
+        Update Qt specific expected files after r85009.
+
+        * platform/qt/editing/selection/3690703-2-expected.png:
+        * platform/qt/editing/selection/3690703-2-expected.txt:
+        * platform/qt/editing/selection/3690703-expected.png:
+        * platform/qt/editing/selection/3690703-expected.txt:
+        * platform/qt/editing/selection/3690719-expected.png:
+        * platform/qt/editing/selection/3690719-expected.txt:
+        * platform/qt/editing/selection/5240265-expected.png:
+        * platform/qt/editing/selection/5240265-expected.txt:
+        * platform/qt/fast/block/float/float-avoidance-expected.png:
+        * platform/qt/fast/block/float/float-avoidance-expected.txt:
+        * platform/qt/fast/block/positioning/inline-block-relposition-expected.png:
+        * platform/qt/fast/block/positioning/inline-block-relposition-expected.txt:
+        * platform/qt/fast/css/continuationCrash-expected.png:
+        * platform/qt/fast/css/continuationCrash-expected.txt:
+        * platform/qt/fast/css/margin-top-bottom-dynamic-expected.png:
+        * platform/qt/fast/css/margin-top-bottom-dynamic-expected.txt:
+        * platform/qt/fast/dom/HTMLTableColElement/resize-table-using-col-width-expected.png: Added.
+        * platform/qt/fast/dom/HTMLTableColElement/resize-table-using-col-width-expected.txt:
+        * platform/qt/fast/dynamic/positioned-movement-with-positioned-children-expected.txt:
+        * platform/qt/fast/forms/basic-buttons-expected.png: Added.
+        * platform/qt/fast/forms/basic-buttons-expected.txt:
+        * platform/qt/fast/forms/basic-selects-expected.png:
+        * platform/qt/fast/forms/basic-selects-expected.txt:
+        * platform/qt/fast/forms/blankbuttons-expected.png: Copied from LayoutTests/platform/qt/tables/mozilla/bugs/bug4429-expected.png.
+        * platform/qt/fast/forms/blankbuttons-expected.txt:
+        * platform/qt/fast/forms/button-align-expected.png: Added.
+        * platform/qt/fast/forms/button-align-expected.txt:
+        * platform/qt/fast/forms/button-cannot-be-nested-expected.png: Added.
+        * platform/qt/fast/forms/button-cannot-be-nested-expected.txt:
+        * platform/qt/fast/forms/button-generated-content-expected.png: Added.
+        * platform/qt/fast/forms/button-generated-content-expected.txt:
+        * platform/qt/fast/forms/button-inner-block-reuse-expected.png: Added.
+        * platform/qt/fast/forms/button-inner-block-reuse-expected.txt:
+        * platform/qt/fast/forms/button-line-break-expected.txt:
+        * platform/qt/fast/forms/button-positioned-expected.png: Added.
+        * platform/qt/fast/forms/button-positioned-expected.txt:
+        * platform/qt/fast/forms/button-sizes-expected.png: Added.
+        * platform/qt/fast/forms/button-sizes-expected.txt:
+        * platform/qt/fast/forms/button-style-color-expected.png: Added.
+        * platform/qt/fast/forms/button-style-color-expected.txt:
+        * platform/qt/fast/forms/button-table-styles-expected.png: Added.
+        * platform/qt/fast/forms/button-table-styles-expected.txt:
+        * platform/qt/fast/forms/button-text-transform-expected.png: Added.
+        * platform/qt/fast/forms/button-text-transform-expected.txt:
+        * platform/qt/fast/forms/control-clip-overflow-expected.png: Added.
+        * platform/qt/fast/forms/control-clip-overflow-expected.txt:
+        * platform/qt/fast/forms/control-restrict-line-height-expected.png: Added.
+        * platform/qt/fast/forms/control-restrict-line-height-expected.txt:
+        * platform/qt/fast/forms/formmove3-expected.png: Added.
+        * platform/qt/fast/forms/formmove3-expected.txt:
+        * platform/qt/fast/forms/input-button-sizes-expected.png:
+        * platform/qt/fast/forms/input-button-sizes-expected.txt:
+        * platform/qt/fast/forms/select-baseline-expected.png: Added.
+        * platform/qt/fast/forms/select-baseline-expected.txt:
+        * platform/qt/fast/forms/targeted-frame-submission-expected.png: Added.
+        * platform/qt/fast/forms/targeted-frame-submission-expected.txt:
+        * platform/qt/fast/replaced/replaced-breaking-expected.png:
+        * platform/qt/fast/replaced/replaced-breaking-expected.txt:
+        * platform/qt/fast/replaced/width100percent-button-expected.png:
+        * platform/qt/fast/replaced/width100percent-button-expected.txt:
+        * platform/qt/fast/selectors/064-expected.png:
+        * platform/qt/fast/selectors/064-expected.txt:
+        * platform/qt/fast/table/append-cells2-expected.png:
+        * platform/qt/fast/table/append-cells2-expected.txt:
+        * platform/qt/fast/table/remove-td-display-none-expected.png:
+        * platform/qt/fast/table/remove-td-display-none-expected.txt:
+        * platform/qt/fast/text/textIteratorNilRenderer-expected.png: Added.
+        * platform/qt/fast/text/textIteratorNilRenderer-expected.txt:
+        * platform/qt/http/tests/navigation/javascriptlink-frames-expected.png:
+        * platform/qt/http/tests/navigation/javascriptlink-frames-expected.txt:
+        * platform/qt/platform/qt/fast/forms/button-line-break-expected.png: Added.
+        * platform/qt/svg/custom/inline-svg-in-xhtml-expected.png:
+        * platform/qt/svg/custom/inline-svg-in-xhtml-expected.txt:
+        * platform/qt/tables/mozilla/bugs/bug1188-expected.png:
+        * platform/qt/tables/mozilla/bugs/bug1188-expected.txt:
+        * platform/qt/tables/mozilla/bugs/bug1318-expected.png:
+        * platform/qt/tables/mozilla/bugs/bug1318-expected.txt:
+        * platform/qt/tables/mozilla/bugs/bug138725-expected.png:
+        * platform/qt/tables/mozilla/bugs/bug138725-expected.txt:
+        * platform/qt/tables/mozilla/bugs/bug18359-expected.png:
+        * platform/qt/tables/mozilla/bugs/bug18359-expected.txt:
+        * platform/qt/tables/mozilla/bugs/bug2479-2-expected.png:
+        * platform/qt/tables/mozilla/bugs/bug2479-2-expected.txt:
+        * platform/qt/tables/mozilla/bugs/bug2479-3-expected.png:
+        * platform/qt/tables/mozilla/bugs/bug2479-3-expected.txt:
+        * platform/qt/tables/mozilla/bugs/bug2479-4-expected.png:
+        * platform/qt/tables/mozilla/bugs/bug2479-4-expected.txt:
+        * platform/qt/tables/mozilla/bugs/bug26178-expected.png:
+        * platform/qt/tables/mozilla/bugs/bug26178-expected.txt:
+        * platform/qt/tables/mozilla/bugs/bug28928-expected.png:
+        * platform/qt/tables/mozilla/bugs/bug28928-expected.txt:
+        * platform/qt/tables/mozilla/bugs/bug33855-expected.png:
+        * platform/qt/tables/mozilla/bugs/bug33855-expected.txt:
+        * platform/qt/tables/mozilla/bugs/bug39209-expected.png:
+        * platform/qt/tables/mozilla/bugs/bug39209-expected.txt:
+        * platform/qt/tables/mozilla/bugs/bug4429-expected.png:
+        * platform/qt/tables/mozilla/bugs/bug4429-expected.txt:
+        * platform/qt/tables/mozilla/bugs/bug44505-expected.png:
+        * platform/qt/tables/mozilla/bugs/bug44505-expected.txt:
+        * platform/qt/tables/mozilla/bugs/bug46368-1-expected.png:
+        * platform/qt/tables/mozilla/bugs/bug46368-1-expected.txt:
+        * platform/qt/tables/mozilla/bugs/bug46368-2-expected.png:
+        * platform/qt/tables/mozilla/bugs/bug46368-2-expected.txt:
+        * platform/qt/tables/mozilla/bugs/bug51037-expected.png:
+        * platform/qt/tables/mozilla/bugs/bug51037-expected.txt:
+        * platform/qt/tables/mozilla/bugs/bug51727-expected.png:
+        * platform/qt/tables/mozilla/bugs/bug51727-expected.txt:
+        * platform/qt/tables/mozilla/bugs/bug52505-expected.png:
+        * platform/qt/tables/mozilla/bugs/bug52505-expected.txt:
+        * platform/qt/tables/mozilla/bugs/bug52506-expected.png:
+        * platform/qt/tables/mozilla/bugs/bug52506-expected.txt:
+        * platform/qt/tables/mozilla/bugs/bug60749-expected.png:
+        * platform/qt/tables/mozilla/bugs/bug60749-expected.txt:
+        * platform/qt/tables/mozilla/bugs/bug68912-expected.png:
+        * platform/qt/tables/mozilla/bugs/bug68912-expected.txt:
+        * platform/qt/tables/mozilla/bugs/bug7342-expected.png:
+        * platform/qt/tables/mozilla/bugs/bug7342-expected.txt:
+        * platform/qt/tables/mozilla/collapsing_borders/bug41262-4-expected.png:
+        * platform/qt/tables/mozilla/collapsing_borders/bug41262-4-expected.txt:
+        * platform/qt/tables/mozilla/dom/tableDom-expected.png:
+        * platform/qt/tables/mozilla/dom/tableDom-expected.txt:
+        * platform/qt/tables/mozilla/other/move_row-expected.png:
+        * platform/qt/tables/mozilla/other/move_row-expected.txt:
+        * platform/qt/tables/mozilla_expected_failures/bugs/bug1725-expected.png:
+        * platform/qt/tables/mozilla_expected_failures/bugs/bug1725-expected.txt:
+        * platform/qt/tables/mozilla_expected_failures/bugs/bug58402-2-expected.png:
+        * platform/qt/tables/mozilla_expected_failures/bugs/bug58402-2-expected.txt:
+        * platform/qt/tables/mozilla_expected_failures/collapsing_borders/bug41262-5-expected.png:
+        * platform/qt/tables/mozilla_expected_failures/collapsing_borders/bug41262-5-expected.txt:
+        * platform/qt/tables/mozilla_expected_failures/collapsing_borders/bug41262-6-expected.png:
+        * platform/qt/tables/mozilla_expected_failures/collapsing_borders/bug41262-6-expected.txt:
+
 2011-04-26  Dirk Pranke  <dpranke@chromium.org>
 
         Unreviewed, expectations change.
