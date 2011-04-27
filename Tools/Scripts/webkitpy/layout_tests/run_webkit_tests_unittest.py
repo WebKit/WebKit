@@ -1,6 +1,7 @@
 #!/usr/bin/python
 # Copyright (C) 2010 Google Inc. All rights reserved.
 # Copyright (C) 2010 Gabor Rapcsanyi (rgabor@inf.u-szeged.hu), University of Szeged
+# Copyright (C) 2011 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are
@@ -294,6 +295,15 @@ class MainTest(unittest.TestCase):
     def test_randomize_order(self):
         # FIXME: verify order was shuffled
         self.assertTrue(passing_run(['--randomize-order']))
+
+    def test_gc_between_tests(self):
+        self.assertTrue(passing_run(['--gc-between-tests']))
+
+    def test_complex_text(self):
+        self.assertTrue(passing_run(['--complex-text']))
+
+    def test_threaded(self):
+        self.assertTrue(passing_run(['--threaded']))
 
     def test_run_chunk(self):
         # Test that we actually select the right chunk

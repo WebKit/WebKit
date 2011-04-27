@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 # Copyright (C) 2010 Google Inc. All rights reserved.
 # Copyright (C) 2010 Gabor Rapcsanyi <rgabor@inf.u-szeged.hu>, University of Szeged
+# Copyright (C) 2011 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are
@@ -375,6 +376,13 @@ class WebKitDriver(base.Driver):
         cmd.append(self._port._path_to_driver())
         if self._port.get_option('pixel_tests'):
             cmd.append('--pixel-tests')
+        if self._port.get_option('gc_between_tests'):
+            cmd.append('--gc-between-tests')
+        if self._port.get_option('complex_text'):
+            cmd.append('--complex-text')
+        if self._port.get_option('threaded'):
+            cmd.append('--threaded')
+
         cmd.extend(self._port.get_option('additional_drt_flag', []))
         cmd.append('-')
         return cmd

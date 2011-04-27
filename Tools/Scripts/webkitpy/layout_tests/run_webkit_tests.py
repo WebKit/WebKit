@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 # Copyright (C) 2010 Google Inc. All rights reserved.
 # Copyright (C) 2010 Gabor Rapcsanyi (rgabor@inf.u-szeged.hu), University of Szeged
+# Copyright (C) 2011 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are
@@ -254,6 +255,15 @@ def parse_args(args=None):
             help="Run graphics tests on real GPU hardware vs software"),
     ]
 
+    webkit_options = [
+        optparse.make_option("--gc-between-tests", action="store_true", default=False,
+            help="Force garbage collection between each test"),
+        optparse.make_option("--complex-text", action="store_true", default=False,
+            help="Use the complex text code path for all text (Mac OS X and Windows only)"),
+        optparse.make_option("--threaded", action="store_true", default=False,
+            help="Run a concurrent JavaScript thead with each test")
+    ]
+
     # Missing Mac-specific old-run-webkit-tests options:
     # FIXME: Need: -g, --guard for guard malloc support on Mac.
     # FIXME: Need: -l --leaks    Enable leaks checking.
@@ -427,9 +437,8 @@ def parse_args(args=None):
     ]
 
     option_list = (configuration_options + print_options +
-                   chromium_options + results_options + test_options +
-                   misc_options + results_json_options +
-                   old_run_webkit_tests_compat)
+                   chromium_options + webkit_options + results_options + test_options +
+                   misc_options + results_json_options + old_run_webkit_tests_compat)
     option_parser = optparse.OptionParser(option_list=option_list)
 
     return option_parser.parse_args(args)
