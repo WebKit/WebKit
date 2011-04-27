@@ -1,3 +1,10 @@
+2011-04-27  Martin Robinson  <mrobinson@igalia.com>
+
+        Rebaseline some tests which differ on the bots after r85066.
+
+        * platform/gtk/fast/forms/select-writing-direction-natural-expected.txt:
+        * platform/gtk/fast/text/international/bidi-menulist-expected.txt:
+
 2011-04-27  Kenneth Russell  <kbr@google.com>
 
         Web Inspector: regression in inspector/console/console-dir.html after r85054
