@@ -140,8 +140,6 @@ GEN := \
     $(intermediates)/bindings/V8DOMTokenList.h \
     $(intermediates)/bindings/V8DOMSettableTokenList.h \
     $(intermediates)/bindings/V8DOMURL.h \
-    $(intermediates)/bindings/V8DataGridColumn.h \
-    $(intermediates)/bindings/V8DataGridColumnList.h \
     $(intermediates)/bindings/V8File.h \
     $(intermediates)/bindings/V8FileError.h \
     $(intermediates)/bindings/V8FileList.h \
@@ -158,10 +156,6 @@ GEN := \
     $(intermediates)/bindings/V8HTMLButtonElement.h \
     $(intermediates)/bindings/V8HTMLCanvasElement.h \
     $(intermediates)/bindings/V8HTMLCollection.h \
-    $(intermediates)/bindings/V8HTMLDataGridCellElement.h \
-    $(intermediates)/bindings/V8HTMLDataGridColElement.h \
-    $(intermediates)/bindings/V8HTMLDataGridElement.h \
-    $(intermediates)/bindings/V8HTMLDataGridRowElement.h \
     $(intermediates)/bindings/V8HTMLDataListElement.h \
     $(intermediates)/bindings/V8HTMLDListElement.h \
     $(intermediates)/bindings/V8HTMLDirectoryElement.h \

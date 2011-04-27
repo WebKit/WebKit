@@ -67,7 +67,6 @@ LOCAL_SRC_FILES += \
 	bindings/v8/V8ConsoleMessage.cpp \
 	bindings/v8/V8DOMMap.cpp \
 	bindings/v8/V8DOMWrapper.cpp \
-	bindings/v8/V8DataGridDataSource.cpp \
 	bindings/v8/V8EventListenerList.cpp \
 	bindings/v8/V8GCController.cpp \
 	bindings/v8/V8Helpers.cpp \
@@ -104,7 +103,6 @@ LOCAL_SRC_FILES += \
 	bindings/v8/custom/V8CustomVoidCallback.cpp \
 	bindings/v8/custom/V8DOMFormDataCustom.cpp \
 	bindings/v8/custom/V8DOMWindowCustom.cpp \
-	bindings/v8/custom/V8DataGridColumnListCustom.cpp \
 	bindings/v8/custom/V8DatabaseCallback.cpp \
 	bindings/v8/custom/V8DedicatedWorkerContextCustom.cpp \
 	bindings/v8/custom/V8DeviceMotionEventCustom.cpp \
@@ -123,7 +121,6 @@ LOCAL_SRC_FILES += \
 	bindings/v8/custom/V8HTMLAudioElementConstructor.cpp \
 	bindings/v8/custom/V8HTMLCanvasElementCustom.cpp \
 	bindings/v8/custom/V8HTMLCollectionCustom.cpp \
-	bindings/v8/custom/V8HTMLDataGridElementCustom.cpp \
 	bindings/v8/custom/V8HTMLDocumentCustom.cpp \
 	bindings/v8/custom/V8HTMLElementCustom.cpp \
 	bindings/v8/custom/V8HTMLFormElementCustom.cpp \

@@ -94,8 +94,6 @@ LOCAL_SRC_FILES += \
 	bindings/js/JSDOMWindowBase.cpp \
 	bindings/js/JSDOMWindowCustom.cpp \
 	bindings/js/JSDOMWindowShell.cpp \
-	bindings/js/JSDataGridColumnListCustom.cpp \
-	bindings/js/JSDataGridDataSource.cpp \
 	bindings/js/JSDatabaseCallback.cpp \
 	bindings/js/JSDedicatedWorkerContextCustom.cpp \
 	bindings/js/JSDesktopNotificationsCustom.cpp \
@@ -114,7 +112,6 @@ LOCAL_SRC_FILES += \
 	bindings/js/JSHTMLAppletElementCustom.cpp \
 	bindings/js/JSHTMLCanvasElementCustom.cpp \
 	bindings/js/JSHTMLCollectionCustom.cpp \
-	bindings/js/JSHTMLDataGridElementCustom.cpp \
 	bindings/js/JSHTMLDocumentCustom.cpp \
 	bindings/js/JSHTMLElementCustom.cpp \
 	bindings/js/JSHTMLEmbedElementCustom.cpp \

@@ -85,10 +85,6 @@ bool HTMLElement::ieForbidsInsertHTML() const
         || hasLocalName(basefontTag)
         || hasLocalName(brTag)
         || hasLocalName(colTag)
-#if ENABLE(DATAGRID)
-        || hasLocalName(dcellTag)
-        || hasLocalName(dcolTag)
-#endif
         || hasLocalName(embedTag)
         || hasLocalName(frameTag)
         || hasLocalName(hrTag)

@@ -99,10 +99,6 @@ webcore_built_sources += \
 	DerivedSources/WebCore/JSCSSValueList.h \
 	DerivedSources/WebCore/JSCustomEvent.cpp \
 	DerivedSources/WebCore/JSCustomEvent.h \
-	DerivedSources/WebCore/JSDataGridColumn.cpp \
-	DerivedSources/WebCore/JSDataGridColumn.h \
-	DerivedSources/WebCore/JSDataGridColumnList.cpp \
-	DerivedSources/WebCore/JSDataGridColumnList.h \
 	DerivedSources/WebCore/JSDataTransferItems.h \
 	DerivedSources/WebCore/JSDataTransferItems.cpp \
 	DerivedSources/WebCore/JSDataView.cpp \
@@ -212,14 +208,6 @@ webcore_built_sources += \
 	DerivedSources/WebCore/JSHTMLCanvasElement.h \
 	DerivedSources/WebCore/JSHTMLCollection.cpp \
 	DerivedSources/WebCore/JSHTMLCollection.h \
-	DerivedSources/WebCore/JSHTMLDataGridCellElement.cpp \
-	DerivedSources/WebCore/JSHTMLDataGridCellElement.h \
-	DerivedSources/WebCore/JSHTMLDataGridColElement.cpp \
-	DerivedSources/WebCore/JSHTMLDataGridColElement.h \
-	DerivedSources/WebCore/JSHTMLDataGridElement.cpp \
-	DerivedSources/WebCore/JSHTMLDataGridElement.h \
-	DerivedSources/WebCore/JSHTMLDataGridRowElement.cpp \
-	DerivedSources/WebCore/JSHTMLDataGridRowElement.h \
 	DerivedSources/WebCore/JSHTMLDataListElement.cpp \
 	DerivedSources/WebCore/JSHTMLDataListElement.h \
 	DerivedSources/WebCore/JSHTMLDetailsElement.cpp \
@@ -694,9 +682,6 @@ webcore_sources += \
 	Source/WebCore/bindings/js/JSDOMWindowShell.h \
 	Source/WebCore/bindings/js/JSDOMWrapper.cpp \
 	Source/WebCore/bindings/js/JSDOMWrapper.h \
-	Source/WebCore/bindings/js/JSDataGridColumnListCustom.cpp \
-	Source/WebCore/bindings/js/JSDataGridDataSource.cpp \
-	Source/WebCore/bindings/js/JSDataGridDataSource.h \
 	Source/WebCore/bindings/js/JSDataViewCustom.cpp \
 	Source/WebCore/bindings/js/JSDedicatedWorkerContextCustom.cpp \
 	Source/WebCore/bindings/js/JSDeviceMotionEventCustom.cpp \
@@ -725,7 +710,6 @@ webcore_sources += \
 	Source/WebCore/bindings/js/JSHTMLAppletElementCustom.h \
 	Source/WebCore/bindings/js/JSHTMLCanvasElementCustom.cpp \
 	Source/WebCore/bindings/js/JSHTMLCollectionCustom.cpp \
-	Source/WebCore/bindings/js/JSHTMLDataGridElementCustom.cpp \
 	Source/WebCore/bindings/js/JSHTMLDocumentCustom.cpp \
 	Source/WebCore/bindings/js/JSHTMLElementCustom.cpp \
 	Source/WebCore/bindings/js/JSHTMLEmbedElementCustom.cpp \
@@ -1569,11 +1553,6 @@ webcore_sources += \
 	Source/WebCore/html/CollectionType.h \
 	Source/WebCore/html/ColorInputType.cpp \
 	Source/WebCore/html/ColorInputType.h \
-	Source/WebCore/html/DataGridColumn.cpp \
-	Source/WebCore/html/DataGridColumn.h \
-	Source/WebCore/html/DataGridColumnList.cpp \
-	Source/WebCore/html/DataGridColumnList.h \
-	Source/WebCore/html/DataGridDataSource.h \
 	Source/WebCore/html/DateComponents.cpp \
 	Source/WebCore/html/DateComponents.h \
 	Source/WebCore/html/DateInputType.cpp \
@@ -1582,8 +1561,6 @@ webcore_sources += \
 	Source/WebCore/html/DateTimeInputType.h \
 	Source/WebCore/html/DateTimeLocalInputType.cpp \
 	Source/WebCore/html/DateTimeLocalInputType.h \
-	Source/WebCore/html/DOMDataGridDataSource.cpp \
-	Source/WebCore/html/DOMDataGridDataSource.h \
 	Source/WebCore/html/DOMFormData.cpp \
 	Source/WebCore/html/DOMFormData.h \
 	Source/WebCore/html/DOMURL.cpp \
@@ -1624,14 +1601,6 @@ webcore_sources += \
 	Source/WebCore/html/HTMLCanvasElement.h \
 	Source/WebCore/html/HTMLCollection.cpp \
 	Source/WebCore/html/HTMLCollection.h \
-	Source/WebCore/html/HTMLDataGridCellElement.cpp \
-	Source/WebCore/html/HTMLDataGridCellElement.h \
-	Source/WebCore/html/HTMLDataGridColElement.cpp \
-	Source/WebCore/html/HTMLDataGridColElement.h \
-	Source/WebCore/html/HTMLDataGridElement.cpp \
-	Source/WebCore/html/HTMLDataGridElement.h \
-	Source/WebCore/html/HTMLDataGridRowElement.cpp \
-	Source/WebCore/html/HTMLDataGridRowElement.h \
 	Source/WebCore/html/HTMLDataListElement.cpp \
 	Source/WebCore/html/HTMLDataListElement.h \
 	Source/WebCore/html/HTMLDetailsElement.cpp \
@@ -2783,8 +2752,6 @@ webcore_sources += \
 	Source/WebCore/rendering/RenderCombineText.h \
 	Source/WebCore/rendering/RenderCounter.cpp \
 	Source/WebCore/rendering/RenderCounter.h \
-	Source/WebCore/rendering/RenderDataGrid.cpp \
-	Source/WebCore/rendering/RenderDataGrid.h \
 	Source/WebCore/rendering/RenderDetails.cpp \
 	Source/WebCore/rendering/RenderDetails.h \
 	Source/WebCore/rendering/RenderDetailsMarker.cpp \

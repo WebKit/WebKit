@@ -137,14 +137,6 @@ webcoregtk_cppflags += \
 endif # END USE_PANGO
 
 # ----
-# HTML Data Grid
-# ----
-if ENABLE_DATAGRID
-FEATURE_DEFINES += ENABLE_DATAGRID=1
-webcore_cppflags += -DENABLE_DATAGRID=1
-endif
-
-# ----
 # HTML Details Element
 # ----
 if ENABLE_DETAILS

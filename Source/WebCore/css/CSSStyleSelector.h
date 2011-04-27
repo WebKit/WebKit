@@ -50,7 +50,6 @@ class CSSStyleRule;
 class CSSStyleSheet;
 class CSSValue;
 class ContainerNode;
-class DataGridColumn;
 class Document;
 class Element;
 class Frame;
@@ -107,12 +106,6 @@ public:
         PassRefPtr<RenderStyle> styleForPage(int pageIndex);
 
         static PassRefPtr<RenderStyle> styleForDocument(Document*);
-
-#if ENABLE(DATAGRID)
-        // Datagrid style computation (uses unique pseudo elements and structures)
-        PassRefPtr<RenderStyle> pseudoStyleForDataGridColumn(DataGridColumn*, RenderStyle* parentStyle);
-        PassRefPtr<RenderStyle> pseudoStyleForDataGridColumnHeader(DataGridColumn*, RenderStyle* parentStyle);
-#endif
 
         RenderStyle* style() const { return m_style.get(); }
         RenderStyle* parentStyle() const { return m_parentStyle; }

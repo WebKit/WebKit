@@ -217,8 +217,6 @@ IDL_BINDINGS += \
     html/canvas/Uint8Array.idl \
     html/canvas/Uint32Array.idl \
     html/canvas/Uint16Array.idl \
-    html/DataGridColumn.idl \
-    html/DataGridColumnList.idl \
     html/DOMFormData.idl \
     html/DOMSettableTokenList.idl \
     html/DOMTokenList.idl \
@@ -236,10 +234,6 @@ IDL_BINDINGS += \
     html/HTMLButtonElement.idl \
     html/HTMLCanvasElement.idl \
     html/HTMLCollection.idl \
-    html/HTMLDataGridElement.idl \
-    html/HTMLDataGridCellElement.idl \
-    html/HTMLDataGridColElement.idl \
-    html/HTMLDataGridRowElement.idl \
     html/HTMLDataListElement.idl \
     html/HTMLDetailsElement.idl \
     html/HTMLDirectoryElement.idl \

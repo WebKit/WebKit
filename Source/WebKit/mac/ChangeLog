@@ -1,3 +1,13 @@
+2011-04-26  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by David Hyatt.
+
+        Remove Datagrid from the tree
+        https://bugs.webkit.org/show_bug.cgi?id=59543
+
+        * Configurations/FeatureDefines.xcconfig:
+        Remove feature.
+
 2011-04-26  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Mark Rowe.

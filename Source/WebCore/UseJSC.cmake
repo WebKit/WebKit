@@ -50,8 +50,6 @@ LIST(APPEND WebCore_SOURCES
     bindings/js/JSDOMWindowCustom.cpp
     bindings/js/JSDOMWindowShell.cpp
     bindings/js/JSDOMWrapper.cpp
-    bindings/js/JSDataGridColumnListCustom.cpp
-    bindings/js/JSDataGridDataSource.cpp
     bindings/js/JSDedicatedWorkerContextCustom.cpp
     bindings/js/JSDeviceMotionEventCustom.cpp
     bindings/js/JSDeviceOrientationEventCustom.cpp
@@ -70,7 +68,6 @@ LIST(APPEND WebCore_SOURCES
     bindings/js/JSHTMLAppletElementCustom.cpp
     bindings/js/JSHTMLCanvasElementCustom.cpp
     bindings/js/JSHTMLCollectionCustom.cpp
-    bindings/js/JSHTMLDataGridElementCustom.cpp
     bindings/js/JSHTMLDocumentCustom.cpp
     bindings/js/JSHTMLElementCustom.cpp
     bindings/js/JSHTMLEmbedElementCustom.cpp

@@ -1,3 +1,75 @@
+2011-04-26  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by David Hyatt.
+
+        Remove Datagrid from the tree
+        https://bugs.webkit.org/show_bug.cgi?id=59543
+
+        * Android.derived.jscbindings.mk:
+        * Android.derived.v8bindings.mk:
+        * Android.jscbindings.mk:
+        * Android.v8bindings.mk:
+        * CMakeLists.txt:
+        * CodeGenerators.pri:
+        * Configurations/FeatureDefines.xcconfig:
+        * DerivedSources.cpp:
+        * DerivedSources.make:
+        * GNUmakefile.am:
+        * GNUmakefile.list.am:
+        * UseJSC.cmake:
+        * WebCore.gypi:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/JSBindingsAllInOne.cpp:
+        * bindings/js/JSDataGridColumnListCustom.cpp: Removed.
+        * bindings/js/JSDataGridDataSource.cpp: Removed.
+        * bindings/js/JSDataGridDataSource.h: Removed.
+        * bindings/js/JSHTMLDataGridElementCustom.cpp: Removed.
+        * bindings/v8/V8DataGridDataSource.cpp: Removed.
+        * bindings/v8/V8DataGridDataSource.h: Removed.
+        * bindings/v8/custom/V8DataGridColumnListCustom.cpp: Removed.
+        * bindings/v8/custom/V8HTMLDataGridElementCustom.cpp: Removed.
+        * css/CSSStyleSelector.cpp:
+        * css/CSSStyleSelector.h:
+        * css/html.css:
+        (input, textarea, keygen, select, button, isindex):
+        (select:disabled, keygen:disabled, optgroup:disabled, option:disabled):
+        * editing/htmlediting.cpp:
+        (WebCore::canHaveChildrenForEditing):
+        * features.pri:
+        * html/DOMDataGridDataSource.cpp: Removed.
+        * html/DOMDataGridDataSource.h: Removed.
+        * html/DataGridColumn.cpp: Removed.
+        * html/DataGridColumn.h: Removed.
+        * html/DataGridColumn.idl: Removed.
+        * html/DataGridColumnList.cpp: Removed.
+        * html/DataGridColumnList.h: Removed.
+        * html/DataGridColumnList.idl: Removed.
+        * html/DataGridDataSource.h: Removed.
+        * html/HTMLDataGridCellElement.cpp: Removed.
+        * html/HTMLDataGridCellElement.h: Removed.
+        * html/HTMLDataGridCellElement.idl: Removed.
+        * html/HTMLDataGridColElement.cpp: Removed.
+        * html/HTMLDataGridColElement.h: Removed.
+        * html/HTMLDataGridColElement.idl: Removed.
+        * html/HTMLDataGridElement.cpp: Removed.
+        * html/HTMLDataGridElement.h: Removed.
+        * html/HTMLDataGridElement.idl: Removed.
+        * html/HTMLDataGridRowElement.cpp: Removed.
+        * html/HTMLDataGridRowElement.h: Removed.
+        * html/HTMLDataGridRowElement.idl: Removed.
+        * html/HTMLElement.cpp:
+        (WebCore::HTMLElement::ieForbidsInsertHTML):
+        * html/HTMLElementsAllInOne.cpp:
+        * html/HTMLTagNames.in:
+        * page/DOMWindow.idl:
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::sizesToIntrinsicLogicalWidth):
+        * rendering/RenderDataGrid.cpp: Removed.
+        * rendering/RenderDataGrid.h: Removed.
+        * rendering/RenderingAllInOne.cpp:
+
 2011-04-26  Chun-Lung Huang  <alvincl.huang@gmail.com>
 
         Reviewed by Adele Peterson.

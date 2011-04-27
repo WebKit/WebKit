@@ -159,8 +159,6 @@ GEN := \
     $(intermediates)/html/JSDOMSettableTokenList.h \
     $(intermediates)/html/JSDOMTokenList.h \
     $(intermediates)/html/JSDOMURL.h \
-    $(intermediates)/html/JSDataGridColumn.h \
-    $(intermediates)/html/JSDataGridColumnList.h \
     $(intermediates)/html/JSFile.h \
     $(intermediates)/html/JSFileError.h \
     $(intermediates)/html/JSFileList.h \
@@ -177,10 +175,6 @@ GEN := \
     $(intermediates)/html/JSHTMLButtonElement.h \
     $(intermediates)/html/JSHTMLCanvasElement.h \
     $(intermediates)/html/JSHTMLCollection.h \
-    $(intermediates)/html/JSHTMLDataGridElement.h \
-    $(intermediates)/html/JSHTMLDataGridCellElement.h \
-    $(intermediates)/html/JSHTMLDataGridColElement.h \
-    $(intermediates)/html/JSHTMLDataGridRowElement.h \
     $(intermediates)/html/JSHTMLDataListElement.h \
     $(intermediates)/html/JSHTMLDListElement.h \
     $(intermediates)/html/JSHTMLDirectoryElement.h \

@@ -192,8 +192,6 @@ SET(WebCore_IDL_FILES
     fileapi/FileReader.idl
     fileapi/WebKitBlobBuilder.idl
 
-    html/DataGridColumn.idl
-    html/DataGridColumnList.idl
     html/DOMFormData.idl
     html/DOMSettableTokenList.idl
     html/DOMTokenList.idl
@@ -211,10 +209,6 @@ SET(WebCore_IDL_FILES
     html/HTMLButtonElement.idl
     html/HTMLCanvasElement.idl
     html/HTMLCollection.idl
-    html/HTMLDataGridCellElement.idl
-    html/HTMLDataGridColElement.idl
-    html/HTMLDataGridElement.idl
-    html/HTMLDataGridRowElement.idl
     html/HTMLDataListElement.idl
     html/HTMLDetailsElement.idl
     html/HTMLDirectoryElement.idl
@@ -718,13 +712,10 @@ SET(WebCore_SOURCES
     html/ClassList.cpp
     html/CollectionCache.cpp
     html/ColorInputType.cpp
-    html/DOMDataGridDataSource.cpp
     html/DOMFormData.cpp
     html/DOMSettableTokenList.cpp
     html/DOMTokenList.cpp
     html/DOMURL.cpp
-    html/DataGridColumn.cpp
-    html/DataGridColumnList.cpp
     html/DateComponents.cpp
     html/DateInputType.cpp
     html/DateTimeInputType.cpp
@@ -747,10 +738,6 @@ SET(WebCore_SOURCES
     html/HTMLCanvasElement.cpp
     html/HTMLCollection.cpp
     html/HTMLDListElement.cpp
-    html/HTMLDataGridCellElement.cpp
-    html/HTMLDataGridColElement.cpp
-    html/HTMLDataGridElement.cpp
-    html/HTMLDataGridRowElement.cpp
     html/HTMLDataListElement.cpp
     html/HTMLDetailsElement.cpp
     html/HTMLDirectoryElement.cpp
@@ -1221,7 +1208,6 @@ SET(WebCore_SOURCES
     rendering/RenderButton.cpp
     rendering/RenderCombineText.cpp
     rendering/RenderCounter.cpp
-    rendering/RenderDataGrid.cpp
     rendering/RenderDetails.cpp
     rendering/RenderDetailsMarker.cpp
     rendering/RenderEmbeddedObject.cpp

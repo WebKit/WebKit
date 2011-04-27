@@ -87,7 +87,7 @@ bool canHaveChildrenForEditing(const Node* node)
 #if ENABLE(WML)
         && !node->hasTagName(WMLNames::doTag)
 #endif
-        && ((!node->hasTagName(hrTag) && !node->hasTagName(datagridTag)) || node->hasChildNodes());
+        && (!node->hasTagName(hrTag) || node->hasChildNodes());
 }
 
 // Compare two positions, taking into account the possibility that one or both

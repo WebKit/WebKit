@@ -130,8 +130,6 @@ DOM_CLASSES = \
     Counter \
     Crypto \
     CustomEvent \
-    DataGridColumn \
-    DataGridColumnList \
     DataTransferItem \
     DataTransferItems \
     DedicatedWorkerContext \
@@ -215,10 +213,6 @@ DOM_CLASSES = \
     HTMLButtonElement \
     HTMLCanvasElement \
     HTMLCollection \
-    HTMLDataGridElement \
-    HTMLDataGridCellElement \
-    HTMLDataGridColElement \
-    HTMLDataGridRowElement \
     HTMLDataListElement \
     HTMLDetailsElement \
     HTMLDListElement \

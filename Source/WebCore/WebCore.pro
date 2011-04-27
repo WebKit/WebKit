@@ -115,7 +115,6 @@ v8 {
         bindings/v8/V8Collection.cpp \
         bindings/v8/V8DOMMap.cpp \
         bindings/v8/V8DOMWrapper.cpp \
-        bindings/v8/V8DataGridDataSource.cpp \
         bindings/v8/V8EventListener.cpp \
         bindings/v8/V8EventListenerList.cpp \
         bindings/v8/V8GCController.cpp \
@@ -159,7 +158,6 @@ v8 {
         bindings/v8/custom/V8CustomVoidCallback.cpp \
         bindings/v8/custom/V8DOMFormDataCustom.cpp \
         bindings/v8/custom/V8DOMWindowCustom.cpp \
-        bindings/v8/custom/V8DataGridColumnListCustom.cpp \
         bindings/v8/custom/V8DedicatedWorkerContextCustom.cpp \
         bindings/v8/custom/V8DocumentCustom.cpp \
         bindings/v8/custom/V8DocumentLocationCustom.cpp \
@@ -177,7 +175,6 @@ v8 {
     SOURCES += \
         bindings/v8/custom/V8HTMLCanvasElementCustom.cpp \
         bindings/v8/custom/V8HTMLCollectionCustom.cpp \
-        bindings/v8/custom/V8HTMLDataGridElementCustom.cpp \
         bindings/v8/custom/V8HTMLDocumentCustom.cpp \
         bindings/v8/custom/V8HTMLElementCustom.cpp \
         bindings/v8/custom/V8HTMLFormElementCustom.cpp \
@@ -268,8 +265,6 @@ v8 {
         bindings/js/JSDOMWindowCustom.cpp \
         bindings/js/JSDOMWindowShell.cpp \
         bindings/js/JSDOMWrapper.cpp \
-        bindings/js/JSDataGridColumnListCustom.cpp \
-        bindings/js/JSDataGridDataSource.cpp \
         bindings/js/JSDataViewCustom.cpp \
         bindings/js/JSDesktopNotificationsCustom.cpp \
         bindings/js/JSDeviceMotionEventCustom.cpp \
@@ -289,7 +284,6 @@ v8 {
         bindings/js/JSHTMLAppletElementCustom.cpp \
         bindings/js/JSHTMLCanvasElementCustom.cpp \
         bindings/js/JSHTMLCollectionCustom.cpp \
-        bindings/js/JSHTMLDataGridElementCustom.cpp \
         bindings/js/JSHTMLDocumentCustom.cpp \
         bindings/js/JSHTMLElementCustom.cpp \
         bindings/js/JSHTMLEmbedElementCustom.cpp \
@@ -642,13 +636,10 @@ SOURCES += \
     html/ClassList.cpp \
     html/CollectionCache.cpp \
     html/ColorInputType.cpp \
-    html/DOMDataGridDataSource.cpp \
     html/DOMFormData.cpp \
     html/DOMSettableTokenList.cpp \
     html/DOMTokenList.cpp \
     html/DOMURL.cpp \
-    html/DataGridColumn.cpp \
-    html/DataGridColumnList.cpp \
     html/DateComponents.cpp \
     html/DateInputType.cpp \
     html/DateTimeInputType.cpp \
@@ -671,10 +662,6 @@ SOURCES += \
     html/HTMLCanvasElement.cpp \
     html/HTMLCollection.cpp \
     html/HTMLDListElement.cpp \
-    html/HTMLDataGridCellElement.cpp \
-    html/HTMLDataGridColElement.cpp \
-    html/HTMLDataGridElement.cpp \
-    html/HTMLDataGridRowElement.cpp \
     html/HTMLDataListElement.cpp \
     html/HTMLDirectoryElement.cpp \
     html/HTMLDetailsElement.cpp \
@@ -1103,7 +1090,6 @@ SOURCES += \
     rendering/RenderButton.cpp \
     rendering/RenderCombineText.cpp \
     rendering/RenderCounter.cpp \
-    rendering/RenderDataGrid.cpp \
     rendering/RenderDetails.cpp \
     rendering/RenderDetailsMarker.cpp \
     rendering/RenderEmbeddedObject.cpp \
@@ -1264,7 +1250,6 @@ v8 {
         bindings/v8/V8AbstractEventListener.h \
         bindings/v8/V8Binding.h \
         bindings/v8/V8Collection.h \
-        bindings/v8/V8DataGridDataSource.h \
         bindings/v8/V8DOMMap.h \
         bindings/v8/V8DOMWindowShell.h \
         bindings/v8/V8DOMWrapper.h \
@@ -1307,7 +1292,6 @@ v8 {
         bindings/js/JSDOMWindowCustom.h \
         bindings/js/JSDOMWindowShell.h \
         bindings/js/JSDOMWrapper.h \
-        bindings/js/JSDataGridDataSource.h \
         bindings/js/JSErrorHandler.h \
         bindings/js/JSEventListener.h \
         bindings/js/JSEventTarget.h \
@@ -1631,10 +1615,7 @@ HEADERS += \
     html/canvas/Uint8Array.h \
     html/ClassList.h \
     html/CollectionCache.h \
-    html/DataGridColumn.h \
-    html/DataGridColumnList.h \
     html/DateComponents.h \
-    html/DOMDataGridDataSource.h \
     html/DOMFormData.h \
     html/DOMSettableTokenList.h \
     html/DOMTokenList.h \
@@ -1655,10 +1636,6 @@ HEADERS += \
     html/HTMLButtonElement.h \
     html/HTMLCanvasElement.h \
     html/HTMLCollection.h \
-    html/HTMLDataGridCellElement.h \
-    html/HTMLDataGridColElement.h \
-    html/HTMLDataGridElement.h \
-    html/HTMLDataGridRowElement.h \
     html/HTMLDirectoryElement.h \
     html/HTMLDetailsElement.h \
     html/HTMLDivElement.h \
@@ -2121,7 +2098,6 @@ HEADERS += \
     rendering/RenderButton.h \
     rendering/RenderCombineText.h \
     rendering/RenderCounter.h \
-    rendering/RenderDataGrid.h \
     rendering/RenderDetails.h \
     rendering/RenderDetailsMarker.h \
     rendering/RenderEmbeddedObject.h \
