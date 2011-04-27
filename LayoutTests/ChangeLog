@@ -1,3 +1,12 @@
+2011-04-27  Kenneth Russell  <kbr@google.com>
+
+        Not reviewed. Rebaseline test to get the tree green.
+
+        Web Inspector: regression in inspector/console/console-dir.html after r85054
+        https://bugs.webkit.org/show_bug.cgi?id=59620
+
+        * inspector/console/console-dir-expected.txt:
+
 2011-04-27  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r84987.

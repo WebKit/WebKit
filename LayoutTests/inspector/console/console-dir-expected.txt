@@ -18,13 +18,13 @@ console-dir.html:10NodeList[1]
     __proto__: NodeListPrototype
 
 console-dir.html:11XPathResult
-    booleanValue: Error: TYPE_ERR: DOM XPath Exception 52
+    booleanValue: XPathException
     constructor: XPathResultConstructor
     invalidIteratorState: false
-    numberValue: Error: TYPE_ERR: DOM XPath Exception 52
+    numberValue: XPathException
     resultType: 4
-    singleNodeValue: Error: TYPE_ERR: DOM XPath Exception 52
-    snapshotLength: Error: TYPE_ERR: DOM XPath Exception 52
-    stringValue: Error: TYPE_ERR: DOM XPath Exception 52
+    singleNodeValue: XPathException
+    snapshotLength: XPathException
+    stringValue: XPathException
     __proto__: XPathResultPrototype
 
