@@ -811,6 +811,43 @@
             }],
         },
         {
+            'target_name': 'generate_devtools_zip',
+            'type': 'none',
+            'dependencies': [
+                '../../WebCore/WebCore.gyp/WebCore.gyp:inspector_protocol_sources',
+            ],
+            'actions': [{
+                'action_name': 'generate_devtools_zip',
+                'script_name': 'scripts/generate_devtools_zip.py',
+                'inspector_html': '../../WebCore/inspector/front-end/inspector.html',
+                'inputs': [
+                    '<@(_script_name)',
+                    'scripts/generate_devtools_html.py',
+                    '<@(_inspector_html)',
+                    '<@(devtools_files)',
+                    '<@(webinspector_files)',
+                    '<(SHARED_INTERMEDIATE_DIR)/webcore/InspectorBackendStub.js',
+                    '<@(webinspector_image_files)',
+                    '<@(devtools_image_files)',
+                ],
+                'search_path': [
+                    '../../WebCore/inspector/front-end',
+                    'src/js',
+                    '<(SHARED_INTERMEDIATE_DIR)/webcore',
+                ],
+                'image_search_path': [
+                    '../../WebCore/inspector/front-end/Images',
+                    'src/js/Images',
+                ],
+                'outputs': ['<(PRODUCT_DIR)/devtools_frontend.zip'],
+                'action': ['python', '<@(_script_name)', '<@(_inspector_html)',
+                                     '--devtools-files', '<@(devtools_files)',
+                                     '--search-path', '<@(_search_path)',
+                                     '--image-search-path', '<@(_image_search_path)',
+                                     '--output', '<@(_outputs)'],
+            }],
+        },
+        {
             'target_name': 'webkit_unit_tests',
             'type': 'executable',
             'msvs_guid': '7CEFE800-8403-418A-AD6A-2D52C6FC3EAD',

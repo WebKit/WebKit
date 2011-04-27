@@ -33,7 +33,7 @@ import os.path
 import sys
 
 
-def GenerateIncludeTag(resource_path):
+def generate_include_tag(resource_path):
     (dir_name, file_name) = os.path.split(resource_path)
     if (file_name.endswith('.js')):
         return '    <script type="text/javascript" src="%s"></script>\n' % file_name
@@ -41,6 +41,22 @@ def GenerateIncludeTag(resource_path):
         return '    <link rel="stylesheet" type="text/css" href="%s">\n' % file_name
     else:
         assert resource_path
+
+
+def write_devtools_html(inspector_file, devtools_file, debug, debug_files):
+    for line in inspector_file:
+        if not debug and '<script ' in line:
+            continue
+        if not debug and '<link ' in line:
+            continue
+        if '</head>' in line:
+            if debug:
+                for resource in debug_files:
+                    devtools_file.write(generate_include_tag(resource))
+            else:
+                devtools_file.write(generate_include_tag("devTools.css"))
+                devtools_file.write(generate_include_tag("DevTools.js"))
+        devtools_file.write(line)
 
 
 def main(argv):
@@ -59,19 +75,7 @@ def main(argv):
     inspector_html = open(inspector_html_name, 'r')
     devtools_html = open(devtools_html_name, 'w')
 
-    for line in inspector_html:
-        if not debug and '<script ' in line:
-            continue
-        if not debug and '<link ' in line:
-            continue
-        if '</head>' in line:
-            if debug:
-                for resource in argv[4:]:
-                    devtools_html.write(GenerateIncludeTag(resource))
-            else:
-                devtools_html.write(GenerateIncludeTag("devTools.css"))
-                devtools_html.write(GenerateIncludeTag("DevTools.js"))
-        devtools_html.write(line)
+    write_devtools_html(inspector_html, devtools_html, debug, argv[4:])
 
     devtools_html.close()
     inspector_html.close()

@@ -32,6 +32,8 @@
 # This script concatenates in place JS files in the order specified
 # using <script> tags in a given 'order.html' file.
 
+from __future__ import with_statement
+
 from HTMLParser import HTMLParser
 from cStringIO import StringIO
 
@@ -42,11 +44,10 @@ import sys
 
 class OrderedJSFilesExtractor(HTMLParser):
 
-    def __init__(self, order_html_name):
+    def __init__(self, order_html):
         HTMLParser.__init__(self)
         self.ordered_js_files = []
-        order_html = open(order_html_name, 'r')
-        self.feed(order_html.read())
+        self.feed(order_html)
 
     def handle_starttag(self, tag, attrs):
         if tag == 'script':
@@ -83,7 +84,8 @@ def main(argv):
 
     output_file_name = argv.pop()
     input_order_file_name = argv[1]
-    extractor = OrderedJSFilesExtractor(input_order_file_name)
+    with open(input_order_file_name, 'r') as order_html:
+        extractor = OrderedJSFilesExtractor(order_html.read())
     extractor.ordered_js_files.append('DevTools.js')
     extractor.ordered_js_files.append('Tests.js')
 
