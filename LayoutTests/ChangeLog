@@ -1,3 +1,15 @@
+2011-04-27  Kenneth Russell  <kbr@google.com>
+
+        [chromium] Rebaseline direct-image-compositing.html after r85011
+        https://bugs.webkit.org/show_bug.cgi?id=59624
+
+        Unreviewed. It looks like the previous image result for this
+        layout test was checked in from a Debug rather than Release build
+        and was affected by bug 58587.
+
+        * platform/chromium-gpu-linux/compositing/direct-image-compositing-expected.png:
+        * platform/chromium/test_expectations.txt:
+
 2011-04-27  Dirk Pranke  <dpranke@chromium.org>
 
         Unreviewed, update w/ failing tests.

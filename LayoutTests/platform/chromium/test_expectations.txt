@@ -3066,6 +3066,7 @@ BUGCR75019 WIN LINUX MAC :fast/text/hyphenate-limit-before-after.html = IMAGE+TE
 //BUGWK58587 DEBUG GPU LINUX : compositing/geometry/horizontal-scroll-composited.html = IMAGE
 BUGWK58587 DEBUG GPU LINUX : fast/canvas/image-object-in-canvas.html = IMAGE
 //BUGWK58587 DEBUG GPU LINUX : platform/chromium/compositing/layout-width-change.html = IMAGE
+BUGWK58587 DEBUG GPU LINUX : compositing/direct-image-compositing.html = IMAGE
 
 // WebKit roll 80564:80631: rendering on Mac LEOPARD is shifted to the top right
 // started at some point at or after WK r80582 (Dave Hyatt's vertical text change - a very likely candidate)
@@ -3454,9 +3455,6 @@ BUGCR79241 : http/tests/misc/favicon-loads-with-icon-loading-override.html = TEX
 BUGCR79259 : fast/js/array-proto-func-property-getter-except.html = TEXT
 
 BUGWK58306 GPU MAC DEBUG : media/adopt-node-crash.html = CRASH
-
-// Flaky due to this webkit bug
-BUGWK58632 GPU LINUX DEBUG : compositing/direct-image-compositing.html = IMAGE
 
 // Temporarily marked failing for rebaselining.
 
