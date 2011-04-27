@@ -2,6 +2,14 @@
 
         Unreviewed, expectations change.
 
+        And yet more failures resulting from r85011
+
+        * platform/chromium/test_expectations.txt:
+
+2011-04-26  Dirk Pranke  <dpranke@chromium.org>
+
+        Unreviewed, expectations change.
+
         Suppress more failures resulting from r85011
 
         * platform/chromium/test_expectations.txt:
