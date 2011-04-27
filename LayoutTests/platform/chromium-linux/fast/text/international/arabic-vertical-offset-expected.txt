@@ -1,0 +1,11 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock {P} at (0,0) size 784x20
+        RenderText {#text} at (0,0) size 340x19
+          text run at (0,0) width 340: "The square glyph should be located above the line glyph."
+      RenderBlock {DIV} at (0,36) size 784x60
+        RenderText {#text} at (0,3) size 64x54
+          text run at (0,3) width 64: "\x{606}\x{6E1}"

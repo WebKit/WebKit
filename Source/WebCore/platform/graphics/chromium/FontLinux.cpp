@@ -206,7 +206,7 @@ void Font::drawComplexText(GraphicsContext* gc, const TextRun& run,
         setupForTextPainting(&strokePaint, gc->strokeColor().rgb());
     }
 
-    ComplexTextController controller(run, point.x(), this);
+    ComplexTextController controller(run, point.x(), point.y(), this);
     controller.setWordSpacingAdjustment(wordSpacing());
     controller.setLetterSpacingAdjustment(letterSpacing());
     controller.setPadding(run.expansion());
@@ -225,13 +225,13 @@ void Font::drawComplexText(GraphicsContext* gc, const TextRun& run,
         if (fill) {
             controller.fontPlatformDataForScriptRun()->setupPaint(&fillPaint);
             adjustTextRenderMode(&fillPaint, gc->platformContext());
-            canvas->drawPosTextH(controller.glyphs(), controller.length() << 1, controller.xPositions(), point.y(), fillPaint);
+            canvas->drawPosText(controller.glyphs(), controller.length() << 1, controller.positions(), fillPaint);
         }
 
         if (stroke) {
             controller.fontPlatformDataForScriptRun()->setupPaint(&strokePaint);
             adjustTextRenderMode(&strokePaint, gc->platformContext());
-            canvas->drawPosTextH(controller.glyphs(), controller.length() << 1, controller.xPositions(), point.y(), strokePaint);
+            canvas->drawPosText(controller.glyphs(), controller.length() << 1, controller.positions(), strokePaint);
         }
     }
 }
@@ -243,7 +243,7 @@ void Font::drawEmphasisMarksForComplexText(GraphicsContext* /* context */, const
 
 float Font::floatWidthForComplexText(const TextRun& run, HashSet<const SimpleFontData*>* /* fallbackFonts */, GlyphOverflow* /* glyphOverflow */) const
 {
-    ComplexTextController controller(run, 0, this);
+    ComplexTextController controller(run, 0, 0, this);
     controller.setWordSpacingAdjustment(wordSpacing());
     controller.setLetterSpacingAdjustment(letterSpacing());
     controller.setPadding(run.expansion());
@@ -258,7 +258,7 @@ static int glyphIndexForXPositionInScriptRun(const ComplexTextController& contro
     int lastX = controller.offsetX() - (controller.rtl() ? -controller.width() : controller.width());
     for (int glyphIndex = 0; static_cast<unsigned>(glyphIndex) < controller.length(); ++glyphIndex) {
         int advance = truncateFixedPointToInteger(controller.advances()[glyphIndex]);
-        int nextX = static_cast<int>(controller.xPositions()[glyphIndex]) + advance / 2;
+        int nextX = static_cast<int>(controller.positions()[glyphIndex].x()) + advance / 2;
         if (std::min(nextX, lastX) <= targetX && targetX <= std::max(nextX, lastX))
             return glyphIndex;
         lastX = nextX;
@@ -277,7 +277,7 @@ int Font::offsetForPositionForComplexText(const TextRun& run, float xFloat,
 
     // (Mac code ignores includePartialGlyphs, and they don't know what it's
     // supposed to do, so we just ignore it as well.)
-    ComplexTextController controller(run, 0, this);
+    ComplexTextController controller(run, 0, 0, this);
     controller.setWordSpacingAdjustment(wordSpacing());
     controller.setLetterSpacingAdjustment(letterSpacing());
     controller.setPadding(run.expansion());
@@ -328,7 +328,7 @@ FloatRect Font::selectionRectForComplexText(const TextRun& run,
                                             int from, int to) const
 {
     int fromX = -1, toX = -1;
-    ComplexTextController controller(run, 0, this);
+    ComplexTextController controller(run, 0, 0, this);
     controller.setWordSpacingAdjustment(wordSpacing());
     controller.setLetterSpacingAdjustment(letterSpacing());
     controller.setPadding(run.expansion());
@@ -345,7 +345,7 @@ FloatRect Font::selectionRectForComplexText(const TextRun& run,
             // find which glyph this code-point contributed to and find its x
             // position.
             int glyph = controller.logClusters()[from];
-            fromX = controller.xPositions()[glyph];
+            fromX = controller.positions()[glyph].x();
             if (controller.rtl())
                 fromX += truncateFixedPointToInteger(controller.advances()[glyph]);
         } else
@@ -353,7 +353,7 @@ FloatRect Font::selectionRectForComplexText(const TextRun& run,
 
         if (toX == -1 && to >= 0 && static_cast<unsigned>(to) < controller.numCodePoints()) {
             int glyph = controller.logClusters()[to];
-            toX = controller.xPositions()[glyph];
+            toX = controller.positions()[glyph].x();
             if (controller.rtl())
                 toX += truncateFixedPointToInteger(controller.advances()[glyph]);
         } else

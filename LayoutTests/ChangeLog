@@ -1,3 +1,18 @@
+2011-04-26  Kenichi Ishibashi  <bashi@chromium.org>
+
+        Reviewed by Tony Chang.
+
+        [Chromium] Vertical positions are off for some Arabic glyphs on Linux
+        https://bugs.webkit.org/show_bug.cgi?id=59182
+
+        Add a test for checking vertical offsets of Arabic script shaping.
+        The font which is used in the test was created from scratch.
+
+        * platform/chromium-linux/fast/text/international/arabic-vertical-offset-expected.png: Added.
+        * platform/chromium-linux/fast/text/international/arabic-vertical-offset-expected.txt: Added.
+        * platform/chromium-linux/fast/text/international/arabic-vertical-offset.html: Added.
+        * platform/chromium-linux/fast/text/international/resources/font-for-arabic-offset-test.ttf: Added.
+
 2011-04-26  Tony Chang  <tony@chromium.org>
 
         Reviewed by Ojan Vafai.

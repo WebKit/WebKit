@@ -1,3 +1,35 @@
+2011-04-26  Kenichi Ishibashi  <bashi@chromium.org>
+
+        Reviewed by Tony Chang.
+
+        [Chromium] Vertical positions are off for some Arabic glyphs on Linux
+        https://bugs.webkit.org/show_bug.cgi?id=59182
+
+        Use vertical offsets of the shaping results.
+
+        Test: platform/chromium-linux/fast/text/international/arabic-vertical-offset.html
+
+        * platform/graphics/chromium/ComplexTextControllerLinux.cpp:
+        (WebCore::ComplexTextController::ComplexTextController):
+        Added initialization of m_startingY.
+        (WebCore::ComplexTextController::nextScriptRun):
+        Followed the change in handling positions.
+        (WebCore::ComplexTextController::deleteGlyphArrays): Ditto.
+        (WebCore::ComplexTextController::createGlyphArrays): Ditto.
+        (WebCore::ComplexTextController::resetGlyphArrays): Ditto.
+        (WebCore::ComplexTextController::setGlyphPositions):
+        Changed to use vertical offsets as same as horizontal offsets.
+        * platform/graphics/chromium/ComplexTextControllerLinux.h:
+        Removed m_xPositions and Added m_positions and m_startingY.
+        (WebCore::ComplexTextController::positions): Added.
+        * platform/graphics/chromium/FontLinux.cpp:
+        Followed the change in ComplexTextController.
+        (WebCore::Font::drawComplexText): Ditto.
+        (WebCore::Font::floatWidthForComplexText): Ditto.
+        (WebCore::glyphIndexForXPositionInScriptRun): Ditto.
+        (WebCore::Font::offsetForPositionForComplexText): Ditto.
+        (WebCore::Font::selectionRectForComplexText): Ditto.
+
 2011-04-26  Levi Weintraub  <leviw@chromium.org>
 
         Reviewed by Eric Seidel.

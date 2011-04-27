@@ -32,6 +32,7 @@
 #define ComplexTextControllerLinux_h
 
 #include "HarfbuzzSkia.h"
+#include "SkPoint.h"
 #include "SkScalar.h"
 #include "TextRun.h"
 
@@ -60,7 +61,7 @@ class SimpleFontData;
 // can call |reset| to start over again.
 class ComplexTextController {
 public:
-    ComplexTextController(const TextRun&, unsigned, const Font*);
+    ComplexTextController(const TextRun&, unsigned, unsigned, const Font*);
     ~ComplexTextController();
 
     bool isWordBreak(unsigned);
@@ -92,10 +93,10 @@ public:
     // Return the length of the array returned by |glyphs|
     const unsigned length() const { return m_item.num_glyphs; }
 
-    // Return the x offset for each of the glyphs. Note that this is translated
+    // Return the offset for each of the glyphs. Note that this is translated
     // by the current x offset and that the x offset is updated for each script
     // run.
-    const SkScalar* xPositions() const { return m_xPositions; }
+    const SkPoint* positions() const { return m_positions; }
 
     // Get the advances (widths) for each glyph.
     const HB_Fixed* advances() const { return m_item.advances; }
@@ -125,7 +126,7 @@ private:
     void createGlyphArrays(int);
     void resetGlyphArrays();
     void shapeGlyphs();
-    void setGlyphXPositions(bool);
+    void setGlyphPositions(bool);
 
     static void normalizeSpacesAndMirrorChars(const UChar* source, bool rtl, UChar* destination, int length);
     static const TextRun& getNormalizedTextRun(const TextRun& originalRun, OwnPtr<TextRun>& normalizedRun, OwnArrayPtr<UChar>& normalizedBuffer);
@@ -137,9 +138,10 @@ private:
     const SimpleFontData* m_currentFontData;
     HB_ShaperItem m_item;
     uint16_t* m_glyphs16; // A vector of 16-bit glyph ids.
-    SkScalar* m_xPositions; // A vector of x positions for each glyph.
+    SkPoint* m_positions; // A vector of positions for each glyph.
     ssize_t m_indexOfNextScriptRun; // Indexes the script run in |m_run|.
     unsigned m_offsetX; // Offset in pixels to the start of the next script run.
+    unsigned m_startingY; // The Y starting point of the script run.
     unsigned m_pixelWidth; // Width (in px) of the current script run.
     unsigned m_glyphsArrayCapacity; // Current size of all the Harfbuzz arrays.
 

@@ -46,7 +46,7 @@ static int truncateFixedPointToInteger(HB_Fixed value)
     return value >> 6;
 }
 
-ComplexTextController::ComplexTextController(const TextRun& run, unsigned startingX, const Font* font)
+ComplexTextController::ComplexTextController(const TextRun& run, unsigned startingX, unsigned startingY, const Font* font)
     : m_font(font)
     , m_run(getNormalizedTextRun(run, m_normalizedRun, m_normalizedBuffer))
     , m_wordSpacingAdjustment(0)
@@ -75,6 +75,7 @@ ComplexTextController::ComplexTextController(const TextRun& run, unsigned starti
     m_item.stringLength = m_run.length();
 
     reset(startingX);
+    m_startingY = startingY;
 }
 
 ComplexTextController::~ComplexTextController()
@@ -171,7 +172,7 @@ bool ComplexTextController::nextScriptRun()
 
     setupFontForScriptRun();
     shapeGlyphs();
-    setGlyphXPositions(rtl());
+    setGlyphPositions(rtl());
 
     return true;
 }
@@ -233,7 +234,7 @@ void ComplexTextController::deleteGlyphArrays()
     delete[] m_item.advances;
     delete[] m_item.offsets;
     delete[] m_glyphs16;
-    delete[] m_xPositions;
+    delete[] m_positions;
 }
 
 void ComplexTextController::createGlyphArrays(int size)
@@ -244,7 +245,7 @@ void ComplexTextController::createGlyphArrays(int size)
     m_item.offsets = new HB_FixedPoint[size];
 
     m_glyphs16 = new uint16_t[size];
-    m_xPositions = new SkScalar[size];
+    m_positions = new SkPoint[size];
 
     m_item.num_glyphs = size;
     m_glyphsArrayCapacity = size; // Save the GlyphArrays size.
@@ -261,7 +262,7 @@ void ComplexTextController::resetGlyphArrays()
     memset(m_item.advances, 0, size * sizeof(HB_Fixed));
     memset(m_item.offsets, 0, size * sizeof(HB_FixedPoint));
     memset(m_glyphs16, 0, size * sizeof(uint16_t));
-    memset(m_xPositions, 0, size * sizeof(SkScalar));
+    memset(m_positions, 0, size * sizeof(SkPoint));
 }
 
 void ComplexTextController::shapeGlyphs()
@@ -284,7 +285,7 @@ void ComplexTextController::shapeGlyphs()
     }
 }
 
-void ComplexTextController::setGlyphXPositions(bool isRTL)
+void ComplexTextController::setGlyphPositions(bool isRTL)
 {
     const double rtlFlip = isRTL ? -1 : 1;
     double position = 0;
@@ -304,11 +305,13 @@ void ComplexTextController::setGlyphXPositions(bool isRTL)
 
         m_glyphs16[i] = m_item.glyphs[i];
         double offsetX = truncateFixedPointToInteger(m_item.offsets[i].x);
+        double offsetY = truncateFixedPointToInteger(m_item.offsets[i].y);
         double advance = truncateFixedPointToInteger(m_item.advances[i]);
         if (isRTL)
             offsetX -= advance;
 
-        m_xPositions[i] = m_offsetX + (position * rtlFlip) + offsetX;
+        m_positions[i].set(m_offsetX + (position * rtlFlip) + offsetX,
+                           m_startingY + offsetY);
 
         if (m_currentFontData->isZeroWidthSpaceGlyph(m_glyphs16[i]))
             continue;
