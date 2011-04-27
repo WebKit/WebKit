@@ -49,7 +49,7 @@ using namespace WebCore;
 
 @interface WebInspectorWindowController : NSWindowController <NSWindowDelegate> {
 @private
-    WebView *_inspectedWebView;
+    RetainPtr<WebView> _inspectedWebView;
     WebView *_webView;
     WebInspectorFrontendClient* _frontendClient;
     WebInspectorClient* _inspectorClient;
@@ -263,7 +263,6 @@ void WebInspectorFrontendClient::updateWindowTitle() const
     if (!(self = [self init]))
         return nil;
 
-    // Don't retain to avoid a circular reference.
     _inspectedWebView = webView;
     return self;
 }
@@ -323,12 +322,12 @@ void WebInspectorFrontendClient::updateWindowTitle() const
     _visible = NO;
 
     if (_attachedToInspectedWebView) {
-        if ([_inspectedWebView _isClosed])
+        if ([_inspectedWebView.get() _isClosed])
             return;
 
         [_webView removeFromSuperview];
 
-        WebFrameView *frameView = [[_inspectedWebView mainFrame] frameView];
+        WebFrameView *frameView = [[_inspectedWebView.get() mainFrame] frameView];
         NSRect frameViewRect = [frameView frame];
 
         // Setting the height based on the previous height is done to work with
@@ -339,7 +338,7 @@ void WebInspectorFrontendClient::updateWindowTitle() const
         [frameView setAutoresizingMask:(NSViewWidthSizable | NSViewHeightSizable)];
         [frameView setFrame:frameViewRect];
 
-        [_inspectedWebView displayIfNeeded];
+        [_inspectedWebView.get() displayIfNeeded];
     } else
         [super close];
 }
@@ -360,10 +359,10 @@ void WebInspectorFrontendClient::updateWindowTitle() const
         _shouldAttach = NO;
 
     if (_shouldAttach) {
-        WebFrameView *frameView = [[_inspectedWebView mainFrame] frameView];
+        WebFrameView *frameView = [[_inspectedWebView.get() mainFrame] frameView];
 
         [_webView removeFromSuperview];
-        [_inspectedWebView addSubview:_webView positioned:NSWindowBelow relativeTo:(NSView *)frameView];
+        [_inspectedWebView.get() addSubview:_webView positioned:NSWindowBelow relativeTo:(NSView *)frameView];
 
         [_webView setAutoresizingMask:(NSViewWidthSizable | NSViewHeightSizable | NSViewMaxYMargin)];
         [frameView setAutoresizingMask:(NSViewWidthSizable | NSViewHeightSizable | NSViewMinYMargin)];
@@ -431,7 +430,7 @@ void WebInspectorFrontendClient::updateWindowTitle() const
     if (!_attachedToInspectedWebView)
         return;
 
-    WebFrameView *frameView = [[_inspectedWebView mainFrame] frameView];
+    WebFrameView *frameView = [[_inspectedWebView.get() mainFrame] frameView];
     NSRect frameViewRect = [frameView frame];
 
     // Setting the height based on the difference is done to work with
@@ -456,7 +455,7 @@ void WebInspectorFrontendClient::updateWindowTitle() const
     _visible = NO;
 
     if (notifyInspectorController) {
-        if (Page* inspectedPage = [_inspectedWebView page])
+        if (Page* inspectedPage = [_inspectedWebView.get() page])
             inspectedPage->inspectorController()->disconnectFrontend();
 
         _inspectorClient->releaseFrontendPage();
@@ -471,51 +470,6 @@ void WebInspectorFrontendClient::updateWindowTitle() const
 - (NSUInteger)webView:(WebView *)sender dragDestinationActionMaskForDraggingInfo:(id <NSDraggingInfo>)draggingInfo
 {
     return WebDragDestinationActionNone;
-}
-
-// MARK: -
-
-// These methods can be used by UI elements such as menu items and toolbar buttons when the inspector is the key window.
-
-// This method is really only implemented to keep any UI elements enabled.
-- (void)showWebInspector:(id)sender
-{
-    [[_inspectedWebView inspector] show:sender];
-}
-
-- (void)showErrorConsole:(id)sender
-{
-    [[_inspectedWebView inspector] showConsole:sender];
-}
-
-- (void)toggleDebuggingJavaScript:(id)sender
-{
-    [[_inspectedWebView inspector] toggleDebuggingJavaScript:sender];
-}
-
-- (void)toggleProfilingJavaScript:(id)sender
-{
-    [[_inspectedWebView inspector] toggleProfilingJavaScript:sender];
-}
-
-- (BOOL)validateUserInterfaceItem:(id <NSValidatedUserInterfaceItem>)item
-{
-    BOOL isMenuItem = [(id)item isKindOfClass:[NSMenuItem class]];
-    if ([item action] == @selector(toggleDebuggingJavaScript:) && isMenuItem) {
-        NSMenuItem *menuItem = (NSMenuItem *)item;
-        if ([[_inspectedWebView inspector] isDebuggingJavaScript])
-            [menuItem setTitle:UI_STRING_INTERNAL("Stop Debugging JavaScript", "title for Stop Debugging JavaScript menu item")];
-        else
-            [menuItem setTitle:UI_STRING_INTERNAL("Start Debugging JavaScript", "title for Start Debugging JavaScript menu item")];
-    } else if ([item action] == @selector(toggleProfilingJavaScript:) && isMenuItem) {
-        NSMenuItem *menuItem = (NSMenuItem *)item;
-        if ([[_inspectedWebView inspector] isProfilingJavaScript])
-            [menuItem setTitle:UI_STRING_INTERNAL("Stop Profiling JavaScript", "title for Stop Profiling JavaScript menu item")];
-        else
-            [menuItem setTitle:UI_STRING_INTERNAL("Start Profiling JavaScript", "title for Start Profiling JavaScript menu item")];
-    }
-
-    return YES;
 }
 
 @end

@@ -1,3 +1,26 @@
+2011-04-27  Yury Semikhatsky  <yurys@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        REGRESSION: Crash occurs at objc_msgSend when closing a window that is displaying the web inspector
+        https://bugs.webkit.org/show_bug.cgi?id=44230
+
+        Use RetainPtr access inspected view from the inspector one to avoid inspected view being deleted before
+        inspector is closed.
+
+        * WebCoreSupport/WebInspectorClient.mm: store reference to inspected view in RetainPtr. Despite the removed
+        comment in initWithInspectedWebView this doesn't introduce cyclic reference since there are no retaining
+        pointers to the WebInspectorWindowController from the inspected page or from the WebInspectorClient.
+        There is only one reference to it from WebInspectorFrontendClient which is held by the inspector
+        front-end page.
+
+        Drive-by fix: removed several unused methods which are currently implemented in mac/WebInspector/WebInspector.mm
+        (-[WebInspectorWindowController initWithInspectedWebView:]):
+        (-[WebInspectorWindowController close]):
+        (-[WebInspectorWindowController showWindow:]):
+        (-[WebInspectorWindowController setAttachedWindowHeight:]):
+        (-[WebInspectorWindowController destroyInspectorView:]):
+
 2011-04-26  Sam Weinig  <sam@webkit.org>
 
         Reviewed by David Hyatt.
