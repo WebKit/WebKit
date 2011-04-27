@@ -26,6 +26,7 @@
 #include "config.h"
 #include "UserTypingGestureIndicator.h"
 
+#include "Document.h"
 #include "Frame.h"
 #include "Node.h"
 #include <wtf/StdLibExtras.h>

@@ -22,6 +22,7 @@
 #include "config.h"
 #include "CharacterData.h"
 
+#include "Document.h"
 #include "EventNames.h"
 #include "ExceptionCode.h"
 #include "InspectorInstrumentation.h"

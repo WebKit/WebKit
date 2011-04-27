@@ -33,6 +33,7 @@
 
 #if ENABLE(WEB_TIMING)
 
+#include "Document.h"
 #include "DocumentLoadTiming.h"
 #include "DocumentLoader.h"
 #include "DocumentTiming.h"

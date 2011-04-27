@@ -31,6 +31,7 @@
 #if ENABLE(GEOLOCATION)
 
 #include "Chrome.h"
+#include "Document.h"
 #include "Frame.h"
 #include "Page.h"
 #include <wtf/CurrentTime.h>

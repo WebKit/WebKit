@@ -26,9 +26,10 @@
 
 #include "XSLTProcessor.h"
 
+#include "CachedResourceLoader.h"
 #include "Console.h"
 #include "DOMWindow.h"
-#include "CachedResourceLoader.h"
+#include "Document.h"
 #include "Frame.h"
 #include "ResourceError.h"
 #include "ResourceHandle.h"

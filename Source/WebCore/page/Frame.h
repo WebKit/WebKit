@@ -29,7 +29,6 @@
 #define Frame_h
 
 #include "AnimationController.h"
-#include "Document.h"
 #include "DragImage.h"
 #include "Editor.h"
 #include "EventHandler.h"
@@ -62,6 +61,7 @@ typedef struct HBITMAP__* HBITMAP;
 
 namespace WebCore {
 
+    class Document;
     class FrameView;
     class HTMLTableCellElement;
     class RegularExpression;
@@ -174,10 +174,7 @@ namespace WebCore {
 
         String documentTypeString() const;
 
-        String displayStringModifiedByEncoding(const String& str) const
-        {
-            return document() ? document()->displayStringModifiedByEncoding(str) : str;
-        }
+        String displayStringModifiedByEncoding(const String&) const;
 
         DragImageRef nodeImage(Node*);
         DragImageRef dragImageForSelection();

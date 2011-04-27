@@ -808,6 +808,11 @@ String Frame::documentTypeString() const
     return String();
 }
 
+String Frame::displayStringModifiedByEncoding(const String& str) const
+{
+    return document() ? document()->displayStringModifiedByEncoding(str) : str;
+}
+
 VisiblePosition Frame::visiblePositionForPoint(const IntPoint& framePoint)
 {
     HitTestResult result = eventHandler()->hitTestResultAtPoint(framePoint, true);

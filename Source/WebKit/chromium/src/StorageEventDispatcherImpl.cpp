@@ -34,6 +34,7 @@
 #if ENABLE(DOM_STORAGE)
 
 #include "DOMWindow.h"
+#include "Document.h"
 #include "EventNames.h"
 #include "Frame.h"
 #include "KURL.h"

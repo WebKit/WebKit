@@ -33,6 +33,7 @@
 
 #include "CrossThreadTask.h"
 #include "DatabaseTask.h"
+#include "Document.h"
 #include "MessagePortChannel.h"
 #include "PlatformMessagePortChannel.h"
 

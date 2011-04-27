@@ -34,6 +34,7 @@
 #include "CSSMutableStyleDeclaration.h"
 #include "CachedMetadata.h"
 #include "DateExtension.h"
+#include "Document.h"
 #include "DocumentLoader.h"
 #include "Frame.h"
 #include "FrameLoaderClient.h"

@@ -32,6 +32,7 @@
 #define InspectorInstrumentation_h
 
 #include "Console.h"
+#include "Document.h"
 #include "Frame.h"
 #include "Page.h"
 #include "ScriptExecutionContext.h"
@@ -42,7 +43,6 @@ namespace WebCore {
 class CharacterData;
 class DOMWrapperWorld;
 class Database;
-class Document;
 class Element;
 class EventContext;
 class DocumentLoader;

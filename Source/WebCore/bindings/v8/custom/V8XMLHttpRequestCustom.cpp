@@ -32,6 +32,7 @@
 #include "V8XMLHttpRequest.h"
 
 #include "ArrayBuffer.h"
+#include "Document.h"
 #include "Frame.h"
 #include "InspectorInstrumentation.h"
 #include "V8ArrayBuffer.h"

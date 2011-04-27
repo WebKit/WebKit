@@ -34,6 +34,7 @@
 #if ENABLE(FILE_SYSTEM)
 
 #include "AsyncFileSystem.h"
+#include "Document.h"
 #include "ErrorCallback.h"
 #include "FileSystemCallback.h"
 #include "FileSystemCallbacks.h"

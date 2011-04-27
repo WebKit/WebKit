@@ -32,6 +32,7 @@
 #include "SelectionController.h"
 
 #include "AXObjectCache.h"
+#include "Document.h"
 #include "Frame.h"
 
 namespace WebCore {

@@ -32,6 +32,7 @@
 #include "config.h"
 #include "PingLoader.h"
 
+#include "Document.h"
 #include "FormData.h"
 #include "Frame.h"
 #include "FrameLoaderClient.h"

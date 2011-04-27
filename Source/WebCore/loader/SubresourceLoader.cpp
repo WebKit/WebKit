@@ -29,6 +29,7 @@
 #include "config.h"
 #include "SubresourceLoader.h"
 
+#include "Document.h"
 #include "DocumentLoader.h"
 #include "Frame.h"
 #include "FrameLoader.h"

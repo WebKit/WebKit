@@ -32,6 +32,7 @@
 #include "BindingSecurityBase.h"
 
 #include "DOMWindow.h"
+#include "Document.h"
 #include "Frame.h"
 #include "SecurityOrigin.h"
 

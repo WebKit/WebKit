@@ -1,3 +1,44 @@
+2011-04-27  Mihai Parparita  <mihaip@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        Frame.h shouldn't include Document.h
+        https://bugs.webkit.org/show_bug.cgi?id=59560
+
+        Frame can use a forward-declared Document if we move
+        Frame::displayStringModifiedByEncoding's implementation out of the
+        header.
+                                Size  #includes  Size * #includes
+        Before: page/Frame.h:   0.746       653           487.138
+                dom/Document.h: 0.220      1306           287.320
+        
+        After:  page/Frame.h:   0.646       653           421.838
+                dom/Document.h: 0.220      1189           261.580
+
+        * WebCore.exp.in:
+        * bindings/ScriptControllerBase.cpp:
+        * bindings/generic/BindingSecurityBase.cpp:
+        * bindings/v8/V8Proxy.cpp:
+        * bindings/v8/custom/V8XMLHttpRequestCustom.cpp:
+        * dom/CharacterData.cpp:
+        * dom/UserTypingGestureIndicator.cpp:
+        * editing/chromium/SelectionControllerChromium.cpp:
+        * inspector/InspectorDOMStorageResource.cpp:
+        * inspector/InspectorInstrumentation.h:
+        * loader/PingLoader.cpp:
+        * loader/SubresourceLoader.cpp:
+        * loader/appcache/DOMApplicationCache.cpp:
+        * loader/cache/CachedResourceRequest.cpp:
+        * page/Frame.cpp:
+        (WebCore::Frame::displayStringModifiedByEncoding):
+        * page/Frame.h:
+        * page/Geolocation.cpp:
+        * page/Location.cpp:
+        * page/Navigator.cpp:
+        * page/PageGroupLoadDeferrer.cpp:
+        * page/PerformanceTiming.cpp:
+        * xml/XSLTProcessorLibxslt.cpp:
+
 2011-04-27  James Robinson  <jamesr@chromium.org>
 
         Reviewed by Eric Seidel.

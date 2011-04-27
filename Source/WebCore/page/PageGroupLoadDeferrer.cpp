@@ -21,6 +21,7 @@
 #include "config.h"
 #include "PageGroupLoadDeferrer.h"
 
+#include "Document.h"
 #include "DocumentParser.h"
 #include "Frame.h"
 #include "Page.h"

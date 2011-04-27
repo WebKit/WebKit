@@ -42,6 +42,7 @@
 
 namespace WebCore {
 class GraphicsContext;
+class HTMLInputElement;
 class HistoryItem;
 class KURL;
 class Node;
