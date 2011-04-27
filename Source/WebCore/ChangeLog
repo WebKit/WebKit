@@ -1,3 +1,12 @@
+2011-04-26  Pavel Feldman  <pfeldman@chromium.org>
+
+        Not reviewed: restore inspector test disabled in r84913.
+
+        Test: http/tests/inspector-enabled/dom-storage-open.html
+
+        * inspector/InspectorDOMStorageAgent.cpp:
+        (WebCore::InspectorDOMStorageAgent::clearFrontend):
+
 2011-04-26  Kenichi Ishibashi  <bashi@chromium.org>
 
         Reviewed by Tony Chang.

@@ -81,6 +81,7 @@ void InspectorDOMStorageAgent::clearFrontend()
     for (DOMStorageResourcesMap::iterator it = m_resources.begin(); it != domStorageEnd; ++it)
         it->second->unbind();
     m_frontend = 0;
+    disable(0);
 }
 
 void InspectorDOMStorageAgent::restore()

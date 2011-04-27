@@ -1,3 +1,9 @@
+2011-04-26  Pavel Feldman  <pfeldman@chromium.org>
+
+        Not reviewed: restore inspector test disabled in r84913.
+
+        * http/tests/inspector-enabled/dom-storage-open.html: Renamed from LayoutTests/http/tests/inspector-enabled/dom-storage-open.html-disabled.
+
 2011-04-26  Ami Fischman  <fischman@google.com>
 
         Reviewed by David Levin.
