@@ -140,7 +140,7 @@ private:
     
     void clearScratchBuffer()
     {
-        m_imageBuffer = 0;
+        m_imageBuffer = nullptr;
         m_lastRadius = FloatSize();
     }
 

@@ -81,7 +81,7 @@ HTMLFormControlElement::~HTMLFormControlElement()
 
 void HTMLFormControlElement::detach()
 {
-    m_validationMessage = 0;
+    m_validationMessage = nullptr;
     HTMLElement::detach();
 }
 

@@ -374,10 +374,10 @@ InspectorResourceAgent::InspectorResourceAgent(InstrumentingAgents* instrumentin
     , m_state(state)
 {
     if (backgroundEventsCollectionEnabled()) {
-        m_eventsCollector = new EventsCollector();
-        m_inspectorFrontendProxy = new InspectorFrontendProxy(m_eventsCollector.get());
+        m_eventsCollector = adoptPtr(new EventsCollector);
+        m_inspectorFrontendProxy = adoptPtr(new InspectorFrontendProxy(m_eventsCollector.get()));
         // Create mock frontend, so we can collect network events.
-        m_mockFrontend = new InspectorFrontend::Network(m_inspectorFrontendProxy.get());
+        m_mockFrontend = adoptPtr(new InspectorFrontend::Network(m_inspectorFrontendProxy.get()));
         m_frontend = m_mockFrontend.get();
         enable();
     } else

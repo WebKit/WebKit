@@ -67,7 +67,7 @@ JSC::JSValue JSMessageEvent::initMessageEvent(JSC::ExecState* exec)
     DOMWindow* sourceArg = toDOMWindow(exec->argument(6));
     OwnPtr<MessagePortArray> messagePorts;
     if (!exec->argument(7).isUndefinedOrNull()) {
-        messagePorts = new MessagePortArray();
+        messagePorts = adoptPtr(new MessagePortArray);
         fillMessagePortArray(exec, exec->argument(7), *messagePorts);
         if (exec->hadException())
             return jsUndefined();

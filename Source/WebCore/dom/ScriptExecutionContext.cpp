@@ -60,7 +60,7 @@ class ProcessMessagesSoonTask : public ScriptExecutionContext::Task {
 public:
     static PassOwnPtr<ProcessMessagesSoonTask> create()
     {
-        return new ProcessMessagesSoonTask;
+        return adoptPtr(new ProcessMessagesSoonTask);
     }
 
     virtual void performTask(ScriptExecutionContext* context)

@@ -239,7 +239,7 @@ static bool animationHasStepsTimingFunction(const KeyframeValueList& valueList, 
 
 PassOwnPtr<GraphicsLayer> GraphicsLayer::create(GraphicsLayerClient* client)
 {
-    return new GraphicsLayerCA(client);
+    return adoptPtr(new GraphicsLayerCA(client));
 }
 
 GraphicsLayerCA::GraphicsLayerCA(GraphicsLayerClient* client)
@@ -2151,13 +2151,13 @@ void GraphicsLayerCA::ensureCloneLayers(CloneID cloneID, RefPtr<PlatformCALayer>
     contentsLayer = 0;
 
     if (!m_layerClones)
-        m_layerClones = new LayerMap;
+        m_layerClones = adoptPtr(new LayerMap);
 
     if (!m_structuralLayerClones && m_structuralLayer)
-        m_structuralLayerClones = new LayerMap;
+        m_structuralLayerClones = adoptPtr(new LayerMap);
 
     if (!m_contentsLayerClones && m_contentsLayer)
-        m_contentsLayerClones = new LayerMap;
+        m_contentsLayerClones = adoptPtr(new LayerMap);
 
     primaryLayer = findOrMakeClone(cloneID, m_layer.get(), m_layerClones.get(), cloneLevel);
     structuralLayer = findOrMakeClone(cloneID, m_structuralLayer.get(), m_structuralLayerClones.get(), cloneLevel);
@@ -2166,9 +2166,9 @@ void GraphicsLayerCA::ensureCloneLayers(CloneID cloneID, RefPtr<PlatformCALayer>
 
 void GraphicsLayerCA::removeCloneLayers()
 {
-    m_layerClones = 0;
-    m_structuralLayerClones = 0;
-    m_contentsLayerClones = 0;
+    m_layerClones = nullptr;
+    m_structuralLayerClones = nullptr;
+    m_contentsLayerClones = nullptr;
 }
 
 FloatPoint GraphicsLayerCA::positionForCloneRootLayer() const

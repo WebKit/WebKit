@@ -1,3 +1,72 @@
+2011-04-27  Darin Adler  <darin@apple.com>
+
+        Reviewed by David Levin.
+
+        Fix strict OwnPtr issues seen in about 30 more files
+        https://bugs.webkit.org/show_bug.cgi?id=59615
+
+        * bindings/js/JSCallbackData.h:
+        (WebCore::DeleteCallbackDataTask::create): Use adoptPtr.
+        * bindings/js/JSMessageEventCustom.cpp:
+        (WebCore::JSMessageEvent::initMessageEvent): Use adoptPtr.
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::updateSpecifiersWithElementName): Use OwnPtr,
+        adoptPtr, and release.
+        * dom/MessageEvent.cpp:
+        (WebCore::MessageEvent::initMessageEvent): Use OwnPtr, adoptPtr,
+        and release.
+        * dom/MessagePortChannel.cpp:
+        (WebCore::MessagePortChannel::EventData::create): Use adoptPtr.
+        * dom/ScriptExecutionContext.cpp:
+        (WebCore::ProcessMessagesSoonTask::create): Use adoptPtr.
+        * dom/XMLDocumentParserLibxml2.cpp:
+        (WebCore::XMLDocumentParser::doEnd): Use adoptPtr.
+        * dom/default/PlatformMessagePortChannel.cpp:
+        (WebCore::MessagePortChannel::create): Use adoptPtr.
+        * html/HTMLFormControlElement.cpp:
+        (WebCore::HTMLFormControlElement::detach): Use nullptr.
+        * inspector/InspectorAgent.cpp:
+        (WebCore::PostWorkerNotificationToFrontendTask::create): Use adoptPtr.
+        * inspector/InspectorConsoleAgent.cpp:
+        (WebCore::InspectorConsoleAgent::addMessageToConsole): Use adoptPtr.
+        (WebCore::InspectorConsoleAgent::didReceiveResponse): Use adoptPtr.
+        (WebCore::InspectorConsoleAgent::didFailLoading): Use adoptPtr.
+        * inspector/InspectorController.cpp:
+        (WebCore::InspectorController::connectFrontend): Use adoptPtr.
+        * inspector/InspectorDOMAgent.cpp:
+        (WebCore::InspectorDOMAgent::didInvalidateStyleAttr): Use adoptPtr.
+        * inspector/InspectorResourceAgent.cpp:
+        (WebCore::InspectorResourceAgent::InspectorResourceAgent): Use adoptPtr.
+        * page/FrameActionScheduler.cpp:
+        (WebCore::FrameActionScheduler::scheduleEvent): Use adoptPtr.
+        * platform/graphics/ShadowBlur.cpp:
+        (WebCore::ScratchBuffer::clearScratchBuffer): Use nullptr.
+        * platform/graphics/ca/GraphicsLayerCA.cpp:
+        (WebCore::GraphicsLayer::create): Use adoptPtr.
+        (WebCore::GraphicsLayerCA::ensureCloneLayers): Use adoptPtr.
+        (WebCore::GraphicsLayerCA::removeCloneLayers): Use nullptr.
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::setMaxMarginBeforeValues): Use adoptPtr.
+        (WebCore::RenderBlock::setMaxMarginAfterValues): Use adoptPtr.
+        (WebCore::RenderBlock::setPaginationStrut): Use adoptPtr.
+        (WebCore::RenderBlock::setPageLogicalOffset): Use adoptPtr.
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::destroyGraphicsLayer): Use nullptr.
+        (WebCore::RenderLayerBacking::updateClippingLayers): Use nullptr.
+        (WebCore::RenderLayerBacking::updateForegroundLayer): Use nullptr.
+        (WebCore::RenderLayerBacking::updateMaskLayer): Use nullptr.
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::updateOverflowControlsLayers): Use nullptr.
+        (WebCore::RenderLayerCompositor::ensureRootPlatformLayer): Use nullptr.
+        (WebCore::RenderLayerCompositor::destroyRootPlatformLayer): Use nullptr.
+        * rendering/style/StyleRareNonInheritedData.cpp:
+        (WebCore::StyleRareNonInheritedData::StyleRareNonInheritedData): Removed
+        explicit initializations of OwnPtr members to 0. Use adoptPtr.
+        * workers/SharedWorkerContext.cpp:
+        (WebCore::createConnectEvent): Use adoptPtr.
+        * workers/Worker.cpp:
+        (WebCore::Worker::notifyFinished): Use nullptr.
+
 2011-04-27  Enrica Casucci  <enrica@apple.com>
 
         Reviewed by Darin Adler.

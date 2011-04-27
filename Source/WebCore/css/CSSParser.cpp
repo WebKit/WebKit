@@ -6387,9 +6387,9 @@ void CSSParser::updateSpecifiersWithElementName(const AtomicString& namespacePre
     if (elementName == starAtom && m_defaultNamespace == starAtom)
         return;
 
-    CSSParserSelector* elementNameSelector = new CSSParserSelector;
+    OwnPtr<CSSParserSelector> elementNameSelector = adoptPtr(new CSSParserSelector);
     elementNameSelector->setTag(tag);
-    lastShadowDescendant->setTagHistory(elementNameSelector);
+    lastShadowDescendant->setTagHistory(elementNameSelector.release());
     lastShadowDescendant->setRelation(CSSSelector::ShadowDescendant);
 }
 

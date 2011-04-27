@@ -105,7 +105,7 @@ void InspectorController::stopTimelineProfiler()
 void InspectorController::connectFrontend()
 {
     m_openingFrontend = false;
-    m_inspectorFrontend = new InspectorFrontend(m_inspectorClient);
+    m_inspectorFrontend = adoptPtr(new InspectorFrontend(m_inspectorClient));
     m_injectedScriptManager->injectedScriptHost()->setFrontend(m_inspectorFrontend.get());
     m_inspectorAgent->setFrontend(m_inspectorFrontend.get());
 
@@ -114,7 +114,7 @@ void InspectorController::connectFrontend()
     InspectorInstrumentation::frontendCreated();
 
     ASSERT(m_inspectorClient);
-    m_inspectorBackendDispatcher = new InspectorBackendDispatcher(
+    m_inspectorBackendDispatcher = adoptPtr(new InspectorBackendDispatcher(
         m_inspectorClient,
 #if ENABLE(OFFLINE_WEB_APPLICATIONS)
         m_inspectorAgent->applicationCacheAgent(),
@@ -144,7 +144,7 @@ void InspectorController::connectFrontend()
 #if ENABLE(WORKERS)
         , m_inspectorAgent->workerAgent()
 #endif
-    );
+    ));
 
     if (m_startUserInitiatedDebuggingWhenFrontedIsConnected) {
         m_inspectorFrontend->inspector()->startUserInitiatedDebugging();

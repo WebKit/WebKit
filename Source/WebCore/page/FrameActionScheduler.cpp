@@ -104,7 +104,7 @@ void FrameActionScheduler::scheduleAction(PassOwnPtr<FrameAction> action)
 
 void FrameActionScheduler::scheduleEvent(PassRefPtr<Event> event, PassRefPtr<Node> eventTarget)
 {
-    scheduleAction(new EventFrameAction(event, eventTarget));
+    scheduleAction(adoptPtr(new EventFrameAction(event, eventTarget)));
 }
 
 

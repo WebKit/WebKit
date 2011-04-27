@@ -5587,7 +5587,7 @@ void RenderBlock::setMaxMarginBeforeValues(int pos, int neg)
     if (!m_rareData) {
         if (pos == RenderBlockRareData::positiveMarginBeforeDefault(this) && neg == RenderBlockRareData::negativeMarginBeforeDefault(this))
             return;
-        m_rareData = new RenderBlockRareData(this);
+        m_rareData = adoptPtr(new RenderBlockRareData(this));
     }
     m_rareData->m_margins.setPositiveMarginBefore(pos);
     m_rareData->m_margins.setNegativeMarginBefore(neg);
@@ -5598,7 +5598,7 @@ void RenderBlock::setMaxMarginAfterValues(int pos, int neg)
     if (!m_rareData) {
         if (pos == RenderBlockRareData::positiveMarginAfterDefault(this) && neg == RenderBlockRareData::negativeMarginAfterDefault(this))
             return;
-        m_rareData = new RenderBlockRareData(this);
+        m_rareData = adoptPtr(new RenderBlockRareData(this));
     }
     m_rareData->m_margins.setPositiveMarginAfter(pos);
     m_rareData->m_margins.setNegativeMarginAfter(neg);
@@ -5609,7 +5609,7 @@ void RenderBlock::setPaginationStrut(int strut)
     if (!m_rareData) {
         if (!strut)
             return;
-        m_rareData = new RenderBlockRareData(this);
+        m_rareData = adoptPtr(new RenderBlockRareData(this));
     }
     m_rareData->m_paginationStrut = strut;
 }
@@ -5619,7 +5619,7 @@ void RenderBlock::setPageLogicalOffset(int logicalOffset)
     if (!m_rareData) {
         if (!logicalOffset)
             return;
-        m_rareData = new RenderBlockRareData(this);
+        m_rareData = adoptPtr(new RenderBlockRareData(this));
     }
     m_rareData->m_pageLogicalOffset = logicalOffset;
 }

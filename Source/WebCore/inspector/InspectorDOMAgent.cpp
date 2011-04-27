@@ -1293,7 +1293,7 @@ void InspectorDOMAgent::didInvalidateStyleAttr(Node* node)
         return;
 
     if (!m_revalidateStyleAttrTask)
-        m_revalidateStyleAttrTask = new RevalidateStyleAttributeTask(this);
+        m_revalidateStyleAttrTask = adoptPtr(new RevalidateStyleAttributeTask(this));
     m_revalidateStyleAttrTask->scheduleFor(static_cast<Element*>(node));
 }
 

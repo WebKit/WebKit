@@ -77,12 +77,12 @@ MessagePort* MessageEvent::messagePort()
 
 void MessageEvent::initMessageEvent(const AtomicString& type, bool canBubble, bool cancelable, PassRefPtr<SerializedScriptValue> data, const String& origin, const String& lastEventId, DOMWindow* source, MessagePort* port)
 {
-    MessagePortArray* ports = 0;
+    OwnPtr<MessagePortArray> ports;
     if (port) {
-        ports = new MessagePortArray();
+        ports = adoptPtr(new MessagePortArray);
         ports->append(port);
     }
-    initMessageEvent(type, canBubble, cancelable, data, origin, lastEventId, source, ports);
+    initMessageEvent(type, canBubble, cancelable, data, origin, lastEventId, source, ports.release());
 }
 
 bool MessageEvent::isMessageEvent() const 

@@ -77,7 +77,7 @@ class DeleteCallbackDataTask : public ScriptExecutionContext::Task {
 public:
     static PassOwnPtr<DeleteCallbackDataTask> create(JSCallbackData* data)
     {
-        return new DeleteCallbackDataTask(data);
+        return adoptPtr(new DeleteCallbackDataTask(data));
     }
 
     virtual void performTask(ScriptExecutionContext*)

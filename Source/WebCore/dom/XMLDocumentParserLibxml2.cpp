@@ -1351,7 +1351,7 @@ void XMLDocumentParser::doEnd()
 
     if (m_sawXSLTransform) {
         void* doc = xmlDocPtrForString(document()->cachedResourceLoader(), m_originalSourceForTransform, document()->url().string());
-        document()->setTransformSource(new TransformSource(doc));
+        document()->setTransformSource(adoptPtr(new TransformSource(doc)));
 
         document()->setParsing(false); // Make the document think it's done, so it will apply XSL stylesheets.
         document()->styleSelectorChanged(RecalcStyleImmediately);

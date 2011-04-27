@@ -44,7 +44,7 @@ void MessagePortChannel::createChannel(PassRefPtr<MessagePort> port1, PassRefPtr
 
 PassOwnPtr<MessagePortChannel> MessagePortChannel::create(PassRefPtr<PlatformMessagePortChannel> channel)
 {
-    return new MessagePortChannel(channel);
+    return adoptPtr(new MessagePortChannel(channel));
 }
 
 MessagePortChannel::MessagePortChannel(PassRefPtr<PlatformMessagePortChannel> channel)

@@ -1508,7 +1508,7 @@ void RenderLayerCompositor::updateOverflowControlsLayers()
         layersChanged = true;
     } else if (m_layerForHorizontalScrollbar) {
         m_layerForHorizontalScrollbar->removeFromParent();
-        m_layerForHorizontalScrollbar = 0;
+        m_layerForHorizontalScrollbar = nullptr;
         layersChanged = true;
     }
 
@@ -1521,7 +1521,7 @@ void RenderLayerCompositor::updateOverflowControlsLayers()
         layersChanged = true;
     } else if (m_layerForVerticalScrollbar) {
         m_layerForVerticalScrollbar->removeFromParent();
-        m_layerForVerticalScrollbar = 0;
+        m_layerForVerticalScrollbar = nullptr;
         layersChanged = true;
     }
 
@@ -1534,7 +1534,7 @@ void RenderLayerCompositor::updateOverflowControlsLayers()
         layersChanged = true;
     } else if (m_layerForScrollCorner) {
         m_layerForScrollCorner->removeFromParent();
-        m_layerForScrollCorner = 0;
+        m_layerForScrollCorner = nullptr;
         layersChanged = true;
     }
 
@@ -1593,9 +1593,9 @@ void RenderLayerCompositor::ensureRootPlatformLayer()
         }
     } else {
         if (m_overflowControlsHostLayer) {
-            m_overflowControlsHostLayer = 0;
-            m_clipLayer = 0;
-            m_scrollLayer = 0;
+            m_overflowControlsHostLayer = nullptr;
+            m_clipLayer = nullptr;
+            m_scrollLayer = nullptr;
         }
     }
 
@@ -1615,30 +1615,30 @@ void RenderLayerCompositor::destroyRootPlatformLayer()
 
     if (m_layerForHorizontalScrollbar) {
         m_layerForHorizontalScrollbar->removeFromParent();
-        m_layerForHorizontalScrollbar = 0;
+        m_layerForHorizontalScrollbar = nullptr;
         if (Scrollbar* horizontalScrollbar = m_renderView->frameView()->verticalScrollbar())
             m_renderView->frameView()->invalidateScrollbar(horizontalScrollbar, IntRect(IntPoint(0, 0), horizontalScrollbar->frameRect().size()));
     }
 
     if (m_layerForVerticalScrollbar) {
         m_layerForVerticalScrollbar->removeFromParent();
-        m_layerForVerticalScrollbar = 0;
+        m_layerForVerticalScrollbar = nullptr;
         if (Scrollbar* verticalScrollbar = m_renderView->frameView()->verticalScrollbar())
             m_renderView->frameView()->invalidateScrollbar(verticalScrollbar, IntRect(IntPoint(0, 0), verticalScrollbar->frameRect().size()));
     }
 
     if (m_layerForScrollCorner) {
-        m_layerForScrollCorner = 0;
+        m_layerForScrollCorner = nullptr;
         m_renderView->frameView()->invalidateScrollCorner();
     }
 
     if (m_overflowControlsHostLayer) {
-        m_overflowControlsHostLayer = 0;
-        m_clipLayer = 0;
-        m_scrollLayer = 0;
+        m_overflowControlsHostLayer = nullptr;
+        m_clipLayer = nullptr;
+        m_scrollLayer = nullptr;
     }
     ASSERT(!m_scrollLayer);
-    m_rootPlatformLayer = 0;
+    m_rootPlatformLayer = nullptr;
 }
 
 void RenderLayerCompositor::attachRootPlatformLayer(RootLayerAttachment attachment)

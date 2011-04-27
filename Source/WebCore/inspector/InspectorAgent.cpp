@@ -330,7 +330,7 @@ class PostWorkerNotificationToFrontendTask : public ScriptExecutionContext::Task
 public:
     static PassOwnPtr<PostWorkerNotificationToFrontendTask> create(PassRefPtr<InspectorWorkerResource> worker, InspectorAgent::WorkerAction action)
     {
-        return new PostWorkerNotificationToFrontendTask(worker, action);
+        return adoptPtr(new PostWorkerNotificationToFrontendTask(worker, action));
     }
 
 private:

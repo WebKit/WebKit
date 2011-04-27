@@ -35,7 +35,7 @@ namespace WebCore {
 
 PassOwnPtr<MessagePortChannel::EventData> MessagePortChannel::EventData::create(PassRefPtr<SerializedScriptValue> message, PassOwnPtr<MessagePortChannelArray> channels)
 {
-    return new EventData(message, channels);
+    return adoptPtr(new EventData(message, channels));
 }
 
 MessagePortChannel::EventData::EventData(PassRefPtr<SerializedScriptValue> message, PassOwnPtr<MessagePortChannelArray> channels)

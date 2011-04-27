@@ -44,7 +44,7 @@ namespace WebCore {
 
 PassRefPtr<MessageEvent> createConnectEvent(PassRefPtr<MessagePort> port)
 {
-    RefPtr<MessageEvent> event = MessageEvent::create(new MessagePortArray(1, port));
+    RefPtr<MessageEvent> event = MessageEvent::create(adoptPtr(new MessagePortArray(1, port)));
     event->initEvent(eventNames().connectEvent, false, false);
     return event;
 }

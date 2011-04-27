@@ -123,10 +123,10 @@ void RenderLayerBacking::destroyGraphicsLayer()
     if (m_graphicsLayer)
         m_graphicsLayer->removeFromParent();
 
-    m_graphicsLayer = 0;
-    m_foregroundLayer = 0;
-    m_clippingLayer = 0;
-    m_maskLayer = 0;
+    m_graphicsLayer = nullptr;
+    m_foregroundLayer = nullptr;
+    m_clippingLayer = nullptr;
+    m_maskLayer = nullptr;
 }
 
 void RenderLayerBacking::updateLayerOpacity(const RenderStyle* style)
@@ -541,7 +541,7 @@ bool RenderLayerBacking::updateClippingLayers(bool needsAncestorClip, bool needs
         }
     } else if (m_ancestorClippingLayer) {
         m_ancestorClippingLayer->removeFromParent();
-        m_ancestorClippingLayer = 0;
+        m_ancestorClippingLayer = nullptr;
         layersChanged = true;
     }
     
@@ -556,7 +556,7 @@ bool RenderLayerBacking::updateClippingLayers(bool needsAncestorClip, bool needs
         }
     } else if (m_clippingLayer) {
         m_clippingLayer->removeFromParent();
-        m_clippingLayer = 0;
+        m_clippingLayer = nullptr;
         layersChanged = true;
     }
     
@@ -652,7 +652,7 @@ bool RenderLayerBacking::updateForegroundLayer(bool needsForegroundLayer)
         }
     } else if (m_foregroundLayer) {
         m_foregroundLayer->removeFromParent();
-        m_foregroundLayer = 0;
+        m_foregroundLayer = nullptr;
         layerChanged = true;
     }
 
@@ -678,7 +678,7 @@ bool RenderLayerBacking::updateMaskLayer(bool needsMaskLayer)
             layerChanged = true;
         }
     } else if (m_maskLayer) {
-        m_maskLayer = 0;
+        m_maskLayer = nullptr;
         layerChanged = true;
     }
 

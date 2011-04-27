@@ -128,14 +128,14 @@ void InspectorConsoleAgent::addMessageToConsole(MessageSource source, MessageTyp
 {
     if (!m_inspectorAgent->enabled())
         return;
-    addConsoleMessage(new ConsoleMessage(source, type, level, message, arguments, callStack));
+    addConsoleMessage(adoptPtr(new ConsoleMessage(source, type, level, message, arguments, callStack)));
 }
 
 void InspectorConsoleAgent::addMessageToConsole(MessageSource source, MessageType type, MessageLevel level, const String& message, unsigned lineNumber, const String& sourceID)
 {
     if (!m_inspectorAgent->enabled())
         return;
-    addConsoleMessage(new ConsoleMessage(source, type, level, message, lineNumber, sourceID));
+    addConsoleMessage(adoptPtr(new ConsoleMessage(source, type, level, message, lineNumber, sourceID)));
 }
 
 void InspectorConsoleAgent::startTiming(const String& title)
@@ -207,7 +207,7 @@ void InspectorConsoleAgent::didReceiveResponse(unsigned long identifier, const R
 
     if (response.httpStatusCode() >= 400) {
         String message = makeString("Failed to load resource: the server responded with a status of ", String::number(response.httpStatusCode()), " (", response.httpStatusText(), ')');
-        addConsoleMessage(new ConsoleMessage(OtherMessageSource, NetworkErrorMessageType, ErrorMessageLevel, message, response.url().string(), identifier));
+        addConsoleMessage(adoptPtr(new ConsoleMessage(OtherMessageSource, NetworkErrorMessageType, ErrorMessageLevel, message, response.url().string(), identifier)));
     }
 }
 
@@ -220,7 +220,7 @@ void InspectorConsoleAgent::didFailLoading(unsigned long identifier, const Resou
     String message = "Failed to load resource";
     if (!error.localizedDescription().isEmpty())
         message += ": " + error.localizedDescription();
-    addConsoleMessage(new ConsoleMessage(OtherMessageSource, NetworkErrorMessageType, ErrorMessageLevel, message, error.failingURL(), identifier));
+    addConsoleMessage(adoptPtr(new ConsoleMessage(OtherMessageSource, NetworkErrorMessageType, ErrorMessageLevel, message, error.failingURL(), identifier)));
 }
 
 void InspectorConsoleAgent::setMonitoringXHREnabled(ErrorString*, bool enabled)
