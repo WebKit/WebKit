@@ -70,6 +70,7 @@ class Reviewer(Committer):
 
 
 contributors_who_are_not_committers = [
+    Contributor("Alexey Marinichev", ["amarinichev@chromium.org", "amarinichev@google.com"], "amarinichev"),
     Contributor("Ami Fischman", "fischman@chromium.org", "amifischman0"),
     Contributor("Anna Cavender", "annacc@chromium.org", "annacc"),
     Contributor("Anne van Kesteren", "annevankesteren+webkit@gmail.com", "annevk"),
@@ -77,8 +78,12 @@ contributors_who_are_not_committers = [
     Contributor("David Dorwin", "ddorwin@chromium.org", "ddorwin"),
     Contributor("David Grogan", "dgrogan@chromium.org", "dgrogan"),
     Contributor("Finnur Thorarinsson", "finnur@chromium.org", "finnur"),
+    Contributor("Greg Tavares", ["gman@google.com", "gman@chromium.org"], "gman"),
     Contributor("Ian Hickson", "ian@hixie.ch", "hixie"),
     Contributor("Ilya Sherman", "isherman@chromium.org", "isherman"),
+    Contributor("John Bates", ["jbates@google.com", "jbates@chromium.org"], "jbates"),
+    Contributor("John Bauman", ["jbauman@chromium.org", "jbauman@google.com"], "jbauman"),
+    Contributor("Nat Duca", ["nduca@chromium.org", "nduca@google.com"], "nduca"),
     Contributor("Steve Lacey", "sjl@chromium.org", "stevela"),
 ]
 

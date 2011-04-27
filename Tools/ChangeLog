@@ -1,3 +1,9 @@
+2011-04-27  Adrienne Walker  <enne@google.com>
+
+        Unreviewed, add Chrome GPU folks to contributors that I'm tired of manually CCing
+
+        * Scripts/webkitpy/common/config/committers.py:
+
 2011-04-22  Ojan Vafai  <ojan@chromium.org>
 
         Reviewed by Tony Chang.
