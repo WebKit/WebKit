@@ -1,3 +1,17 @@
+2011-04-28  Alexander Pavlov  <apavlov@chromium.org>
+
+        Reviewed by Yury Semikhatsky.
+
+        Web Inspector: provide a hotkey for script pause
+        https://bugs.webkit.org/show_bug.cgi?id=59593
+
+        In fact, F8 works as a hotkey, but this fact was not reflected
+        in the shortcut help popup.
+
+        * English.lproj/localizedStrings.js:
+        * inspector/front-end/ScriptsPanel.js:
+        (WebInspector.ScriptsPanel.prototype._registerShortcuts):
+
 2011-04-28  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Eric Seidel.

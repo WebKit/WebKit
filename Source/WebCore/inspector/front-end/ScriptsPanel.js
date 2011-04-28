@@ -909,7 +909,7 @@ WebInspector.ScriptsPanel.prototype = {
         shortcuts[shortcut1.key] = handler;
         shortcut2 = WebInspector.KeyboardShortcut.makeDescriptor(WebInspector.KeyboardShortcut.Keys.Slash, platformSpecificModifier);
         shortcuts[shortcut2.key] = handler;
-        section.addAlternateKeys([ shortcut1.name, shortcut2.name ], WebInspector.UIString("Continue"));
+        section.addAlternateKeys([ shortcut1.name, shortcut2.name ], WebInspector.UIString("Pause/Continue"));
 
         // Step over.
         handler = this.stepOverButton.click.bind(this.stepOverButton);
