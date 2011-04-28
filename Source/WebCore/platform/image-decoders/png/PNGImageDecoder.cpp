@@ -228,7 +228,11 @@ static ColorProfile readColorProfile(png_structp png, png_infop info)
 #ifdef PNG_iCCP_SUPPORTED
     char* profileName;
     int compressionType;
-    char* profile;
+#if (PNG_LIBPNG_VER < 10500)
+    png_charp profile;
+#else
+    png_bytep profile;
+#endif
     png_uint_32 profileLength;
     if (png_get_iCCP(png, info, &profileName, &compressionType, &profile, &profileLength)) {
         ColorProfile colorProfile;
