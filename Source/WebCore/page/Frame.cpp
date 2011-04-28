@@ -916,7 +916,7 @@ void Frame::setTiledBackingStoreEnabled(bool enabled)
     }
     if (m_tiledBackingStore)
         return;
-    m_tiledBackingStore.set(new TiledBackingStore(this));
+    m_tiledBackingStore = adoptPtr(new TiledBackingStore(this));
     if (m_view)
         m_view->setPaintsEntireContents(true);
 }

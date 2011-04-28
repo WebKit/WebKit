@@ -1,5 +1,14 @@
 2011-04-27  Adam Barth  <abarth@webkit.org>
 
+        Two build fixes from the future.  (Trivial strict OwnPtr fixes.)
+
+        * page/Frame.cpp:
+        (WebCore::Frame::setTiledBackingStoreEnabled):
+        * platform/audio/ReverbConvolver.cpp:
+        (WebCore::ReverbConvolver::ReverbConvolver):
+
+2011-04-27  Adam Barth  <abarth@webkit.org>
+
         Reviewed by David Levin.
 
         Fix five strict PassOwnPtr violations in WebCore
