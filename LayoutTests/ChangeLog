@@ -1,3 +1,12 @@
+2011-04-28  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Simon Fraser.
+
+        <rdar://problem/9291132> Add support for -epub-prefixed properties
+
+        * fast/css/epub-properties-expected.txt: Added.
+        * fast/css/epub-properties.html: Added.
+
 2011-04-28  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Eric Seidel.

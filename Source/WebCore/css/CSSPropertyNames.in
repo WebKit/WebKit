@@ -22,8 +22,10 @@ font-weight
 text-rendering
 -webkit-font-smoothing
 -webkit-text-orientation
+-epub-text-orientation = -webkit-text-orientation
 -webkit-text-size-adjust
 -webkit-writing-mode
+-epub-writing-mode = -webkit-writing-mode
 zoom
 
 # line height needs to be right after the above high-priority properties
@@ -80,6 +82,7 @@ box-sizing
 # -webkit-box-sizing worked in Safari 4 and earlier.
 -webkit-box-sizing = box-sizing
 caption-side
+-epub-caption-side = caption-side
 clear
 clip
 content
@@ -152,6 +155,7 @@ text-overline-style
 text-overline-width
 text-shadow
 text-transform
+-epub-text-transform = text-transform
 text-underline
 text-underline-color
 text-underline-mode
@@ -166,6 +170,7 @@ white-space
 widows
 width
 word-break
+-epub-word-break = word-break
 word-spacing
 word-wrap
 z-index
@@ -240,6 +245,7 @@ z-index
 -webkit-hyphenate-limit-after
 -webkit-hyphenate-limit-before
 -webkit-hyphens
+-epub-hyphens = -webkit-hyphens
 -webkit-line-box-contain
 -webkit-line-break
 -webkit-line-clamp
@@ -291,11 +297,15 @@ z-index
 -webkit-perspective-origin-y
 -webkit-rtl-ordering
 -webkit-text-combine
+-epub-text-combine = -webkit-text-combine
 -webkit-text-decorations-in-effect
 -webkit-text-emphasis
+-epub-text-emphasis = -webkit-text-emphasis
 -webkit-text-emphasis-color
+-epub-text-emphasis-color = -webkit-text-emphasis-color
 -webkit-text-emphasis-position
 -webkit-text-emphasis-style
+-epub-text-emphasis-style = -webkit-text-emphasis-style
 -webkit-text-fill-color
 -webkit-text-security
 -webkit-text-stroke

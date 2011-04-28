@@ -1,3 +1,17 @@
+2011-04-28  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Simon Fraser.
+
+        <rdar://problem/9291132> Add support for -epub-prefixed properties
+
+        Test: fast/css/epub-properties.html
+
+        * bindings/js/JSCSSStyleDeclarationCustom.cpp:
+        (WebCore::cssPropertyName): Map "epub"-prefixed properties to "-epub"-prefixed ones.
+        * css/CSSPropertyNames.in: Added -epub- aliases to caption-side, -webkit-hyphens, -webkit-text-combine,
+        -webkit-text-emphasis, -webkit-text-emphasis-color, -webkit-text-emphasis-style, -webkit-text-orientation,
+        text-transform, text-transform, word-break, and -webkit-writing-mode.
+
 2011-04-28  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Eric Seidel.

@@ -103,7 +103,8 @@ static String cssPropertyName(const Identifier& propertyName, bool* hadPixelOrPo
             *hadPixelOrPosPrefix = true;
     } else if (hasCSSPropertyNamePrefix(propertyName, "webkit")
             || hasCSSPropertyNamePrefix(propertyName, "khtml")
-            || hasCSSPropertyNamePrefix(propertyName, "apple"))
+            || hasCSSPropertyNamePrefix(propertyName, "apple")
+            || hasCSSPropertyNamePrefix(propertyName, "epub"))
         builder.append('-');
     else {
         if (isASCIIUpper(propertyName.characters()[0]))
