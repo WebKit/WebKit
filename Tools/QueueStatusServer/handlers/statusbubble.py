@@ -48,11 +48,19 @@ class StatusBubble(webapp.RequestHandler):
         }
         return bubble
 
-    def get(self, attachment_id):
-        attachment = Attachment(int(attachment_id))
+    def _have_ews_status_for(self, attachment, queue):
+        return bool(queue.is_ews() and (attachment.position_in_queue(queue) or attachment.status_for_queue(queue)))
+
+    def get(self, attachment_id_string):
+        attachment_id = int(attachment_id_string)
+        attachment = Attachment(attachment_id)
         # Show all queue positions, even the commit-queue.
         bubbles = [self._build_bubble(queue, attachment) for queue in Queue.all() if queue.is_ews() or attachment.position_in_queue(queue)]
+        # If all EWS queues have no position and no status we show a "submit to ews" button.
+        have_ews_status_or_position = reduce(operator.or_, map(lambda queue: self._have_ews_status_for(attachment, queue), Queue.all()))
         template_values = {
             "bubbles": bubbles,
+            "attachment_id": attachment_id,
+            "show_submit_to_ews": not have_ews_status_or_position,
         }
         self.response.out.write(template.render("templates/statusbubble.html", template_values))

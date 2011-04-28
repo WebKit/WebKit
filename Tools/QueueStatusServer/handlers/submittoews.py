@@ -62,3 +62,5 @@ class SubmitToEWS(UpdateBase):
         attachment_id = self._int_from_request("attachment_id")
         attachment = Attachment(attachment_id)
         self._add_attachment_to_ews_queues(attachment)
+        if self.request.get("next_action") == "return_to_bubbles":
+            self.redirect("/status-bubble/%s" % attachment_id)

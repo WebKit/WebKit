@@ -67,6 +67,13 @@ window.addEventListener("message", function(e) {
 </head>
 <body>
 <div id="bubbleContainer">
+{% if show_submit_to_ews %}
+  <form name="submit_to_ews" enctype="multipart/form-data" method="post" action="/submit-to-ews">
+    <input type="hidden" name="attachment_id" value="{{ attachment_id }}">
+    <input type="hidden" name="next_action" value="return_to_bubbles">
+    <input class="status" type="submit" value="Submit for EWS analysis">
+  </form>
+{% else %}
   {% for bubble in bubbles %}
   <a class="status {{ bubble.state }}"
   {% if bubble.status %}
@@ -80,6 +87,7 @@ window.addEventListener("message", function(e) {
     {% endif %}
   </a>
   {% endfor %}
+{% endif %}
 </div>
 </body>
 </html>
