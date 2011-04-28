@@ -1,5 +1,12 @@
 2011-04-27  Ojan Vafai  <ojan@chromium.org>
 
+        remove assertion now that platform/mac-tiger no longer exists
+        https://bugs.webkit.org/show_bug.cgi?id=59660
+
+        * Scripts/webkitpy/layout_tests/port/mac_unittest.py:
+
+2011-04-27  Ojan Vafai  <ojan@chromium.org>
+
         Reviewed by Eric Seidel.
 
         remove test that didn't make sense
