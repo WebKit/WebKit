@@ -40,7 +40,7 @@
     IBOutlet NSTextField *username;
     IBOutlet NSImageView *imageView;
     IBOutlet NSButton *remember;
-    IBOutlet NSImageView *separateRealmLabel;
+    IBOutlet NSTextField *separateRealmLabel;
     BOOL nibLoaded;
     BOOL usingSheet;
     id callback;
