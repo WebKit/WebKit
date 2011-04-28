@@ -1,3 +1,17 @@
+2011-04-28  Xan Lopez  <xlopez@igalia.com>
+
+        Reviewed by Martin Robinson.
+
+        [Gtk] Split JSC and WebCore builds
+        https://bugs.webkit.org/show_bug.cgi?id=19428
+
+        Build JavaScriptCore as a libtool shared library instead of a
+        private convenience library.
+
+        * GNUmakefile.am: define new jsc library and adapt to new name for
+        javascriptcore target.
+        * GNUmakefile.list.am: ditto.
+
 2011-04-28  David Kilzer  <ddkilzer@apple.com>
 
         <http://webkit.org/b/59705> WTF::postTimer() leaks a CFRunLoopTimerRef every time it's called

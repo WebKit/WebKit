@@ -604,5 +604,5 @@ Programs_minidom_SOURCES = \
 	Source/JavaScriptCore/API/tests/NodeList.h \
 	Source/JavaScriptCore/API/tests/minidom.c
 
-Programs_jsc_SOURCES = \
+Programs_jsc_@WEBKITGTK_API_MAJOR_VERSION@_SOURCES = \
 	Source/JavaScriptCore/jsc.cpp

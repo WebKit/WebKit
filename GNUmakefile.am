@@ -123,42 +123,6 @@ if OS_GNU
 version_script = -Wl,--version-script,$(srcdir)/Source/autotools/symbols.filter
 endif
 
-# Convenience libraries
-noinst_LTLIBRARIES += \
-	libJavaScriptCore.la
-
-nodist_EXTRA_libJavaScriptCore_la_SOURCES = \
-	$(javascriptcore_built_nosources)
-
-nodist_libJavaScriptCore_la_SOURCES = \
-	$(javascriptcore_built_sources)
-
-libJavaScriptCore_ladir = $(prefix)/include/webkit-@WEBKITGTK_API_VERSION@/JavaScriptCore
-libJavaScriptCore_la_HEADERS = $(javascriptcore_h_api)
-
-libJavaScriptCore_la_SOURCES = \
-	$(javascriptcore_sources)
-
-libJavaScriptCore_la_LIBADD = \
-	$(UNICODE_LIBS) \
-	$(GLIB_LIBS) \
-	-lpthread
-
-libJavaScriptCore_la_CXXFLAGS = \
-	$(global_cxxflags) \
-	$(libJavaScriptCore_la_CFLAGS)
-
-libJavaScriptCore_la_CFLAGS = \
-	-fstrict-aliasing \
-	-O3 \
-	$(global_cflags) \
-	$(GLIB_CFLAGS) \
-	$(UNICODE_CFLAGS)
-
-libJavaScriptCore_la_CPPFLAGS = \
-	$(global_cppflags) \
-	$(javascriptcore_cppflags)
-
 # Extra checks and flags
 global_cppflags += \
 	-DBUILDING_CAIRO__=1 \

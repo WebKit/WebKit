@@ -1,3 +1,15 @@
+2011-04-28  Xan Lopez  <xlopez@igalia.com>
+
+        Reviewed by Martin Robinson.
+
+        [Gtk] Split JSC and WebCore builds
+        https://bugs.webkit.org/show_bug.cgi?id=19428
+
+        Build JavaScriptCore as a libtool shared library instead of a
+        private convenience library.
+
+        * GNUmakefile.am: adapt to new name for javascriptcore target.
+
 2011-04-28  ojab  <ojab@ojab.ru>
 
         Reviewed by Martin Robinson.
