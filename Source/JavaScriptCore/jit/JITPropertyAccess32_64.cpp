@@ -740,13 +740,9 @@ void JIT::privateCompileGetByIdProto(StructureStubInfo* stubInfo, Structure* str
     Jump failureCases1 = checkStructure(regT0, structure);
     
     // Check the prototype object's Structure had not changed.
-    const void* prototypeStructureAddress = protoObject->addressOfStructure();
-#if CPU(X86_64)
-    move(TrustedImmPtr(prototypeStructure), regT3);
-    Jump failureCases2 = branchPtr(NotEqual, AbsoluteAddress(prototypeStructureAddress), regT3);
-#else
-    Jump failureCases2 = branchPtr(NotEqual, AbsoluteAddress(prototypeStructureAddress), TrustedImmPtr(prototypeStructure));
-#endif
+    move(TrustedImmPtr(protoObject), regT3);
+    Jump failureCases2 = branchPtr(NotEqual, Address(regT3, JSCell::structureOffset()), TrustedImmPtr(prototypeStructure));
+
     bool needsStubLink = false;
     // Checks out okay!
     if (slot.cachedPropertyType() == PropertySlot::Getter) {
@@ -866,13 +862,8 @@ void JIT::privateCompileGetByIdProtoList(StructureStubInfo* stubInfo, Polymorphi
     Jump failureCases1 = checkStructure(regT0, structure);
     
     // Check the prototype object's Structure had not changed.
-    const void* prototypeStructureAddress = protoObject->addressOfStructure();
-#if CPU(X86_64)
-    move(TrustedImmPtr(prototypeStructure), regT3);
-    Jump failureCases2 = branchPtr(NotEqual, AbsoluteAddress(prototypeStructureAddress), regT3);
-#else
-    Jump failureCases2 = branchPtr(NotEqual, AbsoluteAddress(prototypeStructureAddress), TrustedImmPtr(prototypeStructure));
-#endif
+    move(TrustedImmPtr(protoObject), regT3);
+    Jump failureCases2 = branchPtr(NotEqual, Address(regT3, JSCell::structureOffset()), TrustedImmPtr(prototypeStructure));
     
     bool needsStubLink = false;
     if (slot.cachedPropertyType() == PropertySlot::Getter) {

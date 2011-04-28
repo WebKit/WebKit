@@ -147,11 +147,6 @@ namespace JSC {
             return OBJECT_OFFSETOF(JSCell, m_structure);
         }
 
-        const void* addressOfStructure() const
-        {
-            return &m_structure;
-        }
-
     protected:
         static const unsigned AnonymousSlotCount = 0;
 
