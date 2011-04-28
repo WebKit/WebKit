@@ -171,8 +171,8 @@ namespace WebCore {
         if (node->inDocument())
             return node->document();
 
-        while (node->parentNode())
-            node = node->parentNode();
+        while (node->parentOrHostNode())
+            node = node->parentOrHostNode();
         return node;
     }
 

@@ -1,3 +1,14 @@
+2011-04-28  Dominic Cooney  <dominicc@chromium.org>
+
+        Reviewed by Geoffrey Garen.
+
+        Walk shadow hosts as well as parent nodes when finding opaque roots.
+        https://bugs.webkit.org/show_bug.cgi?id=59571
+
+        Remove expectation of failure.
+
+        * platform/mac/fast/dom/shadow/gc-shadow-expected.txt: Removed.
+
 2011-04-28  Dimitri Glazkov  <dglazkov@chromium.org>
 
         Added the test results, missed in r85209.
