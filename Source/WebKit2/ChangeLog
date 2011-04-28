@@ -1,3 +1,16 @@
+2011-04-28  Jessie Berlin  <jberlin@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Crash under WKPageCreateSnapshotOfVisibleContent if there is no response from the Web Process
+        in the allotted time.
+        https://bugs.webkit.org/show_bug.cgi?id=59738
+
+        If the handle is null, don't try to create a ShareableBitmap and then a WebImage out of it.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::createSnapshotOfVisibleContent):
+
 2011-04-28  Xan Lopez  <xlopez@igalia.com>
 
         Reviewed by Martin Robinson.

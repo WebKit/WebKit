@@ -3077,6 +3077,8 @@ PassRefPtr<WebImage> WebPageProxy::createSnapshotOfVisibleContent()
     // that the UI Process is not permanently stuck waiting on a potentially crashing Web Process.
     static const double createSnapshotOfVisibleContentSyncMessageTimeout = 1.0;
     process()->sendSync(Messages::WebPage::CreateSnapshotOfVisibleContent(), Messages::WebPage::CreateSnapshotOfVisibleContent::Reply(snapshotHandle), m_pageID, createSnapshotOfVisibleContentSyncMessageTimeout);
+    if (snapshotHandle.isNull())
+        return 0;
     return WebImage::create(ShareableBitmap::create(snapshotHandle));
 }
 
