@@ -329,8 +329,9 @@ function runTests()
     var subtree = results.tests['fullscreen'] = {}
     subtree['full-screen-api.html'] = mockExpectation('TEXT', 'IMAGE+TEXT');
     runTest(results, function() {
-        var expectedHref = 'file://' + results.layout_tests_dir + '/fullscreen/full-screen-api.html';
-        assertTrue(document.querySelector('tbody td:first-child a').href == expectedHref);
+        // Use a regexp to match windows and unix-style paths.
+        var expectedRegExp = new RegExp('^file.*' + results.layout_tests_dir + '/fullscreen/full-screen-api.html$');
+        assertTrue(expectedRegExp.exec(document.querySelector('tbody td:first-child a').href));
     });
 
     var oldShouldUseTracLinks = shouldUseTracLinks;

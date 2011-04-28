@@ -1,3 +1,12 @@
+2011-04-28  Ojan Vafai  <ojan@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        fast/harness/results.html failing in some configurations
+        https://bugs.webkit.org/show_bug.cgi?id=59750
+
+        * fast/harness/resources/results-test.js:
+
 2011-04-28  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Simon Fraser.
