@@ -1,3 +1,12 @@
+2011-04-28  Chris Fleizach  <cfleizach@apple.com>
+
+        Not reviewed. Add new expected results for GTK platform.
+
+        ARIA role attribute implemented incorrectly; does not support token list with fallbacks
+        https://bugs.webkit.org/show_bug.cgi?id=59648
+
+        * platform/gtk/accessibility/aria-fallback-roles-expected.txt: Added.
+
 2011-04-28  Pavel Feldman  <pfeldman@google.com>
 
         Not reviewed: unflake new inspector tests.
