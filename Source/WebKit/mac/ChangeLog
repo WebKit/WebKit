@@ -1,3 +1,20 @@
+2011-04-28  Brian Weinstein  <bweinstein@apple.com>
+
+        Reviewed by Timothy Hatcher.
+
+        Web Inspector: REGRESSION(85051): Develop Menu items are wrong when inspector is frontmost window
+        https://bugs.webkit.org/show_bug.cgi?id=59747
+
+        Restore functions that were removed in r85051. They were needed when the inspector is the frontmost window.
+        Also update them to call _inspectedWebView.get() - since it's a RetainPtr now.
+
+        * WebCoreSupport/WebInspectorClient.mm:
+        (-[WebInspectorWindowController showWebInspector:]):
+        (-[WebInspectorWindowController showErrorConsole:]):
+        (-[WebInspectorWindowController toggleDebuggingJavaScript:]):
+        (-[WebInspectorWindowController toggleProfilingJavaScript:]):
+        (-[WebInspectorWindowController validateUserInterfaceItem:]):
+
 2011-04-28  David Kilzer  <ddkilzer@apple.com>
 
         <http://webkit.org/b/59725> -[WebFullscreenWindow initWithContentRect:styleMask:backing:defer:] leaks a CALayer

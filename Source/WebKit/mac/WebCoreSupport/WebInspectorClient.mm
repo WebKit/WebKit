@@ -472,4 +472,49 @@ void WebInspectorFrontendClient::updateWindowTitle() const
     return WebDragDestinationActionNone;
 }
 
+// MARK: -
+// These methods can be used by UI elements such as menu items and toolbar buttons when the inspector is the key window.
+
+// This method is really only implemented to keep any UI elements enabled.
+- (void)showWebInspector:(id)sender
+{
+    [[_inspectedWebView.get() inspector] show:sender];
+}
+
+- (void)showErrorConsole:(id)sender
+{
+    [[_inspectedWebView.get() inspector] showConsole:sender];
+}
+
+- (void)toggleDebuggingJavaScript:(id)sender
+{
+    [[_inspectedWebView.get() inspector] toggleDebuggingJavaScript:sender];
+}
+
+- (void)toggleProfilingJavaScript:(id)sender
+{
+    [[_inspectedWebView.get() inspector] toggleProfilingJavaScript:sender];
+}
+
+- (BOOL)validateUserInterfaceItem:(id <NSValidatedUserInterfaceItem>)item
+{
+    BOOL isMenuItem = [(id)item isKindOfClass:[NSMenuItem class]];
+    if ([item action] == @selector(toggleDebuggingJavaScript:) && isMenuItem) {
+        NSMenuItem *menuItem = (NSMenuItem *)item;
+        if ([[_inspectedWebView.get() inspector] isDebuggingJavaScript])
+            [menuItem setTitle:UI_STRING_INTERNAL("Stop Debugging JavaScript", "title for Stop Debugging JavaScript menu item")];
+        else
+            [menuItem setTitle:UI_STRING_INTERNAL("Start Debugging JavaScript", "title for Start Debugging JavaScript menu item")];
+    } else if ([item action] == @selector(toggleProfilingJavaScript:) && isMenuItem) {
+        NSMenuItem *menuItem = (NSMenuItem *)item;
+        if ([[_inspectedWebView.get() inspector] isProfilingJavaScript])
+            [menuItem setTitle:UI_STRING_INTERNAL("Stop Profiling JavaScript", "title for Stop Profiling JavaScript menu item")];
+        else
+            [menuItem setTitle:UI_STRING_INTERNAL("Start Profiling JavaScript", "title for Start Profiling JavaScript menu item")];
+    }
+
+    return YES;
+}
+
+
 @end
