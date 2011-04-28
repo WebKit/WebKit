@@ -422,7 +422,10 @@ http/tests/websocket
 media/video-controls-in-media-document.html
 
 # Sometimes fails http://webkit.org/b/58367
-http/tests/inspector/resource-tree-model.html
+http/tests/inspector/resource-tree/resource-tree-document-url.html
+http/tests/inspector/resource-tree/resource-tree-frame-navigate.html
+http/tests/inspector/resource-tree/resource-tree-reload.html
+http/tests/inspector/resource-tree/resource-tree-frame-add.html
 
 ################################################################################
 ####################### No bugs filed about the below yet#######################

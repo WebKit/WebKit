@@ -1,0 +1,41 @@
+Tests resource tree model on page reload, compares resource tree against golden. Every line is important.
+
+
+Page reloaded.
+Resources:
+script http://127.0.0.1:8000/inspector/inspector-test.js
+document http://127.0.0.1:8000/inspector/resource-tree/resource-tree-reload.html
+script http://127.0.0.1:8000/inspector/resource-tree/resource-tree-test.js
+document http://127.0.0.1:8000/inspector/resource-tree/resources/resource-tree-reload-iframe.html
+script http://127.0.0.1:8000/inspector/resource-tree/resources/script-initial.js
+stylesheet http://127.0.0.1:8000/inspector/resource-tree/resources/styles-initial-2.css
+stylesheet http://127.0.0.1:8000/inspector/resource-tree/resources/styles-initial.css
+script http://127.0.0.1:8000/inspector/resources-test.js
+
+Resources URL Map:
+http://127.0.0.1:8000/inspector/inspector-test.js == http://127.0.0.1:8000/inspector/inspector-test.js
+http://127.0.0.1:8000/inspector/resource-tree/resource-tree-reload.html == http://127.0.0.1:8000/inspector/resource-tree/resource-tree-reload.html
+http://127.0.0.1:8000/inspector/resource-tree/resource-tree-test.js == http://127.0.0.1:8000/inspector/resource-tree/resource-tree-test.js
+http://127.0.0.1:8000/inspector/resource-tree/resources/resource-tree-reload-iframe.html == http://127.0.0.1:8000/inspector/resource-tree/resources/resource-tree-reload-iframe.html
+http://127.0.0.1:8000/inspector/resource-tree/resources/script-initial.js == http://127.0.0.1:8000/inspector/resource-tree/resources/script-initial.js
+http://127.0.0.1:8000/inspector/resource-tree/resources/styles-initial-2.css == http://127.0.0.1:8000/inspector/resource-tree/resources/styles-initial-2.css
+http://127.0.0.1:8000/inspector/resource-tree/resources/styles-initial.css == http://127.0.0.1:8000/inspector/resource-tree/resources/styles-initial.css
+http://127.0.0.1:8000/inspector/resources-test.js == http://127.0.0.1:8000/inspector/resources-test.js
+
+Resources Tree:
+Frames
+    (resource-tree-reload.html)
+        (resource-tree-reload-iframe.html)
+            Scripts
+                script-initial.js
+            Stylesheets
+                styles-initial-2.css
+            resource-tree-reload-iframe.html
+        Scripts
+            inspector-test.js
+            resource-tree-test.js
+            resources-test.js
+        Stylesheets
+            styles-initial.css
+        resource-tree-reload.html
+

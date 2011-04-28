@@ -57,6 +57,8 @@ WebInspector.ResourceTreeModel.prototype = {
         this._resourcesByURL = {};
         this._resourcesByFrameId = {};
         this._subframes = {};
+        this._frameIds = {};
+        delete this._cachedResourcesProcessed;
         PageAgent.getResourceTree(this._processCachedResources.bind(this));
     },
 
@@ -79,16 +81,17 @@ WebInspector.ResourceTreeModel.prototype = {
         this.dispatchEventToListeners(WebInspector.ResourceTreeModel.EventTypes.InspectedURLChanged, url);
     },
 
-    _addOrUpdateFrame: function(frame)
+    _addFrame: function(frame)
     {
-        this.dispatchEventToListeners(WebInspector.ResourceTreeModel.EventTypes.FrameAdded, frame);
-
+        this._frameIds[frame.id] = frame;
         var subframes = this._subframes[frame.parentId];
         if (!subframes) {
             subframes = [];
-            this._subframes[frame.parentId || 0] = subframes;
+            this._subframes[frame.parentId] = subframes;
         }
+
         subframes.push(frame);
+        this.dispatchEventToListeners(WebInspector.ResourceTreeModel.EventTypes.FrameAdded, frame);
     },
 
     frames: function(parentFrameId)
@@ -112,24 +115,30 @@ WebInspector.ResourceTreeModel.prototype = {
 
     _frameNavigated: function(frame, loaderId)
     {
+        // Do nothing unless cached resource tree is processed - it will overwrite everything.
         if (!this._cachedResourcesProcessed)
             return;
 
+        // Add frame in case it is seen for the first time, otherwise, do a within-frame cleanup.
+        if (!this._frameIds[frame.id])
+            this._addFrame(frame);
+        else
+            this._clearChildFramesAndResources(frame.id, loaderId);
+
+
         var isMainFrame = !frame.parentId;
 
+        // Dispatch frame navigated event to clients prior to filling it with the resources. 
         this.dispatchEventToListeners(WebInspector.ResourceTreeModel.EventTypes.FrameNavigated, { frame: frame, loaderId: loaderId, isMainFrame: isMainFrame });
 
-        // frame.parentId === 0 is when main frame navigation happens.
-        this._clearChildFramesAndResources(isMainFrame ? 0 : frame.id, loaderId);
-
-        this._addOrUpdateFrame(frame);
-
+        // Fill frame with retained resources (the ones loaded using new loader). 
         var resourcesForFrame = this._resourcesByFrameId[frame.id];
         if (resourcesForFrame) {
             for (var url in resourcesForFrame)
                 this.dispatchEventToListeners(WebInspector.ResourceTreeModel.EventTypes.ResourceAdded, resourcesForFrame[url]);
         }
 
+        // Update main frame, issue top-level navigate events. 
         if (isMainFrame && this.resourceForURL(frame.url)) {
             WebInspector.mainResource = this.resourceForURL(frame.url);
             this._dispatchInspectedURLChanged(frame.url);
@@ -139,10 +148,20 @@ WebInspector.ResourceTreeModel.prototype = {
 
     _frameDetached: function(frameId)
     {
+        // Do nothing unless cached resource tree is processed - it will overwrite everything.
         if (!this._cachedResourcesProcessed)
             return;
 
-        this._clearChildFramesAndResources(frameId, 0);
+        this._clearChildFramesAndResources(frameId, "");
+        var frame = this._frameIds[frameId];
+
+        if (frame) {
+            var siblings = this._subframes[frame.parentId];
+            if (siblings)
+                siblings.remove(frame);
+            delete this._frameIds[frameId];
+        }
+
         this.dispatchEventToListeners(WebInspector.ResourceTreeModel.EventTypes.FrameDetached, frameId);
     },
 
@@ -157,7 +176,15 @@ WebInspector.ResourceTreeModel.prototype = {
     {
         if (!this._cachedResourcesProcessed)
             return;
-        this._addResourceToFrame(event.data);
+
+        var resource = event.data;
+        if (resource.failed) {
+            this._unbindResourceURL(resource);
+            return;
+        }
+
+        if (resource.finished)
+            this._addResourceToFrame(resource);
     },
 
     _addResourceToFrame: function(resource)
@@ -180,7 +207,7 @@ WebInspector.ResourceTreeModel.prototype = {
 
     forAllResources: function(callback)
     {
-        this._callForFrameResources(0, callback);
+        return this._callForFrameResources("", callback);
     },
 
     addConsoleMessage: function(msg)
@@ -227,7 +254,7 @@ WebInspector.ResourceTreeModel.prototype = {
         this._clearResources(frameId, loaderToPreserveId);
         var subframes = this._subframes[frameId];
         for (var i = 0; subframes && i < subframes.length; ++ i) {
-            this.dispatchEventToListeners(WebInspector.ResourceTreeModel.EventTypes.FrameRemoved, subframes[i].id);
+            this.dispatchEventToListeners(WebInspector.ResourceTreeModel.EventTypes.FrameDetached, subframes[i].id);
             this._clearChildFramesAndResources(subframes[i].id, loaderToPreserveId);
         }
         delete this._subframes[frameId];
@@ -263,7 +290,7 @@ WebInspector.ResourceTreeModel.prototype = {
             if (callback(resources[url]))
                 return true;
         }
-        
+
         var frames = this._subframes[frameId];
         for (var i = 0; frames && i < frames.length; ++i) {
             if (this._callForFrameResources(frames[i].id, callback))
@@ -286,7 +313,7 @@ WebInspector.ResourceTreeModel.prototype = {
         frameResource.type = WebInspector.Resource.Type.Document;
         frameResource.finished = true;
 
-        this._addOrUpdateFrame(framePayload);
+        this._addFrame(framePayload);
         this._addResourceToFrame(frameResource);
 
         for (var i = 0; frameTreePayload.childFrames && i < frameTreePayload.childFrames.length; ++i)

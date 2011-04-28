@@ -1,3 +1,32 @@
+2011-04-28  Pavel Feldman  <pfeldman@google.com>
+
+        Reviewed by Yury Semikhatsky.
+
+        Web Inspector: add ResourceTreeModel tests.
+        https://bugs.webkit.org/show_bug.cgi?id=59616
+
+        Tests: http/tests/inspector/resource-tree/resource-tree-document-url.html
+               http/tests/inspector/resource-tree/resource-tree-frame-navigate.html
+               http/tests/inspector/resource-tree/resource-tree-reload.html
+
+        * inspector/front-end/ResourceTreeModel.js:
+        (WebInspector.ResourceTreeModel.prototype.frontendReused):
+        (WebInspector.ResourceTreeModel.prototype._addFrame):
+        (WebInspector.ResourceTreeModel.prototype._frameNavigated):
+        (WebInspector.ResourceTreeModel.prototype._frameDetached):
+        (WebInspector.ResourceTreeModel.prototype._onResourceUpdated):
+        (WebInspector.ResourceTreeModel.prototype.forAllResources):
+        (WebInspector.ResourceTreeModel.prototype._clearChildFramesAndResources):
+        (WebInspector.ResourceTreeModel.prototype._callForFrameResources):
+        (WebInspector.ResourceTreeModel.prototype._addFramesRecursively):
+        * inspector/front-end/ResourcesPanel.js:
+        (WebInspector.ResourcesPanel.prototype._populateResourceTree):
+        (WebInspector.ResourcesPanel.prototype._frameAdded):
+        (WebInspector.ResourcesPanel.prototype._frameDetached):
+        (WebInspector.ResourcesPanel.prototype._frameNavigated):
+        (WebInspector.FrameTreeElement):
+        (WebInspector.FrameTreeElement.prototype.frameNavigated):
+
 2011-04-28  Mikhail Naganov  <mnaganov@chromium.org>
 
         Reviewed by Yury Semikhatsky.

@@ -1,3 +1,43 @@
+2011-04-28  Pavel Feldman  <pfeldman@google.com>
+
+        Reviewed by Yury Semikhatsky.
+
+        Web Inspector: add ResourceTreeModel tests.
+        https://bugs.webkit.org/show_bug.cgi?id=59616
+
+        * http/tests/inspector/resource-tree-model-expected.txt: Removed.
+        * http/tests/inspector/resource-tree-model.html: Removed.
+        * http/tests/inspector/resource-tree/resource-tree-document-url-expected.txt: Added.
+        * http/tests/inspector/resource-tree/resource-tree-document-url.html: Added.
+        * http/tests/inspector/resource-tree/resource-tree-frame-navigate-expected.txt: Added.
+        * http/tests/inspector/resource-tree/resource-tree-frame-navigate.html: Added.
+        * http/tests/inspector/resource-tree/resource-tree-reload-expected.txt: Added.
+        * http/tests/inspector/resource-tree/resource-tree-reload.html: Added.
+        * http/tests/inspector/resource-tree/resource-tree-test.js: Added.
+        (initialize_ResourceTreeTest.InspectorTest.dumpResources):
+        (initialize_ResourceTreeTest.InspectorTest.dumpResources.comparator):
+        (initialize_ResourceTreeTest.InspectorTest.dumpResourcesURLMap):
+        (initialize_ResourceTreeTest.InspectorTest.dumpResourcesTree):
+        (initialize_ResourceTreeTest.InspectorTest.runAfterResourcesAreLoaded.callbackWrapper):
+        (initialize_ResourceTreeTest.InspectorTest.runAfterResourcesAreLoaded):
+        (initialize_ResourceTreeTest.InspectorTest.dumpResourceTreeEverything):
+        (initialize_ResourceTreeTest):
+        * http/tests/inspector/resource-tree/resources/dummy-iframe.html: Added.
+        * http/tests/inspector/resource-tree/resources/resource-tree-frame-navigate-iframe-after.html: Added.
+        * http/tests/inspector/resource-tree/resources/resource-tree-frame-navigate-iframe-before.html: Added.
+        * http/tests/inspector/resource-tree/resources/resource-tree-reload-iframe.html: Added.
+        * http/tests/inspector/resource-tree/resources/script-initial.js: Added.
+        (foo):
+        * http/tests/inspector/resource-tree/resources/script-navigated.js: Added.
+        (foo):
+        * http/tests/inspector/resource-tree/resources/styles-initial-2.css: Added.
+        (html):
+        * http/tests/inspector/resource-tree/resources/styles-initial.css: Added.
+        (html):
+        * http/tests/inspector/resource-tree/resources/styles-navigated.css: Added.
+        (html):
+        * platform/win/Skipped:
+
 2011-04-28  Mikhail Naganov  <mnaganov@chromium.org>
 
         Reviewed by Yury Semikhatsky.

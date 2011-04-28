@@ -192,7 +192,7 @@ WebInspector.ResourcesPanel.prototype = {
             for (var i = 0; i < resources.length; ++i)
                 this._resourceAdded({data:resources[i]});
         }
-        populateFrame.call(this, 0);
+        populateFrame.call(this, "");
 
         this._initDefaultSelection();
     },
@@ -200,30 +200,16 @@ WebInspector.ResourcesPanel.prototype = {
     _frameAdded: function(event)
     {
         var frame = event.data;
-        var frameId = frame.id;
         var parentFrameId = frame.parentId;
-        var title = frame.name;
-        var subtitle = new WebInspector.Resource(null, frame.url).displayName;
-        this.addDocumentURL(frame.url);
         
-        var frameTreeElement = this._treeElementForFrameId[frameId];
-        if (frameTreeElement) {
-            // Maintain sorted order.
-            var parent = frameTreeElement.parent;
-            parent.removeChild(frameTreeElement);
-            frameTreeElement.setTitles(title, subtitle);
-            parent.appendChild(frameTreeElement);
-            return;
-        }
-
         var parentTreeElement = parentFrameId ? this._treeElementForFrameId[parentFrameId] : this.resourcesListTreeElement;
         if (!parentTreeElement) {
-            console.warn("No frame with id:" + parentFrameId + " to route " + title + "/" + subtitle + " to.")
+            console.warn("No frame with id:" + parentFrameId + " to route " + frame.name + "/" + frame.url + " to.")
             return;
         }
 
-        var frameTreeElement = new WebInspector.FrameTreeElement(this, frameId, title, subtitle);
-        this._treeElementForFrameId[frameId] = frameTreeElement;
+        var frameTreeElement = new WebInspector.FrameTreeElement(this, frame);
+        this._treeElementForFrameId[frame.id] = frameTreeElement;
         parentTreeElement.appendChild(frameTreeElement);
     },
 
@@ -233,6 +219,7 @@ WebInspector.ResourcesPanel.prototype = {
         var frameTreeElement = this._treeElementForFrameId[frameId];
         if (!frameTreeElement)
             return;
+
         delete this._treeElementForFrameId[frameId];
         if (frameTreeElement.parent)
             frameTreeElement.parent.removeChild(frameTreeElement);
@@ -258,16 +245,10 @@ WebInspector.ResourcesPanel.prototype = {
 
     _frameNavigated: function(event)
     {
-        if (event.data.isMainFrame) {
-            // Total update.
-            this._resetResourcesTree();
-            return;
-        }
-
         var frameId = event.data.frame.id;
         var frameTreeElement = this._treeElementForFrameId[frameId];
         if (frameTreeElement)
-            frameTreeElement.removeChildren();        
+            frameTreeElement.frameNavigated(event.data.frame);
     },
 
     _resetResourcesTree: function()
@@ -928,16 +909,29 @@ WebInspector.StorageCategoryTreeElement.prototype = {
 }
 WebInspector.StorageCategoryTreeElement.prototype.__proto__ = WebInspector.BaseStorageTreeElement.prototype;
 
-WebInspector.FrameTreeElement = function(storagePanel, frameId, title, subtitle)
+WebInspector.FrameTreeElement = function(storagePanel, frame)
 {
     WebInspector.BaseStorageTreeElement.call(this, storagePanel, null, "", ["frame-storage-tree-item"]);
-    this._frameId = frameId;
-    this.setTitles(title, subtitle);
-    this._categoryElements = {};
-    this._treeElementForResource = {};
+    this._frame = frame;
+    this.frameNavigated(frame);
 }
 
 WebInspector.FrameTreeElement.prototype = {
+    frameNavigated: function(frame)
+    {
+        this.removeChildren();
+        this._frameId = frame.id;
+
+        var title = frame.name;
+        var subtitle = new WebInspector.Resource(null, frame.url).displayName;
+        this.setTitles(title, subtitle);
+
+        this._categoryElements = {};
+        this._treeElementForResource = {};
+
+        this._storagePanel.addDocumentURL(frame.url);
+    },
+
     get itemURL()
     {
         return "frame://" + encodeURI(this._displayName);
@@ -1015,12 +1009,6 @@ WebInspector.FrameTreeElement.prototype = {
         resourceTreeElement._populateRevisions();
 
         this._treeElementForResource[resource.url] = resourceTreeElement;
-    },
-
-    removeChildren: function()
-    {
-        WebInspector.BaseStorageTreeElement.prototype.removeChildren.call(this);
-        this._treeElementForResource = [];
     },
 
     appendChild: function(treeElement)
