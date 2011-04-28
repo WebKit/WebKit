@@ -1,3 +1,14 @@
+2011-04-27  Mark Pilgrim  <pilgrim@chromium.org>
+
+        Reviewed by Tony Chang.
+
+        IndexedDB object store deleting entry should fail if key is null
+        https://bugs.webkit.org/show_bug.cgi?id=58614
+
+        * storage/indexeddb/mozilla: Added.
+        * storage/indexeddb/mozilla/key-requirements-delete-null-key-expected.txt: Added.
+        * storage/indexeddb/mozilla/key-requirements-delete-null-key.html: Added.
+
 2011-04-27  Eric Carlson  <eric.carlson@apple.com>
 
         Reviewed by Dan Bernstein.

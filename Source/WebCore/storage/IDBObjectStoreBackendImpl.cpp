@@ -279,6 +279,10 @@ void IDBObjectStoreBackendImpl::deleteFunction(PassRefPtr<IDBKey> prpKey, PassRe
     RefPtr<IDBObjectStoreBackendImpl> objectStore = this;
     RefPtr<IDBKey> key = prpKey;
     RefPtr<IDBCallbacks> callbacks = prpCallbacks;
+    if (key->type() == IDBKey::NullType) {
+        ec = IDBDatabaseException::DATA_ERR;
+        return;
+    }
 
     if (!transaction->scheduleTask(createCallbackTask(&IDBObjectStoreBackendImpl::deleteInternal, objectStore, key, callbacks)))
         ec = IDBDatabaseException::NOT_ALLOWED_ERR;
