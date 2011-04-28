@@ -1,3 +1,10 @@
+2011-04-27  Dirk Pranke  <dpranke@chromium.org>
+
+        Unreviewed, update w/ failing tests and remove a bunch of
+        passing mac tests.
+
+        * platform/chromium/test_expectations.txt:
+
 2011-04-27  Mark Pilgrim  <pilgrim@chromium.org>
 
         Reviewed by Tony Chang.

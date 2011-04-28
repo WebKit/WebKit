@@ -294,7 +294,6 @@ BUGCR15733 WONTFIX CPU SKIP : platform/chromium/compositing = FAIL PASS TIMEOUT
 WONTFIX : platform/gtk = FAIL PASS
 WONTFIX : platform/mac = FAIL PASS TIMEOUT
 WONTFIX : platform/mac-leopard = FAIL PASS
-WONTFIX : platform/mac-tiger = FAIL PASS
 WONTFIX : platform/qt = FAIL PASS
 WONTFIX SKIP : platform/qt/plugins/qt-qwidget-plugin.html = FAIL
 WONTFIX SKIP : platform/mac/fast/text/international/Geeza-Pro-vertical-metrics-adjustment.html = PASS
@@ -732,7 +731,8 @@ BUGCR58254 MAC : platform/mac/editing/spelling/autocorrection-simple.html = IMAG
 // Directionality of mixed-direction text in selected choice should
 // match that in the <select> option lists.
 // Low priority, unclear if test expectations are correct (see bug)
-BUGCR6139 : fast/forms/select-writing-direction-natural.html = IMAGE+TEXT
+BUGCR6139 WIN LINUX : fast/forms/select-writing-direction-natural.html = IMAGE+TEXT
+BUGCR6139 MAC LEOPARD : fast/forms/select-writing-direction-natural.html = IMAGE+TEXT
 
 BUGCR67767 : http/tests/security/cross-frame-access-call.html = TEXT
 BUGCR67767 : http/tests/security/aboutBlank/xss-DENIED-set-opener.html = TEXT
@@ -878,8 +878,8 @@ BUGCR62433 WIN : fast/images/gif-loop-count.html = IMAGE
 BUGCR8763 MAC : svg/custom/use-on-g-containing-foreignObject-and-image.svg = IMAGE
 
 // We show reduced version of the entire SVN image rather than an image
-BUGCR23463 MAC : svg/W3C-SVG-1.1/struct-symbol-01-b.svg = IMAGE
-BUGCR23463 WIN LINUX : svg/W3C-SVG-1.1/struct-symbol-01-b.svg = IMAGE+TEXT TEXT
+BUGCR23463 MAC LEOPARD : svg/W3C-SVG-1.1/struct-symbol-01-b.svg = IMAGE
+BUGCR23463 WIN LINUX : svg/W3C-SVG-1.1/struct-symbol-01-b.svg = IMAGE+TEXT
 BUGCR23463 WIN LINUX : svg/W3C-SVG-1.1/struct-use-01-t.svg = IMAGE IMAGE+TEXT PASS
 BUGCR23463 WIN LINUX : svg/W3C-SVG-1.1/struct-image-02-b.svg = IMAGE+TEXT
 
@@ -1233,7 +1233,7 @@ BUGCR23494 MAC LEOPARD : fast/text/monospace-width-cache.html = IMAGE
 // Actual is just slightly off in color than expected
 BUGCR23488 MAC RELEASE LEOPARD : fast/backgrounds/size/backgroundSize15.html = IMAGE
 BUGCR23488 MAC DEBUG SLOW LEOPARD : fast/backgrounds/size/backgroundSize15.html = IMAGE
-BUGCR23488 MAC : fast/block/float/float-avoidance.html = IMAGE
+BUGCR23488 MAC LEOPARD : fast/block/float/float-avoidance.html = IMAGE
 BUGCR23488 MAC : fast/canvas/canvas-incremental-repaint-2.html = IMAGE
 BUGCR23488 MAC LEOPARD : fast/css/shadow-multiple.html = IMAGE
 BUGCR23488 MAC : fast/forms/search-vertical-alignment.html = IMAGE
@@ -1399,7 +1399,7 @@ BUGCR10418 WIN DEBUG : animations/change-keyframes-name.html = FAIL PASS
 
 // We could fix this test for us and upstream it if the test shell user agent
 // would let us differentiate test_shell and WebKit DumpTreeNode.
-BUGCR7482 LINUX MAC : http/tests/misc/timer-vs-loading.html = TIMEOUT
+BUGCR7482 LINUX MAC : http/tests/misc/timer-vs-loading.html = TIMEOUT PASS
 BUGCR7482 WIN : http/tests/misc/timer-vs-loading.html = TIMEOUT PASS
 
 // Selection highlight colors are wrong.
@@ -2144,7 +2144,8 @@ BUGCR48239 : fast/js/function-apply-many-args.html = TEXT
 
 // The error gives a different line number than upstream.  Maybe a V8/JSC
 // difference?
-BUGCR48452 : svg/custom/use-font-face-crash.svg = IMAGE+TEXT
+BUGCR48452 WIN LINUX : svg/custom/use-font-face-crash.svg = IMAGE+TEXT
+BUGCR48452 MAC LEOPARD : svg/custom/use-font-face-crash.svg = IMAGE+TEXT
 
 BUGCR48668 MAC : svg/W3C-SVG-1.1/struct-use-01-t.svg = FAIL
 
@@ -2438,7 +2439,7 @@ BUGCR59671 LINUX : svg/carto.net/slider.svg = IMAGE PASS
 
 // Needs investigation
 BUGJAMESR LINUX WIN : fast/text/international/vertical-text-glyph-test.html = IMAGE+TEXT
-BUGJAMESR MAC : fast/text/international/vertical-text-glyph-test.html = IMAGE
+BUGJAMESR MAC LEOPARD : fast/text/international/vertical-text-glyph-test.html = IMAGE
 BUGJAMESR WIN LINUX : fast/text/international/vertical-text-metrics-test.html = TEXT
 
 // Added in WebKit r69755, failed immediately.
@@ -2527,7 +2528,8 @@ BUGCR61739 DEBUG : animations/suspend-resume-animation-events.html = CRASH TEXT 
 
 // New tests added with http://trac.webkit.org/changeset/72472 and further.
 // See https://bugs.webkit.org/show_bug.cgi?id=51982 for more info.
-BUGWK52509 : svg/css/rect-gradient-stroke-shadow.svg = IMAGE
+BUGWK52509 WIN LINUX : svg/css/rect-gradient-stroke-shadow.svg = IMAGE
+BUGWK52509 MAC LEOPARD : svg/css/rect-gradient-stroke-shadow.svg = IMAGE
 BUGCR63921 CPU LINUX WIN : fast/canvas/canvas-fillPath-shadow.html = TEXT
 BUGCR63921 CPU LINUX WIN : fast/canvas/canvas-fillPath-alpha-shadow.html = TEXT
 BUGCR63921 GPU LINUX WIN : fast/canvas/canvas-fillPath-alpha-shadow.html = TEXT TIMEOUT
@@ -2545,8 +2547,8 @@ BUGCR64733 : editing/text-iterator/findString.html = TEXT
 BUGV8_953 : fast/regex/pcre-test-1.html = TIMEOUT
 
 BUGCR50282 MAC : fast/images/imagemap-case.html = IMAGE
-BUGCR50282 MAC : fast/images/imagemap-focus-ring-zoom.html = IMAGE
-BUGCR50282 MAC : fast/images/imagemap-focus-ring.html = IMAGE
+BUGCR50282 MAC LEOPARD : fast/images/imagemap-focus-ring-zoom.html = IMAGE
+BUGCR50282 MAC LEOPARD : fast/images/imagemap-focus-ring.html = IMAGE
 BUGCR50282 WIN LINUX : fast/images/imagemap-focus-ring-outline-color-explicitly-inherited-from-map.html = IMAGE+TEXT
 BUGCR50282 MAC LEOPARD : fast/images/imagemap-focus-ring-outline-color-explicitly-inherited-from-map.html = IMAGE
 BUGCR50282 WIN LINUX : fast/images/imagemap-focus-ring-outline-color-not-inherited-from-map.html = IMAGE+TEXT
@@ -2558,13 +2560,14 @@ BUGCR50282 MAC LEOPARD : fast/images/imagemap-focus-ring-outline-color.html = IM
 BUGCR64938 : editing/selection/5354455-1.html = TEXT
 
 // Regressed at r73423. All areas are painted green.
-BUGWK50734 : fast/repaint/positioned-document-element.html = IMAGE
+BUGWK50734 WIN LINUX : fast/repaint/positioned-document-element.html = IMAGE
+BUGWK50734 MAC LEOPARD : fast/repaint/positioned-document-element.html = IMAGE
 
 // r73490. Win/Linux: Focus ring is not rendered. Mac: Just rebaseline?
 BUG_YUTAK WIN LINUX : fast/images/imagemap-circle-focus-ring.html = IMAGE+TEXT
-BUG_YUTAK MAC : fast/images/imagemap-circle-focus-ring.html = IMAGE
+BUG_YUTAK MAC LEOPARD : fast/images/imagemap-circle-focus-ring.html = IMAGE
 BUG_YUTAK WIN LINUX : fast/images/imagemap-polygon-focus-ring.html = IMAGE+TEXT
-BUG_YUTAK MAC : fast/images/imagemap-polygon-focus-ring.html = IMAGE
+BUG_YUTAK MAC LEOPARD : fast/images/imagemap-polygon-focus-ring.html = IMAGE
 
 ///////////////////////////////////////////////////////////////////////////
 // Regressions caused by switching to DRT.
@@ -2687,7 +2690,8 @@ BUG_YURYS DEBUG SLOW : fast/overflow/lots-of-sibling-inline-boxes.html = PASS
 BUGCR67139 WIN MAC LINUX DEBUG : storage/close-during-stress-test.html = CRASH PASS
 
 // WebKit roll 74255:74308
-BUGCR67416 : fast/text/emphasis.html = FAIL
+BUGCR67416 WIN LINUX : fast/text/emphasis.html = IMAGE+TEXT
+BUGCR67416 MAC DEBUG : fast/text/emphasis.html = IMAGE
 BUGCR67416 : fast/text/emphasis-vertical.html = FAIL
 BUGCR67540 WIN LINUX : fast/text/emphasis-overlap.html = IMAGE+TEXT
 BUGCR67540 WIN LINUX : fast/text/emphasis-avoid-ruby.html = IMAGE
@@ -2716,9 +2720,9 @@ BUGWK52414 MAC : fast/overflow/006.html = IMAGE
 BUGWK52414 MAC : fast/overflow/overflow-x-y.html = IMAGE
 
 // MAC not passing the CSS3 elliptical gradient tests.
-BUGWK55745 MAC : fast/gradients/css3-color-stop-units.html = IMAGE
-BUGWK55745 MAC : fast/gradients/css3-color-stops.html = IMAGE
-BUGWK55745 MAC : fast/gradients/css3-linear-angle-gradients.html = IMAGE
+BUGWK55745 MAC LEOPARD : fast/gradients/css3-color-stop-units.html = IMAGE
+BUGWK55745 MAC LEOPARD : fast/gradients/css3-color-stops.html = IMAGE
+BUGWK55745 MAC LEOPARD : fast/gradients/css3-linear-angle-gradients.html = IMAGE
 BUGWK55745 MAC : fast/gradients/css3-radial-gradients.html = IMAGE
 BUGWK55745 MAC : fast/gradients/css3-radial-gradients2.html = IMAGE
 BUGWK55745 MAC : fast/gradients/css3-radial-gradients3.html = IMAGE
@@ -2932,10 +2936,7 @@ BUGWK54051 MAC LINUX : plugins/windowless_plugin_paint_test.html = TEXT TIMEOUT
 // Snow Leopard-only failures (generally just need updated pixel results)
 BUGWK54322 MAC SNOWLEOPARD : animations/3d/matrix-transform-type-animation.html = IMAGE
 BUGWK54322 MAC SNOWLEOPARD : animations/3d/state-at-end-event-transform.html = IMAGE
-BUGWK54322 MAC SNOWLEOPARD : css1/font_properties/font.html = IMAGE+TEXT
 BUGWK54322 MAC SNOWLEOPARD : css1/text_properties/text_transform.html = IMAGE+TEXT
-BUGWK54322 MAC SNOWLEOPARD : css2.1/t1508-c527-font-05-b.html = IMAGE+TEXT
-BUGWK54322 MAC SNOWLEOPARD : css2.1/t1508-c527-font-10-c.html = IMAGE+TEXT
 BUGWK54322 MAC SNOWLEOPARD : css2.1/t1605-c545-txttrans-00-b-ag.html = IMAGE+TEXT
 BUGWK54322 MAC SNOWLEOPARD : fast/backgrounds/svg-as-background-5.html = IMAGE
 BUGWK54322 MAC SNOWLEOPARD : fast/backgrounds/svg-as-background-6.html = IMAGE
@@ -3039,9 +3040,10 @@ BUGV8_1203 DEBUG : fast/canvas/webgl/gl-get-calls.html = PASS CRASH
 
 BUGWK55117 : fast/js/i18n-bindings-locale.html = TEXT
 
-BUGJAMESR DEBUG : html5lib/runner.html = PASS TIMEOUT
+BUGJAMESR DEBUG : html5lib/runner.html = PASS TIMEOUT CRASH
 
-BUG_ANTONM : svg/dynamic-updates/SVGFESpecularLightingElement-remove-lightSource.html = IMAGE
+BUG_ANTONM WIN LINUX : svg/dynamic-updates/SVGFESpecularLightingElement-remove-lightSource.html = IMAGE
+BUG_ANTONM MAC LEOPARD : svg/dynamic-updates/SVGFESpecularLightingElement-remove-lightSource.html = IMAGE
 
 BUGCR74497 : platform/win/plugins/windowless-paint-rect-coordinates.html = CRASH
 
@@ -3083,12 +3085,11 @@ BUGWK56072 WIN-VISTA : fast/blockflow/vertical-baseline-alignment.html = IMAGE
 BUGWK56072 WIN-VISTA : fast/repaint/japanese-rl-selection-clear.html = IMAGE
 BUGWK56072 WIN-VISTA : fast/repaint/japanese-rl-selection-repaint.html = IMAGE
 BUGWK56072 WIN-VISTA : fast/repaint/repaint-across-writing-mode-boundary.html = IMAGE
-BUGWK56072 MAC SNOWLEOPARD : fast/repaint/text-emphasis-h.html = IMAGE
 BUGWK56072 WIN-VISTA : fast/ruby/base-shorter-than-text.html = FAIL
 
 // introduced by Dave Hyatt in WK r80582
 BUGCR75561 WIN LINUX : fast/blockflow/text-orientation-basic.html = IMAGE+TEXT
-BUGCR75561 MAC : fast/blockflow/text-orientation-basic.html = IMAGE IMAGE+TEXT
+BUGCR75561 MAC LEOPARD : fast/blockflow/text-orientation-basic.html = IMAGE
 
 // introduced by brarraclough in WK r80621
 BUGCR75562 : fast/js/array-proto-func-length-getter-except.html = TEXT
@@ -3106,8 +3107,8 @@ BUGCR75740 : fast/js/regexp-test-null-string.html = FAIL
 BUGCR69594 SKIP : http/tests/appcache/different-https-origin-resource-main.html = FAIL
 
 // Need a rebaseline.
-BUG_ANTONM MAC : http/tests/security/xss-DENIED-xml-external-entity.xhtml = TEXT
-BUG_ANTONM MAC : http/tests/security/xss-DENIED-xsl-external-entity.xml = TEXT
+BUG_ANTONM MAC LEOPARD : http/tests/security/xss-DENIED-xml-external-entity.xhtml = TEXT
+BUG_ANTONM MAC LEOPARD : http/tests/security/xss-DENIED-xsl-external-entity.xml = TEXT
 
 // are failing after roll 80582 -> 80608
 BUG_LOISLO MAC DEBUG : fast/text/font-size-zero.html = TEXT
@@ -3152,36 +3153,38 @@ BUGCR77468 : fast/forms/input-file-directory-upload.html = TIMEOUT
 // Temprary bug holding to deal with many changed tests due to
 // http://build.chromium.org/p/chromium.webkit/builders/Webkit%20Linux/builds/4837
 // http://trac.webkit.org/changeset/81992
-BUGCR77494 : fast/block/positioning/056.html = FAIL
-BUGCR77494 : fast/block/positioning/auto/005.html = FAIL
-BUGCR77494 : fast/block/positioning/auto/006.html = FAIL
-BUGCR77494 : fast/block/positioning/auto/vertical-lr/005.html = FAIL
-BUGCR77494 : fast/block/positioning/auto/vertical-lr/006.html = FAIL
-BUGCR77494 : fast/block/positioning/auto/vertical-rl/005.html = FAIL
-BUGCR77494 : fast/block/positioning/auto/vertical-rl/006.html = FAIL
+BUGCR77494 WIN LINUX : fast/block/positioning/056.html = FAIL
+BUGCR77494 WIN LINUX : fast/block/positioning/auto/005.html = FAIL
+BUGCR77494 WIN LINUX : fast/block/positioning/auto/006.html = FAIL
+BUGCR77494 WIN LINUX : fast/block/positioning/auto/vertical-lr/005.html = FAIL
+BUGCR77494 WIN LINUX : fast/block/positioning/auto/vertical-lr/006.html = FAIL
+BUGCR77494 WIN LINUX : fast/block/positioning/auto/vertical-rl/005.html = FAIL
+BUGCR77494 WIN LINUX : fast/block/positioning/auto/vertical-rl/006.html = FAIL
 BUGCR77494 WIN LINUX : fast/block/positioning/fixed-positioning-scrollbar-bug.html = FAIL
-BUGCR77494 : fast/block/positioning/inline-block-relposition.html = FAIL
+BUGCR77494 WIN LINUX : fast/block/positioning/inline-block-relposition.html = IMAGE+TEXT
+BUGCR77494 MAC LEOPARD : fast/block/positioning/inline-block-relposition.html = IMAGE
 BUGCR77494 WIN LINUX : fast/block/positioning/relative-overflow-block.html = FAIL
-BUGCR77494 : fast/block/positioning/trailing-space-test.html = FAIL
-BUGCR77494 : fast/clip/001.html = FAIL
-BUGCR77494 : fast/clip/004.html = FAIL
-BUGCR77494 : fast/clip/006.html = FAIL
-BUGCR77494 : fast/clip/007.html = FAIL
-BUGCR77494 : fast/clip/008.html = FAIL
-BUGCR77494 : fast/clip/009.html = FAIL
-BUGCR77494 : fast/clip/010.html = FAIL
-BUGCR77494 : fast/clip/011.html = FAIL
-BUGCR77494 : fast/clip/012.html = FAIL
-BUGCR77494 : fast/clip/013.html = FAIL
-BUGCR77494 : fast/clip/014.html = FAIL
-BUGCR77494 : fast/clip/nestedTransparencyClip.html = FAIL
-BUGCR77494 : fast/clip/outline-overflowClip.html = FAIL
-BUGCR77494 : fast/invalid/014.html = FAIL
-BUGCR77494 : fast/layers/layer-visibility.html = FAIL
-BUGCR77494 : fast/repaint/layout-state-scrolloffset.html = FAIL
-BUGCR77494 : fast/repaint/layout-state-scrolloffset2.html = FAIL
-BUGCR77494 : fast/repaint/layout-state-scrolloffset3.html = FAIL
-BUGCR77494 : tables/mozilla/bugs/bug51140.html = FAIL
+BUGCR77494 WIN LINUX : fast/block/positioning/trailing-space-test.html = IMAGE+TEXT
+BUGCR77494 MAC LEOPARD : fast/block/positioning/trailing-space-test.html = IMAGE
+BUGCR77494 WIN LINUX : fast/clip/001.html = FAIL
+BUGCR77494 WIN LINUX : fast/clip/004.html = FAIL
+BUGCR77494 WIN LINUX : fast/clip/006.html = FAIL
+BUGCR77494 WIN LINUX : fast/clip/007.html = FAIL
+BUGCR77494 WIN LINUX : fast/clip/008.html = FAIL
+BUGCR77494 WIN LINUX : fast/clip/009.html = FAIL
+BUGCR77494 WIN LINUX : fast/clip/010.html = FAIL
+BUGCR77494 WIN LINUX : fast/clip/011.html = FAIL
+BUGCR77494 WIN LINUX : fast/clip/012.html = FAIL
+BUGCR77494 WIN LINUX : fast/clip/013.html = FAIL
+BUGCR77494 WIN LINUX : fast/clip/014.html = FAIL
+BUGCR77494 WIN LINUX : fast/clip/nestedTransparencyClip.html = FAIL
+BUGCR77494 WIN LINUX : fast/clip/outline-overflowClip.html = FAIL
+BUGCR77494 WIN LINUX : fast/invalid/014.html = TEXT
+BUGCR77494 WIN LINUX : fast/layers/layer-visibility.html = FAIL
+BUGCR77494 WIN LINUX : fast/repaint/layout-state-scrolloffset.html = FAIL
+BUGCR77494 WIN LINUX : fast/repaint/layout-state-scrolloffset2.html = FAIL
+BUGCR77494 WIN LINUX : fast/repaint/layout-state-scrolloffset3.html = FAIL
+BUGCR77494 WIN LINUX : tables/mozilla/bugs/bug51140.html = TEXT
 // Not included in tests modified by 81992, but started failing at same time:
 BUGCR77494 WIN LINUX : fast/repaint/transform-replaced-shadows.html = IMAGE
 BUGCR77494 : media/audio-repaint.html = FAIL
@@ -3259,8 +3262,9 @@ BUGWK50661 MAC LEOPARD : fast/speech/input-appearance-numberandspeech.html = IMA
 BUGWK50661 WIN LINUX : fast/dom/HTMLMeterElement/meter-styles.html = IMAGE+TEXT PASS
 
 // Need expectations
-BUGWK59281 : fast/dom/HTMLMeterElement/meter-writing-mode.html = FAIL
-BUGWK59281 : fast/dom/HTMLProgressElement/progress-writing-mode.html = FAIL
+BUGWK59281 WIN LINUX : fast/dom/HTMLMeterElement/meter-writing-mode.html = IMAGE+TEXT
+BUGWK59281 MAC LEOPARD : fast/dom/HTMLMeterElement/meter-writing-mode.html = IMAGE+TEXT
+BUGWK59281 WIN LINUX : fast/dom/HTMLProgressElement/progress-writing-mode.html = TEXT
 
 // We need to skip Geeza Pro quirk in SimpleFontDataMac.mm for non-Leopard.
 // http://trac.webkit.org/changeset/83126
@@ -3273,7 +3277,7 @@ BUGWK58008 MAC SNOWLEOPARD : fast/text/international/bidi-mirror-he-ar.html = IM
 BUGWK58008 MAC SNOWLEOPARD : fast/text/international/bidi-neutral-run.html = IMAGE+TEXT
 
 BUGCR78638 WIN : fast/frames/set-unloaded-frame-location.html = CRASH PASS
-BUGWK58005 MAC : editing/inserting/editable-inline-element.html = IMAGE
+BUGWK58005 MAC LEOPARD : editing/inserting/editable-inline-element.html = IMAGE
 BUGCR780807 : http/tests/misc/webtiming-origins.html = PASS TEXT
 
 BUGCR78835 : plugins/npp-set-window-called-during-destruction.html = CRASH
@@ -3459,7 +3463,6 @@ BUGWK58306 GPU MAC DEBUG : media/adopt-node-crash.html = CRASH
 // Temporarily marked failing for rebaselining.
 
 BUGWK58619 GPU LINUX WIN : media/video-volume-slider.html = IMAGE
-BUGWK58741 LINUX : fast/text/zero-width-characters-complex-script.html = FAIL
 
 // Need to be re-baselined BUGCR79770
 BUGCR79770 WIN : fast/box-shadow/inset-with-extraordinary-radii-and-border.html = IMAGE
@@ -3475,13 +3478,13 @@ BUGWK59055 : fast/html/details-remove-child-1.html = FAIL
 BUGWK59055 : fast/html/details-remove-child-2.html = FAIL
 
 // Temporarily marked as failing for rebaselining.
-BUGCR79798 : fast/gradients/crash-on-zero-radius.html = FAIL
-BUGCR79798 : fast/gradients/generated-gradients.html = FAIL
-BUGCR79798 : fast/gradients/radial-centered.html = FAIL
-BUGCR79798 : fast/gradients/simple-gradients.html = FAIL
-BUGCR79798 : fast/gradients/background-clipped.html = FAIL
-BUGCR79798 : svg/W3C-SVG-1.1/pservers-grad-13-b.svg = FAIL
-BUGCR79798 : svg/custom/radial-gradient-with-outstanding-focalPoint.svg = FAIL
+BUGCR79798 WIN LINUX : fast/gradients/crash-on-zero-radius.html = IMAGE
+BUGCR79798 WIN LINUX : fast/gradients/generated-gradients.html = IMAGE
+BUGCR79798 WIN LINUX : fast/gradients/radial-centered.html = IMAGE
+BUGCR79798 WIN LINUX : fast/gradients/simple-gradients.html = IMAGE
+BUGCR79798 WIN LINUX : fast/gradients/background-clipped.html = IMAGE
+BUGCR79798 WIN LINUX : svg/W3C-SVG-1.1/pservers-grad-13-b.svg = FAIL
+BUGCR79798 WIN LINUX : svg/custom/radial-gradient-with-outstanding-focalPoint.svg = FAIL
 
 // Flaky, perhaps Skia related.
 BUGCR79851 LINUX : fast/table/frame-and-rules.html = PASS TEXT
@@ -3627,22 +3630,13 @@ BUGCR79917 WIN LINUX : tables/mozilla_expected_failures/marvin/backgr_position-t
 BUGCR79917 WIN LINUX : tables/mozilla_expected_failures/marvin/backgr_position-table-row.html = IMAGE
 BUGCR79917 WIN LINUX : transforms/svg-vs-css.xhtml = IMAGE
 
-BUGDPRANKE MAC : editing/selection/move-by-word-visually.html = TEXT
-BUGDPRANKE MAC : fast/borders/border-radius-constraints.html = IMAGE
+BUGDPRANKE MAC SLOW : editing/selection/move-by-word-visually.html = PASS
 BUGDPRANKE MAC LEOPARD : fast/canvas/canvasDrawingIntoSelf.html = IMAGE
 BUGDPRANKE MAC : compositing/iframes/invisible-nested-iframe-show.html = TEXT
 BUGDPRANKE MAC GPU : compositing/geometry/video-fixed-scrolling.html = IMAGE
 BUGDPRANKE MAC GPU : media/video-volume-slider.html = IMAGE
 BUGDPRANKE MAC : plugins/mouse-click-iframe-to-plugin.html = TIMEOUT PASS
 BUGDPRANKE MAC : animations/3d/transform-origin-vs-functions.html = TEXT PASS
-BUGDPRANKE MAC : http/tests/loading/preload-slow-loading.php = TEXT
-BUGDPRANKE MAC : http/tests/misc/image-error.html = TEXT
-BUGDPRANKE MAC : http/tests/ssl/verify-ssl-enabled.php = TEXT
-BUGDPRANKE MAC : fast/text/international/thai-line-breaks.html = IMAGE
-BUGDPRANKE MAC : css1/basic/grouping.html = CRASH
-BUGDPRANKE MAC : http/tests/media/video-served-as-text.html = CRASH
-BUGDPRANKE MAC : http/tests/misc/object-image-error.html = TIMEOUT
-BUGDPRANKE MAC : fast/text/international/thai-baht-space.html = IMAGE+TEXT
 
 BUGDPRANKE LINUX DEBUG : svg/custom/foreignObject-crash-on-hover.xml = CRASH PASS
 BUGDPRANKE DEBUG : fast/css/getComputedStyle/getComputedStyle-margin-percentage.html = CRASH
@@ -3661,24 +3655,26 @@ BUGDPRANKE LINUX DEBUG GPU : fast/canvas/canvas-text-alignment.html = IMAGE
 BUGDPRANKE LINUX DEBUG GPU : platform/chromium/compositing/layout-width-change.html = IMAGE
 
 // probably just needs new baselines after r84343
-BUGDPRANKE : fast/borders/border-radius-huge-assert.html = IMAGE
+BUGDPRANKE WIN LINUX : fast/borders/border-radius-huge-assert.html = IMAGE
+BUGDPRANKE MAC LEOPARD : fast/borders/border-radius-huge-assert.html = IMAGE
 BUGDPRANKE : fast/borders/borderRadiusAllStylesAllCorners.html = IMAGE
-BUGDPRANKE : fast/borders/borderRadiusArcs01.html = IMAGE
-BUGDPRANKE : fast/borders/borderRadiusDashed02.html = IMAGE
-BUGDPRANKE : fast/borders/borderRadiusDashed03.html = IMAGE
-BUGDPRANKE : fast/borders/borderRadiusDotted01.html = IMAGE
-BUGDPRANKE : fast/borders/borderRadiusDouble01.html = IMAGE
-BUGDPRANKE : fast/borders/borderRadiusDouble02.html = IMAGE
-BUGDPRANKE : fast/borders/borderRadiusDouble03.html = IMAGE
-BUGDPRANKE : fast/borders/borderRadiusGroove01.html = IMAGE
-BUGDPRANKE : fast/borders/borderRadiusGroove02.html = IMAGE
-BUGDPRANKE : fast/borders/borderRadiusInset01.html = IMAGE
-BUGDPRANKE : fast/borders/borderRadiusInvalidColor.html = IMAGE
-BUGDPRANKE : fast/borders/borderRadiusOutset01.html = IMAGE
-BUGDPRANKE : fast/borders/borderRadiusRidge01.html = IMAGE
-BUGDPRANKE : fast/borders/borderRadiusSolid01.html = IMAGE
-BUGDPRANKE : fast/borders/borderRadiusSolid02.html = IMAGE
-BUGDPRANKE : fast/borders/borderRadiusSolid03.html = IMAGE
+BUGDPRANKE WIN LINUX : fast/borders/borderRadiusArcs01.html = IMAGE
+BUGDPRANKE WIN LINUX : fast/borders/borderRadiusDashed02.html = IMAGE
+BUGDPRANKE WIN LINUX : fast/borders/borderRadiusDashed03.html = IMAGE
+BUGDPRANKE WIN LINUX : fast/borders/borderRadiusDotted01.html = IMAGE
+BUGDPRANKE WIN LINUX : fast/borders/borderRadiusDouble01.html = IMAGE
+BUGDPRANKE WIN LINUX : fast/borders/borderRadiusDouble02.html = IMAGE
+BUGDPRANKE WIN LINUX : fast/borders/borderRadiusDouble03.html = IMAGE
+BUGDPRANKE WIN LINUX : fast/borders/borderRadiusGroove01.html = IMAGE
+BUGDPRANKE WIN LINUX : fast/borders/borderRadiusGroove02.html = IMAGE
+BUGDPRANKE WIN LINUX : fast/borders/borderRadiusInset01.html = IMAGE
+BUGDPRANKE WIN LINUX : fast/borders/borderRadiusInvalidColor.html = IMAGE
+BUGDPRANKE MAC LEOPARD : fast/borders/borderRadiusInvalidColor.html = IMAGE
+BUGDPRANKE WIN LINUX : fast/borders/borderRadiusOutset01.html = IMAGE
+BUGDPRANKE WIN LINUX : fast/borders/borderRadiusRidge01.html = IMAGE
+BUGDPRANKE WIN LINUX : fast/borders/borderRadiusSolid01.html = IMAGE
+BUGDPRANKE WIN LINUX : fast/borders/borderRadiusSolid02.html = IMAGE
+BUGDPRANKE WIN LINUX : fast/borders/borderRadiusSolid03.html = IMAGE
 BUGDPRANKE MAC LINUX : fast/box-shadow/inset-with-extraordinary-radii-and-border.html = IMAGE
 BUGDPRANKE : fast/box-shadow/inset.html = IMAGE
 BUGDPRANKE LINUX : fast/css/text-input-with-webkit-border-radius.html = IMAGE
@@ -3706,21 +3702,18 @@ BUGDPRANKE LINUX : fast/canvas/webgl/css-webkit-canvas.html = IMAGE
 BUGDPRANKE CPU : media/media-document-audio-repaint.html = IMAGE
 BUGDPRANKE MAC LINUX : transitions/interrupt-zero-duration.html = TEXT PASS
 BUGDPRANKE : media/controls-css-overload.html = TIMEOUT PASS
-BUGDPRANKE : fast/borders/bidi-012.html = IMAGE+TEXT IMAGE
+BUGDPRANKE WIN LINUX : fast/borders/bidi-012.html = IMAGE+TEXT
+BUGDPRANKE MAC LEOPARD : fast/borders/bidi-012.html = IMAGE
 BUGDPRANKE WIN LINUX : animations/change-one-anim.html = TEXT PASS
 BUGDPRANKE CPU : media/video-controls-rendering.html = IMAGE
 
 // pulled in from downstream during webkit roll 84350:84431
-BUGCASEQ MAC : svg/dynamic-updates/SVGFEDiffuseLightingElement-inherit-lighting-color-css-prop.html = IMAGE
-BUGCASEQ MAC : svg/dynamic-updates/SVGFEFloodElement-inherit-flood-color.html = IMAGE
-BUGCASEQ MAC : svg/dynamic-updates/SVGFESpecularLightingElement-inherit-lighting-color-css-prop.html = IMAGE
-BUGCASEQ MAC : svg/dynamic-updates/SVGFESpecularLightingElement-lighting-color-css-prop.html = IMAGE
 BUGCASEQ WIN LINUX : editing/selection/select-from-textfield-outwards.html = IMAGE+TEXT
 BUGCASEQ WIN LINUX : fast/forms/input-text-drag-down.html = IMAGE+TEXT
 BUGCASEQ MAC : fast/canvas/image-object-in-canvas.html = IMAGE
 
-BUGDPRANKE : fast/backgrounds/background-leakage.html = IMAGE+TEXT IMAGE
-BUGDPRANKE MAC : fast/multicol/client-rects.html = IMAGE
+BUGDPRANKE WIN LINUX : fast/backgrounds/background-leakage.html = IMAGE+TEXT IMAGE
+BUGDPRANKE MAC LEOPARD : fast/multicol/client-rects.html = IMAGE
 
 BUGDPRANKE MAC DEBUG : transitions/cancel-transition.html = TEXT PASS
 
@@ -3738,7 +3731,7 @@ BUGDPRANKE MAC DEBUG : fast/css-generated-content/table-row-group-to-inline.html
 
 BUGDPRANKE LINUX : canvas/philip/tests/2d.gradient.radial.touch2.html = TEXT
 
-BUGDPRANKE MAC : http/tests/navigation/lockedhistory-iframe.html = TEXT
+BUGDPRANKE MAC LEOPARD : http/tests/navigation/lockedhistory-iframe.html = TEXT PASS
 BUGDPRANKE LINUX DEBUG : http/tests/navigation/lockedhistory-iframe.html = TEXT PASS
 BUGDPRANKE : fast/parser/iframe-sets-parent-to-javascript-url.html = TEXT PASS
 BUGDPRANKE : fast/repaint/moving-shadow-on-path.html = TEXT PASS
@@ -3850,11 +3843,11 @@ BUGWK59172 : fast/html/details-remove-summary-6-and-click.html = IMAGE+TEXT
 BUGWK59172 : fast/html/details-remove-summary-6.html = IMAGE+TEXT
 BUGWK59172 : fast/html/details-writing-mode.html = IMAGE+TEXT
 
-BUGCR80301 MAC : fast/canvas/canvas-largedraws.html = TIMEOUT
+BUGCR80301 MAC LEOPARD : fast/canvas/canvas-largedraws.html = TIMEOUT
 
 // roll up from r84685:r84721??
 BUGDPRANKE : fast/dom/dataset-gc.html = TEXT
-BUGDPRANKE : fast/backgrounds/gradient-background-leakage.html = IMAGE
+BUGDPRANKE WIN LINUX : fast/backgrounds/gradient-background-leakage.html = IMAGE
 BUGDPRANKE : fast/forms/validation-message-appearance.html = IMAGE
 BUGDPRANKE LINUX : fast/multicol/shadow-breaking.html = IMAGE
 BUGDPRANKE WIN XP : fast/multicol/shadow-breaking.html = IMAGE
@@ -3885,8 +3878,8 @@ BUGWK50661 WIN LINUX : fast/dom/HTMLMeterElement/meter-element.html = TEXT
 BUGDPRANKE GPU SLOW : compositing/tiling/huge-layer-img.html = PASS TEXT
 BUGDPRANKE GPU : media/video-aspect-ratio.html = IMAGE PASS
 
-BUGSENORBLANCO : animations/animation-drt-api-multiple-keyframes.html = TEXT
-BUGSENORBLANCO : animations/animation-drt-api.html = TEXT
+BUGSENORBLANCO WIN LINUX : animations/animation-drt-api-multiple-keyframes.html = TEXT
+BUGSENORBLANCO WIN LINUX : animations/animation-drt-api.html = TEXT
 BUGSENORBLANCO GPU : compositing/animation/animated-composited-inside-hidden.html = MISSING
 BUGSENORBLANCO GPU MAC LEOPARD : compositing/direct-image-compositing.html = IMAGE CRASH
 BUGSENORBLANCO MAC LINUX : fast/css/string-quote-binary.html = CRASH PASS
@@ -3964,5 +3957,11 @@ BUGDPRANKE MAC DEBUG : fast/blockflow/Kusa-Makura-background-canvas.html = CRASH
 BUGDPRANKE MAC DEBUG : storage/domstorage/events/documentURI.html = CRASH
 BUGDPRANKE MAC DEBUG : svg/W3C-SVG-1.1-SE/types-dom-04-b.svg = CRASH
 BUGDPRANKE MAC DEBUG : http/tests/media/remove-while-loading.html = TIMEOUT
+BUGDPRANKE WIN DEBUG : http/tests/security/credentials-in-referer.html = PASS TIMEOUT
+BUGDPRANKE MAC DEBUG : fast/css/getComputedStyle/font-family-fallback-reset.html = CRASH
 
 BUGKBR WIN7 : fast/speech/input-readonly-and-disabled.html = CRASH
+
+BUGWK59642 WIN : editing/input/scroll-viewport-page-up-down.html = PASS TEXT
+
+
