@@ -128,7 +128,7 @@ void GeolocationPositionCache::threadEntryPointImpl()
 
 void GeolocationPositionCache::triggerReadFromDatabase()
 {
-    m_queue.append(createCallbackTask(&GeolocationPositionCache::readFromDatabase, this));
+    m_queue.append(createCallbackTask(&GeolocationPositionCache::readFromDatabase, AllowCrossThreadAccess(this)));
 }
 
 void GeolocationPositionCache::readFromDatabase(ScriptExecutionContext*, GeolocationPositionCache* cache)
@@ -187,7 +187,7 @@ void GeolocationPositionCache::readFromDatabaseImpl()
 
 void GeolocationPositionCache::triggerWriteToDatabase()
 {
-    m_queue.append(createCallbackTask(writeToDatabase, this));
+    m_queue.append(createCallbackTask(writeToDatabase, AllowCrossThreadAccess(this)));
 }
 
 void GeolocationPositionCache::writeToDatabase(ScriptExecutionContext*, GeolocationPositionCache* cache)

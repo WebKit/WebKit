@@ -61,20 +61,22 @@ void WorkerFileWriterCallbacksBridge::postWriteToMainThread(long long position, 
 {
     ASSERT(!m_operationInProgress);
     m_operationInProgress = true;
-    dispatchTaskToMainThread(createCallbackTask(&writeOnMainThread, this, position, data));
+    dispatchTaskToMainThread(createCallbackTask(&writeOnMainThread, 
+                                                AllowCrossThreadAccess(this), position, data));
 }
 
 void WorkerFileWriterCallbacksBridge::postTruncateToMainThread(long long length)
 {
     ASSERT(!m_operationInProgress);
     m_operationInProgress = true;
-    dispatchTaskToMainThread(createCallbackTask(&truncateOnMainThread, this, length));
+    dispatchTaskToMainThread(createCallbackTask(&truncateOnMainThread, 
+                                                AllowCrossThreadAccess(this), length));
 }
 
 void WorkerFileWriterCallbacksBridge::postAbortToMainThread()
 {
     ASSERT(m_operationInProgress);
-    dispatchTaskToMainThread(createCallbackTask(&abortOnMainThread, this));
+    dispatchTaskToMainThread(createCallbackTask(&abortOnMainThread, AllowCrossThreadAccess(this)));
 }
 
 void WorkerFileWriterCallbacksBridge::postShutdownToMainThread(PassRefPtr<WorkerFileWriterCallbacksBridge> bridge)
@@ -113,17 +115,20 @@ void WorkerFileWriterCallbacksBridge::shutdownOnMainThread(ScriptExecutionContex
 
 void WorkerFileWriterCallbacksBridge::didWrite(long long bytes, bool complete)
 {
-    dispatchTaskToWorkerThread(createCallbackTask(&didWriteOnWorkerThread, this, bytes, complete));
+    dispatchTaskToWorkerThread(
+        createCallbackTask(&didWriteOnWorkerThread, AllowCrossThreadAccess(this), bytes, complete));
 }
 
 void WorkerFileWriterCallbacksBridge::didFail(WebFileError error)
 {
-    dispatchTaskToWorkerThread(createCallbackTask(&didFailOnWorkerThread, this, error));
+    dispatchTaskToWorkerThread(
+        createCallbackTask(&didFailOnWorkerThread, AllowCrossThreadAccess(this), error));
 }
 
 void WorkerFileWriterCallbacksBridge::didTruncate()
 {
-    dispatchTaskToWorkerThread(createCallbackTask(&didTruncateOnWorkerThread, this));
+    dispatchTaskToWorkerThread(
+        createCallbackTask(&didTruncateOnWorkerThread, AllowCrossThreadAccess(this)));
 }
 
 static const char fileWriterOperationsMode[] = "fileWriterOperationsMode";
@@ -144,7 +149,8 @@ WorkerFileWriterCallbacksBridge::WorkerFileWriterCallbacksBridge(const String& p
 
 void WorkerFileWriterCallbacksBridge::postInitToMainThread(const String& path)
 {
-    dispatchTaskToMainThread(createCallbackTask(&initOnMainThread, this, path));
+    dispatchTaskToMainThread(
+        createCallbackTask(&initOnMainThread, AllowCrossThreadAccess(this), path));
 }
 
 WorkerFileWriterCallbacksBridge::~WorkerFileWriterCallbacksBridge()
@@ -196,13 +202,15 @@ void WorkerFileWriterCallbacksBridge::runTaskOnWorkerThread(ScriptExecutionConte
 void WorkerFileWriterCallbacksBridge::dispatchTaskToMainThread(PassOwnPtr<ScriptExecutionContext::Task> task)
 {
     ASSERT(m_workerContext->isContextThread());
-    WebWorkerBase::dispatchTaskToMainThread(createCallbackTask(&runTaskOnMainThread, this, task));
+    WebWorkerBase::dispatchTaskToMainThread(
+        createCallbackTask(&runTaskOnMainThread, AllowCrossThreadAccess(this), task));
 }
 
 void WorkerFileWriterCallbacksBridge::dispatchTaskToWorkerThread(PassOwnPtr<ScriptExecutionContext::Task> task)
 {
     ASSERT(isMainThread());
-    m_proxy->postTaskForModeToWorkerContext(createCallbackTask(&runTaskOnWorkerThread, this, task), m_mode);
+    m_proxy->postTaskForModeToWorkerContext(
+        createCallbackTask(&runTaskOnWorkerThread, AllowCrossThreadAccess(this), task), m_mode);
 }
 
 bool WorkerFileWriterCallbacksBridge::waitForOperationToComplete()

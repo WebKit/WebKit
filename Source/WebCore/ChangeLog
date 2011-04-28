@@ -1,3 +1,69 @@
+2011-04-27  Dmitry Lomov  <dslomov@google.com>
+
+        Reviewed by David Levin.
+
+        CrossThreadCopier should not have a default specialization for raw pointers
+        https://bugs.webkit.org/show_bug.cgi?id=59234
+        Removed the ablity to pass raw pointers cross-thread
+        Added and applied annotations for doing that
+
+        * fileapi/FileReader.cpp:
+        (WebCore::FileReader::readInternal):
+        (WebCore::FileReader::abort):
+        * fileapi/FileStreamProxy.cpp:
+        (WebCore::FileStreamProxy::startOnFileThread):
+        (WebCore::FileStreamProxy::stopOnFileThread):
+        (WebCore::FileStreamProxy::getSize):
+        (WebCore::FileStreamProxy::getSizeOnFileThread):
+        (WebCore::FileStreamProxy::openForRead):
+        (WebCore::FileStreamProxy::openForReadOnFileThread):
+        (WebCore::FileStreamProxy::openForWrite):
+        (WebCore::FileStreamProxy::openForWriteOnFileThread):
+        (WebCore::FileStreamProxy::close):
+        (WebCore::FileStreamProxy::read):
+        (WebCore::FileStreamProxy::readOnFileThread):
+        (WebCore::FileStreamProxy::write):
+        (WebCore::FileStreamProxy::writeOnFileThread):
+        (WebCore::FileStreamProxy::truncate):
+        (WebCore::FileStreamProxy::truncateOnFileThread):
+        * loader/WorkerThreadableLoader.cpp:
+        (WebCore::WorkerThreadableLoader::MainThreadBridge::MainThreadBridge):
+        (WebCore::WorkerThreadableLoader::MainThreadBridge::destroy):
+        (WebCore::WorkerThreadableLoader::MainThreadBridge::cancel):
+        * page/GeolocationPositionCache.cpp:
+        (WebCore::GeolocationPositionCache::triggerReadFromDatabase):
+        (WebCore::GeolocationPositionCache::triggerWriteToDatabase):
+        * platform/CrossThreadCopier.h:
+        (WebCore::AllowCrossThreadAccessWrapper::AllowCrossThreadAccessWrapper):
+        (WebCore::AllowCrossThreadAccessWrapper::value):
+        (WebCore::AllowCrossThreadAccess):
+        (WebCore::AllowExtendedLifetimeWrapper::AllowExtendedLifetimeWrapper):
+        (WebCore::AllowExtendedLifetimeWrapper::value):
+        (WebCore::AllowExtendedLifetime):
+        * platform/graphics/chromium/cc/CCCompletionEvent.h:
+        * storage/IDBObjectStoreBackendImpl.cpp:
+        (WebCore::IDBObjectStoreBackendImpl::get):
+        (WebCore::IDBObjectStoreBackendImpl::put):
+        (WebCore::IDBObjectStoreBackendImpl::deleteFunction):
+        (WebCore::IDBObjectStoreBackendImpl::clear):
+        (WebCore::IDBObjectStoreBackendImpl::createIndex):
+        (WebCore::IDBObjectStoreBackendImpl::deleteIndex):
+        (WebCore::IDBObjectStoreBackendImpl::openCursor):
+        * storage/SQLCallbackWrapper.h:
+        (WebCore::SQLCallbackWrapper::clear):
+        * websockets/WorkerThreadableWebSocketChannel.cpp:
+        (WebCore::WorkerThreadableWebSocketChannel::Bridge::mainThreadCreateWebSocketChannel):
+        (WebCore::WorkerThreadableWebSocketChannel::Bridge::Bridge):
+        (WebCore::WorkerThreadableWebSocketChannel::Bridge::connect):
+        (WebCore::WorkerThreadableWebSocketChannel::Bridge::send):
+        (WebCore::WorkerThreadableWebSocketChannel::Bridge::bufferedAmount):
+        (WebCore::WorkerThreadableWebSocketChannel::Bridge::close):
+        (WebCore::WorkerThreadableWebSocketChannel::Bridge::disconnect):
+        (WebCore::WorkerThreadableWebSocketChannel::Bridge::suspend):
+        (WebCore::WorkerThreadableWebSocketChannel::Bridge::resume):
+        * workers/WorkerMessagingProxy.cpp:
+        (WebCore::WorkerMessagingProxy::postConsoleMessageToWorkerObject):
+
 2011-04-27  Adam Barth  <abarth@webkit.org>
 
         Two build fixes from the future.  (Trivial strict OwnPtr fixes.)

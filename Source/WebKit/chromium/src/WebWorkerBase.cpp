@@ -90,7 +90,8 @@ public:
     {
         MutexLocker locker(m_mutex);
         if (m_worker)
-            m_worker->postTaskForModeToWorkerContext(createCallbackTask(&didComplete, this, result), m_mode);
+            m_worker->postTaskForModeToWorkerContext(
+                createCallbackTask(&didComplete, AllowCrossThreadAccess(this), result), m_mode);
     }
 
 private:
@@ -98,7 +99,11 @@ private:
         : m_worker(worker)
         , m_mode(mode)
     {
-        worker->dispatchTaskToMainThread(createCallbackTask(&allowDatabaseTask, commonClient, frame, String(name), String(displayName), estimatedSize, this));
+        worker->dispatchTaskToMainThread(
+            createCallbackTask(&allowDatabaseTask, AllowCrossThreadAccess(commonClient),
+                               AllowCrossThreadAccess(frame),
+                               String(name), String(displayName), estimatedSize,
+                               AllowCrossThreadAccess(this)));
     }
 
     static void allowDatabaseTask(WebCore::ScriptExecutionContext* context, WebCommonWorkerClient* commonClient, WebFrame* frame, const WTF::String name, const WTF::String displayName, unsigned long estimatedSize, PassRefPtr<AllowDatabaseMainThreadBridge> bridge)
@@ -263,7 +268,7 @@ void WebWorkerBase::openFileSystemForWorker(WebFileSystem::Type type, long long 
 void WebWorkerBase::postMessageToWorkerObject(PassRefPtr<SerializedScriptValue> message,
                                               PassOwnPtr<MessagePortChannelArray> channels)
 {
-    dispatchTaskToMainThread(createCallbackTask(&postMessageTask, this,
+    dispatchTaskToMainThread(createCallbackTask(&postMessageTask, AllowCrossThreadAccess(this),
                                                 message->toWireString(), channels));
 }
 
@@ -288,9 +293,10 @@ void WebWorkerBase::postExceptionToWorkerObject(const String& errorMessage,
                                                 int lineNumber,
                                                 const String& sourceURL)
 {
-    dispatchTaskToMainThread(createCallbackTask(&postExceptionTask, this,
-                                                errorMessage, lineNumber,
-                                                sourceURL));
+    dispatchTaskToMainThread(
+        createCallbackTask(&postExceptionTask, AllowCrossThreadAccess(this),
+                           errorMessage, lineNumber,
+                           sourceURL));
 }
 
 void WebWorkerBase::postExceptionTask(ScriptExecutionContext* context,
@@ -313,7 +319,7 @@ void WebWorkerBase::postConsoleMessageToWorkerObject(MessageSource source,
                                                      int lineNumber,
                                                      const String& sourceURL)
 {
-    dispatchTaskToMainThread(createCallbackTask(&postConsoleMessageTask, this,
+    dispatchTaskToMainThread(createCallbackTask(&postConsoleMessageTask, AllowCrossThreadAccess(this),
                                                 source, type, level,
                                                 message, lineNumber, sourceURL));
 }
@@ -335,7 +341,7 @@ void WebWorkerBase::postConsoleMessageTask(ScriptExecutionContext* context,
 
 void WebWorkerBase::confirmMessageFromWorkerObject(bool hasPendingActivity)
 {
-    dispatchTaskToMainThread(createCallbackTask(&confirmMessageTask, this,
+    dispatchTaskToMainThread(createCallbackTask(&confirmMessageTask, AllowCrossThreadAccess(this),
                                                 hasPendingActivity));
 }
 
@@ -351,7 +357,8 @@ void WebWorkerBase::confirmMessageTask(ScriptExecutionContext* context,
 void WebWorkerBase::reportPendingActivity(bool hasPendingActivity)
 {
     dispatchTaskToMainThread(createCallbackTask(&reportPendingActivityTask,
-                                                this, hasPendingActivity));
+                                                AllowCrossThreadAccess(this),
+                                                hasPendingActivity));
 }
 
 void WebWorkerBase::reportPendingActivityTask(ScriptExecutionContext* context,
@@ -366,7 +373,7 @@ void WebWorkerBase::reportPendingActivityTask(ScriptExecutionContext* context,
 void WebWorkerBase::workerContextClosed()
 {
     dispatchTaskToMainThread(createCallbackTask(&workerContextClosedTask,
-                                                this));
+                                                AllowCrossThreadAccess(this)));
 }
 
 void WebWorkerBase::workerContextClosedTask(ScriptExecutionContext* context,
@@ -381,7 +388,7 @@ void WebWorkerBase::workerContextClosedTask(ScriptExecutionContext* context,
 void WebWorkerBase::workerContextDestroyed()
 {
     dispatchTaskToMainThread(createCallbackTask(&workerContextDestroyedTask,
-                                                this));
+                                                AllowCrossThreadAccess(this)));
 }
 
 void WebWorkerBase::workerContextDestroyedTask(ScriptExecutionContext* context,

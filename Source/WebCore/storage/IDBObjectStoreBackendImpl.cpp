@@ -384,8 +384,11 @@ PassRefPtr<IDBIndexBackendInterface> IDBObjectStoreBackendImpl::createIndex(cons
 
     RefPtr<IDBObjectStoreBackendImpl> objectStore = this;
     RefPtr<IDBTransactionBackendInterface> transactionPtr = transaction;
-    if (!transaction->scheduleTask(createCallbackTask(&IDBObjectStoreBackendImpl::createIndexInternal, objectStore, index, transaction),
-                                   createCallbackTask(&IDBObjectStoreBackendImpl::removeIndexFromMap, objectStore, index))) {
+    if (!transaction->scheduleTask(
+              createCallbackTask(&IDBObjectStoreBackendImpl::createIndexInternal,
+                                 objectStore, index, transactionPtr),
+              createCallbackTask(&IDBObjectStoreBackendImpl::removeIndexFromMap,
+                                 objectStore, index))) {
         ec = IDBDatabaseException::NOT_ALLOWED_ERR;
         return 0;
     }
@@ -437,8 +440,11 @@ void IDBObjectStoreBackendImpl::deleteIndex(const String& name, IDBTransactionBa
 
     RefPtr<IDBObjectStoreBackendImpl> objectStore = this;
     RefPtr<IDBTransactionBackendInterface> transactionPtr = transaction;
-    if (!transaction->scheduleTask(createCallbackTask(&IDBObjectStoreBackendImpl::deleteIndexInternal, objectStore, index, transactionPtr),
-                                   createCallbackTask(&IDBObjectStoreBackendImpl::addIndexToMap, objectStore, index))) {
+    if (!transaction->scheduleTask(
+              createCallbackTask(&IDBObjectStoreBackendImpl::deleteIndexInternal,
+                                 objectStore, index, transactionPtr),
+              createCallbackTask(&IDBObjectStoreBackendImpl::addIndexToMap,
+                                 objectStore, index))) {
         ec = IDBDatabaseException::NOT_ALLOWED_ERR;
         return;
     }
@@ -451,14 +457,17 @@ void IDBObjectStoreBackendImpl::deleteIndexInternal(ScriptExecutionContext*, Pas
     transaction->didCompleteTaskEvents();
 }
 
-void IDBObjectStoreBackendImpl::openCursor(PassRefPtr<IDBKeyRange> prpRange, unsigned short direction, PassRefPtr<IDBCallbacks> prpCallbacks, IDBTransactionBackendInterface* transactionPtr, ExceptionCode& ec)
+void IDBObjectStoreBackendImpl::openCursor(PassRefPtr<IDBKeyRange> prpRange, unsigned short direction, PassRefPtr<IDBCallbacks> prpCallbacks, IDBTransactionBackendInterface* transaction, ExceptionCode& ec)
 {
     RefPtr<IDBObjectStoreBackendImpl> objectStore = this;
     RefPtr<IDBKeyRange> range = prpRange;
     RefPtr<IDBCallbacks> callbacks = prpCallbacks;
-    RefPtr<IDBTransactionBackendInterface> transaction = transactionPtr;
-    if (!transaction->scheduleTask(createCallbackTask(&IDBObjectStoreBackendImpl::openCursorInternal, objectStore, range, direction, callbacks, transaction)))
+    RefPtr<IDBTransactionBackendInterface> transactionPtr = transaction;
+    if (!transaction->scheduleTask(
+            createCallbackTask(&IDBObjectStoreBackendImpl::openCursorInternal,
+                               objectStore, range, direction, callbacks, transactionPtr))) {
         ec = IDBDatabaseException::NOT_ALLOWED_ERR;
+    }
 }
 
 void IDBObjectStoreBackendImpl::openCursorInternal(ScriptExecutionContext*, PassRefPtr<IDBObjectStoreBackendImpl> objectStore, PassRefPtr<IDBKeyRange> range, unsigned short tmpDirection, PassRefPtr<IDBCallbacks> callbacks, PassRefPtr<IDBTransactionBackendInterface> transaction)

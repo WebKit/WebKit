@@ -63,7 +63,7 @@ public:
 private:
     virtual ~WebSharedWorkerImpl();
 
-    static void connectTask(WebCore::ScriptExecutionContext*, WebSharedWorkerImpl*, PassOwnPtr<WebCore::MessagePortChannel>);
+    static void connectTask(WebCore::ScriptExecutionContext*, PassOwnPtr<WebCore::MessagePortChannel>);
 
     WebCommonWorkerClient* m_client;
 };

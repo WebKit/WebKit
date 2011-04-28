@@ -74,7 +74,7 @@ public:
             context = m_scriptExecutionContext.release().leakRef();
             callback = m_callback.release().leakRef();
         }
-        context->postTask(createCallbackTask(&safeRelease, callback));
+        context->postTask(createCallbackTask(&safeRelease, AllowAccessLater(callback)));
     }
 
     PassRefPtr<T> unwrap()

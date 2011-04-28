@@ -62,10 +62,6 @@ namespace WebCore {
     template<typename T> struct CrossThreadCopierBase<true, false, T> : public CrossThreadCopierPassThrough<T> {
     };
 
-    // Pointers get passed through without any significant changes.
-    template<typename T> struct CrossThreadCopierBase<false, false, T*> : public CrossThreadCopierPassThrough<T*> {
-    };
-
     template<> struct CrossThreadCopierBase<false, false, ThreadableLoaderOptions> : public CrossThreadCopierPassThrough<ThreadableLoaderOptions> {
     };
 
@@ -118,6 +114,45 @@ namespace WebCore {
                                                                                      || WTF::IsSubclassOfTemplate<typename WTF::RemoveTemplate<T, PassRefPtr>::Type, ThreadSafeRefCounted>::value,
                                                                                  T> {
     };
+
+    template<typename T> struct AllowCrossThreadAccessWrapper {
+    public:
+        explicit AllowCrossThreadAccessWrapper(T* value) : m_value(value) { }
+        T* value() const { return m_value; }
+    private:
+        T* m_value;
+    };
+
+    template<typename T> struct CrossThreadCopierBase<false, false, AllowCrossThreadAccessWrapper<T> > {
+        typedef T* Type;
+        static Type copy(const AllowCrossThreadAccessWrapper<T>& wrapper) { return wrapper.value(); }
+    };
+
+    template<typename T> AllowCrossThreadAccessWrapper<T> AllowCrossThreadAccess(T* value) 
+    {
+        return AllowCrossThreadAccessWrapper<T>(value);
+    }
+
+    // FIXME: Move to a different header file. AllowAccessLater is for cross-thread access
+    // that is not cross-thread (tasks posted to a queue guaranteed to run on the same thread).
+    template<typename T> struct AllowAccessLaterWrapper {
+    public:
+        explicit AllowAccessLaterWrapper(T* value) : m_value(value) { }
+        T* value() const { return m_value; }
+    private:
+        T* m_value;
+    };
+
+    template<typename T> struct CrossThreadCopierBase<false, false, AllowAccessLaterWrapper<T> > {
+        typedef T* Type;
+        static Type copy(const AllowAccessLaterWrapper<T>& wrapper) { return wrapper.value(); }
+    };
+
+    template<typename T> AllowAccessLaterWrapper<T> AllowAccessLater(T* value)
+    {
+        return AllowAccessLaterWrapper<T>(value);
+    }
+
 
 } // namespace WebCore
 

@@ -288,7 +288,9 @@ static void postConsoleMessageTask(ScriptExecutionContext* context, WorkerMessag
 
 void WorkerMessagingProxy::postConsoleMessageToWorkerObject(MessageSource source, MessageType type, MessageLevel level, const String& message, int lineNumber, const String& sourceURL)
 {
-    m_scriptExecutionContext->postTask(createCallbackTask(&postConsoleMessageTask, this, source, type, level, message, lineNumber, sourceURL));
+    m_scriptExecutionContext->postTask(
+        createCallbackTask(&postConsoleMessageTask, AllowCrossThreadAccess(this),
+                           source, type, level, message, lineNumber, sourceURL));
 }
 
 void WorkerMessagingProxy::workerThreadCreated(PassRefPtr<DedicatedWorkerThread> workerThread)

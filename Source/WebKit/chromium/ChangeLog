@@ -1,3 +1,66 @@
+2011-04-27  Dmitry Lomov  <dslomov@google.com>
+
+        Reviewed by David Levin.
+        
+        CrossThreadCopier should not have a default specialization for raw pointers
+        https://bugs.webkit.org/show_bug.cgi?id=59234
+        Removed the ablity to pass raw pointers cross-thread
+        Added and applied annotations for doing that
+
+        * src/WebSharedWorkerImpl.cpp:
+        (WebKit::WebSharedWorkerImpl::connect):
+        (WebKit::WebSharedWorkerImpl::connectTask):
+        * src/WebSharedWorkerImpl.h:
+        * src/WebWorkerBase.cpp:
+        (WebKit::WebWorkerBase::postMessageToWorkerObject):
+        (WebKit::WebWorkerBase::postExceptionToWorkerObject):
+        (WebKit::WebWorkerBase::postConsoleMessageToWorkerObject):
+        (WebKit::WebWorkerBase::confirmMessageFromWorkerObject):
+        (WebKit::WebWorkerBase::reportPendingActivity):
+        (WebKit::WebWorkerBase::workerContextClosed):
+        (WebKit::WebWorkerBase::workerContextDestroyed):
+        * src/WebWorkerClientImpl.cpp:
+        (WebKit::WebWorkerClientImpl::startWorkerContext):
+        (WebKit::WebWorkerClientImpl::terminateWorkerContext):
+        (WebKit::WebWorkerClientImpl::postMessageToWorkerContext):
+        (WebKit::WebWorkerClientImpl::workerObjectDestroyed):
+        (WebKit::WebWorkerClientImpl::postMessageToWorkerObject):
+        (WebKit::WebWorkerClientImpl::postExceptionToWorkerObject):
+        (WebKit::WebWorkerClientImpl::postConsoleMessageToWorkerObject):
+        (WebKit::WebWorkerClientImpl::confirmMessageFromWorkerObject):
+        (WebKit::WebWorkerClientImpl::reportPendingActivity):
+        * src/WebWorkerImpl.cpp:
+        (WebKit::WebWorkerImpl::postMessageToWorkerContext):
+        * src/WorkerFileSystemCallbacksBridge.cpp:
+        (WebKit::WorkerFileSystemCallbacksBridge::postOpenFileSystemToMainThread):
+        (WebKit::WorkerFileSystemCallbacksBridge::postMoveToMainThread):
+        (WebKit::WorkerFileSystemCallbacksBridge::postCopyToMainThread):
+        (WebKit::WorkerFileSystemCallbacksBridge::postRemoveToMainThread):
+        (WebKit::WorkerFileSystemCallbacksBridge::postRemoveRecursivelyToMainThread):
+        (WebKit::WorkerFileSystemCallbacksBridge::postReadMetadataToMainThread):
+        (WebKit::WorkerFileSystemCallbacksBridge::postCreateFileToMainThread):
+        (WebKit::WorkerFileSystemCallbacksBridge::postCreateDirectoryToMainThread):
+        (WebKit::WorkerFileSystemCallbacksBridge::postFileExistsToMainThread):
+        (WebKit::WorkerFileSystemCallbacksBridge::postDirectoryExistsToMainThread):
+        (WebKit::WorkerFileSystemCallbacksBridge::postReadDirectoryToMainThread):
+        (WebKit::WorkerFileSystemCallbacksBridge::didFailOnMainThread):
+        (WebKit::WorkerFileSystemCallbacksBridge::didOpenFileSystemOnMainThread):
+        (WebKit::WorkerFileSystemCallbacksBridge::didSucceedOnMainThread):
+        (WebKit::WorkerFileSystemCallbacksBridge::didReadMetadataOnMainThread):
+        (WebKit::WorkerFileSystemCallbacksBridge::didReadDirectoryOnMainThread):
+        * src/WorkerFileWriterCallbacksBridge.cpp:
+        (WebKit::WorkerFileWriterCallbacksBridge::postWriteToMainThread):
+        (WebKit::WorkerFileWriterCallbacksBridge::postTruncateToMainThread):
+        (WebKit::WorkerFileWriterCallbacksBridge::postAbortToMainThread):
+        (WebKit::WorkerFileWriterCallbacksBridge::didWrite):
+        (WebKit::WorkerFileWriterCallbacksBridge::didFail):
+        (WebKit::WorkerFileWriterCallbacksBridge::didTruncate):
+        (WebKit::WorkerFileWriterCallbacksBridge::postInitToMainThread):
+        (WebKit::WorkerFileWriterCallbacksBridge::dispatchTaskToMainThread):
+        (WebKit::WorkerFileWriterCallbacksBridge::dispatchTaskToWorkerThread):
+        * tests/CCThreadTest.cpp:
+        (WebCore::TEST):
+
 2011-04-27  James Robinson  <jamesr@chromium.org>
 
         Reviewed by Kenneth Russell.

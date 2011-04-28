@@ -129,7 +129,7 @@ void FileReader::readInternal(Blob* blob, FileReaderLoader::ReadType type)
         return;
 
     if (m_state == None)
-        scriptExecutionContext()->postTask(createCallbackTask(&delayedStart, this));
+        scriptExecutionContext()->postTask(createCallbackTask(&delayedStart, AllowAccessLater(this)));
 
     m_blob = blob;
     m_readType = type;
@@ -150,7 +150,8 @@ void FileReader::abort()
     m_state = Aborting;
 
     // Schedule to have the abort done later since abort() might be called from the event handler and we do not want the resource loading code to be in the stack.
-    scriptExecutionContext()->postTask(createCallbackTask(&delayedAbort, this));
+    scriptExecutionContext()->postTask(
+        createCallbackTask(&delayedAbort, AllowAccessLater(this)));
 }
 
 void FileReader::doAbort()

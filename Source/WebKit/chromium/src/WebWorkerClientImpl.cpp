@@ -141,7 +141,7 @@ void WebWorkerClientImpl::startWorkerContext(const KURL& scriptURL,
     if (!isMainThread()) {
         WebWorkerBase::dispatchTaskToMainThread(createCallbackTask(
             &startWorkerContextTask,
-            this,
+            AllowCrossThreadAccess(this),
             scriptURL.string(),
             userAgent,
             sourceCode));
@@ -156,7 +156,8 @@ void WebWorkerClientImpl::terminateWorkerContext()
         return;
     m_askedToTerminate = true;
     if (!isMainThread()) {
-        WebWorkerBase::dispatchTaskToMainThread(createCallbackTask(&terminateWorkerContextTask, this));
+        WebWorkerBase::dispatchTaskToMainThread(
+            createCallbackTask(&terminateWorkerContextTask, AllowCrossThreadAccess(this)));
         return;
     }
     m_webWorker->terminateWorkerContext();
@@ -172,7 +173,7 @@ void WebWorkerClientImpl::postMessageToWorkerContext(
     ++m_unconfirmedMessageCount;
     if (!isMainThread()) {
         WebWorkerBase::dispatchTaskToMainThread(createCallbackTask(&postMessageToWorkerContextTask,
-                                                                   this,
+                                                                   AllowCrossThreadAccess(this),
                                                                    message->toWireString(),
                                                                    channels));
         return;
@@ -202,7 +203,7 @@ void WebWorkerClientImpl::workerObjectDestroyed()
     // Even if this is called on the main thread, there could be a queued task for
     // this object, so don't delete it right away.
     WebWorkerBase::dispatchTaskToMainThread(createCallbackTask(&workerObjectDestroyedTask,
-                                                               this));
+                                                               AllowCrossThreadAccess(this)));
 }
 
 void WebWorkerClientImpl::postMessageToWorkerObject(const WebString& message,
@@ -221,7 +222,7 @@ void WebWorkerClientImpl::postMessageToWorkerObject(const WebString& message,
 
     if (currentThread() != m_workerThreadId) {
         m_scriptExecutionContext->postTask(createCallbackTask(&postMessageToWorkerObjectTask,
-                                                              this,
+                                                              AllowCrossThreadAccess(this),
                                                               String(message),
                                                               channels2.release()));
         return;
@@ -237,7 +238,7 @@ void WebWorkerClientImpl::postExceptionToWorkerObject(const WebString& errorMess
 {
     if (currentThread() != m_workerThreadId) {
         m_scriptExecutionContext->postTask(createCallbackTask(&postExceptionToWorkerObjectTask,
-                                                              this,
+                                                              AllowCrossThreadAccess(this),
                                                               String(errorMessage),
                                                               lineNumber,
                                                               String(sourceURL)));
@@ -261,7 +262,7 @@ void WebWorkerClientImpl::postConsoleMessageToWorkerObject(int destination,
 {
     if (currentThread() != m_workerThreadId) {
         m_scriptExecutionContext->postTask(createCallbackTask(&postConsoleMessageToWorkerObjectTask,
-                                                              this,
+                                                              AllowCrossThreadAccess(this),
                                                               sourceId,
                                                               messageType,
                                                               messageLevel,
@@ -294,14 +295,14 @@ void WebWorkerClientImpl::confirmMessageFromWorkerObject(bool hasPendingActivity
     // accessed.  Otherwise there are race conditions with v8's garbage
     // collection.
     m_scriptExecutionContext->postTask(createCallbackTask(&confirmMessageFromWorkerObjectTask,
-                                                          this));
+                                                          AllowCrossThreadAccess(this)));
 }
 
 void WebWorkerClientImpl::reportPendingActivity(bool hasPendingActivity)
 {
     // See above comment in confirmMessageFromWorkerObject.
     m_scriptExecutionContext->postTask(createCallbackTask(&reportPendingActivityTask,
-                                                          this,
+                                                          AllowCrossThreadAccess(this),
                                                           hasPendingActivity));
 }
 

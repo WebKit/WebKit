@@ -155,64 +155,97 @@ void WorkerFileSystemCallbacksBridge::stop()
 
 void WorkerFileSystemCallbacksBridge::postOpenFileSystemToMainThread(WebCommonWorkerClient* commonClient, WebFileSystem::Type type, long long size, bool create, const String& mode)
 {
-    dispatchTaskToMainThread(createCallbackTask(&openFileSystemOnMainThread, commonClient, type, size, create, this, mode));
+    dispatchTaskToMainThread(
+        createCallbackTask(&openFileSystemOnMainThread,
+                           AllowCrossThreadAccess(commonClient), type, size, create,
+                           AllowCrossThreadAccess(this), mode));
 }
 
 void WorkerFileSystemCallbacksBridge::postMoveToMainThread(WebFileSystem* fileSystem, const String& sourcePath, const String& destinationPath, const String& mode)
 {
-    dispatchTaskToMainThread(createCallbackTask(&moveOnMainThread, fileSystem, sourcePath, destinationPath, this, mode));
+    dispatchTaskToMainThread(
+        createCallbackTask(&moveOnMainThread,
+                           AllowCrossThreadAccess(fileSystem), sourcePath, destinationPath,
+                           AllowCrossThreadAccess(this), mode));
 }
 
 void WorkerFileSystemCallbacksBridge::postCopyToMainThread(WebFileSystem* fileSystem, const String& sourcePath, const String& destinationPath, const String& mode)
 {
-    dispatchTaskToMainThread(createCallbackTask(&copyOnMainThread, fileSystem, sourcePath, destinationPath, this, mode));
+    dispatchTaskToMainThread(
+        createCallbackTask(&copyOnMainThread,
+                           AllowCrossThreadAccess(fileSystem), sourcePath, destinationPath,
+                           AllowCrossThreadAccess(this), mode));
 }
 
 void WorkerFileSystemCallbacksBridge::postRemoveToMainThread(WebFileSystem* fileSystem, const String& path, const String& mode)
 {
     ASSERT(fileSystem);
-    dispatchTaskToMainThread(createCallbackTask(&removeOnMainThread, fileSystem, path, this, mode));
+    dispatchTaskToMainThread(
+        createCallbackTask(&removeOnMainThread,
+                           AllowCrossThreadAccess(fileSystem), path,
+                           AllowCrossThreadAccess(this), mode));
 }
 
 void WorkerFileSystemCallbacksBridge::postRemoveRecursivelyToMainThread(WebFileSystem* fileSystem, const String& path, const String& mode)
 {
     ASSERT(fileSystem);
-    dispatchTaskToMainThread(createCallbackTask(&removeRecursivelyOnMainThread, fileSystem, path, this, mode));
+    dispatchTaskToMainThread(
+        createCallbackTask(&removeRecursivelyOnMainThread,
+                           AllowCrossThreadAccess(fileSystem), path,
+                           AllowCrossThreadAccess(this), mode));
 }
 
 void WorkerFileSystemCallbacksBridge::postReadMetadataToMainThread(WebFileSystem* fileSystem, const String& path, const String& mode)
 {
     ASSERT(fileSystem);
-    dispatchTaskToMainThread(createCallbackTask(&readMetadataOnMainThread, fileSystem, path, this, mode));
+    dispatchTaskToMainThread(
+        createCallbackTask(&readMetadataOnMainThread,
+                           AllowCrossThreadAccess(fileSystem), path,
+                           AllowCrossThreadAccess(this), mode));
 }
 
 void WorkerFileSystemCallbacksBridge::postCreateFileToMainThread(WebFileSystem* fileSystem, const String& path, bool exclusive, const String& mode)
 {
-    dispatchTaskToMainThread(createCallbackTask(&createFileOnMainThread, fileSystem, path, exclusive, this, mode));
+    dispatchTaskToMainThread(
+        createCallbackTask(&createFileOnMainThread,
+                           AllowCrossThreadAccess(fileSystem), path, exclusive,
+                           AllowCrossThreadAccess(this), mode));
 }
 
 void WorkerFileSystemCallbacksBridge::postCreateDirectoryToMainThread(WebFileSystem* fileSystem, const String& path, bool exclusive, const String& mode)
 {
     ASSERT(fileSystem);
-    dispatchTaskToMainThread(createCallbackTask(&createDirectoryOnMainThread, fileSystem, path, exclusive, this, mode));
+    dispatchTaskToMainThread(
+        createCallbackTask(&createDirectoryOnMainThread,
+                           AllowCrossThreadAccess(fileSystem), path, exclusive,
+                           AllowCrossThreadAccess(this), mode));
 }
 
 void WorkerFileSystemCallbacksBridge::postFileExistsToMainThread(WebFileSystem* fileSystem, const String& path, const String& mode)
 {
     ASSERT(fileSystem);
-    dispatchTaskToMainThread(createCallbackTask(&fileExistsOnMainThread, fileSystem, path, this, mode));
+    dispatchTaskToMainThread(
+        createCallbackTask(&fileExistsOnMainThread,
+                           AllowCrossThreadAccess(fileSystem), path,
+                           AllowCrossThreadAccess(this), mode));
 }
 
 void WorkerFileSystemCallbacksBridge::postDirectoryExistsToMainThread(WebFileSystem* fileSystem, const String& path, const String& mode)
 {
     ASSERT(fileSystem);
-    dispatchTaskToMainThread(createCallbackTask(&directoryExistsOnMainThread, fileSystem, path, this, mode));
+    dispatchTaskToMainThread(
+        createCallbackTask(&directoryExistsOnMainThread,
+                           AllowCrossThreadAccess(fileSystem), path,
+                           AllowCrossThreadAccess(this), mode));
 }
 
 void WorkerFileSystemCallbacksBridge::postReadDirectoryToMainThread(WebFileSystem* fileSystem, const String& path, const String& mode)
 {
     ASSERT(fileSystem);
-    dispatchTaskToMainThread(createCallbackTask(&readDirectoryOnMainThread, fileSystem, path, this, mode));
+    dispatchTaskToMainThread(
+        createCallbackTask(&readDirectoryOnMainThread,
+                           AllowCrossThreadAccess(fileSystem), path,
+                           AllowCrossThreadAccess(this), mode));
 }
 
 void WorkerFileSystemCallbacksBridge::openFileSystemOnMainThread(ScriptExecutionContext*, WebCommonWorkerClient* commonClient, WebFileSystem::Type type, long long size, bool create, WorkerFileSystemCallbacksBridge* bridge, const String& mode)
@@ -276,27 +309,30 @@ void WorkerFileSystemCallbacksBridge::readDirectoryOnMainThread(WebCore::ScriptE
 
 void WorkerFileSystemCallbacksBridge::didFailOnMainThread(WebFileError error, const String& mode)
 {
-    mayPostTaskToWorker(createCallbackTask(&didFailOnWorkerThread, this, error), mode);
+    mayPostTaskToWorker(createCallbackTask(&didFailOnWorkerThread, AllowCrossThreadAccess(this), error), mode);
 }
 
 void WorkerFileSystemCallbacksBridge::didOpenFileSystemOnMainThread(const String& name, const String& rootPath, const String& mode)
 {
-    mayPostTaskToWorker(createCallbackTask(&didOpenFileSystemOnWorkerThread, this, name, rootPath), mode);
+    mayPostTaskToWorker(createCallbackTask(&didOpenFileSystemOnWorkerThread,
+                                           AllowCrossThreadAccess(this), name, rootPath), mode);
 }
 
 void WorkerFileSystemCallbacksBridge::didSucceedOnMainThread(const String& mode)
 {
-    mayPostTaskToWorker(createCallbackTask(&didSucceedOnWorkerThread, this), mode);
+    mayPostTaskToWorker(createCallbackTask(&didSucceedOnWorkerThread, AllowCrossThreadAccess(this)), mode);
 }
 
 void WorkerFileSystemCallbacksBridge::didReadMetadataOnMainThread(const WebFileInfo& info, const String& mode)
 {
-    mayPostTaskToWorker(createCallbackTask(&didReadMetadataOnWorkerThread, this, info), mode);
+    mayPostTaskToWorker(createCallbackTask(&didReadMetadataOnWorkerThread, AllowCrossThreadAccess(this), info), mode);
 }
 
 void WorkerFileSystemCallbacksBridge::didReadDirectoryOnMainThread(const WebVector<WebFileSystemEntry>& entries, bool hasMore, const String& mode)
 {
-    mayPostTaskToWorker(createCallbackTask(&didReadDirectoryOnWorkerThread, this, entries, hasMore), mode);
+    mayPostTaskToWorker(
+        createCallbackTask(&didReadDirectoryOnWorkerThread,
+                           AllowCrossThreadAccess(this), entries, hasMore), mode);
 }
 
 WorkerFileSystemCallbacksBridge::WorkerFileSystemCallbacksBridge(WebWorkerBase* worker, ScriptExecutionContext* scriptExecutionContext, WebFileSystemCallbacks* callbacks)

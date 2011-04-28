@@ -86,7 +86,7 @@ void FileStreamProxy::startOnFileThread()
     if (!client())
         return;
     m_stream->start();
-    m_context->postTask(createCallbackTask(&didStart, this));
+    m_context->postTask(createCallbackTask(&didStart, AllowCrossThreadAccess(this)));
 }
 
 void FileStreamProxy::stop()
@@ -107,7 +107,7 @@ static void derefProxyOnContext(ScriptExecutionContext*, FileStreamProxy* proxy)
 void FileStreamProxy::stopOnFileThread()
 {
     m_stream->stop();
-    m_context->postTask(createCallbackTask(&derefProxyOnContext, this));
+    m_context->postTask(createCallbackTask(&derefProxyOnContext, AllowCrossThreadAccess(this)));
 }
 
 static void didGetSize(ScriptExecutionContext*, FileStreamProxy* proxy, long long size)
@@ -124,7 +124,7 @@ void FileStreamProxy::getSize(const String& path, double expectedModificationTim
 void FileStreamProxy::getSizeOnFileThread(const String& path, double expectedModificationTime)
 {
     long long size = m_stream->getSize(path, expectedModificationTime);
-    m_context->postTask(createCallbackTask(&didGetSize, this, size));
+    m_context->postTask(createCallbackTask(&didGetSize, AllowCrossThreadAccess(this), size));
 }
 
 static void didOpen(ScriptExecutionContext*, FileStreamProxy* proxy, bool success)
@@ -141,18 +141,20 @@ void FileStreamProxy::openForRead(const String& path, long long offset, long lon
 void FileStreamProxy::openForReadOnFileThread(const String& path, long long offset, long long length)
 {
     bool success = m_stream->openForRead(path, offset, length);
-    m_context->postTask(createCallbackTask(&didOpen, this, success));
+    m_context->postTask(createCallbackTask(&didOpen, AllowCrossThreadAccess(this), success));
 }
 
 void FileStreamProxy::openForWrite(const String& path)
 {
-    fileThread()->postTask(createFileThreadTask(this, &FileStreamProxy::openForWriteOnFileThread, path));
+    fileThread()->postTask(
+        createFileThreadTask(this,
+                             &FileStreamProxy::openForWriteOnFileThread, path));
 }
 
 void FileStreamProxy::openForWriteOnFileThread(const String& path)
 {
     bool success = m_stream->openForWrite(path);
-    m_context->postTask(createCallbackTask(&didOpen, this, success));
+    m_context->postTask(createCallbackTask(&didOpen, AllowCrossThreadAccess(this), success));
 }
 
 void FileStreamProxy::close()
@@ -173,13 +175,15 @@ static void didRead(ScriptExecutionContext*, FileStreamProxy* proxy, int bytesRe
 
 void FileStreamProxy::read(char* buffer, int length)
 {
-    fileThread()->postTask(createFileThreadTask(this, &FileStreamProxy::readOnFileThread, buffer, length));
+    fileThread()->postTask(
+        createFileThreadTask(this, &FileStreamProxy::readOnFileThread,
+                             AllowCrossThreadAccess(buffer), length));
 }
 
 void FileStreamProxy::readOnFileThread(char* buffer, int length)
 {
     int bytesRead = m_stream->read(buffer, length);
-    m_context->postTask(createCallbackTask(&didRead, this, bytesRead));
+    m_context->postTask(createCallbackTask(&didRead, AllowCrossThreadAccess(this), bytesRead));
 }
 
 static void didWrite(ScriptExecutionContext*, FileStreamProxy* proxy, int bytesWritten)
@@ -196,7 +200,7 @@ void FileStreamProxy::write(const KURL& blobURL, long long position, int length)
 void FileStreamProxy::writeOnFileThread(const KURL& blobURL, long long position, int length)
 {
     int bytesWritten = m_stream->write(blobURL, position, length);
-    m_context->postTask(createCallbackTask(&didWrite, this, bytesWritten));
+    m_context->postTask(createCallbackTask(&didWrite, AllowCrossThreadAccess(this), bytesWritten));
 }
 
 static void didTruncate(ScriptExecutionContext*, FileStreamProxy* proxy, bool success)
@@ -213,7 +217,7 @@ void FileStreamProxy::truncate(long long position)
 void FileStreamProxy::truncateOnFileThread(long long position)
 {
     bool success = m_stream->truncate(position);
-    m_context->postTask(createCallbackTask(&didTruncate, this, success));
+    m_context->postTask(createCallbackTask(&didTruncate, AllowCrossThreadAccess(this), success));
 }
 
 } // namespace WebCore

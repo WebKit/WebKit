@@ -129,7 +129,7 @@ void WebWorkerImpl::postMessageToWorkerContext(const WebString& message,
 
     workerThread()->runLoop().postTask(
         createCallbackTask(&postMessageToWorkerContextTask,
-                           this, String(message), channels.release()));
+                           AllowCrossThreadAccess(this), String(message), channels.release()));
 }
 
 void WebWorkerImpl::workerObjectDestroyed()

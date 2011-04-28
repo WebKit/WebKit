@@ -76,12 +76,12 @@ void WebSharedWorkerImpl::connect(WebMessagePortChannel* webChannel, ConnectList
         MessagePortChannel::create(platform_channel);
 
     workerThread()->runLoop().postTask(
-        createCallbackTask(&connectTask, this, channel.release()));
+        createCallbackTask(&connectTask, channel.release()));
     if (listener)
         listener->connected();
 }
 
-void WebSharedWorkerImpl::connectTask(ScriptExecutionContext* context, WebSharedWorkerImpl* worker, PassOwnPtr<MessagePortChannel> channel)
+void WebSharedWorkerImpl::connectTask(ScriptExecutionContext* context, PassOwnPtr<MessagePortChannel> channel)
 {
     // Wrap the passed-in channel in a MessagePort, and send it off via a connect event.
     RefPtr<MessagePort> port = MessagePort::create(*context);
