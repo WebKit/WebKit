@@ -1,3 +1,10 @@
+2011-04-27  Ryosuke Niwa  <rniwa@webkit.org>
+
+        WinCE build fix after r85143.
+
+        * platform/graphics/wince/FontWinCE.cpp:
+        (WebCore::TextRunComponent::TextRunComponent):
+
 2011-04-27  Mark Pilgrim  <pilgrim@chromium.org>
 
         Reviewed by Tony Chang.
