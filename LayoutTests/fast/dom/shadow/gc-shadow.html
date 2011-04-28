@@ -10,16 +10,33 @@ are not prematurely garbage collected.
 
 </pre>
 <script>
+function gc() {
+    if (window.GCController) {
+        GCController.collect();
+        return;
+    }
+
+    for (var i = 0; i < 10000; i++)
+        new String(i);
+}
+
 if (window.layoutTestController) {
-    var p = document.createElement('p');
-    var shadow = layoutTestController.ensureShadowRoot(p);
-    shadow.tattoo = 'I <3 WebKit';
-    shadow = null;
+    var ps = [];
 
-    GCController.collect();
+    for (var i = 0; i < 10; i++) {
+        var p = document.createElement('p');
+        ps.push(p);
 
-    shadow = layoutTestController.shadowRoot(p);
-    shouldBe('shadow.tattoo', '"I <3 WebKit"');
+        var shadow = layoutTestController.ensureShadowRoot(p);
+        shadow.tattoo = 'I <3 WebKit';
+        shadow = null;
+    }
+
+    gc();
+
+    for (i = 0; i < ps.length; i++) {
+        shouldBe('layoutTestController.shadowRoot(ps[' + i + ']).tattoo', '"I <3 WebKit"');
+    }
 }
 
 var successfullyParsed = true;

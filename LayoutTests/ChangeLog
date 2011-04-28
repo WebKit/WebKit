@@ -1,3 +1,15 @@
+2011-04-28  Dominic Cooney  <dominicc@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        Unskip fast/dom/shadow/gc-shadow.html on Mac with expected failure
+        https://bugs.webkit.org/show_bug.cgi?id=59647
+
+        * fast/dom/shadow/gc-shadow.html: Actually GC the shadow roots now.
+        * fast/dom/shadow/gc-shadow-expected.txt: Updated.
+        * platform/mac/Skipped: Unskip gc-shadow.html.
+        * platform/mac/fast/dom/shadow/gc-shadow-expected.txt: Added.
+
 2011-04-28  Arno Renevier  <arno@renevier.net>
 
         Reviewed by Gustavo Noronha Silva.
