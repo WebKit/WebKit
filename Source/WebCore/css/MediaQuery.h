@@ -44,7 +44,9 @@ public:
         Only, Not, None
     };
 
-    MediaQuery(Restrictor, const String& mediaType, PassOwnPtr<Vector<OwnPtr<MediaQueryExp> > > exprs);
+    typedef Vector<OwnPtr<MediaQueryExp> > ExpressionVector;
+
+    MediaQuery(Restrictor, const String& mediaType, PassOwnPtr<ExpressionVector> exprs);
     ~MediaQuery();
 
     Restrictor restrictor() const { return m_restrictor; }
@@ -57,7 +59,7 @@ public:
  private:
     Restrictor m_restrictor;
     String m_mediaType;
-    OwnPtr<Vector<OwnPtr<MediaQueryExp> > > m_expressions;
+    OwnPtr<ExpressionVector> m_expressions;
     bool m_ignored;
     String m_serializationCache;
 

@@ -206,7 +206,7 @@ MessagePort* MessagePort::locallyEntangledPort()
 PassOwnPtr<MessagePortChannelArray> MessagePort::disentanglePorts(const MessagePortArray* ports, ExceptionCode& ec)
 {
     if (!ports || !ports->size())
-        return 0;
+        return PassOwnPtr<MessagePortChannelArray>();
 
     // HashSet used to efficiently check for duplicates in the passed-in array.
     HashSet<MessagePort*> portSet;
@@ -216,33 +216,33 @@ PassOwnPtr<MessagePortChannelArray> MessagePort::disentanglePorts(const MessageP
         MessagePort* port = (*ports)[i].get();
         if (!port || port->isCloned() || portSet.contains(port)) {
             ec = INVALID_STATE_ERR;
-            return 0;
+            return PassOwnPtr<MessagePortChannelArray>();
         }
         portSet.add(port);
     }
 
     // Passed-in ports passed validity checks, so we can disentangle them.
-    MessagePortChannelArray* portArray = new MessagePortChannelArray(ports->size());
+    OwnPtr<MessagePortChannelArray> portArray = adoptPtr(new MessagePortChannelArray(ports->size()));
     for (unsigned int i = 0 ; i < ports->size() ; ++i) {
         OwnPtr<MessagePortChannel> channel = (*ports)[i]->disentangle(ec);
         ASSERT(!ec); // Can't generate exception here if passed above checks.
         (*portArray)[i] = channel.release();
     }
-    return portArray;
+    return portArray.release();
 }
 
 PassOwnPtr<MessagePortArray> MessagePort::entanglePorts(ScriptExecutionContext& context, PassOwnPtr<MessagePortChannelArray> channels)
 {
     if (!channels || !channels->size())
-        return 0;
+        return PassOwnPtr<MessagePortArray>();
 
-    MessagePortArray* portArray = new MessagePortArray(channels->size());
+    OwnPtr<MessagePortArray> portArray = adoptPtr(new MessagePortArray(channels->size()));
     for (unsigned int i = 0; i < channels->size(); ++i) {
         RefPtr<MessagePort> port = MessagePort::create(context);
         port->entangle((*channels)[i].release());
         (*portArray)[i] = port.release();
     }
-    return portArray;
+    return portArray.release();
 }
 
 EventTargetData* MessagePort::eventTargetData()

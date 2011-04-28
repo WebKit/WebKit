@@ -1,3 +1,33 @@
+2011-04-27  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by David Levin.
+
+        Fix five strict PassOwnPtr violations in WebCore
+        https://bugs.webkit.org/show_bug.cgi?id=59640
+
+        * css/MediaList.cpp:
+        (WebCore::MediaList::deleteMedium):
+        (WebCore::MediaList::setMediaText):
+        (WebCore::MediaList::appendMedium):
+        * css/MediaQuery.h:
+        * dom/MessagePort.cpp:
+        (WebCore::MessagePort::disentanglePorts):
+        (WebCore::MessagePort::entanglePorts):
+        * inspector/InspectorStyleSheet.cpp:
+        (ParsedStyleSheet::setText):
+        * rendering/RenderTheme.cpp:
+        (WebCore::RenderTheme::adjustStyle):
+        (WebCore::RenderTheme::adjustMeterStyle):
+        * rendering/RenderThemeMac.mm:
+        (WebCore::RenderThemeMac::adjustMenuListStyle):
+        (WebCore::RenderThemeMac::adjustSliderTrackStyle):
+        (WebCore::RenderThemeMac::adjustSliderThumbStyle):
+        (WebCore::RenderThemeMac::adjustSearchFieldStyle):
+        (WebCore::RenderThemeMac::adjustSearchFieldCancelButtonStyle):
+        (WebCore::RenderThemeMac::adjustSearchFieldDecorationStyle):
+        (WebCore::RenderThemeMac::adjustSearchFieldResultsDecorationStyle):
+        (WebCore::RenderThemeMac::adjustSearchFieldResultsButtonStyle):
+
 2011-04-27  Chris Fleizach  <cfleizach@apple.com>
 
         Reviewed by Beth Dakin.

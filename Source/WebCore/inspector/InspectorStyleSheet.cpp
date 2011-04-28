@@ -85,7 +85,7 @@ void ParsedStyleSheet::setText(const String& text)
 {
     m_hasText = true;
     m_text = text;
-    setSourceData(0);
+    setSourceData(PassOwnPtr<SourceData>());
 }
 
 void ParsedStyleSheet::setSourceData(PassOwnPtr<SourceData> sourceData)
