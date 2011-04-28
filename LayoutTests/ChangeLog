@@ -1,3 +1,12 @@
+2011-04-28  Adam Roben  <aroben@apple.com>
+
+        Skip another crashing shadow DOM test
+
+        <http://webkit.org/b/59708> tracks the failure. Maybe it will eventually be duped to
+        <http://webkit.org/b/59571>.
+
+        * platform/mac/Skipped: Added fast/dom/shadow/nodetype.html.
+
 2011-04-28  Leon Scroggins  <scroggo@google.com>
 
         Reviewed by Steve Block.
