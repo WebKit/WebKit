@@ -1,0 +1,23 @@
+Test IndexedDB behavior adding the same property twice
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+indexedDB = window.indexedDB || window.webkitIndexedDB || window.mozIndexedDB;
+PASS indexedDB == null is false
+IDBDatabaseException = window.IDBDatabaseException || window.webkitIDBDatabaseException;
+PASS IDBDatabaseException == null is false
+indexedDB.open(name, description)
+db = event.target.result
+request = db.setVersion('1')
+Deleted all object stores.
+objectStore = db.createObjectStore('foo');
+key = 10
+request = objectStore.add({}, key);
+PASS request.result is key
+request = objectStore.add({}, key);
+PASS event.target.errorCode is IDBDatabaseException.CONSTRAINT_ERR
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

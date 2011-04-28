@@ -1,3 +1,14 @@
+2011-04-27  Mark Pilgrim  <pilgrim@chromium.org>
+
+        Reviewed by Tony Chang.
+
+        Port Mozilla's IndexedDB tests: add twice failure
+        https://bugs.webkit.org/show_bug.cgi?id=59492
+
+        * storage/indexeddb/mozilla: Added.
+        * storage/indexeddb/mozilla/add-twice-failure-expected.txt: Added.
+        * storage/indexeddb/mozilla/add-twice-failure.html: Added.
+
 2011-04-27  Kenneth Russell  <kbr@google.com>
 
         Unreviewed. Fixed more breakage in test_expectations.txt caused by
