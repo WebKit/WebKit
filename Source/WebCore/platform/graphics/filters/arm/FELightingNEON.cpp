@@ -29,14 +29,14 @@
 
 #if CPU(ARM_NEON) && COMPILER(GCC)
 
-#include <wtf/Vector.h>
+#include <wtf/Alignment.h>
 
 namespace WebCore {
 
 // These constants are copied to the following SIMD registers:
 //   ALPHAX_Q ALPHAY_Q REMAPX_D REMAPY_D
 
-WTF_ALIGNED(short, s_FELightingConstantsForNeon[], 16) = {
+static WTF_ALIGNED(short, s_FELightingConstantsForNeon[], 16) = {
     // Alpha coefficients.
     -2, 1, 0, -1, 2, 1, 0, -1,
     0, -1, -2, -1, 0, 1, 2, 1,
@@ -60,7 +60,7 @@ short* feLightingConstantsForNeon()
 #define SPECULAR_EXPONENT_OFFSET TOSTRING(16)
 #define CONE_EXPONENT_OFFSET TOSTRING(20)
 #define FLOAT_ARGUMENTS_OFFSET TOSTRING(24)
-#define DRAWING_CONSTANTS_OFFSET TOSTRING(28)
+#define PAINTING_CONSTANTS_OFFSET TOSTRING(28)
 #define NL "\n"
 
 // Register allocation
@@ -219,7 +219,7 @@ TOSTRING(neonDrawLighting) ":" NL
 
     // The following two arguments are loaded to SIMD registers.
     "ldr r0, [" PAINTING_DATA_R ", #" FLOAT_ARGUMENTS_OFFSET "]" NL
-    "ldr r1, [" PAINTING_DATA_R ", #" DRAWING_CONSTANTS_OFFSET "]" NL
+    "ldr r1, [" PAINTING_DATA_R ", #" PAINTING_CONSTANTS_OFFSET "]" NL
     "ldr " PIXELS_R ", [" PAINTING_DATA_R ", #" PIXELS_OFFSET "]" NL
     "ldr " WIDTH_R ", [" PAINTING_DATA_R ", #" WIDTH_OFFSET "]" NL
     "ldr " HEIGHT_R ", [" PAINTING_DATA_R ", #" HEIGHT_OFFSET "]" NL
@@ -246,7 +246,7 @@ TOSTRING(neonDrawLighting) ":" NL
     "vmov.f32 " SPOT_COLOR_Q ", " COLOR_Q NL
     "mov " RESET_WIDTH_R ", " WIDTH_R NL
 
-".mainloop:" NL
+".mainLoop:" NL
     "mov r3, #3" NL
     "vmov.f32 " POSITION_X_S ", " CONST_ONE_S NL
 
@@ -417,7 +417,7 @@ TOSTRING(neonDrawLighting) ":" NL
     "vadd.f32 " POSITION_Y_S ", " CONST_ONE_S NL
     "mov " WIDTH_R ", " RESET_WIDTH_R NL
     "subs " HEIGHT_R ", " HEIGHT_R ", #1" NL
-    "bne .mainloop" NL
+    "bne .mainLoop" NL
 
     // Return.
     "vldmia sp!, {d8-d15}" NL
@@ -458,6 +458,40 @@ TOSTRING(neonDrawLighting) ":" NL
     "vmuleq.f32 " TMP2_S1 ", " TMP2_S1 ", " DIFFUSE_CONST_S NL
     "b .lightStrengthCalculated" NL
 ); // NOLINT
+
+int FELighting::getPowerCoefficients(float exponent)
+{
+    // Calling a powf function from the assembly code would require to save
+    // and reload a lot of NEON registers. Since the base is in range [0..1]
+    // and only 8 bit precision is required, we use our own powf function.
+    // This is probably not the best, but it uses only a few registers and
+    // gives us enough precision (modifying the exponent field directly would
+    // also be possible).
+
+    // First, we limit the exponent to maximum of 64, which gives us enough
+    // precision. We split the exponent to an integer and fraction part,
+    // since a^x = (a^y)*(a^z) where x = y+z. The integer exponent of the
+    // power is estimated by square, and the fraction exponent of the power
+    // is estimated by square root assembly instructions.
+    int i, result;
+
+    if (exponent < 0)
+        exponent = 1 / (-exponent);
+
+    if (exponent > 63.99)
+        exponent = 63.99;
+
+    exponent /= 64;
+    result = 0;
+    for (i = 11; i >= 0; --i) {
+        exponent *= 2;
+        if (exponent >= 1) {
+            result |= 1 << i;
+            exponent -= 1;
+        }
+    }
+    return result;
+}
 
 } // namespace WebCore
 

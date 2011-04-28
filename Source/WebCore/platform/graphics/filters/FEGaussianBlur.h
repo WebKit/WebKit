@@ -49,12 +49,46 @@ public:
 
     static void calculateKernelSize(Filter*, unsigned& kernelSizeX, unsigned& kernelSizeY, float stdX, float stdY);
 
+    static inline void kernelPosition(int boxBlur, unsigned& std, int& dLeft, int& dRight);
+    inline void platformApply(ByteArray* srcPixelArray, ByteArray* tmpPixelArray, unsigned kernelSizeX, unsigned kernelSizeY, IntSize& paintSize);
+
+    inline void platformApplyGeneric(ByteArray* srcPixelArray, ByteArray* tmpPixelArray, unsigned kernelSizeX, unsigned kernelSizeY, IntSize& paintSize);
+    inline void platformApplyNeon(ByteArray* srcPixelArray, ByteArray* tmpPixelArray, unsigned kernelSizeX, unsigned kernelSizeY, IntSize& paintSize);
+
 private:
     FEGaussianBlur(Filter*, float, float);
 
     float m_stdX;
     float m_stdY;
 };
+
+inline void FEGaussianBlur::kernelPosition(int boxBlur, unsigned& std, int& dLeft, int& dRight)
+{
+    // check http://www.w3.org/TR/SVG/filters.html#feGaussianBlurElement for details
+    switch (boxBlur) {
+    case 0:
+        if (!(std % 2)) {
+            dLeft = std / 2 - 1;
+            dRight = std - dLeft;
+        } else {
+            dLeft = std / 2;
+            dRight = std - dLeft;
+        }
+        break;
+    case 1:
+        if (!(std % 2)) {
+            dLeft++;
+            dRight--;
+        }
+        break;
+    case 2:
+        if (!(std % 2)) {
+            dRight++;
+            std++;
+        }
+        break;
+    }
+}
 
 } // namespace WebCore
 

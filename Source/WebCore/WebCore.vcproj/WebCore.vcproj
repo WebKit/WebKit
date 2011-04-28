@@ -29155,6 +29155,22 @@
 						RelativePath="..\platform\graphics\filters\SpotLightSource.h"
 						>
 					</File>
+					<File
+						RelativePath="..\platform\graphics\filters\arm\FEGaussianBlurNEON.cpp"
+						>
+					</File>
+					<File
+						RelativePath="..\platform\graphics\filters\arm\FEGaussianBlurNEON.h"
+						>
+					</File>
+					<File
+						RelativePath="..\platform\graphics\filters\arm\FELightingNEON.cpp"
+						>
+					</File>
+					<File
+						RelativePath="..\platform\graphics\filters\arm\FELightingNEON.h"
+						>
+					</File>
 				</Filter>
 				<Filter
 					Name="ca"

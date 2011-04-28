@@ -27,6 +27,7 @@
 #if ENABLE(FILTERS)
 #include "FEGaussianBlur.h"
 
+#include "FEGaussianBlurNEON.h"
 #include "Filter.h"
 #include "GraphicsContext.h"
 #include "RenderTreeAsText.h"
@@ -101,32 +102,42 @@ inline void boxBlur(ByteArray* srcPixelArray, ByteArray* dstPixelArray,
     }
 }
 
-inline void kernelPosition(int boxBlur, unsigned& std, int& dLeft, int& dRight)
+inline void FEGaussianBlur::platformApplyGeneric(ByteArray* srcPixelArray, ByteArray* tmpPixelArray, unsigned kernelSizeX, unsigned kernelSizeY, IntSize& paintSize)
 {
-    // check http://www.w3.org/TR/SVG/filters.html#feGaussianBlurElement for details
-    switch (boxBlur) {
-    case 0:
-        if (!(std % 2)) {
-            dLeft = std / 2 - 1;
-            dRight = std - dLeft;
+    int stride = 4 * paintSize.width();
+    int dxLeft = 0;
+    int dxRight = 0;
+    int dyLeft = 0;
+    int dyRight = 0;
+    for (int i = 0; i < 3; ++i) {
+        if (kernelSizeX) {
+            kernelPosition(i, kernelSizeX, dxLeft, dxRight);
+            boxBlur(srcPixelArray, tmpPixelArray, kernelSizeX, dxLeft, dxRight, 4, stride, paintSize.width(), paintSize.height(), isAlphaImage());
         } else {
-            dLeft = std / 2;
-            dRight = std - dLeft;
+            ByteArray* auxPixelArray = tmpPixelArray;
+            tmpPixelArray = srcPixelArray;
+            srcPixelArray = auxPixelArray;
         }
-        break;
-    case 1:
-        if (!(std % 2)) {
-            dLeft++;
-            dRight--;
+
+        if (kernelSizeY) {
+            kernelPosition(i, kernelSizeY, dyLeft, dyRight);
+            boxBlur(tmpPixelArray, srcPixelArray, kernelSizeY, dyLeft, dyRight, stride, 4, paintSize.height(), paintSize.width(), isAlphaImage());
+        } else {
+            ByteArray* auxPixelArray = tmpPixelArray;
+            tmpPixelArray = srcPixelArray;
+            srcPixelArray = auxPixelArray;
         }
-        break;
-    case 2:
-        if (!(std % 2)) {
-            dRight++;
-            std++;
-        }
-        break;
     }
+}
+
+inline void FEGaussianBlur::platformApply(ByteArray* srcPixelArray, ByteArray* tmpPixelArray, unsigned kernelSizeX, unsigned kernelSizeY, IntSize& paintSize)
+{
+    // The selection here eventually should happen dynamically on some platforms.
+#if CPU(ARM_NEON) && COMPILER(GCC)
+    platformApplyNeon(srcPixelArray, tmpPixelArray, kernelSizeX, kernelSizeY, paintSize);
+#else
+    platformApplyGeneric(srcPixelArray, tmpPixelArray, kernelSizeX, kernelSizeY, paintSize);
+#endif
 }
 
 void FEGaussianBlur::calculateKernelSize(Filter* filter, unsigned& kernelSizeX, unsigned& kernelSizeY, float stdX, float stdY)
@@ -193,30 +204,7 @@ void FEGaussianBlur::apply()
     RefPtr<ByteArray> tmpImageData = ByteArray::create(paintSize.width() * paintSize.height() * 4);
     ByteArray* tmpPixelArray = tmpImageData.get();
 
-    int stride = 4 * paintSize.width();
-    int dxLeft = 0;
-    int dxRight = 0;
-    int dyLeft = 0;
-    int dyRight = 0;
-    for (int i = 0; i < 3; ++i) {
-        if (kernelSizeX) {
-            kernelPosition(i, kernelSizeX, dxLeft, dxRight);
-            boxBlur(srcPixelArray, tmpPixelArray, kernelSizeX, dxLeft, dxRight, 4, stride, paintSize.width(), paintSize.height(), isAlphaImage());
-        } else {
-            ByteArray* auxPixelArray = tmpPixelArray;
-            tmpPixelArray = srcPixelArray;
-            srcPixelArray = auxPixelArray;
-        }
-
-        if (kernelSizeY) {
-            kernelPosition(i, kernelSizeY, dyLeft, dyRight);
-            boxBlur(tmpPixelArray, srcPixelArray, kernelSizeY, dyLeft, dyRight, stride, 4, paintSize.height(), paintSize.width(), isAlphaImage());
-        } else {
-            ByteArray* auxPixelArray = tmpPixelArray;
-            tmpPixelArray = srcPixelArray;
-            srcPixelArray = auxPixelArray;
-        }
-    }
+    platformApply(srcPixelArray, tmpPixelArray, kernelSizeX, kernelSizeY, paintSize);
 }
 
 void FEGaussianBlur::dump()

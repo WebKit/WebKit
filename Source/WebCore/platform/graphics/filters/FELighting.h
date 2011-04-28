@@ -32,6 +32,8 @@
 #include "Filter.h"
 #include "FilterEffect.h"
 #include "LightSource.h"
+#include "PointLightSource.h"
+#include "SpotLightSource.h"
 #include <wtf/ByteArray.h>
 #include <wtf/Platform.h>
 
@@ -80,9 +82,11 @@ protected:
     void setPixel(int offset, LightingData&, LightSource::PaintingData&,
                   int lightX, int lightY, float factorX, float factorY, IntPoint& normalVector);
 
-#if CPU(ARM_NEON) && COMPILER(GCC)
-    void drawInteriorPixels(LightingData&, LightSource::PaintingData&);
-#endif
+    inline void platformApply(LightingData&, LightSource::PaintingData&);
+
+    inline void platformApplyGeneric(LightingData&, LightSource::PaintingData&);
+    static int getPowerCoefficients(float exponent);
+    inline void platformApplyNeon(LightingData&, LightSource::PaintingData&);
 
     LightingType m_lightingType;
     RefPtr<LightSource> m_lightSource;

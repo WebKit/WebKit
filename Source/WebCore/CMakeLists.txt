@@ -30,6 +30,7 @@ SET(WebCore_INCLUDE_DIRECTORIES
     "${WEBCORE_DIR}/platform/audio"
     "${WEBCORE_DIR}/platform/graphics"
     "${WEBCORE_DIR}/platform/graphics/filters"
+    "${WEBCORE_DIR}/platform/graphics/filters/arm"
     "${WEBCORE_DIR}/platform/graphics/transforms"
     "${WEBCORE_DIR}/platform/image-decoders"
     "${WEBCORE_DIR}/platform/image-decoders/bmp"
@@ -1125,6 +1126,11 @@ SET(WebCore_SOURCES
     platform/graphics/filters/SpotLightSource.cpp
     platform/graphics/filters/SourceAlpha.cpp
     platform/graphics/filters/SourceGraphic.cpp
+
+    platform/graphics/filters/arm/FEGaussianBlurNEON.cpp
+    platform/graphics/filters/arm/FEGaussianBlurNEON.h
+    platform/graphics/filters/arm/FELightingNEON.cpp
+    platform/graphics/filters/arm/FELightingNEON.h
 
     platform/graphics/transforms/AffineTransform.cpp
     platform/graphics/transforms/Matrix3DTransformOperation.cpp

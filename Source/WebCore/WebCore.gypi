@@ -4124,6 +4124,8 @@
             'platform/graphics/filters/SpotLightSource.h',
             'platform/graphics/filters/arm/FELightingNEON.cpp',
             'platform/graphics/filters/arm/FELightingNEON.h',
+            'platform/graphics/filters/arm/FEGaussianBlurNEON.cpp',
+            'platform/graphics/filters/arm/FEGaussianBlurNEON.h',
             'platform/graphics/freetype/FontCacheFreeType.cpp',
             'platform/graphics/freetype/FontCustomPlatformDataFreeType.cpp',
             'platform/graphics/freetype/FontPlatformData.h',

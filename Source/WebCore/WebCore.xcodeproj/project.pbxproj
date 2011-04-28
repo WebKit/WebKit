@@ -348,6 +348,10 @@
 		18F831B80FD48C7800D8C56B /* WorkerLoaderProxy.h in Headers */ = {isa = PBXBuildFile; fileRef = 18F831B70FD48C7800D8C56B /* WorkerLoaderProxy.h */; };
 		1921327411C0E6BB00456238 /* SVGFEConvolveMatrixElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1921327111C0E6BB00456238 /* SVGFEConvolveMatrixElement.cpp */; };
 		1921327511C0E6BB00456238 /* SVGFEConvolveMatrixElement.h in Headers */ = {isa = PBXBuildFile; fileRef = 1921327211C0E6BB00456238 /* SVGFEConvolveMatrixElement.h */; };
+		19841BFF136836F0006EBBB9 /* FEGaussianBlurNEON.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 19841BFB136836F0006EBBB9 /* FEGaussianBlurNEON.cpp */; };
+		19841C00136836F0006EBBB9 /* FEGaussianBlurNEON.h in Headers */ = {isa = PBXBuildFile; fileRef = 19841BFC136836F0006EBBB9 /* FEGaussianBlurNEON.h */; };
+		19841C01136836F0006EBBB9 /* FELightingNEON.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 19841BFD136836F0006EBBB9 /* FELightingNEON.cpp */; };
+		19841C02136836F0006EBBB9 /* FELightingNEON.h in Headers */ = {isa = PBXBuildFile; fileRef = 19841BFE136836F0006EBBB9 /* FELightingNEON.h */; };
 		19BFF64B11C0F2AC00B8C04D /* DOMSVGFEConvolveMatrixElement.h in Headers */ = {isa = PBXBuildFile; fileRef = 19BFF64611C0F2AC00B8C04D /* DOMSVGFEConvolveMatrixElement.h */; };
 		19BFF64C11C0F2AC00B8C04D /* DOMSVGFEConvolveMatrixElement.mm in Sources */ = {isa = PBXBuildFile; fileRef = 19BFF64711C0F2AC00B8C04D /* DOMSVGFEConvolveMatrixElement.mm */; };
 		19BFF64D11C0F2AC00B8C04D /* DOMSVGFEConvolveMatrixElementInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = 19BFF64811C0F2AC00B8C04D /* DOMSVGFEConvolveMatrixElementInternal.h */; };
@@ -6781,6 +6785,10 @@
 		1921327111C0E6BB00456238 /* SVGFEConvolveMatrixElement.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SVGFEConvolveMatrixElement.cpp; sourceTree = "<group>"; };
 		1921327211C0E6BB00456238 /* SVGFEConvolveMatrixElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SVGFEConvolveMatrixElement.h; sourceTree = "<group>"; };
 		1921327311C0E6BB00456238 /* SVGFEConvolveMatrixElement.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = SVGFEConvolveMatrixElement.idl; sourceTree = "<group>"; };
+		19841BFB136836F0006EBBB9 /* FEGaussianBlurNEON.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = FEGaussianBlurNEON.cpp; path = filters/arm/FEGaussianBlurNEON.cpp; sourceTree = "<group>"; };
+		19841BFC136836F0006EBBB9 /* FEGaussianBlurNEON.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FEGaussianBlurNEON.h; path = filters/arm/FEGaussianBlurNEON.h; sourceTree = "<group>"; };
+		19841BFD136836F0006EBBB9 /* FELightingNEON.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = FELightingNEON.cpp; path = filters/arm/FELightingNEON.cpp; sourceTree = "<group>"; };
+		19841BFE136836F0006EBBB9 /* FELightingNEON.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FELightingNEON.h; path = filters/arm/FELightingNEON.h; sourceTree = "<group>"; };
 		19BFF64611C0F2AC00B8C04D /* DOMSVGFEConvolveMatrixElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DOMSVGFEConvolveMatrixElement.h; sourceTree = "<group>"; };
 		19BFF64711C0F2AC00B8C04D /* DOMSVGFEConvolveMatrixElement.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = DOMSVGFEConvolveMatrixElement.mm; sourceTree = "<group>"; };
 		19BFF64811C0F2AC00B8C04D /* DOMSVGFEConvolveMatrixElementInternal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DOMSVGFEConvolveMatrixElementInternal.h; sourceTree = "<group>"; };
@@ -12904,6 +12912,17 @@
 			path = DerivedSources/WebCore;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
+		19841BFA136836A1006EBBB9 /* arm */ = {
+			isa = PBXGroup;
+			children = (
+				19841BFB136836F0006EBBB9 /* FEGaussianBlurNEON.cpp */,
+				19841BFC136836F0006EBBB9 /* FEGaussianBlurNEON.h */,
+				19841BFD136836F0006EBBB9 /* FELightingNEON.cpp */,
+				19841BFE136836F0006EBBB9 /* FELightingNEON.h */,
+			);
+			name = arm;
+			sourceTree = "<group>";
+		};
 		1A2E6E560CC551E0004A2062 /* sql */ = {
 			isa = PBXGroup;
 			children = (
@@ -16326,6 +16345,7 @@
 		A75E8B7F0E1DE2B0007F2481 /* filters */ = {
 			isa = PBXGroup;
 			children = (
+				19841BFA136836A1006EBBB9 /* arm */,
 				A1E1154313015C3D0054AC8C /* DistantLightSource.cpp */,
 				84730D5A1248F0B300D3A9C9 /* DistantLightSource.h */,
 				A75E8B800E1DE2D6007F2481 /* FEBlend.cpp */,
@@ -21030,7 +21050,9 @@
 				84730D7D1248F0B300D3A9C9 /* FEDisplacementMap.h in Headers */,
 				84730D7F1248F0B300D3A9C9 /* FEFlood.h in Headers */,
 				84801955108BAFB300CB2B1F /* FEGaussianBlur.h in Headers */,
+				19841C00136836F0006EBBB9 /* FEGaussianBlurNEON.h in Headers */,
 				84730D811248F0B300D3A9C9 /* FELighting.h in Headers */,
+				19841C02136836F0006EBBB9 /* FELightingNEON.h in Headers */,
 				84730D831248F0B300D3A9C9 /* FEMerge.h in Headers */,
 				84730D851248F0B300D3A9C9 /* FEMorphology.h in Headers */,
 				84730D871248F0B300D3A9C9 /* FEOffset.h in Headers */,
@@ -23889,7 +23911,9 @@
 				84730D7C1248F0B300D3A9C9 /* FEDisplacementMap.cpp in Sources */,
 				84730D7E1248F0B300D3A9C9 /* FEFlood.cpp in Sources */,
 				84801954108BAFB300CB2B1F /* FEGaussianBlur.cpp in Sources */,
+				19841BFF136836F0006EBBB9 /* FEGaussianBlurNEON.cpp in Sources */,
 				84730D801248F0B300D3A9C9 /* FELighting.cpp in Sources */,
+				19841C01136836F0006EBBB9 /* FELightingNEON.cpp in Sources */,
 				84730D821248F0B300D3A9C9 /* FEMerge.cpp in Sources */,
 				84730D841248F0B300D3A9C9 /* FEMorphology.cpp in Sources */,
 				84730D861248F0B300D3A9C9 /* FEOffset.cpp in Sources */,
