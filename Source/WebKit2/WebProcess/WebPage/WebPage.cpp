@@ -921,6 +921,22 @@ static bool isContextClick(const PlatformMouseEvent& event)
     return false;
 }
 
+static bool handleContextMenuEvent(const PlatformMouseEvent& platformMouseEvent, Page* page)
+{
+    IntPoint point = page->mainFrame()->view()->windowToContents(platformMouseEvent.pos());
+    HitTestResult result = page->mainFrame()->eventHandler()->hitTestResultAtPoint(point, false);
+
+    Frame* frame = page->mainFrame();
+    if (result.innerNonSharedNode())
+        frame = result.innerNonSharedNode()->document()->frame();
+    
+    bool handled = frame->eventHandler()->sendContextMenuEvent(platformMouseEvent);
+    if (handled)
+        page->chrome()->showContextMenu();
+
+    return handled;
+}
+
 static bool handleMouseEvent(const WebMouseEvent& mouseEvent, Page* page)
 {
     Frame* frame = page->mainFrame();
@@ -936,12 +952,8 @@ static bool handleMouseEvent(const WebMouseEvent& mouseEvent, Page* page)
                 page->contextMenuController()->clearContextMenu();
             
             bool handled = frame->eventHandler()->handleMousePressEvent(platformMouseEvent);
-            
-            if (isContextClick(platformMouseEvent)) {
-                handled = frame->eventHandler()->sendContextMenuEvent(platformMouseEvent);
-                if (handled)
-                    page->chrome()->showContextMenu();
-            }
+            if (isContextClick(platformMouseEvent))
+                handled = handleContextMenuEvent(platformMouseEvent, page);
 
             return handled;
         }

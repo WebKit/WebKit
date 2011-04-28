@@ -1,3 +1,19 @@
+2011-04-28  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Right-clicking on a Flash movie in an iframe shows the browser context menu
+        https://bugs.webkit.org/show_bug.cgi?id=59760
+        <rdar://problem/9340541>
+
+        Move context menu event handling out into a separate function. Make sure to call
+        EventHandler::sendContextMenuEvent on the event handler belonging to the frame of the
+        node that was clicked, and not the main frame.
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::handleContextMenuEvent):
+        (WebKit::handleMouseEvent):
+
 2011-04-28  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Eric Seidel.
