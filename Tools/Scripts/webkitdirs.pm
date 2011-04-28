@@ -952,6 +952,11 @@ sub isLinux()
     return ($^O eq "linux") || 0;
 }
 
+sub isARM()
+{
+    return $Config{archname} =~ /^arm-/;
+}
+
 sub isAppleWebKit()
 {
     return !(isQt() or isGtk() or isWx() or isChromium() or isEfl() or isWinCE());

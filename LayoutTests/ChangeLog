@@ -1,3 +1,12 @@
+2011-04-28  Gabor Rapcsanyi  <rgabor@webkit.org>
+
+        Reviewed by Csaba Osztrogonác.
+
+        [Qt] Add ARM specific Skipped list
+        https://bugs.webkit.org/show_bug.cgi?id=59680
+
+        * platform/qt-arm/Skipped: Added.
+
 2011-04-27  Csaba Osztrogonác  <ossy@webkit.org>
 
         Convert LayoutTests/fast/events/mouseout-dead-node.html from pixel test to text-based test
