@@ -59,8 +59,7 @@ PassRefPtr<HRTFDatabaseLoader> HRTFDatabaseLoader::createAndLoadAsynchronouslyIf
 }
 
 HRTFDatabaseLoader::HRTFDatabaseLoader(double sampleRate)
-    : m_hrtfDatabase(0)
-    , m_databaseLoaderThread(0)
+    : m_databaseLoaderThread(0)
     , m_startedLoadingDatabase(false)
     , m_databaseSampleRate(sampleRate)
 {
