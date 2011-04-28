@@ -1014,7 +1014,7 @@ BUGCR10317 LINUX : fast/css/shadow-multiple.html = FAIL
 // Problems with getImageData and toDataURL.
 // This test requires us to do alpha blending exactly the way CG does it,
 // which Skia may never do (see bug).
-BUGCR22700 CPU WIN-WIN7 : fast/canvas/canvas-getImageData.html = FAIL TIMEOUT
+// BUGCR22700 CPU WIN-WIN7 : fast/canvas/canvas-getImageData.html = FAIL TIMEOUT
 
 // We're much closer now. To fully pass this we need encoders for jpg
 // and gif, which is a low priority.
@@ -2917,7 +2917,6 @@ BUGCR74102 GPU WIN LINUX : media/video-controls-rendering.html = IMAGE
 // BUGCR74102 GPU WIN : media/video-layer-crash.html = IMAGE
 
 // New test causes an assertion failure.
-BUGWK58214 WIN LINUX RELEASE GPU : fast/canvas/font-update.html = TEXT
 BUGWK58214 WIN LINUX DEBUG GPU : fast/canvas/font-update.html = CRASH
 
 // Slight differences.  Need rebaseline?
@@ -2940,11 +2939,7 @@ BUGWK54322 MAC SNOWLEOPARD : css1/text_properties/text_transform.html = IMAGE+TE
 BUGWK54322 MAC SNOWLEOPARD : css2.1/t1605-c545-txttrans-00-b-ag.html = IMAGE+TEXT
 BUGWK54322 MAC SNOWLEOPARD : fast/backgrounds/svg-as-background-5.html = IMAGE
 BUGWK54322 MAC SNOWLEOPARD : fast/backgrounds/svg-as-background-6.html = IMAGE
-BUGWK54322 MAC SNOWLEOPARD : fast/block/positioning/auto/vertical-lr/007.html = IMAGE
-BUGWK54322 MAC SNOWLEOPARD : fast/block/positioning/auto/vertical-rl/007.html = IMAGE
 BUGWK54322 MAC SNOWLEOPARD : fast/canvas/arc360.html = IMAGE
-BUGWK54322 MAC SNOWLEOPARD : fast/canvas/canvasDrawingIntoSelf.html = IMAGE
-BUGWK54322 MAC SNOWLEOPARD : fast/canvas/drawImage.html = IMAGE
 BUGWK54322 MAC SNOWLEOPARD : fast/canvas/set-colors.html = TEXT
 BUGWK54322 MAC SNOWLEOPARD : fast/css/transform-default-parameter.html = IMAGE
 BUGWK54322 MAC SNOWLEOPARD : fast/dom/blur-contenteditable.html = IMAGE
@@ -2991,7 +2986,6 @@ BUGWK54322 MAC SNOWLEOPARD : fast/loader/loadInProgress.html = PASS TIMEOUT
 BUGWK54322 MAC SNOWLEOPARD : http/tests/loading/location-hash-reload-cycle.html = TEXT PASS
 BUGWK54322 MAC SNOWLEOPARD : http/tests/loading/slow-parsing-subframe.html = CRASH PASS
 BUGWK54322 MAC SNOWLEOPARD : http/tests/navigation/image-load-in-unload-handler.html = TEXT PASS
-BUGWK54322 MAC SNOWLEOPARD : http/tests/navigation/ping-cookie.html = TEXT PASS
 BUGWK54322 MAC SNOWLEOPARD : http/tests/navigation/ping-same-origin.html = TEXT PASS
 BUGWK54322 MAC SNOWLEOPARD : http/tests/security/isolatedWorld/all-window-properties.html = TEXT PASS
 BUGWK54322 MAC SNOWLEOPARD : http/tests/security/isolatedWorld/all-window-prototypes.html = TEXT PASS
@@ -3458,8 +3452,6 @@ BUGCR79241 : http/tests/misc/favicon-loads-with-icon-loading-override.html = TEX
 // Regression caused by r83669. Seems to be V8 related.
 BUGCR79259 : fast/js/array-proto-func-property-getter-except.html = TEXT
 
-BUGWK58306 GPU MAC DEBUG : media/adopt-node-crash.html = CRASH
-
 // Temporarily marked failing for rebaselining.
 
 BUGWK58619 GPU LINUX WIN : media/video-volume-slider.html = IMAGE
@@ -3631,7 +3623,6 @@ BUGCR79917 WIN LINUX : tables/mozilla_expected_failures/marvin/backgr_position-t
 BUGCR79917 WIN LINUX : transforms/svg-vs-css.xhtml = IMAGE
 
 BUGDPRANKE MAC SLOW : editing/selection/move-by-word-visually.html = PASS
-BUGDPRANKE MAC LEOPARD : fast/canvas/canvasDrawingIntoSelf.html = IMAGE
 BUGDPRANKE MAC : compositing/iframes/invisible-nested-iframe-show.html = TEXT
 BUGDPRANKE MAC GPU : compositing/geometry/video-fixed-scrolling.html = IMAGE
 BUGDPRANKE MAC GPU : media/video-volume-slider.html = IMAGE
@@ -3639,9 +3630,9 @@ BUGDPRANKE MAC : plugins/mouse-click-iframe-to-plugin.html = TIMEOUT PASS
 BUGDPRANKE MAC : animations/3d/transform-origin-vs-functions.html = TEXT PASS
 
 BUGDPRANKE LINUX DEBUG : svg/custom/foreignObject-crash-on-hover.xml = CRASH PASS
-BUGDPRANKE DEBUG : fast/css/getComputedStyle/getComputedStyle-margin-percentage.html = CRASH
-BUGDPRANKE DEBUG : fast/css/getComputedStyle/getComputedStyle-relayout.html = CRASH
-BUGDPRANKE LINUX DEBUG : fast/dom/Attr/access-after-element-destruction.html = CRASH
+BUGDPRANKE LINUX MAC DEBUG : fast/css/getComputedStyle/getComputedStyle-margin-percentage.html = CRASH PASS
+BUGDPRANKE LINUX MAC DEBUG : fast/css/getComputedStyle/getComputedStyle-relayout.html = CRASH PASS
+BUGDPRANKE LINUX DEBUG : fast/dom/Attr/access-after-element-destruction.html = CRASH PASS
 BUGDPRANKE LINUX DEBUG : fast/css/last-child-pseudo-class.html = TEXT PASS
 BUGDPRANKE LINUX DEBUG : fast/dom/HTMLLinkElement/link-and-subresource-test.html = TEXT PASS
 
@@ -3710,7 +3701,7 @@ BUGDPRANKE CPU : media/video-controls-rendering.html = IMAGE
 // pulled in from downstream during webkit roll 84350:84431
 BUGCASEQ WIN LINUX : editing/selection/select-from-textfield-outwards.html = IMAGE+TEXT
 BUGCASEQ WIN LINUX : fast/forms/input-text-drag-down.html = IMAGE+TEXT
-BUGCASEQ MAC : fast/canvas/image-object-in-canvas.html = IMAGE
+BUGCASEQ MAC LEOPARD : fast/canvas/image-object-in-canvas.html = IMAGE
 
 BUGDPRANKE WIN LINUX : fast/backgrounds/background-leakage.html = IMAGE+TEXT IMAGE
 BUGDPRANKE MAC LEOPARD : fast/multicol/client-rects.html = IMAGE
@@ -3718,7 +3709,7 @@ BUGDPRANKE MAC LEOPARD : fast/multicol/client-rects.html = IMAGE
 BUGDPRANKE MAC DEBUG : transitions/cancel-transition.html = TEXT PASS
 
 BUGDPRANKE LINUX DEBUG : perf/array-nested-loop.html = TEXT TIMEOUT PASS
-BUGDPRANKE LINUX DEBUG : fast/dom/Node/mutation-blur.html = CRASH
+BUGDPRANKE LINUX DEBUG : fast/dom/Node/mutation-blur.html = CRASH PASS
 BUGDPRANKE WIN DEBUG : svg/custom/foreignObject-crash-on-hover.xml = CRASH PASS
 BUGDPRANKE WIN LINUX DEBUG : svg/custom/foreign-object-skew.svg = CRASH IMAGE PASS
 
@@ -3792,7 +3783,7 @@ BUGWK59166 WIN LINUX DEBUG CPU : svg/dynamic-updates/SVGFEDropShadowElement-svgd
 BUGWK59166 WIN LINUX DEBUG CPU : svg/dynamic-updates/SVGFEDropShadowElement-svgdom-stdDeviation-prop.html = TIMEOUT
 BUGWK59166 WIN LINUX DEBUG CPU : svg/filters/feDropShadow.svg = TIMEOUT
 
-BUGWK59167 GPU : media/video-zoom.html = IMAGE
+BUGWK59167 MAC GPU : media/video-zoom.html = IMAGE
 
 BUGWK59172 : fast/html/details-children-merge-crash.html = TEXT
 BUGWK59172 : fast/html/details-element-render-inline-crash.html = TEXT
@@ -3880,7 +3871,6 @@ BUGDPRANKE GPU : media/video-aspect-ratio.html = IMAGE PASS
 
 BUGSENORBLANCO WIN LINUX : animations/animation-drt-api-multiple-keyframes.html = TEXT
 BUGSENORBLANCO WIN LINUX : animations/animation-drt-api.html = TEXT
-BUGSENORBLANCO GPU : compositing/animation/animated-composited-inside-hidden.html = MISSING
 BUGSENORBLANCO GPU MAC LEOPARD : compositing/direct-image-compositing.html = IMAGE CRASH
 BUGSENORBLANCO MAC LINUX : fast/css/string-quote-binary.html = CRASH PASS
 BUGSENORBLANCO LINUX : fast/events/panScroll-click-hyperlink.html = TEXT
@@ -3954,13 +3944,25 @@ BUGDPRANKE MAC : fast/repaint/box-shadow-h.html = IMAGE
 BUGDPRANKE MAC : fast/block/float/float-overhangs-root.html = MISSING
 BUGDPRANKE MAC DEBUG : fast/blockflow/Kusa-Makura-background-canvas.html = CRASH
 BUGDPRANKE MAC DEBUG : storage/domstorage/events/documentURI.html = CRASH
-BUGDPRANKE MAC DEBUG : svg/W3C-SVG-1.1-SE/types-dom-04-b.svg = CRASH
+BUGDPRANKE MAC DEBUG : svg/W3C-SVG-1.1-SE/types-dom-04-b.svg = CRASH PASS
 BUGDPRANKE MAC DEBUG : http/tests/media/remove-while-loading.html = TIMEOUT
 BUGDPRANKE WIN DEBUG : http/tests/security/credentials-in-referer.html = PASS TIMEOUT
-BUGDPRANKE MAC DEBUG : fast/css/getComputedStyle/font-family-fallback-reset.html = CRASH
+BUGDPRANKE MAC DEBUG : fast/css/getComputedStyle/font-family-fallback-reset.html = CRASH PASS
 
-BUGKBR WIN7 : fast/speech/input-readonly-and-disabled.html = CRASH
 // Flakiness
 BUGKBR WIN DEBUG : animations/animation-controller-drt-api.html = PASS TEXT
 
 BUGWK59642 WIN : editing/input/scroll-viewport-page-up-down.html = PASS TEXT
+
+BUGDPRANKE SNOWLEOPARD DEBUG : http/tests/loading/preload-slow-loading.php = TEXT
+BUGDPRANKE SNOWLEOPARD DEBUG : http/tests/misc/image-error.html = TEXT
+BUGDPRANKE SNOWLEOPARD DEBUG : http/tests/ssl/verify-ssl-enabled.php = TEXT
+BUGDPRANKE SNOWLEOPARD DEBUG : fast/text/international/thai-line-breaks.html = IMAGE
+BUGDPRANKE SNOWLEOPARD DEBUG : http/tests/misc/object-image-error.html = TIMEOUT
+BUGDPRANKE SNOWLEOPARD DEBUG : css1/font_properties/font.html = IMAGE+TEXT
+BUGDPRANKE SNOWLEOPARD DEBUG : css2.1/t1508-c527-font-05-b.html = IMAGE+TEXT
+BUGDPRANKE SNOWLEOPARD DEBUG : css2.1/t1508-c527-font-10-c.html = IMAGE+TEXT
+BUGDPRANKE SNOWLEOPARD DEBUG : fast/text/international/thai-baht-space.html = IMAGE+TEXT
+BUGDPRANKE SNOWLEOPARD DEBUG : http/tests/multipart/multipart-wait-before-boundary.html = TIMEOUT PASS
+BUGDPRANKE WIN RELEASE : inspector/elements/edit-dom-actions.html = PASS TEXT
+BUGDPRANKE SLOW LINUX WIN DEBUG : inspector/elements/edit-dom-actions.html = PASS TEXT
