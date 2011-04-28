@@ -43,21 +43,20 @@ namespace JSC { namespace DFG {
 void JITCompiler::fillNumericToDouble(NodeIndex nodeIndex, FPRReg fpr, GPRReg temporary)
 {
     Node& node = graph()[nodeIndex];
-    MacroAssembler::RegisterID tempReg = gprToRegisterID(temporary);
 
     if (node.isConstant()) {
         ASSERT(node.op == DoubleConstant);
-        move(MacroAssembler::ImmPtr(reinterpret_cast<void*>(reinterpretDoubleToIntptr(valueOfDoubleConstant(nodeIndex)))), tempReg);
-        movePtrToDouble(tempReg, fprToRegisterID(fpr));
+        move(MacroAssembler::ImmPtr(reinterpret_cast<void*>(reinterpretDoubleToIntptr(valueOfDoubleConstant(nodeIndex)))), temporary);
+        movePtrToDouble(temporary, fprToRegisterID(fpr));
     } else {
-        loadPtr(addressFor(node.virtualRegister()), tempReg);
-        Jump isInteger = branchPtr(MacroAssembler::AboveOrEqual, tempReg, tagTypeNumberRegister);
-        jitAssertIsJSDouble(gpr0);
-        addPtr(tagTypeNumberRegister, tempReg);
-        movePtrToDouble(tempReg, fprToRegisterID(fpr));
+        loadPtr(addressFor(node.virtualRegister()), temporary);
+        Jump isInteger = branchPtr(MacroAssembler::AboveOrEqual, temporary, GPRInfo::tagTypeNumberRegister);
+        jitAssertIsJSDouble(temporary);
+        addPtr(GPRInfo::tagTypeNumberRegister, temporary);
+        movePtrToDouble(temporary, fprToRegisterID(fpr));
         Jump hasUnboxedDouble = jump();
         isInteger.link(this);
-        convertInt32ToDouble(tempReg, fprToRegisterID(fpr));
+        convertInt32ToDouble(temporary, fprToRegisterID(fpr));
         hasUnboxedDouble.link(this);
     }
 }
@@ -69,14 +68,14 @@ void JITCompiler::fillInt32ToInteger(NodeIndex nodeIndex, GPRReg gpr)
 
     if (node.isConstant()) {
         ASSERT(node.op == Int32Constant);
-        move(MacroAssembler::Imm32(valueOfInt32Constant(nodeIndex)), gprToRegisterID(gpr));
+        move(MacroAssembler::Imm32(valueOfInt32Constant(nodeIndex)), gpr);
     } else {
 #if DFG_JIT_ASSERT
         // Redundant load, just so we can check the tag!
-        loadPtr(addressFor(node.virtualRegister()), gprToRegisterID(gpr));
+        loadPtr(addressFor(node.virtualRegister()), gpr);
         jitAssertIsJSInt32(gpr);
 #endif
-        load32(addressFor(node.virtualRegister()), gprToRegisterID(gpr));
+        load32(addressFor(node.virtualRegister()), gpr);
     }
 }
 
@@ -88,19 +87,19 @@ void JITCompiler::fillToJS(NodeIndex nodeIndex, GPRReg gpr)
     if (node.isConstant()) {
         if (isInt32Constant(nodeIndex)) {
             JSValue jsValue = jsNumber(valueOfInt32Constant(nodeIndex));
-            move(MacroAssembler::ImmPtr(JSValue::encode(jsValue)), gprToRegisterID(gpr));
+            move(MacroAssembler::ImmPtr(JSValue::encode(jsValue)), gpr);
         } else if (isDoubleConstant(nodeIndex)) {
             JSValue jsValue(JSValue::EncodeAsDouble, valueOfDoubleConstant(nodeIndex));
-            move(MacroAssembler::ImmPtr(JSValue::encode(jsValue)), gprToRegisterID(gpr));
+            move(MacroAssembler::ImmPtr(JSValue::encode(jsValue)), gpr);
         } else {
             ASSERT(isJSConstant(nodeIndex));
             JSValue jsValue = valueOfJSConstant(nodeIndex);
-            move(MacroAssembler::ImmPtr(JSValue::encode(jsValue)), gprToRegisterID(gpr));
+            move(MacroAssembler::ImmPtr(JSValue::encode(jsValue)), gpr);
         }
         return;
     }
 
-    loadPtr(addressFor(node.virtualRegister()), gprToRegisterID(gpr));
+    loadPtr(addressFor(node.virtualRegister()), gpr);
 }
 
 void JITCompiler::jumpFromSpeculativeToNonSpeculative(const SpeculationCheck& check, const EntryLocation& entry, SpeculationRecovery* recovery)
@@ -117,7 +116,7 @@ void JITCompiler::jumpFromSpeculativeToNonSpeculative(const SpeculationCheck& ch
         // The only additional recovery we currently support is for integer add operation
         ASSERT(recovery->type() == SpeculativeAdd);
         // Revert the add.
-        sub32(gprToRegisterID(recovery->src()), gprToRegisterID(recovery->dest()));
+        sub32(recovery->src(), recovery->dest());
     }
 
     // FIXME: - This is hideously inefficient!
@@ -128,18 +127,18 @@ void JITCompiler::jumpFromSpeculativeToNonSpeculative(const SpeculationCheck& ch
     // are constants, or are arguments.
 
     // Spill all GPRs in use by the speculative path.
-    for (GPRReg gpr = gpr0; gpr < numberOfGPRs; next(gpr)) {
-        NodeIndex nodeIndex = check.m_gprInfo[gpr].nodeIndex;
+    for (unsigned index = 0; index < GPRInfo::numberOfRegisters; ++index) {
+        NodeIndex nodeIndex = check.m_gprInfo[index].nodeIndex;
         if (nodeIndex == NoNode)
             continue;
 
-        DataFormat dataFormat = check.m_gprInfo[gpr].format;
+        DataFormat dataFormat = check.m_gprInfo[index].format;
         VirtualRegister virtualRegister = graph()[nodeIndex].virtualRegister();
 
         ASSERT(dataFormat == DataFormatInteger || DataFormatCell || dataFormat & DataFormatJS);
         if (dataFormat == DataFormatInteger)
-            orPtr(tagTypeNumberRegister, gprToRegisterID(gpr));
-        storePtr(gprToRegisterID(gpr), addressFor(virtualRegister));
+            orPtr(GPRInfo::tagTypeNumberRegister, GPRInfo::toRegister(index));
+        storePtr(GPRInfo::toRegister(index), addressFor(virtualRegister));
     }
 
     // Spill all FPRs in use by the speculative path.
@@ -150,9 +149,9 @@ void JITCompiler::jumpFromSpeculativeToNonSpeculative(const SpeculationCheck& ch
 
         VirtualRegister virtualRegister = graph()[nodeIndex].virtualRegister();
 
-        moveDoubleToPtr(fprToRegisterID(fpr), regT0);
-        subPtr(tagTypeNumberRegister, regT0);
-        storePtr(regT0, addressFor(virtualRegister));
+        moveDoubleToPtr(fprToRegisterID(fpr), GPRInfo::regT0);
+        subPtr(GPRInfo::tagTypeNumberRegister, GPRInfo::regT0);
+        storePtr(GPRInfo::regT0, addressFor(virtualRegister));
     }
 
     // Fill all FPRs in use by the non-speculative path.
@@ -161,21 +160,21 @@ void JITCompiler::jumpFromSpeculativeToNonSpeculative(const SpeculationCheck& ch
         if (nodeIndex == NoNode)
             continue;
 
-        fillNumericToDouble(nodeIndex, fpr, gpr0);
+        fillNumericToDouble(nodeIndex, fpr, GPRInfo::regT0);
     }
 
     // Fill all GPRs in use by the non-speculative path.
-    for (GPRReg gpr = gpr0; gpr < numberOfGPRs; next(gpr)) {
-        NodeIndex nodeIndex = entry.m_gprInfo[gpr].nodeIndex;
+    for (unsigned index = 0; index < GPRInfo::numberOfRegisters; ++index) {
+        NodeIndex nodeIndex = entry.m_gprInfo[index].nodeIndex;
         if (nodeIndex == NoNode)
             continue;
 
-        DataFormat dataFormat = entry.m_gprInfo[gpr].format;
+        DataFormat dataFormat = entry.m_gprInfo[index].format;
         if (dataFormat == DataFormatInteger)
-            fillInt32ToInteger(nodeIndex, gpr);
+            fillInt32ToInteger(nodeIndex, GPRInfo::toRegister(index));
         else {
             ASSERT(dataFormat & DataFormatJS || dataFormat == DataFormatCell); // Treat cell as JSValue for now!
-            fillToJS(nodeIndex, gpr);
+            fillToJS(nodeIndex, GPRInfo::toRegister(index));
             // FIXME: For subtypes of DataFormatJS, should jitAssert the subtype?
         }
     }
@@ -230,8 +229,8 @@ void JITCompiler::compileFunction(JITCode& entry, MacroAssemblerCodePtr& entryWi
     // We'll need to convert the remaining cti_ style calls (specifically the register file
     // check) which will be dependent on stack layout. (We'd need to account for this in
     // both normal return code and when jumping to an exception handler).
-    preserveReturnAddressAfterCall(regT2);
-    emitPutToCallFrameHeader(regT2, RegisterFile::ReturnPC);
+    preserveReturnAddressAfterCall(GPRInfo::regT2);
+    emitPutToCallFrameHeader(GPRInfo::regT2, RegisterFile::ReturnPC);
     // If we needed to perform an arity check we will already have moved the return address,
     // so enter after this.
     Label fromArityCheck(this);
@@ -241,8 +240,8 @@ void JITCompiler::compileFunction(JITCode& entry, MacroAssemblerCodePtr& entryWi
 
     // Plant a check that sufficient space is available in the RegisterFile.
     // FIXME: https://bugs.webkit.org/show_bug.cgi?id=56291
-    addPtr(Imm32(m_codeBlock->m_numCalleeRegisters * sizeof(Register)), callFrameRegister, regT1);
-    Jump registerFileCheck = branchPtr(Below, AbsoluteAddress(m_globalData->interpreter->registerFile().addressOfEnd()), regT1);
+    addPtr(Imm32(m_codeBlock->m_numCalleeRegisters * sizeof(Register)), GPRInfo::callFrameRegister, GPRInfo::regT1);
+    Jump registerFileCheck = branchPtr(Below, AbsoluteAddress(m_globalData->interpreter->registerFile().addressOfEnd()), GPRInfo::regT1);
     // Return here after register file check.
     Label fromRegisterFileCheck = label();
 
@@ -314,20 +313,20 @@ void JITCompiler::compileFunction(JITCode& entry, MacroAssemblerCodePtr& entryWi
         // to look up handler information. The identifier we use is the return address
         // of the call out from JIT code that threw the exception; this is still
         // available on the stack, just below the stack pointer!
-        move(callFrameRegister, argumentRegister0);
-        peek(argumentRegister1, -1);
+        move(GPRInfo::callFrameRegister, GPRInfo::argumentRegister0);
+        peek(GPRInfo::argumentRegister1, -1);
         m_calls.append(CallRecord(call(), lookupExceptionHandler));
         // lookupExceptionHandler leaves the handler CallFrame* in the returnValueRegister,
         // and the address of the handler in returnValueRegister2.
-        jump(returnValueRegister2);
+        jump(GPRInfo::returnValueRegister2);
     }
 
     // Generate the register file check; if the fast check in the function head fails,
     // we need to call out to a helper function to check whether more space is available.
     // FIXME: change this from a cti call to a DFG style operation (normal C calling conventions).
     registerFileCheck.link(this);
-    move(stackPointerRegister, argumentRegister0);
-    poke(callFrameRegister, OBJECT_OFFSETOF(struct JITStackFrame, callFrame) / sizeof(void*));
+    move(stackPointerRegister, GPRInfo::argumentRegister0);
+    poke(GPRInfo::callFrameRegister, OBJECT_OFFSETOF(struct JITStackFrame, callFrame) / sizeof(void*));
     Call callRegisterFileCheck = call();
     jump(fromRegisterFileCheck);
 
@@ -337,13 +336,13 @@ void JITCompiler::compileFunction(JITCode& entry, MacroAssemblerCodePtr& entryWi
     // In cases where an arity check is necessary, we enter here.
     // FIXME: change this from a cti call to a DFG style operation (normal C calling conventions).
     Label arityCheck = label();
-    preserveReturnAddressAfterCall(regT2);
-    emitPutToCallFrameHeader(regT2, RegisterFile::ReturnPC);
-    branch32(Equal, regT1, Imm32(m_codeBlock->m_numParameters)).linkTo(fromArityCheck, this);
-    move(stackPointerRegister, argumentRegister0);
-    poke(callFrameRegister, OBJECT_OFFSETOF(struct JITStackFrame, callFrame) / sizeof(void*));
+    preserveReturnAddressAfterCall(GPRInfo::regT2);
+    emitPutToCallFrameHeader(GPRInfo::regT2, RegisterFile::ReturnPC);
+    branch32(Equal, GPRInfo::regT1, Imm32(m_codeBlock->m_numParameters)).linkTo(fromArityCheck, this);
+    move(stackPointerRegister, GPRInfo::argumentRegister0);
+    poke(GPRInfo::callFrameRegister, OBJECT_OFFSETOF(struct JITStackFrame, callFrame) / sizeof(void*));
     Call callArityCheck = call();
-    move(regT0, callFrameRegister);
+    move(GPRInfo::regT0, GPRInfo::callFrameRegister);
     jump(fromArityCheck);
 
 
@@ -384,7 +383,7 @@ void JITCompiler::compileFunction(JITCode& entry, MacroAssemblerCodePtr& entryWi
 void JITCompiler::jitAssertIsInt32(GPRReg gpr)
 {
 #if CPU(X86_64)
-    Jump checkInt32 = branchPtr(BelowOrEqual, gprToRegisterID(gpr), TrustedImmPtr(reinterpret_cast<void*>(static_cast<uintptr_t>(0xFFFFFFFFu))));
+    Jump checkInt32 = branchPtr(BelowOrEqual, gpr, TrustedImmPtr(reinterpret_cast<void*>(static_cast<uintptr_t>(0xFFFFFFFFu))));
     breakpoint();
     checkInt32.link(this);
 #else
@@ -394,22 +393,22 @@ void JITCompiler::jitAssertIsInt32(GPRReg gpr)
 
 void JITCompiler::jitAssertIsJSInt32(GPRReg gpr)
 {
-    Jump checkJSInt32 = branchPtr(AboveOrEqual, gprToRegisterID(gpr), tagTypeNumberRegister);
+    Jump checkJSInt32 = branchPtr(AboveOrEqual, gpr, GPRInfo::tagTypeNumberRegister);
     breakpoint();
     checkJSInt32.link(this);
 }
 
 void JITCompiler::jitAssertIsJSNumber(GPRReg gpr)
 {
-    Jump checkJSNumber = branchTestPtr(MacroAssembler::NonZero, gprToRegisterID(gpr), tagTypeNumberRegister);
+    Jump checkJSNumber = branchTestPtr(MacroAssembler::NonZero, gpr, GPRInfo::tagTypeNumberRegister);
     breakpoint();
     checkJSNumber.link(this);
 }
 
 void JITCompiler::jitAssertIsJSDouble(GPRReg gpr)
 {
-    Jump checkJSInt32 = branchPtr(AboveOrEqual, gprToRegisterID(gpr), tagTypeNumberRegister);
-    Jump checkJSNumber = branchTestPtr(MacroAssembler::NonZero, gprToRegisterID(gpr), tagTypeNumberRegister);
+    Jump checkJSInt32 = branchPtr(AboveOrEqual, gpr, GPRInfo::tagTypeNumberRegister);
+    Jump checkJSNumber = branchTestPtr(MacroAssembler::NonZero, gpr, GPRInfo::tagTypeNumberRegister);
     checkJSInt32.link(this);
     breakpoint();
     checkJSNumber.link(this);

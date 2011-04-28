@@ -52,18 +52,17 @@ class JITCodeGenerator {
 protected:
     typedef MacroAssembler::TrustedImm32 TrustedImm32;
     typedef MacroAssembler::Imm32 Imm32;
+    typedef MacroAssembler::FPRegisterID FPRegisterID;
 
     // These constants are used to set priorities for spill order for
     // the register allocator.
     enum SpillOrder {
-        SpillOrderNone,
         SpillOrderConstant = 1, // no spill, and cheap fill
         SpillOrderSpilled = 2,  // no spill
         SpillOrderJS = 4,       // needs spill
         SpillOrderCell = 4,     // needs spill
         SpillOrderInteger = 5,  // needs spill and box
         SpillOrderDouble = 6,   // needs spill and convert
-        SpillOrderMax
     };
 
 
@@ -159,17 +158,15 @@ protected:
     GPRReg boxDouble(FPRReg fpr, GPRReg gpr)
     {
         JITCompiler::FPRegisterID fpReg = JITCompiler::fprToRegisterID(fpr);
-        JITCompiler::RegisterID reg = JITCompiler::gprToRegisterID(gpr);
-        m_jit.moveDoubleToPtr(fpReg, reg);
-        m_jit.subPtr(JITCompiler::tagTypeNumberRegister, reg);
+        m_jit.moveDoubleToPtr(fpReg, gpr);
+        m_jit.subPtr(GPRInfo::tagTypeNumberRegister, gpr);
         return gpr;
     }
     FPRReg unboxDouble(GPRReg gpr, FPRReg fpr)
     {
-        JITCompiler::RegisterID reg = JITCompiler::gprToRegisterID(gpr);
         JITCompiler::FPRegisterID fpReg = JITCompiler::fprToRegisterID(fpr);
-        m_jit.addPtr(JITCompiler::tagTypeNumberRegister, reg);
-        m_jit.movePtrToDouble(reg, fpReg);
+        m_jit.addPtr(GPRInfo::tagTypeNumberRegister, gpr);
+        m_jit.movePtrToDouble(gpr, fpReg);
         return fpr;
     }
     GPRReg boxDouble(FPRReg fpr)
@@ -216,7 +213,7 @@ protected:
         if (spillFormat == DataFormatDouble) {
             // All values are spilled as JSValues, so box the double via a temporary gpr.
             GPRReg gpr = boxDouble(info.fpr());
-            m_jit.storePtr(JITCompiler::gprToRegisterID(gpr), JITCompiler::addressFor(spillMe));
+            m_jit.storePtr(gpr, JITCompiler::addressFor(spillMe));
             unlock(gpr);
             info.spill(DataFormatJSDouble);
             return;
@@ -225,11 +222,11 @@ protected:
         // The following code handles JSValues, int32s, and cells.
         ASSERT(spillFormat == DataFormatInteger || spillFormat == DataFormatCell || spillFormat & DataFormatJS);
 
-        JITCompiler::RegisterID reg = JITCompiler::gprToRegisterID(info.gpr());
+        GPRReg reg = info.gpr();
         // We need to box int32 and cell values ...
         // but on JSVALUE64 boxing a cell is a no-op!
         if (spillFormat == DataFormatInteger)
-            m_jit.orPtr(JITCompiler::tagTypeNumberRegister, reg);
+            m_jit.orPtr(GPRInfo::tagTypeNumberRegister, reg);
 
         // Spill the value, and record it as spilled in its boxed form.
         m_jit.storePtr(reg, JITCompiler::addressFor(spillMe));
@@ -253,11 +250,10 @@ protected:
     // Spill all VirtualRegisters back to the RegisterFile.
     void flushRegisters()
     {
-        for (GPRReg gpr = gpr0; gpr < numberOfGPRs; next(gpr)) {
-            VirtualRegister name = m_gprs.name(gpr);
-            if (name != InvalidVirtualRegister) {
-                spill(name);
-                m_gprs.release(gpr);
+        for (gpr_iterator iter = m_gprs.begin(); iter != m_gprs.end(); ++iter) {
+            if (iter.name() != InvalidVirtualRegister) {
+                spill(iter.name());
+                iter.release();
             }
         }
         for (FPRReg fpr = fpr0; fpr < numberOfFPRs; next(fpr)) {
@@ -274,9 +270,8 @@ protected:
     // calling out from JIT code to a C helper function.
     bool isFlushed()
     {
-        for (GPRReg gpr = gpr0; gpr < numberOfGPRs; next(gpr)) {
-            VirtualRegister name = m_gprs.name(gpr);
-            if (name != InvalidVirtualRegister)
+        for (gpr_iterator iter = m_gprs.begin(); iter != m_gprs.end(); ++iter) {
+            if (iter.name() != InvalidVirtualRegister)
                 return false;
         }
         for (FPRReg fpr = fpr0; fpr < numberOfFPRs; next(fpr)) {
@@ -305,7 +300,7 @@ protected:
     }
 
     // Helper functions to enable code sharing in implementations of bit/shift ops.
-    void bitOp(NodeType op, int32_t imm, MacroAssembler::RegisterID op1, MacroAssembler::RegisterID result)
+    void bitOp(NodeType op, int32_t imm, GPRReg op1, GPRReg result)
     {
         switch (op) {
         case BitAnd:
@@ -321,7 +316,7 @@ protected:
             ASSERT_NOT_REACHED();
         }
     }
-    void bitOp(NodeType op, MacroAssembler::RegisterID op1, MacroAssembler::RegisterID op2, MacroAssembler::RegisterID result)
+    void bitOp(NodeType op, GPRReg op1, GPRReg op2, GPRReg result)
     {
         switch (op) {
         case BitAnd:
@@ -337,7 +332,7 @@ protected:
             ASSERT_NOT_REACHED();
         }
     }
-    void shiftOp(NodeType op, MacroAssembler::RegisterID op1, int32_t shiftAmount, MacroAssembler::RegisterID result)
+    void shiftOp(NodeType op, GPRReg op1, int32_t shiftAmount, GPRReg result)
     {
         switch (op) {
         case BitRShift:
@@ -353,7 +348,7 @@ protected:
             ASSERT_NOT_REACHED();
         }
     }
-    void shiftOp(NodeType op, MacroAssembler::RegisterID op1, MacroAssembler::RegisterID shiftAmount, MacroAssembler::RegisterID result)
+    void shiftOp(NodeType op, GPRReg op1, GPRReg shiftAmount, GPRReg result)
     {
         switch (op) {
         case BitRShift:
@@ -462,14 +457,14 @@ protected:
 
         if (srcB != destA) {
             // Handle the easy cases - two simple moves.
-            m_jit.move(JITCompiler::gprToRegisterID(srcA), JITCompiler::gprToRegisterID(destA));
-            m_jit.move(JITCompiler::gprToRegisterID(srcB), JITCompiler::gprToRegisterID(destB));
+            m_jit.move(srcA, destA);
+            m_jit.move(srcB, destB);
         } else if (srcA != destB) {
             // Handle the non-swap case - just put srcB in place first.
-            m_jit.move(JITCompiler::gprToRegisterID(srcB), JITCompiler::gprToRegisterID(destB));
-            m_jit.move(JITCompiler::gprToRegisterID(srcA), JITCompiler::gprToRegisterID(destA));
+            m_jit.move(srcB, destB);
+            m_jit.move(srcA, destA);
         } else
-            m_jit.swap(JITCompiler::gprToRegisterID(destB), JITCompiler::gprToRegisterID(destB));
+            m_jit.swap(destB, destB);
     }
     template<FPRReg destA, FPRReg destB>
     void setupTwoStubArgs(FPRReg srcA, FPRReg srcB)
@@ -519,31 +514,31 @@ protected:
     }
     void setupStubArguments(GPRReg arg1, GPRReg arg2)
     {
-        setupTwoStubArgs<JITCompiler::argumentGPR1, JITCompiler::argumentGPR2>(arg1, arg2);
+        setupTwoStubArgs<GPRInfo::argumentRegister1, GPRInfo::argumentRegister2>(arg1, arg2);
     }
     void setupStubArguments(GPRReg arg1, GPRReg arg2, GPRReg arg3)
     {
         // If neither of arg2/arg3 are in our way, then we can move arg1 into place.
         // Then we can use setupTwoStubArgs to fix arg2/arg3.
-        if (arg2 != JITCompiler::argumentGPR1 && arg3 != JITCompiler::argumentGPR1) {
-            m_jit.move(JITCompiler::gprToRegisterID(arg1), JITCompiler::argumentRegister1);
-            setupTwoStubArgs<JITCompiler::argumentGPR2, JITCompiler::argumentGPR3>(arg2, arg3);
+        if (arg2 != GPRInfo::argumentRegister1 && arg3 != GPRInfo::argumentRegister1) {
+            m_jit.move(arg1, GPRInfo::argumentRegister1);
+            setupTwoStubArgs<GPRInfo::argumentRegister2, GPRInfo::argumentRegister3>(arg2, arg3);
             return;
         }
 
         // If neither of arg1/arg3 are in our way, then we can move arg2 into place.
         // Then we can use setupTwoStubArgs to fix arg1/arg3.
-        if (arg1 != JITCompiler::argumentGPR2 && arg3 != JITCompiler::argumentGPR2) {
-            m_jit.move(JITCompiler::gprToRegisterID(arg2), JITCompiler::argumentRegister2);
-            setupTwoStubArgs<JITCompiler::argumentGPR1, JITCompiler::argumentGPR3>(arg1, arg3);
+        if (arg1 != GPRInfo::argumentRegister2 && arg3 != GPRInfo::argumentRegister2) {
+            m_jit.move(arg2, GPRInfo::argumentRegister2);
+            setupTwoStubArgs<GPRInfo::argumentRegister1, GPRInfo::argumentRegister3>(arg1, arg3);
             return;
         }
 
         // If neither of arg1/arg2 are in our way, then we can move arg3 into place.
         // Then we can use setupTwoStubArgs to fix arg1/arg2.
-        if (arg1 != JITCompiler::argumentGPR3 && arg2 != JITCompiler::argumentGPR3) {
-            m_jit.move(JITCompiler::gprToRegisterID(arg3), JITCompiler::argumentRegister3);
-            setupTwoStubArgs<JITCompiler::argumentGPR1, JITCompiler::argumentGPR2>(arg1, arg2);
+        if (arg1 != GPRInfo::argumentRegister3 && arg2 != GPRInfo::argumentRegister3) {
+            m_jit.move(arg3, GPRInfo::argumentRegister3);
+            setupTwoStubArgs<GPRInfo::argumentRegister1, GPRInfo::argumentRegister2>(arg1, arg2);
             return;
         }
 
@@ -552,25 +547,25 @@ protected:
         // But are they in the right ones?
 
         // First, ensure arg1 is in place.
-        if (arg1 != JITCompiler::argumentGPR1) {
-            m_jit.swap(JITCompiler::gprToRegisterID(arg1), JITCompiler::argumentRegister1);
+        if (arg1 != GPRInfo::argumentRegister1) {
+            m_jit.swap(arg1, GPRInfo::argumentRegister1);
 
-            // If arg1 wasn't in argumentGPR1, one of arg2/arg3 must be.
-            ASSERT(arg2 == JITCompiler::argumentGPR1 || arg3 == JITCompiler::argumentGPR1);
-            // If arg2 was in argumentGPR1 it no longer is (due to the swap).
+            // If arg1 wasn't in argumentRegister1, one of arg2/arg3 must be.
+            ASSERT(arg2 == GPRInfo::argumentRegister1 || arg3 == GPRInfo::argumentRegister1);
+            // If arg2 was in argumentRegister1 it no longer is (due to the swap).
             // Otherwise arg3 must have been. Mark him as moved.
-            if (arg2 == JITCompiler::argumentGPR1)
+            if (arg2 == GPRInfo::argumentRegister1)
                 arg2 = arg1;
             else
                 arg3 = arg1;
         }
 
         // Either arg2 & arg3 need swapping, or we're all done.
-        ASSERT((arg2 == JITCompiler::argumentGPR2 || arg3 == JITCompiler::argumentGPR3)
-            || (arg2 == JITCompiler::argumentGPR3 || arg3 == JITCompiler::argumentGPR2));
+        ASSERT((arg2 == GPRInfo::argumentRegister2 || arg3 == GPRInfo::argumentRegister3)
+            || (arg2 == GPRInfo::argumentRegister3 || arg3 == GPRInfo::argumentRegister2));
 
-        if (arg2 != JITCompiler::argumentGPR2)
-            m_jit.swap(JITCompiler::argumentRegister2, JITCompiler::argumentRegister3);
+        if (arg2 != GPRInfo::argumentRegister2)
+            m_jit.swap(GPRInfo::argumentRegister2, GPRInfo::argumentRegister3);
     }
 
     // These methods add calls to C++ helper functions.
@@ -578,12 +573,12 @@ protected:
     {
         ASSERT(isFlushed());
 
-        m_jit.move(JITCompiler::gprToRegisterID(arg1), JITCompiler::argumentRegister1);
-        m_jit.move(JITCompiler::TrustedImmPtr(pointer), JITCompiler::argumentRegister2);
-        m_jit.move(JITCompiler::callFrameRegister, JITCompiler::argumentRegister0);
+        m_jit.move(arg1, GPRInfo::argumentRegister1);
+        m_jit.move(JITCompiler::TrustedImmPtr(pointer), GPRInfo::argumentRegister2);
+        m_jit.move(GPRInfo::callFrameRegister, GPRInfo::argumentRegister0);
 
         appendCallWithExceptionCheck(operation);
-        m_jit.move(JITCompiler::returnValueRegister, JITCompiler::gprToRegisterID(result));
+        m_jit.move(GPRInfo::returnValueRegister, result);
     }
     void callOperation(J_DFGOperation_EJI operation, GPRReg result, GPRReg arg1, Identifier* identifier)
     {
@@ -593,49 +588,49 @@ protected:
     {
         ASSERT(isFlushed());
 
-        m_jit.move(JITCompiler::gprToRegisterID(arg1), JITCompiler::argumentRegister1);
-        m_jit.move(JITCompiler::callFrameRegister, JITCompiler::argumentRegister0);
+        m_jit.move(arg1, GPRInfo::argumentRegister1);
+        m_jit.move(GPRInfo::callFrameRegister, GPRInfo::argumentRegister0);
 
         appendCallWithExceptionCheck(operation);
-        m_jit.move(JITCompiler::returnValueRegister, JITCompiler::gprToRegisterID(result));
+        m_jit.move(GPRInfo::returnValueRegister, result);
     }
     void callOperation(Z_DFGOperation_EJ operation, GPRReg result, GPRReg arg1)
     {
         ASSERT(isFlushed());
 
-        m_jit.move(JITCompiler::gprToRegisterID(arg1), JITCompiler::argumentRegister1);
-        m_jit.move(JITCompiler::callFrameRegister, JITCompiler::argumentRegister0);
+        m_jit.move(arg1, GPRInfo::argumentRegister1);
+        m_jit.move(GPRInfo::callFrameRegister, GPRInfo::argumentRegister0);
 
         appendCallWithExceptionCheck(operation);
-        m_jit.move(JITCompiler::returnValueRegister, JITCompiler::gprToRegisterID(result));
+        m_jit.move(GPRInfo::returnValueRegister, result);
     }
     void callOperation(Z_DFGOperation_EJJ operation, GPRReg result, GPRReg arg1, GPRReg arg2)
     {
         ASSERT(isFlushed());
 
         setupStubArguments(arg1, arg2);
-        m_jit.move(JITCompiler::callFrameRegister, JITCompiler::argumentRegister0);
+        m_jit.move(GPRInfo::callFrameRegister, GPRInfo::argumentRegister0);
 
         appendCallWithExceptionCheck(operation);
-        m_jit.move(JITCompiler::returnValueRegister, JITCompiler::gprToRegisterID(result));
+        m_jit.move(GPRInfo::returnValueRegister, result);
     }
     void callOperation(J_DFGOperation_EJJ operation, GPRReg result, GPRReg arg1, GPRReg arg2)
     {
         ASSERT(isFlushed());
 
         setupStubArguments(arg1, arg2);
-        m_jit.move(JITCompiler::callFrameRegister, JITCompiler::argumentRegister0);
+        m_jit.move(GPRInfo::callFrameRegister, GPRInfo::argumentRegister0);
 
         appendCallWithExceptionCheck(operation);
-        m_jit.move(JITCompiler::returnValueRegister, JITCompiler::gprToRegisterID(result));
+        m_jit.move(GPRInfo::returnValueRegister, result);
     }
     void callOperation(V_DFGOperation_EJJP operation, GPRReg arg1, GPRReg arg2, void* pointer)
     {
         ASSERT(isFlushed());
 
         setupStubArguments(arg1, arg2);
-        m_jit.move(JITCompiler::TrustedImmPtr(pointer), JITCompiler::argumentRegister3);
-        m_jit.move(JITCompiler::callFrameRegister, JITCompiler::argumentRegister0);
+        m_jit.move(JITCompiler::TrustedImmPtr(pointer), GPRInfo::argumentRegister3);
+        m_jit.move(GPRInfo::callFrameRegister, GPRInfo::argumentRegister0);
 
         appendCallWithExceptionCheck(operation);
     }
@@ -648,7 +643,7 @@ protected:
         ASSERT(isFlushed());
 
         setupStubArguments(arg1, arg2, arg3);
-        m_jit.move(JITCompiler::callFrameRegister, JITCompiler::argumentRegister0);
+        m_jit.move(GPRInfo::callFrameRegister, GPRInfo::argumentRegister0);
 
         appendCallWithExceptionCheck(operation);
     }
@@ -708,8 +703,8 @@ protected:
     NodeIndex m_compileIndex;
     // Virtual and physical register maps.
     Vector<GenerationInfo, 32> m_generationInfo;
-    RegisterBank<GPRReg, numberOfGPRs, SpillOrder, SpillOrderNone, SpillOrderMax> m_gprs;
-    RegisterBank<FPRReg, numberOfFPRs, SpillOrder, SpillOrderNone, SpillOrderMax> m_fprs;
+    RegisterBank<GPRInfo> m_gprs;
+    RegisterBank<FPRBankInfo> m_fprs;
 
     Vector<MacroAssembler::Label> m_blockHeads;
     struct BranchRecord {
@@ -762,13 +757,6 @@ public:
         return m_index;
     }
 
-    GPRReg gpr()
-    {
-        if (m_gprOrInvalid == InvalidGPRReg)
-            m_gprOrInvalid = m_jit->fillInteger(index(), m_format);
-        return m_gprOrInvalid;
-    }
-
     DataFormat format()
     {
         gpr(); // m_format is set when m_gpr is locked.
@@ -776,9 +764,11 @@ public:
         return m_format;
     }
 
-    MacroAssembler::RegisterID registerID()
+    GPRReg gpr()
     {
-        return JITCompiler::gprToRegisterID(gpr());
+        if (m_gprOrInvalid == InvalidGPRReg)
+            m_gprOrInvalid = m_jit->fillInteger(index(), m_format);
+        return m_gprOrInvalid;
     }
 
 private:
@@ -818,7 +808,7 @@ public:
         return m_fprOrInvalid;
     }
 
-    MacroAssembler::FPRegisterID registerID()
+    MacroAssembler::FPRegisterID gpr()
     {
         return JITCompiler::fprToRegisterID(fpr());
     }
@@ -859,11 +849,6 @@ public:
         return m_gprOrInvalid;
     }
 
-    MacroAssembler::RegisterID registerID()
-    {
-        return JITCompiler::gprToRegisterID(gpr());
-    }
-
 private:
     JITCodeGenerator* m_jit;
     NodeIndex m_index;
@@ -893,16 +878,10 @@ public:
         m_jit->unlock(gpr());
     }
 
-    GPRReg gpr() const
+    GPRReg gpr()
     {
         ASSERT(m_gpr != InvalidGPRReg);
         return m_gpr;
-    }
-
-    MacroAssembler::RegisterID registerID()
-    {
-        ASSERT(m_gpr != InvalidGPRReg);
-        return JITCompiler::gprToRegisterID(m_gpr);
     }
 
 protected:
@@ -934,7 +913,7 @@ public:
         return m_fpr;
     }
 
-    MacroAssembler::FPRegisterID registerID()
+    MacroAssembler::FPRegisterID gpr()
     {
         ASSERT(m_fpr != InvalidFPRReg);
         return JITCompiler::fprToRegisterID(m_fpr);
@@ -967,8 +946,8 @@ public:
 private:
     static GPRReg lockedResult(JITCodeGenerator* jit)
     {
-        jit->lock(JITCompiler::returnValueGPR);
-        return JITCompiler::returnValueGPR;
+        jit->lock(GPRInfo::returnValueRegister);
+        return GPRInfo::returnValueRegister;
     }
 };
 

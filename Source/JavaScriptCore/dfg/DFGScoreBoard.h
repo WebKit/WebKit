@@ -55,7 +55,7 @@ public:
         ASSERT(m_used.size() == m_free.size());
         // Every entry in the used list should be available in the free list.
         for (size_t i = 0; i < m_used.size(); ++i)
-            ASSERT(m_free.contains(i))
+            ASSERT(m_free.contains(i));
         // For every entry in the used list the use count of the virtual register should be zero.
         for (size_t i = 0; i < m_free.size(); ++i)
             ASSERT(!m_used[i]);

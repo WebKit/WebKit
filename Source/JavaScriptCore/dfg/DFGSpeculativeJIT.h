@@ -85,7 +85,7 @@ struct SpeculationCheck {
         NodeIndex nodeIndex;
         DataFormat format;
     };
-    RegisterInfo m_gprInfo[numberOfGPRs];
+    RegisterInfo m_gprInfo[GPRInfo::numberOfRegisters];
     NodeIndex m_fprInfo[numberOfFPRs];
 };
 typedef SegmentedVector<SpeculationCheck, 16> SpeculationCheckVector;
@@ -254,13 +254,6 @@ public:
         return m_index;
     }
 
-    GPRReg gpr()
-    {
-        if (m_gprOrInvalid == InvalidGPRReg)
-            m_gprOrInvalid = m_jit->fillSpeculateInt(index(), m_format);
-        return m_gprOrInvalid;
-    }
-
     DataFormat format()
     {
         gpr(); // m_format is set when m_gpr is locked.
@@ -268,9 +261,11 @@ public:
         return m_format;
     }
 
-    MacroAssembler::RegisterID registerID()
+    GPRReg gpr()
     {
-        return JITCompiler::gprToRegisterID(gpr());
+        if (m_gprOrInvalid == InvalidGPRReg)
+            m_gprOrInvalid = m_jit->fillSpeculateInt(index(), m_format);
+        return m_gprOrInvalid;
     }
 
 private:
@@ -310,11 +305,6 @@ public:
         return m_gprOrInvalid;
     }
 
-    MacroAssembler::RegisterID registerID()
-    {
-        return JITCompiler::gprToRegisterID(gpr());
-    }
-
 private:
     SpeculativeJIT* m_jit;
     NodeIndex m_index;
@@ -349,11 +339,6 @@ public:
         if (m_gprOrInvalid == InvalidGPRReg)
             m_gprOrInvalid = m_jit->fillSpeculateCell(index());
         return m_gprOrInvalid;
-    }
-
-    MacroAssembler::RegisterID registerID()
-    {
-        return JITCompiler::gprToRegisterID(gpr());
     }
 
 private:

@@ -1,3 +1,119 @@
+2011-04-28  Gavin Barraclough  <barraclough@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        Bug 59740 - DFG JIT - Unify GPRReg & RegisterID
+
+        Currently we use a mix of enum values throughout the DFG JIT to  represent
+        gpr registers - the RegisterID provided by the MacroAssembler, and the
+        GPRReg enum giving the sequential register set over which the RegisterBank
+        allocates. Unify the two.
+
+        Patch to unify FPRReg in a similar fashion will follow.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * dfg/DFGFPRInfo.h: Added.
+        (JSC::DFG::next):
+        (JSC::DFG::FPRBankInfo::toRegister):
+        (JSC::DFG::FPRBankInfo::toIndex):
+        * dfg/DFGGPRInfo.h: Added.
+        (JSC::DFG::GPRInfo::toRegister):
+        (JSC::DFG::GPRInfo::toIndex):
+        (JSC::DFG::GPRInfo::debugName):
+        * dfg/DFGJITCodeGenerator.cpp:
+        (JSC::DFG::JITCodeGenerator::fillInteger):
+        (JSC::DFG::JITCodeGenerator::fillDouble):
+        (JSC::DFG::JITCodeGenerator::fillJSValue):
+        (JSC::DFG::JITCodeGenerator::dump):
+        (JSC::DFG::JITCodeGenerator::checkConsistency):
+        (JSC::DFG::GPRTemporary::GPRTemporary):
+        (JSC::DFG::FPRTemporary::FPRTemporary):
+        * dfg/DFGJITCodeGenerator.h:
+        (JSC::DFG::JITCodeGenerator::boxDouble):
+        (JSC::DFG::JITCodeGenerator::unboxDouble):
+        (JSC::DFG::JITCodeGenerator::spill):
+        (JSC::DFG::JITCodeGenerator::flushRegisters):
+        (JSC::DFG::JITCodeGenerator::isFlushed):
+        (JSC::DFG::JITCodeGenerator::bitOp):
+        (JSC::DFG::JITCodeGenerator::shiftOp):
+        (JSC::DFG::JITCodeGenerator::setupTwoStubArgs):
+        (JSC::DFG::JITCodeGenerator::setupStubArguments):
+        (JSC::DFG::JITCodeGenerator::callOperation):
+        (JSC::DFG::IntegerOperand::gpr):
+        (JSC::DFG::DoubleOperand::gpr):
+        (JSC::DFG::GPRTemporary::gpr):
+        (JSC::DFG::FPRTemporary::gpr):
+        (JSC::DFG::GPRResult::lockedResult):
+        * dfg/DFGJITCompiler.cpp:
+        (JSC::DFG::JITCompiler::fillNumericToDouble):
+        (JSC::DFG::JITCompiler::fillInt32ToInteger):
+        (JSC::DFG::JITCompiler::fillToJS):
+        (JSC::DFG::JITCompiler::jumpFromSpeculativeToNonSpeculative):
+        (JSC::DFG::JITCompiler::compileFunction):
+        (JSC::DFG::JITCompiler::jitAssertIsInt32):
+        (JSC::DFG::JITCompiler::jitAssertIsJSInt32):
+        (JSC::DFG::JITCompiler::jitAssertIsJSNumber):
+        (JSC::DFG::JITCompiler::jitAssertIsJSDouble):
+        * dfg/DFGJITCompiler.h:
+        (JSC::DFG::JITCompiler::preserveReturnAddressAfterCall):
+        (JSC::DFG::JITCompiler::restoreReturnAddressBeforeReturn):
+        (JSC::DFG::JITCompiler::emitGetFromCallFrameHeaderPtr):
+        (JSC::DFG::JITCompiler::emitPutToCallFrameHeader):
+        (JSC::DFG::JITCompiler::emitPutImmediateToCallFrameHeader):
+        (JSC::DFG::JITCompiler::addressForGlobalVar):
+        (JSC::DFG::JITCompiler::addressFor):
+        (JSC::DFG::JITCompiler::tagFor):
+        (JSC::DFG::JITCompiler::payloadFor):
+        * dfg/DFGNonSpeculativeJIT.cpp:
+        (JSC::DFG::EntryLocation::EntryLocation):
+        (JSC::DFG::NonSpeculativeJIT::valueToNumber):
+        (JSC::DFG::NonSpeculativeJIT::valueToInt32):
+        (JSC::DFG::NonSpeculativeJIT::numberToInt32):
+        (JSC::DFG::NonSpeculativeJIT::compile):
+        * dfg/DFGNonSpeculativeJIT.h:
+        (JSC::DFG::NonSpeculativeJIT::silentSpillGPR):
+        (JSC::DFG::NonSpeculativeJIT::silentSpillFPR):
+        (JSC::DFG::NonSpeculativeJIT::silentFillGPR):
+        (JSC::DFG::NonSpeculativeJIT::silentFillFPR):
+        (JSC::DFG::NonSpeculativeJIT::silentSpillAllRegisters):
+        (JSC::DFG::NonSpeculativeJIT::silentFillAllRegisters):
+        * dfg/DFGRegisterBank.h:
+        (JSC::DFG::RegisterBank::allocate):
+        (JSC::DFG::RegisterBank::retain):
+        (JSC::DFG::RegisterBank::release):
+        (JSC::DFG::RegisterBank::lock):
+        (JSC::DFG::RegisterBank::unlock):
+        (JSC::DFG::RegisterBank::isLocked):
+        (JSC::DFG::RegisterBank::name):
+        (JSC::DFG::RegisterBank::iterator::name):
+        (JSC::DFG::RegisterBank::iterator::isLocked):
+        (JSC::DFG::RegisterBank::iterator::release):
+        (JSC::DFG::RegisterBank::iterator::gpr):
+        (JSC::DFG::RegisterBank::iterator::debugName):
+        (JSC::DFG::RegisterBank::iterator::operator++):
+        (JSC::DFG::RegisterBank::iterator::operator!=):
+        (JSC::DFG::RegisterBank::iterator::index):
+        (JSC::DFG::RegisterBank::iterator::iterator):
+        (JSC::DFG::RegisterBank::begin):
+        (JSC::DFG::RegisterBank::end):
+        (JSC::DFG::RegisterBank::isLockedAtIndex):
+        (JSC::DFG::RegisterBank::nameAtIndex):
+        (JSC::DFG::RegisterBank::releaseAtIndex):
+        (JSC::DFG::RegisterBank::allocateInternal):
+        (JSC::DFG::RegisterBank::MapEntry::MapEntry):
+        * dfg/DFGScoreBoard.h:
+        (JSC::DFG::ScoreBoard::~ScoreBoard):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::fillSpeculateIntInternal):
+        (JSC::DFG::SpeculationCheck::SpeculationCheck):
+        (JSC::DFG::SpeculativeJIT::fillSpeculateCell):
+        (JSC::DFG::SpeculativeJIT::compilePeepHoleBranch):
+        (JSC::DFG::SpeculativeJIT::compile):
+        (JSC::DFG::SpeculativeJIT::checkArgumentTypes):
+        (JSC::DFG::SpeculativeJIT::initializeVariableTypes):
+        * dfg/DFGSpeculativeJIT.h:
+        (JSC::DFG::SpeculateIntegerOperand::gpr):
+
 2011-04-28  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Gavin Barraclough.

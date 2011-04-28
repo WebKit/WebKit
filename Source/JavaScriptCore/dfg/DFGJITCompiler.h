@@ -31,7 +31,11 @@
 #include <assembler/MacroAssembler.h>
 #include <bytecode/CodeBlock.h>
 #include <dfg/DFGGraph.h>
+#include <dfg/DFGRegisterBank.h>
 #include <jit/JITCode.h>
+
+#include <dfg/DFGFPRInfo.h>
+#include <dfg/DFGGPRInfo.h>
 
 namespace JSC {
 
@@ -48,23 +52,6 @@ class SpeculationRecovery;
 
 struct EntryLocation;
 struct SpeculationCheck;
-
-// Abstracted sequential numbering of available machine registers (as opposed to MacroAssembler::RegisterID,
-// which are non-sequential, and not abstracted from the register numbering used by the underlying processor).
-enum GPRReg { gpr0, gpr1, gpr2, gpr3, gpr4, gpr5, gpr6, gpr7, gpr8, numberOfGPRs, InvalidGPRReg = 0xFFFFFFFF };
-enum FPRReg { fpr0, fpr1, fpr2, fpr3, fpr4, fpr5, numberOfFPRs, InvalidFPRReg = 0xFFFFFFFF };
-
-// GPRReg/FPRReg are enum types to provide type checking at compile time, use these method to iterate.
-inline GPRReg next(GPRReg& reg)
-{
-    ASSERT(reg < numberOfGPRs);
-    return reg = static_cast<GPRReg>(reg + 1);
-}
-inline FPRReg next(FPRReg& reg)
-{
-    ASSERT(reg < numberOfFPRs);
-    return reg = static_cast<FPRReg>(reg + 1);
-}
 
 // === CallRecord ===
 //
@@ -121,45 +108,13 @@ public:
     JSGlobalData* globalData() { return m_globalData; }
 
 #if CPU(X86_64)
-    // These registers match the old JIT.
-    static const RegisterID timeoutCheckRegister = X86Registers::r12;
-    static const RegisterID callFrameRegister = X86Registers::r13;
-    static const RegisterID tagTypeNumberRegister = X86Registers::r14;
-    static const RegisterID tagMaskRegister = X86Registers::r15;
-
-    // Temporary registers (these correspond to the temporary GPRReg/FPRReg
-    // registers i.e. regT0 and grp0 refer to the same thing, grp0 being
-    // the abstracted, sequential name, and regT0 being the machine register
-    // number in the instruction set, as provided by the MacroAssembler).
-    static const RegisterID regT0 = X86Registers::eax;
-    static const RegisterID regT1 = X86Registers::edx;
-    static const RegisterID regT2 = X86Registers::ecx;
-    static const RegisterID regT3 = X86Registers::ebx;
-    static const RegisterID regT4 = X86Registers::edi;
-    static const RegisterID regT5 = X86Registers::esi;
-    static const RegisterID regT6 = X86Registers::r8;
-    static const RegisterID regT7 = X86Registers::r9;
-    static const RegisterID regT8 = X86Registers::r10;
+    // Temporary registers.
     static const FPRegisterID fpRegT0 = X86Registers::xmm0;
     static const FPRegisterID fpRegT1 = X86Registers::xmm1;
     static const FPRegisterID fpRegT2 = X86Registers::xmm2;
     static const FPRegisterID fpRegT3 = X86Registers::xmm3;
     static const FPRegisterID fpRegT4 = X86Registers::xmm4;
     static const FPRegisterID fpRegT5 = X86Registers::xmm5;
-
-    // These constants provide both RegisterID & GPRReg style names for the
-    // general purpose argument & return value register.
-    static const GPRReg argumentGPR0 = gpr4;
-    static const GPRReg argumentGPR1 = gpr5;
-    static const GPRReg argumentGPR2 = gpr1;
-    static const GPRReg argumentGPR3 = gpr2;
-    static const RegisterID argumentRegister0 = regT4;
-    static const RegisterID argumentRegister1 = regT5;
-    static const RegisterID argumentRegister2 = regT1;
-    static const RegisterID argumentRegister3 = regT2;
-    static const GPRReg returnValueGPR = gpr0;
-    static const RegisterID returnValueRegister = regT0;
-    static const RegisterID returnValueRegister2 = regT1;
 
     // These constants provide both FPRegisterID & FPRReg style names for the
     // floating point argument & return value register.
@@ -175,12 +130,12 @@ public:
     static const FPRegisterID fpReturnValueRegister = fpRegT0;
 
 
-    void preserveReturnAddressAfterCall(RegisterID reg)
+    void preserveReturnAddressAfterCall(GPRReg reg)
     {
         pop(reg);
     }
 
-    void restoreReturnAddressBeforeReturn(RegisterID reg)
+    void restoreReturnAddressBeforeReturn(GPRReg reg)
     {
         push(reg);
     }
@@ -190,49 +145,41 @@ public:
         push(address);
     }
 
-    void emitGetFromCallFrameHeaderPtr(RegisterFile::CallFrameHeaderEntry entry, RegisterID to)
+    void emitGetFromCallFrameHeaderPtr(RegisterFile::CallFrameHeaderEntry entry, GPRReg to)
     {
-        loadPtr(Address(callFrameRegister, entry * sizeof(Register)), to);
+        loadPtr(Address(GPRInfo::callFrameRegister, entry * sizeof(Register)), to);
     }
-    void emitPutToCallFrameHeader(RegisterID from, RegisterFile::CallFrameHeaderEntry entry)
+    void emitPutToCallFrameHeader(GPRReg from, RegisterFile::CallFrameHeaderEntry entry)
     {
-        storePtr(from, Address(callFrameRegister, entry * sizeof(Register)));
+        storePtr(from, Address(GPRInfo::callFrameRegister, entry * sizeof(Register)));
     }
 
     void emitPutImmediateToCallFrameHeader(void* value, RegisterFile::CallFrameHeaderEntry entry)
     {
-        storePtr(TrustedImmPtr(value), Address(callFrameRegister, entry * sizeof(Register)));
+        storePtr(TrustedImmPtr(value), Address(GPRInfo::callFrameRegister, entry * sizeof(Register)));
     }
 #endif
 
-    static Address addressForGlobalVar(RegisterID global, int32_t varNumber)
+    static Address addressForGlobalVar(GPRReg global, int32_t varNumber)
     {
         return Address(global, varNumber * sizeof(Register));
     }
 
     static Address addressFor(VirtualRegister virtualRegister)
     {
-        return Address(callFrameRegister, virtualRegister * sizeof(Register));
+        return Address(GPRInfo::callFrameRegister, virtualRegister * sizeof(Register));
     }
 
     static Address tagFor(VirtualRegister virtualRegister)
     {
-        return Address(callFrameRegister, virtualRegister * sizeof(Register) + OBJECT_OFFSETOF(EncodedValueDescriptor, asBits.tag));
+        return Address(GPRInfo::callFrameRegister, virtualRegister * sizeof(Register) + OBJECT_OFFSETOF(EncodedValueDescriptor, asBits.tag));
     }
 
     static Address payloadFor(VirtualRegister virtualRegister)
     {
-        return Address(callFrameRegister, virtualRegister * sizeof(Register) + OBJECT_OFFSETOF(EncodedValueDescriptor, asBits.payload));
+        return Address(GPRInfo::callFrameRegister, virtualRegister * sizeof(Register) + OBJECT_OFFSETOF(EncodedValueDescriptor, asBits.payload));
     }
 
-    // These methods provide mapping from sequential register numbering (GPRReg/FPRReg)
-    // to machine register numbering (RegisterID/FPRegisterID).
-    static RegisterID gprToRegisterID(GPRReg reg)
-    {
-        ASSERT(reg < numberOfGPRs);
-        static const RegisterID idForRegister[numberOfGPRs] = { regT0, regT1, regT2, regT3, regT4, regT5, regT6, regT7, regT8 };
-        return idForRegister[reg];
-    }
     static FPRegisterID fprToRegisterID(FPRReg reg)
     {
         ASSERT(reg < numberOfFPRs);

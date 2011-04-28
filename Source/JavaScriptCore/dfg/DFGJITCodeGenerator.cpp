@@ -42,28 +42,27 @@ GPRReg JITCodeGenerator::fillInteger(NodeIndex nodeIndex, DataFormat& returnForm
 
     if (info.registerFormat() == DataFormatNone) {
         GPRReg gpr = allocate();
-        JITCompiler::RegisterID reg = JITCompiler::gprToRegisterID(gpr);
 
         if (node.isConstant()) {
             m_gprs.retain(gpr, virtualRegister, SpillOrderConstant);
             if (isInt32Constant(nodeIndex)) {
-                m_jit.move(MacroAssembler::Imm32(valueOfInt32Constant(nodeIndex)), reg);
+                m_jit.move(MacroAssembler::Imm32(valueOfInt32Constant(nodeIndex)), gpr);
                 info.fillInteger(gpr);
                 returnFormat = DataFormatInteger;
                 return gpr;
             }
             if (isDoubleConstant(nodeIndex)) {
                 JSValue jsValue = jsNumber(valueOfDoubleConstant(nodeIndex));
-                m_jit.move(MacroAssembler::ImmPtr(JSValue::encode(jsValue)), reg);
+                m_jit.move(MacroAssembler::ImmPtr(JSValue::encode(jsValue)), gpr);
             } else {
                 ASSERT(isJSConstant(nodeIndex));
                 JSValue jsValue = valueOfJSConstant(nodeIndex);
-                m_jit.move(MacroAssembler::ImmPtr(JSValue::encode(jsValue)), reg);
+                m_jit.move(MacroAssembler::ImmPtr(JSValue::encode(jsValue)), gpr);
             }
         } else {
             ASSERT(info.spillFormat() == DataFormatJS || info.spillFormat() == DataFormatJSInteger);
             m_gprs.retain(gpr, virtualRegister, SpillOrderSpilled);
-            m_jit.loadPtr(JITCompiler::addressFor(virtualRegister), reg);
+            m_jit.loadPtr(JITCompiler::addressFor(virtualRegister), gpr);
         }
 
         // Since we statically know that we're filling an integer, and values
@@ -113,19 +112,18 @@ FPRReg JITCodeGenerator::fillDouble(NodeIndex nodeIndex)
 
     if (info.registerFormat() == DataFormatNone) {
         GPRReg gpr = allocate();
-        JITCompiler::RegisterID reg = JITCompiler::gprToRegisterID(gpr);
 
         if (node.isConstant()) {
             if (isInt32Constant(nodeIndex)) {
                 // FIXME: should not be reachable?
-                m_jit.move(MacroAssembler::Imm32(valueOfInt32Constant(nodeIndex)), reg);
+                m_jit.move(MacroAssembler::Imm32(valueOfInt32Constant(nodeIndex)), gpr);
                 m_gprs.retain(gpr, virtualRegister, SpillOrderConstant);
                 info.fillInteger(gpr);
                 unlock(gpr);
             } else if (isDoubleConstant(nodeIndex)) {
                 FPRReg fpr = fprAllocate();
-                m_jit.move(MacroAssembler::ImmPtr(reinterpret_cast<void*>(reinterpretDoubleToIntptr(valueOfDoubleConstant(nodeIndex)))), reg);
-                m_jit.movePtrToDouble(reg, JITCompiler::fprToRegisterID(fpr));
+                m_jit.move(MacroAssembler::ImmPtr(reinterpret_cast<void*>(reinterpretDoubleToIntptr(valueOfDoubleConstant(nodeIndex)))), gpr);
+                m_jit.movePtrToDouble(gpr, JITCompiler::fprToRegisterID(fpr));
                 unlock(gpr);
 
                 m_fprs.retain(fpr, virtualRegister, SpillOrderDouble);
@@ -135,7 +133,7 @@ FPRReg JITCodeGenerator::fillDouble(NodeIndex nodeIndex)
                 // FIXME: should not be reachable?
                 ASSERT(isJSConstant(nodeIndex));
                 JSValue jsValue = valueOfJSConstant(nodeIndex);
-                m_jit.move(MacroAssembler::ImmPtr(JSValue::encode(jsValue)), reg);
+                m_jit.move(MacroAssembler::ImmPtr(JSValue::encode(jsValue)), gpr);
                 m_gprs.retain(gpr, virtualRegister, SpillOrderConstant);
                 info.fillJSValue(gpr, DataFormatJS);
                 unlock(gpr);
@@ -144,7 +142,7 @@ FPRReg JITCodeGenerator::fillDouble(NodeIndex nodeIndex)
             DataFormat spillFormat = info.spillFormat();
             ASSERT(spillFormat & DataFormatJS);
             m_gprs.retain(gpr, virtualRegister, SpillOrderSpilled);
-            m_jit.loadPtr(JITCompiler::addressFor(virtualRegister), reg);
+            m_jit.loadPtr(JITCompiler::addressFor(virtualRegister), gpr);
             info.fillJSValue(gpr, m_isSpeculative ? spillFormat : DataFormatJS);
             unlock(gpr);
         }
@@ -164,23 +162,21 @@ FPRReg JITCodeGenerator::fillDouble(NodeIndex nodeIndex)
         FPRReg fpr = fprAllocate();
         GPRReg tempGpr = allocate(); // FIXME: can we skip this allocation on the last use of the virtual register?
 
-        JITCompiler::RegisterID jsValueReg = JITCompiler::gprToRegisterID(jsValueGpr);
         JITCompiler::FPRegisterID fpReg = JITCompiler::fprToRegisterID(fpr);
-        JITCompiler::RegisterID tempReg = JITCompiler::gprToRegisterID(tempGpr);
 
-        JITCompiler::Jump isInteger = m_jit.branchPtr(MacroAssembler::AboveOrEqual, jsValueReg, JITCompiler::tagTypeNumberRegister);
+        JITCompiler::Jump isInteger = m_jit.branchPtr(MacroAssembler::AboveOrEqual, jsValueGpr, GPRInfo::tagTypeNumberRegister);
 
         m_jit.jitAssertIsJSDouble(jsValueGpr);
 
         // First, if we get here we have a double encoded as a JSValue
-        m_jit.move(jsValueReg, tempReg);
-        m_jit.addPtr(JITCompiler::tagTypeNumberRegister, tempReg);
-        m_jit.movePtrToDouble(tempReg, fpReg);
+        m_jit.move(jsValueGpr, tempGpr);
+        m_jit.addPtr(GPRInfo::tagTypeNumberRegister, tempGpr);
+        m_jit.movePtrToDouble(tempGpr, fpReg);
         JITCompiler::Jump hasUnboxedDouble = m_jit.jump();
 
         // Finally, handle integers.
         isInteger.link(&m_jit);
-        m_jit.convertInt32ToDouble(jsValueReg, fpReg);
+        m_jit.convertInt32ToDouble(jsValueGpr, fpReg);
         hasUnboxedDouble.link(&m_jit);
 
         m_gprs.release(jsValueGpr);
@@ -196,7 +192,7 @@ FPRReg JITCodeGenerator::fillDouble(NodeIndex nodeIndex)
         FPRReg fpr = fprAllocate();
         GPRReg gpr = info.gpr();
         m_gprs.lock(gpr);
-        JITCompiler::RegisterID reg = JITCompiler::gprToRegisterID(gpr);
+        GPRReg reg = gpr;
         JITCompiler::FPRegisterID fpReg = JITCompiler::fprToRegisterID(fpr);
 
         m_jit.convertInt32ToDouble(reg, fpReg);
@@ -240,21 +236,20 @@ GPRReg JITCodeGenerator::fillJSValue(NodeIndex nodeIndex)
     switch (info.registerFormat()) {
     case DataFormatNone: {
         GPRReg gpr = allocate();
-        JITCompiler::RegisterID reg = JITCompiler::gprToRegisterID(gpr);
 
         if (node.isConstant()) {
             if (isInt32Constant(nodeIndex)) {
                 info.fillJSValue(gpr, DataFormatJSInteger);
                 JSValue jsValue = jsNumber(valueOfInt32Constant(nodeIndex));
-                m_jit.move(MacroAssembler::ImmPtr(JSValue::encode(jsValue)), reg);
+                m_jit.move(MacroAssembler::ImmPtr(JSValue::encode(jsValue)), gpr);
             } else if (isDoubleConstant(nodeIndex)) {
                 info.fillJSValue(gpr, DataFormatJSDouble);
                 JSValue jsValue(JSValue::EncodeAsDouble, valueOfDoubleConstant(nodeIndex));
-                m_jit.move(MacroAssembler::ImmPtr(JSValue::encode(jsValue)), reg);
+                m_jit.move(MacroAssembler::ImmPtr(JSValue::encode(jsValue)), gpr);
             } else {
                 ASSERT(isJSConstant(nodeIndex));
                 JSValue jsValue = valueOfJSConstant(nodeIndex);
-                m_jit.move(MacroAssembler::ImmPtr(JSValue::encode(jsValue)), reg);
+                m_jit.move(MacroAssembler::ImmPtr(JSValue::encode(jsValue)), gpr);
                 info.fillJSValue(gpr, DataFormatJS);
             }
 
@@ -263,7 +258,7 @@ GPRReg JITCodeGenerator::fillJSValue(NodeIndex nodeIndex)
             DataFormat spillFormat = info.spillFormat();
             ASSERT(spillFormat & DataFormatJS);
             m_gprs.retain(gpr, virtualRegister, SpillOrderSpilled);
-            m_jit.loadPtr(JITCompiler::addressFor(virtualRegister), reg);
+            m_jit.loadPtr(JITCompiler::addressFor(virtualRegister), gpr);
             info.fillJSValue(gpr, m_isSpeculative ? spillFormat : DataFormatJS);
         }
         return gpr;
@@ -275,11 +270,11 @@ GPRReg JITCodeGenerator::fillJSValue(NodeIndex nodeIndex)
         // If not, we'll zero extend in place, so mark on the info that this is now type DataFormatInteger, not DataFormatJSInteger.
         if (m_gprs.isLocked(gpr)) {
             GPRReg result = allocate();
-            m_jit.orPtr(JITCompiler::tagTypeNumberRegister, JITCompiler::gprToRegisterID(gpr), JITCompiler::gprToRegisterID(result));
+            m_jit.orPtr(GPRInfo::tagTypeNumberRegister, gpr, result);
             return result;
         }
         m_gprs.lock(gpr);
-        m_jit.orPtr(JITCompiler::tagTypeNumberRegister, JITCompiler::gprToRegisterID(gpr));
+        m_jit.orPtr(GPRInfo::tagTypeNumberRegister, gpr);
         info.fillJSValue(gpr, DataFormatJSInteger);
         return gpr;
     }
@@ -377,9 +372,10 @@ void JITCodeGenerator::dump(const char* label)
             fprintf(stderr, "    % 3d:[__][__]", i);
         if (info.registerFormat() == DataFormatDouble)
             fprintf(stderr, ":fpr%d\n", info.fpr());
-        else if (info.registerFormat() != DataFormatNone)
-            fprintf(stderr, ":gpr%d\n", info.gpr());
-        else
+        else if (info.registerFormat() != DataFormatNone) {
+            ASSERT(info.gpr() != InvalidGPRReg);
+            fprintf(stderr, ":%s\n", GPRInfo::debugName(info.gpr()));
+        } else
             fprintf(stderr, "\n");
     }
     if (label)
@@ -391,15 +387,28 @@ void JITCodeGenerator::dump(const char* label)
 #if DFG_CONSISTENCY_CHECK
 void JITCodeGenerator::checkConsistency()
 {
-    VirtualRegister gprContents[numberOfGPRs];
+    bool failed = false;
+
+    for (gpr_iterator iter = m_gprs.begin(); iter != m_gprs.end(); ++iter) {
+        if (iter.isLocked()) {
+            fprintf(stderr, "DFG_CONSISTENCY_CHECK failed: gpr %s is locked.\n", iter.debugName());
+            failed = true;
+        }
+    }
+    for (FPRReg i = fpr0; i < numberOfFPRs; next(i)) {
+        if (m_fprs.isLocked(i)) {
+            fprintf(stderr, "DFG_CONSISTENCY_CHECK failed: fpr %d is locked.\n", i);
+            failed = true;
+        }
+    }
+
     VirtualRegister fprContents[numberOfFPRs];
 
-    for (unsigned i = 0; i < numberOfGPRs; ++i)
-        gprContents[i] = InvalidVirtualRegister;
     for (unsigned i = 0; i < numberOfFPRs; ++i)
         fprContents[i] = InvalidVirtualRegister;
     for (unsigned i = 0; i < m_generationInfo.size(); ++i) {
-        GenerationInfo& info = m_generationInfo[i];
+        VirtualRegister virtualRegister = (VirtualRegister)i;
+        GenerationInfo& info = m_generationInfo[virtualRegister];
         if (!info.alive())
             continue;
         switch (info.registerFormat()) {
@@ -413,37 +422,35 @@ void JITCodeGenerator::checkConsistency()
         case DataFormatJSCell: {
             GPRReg gpr = info.gpr();
             ASSERT(gpr != InvalidGPRReg);
-            gprContents[gpr] = (VirtualRegister)i;
+            if (m_gprs.name(gpr) != virtualRegister) {
+                fprintf(stderr, "DFG_CONSISTENCY_CHECK failed: name mismatch for virtual register %d (gpr %s).\n", virtualRegister, GPRInfo::debugName(gpr));
+                failed = true;
+            }
             break;
         }
         case DataFormatDouble: {
             FPRReg fpr = info.fpr();
             ASSERT(fpr != InvalidFPRReg);
-            fprContents[fpr] = (VirtualRegister)i;
+            fprContents[fpr] = virtualRegister;
             break;
         }
         }
     }
 
-    bool failed = false;
+    for (gpr_iterator iter = m_gprs.begin(); iter != m_gprs.end(); ++iter) {
+        VirtualRegister virtualRegister = iter.name();
+        if (virtualRegister == InvalidVirtualRegister)
+            continue;
 
-    for (GPRReg i = gpr0; i < numberOfGPRs; next(i)) {
-        if (m_gprs.isLocked(i)) {
-            fprintf(stderr, "DFG_CONSISTENCY_CHECK failed: gpr%d is locked.\n", i);
-            failed = true;
-        }
-        if (m_gprs.name(i) != gprContents[i]) {
-            fprintf(stderr, "DFG_CONSISTENCY_CHECK failed: name mismatch for gpr%d (%d != %d).\n", i, m_gprs.name(i), gprContents[i]);
+        GenerationInfo& info = m_generationInfo[virtualRegister];
+        if (iter.gpr() != info.gpr()) {
+            fprintf(stderr, "DFG_CONSISTENCY_CHECK failed: name mismatch for gpr %s (virtual register %d).\n", iter.debugName(), virtualRegister);
             failed = true;
         }
     }
     for (FPRReg i = fpr0; i < numberOfFPRs; next(i)) {
-        if (m_fprs.isLocked(i)) {
-            fprintf(stderr, "DFG_CONSISTENCY_CHECK failed: fpr%d is locked.\n", i);
-            failed = true;
-        }
         if (m_fprs.name(i) != fprContents[i]) {
-            fprintf(stderr, "DFG_CONSISTENCY_CHECK failed: name mismatch for fpr%d (%d != %d).\n", i, m_fprs.name(i), fprContents[i]);
+            fprintf(stderr, "DFG_CONSISTENCY_CHECK failed: name mismatch for fpr %d (%d != %d).\n", i, m_fprs.name(i), fprContents[i]);
             failed = true;
         }
     }
@@ -466,8 +473,6 @@ GPRTemporary::GPRTemporary(JITCodeGenerator* jit, SpeculateIntegerOperand& op1)
     : m_jit(jit)
     , m_gpr(InvalidGPRReg)
 {
-    // locking into a register may free for reuse!
-    op1.gpr();
     if (m_jit->canReuse(op1.index()))
         m_gpr = m_jit->reuse(op1.gpr());
     else
@@ -478,9 +483,6 @@ GPRTemporary::GPRTemporary(JITCodeGenerator* jit, SpeculateIntegerOperand& op1, 
     : m_jit(jit)
     , m_gpr(InvalidGPRReg)
 {
-    // locking into a register may free for reuse!
-    op1.gpr();
-    op2.gpr();
     if (m_jit->canReuse(op1.index()))
         m_gpr = m_jit->reuse(op1.gpr());
     else if (m_jit->canReuse(op2.index()))
@@ -493,8 +495,6 @@ GPRTemporary::GPRTemporary(JITCodeGenerator* jit, IntegerOperand& op1)
     : m_jit(jit)
     , m_gpr(InvalidGPRReg)
 {
-    // locking into a register may free for reuse!
-    op1.gpr();
     if (m_jit->canReuse(op1.index()))
         m_gpr = m_jit->reuse(op1.gpr());
     else
@@ -505,9 +505,6 @@ GPRTemporary::GPRTemporary(JITCodeGenerator* jit, IntegerOperand& op1, IntegerOp
     : m_jit(jit)
     , m_gpr(InvalidGPRReg)
 {
-    // locking into a register may free for reuse!
-    op1.gpr();
-    op2.gpr();
     if (m_jit->canReuse(op1.index()))
         m_gpr = m_jit->reuse(op1.gpr());
     else if (m_jit->canReuse(op2.index()))
@@ -520,8 +517,6 @@ GPRTemporary::GPRTemporary(JITCodeGenerator* jit, SpeculateCellOperand& op1)
     : m_jit(jit)
     , m_gpr(InvalidGPRReg)
 {
-    // locking into a register may free for reuse!
-    op1.gpr();
     if (m_jit->canReuse(op1.index()))
         m_gpr = m_jit->reuse(op1.gpr());
     else
@@ -532,8 +527,6 @@ GPRTemporary::GPRTemporary(JITCodeGenerator* jit, JSValueOperand& op1)
     : m_jit(jit)
     , m_gpr(InvalidGPRReg)
 {
-    // locking into a register may free for reuse!
-    op1.gpr();
     if (m_jit->canReuse(op1.index()))
         m_gpr = m_jit->reuse(op1.gpr());
     else
@@ -551,8 +544,6 @@ FPRTemporary::FPRTemporary(JITCodeGenerator* jit, DoubleOperand& op1)
     : m_jit(jit)
     , m_fpr(InvalidFPRReg)
 {
-    // locking into a register may free for reuse!
-    op1.fpr();
     if (m_jit->canReuse(op1.index()))
         m_fpr = m_jit->reuse(op1.fpr());
     else
@@ -563,9 +554,6 @@ FPRTemporary::FPRTemporary(JITCodeGenerator* jit, DoubleOperand& op1, DoubleOper
     : m_jit(jit)
     , m_fpr(InvalidFPRReg)
 {
-    // locking into a register may free for reuse!
-    op1.fpr();
-    op2.fpr();
     if (m_jit->canReuse(op1.index()))
         m_fpr = m_jit->reuse(op1.fpr());
     else if (m_jit->canReuse(op2.index()))
