@@ -1,3 +1,16 @@
+2011-04-28  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        PluginStream should play nice with strict OwnPtr
+        https://bugs.webkit.org/show_bug.cgi?id=59675
+
+        These failures appear when enabling strict OwnPtr on Qt.
+
+        * plugins/PluginStream.cpp:
+        (WebCore::PluginStream::PluginStream):
+        (WebCore::PluginStream::didReceiveData):
+
 2011-04-26  Alexander Pavlov  <apavlov@chromium.org>
 
         Reviewed by Pavel Feldman.

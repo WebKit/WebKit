@@ -63,7 +63,6 @@ PluginStream::PluginStream(PluginStreamClient* client, Frame* frame, const Resou
     , m_streamState(StreamBeforeStarted)
     , m_loadManually(false)
     , m_delayDeliveryTimer(this, &PluginStream::delayDeliveryTimerFired)
-    , m_deliveryData(0)
     , m_tempFileHandle(invalidPlatformFileHandle)
     , m_pluginFuncs(pluginFuncs)
     , m_instance(instance)
@@ -415,7 +414,7 @@ void PluginStream::didReceiveData(NetscapePlugInStreamLoader* loader, const char
 
     if (m_transferMode != NP_ASFILEONLY) {
         if (!m_deliveryData)
-            m_deliveryData.set(new Vector<char>);
+            m_deliveryData = adoptPtr(new Vector<char>);
 
         int oldSize = m_deliveryData->size();
         m_deliveryData->resize(oldSize + length);
