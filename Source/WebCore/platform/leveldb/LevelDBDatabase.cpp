@@ -63,7 +63,6 @@ static Vector<char> makeVector(const std::string& s)
     return res;
 }
 
-namespace {
 class ComparatorAdapter : public leveldb::Comparator {
 public:
     ComparatorAdapter(const LevelDBComparator* comparator)
@@ -85,7 +84,6 @@ public:
 private:
     const LevelDBComparator* m_comparator;
 };
-}
 
 LevelDBDatabase::LevelDBDatabase()
 {
