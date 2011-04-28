@@ -227,3 +227,6 @@ http/tests/inspector/resource-har-conversion.html
 fast/preloader/document-write.html
 fast/preloader/document-write-2.html
 fast/preloader/scan-body-from-head-script.html
+
+# https://bugs.webkit.org/show_bug.cgi?id=51807
+fast/blockflow/broken-ideographic-font.html

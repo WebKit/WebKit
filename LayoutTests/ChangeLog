@@ -1,3 +1,9 @@
+2011-04-27  Andy Estes  <aestes@apple.com>
+
+        Skip fast/blockflow/broken-ideographic-font.html on Leopard.
+
+        * platform/mac-leopard/Skipped:
+
 2011-04-27  Kenneth Russell  <kbr@google.com>
 
         Unreviewed, test expectation updates.
