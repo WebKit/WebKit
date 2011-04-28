@@ -31,21 +31,154 @@
 WebInspector.HeapSnapshotLoader = function()
 {
     this._json = "";
+    this._state = "find-snapshot-info";
+    this._snapshot = {};
 }
 
 WebInspector.HeapSnapshotLoader.prototype = {
+    _findBalancedCurlyBrackets: function()
+    {
+        var counter = 0;
+        var openingBracket = "{".charCodeAt(0), closingBracket = "}".charCodeAt(0);
+        for (var i = 0, l = this._json.length; i < l; ++i) {
+            var character = this._json.charCodeAt(i);
+            if (character === openingBracket)
+                ++counter;
+            else if (character === closingBracket) {
+                if (--counter === 0)
+                    return i + 1;
+            }
+        }
+        return -1;
+    },
+
     finishLoading: function()
     {
         if (!this._json)
             return null;
-        var rawSnapshot = JSON.parse(this._json);
+        this._parseStringsArray();
         this._json = "";
-        return new WebInspector.HeapSnapshot(rawSnapshot);
+        var result = new WebInspector.HeapSnapshot(this._snapshot);
+        this._json = "";
+        this._snapshot = {};
+        return result;
+    },
+
+    _parseNodes: function()
+    {
+        var index = 0;
+        var char0 = "0".charCodeAt(0), char9 = "9".charCodeAt(0), closingBracket = "]".charCodeAt(0);
+        var length = this._json.length;
+        while (true) {
+            while (index < length) {
+                var code = this._json.charCodeAt(index);
+                if (char0 <= code && code <= char9)
+                    break;
+                else if (code === closingBracket) {
+                    this._json = this._json.slice(index + 1);
+                    // Shave off provisionally allocated space.
+                    this._snapshot.nodes = this._snapshot.nodes.slice(0);
+                    return false;
+                }
+                ++index;
+            }
+            if (index === length) {
+                this._json = "";
+                return true;
+            }
+            var startIndex = index;
+            while (index < length) {
+                var code = this._json.charCodeAt(index);
+                if (char0 > code || code > char9)
+                    break;
+                ++index;
+            }
+            if (index === length) {
+                this._json = this._json.slice(startIndex);
+                return true;
+            }
+            this._snapshot.nodes.push(parseInt(this._json.slice(startIndex, index)));
+        }
+    },
+
+    _parseStringsArray: function()
+    {
+        var closingBracketIndex = this._json.lastIndexOf("]");
+        if (closingBracketIndex === -1)
+            throw new Error("Incomplete JSON");
+        this._json = this._json.slice(0, closingBracketIndex + 1);
+        this._snapshot.strings = JSON.parse(this._json);
     },
 
     pushJSONChunk: function(chunk)
     {
         this._json += chunk;
+        switch (this._state) {
+        case "find-snapshot-info": {
+            var snapshotToken = "\"snapshot\"";
+            var snapshotTokenIndex = this._json.indexOf(snapshotToken);
+            if (snapshotTokenIndex === -1)
+                throw new Error("Snapshot token not found");
+            this._json = this._json.slice(snapshotTokenIndex + snapshotToken.length + 1);
+            this._state = "parse-snapshot-info";
+            this.pushJSONChunk("");
+            break;
+        }
+        case "parse-snapshot-info": {
+            var closingBracketIndex = this._findBalancedCurlyBrackets();
+            if (closingBracketIndex === -1)
+                return;
+            this._snapshot.snapshot = JSON.parse(this._json.slice(0, closingBracketIndex));
+            this._json = this._json.slice(closingBracketIndex);
+            this._state = "find-nodes";
+            this.pushJSONChunk("");
+            break;
+        }
+        case "find-nodes": {
+            var nodesToken = "\"nodes\"";
+            var nodesTokenIndex = this._json.indexOf(nodesToken);
+            if (nodesTokenIndex === -1)
+                return;
+            var bracketIndex = this._json.indexOf("[", nodesTokenIndex);
+            if (bracketIndex === -1)
+                return;
+            this._json = this._json.slice(bracketIndex + 1);
+            this._state = "parse-nodes-meta-info";
+            this.pushJSONChunk("");
+            break;
+        }
+        case "parse-nodes-meta-info": {
+            var closingBracketIndex = this._findBalancedCurlyBrackets();
+            if (closingBracketIndex === -1)
+                return;
+            this._snapshot.nodes = [JSON.parse(this._json.slice(0, closingBracketIndex))];
+            this._json = this._json.slice(closingBracketIndex);
+            this._state = "parse-nodes";
+            this.pushJSONChunk("");
+            break;          
+        }
+        case "parse-nodes": {
+            if (this._parseNodes())
+                return;
+            this._state = "find-strings";
+            this.pushJSONChunk("");
+            break;
+        }
+        case "find-strings": {
+            var stringsToken = "\"strings\"";
+            var stringsTokenIndex = this._json.indexOf(stringsToken);
+            if (stringsTokenIndex === -1)
+                return;
+            var bracketIndex = this._json.indexOf("[", stringsTokenIndex);
+            if (bracketIndex === -1)
+                return;
+            this._json = this._json.slice(bracketIndex);
+            this._state = "accumulate-strings";
+            break;
+        }
+        case "accumulate-strings":
+            break;
+        }
     }
 };
 

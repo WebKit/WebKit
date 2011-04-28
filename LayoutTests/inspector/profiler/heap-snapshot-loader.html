@@ -1,0 +1,39 @@
+<html>
+<head>
+<script src="../../http/tests/inspector/inspector-test.js"></script>
+<script src="heap-snapshot-test.js"></script>
+<script>
+
+function test()
+{
+    InspectorTest.assertSnapshotEquals = function(reference, actual)
+    {
+        InspectorTest.assertEquals(JSON.stringify(reference), JSON.stringify(actual));
+    }
+
+    InspectorTest.runTestSuite([
+        function heapSnapshotLoaderTest(next)
+        {
+            var source = InspectorTest.createHeapSnapshotMock();
+            var sourceStringified = JSON.stringify(source);
+            var partSize = sourceStringified.length >> 3;
+            var loader = new WebInspector.HeapSnapshotLoader();
+            for (var i = 0, l = sourceStringified.length; i < l; i += partSize)
+                loader.pushJSONChunk(sourceStringified.slice(i, i + partSize));
+            var result = loader.finishLoading();
+            InspectorTest.assertSnapshotEquals(new WebInspector.HeapSnapshot(source), result);
+            next();
+        }
+    ]);
+}
+
+</script>
+</head>
+
+<body onload="runTest()">
+<p>
+This test checks HeapSnapshots loader.
+</p>
+
+</body>
+</html>

@@ -1,3 +1,22 @@
+2011-04-28  Mikhail Naganov  <mnaganov@chromium.org>
+
+        Reviewed by Yury Semikhatsky.
+
+        Web Inspector: [Chromium] Optimize detailed heap snapshots loading / parsing.
+        https://bugs.webkit.org/show_bug.cgi?id=59454
+
+        Test: inspector/profiler/heap-snapshot-loader.html
+
+        * inspector/front-end/HeapSnapshot.js:
+        (WebInspector.HeapSnapshotLoader):
+        (WebInspector.HeapSnapshotLoader.prototype._findBalancedCurlyBrackets):
+        (WebInspector.HeapSnapshotLoader.prototype.finishLoading):
+        (WebInspector.HeapSnapshotLoader.prototype._parseNodes):
+        (WebInspector.HeapSnapshotLoader.prototype._parseStringsArray):
+        (WebInspector.HeapSnapshotLoader.prototype.pushJSONChunk):
+        * inspector/front-end/HeapSnapshotProxy.js:
+        (WebInspector.HeapSnapshotFakeWorker.prototype.postMessage):
+
 2011-04-28  ojab  <ojab@ojab.ru>
 
         Reviewed by David Levin.

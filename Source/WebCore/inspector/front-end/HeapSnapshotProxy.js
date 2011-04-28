@@ -63,7 +63,8 @@ WebInspector.HeapSnapshotFakeWorker.prototype = {
     {
         function dispatch()
         {
-            this._dispatcher.dispatchMessage({data: message});
+            if (this._dispatcher)
+                this._dispatcher.dispatchMessage({data: message});
         }
         setTimeout(dispatch.bind(this), 0);
     },

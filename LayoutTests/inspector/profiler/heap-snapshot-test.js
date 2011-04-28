@@ -40,6 +40,7 @@ InspectorTest.createHeapSnapshotMockObject = function()
 InspectorTest.createHeapSnapshotMock = function()
 {
     return {
+        snapshot: {},
         nodes: [
             { fields: ["type", "name", "id", "self_size", "retained_size", "dominator", "children_count", "children"],
               types: [["hidden", "object"], "", "", "", "", "", "", { fields: ["type", "name_or_index", "to_node"], types: [["element", "property"], "", ""] }] },
@@ -61,8 +62,7 @@ InspectorTest.createHeapSnapshotMock = function()
             1, 3, 4, 4, 10,  1, 1, 1, 11, 57,
             1, 4, 5, 5,  5, 27, 0,
             1, 5, 6, 6,  6, 40, 0],
-        strings: ["", "A", "B", "C", "D", "E", "a", "b", "ac", "bc", "bd", "ce"],
-        snapshot: {}
+        strings: ["", "A", "B", "C", "D", "E", "a", "b", "ac", "bc", "bd", "ce"]
     };
 };
 
