@@ -112,8 +112,8 @@ function transactionCompleted1()
     evalAndLog("trans.oncomplete = transactionCompleted2");
     store = evalAndLog("store = trans.objectStore('storeName')");
     request = evalAndLog("store.add({x: 'value4', y: 'zzz4'}, 'key4')");
-    request.onsuccess = unexpectedSuccessCallback;
-    request.onerror = throwAndCatch;
+    request.onsuccess = function() { testPassed("key4 added"); }
+    request.onerror = unexpectedErrorCallback;
 }
 
 function transactionCompleted2()

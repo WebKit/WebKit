@@ -2,6 +2,22 @@
 
         Reviewed by Tony Chang.
 
+        Should call done() from unexpectedErrorCallback so failing IndexedDB tests don't time out
+        https://bugs.webkit.org/show_bug.cgi?id=59569
+
+        * storage/indexeddb/exception-in-event-aborts-expected.txt:
+        * storage/indexeddb/exception-in-event-aborts.html:
+        * storage/indexeddb/resources/shared.js:
+        (unexpectedSuccessCallback):
+        (unexpectedErrorCallback):
+        (unexpectedAbortCallback):
+        (unexpectedCompleteCallback):
+        (unexpectedBlockedCallback):
+
+2011-04-27  Mark Pilgrim  <pilgrim@chromium.org>
+
+        Reviewed by Tony Chang.
+
         Port Mozilla's IndexedDB tests: creating and deleting indexes
         https://bugs.webkit.org/show_bug.cgi?id=59635
 

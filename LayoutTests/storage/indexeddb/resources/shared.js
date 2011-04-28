@@ -8,26 +8,31 @@ function done()
 function unexpectedSuccessCallback()
 {
     testFailed("Success function called unexpectedly.");
+    done();
 }
 
 function unexpectedErrorCallback()
 {
     testFailed("Error function called unexpectedly: (" + event.target.errorCode + ") " + event.target.webkitErrorMessage);
+    done();
 }
 
 function unexpectedAbortCallback()
 {
     testFailed("Abort function called unexpectedly!");
+    done();
 }
 
 function unexpectedCompleteCallback()
 {
     testFailed("oncomplete function called unexpectedly!");
+    done();
 }
 
 function unexpectedBlockedCallback()
 {
     testFailed("onblocked called unexpectedly");
+    done();
 }
 
 function evalAndExpectException(cmd, expected)

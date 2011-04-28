@@ -51,7 +51,7 @@ trans.onabort = unexpectedAbortCallback
 trans.oncomplete = transactionCompleted2
 store = trans.objectStore('storeName')
 store.add({x: 'value4', y: 'zzz4'}, 'key4')
-FAIL Success function called unexpectedly.
+PASS key4 added
 
 PASS The transaction completed.
 
