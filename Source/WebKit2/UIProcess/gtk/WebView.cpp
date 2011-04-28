@@ -45,28 +45,6 @@ using namespace WebCore;
 
 namespace WebKit {
 
-WebPageProxy* WebView::page() const
-{
-    return webkitWebViewBaseGetPage(WEBKIT_WEB_VIEW_BASE(m_viewWidget));
-}
-
-void WebView::handleFocusInEvent(GtkWidget* widget)
-{
-    if (!(m_isPageActive)) {
-        m_isPageActive = true;
-        page()->viewStateDidChange(WebPageProxy::ViewWindowIsActive);
-    }
-
-    page()->viewStateDidChange(WebPageProxy::ViewIsFocused);
-}
-
-void WebView::handleFocusOutEvent(GtkWidget* widget)
-{
-    m_isPageActive = false;
-    page()->viewStateDidChange(WebPageProxy::ViewWindowIsActive);
-}
-
-
 static void backspaceCallback(GtkWidget* widget, WebView* client)
 {
     g_signal_stop_emission_by_name(widget, "backspace");
@@ -244,7 +222,6 @@ static const KeyPressEntry keyPressEntries[] = {
 
 WebView::WebView(GtkWidget* viewWidget)
     : m_viewWidget(viewWidget)
-    , m_isPageActive(true)
     , m_nativeWidget(gtk_text_view_new())
 {
     g_signal_connect(m_nativeWidget.get(), "backspace", G_CALLBACK(backspaceCallback), this);
@@ -261,31 +238,6 @@ WebView::WebView(GtkWidget* viewWidget)
 
 WebView::~WebView()
 {
-}
-
-void WebView::paint(GtkWidget* widget, GdkRectangle rect, cairo_t* cr)
-{
-    page()->drawingArea()->paint(IntRect(rect), cr);
-}
-
-void WebView::setSize(GtkWidget*, IntSize windowSize)
-{
-    page()->drawingArea()->setSize(windowSize, IntSize());
-}
-
-void WebView::handleKeyboardEvent(GdkEventKey* event)
-{
-    page()->handleKeyboardEvent(NativeWebKeyboardEvent(reinterpret_cast<GdkEvent*>(event)));
-}
-
-void WebView::handleMouseEvent(GdkEvent* event, int currentClickCount)
-{
-    page()->handleMouseEvent(NativeWebMouseEvent(event, currentClickCount));
-}
-
-void WebView::handleWheelEvent(GdkEventScroll* event)
-{
-    page()->handleWheelEvent(WebEventFactory::createWebWheelEvent(event));
 }
 
 void WebView::getEditorCommandsForKeyEvent(const NativeWebKeyboardEvent& event, Vector<WTF::String>& commandList)
@@ -334,20 +286,11 @@ void WebView::getEditorCommandsForKeyEvent(const NativeWebKeyboardEvent& event, 
     commandList.append(m_pendingEditorCommands);
 }
 
-bool WebView::isActive()
-{
-    return m_isPageActive;
-}
-
-void WebView::close()
-{
-    page()->close();
-}
-
 // PageClient's pure virtual functions
 PassOwnPtr<DrawingAreaProxy> WebView::createDrawingAreaProxy()
 {
-    return ChunkedUpdateDrawingAreaProxy::create(WEBKIT_WEB_VIEW_BASE(m_viewWidget), page());
+    WebKitWebViewBase* view = WEBKIT_WEB_VIEW_BASE(m_viewWidget);
+    return ChunkedUpdateDrawingAreaProxy::create(view, webkitWebViewBaseGetPage(view));
 }
 
 void WebView::setViewNeedsDisplay(const WebCore::IntRect&)

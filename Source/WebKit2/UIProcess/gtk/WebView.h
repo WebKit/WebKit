@@ -47,24 +47,10 @@ public:
         return adoptPtr(new WebView(viewWidget));
     }
 
-    WebPageProxy* page() const;
-
-    void handleFocusInEvent(GtkWidget*);
-    void handleFocusOutEvent(GtkWidget*);
-
-    void paint(GtkWidget*, GdkRectangle, cairo_t*);
-    void setSize(GtkWidget*, WebCore::IntSize);
-    void handleKeyboardEvent(GdkEventKey*);
-    void handleWheelEvent(GdkEventScroll*);
-    void handleMouseEvent(GdkEvent*, int);
-
     void addPendingEditorCommand(const char* command) { m_pendingEditorCommands.append(WTF::String(command)); }
 
 private:
     WebView(GtkWidget*);
-
-    bool isActive();
-    void close();
 
     // PageClient
     virtual PassOwnPtr<DrawingAreaProxy> createDrawingAreaProxy();
@@ -114,7 +100,6 @@ private:
 
     // Members of WebView class
     GtkWidget* m_viewWidget;
-    bool m_isPageActive;
     Vector<WTF::String> m_pendingEditorCommands;
     GRefPtr<GtkWidget> m_nativeWidget;
 };

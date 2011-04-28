@@ -61,8 +61,6 @@ GType webkitWebViewBaseGetType();
 
 WebKitWebViewBase* webkitWebViewBaseCreate(WebContext*, WebPageGroup*);
 
-WebView* webkitWebViewBaseGetWebViewInstance(WebKitWebViewBase*);
-
 GtkIMContext* webkitWebViewBaseGetIMContext(WebKitWebViewBase*);
 
 WebPageProxy* webkitWebViewBaseGetPage(WebKitWebViewBase*);

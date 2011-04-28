@@ -2,6 +2,36 @@
 
         Reviewed by Martin Robinson.
 
+        [GTK] Use the WebPage object in WebKitWebViewBase
+        https://bugs.webkit.org/show_bug.cgi?id=59683
+
+        It simplifies the implementation of the event callbacks. Remove
+        also all the methods from the page client that are no longer
+        needed.
+
+        * UIProcess/API/gtk/WebKitWebViewBase.cpp:
+        (webkitWebViewBaseInit):
+        (webViewExpose):
+        (webViewDraw):
+        (webViewSizeAllocate):
+        (webViewFocusInEvent):
+        (webViewFocusOutEvent):
+        (webViewKeyPressEvent):
+        (webViewKeyReleaseEvent):
+        (webViewButtonPressEvent):
+        (webViewButtonReleaseEvent):
+        (webViewScrollEvent):
+        (webViewMotionNotifyEvent):
+        * UIProcess/API/gtk/WebKitWebViewBase.h:
+        * UIProcess/gtk/WebView.cpp:
+        (WebKit::WebView::WebView):
+        (WebKit::WebView::createDrawingAreaProxy):
+        * UIProcess/gtk/WebView.h:
+
+2011-04-28  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Reviewed by Martin Robinson.
+
         [GTK] Create the page client in the view widget
         https://bugs.webkit.org/show_bug.cgi?id=59679
 
