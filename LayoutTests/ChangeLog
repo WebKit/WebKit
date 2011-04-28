@@ -1,3 +1,9 @@
+2011-04-28  Adam Roben  <aroben@apple.com>
+
+        Update expected results for a hyphenation test
+
+        * platform/mac/fast/text/hyphenate-limit-before-after-expected.txt:
+
 2011-04-28  Sam Weinig  <sam@webkit.org>
 
         Add failing test to Leopard skipped list.
