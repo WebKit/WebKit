@@ -56,6 +56,7 @@
                     { "name": "google-mac-2", "platform": "chromium-mac" },
                     { "name": "google-linux-2", "platform": "chromium-linux" },
                     { "name": "google-new-tests", "platform": "mac-snowleopard" },
+                    { "name": "google-new-tests-leopard", "platform": "mac-leopard" },
 
                     { "name": "wincairo-1", "platform": "wincairo" },
 
@@ -99,6 +100,11 @@
                     { "name": "SnowLeopard Intel Release (WebKit2 Tests)", "type": "TestWebKit2", "builddir": "snowleopard-intel-release-tests-wk2",
                       "platform": "mac-snowleopard", "configuration": "release", "architectures": ["x86_64"],
                       "slavenames": ["apple-xserve-7", "test-slave"]
+                    },
+                    {
+                      "name": "Leopard Intel Release (NRWT)", "type": "NewBuildAndTest", "builddir": "google-new-tests-leopard",
+                      "platform": "mac-leopard", "configuration": "release", "architectures": ["i386"],
+                      "slavenames": ["google-new-tests-leopard"]
                     },
                     {
                       "name": "SnowLeopard Intel Release (NRWT)", "type": "NewBuildAndTest", "builddir": "google-new-tests",
