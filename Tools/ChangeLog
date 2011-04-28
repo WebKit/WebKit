@@ -1,3 +1,10 @@
+2011-04-28  Ojan Vafai  <ojan@chromium.org>
+
+        Avoid crashing when running new-run-webkit-tests outside of
+        version control.
+
+        * Scripts/webkitpy/layout_tests/layout_package/manager.py:
+
 2011-04-28  Xan Lopez  <xlopez@igalia.com>
 
         Unreviewed build fix.
