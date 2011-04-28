@@ -108,6 +108,7 @@ sub getDefaultConfigForTestDirectory
         "-c", "TypesConfig \"$typesConfig\"",
         "-c", "PidFile \"$httpdPidFile\"",
         "-c", "ScoreBoardFile \"$httpdScoreBoardFile\"",
+        "-c", "php_value log_errors 1", # PHP errors should show up in Apache's error log.
     );
 
     push @httpdArgs, (

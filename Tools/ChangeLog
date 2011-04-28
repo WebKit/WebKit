@@ -1,3 +1,18 @@
+2011-04-27  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Adam Barth.
+
+        error_log.txt should include PHP errors
+        https://bugs.webkit.org/show_bug.cgi?id=59643
+
+        Turns out this was really easy after I finally learned
+        enough about PHP to do it...
+
+        I'm adding this in hopes of better tracking down
+        our random http failures.
+
+        * Scripts/webkitperl/httpd.pm:
+
 2011-04-27  David Levin  <levin@chromium.org>
 
         Reviewed by Adam Barth.
