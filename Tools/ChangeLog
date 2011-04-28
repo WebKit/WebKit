@@ -1,3 +1,17 @@
+2011-04-28  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Adam Barth.
+
+        EWS Bubbles should show commit-queue position when patch is in the commit-queue
+        https://bugs.webkit.org/show_bug.cgi?id=59744
+
+        This was actually just a 2 line change to statusbubble.py.
+        I also cleaned up statusbubble.html a little while I was there
+        (the links are now actual <a> tags and have hover).
+
+        * QueueStatusServer/handlers/statusbubble.py:
+        * QueueStatusServer/templates/statusbubble.html:
+
 2011-04-28  Dirk Pranke  <dpranke@chromium.org>
 
         Reviewed by Eric Seidel.

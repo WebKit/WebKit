@@ -23,9 +23,17 @@ body {
     background-color: white;
     font-size: 11px;
     cursor: pointer;
+    text-decoration: none;
+    color: black;
+}
+.status:hover {
+    border-color: #666;
 }
 .none {
     cursor: auto;
+}
+.none:hover {
+    border-color: #AAA;
 }
 .pass {
     background-color: #8FDF5F;
@@ -48,9 +56,6 @@ body {
 }
 </style>
 <script>
-function statusDetail(patch_id) {
-  top.location = "/patch/" + patch_id
-}
 window.addEventListener("message", function(e) {
   if (e.data == 'containerMetrics') {
     e.source.postMessage({'width': bubbleContainer.offsetWidth, 'height': bubbleContainer.offsetHeight},
@@ -63,14 +68,17 @@ window.addEventListener("message", function(e) {
 <body>
 <div id="bubbleContainer">
   {% for bubble in bubbles %}
-  <div class="status {{ bubble.state }}"{% if bubble.status %}
-      onclick="statusDetail({{ bubble.attachment_id }})"
-      title="{{ bubble.status.date|timesince }} ago"{% endif %}>
+  <a class="status {{ bubble.state }}"
+  {% if bubble.status %}
+      href="http://queues.webkit.org/patch/{{ bubble.attachment_id }}"
+      title="{{ bubble.status.date|timesince }} ago"
+  {% endif %}
+  >
     {{ bubble.name }}
     {% if bubble.queue_position %}
     <span class="queue_position">#{{ bubble.queue_position }}</span>
     {% endif %}
-  </div>
+  </a>
   {% endfor %}
 </div>
 </body>

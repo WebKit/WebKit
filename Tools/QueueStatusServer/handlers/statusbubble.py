@@ -37,8 +37,6 @@ from model.queues import Queue
 
 
 class StatusBubble(webapp.RequestHandler):
-    _queues_to_display = [queue for queue in Queue.all() if queue.is_ews()]
-
     def _build_bubble(self, queue, attachment):
         queue_status = attachment.status_for_queue(queue)
         bubble = {
@@ -52,7 +50,8 @@ class StatusBubble(webapp.RequestHandler):
 
     def get(self, attachment_id):
         attachment = Attachment(int(attachment_id))
-        bubbles = [self._build_bubble(queue, attachment) for queue in self._queues_to_display]
+        # Show all queue positions, even the commit-queue.
+        bubbles = [self._build_bubble(queue, attachment) for queue in Queue.all() if queue.is_ews() or attachment.position_in_queue(queue)]
         template_values = {
             "bubbles": bubbles,
         }
