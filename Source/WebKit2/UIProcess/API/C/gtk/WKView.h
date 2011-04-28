@@ -29,15 +29,12 @@
 #define WKView_h
 
 #include <WebKit2/WKBase.h>
-#include <gtk/gtk.h>
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
 WK_EXPORT WKViewRef WKViewCreate(WKContextRef context, WKPageGroupRef pageGroup);
-
-WK_EXPORT GtkWidget* WKViewGetWindow(WKViewRef view);
 
 WK_EXPORT WKPageRef WKViewGetPage(WKViewRef view);
 

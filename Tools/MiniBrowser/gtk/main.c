@@ -98,7 +98,7 @@ static GtkWidget *createWindow(WKViewRef webView)
 
     GtkWidget *vbox = gtk_vbox_new(FALSE, 0);
     gtk_box_pack_start(GTK_BOX(vbox), createToolbar(uriEntry, webView), FALSE, FALSE, 0);
-    gtk_box_pack_start(GTK_BOX(vbox), WKViewGetWindow(webView), TRUE, TRUE, 0);
+    gtk_box_pack_start(GTK_BOX(vbox), GTK_WIDGET(webView), TRUE, TRUE, 0);
 
     gtk_container_add(GTK_CONTAINER(window), vbox);
 
@@ -130,7 +130,7 @@ int main(int argc, char *argv[])
     WKPageLoadURL(WKViewGetPage(webView), WKURLCreateWithURL(url));
     g_free(url);
 
-    gtk_widget_grab_focus(WKViewGetWindow(webView));
+    gtk_widget_grab_focus(GTK_WIDGET(webView));
     gtk_widget_show_all(mainWindow);
     gtk_main();
 

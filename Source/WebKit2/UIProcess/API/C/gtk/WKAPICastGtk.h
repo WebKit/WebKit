@@ -31,11 +31,11 @@
 #error "Please #include \"WKAPICast.h\" instead of this file directly."
 #endif
 
+typedef struct _WebKitWebViewBase WebKitWebViewBase;
+
 namespace WebKit {
 
-class WebView;
-
-WK_ADD_API_MAPPING(WKViewRef, WebView)
+WK_ADD_API_MAPPING(WKViewRef, WebKitWebViewBase)
 
 }
 

@@ -1,3 +1,16 @@
+2011-04-28  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Reviewed by Martin Robinson.
+
+        [GTK] WKView should be a GtkWidget
+        https://bugs.webkit.org/show_bug.cgi?id=59603
+
+        Don't use WKViewGetWindow(), use WKView as a GtkWidget instead.
+
+        * MiniBrowser/gtk/main.c:
+        (createWindow):
+        (main):
+
 2011-04-28  Gabor Rapcsanyi  <rgabor@webkit.org>
 
         Reviewed by Csaba Osztrogonác.

@@ -29,6 +29,7 @@
 #include "WKView.h"
 
 #include "WKAPICast.h"
+#include "WebKitWebViewBase.h"
 #include "WebView.h"
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefPtr.h>
@@ -40,17 +41,12 @@ using namespace WebCore;
 WKViewRef WKViewCreate(WKContextRef contextRef, WKPageGroupRef pageGroupRef)
 {
     RefPtr<WebView> view = WebView::create(toImpl(contextRef), toImpl(pageGroupRef));
-    return toAPI(view.release().leakRef());
-}
-
-GtkWidget* WKViewGetWindow(WKViewRef viewRef)
-{
-    return toImpl(viewRef)->window();
+    return toAPI(WEBKIT_WEB_VIEW_BASE(view.release().leakRef()->window()));
 }
 
 WKPageRef WKViewGetPage(WKViewRef viewRef)
 {
-    return toAPI(toImpl(viewRef)->page());
+    return toAPI(webkitWebViewBaseGetWebViewInstance(toImpl(viewRef))->page());
 }
 
 WKURLRef WKURLCreateWithURL(const char* url)
