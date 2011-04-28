@@ -392,7 +392,7 @@ static BOOL _PDFSelectionsAreEqual(PDFSelection *selectionA, PDFSelection *selec
         while ((menuItem = [e nextObject]) != nil) {
             // copy menuItem since a given menuItem can be in only one menu at a time, and we don't
             // want to mess with the menu returned from PDFKit.
-            [menu addItem:[menuItem copy]];
+            [menu addItem:[[menuItem copy] autorelease]];
         }
     }
     

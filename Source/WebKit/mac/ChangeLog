@@ -1,3 +1,13 @@
+2011-04-28  David Kilzer  <ddkilzer@apple.com>
+
+        <http://webkit.org/b/59727> -[WebPDFView menuForEvent:] leaks NSMenuItem objects
+
+        Reviewed by Dan Bernstein.
+
+        * WebView/WebPDFView.mm:
+        (-[WebPDFView menuForEvent:]): Call -autorelease after copying
+        each NSMenuItem.  Regressed in r9566 for Bug 3711.
+
 2011-04-28  Enrica Casucci  <enrica@apple.com>
 
         Reviewed by Beth Dakin.
