@@ -197,9 +197,12 @@ WebInspector.DebuggerPresentationModel.prototype = {
         }
     },
 
-    toggleFormatSourceFiles: function()
+    setFormatSourceFiles: function(formatSourceFiles)
     {
-        this._formatSourceFiles = !this._formatSourceFiles;
+        if (this._formatSourceFiles === formatSourceFiles)
+            return;
+
+        this._formatSourceFiles = formatSourceFiles;
 
         for (var id in this._sourceFiles) {
             var sourceFile = this._sourceFiles[id];
@@ -219,11 +222,6 @@ WebInspector.DebuggerPresentationModel.prototype = {
 
         if (WebInspector.debuggerModel.callFrames)
             this._debuggerPaused();
-    },
-
-    formatSourceFilesToggled: function()
-    {
-        return this._formatSourceFiles;
     },
 
     _formatter: function()

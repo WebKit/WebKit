@@ -651,8 +651,6 @@ WebInspector.SourceFrame.prototype = {
 
     populateTextAreaContextMenu: function(contextMenu)
     {
-        if (this._delegate.debuggingSupported())
-            contextMenu.appendCheckboxItem(WebInspector.UIString("Pretty print"), this._delegate.toggleFormatSourceFiles.bind(this._delegate), this._delegate.formatSourceFilesToggled());
     },
 
     suggestedFileName: function()
@@ -1008,16 +1006,6 @@ WebInspector.SourceFrameDelegate.prototype = {
     },
 
     releaseEvaluationResult: function()
-    {
-        // Should be implemented by subclasses.
-    },
-
-    toggleFormatSourceFiles: function()
-    {
-        // Should be implemented by subclasses.
-    },
-
-    formatSourceFilesToggled: function()
     {
         // Should be implemented by subclasses.
     },

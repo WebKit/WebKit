@@ -1014,8 +1014,8 @@ WebInspector.ScriptsPanel.prototype = {
     _toggleFormatSourceFiles: function()
     {
         WebInspector.panels.scripts.reset();
-        this._presentationModel.toggleFormatSourceFiles();
-        this._toggleFormatSourceFilesButton.toggled = this._presentationModel.formatSourceFilesToggled();
+        this._toggleFormatSourceFilesButton.toggled = !this._toggleFormatSourceFilesButton.toggled;
+        this._presentationModel.setFormatSourceFiles(this._toggleFormatSourceFilesButton.toggled);
     }
 }
 
@@ -1098,17 +1098,6 @@ WebInspector.SourceFrameDelegateForScriptsPanel.prototype = {
     releaseEvaluationResult: function()
     {
         RuntimeAgent.releaseObjectGroup(this._popoverObjectGroup);
-    },
-
-    toggleFormatSourceFiles: function()
-    {
-        WebInspector.panels.scripts.reset();
-        this._model.toggleFormatSourceFiles();
-    },
-
-    formatSourceFilesToggled: function()
-    {
-        return this._model.formatSourceFilesToggled();
     },
 
     suggestedFileName: function()

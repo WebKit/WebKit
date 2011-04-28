@@ -1,3 +1,17 @@
+2011-04-28  Pavel Podivilov  <podivilov@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: remove "Pretty print" source frame context menu item.
+        https://bugs.webkit.org/show_bug.cgi?id=59709
+
+        * inspector/front-end/DebuggerPresentationModel.js:
+        (WebInspector.DebuggerPresentationModel.prototype.setFormatSourceFiles):
+        * inspector/front-end/ScriptsPanel.js:
+        (WebInspector.ScriptsPanel.prototype._toggleFormatSourceFiles):
+        * inspector/front-end/SourceFrame.js:
+        (WebInspector.SourceFrame.prototype.populateTextAreaContextMenu):
+
 2011-04-28  Satish Sampath  <satish@chromium.org>
 
         Reviewed by Tony Gentilcore.
