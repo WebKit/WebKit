@@ -64,7 +64,7 @@ typedef struct HICON__ *HICON;
 typedef HICON HCURSOR;
 #endif
 
-#if PLATFORM(WIN) || PLATFORM(MAC) || PLATFORM(GTK) || PLATFORM(QT)
+#if PLATFORM(WIN) || PLATFORM(MAC) || PLATFORM(GTK) || PLATFORM(QT) || PLATFORM(EFL)
 #define WTF_USE_LAZY_NATIVE_CURSOR 1
 #endif
 
@@ -154,9 +154,7 @@ namespace WebCore {
         static const Cursor& fromType(Cursor::Type);
 
         Cursor()
-#if !PLATFORM(EFL)
             : m_platformCursor(0)
-#endif
         {
         }
 

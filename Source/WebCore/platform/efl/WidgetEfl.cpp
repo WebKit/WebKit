@@ -263,7 +263,7 @@ void Widget::setCursor(const Cursor& cursor)
     if (!evas())
          return;
 
-    const char *group = cursor.impl();
+    const char* group = cursor.platformCursor();
     if (!group || String(group) == m_data->m_cursorGroup)
         return;
 

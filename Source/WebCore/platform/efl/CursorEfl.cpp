@@ -43,367 +43,73 @@
 
 namespace WebCore {
 
-Cursor::Cursor(PlatformCursor p)
-{
-    m_platformCursor = eina_stringshare_add(p);
-}
-
 Cursor::Cursor(const Cursor& other)
+    : m_type(other.m_type)
+    , m_image(other.m_image)
+    , m_hotSpot(other.m_hotSpot)
+    , m_platformCursor(other.m_platformCursor)
 {
-    m_platformCursor = eina_stringshare_ref(other.m_platformCursor);
 }
 
 Cursor::~Cursor()
 {
-    if (m_platformCursor) {
-        eina_stringshare_del(m_platformCursor);
-        m_platformCursor = 0;
-    }
 }
 
-Cursor::Cursor(Image* image, const IntPoint& hotspot)
-    : m_platformCursor(0)
+static const char* cursorString(Cursor::Type type)
 {
-    notImplemented();
+    static const char* cursorStrings[] = {
+        "cursor/pointer",
+        "cursor/cross",
+        "cursor/hand",
+        "cursor/i_beam",
+        "cursor/wait",
+        "cursor/help",
+        "cursor/east_resize",
+        "cursor/north_resize",
+        "cursor/north_east_resize",
+        "cursor/north_west_resize",
+        "cursor/south_resize",
+        "cursor/south_east_resize",
+        "cursor/south_west_resize",
+        "cursor/west_resize",
+        "cursor/north_south_resize",
+        "cursor/east_west_resize",
+        "cursor/north_east_south_west_resize",
+        "cursor/north_west_south_east_resize",
+        "cursor/column_resize",
+        "cursor/row_resize",
+        "cursor/middle_panning",
+        "cursor/east_panning",
+        "cursor/north_panning",
+        "cursor/north_east_panning",
+        "cursor/north_west_panning",
+        "cursor/south_panning",
+        "cursor/south_east_panning",
+        "cursor/south_west_panning",
+        "cursor/west_panning",
+        "cursor/move",
+        "cursor/vertical_text",
+        "cursor/cell",
+        "cursor/context_menu",
+        "cursor/alias",
+        "cursor/progress",
+        "cursor/no_drop",
+        "cursor/copy",
+        "cursor/none",
+        "cursor/not_allowed",
+        "cursor/zoom_in",
+        "cursor/zoom_out",
+        "cursor/grab",
+        "cursor/grabbing",
+        ""}; // FIXME: Just return "" for custom type. We don't support it now.
+    return cursorStrings[type];
 }
 
-Cursor& Cursor::operator=(const Cursor& other)
+void Cursor::ensurePlatformCursor() const
 {
-    eina_stringshare_ref(other.m_platformCursor);
-    eina_stringshare_del(m_platformCursor);
-    m_platformCursor = other.m_platformCursor;
-    return *this;
-}
-
-namespace {
-
-class Cursors {
-protected:
-    Cursors()
-        : PointerCursor("cursor/pointer")
-        , MoveCursor("cursor/move")
-        , CrossCursor("cursor/cross")
-        , HandCursor("cursor/hand")
-        , IBeamCursor("cursor/i_beam")
-        , WaitCursor("cursor/wait")
-        , HelpCursor("cursor/help")
-        , EastResizeCursor("cursor/east_resize")
-        , NorthResizeCursor("cursor/north_resize")
-        , NorthEastResizeCursor("cursor/north_east_resize")
-        , NorthWestResizeCursor("cursor/north_west_resize")
-        , SouthResizeCursor("cursor/south_resize")
-        , SouthEastResizeCursor("cursor/south_east_resize")
-        , SouthWestResizeCursor("cursor/south_west_resize")
-        , WestResizeCursor("cursor/west_resize")
-        , NorthSouthResizeCursor("cursor/north_south_resize")
-        , EastWestResizeCursor("cursor/east_west_resize")
-        , NorthEastSouthWestResizeCursor("cursor/north_east_south_west_resize")
-        , NorthWestSouthEastResizeCursor("cursor/north_west_south_east_resize")
-        , ColumnResizeCursor("cursor/column_resize")
-        , RowResizeCursor("cursor/row_resize")
-        , MiddlePanningCursor("cursor/middle_panning")
-        , EastPanningCursor("cursor/east_panning")
-        , NorthPanningCursor("cursor/north_panning")
-        , NorthEastPanningCursor("cursor/north_east_panning")
-        , NorthWestPanningCursor("cursor/north_west_panning")
-        , SouthPanningCursor("cursor/south_panning")
-        , SouthEastPanningCursor("cursor/south_east_panning")
-        , SouthWestPanningCursor("cursor/south_west_panning")
-        , WestPanningCursor("cursor/west_panning")
-        , VerticalTextCursor("cursor/vertical_text")
-        , CellCursor("cursor/cell")
-        , ContextMenuCursor("cursor/context_menu")
-        , NoDropCursor("cursor/no_drop")
-        , CopyCursor("cursor/copy")
-        , ProgressCursor("cursor/progress")
-        , AliasCursor("cursor/alias")
-        , NoneCursor("cursor/none")
-        , NotAllowedCursor("cursor/not_allowed")
-        , ZoomInCursor("cursor/zoom_in")
-        , ZoomOutCursor("cursor/zoom_out")
-        , GrabCursor("cursor/grab")
-        , GrabbingCursor("cursor/grabbing")
-    {
-    }
-
-    ~Cursors()
-    {
-    }
-
-public:
-    static Cursors* self();
-    static Cursors* s_self;
-
-    Cursor PointerCursor;
-    Cursor MoveCursor;
-    Cursor CrossCursor;
-    Cursor HandCursor;
-    Cursor IBeamCursor;
-    Cursor WaitCursor;
-    Cursor HelpCursor;
-    Cursor EastResizeCursor;
-    Cursor NorthResizeCursor;
-    Cursor NorthEastResizeCursor;
-    Cursor NorthWestResizeCursor;
-    Cursor SouthResizeCursor;
-    Cursor SouthEastResizeCursor;
-    Cursor SouthWestResizeCursor;
-    Cursor WestResizeCursor;
-    Cursor NorthSouthResizeCursor;
-    Cursor EastWestResizeCursor;
-    Cursor NorthEastSouthWestResizeCursor;
-    Cursor NorthWestSouthEastResizeCursor;
-    Cursor ColumnResizeCursor;
-    Cursor RowResizeCursor;
-    Cursor MiddlePanningCursor;
-    Cursor EastPanningCursor;
-    Cursor NorthPanningCursor;
-    Cursor NorthEastPanningCursor;
-    Cursor NorthWestPanningCursor;
-    Cursor SouthPanningCursor;
-    Cursor SouthEastPanningCursor;
-    Cursor SouthWestPanningCursor;
-    Cursor WestPanningCursor;
-    Cursor VerticalTextCursor;
-    Cursor CellCursor;
-    Cursor ContextMenuCursor;
-    Cursor NoDropCursor;
-    Cursor CopyCursor;
-    Cursor ProgressCursor;
-    Cursor AliasCursor;
-    Cursor NoneCursor;
-    Cursor NotAllowedCursor;
-    Cursor ZoomInCursor;
-    Cursor ZoomOutCursor;
-    Cursor GrabCursor;
-    Cursor GrabbingCursor;
-};
-
-Cursors* Cursors::s_self = 0;
-
-Cursors* Cursors::self()
-{
-    if (!s_self)
-        s_self = new Cursors();
-
-    return s_self;
-}
-
-}
-
-const Cursor& pointerCursor()
-{
-    return Cursors::self()->PointerCursor;
-}
-
-const Cursor& moveCursor()
-{
-    return Cursors::self()->MoveCursor;
-}
-
-const Cursor& crossCursor()
-{
-    return Cursors::self()->CrossCursor;
-}
-
-const Cursor& handCursor()
-{
-    return Cursors::self()->HandCursor;
-}
-
-const Cursor& iBeamCursor()
-{
-    return Cursors::self()->IBeamCursor;
-}
-
-const Cursor& waitCursor()
-{
-    return Cursors::self()->WaitCursor;
-}
-
-const Cursor& helpCursor()
-{
-    return Cursors::self()->HelpCursor;
-}
-
-const Cursor& eastResizeCursor()
-{
-    return Cursors::self()->EastResizeCursor;
-}
-
-const Cursor& northResizeCursor()
-{
-    return Cursors::self()->NorthResizeCursor;
-}
-
-const Cursor& northEastResizeCursor()
-{
-    return Cursors::self()->NorthEastResizeCursor;
-}
-
-const Cursor& northWestResizeCursor()
-{
-    return Cursors::self()->NorthWestResizeCursor;
-}
-
-const Cursor& southResizeCursor()
-{
-    return Cursors::self()->SouthResizeCursor;
-}
-
-const Cursor& southEastResizeCursor()
-{
-    return Cursors::self()->SouthEastResizeCursor;
-}
-
-const Cursor& southWestResizeCursor()
-{
-    return Cursors::self()->SouthWestResizeCursor;
-}
-
-const Cursor& westResizeCursor()
-{
-    return Cursors::self()->WestResizeCursor;
-}
-
-const Cursor& northSouthResizeCursor()
-{
-    return Cursors::self()->NorthSouthResizeCursor;
-}
-
-const Cursor& eastWestResizeCursor()
-{
-    return Cursors::self()->EastWestResizeCursor;
-}
-
-const Cursor& northEastSouthWestResizeCursor()
-{
-    return Cursors::self()->NorthEastSouthWestResizeCursor;
-}
-
-const Cursor& northWestSouthEastResizeCursor()
-{
-    return Cursors::self()->NorthWestSouthEastResizeCursor;
-}
-
-const Cursor& columnResizeCursor()
-{
-    return Cursors::self()->ColumnResizeCursor;
-}
-
-const Cursor& rowResizeCursor()
-{
-    return Cursors::self()->RowResizeCursor;
-}
-
-const Cursor& middlePanningCursor()
-{
-    return Cursors::self()->MiddlePanningCursor;
-}
-
-const Cursor& eastPanningCursor()
-{
-    return Cursors::self()->EastPanningCursor;
-}
-
-const Cursor& northPanningCursor()
-{
-    return Cursors::self()->NorthPanningCursor;
-}
-
-const Cursor& northEastPanningCursor()
-{
-    return Cursors::self()->NorthEastPanningCursor;
-}
-
-const Cursor& northWestPanningCursor()
-{
-    return Cursors::self()->NorthWestPanningCursor;
-}
-
-const Cursor& southPanningCursor()
-{
-    return Cursors::self()->SouthPanningCursor;
-}
-
-const Cursor& southEastPanningCursor()
-{
-    return Cursors::self()->SouthEastPanningCursor;
-}
-
-const Cursor& southWestPanningCursor()
-{
-    return Cursors::self()->SouthWestPanningCursor;
-}
-
-const Cursor& westPanningCursor()
-{
-    return Cursors::self()->WestPanningCursor;
-}
-
-const Cursor& verticalTextCursor()
-{
-    return Cursors::self()->VerticalTextCursor;
-}
-
-const Cursor& cellCursor()
-{
-    return Cursors::self()->CellCursor;
-}
-
-const Cursor& contextMenuCursor()
-{
-    return Cursors::self()->ContextMenuCursor;
-}
-
-const Cursor& noDropCursor()
-{
-    return Cursors::self()->NoDropCursor;
-}
-
-const Cursor& copyCursor()
-{
-    return Cursors::self()->CopyCursor;
-}
-
-const Cursor& progressCursor()
-{
-    return Cursors::self()->ProgressCursor;
-}
-
-const Cursor& aliasCursor()
-{
-    return Cursors::self()->AliasCursor;
-}
-
-const Cursor& noneCursor()
-{
-    return Cursors::self()->NoneCursor;
-}
-
-const Cursor& notAllowedCursor()
-{
-    return Cursors::self()->NotAllowedCursor;
-}
-
-const Cursor& zoomInCursor()
-{
-    return Cursors::self()->ZoomInCursor;
-}
-
-const Cursor& zoomOutCursor()
-{
-    return Cursors::self()->ZoomOutCursor;
-}
-
-const Cursor& grabCursor()
-{
-    return Cursors::self()->GrabCursor;
-}
-
-const Cursor& grabbingCursor()
-{
-    return Cursors::self()->GrabbingCursor;
+    if (m_platformCursor)
+        return;
+    m_platformCursor = cursorString(m_type);
 }
 
 }

@@ -1,3 +1,25 @@
+2011-04-27  Ryuan Choi  <ryuan.choi@samsung.com>
+
+        Reviewed by Antonio Gomes.
+
+        [EFL] Change cursor to LAZY_NATIVE_CURSOR
+        https://bugs.webkit.org/show_bug.cgi?id=59411
+
+        Enable LAZY_NATIVE_CURSOR on EFL build.
+
+        No test added because functionality is unchanged.
+
+        * CMakeListsEfl.txt: Add Cursor.cpp
+        * platform/Cursor.h:
+        (WebCore::Cursor::Cursor):
+        * platform/efl/CursorEfl.cpp:
+        (WebCore::Cursor::Cursor):
+        (WebCore::Cursor::~Cursor):
+        (WebCore::getCursorString):
+        (WebCore::Cursor::ensurePlatformCursor):
+        * platform/efl/WidgetEfl.cpp:
+        (WebCore::Widget::setCursor):
+
 2011-04-27  Adam Barth  <abarth@webkit.org>
 
         Build fix from the future.  Another trival strict OwnPtr fixes.  This

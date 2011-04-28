@@ -22,6 +22,7 @@ LIST(APPEND WebCore_SOURCES
   page/efl/DragControllerEfl.cpp
   page/efl/EventHandlerEfl.cpp
   page/efl/FrameEfl.cpp
+  platform/Cursor.cpp
   platform/efl/ClipboardEfl.cpp
   platform/efl/ContextMenuEfl.cpp
   platform/efl/ContextMenuItemEfl.cpp
