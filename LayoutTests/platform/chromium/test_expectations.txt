@@ -2691,7 +2691,7 @@ BUGCR67139 WIN MAC LINUX DEBUG : storage/close-during-stress-test.html = CRASH P
 
 // WebKit roll 74255:74308
 BUGCR67416 WIN LINUX : fast/text/emphasis.html = IMAGE+TEXT
-BUGCR67416 MAC DEBUG : fast/text/emphasis.html = IMAGE
+BUGCR67416 MAC LEOPARD : fast/text/emphasis.html = IMAGE
 BUGCR67416 : fast/text/emphasis-vertical.html = FAIL
 BUGCR67540 WIN LINUX : fast/text/emphasis-overlap.html = IMAGE+TEXT
 BUGCR67540 WIN LINUX : fast/text/emphasis-avoid-ruby.html = IMAGE
@@ -3148,8 +3148,10 @@ BUGCR77468 : fast/forms/input-file-directory-upload.html = TIMEOUT
 // http://build.chromium.org/p/chromium.webkit/builders/Webkit%20Linux/builds/4837
 // http://trac.webkit.org/changeset/81992
 BUGCR77494 WIN LINUX : fast/block/positioning/056.html = FAIL
-BUGCR77494 WIN LINUX : fast/block/positioning/auto/005.html = FAIL
-BUGCR77494 WIN LINUX : fast/block/positioning/auto/006.html = FAIL
+BUGCR77494 WIN LINUX : fast/block/positioning/auto/005.html = IMAGE+TEXT
+BUGCR77494 MAC LEOPARD : fast/block/positioning/auto/005.html = IMAGE
+BUGCR77494 WIN LINUX : fast/block/positioning/auto/006.html = IMAGE+TEXT
+BUGCR77494 MAC LEOPARD : fast/block/positioning/auto/006.html = IMAGE
 BUGCR77494 WIN LINUX : fast/block/positioning/auto/vertical-lr/005.html = FAIL
 BUGCR77494 WIN LINUX : fast/block/positioning/auto/vertical-lr/006.html = FAIL
 BUGCR77494 WIN LINUX : fast/block/positioning/auto/vertical-rl/005.html = FAIL
@@ -3191,7 +3193,8 @@ BUGCR77582 BUG_DRT WIN LINUX DEBUG SLOW : inspector/debugger/debugger-activation
 BUGCR77619 MAC SNOWLEOPARD : plugins/plugin-javascript-access.html = TEXT
 
 // New test in r82013.
-BUGWK82013 WIN MAC LINUX : fast/text/justify-ideograph-leading-expansion.html = IMAGE+TEXT IMAGE
+BUGWK82013 WIN LINUX : fast/text/justify-ideograph-leading-expansion.html = IMAGE+TEXT
+BUGWK82013 SNOWLEOPARD: fast/text/justify-ideograph-leading-expansion.html = IMAGE
 
 // New test added in r82056. The arrow does not point upwards.
 BUGCR77574 LINUX : fast/blockflow/fallback-orientation.html = IMAGE
@@ -3257,7 +3260,7 @@ BUGWK50661 WIN LINUX : fast/dom/HTMLMeterElement/meter-styles.html = IMAGE+TEXT 
 
 // Need expectations
 BUGWK59281 WIN LINUX : fast/dom/HTMLMeterElement/meter-writing-mode.html = IMAGE+TEXT
-BUGWK59281 MAC LEOPARD : fast/dom/HTMLMeterElement/meter-writing-mode.html = IMAGE+TEXT
+BUGWK59281 MAC LEOPARD : fast/dom/HTMLMeterElement/meter-writing-mode.html = IMAGE PASS
 BUGWK59281 WIN LINUX : fast/dom/HTMLProgressElement/progress-writing-mode.html = TEXT
 
 // We need to skip Geeza Pro quirk in SimpleFontDataMac.mm for non-Leopard.

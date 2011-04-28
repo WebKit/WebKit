@@ -1,5 +1,12 @@
 2011-04-27  Dirk Pranke  <dpranke@chromium.org>
 
+        Unreviewed, expectations change. Fix some
+        Chromium Mac Leopard failures.
+
+        * platform/chromium/test_expectations.txt:
+
+2011-04-27  Dirk Pranke  <dpranke@chromium.org>
+
         Unreviewed, expectations change. Fix Chromium Mac SL Debug
         expectations, few miscellaneous other expectations.
 
