@@ -2,6 +2,16 @@
 
         Reviewed by Tony Chang.
 
+        Port Mozilla's IndexedDB tests: creating unique index and updating indexNames
+        https://bugs.webkit.org/show_bug.cgi?id=59631
+
+        * storage/indexeddb/mozilla/create-index-unique-expected.txt: Added.
+        * storage/indexeddb/mozilla/create-index-unique.html: Added.
+
+2011-04-27  Mark Pilgrim  <pilgrim@chromium.org>
+
+        Reviewed by Tony Chang.
+
         Should call done() from unexpectedErrorCallback so failing IndexedDB tests don't time out
         https://bugs.webkit.org/show_bug.cgi?id=59569
 
