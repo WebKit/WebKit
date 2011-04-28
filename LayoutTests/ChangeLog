@@ -1,3 +1,13 @@
+2011-04-28  Ojan Vafai  <ojan@chromium.org>
+
+        Reviewed by Mihai Parparita.
+
+        use a hierarchical data structure to store results json
+        https://bugs.webkit.org/show_bug.cgi?id=59736
+
+        * fast/harness/resources/results-test.js:
+        * fast/harness/results.html:
+
 2011-04-28  Mark Pilgrim  <pilgrim@chromium.org>
 
         Reviewed by Tony Chang.

@@ -289,88 +289,134 @@ function resultLink(testPrefix, suffix, contents)
     return '<a class=result-link href="' + testPrefix + suffix + '">' + contents + '</a> ';
 }
 
+function testObjectFor(test)
+{
+    var parts = test.split('/');
+    var tree = globalState().results.tests;
+    for (var i = 0; i < parts.length; i++) {
+        if (parts[i] in tree)
+            tree = tree[parts[i]];
+        else {
+            console.error('Test not in the results tree: ' + test);
+            return null;
+        }
+    }
+    return tree;
+}
+
+function processGlobalStateFor(testObject)
+{
+    var test = testObject.name;
+    if (testObject.has_stderr)
+        globalState().testsWithStderr.push(test);
+
+    globalState().hasHttpTests = globalState().hasHttpTests || test.indexOf('http/') == 0;
+
+    var actual = testObject.actual;
+    if (actual == 'MISSING') {
+        // FIXME: make sure that new-run-webkit-tests spits out an -actual.txt file for
+        // tests with MISSING results.
+        globalState().newTests.push(test);
+        return;
+    }
+
+    var expected = testObject.expected || 'PASS';
+    testObject.isExpected = actual == 'SKIP';
+    if (!testObject.isExpected && globalState().results.uses_expectations_file) {
+        var expectedArray = expected.split(' ');
+        if (expectedArray.indexOf(actual) != -1)
+            testObject.isExpected = true;
+        else if (expectedArray.indexOf('FAIL') != -1)
+            testObject.isExpected = actual == 'IMAGE' || actual == 'TEXT' || actual == 'IMAGE+TEXT';
+    }
+
+    if (actual == 'PASS' && expected != 'PASS' && !testObject.isExpected)
+        globalState().unexpectedPassTests.push(test);            
+}
+
+function tableRow(testObject)
+{    
+    var actual = testObject.actual;
+    if (actual == 'PASS')
+        return '';
+
+    var row = '<td>' + testLink(testObject.name) + '</td>';
+    var test_prefix = stripExtension(testObject.name);
+
+    row += '<td>';
+
+    if (actual == 'CRASH')
+        row += resultLink(test_prefix, '-stack.txt', 'stack');
+    else if (actual == 'AUDIO') {
+        row += resultLink(test_prefix, '-expected.wav', 'expected');
+        row += resultLink(test_prefix, '-actual.wav', 'actual');
+    } else if (actual.indexOf('TEXT') != -1 || actual == 'TIMEOUT') {
+        // FIXME: only include timeout actual/expected results here if we actually spit out results for timeout tests.
+        globalState().hasTextFailures = true;
+        row += resultLink(test_prefix, '-expected.txt', 'expected') +
+            resultLink(test_prefix, '-actual.txt', 'actual') +
+            resultLink(test_prefix, '-diff.txt', 'diff');
+  
+        if (globalState().results.has_pretty_patch)
+            row += resultLink(test_prefix, '-pretty-diff.html', 'pretty diff');
+
+        if (globalState().results.has_wdiff)
+            row += resultLink(test_prefix, '-wdiff.html', 'wdiff');
+    }
+
+    row += '</td><td>';
+
+    if (actual.indexOf('IMAGE') != -1) {
+        globalState().hasImageFailures = true;
+
+        if (testObject.is_mismatch_reftest) {
+            row += resultLink(test_prefix, '-expected-mismatch.html', 'ref mismatch html') +
+                resultLink(test_prefix, '-actual.png', 'actual');
+        } else {
+            if (testObject.is_reftest)
+                row += resultLink(test_prefix, '-expected.html', 'ref html');
+
+            row += resultLink(test_prefix, '-expected.png', 'expected') +
+                resultLink(test_prefix, '-actual.png', 'actual') +
+                resultLink(test_prefix, '-diff.png', 'diff');
+        }
+    }
+
+    row += '</td>';
+    row += '<td>' + actual + '</td>';
+
+    if (globalState().results.uses_expectations_file)
+      row += '<td>' + testObject.expected + '</td>';
+
+    return '<tbody class="' + (testObject.isExpected ? 'expected' : '') + '"><tr>' + row + '</tr></tbody>';
+}
+
+function forEachTest(handler, opt_tree, opt_prefix)
+{
+    var tree = opt_tree || globalState().results.tests;
+    var prefix = opt_prefix || '';
+
+    for (var key in tree) {
+        var newPrefix = prefix ? (prefix + '/' + key) : key;
+        if ('actual' in tree[key]) {
+            var testObject = tree[key];
+            testObject.name = newPrefix;
+            handler(testObject);
+        } else
+            forEachTest(handler, tree[key], newPrefix);
+    }
+}
+
 function tableRows()
 {
     var html = '';
-    for (var test in globalState().results.tests) {
-        if (globalState().results.tests[test].has_stderr)
-            globalState().testsWithStderr.push(test);
-
-        globalState().hasHttpTests = globalState().hasHttpTests || test.indexOf('http/') == 0;
-
-        var actual = globalState().results.tests[test].actual;
-        if (actual == 'MISSING') {
-            // FIXME: make sure that new-run-webkit-tests spits out an -actual.txt file for
-            // tests with MISSING results.
-            globalState().newTests.push(test);
-            continue;
-        }
-
-        var expected = globalState().results.tests[test].expected || 'PASS';
-        var isExpected = actual == 'SKIP';
-        if (!isExpected && globalState().results.uses_expectations_file) {
-            var expectedArray = expected.split(' ');
-            if (expectedArray.indexOf(actual) != -1)
-                isExpected = true;
-            else if (expectedArray.indexOf('FAIL') != -1)
-                isExpected = actual == 'IMAGE' || actual == 'TEXT' || actual == 'IMAGE+TEXT';
-        }
-
-        if (actual == 'PASS') {
-            if (!isExpected && expected != 'PASS')
-                globalState().unexpectedPassTests.push(test);            
-            continue;
-        }
-
-        var row = '<td>' + testLink(test) + '</td>';
-        var test_prefix = stripExtension(test);
-
-        row += '<td>';
-        if (actual == 'CRASH')
-            row += resultLink(test_prefix, '-stack.txt', 'stack');
-        else if (actual == 'AUDIO') {
-            row += resultLink(test_prefix, '-expected.wav', 'expected');
-            row += resultLink(test_prefix, '-actual.wav', 'actual');
-        } else if (actual.indexOf('TEXT') != -1 || actual == 'TIMEOUT') {
-            // FIXME: only include timeout actual/expected results here if we actually spit out results for timeout tests.
-            globalState().hasTextFailures = true;
-            row += resultLink(test_prefix, '-expected.txt', 'expected') +
-                resultLink(test_prefix, '-actual.txt', 'actual') +
-                resultLink(test_prefix, '-diff.txt', 'diff');
-      
-            if (globalState().results.has_pretty_patch)
-                row += resultLink(test_prefix, '-pretty-diff.html', 'pretty diff');
-
-            if (globalState().results.has_wdiff)
-                row += resultLink(test_prefix, '-wdiff.html', 'wdiff');
-        }
-
-        row += '</td><td>';
-
-        if (actual.indexOf('IMAGE') != -1) {
-            globalState().hasImageFailures = true;
-
-            if (globalState().results.tests[test].is_mismatch_reftest) {
-                row += resultLink(test_prefix, '-expected-mismatch.html', 'ref mismatch html') +
-                    resultLink(test_prefix, '-actual.png', 'actual');
-            } else {
-                if (globalState().results.tests[test].is_reftest)
-                    row += resultLink(test_prefix, '-expected.html', 'ref html');
-
-                row += resultLink(test_prefix, '-expected.png', 'expected') +
-                    resultLink(test_prefix, '-actual.png', 'actual') +
-                    resultLink(test_prefix, '-diff.png', 'diff');
-            }
-        }
-
-        row += '</td>';
-        row += '<td>' + actual + '</td>';
-
-        if (globalState().results.uses_expectations_file)
-          row += '<td>' + expected + '</td>';
-
-        html += '<tbody class="' + (isExpected ? 'expected' : '') + '"><tr>' + row + '</tr></tbody>';
-    }
+    forEachTest(function(testObject) {
+        processGlobalStateFor(testObject)
+        var test = testObject.name;
+        if (globalState().unexpectedPassTests.indexOf(test) == -1 &&
+            globalState().newTests.indexOf(test) == -1)
+            html += tableRow(testObject);
+    });
     return html;
 }
 
@@ -390,9 +436,9 @@ function testList(tests, header, tableId)
         if (tableId == 'stderr-table')
             html += resultLink(stripExtension(test), '-stderr.txt', 'stderr');
         else if (tableId == 'passes-table')
-            html += globalState().results.tests[test].expected;
+            html += testObjectFor(test).expected;
         else if (tableId == 'new-tests-table') {
-            var testObject = globalState().results.tests[test];
+            var testObject = testObjectFor(test);
             if (testObject.is_missing_audio)
                 html += resultLink(stripExtension(test), '-actual.wav', 'audio result');
             if (testObject.is_missing_text)

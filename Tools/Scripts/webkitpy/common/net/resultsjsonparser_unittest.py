@@ -37,20 +37,28 @@ class ResultsJSONParserTest(unittest.TestCase):
     # The real files have no whitespace, but newlines make this much more readable.
     _example_unexpected_results_json = """ADD_RESULTS({
     "tests": {
-        "fast\/dom\/prototype-inheritance.html": {
-            "expected": "PASS",
-            "actual": "TEXT"
+        "fast": {
+            "dom": {
+                "prototype-inheritance.html": {
+                    "expected": "PASS",
+                    "actual": "TEXT"
+                }
+            }
         },
-        "svg\/dynamic-updates\/SVGFEDropShadowElement-dom-stdDeviation-attr.html": {
-            "expected": "PASS",
-            "actual": "IMAGE",
-            "has_stderr": true
+        "svg": {
+            "dynamic-updates": {
+                "SVGFEDropShadowElement-dom-stdDeviation-attr.html": {
+                    "expected": "PASS",
+                    "actual": "IMAGE",
+                    "has_stderr": true
+                }
+            }
         }
     },
     "skipped": 450,
     "num_regressions": 15,
     "layout_tests_dir": "\/b\/build\/slave\/Webkit_Mac10_5\/build\/src\/third_party\/WebKit\/LayoutTests",
-    "version": 1,
+    "version": 3,
     "num_passes": 77,
     "has_pretty_patch": false,
     "fixable": 1220,

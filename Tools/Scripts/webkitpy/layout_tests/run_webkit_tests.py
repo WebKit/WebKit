@@ -38,6 +38,7 @@ import os
 import signal
 import sys
 
+from webkitpy.common.net import resultsjsonparser
 from webkitpy.layout_tests import layout_package
 from webkitpy.layout_tests.layout_package import json_results_generator
 from webkitpy.layout_tests.layout_package import printing
@@ -179,7 +180,7 @@ def _gather_unexpected_results(port):
         unexpected_results_filename = filesystem.join(results_directory, "unexpected_results.json")
         if filesystem.exists(unexpected_results_filename):
             results = json_results_generator.load_json(filesystem, unexpected_results_filename)
-            last_unexpected_results = results['tests'].keys()
+            resultsjsonparser.for_each_test(results['tests'], lambda test, result: last_unexpected_results.append(test))
     return last_unexpected_results
 
 

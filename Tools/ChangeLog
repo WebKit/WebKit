@@ -1,3 +1,34 @@
+2011-04-28  Ojan Vafai  <ojan@chromium.org>
+
+        Reviewed by Mihai Parparita.
+
+        use a hierarchical data structure to store results json
+        https://bugs.webkit.org/show_bug.cgi?id=59736
+
+        Instead of a map from test name to results dict, we now store a hierarchical
+        data structure.
+
+        Old: { foo/bar/baz.html: results_dict, foo/bar/baz2.html: results_dict }
+        New:
+        { foo: {
+            bar: {
+              baz.html: results_dict,
+              baz2.html: results_dict } } }
+
+        This cut ~52% of the size of times_ms.json. I expect it will cut
+        30-40% of full_results.json and unexpected_results.json.
+
+        * Scripts/webkitpy/common/net/resultsjsonparser.py:
+        * Scripts/webkitpy/common/net/resultsjsonparser_unittest.py:
+        * Scripts/webkitpy/layout_tests/layout_package/json_results_generator.py:
+        Using os.sep was just wrong since relative_test_filename canonicalizes separators.
+        * Scripts/webkitpy/layout_tests/layout_package/manager.py:
+        * Scripts/webkitpy/layout_tests/layout_package/printing.py:
+        * Scripts/webkitpy/layout_tests/run_webkit_tests.py:
+        * Scripts/webkitpy/tool/commands/rebaselineserver.py:
+        Instead of plumbing through the change to all of the rebaselineserver
+        python and JS, just convert to the old format after reading in the json.
+
 2011-04-28  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Adam Barth.

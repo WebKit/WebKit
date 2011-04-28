@@ -47,6 +47,7 @@ from optparse import make_option
 from wsgiref.handlers import format_date_time
 
 from webkitpy.common import system
+from webkitpy.common.net import resultsjsonparser
 from webkitpy.layout_tests.layout_package import json_results_generator
 from webkitpy.layout_tests.port import factory
 from webkitpy.layout_tests.port.webkit import WebKitPort
@@ -431,10 +432,18 @@ class RebaselineServer(AbstractDeclarativeCommand):
             scm)
 
         print 'Gathering current baselines...'
-        for test_file, test_json in results_json['tests'].items():
-            test_json['state'] = STATE_NEEDS_REBASELINE
-            test_path = filesystem.join(layout_tests_directory, test_file)
-            test_json['baselines'] = _get_test_baselines(test_file, test_config)
+        # Rebaseline server and it's associated JavaScript expected the tests subtree to
+        # be key-value pairs instead of hierarchical.
+        # FIXME: make the rebaseline server use the hierarchical tree.
+        new_tests_subtree = {}
+
+        def gather_baselines(test, result):
+            result['state'] = STATE_NEEDS_REBASELINE
+            result['baselines'] = _get_test_baselines(test, test_config)
+            new_tests_subtree[test] = result
+
+        resultsjsonparser.for_each_test(results_json['tests'], gather_baselines)
+        results_json['tests'] = new_tests_subtree
 
         server_url = "http://localhost:%d/" % options.httpd_port
         print "Starting server at %s" % server_url

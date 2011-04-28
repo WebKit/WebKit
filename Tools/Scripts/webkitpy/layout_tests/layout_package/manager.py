@@ -96,7 +96,7 @@ def summarize_results(port_obj, expectations, result_summary, retry_summary, tes
         'tests': a dict of tests -> {'expected': '...', 'actual': '...'}
     """
     results = {}
-    results['version'] = 2
+    results['version'] = 3
 
     tbe = result_summary.tests_by_expectation
     tbt = result_summary.tests_by_timeline
@@ -177,7 +177,26 @@ def summarize_results(port_obj, expectations, result_summary, retry_summary, tes
         if test_failures.FailureMissingImage in failure_types or test_failures.FailureMissingImageHash in failure_types:
             test_dict['is_missing_image'] = True
 
-        tests[test] = test_dict
+        # Store test hierarchically by directory. e.g.
+        # foo/bar/baz.html: test_dict
+        # foo/bar/baz1.html: test_dict
+        #
+        # becomes
+        # foo: {
+        #     bar: {
+        #         baz.html: test_dict,
+        #         baz1.html: test_dict
+        #     }
+        # }
+        parts = test.split('/')
+        current_map = tests
+        for i, part in enumerate(parts):
+            if i == (len(parts) - 1):
+                current_map[part] = test_dict
+                break
+            if part not in current_map:
+                current_map[part] = {}
+            current_map = current_map[part]
 
     results['tests'] = tests
     results['num_passes'] = num_passes

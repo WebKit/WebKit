@@ -32,6 +32,7 @@
 import logging
 import optparse
 
+from webkitpy.common.net import resultsjsonparser
 from webkitpy.layout_tests.layout_package import metered_stream
 from webkitpy.layout_tests.layout_package import test_expectations
 
@@ -454,7 +455,7 @@ class Printer(object):
         flaky = {}
         regressions = {}
 
-        for test, results in unexpected_results['tests'].iteritems():
+        def add_result(test, results):
             actual = results['actual'].split(" ")
             expected = results['expected'].split(" ")
             if actual == ['PASS']:
@@ -475,6 +476,8 @@ class Printer(object):
                 _add_to_dict_of_lists(flaky, actual[0], test)
             else:
                 _add_to_dict_of_lists(regressions, results['actual'], test)
+
+        resultsjsonparser.for_each_test(unexpected_results['tests'], add_result)
 
         if len(passes) or len(flaky) or len(regressions):
             self._buildbot_stream.write("\n")
@@ -497,7 +500,7 @@ class Printer(object):
                 tests.sort()
 
                 for test in tests:
-                    result = unexpected_results['tests'][test]
+                    result = resultsjsonparser.result_for_test(unexpected_results['tests'], test)
                     actual = result['actual'].split(" ")
                     expected = result['expected'].split(" ")
                     result = TestExpectationsFile.EXPECTATIONS[key.lower()]

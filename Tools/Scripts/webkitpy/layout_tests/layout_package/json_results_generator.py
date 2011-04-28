@@ -88,7 +88,7 @@ def test_timings_trie(port, individual_test_timings):
             # FIXME: Handle this better. Non-layout tests shouldn't be relativized.
             test = test_result.filename
 
-        parts = test.split(os.sep)
+        parts = test.split('/')
         current_map = trie
         for i, part in enumerate(parts):
             if i == (len(parts) - 1):

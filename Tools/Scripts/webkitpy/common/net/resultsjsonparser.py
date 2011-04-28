@@ -37,6 +37,23 @@ except ImportError:
 from webkitpy.layout_tests.layout_package import json_results_generator, test_expectations, test_results, test_failures
 
 
+# These are helper functions for navigating the results json structure.
+def for_each_test(tree, handler, prefix=''):
+    for key in tree:
+        new_prefix = (prefix + '/' + key) if prefix else key
+        if 'actual' not in tree[key]:
+            for_each_test(tree[key], handler, new_prefix)
+        else:
+            handler(new_prefix, tree[key])
+
+
+def result_for_test(tree, test):
+    parts = test.split('/')
+    for part in parts:
+        tree = tree[part]
+    return tree
+
+
 # Wrapper around the dictionaries returned from the json.
 # Eventually the .json should just serialize the TestFailure objects
 # directly and we won't need this.
@@ -96,7 +113,9 @@ class ResultsJSONParser(object):
         content_string = json_results_generator.strip_json_wrapper(json_string)
         json_dict = json.loads(content_string)
 
-        json_results = [JSONTestResult(test_name, results_dict) for test_name, results_dict in json_dict['tests'].items()]
+        json_results = []
+        for_each_test(json_dict['tests'], lambda test, result: json_results.append(JSONTestResult(test, result)))
+
         # FIXME: What's the short sexy python way to filter None?
         # I would use [foo.bar() for foo in foos if foo.bar()] but bar() is expensive.
         non_passing_results = [result.test_result() for result in json_results if not result.did_pass()]
