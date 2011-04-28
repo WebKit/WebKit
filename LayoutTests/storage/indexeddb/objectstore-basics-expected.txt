@@ -67,10 +67,9 @@ PASS event.target.errorCode is webkitIDBDatabaseException.UNKNOWN_ERR
 event.preventDefault()
 db.transaction([], webkitIDBTransaction.READ_WRITE)
 store = transaction.objectStore('storeName')
-store.add({x: 'othervalue'}, null)
-addWithNullKeyFailre():
-PASS event.target.errorCode is webkitIDBDatabaseException.DATA_ERR
-event.preventDefault()
+Expecting exception from store.add({x: 'othervalue'}, null)
+PASS Exception was thrown.
+PASS code is webkitIDBDatabaseException.DATA_ERR
 db.transaction([], webkitIDBTransaction.READ_WRITE)
 store = transaction.objectStore('storeName')
 store.add({x: null}, 'validkey')
