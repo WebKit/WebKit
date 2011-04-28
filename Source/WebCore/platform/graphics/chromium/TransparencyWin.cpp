@@ -365,7 +365,7 @@ void TransparencyWin::initializeNewContext()
         // Create a 1-off buffer for drawing into. We only need the reference
         // buffer if we're making an OpaqueCompositeLayer.
         bool needReferenceBitmap = m_layerMode == OpaqueCompositeLayer;
-        m_ownedBuffers.set(new OwnedBuffers(m_layerSize, needReferenceBitmap));
+        m_ownedBuffers = adoptPtr(new OwnedBuffers(m_layerSize, needReferenceBitmap));
         m_layerBuffer = m_ownedBuffers->destBitmap();
         if (!m_layerBuffer)
             return;

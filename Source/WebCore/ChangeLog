@@ -1,3 +1,12 @@
+2011-04-27  Adam Barth  <abarth@webkit.org>
+
+        Build fix from the future.  Another trival strict OwnPtr fixes.  This
+        is the last futuristic build fix I can detect with my time traveling
+        abilities.
+
+        * platform/graphics/chromium/TransparencyWin.cpp:
+        (WebCore::TransparencyWin::initializeNewContext):
+
 2011-04-27  Dmitry Lomov  <dslomov@google.com>
 
         Reviewed by David Levin.
