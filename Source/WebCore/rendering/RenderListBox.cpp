@@ -115,9 +115,10 @@ void RenderListBox::updateFromElement()
                 itemFont = Font(d, itemFont.letterSpacing(), itemFont.wordSpacing());
                 itemFont.update(document()->styleSelector()->fontSelector());
             }
-                
+
             if (!text.isEmpty()) {
-                float textWidth = itemFont.width(TextRun(text.impl(), false, 0, 0, TextRun::AllowTrailingExpansion, false, false));
+                // FIXME: Why is this always LTR? Can't text direction affect the width?
+                float textWidth = itemFont.width(TextRun(text.impl(), false, 0, 0, TextRun::AllowTrailingExpansion, LTR));
                 width = max(width, textWidth);
             }
         }
@@ -389,7 +390,7 @@ void RenderListBox::paintItemForeground(PaintInfo& paintInfo, int tx, int ty, in
 
     unsigned length = itemText.length();
     const UChar* string = itemText.characters();
-    TextRun textRun(string, length, false, 0, 0, TextRun::AllowTrailingExpansion, !itemStyle->isLeftToRightDirection(), itemStyle->unicodeBidi() == Override);
+    TextRun textRun(string, length, false, 0, 0, TextRun::AllowTrailingExpansion, itemStyle->direction(), itemStyle->unicodeBidi() == Override);
     Font itemFont = style()->font();
     IntRect r = itemBoundingBoxRect(tx, ty, listIndex);
     r.move(itemOffsetForAlignment(textRun, itemStyle, itemFont, r));

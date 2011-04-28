@@ -412,7 +412,7 @@ TextRun SVGInlineTextBox::constructTextRun(RenderStyle* style, const SVGTextFrag
                 , 0 /* xPos, only relevant with allowTabs=true */
                 , 0 /* padding, only relevant for justified text, not relevant for SVG */
                 , TextRun::AllowTrailingExpansion
-                , direction() == RTL
+                , direction()
                 , m_dirOverride || style->visuallyOrdered() /* directionalOverride */);
 
 #if ENABLE(SVG_FONTS)

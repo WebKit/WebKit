@@ -25,6 +25,7 @@
 #define TextRun_h
 
 #include "PlatformString.h"
+#include "TextDirection.h"
 
 namespace WebCore {
 
@@ -42,7 +43,7 @@ public:
 
     typedef unsigned ExpansionBehavior;
 
-    TextRun(const UChar* c, int len, bool allowTabs = false, float xpos = 0, float expansion = 0, ExpansionBehavior expansionBehavior = AllowTrailingExpansion | ForbidLeadingExpansion, bool rtl = false, bool directionalOverride = false)
+    TextRun(const UChar* c, int len, bool allowTabs = false, float xpos = 0, float expansion = 0, ExpansionBehavior expansionBehavior = AllowTrailingExpansion | ForbidLeadingExpansion, TextDirection direction = LTR, bool directionalOverride = false)
         : m_characters(c)
         , m_len(len)
         , m_xpos(xpos)
@@ -52,7 +53,7 @@ public:
         , m_horizontalGlyphStretch(1)
 #endif
         , m_allowTabs(allowTabs)
-        , m_rtl(rtl)
+        , m_direction(direction)
         , m_directionalOverride(directionalOverride)
         , m_disableSpacing(false)
 #if ENABLE(SVG_FONTS)
@@ -62,7 +63,7 @@ public:
     {
     }
 
-    TextRun(const String& s, bool allowTabs = false, float xpos = 0, float expansion = 0, ExpansionBehavior expansionBehavior = AllowTrailingExpansion | ForbidLeadingExpansion, bool rtl = false, bool directionalOverride = false)
+    TextRun(const String& s, bool allowTabs = false, float xpos = 0, float expansion = 0, ExpansionBehavior expansionBehavior = AllowTrailingExpansion | ForbidLeadingExpansion, TextDirection direction = LTR, bool directionalOverride = false)
         : m_characters(s.characters())
         , m_len(s.length())
         , m_xpos(xpos)
@@ -72,7 +73,7 @@ public:
         , m_horizontalGlyphStretch(1)
 #endif
         , m_allowTabs(allowTabs)
-        , m_rtl(rtl)
+        , m_direction(direction)
         , m_directionalOverride(directionalOverride)
         , m_disableSpacing(false)
 #if ENABLE(SVG_FONTS)
@@ -100,13 +101,14 @@ public:
     float expansion() const { return m_expansion; }
     bool allowsLeadingExpansion() const { return m_expansionBehavior & AllowLeadingExpansion; }
     bool allowsTrailingExpansion() const { return m_expansionBehavior & AllowTrailingExpansion; }
-    bool rtl() const { return m_rtl; }
-    bool ltr() const { return !m_rtl; }
+    TextDirection direction() const { return m_direction; }
+    bool rtl() const { return m_direction == RTL; }
+    bool ltr() const { return m_direction == LTR; }
     bool directionalOverride() const { return m_directionalOverride; }
     bool spacingDisabled() const { return m_disableSpacing; }
 
     void disableSpacing() { m_disableSpacing = true; }
-    void setRTL(bool b) { m_rtl = b; }
+    void setDirection(TextDirection direction) { m_direction = direction; }
     void setDirectionalOverride(bool override) { m_directionalOverride = override; }
 
 #if ENABLE(SVG_FONTS)
@@ -131,8 +133,8 @@ private:
     float m_horizontalGlyphStretch;
 #endif
     bool m_allowTabs;
-    bool m_rtl;
-    bool m_directionalOverride;
+    TextDirection m_direction;
+    bool m_directionalOverride; // Was this direction set by an override character.
     bool m_disableSpacing;
 
 #if ENABLE(SVG_FONTS)

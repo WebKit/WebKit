@@ -53,7 +53,8 @@ void EllipsisBox::paint(PaintInfo& paintInfo, int tx, int ty, int lineTop, int l
     }
 
     const String& str = m_str;
-    context->drawText(style->font(), TextRun(str.characters(), str.length(), false, 0, 0, TextRun::AllowTrailingExpansion, false, style->visuallyOrdered()), IntPoint(m_x + tx, m_y + ty + style->fontMetrics().ascent()));
+    // FIXME: Why is this alwasy LTR?
+    context->drawText(style->font(), TextRun(str.characters(), str.length(), false, 0, 0, TextRun::AllowTrailingExpansion, LTR, style->visuallyOrdered()), IntPoint(m_x + tx, m_y + ty + style->fontMetrics().ascent()));
 
     // Restore the regular fill color.
     if (textColor != context->fillColor())
@@ -74,7 +75,8 @@ IntRect EllipsisBox::selectionRect(int tx, int ty)
 {
     RenderStyle* style = m_renderer->style(m_firstLine);
     const Font& f = style->font();
-    return enclosingIntRect(f.selectionRectForText(TextRun(m_str.characters(), m_str.length(), false, 0, 0, TextRun::AllowTrailingExpansion, false, style->visuallyOrdered()),
+    // FIXME: Why is this always LTR?
+    return enclosingIntRect(f.selectionRectForText(TextRun(m_str.characters(), m_str.length(), false, 0, 0, TextRun::AllowTrailingExpansion, LTR, style->visuallyOrdered()),
             IntPoint(m_x + tx, m_y + ty + root()->selectionTop()), root()->selectionHeight()));
 }
 
@@ -94,7 +96,8 @@ void EllipsisBox::paintSelection(GraphicsContext* context, int tx, int ty, Rende
     int y = root()->selectionTop();
     int h = root()->selectionHeight();
     context->clip(IntRect(m_x + tx, y + ty, m_logicalWidth, h));
-    context->drawHighlightForText(font, TextRun(m_str.characters(), m_str.length(), false, 0, 0, TextRun::AllowTrailingExpansion, false, style->visuallyOrdered()),
+    // FIXME: Why is this always LTR?
+    context->drawHighlightForText(font, TextRun(m_str.characters(), m_str.length(), false, 0, 0, TextRun::AllowTrailingExpansion, LTR, style->visuallyOrdered()),
         IntPoint(m_x + tx, m_y + ty + y), h, c, style->colorSpace());
 }
 

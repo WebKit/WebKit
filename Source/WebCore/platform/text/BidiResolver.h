@@ -24,6 +24,7 @@
 
 #include "BidiContext.h"
 #include "BidiRunList.h"
+#include "TextDirection.h"
 #include <wtf/Noncopyable.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/Vector.h>
@@ -60,6 +61,15 @@ struct BidiStatus {
         , lastStrong(WTF::Unicode::OtherNeutral)
         , last(WTF::Unicode::OtherNeutral)
     {
+    }
+
+    // Creates a BidiStatus representing a new paragraph root with a default direction.
+    // Uses TextDirection as it only has two possibilities instead of WTF::Unicode::Direction which has 19.
+    BidiStatus(TextDirection textDirection, bool isOverride)
+    {
+        WTF::Unicode::Direction direction = textDirection == LTR ? WTF::Unicode::LeftToRight : WTF::Unicode::RightToLeft;
+        eor = lastStrong = last = direction;
+        context = BidiContext::create(textDirection == LTR ? 0 : 1, direction, isOverride);
     }
 
     BidiStatus(WTF::Unicode::Direction eorDir, WTF::Unicode::Direction lastStrongDir, WTF::Unicode::Direction lastDir, PassRefPtr<BidiContext> bidiContext)

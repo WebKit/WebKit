@@ -223,7 +223,7 @@ void RenderFileUploadControl::paintObject(PaintInfo& paintInfo, int tx, int ty)
         const String& displayedFilename = fileTextValue();
         unsigned length = displayedFilename.length();
         const UChar* string = displayedFilename.characters();
-        TextRun textRun(string, length, false, 0, 0, TextRun::AllowTrailingExpansion, !style()->isLeftToRightDirection(), style()->unicodeBidi() == Override);
+        TextRun textRun(string, length, false, 0, 0, TextRun::AllowTrailingExpansion, style()->direction(), style()->unicodeBidi() == Override);
         
         // Determine where the filename should be placed
         int contentLeft = tx + borderLeft() + paddingLeft();
@@ -276,7 +276,7 @@ void RenderFileUploadControl::computePreferredLogicalWidths()
         // Figure out how big the filename space needs to be for a given number of characters
         // (using "0" as the nominal character).
         const UChar ch = '0';
-        float charWidth = style()->font().width(TextRun(&ch, 1, false, 0, 0, TextRun::AllowTrailingExpansion, false));
+        float charWidth = style()->font().width(TextRun(&ch, 1, false, 0, 0, TextRun::AllowTrailingExpansion));
         m_maxPreferredLogicalWidth = (int)ceilf(charWidth * defaultWidthNumChars);
     }
 

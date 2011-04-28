@@ -398,28 +398,24 @@ void GraphicsContext::drawBidiText(const Font& font, const TextRun& run, const F
     if (paintingDisabled())
         return;
 
+    BidiResolver<TextRunIterator, BidiCharacterRun> bidiResolver;
+    bidiResolver.setStatus(BidiStatus(run.direction(), run.directionalOverride()));
+    bidiResolver.setPosition(TextRunIterator(&run, 0));
+
     // FIXME: This ownership should be reversed. We should pass BidiRunList
     // to BidiResolver in createBidiRunsForLine.
-    BidiResolver<TextRunIterator, BidiCharacterRun> bidiResolver;
     BidiRunList<BidiCharacterRun>& bidiRuns = bidiResolver.runs();
-
-    WTF::Unicode::Direction paragraphDirection = run.ltr() ? WTF::Unicode::LeftToRight : WTF::Unicode::RightToLeft;
-
-    bidiResolver.setStatus(BidiStatus(paragraphDirection, paragraphDirection, paragraphDirection, BidiContext::create(run.ltr() ? 0 : 1, paragraphDirection, run.directionalOverride())));
-
-    bidiResolver.setPosition(TextRunIterator(&run, 0));
     bidiResolver.createBidiRunsForLine(TextRunIterator(&run, run.length()));
-
     if (!bidiRuns.runCount())
         return;
 
     FloatPoint currPoint = point;
     BidiCharacterRun* bidiRun = bidiRuns.firstRun();
     while (bidiRun) {
-
         TextRun subrun = run;
         subrun.setText(run.data(bidiRun->start()), bidiRun->stop() - bidiRun->start());
-        subrun.setRTL(bidiRun->level() % 2);
+        bool isRTL = bidiRun->level() % 2;
+        subrun.setDirection(isRTL ? RTL : LTR);
         subrun.setDirectionalOverride(bidiRun->dirOverride(false));
 
         font.drawText(this, subrun, currPoint);

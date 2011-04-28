@@ -541,8 +541,8 @@ float RenderTextControl::getAvgCharWidth(AtomicString family)
     if (hasValidAvgCharWidth(family))
         return roundf(style()->font().primaryFont()->avgCharWidth());
 
-    const UChar ch = '0'; 
-    return style()->font().width(TextRun(&ch, 1, false, 0, 0, TextRun::AllowTrailingExpansion, false));
+    const UChar ch = '0';
+    return style()->font().width(TextRun(&ch, 1, false, 0, 0, TextRun::AllowTrailingExpansion));
 }
 
 float RenderTextControl::scaleEmToUnits(int x) const
@@ -636,7 +636,7 @@ void RenderTextControl::paintPlaceholder(PaintInfo& paintInfo, int tx, int ty)
     paintInfo.context->setFillColor(placeholderStyle->visitedDependentColor(CSSPropertyColor), placeholderStyle->colorSpace());
     
     String placeholderText = static_cast<HTMLTextFormControlElement*>(node())->strippedPlaceholder();
-    TextRun textRun(placeholderText.characters(), placeholderText.length(), false, 0, 0, TextRun::AllowTrailingExpansion, !placeholderStyle->isLeftToRightDirection(), placeholderStyle->unicodeBidi() == Override);
+    TextRun textRun(placeholderText.characters(), placeholderText.length(), false, 0, 0, TextRun::AllowTrailingExpansion, placeholderStyle->direction(), placeholderStyle->unicodeBidi() == Override);
     
     RenderBox* textRenderer = innerTextElement() ? innerTextElement()->renderBox() : 0;
     if (textRenderer) {

@@ -83,7 +83,7 @@ static TextRun constructTextRun(RenderSVGInlineText* text, const UChar* characte
                 , 0 /* xPos, only relevant with allowTabs=true */
                 , 0 /* padding, only relevant for justified text, not relevant for SVG */
                 , TextRun::AllowTrailingExpansion
-                , !style->isLeftToRightDirection()
+                , style->direction()
                 , style->unicodeBidi() == Override /* directionalOverride */);
 
 #if ENABLE(SVG_FONTS)

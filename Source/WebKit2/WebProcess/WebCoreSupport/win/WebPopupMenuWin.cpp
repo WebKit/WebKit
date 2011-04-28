@@ -116,7 +116,9 @@ void WebPopupMenu::setUpPlatformData(const WebCore::IntRect& pageCoordinates, Pl
 
         unsigned length = itemText.length();
         const UChar* string = itemText.characters();
-        TextRun textRun(string, length, false, 0, 0, TextRun::AllowTrailingExpansion, itemText.defaultWritingDirection() == WTF::Unicode::RightToLeft);
+        // FIXME: defaultWritingDirection should return a TextDirection not a Unicode::Direction.
+        TextDirection direction = itemText.defaultWritingDirection() == WTF::Unicode::RightToLeft ? RTL : LTR;
+        TextRun textRun(string, length, false, 0, 0, TextRun::AllowTrailingExpansion, direction);
 
         notSelectedBackingStoreContext->setFillColor(optionTextColor, ColorSpaceDeviceRGB);
         selectedBackingStoreContext->setFillColor(activeOptionTextColor, ColorSpaceDeviceRGB);

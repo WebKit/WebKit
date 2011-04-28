@@ -1259,26 +1259,14 @@ RootInlineBox* RenderBlock::determineStartPosition(bool& firstLine, bool& fullLa
     firstLine = !last;
     previousLineBrokeCleanly = !last || last->endsWithBreak();
 
-    RenderObject* startObj;
-    int pos = 0;
     if (last) {
         setLogicalHeight(last->blockLogicalHeight());
-        startObj = last->lineBreakObj();
-        pos = last->lineBreakPos();
+        resolver.setPosition(InlineIterator(this, last->lineBreakObj(), last->lineBreakPos()));
         resolver.setStatus(last->lineBreakBidiStatus());
     } else {
-        bool ltr = style()->isLeftToRightDirection();
-        Direction direction = ltr ? LeftToRight : RightToLeft;
-        resolver.setLastStrongDir(direction);
-        resolver.setLastDir(direction);
-        resolver.setEorDir(direction);
-        resolver.setContext(BidiContext::create(ltr ? 0 : 1, direction, style()->unicodeBidi() == Override, FromStyleOrDOM));
-
-        startObj = bidiFirstSkippingInlines(this, &resolver);
+        resolver.setStatus(BidiStatus(style()->direction(), style()->unicodeBidi() == Override));
+        resolver.setPosition(InlineIterator(this, bidiFirstSkippingInlines(this, &resolver), 0));
     }
-
-    resolver.setPosition(InlineIterator(this, startObj, pos));
-
     return curr;
 }
 

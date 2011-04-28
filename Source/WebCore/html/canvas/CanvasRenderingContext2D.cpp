@@ -1866,12 +1866,13 @@ void CanvasRenderingContext2D::drawTextInternal(const String& text, float x, flo
     // FIXME: Need to turn off font smoothing.
 
     RenderStyle* computedStyle = canvas()->computedStyle();
-    bool rtl = computedStyle ? !computedStyle->isLeftToRightDirection() : false;
+    TextDirection direction = computedStyle ? computedStyle->direction() : LTR;
+    bool isRTL = direction == RTL;
     bool override = computedStyle ? computedStyle->unicodeBidi() == Override : false;
 
     unsigned length = text.length();
     const UChar* string = text.characters();
-    TextRun textRun(string, length, false, 0, 0, TextRun::AllowTrailingExpansion, rtl, override);
+    TextRun textRun(string, length, false, 0, 0, TextRun::AllowTrailingExpansion, direction, override);
 
     // Draw the item text at the correct point.
     FloatPoint location(x, y);
@@ -1893,13 +1894,13 @@ void CanvasRenderingContext2D::drawTextInternal(const String& text, float x, flo
         break;
     }
 
-    float width = font.width(TextRun(text, false, 0, 0, TextRun::AllowTrailingExpansion, rtl, override));
+    float width = font.width(TextRun(text, false, 0, 0, TextRun::AllowTrailingExpansion, direction, override));
 
     TextAlign align = state().m_textAlign;
     if (align == StartTextAlign)
-         align = rtl ? RightTextAlign : LeftTextAlign;
+        align = isRTL ? RightTextAlign : LeftTextAlign;
     else if (align == EndTextAlign)
-        align = rtl ? LeftTextAlign : RightTextAlign;
+        align = isRTL ? LeftTextAlign : RightTextAlign;
 
     switch (align) {
     case CenterTextAlign:

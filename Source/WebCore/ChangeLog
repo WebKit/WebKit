@@ -1,3 +1,67 @@
+2011-04-27  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Ryosuke Niwa.
+
+        Should have an easy way to construct starting BidiStatus for a paragraph root
+        https://bugs.webkit.org/show_bug.cgi?id=59226
+
+        Two places try to construct BidiStatuses for a paragraph root using copy/paste code.
+        I've made this a constructor for BidiStatus instead.
+
+        As part of this effort I added a direction() accessor for TextRun and got
+        rid of the old m_rtl bool.  This is part of the generic effort in the
+        Bidi code to replace old bool usage with the superior TextDirection enum
+        (this generally makes the code cleaner).
+
+        As part of this replacement effort I found several places which were
+        assuming LTR (by passing rtl=false) when they probably want to use
+        the current text direction.  I suspect that LTR vs. RTL may affect
+        string width in the case of ligatures.  It's unclear.
+
+        This is almost entirely a mechanical change.
+
+        * html/canvas/CanvasRenderingContext2D.cpp:
+        (WebCore::CanvasRenderingContext2D::drawTextInternal):
+        * platform/graphics/GraphicsContext.cpp:
+        (WebCore::GraphicsContext::drawBidiText):
+        * platform/graphics/TextRun.h:
+        (WebCore::TextRun::TextRun):
+        (WebCore::TextRun::direction):
+        (WebCore::TextRun::rtl):
+        (WebCore::TextRun::ltr):
+        (WebCore::TextRun::setDirection):
+        * platform/text/BidiResolver.h:
+        (WebCore::BidiStatus::BidiStatus):
+        * rendering/EllipsisBox.cpp:
+        (WebCore::EllipsisBox::paint):
+        (WebCore::EllipsisBox::selectionRect):
+        (WebCore::EllipsisBox::paintSelection):
+        * rendering/InlineTextBox.cpp:
+        (WebCore::InlineTextBox::selectionRect):
+        (WebCore::InlineTextBox::paint):
+        (WebCore::InlineTextBox::paintSelection):
+        (WebCore::InlineTextBox::paintCompositionBackground):
+        (WebCore::InlineTextBox::paintSpellingOrGrammarMarker):
+        (WebCore::InlineTextBox::paintTextMatchMarker):
+        (WebCore::InlineTextBox::computeRectForReplacementMarker):
+        (WebCore::InlineTextBox::offsetForPosition):
+        (WebCore::InlineTextBox::positionForOffset):
+        * rendering/RenderBlockLineLayout.cpp:
+        (WebCore::RenderBlock::determineStartPosition):
+        * rendering/RenderFileUploadControl.cpp:
+        (WebCore::RenderFileUploadControl::paintObject):
+        (WebCore::RenderFileUploadControl::computePreferredLogicalWidths):
+        * rendering/RenderListBox.cpp:
+        (WebCore::RenderListBox::updateFromElement):
+        (WebCore::RenderListBox::paintItemForeground):
+        * rendering/RenderTextControl.cpp:
+        (WebCore::RenderTextControl::getAvgCharWidth):
+        (WebCore::RenderTextControl::paintPlaceholder):
+        * rendering/svg/SVGInlineTextBox.cpp:
+        (WebCore::SVGInlineTextBox::constructTextRun):
+        * rendering/svg/SVGTextMetrics.cpp:
+        (WebCore::constructTextRun):
+
 2011-04-27  Robert Hogan  <robert@webkit.org>
 
         Reviewed by Adam Barth.
