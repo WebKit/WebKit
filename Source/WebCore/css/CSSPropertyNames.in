@@ -47,7 +47,9 @@ border
 border-bottom
 border-bottom-color
 border-bottom-left-radius
+-webkit-border-bottom-left-radius = border-bottom-left-radius
 border-bottom-right-radius
+-webkit-border-bottom-right-radius = border-bottom-right-radius
 border-bottom-style
 border-bottom-width
 border-collapse
@@ -66,13 +68,17 @@ border-style
 border-top
 border-top-color
 border-top-left-radius
+-webkit-border-top-left-radius = border-top-left-radius
 border-top-right-radius
+-webkit-border-top-right-radius = border-top-right-radius
 border-top-style
 border-top-width
 border-width
 bottom
 box-shadow
 box-sizing
+# -webkit-box-sizing worked in Safari 4 and earlier.
+-webkit-box-sizing = box-sizing
 caption-side
 clear
 clip
@@ -100,6 +106,9 @@ max-width
 min-height
 min-width
 opacity
+# Honor -webkit-opacity as a synonym for opacity. This was the only syntax that worked in Safari 1.1,
+# and may be in use on some websites and widgets.
+-webkit-opacity = opacity
 orphans
 outline
 outline-color

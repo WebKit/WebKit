@@ -1,3 +1,16 @@
+2011-04-28  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Simon Fraser.
+
+        Allow specifying CSS property aliases in CSSPropertyNames.in files
+        https://bugs.webkit.org/show_bug.cgi?id=59712
+
+        * css/CSSParser.cpp:
+        (WebCore::cssPropertyID): Removed code to handle some aliases
+        * css/CSSPropertyNames.in: Added aliases no longer handled in code.
+        * css/makeprop.pl: Interpret lines of the form "alias-property-name = property-name" as
+        defining an alias, and add an appropriate entry to the gperf file.
+
 2011-04-28  Arno Renevier  <arno@renevier.net>
 
         Reviewed by Gustavo Noronha Silva.

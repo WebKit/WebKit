@@ -6602,37 +6602,13 @@ static int cssPropertyID(const UChar* propertyName, unsigned length)
             ++length;
         }
 
-        if (hasPrefix(buffer, length, "-webkit")) {
-            if (!strcmp(buffer, "-webkit-box-sizing")) {
-                // -webkit-box-sizing worked in Safari 4 and earlier.
-                const char* const boxSizing = "box-sizing";
-                name = boxSizing;
-                length = strlen(boxSizing);
-            } else if (!strcmp(buffer, "-webkit-opacity")) {
-                // Honor -webkit-opacity as a synonym for opacity.
-                // This was the only syntax that worked in Safari 1.1, and may be in use on some websites and widgets.
-                const char* const opacity = "opacity";
-                name = opacity;
-                length = strlen(opacity);
 #if PLATFORM(IOS)
-            } else if (!strcmp(buffer, "-webkit-hyphenate-locale")) {
-                // Worked in iOS 4.2.
-                const char* const webkitLocale = "-webkit-locale";
-                name = webkitLocale;
-                length = strlen(webkitLocale);
+        if (!strcmp(buffer, "-webkit-hyphenate-locale")) {
+            // Worked in iOS 4.2.
+            const char* const webkitLocale = "-webkit-locale";
+            name = webkitLocale;
+            length = strlen(webkitLocale);
 #endif
-            } else if (hasPrefix(buffer + 7, length - 7, "-border-")) {
-                // -webkit-border-*-*-radius worked in Safari 4 and earlier. -webkit-border-radius syntax
-                // differs from border-radius, so it is remains as a distinct property.
-                if (!strcmp(buffer + 15, "top-left-radius")
-                        || !strcmp(buffer + 15, "top-right-radius")
-                        || !strcmp(buffer + 15, "bottom-right-radius")
-                        || !strcmp(buffer + 15, "bottom-left-radius")) {
-                    name = buffer + 8;
-                    length -= 8;
-                }
-            }
-        }
     }
 
     const Property* hashTableEntry = findProperty(name, length);

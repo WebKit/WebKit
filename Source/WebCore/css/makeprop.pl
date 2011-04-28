@@ -26,11 +26,16 @@ use warnings;
 
 open NAMES, "<CSSPropertyNames.in" || die "Could not find CSSPropertyNames.in";
 my @names = ();
+my @aliases = ();
 while (<NAMES>) {
   next if (m/(^#)|(^\s*$)/);
   # Input may use a different EOL sequence than $/, so avoid chomp.
   $_ =~ s/[\r\n]+$//g;
-  push @names, $_;
+  if ($_ =~ /=/) {
+    push @aliases, $_;
+  } else {
+    push @names, $_;
+  }
 }
 close(NAMES);
 
@@ -61,6 +66,14 @@ EOF
 
 foreach my $name (@names) {
   my $id = $name;
+  $id =~ s/(^[^-])|-(.)/uc($1||$2)/ge;
+  print GPERF $name . ", CSSProperty" . $id . "\n";
+}
+
+foreach my $alias (@aliases) {
+  $alias =~ /^([^\s]*)[\s]*=[\s]*([^\s]*)/;
+  my $name = $1;
+  my $id = $2;
   $id =~ s/(^[^-])|-(.)/uc($1||$2)/ge;
   print GPERF $name . ", CSSProperty" . $id . "\n";
 }
