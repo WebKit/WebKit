@@ -1,3 +1,12 @@
+2011-04-27  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Convert LayoutTests/fast/events/mouseout-dead-node.html from pixel test to text-based test
+        https://bugs.webkit.org/show_bug.cgi?id=59369
+
+        [Qt] Qt specific expected result is unnecessary after r85163.
+
+        * platform/qt/fast/events/mouseout-dead-node-expected.txt: Removed.
+
 2011-04-27  Naoki Takano  <takano.naoki@gmail.com>
 
         Reviewed by Ryosuke Niwa.
