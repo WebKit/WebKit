@@ -59,9 +59,9 @@ struct _WebKitWebViewBaseClass {
 
 GType webkitWebViewBaseGetType();
 
-WebView* webkitWebViewBaseGetWebViewInstance(WebKitWebViewBase*);
+WebKitWebViewBase* webkitWebViewBaseCreate(WebContext*, WebPageGroup*);
 
-void webkitWebViewBaseSetWebViewInstance(WebKitWebViewBase*, WebView*);
+WebView* webkitWebViewBaseGetWebViewInstance(WebKitWebViewBase*);
 
 GtkIMContext* webkitWebViewBaseGetIMContext(WebKitWebViewBase*);
 

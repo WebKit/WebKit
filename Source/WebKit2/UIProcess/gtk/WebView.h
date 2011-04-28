@@ -33,26 +33,21 @@
 #include "WindowsKeyboardCodes.h"
 #include <WebCore/IntSize.h>
 #include <gtk/gtk.h>
-#include <wtf/PassRefPtr.h>
-#include <wtf/RefCounted.h>
-#include <wtf/RefPtr.h>
 
 namespace WebKit {
 
 class DrawingAreaProxy;
 class WebPageNamespace;
 
-class WebView : public RefCounted<WebView>, public PageClient {
+class WebView : public PageClient {
 public:
     ~WebView();
-    static PassRefPtr<WebView> create(WebContext* context, WebPageGroup* pageGroup)
+    static PassOwnPtr<WebView> create(GtkWidget* viewWidget)
     {
-        return adoptRef(new WebView(context, pageGroup));
+        return adoptPtr(new WebView(viewWidget));
     }
 
-    GtkWidget* window() const { return m_viewWidget; }
-
-    WebPageProxy* page() const { return m_page.get(); }
+    WebPageProxy* page() const;
 
     void handleFocusInEvent(GtkWidget*);
     void handleFocusOutEvent(GtkWidget*);
@@ -66,7 +61,7 @@ public:
     void addPendingEditorCommand(const char* command) { m_pendingEditorCommands.append(WTF::String(command)); }
 
 private:
-    WebView(WebContext*, WebPageGroup*);
+    WebView(GtkWidget*);
 
     bool isActive();
     void close();
@@ -120,7 +115,6 @@ private:
     // Members of WebView class
     GtkWidget* m_viewWidget;
     bool m_isPageActive;
-    RefPtr<WebPageProxy> m_page;
     Vector<WTF::String> m_pendingEditorCommands;
     GRefPtr<GtkWidget> m_nativeWidget;
 };

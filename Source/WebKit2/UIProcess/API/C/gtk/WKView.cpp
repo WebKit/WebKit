@@ -40,13 +40,12 @@ using namespace WebCore;
 
 WKViewRef WKViewCreate(WKContextRef contextRef, WKPageGroupRef pageGroupRef)
 {
-    RefPtr<WebView> view = WebView::create(toImpl(contextRef), toImpl(pageGroupRef));
-    return toAPI(WEBKIT_WEB_VIEW_BASE(view.release().leakRef()->window()));
+    return toAPI(webkitWebViewBaseCreate(toImpl(contextRef), toImpl(pageGroupRef)));
 }
 
 WKPageRef WKViewGetPage(WKViewRef viewRef)
 {
-    return toAPI(webkitWebViewBaseGetWebViewInstance(toImpl(viewRef))->page());
+    return toAPI(webkitWebViewBaseGetPage(toImpl(viewRef)));
 }
 
 WKURLRef WKURLCreateWithURL(const char* url)

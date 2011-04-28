@@ -32,6 +32,9 @@
 #include "GtkVersioning.h"
 #include "NotImplemented.h"
 #include "RefPtrCairo.h"
+#include "WebContext.h"
+#include "WebPageProxy.h"
+#include <WebKit2/WKContext.h>
 
 using namespace WebKit;
 using namespace WebCore;
@@ -39,7 +42,8 @@ using namespace WebCore;
 static gpointer webkitWebViewBaseParentClass = 0;
 
 struct _WebKitWebViewBasePrivate {
-    WebView* webViewInstance;
+    OwnPtr<WebView> webViewInstance;
+    RefPtr<WebPageProxy> page;
     GtkIMContext* imContext;
     gint currentClickCount;
     IntPoint previousClickPoint;
@@ -106,7 +110,7 @@ static void webkitWebViewBaseContainerAdd(GtkContainer* container, GtkWidget* wi
     gtk_widget_set_parent(widget, GTK_WIDGET(container));
 }
 
-static void webkitWebViewBaseDispose(GObject* gobject)
+static void webkitWebViewBaseFinalize(GObject* gobject)
 {
     WebKitWebViewBase* webkitWebViewBase = WEBKIT_WEB_VIEW_BASE(gobject);
     WebKitWebViewBasePrivate* priv = webkitWebViewBase->priv;
@@ -116,12 +120,17 @@ static void webkitWebViewBaseDispose(GObject* gobject)
         priv->imContext = 0;
     }
 
-    G_OBJECT_CLASS(webkitWebViewBaseParentClass)->dispose(gobject);
+    priv->page->close();
+
+    delete priv;
+    webkitWebViewBase->priv = 0;
+
+    G_OBJECT_CLASS(webkitWebViewBaseParentClass)->finalize(gobject);
 }
 
 static void webkitWebViewBaseInit(WebKitWebViewBase* webkitWebViewBase)
 {
-    WebKitWebViewBasePrivate* priv = G_TYPE_INSTANCE_GET_PRIVATE(webkitWebViewBase, WEBKIT_TYPE_WEB_VIEW_BASE, WebKitWebViewBasePrivate);
+    WebKitWebViewBasePrivate* priv = new WebKitWebViewBasePrivate();
     webkitWebViewBase->priv = priv;
 
     gtk_widget_set_can_focus(GTK_WIDGET(webkitWebViewBase), TRUE);
@@ -130,6 +139,8 @@ static void webkitWebViewBaseInit(WebKitWebViewBase* webkitWebViewBase)
     priv->currentClickCount = 0;
     priv->previousClickButton = 0;
     priv->previousClickTime = 0;
+
+    priv->webViewInstance = WebView::create(GTK_WIDGET(webkitWebViewBase));
 }
 
 #ifdef GTK_API_VERSION_2
@@ -334,12 +345,10 @@ static void webkitWebViewBaseClassInit(WebKitWebViewBaseClass* webkitWebViewBase
     widgetClass->motion_notify_event = webViewMotionNotifyEvent;
 
     GObjectClass* gobjectClass = G_OBJECT_CLASS(webkitWebViewBaseClass);
-    gobjectClass->dispose = webkitWebViewBaseDispose;
+    gobjectClass->finalize = webkitWebViewBaseFinalize;
 
     GtkContainerClass* containerClass = GTK_CONTAINER_CLASS(webkitWebViewBaseClass);
     containerClass->add = webkitWebViewBaseContainerAdd;
-
-    g_type_class_add_private(webkitWebViewBaseClass, sizeof(WebKitWebViewBasePrivate));
 }
 
 GType webkitWebViewBaseGetType()
@@ -361,14 +370,20 @@ GType webkitWebViewBaseGetType()
     return gDefineTypeIdVolatile;
 }
 
-WebView* webkitWebViewBaseGetWebViewInstance(WebKitWebViewBase* webkitWebViewBase)
+WebKitWebViewBase* webkitWebViewBaseCreate(WebContext* context, WebPageGroup* pageGroup)
 {
-    return webkitWebViewBase->priv->webViewInstance;
+    WebKitWebViewBase* webkitWebViewBase = WEBKIT_WEB_VIEW_BASE(g_object_new(WEBKIT_TYPE_WEB_VIEW_BASE, NULL));
+    WebKitWebViewBasePrivate* priv = webkitWebViewBase->priv;
+
+    priv->page = context->createWebPage(priv->webViewInstance.get(), pageGroup);
+    priv->page->initializeWebPage();
+
+    return webkitWebViewBase;
 }
 
-void webkitWebViewBaseSetWebViewInstance(WebKitWebViewBase* webkitWebViewBase, WebView* webViewInstance)
+WebView* webkitWebViewBaseGetWebViewInstance(WebKitWebViewBase* webkitWebViewBase)
 {
-    webkitWebViewBase->priv->webViewInstance = webViewInstance;
+    return webkitWebViewBase->priv->webViewInstance.get();
 }
 
 GtkIMContext* webkitWebViewBaseGetIMContext(WebKitWebViewBase* webkitWebViewBase)
@@ -378,5 +393,5 @@ GtkIMContext* webkitWebViewBaseGetIMContext(WebKitWebViewBase* webkitWebViewBase
 
 WebPageProxy* webkitWebViewBaseGetPage(WebKitWebViewBase* webkitWebViewBase)
 {
-    return webkitWebViewBase->priv->webViewInstance->page();
+    return webkitWebViewBase->priv->page.get();
 }

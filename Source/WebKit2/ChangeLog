@@ -2,6 +2,43 @@
 
         Reviewed by Martin Robinson.
 
+        [GTK] Create the page client in the view widget
+        https://bugs.webkit.org/show_bug.cgi?id=59679
+
+        * UIProcess/API/C/gtk/WKView.cpp:
+        (WKViewCreate): Simply create a new view widget and return it.
+        (WKViewGetPage): Use webkitWebViewBaseGetPage().
+        * UIProcess/API/gtk/WebKitWebViewBase.cpp:
+        (webkitWebViewBaseFinalize): Use finalize instead of dispose to
+        make sure it's called only once, and release the private struct too.
+        (webkitWebViewBaseInit): Create the page client.
+        (webkitWebViewBaseClassInit): Don't use GObject private data structure.
+        (webkitWebViewBaseCreate): New method to create a
+        WebKitWebViewBase for a given context and page group.
+        (webkitWebViewBaseGetWebViewInstance):
+        (webkitWebViewBaseGetPage):
+        * UIProcess/API/gtk/WebKitWebViewBase.h:
+        * UIProcess/gtk/WebView.cpp:
+        (WebKit::WebView::page): Get the page from the view widget.
+        (WebKit::WebView::handleFocusInEvent): Ditto.
+        (WebKit::WebView::handleFocusOutEvent): Ditto.
+        (WebKit::WebView::WebView): Page client is now created with a view widget.
+        (WebKit::WebView::paint): Get the page from the view widget.
+        (WebKit::WebView::setSize): Ditto.
+        (WebKit::WebView::handleKeyboardEvent): Ditto.
+        (WebKit::WebView::handleMouseEvent): Ditto.
+        (WebKit::WebView::handleWheelEvent): Ditto.
+        (WebKit::WebView::close): Ditto.
+        (WebKit::WebView::createDrawingAreaProxy): Ditto.
+        * UIProcess/gtk/WebView.h:
+        (WebKit::WebView::create): The page client will be created as
+        private by the view widget, so it doesn't need to be ref counted,
+        use PassOwnPtr instead of PassRefPtr.
+
+2011-04-28  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Reviewed by Martin Robinson.
+
         [GTK] PlatformWebView should be the view widget
         https://bugs.webkit.org/show_bug.cgi?id=59676
 
