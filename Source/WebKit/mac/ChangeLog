@@ -1,3 +1,13 @@
+2011-04-28  David Kilzer  <ddkilzer@apple.com>
+
+        Follow-up fix: <http://webkit.org/b/59727> -[WebPDFView menuForEvent:] leaks NSMenuItem objects
+
+        Addresses review comment from Darin Adler.
+
+        * WebView/WebPDFView.mm:
+        (-[WebPDFView menuForEvent:]): Use a local variable and -release
+        instead of -autorelease.
+
 2011-04-28  Anders Carlsson  <andersca@apple.com>
 
         Fix a thinko - separateRealmLabel is not an NSImageView.
