@@ -1,3 +1,14 @@
+2011-04-28  Enrica Casucci  <enrica@apple.com>
+
+        Reviewed by Beth Dakin.
+
+        Momentum scroll tweak for WebKit.
+        https://bugs.webkit.org/show_bug.cgi?id=59723
+        <rdar://problem/9259933>
+
+        * WebView/WebDynamicScrollBarsView.mm:
+        (-[WebDynamicScrollBarsView scrollWheel:]): Changed constant.
+
 2011-04-27  Anders Carlsson  <andersca@apple.com>
 
         Follow-up Leopard build fix.

@@ -496,7 +496,7 @@ static const unsigned cMaxUpdateScrollbarsPass = 2;
 
 #if !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOW_LEOPARD)
     NSEventPhase momentumPhase = [event momentumPhase];
-    BOOL isLatchingEvent = momentumPhase & NSEventPhaseBegan || momentumPhase & NSEventPhaseChanged;
+    BOOL isLatchingEvent = momentumPhase & NSEventPhaseBegan || momentumPhase & NSEventPhaseStationary;
 #else
     int momentumPhase = WKGetNSEventMomentumPhase(event);
     BOOL isLatchingEvent = momentumPhase == WKEventPhaseBegan || momentumPhase == WKEventPhaseChanged;
