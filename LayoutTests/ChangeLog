@@ -1,3 +1,9 @@
+2011-04-28  Pavel Feldman  <pfeldman@google.com>
+
+        Not reviewed: skipping new inspector tests on Mac while I'm looking into it.
+
+        * platform/mac/Skipped:
+
 2011-04-28  Satish Sampath  <satish@chromium.org>
 
         Reviewed by Tony Gentilcore.
