@@ -1,3 +1,13 @@
+2011-04-27  Chris Fleizach  <cfleizach@apple.com>
+
+        Reviewed by Beth Dakin.
+
+        <rdar://problem/9315254> ARIA role attribute implemented incorrectly; does not support token list with fallbacks
+        https://bugs.webkit.org/show_bug.cgi?id=59648
+
+        * accessibility/aria-fallback-roles.html: Added.
+        * platform/mac/accessibility/aria-fallback-roles-expected.txt: Added.
+
 2011-04-27  Mark Pilgrim  <pilgrim@chromium.org>
 
         Reviewed by Tony Chang.

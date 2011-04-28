@@ -977,8 +977,21 @@ static ARIARoleMap* createARIARoleMap()
 AccessibilityRole AccessibilityObject::ariaRoleToWebCoreRole(const String& value)
 {
     ASSERT(!value.isEmpty());
+    
     static const ARIARoleMap* roleMap = createARIARoleMap();
-    return roleMap->get(value);
+
+    Vector<String> roleVector;
+    value.split(' ', roleVector);
+    AccessibilityRole role = UnknownRole;
+    unsigned size = roleVector.size();
+    for (unsigned i = 0; i < size; ++i) {
+        String roleName = roleVector[i];
+        role = roleMap->get(roleName);
+        if (role)
+            return role;
+    }
+    
+    return role;
 }
 
 const AtomicString& AccessibilityObject::placeholderValue() const
