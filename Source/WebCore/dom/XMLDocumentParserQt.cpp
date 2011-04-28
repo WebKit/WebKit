@@ -422,9 +422,6 @@ void XMLDocumentParser::parse()
 #if ENABLE(XHTMLMP)
                 || isXHTMLMPDocument()
 #endif
-#if ENABLE(WML)
-                || isWMLDocument()
-#endif
                ) {
                 QString entity = m_stream.name().toString();
                 UChar c = decodeNamedEntity(entity.toUtf8().constData());
@@ -717,14 +714,6 @@ void XMLDocumentParser::parseDtd()
         else
             setIsXHTMLDocument(true);
     }
-#endif
-#if ENABLE(WML)
-    else if (document()->isWMLDocument()
-             && publicId != QLatin1String("-//WAPFORUM//DTD WML 1.3//EN")
-             && publicId != QLatin1String("-//WAPFORUM//DTD WML 1.2//EN")
-             && publicId != QLatin1String("-//WAPFORUM//DTD WML 1.1//EN")
-             && publicId != QLatin1String("-//WAPFORUM//DTD WML 1.0//EN"))
-        handleError(fatal, "Invalid DTD Public ID", lineNumber(), columnNumber());
 #endif
     if (!m_parsingFragment)
         document()->parserAddChild(DocumentType::create(document(), name, publicId, systemId));

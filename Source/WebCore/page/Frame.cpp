@@ -109,10 +109,6 @@
 #include "TiledBackingStore.h"
 #endif
 
-#if ENABLE(WML)
-#include "WMLNames.h"
-#endif
-
 using namespace std;
 
 namespace WebCore {
@@ -178,10 +174,6 @@ inline Frame::Frame(Page* page, HTMLFrameOwnerElement* ownerElement, FrameLoader
     MathMLNames::init();
     XMLNSNames::init();
     XMLNames::init();
-
-#if ENABLE(WML)
-    WMLNames::init();
-#endif
 
     if (!ownerElement) {
 #if ENABLE(TILED_BACKING_STORE)

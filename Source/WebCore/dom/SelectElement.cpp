@@ -43,11 +43,6 @@
 #include <wtf/Assertions.h>
 #include <wtf/unicode/CharacterNames.h>
 
-#if ENABLE(WML)
-#include "WMLNames.h"
-#include "WMLSelectElement.h"
-#endif
-
 // Configure platform-specific behavior when focused pop-up receives arrow/space/return keystroke.
 // (PLATFORM(MAC) and PLATFORM(GTK) are always false in Chromium, hence the extra tests.)
 #if PLATFORM(MAC) || (PLATFORM(CHROMIUM) && OS(DARWIN))
@@ -1090,12 +1085,6 @@ SelectElement* toSelectElement(Element* element)
 {
     if (element->isHTMLElement() && element->hasTagName(HTMLNames::selectTag))
         return static_cast<HTMLSelectElement*>(element);
-
-#if ENABLE(WML)
-    if (element->isWMLElement() && element->hasTagName(WMLNames::selectTag))
-        return static_cast<WMLSelectElement*>(element);
-#endif
-
     return 0;
 }
 

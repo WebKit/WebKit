@@ -108,7 +108,7 @@ protected:
 #endif
 };
 
-// HTML/WMLInputElement hold this struct as member variable
+// HTMLInputElement hold this struct as member variable
 // and pass it to the static helper functions in InputElement
 class InputElementData {
 public:

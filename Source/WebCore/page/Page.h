@@ -86,9 +86,6 @@ namespace WebCore {
 #if ENABLE(NOTIFICATIONS)
     class NotificationPresenter;
 #endif
-#if ENABLE(WML)
-    class WMLPageState;
-#endif
 
     typedef uint64_t LinkHash;
 
@@ -268,10 +265,6 @@ namespace WebCore {
         void setSessionStorage(PassRefPtr<StorageNamespace>);
 #endif
 
-#if ENABLE(WML)
-        WMLPageState* wmlPageState();
-#endif
-
         void setCustomHTMLTokenizerTimeDelay(double);
         bool hasCustomHTMLTokenizerTimeDelay() const { return m_customHTMLTokenizerTimeDelay != -1; }
         double customHTMLTokenizerTimeDelay() const { ASSERT(m_customHTMLTokenizerTimeDelay != -1); return m_customHTMLTokenizerTimeDelay; }
@@ -388,10 +381,6 @@ namespace WebCore {
 
 #if ENABLE(DOM_STORAGE)
         RefPtr<StorageNamespace> m_sessionStorage;
-#endif
-
-#if ENABLE(WML)
-        OwnPtr<WMLPageState> m_wmlPageState;
 #endif
 
 #if ENABLE(NOTIFICATIONS)

@@ -56,11 +56,6 @@
 #include "SVGDocument.h"
 #endif
 
-#if ENABLE(WML)
-#include "WMLNames.h"
-#include "WMLDocument.h"
-#endif
-
 namespace WebCore {
 
 #if ENABLE(SVG)
@@ -235,11 +230,6 @@ PassRefPtr<Document> DOMImplementation::createDocument(const String& namespaceUR
         doc = SVGDocument::create(0, KURL());
     else
 #endif
-#if ENABLE(WML)
-    if (namespaceURI == WMLNames::wmlNamespaceURI)
-        doc = WMLDocument::create(0, KURL());
-    else
-#endif
     if (namespaceURI == HTMLNames::xhtmlNamespaceURI)
         doc = Document::createXHTML(0, KURL());
     else
@@ -326,11 +316,6 @@ PassRefPtr<Document> DOMImplementation::createDocument(const String& type, Frame
 #endif
         )
         return Document::createXHTML(frame, url);
-
-#if ENABLE(WML)
-    if (type == "text/vnd.wap.wml" || type == "application/vnd.wap.wmlc")
-        return WMLDocument::create(frame, url);
-#endif
 
 #if ENABLE(FTPDIR)
     // Plugins cannot take FTP from us either

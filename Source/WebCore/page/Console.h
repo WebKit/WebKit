@@ -52,7 +52,6 @@ class ScriptCallStack;
 
 enum MessageSource {
     HTMLMessageSource,
-    WMLMessageSource,
     XMLMessageSource,
     JSMessageSource,
     CSSMessageSource,

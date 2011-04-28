@@ -2418,42 +2418,6 @@ HEADERS += \
     svg/SVGVKernElement.h \
     svg/SVGZoomAndPan.h \
     svg/SVGZoomEvent.h \
-    wml/WMLAccessElement.h \
-    wml/WMLAElement.h \
-    wml/WMLAnchorElement.h \
-    wml/WMLBRElement.h \
-    wml/WMLCardElement.h \
-    wml/WMLDocument.h \
-    wml/WMLDoElement.h \
-    wml/WMLElement.h \
-    wml/WMLErrorHandling.h \
-    wml/WMLEventHandlingElement.h \
-    wml/WMLFieldSetElement.h \
-    wml/WMLFormControlElement.h \
-    wml/WMLGoElement.h \
-    wml/WMLImageElement.h \
-    wml/WMLImageLoader.h \
-    wml/WMLInputElement.h \
-    wml/WMLInsertedLegendElement.h \
-    wml/WMLIntrinsicEvent.h \
-    wml/WMLIntrinsicEventHandler.h \
-    wml/WMLMetaElement.h \
-    wml/WMLNoopElement.h \
-    wml/WMLOnEventElement.h \
-    wml/WMLOptGroupElement.h \
-    wml/WMLOptionElement.h \
-    wml/WMLPageState.h \
-    wml/WMLPElement.h \
-    wml/WMLPostfieldElement.h \
-    wml/WMLPrevElement.h \
-    wml/WMLRefreshElement.h \
-    wml/WMLSelectElement.h \
-    wml/WMLSetvarElement.h \
-    wml/WMLTableElement.h \
-    wml/WMLTaskElement.h \
-    wml/WMLTemplateElement.h \
-    wml/WMLTimerElement.h \
-    wml/WMLVariables.h \
     workers/AbstractWorker.h \
     workers/DedicatedWorkerContext.h \
     workers/DedicatedWorkerThread.h \
@@ -3080,46 +3044,6 @@ contains(DEFINES, ENABLE_MATHML=1) {
         rendering/mathml/RenderMathMLSquareRoot.cpp \
         rendering/mathml/RenderMathMLSubSup.cpp \
         rendering/mathml/RenderMathMLUnderOver.cpp
-}
-
-contains(DEFINES, ENABLE_WML=1) {
-    SOURCES += \
-        wml/WMLAElement.cpp \
-        wml/WMLAccessElement.cpp \
-        wml/WMLAnchorElement.cpp \
-        wml/WMLBRElement.cpp \
-        wml/WMLCardElement.cpp \
-        wml/WMLDoElement.cpp \
-        wml/WMLDocument.cpp \
-        wml/WMLElement.cpp \
-        wml/WMLErrorHandling.cpp \
-        wml/WMLEventHandlingElement.cpp \
-        wml/WMLFormControlElement.cpp \
-        wml/WMLFieldSetElement.cpp \
-        wml/WMLGoElement.cpp \
-        wml/WMLImageElement.cpp \
-        wml/WMLImageLoader.cpp \
-        wml/WMLInputElement.cpp \
-        wml/WMLInsertedLegendElement.cpp \
-        wml/WMLIntrinsicEvent.cpp \
-        wml/WMLIntrinsicEventHandler.cpp \
-        wml/WMLMetaElement.cpp \
-        wml/WMLNoopElement.cpp \
-        wml/WMLOnEventElement.cpp \
-        wml/WMLPElement.cpp \
-        wml/WMLOptGroupElement.cpp \
-        wml/WMLOptionElement.cpp \
-        wml/WMLPageState.cpp \
-        wml/WMLPostfieldElement.cpp \
-        wml/WMLPrevElement.cpp \
-        wml/WMLRefreshElement.cpp \
-        wml/WMLSelectElement.cpp \
-        wml/WMLSetvarElement.cpp \
-        wml/WMLTableElement.cpp \
-        wml/WMLTaskElement.cpp \
-        wml/WMLTemplateElement.cpp \
-        wml/WMLTimerElement.cpp \
-        wml/WMLVariables.cpp
 }
 
 contains(DEFINES, ENABLE_XHTMLMP=1) {

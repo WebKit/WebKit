@@ -415,9 +415,6 @@ public:
 #endif
     virtual bool isPluginDocument() const { return false; }
     virtual bool isMediaDocument() const { return false; }
-#if ENABLE(WML)
-    virtual bool isWMLDocument() const { return false; }
-#endif
 #if ENABLE(XHTMLMP)
     bool isXHTMLMPDocument() const; 
     bool shouldProcessNoscriptElement() const { return m_shouldProcessNoScriptElement; }
@@ -1020,14 +1017,6 @@ public:
     void setUsingGeolocation(bool f) { m_usingGeolocation = f; }
     bool usingGeolocation() const { return m_usingGeolocation; };
 
-#if ENABLE(WML)
-    void setContainsWMLContent(bool value) { m_containsWMLContent = value; }
-    bool containsWMLContent() const { return m_containsWMLContent; }
-
-    void resetWMLPageState();
-    void initializeWMLPageState();
-#endif
-    
     bool containsValidityStyleRules() const { return m_containsValidityStyleRules; }
     void setContainsValidityStyleRules() { m_containsValidityStyleRules = true; }
 
@@ -1350,19 +1339,15 @@ private:
     bool m_sawElementsInKnownNamespaces;
 
     bool m_usingGeolocation;
-    
-    RefPtr<EventQueue> m_eventQueue;
 
-#if ENABLE(WML)
-    bool m_containsWMLContent;
-#endif
+    RefPtr<EventQueue> m_eventQueue;
 
     RefPtr<DocumentWeakReference> m_weakReference;
 
     HashSet<MediaCanStartListener*> m_mediaCanStartListeners;
 
     QualifiedName m_idAttributeName;
-    
+
 #if ENABLE(FULLSCREEN_API)
     bool m_areKeysEnabledInFullScreen;
     RefPtr<Element> m_fullScreenElement;

@@ -116,10 +116,6 @@
 #include "SVGNames.h"
 #endif
 
-#if ENABLE(WML)
-#include "WMLNames.h"
-#endif
-
 #if PLATFORM(QT)
 #include <qwebhistoryinterface.h>
 #endif
@@ -892,17 +888,6 @@ static inline const AtomicString* linkAttribute(Node* node)
     if (element->isHTMLElement())
         return &element->fastGetAttribute(hrefAttr);
 
-#if ENABLE(WML)
-    if (element->isWMLElement()) {
-        // <anchor> elements don't have href attributes, but we still want to
-        // appear as link, so linkAttribute() has to return a non-null value!
-        if (element->hasTagName(WMLNames::anchorTag))
-            return &emptyAtom;
-
-        return &element->fastGetAttribute(hrefAttr);
-    }
-#endif
-
 #if ENABLE(SVG)
     if (element->isSVGElement())
         return &element->fastGetAttribute(XLinkNames::hrefAttr);
@@ -1373,18 +1358,6 @@ PassRefPtr<RenderStyle> CSSStyleSelector::styleForElement(Element* e, RenderStyl
         defaultPrintStyle->addRulesFromSheet(mathMLSheet, printEval());
         // There are some sibling rules here.
         collectSiblingRulesInDefaultStyle();
-    }
-#endif
-
-#if ENABLE(WML)
-    static bool loadedWMLUserAgentSheet;
-    if (e->isWMLElement() && !loadedWMLUserAgentSheet) {
-        // WML rules.
-        loadedWMLUserAgentSheet = true;
-        CSSStyleSheet* wmlSheet = parseUASheet(wmlUserAgentStyleSheet, sizeof(wmlUserAgentStyleSheet));
-        defaultStyle->addRulesFromSheet(wmlSheet, screenEval());
-        defaultPrintStyle->addRulesFromSheet(wmlSheet, printEval());
-        assertNoSiblingRulesInDefaultStyle();
     }
 #endif
 
@@ -1912,13 +1885,6 @@ void CSSStyleSelector::adjustRenderStyle(RenderStyle* style, RenderStyle* parent
     if (style->hasAutoZIndex() && ((e && e->document()->documentElement() == e) || style->opacity() < 1.0f || 
         style->hasTransformRelatedProperty() || style->hasMask() || style->boxReflect()))
         style->setZIndex(0);
-    
-#if ENABLE(WML)
-    if (e && (e->hasTagName(WMLNames::insertedLegendTag)
-              || e->hasTagName(WMLNames::inputTag))
-            && style->width().isAuto())
-        style->setWidth(Length(Intrinsic));
-#endif
 
     // Textarea considers overflow visible as auto.
     if (e && e->hasTagName(textareaTag)) {

@@ -117,7 +117,6 @@ my (
     $webInspectorSupport,
     $webSocketsSupport,
     $webTimingSupport,
-    $wmlSupport,
     $workersSupport,
     $xhtmlmpSupport,
     $xpathSupport,
@@ -286,9 +285,6 @@ my @features = (
 
     { option => "web-timing", desc => "Toggle Web Timing support",
       define => "ENABLE_WEB_TIMING", default => 0, value=> \$webTimingSupport },
-
-    { option => "wml", desc => "Toggle WML support",
-      define => "ENABLE_WML", default => 0, value => \$wmlSupport },
 
     { option => "workers", desc => "Toggle Web Workers support",
       define => "ENABLE_WORKERS", default => (isAppleWebKit() || isGtk()), value => \$workersSupport },

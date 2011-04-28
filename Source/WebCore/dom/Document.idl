@@ -235,12 +235,6 @@ module core {
         [RequiresAllArguments=Raise] NodeList querySelectorAll(in DOMString selectors)
             raises(DOMException);
 
-#if defined(ENABLE_WML) && ENABLE_WML
-        // Only used from within WML layout tests, WML doesn't have JS support at all.
-        [DontEnum] void resetWMLPageState();
-        [DontEnum] void initializeWMLPageState();
-#endif
-
 #if defined(ENABLE_FULLSCREEN_API) && ENABLE_FULLSCREEN_API
         readonly attribute boolean webkitIsFullScreen;
         readonly attribute boolean webkitFullScreenKeyboardInputAllowed;

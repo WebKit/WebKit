@@ -105,10 +105,6 @@
 #include "SVGUseElement.h"
 #endif
 
-#if ENABLE(WML)
-#include "WMLNames.h"
-#endif
-
 #if ENABLE(XHTMLMP)
 #include "HTMLNoScriptElement.h"
 #endif
@@ -568,9 +564,6 @@ InputElement* Node::toInputElement()
     // directly or indirectly from a constructor or destructor of this object.
     // Don't do this!
     ASSERT(!(isHTMLElement() && hasTagName(inputTag)));
-#if ENABLE(WML)
-    ASSERT(!(isWMLElement() && hasTagName(WMLNames::inputTag)));
-#endif
     return 0;
 }
 

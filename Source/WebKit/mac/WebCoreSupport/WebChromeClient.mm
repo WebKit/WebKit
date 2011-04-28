@@ -85,7 +85,6 @@
 #endif
 
 NSString *WebConsoleMessageHTMLMessageSource = @"HTMLMessageSource";
-NSString *WebConsoleMessageWMLMessageSource = @"WMLMessageSource";
 NSString *WebConsoleMessageXMLMessageSource = @"XMLMessageSource";
 NSString *WebConsoleMessageJSMessageSource = @"JSMessageSource";
 NSString *WebConsoleMessageCSSMessageSource = @"CSSMessageSource";
@@ -367,8 +366,6 @@ inline static NSString *stringForMessageSource(MessageSource source)
     switch (source) {
     case HTMLMessageSource:
         return WebConsoleMessageHTMLMessageSource;
-    case WMLMessageSource:
-        return WebConsoleMessageWMLMessageSource;
     case XMLMessageSource:
         return WebConsoleMessageXMLMessageSource;
     case JSMessageSource:

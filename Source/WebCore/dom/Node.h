@@ -201,12 +201,6 @@ public:
     SVGUseElement* svgShadowHost() const;
 #endif
 
-#if ENABLE(WML)
-    virtual bool isWMLElement() const { return false; }
-#else
-    static bool isWMLElement() { return false; }
-#endif
-
     virtual bool isMediaControlElement() const { return false; }
     bool isStyledElement() const { return getFlag(IsStyledElementFlag); }
     virtual bool isFrameOwnerElement() const { return false; }

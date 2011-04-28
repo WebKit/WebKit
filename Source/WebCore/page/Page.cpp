@@ -82,10 +82,6 @@
 #include "StorageNamespace.h"
 #endif
 
-#if ENABLE(WML)
-#include "WMLPageState.h"
-#endif
-
 #if ENABLE(CLIENT_BASED_GEOLOCATION)
 #include "GeolocationController.h"
 #endif
@@ -775,15 +771,6 @@ StorageNamespace* Page::sessionStorage(bool optionalCreate)
 void Page::setSessionStorage(PassRefPtr<StorageNamespace> newStorage)
 {
     m_sessionStorage = newStorage;
-}
-#endif
-
-#if ENABLE(WML)
-WMLPageState* Page::wmlPageState()
-{
-    if (!m_wmlPageState)    
-        m_wmlPageState.set(new WMLPageState(this));
-    return m_wmlPageState.get(); 
 }
 #endif
 

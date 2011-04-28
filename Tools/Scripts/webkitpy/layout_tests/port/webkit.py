@@ -226,7 +226,6 @@ class WebKitPort(base.Port):
             "GraphicsLayer": ["compositing"],
             "WebCoreHas3DRendering": ["animations/3d", "transforms/3d"],
             "WebGLShader": ["fast/canvas/webgl", "compositing/webgl", "http/tests/canvas/webgl"],
-            "WMLElement": ["http/tests/wml", "fast/wml", "wml"],
             "parseWCSSInputProperty": ["fast/wcss"],
             "isXHTMLMPDocument": ["fast/xhtmlmp"],
         }
@@ -259,9 +258,7 @@ class WebKitPort(base.Port):
         # the Mac platform.
         disabled_feature_tests = [
             "fast/xhtmlmp",
-            "http/tests/wml",
             "mathml",
-            "wml",
         ]
         # FIXME: webarchive tests expect to read-write from
         # -expected.webarchive files instead of .txt files.

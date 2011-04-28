@@ -31,11 +31,6 @@
 #include "SVGNames.h"
 #endif
 
-#if ENABLE(WML)
-#include "WMLDocument.h"
-#include "WMLVariables.h"
-#endif
-
 using namespace std;
 
 namespace WebCore {
@@ -256,19 +251,6 @@ RenderObject* Text::createRenderer(RenderArena* arena, RenderStyle* style)
 
 void Text::attach()
 {
-#if ENABLE(WML)
-    if (document()->isWMLDocument() && !containsOnlyWhitespace()) {
-        String text = data();
-        ASSERT(!text.isEmpty());
-
-        text = substituteVariableReferences(text, document());
-
-        ExceptionCode code = 0;
-        setData(text, code);
-        ASSERT(!code);
-    }
-#endif
-
     createRendererIfNeeded();
     CharacterData::attach();
 }

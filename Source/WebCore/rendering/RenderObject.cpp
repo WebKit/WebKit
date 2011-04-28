@@ -67,10 +67,6 @@
 #include "RenderLayerCompositor.h"
 #endif
 
-#if ENABLE(WML)
-#include "WMLNames.h"
-#endif
-
 #if ENABLE(SVG)
 #include "RenderSVGResourceContainer.h"
 #include "SVGRenderSupport.h"
@@ -261,11 +257,7 @@ bool RenderObject::isHR() const
 
 bool RenderObject::isLegend() const
 {
-    return node() && (node()->hasTagName(legendTag)
-#if ENABLE(WML)
-                      || node()->hasTagName(WMLNames::insertedLegendTag)
-#endif
-                     );
+    return node() && node()->hasTagName(legendTag);
 }
 
 bool RenderObject::isHTMLMarquee() const
@@ -2502,20 +2494,8 @@ RenderBoxModelObject* RenderObject::offsetParent() const
     RenderObject* curr = parent();
     while (curr && (!curr->node() || (!curr->isPositioned() && !curr->isRelPositioned() && !curr->isBody()))) {
         Node* element = curr->node();
-        if (!skipTables && element) {
-            bool isTableElement = element->hasTagName(tableTag) ||
-                                  element->hasTagName(tdTag) ||
-                                  element->hasTagName(thTag);
-
-#if ENABLE(WML)
-            if (!isTableElement && element->isWMLElement())
-                isTableElement = element->hasTagName(WMLNames::tableTag) ||
-                                 element->hasTagName(WMLNames::tdTag);
-#endif
-
-            if (isTableElement)
-                break;
-        }
+        if (!skipTables && element && (element->hasTagName(tableTag) || element->hasTagName(tdTag) || element->hasTagName(thTag)))
+            break;
 
         float newZoom = curr->style()->effectiveZoom();
         if (currZoom != newZoom)

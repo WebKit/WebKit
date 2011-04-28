@@ -94,7 +94,6 @@ enum {
 
 // Message Sources.
 extern NSString *WebConsoleMessageHTMLMessageSource;
-extern NSString *WebConsoleMessageWMLMessageSource;
 extern NSString *WebConsoleMessageXMLMessageSource;
 extern NSString *WebConsoleMessageJSMessageSource;
 extern NSString *WebConsoleMessageCSSMessageSource;

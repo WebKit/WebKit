@@ -52,10 +52,6 @@
 #include <algorithm>
 #include <math.h>
 
-#if ENABLE(WML)
-#include "WMLNames.h"
-#endif
-
 using namespace std;
 
 namespace WebCore {

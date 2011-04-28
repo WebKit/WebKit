@@ -108,7 +108,7 @@ private:
     static void setOptionsChangedOnRenderer(SelectElementData&, Element*);
 };
 
-// HTML/WMLSelectElement hold this struct as member variable
+// HTMLSelectElement hold this struct as member variable
 // and pass it to the static helper functions in SelectElement
 class SelectElementData {
 public:

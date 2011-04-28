@@ -1,3 +1,18 @@
+2011-04-28  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        Remove WML
+        https://bugs.webkit.org/show_bug.cgi?id=59678
+
+        Remove WML-related configuration options and private APIs.
+
+        * Configurations/FeatureDefines.xcconfig:
+        * WebCoreSupport/WebChromeClient.mm:
+        (stringForMessageSource):
+        * WebView/WebFramePrivate.h:
+        * WebView/WebUIDelegatePrivate.h:
+
 2011-04-28  Brian Weinstein  <bweinstein@apple.com>
 
         Reviewed by Timothy Hatcher.

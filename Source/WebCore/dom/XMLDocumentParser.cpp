@@ -68,13 +68,6 @@ using namespace HTMLNames;
 
 const int maxErrors = 25;
 
-#if ENABLE(WML)
-bool XMLDocumentParser::isWMLDocument() const
-{
-    return document()->isWMLDocument();
-}
-#endif
-
 void XMLDocumentParser::pushCurrentNode(Node* n)
 {
     ASSERT(n);
@@ -311,17 +304,6 @@ void XMLDocumentParser::insertErrorMessageBlock()
         documentElement = body.get();
     }
 #endif
-#if ENABLE(WML)
-    else if (isWMLDocument()) {
-        RefPtr<Element> rootElement = document->createElement(htmlTag, false);
-        RefPtr<Element> body = document->createElement(bodyTag, false);
-        rootElement->appendChild(body, ec);
-        body->appendChild(documentElement, ec);
-        document->appendChild(rootElement.get(), ec);
-        documentElement = body.get();
-    }
-#endif
-
     RefPtr<Element> reportElement = createXHTMLParserErrorHeader(document, m_errorMessages);
     documentElement->insertBefore(reportElement, documentElement->firstChild(), ec);
 #if ENABLE(XSLT)

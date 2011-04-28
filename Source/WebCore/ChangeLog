@@ -1,3 +1,232 @@
+2011-04-28  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        Remove WML
+        https://bugs.webkit.org/show_bug.cgi?id=59678
+
+        This patch removes WML from WebCore.  After removing WML, there's a
+        bunch of twisted code that could be untwisted, but this patch contains
+        only the purely mechanical part of removing the feature.
+
+        There's been a lot of discussion on webkit-dev about whether we should
+        remove WML.  In addition to those threads, we've had an informal poll
+        of the reviewers as well as an in-person discussion at the WebKit
+        contributor's meeting.  Removing any feature is likely to make some
+        folks unhappy, but, on balance, removing WML appears to be the right
+        thing for the project to do at this time.
+
+        * CMakeLists.txt:
+        * CodeGenerators.pri:
+        * Configurations/FeatureDefines.xcconfig:
+        * DerivedSources.cpp:
+        * DerivedSources.make:
+        * GNUmakefile.am:
+        * GNUmakefile.list.am:
+        * WebCore.gyp/WebCore.gyp:
+        * WebCore.gypi:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * css/CSSStyleSelector.cpp:
+        (WebCore::linkAttribute):
+        (WebCore::CSSStyleSelector::styleForElement):
+        (WebCore::CSSStyleSelector::adjustRenderStyle):
+        * css/wml.css: Removed.
+        * dom/DOMImplementation.cpp:
+        (WebCore::DOMImplementation::createDocument):
+        * dom/Document.cpp:
+        (WebCore::Document::Document):
+        (WebCore::Document::createElement):
+        * dom/Document.h:
+        (WebCore::Document::isMediaDocument):
+        * dom/Document.idl:
+        * dom/InputElement.h:
+        * dom/Node.cpp:
+        (WebCore::Node::toInputElement):
+        * dom/Node.h:
+        * dom/OptionElement.cpp:
+        (WebCore::toOptionElement):
+        (WebCore::isOptionElement):
+        * dom/OptionElement.h:
+        * dom/OptionGroupElement.cpp:
+        (WebCore::toOptionGroupElement):
+        (WebCore::isOptionGroupElement):
+        * dom/SelectElement.cpp:
+        (WebCore::toSelectElement):
+        * dom/SelectElement.h:
+        * dom/Text.cpp:
+        (WebCore::Text::attach):
+        * dom/XMLDocumentParser.cpp:
+        (WebCore::XMLDocumentParser::insertErrorMessageBlock):
+        * dom/XMLDocumentParser.h:
+        * dom/XMLDocumentParserLibxml2.cpp:
+        (WebCore::XMLDocumentParser::internalSubset):
+        (WebCore::getEntityHandler):
+        * dom/XMLDocumentParserQt.cpp:
+        (WebCore::XMLDocumentParser::parse):
+        (WebCore::XMLDocumentParser::parseDtd):
+        * editing/htmlediting.cpp:
+        (WebCore::canHaveChildrenForEditing):
+        * features.pri:
+        * history/BackForwardList.h:
+        * history/BackForwardListImpl.cpp:
+        * history/BackForwardListImpl.h:
+        * history/PageCache.cpp:
+        (WebCore::PageCache::canCachePageContainingThisFrame):
+        * html/HTMLAnchorElement.h:
+        * inspector/ConsoleMessage.cpp:
+        (WebCore::messageSourceValue):
+        * inspector/front-end/ConsoleView.js:
+        (WebInspector.ConsoleMessage.prototype.toString):
+        * loader/FrameLoader.cpp:
+        (WebCore::isBackForwardLoadType):
+        (WebCore::FrameLoader::transitionToCommitted):
+        (WebCore::FrameLoader::shouldReload):
+        (WebCore::FrameLoader::loadDifferentDocumentItem):
+        (WebCore::FrameLoader::loadItem):
+        * loader/FrameLoaderTypes.h:
+        * loader/HistoryController.cpp:
+        (WebCore::HistoryController::restoreDocumentState):
+        * manual-tests/wml: Removed.
+        * manual-tests/wml/StartTests.wml: Removed.
+        * manual-tests/wml/a-br-element.wml: Removed.
+        * manual-tests/wml/a-element.wml: Removed.
+        * manual-tests/wml/a-img-element.wml: Removed.
+        * manual-tests/wml/access-target.wml: Removed.
+        * manual-tests/wml/anchor-br-element.wml: Removed.
+        * manual-tests/wml/anchor-element.wml: Removed.
+        * manual-tests/wml/anchor-img-element.wml: Removed.
+        * manual-tests/wml/card-newcontext-attr.wml: Removed.
+        * manual-tests/wml/card-onenterbackward.wml: Removed.
+        * manual-tests/wml/card-onenterforward.wml: Removed.
+        * manual-tests/wml/card-ontimer.wml: Removed.
+        * manual-tests/wml/deck-access-control.wml: Removed.
+        * manual-tests/wml/input-format.wml: Removed.
+        * manual-tests/wml/onevent-go.wml: Removed.
+        * manual-tests/wml/onevent-noop.wml: Removed.
+        * manual-tests/wml/onevent-prev.wml: Removed.
+        * manual-tests/wml/onevent-refresh.wml: Removed.
+        * manual-tests/wml/onevent-shadow.wml: Removed.
+        * manual-tests/wml/resources: Removed.
+        * manual-tests/wml/resources/smiley.png: Removed.
+        * manual-tests/wml/select-element.wml: Removed.
+        * manual-tests/wml/select-onpick-event-crash.wml: Removed.
+        * manual-tests/wml/select-onpick-event.wml: Removed.
+        * manual-tests/wml/setvar-element.wml: Removed.
+        * manual-tests/wml/targetdeck.wml: Removed.
+        * manual-tests/wml/task-go-in-anchor.wml: Removed.
+        * manual-tests/wml/task-prev-in-anchor.wml: Removed.
+        * manual-tests/wml/task-refresh-in-anchor.wml: Removed.
+        * manual-tests/wml/template-go.wml: Removed.
+        * manual-tests/wml/template-ontimer.wml: Removed.
+        * manual-tests/wml/timer.wml: Removed.
+        * manual-tests/wml/variable-substitution.wml: Removed.
+        * page/Console.cpp:
+        (WebCore::printMessageSourceAndLevelPrefix):
+        * page/Console.h:
+        * page/Frame.cpp:
+        (WebCore::Frame::Frame):
+        * page/Page.cpp:
+        * page/Page.h:
+        * platform/MIMETypeRegistry.cpp:
+        (WebCore::initializeSupportedNonImageMimeTypes):
+        * platform/network/FormDataBuilder.h:
+        * platform/network/mac/ResourceHandleMac.mm:
+        (-[WebCoreResourceHandleAsDelegate connection:didReceiveResponse:]):
+        * platform/wince/MIMETypeRegistryWinCE.cpp:
+        (WebCore::initMIMETypeEntensionMap):
+        * rendering/HitTestResult.cpp:
+        (WebCore::HitTestResult::altDisplayString):
+        (WebCore::HitTestResult::absoluteImageURL):
+        (WebCore::HitTestResult::absoluteLinkURL):
+        (WebCore::HitTestResult::isLiveLink):
+        * rendering/RenderBox.cpp:
+        * rendering/RenderButton.cpp:
+        (WebCore::RenderButton::updateFromElement):
+        * rendering/RenderFieldset.cpp:
+        (WebCore::RenderFieldset::findLegend):
+        * rendering/RenderImage.cpp:
+        (WebCore::RenderImage::updateAltText):
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::isLegend):
+        (WebCore::RenderObject::offsetParent):
+        * wml: Removed.
+        * wml/WMLAElement.cpp: Removed.
+        * wml/WMLAElement.h: Removed.
+        * wml/WMLAccessElement.cpp: Removed.
+        * wml/WMLAccessElement.h: Removed.
+        * wml/WMLAnchorElement.cpp: Removed.
+        * wml/WMLAnchorElement.h: Removed.
+        * wml/WMLAttributeNames.in: Removed.
+        * wml/WMLBRElement.cpp: Removed.
+        * wml/WMLBRElement.h: Removed.
+        * wml/WMLCardElement.cpp: Removed.
+        * wml/WMLCardElement.h: Removed.
+        * wml/WMLDoElement.cpp: Removed.
+        * wml/WMLDoElement.h: Removed.
+        * wml/WMLDocument.cpp: Removed.
+        * wml/WMLDocument.h: Removed.
+        * wml/WMLElement.cpp: Removed.
+        * wml/WMLElement.h: Removed.
+        * wml/WMLErrorHandling.cpp: Removed.
+        * wml/WMLErrorHandling.h: Removed.
+        * wml/WMLEventHandlingElement.cpp: Removed.
+        * wml/WMLEventHandlingElement.h: Removed.
+        * wml/WMLFieldSetElement.cpp: Removed.
+        * wml/WMLFieldSetElement.h: Removed.
+        * wml/WMLFormControlElement.cpp: Removed.
+        * wml/WMLFormControlElement.h: Removed.
+        * wml/WMLGoElement.cpp: Removed.
+        * wml/WMLGoElement.h: Removed.
+        * wml/WMLImageElement.cpp: Removed.
+        * wml/WMLImageElement.h: Removed.
+        * wml/WMLImageLoader.cpp: Removed.
+        * wml/WMLImageLoader.h: Removed.
+        * wml/WMLInputElement.cpp: Removed.
+        * wml/WMLInputElement.h: Removed.
+        * wml/WMLInsertedLegendElement.cpp: Removed.
+        * wml/WMLInsertedLegendElement.h: Removed.
+        * wml/WMLIntrinsicEvent.cpp: Removed.
+        * wml/WMLIntrinsicEvent.h: Removed.
+        * wml/WMLIntrinsicEventHandler.cpp: Removed.
+        * wml/WMLIntrinsicEventHandler.h: Removed.
+        * wml/WMLMetaElement.cpp: Removed.
+        * wml/WMLMetaElement.h: Removed.
+        * wml/WMLNoopElement.cpp: Removed.
+        * wml/WMLNoopElement.h: Removed.
+        * wml/WMLOnEventElement.cpp: Removed.
+        * wml/WMLOnEventElement.h: Removed.
+        * wml/WMLOptGroupElement.cpp: Removed.
+        * wml/WMLOptGroupElement.h: Removed.
+        * wml/WMLOptionElement.cpp: Removed.
+        * wml/WMLOptionElement.h: Removed.
+        * wml/WMLPElement.cpp: Removed.
+        * wml/WMLPElement.h: Removed.
+        * wml/WMLPageState.cpp: Removed.
+        * wml/WMLPageState.h: Removed.
+        * wml/WMLPostfieldElement.cpp: Removed.
+        * wml/WMLPostfieldElement.h: Removed.
+        * wml/WMLPrevElement.cpp: Removed.
+        * wml/WMLPrevElement.h: Removed.
+        * wml/WMLRefreshElement.cpp: Removed.
+        * wml/WMLRefreshElement.h: Removed.
+        * wml/WMLSelectElement.cpp: Removed.
+        * wml/WMLSelectElement.h: Removed.
+        * wml/WMLSetvarElement.cpp: Removed.
+        * wml/WMLSetvarElement.h: Removed.
+        * wml/WMLTableElement.cpp: Removed.
+        * wml/WMLTableElement.h: Removed.
+        * wml/WMLTagNames.in: Removed.
+        * wml/WMLTaskElement.cpp: Removed.
+        * wml/WMLTaskElement.h: Removed.
+        * wml/WMLTemplateElement.cpp: Removed.
+        * wml/WMLTemplateElement.h: Removed.
+        * wml/WMLTimerElement.cpp: Removed.
+        * wml/WMLTimerElement.h: Removed.
+        * wml/WMLVariables.cpp: Removed.
+        * wml/WMLVariables.h: Removed.
+
 2011-04-28  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r85233 and r85235.

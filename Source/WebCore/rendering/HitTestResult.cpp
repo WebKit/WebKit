@@ -41,11 +41,6 @@
 #include "XLinkNames.h"
 #endif
 
-#if ENABLE(WML)
-#include "WMLImageElement.h"
-#include "WMLNames.h"
-#endif
-
 namespace WebCore {
 
 using namespace HTMLNames;
@@ -263,13 +258,6 @@ String HitTestResult::altDisplayString() const
         return displayString(input->alt(), m_innerNonSharedNode.get());
     }
 
-#if ENABLE(WML)
-    if (m_innerNonSharedNode->hasTagName(WMLNames::imgTag)) {
-        WMLImageElement* image = static_cast<WMLImageElement*>(m_innerNonSharedNode.get());
-        return displayString(image->altText(), m_innerNonSharedNode.get());
-    }
-#endif
-
     return String();
 }
 
@@ -310,9 +298,6 @@ KURL HitTestResult::absoluteImageURL() const
         || m_innerNonSharedNode->hasTagName(objectTag)    
 #if ENABLE(SVG)
         || m_innerNonSharedNode->hasTagName(SVGNames::imageTag)
-#endif
-#if ENABLE(WML)
-        || m_innerNonSharedNode->hasTagName(WMLNames::imgTag)
 #endif
        ) {
         Element* element = static_cast<Element*>(m_innerNonSharedNode.get());
@@ -469,10 +454,6 @@ KURL HitTestResult::absoluteLinkURL() const
     else if (m_innerURLElement->hasTagName(SVGNames::aTag))
         urlString = m_innerURLElement->getAttribute(XLinkNames::hrefAttr);
 #endif
-#if ENABLE(WML)
-    else if (m_innerURLElement->hasTagName(WMLNames::aTag))
-        urlString = m_innerURLElement->getAttribute(hrefAttr);
-#endif
     else
         return KURL();
 
@@ -488,10 +469,6 @@ bool HitTestResult::isLiveLink() const
         return static_cast<HTMLAnchorElement*>(m_innerURLElement.get())->isLiveLink();
 #if ENABLE(SVG)
     if (m_innerURLElement->hasTagName(SVGNames::aTag))
-        return m_innerURLElement->isLink();
-#endif
-#if ENABLE(WML)
-    if (m_innerURLElement->hasTagName(WMLNames::aTag))
         return m_innerURLElement->isLink();
 #endif
 

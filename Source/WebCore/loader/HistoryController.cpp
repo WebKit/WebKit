@@ -187,7 +187,6 @@ void HistoryController::restoreDocumentState()
         case FrameLoadTypeReplace:
             break;
         case FrameLoadTypeBack:
-        case FrameLoadTypeBackWMLDeckNotAccessible:
         case FrameLoadTypeForward:
         case FrameLoadTypeIndexedBackForward:
         case FrameLoadTypeRedirectWithLockedBackForwardList:

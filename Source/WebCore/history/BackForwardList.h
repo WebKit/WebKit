@@ -55,14 +55,6 @@ public:
 
     virtual void close() = 0;
 
-#if ENABLE(WML)
-    // FIXME: Rename this to just "clear" and change it so it's not
-    // WML-specific. This is the same operation as clearBackForwardList
-    // in the layout test controller; it would be reasonable to have it
-    // here even though HTML DOM interfaces don't require it.
-    virtual void clearWMLPageHistory()  = 0;
-#endif
-
     // FIXME: Delete these once all callers are using BackForwardController
     // instead of calling this directly.
     HistoryItem* backItem() { return itemAtIndex(-1); }

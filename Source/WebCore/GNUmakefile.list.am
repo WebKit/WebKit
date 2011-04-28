@@ -3557,42 +3557,6 @@ webcore_sources += \
 	Source/WebCore/websockets/WebSocketHandshakeResponse.h \
 	Source/WebCore/websockets/WorkerThreadableWebSocketChannel.cpp \
 	Source/WebCore/websockets/WorkerThreadableWebSocketChannel.h \
-	Source/WebCore/wml/WMLAccessElement.cpp \
-	Source/WebCore/wml/WMLAElement.cpp \
-	Source/WebCore/wml/WMLAnchorElement.cpp \
-	Source/WebCore/wml/WMLBRElement.cpp \
-	Source/WebCore/wml/WMLCardElement.cpp \
-	Source/WebCore/wml/WMLDocument.cpp \
-	Source/WebCore/wml/WMLDoElement.cpp \
-	Source/WebCore/wml/WMLElement.cpp \
-	Source/WebCore/wml/WMLErrorHandling.cpp \
-	Source/WebCore/wml/WMLEventHandlingElement.cpp \
-	Source/WebCore/wml/WMLFieldSetElement.cpp \
-	Source/WebCore/wml/WMLFormControlElement.cpp \
-	Source/WebCore/wml/WMLGoElement.cpp \
-	Source/WebCore/wml/WMLImageElement.cpp \
-	Source/WebCore/wml/WMLImageLoader.cpp \
-	Source/WebCore/wml/WMLInputElement.cpp \
-	Source/WebCore/wml/WMLInsertedLegendElement.cpp \
-	Source/WebCore/wml/WMLIntrinsicEvent.cpp \
-	Source/WebCore/wml/WMLIntrinsicEventHandler.cpp \
-	Source/WebCore/wml/WMLMetaElement.cpp \
-	Source/WebCore/wml/WMLNoopElement.cpp \
-	Source/WebCore/wml/WMLOnEventElement.cpp \
-	Source/WebCore/wml/WMLOptGroupElement.cpp \
-	Source/WebCore/wml/WMLOptionElement.cpp \
-	Source/WebCore/wml/WMLPageState.cpp \
-	Source/WebCore/wml/WMLPElement.cpp \
-	Source/WebCore/wml/WMLPostfieldElement.cpp \
-	Source/WebCore/wml/WMLPrevElement.cpp \
-	Source/WebCore/wml/WMLRefreshElement.cpp \
-	Source/WebCore/wml/WMLSelectElement.cpp \
-	Source/WebCore/wml/WMLSetvarElement.cpp \
-	Source/WebCore/wml/WMLTableElement.cpp \
-	Source/WebCore/wml/WMLTaskElement.cpp \
-	Source/WebCore/wml/WMLTemplateElement.cpp \
-	Source/WebCore/wml/WMLTimerElement.cpp \
-	Source/WebCore/wml/WMLVariables.cpp \
 	Source/WebCore/workers/AbstractWorker.cpp \
 	Source/WebCore/workers/AbstractWorker.h \
 	Source/WebCore/workers/DedicatedWorkerContext.cpp \
@@ -4077,15 +4041,6 @@ webcore_built_sources += \
 	DerivedSources/WebCore/XPathGrammar.cpp \
 	DerivedSources/WebCore/XPathGrammar.h
 endif # END ENABLE_XPATH
-
-# ----
-# WML Support
-# ----
-if ENABLE_WML
-webcore_built_sources += \
-	DerivedSources/WebCore/WMLElementFactory.cpp \
-	DerivedSources/WebCore/WMLNames.cpp
-endif # END ENABLE_WML
 
 # ----
 # SVG Support

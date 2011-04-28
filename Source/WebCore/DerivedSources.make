@@ -567,8 +567,6 @@ all : \
     HTMLElementFactory.cpp \
     HTMLEntityTable.cpp \
     HTMLNames.cpp \
-    WMLElementFactory.cpp \
-    WMLNames.cpp \
     JSSVGElementWrapperFactory.cpp \
     SVGElementFactory.cpp \
     SVGNames.cpp \
@@ -735,10 +733,6 @@ ifeq ($(findstring ENABLE_SVG,$(FEATURE_DEFINES)), ENABLE_SVG)
     USER_AGENT_STYLE_SHEETS := $(USER_AGENT_STYLE_SHEETS) $(WebCore)/css/svg.css 
 endif
 
-ifeq ($(findstring ENABLE_WML,$(FEATURE_DEFINES)), ENABLE_WML)
-    USER_AGENT_STYLE_SHEETS := $(USER_AGENT_STYLE_SHEETS) $(WebCore)/css/wml.css
-endif
-
 ifeq ($(findstring ENABLE_MATHML,$(FEATURE_DEFINES)), ENABLE_MATHML)
     USER_AGENT_STYLE_SHEETS := $(USER_AGENT_STYLE_SHEETS) $(WebCore)/css/mathml.css
 endif
@@ -848,25 +842,6 @@ JSSVGElementWrapperFactory.cpp : SVGNames.cpp
 
 XLinkNames.cpp : dom/make_names.pl svg/xlinkattrs.in
 	perl -I $(WebCore)/bindings/scripts $< --attrs $(WebCore)/svg/xlinkattrs.in
-
-# --------
-
-# WML tag and attribute names, and element factory
-
-ifeq ($(findstring ENABLE_WML,$(FEATURE_DEFINES)), ENABLE_WML)
-
-WMLElementFactory.cpp WMLNames.cpp : dom/make_names.pl wml/WMLTagNames.in wml/WMLAttributeNames.in
-	perl -I $(WebCore)/bindings/scripts $< --tags $(WebCore)/wml/WMLTagNames.in --attrs $(WebCore)/wml/WMLAttributeNames.in --factory --wrapperFactory
-
-else
-
-WMLElementFactory.cpp :
-	echo > $@
-
-WMLNames.cpp :
-	echo > $@
-
-endif
 
 # --------
  

@@ -128,7 +128,7 @@ private:
     uint32_t m_linkRelations;
 };
 
-// Functions shared with the other anchor elements (SVG and WML).
+// Functions shared with the other anchor elements (i.e., SVG).
 
 bool isEnterKeyKeydownEvent(Event*);
 bool isMiddleMouseButtonEvent(Event*);

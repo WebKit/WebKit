@@ -198,10 +198,6 @@ static void initializeSupportedJavaScriptMIMETypes()
 static void initializeSupportedNonImageMimeTypes()
 {
     static const char* types[] = {
-#if ENABLE(WML)
-        "text/vnd.wap.wml",
-        "application/vnd.wap.wmlc",
-#endif
         "text/html",
         "text/xml",
         "text/xsl",

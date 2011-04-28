@@ -279,10 +279,6 @@ bool PageCache::canCachePageContainingThisFrame(Frame* frame)
         // application cache. <rdar://problem/5917899> tracks that work.
         && frame->loader()->documentLoader()->applicationCacheHost()->canCacheInPageCache()
 #endif
-#if ENABLE(WML)
-        && !frame->document()->containsWMLContent()
-        && !frame->document()->isWMLDocument()
-#endif
         && frame->loader()->client()->canCachePage();
 }
     

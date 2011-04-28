@@ -57,7 +57,6 @@ namespace WebCore {
         FrameLoadTypeRedirectWithLockedBackForwardList, // FIXME: Merge "lockBackForwardList", "lockHistory", "quickRedirect" and "clientRedirect" into a single concept of redirect.
         FrameLoadTypeReplace,
         FrameLoadTypeReloadFromOrigin,
-        FrameLoadTypeBackWMLDeckNotAccessible
     };
 
     enum NavigationType {

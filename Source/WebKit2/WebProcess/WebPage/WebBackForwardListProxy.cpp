@@ -222,10 +222,4 @@ void WebBackForwardListProxy::clear()
     m_page->send(Messages::WebPageProxy::BackForwardClear());
 }
 
-#if ENABLE(WML)
-void WebBackForwardListProxy::clearWMLPageHistory()
-{
-}
-#endif
-
 } // namespace WebKit

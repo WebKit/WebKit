@@ -60,10 +60,6 @@ private:
     virtual bool isActive();
 
     virtual void close();
-    
-#if ENABLE(WML)
-    void clearWMLPageHistory();
-#endif
 
     WebPage* m_page;
 };

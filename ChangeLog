@@ -1,3 +1,16 @@
+2011-04-28  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        Remove WML
+        https://bugs.webkit.org/show_bug.cgi?id=59678
+
+        Remove WML configuration option from the CMake build system.
+
+        * Source/cmake/OptionsEfl.cmake:
+        * Source/cmake/OptionsWinCE.cmake:
+        * Source/cmakeconfig.h.cmake:
+
 2011-04-28  Xan Lopez  <xlopez@igalia.com>
 
         Reviewed by Martin Robinson.

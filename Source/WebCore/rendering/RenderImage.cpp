@@ -42,11 +42,6 @@
 #include "TextRun.h"
 #include <wtf/UnusedParam.h>
 
-#if ENABLE(WML)
-#include "WMLImageElement.h"
-#include "WMLNames.h"
-#endif
-
 using namespace std;
 
 namespace WebCore {
@@ -430,10 +425,6 @@ void RenderImage::updateAltText()
         m_altText = static_cast<HTMLInputElement*>(node())->altText();
     else if (node()->hasTagName(imgTag))
         m_altText = static_cast<HTMLImageElement*>(node())->altText();
-#if ENABLE(WML)
-    else if (node()->hasTagName(WMLNames::imgTag))
-        m_altText = static_cast<WMLImageElement*>(node())->altText();
-#endif
 }
 
 bool RenderImage::isLogicalWidthSpecified() const

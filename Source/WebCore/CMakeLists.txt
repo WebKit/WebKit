@@ -1413,7 +1413,6 @@ SET(WebCore_USER_AGENT_STYLE_SHEETS
     ${WEBCORE_DIR}/css/quirks.css
     ${WEBCORE_DIR}/css/svg.css
     ${WEBCORE_DIR}/css/view-source.css
-    ${WEBCORE_DIR}/css/wml.css
 )
 
 IF (ENABLE_BLOB)
@@ -1925,47 +1924,6 @@ IF (ENABLE_VIDEO_TRACK)
     )
 ENDIF()
 
-IF (ENABLE_WML)
-    LIST(APPEND WebCore_SOURCES
-        wml/WMLAElement.cpp
-        wml/WMLAccessElement.cpp
-        wml/WMLAnchorElement.cpp
-        wml/WMLBRElement.cpp
-        wml/WMLCardElement.cpp
-        wml/WMLDoElement.cpp
-        wml/WMLDocument.cpp
-        wml/WMLElement.cpp
-        wml/WMLErrorHandling.cpp
-        wml/WMLEventHandlingElement.cpp
-        wml/WMLFieldSetElement.cpp
-        wml/WMLFormControlElement.cpp
-        wml/WMLGoElement.cpp
-        wml/WMLImageElement.cpp
-        wml/WMLImageLoader.cpp
-        wml/WMLInputElement.cpp
-        wml/WMLInsertedLegendElement.cpp
-        wml/WMLIntrinsicEvent.cpp
-        wml/WMLIntrinsicEventHandler.cpp
-        wml/WMLMetaElement.cpp
-        wml/WMLNoopElement.cpp
-        wml/WMLOnEventElement.cpp
-        wml/WMLPElement.cpp
-        wml/WMLOptGroupElement.cpp
-        wml/WMLOptionElement.cpp
-        wml/WMLPageState.cpp
-        wml/WMLPostfieldElement.cpp
-        wml/WMLPrevElement.cpp
-        wml/WMLRefreshElement.cpp
-        wml/WMLSelectElement.cpp
-        wml/WMLSetvarElement.cpp
-        wml/WMLTableElement.cpp
-        wml/WMLTaskElement.cpp
-        wml/WMLTemplateElement.cpp
-        wml/WMLTimerElement.cpp
-        wml/WMLVariables.cpp
-    )
-ENDIF()
-
 IF (ENABLE_PROGRESS_TAG)
     LIST(APPEND WebCore_SOURCES
         accessibility/AccessibilityProgressIndicator.cpp
@@ -2132,13 +2090,6 @@ GENERATE_DOM_NAMES(SVG ${WEBCORE_DIR}/svg/svgattrs.in ${WEBCORE_DIR}/svg/svgtags
 LIST(APPEND WebCore_SOURCES ${DERIVED_SOURCES_WEBCORE_DIR}/SVGNames.cpp)
 IF (ENABLE_SVG)
     LIST(APPEND WebCore_SOURCES ${DERIVED_SOURCES_WEBCORE_DIR}/SVGElementFactory.cpp ${DERIVED_SOURCES_WEBCORE_DIR}/JSSVGElementWrapperFactory.cpp)
-ENDIF ()
-
-
-GENERATE_DOM_NAMES(WML ${WEBCORE_DIR}/wml/WMLAttributeNames.in ${WEBCORE_DIR}/wml/WMLTagNames.in "${WML_FEATURES}")
-LIST(APPEND WebCore_SOURCES ${DERIVED_SOURCES_WEBCORE_DIR}/WMLNames.cpp)
-IF (ENABLE_WML)
-    LIST(APPEND WebCore_SOURCES ${DERIVED_SOURCES_WEBCORE_DIR}/WMLElementFactory.cpp)
 ENDIF ()
 
 

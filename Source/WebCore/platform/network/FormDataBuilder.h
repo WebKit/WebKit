@@ -34,7 +34,7 @@ class FormDataBuilder {
 public:
     static TextEncoding encodingFromAcceptCharset(const String& acceptCharset, Document* document);
 
-    // Helper functions used by HTMLFormElement/WMLGoElement for multi-part form data
+    // Helper functions used by HTMLFormElement for multi-part form data
     static Vector<char> generateUniqueBoundaryString();
     static void beginMultiPartHeader(Vector<char>&, const CString& boundary, const CString& name);
     static void addBoundaryToMultiPartHeader(Vector<char>&, const CString& boundary, bool isLastBoundary = false);
@@ -42,7 +42,7 @@ public:
     static void addContentTypeToMultiPartHeader(Vector<char>&, const CString& mimeType);
     static void finishMultiPartHeader(Vector<char>&);
 
-    // Helper functions used by HTMLFormElement/WMLGoElement for non multi-part form data
+    // Helper functions used by HTMLFormElement for non multi-part form data
     static void addKeyValuePairAsFormData(Vector<char>&, const CString& key, const CString& value);
     static void encodeStringAsFormData(Vector<char>&, const CString&);
 

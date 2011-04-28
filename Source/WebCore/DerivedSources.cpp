@@ -462,8 +462,6 @@
 #include "JSXPathNSResolver.cpp"
 #include "JSXPathResult.cpp"
 #include "JSXSLTProcessor.cpp"
-#include "WMLElementFactory.cpp"
-#include "WMLNames.cpp"
 #include "UserAgentStyleSheetsData.cpp"
 
 // On MSVC, including StaticConstructors.h causes all global objects not to be

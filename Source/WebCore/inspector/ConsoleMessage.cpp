@@ -91,7 +91,6 @@ static String messageSourceValue(MessageSource source)
 {
     switch (source) {
     case HTMLMessageSource: return "html";
-    case WMLMessageSource: return "wml";
     case XMLMessageSource: return "xml";
     case JSMessageSource: return "javascript";
     case CSSMessageSource: return "css";

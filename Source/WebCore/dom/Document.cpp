@@ -192,13 +192,6 @@
 #include "TouchEvent.h"
 #endif
 
-#if ENABLE(WML)
-#include "WMLDocument.h"
-#include "WMLElement.h"
-#include "WMLElementFactory.h"
-#include "WMLNames.h"
-#endif
-
 #if ENABLE(MATHML)
 #include "MathMLElement.h"
 #include "MathMLElementFactory.h"
@@ -414,9 +407,6 @@ Document::Document(Frame* frame, const KURL& url, bool isXHTML, bool isHTML)
     , m_sawElementsInKnownNamespaces(false)
     , m_usingGeolocation(false)
     , m_eventQueue(EventQueue::create(this))
-#if ENABLE(WML)
-    , m_containsWMLContent(false)
-#endif
     , m_weakReference(DocumentWeakReference::create(this))
     , m_idAttributeName(idAttr)
 #if ENABLE(FULLSCREEN_API)
@@ -933,12 +923,6 @@ PassRefPtr<Element> Document::createElement(const QualifiedName& qName, bool cre
     else if (qName.namespaceURI() == SVGNames::svgNamespaceURI)
         e = SVGElementFactory::createSVGElement(qName, this, createdByParser);
 #endif
-#if ENABLE(WML)
-    else if (qName.namespaceURI() == WMLNames::wmlNamespaceURI)
-        e = WMLElementFactory::createWMLElement(qName, this, createdByParser);
-    else if (isWMLDocument())
-        e = WMLElementFactory::createWMLElement(QualifiedName(nullAtom, qName.localName(), WMLNames::wmlNamespaceURI), this, createdByParser);
-#endif
 #if ENABLE(MATHML)
     else if (qName.namespaceURI() == MathMLNames::mathmlNamespaceURI)
         e = MathMLElementFactory::createMathMLElement(qName, this, createdByParser);
@@ -950,9 +934,6 @@ PassRefPtr<Element> Document::createElement(const QualifiedName& qName, bool cre
         e = Element::create(qName, document());
 
     // <image> uses imgTag so we need a special rule.
-#if ENABLE(WML)
-    if (!isWMLDocument())
-#endif
     ASSERT((qName.matches(imageTag) && e->tagQName().matches(imgTag) && e->tagQName().prefix() == qName.prefix()) || qName == e->tagQName());
 
     return e.release();
@@ -4581,22 +4562,6 @@ DOMSelection* Document::getSelection() const
 {
     return frame() ? frame()->domWindow()->getSelection() : 0;
 }
-
-#if ENABLE(WML)
-void Document::resetWMLPageState()
-{
-    if (WMLPageState* pageState = wmlPageStateForDocument(this))
-        pageState->reset();
-}
-
-void Document::initializeWMLPageState()
-{
-    if (!isWMLDocument())
-        return;
-
-    static_cast<WMLDocument*>(this)->initialize();
-}
-#endif
 
 void Document::attachRange(Range* range)
 {

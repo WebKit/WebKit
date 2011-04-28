@@ -399,19 +399,6 @@ webcore_cppflags += -DENABLE_SHARED_WORKERS=1
 endif
 
 # ----
-# WML Support
-# ----
-if ENABLE_WML
-FEATURE_DEFINES += ENABLE_WML=1
-webcore_cppflags += -DENABLE_WML=1
-
-# WML tag and attribute names
-DerivedSources/WebCore/WMLNames.cpp: DerivedSources/WebCore/WMLElementFactory.cpp
-DerivedSources/WebCore/WMLElementFactory.cpp: $(WebCore)/dom/make_names.pl $(WebCore)/wml/WMLTagNames.in $(WebCore)/wml/WMLAttributeNames.in
-	$(AM_V_GEN)$(PERL) -I$(WebCore)/bindings/scripts $< --tags $(WebCore)/wml/WMLTagNames.in --attrs $(WebCore)/wml/WMLAttributeNames.in --factory --wrapperFactory --outputDir "$(GENSOURCES_WEBCORE)"
-endif # END ENABLE_WML
-
-# ----
 # WCSS Support
 # ----
 if ENABLE_WCSS
@@ -620,7 +607,6 @@ USER_AGENT_STYLE_SHEETS = \
 	$(WebCore)/css/quirks.css \
 	$(WebCore)/css/view-source.css \
 	$(WebCore)/css/svg.css \
-	$(WebCore)/css/wml.css \
 	$(WebCore)/css/mediaControls.css \
 	$(WebCore)/css/mediaControlsGtk.css \
 	$(WebCore)/css/fullscreen.css
@@ -797,7 +783,6 @@ EXTRA_DIST += \
 	Source/WebCore/css/SVGCSSValueKeywords.in \
 	Source/WebCore/css/tokenizer.flex \
 	Source/WebCore/css/view-source.css \
-	Source/WebCore/css/wml.css \
 	Source/WebCore/dom/make_names.pl \
 	Source/WebCore/html/DocTypeStrings.gperf \
 	Source/WebCore/html/HTMLAttributeNames.in \

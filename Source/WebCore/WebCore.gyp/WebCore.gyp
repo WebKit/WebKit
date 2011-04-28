@@ -637,7 +637,6 @@
             '../css/themeWin.css',
             '../css/themeWinQuirks.css',
             '../css/svg.css',
-            # Skip WML.
             '../css/mathml.css',
             '../css/mediaControls.css',
             '../css/mediaControlsChromium.css',

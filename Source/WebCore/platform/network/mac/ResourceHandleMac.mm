@@ -808,22 +808,6 @@ String ResourceHandle::privateBrowsingStorageSessionIdentifierDefaultBase()
     if ([m_handle->firstRequest().nsURLRequest() _propertyForKey:@"ForceHTMLMIMEType"])
         [r _setMIMEType:@"text/html"];
 
-#if ENABLE(WML)
-    const KURL& url = [r URL];
-    if (url.isLocalFile()) {
-        // FIXME: Workaround for <rdar://problem/6917571>: The WML file extension ".wml" is not mapped to
-        // the right MIME type, work around that CFNetwork problem, to unbreak WML support for local files.
-        const String& path = url.path();
-  
-        DEFINE_STATIC_LOCAL(const String, wmlExt, (".wml"));
-        if (path.endsWith(wmlExt, false)) {
-            static NSString* defaultMIMETypeString = [(NSString*) defaultMIMEType() retain];
-            if ([[r MIMEType] isEqualToString:defaultMIMETypeString])
-                [r _setMIMEType:@"text/vnd.wap.wml"];
-        }
-    }
-#endif
-
     m_handle->client()->didReceiveResponse(m_handle, r);
 }
 

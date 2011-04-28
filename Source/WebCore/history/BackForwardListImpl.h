@@ -71,13 +71,9 @@ public:
 
     virtual void close();
     bool closed();
-    
+
     void removeItem(HistoryItem*);
     HistoryItemVector& entries();
-    
-#if ENABLE(WML)
-    virtual void clearWMLPageHistory();
-#endif
 
 private:
     BackForwardListImpl(Page*);

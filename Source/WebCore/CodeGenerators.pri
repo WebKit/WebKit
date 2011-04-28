@@ -12,8 +12,6 @@ CONFIG(standalone_package) {
 ## Derived source generators
 MATHML_NAMES = $$PWD/mathml/mathtags.in
 
-WML_NAMES = $$PWD/wml/WMLTagNames.in
-
 SVG_NAMES = $$PWD/svg/svgtags.in
 
 XLINK_NAMES = $$PWD/svg/xlinkattrs.in
@@ -58,7 +56,6 @@ STYLESHEETS_EMBED = \
     $$PWD/css/mathml.css \
     $$PWD/css/svg.css \
     $$PWD/css/view-source.css \
-    $$PWD/css/wml.css \
     $$PWD/css/mediaControls.css \
     $$PWD/css/mediaControlsQt.css \
     $$PWD/css/mediaControlsQtFullscreen.css \
@@ -562,15 +559,6 @@ mathmlnames.wkScript = $$PWD/dom/make_names.pl
 mathmlnames.commands = perl -I$$PWD/bindings/scripts $$mathmlnames.wkScript --tags $$PWD/mathml/mathtags.in --attrs $$PWD/mathml/mathattrs.in --extraDefines \"$${DEFINES}\" --preprocessor \"$${QMAKE_MOC} -E\" --factory $$wrapperFactoryArg --outputDir $$WC_GENERATED_SOURCES_DIR
 mathmlnames.wkExtraSources = $${WC_GENERATED_SOURCES_DIR}/MathMLElementFactory.cpp 
 addExtraCompiler(mathmlnames)
-
-contains(DEFINES, ENABLE_WML=1) {
-    wmlnames.output = $${WC_GENERATED_SOURCES_DIR}/WMLNames.cpp
-    wmlnames.input = WML_NAMES
-    wmlnames.wkScript = $$PWD/dom/make_names.pl
-    wmlnames.commands = perl -I$$PWD/bindings/scripts $$wmlnames.wkScript --tags $$PWD/wml/WMLTagNames.in --attrs $$PWD/wml/WMLAttributeNames.in --extraDefines \"$${DEFINES}\" --preprocessor \"$${QMAKE_MOC} -E\" --factory $$wrapperFactoryArg --outputDir $$WC_GENERATED_SOURCES_DIR
-    wmlnames.wkExtraSources = $${WC_GENERATED_SOURCES_DIR}/WMLElementFactory.cpp
-    addExtraCompiler(wmlnames)
-}
 
 # GENERATOR 5-C:
 svgnames.output = $${WC_GENERATED_SOURCES_DIR}/SVGNames.cpp

@@ -146,7 +146,6 @@ bool isBackForwardLoadType(FrameLoadType type)
         case FrameLoadTypeReplace:
             return false;
         case FrameLoadTypeBack:
-        case FrameLoadTypeBackWMLDeckNotAccessible:
         case FrameLoadTypeForward:
         case FrameLoadTypeIndexedBackForward:
             return true;
@@ -1129,17 +1128,6 @@ void FrameLoader::willSetEncoding()
         receivedFirstData();
 }
 
-#if ENABLE(WML)
-static inline bool frameContainsWMLContent(Frame* frame)
-{
-    Document* document = frame ? frame->document() : 0;
-    if (!document)
-        return false;
-
-    return document->containsWMLContent() || document->isWMLDocument();
-}
-#endif
-
 void FrameLoader::updateFirstPartyForCookies()
 {
     if (m_frame->tree()->parent())
@@ -2021,7 +2009,6 @@ void FrameLoader::transitionToCommitted(PassRefPtr<CachedPage> cachedPage)
     switch (m_loadType) {
         case FrameLoadTypeForward:
         case FrameLoadTypeBack:
-        case FrameLoadTypeBackWMLDeckNotAccessible:
         case FrameLoadTypeIndexedBackForward:
             if (m_frame->page()) {
                 // If the first load within a frame is a navigation within a back/forward list that was attached
@@ -2119,12 +2106,6 @@ void FrameLoader::clientRedirected(const KURL& url, double seconds, double fireD
 
 bool FrameLoader::shouldReload(const KURL& currentURL, const KURL& destinationURL)
 {
-#if ENABLE(WML)
-    // All WML decks are supposed to be reloaded, even within the same URL fragment
-    if (frameContainsWMLContent(m_frame))
-        return true;
-#endif
-
     // This function implements the rule: "Don't reload if navigating by fragment within
     // the same URL, but do reload if going to a new URL or to the same URL with no
     // fragment identifier at all."
@@ -3271,7 +3252,6 @@ void FrameLoader::loadDifferentDocumentItem(HistoryItem* item, FrameLoadType loa
                 request.setCachePolicy(ReloadIgnoringCacheData);
                 break;
             case FrameLoadTypeBack:
-            case FrameLoadTypeBackWMLDeckNotAccessible:
             case FrameLoadTypeForward:
             case FrameLoadTypeIndexedBackForward:
                 // If the first load within a frame is a navigation within a back/forward list that was attached 
@@ -3301,17 +3281,6 @@ void FrameLoader::loadItem(HistoryItem* item, FrameLoadType loadType)
 {
     HistoryItem* currentItem = history()->currentItem();
     bool sameDocumentNavigation = currentItem && item->shouldDoSameDocumentNavigationTo(currentItem);
-
-#if ENABLE(WML)
-    // All WML decks should go through the real load mechanism, not the scroll-to-anchor code
-    // FIXME: Why do WML decks have this different behavior?
-    // Are WML decks incompatible with HTML5 pushState/replaceState which require inter-document history navigations?
-    // Should this new API be disabled for WML pages, or does WML need to update their mechanism to act like normal loads?
-    // If scroll-to-anchor navigations were broken for WML and required them to have different loading behavior, then  
-    // state object loads are certainly also broken for them.
-    if (frameContainsWMLContent(m_frame))
-        sameDocumentNavigation = false;
-#endif
 
     if (sameDocumentNavigation)
         loadSameDocumentItem(item);

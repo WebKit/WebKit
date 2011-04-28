@@ -65,7 +65,6 @@ typedef enum {
     WebFrameLoadTypeInternal,           // maps to WebCore::FrameLoadTypeRedirectWithLockedBackForwardList
     WebFrameLoadTypeReplace,
     WebFrameLoadTypeReloadFromOrigin,
-    WebFrameLoadTypeBackWMLDeckNotAccessible
 } WebFrameLoadType;
 
 @interface WebFrame (WebPrivate)

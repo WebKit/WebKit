@@ -1063,18 +1063,8 @@ void XMLDocumentParser::internalSubset(const xmlChar* name, const xmlChar* exter
     }
 
     if (document()) {
-#if ENABLE(WML) || ENABLE(XHTMLMP)
-        String extId = toString(externalID);
-#endif
-#if ENABLE(WML)
-        if (isWMLDocument()
-            && extId != "-//WAPFORUM//DTD WML 1.3//EN"
-            && extId != "-//WAPFORUM//DTD WML 1.2//EN"
-            && extId != "-//WAPFORUM//DTD WML 1.1//EN"
-            && extId != "-//WAPFORUM//DTD WML 1.0//EN")
-            handleError(fatal, "Invalid DTD Public ID", lineNumber(), columnNumber());
-#endif
 #if ENABLE(XHTMLMP)
+        String extId = toString(externalID);
         String dtdName = toString(name);
         if (extId == "-//WAPFORUM//DTD XHTML Mobile 1.0//EN"
             || extId == "-//WAPFORUM//DTD XHTML Mobile 1.1//EN") {
@@ -1237,9 +1227,6 @@ static xmlEntityPtr getEntityHandler(void* closure, const xmlChar* name)
     if (!ent && (getParser(closure)->isXHTMLDocument()
 #if ENABLE(XHTMLMP)
                  || getParser(closure)->isXHTMLMPDocument()
-#endif
-#if ENABLE(WML)
-                 || getParser(closure)->isWMLDocument()
 #endif
        )) {
         ent = getXHTMLEntity(name);

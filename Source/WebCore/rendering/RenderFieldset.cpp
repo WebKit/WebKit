@@ -29,10 +29,6 @@
 #include "HTMLNames.h"
 #include "PaintInfo.h"
 
-#if ENABLE(WML)
-#include "WMLNames.h"
-#endif
-
 using std::min;
 using std::max;
 
@@ -116,13 +112,7 @@ RenderObject* RenderFieldset::layoutSpecialExcludedChild(bool relayoutChildren)
 RenderBox* RenderFieldset::findLegend() const
 {
     for (RenderObject* legend = firstChild(); legend; legend = legend->nextSibling()) {
-        if (!legend->isFloatingOrPositioned() && legend->node() &&
-            (legend->node()->hasTagName(legendTag)
-#if ENABLE(WML)
-            || legend->node()->hasTagName(WMLNames::insertedLegendTag)
-#endif
-            )
-           )
+        if (!legend->isFloatingOrPositioned() && legend->node() && (legend->node()->hasTagName(legendTag)))
             return toRenderBox(legend);
     }
     return 0;

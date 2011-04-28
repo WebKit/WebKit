@@ -949,9 +949,6 @@ WebInspector.ConsoleMessage.prototype = {
             case WebInspector.ConsoleMessage.MessageSource.HTML:
                 sourceString = "HTML";
                 break;
-            case WebInspector.ConsoleMessage.MessageSource.WML:
-                sourceString = "WML";
-                break;
             case WebInspector.ConsoleMessage.MessageSource.XML:
                 sourceString = "XML";
                 break;
@@ -1048,7 +1045,6 @@ WebInspector.ConsoleMessage.prototype = {
 // Note: Keep these constants in sync with the ones in Console.h
 WebInspector.ConsoleMessage.MessageSource = {
     HTML: "html",
-    WML: "wml",
     XML: "xml",
     JS: "javascript",
     CSS: "css",

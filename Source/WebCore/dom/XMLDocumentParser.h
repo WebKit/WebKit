@@ -95,13 +95,10 @@ namespace WebCore {
         void setIsXHTMLMPDocument(bool isXHTML) { m_isXHTMLMPDocument = isXHTML; }
         bool isXHTMLMPDocument() const { return m_isXHTMLMPDocument; }
 #endif
-#if ENABLE(WML)
-        bool isWMLDocument() const;
-#endif
 
         static bool parseDocumentFragment(const String&, DocumentFragment*, Element* parent = 0, FragmentScriptingPermission = FragmentScriptingAllowed);
 
-        // WMLErrorHandling uses these functions.
+        // FIXME: This function used to be used by WML. Can we remove it?
         virtual bool wellFormed() const { return !m_sawError; }
 
         TextPosition0 textPosition() const;
