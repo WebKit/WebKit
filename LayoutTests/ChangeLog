@@ -1,3 +1,14 @@
+2011-04-28  Mark Pilgrim  <pilgrim@chromium.org>
+
+        Reviewed by Darin Fisher.
+
+        Port Mozilla's IndexedDB tests: versionchange event
+        https://bugs.webkit.org/show_bug.cgi?id=58738
+
+        * storage/indexeddb/mozilla: Added.
+        * storage/indexeddb/mozilla/versionchange-expected.txt: Added.
+        * storage/indexeddb/mozilla/versionchange.html: Added.
+
 2011-04-28  Kenneth Russell  <kbr@google.com>
 
         Unreviewed test expectations update. Marked flaky and crashing tests.
