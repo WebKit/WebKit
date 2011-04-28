@@ -2,6 +2,19 @@
 
         Reviewed by Tony Chang.
 
+        IndexedDB createIndex should fail if name arg is null
+        https://bugs.webkit.org/show_bug.cgi?id=58365
+
+        Test: storage/indexeddb/mozilla/create-index-null-name.html
+
+        * storage/IDBObjectStore.idl:
+        * storage/IDBObjectStoreBackendImpl.cpp:
+        (WebCore::IDBObjectStoreBackendImpl::createIndex):
+
+2011-04-28  Mark Pilgrim  <pilgrim@chromium.org>
+
+        Reviewed by Tony Chang.
+
         IndexedDB put() should fail if second (key) parameter is null
         https://bugs.webkit.org/show_bug.cgi?id=58613
 

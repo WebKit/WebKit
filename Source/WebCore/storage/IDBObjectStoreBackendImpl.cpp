@@ -375,6 +375,10 @@ static bool populateIndex(IDBBackingStore& backingStore, int64_t databaseId, int
 
 PassRefPtr<IDBIndexBackendInterface> IDBObjectStoreBackendImpl::createIndex(const String& name, const String& keyPath, bool unique, IDBTransactionBackendInterface* transaction, ExceptionCode& ec)
 {
+    if (name.isNull()) {
+        ec = IDBDatabaseException::NON_TRANSIENT_ERR;
+        return 0;
+    }
     if (m_indexes.contains(name)) {
         ec = IDBDatabaseException::CONSTRAINT_ERR;
         return 0;

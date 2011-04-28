@@ -28,7 +28,7 @@ module storage {
     interface [
         Conditional=INDEXED_DATABASE
     ] IDBObjectStore {
-        readonly attribute DOMString name;
+        readonly attribute [ConvertNullStringTo=Null] DOMString name;
         readonly attribute [ConvertNullStringTo=Null] DOMString keyPath;
         readonly attribute DOMStringList indexNames;
 
@@ -44,7 +44,7 @@ module storage {
             raises (IDBDatabaseException);
         [CallWith=ScriptExecutionContext] IDBRequest openCursor(in [Optional] IDBKeyRange range, in [Optional] unsigned short direction)
             raises (IDBDatabaseException);
-        IDBIndex createIndex(in DOMString name, in [ConvertNullToNullString] DOMString keyPath, in [Optional] OptionsObject options)
+        IDBIndex createIndex(in [ConvertNullToNullString] DOMString name, in [ConvertNullToNullString] DOMString keyPath, in [Optional] OptionsObject options)
             raises (IDBDatabaseException);
         IDBIndex index(in DOMString name)
             raises (IDBDatabaseException);
