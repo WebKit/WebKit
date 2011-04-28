@@ -117,8 +117,9 @@ public:
 
     // WebView methods:
     virtual void initializeMainFrame(WebFrameClient*);
-    virtual void setDevToolsAgentClient(WebDevToolsAgentClient*);
     virtual void setAutoFillClient(WebAutoFillClient*);
+    virtual void setDevToolsAgentClient(WebDevToolsAgentClient*);
+    virtual void setPermissionClient(WebPermissionClient*);
     virtual void setSpellCheckClient(WebSpellCheckClient*);
     virtual WebSettings* settings();
     virtual WebString pageEncoding() const;
@@ -223,6 +224,11 @@ public:
     WebAutoFillClient* autoFillClient()
     {
         return m_autoFillClient;
+    }
+
+    WebPermissionClient* permissionClient()
+    {
+        return m_permissionClient;
     }
 
     WebSpellCheckClient* spellCheckClient()
@@ -414,6 +420,7 @@ private:
 
     WebViewClient* m_client;
     WebAutoFillClient* m_autoFillClient;
+    WebPermissionClient* m_permissionClient;
     WebSpellCheckClient* m_spellCheckClient;
 
     ChromeClientImpl m_chromeClientImpl;

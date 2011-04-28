@@ -53,6 +53,7 @@
 #include "WebInputEventConversion.h"
 #include "WebNode.h"
 #include "WebPasswordAutocompleteListener.h"
+#include "WebPermissionClient.h"
 #include "WebRange.h"
 #include "WebSpellCheckClient.h"
 #include "WebTextAffinity.h"
@@ -165,11 +166,6 @@ void EditorClientImpl::toggleContinuousSpellChecking()
         m_spellCheckThisFieldStatus = SpellCheckForcedOff;
     else
         m_spellCheckThisFieldStatus = SpellCheckForcedOn;
-
-    WebFrameImpl* webframe = WebFrameImpl::fromFrame(
-        m_webView->focusedWebCoreFrame());
-    if (webframe)
-        webframe->client()->didToggleContinuousSpellChecking(webframe);
 }
 
 bool EditorClientImpl::isGrammarCheckingEnabled()
@@ -322,12 +318,16 @@ void EditorClientImpl::clearUndoRedoOperations()
 
 bool EditorClientImpl::canCopyCut(Frame* frame, bool defaultValue) const
 {
-    return (m_webView->client() && m_webView->client()->canTriggerClipboardRead(frame->document()->url())) || defaultValue;
+    if (!m_webView->permissionClient())
+        return defaultValue;
+    return m_webView->permissionClient()->allowReadFromClipboard(WebFrameImpl::fromFrame(frame), defaultValue);
 }
 
 bool EditorClientImpl::canPaste(Frame* frame, bool defaultValue) const
 {
-    return (m_webView->client() && m_webView->client()->canTriggerClipboardWrite(frame->document()->url())) || defaultValue;
+    if (!m_webView->permissionClient())
+        return defaultValue;
+    return m_webView->permissionClient()->allowWriteToClipboard(WebFrameImpl::fromFrame(frame), defaultValue);
 }
 
 bool EditorClientImpl::canUndo() const

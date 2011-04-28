@@ -273,6 +273,11 @@ void WebViewImpl::initializeMainFrame(WebFrameClient* frameClient)
     SecurityOrigin::setLocalLoadPolicy(SecurityOrigin::AllowLocalLoadsForLocalOnly);
 }
 
+void WebViewImpl::setAutoFillClient(WebAutoFillClient* autoFillClient)
+{
+    m_autoFillClient = autoFillClient;
+}
+
 void WebViewImpl::setDevToolsAgentClient(WebDevToolsAgentClient* devToolsClient) 
 {
     if (devToolsClient)
@@ -281,9 +286,9 @@ void WebViewImpl::setDevToolsAgentClient(WebDevToolsAgentClient* devToolsClient)
         m_devToolsAgent.clear();
 }
 
-void WebViewImpl::setAutoFillClient(WebAutoFillClient* autoFillClient)
+void WebViewImpl::setPermissionClient(WebPermissionClient* permissionClient)
 {
-    m_autoFillClient = autoFillClient;
+    m_permissionClient = permissionClient;
 }
 
 void WebViewImpl::setSpellCheckClient(WebSpellCheckClient* spellCheckClient)
@@ -294,6 +299,7 @@ void WebViewImpl::setSpellCheckClient(WebSpellCheckClient* spellCheckClient)
 WebViewImpl::WebViewImpl(WebViewClient* client)
     : m_client(client)
     , m_autoFillClient(0)
+    , m_permissionClient(0)
     , m_spellCheckClient(0)
     , m_chromeClientImpl(this)
     , m_contextMenuClientImpl(this)

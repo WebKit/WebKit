@@ -103,19 +103,6 @@ public:
     // This frame is about to be closed.
     virtual void willClose(WebFrame*) { }
 
-    // Controls whether plugins are allowed for this frame.
-    virtual bool allowPlugins(WebFrame*, bool enabledPerSettings) { return enabledPerSettings; }
-
-    // Notifies the client that the frame would have instantiated a plug-in if plug-ins were enabled.
-    virtual void didNotAllowPlugins(WebFrame*) { }
-
-    // Controls whether images are allowed for this frame.
-    virtual bool allowImages(WebFrame*, bool enabledPerSettings) { return enabledPerSettings; }
-
-    // Notifies the client that continuous spell checking has been enabled or
-    // disabled.
-    virtual void didToggleContinuousSpellChecking(WebFrame*) { }
-
     // Load commands -------------------------------------------------------
 
     // The client should handle the navigation externally.
@@ -292,15 +279,6 @@ public:
 
     // Script notifications ------------------------------------------------
 
-    // Controls whether scripts are allowed to execute for this frame.
-    virtual bool allowScript(WebFrame*, bool enabledPerSettings) { return enabledPerSettings; }
-
-    // Controls whether access to Web Databases is allowed for this frame.
-    virtual bool allowDatabase(WebFrame*, const WebString& name, const WebString& displayName, unsigned long estimatedSize) { return true; }
-
-    // Notifies the client that the frame would have executed script if script were enabled.
-    virtual void didNotAllowScript(WebFrame*) { }
-
     // Script in the page tried to allocate too much memory.
     virtual void didExhaustMemoryAvailableForScript(WebFrame*) { }
 
@@ -316,11 +294,13 @@ public:
     // scripts.
     virtual void didCreateIsolatedScriptContext(WebFrame*) { }
 
-    // Controls whether the given script extension should run in a new script
-    // context in this frame. If extensionGroup is 0, the script context is the
-    // frame's main context. Otherwise, it is a context created by
-    // WebFrame::executeScriptInIsolatedWorld with that same extensionGroup
-    // value.
+    // FIXME(jam): remove me once Chrome's WebKit is rolled.
+    virtual bool allowPlugins(WebFrame*, bool enabledPerSettings) { return enabledPerSettings; }
+    virtual void didNotAllowPlugins(WebFrame*) { }
+    virtual bool allowImages(WebFrame*, bool enabledPerSettings) { return enabledPerSettings; }
+    virtual bool allowScript(WebFrame*, bool enabledPerSettings) { return enabledPerSettings; }
+    virtual bool allowDatabase(WebFrame*, const WebString& name, const WebString& displayName, unsigned long estimatedSize) { return true; }
+    virtual void didNotAllowScript(WebFrame*) { }
     virtual bool allowScriptExtension(WebFrame*, const WebString& extensionName, int extensionGroup) { return true; }
 
 

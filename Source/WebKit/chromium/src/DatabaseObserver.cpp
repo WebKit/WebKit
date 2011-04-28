@@ -40,7 +40,9 @@
 #include "WebDatabaseObserver.h"
 #include "WebFrameClient.h"
 #include "WebFrameImpl.h"
+#include "WebPermissionClient.h"
 #include "WebSecurityOrigin.h"
+#include "WebViewImpl.h"
 #include "WebWorkerImpl.h"
 #include "WorkerContext.h"
 #include "WorkerThread.h"
@@ -56,6 +58,10 @@ bool DatabaseObserver::canEstablishDatabase(ScriptExecutionContext* scriptExecut
     if (scriptExecutionContext->isDocument()) {
         Document* document = static_cast<Document*>(scriptExecutionContext);
         WebFrameImpl* webFrame = WebFrameImpl::fromFrame(document->frame());
+        WebViewImpl* webView = webFrame->viewImpl();
+        if (webView->permissionClient())
+            return webView->permissionClient()->allowDatabase(webFrame, name, displayName, estimatedSize);
+        // FIXME(jam): remove this.
         return webFrame->client()->allowDatabase(webFrame, name, displayName, estimatedSize);
     } else {
         WorkerContext* workerContext = static_cast<WorkerContext*>(scriptExecutionContext);

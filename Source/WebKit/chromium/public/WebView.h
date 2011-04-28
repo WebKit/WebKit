@@ -47,6 +47,7 @@ class WebFrame;
 class WebFrameClient;
 class WebGraphicsContext3D;
 class WebNode;
+class WebPermissionClient;
 class WebSettings;
 class WebSpellCheckClient;
 class WebString;
@@ -93,8 +94,9 @@ public:
     virtual void initializeMainFrame(WebFrameClient*) = 0;
 
     // Initializes the various client interfaces.
-    virtual void setDevToolsAgentClient(WebDevToolsAgentClient*) = 0;
     virtual void setAutoFillClient(WebAutoFillClient*) = 0;
+    virtual void setDevToolsAgentClient(WebDevToolsAgentClient*) = 0;
+    virtual void setPermissionClient(WebPermissionClient*) = 0;
     virtual void setSpellCheckClient(WebSpellCheckClient*) = 0;
 
 
