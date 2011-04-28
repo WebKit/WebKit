@@ -1,3 +1,33 @@
+2011-04-28  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r85233 and r85235.
+        http://trac.webkit.org/changeset/85233
+        http://trac.webkit.org/changeset/85235
+        https://bugs.webkit.org/show_bug.cgi?id=59754
+
+        Causes issues with jsc. (Requested by dave_levin on #webkit).
+
+        * GNUmakefile.list.am:
+        * JavaScriptCore.gypi:
+        * JavaScriptCore.vcproj/WTF/WTF.vcproj:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * jit/ExecutableAllocator.h:
+        (JSC::ExecutablePool::ExecutablePool):
+        * parser/SourceProvider.h:
+        (JSC::SourceProvider::SourceProvider):
+        * runtime/RegExp.cpp:
+        (JSC::RegExp::RegExp):
+        * wtf/CMakeLists.txt:
+        * wtf/RefCounted.h:
+        (WTF::RefCountedBase::ref):
+        (WTF::RefCountedBase::hasOneRef):
+        (WTF::RefCountedBase::refCount):
+        (WTF::RefCountedBase::derefBase):
+        * wtf/SizeLimits.cpp:
+        * wtf/ThreadRestrictionVerifier.h: Removed.
+        * wtf/text/CString.h:
+        (WTF::CStringBuffer::CStringBuffer):
+
 2011-04-28  Gavin Barraclough  <barraclough@apple.com>
 
         Reviewed by Oliver Hunt.

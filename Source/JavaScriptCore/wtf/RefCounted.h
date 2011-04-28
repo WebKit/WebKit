@@ -23,10 +23,7 @@
 
 #include "Assertions.h"
 #include "FastAllocBase.h"
-#include "ThreadRestrictionVerifier.h"
 #include "Noncopyable.h"
-#include "OwnPtr.h"
-#include "UnusedParam.h"
 
 namespace WTF {
 
@@ -37,20 +34,6 @@ class RefCountedBase {
 public:
     void ref()
     {
-#ifndef NDEBUG
-        // Start thread verification as soon as the ref count gets to 2. This
-        // heuristic reflects the fact that items are often created on one thread
-        // and then given to another thread to be used.
-        // FIXME: Make this restriction tigher. Especially as we move to more
-        // common methods for sharing items across threads like CrossThreadCopier.h
-        // We should be able to add a "detachFromThread" method to make this explicit.
-        if (m_refCount == 1)
-            m_verifier.setShared(true);
-#endif
-        // If this assert fires, it either indicates a thread safety issue or
-        // that the verification needs to change. See ThreadRestrictionVerifier for
-        // the different modes.
-        ASSERT(m_verifier.isSafeToUse());
         ASSERT(!m_deletionHasBegun);
         ASSERT(!m_adoptionIsRequired);
         ++m_refCount;
@@ -58,27 +41,13 @@ public:
 
     bool hasOneRef() const
     {
-        ASSERT(m_verifier.isSafeToUse());
         ASSERT(!m_deletionHasBegun);
         return m_refCount == 1;
     }
 
     int refCount() const
     {
-        ASSERT(m_verifier.isSafeToUse());
         return m_refCount;
-    }
-
-    void setMutexForVerifier(Mutex&);
-
-    // Turns off verification. Use of this method is discouraged (instead extend
-    // ThreadRestrictionVerifier to verify your case).
-    // FIXME: remove this method.
-    void deprecatedTurnOffVerifier()
-    {
-#ifndef NDEBUG
-        m_verifier.turnOffVerification();
-#endif
     }
 
     void relaxAdoptionRequirement()
@@ -115,7 +84,6 @@ protected:
     // Returns whether the pointer should be freed or not.
     bool derefBase()
     {
-        ASSERT(m_verifier.isSafeToUse());
         ASSERT(!m_deletionHasBegun);
         ASSERT(!m_adoptionIsRequired);
 
@@ -128,12 +96,6 @@ protected:
         }
 
         --m_refCount;
-#ifndef NDEBUG
-        // Stop thread verification when the ref goes to 1 because it
-        // is safe to be passed to another thread at this point.
-        if (m_refCount == 1)
-            m_verifier.setShared(false);
-#endif
         return false;
     }
 
@@ -155,7 +117,6 @@ private:
 #ifndef NDEBUG
     bool m_deletionHasBegun;
     bool m_adoptionIsRequired;
-    ThreadRestrictionVerifier m_verifier;
 #endif
 };
 
@@ -202,15 +163,6 @@ protected:
     {
     }
 };
-
-#ifdef NDEBUG
-inline void RefCountedBase::setMutexForVerifier(Mutex&) { }
-#else
-inline void RefCountedBase::setMutexForVerifier(Mutex& mutex)
-{
-    m_verifier.setMutexMode(mutex);
-}
-#endif
 
 } // namespace WTF
 

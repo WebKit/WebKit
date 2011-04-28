@@ -1,3 +1,19 @@
+2011-04-28  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r85233 and r85235.
+        http://trac.webkit.org/changeset/85233
+        http://trac.webkit.org/changeset/85235
+        https://bugs.webkit.org/show_bug.cgi?id=59754
+
+        Causes issues with jsc. (Requested by dave_levin on #webkit).
+
+        * ForwardingHeaders/wtf/ThreadRestrictionVerifier.h: Removed.
+        * loader/icon/IconDatabase.cpp:
+        (WebCore::IconDatabase::defaultIcon):
+        (WebCore::IconDatabase::setIconDataForIconURL):
+        (WebCore::IconDatabase::getOrCreateIconRecord):
+        (WebCore::IconDatabase::readFromDatabase):
+
 2011-04-28  Jay Civelli  <jcivelli@chromium.org>
 
         Reviewed by Adam Barth.

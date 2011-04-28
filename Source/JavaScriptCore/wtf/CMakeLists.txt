@@ -42,7 +42,6 @@ SET(WTF_HEADERS
     MathExtras.h
     MessageQueue.h
     NonCopyingSort.h
-    ThreadRestrictionVerifier.h
     Noncopyable.h
     NotFound.h
     NullPtr.h
