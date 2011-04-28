@@ -143,21 +143,36 @@ void WebPageProxy::windowAndViewFramesChanged(const IntRect& windowFrameInScreen
 
 void WebPageProxy::setComposition(const String& text, Vector<CompositionUnderline> underlines, uint64_t selectionStart, uint64_t selectionEnd, uint64_t replacementRangeStart, uint64_t replacementRangeEnd)
 {
+    if (!isValid()) {
+        // If this fails, we should call -discardMarkedText on input context to notify the input method.
+        // This will happen naturally later, as part of reloading the page.
+        return;
+    }
+
     process()->sendSync(Messages::WebPage::SetComposition(text, underlines, selectionStart, selectionEnd, replacementRangeStart, replacementRangeEnd), Messages::WebPage::SetComposition::Reply(m_editorState), m_pageID);
 }
 
 void WebPageProxy::confirmComposition()
 {
+    if (!isValid())
+        return;
+
     process()->sendSync(Messages::WebPage::ConfirmComposition(), Messages::WebPage::ConfirmComposition::Reply(m_editorState), m_pageID);
 }
 
 void WebPageProxy::confirmCompositionWithoutDisturbingSelection()
 {
+    if (!isValid())
+        return;
+
     process()->sendSync(Messages::WebPage::ConfirmCompositionWithoutDisturbingSelection(), Messages::WebPage::ConfirmComposition::Reply(m_editorState), m_pageID);
 }
 
 bool WebPageProxy::insertText(const String& text, uint64_t replacementRangeStart, uint64_t replacementRangeEnd)
 {
+    if (!isValid())
+        return true;
+
     bool handled;
     process()->sendSync(Messages::WebPage::InsertText(text, replacementRangeStart, replacementRangeEnd), Messages::WebPage::InsertText::Reply(handled, m_editorState), m_pageID);
     return handled;
@@ -165,28 +180,46 @@ bool WebPageProxy::insertText(const String& text, uint64_t replacementRangeStart
 
 void WebPageProxy::getMarkedRange(uint64_t& location, uint64_t& length)
 {
+    if (!isValid()) {
+        location = NSNotFound;
+        length = 0;
+        return;
+    }
     process()->sendSync(Messages::WebPage::GetMarkedRange(), Messages::WebPage::GetMarkedRange::Reply(location, length), m_pageID);
 }
 
 void WebPageProxy::getSelectedRange(uint64_t& location, uint64_t& length)
 {
+    if (!isValid()) {
+        location = NSNotFound;
+        length = 0;
+        return;
+    }
     process()->sendSync(Messages::WebPage::GetSelectedRange(), Messages::WebPage::GetSelectedRange::Reply(location, length), m_pageID);
 }
 
 void WebPageProxy::getAttributedSubstringFromRange(uint64_t location, uint64_t length, AttributedString& result)
 {
+    if (!isValid())
+        return;
     process()->sendSync(Messages::WebPage::GetAttributedSubstringFromRange(location, length), Messages::WebPage::GetAttributedSubstringFromRange::Reply(result), m_pageID);
 }
 
 uint64_t WebPageProxy::characterIndexForPoint(const IntPoint point)
 {
+    if (!isValid())
+        return 0;
+
     uint64_t result;
     process()->sendSync(Messages::WebPage::CharacterIndexForPoint(point), Messages::WebPage::CharacterIndexForPoint::Reply(result), m_pageID);
     return result;
 }
 
-WebCore::IntRect WebPageProxy::firstRectForCharacterRange(uint64_t location, uint64_t length)
+IntRect WebPageProxy::firstRectForCharacterRange(uint64_t location, uint64_t length)
 {
+    if (!isValid())
+        return IntRect();
+
     IntRect resultRect;
     process()->sendSync(Messages::WebPage::FirstRectForCharacterRange(location, length), Messages::WebPage::FirstRectForCharacterRange::Reply(resultRect), m_pageID);
     return resultRect;
@@ -194,6 +227,9 @@ WebCore::IntRect WebPageProxy::firstRectForCharacterRange(uint64_t location, uin
 
 bool WebPageProxy::executeKeypressCommands(const Vector<WebCore::KeypressCommand>& commands)
 {
+    if (!isValid())
+        return false;
+
     bool result;
     process()->sendSync(Messages::WebPage::ExecuteKeypressCommands(commands), Messages::WebPage::ExecuteKeypressCommands::Reply(result, m_editorState), m_pageID);
     return result;
@@ -201,6 +237,9 @@ bool WebPageProxy::executeKeypressCommands(const Vector<WebCore::KeypressCommand
 
 bool WebPageProxy::writeSelectionToPasteboard(const String& pasteboardName, const Vector<String>& pasteboardTypes)
 {
+    if (!isValid())
+        return false;
+
     bool result;
     const double messageTimeout = 20;
     process()->sendSync(Messages::WebPage::WriteSelectionToPasteboard(pasteboardName, pasteboardTypes), Messages::WebPage::WriteSelectionToPasteboard::Reply(result), m_pageID, messageTimeout);
@@ -209,6 +248,9 @@ bool WebPageProxy::writeSelectionToPasteboard(const String& pasteboardName, cons
 
 bool WebPageProxy::readSelectionFromPasteboard(const String& pasteboardName)
 {
+    if (!isValid())
+        return false;
+
     bool result;
     const double messageTimeout = 20;
     process()->sendSync(Messages::WebPage::ReadSelectionFromPasteboard(pasteboardName), Messages::WebPage::ReadSelectionFromPasteboard::Reply(result), m_pageID, messageTimeout);
@@ -302,6 +344,9 @@ void WebPageProxy::executeSavedCommandBySelector(const String& selector, bool& h
 
 bool WebPageProxy::shouldDelayWindowOrderingForEvent(const WebKit::WebMouseEvent& event)
 {
+    if (!process()->isValid())
+        return false;
+
     bool result = false;
     const double messageTimeout = 3;
     process()->sendSync(Messages::WebPage::ShouldDelayWindowOrderingEvent(event), Messages::WebPage::ShouldDelayWindowOrderingEvent::Reply(result), m_pageID, messageTimeout);
@@ -310,6 +355,9 @@ bool WebPageProxy::shouldDelayWindowOrderingForEvent(const WebKit::WebMouseEvent
 
 bool WebPageProxy::acceptsFirstMouse(int eventNumber, const WebKit::WebMouseEvent& event)
 {
+    if (!isValid())
+        return false;
+
     bool result = false;
     const double messageTimeout = 3;
     process()->sendSync(Messages::WebPage::AcceptsFirstMouse(eventNumber, event), Messages::WebPage::AcceptsFirstMouse::Reply(result), m_pageID, messageTimeout);

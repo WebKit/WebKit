@@ -666,8 +666,11 @@ void WebPageProxy::executeEditCommand(const String& commandName)
 }
     
 #if PLATFORM(WIN)
-WebCore::IntRect WebPageProxy::firstRectForCharacterInSelectedRange(int characterPosition)
+IntRect WebPageProxy::firstRectForCharacterInSelectedRange(int characterPosition)
 {
+    if (!isValid())
+        return IntRect();
+
     IntRect resultRect;
     process()->sendSync(Messages::WebPage::FirstRectForCharacterInSelectedRange(characterPosition), Messages::WebPage::FirstRectForCharacterInSelectedRange::Reply(resultRect), m_pageID);
     return resultRect;
@@ -675,6 +678,9 @@ WebCore::IntRect WebPageProxy::firstRectForCharacterInSelectedRange(int characte
 
 String WebPageProxy::getSelectedText()
 {
+    if (!isValid())
+        return String();
+
     String text;
     process()->sendSync(Messages::WebPage::GetSelectedText(), Messages::WebPage::GetSelectedText::Reply(text), m_pageID);
     return text;
@@ -682,6 +688,9 @@ String WebPageProxy::getSelectedText()
 
 bool WebPageProxy::gestureWillBegin(const IntPoint& point)
 {
+    if (!isValid())
+        return false;
+
     bool canBeginPanning = false;
     process()->sendSync(Messages::WebPage::GestureWillBegin(point), Messages::WebPage::GestureWillBegin::Reply(canBeginPanning), m_pageID);
     return canBeginPanning;
@@ -3072,6 +3081,9 @@ void WebPageProxy::linkClicked(const String& url, const WebMouseEvent& event)
 
 PassRefPtr<WebImage> WebPageProxy::createSnapshotOfVisibleContent()
 {
+    if (!isValid())
+        return 0;
+
     ShareableBitmap::Handle snapshotHandle;
     // Do not wait for more than a second (arbitrary) for the WebProcess to get the snapshot so
     // that the UI Process is not permanently stuck waiting on a potentially crashing Web Process.

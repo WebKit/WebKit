@@ -1,3 +1,38 @@
+2011-04-28  Alexey Proskuryakov  <ap@apple.com>
+
+        Reviewed by Anders Carlsson.
+
+        WebKit2: Frequent crashes in acceptsFirstMouse
+        https://bugs.webkit.org/show_bug.cgi?id=59746
+        <rdar://problem/9281270>
+
+        The crash occurred when connection was null (and it can become null at any time).
+
+        Added checks for the proxy being valid in all sync calls that lacked such.
+        WebPageProxy::isValid() is not the same as WebProcessProxy::isValid(), but existing checks
+        looked at the former, so I used that.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::firstRectForCharacterInSelectedRange):
+        (WebKit::WebPageProxy::getSelectedText):
+        (WebKit::WebPageProxy::gestureWillBegin):
+        (WebKit::WebPageProxy::createSnapshotOfVisibleContent):
+        * UIProcess/mac/WebPageProxyMac.mm:
+        (WebKit::WebPageProxy::setComposition):
+        (WebKit::WebPageProxy::confirmComposition):
+        (WebKit::WebPageProxy::confirmCompositionWithoutDisturbingSelection):
+        (WebKit::WebPageProxy::insertText):
+        (WebKit::WebPageProxy::getMarkedRange):
+        (WebKit::WebPageProxy::getSelectedRange):
+        (WebKit::WebPageProxy::getAttributedSubstringFromRange):
+        (WebKit::WebPageProxy::characterIndexForPoint):
+        (WebKit::WebPageProxy::firstRectForCharacterRange):
+        (WebKit::WebPageProxy::executeKeypressCommands):
+        (WebKit::WebPageProxy::writeSelectionToPasteboard):
+        (WebKit::WebPageProxy::readSelectionFromPasteboard):
+        (WebKit::WebPageProxy::shouldDelayWindowOrderingForEvent):
+        (WebKit::WebPageProxy::acceptsFirstMouse):
+
 2011-04-27  Brian Weinstein  <bweinstein@apple.com>
 
         Reviewed by Timothy Hatcher.
