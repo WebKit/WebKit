@@ -45,7 +45,7 @@ module window {
     ] DOMWindow {
         // DOM Level 0
         attribute [Replaceable] Screen screen;
-        readonly attribute [DoNotCheckDomainSecurity, JSCCustomGetter] History history;
+        attribute [Replaceable, DoNotCheckDomainSecurityOnGet, JSCCustomGetter] History history;
         attribute [Replaceable] BarInfo locationbar;
         attribute [Replaceable] BarInfo menubar;
         attribute [Replaceable] BarInfo personalbar;

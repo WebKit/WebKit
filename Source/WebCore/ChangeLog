@@ -1,3 +1,15 @@
+2011-04-27  Robert Hogan  <robert@webkit.org>
+
+        Reviewed by Adam Barth.
+
+        Allow shadowing of history object
+        https://bugs.webkit.org/show_bug.cgi?id=55965
+
+        Tests: http/tests/history/cross-origin-replace-history-object-child.html
+               http/tests/history/cross-origin-replace-history-object.html
+
+        * page/DOMWindow.idl:
+
 2011-04-27  James Robinson  <jamesr@chromium.org>
 
         Reviewed by Kenneth Russell.
