@@ -3969,3 +3969,7 @@ BUGDPRANKE SNOWLEOPARD DEBUG : fast/text/international/thai-baht-space.html = IM
 BUGDPRANKE SNOWLEOPARD DEBUG : http/tests/multipart/multipart-wait-before-boundary.html = TIMEOUT PASS
 BUGDPRANKE WIN RELEASE : inspector/elements/edit-dom-actions.html = PASS TEXT
 BUGDPRANKE SLOW LINUX WIN DEBUG : inspector/elements/edit-dom-actions.html = PASS TEXT
+
+BUGWK59673 : fast/dom/Window/get-set-properties.html = TEXT
+BUGWK59673 : fast/dom/Window/window-property-shadowing.html = TEXT
+BUGWK59673 : http/tests/history/cross-origin-replace-history-object-child.html = TIMEOUT

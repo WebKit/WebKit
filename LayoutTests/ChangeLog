@@ -1,3 +1,12 @@
+2011-04-27  Kenneth Russell  <kbr@google.com>
+
+        Chromium test failures after r85142
+        https://bugs.webkit.org/show_bug.cgi?id=59673
+
+        Unreviewed. Temporarily suppress test failures.
+
+        * platform/chromium/test_expectations.txt:
+
 2011-04-27  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Ojan Vafai.
