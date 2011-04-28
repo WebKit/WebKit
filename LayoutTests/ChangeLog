@@ -1,3 +1,10 @@
+2011-04-28  Sam Weinig  <sam@webkit.org>
+
+        Add failing test to Leopard skipped list.
+        Will track using https://bugs.webkit.org/show_bug.cgi?id=51807
+
+        * platform/mac-leopard/Skipped:
+
 2011-04-28  Adam Roben  <aroben@apple.com>
 
         Skip another crashing shadow DOM test
