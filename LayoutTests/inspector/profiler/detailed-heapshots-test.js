@@ -354,25 +354,7 @@ InspectorTest.switchToView = function(title, callback)
 {
     callback = InspectorTest.safeWrap(callback);
     var view = WebInspector.panels.profiles.visibleView;
-    var index = -1;
-    for (var i = 0; i < view.views.length; ++i)
-        if (view.views[i].title === title) {
-            index = i;
-            break;
-        }
-    InspectorTest.assertEquals(true, index >= 0, "View not found: " + title);
-    if (view.views.current === index) {
-        setTimeout(callback, 0);
-        return;
-    }
-    var grid = view.views[index].grid;
-    function sortingComplete()
-    {
-        grid.removeEventListener("sorting complete", sortingComplete, this);
-        setTimeout(callback, 0);
-    }
-    view.views[index].grid.addEventListener("sorting complete", sortingComplete, this);
-    view._changeView({target: {selectedIndex: index}});
+    view.changeView(title, callback);
 };
 
 InspectorTest.takeAndOpenSnapshot = function(generator, callback)

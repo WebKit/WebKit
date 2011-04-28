@@ -2,6 +2,35 @@
 
         Reviewed by Yury Semikhatsky.
 
+        WebInspector: [Chromium] Implement retaining paths following in detailed heap snapshots.
+        https://bugs.webkit.org/show_bug.cgi?id=59592
+
+        * inspector/front-end/DetailedHeapshotGridNodes.js:
+        (WebInspector.HeapSnapshotGridNode.prototype._populate):
+        (WebInspector.HeapSnapshotGridNode.prototype.populateChildren.childrenRetrieved):
+        (WebInspector.HeapSnapshotGridNode.prototype.populateChildren.callSerialize):
+        (WebInspector.HeapSnapshotGridNode.prototype.populateChildren):
+        * inspector/front-end/DetailedHeapshotView.js:
+        (WebInspector.HeapSnapshotContainmentDataGrid.prototype._defaultPopulateCount.100.expandRoute.nextStep.else.afterExpand):
+        (WebInspector.HeapSnapshotContainmentDataGrid.prototype._defaultPopulateCount.100.expandRoute):
+        (WebInspector.HeapSnapshotRetainingPathsList.prototype.showNext.pathFound):
+        (WebInspector.DetailedHeapshotView.prototype._mouseClickInRetainmentGrid.expandRoute):
+        (WebInspector.DetailedHeapshotView.prototype._mouseClickInRetainmentGrid):
+        (WebInspector.DetailedHeapshotView.prototype.changeView.sortingComplete):
+        (WebInspector.DetailedHeapshotView.prototype.changeView):
+        * inspector/front-end/HeapSnapshot.js:
+        (WebInspector.HeapSnapshotPathFinder.prototype.findNext):
+        (WebInspector.HeapSnapshotPathFinder.prototype._nextEdgeIter):
+        (WebInspector.HeapSnapshotPathFinder.prototype._buildNextPath):
+        (WebInspector.HeapSnapshotPathFinder.prototype._pathToString):
+        (WebInspector.HeapSnapshotPathFinder.prototype._pathToRoute):
+        * inspector/front-end/heapProfiler.css:
+        (div.retaining-paths-view td.path-column div:hover):
+
+2011-04-28  Mikhail Naganov  <mnaganov@chromium.org>
+
+        Reviewed by Yury Semikhatsky.
+
         Web Inspector: [Chromium] Optimize detailed heap snapshots loading / parsing.
         https://bugs.webkit.org/show_bug.cgi?id=59454
 

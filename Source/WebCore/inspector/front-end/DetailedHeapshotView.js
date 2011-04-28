@@ -131,6 +131,43 @@ WebInspector.HeapSnapshotContainmentDataGrid = function()
 WebInspector.HeapSnapshotContainmentDataGrid.prototype = {
     _defaultPopulateCount: 100,
 
+    expandRoute: function(route)
+    {
+        function nextStep(parent, hopIndex)
+        {
+            if (hopIndex >= route.length) {
+                parent.element.scrollIntoViewIfNeeded(true);
+                parent.select();
+                return;
+            }
+            var nodeIndex = route[hopIndex];
+            for (var i = 0, l = parent.children.length; i < l; ++i) {
+                var child = parent.children[i];
+                if (child.snapshotNodeIndex === nodeIndex) {
+                    if (child.expanded)
+                        nextStep(child, hopIndex + 1);
+                    else {
+                        function afterExpand()
+                        {
+                            child.removeEventListener("populate complete", afterExpand, null);
+                            var lastChild = child.children[child.children.length - 1];
+                            if (!lastChild.showAll)
+                                nextStep(child, hopIndex + 1);
+                            else {
+                                child.addEventListener("populate complete", afterExpand, null);
+                                lastChild.showAll.click();
+                            }
+                        }
+                        child.addEventListener("populate complete", afterExpand, null);
+                        child.expand();
+                    }
+                    break;
+                }
+            }
+        }
+        nextStep(this, 0);
+    },
+
     setDataSource: function(snapshotView, snapshot)
     {
         this.snapshotView = snapshotView;
@@ -377,7 +414,9 @@ WebInspector.HeapSnapshotRetainingPathsList.prototype = {
             } else if (result !== false) {
                 if (this._prefix)
                     result.path = this._prefix + result.path;
-                this.appendChild(new WebInspector.DataGridNode(result, false));
+                var node = new WebInspector.DataGridNode(result, false);
+                node.route = result.route;
+                this.appendChild(node);
                 ++this._counter;
             }
             setTimeout(startSearching.bind(this), 0);
@@ -494,6 +533,7 @@ WebInspector.DetailedHeapshotView = function(parent, profile)
     retainingPathsTitleDiv.appendChild(this.retainingPathsRoot);
     retainmentView.element.appendChild(retainingPathsTitleDiv);
     this.retainmentDataGrid = new WebInspector.HeapSnapshotRetainingPathsList();
+    this.retainmentDataGrid.element.addEventListener("click", this._mouseClickInRetainmentGrid.bind(this), true);
     retainmentView.element.appendChild(this.retainmentDataGrid.element);
     retainmentView.visible = true;
     this.element.appendChild(retainmentView.element);
@@ -831,6 +871,45 @@ WebInspector.DetailedHeapshotView.prototype = {
             return;
 
         this.retainmentDataGrid.setDataSource(this, nodeItem.isDeletedNode ? nodeItem.dataGrid.baseSnapshot : nodeItem.dataGrid.snapshot, nodeItem.snapshotNodeIndex, nodeItem.isDeletedNode ? this.baseSelectElement.childNodes[this.baseSelectElement.selectedIndex].label + " | " : "");
+    },
+
+    _mouseClickInRetainmentGrid: function(event)
+    {
+        var cell = event.target.enclosingNodeOrSelfWithNodeName("td");
+        if (!cell || (!cell.hasStyleClass("path-column")))
+            return;
+        var row = event.target.enclosingNodeOrSelfWithNodeName("tr");
+        var nodeItem = row._dataGridNode;
+        if (!nodeItem)
+            return;
+        function expandRoute()
+        {
+            this.dataGrid.expandRoute(nodeItem.route);
+        }
+        this.changeView("Containment", expandRoute.bind(this));
+    },
+
+    changeView: function(viewTitle, callback)
+    {
+        var viewIndex = null;
+        for (var i = 0; i < this.views.length; ++i)
+            if (this.views[i].title === viewTitle) {
+                viewIndex = i;
+                break;
+            }
+        if (this.views.current === viewIndex) {
+            setTimeout(callback, 0);
+            return;
+        }
+        var grid = this.views[viewIndex].grid;
+        function sortingComplete()
+        {
+            grid.removeEventListener("sorting complete", sortingComplete, this);
+            setTimeout(callback, 0);
+        }
+        this.views[viewIndex].grid.addEventListener("sorting complete", sortingComplete, this);
+        this.viewSelectElement.selectedIndex = viewIndex;
+        this._changeView({target: {selectedIndex: viewIndex}});      
     },
 
     _changeView: function(event)

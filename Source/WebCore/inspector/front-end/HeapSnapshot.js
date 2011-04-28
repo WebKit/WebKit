@@ -1204,7 +1204,7 @@ WebInspector.HeapSnapshotPathFinder.prototype = {
                     return null;
             }
             if (this._isPathFound())
-                return {path:this._pathToString(this._currentPath), len:this._currentPath.length};
+                return {path:this._pathToString(this._currentPath), route:this._pathToRoute(this._currentPath), len:this._currentPath.length};
         }
 
         return false;
@@ -1278,7 +1278,7 @@ WebInspector.HeapSnapshotPathFinder.prototype = {
     _nextEdgeIter: function()
     {
         var iter = this._lastEdgeIter;
-        while (this._skipEdge(iter.item) && iter.hasNext())
+        while (iter.hasNext() && this._skipEdge(iter.item))
             iter.next();
         return iter;
     },
@@ -1289,6 +1289,7 @@ WebInspector.HeapSnapshotPathFinder.prototype = {
             var iter = this._lastEdgeIter;
             while (true) {
                 iter.next();
+                iter = this._nextEdgeIter();
                 if (iter.hasNext())
                     return true;
                 while (true) {
@@ -1344,6 +1345,18 @@ WebInspector.HeapSnapshotPathFinder.prototype = {
         sPath.push(this._nodeToString(path[path.length - 1].item.node));
         sPath.reverse();
         return sPath.join("");
+    },
+
+    _pathToRoute: function(path)
+    {
+        if (!path)
+           return [];
+        var route = [];
+        route.push(this._targetNodeIndex);
+        for (var i = 0; i < path.length; ++i)
+            route.push(path[i].item.nodeIndex);
+        route.reverse();
+        return route;
     }
 };
 
