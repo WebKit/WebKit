@@ -1,3 +1,9 @@
+2011-04-28  Kenneth Russell  <kbr@google.com>
+
+        Unreviewed fix for Windows multi-DLL build.
+
+        * WebKit.gyp:
+
 2011-04-27  Dmitry Lomov  <dslomov@google.com>
 
         Reviewed by David Levin.
