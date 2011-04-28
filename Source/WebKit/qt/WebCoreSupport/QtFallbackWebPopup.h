@@ -69,9 +69,6 @@ private:
     QWebPageClient* pageClient() const;
 
     void populate(const QWebSelectData&);
-#if ENABLE(SYMBIAN_DIALOG_PROVIDERS)
-    void showS60BrowserDialog();
-#endif
 };
 
 class QtFallbackWebPopupCombo : public QComboBox {

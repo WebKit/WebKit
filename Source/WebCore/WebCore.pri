@@ -276,14 +276,6 @@ contains(DEFINES, ENABLE_WEBGL=1)|contains(CONFIG, texmap) {
     QT *= opengl
 }
 
-contains(DEFINES, ENABLE_SYMBIAN_DIALOG_PROVIDERS) {
-    # this feature requires the S60 platform private BrowserDialogsProvider.h header file
-    # and is therefore not enabled by default but only meant for platform builds.
-    symbian {
-        LIBS += -lbrowserdialogsprovider
-    }
-}
-
 !CONFIG(webkit-debug):CONFIG(QTDIR_build) {
     # Remove the following 2 lines if you want debug information in WebCore
     CONFIG -= separate_debug_info

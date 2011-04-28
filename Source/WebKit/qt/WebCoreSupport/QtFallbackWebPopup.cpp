@@ -35,12 +35,6 @@
 #include <QMouseEvent>
 #include <QStandardItemModel>
 
-#if ENABLE(SYMBIAN_DIALOG_PROVIDERS)
-#include <BrCtlDialogsProvider.h>
-#include <BrowserDialogsProvider.h> // S60 platform private header file
-#include <e32base.h>
-#endif
-
 namespace WebCore {
 
 QtFallbackWebPopupCombo::QtFallbackWebPopupCombo(QtFallbackWebPopup& ownerPopup)
@@ -113,10 +107,6 @@ void QtFallbackWebPopup::show(const QWebSelectData& data)
     if (!pageClient())
         return;
 
-#if ENABLE(SYMBIAN_DIALOG_PROVIDERS)
-    TRAP_IGNORE(showS60BrowserDialog());
-#else
-
     destroyPopup();
     m_combo = new QtFallbackWebPopupCombo(*this);
     connect(m_combo, SIGNAL(activated(int)),
@@ -150,61 +140,7 @@ void QtFallbackWebPopup::show(const QWebSelectData& data)
     QMouseEvent event(QEvent::MouseButtonPress, QCursor::pos(), Qt::LeftButton,
                       Qt::LeftButton, Qt::NoModifier);
     QCoreApplication::sendEvent(m_combo, &event);
-#endif
 }
-
-#if ENABLE(SYMBIAN_DIALOG_PROVIDERS)
-
-static void ResetAndDestroy(TAny* aPtr)
-{
-    RPointerArray<HBufC>* items = reinterpret_cast<RPointerArray<HBufC>* >(aPtr);
-    items->ResetAndDestroy();
-}
-
-void QtFallbackWebPopup::showS60BrowserDialog()
-{
-    static MBrCtlDialogsProvider* dialogs = CBrowserDialogsProvider::NewL(0);
-    if (!dialogs)
-        return;
-
-    int size = itemCount();
-    CArrayFix<TBrCtlSelectOptionData>* options = new CArrayFixFlat<TBrCtlSelectOptionData>(qMax(1, size));
-    RPointerArray<HBufC> items(qMax(1, size));
-    CleanupStack::PushL(TCleanupItem(&ResetAndDestroy, &items));
-
-    for (int i = 0; i < size; i++) {
-        if (itemType(i) == Separator) {
-            TBrCtlSelectOptionData data(_L("----------"), false, false, false);
-            options->AppendL(data);
-        } else {
-            HBufC16* itemStr = HBufC16::NewL(itemText(i).length());
-            itemStr->Des().Copy((const TUint16*)itemText(i).utf16(), itemText(i).length());
-            CleanupStack::PushL(itemStr);
-            TBrCtlSelectOptionData data(*itemStr, i == currentIndex(), false, itemIsEnabled(i));
-            options->AppendL(data);
-            items.AppendL(itemStr);
-            CleanupStack::Pop();
-        }
-    }
-
-    dialogs->DialogSelectOptionL(KNullDesC(), (TBrCtlSelectOptionType)(ESelectTypeSingle | ESelectTypeWithFindPane), *options);
-
-    CleanupStack::PopAndDestroy(&items);
-
-    int newIndex;
-    for (newIndex = 0; newIndex < options->Count() && !options->At(newIndex).IsSelected(); newIndex++) {}
-    if (newIndex == options->Count())
-        newIndex = currentIndex();
-    
-    m_popupVisible = false;
-    popupDidHide();
-
-    if (currentIndex() != newIndex && newIndex >= 0)
-        valueChanged(newIndex);
-
-    delete options;
-}
-#endif
 
 void QtFallbackWebPopup::hide()
 {
