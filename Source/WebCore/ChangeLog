@@ -1,3 +1,22 @@
+2011-04-26  Alexander Pavlov  <apavlov@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: Use CachedResource to retrieve charset-decoded stylesheet text
+        https://bugs.webkit.org/show_bug.cgi?id=59326
+
+        Concrete CachedResource successors for stylesheets and scripts
+        can decode their content better than the generic approach we use.
+
+        * inspector/InspectorPageAgent.cpp:
+        (WebCore::decodeSharedBuffer):
+        (WebCore::prepareCachedResourceBuffer):
+        (WebCore::cachedResourceDecoded):
+        (WebCore::InspectorPageAgent::resourceContent):
+        (WebCore::InspectorPageAgent::resourceData):
+        * inspector/InspectorStyleSheet.cpp:
+        (WebCore::InspectorStyleSheet::originalStyleSheetText):
+
 2011-04-28  Jon Lee  <jonlee@apple.com>
 
         Reviewed by Simon Fraser.

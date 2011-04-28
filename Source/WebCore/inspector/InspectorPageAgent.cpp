@@ -35,7 +35,10 @@
 #if ENABLE(INSPECTOR)
 
 #include "Base64.h"
+#include "CachedCSSStyleSheet.h"
+#include "CachedResource.h"
 #include "CachedResourceLoader.h"
+#include "CachedScript.h"
 #include "Cookie.h"
 #include "CookieJar.h"
 #include "Document.h"
@@ -61,6 +64,70 @@
 
 namespace WebCore {
 
+static bool decodeSharedBuffer(PassRefPtr<SharedBuffer> buffer, const String& textEncodingName, String* result)
+{
+    if (buffer) {
+        TextEncoding encoding(textEncodingName);
+        if (!encoding.isValid())
+            encoding = WindowsLatin1Encoding();
+        *result = encoding.decode(buffer->data(), buffer->size());
+        return true;
+    }
+    return false;
+}
+
+static bool prepareCachedResourceBuffer(CachedResource* cachedResource, bool* hasZeroSize)
+{
+    *hasZeroSize = false;
+    if (!cachedResource)
+        return false;
+
+    // Zero-sized resources don't have data at all -- so fake the empty buffer, instead of indicating error by returning 0.
+    if (!cachedResource->encodedSize()) {
+        *hasZeroSize = true;
+        return true;
+    }
+
+    if (cachedResource->isPurgeable()) {
+        // If the resource is purgeable then make it unpurgeable to get
+        // get its data. This might fail, in which case we return an
+        // empty String.
+        // FIXME: should we do something else in the case of a purged
+        // resource that informs the user why there is no data in the
+        // inspector?
+        if (!cachedResource->makePurgeable(false))
+            return false;
+    }
+
+    return true;
+}
+
+static bool decodeCachedResource(CachedResource* cachedResource, String* result)
+{
+    bool hasZeroSize;
+    bool prepared = prepareCachedResourceBuffer(cachedResource, &hasZeroSize);
+    if (!prepared)
+        return false;
+
+    if (cachedResource) {
+        switch (cachedResource->type()) {
+        case CachedResource::CSSStyleSheet:
+            *result = static_cast<CachedCSSStyleSheet*>(cachedResource)->sheetText();
+            return true;
+        case CachedResource::Script:
+            *result = static_cast<CachedScript*>(cachedResource)->script();
+            return true;
+        default:
+            if (hasZeroSize) {
+                *result = "";
+                return true;
+            }
+            return decodeSharedBuffer(cachedResource->data(), cachedResource->encoding(), result);
+        }
+    }
+    return false;
+}
+
 PassOwnPtr<InspectorPageAgent> InspectorPageAgent::create(InstrumentingAgents* instrumentingAgents, Page* page, InjectedScriptManager* injectedScriptManager)
 {
     return adoptPtr(new InspectorPageAgent(instrumentingAgents, page, injectedScriptManager));
@@ -73,17 +140,20 @@ void InspectorPageAgent::resourceContent(ErrorString* errorString, Frame* frame,
         return;
     }
 
-    String textEncodingName;
-    RefPtr<SharedBuffer> buffer = InspectorPageAgent::resourceData(frame, url, &textEncodingName);
-
-    if (buffer) {
-        TextEncoding encoding(textEncodingName);
-        if (!encoding.isValid())
-            encoding = WindowsLatin1Encoding();
-        *result = encoding.decode(buffer->data(), buffer->size());
-        return;
+    FrameLoader* frameLoader = frame->loader();
+    DocumentLoader* loader = frameLoader->documentLoader();
+    RefPtr<SharedBuffer> buffer;
+    bool success = false;
+    if (equalIgnoringFragmentIdentifier(url, loader->url())) {
+        String textEncodingName = frame->document()->inputEncoding();
+        buffer = frameLoader->documentLoader()->mainResourceData();
+        success = decodeSharedBuffer(buffer, textEncodingName, result);
     }
-    *errorString = "No resource with given URL found";
+    if (!success)
+        success = decodeCachedResource(cachedResource(frame, url), result);
+
+    if (!success)
+        *errorString = "No resource with given URL found";
 }
 
 void InspectorPageAgent::resourceContentBase64(ErrorString* errorString, Frame* frame, const KURL& url, String* result)
@@ -101,34 +171,27 @@ void InspectorPageAgent::resourceContentBase64(ErrorString* errorString, Frame* 
 
 PassRefPtr<SharedBuffer> InspectorPageAgent::resourceData(Frame* frame, const KURL& url, String* textEncodingName)
 {
+    RefPtr<SharedBuffer> buffer;
     FrameLoader* frameLoader = frame->loader();
     DocumentLoader* loader = frameLoader->documentLoader();
     if (equalIgnoringFragmentIdentifier(url, loader->url())) {
         *textEncodingName = frame->document()->inputEncoding();
-        return frameLoader->documentLoader()->mainResourceData();
+        buffer = frameLoader->documentLoader()->mainResourceData();
+        if (buffer)
+            return buffer;
     }
 
     CachedResource* cachedResource = InspectorPageAgent::cachedResource(frame, url);
     if (!cachedResource)
         return 0;
 
-    // Zero-sized resources don't have data at all -- so fake the empty buffer, insted of indicating error by returning 0.
-    if (!cachedResource->encodedSize())
-        return SharedBuffer::create();
-
-    if (cachedResource->isPurgeable()) {
-        // If the resource is purgeable then make it unpurgeable to get
-        // get its data. This might fail, in which case we return an
-        // empty String.
-        // FIXME: should we do something else in the case of a purged
-        // resource that informs the user why there is no data in the
-        // inspector?
-        if (!cachedResource->makePurgeable(false))
-            return 0;
-    }
+    bool hasZeroSize;
+    bool prepared = prepareCachedResourceBuffer(cachedResource, &hasZeroSize);
+    if (!prepared)
+        return 0;
 
     *textEncodingName = cachedResource->encoding();
-    return cachedResource->data();
+    return hasZeroSize ? SharedBuffer::create() : cachedResource->data();
 }
 
 CachedResource* InspectorPageAgent::cachedResource(Frame* frame, const KURL& url)

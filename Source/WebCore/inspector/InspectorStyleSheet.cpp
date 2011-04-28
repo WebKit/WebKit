@@ -45,7 +45,6 @@
 #include "InspectorValues.h"
 #include "Node.h"
 #include "StyleSheetList.h"
-#include "TextResourceDecoder.h"
 #include "WebKitCSSKeyframesRule.h"
 
 #include <wtf/OwnPtr.h>
@@ -1055,17 +1054,9 @@ void InspectorStyleSheet::revalidateStyle(CSSStyleDeclaration* pageStyle)
 
 bool InspectorStyleSheet::originalStyleSheetText(String* result) const
 {
-    String rawText;
-    bool success = inlineStyleSheetText(&rawText);
+    bool success = inlineStyleSheetText(result);
     if (!success)
-        success = resourceStyleSheetText(&rawText);
-    if (success) {
-        CString cString = rawText.utf8();
-        RefPtr<TextResourceDecoder> decoder = TextResourceDecoder::create("text/css");
-        String sheetText = decoder->decode(cString.data(), cString.length());
-        sheetText += decoder->flush();
-        *result = sheetText;
-    }
+        success = resourceStyleSheetText(result);
     return success;
 }
 
