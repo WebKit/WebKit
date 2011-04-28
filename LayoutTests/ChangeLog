@@ -1,3 +1,28 @@
+2011-04-28  Leon Scroggins  <scroggo@google.com>
+
+        Reviewed by Steve Block.
+
+        Rebaseline tests which look different due to a change in skia gradient calculations.
+        https://bugs.webkit.org/show_bug.cgi?id=59132
+
+        * platform/chromium-linux-x86_64/svg/W3C-SVG-1.1/pservers-grad-13-b-expected.png:
+        * platform/chromium-linux-x86_64/svg/custom/radial-gradient-with-outstanding-focalPoint-expected.png:
+        * platform/chromium-linux/fast/gradients/background-clipped-expected.png:
+        * platform/chromium-linux/fast/gradients/crash-on-zero-radius-expected.png:
+        * platform/chromium-linux/fast/gradients/generated-gradients-expected.png:
+        * platform/chromium-linux/fast/gradients/radial-centered-expected.png:
+        * platform/chromium-linux/fast/gradients/simple-gradients-expected.png:
+        * platform/chromium-linux/svg/W3C-SVG-1.1/pservers-grad-13-b-expected.png:
+        * platform/chromium-linux/svg/custom/radial-gradient-with-outstanding-focalPoint-expected.png:
+        * platform/chromium-win/fast/gradients/background-clipped-expected.png:
+        * platform/chromium-win/fast/gradients/crash-on-zero-radius-expected.png:
+        * platform/chromium-win/fast/gradients/generated-gradients-expected.png:
+        * platform/chromium-win/fast/gradients/radial-centered-expected.png:
+        * platform/chromium-win/fast/gradients/simple-gradients-expected.png:
+        * platform/chromium-win/svg/W3C-SVG-1.1/pservers-grad-13-b-expected.png:
+        * platform/chromium-win/svg/custom/radial-gradient-with-outstanding-focalPoint-expected.png:
+        * platform/chromium/test_expectations.txt:
+
 2011-04-28  Pavel Feldman  <pfeldman@google.com>
 
         Not reviewed: skipping new inspector tests on Mac while I'm looking into it.

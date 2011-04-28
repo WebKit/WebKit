@@ -3472,14 +3472,6 @@ BUGWK59055 : fast/html/details-add-child-2.html = FAIL
 BUGWK59055 : fast/html/details-remove-child-1.html = FAIL
 BUGWK59055 : fast/html/details-remove-child-2.html = FAIL
 
-// Temporarily marked as failing for rebaselining.
-BUGCR79798 WIN LINUX : fast/gradients/crash-on-zero-radius.html = IMAGE
-BUGCR79798 WIN LINUX : fast/gradients/generated-gradients.html = IMAGE
-BUGCR79798 WIN LINUX : fast/gradients/radial-centered.html = IMAGE
-BUGCR79798 WIN LINUX : fast/gradients/simple-gradients.html = IMAGE
-BUGCR79798 WIN LINUX : fast/gradients/background-clipped.html = IMAGE
-BUGCR79798 WIN LINUX : svg/W3C-SVG-1.1/pservers-grad-13-b.svg = FAIL
-BUGCR79798 WIN LINUX : svg/custom/radial-gradient-with-outstanding-focalPoint.svg = FAIL
 
 // Flaky, perhaps Skia related.
 BUGCR79851 LINUX : fast/table/frame-and-rules.html = PASS TEXT
