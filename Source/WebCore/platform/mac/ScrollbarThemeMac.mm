@@ -445,6 +445,9 @@ static inline wkScrollerKnobStyle toScrollbarPainterKnobStyle(ScrollbarOverlaySt
 
 bool ScrollbarThemeMac::paint(Scrollbar* scrollbar, GraphicsContext* context, const IntRect& damageRect)
 {
+    int visibleSize = scrollbar->visibleSize();
+    int totalSize = scrollbar->totalSize();
+
 #if USE(WK_SCROLLBAR_PAINTER)
     float value = 0;
     float overhang = 0;
@@ -453,10 +456,10 @@ bool ScrollbarThemeMac::paint(Scrollbar* scrollbar, GraphicsContext* context, co
         // Scrolled past the top.
         value = 0;
         overhang = -scrollbar->currentPos();
-    } else if (scrollbar->visibleSize() + scrollbar->currentPos() > scrollbar->totalSize()) {
+    } else if (visibleSize + scrollbar->currentPos() > totalSize) {
         // Scrolled past the bottom.
         value = 1;
-        overhang = scrollbar->currentPos() + scrollbar->visibleSize() - scrollbar->totalSize();
+        overhang = scrollbar->currentPos() + visibleSize - totalSize;
     } else {
         // Within the bounds of the scrollable area.
         int maximum = scrollbar->maximum();
@@ -465,6 +468,8 @@ bool ScrollbarThemeMac::paint(Scrollbar* scrollbar, GraphicsContext* context, co
         else
             value = 0;
     }
+
+    float proportion = visibleSize < totalSize ? (visibleSize - overhang) / totalSize : 0;
     
     ScrollAnimatorMac* scrollAnimator = static_cast<ScrollAnimatorMac*>(scrollbar->scrollableArea()->scrollAnimator());
     scrollAnimator->setIsDrawingIntoLayer(context->isCALayerContext());
@@ -480,7 +485,7 @@ bool ScrollbarThemeMac::paint(Scrollbar* scrollbar, GraphicsContext* context, co
     wkScrollbarPainterPaint(scrollbarMap()->get(scrollbar).get(),
                             scrollbar->enabled(),
                             value,
-                            (static_cast<CGFloat>(scrollbar->visibleSize()) - overhang) / scrollbar->totalSize(),
+                            proportion,
                             scrollbar->frameRect());
 
     scrollAnimator->setIsDrawingIntoLayer(false);
@@ -496,9 +501,9 @@ bool ScrollbarThemeMac::paint(Scrollbar* scrollbar, GraphicsContext* context, co
     float position = 0.0f;
     if (scrollbar->currentPos() < 0) {
         // Scrolled past the top.
-        maximum = (scrollbar->totalSize() - scrollbar->currentPos()) - scrollbar->visibleSize();
+        maximum = (totalSize - scrollbar->currentPos()) - visibleSize;
         position = 0;
-    } else if (scrollbar->visibleSize() + scrollbar->currentPos() > scrollbar->totalSize()) {
+    } else if (visibleSize + scrollbar->currentPos() > totalSize) {
         // Scrolled past the bottom.
         maximum = scrollbar->currentPos();
         position = maximum;
@@ -512,7 +517,7 @@ bool ScrollbarThemeMac::paint(Scrollbar* scrollbar, GraphicsContext* context, co
     trackInfo.max = static_cast<int>(maximum);
     trackInfo.value = static_cast<int>(position);
 
-    trackInfo.trackInfo.scrollbar.viewsize = scrollbar->visibleSize();
+    trackInfo.trackInfo.scrollbar.viewsize = visibleSize;
     trackInfo.attributes = 0;
     if (scrollbar->orientation() == HorizontalScrollbar)
         trackInfo.attributes |= kThemeTrackHorizontal;
