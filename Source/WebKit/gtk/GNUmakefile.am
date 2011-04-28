@@ -404,6 +404,7 @@ webkit_tests_cflags = \
 	$(LIBSOUP_CFLAGS)
 
 webkit_tests_ldadd = \
+	libjavascriptcoregtk-@WEBKITGTK_API_MAJOR_VERSION@.@WEBKITGTK_API_MINOR_VERSION@.la \
 	libwebkitgtk-@WEBKITGTK_API_MAJOR_VERSION@.@WEBKITGTK_API_MINOR_VERSION@.la \
 	$(GTK_LIBS) \
 	$(GLIB_LIBS) \

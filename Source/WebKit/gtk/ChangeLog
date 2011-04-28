@@ -1,5 +1,11 @@
 2011-04-28  Xan Lopez  <xlopez@igalia.com>
 
+        Unreviewed build fix.
+
+        * GNUmakefile.am:
+
+2011-04-28  Xan Lopez  <xlopez@igalia.com>
+
         Reviewed by Martin Robinson.
 
         [Gtk] Split JSC and WebCore builds

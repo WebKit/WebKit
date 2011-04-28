@@ -1,3 +1,9 @@
+2011-04-28  Xan Lopez  <xlopez@igalia.com>
+
+        Unreviewed build fix.
+
+        * GNUmakefile.am:
+
 2011-04-28  Ojan Vafai  <ojan@chromium.org>
 
         Reviewed by Eric Seidel.
