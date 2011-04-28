@@ -3040,7 +3040,7 @@ BUGV8_1203 DEBUG : fast/canvas/webgl/gl-get-calls.html = PASS CRASH
 
 BUGWK55117 : fast/js/i18n-bindings-locale.html = TEXT
 
-BUGJAMESR DEBUG : html5lib/runner.html = PASS TIMEOUT CRASH
+BUGCR80745 DEBUG : html5lib/runner.html = PASS TIMEOUT CRASH
 
 BUG_ANTONM WIN LINUX : svg/dynamic-updates/SVGFESpecularLightingElement-remove-lightSource.html = IMAGE
 BUG_ANTONM MAC LEOPARD : svg/dynamic-updates/SVGFESpecularLightingElement-remove-lightSource.html = IMAGE
@@ -3960,7 +3960,6 @@ BUGDPRANKE WIN DEBUG : http/tests/security/credentials-in-referer.html = PASS TI
 BUGDPRANKE MAC DEBUG : fast/css/getComputedStyle/font-family-fallback-reset.html = CRASH
 
 BUGKBR WIN7 : fast/speech/input-readonly-and-disabled.html = CRASH
-BUGCR80745 WIN DEBUG : html5lib/runner.html = CRASH
 // Flakiness
 BUGKBR WIN DEBUG : animations/animation-controller-drt-api.html = PASS TEXT
 

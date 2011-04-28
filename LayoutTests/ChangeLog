@@ -1,3 +1,10 @@
+2011-04-27  Kenneth Russell  <kbr@google.com>
+
+        Unreviewed. Fixed more breakage in test_expectations.txt caused by
+        my previous checkin, caught with --lint-test-files thanks to dpranke.
+
+        * platform/chromium/test_expectations.txt:
+
 2011-04-27  Andy Estes  <aestes@apple.com>
 
         Skip fast/blockflow/broken-ideographic-font.html on Leopard.
