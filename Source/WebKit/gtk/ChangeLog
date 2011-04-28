@@ -1,3 +1,23 @@
+2011-04-28  Martin Robinson  <mrobinson@igalia.com>
+
+        Reviewed by Xan Lopez.
+
+        [GTK] Click counting logic should be shared between WebKit1 and WebKit2
+        https://bugs.webkit.org/show_bug.cgi?id=59715
+
+        Switch WebKit1 to use the new GtkClickCounter for counting > 3 clicks in a row.
+        This allows the code to be shared between WebKit1 and WebKit2.
+
+        * WebCoreSupport/DragClientGtk.cpp:
+        (WebKit::DragClient::startDrag): Call GtkClickCounter::reset instead of fiddling
+        the WebView private data directly.
+        * WebCoreSupport/FrameLoaderClientGtk.cpp:
+        (WebKit::postCommitFrameViewSetup): Ditto.
+        * webkit/webkitwebview.cpp:
+        (webkit_web_view_button_press_event): Call into GtkClickCounter now.
+        (webkit_web_view_init): Remove private member intialization.
+        * webkit/webkitwebviewprivate.h: Remove unneeded private members.
+
 2011-04-27  Martin Robinson  <mrobinson@igalia.com>
 
         Reviewed by Eric Seidel.

@@ -3757,6 +3757,8 @@ webcoregtk_sources += \
 	Source/WebCore/platform/gtk/EventLoopGtk.cpp \
 	Source/WebCore/platform/gtk/FileChooserGtk.cpp \
 	Source/WebCore/platform/gtk/FileSystemGtk.cpp \
+	Source/WebCore/platform/gtk/GtkClickCounter.cpp \
+	Source/WebCore/platform/gtk/GtkClickCounter.h \
 	Source/WebCore/platform/gtk/GeolocationServiceGtk.cpp \
 	Source/WebCore/platform/gtk/GeolocationServiceGtk.h \
 	Source/WebCore/platform/gtk/GOwnPtrGtk.cpp \

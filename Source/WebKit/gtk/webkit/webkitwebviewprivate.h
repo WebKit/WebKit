@@ -25,6 +25,7 @@
 
 #include "DataObjectGtk.h"
 #include "FullscreenVideoController.h"
+#include "GtkClickCounter.h"
 #include "GOwnPtr.h"
 #include "ResourceHandle.h"
 #include <webkit/webkitwebview.h>
@@ -101,10 +102,7 @@ struct _WebKitWebViewPrivate {
     CString tooltipText;
     WebCore::IntRect tooltipArea;
 
-    int currentClickCount;
-    WebCore::IntPoint previousClickPoint;
-    guint previousClickButton;
-    guint32 previousClickTime;
+    WebCore::GtkClickCounter clickCounter;
     HashMap<GdkDragContext*, RefPtr<WebCore::DataObjectGtk> > draggingDataObjects;
     HashMap<GdkDragContext*, WebKit::DroppingContext*> droppingContexts;
 };

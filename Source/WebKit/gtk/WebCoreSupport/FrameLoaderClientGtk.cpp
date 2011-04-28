@@ -1374,7 +1374,7 @@ static void postCommitFrameViewSetup(WebKitWebFrame *frame, FrameView *view, boo
     }
 
     // Do not allow click counting between main frame loads.
-    priv->previousClickTime = 0;
+    priv->clickCounter.reset();
 }
 
 void FrameLoaderClient::transitionToCommittedFromCachedFrame(CachedFrame* cachedFrame)

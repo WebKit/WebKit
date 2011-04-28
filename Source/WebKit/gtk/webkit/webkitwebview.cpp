@@ -757,21 +757,6 @@ static gboolean webkit_web_view_key_release_event(GtkWidget* widget, GdkEventKey
     return GTK_WIDGET_CLASS(webkit_web_view_parent_class)->key_release_event(widget, event);
 }
 
-static guint32 getEventTime(GdkEvent* event)
-{
-    guint32 time = gdk_event_get_time(event);
-    if (time)
-        return time;
-
-    // Real events always have a non-zero time, but events synthesized
-    // by the DRT do not and we must calculate a time manually. This time
-    // is not calculated in the DRT, because GTK+ does not work well with
-    // anything other than GDK_CURRENT_TIME on synthesized events.
-    GTimeVal timeValue;
-    g_get_current_time(&timeValue);
-    return (timeValue.tv_sec * 1000) + (timeValue.tv_usec / 1000);
-} 
-
 static gboolean webkit_web_view_button_press_event(GtkWidget* widget, GdkEventButton* event)
 {
     WebKitWebView* webView = WEBKIT_WEB_VIEW(widget);
@@ -780,40 +765,11 @@ static gboolean webkit_web_view_button_press_event(GtkWidget* widget, GdkEventBu
     // FIXME: need to keep track of subframe focus for key events
     gtk_widget_grab_focus(widget);
 
-    // For double and triple clicks GDK sends both a normal button press event
-    // and a specific type (like GDK_2BUTTON_PRESS). If we detect a special press
-    // coming up, ignore this event as it certainly generated the double or triple
-    // click. The consequence of not eating this event is two DOM button press events
-    // are generated.
-    GOwnPtr<GdkEvent> nextEvent(gdk_event_peek());
-    if (nextEvent && (nextEvent->any.type == GDK_2BUTTON_PRESS || nextEvent->any.type == GDK_3BUTTON_PRESS))
+    if (!priv->clickCounter.shouldProcessButtonEvent(event))
         return TRUE;
 
-    gint doubleClickDistance = 250;
-    gint doubleClickTime = 5;
-    GtkSettings* settings = gtk_settings_get_for_screen(gtk_widget_get_screen(widget));
-    g_object_get(settings, 
-        "gtk-double-click-distance", &doubleClickDistance,
-        "gtk-double-click-time", &doubleClickTime, NULL);
-
-    // GTK+ only counts up to triple clicks, but WebCore wants to know about
-    // quadruple clicks, quintuple clicks, ad infinitum. Here, we replicate the
-    // GDK logic for counting clicks.
-    guint32 eventTime = getEventTime(reinterpret_cast<GdkEvent*>(event));
-    if ((event->type == GDK_2BUTTON_PRESS || event->type == GDK_3BUTTON_PRESS)
-        || ((abs(event->x - priv->previousClickPoint.x()) < doubleClickDistance)
-            && (abs(event->y - priv->previousClickPoint.y()) < doubleClickDistance)
-            && (eventTime - priv->previousClickTime < static_cast<guint>(doubleClickTime))
-            && (event->button == priv->previousClickButton)))
-        priv->currentClickCount++;
-    else
-        priv->currentClickCount = 1;
-
     PlatformMouseEvent platformEvent(event);
-    platformEvent.setClickCount(priv->currentClickCount);
-    priv->previousClickPoint = platformEvent.pos();
-    priv->previousClickButton = event->button;
-    priv->previousClickTime = eventTime;
+    platformEvent.setClickCount(priv->clickCounter.clickCountForGdkButtonEvent(widget, event));
 
     if (event->button == 3)
         return webkit_web_view_forward_context_menu_event(webView, PlatformMouseEvent(event));
@@ -3535,9 +3491,6 @@ static void webkit_web_view_init(WebKitWebView* webView)
 
     priv->subResources = adoptGRef(g_hash_table_new_full(g_str_hash, g_str_equal, g_free, g_object_unref));
 
-    priv->currentClickCount = 0;
-    priv->previousClickButton = 0;
-    priv->previousClickTime = 0;
     gtk_drag_dest_set(GTK_WIDGET(webView), static_cast<GtkDestDefaults>(0), 0, 0, static_cast<GdkDragAction>(GDK_ACTION_COPY | GDK_ACTION_COPY | GDK_ACTION_MOVE | GDK_ACTION_LINK | GDK_ACTION_PRIVATE));
     gtk_drag_dest_set_target_list(GTK_WIDGET(webView), pasteboardHelperInstance()->targetList());
 }

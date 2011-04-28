@@ -111,7 +111,7 @@ void DragClient::startDrag(DragImageRef image, const IntPoint& dragImageOrigin, 
 
     // A drag starting should prevent a double-click from happening. This might
     // happen if a drag is followed very quickly by another click (like in the DRT).
-    webView->priv->previousClickTime = 0;
+    webView->priv->clickCounter.reset();
 
     // This strategy originally comes from Chromium:
     // src/chrome/browser/gtk/tab_contents_drag_source.cc

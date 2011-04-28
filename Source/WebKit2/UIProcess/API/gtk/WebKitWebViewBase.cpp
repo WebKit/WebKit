@@ -29,6 +29,7 @@
 #include "WebKitWebViewBase.h"
 
 #include "GOwnPtrGtk.h"
+#include "GtkClickCounter.h"
 #include "GtkVersioning.h"
 #include "NativeWebKeyboardEvent.h"
 #include "NativeWebMouseEvent.h"
@@ -49,10 +50,7 @@ struct _WebKitWebViewBasePrivate {
     RefPtr<WebPageProxy> page;
     gboolean isPageActive;
     GtkIMContext* imContext;
-    gint currentClickCount;
-    IntPoint previousClickPoint;
-    guint previousClickButton;
-    guint32 previousClickTime;
+    GtkClickCounter clickCounter;
 };
 
 G_DEFINE_TYPE(WebKitWebViewBase, webkit_web_view_base, GTK_TYPE_CONTAINER)
@@ -143,12 +141,6 @@ static void webkit_web_view_base_init(WebKitWebViewBase* webkitWebViewBase)
 
     gtk_widget_set_can_focus(GTK_WIDGET(webkitWebViewBase), TRUE);
     priv->imContext = gtk_im_multicontext_new();
-
-    priv->currentClickCount = 0;
-    priv->previousClickButton = 0;
-    priv->previousClickTime = 0;
-
-    priv->pageClient = PageClientImpl::create(GTK_WIDGET(webkitWebViewBase));
 }
 
 #ifdef GTK_API_VERSION_2
@@ -241,73 +233,16 @@ static gboolean webViewKeyReleaseEvent(GtkWidget* widget, GdkEventKey* event)
     return GTK_WIDGET_CLASS(webkit_web_view_base_parent_class)->key_release_event(widget, event);
 }
 
-// Copied from webkitwebview.cpp
-static guint32 getEventTime(GdkEvent* event)
-{
-    guint32 time = gdk_event_get_time(event);
-    if (time)
-        return time;
-
-    // Real events always have a non-zero time, but events synthesized
-    // by the DRT do not and we must calculate a time manually. This time
-    // is not calculated in the DRT, because GTK+ does not work well with
-    // anything other than GDK_CURRENT_TIME on synthesized events.
-    GTimeVal timeValue;
-    g_get_current_time(&timeValue);
-    return (timeValue.tv_sec * 1000) + (timeValue.tv_usec / 1000);
-}
-
 static gboolean webViewButtonPressEvent(GtkWidget* widget, GdkEventButton* buttonEvent)
 {
-    if (buttonEvent->button == 3) {
-        // FIXME: [GTK] Add context menu support for Webkit2.
-        // https://bugs.webkit.org/show_bug.cgi?id=54827
-        notImplemented();
-        return FALSE;
-    }
-
+    WebKitWebViewBase* webViewBase = WEBKIT_WEB_VIEW_BASE(widget);
+    WebKitWebViewBasePrivate* priv = webViewBase->priv;
     gtk_widget_grab_focus(widget);
 
-    // For double and triple clicks GDK sends both a normal button press event
-    // and a specific type (like GDK_2BUTTON_PRESS). If we detect a special press
-    // coming up, ignore this event as it certainly generated the double or triple
-    // click. The consequence of not eating this event is two DOM button press events
-    // are generated.
-    GOwnPtr<GdkEvent> nextEvent(gdk_event_peek());
-    if (nextEvent && (nextEvent->any.type == GDK_2BUTTON_PRESS || nextEvent->any.type == GDK_3BUTTON_PRESS))
+    if (!priv->clickCounter.shouldProcessButtonEvent(buttonEvent))
         return TRUE;
-
-    gint doubleClickDistance = 250;
-    gint doubleClickTime = 5;
-    GtkSettings* settings = gtk_settings_get_for_screen(gtk_widget_get_screen(widget));
-    g_object_get(settings,
-                 "gtk-double-click-distance", &doubleClickDistance,
-                 "gtk-double-click-time", &doubleClickTime, NULL);
-
-    // GTK+ only counts up to triple clicks, but WebCore wants to know about
-    // quadruple clicks, quintuple clicks, ad infinitum. Here, we replicate the
-    // GDK logic for counting clicks.
-    GdkEvent* event(reinterpret_cast<GdkEvent*>(buttonEvent));
-    guint32 eventTime = getEventTime(event);
-    WebKitWebViewBase* webkitWebViewBase = WEBKIT_WEB_VIEW_BASE(widget);
-    WebKitWebViewBasePrivate* priv = webkitWebViewBase->priv;
-    if ((event->type == GDK_2BUTTON_PRESS || event->type == GDK_3BUTTON_PRESS)
-        || ((abs(buttonEvent->x - priv->previousClickPoint.x()) < doubleClickDistance)
-            && (abs(buttonEvent->y - priv->previousClickPoint.y()) < doubleClickDistance)
-            && (eventTime - priv->previousClickTime < static_cast<guint>(doubleClickTime))
-            && (buttonEvent->button == priv->previousClickButton)))
-        priv->currentClickCount++;
-    else
-        priv->currentClickCount = 1;
-
-    priv->page->handleMouseEvent(NativeWebMouseEvent(event, priv->currentClickCount));
-
-    gdouble x, y;
-    gdk_event_get_coords(event, &x, &y);
-    priv->previousClickPoint = IntPoint(x, y);
-    priv->previousClickButton = buttonEvent->button;
-    priv->previousClickTime = eventTime;
-
+    priv->page->handleMouseEvent(NativeWebMouseEvent(reinterpret_cast<GdkEvent*>(buttonEvent),
+                                                     priv->clickCounter.clickCountForGdkButtonEvent(widget, buttonEvent)));
     return FALSE;
 }
 

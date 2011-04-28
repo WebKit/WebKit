@@ -1,5 +1,19 @@
 2011-04-28  Martin Robinson  <mrobinson@igalia.com>
 
+        Reviewed by Xan Lopez.
+
+        [GTK] Click counting logic should be shared between WebKit1 and WebKit2
+        https://bugs.webkit.org/show_bug.cgi?id=59715
+
+        Use the GtkClickCounter instead of doing click counting manually. This means that
+        the code will now be shared between WebKit1 and WebKit2.
+
+        * UIProcess/API/gtk/WebKitWebViewBase.cpp:
+        (webkit_web_view_base_init): Remove private member initialization.
+        (webViewButtonPressEvent): Call into GtkClickCounter.
+
+2011-04-28  Martin Robinson  <mrobinson@igalia.com>
+
         Build fix after r85197.
 
         * UIProcess/API/gtk/WebKitWebViewBase.cpp:
