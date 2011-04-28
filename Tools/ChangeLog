@@ -1,3 +1,15 @@
+2011-04-28  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Adam Roben.
+
+        Make reading skipped files from additional platform
+        directories work in WebKit2 mode.
+
+        * Scripts/old-run-webkit-tests:
+        (buildPlatformTestHierarchy): Simplify logic to always use the first
+        and last platforms in the build hierarchy as the test hierarchy, and to
+        insert the WebKit2 platform in the middle if it exists. Yum.
+
 2011-04-28  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Eric Seidel.

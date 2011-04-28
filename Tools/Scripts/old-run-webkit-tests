@@ -2148,11 +2148,21 @@ sub buildPlatformResultHierarchy()
 sub buildPlatformTestHierarchy(@)
 {
     my (@platformHierarchy) = @_;
-    return @platformHierarchy if (@platformHierarchy < 2);
-    if ($platformHierarchy[0] =~ /mac-wk2/) {
-        return ($platformHierarchy[0], $platformHierarchy[1], $platformHierarchy[$#platformHierarchy]);
+
+    my $wk2Platform;
+    for (my $i = 0; $i < @platformHierarchy; ++$i) {
+        if ($platformHierarchy[$i] =~ /-wk2/) {
+            $wk2Platform = splice @platformHierarchy, $i, 1;
+            last;
+        }
     }
-    return ($platformHierarchy[0], $platformHierarchy[$#platformHierarchy]);
+
+    my @result;
+    push @result, $platformHierarchy[0];
+    push @result, $wk2Platform if defined $wk2Platform;
+    push @result, $platformHierarchy[$#platformHierarchy] if @platformHierarchy >= 2;
+
+    return @result;
 }
 
 sub epiloguesAndPrologues($$)
