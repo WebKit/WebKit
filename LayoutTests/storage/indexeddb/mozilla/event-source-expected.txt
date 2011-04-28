@@ -1,0 +1,23 @@
+Test IndexedDB's event.target.source in success callbacks
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+indexedDB = window.indexedDB || window.webkitIndexedDB || window.mozIndexedDB;
+PASS indexedDB == null is false
+indexedDB.open(name, description)
+source = event.target.source;
+PASS source is indexedDB
+db = event.target.result
+request = db.setVersion('1')
+source = event.target.source;
+PASS source is db
+Deleted all object stores.
+objectStore = db.createObjectStore(objectStoreName, { autoIncrement: true });
+request = objectStore.add({});
+source = event.target.source;
+PASS source is objectStore
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -2,6 +2,16 @@
 
         Reviewed by Tony Chang.
 
+        Port Mozilla's IndexedDB tests: event.target.source in success callbacks
+        https://bugs.webkit.org/show_bug.cgi?id=59632
+
+        * storage/indexeddb/mozilla/event-source-expected.txt: Added.
+        * storage/indexeddb/mozilla/event-source.html: Added.
+
+2011-04-27  Mark Pilgrim  <pilgrim@chromium.org>
+
+        Reviewed by Tony Chang.
+
         Port Mozilla's IndexedDB tests: event.target.result after add() and put()
         https://bugs.webkit.org/show_bug.cgi?id=59634
 
