@@ -74,7 +74,7 @@ ImageBuffer::ImageBuffer(const IntSize& size, ColorSpace, RenderingMode, bool& s
 
     m_data.m_canvas = canvas;
     m_data.m_platformContext.setCanvas(m_data.m_canvas.get());
-    m_context.set(new GraphicsContext(&m_data.m_platformContext));
+    m_context = adoptPtr(new GraphicsContext(&m_data.m_platformContext));
     m_context->platformContext()->setDrawingToImageBuffer(true);
 
     // Make the background transparent. It would be nice if this wasn't

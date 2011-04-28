@@ -1,3 +1,15 @@
+2011-04-27  James Robinson  <jamesr@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        Fix OwnPtr strict issues in chromium linux build
+        https://bugs.webkit.org/show_bug.cgi?id=59664
+
+        * src/WebImageDecoder.cpp:
+        (WebKit::WebImageDecoder::getFrameAtIndex):
+        * src/WebImageSkia.cpp:
+        (WebKit::WebImage::fromData):
+
 2011-04-27  Adam Barth  <abarth@webkit.org>
 
         Reviewed by David Levin.

@@ -394,7 +394,7 @@ const TextRun& ComplexTextController::getNormalizedTextRun(const TextRun& origin
 
     normalizeSpacesAndMirrorChars(sourceText, originalRun.rtl(), normalizedBuffer.get(), normalizedBufferLength);
 
-    normalizedRun.set(new TextRun(originalRun));
+    normalizedRun = adoptPtr(new TextRun(originalRun));
     normalizedRun->setText(normalizedBuffer.get(), normalizedBufferLength);
     return *normalizedRun;
 }

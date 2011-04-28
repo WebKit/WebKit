@@ -1,3 +1,17 @@
+2011-04-27  James Robinson  <jamesr@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        Fix OwnPtr strict issues in chromium linux build
+        https://bugs.webkit.org/show_bug.cgi?id=59664
+
+        * platform/graphics/chromium/ComplexTextControllerLinux.cpp:
+        (WebCore::ComplexTextController::getNormalizedTextRun):
+        * platform/graphics/skia/ImageBufferSkia.cpp:
+        (WebCore::ImageBuffer::ImageBuffer):
+        * platform/graphics/skia/PlatformContextSkia.cpp:
+        (WebCore::PlatformContextSkia::PlatformContextSkia):
+
 2011-04-27  Chris Rogers  <crogers@google.com>
 
         Reviewed by Kenneth Russell.

@@ -40,8 +40,10 @@
 
 #if WEBKIT_USING_SKIA
 #include <wtf/OwnPtr.h>
-#include <wtf/PassRefPtr.h>
+#include <wtf/PassOwnPtr.h>
 #endif
+
+#include <wtf/PassRefPtr.h>
 
 using namespace WebCore;
 
@@ -110,7 +112,7 @@ WebImage WebImageDecoder::getFrameAtIndex(int index = 0) const
     if (!frameBuffer)
         return WebImage();
 #if WEBKIT_USING_SKIA
-    OwnPtr<NativeImageSkia>image(frameBuffer->asNewNativeImage());
+    OwnPtr<NativeImageSkia> image = adoptPtr(frameBuffer->asNewNativeImage());
     return WebImage(*image);
 #elif WEBKIT_USING_CG
     // FIXME: Implement CG side of this.

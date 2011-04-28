@@ -40,6 +40,7 @@
 #include "WebSize.h"
 
 #include <wtf/OwnPtr.h>
+#include <wtf/PassOwnPtr.h>
 #include <wtf/PassRefPtr.h>
 
 using namespace WebCore;
@@ -76,8 +77,8 @@ WebImage WebImage::fromData(const WebData& data, const WebSize& desiredSize)
         }
     }
 
-    OwnPtr<NativeImageSkia> frame(source.createFrameAtIndex(index));
-    if (!frame.get())
+    OwnPtr<NativeImageSkia> frame = adoptPtr(source.createFrameAtIndex(index));
+    if (!frame)
         return WebImage();
 
     return WebImage(*frame);

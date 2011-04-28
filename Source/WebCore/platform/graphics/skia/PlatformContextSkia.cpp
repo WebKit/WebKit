@@ -215,9 +215,6 @@ PlatformContextSkia::PlatformContextSkia(SkCanvas* canvas)
     , m_printing(false)
     , m_drawingToImageBuffer(false)
     , m_accelerationMode(NoAcceleration)
-#if ENABLE(ACCELERATED_2D_CANVAS)
-    , m_gpuCanvas(0)
-#endif
     , m_backingStoreState(None)
 {
     m_stateStack.append(State());
