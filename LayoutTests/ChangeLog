@@ -1,3 +1,13 @@
+2011-04-28  Satish Sampath  <satish@chromium.org>
+
+        Reviewed by Tony Gentilcore.
+
+        Speech input button layout issues with padding and border.
+        https://bugs.webkit.org/show_bug.cgi?id=59613
+
+        * fast/speech/input-text-speechbutton-expected.txt:
+        * fast/speech/input-text-speechbutton.html: Updated to test with padding.
+
 2011-04-28  Chris Fleizach  <cfleizach@apple.com>
 
         Not reviewed. Add new expected results for GTK platform.

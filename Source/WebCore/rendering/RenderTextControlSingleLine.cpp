@@ -308,9 +308,14 @@ void RenderTextControlSingleLine::layout()
             int y = (height() - button->height()) / 2;
             button->setLocation(x, y);
         } else {
-            // For non-search fields which are simpler and we let the defaut layout handle things
-            // except for small tweaking below.
-            button->setLocation(button->x() + paddingRight(), (height() - button->height()) / 2);
+            int x = width() - borderRight() - paddingRight() - button->width();
+            RenderBox* spinBox = m_innerSpinButton ? m_innerSpinButton->renderBox() : 0;
+            if (style()->isLeftToRightDirection())
+                x -= spinBox ? spinBox->width() : 0;
+            else
+                innerTextRenderer->setX(paddingLeft() + borderLeft() + (spinBox ? spinBox->width() : 0));
+            int y = (height() - button->height()) / 2;
+            button->setLocation(x, y);
         }
     }
 #endif
@@ -369,6 +374,14 @@ bool RenderTextControlSingleLine::nodeAtPoint(const HitTestRequest& request, Hit
     if (m_resultsButton && m_resultsButton->renderer() && xPos < textLeft)
         innerNode = m_resultsButton.get();
 
+#if ENABLE(INPUT_SPEECH)
+    if (!innerNode && m_speechButton && m_speechButton->renderer()) {
+        int buttonLeft = tx + x() + innerBlockRenderer->x() + innerBlockRenderer->width() - m_speechButton->renderBox()->width();
+        if (xPos >= buttonLeft)
+            innerNode = m_speechButton.get();
+    }
+#endif
+
     if (!innerNode) {
         int textRight = textLeft + innerTextRenderer->width();
         if (m_cancelButton && m_cancelButton->renderer() && xPos > textRight)
@@ -405,7 +418,8 @@ void RenderTextControlSingleLine::forwardEvent(Event* event)
 
 #if ENABLE(INPUT_SPEECH)
     if (RenderBox* speechBox = m_speechButton ? m_speechButton->renderBox() : 0) {
-        FloatPoint pointInTextControlCoords = absoluteToLocal(static_cast<MouseEvent*>(event)->absoluteLocation(), false, true);
+        RenderBox* parent = innerTextRenderer ? innerTextRenderer : this;
+        FloatPoint pointInTextControlCoords = parent->absoluteToLocal(static_cast<MouseEvent*>(event)->absoluteLocation(), false, true);
         if (speechBox->frameRect().contains(roundedIntPoint(pointInTextControlCoords))) {
             m_speechButton->defaultEventHandler(event);
             return;

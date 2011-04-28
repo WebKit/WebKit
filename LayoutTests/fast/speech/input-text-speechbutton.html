@@ -10,37 +10,35 @@
 <script type="text/javascript">
 description('Tests for speech button click with &lt;input type="text" speech>.');
 
-function onWebkitSpeechChange() {
-    shouldBeEqualToString('document.getElementById("speechInput").value', 'Pictures of the moon');
-    setTimeout(function() {
-        var input = document.getElementById('speechInput');
-        input.dir = 'rtl';
-        input.value = '';
-        input.onwebkitspeechchange = function() {
-            shouldBeEqualToString('document.getElementById("speechInput").value',
-                                  'Pictures of the moon');
-            finishJSTest();
-        };
+function startSpeechInput(id) {
+    // Clicking the speech button should fill in mock speech-recognized text.
+    var input = document.getElementById(id);
+    var x = input.offsetLeft + input.offsetWidth - 4;
+    var y = input.offsetTop + input.offsetHeight / 2;
+    if (input.style.paddingRight.length)
+        x -= parseInt(input.style.paddingRight.substr(0, input.style.paddingRight.length - 2));
+    eventSender.mouseMoveTo(x, y);
+    eventSender.mouseDown();
+    eventSender.mouseUp();
+}
 
-        var x = input.offsetLeft + 4;
-        var y = input.offsetTop + input.offsetHeight / 2;
-        eventSender.mouseMoveTo(x, y);
-        eventSender.mouseDown();
-        eventSender.mouseUp();
+var testIndex = 1;
+function onWebkitSpeechChange() {
+    shouldBeEqualToString('document.getElementById("speechInput' + testIndex + '").value', 'Pictures of the moon');
+    if (testIndex == 4) {
+        finishJSTest();
+        return;
+    }
+    ++testIndex;
+    setTimeout(function() {
+        startSpeechInput("speechInput" + testIndex);
     }, 50);
 }
 
 function run() {
     if (window.layoutTestController && window.eventSender) {
         layoutTestController.addMockSpeechInputResult('Pictures of the moon', 1.0, '');
-
-        // Clicking the speech button should fill in mock speech-recognized text.
-        var input = document.getElementById('speechInput');
-        var x = input.offsetLeft + input.offsetWidth - 4;
-        var y = input.offsetTop + input.offsetHeight / 2;
-        eventSender.mouseMoveTo(x, y);
-        eventSender.mouseDown();
-        eventSender.mouseUp();
+        startSpeechInput("speechInput" + testIndex);
     }
 }
 
@@ -49,6 +47,10 @@ window.jsTestIsAsync = true;
 window.successfullyParsed = true;
 </script>
 <script src="../js/resources/js-test-post.js"></script>
-<input id='speechInput' x-webkit-speech onwebkitspeechchange="onWebkitSpeechChange()">
+<input id='speechInput1' x-webkit-speech onwebkitspeechchange="onWebkitSpeechChange()">
+<input id='speechInput2' x-webkit-speech onwebkitspeechchange="onWebkitSpeechChange()" dir="rtl">
+<input id='speechInput3' x-webkit-speech onwebkitspeechchange="onWebkitSpeechChange()" style="padding:5px 10px">
+<input id='speechInput4' x-webkit-speech onwebkitspeechchange="onWebkitSpeechChange()" style="padding:5px 10px" dir="rtl">
 </body>
 </html>
+

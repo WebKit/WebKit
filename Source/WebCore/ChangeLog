@@ -1,3 +1,15 @@
+2011-04-28  Satish Sampath  <satish@chromium.org>
+
+        Reviewed by Tony Gentilcore.
+
+        Speech input button layout issues with padding and border.
+        https://bugs.webkit.org/show_bug.cgi?id=59613
+
+        * rendering/RenderTextControlSingleLine.cpp:
+        (WebCore::RenderTextControlSingleLine::layout):
+        (WebCore::RenderTextControlSingleLine::nodeAtPoint):
+        (WebCore::RenderTextControlSingleLine::forwardEvent):
+
 2011-04-28  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Reviewed by Martin Robinson.
