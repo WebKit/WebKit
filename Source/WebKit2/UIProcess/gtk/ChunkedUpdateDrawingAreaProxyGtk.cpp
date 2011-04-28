@@ -32,7 +32,6 @@
 #include "UpdateChunk.h"
 #include "WebKitWebViewBase.h"
 #include "WebProcessProxy.h"
-#include "WebView.h"
 #include <WebCore/GtkVersioning.h>
 #include <gdk/gdk.h>
 

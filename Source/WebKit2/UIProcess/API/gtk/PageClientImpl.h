@@ -25,8 +25,8 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebView_h
-#define WebView_h
+#ifndef PageClientImpl_h
+#define PageClientImpl_h
 
 #include "PageClient.h"
 #include "WebPageProxy.h"
@@ -39,20 +39,19 @@ namespace WebKit {
 class DrawingAreaProxy;
 class WebPageNamespace;
 
-class WebView : public PageClient {
+class PageClientImpl : public PageClient {
 public:
-    ~WebView();
-    static PassOwnPtr<WebView> create(GtkWidget* viewWidget)
+    ~PageClientImpl();
+    static PassOwnPtr<PageClientImpl> create(GtkWidget* viewWidget)
     {
-        return adoptPtr(new WebView(viewWidget));
+        return adoptPtr(new PageClientImpl(viewWidget));
     }
 
     void addPendingEditorCommand(const char* command) { m_pendingEditorCommands.append(WTF::String(command)); }
 
 private:
-    WebView(GtkWidget*);
+    PageClientImpl(GtkWidget*);
 
-    // PageClient
     virtual PassOwnPtr<DrawingAreaProxy> createDrawingAreaProxy();
     virtual void setViewNeedsDisplay(const WebCore::IntRect&);
     virtual void displayView();
@@ -98,7 +97,7 @@ private:
     virtual double customRepresentationZoomFactor();
     virtual void setCustomRepresentationZoomFactor(double);
 
-    // Members of WebView class
+    // Members of PageClientImpl class
     GtkWidget* m_viewWidget;
     Vector<WTF::String> m_pendingEditorCommands;
     GRefPtr<GtkWidget> m_nativeWidget;
@@ -106,4 +105,4 @@ private:
 
 } // namespace WebKit
 
-#endif // WebView_h
+#endif // PageClientImpl_h

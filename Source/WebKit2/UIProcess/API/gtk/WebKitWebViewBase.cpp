@@ -33,6 +33,7 @@
 #include "NativeWebKeyboardEvent.h"
 #include "NativeWebMouseEvent.h"
 #include "NotImplemented.h"
+#include "PageClientImpl.h"
 #include "RefPtrCairo.h"
 #include "WebContext.h"
 #include "WebEventFactory.h"
@@ -45,7 +46,7 @@ using namespace WebCore;
 static gpointer webkitWebViewBaseParentClass = 0;
 
 struct _WebKitWebViewBasePrivate {
-    OwnPtr<WebView> webViewInstance;
+    OwnPtr<PageClientImpl> pageClient;
     RefPtr<WebPageProxy> page;
     gboolean isPageActive;
     GtkIMContext* imContext;
@@ -146,7 +147,7 @@ static void webkitWebViewBaseInit(WebKitWebViewBase* webkitWebViewBase)
     priv->previousClickButton = 0;
     priv->previousClickTime = 0;
 
-    priv->webViewInstance = WebView::create(GTK_WIDGET(webkitWebViewBase));
+    priv->pageClient = PageClientImpl::create(GTK_WIDGET(webkitWebViewBase));
 }
 
 #ifdef GTK_API_VERSION_2
@@ -395,7 +396,7 @@ WebKitWebViewBase* webkitWebViewBaseCreate(WebContext* context, WebPageGroup* pa
     WebKitWebViewBase* webkitWebViewBase = WEBKIT_WEB_VIEW_BASE(g_object_new(WEBKIT_TYPE_WEB_VIEW_BASE, NULL));
     WebKitWebViewBasePrivate* priv = webkitWebViewBase->priv;
 
-    priv->page = context->createWebPage(priv->webViewInstance.get(), pageGroup);
+    priv->page = context->createWebPage(priv->pageClient.get(), pageGroup);
     priv->page->initializeWebPage();
 
     return webkitWebViewBase;

@@ -30,7 +30,6 @@
 
 #include "WKAPICast.h"
 #include "WebKitWebViewBase.h"
-#include "WebView.h"
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefPtr.h>
 #include <wtf/text/StringImpl.h>

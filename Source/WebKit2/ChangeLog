@@ -2,6 +2,80 @@
 
         Reviewed by Martin Robinson.
 
+        [GTK] Move WebView to UIProcess/API/gtk
+        https://bugs.webkit.org/show_bug.cgi?id=59686
+
+        And rename it as PageClientImpl, since it's a page client
+        implementation, not a web view.
+
+        * GNUmakefile.am:
+        * UIProcess/API/C/gtk/WKView.cpp:
+        * UIProcess/API/gtk/PageClientImpl.cpp: Renamed from Source/WebKit2/UIProcess/gtk/WebView.cpp.
+        (WebKit::backspaceCallback):
+        (WebKit::selectAllCallback):
+        (WebKit::cutClipboardCallback):
+        (WebKit::copyClipboardCallback):
+        (WebKit::pasteClipboardCallback):
+        (WebKit::toggleOverwriteCallback):
+        (WebKit::popupMenuCallback):
+        (WebKit::showHelpCallback):
+        (WebKit::deleteFromCursorCallback):
+        (WebKit::moveCursorCallback):
+        (WebKit::PageClientImpl::PageClientImpl):
+        (WebKit::PageClientImpl::~PageClientImpl):
+        (WebKit::PageClientImpl::getEditorCommandsForKeyEvent):
+        (WebKit::PageClientImpl::createDrawingAreaProxy):
+        (WebKit::PageClientImpl::setViewNeedsDisplay):
+        (WebKit::PageClientImpl::displayView):
+        (WebKit::PageClientImpl::scrollView):
+        (WebKit::PageClientImpl::viewSize):
+        (WebKit::PageClientImpl::isViewWindowActive):
+        (WebKit::PageClientImpl::isViewFocused):
+        (WebKit::PageClientImpl::isViewVisible):
+        (WebKit::PageClientImpl::isViewInWindow):
+        (WebKit::PageClientImpl::PageClientImpl::processDidCrash):
+        (WebKit::PageClientImpl::didRelaunchProcess):
+        (WebKit::PageClientImpl::takeFocus):
+        (WebKit::PageClientImpl::toolTipChanged):
+        (WebKit::PageClientImpl::setCursor):
+        (WebKit::PageClientImpl::setViewportArguments):
+        (WebKit::PageClientImpl::registerEditCommand):
+        (WebKit::PageClientImpl::clearAllEditCommands):
+        (WebKit::PageClientImpl::canUndoRedo):
+        (WebKit::PageClientImpl::executeUndoRedo):
+        (WebKit::PageClientImpl::convertToDeviceSpace):
+        (WebKit::PageClientImpl::convertToUserSpace):
+        (WebKit::PageClientImpl::windowToScreen):
+        (WebKit::PageClientImpl::doneWithKeyEvent):
+        (WebKit::PageClientImpl::didNotHandleKeyEvent):
+        (WebKit::PageClientImpl::createPopupMenuProxy):
+        (WebKit::PageClientImpl::createContextMenuProxy):
+        (WebKit::PageClientImpl::setFindIndicator):
+        (WebKit::PageClientImpl::pageDidEnterAcceleratedCompositing):
+        (WebKit::PageClientImpl::pageDidLeaveAcceleratedCompositing):
+        (WebKit::PageClientImpl::didCommitLoadForMainFrame):
+        (WebKit::PageClientImpl::didFinishLoadingDataForCustomRepresentation):
+        (WebKit::PageClientImpl::customRepresentationZoomFactor):
+        (WebKit::PageClientImpl::setCustomRepresentationZoomFactor):
+        (WebKit::PageClientImpl::pageClosed):
+        (WebKit::PageClientImpl::didChangeScrollbarsForMainFrame):
+        (WebKit::PageClientImpl::flashBackingStoreUpdates):
+        (WebKit::PageClientImpl::findStringInCustomRepresentation):
+        (WebKit::PageClientImpl::countStringMatchesInCustomRepresentation):
+        * UIProcess/API/gtk/PageClientImpl.h: Renamed from Source/WebKit2/UIProcess/gtk/WebView.h.
+        (WebKit::PageClientImpl::create):
+        (WebKit::PageClientImpl::addPendingEditorCommand):
+        (WebKit::PageClientImpl::userSpaceScaleFactor):
+        * UIProcess/API/gtk/WebKitWebViewBase.cpp:
+        (webkitWebViewBaseInit):
+        (webkitWebViewBaseCreate):
+        * UIProcess/API/gtk/WebKitWebViewBase.h:
+        * UIProcess/gtk/ChunkedUpdateDrawingAreaProxyGtk.cpp:
+
+2011-04-28  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Reviewed by Martin Robinson.
+
         [GTK] Use the WebPage object in WebKitWebViewBase
         https://bugs.webkit.org/show_bug.cgi?id=59683
 

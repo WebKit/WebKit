@@ -28,8 +28,7 @@
 #ifndef WebKitWebViewBase_h
 #define WebKitWebViewBase_h
 
-#include "WebView.h"
-
+#include "WebPageProxy.h"
 #include <gtk/gtk.h>
 
 using namespace WebKit;

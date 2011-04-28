@@ -26,7 +26,7 @@
  */
 
 #include "config.h"
-#include "WebView.h"
+#include "PageClientImpl.h"
 
 #include "ChunkedUpdateDrawingAreaProxy.h"
 #include "NativeWebKeyboardEvent.h"
@@ -45,31 +45,31 @@ using namespace WebCore;
 
 namespace WebKit {
 
-static void backspaceCallback(GtkWidget* widget, WebView* client)
+static void backspaceCallback(GtkWidget* widget, PageClientImpl* client)
 {
     g_signal_stop_emission_by_name(widget, "backspace");
     client->addPendingEditorCommand("DeleteBackward");
 }
 
-static void selectAllCallback(GtkWidget* widget, gboolean select, WebView* client)
+static void selectAllCallback(GtkWidget* widget, gboolean select, PageClientImpl* client)
 {
     g_signal_stop_emission_by_name(widget, "select-all");
     client->addPendingEditorCommand(select ? "SelectAll" : "Unselect");
 }
 
-static void cutClipboardCallback(GtkWidget* widget, WebView* client)
+static void cutClipboardCallback(GtkWidget* widget, PageClientImpl* client)
 {
     g_signal_stop_emission_by_name(widget, "cut-clipboard");
     client->addPendingEditorCommand("Cut");
 }
 
-static void copyClipboardCallback(GtkWidget* widget, WebView* client)
+static void copyClipboardCallback(GtkWidget* widget, PageClientImpl* client)
 {
     g_signal_stop_emission_by_name(widget, "copy-clipboard");
     client->addPendingEditorCommand("Copy");
 }
 
-static void pasteClipboardCallback(GtkWidget* widget, WebView* client)
+static void pasteClipboardCallback(GtkWidget* widget, PageClientImpl* client)
 {
     g_signal_stop_emission_by_name(widget, "paste-clipboard");
     client->addPendingEditorCommand("Paste");
@@ -105,7 +105,7 @@ static const char* const gtkDeleteCommands[][2] = {
     { 0,                              0                                      } // Whitespace (M-\ in Emacs)
 };
 
-static void deleteFromCursorCallback(GtkWidget* widget, GtkDeleteType deleteType, gint count, WebView* client)
+static void deleteFromCursorCallback(GtkWidget* widget, GtkDeleteType deleteType, gint count, PageClientImpl* client)
 {
     g_signal_stop_emission_by_name(widget, "delete-from-cursor");
     int direction = count > 0 ? 1 : 0;
@@ -164,7 +164,7 @@ static const char* const gtkMoveCommands[][4] = {
       0,                                                0                                           } // Horizontal page movement
 };
 
-static void moveCursorCallback(GtkWidget* widget, GtkMovementStep step, gint count, gboolean extendSelection, WebView* client)
+static void moveCursorCallback(GtkWidget* widget, GtkMovementStep step, gint count, gboolean extendSelection, PageClientImpl* client)
 {
     g_signal_stop_emission_by_name(widget, "move-cursor");
     int direction = count > 0 ? 1 : 0;
@@ -220,7 +220,7 @@ static const KeyPressEntry keyPressEntries[] = {
     { '\r',   AltKey | ShiftKey,  "InsertNewline"                               },
 };
 
-WebView::WebView(GtkWidget* viewWidget)
+PageClientImpl::PageClientImpl(GtkWidget* viewWidget)
     : m_viewWidget(viewWidget)
     , m_nativeWidget(gtk_text_view_new())
 {
@@ -236,11 +236,11 @@ WebView::WebView(GtkWidget* viewWidget)
     g_signal_connect(m_nativeWidget.get(), "show-help", G_CALLBACK(showHelpCallback), this);
 }
 
-WebView::~WebView()
+PageClientImpl::~PageClientImpl()
 {
 }
 
-void WebView::getEditorCommandsForKeyEvent(const NativeWebKeyboardEvent& event, Vector<WTF::String>& commandList)
+void PageClientImpl::getEditorCommandsForKeyEvent(const NativeWebKeyboardEvent& event, Vector<WTF::String>& commandList)
 {
     m_pendingEditorCommands.clear();
 
@@ -287,79 +287,79 @@ void WebView::getEditorCommandsForKeyEvent(const NativeWebKeyboardEvent& event, 
 }
 
 // PageClient's pure virtual functions
-PassOwnPtr<DrawingAreaProxy> WebView::createDrawingAreaProxy()
+PassOwnPtr<DrawingAreaProxy> PageClientImpl::createDrawingAreaProxy()
 {
     WebKitWebViewBase* view = WEBKIT_WEB_VIEW_BASE(m_viewWidget);
     return ChunkedUpdateDrawingAreaProxy::create(view, webkitWebViewBaseGetPage(view));
 }
 
-void WebView::setViewNeedsDisplay(const WebCore::IntRect&)
+void PageClientImpl::setViewNeedsDisplay(const WebCore::IntRect&)
 {
     notImplemented();
 }
 
-void WebView::displayView()
+void PageClientImpl::displayView()
 {
     notImplemented();
 }
 
-void WebView::scrollView(const WebCore::IntRect& scrollRect, const WebCore::IntSize& scrollOffset)
+void PageClientImpl::scrollView(const WebCore::IntRect& scrollRect, const WebCore::IntSize& scrollOffset)
 {
     notImplemented();
 }
 
-WebCore::IntSize WebView::viewSize()
+WebCore::IntSize PageClientImpl::viewSize()
 {
     GtkAllocation allocation;
     gtk_widget_get_allocation(m_viewWidget, &allocation);
     return IntSize(allocation.width, allocation.height);
 }
 
-bool WebView::isViewWindowActive()
+bool PageClientImpl::isViewWindowActive()
 {
     notImplemented();
     return true;
 }
 
-bool WebView::isViewFocused()
+bool PageClientImpl::isViewFocused()
 {
     notImplemented();
     return true;
 }
 
-bool WebView::isViewVisible()
+bool PageClientImpl::isViewVisible()
 {
     notImplemented();
     return true;
 }
 
-bool WebView::isViewInWindow()
+bool PageClientImpl::isViewInWindow()
 {
     notImplemented();
     return true;
 }
 
-void WebView::WebView::processDidCrash()
+void PageClientImpl::PageClientImpl::processDidCrash()
 {
     notImplemented();
 }
 
-void WebView::didRelaunchProcess()
+void PageClientImpl::didRelaunchProcess()
 {
     notImplemented();
 }
 
-void WebView::takeFocus(bool)
+void PageClientImpl::takeFocus(bool)
 {
     notImplemented();
 }
 
-void WebView::toolTipChanged(const String&, const String&)
+void PageClientImpl::toolTipChanged(const String&, const String&)
 {
     notImplemented();
 }
 
-void WebView::setCursor(const Cursor& cursor)
+void PageClientImpl::setCursor(const Cursor& cursor)
 {
     // [GTK] Widget::setCursor() gets called frequently
     // http://bugs.webkit.org/show_bug.cgi?id=16388
@@ -372,128 +372,128 @@ void WebView::setCursor(const Cursor& cursor)
         gdk_window_set_cursor(window, newCursor);
 }
 
-void WebView::setViewportArguments(const WebCore::ViewportArguments&)
+void PageClientImpl::setViewportArguments(const WebCore::ViewportArguments&)
 {
     notImplemented();
 }
 
-void WebView::registerEditCommand(PassRefPtr<WebEditCommandProxy>, WebPageProxy::UndoOrRedo)
+void PageClientImpl::registerEditCommand(PassRefPtr<WebEditCommandProxy>, WebPageProxy::UndoOrRedo)
 {
     notImplemented();
 }
 
-void WebView::clearAllEditCommands()
+void PageClientImpl::clearAllEditCommands()
 {
     notImplemented();
 }
 
-bool WebView::canUndoRedo(WebPageProxy::UndoOrRedo)
+bool PageClientImpl::canUndoRedo(WebPageProxy::UndoOrRedo)
 {
     notImplemented();
     return false;
 }
 
-void WebView::executeUndoRedo(WebPageProxy::UndoOrRedo)
+void PageClientImpl::executeUndoRedo(WebPageProxy::UndoOrRedo)
 {
     notImplemented();
 }
 
-FloatRect WebView::convertToDeviceSpace(const FloatRect& viewRect)
-{
-    notImplemented();
-    return viewRect;
-}
-
-FloatRect WebView::convertToUserSpace(const FloatRect& viewRect)
+FloatRect PageClientImpl::convertToDeviceSpace(const FloatRect& viewRect)
 {
     notImplemented();
     return viewRect;
 }
 
-IntRect WebView::windowToScreen(const IntRect& rect)
+FloatRect PageClientImpl::convertToUserSpace(const FloatRect& viewRect)
+{
+    notImplemented();
+    return viewRect;
+}
+
+IntRect PageClientImpl::windowToScreen(const IntRect& rect)
 {
     notImplemented();
     return IntRect();
 }
 
-void WebView::doneWithKeyEvent(const NativeWebKeyboardEvent&, bool wasEventHandled)
+void PageClientImpl::doneWithKeyEvent(const NativeWebKeyboardEvent&, bool wasEventHandled)
 {
     notImplemented();
 }
 
-void WebView::didNotHandleKeyEvent(const NativeWebKeyboardEvent& event)
+void PageClientImpl::didNotHandleKeyEvent(const NativeWebKeyboardEvent& event)
 {
     notImplemented();
 }
 
-PassRefPtr<WebPopupMenuProxy> WebView::createPopupMenuProxy(WebPageProxy*)
-{
-    notImplemented();
-    return 0;
-}
-
-PassRefPtr<WebContextMenuProxy> WebView::createContextMenuProxy(WebPageProxy*)
+PassRefPtr<WebPopupMenuProxy> PageClientImpl::createPopupMenuProxy(WebPageProxy*)
 {
     notImplemented();
     return 0;
 }
 
-void WebView::setFindIndicator(PassRefPtr<FindIndicator>, bool fadeOut)
+PassRefPtr<WebContextMenuProxy> PageClientImpl::createContextMenuProxy(WebPageProxy*)
+{
+    notImplemented();
+    return 0;
+}
+
+void PageClientImpl::setFindIndicator(PassRefPtr<FindIndicator>, bool fadeOut)
 {
     notImplemented();
 }
 
 #if USE(ACCELERATED_COMPOSITING)
-void WebView::pageDidEnterAcceleratedCompositing()
+void PageClientImpl::pageDidEnterAcceleratedCompositing()
 {
     notImplemented();
 }
 
-void WebView::pageDidLeaveAcceleratedCompositing()
+void PageClientImpl::pageDidLeaveAcceleratedCompositing()
 {
     notImplemented();
 }
 #endif // USE(ACCELERATED_COMPOSITING)
 
-void WebView::didCommitLoadForMainFrame(bool useCustomRepresentation)
+void PageClientImpl::didCommitLoadForMainFrame(bool useCustomRepresentation)
 {
 }
 
-void WebView::didFinishLoadingDataForCustomRepresentation(const String& suggestedFilename, const CoreIPC::DataReference&)
+void PageClientImpl::didFinishLoadingDataForCustomRepresentation(const String& suggestedFilename, const CoreIPC::DataReference&)
 {
 }
 
-double WebView::customRepresentationZoomFactor()
+double PageClientImpl::customRepresentationZoomFactor()
 {
     notImplemented();
     return 0;
 }
 
-void WebView::setCustomRepresentationZoomFactor(double)
+void PageClientImpl::setCustomRepresentationZoomFactor(double)
 {
     notImplemented();
 }
 
-void WebView::pageClosed()
+void PageClientImpl::pageClosed()
 {
     notImplemented();
 }
 
-void WebView::didChangeScrollbarsForMainFrame() const
+void PageClientImpl::didChangeScrollbarsForMainFrame() const
 {
 }
 
-void WebView::flashBackingStoreUpdates(const Vector<IntRect>&)
-{
-    notImplemented();
-}
-
-void WebView::findStringInCustomRepresentation(const String&, FindOptions, unsigned)
+void PageClientImpl::flashBackingStoreUpdates(const Vector<IntRect>&)
 {
     notImplemented();
 }
 
-void WebView::countStringMatchesInCustomRepresentation(const String&, FindOptions, unsigned)
+void PageClientImpl::findStringInCustomRepresentation(const String&, FindOptions, unsigned)
+{
+    notImplemented();
+}
+
+void PageClientImpl::countStringMatchesInCustomRepresentation(const String&, FindOptions, unsigned)
 {
     notImplemented();
 }
