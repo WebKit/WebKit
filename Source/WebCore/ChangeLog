@@ -1,3 +1,20 @@
+2011-04-28  Jon Lee  <jonlee@apple.com>
+
+        Reviewed by Simon Fraser.
+
+        REGRESSION: white overlay scrollbars on apple.com/startpage
+        https://bugs.webkit.org/show_bug.cgi?id=59540
+        <rdar://problem/9338653>
+
+        Now we look at the document background in addition to the <body> element,
+        and blend those colors in with the base background of the frame view to
+        arrive at our aggregate color. This provides a better result to determine
+        overlay scrollbar style.
+
+        * page/Frame.cpp:
+        (WebCore::Frame::getDocumentBackgroundColor): look up the colors on the html and body element, and properly composite them.
+        * platform/graphics/Color.h: a short comment to note that blend() uses the Porter-Duff source-over equation
+
 2011-04-27  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Maciej Stachowiak.

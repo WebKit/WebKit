@@ -121,6 +121,7 @@ public:
     Color light() const;
     Color dark() const;
 
+    // This is an implementation of Porter-Duff's "source-over" equation
     Color blend(const Color&) const;
     Color blendWithWhite() const;
 
