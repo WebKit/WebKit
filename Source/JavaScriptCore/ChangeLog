@@ -1,3 +1,12 @@
+2011-04-28  David Kilzer  <ddkilzer@apple.com>
+
+        <http://webkit.org/b/59705> WTF::postTimer() leaks a CFRunLoopTimerRef every time it's called
+
+        Reviewed by Simon Fraser.
+
+        * wtf/mac/MainThreadMac.mm:
+        (WTF::postTimer): Use RetainPtr to plug the leak.
+
 2011-04-27  Sam Weinig  <sam@webkit.org>
 
         Reviewed by David Kilzer.
