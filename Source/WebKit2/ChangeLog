@@ -1,3 +1,41 @@
+2011-04-27  Brian Weinstein  <bweinstein@apple.com>
+
+        Reviewed by Timothy Hatcher.
+
+        Mac side of: WebKit2: Support docked mode for Web Inspector
+        https://bugs.webkit.org/show_bug.cgi?id=59134
+        <rdar://problem/8739005>
+
+        Implement docking of the Web Inspector on Mac. This matches the Windows (WK1 and WK2) closely,
+        where the inspector and the inspected view are siblings.
+
+        * UIProcess/API/C/mac: Added.
+        * UIProcess/API/C/mac/WKInspectorMac.h: Added.
+        * UIProcess/API/mac/PageClientImpl.h:
+        (WebKit::PageClientImpl::wkView): Returns the WKView.
+        * UIProcess/PageClient.h:
+        * UIProcess/WebInspectorProxy.h: The inspected view is now a WebInspectorWKView, so we can override tag.
+        * UIProcess/WebPageProxy.h: Added a getter for the WKView.
+
+        * UIProcess/mac/WebInspectorProxyMac.mm:
+        (-[WebInspectorProxyObjCAdapter inspectedViewFrameDidChange:]): Calls through to WebInspectorProxy::inspectedViewFrameDidChange.
+        (-[WebInspectorWKView tag]): Returns a constant defined in WKInspectorMac.h.
+        (WebKit::WebInspectorProxy::platformCreateInspectorPage): Create a WebInspectorWKView instead of a WKView.
+        (WebKit::WebInspectorProxy::platformClose): Removed a FIXME that isn't needed anymore (we always detach before closing).
+        (WebKit::WebInspectorProxy::inspectedViewFrameDidChange): Place our inspector and the inspected view next to each other, assuming the
+            bottom of the inspector is at the Y origin.
+        (WebKit::WebInspectorProxy::platformAttach): Listen for changes to the inspected view's frame, and move the inspectorView from the
+            detached inspector window to the superview of the inspected view (to make the inspector and inspected view siblings).
+        (WebKit::WebInspectorProxy::platformDetach): Stop listening for changes to the inspected view's frame, and move the inspectorView
+            back to the detached inspector window. We also resize the inspected view to take up the space the inspector took up before
+            (assuming the bottom of the inspector was at the Y origin).
+        (WebKit::WebInspectorProxy::platformSetAttachedWindowHeight): Resize the inspector's view, and call inspectedViewFrameDidChange (which
+            syncs the inspector and the inspected view), and call setNeedsDisplay on both views.
+        * UIProcess/mac/WebPageProxyMac.mm:
+        (WebKit::WebPageProxy::wkView):
+        
+        * WebKit2.xcodeproj/project.pbxproj: Add a new file.
+
 2011-04-28  Jessie Berlin  <jberlin@apple.com>
 
         Reviewed by Darin Adler.

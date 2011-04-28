@@ -31,6 +31,14 @@
 #include "WebPopupMenuProxy.h"
 #include <wtf/Forward.h>
 
+#if PLATFORM(MAC)
+#ifdef __OBJC__
+@class WKView;
+#else
+class WKView;
+#endif
+#endif
+
 namespace WebCore {
     class Cursor;
     struct ViewportArguments;
@@ -142,6 +150,8 @@ public:
     virtual void dismissCorrectionPanel(WebCore::ReasonForDismissingCorrectionPanel) = 0;
     virtual String dismissCorrectionPanelSoon(WebCore::ReasonForDismissingCorrectionPanel) = 0;
     virtual void recordAutocorrectionResponse(WebCore::EditorClient::AutocorrectionResponseType, const String& replacedString, const String& replacementString) = 0;
+    
+    virtual WKView* wkView() const = 0;
 #endif
 
     virtual void didChangeScrollbarsForMainFrame() const = 0;

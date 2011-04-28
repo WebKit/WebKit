@@ -29,6 +29,7 @@
 #if ENABLE(INSPECTOR)
 
 #import "WKAPICast.h"
+#import "WKInspectorMac.h"
 #import "WKView.h"
 #import "WebPageProxy.h"
 #import "WebProcessProxy.h"
@@ -73,6 +74,23 @@ static const CGFloat windowContentBorderThickness = 55;
     _inspectorProxy->close();
 }
 
+- (void)inspectedViewFrameDidChange:(NSNotification *)notification
+{
+    _inspectorProxy->inspectedViewFrameDidChange();
+}
+
+@end
+
+@interface WebInspectorWKView : WKView
+@end
+
+@implementation WebInspectorWKView
+
+- (NSInteger)tag
+{
+    return WKInspectorViewTag;
+}
+
 @end
 
 namespace WebKit {
@@ -82,7 +100,7 @@ WebPageProxy* WebInspectorProxy::platformCreateInspectorPage()
     ASSERT(m_page);
     ASSERT(!m_inspectorView);
 
-    m_inspectorView.adoptNS([[WKView alloc] initWithFrame:NSMakeRect(0, 0, initialWindowWidth, initialWindowHeight) contextRef:toAPI(page()->process()->context()) pageGroupRef:toAPI(inspectorPageGroup())]);
+    m_inspectorView.adoptNS([[WebInspectorWKView alloc] initWithFrame:NSMakeRect(0, 0, initialWindowWidth, initialWindowHeight) contextRef:toAPI(page()->process()->context()) pageGroupRef:toAPI(inspectorPageGroup())]);
     ASSERT(m_inspectorView);
 
     [m_inspectorView.get() setDrawsBackground:NO];
@@ -125,8 +143,6 @@ void WebInspectorProxy::platformOpen()
 
 void WebInspectorProxy::platformClose()
 {
-    // FIXME: support closing in docked mode here.
-
     [m_inspectorWindow.get() setDelegate:nil];
     [m_inspectorWindow.get() orderOut:nil];
 
@@ -148,19 +164,75 @@ void WebInspectorProxy::platformInspectedURLChanged(const String& urlString)
     [m_inspectorWindow.get() setTitle:title];
 }
 
+void WebInspectorProxy::inspectedViewFrameDidChange()
+{
+    if (!m_isAttached)
+        return;
+
+    WKView *inspectedView = m_page->wkView();
+    NSRect inspectedViewFrame = [inspectedView frame];
+
+    CGFloat inspectedLeft = NSMinX(inspectedViewFrame);
+    CGFloat inspectedTop = NSMaxY(inspectedViewFrame);
+    CGFloat inspectedWidth = NSWidth(inspectedViewFrame);
+    CGFloat inspectorHeight = NSHeight([m_inspectorView.get() frame]);
+
+    [m_inspectorView.get() setFrame:NSMakeRect(inspectedLeft, 0.0, inspectedWidth, inspectorHeight)];
+    [inspectedView setFrame:NSMakeRect(inspectedLeft, inspectorHeight, inspectedWidth, inspectedTop - inspectorHeight)];
+}
+
 void WebInspectorProxy::platformAttach()
 {
-    notImplemented();
+    WKView *inspectedView = m_page->wkView();
+    [[NSNotificationCenter defaultCenter] addObserver:m_inspectorProxyObjCAdapter.get() selector:@selector(inspectedViewFrameDidChange:) name:NSViewFrameDidChangeNotification object:inspectedView];
+
+    [m_inspectorView.get() removeFromSuperview];
+
+    [[inspectedView superview] addSubview:m_inspectorView.get() positioned:NSWindowBelow relativeTo:inspectedView];
+
+    [m_inspectorWindow.get() orderOut:nil];
+
+    inspectedViewFrameDidChange();
 }
 
 void WebInspectorProxy::platformDetach()
 {
-    notImplemented();
+    WKView *inspectedView = m_page->wkView();
+    [[NSNotificationCenter defaultCenter] removeObserver:m_inspectorProxyObjCAdapter.get() name:NSViewFrameDidChangeNotification object:inspectedView];
+
+    [m_inspectorView.get() removeFromSuperview];
+
+    // Move the inspector view back into the inspector window.
+    NSView *inspectorWindowContentView = [m_inspectorWindow.get() contentView];
+    [m_inspectorView.get() setFrame:[inspectorWindowContentView bounds]];
+    [inspectorWindowContentView addSubview:m_inspectorView.get()];
+
+    // Make sure that we size the inspected view's frame after detaching so that it takes up the space that the
+    // attached inspector used to. This assumes the previous height was the Y origin.
+    NSRect inspectedViewRect = [inspectedView frame];
+    inspectedViewRect.size.height += NSMinY(inspectedViewRect);
+    inspectedViewRect.origin.y = 0.0;
+    [inspectedView setFrame:inspectedViewRect];
+
+    if (m_isVisible)
+        [m_inspectorWindow.get() makeKeyAndOrderFront:nil];
 }
 
-void WebInspectorProxy::platformSetAttachedWindowHeight(unsigned)
+void WebInspectorProxy::platformSetAttachedWindowHeight(unsigned height)
 {
-    notImplemented();
+    if (!m_isAttached)
+        return;
+
+    WKView *inspectedView = m_page->wkView();
+    NSRect inspectedViewFrame = [inspectedView frame];
+
+    // The inspector view shares the width and the left starting point of the inspected view.
+    [m_inspectorView.get() setFrame:NSMakeRect(NSMinX(inspectedViewFrame), 0.0, NSWidth(inspectedViewFrame), height)];
+
+    inspectedViewFrameDidChange();
+
+    [m_inspectorView.get() setNeedsDisplay:YES];
+    [inspectedView setNeedsDisplay:YES];
 }
 
 String WebInspectorProxy::inspectorPageURL() const

@@ -75,6 +75,14 @@ namespace WebCore {
     struct WindowFeatures;
 }
 
+#if PLATFORM(MAC)
+#ifdef __OBJC__
+@class WKView;
+#else
+class WKView;
+#endif
+#endif
+
 namespace WebKit {
 
 class NativeWebKeyboardEvent;
@@ -271,6 +279,8 @@ public:
     CGContextRef containingWindowGraphicsContext();
     bool shouldDelayWindowOrderingForEvent(const WebMouseEvent&);
     bool acceptsFirstMouse(int eventNumber, const WebMouseEvent&);
+    
+    WKView* wkView() const;
 #endif
 #if PLATFORM(WIN)
     void didChangeCompositionSelection(bool);

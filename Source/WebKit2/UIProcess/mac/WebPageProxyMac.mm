@@ -316,4 +316,9 @@ bool WebPageProxy::acceptsFirstMouse(int eventNumber, const WebKit::WebMouseEven
     return result;
 }
 
+WKView* WebPageProxy::wkView() const
+{
+    return m_pageClient->wkView();
+}
+
 } // namespace WebKit
