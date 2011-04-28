@@ -1,3 +1,17 @@
+2011-04-27  Ojan Vafai  <ojan@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        remove test that didn't make sense
+        https://bugs.webkit.org/show_bug.cgi?id=59658
+
+        It was artifically saying the test wasn't expected to pass,
+        but the expectations string was empty. The case of unexpected
+        passes with a real expectations string is tested later in the
+        same test.
+
+        * Scripts/webkitpy/layout_tests/layout_package/printing_unittest.py:
+
 2011-04-27  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Adam Roben.

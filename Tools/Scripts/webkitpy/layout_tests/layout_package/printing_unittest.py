@@ -543,15 +543,7 @@ class  Testprinter(unittest.TestCase):
         self.assertTrue(err.empty())
         self.assertFalse(out.empty())
 
-        # test unexpected flaky results
-        err.reset()
-        out.reset()
-        ur = get_unexpected_results(expected=False, passing=True, flaky=False)
-        printer.print_unexpected_results(ur)
-        self.assertTrue(err.empty())
-        self.assertFalse(out.empty())
-
-        # test unexpected passes
+        # test unexpected flaky
         err.reset()
         out.reset()
         ur = get_unexpected_results(expected=False, passing=False, flaky=True)
