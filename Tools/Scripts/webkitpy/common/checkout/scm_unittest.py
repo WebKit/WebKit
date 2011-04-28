@@ -177,7 +177,7 @@ class SVNTestRepository:
         # Now that we've deleted the checkout paths, cwddir may be invalid
         # Change back to a valid directory so that later calls to os.getcwd() do not fail.
         if os.path.isabs(__file__):
-            path = __file__
+            path = os.path.dirname(__file__)
         else:
             path = sys.path[0]
         os.chdir(detect_scm_system(path).checkout_root)
@@ -474,6 +474,8 @@ OcmYex&reD$;sO8*F9L)B
         commit_function('deleting foo')
         self.assertFalse(scm.exists('foo.txt'))
 
+    def _shared_test_head_svn_revision(self):
+        self.assertEqual(self.scm.head_svn_revision(), '5')
 
 class SVNTest(SCMTest):
 
@@ -791,6 +793,9 @@ END
         self.scm.delete("test_file")
         self.assertTrue("test_file" in self.scm.deleted_files())
 
+    def test_head_svn_revision(self):
+        self._shared_test_head_svn_revision()
+
     def test_propset_propget(self):
         filepath = os.path.join(self.svn_checkout_path, "test_file")
         expected_mime_type = "x-application/foo-bar"
@@ -854,6 +859,8 @@ class GitTest(SCMTest):
     def setUp(self):
         """Sets up fresh git repository with one commit. Then setups a second git
         repo that tracks the first one."""
+        # FIXME: We should instead clone a git repo that is tracking an SVN repo.
+        # That better matches what we do with WebKit.
         self.original_dir = os.getcwd()
 
         self.untracking_checkout_path = tempfile.mkdtemp(suffix="git_test_checkout2")
@@ -900,6 +907,11 @@ class GitTest(SCMTest):
         scm = self.untracking_scm
         self._shared_test_exists(scm, scm.commit_locally_with_message)
 
+    def test_head_svn_revision(self):
+        scm = detect_scm_system(self.untracking_checkout_path)
+        # If we cloned a git repo tracking an SVG repo, this would give the same result as
+        # self._shared_test_head_svn_revision().
+        self.assertEqual(scm.head_svn_revision(), '')
 
 class GitSVNTest(SCMTest):
 
@@ -1386,6 +1398,9 @@ class GitSVNTest(SCMTest):
         self._two_local_commits()
         self.scm.delete('test_file_commit1')
         self.assertTrue("test_file_commit1" in self.scm.deleted_files())
+
+    def test_head_svn_revision(self):
+        self._shared_test_head_svn_revision()
 
     def test_to_object_name(self):
         relpath = 'test_file_commit1'

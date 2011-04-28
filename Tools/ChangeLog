@@ -1,3 +1,16 @@
+2011-04-28  Ojan Vafai  <ojan@chromium.org>
+
+        Reviewed by Tony Chang.
+
+        link to tests at a specific revision in the results.html file
+        https://bugs.webkit.org/show_bug.cgi?id=59711
+
+        * Scripts/webkitpy/common/checkout/scm.py:
+        Add a method to get the head svn revision.
+        * Scripts/webkitpy/common/checkout/scm_unittest.py:
+        * Scripts/webkitpy/layout_tests/layout_package/manager.py:
+        Include the svn revision in the results json.
+
 2011-04-28  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Reviewed by Sam Weinig.

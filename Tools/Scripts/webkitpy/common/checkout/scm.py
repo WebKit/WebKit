@@ -271,6 +271,9 @@ class SCM:
     def display_name(self):
         self._subclass_must_implement()
 
+    def head_svn_revision(self):
+        self._subclass_must_implement()
+
     def create_patch(self, git_commit=None, changed_files=None):
         self._subclass_must_implement()
 
@@ -494,6 +497,9 @@ class SVN(SCM, SVNRepository):
 
     def display_name(self):
         return "svn"
+
+    def head_svn_revision(self):
+        return self.value_from_svn_info(self.checkout_root, 'Revision')
 
     # FIXME: This method should be on Checkout.
     def create_patch(self, git_commit=None, changed_files=None):
@@ -780,13 +786,19 @@ class Git(SCM, SVNRepository):
     def display_name(self):
         return "git"
 
-    def prepend_svn_revision(self, diff):
+    def head_svn_revision(self):
         git_log = self.run(['git', 'log', '-25'])
         match = re.search("^\s*git-svn-id:.*@(?P<svn_revision>\d+)\ ", git_log, re.MULTILINE)
         if not match:
+            return ""
+        return str(match.group('svn_revision'))
+
+    def prepend_svn_revision(self, diff):
+        revision = self.head_svn_revision()
+        if not revision:
             return diff
 
-        return "Subversion Revision: " + str(match.group('svn_revision')) + '\n' + diff
+        return "Subversion Revision: " + revision + '\n' + diff
 
     def create_patch(self, git_commit=None, changed_files=None):
         """Returns a byte array (str()) representing the patch file.

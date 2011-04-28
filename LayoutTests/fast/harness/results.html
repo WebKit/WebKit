@@ -265,13 +265,21 @@ function collapseAllExpectations()
         async(collapseExpectations, [expandLinks[i]]);
 }
 
+function shouldUseTracLinks()
+{
+    return !globalState().results.layout_tests_dir || !location.toString().indexOf('file://') == 0;
+}
+
 function testLink(test)
 {
     var basePath;
-    if (globalState().results.layout_tests_dir && location.toString().indexOf('file://') == 0)
+    if (shouldUseTracLinks()) {
+        var revision = globalState().results.revision;
+        basePath = 'http://trac.webkit.org';
+        basePath += revision ? ('/export/' + revision) : '/browser';
+        basePath += '/trunk/LayoutTests/';
+    } else
         basePath = globalState().results.layout_tests_dir + '/';
-    else
-        basePath = 'http://trac.webkit.org/browser/trunk/LayoutTests/';
     return '<span class=expand-button onclick="toggleExpectations(event)"><span class=expand-button-text>+</span></span>' +
         '<a class=test-link href="' + basePath + test + '">' + test + '</a>';
 }

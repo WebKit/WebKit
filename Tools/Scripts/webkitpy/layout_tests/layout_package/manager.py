@@ -46,6 +46,8 @@ import random
 import sys
 import time
 
+from webkitpy.common.checkout import scm
+
 from webkitpy.layout_tests.layout_package import json_layout_results_generator
 from webkitpy.layout_tests.layout_package import json_results_generator
 from webkitpy.layout_tests.layout_package import manager_worker_broker
@@ -187,6 +189,7 @@ def summarize_results(port_obj, expectations, result_summary, retry_summary, tes
     results['layout_tests_dir'] = port_obj.layout_tests_dir()
     results['has_wdiff'] = port_obj.wdiff_available()
     results['has_pretty_patch'] = port_obj.pretty_patch_available()
+    results['revision'] = scm.default_scm().head_svn_revision()
 
     return results
 

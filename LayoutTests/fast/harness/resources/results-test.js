@@ -29,7 +29,8 @@ function mockResults()
         "layout_tests_dir": "/WEBKITROOT",
         "uses_expectations_file": true,
         "has_pretty_patch": false,
-        "has_wdiff": false
+        "has_wdiff": false,
+        "revision": 12345
     };
 }
 
@@ -310,6 +311,33 @@ function runTests()
         assertTrue(!!document.querySelector('.pixel-zoom-container'));
         assertTrue(document.querySelectorAll('.zoom-image-container').length == 3);
     });
+    
+    results = mockResults();
+    results.tests['fullscreen/full-screen-api.html'] = mockExpectation('TEXT', 'IMAGE+TEXT');
+    runTest(results, function() {
+        var expectedHref = 'file://' + results.layout_tests_dir + '/fullscreen/full-screen-api.html';
+        assertTrue(document.querySelector('tbody td:first-child a').href == expectedHref);
+    });
+    
+    var oldShouldUseTracLinks = shouldUseTracLinks;
+    shouldUseTracLinks = function() { return true; };
+    
+    results = mockResults();
+    results.tests['fullscreen/full-screen-api.html'] = mockExpectation('TEXT', 'IMAGE+TEXT');
+    runTest(results, function() {
+        var expectedHref = 'http://trac.webkit.org/export/' + results.revision + '/trunk/LayoutTests/fullscreen/full-screen-api.html';
+        assertTrue(document.querySelector('tbody td:first-child a').href == expectedHref);
+    });
+
+    results = mockResults();
+    results.tests['fullscreen/full-screen-api.html'] = mockExpectation('TEXT', 'IMAGE+TEXT');
+    results.revision = '';
+    runTest(results, function() {
+        var expectedHref = 'http://trac.webkit.org/browser/trunk/LayoutTests/fullscreen/full-screen-api.html';
+        assertTrue(document.querySelector('tbody td:first-child a').href == expectedHref);
+    });
+
+    shouldUseTracLinks = oldShouldUseTracLinks;
 
     document.body.innerHTML = '<pre>' + g_log.join('\n') + '</pre>';
 }

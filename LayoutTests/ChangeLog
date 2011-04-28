@@ -1,3 +1,16 @@
+2011-04-28  Ojan Vafai  <ojan@chromium.org>
+
+        Reviewed by Tony Chang.
+
+        link to tests at a specific revision in the results.html file
+        https://bugs.webkit.org/show_bug.cgi?id=59711
+
+        This matches old-run-webkit-tests.
+
+        * fast/harness/resources/results-test.js:
+        * fast/harness/results-expected.txt:
+        * fast/harness/results.html:
+
 2011-04-28  Dominic Cooney  <dominicc@chromium.org>
 
         Reviewed by Dimitri Glazkov.
