@@ -1100,6 +1100,12 @@ void WebViewImpl::themeChanged()
 void WebViewImpl::composite(bool finish)
 {
 #if USE(ACCELERATED_COMPOSITING)
+    // Update the compositing requirements for all frame in the tree before doing any painting
+    // as the compositing requirements for a RenderLayer within a subframe might change.
+    for (Frame* frame = page()->mainFrame(); frame; frame = frame->tree()->traverseNext())
+        frame->view()->updateCompositingLayers();
+    page()->mainFrame()->view()->syncCompositingStateIncludingSubframes();
+
     TRACE_EVENT("WebViewImpl::composite", this, 0);
     if (m_recreatingGraphicsContext) {
         // reallocateRenderer will request a repaint whether or not it succeeded

@@ -1,5 +1,25 @@
 2011-04-27  James Robinson  <jamesr@chromium.org>
 
+        Reviewed by Kenneth Russell.
+
+        [chromium] Ensure compositing layers are up to date before entering doComposite
+        https://bugs.webkit.org/show_bug.cgi?id=59159
+
+        Adds some assertions to try to catch GraphicsLayer mutations at bad times (such as during
+        GraphicsLayerClient::paintContents() implementations).
+
+        * platform/graphics/chromium/GraphicsLayerChromium.cpp:
+        (WebCore::GraphicsLayerChromium::updateLayerPreserves3D):
+        * platform/graphics/chromium/LayerChromium.cpp:
+        (WebCore::LayerChromium::LayerChromium):
+        (WebCore::LayerChromium::~LayerChromium):
+        * platform/graphics/chromium/LayerRendererChromium.cpp:
+        (WebCore::LayerRendererChromium::updateLayers):
+        * platform/graphics/chromium/LayerRendererChromium.h:
+          Add a set of assertions that we aren't creating or destroying LayerChromiums during paintContents
+
+2011-04-27  James Robinson  <jamesr@chromium.org>
+
         Reviewed by Adam Barth.
 
         Fix OwnPtr strict issues in chromium linux build

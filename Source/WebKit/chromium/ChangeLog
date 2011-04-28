@@ -1,5 +1,18 @@
 2011-04-27  James Robinson  <jamesr@chromium.org>
 
+        Reviewed by Kenneth Russell.
+
+        [chromium] Ensure compositing layers are up to date before entering doComposite
+        https://bugs.webkit.org/show_bug.cgi?id=59159
+
+        Explicitly update and sync the compositing layer data structures for all frames in the tree before entering the
+        composite operation so that lazily updated state doesn't mutate the GraphicsLayer tree while compositing.
+
+        * src/WebViewImpl.cpp:
+        (WebKit::WebViewImpl::composite):
+
+2011-04-27  James Robinson  <jamesr@chromium.org>
+
         Reviewed by Adam Barth.
 
         Fix OwnPtr strict issues in chromium linux build
