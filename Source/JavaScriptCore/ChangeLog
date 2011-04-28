@@ -1,3 +1,9 @@
+2011-04-28  Xan Lopez  <xlopez@igalia.com>
+
+        Unreviewed attempt to fix the build.
+
+        * GNUmakefile.am: add -lpthread.
+
 2011-04-28  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Gavin Barraclough.
