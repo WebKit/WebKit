@@ -2135,6 +2135,8 @@ IntRect FrameView::windowResizerRect() const
 void FrameView::didCompleteRubberBand(const IntSize& initialOverhang) const
 {
     Page* page = m_frame->page();
+    if (!page)
+        return;
     if (page->mainFrame() != m_frame)
         return;
     return page->chrome()->client()->didCompleteRubberBandForMainFrame(initialOverhang);
@@ -2143,7 +2145,6 @@ void FrameView::didCompleteRubberBand(const IntSize& initialOverhang) const
 void FrameView::scrollbarStyleChanged()
 {
     Page* page = m_frame->page();
-    ASSERT(page);
     if (!page)
         return;
     page->setNeedsRecalcStyleInAllFrames();
@@ -2152,7 +2153,8 @@ void FrameView::scrollbarStyleChanged()
 void FrameView::setVisibleScrollerThumbRect(const IntRect& scrollerThumb)
 {
     Page* page = m_frame->page();
-    ASSERT(page);
+    if (!page)
+        return;
     if (page->mainFrame() != m_frame)
         return;
     return page->chrome()->client()->notifyScrollerThumbIsVisibleInRect(scrollerThumb);

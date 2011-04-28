@@ -1,3 +1,20 @@
+2011-04-27  Beth Dakin  <bdakin@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        https://bugs.webkit.org/show_bug.cgi?id=59671
+        Race condition with scrollbar animations and closing a page can cause a crash in 
+        WebCore::FrameView::setVisibleScrollerThumbRect + 15
+        -and corresponding-
+        <rdar://problem/9329253>
+
+        It is definitely possible for Page to be null here. So we should null-check it! 
+        And we should not ASSERT.
+        * page/FrameView.cpp:
+        (WebCore::FrameView::didCompleteRubberBand):
+        (WebCore::FrameView::scrollbarStyleChanged):
+        (WebCore::FrameView::setVisibleScrollerThumbRect):
+
 2011-04-27  Ryosuke Niwa  <rniwa@webkit.org>
 
         WinCE build fix after r85143.
