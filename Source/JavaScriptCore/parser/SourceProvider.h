@@ -46,6 +46,7 @@ namespace JSC {
             , m_cache(cache ? cache : new SourceProviderCache)
             , m_cacheOwned(!cache)
         {
+            deprecatedTurnOffVerifier();
         }
         virtual ~SourceProvider()
         {

@@ -203,6 +203,7 @@
             'wtf/StringHasher.h',
             'wtf/ThreadSafeRefCounted.h',
             'wtf/ThreadSpecific.h',
+            'wtf/ThreadRestrictionVerifier.h',
             'wtf/Threading.h',
             'wtf/ThreadingPrimitives.h',
             'wtf/TypeTraits.h',

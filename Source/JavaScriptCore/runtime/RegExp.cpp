@@ -85,6 +85,7 @@ inline RegExp::RegExp(JSGlobalData* globalData, const UString& patternString, Re
     , m_representation(adoptPtr(new RegExpRepresentation))
 {
     m_state = compile(globalData);
+    deprecatedTurnOffVerifier();
 }
 
 RegExp::~RegExp()

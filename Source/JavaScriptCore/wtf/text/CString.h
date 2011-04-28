@@ -41,7 +41,7 @@ private:
     friend class CString;
 
     static PassRefPtr<CStringBuffer> create(size_t length) { return adoptRef(new CStringBuffer(length)); }
-    CStringBuffer(size_t length) : m_vector(length) { }
+    CStringBuffer(size_t length) : m_vector(length) { deprecatedTurnOffVerifier(); }
     char* mutableData() { return m_vector.data(); }
 
     Vector<char> m_vector;

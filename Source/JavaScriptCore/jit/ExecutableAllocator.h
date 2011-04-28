@@ -350,6 +350,7 @@ inline ExecutablePool::ExecutablePool(size_t n)
     if (!m_freePtr)
         CRASH(); // Failed to allocate
     m_end = m_freePtr + allocSize;
+    deprecatedTurnOffVerifier();
 }
 
 inline void* ExecutablePool::poolAllocate(size_t n)
