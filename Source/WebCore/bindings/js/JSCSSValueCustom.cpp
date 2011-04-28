@@ -45,19 +45,13 @@ using namespace JSC;
 
 namespace WebCore {
 
-HashMap<CSSValue*, void*>& cssValueRoots()
-{
-    typedef HashMap<CSSValue*, void*> MapType;
-    DEFINE_STATIC_LOCAL(MapType, cssValueRoots, ());
-    return cssValueRoots;
-}
-
-bool JSCSSValueOwner::isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown> handle, void*, MarkStack& markStack)
+bool JSCSSValueOwner::isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown> handle, void* context, MarkStack& markStack)
 {
     JSCSSValue* jsCSSValue = static_cast<JSCSSValue*>(handle.get().asCell());
     if (!jsCSSValue->hasCustomProperties())
         return false;
-    void* root = cssValueRoots().get(jsCSSValue->impl());
+    DOMWrapperWorld* world = static_cast<DOMWrapperWorld*>(context);
+    void* root = world->m_cssValueRoots.get(jsCSSValue->impl());
     if (!root)
         return false;
     return markStack.containsOpaqueRoot(root);
@@ -67,8 +61,8 @@ void JSCSSValueOwner::finalize(JSC::Handle<JSC::Unknown> handle, void* context)
 {
     JSCSSValue* jsCSSValue = static_cast<JSCSSValue*>(handle.get().asCell());
     DOMWrapperWorld* world = static_cast<DOMWrapperWorld*>(context);
+    world->m_cssValueRoots.remove(jsCSSValue->impl());
     uncacheWrapper(world, jsCSSValue->impl(), jsCSSValue);
-    cssValueRoots().remove(jsCSSValue->impl());
 }
 
 JSValue toJS(ExecState* exec, JSDOMGlobalObject* globalObject, CSSValue* value)

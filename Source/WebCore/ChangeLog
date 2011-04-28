@@ -1,3 +1,23 @@
+2011-04-27  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Fixed a small leak related to CSSValues when deallocating a DOMWrapperWorld
+        https://bugs.webkit.org/show_bug.cgi?id=59646
+
+        Made the cssValueRoots map per-world, instead of a global. When we deallocate
+        a world, we need to clear all entries in the map for that world, since
+        the finalizers that would otherwise clear those entries don't run. The
+        simplest way to do this is just to make the world own the map.
+        
+        * bindings/js/DOMWrapperWorld.h:
+        * bindings/js/JSCSSStyleDeclarationCustom.cpp:
+        (WebCore::JSCSSStyleDeclaration::getPropertyCSSValue):
+        * bindings/js/JSCSSValueCustom.cpp:
+        (WebCore::JSCSSValueOwner::isReachableFromOpaqueRoots):
+        (WebCore::JSCSSValueOwner::finalize):
+        * bindings/js/JSDOMBinding.h:
+
 2011-04-27  Adam Barth  <abarth@webkit.org>
 
         Reviewed by David Levin.

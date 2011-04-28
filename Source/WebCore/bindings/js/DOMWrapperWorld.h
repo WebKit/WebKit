@@ -29,6 +29,7 @@
 
 namespace WebCore {
 
+class CSSValue;
 class JSDOMWrapper;
 class ScriptController;
 
@@ -80,6 +81,7 @@ public:
     // FIXME: can we make this private?
     DOMObjectWrapperMap m_wrappers;
     JSStringCache m_stringCache;
+    HashMap<CSSValue*, void*> m_cssValueRoots;
 
     bool isNormal() const { return m_isNormal; }
 

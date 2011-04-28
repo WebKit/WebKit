@@ -41,7 +41,6 @@ namespace JSC {
 
 namespace WebCore {
 
-    class CSSValue;
     class Document;
     class Frame;
     class JSNode;
@@ -186,8 +185,6 @@ namespace WebCore {
             return root(node);
         return styleBase;
     }
-
-    HashMap<CSSValue*, void*>& cssValueRoots();
 
     const JSC::HashTable* getHashTableForGlobalData(JSC::JSGlobalData&, const JSC::HashTable* staticTable);
 
