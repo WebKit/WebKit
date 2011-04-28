@@ -1136,6 +1136,8 @@
 		A8E894330CD0603F00367179 /* JSGlobalObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSGlobalObject.h; sourceTree = "<group>"; };
 		BC01D4EF11A8F1FF00A54B2A /* JSZombie.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSZombie.cpp; sourceTree = "<group>"; };
 		BC01D4F011A8F1FF00A54B2A /* JSZombie.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSZombie.h; sourceTree = "<group>"; };
+		BC021BF1136900C300FC5467 /* CompilerVersion.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = CompilerVersion.xcconfig; sourceTree = "<group>"; };
+		BC021BF2136900C300FC5467 /* TestAPI.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = TestAPI.xcconfig; sourceTree = "<group>"; };
 		BC02E9040E1839DB000F9297 /* ErrorConstructor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ErrorConstructor.cpp; sourceTree = "<group>"; };
 		BC02E9050E1839DB000F9297 /* ErrorConstructor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ErrorConstructor.h; sourceTree = "<group>"; };
 		BC02E9060E1839DB000F9297 /* ErrorPrototype.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ErrorPrototype.cpp; sourceTree = "<group>"; };
@@ -1583,9 +1585,11 @@
 			isa = PBXGroup;
 			children = (
 				1C9051450BA9E8A70081E9D0 /* Base.xcconfig */,
+				BC021BF1136900C300FC5467 /* CompilerVersion.xcconfig */,
 				1C9051440BA9E8A70081E9D0 /* DebugRelease.xcconfig */,
 				449097EE0F8F81B50076A327 /* FeatureDefines.xcconfig */,
 				1C9051430BA9E8A70081E9D0 /* JavaScriptCore.xcconfig */,
+				BC021BF2136900C300FC5467 /* TestAPI.xcconfig */,
 				1C9051420BA9E8A70081E9D0 /* Version.xcconfig */,
 			);
 			path = Configurations;
@@ -3194,25 +3198,22 @@
 		};
 		14BD59D70A3E8FC900BAF59C /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = BC021BF2136900C300FC5467 /* TestAPI.xcconfig */;
 			buildSettings = {
-				PRODUCT_NAME = testapi;
-				SKIP_INSTALL = YES;
 			};
 			name = Debug;
 		};
 		14BD59D80A3E8FC900BAF59C /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = BC021BF2136900C300FC5467 /* TestAPI.xcconfig */;
 			buildSettings = {
-				PRODUCT_NAME = testapi;
-				SKIP_INSTALL = YES;
 			};
 			name = Release;
 		};
 		14BD59D90A3E8FC900BAF59C /* Production */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = BC021BF2136900C300FC5467 /* TestAPI.xcconfig */;
 			buildSettings = {
-				PRODUCT_NAME = testapi;
-				SKIP_INSTALL = YES;
 			};
 			name = Production;
 		};
@@ -3277,9 +3278,8 @@
 		};
 		A76148420E6402F700E357FA /* Profiling */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = BC021BF2136900C300FC5467 /* TestAPI.xcconfig */;
 			buildSettings = {
-				PRODUCT_NAME = testapi;
-				SKIP_INSTALL = YES;
 			};
 			name = Profiling;
 		};

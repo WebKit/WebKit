@@ -1,3 +1,18 @@
+2011-04-27  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by David Kilzer.
+
+        Add way to install testapi in production builds
+        https://bugs.webkit.org/show_bug.cgi?id=59674
+
+        * Configurations/TestAPI.xcconfig: Copied from Configurations/JavaScriptCore.xcconfig.
+        Add configuration file for TestAPI. In addition to name, we now specify an install path
+        and allow SKIP_INSTALL to be overridden by setting FORCE_TOOL_INSTALL.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        Remove in-project build settings and add missing configuration files. Added missing CompilerVersion.xcconfig
+        file.
+
 2011-04-27  Adam Barth  <abarth@webkit.org>
 
         Reviewed by David Levin.
