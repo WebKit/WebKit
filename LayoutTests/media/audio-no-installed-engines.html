@@ -1,12 +1,14 @@
 <html>
-  <head>
-    <script>
-      var audio = new Audio("content/empty.wav");
-      audio.play();
-    </script>
-  </head>
+    <head>
+        <script>
+            if (window.layoutTestController)
+                layoutTestController.dumpAsText();
+            var audio = new Audio("content/empty.wav");
+            audio.play();
+        </script>
+    </head>
 
-  <body>
-    <p>PASSED -- crash using Audio with no installed engines bug 27479.</p>
-  </body>
+    <body>
+        <p>PASSED -- crash using Audio with no installed engines bug 27479.</p>
+    </body>
 </html>

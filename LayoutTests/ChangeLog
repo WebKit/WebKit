@@ -1,3 +1,22 @@
+2011-04-27  Eric Carlson  <eric.carlson@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        audio-no-installed-engines.html media test has unnecessary pixel results
+        https://bugs.webkit.org/show_bug.cgi?id=59456
+
+        Convert audio-no-installed-engines.html results from pixel to text.
+
+        * media/audio-no-installed-engines-expected.txt: Added.
+        * media/audio-no-installed-engines.html:
+        * platform/chromium-linux/media/audio-no-installed-engines-expected.png: Removed.
+        * platform/chromium-win/media/audio-no-installed-engines-expected.png: Removed.
+        * platform/chromium-win/media/audio-no-installed-engines-expected.txt: Removed.
+        * platform/gtk/media/audio-no-installed-engines-expected.txt: Removed.
+        * platform/mac-leopard/media/audio-no-installed-engines-expected.png: Removed.
+        * platform/mac/media/audio-no-installed-engines-expected.png: Removed.
+        * platform/mac/media/audio-no-installed-engines-expected.txt: Removed.
+
 2011-04-27  Robert Hogan  <robert@webkit.org>
 
         Reviewed by Adam Barth.
