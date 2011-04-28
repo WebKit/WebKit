@@ -31,14 +31,14 @@
 #ifndef WebPageSerializer_h
 #define WebPageSerializer_h
 
+#include "WebCString.h"
 #include "WebCommon.h"
+#include "WebURL.h"
 
 namespace WebKit {
-class WebCString;
 class WebFrame;
 class WebPageSerializerClient;
 class WebString;
-class WebURL;
 class WebView;
 template <typename T> class WebVector;
 
@@ -46,6 +46,23 @@ template <typename T> class WebVector;
 // which contain all resource links that have local copy.
 class WebPageSerializer {
 public:
+    struct Resource {
+        WebURL url;
+        WebCString mimeType;
+        WebCString data;
+    };
+
+    // Serializes all the frames from the WebView, retrieves the page's
+    // resources (such as images and CSS) and adds them to the passed vector.
+    // The first resource in that vector is the top frame contents.
+    // Note that this also strips-out any script tag or link to JavaScript.
+    WEBKIT_API static void serialize(WebView*, WebVector<Resource>*);
+
+    // IMPORTANT:
+    // The API below is an older implementation of a pageserialization that
+    // will be removed soon.
+
+
     // This function will find out all frames and serialize them to HTML data.
     // We have a data buffer to temporary saving generated html data. We will
     // sequentially call WebPageSeriazlierClient once the data buffer is full.
@@ -64,9 +81,9 @@ public:
     // saved links, which matched with vector:links one by one.
     // The parameter localDirectoryName is relative path of directory which
     // contain all saved auxiliary files included all sub frames and resources.
-    WEBKIT_API static bool serialize(WebFrame* frame,
+    WEBKIT_API static bool serialize(WebFrame*,
                                      bool recursive,
-                                     WebPageSerializerClient* client,
+                                     WebPageSerializerClient*,
                                      const WebVector<WebURL>& links,
                                      const WebVector<WebString>& localPaths,
                                      const WebString& localDirectoryName);
@@ -85,7 +102,7 @@ public:
     // Generate the META for charset declaration.
     WEBKIT_API static WebString generateMetaCharsetDeclaration(const WebString& charset);
     // Generate the MOTW declaration.
-    WEBKIT_API static WebString generateMarkOfTheWebDeclaration(const WebURL& url);
+    WEBKIT_API static WebString generateMarkOfTheWebDeclaration(const WebURL&);
     // Generate the default base tag declaration.
     WEBKIT_API static WebString generateBaseTagDeclaration(const WebString& baseTarget);
 };

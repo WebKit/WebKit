@@ -74,25 +74,26 @@ public:
 protected:
     virtual void appendString(const String&);
     void appendStartTag(Node*, Namespaces* = 0);
-    void appendEndTag(Node*);
+    virtual void appendEndTag(Node*);
     static size_t totalLength(const Vector<String>&);
     size_t length() const { return totalLength(m_succeedingMarkup); }
     void concatenateMarkup(Vector<UChar>& out);
     void appendAttributeValue(Vector<UChar>& result, const String& attribute, bool documentIsHTML);
+    virtual void appendCustomAttributes(Vector<UChar>&, Element*, Namespaces*);
     void appendQuotedURLAttributeValue(Vector<UChar>& result, const String& urlString);
     void appendNodeValue(Vector<UChar>& out, const Node*, const Range*, EntityMask);
     bool shouldAddNamespaceElement(const Element*);
     bool shouldAddNamespaceAttribute(const Attribute&, Namespaces&);
     void appendNamespace(Vector<UChar>& result, const AtomicString& prefix, const AtomicString& namespaceURI, Namespaces&);
-    EntityMask entityMaskForText(Text* text) const;
+    EntityMask entityMaskForText(Text*) const;
     virtual void appendText(Vector<UChar>& out, Text*);
     void appendComment(Vector<UChar>& out, const String& comment);
     void appendDocumentType(Vector<UChar>& result, const DocumentType*);
     void appendProcessingInstruction(Vector<UChar>& out, const String& target, const String& data);
     virtual void appendElement(Vector<UChar>& out, Element*, Namespaces*);
-    void appendOpenTag(Vector<UChar>& out, Element* element, Namespaces*);
-    void appendCloseTag(Vector<UChar>& out, Element* element);
-    void appendAttribute(Vector<UChar>& out, Element* element, const Attribute&, Namespaces*);
+    void appendOpenTag(Vector<UChar>& out, Element*, Namespaces*);
+    void appendCloseTag(Vector<UChar>& out, Element*);
+    void appendAttribute(Vector<UChar>& out, Element*, const Attribute&, Namespaces*);
     void appendCDATASection(Vector<UChar>& out, const String& section);
     void appendStartMarkup(Vector<UChar>& result, const Node*, Namespaces*);
     bool shouldSelfClose(const Node*);

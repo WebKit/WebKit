@@ -77,6 +77,7 @@
                     'tests/PopupMenuTest.cpp',
                     'tests/TransparencyWinTest.cpp',
                     'tests/UniscribeHelperTest.cpp',
+                    'tests/WebPageNewSerializerTest.cpp',
                     'tests/WebPageSerializerTest.cpp',
                 ],
             }],

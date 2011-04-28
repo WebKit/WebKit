@@ -357,6 +357,8 @@ public:
 
     void setContent(const String&);
 
+    String suggestedMIMEType() const;
+
     String contentLanguage() const { return m_contentLanguage; }
     void setContentLanguage(const String& lang) { m_contentLanguage = lang; }
 

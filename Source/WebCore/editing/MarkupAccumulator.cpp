@@ -158,6 +158,10 @@ void MarkupAccumulator::appendAttributeValue(Vector<UChar>& result, const String
         documentIsHTML ? EntityMaskInHTMLAttributeValue : EntityMaskInAttributeValue);
 }
 
+void MarkupAccumulator::appendCustomAttributes(Vector<UChar>&, Element*, Namespaces*)
+{
+}
+
 void MarkupAccumulator::appendQuotedURLAttributeValue(Vector<UChar>& result, const String& urlString)
 {
     UChar quoteChar = '\"';
@@ -326,6 +330,9 @@ void MarkupAccumulator::appendElement(Vector<UChar>& out, Element* element, Name
     unsigned length = attributes->length();
     for (unsigned int i = 0; i < length; i++)
         appendAttribute(out, element, *attributes->attributeItem(i), namespaces);
+
+    // Give an opportunity to subclasses to add their own attributes.
+    appendCustomAttributes(out, element, namespaces);
 
     appendCloseTag(out, element);
 }

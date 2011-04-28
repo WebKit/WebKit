@@ -102,15 +102,27 @@ String HTMLMetaCharsetParser::extractCharset(const String& value)
 
 bool HTMLMetaCharsetParser::processMeta()
 {
+    const HTMLToken::AttributeList& tokenAttributes = m_token.attributes();
+    AttributeList attributes;
+    for (HTMLToken::AttributeList::const_iterator iter = tokenAttributes.begin(); iter != tokenAttributes.end(); ++iter) {
+        String attributeName(iter->m_name.data(), iter->m_name.size());
+        String attributeValue(iter->m_value.data(), iter->m_value.size());
+        attributes.append(make_pair(attributeName, attributeValue));
+    }
+
+    m_encoding = encodingFromMetaAttributes(attributes);
+    return m_encoding.isValid();
+}
+
+TextEncoding HTMLMetaCharsetParser::encodingFromMetaAttributes(const AttributeList& attributes)
+{
     bool gotPragma = false;
     Mode mode = None;
     String charset;
 
-    const HTMLToken::AttributeList& attributes = m_token.attributes();
-    for (HTMLToken::AttributeList::const_iterator iter = attributes.begin();
-         iter != attributes.end(); ++iter) {
-        AtomicString attributeName(iter->m_name.data(), iter->m_name.size());
-        String attributeValue(iter->m_value.data(), iter->m_value.size());
+    for (AttributeList::const_iterator iter = attributes.begin(); iter != attributes.end(); ++iter) {
+        const AtomicString& attributeName = iter->first;
+        const String& attributeValue = iter->second;
 
         if (attributeName == http_equivAttr) {
             if (equalIgnoringCase(attributeValue, "content-type"))
@@ -127,13 +139,10 @@ bool HTMLMetaCharsetParser::processMeta()
         }
     }
 
-    if (mode == Charset || (mode == Pragma && gotPragma)) {
-        m_encoding = TextEncoding(stripLeadingAndTrailingHTMLSpaces(charset));
-        if (m_encoding.isValid())
-            return true;
-    }
+    if (mode == Charset || (mode == Pragma && gotPragma))
+        return TextEncoding(stripLeadingAndTrailingHTMLSpaces(charset));
 
-    return false;
+    return TextEncoding();
 }
 
 static const int bytesToCheckUnconditionally = 1024; // That many input bytes will be checked for meta charset even if <head> section is over.

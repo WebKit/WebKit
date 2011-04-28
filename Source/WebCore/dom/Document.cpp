@@ -1080,6 +1080,20 @@ void Document::setContent(const String& content)
     close();
 }
 
+String Document::suggestedMIMEType() const
+{
+    if (m_document->isXHTMLDocument())
+        return "application/xhtml+xml";
+    if (m_document->isSVGDocument())
+        return "image/svg+xml";
+    if (m_document->xmlStandalone())
+        return "text/xml";
+    if (m_document->isHTMLDocument())
+        return "text/html";
+
+    return m_documentLoader->responseMIMEType();
+}
+
 // FIXME: We need to discuss the DOM API here at some point. Ideas:
 // * making it receive a rect as parameter, i.e. nodesFromRect(x, y, w, h);
 // * making it receive the expading size of each direction separately,

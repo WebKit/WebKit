@@ -39,6 +39,7 @@
 #include "HTMLInputElement.h"
 #include "HTMLNames.h"
 #include "KURL.h"
+#include "PageSerializer.h"
 #include "Vector.h"
 
 #include "WebCString.h"
@@ -50,6 +51,7 @@
 #include "WebURL.h"
 #include "WebVector.h"
 #include "WebView.h"
+#include "WebViewImpl.h"
 
 #include <wtf/text/StringConcatenate.h>
 
@@ -178,6 +180,25 @@ void retrieveResourcesForFrame(Frame* frame,
 } // namespace
 
 namespace WebKit {
+
+void WebPageSerializer::serialize(WebView* view, WebVector<WebPageSerializer::Resource>* resourcesParam)
+{
+    Vector<PageSerializer::Resource> resources;
+    PageSerializer serializer(&resources);
+    serializer.serialize(static_cast<WebViewImpl*>(view)->page());
+
+    Vector<Resource> result;
+    for (Vector<PageSerializer::Resource>::const_iterator iter = resources.begin(); iter != resources.end(); ++iter) {
+        Resource resource;
+        resource.url = iter->url;
+        resource.mimeType = iter->mimeType.ascii();
+        // FIXME: we are copying all the resource data here. Idealy we would have a WebSharedData().
+        resource.data = WebCString(iter->data->data(), iter->data->size());
+        result.append(resource);
+    }
+
+    *resourcesParam = result;         
+}
 
 bool WebPageSerializer::serialize(WebFrame* frame,
                                   bool recursive,

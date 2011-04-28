@@ -1,3 +1,33 @@
+2011-04-28  Jay Civelli  <jcivelli@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        Introducing a new class that allows serialization of a page back
+        to HTML/XML with all its sub-frames and also retrieves the page's
+        resources.
+        Tests: unit-tests in chromium/tests/WebPageNewSerializerTest.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=58947
+
+        * Android.mk:
+        * CMakeLists.txt:
+        * GNUmakefile.list.am:
+        * WebCore.gypi:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * dom/Document.cpp:
+        (WebCore::Document::suggestedMIMEType):
+        * dom/Document.h:
+        * editing/MarkupAccumulator.cpp:
+        (WebCore::MarkupAccumulator::appendCustomAttributes):
+        (WebCore::MarkupAccumulator::appendElement):
+        * editing/MarkupAccumulator.h:
+        * html/parser/HTMLMetaCharsetParser.cpp:
+        (WebCore::HTMLMetaCharsetParser::processMeta):
+        (WebCore::HTMLMetaCharsetParser::encodingFromMetaAttributes):
+        * html/parser/HTMLMetaCharsetParser.h:
+        * page/PageSerializer.cpp: Added.
+        * page/PageSerializer.h: Added.
+
 2011-04-28  Mark Pilgrim  <pilgrim@chromium.org>
 
         Reviewed by Tony Chang.

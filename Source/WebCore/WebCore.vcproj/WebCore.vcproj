@@ -24833,6 +24833,14 @@
 				RelativePath="..\page\PageGroupLoadDeferrer.h"
 				>
 			</File>
+                        <File
+                                RelativePath="..\page\PageSerializer.cpp"
+                                >
+                        </File>
+                        <File
+                                RelativePath="..\page\PageSerializer.h"
+                                >
+                        </File>
 			<File
 				RelativePath="..\page\Performance.cpp"
 				>

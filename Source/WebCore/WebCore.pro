@@ -922,6 +922,7 @@ SOURCES += \
     page/Page.cpp \
     page/PageGroup.cpp \
     page/PageGroupLoadDeferrer.cpp \
+    page/PageSerializer.cpp \
     page/Performance.cpp \
     page/PerformanceNavigation.cpp \
     page/PerformanceTiming.cpp \
@@ -1862,6 +1863,7 @@ HEADERS += \
     page/PageGroup.h \
     page/PageGroupLoadDeferrer.h \
     page/Page.h \
+    page/PageSerializer.h \
     page/PluginHalter.h \
     page/PluginHalterClient.h \
     page/PrintContext.h \
