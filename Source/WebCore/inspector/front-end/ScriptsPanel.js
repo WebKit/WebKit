@@ -171,6 +171,10 @@ WebInspector.ScriptsPanel = function()
     this._pauseOnExceptionButton = new WebInspector.StatusBarButton("", "scripts-pause-on-exceptions-status-bar-item", 3);
     this._pauseOnExceptionButton.addEventListener("click", this._togglePauseOnExceptions.bind(this), false);
 
+    this._toggleFormatSourceFilesButton = new WebInspector.StatusBarButton(WebInspector.UIString("Pretty print"), "scripts-toggle-pretty-print-status-bar-item");
+    this._toggleFormatSourceFilesButton.toggled = false;
+    this._toggleFormatSourceFilesButton.addEventListener("click", this._toggleFormatSourceFiles.bind(this), false);
+
     this._registerShortcuts();
 
     this._debuggerEnabled = Preferences.debuggerAlwaysEnabled;
@@ -215,7 +219,7 @@ WebInspector.ScriptsPanel.prototype = {
 
     get statusBarItems()
     {
-        return [this.enableToggleButton.element, this._pauseOnExceptionButton.element];
+        return [this.enableToggleButton.element, this._pauseOnExceptionButton.element, this._toggleFormatSourceFilesButton.element];
     },
 
     get defaultFocusedElement()
@@ -1006,6 +1010,13 @@ WebInspector.ScriptsPanel.prototype = {
         else
             this._searchView.jumpToPreviousSearchResult();
     },
+
+    _toggleFormatSourceFiles: function()
+    {
+        WebInspector.panels.scripts.reset();
+        this._presentationModel.toggleFormatSourceFiles();
+        this._toggleFormatSourceFilesButton.toggled = this._presentationModel.formatSourceFilesToggled();
+    }
 }
 
 WebInspector.ScriptsPanel.prototype.__proto__ = WebInspector.Panel.prototype;

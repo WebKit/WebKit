@@ -6361,6 +6361,7 @@
             'inspector/front-end/Images/percentButtonGlyph.png',
             'inspector/front-end/Images/popoverArrows.png',
             'inspector/front-end/Images/popoverBackground.png',
+            'inspector/front-end/Images/prettyPrintButtonGlyph.png',
             'inspector/front-end/Images/profileGroupIcon.png',
             'inspector/front-end/Images/profileIcon.png',
             'inspector/front-end/Images/profilesIcon.png',

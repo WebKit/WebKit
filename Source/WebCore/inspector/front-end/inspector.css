@@ -2557,6 +2557,14 @@ button.enable-toggle-status-bar-item.toggled-on .glyph {
     background-color: purple;   
 }
 
+.scripts-toggle-pretty-print-status-bar-item .glyph {
+    -webkit-mask-image: url(Images/prettyPrintButtonGlyph.png);
+}
+
+.scripts-toggle-pretty-print-status-bar-item.toggled .glyph {
+    background-color: rgb(66, 129, 235);
+}
+
 #scripts-status-bar {
     position: absolute;
     top: -1px;

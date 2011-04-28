@@ -31,6 +31,24 @@
 
         Reviewed by Yury Semikhatsky.
 
+        Web Inspector: add status bar button for pretty print.
+        https://bugs.webkit.org/show_bug.cgi?id=59467
+
+        * WebCore.gypi:
+        * inspector/front-end/Images/prettyPrintButtonGlyph.png: Added.
+        * inspector/front-end/ScriptsPanel.js:
+        (WebInspector.ScriptsPanel):
+        (WebInspector.ScriptsPanel.prototype.get statusBarItems):
+        (WebInspector.ScriptsPanel.prototype._toggleFormatSourceFiles):
+        * inspector/front-end/WebKit.qrc:
+        * inspector/front-end/inspector.css:
+        (.scripts-toggle-pretty-print-status-bar-item .glyph):
+        (.scripts-toggle-pretty-print-status-bar-item.toggled .glyph):
+
+2011-04-28  Pavel Feldman  <pfeldman@google.com>
+
+        Reviewed by Yury Semikhatsky.
+
         Web Inspector: add ResourceTreeModel tests.
         https://bugs.webkit.org/show_bug.cgi?id=59616
 
