@@ -1,3 +1,16 @@
+2011-04-28  Mark Pilgrim  <pilgrim@chromium.org>
+
+        Reviewed by Tony Chang.
+
+        Port Mozilla's IndexedDB tests: readonly and read/write transactions
+        https://bugs.webkit.org/show_bug.cgi?id=59465
+
+        * storage/indexeddb/mozilla: Added.
+        * storage/indexeddb/mozilla/readonly-transactions-expected.txt: Added.
+        * storage/indexeddb/mozilla/readonly-transactions.html: Added.
+        * storage/indexeddb/mozilla/readwrite-transactions-expected.txt: Added.
+        * storage/indexeddb/mozilla/readwrite-transactions.html: Added.
+
 2011-04-28  Gabor Rapcsanyi  <rgabor@webkit.org>
 
         Reviewed by Csaba Osztrogonác.
