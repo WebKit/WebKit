@@ -1756,9 +1756,9 @@ def check_spacing(file_extension, clean_lines, line_number, error):
                           'Should have a space between // and comment')
 
             # There should only be one space after punctuation in a comment.
-            if search('[.!?,;:]\s\s', line[comment_position:]):
+            if search(r'[.!?,;:]\s\s+\w', line[comment_position:]):
                 error(line_number, 'whitespace/comments', 5,
-                      'Should only a single space after a punctuation in a comment.')
+                      'Should have only a single space after a punctuation in a comment.')
 
     line = clean_lines.elided[line_number]  # get rid of comments and strings
 

@@ -1,3 +1,15 @@
+2011-04-27  David Levin  <levin@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        check-webkit-style error for spaces after periods in a comment has a bad error
+        message and warns about end of line spaces.
+        https://bugs.webkit.org/show_bug.cgi?id=59663
+
+        * Scripts/webkitpy/style/checkers/cpp.py: Fix both issues.
+        * Scripts/webkitpy/style/checkers/cpp_unittest.py: Added tests for spaces at the end of line
+        and changed the error messages.
+
 2011-04-27  Ojan Vafai  <ojan@chromium.org>
 
         remove assertion now that platform/mac-tiger no longer exists
