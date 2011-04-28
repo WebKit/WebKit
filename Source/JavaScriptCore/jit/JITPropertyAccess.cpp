@@ -1037,17 +1037,10 @@ void JIT::testPrototype(JSValue prototype, JumpList& failureCases)
 {
     if (prototype.isNull())
         return;
-    
-    // We have a special case for X86_64 here because X86 instructions that take immediate values
-    // only take 32 bit immediate values, wheras the pointer constants we are using here are 64 bit
-    // values. In the non X86_64 case, the generated code is slightly more efficient because it uses
-    // two less instructions and doesn't require any scratch registers.
-#if CPU(X86_64)
-    move(TrustedImmPtr(prototype.asCell()->structure()), regT3);
-    failureCases.append(branchPtr(NotEqual, AbsoluteAddress(prototype.asCell()->addressOfStructure()), regT3));
-#else
-    failureCases.append(branchPtr(NotEqual, AbsoluteAddress(prototype.asCell()->addressOfStructure()), TrustedImmPtr(prototype.asCell()->structure())));
-#endif
+
+    ASSERT(prototype.isCell());
+    move(TrustedImmPtr(prototype.asCell()), regT3);
+    failureCases.append(branchPtr(NotEqual, Address(regT3, JSCell::structureOffset()), TrustedImmPtr(prototype.asCell()->structure())));
 }
 
 } // namespace JSC

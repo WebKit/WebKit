@@ -1,3 +1,18 @@
+2011-04-28  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Gavin Barraclough.
+
+        Clean up testPrototype()
+        https://bugs.webkit.org/show_bug.cgi?id=59734
+
+        Remove direct pointer to the inside of a GC object and just do
+        the indirect load manually.  Doesn't effect sunspider but does
+        clean up the code quite a bit, and simplifies the handling of
+        GC values.
+
+        * jit/JITPropertyAccess.cpp:
+        (JSC::JIT::testPrototype):
+
 2011-04-28  David Levin  <levin@chromium.org>
 
         Build fix.
