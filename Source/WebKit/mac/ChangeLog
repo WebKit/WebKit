@@ -1,5 +1,15 @@
 2011-04-28  David Kilzer  <ddkilzer@apple.com>
 
+        <http://webkit.org/b/59725> -[WebFullscreenWindow initWithContentRect:styleMask:backing:defer:] leaks a CALayer
+
+        Reviewed by Dan Bernstein.
+
+        * WebView/WebFullScreenController.mm:
+        (-[WebFullscreenWindow initWithContentRect:styleMask:backing:defer:]):
+        Use a RetainPtr to hold the CALayer and to fix the leak.
+
+2011-04-28  David Kilzer  <ddkilzer@apple.com>
+
         Follow-up fix: <http://webkit.org/b/59727> -[WebPDFView menuForEvent:] leaks NSMenuItem objects
 
         Addresses review comment from Darin Adler.

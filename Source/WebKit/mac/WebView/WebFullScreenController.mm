@@ -52,6 +52,7 @@
 #import <WebCore/RenderLayer.h>
 #import <WebCore/RenderLayerBacking.h>
 #import <objc/objc-runtime.h>
+#import <wtf/RetainPtr.h>
 #import <wtf/UnusedParam.h>
 
 static const NSTimeInterval tickleTimerInterval = 1.0;
@@ -799,20 +800,20 @@ private:
     NSView* contentView = [self contentView];
     _animationView = [[NSView alloc] initWithFrame:[contentView bounds]];
     
-    CALayer* contentLayer = [[CALayer alloc] init];
-    [_animationView setLayer:contentLayer];
+    RetainPtr<CALayer> contentLayer(AdoptNS, [[CALayer alloc] init]);
+    [_animationView setLayer:contentLayer.get()];
     [_animationView setWantsLayer:YES];
     [_animationView setAutoresizingMask:NSViewWidthSizable|NSViewHeightSizable];
     [contentView addSubview:_animationView];
     
     _backgroundLayer = [[CALayer alloc] init];
-    [contentLayer addSublayer:_backgroundLayer];
+    [contentLayer.get() addSublayer:_backgroundLayer];
 #ifndef BUILDING_ON_LEOPARD
-    [contentLayer setGeometryFlipped:YES];
+    [contentLayer.get() setGeometryFlipped:YES];
 #else
-    [contentLayer setSublayerTransform:CATransform3DMakeScale(1, -1, 1)];
+    [contentLayer.get() setSublayerTransform:CATransform3DMakeScale(1, -1, 1)];
 #endif
-    [contentLayer setOpacity:0];
+    [contentLayer.get() setOpacity:0];
     
     [_backgroundLayer setBackgroundColor:CGColorGetConstantColor(kCGColorBlack)];
     [_backgroundLayer setOpacity:0];
