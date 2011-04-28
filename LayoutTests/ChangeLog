@@ -2,6 +2,16 @@
 
         Reviewed by Tony Chang.
 
+        Port Mozilla's IndexedDB tests: creating and deleting indexes
+        https://bugs.webkit.org/show_bug.cgi?id=59635
+
+        * storage/indexeddb/mozilla/remove-index-expected.txt: Added.
+        * storage/indexeddb/mozilla/remove-index.html: Added.
+
+2011-04-27  Mark Pilgrim  <pilgrim@chromium.org>
+
+        Reviewed by Tony Chang.
+
         Port Mozilla's IndexedDB tests: get() and put() basics
         https://bugs.webkit.org/show_bug.cgi?id=59468
 
