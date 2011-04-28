@@ -1,5 +1,12 @@
 2011-04-27  Geoffrey Garen  <ggaren@apple.com>
 
+        Motivated by Alexey Proskuryakov.
+
+        * bindings/scripts/CodeGeneratorJS.pm: Tried to make this comment more
+        informative, since it confused Alexey and me.
+
+2011-04-27  Geoffrey Garen  <ggaren@apple.com>
+
         Reviewed by Sam Weinig.
 
         Fixed a small leak related to CSSValues when deallocating a DOMWrapperWorld

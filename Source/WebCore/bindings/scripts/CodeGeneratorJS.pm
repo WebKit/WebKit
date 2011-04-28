@@ -2144,9 +2144,11 @@ sub GenerateImplementation
         push(@implContent, "bool JS${implType}Owner::isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown> handle, void*, SlotVisitor& visitor)\n");
         push(@implContent, "{\n");
         push(@implContent, "    JS${implType}* js${implType} = static_cast<JS${implType}*>(handle.get().asCell());\n");
-        # Not all ActiveDOMObjects with pending activity maintain their reference
-        # counts correctly, so JavaScript wrappers must unconditionally keep
-        # ActiveDOMObjects with pending activity alive.
+        # All ActiveDOMObjects implement hasPendingActivity(), but not all of them
+        # increment their C++ reference counts when hasPendingActivity() becomes
+        # true. As a result, ActiveDOMObjects can be prematurely destroyed before
+        # their pending activities complete. To wallpaper over this bug, JavaScript
+        # wrappers unconditionally keep ActiveDOMObjects with pending activity alive.
         # FIXME: Fix this lifetime issue in the DOM, and move this hasPendingActivity
         # check below the isObservable check.
         if ($dataNode->extendedAttributes->{"ActiveDOMObject"}) {
