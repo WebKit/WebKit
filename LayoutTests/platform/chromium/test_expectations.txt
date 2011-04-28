@@ -3948,8 +3948,7 @@ BUGDPRANKE LINUX : svg/W3C-I18N/text-anchor-no-markup.svg = IMAGE
 BUGDPRANKE LINUX : svg/W3C-SVG-1.1-SE/text-intro-05-t.svg = IMAGE
 BUGDPRANKE LINUX : svg/text/text-intro-05-t.svg = IMAGE
 
-BUGWK59661 WIN LINUX : media/video-controls-transformed.html = TEXT
-BUGWK59661 MAC CPU : media/video-controls-transformed.html = TEXT
+BUGWK59661 WIN LINUX MAC : media/video-controls-transformed.html = TEXT
 
 BUGDPRANKE MAC : fast/repaint/box-shadow-h.html = IMAGE
 BUGDPRANKE MAC : fast/block/float/float-overhangs-root.html = MISSING
@@ -3961,7 +3960,7 @@ BUGDPRANKE WIN DEBUG : http/tests/security/credentials-in-referer.html = PASS TI
 BUGDPRANKE MAC DEBUG : fast/css/getComputedStyle/font-family-fallback-reset.html = CRASH
 
 BUGKBR WIN7 : fast/speech/input-readonly-and-disabled.html = CRASH
-BUG80745 WIN DEBUG : html5lib/runner.html = CRASH
+BUGCR80745 WIN DEBUG : html5lib/runner.html = CRASH
 // Flakiness
 BUGKBR WIN DEBUG : animations/animation-controller-drt-api.html = PASS TEXT
 

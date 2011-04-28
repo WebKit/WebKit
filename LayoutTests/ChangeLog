@@ -1,6 +1,14 @@
 2011-04-27  Kenneth Russell  <kbr@google.com>
 
         Unreviewed, test expectation updates.
+          - Marked media/video-controls-transformed.html as failing generally.
+          - Fixed malformed bug ID in last update.
+
+        * platform/chromium/test_expectations.txt:
+
+2011-04-27  Kenneth Russell  <kbr@google.com>
+
+        Unreviewed, test expectation updates.
           - Added a couple of flaky tests.
           - Filed bugs for a preexisting and a new failure.
           - Rebaselined fast/lists/003-vertical.html on Mac.
