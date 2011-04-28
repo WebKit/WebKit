@@ -1,5 +1,12 @@
 2011-04-28  Dan Bernstein  <mitz@apple.com>
 
+        Build fix.
+
+        * css/CSSParser.cpp:
+        (WebCore::cssPropertyID):
+
+2011-04-28  Dan Bernstein  <mitz@apple.com>
+
         Reviewed by Simon Fraser.
 
         Allow specifying CSS property aliases in CSSPropertyNames.in files

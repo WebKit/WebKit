@@ -6608,6 +6608,7 @@ static int cssPropertyID(const UChar* propertyName, unsigned length)
             const char* const webkitLocale = "-webkit-locale";
             name = webkitLocale;
             length = strlen(webkitLocale);
+        }
 #endif
     }
 
