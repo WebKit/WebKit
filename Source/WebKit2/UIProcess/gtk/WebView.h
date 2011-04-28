@@ -32,8 +32,6 @@
 #include "WebPageProxy.h"
 #include "WindowsKeyboardCodes.h"
 #include <WebCore/IntSize.h>
-#include <gdk/gdk.h>
-#include <glib.h>
 #include <gtk/gtk.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
@@ -69,8 +67,6 @@ public:
 
 private:
     WebView(WebContext*, WebPageGroup*);
-
-    GdkWindow* getWebViewWindow();
 
     bool isActive();
     void close();

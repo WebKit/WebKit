@@ -65,6 +65,8 @@ void webkitWebViewBaseSetWebViewInstance(WebKitWebViewBase*, WebView*);
 
 GtkIMContext* webkitWebViewBaseGetIMContext(WebKitWebViewBase*);
 
+WebPageProxy* webkitWebViewBaseGetPage(WebKitWebViewBase*);
+
 G_END_DECLS
 
 #endif // WebKitWebViewBase_h

@@ -2,6 +2,29 @@
 
         Reviewed by Martin Robinson.
 
+        [GTK] PlatformWebView should be the view widget
+        https://bugs.webkit.org/show_bug.cgi?id=59676
+
+        * UIProcess/API/gtk/WebKitWebViewBase.cpp:
+        (webkitWebViewBaseGetPage): Return the page of the view.
+        * UIProcess/API/gtk/WebKitWebViewBase.h:
+        * UIProcess/ChunkedUpdateDrawingAreaProxy.h: Map PlatformWebView
+        to WebKitWebViewBase instead of the page client.
+        * UIProcess/gtk/ChunkedUpdateDrawingAreaProxyGtk.cpp:
+        (WebKit::ChunkedUpdateDrawingAreaProxy::page): Use the view widget
+        directly.
+        (WebKit::ChunkedUpdateDrawingAreaProxy::ensureBackingStore): Ditto.
+        (WebKit::ChunkedUpdateDrawingAreaProxy::drawUpdateChunkIntoBackingStore): Ditto.
+        * UIProcess/gtk/WebView.cpp:
+        (WebKit::WebView::createDrawingAreaProxy): Pass the view widget to
+        the DrawingAreaProxy constructor instead of the page client.
+        * UIProcess/gtk/WebView.h: Remove getWebViewWindow() which is no
+        longer needed.
+
+2011-04-28  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Reviewed by Martin Robinson.
+
         [GTK] WKView should be a GtkWidget
         https://bugs.webkit.org/show_bug.cgi?id=59603
 

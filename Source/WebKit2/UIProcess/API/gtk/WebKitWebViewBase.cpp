@@ -375,3 +375,8 @@ GtkIMContext* webkitWebViewBaseGetIMContext(WebKitWebViewBase* webkitWebViewBase
 {
     return webkitWebViewBase->priv->imContext;
 }
+
+WebPageProxy* webkitWebViewBaseGetPage(WebKitWebViewBase* webkitWebViewBase)
+{
+    return webkitWebViewBase->priv->webViewInstance->page();
+}

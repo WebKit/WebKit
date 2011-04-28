@@ -41,6 +41,7 @@ OBJC_CLASS WKView;
 class QGraphicsWKView;
 #elif PLATFORM(GTK)
 typedef struct _cairo_surface cairo_surface_t;
+typedef struct _WebKitWebViewBase WebKitWebViewBase;
 #endif
 
 namespace WebKit {
@@ -56,8 +57,7 @@ typedef WebView PlatformWebView;
 #elif PLATFORM(QT)
 typedef QGraphicsWKView PlatformWebView;
 #elif PLATFORM(GTK)
-class WebView;
-typedef WebView PlatformWebView;
+typedef WebKitWebViewBase PlatformWebView;
 #endif
 
 class ChunkedUpdateDrawingAreaProxy : public DrawingAreaProxy {

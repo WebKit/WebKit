@@ -30,6 +30,7 @@
 
 #include "RefPtrCairo.h"
 #include "UpdateChunk.h"
+#include "WebKitWebViewBase.h"
 #include "WebProcessProxy.h"
 #include "WebView.h"
 #include <WebCore/GtkVersioning.h>
@@ -41,7 +42,7 @@ namespace WebKit {
 
 WebPageProxy* ChunkedUpdateDrawingAreaProxy::page()
 {
-    return m_webView->page();
+    return webkitWebViewBaseGetPage(m_webView);
 }
 
 void ChunkedUpdateDrawingAreaProxy::ensureBackingStore()
@@ -49,7 +50,7 @@ void ChunkedUpdateDrawingAreaProxy::ensureBackingStore()
     if (m_backingStoreImage)
         return;
 
-    m_backingStoreImage = gdk_window_create_similar_surface(gtk_widget_get_window(m_webView->window()),
+    m_backingStoreImage = gdk_window_create_similar_surface(gtk_widget_get_window(GTK_WIDGET(m_webView)),
                                                             CAIRO_CONTENT_COLOR_ALPHA, size().width(), size().height());
 }
 
@@ -87,7 +88,7 @@ void ChunkedUpdateDrawingAreaProxy::drawUpdateChunkIntoBackingStore(UpdateChunk*
     cairo_set_source_surface(cr.get(), pixmap.get(), updateChunkRect.x(), updateChunkRect.y());
     cairo_paint(cr.get());
 
-    gtk_widget_queue_draw_area(m_webView->window(), updateChunkRect.x(), updateChunkRect.y(),
+    gtk_widget_queue_draw_area(GTK_WIDGET(m_webView), updateChunkRect.x(), updateChunkRect.y(),
                                updateChunkRect.width(), updateChunkRect.height());
 }
 

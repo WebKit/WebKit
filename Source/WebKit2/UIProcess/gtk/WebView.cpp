@@ -267,11 +267,6 @@ WebView::~WebView()
 {
 }
 
-GdkWindow* WebView::getWebViewWindow()
-{
-    return gtk_widget_get_window(m_viewWidget);
-}
-
 void WebView::paint(GtkWidget* widget, GdkRectangle rect, cairo_t* cr)
 {
     m_page->drawingArea()->paint(IntRect(rect), cr);
@@ -356,7 +351,7 @@ void WebView::close()
 // PageClient's pure virtual functions
 PassOwnPtr<DrawingAreaProxy> WebView::createDrawingAreaProxy()
 {
-    return ChunkedUpdateDrawingAreaProxy::create(this, m_page.get());
+    return ChunkedUpdateDrawingAreaProxy::create(WEBKIT_WEB_VIEW_BASE(m_viewWidget), m_page.get());
 }
 
 void WebView::setViewNeedsDisplay(const WebCore::IntRect&)
