@@ -38,8 +38,6 @@ WK_EXPORT WKViewRef WKViewCreate(WKContextRef context, WKPageGroupRef pageGroup)
 
 WK_EXPORT WKPageRef WKViewGetPage(WKViewRef view);
 
-WK_EXPORT WKURLRef WKURLCreateWithURL(const char*);
-
 #ifdef __cplusplus
 }
 #endif

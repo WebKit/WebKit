@@ -1,5 +1,18 @@
 2011-04-28  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        Reviewed by Sam Weinig.
+
+        [GTK] Remove WKURLCreateWithURL()
+        https://bugs.webkit.org/show_bug.cgi?id=59691
+
+        Use WKURLCreateWithUTF8CString() instead of WKURLCreateWithURL().
+
+        * MiniBrowser/gtk/main.c:
+        (activateUriEntryCallback):
+        (main):
+
+2011-04-28  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         Reviewed by Martin Robinson.
 
         [GTK] WKView should be a GtkWidget

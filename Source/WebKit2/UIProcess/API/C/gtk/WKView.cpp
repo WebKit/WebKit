@@ -30,9 +30,6 @@
 
 #include "WKAPICast.h"
 #include "WebKitWebViewBasePrivate.h"
-#include <wtf/PassRefPtr.h>
-#include <wtf/RefPtr.h>
-#include <wtf/text/StringImpl.h>
 
 using namespace WebKit;
 using namespace WebCore;
@@ -47,7 +44,4 @@ WKPageRef WKViewGetPage(WKViewRef viewRef)
     return toAPI(webkitWebViewBaseGetPage(toImpl(viewRef)));
 }
 
-WKURLRef WKURLCreateWithURL(const char* url)
-{
-    return toCopiedURLAPI(StringImpl::create(url).leakRef());
-}
+

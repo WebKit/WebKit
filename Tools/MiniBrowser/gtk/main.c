@@ -32,7 +32,7 @@ static void activateUriEntryCallback(GtkWidget *entry, gpointer data)
 {
     WKViewRef webView = g_object_get_data(G_OBJECT(entry), "web-view");
     const gchar *uri = gtk_entry_get_text(GTK_ENTRY(entry));
-    WKPageLoadURL(WKViewGetPage(webView), WKURLCreateWithURL(uri));
+    WKPageLoadURL(WKViewGetPage(webView), WKURLCreateWithUTF8CString(uri));
 }
 
 static void destroyCallback(GtkWidget *widget, GtkWidget *window)
@@ -127,7 +127,7 @@ int main(int argc, char *argv[])
     GtkWidget *mainWindow = createWindow(webView);
 
     gchar* url = argumentToURL(argc > 1 ? argv[1] : "http://www.webkitgtk.org/");
-    WKPageLoadURL(WKViewGetPage(webView), WKURLCreateWithURL(url));
+    WKPageLoadURL(WKViewGetPage(webView), WKURLCreateWithUTF8CString(url));
     g_free(url);
 
     gtk_widget_grab_focus(GTK_WIDGET(webView));

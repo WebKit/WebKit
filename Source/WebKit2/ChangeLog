@@ -1,5 +1,18 @@
 2011-04-28  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        Reviewed by Sam Weinig.
+
+        [GTK] Remove WKURLCreateWithURL()
+        https://bugs.webkit.org/show_bug.cgi?id=59691
+
+        The name is a bit confusing and there's already
+        WKURLCreateWithUTF8CString() in the C API.
+
+        * UIProcess/API/C/gtk/WKView.cpp:
+        * UIProcess/API/C/gtk/WKView.h:
+
+2011-04-28  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         Reviewed by Martin Robinson.
 
         [GTK] Make WebKitWebViewBase public in the API
