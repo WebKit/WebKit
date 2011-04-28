@@ -1,3 +1,9 @@
+2011-04-28  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        Added the test results, missed in r85209.
+
+        * platform/mac/fast/dom/shadow/gc-shadow-expected.txt: Added.
+
 2011-04-28  Matthew Delaney  <mdelaney@apple.com>
 
         Reviewed by Brian Weinstein.
