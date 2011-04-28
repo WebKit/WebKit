@@ -29,7 +29,7 @@
 #include "WKView.h"
 
 #include "WKAPICast.h"
-#include "WebKitWebViewBase.h"
+#include "WebKitWebViewBasePrivate.h"
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefPtr.h>
 #include <wtf/text/StringImpl.h>

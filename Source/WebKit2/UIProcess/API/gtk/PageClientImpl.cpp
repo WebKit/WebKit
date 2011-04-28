@@ -35,7 +35,7 @@
 #include "WebContext.h"
 #include "WebContextMenuProxy.h"
 #include "WebEventFactory.h"
-#include "WebKitWebViewBase.h"
+#include "WebKitWebViewBasePrivate.h"
 #include "WebPageProxy.h"
 #include <wtf/text/WTFString.h>
 

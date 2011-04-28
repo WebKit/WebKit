@@ -30,7 +30,7 @@
 
 #include "RefPtrCairo.h"
 #include "UpdateChunk.h"
-#include "WebKitWebViewBase.h"
+#include "WebKitWebViewBasePrivate.h"
 #include "WebProcessProxy.h"
 #include <WebCore/GtkVersioning.h>
 #include <gdk/gdk.h>

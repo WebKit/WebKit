@@ -37,6 +37,7 @@
 #include "RefPtrCairo.h"
 #include "WebContext.h"
 #include "WebEventFactory.h"
+#include "WebKitWebViewBasePrivate.h"
 #include "WebPageProxy.h"
 #include <WebKit2/WKContext.h>
 
@@ -55,6 +56,8 @@ struct _WebKitWebViewBasePrivate {
     guint previousClickButton;
     guint32 previousClickTime;
 };
+
+G_DEFINE_TYPE(WebKitWebViewBase, webkit_web_view_base, GTK_TYPE_CONTAINER)
 
 static void webkitWebViewBaseRealize(GtkWidget* widget)
 {
@@ -130,10 +133,10 @@ static void webkitWebViewBaseFinalize(GObject* gobject)
     delete priv;
     webkitWebViewBase->priv = 0;
 
-    G_OBJECT_CLASS(webkitWebViewBaseParentClass)->finalize(gobject);
+    G_OBJECT_CLASS(webkit_web_view_base_parent_class)->finalize(gobject);
 }
 
-static void webkitWebViewBaseInit(WebKitWebViewBase* webkitWebViewBase)
+static void webkit_web_view_base_init(WebKitWebViewBase* webkitWebViewBase)
 {
     WebKitWebViewBasePrivate* priv = new WebKitWebViewBasePrivate();
     webkitWebViewBase->priv = priv;
@@ -186,7 +189,7 @@ static void webViewSizeAllocate(GtkWidget* widget, GtkAllocation* allocation)
     WebKitWebViewBase* webViewBase = WEBKIT_WEB_VIEW_BASE(widget);
     WebKitWebViewBasePrivate* priv = webViewBase->priv;
 
-    GTK_WIDGET_CLASS(webkitWebViewBaseParentClass)->size_allocate(widget, allocation);
+    GTK_WIDGET_CLASS(webkit_web_view_base_parent_class)->size_allocate(widget, allocation);
     priv->page->drawingArea()->setSize(IntSize(allocation->width, allocation->height), IntSize());
 }
 
@@ -204,7 +207,7 @@ static gboolean webViewFocusInEvent(GtkWidget* widget, GdkEventFocus* event)
         }
     }
 
-    return GTK_WIDGET_CLASS(webkitWebViewBaseParentClass)->focus_in_event(widget, event);
+    return GTK_WIDGET_CLASS(webkit_web_view_base_parent_class)->focus_in_event(widget, event);
 }
 
 static gboolean webViewFocusOutEvent(GtkWidget* widget, GdkEventFocus* event)
@@ -217,7 +220,7 @@ static gboolean webViewFocusOutEvent(GtkWidget* widget, GdkEventFocus* event)
     if (priv->imContext)
         gtk_im_context_focus_out(priv->imContext);
 
-    return GTK_WIDGET_CLASS(webkitWebViewBaseParentClass)->focus_out_event(widget, event);
+    return GTK_WIDGET_CLASS(webkit_web_view_base_parent_class)->focus_out_event(widget, event);
 }
 
 static gboolean webViewKeyPressEvent(GtkWidget* widget, GdkEventKey* event)
@@ -227,7 +230,7 @@ static gboolean webViewKeyPressEvent(GtkWidget* widget, GdkEventKey* event)
 
     priv->page->handleKeyboardEvent(NativeWebKeyboardEvent(reinterpret_cast<GdkEvent*>(event)));
 
-    return GTK_WIDGET_CLASS(webkitWebViewBaseParentClass)->key_press_event(widget, event);
+    return GTK_WIDGET_CLASS(webkit_web_view_base_parent_class)->key_press_event(widget, event);
 }
 
 static gboolean webViewKeyReleaseEvent(GtkWidget* widget, GdkEventKey* event)
@@ -240,7 +243,7 @@ static gboolean webViewKeyReleaseEvent(GtkWidget* widget, GdkEventKey* event)
 
     priv->page->handleKeyboardEvent(NativeWebKeyboardEvent(reinterpret_cast<GdkEvent*>(event)));
 
-    return GTK_WIDGET_CLASS(webkitWebViewBaseParentClass)->key_release_event(widget, event);
+    return GTK_WIDGET_CLASS(webkit_web_view_base_parent_class)->key_release_event(widget, event);
 }
 
 // Copied from webkitwebview.cpp
@@ -344,10 +347,8 @@ static gboolean webViewMotionNotifyEvent(GtkWidget* widget, GdkEventMotion* even
     return FALSE;
 }
 
-static void webkitWebViewBaseClassInit(WebKitWebViewBaseClass* webkitWebViewBaseClass)
+static void webkit_web_view_base_class_init(WebKitWebViewBaseClass* webkitWebViewBaseClass)
 {
-    webkitWebViewBaseParentClass = g_type_class_peek_parent(webkitWebViewBaseClass);
-
     GtkWidgetClass* widgetClass = GTK_WIDGET_CLASS(webkitWebViewBaseClass);
     widgetClass->realize = webkitWebViewBaseRealize;
 #ifdef GTK_API_VERSION_2
@@ -370,25 +371,6 @@ static void webkitWebViewBaseClassInit(WebKitWebViewBaseClass* webkitWebViewBase
 
     GtkContainerClass* containerClass = GTK_CONTAINER_CLASS(webkitWebViewBaseClass);
     containerClass->add = webkitWebViewBaseContainerAdd;
-}
-
-GType webkitWebViewBaseGetType()
-{
-    static volatile gsize gDefineTypeIdVolatile = 0;
-
-    if (!g_once_init_enter(&gDefineTypeIdVolatile))
-        return gDefineTypeIdVolatile;
-
-    GType gDefineTypeId = g_type_register_static_simple(GTK_TYPE_CONTAINER,
-                                                        g_intern_static_string("WebKitWebViewBase"),
-                                                        sizeof(WebKitWebViewBaseClass),
-                                                        reinterpret_cast<GClassInitFunc>(webkitWebViewBaseClassInit),
-                                                        sizeof(WebKitWebViewBase),
-                                                        reinterpret_cast<GInstanceInitFunc>(webkitWebViewBaseInit),
-                                                        static_cast<GTypeFlags>(0));
-    g_once_init_leave(&gDefineTypeIdVolatile, gDefineTypeId);
-
-    return gDefineTypeIdVolatile;
 }
 
 WebKitWebViewBase* webkitWebViewBaseCreate(WebContext* context, WebPageGroup* pageGroup)

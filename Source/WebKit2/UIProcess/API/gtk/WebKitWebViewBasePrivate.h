@@ -25,44 +25,22 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebKitWebViewBase_h
-#define WebKitWebViewBase_h
+#ifndef WebKitWebViewBasePrivate_h
+#define WebKitWebViewBasePrivate_h
 
-#include <WebKit2/WKBase.h>
-#include <gtk/gtk.h>
+#include "WebKitWebViewBase.h"
+#include "WebPageProxy.h"
+
+using namespace WebKit;
 
 G_BEGIN_DECLS
 
-#define WEBKIT_TYPE_WEB_VIEW_BASE              (webkit_web_view_base_get_type())
-#define WEBKIT_WEB_VIEW_BASE(object)           (G_TYPE_CHECK_INSTANCE_CAST((object), WEBKIT_TYPE_WEB_VIEW_BASE, WebKitWebViewBase))
-#define WEBKIT_WEB_VIEW_BASE_CLASS(klass)      (G_TYPE_CHECK_CLASS_CAST((klass), WEBKIT_TYPE_WEB_VIEW_BASE, WebKitWebViewBaseClass))
-#define WEBKIT_IS_WEB_VIEW_BASE(object)        (G_TYPE_CHECK_INSTANCE_TYPE((object), WEBKIT_TYPE_WEB_VIEW_BASE))
-#define WEBKIT_IS_WEB_VIEW_BASE_CLASS(klass)   (G_TYPE_CHECK_CLASS_TYPE((klass), WEBKIT_TYPE_WEB_VIEW_BASE))
-#define WEBKIT_WEB_VIEW_BASE_GET_CLASS(object) (G_TYPE_INSTANCE_GET_CLASS((object), WEBKIT_TYPE_WEB_VIEW_BASE, WebKitWebViewBaseClass))
+WebKitWebViewBase* webkitWebViewBaseCreate(WebContext*, WebPageGroup*);
 
-typedef struct _WebKitWebViewBase WebKitWebViewBase;
-typedef struct _WebKitWebViewBaseClass WebKitWebViewBaseClass;
-typedef struct _WebKitWebViewBasePrivate WebKitWebViewBasePrivate;
+GtkIMContext* webkitWebViewBaseGetIMContext(WebKitWebViewBase*);
 
-struct _WebKitWebViewBase {
-    GtkContainer parentInstance;
-    /*< private >*/
-    WebKitWebViewBasePrivate* priv;
-};
-
-struct _WebKitWebViewBaseClass {
-    GtkContainerClass parentClass;
-
-    /* Padding for future expansion */
-    void (*_webkit_reserved0) (void);
-    void (*_webkit_reserved1) (void);
-    void (*_webkit_reserved2) (void);
-    void (*_webkit_reserved3) (void);
-};
-
-WK_EXPORT GType
-webkit_web_view_base_get_type();
+WebPageProxy* webkitWebViewBaseGetPage(WebKitWebViewBase*);
 
 G_END_DECLS
 
-#endif // WebKitWebViewBase_h
+#endif // WebKitWebViewBasePrivate_h
