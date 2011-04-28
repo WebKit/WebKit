@@ -416,6 +416,7 @@ PassOwnPtr<AudioBus> AudioBus::createBySampleRateConverting(AudioBus* sourceBus,
         resampler.process(source, destination, sourceLength);
     }
 
+    destinationBus->setSampleRate(newSampleRate);    
     return destinationBus.release();
 }
 #endif // !PLATFORM(MAC)
@@ -439,6 +440,7 @@ PassOwnPtr<AudioBus> AudioBus::createByMixingToMono(AudioBus* sourceBus)
             for (unsigned i = 0; i < n; ++i)
                 destination[i] = 0.5 * (sourceL[i] + sourceR[i]);
 
+            destinationBus->setSampleRate(sourceBus->sampleRate());    
             return destinationBus.release();
         }
     }
