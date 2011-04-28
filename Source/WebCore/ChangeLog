@@ -1,3 +1,22 @@
+2011-04-28  Arno Renevier  <arno@renevier.net>
+
+        Reviewed by Gustavo Noronha Silva.
+
+        [Soup] does not load css stylesheets without content-type
+        https://bugs.webkit.org/show_bug.cgi?id=59697
+
+        When sniffing content type, do not replace http Content-Type header in
+        soup message anymore, but keep sniffed content type in a separate
+        variable.
+
+        * platform/network/soup/ResourceHandleSoup.cpp:
+        (WebCore::contentSniffedCallback):
+        * platform/network/soup/ResourceResponse.h:
+        (WebCore::ResourceResponse::sniffedContentType):
+        (WebCore::ResourceResponse::setSniffedContentType):
+        * platform/network/soup/ResourceResponseSoup.cpp:
+        (WebCore::ResourceResponse::updateFromSoupMessage):
+
 2011-04-28  Yael Aharon  <yael.aharon@nokia.com>
 
         Reviewed by Andreas Kling.

@@ -316,12 +316,6 @@ static void wroteBodyDataCallback(SoupMessage*, SoupBuffer* buffer, gpointer dat
 // This callback will not be called if the content sniffer is disabled in startHTTPRequest.
 static void contentSniffedCallback(SoupMessage* msg, const char* sniffedType, GHashTable *params, gpointer data)
 {
-    if (sniffedType) {
-        const char* officialType = soup_message_headers_get_one(msg->response_headers, "Content-Type");
-
-        if (!officialType || strcmp(officialType, sniffedType))
-            soup_message_headers_set_content_type(msg->response_headers, sniffedType, params);
-    }
 
     if (statusWillBeHandledBySoup(msg->status_code))
         return;
@@ -337,6 +331,24 @@ static void contentSniffedCallback(SoupMessage* msg, const char* sniffedType, GH
         return;
 
     ASSERT(d->m_response.isNull());
+
+    if (sniffedType) {
+        const char* officialType = soup_message_headers_get_one(msg->response_headers, "Content-Type");
+        if (!officialType || strcmp(officialType, sniffedType)) {
+            GString* str = g_string_new(sniffedType);
+            if (params) {
+                GHashTableIter iter;
+                gpointer key, value;
+                g_hash_table_iter_init(&iter, params);
+                while (g_hash_table_iter_next(&iter, &key, &value)) {
+                    g_string_append(str, "; ");
+                    soup_header_g_string_append_param(str, static_cast<const char*>(key), static_cast<const char*>(value));
+                }
+            }
+            d->m_response.setSniffedContentType(str->str);
+            g_string_free(str, TRUE);
+        }
+    }
 
     fillResponseFromMessage(msg, &d->m_response);
     client->didReceiveResponse(handle.get(), d->m_response);

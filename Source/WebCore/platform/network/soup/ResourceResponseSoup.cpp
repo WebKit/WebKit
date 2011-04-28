@@ -71,7 +71,11 @@ void ResourceResponse::updateFromSoupMessage(SoupMessage* soupMessage)
 
     m_soupFlags = soup_message_get_flags(soupMessage);
 
-    String contentType = soup_message_headers_get_one(soupMessage->response_headers, "Content-Type");
+    String contentType;
+    if (sniffedContentType().isEmpty())
+        contentType = soup_message_headers_get_one(soupMessage->response_headers, "Content-Type");
+    else
+        contentType = this->sniffedContentType();
     setMimeType(extractMIMETypeFromMediaType(contentType));
 
     setTextEncodingName(extractCharsetFromMediaType(contentType));

@@ -515,8 +515,6 @@ http/tests/loading/text-content-type-with-binary-extension.html
 http/tests/media/video-play-stall-seek.html
 http/tests/media/video-play-stall.html
 http/tests/media/video-seekable-stall.html
-http/tests/mime/standard-mode-loads-stylesheet-with-empty-content-type.html
-http/tests/mime/standard-mode-loads-stylesheet-with-text-css-and-invalid-type.html
 http/tests/misc/acid3.html
 http/tests/misc/link-rel-prefetch-and-subresource.html
 http/tests/misc/policy-delegate-called-twice.html

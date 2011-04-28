@@ -1,3 +1,14 @@
+2011-04-28  Arno Renevier  <arno@renevier.net>
+
+        Reviewed by Gustavo Noronha Silva.
+
+        [Soup] does not load css stylesheets without content-type
+        https://bugs.webkit.org/show_bug.cgi?id=59697
+
+        * platform/gtk/Skipped: Enable now passing tests:
+         - http/tests/mime/standard-mode-loads-stylesheet-with-empty-content-type.html
+         - http/tests/mime/standard-mode-loads-stylesheet-with-text-css-and-invalid-type.html
+
 2011-04-28  Adam Roben  <aroben@apple.com>
 
         Update expected results for a hyphenation test
