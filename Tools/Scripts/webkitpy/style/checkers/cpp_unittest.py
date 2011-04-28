@@ -789,7 +789,7 @@ class CppStyleTest(CppStyleTestBase):
             'int a = int(); // Constructor, o.k.',
             '')
         self.assert_lint(
-            'X::X() : a(int()) {} // default Constructor, o.k.',
+            'X::X() : a(int()) { } // default Constructor, o.k.',
             '')
         self.assert_lint(
             'operator bool(); // Conversion operator, o.k.',
@@ -1601,6 +1601,11 @@ class CppStyleTest(CppStyleTestBase):
         self.assert_lint('for {', '')
         self.assert_lint('EXPECT_DEBUG_DEATH({', '')
 
+    def test_spacing_between_braces(self):
+        self.assert_lint('    { }', '')
+        self.assert_lint('    {}', 'Missing space inside { }.  [whitespace/braces] [5]')
+        self.assert_lint('    {   }', 'Too many spaces inside { }.  [whitespace/braces] [5]')
+
     def test_spacing_around_else(self):
         self.assert_lint('}else {', 'Missing space before else'
                          '  [whitespace/braces] [5]')
@@ -1749,7 +1754,7 @@ class CppStyleTest(CppStyleTestBase):
         self.assert_lint('string EmptyString() { return ""; }', '')
         self.assert_lint('string EmptyString () { return ""; }', '')
         self.assert_lint('string VeryLongNameFunctionSometimesEndsWith(\n'
-                         '    VeryLongNameType veryLongNameVariable) {}', '')
+                         '    VeryLongNameType veryLongNameVariable) { }', '')
         self.assert_lint('template<>\n'
                          'string FunctionTemplateSpecialization<SomeType>(\n'
                          '      int x) { return ""; }', '')
@@ -3969,7 +3974,7 @@ class WebKitStyleTest(CppStyleTestBase):
             '')
         self.assert_multi_line_lint(
             'for ( ; current;\n'
-            '     current = current->next) {}\n',
+            '     current = current->next) { }\n',
             '')
         self.assert_multi_line_lint(
             'for ( ; current; current = current->next);\n',

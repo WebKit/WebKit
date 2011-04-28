@@ -1878,6 +1878,12 @@ def check_spacing(file_extension, clean_lines, line_number, error):
         error(line_number, 'whitespace/braces', 5,
               'Extra space before [')
 
+    # There should always be a single space in between braces on the same line.
+    if search(r'\{\}', line):
+        error(line_number, 'whitespace/braces', 5, 'Missing space inside { }.')
+    if search(r'\{\s\s+\}', line):
+        error(line_number, 'whitespace/braces', 5, 'Too many spaces inside { }.')
+
     # You shouldn't have a space before a semicolon at the end of the line.
     # There's a special case for "for" since the style guide allows space before
     # the semicolon there.
