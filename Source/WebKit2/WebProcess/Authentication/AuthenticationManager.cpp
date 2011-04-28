@@ -81,10 +81,22 @@ void AuthenticationManager::didReceiveAuthenticationChallenge(Download* download
     download->send(Messages::DownloadProxy::DidReceiveAuthenticationChallenge(authenticationChallenge, challengeID));
 }
 
-void AuthenticationManager::useCredentialForChallenge(uint64_t challengeID, const Credential& credential)
+// Currently, only Mac knows how to respond to authentication challenges with certificate info.
+#if !PLATFORM(MAC)
+bool AuthenticationManager::tryUsePlatformCertificateInfoForChallenge(const WebCore::AuthenticationChallenge&, const PlatformCertificateInfo&)
+{
+    return false;
+}
+#endif
+
+void AuthenticationManager::useCredentialForChallenge(uint64_t challengeID, const Credential& credential, const PlatformCertificateInfo& certificateInfo)
 {
     AuthenticationChallenge challenge = m_challenges.take(challengeID);
     ASSERT(!challenge.isNull());
+    
+    if (tryUsePlatformCertificateInfoForChallenge(challenge, certificateInfo))
+        return;
+    
     AuthenticationClient* coreClient = challenge.authenticationClient();
     if (!coreClient) {
         // This authentication challenge comes from a download.

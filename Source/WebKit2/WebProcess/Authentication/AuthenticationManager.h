@@ -42,6 +42,7 @@ namespace WebCore {
 namespace WebKit {
 
 class Download;
+class PlatformCertificateInfo;
 class WebFrame;
 
 class AuthenticationManager {
@@ -55,7 +56,7 @@ public:
     void didReceiveAuthenticationChallenge(WebFrame*, const WebCore::AuthenticationChallenge&);
     void didReceiveAuthenticationChallenge(Download*, const WebCore::AuthenticationChallenge&);
 
-    void useCredentialForChallenge(uint64_t challengeID, const WebCore::Credential&);
+    void useCredentialForChallenge(uint64_t challengeID, const WebCore::Credential&, const PlatformCertificateInfo&);
     void continueWithoutCredentialForChallenge(uint64_t challengeID);
     void cancelChallenge(uint64_t challengeID);
 
@@ -64,6 +65,8 @@ private:
 
     void didReceiveAuthenticationManagerMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::ArgumentDecoder*);
 
+    bool tryUsePlatformCertificateInfoForChallenge(const WebCore::AuthenticationChallenge&, const PlatformCertificateInfo&);
+    
     typedef HashMap<uint64_t, WebCore::AuthenticationChallenge> AuthenticationChallengeMap;
     AuthenticationChallengeMap m_challenges;
 };

@@ -26,6 +26,7 @@
 #include "config.h"
 #include "WKCredential.h"
 
+#include "WebCertificateInfo.h"
 #include "WebCredential.h"
 #include "WebString.h"
 #include "WKAPICast.h"
@@ -40,6 +41,12 @@ WKTypeID WKCredentialGetTypeID()
 WKCredentialRef WKCredentialCreate(WKStringRef username, WKStringRef password, WKCredentialPersistence persistence)
 {
     RefPtr<WebCredential> credential = WebCredential::create(toImpl(username), toImpl(password), toCredentialPersistence(persistence));
+    return toAPI(credential.release().releaseRef());
+}
+
+WKCredentialRef WKCredentialCreateWithCertificateInfo(WKCertificateInfoRef certificateInfo)
+{
+    RefPtr<WebCredential> credential = WebCredential::create(toImpl(certificateInfo));
     return toAPI(credential.release().releaseRef());
 }
 

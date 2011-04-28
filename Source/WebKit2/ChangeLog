@@ -1,3 +1,43 @@
+2011-04-28  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        <rdar://problem/8773946> and https://bugs.webkit.org/show_bug.cgi?id=59614
+        Client certificate authentication in WebKit2
+
+        Project-file stuff:
+        * WebKit2.xcodeproj/project.pbxproj:
+
+        Allow WKCredentials to store certificates:
+        * UIProcess/Authentication/WebCredential.cpp:
+        (WebKit::WebCredential::WebCredential):
+        (WebKit::WebCredential::certificateInfo):
+        * UIProcess/Authentication/WebCredential.h:
+        (WebKit::WebCredential::create):
+        * UIProcess/API/C/WKCredential.cpp:
+        (WKCredentialCreateWithCertificateInfo):
+        * UIProcess/API/C/WKCredential.h:
+
+        Pass the certificate info over the wire to the WebProcess:
+        * UIProcess/Authentication/AuthenticationChallengeProxy.cpp:
+        (WebKit::AuthenticationChallengeProxy::useCredential): 
+
+        Change the WebProcess to prefer certificate info over basic credentials when responding to a challenge:
+        * WebProcess/Authentication/AuthenticationManager.cpp:
+        (WebKit::AuthenticationManager::tryUsePlatformCertificateInfoForChallenge): Stub for platforms other than Mac,
+          as only Mac can currently respond to challenges with certificates.
+        (WebKit::AuthenticationManager::useCredentialForChallenge):
+        * WebProcess/Authentication/AuthenticationManager.h:
+        * WebProcess/Authentication/AuthenticationManager.messages.in:
+        * WebProcess/Authentication/mac: Added.
+        * WebProcess/Authentication/mac/AuthenticationManager.mac.mm: Added.
+        (WebKit::AuthenticationManager::tryUsePlatformCertificateInfoForChallenge): Recreate the identity and certificate
+          chain and respond to the challenge with it.
+
+        Add a newly required #include:
+        * UIProcess/API/C/WKAuthenticationChallenge.cpp:
+        * UIProcess/Authentication/AuthenticationDecisionListener.cpp:
+
 2011-04-28  Martin Robinson  <mrobinson@igalia.com>
 
         Reviewed by Xan Lopez.

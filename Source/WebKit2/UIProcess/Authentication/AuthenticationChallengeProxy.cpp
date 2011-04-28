@@ -28,6 +28,7 @@
 
 #include "AuthenticationDecisionListener.h"
 #include "AuthenticationManagerMessages.h"
+#include "WebCertificateInfo.h"
 #include "WebCoreArgumentCoders.h"
 #include "WebCredential.h"
 #include "WebPageProxy.h"
@@ -63,8 +64,11 @@ void AuthenticationChallengeProxy::useCredential(WebCredential* credential)
 
     if (!credential)
         m_process->send(Messages::AuthenticationManager::ContinueWithoutCredentialForChallenge(m_challengeID), 0);
-    else 
-        m_process->send(Messages::AuthenticationManager::UseCredentialForChallenge(m_challengeID, credential->core()), 0);
+    else {
+        WebCertificateInfo* certificateInfo = credential->certificateInfo();
+        PlatformCertificateInfo platformInfo = certificateInfo ? certificateInfo->platformCertificateInfo() : PlatformCertificateInfo();
+        m_process->send(Messages::AuthenticationManager::UseCredentialForChallenge(m_challengeID, credential->core(), platformInfo), 0);
+    }
 
     m_challengeID = 0;
 }

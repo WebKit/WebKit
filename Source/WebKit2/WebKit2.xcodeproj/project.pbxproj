@@ -355,6 +355,7 @@
 		51ACBBA1127A8F2C00D203B9 /* WebContextMenuProxyMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 51ACBB9F127A8F2C00D203B9 /* WebContextMenuProxyMac.mm */; };
 		51B3005012529D0E000B5CA0 /* WebBackForwardListCF.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51B3004E12529D0E000B5CA0 /* WebBackForwardListCF.cpp */; };
 		51B3005112529D0E000B5CA0 /* WebPageProxyCF.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51B3004F12529D0E000B5CA0 /* WebPageProxyCF.cpp */; };
+		51C4032C136749D800DC972D /* AuthenticationManager.mac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 51C4032B136749D800DC972D /* AuthenticationManager.mac.mm */; };
 		51D02F64132EC5B900BEAA96 /* WebIconDatabaseMessageReceiver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51D02F63132EC5B900BEAA96 /* WebIconDatabaseMessageReceiver.cpp */; };
 		51D02F6A132EC73700BEAA96 /* WebIconDatabaseMessages.h in Headers */ = {isa = PBXBuildFile; fileRef = 51D02F67132EC73700BEAA96 /* WebIconDatabaseMessages.h */; };
 		51D02F6B132EC73700BEAA96 /* WebIconDatabaseProxyMessageReceiver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51D02F68132EC73700BEAA96 /* WebIconDatabaseProxyMessageReceiver.cpp */; };
@@ -1249,6 +1250,7 @@
 		51ACBB9F127A8F2C00D203B9 /* WebContextMenuProxyMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebContextMenuProxyMac.mm; sourceTree = "<group>"; };
 		51B3004E12529D0E000B5CA0 /* WebBackForwardListCF.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = WebBackForwardListCF.cpp; path = cf/WebBackForwardListCF.cpp; sourceTree = "<group>"; };
 		51B3004F12529D0E000B5CA0 /* WebPageProxyCF.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = WebPageProxyCF.cpp; path = cf/WebPageProxyCF.cpp; sourceTree = "<group>"; };
+		51C4032B136749D800DC972D /* AuthenticationManager.mac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = AuthenticationManager.mac.mm; path = mac/AuthenticationManager.mac.mm; sourceTree = "<group>"; };
 		51D02F63132EC5B900BEAA96 /* WebIconDatabaseMessageReceiver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebIconDatabaseMessageReceiver.cpp; sourceTree = "<group>"; };
 		51D02F65132EC6D300BEAA96 /* WebIconDatabaseProxy.messages.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = WebIconDatabaseProxy.messages.in; path = IconDatabase/WebIconDatabaseProxy.messages.in; sourceTree = "<group>"; };
 		51D02F67132EC73700BEAA96 /* WebIconDatabaseMessages.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebIconDatabaseMessages.h; sourceTree = "<group>"; };
@@ -2325,6 +2327,7 @@
 		512F588612A8834700629530 /* Authentication */ = {
 			isa = PBXGroup;
 			children = (
+				51C4032A136749C400DC972D /* mac */,
 				512F588712A8836600629530 /* AuthenticationManager.cpp */,
 				512F588812A8836600629530 /* AuthenticationManager.h */,
 				512F588912A8836600629530 /* AuthenticationManager.messages.in */,
@@ -2365,6 +2368,14 @@
 				BC2DFBA212A761A500E732A3 /* WebPreferencesCF.cpp */,
 			);
 			name = cf;
+			sourceTree = "<group>";
+		};
+		51C4032A136749C400DC972D /* mac */ = {
+			isa = PBXGroup;
+			children = (
+				51C4032B136749D800DC972D /* AuthenticationManager.mac.mm */,
+			);
+			name = mac;
 			sourceTree = "<group>";
 		};
 		51FBB9C1132E079200F327B4 /* IconDatabase */ = {
@@ -4313,6 +4324,7 @@
 				E179FD9F134D38250015B883 /* ArgumentCodersMac.mm in Sources */,
 				31EA25D2134F78C0005B1452 /* NativeWebMouseEventMac.mm in Sources */,
 				CD5C66A0134B9D38004FE2A8 /* InjectedBundlePageFullScreenClient.cpp in Sources */,
+				51C4032C136749D800DC972D /* AuthenticationManager.mac.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

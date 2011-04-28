@@ -28,6 +28,7 @@
 
 #include "AuthenticationChallengeProxy.h"
 #include "AuthenticationManagerMessages.h"
+#include "WebCertificateInfo.h"
 #include "WebCredential.h"
 #include "WebPageProxy.h"
 #include "WebProcessProxy.h"

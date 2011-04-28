@@ -36,6 +36,8 @@ extern "C" {
 WK_EXPORT WKTypeID WKCredentialGetTypeID();
 
 WK_EXPORT WKCredentialRef WKCredentialCreate(WKStringRef username, WKStringRef password, WKCredentialPersistence);
+WK_EXPORT WKCredentialRef WKCredentialCreateWithCertificateInfo(WKCertificateInfoRef certificateInfo);
+
 WK_EXPORT WKStringRef WKCredentialCopyUser(WKCredentialRef);
 
 #ifdef __cplusplus
