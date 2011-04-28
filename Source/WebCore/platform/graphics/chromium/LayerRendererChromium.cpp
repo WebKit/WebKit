@@ -53,6 +53,7 @@
 #elif USE(CG)
 #include <CoreGraphics/CGBitmapContext.h>
 #endif
+#include <wtf/CurrentTime.h>
 
 namespace WebCore {
 
@@ -195,6 +196,10 @@ void LayerRendererChromium::setViewport(const IntRect& visibleRect, const IntRec
 
 void LayerRendererChromium::updateAndDrawLayers()
 {
+    // FIXME: use the frame begin time from the overall compositor scheduler.
+    // This value is currently inaccessible because it is up in Chromium's
+    // RenderWidget.
+    m_headsUpDisplay->onFrameBegin(currentTime());
     ASSERT(m_hardwareCompositing);
 
     if (!m_rootLayer)

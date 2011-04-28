@@ -49,6 +49,7 @@ public:
 
     ~CCHeadsUpDisplay();
 
+    void onFrameBegin(double timestamp);
     void onPresent();
 
     void setShowFPSCounter(bool enable) { m_showFPSCounter = enable; }
@@ -77,8 +78,8 @@ private:
 
     LayerRendererChromium* m_layerRenderer;
 
-    static const int kPresentHistorySize = 64;
-    double m_presentTimeHistoryInSec[kPresentHistorySize];
+    static const int kBeginFrameHistorySize = 64;
+    double m_beginTimeHistoryInSec[kBeginFrameHistorySize];
 
     bool m_showFPSCounter;
     bool m_showPlatformLayerTree;

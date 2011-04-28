@@ -27,7 +27,6 @@
 #if USE(ACCELERATED_COMPOSITING)
 #include "CCHeadsUpDisplay.h"
 
-#include "CurrentTime.h"
 #include "Font.h"
 #include "FontDescription.h"
 #include "GraphicsContext3D.h"
@@ -37,6 +36,7 @@
 #include "TextRun.h"
 #include "TextStream.h"
 #include "TextureManager.h"
+#include <wtf/CurrentTime.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/WTFString.h>
 
@@ -51,10 +51,10 @@ CCHeadsUpDisplay::CCHeadsUpDisplay(LayerRendererChromium* owner)
     , m_showFPSCounter(false)
     , m_showPlatformLayerTree(false)
 {
-    m_presentTimeHistoryInSec[0] = currentTime();
-    m_presentTimeHistoryInSec[1] = m_presentTimeHistoryInSec[0];
-    for (int i = 2; i < kPresentHistorySize; i++)
-        m_presentTimeHistoryInSec[i] = 0;
+    m_beginTimeHistoryInSec[0] = currentTime();
+    m_beginTimeHistoryInSec[1] = m_beginTimeHistoryInSec[0];
+    for (int i = 2; i < kBeginFrameHistorySize; i++)
+        m_beginTimeHistoryInSec[i] = 0;
 
     FontDescription mediumFontDesc;
     mediumFontDesc.setGenericFamily(FontDescription::MonospaceFamily);
@@ -151,8 +151,8 @@ void CCHeadsUpDisplay::drawFPSCounter(GraphicsContext* ctx, int top, int height)
 {
     // Note that since we haven't finished the current frame, the FPS counter
     // actually reports the last frame's time.
-    double secForLastFrame = m_presentTimeHistoryInSec[(m_currentFrameNumber + kPresentHistorySize - 1) % kPresentHistorySize] -
-                             m_presentTimeHistoryInSec[(m_currentFrameNumber + kPresentHistorySize - 2) % kPresentHistorySize];
+    double secForLastFrame = m_beginTimeHistoryInSec[(m_currentFrameNumber + kBeginFrameHistorySize - 1) % kBeginFrameHistorySize] -
+                             m_beginTimeHistoryInSec[(m_currentFrameNumber + kBeginFrameHistorySize - 2) % kBeginFrameHistorySize];
 
     // Filter the frame times to avoid spikes.
     const float alpha = 0.1;
@@ -166,7 +166,7 @@ void CCHeadsUpDisplay::drawFPSCounter(GraphicsContext* ctx, int top, int height)
     String text(String::format("FPS: %5.1f", 1.0 / m_filteredFrameTime));
     TextRun run(text);
     float textWidth = m_mediumFont->width(run) + 2.0f;
-    float graphWidth = kPresentHistorySize;
+    float graphWidth = kBeginFrameHistorySize;
 
     // Draw background.
     ctx->setFillColor(Color(0, 0, 0, 255), ColorSpaceDeviceRGB);
@@ -187,9 +187,9 @@ void CCHeadsUpDisplay::drawFPSCounter(GraphicsContext* ctx, int top, int height)
     IntPoint prev(-1, 0);
     int x = 0;
     double h = static_cast<double>(height - 2);
-    for (int i = m_currentFrameNumber % kPresentHistorySize; i != (m_currentFrameNumber - 1) % kPresentHistorySize; i = (i + 1) % kPresentHistorySize) {
-        int j = (i + 1) % kPresentHistorySize;
-        double fps = 1.0 / (m_presentTimeHistoryInSec[j] - m_presentTimeHistoryInSec[i]);
+    for (int i = m_currentFrameNumber % kBeginFrameHistorySize; i != (m_currentFrameNumber - 1) % kBeginFrameHistorySize; i = (i + 1) % kBeginFrameHistorySize) {
+        int j = (i + 1) % kBeginFrameHistorySize;
+        double fps = 1.0 / (m_beginTimeHistoryInSec[j] - m_beginTimeHistoryInSec[i]);
         double p = 1 - ((fps - loFPS) / (hiFPS - loFPS));
         if (p < 0)
             p = 0;
@@ -216,9 +216,13 @@ void CCHeadsUpDisplay::drawPlatformLayerTree(GraphicsContext* ctx, int top)
     }
 }
 
+void CCHeadsUpDisplay::onFrameBegin(double timestamp)
+{
+    m_beginTimeHistoryInSec[m_currentFrameNumber % kBeginFrameHistorySize] = timestamp;
+}
+
 void CCHeadsUpDisplay::onPresent()
 {
-    m_presentTimeHistoryInSec[m_currentFrameNumber % kPresentHistorySize] = currentTime();
     m_currentFrameNumber += 1;
 }
 
