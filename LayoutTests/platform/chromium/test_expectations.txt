@@ -1011,11 +1011,6 @@ BUGCR24209 : fast/js/pic/cached-prototype-setter.html = FAIL
 // It appears we're not obeying the "transparent" fill color.
 BUGCR10317 LINUX : fast/css/shadow-multiple.html = FAIL
 
-// Problems with getImageData and toDataURL.
-// This test requires us to do alpha blending exactly the way CG does it,
-// which Skia may never do (see bug).
-// BUGCR22700 CPU WIN-WIN7 : fast/canvas/canvas-getImageData.html = FAIL TIMEOUT
-
 // We're much closer now. To fully pass this we need encoders for jpg
 // and gif, which is a low priority.
 BUGCR10318 : fast/canvas/toDataURL-supportedTypes.html = FAIL
@@ -2026,9 +2021,6 @@ BUGWK45991 CPU LINUX WIN : canvas/philip/tests/2d.path.arcTo.shape.curve2.html =
 BUGWK45991 LINUX WIN : canvas/philip/tests/2d.pattern.paint.norepeat.coord3.html = TEXT
 BUGWK45991 LINUX WIN : canvas/philip/tests/2d.pattern.paint.repeatx.coord1.html = TEXT
 BUGWK45991 LINUX WIN : canvas/philip/tests/2d.pattern.paint.repeaty.coord1.html = TEXT
-BUGWK45991 LINUX WIN : canvas/philip/tests/2d.shadow.alpha.3.html = TEXT
-BUGWK45991 LINUX WIN : canvas/philip/tests/2d.shadow.alpha.4.html = TEXT
-BUGWK45991 LINUX WIN : canvas/philip/tests/2d.shadow.alpha.5.html = TEXT
 BUGWK45991 LINUX WIN : canvas/philip/tests/2d.shadow.canvas.alpha.html = TEXT
 BUGWK45991 LINUX WIN : canvas/philip/tests/2d.shadow.canvas.basic.html = TEXT
 BUGWK45991 LINUX WIN : canvas/philip/tests/2d.shadow.canvas.transparent.2.html = TEXT
@@ -2531,10 +2523,9 @@ BUGCR61739 DEBUG : animations/suspend-resume-animation-events.html = CRASH TEXT 
 BUGWK52509 WIN LINUX : svg/css/rect-gradient-stroke-shadow.svg = IMAGE
 BUGWK52509 MAC LEOPARD : svg/css/rect-gradient-stroke-shadow.svg = IMAGE
 BUGCR63921 CPU LINUX WIN : fast/canvas/canvas-fillPath-shadow.html = TEXT
-BUGCR63921 CPU LINUX WIN : fast/canvas/canvas-fillPath-alpha-shadow.html = TEXT
-BUGCR63921 GPU LINUX WIN : fast/canvas/canvas-fillPath-alpha-shadow.html = TEXT TIMEOUT
-BUGCR63921 GPU LINUX WIN : fast/canvas/canvas-strokeRect-alpha-shadow.html = TEXT TIMEOUT
-BUGCR63921 GPU LINUX WIN : fast/canvas/canvas-strokePath-alpha-shadow.html = TEXT TIMEOUT
+BUGCR63921 GPU : fast/canvas/canvas-fillPath-alpha-shadow.html = TEXT TIMEOUT
+BUGCR63921 GPU : fast/canvas/canvas-strokeRect-alpha-shadow.html = TEXT TIMEOUT
+BUGCR63921 GPU : fast/canvas/canvas-strokePath-alpha-shadow.html = TEXT TIMEOUT
 
 // Mainly flaky with mac debug, but also intermittent crashes seen on linux and windows
 BUGCR64129 WIN MAC LINUX : fast/files/revoke-blob-url.html = CRASH PASS
@@ -3759,9 +3750,6 @@ BUGDPRANKE : fast/dom/Document/document-reopen.html = TEXT PASS
 BUGDPRANKE : fast/parser/javascript-url-compat-mode.html = TEXT PASS
 BUGDPRANKE : inspector/console/console-tests.html = TEXT PASS TIMEOUT
 
-BUGWK59158 CPU WIN LINUX : fast/canvas/canvas-strokePath-alpha-shadow.html = TEXT
-BUGWK59158 CPU WIN LINUX : fast/canvas/canvas-strokeRect-alpha-shadow.html = TEXT
-
 // these tests were introduced in r58522. Needed new baselines, but I'm
 // not sure why debug is timing out.
 BUGWK59166 WIN LINUX DEBUG CPU : svg/dynamic-updates/SVGFEDropShadowElement-dom-dx-attr.html = TIMEOUT
@@ -3835,17 +3823,12 @@ BUGCR80301 MAC LEOPARD : fast/canvas/canvas-largedraws.html = TIMEOUT
 BUGDPRANKE : fast/dom/dataset-gc.html = TEXT
 BUGDPRANKE WIN LINUX : fast/backgrounds/gradient-background-leakage.html = IMAGE
 BUGDPRANKE : fast/forms/validation-message-appearance.html = IMAGE
-BUGDPRANKE LINUX : fast/multicol/shadow-breaking.html = IMAGE
-BUGDPRANKE WIN XP : fast/multicol/shadow-breaking.html = IMAGE
-BUGDPRANKE WIN XP : fast/repaint/shadow-multiple-horizontal.html = IMAGE
-BUGDPRANKE WIN XP : fast/repaint/shadow-multiple-strict-horizontal.html = IMAGE
-BUGDPRANKE WIN XP : fast/repaint/shadow-multiple-strict-vertical.html = IMAGE
-BUGDPRANKE WIN XP : fast/repaint/shadow-multiple-vertical.html = IMAGE
-BUGDPRANKE WIN XP : fast/text/shadow-translucent-fill.html = IMAGE
-BUGDPRANKE WIN XP : fast/transforms/shadows.html = IMAGE
-BUGDPRANKE WIN XP : svg/css/group-with-shadow.svg = IMAGE
-BUGDPRANKE WIN XP : svg/css/text-shadow-multiple.xhtml = IMAGE
-BUGDPRANKE WIN XP : transitions/svg-text-shadow-transition.html = IMAGE
+BUGDPRANKE : fast/multicol/shadow-breaking.html = IMAGE
+BUGDPRANKE WIN : fast/text/shadow-translucent-fill.html = IMAGE
+BUGDPRANKE WIN : fast/transforms/shadows.html = IMAGE
+BUGDPRANKE WIN : svg/css/group-with-shadow.svg = IMAGE
+BUGDPRANKE WIN : svg/css/text-shadow-multiple.xhtml = IMAGE
+BUGDPRANKE WIN : transitions/svg-text-shadow-transition.html = IMAGE
 
 // flakiness on deps bots from r84685:r84721??
 BUGDPRANKE MAC LEOPARD DEBUG : http/tests/local/stylesheet-and-script-load-order.html = CRASH PASS

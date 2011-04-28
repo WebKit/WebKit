@@ -1047,6 +1047,7 @@ void GraphicsContext::setPlatformShadow(const FloatSize& size,
     double blur = blurFloat;
 
     uint32_t mfFlags = SkBlurMaskFilter::kHighQuality_BlurFlag;
+    SkXfermode::Mode colorMode = SkXfermode::kSrc_Mode;
 
     if (m_state.shadowsIgnoreTransforms)  {
         // Currently only the GraphicsContext associated with the
@@ -1054,6 +1055,12 @@ void GraphicsContext::setPlatformShadow(const FloatSize& size,
         // Transforms. So with this flag set, we know this state is associated
         // with a CanvasRenderingContext.
         mfFlags |= SkBlurMaskFilter::kIgnoreTransform_BlurFlag;
+
+        // CSS wants us to ignore the original's alpha, but Canvas wants us to
+        // modulate with it. Using shadowsIgnoreTransforms to tell us that we're
+        // in a Canvas, we change the colormode to kDst_Mode, so we don't overwrite
+        // it with our layer's (default opaque-black) color.
+        colorMode = SkXfermode::kDst_Mode;
 
         // CG uses natural orientation for Y axis, but the HTML5 canvas spec
         // does not.
@@ -1080,16 +1087,9 @@ void GraphicsContext::setPlatformShadow(const FloatSize& size,
     // lower layer contains our offset, blur, and colorfilter
     SkLayerDrawLooper::LayerInfo info;
 
-    /*
-        WebKit's interpretation of shadow color is that it does not pay
-        attention to the alpha in the fill color, so we pass kSrc_Mode for
-        fColorMode so that we overwrite the drawing paint's color and use ours,
-        which is 0xFF000000. This works fine, since by passing kSrcIn_Mode to
-        the colorfilter, we will only modulate with the alpha, which is 0xFF.
-     */
     info.fPaintBits |= SkLayerDrawLooper::kMaskFilter_Bit; // our blur
     info.fPaintBits |= SkLayerDrawLooper::kColorFilter_Bit;
-    info.fColorMode = SkXfermode::kSrc_Mode;
+    info.fColorMode = colorMode;
     info.fOffset.set(width, height);
     info.fPostTranslate = m_state.shadowsIgnoreTransforms;
 

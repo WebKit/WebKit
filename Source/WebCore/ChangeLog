@@ -1,3 +1,29 @@
+2011-04-28  Mike Reed  <reed@google.com>
+
+        Reviewed by Eric Seidel.
+
+        fix shadw behavior for both CSS and Canvas -- skia only
+        https://bugs.webkit.org/show_bug.cgi?id=59700
+
+        Test:
+        canvas/philip/tests/2d.shadow.alpha.3.html
+        canvas/philip/tests/2d.shadow.alpha.4.html
+        canvas/philip/tests/2d.shadow.alpha.5.html
+        fast/canvas/canvas-fillPath-alpha-shadow.html
+        fast/canvas/canvas-strokePath-alpha-shadow.html
+        fast/canvas/canvas-strokeRect-alpha-shadow.html
+        fast/css/text-input-with-webkit-border-radius.html
+        fast/repaint/shadow-multiple-horizontal.html
+        fast/repaint/shadow-multiple-strict-horizontal.html
+        fast/repaint/shadow-multiple-strict-vertical.html
+        fast/repaint/shadow-multiple-vertical.html
+        fast/canvas/canvas-getImageData.html
+
+        * platform/graphics/chromium/FontChromiumWin.cpp:
+        (WebCore::Font::drawGlyphs):
+        * platform/graphics/skia/GraphicsContextSkia.cpp:
+        (WebCore::GraphicsContext::setPlatformShadow):
+
 2011-04-28  David Kilzer  <ddkilzer@apple.com>
 
         <http://webkit.org/b/59755> AXObjectCache::attachWrapper() over-retains an AccessibilityObjectWrapper
