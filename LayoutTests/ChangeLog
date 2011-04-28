@@ -1,3 +1,20 @@
+2011-04-27  Naoki Takano  <takano.naoki@gmail.com>
+
+        Reviewed by Ryosuke Niwa.
+
+        Convert LayoutTests/fast/events/mouseout-dead-node.html from pixel test to text-based test
+        https://bugs.webkit.org/show_bug.cgi?id=59369
+
+        * fast/events/mouseout-dead-node-expected.txt: Added.
+        * fast/events/mouseout-dead-node.html: Change to use dumpAsText.
+        * platform/chromium-linux/fast/events/mouseout-dead-node-expected.png: Removed.
+        * platform/chromium-win/fast/events/mouseout-dead-node-expected.png: Removed.
+        * platform/chromium-win/fast/events/mouseout-dead-node-expected.txt: Removed.
+        * platform/gtk/fast/events/mouseout-dead-node-expected.txt: Removed.
+        * platform/mac-leopard/fast/events/mouseout-dead-node-expected.png: Removed.
+        * platform/mac/fast/events/mouseout-dead-node-expected.png: Removed.
+        * platform/mac/fast/events/mouseout-dead-node-expected.txt: Removed.
+
 2011-04-27  Kenneth Russell  <kbr@google.com>
 
         Chromium test failures after r85142
