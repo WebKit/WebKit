@@ -1,3 +1,12 @@
+2011-04-28  Jessie Berlin  <jberlin@apple.com>
+
+        accessibility/aria-fallback-roles.html failing on Windows since introduction in r85157.
+        https://bugs.webkit.org/show_bug.cgi?id=59701
+
+        Add Windows-specific results to get the bots green.
+
+        * platform/win/accessibility/aria-fallback-roles-expected.txt: Added.
+
 2011-04-28  Pavel Feldman  <pfeldman@google.com>
 
         Reviewed by Yury Semikhatsky.
