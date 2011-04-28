@@ -1,3 +1,9 @@
+2011-04-28  David Levin  <levin@chromium.org>
+
+        Build fix.
+
+        * wtf/RefCounted.h: Fix inverted ifdef.
+
 2011-04-07  David Levin  <levin@chromium.org>
 
         Reviewed by Darin Adler.

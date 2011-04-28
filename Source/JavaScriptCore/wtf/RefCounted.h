@@ -203,7 +203,7 @@ protected:
     }
 };
 
-#ifndef NDEBUG
+#ifdef NDEBUG
 inline void RefCountedBase::setMutexForVerifier(Mutex&) { }
 #else
 inline void RefCountedBase::setMutexForVerifier(Mutex& mutex)
