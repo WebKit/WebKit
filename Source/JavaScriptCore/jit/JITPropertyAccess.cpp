@@ -26,7 +26,6 @@
 #include "config.h"
 
 #if ENABLE(JIT)
-#if USE(JSVALUE64)
 #include "JIT.h"
 
 #include "CodeBlock.h"
@@ -49,6 +48,7 @@
 using namespace std;
 
 namespace JSC {
+#if USE(JSVALUE64)
 
 JIT::CodePtr JIT::stringGetByValStubGenerator(JSGlobalData* globalData, ExecutablePool* pool)
 {
@@ -554,23 +554,6 @@ void JIT::compileGetDirectOffset(JSObject* base, RegisterID result, size_t cache
     loadPtr(static_cast<void*>(&base->m_propertyStorage[cachedOffset]), result);
 }
 
-void JIT::testPrototype(JSValue prototype, JumpList& failureCases)
-{
-    if (prototype.isNull())
-        return;
-
-    // We have a special case for X86_64 here because X86 instructions that take immediate values
-    // only take 32 bit immediate values, wheras the pointer constants we are using here are 64 bit
-    // values.  In the non X86_64 case, the generated code is slightly more efficient because it uses
-    // two less instructions and doesn't require any scratch registers.
-#if CPU(X86_64)
-    move(TrustedImmPtr(prototype.asCell()->structure()), regT3);
-    failureCases.append(branchPtr(NotEqual, AbsoluteAddress(prototype.asCell()->addressOfStructure()), regT3));
-#else
-    failureCases.append(branchPtr(NotEqual, AbsoluteAddress(prototype.asCell()->addressOfStructure()), TrustedImmPtr(prototype.asCell()->structure())));
-#endif
-}
-
 void JIT::privateCompilePutByIdTransition(StructureStubInfo* stubInfo, Structure* oldStructure, Structure* newStructure, size_t cachedOffset, StructureChain* chain, ReturnAddressPtr returnAddress, bool direct)
 {
     JumpList failureCases;
@@ -1048,7 +1031,25 @@ void JIT::privateCompileGetByIdChain(StructureStubInfo* stubInfo, Structure* str
 
 #endif // !ENABLE(JIT_OPTIMIZE_PROPERTY_ACCESS)
 
+#endif // USE(JSVALUE64)
+
+void JIT::testPrototype(JSValue prototype, JumpList& failureCases)
+{
+    if (prototype.isNull())
+        return;
+    
+    // We have a special case for X86_64 here because X86 instructions that take immediate values
+    // only take 32 bit immediate values, wheras the pointer constants we are using here are 64 bit
+    // values. In the non X86_64 case, the generated code is slightly more efficient because it uses
+    // two less instructions and doesn't require any scratch registers.
+#if CPU(X86_64)
+    move(TrustedImmPtr(prototype.asCell()->structure()), regT3);
+    failureCases.append(branchPtr(NotEqual, AbsoluteAddress(prototype.asCell()->addressOfStructure()), regT3));
+#else
+    failureCases.append(branchPtr(NotEqual, AbsoluteAddress(prototype.asCell()->addressOfStructure()), TrustedImmPtr(prototype.asCell()->structure())));
+#endif
+}
+
 } // namespace JSC
 
-#endif // USE(JSVALUE64)
 #endif // ENABLE(JIT)
