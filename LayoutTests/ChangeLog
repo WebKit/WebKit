@@ -1,3 +1,11 @@
+2011-04-28  Pavel Feldman  <pfeldman@google.com>
+
+        Not reviewed: unflake new inspector tests.
+
+        * http/tests/inspector/resource-tree/resource-tree-reload.html:
+        * http/tests/inspector/resource-tree/resource-tree-test.js:
+        (initialize_ResourceTreeTest.InspectorTest.dumpResourcesURLMap):
+
 2011-04-28  Jessie Berlin  <jberlin@apple.com>
 
         accessibility/aria-fallback-roles.html failing on Windows since introduction in r85157.

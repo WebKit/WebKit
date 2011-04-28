@@ -24,7 +24,7 @@ function onIframeLoad()
 
 function test()
 {
-    InspectorTest.runAfterResourcesAreFinished(["resource-tree-frame-navigate-iframe-before.html", "styles-initial.css", "styles-initial-2.css"], step1);
+    InspectorTest.runAfterResourcesAreFinished(["resource-tree-frame-navigate-iframe-before.html", "script-initial.js", "styles-initial.css", "styles-initial-2.css"], step1);
 
     function step1()
     {
@@ -37,7 +37,7 @@ function test()
 
     function step2()
     {
-        InspectorTest.runAfterResourcesAreFinished(["resource-tree-frame-navigate-iframe-after.html", "styles-navigated.css"], step3);
+        InspectorTest.runAfterResourcesAreFinished(["resource-tree-frame-navigate-iframe-after.html", "styles-navigated.css", "script-navigated.js"], step3);
     }
 
     function step3()

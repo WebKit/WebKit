@@ -34,7 +34,11 @@ InspectorTest.dumpResourcesURLMap = function()
 
     function comparator(result1, result2)
     {
-        return result1.url > result2.url;
+        if (result1.url > result2.url)
+            return 1;
+        if (result2.url > result1.url)
+            return -1;
+        return 0;
     }
 
     results.sort(comparator);
