@@ -1,3 +1,13 @@
+2011-04-27  Kenneth Russell  <kbr@google.com>
+
+        Unreviewed, test expectation updates.
+          - Added a couple of flaky tests.
+          - Filed bugs for a preexisting and a new failure.
+          - Rebaselined fast/lists/003-vertical.html on Mac.
+
+        * platform/chromium-mac/fast/lists/003-vertical-expected.txt:
+        * platform/chromium/test_expectations.txt:
+
 2011-04-27  Dirk Pranke  <dpranke@chromium.org>
 
         Unreviewed, update w/ failing tests and remove a bunch of

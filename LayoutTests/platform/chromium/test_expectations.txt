@@ -3727,7 +3727,7 @@ BUGDPRANKE WIN DEBUG : http/tests/navigation/forward-to-fragment-fires-onload.ht
 BUGDPRANKE WIN DEBUG : perf/mouse-event.html = TEXT TIMEOUT PASS
 BUGDPRANKE WIN DEBUG : perf/typing-at-end-of-line.html = TEXT TIMEOUT PASS
 BUGDPRANKE DEBUG : fast/notifications/notifications-display-close-events.html = TIMEOUT PASS
-BUGDPRANKE MAC DEBUG : fast/css-generated-content/table-row-group-to-inline.html = IMAGE+TEXT PASS
+BUGDPRANKE WIN MAC DEBUG : fast/css-generated-content/table-row-group-to-inline.html = IMAGE+TEXT PASS
 
 BUGDPRANKE LINUX : canvas/philip/tests/2d.gradient.radial.touch2.html = TEXT
 
@@ -3948,9 +3948,9 @@ BUGDPRANKE LINUX : svg/W3C-I18N/text-anchor-no-markup.svg = IMAGE
 BUGDPRANKE LINUX : svg/W3C-SVG-1.1-SE/text-intro-05-t.svg = IMAGE
 BUGDPRANKE LINUX : svg/text/text-intro-05-t.svg = IMAGE
 
-BUGDPRANKE WIN LINUX : media/video-controls-transformed.html = TEXT
-BUGDPRANKE MAC CPU : media/video-controls-transformed.html = TEXT
-BUGDPRANKE MAC : fast/lists/003-vertical.html = TEXT
+BUGWK59661 WIN LINUX : media/video-controls-transformed.html = TEXT
+BUGWK59661 MAC CPU : media/video-controls-transformed.html = TEXT
+
 BUGDPRANKE MAC : fast/repaint/box-shadow-h.html = IMAGE
 BUGDPRANKE MAC : fast/block/float/float-overhangs-root.html = MISSING
 BUGDPRANKE MAC DEBUG : fast/blockflow/Kusa-Makura-background-canvas.html = CRASH
@@ -3961,7 +3961,8 @@ BUGDPRANKE WIN DEBUG : http/tests/security/credentials-in-referer.html = PASS TI
 BUGDPRANKE MAC DEBUG : fast/css/getComputedStyle/font-family-fallback-reset.html = CRASH
 
 BUGKBR WIN7 : fast/speech/input-readonly-and-disabled.html = CRASH
+BUG80745 WIN DEBUG : html5lib/runner.html = CRASH
+// Flakiness
+BUGKBR WIN DEBUG : animations/animation-controller-drt-api.html = PASS TEXT
 
 BUGWK59642 WIN : editing/input/scroll-viewport-page-up-down.html = PASS TEXT
-
-
