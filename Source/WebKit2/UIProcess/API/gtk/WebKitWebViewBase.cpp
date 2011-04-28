@@ -44,8 +44,6 @@
 using namespace WebKit;
 using namespace WebCore;
 
-static gpointer webkitWebViewBaseParentClass = 0;
-
 struct _WebKitWebViewBasePrivate {
     OwnPtr<PageClientImpl> pageClient;
     RefPtr<WebPageProxy> page;
@@ -157,14 +155,12 @@ static void webkit_web_view_base_init(WebKitWebViewBase* webkitWebViewBase)
 static gboolean webViewExpose(GtkWidget* widget, GdkEventExpose* event)
 {
     WebKitWebViewBase* webViewBase = WEBKIT_WEB_VIEW_BASE(widget);
-    WebKitWebViewBasePrivate* priv = webViewBase->priv;
+
     GdkRectangle clipRect;
     gdk_region_get_clipbox(event->region, &clipRect);
 
-    GdkWindow* window = gtk_widget_get_window(widget);
-    RefPtr<cairo_t> cr = adoptRef(gdk_cairo_create(window));
-
-    priv->page->drawingArea()->paint(clipRect, cr);
+    RefPtr<cairo_t> cr = adoptRef(gdk_cairo_create(gtk_widget_get_window(widget)));
+    webViewBase->priv->page->drawingArea()->paint(clipRect, cr.get());
 
     return FALSE;
 }
@@ -172,13 +168,12 @@ static gboolean webViewExpose(GtkWidget* widget, GdkEventExpose* event)
 static gboolean webViewDraw(GtkWidget* widget, cairo_t* cr)
 {
     WebKitWebViewBase* webViewBase = WEBKIT_WEB_VIEW_BASE(widget);
-    WebKitWebViewBasePrivate* priv = webViewBase->priv;
-    GdkRectangle clipRect;
 
+    GdkRectangle clipRect;
     if (!gdk_cairo_get_clip_rectangle(cr, &clipRect))
         return FALSE;
 
-    priv->page->drawingArea()->paint(clipRect, cr);
+    webViewBase->priv->page->drawingArea()->paint(clipRect, cr);
 
     return FALSE;
 }

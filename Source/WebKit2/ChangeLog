@@ -1,3 +1,11 @@
+2011-04-28  Martin Robinson  <mrobinson@igalia.com>
+
+        Build fix after r85197.
+
+        * UIProcess/API/gtk/WebKitWebViewBase.cpp:
+        (webViewExpose): Use cr.get() here.
+        (webViewDraw): Small clean up.
+
 2011-04-28  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Reviewed by Sam Weinig.
