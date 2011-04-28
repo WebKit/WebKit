@@ -126,7 +126,7 @@ void ScrollView::setHasVerticalScrollbar(bool hasBar)
         axObjectCache()->handleScrollbarUpdate(this);
 }
 
-#if !USE(NATIVE_GTK_MAIN_FRAME_SCROLLBAR)
+#if !PLATFORM(GTK)
 PassRefPtr<Scrollbar> ScrollView::createScrollbar(ScrollbarOrientation orientation)
 {
     return Scrollbar::createNativeScrollbar(this, orientation, RegularScrollbar);
@@ -226,7 +226,7 @@ void ScrollView::setDelegatesScrolling(bool delegatesScrolling)
     m_delegatesScrolling = delegatesScrolling;
 }
 
-#if !USE(NATIVE_GTK_MAIN_FRAME_SCROLLBAR)
+#if !PLATFORM(GTK)
 IntRect ScrollView::visibleContentRect(bool includeScrollbars) const
 {
     if (platformWidget())
@@ -1245,7 +1245,7 @@ void ScrollView::setScrollOrigin(const IntPoint& origin, bool updatePositionAtAl
         updateScrollbars(scrollOffset());
 }
 
-#if !PLATFORM(WX) && !USE(NATIVE_GTK_MAIN_FRAME_SCROLLBAR) && !PLATFORM(EFL)
+#if !PLATFORM(WX) && !PLATFORM(GTK) && !PLATFORM(EFL)
 
 void ScrollView::platformInit()
 {

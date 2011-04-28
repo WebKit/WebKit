@@ -31,8 +31,6 @@
 #include "config.h"
 #include "ScrollView.h"
 
-#if USE(NATIVE_GTK_MAIN_FRAME_SCROLLBAR)
-
 #include "ChromeClient.h"
 #include "FloatRect.h"
 #include "Frame.h"
@@ -66,7 +64,7 @@ PassRefPtr<Scrollbar> ScrollView::createScrollbar(ScrollbarOrientation orientati
 {
     // If this is an interior frame scrollbar, we want to create a totally fake
     // scrollbar with no GtkAdjustment backing it.
-    if (parent())
+    if (parent() || (hostWindow() && !hostWindow()->platformPageClient()))
         return Scrollbar::createNativeScrollbar(this, orientation, RegularScrollbar);
 
     // If this is the main frame, we want to create a Scrollbar that does no  painting
@@ -230,4 +228,3 @@ void ScrollView::setScrollbarModes(ScrollbarMode horizontalMode, ScrollbarMode v
 
 }
 
-#endif // USE(NATIVE_GTK_MAIN_FRAME_SCROLLBAR)

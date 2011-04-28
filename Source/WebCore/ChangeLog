@@ -1,3 +1,20 @@
+2011-04-28  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Reviewed by Martin Robinson.
+
+        [GTK] Check whether to use native scrollbars at run time
+        https://bugs.webkit.org/show_bug.cgi?id=59694
+
+        It's currently decided at build time depending on whether webkit2
+        build is enabled or not. That makes imposible to build both
+        webkit1 and webkit2 using the same libWebCore.
+
+        * GNUmakefile.am:
+        * platform/ScrollView.cpp:
+        (WebCore::ScrollView::wheelEvent):
+        * platform/gtk/ScrollViewGtk.cpp:
+        (WebCore::ScrollView::createScrollbar):
+
 2011-04-28  Pavel Feldman  <pfeldman@google.com>
 
         Reviewed by Yury Semikhatsky.
