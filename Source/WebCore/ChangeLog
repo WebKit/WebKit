@@ -1,3 +1,20 @@
+2011-04-28  David Kilzer  <ddkilzer@apple.com>
+
+        <http://webkit.org/b/59755> AXObjectCache::attachWrapper() over-retains an AccessibilityObjectWrapper
+
+        Reviewed by Chris Fleizach.
+
+        Previously, AXObjectCache::attachWrapper over-retained each
+        AccessibilityObjectWrapper it created, which is why
+        AXObjectCache::detachWrapper() contained an extra -release.
+
+        * accessibility/mac/AXObjectCacheMac.mm:
+        (WebCore::AXObjectCache::detachWrapper): Removed extra -release.
+        (WebCore::AXObjectCache::attachWrapper): Because setWrapper()
+        assigns to a RetainPtr<> instance variable, it doesn't need a +1
+        retained object passed in.  Fix the leak by using a RetainPtr<>
+        for the AccessibilityObjectWrapper.
+
 2011-04-28  Nat Duca  <nduca@chromium.org>
 
         Reviewed by Darin Fisher.
