@@ -44,7 +44,6 @@ VPATH = \
     $(WebCore)/storage \
     $(WebCore)/xml \
     $(WebCore)/webaudio \
-    $(WebCore)/wml \
     $(WebCore)/workers \
     $(WebCore)/svg \
     $(WebCore)/websockets \
