@@ -1,3 +1,13 @@
+2011-04-28  David Levin  <levin@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        Remove IMAGE_RESIZER related code.
+        https://bugs.webkit.org/show_bug.cgi?id=59735
+
+        * win/tools/vsprops/FeatureDefines.vsprops: Also removed WML which was missed in r85256.
+        * win/tools/vsprops/FeatureDefinesCairo.vsprops: Ditto.
+
 2011-04-28  Chris Fleizach  <cfleizach@apple.com>
 
         Reviewed by Maciej Stachowiak.

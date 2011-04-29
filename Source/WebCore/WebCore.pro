@@ -626,7 +626,6 @@ SOURCES += \
     history/HistoryItem.cpp \
     history/qt/HistoryItemQt.cpp \
     history/PageCache.cpp \
-    html/AsyncImageResizer.cpp \
     html/BaseButtonInputType.cpp \
     html/BaseCheckableInputType.cpp \
     html/BaseDateAndTimeInputType.cpp \
@@ -733,7 +732,6 @@ SOURCES += \
     html/ImageData.cpp \
     html/ImageDocument.cpp \
     html/ImageInputType.cpp \
-    html/ImageResizerThread.cpp \
     html/InputType.cpp \
     html/IsIndexInputType.cpp \
     html/LabelsNodeList.cpp \
@@ -1598,7 +1596,6 @@ HEADERS += \
     history/CachedPage.h \
     history/HistoryItem.h \
     history/PageCache.h \
-    html/AsyncImageResizer.h \
     html/canvas/ArrayBuffer.h \
     html/canvas/ArrayBufferView.h \
     html/canvas/CanvasGradient.h \
@@ -1711,7 +1708,6 @@ HEADERS += \
     html/HTMLViewSourceDocument.h \
     html/ImageData.h \
     html/ImageDocument.h \
-    html/ImageResizerThread.h \
     html/LabelsNodeList.h \
     html/MediaDocument.h \
     html/PluginDocument.h \

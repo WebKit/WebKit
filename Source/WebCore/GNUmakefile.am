@@ -280,16 +280,6 @@ webcore_cppflags += -DENABLE_ICONDATABASE=0
 endif # END ENABLE_ICONDATABASE
 
 # ----
-# Image Resizer Support
-# ----
-if ENABLE_IMAGE_RESIZER
-FEATURE_DEFINES += ENABLE_IMAGE_RESIZER=1
-webcore_cppflags += -DENABLE_IMAGE_RESIZER=1
-else
-webcore_cppflags += -DENABLE_IMAGE_RESIZER=0
-endif # END ENABLE_IMAGE_RESIZER
-
-# ----
 # Orientation Events
 # ----
 if ENABLE_ORIENTATION_EVENTS

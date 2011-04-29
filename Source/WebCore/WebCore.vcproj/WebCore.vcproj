@@ -50902,14 +50902,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\html\AsyncImageResizer.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\html\AsyncImageResizer.h"
-				>
-			</File>
-			<File
 				RelativePath="..\html\BaseButtonInputType.cpp"
 				>
 			</File>
@@ -55687,14 +55679,6 @@
 			</File>
 			<File
 				RelativePath="..\html\ImageInputType.h"
-				>
-			</File>
-			<File
-				RelativePath="..\html\ImageResizerThread.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\html\ImageResizerThread.h"
 				>
 			</File>
 			<File

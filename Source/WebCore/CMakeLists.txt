@@ -703,7 +703,6 @@ SET(WebCore_SOURCES
     history/HistoryItem.cpp
     history/PageCache.cpp
 
-    html/AsyncImageResizer.cpp
     html/BaseButtonInputType.cpp
     html/BaseCheckableInputType.cpp
     html/BaseDateAndTimeInputType.cpp
@@ -810,7 +809,6 @@ SET(WebCore_SOURCES
     html/ImageData.cpp
     html/ImageDocument.cpp
     html/ImageInputType.cpp
-    html/ImageResizerThread.cpp
     html/InputType.cpp
     html/IsIndexInputType.cpp
     html/LabelsNodeList.cpp

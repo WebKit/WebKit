@@ -4071,10 +4071,6 @@
 		ABDDFE790A5C6E7000A3E11D /* RenderMenuList.cpp in Sources */ = {isa = PBXBuildFile; fileRef = ABDDFE730A5C6E6F00A3E11D /* RenderMenuList.cpp */; };
 		ABDDFE7A0A5C6E7000A3E11D /* RenderMenuList.h in Headers */ = {isa = PBXBuildFile; fileRef = ABDDFE740A5C6E7000A3E11D /* RenderMenuList.h */; };
 		ADDF1AD71257CD9A0003A759 /* RenderSVGPath.h in Headers */ = {isa = PBXBuildFile; fileRef = ADDF1AD51257CD9A0003A759 /* RenderSVGPath.h */; };
-		B0149E7D11A4B21500196A7B /* AsyncImageResizer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B0149E7911A4B21500196A7B /* AsyncImageResizer.cpp */; };
-		B0149E7E11A4B21500196A7B /* AsyncImageResizer.h in Headers */ = {isa = PBXBuildFile; fileRef = B0149E7A11A4B21500196A7B /* AsyncImageResizer.h */; };
-		B0149E7F11A4B21500196A7B /* ImageResizerThread.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B0149E7B11A4B21500196A7B /* ImageResizerThread.cpp */; };
-		B0149E8011A4B21500196A7B /* ImageResizerThread.h in Headers */ = {isa = PBXBuildFile; fileRef = B0149E7C11A4B21500196A7B /* ImageResizerThread.h */; };
 		B1827493134CA4C100B98C2D /* CallbackFunction.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B1827492134CA4C100B98C2D /* CallbackFunction.cpp */; };
 		B1D5ECB5134B58DA0087C78F /* CallbackFunction.h in Headers */ = {isa = PBXBuildFile; fileRef = B1D5ECB4134B58DA0087C78F /* CallbackFunction.h */; };
 		B1E54599134629C10092A545 /* NavigatorUserMediaError.h in Headers */ = {isa = PBXBuildFile; fileRef = B1E5458D134629C10092A545 /* NavigatorUserMediaError.h */; };
@@ -10310,10 +10306,6 @@
 		ABDDFE740A5C6E7000A3E11D /* RenderMenuList.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = RenderMenuList.h; sourceTree = "<group>"; };
 		ADDF1AD41257CD9A0003A759 /* RenderSVGPath.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RenderSVGPath.cpp; sourceTree = "<group>"; };
 		ADDF1AD51257CD9A0003A759 /* RenderSVGPath.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RenderSVGPath.h; sourceTree = "<group>"; };
-		B0149E7911A4B21500196A7B /* AsyncImageResizer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AsyncImageResizer.cpp; sourceTree = "<group>"; };
-		B0149E7A11A4B21500196A7B /* AsyncImageResizer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AsyncImageResizer.h; sourceTree = "<group>"; };
-		B0149E7B11A4B21500196A7B /* ImageResizerThread.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ImageResizerThread.cpp; sourceTree = "<group>"; };
-		B0149E7C11A4B21500196A7B /* ImageResizerThread.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ImageResizerThread.h; sourceTree = "<group>"; };
 		B1827492134CA4C100B98C2D /* CallbackFunction.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CallbackFunction.cpp; sourceTree = "<group>"; };
 		B1D5ECB4134B58DA0087C78F /* CallbackFunction.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CallbackFunction.h; sourceTree = "<group>"; };
 		B1E5458D134629C10092A545 /* NavigatorUserMediaError.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NavigatorUserMediaError.h; sourceTree = "<group>"; };
@@ -15579,8 +15571,6 @@
 				49484FAE102CF01E00187DD3 /* canvas */,
 				97C1F5511228558800EDE616 /* parser */,
 				4150F9ED12B6E0990008C860 /* shadow */,
-				B0149E7911A4B21500196A7B /* AsyncImageResizer.cpp */,
-				B0149E7A11A4B21500196A7B /* AsyncImageResizer.h */,
 				379E61C5126CA5C300B63E8D /* BaseButtonInputType.cpp */,
 				379E61C6126CA5C300B63E8D /* BaseButtonInputType.h */,
 				379E61C7126CA5C300B63E8D /* BaseCheckableInputType.cpp */,
@@ -15883,8 +15873,6 @@
 				97205AB21239291000B17380 /* ImageDocument.h */,
 				F55B3D8D1251F12D003EF269 /* ImageInputType.cpp */,
 				F55B3D8E1251F12D003EF269 /* ImageInputType.h */,
-				B0149E7B11A4B21500196A7B /* ImageResizerThread.cpp */,
-				B0149E7C11A4B21500196A7B /* ImageResizerThread.h */,
 				37E3524A12450C5200BAF5D9 /* InputType.cpp */,
 				37E3524C12450C6600BAF5D9 /* InputType.h */,
 				F55B3D8F1251F12D003EF269 /* IsIndexInputType.cpp */,
@@ -19689,7 +19677,6 @@
 				89D08DA112228451001241DF /* AsyncFileSystemCallbacks.h in Headers */,
 				976D6C77122B8A3D001FD1F7 /* AsyncFileWriter.h in Headers */,
 				976D6C93122B8A3D001FD1F7 /* AsyncFileWriterClient.h in Headers */,
-				B0149E7E11A4B21500196A7B /* AsyncImageResizer.h in Headers */,
 				37C61F0112095C87007A3C67 /* AtomicStringKeyedMRUCache.h in Headers */,
 				A8C4A80D09D563270003AC8D /* Attr.h in Headers */,
 				A8C4A80B09D563270003AC8D /* Attribute.h in Headers */,
@@ -21110,7 +21097,6 @@
 				F55B3DC21251F12D003EF269 /* ImageInputType.h in Headers */,
 				089582560E857A7E00F82C83 /* ImageLoader.h in Headers */,
 				BC7F44A80B9E324E00A9D081 /* ImageObserver.h in Headers */,
-				B0149E8011A4B21500196A7B /* ImageResizerThread.h in Headers */,
 				B27535710B053814002CE64F /* ImageSource.h in Headers */,
 				4B3480940EEF50D400AC1B41 /* ImageSourceCG.h in Headers */,
 				316FE1180E6E1DA700BF6088 /* ImplicitAnimation.h in Headers */,
@@ -23040,7 +23026,6 @@
 				49EECDE210503C2400099FAB /* ArrayBuffer.cpp in Sources */,
 				49EECDDF10503C2400099FAB /* ArrayBufferView.cpp in Sources */,
 				89D08D9F12228451001241DF /* AsyncFileSystem.cpp in Sources */,
-				B0149E7D11A4B21500196A7B /* AsyncImageResizer.cpp in Sources */,
 				A8C4A80E09D563270003AC8D /* Attr.cpp in Sources */,
 				A8C4A80C09D563270003AC8D /* Attribute.cpp in Sources */,
 				FD315FF612B0267600C1A359 /* AudioBasicProcessorNode.cpp in Sources */,
@@ -23897,7 +23882,6 @@
 				F55B3DC11251F12D003EF269 /* ImageInputType.cpp in Sources */,
 				089582550E857A7E00F82C83 /* ImageLoader.cpp in Sources */,
 				B275357B0B053814002CE64F /* ImageMac.mm in Sources */,
-				B0149E7F11A4B21500196A7B /* ImageResizerThread.cpp in Sources */,
 				B275355F0B053814002CE64F /* ImageSourceCG.cpp in Sources */,
 				4B3480930EEF50D400AC1B41 /* ImageSourceCGMac.mm in Sources */,
 				316FE1170E6E1DA700BF6088 /* ImplicitAnimation.cpp in Sources */,
