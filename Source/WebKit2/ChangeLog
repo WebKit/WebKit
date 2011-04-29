@@ -1,3 +1,17 @@
+2011-04-29  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Brian Weinstein.
+
+        Crash when closing a tab that is unresponsive
+        https://bugs.webkit.org/show_bug.cgi?id=59810
+        <rdar://problem/9329133>
+
+        Back out r84643 - there was no rationale for this change, and it's causing crashes.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::close):
+        (WebKit::WebPageProxy::processDidCrash):
+
 2011-04-29  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Reviewed by Martin Robinson.
