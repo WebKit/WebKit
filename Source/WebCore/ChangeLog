@@ -1,3 +1,23 @@
+2011-04-28  Luke Macpherson   <macpherson@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        Implement CSS border width and related properties in CSSStyleApplyProperty.
+        https://bugs.webkit.org/show_bug.cgi?id=59414
+
+        No new tests as no functionality added.
+
+        * css/CSSStyleApplyProperty.cpp:
+        Separated ApplyPropertyDefault into parent and child so that other classes could inherit
+        the applyInheritValue and applyInitialValue methods only.
+        This was necessary to avoid casting from CSSPrimitiveValue to inappropriate types in ApplyPropertyDefault::applyValue().
+        
+        Added ApplyPropertyWidth class for handling width based CSS properties.
+        * css/CSSStyleSelector.cpp:
+        Removed no-longer-required code for handling width based CSS properties.
+        * css/CSSStyleSelector.h:
+        Added a getter for m_rootElementStyle.
+
 2011-04-28  Kent Tamura  <tkent@chromium.org>
 
         Run sort-Xcode-project-file.

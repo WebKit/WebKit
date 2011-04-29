@@ -82,19 +82,20 @@ public:
 };
 
 template <typename T>
-class ApplyPropertyDefault : public ApplyPropertyBase {
+class ApplyPropertyDefaultBase : public ApplyPropertyBase {
 public:
     typedef T (RenderStyle::*GetterFunction)() const;
     typedef void (RenderStyle::*SetterFunction)(T);
     typedef T (*InitialFunction)();
 
-    ApplyPropertyDefault(GetterFunction getter, SetterFunction setter, InitialFunction initial)
+    ApplyPropertyDefaultBase(GetterFunction getter, SetterFunction setter, InitialFunction initial)
         : m_getter(getter)
         , m_setter(setter)
         , m_initial(initial)
     {
     }
 
+private:
     virtual void applyInheritValue(CSSStyleSelector* selector) const
     {
         (selector->style()->*m_setter)((selector->parentStyle()->*m_getter)());
@@ -105,19 +106,29 @@ public:
         (selector->style()->*m_setter)((*m_initial)());
     }
 
-    virtual void applyValue(CSSStyleSelector* selector, CSSValue* value) const
-    {
-        if (value->isPrimitiveValue())
-            (selector->style()->*m_setter)(*(static_cast<CSSPrimitiveValue*>(value)));
-    }
-
 protected:
     GetterFunction m_getter;
     SetterFunction m_setter;
     InitialFunction m_initial;
 };
 
-// CSSPropertyColor
+
+template <typename T>
+class ApplyPropertyDefault : public ApplyPropertyDefaultBase<T> {
+public:
+    ApplyPropertyDefault(typename ApplyPropertyDefaultBase<T>::GetterFunction getter, typename ApplyPropertyDefaultBase<T>::SetterFunction setter, typename ApplyPropertyDefaultBase<T>::InitialFunction initial)
+        : ApplyPropertyDefaultBase<T>(getter, setter, initial)
+    {
+    }
+
+protected:
+    virtual void applyValue(CSSStyleSelector* selector, CSSValue* value) const
+    {
+        if (value->isPrimitiveValue())
+            (selector->style()->*ApplyPropertyDefaultBase<T>::m_setter)(*static_cast<CSSPrimitiveValue*>(value));
+    }
+};
+
 class ApplyPropertyColor : public ApplyPropertyBase {
 public:
     typedef const Color& (RenderStyle::*GetterFunction)() const;
@@ -133,6 +144,7 @@ public:
     {
     }
 
+private:
     virtual void applyInheritValue(CSSStyleSelector* selector) const
     {
         const Color& color = (selector->parentStyle()->*m_getter)();
@@ -151,6 +163,7 @@ public:
     {
         if (!value->isPrimitiveValue())
             return;
+
         CSSPrimitiveValue* primitiveValue = static_cast<CSSPrimitiveValue*>(value);
         if (m_initial && primitiveValue->getIdent() == CSSValueCurrentcolor)
             applyInheritValue(selector);
@@ -158,7 +171,6 @@ public:
             (selector->style()->*m_setter)(selector->getColorFromPrimitiveValue(primitiveValue));
     }
 
-private:
     GetterFunction m_getter;
     SetterFunction m_setter;
     DefaultFunction m_default;
@@ -168,11 +180,12 @@ private:
 // CSSPropertyDirection
 class ApplyPropertyDirection : public ApplyPropertyDefault<TextDirection> {
 public:
-    ApplyPropertyDirection(TextDirection (RenderStyle::*getter)() const, void (RenderStyle::*setter)(TextDirection), TextDirection (*initial)())
+    ApplyPropertyDirection(GetterFunction getter, SetterFunction setter, InitialFunction initial)
         : ApplyPropertyDefault<TextDirection>(getter, setter, initial)
     {
     }
 
+private:
     virtual void applyValue(CSSStyleSelector* selector, CSSValue* value) const
     {
         ApplyPropertyDefault<TextDirection>::applyValue(selector, value);
@@ -202,6 +215,7 @@ public:
     {
     }
 
+private:
     virtual void applyInheritValue(CSSStyleSelector* selector) const
     {
         FillLayer* currChild = (selector->style()->*m_accessLayers)();
@@ -273,6 +287,45 @@ protected:
     void (FillLayer::*m_clear)();
     T (*m_initial)(EFillLayerType);
     void (CSSStyleSelector::*m_mapFill)(CSSPropertyID, FillLayer*, CSSValue*);
+};
+
+class ApplyPropertyWidth : public ApplyPropertyDefaultBase<unsigned short> {
+public:
+    ApplyPropertyWidth(GetterFunction getter, SetterFunction setter, InitialFunction initial)
+        : ApplyPropertyDefaultBase<unsigned short>(getter, setter, initial)
+    {
+    }
+
+private:
+    virtual void applyValue(CSSStyleSelector* selector, CSSValue* value) const
+    {
+        if (!value->isPrimitiveValue())
+            return;
+
+        CSSPrimitiveValue* primitiveValue = static_cast<CSSPrimitiveValue*>(value);
+        short width;
+        switch (primitiveValue->getIdent()) {
+        case CSSValueThin:
+            width = 1;
+            break;
+        case CSSValueMedium:
+            width = 3;
+            break;
+        case CSSValueThick:
+            width = 5;
+            break;
+        case CSSValueInvalid:
+            width = primitiveValue->computeLengthShort(selector->style(), selector->rootElementStyle(), selector->style()->effectiveZoom());
+            // CSS2 box model does not allow negative lengths for borders.
+            if (width < 0)
+                return;
+            break;
+        default:
+            return;
+        }
+
+        (selector->style()->*m_setter)(width);
+    }
 };
 
 const CSSStyleApplyProperty& CSSStyleApplyProperty::sharedCSSStyleApplyProperty()
@@ -357,6 +410,13 @@ CSSStyleApplyProperty::CSSStyleApplyProperty()
     setPropertyValue(CSSPropertyBorderRightStyle, new ApplyPropertyDefault<EBorderStyle>(&RenderStyle::borderRightStyle, &RenderStyle::setBorderRightStyle, &RenderStyle::initialBorderStyle));
     setPropertyValue(CSSPropertyBorderBottomStyle, new ApplyPropertyDefault<EBorderStyle>(&RenderStyle::borderBottomStyle, &RenderStyle::setBorderBottomStyle, &RenderStyle::initialBorderStyle));
     setPropertyValue(CSSPropertyBorderLeftStyle, new ApplyPropertyDefault<EBorderStyle>(&RenderStyle::borderLeftStyle, &RenderStyle::setBorderLeftStyle, &RenderStyle::initialBorderStyle));
+
+    setPropertyValue(CSSPropertyBorderTopWidth, new ApplyPropertyWidth(&RenderStyle::borderTopWidth, &RenderStyle::setBorderTopWidth, &RenderStyle::initialBorderWidth));
+    setPropertyValue(CSSPropertyBorderRightWidth, new ApplyPropertyWidth(&RenderStyle::borderRightWidth, &RenderStyle::setBorderRightWidth, &RenderStyle::initialBorderWidth));
+    setPropertyValue(CSSPropertyBorderBottomWidth, new ApplyPropertyWidth(&RenderStyle::borderBottomWidth, &RenderStyle::setBorderBottomWidth, &RenderStyle::initialBorderWidth));
+    setPropertyValue(CSSPropertyBorderLeftWidth, new ApplyPropertyWidth(&RenderStyle::borderLeftWidth, &RenderStyle::setBorderLeftWidth, &RenderStyle::initialBorderWidth));
+    setPropertyValue(CSSPropertyOutlineWidth, new ApplyPropertyWidth(&RenderStyle::outlineWidth, &RenderStyle::setOutlineWidth, &RenderStyle::initialBorderWidth));
+    setPropertyValue(CSSPropertyWebkitColumnRuleWidth, new ApplyPropertyWidth(&RenderStyle::columnRuleWidth, &RenderStyle::setColumnRuleWidth, &RenderStyle::initialBorderWidth));
 
     setPropertyValue(CSSPropertyOutlineColor, new ApplyPropertyColor(&RenderStyle::outlineColor, &RenderStyle::setOutlineColor, &RenderStyle::color));
 

@@ -109,6 +109,7 @@ public:
 
         RenderStyle* style() const { return m_style.get(); }
         RenderStyle* parentStyle() const { return m_parentStyle; }
+        RenderStyle* rootElementStyle() const { return m_rootElementStyle; }
         Element* element() const { return m_element; }
 
     private:

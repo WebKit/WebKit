@@ -3839,79 +3839,6 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
         return;
     }
 
-// length
-    case CSSPropertyBorderTopWidth:
-    case CSSPropertyBorderRightWidth:
-    case CSSPropertyBorderBottomWidth:
-    case CSSPropertyBorderLeftWidth:
-    case CSSPropertyOutlineWidth:
-    case CSSPropertyWebkitColumnRuleWidth:
-    {
-        if (isInherit) {
-            HANDLE_INHERIT_COND(CSSPropertyBorderTopWidth, borderTopWidth, BorderTopWidth)
-            HANDLE_INHERIT_COND(CSSPropertyBorderRightWidth, borderRightWidth, BorderRightWidth)
-            HANDLE_INHERIT_COND(CSSPropertyBorderBottomWidth, borderBottomWidth, BorderBottomWidth)
-            HANDLE_INHERIT_COND(CSSPropertyBorderLeftWidth, borderLeftWidth, BorderLeftWidth)
-            HANDLE_INHERIT_COND(CSSPropertyOutlineWidth, outlineWidth, OutlineWidth)
-            HANDLE_INHERIT_COND(CSSPropertyWebkitColumnRuleWidth, columnRuleWidth, ColumnRuleWidth)
-            return;
-        }
-        else if (isInitial) {
-            HANDLE_INITIAL_COND_WITH_VALUE(CSSPropertyBorderTopWidth, BorderTopWidth, BorderWidth)
-            HANDLE_INITIAL_COND_WITH_VALUE(CSSPropertyBorderRightWidth, BorderRightWidth, BorderWidth)
-            HANDLE_INITIAL_COND_WITH_VALUE(CSSPropertyBorderBottomWidth, BorderBottomWidth, BorderWidth)
-            HANDLE_INITIAL_COND_WITH_VALUE(CSSPropertyBorderLeftWidth, BorderLeftWidth, BorderWidth)
-            HANDLE_INITIAL_COND_WITH_VALUE(CSSPropertyOutlineWidth, OutlineWidth, BorderWidth)
-            HANDLE_INITIAL_COND_WITH_VALUE(CSSPropertyWebkitColumnRuleWidth, ColumnRuleWidth, BorderWidth)
-            return;
-        }
-
-        if (!primitiveValue)
-            return;
-        short width = 3;
-        switch (primitiveValue->getIdent()) {
-        case CSSValueThin:
-            width = 1;
-            break;
-        case CSSValueMedium:
-            width = 3;
-            break;
-        case CSSValueThick:
-            width = 5;
-            break;
-        case CSSValueInvalid:
-            width = primitiveValue->computeLengthShort(style(), m_rootElementStyle, zoomFactor);
-            break;
-        default:
-            return;
-        }
-
-        if (width < 0) return;
-        switch (id) {
-        case CSSPropertyBorderTopWidth:
-            m_style->setBorderTopWidth(width);
-            break;
-        case CSSPropertyBorderRightWidth:
-            m_style->setBorderRightWidth(width);
-            break;
-        case CSSPropertyBorderBottomWidth:
-            m_style->setBorderBottomWidth(width);
-            break;
-        case CSSPropertyBorderLeftWidth:
-            m_style->setBorderLeftWidth(width);
-            break;
-        case CSSPropertyOutlineWidth:
-            m_style->setOutlineWidth(width);
-            break;
-        case CSSPropertyWebkitColumnRuleWidth:
-            m_style->setColumnRuleWidth(width);
-            break;
-        default:
-            return;
-        }
-        return;
-    }
-
     case CSSPropertyWebkitFontSmoothing: {
         FontDescription fontDescription = m_style->fontDescription();
         if (isInherit) 
@@ -5996,6 +5923,12 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
     case CSSPropertyBorderRightStyle:
     case CSSPropertyBorderBottomStyle:
     case CSSPropertyBorderLeftStyle:
+    case CSSPropertyBorderTopWidth:
+    case CSSPropertyBorderRightWidth:
+    case CSSPropertyBorderBottomWidth:
+    case CSSPropertyBorderLeftWidth:
+    case CSSPropertyOutlineWidth:
+    case CSSPropertyWebkitColumnRuleWidth:
     case CSSPropertyOutlineColor:
     case CSSPropertyWebkitColumnRuleColor:
     case CSSPropertyWebkitTextEmphasisColor:
