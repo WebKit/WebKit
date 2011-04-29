@@ -875,6 +875,14 @@ AC_ARG_ENABLE([introspection],
   [],[enable_introspection=no])
 AC_MSG_RESULT([$enable_introspection])
 
+# check whether to enable animation API
+AC_MSG_CHECKING([whether to enable Animation API support])
+AC_ARG_ENABLE(animation_api,
+              AC_HELP_STRING([--enable-animation-api],
+                             [enable support for Animation API (experimental) [default=no]]),
+              [], [enable_animation_api="no"])
+AC_MSG_RESULT([$enable_animation_api])
+
 G_IR_SCANNER=
 G_IR_COMPILER=
 G_IR_GENERATE=
@@ -1121,6 +1129,7 @@ AM_CONDITIONAL([ENABLE_WEB_TIMING],[test "$enable_web_timing" = "yes"])
 AM_CONDITIONAL([ENABLE_OPCODE_STATS],[test "$enable_opcode_stats" = "yes"])
 AM_CONDITIONAL([ENABLE_WEBKIT2],[test "$enable_webkit2" = "yes"])
 AM_CONDITIONAL([ENABLE_SPELLCHECK],[test "$enable_spellcheck" = "yes"])
+AM_CONDITIONAL([ENABLE_ANIMATION_API],[test "$enable_animation_api" = "yes"])
 
 # Gtk conditionals
 AM_CONDITIONAL([ENABLE_INTROSPECTION],[test "$enable_introspection" = "yes"])
@@ -1216,6 +1225,7 @@ Features:
  XPATH support                                            : $enable_xpath
  XSLT support                                             : $enable_xslt
  Spellcheck support                                       : $enable_spellcheck
+ Animation API                                            : $enable_animation_api
 
 GTK+ configuration:
  GTK+ version                                             : $with_gtk

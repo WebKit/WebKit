@@ -1271,3 +1271,6 @@ media/invalid-media-url-crash.html
 # Times out in Debug builds http://webkit.org/b/51596
 http/tests/xmlhttprequest/basic-auth-nopassword.html
 http/tests/xmlhttprequest/basic-auth-nouser.html
+
+# Animation API is disabled by default
+animations/animation-api-1.html

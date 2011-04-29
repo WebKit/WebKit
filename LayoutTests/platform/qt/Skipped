@@ -2701,3 +2701,6 @@ svg/W3C-SVG-1.1/struct-image-06-t.svg
 http/tests/loading/preload-slow-loading.php
 http/tests/security/contentSecurityPolicy/media-src-allowed.html
 http/tests/security/contentSecurityPolicy/media-src-blocked.html
+
+# Animation API is disabled by default
+animations/animation-api-1.html

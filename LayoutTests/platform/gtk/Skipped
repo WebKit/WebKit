@@ -321,6 +321,9 @@ media/media-fullscreen-not-in-document.html
 # https://bugs.webkit.org/show_bug.cgi?id=59367
 http/tests/security/mixedContent/insecure-css-in-iframe.html
 
+# Animation API is disabled
+animations/animation-api-1.html
+
 ###############################################################################
 # TESTS FAILING
 ###############################################################################

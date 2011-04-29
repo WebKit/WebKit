@@ -95,7 +95,9 @@ module core {
         void scrollByLines(in long lines);
         void scrollByPages(in long pages);
 
+#if defined(ENABLE_ANIMATION_API) && ENABLE_ANIMATION_API
         WebKitAnimationList webkitGetAnimations();
+#endif
 
         // HTML 5
         NodeList getElementsByClassName(in DOMString name);

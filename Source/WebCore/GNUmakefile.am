@@ -528,6 +528,14 @@ webcore_cppflags += -DENABLE_BLOB=1
 endif  # END ENABLE_BLOB
 
 # ---
+# Animation API support
+# ---
+if ENABLE_ANIMATION_API
+FEATURE_DEFINES += ENABLE_ANIMATION_API=1
+webcore_cppflags += -DENABLE_ANIMATION_API=1
+endif  # END ENABLE_ANIMATION_API
+
+# ---
 # 3D canvas (WebGL) support
 # ---
 if ENABLE_WEBGL

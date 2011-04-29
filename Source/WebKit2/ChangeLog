@@ -1,3 +1,14 @@
+2011-04-29  Dean Jackson  <dino@apple.com>
+
+        Reviewed by Simon Fraser.
+
+        Add ENABLE macro for WebKitAnimation
+        https://bugs.webkit.org/show_bug.cgi?id=59729
+
+        Add new feature to toggle WebKit Animation API.
+
+        * Configurations/FeatureDefines.xcconfig:
+
 2011-04-29  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Brian Weinstein.

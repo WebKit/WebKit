@@ -2,6 +2,22 @@
 
         Reviewed by Simon Fraser.
 
+        Add ENABLE macro for WebKitAnimation
+        https://bugs.webkit.org/show_bug.cgi?id=59729
+
+        Now that the WebKit Animation API is disabled by
+        default, skip the existing test.
+
+        * platform/chromium/test_expectations.txt:
+        * platform/gtk/Skipped:
+        * platform/mac/Skipped:
+        * platform/qt/Skipped:
+        * platform/win/Skipped:
+
+2011-04-29  Dean Jackson  <dino@apple.com>
+
+        Reviewed by Simon Fraser.
+
         https://bugs.webkit.org/show_bug.cgi?id=59149
         (Regression) Existing animations are not replaced when filling.
 

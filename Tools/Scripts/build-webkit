@@ -66,6 +66,7 @@ my (
     $threeDCanvasSupport,
     $threeDRenderingSupport,
     $accelerated2dCanvasSupport,
+    $animationAPISupport,
     $blobSupport,
     $channelMessagingSupport,
     $clientBasedGeolocationSupport,
@@ -132,6 +133,9 @@ my @features = (
 
     { option => "accelerated-2d-canvas", desc => "Toggle accelerated 2D canvas support",
       define => "ENABLE_ACCELERATED_2D_CANVAS", default => 0, value => \$accelerated2dCanvasSupport },
+
+    { option => "animation-api", desc => "Toggle animation API support",
+      define => "ENABLE_ANIMATION_API", default => 0, value => \$animationAPISupport },
 
     { option => "blob", desc => "Toggle Blob support",
       define => "ENABLE_BLOB", default => (isAppleMacWebKit() || isGtk()), value => \$blobSupport },
