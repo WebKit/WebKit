@@ -587,7 +587,7 @@
 				BC646D6E136A3A8700B35DED /* Production */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
+			defaultConfigurationName = Production;
 		};
 		1DEB927808733DD40010E9CD /* Build configuration list for PBXProject "WebKitTestRunner" */ = {
 			isa = XCConfigurationList;
@@ -597,7 +597,7 @@
 				BC646D6D136A3A8700B35DED /* Production */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
+			defaultConfigurationName = Production;
 		};
 		BC25186611D15D55002EBC01 /* Build configuration list for PBXNativeTarget "WebKitTestRunnerInjectedBundle" */ = {
 			isa = XCConfigurationList;
@@ -607,7 +607,7 @@
 				BC646D6F136A3A8700B35DED /* Production */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
+			defaultConfigurationName = Production;
 		};
 		BC952D7D11F3BF6A003398B4 /* Build configuration list for PBXAggregateTarget "Derived Sources" */ = {
 			isa = XCConfigurationList;
@@ -617,7 +617,7 @@
 				BC646D70136A3A8700B35DED /* Production */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
+			defaultConfigurationName = Production;
 		};
 /* End XCConfigurationList section */
 	};
