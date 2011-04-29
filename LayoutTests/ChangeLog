@@ -1,3 +1,11 @@
+2011-04-28  Adam Roben  <aroben@apple.com>
+
+        Skip all fast/dom/shadow tests on Mac
+
+        They seem to be causing later tests to crash. See <http://webkit.org/b/59571>.
+
+        * platform/mac/Skipped:
+
 2011-04-28  Yael Aharon  <yael.aharon@nokia.com>
 
         Reviewed by Beth Dakin.

@@ -341,7 +341,4 @@ fast/dom/title-directionality.html
 plugins/mouse-click-iframe-to-plugin.html
 
 # Unskip when https://bugs.webkit.org/show_bug.cgi?id=59571 is fixed
-fast/dom/shadow/no-renderers-for-light-children.html
-
-# Crashing http://webkit.org/b/59708
-fast/dom/shadow/nodetype.html
+fast/dom/shadow
