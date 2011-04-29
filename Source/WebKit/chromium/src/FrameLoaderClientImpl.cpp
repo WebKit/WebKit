@@ -183,7 +183,7 @@ bool FrameLoaderClientImpl::allowJavaScript(bool enabledPerSettings)
 {
     WebViewImpl* webview = m_webFrame->viewImpl();
     if (webview && webview->permissionClient())
-        webview->permissionClient()->allowScript(m_webFrame, enabledPerSettings);
+        return webview->permissionClient()->allowScript(m_webFrame, enabledPerSettings);
 
     // FIXME(jam): remove this.
     if (m_webFrame->client())
@@ -196,7 +196,7 @@ bool FrameLoaderClientImpl::allowPlugins(bool enabledPerSettings)
 {
     WebViewImpl* webview = m_webFrame->viewImpl();
     if (webview && webview->permissionClient())
-        webview->permissionClient()->allowPlugins(m_webFrame, enabledPerSettings);
+        return webview->permissionClient()->allowPlugins(m_webFrame, enabledPerSettings);
 
     // FIXME(jam): remove this.
     if (m_webFrame->client())
@@ -209,7 +209,7 @@ bool FrameLoaderClientImpl::allowImages(bool enabledPerSettings)
 {
     WebViewImpl* webview = m_webFrame->viewImpl();
     if (webview && webview->permissionClient())
-        webview->permissionClient()->allowImages(m_webFrame, enabledPerSettings);
+        return webview->permissionClient()->allowImages(m_webFrame, enabledPerSettings);
 
     // FIXME(jam): remove this.
     if (m_webFrame->client())
