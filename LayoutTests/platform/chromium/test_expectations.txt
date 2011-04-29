@@ -2957,7 +2957,6 @@ BUGWK54322 MAC SNOWLEOPARD : svg/W3C-SVG-1.1/coords-viewattr-01-b.svg = IMAGE+TE
 BUGWK54322 MAC SNOWLEOPARD : svg/zoom/page/zoom-coords-viewattr-01-b.svg = IMAGE+TEXT
 BUGWK54322 MAC SNOWLEOPARD : svg/zoom/text/zoom-coords-viewattr-01-b.svg = IMAGE+TEXT
 BUGWK54322 MAC SNOWLEOPARD : tables/mozilla_expected_failures/bugs/bug85016.html = IMAGE
-BUGWK54322 MAC SNOWLEOPARD : tables/mozilla_expected_failures/other/test4.html = IMAGE
 BUGWK54322 MAC SNOWLEOPARD : tables/mozilla/core/bloomberg.html = IMAGE
 BUGWK54322 MAC SNOWLEOPARD : tables/mozilla/core/misc.html = IMAGE
 BUGWK54322 MAC SNOWLEOPARD : tables/mozilla/core/row_span.html = IMAGE

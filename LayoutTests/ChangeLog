@@ -1,3 +1,27 @@
+2011-04-29  Abhishek Arya  <inferno@chromium.org>
+
+        Unreviewed.
+        
+        Chromium rebaselines for r85355.
+        https://bugs.webkit.org/show_bug.cgi?id=59833
+
+        * platform/chromium-linux/fast/table/dynamic-caption-add-before-child-expected.png: Added.
+        * platform/chromium-linux/fast/table/dynamic-caption-add-remove-before-child-expected.png: Added.
+        * platform/chromium-linux/fast/table/multiple-captions-display-expected.png: Added.
+        * platform/chromium-mac-leopard/fast/table/dynamic-caption-add-before-child-expected.png: Added.
+        * platform/chromium-mac-leopard/fast/table/dynamic-caption-add-remove-before-child-expected.png: Added.
+        * platform/chromium-mac-leopard/fast/table/multiple-captions-display-expected.png: Added.
+        * platform/chromium-mac/tables/mozilla_expected_failures/other/test4-expected.png:
+        * platform/chromium-win/fast/table/dynamic-caption-add-before-child-expected.png: Added.
+        * platform/chromium-win/fast/table/dynamic-caption-add-before-child-expected.txt: Added.
+        * platform/chromium-win/fast/table/dynamic-caption-add-remove-before-child-expected.png: Added.
+        * platform/chromium-win/fast/table/dynamic-caption-add-remove-before-child-expected.txt: Added.
+        * platform/chromium-win/fast/table/multiple-captions-display-expected.png: Added.
+        * platform/chromium-win/fast/table/multiple-captions-display-expected.txt: Added.
+        * platform/chromium-win/fast/table/prepend-in-anonymous-table-expected.txt:
+        * platform/chromium-win/tables/mozilla_expected_failures/other/test4-expected.txt:
+        * platform/chromium/test_expectations.txt:
+
 2011-04-29  Gavin Barraclough  <barraclough@apple.com>
 
         Reviewed by Oliver Hunt & Geoff Garen.

@@ -416,8 +416,6 @@ layer at (0,0) size 785x2646
             RenderTableCell {TD} at (2,2) size 90x15 [r=0 c=0 rs=1 cs=2]
               RenderText {#text} at (1,1) size 46x13
                 text run at (1,1) width 46: "FOOTER"
-        RenderBlock {CAPTION} at (0,0) size 0x0
-          RenderText {#text} at (0,0) size 0x0
       RenderBlock (anonymous) at (0,1286) size 769x40
         RenderBR {BR} at (0,0) size 0x19
         RenderText {#text} at (0,20) size 581x19
