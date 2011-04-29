@@ -4,6 +4,11 @@ media/media-can-play-ogg.html
 # requires video.buffered to be able to return multiple timeranges
 http/tests/media/video-buffered.html
 
+# flakey tests
+http/tests/inspector/resource-tree/resource-tree-frame-add.html
+http/tests/inspector/resource-tree/resource-tree-frame-navigate.html
+http/tests/inspector/resource-tree/resource-tree-reload.html
+
 # failing tests
 animations/missing-values-first-keyframe.html
 animations/missing-values-last-keyframe.html

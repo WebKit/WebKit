@@ -1,3 +1,9 @@
+2011-04-29  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [Qt] Add flakey tests to the Skipped list.
+
+        * platform/qt-mac/Skipped:
+
 2011-04-29  Adam Roben  <aroben@apple.com>
 
         Move some tests that time out in Debug from win-xp/Skipped to win/Skipped
