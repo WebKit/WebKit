@@ -69,15 +69,15 @@
     (literal (string-append (param "HOME_DIR") "/Library/Preferences/com.apple.LaunchServices.QuarantineEventsV2"))
 
     (subpath (string-append (param "HOME_DIR") "/Library/Dictionaries"))
-
-    ;; Extensions from UIProcess
-    (extension)
 )
 
-(allow file-write*
-    ;; Extensions from UIProcess
-    (extension)
-)
+;; This should be updated when <rdar://problem/9355830> is fixed.
+;; Read-only extensions from UIProcess
+(if (defined? 'extension-class)
+    (allow file-read* (extension "com.apple.app-sandbox.read")))
+
+;; Read-write extensions from UIProcess
+(allow file-read* file-write* (extension))
 
 ;; Writable preferences and temporary files
 (allow file*

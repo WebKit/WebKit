@@ -1,3 +1,14 @@
+2011-04-28  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Gavin Barraclough.
+
+        Original patch by Austin Jennings.
+
+        <rdar://problem/9350288>
+        Update sandbox profile for extension changes
+
+        * WebProcess/com.apple.WebProcess.sb:
+
 2011-04-28  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Darin Adler.
