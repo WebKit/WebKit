@@ -1,3 +1,9 @@
+2011-04-29  Jon Lee  <jonlee@apple.com>
+
+        Unreviewed, Adding Jon Lee as a committer
+
+        * Scripts/webkitpy/common/config/committers.py:
+
 2011-04-28  Ojan Vafai  <ojan@chromium.org>
 
         Reviewed by Tony Chang.
