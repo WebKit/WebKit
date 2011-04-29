@@ -1,5 +1,32 @@
 2011-04-29  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        Reviewed by Martin Robinson.
+
+        [GTK] Rename page as pageProxy in WebKitWebViewBase
+        https://bugs.webkit.org/show_bug.cgi?id=59790
+
+        To avoid consufion between page client and page proxy. Also rename
+        some methods to webkitWebViewBase* for consistency.
+
+        * UIProcess/API/gtk/WebKitWebViewBase.cpp:
+        (webkitWebViewBaseFinalize):
+        (webkitWebViewBaseExpose):
+        (webkitWebViewBaseDraw):
+        (webkitWebViewBaseSizeAllocate):
+        (webkitWebViewBaseFocusInEvent):
+        (webkitWebViewBaseFocusOutEvent):
+        (webkitWebViewBaseKeyPressEvent):
+        (webkitWebViewBaseKeyReleaseEvent):
+        (webkitWebViewBaseButtonPressEvent):
+        (webkitWebViewBaseButtonReleaseEvent):
+        (webkitWebViewBaseScrollEvent):
+        (webkitWebViewBaseMotionNotifyEvent):
+        (webkit_web_view_base_class_init):
+        (webkitWebViewBaseCreate):
+        (webkitWebViewBaseGetPage):
+
+2011-04-29  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         Unreviewed. Fix a crash after r85214.
 
         * UIProcess/API/gtk/WebKitWebViewBase.cpp:
