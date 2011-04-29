@@ -529,7 +529,7 @@ TestSuite.prototype.testNetworkSize = function()
 
     function finishResource(resource, finishTime)
     {
-        test.assertEquals(221, resource.transferSize, "Incorrect total encoded data length");
+        test.assertEquals(219, resource.transferSize, "Incorrect total encoded data length");
         test.assertEquals(25, resource.resourceSize, "Incorrect total data length");
         test.releaseControl();
     }
@@ -552,14 +552,14 @@ TestSuite.prototype.testNetworkSyncSize = function()
 
     function finishResource(resource, finishTime)
     {
-        test.assertEquals(221, resource.transferSize, "Incorrect total encoded data length");
+        test.assertEquals(219, resource.transferSize, "Incorrect total encoded data length");
         test.assertEquals(25, resource.resourceSize, "Incorrect total data length");
         test.releaseControl();
     }
     
     this.addSniffer(WebInspector.NetworkDispatcher.prototype, "_finishResource", finishResource);
 
-    // Send synchronous XHR  to sniff network events
+    // Send synchronous XHR to sniff network events
     test.evaluateInConsole_("var xhr = new XMLHttpRequest(); xhr.open(\"GET\", \"chunked\", false); xhr.send(null);", function() {});
     
     this.takeControl();
@@ -575,10 +575,9 @@ TestSuite.prototype.testNetworkRawHeadersText = function()
     
     function finishResource(resource, finishTime)
     {
-        var rawResponseHeadersText = resource.rawResponseHeadersText
-        if (!rawResponseHeadersText)
-            test.fail("Failure: resource does not have raw response header text");
-        test.assertEquals(166, resource.rawResponseHeadersText.length, "Incorrect raw response header text length");
+        if (!resource.responseHeadersText)
+            test.fail("Failure: resource does not have response headers text");
+        test.assertEquals(164, resource.responseHeadersText.length, "Incorrect response headers text length");
         test.releaseControl();
     }
     
@@ -600,12 +599,18 @@ TestSuite.prototype.testNetworkTiming = function()
 
     function finishResource(resource, finishTime)
     {
-        test.assertTrue(resource.timing.receiveHeadersEnd - resource.timing.connectStart >= 100, 
-                        "Time between receiveHeadersEnd and connectStart should be >=100ms, but was " +
+        // Setting relaxed expectations to reduce flakiness. 
+        // Server sends headers after 100ms, then sends data during another 100ms.
+        // We expect these times to be measured at least as 70ms.  
+        test.assertTrue(resource.timing.receiveHeadersEnd - resource.timing.connectStart >= 70, 
+                        "Time between receiveHeadersEnd and connectStart should be >=70ms, but was " +
                         "receiveHeadersEnd=" + resource.timing.receiveHeadersEnd + ", connectStart=" + resource.timing.connectStart + ".");
-        test.assertTrue(resource.endTime - resource.startTime >= 0.2, 
-                        "Time between endTime and startTime should be >=200ms, but was " +
-                        "endtime=" + resource.endTime + ", startTime=" + resource.startTime + ".");
+        test.assertTrue(resource.responseReceivedTime - resource.startTime >= 0.07, 
+                "Time between responseReceivedTime and startTime should be >=0.07s, but was " +
+                "responseReceivedTime=" + resource.responseReceivedTime + ", startTime=" + resource.startTime + ".");
+        test.assertTrue(resource.endTime - resource.startTime >= 0.14, 
+                "Time between endTime and startTime should be >=0.14s, but was " +
+                "endtime=" + resource.endTime + ", startTime=" + resource.startTime + ".");
         
         test.releaseControl();
     }

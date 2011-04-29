@@ -1,3 +1,16 @@
+2011-04-29  Vsevolod Vlasov  <vsevik@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Chromium DevTools: Fix network panel timing/size/headers tests.
+        https://bugs.webkit.org/show_bug.cgi?id=59696
+
+        * src/js/Tests.js:
+        (.TestSuite.prototype.testNetworkSize.finishResource):
+        (.TestSuite.prototype.testNetworkSyncSize.finishResource):
+        (.TestSuite.prototype.testNetworkRawHeadersText.finishResource):
+        (.TestSuite.prototype.testNetworkTiming.finishResource):
+
 2011-04-29  Pavel Feldman  <pfeldman@google.com>
 
         Reviewed by Yury Semikhatsky.
