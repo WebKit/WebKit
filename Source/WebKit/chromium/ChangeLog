@@ -1,3 +1,24 @@
+2011-04-28  Nat Duca  <nduca@chromium.org>
+
+        Reviewed by Kenneth Russell.
+
+        [chromium] Add swapBuffersCompleteCallback to Extensions3DChromium
+        https://bugs.webkit.org/show_bug.cgi?id=59626
+
+        * public/WebGraphicsContext3D.h:
+        (WebKit::WebGraphicsContext3D::WebGraphicsSwapBuffersCompleteCallbackCHROMIUM::~WebGraphicsSwapBuffersCompleteCallbackCHROMIUM):
+        (WebKit::WebGraphicsContext3D::setSwapBuffersCompleteCallbackCHROMIUM):
+        * src/Extensions3DChromium.cpp:
+        (WebCore::Extensions3DChromium::setSwapBuffersCompleteCallbackCHROMIUM):
+        * src/GraphicsContext3DChromium.cpp:
+        (WebCore::SwapBuffersCompleteCallbackAdapter::~SwapBuffersCompleteCallbackAdapter):
+        (WebCore::SwapBuffersCompleteCallbackAdapter::SwapBuffersCompleteCallbackAdapter):
+        (WebCore::SwapBuffersCompleteCallbackAdapter::onSwapBuffersComplete):
+        (WebCore::SwapBuffersCompleteCallbackAdapter::create):
+        (WebCore::GraphicsContext3DInternal::setSwapBuffersCompleteCallbackCHROMIUM):
+        * src/GraphicsContext3DInternal.h:
+        * src/WebViewImpl.cpp:
+
 2011-04-28  John Abd-El-Malek  <jam@chromium.org>
 
         Reviewed by Tony Chang.

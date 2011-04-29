@@ -26,6 +26,7 @@
 #ifndef GraphicsContext3DInternal_h
 #define GraphicsContext3DInternal_h
 
+#include "Extensions3DChromium.h"
 #include "GraphicsContext3D.h"
 #include <wtf/HashSet.h>
 #include <wtf/OwnPtr.h>
@@ -45,6 +46,7 @@ class Extensions3DChromium;
 class WebGLLayerChromium;
 #endif
 class GraphicsContextLostCallbackAdapter;
+class SwapBuffersCompleteCallbackAdapter;
 
 class GraphicsContext3DInternal {
 public:
@@ -277,10 +279,14 @@ public:
     void waitLatchCHROMIUM(GC3Duint latchId);
     void setLatchCHROMIUM(GC3Duint latchId);
 
+    // GL_CHROMIUM_swapbuffers_complete_callback
+    void setSwapBuffersCompleteCallbackCHROMIUM(PassOwnPtr<Extensions3DChromium::SwapBuffersCompleteCallbackCHROMIUM>);
+
 private:
     OwnPtr<WebKit::WebGraphicsContext3D> m_impl;
     OwnPtr<Extensions3DChromium> m_extensions;
     OwnPtr<GraphicsContextLostCallbackAdapter> m_contextLostCallbackAdapter;
+    OwnPtr<SwapBuffersCompleteCallbackAdapter> m_swapBuffersCompleteCallbackAdapter;
     WebKit::WebViewImpl* m_webViewImpl;
     bool m_initializedAvailableExtensions;
     HashSet<String> m_enabledExtensions;

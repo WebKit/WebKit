@@ -99,7 +99,13 @@ public:
     class WebGraphicsContextLostCallback {
     public:
         virtual void onContextLost() = 0;
-        virtual ~WebGraphicsContextLostCallback() {}
+        virtual ~WebGraphicsContextLostCallback() { }
+    };
+
+    class WebGraphicsSwapBuffersCompleteCallbackCHROMIUM {
+    public:
+        virtual void onSwapBuffersComplete() = 0;
+        virtual ~WebGraphicsSwapBuffersCompleteCallbackCHROMIUM() { }
     };
 
     // This destructor needs to be public so that using classes can destroy instances if initialization fails.
@@ -173,6 +179,9 @@ public:
     virtual void getChildToParentLatchCHROMIUM(WGC3Duint* latchId) = 0;
     virtual void waitLatchCHROMIUM(WGC3Duint latchId) = 0;
     virtual void setLatchCHROMIUM(WGC3Duint latchId) = 0;
+
+    // GL_CHROMIUM_swapbuffers_complete_callback
+    virtual void setSwapBuffersCompleteCallbackCHROMIUM(WebGraphicsSwapBuffersCompleteCallbackCHROMIUM* callback) { }
 
     // The entry points below map directly to the OpenGL ES 2.0 API.
     // See: http://www.khronos.org/registry/gles/

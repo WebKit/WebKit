@@ -935,6 +935,8 @@ GraphicsContext3D::~GraphicsContext3D()
     WebGLLayerChromium* canvasLayer = m_internal->platformLayer();
     if (canvasLayer)
         canvasLayer->setContext(0);
+    m_internal->setContextLostCallback(0);
+    m_internal->setSwapBuffersCompleteCallbackCHROMIUM(0);
 }
 
 PassRefPtr<GraphicsContext3D> GraphicsContext3D::create(GraphicsContext3D::Attributes attrs, HostWindow* hostWindow, GraphicsContext3D::RenderStyle renderStyle)
@@ -1156,9 +1158,9 @@ class GraphicsContextLostCallbackAdapter : public WebKit::WebGraphicsContext3D::
 public:
     virtual void onContextLost();
     static PassOwnPtr<GraphicsContextLostCallbackAdapter> create(PassOwnPtr<GraphicsContext3D::ContextLostCallback>);
-    virtual ~GraphicsContextLostCallbackAdapter() {}
+    virtual ~GraphicsContextLostCallbackAdapter() { }
 private:
-    GraphicsContextLostCallbackAdapter(PassOwnPtr<GraphicsContext3D::ContextLostCallback> cb) : m_contextLostCallback(cb) {}
+    GraphicsContextLostCallbackAdapter(PassOwnPtr<GraphicsContext3D::ContextLostCallback> cb) : m_contextLostCallback(cb) { }
     OwnPtr<GraphicsContext3D::ContextLostCallback> m_contextLostCallback;
 };
 
@@ -1182,6 +1184,33 @@ void GraphicsContext3DInternal::setContextLostCallback(PassOwnPtr<GraphicsContex
 bool GraphicsContext3D::isGLES2Compliant() const
 {
     return m_internal->isGLES2Compliant();
+}
+
+class SwapBuffersCompleteCallbackAdapter : public WebKit::WebGraphicsContext3D::WebGraphicsSwapBuffersCompleteCallbackCHROMIUM {
+public:
+    virtual void onSwapBuffersComplete();
+    static PassOwnPtr<SwapBuffersCompleteCallbackAdapter> create(PassOwnPtr<Extensions3DChromium::SwapBuffersCompleteCallbackCHROMIUM>);
+    virtual ~SwapBuffersCompleteCallbackAdapter() { }
+private:
+    SwapBuffersCompleteCallbackAdapter(PassOwnPtr<Extensions3DChromium::SwapBuffersCompleteCallbackCHROMIUM> cb) : m_swapBuffersCompleteCallback(cb) { }
+    OwnPtr<Extensions3DChromium::SwapBuffersCompleteCallbackCHROMIUM> m_swapBuffersCompleteCallback;
+};
+
+void SwapBuffersCompleteCallbackAdapter::onSwapBuffersComplete()
+{
+    if (m_swapBuffersCompleteCallback)
+        m_swapBuffersCompleteCallback->onSwapBuffersComplete();
+}
+
+PassOwnPtr<SwapBuffersCompleteCallbackAdapter> SwapBuffersCompleteCallbackAdapter::create(PassOwnPtr<Extensions3DChromium::SwapBuffersCompleteCallbackCHROMIUM> cb)
+{
+    return adoptPtr(new SwapBuffersCompleteCallbackAdapter(cb));
+}
+
+void GraphicsContext3DInternal::setSwapBuffersCompleteCallbackCHROMIUM(PassOwnPtr<Extensions3DChromium::SwapBuffersCompleteCallbackCHROMIUM> cb)
+{
+    m_swapBuffersCompleteCallbackAdapter = SwapBuffersCompleteCallbackAdapter::create(cb);
+    m_impl->setSwapBuffersCompleteCallbackCHROMIUM(m_swapBuffersCompleteCallbackAdapter.get());
 }
 
 } // namespace WebCore

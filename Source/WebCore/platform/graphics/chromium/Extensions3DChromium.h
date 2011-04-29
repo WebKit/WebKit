@@ -39,6 +39,10 @@ public:
     // Supported extensions:
     //   GL_CHROMIUM_resource_safe  : indicating that textures/renderbuffers are always initialized before read/write.
     //   GL_CHROMIUM_strict_attribs : indicating a GL error is generated for out-of-bounds buffer accesses.
+    //   GL_CHROMIUM_map_sub
+    //   GL_CHROMIUM_copy_texture_to_parent_texture
+    //   GL_CHROMIUM_latch
+    //   GL_CHROMIUM_swapbuffers_complete_callback
 
     // Extensions3D methods.
     virtual bool supports(const String&);
@@ -67,11 +71,19 @@ public:
     // GL_CHROMIUM_copy_texture_to_parent_texture
     void copyTextureToParentTextureCHROMIUM(unsigned texture, unsigned parentTexture);
 
-    // Latch support
+    // GL_CHROMIUM_latch
     void getParentToChildLatchCHROMIUM(GC3Duint* latchId);
     void getChildToParentLatchCHROMIUM(GC3Duint* latchId);
     void waitLatchCHROMIUM(GC3Duint latchId);
     void setLatchCHROMIUM(GC3Duint latchId);
+
+    // GL_CHROMIUM_swapbuffers_complete_callback
+    class SwapBuffersCompleteCallbackCHROMIUM {
+    public:
+        virtual void onSwapBuffersComplete() = 0;
+        virtual ~SwapBuffersCompleteCallbackCHROMIUM() { }
+    };
+    void setSwapBuffersCompleteCallbackCHROMIUM(PassOwnPtr<SwapBuffersCompleteCallbackCHROMIUM>);
 
 private:
     // Instances of this class are strictly owned by the GraphicsContext3D implementation and do not

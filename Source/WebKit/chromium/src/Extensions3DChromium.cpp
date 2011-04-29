@@ -140,6 +140,11 @@ void Extensions3DChromium::bindVertexArrayOES(Platform3DObject)
 {
 }
 
+void Extensions3DChromium::setSwapBuffersCompleteCallbackCHROMIUM(PassOwnPtr<SwapBuffersCompleteCallbackCHROMIUM> callback)
+{
+    m_internal->setSwapBuffersCompleteCallbackCHROMIUM(callback);
+}
+
 } // namespace WebCore
 
 #endif // ENABLE(WEBGL)
