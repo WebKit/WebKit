@@ -222,6 +222,8 @@ void WebContext::ensureWebProcess()
     WebProcessCreationParameters parameters;
 
     parameters.applicationCacheDirectory = applicationCacheDirectory();
+    if (!parameters.applicationCacheDirectory.isEmpty())
+        SandboxExtension::createHandle(parameters.applicationCacheDirectory, SandboxExtension::ReadWrite, parameters.applicationCacheDirectoryExtensionHandle);
 
     if (!injectedBundlePath().isEmpty()) {
         parameters.injectedBundlePath = injectedBundlePath();

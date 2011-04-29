@@ -216,6 +216,10 @@ private:
     WebIconDatabaseProxy m_iconDatabaseProxy;
     
     String m_localStorageDirectory;
+
+#if ENABLE(OFFLINE_WEB_APPLICATIONS)
+    RefPtr<SandboxExtension> m_applicationCachePathExtension;
+#endif
 };
 
 } // namespace WebKit
