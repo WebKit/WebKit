@@ -1,3 +1,11 @@
+2011-04-28  Adam Roben  <aroben@apple.com>
+
+        Skip a timing-out canvas test on Leopard
+
+        <http://webkit.org/b/59777> tracks the failure.
+
+        * platform/mac-leopard/Skipped: Added fast/canvas/canvas-largedraws.html.
+
 2011-04-28  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Dan Bernstein.

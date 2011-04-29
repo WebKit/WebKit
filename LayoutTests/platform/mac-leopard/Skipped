@@ -231,3 +231,6 @@ fast/preloader/scan-body-from-head-script.html
 # https://bugs.webkit.org/show_bug.cgi?id=51807
 fast/blockflow/broken-ideographic-font.html
 fast/blockflow/japanese-rl-text-with-broken-font.html
+
+# Times out http://webkit.org/b/59777
+fast/canvas/canvas-largedraws.html
