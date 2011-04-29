@@ -48,6 +48,7 @@ DrawingAreaProxyImpl::DrawingAreaProxyImpl(WebPageProxy* webPageProxy)
     , m_currentBackingStoreStateID(0)
     , m_nextBackingStoreStateID(0)
     , m_isWaitingForDidUpdateBackingStoreState(false)
+    , m_hasReceivedFirstUpdate(false)
     , m_isBackingStoreDiscardable(true)
     , m_discardBackingStoreTimer(RunLoop::current(), this, &DrawingAreaProxyImpl::discardBackingStore)
 {
@@ -75,6 +76,10 @@ void DrawingAreaProxyImpl::paint(BackingStore::PlatformGraphicsContext context, 
         // it about our next state but didn't request an immediate update.
         sendUpdateBackingStoreState(RespondImmediately);
 
+        // If we haven't yet received our first bits from the WebProcess then don't paint anything.
+        if (!m_hasReceivedFirstUpdate)
+            return;        
+        
         if (m_isWaitingForDidUpdateBackingStoreState) {
             // Wait for a DidUpdateBackingStoreState message that contains the new bits before we paint
             // what's currently in the backing store.
@@ -179,6 +184,8 @@ void DrawingAreaProxyImpl::didUpdateBackingStoreState(uint64_t backingStoreState
 
     if (m_nextBackingStoreStateID != m_currentBackingStoreStateID)
         sendUpdateBackingStoreState(RespondImmediately);
+    else
+        m_hasReceivedFirstUpdate = true;
 
 #if USE(ACCELERATED_COMPOSITING)
     if (layerTreeContext != m_layerTreeContext) {
@@ -281,7 +288,7 @@ void DrawingAreaProxyImpl::sendUpdateBackingStoreState(RespondImmediatelyOrNot r
 
 #if USE(ACCELERATED_COMPOSITING)
     if (m_isWaitingForDidUpdateBackingStoreState && !m_layerTreeContext.isEmpty()) {
-        // Wait for the DidUpdateBackingStoreState message. Normally we don this in DrawingAreaProxyImpl::paint, but that
+        // Wait for the DidUpdateBackingStoreState message. Normally we do this in DrawingAreaProxyImpl::paint, but that
         // function is never called when in accelerated compositing mode.
         waitForAndDispatchDidUpdateBackingStoreState();
     }

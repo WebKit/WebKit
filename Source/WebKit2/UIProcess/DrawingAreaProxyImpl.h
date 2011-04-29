@@ -98,6 +98,9 @@ private:
     // Whether we've sent a UpdateBackingStoreState message and are now waiting for a DidUpdateBackingStoreState message.
     // Used to throttle UpdateBackingStoreState messages so we don't send them faster than the Web process can handle.
     bool m_isWaitingForDidUpdateBackingStoreState;
+    
+    // For a new Drawing Area don't draw anything until the WebProcess has sent over the first content.
+    bool m_hasReceivedFirstUpdate;
 
     bool m_isBackingStoreDiscardable;
     OwnPtr<BackingStore> m_backingStore;
