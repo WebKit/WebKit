@@ -87,7 +87,7 @@ AXUIElementRef WKCreateAXUIElementRef(id element);
 void WKUnregisterUniqueIdForElement(id element);
 
 
-#if !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOW_LEOPARD)
+#if !defined(BUILDING_ON_LEOPARD)
 // Remote Accessibility API.
 void WKAXRegisterRemoteApp(void);
 void WKAXInitializeElementWithPresenterPid(id, pid_t);
@@ -414,7 +414,19 @@ void WKSetScrollbarPainterKnobAlpha(WKScrollbarPainterRef, CGFloat);
 CGFloat WKScrollbarPainterTrackAlpha(WKScrollbarPainterRef);
 void WKSetScrollbarPainterTrackAlpha(WKScrollbarPainterRef, CGFloat);
 bool WKScrollbarPainterIsHorizontal(WKScrollbarPainterRef);
+CGRect WKScrollbarPainterKnobRect(WKScrollbarPainterRef);
 void WKScrollbarPainterSetOverlayState(WKScrollbarPainterRef, int overlayScrollerState);
+
+// The wk* to WK* renaming does not apply to enums. The way to
+// circumvent this is to define the enum anonymously twice using
+// the two prefixes. (See WebCoreSystemInterface.h)
+enum {
+    WKScrollerKnobStyleDefault = 0,
+    WKScrollerKnobStyleDark = 1,
+    WKScrollerKnobStyleLight = 2
+};
+typedef uint32 WKScrollerKnobStyle;
+void WKSetScrollbarPainterKnobStyle(WKScrollbarPainterRef, WKScrollerKnobStyle);
 
 WKScrollbarPainterControllerRef WKMakeScrollbarPainterController(id painterControllerDelegate);
 void WKSetPainterForPainterController(WKScrollbarPainterControllerRef, WKScrollbarPainterRef, bool isHorizontal);
