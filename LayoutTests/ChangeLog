@@ -1,5 +1,11 @@
 2011-04-29  Pavel Feldman  <pfeldman@google.com>
 
+        Not reviewed: skip flaky inspector tests on GTK for now.
+
+        * platform/gtk/Skipped:
+
+2011-04-29  Pavel Feldman  <pfeldman@google.com>
+
         Not reviewed: skip flaky inspector tests for now.
 
         * platform/mac/Skipped:
