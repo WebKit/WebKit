@@ -2,6 +2,16 @@
 
         https://bugs.webkit.org/show_bug.cgi?id=59729
 
+        Another followup from adding ENABLE(ANIMATION_API). Fix
+        tests that mention webkitGetAnimations().
+
+        * fast/dom/Window/window-properties-expected.txt:
+        * platform/qt/fast/dom/Window/window-properties-expected.txt:
+
+2011-04-29  Dean Jackson  <dino@apple.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=59729
+
         Followup from adding an ENABLE flag that is disabled by
         default. Adjust broken test results.
 
