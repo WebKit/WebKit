@@ -1,3 +1,12 @@
+2011-04-29  Adam Roben  <aroben@apple.com>
+
+        Move some tests that time out in Debug from win-xp/Skipped to win/Skipped
+
+        This will help people who run tests in Debug on Windows 7.
+
+        * platform/win-xp/Skipped: Moved two XHR tests from here...
+        * platform/win/Skipped: ...to here.
+
 2011-04-29  Jessie Berlin  <jberlin@apple.com>
 
         WebKit2 needs layoutTestController.overridePreference.
