@@ -558,18 +558,21 @@
 		BC646D70136A3A8700B35DED /* Production */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				PRODUCT_NAME = "Derived Sources";
 			};
 			name = Production;
 		};
 		BC952D7811F3BF5E003398B4 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				PRODUCT_NAME = "Derived Sources";
 			};
 			name = Debug;
 		};
 		BC952D7911F3BF5E003398B4 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				PRODUCT_NAME = "Derived Sources";
 			};
 			name = Release;
 		};
