@@ -1,5 +1,13 @@
 2011-04-28  Adam Roben  <aroben@apple.com>
 
+        Unskip some tests that were failing due to local issues on the bots that have been resolved
+
+        See <http://webkit.org/b/51807> for details.
+
+        * platform/mac-leopard/Skipped:
+
+2011-04-28  Adam Roben  <aroben@apple.com>
+
         Skip a failing custom font test on Leopard
 
         <http://webkit.org/b/59780> tracks the failure.
