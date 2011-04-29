@@ -127,6 +127,9 @@ def summarize_results(port_obj, expectations, result_summary, retry_summary, tes
         result_type = result.type
         actual = [keywords[result_type]]
 
+        if result_type == test_expectations.SKIP:
+            continue
+
         test_dict = {}
         if False:
             test_dict['has_stderr'] = True

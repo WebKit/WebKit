@@ -1,3 +1,16 @@
+2011-04-29  Ojan Vafai  <ojan@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        exclude skipped tests from the summarized results
+        https://bugs.webkit.org/show_bug.cgi?id=59813
+
+        If we find a need fo skipped tests later, we should either create
+        a skipped.json file or expose this some other way. As it is, the data
+        is unused and is hugely bloating the size of full_results.json.
+
+        * Scripts/webkitpy/layout_tests/layout_package/manager.py:
+
 2011-04-29  Adam Roben  <aroben@apple.com>
 
         Make DumpRenderTreeSupport get installed when the default configuration is built
