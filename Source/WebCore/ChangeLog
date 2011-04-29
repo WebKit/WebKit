@@ -1,3 +1,21 @@
+2011-04-29  Mike Reed  <reed@google.com>
+
+        Reviewed by Ojan Vafai.
+
+        Skia: Need to implement GraphicsContext::clipConvexPolygon()
+        https://bugs.webkit.org/show_bug.cgi?id=41311
+
+        This does not (yet) enable HAVE_PATH_BASED_BORDER_RADIUS_DRAWING
+        as that shows other issues/question unrelated to clipping.
+        https://bugs.webkit.org/show_bug.cgi?id=41311
+
+        No new tests. covered by existing layout tests
+
+        * platform/graphics/skia/GraphicsContextSkia.cpp:
+        (WebCore::setPathFromConvexPoints):
+        (WebCore::GraphicsContext::drawConvexPolygon):
+        (WebCore::GraphicsContext::clipConvexPolygon):
+
 2011-04-29  Mike Lawther  <mikelawther@chromium.org>
 
         Reviewed by Ojan Vafai.

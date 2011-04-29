@@ -449,6 +449,18 @@ void GraphicsContext::setCTM(const AffineTransform& affine)
     platformContext()->canvas()->setMatrix(affine);
 }
 
+static void setPathFromConvexPoints(SkPath* path, size_t numPoints, const FloatPoint* points)
+{
+    path->incReserve(numPoints);
+    path->moveTo(WebCoreFloatToSkScalar(points[0].x()),
+                 WebCoreFloatToSkScalar(points[0].y()));
+    for (size_t i = 1; i < numPoints; ++i) {
+        path->lineTo(WebCoreFloatToSkScalar(points[i].x()),
+                     WebCoreFloatToSkScalar(points[i].y()));
+    }
+    path->setIsConvex(true);
+}
+
 void GraphicsContext::drawConvexPolygon(size_t numPoints,
                                         const FloatPoint* points,
                                         bool shouldAntialias)
@@ -462,20 +474,14 @@ void GraphicsContext::drawConvexPolygon(size_t numPoints,
     platformContext()->prepareForSoftwareDraw();
 
     SkPath path;
-
-    path.incReserve(numPoints);
-    path.moveTo(WebCoreFloatToSkScalar(points[0].x()),
-                WebCoreFloatToSkScalar(points[0].y()));
-    for (size_t i = 1; i < numPoints; i++) {
-        path.lineTo(WebCoreFloatToSkScalar(points[i].x()),
-                    WebCoreFloatToSkScalar(points[i].y()));
-    }
+    setPathFromConvexPoints(&path, numPoints, points);
 
     if (!isPathSkiaSafe(getCTM(), path))
         return;
 
     SkPaint paint;
     platformContext()->setupPaintForFilling(&paint);
+    paint.setAntiAlias(shouldAntialias);
     platformContext()->canvas()->drawPath(path, paint);
 
     if (strokeStyle() != NoStroke) {
@@ -493,7 +499,9 @@ void GraphicsContext::clipConvexPolygon(size_t numPoints, const FloatPoint* poin
     if (numPoints <= 1)
         return;
 
-    // FIXME: IMPLEMENT!!
+    SkPath path;
+    setPathFromConvexPoints(&path, numPoints, points);
+    platformContext()->canvas()->clipPath(path);
 }
 
 // This method is only used to draw the little circles used in lists.
