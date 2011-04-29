@@ -225,7 +225,7 @@ public:
             m_bank->releaseAtIndex(m_index);
         }
 
-        RegID gpr() const
+        RegID regID() const
         {
             return BankInfo::toRegister(m_index);
         }
@@ -233,7 +233,7 @@ public:
 #ifndef NDEBUG
         const char* debugName() const
         {
-            return BankInfo::debugName(gpr());
+            return BankInfo::debugName(regID());
         }
 #endif
 

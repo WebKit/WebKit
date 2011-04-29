@@ -86,7 +86,7 @@ struct SpeculationCheck {
         DataFormat format;
     };
     RegisterInfo m_gprInfo[GPRInfo::numberOfRegisters];
-    NodeIndex m_fprInfo[numberOfFPRs];
+    NodeIndex m_fprInfo[FPRInfo::numberOfRegisters];
 };
 typedef SegmentedVector<SpeculationCheck, 16> SpeculationCheckVector;
 

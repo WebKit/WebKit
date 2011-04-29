@@ -108,28 +108,6 @@ public:
     JSGlobalData* globalData() { return m_globalData; }
 
 #if CPU(X86_64)
-    // Temporary registers.
-    static const FPRegisterID fpRegT0 = X86Registers::xmm0;
-    static const FPRegisterID fpRegT1 = X86Registers::xmm1;
-    static const FPRegisterID fpRegT2 = X86Registers::xmm2;
-    static const FPRegisterID fpRegT3 = X86Registers::xmm3;
-    static const FPRegisterID fpRegT4 = X86Registers::xmm4;
-    static const FPRegisterID fpRegT5 = X86Registers::xmm5;
-
-    // These constants provide both FPRegisterID & FPRReg style names for the
-    // floating point argument & return value register.
-    static const FPRReg argumentFPR0 = fpr0;
-    static const FPRReg argumentFPR1 = fpr1;
-    static const FPRReg argumentFPR2 = fpr2;
-    static const FPRReg argumentFPR3 = fpr3;
-    static const FPRegisterID fpArgumentRegister0 = fpRegT0;
-    static const FPRegisterID fpArgumentRegister1 = fpRegT1;
-    static const FPRegisterID fpArgumentRegister2 = fpRegT2;
-    static const FPRegisterID fpArgumentRegister3 = fpRegT3;
-    static const FPRReg returnValueFPR = fpr0;
-    static const FPRegisterID fpReturnValueRegister = fpRegT0;
-
-
     void preserveReturnAddressAfterCall(GPRReg reg)
     {
         pop(reg);
@@ -178,13 +156,6 @@ public:
     static Address payloadFor(VirtualRegister virtualRegister)
     {
         return Address(GPRInfo::callFrameRegister, virtualRegister * sizeof(Register) + OBJECT_OFFSETOF(EncodedValueDescriptor, asBits.payload));
-    }
-
-    static FPRegisterID fprToRegisterID(FPRReg reg)
-    {
-        ASSERT(reg < numberOfFPRs);
-        static const FPRegisterID idForRegister[numberOfFPRs] = { fpRegT0, fpRegT1, fpRegT2, fpRegT3, fpRegT4, fpRegT5 };
-        return idForRegister[reg];
     }
 
     // Add a call out from JIT code, without an exception check.

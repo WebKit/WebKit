@@ -151,14 +151,13 @@ SpeculationCheck::SpeculationCheck(MacroAssembler::Jump check, SpeculativeJIT* j
         } else
             m_gprInfo[iter.index()].nodeIndex = NoNode;
     }
-    for (FPRReg fpr = fpr0; fpr < numberOfFPRs; next(fpr)) {
-        VirtualRegister virtualRegister = jit->m_fprs.name(fpr);
-        if (virtualRegister != InvalidVirtualRegister) {
-            GenerationInfo& info =  jit->m_generationInfo[virtualRegister];
+    for (fpr_iterator iter = jit->m_fprs.begin(); iter != jit->m_fprs.end(); ++iter) {
+        if (iter.name() != InvalidVirtualRegister) {
+            GenerationInfo& info =  jit->m_generationInfo[iter.name()];
             ASSERT(info.registerFormat() == DataFormatDouble);
-            m_fprInfo[fpr] = info.nodeIndex();
+            m_fprInfo[iter.index()] = info.nodeIndex();
         } else
-            m_fprInfo[fpr] = NoNode;
+            m_fprInfo[iter.index()] = NoNode;
     }
 }
 
@@ -431,8 +430,7 @@ void SpeculativeJIT::compile(Node& node)
             SpeculateIntegerOperand op2(this, node.child2);
             GPRTemporary result(this);
 
-            GPRReg reg = op2.gpr();
-            speculationCheck(m_jit.branchAdd32(MacroAssembler::Overflow, reg, Imm32(imm1), result.gpr()));
+            speculationCheck(m_jit.branchAdd32(MacroAssembler::Overflow, op2.gpr(), Imm32(imm1), result.gpr()));
 
             integerResult(result.gpr(), m_compileIndex);
             break;
@@ -443,8 +441,7 @@ void SpeculativeJIT::compile(Node& node)
             SpeculateIntegerOperand op1(this, node.child1);
             GPRTemporary result(this);
 
-            GPRReg reg = op1.gpr();
-            speculationCheck(m_jit.branchAdd32(MacroAssembler::Overflow, reg, Imm32(imm2), result.gpr()));
+            speculationCheck(m_jit.branchAdd32(MacroAssembler::Overflow, op1.gpr(), Imm32(imm2), result.gpr()));
 
             integerResult(result.gpr(), m_compileIndex);
             break;
@@ -476,8 +473,7 @@ void SpeculativeJIT::compile(Node& node)
             SpeculateIntegerOperand op1(this, node.child1);
             GPRTemporary result(this);
 
-            GPRReg reg = op1.gpr();
-            speculationCheck(m_jit.branchSub32(MacroAssembler::Overflow, reg, Imm32(imm2), result.gpr()));
+            speculationCheck(m_jit.branchSub32(MacroAssembler::Overflow, op1.gpr(), Imm32(imm2), result.gpr()));
 
             integerResult(result.gpr(), m_compileIndex);
             break;
@@ -487,9 +483,7 @@ void SpeculativeJIT::compile(Node& node)
         SpeculateIntegerOperand op2(this, node.child2);
         GPRTemporary result(this);
 
-        GPRReg reg1 = op1.gpr();
-        GPRReg reg2 = op2.gpr();
-        speculationCheck(m_jit.branchSub32(MacroAssembler::Overflow, reg1, reg2, result.gpr()));
+        speculationCheck(m_jit.branchSub32(MacroAssembler::Overflow, op1.gpr(), op2.gpr(), result.gpr()));
 
         integerResult(result.gpr(), m_compileIndex);
         break;
@@ -775,17 +769,17 @@ void SpeculativeJIT::compile(Node& node)
 
     case Return: {
         ASSERT(GPRInfo::callFrameRegister != GPRInfo::regT1);
-        ASSERT(GPRInfo::regT1 != GPRInfo::returnValueRegister);
-        ASSERT(GPRInfo::returnValueRegister != GPRInfo::callFrameRegister);
+        ASSERT(GPRInfo::regT1 != GPRInfo::returnValueGPR);
+        ASSERT(GPRInfo::returnValueGPR != GPRInfo::callFrameRegister);
 
 #if DFG_SUCCESS_STATS
         static SamplingCounter counter("SpeculativeJIT");
         m_jit.emitCount(counter);
 #endif
 
-        // Return the result in returnValueRegister.
+        // Return the result in returnValueGPR.
         JSValueOperand op1(this, node.child1);
-        m_jit.move(op1.gpr(), GPRInfo::returnValueRegister);
+        m_jit.move(op1.gpr(), GPRInfo::returnValueGPR);
 
         // Grab the return address.
         m_jit.emitGetFromCallFrameHeaderPtr(RegisterFile::ReturnPC, GPRInfo::regT1);

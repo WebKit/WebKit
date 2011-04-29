@@ -47,16 +47,16 @@ void JITCompiler::fillNumericToDouble(NodeIndex nodeIndex, FPRReg fpr, GPRReg te
     if (node.isConstant()) {
         ASSERT(node.op == DoubleConstant);
         move(MacroAssembler::ImmPtr(reinterpret_cast<void*>(reinterpretDoubleToIntptr(valueOfDoubleConstant(nodeIndex)))), temporary);
-        movePtrToDouble(temporary, fprToRegisterID(fpr));
+        movePtrToDouble(temporary, fpr);
     } else {
         loadPtr(addressFor(node.virtualRegister()), temporary);
         Jump isInteger = branchPtr(MacroAssembler::AboveOrEqual, temporary, GPRInfo::tagTypeNumberRegister);
         jitAssertIsJSDouble(temporary);
         addPtr(GPRInfo::tagTypeNumberRegister, temporary);
-        movePtrToDouble(temporary, fprToRegisterID(fpr));
+        movePtrToDouble(temporary, fpr);
         Jump hasUnboxedDouble = jump();
         isInteger.link(this);
-        convertInt32ToDouble(temporary, fprToRegisterID(fpr));
+        convertInt32ToDouble(temporary, fpr);
         hasUnboxedDouble.link(this);
     }
 }
@@ -142,25 +142,25 @@ void JITCompiler::jumpFromSpeculativeToNonSpeculative(const SpeculationCheck& ch
     }
 
     // Spill all FPRs in use by the speculative path.
-    for (FPRReg fpr = fpr0; fpr < numberOfFPRs; next(fpr)) {
-        NodeIndex nodeIndex = check.m_fprInfo[fpr];
+    for (unsigned index = 0; index < FPRInfo::numberOfRegisters; ++index) {
+        NodeIndex nodeIndex = check.m_fprInfo[index];
         if (nodeIndex == NoNode)
             continue;
 
         VirtualRegister virtualRegister = graph()[nodeIndex].virtualRegister();
 
-        moveDoubleToPtr(fprToRegisterID(fpr), GPRInfo::regT0);
+        moveDoubleToPtr(FPRInfo::toRegister(index), GPRInfo::regT0);
         subPtr(GPRInfo::tagTypeNumberRegister, GPRInfo::regT0);
         storePtr(GPRInfo::regT0, addressFor(virtualRegister));
     }
 
     // Fill all FPRs in use by the non-speculative path.
-    for (FPRReg fpr = fpr0; fpr < numberOfFPRs; next(fpr)) {
-        NodeIndex nodeIndex = entry.m_fprInfo[fpr];
+    for (unsigned index = 0; index < FPRInfo::numberOfRegisters; ++index) {
+        NodeIndex nodeIndex = entry.m_fprInfo[index];
         if (nodeIndex == NoNode)
             continue;
 
-        fillNumericToDouble(nodeIndex, fpr, GPRInfo::regT0);
+        fillNumericToDouble(nodeIndex, FPRInfo::toRegister(index), GPRInfo::regT0);
     }
 
     // Fill all GPRs in use by the non-speculative path.
@@ -313,19 +313,19 @@ void JITCompiler::compileFunction(JITCode& entry, MacroAssemblerCodePtr& entryWi
         // to look up handler information. The identifier we use is the return address
         // of the call out from JIT code that threw the exception; this is still
         // available on the stack, just below the stack pointer!
-        move(GPRInfo::callFrameRegister, GPRInfo::argumentRegister0);
-        peek(GPRInfo::argumentRegister1, -1);
+        move(GPRInfo::callFrameRegister, GPRInfo::argumentGPR0);
+        peek(GPRInfo::argumentGPR1, -1);
         m_calls.append(CallRecord(call(), lookupExceptionHandler));
-        // lookupExceptionHandler leaves the handler CallFrame* in the returnValueRegister,
-        // and the address of the handler in returnValueRegister2.
-        jump(GPRInfo::returnValueRegister2);
+        // lookupExceptionHandler leaves the handler CallFrame* in the returnValueGPR,
+        // and the address of the handler in returnValueGPR2.
+        jump(GPRInfo::returnValueGPR2);
     }
 
     // Generate the register file check; if the fast check in the function head fails,
     // we need to call out to a helper function to check whether more space is available.
     // FIXME: change this from a cti call to a DFG style operation (normal C calling conventions).
     registerFileCheck.link(this);
-    move(stackPointerRegister, GPRInfo::argumentRegister0);
+    move(stackPointerRegister, GPRInfo::argumentGPR0);
     poke(GPRInfo::callFrameRegister, OBJECT_OFFSETOF(struct JITStackFrame, callFrame) / sizeof(void*));
     Call callRegisterFileCheck = call();
     jump(fromRegisterFileCheck);
@@ -339,7 +339,7 @@ void JITCompiler::compileFunction(JITCode& entry, MacroAssemblerCodePtr& entryWi
     preserveReturnAddressAfterCall(GPRInfo::regT2);
     emitPutToCallFrameHeader(GPRInfo::regT2, RegisterFile::ReturnPC);
     branch32(Equal, GPRInfo::regT1, Imm32(m_codeBlock->m_numParameters)).linkTo(fromArityCheck, this);
-    move(stackPointerRegister, GPRInfo::argumentRegister0);
+    move(stackPointerRegister, GPRInfo::argumentGPR0);
     poke(GPRInfo::callFrameRegister, OBJECT_OFFSETOF(struct JITStackFrame, callFrame) / sizeof(void*));
     Call callArityCheck = call();
     move(GPRInfo::regT0, GPRInfo::callFrameRegister);

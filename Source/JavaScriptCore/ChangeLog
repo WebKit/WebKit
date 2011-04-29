@@ -1,3 +1,52 @@
+2011-04-28  Gavin Barraclough  <barraclough@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        https://bugs.webkit.org/show_bug.cgi?id=59763
+        DFG JIT - Unify FPRReg & FPRegisterID
+
+        (Following on from GPRReg/RegisterID unification).
+
+        * dfg/DFGFPRInfo.h:
+        (JSC::DFG::FPRInfo::toRegister):
+        (JSC::DFG::FPRInfo::debugName):
+        * dfg/DFGGPRInfo.h:
+        * dfg/DFGJITCodeGenerator.cpp:
+        (JSC::DFG::JITCodeGenerator::fillDouble):
+        (JSC::DFG::JITCodeGenerator::checkConsistency):
+        * dfg/DFGJITCodeGenerator.h:
+        (JSC::DFG::JITCodeGenerator::boxDouble):
+        (JSC::DFG::JITCodeGenerator::unboxDouble):
+        (JSC::DFG::JITCodeGenerator::flushRegisters):
+        (JSC::DFG::JITCodeGenerator::isFlushed):
+        (JSC::DFG::JITCodeGenerator::setupTwoStubArgs):
+        (JSC::DFG::JITCodeGenerator::setupStubArguments):
+        (JSC::DFG::JITCodeGenerator::callOperation):
+        (JSC::DFG::GPRResult::lockedResult):
+        (JSC::DFG::FPRResult::lockedResult):
+        * dfg/DFGJITCompiler.cpp:
+        (JSC::DFG::JITCompiler::fillNumericToDouble):
+        (JSC::DFG::JITCompiler::jumpFromSpeculativeToNonSpeculative):
+        (JSC::DFG::JITCompiler::compileFunction):
+        * dfg/DFGJITCompiler.h:
+        * dfg/DFGNode.h:
+        * dfg/DFGNonSpeculativeJIT.cpp:
+        (JSC::DFG::EntryLocation::EntryLocation):
+        (JSC::DFG::NonSpeculativeJIT::valueToNumber):
+        (JSC::DFG::NonSpeculativeJIT::valueToInt32):
+        (JSC::DFG::NonSpeculativeJIT::numberToInt32):
+        (JSC::DFG::NonSpeculativeJIT::compile):
+        * dfg/DFGNonSpeculativeJIT.h:
+        (JSC::DFG::NonSpeculativeJIT::silentSpillAllRegisters):
+        (JSC::DFG::NonSpeculativeJIT::silentFillAllRegisters):
+        * dfg/DFGRegisterBank.h:
+        (JSC::DFG::RegisterBank::iterator::regID):
+        (JSC::DFG::RegisterBank::iterator::debugName):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculationCheck::SpeculationCheck):
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT.h:
+
 2011-04-28  David Kilzer  <ddkilzer@apple.com>
 
         Revert "<http://webkit.org/b/59705> WTF::postTimer() leaks a CFRunLoopTimerRef every time it's called"

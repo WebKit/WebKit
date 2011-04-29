@@ -123,7 +123,7 @@ FPRReg JITCodeGenerator::fillDouble(NodeIndex nodeIndex)
             } else if (isDoubleConstant(nodeIndex)) {
                 FPRReg fpr = fprAllocate();
                 m_jit.move(MacroAssembler::ImmPtr(reinterpret_cast<void*>(reinterpretDoubleToIntptr(valueOfDoubleConstant(nodeIndex)))), gpr);
-                m_jit.movePtrToDouble(gpr, JITCompiler::fprToRegisterID(fpr));
+                m_jit.movePtrToDouble(gpr, fpr);
                 unlock(gpr);
 
                 m_fprs.retain(fpr, virtualRegister, SpillOrderDouble);
@@ -162,8 +162,6 @@ FPRReg JITCodeGenerator::fillDouble(NodeIndex nodeIndex)
         FPRReg fpr = fprAllocate();
         GPRReg tempGpr = allocate(); // FIXME: can we skip this allocation on the last use of the virtual register?
 
-        JITCompiler::FPRegisterID fpReg = JITCompiler::fprToRegisterID(fpr);
-
         JITCompiler::Jump isInteger = m_jit.branchPtr(MacroAssembler::AboveOrEqual, jsValueGpr, GPRInfo::tagTypeNumberRegister);
 
         m_jit.jitAssertIsJSDouble(jsValueGpr);
@@ -171,12 +169,12 @@ FPRReg JITCodeGenerator::fillDouble(NodeIndex nodeIndex)
         // First, if we get here we have a double encoded as a JSValue
         m_jit.move(jsValueGpr, tempGpr);
         m_jit.addPtr(GPRInfo::tagTypeNumberRegister, tempGpr);
-        m_jit.movePtrToDouble(tempGpr, fpReg);
+        m_jit.movePtrToDouble(tempGpr, fpr);
         JITCompiler::Jump hasUnboxedDouble = m_jit.jump();
 
         // Finally, handle integers.
         isInteger.link(&m_jit);
-        m_jit.convertInt32ToDouble(jsValueGpr, fpReg);
+        m_jit.convertInt32ToDouble(jsValueGpr, fpr);
         hasUnboxedDouble.link(&m_jit);
 
         m_gprs.release(jsValueGpr);
@@ -192,10 +190,8 @@ FPRReg JITCodeGenerator::fillDouble(NodeIndex nodeIndex)
         FPRReg fpr = fprAllocate();
         GPRReg gpr = info.gpr();
         m_gprs.lock(gpr);
-        GPRReg reg = gpr;
-        JITCompiler::FPRegisterID fpReg = JITCompiler::fprToRegisterID(fpr);
 
-        m_jit.convertInt32ToDouble(reg, fpReg);
+        m_jit.convertInt32ToDouble(gpr, fpr);
 
         m_gprs.release(gpr);
         m_gprs.unlock(gpr);
@@ -395,17 +391,13 @@ void JITCodeGenerator::checkConsistency()
             failed = true;
         }
     }
-    for (FPRReg i = fpr0; i < numberOfFPRs; next(i)) {
-        if (m_fprs.isLocked(i)) {
-            fprintf(stderr, "DFG_CONSISTENCY_CHECK failed: fpr %d is locked.\n", i);
+    for (fpr_iterator iter = m_fprs.begin(); iter != m_fprs.end(); ++iter) {
+        if (iter.isLocked()) {
+            fprintf(stderr, "DFG_CONSISTENCY_CHECK failed: fpr %s is locked.\n", iter.debugName());
             failed = true;
         }
     }
 
-    VirtualRegister fprContents[numberOfFPRs];
-
-    for (unsigned i = 0; i < numberOfFPRs; ++i)
-        fprContents[i] = InvalidVirtualRegister;
     for (unsigned i = 0; i < m_generationInfo.size(); ++i) {
         VirtualRegister virtualRegister = (VirtualRegister)i;
         GenerationInfo& info = m_generationInfo[virtualRegister];
@@ -431,7 +423,10 @@ void JITCodeGenerator::checkConsistency()
         case DataFormatDouble: {
             FPRReg fpr = info.fpr();
             ASSERT(fpr != InvalidFPRReg);
-            fprContents[fpr] = virtualRegister;
+            if (m_fprs.name(fpr) != virtualRegister) {
+                fprintf(stderr, "DFG_CONSISTENCY_CHECK failed: name mismatch for virtual register %d (fpr %s).\n", virtualRegister, FPRInfo::debugName(fpr));
+                failed = true;
+            }
             break;
         }
         }
@@ -443,14 +438,20 @@ void JITCodeGenerator::checkConsistency()
             continue;
 
         GenerationInfo& info = m_generationInfo[virtualRegister];
-        if (iter.gpr() != info.gpr()) {
+        if (iter.regID() != info.gpr()) {
             fprintf(stderr, "DFG_CONSISTENCY_CHECK failed: name mismatch for gpr %s (virtual register %d).\n", iter.debugName(), virtualRegister);
             failed = true;
         }
     }
-    for (FPRReg i = fpr0; i < numberOfFPRs; next(i)) {
-        if (m_fprs.name(i) != fprContents[i]) {
-            fprintf(stderr, "DFG_CONSISTENCY_CHECK failed: name mismatch for fpr %d (%d != %d).\n", i, m_fprs.name(i), fprContents[i]);
+
+    for (fpr_iterator iter = m_fprs.begin(); iter != m_fprs.end(); ++iter) {
+        VirtualRegister virtualRegister = iter.name();
+        if (virtualRegister == InvalidVirtualRegister)
+            continue;
+
+        GenerationInfo& info = m_generationInfo[virtualRegister];
+        if (iter.regID() != info.fpr()) {
+            fprintf(stderr, "DFG_CONSISTENCY_CHECK failed: name mismatch for fpr %s (virtual register %d).\n", iter.debugName(), virtualRegister);
             failed = true;
         }
     }
