@@ -1,5 +1,11 @@
 2011-04-29  Pavel Feldman  <pfeldman@google.com>
 
+        Not reviewed: skip flaky inspector tests for now.
+
+        * platform/mac/Skipped:
+
+2011-04-29  Pavel Feldman  <pfeldman@google.com>
+
         Reviewed by Yury Semikhatsky.
 
         Web Inspector: CSS editing breaks when entering "color: rgb(1"
