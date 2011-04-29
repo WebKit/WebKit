@@ -71,7 +71,7 @@ BUGCR24182 SLOW DEBUG : fast/js/toString-and-valueOf-override.html = PASS
 // This tests is normally <1 second, but occasionally takes >20s.
 BUGCR24182 SLOW WIN RELEASE : fast/dom/Window/webkitConvertPoint.html = PASS
 
-BUGCR24182 WIN RELEASE SLOW : http/tests/loading/redirect-methods.html = PASS
+BUGCR24182 WIN RELEASE : http/tests/loading/redirect-methods.html = PASS TIMEOUT
 BUGCR24182 SLOW MAC RELEASE : dom/html/level2/html/HTMLImageElement01.html = PASS
 BUGCR24182 SLOW WIN RELEASE : http/tests/local/file-url-sent-as-referer.html = PASS
 BUGCR24182 SLOW LINUX DEBUG : fast/xpath/4XPath/Borrowed/cz_20030217.html = PASS
@@ -3215,6 +3215,7 @@ BUGXXX : media/video-delay-load-event.html = PASS TEXT
 BUGWK51721 : fast/encoding/parser-tests.html = TIMEOUT PASS
 BUGDPRANKE : fast/encoding/parser-tests-10.html = TIMEOUT PASS
 BUGDPRANKE : fast/encoding/parser-tests-20.html = TIMEOUT PASS
+BUGDPRANKE : fast/encoding/parser-tests-30.html = TIMEOUT PASS
 BUGDPRANKE : fast/encoding/parser-tests-50.html = TIMEOUT PASS
 BUGDPRANKE : fast/encoding/parser-tests-60.html = TIMEOUT PASS
 BUGDPRANKE : fast/encoding/parser-tests-70.html = TIMEOUT PASS
@@ -3225,8 +3226,8 @@ BUGDPRANKE : fast/encoding/parser-tests-120.html = TIMEOUT PASS
 
 BUGWK57547 WIN LINUX GPU : fast/canvas/canvas-strokePath-gradient-shadow.html = TIMEOUT
 BUGWK57547 WIN LINUX GPU : fast/canvas/canvas-strokeRect-gradient-shadow.html = TIMEOUT
-BUGWK57547 WIN GPU : fast/canvas/canvas-fillPath-gradient-shadow.html = TIMEOUT
-BUGWK57547 WIN GPU : fast/canvas/canvas-fillPath-pattern-shadow.html = TIMEOUT
+BUGWK57547 WIN LINUX GPU : fast/canvas/canvas-fillPath-gradient-shadow.html = TIMEOUT
+BUGWK57547 WIN LINUX GPU : fast/canvas/canvas-fillPath-pattern-shadow.html = TIMEOUT
 
 // Flaky since creation because we lack layoutTestController.setSerializeHTTPLoads
 BUGWK57593 : fast/preloader/document-write-2.html = TEXT
@@ -3997,3 +3998,8 @@ BUGDPRANKE XP : fast/repaint/shadow-multiple-vertical.html = IMAGE
 BUGDPRANKE XP : fast/repaint/shadow-multiple-strict-vertical.html = IMAGE
 BUGDPRANKE XP : fast/repaint/shadow-multiple-strict-horizontal.html = IMAGE
 BUGDPRANKE XP : fast/repaint/shadow-multiple-horizontal.html = IMAGe
+
+// flakiness on the deps bots (noted r~83476)
+BUGDPRANKE DEBUG : fast/css/empty-pseudo-class.html = PASS TEXT
+BUGDPRANKE WIN RELEASE : http/tests/inspector/network-preflight-options.html = PASS TIMEOUT
+BUGDPRANKE WIN : http/tests/inspector/resource-tree/resource-tree-reload.html = PASS TEXT
