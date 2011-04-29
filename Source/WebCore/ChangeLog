@@ -1,3 +1,53 @@
+2011-04-28  Yury Semikhatsky  <yurys@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: [protocol] Evaluate should expose thrown exception value
+        https://bugs.webkit.org/show_bug.cgi?id=59000
+
+        Each evaluation command may have either thrown or returned result. This is indicated
+        by wasThrown property in the protocol.
+
+        * inspector/InjectedScript.cpp:
+        (WebCore::InjectedScript::evaluate):
+        (WebCore::InjectedScript::evaluateOn):
+        (WebCore::InjectedScript::evaluateOnCallFrame):
+        (WebCore::InjectedScript::getProperties):
+        (WebCore::InjectedScript::makeEvalCall):
+        * inspector/InjectedScript.h:
+        * inspector/InjectedScriptSource.js:
+        * inspector/Inspector.json: Removed "error" remote object type, added "wasThrown" property to
+        the evaluation results.
+        * inspector/InspectorDebuggerAgent.cpp:
+        (WebCore::InspectorDebuggerAgent::evaluateOnCallFrame):
+        * inspector/InspectorDebuggerAgent.h:
+        * inspector/InspectorRuntimeAgent.cpp:
+        (WebCore::InspectorRuntimeAgent::evaluate):
+        (WebCore::InspectorRuntimeAgent::evaluateOn):
+        (WebCore::InspectorRuntimeAgent::getProperties):
+        * inspector/InspectorRuntimeAgent.h:
+        * inspector/front-end/ConsoleView.js:
+        (WebInspector.ConsoleView.prototype.completions.evaluated):
+        (WebInspector.ConsoleView.prototype.evalInInspectedWindow):
+        (WebInspector.ConsoleView.prototype._enterKeyPressed.printResult):
+        (WebInspector.ConsoleView.prototype._enterKeyPressed):
+        (WebInspector.ConsoleCommandResult):
+        * inspector/front-end/DebuggerPresentationModel.js:
+        (WebInspector.PresenationCallFrame.prototype.evaluate):
+        * inspector/front-end/ElementsTreeOutline.js:
+        (WebInspector.ElementsTreeElement.prototype._createTooltipForNode.setTooltip):
+        * inspector/front-end/ExtensionPanel.js:
+        (WebInspector.ExtensionSidebarPane.prototype._onEvaluate):
+        * inspector/front-end/ExtensionServer.js:
+        (WebInspector.ExtensionServer.prototype._onEvaluateOnInspectedPage):
+        * inspector/front-end/ObjectPropertiesSection.js:
+        (WebInspector.ObjectPropertyTreeElement.prototype.update):
+        * inspector/front-end/PropertiesSidebarPane.js:
+        (WebInspector.PropertiesSidebarPane.prototype.update.nodePrototypesReady):
+        * inspector/front-end/SourceFrame.js:
+        (WebInspector.SourceFrame.prototype._showPopup.showObjectPopup):
+        (WebInspector.SourceFrame.prototype._showPopup):
+
 2011-04-29  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r85315.

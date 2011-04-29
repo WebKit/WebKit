@@ -52,9 +52,9 @@ WebInspector.PropertiesSidebarPane.prototype = {
             object.release();
         }
 
-        function nodePrototypesReady(error, objectPayload)
+        function nodePrototypesReady(error, objectPayload, wasThrown)
         {
-            if (error || !objectPayload)
+            if (error || wasThrown)
                 return;
             var object = WebInspector.RemoteObject.fromPayload(objectPayload);
             object.getOwnProperties(fillSection.bind(this));

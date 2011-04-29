@@ -358,9 +358,9 @@ WebInspector.ConsoleView.prototype = {
 
         this.evalInInspectedWindow(expressionString, "completion", true, evaluated.bind(this));
 
-        function evaluated(result)
+        function evaluated(result, wasThrown)
         {
-            if (!result)
+            if (wasThrown)
                 return;
             result.getAllProperties(evaluatedProperties.bind(this));
         }
@@ -534,10 +534,10 @@ WebInspector.ConsoleView.prototype = {
             expression = "this";
         }
 
-        function evalCallback(error, result)
+        function evalCallback(error, result, wasThrown)
         {
             if (!error)
-                callback(WebInspector.RemoteObject.fromPayload(result));
+                callback(WebInspector.RemoteObject.fromPayload(result), wasThrown);
         }
         RuntimeAgent.evaluate(expression, objectGroup, includeCommandLineAPI, evalCallback);
     },
@@ -560,7 +560,7 @@ WebInspector.ConsoleView.prototype = {
         this.addMessage(commandMessage);
 
         var self = this;
-        function printResult(result)
+        function printResult(result, wasThrown)
         {
             self.prompt.history.push(str);
             self.prompt.historyOffset = 0;
@@ -568,7 +568,7 @@ WebInspector.ConsoleView.prototype = {
 
             WebInspector.settings.consoleHistory = self.prompt.history.slice(-30);
 
-            self.addMessage(new WebInspector.ConsoleCommandResult(result, commandMessage));
+            self.addMessage(new WebInspector.ConsoleCommandResult(result, wasThrown, commandMessage));
         }
         this.evalInInspectedWindow(str, "console", true, printResult);
     },
@@ -1093,9 +1093,9 @@ WebInspector.ConsoleCommand.prototype = {
     }
 }
 
-WebInspector.ConsoleCommandResult = function(result, originatingCommand)
+WebInspector.ConsoleCommandResult = function(result, wasThrown, originatingCommand)
 {
-    var level = (result.isError() ? WebInspector.ConsoleMessage.MessageLevel.Error : WebInspector.ConsoleMessage.MessageLevel.Log);
+    var level = (wasThrown ? WebInspector.ConsoleMessage.MessageLevel.Error : WebInspector.ConsoleMessage.MessageLevel.Log);
     this.originatingCommand = originatingCommand;
     WebInspector.ConsoleMessage.call(this, WebInspector.ConsoleMessage.MessageSource.JS, WebInspector.ConsoleMessage.MessageType.Result, level, -1, null, 1, null, [result]);
 }

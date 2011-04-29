@@ -187,7 +187,9 @@ WebInspector.ObjectPropertyTreeElement.prototype = {
 
         var description = this.property.value.description;
         // Render \n as a nice unicode cr symbol.
-        if (this.property.value.type === "string" && typeof description === "string") {
+        if (this.property.wasThrown)
+            this.valueElement.textContent = "[Exception: " + description + "]";
+        else if (this.property.value.type === "string" && typeof description === "string") {
             this.valueElement.textContent = "\"" + description.replace(/\n/g, "\u21B5") + "\"";
             this.valueElement._originalTextContent = "\"" + description + "\"";
         } else if (this.property.value.type === "function" && typeof description === "string") {
@@ -198,7 +200,7 @@ WebInspector.ObjectPropertyTreeElement.prototype = {
 
         if (this.property.isGetter)
             this.valueElement.addStyleClass("dimmed");
-        if (this.property.value.isError())
+        if (this.property.wasThrown)
             this.valueElement.addStyleClass("error");
         if (this.property.value.type)
             this.valueElement.addStyleClass("console-formatted-" + this.property.value.type);
@@ -210,7 +212,7 @@ WebInspector.ObjectPropertyTreeElement.prototype = {
         this.listItemElement.appendChild(this.nameElement);
         this.listItemElement.appendChild(separatorElement);
         this.listItemElement.appendChild(this.valueElement);
-        this.hasChildren = this.property.value.hasChildren;
+        this.hasChildren = this.property.value.hasChildren && !this.property.wasThrown;
     },
 
     _contextMenuEventFired: function()

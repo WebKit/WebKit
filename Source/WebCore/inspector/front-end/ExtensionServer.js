@@ -264,13 +264,13 @@ WebInspector.ExtensionServer.prototype = {
 
     _onEvaluateOnInspectedPage: function(message, port)
     {
-        function callback(error, resultPayload)
+        function callback(error, resultPayload, wasThrown)
         {
             if (error)
                 return;
             var resultObject = WebInspector.RemoteObject.fromPayload(resultPayload);
             var result = {};
-            if (resultObject.isError())
+            if (wasThrown)
                 result.isException = true;
             result.value = resultObject.description;
             this._dispatchCallback(message.requestId, port, result);

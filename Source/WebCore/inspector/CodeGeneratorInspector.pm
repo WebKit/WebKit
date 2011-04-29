@@ -490,7 +490,15 @@ sub generateBackendFunction
     push(@function, "");
     push(@function, "    RefPtr<InspectorObject> responseMessage = InspectorObject::create();");
     push(@function, "    RefPtr<InspectorObject> result = InspectorObject::create();");
-    push(@function, map("        result->set" . typeTraits($_->type, "JSONType") . "(\"" . $_->name . "\", out_" . $_->name . ");", @outArgs));
+    foreach my $parameter (@outArgs) {
+        my $offset = "        ";
+        # Don't add optional boolean parameter to the result unless it is "true"
+        if ($parameter->extendedAttributes->{"optional"} && $parameter->type eq "boolean") {
+            push(@function, $offset . "if (out_" . $parameter->name . ")");
+            $offset .= "    ";
+        }
+        push(@function, $offset . "result->set" . typeTraits($parameter->type, "JSONType") . "(\"" . $parameter->name . "\", out_" . $parameter->name . ");");
+    }
     push(@function, "    responseMessage->setObject(\"result\", result);");
     push(@function, "");
     push(@function, "    responseMessage->setNumber(\"id\", callId);");

@@ -18,13 +18,13 @@ console-dir.html:10NodeList[1]
     __proto__: NodeListPrototype
 
 console-dir.html:11XPathResult
-    booleanValue: XPathException
+    booleanValue: [Exception: XPathException]
     constructor: XPathResultConstructor
     invalidIteratorState: false
-    numberValue: XPathException
+    numberValue: [Exception: XPathException]
     resultType: 4
-    singleNodeValue: XPathException
-    snapshotLength: XPathException
-    stringValue: XPathException
+    singleNodeValue: [Exception: XPathException]
+    snapshotLength: [Exception: XPathException]
+    stringValue: [Exception: XPathException]
     __proto__: XPathResultPrototype
 

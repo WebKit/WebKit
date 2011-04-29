@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Google Inc. All rights reserved.
+ * Copyright (C) 2010, 2011 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -55,9 +55,9 @@ public:
 
     bool hasNoValue() const { return m_injectedScriptObject.hasNoValue(); }
 
-    void evaluate(ErrorString*, const String& expression, const String& objectGroup, bool includeCommandLineAPI, RefPtr<InspectorObject>* result);
-    void evaluateOn(ErrorString*, const String& objectId, const String& expression, RefPtr<InspectorObject>* result);
-    void evaluateOnCallFrame(ErrorString*, const ScriptValue& callFrames, const String& callFrameId, const String& expression, const String& objectGroup, bool includeCommandLineAPI, RefPtr<InspectorObject>* result);
+    void evaluate(ErrorString*, const String& expression, const String& objectGroup, bool includeCommandLineAPI, RefPtr<InspectorObject>* result, bool* wasThrown);
+    void evaluateOn(ErrorString*, const String& objectId, const String& expression, RefPtr<InspectorObject>* result, bool* wasThrown);
+    void evaluateOnCallFrame(ErrorString*, const ScriptValue& callFrames, const String& callFrameId, const String& expression, const String& objectGroup, bool includeCommandLineAPI, RefPtr<InspectorObject>* result, bool* wasThrown);
     void getProperties(ErrorString*, const String& objectId, bool ignoreHasOwnProperty, RefPtr<InspectorArray>* result);
     Node* nodeForObjectId(const String& objectId);
     void setPropertyValue(ErrorString*, const String& objectId, const String& propertyName, const String& expression);
@@ -80,7 +80,7 @@ private:
 
     bool canAccessInspectedWindow();
     void makeCall(ScriptFunctionCall&, RefPtr<InspectorValue>* result);
-    void makeObjectCall(ErrorString*, ScriptFunctionCall&, RefPtr<InspectorObject>* result);
+    void makeEvalCall(ErrorString*, ScriptFunctionCall&, RefPtr<InspectorObject>* result, bool* wasThrown);
     ScriptValue nodeAsScriptValue(Node*);
 
     ScriptObject m_injectedScriptObject;

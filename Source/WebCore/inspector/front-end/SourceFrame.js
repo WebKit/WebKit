@@ -793,9 +793,9 @@ WebInspector.SourceFrame.prototype = {
             }
         }
 
-        function showObjectPopup(result)
+        function showObjectPopup(result, wasThrown)
         {
-            if (result.isError() || !this._delegate.debuggerPaused())
+            if (wasThrown || !this._delegate.debuggerPaused())
                 return;
 
             var popupContentElement = null;

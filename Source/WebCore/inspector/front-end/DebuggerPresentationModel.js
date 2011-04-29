@@ -684,9 +684,9 @@ WebInspector.PresenationCallFrame.prototype = {
 
     evaluate: function(code, objectGroup, includeCommandLineAPI, callback)
     {
-        function didEvaluateOnCallFrame(error, result)
+        function didEvaluateOnCallFrame(error, result, wasThrown)
         {
-            callback(WebInspector.RemoteObject.fromPayload(result));
+            callback(WebInspector.RemoteObject.fromPayload(result), wasThrown);
         }
         DebuggerAgent.evaluateOnCallFrame(this._callFrame.id, code, objectGroup, includeCommandLineAPI, didEvaluateOnCallFrame.bind(this));
     },

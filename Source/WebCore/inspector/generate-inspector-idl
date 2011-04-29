@@ -133,7 +133,11 @@ for domain in json_api:
                     params.append("in%s %s %s" % (optional, param_type(domain_name, in_param), in_param["name"]))
             if ("returns" in command):
                 for out_param in command["returns"]:
-                    params.append("out %s %s" % (param_type(domain_name, out_param), out_param["name"]))
+                    if ("optional" in out_param):
+                        optional = " [optional]"
+                    else:
+                        optional = ""
+                    params.append("out%s %s %s" % (optional, param_type(domain_name, out_param), out_param["name"]))
             output_file.write("\n        void %s(%s);" % (command["name"], ", ".join(params)))
 
     if "events" in domain:

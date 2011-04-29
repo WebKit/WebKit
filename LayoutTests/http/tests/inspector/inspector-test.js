@@ -48,10 +48,10 @@ InspectorTest.evaluateInPage = function(code, callback)
 {
     callback = InspectorTest.safeWrap(callback);
 
-    function mycallback(error, result)
+    function mycallback(error, result, wasThrown)
     {
         if (!error)
-            callback(WebInspector.RemoteObject.fromPayload(result));
+            callback(WebInspector.RemoteObject.fromPayload(result), wasThrown);
     }
     RuntimeAgent.evaluate(code, "console", false, mycallback);
 }

@@ -106,7 +106,7 @@ WebInspector.ExtensionSidebarPane.prototype = {
         WebInspector.extensionServer.notifyExtensionSidebarUpdated(this._id);
     },
 
-    _onEvaluate: function(title, error, result)
+    _onEvaluate: function(title, error, result, wasThrown)
     {
         if (!error)
             this._setObject(WebInspector.RemoteObject.fromPayload(result), title);

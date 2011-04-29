@@ -201,7 +201,7 @@
                     { "name": "description", "type": "string", "description": "String representation of the object." },
                     { "name": "hasChildren", "type": "boolean", "optional": true, "description": "True when this object can be queried for children." },
                     { "name": "objectId", "type": "string", "optional": true, "description": "Unique object identifier (for non-primitive values)." },
-                    { "name": "type", "type": "string", "enum": ["object", "array", "function", "null", "node", "undefined", "string", "number", "boolean", "error", "regexp", "date"], "description": "Object type." }
+                    { "name": "type", "type": "string", "enum": ["object", "array", "function", "null", "node", "undefined", "string", "number", "boolean", "regexp", "date"], "description": "Object type." }
                 ]
             },
             {
@@ -211,6 +211,7 @@
                 "properties": [
                     { "name": "name", "type": "string", "description": "Property name." },
                     { "name": "value", "$ref": "RemoteObject", "description": "Property value." },
+                    { "name": "wasThrown", "type": "boolean", "optional": true, "description": "True if exception was thrown on attempt to get the property value, in that case the value propery will contain thrown value." },
                     { "name": "isGetter", "type": "boolean", "optional": true, "description": "True if this property is getter." }
                 ]
             }
@@ -224,7 +225,8 @@
                     { "name": "includeCommandLineAPI", "type": "boolean", "optional": true, "description": "Determines whether Command Line API should be available during the evaluation." }
                 ],
                 "returns": [
-                    { "name": "result", "$ref": "RemoteObject", "description": "Evaluation result." }
+                    { "name": "result", "$ref": "RemoteObject", "description": "Evaluation result." },
+                    { "name": "wasThrown", "type": "boolean", "optional": true, "description": "True iff the result was thrown during the evaluation." }
                 ],
                 "description": "Evaluate expression on global object."
             },
@@ -235,7 +237,8 @@
                     { "name": "expression", "type": "string", "description": "Expression to evaluate." }
                 ],
                 "returns": [
-                    { "name": "result", "$ref": "RemoteObject", "description": "Evaluation result." }
+                    { "name": "result", "$ref": "RemoteObject", "description": "Evaluation result." },
+                    { "name": "wasThrown", "type": "boolean", "optional": true, "description": "True iff the result was thrown during the evaluation." }
                 ],
                 "description": "Evaluate expression on given object using it as <code>this</code>."
             },
@@ -1449,7 +1452,8 @@
                     { "name": "includeCommandLineAPI", "type": "boolean", "optional": true, "description": "Specifies whether command line API should be available to the evaluated expression, defaults to false." }
                 ],
                 "returns": [
-                    { "name": "result", "$ref": "Runtime.RemoteObject", "description": "Object wrapper for the evaluation result." }
+                    { "name": "result", "$ref": "Runtime.RemoteObject", "description": "Object wrapper for the evaluation result." },
+                    { "name": "wasThrown", "type": "boolean", "optional": true, "description": "True iff the result was thrown during the evaluation." }
                 ],
                 "description": "Evaluates expression on a given call frame."
             }

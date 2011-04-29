@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Google Inc. All rights reserved.
+ * Copyright (C) 2010, 2011 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -54,24 +54,24 @@ InjectedScript::InjectedScript(ScriptObject injectedScriptObject, InspectedState
 {
 }
 
-void InjectedScript::evaluate(ErrorString* errorString, const String& expression, const String& objectGroup, bool includeCommandLineAPI, RefPtr<InspectorObject>* result)
+void InjectedScript::evaluate(ErrorString* errorString, const String& expression, const String& objectGroup, bool includeCommandLineAPI, RefPtr<InspectorObject>* result, bool* wasThrown)
 {
     ScriptFunctionCall function(m_injectedScriptObject, "evaluate");
     function.appendArgument(expression);
     function.appendArgument(objectGroup);
     function.appendArgument(includeCommandLineAPI);
-    makeObjectCall(errorString, function, result);
+    makeEvalCall(errorString, function, result, wasThrown);
 }
 
-void InjectedScript::evaluateOn(ErrorString* errorString, const String& objectId, const String& expression, RefPtr<InspectorObject>* result)
+void InjectedScript::evaluateOn(ErrorString* errorString, const String& objectId, const String& expression, RefPtr<InspectorObject>* result, bool* wasThrown)
 {
     ScriptFunctionCall function(m_injectedScriptObject, "evaluateOn");
     function.appendArgument(objectId);
     function.appendArgument(expression);
-    makeObjectCall(errorString, function, result);
+    makeEvalCall(errorString, function, result, wasThrown);
 }
 
-void InjectedScript::evaluateOnCallFrame(ErrorString* errorString, const ScriptValue& callFrames, const String& callFrameId, const String& expression, const String& objectGroup, bool includeCommandLineAPI, RefPtr<InspectorObject>* result)
+void InjectedScript::evaluateOnCallFrame(ErrorString* errorString, const ScriptValue& callFrames, const String& callFrameId, const String& expression, const String& objectGroup, bool includeCommandLineAPI, RefPtr<InspectorObject>* result, bool* wasThrown)
 {
     ScriptFunctionCall function(m_injectedScriptObject, "evaluateOnCallFrame");
     function.appendArgument(callFrames);
@@ -79,7 +79,7 @@ void InjectedScript::evaluateOnCallFrame(ErrorString* errorString, const ScriptV
     function.appendArgument(expression);
     function.appendArgument(objectGroup);
     function.appendArgument(includeCommandLineAPI);
-    makeObjectCall(errorString, function, result);
+    makeEvalCall(errorString, function, result, wasThrown);
 }
 
 void InjectedScript::getProperties(ErrorString* errorString, const String& objectId, bool ignoreHasOwnProperty, RefPtr<InspectorArray>* properties)
@@ -88,7 +88,7 @@ void InjectedScript::getProperties(ErrorString* errorString, const String& objec
     function.appendArgument(objectId);
     function.appendArgument(ignoreHasOwnProperty);
 
-    RefPtr<InspectorValue> result; 
+    RefPtr<InspectorValue> result;
     makeCall(function, &result);
     if (!result || result->type() != InspectorValue::TypeArray) {
         *errorString = "Internal error";
@@ -206,20 +206,31 @@ void InjectedScript::makeCall(ScriptFunctionCall& function, RefPtr<InspectorValu
         *result = InspectorString::create("Exception while making a call.");
 }
 
-void InjectedScript::makeObjectCall(ErrorString* errorString, ScriptFunctionCall& function, RefPtr<InspectorObject>* objectResult)
+void InjectedScript::makeEvalCall(ErrorString* errorString, ScriptFunctionCall& function, RefPtr<InspectorObject>* objectResult, bool* wasThrown)
 {
     RefPtr<InspectorValue> result;
     makeCall(function, &result);
-    if (result && result->type() == InspectorValue::TypeString) {
+    if (!result) {
+        *errorString = "Internal error: result value is empty";
+        return;
+    }
+    if (result->type() == InspectorValue::TypeString) {
         result->asString(errorString);
         return;
     }
-
-    if (!result || result->type() != InspectorValue::TypeObject) {
-        *errorString = "Internal error";
+    RefPtr<InspectorObject> resultPair = result->asObject();
+    if (!resultPair) {
+        *errorString = "Internal error: result is not an Object";
         return;
     }
-    *objectResult = result->asObject();
+    RefPtr<InspectorObject> resultObj = resultPair->getObject("result");
+    bool wasThrownVal = false;
+    if (!resultObj || !resultPair->getBoolean("wasThrown", &wasThrownVal)) {
+        *errorString = "Internal error: result is not a pair of value and wasThrown flag";
+        return;
+    }
+    *objectResult = resultObj;
+    *wasThrown = wasThrownVal;
 }
 
 ScriptValue InjectedScript::nodeAsScriptValue(Node* node)

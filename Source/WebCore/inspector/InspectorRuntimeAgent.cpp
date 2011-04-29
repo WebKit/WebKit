@@ -49,25 +49,34 @@ InspectorRuntimeAgent::~InspectorRuntimeAgent()
 {
 }
 
-void InspectorRuntimeAgent::evaluate(ErrorString* errorString, const String& expression, const String* const objectGroup, const bool* const includeCommandLineAPI, RefPtr<InspectorObject>* result)
+void InspectorRuntimeAgent::evaluate(ErrorString* errorString, const String& expression, const String* const objectGroup, const bool* const includeCommandLineAPI, RefPtr<InspectorObject>* result, bool* wasThrown)
 {
     InjectedScript injectedScript = m_injectedScriptManager->injectedScriptFor(getDefaultInspectedState());
-    if (!injectedScript.hasNoValue())
-        injectedScript.evaluate(errorString, expression, objectGroup ? *objectGroup : "", includeCommandLineAPI ? *includeCommandLineAPI : false, result);
+    if (injectedScript.hasNoValue()) {
+        *errorString = "Inspected frame has gone";
+        return;
+    }
+    injectedScript.evaluate(errorString, expression, objectGroup ? *objectGroup : "", includeCommandLineAPI ? *includeCommandLineAPI : false, result, wasThrown);
 }
 
-void InspectorRuntimeAgent::evaluateOn(ErrorString* errorString, const String& objectId, const String& expression, RefPtr<InspectorObject>* result)
+void InspectorRuntimeAgent::evaluateOn(ErrorString* errorString, const String& objectId, const String& expression, RefPtr<InspectorObject>* result, bool* wasThrown)
 {
     InjectedScript injectedScript = m_injectedScriptManager->injectedScriptForObjectId(objectId);
-    if (!injectedScript.hasNoValue())
-        injectedScript.evaluateOn(errorString, objectId, expression, result);
+    if (injectedScript.hasNoValue()) {
+        *errorString = "Inspected frame has gone";
+        return;
+    }
+    injectedScript.evaluateOn(errorString, objectId, expression, result, wasThrown);
 }
 
 void InspectorRuntimeAgent::getProperties(ErrorString* errorString, const String& objectId, bool ignoreHasOwnProperty, RefPtr<InspectorArray>* result)
 {
     InjectedScript injectedScript = m_injectedScriptManager->injectedScriptForObjectId(objectId);
-    if (!injectedScript.hasNoValue())
-        injectedScript.getProperties(errorString, objectId, ignoreHasOwnProperty, result);
+    if (injectedScript.hasNoValue()) {
+        *errorString = "Inspected frame has gone";
+        return;
+    }
+    injectedScript.getProperties(errorString, objectId, ignoreHasOwnProperty, result);
 }
 
 void InspectorRuntimeAgent::setPropertyValue(ErrorString* errorString, const String& objectId, const String& propertyName, const String& expression)

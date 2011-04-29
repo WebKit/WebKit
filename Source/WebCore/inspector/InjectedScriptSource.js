@@ -90,13 +90,14 @@ InjectedScript.prototype = {
         return object;
     },
 
+    // This method cannot throw.
     _wrapObject: function(object, objectGroupName)
     {
         try {
             if (typeof object === "object" || typeof object === "function" || this._isHTMLAllCollection(object)) {
                 var id = this._lastBoundObjectId++;
                 this._idToWrappedObject[id] = object;
-                var objectId = "{\"injectedScriptId\":" + injectedScriptId + ",\"id\":" + id + "}";    
+                var objectId = "{\"injectedScriptId\":" + injectedScriptId + ",\"id\":" + id + "}";
                 if (objectGroupName) {
                     var group = this._objectGroups[objectGroupName];
                     if (!group) {
@@ -109,7 +110,7 @@ InjectedScript.prototype = {
             }
             return InjectedScript.RemoteObject.fromObject(object, objectId);
         } catch (e) {
-            return InjectedScript.RemoteObject.fromObject("[ Exception: " + e.toString() + " ]");
+            return InjectedScript.RemoteObject.fromException(e);
         }
     },
 
@@ -152,23 +153,25 @@ InjectedScript.prototype = {
         var propertyNames = ignoreHasOwnProperty ? this._getPropertyNames(object) : Object.getOwnPropertyNames(object);
         if (!ignoreHasOwnProperty && object.__proto__)
             propertyNames.push("__proto__");
-    
+
         // Go over properties, prepare results.
         for (var i = 0; i < propertyNames.length; ++i) {
             var propertyName = propertyNames[i];
-    
+
             var property = {};
             property.name = propertyName + "";
             var isGetter = object["__lookupGetter__"] && object.__lookupGetter__(propertyName);
             if (!isGetter) {
                 try {
-                    property.value = this._wrapObject(object[propertyName], objectGroupName);
+                    var value = object[propertyName];
                 } catch(e) {
-                    property.value = new InjectedScript.RemoteObject.fromException(e);
+                    var value = e;
+                    property.wasThrown = true;
                 }
+                property.value = this._wrapObject(value, objectGroupName);
             } else {
                 // FIXME: this should show something like "getter" (bug 16734).
-                property.value = new InjectedScript.RemoteObject.fromObject("\u2014"); // em dash
+                property.value = InjectedScript.RemoteObject.fromObject("\u2014"); // em dash
                 property.isGetter = true;
             }
             properties.push(property);
@@ -182,17 +185,17 @@ InjectedScript.prototype = {
         var object = this._objectForId(parsedObjectId);
         if (!this._isDefined(object))
             return "Object with given id not found";
-    
+
         var expressionLength = expression.length;
         if (!expressionLength) {
             delete object[propertyName];
             return propertyName in object ? "Cound not delete property." : undefined;
         }
-    
+
         try {
             // Surround the expression in parenthesis so the result of the eval is the result
             // of the whole expression not the last potential sub-expression.
-    
+
             // There is a regression introduced here: eval is now happening against global object,
             // not call frame while on a breakpoint.
             // TODO: bring evaluation against call frame back.
@@ -262,9 +265,11 @@ InjectedScript.prototype = {
     _evaluateAndWrap: function(evalFunction, object, expression, objectGroup, isEvalOnCallFrame, injectCommandLineAPI)
     {
         try {
-            return this._wrapObject(this._evaluateOn(evalFunction, object, expression, isEvalOnCallFrame, injectCommandLineAPI), objectGroup);
+            return { wasThrown: false,
+                     result: this._wrapObject(this._evaluateOn(evalFunction, object, expression, isEvalOnCallFrame, injectCommandLineAPI), objectGroup) };
         } catch (e) {
-            return InjectedScript.RemoteObject.fromException(e);
+            return { wasThrown: true,
+                     result: this._wrapObject(e, objectGroup) };
         }
     },
 
@@ -279,14 +284,7 @@ InjectedScript.prototype = {
                 inspectedWindow.console._commandLineAPI = new CommandLineAPI(this._commandLineAPIImpl, isEvalOnCallFrame ? object : null);
                 expression = "with ((window && window.console && window.console._commandLineAPI) || {}) {\n" + expression + "\n}";
             }
-
-            var value = evalFunction.call(object, expression);
-
-            // When evaluating on call frame error is not thrown, but returned as a value.
-            if (this._type(value) === "error")
-                throw value.toString();
-
-            return value;
+            return evalFunction.call(object, expression);
         } finally {
             if (injectCommandLineAPI && inspectedWindow.console)
                 delete inspectedWindow.console._commandLineAPI;
@@ -297,7 +295,7 @@ InjectedScript.prototype = {
     {
         if (!callFrame)
             return false;
-    
+
         var result = [];
         var depth = 0;
         do {
@@ -395,8 +393,6 @@ InjectedScript.prototype = {
             return "array";
         if (obj instanceof inspectedWindow.HTMLCollection)
             return "array";
-        if (obj instanceof inspectedWindow.Error)
-            return "error";
         return type;
     },
 
@@ -457,21 +453,18 @@ InjectedScript.RemoteObject.fromException = function(e)
     } catch (ex) {
         var description = "<failed to convert exception to string>";
     }
-    return new InjectedScript.RemoteObject(null, "error", description);
+    return new InjectedScript.RemoteObject(null, "string", "[ Exception: " + description + " ]");
 }
 
+// This method may throw
 InjectedScript.RemoteObject.fromObject = function(object, objectId)
 {
     var type = injectedScript._type(object);
     var rawType = typeof object;
     var hasChildren = (rawType === "object" && object !== null && (!!Object.getOwnPropertyNames(object).length || !!object.__proto__)) || rawType === "function";
     var description = "";
-    try {
-        var description = injectedScript._describe(object);
-        return new InjectedScript.RemoteObject(objectId, type, description, hasChildren);
-    } catch (e) {
-        return InjectedScript.RemoteObject.fromException(e);
-    }
+    var description = injectedScript._describe(object);
+    return new InjectedScript.RemoteObject(objectId, type, description, hasChildren);
 }
 
 InjectedScript.CallFrameProxy = function(ordinal, callFrame)

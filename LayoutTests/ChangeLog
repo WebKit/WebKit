@@ -1,3 +1,17 @@
+2011-04-28  Yury Semikhatsky  <yurys@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: [protocol] Evaluate should expose thrown exception value
+        https://bugs.webkit.org/show_bug.cgi?id=59000
+
+        * inspector/console/console-dir-expected.txt:
+        * inspector/console/console-eval-global-expected.txt:
+        * inspector/console/console-format-expected.txt:
+        * inspector/extensions/extensions-eval-expected.txt:
+        * inspector/protocol/console-agent-expected.txt:
+        * inspector/protocol/runtime-agent-expected.txt:
+
 2011-04-29  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r85315.

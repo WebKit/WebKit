@@ -64,10 +64,10 @@ console-format.html:53test named "test"
 console-format.html:54["test named "test""]
 globals[3]
 "test named "test""
-console-format.html:53Error: 
-console-format.html:54[Error: ]
+console-format.html:53Error
+console-format.html:54[Error]
 globals[4]
-Error: 
+Error
 console-format.html:53<body onload="onload()">…</body>
 console-format.html:54[<body onload="onload()">…</body>]
 globals[5]
