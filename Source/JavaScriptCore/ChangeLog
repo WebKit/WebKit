@@ -1,3 +1,12 @@
+2011-04-28  David Kilzer  <ddkilzer@apple.com>
+
+        Revert "<http://webkit.org/b/59705> WTF::postTimer() leaks a CFRunLoopTimerRef every time it's called"
+
+        This reverts commit r85195.  It was crashing DumpRenderTree on Lion.
+
+        * wtf/mac/MainThreadMac.mm:
+        (WTF::postTimer):
+
 2011-04-28  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Eric Seidel.

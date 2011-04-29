@@ -33,7 +33,6 @@
 #import <Foundation/NSThread.h>
 #import <stdio.h>
 #import <wtf/Assertions.h>
-#import <wtf/RetainPtr.h>
 #import <wtf/Threading.h>
 
 @interface WTFMainThreadCaller : NSObject {
@@ -96,8 +95,7 @@ static void postTimer()
         return;
 
     isTimerPosted = true;
-    RetainPtr<CFRunLoopTimerRef> runLoopTimer(AdoptCF, CFRunLoopTimerCreate(0, 0, 0, 0, 0, timerFired, 0));
-    CFRunLoopAddTimer(CFRunLoopGetCurrent(), runLoopTimer.get(), kCFRunLoopCommonModes);
+    CFRunLoopAddTimer(CFRunLoopGetCurrent(), CFRunLoopTimerCreate(0, 0, 0, 0, 0, timerFired, 0), kCFRunLoopCommonModes);
 }
 
 void scheduleDispatchFunctionsOnMainThread()
