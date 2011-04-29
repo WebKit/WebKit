@@ -1,3 +1,16 @@
+2011-04-28  Julien Chaffraix  <jchaffraix@codeaurora.org>
+
+        Reviewed by Darin Adler.
+
+        CSS counters in :before pseudo-elements do not always update
+        https://bugs.webkit.org/show_bug.cgi?id=38291
+
+        The previous bug was solved so just landing the test case to ensure that
+        we don't regress it.
+
+        * fast/css/counters/counter-before-content-not-incremented-expected.txt: Added.
+        * fast/css/counters/counter-before-content-not-incremented.html: Added.
+
 2011-04-28  Dirk Pranke  <dpranke@chromium.org>
 
         Suppress GPU failures - bug 59768, and
