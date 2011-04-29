@@ -1079,6 +1079,7 @@ void Element::recalcStyle(StyleChange change)
     RefPtr<RenderStyle> currentStyle(renderStyle());
     bool hasParentStyle = parentNodeForRenderingAndStyle() ? parentNodeForRenderingAndStyle()->renderStyle() : false;
     bool hasDirectAdjacentRules = currentStyle && currentStyle->childrenAffectedByDirectAdjacentRules();
+    bool hasIndirectAdjacentRules = currentStyle && currentStyle->childrenAffectedByForwardPositionalRules();
 
     if ((change > NoChange || needsStyleRecalc())) {
         if (hasRareData())
@@ -1146,16 +1147,19 @@ void Element::recalcStyle(StyleChange change)
     // For now we will just worry about the common case, since it's a lot trickier to get the second case right
     // without doing way too much re-resolution.
     bool forceCheckOfNextElementSibling = false;
+    bool forceCheckOfAnyElementSibling = false;
     for (Node *n = firstChild(); n; n = n->nextSibling()) {
         bool childRulesChanged = n->needsStyleRecalc() && n->styleChangeType() == FullStyleChange;
-        if (forceCheckOfNextElementSibling && n->isElementNode())
+        if ((forceCheckOfNextElementSibling || forceCheckOfAnyElementSibling) && n->isElementNode())
             n->setNeedsStyleRecalc();
         if (change >= Inherit || n->isTextNode() || n->childNeedsStyleRecalc() || n->needsStyleRecalc()) {
             parentPusher.push();
             n->recalcStyle(change);
         }
-        if (n->isElementNode())
+        if (n->isElementNode()) {
             forceCheckOfNextElementSibling = childRulesChanged && hasDirectAdjacentRules;
+            forceCheckOfAnyElementSibling = forceCheckOfAnyElementSibling || (childRulesChanged && hasIndirectAdjacentRules);
+        }
     }
     // FIXME: This does not care about sibling combinators. Will be necessary in XBL2 world.
     if (Node* shadow = shadowRoot()) {
