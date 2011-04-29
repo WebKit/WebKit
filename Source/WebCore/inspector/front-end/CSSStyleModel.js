@@ -532,7 +532,6 @@ WebInspector.CSSProperty.prototype = {
 
                 WebInspector.cssModel._fireStyleSheetChanged(style.id.styleSheetId, majorChange, userCallback ? userCallback.bind(this, style) : null);
             } else {
-                console.error(JSON.stringify(error));
                 if (userCallback)
                     userCallback(null);
             }

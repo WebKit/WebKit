@@ -1641,7 +1641,7 @@ WebInspector.StylePropertyTreeElement.prototype = {
                 // Enter or colon (for name)/semicolon outside of string (for value).
                 event.preventDefault();
                 return "move-forward";
-            } else if (event.keyCode === WebInspector.KeyboardShortcut.Keys.Esc.code)
+            } else if (event.keyCode === WebInspector.KeyboardShortcut.Keys.Esc.code || event.keyIdentifier === "U+001B")
                 return "cancel";
             else if (!isEditingName && this._newProperty && event.keyCode === WebInspector.KeyboardShortcut.Keys.Backspace.code) {
                 // For a new property, when Backspace is pressed at the beginning of new property value, move back to the property name.
@@ -1679,6 +1679,7 @@ WebInspector.StylePropertyTreeElement.prototype = {
             return "move-forward";
         }
 
+        delete this.originalPropertyText;
         WebInspector.panels.elements.startEditingStyle();
         WebInspector.startEditing(selectElement, {
             context: context,
@@ -1702,7 +1703,7 @@ WebInspector.StylePropertyTreeElement.prototype = {
         this._applyFreeFlowStyleTextEdit();
     },
 
-    _applyFreeFlowStyleTextEdit: function()
+    _applyFreeFlowStyleTextEdit: function(now)
     {
         if (this._applyFreeFlowStyleTextEditTimer)
             clearTimeout(this._applyFreeFlowStyleTextEditTimer);
@@ -1711,7 +1712,15 @@ WebInspector.StylePropertyTreeElement.prototype = {
         {
             this.applyStyleText(this.nameElement.textContent + ": " + this.valueElement.textContent);
         }
-        this._applyFreeFlowStyleTextEditTimer = setTimeout(apply.bind(this), 100);
+        if (now)
+            apply.call(this);
+        else
+            this._applyFreeFlowStyleTextEditTimer = setTimeout(apply.bind(this), 100);
+    },
+
+    kickFreeFlowStyleEditForTest: function()
+    {
+        this._applyFreeFlowStyleTextEdit(true);
     },
 
     _handleUpOrDownKeyPressed: function(event)
@@ -1769,12 +1778,6 @@ WebInspector.StylePropertyTreeElement.prototype = {
             event.handled = true;
             event.preventDefault();
 
-            if (!("originalPropertyText" in this)) {
-                // Remember the rule's original CSS text on [Page](Up|Down), so it can be restored
-                // if the editing is canceled.
-                this.originalPropertyText = this.property.propertyText;
-            }
-
             // Synthesize property text disregarding any comments, custom whitespace etc.
             this.applyStyleText(this.nameElement.textContent + ": " + this.valueElement.textContent);
         }
@@ -1795,25 +1798,29 @@ WebInspector.StylePropertyTreeElement.prototype = {
         if (editedElement.parentElement)
             editedElement.parentElement.removeStyleClass("child-editing");
 
-        delete this.originalPropertyText;
         WebInspector.panels.elements.endEditingStyle();
     },
 
     editingCancelled: function(element, context)
     {
         this._removePrompt();
-        if ("originalPropertyText" in this)
-            this.applyStyleText(this.originalPropertyText, true);
-        else {
+        this._revertStyleUponEditingCanceled(this.originalPropertyText);
+        // This should happen last, as it clears the info necessary to restore the property value after [Page]Up/Down changes.
+        this.editingEnded(context);
+    },
+
+    _revertStyleUponEditingCanceled: function(originalPropertyText)
+    {
+        if (typeof originalPropertyText === "string") {
+            delete this.originalPropertyText;
+            this.applyStyleText(originalPropertyText, true, false, true);
+        } else {
             if (this._newProperty)
                 this.treeOutline.removeChild(this);
             else
                 this.updateTitle();
         }
-
-        // This should happen last, as it clears the info necessary to restore the property value after [Page]Up/Down changes.
-        this.editingEnded(context);
-    },
+    }, 
 
     editingCommitted: function(element, userInput, previousContent, context, moveDirection)
     {
@@ -1856,7 +1863,7 @@ WebInspector.StylePropertyTreeElement.prototype = {
                 else
                     propertyText = this.nameElement.textContent + ": " + userInput;
             }
-            this.applyStyleText(propertyText, true);
+            this.applyStyleText(propertyText, true, true);
         } else {
             if (!isDataPasted && !this._newProperty)
                 this.updateTitle();
@@ -1927,38 +1934,40 @@ WebInspector.StylePropertyTreeElement.prototype = {
         }
     },
 
-    _hasBeenAppliedToPageViaUpDown: function()
+    _hasBeenModifiedIncrementally: function()
     {
         // New properties applied via up/down have an originalPropertyText and will be deleted later
         // on, if cancelled, when the empty string gets applied as their style text.
-        return ("originalPropertyText" in this);
+        return typeof this.originalPropertyText === "string";
     },
 
-    applyStyleText: function(styleText, updateInterface)
+    applyStyleText: function(styleText, updateInterface, majorChange, isRevert)
     {
+        // Leave a way to cancel editing after incremental changes.
+        if (!isRevert && !updateInterface && !this._hasBeenModifiedIncrementally()) {
+            // Remember the rule's original CSS text on [Page](Up|Down), so it can be restored
+            // if the editing is canceled.
+            this.originalPropertyText = this.property.propertyText;
+        }
+
         var section = this.treeOutline.section;
         var elementsPanel = WebInspector.panels.elements;
         styleText = styleText.replace(/\s/g, " ").trim(); // Replace &nbsp; with whitespace.
         var styleTextLength = styleText.length;
-        if (!styleTextLength && updateInterface && this._newProperty && !this._hasBeenAppliedToPageViaUpDown()) {
+        if (!styleTextLength && updateInterface && !isRevert && this._newProperty && !this._hasBeenModifiedIncrementally()) {
             // The user deleted everything and never applied a new property value via Up/Down scrolling, so remove the tree element and update.
             this.parent.removeChild(this);
             section.afterUpdate();
             return;
         }
 
-        function callback(newStyle)
+        function callback(originalPropertyText, newStyle)
         {
             if (!newStyle) {
-                // The user typed something, but it didn't parse. Just abort and restore
-                // the original title for this property.  If this was a new attribute and
-                // we couldn't parse, then just remove it.
-                if (this._newProperty) {
-                    this.parent.removeChild(this);
-                    return;
+                if (updateInterface) {
+                    // It did not apply, cancel editing.
+                    this._revertStyleUponEditingCanceled(originalPropertyText);
                 }
-                if (updateInterface)
-                    this.updateTitle();
                 return;
             }
 
@@ -1977,7 +1986,7 @@ WebInspector.StylePropertyTreeElement.prototype = {
         // FIXME: this does not handle trailing comments.
         if (styleText.length && !/;\s*$/.test(styleText))
             styleText += ";";
-        this.property.setText(styleText, updateInterface, callback.bind(this));
+        this.property.setText(styleText, majorChange, callback.bind(this, this.originalPropertyText));
     }
 }
 

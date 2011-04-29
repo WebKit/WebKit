@@ -1519,7 +1519,7 @@ WebInspector.startEditing = function(element, config)
             event.ctrlKey && !event.shiftKey && !event.metaKey && !event.altKey;
         if (isEnterKey(event) && (event.isMetaOrCtrlForTest || !config.multiline || isMetaOrCtrl))
             return "commit";
-        else if (event.keyCode === WebInspector.KeyboardShortcut.Keys.Esc.code)
+        else if (event.keyCode === WebInspector.KeyboardShortcut.Keys.Esc.code || event.keyIdentifier === "U+001B")
             return "cancel";
         else if (event.keyIdentifier === "U+0009") // Tab key
             return "move-" + (event.shiftKey ? "backward" : "forward");

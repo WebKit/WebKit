@@ -1,3 +1,17 @@
+2011-04-29  Pavel Feldman  <pfeldman@google.com>
+
+        Reviewed by Yury Semikhatsky.
+
+        Web Inspector: CSS editing breaks when entering "color: rgb(1"
+        https://bugs.webkit.org/show_bug.cgi?id=59789
+
+        * inspector/styles/styles-add-invalid-property-expected.txt: Added.
+        * inspector/styles/styles-add-invalid-property.html: Added.
+        * inspector/styles/styles-cancel-editing-expected.txt: Added.
+        * inspector/styles/styles-cancel-editing.html: Added.
+        * inspector/styles/styles-commit-editing-expected.txt: Added.
+        * inspector/styles/styles-commit-editing.html: Added.
+
 2011-04-29  Pavel Podivilov  <podivilov@chromium.org>
 
         Reviewed by Pavel Feldman.
