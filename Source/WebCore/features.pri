@@ -133,9 +133,9 @@ contains(MOBILITY_CONFIG, sensors) {
 
 # systeminfo support if QtMobility systeminfo module exists, but only for symbian, maemo and meego
 symbian|maemo5|maemo6 {
-    !CONFIG(QTDIR_build):!contains(DEFINES, ENABLE_QT_USERAGENT_DEVICEMODEL=.) {
+    !CONFIG(QTDIR_build):!contains(DEFINES, WTF_USE_QT_MOBILITY_SYSTEMINFO=.) {
         contains(MOBILITY_CONFIG, systeminfo) {
-            DEFINES += ENABLE_QT_USERAGENT_DEVICEMODEL=1
+            DEFINES += WTF_USE_QT_MOBILITY_SYSTEMINFO=1
         }
     }
 }

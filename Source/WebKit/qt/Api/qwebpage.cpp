@@ -143,7 +143,7 @@
 #if defined(Q_WS_X11)
 #include <QX11Info>
 #endif
-#if ENABLE(QT_USERAGENT_DEVICEMODEL)
+#if USE(QT_MOBILITY_SYSTEMINFO)
 #include <qsysteminfo.h>
 #endif
 
@@ -3860,7 +3860,7 @@ QString QWebPage::userAgentForUrl(const QUrl&) const
         firstPartTemp += QString::fromLatin1("Unknown");
 #endif
 
-#if ENABLE(QT_USERAGENT_DEVICEMODEL)
+#if USE(QT_MOBILITY_SYSTEMINFO)
         // adding Model Number
         QtMobility::QSystemDeviceInfo systemDeviceInfo;
 

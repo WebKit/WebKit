@@ -1,3 +1,11 @@
+2011-04-29  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
+
+        Reviewed by Simon Hausmann.
+
+        ENABLE(QT_USERAGENT_DEVICEMODEL) -> USE(QT_MOBILITY_SYSTEMINFO)
+
+        * Api/qwebpage.cpp:
+
 2011-04-28  Yael Aharon  <yael.aharon@nokia.com>
 
         Reviewed by Andreas Kling.
