@@ -1,3 +1,13 @@
+2011-04-28  Dan Bernstein  <mitz@apple.com>
+
+        Rubber-stamped by Mark Rowe.
+
+        Reverted r81319.
+
+        Fixes <rdar://problem/9331580> REGRESSION (r81319): Safari fails to display dropdown navigation on classics.berkeley.edu
+
+        * page/NavigatorBase.cpp:
+
 2011-04-28  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Dirk Schulze.
