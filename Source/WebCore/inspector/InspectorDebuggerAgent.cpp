@@ -248,16 +248,7 @@ PassRefPtr<InspectorObject> InspectorDebuggerAgent::resolveBreakpoint(const Stri
     if (scriptIterator == m_scripts.end())
         return 0;
     Script& script = scriptIterator->second;
-    if (breakpoint.lineNumber < script.lineOffset)
-        return 0;
-    if (!script.linesCount) {
-        script.linesCount = 1;
-        for (size_t i = 0; i < script.data.length(); ++i) {
-            if (script.data[i] == '\n')
-                script.linesCount += 1;
-        }
-    }
-    if (breakpoint.lineNumber >= script.lineOffset + script.linesCount)
+    if (breakpoint.lineNumber < script.startLine || script.endLine <= breakpoint.lineNumber)
         return 0;
 
     int actualLineNumber;
@@ -376,12 +367,12 @@ PassRefPtr<InspectorArray> InspectorDebuggerAgent::currentCallFrames()
 
 // JavaScriptDebugListener functions
 
-void InspectorDebuggerAgent::didParseSource(const String& sourceID, const String& url, const String& data, int lineOffset, int columnOffset, bool isContentScript)
+void InspectorDebuggerAgent::didParseSource(const String& sourceID, const String& url, const String& data, int startLine, int startColumn, int endLine, int endColumn, bool isContentScript)
 {
     // Don't send script content to the front end until it's really needed.
-    m_frontend->scriptParsed(sourceID, url, lineOffset, columnOffset, data.length(), isContentScript);
+    m_frontend->scriptParsed(sourceID, url, startLine, startColumn, endLine, endColumn, isContentScript);
 
-    m_scripts.set(sourceID, Script(url, data, lineOffset, columnOffset));
+    m_scripts.set(sourceID, Script(url, data, startLine, startColumn, endLine, endColumn));
 
     if (url.isEmpty())
         return;

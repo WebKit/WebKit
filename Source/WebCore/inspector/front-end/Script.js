@@ -23,13 +23,14 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.Script = function(sourceID, sourceURL, lineOffset, columnOffset, length, errorLine, errorMessage, isContentScript)
+WebInspector.Script = function(sourceID, sourceURL, startLine, startColumn, endLine, endColumn, errorLine, errorMessage, isContentScript)
 {
     this.sourceID = sourceID;
     this.sourceURL = sourceURL;
-    this.lineOffset = lineOffset;
-    this.columnOffset = columnOffset;
-    this.length = length;
+    this.lineOffset = startLine;
+    this.columnOffset = startColumn;
+    this.endLine = endLine;
+    this.endColumn = endColumn;
     this.errorLine = errorLine;
     this.errorMessage = errorMessage;
     this.isContentScript = isContentScript;

@@ -225,10 +225,26 @@ void ScriptDebugServer::dispatchDidParseSource(const ListenerSet& listeners, Sou
     int lineOffset = sourceProvider->startPosition().m_line.convertAsZeroBasedInt();
     int columnOffset = sourceProvider->startPosition().m_column.convertAsZeroBasedInt();
 
+    int lineCount = 1;
+    int lastLineStart = 0;
+    for (size_t i = 0; i < data.length() - 1; ++i) {
+        if (data[i] == '\n') {
+            lineCount += 1;
+            lastLineStart = i + 1;
+        }
+    }
+
+    int endLine = lineOffset + lineCount - 1;
+    int endColumn;
+    if (lineCount == 1)
+        endColumn = data.length() + columnOffset;
+    else
+        endColumn = data.length() - lastLineStart;
+
     Vector<ScriptDebugListener*> copy;
     copyToVector(listeners, copy);
     for (size_t i = 0; i < copy.size(); ++i)
-        copy[i]->didParseSource(sourceID, url, data, lineOffset, columnOffset, isContentScript);
+        copy[i]->didParseSource(sourceID, url, data, lineOffset, columnOffset, endLine, endColumn, isContentScript);
 }
 
 void ScriptDebugServer::dispatchFailedToParseSource(const ListenerSet& listeners, SourceProvider* sourceProvider, int errorLine, const String& errorMessage)

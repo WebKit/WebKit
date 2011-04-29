@@ -2,10 +2,19 @@ Tests that valid parsed script notifications are received by front-end. Bug 5272
 
 Debugger was enabled.
 script 1:
-    offset: 5:8
-    length: 1041
+    start: 5:8
+    end: 37:2
 script 2:
-    offset: 38:21
-    length: 50
+    start: 38:21
+    end: 43:24
+script 3:
+    start: 45:11
+    end: 45:32
+script 4:
+    start: 46:11
+    end: 46:28
+script 5:
+    start: 48:11
+    end: 49:20
 Debugger was disabled.
 

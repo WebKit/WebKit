@@ -120,7 +120,7 @@ private:
 
     PassRefPtr<InspectorArray> currentCallFrames();
 
-    virtual void didParseSource(const String& sourceID, const String& url, const String& data, int lineOffset, int columnOffset, bool isContentScript);
+    virtual void didParseSource(const String& sourceID, const String& url, const String& data,  int startLine, int startColumn, int endLine, int endColumn, bool isContentScript);
     virtual void failedToParseSource(const String& url, const String& data, int firstLine, int errorLine, const String& errorMessage);
     virtual void didPause(ScriptState*, const ScriptValue& callFrames, const ScriptValue& exception);
     virtual void didContinue();
@@ -131,25 +131,29 @@ private:
     class Script {
     public:
         Script()
-            : lineOffset(0)
-            , columnOffset(0)
-            , linesCount(0)
+            : startLine(0)
+            , startColumn(0)
+            , endLine(0)
+            , endColumn(0)
         {
         }
 
-        Script(const String& url, const String& data, int lineOffset, int columnOffset)
+        Script(const String& url, const String& data, int startLine, int startColumn, int endLine, int endColumn)
             : url(url)
             , data(data)
-            , lineOffset(lineOffset)
-            , columnOffset(columnOffset)
-            , linesCount(0)
+            , startLine(startLine)
+            , startColumn(startColumn)
+            , endLine(endLine)
+            , endColumn(endColumn)
         {
         }
 
         String url;
         String data;
-        int lineOffset;
-        int columnOffset;
+        int startLine;
+        int startColumn;
+        int endLine;
+        int endColumn;
         int linesCount;
     };
 

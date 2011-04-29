@@ -356,8 +356,10 @@ void ScriptDebugServer::dispatchDidParseSource(ScriptDebugListener* listener, v8
         toWebCoreStringWithNullOrUndefinedCheck(object->Get(v8::String::New("id"))),
         toWebCoreStringWithNullOrUndefinedCheck(object->Get(v8::String::New("name"))),
         toWebCoreStringWithNullOrUndefinedCheck(object->Get(v8::String::New("source"))),
-        object->Get(v8::String::New("lineOffset"))->ToInteger()->Value(),
-        object->Get(v8::String::New("columnOffset"))->ToInteger()->Value(),
+        object->Get(v8::String::New("startLine"))->ToInteger()->Value(),
+        object->Get(v8::String::New("startColumn"))->ToInteger()->Value(),
+        object->Get(v8::String::New("endLine"))->ToInteger()->Value(),
+        object->Get(v8::String::New("endColumn"))->ToInteger()->Value(),
         object->Get(v8::String::New("isContentScript"))->ToBoolean()->Value());
 }
 

@@ -86,12 +86,23 @@ DebuggerScript.getScripts = function(contextData)
 
 DebuggerScript._formatScript = function(script)
 {
+    var lineEnds = script.line_ends;
+    var lineCount = lineEnds.length;
+    var endLine = script.line_offset + lineCount - 1;
+    var endColumn;
+    if (lineCount === 1)
+        endColumn = script.source.length + script.column_offset;
+    else
+        endColumn = script.source.length - (script.line_ends[lineCount - 2] + 1);
+
     return {
         id: script.id,
         name: script.nameOrSourceURL(),
         source: script.source,
-        lineOffset: script.line_offset,
-        columnOffset: script.column_offset,
+        startLine: script.line_offset,
+        startColumn: script.column_offset,
+        endLine: endLine,
+        endColumn: endColumn,
         isContentScript: !!script.context_data && script.context_data.indexOf("injected") == 0
     };
 }

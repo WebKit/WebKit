@@ -21,7 +21,7 @@ var test = function()
         if (script.sourceURL !== WebInspector.mainResource.url)
             return;
         scripts.push(script);
-        if (scripts.length === 2)
+        if (scripts.length === 5)
             step3();
     }
 
@@ -30,18 +30,24 @@ var test = function()
         scripts.sort(function(x, y) { return x.lineOffset - y.lineOffset });
         for (var i = 0; i < scripts.length; ++i) {
             InspectorTest.addResult("script " + (i + 1) + ":");
-            InspectorTest.addResult("    offset: " + scripts[i].lineOffset + ":" + scripts[i].columnOffset);
-            InspectorTest.addResult("    length: " + scripts[i].length);
+            InspectorTest.addResult("    start: " + scripts[i].lineOffset + ":" + scripts[i].columnOffset);
+            InspectorTest.addResult("    end: " + scripts[i].endLine + ":" + scripts[i].endColumn);
         }
         InspectorTest.completeDebuggerTest();
     }
 }
 </script>    <script>
-function doStuff()
+function f1()
 {
 }
 
-window.onload = runTest;
+window.onload = runTest;</script>
+
+   <script> function f2() {}    </script>
+   <script>function f3() {}
+</script>
+   <script>
+   function f4() {}
 </script>
 
 </head>

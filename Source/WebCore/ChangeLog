@@ -1,3 +1,30 @@
+2011-04-28  Pavel Podivilov  <podivilov@chromium.org>
+
+        Reviewed by Yury Semikhatsky.
+
+        Web Inspector: include script end line:column in scriptParsed parameters.
+        https://bugs.webkit.org/show_bug.cgi?id=59717
+
+        * bindings/js/ScriptDebugServer.cpp:
+        (WebCore::ScriptDebugServer::dispatchDidParseSource):
+        * bindings/v8/DebuggerScript.js:
+        ():
+        * bindings/v8/ScriptDebugServer.cpp:
+        (WebCore::ScriptDebugServer::dispatchDidParseSource):
+        * inspector/Inspector.json:
+        * inspector/InspectorDebuggerAgent.cpp:
+        (WebCore::InspectorDebuggerAgent::resolveBreakpoint):
+        (WebCore::InspectorDebuggerAgent::didParseSource):
+        * inspector/InspectorDebuggerAgent.h:
+        (WebCore::InspectorDebuggerAgent::Script::Script):
+        * inspector/ScriptDebugListener.h:
+        * inspector/front-end/DebuggerModel.js:
+        (WebInspector.DebuggerModel.prototype._parsedScriptSource):
+        (WebInspector.DebuggerModel.prototype._failedToParseScriptSource):
+        (WebInspector.DebuggerDispatcher.prototype.scriptParsed):
+        * inspector/front-end/Script.js:
+        (WebInspector.Script):
+
 2011-04-28  Yury Semikhatsky  <yurys@chromium.org>
 
         Reviewed by Pavel Feldman.
