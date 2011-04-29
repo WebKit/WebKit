@@ -3976,6 +3976,17 @@ BUGDPRANKE DEBUG : editing/pasteboard/drag-image-in-about-blank-frame.html = CRA
 
 BUGDPRANKE DEBUG : http/tests/local/link-stylesheet-preferred.html = CRASH PASS
 BUGDPRANKE DEBUG : http/tests/misc/window-dot-stop.html = PASS TEXT
+BUGDPRANKE WIN DEBUG : fast/css/getComputedStyle/counterIncrement-without-counter.html = CRASH PASS
 
 // failing on the deps bots??
 BUGDPRANKE SNOWLEOPARD : svg/custom/foreign-object-skew.svg = IMAGE PASS
+
+BUGWK59768 WIN LINUX GPU : canvas/philip/tests/2d.shadow.alpha.3.html = TEXT
+BUGWK59768 WIN LINUX GPU : canvas/philip/tests/2d.shadow.alpha.4.html = TEXT
+BUGWK59768 WIN LINUX GPU : canvas/philip/tests/2d.shadow.alpha.5.html = TEXT
+
+// just needs new baselines?
+BUGDPRANKE XP : fast/repaint/shadow-multiple-vertical.html = IMAGE
+BUGDPRANKE XP : fast/repaint/shadow-multiple-strict-vertical.html = IMAGE
+BUGDPRANKE XP : fast/repaint/shadow-multiple-strict-horizontal.html = IMAGE
+BUGDPRANKE XP : fast/repaint/shadow-multiple-horizontal.html = IMAGe

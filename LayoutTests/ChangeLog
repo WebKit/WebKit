@@ -1,5 +1,13 @@
 2011-04-28  Dirk Pranke  <dpranke@chromium.org>
 
+        Suppress GPU failures - bug 59768, and
+        some fast/repaint/shadow failures that are
+        probably just rebaselines.
+
+        * platform/chromium/test_expectations.txt:
+
+2011-04-28  Dirk Pranke  <dpranke@chromium.org>
+
         Unreviewed, expectations change.
 
         * platform/chromium/test_expectations.txt:
