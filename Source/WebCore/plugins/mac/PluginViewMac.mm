@@ -233,7 +233,7 @@ bool PluginView::platformStart()
         setNPWindowIfNeeded();
 
     // TODO: Implement null timer throttling depending on plugin activation
-    m_nullEventTimer.set(new Timer<PluginView>(this, &PluginView::nullEventTimerFired));
+    m_nullEventTimer = adoptPtr(new Timer<PluginView>(this, &PluginView::nullEventTimerFired));
     m_nullEventTimer->startRepeating(0.02);
 
     m_lastMousePos.h = m_lastMousePos.v = 0;
