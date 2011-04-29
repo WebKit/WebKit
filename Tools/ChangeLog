@@ -1,3 +1,23 @@
+2011-04-28  Adam Roben  <aroben@apple.com>
+
+        Stop and restart ATSServer before each test run on Leopard
+
+        This is to work around an ATSServer leak that eventually causes tests
+        to fail.
+
+        Fixes <http://webkit.org/b/51807> <rdar://problem/9273894>
+        fast/blockflow/broken-ideograph-[small-caps|font].html sometimes fails on Leopard buildbots
+        (due to ATSServer leak)
+
+        Reviewed by Dan Bernstein.
+
+        * BuildSlaveSupport/build.webkit.org-config/master.cfg:
+        (StopATSServer):
+        (StartATSServer):
+        Added these new commands to stop and start ATSServer.
+
+        (TestFactory.__init__): Stop and start ATSServer on Leopard before running tests.
+
 2011-04-28  Dirk Pranke  <dpranke@chromium.org>
 
         Reviewed by Adam Roben.
