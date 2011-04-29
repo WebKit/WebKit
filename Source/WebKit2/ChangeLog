@@ -1,3 +1,20 @@
+2011-04-29  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Dan Bernstein.
+
+        Add protection for shared memory failing to allocate
+        <rdar://problem/9125287>
+        https://bugs.webkit.org/show_bug.cgi?id=59842
+
+        * Platform/mac/SharedMemoryMac.cpp:
+        (WebKit::SharedMemory::create):
+        Add logging in shared memory failure cases.
+
+        * WebProcess/WebPage/DrawingAreaImpl.cpp:
+        (WebKit::DrawingAreaImpl::display):
+        Guard against ShareableBitmap failing to create a shared memory
+        backing.
+
 2011-04-28  Stephanie Lewis  <slewis@apple.com>
 
         Reviewed by Darin Adler.

@@ -571,6 +571,9 @@ void DrawingAreaImpl::display(UpdateInfo& updateInfo)
         ASSERT(m_webPage->bounds().contains(bounds));
 
         RefPtr<ShareableBitmap> bitmap = ShareableBitmap::createShareable(bounds.size(), ShareableBitmap::SupportsAlpha);
+        if (!bitmap)
+            return;
+
         if (!bitmap->createHandle(updateInfo.bitmapHandle))
             return;
 
