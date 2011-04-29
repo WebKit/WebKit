@@ -1,3 +1,31 @@
+2011-04-29  Vsevolod Vlasov  <vsevik@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: Hyperlink Auditing (ping) requests are not shown in network panel
+        https://bugs.webkit.org/show_bug.cgi?id=58794
+
+        Added ping requests to network panel.
+
+        Test: http/tests/inspector/network/ping.html
+
+        * English.lproj/localizedStrings.js:
+        * inspector/InspectorInstrumentation.cpp:
+        (WebCore::InspectorInstrumentation::continueAfterPingLoaderImpl):
+        * inspector/InspectorInstrumentation.h:
+        (WebCore::InspectorInstrumentation::continueAfterPingLoader):
+        * inspector/front-end/NetworkPanel.js:
+        (WebInspector.NetworkDataGridNode.prototype.refreshResource):
+        (WebInspector.NetworkDataGridNode.prototype._refreshStatusCell):
+        (WebInspector.NetworkDataGridNode.prototype._refreshTypeCell):
+        * inspector/front-end/Resource.js:
+        (WebInspector.Resource.prototype.get formParameters):
+        (WebInspector.Resource.prototype.requestContentType):
+        (WebInspector.Resource.prototype.isPingRequest):
+        * loader/PingLoader.cpp:
+        (WebCore::PingLoader::PingLoader):
+        * loader/PingLoader.h:
+
 2011-04-28  Pavel Podivilov  <podivilov@chromium.org>
 
         Reviewed by Pavel Feldman.

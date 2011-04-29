@@ -1,3 +1,15 @@
+2011-04-29  Vsevolod Vlasov  <vsevik@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: Hyperlink Auditing (ping) requests are not shown in network panel
+        https://bugs.webkit.org/show_bug.cgi?id=58794
+
+        Added ping requests to network panel.
+
+        * http/tests/inspector/network/ping-expected.txt: Added.
+        * http/tests/inspector/network/ping.html: Added.
+
 2011-04-28  Pavel Podivilov  <podivilov@chromium.org>
 
         Reviewed by Pavel Feldman.

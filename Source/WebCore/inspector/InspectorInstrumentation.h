@@ -113,6 +113,7 @@ public:
 
     static void applyUserAgentOverride(Frame*, String*);
     static void willSendRequest(Frame*, unsigned long identifier, DocumentLoader*, ResourceRequest&, const ResourceResponse& redirectResponse);
+    static void continueAfterPingLoader(Frame*, unsigned long identifier, DocumentLoader*, ResourceRequest&, const ResourceResponse&);
     static void markResourceAsCached(Page*, unsigned long identifier);
     static void didLoadResourceFromMemoryCache(Page*, DocumentLoader*, const CachedResource*);
     static InspectorInstrumentationCookie willReceiveResourceData(Frame*, unsigned long identifier);
@@ -234,6 +235,7 @@ private:
 
     static void applyUserAgentOverrideImpl(InspectorAgent*, String*);
     static void willSendRequestImpl(InspectorAgent*, unsigned long identifier, DocumentLoader*, ResourceRequest&, const ResourceResponse& redirectResponse);
+    static void continueAfterPingLoaderImpl(InspectorAgent*, unsigned long identifier, DocumentLoader*, ResourceRequest&, const ResourceResponse&);
     static void markResourceAsCachedImpl(InspectorAgent*, unsigned long identifier);
     static void didLoadResourceFromMemoryCacheImpl(InspectorAgent*, DocumentLoader*, const CachedResource*);
     static InspectorInstrumentationCookie willReceiveResourceDataImpl(InspectorAgent*, unsigned long identifier);
@@ -625,6 +627,14 @@ inline void InspectorInstrumentation::willSendRequest(Frame* frame, unsigned lon
 #if ENABLE(INSPECTOR)
     if (InspectorAgent* ic = inspectorAgentForFrame(frame))
         willSendRequestImpl(ic, identifier, loader, request, redirectResponse);
+#endif
+}
+
+inline void InspectorInstrumentation::continueAfterPingLoader(Frame* frame, unsigned long identifier, DocumentLoader* loader, ResourceRequest& request, const ResourceResponse& response)
+{
+#if ENABLE(INSPECTOR)
+    if (InspectorAgent* ic = inspectorAgentForFrame(frame))
+        InspectorInstrumentation::continueAfterPingLoaderImpl(ic, identifier, loader, request, response);
 #endif
 }
 

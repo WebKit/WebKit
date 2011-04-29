@@ -1488,15 +1488,7 @@ WebInspector.NetworkDataGridNode.prototype = {
         this._methodCell.setTextAndTitle(this._resource.requestMethod);
 
         this._refreshStatusCell();
-
-        if (this._resource.mimeType) {
-            this._typeCell.removeStyleClass("network-dim-cell");
-            this._typeCell.setTextAndTitle(this._resource.mimeType);
-        } else {
-            this._typeCell.addStyleClass("network-dim-cell");
-            this._typeCell.setTextAndTitle(WebInspector.UIString("Pending"));
-        }
-
+        this._refreshTypeCell();
         this._refreshSizeCell();
         this._refreshTimeCell();
 
@@ -1579,9 +1571,25 @@ WebInspector.NetworkDataGridNode.prototype = {
         } else {
             if (this._resource.isDataURL() && this._resource.finished)
                 this._statusCell.setTextAndTitle(WebInspector.UIString("(data url)"));
+            else if (this._resource.isPingRequest())
+                this._statusCell.setTextAndTitle(WebInspector.UIString("(ping)"));
             else
                 this._statusCell.setTextAndTitle(WebInspector.UIString("(Pending)"));
             this._statusCell.addStyleClass("network-dim-cell");
+        }
+    },
+
+    _refreshTypeCell: function()
+    {
+        if (this._resource.mimeType) {
+            this._typeCell.removeStyleClass("network-dim-cell");
+            this._typeCell.setTextAndTitle(this._resource.mimeType);
+        } else if (this._resource.isPingRequest) {
+            this._typeCell.removeStyleClass("network-dim-cell");
+            this._typeCell.setTextAndTitle(this._resource.requestContentType());
+        } else {
+            this._typeCell.addStyleClass("network-dim-cell");
+            this._typeCell.setTextAndTitle(WebInspector.UIString("Pending"));
         }
     },
 

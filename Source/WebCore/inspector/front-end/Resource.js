@@ -587,7 +587,7 @@ WebInspector.Resource.prototype = {
             return this._parsedFormParameters;
         if (!this.requestFormData)
             return;
-        var requestContentType = this.requestHeaderValue("Content-Type");
+        var requestContentType = this.requestContentType();
         if (!requestContentType || !requestContentType.match(/^application\/x-www-form-urlencoded\s*(;.*)?$/i))
             return;
         this._parsedFormParameters = this._parseParameters(this.requestFormData);
@@ -845,6 +845,16 @@ WebInspector.Resource.prototype = {
     isDataURL: function()
     {
         return this.url.match(/^data:/i);
+    },
+    
+    requestContentType: function()
+    {
+        return this.requestHeaderValue("Content-Type");
+    },
+
+    isPingRequest: function()
+    {
+        return "text/ping" === this.requestContentType();
     },
     
     _contentURL: function()

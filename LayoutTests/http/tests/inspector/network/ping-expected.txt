@@ -1,0 +1,7 @@
+ping
+Tests that hyperlink auditing (ping) requests appear in network panel.
+
+http://127.0.0.1:8000/inspector/network/ping.html
+resource.isPingRequest(): true
+resource.requestContentType: text/ping
+

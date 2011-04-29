@@ -403,6 +403,11 @@ void InspectorInstrumentation::willSendRequestImpl(InspectorAgent* inspectorAgen
         resourceAgent->willSendRequest(identifier, loader, request, redirectResponse);
 }
 
+void InspectorInstrumentation::continueAfterPingLoaderImpl(InspectorAgent* inspectorAgent, unsigned long identifier, DocumentLoader* loader, ResourceRequest& request, const ResourceResponse& response)
+{
+    willSendRequestImpl(inspectorAgent, identifier, loader, request, response);
+}
+
 void InspectorInstrumentation::markResourceAsCachedImpl(InspectorAgent* inspectorAgent, unsigned long identifier)
 {
     if (InspectorResourceAgent* resourceAgent = retrieveResourceAgent(inspectorAgent))

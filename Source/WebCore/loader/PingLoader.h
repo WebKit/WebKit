@@ -61,7 +61,7 @@ public:
     ~PingLoader();
 
 private:
-    PingLoader(Frame*, const ResourceRequest&);
+    PingLoader(Frame*, ResourceRequest&);
 
     void didReceiveResponse(ResourceHandle*, const ResourceResponse&) { delete this; }
     void didReceiveData(ResourceHandle*, const char*, int, int) { delete this; }
