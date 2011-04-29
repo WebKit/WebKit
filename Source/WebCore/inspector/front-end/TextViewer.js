@@ -291,7 +291,7 @@ WebInspector.TextViewer.prototype = {
 
         var fileName = this._delegate.suggestedFileName();
         if (fileName)
-            contextMenu.appendItem(WebInspector.UIString("Save as..."), InspectorFrontendHost.saveAs.bind(InspectorFrontendHost, fileName, this._textModel.text));
+            contextMenu.appendItem(WebInspector.UIString(WebInspector.useLowerCaseMenuTitles() ? "Save as..." : "Save As..."), InspectorFrontendHost.saveAs.bind(InspectorFrontendHost, fileName, this._textModel.text));
 
         contextMenu.show(event);
     },

@@ -606,12 +606,12 @@ WebInspector.SourceFrame.prototype = {
 
     populateLineGutterContextMenu: function(lineNumber, contextMenu)
     {
-        contextMenu.appendItem(WebInspector.UIString("Continue to Here"), this._delegate.continueToLine.bind(this._delegate, lineNumber));
+        contextMenu.appendItem(WebInspector.UIString(WebInspector.useLowerCaseMenuTitles() ? "Continue to here" : "Continue to Here"), this._delegate.continueToLine.bind(this._delegate, lineNumber));
 
         var breakpoint = this._delegate.findBreakpoint(lineNumber);
         if (!breakpoint) {
             // This row doesn't have a breakpoint: We want to show Add Breakpoint and Add and Edit Breakpoint.
-            contextMenu.appendItem(WebInspector.UIString("Add Breakpoint"), this._delegate.setBreakpoint.bind(this._delegate, lineNumber, "", true));
+            contextMenu.appendItem(WebInspector.UIString(WebInspector.useLowerCaseMenuTitles() ? "Add breakpoint" : "Add Breakpoint"), this._delegate.setBreakpoint.bind(this._delegate, lineNumber, "", true));
 
             function addConditionalBreakpoint()
             {
@@ -624,10 +624,10 @@ WebInspector.SourceFrame.prototype = {
                 }
                 this._editBreakpointCondition(lineNumber, "", didEditBreakpointCondition.bind(this));
             }
-            contextMenu.appendItem(WebInspector.UIString("Add Conditional Breakpoint…"), addConditionalBreakpoint.bind(this));
+            contextMenu.appendItem(WebInspector.UIString(WebInspector.useLowerCaseMenuTitles() ? "Add conditional breakpoint…" : "Add Conditional Breakpoint…"), addConditionalBreakpoint.bind(this));
         } else {
             // This row has a breakpoint, we want to show edit and remove breakpoint, and either disable or enable.
-            contextMenu.appendItem(WebInspector.UIString("Remove Breakpoint"), this._delegate.removeBreakpoint.bind(this._delegate, lineNumber));
+            contextMenu.appendItem(WebInspector.UIString(WebInspector.useLowerCaseMenuTitles() ? "Remove breakpoint" : "Remove Breakpoint"), this._delegate.removeBreakpoint.bind(this._delegate, lineNumber));
             function editBreakpointCondition()
             {
                 function didEditBreakpointCondition(committed, condition)
@@ -637,15 +637,15 @@ WebInspector.SourceFrame.prototype = {
                 }
                 this._editBreakpointCondition(lineNumber, breakpoint.condition, didEditBreakpointCondition.bind(this));
             }
-            contextMenu.appendItem(WebInspector.UIString("Edit Breakpoint…"), editBreakpointCondition.bind(this));
+            contextMenu.appendItem(WebInspector.UIString(WebInspector.useLowerCaseMenuTitles() ? "Edit breakpoint…" : "Edit Breakpoint…"), editBreakpointCondition.bind(this));
             function setBreakpointEnabled(enabled)
             {
                 this._delegate.updateBreakpoint(lineNumber, breakpoint.condition, enabled);
             }
             if (breakpoint.enabled)
-                contextMenu.appendItem(WebInspector.UIString("Disable Breakpoint"), setBreakpointEnabled.bind(this, false));
+                contextMenu.appendItem(WebInspector.UIString(WebInspector.useLowerCaseMenuTitles() ? "Disable breakpoint" : "Disable Breakpoint"), setBreakpointEnabled.bind(this, false));
             else
-                contextMenu.appendItem(WebInspector.UIString("Enable Breakpoint"), setBreakpointEnabled.bind(this, true));
+                contextMenu.appendItem(WebInspector.UIString(WebInspector.useLowerCaseMenuTitles() ? "Enable breakpoint" : "Enable Breakpoint"), setBreakpointEnabled.bind(this, true));
         }
     },
 

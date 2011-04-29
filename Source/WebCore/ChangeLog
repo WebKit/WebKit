@@ -1,3 +1,39 @@
+2011-04-29  Pavel Feldman  <pfeldman@google.com>
+
+        Reviewed by Yury Semikhatsky.
+
+        Web Inspector: add "open link in new tab" action into the network and resources panels.
+        https://bugs.webkit.org/show_bug.cgi?id=59788
+
+        This change also distinguishes context menu items case between platforms.
+
+        * English.lproj/localizedStrings.js:
+        * inspector/front-end/ConsoleView.js:
+        (WebInspector.ConsoleView.prototype._handleContextMenuEvent):
+        * inspector/front-end/DOMBreakpointsSidebarPane.js:
+        (WebInspector.DOMBreakpointsSidebarPane):
+        * inspector/front-end/ElementsPanel.js:
+        (WebInspector.ElementsPanel.prototype._contextMenuEventFired):
+        (WebInspector.ElementsPanel.prototype.populateHrefContextMenu):
+        * inspector/front-end/ElementsTreeOutline.js:
+        (WebInspector.ElementsTreeElement.prototype._populateTagContextMenu):
+        (WebInspector.ElementsTreeElement.prototype._populateTextContextMenu):
+        * inspector/front-end/NetworkPanel.js:
+        (WebInspector.NetworkPanel.prototype._contextMenu):
+        * inspector/front-end/ResourcesPanel.js:
+        (WebInspector.FrameResourceTreeElement.prototype._handleContextMenuEvent):
+        (WebInspector.FrameResourceTreeElement.prototype._appendSaveAsAction):
+        (WebInspector.ResourceRevisionTreeElement.prototype._handleContextMenuEvent):
+        * inspector/front-end/Settings.js:
+        * inspector/front-end/SourceFrame.js:
+        (WebInspector.SourceFrame.prototype.populateLineGutterContextMenu):
+        * inspector/front-end/TextViewer.js:
+        (WebInspector.TextViewer.prototype._contextMenu):
+        * inspector/front-end/inspector.js:
+        (WebInspector.openLinkExternallyLabel):
+        (WebInspector.openResource):
+        (WebInspector.useLowerCaseMenuTitles):
+
 2011-04-28  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Dan Bernstein.

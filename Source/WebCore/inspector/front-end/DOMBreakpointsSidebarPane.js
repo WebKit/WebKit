@@ -45,9 +45,9 @@ WebInspector.DOMBreakpointsSidebarPane = function()
         WebInspector.UIString("Node Removed")
     ];
     this._contextMenuLabels = [
-        WebInspector.UIString("Break on Subtree Modifications"),
-        WebInspector.UIString("Break on Attributes Modifications"),
-        WebInspector.UIString("Break on Node Removal")
+        WebInspector.UIString(WebInspector.useLowerCaseMenuTitles() ? "Break on subtree modifications" : "Break on Subtree Modifications"),
+        WebInspector.UIString(WebInspector.useLowerCaseMenuTitles() ? "Break on attributes modifications" : "Break on Attributes Modifications"),
+        WebInspector.UIString(WebInspector.useLowerCaseMenuTitles() ? "Break on node removal" : "Break on Node Removal")
     ];
     WebInspector.resourceTreeModel.addEventListener(WebInspector.ResourceTreeModel.EventTypes.InspectedURLChanged, this._inspectedURLChanged, this);
 }

@@ -1117,6 +1117,14 @@ WebInspector.FrameResourceTreeElement.prototype = {
 
     _handleContextMenuEvent: function(event)
     {
+        var contextMenu = new WebInspector.ContextMenu();
+        contextMenu.appendItem(WebInspector.openLinkExternallyLabel(), WebInspector.openResource.bind(WebInspector, this._resource.url, false));
+        this._appendSaveAsAction(contextMenu, event);
+        contextMenu.show(event);
+    },
+
+    _appendSaveAsAction: function(contextMenu, event)
+    {
         if (!Preferences.saveAsAvailable)
             return;
 
@@ -1130,9 +1138,9 @@ WebInspector.FrameResourceTreeElement.prototype = {
             var fileName = this._resource.displayName;
             this._resource.requestContent(InspectorFrontendHost.saveAs.bind(InspectorFrontendHost, fileName));
         }
-        var contextMenu = new WebInspector.ContextMenu();
-        contextMenu.appendItem(WebInspector.UIString("Save as..."), save.bind(this));
-        contextMenu.show(event);
+
+        contextMenu.appendSeparator();
+        contextMenu.appendItem(WebInspector.UIString(WebInspector.useLowerCaseMenuTitles() ? "Save as..." : "Save As..."), save.bind(this));
     },
     
     _setBubbleText: function(x)
@@ -1393,7 +1401,7 @@ WebInspector.ResourceRevisionTreeElement.prototype = {
                 this._revision.requestContent(InspectorFrontendHost.saveAs.bind(InspectorFrontendHost, fileName));
             }
             contextMenu.appendSeparator();
-            contextMenu.appendItem(WebInspector.UIString("Save as..."), save.bind(this));
+            contextMenu.appendItem(WebInspector.UIString(WebInspector.useLowerCaseMenuTitles() ? "Save as..." : "Save As..."), save.bind(this));
         }
 
         contextMenu.show(event);

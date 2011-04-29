@@ -432,8 +432,8 @@ WebInspector.ConsoleView.prototype = {
             ConsoleAgent.setMonitoringXHREnabled(WebInspector.settings.monitoringXHREnabled);
         }.bind(this);
         var contextMenu = new WebInspector.ContextMenu();
-        contextMenu.appendCheckboxItem(WebInspector.UIString("XMLHttpRequest logging"), itemAction, WebInspector.settings.monitoringXHREnabled)
-        contextMenu.appendItem(WebInspector.UIString("Clear Console"), this.requestClearMessages.bind(this));
+        contextMenu.appendCheckboxItem(WebInspector.UIString(WebInspector.useLowerCaseMenuTitles() ? "XMLHttpRequest logging" : "XMLHttpRequest Logging"), itemAction, WebInspector.settings.monitoringXHREnabled)
+        contextMenu.appendItem(WebInspector.UIString(WebInspector.useLowerCaseMenuTitles() ? "Clear console" : "Clear Console"), this.requestClearMessages.bind(this));
         contextMenu.show(event);
     },
 

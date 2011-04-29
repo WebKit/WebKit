@@ -1,3 +1,14 @@
+2011-04-29  Pavel Feldman  <pfeldman@google.com>
+
+        Reviewed by Yury Semikhatsky.
+
+        Web Inspector: add "open link in new tab" action into the network and resources panels.
+        https://bugs.webkit.org/show_bug.cgi?id=59788
+
+        This change also distinguishes context menu items case between platforms.
+
+        * src/js/DevTools.js:
+
 2011-04-28  Nat Duca  <nduca@chromium.org>
 
         Reviewed by Kenneth Russell.

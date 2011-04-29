@@ -778,15 +778,15 @@ WebInspector.ElementsTreeElement.prototype = {
         var newAttribute = event.target.enclosingNodeOrSelfWithClass("add-attribute");
 
         // Add attribute-related actions.
-        contextMenu.appendItem(WebInspector.UIString("Add Attribute"), this._addNewAttribute.bind(this));
+        contextMenu.appendItem(WebInspector.UIString(WebInspector.useLowerCaseMenuTitles() ? "Add attribute" : "Add Attribute"), this._addNewAttribute.bind(this));
         if (attribute && !newAttribute)
-            contextMenu.appendItem(WebInspector.UIString("Edit Attribute"), this._startEditingAttribute.bind(this, attribute, event.target));
+            contextMenu.appendItem(WebInspector.UIString(WebInspector.useLowerCaseMenuTitles() ? "Edit attribute" : "Edit Attribute"), this._startEditingAttribute.bind(this, attribute, event.target));
         contextMenu.appendSeparator();
 
         // Add free-form node-related actions.
         contextMenu.appendItem(WebInspector.UIString("Edit as HTML"), this._editAsHTML.bind(this));
         contextMenu.appendItem(WebInspector.UIString("Copy as HTML"), this._copyHTML.bind(this));
-        contextMenu.appendItem(WebInspector.UIString("Delete Node"), this.remove.bind(this));
+        contextMenu.appendItem(WebInspector.UIString(WebInspector.useLowerCaseMenuTitles() ? "Delete node" : "Delete Node"), this.remove.bind(this));
 
         if (Preferences.nativeInstrumentationEnabled) {
             // Add debbuging-related actions
@@ -798,7 +798,7 @@ WebInspector.ElementsTreeElement.prototype = {
 
     _populateTextContextMenu: function(contextMenu, textNode)
     {
-        contextMenu.appendItem(WebInspector.UIString("Edit Text"), this._startEditingTextNode.bind(this, textNode));
+        contextMenu.appendItem(WebInspector.UIString(WebInspector.useLowerCaseMenuTitles() ? "Edit text" : "Edit Text"), this._startEditingTextNode.bind(this, textNode));
     },
 
     _startEditing: function()

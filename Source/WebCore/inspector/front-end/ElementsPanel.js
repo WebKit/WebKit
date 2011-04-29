@@ -287,7 +287,7 @@ WebInspector.ElementsPanel.prototype = {
         var populated = this.treeOutline.populateContextMenu(contextMenu, event);
         if (populated)
             contextMenu.appendSeparator();
-        contextMenu.appendCheckboxItem(WebInspector.UIString("Word Wrap"), toggleWordWrap.bind(this), isTextWrapped.call(this));
+        contextMenu.appendCheckboxItem(WebInspector.UIString(WebInspector.useLowerCaseMenuTitles() ? "Word wrap" : "Word Wrap"), toggleWordWrap.bind(this), isTextWrapped.call(this));
 
         contextMenu.show(event);
     },
@@ -302,9 +302,9 @@ WebInspector.ElementsPanel.prototype = {
             return false;
 
         // Add resource-related actions.
-        contextMenu.appendItem(WebInspector.openLinkExternallyLabel(), WebInspector.openResource.bind(null, resourceURL, false));
+        contextMenu.appendItem(WebInspector.openLinkExternallyLabel(), WebInspector.openResource.bind(WebInspector, resourceURL, false));
         if (WebInspector.resourceForURL(resourceURL))
-            contextMenu.appendItem(WebInspector.UIString("Open Link in Resources Panel"), WebInspector.openResource.bind(null, resourceURL, true));
+            contextMenu.appendItem(WebInspector.UIString(WebInspector.useLowerCaseMenuTitles() ? "Open link in Resources panel" : "Open Link in Resources Panel"), WebInspector.openResource.bind(null, resourceURL, true));
         return true;
     },
 

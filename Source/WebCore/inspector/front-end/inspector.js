@@ -363,7 +363,7 @@ var WebInspector = {
 
     openLinkExternallyLabel: function()
     {
-        return WebInspector.UIString("Open Link in New Window");
+        return WebInspector.UIString(WebInspector.useLowerCaseMenuTitles() ? "Open link in new tab" : "Open Link in New Tab");
     }
 }
 
@@ -661,7 +661,7 @@ WebInspector.openResource = function(resourceURL, inResourcesPanel)
         WebInspector.panels.resources.showResource(resource);
         WebInspector.showPanel("resources");
     } else
-        PageAgent.open(resource ? resource.url : resourceURL, true);
+        PageAgent.open(resourceURL, true);
 }
 
 WebInspector._registerShortcuts = function()
@@ -1406,6 +1406,11 @@ WebInspector.isMac = function()
         this._isMac = WebInspector.platform === "mac";
 
     return this._isMac;
+}
+
+WebInspector.useLowerCaseMenuTitles = function()
+{
+    return WebInspector.platform === "windows" && Preferences.useLowerCaseMenuTitlesOnWindows;
 }
 
 WebInspector.isBeingEdited = function(element)

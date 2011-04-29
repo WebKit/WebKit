@@ -1001,20 +1001,22 @@ WebInspector.NetworkPanel.prototype = {
         var resource = gridNode && gridNode._resource;
 
         if (resource) {
-            contextMenu.appendItem(WebInspector.UIString("Copy location"), this._copyLocation.bind(this, resource));
+            contextMenu.appendItem(WebInspector.openLinkExternallyLabel(), WebInspector.openResource.bind(WebInspector, resource.url, false));
+            contextMenu.appendSeparator();
+            contextMenu.appendItem(WebInspector.UIString(WebInspector.useLowerCaseMenuTitles() ? "Copy location" : "Copy Location"), this._copyLocation.bind(this, resource));
             if (resource.requestHeadersText)
-                contextMenu.appendItem(WebInspector.UIString("Copy request headers"), this._copyRequestHeaders.bind(this, resource));
+                contextMenu.appendItem(WebInspector.UIString(WebInspector.useLowerCaseMenuTitles() ? "Copy request headers" : "Copy Request Headers"), this._copyRequestHeaders.bind(this, resource));
             if (resource.responseHeadersText)
-                contextMenu.appendItem(WebInspector.UIString("Copy response headers"), this._copyResponseHeaders.bind(this, resource));
-            contextMenu.appendItem(WebInspector.UIString("Copy entry as HAR"), this._copyResource.bind(this, resource));
+                contextMenu.appendItem(WebInspector.UIString(WebInspector.useLowerCaseMenuTitles() ? "Copy response headers" : "Copy Response Headers"), this._copyResponseHeaders.bind(this, resource));
+            contextMenu.appendItem(WebInspector.UIString(WebInspector.useLowerCaseMenuTitles() ? "Copy entry as HAR" : "Copy Entry as HAR"), this._copyResource.bind(this, resource));
         }
-        contextMenu.appendItem(WebInspector.UIString("Copy all as HAR"), this._copyAll.bind(this));
+        contextMenu.appendItem(WebInspector.UIString(WebInspector.useLowerCaseMenuTitles() ? "Copy all as HAR" : "Copy All as HAR"), this._copyAll.bind(this));
 
         if (Preferences.saveAsAvailable) {
             contextMenu.appendSeparator();
             if (resource)
-                contextMenu.appendItem(WebInspector.UIString("Save entry as HAR"), this._exportResource.bind(this, resource));
-            contextMenu.appendItem(WebInspector.UIString("Save all as HAR"), this._exportAll.bind(this));
+                contextMenu.appendItem(WebInspector.UIString(WebInspector.useLowerCaseMenuTitles() ? "Save entry as HAR" : "Save Entry as HAR"), this._exportResource.bind(this, resource));
+            contextMenu.appendItem(WebInspector.UIString(WebInspector.useLowerCaseMenuTitles() ? "Save all as HAR" : "Save All as HAR"), this._exportAll.bind(this));
         }
 
         contextMenu.show(event);
