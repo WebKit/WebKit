@@ -1,3 +1,21 @@
+2011-04-29  Gavin Barraclough  <barraclough@apple.com>
+
+        Reviewed by Oliver Hunt & Geoff Garen.
+
+        https://bugs.webkit.org/show_bug.cgi?id=59221
+        [RegexFuzz] Regression blocking testing
+
+        Okay, so the bug here is that when, in the case of a TypeParentheticalAssertion
+        node, emitDisjunction recursively calls to itself to emit the nested disjunction
+        the value of parenthesesInputCountAlreadyChecked is bogus (doesn't take into
+        account the uncheck that has just taken place).
+
+        Also, the special handling given to countToCheck in the case of parenthetical
+        assertions is nonsense, delete it, along with the isParentheticalAssertion argument.
+
+        * yarr/YarrInterpreter.cpp:
+        (JSC::Yarr::ByteCompiler::emitDisjunction):
+
 2011-04-29  Csaba Osztrogonác  <ossy@webkit.org>
 
         Reviewed by Adam Barth.

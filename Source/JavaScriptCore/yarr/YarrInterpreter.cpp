@@ -1771,7 +1771,7 @@ public:
         m_currentAlternativeIndex = newAlternativeIndex;
     }
 
-    void emitDisjunction(PatternDisjunction* disjunction, unsigned inputCountAlreadyChecked = 0, unsigned parenthesesInputCountAlreadyChecked = 0, bool isParentheticalAssertion = false)
+    void emitDisjunction(PatternDisjunction* disjunction, unsigned inputCountAlreadyChecked = 0, unsigned parenthesesInputCountAlreadyChecked = 0)
     {
         for (unsigned alt = 0; alt < disjunction->m_alternatives.size(); ++alt) {
             unsigned currentCountAlreadyChecked = inputCountAlreadyChecked;
@@ -1786,12 +1786,7 @@ public:
             }
 
             unsigned minimumSize = alternative->m_minimumSize;
-            int countToCheck;
-
-            if (isParentheticalAssertion && parenthesesInputCountAlreadyChecked > minimumSize)
-                countToCheck = 0;
-            else
-                countToCheck = minimumSize - parenthesesInputCountAlreadyChecked;
+            int countToCheck = minimumSize - parenthesesInputCountAlreadyChecked;
 
             ASSERT(countToCheck >= 0);
             if (countToCheck) {
@@ -1871,7 +1866,7 @@ public:
                         uncheckAmount = 0;
 
                     atomParentheticalAssertionBegin(term.parentheses.subpatternId, term.invert(), term.frameLocation, alternativeFrameLocation);
-                    emitDisjunction(term.parentheses.disjunction, currentCountAlreadyChecked, positiveInputOffset, true);
+                    emitDisjunction(term.parentheses.disjunction, currentCountAlreadyChecked, positiveInputOffset - uncheckAmount);
                     atomParentheticalAssertionEnd(0, term.frameLocation, term.quantityCount, term.quantityType);
                     if (uncheckAmount) {
                         checkInput(uncheckAmount);

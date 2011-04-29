@@ -76,5 +76,14 @@ shouldBe("regex20.exec('xxx')", "['x','xx']");
 var regex21 = /(?=a+b)aab/;
 shouldBe("regex21.exec('aab')", "['aab']");
 
+var regex22 = /(?!(u|m{0,}g+)u{1,}|2{2,}!1%n|(?!K|(?=y)|(?=ip))+?)(?=(?=(((?:7))*?)*?))p/m;
+shouldBe("regex22.exec('55up')", "null");
+
+var regex23 = /(?=(a)b|c?)()*d/;
+shouldBe("regex23.exec('ax')", "null");
+
+var regex24 = /(?=a|b?)c/;
+shouldBe("regex24.exec('x')", "null");
+
 var successfullyParsed = true;
 

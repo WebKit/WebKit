@@ -1,3 +1,15 @@
+2011-04-29  Gavin Barraclough  <barraclough@apple.com>
+
+        Reviewed by Oliver Hunt & Geoff Garen.
+
+        https://bugs.webkit.org/show_bug.cgi?id=59221
+        [RegexFuzz] Regression blocking testing
+
+        Add new tests for parenthetical assertions.
+
+        * fast/regex/assertion-expected.txt:
+        * fast/regex/script-tests/assertion.js:
+
 2011-04-29  Adam Roben  <aroben@apple.com>
 
         Ensure PHP's short_open_tag and log_errors settings are turned on

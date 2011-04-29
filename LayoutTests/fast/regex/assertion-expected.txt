@@ -37,6 +37,9 @@ PASS regex20.exec('x') is null
 PASS regex20.exec('xx') is ['x','xx']
 PASS regex20.exec('xxx') is ['x','xx']
 PASS regex21.exec('aab') is ['aab']
+PASS regex22.exec('55up') is null
+PASS regex23.exec('ax') is null
+PASS regex24.exec('x') is null
 PASS successfullyParsed is true
 
 TEST COMPLETE
