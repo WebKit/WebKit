@@ -1,3 +1,13 @@
+2011-04-29  Mark Pilgrim  <pilgrim@chromium.org>
+
+        Reviewed by Tony Chang.
+
+        Port Mozilla's IndexedDB tests: indexes against autoincrementing keys
+        https://bugs.webkit.org/show_bug.cgi?id=59722
+
+        * storage/indexeddb/mozilla/autoincrement-indexes-expected.txt: Added.
+        * storage/indexeddb/mozilla/autoincrement-indexes.html: Added.
+
 2011-04-29  Csaba Osztrogonác  <ossy@webkit.org>
 
         Remove WML
