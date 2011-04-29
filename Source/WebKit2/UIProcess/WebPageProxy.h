@@ -234,6 +234,8 @@ public:
 
     void setInitialFocus(bool);
     void setWindowResizerSize(const WebCore::IntSize&);
+    
+    void clearSelection();
 
     void setViewNeedsDisplay(const WebCore::IntRect&);
     void displayView();
@@ -259,6 +261,9 @@ public:
     bool canDelete() const { return hasSelectedRange() && isContentEditable(); }
     bool hasSelectedRange() const { return m_editorState.selectionIsRange; }
     bool isContentEditable() const { return m_editorState.isContentEditable; }
+    
+    bool maintainsInactiveSelection() const { return m_maintainsInactiveSelection; }
+    void setMaintainsInactiveSelection(bool);
 
 #if PLATFORM(MAC)
     void updateWindowIsVisible(bool windowIsVisible);
@@ -784,6 +789,8 @@ private:
     bool m_canGoBack;
     bool m_canGoForward;
     RefPtr<WebBackForwardList> m_backForwardList;
+    
+    bool m_maintainsInactiveSelection;
 
     String m_toolTip;
 

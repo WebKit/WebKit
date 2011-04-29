@@ -334,6 +334,11 @@ bool WKPageIsContentEditable(WKPageRef pageRef)
     return toImpl(pageRef)->isContentEditable();
 }
 
+void WKPageSetMaintainsInactiveSelection(WKPageRef pageRef, bool newValue)
+{
+    return toImpl(pageRef)->setMaintainsInactiveSelection(newValue);
+}
+
 void WKPageFindString(WKPageRef pageRef, WKStringRef string, WKFindOptions options, unsigned maxMatchCount)
 {
     toImpl(pageRef)->findString(toImpl(string)->string(), toFindOptions(options), maxMatchCount);

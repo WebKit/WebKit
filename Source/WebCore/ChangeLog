@@ -1,3 +1,16 @@
+2011-04-29  Jon Lee  <jonlee@apple.com>
+
+        Reviewed by mitzpettel.
+
+        REGRESSION (WebKit2): (Mac) Selection is gone after switching tabs (59721)
+        <rdar://problem/9327332>
+        https://bugs.webkit.org/show_bug.cgi?id=59721
+
+        Removing shouldClearSelectionWhenLosingWebPageFocus().  Reverting changelist 83814.
+
+        * WebCore.exp.in:
+        * editing/EditingBehavior.h:
+
 2011-04-29  Abhishek Arya  <inferno@chromium.org>
 
         Reviewed by Dave Hyatt.

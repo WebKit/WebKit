@@ -1,3 +1,33 @@
+2011-04-29  Jon Lee  <jonlee@apple.com>
+
+        Reviewed by mitzpettel.
+
+        REGRESSION (WebKit2): (Mac) Selection is gone after switching tabs (59721)
+        <rdar://problem/9327332>
+        https://bugs.webkit.org/show_bug.cgi?id=59721
+
+        When resigning first responder status, check to see if we need to maintain an inactive
+        selection in the web view. If we don't, we clear the selection.
+
+        This also reverts the change made in 83814, since that was a different attempt to solve this same issue.
+
+        * UIProcess/API/C/WKPage.cpp:
+        (WKPageSetMaintainsInactiveSelection): Export setMaintainsInactiveSelection()
+        * UIProcess/API/C/WKPage.h:
+        * UIProcess/API/mac/WKView.mm:
+        (-[WKView resignFirstResponder]): Check and see if we need to maintain the selection in the view prior to resigning.
+        If not, we clear the selection
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::clearSelection): Send message across process boundary
+        (WebKit::WebPageProxy::setMaintainsInactiveSelection): Sets variable
+        * UIProcess/WebPageProxy.h: New member variable to keep track of whether we need to maintain the current selection
+        (WebKit::WebPageProxy::maintainsInactiveSelection): Returns variable
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::setFocused): Reverting code to just set the focused bit instead of also clearing the selection
+        (WebKit::WebPage::clearSelection):
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/WebPage.messages.in: add new ClearSelection() message
+
 2011-04-29  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Darin Adler.

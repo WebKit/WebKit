@@ -642,6 +642,13 @@ void WebPageProxy::setWindowResizerSize(const IntSize& windowResizerSize)
         return;
     process()->send(Messages::WebPage::SetWindowResizerSize(windowResizerSize), m_pageID);
 }
+    
+void WebPageProxy::clearSelection()
+{
+    if (!isValid())
+        return;
+    process()->send(Messages::WebPage::ClearSelection(), m_pageID);
+}
 
 void WebPageProxy::validateCommand(const String& commandName, PassRefPtr<ValidateCommandCallback> callback)
 {
@@ -653,6 +660,11 @@ void WebPageProxy::validateCommand(const String& commandName, PassRefPtr<Validat
     uint64_t callbackID = callback->callbackID();
     m_validateCommandCallbacks.set(callbackID, callback.get());
     process()->send(Messages::WebPage::ValidateCommand(commandName, callbackID), m_pageID);
+}
+
+void WebPageProxy::setMaintainsInactiveSelection(bool newValue)
+{
+    m_maintainsInactiveSelection = newValue;
 }
     
 void WebPageProxy::executeEditCommand(const String& commandName)

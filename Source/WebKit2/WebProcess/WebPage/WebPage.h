@@ -364,6 +364,7 @@ public:
 #endif
 
     void replaceSelectionWithText(WebCore::Frame*, const String&);
+    void clearSelection();
 #if PLATFORM(WIN)
     void performDragControllerAction(uint64_t action, WebCore::IntPoint clientPosition, WebCore::IntPoint globalPosition, uint64_t draggingSourceOperationMask, const WebCore::DragDataMap&, uint32_t flags);
 #else

@@ -67,6 +67,8 @@ messages -> WebPage {
 
     DidReceivePolicyDecision(uint64_t frameID, uint64_t listenerID, uint32_t policyAction, uint64_t downloadID)
 
+    ClearSelection()
+
     # Callbacks.
     GetContentsAsString(uint64_t callbackID)
     GetMainResourceDataOfFrame(uint64_t frameID, uint64_t callbackID)

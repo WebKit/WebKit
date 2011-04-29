@@ -314,6 +314,9 @@ struct WKViewInterpretKeyEventsParameters {
         _data->_page->confirmCompositionWithoutDisturbingSelection();
     [self _resetTextInputState];
     
+    if (!_data->_page->maintainsInactiveSelection())
+        _data->_page->clearSelection();
+    
     _data->_page->viewStateDidChange(WebPageProxy::ViewIsFocused);
 
     _data->_inResignFirstResponder = false;

@@ -78,7 +78,6 @@
 #include <WebCore/DocumentMarkerController.h>
 #include <WebCore/DragController.h>
 #include <WebCore/DragData.h>
-#include <WebCore/EditingBehavior.h>
 #include <WebCore/EventHandler.h>
 #include <WebCore/FocusController.h>
 #include <WebCore/FormState.h>
@@ -1206,9 +1205,6 @@ void WebPage::viewWillEndLiveResize()
 
 void WebPage::setFocused(bool isFocused)
 {
-    if (!isFocused && m_page->focusController()->focusedOrMainFrame()->editor()->behavior().shouldClearSelectionWhenLosingWebPageFocus())
-        m_page->focusController()->focusedOrMainFrame()->selection()->clear();
-
     m_page->focusController()->setFocused(isFocused);
 }
 
@@ -1805,6 +1801,11 @@ void WebPage::replaceSelectionWithText(Frame* frame, const String& text)
     RefPtr<DocumentFragment> textFragment = createFragmentFromText(frame->selection()->toNormalizedRange().get(), text);
     applyCommand(ReplaceSelectionCommand::create(frame->document(), textFragment.release(), ReplaceSelectionCommand::SelectReplacement | ReplaceSelectionCommand::MatchStyle | ReplaceSelectionCommand::PreventNesting));
     frame->selection()->revealSelection(ScrollAlignment::alignToEdgeIfNeeded);
+}
+
+void WebPage::clearSelection()
+{
+    m_page->focusController()->focusedOrMainFrame()->selection()->clear();
 }
 
 bool WebPage::mainFrameHasCustomRepresentation() const
