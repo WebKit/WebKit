@@ -2991,7 +2991,7 @@ BUGCR72861 : fast/css/test-setting-canvas-color.html = TEXT
 // need rebaseline.
 BUGWK54499 LINUX : svg/transforms/text-with-pattern-with-svg-transform.svg = IMAGE
 
-BUGWK54472 : media/audio-delete-while-slider-thumb-clicked.html = TIMEOUT
+BUGWK54472 BUGCR74826 : media/audio-delete-while-slider-thumb-clicked.html = TEXT TIMEOUT
 
 // Flaky
 BUGCR73080 LINUX DEBUG : fast/forms/form-attribute-elements-order.html = PASS TIMEOUT
@@ -3656,12 +3656,21 @@ BUGDPRANKE : fast/layers/video-layer.html = IMAGE
 BUGDPRANKE : fast/overflow/border-radius-clipping.html = IMAGE
 BUGDPRANKE WIN LINUX : fast/repaint/border-radius-repaint.html = IMAGE
 BUGDPRANKE WIN LINUX : fast/replaced/border-radius-clip.html = IMAGE
-BUGDPRANKE : media/audio-controls-rendering.html = IMAGE
-BUGDPRANKE : media/video-display-toggle.html = IMAGE
-BUGDPRANKE : media/video-empty-source.html = IMAGE
-BUGDPRANKE : media/video-no-audio.html = IMAGE
-BUGDPRANKE CPU : media/video-volume-slider.html = IMAGE
 BUGDPRANKE : svg/custom/svg-fonts-in-html.html = IMAGE
+
+// Needs a rebaseline after moving controls to absolute positioning
+BUGCR74826 : media/audio-controls-rendering.html = IMAGE+TEXT
+BUGCR74826 CPU : media/media-document-audio-repaint.html = IMAGE+TEXT
+BUGCR74826 CPU : media/video-controls-rendering.html = IMAGE+TEXT
+BUGCR74826 : media/video-display-toggle.html = IMAGE+TEXT
+BUGCR74826 : media/video-empty-source.html = IMAGE+TEXT
+BUGCR74826 : media/video-no-audio.html = IMAGE+TEXT
+BUGCR74826 CPU : media/video-volume-slider.html = IMAGE+TEXT
+BUGCR74826 : media/video-zoom-controls.html = IMAGE+TEXT
+BUGCR74826 : media/controls-after-reload.html = TEXT
+BUGCR74826 : media/controls-strict.html = TEXT
+BUGCR74826 : media/controls-styling.html = TEXT
+BUGCR74826 : media/controls-without-preload.html = TEXT
 
 // probably just needs a new baseline
 BUGDPRANKE WIN LINUX : fast/backgrounds/background-leakage-transforms.html = IMAGE+TEXT
@@ -3672,13 +3681,11 @@ BUGDPRANKE SLOW : fast/css/visited-link-hang.html = PASS
 // webkit roll : 84350:84431
 BUGDPRANKE LINUX : fast/canvas/webgl/css-webkit-canvas-repaint.html = IMAGE
 BUGDPRANKE LINUX : fast/canvas/webgl/css-webkit-canvas.html = IMAGE
-BUGDPRANKE CPU : media/media-document-audio-repaint.html = IMAGE
 BUGDPRANKE MAC LINUX : transitions/interrupt-zero-duration.html = TEXT PASS
 BUGDPRANKE : media/controls-css-overload.html = TIMEOUT PASS
 BUGDPRANKE WIN LINUX : fast/borders/bidi-012.html = IMAGE+TEXT
 BUGDPRANKE MAC LEOPARD : fast/borders/bidi-012.html = IMAGE
 BUGDPRANKE WIN LINUX : animations/change-one-anim.html = TEXT PASS
-BUGDPRANKE CPU : media/video-controls-rendering.html = IMAGE
 
 // pulled in from downstream during webkit roll 84350:84431
 BUGCASEQ WIN LINUX : editing/selection/select-from-textfield-outwards.html = IMAGE+TEXT

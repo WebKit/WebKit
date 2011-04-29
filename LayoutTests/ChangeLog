@@ -1,3 +1,12 @@
+2011-04-28  Steve Lacey  <sjl@chromium.org>
+
+        Reviewed by Eric Carlson.
+
+        Change chromium media controls to use absolute positioning until bug 59644 is fixed.
+        https://bugs.webkit.org/show_bug.cgi?id=59732
+
+        * platform/chromium/test_expectations.txt: Add expectations for affected tests.
+
 2011-04-28  Julien Chaffraix  <jchaffraix@codeaurora.org>
 
         Reviewed by Darin Adler.
