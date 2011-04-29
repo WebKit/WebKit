@@ -1,3 +1,20 @@
+2011-04-29  Chris Fleizach  <cfleizach@apple.com>
+
+        Reviewed by Beth Dakin.
+
+        AX: Remote accessibility should build on snow leopard
+        https://bugs.webkit.org/show_bug.cgi?id=59767
+
+        * UIProcess/API/mac/WKView.mm:
+        (-[WKView _updateRemoteAccessibilityRegistration:]):
+        (-[WKView viewDidMoveToWindow]):
+        (-[WKView _setAccessibilityWebProcessToken:]):
+        * WebProcess/WebPage/mac/WebPageMac.mm:
+        (WebKit::WebPage::platformInitialize):
+        (WebKit::WebPage::registerUIProcessAccessibilityTokens):
+        * WebProcess/mac/WebProcessMainMac.mm:
+        (WebKit::WebProcessMain):
+
 2011-04-29  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Dan Bernstein.

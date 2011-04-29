@@ -63,7 +63,6 @@ void WebPage::platformInitialize()
 {
     m_page->addSchedulePair(SchedulePair::create([NSRunLoop currentRunLoop], kCFRunLoopCommonModes));
 
-#if !defined(BUILDING_ON_SNOW_LEOPARD)
     AccessibilityWebPageObject* mockAccessibilityElement = [[[AccessibilityWebPageObject alloc] init] autorelease];
 
     // Get the pid for the starting process.
@@ -76,7 +75,6 @@ void WebPage::platformInitialize()
     CoreIPC::DataReference dataToken = CoreIPC::DataReference(reinterpret_cast<const uint8_t*>([remoteToken bytes]), [remoteToken length]);
     send(Messages::WebPageProxy::RegisterWebProcessAccessibilityToken(dataToken));
     m_mockAccessibilityElement = mockAccessibilityElement;
-#endif
 }
 
 void WebPage::platformPreferencesDidChange(const WebPreferencesStore&)
@@ -583,7 +581,6 @@ bool WebPage::performDefaultBehaviorForKeyEvent(const WebKeyboardEvent&)
 
 void WebPage::registerUIProcessAccessibilityTokens(const CoreIPC::DataReference& elementToken, const CoreIPC::DataReference& windowToken)
 {
-#if !defined(BUILDING_ON_SNOW_LEOPARD)
     NSData* elementTokenData = [NSData dataWithBytes:elementToken.data() length:elementToken.size()];
     NSData* windowTokenData = [NSData dataWithBytes:windowToken.data() length:windowToken.size()];
     id remoteElement = WKAXRemoteElementForToken(elementTokenData);
@@ -591,7 +588,6 @@ void WebPage::registerUIProcessAccessibilityTokens(const CoreIPC::DataReference&
     WKAXSetWindowForRemoteElement(remoteWindow, remoteElement);
     
     [accessibilityRemoteObject() setRemoteParent:remoteElement];
-#endif
 }
 
 void WebPage::writeSelectionToPasteboard(const String& pasteboardName, const Vector<String>& pasteboardTypes, bool& result)

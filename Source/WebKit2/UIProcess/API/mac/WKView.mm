@@ -193,7 +193,6 @@ struct WKViewInterpretKeyEventsParameters {
 
 - (void)_updateRemoteAccessibilityRegistration:(BOOL)registerProcess
 {
-#if !defined(BUILDING_ON_SNOW_LEOPARD)
     // When the tree is connected/disconnected, the remote accessibility registration
     // needs to be updated with the pid of the remote process. If the process is going
     // away, that information is not present in WebProcess
@@ -206,7 +205,6 @@ struct WKViewInterpretKeyEventsParameters {
     }
     if (pid)
         WKAXRegisterRemoteProcess(registerProcess, pid); 
-#endif
 }
 
 - (id)initWithFrame:(NSRect)frame contextRef:(WKContextRef)contextRef pageGroupRef:(WKPageGroupRef)pageGroupRef
@@ -1719,13 +1717,11 @@ static void maybeCreateSandboxExtensionFromPasteboard(NSPasteboard *pasteboard, 
         [self _updateWindowAndViewFrames];
         
         // Initialize remote accessibility when the window connection has been established.
-#if !defined(BUILDING_ON_SNOW_LEOPARD)
         NSData *remoteElementToken = WKAXRemoteTokenForElement(self);
         NSData *remoteWindowToken = WKAXRemoteTokenForElement([self accessibilityAttributeValue:NSAccessibilityWindowAttribute]);
         CoreIPC::DataReference elementToken = CoreIPC::DataReference(reinterpret_cast<const uint8_t*>([remoteElementToken bytes]), [remoteElementToken length]);
         CoreIPC::DataReference windowToken = CoreIPC::DataReference(reinterpret_cast<const uint8_t*>([remoteWindowToken bytes]), [remoteWindowToken length]);
         _data->_page->registerUIProcessAccessibilityTokens(elementToken, windowToken);
-#endif    
             
     } else {
         _data->_page->viewStateDidChange(WebPageProxy::ViewIsVisible);
@@ -2219,10 +2215,8 @@ static void drawPageBackground(CGContextRef context, WebPageProxy* page, const I
 
 - (void)_setAccessibilityWebProcessToken:(NSData *)data
 {
-#if !defined(BUILDING_ON_SNOW_LEOPARD)
     _data->_remoteAccessibilityChild = WKAXRemoteElementForToken(data);
     [self _updateRemoteAccessibilityRegistration:YES];
-#endif
 }
 
 - (void)_setComplexTextInputEnabled:(BOOL)complexTextInputEnabled pluginComplexTextInputIdentifier:(uint64_t)pluginComplexTextInputIdentifier

@@ -102,9 +102,7 @@ int WebProcessMain(const CommandLine& commandLine)
     // FIXME: Remove when <rdar://problem/8929426> is fixed.
     [[NSApplication sharedApplication] _installAutoreleasePoolsOnCurrentThreadIfNecessary];
 
-#if !defined(BUILDING_ON_SNOW_LEOPARD)
     WKAXRegisterRemoteApp();
-#endif
     
     RunLoop::run();
 
