@@ -1,3 +1,19 @@
+2011-04-28  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r85101.
+        http://trac.webkit.org/changeset/85101
+        https://bugs.webkit.org/show_bug.cgi?id=59757
+
+         it'd be better to rollout the patch and do another one with
+        another property name. Current one will bring us to a problem
+        at first run after upgrade because it's type was changed from
+        int to string. (Requested by loislo on #webkit).
+
+        * inspector/front-end/ScriptsPanel.js:
+        (WebInspector.ScriptsPanel.prototype._debuggerWasEnabled):
+        (WebInspector.ScriptsPanel.prototype._setPauseOnExceptions.callback):
+        (WebInspector.ScriptsPanel.prototype._setPauseOnExceptions):
+
 2011-04-28  Mike Reed  <reed@google.com>
 
         Reviewed by Eric Seidel.
