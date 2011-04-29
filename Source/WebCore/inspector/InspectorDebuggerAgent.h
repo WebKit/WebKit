@@ -120,7 +120,7 @@ private:
 
     PassRefPtr<InspectorArray> currentCallFrames();
 
-    virtual void didParseSource(const String& sourceID, const String& url, const String& data,  int startLine, int startColumn, int endLine, int endColumn, bool isContentScript);
+    virtual void didParseSource(const String& sourceID, const String& url, const String& data, int startLine, int startColumn, int endLine, int endColumn, bool isContentScript);
     virtual void failedToParseSource(const String& url, const String& data, int firstLine, int errorLine, const String& errorMessage);
     virtual void didPause(ScriptState*, const ScriptValue& callFrames, const ScriptValue& exception);
     virtual void didContinue();

@@ -1,3 +1,19 @@
+2011-04-29  Pavel Podivilov  <podivilov@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: breakpoints set in original and formatted scripts are messed up after navigation.
+        https://bugs.webkit.org/show_bug.cgi?id=59476
+
+        * inspector/front-end/DebuggerPresentationModel.js:
+        (WebInspector.DebuggerPresentationModel.prototype.setFormatSourceFiles):
+        (WebInspector.DebuggerPresentationModel.prototype._removeBreakpointFromDebugger):
+        (WebInspector.PresentationBreakpoint.prototype.serialize):
+        * inspector/front-end/ScriptsPanel.js:
+        (WebInspector.ScriptsPanel.prototype._addOptionToFilesSelect.optionCompare):
+        (WebInspector.ScriptsPanel.prototype._addOptionToFilesSelect):
+        (WebInspector.ScriptsPanel.prototype.reset):
+
 2011-04-28  Pavel Podivilov  <podivilov@chromium.org>
 
         Reviewed by Yury Semikhatsky.

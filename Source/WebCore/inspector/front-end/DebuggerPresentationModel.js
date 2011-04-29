@@ -210,6 +210,12 @@ WebInspector.DebuggerPresentationModel.prototype = {
                 this._removeBreakpointFromDebugger(sourceFile.breakpoints[line]);
         }
 
+        for (var id in this._breakpointsWithoutSourceFile) {
+            var breakpoints = this._breakpointsWithoutSourceFile[id];
+            for (var i = 0; i < breakpoints.length; ++i)
+                this._removeBreakpointFromDebugger(breakpoints[i]);
+        }
+
         var messages = this._messages;
         this._reset();
 
@@ -330,19 +336,13 @@ WebInspector.DebuggerPresentationModel.prototype = {
 
     _removeBreakpointFromDebugger: function(breakpoint, callback)
     {
-        if (!("debuggerId" in breakpoint)) {
-            if (callback)
-                callback();
-            return;
+        if ("debuggerId" in breakpoint) {
+            WebInspector.debuggerModel.removeBreakpoint(breakpoint.debuggerId);
+            this._unbindDebuggerId(breakpoint);
         }
 
-        function didRemoveBreakpoint()
-        {
-            this._unbindDebuggerId(breakpoint);
-            if (callback)
-                callback();
-        }
-        WebInspector.debuggerModel.removeBreakpoint(breakpoint.debuggerId, didRemoveBreakpoint.bind(this));
+        if (callback)
+            callback();
     },
 
     _bindDebuggerId: function(breakpoint, debuggerId)
@@ -631,7 +631,8 @@ WebInspector.PresentationBreakpoint.prototype = {
         serializedBreakpoint.lineNumber = this.lineNumber;
         serializedBreakpoint.condition = this.condition;
         serializedBreakpoint.enabled = this.enabled;
-        serializedBreakpoint.debuggerId = this.debuggerId;
+        if ("debuggerId" in this)
+            serializedBreakpoint.debuggerId = this.debuggerId;
         return serializedBreakpoint;
     }
 }

@@ -150,36 +150,45 @@ InspectorTest.assertGreaterOrEqual = function(expected, actual, message)
         InspectorTest.addResult("FAILED: " + (message ? message + ": " : "") + actual + " < " + expected);
 }
 
+InspectorTest.navigate = function(url, callback)
+{
+    InspectorTest._pageLoadedCallback = InspectorTest.safeWrap(callback);
+
+    if (WebInspector.panels.network)
+        WebInspector.panels.network._reset();
+    InspectorTest.evaluateInConsole("window.location = '" + url + "'");
+}
+
 InspectorTest.reloadPage = function(callback)
 {
-    InspectorTest._reloadPageCallback = InspectorTest.safeWrap(callback);
+    InspectorTest._pageLoadedCallback = InspectorTest.safeWrap(callback);
 
     if (WebInspector.panels.network)
         WebInspector.panels.network._reset();
     PageAgent.reload(false);
 }
 
-InspectorTest.pageReloaded = function()
+InspectorTest.pageLoaded = function()
 {
     resultsSynchronized = false;
     InspectorTest.addResult("Page reloaded.");
-    if (InspectorTest._reloadPageCallback) {
-        var callback = InspectorTest._reloadPageCallback;
-        delete InspectorTest._reloadPageCallback;
+    if (InspectorTest._pageLoadedCallback) {
+        var callback = InspectorTest._pageLoadedCallback;
+        delete InspectorTest._pageLoadedCallback;
         callback();
     }
 }
 
 InspectorTest.runWhenPageLoads = function(callback)
 {
-    var oldCallback = InspectorTest._reloadPageCallback;
+    var oldCallback = InspectorTest._pageLoadedCallback;
     function chainedCallback()
     {
         if (oldCallback)
             oldCallback();
         callback();
     }
-    InspectorTest._reloadPageCallback = InspectorTest.safeWrap(chainedCallback);
+    InspectorTest._pageLoadedCallback = InspectorTest.safeWrap(chainedCallback);
 }
 
 InspectorTest.runAfterPendingDispatches = function(callback)
@@ -341,7 +350,7 @@ function runTest(enableWatchDogWhileDebugging)
     function runTestInFrontend(initializationFunctions, testFunction, completeTestCallId)
     {
         if (window.InspectorTest) {
-            InspectorTest.pageReloaded();
+            InspectorTest.pageLoaded();
             return;
         }
 
