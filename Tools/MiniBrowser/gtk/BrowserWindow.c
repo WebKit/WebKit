@@ -49,6 +49,9 @@ struct _BrowserWindowClass {
 };
 
 static void browserWindowLoaderClientInit(BrowserWindow*);
+static void browserWindowUIClientInit(BrowserWindow*);
+
+static gint windowCount = 0;
 
 G_DEFINE_TYPE(BrowserWindow, browser_window, GTK_TYPE_WINDOW)
 
@@ -75,6 +78,9 @@ static void browserWindowFinalize(GObject* gObject)
     g_free(window->title);
 
     G_OBJECT_CLASS(browser_window_parent_class)->finalize(gObject);
+
+    if (g_atomic_int_dec_and_test(&windowCount))
+        gtk_main_quit();
 }
 
 static void browserWindowGetProperty(GObject* object, guint propId, GValue* value, GParamSpec* pspec)
@@ -105,6 +111,8 @@ static void browserWindowSetProperty(GObject* object, guint propId, const GValue
 
 static void browser_window_init(BrowserWindow* window)
 {
+    g_atomic_int_inc(&windowCount);
+
     gtk_window_set_default_size(GTK_WINDOW(window), 800, 600);
 
     window->uriEntry = gtk_entry_new();
@@ -157,6 +165,7 @@ static void browserWindowConstructed(GObject* gObject)
     gtk_widget_show(GTK_WIDGET(window->webView));
 
     browserWindowLoaderClientInit(window);
+    browserWindowUIClientInit(window);
 }
 
 static void browser_window_class_init(BrowserWindowClass* klass)
@@ -371,6 +380,75 @@ static void browserWindowLoaderClientInit(BrowserWindow* window)
         0        /* didFailToInitializePlugin */
     };
     WKPageSetPageLoaderClient(WKViewGetPage(window->webView), &loadClient);
+}
+
+// UI Client.
+static WKPageRef createNewPage(WKPageRef page, WKDictionaryRef features, WKEventModifiers modifiers, WKEventMouseButton button, const void *clientInfo)
+{
+    WKViewRef webView = WKViewCreate(WKPageGetContext(page), 0);
+    BrowserWindow* window = BROWSER_WINDOW(browser_window_new(webView));
+    return WKRetain(WKViewGetPage(window->webView));
+}
+
+static void showPage(WKPageRef page, const void *clientInfo)
+{
+    gtk_widget_show(GTK_WIDGET(clientInfo));
+}
+
+static void closePage(WKPageRef page, const void *clientInfo)
+{
+    gtk_widget_destroy(GTK_WIDGET(clientInfo));
+}
+
+static void runJavaScriptAlert(WKPageRef page, WKStringRef message, WKFrameRef frame, const void *clientInfo)
+{
+}
+
+static void browserWindowUIClientInit(BrowserWindow *window)
+{
+    WKPageUIClient uiClient = {
+        0,      /* version */
+        window, /* clientInfo */
+        createNewPage,
+        showPage,
+        closePage,
+        0,      /* takeFocus */
+        0,      /* focus */
+        0,      /* unfocus */
+        runJavaScriptAlert,
+        0,      /* runJavaScriptConfirm */
+        0,      /* runJavaScriptPrompt */
+        0,      /* setStatusText */
+        0,      /* mouseDidMoveOverElement */
+        0,      /* missingPluginButtonClicked */
+        0,      /* didNotHandleKeyEvent */
+        0,      /* toolbarsAreVisible */
+        0,      /* setToolbarsAreVisible */
+        0,      /* menuBarIsVisible */
+        0,      /* setMenuBarIsVisible */
+        0,      /* statusBarIsVisible */
+        0,      /* setStatusBarIsVisible */
+        0,      /* isResizable */
+        0,      /* setIsResizable */
+        0,      /* getWindowFrame */
+        0,      /* setWindowFrame */
+        0,      /* runBeforeUnloadConfirmPanel */
+        0,      /* didDraw */
+        0,      /* pageDidScroll */
+        0,      /* exceededDatabaseQuota */
+        0,      /* runOpenPanel */
+        0,      /* decidePolicyForGeolocationPermissionRequest */
+        0,      /* headerHeight */
+        0,      /* footerHeight */
+        0,      /* drawHeader */
+        0,      /* drawFooter */
+        0,      /* printFrame */
+        0,      /* runModal */
+        0,      /* didCompleteRubberBandForMainFrame */
+        0,      /* saveDataToFileInDownloadsFolder */
+        0       /* shouldInterruptJavaScript */
+    };
+    WKPageSetPageUIClient(WKViewGetPage(window->webView), &uiClient);
 }
 
 // Public API.

@@ -29,24 +29,7 @@
 #include <WebKit2/WebKit2.h>
 #include <gtk/gtk.h>
 
-static void destroyCallback(GtkWidget *widget, GtkWidget *window)
-{
-    gtk_main_quit();
-}
-
-static WKViewRef createWebView()
-{
-    return WKViewCreate(WKContextGetSharedProcessContext(), 0);
-}
-
-static GtkWidget *createWindow(WKViewRef webView)
-{
-    GtkWidget *window = browser_window_new(webView);
-
-    g_signal_connect(window, "destroy", G_CALLBACK(destroyCallback), NULL);
-
-    return window;
-}
+static const gchar **uriArguments = NULL;
 
 static gchar *argumentToURL(const char *filename)
 {
@@ -57,22 +40,51 @@ static gchar *argumentToURL(const char *filename)
     return fileURL;
 }
 
-int main(int argc, char *argv[])
+static void loadURI(const gchar *uri)
 {
-    gtk_init(&argc, &argv);
-
-    if (!g_thread_supported())
-        g_thread_init(NULL);
-
-    WKViewRef webView = createWebView();
-    GtkWidget *mainWindow = createWindow(webView);
-
-    gchar* url = argumentToURL(argc > 1 ? argv[1] : "http://www.webkitgtk.org/");
+    WKViewRef webView = WKViewCreate(WKContextGetSharedProcessContext(), 0);
+    GtkWidget *mainWindow = browser_window_new(webView);
+    gchar *url = argumentToURL(uri);
     WKPageLoadURL(WKViewGetPage(webView), WKURLCreateWithUTF8CString(url));
     g_free(url);
 
     gtk_widget_grab_focus(GTK_WIDGET(webView));
-    gtk_widget_show_all(mainWindow);
+    gtk_widget_show(mainWindow);
+}
+
+static const GOptionEntry commandLineOptions[] =
+{
+    { G_OPTION_REMAINING, 0, 0, G_OPTION_ARG_FILENAME_ARRAY, &uriArguments, 0, "[URL…]" },
+    { 0 }
+};
+
+int main(int argc, char *argv[])
+{
+    if (!g_thread_supported())
+        g_thread_init(NULL);
+
+    GOptionContext *context = g_option_context_new(NULL);
+    g_option_context_add_main_entries(context, commandLineOptions, 0);
+    g_option_context_add_group(context, gtk_get_option_group(TRUE));
+
+    GError *error = 0;
+    if (!g_option_context_parse(context, &argc, &argv, &error)) {
+        g_printerr("Cannot parse arguments: %s\n", error->message);
+        g_error_free(error);
+        g_option_context_free(context);
+
+        return 1;
+    }
+    g_option_context_free (context);
+
+    if (uriArguments) {
+        int i;
+
+        for (i = 0; uriArguments[i]; i++)
+            loadURI(uriArguments[i]);
+    } else
+        loadURI("http://www.webkitgtk.org/");
+
     gtk_main();
 
     return 0;

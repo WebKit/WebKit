@@ -2,6 +2,29 @@
 
         Reviewed by Martin Robinson.
 
+        [GTK] Implement UI client in minibrowser
+        https://bugs.webkit.org/show_bug.cgi?id=58416
+
+        It also allows to open more than one minibrowser window from the
+        command line.
+
+        * MiniBrowser/gtk/BrowserWindow.c:
+        (browserWindowFinalize):
+        (browser_window_init):
+        (browserWindowConstructed):
+        (createNewPage):
+        (showPage):
+        (closePage):
+        (runJavaScriptAlert):
+        (browserWindowUIClientInit):
+        * MiniBrowser/gtk/main.c:
+        (loadURI):
+        (main):
+
+2011-04-29  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Reviewed by Martin Robinson.
+
         [GTK] Implement page loader client in MiniBrowser
         https://bugs.webkit.org/show_bug.cgi?id=58024
 
