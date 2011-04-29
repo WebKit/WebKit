@@ -25,62 +25,13 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#include "BrowserWindow.h"
 #include <WebKit2/WebKit2.h>
 #include <gtk/gtk.h>
-
-static void activateUriEntryCallback(GtkWidget *entry, gpointer data)
-{
-    WKViewRef webView = g_object_get_data(G_OBJECT(entry), "web-view");
-    const gchar *uri = gtk_entry_get_text(GTK_ENTRY(entry));
-    WKPageLoadURL(WKViewGetPage(webView), WKURLCreateWithUTF8CString(uri));
-}
 
 static void destroyCallback(GtkWidget *widget, GtkWidget *window)
 {
     gtk_main_quit();
-}
-
-static void goBackCallback(GtkWidget *widget, WKViewRef webView)
-{
-    WKPageGoBack(WKViewGetPage(webView));
-}
-
-static void goForwardCallback(GtkWidget *widget, WKViewRef webView)
-{
-    WKPageGoForward(WKViewGetPage(webView));
-}
-
-static GtkWidget *createToolbar(GtkWidget *uriEntry, WKViewRef webView)
-{
-    GtkWidget *toolbar = gtk_toolbar_new();
-
-#if GTK_CHECK_VERSION(2, 15, 0)
-    gtk_orientable_set_orientation(GTK_ORIENTABLE(toolbar), GTK_ORIENTATION_HORIZONTAL);
-#else
-    gtk_toolbar_set_orientation(GTK_TOOLBAR(toolbar), GTK_ORIENTATION_HORIZONTAL);
-#endif
-    gtk_toolbar_set_style(GTK_TOOLBAR(toolbar), GTK_TOOLBAR_BOTH_HORIZ);
-
-    GtkToolItem *item = gtk_tool_button_new_from_stock(GTK_STOCK_GO_BACK);
-    g_signal_connect(item, "clicked", G_CALLBACK(goBackCallback), (gpointer)webView);
-    gtk_toolbar_insert(GTK_TOOLBAR(toolbar), item, -1);
-
-    item = gtk_tool_button_new_from_stock(GTK_STOCK_GO_FORWARD);
-    g_signal_connect(G_OBJECT(item), "clicked", G_CALLBACK(goForwardCallback), (gpointer)webView);
-    gtk_toolbar_insert(GTK_TOOLBAR(toolbar), item, -1);
-
-    item = gtk_tool_item_new();
-    gtk_tool_item_set_expand(item, TRUE);
-    gtk_container_add(GTK_CONTAINER(item), uriEntry);
-    g_signal_connect(uriEntry, "activate", G_CALLBACK(activateUriEntryCallback), NULL);
-    gtk_toolbar_insert(GTK_TOOLBAR(toolbar), item, -1);
-
-    g_object_set_data(G_OBJECT(uriEntry), "web-view", (gpointer)webView);
-    item = gtk_tool_button_new_from_stock(GTK_STOCK_OK);
-    g_signal_connect_swapped(item, "clicked", G_CALLBACK(activateUriEntryCallback), (gpointer)uriEntry);
-    gtk_toolbar_insert(GTK_TOOLBAR(toolbar), item, -1);
-
-    return toolbar;
 }
 
 static WKViewRef createWebView()
@@ -90,17 +41,7 @@ static WKViewRef createWebView()
 
 static GtkWidget *createWindow(WKViewRef webView)
 {
-    GtkWidget *window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
-    gtk_window_set_default_size(GTK_WINDOW(window), 800, 600);
-    gtk_widget_set_name(window, "MiniBrowser");
-
-    GtkWidget *uriEntry = gtk_entry_new();
-
-    GtkWidget *vbox = gtk_vbox_new(FALSE, 0);
-    gtk_box_pack_start(GTK_BOX(vbox), createToolbar(uriEntry, webView), FALSE, FALSE, 0);
-    gtk_box_pack_start(GTK_BOX(vbox), GTK_WIDGET(webView), TRUE, TRUE, 0);
-
-    gtk_container_add(GTK_CONTAINER(window), vbox);
+    GtkWidget *window = browser_window_new(webView);
 
     g_signal_connect(window, "destroy", G_CALLBACK(destroyCallback), NULL);
 

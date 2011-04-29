@@ -9,6 +9,8 @@ Programs_MiniBrowser_CPPFLAGS = \
 	$(GTK_CFLAGS)
 
 Programs_MiniBrowser_SOURCES = \
+	Tools/MiniBrowser/gtk/BrowserWindow.h \
+	Tools/MiniBrowser/gtk/BrowserWindow.c \
 	Tools/MiniBrowser/gtk/main.c
 
 BUILT_SOURCES += \

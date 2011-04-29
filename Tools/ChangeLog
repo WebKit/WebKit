@@ -1,3 +1,52 @@
+2011-04-29  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Reviewed by Martin Robinson.
+
+        [GTK] Implement page loader client in MiniBrowser
+        https://bugs.webkit.org/show_bug.cgi?id=58024
+
+        A new class BrowserWindow has been added to implement the page
+        loader client. It makes supporting multiple windows easier. Window
+        title and url entry are now updated during the loading process.
+
+        * MiniBrowser/gtk/BrowserWindow.c: Added.
+        (activateUriEntryCallback):
+        (goBackCallback):
+        (goForwardCallback):
+        (browserWindowFinalize):
+        (browserWindowGetProperty):
+        (browserWindowSetProperty):
+        (browser_window_init):
+        (browserWindowConstructed):
+        (browser_window_class_init):
+        (browserWindowUpdateTitle):
+        (browserWindowSetTitle):
+        (browserWindowSetLoadProgress):
+        (browserWindowUpdateURL):
+        (didStartProvisionalLoadForFrame):
+        (didReceiveServerRedirectForProvisionalLoadForFrame):
+        (didFailProvisionalLoadWithErrorForFrame):
+        (didCommitLoadForFrame):
+        (didFinishDocumentLoadForFrame):
+        (didFinishLoadForFrame):
+        (didFailLoadWithErrorForFrame):
+        (didReceiveTitleForFrame):
+        (didFirstLayoutForFrame):
+        (didFirstVisuallyNonEmptyLayoutForFrame):
+        (didRemoveFrameFromHierarchy):
+        (didStartProgress):
+        (didChangeProgress):
+        (didFinishProgress):
+        (didBecomeUnresponsive):
+        (didBecomeResponsive):
+        (browserWindowLoaderClientInit):
+        (browser_window_new):
+        (browser_window_get_view):
+        * MiniBrowser/gtk/BrowserWindow.h: Added.
+        * MiniBrowser/gtk/GNUmakefile.am:
+        * MiniBrowser/gtk/main.c:
+        (createWindow):
+
 2011-04-28  Stephanie Lewis  <slewis@apple.com>
 
         Reviewed by Mark Rowe.
