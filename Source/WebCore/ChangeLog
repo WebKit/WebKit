@@ -1,3 +1,16 @@
+2011-04-29  Mike Lawther  <mikelawther@chromium.org>
+
+        Reviewed by Ojan Vafai.
+
+        Fix IR->SR typo in enum value (and resulting style fails)
+        https://bugs.webkit.org/show_bug.cgi?id=59779
+
+        No functionality change, so no new tests
+
+        * css/CSSPrimitiveValueMappings.h:
+        (WebCore::CSSPrimitiveValue::CSSPrimitiveValue):
+        (WebCore::CSSPrimitiveValue::operator EShapeRendering):
+
 2011-04-29  Pavel Feldman  <pfeldman@google.com>
 
         Reviewed by Yury Semikhatsky.

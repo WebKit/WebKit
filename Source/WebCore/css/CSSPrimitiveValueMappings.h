@@ -2912,35 +2912,35 @@ template<> inline CSSPrimitiveValue::CSSPrimitiveValue(EShapeRendering e)
     , m_hasCachedCSSText(false)
 {
     switch (e) {
-        case IR_AUTO:
-            m_value.ident = CSSValueAuto;
-            break;
-        case IR_OPTIMIZESPEED:
-            m_value.ident = CSSValueOptimizespeed;
-            break;
-        case SR_CRISPEDGES:
-            m_value.ident = CSSValueCrispedges;
-            break;
-        case SR_GEOMETRICPRECISION:
-            m_value.ident = CSSValueGeometricprecision;
-            break;
+    case SR_AUTO:
+        m_value.ident = CSSValueAuto;
+        break;
+    case SR_OPTIMIZESPEED:
+        m_value.ident = CSSValueOptimizespeed;
+        break;
+    case SR_CRISPEDGES:
+        m_value.ident = CSSValueCrispedges;
+        break;
+    case SR_GEOMETRICPRECISION:
+        m_value.ident = CSSValueGeometricprecision;
+        break;
     }
 }
 
 template<> inline CSSPrimitiveValue::operator EShapeRendering() const
 {
     switch (m_value.ident) {
-        case CSSValueAuto:
-            return SR_AUTO;
-        case CSSValueOptimizespeed:
-            return SR_OPTIMIZESPEED;
-        case CSSValueCrispedges:
-            return SR_CRISPEDGES;
-        case CSSValueGeometricprecision:
-            return SR_GEOMETRICPRECISION;
-        default:
-            ASSERT_NOT_REACHED();
-            return SR_AUTO;
+    case CSSValueAuto:
+        return SR_AUTO;
+    case CSSValueOptimizespeed:
+        return SR_OPTIMIZESPEED;
+    case CSSValueCrispedges:
+        return SR_CRISPEDGES;
+    case CSSValueGeometricprecision:
+        return SR_GEOMETRICPRECISION;
+    default:
+        ASSERT_NOT_REACHED();
+        return SR_AUTO;
     }
 }
 
