@@ -1,3 +1,15 @@
+2011-04-29  Adam Roben  <aroben@apple.com>
+
+        Make DumpRenderTreeSupport get installed when the default configuration is built
+
+        The default configuration is Production, but in that case the CONFIGURATION environment
+        variable is set to the empty string.
+
+        Reviewed by Sam Weinig.
+
+        * DumpRenderTree/mac/PerlSupport/Makefile: Set CONFIGURATION to Production if it isn't
+        already set so that later logic that depends on CONFIGURATION having that value will work.
+
 2011-04-29  Dean Jackson  <dino@apple.com>
 
         Reviewed by Simon Fraser.
