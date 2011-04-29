@@ -1,3 +1,19 @@
+2011-04-29  Abhishek Arya  <inferno@chromium.org>
+
+        Reviewed by Nikolas Zimmermann.
+
+        When svg inline text is getting destroyed, make sure to mark
+        its svg text ancestor as needing a positioning values update.
+        This helps to recalculate layout attributes and makes sure
+        that svg inline text is not used again.
+        https://bugs.webkit.org/show_bug.cgi?id=59161
+
+        Test: svg/text/inline-text-destroy-attributes-crash.xhtml
+
+        * rendering/svg/RenderSVGInlineText.cpp:
+        (WebCore::RenderSVGInlineText::destroy):
+        * rendering/svg/RenderSVGInlineText.h:
+
 2011-04-29  Kevin Ollivier  <kevino@theolliviers.com>
 
         [wx] Unreviewed build fix. Fix wxMSW trunk builds by adding include.

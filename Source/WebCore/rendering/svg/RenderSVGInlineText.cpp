@@ -70,6 +70,14 @@ RenderSVGInlineText::RenderSVGInlineText(Node* n, PassRefPtr<StringImpl> string)
 {
 }
 
+void RenderSVGInlineText::destroy()
+{
+    if (RenderSVGText* textRenderer = RenderSVGText::locateRenderSVGTextAncestor(this))
+        textRenderer->setNeedsPositioningValuesUpdate();
+
+    RenderText::destroy();
+}
+
 void RenderSVGInlineText::styleDidChange(StyleDifference diff, const RenderStyle* oldStyle)
 {
     RenderText::styleDidChange(diff, oldStyle);

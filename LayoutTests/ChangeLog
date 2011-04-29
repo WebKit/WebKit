@@ -1,3 +1,14 @@
+2011-04-28  Abhishek Arya  <inferno@chromium.org>
+
+        Reviewed by Nikolas Zimmermann.
+
+        Tests that we do not crash when inline text is removed and we
+        try to access layout attributes containing that inline text.
+        https://bugs.webkit.org/show_bug.cgi?id=59161
+
+        * svg/text/inline-text-destroy-attributes-crash-expected.txt: Added.
+        * svg/text/inline-text-destroy-attributes-crash.xhtml: Added.
+
 2011-04-29  Csaba Osztrogonác  <ossy@webkit.org>
 
         [Qt] Add flakey tests to the Skipped list.
