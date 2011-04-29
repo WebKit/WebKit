@@ -237,6 +237,7 @@ private:
 
     void subtractCaptionRect(IntRect&) const;
 
+    void recalcCaption(RenderBlock*) const;
     void recalcSections() const;
     void adjustLogicalHeightForCaption();
 

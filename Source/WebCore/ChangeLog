@@ -1,3 +1,36 @@
+2011-04-29  Abhishek Arya  <inferno@chromium.org>
+
+        Reviewed by Dave Hyatt.
+
+        Allow only first table caption and destroy the remaining ones.
+        https://bugs.webkit.org/show_bug.cgi?id=58249
+
+        Previously, we were only laying out the first table caption.
+        However Table::layout didn't mark the other ones as not needing
+        layout. So after table layout completes, table is marked as not
+        needing layout with its other table caption still needing layout.
+        This causes incorrect layout root calculations and set it to a
+        node which is already getting deleted.
+
+        Tests: fast/table/dynamic-caption-add-before-child.xhtml
+               fast/table/dynamic-caption-add-remove-before-child.xhtml
+               fast/table/multiple-captions-crash.xhtml
+               fast/table/multiple-captions-crash2.xhtml
+               fast/table/multiple-captions-display.xhtml
+
+        * rendering/RenderTable.cpp:
+        (WebCore::RenderTable::addChild): when new caption or a before
+        child caption is added, we need to explicitly trigger section
+        recalc or otherwise layout won't catch it.
+        (WebCore::RenderTable::removeChild): when child to be removed is
+        m_caption, make sure to trigger style recalc on the table.
+        (WebCore::RenderTable::recalcCaption): code to destroy captions
+        other than the first one.
+        (WebCore::RenderTable::recalcSections): call recalcCaption
+        helper. Store the next sibling early since child can get destroyed
+        in recalcCaption.
+        * rendering/RenderTable.h:
+
 2011-04-29  David Kilzer  <ddkilzer@apple.com>
 
         Remove WML

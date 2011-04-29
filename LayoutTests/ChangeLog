@@ -1,3 +1,43 @@
+2011-04-21  Abhishek Arya  <inferno@chromium.org>
+
+        Reviewed by Dave Hyatt.
+
+        Tests that we do not crash on
+        ASSERT(!m_layoutRoot->container() || !m_layoutRoot->container()->needsLayout())
+        when a table has two or more captions.
+        https://bugs.webkit.org/show_bug.cgi?id=58249
+
+        * fast/table/dynamic-caption-add-before-child.xhtml: Added. Tests that
+        before child caption becomes the first caption.
+        * fast/table/dynamic-caption-add-remove-before-child.xhtml: Added. Tests
+        that when we remove the before child caption, the original caption becomes
+        the first caption and is drawn.
+        * fast/table/multiple-captions-crash-expected.txt: Added.
+        * fast/table/multiple-captions-crash.xhtml: Added. Tests that we
+        do not crash when table has multiple captions and captions (other
+        than the first one) have input elements added as their child.
+        * fast/table/multiple-captions-crash2-expected.txt: Added.
+        * fast/table/multiple-captions-crash2.xhtml: Added. Same as
+        multiple-captions-crash.xhtml but this testcase does not have
+        enclosing table tags for the captions.
+        * fast/table/multiple-captions-display.xhtml: Added. Tests that only
+        the first caption and captions with position fixed (display=BLOCK) are
+        shown. Other captions are not added to table.
+        * platform/mac/fast/table/dynamic-caption-add-before-child-expected.checksum: Added.
+        * platform/mac/fast/table/dynamic-caption-add-before-child-expected.png: Added.
+        * platform/mac/fast/table/dynamic-caption-add-before-child-expected.txt: Added.
+        * platform/mac/fast/table/dynamic-caption-add-remove-before-child-expected.checksum: Added.
+        * platform/mac/fast/table/dynamic-caption-add-remove-before-child-expected.png: Added.
+        * platform/mac/fast/table/dynamic-caption-add-remove-before-child-expected.txt: Added.
+        * platform/mac/fast/table/multiple-captions-display-expected.checksum: Added.
+        * platform/mac/fast/table/multiple-captions-display-expected.png: Added.
+        * platform/mac/fast/table/multiple-captions-display-expected.txt: Added.
+        * platform/mac/fast/table/prepend-in-anonymous-table-expected.png:
+        * platform/mac/fast/table/prepend-in-anonymous-table-expected.txt: Rebaseline
+        test because we do not allow captions other than the first one.
+        * platform/mac/tables/mozilla_expected_failures/other/test4-expected.txt: Rebaseline
+        test because we do not allow captions other than the first one.
+
 2011-04-29  Dean Jackson  <dino@apple.com>
 
         https://bugs.webkit.org/show_bug.cgi?id=59729
