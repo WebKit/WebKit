@@ -1,3 +1,13 @@
+2011-04-28  Sam Weinig  <sam@webkit.org>
+
+        Rubber-stamped by Mark Rowe.
+
+        Cleanup WebCore.xcodeproj a bit.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        Added CompilerVersion.xcconfig and moved some JS bindings files into the
+        correct sub groups.
+
 2011-04-28  David Levin  <levin@chromium.org>
 
         Reviewed by Adam Barth.

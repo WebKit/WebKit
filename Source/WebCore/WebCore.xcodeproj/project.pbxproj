@@ -11403,6 +11403,7 @@
 		BC64649511D82349006455B0 /* JSDOMStringMap.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSDOMStringMap.cpp; sourceTree = "<group>"; };
 		BC64649611D82349006455B0 /* JSDOMStringMap.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSDOMStringMap.h; sourceTree = "<group>"; };
 		BC64649B11D8238C006455B0 /* JSDOMStringMapCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSDOMStringMapCustom.cpp; sourceTree = "<group>"; };
+		BC646F7E136A435700B35DED /* CompilerVersion.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = CompilerVersion.xcconfig; sourceTree = "<group>"; };
 		BC64B4C90CB4295D005F2B62 /* CachedFont.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CachedFont.cpp; sourceTree = "<group>"; };
 		BC64B4CA0CB4295D005F2B62 /* CachedFont.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CachedFont.h; sourceTree = "<group>"; };
 		BC64B4CD0CB4298A005F2B62 /* CSSFontFace.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CSSFontFace.cpp; sourceTree = "<group>"; };
@@ -13202,6 +13203,7 @@
 			isa = PBXGroup;
 			children = (
 				1CDD45E60BA9C84600F90147 /* Base.xcconfig */,
+				BC646F7E136A435700B35DED /* CompilerVersion.xcconfig */,
 				1CDD45E40BA9C84600F90147 /* DebugRelease.xcconfig */,
 				449098B10F8F82520076A327 /* FeatureDefines.xcconfig */,
 				1C904DF90BA9D2C80081E9D0 /* Version.xcconfig */,
@@ -17859,10 +17861,8 @@
 				BCCE58B41061E925008FB35A /* Constructors */,
 				BC4EDEF70C08F414007EDD49 /* Custom */,
 				14DFB33F0A7DF7630018F769 /* Derived Sources */,
-				BCD533630ED6848900887468 /* CachedScriptSourceProvider.h */,
-				B1827492134CA4C100B98C2D /* CallbackFunction.cpp */,
-				B1D5ECB4134B58DA0087C78F /* CallbackFunction.h */,
 				93F8B3060A300FEA00F61AB8 /* CodeGeneratorJS.pm */,
+				BCD533630ED6848900887468 /* CachedScriptSourceProvider.h */,
 				BC53DA61114314BD000D817E /* DOMObjectHashTableMap.cpp */,
 				BC53DA5F1143141A000D817E /* DOMObjectHashTableMap.h */,
 				BC53DA471143134D000D817E /* DOMWrapperWorld.cpp */,
@@ -17877,8 +17877,6 @@
 				93B70D4809EB0C7C009D8468 /* JSDOMBinding.h */,
 				E1C36CBC0EB08062007410BC /* JSDOMGlobalObject.cpp */,
 				E1C36C020EB076D6007410BC /* JSDOMGlobalObject.h */,
-				22885E631301AE4C00526E68 /* JSDOMImplementationCustom.cpp */,
-				14E0BC55136148A8002AD12E /* JSDOMTokenListCustom.cpp */,
 				BC6932710D7E293900AE44D1 /* JSDOMWindowBase.cpp */,
 				BC6932720D7E293900AE44D1 /* JSDOMWindowBase.h */,
 				BCBFB53A0DCD29CF0019B3E5 /* JSDOMWindowShell.cpp */,
@@ -17893,8 +17891,6 @@
 				3314ACEA10892086000F0E56 /* JSExceptionBase.h */,
 				8F934D841189F1EE00508D5D /* JSMainThreadExecState.cpp */,
 				8F934D831189F1EE00508D5D /* JSMainThreadExecState.h */,
-				1464E06B135EC10600FDB00A /* JSMediaListCustom.cpp */,
-				9FDC8FF112FAB0060099AB1C /* JSMemoryInfoCustom.cpp */,
 				93B70D4F09EB0C7C009D8468 /* JSPluginElementFunctions.cpp */,
 				93B70D5009EB0C7C009D8468 /* JSPluginElementFunctions.h */,
 				14CD8D81106B529000A46D23 /* JSSharedWorkerCustom.cpp */,
@@ -18028,10 +18024,12 @@
 				49C7BA8C1042F5B10009D447 /* JSDocumentCustom.cpp */,
 				1AC226160DB69F740089B669 /* JSDOMApplicationCacheCustom.cpp */,
 				2E0888E5114884E200AF4265 /* JSDOMFormDataCustom.cpp */,
+				22885E631301AE4C00526E68 /* JSDOMImplementationCustom.cpp */,
 				A9C6E6460D7465CA006442E9 /* JSDOMMimeTypeArrayCustom.cpp */,
 				A9C6E64A0D7465E7006442E9 /* JSDOMPluginArrayCustom.cpp */,
 				A9C6E64B0D7465E7006442E9 /* JSDOMPluginCustom.cpp */,
 				BC64649B11D8238C006455B0 /* JSDOMStringMapCustom.cpp */,
+				14E0BC55136148A8002AD12E /* JSDOMTokenListCustom.cpp */,
 				BCD9C25E0C17AA67005C90A2 /* JSDOMWindowCustom.cpp */,
 				652FBBBB0DE27CB60001D386 /* JSDOMWindowCustom.h */,
 				BC2ED5540C6B9BD300920BFF /* JSElementCustom.cpp */,
@@ -18077,6 +18075,8 @@
 				FDEAAAFD12B02F4900DCF33B /* JSJavaScriptAudioNodeCustom.cpp */,
 				1C5FAEE60DCFDA6800D58F78 /* JSJavaScriptCallFrameCustom.cpp */,
 				BCE1C43F0D9830F4003B02F2 /* JSLocationCustom.cpp */,
+				1464E06B135EC10600FDB00A /* JSMediaListCustom.cpp */,
+				9FDC8FF112FAB0060099AB1C /* JSMemoryInfoCustom.cpp */,
 				E1A5F99A0E7EAA2500AF85EA /* JSMessageChannelCustom.cpp */,
 				410B7E711045FAB000D8224F /* JSMessageEventCustom.cpp */,
 				E1ADED460E76B8DD004A1A5E /* JSMessagePortCustom.cpp */,
@@ -18341,6 +18341,8 @@
 		BCCE58A71061E82F008FB35A /* Callback Objects */ = {
 			isa = PBXGroup;
 			children = (
+				B1827492134CA4C100B98C2D /* CallbackFunction.cpp */,
+				B1D5ECB4134B58DA0087C78F /* CallbackFunction.h */,
 				1449E286107D4DB400B5793F /* JSCallbackData.cpp */,
 				1449E24A107D4A8400B5793F /* JSCallbackData.h */,
 				FE80D7A20E9C1ED2000D6F75 /* JSCustomPositionCallback.cpp */,
