@@ -21,7 +21,6 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
 
-CONFIGURATION ?= Production
 CONFIGURATION_BUILD_DIR ?= .
 OUTPUT_DIR=$(CONFIGURATION_BUILD_DIR)
 
@@ -74,8 +73,6 @@ clean:
 
 installhdrs installsrc:
 
-ifeq "$(CONFIGURATION)" "Production"
-
 INSTALL_LOCATION=$(DSTROOT)/$(SYSTEM_LIBRARY_DIR)/Frameworks/$(WEBKIT_FRAMEWORK_RESOURCES_PATH)
 
 install: all
@@ -83,8 +80,3 @@ install: all
 	cp $(DYLIB) $(INSTALL_LOCATION)/DumpRenderTreeSupport.dylib
 	cp $(PERL_MODULE) $(INSTALL_LOCATION)/DumpRenderTreeSupport.pm
 
-else
-
-install:
-
-endif

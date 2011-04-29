@@ -1,3 +1,12 @@
+2011-04-29  Stephanie Lewis  <slewis@apple.com>
+
+        Rubber-stamped by Adam Roben.   
+
+        Remove the production configuration guard since installs only happen in production anyway.  
+        Works around a bug in Xcode
+
+        * DumpRenderTree/mac/PerlSupport/Makefile:
+
 2011-04-29  Adam Roben  <aroben@apple.com>
 
         Remove a PHP setting that is now provided by httpd.conf
