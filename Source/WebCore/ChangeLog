@@ -1,5 +1,16 @@
 2011-04-29  Csaba Osztrogonác  <ossy@webkit.org>
 
+        [Qt] Unreviewed buildfix after r85343.
+
+        Enable strict OwnPtr for Qt
+        https://bugs.webkit.org/show_bug.cgi?id=59667
+
+        * plugins/win/PluginViewWin.cpp:
+        (WebCore::PluginView::wndProc):
+        (WebCore::PluginView::snapshot):
+
+2011-04-29  Csaba Osztrogonác  <ossy@webkit.org>
+
         Reviewed by Adam Barth.
 
         Enable strict OwnPtr for Qt

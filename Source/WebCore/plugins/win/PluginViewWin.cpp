@@ -374,7 +374,7 @@ PluginView::wndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
     if (message == WM_USER + 1 &&
         m_plugin->quirks().contains(PluginQuirkThrottleWMUserPlusOneMessages)) {
         if (!m_messageThrottler)
-            m_messageThrottler.set(new PluginMessageThrottlerWin(this));
+            m_messageThrottler = adoptPtr(new PluginMessageThrottlerWin(this));
 
         m_messageThrottler->appendMessage(hWnd, message, wParam, lParam);
         return 0;
@@ -1012,7 +1012,7 @@ void PluginView::platformDestroy()
 PassRefPtr<Image> PluginView::snapshot()
 {
 #if !PLATFORM(WX) && !OS(WINCE)
-    OwnPtr<HDC> hdc(CreateCompatibleDC(0));
+    OwnPtr<HDC> hdc = adoptPtr(CreateCompatibleDC(0));
 
     if (!m_isWindowed) {
         // Enable world transforms.
@@ -1032,7 +1032,7 @@ PassRefPtr<Image> PluginView::snapshot()
 
     void* bits;
     BitmapInfo bmp = BitmapInfo::createBottomUp(frameRect().size());
-    OwnPtr<HBITMAP> hbmp(CreateDIBSection(0, &bmp, DIB_RGB_COLORS, &bits, 0, 0));
+    OwnPtr<HBITMAP> hbmp = adoptPtr(CreateDIBSection(0, &bmp, DIB_RGB_COLORS, &bits, 0, 0));
 
     HBITMAP hbmpOld = static_cast<HBITMAP>(SelectObject(hdc.get(), hbmp.get()));
 
