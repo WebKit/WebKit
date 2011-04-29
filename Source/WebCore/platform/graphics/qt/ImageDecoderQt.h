@@ -34,6 +34,7 @@
 #include <QtCore/QHash>
 #include <QtCore/QBuffer>
 #include <wtf/OwnPtr.h>
+#include <wtf/PassOwnPtr.h>
 
 namespace WebCore {
 

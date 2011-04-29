@@ -49,7 +49,6 @@ namespace WebCore {
 
 ImageBufferData::ImageBufferData(const IntSize& size)
     : m_pixmap(size)
-    , m_painter(0)
 {
     if (m_pixmap.isNull())
         return;
@@ -57,7 +56,7 @@ ImageBufferData::ImageBufferData(const IntSize& size)
     m_pixmap.fill(QColor(Qt::transparent));
 
     QPainter* painter = new QPainter;
-    m_painter.set(painter);
+    m_painter = adoptPtr(painter);
 
     if (!painter->begin(&m_pixmap))
         return;
@@ -103,7 +102,7 @@ ImageBuffer::ImageBuffer(const IntSize& size, ColorSpace, RenderingMode, bool& s
     if (!success)
         return;
 
-    m_context.set(new GraphicsContext(m_data.m_painter.get()));
+    m_context = adoptPtr(new GraphicsContext(m_data.m_painter.get()));
 }
 
 ImageBuffer::~ImageBuffer()

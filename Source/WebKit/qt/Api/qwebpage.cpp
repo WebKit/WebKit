@@ -285,7 +285,6 @@ static inline Qt::DropAction dragOpToDropAction(unsigned actions)
 QWebPagePrivate::QWebPagePrivate(QWebPage *qq)
     : q(qq)
     , page(0)
-    , client(0)
     , mainFrame(0)
 #ifndef QT_NO_UNDOSTACK
     , undoStack(0)

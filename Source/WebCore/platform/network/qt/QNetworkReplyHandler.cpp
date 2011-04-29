@@ -210,7 +210,6 @@ QNetworkReplyWrapper::QNetworkReplyWrapper(QNetworkReplyHandlerCallQueue* queue,
     , m_reply(reply)
     , m_queue(queue)
     , m_responseContainsData(false)
-    , m_sniffer(0)
     , m_sniffMIMETypes(sniffMIMETypes)
 {
     Q_ASSERT(m_reply);
@@ -351,7 +350,6 @@ String QNetworkReplyHandler::httpMethod() const
 
 QNetworkReplyHandler::QNetworkReplyHandler(ResourceHandle* handle, LoadType loadType, bool deferred)
     : QObject(0)
-    , m_replyWrapper(0)
     , m_resourceHandle(handle)
     , m_loadType(loadType)
     , m_redirectionTries(gMaxRedirections)
