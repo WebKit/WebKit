@@ -129,6 +129,7 @@ webcore_dirs_common = [
     'Source/WebCore/platform/animation',
     'Source/WebCore/platform/graphics',
     'Source/WebCore/platform/graphics/filters',
+    'Source/WebCore/platform/graphics/filters/arm',
     'Source/WebCore/platform/graphics/transforms',
     'Source/WebCore/platform/image-decoders',
     'Source/WebCore/platform/image-decoders/bmp',

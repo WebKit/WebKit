@@ -1,3 +1,9 @@
+2011-04-29  Kevin Ollivier  <kevino@theolliviers.com>
+
+        [wx] Unreviewed build fix. Fix library copying logic for wxMSW 2.9.x.
+
+        * wscript:
+
 2011-04-28  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Eric Seidel.

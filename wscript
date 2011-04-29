@@ -28,6 +28,7 @@
 import Options
 
 from settings import *
+import wxpresets
 
 import TaskGen
 from TaskGen import taskgen, feature, after
@@ -335,7 +336,11 @@ def build(bld):
             
         if building_on_win32:
             for wxlib in bld.env['LIB_WX']:
+                wx_version = wxpresets.get_wx_version(os.environ['WXWIN'])
+                if int(wx_version[1]) % 2 == 1:
+                    wxlib = wxlib.replace(''.join(wx_version[:2]), ''.join(wx_version))
                 wxlibname = os.path.join(bld.env['LIBPATH_WX'][0], wxlib + '_vc.dll')
+                print "Copying %s" % wxlibname
                 if os.path.exists(wxlibname):
                     bld.install_files(webcore.install_path, [wxlibname])
         

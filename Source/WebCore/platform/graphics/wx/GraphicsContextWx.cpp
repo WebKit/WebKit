@@ -36,6 +36,11 @@
 #include <math.h>
 #include <stdio.h>
 
+// see http://trac.wxwidgets.org/ticket/11482
+#ifdef __WXMSW__
+#   include "wx/msw/winundef.h"
+#endif
+
 #include <wx/defs.h>
 #include <wx/window.h>
 #include <wx/dcclient.h>

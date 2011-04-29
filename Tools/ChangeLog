@@ -1,3 +1,9 @@
+2011-04-29  Kevin Ollivier  <kevino@theolliviers.com>
+
+        [wx] Unreviewed build fix, add new directory to the build.
+
+        * waf/build/settings.py:
+
 2011-04-29  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Reviewed by Martin Robinson.
