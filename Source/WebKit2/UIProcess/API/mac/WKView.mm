@@ -1263,6 +1263,17 @@ static const short kIOHIDEventTypeScroll = 6;
     parameters->executingSavedKeypressCommands = false;
 }
 
+- (void)_notifyInputContextAboutDiscardedComposition
+{
+    // <rdar://problem/9359055>: -discardMarkedText can only be called for active contexts.
+    // FIXME: We fail to ever notify the input context if something (e.g. a navigation) happens while the window is not key.
+    // This is not a problem when the window is key, because we discard marked text on resigning first responder.
+    if (![[self window] isKeyWindow] || self != [[self window] firstResponder])
+        return;
+
+    [[super inputContext] discardMarkedText]; // Inform the input method that we won't have an inline input area despite having been asked to.
+}
+
 - (NSTextInputContext *)inputContext
 {
     WKViewInterpretKeyEventsParameters* parameters = _data->_interpretKeyEventsParameters;
@@ -1403,7 +1414,7 @@ static void extractUnderlines(NSAttributedString *string, Vector<CompositionUnde
         // In password fields, we only allow ASCII dead keys, and don't allow inline input, matching NSSecureTextInputField.
         // Allowing ASCII dead keys is necessary to enable full Roman input when using a Vietnamese keyboard.
         ASSERT(!_data->_page->editorState().hasComposition);
-        [[super inputContext] discardMarkedText]; // Inform the input method that we won't have an inline input area despite having been asked to.
+        [self _notifyInputContextAboutDiscardedComposition];
         if ([text length] == 1 && [[text decomposedStringWithCanonicalMapping] characterAtIndex:0] < 0x80) {
             _data->_page->insertText(text, replacementRange.location, NSMaxRange(replacementRange));
         } else
@@ -2348,12 +2359,13 @@ static void drawPageBackground(CGContextRef context, WebPageProxy* page, const I
         return;
 
     _data->_page->confirmCompositionWithoutDisturbingSelection();
-    [[super inputContext] discardMarkedText];
+
+    [self _notifyInputContextAboutDiscardedComposition];
 }
 
 - (void)_resetTextInputState
 {
-    [[super inputContext] discardMarkedText];
+    [self _notifyInputContextAboutDiscardedComposition];
 
     if (_data->_inSecureInputState) {
         DisableSecureEventInput();

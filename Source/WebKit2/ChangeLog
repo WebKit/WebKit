@@ -1,3 +1,21 @@
+2011-04-29  Alexey Proskuryakov  <ap@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        WebKit2: Typing with Input methods still enters Roman characters in Safari search field frequently
+        https://bugs.webkit.org/show_bug.cgi?id=59829
+        <rdar://problem/9336907>
+
+        This patch regresses behavior somewhat in that inline input isn't discarded when something
+        happens in an inactive window. This doesn't work well in shipping Safari either.
+
+        * UIProcess/API/mac/WKView.mm:
+        (-[WKView _notifyInputContextAboutDiscardedComposition]): Added a method that calls
+        -discardMarkedText with a safety check.
+        (-[WKView setMarkedText:selectedRange:replacementRange:]): Use it.
+        (-[WKView _updateTextInputStateIncludingSecureInputState:]): Use it.
+        (-[WKView _resetTextInputState]): Use it.
+
 2011-04-29  Chris Fleizach  <cfleizach@apple.com>
 
         Reviewed by Beth Dakin.
