@@ -1,3 +1,13 @@
+2011-04-29  Jessie Berlin  <jberlin@apple.com>
+
+        WebKit2 needs layoutTestController.overridePreference.
+        https://bugs.webkit.org/show_bug.cgi?id=42197
+
+        Add http/tests/inspector/network/ping.html, which uses overridePreference, to the mac-wk2
+        Skipped list to get the bots green.
+
+        * platform/mac-wk2/Skipped:
+
 2011-04-29  Pavel Feldman  <pfeldman@google.com>
 
         Not reviewed: skip flaky inspector tests on GTK for now.
