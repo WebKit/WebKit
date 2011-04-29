@@ -1,3 +1,20 @@
+2011-04-29  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r85315.
+        http://trac.webkit.org/changeset/85315
+        https://bugs.webkit.org/show_bug.cgi?id=59792
+
+        Broke script-formatter.html test (Requested by podivilov on
+        #webkit).
+
+        * http/tests/inspector/inspector-test.js:
+        (initialize_InspectorTest.InspectorTest.reloadPage):
+        (initialize_InspectorTest.InspectorTest.pageReloaded):
+        (initialize_InspectorTest.InspectorTest.runWhenPageLoads):
+        ():
+        * inspector/debugger/script-formatter-expected.txt:
+        * inspector/debugger/script-formatter.html:
+
 2011-04-29  Vsevolod Vlasov  <vsevik@chromium.org>
 
         Reviewed by Pavel Feldman.

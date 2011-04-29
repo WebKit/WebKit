@@ -295,9 +295,9 @@ WebInspector.ScriptsPanel.prototype = {
                 return a.isContentScript ? 1 : -1;
 
             if (a.isContentScript && !b.isContentScript)
-                return 1;
+                return 1; 
             if (!a.isContentScript && b.isContentScript)
-                return -1;
+                return -1; 
 
             if (a.text === b.text)
                 return 0;
@@ -478,11 +478,6 @@ WebInspector.ScriptsPanel.prototype = {
         this._backForwardList = [];
         this._currentBackForwardIndex = -1;
         this._updateBackAndForwardButtons();
-
-        for (var id in this._sourceFileIdToSourceFrame) {
-            var sourceFrame = this._sourceFileIdToSourceFrame[id];
-            sourceFrame.removeEventListener(WebInspector.SourceFrame.Events.Loaded, this._sourceFrameLoaded, this);
-        }
 
         this._sourceFileIdToSourceFrame = {};
         this._sourceFileIdToFilesSelectOption = {};

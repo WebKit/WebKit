@@ -1,3 +1,22 @@
+2011-04-29  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r85315.
+        http://trac.webkit.org/changeset/85315
+        https://bugs.webkit.org/show_bug.cgi?id=59792
+
+        Broke script-formatter.html test (Requested by podivilov on
+        #webkit).
+
+        * inspector/front-end/DebuggerPresentationModel.js:
+        (WebInspector.DebuggerPresentationModel.prototype.setFormatSourceFiles):
+        (WebInspector.DebuggerPresentationModel.prototype._removeBreakpointFromDebugger.didRemoveBreakpoint):
+        (WebInspector.DebuggerPresentationModel.prototype._removeBreakpointFromDebugger):
+        (WebInspector.PresentationBreakpoint.prototype.serialize):
+        * inspector/front-end/ScriptsPanel.js:
+        (WebInspector.ScriptsPanel.prototype._addOptionToFilesSelect.optionCompare):
+        (WebInspector.ScriptsPanel.prototype._addOptionToFilesSelect):
+        (WebInspector.ScriptsPanel.prototype.reset):
+
 2011-04-29  Vsevolod Vlasov  <vsevik@chromium.org>
 
         Reviewed by Pavel Feldman.
