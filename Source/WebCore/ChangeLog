@@ -1,3 +1,22 @@
+2011-04-29  Dean Jackson  <dino@apple.com>
+
+        Reviewed by Simon Fraser.
+
+        https://bugs.webkit.org/show_bug.cgi?id=59149
+        (Regression) Existing animations are not replaced when filling.
+
+        Hardware animations that fill forwards were not being correctly
+        replaced when the animation was removed. The actual animation
+        logic was working correctly, but it wasn't deleting the
+        CoreAnimation animation from the PlatformLayer. The fix was
+        to explicitly call endAnimation when disconnecting the animation
+        from its RenderObject.
+
+        Test: animations/3d/replace-filling-transform.html
+
+        * page/animation/AnimationBase.h:
+        (WebCore::AnimationBase::clear): call endAnimation as the animation is cleared
+
 2011-04-29  Abhishek Arya  <inferno@chromium.org>
 
         Reviewed by Nikolas Zimmermann.

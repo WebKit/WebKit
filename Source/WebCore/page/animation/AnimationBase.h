@@ -54,8 +54,13 @@ public:
     virtual ~AnimationBase() { }
 
     RenderObject* renderer() const { return m_object; }
-    void clear() { m_object = 0; m_compAnim = 0; }
-    
+    void clear()
+    {
+      endAnimation();
+      m_object = 0;
+      m_compAnim = 0;
+    }
+
     double duration() const;
 
     // Animations and Transitions go through the states below. When entering the STARTED state

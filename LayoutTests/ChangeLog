@@ -1,3 +1,17 @@
+2011-04-29  Dean Jackson  <dino@apple.com>
+
+        Reviewed by Simon Fraser.
+
+        https://bugs.webkit.org/show_bug.cgi?id=59149
+        (Regression) Existing animations are not replaced when filling.
+
+        Add a test that exercises the case where a hardware animation
+        is in a filling mode, then is replaced by a new animation.
+
+        * animations/3d/replace-filling-transform-expected.txt: Added.
+        * animations/3d/replace-filling-transform.html: Added.
+        * animations/3d/replace-filling-transform-expected.png: Added.
+
 2011-04-29  Mark Pilgrim  <pilgrim@chromium.org>
 
         Reviewed by Tony Chang.
