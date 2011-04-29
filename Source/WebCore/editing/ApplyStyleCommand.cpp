@@ -1316,8 +1316,10 @@ void ApplyStyleCommand::surroundNodeRangeWithElement(PassRefPtr<Node> passedStar
     RefPtr<Node> node = startNode;
     while (node) {
         RefPtr<Node> next = node->nextSibling();
-        removeNode(node);
-        appendNode(node, element);
+        if (node->isContentEditable()) {
+            removeNode(node);
+            appendNode(node, element);
+        }
         if (node == endNode)
             break;
         node = next;

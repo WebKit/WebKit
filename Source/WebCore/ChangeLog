@@ -1,3 +1,35 @@
+2011-04-28  Chang Shu  <cshu@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        isContentEditable is not working properly with document.designMode
+        https://bugs.webkit.org/show_bug.cgi?id=53031
+
+        The specification (http://dev.w3.org/html5/spec/Overview.html#attr-contenteditable)
+        indicates that the element.isContentEditable relies on document.designMode if its
+        and its ancestors' contenteditable attributes are set to inherit.
+
+        1. Sync document render style after document.designMode is changed.
+        2. Removed the code that does unnecessary and incorrect handling for contenteditable
+        attribute with "inherit" value.
+        3. Ryosuke Niwa also helped to fix the code in ApplyStyleCommand that causes an assertion.
+
+        Tests: fast/dom/HTMLElement/iscontenteditable-designmodeon-allinherit-subframe.html
+               fast/dom/HTMLElement/iscontenteditable-designmodeon-allinherit.html
+               fast/dom/HTMLElement/iscontenteditable-designmodeon-ancestor.html
+               fast/dom/HTMLElement/iscontenteditable-designmodeon.html
+
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::styleForDocument):
+        * dom/Document.cpp:
+        (WebCore::Document::setDesignMode):
+        * dom/Node.cpp:
+        (WebCore::Node::rendererIsEditable):
+        * editing/ApplyStyleCommand.cpp:
+        (WebCore::ApplyStyleCommand::surroundNodeRangeWithElement):
+        * html/HTMLElement.cpp:
+        (WebCore::HTMLElement::setContentEditable):
+
 2011-04-28  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r85101.

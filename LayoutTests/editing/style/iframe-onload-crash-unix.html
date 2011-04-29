@@ -4,9 +4,16 @@ if (window.layoutTestController) {
     layoutTestController.setEditingBehavior('unix');
 }
 
-document.designMode='on';
-document.execCommand('selectall');
-document.execCommand('italic');
-document.execCommand('RemoveFormat');
-document.execCommand('inserthtml', false);
-document.body.innerHTML='PASS';">x
+if (document.counter)
+    document.counter++;
+else
+    document.counter = 1;
+
+if (document.counter <= 16) {
+    document.designMode='on';
+    document.execCommand('selectall');
+    document.execCommand('italic');
+    document.execCommand('RemoveFormat');
+    document.execCommand('inserthtml', false);
+    document.body.innerHTML='PASS';
+} ">x

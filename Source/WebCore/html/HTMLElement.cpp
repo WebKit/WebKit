@@ -678,11 +678,6 @@ void HTMLElement::setContentEditable(Attribute* attr)
         attr->decl()->removeProperty(CSSPropertyWordWrap, false);
         attr->decl()->removeProperty(CSSPropertyWebkitNbspMode, false);
         attr->decl()->removeProperty(CSSPropertyWebkitLineBreak, false);
-    } else if (equalIgnoringCase(enabled, "inherit")) {
-        addCSSProperty(attr, CSSPropertyWebkitUserModify, CSSValueInherit);
-        attr->decl()->removeProperty(CSSPropertyWordWrap, false);
-        attr->decl()->removeProperty(CSSPropertyWebkitNbspMode, false);
-        attr->decl()->removeProperty(CSSPropertyWebkitLineBreak, false);
     } else if (equalIgnoringCase(enabled, "plaintext-only")) {
         addCSSProperty(attr, CSSPropertyWebkitUserModify, CSSValueReadWritePlaintextOnly);
         addCSSProperty(attr, CSSPropertyWordWrap, CSSValueBreakWord);

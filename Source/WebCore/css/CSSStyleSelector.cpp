@@ -1219,7 +1219,8 @@ PassRefPtr<RenderStyle> CSSStyleSelector::styleForDocument(Document* document)
     documentStyle->setVisuallyOrdered(document->visuallyOrdered());
     documentStyle->setZoom(frame ? frame->pageZoomFactor() : 1);
     documentStyle->setPageScaleTransform(frame ? frame->pageScaleFactor() : 1);
-    
+    documentStyle->setUserModify(document->inDesignMode() ? READ_WRITE : READ_ONLY);
+
     Element* docElement = document->documentElement();
     RenderObject* docElementRenderer = docElement ? docElement->renderer() : 0;
     if (docElementRenderer) {

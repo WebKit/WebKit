@@ -1,3 +1,29 @@
+2011-04-28  Chang Shu  <cshu@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        isContentEditable is not working properly with document.designMode
+        https://bugs.webkit.org/show_bug.cgi?id=53031
+
+        1. Added test cases for checking isContentEditable with designMode.
+        2. Added a new test case for setting contenteditable attribute to "inherit" as the
+        original code will cause a crash.
+        3. Ryosuke Niwa also helped to fix test cases under editing/style that cause infinite loop.
+
+        * editing/style/iframe-onload-crash-mac.html:
+        * editing/style/iframe-onload-crash-unix.html:
+        * editing/style/iframe-onload-crash-win.html:
+        * fast/dom/HTMLElement/attr-invalid-string-expected.txt:
+        * fast/dom/HTMLElement/attr-invalid-string.html:
+        * fast/dom/HTMLElement/iscontenteditable-designmodeon-allinherit-expected.txt: Added.
+        * fast/dom/HTMLElement/iscontenteditable-designmodeon-allinherit-subframe-expected.txt: Added.
+        * fast/dom/HTMLElement/iscontenteditable-designmodeon-allinherit-subframe.html: Added.
+        * fast/dom/HTMLElement/iscontenteditable-designmodeon-allinherit.html: Added.
+        * fast/dom/HTMLElement/iscontenteditable-designmodeon-ancestor-expected.txt: Added.
+        * fast/dom/HTMLElement/iscontenteditable-designmodeon-ancestor.html: Added.
+        * fast/dom/HTMLElement/iscontenteditable-designmodeon-expected.txt: Added.
+        * fast/dom/HTMLElement/iscontenteditable-designmodeon.html: Added.
+
 2011-04-28  Mike Reed  <reed@google.com>
 
         Reviewed by Eric Seidel.
