@@ -3245,7 +3245,7 @@ BUGWK50661 MAC : fast/forms/input-appearance-spinbutton-disabled-readonly.html =
 BUGWK50661 WIN LINUX : fast/forms/input-appearance-spinbutton-layer.html = IMAGE+TEXT TEXT PASS
 BUGWK50661 WIN LINUX : fast/forms/input-appearance-spinbutton-visibility.html = TEXT PASS
 BUGWK50661 MAC : fast/forms/input-appearance-spinbutton-visibility.html = IMAGE+TEXT PASS
-BUGWK50661 MAC LEOPARD : fast/speech/input-appearance-numberandspeech.html = IMAGE PASS
+BUGWK50661 MAC : fast/speech/input-appearance-numberandspeech.html = IMAGE+TEXT PASS
 //BUGWK50661 WIN LINUX : fast/dom/HTMLMeterElement/meter-element.html = IMAGE+TEXT PASS
 BUGWK50661 WIN LINUX : fast/dom/HTMLMeterElement/meter-styles.html = IMAGE+TEXT PASS
 
@@ -3886,7 +3886,8 @@ BUGDPRANKE MAC DEBUG :   transitions/transition-end-event-transform.html = TEXT 
 BUGNONE WONTFIX SKIP : platform/qt/fast/forms = PASS FAIL CRASH TIMEOUT
 
 // rebaselines introduced by r85013
-BUGDPRANKE MAC SNOWLEOPARD : fast/speech/input-appearance-numberandspeech.html = IMAGE
+BUGDPRANKE SNOWLEOPARD : fast/speech/input-appearance-numberandspeech.html = IMAGE+TEXT PASS
+BUGDPRANKE SNOWLEOPARD : fast/speech/input-appearance-speechbutton.html = IMAGE+TEXT PASS
 BUGDPRANKE MAC SNOWLEOPARD : fast/speech/input-appearance-searchandspeech.html = IMAGE
 BUGDPRANKE LINUX : fast/speech/input-appearance-numberandspeech.html = IMAGE+TEXT PASS TEXT
 BUGDPRANKE LINUX : fast/speech/input-appearance-searchandspeech.html = IMAGE+TEXT PASS
@@ -3963,3 +3964,11 @@ BUGKBR WIN : editing/input/option-page-up-down.html = PASS TEXT
 BUGKBR WIN LINUX : http/tests/inspector/resource-tree/resource-tree-frame-navigate.html = PASS TIMEOUT
 BUGCR80745 DEBUG: editing/pasteboard/paste-blockquote-into-blockquote-3.html = PASS CRASH
 BUGWK59726 : fast/dom/shadow/gc-shadow.html = PASS TEXT
+
+BUGDPRANKE : fast/css/epub-properties.html = TEXT
+BUGDPRANKE WIN : fast/harness/results.html = TEXT
+
+BUGDPRANKE WIN : http/tests/xmlviewer/dumpAsText/xmlviewer.xml = TEXT
+BUGDPRANKE WIN : svg/css/composite-shadow-text.svg = IMAGE
+BUGDPRANKE WIN : svg/css/shadow-changes.svg = IMAGE
+
