@@ -1,3 +1,11 @@
+2011-04-29  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Fix a crash after r85214.
+
+        * UIProcess/API/gtk/WebKitWebViewBase.cpp:
+        (webkit_web_view_base_init): Add line to create the page client
+        instance, removed by mistake in r85214.
+
 2011-04-28  David Levin  <levin@chromium.org>
 
         Reviewed by Adam Barth.

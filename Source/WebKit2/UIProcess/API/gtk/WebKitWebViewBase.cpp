@@ -141,6 +141,8 @@ static void webkit_web_view_base_init(WebKitWebViewBase* webkitWebViewBase)
 
     gtk_widget_set_can_focus(GTK_WIDGET(webkitWebViewBase), TRUE);
     priv->imContext = gtk_im_multicontext_new();
+
+    priv->pageClient = PageClientImpl::create(GTK_WIDGET(webkitWebViewBase));
 }
 
 #ifdef GTK_API_VERSION_2
