@@ -1,3 +1,21 @@
+2011-04-28  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        Mask placement on composited layer is incorrect sometimes
+        https://bugs.webkit.org/show_bug.cgi?id=59775
+        
+        The mask layer always has the same size as its owning GraphicsLayer,
+        so it needs to share the same offsetFromRenderer as well. This fixes
+        the offset at which the mask layer contents are painted in cases where
+        that offset is non-zero, for example when outline style bloats all of
+        the layer sizes.
+
+        Test: compositing/masks/layer-mask-placement.html
+
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::updateGraphicsLayerGeometry):
+
 2011-04-28  Dan Bernstein  <mitz@apple.com>
 
         Rubber-stamped by Mark Rowe.

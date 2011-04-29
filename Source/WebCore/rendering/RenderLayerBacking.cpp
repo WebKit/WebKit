@@ -420,6 +420,7 @@ void RenderLayerBacking::updateGraphicsLayerGeometry()
             m_maskLayer->setNeedsDisplay();
         }
         m_maskLayer->setPosition(FloatPoint());
+        m_maskLayer->setOffsetFromRenderer(m_graphicsLayer->offsetFromRenderer());
     }
     
     if (m_owningLayer->hasTransform()) {
