@@ -1,3 +1,15 @@
+2011-04-28  Kamil Blank  <k.blank@samsung.com>
+
+        Reviewed by Antonio Gomes.
+
+        New API for executing Editor Commands: InsertText, InsertImage.
+        https://bugs.webkit.org/show_bug.cgi?id=54439
+
+        * ewk/ewk_view.cpp:
+        (_ewk_view_editor_command): Added value parameter.
+        (ewk_view_execute_editor_command): Added.
+        * ewk/ewk_view.h: New API added.
+
 2011-04-26  Grzegorz Czajkowski  <g.czajkowski@samsung.com>
 
         Reviewed by Antonio Gomes.

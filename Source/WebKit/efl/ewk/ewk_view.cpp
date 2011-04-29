@@ -1534,9 +1534,9 @@ char* ewk_view_selection_get(const Evas_Object* o)
     return strdup(s.data());
 }
 
-static Eina_Bool _ewk_view_editor_command(Ewk_View_Private_Data* priv, const char* command)
+static Eina_Bool _ewk_view_editor_command(Ewk_View_Private_Data* priv, const char* command, const char* value = 0)
 {
-    return priv->page->focusController()->focusedOrMainFrame()->editor()->command(String::fromUTF8(command)).execute();
+    return priv->page->focusController()->focusedOrMainFrame()->editor()->command(WTF::String::fromUTF8(command)).execute(value);
 }
 
 /**
@@ -1609,6 +1609,30 @@ Eina_Bool ewk_view_select_word(Evas_Object* o)
     EWK_VIEW_SD_GET_OR_RETURN(o, sd, EINA_FALSE);
     EWK_VIEW_PRIV_GET_OR_RETURN(sd, priv, EINA_FALSE);
     return _ewk_view_editor_command(priv, "SelectWord");
+}
+
+/**
+ * Executes editor command.
+ *
+ * @param o view object to execute command.
+ * @param command editor command to be executed.
+ * @param value value to be passed into command.
+ *
+ * @return @c EINA_TRUE if operation was executed, @c EINA_FALSE otherwise.
+ */
+Eina_Bool ewk_view_execute_editor_command(Evas_Object* o, const Ewk_Editor_Command command, const char* value)
+{
+    EWK_VIEW_SD_GET_OR_RETURN(o, sd, EINA_FALSE);
+    EWK_VIEW_PRIV_GET_OR_RETURN(sd, priv, EINA_FALSE);
+
+    switch (command) {
+    case EWK_EDITOR_COMMAND_INSERT_IMAGE:
+        return _ewk_view_editor_command(priv, "InsertImage", value);
+    case EWK_EDITOR_COMMAND_INSERT_TEXT:
+        return _ewk_view_editor_command(priv, "InsertText", value);
+    default:
+        return EINA_FALSE;
+    }
 }
 
 #if ENABLE(CONTEXT_MENUS)
