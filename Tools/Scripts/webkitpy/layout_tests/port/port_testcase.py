@@ -138,6 +138,17 @@ class PortTestCase(unittest.TestCase):
         self.assertTrue(port.diff_image('foo', None, None))
         self.assertTrue(port.diff_image('foo', '', None))
 
+    def test_check_build(self):
+        port = self.make_port()
+        if not port:
+            return
+        port.check_build(needs_http=True)
+
+    def test_check_wdiff(self):
+        port = self.make_port()
+        if not port:
+            return
+        port.check_wdiff()
 
     def disabled_test_websocket_server(self):
         port = self.make_port()

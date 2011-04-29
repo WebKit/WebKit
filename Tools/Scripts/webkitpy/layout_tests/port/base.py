@@ -127,7 +127,7 @@ class Port(object):
         # http://mail.python.org/pipermail/python-list/
         #    2008-August/505753.html
         # http://bugs.python.org/issue3210
-        self._wdiff_available = True
+        self._wdiff_available = None
 
         # FIXME: prettypatch.py knows this path, why is it copied here?
         self._pretty_patch_path = self.path_from_webkit_base("Websites",
@@ -141,10 +141,14 @@ class Port(object):
         self._results_directory = None
 
     def wdiff_available(self):
-        return bool(self._wdiff_available)
+        if self._wdiff_available is None:
+            self._wdiff_available = self.check_wdiff(logging=False)
+        return self._wdiff_available
 
     def pretty_patch_available(self):
-        return bool(self._pretty_patch_available)
+        if self._pretty_patch_available is None:
+            self._pretty_patch_available = self.check_pretty_patch(logging=False)
+        return self._pretty_patch_available
 
     def default_child_processes(self):
         """Return the number of DumpRenderTree instances to use for this
@@ -185,7 +189,6 @@ class Port(object):
 
     def check_pretty_patch(self, logging=True):
         """Checks whether we can use the PrettyPatch ruby script."""
-        # check if Ruby is installed
         try:
             result = self._executive.run_command(['ruby', '--version'])
         except OSError, e:
@@ -199,6 +202,20 @@ class Port(object):
             if logging:
                 _log.error("Unable to find %s; can't generate pretty patches." % self._pretty_patch_path)
                 _log.error('')
+            return False
+
+        return True
+
+    def check_wdiff(self, logging=True):
+        if not self._path_to_wdiff():
+            # Don't need to log here since this is the port choosing not to use wdiff.
+            return False
+
+        try:
+            result = self._executive.run_command([self._path_to_wdiff(), '--help'])
+        except OSError:
+            if logging:
+                _log.error("wdiff is not installed.")
             return False
 
         return True

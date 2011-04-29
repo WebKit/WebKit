@@ -40,11 +40,9 @@ class ChromiumMacPortTest(port_testcase.PortTestCase):
             return None
         return chromium_mac.ChromiumMacPort
 
-    def test_check_wdiff_install(self):
+    def test_check_wdiff(self):
         port = chromium_mac.ChromiumMacPort()
-
-        # Currently is always true, just logs if missing.
-        self.assertTrue(port._check_wdiff_install())
+        self.assertTrue(port.check_wdiff())
 
     def assert_name(self, port_name, os_version_string, expected):
         port = chromium_mac.ChromiumMacPort(port_name=port_name,

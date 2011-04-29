@@ -127,6 +127,14 @@ class ChromiumPortTest(port_testcase.PortTestCase):
         # Override this test since ChromiumPort doesn't implement baseline_search_path().
         pass
 
+    def test_check_build(self):
+        # Override this test since ChromiumPort doesn't implement _path_to_driver().
+        pass
+
+    def test_check_wdiff(self):
+        # Override this test since ChromiumPort doesn't implement _path_to_driver().
+        pass
+
     class TestMacPort(chromium_mac.ChromiumMacPort):
         def __init__(self, options):
             chromium_mac.ChromiumMacPort.__init__(self,

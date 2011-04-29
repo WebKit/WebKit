@@ -66,10 +66,6 @@ class MockDRTPortTest(port_testcase.PortTestCase):
         # Only checking that no exception is raised.
         self.make_port().release_http_lock()
 
-    def test_check_build(self):
-        port = self.make_port()
-        self.assertTrue(port.check_build(True))
-
     def test_check_sys_deps(self):
         port = self.make_port()
         self.assertTrue(port.check_sys_deps(True))

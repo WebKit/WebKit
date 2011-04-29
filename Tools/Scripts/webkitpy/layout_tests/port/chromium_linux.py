@@ -107,7 +107,7 @@ class ChromiumLinuxPort(chromium.ChromiumPort):
                 result = self._check_apache_install() and result
             else:
                 result = self._check_lighttpd_install() and result
-        result = self._check_wdiff_install() and result
+        result = self.check_wdiff() and result
 
         if not result:
             _log.error('For complete Linux build requirements, please see:')
@@ -159,9 +159,9 @@ class ChromiumLinuxPort(chromium.ChromiumPort):
             _log.error('')
         return result
 
-    def _check_wdiff_install(self):
+    def check_wdiff(self, logging=True):
         result = self._check_file_exists(self._path_to_wdiff(), 'wdiff')
-        if not result:
+        if not result and logging:
             _log.error('    Please install using: "sudo apt-get install '
                        'wdiff"')
             _log.error('')

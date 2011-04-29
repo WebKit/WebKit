@@ -1,3 +1,20 @@
+2011-04-28  Ojan Vafai  <ojan@chromium.org>
+
+        Reviewed by Tony Chang.
+
+        fix pretty_patch_available and wdiff_available
+        https://bugs.webkit.org/show_bug.cgi?id=59761
+
+        These methods rely on the check_* method being called first.
+        This would only happen when we actually tried to compute a diff,
+        but computing the diff happens on a different process.
+        
+        Also fix setting _wdiff_avialable to True by default.
+
+        * Scripts/webkitpy/layout_tests/port/base.py:
+        * Scripts/webkitpy/layout_tests/port/chromium_linux.py:
+        * Scripts/webkitpy/layout_tests/port/chromium_linux_unittest.py:
+
 2011-04-29  Ojan Vafai  <ojan@chromium.org>
 
         Reviewed by Eric Seidel.
