@@ -1,3 +1,15 @@
+2011-04-29  James Robinson  <jamesr@chromium.org>
+
+        Unreviewed, rolling out r85330.
+        http://trac.webkit.org/changeset/85330
+        https://bugs.webkit.org/show_bug.cgi?id=41311
+
+        Caused unexpected border rendering change on 500 tests on chromium linux.
+
+        * platform/graphics/skia/GraphicsContextSkia.cpp:
+        (WebCore::GraphicsContext::drawConvexPolygon):
+        (WebCore::GraphicsContext::clipConvexPolygon):
+
 2011-04-29  Csaba Osztrogonác  <ossy@webkit.org>
 
         [Qt] Unreviewed buildfix after r85343.
