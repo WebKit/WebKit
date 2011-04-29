@@ -1,5 +1,13 @@
 2011-04-28  Adam Roben  <aroben@apple.com>
 
+        Skip a failing custom font test on Leopard
+
+        <http://webkit.org/b/59780> tracks the failure.
+
+        * platform/mac-leopard/Skipped: Added fast/css/custom-font-xheight.html.
+
+2011-04-28  Adam Roben  <aroben@apple.com>
+
         Skip a timing-out canvas test on Leopard
 
         <http://webkit.org/b/59777> tracks the failure.
