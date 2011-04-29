@@ -1,3 +1,15 @@
+2011-04-29  Adam Roben  <aroben@apple.com>
+
+        Remove a PHP setting that is now provided by httpd.conf
+
+        r85155 added this setting, but putting it in httpd.conf makes more sense (since the setting
+        isn't dependent on paths that could be different on each user's machine).
+
+        Reviewed by Sam Weinig.
+
+        * Scripts/webkitperl/httpd.pm:
+        (getDefaultConfigForTestDirectory): Removed log_errors setting.
+
 2011-04-29  Jon Lee  <jonlee@apple.com>
 
         Unreviewed, Adding Jon Lee as a committer

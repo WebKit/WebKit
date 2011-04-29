@@ -1,3 +1,19 @@
+2011-04-29  Adam Roben  <aroben@apple.com>
+
+        Ensure PHP's short_open_tag and log_errors settings are turned on
+
+        These are usually on by default, but you can't trust defaults!
+
+        Reviewed by Sam Weinig.
+
+        * http/conf/apache2-debian-httpd.conf:
+        * http/conf/apache2-httpd.conf:
+        * http/conf/apache2-msys-httpd.conf:
+        * http/conf/cygwin-httpd.conf:
+        * http/conf/fedora-httpd.conf:
+        * http/conf/httpd.conf:
+        Added settings to turn on short_open_tag and log_errors.
+
 2011-04-29  Ojan Vafai  <ojan@chromium.org>
 
         Inlude new expected results accidentally excluded from
