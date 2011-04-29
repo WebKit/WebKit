@@ -1,3 +1,12 @@
+2011-04-28  Stephanie Lewis  <slewis@apple.com>
+
+        Reviewed by Mark Rowe.
+
+        http://bugs.webkit.org/show_bug.cgi?id=59743
+        <rdar://problem/9040413> Add an install target for production builds.
+
+        * DumpRenderTree/mac/PerlSupport/Makefile:
+
 2011-04-28  Adam Roben  <aroben@apple.com>
 
         Stop and restart ATSServer before each test run on Leopard

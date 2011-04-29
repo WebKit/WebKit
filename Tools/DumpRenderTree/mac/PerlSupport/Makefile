@@ -71,4 +71,19 @@ $(DYLIB): DumpRenderTreeSupport.c $(WRAPPER)
 clean:
 	rm -f $(WRAPPER) $(PERL_MODULE) $(DYLIB)
 
-installhdrs installsrc install:
+installhdrs installsrc:
+
+ifeq "$(CONFIGURATION)" "Production"
+
+INSTALL_LOCATION=$(DSTROOT)/$(SYSTEM_LIBRARY_DIR)/Frameworks/$(WEBKIT_FRAMEWORK_RESOURCES_PATH)
+
+install: all
+	mkdir -p $(INSTALL_LOCATION)
+	cp $(DYLIB) $(INSTALL_LOCATION)/DumpRenderTreeSupport.dylib
+	cp $(PERL_MODULE) $(INSTALL_LOCATION)/DumpRenderTreeSupport.pm
+
+else
+
+install:
+
+endif
