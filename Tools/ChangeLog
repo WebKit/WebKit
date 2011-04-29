@@ -1,3 +1,20 @@
+2011-04-28  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Mark Rowe.
+
+        Add install support for WebKitTestRunner.
+        <rdar://problem/9349055>
+
+        * DumpRenderTree/DumpRenderTree.xcodeproj/project.pbxproj:
+        Add missing CompilerVersion.xcconfig.
+
+        * WebKitTestRunner/Configurations/InjectedBundle.xcconfig:
+        * WebKitTestRunner/Configurations/WebKitTestRunner.xcconfig:
+        * WebKitTestRunner/WebKitTestRunner.xcodeproj/project.pbxproj:
+        Add install path and tell it not to skip installation.
+
+        Add missing CompilerVersion.xcconfig.
+
 2011-04-28  David Levin  <levin@chromium.org>
 
         Reviewed by Adam Barth.

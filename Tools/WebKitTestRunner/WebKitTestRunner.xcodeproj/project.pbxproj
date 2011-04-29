@@ -534,24 +534,42 @@
 			};
 			name = Release;
 		};
+		BC646D6D136A3A8700B35DED /* Production */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = BC793426118F7D3C005EA8E2 /* Base.xcconfig */;
+			buildSettings = {
+			};
+			name = Production;
+		};
+		BC646D6E136A3A8700B35DED /* Production */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = BC251A1811D16795002EBC01 /* WebKitTestRunner.xcconfig */;
+			buildSettings = {
+			};
+			name = Production;
+		};
+		BC646D6F136A3A8700B35DED /* Production */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = BC25197111D15E61002EBC01 /* InjectedBundle.xcconfig */;
+			buildSettings = {
+			};
+			name = Production;
+		};
+		BC646D70136A3A8700B35DED /* Production */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+			};
+			name = Production;
+		};
 		BC952D7811F3BF5E003398B4 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				COPY_PHASE_STRIP = NO;
-				GCC_DYNAMIC_NO_PIC = NO;
-				GCC_OPTIMIZATION_LEVEL = 0;
-				PRODUCT_NAME = "Derived Sources";
 			};
 			name = Debug;
 		};
 		BC952D7911F3BF5E003398B4 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				COPY_PHASE_STRIP = YES;
-				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				GCC_ENABLE_FIX_AND_CONTINUE = NO;
-				PRODUCT_NAME = "Derived Sources";
-				ZERO_LINK = NO;
 			};
 			name = Release;
 		};
@@ -563,6 +581,7 @@
 			buildConfigurations = (
 				1DEB927508733DD40010E9CD /* Debug */,
 				1DEB927608733DD40010E9CD /* Release */,
+				BC646D6E136A3A8700B35DED /* Production */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
@@ -572,6 +591,7 @@
 			buildConfigurations = (
 				1DEB927908733DD40010E9CD /* Debug */,
 				1DEB927A08733DD40010E9CD /* Release */,
+				BC646D6D136A3A8700B35DED /* Production */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
@@ -581,6 +601,7 @@
 			buildConfigurations = (
 				BC25186411D15D55002EBC01 /* Debug */,
 				BC25186511D15D55002EBC01 /* Release */,
+				BC646D6F136A3A8700B35DED /* Production */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
@@ -590,6 +611,7 @@
 			buildConfigurations = (
 				BC952D7811F3BF5E003398B4 /* Debug */,
 				BC952D7911F3BF5E003398B4 /* Release */,
+				BC646D70136A3A8700B35DED /* Production */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
