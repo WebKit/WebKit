@@ -1,3 +1,17 @@
+2011-04-29  Ojan Vafai  <ojan@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        handle flaky failures
+        https://bugs.webkit.org/show_bug.cgi?id=59820
+
+        Handle that actual can be a space-separated list of results
+        when we do retries. Also, show expected flaky tests that pass
+        in the unexpected passes table.
+
+        * fast/harness/resources/results-test.js:
+        * fast/harness/results.html:
+
 2011-04-29  Mark Pilgrim  <pilgrim@chromium.org>
 
         Reviewed by Tony Chang.

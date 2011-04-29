@@ -220,7 +220,7 @@ function runTests()
     runDefaultSingleRowTest('bar-flaky-fail.html', 'PASS FAIL', 'TEXT', true, 'expected actual diff ', '');
     runDefaultSingleRowTest('bar-flaky-fail-unexpected.html', 'PASS TEXT', 'IMAGE', false, '', 'expected actual diff ');
     runDefaultSingleRowTest('bar-crash.html', 'TEXT', 'CRASH', false, 'stack ', '');
-    runDefaultSingleRowTest('bar-audio.html', 'TEXT', 'AUDIO', false, 'expected actual ', '');
+    runDefaultSingleRowTest('bar-audio.html', 'TEXT', 'AUDIO', false, 'expected audio actual audio ', '');
     runDefaultSingleRowTest('bar-timeout.html', 'TEXT', 'TIMEOUT', false, 'expected actual diff ', '');
     runDefaultSingleRowTest('bar-image.html', 'TEXT', 'IMAGE', false, '', 'expected actual diff ');
     runDefaultSingleRowTest('bar-image-plus-text.html', 'TEXT', 'IMAGE+TEXT', false, 'expected actual diff ', 'expected actual diff ');
@@ -237,10 +237,19 @@ function runTests()
 
     results = mockResults();
     var subtree = results.tests['foo'] = {}
-    subtree['bar-flaky-pass.html'] = mockExpectation('PASS FAIL', 'PASS');
+    subtree['bar-flaky-pass.html'] = mockExpectation('PASS TEXT', 'PASS');
     runTest(results, function() {
-        // FIXME: should a PASS FAIL test that passes go in the unexpected passes table?
-        assertTrue(document.body.textContent.indexOf('foo/bar-flaky-pass.html') == -1);
+        assertTrue(!document.getElementById('results-table'));
+        assertTrue(document.getElementById('passes-table'));
+        assertTrue(document.body.textContent.indexOf('foo/bar-flaky-pass.html') != -1);
+    });
+
+    results = mockResults();
+    var subtree = results.tests['foo'] = {}
+    subtree['bar-flaky-fail.html'] = mockExpectation('PASS TEXT', 'IMAGE PASS');
+    runTest(results, function() {
+        assertTrue(document.getElementById('results-table'));
+        assertTrue(document.body.textContent.indexOf('bar-flaky-fail.html') != -1);
     });
 
     results = mockResults();
@@ -355,6 +364,8 @@ function runTests()
     });
 
     shouldUseTracLinks = oldShouldUseTracLinks;
+
+    runDefaultSingleRowTest('bar-flaky-crash.html', 'TEXT', 'TIMEOUT CRASH AUDIO', false, 'expected actual diff stack expected audio actual audio ', '');
 
     document.body.innerHTML = '<pre>' + g_log.join('\n') + '</pre>';
 }
