@@ -1,3 +1,10 @@
+2011-04-29  Ojan Vafai  <ojan@chromium.org>
+
+        Inlude new expected results accidentally excluded from
+        http://trac.webkit.org/changeset/85346.
+
+        * fast/harness/results-expected.txt:
+
 2011-04-21  Abhishek Arya  <inferno@chromium.org>
 
         Reviewed by Dave Hyatt.
