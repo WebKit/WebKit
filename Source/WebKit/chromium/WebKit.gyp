@@ -636,6 +636,7 @@
                                 # These tests depend on webkit_support and
                                 # functions defined only in !WEBKIT_IMPLEMENTATION.
                                 'tests/WebFrameTest.cpp',
+                                'tests/WebPageNewSerializerTest.cpp',
                                 'tests/WebPageSerializerTest.cpp',
                             ],
                             'conditions': [
