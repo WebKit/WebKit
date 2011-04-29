@@ -3047,7 +3047,7 @@ contains(DEFINES, ENABLE_XHTMLMP=1) {
         html/HTMLNoScriptElement.cpp
 }
 
-contains(DEFINES, ENABLE_QT_BEARER=1) {
+contains(DEFINES, WTF_USE_QT_BEARER=1) {
     HEADERS += \
         platform/network/qt/NetworkStateNotifierPrivate.h
 

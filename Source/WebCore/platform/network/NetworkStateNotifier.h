@@ -46,15 +46,15 @@ typedef const struct __SCDynamicStore * SCDynamicStoreRef;
 #include <QtCore/qglobal.h>
 
 #ifdef QT_NO_BEARERMANAGEMENT
-#undef ENABLE_QT_BEARER
-#define ENABLE_QT_BEARER 0
+#undef WTF_USE_QT_BEARER
+#define WTF_USE_QT_BEARER 0
 #endif
 
 #endif
 
 namespace WebCore {
 
-#if (PLATFORM(QT) && ENABLE(QT_BEARER))
+#if (PLATFORM(QT) && USE(QT_BEARER))
 class NetworkStateNotifierPrivate;
 #endif
 
@@ -66,7 +66,7 @@ public:
 
     bool onLine() const { return m_isOnLine; }
 
-#if (PLATFORM(QT) && ENABLE(QT_BEARER))
+#if (PLATFORM(QT) && USE(QT_BEARER))
     void setNetworkAccessAllowed(bool);
 #elif PLATFORM(ANDROID) || PLATFORM(CHROMIUM)
     void setOnLine(bool);
@@ -99,13 +99,13 @@ private:
     HANDLE m_waitHandle;
     OVERLAPPED m_overlapped;
 
-#elif PLATFORM(QT) && ENABLE(QT_BEARER)
+#elif PLATFORM(QT) && USE(QT_BEARER)
     friend class NetworkStateNotifierPrivate;
     NetworkStateNotifierPrivate* p;
 #endif
 };
 
-#if !PLATFORM(MAC) && !PLATFORM(WIN) && !(PLATFORM(QT) && ENABLE(QT_BEARER))
+#if !PLATFORM(MAC) && !PLATFORM(WIN) && !(PLATFORM(QT) && USE(QT_BEARER))
 
 inline NetworkStateNotifier::NetworkStateNotifier()
     : m_isOnLine(true)

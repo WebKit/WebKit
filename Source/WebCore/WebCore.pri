@@ -234,7 +234,7 @@ contains(DEFINES, WTF_USE_QT_MOBILITY_SYSTEMINFO=1) {
      MOBILITY *= systeminfo
 }
 
-contains(DEFINES, ENABLE_QT_BEARER=1) {
+contains(DEFINES, WTF_USE_QT_BEARER=1) {
     # Bearer management is part of Qt 4.7, so don't accidentially
     # pull in Qt Mobility when building against >= 4.7
     !greaterThan(QT_MINOR_VERSION, 6) {

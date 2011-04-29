@@ -2,6 +2,18 @@
 
         Reviewed by Simon Hausmann.
 
+        ENABLE(QT_BEARER) -> USE(QT_BEARER)
+
+        * WebCore.pri:
+        * WebCore.pro:
+        * features.pri:
+        * platform/network/NetworkStateNotifier.h:
+        * platform/network/qt/NetworkStateNotifierQt.cpp:
+
+2011-04-29  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
+
+        Reviewed by Simon Hausmann.
+
         ENABLE(QT_USERAGENT_DEVICEMODEL) -> USE(QT_MOBILITY_SYSTEMINFO)
 
         * WebCore.pri:

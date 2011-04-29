@@ -57,7 +57,7 @@
 
 void QWEBKIT_EXPORT qt_networkAccessAllowed(bool isAllowed)
 {
-#if ENABLE(QT_BEARER)
+#if USE(QT_BEARER)
     WebCore::networkStateNotifier().setNetworkAccessAllowed(isAllowed);
 #endif
 }

@@ -142,12 +142,12 @@ symbian|maemo5|maemo6 {
 
 # Bearer management is part of Qt 4.7
 # for older version, check for mobility with bearer
-!contains(DEFINES, ENABLE_QT_BEARER=.) {
+!contains(DEFINES, WTF_USE_QT_BEARER=.) {
      !lessThan(QT_MINOR_VERSION, 7) {
-        DEFINES += ENABLE_QT_BEARER=1
+        DEFINES += WTF_USE_QT_BEARER=1
      } else {
         contains(MOBILITY_CONFIG, bearer) {
-            DEFINES += ENABLE_QT_BEARER=1
+            DEFINES += WTF_USE_QT_BEARER=1
         }
     }
 }
