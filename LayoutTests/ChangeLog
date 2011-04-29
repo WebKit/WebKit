@@ -1,3 +1,22 @@
+2011-04-28  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Dirk Schulze.
+
+        1px box-shadow looks ugly
+        https://bugs.webkit.org/show_bug.cgi?id=58100
+        and
+        ShadowBlur incorrectly handles zero-sized blur radius in one axis
+        https://bugs.webkit.org/show_bug.cgi?id=59710
+        
+        Pixel test for a single-pixel shadow.
+
+        * fast/box-shadow/single-pixel-shadow.html: Added.
+        * platform/mac/fast/box-shadow/single-pixel-shadow-expected.png: Added.
+        * platform/mac/fast/box-shadow/single-pixel-shadow-expected.txt: Added.
+        * platform/mac/svg/dynamic-updates/SVGFEDropShadowElement-dom-shadow-color-attr-expected.png:
+        * platform/mac/svg/dynamic-updates/SVGFEDropShadowElement-svgdom-shadow-color-prop-expected.png:
+        * platform/mac/svg/filters/feDropShadow-expected.png:
+
 2011-04-28  Adam Roben  <aroben@apple.com>
 
         Skip all fast/dom/shadow tests on Mac
