@@ -277,95 +277,94 @@ void GraphicsContext::drawRect(const IntRect& rect)
     cairo_restore(cr);
 }
 
-// This is only used to draw borders.
+static double calculateStrokePatternOffset(int distance, int patternWidth)
+{
+    // Example: 80 pixels with a width of 30 pixels. Remainder is 20.
+    // The maximum pixels of line we could paint will be 50 pixels.
+    int remainder = distance % patternWidth;
+    int numSegments = (distance - remainder) / patternWidth;
+
+    // Special case 1px dotted borders for speed.
+    if (patternWidth == 1)
+        return 1;
+
+    bool evenNumberOfSegments = !(numSegments % 2);
+    if (remainder)
+        evenNumberOfSegments = !evenNumberOfSegments;
+
+    if (evenNumberOfSegments) {
+        if (remainder)
+            return (patternWidth - remainder) + (remainder / 2);
+        return patternWidth / 2;
+    }
+
+    // Odd number of segments.
+    if (remainder)
+        return (patternWidth - remainder) / 2.f;
+    return 0;
+}
+
+static void drawLineOnCairoContext(GraphicsContext* graphicsContext, cairo_t* context, const FloatPoint& point1, const FloatPoint& point2)
+{
+    StrokeStyle style = graphicsContext->strokeStyle();
+    if (style == NoStroke)
+        return;
+
+    const Color& strokeColor = graphicsContext->strokeColor();
+    int strokeThickness = floorf(graphicsContext->strokeThickness());
+    if (graphicsContext->strokeThickness() < 1)
+        strokeThickness = 1;
+
+    int patternWidth = 0;
+    if (style == DottedStroke)
+        patternWidth = strokeThickness;
+    else if (style == DashedStroke)
+        patternWidth = 3 * strokeThickness;
+
+    bool isVerticalLine = point1.x() == point2.x();
+    FloatPoint point1OnPixelBoundaries = point1;
+    FloatPoint point2OnPixelBoundaries = point2;
+    GraphicsContext::adjustLineToPixelBoundaries(point1OnPixelBoundaries, point2OnPixelBoundaries, strokeThickness, style);
+
+    cairo_set_antialias(context, CAIRO_ANTIALIAS_NONE);
+    if (patternWidth) {
+        // Do a rect fill of our endpoints.  This ensures we always have the
+        // appearance of being a border.  We then draw the actual dotted/dashed line.
+        FloatRect firstRect(point1OnPixelBoundaries, FloatSize(strokeThickness, strokeThickness));
+        FloatRect secondRect(point2OnPixelBoundaries, FloatSize(strokeThickness, strokeThickness));
+        if (isVerticalLine) {
+            firstRect.move(-strokeThickness / 2, -strokeThickness);
+            secondRect.move(-strokeThickness / 2, 0);
+        } else {
+            firstRect.move(-strokeThickness, -strokeThickness / 2);
+            secondRect.move(0, -strokeThickness / 2);
+        }
+        fillRectSourceOver(context, firstRect, strokeColor);
+        fillRectSourceOver(context, secondRect, strokeColor);
+
+        int distance = (isVerticalLine ? (point2.y() - point1.y()) : (point2.x() - point1.x())) - 2 * strokeThickness;
+        double patternOffset = calculateStrokePatternOffset(distance, patternWidth);
+        double patternWidthAsDouble = patternWidth;
+        cairo_set_dash(context, &patternWidthAsDouble, 1, patternOffset);
+    }
+
+    setSourceRGBAFromColor(context, strokeColor);
+    cairo_set_line_width(context, strokeThickness);
+    cairo_move_to(context, point1OnPixelBoundaries.x(), point1OnPixelBoundaries.y());
+    cairo_line_to(context, point2OnPixelBoundaries.x(), point2OnPixelBoundaries.y());
+    cairo_stroke(context);
+}
+
+// This is only used to draw borders, so we should not draw shadows.
 void GraphicsContext::drawLine(const IntPoint& point1, const IntPoint& point2)
 {
     if (paintingDisabled())
         return;
 
-    StrokeStyle style = strokeStyle();
-    if (style == NoStroke)
-        return;
-
-    cairo_t* cr = platformContext()->cr();
-    cairo_save(cr);
-
-    float width = strokeThickness();
-    if (width < 1)
-        width = 1;
-
-    FloatPoint p1 = point1;
-    FloatPoint p2 = point2;
-    bool isVerticalLine = (p1.x() == p2.x());
-
-    adjustLineToPixelBoundaries(p1, p2, width, style);
-    cairo_set_line_width(cr, width);
-
-    int patWidth = 0;
-    switch (style) {
-    case NoStroke:
-    case SolidStroke:
-        break;
-    case DottedStroke:
-        patWidth = static_cast<int>(width);
-        break;
-    case DashedStroke:
-        patWidth = 3*static_cast<int>(width);
-        break;
-    }
-
-    setSourceRGBAFromColor(cr, strokeColor());
-
-    cairo_set_antialias(cr, CAIRO_ANTIALIAS_NONE);
-
-    if (patWidth) {
-        // Do a rect fill of our endpoints.  This ensures we always have the
-        // appearance of being a border.  We then draw the actual dotted/dashed line.
-        if (isVerticalLine) {
-            fillRectSourceOver(cr, FloatRect(p1.x() - width/2, p1.y() - width, width, width), strokeColor());
-            fillRectSourceOver(cr, FloatRect(p2.x() - width/2, p2.y(), width, width), strokeColor());
-        } else {
-            fillRectSourceOver(cr, FloatRect(p1.x() - width, p1.y() - width/2, width, width), strokeColor());
-            fillRectSourceOver(cr, FloatRect(p2.x(), p2.y() - width/2, width, width), strokeColor());
-        }
-
-        // Example: 80 pixels with a width of 30 pixels.
-        // Remainder is 20.  The maximum pixels of line we could paint
-        // will be 50 pixels.
-        int distance = (isVerticalLine ? (point2.y() - point1.y()) : (point2.x() - point1.x())) - 2*static_cast<int>(width);
-        int remainder = distance%patWidth;
-        int coverage = distance-remainder;
-        int numSegments = coverage/patWidth;
-
-        float patternOffset = 0;
-        // Special case 1px dotted borders for speed.
-        if (patWidth == 1)
-            patternOffset = 1.0;
-        else {
-            bool evenNumberOfSegments = !(numSegments % 2);
-            if (remainder)
-                evenNumberOfSegments = !evenNumberOfSegments;
-            if (evenNumberOfSegments) {
-                if (remainder) {
-                    patternOffset += patWidth - remainder;
-                    patternOffset += remainder / 2;
-                } else
-                    patternOffset = patWidth / 2;
-            } else if (!evenNumberOfSegments) {
-                if (remainder)
-                    patternOffset = (patWidth - remainder) / 2;
-            }
-        }
-
-        double dash = patWidth;
-        cairo_set_dash(cr, &dash, 1, patternOffset);
-    }
-
-    cairo_move_to(cr, p1.x(), p1.y());
-    cairo_line_to(cr, p2.x(), p2.y());
-
-    cairo_stroke(cr);
-    cairo_restore(cr);
+    cairo_t* cairoContext = platformContext()->cr();
+    cairo_save(cairoContext);
+    drawLineOnCairoContext(this, cairoContext, point1, point2);
+    cairo_restore(cairoContext);
 }
 
 // This method is only used to draw the little circles used in lists.
@@ -424,15 +423,13 @@ void GraphicsContext::strokeArc(const IntRect& rect, int startAngle, int angleSp
     if (w != h)
         cairo_scale(cr, 1., reverseScaleFactor);
 
-    float width = strokeThickness();
-    int patWidth = 0;
-
+    int patternWidth = 0;
     switch (strokeStyle()) {
     case DottedStroke:
-        patWidth = static_cast<int>(width / 2);
+        patternWidth = floorf(strokeThickness() / 2.f);
         break;
     case DashedStroke:
-        patWidth = 3 * static_cast<int>(width / 2);
+        patternWidth = 3 * floorf(strokeThickness() / 2.f);
         break;
     default:
         break;
@@ -440,42 +437,15 @@ void GraphicsContext::strokeArc(const IntRect& rect, int startAngle, int angleSp
 
     setSourceRGBAFromColor(cr, strokeColor());
 
-    if (patWidth) {
-        // Example: 80 pixels with a width of 30 pixels.
-        // Remainder is 20.  The maximum pixels of line we could paint
-        // will be 50 pixels.
-        int distance;
+    if (patternWidth) {
+        float distance = 0;
         if (hRadius == vRadius)
-            distance = static_cast<int>((M_PI * hRadius) / 2.0);
+            distance = (piFloat * hRadius) / 2.f;
         else // We are elliptical and will have to estimate the distance
-            distance = static_cast<int>((M_PI * sqrtf((hRadius * hRadius + vRadius * vRadius) / 2.0)) / 2.0);
-
-        int remainder = distance % patWidth;
-        int coverage = distance - remainder;
-        int numSegments = coverage / patWidth;
-
-        float patternOffset = 0.0;
-        // Special case 1px dotted borders for speed.
-        if (patWidth == 1)
-            patternOffset = 1.0;
-        else {
-            bool evenNumberOfSegments = !(numSegments % 2);
-            if (remainder)
-                evenNumberOfSegments = !evenNumberOfSegments;
-            if (evenNumberOfSegments) {
-                if (remainder) {
-                    patternOffset += patWidth - remainder;
-                    patternOffset += remainder / 2.0;
-                } else
-                    patternOffset = patWidth / 2.0;
-            } else {
-                if (remainder)
-                    patternOffset = (patWidth - remainder) / 2.0;
-            }
-        }
-
-        double dash = patWidth;
-        cairo_set_dash(cr, &dash, 1, patternOffset);
+            distance = (piFloat * sqrtf((hRadius * hRadius + vRadius * vRadius) / 2.f)) / 2.f;
+        double patternOffset = calculateStrokePatternOffset(floorf(distance), patternWidth);
+        double patternWidthAsDouble = patternWidth;
+        cairo_set_dash(cr, &patternWidthAsDouble, 1, patternOffset);
     }
 
     cairo_stroke(cr);
@@ -715,10 +685,23 @@ void GraphicsContext::drawLineForText(const FloatPoint& origin, float width, boo
     if (paintingDisabled())
         return;
 
-    FloatPoint endPoint = origin + FloatSize(width, 0);
-    
-    // FIXME: Loss of precision here. Might consider rounding.
-    drawLine(IntPoint(origin.x(), origin.y()), IntPoint(endPoint.x(), endPoint.y()));
+    cairo_t* cairoContext = platformContext()->cr();
+    cairo_save(cairoContext);
+
+    // This bumping of <1 stroke thicknesses matches the one in drawLineOnCairoContext.
+    FloatPoint endPoint(origin + IntSize(width, 0));
+    FloatRect lineExtents(origin, FloatSize(width, strokeThickness()));
+
+    ContextShadow* shadow = contextShadow();
+    ASSERT(shadow);
+    cairo_t* shadowContext = shadow->beginShadowLayer(this, lineExtents);
+    if (shadowContext) {
+        drawLineOnCairoContext(this, shadowContext, origin, endPoint);
+        shadow->endShadowLayer(this);
+    }
+
+    drawLineOnCairoContext(this, cairoContext, origin, endPoint);
+    cairo_restore(cairoContext);
 }
 
 #if !PLATFORM(GTK)

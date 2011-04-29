@@ -1,3 +1,15 @@
+2011-04-28  Martin Robinson  <mrobinson@igalia.com>
+
+        Reviewed by Dirk Schulze.
+
+        [Cairo] Text underline is not shadowed when text-shadow is enabled
+        https://bugs.webkit.org/show_bug.cgi?id=48074
+
+        Updated pixel results for this test. They were previously incorrect
+        because text underlines were not shadowed.
+
+        * platform/gtk/fast/text/stroking-decorations-expected.png:
+
 2011-04-28  Dirk Pranke  <dpranke@chromium.org>
 
         Unreviewed, expectations change.

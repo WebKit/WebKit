@@ -512,6 +512,8 @@ namespace WebCore {
         void syncSoftwareCanvas();
         void markDirtyRect(const IntRect&); // Hints that a portion of the backing store is dirty.
 
+        static void adjustLineToPixelBoundaries(FloatPoint& p1, FloatPoint& p2, float strokeWidth, StrokeStyle);
+
     private:
         void platformInit(PlatformGraphicsContext*);
         void platformDestroy();
@@ -543,8 +545,6 @@ namespace WebCore {
         void clearPlatformShadow();
 
         void setPlatformCompositeOperation(CompositeOperator);
-
-        static void adjustLineToPixelBoundaries(FloatPoint& p1, FloatPoint& p2, float strokeWidth, StrokeStyle);
 
         GraphicsContextPlatformPrivate* m_data;
 
