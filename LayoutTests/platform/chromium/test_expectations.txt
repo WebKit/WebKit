@@ -138,12 +138,6 @@ WONTFIX SKIP WIN LINUX : fast/encoding/char-encoding-mac.html = FAIL
 // ever expect to pass this.  Now also timing out.
 BUGCR24189 WONTFIX SKIP : fast/dom/open-and-close-by-DOM.html = FAIL
 
-// WML is still an inprogress feature upstream. Chromium does not build
-// with WML support, so skip its tests.
-WONTFIX SKIP : wml = FAIL
-WONTFIX SKIP : http/tests/wml = FAIL
-WONTFIX SKIP : fast/wml = FAIL
-
 // These tests are based on the JSC JavaScript profiler. The V8 JavaScript
 // profiler is in development and will use a different approach than JSC and
 // most likely these tests will always be JSC specific.
@@ -2333,7 +2327,7 @@ BUGCR60651 WIN : fast/canvas/webgl/gl-object-get-calls.html = TIMEOUT PASS TEXT
 // BUGCR60651 WIN : fast/canvas/webgl/glsl-conformance.html = TIMEOUT FAIL
 BUGCR60651 : fast/canvas/webgl/uniform-location.html = TEXT
 
-BUG_AUTO LINUX WIN DEBUG : animations/suspend-resume-animation.html = PASS TEXT
+BUG_AUTO DEBUG : animations/suspend-resume-animation.html = PASS TEXT
 BUG_AUTO LINUX RELEASE : animations/3d/transform-origin-vs-functions.html = PASS TEXT
 BUG_AUTO WIN DEBUG : animations/3d/transform-origin-vs-functions.html = PASS TEXT
 BUG_AUTO WIN DEBUG : animations/multiple-keyframes.html = PASS TEXT
@@ -2670,7 +2664,8 @@ BUGCR66683 WIN LINUX : fast/canvas/canvas-draw-canvas-on-canvas-shadow.html = TE
 BUGCR66686 : fast/loader/user-stylesheet-fast-path.html = TEXT
 
 BUGCR66751 : http/tests/local/link-stylesheet-load-order-preload.html = TEXT TIMEOUT PASS
-BUGCR66751 : http/tests/local/link-stylesheet-load-order.html = TEXT TIMEOUT PASS
+BUGCR66751 RELEASE : http/tests/local/link-stylesheet-load-order.html = TEXT TIMEOUT PASS
+BUGCR66751 DEBUG : http/tests/local/link-stylesheet-load-order.html = TEXT TIMEOUT PASS CRASH
 
 BUGCR66923 MAC : fast/css/focus-ring-detached.html = IMAGE
 BUGCR66923 MAC : fast/css/focus-ring-multiline.html = IMAGE
@@ -2797,7 +2792,8 @@ BUGCR71418 MAC : fast/borders/border-radius-split-inline.html = IMAGE
 //BUGCR71418 MAC : fast/repaint/box-shadow-v.html = IMAGE PASS
 BUGCR71418 MAC : fast/transforms/shadows.html = IMAGE PASS
 
-BUGWK53446 WIN LINUX DEBUG : http/tests/navigation/forward-and-cancel.html = PASS TEXT
+BUGWK53446 DEBUG : http/tests/navigation/forward-and-cancel.html = PASS TEXT
+BUGWK53446 LINUX RELEASE : http/tests/navigation/forward-and-cancel.html = PASS TEXT
 
 BUGWK53459 WIN LINUX : editing/pasteboard/3976872.html = PASS TIMEOUT
 
@@ -3700,7 +3696,8 @@ BUGDPRANKE WIN DEBUG : svg/custom/foreignObject-crash-on-hover.xml = CRASH PASS
 BUGDPRANKE WIN LINUX DEBUG : svg/custom/foreign-object-skew.svg = CRASH IMAGE PASS
 
 // flakiness
-BUGDPRANKE WIN DEBUG : http/tests/navigation/forward-to-fragment-fires-onload.html = TIMEOUT PASS
+BUGDPRANKE DEBUG : http/tests/navigation/forward-to-fragment-fires-onload.html = TIMEOUT PASS
+BUGDPRANKE LINUX RELEASE : http/tests/navigation/forward-to-fragment-fires-onload.html = TIMEOUT PASS
 BUGDPRANKE WIN DEBUG : perf/mouse-event.html = TEXT TIMEOUT PASS
 BUGDPRANKE WIN DEBUG : perf/typing-at-end-of-line.html = TEXT TIMEOUT PASS
 BUGDPRANKE DEBUG : fast/notifications/notifications-display-close-events.html = TIMEOUT PASS
@@ -3886,7 +3883,6 @@ BUGDPRANKE MAC DEBUG :   transitions/transition-end-event-transform.html = TEXT 
 BUGNONE WONTFIX SKIP : platform/qt/fast/forms = PASS FAIL CRASH TIMEOUT
 
 // rebaselines introduced by r85013
-BUGDPRANKE SNOWLEOPARD : fast/speech/input-appearance-numberandspeech.html = IMAGE+TEXT PASS
 BUGDPRANKE SNOWLEOPARD : fast/speech/input-appearance-speechbutton.html = IMAGE+TEXT PASS
 BUGDPRANKE MAC SNOWLEOPARD : fast/speech/input-appearance-searchandspeech.html = IMAGE
 BUGDPRANKE LINUX : fast/speech/input-appearance-numberandspeech.html = IMAGE+TEXT PASS TEXT
@@ -3972,3 +3968,14 @@ BUGDPRANKE WIN : http/tests/xmlviewer/dumpAsText/xmlviewer.xml = TEXT
 BUGDPRANKE WIN : svg/css/composite-shadow-text.svg = IMAGE
 BUGDPRANKE WIN : svg/css/shadow-changes.svg = IMAGE
 
+// Flakiness on canaries (noted ~ r85280)
+BUGDPRANKE WIN : inspector/console/console-clear.html = PASS TEXT
+BUGDPRANKE WIN SLOW : inspector/profiler/detailed-heapshots-dominators-show-next.html = PASS
+BUGDPRANKE SNOWLEOPARD DEBUG : svg/dom/vkern-element-crash.html = CRASH PASS
+BUGDPRANKE DEBUG : editing/pasteboard/drag-image-in-about-blank-frame.html = CRASH PASS
+
+BUGDPRANKE DEBUG : http/tests/local/link-stylesheet-preferred.html = CRASH PASS
+BUGDPRANKE DEBUG : http/tests/misc/window-dot-stop.html = PASS TEXT
+
+// failing on the deps bots??
+BUGDPRANKE SNOWLEOPARD : svg/custom/foreign-object-skew.svg = IMAGE PASS
