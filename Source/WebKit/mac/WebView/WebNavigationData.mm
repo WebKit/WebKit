@@ -57,6 +57,9 @@
 
 - (id)initWithURLString:(NSString *)url title:(NSString *)title originalRequest:(NSURLRequest *)request response:(NSURLResponse *)response hasSubstituteData:(BOOL)hasSubstituteData clientRedirectSource:(NSString *)redirectSource
 {
+    self = [super init];
+    if (!self)
+        return nil;
     _private = [[WebNavigationDataPrivate alloc] init];
     
     _private->url = [url retain];

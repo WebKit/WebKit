@@ -34,7 +34,9 @@
 
 - (id)initWithRequest:(NSURLRequest *)request frameName:(NSString *)frameName notifyData:(void *)notifyData sendNotification:(BOOL)sendNotification didStartFromUserGesture:(BOOL)currentEventIsUserGesture
 {
-    [super init];
+    self = [super init];
+    if (!self)
+        return nil;
     _didStartFromUserGesture = currentEventIsUserGesture;
     _request = [request retain];
     _frameName = [frameName retain];

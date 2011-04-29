@@ -98,7 +98,9 @@ static void cacheValueForKey(const void *key, const void *value, void *self)
 - (id)initWithHitTestResult:(const HitTestResult&)result
 {
     [[self class] initializeLookupTable];
-    [super init];
+    self = [super init];
+    if (!self)
+        return nil;
     _result = new HitTestResult(result);
     return self;
 }

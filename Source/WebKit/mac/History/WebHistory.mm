@@ -123,7 +123,8 @@ private:
 
 - (id)init
 {
-    if (![super init])
+    self = [super init];
+    if (!self)
         return nil;
     
     _entriesByURL = [[NSMutableDictionary alloc] init];

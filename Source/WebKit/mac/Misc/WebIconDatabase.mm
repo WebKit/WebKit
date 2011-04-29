@@ -106,7 +106,9 @@ static WebIconDatabaseClient* defaultClient()
 
 - (id)init
 {
-    [super init];
+    self = [super init];
+    if (!self)
+        return nil;
     WebCoreThreadViolationCheckRoundOne();
         
     _private = [[WebIconDatabasePrivate alloc] init];

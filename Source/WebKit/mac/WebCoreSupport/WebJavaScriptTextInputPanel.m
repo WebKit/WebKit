@@ -37,7 +37,9 @@
 
 - (id)initWithPrompt:(NSString *)p text:(NSString *)t
 {
-    [self initWithWindowNibName:@"WebJavaScriptTextInputPanel"];
+    self = [self initWithWindowNibName:@"WebJavaScriptTextInputPanel"];
+    if (!self)
+        return nil;
     NSWindow *window = [self window];
     
     // This must be done after the call to [self window], because

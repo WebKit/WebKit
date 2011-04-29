@@ -115,7 +115,9 @@ static const int InvalidCorrectionPanelTag = 0;
 - (id)initWithEditCommand:(PassRefPtr<EditCommand>)command
 {
     ASSERT(command);
-    [super init];
+    self = [super init];
+    if (!self)
+        return nil;
     m_command = command;
     return self;
 }

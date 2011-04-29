@@ -122,7 +122,9 @@ static NSMutableSet *pluginViews = nil;
 
 - (id)initWithDocumentView:(NSView *)view
 {
-    [super init];
+    self = [super init];
+    if (!self)
+        return nil;
     _documentView = view;
     _views = [[NSMutableArray alloc] init];
     _checksInProgress = (NSMutableSet *)CFMakeCollectable(CFSetCreateMutable(NULL, 0, NULL));
