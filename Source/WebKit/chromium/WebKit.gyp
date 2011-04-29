@@ -592,7 +592,7 @@
                 'src/win/WebScreenInfoFactory.cpp',
             ],
             'conditions': [
-                ['inside_chromium_build==1 and OS=="win"', {
+                ['inside_chromium_build==1', {
                     'type': '<(component)',
 
                     'conditions': [
@@ -612,7 +612,6 @@
                                 '<(chromium_src_dir)/third_party/libxml/libxml.gyp:libxml',
                                 '<(chromium_src_dir)/third_party/libxslt/libxslt.gyp:libxslt',
                                 '<(chromium_src_dir)/third_party/modp_b64/modp_b64.gyp:modp_b64',
-                                '<(chromium_src_dir)/third_party/nss/nss.gyp:*',
                                 '<(chromium_src_dir)/third_party/ots/ots.gyp:ots',
                                 '<(chromium_src_dir)/third_party/zlib/zlib.gyp:zlib',
                                 '<(chromium_src_dir)/v8/tools/gyp/v8.gyp:v8',
@@ -631,13 +630,20 @@
                                 '<@(webkit_unittest_files)',
                                 'tests/WebUnitTests.cpp',   # Components test runner support.
                             ],
-                            'sources!' : [
+                            'sources!': [
                                 # We should not include files depending on webkit_support.
                                 'tests/CCThreadTest.cpp',
                                 # These tests depend on webkit_support and
                                 # functions defined only in !WEBKIT_IMPLEMENTATION.
                                 'tests/WebFrameTest.cpp',
                                 'tests/WebPageSerializerTest.cpp',
+                            ],
+                            'conditions': [
+                                ['OS=="win" or OS=="mac"', {
+                                    'dependencies': [
+                                        '<(chromium_src_dir)/third_party/nss/nss.gyp:*',
+                                    ],
+                                }],
                             ]
                         }],
                     ],
@@ -870,7 +876,7 @@
                 'src',
             ],
             'conditions': [
-                ['inside_chromium_build==1 and OS=="win" and component=="shared_library"', {
+                ['inside_chromium_build==1 and component=="shared_library"', {
                     'defines': [
                         'WEBKIT_DLL_UNITTEST',
                     ],

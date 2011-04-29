@@ -1,3 +1,15 @@
+2011-04-28  Evan Martin  <evan@chromium.org>
+
+        Reviewed by Tony Chang.
+
+        [chromium] support components build on Linux
+        https://bugs.webkit.org/show_bug.cgi?id=59748
+
+        * WebKit.gyp: adjust tests to not be Windows-specific.
+        * public/WebCommon.h: add #defines to support Linux.
+        * public/linux/WebFontRenderStyle.h: expose Linux-specific API.
+        * tests/RunAllTests.cpp: adjust ifdefs to not be Windows-specific.
+
 2011-04-29  Vsevolod Vlasov  <vsevik@chromium.org>
 
         Reviewed by Pavel Feldman.

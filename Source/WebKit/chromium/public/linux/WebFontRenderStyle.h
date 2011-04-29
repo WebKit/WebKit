@@ -37,7 +37,7 @@ namespace WebCore { struct FontRenderStyle; }
 
 namespace WebKit {
 
-struct WebFontRenderStyle {
+struct WEBKIT_API WebFontRenderStyle {
     // Each of the use* members below can take one of three values:
     //   0: off
     //   1: on

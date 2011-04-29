@@ -65,11 +65,15 @@
 // -----------------------------------------------------------------------------
 // Exported symbols need to be annotated with WEBKIT_API
 
-#if defined(WIN32) && defined(WEBKIT_DLL)
-    #if WEBKIT_IMPLEMENTATION
-        #define WEBKIT_API __declspec(dllexport)
+#if defined(WEBKIT_DLL)
+    #if defined(WIN32)
+        #if WEBKIT_IMPLEMENTATION
+            #define WEBKIT_API __declspec(dllexport)
+        #else
+            #define WEBKIT_API __declspec(dllimport)
+        #endif
     #else
-        #define WEBKIT_API __declspec(dllimport)
+        #define WEBKIT_API __attribute__((visibility("default")))
     #endif
 #else
     #define WEBKIT_API
