@@ -3244,7 +3244,6 @@ BUGWK50661 MAC : fast/forms/input-appearance-spinbutton-disabled-readonly.html =
 BUGWK50661 WIN LINUX : fast/forms/input-appearance-spinbutton-layer.html = IMAGE+TEXT TEXT PASS
 BUGWK50661 WIN LINUX : fast/forms/input-appearance-spinbutton-visibility.html = TEXT PASS
 BUGWK50661 MAC : fast/forms/input-appearance-spinbutton-visibility.html = IMAGE+TEXT PASS
-BUGWK50661 MAC : fast/speech/input-appearance-numberandspeech.html = IMAGE+TEXT PASS
 //BUGWK50661 WIN LINUX : fast/dom/HTMLMeterElement/meter-element.html = IMAGE+TEXT PASS
 BUGWK50661 WIN LINUX : fast/dom/HTMLMeterElement/meter-styles.html = IMAGE+TEXT PASS
 
@@ -3655,7 +3654,7 @@ BUGDPRANKE MAC LINUX : fast/box-shadow/inset-with-extraordinary-radii-and-border
 BUGDPRANKE : fast/box-shadow/inset.html = IMAGE
 BUGDPRANKE LINUX : fast/css/text-input-with-webkit-border-radius.html = IMAGE
 BUGDPRANKE : fast/forms/basic-selects.html = IMAGE
-BUGDPRANKE : fast/layers/video-layer.html = IMAGE
+BUGDPRANKE : fast/layers/video-layer.html = IMAGE IMAGE+TEXT
 BUGDPRANKE : fast/overflow/border-radius-clipping.html = IMAGE
 BUGDPRANKE WIN LINUX : fast/repaint/border-radius-repaint.html = IMAGE
 BUGDPRANKE WIN LINUX : fast/replaced/border-radius-clip.html = IMAGE
@@ -3893,7 +3892,6 @@ BUGDPRANKE MAC DEBUG :   transitions/transition-end-event-transform.html = TEXT 
 BUGNONE WONTFIX SKIP : platform/qt/fast/forms = PASS FAIL CRASH TIMEOUT
 
 // rebaselines introduced by r85013
-BUGDPRANKE SNOWLEOPARD : fast/speech/input-appearance-speechbutton.html = IMAGE+TEXT PASS
 BUGDPRANKE MAC SNOWLEOPARD : fast/speech/input-appearance-searchandspeech.html = IMAGE
 BUGDPRANKE LINUX : fast/speech/input-appearance-numberandspeech.html = IMAGE+TEXT PASS TEXT
 BUGDPRANKE LINUX : fast/speech/input-appearance-searchandspeech.html = IMAGE+TEXT PASS
@@ -4005,3 +4003,24 @@ BUGDPRANKE XP : fast/repaint/shadow-multiple-horizontal.html = IMAGe
 BUGDPRANKE DEBUG : fast/css/empty-pseudo-class.html = PASS TEXT
 BUGDPRANKE WIN RELEASE : http/tests/inspector/network-preflight-options.html = PASS TIMEOUT
 BUGDPRANKE WIN : http/tests/inspector/resource-tree/resource-tree-reload.html = PASS TEXT
+
+// Also affected by WK50661
+BUGWK59742 MAC : fast/speech/input-appearance-numberandspeech.html = IMAGE+TEXT PASS
+// Also affected by r85013
+BUGWK59742 MAC LEOPARD SNOWLEOPARD : fast/speech/input-appearance-speechbutton.html = IMAGE+TEXT PASS
+
+BUGWK59782 WIN LINUX : fast/box-shadow/single-pixel-shadow.html = IMAGE
+BUGWK59782 WIN MAC LINUX RELEASE : svg/dynamic-updates/SVGFEDropShadowElement-dom-shadow-color-attr.html = IMAGE
+BUGWK59782 WIN MAC LINUX RELEASE : svg/dynamic-updates/SVGFEDropShadowElement-dom-shadow-opacity-attr.html = IMAGE
+BUGWK59782 WIN MAC LINUX RELEASE : svg/dynamic-updates/SVGFEDropShadowElement-svgdom-shadow-color-prop.html = IMAGE
+BUGWK59782 WIN MAC LINUX RELEASE : svg/dynamic-updates/SVGFEDropShadowElement-svgdom-shadow-opacity-prop.html = IMAGE
+BUGWK59782 WIN MAC LINUX RELEASE : svg/filters/feDropShadow.svg = IMAGE
+
+BUGWK59833 : fast/table/prepend-in-anonymous-table.html = PASS TEXT
+// Also affected by WK54322
+BUGWK59833 : tables/mozilla_expected_failures/other/test4.html = PASS IMAGE TEXT
+BUGWK59833 LINUX : fast/table/dynamic-caption-add-before-child.xhtml = PASS IMAGE+TEXT
+BUGWK59833 LINUX : fast/table/dynamic-caption-add-remove-before-child.xhtml = PASS IMAGE+TEXT
+BUGWK59833 LINUX : fast/table/multiple-captions-display.xhtml = PASS IMAGE+TEXT
+
+BUGWK59839 : animations/3d/replace-filling-transform.html = PASS IMAGE
