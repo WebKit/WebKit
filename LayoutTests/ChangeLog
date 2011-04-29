@@ -1,3 +1,13 @@
+2011-04-29  Mark Pilgrim  <pilgrim@chromium.org>
+
+        Reviewed by Tony Chang.
+
+        Port Mozilla's IndexedDB tests: index with integer keys
+        https://bugs.webkit.org/show_bug.cgi?id=59794
+
+        * storage/indexeddb/mozilla/create-index-with-integer-keys-expected.txt: Added.
+        * storage/indexeddb/mozilla/create-index-with-integer-keys.html: Added.
+
 2011-04-29  Dean Jackson  <dino@apple.com>
 
         Reviewed by Simon Fraser.
