@@ -1,3 +1,11 @@
+2011-04-29  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Unreviewed. Update Qt specific expected files after r85355.
+        https://bugs.webkit.org/show_bug.cgi?id=59833
+
+        * platform/qt/fast/table/prepend-in-anonymous-table-expected.txt:
+        * platform/qt/tables/mozilla_expected_failures/other/test4-expected.txt:
+
 2011-04-29  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Eric Seidel.
