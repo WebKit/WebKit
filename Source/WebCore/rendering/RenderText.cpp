@@ -434,6 +434,38 @@ InlineTextBox* RenderText::findNextInlineTextBox(int offset, int& pos) const
     return s;
 }
 
+static bool lineDirectionPointFitsInBox(int pointLineDirection, InlineTextBox* box, int offset, EAffinity& affinity)
+{
+    affinity = DOWNSTREAM;
+
+    // the x coordinate is equal to the left edge of this box
+    // the affinity must be downstream so the position doesn't jump back to the previous line
+    if (pointLineDirection == box->logicalLeft())
+        return true;
+
+    // and the x coordinate is to the left of the right edge of this box
+    // check to see if position goes in this box
+    if (pointLineDirection < box->logicalRight()) {
+        affinity = offset > 0 ? VP_UPSTREAM_IF_POSSIBLE : DOWNSTREAM;
+        return true;
+    }
+
+    // box is first on line
+    // and the x coordinate is to the left of the first text box left edge
+    if (!box->prevOnLine() && pointLineDirection < box->logicalLeft())
+        return true;
+
+    if (!box->nextOnLine()) {
+        // box is last on line
+        // and the x coordinate is to the right of the last text box right edge
+        // generate VisiblePosition, use UPSTREAM affinity if possible
+        affinity = offset > 0 ? VP_UPSTREAM_IF_POSSIBLE : DOWNSTREAM;
+        return true;
+    }
+
+    return false;
+}
+
 VisiblePosition RenderText::positionForPoint(const IntPoint& point)
 {
     if (!firstTextBox() || textLength() == 0)
@@ -466,29 +498,12 @@ VisiblePosition RenderText::positionForPoint(const IntPoint& point)
             int bottom = rootBox->selectionBottom();
             if (rootBox->nextRootBox())
                 bottom = min(bottom, rootBox->nextRootBox()->lineTop());
+
             if (pointBlockDirection < bottom) {
-                offset = box->offsetForPosition(pointLineDirection);
-
-                if (pointLineDirection == box->logicalLeft())
-                    // the x coordinate is equal to the left edge of this box
-                    // the affinity must be downstream so the position doesn't jump back to the previous line
-                    return createVisiblePosition(offset + box->start(), DOWNSTREAM);
-
-                if (pointLineDirection < box->logicalRight())
-                    // and the x coordinate is to the left of the right edge of this box
-                    // check to see if position goes in this box
-                    return createVisiblePosition(offset + box->start(), offset > 0 ? VP_UPSTREAM_IF_POSSIBLE : DOWNSTREAM);
-
-                if (!box->prevOnLine() && pointLineDirection < box->logicalLeft())
-                    // box is first on line
-                    // and the x coordinate is to the left of the first text box left edge
-                    return createVisiblePosition(offset + box->start(), DOWNSTREAM);
-
-                if (!box->nextOnLine())
-                    // box is last on line
-                    // and the x coordinate is to the right of the last text box right edge
-                    // generate VisiblePosition, use UPSTREAM affinity if possible
-                    return createVisiblePosition(offset + box->start(), offset > 0 ? VP_UPSTREAM_IF_POSSIBLE : DOWNSTREAM);
+                EAffinity affinity;
+                int offset = box->offsetForPosition(pointLineDirection);
+                if (lineDirectionPointFitsInBox(pointLineDirection, box, offset, affinity))
+                    return createVisiblePosition(offset + box->start(), affinity);
             }
             lastBoxAbove = box;
         }
