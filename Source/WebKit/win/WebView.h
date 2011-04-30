@@ -57,8 +57,13 @@ namespace WebCore {
 class FullscreenVideoController;
 class WebBackForwardList;
 class WebFrame;
+class WebFullScreenController;
 class WebInspector;
 class WebInspectorClient;
+
+#if ENABLE(FULLSCREEN_API)
+class WebFullScreenController;
+#endif
 
 typedef WebCore::RefCountedGDIHandle<HBITMAP> RefCountedHBITMAP;
 typedef WebCore::RefCountedGDIHandle<HRGN> RefCountedHRGN;
@@ -936,6 +941,12 @@ public:
 
     void setGlobalHistoryItem(WebCore::HistoryItem*);
 
+#if ENABLE(FULLSCREEN_API)
+    bool supportsFullScreenForElement(const WebCore::Element*, bool withKeyboard) const;
+    bool isFullScreen() const;
+    WebFullScreenController* fullScreenController();
+#endif
+
 private:
     void setZoomMultiplier(float multiplier, bool isTextOnly);
     float zoomMultiplier(bool isTextOnly);
@@ -1072,7 +1083,7 @@ protected:
     long m_yOverpan;
 
 #if ENABLE(VIDEO)
-    OwnPtr<FullscreenVideoController> m_fullscreenController;
+    OwnPtr<FullscreenVideoController> m_fullScreenVideoController;
 #endif
 
 #if USE(ACCELERATED_COMPOSITING)
@@ -1090,6 +1101,10 @@ protected:
     HCURSOR m_lastSetCursor;
 
     RefPtr<WebCore::HistoryItem> m_globalHistoryItem;
+
+#if ENABLE(FULLSCREEN_API)
+    OwnPtr<WebFullScreenController> m_fullscreenController;
+#endif
 };
 
 #endif

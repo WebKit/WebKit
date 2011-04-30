@@ -512,6 +512,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\WebFullScreenController.h"
+				>
+			</File>
+			<File
 				RelativePath="..\WebGeolocationPolicyListener.h"
 				>
 			</File>
@@ -925,6 +929,10 @@
 			</File>
 			<File
 				RelativePath="..\WebFramePolicyListener.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\WebFullScreenController.cpp"
 				>
 			</File>
 			<File

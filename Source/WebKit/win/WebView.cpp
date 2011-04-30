@@ -160,6 +160,10 @@
 #include <WebCore/PlatformCALayer.h>
 #endif
 
+#if ENABLE(FULLSCREEN_API)
+#include "WebFullScreenController.h"
+#endif
+
 #include <ShlObj.h>
 #include <comutil.h>
 #include <dimm.h>
@@ -1962,6 +1966,13 @@ bool WebView::handleEditingKeyboardEvent(KeyboardEvent* evt)
 
 bool WebView::keyDown(WPARAM virtualKeyCode, LPARAM keyData, bool systemKeyDown)
 {
+#if ENABLE(FULLSCREEN_API)
+    // Trap the ESC key when in full screen mode.
+    if (virtualKeyCode == VK_ESCAPE && isFullScreen()) {
+        m_fullscreenController->exitFullScreen();
+        return false;
+    }
+#endif
     Frame* frame = m_page->focusController()->focusedOrMainFrame();
 
     PlatformKeyboardEvent keyEvent(m_viewWindow, virtualKeyCode, keyData, PlatformKeyboardEvent::RawKeyDown, systemKeyDown);
@@ -4843,6 +4854,13 @@ HRESULT WebView::notifyPreferencesChanged(IWebNotification* notification)
     if (FAILED(hr))
         return hr;
 
+#if ENABLE(FULLSCREEN_API)
+    hr = prefsPrivate->isFullScreenEnabled(&enabled);
+    if (FAILED(hr))
+        return hr;
+    settings->setFullScreenEnabled(enabled);
+#endif
+
     return S_OK;
 }
 
@@ -6100,33 +6118,33 @@ void WebView::enterFullscreenForNode(Node* node)
 #if ENABLE(VIDEO)
     HTMLMediaElement* videoElement = static_cast<HTMLMediaElement*>(node);
 
-    if (m_fullscreenController) {
-        if (m_fullscreenController->mediaElement() == videoElement) {
+    if (m_fullScreenVideoController) {
+        if (m_fullScreenVideoController->mediaElement() == videoElement) {
             // The backend may just warn us that the underlaying plaftormMovie()
             // has changed. Just force an update.
-            m_fullscreenController->setMediaElement(videoElement);
+            m_fullScreenVideoController->setMediaElement(videoElement);
             return; // No more to do.
         }
 
         // First exit Fullscreen for the old mediaElement.
-        m_fullscreenController->mediaElement()->exitFullscreen();
+        m_fullScreenVideoController->mediaElement()->exitFullscreen();
         // This previous call has to trigger exitFullscreen,
-        // which has to clear m_fullscreenController.
-        ASSERT(!m_fullscreenController);
+        // which has to clear m_fullScreenVideoController.
+        ASSERT(!m_fullScreenVideoController);
     }
 
-    m_fullscreenController = new FullscreenVideoController;
-    m_fullscreenController->setMediaElement(videoElement);
-    m_fullscreenController->enterFullscreen();
+    m_fullScreenVideoController = new FullscreenVideoController;
+    m_fullScreenVideoController->setMediaElement(videoElement);
+    m_fullScreenVideoController->enterFullscreen();
 #endif
 }
 
 void WebView::exitFullscreen()
 {
 #if ENABLE(VIDEO)
-    if (m_fullscreenController)
-        m_fullscreenController->exitFullscreen();
-    m_fullscreenController = 0;
+    if (m_fullScreenVideoController)
+        m_fullScreenVideoController->exitFullscreen();
+    
 #endif
 }
 
@@ -6723,3 +6741,29 @@ void WebView::setGlobalHistoryItem(HistoryItem* historyItem)
 {
     m_globalHistoryItem = historyItem;
 }
+
+#if ENABLE(FULLSCREEN_API)
+bool WebView::supportsFullScreenForElement(const WebCore::Element*, bool withKeyboard) const
+{
+    if (withKeyboard)
+        return false;
+
+    BOOL enabled = FALSE;
+    if (!m_preferences || FAILED(m_preferences->isFullScreenEnabled(&enabled)))
+        return false;
+
+    return enabled;
+}
+
+bool WebView::isFullScreen() const 
+{
+    return m_fullscreenController && m_fullscreenController->isFullScreen();
+}
+
+WebFullScreenController* WebView::fullScreenController()
+{
+    if (!m_fullscreenController)
+        m_fullscreenController = adoptPtr(new WebFullScreenController(this));
+    return m_fullscreenController.get();
+}
+#endif

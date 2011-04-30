@@ -1,3 +1,43 @@
+2011-04-29  Jer Noble  <jer.noble@apple.com>
+
+        Reviewed by Adam Roben.
+
+        Implement FULLSCREEN_API on Windows, Part 2: WebKit
+        https://bugs.webkit.org/show_bug.cgi?id=59785
+
+        Initial implementation of full screen API on windows.  No animation
+        occurs when entering or exiting full screen.  Re-use existing window
+        classes (MediaPlayerPrivateFullscreenWindow) to host the webView.
+
+        * WebCoreSupport/WebChromeClient.cpp:
+        (WebChromeClient::supportsFullScreenForElement): Call into WebView.
+        (WebChromeClient::enterFullScreenForElement): Call into WebFullScreenController.
+        (WebChromeClient::exitFullScreenForElement): Ditto.
+        * WebFullScreenController.cpp: Added.
+        (WebFullScreenController::Private::Private): Private data storage class.
+        (WebFullScreenController::Private::~Private):
+        (WebFullScreenController::Private::fullscreenClientWndProc): Handle window
+            message for full screen window.
+        (WebFullScreenController::WebFullScreenController):
+        (WebFullScreenController::~WebFullScreenController):
+        (WebFullScreenController::setElement): Added.
+        (WebFullScreenController::element): Added.
+        (WebFullScreenController::isFullScreen): Added.
+        (WebFullScreenController::enterFullScreen): Create and display full screen
+            window, moving webView as child window.
+        (WebFullScreenController::exitFullScreen): Destroy full screen window and
+            move webView back where we found it.
+        * WebFullScreenController.h: Added.
+        * WebKit.vcproj/WebKit.vcproj:
+        * WebView.cpp:
+        (WebView::keyDown): Handle the ESC key.
+        (WebView::notifyPreferencesChanged):
+        (WebView::supportsFullScreenForElement): Do not support full screen if
+            full screen preference is disabled, or if keyboard access is requested.
+        (WebView::isFullScreen): Added.
+        (WebView::fullScreenController): Added.
+        * WebView.h:
+
 2011-04-28  Jer Noble  <jer.noble@apple.com>
 
         Reviewed by Jon Honeycutt.

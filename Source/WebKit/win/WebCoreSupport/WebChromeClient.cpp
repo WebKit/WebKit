@@ -35,6 +35,7 @@
 #include "WebHistory.h"
 #include "WebMutableURLRequest.h"
 #include "WebDesktopNotificationsDelegate.h"
+#include "WebFullScreenController.h"
 #include "WebSecurityOrigin.h"
 #include "WebView.h"
 #include <WebCore/BString.h>
@@ -890,7 +891,7 @@ bool WebChromeClient::supportsFullScreenForElement(const Element* element, bool 
             return supports;
     }
 
-    return FALSE;
+    return m_webView->supportsFullScreenForElement(element, requestingKeyboardAccess);
 }
 
 void WebChromeClient::enterFullScreenForElement(Element* element)
@@ -902,6 +903,9 @@ void WebChromeClient::enterFullScreenForElement(Element* element)
         if (uiDelegatePrivate4 && SUCCEEDED(uiDelegatePrivate4->enterFullScreenForElement(domElement.get())))
             return;
     } 
+
+    m_webView->fullScreenController()->setElement(element);
+    m_webView->fullScreenController()->enterFullScreen();
 }
 
 void WebChromeClient::exitFullScreenForElement(Element* element)
@@ -913,6 +917,9 @@ void WebChromeClient::exitFullScreenForElement(Element* element)
         if (uiDelegatePrivate4 && SUCCEEDED(uiDelegatePrivate4->exitFullScreenForElement(domElement.get())))
             return;
     }
+
+    ASSERT(element == m_webView->fullScreenController()->element());
+    m_webView->fullScreenController()->exitFullScreen();
 }
 
 #endif
