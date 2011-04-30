@@ -1515,6 +1515,10 @@ plugins/private-browsing-mode-2.html
 # http://webkit.org/b/58990
 editing/undo/undo-iframe-location-change.html
 
+# Failing since r84961, always with slightly different results
+# http://webkit.org/b/59865
+transitions/transition-timing-function.html
+
 ### END OF (1) Classified failures with bug reports
 ########################################
 

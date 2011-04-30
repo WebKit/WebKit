@@ -1,5 +1,16 @@
 2011-04-30  Adam Roben  <aroben@apple.com>
 
+        Skip a failing test on mac-wk2
+
+        I can't check in expected failure results because the results are slightly different each
+        time.
+
+        <http://webkit.org/b/59865> tracks the failure.
+
+        * platform/mac-wk2/Skipped: Added transitions/transition-timing-function.html.
+
+2011-04-30  Adam Roben  <aroben@apple.com>
+
         Skip a flaky test on mac-wk2
 
         <http://webkit.org/b/58990> tracks the failure.
