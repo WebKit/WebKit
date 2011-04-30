@@ -1,3 +1,15 @@
+2011-04-30  Adam Roben  <aroben@apple.com>
+
+        Remove mac-wk2 expected failure results for an animation test
+
+        Looks like this started passing in r85340. (I hope it wasn't because animation-api-1.html,
+        which is now skipped, was causing this one to fail!)
+
+        Fixes <http://webkit.org/b/56528> <rdar://problem/9147568> REGRESSION (r80846):
+        animations/animation-controller-drt-api.html failing in WebKit2
+
+        * platform/mac-wk2/animations/animation-controller-drt-api-expected.txt: Removed.
+
 2011-04-30  Csaba Osztrogonác  <ossy@webkit.org>
 
         [Qt] Add one more flakey test to the Skipped list.
