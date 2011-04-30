@@ -41,6 +41,7 @@
 #include "InspectorInstrumentation.h"
 #include "Page.h"
 #include "ProgressEvent.h"
+#include "SecurityOrigin.h"
 #include "Settings.h"
 #include "WebFrameImpl.h"
 #include "WebURL.h"

@@ -43,6 +43,7 @@
 #include "IDBRequest.h"
 #include "Page.h"
 #include "PageGroup.h"
+#include "SecurityOrigin.h"
 
 namespace WebCore {
 

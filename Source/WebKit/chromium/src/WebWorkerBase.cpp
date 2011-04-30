@@ -36,6 +36,7 @@
 #include "Document.h"
 #include "MessagePortChannel.h"
 #include "PlatformMessagePortChannel.h"
+#include "SecurityOrigin.h"
 
 #include "WebDataSourceImpl.h"
 #include "WebFileError.h"

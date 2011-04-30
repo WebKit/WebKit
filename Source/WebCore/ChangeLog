@@ -1,3 +1,25 @@
+2011-04-30  Mihai Parparita  <mihaip@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        V8Proxy.h shouldn't include SecurityOrigin.h
+        https://bugs.webkit.org/show_bug.cgi?id=59859
+
+        Remove SecurityOrigin.h #include from V8Proxy.h. Touching
+        SecurityOrigin.h now rebuilds 234 targets instead of 638 (when building
+        chromium's DumpRenderTree).
+
+        * bindings/v8/NPV8Object.cpp:
+        * bindings/v8/V8Proxy.cpp:
+        * bindings/v8/V8Proxy.h:
+        * css/CSSStyleSelector.cpp:
+        * dom/XMLDocumentParserLibxml2.cpp:
+        * html/HTMLLinkElement.cpp:
+        * loader/SubframeLoader.cpp:
+        * page/History.cpp:
+        * storage/IDBFactory.cpp:
+        * storage/StorageAreaImpl.cpp:
+
 2011-04-29  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Eric Seidel.

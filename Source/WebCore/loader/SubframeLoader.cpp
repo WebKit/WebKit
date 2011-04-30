@@ -46,6 +46,7 @@
 #include "PluginDocument.h"
 #include "RenderEmbeddedObject.h"
 #include "RenderView.h"
+#include "SecurityOrigin.h"
 #include "Settings.h"
 
 #if ENABLE(PLUGIN_PROXY_FOR_VIDEO)

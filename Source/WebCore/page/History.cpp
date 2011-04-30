@@ -34,6 +34,7 @@
 #include "FrameLoaderClient.h"
 #include "HistoryItem.h"
 #include "Page.h"
+#include "SecurityOrigin.h"
 
 namespace WebCore {
 

@@ -32,8 +32,6 @@
 #define V8Proxy_h
 
 #include "PlatformBridge.h"
-#include "ScriptSourceCode.h" // for WebCore::ScriptSourceCode
-#include "SecurityOrigin.h" // for WebCore::SecurityOrigin
 #include "SharedPersistent.h"
 #include "V8AbstractEventListener.h"
 #include "V8DOMWindowShell.h"
@@ -45,6 +43,7 @@
 #include <wtf/Forward.h>
 #include <wtf/PassRefPtr.h> // so generated bindings don't have to
 #include <wtf/Vector.h>
+#include <wtf/text/TextPosition.h>
 
 #if defined(ENABLE_DOM_STATS_COUNTERS) && PLATFORM(CHROMIUM)
 #define INC_STATS(name) PlatformBridge::incrementStatsCounter(name)
@@ -59,6 +58,7 @@ namespace WebCore {
     class Frame;
     class Node;
     class ScriptExecutionContext;
+    class ScriptSourceCode;
     class V8EventListener;
     class V8IsolatedContext;
     class WorldContextHandle;

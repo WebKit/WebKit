@@ -29,6 +29,7 @@
 #include "Document.h"
 #include "Frame.h"
 #include "Geolocation.h"
+#include "SecurityOrigin.h"
 #include "WebSecurityOrigin.h"
 #include "WebURL.h"
 

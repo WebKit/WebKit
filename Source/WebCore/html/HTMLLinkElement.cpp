@@ -42,6 +42,7 @@
 #include "Page.h"
 #include "ResourceHandle.h"
 #include "ScriptEventListener.h"
+#include "SecurityOrigin.h"
 #include "Settings.h"
 #include <wtf/StdLibExtras.h>
 
