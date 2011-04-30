@@ -1,3 +1,9 @@
+2011-04-29  Joseph Pecoraro  <joepeck@webkit.org>
+
+        Unreviewed. Add windows expected results for a new test.
+
+        * platform/win/fast/forms/date-input-visible-strings-expected.txt: Added.
+
 2011-04-29  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Eric Seidel.
