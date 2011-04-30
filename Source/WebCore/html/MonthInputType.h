@@ -42,8 +42,9 @@ public:
 private:
     MonthInputType(HTMLInputElement* element) : BaseDateAndTimeInputType(element) { }
     virtual const AtomicString& formControlType() const;
+    virtual DateComponents::Type dateType() const;
     virtual double valueAsDate() const;
-    virtual void setValueAsDate(double, ExceptionCode&) const;
+    virtual String serializeWithMilliseconds(double) const;
     virtual double parseToDouble(const String&, double) const;
     virtual double defaultValueForStepUp() const;
     virtual double minimum() const;

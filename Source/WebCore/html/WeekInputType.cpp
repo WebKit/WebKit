@@ -54,6 +54,11 @@ const AtomicString& WeekInputType::formControlType() const
     return InputTypeNames::week();
 }
 
+DateComponents::Type WeekInputType::dateType() const
+{
+    return DateComponents::Week;
+}
+
 double WeekInputType::minimum() const
 {
     return parseToDouble(element()->fastGetAttribute(minAttr), DateComponents::minimumWeek());

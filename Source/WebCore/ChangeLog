@@ -1,3 +1,81 @@
+2011-04-29  Joseph Pecoraro  <joepeck@webkit.org>
+
+        Reviewed by Kent Tamura.
+
+        Allow Localized Date Strings for Date Input Fields
+        https://bugs.webkit.org/show_bug.cgi?id=59752
+
+        Test: fast/forms/date-input-visible-strings.html
+
+        * CMakeLists.txt:
+        * WebCore.gypi:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj: update build files for
+        moving DateComponents from WebCore/html to WebCore/platform
+        and adding the LocalizedDate files.
+
+        * html/BaseDateAndTimeInputType.cpp:
+        (WebCore::BaseDateAndTimeInputType::serialize):
+        (WebCore::BaseDateAndTimeInputType::serializeWithComponents):
+        (WebCore::BaseDateAndTimeInputType::serializeWithMilliseconds):
+        InputType::serialize for a double value with date types is
+        different for the month type because it assumes the incoming
+        value is months instead of msecs (matching valueAsNumber in
+        HTML5).  So provide a more general serialization function,
+        serializeWithComponents, that will always serialize a string
+        correctly for the current type but taking in a DateComponents
+        object. The default serialize, and new serializeWithMilliseconds,
+        can fall back to this and allows an override point for
+        the month type.
+
+        * html/MonthInputType.cpp:
+        (WebCore::MonthInputType::serializeWithMilliseconds): the month
+        type is a case where the default serialize does not take msec,
+        so provide an implementation for month which handles msec input.
+
+        * html/BaseDateAndTimeInputType.cpp:
+        (WebCore::BaseDateAndTimeInputType::setValueAsDate): switch
+        to serializeWithMilliseconds as the incoming date value is msec.
+        * html/MonthInputType.cpp:
+        (WebCore::MonthInputType::setValueAsDate): removed.
+
+        * html/BaseDateAndTimeInputType.cpp:
+        (WebCore::BaseDateAndTimeInputType::visibleValue): allow
+        localized formatting of a date value.
+        (WebCore::BaseDateAndTimeInputType::convertFromVisibleValue):
+        allow parsing for a formatted date value.
+
+        * html/BaseDateAndTimeInputType.h:
+        * platform/DateComponents.cpp: Renamed from Source/WebCore/html/DateComponents.cpp.
+        Expose the Type enum so it can be used outside of the DateComponents class.
+        * platform/text/LocalizedDate.h: Added.
+        * platform/text/LocalizedDateNone.cpp: Added.
+        (WebCore::formatLocalizedDate): Default implementation falls back to
+        existing HTML5 date input value formatting.
+
+        * html/BaseDateAndTimeInputType.h:
+        * html/DateInputType.cpp:
+        (WebCore::DateInputType::dateType):
+        * html/DateInputType.h:
+        * html/DateTimeInputType.cpp:
+        (WebCore::DateTimeInputType::dateType):
+        * html/DateTimeInputType.h:
+        * html/DateTimeLocalInputType.cpp:
+        (WebCore::DateTimeLocalInputType::dateType):
+        * html/DateTimeLocalInputType.h:
+        * html/MonthInputType.cpp:
+        (WebCore::MonthInputType::dateType):
+        * html/MonthInputType.h:
+        * html/TimeInputType.cpp:
+        (WebCore::TimeInputType::dateType):
+        * html/TimeInputType.h:
+        * html/WeekInputType.cpp:
+        (WebCore::WeekInputType::dateType):
+        * html/WeekInputType.h: Accessors for the desired date
+        type of a date input type. This allows the base class
+        to write a generic algorithm.
+
 2011-04-29  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Eric Seidel.

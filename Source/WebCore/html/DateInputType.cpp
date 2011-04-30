@@ -53,6 +53,11 @@ const AtomicString& DateInputType::formControlType() const
     return InputTypeNames::date();
 }
 
+DateComponents::Type DateInputType::dateType() const
+{
+    return DateComponents::Date;
+}
+
 double DateInputType::minimum() const
 {
     return parseToDouble(element()->fastGetAttribute(minAttr), DateComponents::minimumDate());

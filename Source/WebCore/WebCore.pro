@@ -639,7 +639,6 @@ SOURCES += \
     html/DOMSettableTokenList.cpp \
     html/DOMTokenList.cpp \
     html/DOMURL.cpp \
-    html/DateComponents.cpp \
     html/DateInputType.cpp \
     html/DateTimeInputType.cpp \
     html/DateTimeLocalInputType.cpp \
@@ -945,9 +944,11 @@ SOURCES += \
     platform/text/Base64.cpp \
     platform/text/BidiContext.cpp \
     platform/text/Hyphenation.cpp \
+    platform/text/LocalizedDateNone.cpp \
     platform/text/LocalizedNumberNone.cpp \
     platform/ContentType.cpp \
     platform/CrossThreadCopier.cpp \
+    platform/DateComponents.cpp \
     platform/DefaultLocalizationStrategy.cpp \
     platform/DragData.cpp \
     platform/DragImage.cpp \
@@ -1614,7 +1615,6 @@ HEADERS += \
     html/canvas/Uint8Array.h \
     html/ClassList.h \
     html/CollectionCache.h \
-    html/DateComponents.h \
     html/DOMFormData.h \
     html/DOMSettableTokenList.h \
     html/DOMTokenList.h \
@@ -1884,6 +1884,7 @@ HEADERS += \
     platform/ContentType.h \
     platform/ContextMenu.h \
     platform/CrossThreadCopier.h \
+    platform/DateComponents.h \
     platform/DefaultLocalizationStrategy.h \
     platform/DragData.h \
     platform/DragImage.h \

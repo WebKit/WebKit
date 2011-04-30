@@ -716,7 +716,6 @@ SET(WebCore_SOURCES
     html/DOMSettableTokenList.cpp
     html/DOMTokenList.cpp
     html/DOMURL.cpp
-    html/DateComponents.cpp
     html/DateInputType.cpp
     html/DateTimeInputType.cpp
     html/DateTimeLocalInputType.cpp
@@ -1038,6 +1037,7 @@ SET(WebCore_SOURCES
     platform/ContextMenuItem.cpp
     platform/ContentType.cpp
     platform/CrossThreadCopier.cpp
+    platform/DateComponents.cpp
     platform/DefaultLocalizationStrategy.cpp
     platform/DragData.cpp
     platform/DragImage.cpp
@@ -1168,6 +1168,7 @@ SET(WebCore_SOURCES
     platform/text/Base64.cpp
     platform/text/BidiContext.cpp
     platform/text/LineEnding.cpp
+    platform/text/LocalizedDateNone.cpp
     platform/text/LocalizedNumberNone.cpp
     platform/text/Hyphenation.cpp
     platform/text/RegularExpression.cpp

@@ -31,10 +31,10 @@
 #include "config.h"
 #include "BaseDateAndTimeInputType.h"
 
-#include "DateComponents.h"
 #include "HTMLInputElement.h"
 #include "HTMLNames.h"
 #include "KeyboardEvent.h"
+#include "LocalizedDate.h"
 #include <limits>
 #include <wtf/CurrentTime.h>
 #include <wtf/DateMath.h>
@@ -57,7 +57,7 @@ double BaseDateAndTimeInputType::valueAsDate() const
 
 void BaseDateAndTimeInputType::setValueAsDate(double value, ExceptionCode&) const
 {
-    element()->setValue(serialize(value));
+    element()->setValue(serializeWithMilliseconds(value));
 }
 
 double BaseDateAndTimeInputType::valueAsNumber() const
@@ -169,6 +169,11 @@ String BaseDateAndTimeInputType::serialize(double value) const
     DateComponents date;
     if (!setMillisecondToDateComponents(value, &date))
         return String();
+    return serializeWithComponents(date);
+}
+
+String BaseDateAndTimeInputType::serializeWithComponents(const DateComponents& date) const
+{
     double step;
     if (!element()->getAllowedValueStep(&step))
         return date.toString();
@@ -177,6 +182,34 @@ String BaseDateAndTimeInputType::serialize(double value) const
     if (!fmod(step, msecPerSecond))
         return date.toString(DateComponents::Second);
     return date.toString(DateComponents::Millisecond);
+}
+
+String BaseDateAndTimeInputType::serializeWithMilliseconds(double value) const
+{
+    return serialize(value);
+}
+
+String BaseDateAndTimeInputType::visibleValue() const
+{
+    String currentValue = element()->value();
+    DateComponents date;
+    if (!parseToDateComponents(currentValue, &date))
+        return currentValue;
+
+    String localized = formatLocalizedDate(date);
+    return localized.isEmpty() ? currentValue : localized;
+}
+
+String BaseDateAndTimeInputType::convertFromVisibleValue(const String& visibleValue) const
+{
+    if (visibleValue.isEmpty())
+        return visibleValue;
+
+    double parsedValue = parseLocalizedDate(visibleValue, dateType());
+    if (!isfinite(parsedValue))
+        return visibleValue;
+
+    return serializeWithMilliseconds(parsedValue);
 }
 
 } // namespace WebCore

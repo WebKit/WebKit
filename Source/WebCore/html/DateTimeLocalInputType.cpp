@@ -53,6 +53,11 @@ const AtomicString& DateTimeLocalInputType::formControlType() const
     return InputTypeNames::datetimelocal();
 }
 
+DateComponents::Type DateTimeLocalInputType::dateType() const
+{
+    return DateComponents::DateTimeLocal;
+}
+
 double DateTimeLocalInputType::valueAsDate() const
 {
     // valueAsDate doesn't work for the datetime-local type according to the standard.

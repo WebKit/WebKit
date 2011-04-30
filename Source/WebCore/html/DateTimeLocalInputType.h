@@ -42,6 +42,7 @@ public:
 private:
     DateTimeLocalInputType(HTMLInputElement* element) : BaseDateAndTimeInputType(element) { }
     virtual const AtomicString& formControlType() const;
+    virtual DateComponents::Type dateType() const;
     virtual double valueAsDate() const;
     virtual void setValueAsDate(double, ExceptionCode&) const;
     virtual double minimum() const;

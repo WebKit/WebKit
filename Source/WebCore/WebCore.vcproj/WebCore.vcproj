@@ -25618,6 +25618,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\platform\DateComponents.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\platform\DateComponents.h"
+				>
+			</File>
+			<File
 				RelativePath="..\platform\DefaultLocalizationStrategy.cpp"
 				>
 			</File>
@@ -30446,6 +30454,14 @@
 				</File>
 				<File
 					RelativePath="..\platform\text\LineEnding.h"
+					>
+				</File>
+				<File
+					RelativePath="..\platform\text\LocalizedDate.h"
+					>
+				</File>
+				<File
+					RelativePath="..\platform\text\LocalizedDateNone.cpp"
 					>
 				</File>
 				<File
@@ -51047,14 +51063,6 @@
 			</File>
 			<File
 				RelativePath="..\html\canvas\DataView.h"
-				>
-			</File>
-			<File
-				RelativePath="..\html\DateComponents.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\html\DateComponents.h"
 				>
 			</File>
 			<File

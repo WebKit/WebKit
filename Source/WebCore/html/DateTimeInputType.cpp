@@ -54,6 +54,11 @@ const AtomicString& DateTimeInputType::formControlType() const
     return InputTypeNames::datetime();
 }
 
+DateComponents::Type DateTimeInputType::dateType() const
+{
+    return DateComponents::DateTime;
+}
+
 double DateTimeInputType::defaultValueForStepUp() const
 {
     return currentTimeMS();

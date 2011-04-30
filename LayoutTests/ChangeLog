@@ -1,3 +1,16 @@
+2011-04-29  Joseph Pecoraro  <joepeck@webkit.org>
+
+        Reviewed by Kent Tamura.
+
+        Allow Localized Date Strings for Date Input Fields
+        https://bugs.webkit.org/show_bug.cgi?id=59752
+
+        The render tree dump prints out the visible string
+        inside the <input> field.
+
+        * fast/forms/date-input-visible-strings.html: Added.
+        * platform/mac/fast/forms/date-input-visible-strings-expected.txt: Added.
+
 2011-04-29  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Eric Seidel.

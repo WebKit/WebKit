@@ -58,6 +58,16 @@ public:
     {
     }
 
+    enum Type {
+        Invalid,
+        Date,
+        DateTime,
+        DateTimeLocal,
+        Month,
+        Time,
+        Week,
+    };
+
     int millisecond() const { return m_millisecond; }
     int second() const { return m_second; }
     int minute() const { return m_minute; }
@@ -66,6 +76,7 @@ public:
     int month() const { return m_month; }
     int fullYear() const { return m_year; }
     int week() const { return m_week; }
+    Type type() const { return m_type; }
 
     enum SecondFormat {
         None, // Suppress the second part and the millisecond part if they are 0.
@@ -184,15 +195,6 @@ private:
     int m_year; //  1582 -
     int m_week; // 1 - 53
 
-    enum Type {
-        Invalid,
-        Date,
-        DateTime,
-        DateTimeLocal,
-        Month,
-        Time,
-        Week,
-    };
     Type m_type;
 };
 

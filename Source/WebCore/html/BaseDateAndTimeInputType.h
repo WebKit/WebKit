@@ -31,6 +31,7 @@
 #ifndef BaseDateAndTimeInputType_h
 #define BaseDateAndTimeInputType_h
 
+#include "DateComponents.h"
 #include "TextFieldInputType.h"
 #include <wtf/unicode/Unicode.h>
 
@@ -42,10 +43,12 @@ protected:
     BaseDateAndTimeInputType(HTMLInputElement* element) : TextFieldInputType(element) { }
     virtual double parseToDouble(const String&, double) const;
     virtual bool parseToDateComponents(const String&, DateComponents*) const;
+    String serializeWithComponents(const DateComponents&) const;
 
 private:
     virtual bool parseToDateComponentsInternal(const UChar*, unsigned length, DateComponents*) const = 0;
     virtual bool setMillisecondToDateComponents(double, DateComponents*) const = 0;
+    virtual DateComponents::Type dateType() const = 0;
     virtual double valueAsDate() const;
     virtual void setValueAsDate(double, ExceptionCode&) const;
     virtual double valueAsNumber() const;
@@ -62,6 +65,9 @@ private:
     virtual void handleKeydownEvent(KeyboardEvent*);
     virtual void handleWheelEvent(WheelEvent*);
     virtual String serialize(double) const;
+    virtual String serializeWithMilliseconds(double) const;
+    virtual String visibleValue() const;
+    virtual String convertFromVisibleValue(const String&) const;
 };
 
 } // namespace WebCore

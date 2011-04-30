@@ -42,6 +42,7 @@ public:
 private:
     WeekInputType(HTMLInputElement* element) : BaseDateAndTimeInputType(element) { }
     virtual const AtomicString& formControlType() const;
+    virtual DateComponents::Type dateType() const;
     virtual double minimum() const;
     virtual double maximum() const;
     virtual double stepBase() const;

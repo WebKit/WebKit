@@ -56,6 +56,11 @@ const AtomicString& MonthInputType::formControlType() const
     return InputTypeNames::month();
 }
 
+DateComponents::Type MonthInputType::dateType() const
+{
+    return DateComponents::Month;
+}
+
 double MonthInputType::valueAsDate() const
 {
     DateComponents date;
@@ -66,14 +71,12 @@ double MonthInputType::valueAsDate() const
     return msec;
 }
 
-void MonthInputType::setValueAsDate(double value, ExceptionCode&) const
+String MonthInputType::serializeWithMilliseconds(double value) const
 {
     DateComponents date;
-    if (!date.setMillisecondsSinceEpochForMonth(value)) {
-        element()->setValue(String());
-        return;
-    }
-    element()->setValue(date.toString());
+    if (!date.setMillisecondsSinceEpochForMonth(value))
+        return String();
+    return serializeWithComponents(date);
 }
 
 double MonthInputType::defaultValueForStepUp() const
