@@ -1,5 +1,11 @@
 2011-04-29  Adam Barth  <abarth@webkit.org>
 
+        Attempt to fix the Windows build.
+
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.def:
+
+2011-04-29  Adam Barth  <abarth@webkit.org>
+
         Reviewed by Eric Seidel.
 
         CSP script-src should block eval
