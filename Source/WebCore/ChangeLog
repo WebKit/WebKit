@@ -1,3 +1,10 @@
+2011-04-30  Pavel Feldman  <pfeldman@chromium.org>
+
+        Not reviewed: inspector toolbar titles were 2px off.
+
+        * inspector/front-end/inspector.css:
+        (#toolbar-dropdown .toolbar-label):
+
 2011-04-30  Mihai Parparita  <mihaip@chromium.org>
 
         Reviewed by Eric Seidel.

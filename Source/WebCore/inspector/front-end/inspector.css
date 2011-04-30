@@ -163,6 +163,8 @@ body.attached .toolbar-label,
 #toolbar-dropdown .toolbar-label {
     display: inline-block;
     margin-left: 3px;
+    position: relative;
+    top: 2px;
 }
 
 body.attached #search-toolbar-label {
