@@ -1,3 +1,17 @@
+2011-04-29  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        style-src should block inline style from <style>
+        https://bugs.webkit.org/show_bug.cgi?id=59292
+
+        Testing makes perfect.
+
+        * http/tests/security/contentSecurityPolicy/inline-style-allowed-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/inline-style-allowed.html: Added.
+        * http/tests/security/contentSecurityPolicy/inline-style-blocked-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/inline-style-blocked.html: Added.
+
 2011-04-29  Sam Weinig  <sam@webkit.org>
 
         Add tests using layoutTestController.setPrivateBrowsingEnabled to the WebKit2

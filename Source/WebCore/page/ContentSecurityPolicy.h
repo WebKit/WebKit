@@ -48,6 +48,7 @@ public:
     bool allowJavaScriptURLs() const;
     bool allowInlineEventHandlers() const;
     bool allowInlineScript() const;
+    bool allowInlineStyle() const;
     bool allowEval() const;
 
     bool allowScriptFromSource(const KURL&) const;

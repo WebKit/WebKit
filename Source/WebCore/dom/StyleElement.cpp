@@ -22,6 +22,7 @@
 #include "StyleElement.h"
 
 #include "Attribute.h"
+#include "ContentSecurityPolicy.h"
 #include "Document.h"
 #include "Element.h"
 #include "MediaList.h"
@@ -36,7 +37,12 @@ static bool isValidStyleChild(Node* node)
     Node::NodeType nodeType = node->nodeType();
     return nodeType == Node::TEXT_NODE || nodeType == Node::CDATA_SECTION_NODE;
 }
-    
+
+static bool isCSS(Element* element, const AtomicString& type)
+{
+    return type.isEmpty() || (element->isHTMLElement() ? equalIgnoringCase(type, "text/css") : (type == "text/css"));
+}
+
 StyleElement::StyleElement(Document* document, bool createdByParser)
     : m_createdByParser(createdByParser)
     , m_loading(false)
@@ -140,7 +146,7 @@ void StyleElement::createSheet(Element* e, int startLineNumber, const String& te
 
     // If type is empty or CSS, this is a CSS style sheet.
     const AtomicString& type = this->type();
-    if (type.isEmpty() || (e->isHTMLElement() ? equalIgnoringCase(type, "text/css") : (type == "text/css"))) {
+    if (document->contentSecurityPolicy()->allowInlineStyle() && isCSS(e, type)) {
         RefPtr<MediaList> mediaList = MediaList::create(media(), e->isHTMLElement());
         MediaQueryEvaluator screenEval("screen", true);
         MediaQueryEvaluator printEval("print", true);

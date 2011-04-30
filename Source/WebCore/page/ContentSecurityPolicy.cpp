@@ -533,6 +533,16 @@ bool ContentSecurityPolicy::allowInlineScript() const
     return false;
 }
 
+bool ContentSecurityPolicy::allowInlineStyle() const
+{
+    if (!m_styleSrc || m_styleSrc->allowInline())
+        return true;
+
+    DEFINE_STATIC_LOCAL(String, consoleMessage, ("Refused to apply inline style because of Content-Security-Policy.\n"));
+    reportViolation(m_styleSrc->text(), consoleMessage);
+    return false;
+}
+
 bool ContentSecurityPolicy::allowEval() const
 {
     if (!m_scriptSrc || m_scriptSrc->allowEval())
