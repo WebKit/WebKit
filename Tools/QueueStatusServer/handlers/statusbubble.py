@@ -48,19 +48,34 @@ class StatusBubble(webapp.RequestHandler):
         }
         return bubble
 
-    def _have_ews_status_for(self, attachment, queue):
-        return bool(queue.is_ews() and (attachment.position_in_queue(queue) or attachment.status_for_queue(queue)))
+    def _have_status_for(self, attachment, queue):
+        # Any pending queue is shown.
+        if attachment.position_in_queue(queue):
+            return True
+        # Complete ewses are also shown.
+        return bool(queue.is_ews() and attachment.status_for_queue(queue))
+
+    def _build_bubbles_for_attachment(self, attachment):
+        show_submit_to_ews = True
+        bubbles = []
+        for queue in Queue.all():
+            if not self._have_status_for(attachment, queue):
+                continue
+            bubbles.append(self._build_bubble(queue, attachment))
+            # If even one ews has status, we don't show the submit-to-ews button.
+            if queue.is_ews():
+                show_submit_to_ews = False
+
+        return (bubbles, show_submit_to_ews)
 
     def get(self, attachment_id_string):
         attachment_id = int(attachment_id_string)
         attachment = Attachment(attachment_id)
-        # Show all queue positions, even the commit-queue.
-        bubbles = [self._build_bubble(queue, attachment) for queue in Queue.all() if queue.is_ews() or attachment.position_in_queue(queue)]
-        # If all EWS queues have no position and no status we show a "submit to ews" button.
-        have_ews_status_or_position = reduce(operator.or_, map(lambda queue: self._have_ews_status_for(attachment, queue), Queue.all()))
+        bubbles, show_submit_to_ews = self._build_bubbles_for_attachment(attachment)
+
         template_values = {
             "bubbles": bubbles,
             "attachment_id": attachment_id,
-            "show_submit_to_ews": not have_ews_status_or_position,
+            "show_submit_to_ews": show_submit_to_ews,
         }
         self.response.out.write(template.render("templates/statusbubble.html", template_values))

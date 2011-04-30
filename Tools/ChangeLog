@@ -1,3 +1,18 @@
+2011-04-29  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Adam Barth.
+
+        land-safely patches should show show their place in the commit-queue
+        https://bugs.webkit.org/show_bug.cgi?id=59853
+
+        This complicated the "should we show the bubbles or the submit-to-ews button"
+        logic substantially. :(  But now we'll show both the commit-queue position
+        as well as the submit-to-ews button for land-safely (cq+ only) patches.
+        Previously we would only show the submit-to-ews button.
+
+        * QueueStatusServer/handlers/statusbubble.py:
+        * QueueStatusServer/templates/statusbubble.html:
+
 2011-04-29  Naoki Takano  <takano.naoki@gmail.com>
 
         Reviewed by Adam Barth.
