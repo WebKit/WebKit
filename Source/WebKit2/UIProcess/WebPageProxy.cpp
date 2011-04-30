@@ -2071,6 +2071,9 @@ void WebPageProxy::didChangeViewportData(const ViewportArguments& args)
 void WebPageProxy::pageDidScroll()
 {
     m_uiClient.pageDidScroll(this);
+#if PLATFORM(MAC) && !defined(BUILDING_ON_SNOW_LEOPARD)
+    dismissCorrectionPanel(ReasonForDismissingCorrectionPanelIgnored);
+#endif
 }
 
 void WebPageProxy::runOpenPanel(uint64_t frameID, const WebOpenPanelParameters::Data& data)

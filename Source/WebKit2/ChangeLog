@@ -1,3 +1,14 @@
+2011-04-29  Jia Pu  <jpu@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        [Mac] Scrolling WK2 window should dismiss autocorrection panel.
+        https://bugs.webkit.org/show_bug.cgi?id=59809
+        <rdar://problem/9317410>
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::pageDidScroll): Dimiss autocorrection panel in this function.
+
 2011-04-29  Alexey Proskuryakov  <ap@apple.com>
 
         Reviewed by Dan Bernstein.
