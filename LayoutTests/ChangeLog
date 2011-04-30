@@ -1,5 +1,14 @@
 2011-04-30  Adam Roben  <aroben@apple.com>
 
+        Skip another test that requires layoutTestController.setAlwaysAcceptCookies on mac-wk2
+
+        <http://webkit.org/b/42778> tracks implementing this feature.
+
+        * platform/mac-wk2/Skipped: Added
+        http/tests/xmlhttprequest/cross-origin-cookie-storage.html.
+
+2011-04-30  Adam Roben  <aroben@apple.com>
+
         Skip another test that requires eventSender.keyDown on mac-wk2
 
         <http://webkit.org/b/42194> tracks implementing this feature.

@@ -1412,6 +1412,7 @@ fast/loader/non-deferred-substitute-load.html
 # <https://bugs.webkit.org/show_bug.cgi?id=42778>
 http/tests/cookies/third-party-cookie-relaxing.html
 http/tests/plugins/third-party-cookie-accept-policy.html
+http/tests/xmlhttprequest/cross-origin-cookie-storage.html
 
 # WebKitTestRunner needs to print history delegate information
 # <https://bugs.webkit.org/show_bug.cgi?id=42704>
