@@ -448,11 +448,6 @@ public:
 
 
     // Section 3: Misc admin methods
-    size_t size()
-    {
-        return m_assembler.size();
-    }
-
     Label label()
     {
         return Label(this);

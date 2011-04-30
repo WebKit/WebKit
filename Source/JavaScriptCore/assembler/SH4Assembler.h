@@ -1167,7 +1167,7 @@ public:
         uint16_t opc = getOpcodeGroup3(MOVIMM_OPCODE, dst, 0);
 
         m_buffer.ensureSpace(maxInstructionSize, sizeof(uint32_t));
-        printInstr(getOpcodeGroup3(MOVIMM_OPCODE, dst, constant), m_buffer.uncheckedSize());
+        printInstr(getOpcodeGroup3(MOVIMM_OPCODE, dst, constant), m_buffer.label());
         m_buffer.putShortWithConstantInt(opc, constant, true);
     }
 
@@ -1178,7 +1178,7 @@ public:
         if (ensureSpace)
             m_buffer.ensureSpace(maxInstructionSize, sizeof(uint32_t));
 
-        printInstr(getOpcodeGroup3(MOVIMM_OPCODE, dst, constant), m_buffer.uncheckedSize());
+        printInstr(getOpcodeGroup3(MOVIMM_OPCODE, dst, constant), m_buffer.label());
         m_buffer.putShortWithConstantInt(opc, constant);
     }
 
@@ -1192,7 +1192,7 @@ public:
         branch(JSR_OPCODE, scr);
         nop();
         releaseScratch(scr);
-        return JmpSrc(m_buffer.uncheckedSize());
+        return JmpSrc(m_buffer.label());
     }
 
     JmpSrc call(RegisterID dst)
@@ -1200,14 +1200,14 @@ public:
         m_buffer.ensureSpace(maxInstructionSize + 2);
         branch(JSR_OPCODE, dst);
         nop();
-        return JmpSrc(m_buffer.uncheckedSize());
+        return JmpSrc(m_buffer.label());
     }
 
     JmpSrc jmp()
     {
         RegisterID scr = claimScratch();
         m_buffer.ensureSpace(maxInstructionSize + 4, sizeof(uint32_t));
-        int m_size = m_buffer.uncheckedSize();
+        int m_size = m_buffer.label();
         loadConstantUnReusable(0x0, scr);
         branch(BRAF_OPCODE, scr);
         nop();
@@ -1218,7 +1218,7 @@ public:
     JmpSrc jmp(RegisterID dst)
     {
         jmpReg(dst);
-        return JmpSrc(m_buffer.uncheckedSize());
+        return JmpSrc(m_buffer.label());
     }
 
     void jmpReg(RegisterID dst)
@@ -1230,14 +1230,14 @@ public:
 
     JmpSrc jne()
     {
-        int m_size = m_buffer.uncheckedSize();
+        int m_size = m_buffer.label();
         branch(BF_OPCODE, 0);
         return JmpSrc(m_size);
     }
 
     JmpSrc je()
     {
-        int m_size = m_buffer.uncheckedSize();
+        int m_size = m_buffer.label();
         branch(BT_OPCODE, 0);
         return JmpSrc(m_size);
     }
@@ -1250,7 +1250,8 @@ public:
 
     JmpDst label()
     {
-        return JmpDst(m_buffer.size());
+        m_buffer.ensureSpaceForAnyOneInstruction();
+        return JmpDst(m_buffer.label());
     }
 
     int sizeOfConstantPool()
@@ -1528,9 +1529,7 @@ public:
 
     void* executableCopy(ExecutablePool* allocator)
     {
-        void* copy = m_buffer.executableCopy(allocator);
-        ASSERT(copy);
-        return copy;
+        return m_buffer.executableCopy(allocator);
     }
 
     void prefix(uint16_t pre)
@@ -1540,7 +1539,7 @@ public:
 
     void oneShortOp(uint16_t opcode, bool checksize = true, bool isDouble = true)
     {
-        printInstr(opcode, m_buffer.uncheckedSize(), isDouble);
+        printInstr(opcode, m_buffer.label(), isDouble);
         if (checksize)
             m_buffer.ensureSpace(maxInstructionSize);
         m_buffer.putShortUnchecked(opcode);
@@ -1559,10 +1558,7 @@ public:
     // Administrative methods
 
     void* data() const { return m_buffer.data(); }
-    int size()
-    {
-        return m_buffer.size();
-    }
+    size_t codeSize() const { return m_buffer.codeSize(); }
 
 #ifdef SH4_ASSEMBLER_TRACING
     static void printInstr(uint16_t opc, unsigned int size, bool isdoubleInst = true)

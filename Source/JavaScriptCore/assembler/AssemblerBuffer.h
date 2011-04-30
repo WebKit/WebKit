@@ -134,7 +134,12 @@ namespace JSC {
             return m_buffer;
         }
 
-        int size() const
+        size_t codeSize() const
+        {
+            return m_size;
+        }
+
+        unsigned label() const
         {
             return m_size;
         }

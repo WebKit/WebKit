@@ -347,7 +347,7 @@ void* ARMAssembler::executableCopy(ExecutablePool* allocator)
 {
     // 64-bit alignment is required for next constant pool and JIT code as well
     m_buffer.flushWithoutBarrier(true);
-    if (m_buffer.uncheckedSize() & 0x7)
+    if (m_buffer.label() & 0x7)
         bkpt(0);
 
     char* data = reinterpret_cast<char*>(m_buffer.executableCopy(allocator));

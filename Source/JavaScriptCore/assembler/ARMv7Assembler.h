@@ -885,7 +885,7 @@ public:
     JmpSrc b(JumpType type)
     {
         m_formatter.twoWordOp16Op16(OP_B_T4a, OP_B_T4b);
-        return JmpSrc(m_formatter.size(), type);
+        return JmpSrc(m_formatter.label(), type);
     }
     
     // Only allowed in IT (if then) block if last instruction.
@@ -893,20 +893,20 @@ public:
     {
         ASSERT(rm != ARMRegisters::pc);
         m_formatter.oneWordOp8RegReg143(OP_BLX, rm, (RegisterID)8);
-        return JmpSrc(m_formatter.size(), type);
+        return JmpSrc(m_formatter.label(), type);
     }
 
     // Only allowed in IT (if then) block if last instruction.
     JmpSrc bx(RegisterID rm, JumpType type, Condition condition)
     {
         m_formatter.oneWordOp8RegReg143(OP_BX, rm, (RegisterID)0);
-        return JmpSrc(m_formatter.size(), type, condition);
+        return JmpSrc(m_formatter.label(), type, condition);
     }
 
     JmpSrc bx(RegisterID rm, JumpType type)
     {
         m_formatter.oneWordOp8RegReg143(OP_BX, rm, (RegisterID)0);
-        return JmpSrc(m_formatter.size(), type);
+        return JmpSrc(m_formatter.label(), type);
     }
 
     void bkpt(uint8_t imm=0)
@@ -1593,7 +1593,7 @@ public:
 
     JmpDst label()
     {
-        return JmpDst(m_formatter.size());
+        return JmpDst(m_formatter.label());
     }
     
     JmpDst align(int alignment)
@@ -1643,11 +1643,6 @@ public:
     int jumpSizeDelta(JumpType jumpType, JumpLinkType jumpLinkType) { return JumpPaddingSizes[jumpType] - JumpSizes[jumpLinkType]; }
     
     // Assembler admin methods:
-
-    size_t size() const
-    {
-        return m_formatter.size();
-    }
 
     static bool linkRecordSourceComparator(const LinkRecord& a, const LinkRecord& b)
     {
@@ -1767,7 +1762,8 @@ public:
     }
 
     void* unlinkedCode() { return m_formatter.data(); }
-    
+    size_t codeSize() const { return m_formatter.codeSize(); }
+
     static unsigned getCallReturnOffset(JmpSrc call)
     {
         ASSERT(call.m_offset >= 0);
@@ -2287,10 +2283,9 @@ private:
 
         // Administrative methods:
 
-        size_t size() const { return m_buffer.size(); }
+        size_t codeSize() const { return m_buffer.codeSize(); }
         bool isAligned(int alignment) const { return m_buffer.isAligned(alignment); }
         void* data() const { return m_buffer.data(); }
-        void* executableCopy(ExecutablePool* allocator) { return m_buffer.executableCopy(allocator); }
 
 #ifndef NDEBUG
         unsigned debugOffset() { return m_formatter.debugOffset(); }

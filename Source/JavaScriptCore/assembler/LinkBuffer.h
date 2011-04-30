@@ -67,11 +67,20 @@ class LinkBuffer {
 #endif
 
 public:
-    // Note: Initialization sequence is significant, since executablePool is a PassRefPtr.
-    //       First, executablePool is copied into m_executablePool, then the initialization of
-    //       m_code uses m_executablePool, *not* executablePool, since this is no longer valid.
     LinkBuffer(MacroAssembler* masm, PassRefPtr<ExecutablePool> executablePool)
         : m_executablePool(executablePool)
+        , m_size(0)
+        , m_code(0)
+        , m_assembler(masm)
+#ifndef NDEBUG
+        , m_completed(false)
+#endif
+    {
+        linkCode();
+    }
+
+    LinkBuffer(MacroAssembler* masm, ExecutableAllocator& allocator)
+        : m_executablePool(allocator.poolForSize(masm->m_assembler.codeSize()))
         , m_size(0)
         , m_code(0)
         , m_assembler(masm)
@@ -210,13 +219,14 @@ private:
         ASSERT(!m_code);
 #if !ENABLE(BRANCH_COMPACTION)
         m_code = m_assembler->m_assembler.executableCopy(m_executablePool.get());
-        m_size = m_assembler->size();
+        m_size = m_assembler->m_assembler.codeSize();
+        ASSERT(m_code);
 #else
-        size_t initialSize = m_assembler->size();
+        size_t initialSize = m_assembler->m_assembler.codeSize();
         m_code = (uint8_t*)m_executablePool->alloc(initialSize);
         if (!m_code)
             return;
-        ExecutableAllocator::makeWritable(m_code, m_assembler->size());
+        ExecutableAllocator::makeWritable(m_code, initialSize);
         uint8_t* inData = (uint8_t*)m_assembler->unlinkedCode();
         uint8_t* outData = reinterpret_cast<uint8_t*>(m_code);
         int readPtr = 0;
@@ -255,8 +265,8 @@ private:
             jumpsToLink[i].setFrom(writePtr);
         }
         // Copy everything after the last jump
-        memcpy(outData + writePtr, inData + readPtr, m_assembler->size() - readPtr);
-        m_assembler->recordLinkOffsets(readPtr, m_assembler->size(), readPtr - writePtr);
+        memcpy(outData + writePtr, inData + readPtr, initialSize - readPtr);
+        m_assembler->recordLinkOffsets(readPtr, initialSize, readPtr - writePtr);
         
         for (unsigned i = 0; i < jumpCount; ++i) {
             uint8_t* location = outData + jumpsToLink[i].from();
@@ -265,7 +275,7 @@ private:
         }
 
         jumpsToLink.clear();
-        m_size = writePtr + m_assembler->size() - readPtr;
+        m_size = writePtr + initialSize - readPtr;
         m_executablePool->tryShrink(m_code, initialSize, m_size);
 
 #if DUMP_LINK_STATISTICS

@@ -1,3 +1,74 @@
+2011-04-30  Gavin Barraclough  <barraclough@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        Bug 59869 - AssemblerBuffer cleanup - disambiguate size()
+
+        The method size() is called on the AssemblerBuffer both to acquire
+        the complete size of the code, and to get a position to use as a
+        label into the code. Instead, add an explicit 'label' method.
+
+        * assembler/ARMAssembler.cpp:
+        (JSC::ARMAssembler::executableCopy):
+        * assembler/ARMAssembler.h:
+        (JSC::ARMAssembler::blx):
+        (JSC::ARMAssembler::codeSize):
+        (JSC::ARMAssembler::label):
+        (JSC::ARMAssembler::loadBranchTarget):
+        * assembler/ARMv7Assembler.h:
+        (JSC::ARMv7Assembler::b):
+        (JSC::ARMv7Assembler::blx):
+        (JSC::ARMv7Assembler::bx):
+        (JSC::ARMv7Assembler::label):
+        (JSC::ARMv7Assembler::codeSize):
+        (JSC::ARMv7Assembler::ARMInstructionFormatter::codeSize):
+        (JSC::ARMv7Assembler::ARMInstructionFormatter::data):
+        * assembler/AbstractMacroAssembler.h:
+        * assembler/AssemblerBuffer.h:
+        (JSC::AssemblerBuffer::codeSize):
+        (JSC::AssemblerBuffer::label):
+        * assembler/AssemblerBufferWithConstantPool.h:
+        * assembler/LinkBuffer.h:
+        (JSC::LinkBuffer::LinkBuffer):
+        (JSC::LinkBuffer::linkCode):
+        * assembler/MIPSAssembler.h:
+        (JSC::MIPSAssembler::newJmpSrc):
+        (JSC::MIPSAssembler::appendJump):
+        (JSC::MIPSAssembler::label):
+        (JSC::MIPSAssembler::codeSize):
+        (JSC::MIPSAssembler::relocateJumps):
+        * assembler/SH4Assembler.h:
+        (JSC::SH4Assembler::loadConstant):
+        (JSC::SH4Assembler::loadConstantUnReusable):
+        (JSC::SH4Assembler::call):
+        (JSC::SH4Assembler::jmp):
+        (JSC::SH4Assembler::jne):
+        (JSC::SH4Assembler::je):
+        (JSC::SH4Assembler::label):
+        (JSC::SH4Assembler::executableCopy):
+        (JSC::SH4Assembler::oneShortOp):
+        (JSC::SH4Assembler::codeSize):
+        * assembler/X86Assembler.h:
+        (JSC::X86Assembler::call):
+        (JSC::X86Assembler::jmp_r):
+        (JSC::X86Assembler::codeSize):
+        (JSC::X86Assembler::label):
+        (JSC::X86Assembler::executableCopy):
+        (JSC::X86Assembler::X86InstructionFormatter::immediateRel32):
+        (JSC::X86Assembler::X86InstructionFormatter::codeSize):
+        (JSC::X86Assembler::X86InstructionFormatter::label):
+        (JSC::X86Assembler::X86InstructionFormatter::executableCopy):
+        * dfg/DFGJITCompiler.cpp:
+        (JSC::DFG::JITCompiler::compileFunction):
+        * jit/JIT.cpp:
+        (JSC::JIT::privateCompile):
+        * jit/JITOpcodes.cpp:
+        (JSC::JIT::privateCompileCTIMachineTrampolines):
+        * jit/JITOpcodes32_64.cpp:
+        (JSC::JIT::privateCompileCTIMachineTrampolines):
+        * yarr/YarrJIT.cpp:
+        (JSC::Yarr::YarrGenerator::compile):
+
 2011-04-29  Adam Barth  <abarth@webkit.org>
 
         Attempt to fix the Windows build.

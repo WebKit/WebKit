@@ -632,7 +632,7 @@ namespace JSC {
             mov_r(ARMRegisters::lr, ARMRegisters::pc, cc);
             bx(rm, cc);
 #endif
-            return JmpSrc(m_buffer.uncheckedSize());
+            return JmpSrc(m_buffer.label());
         }
 
         static ARMWord lsl(int reg, ARMWord value)
@@ -679,9 +679,9 @@ namespace JSC {
 
         // General helpers
 
-        int size()
+        size_t codeSize() const
         {
-            return m_buffer.size();
+            return m_buffer.codeSize();
         }
 
         void ensureSpace(int insnSpace, int constSpace)
@@ -696,7 +696,8 @@ namespace JSC {
 
         JmpDst label()
         {
-            return JmpDst(m_buffer.size());
+            m_buffer.ensureSpaceForAnyOneInstruction();
+            return JmpDst(m_buffer.label());
         }
 
         JmpDst align(int alignment)
@@ -710,9 +711,9 @@ namespace JSC {
         JmpSrc loadBranchTarget(int rd, Condition cc = AL, int useConstantPool = 0)
         {
             ensureSpace(sizeof(ARMWord), sizeof(ARMWord));
-            m_jumps.append(m_buffer.uncheckedSize() | (useConstantPool & 0x1));
+            m_jumps.append(m_buffer.label() | (useConstantPool & 0x1));
             ldr_un_imm(rd, InvalidBranchTarget, cc);
-            return JmpSrc(m_buffer.uncheckedSize());
+            return JmpSrc(m_buffer.label());
         }
 
         JmpSrc jmp(Condition cc = AL, int useConstantPool = 0)

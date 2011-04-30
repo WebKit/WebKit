@@ -350,7 +350,7 @@ void JITCompiler::compileFunction(JITCode& entry, MacroAssemblerCodePtr& entryWi
     //
     // Link the code, populate data in CodeBlock data structures.
 
-    LinkBuffer linkBuffer(this, m_globalData->executableAllocator.poolForSize(m_assembler.size()));
+    LinkBuffer linkBuffer(this, m_globalData->executableAllocator);
 
 #if DFG_DEBUG_VERBOSE
     fprintf(stderr, "JIT code start at %p\n", linkBuffer.debugAddress());

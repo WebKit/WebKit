@@ -504,12 +504,12 @@ public:
 
     JmpSrc newJmpSrc()
     {
-        return JmpSrc(m_buffer.size());
+        return JmpSrc(m_buffer.label());
     }
 
     void appendJump()
     {
-        m_jumps.append(m_buffer.size());
+        m_jumps.append(m_buffer.label());
     }
 
     void addd(FPRegisterID fd, FPRegisterID fs, FPRegisterID ft)
@@ -663,7 +663,7 @@ public:
 
     JmpDst label()
     {
-        return JmpDst(m_buffer.size());
+        return JmpDst(m_buffer.label());
     }
 
     JmpDst align(int alignment)
@@ -704,9 +704,9 @@ public:
 
     // Assembler admin methods:
 
-    size_t size() const
+    size_t codeSize() const
     {
-        return m_buffer.size();
+        return m_buffer.codeSize();
     }
 
     void* executableCopy(ExecutablePool* allocator)
@@ -825,7 +825,7 @@ private:
             MIPSWord* insn = reinterpret_cast<MIPSWord*>(reinterpret_cast<intptr_t>(newBase) + pos);
             insn = insn + 2;
             // Need to make sure we have 5 valid instructions after pos
-            if ((unsigned int)pos >= m_buffer.size() - 5 * sizeof(MIPSWord))
+            if ((unsigned int)pos >= m_buffer.codeSize() - 5 * sizeof(MIPSWord))
                 continue;
 
             if ((*insn & 0xfc000000) == 0x08000000) { // j

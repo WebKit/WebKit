@@ -269,8 +269,6 @@ public:
     {
     }
 
-    size_t size() const { return m_formatter.size(); }
-
     // Stack operations:
 
     void push_r(RegisterID reg)
@@ -1224,7 +1222,7 @@ public:
     JmpSrc call(RegisterID dst)
     {
         m_formatter.oneByteOp(OP_GROUP5_Ev, GROUP5_OP_CALLN, dst);
-        return JmpSrc(m_formatter.size());
+        return JmpSrc(m_formatter.label());
     }
     
     void call_m(int offset, RegisterID base)
@@ -1244,7 +1242,7 @@ public:
     JmpSrc jmp_r(RegisterID dst)
     {
         m_formatter.oneByteOp(OP_GROUP5_Ev, GROUP5_OP_JMPN, dst);
-        return JmpSrc(m_formatter.size());
+        return JmpSrc(m_formatter.label());
     }
     
     void jmp_m(int offset, RegisterID base)
@@ -1518,9 +1516,14 @@ public:
 
     // Assembler admin methods:
 
+    size_t codeSize() const
+    {
+        return m_formatter.codeSize();
+    }
+
     JmpDst label()
     {
-        return JmpDst(m_formatter.size());
+        return JmpDst(m_formatter.label());
     }
     
     static JmpDst labelFor(JmpSrc jump, intptr_t offset = 0)
@@ -1632,9 +1635,7 @@ public:
     
     void* executableCopy(ExecutablePool* allocator)
     {
-        void* copy = m_formatter.executableCopy(allocator);
-        ASSERT(copy);
-        return copy;
+        return m_formatter.executableCopy(allocator);
     }
 
     void rewindToLabel(JmpDst rewindTo) { m_formatter.rewindToLabel(rewindTo); }
@@ -1932,15 +1933,20 @@ private:
         JmpSrc immediateRel32()
         {
             m_buffer.putIntUnchecked(0);
-            return JmpSrc(m_buffer.size());
+            return JmpSrc(label());
         }
 
         // Administrative methods:
 
-        size_t size() const { return m_buffer.size(); }
+        size_t codeSize() const { return m_buffer.codeSize(); }
+        size_t label() const { return m_buffer.label(); }
         bool isAligned(int alignment) const { return m_buffer.isAligned(alignment); }
         void* data() const { return m_buffer.data(); }
-        void* executableCopy(ExecutablePool* allocator) { return m_buffer.executableCopy(allocator); }
+
+        void* executableCopy(ExecutablePool* allocator)
+        {
+            return m_buffer.executableCopy(allocator);
+        }
 
         void rewindToLabel(JmpDst rewindTo) { m_buffer.rewindToOffset(rewindTo.m_offset); }
 
