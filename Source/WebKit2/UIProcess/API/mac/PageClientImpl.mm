@@ -143,6 +143,8 @@ void PageClientImpl::scrollView(const IntRect& scrollRect, const IntSize& scroll
 {
     NSRect clippedScrollRect = NSIntersectionRect(scrollRect, NSOffsetRect(scrollRect, -scrollOffset.width(), -scrollOffset.height()));
 
+    [m_wkView _cacheWindowBottomCornerRect];
+
     [m_wkView translateRectsNeedingDisplayInRect:clippedScrollRect by:scrollOffset];
     [m_wkView scrollRect:clippedScrollRect by:scrollOffset];
 }

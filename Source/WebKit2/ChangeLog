@@ -1,3 +1,22 @@
+2011-04-29  Beth Dakin  <bdakin@apple.com>
+
+        Reviewed by Simon Fraser.
+
+        https://bugs.webkit.org/show_bug.cgi?id=59846
+        Scrolling causes rounded bottom window corners to become square
+        <rdar://problem/9234239>
+
+        Keep track of the m_windowBottomCornerIntersectionRect in WKView. 
+        Invalidate the rect before scrolling. And if the rect is non-zero during a 
+        display, mask the corners, then set the rect to zero so that only displays that 
+        happen right after a scroll bother to do this.
+        * UIProcess/API/mac/PageClientImpl.mm:
+        (WebKit::PageClientImpl::scrollView):
+        * UIProcess/API/mac/WKView.mm:
+        (-[WKView displayIfNeeded]):
+        (-[WKView _cacheWindowBottomCornerRect]):
+        * UIProcess/API/mac/WKViewInternal.h:
+
 2011-04-29  Jia Pu  <jpu@apple.com>
 
         Reviewed by Sam Weinig.

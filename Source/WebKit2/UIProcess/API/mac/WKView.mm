@@ -87,6 +87,8 @@
 - (id)_growBoxOwner;
 - (void)_setShowOpaqueGrowBoxForOwner:(id)owner;
 - (BOOL)_updateGrowBoxForWindowFrameChange;
+- (NSRect)_intersectBottomCornersWithRect:(NSRect)viewRect;
+- (void)_maskRoundedBottomCorners:(NSRect)clipRect;
 @end
 
 using namespace WebKit;
@@ -156,6 +158,8 @@ struct WKViewInterpretKeyEventsParameters {
     NSInteger _spellCheckerDocumentTag;
 
     BOOL _inSecureInputState;
+
+    NSRect _windowBottomCornerIntersectionRect;
 }
 @end
 
@@ -918,6 +922,29 @@ static void speakString(WKStringRef string, WKErrorRef error, void*)
 - (void)capitalizeWord:(id)sender
 {
     _data->_page->capitalizeWord();
+}
+
+- (void)displayIfNeeded
+{
+#if !defined(BUILDING_ON_SNOW_LEOPARD)
+    // FIXME: We should remove this code when <rdar://problem/9362085> is resolved. In the meantime,
+    // it is necessary to disable scren updates so we get a chance to redraw the corners before this 
+    // display is visible.
+    NSWindow *window = [self window];
+    BOOL shouldMaskWindow = window && !NSIsEmptyRect(_data->_windowBottomCornerIntersectionRect);
+    if (shouldMaskWindow)
+        NSDisableScreenUpdates();
+#endif
+
+    [super displayIfNeeded];
+
+#if !defined(BUILDING_ON_SNOW_LEOPARD)
+    if (shouldMaskWindow) {
+        [window _maskRoundedBottomCorners:_data->_windowBottomCornerIntersectionRect];
+        NSEnableScreenUpdates();
+        _data->_windowBottomCornerIntersectionRect = NSZeroRect;
+    }
+#endif
 }
 
 // Events
@@ -2406,6 +2433,20 @@ static void drawPageBackground(CGContextRef context, WebPageProxy* page, const I
     [super doCommandBySelector:selector];
     [sink.get() detach];
     return ![sink.get() didReceiveUnhandledCommand];
+}
+
+- (void)_cacheWindowBottomCornerRect
+{
+#if !defined(BUILDING_ON_SNOW_LEOPARD)
+    // FIXME: We should remove this code when <rdar://problem/9362085> is resolved. 
+    NSWindow *window = [self window];
+    if (!window)
+        return;
+
+    _data->_windowBottomCornerIntersectionRect = [window _intersectBottomCornersWithRect:[self convertRect:[self visibleRect] toView:nil]];
+    if (!NSIsEmptyRect(_data->_windowBottomCornerIntersectionRect))
+        [self setNeedsDisplayInRect:[self convertRect:_data->_windowBottomCornerIntersectionRect fromView:nil]];
+#endif
 }
 
 @end
