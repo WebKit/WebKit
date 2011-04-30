@@ -1,3 +1,15 @@
+2011-04-29  Emil Eklund  <eae@chromium.org>
+
+        Reviewed by Tony Chang.
+
+        Setting outerHTML should merge text nodes
+        https://bugs.webkit.org/show_bug.cgi?id=52686
+        
+        Add test for setting Element.outerHTML.
+
+        * fast/dom/set-outer-html-expected.txt: Added.
+        * fast/dom/set-outer-html.html: Added.
+
 2011-04-29  Emil A Eklund  <eae@chromium.org>
 
         Reviewed by Dimitri Glazkov.

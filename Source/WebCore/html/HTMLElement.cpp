@@ -360,6 +360,22 @@ void HTMLElement::setInnerHTML(const String& html, ExceptionCode& ec)
         replaceChildrenWithFragment(this, fragment.release(), ec);
 }
 
+static void mergeWithNextTextNode(PassRefPtr<Node> node, ExceptionCode& ec)
+{
+    ASSERT(node && node->isTextNode());
+    Node* next = node->nextSibling();
+    if (!next || !next->isTextNode())
+        return;
+    
+    RefPtr<Text> textNode = static_cast<Text*>(node.get());
+    RefPtr<Text> textNext = static_cast<Text*>(next);
+    textNode->appendData(textNext->data(), ec);
+    if (ec)
+        return;
+    if (textNext->parentNode()) // Might have been removed by mutation event.
+        textNext->remove(ec);
+}
+
 void HTMLElement::setOuterHTML(const String& html, ExceptionCode& ec)
 {
     Node* p = parentNode();
@@ -367,13 +383,21 @@ void HTMLElement::setOuterHTML(const String& html, ExceptionCode& ec)
         ec = NO_MODIFICATION_ALLOWED_ERR;
         return;
     }
-    HTMLElement* parent = toHTMLElement(p);
+    RefPtr<HTMLElement> parent = static_cast<HTMLElement*>(p);
+    RefPtr<Node> prev = previousSibling();
+    RefPtr<Node> next = nextSibling();
 
-    RefPtr<DocumentFragment> fragment = createFragmentFromSource(html, parent, ec);
-    if (fragment) {
-        // FIXME: Why doesn't this have code to merge neighboring text nodes the way setOuterText does?
-        parent->replaceChild(fragment.release(), this, ec);
-    }
+    RefPtr<DocumentFragment> fragment = createFragmentFromSource(html, parent.get(), ec);
+    if (ec)
+        return;
+      
+    parent->replaceChild(fragment.release(), this, ec);
+    RefPtr<Node> node = next ? next->previousSibling() : 0;
+    if (!ec && node && node->isTextNode())
+        mergeWithNextTextNode(node.release(), ec);
+
+    if (!ec && prev && prev->isTextNode())
+        mergeWithNextTextNode(prev.release(), ec);
 }
 
 PassRefPtr<DocumentFragment> HTMLElement::textToFragment(const String& text, ExceptionCode& ec)
@@ -455,22 +479,6 @@ void HTMLElement::setInnerText(const String& text, ExceptionCode& ec)
     RefPtr<DocumentFragment> fragment = textToFragment(text, ec);
     if (!ec)
         replaceChildrenWithFragment(this, fragment.release(), ec);
-}
-
-static void mergeWithNextTextNode(PassRefPtr<Node> node, ExceptionCode& ec)
-{
-    ASSERT(node && node->isTextNode());
-    Node* next = node->nextSibling();
-    if (!next || !next->isTextNode())
-        return;
-    
-    RefPtr<Text> textNode = static_cast<Text*>(node.get());
-    RefPtr<Text> textNext = static_cast<Text*>(next);
-    textNode->appendData(textNext->data(), ec);
-    if (ec)
-        return;
-    if (textNext->parentNode()) // Might have been removed by mutation event.
-        textNext->remove(ec);
 }
 
 void HTMLElement::setOuterText(const String &text, ExceptionCode& ec)
