@@ -68,7 +68,7 @@ void ctiPatchCallByReturnAddress(CodeBlock* codeblock, ReturnAddressPtr returnAd
     repatchBuffer.relinkCallerToFunction(returnAddress, newCalleeFunction);
 }
 
-JIT::JIT(JSGlobalData* globalData, CodeBlock* codeBlock, void* linkerOffset)
+JIT::JIT(JSGlobalData* globalData, CodeBlock* codeBlock)
     : m_interpreter(globalData->interpreter)
     , m_globalData(globalData)
     , m_codeBlock(codeBlock)
@@ -86,7 +86,6 @@ JIT::JIT(JSGlobalData* globalData, CodeBlock* codeBlock, void* linkerOffset)
     , m_lastResultBytecodeRegister(std::numeric_limits<int>::max())
     , m_jumpTargetsPosition(0)
 #endif
-    , m_linkerOffset(linkerOffset)
 {
 }
 
@@ -513,7 +512,7 @@ JITCode JIT::privateCompile(CodePtr* functionEntryArityCheck)
 
     ASSERT(m_jmpTable.isEmpty());
 
-    LinkBuffer patchBuffer(this, m_globalData->executableAllocator.poolForSize(m_assembler.size()), m_linkerOffset);
+    LinkBuffer patchBuffer(this, m_globalData->executableAllocator.poolForSize(m_assembler.size()));
 
     // Translate vPC offsets into addresses in JIT generated code, for switch tables.
     for (unsigned i = 0; i < m_switches.size(); ++i) {

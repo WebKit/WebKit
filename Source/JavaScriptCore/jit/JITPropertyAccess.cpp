@@ -77,7 +77,7 @@ JIT::CodePtr JIT::stringGetByValStubGenerator(JSGlobalData* globalData, Executab
     jit.move(TrustedImm32(0), regT0);
     jit.ret();
     
-    LinkBuffer patchBuffer(&jit, pool, 0);
+    LinkBuffer patchBuffer(&jit, pool);
     return patchBuffer.finalizeCode().m_code;
 }
 
@@ -601,7 +601,7 @@ void JIT::privateCompilePutByIdTransition(StructureStubInfo* stubInfo, Structure
     restoreArgumentReferenceForTrampoline();
     Call failureCall = tailRecursiveCall();
 
-    LinkBuffer patchBuffer(this, m_codeBlock->executablePool(), 0);
+    LinkBuffer patchBuffer(this, m_codeBlock->executablePool());
 
     patchBuffer.link(failureCall, FunctionPtr(direct ? cti_op_put_by_id_direct_fail : cti_op_put_by_id_fail));
 
@@ -679,7 +679,7 @@ void JIT::privateCompilePatchGetArrayLength(ReturnAddressPtr returnAddress)
     emitFastArithIntToImmNoCheck(regT2, regT0);
     Jump success = jump();
 
-    LinkBuffer patchBuffer(this, m_codeBlock->executablePool(), 0);
+    LinkBuffer patchBuffer(this, m_codeBlock->executablePool());
 
     // Use the patch information to link the failure cases back to the original slow case routine.
     CodeLocationLabel slowCaseBegin = stubInfo->callReturnLocation.labelAtOffset(-patchOffsetGetByIdSlowCaseCall);
@@ -737,7 +737,7 @@ void JIT::privateCompileGetByIdProto(StructureStubInfo* stubInfo, Structure* str
     } else
         compileGetDirectOffset(protoObject, regT0, cachedOffset);
     Jump success = jump();
-    LinkBuffer patchBuffer(this, m_codeBlock->executablePool(), 0);
+    LinkBuffer patchBuffer(this, m_codeBlock->executablePool());
 
     // Use the patch information to link the failure cases back to the original slow case routine.
     CodeLocationLabel slowCaseBegin = stubInfo->callReturnLocation.labelAtOffset(-patchOffsetGetByIdSlowCaseCall);
@@ -790,7 +790,7 @@ void JIT::privateCompileGetByIdSelfList(StructureStubInfo* stubInfo, Polymorphic
         compileGetDirectOffset(regT0, regT0, structure, cachedOffset);
     Jump success = jump();
 
-    LinkBuffer patchBuffer(this, m_codeBlock->executablePool(), 0);
+    LinkBuffer patchBuffer(this, m_codeBlock->executablePool());
 
     if (needsStubLink) {
         for (Vector<CallRecord>::iterator iter = m_calls.begin(); iter != m_calls.end(); ++iter) {
@@ -855,7 +855,7 @@ void JIT::privateCompileGetByIdProtoList(StructureStubInfo* stubInfo, Polymorphi
 
     Jump success = jump();
 
-    LinkBuffer patchBuffer(this, m_codeBlock->executablePool(), 0);
+    LinkBuffer patchBuffer(this, m_codeBlock->executablePool());
 
     if (needsStubLink) {
         for (Vector<CallRecord>::iterator iter = m_calls.begin(); iter != m_calls.end(); ++iter) {
@@ -921,7 +921,7 @@ void JIT::privateCompileGetByIdChainList(StructureStubInfo* stubInfo, Polymorphi
         compileGetDirectOffset(protoObject, regT0, cachedOffset);
     Jump success = jump();
 
-    LinkBuffer patchBuffer(this, m_codeBlock->executablePool(), 0);
+    LinkBuffer patchBuffer(this, m_codeBlock->executablePool());
     
     if (needsStubLink) {
         for (Vector<CallRecord>::iterator iter = m_calls.begin(); iter != m_calls.end(); ++iter) {
@@ -989,7 +989,7 @@ void JIT::privateCompileGetByIdChain(StructureStubInfo* stubInfo, Structure* str
         compileGetDirectOffset(protoObject, regT0, cachedOffset);
     Jump success = jump();
 
-    LinkBuffer patchBuffer(this, m_codeBlock->executablePool(), 0);
+    LinkBuffer patchBuffer(this, m_codeBlock->executablePool());
 
     if (needsStubLink) {
         for (Vector<CallRecord>::iterator iter = m_calls.begin(); iter != m_calls.end(); ++iter) {

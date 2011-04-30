@@ -178,9 +178,9 @@ namespace JSC {
         static const int patchGetByIdDefaultOffset = 256;
 
     public:
-        static JITCode compile(JSGlobalData* globalData, CodeBlock* codeBlock, CodePtr* functionEntryArityCheck = 0, void* offsetBase = 0)
+        static JITCode compile(JSGlobalData* globalData, CodeBlock* codeBlock, CodePtr* functionEntryArityCheck = 0)
         {
-            return JIT(globalData, codeBlock, offsetBase).privateCompile(functionEntryArityCheck);
+            return JIT(globalData, codeBlock).privateCompile(functionEntryArityCheck);
         }
 
         static void compileGetByIdProto(JSGlobalData* globalData, CallFrame* callFrame, CodeBlock* codeBlock, StructureStubInfo* stubInfo, Structure* structure, Structure* prototypeStructure, const Identifier& ident, const PropertySlot& slot, size_t cachedOffset, ReturnAddressPtr returnAddress)
@@ -221,7 +221,7 @@ namespace JSC {
         {
             if (!globalData->canUseJIT())
                 return;
-            JIT jit(globalData, 0, 0);
+            JIT jit(globalData, 0);
             jit.privateCompileCTIMachineTrampolines(executablePool, globalData, trampolines);
         }
 
@@ -229,7 +229,7 @@ namespace JSC {
         {
             if (!globalData->canUseJIT())
                 return CodePtr();
-            JIT jit(globalData, 0, 0);
+            JIT jit(globalData, 0);
             return jit.privateCompileCTINativeCall(executablePool, globalData, func);
         }
 
@@ -258,7 +258,7 @@ namespace JSC {
             }
         };
 
-        JIT(JSGlobalData*, CodeBlock* = 0, void* = 0);
+        JIT(JSGlobalData*, CodeBlock* = 0);
 
         void privateCompileMainPass();
         void privateCompileLinkPass();
@@ -993,7 +993,6 @@ namespace JSC {
         int m_uninterruptedConstantSequenceBegin;
 #endif
 #endif
-        void* m_linkerOffset;
         static CodePtr stringGetByValStubGenerator(JSGlobalData* globalData, ExecutablePool* pool);
     } JIT_CLASS_ALIGNMENT;
 

@@ -125,7 +125,7 @@ namespace JSC {
         
         MacroAssemblerCodePtr finalize(MacroAssemblerCodePtr fallback)
         {
-            LinkBuffer patchBuffer(this, m_pool.get(), 0);
+            LinkBuffer patchBuffer(this, m_pool.get());
             patchBuffer.link(m_failures, CodeLocationLabel(fallback));
             return patchBuffer.finalizeCode().m_code;
         }

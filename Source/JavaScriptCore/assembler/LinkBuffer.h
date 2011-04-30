@@ -70,8 +70,7 @@ public:
     // Note: Initialization sequence is significant, since executablePool is a PassRefPtr.
     //       First, executablePool is copied into m_executablePool, then the initialization of
     //       m_code uses m_executablePool, *not* executablePool, since this is no longer valid.
-    // The linkOffset parameter should only be non-null when recompiling for exception info
-    LinkBuffer(MacroAssembler* masm, PassRefPtr<ExecutablePool> executablePool, void* linkOffset)
+    LinkBuffer(MacroAssembler* masm, PassRefPtr<ExecutablePool> executablePool)
         : m_executablePool(executablePool)
         , m_size(0)
         , m_code(0)
@@ -80,7 +79,7 @@ public:
         , m_completed(false)
 #endif
     {
-        linkCode(linkOffset);
+        linkCode();
     }
 
     ~LinkBuffer()
@@ -206,9 +205,8 @@ private:
         return m_code;
     }
 
-    void linkCode(void* linkOffset)
+    void linkCode()
     {
-        UNUSED_PARAM(linkOffset);
         ASSERT(!m_code);
 #if !ENABLE(BRANCH_COMPACTION)
         m_code = m_assembler->m_assembler.executableCopy(m_executablePool.get());
@@ -221,7 +219,6 @@ private:
         ExecutableAllocator::makeWritable(m_code, m_assembler->size());
         uint8_t* inData = (uint8_t*)m_assembler->unlinkedCode();
         uint8_t* outData = reinterpret_cast<uint8_t*>(m_code);
-        const uint8_t* linkBase = linkOffset ? reinterpret_cast<uint8_t*>(linkOffset) : outData;
         int readPtr = 0;
         int writePtr = 0;
         Vector<LinkRecord>& jumpsToLink = m_assembler->jumpsToLink();
@@ -241,11 +238,11 @@ private:
             // branches we need to be precise, forward branches we are pessimistic
             const uint8_t* target;
             if (jumpsToLink[i].to() >= jumpsToLink[i].from())
-                target = linkBase + jumpsToLink[i].to() - offset; // Compensate for what we have collapsed so far
+                target = outData + jumpsToLink[i].to() - offset; // Compensate for what we have collapsed so far
             else
-                target = linkBase + jumpsToLink[i].to() - m_assembler->executableOffsetFor(jumpsToLink[i].to());
+                target = outData + jumpsToLink[i].to() - m_assembler->executableOffsetFor(jumpsToLink[i].to());
             
-            JumpLinkType jumpLinkType = m_assembler->computeJumpType(jumpsToLink[i], linkBase + writePtr, target);
+            JumpLinkType jumpLinkType = m_assembler->computeJumpType(jumpsToLink[i], outData + writePtr, target);
             // Compact branch if we can...
             if (m_assembler->canCompact(jumpsToLink[i].type())) {
                 // Step back in the write stream
@@ -261,14 +258,10 @@ private:
         memcpy(outData + writePtr, inData + readPtr, m_assembler->size() - readPtr);
         m_assembler->recordLinkOffsets(readPtr, m_assembler->size(), readPtr - writePtr);
         
-        // Actually link everything (don't link if we've be given a linkoffset as it's a
-        // waste of time: linkOffset is used for recompiling to get exception info)
-        if (!linkOffset) {
-            for (unsigned i = 0; i < jumpCount; ++i) {
-                uint8_t* location = outData + jumpsToLink[i].from();
-                uint8_t* target = outData + jumpsToLink[i].to() - m_assembler->executableOffsetFor(jumpsToLink[i].to());
-                m_assembler->link(jumpsToLink[i], location, target);
-            }
+        for (unsigned i = 0; i < jumpCount; ++i) {
+            uint8_t* location = outData + jumpsToLink[i].from();
+            uint8_t* target = outData + jumpsToLink[i].to() - m_assembler->executableOffsetFor(jumpsToLink[i].to());
+            m_assembler->link(jumpsToLink[i], location, target);
         }
 
         jumpsToLink.clear();
