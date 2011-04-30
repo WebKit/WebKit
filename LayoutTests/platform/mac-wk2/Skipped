@@ -843,6 +843,7 @@ svg/zoom/text/zoom-coords-viewattr-01-b.svg
 
 # WebKit2 needs layoutTestController.overridePreference
 # <https://bugs.webkit.org/show_bug.cgi?id=42197>
+fast/canvas/webgl/framebuffer-object-attachment.html
 fast/canvas/webgl/gl-vertex-attrib-zero-issues.html
 fast/events/pagehide-timeout.html
 fast/canvas/webgl/gl-getshadersource.html
