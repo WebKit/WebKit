@@ -1,3 +1,9 @@
+2011-04-30  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [Qt] Add one more flakey test to the Skipped list.
+
+        * platform/qt-mac/Skipped:
+
 2011-04-29  Csaba Osztrogonác  <ossy@webkit.org>
 
         Unreviewed. Update Qt specific expected files after r85355.
