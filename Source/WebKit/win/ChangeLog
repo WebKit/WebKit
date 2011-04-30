@@ -1,3 +1,30 @@
+2011-04-28  Jer Noble  <jer.noble@apple.com>
+
+        Reviewed by Jon Honeycutt.
+
+        Implement FULLSCREEN_API on Windows, Part 1: Stubs
+        https://bugs.webkit.org/show_bug.cgi?id=59778
+
+        Create all the stubs necessary to for enabling FULLSCREEN_API
+        on Windows. This includes the COM interfaces for preferences and
+        for overriding full screen behavior in a UI Delegate.
+
+        * Interfaces/IWebPreferencesPrivate.idl: Add functions for enabling
+            full screen preference.
+        * Interfaces/IWebUIDelegatePrivate.idl: Add functions for overriding
+            full screen behavior.
+        * WebCoreSupport/WebChromeClient.cpp:
+        (WebChromeClient::supportsFullScreenForElement): Added.
+        (WebChromeClient::enterFullScreenForElement): Added.
+        (WebChromeClient::exitFullScreenForElement): Added.
+        * WebCoreSupport/WebChromeClient.h:
+        * WebPreferenceKeysPrivate.h: Added WebKitFullScreenEnable key.
+        * WebPreferences.cpp:
+        (WebPreferences::isFullScreenEnabled): Added. Implements function
+           defined in IWebUIDelegatePrivate.
+        (WebPreferences::setFullScreenEnabled): Ditto.
+        * WebPreferences.h:
+
 2011-04-28  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Eric Seidel.

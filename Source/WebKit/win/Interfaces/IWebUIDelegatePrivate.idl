@@ -110,3 +110,16 @@ interface IWebUIDelegatePrivate3 : IWebUIDelegatePrivate2
 {
     HRESULT didPressMissingPluginButton([in] IDOMElement*);
 }
+
+[
+    object,
+    oleautomation,
+    uuid(944e8e46-6d63-450f-b381-c5d68b80b727),
+    pointer_default(unique)
+]
+interface IWebUIDelegatePrivate4 : IWebUIDelegatePrivate3
+{
+    HRESULT supportsFullScreenForElement([in] IDOMElement*, [in] BOOL withKeyboard, [out, retval] BOOL* supports);
+    HRESULT enterFullScreenForElement([in] IDOMElement*);
+    HRESULT exitFullScreenForElement([in] IDOMElement*);
+}

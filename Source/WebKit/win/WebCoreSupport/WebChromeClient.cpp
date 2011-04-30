@@ -877,3 +877,42 @@ PassRefPtr<SearchPopupMenu> WebChromeClient::createSearchPopupMenu(PopupMenuClie
     return adoptRef(new SearchPopupMenuWin(client));
 }
 
+#if ENABLE(FULLSCREEN_API)
+bool WebChromeClient::supportsFullScreenForElement(const Element* element, bool requestingKeyboardAccess)
+{
+    COMPtr<IWebUIDelegate> uiDelegate;
+    if (SUCCEEDED(m_webView->uiDelegate(&uiDelegate))) {
+        COMPtr<IWebUIDelegatePrivate4> uiDelegatePrivate4(Query, uiDelegate);
+        BOOL supports = FALSE;
+        COMPtr<IDOMElement> domElement(AdoptCOM, DOMElement::createInstance(const_cast<Element*>(element)));
+
+        if (uiDelegatePrivate4 && SUCCEEDED(uiDelegatePrivate4->supportsFullScreenForElement(domElement.get(), requestingKeyboardAccess, &supports)))
+            return supports;
+    }
+
+    return FALSE;
+}
+
+void WebChromeClient::enterFullScreenForElement(Element* element)
+{
+    COMPtr<IWebUIDelegate> uiDelegate;
+    if (SUCCEEDED(m_webView->uiDelegate(&uiDelegate))) {
+        COMPtr<IWebUIDelegatePrivate4> uiDelegatePrivate4(Query, uiDelegate);
+        COMPtr<IDOMElement> domElement(AdoptCOM, DOMElement::createInstance(element));
+        if (uiDelegatePrivate4 && SUCCEEDED(uiDelegatePrivate4->enterFullScreenForElement(domElement.get())))
+            return;
+    } 
+}
+
+void WebChromeClient::exitFullScreenForElement(Element* element)
+{
+    COMPtr<IWebUIDelegate> uiDelegate;
+    if (SUCCEEDED(m_webView->uiDelegate(&uiDelegate))) {
+        COMPtr<IWebUIDelegatePrivate4> uiDelegatePrivate4(Query, uiDelegate);
+        COMPtr<IDOMElement> domElement(AdoptCOM, DOMElement::createInstance(element));
+        if (uiDelegatePrivate4 && SUCCEEDED(uiDelegatePrivate4->exitFullScreenForElement(domElement.get())))
+            return;
+    }
+}
+
+#endif

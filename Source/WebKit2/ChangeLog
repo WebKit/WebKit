@@ -1,3 +1,33 @@
+2011-04-28  Jer Noble  <jer.noble@apple.com>
+
+        Reviewed by Jon Honeycutt.
+
+        Implement FULLSCREEN_API on Windows, Part 1: Stubs
+        https://bugs.webkit.org/show_bug.cgi?id=59778
+
+        Add Windows specific stubs for WebKit2 full screen APIs.
+
+        * UIProcess/win/WebFullScreenManagerProxyWin.cpp: Added.
+        (WebKit::WebFullScreenManagerProxy::enterFullScreen): Added stub.
+        (WebKit::WebFullScreenManagerProxy::exitFullScreen): Added stub.
+        (WebKit::WebFullScreenManagerProxy::beganEnterFullScreenAnimation): Added stub.
+        (WebKit::WebFullScreenManagerProxy::finishedEnterFullScreenAnimation): Added stub.
+        (WebKit::WebFullScreenManagerProxy::beganExitFullScreenAnimation): Added stub.
+        (WebKit::WebFullScreenManagerProxy::finishedExitFullScreenAnimation): Added stub.
+        (WebKit::WebFullScreenManagerProxy::enterAcceleratedCompositingMode): Added stub.
+        (WebKit::WebFullScreenManagerProxy::exitAcceleratedCompositingMode): Added stub.
+        (WebKit::WebFullScreenManagerProxy::getFullScreenRect): Added stub.
+        * WebProcess/FullScreen/win/WebFullScreenManagerWin.cpp: Added.
+        (WebKit::WebFullScreenManager::create): Added. Returns a WebFullScreenManagerWin.
+        (WebKit::WebFullScreenManagerWin::create): Added.
+        (WebKit::WebFullScreenManagerWin::WebFullScreenManagerWin): Added.
+        (WebKit::WebFullScreenManagerWin::~WebFullScreenManagerWin): Added.
+        (WebKit::WebFullScreenManagerWin::setRootFullScreenLayer): Added stub.
+        (WebKit::WebFullScreenManagerWin::beginEnterFullScreenAnimation): Added stub.
+        (WebKit::WebFullScreenManagerWin::beginExitFullScreenAnimation): Added stub.
+        * WebProcess/FullScreen/win/WebFullScreenManagerWin.h: Added.
+        * win/WebKit2.vcproj: Added new classes.
+
 2011-04-29  Alexey Proskuryakov  <ap@apple.com>
 
         Reviewed by Simon Fraser and Dan Bernstein.

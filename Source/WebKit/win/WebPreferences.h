@@ -432,6 +432,9 @@ public:
     virtual HRESULT STDMETHODCALLTYPE loadsSiteIconsIgnoringImageLoadingPreference(BOOL*);
     virtual HRESULT STDMETHODCALLTYPE setLoadsSiteIconsIgnoringImageLoadingPreference(BOOL);
 
+    virtual HRESULT STDMETHODCALLTYPE setFullScreenEnabled(BOOL);
+    virtual HRESULT STDMETHODCALLTYPE isFullScreenEnabled(BOOL*);
+
     // WebPreferences
 
     // This method accesses a different preference key than developerExtrasEnabled.

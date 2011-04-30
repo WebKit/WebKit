@@ -150,3 +150,5 @@
 #define WebKitDNSPrefetchingEnabledPreferenceKey "WebKitDNSPrefetchingEnabled"
 
 #define WebKitMemoryInfoEnabledPreferenceKey "WebKitMemoryInfoEnabled"
+
+#define WebKitFullScreenEnabledPreferenceKey "WebKitFullScreenEnabled"

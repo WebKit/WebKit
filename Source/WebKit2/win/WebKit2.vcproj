@@ -2166,6 +2166,14 @@
 					>
 				</File>
 				<File
+					RelativePath="..\WebProcess\InjectedBundle\InjectedBundlePageFullScreenClient.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\WebProcess\InjectedBundle\InjectedBundlePageFullScreenClient.h"
+					>
+				</File>
+				<File
 					RelativePath="..\WebProcess\InjectedBundle\InjectedBundlePageLoaderClient.cpp"
 					>
 				</File>
@@ -2484,6 +2492,30 @@
 							>
 						</File>
 					</Filter>
+				</Filter>
+			</Filter>
+			<Filter
+				Name="FullScreen"
+				>
+				<File
+					RelativePath="..\WebProcess\FullScreen\WebFullScreenManager.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\WebProcess\FullScreen\WebFullScreenManager.h"
+					>
+				</File>
+				<Filter
+					Name="win"
+					>
+					<File
+						RelativePath="..\WebProcess\FullScreen\win\WebFullScreenManagerWin.cpp"
+						>
+					</File>
+					<File
+						RelativePath="..\WebProcess\FullScreen\win\WebFullScreenManagerWin.h"
+						>
+					</File>
 				</Filter>
 			</Filter>
 		</Filter>
@@ -3431,6 +3463,10 @@
 				</File>
 				<File
 					RelativePath="..\UIProcess\win\WebContextWin.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\UIProcess\win\WebFullScreenManagerProxyWin.cpp"
 					>
 				</File>
 				<File

@@ -124,4 +124,7 @@ interface IWebPreferencesPrivate : IUnknown
 
     HRESULT setLoadsSiteIconsIgnoringImageLoadingPreference([in] BOOL enabled);
     HRESULT loadsSiteIconsIgnoringImageLoadingPreference([out, retval] BOOL* enabled);
+
+    HRESULT setFullScreenEnabled([in] BOOL enabled);
+    HRESULT isFullScreenEnabled([out, retval] BOOL* enabled);
 }

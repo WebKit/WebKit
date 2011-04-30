@@ -1528,6 +1528,29 @@ HRESULT WebPreferences::setMemoryInfoEnabled(BOOL enabled)
     return S_OK;
 }
 
+HRESULT WebPreferences::isFullScreenEnabled(BOOL* enabled)
+{
+#if ENABLE(FULLSCREEN_API)
+    if (!enabled)
+        return E_POINTER;
+
+    *enabled = boolValueForKey(CFSTR(WebKitFullScreenEnabledPreferenceKey));
+    return S_OK;
+#else
+    return E_NOTIMPL;
+#endif
+}
+
+HRESULT WebPreferences::setFullScreenEnabled(BOOL enabled)
+{
+#if ENABLE(FULLSCREEN_API)
+    setBoolValue(CFSTR(WebKitFullScreenEnabledPreferenceKey), enabled);
+    return S_OK;
+#else
+    return E_NOTIMPL;
+#endif
+}
+
 void WebPreferences::willAddToWebView()
 {
     ++m_numWebViews;
