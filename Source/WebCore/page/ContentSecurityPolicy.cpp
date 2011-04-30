@@ -469,6 +469,11 @@ void ContentSecurityPolicy::didReceiveHeader(const String& header)
 
     parse(header);
     m_havePolicy = true;
+
+    if (!internalAllowEval()) {
+        if (Frame* frame = m_document->frame())
+            frame->script()->disableEval();
+    }
 }
 
 void ContentSecurityPolicy::reportViolation(const String& directiveText, const String& consoleMessage) const
@@ -543,9 +548,14 @@ bool ContentSecurityPolicy::allowInlineStyle() const
     return false;
 }
 
+bool ContentSecurityPolicy::internalAllowEval() const
+{
+    return !m_scriptSrc || m_scriptSrc->allowEval();
+}
+
 bool ContentSecurityPolicy::allowEval() const
 {
-    if (!m_scriptSrc || m_scriptSrc->allowEval())
+    if (internalAllowEval())
         return true;
 
     DEFINE_STATIC_LOCAL(String, consoleMessage, ("Refused to evaluate script because of Content-Security-Policy.\n"));

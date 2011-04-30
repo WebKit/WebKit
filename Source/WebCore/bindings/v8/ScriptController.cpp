@@ -305,6 +305,12 @@ bool ScriptController::haveInterpreter() const
     return m_proxy->windowShell()->isContextInitialized();
 }
 
+void ScriptController::disableEval()
+{
+    // FIXME: We need help from V8 to implement this function:
+    // http://code.google.com/p/v8/issues/detail?id=1258
+}
+
 PassScriptInstance ScriptController::createScriptInstanceForWidget(Widget* widget)
 {
     ASSERT(widget);

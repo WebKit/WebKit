@@ -237,6 +237,11 @@ int ScriptController::eventHandlerLineNumber() const
     return 0;
 }
 
+void ScriptController::disableEval()
+{
+    windowShell(mainThreadNormalWorld())->window()->disableEval();
+}
+
 bool ScriptController::processingUserGesture()
 {
     ExecState* exec = JSMainThreadExecState::currentState();

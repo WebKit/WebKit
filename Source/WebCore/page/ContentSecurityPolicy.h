@@ -70,6 +70,7 @@ private:
     PassOwnPtr<CSPDirective> createCSPDirective(const String& name, const String& value);
 
     void reportViolation(const String& directiveText, const String& consoleMessage) const;
+    bool internalAllowEval() const;
 
     bool m_havePolicy;
     Document* m_document;

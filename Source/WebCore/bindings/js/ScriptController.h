@@ -107,7 +107,9 @@ public:
     ScriptValue evaluateInWorld(const ScriptSourceCode&, DOMWrapperWorld*);
 
     int eventHandlerLineNumber() const;
-    
+
+    void disableEval();
+
     void setProcessingTimerCallback(bool b) { m_processingTimerCallback = b; }
     static bool processingUserGesture();
     bool anyPageIsProcessingUserGesture() const;

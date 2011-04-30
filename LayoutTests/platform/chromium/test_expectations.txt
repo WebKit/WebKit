@@ -3213,6 +3213,10 @@ BUGWK57259 : http/tests/misc/link-rel-icon-beforeload.html = FAIL PASS
 // This test is very flaky on Mac and a little flaky on Win and Linux.
 BUGXXX : media/video-delay-load-event.html = PASS TEXT
 
+// We need help from V8 to implement this feature.
+// http://code.google.com/p/v8/issues/detail?id=1258
+BUGV8: http/tests/security/contentSecurityPolicy/eval-blocked.html = TEXT
+
 // These tests appears to timeout every 10 or 20 runs.
 BUGWK51721 : fast/encoding/parser-tests.html = TIMEOUT PASS
 BUGDPRANKE : fast/encoding/parser-tests-10.html = TIMEOUT PASS

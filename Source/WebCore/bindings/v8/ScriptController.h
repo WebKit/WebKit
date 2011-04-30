@@ -118,6 +118,8 @@ public:
     // Check if the javascript engine has been initialized.
     bool haveInterpreter() const;
 
+    void disableEval();
+
     static bool canAccessFromCurrentOrigin(Frame*);
 
 #if ENABLE(INSPECTOR)

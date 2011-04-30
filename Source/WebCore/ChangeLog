@@ -1,3 +1,25 @@
+2011-04-29  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        CSP script-src should block eval
+        https://bugs.webkit.org/show_bug.cgi?id=59850
+
+        Rather than have JavaScriptCore call back into WebCore to learn whether
+        eval is enabled, we push that bit of the policy into JavaScriptCore.
+
+        Tests: http/tests/security/contentSecurityPolicy/eval-allowed.html
+               http/tests/security/contentSecurityPolicy/eval-blocked.html
+
+        * bindings/js/ScriptController.cpp:
+        (WebCore::ScriptController::disableEval):
+        * bindings/js/ScriptController.h:
+        * page/ContentSecurityPolicy.cpp:
+        (WebCore::ContentSecurityPolicy::didReceiveHeader):
+        (WebCore::ContentSecurityPolicy::internalAllowEval):
+        (WebCore::ContentSecurityPolicy::allowEval):
+        * page/ContentSecurityPolicy.h:
+
 2011-04-29  Joseph Pecoraro  <joepeck@webkit.org>
 
         GTK build fix. Missed moving DateComponents and

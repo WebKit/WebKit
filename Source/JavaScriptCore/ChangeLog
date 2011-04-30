@@ -1,3 +1,31 @@
+2011-04-29  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        CSP script-src should block eval
+        https://bugs.webkit.org/show_bug.cgi?id=59850
+
+        ggaren recommend a different approach to this patch, essentially
+        installing a new function for function-eval and changing the AST
+        representation of operator-eval to call function-eval.  However, I'm
+        not sure that approach is workable because the ASTBuilder doesn't know
+        about global objects, and there is added complication due to the cache.
+
+        This approach is more dynamic, adding a branch in EvalExecutable to
+        detect whether eval is current disabled in the lexical scope.  The spec
+        is slightly unclear about whether we should return undefined or throw
+        an exception.  I've asked Brandon to clarify the spec, but throwing an
+        exception seems natural.
+
+        * JavaScriptCore.exp:
+        * runtime/Executable.cpp:
+        (JSC::EvalExecutable::compileInternal):
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::disableEval):
+        * runtime/JSGlobalObject.h:
+        (JSC::JSGlobalObject::JSGlobalObject):
+        (JSC::JSGlobalObject::isEvalEnabled):
+
 2011-04-29  Gavin Barraclough  <barraclough@apple.com>
 
         Reviewed by Oliver Hunt.
