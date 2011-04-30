@@ -178,6 +178,8 @@ Settings::Settings(Page* page)
     , m_useQuickLookResourceCachingQuirks(false)
     , m_forceCompositingMode(false)
     , m_shouldInjectUserScriptsInInitialEmptyDocument(false)
+    , m_allowDisplayOfInsecureContent(true)
+    , m_allowRunningOfInsecureContent(true)
 {
     // A Frame may not have been created yet, so we initialize the AtomicString 
     // hash before trying to use it.

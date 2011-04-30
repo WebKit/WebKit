@@ -397,4 +397,14 @@ void WebSettingsImpl::setFullScreenEnabled(bool enabled)
 #endif
 }
 
+void WebSettingsImpl::setAllowDisplayOfInsecureContent(bool enabled)
+{
+    m_settings->setAllowDisplayOfInsecureContent(enabled);
+}
+
+void WebSettingsImpl::setAllowRunningOfInsecureContent(bool enabled)
+{
+    m_settings->setAllowRunningOfInsecureContent(enabled);
+}
+
 } // namespace WebKit

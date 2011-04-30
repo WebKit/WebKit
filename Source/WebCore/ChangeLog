@@ -1,3 +1,31 @@
+2011-04-29  Chris Evans  <cevans@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        Add WebCore::Setting to block displaying and/or running insecure content on secure pages
+        https://bugs.webkit.org/show_bug.cgi?id=58378
+
+        Test: To follow in subsequent patch, including the wiring to expose the new settings to LayoutTests.
+
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::checkIfDisplayInsecureContent): Return whether or not the load should be blocked, and tweak the message upon blocking.
+        (WebCore::FrameLoader::checkIfRunInsecureContent): Return whether or not the load should be blocked, and tweak the message upon blocking.
+        * loader/FrameLoader.h:
+        * loader/MainResourceLoader.cpp:
+        (WebCore::MainResourceLoader::willSendRequest): Check if the frame load is blocked due to mixed content and cancel it if so. The check was moved up so that it occurs before firing the load callbacks, to avoid any outgoing network hits or accounting. Redirects are handled because willSendRequest is called for each one in the chain.
+        * loader/SubframeLoader.cpp:
+        (WebCore::SubframeLoader::loadMediaPlayerProxyPlugin): Handle the blocking of mixed-content plug-in loads.
+        (WebCore::SubframeLoader::loadPlugin): Handle the blocking of mixed-content plug-in loads.
+        * loader/cache/CachedResourceLoader.cpp:
+        (WebCore::CachedResourceLoader::canRequest): Handle the blocking of various loads due to mixed content conditions.
+        * page/Settings.cpp:
+        (WebCore::Settings::Settings): Permit mixed-content loads by default to avoid a change in behavior by default.
+        * page/Settings.h: Add two new booleans to control blocking of mixed content (displaying and running thereof).
+        (WebCore::Settings::setAllowDisplayOfInsecureContent):
+        (WebCore::Settings::allowDisplayOfInsecureContent):
+        (WebCore::Settings::setAllowRunningOfInsecureContent):
+        (WebCore::Settings::allowRunningOfInsecureContent):
+
 2011-04-29  Ryosuke Niwa  <rniwa@webkit.org>
 
         Reviewed by Eric Seidel.

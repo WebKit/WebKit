@@ -207,14 +207,18 @@ void MainResourceLoader::willSendRequest(ResourceRequest& newRequest, const Reso
     if (newRequest.cachePolicy() == UseProtocolCachePolicy && isPostOrRedirectAfterPost(newRequest, redirectResponse))
         newRequest.setCachePolicy(ReloadIgnoringCacheData);
 
+    Frame* top = m_frame->tree()->top();
+    if (top != m_frame) {
+        if (!frameLoader()->checkIfDisplayInsecureContent(top->document()->securityOrigin(), newRequest.url())) {
+            cancel();
+            return;
+        }
+    }
+
     ResourceLoader::willSendRequest(newRequest, redirectResponse);
 
     // Don't set this on the first request. It is set when the main load was started.
     m_documentLoader->setRequest(newRequest);
-
-    Frame* top = m_frame->tree()->top();
-    if (top != m_frame)
-        frameLoader()->checkIfDisplayInsecureContent(top->document()->securityOrigin(), newRequest.url());
 
 #if ENABLE(OFFLINE_WEB_APPLICATIONS)
     if (!redirectResponse.isNull()) {

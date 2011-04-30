@@ -112,6 +112,8 @@ public:
     virtual void setValidationMessageTimerMagnification(int);
     virtual void setMinimumTimerInterval(double);
     virtual void setFullScreenEnabled(bool);
+    virtual void setAllowDisplayOfInsecureContent(bool);
+    virtual void setAllowRunningOfInsecureContent(bool);
 
 private:
     WebCore::Settings* m_settings;

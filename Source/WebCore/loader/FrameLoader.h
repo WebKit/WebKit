@@ -256,8 +256,8 @@ public:
 
     // Mixed content related functions.
     static bool isMixedContent(SecurityOrigin* context, const KURL&);
-    void checkIfDisplayInsecureContent(SecurityOrigin* context, const KURL&);
-    void checkIfRunInsecureContent(SecurityOrigin* context, const KURL&);
+    bool checkIfDisplayInsecureContent(SecurityOrigin* context, const KURL&);
+    bool checkIfRunInsecureContent(SecurityOrigin* context, const KURL&);
 
     Frame* opener();
     void setOpener(Frame*);

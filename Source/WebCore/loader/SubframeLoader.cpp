@@ -173,7 +173,8 @@ PassRefPtr<Widget> SubframeLoader::loadMediaPlayerProxyPlugin(Node* node, const 
     else if (mediaElement->isVideo())
         size = RenderVideo::defaultSize();
 
-    m_frame->loader()->checkIfRunInsecureContent(m_frame->document()->securityOrigin(), completedURL);
+    if (!m_frame->loader()->checkIfRunInsecureContent(m_frame->document()->securityOrigin(), completedURL))
+        return 0;
 
     RefPtr<Widget> widget = m_frame->loader()->client()->createMediaPlayerProxyPlugin(size, mediaElement, completedURL,
                                          paramNames, paramValues, "application/x-media-element-proxy-plugin");
@@ -352,7 +353,8 @@ bool SubframeLoader::loadPlugin(HTMLPlugInImageElement* pluginElement, const KUR
         return false;
 
     FrameLoader* frameLoader = m_frame->loader();
-    frameLoader->checkIfRunInsecureContent(document()->securityOrigin(), url);
+    if (!frameLoader->checkIfRunInsecureContent(document()->securityOrigin(), url))
+        return false;
 
     IntSize contentSize(renderer->contentWidth(), renderer->contentHeight());
     bool loadManually = document()->isPluginDocument() && !m_containsPlugins && toPluginDocument(document())->shouldLoadPluginManually();

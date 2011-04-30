@@ -399,6 +399,11 @@ namespace WebCore {
         void setShouldInjectUserScriptsInInitialEmptyDocument(bool flag) { m_shouldInjectUserScriptsInInitialEmptyDocument = flag; }
         bool shouldInjectUserScriptsInInitialEmptyDocument() { return m_shouldInjectUserScriptsInInitialEmptyDocument; }
 
+        void setAllowDisplayOfInsecureContent(bool flag) { m_allowDisplayOfInsecureContent = flag; }
+        bool allowDisplayOfInsecureContent() const { return m_allowDisplayOfInsecureContent; }
+        void setAllowRunningOfInsecureContent(bool flag) { m_allowRunningOfInsecureContent = flag; }
+        bool allowRunningOfInsecureContent() const { return m_allowRunningOfInsecureContent; }
+
     private:
         Page* m_page;
 
@@ -502,6 +507,8 @@ namespace WebCore {
         bool m_useQuickLookResourceCachingQuirks : 1;
         bool m_forceCompositingMode : 1;
         bool m_shouldInjectUserScriptsInInitialEmptyDocument : 1;
+        bool m_allowDisplayOfInsecureContent : 1;
+        bool m_allowRunningOfInsecureContent : 1;
 
 #if USE(AVFOUNDATION)
         static bool gAVFoundationEnabled;

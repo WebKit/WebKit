@@ -119,6 +119,8 @@ public:
     virtual void setValidationMessageTimerMagnification(int) = 0;
     virtual void setMinimumTimerInterval(double) = 0;
     virtual void setFullScreenEnabled(bool) = 0;
+    virtual void setAllowDisplayOfInsecureContent(bool) = 0;
+    virtual void setAllowRunningOfInsecureContent(bool) = 0;
 
 protected:
     ~WebSettings() { }

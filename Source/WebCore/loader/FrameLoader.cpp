@@ -1051,26 +1051,32 @@ bool FrameLoader::isMixedContent(SecurityOrigin* context, const KURL& url)
     return true;
 }
 
-void FrameLoader::checkIfDisplayInsecureContent(SecurityOrigin* context, const KURL& url)
+bool FrameLoader::checkIfDisplayInsecureContent(SecurityOrigin* context, const KURL& url)
 {
     if (!isMixedContent(context, url))
-        return;
+        return true;
 
-    String message = makeString("The page at ", m_frame->document()->url().string(), " displayed insecure content from ", url.string(), ".\n");
+    Settings* settings = m_frame->settings();
+    bool allowed = settings && settings->allowDisplayOfInsecureContent();
+    String message = makeString((allowed ? "" : "[blocked] "), "The page at ", m_frame->document()->url().string(), " displayed insecure content from ", url.string(), ".\n");
     m_frame->domWindow()->console()->addMessage(HTMLMessageSource, LogMessageType, WarningMessageLevel, message, 1, String());
 
     m_client->didDisplayInsecureContent();
+    return allowed;
 }
 
-void FrameLoader::checkIfRunInsecureContent(SecurityOrigin* context, const KURL& url)
+bool FrameLoader::checkIfRunInsecureContent(SecurityOrigin* context, const KURL& url)
 {
     if (!isMixedContent(context, url))
-        return;
+        return true;
 
-    String message = makeString("The page at ", m_frame->document()->url().string(), " ran insecure content from ", url.string(), ".\n");
+    Settings* settings = m_frame->settings();
+    bool allowed = settings && settings->allowRunningOfInsecureContent();
+    String message = makeString((allowed ? "" : "[blocked] "), "The page at ", m_frame->document()->url().string(), " ran insecure content from ", url.string(), ".\n");
     m_frame->domWindow()->console()->addMessage(HTMLMessageSource, LogMessageType, WarningMessageLevel, message, 1, String());
 
     m_client->didRunInsecureContent(context, url);
+    return allowed;
 }
 
 Frame* FrameLoader::opener()
