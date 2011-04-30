@@ -1,3 +1,15 @@
+2011-04-29  Emil A Eklund  <eae@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        Onchange on text fields has an incoherent behavior
+        https://bugs.webkit.org/show_bug.cgi?id=57330
+
+        * html/HTMLFormControlElement.cpp:
+        (WebCore::HTMLTextFormControlElement::insertedIntoDocument):
+        Initialize m_textAsOfLastFormControlChangeEvent to empty string rather
+        than null for empty fields.
+
 2011-04-29  Csaba Osztrogonác  <ossy@webkit.org>
 
         [Qt] Unreviewed buildfix after r85343.

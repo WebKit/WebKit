@@ -7,12 +7,17 @@
         <input type="text"value="foo">
         <textarea></textarea>
         <textarea>foo</textarea>
+        <input type="text">
     </div>
     <div id="console"></div>
 </body>
 <script>
 
-    function simulateTextEntry(element, text, opt_clear) {
+    var BEFORE = 1;
+    var AFTER = 2;
+
+    function simulateTextEntry(element, text, opt_clear)
+    {
         if (!window.eventSender)
             return null;
             
@@ -22,12 +27,16 @@
         }
         element.addEventListener('change', listener, false);
         element.focus();
-        if (opt_clear) {
+        if (opt_clear & BEFORE) {
             element.select();
             eventSender.keyDown('delete');
         }
         for (var i = 0; i < text.length; i++) {
             eventSender.keyDown(text.charAt(i));
+        }
+        if (opt_clear & AFTER) {
+            element.select();
+            eventSender.keyDown('delete');
         }
         element.blur();
         element.removeEventListener('change', listener, false);
@@ -35,7 +44,8 @@
     }
 
 
-    function setTextValue(element, text) {
+    function setTextValue(element, text)
+    {
         var firedEvent = false;
         function listener(event) {
             firedEvent = true;
@@ -50,32 +60,43 @@
 
     var elements = document.getElementById('test').getElementsByTagName('*');
 
-    shouldBe("simulateTextEntry(elements[0], '', true);", "false");
-    shouldBe("simulateTextEntry(elements[0], 'fo', true);", "true");
-    shouldBe("simulateTextEntry(elements[0], 'o', false);", "true");
-    shouldBe("simulateTextEntry(elements[0], 'foo', true); ", "false");
-    shouldBe("simulateTextEntry(elements[0], 'foo', true); ", "false");
-    shouldBe("simulateTextEntry(elements[0], ' ', false); ", "true");
-    shouldBe("simulateTextEntry(elements[0], 'foo bar', true); ", "true");
-    shouldBe("simulateTextEntry(elements[0], 'foo bar', true); ", "false");
+    shouldBe("simulateTextEntry(elements[0], '', BEFORE);", "false");
+    shouldBe("simulateTextEntry(elements[0], 'fo', BEFORE);", "true");
+    shouldBe("simulateTextEntry(elements[0], 'o');", "true");
+    shouldBe("simulateTextEntry(elements[0], 'foo', BEFORE); ", "false");
+    shouldBe("simulateTextEntry(elements[0], 'foo', BEFORE); ", "false");
+    shouldBe("simulateTextEntry(elements[0], ' '); ", "true");
+    shouldBe("simulateTextEntry(elements[0], 'foo bar', BEFORE); ", "true");
+    shouldBe("simulateTextEntry(elements[0], 'foo bar', BEFORE); ", "false");
     shouldBe("setTextValue(elements[0], 'foo'); ", "false");
-    shouldBe("simulateTextEntry(elements[0], 'foo bar', true);", "true");
+    shouldBe("simulateTextEntry(elements[0], 'foo bar', BEFORE);", "true");
 
-    shouldBe("simulateTextEntry(elements[1], '', true);", "true");
-    shouldBe("simulateTextEntry(elements[1], 'fo', true);", "true");
-    shouldBe("simulateTextEntry(elements[1], 'o', false);", "true");
-    shouldBe("simulateTextEntry(elements[1], 'foo', true); ", "false");
+    shouldBe("simulateTextEntry(elements[1], '', BEFORE);", "true");
+    shouldBe("simulateTextEntry(elements[1], 'fo', BEFORE);", "true");
+    shouldBe("simulateTextEntry(elements[1], 'o');", "true");
+    shouldBe("simulateTextEntry(elements[1], 'foo', BEFORE); ", "false");
 
-    shouldBe("simulateTextEntry(elements[2], '', true);", "false");
-    shouldBe("simulateTextEntry(elements[2], 'fo', true);", "true");
-    shouldBe("simulateTextEntry(elements[2], 'o', false);", "true");
-    shouldBe("simulateTextEntry(elements[2], 'foo', true); ", "false");
+    shouldBe("simulateTextEntry(elements[2], 'wee', AFTER);", "false");
+    shouldBe("simulateTextEntry(elements[2], 'foo', BEFORE | AFTER);", "false");
+    shouldBe("simulateTextEntry(elements[2], 'fo', BEFORE);", "true");
+    shouldBe("simulateTextEntry(elements[2], 'o');", "true");
+    shouldBe("simulateTextEntry(elements[2], 'foo', BEFORE); ", "false");
 
-    shouldBe("simulateTextEntry(elements[3], 'foo', true);", "false");
-    shouldBe("simulateTextEntry(elements[3], 'foo', true);", "false");
+    shouldBe("simulateTextEntry(elements[3], 'foo', BEFORE);", "false");
+    shouldBe("simulateTextEntry(elements[3], 'foo', BEFORE);", "false");
     shouldBe("setTextValue(elements[3], ''); ", "false");
-    shouldBe("simulateTextEntry(elements[3], 'fo', true);", "true");
-    shouldBe("simulateTextEntry(elements[3], 'o', false);", "true");
-    shouldBe("simulateTextEntry(elements[3], 'foo', true); ", "false");
+    shouldBe("simulateTextEntry(elements[3], 'fo', BEFORE);", "true");
+    shouldBe("simulateTextEntry(elements[3], 'o');", "true");
+    shouldBe("simulateTextEntry(elements[3], 'foo', BEFORE); ", "false");
+
+    shouldBe("simulateTextEntry(elements[4], 'foo', AFTER);", "false");
+    shouldBe("simulateTextEntry(elements[4], 'foo');", "true");
+    shouldBe("simulateTextEntry(elements[4], 'foo', BEFORE);", "false");
+    shouldBe("simulateTextEntry(elements[4], 'foo', BEFORE | AFTER);", "true");
+    shouldBe("simulateTextEntry(elements[4], '', AFTER);", "false");
+    shouldBe("simulateTextEntry(elements[4], 'foo', AFTER);", "false");
+
+    // Hide test elements after run to avoid whitespace differences across platforms in the results.
+    document.getElementById('test').style.display = 'none';
 </script>
 </html> 

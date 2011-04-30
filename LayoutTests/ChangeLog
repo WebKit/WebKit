@@ -1,3 +1,16 @@
+2011-04-29  Emil A Eklund  <eae@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        Onchange on text fields has an incoherent behavior
+        https://bugs.webkit.org/show_bug.cgi?id=57330
+
+        Add tests for typing and then deleting text from an empty field.
+
+        * fast/events/onchange-text-form-field-expected.txt:
+        * fast/events/onchange-text-form-field.html:
+        * platform/gtk/fast/events/onchange-text-form-field-expected.txt: Removed.
+
 2011-04-29  Kenneth Russell  <kbr@google.com>
 
         Unreviewed. Merged in all downstream Chromium test expectations.
