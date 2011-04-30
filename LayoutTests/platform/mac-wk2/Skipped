@@ -1511,6 +1511,10 @@ http/tests/security/contentSecurityPolicy/report-uri-from-child-frame.html
 plugins/private-browsing-mode.html
 plugins/private-browsing-mode-2.html
 
+# Sometimes fails
+# http://webkit.org/b/58990
+editing/undo/undo-iframe-location-change.html
+
 ### END OF (1) Classified failures with bug reports
 ########################################
 

@@ -1,5 +1,13 @@
 2011-04-30  Adam Roben  <aroben@apple.com>
 
+        Skip a flaky test on mac-wk2
+
+        <http://webkit.org/b/58990> tracks the failure.
+
+        * platform/mac-wk2/Skipped: Added editing/undo/undo-iframe-location-change.html.
+
+2011-04-30  Adam Roben  <aroben@apple.com>
+
         Remove mac-wk2 expected failure results for an animation test
 
         Looks like this started passing in r85340. (I hope it wasn't because animation-api-1.html,
