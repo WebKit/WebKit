@@ -146,6 +146,20 @@ static bool getPluginInfoFromPropertyLists(CFBundleRef bundle, PluginInfo& plugi
         if (!mimeTypeInfo || CFGetTypeID(mimeTypeInfo) != CFDictionaryGetTypeID())
             continue;
 
+        // FIXME: Consider storing disabled MIME types.
+        CFTypeRef isEnabled = CFDictionaryGetValue(mimeTypeInfo, CFSTR("WebPluginTypeEnabled"));
+        if (isEnabled) {
+            if (CFGetTypeID(isEnabled) == CFNumberGetTypeID()) {
+                int value;
+                if (!CFNumberGetValue(static_cast<CFNumberRef>(isEnabled), kCFNumberIntType, &value) || !value)
+                    continue;
+            } else if (CFGetTypeID(isEnabled) == CFBooleanGetTypeID()) {
+                if (!CFBooleanGetValue(static_cast<CFBooleanRef>(isEnabled)))
+                    continue;
+            } else
+                continue;
+        }
+
         // Get the MIME type description.
         CFStringRef mimeTypeDescription = static_cast<CFStringRef>(CFDictionaryGetValue(mimeTypeInfo, CFSTR("WebPluginTypeDescription")));
         if (mimeTypeDescription && CFGetTypeID(mimeTypeDescription) != CFStringGetTypeID())
