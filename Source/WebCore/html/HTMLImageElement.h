@@ -73,6 +73,7 @@ public:
     bool complete() const;
 
     bool haveFiredLoadEvent() const { return m_imageLoader.haveFiredLoadEvent(); }
+    bool hasPendingActivity();
 
 protected:
     HTMLImageElement(const QualifiedName&, Document*, HTMLFormElement* = 0);

@@ -1,3 +1,38 @@
+2011-04-29  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Alexey Proskuryakov.
+
+        REGRESSION: r83938 abandons GC memory
+        https://bugs.webkit.org/show_bug.cgi?id=59604
+
+        This bug was caused by script and image elements waiting indefinitely
+        for their loads to finish.
+
+        * bindings/js/JSNodeCustom.cpp:
+        (WebCore::isReachableFromDOM): Don't test for the load event firing,
+        since the load event doesn't fire in cases of canceled or errored loads.
+        Instead, test hasPendingActivity().
+        
+        Don't do this test at all for script elements because script elements
+        can't load while outside the document. (fast/dom/script-element-gc.html
+        verifies that this is correct.)
+
+        * html/HTMLImageElement.cpp:
+        (WebCore::HTMLImageElement::hasPendingActivity):
+        * html/HTMLImageElement.h:
+        * loader/ImageLoader.cpp:
+        (WebCore::ImageEventSender::hasPendingEvents):
+        (WebCore::ImageLoader::hasPendingLoadEvent):
+        * loader/ImageLoader.h: Added API for finding out if an image element
+        has pending activity.
+
+        * loader/cache/CachedResource.cpp:
+        (WebCore::CachedResource::setRequest): All loads are supposed to end in
+        data(allDataReceived = true) or error(), but in the edge case of a
+        canceled load, all we get is a call to setRequest(0). Be sure to
+        record that we're no longer loading in that case, otherwise our element
+        will leak forever, waiting for its load to complete.
+
 2011-04-29  Emil Eklund  <eae@chromium.org>
 
         Reviewed by Tony Chang.

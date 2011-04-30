@@ -249,6 +249,14 @@ void CachedResource::setRequest(CachedResourceRequest* request)
     if (request && !m_request)
         m_status = Pending;
     m_request = request;
+
+    // All loads finish with data(allDataReceived = true) or error(), except for
+    // canceled loads, which silently set our request to 0. Be sure to set our
+    // loading flag to false in that case, so we don't seem to continue loading
+    // forever.
+    if (!m_request)
+        setLoading(false);
+
     if (canDelete() && !inCache())
         delete this;
 }

@@ -1,3 +1,16 @@
+2011-04-29  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Alexey Proskuryakov.
+
+        REGRESSION: r83938 abandons GC memory
+        https://bugs.webkit.org/show_bug.cgi?id=59604
+        
+        Test an edge case of an image that has finished loading but has not yet
+        fired its load event.
+
+        * fast/dom/gc-image-element-expected.txt: Added.
+        * fast/dom/gc-image-element.html: Added.
+
 2011-04-29  Emil Eklund  <eae@chromium.org>
 
         Reviewed by Tony Chang.

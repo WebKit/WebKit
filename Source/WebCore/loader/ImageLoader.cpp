@@ -67,9 +67,7 @@ public:
 
     void dispatchPendingEvents();
 
-#if !ASSERT_DISABLED
     bool hasPendingEvents(ImageLoader* loader) { return m_dispatchSoonList.find(loader) != notFound; }
-#endif
 
 private:
     void timerFired(Timer<ImageEventSender>*);
@@ -310,6 +308,11 @@ void ImageLoader::dispatchPendingLoadEvents()
 void ImageLoader::elementWillMoveToNewOwnerDocument()
 {
     setImage(0);
+}
+
+bool ImageLoader::hasPendingLoadEvent()
+{
+    return loadEventSender().hasPendingEvents(this);
 }
 
 ImageEventSender::ImageEventSender(const AtomicString& eventType)
