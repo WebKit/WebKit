@@ -1,3 +1,23 @@
+2011-04-29  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        style-src should block @style
+        https://bugs.webkit.org/show_bug.cgi?id=59293
+
+        This patch blocks @style when style-src doesn't have the
+        'unsafe-inline' token.  This patch blocks the parsing of the attribute
+        itself.  That feels vaguely like too low a level to interpose the
+        policy, but there didn't seem to be anywhere else natural to enforce
+        the policy.
+
+        Tests: http/tests/security/contentSecurityPolicy/inline-style-attribute-allowed.html
+               http/tests/security/contentSecurityPolicy/inline-style-attribute-blocked.html
+               http/tests/security/contentSecurityPolicy/inline-style-on-html.html
+
+        * dom/StyledElement.cpp:
+        (WebCore::StyledElement::parseMappedAttribute):
+
 2011-04-29  Joseph Pecoraro  <joepeck@webkit.org>
 
         Reviewed by Kent Tamura.

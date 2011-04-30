@@ -1,3 +1,19 @@
+2011-04-29  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        style-src should block @style
+        https://bugs.webkit.org/show_bug.cgi?id=59293
+
+        Testing makes perfect.
+
+        * http/tests/security/contentSecurityPolicy/inline-style-attribute-allowed-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/inline-style-attribute-allowed.html: Added.
+        * http/tests/security/contentSecurityPolicy/inline-style-attribute-blocked-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/inline-style-attribute-blocked.html: Added.
+        * http/tests/security/contentSecurityPolicy/inline-style-attribute-on-html-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/inline-style-attribute-on-html.html: Added.
+
 2011-04-29  Joseph Pecoraro  <joepeck@webkit.org>
 
         Reviewed by Kent Tamura.

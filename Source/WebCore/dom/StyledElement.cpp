@@ -30,6 +30,7 @@
 #include "CSSStyleSheet.h"
 #include "CSSValueKeywords.h"
 #include "ClassList.h"
+#include "ContentSecurityPolicy.h"
 #include "DOMTokenList.h"
 #include "Document.h"
 #include "HTMLNames.h"
@@ -240,7 +241,7 @@ void StyledElement::parseMappedAttribute(Attribute* attr)
     else if (attr->name() == styleAttr) {
         if (attr->isNull())
             destroyInlineStyleDecl();
-        else
+        else if (document()->contentSecurityPolicy()->allowInlineStyle())
             getInlineStyleDecl()->parseDeclaration(attr->value());
         setIsStyleAttributeValid();
         setNeedsStyleRecalc();

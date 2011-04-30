@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="X-WebKit-CSP" content="style-src 'none'; script-src 'unsafe-inline'">
+<script>
+if (window.layoutTestController)
+    layoutTestController.dumpAsText();
+</script>
+</head>
+<body style="background-color: blue;">
+<script>
+document.write(document.body.style.length > 0 ? 'FAIL' : 'PASS');
+</script>
+</body>
+</html>
