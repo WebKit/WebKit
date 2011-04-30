@@ -1,3 +1,10 @@
+2011-04-29  Joseph Pecoraro  <joepeck@webkit.org>
+
+        GTK build fix. Missed moving DateComponents and
+        adding LocalizedDate files for their build file.
+
+        * GNUmakefile.list.am:
+
 2011-04-29  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Eric Seidel.
