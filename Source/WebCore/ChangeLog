@@ -1,3 +1,15 @@
+2011-05-01  Chris Fleizach  <cfleizach@apple.com>
+
+        Reviewed by Maciej Stachowiak.
+
+        Crash in AccessibilityRenderObject while viewing PDFs in iframes
+        https://bugs.webkit.org/show_bug.cgi?id=59629
+
+        Could not reproduce this crash, but it's quite clear how it could happen.
+ 
+        * accessibility/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::accessibilityHitTest):
+
 2011-05-01  Nikolas Zimmermann  <nzimmermann@rim.com>
 
         Reviewed by Dirk Schulze.

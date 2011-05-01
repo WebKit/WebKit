@@ -2783,7 +2783,7 @@ AccessibilityObject* AccessibilityRenderObject::accessibilityHitTest(const IntPo
     // Allow the element to perform any hit-testing it might need to do to reach non-render children.
     result = result->elementAccessibilityHitTest(point);
     
-    if (result->accessibilityIsIgnored()) {
+    if (result && result->accessibilityIsIgnored()) {
         // If this element is the label of a control, a hit test should return the control.
         AccessibilityObject* controlObject = result->correspondingControlForLabelElement();
         if (controlObject && !controlObject->exposesTitleUIElement())
