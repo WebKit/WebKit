@@ -831,11 +831,11 @@ void GraphicsContext::strokeArc(const IntRect& rect, int startAngle, int angleSp
         clipRect.bottom = startY;
     }
 
-    OwnPtr<HRGN> clipRgn(CreateRectRgn(0, 0, 0, 0));
+    OwnPtr<HRGN> clipRgn = adoptPtr(CreateRectRgn(0, 0, 0, 0));
     bool newClip;
     if (GetClipRgn(dc, clipRgn.get()) <= 0) {
         newClip = true;
-        clipRgn.set(CreateRectRgn(clipRect.left, clipRect.top, clipRect.right, clipRect.bottom));
+        clipRgn = adoptPtr(CreateRectRgn(clipRect.left, clipRect.top, clipRect.right, clipRect.bottom));
         SelectClipRgn(dc, clipRgn.get());
     } else {
         newClip = false;
@@ -948,7 +948,7 @@ void GraphicsContext::fillRect(const FloatRect& rect, const Color& color, ColorS
     if (!transparentDC.hdc())
         return;
 
-    OwnPtr<HBRUSH> hbrush(CreateSolidBrush(RGB(color.red(), color.green(), color.blue())));
+    OwnPtr<HBRUSH> hbrush = adoptPtr(CreateSolidBrush(RGB(color.red(), color.green(), color.blue())));
     FillRect(transparentDC.hdc(), &transparentDC.rect(), hbrush.get());
 }
 
@@ -962,11 +962,11 @@ void GraphicsContext::clip(const FloatRect& rect)
 
     IntRect trRect = enclosingIntRect(m_data->mapRect(rect));
 
-    OwnPtr<HRGN> clipRgn(CreateRectRgn(0, 0, 0, 0));
+    OwnPtr<HRGN> clipRgn = adoptPtr(CreateRectRgn(0, 0, 0, 0));
     if (GetClipRgn(m_data->m_dc, clipRgn.get()) > 0)
         IntersectClipRect(m_data->m_dc, trRect.x(), trRect.y(), trRect.maxX(), trRect.maxY());
     else {
-        clipRgn.set(CreateRectRgn(trRect.x(), trRect.y(), trRect.maxX(), trRect.maxY()));
+        clipRgn = adoptPtr(CreateRectRgn(trRect.x(), trRect.y(), trRect.maxX(), trRect.maxY()));
         SelectClipRgn(m_data->m_dc, clipRgn.get());
     }
 }
@@ -1252,7 +1252,7 @@ void GraphicsContext::fillRoundedRect(const IntRect& fillRect, const IntSize& to
     clipRect.right = centerPoint.x();
     clipRect.bottom = centerPoint.y();
 
-    OwnPtr<HRGN> clipRgn(CreateRectRgn(0, 0, 0, 0));
+    OwnPtr<HRGN> clipRgn = adoptPtr(CreateRectRgn(0, 0, 0, 0));
     bool needsNewClip = (GetClipRgn(dc, clipRgn.get()) <= 0);
     
     drawRoundCorner(needsNewClip, clipRect, rectWin, dc, stableRound(newTopLeft.width() * 2), stableRound(newTopLeft.height() * 2));
@@ -1287,15 +1287,15 @@ void GraphicsContext::drawRoundCorner(bool needsNewClip, RECT clipRect, RECT rec
     if (!dc)
         return;
 
-    OwnPtr<HRGN> clipRgn(CreateRectRgn(0, 0, 0, 0));
-    if (needsNewClip)  {
-        clipRgn.set(CreateRectRgn(clipRect.left, clipRect.top, clipRect.right, clipRect.bottom));
+    OwnPtr<HRGN> clipRgn = adoptPtr(CreateRectRgn(0, 0, 0, 0));
+    if (needsNewClip) {
+        clipRgn = adoptPtr(CreateRectRgn(clipRect.left, clipRect.top, clipRect.right, clipRect.bottom));
         SelectClipRgn(dc, clipRgn.get());
-    } else 
+    } else
         IntersectClipRect(dc, clipRect.left, clipRect.top, clipRect.right, clipRect.bottom);
-    
+
     ::RoundRect(dc, rectWin.left , rectWin.top , rectWin.right , rectWin.bottom , width, height);
-    
+
     SelectClipRgn(dc, needsNewClip ? 0 : clipRgn.get());
 }
 
@@ -1622,7 +1622,7 @@ void GraphicsContext::drawText(const SimpleFontData* fontData, const GlyphBuffer
 
         offset += width;
 
-        OwnPtr<HPEN> hPen(CreatePen(PS_DASH, 1, fontColor));
+        OwnPtr<HPEN> hPen = adoptPtr(CreatePen(PS_DASH, 1, fontColor));
         HGDIOBJ oldPen = SelectObject(m_data->m_dc, hPen.get());
 
         MoveToEx(m_data->m_dc, stableRound(trPoint.x()), y, 0);

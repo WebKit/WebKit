@@ -128,7 +128,7 @@ HBITMAP imageFromSelection(Frame* frame, bool forceBlackText)
         h = ir.height();
     }
 
-    OwnPtr<HDC> bmpDC(CreateCompatibleDC(g_screenDC));
+    OwnPtr<HDC> bmpDC = adoptPtr(CreateCompatibleDC(g_screenDC));
     HBITMAP hBmp = CreateCompatibleBitmap(g_screenDC, w, h);
     if (!hBmp)
         return 0;

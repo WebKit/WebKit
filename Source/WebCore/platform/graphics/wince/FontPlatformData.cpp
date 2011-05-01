@@ -262,7 +262,7 @@ PassRefPtr<FixedSizeFontData> FixedSizeFontData::create(const AtomicString& fami
     wmemcpy(winFont.lfFaceName, family.characters(), len);
     winFont.lfFaceName[len] = L'\0';
 
-    fontData->m_hfont.set(CreateFontIndirect(&winFont));
+    fontData->m_hfont = adoptPtr(CreateFontIndirect(&winFont));
 
     HGDIOBJ oldFont = SelectObject(g_screenDC, fontData->m_hfont.get());
 
@@ -394,7 +394,7 @@ HFONT FontPlatformData::hfont() const
         return 0;
 
     if (!m_private->m_rootFontData->m_hfont)
-        m_private->m_rootFontData->m_hfont.set(CreateFontIndirect(&m_private->m_rootFontData->m_font));
+        m_private->m_rootFontData->m_hfont = adoptPtr(CreateFontIndirect(&m_private->m_rootFontData->m_font));
 
     return m_private->m_rootFontData->m_hfont.get();
 }
@@ -410,7 +410,7 @@ HFONT FontPlatformData::getScaledFontHandle(int height, int width) const
         LOGFONT font = m_private->m_rootFontData->m_font;
         font.lfHeight = -height;
         font.lfWidth = width;
-        m_private->m_hfontScaled.set(CreateFontIndirect(&font));
+        m_private->m_hfontScaled = adoptPtr(CreateFontIndirect(&font));
     }
 
     return m_private->m_hfontScaled.get();
@@ -422,12 +422,12 @@ bool FontPlatformData::discardFontHandle()
         return false;
 
     if (m_private->m_rootFontData->m_hfont) {
-        m_private->m_rootFontData->m_hfont.set(0);
+        m_private->m_rootFontData->m_hfont = nullptr;
         return true;
     }
 
     if (m_private->m_hfontScaled) {
-        m_private->m_hfontScaled.set(0);
+        m_private->m_hfontScaled = nullptr;
         return true;
     }
     return false;

@@ -70,7 +70,7 @@ bool BitmapImage::getHBITMAPOfSize(HBITMAP bmp, LPSIZE size)
     ASSERT(bmpInfo.bmBitsPixel == 32);
     int bufferSize = bmpInfo.bmWidthBytes * bmpInfo.bmHeight;
 
-    OwnPtr<HDC> hdc(CreateCompatibleDC(0));
+    OwnPtr<HDC> hdc = adoptPtr(CreateCompatibleDC(0));
     HGDIOBJ hOldBmp = SelectObject(hdc.get(), bmp);
 
     {

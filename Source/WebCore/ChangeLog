@@ -1,3 +1,31 @@
+2011-05-01  Patrick Gansterer  <paroga@webkit.org>
+
+        Reviewed by Adam Barth.
+
+        [WINCE] Fix OwnPtr strict issues
+        https://bugs.webkit.org/show_bug.cgi?id=59898
+
+        * page/wince/FrameWinCE.cpp:
+        (WebCore::imageFromSelection):
+        * platform/graphics/wince/FontPlatformData.cpp:
+        (WebCore::FixedSizeFontData::create):
+        (WebCore::FontPlatformPrivateData::FontPlatformData::hfont):
+        (WebCore::FontPlatformPrivateData::FontPlatformData::getScaledFontHandle):
+        (WebCore::FontPlatformPrivateData::FontPlatformData::discardFontHandle):
+        * platform/graphics/wince/GraphicsContextWinCE.cpp:
+        (WebCore::GraphicsContext::strokeArc):
+        (WebCore::GraphicsContext::fillRect):
+        (WebCore::GraphicsContext::clip):
+        (WebCore::GraphicsContext::fillRoundedRect):
+        (WebCore::GraphicsContext::drawRoundCorner):
+        (WebCore::GraphicsContext::drawText):
+        * platform/graphics/wince/ImageBufferWinCE.cpp:
+        (WebCore::ImageBuffer::ImageBuffer):
+        * platform/graphics/wince/ImageWinCE.cpp:
+        (WebCore::BitmapImage::getHBITMAPOfSize):
+        * platform/graphics/wince/SharedBitmap.cpp:
+        (WebCore::SharedBitmap::SharedBitmap):
+
 2011-05-01  Ryosuke Niwa  <rniwa@webkit.org>
 
         Reviewed by Eric Seidel.

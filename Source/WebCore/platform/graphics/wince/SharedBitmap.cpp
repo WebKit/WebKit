@@ -66,7 +66,6 @@ SharedBitmap::SharedBitmap(const IntSize& size, BitmapInfo::BitCount bitCount, b
     , m_pixels(0)
     , m_hasAlpha(false)
     , m_validHeight(abs(size.height()))
-    , m_hbitmap(0)
 {
 #ifndef NDEBUG
     sharedBitmapLeakCounter.increment();

@@ -79,7 +79,7 @@ ImageBuffer::ImageBuffer(const IntSize& size, ColorSpace colorSpace, RenderingMo
     // FIXME: colorSpace is not used
     UNUSED_PARAM(colorSpace);
 
-    m_context.set(new GraphicsContext(0));
+    m_context = adoptPtr(new GraphicsContext(0));
     m_context->setBitmap(m_data.m_bitmap);
     success = true;
 }
