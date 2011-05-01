@@ -121,8 +121,7 @@ void History::stateObjectAdded(PassRefPtr<SerializedScriptValue> data, const Str
         return;
     
     KURL fullURL = urlForState(urlString);
-    RefPtr<SecurityOrigin> origin = SecurityOrigin::create(fullURL);
-    if (!fullURL.isValid() || !m_frame->document()->securityOrigin()->isSameSchemeHostPort(origin.get())) {
+    if (!fullURL.isValid() || !m_frame->document()->securityOrigin()->canRequest(fullURL)) {
         ec = SECURITY_ERR;
         return;
     }

@@ -1,3 +1,17 @@
+2011-05-01  Justin Schuh  <jschuh@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        History::stateObjectAdded should check origin via SecurityOrigin::canRequest
+        https://bugs.webkit.org/show_bug.cgi?id=59840
+
+        Tests: fast/loader/stateobjects/pushstate-in-data-url-denied.html
+               http/tests/navigation/replacestate-base-illegal.html
+               http/tests/navigation/replacestate-base-legal.html
+
+        * page/History.cpp:
+        (WebCore::History::stateObjectAdded):
+
 2011-05-01  Patrick Gansterer  <paroga@webkit.org>
 
         [WIN] Unreviewed buildfix after r85434.
