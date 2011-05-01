@@ -2,6 +2,19 @@
 
         Reviewed by Sam Weinig.
 
+        Can't open document from skydrive.com in Microsoft Word
+        https://bugs.webkit.org/show_bug.cgi?id=59891
+        <rdar://problem/9354285>
+
+        Add the AllowHalfBakedQuickDrawSupport quirk for the SharePoint plug-in.
+
+        * Shared/Plugins/Netscape/mac/NetscapePluginModuleMac.mm:
+        (WebKit::NetscapePluginModule::determineQuirks):
+
+2011-05-01  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Sam Weinig.
+
         Don't try to create a backing store for a 0x0 plug-in
         https://bugs.webkit.org/show_bug.cgi?id=59887
 
