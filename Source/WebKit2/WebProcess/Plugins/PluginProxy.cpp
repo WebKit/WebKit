@@ -173,7 +173,7 @@ void PluginProxy::geometryDidChange(const IntRect& frameRect, const IntRect& cli
 
     m_frameRect = frameRect;
 
-    if (!needsBackingStore()) {
+    if (m_frameRect.isEmpty() || !needsBackingStore()) {
         ShareableBitmap::Handle pluginBackingStoreHandle;
         m_connection->connection()->send(Messages::PluginControllerProxy::GeometryDidChange(frameRect, clipRect, pluginBackingStoreHandle), m_pluginInstanceID, CoreIPC::DispatchMessageEvenWhenWaitingForSyncReply);
         return;
