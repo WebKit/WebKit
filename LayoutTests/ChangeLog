@@ -1,3 +1,13 @@
+2011-05-01  Yael Aharon  <yael.aharon@nokia.com>
+
+        Reviewed by Eric Seidel.
+
+        CSS3 nth-child(n) selector fails
+        https://bugs.webkit.org/show_bug.cgi?id=56943
+
+        * fast/css/nth-child-n-expected.txt: Added.
+        * fast/css/nth-child-n.html: Added.
+
 2011-05-01  Nikolas Zimmermann  <nzimmermann@rim.com>
 
         Reviewed by Dirk Schulze.

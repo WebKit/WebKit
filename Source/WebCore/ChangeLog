@@ -1,3 +1,18 @@
+2011-05-01  Yael Aharon  <yael.aharon@nokia.com>
+
+        Reviewed by Eric Seidel.
+
+        CSS3 nth-child(n) selector fails
+        https://bugs.webkit.org/show_bug.cgi?id=56943
+
+        Regression from r75158.
+        "n" is a valid parameter to nth() and should be allowed.
+
+        Test: fast/css/nth-child-n.html
+
+        * css/CSSParser.cpp:
+        (WebCore::isValidNthToken):
+
 2011-05-01  Pavel Feldman  <pfeldman@chromium.org>
 
         Not reviewed: address stack frame scriptName -> url rename in timeline panel.

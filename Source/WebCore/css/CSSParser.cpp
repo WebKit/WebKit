@@ -6772,8 +6772,8 @@ String quoteCSSURLIfNeeded(const String& string)
 bool isValidNthToken(const CSSParserString& token)
 {
     // The tokenizer checks for the construct of an+b.
-    // nth can also accept "odd" or "even" but should not accept any other token.
-    return equalIgnoringCase(token, "odd") || equalIgnoringCase(token, "even");
+    // nth can also accept "n", "odd" or "even" but should not accept any other token.
+    return equalIgnoringCase(token, "odd") || equalIgnoringCase(token, "even") || equalIgnoringCase(token, "n");
 }
 
 #define YY_DECL int CSSParser::lex()
