@@ -1,3 +1,14 @@
+2011-05-01  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Kevin Decker.
+
+        Sandbox violation by WebProcess for DownloadAssessment.plist
+        https://bugs.webkit.org/show_bug.cgi?id=59879
+        <rdar://problem/9326041>
+
+        * WebProcess/com.apple.WebProcess.sb:
+        Allow reading ~/Library/Preferences/com.apple.DownloadAssessment.plist
+
 2011-05-01  Ivan Krstić  <ike@apple.com>
 
         Reviewed by Maciej Stachowiak.
