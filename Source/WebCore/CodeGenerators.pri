@@ -36,6 +36,12 @@ WALDOCSSPROPS = $$PWD/css/CSSPropertyNames.in
 
 WALDOCSSVALUES = $$PWD/css/CSSValueKeywords.in
 
+INSPECTOR_JSON = $$PWD/inspector/Inspector.json
+
+INSPECTOR_BACKEND_STUB_QRC = $$PWD/inspector/front-end/InspectorBackendStub.qrc
+
+INJECTED_SCRIPT_SOURCE = $$PWD/inspector/InjectedScriptSource.js
+
 contains(DEFINES, ENABLE_DASHBOARD_SUPPORT=1): DASHBOARDSUPPORTCSSPROPERTIES = $$PWD/css/DashboardSupportCSSPropertyNames.in
 
 XPATHBISON = $$PWD/xml/XPathGrammar.y
@@ -544,12 +550,6 @@ IDL_BINDINGS += \
     xml/XPathEvaluator.idl \
     xml/XSLTProcessor.idl
 
-
-INSPECTOR_JSON = inspector/Inspector.json
-INSPECTOR_IDL = $${WC_GENERATED_SOURCES_DIR}/Inspector.idl
-INSPECTOR_BACKEND_STUB_QRC = inspector/front-end/InspectorBackendStub.qrc
-INJECTED_SCRIPT_SOURCE = $$PWD/inspector/InjectedScriptSource.js
-
 v8: wrapperFactoryArg = --wrapperFactoryV8
 else: wrapperFactoryArg = --wrapperFactory
 
@@ -642,9 +642,10 @@ inspectorJSON.commands = python $$inspectorJSON.wkScript -o $${WC_GENERATED_SOUR
 inspectorJSON.depends = $$PWD/inspector/generate-inspector-idl
 inspectorJSON.wkAddOutputToSources = false
 addExtraCompiler(inspectorJSON)
+inspectorJSON.variable_out = INSPECTOR_JSON_OUTPUT
 
-inspectorIDL.output = $${WC_GENERATED_SOURCES_DIR}/${QMAKE_FILE_BASE}Frontend.cpp $${WC_GENERATED_SOURCES_DIR}/${QMAKE_FILE_BASE}BackendDispatcher.cpp
-inspectorIDL.input = INSPECTOR_IDL
+inspectorIDL.output = $${WC_GENERATED_SOURCES_DIR}/InspectorFrontend.cpp $${WC_GENERATED_SOURCES_DIR}/InspectorBackendDispatcher.cpp
+inspectorIDL.input = INSPECTOR_JSON_OUTPUT
 inspectorIDL.wkScript = $$PWD/bindings/scripts/generate-bindings.pl
 inspectorIDL.commands = perl -I$$PWD/bindings/scripts -I$$PWD/inspector $$inspectorIDL.wkScript --defines \"$${FEATURE_DEFINES_JAVASCRIPT}\" --generator Inspector --outputDir $$WC_GENERATED_SOURCES_DIR --preprocessor \"$${QMAKE_MOC} -E\" ${QMAKE_FILE_NAME}
 inspectorIDL.depends = $$PWD/bindings/scripts/CodeGenerator.pm \
@@ -654,11 +655,12 @@ inspectorIDL.depends = $$PWD/bindings/scripts/CodeGenerator.pm \
               $$PWD/bindings/scripts/InFilesParser.pm \
               $$PWD/inspector/Inspector.json \
               $$PWD/inspector/generate-inspector-idl
+inspectorIDL.wkExtraSources = $$inspectorIDL.output
 addExtraCompiler(inspectorIDL)
 
 inspectorBackendStub.output = generated/InspectorBackendStub.qrc
 inspectorBackendStub.input = INSPECTOR_BACKEND_STUB_QRC
-inspectorBackendStub.tempNames = $$PWD/$$INSPECTOR_BACKEND_STUB_QRC $${WC_GENERATED_SOURCES_DIR}/InspectorBackendStub.qrc
+inspectorBackendStub.tempNames = $$INSPECTOR_BACKEND_STUB_QRC $${WC_GENERATED_SOURCES_DIR}/InspectorBackendStub.qrc
 inspectorBackendStub.commands = $$QMAKE_COPY $$replace(inspectorBackendStub.tempNames, "/", $$QMAKE_DIR_SEP)
 inspectorBackendStub.wkAddOutputToSources = false
 addExtraCompiler(inspectorBackendStub)
