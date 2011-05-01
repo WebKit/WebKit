@@ -194,18 +194,18 @@ IntRect InlineTextBox::selectionRect(int tx, int ty, int startPos, int endPos)
     }
 
     IntRect r = enclosingIntRect(f.selectionRectForText(TextRun(characters, len, textObj->allowTabs(), textPos(), m_expansion, expansionBehavior(), direction(), m_dirOverride),
-                                                        IntPoint(), selHeight, sPos, ePos));
-                                                        
+                                                        FloatPoint(logicalLeft(), selTop), selHeight, sPos, ePos));
+
     int logicalWidth = r.width();
-    if (r.x() > m_logicalWidth)
+    if (r.x() > logicalRight())
         logicalWidth  = 0;
-    else if (r.maxX() > m_logicalWidth)
-        logicalWidth = m_logicalWidth - r.x();
-    
-    IntPoint topPoint = isHorizontal() ? IntPoint(tx + m_x + r.x(), ty + selTop) : IntPoint(tx + selTop, ty + m_y + r.x());
+    else if (r.maxX() > logicalRight())
+        logicalWidth = logicalRight() - r.x();
+
+    IntPoint topPoint = isHorizontal() ? IntPoint(r.x(), ty + selTop) : IntPoint(tx + selTop, r.x());
     int width = isHorizontal() ? logicalWidth : selHeight;
     int height = isHorizontal() ? selHeight : logicalWidth;
-    
+
     return IntRect(topPoint, IntSize(width, height));
 }
 
@@ -784,6 +784,9 @@ void InlineTextBox::selectionStartEnd(int& sPos, int& ePos)
 
 void InlineTextBox::paintSelection(GraphicsContext* context, const FloatPoint& boxOrigin, RenderStyle* style, const Font& font)
 {
+    if (context->paintingDisabled())
+        return;
+
     // See if we have a selection to paint at all.
     int sPos, ePos;
     selectionStartEnd(sPos, ePos);
@@ -817,7 +820,13 @@ void InlineTextBox::paintSelection(GraphicsContext* context, const FloatPoint& b
     int deltaY = renderer()->style()->isFlippedLinesWritingMode() ? selectionBottom() - logicalBottom() : logicalTop() - selectionTop();
     int selHeight = selectionHeight();
     FloatPoint localOrigin(boxOrigin.x(), boxOrigin.y() - deltaY);
-    context->clip(FloatRect(localOrigin, FloatSize(m_logicalWidth, selHeight)));
+
+    FloatRect clipRect(localOrigin, FloatSize(m_logicalWidth, selHeight));
+    float maxX = floorf(clipRect.maxX());
+    clipRect.setX(floorf(clipRect.x()));
+    clipRect.setWidth(maxX - clipRect.x());
+    context->clip(clipRect);
+
     context->drawHighlightForText(font, TextRun(characters, length, textRenderer()->allowTabs(), textPos(), m_expansion, expansionBehavior(), 
                                   direction(), m_dirOverride || style->visuallyOrdered()),
                                   localOrigin, selHeight, c, style->colorSpace(), sPos, ePos);

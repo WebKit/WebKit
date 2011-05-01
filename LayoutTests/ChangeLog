@@ -1,3 +1,14 @@
+2011-05-01  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Anders Carlsson.
+
+        <rdar://problem/9155067> REGRESSION (float-based line boxes): Gaps and overlaps in selection highlight
+        https://bugs.webkit.org/show_bug.cgi?id=56658
+
+        * fast/text/selection-rect-rounding.html: Added.
+        * platform/mac/fast/text/selection-rect-rounding-expected.png: Added.
+        * platform/mac/fast/text/selection-rect-rounding-expected.txt: Added.
+
 2011-04-30  Justin Schuh  <jschuh@chromium.org>
 
         Reviewed by Dirk Schulze.
