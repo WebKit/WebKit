@@ -1,3 +1,11 @@
+2011-05-01  Pavel Feldman  <pfeldman@chromium.org>
+
+        Not reviewed: address stack frame scriptName -> url rename in timeline panel.
+
+        * inspector/front-end/TimelinePanel.js:
+        (WebInspector.TimelinePanel.FormattedRecord.prototype._getRecordDetails):
+        (WebInspector.TimelinePanel.PopupContentHelper.prototype._appendStackTrace):
+
 2011-05-01  Chris Fleizach  <cfleizach@apple.com>
 
         Reviewed by Maciej Stachowiak.

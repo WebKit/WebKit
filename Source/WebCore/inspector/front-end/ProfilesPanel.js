@@ -263,14 +263,14 @@ WebInspector.ProfilesPanel.prototype = {
         if (buttonPos > -1) {
             var container = document.createDocumentFragment();
             var part1 = document.createElement("span");
-            part1.innerHTML = message.substr(0, buttonPos);
+            part1.textContent = message.substr(0, buttonPos);
             container.appendChild(part1);
      
             var button = new WebInspector.StatusBarButton(profileType.buttonTooltip, profileType.buttonStyle, profileType.buttonCaption);
             container.appendChild(button.element);
        
             var part2 = document.createElement("span");
-            part2.innerHTML = message.substr(buttonPos + 2);
+            part2.textContent = message.substr(buttonPos + 2);
             container.appendChild(part2);
             this.welcomeView.addMessage(container);
         } else
