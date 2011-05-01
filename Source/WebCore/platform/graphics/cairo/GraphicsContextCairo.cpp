@@ -150,7 +150,7 @@ static inline void drawPathShadow(GraphicsContext* context, PathDrawingStyle dra
 
     // Calculate the extents of the rendered solid paths.
     cairo_t* cairoContext = context->platformContext()->cr();
-    OwnPtr<cairo_path_t> path(cairo_copy_path(cairoContext));
+    OwnPtr<cairo_path_t> path = adoptPtr(cairo_copy_path(cairoContext));
 
     FloatRect solidFigureExtents;
     double x0 = 0;
@@ -1032,8 +1032,8 @@ void GraphicsContext::clip(const Path& path)
         return;
 
     cairo_t* cr = platformContext()->cr();
-    OwnPtr<cairo_path_t> p(cairo_copy_path(path.platformPath()->context()));
-    cairo_append_path(cr, p.get());
+    OwnPtr<cairo_path_t> pathCopy = adoptPtr(cairo_copy_path(path.platformPath()->context()));
+    cairo_append_path(cr, pathCopy.get());
     cairo_fill_rule_t savedFillRule = cairo_get_fill_rule(cr);
     cairo_set_fill_rule(cr, CAIRO_FILL_RULE_WINDING);
     cairo_clip(cr);

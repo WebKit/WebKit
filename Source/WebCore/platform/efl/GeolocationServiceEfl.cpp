@@ -30,7 +30,7 @@ namespace WebCore {
 
 GeolocationService::FactoryFunction* GeolocationService::s_factoryFunction = &GeolocationServiceEfl::create;
 
-GeolocationService* GeolocationServiceEfl::create(GeolocationServiceClient* client)
+PassOwnPtr<GeolocationService> GeolocationServiceEfl::create(GeolocationServiceClient* client)
 {
     return new GeolocationServiceEfl(client);
 }

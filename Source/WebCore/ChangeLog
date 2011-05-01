@@ -1,3 +1,44 @@
+2011-04-30  Martin Robinson  <mrobinson@igalia.com>
+
+        Reviewed by Adam Barth.
+
+        Enable strict mode for OwnPtr and PassOwnPtr
+        https://bugs.webkit.org/show_bug.cgi?id=59428
+
+        Fix assignments and .set() calls with OwnPtr to use adoptPtr. Have GeolocationService
+        factory methods return a PassOwnPtr.
+
+        No new tests. This should not change functionality.
+
+        * platform/GeolocationService.cpp:
+        (WebCore::createGeolocationServiceNull):
+        (WebCore::GeolocationService::create):
+        * platform/GeolocationService.h:
+        * platform/android/GeolocationServiceAndroid.cpp:
+        (WebCore::GeolocationServiceAndroid::create):
+        * platform/android/GeolocationServiceAndroid.h:
+        * platform/efl/GeolocationServiceEfl.cpp:
+        (WebCore::GeolocationServiceEfl::create):
+        * platform/efl/GeolocationServiceEfl.h:
+        * platform/graphics/cairo/CairoUtilities.cpp:
+        (WebCore::appendPathToCairoContext):
+        * platform/graphics/cairo/GraphicsContextCairo.cpp:
+        (WebCore::drawPathShadow):
+        (WebCore::GraphicsContext::clip):
+        * platform/graphics/cairo/ImageBufferCairo.cpp:
+        (WebCore::ImageBuffer::ImageBuffer):
+        * platform/graphics/cairo/OwnPtrCairo.h:
+        * platform/graphics/cairo/PathCairo.cpp:
+        (WebCore::Path::Path):
+        (WebCore::Path::operator=):
+        (WebCore::Path::apply):
+        * platform/gtk/GeolocationServiceGtk.cpp:
+        (WebCore::GeolocationServiceGtk::create):
+        * platform/gtk/GeolocationServiceGtk.h:
+        * platform/mock/GeolocationServiceMock.cpp:
+        (WebCore::GeolocationServiceMock::create):
+        * platform/mock/GeolocationServiceMock.h:
+
 2011-04-30  Pavel Feldman  <pfeldman@chromium.org>
 
         Not reviewed: inspector toolbar titles were 2px off.

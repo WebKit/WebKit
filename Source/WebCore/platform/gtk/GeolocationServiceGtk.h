@@ -32,7 +32,7 @@
 namespace WebCore {
     class GeolocationServiceGtk : public GeolocationService {
     public:
-        static GeolocationService* create(GeolocationServiceClient*);
+        static PassOwnPtr<GeolocationService> create(GeolocationServiceClient*);
         ~GeolocationServiceGtk();
 
         virtual bool startUpdating(PositionOptions*);

@@ -38,7 +38,7 @@ namespace WTF {
 
 namespace WebCore {
 
-GeolocationService* GeolocationServiceGtk::create(GeolocationServiceClient* client)
+PassOwnPtr<GeolocationService> GeolocationServiceGtk::create(GeolocationServiceClient* client)
 {
     return new GeolocationServiceGtk(client);
 }

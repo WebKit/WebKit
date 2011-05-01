@@ -29,7 +29,7 @@
 #include <memory>
 
 // Remove this once we make all WebKit code compatible with stricter rules about OwnPtr.
-#if !PLATFORM(MAC) && !PLATFORM(CHROMIUM) && !PLATFORM(QT)
+#if !PLATFORM(MAC) && !PLATFORM(CHROMIUM) && !PLATFORM(QT) && !PLATFORM(GTK)
 #define LOOSE_OWN_PTR
 #endif
 

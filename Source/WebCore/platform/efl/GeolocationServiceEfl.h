@@ -31,7 +31,7 @@ namespace WebCore {
 
 class GeolocationServiceEfl : public GeolocationService {
 public:
-    static GeolocationService* create(GeolocationServiceClient*);
+    static PassOwnPtr<GeolocationService> create(GeolocationServiceClient*);
     ~GeolocationServiceEfl();
 
     virtual bool startUpdating(PositionOptions*);

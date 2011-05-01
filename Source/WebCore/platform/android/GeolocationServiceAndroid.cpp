@@ -47,7 +47,7 @@ namespace WebCore {
 // exist simultaneously, the corresponsing Java GeolocationService objects all
 // register with the platform location service. It is the platform service that
 // handles making sure that updates are passed to all Geolocation objects.
-GeolocationService* GeolocationServiceAndroid::create(GeolocationServiceClient* client)
+PassOwnPtr<GeolocationService> GeolocationServiceAndroid::create(GeolocationServiceClient* client)
 {
     return new GeolocationServiceAndroid(client);
 }

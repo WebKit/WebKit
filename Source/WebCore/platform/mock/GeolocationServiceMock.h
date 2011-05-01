@@ -41,7 +41,7 @@ namespace WebCore {
 // position or error every time either of these is updated.
 class GeolocationServiceMock : public GeolocationService {
   public:
-    static GeolocationService* create(GeolocationServiceClient*);
+    static PassOwnPtr<GeolocationService> create(GeolocationServiceClient*);
 
     GeolocationServiceMock(GeolocationServiceClient*);
     virtual ~GeolocationServiceMock();

@@ -53,8 +53,8 @@ Path::Path(const Path& other)
     : m_path(new CairoPath())
 {
     cairo_t* cr = platformPath()->context();
-    OwnPtr<cairo_path_t> p(cairo_copy_path(other.platformPath()->context()));
-    cairo_append_path(cr, p.get());
+    OwnPtr<cairo_path_t> pathCopy = adoptPtr(cairo_copy_path(other.platformPath()->context()));
+    cairo_append_path(cr, pathCopy.get());
 }
 
 Path& Path::operator=(const Path& other)
@@ -64,8 +64,8 @@ Path& Path::operator=(const Path& other)
 
     clear();
     cairo_t* cr = platformPath()->context();
-    OwnPtr<cairo_path_t> p(cairo_copy_path(other.platformPath()->context()));
-    cairo_append_path(cr, p.get());
+    OwnPtr<cairo_path_t> pathCopy = adoptPtr(cairo_copy_path(other.platformPath()->context()));
+    cairo_append_path(cr, pathCopy.get());
     return *this;
 }
 
@@ -319,14 +319,14 @@ bool Path::strokeContains(StrokeStyleApplier* applier, const FloatPoint& point) 
 void Path::apply(void* info, PathApplierFunction function) const
 {
     cairo_t* cr = platformPath()->context();
-    OwnPtr<cairo_path_t> path(cairo_copy_path(cr));
+    OwnPtr<cairo_path_t> pathCopy = adoptPtr(cairo_copy_path(cr));
     cairo_path_data_t* data;
     PathElement pelement;
     FloatPoint points[3];
     pelement.points = points;
 
-    for (int i = 0; i < path->num_data; i += path->data[i].header.length) {
-        data = &path->data[i];
+    for (int i = 0; i < pathCopy->num_data; i += pathCopy->data[i].header.length) {
+        data = &pathCopy->data[i];
         switch (data->header.type) {
         case CAIRO_PATH_MOVE_TO:
             pelement.type = PathElementMoveToPoint;

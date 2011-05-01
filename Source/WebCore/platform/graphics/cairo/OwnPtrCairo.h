@@ -21,6 +21,7 @@
 #define OwnPtrCairo_h
 
 #include "OwnPtr.h"
+#include "PassOwnPtr.h"
 
 #if USE(FREETYPE)
 typedef struct _FcObjectSet FcObjectSet;

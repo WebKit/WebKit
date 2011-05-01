@@ -65,7 +65,7 @@ void setSourceRGBAFromColor(cairo_t* context, const Color& color)
 
 void appendPathToCairoContext(cairo_t* to, cairo_t* from)
 {
-    OwnPtr<cairo_path_t> cairoPath(cairo_copy_path(from));
+    OwnPtr<cairo_path_t> cairoPath = adoptPtr(cairo_copy_path(from));
     cairo_append_path(to, cairoPath.get());
 }
 

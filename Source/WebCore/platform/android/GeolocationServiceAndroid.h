@@ -41,7 +41,7 @@ class GeolocationServiceBridge;
 
 class GeolocationServiceAndroid : public GeolocationService {
 public:
-    static GeolocationService* create(GeolocationServiceClient*);
+    static PassOwnPtr<GeolocationService> create(GeolocationServiceClient*);
 
     virtual ~GeolocationServiceAndroid() { };
 

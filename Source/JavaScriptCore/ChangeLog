@@ -1,3 +1,12 @@
+2011-04-30  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Adam Barth.
+
+        Enable strict OwnPtr for GTK
+        https://bugs.webkit.org/show_bug.cgi?id=59861
+
+        * wtf/OwnPtr.h:
+
 2011-04-30  Gavin Barraclough  <barraclough@apple.com>
 
         ARMv7 build fix.

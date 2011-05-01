@@ -84,7 +84,7 @@ ImageBuffer::ImageBuffer(const IntSize& size, ColorSpace, RenderingMode, bool& s
 
     RefPtr<cairo_t> cr = adoptRef(cairo_create(m_data.m_surface));
     m_data.m_platformContext.setCr(cr.get());
-    m_context.set(new GraphicsContext(&m_data.m_platformContext));
+    m_context = adoptPtr(new GraphicsContext(&m_data.m_platformContext));
     success = true;
 }
 
