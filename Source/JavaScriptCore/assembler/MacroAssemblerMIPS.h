@@ -914,9 +914,9 @@ public:
 
     Jump branch32(RelationalCondition cond, RegisterID left, RegisterID right)
     {
-        if (cond == Equal || cond == Zero)
+        if (cond == Equal)
             return branchEqual(left, right);
-        if (cond == NotEqual || cond == NonZero)
+        if (cond == NotEqual)
             return branchNotEqual(left, right);
         if (cond == Above) {
             m_assembler.sltu(cmpTempRegister, right, left);
@@ -949,39 +949,6 @@ public:
         if (cond == LessThanOrEqual) {
             m_assembler.slt(cmpTempRegister, right, left);
             return branchEqual(cmpTempRegister, MIPSRegisters::zero);
-        }
-        if (cond == Overflow) {
-            /*
-                xor     cmpTemp, left, right
-                bgez    No_overflow, cmpTemp    # same sign bit -> no overflow
-                nop
-                subu    cmpTemp, left, right
-                xor     cmpTemp, cmpTemp, left
-                bgez    No_overflow, cmpTemp    # same sign bit -> no overflow
-                nop
-                b       Overflow
-                nop
-                nop
-                nop
-                nop
-                nop
-              No_overflow:
-            */
-            m_assembler.xorInsn(cmpTempRegister, left, right);
-            m_assembler.bgez(cmpTempRegister, 11);
-            m_assembler.nop();
-            m_assembler.subu(cmpTempRegister, left, right);
-            m_assembler.xorInsn(cmpTempRegister, cmpTempRegister, left);
-            m_assembler.bgez(cmpTempRegister, 7);
-            m_assembler.nop();
-            return jump();
-        }
-        if (cond == Signed) {
-            m_assembler.subu(cmpTempRegister, left, right);
-            // Check if the result is negative.
-            m_assembler.slt(cmpTempRegister, cmpTempRegister,
-                            MIPSRegisters::zero);
-            return branchNotEqual(cmpTempRegister, MIPSRegisters::zero);
         }
         ASSERT(0);
 
@@ -1360,10 +1327,10 @@ public:
 
     void compare32(RelationalCondition cond, RegisterID left, RegisterID right, RegisterID dest)
     {
-        if (cond == Equal || cond == Zero) {
+        if (cond == Equal) {
             m_assembler.xorInsn(dest, left, right);
             m_assembler.sltiu(dest, dest, 1);
-        } else if (cond == NotEqual || cond == NonZero) {
+        } else if (cond == NotEqual) {
             m_assembler.xorInsn(dest, left, right);
             m_assembler.sltu(dest, MIPSRegisters::zero, dest);
         } else if (cond == Above)
@@ -1386,26 +1353,6 @@ public:
         else if (cond == LessThanOrEqual) {
             m_assembler.slt(dest, right, left);
             m_assembler.xori(dest, dest, 1);
-        } else if (cond == Overflow) {
-            /*
-                xor     cmpTemp, left, right
-                bgez    Done, cmpTemp   # same sign bit -> no overflow
-                move    dest, 0
-                subu    cmpTemp, left, right
-                xor     cmpTemp, cmpTemp, left # diff sign bit -> overflow
-                slt     dest, cmpTemp, 0
-              Done:
-            */
-            m_assembler.xorInsn(cmpTempRegister, left, right);
-            m_assembler.bgez(cmpTempRegister, 4);
-            m_assembler.move(dest, MIPSRegisters::zero);
-            m_assembler.subu(cmpTempRegister, left, right);
-            m_assembler.xorInsn(cmpTempRegister, cmpTempRegister, left);
-            m_assembler.slt(dest, cmpTempRegister, MIPSRegisters::zero);
-        } else if (cond == Signed) {
-            m_assembler.subu(dest, left, right);
-            // Check if the result is negative.
-            m_assembler.slt(dest, dest, MIPSRegisters::zero);
         }
     }
 

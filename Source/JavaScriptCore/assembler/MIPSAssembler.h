@@ -720,7 +720,7 @@ public:
     }
 
 #ifndef NDEBUG
-    unsigned debugOffset() { return m_formatter.debugOffset(); }
+    unsigned debugOffset() { return m_buffer.debugOffset(); }
 #endif
 
     static unsigned getCallReturnOffset(JmpSrc call)

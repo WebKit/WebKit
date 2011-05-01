@@ -1,3 +1,16 @@
+2011-05-01  Chao-ying Fu  <fu@mips.com>
+
+        Reviewed by Eric Seidel.
+
+        Fix MIPS build due to the split of "Condition" enum
+        https://bugs.webkit.org/show_bug.cgi?id=59407
+
+        * assembler/MIPSAssembler.h:
+        (JSC::MIPSAssembler::debugOffset):
+        * assembler/MacroAssemblerMIPS.h:
+        (JSC::MacroAssemblerMIPS::branch32):
+        (JSC::MacroAssemblerMIPS::compare32):
+
 2011-04-30  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Adam Barth.
