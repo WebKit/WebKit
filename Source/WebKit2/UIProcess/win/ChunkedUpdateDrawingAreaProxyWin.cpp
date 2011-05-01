@@ -48,12 +48,12 @@ void ChunkedUpdateDrawingAreaProxy::ensureBackingStore()
     BitmapInfo bitmapInfo = BitmapInfo::createBottomUp(size());
 
     void* pixels = 0;
-    m_backingStoreBitmap.set(::CreateDIBSection(0, &bitmapInfo, DIB_RGB_COLORS, &pixels, 0, 0));
+    m_backingStoreBitmap = adoptPtr(::CreateDIBSection(0, &bitmapInfo, DIB_RGB_COLORS, &pixels, 0, 0));
 
     if (!m_backingStoreDC) {
         // Create a DC for the backing store.
         HDC screenDC = ::GetDC(0);
-        m_backingStoreDC.set(::CreateCompatibleDC(screenDC));
+        m_backingStoreDC = adoptPtr(::CreateCompatibleDC(screenDC));
         ::ReleaseDC(0, screenDC);
     }
 
@@ -79,7 +79,7 @@ void ChunkedUpdateDrawingAreaProxy::drawUpdateChunkIntoBackingStore(UpdateChunk*
 {
     ensureBackingStore();
 
-    OwnPtr<HDC> updateChunkBitmapDC(::CreateCompatibleDC(m_backingStoreDC.get()));
+    OwnPtr<HDC> updateChunkBitmapDC = adoptPtr(::CreateCompatibleDC(m_backingStoreDC.get()));
 
     // Create a bitmap.
     BitmapInfo bitmapInfo = BitmapInfo::createBottomUp(updateChunk->rect().size());
@@ -90,7 +90,7 @@ void ChunkedUpdateDrawingAreaProxy::drawUpdateChunkIntoBackingStore(UpdateChunk*
                                     ::GetCurrentProcess(), &updateChunkHandle, STANDARD_RIGHTS_REQUIRED | FILE_MAP_READ | FILE_MAP_WRITE, false, DUPLICATE_CLOSE_SOURCE);
 
     void* pixels = 0;
-    OwnPtr<HBITMAP> hBitmap(::CreateDIBSection(0, &bitmapInfo, DIB_RGB_COLORS, &pixels, updateChunkHandle, 0));
+    OwnPtr<HBITMAP> hBitmap = adoptPtr(::CreateDIBSection(0, &bitmapInfo, DIB_RGB_COLORS, &pixels, updateChunkHandle, 0));
     ::SelectObject(updateChunkBitmapDC.get(), hBitmap.get());
 
     // BitBlt from the UpdateChunk to the backing store.

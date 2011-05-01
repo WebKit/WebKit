@@ -37,11 +37,11 @@ namespace WebKit {
 
 void ChunkedUpdateDrawingArea::paintIntoUpdateChunk(UpdateChunk* updateChunk)
 {
-    OwnPtr<HDC> hdc(::CreateCompatibleDC(0));
+    OwnPtr<HDC> hdc = adoptPtr(::CreateCompatibleDC(0));
 
     void* bits;
     BitmapInfo bmp = BitmapInfo::createBottomUp(updateChunk->rect().size());
-    OwnPtr<HBITMAP> hbmp(::CreateDIBSection(0, &bmp, DIB_RGB_COLORS, &bits, updateChunk->memory(), 0));
+    OwnPtr<HBITMAP> hbmp = adoptPtr(::CreateDIBSection(0, &bmp, DIB_RGB_COLORS, &bits, updateChunk->memory(), 0));
 
     HBITMAP hbmpOld = static_cast<HBITMAP>(::SelectObject(hdc.get(), hbmp.get()));
 

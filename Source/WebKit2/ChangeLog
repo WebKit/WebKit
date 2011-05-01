@@ -1,3 +1,17 @@
+2011-05-01  Patrick Gansterer  <paroga@webkit.org>
+
+        [WIN] Unreviewed buildfix after r85434.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::startDragDrop):
+        * UIProcess/win/ChunkedUpdateDrawingAreaProxyWin.cpp:
+        (WebKit::ChunkedUpdateDrawingAreaProxy::ensureBackingStore):
+        (WebKit::ChunkedUpdateDrawingAreaProxy::drawUpdateChunkIntoBackingStore):
+        * WebProcess/WebCoreSupport/win/WebDragClientWin.cpp:
+        (WebKit::WebDragClient::startDrag):
+        * WebProcess/WebPage/win/ChunkedUpdateDrawingAreaWin.cpp:
+        (WebKit::ChunkedUpdateDrawingArea::paintIntoUpdateChunk):
+
 2011-05-01  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Sam Weinig.

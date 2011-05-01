@@ -795,7 +795,7 @@ void WebPageProxy::startDragDrop(const IntPoint& imageOrigin, const IntPoint& dr
 
     BitmapInfo bitmapInfo = BitmapInfo::create(dragImageSize);
     void* bits;
-    OwnPtr<HBITMAP> hbmp(::CreateDIBSection(0, &bitmapInfo, DIB_RGB_COLORS, &bits, 0, 0));
+    OwnPtr<HBITMAP> hbmp = adoptPtr(::CreateDIBSection(0, &bitmapInfo, DIB_RGB_COLORS, &bits, 0, 0));
     memcpy(bits, memoryBuffer->data(), memoryBuffer->size());
 
     SHDRAGIMAGE sdi;

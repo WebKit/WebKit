@@ -66,7 +66,7 @@ void WebDragClient::startDrag(DragImageRef image, const IntPoint& imageOrigin, c
     if (!dataObject)
         return;
 
-    OwnPtr<HDC> bitmapDC(CreateCompatibleDC(0));
+    OwnPtr<HDC> bitmapDC = adoptPtr(CreateCompatibleDC(0));
     BITMAPINFO bitmapInfo = {0};
     bitmapInfo.bmiHeader.biSize = sizeof(BITMAPINFOHEADER);
     GetDIBits(bitmapDC.get(), image, 0, 0, 0, &bitmapInfo, DIB_RGB_COLORS);
