@@ -660,26 +660,6 @@ PlatformMouseEvent EventHandler::currentPlatformMouseEvent() const
     return PlatformMouseEvent(currentNSEvent(), windowView);
 }
 
-#if ENABLE(CONTEXT_MENUS)
-bool EventHandler::sendContextMenuEvent(NSEvent *event)
-{
-    Page* page = m_frame->page();
-    if (!page)
-        return false;
-    return sendContextMenuEvent(PlatformMouseEvent(event, page->chrome()->platformPageClient()));
-}
-#endif // ENABLE(CONTEXT_MENUS)
-
-#if ENABLE(DRAG_SUPPORT)
-bool EventHandler::eventMayStartDrag(NSEvent *event)
-{
-    Page* page = m_frame->page();
-    if (!page)
-        return false;
-    return eventMayStartDrag(PlatformMouseEvent(event, page->chrome()->platformPageClient()));
-}
-#endif // ENABLE(DRAG_SUPPORT)
-
 bool EventHandler::eventActivatedView(const PlatformMouseEvent& event) const
 {
     return m_activationEventNumber == event.eventNumber();

@@ -76,6 +76,7 @@
 #import <WebCore/CSSMutableStyleDeclaration.h>
 #import <WebCore/CachedImage.h>
 #import <WebCore/CachedResourceClient.h>
+#import <WebCore/Chrome.h>
 #import <WebCore/ColorMac.h>
 #import <WebCore/ContextMenu.h>
 #import <WebCore/ContextMenuController.h>
@@ -3108,7 +3109,7 @@ static void setMenuTargets(NSMenu* menu)
     _private->handlingMouseDownEvent = YES;
     page->contextMenuController()->clearContextMenu();
     coreFrame->eventHandler()->mouseDown(event);
-    BOOL handledEvent = coreFrame->eventHandler()->sendContextMenuEvent(event);
+    BOOL handledEvent = coreFrame->eventHandler()->sendContextMenuEvent(PlatformMouseEvent(event, page->chrome()->platformPageClient()));
     _private->handlingMouseDownEvent = NO;
 
     if (!handledEvent)
@@ -3425,9 +3426,10 @@ static void setMenuTargets(NSMenu* menu)
         if (Frame* coreFrame = core([hitHTMLView _frame])) {
             coreFrame->eventHandler()->setActivationEventNumber([event eventNumber]);
             [hitHTMLView _setMouseDownEvent:event];
-            if ([hitHTMLView _isSelectionEvent:event])
-                result = coreFrame->eventHandler()->eventMayStartDrag(event);
-            else if ([hitHTMLView _isScrollBarEvent:event])
+            if ([hitHTMLView _isSelectionEvent:event]) {
+                if (Page* page = coreFrame->page())
+                    result = coreFrame->eventHandler()->eventMayStartDrag(PlatformMouseEvent(event, page->chrome()->platformPageClient()));
+            } else if ([hitHTMLView _isScrollBarEvent:event])
                 result = true;
             [hitHTMLView _setMouseDownEvent:nil];
         }
@@ -3450,7 +3452,8 @@ static void setMenuTargets(NSMenu* menu)
         if ([hitHTMLView _isSelectionEvent:event]) {
             if (Frame* coreFrame = core([hitHTMLView _frame])) {
                 [hitHTMLView _setMouseDownEvent:event];
-                result = coreFrame->eventHandler()->eventMayStartDrag(event);
+                if (Page* page = coreFrame->page())
+                    result = coreFrame->eventHandler()->eventMayStartDrag(PlatformMouseEvent(event, page->chrome()->platformPageClient()));
                 [hitHTMLView _setMouseDownEvent:nil];
             }
         }

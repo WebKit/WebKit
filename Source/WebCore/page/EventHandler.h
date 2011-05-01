@@ -214,11 +214,6 @@ public:
     bool keyEvent(NSEvent *);
     bool wheelEvent(NSEvent *);
 
-#if ENABLE(CONTEXT_MENUS)
-    bool sendContextMenuEvent(NSEvent *);
-#endif
-    bool eventMayStartDrag(NSEvent *);
-
     void sendFakeEventsAfterWidgetTracking(NSEvent *initiatingEvent);
 
     void setActivationEventNumber(int num) { m_activationEventNumber = num; }
