@@ -41,9 +41,10 @@
 #include <JavaScriptCore/Assertions.h>
 #include <JavaScriptCore/JavaScriptCore.h>
 #include <WebKit/WebKit.h>
-#include <wtf/Vector.h>
 #include <stdio.h>
 #include <string>
+#include <wtf/PassOwnPtr.h>
+#include <wtf/Vector.h>
 
 using std::string;
 

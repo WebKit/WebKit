@@ -36,6 +36,7 @@
 #include "DRTDesktopNotificationPresenter.h"
 
 #include <WebCore/COMPtr.h>
+#include <wtf/PassOwnPtr.h>
 #include <wtf/Platform.h>
 #include <wtf/Vector.h>
 #include <JavaScriptCore/Assertions.h>

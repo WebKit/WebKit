@@ -2,6 +2,13 @@
 
         [WIN] Unreviewed buildfix after r85434.
 
+        * DumpRenderTree/win/FrameLoadDelegate.cpp: Added missing header.
+        * DumpRenderTree/win/UIDelegate.cpp: Ditto.
+
+2011-05-01  Patrick Gansterer  <paroga@webkit.org>
+
+        [WIN] Unreviewed buildfix after r85434.
+
         * DumpRenderTree/win/FrameLoadDelegate.cpp:
         (FrameLoadDelegate::FrameLoadDelegate):
         * DumpRenderTree/win/UIDelegate.cpp:
