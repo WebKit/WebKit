@@ -1,3 +1,13 @@
+2011-05-01  ojab  <ojab@ojab.ru>
+
+        Reviewed by Eric Seidel.
+
+        Fix build with --disable-video --enable-fullscreen-api
+        https://bugs.webkit.org/show_bug.cgi?id=59698
+
+        * rendering/RenderTheme.h:
+        (WebCore::RenderTheme::extraFullScreenStyleSheet):
+
 2011-05-01  Jeff Timanus  <twiz@chromium.org>
 
         Reviewed by Eric Seidel.
