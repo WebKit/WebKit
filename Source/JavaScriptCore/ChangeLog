@@ -1,5 +1,11 @@
 2011-04-30  Gavin Barraclough  <barraclough@apple.com>
 
+        ARMv7 build fix.
+
+        * assembler/AssemblerBufferWithConstantPool.h:
+
+2011-04-30  Gavin Barraclough  <barraclough@apple.com>
+
         Reviewed by Oliver Hunt.
 
         Bug 59869 - AssemblerBuffer cleanup - disambiguate size()

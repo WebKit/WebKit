@@ -196,12 +196,6 @@ public:
         putIntegralUnchecked(value.low);
     }
 
-    int size()
-    {
-        ensureSpaceForAnyOneInstruction();
-        return AssemblerBuffer::size();
-    }
-
     void* executableCopy(ExecutablePool* allocator)
     {
         flushConstantPool(false);
@@ -260,7 +254,7 @@ private:
             m_maxDistance = maxPoolSize;
         flushIfNoSpaceFor(sizeof(IntegralType), 4);
 
-        m_loadOffsets.append(AssemblerBuffer::size());
+        m_loadOffsets.append(label());
         if (isReusable) {
             for (int i = 0; i < m_numConsts; ++i) {
                 if (m_mask[i] == ReusableConst && m_pool[i] == constant) {
@@ -284,7 +278,7 @@ private:
     {
         if (m_numConsts == 0)
             return;
-        int alignPool = (AssemblerBuffer::size() + (useBarrier ? barrierSize : 0)) & (sizeof(uint64_t) - 1);
+        int alignPool = (codeSize() + (useBarrier ? barrierSize : 0)) & (sizeof(uint64_t) - 1);
 
         if (alignPool)
             alignPool = sizeof(uint64_t) - alignPool;
@@ -302,7 +296,7 @@ private:
                 AssemblerBuffer::putInt(AssemblerType::padForAlign32);
         }
 
-        int constPoolOffset = AssemblerBuffer::size();
+        int constPoolOffset = label();
         append(reinterpret_cast<char*>(m_pool), m_numConsts * sizeof(uint32_t));
 
         // Patch each PC relative load
