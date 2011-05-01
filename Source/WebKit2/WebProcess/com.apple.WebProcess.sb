@@ -8,6 +8,16 @@
 ;; Distributed notifications, local pasteboard client
 (corefoundation)
 
+;; Utility functions for home directory relative path filters
+(define (home-regex home-relative-regex)
+  (regex (string-append "^" (regex-quote (param "HOME_DIR")) home-relative-regex)))
+
+(define (home-subpath home-relative-subpath)
+  (subpath (string-append (param "HOME_DIR") home-relative-subpath)))
+
+(define (home-literal home-relative-literal)
+  (literal (string-append (param "HOME_DIR") home-relative-literal)))
+
 ;; Read-only preferences and data
 (allow file-read*
        ;; Basic system paths
@@ -21,7 +31,7 @@
 
        ;; Plugins
        (subpath "/Library/Internet Plug-Ins")
-       (subpath (string-append (param "HOME_DIR") "/Library/Internet Plug-Ins"))
+       (home-subpath "/Library/Internet Plug-Ins")
 
        ;; System and user preferences
        (literal "/Library/Preferences/.GlobalPreferences.plist")
@@ -30,47 +40,47 @@
        (literal "/Library/Preferences/com.apple.security.common.plist")
        (literal "/Library/Preferences/com.apple.security.revocation.plist")
        (regex #"^/Library/Managed Preferences/[^/]+/com\.apple\.networkConnect\.plist$")
-       (literal (string-append (param "HOME_DIR") "/Library/Preferences/.GlobalPreferences.plist"))
-       (regex (string-append "^" (param "HOME_DIR") "/Library/Preferences/ByHost/\.GlobalPreferences\."))
-       (regex (string-append "^" (param "HOME_DIR") "/Library/Preferences/ByHost/com\.apple\.networkConnect\."))
-       (literal (string-append (param "HOME_DIR") "/Library/Preferences/com.apple.ATS.plist"))
-       (literal (string-append (param "HOME_DIR") "/Library/Preferences/com.apple.HIToolbox.plist"))
-       (literal (string-append (param "HOME_DIR") "/Library/Preferences/com.apple.LaunchServices.plist"))
-       (literal (string-append (param "HOME_DIR") "/Library/Preferences/com.apple.WebFoundation.plist"))
-       (literal (string-append (param "HOME_DIR") "/Library/Preferences/com.apple.security.plist"))
-       (literal (string-append (param "HOME_DIR") "/Library/Preferences/com.apple.security.revocation.plist"))
-       (literal (string-append (param "HOME_DIR") "/Library/Application Support/SyncServices/Local/ClientsWithChanges/com.apple.Keychain"))
-       (regex (string-append "^" (param "HOME_DIR") "/Library/Preferences/com\.apple\.driver\.(AppleBluetoothMultitouch\.mouse|AppleBluetoothMultitouch\.trackpad|AppleHIDMouse)\.plist$"))
+       (home-literal "/Library/Preferences/.GlobalPreferences.plist")
+       (home-regex "/Library/Preferences/ByHost/\.GlobalPreferences\.")
+       (home-regex "/Library/Preferences/ByHost/com\.apple\.networkConnect\.")
+       (home-literal "/Library/Preferences/com.apple.ATS.plist")
+       (home-literal "/Library/Preferences/com.apple.HIToolbox.plist")
+       (home-literal "/Library/Preferences/com.apple.LaunchServices.plist")
+       (home-literal "/Library/Preferences/com.apple.WebFoundation.plist")
+       (home-literal "/Library/Preferences/com.apple.security.plist")
+       (home-literal "/Library/Preferences/com.apple.security.revocation.plist")
+       (home-literal "/Library/Application Support/SyncServices/Local/ClientsWithChanges/com.apple.Keychain")
+       (home-regex "/Library/Preferences/com\.apple\.driver\.(AppleBluetoothMultitouch\.mouse|AppleBluetoothMultitouch\.trackpad|AppleHIDMouse)\.plist$")
 
        ;; On-disk WebKit2 framework location, to account for debug installations
        ;; outside of /System/Library/Frameworks
        (subpath (param "WEBKIT2_FRAMEWORK_DIR"))
 
        ;; FIXME: This should be removed when <rdar://problem/8957845> is fixed.
-       (subpath (string-append (param "HOME_DIR") "/Library/Fonts"))
+       (home-subpath "/Library/Fonts")
 
        ;; FIXME: These should be removed when <rdar://problem/9217757> is fixed.
-       (subpath (string-append (param "HOME_DIR") "/Library/Audio/Plug-Ins/Components"))
-       (subpath (string-append (param "HOME_DIR") "/Library/Preferences/QuickTime Preferences"))
-       (literal (string-append (param "HOME_DIR") "/Library/Caches/com.apple.coreaudio.components.plist"))
+       (home-subpath "/Library/Audio/Plug-Ins/Components")
+       (home-subpath "/Library/Preferences/QuickTime Preferences")
+       (home-literal "/Library/Caches/com.apple.coreaudio.components.plist")
        (subpath "/Library/Audio/Plug-Ins/Components")
        (subpath "/Library/Audio/Plug-Ins/HAL")
        (subpath "/Library/Video/Plug-Ins")
        (subpath "/Library/QuickTime")
 
        ;; FIXME: This should be removed when <rdar://problem/9237619> is fixed.
-       (literal (string-append (param "HOME_DIR") "/Library/Preferences/com.apple.universalaccess.plist"))
+       (home-literal "/Library/Preferences/com.apple.universalaccess.plist")
 
        ;; FIXME: This should be removed when <rdar://problem/9276253> is fixed.
-       (subpath (string-append (param "HOME_DIR") "/Library/Keyboard Layouts"))
+       (home-subpath "/Library/Keyboard Layouts")
 
        ;; FIXME: This should be removed when <rdar://problem/9276268> is fixed.
-       (subpath (string-append (param "HOME_DIR") "/Library/Input Methods"))
+       (home-subpath "/Library/Input Methods")
 
        ;; FIXME: This should be removed when <rdar://problem/9276430> is fixed.
-       (literal (string-append (param "HOME_DIR") "/Library/Preferences/com.apple.LaunchServices.QuarantineEventsV2"))
+       (home-literal "/Library/Preferences/com.apple.LaunchServices.QuarantineEventsV2")
 
-       (subpath (string-append (param "HOME_DIR") "/Library/Dictionaries")))
+       (home-subpath "/Library/Dictionaries"))
 
 ;; This should be updated when <rdar://problem/9355830> is fixed.
 ;; Read-only extensions from UIProcess
@@ -82,10 +92,10 @@
 
 ;; Writable preferences and temporary files
 (allow file*
-       (subpath (string-append (param "HOME_DIR") "/Library/Caches/com.apple.WebProcess"))
-       (regex (string-append "^" (param "HOME_DIR") "/Library/Preferences/ByHost/com\.apple\.HIToolbox\."))
-       (regex (string-append "^" (param "HOME_DIR") "/Library/Preferences/com\.apple\.WebProcess\."))
-       (subpath (string-append (param "HOME_DIR") "/Library/Keychains")))
+       (home-subpath "/Library/Caches/com.apple.WebProcess")
+       (home-regex "/Library/Preferences/ByHost/com\.apple\.HIToolbox\.")
+       (home-regex "/Library/Preferences/com\.apple\.WebProcess\.")
+       (home-subpath "/Library/Keychains"))
 
 ;; Darwin temporary files and Security mds caches, if present
 (if (positive? (string-length (param "DARWIN_USER_CACHE_DIR")))
@@ -165,12 +175,12 @@
 (allow mach-lookup (global-name "com.apple.pubsub.ipc"))
 (allow network-outbound (regex #"^/private/tmp/launch-[^/]+/Render"))
 (allow file-read*
-       (literal (string-append (param "HOME_DIR") "/Library/Preferences/com.apple.Safari.RSS.plist"))
-       (literal (string-append (param "HOME_DIR") "/Library/Preferences/com.apple.Syndication.plist")))
+       (home-literal "/Library/Preferences/com.apple.Safari.RSS.plist")
+       (home-literal "/Library/Preferences/com.apple.Syndication.plist"))
 
 ;; Mute violations
 (deny file-write*
-      (literal (string-append (param "HOME_DIR") "/Library/Caches/com.apple.coreaudio.components.plist"))
+      (home-literal "/Library/Caches/com.apple.coreaudio.components.plist")
       (with no-log))
 
 ;; FIXME: This should be removed when <rdar://problem/8448021> is fixed.

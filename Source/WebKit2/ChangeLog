@@ -2,6 +2,15 @@
 
         Reviewed by Maciej Stachowiak.
 
+        Simplify WebProcess sandbox with homedir-relative path filters.
+        https://bugs.webkit.org/show_bug.cgi?id=59872
+
+        * WebProcess/com.apple.WebProcess.sb:
+
+2011-05-01  Ivan Krstić  <ike@apple.com>
+
+        Reviewed by Maciej Stachowiak.
+
         On-demand VPN support for sandboxed WebProcess.
         <rdar://problem/8994181>
 
