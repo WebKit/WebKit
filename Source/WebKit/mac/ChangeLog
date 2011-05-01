@@ -1,3 +1,16 @@
+2011-05-01  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        Move currentKeyboardEvent from EventHandlerMac.mm to WebHTMLView.mm
+        https://bugs.webkit.org/show_bug.cgi?id=59835
+
+        Moved currentKeyboardEvent.
+
+        * WebView/WebHTMLView.mm:
+        (currentKeyboardEvent):
+        (-[WebHTMLView becomeFirstResponder]):
+
 2011-04-29  Dean Jackson  <dino@apple.com>
 
         Reviewed by Simon Fraser.

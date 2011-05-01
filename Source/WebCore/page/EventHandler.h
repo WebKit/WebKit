@@ -207,8 +207,6 @@ public:
     void sendScrollEvent();
     
 #if PLATFORM(MAC) && defined(__OBJC__)
-    PassRefPtr<KeyboardEvent> currentKeyboardEvent() const;
-
     void mouseDown(NSEvent *);
     void mouseDragged(NSEvent *);
     void mouseUp(NSEvent *);

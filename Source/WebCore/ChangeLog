@@ -1,3 +1,16 @@
+2011-05-01  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        Move currentKeyboardEvent from EventHandlerMac.mm to WebHTMLView.mm
+        https://bugs.webkit.org/show_bug.cgi?id=59835
+
+        Moved currentKeyboardEvent.
+
+        * WebCore.exp.in:
+        * page/EventHandler.h:
+        * page/mac/EventHandlerMac.mm:
+
 2011-05-01  ojab  <ojab@ojab.ru>
 
         Reviewed by Eric Seidel.

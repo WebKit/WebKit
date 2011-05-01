@@ -3682,6 +3682,25 @@ static BOOL isInPasswordField(Frame* coreFrame)
     return coreFrame && coreFrame->selection()->isInPasswordField();
 }
 
+static PassRefPtr<KeyboardEvent> currentKeyboardEvent(Frame* coreFrame)
+{
+    NSEvent *event = [NSApp currentEvent];
+    if (!event)
+        return 0;
+
+    switch ([event type]) {
+    case NSKeyDown: {
+        PlatformKeyboardEvent platformEvent(event);
+        platformEvent.disambiguateKeyDownEvent(PlatformKeyboardEvent::RawKeyDown);
+        return KeyboardEvent::create(platformEvent, coreFrame->document()->defaultView());
+    }
+    case NSKeyUp:
+        return KeyboardEvent::create(event, coreFrame->document()->defaultView());
+    default:
+        return 0;
+    }
+}
+
 - (BOOL)becomeFirstResponder
 {
     NSSelectionDirection direction = NSDirectSelection;
@@ -3721,7 +3740,7 @@ static BOOL isInPasswordField(Frame* coreFrame)
     if (Document* document = frame->document())
         document->setFocusedNode(0);
     page->focusController()->setInitialFocus(direction == NSSelectingNext ? FocusDirectionForward : FocusDirectionBackward,
-                                             frame->eventHandler()->currentKeyboardEvent().get());
+                                             currentKeyboardEvent(frame).get());
     return YES;
 }
 

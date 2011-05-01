@@ -119,24 +119,6 @@ bool EventHandler::wheelEvent(NSEvent *event)
     return wheelEvent.isAccepted();
 }
 
-PassRefPtr<KeyboardEvent> EventHandler::currentKeyboardEvent() const
-{
-    NSEvent *event = [NSApp currentEvent];
-    if (!event)
-        return 0;
-    switch ([event type]) {
-        case NSKeyDown: {
-            PlatformKeyboardEvent platformEvent(event);
-            platformEvent.disambiguateKeyDownEvent(PlatformKeyboardEvent::RawKeyDown);
-            return KeyboardEvent::create(platformEvent, m_frame->document()->defaultView());
-        }
-        case NSKeyUp:
-            return KeyboardEvent::create(event, m_frame->document()->defaultView());
-        default:
-            return 0;
-    }
-}
-
 bool EventHandler::keyEvent(NSEvent *event)
 {
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
