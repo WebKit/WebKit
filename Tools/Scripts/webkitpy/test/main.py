@@ -96,7 +96,7 @@ class Tester(object):
     def run_tests(self, sys_argv, external_package_paths=None):
         """Run the unit tests in all *_unittest.py modules in webkitpy.
 
-        This method excludes "webkitpy.common.checkout.scm_unittest" unless
+        This method excludes "webkitpy.common.checkout.scm.scm_unittest" unless
         the --all option is the second element of sys_argv.
 
         Args:
@@ -140,12 +140,17 @@ class Tester(object):
         if len(sys_argv) > 1 and sys.argv[1] == "--all":
             sys.argv.remove("--all")
         else:
-            excluded_module = "webkitpy.common.checkout.scm_unittest"
+            excluded_module = "webkitpy.common.checkout.scm.scm_unittest"
             _log.info("Excluding: %s (use --all to include)" % excluded_module)
             modules.remove(excluded_module)
 
         if sys.platform == 'win32':
             modules = filter(self._win32_blacklist, modules)
+
+        # unittest.main has horrible error reporting when module imports are bad
+        # so we test import here to make debugging bad imports much easier.
+        for module in modules:
+            __import__(module)
 
         sys_argv.extend(modules)
 

@@ -1,3 +1,15 @@
+2011-05-01  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Adam Barth.
+
+        Move scm.py into its own module in preparation for splitting it up
+        https://bugs.webkit.org/show_bug.cgi?id=59884
+
+        * Scripts/webkitpy/common/checkout/scm/__init__.py: Added.
+        * Scripts/webkitpy/common/checkout/scm/scm.py: Moved.
+        * Scripts/webkitpy/common/checkout/scm/scm_unittest.py: Moved.
+        * Scripts/webkitpy/test/main.py:
+
 2011-05-01  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Eric Seidel.
