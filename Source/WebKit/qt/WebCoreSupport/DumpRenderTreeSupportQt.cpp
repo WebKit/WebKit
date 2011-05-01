@@ -65,6 +65,7 @@
 #include "RenderListItem.h"
 #include "RenderTreeAsText.h"
 #include "ScriptController.h"
+#include "ScriptValue.h"
 #include "SecurityOrigin.h"
 #include "Settings.h"
 #if ENABLE(SVG)

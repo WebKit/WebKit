@@ -50,6 +50,7 @@
 #include <WebCore/RenderEmbeddedObject.h>
 #include <WebCore/RenderLayer.h>
 #include <WebCore/ResourceLoadScheduler.h>
+#include <WebCore/ScriptValue.h>
 #include <WebCore/ScrollView.h>
 #include <WebCore/Settings.h>
 

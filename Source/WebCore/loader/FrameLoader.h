@@ -38,7 +38,6 @@
 #include "IconDatabaseBase.h"
 #include "PolicyChecker.h"
 #include "ResourceLoadNotifier.h"
-#include "ScriptValue.h"
 #include "SubframeLoader.h"
 #include "ThreadableLoader.h"
 #include "Timer.h"

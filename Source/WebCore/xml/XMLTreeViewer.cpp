@@ -36,6 +36,7 @@
 #include "Frame.h"
 #include "Page.h"
 #include "ScriptSourceCode.h"
+#include "ScriptValue.h"
 #include "Settings.h"
 #include "Text.h"
 #include "XMLViewerCSS.h"

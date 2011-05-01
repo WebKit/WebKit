@@ -29,15 +29,11 @@
 #ifndef XMLTreeViewer_h
 #define XMLTreeViewer_h
 
-#include <wtf/Vector.h>
-#include <wtf/text/WTFString.h>
-
 #if ENABLE(XSLT)
 
 namespace WebCore {
 
 class Document;
-class ProcessingInstruction;
 
 class XMLTreeViewer {
 public:

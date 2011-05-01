@@ -1,3 +1,27 @@
+2011-05-01  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Anders Carlsson.
+
+        Prune some unnecessary #includes
+        https://bugs.webkit.org/show_bug.cgi?id=59895
+
+        Start getting rid of unnecessary #includes and forward declares.
+
+        * bindings/js/JSDOMBinding.h:
+        * bindings/js/JSDOMWindowBase.h:
+        * bindings/js/JSDOMWindowShell.h:
+        * bindings/js/ScheduledAction.cpp:
+        * bindings/js/ScriptController.cpp:
+        * bindings/js/ScriptController.h:
+        * bindings/js/ScriptDebugServer.cpp:
+        * editing/Editor.h:
+        * inspector/InspectorClient.cpp:
+        * loader/FrameLoader.h:
+        * loader/NavigationScheduler.h:
+        * page/Console.cpp:
+        * xml/XMLTreeViewer.cpp:
+        * xml/XMLTreeViewer.h:
+
 2011-05-01  Patrick Gansterer  <paroga@webkit.org>
 
         [WIN] Unreviewed buildfix after r85434.

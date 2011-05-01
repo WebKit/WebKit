@@ -51,11 +51,8 @@ namespace JSC {
 
 namespace WebCore {
 
-class Event;
-class EventListener;
 class HTMLPlugInElement;
 class Frame;
-class Node;
 class ScriptSourceCode;
 class ScriptValue;
 class Widget;

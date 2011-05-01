@@ -36,7 +36,6 @@
 #include "FindOptions.h"
 #include "SelectionController.h"
 #include "TextChecking.h"
-#include "Timer.h"
 #include "VisibleSelection.h"
 #include "WritingDirection.h"
 

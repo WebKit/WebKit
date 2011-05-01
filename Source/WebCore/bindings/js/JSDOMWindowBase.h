@@ -20,24 +20,17 @@
 #ifndef JSDOMWindowBase_h
 #define JSDOMWindowBase_h
 
-#include "PlatformString.h"
 #include "JSDOMBinding.h"
-#include <heap/Strong.h>
+#include "JSDOMGlobalObject.h"
 #include <wtf/Forward.h>
-#include <wtf/HashMap.h>
-#include <wtf/OwnPtr.h>
 
 namespace WebCore {
 
     class DOMWindow;
-    class Event;
     class Frame;
     class DOMWrapperWorld;
     class JSDOMWindow;
     class JSDOMWindowShell;
-    class JSLocation;
-    class JSEventListener;
-    class SecurityOrigin;
 
     class JSDOMWindowBasePrivate;
 

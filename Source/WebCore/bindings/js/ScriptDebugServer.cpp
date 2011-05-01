@@ -38,11 +38,12 @@
 #include "JavaScriptCallFrame.h"
 #include "ScriptBreakpoint.h"
 #include "ScriptDebugListener.h"
+#include "ScriptValue.h"
 #include <debugger/DebuggerCallFrame.h>
 #include <parser/SourceProvider.h>
 #include <runtime/JSLock.h>
-#include <wtf/text/StringConcatenate.h>
 #include <wtf/MainThread.h>
+#include <wtf/text/StringConcatenate.h>
 
 using namespace JSC;
 

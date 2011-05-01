@@ -29,25 +29,14 @@
 #include "Element.h"
 #include "StyleBase.h"
 #include <heap/Weak.h>
-#include <runtime/Completion.h>
 #include <runtime/Lookup.h>
 #include <wtf/Forward.h>
 #include <wtf/Noncopyable.h>
 
-namespace JSC {
-    class JSGlobalData;
-    class DebuggerCallFrame;
-}
-
 namespace WebCore {
 
-    class Document;
     class Frame;
-    class JSNode;
     class KURL;
-    class Node;
-    class ScriptController;
-    class ScriptCachedFrameData;
 
     typedef int ExceptionCode;
 

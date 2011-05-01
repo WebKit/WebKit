@@ -1,3 +1,14 @@
+2011-05-01  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Anders Carlsson.
+
+        Prune some unnecessary #includes
+        https://bugs.webkit.org/show_bug.cgi?id=59895
+
+        Start getting rid of unnecessary #includes and forward declares.
+
+        * WebCoreSupport/DumpRenderTreeSupportQt.cpp:
+
 2011-04-29  Csaba Osztrogonác  <ossy@webkit.org>
 
         Reviewed by Adam Barth.

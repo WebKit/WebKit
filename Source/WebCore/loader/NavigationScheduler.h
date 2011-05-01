@@ -31,7 +31,6 @@
 #ifndef NavigationScheduler_h
 #define NavigationScheduler_h
 
-#include "Event.h"
 #include "Timer.h"
 #include <wtf/Forward.h>
 #include <wtf/Noncopyable.h>
@@ -41,13 +40,10 @@
 
 namespace WebCore {
 
-class FormState;
 class FormSubmission;
 class Frame;
 class ScheduledNavigation;
 class SecurityOrigin;
-
-struct FrameLoadRequest;
 
 class NavigationDisablerForBeforeUnload {
     WTF_MAKE_NONCOPYABLE(NavigationDisablerForBeforeUnload);

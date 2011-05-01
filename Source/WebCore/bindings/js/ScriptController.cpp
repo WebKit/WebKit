@@ -21,7 +21,6 @@
 #include "config.h"
 #include "ScriptController.h"
 
-#include "ScriptableDocumentParser.h"
 #include "Event.h"
 #include "EventNames.h"
 #include "Frame.h"
@@ -29,6 +28,7 @@
 #include "GCController.h"
 #include "HTMLPlugInElement.h"
 #include "InspectorInstrumentation.h"
+#include "JSDOMWindow.h"
 #include "JSDocument.h"
 #include "JSMainThreadExecState.h"
 #include "NP_jsobject.h"
@@ -36,6 +36,7 @@
 #include "PageGroup.h"
 #include "ScriptSourceCode.h"
 #include "ScriptValue.h"
+#include "ScriptableDocumentParser.h"
 #include "Settings.h"
 #include "StorageNamespace.h"
 #include "UserGestureIndicator.h"
