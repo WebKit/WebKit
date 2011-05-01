@@ -1,3 +1,12 @@
+2011-05-01  Ivan Krstić  <ike@apple.com>
+
+        Reviewed by Maciej Stachowiak.
+
+        On-demand VPN support for sandboxed WebProcess.
+        <rdar://problem/8994181>
+
+        * WebProcess/com.apple.WebProcess.sb:
+
 2011-04-30  Ivan Krstić  <ike@apple.com>
 
         Reviewed by Sam Weinig.
