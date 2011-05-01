@@ -72,8 +72,8 @@ string descriptionSuitableForTestResult(IWebFrame* webFrame)
 
 FrameLoadDelegate::FrameLoadDelegate()
     : m_refCount(1)
-    , m_gcController(new GCController)
-    , m_accessibilityController(new AccessibilityController)
+    , m_gcController(adoptPtr(new GCController))
+    , m_accessibilityController(adoptPtr(new AccessibilityController))
 {
 }
 

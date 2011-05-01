@@ -103,8 +103,8 @@ private:
 };
 
 DRTUndoManager::DRTUndoManager()
-    : m_redoStack(new DRTUndoStack)
-    , m_undoStack(new DRTUndoStack)
+    : m_redoStack(adoptPtr(new DRTUndoStack))
+    , m_undoStack(adoptPtr(new DRTUndoStack))
     , m_isRedoing(false)
     , m_isUndoing(false)
 {
@@ -155,8 +155,8 @@ void DRTUndoManager::undo()
 
 UIDelegate::UIDelegate()
     : m_refCount(1)
-    , m_undoManager(new DRTUndoManager)
-    , m_desktopNotifications(new DRTDesktopNotificationPresenter)
+    , m_undoManager(adoptPtr(new DRTUndoManager))
+    , m_desktopNotifications(adoptPtr(new DRTDesktopNotificationPresenter))
 {
     m_frame.bottom = 0;
     m_frame.top = 0;
@@ -166,7 +166,7 @@ UIDelegate::UIDelegate()
 
 void UIDelegate::resetUndoManager()
 {
-    m_undoManager.set(new DRTUndoManager);
+    m_undoManager = adoptPtr(new DRTUndoManager);
 }
 
 HRESULT STDMETHODCALLTYPE UIDelegate::QueryInterface(REFIID riid, void** ppvObject)
