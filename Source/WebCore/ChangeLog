@@ -1,3 +1,17 @@
+2011-05-01  Emil A Eklund  <eae@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        getComputedStyle() returns unitless values for some properties that require units
+        https://bugs.webkit.org/show_bug.cgi?id=55111
+
+        Change getComputedStyle to return value with unit for -webkit-column-width, -webkit-column-gap and -webkit-perspective
+
+        Test: fast/css/getComputedStyle/getComputedStyle-length-unit.html
+
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::CSSComputedStyleDeclaration::getPropertyCSSValue):
+
 2011-05-01  Young Han Lee  <joybro@company100.net>
 
         Reviewed by Eric Seidel.

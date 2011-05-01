@@ -1,3 +1,15 @@
+2011-05-01  Emil A Eklund  <eae@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        getComputedStyle() returns unitless values for some properties that require units
+        https://bugs.webkit.org/show_bug.cgi?id=55111
+
+        Add test to verify that getComputedStyle returns length properties with a unit.
+
+        * fast/css/getComputedStyle/getComputedStyle-length-unit-expected.txt: Added.
+        * fast/css/getComputedStyle/getComputedStyle-length-unit.html: Added.
+
 2011-05-01  Yael Aharon  <yael.aharon@nokia.com>
 
         Reviewed by Eric Seidel.
@@ -7076,7 +7088,7 @@
         [Chromium] Rebaseline for fast/html/details-add-summary-1
         https://bugs.webkit.org/show_bug.cgi?id=58783
 
-	Following changes to after changes to RenderDetailsMarker (r84039).
+    Following changes to after changes to RenderDetailsMarker (r84039).
 
         * platform/chromium-linux/fast/html/details-add-summary-1-expected.png:
         * platform/chromium-mac-leopard/fast/html/details-add-summary-1-expected.png:
@@ -7135,7 +7147,7 @@
         [Chromium] Update test expectations for canvas/philip/tests/2d.gradient.interpolate.outside.html
         https://bugs.webkit.org/show_bug.cgi?id=58777
 
-	Regression caused by Skia roll: Chromium r81836.
+    Regression caused by Skia roll: Chromium r81836.
 
         * platform/chromium/test_expectations.txt:
 

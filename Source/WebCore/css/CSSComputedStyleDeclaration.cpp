@@ -1043,7 +1043,7 @@ PassRefPtr<CSSValue> CSSComputedStyleDeclaration::getPropertyCSSValue(int proper
         case CSSPropertyWebkitColumnGap:
             if (style->hasNormalColumnGap())
                 return primitiveValueCache->createIdentifierValue(CSSValueNormal);
-            return primitiveValueCache->createValue(style->columnGap(), CSSPrimitiveValue::CSS_NUMBER);
+            return zoomAdjustedPixelValue(style->columnGap(), style.get(), primitiveValueCache);
         case CSSPropertyWebkitColumnRuleColor:
             return m_allowVisitedStyle ? primitiveValueCache->createColorValue(style->visitedDependentColor(CSSPropertyOutlineColor).rgb()) : currentColorOrValidColor(style.get(), style->columnRuleColor());
         case CSSPropertyWebkitColumnRuleStyle:
@@ -1063,7 +1063,7 @@ PassRefPtr<CSSValue> CSSComputedStyleDeclaration::getPropertyCSSValue(int proper
         case CSSPropertyWebkitColumnWidth:
             if (style->hasAutoColumnWidth())
                 return primitiveValueCache->createIdentifierValue(CSSValueAuto);
-            return primitiveValueCache->createValue(style->columnWidth(), CSSPrimitiveValue::CSS_NUMBER);
+            return zoomAdjustedPixelValue(style->columnWidth(), style.get(), primitiveValueCache);
         case CSSPropertyCursor: {
             RefPtr<CSSValueList> list;
             CursorList* cursors = style->cursors();
@@ -1550,7 +1550,7 @@ PassRefPtr<CSSValue> CSSComputedStyleDeclaration::getPropertyCSSValue(int proper
         case CSSPropertyWebkitPerspective:
             if (!style->hasPerspective())
                 return primitiveValueCache->createIdentifierValue(CSSValueNone);
-            return primitiveValueCache->createValue(style->perspective(), CSSPrimitiveValue::CSS_NUMBER);
+            return zoomAdjustedPixelValue(style->perspective(), style.get(), primitiveValueCache);
         case CSSPropertyWebkitPerspectiveOrigin: {
             RefPtr<CSSValueList> list = CSSValueList::createSpaceSeparated();
             if (renderer) {
