@@ -1,3 +1,17 @@
+2011-05-01  Jeff Timanus  <twiz@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        Add solid-color checking to BitmapImage::checkForSolidColour in the skia port.
+        https://bugs.webkit.org/show_bug.cgi?id=59041
+
+        Test:css2.1/t140201-c533-bgimage-00-a.html
+
+        * platform/graphics/Image.cpp:
+        (WebCore::Image::drawTiled): Removal of macro exclusion of assert for Skia path.
+        * platform/graphics/skia/ImageSkia.cpp:
+        (WebCore::BitmapImage::checkForSolidColor):
+
 2011-05-01  Patrick Gansterer  <paroga@webkit.org>
 
         Reviewed by Adam Barth.

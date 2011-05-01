@@ -460,7 +460,22 @@ void BitmapImage::invalidatePlatformData()
 
 void BitmapImage::checkForSolidColor()
 {
+    m_isSolidColor = false;
     m_checkedForSolidColor = true;
+
+    if (frameCount() > 1)
+        return;
+
+    WebCore::NativeImageSkia* frame = frameAtIndex(0);
+
+    if (frame && size().width() == 1 && size().height() == 1) {
+        SkAutoLockPixels lock(*frame);
+        if (!frame->getPixels())
+            return;
+
+        m_isSolidColor = true;
+        m_solidColor = Color(frame->getColor(0, 0));
+    }
 }
 
 void BitmapImage::draw(GraphicsContext* ctxt, const FloatRect& dstRect,
