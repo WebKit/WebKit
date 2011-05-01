@@ -1,3 +1,12 @@
+2011-04-30  Ivan Krstić  <ike@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Reindent WebProcess sandbox to standard scheme style
+        https://bugs.webkit.org/show_bug.cgi?id=59870
+
+        * WebProcess/com.apple.WebProcess.sb:
+
 2011-04-28  Jer Noble  <jer.noble@apple.com>
 
         Reviewed by Jon Honeycutt.
