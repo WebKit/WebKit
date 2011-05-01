@@ -154,7 +154,7 @@ void RenderSVGResourceContainer::removeClient(RenderObject* client)
 void RenderSVGResourceContainer::registerResource()
 {
     SVGDocumentExtensions* extensions = svgExtensionsFromNode(node());
-    if (!extensions->isPendingResource(m_id)) {
+    if (!extensions->hasPendingResources(m_id)) {
         extensions->addResource(m_id, this);
         return;
     }
@@ -167,6 +167,8 @@ void RenderSVGResourceContainer::registerResource()
     // Update cached resources of pending clients.
     const SVGDocumentExtensions::SVGPendingElements::const_iterator end = clients->end();
     for (SVGDocumentExtensions::SVGPendingElements::const_iterator it = clients->begin(); it != end; ++it) {
+        ASSERT((*it)->hasPendingResources());
+        (*it)->setHasPendingResources(false);
         RenderObject* renderer = (*it)->renderer();
         if (!renderer)
             continue;

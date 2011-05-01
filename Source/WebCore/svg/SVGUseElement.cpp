@@ -72,7 +72,6 @@ inline SVGUseElement::SVGUseElement(const QualifiedName& tagName, Document* docu
     , m_width(LengthModeWidth)
     , m_height(LengthModeHeight)
     , m_updatesBlocked(false)
-    , m_isPendingResource(false)
     , m_needsShadowTreeRecreation(false)
 {
 }
@@ -139,7 +138,7 @@ void SVGUseElement::insertedIntoDocument()
     // This functions exists to assure assumptions made in the code regarding SVGElementInstance creation/destruction are satisfied.
     SVGStyledTransformableElement::insertedIntoDocument();
     ASSERT(!m_targetElementInstance || !isWellFormedDocument(document()));
-    ASSERT(!m_isPendingResource || !isWellFormedDocument(document()));
+    ASSERT(!hasPendingResources() || !isWellFormedDocument(document()));
 }
 
 void SVGUseElement::removedFromDocument()
@@ -166,10 +165,18 @@ void SVGUseElement::svgAttributeChanged(const QualifiedName& attrName)
         return;
 
     if (SVGURIReference::isKnownAttribute(attrName)) {
-        if (m_isPendingResource) {
-            document()->accessSVGExtensions()->removePendingResource(m_resourceId);
+        if (hasPendingResources()) {
+            OwnPtr<SVGDocumentExtensions::SVGPendingElements> clients(document()->accessSVGExtensions()->removePendingResource(m_resourceId));
+            ASSERT(!clients->isEmpty());
+
+            const SVGDocumentExtensions::SVGPendingElements::const_iterator end = clients->end();
+            for (SVGDocumentExtensions::SVGPendingElements::const_iterator it = clients->begin(); it != end; ++it) {
+                ASSERT((*it)->hasPendingResources());
+                (*it)->setHasPendingResources(false);
+            }
+
             m_resourceId = String();
-            m_isPendingResource = false;
+            setHasPendingResources(false);
         }
 
         invalidateShadowTree();
@@ -470,18 +477,19 @@ void SVGUseElement::buildPendingResource()
     ASSERT(!m_targetElementInstance);
 
     if (!targetElement) {
-        if (m_isPendingResource || id.isEmpty())
+        if (hasPendingResources() || id.isEmpty())
             return;
 
-        m_isPendingResource = true;
         m_resourceId = id;
+        ASSERT(!hasPendingResources());
         document()->accessSVGExtensions()->addPendingResource(id, this);
+        ASSERT(hasPendingResources());
         return;
     }
 
-    if (m_isPendingResource) {
+
+    if (hasPendingResources()) {
         ASSERT(!m_targetElementInstance);
-        m_isPendingResource = false;    
         m_resourceId = String();
         invalidateShadowTree();
     }

@@ -73,7 +73,7 @@ void RenderSVGShadowTreeRootContainer::updateFromElement()
     // Only rebuild the shadow tree, if we a) never had a tree or b) we were specifically asked to do so
     // If the use element is a pending resource, and a) or b) is true, do nothing, and wait for the use
     // element to be asked to buildPendingResource(), this will call us again, with m_recreateTrue=true.
-    if ((shouldRecreateTree || !hadExistingTree) && !useElement->isPendingResource()) {
+    if ((shouldRecreateTree || !hadExistingTree) && !useElement->hasPendingResources()) {
         useElement->buildShadowAndInstanceTree(m_shadowRoot.get());
 
         // Attach shadow root element

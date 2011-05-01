@@ -115,7 +115,6 @@ protected:
     virtual void parseMappedAttribute(Attribute*);
 
     virtual void finishParsingChildren();
-    virtual void insertedIntoDocument();
     virtual void attributeChanged(Attribute*, bool preserveDecls = false);
     virtual bool childShouldCreateRenderer(Node*) const;
     
@@ -130,9 +129,6 @@ private:
     virtual bool rendererIsNeeded(RenderStyle*) { return false; }
 
     virtual bool isSupported(StringImpl* feature, StringImpl* version) const;
-
-    virtual bool needsPendingResourceHandling() const { return true; }
-    virtual void buildPendingResource() { }
 
     void mapInstanceToElement(SVGElementInstance*);
     void removeInstanceMapping(SVGElementInstance*);

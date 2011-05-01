@@ -38,6 +38,7 @@ public:
         : m_cursorElement(0)
         , m_cursorImageValue(0)
         , m_instancesUpdatesBlocked(false)
+        , m_hasPendingResources(false)
     {
     }
 
@@ -60,6 +61,9 @@ public:
     bool instanceUpdatesBlocked() const { return m_instancesUpdatesBlocked; }
     void setInstanceUpdatesBlocked(bool value) { m_instancesUpdatesBlocked = value; }
 
+    bool hasPendingResources() const { return m_hasPendingResources; }
+    void setHasPendingResources(bool value) { m_hasPendingResources = value; }
+
     SVGCursorElement* cursorElement() const { return m_cursorElement; }
     void setCursorElement(SVGCursorElement* cursorElement) { m_cursorElement = cursorElement; }
 
@@ -71,6 +75,7 @@ private:
     SVGCursorElement* m_cursorElement;
     CSSCursorImageValue* m_cursorImageValue;
     bool m_instancesUpdatesBlocked : 1;
+    bool m_hasPendingResources : 1;
 };
 
 }

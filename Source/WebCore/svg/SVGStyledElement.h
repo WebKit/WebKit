@@ -52,12 +52,16 @@ public:
     bool instanceUpdatesBlocked() const;
     void setInstanceUpdatesBlocked(bool);
 
+    bool hasPendingResources() const;
+    void setHasPendingResources(bool);
+
     AnimatedAttributeType animatedPropertyTypeForCSSProperty(const QualifiedName&);
     static bool isAnimatableCSSProperty(const QualifiedName&);
 
     virtual AffineTransform localCoordinateSpaceTransform(SVGLocatable::CTMScope) const;
 
     virtual CSSStyleDeclaration* style() { return StyledElement::style(); }
+    virtual bool needsPendingResourceHandling() const { return true; }
 
 protected: 
     SVGStyledElement(const QualifiedName&, Document*);
@@ -81,6 +85,7 @@ protected:
     void updateRelativeLengthsInformation(bool hasRelativeLengths, SVGStyledElement*);
 
     virtual bool selfHasRelativeLengths() const { return false; }
+    virtual void buildPendingResource() { }
 
 private:
     virtual bool isStyled() const { return true; }

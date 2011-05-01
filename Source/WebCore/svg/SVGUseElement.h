@@ -77,7 +77,6 @@ private:
     void setUpdatesBlocked(bool blocked) { m_updatesBlocked = blocked; }
 
     friend class RenderSVGShadowTreeRootContainer;
-    bool isPendingResource() const { return m_isPendingResource; }
     void buildShadowAndInstanceTree(SVGShadowTreeRootElement*);
     void detachInstance();
 
@@ -118,7 +117,6 @@ private:
     DECLARE_ANIMATED_BOOLEAN(ExternalResourcesRequired, externalResourcesRequired)
 
     bool m_updatesBlocked;
-    bool m_isPendingResource;
     bool m_needsShadowTreeRecreation;
     String m_resourceId;
     RefPtr<SVGElementInstance> m_targetElementInstance;

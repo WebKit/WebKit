@@ -42,7 +42,7 @@ class SVGSVGElement;
 class SVGDocumentExtensions {
     WTF_MAKE_NONCOPYABLE(SVGDocumentExtensions); WTF_MAKE_FAST_ALLOCATED;
 public:
-    typedef HashSet<RefPtr<SVGStyledElement> > SVGPendingElements;
+    typedef HashSet<SVGStyledElement*> SVGPendingElements;
     SVGDocumentExtensions(Document*);
     ~SVGDocumentExtensions();
     
@@ -79,8 +79,9 @@ public:
     // This HashMap contains a list of pending resources. Pending resources, are such
     // which are referenced by any object in the SVG document, but do NOT exist yet.
     // For instance, dynamically build gradients / patterns / clippers...
-    void addPendingResource(const AtomicString& id, PassRefPtr<SVGStyledElement>);
-    bool isPendingResource(const AtomicString& id) const;
+    void addPendingResource(const AtomicString& id, SVGStyledElement*);
+    bool hasPendingResources(const AtomicString& id) const;
+    void removeElementFromPendingResources(SVGStyledElement*);
     PassOwnPtr<SVGPendingElements> removePendingResource(const AtomicString& id);
 };
 

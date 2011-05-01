@@ -66,6 +66,10 @@ SVGStyledElement::SVGStyledElement(const QualifiedName& tagName, Document* docum
 
 SVGStyledElement::~SVGStyledElement()
 {
+    if (needsPendingResourceHandling() && hasPendingResources() && document())
+        document()->accessSVGExtensions()->removeElementFromPendingResources(this);
+
+    ASSERT(!hasPendingResources());
 }
 
 String SVGStyledElement::title() const
@@ -359,12 +363,37 @@ void SVGStyledElement::insertedIntoDocument()
 {
     SVGElement::insertedIntoDocument();
     updateRelativeLengthsInformation();
+
+    Document* document = this->document();
+    if (!needsPendingResourceHandling() || !document)
+        return;
+
+    SVGDocumentExtensions* extensions = document->accessSVGExtensions();
+    String resourceId = getIdAttribute();
+    if (!extensions->hasPendingResources(resourceId))
+        return;
+
+    OwnPtr<SVGDocumentExtensions::SVGPendingElements> clients(extensions->removePendingResource(resourceId));
+    ASSERT(!clients->isEmpty());
+
+    const SVGDocumentExtensions::SVGPendingElements::const_iterator end = clients->end();
+    for (SVGDocumentExtensions::SVGPendingElements::const_iterator it = clients->begin(); it != end; ++it) {
+        ASSERT((*it)->hasPendingResources());
+        (*it)->buildPendingResource();
+        (*it)->setHasPendingResources(false);
+    }
 }
 
 void SVGStyledElement::removedFromDocument()
 {
     updateRelativeLengthsInformation(false, this);
     SVGElement::removedFromDocument();
+
+    Document* document = this->document();
+    if (!needsPendingResourceHandling() || !document)
+        return;
+
+    document->accessSVGExtensions()->removeElementFromPendingResources(this);
 }
 
 void SVGStyledElement::childrenChanged(bool changedByParser, Node* beforeChange, Node* afterChange, int childCountDelta)
@@ -417,6 +446,16 @@ void SVGStyledElement::setInstanceUpdatesBlocked(bool value)
 {
     if (hasRareSVGData())
         rareSVGData()->setInstanceUpdatesBlocked(value);
+}
+
+bool SVGStyledElement::hasPendingResources() const
+{
+    return hasRareSVGData() && rareSVGData()->hasPendingResources();
+}
+
+void SVGStyledElement::setHasPendingResources(bool value)
+{
+    ensureRareSVGData()->setHasPendingResources(value);
 }
 
 AffineTransform SVGStyledElement::localCoordinateSpaceTransform(SVGLocatable::CTMScope) const

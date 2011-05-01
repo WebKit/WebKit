@@ -1,3 +1,19 @@
+2011-05-01  Nikolas Zimmermann  <nzimmermann@rim.com>
+
+        Reviewed by Dirk Schulze.
+
+        LEAK: SVGElement leaks when detaching it in a pending resource state
+        https://bugs.webkit.org/show_bug.cgi?id=59072
+
+        Add testcase that used to leak, the leaks bot will assure they won't in future.
+
+        * svg/custom/pending-resource-leak-2-expected.txt: Added.
+        * svg/custom/pending-resource-leak-2.svg: Added.
+        * svg/custom/pending-resource-leak-3-expected.txt: Added.
+        * svg/custom/pending-resource-leak-3.svg: Added.
+        * svg/custom/pending-resource-leak-expected.txt: Added.
+        * svg/custom/pending-resource-leak.svg: Added.
+
 2011-05-01  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Anders Carlsson.

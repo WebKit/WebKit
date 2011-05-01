@@ -1,3 +1,63 @@
+2011-05-01  Nikolas Zimmermann  <nzimmermann@rim.com>
+
+        Reviewed by Dirk Schulze.
+
+        LEAK: SVGElement leaks when detaching it in a pending resource state
+        https://bugs.webkit.org/show_bug.cgi?id=59072
+
+        Make the pending resources set non-refcounted again. We made it refcounted a while ago
+        to fix a security bug, as we had dangling pointers in the set in SVGDocumentExtensions.
+        Fix the underlying problem, by removing all pending resources referencing to a particular
+        SVGElement, upon its destruction or upon removing it from the document.
+
+        Example: <rect fill="url(#foo)" id="rect">
+        When we try to render the rect, the foo paint server can't be found and thus "foo" will be
+        added to the pending resource set, with "rect" as client. When "foo" appears, it would remove
+        itself from the pending resource set, and a ref count to the "rect" would be released.
+        If "foo" never appears, SVGDocumentExtensions still holds a ref to the <rect>, thus keeping
+        it and the associated document alive.
+
+        Tests: svg/custom/pending-resource-leak-2.svg
+               svg/custom/pending-resource-leak-3.svg
+               svg/custom/pending-resource-leak.svg
+
+        These tests cover several scenarios where we used to leak. Should fix several SVG*Element leaks on the bots.
+        I manually tested reloading above testcases dozens of times, before the leak count was incremented by 2 nodes on every reload, that's gone now.
+
+        * rendering/svg/RenderSVGResourceContainer.cpp:
+        (WebCore::RenderSVGResourceContainer::registerResource):
+        * rendering/svg/RenderSVGShadowTreeRootContainer.cpp:
+        (WebCore::RenderSVGShadowTreeRootContainer::updateFromElement):
+        * rendering/svg/SVGResources.cpp:
+        (WebCore::registerPendingResource):
+        * svg/SVGDocumentExtensions.cpp:
+        (WebCore::SVGDocumentExtensions::addPendingResource):
+        (WebCore::SVGDocumentExtensions::hasPendingResources):
+        (WebCore::SVGDocumentExtensions::removeElementFromPendingResources):
+        (WebCore::SVGDocumentExtensions::removePendingResource):
+        * svg/SVGDocumentExtensions.h:
+        * svg/SVGElement.cpp:
+        * svg/SVGElement.h:
+        * svg/SVGElementRareData.h:
+        (WebCore::SVGElementRareData::SVGElementRareData):
+        (WebCore::SVGElementRareData::hasPendingResources):
+        (WebCore::SVGElementRareData::setHasPendingResources):
+        * svg/SVGStyledElement.cpp:
+        (WebCore::SVGStyledElement::~SVGStyledElement):
+        (WebCore::SVGStyledElement::insertedIntoDocument):
+        (WebCore::SVGStyledElement::removedFromDocument):
+        (WebCore::SVGStyledElement::hasPendingResources):
+        (WebCore::SVGStyledElement::setHasPendingResources):
+        * svg/SVGStyledElement.h:
+        (WebCore::SVGStyledElement::needsPendingResourceHandling):
+        (WebCore::SVGStyledElement::buildPendingResource):
+        * svg/SVGUseElement.cpp:
+        (WebCore::SVGUseElement::SVGUseElement):
+        (WebCore::SVGUseElement::insertedIntoDocument):
+        (WebCore::SVGUseElement::svgAttributeChanged):
+        (WebCore::SVGUseElement::buildPendingResource):
+        * svg/SVGUseElement.h:
+
 2011-05-01  Rafael Brandao  <rafael.lobo@openbossa.org>
 
         Reviewed by Csaba Osztrogonác.

@@ -211,24 +211,26 @@ void SVGDocumentExtensions::reportError(const String& message)
     reportMessage(m_document, ErrorMessageLevel, "Error: " + message);
 }
 
-void SVGDocumentExtensions::addPendingResource(const AtomicString& id, PassRefPtr<SVGStyledElement> obj)
+void SVGDocumentExtensions::addPendingResource(const AtomicString& id, SVGStyledElement* element)
 {
-    ASSERT(obj);
+    ASSERT(element);
 
     if (id.isEmpty())
         return;
 
     if (m_pendingResources.contains(id))
-        m_pendingResources.get(id)->add(obj);
+        m_pendingResources.get(id)->add(element);
     else {
         SVGPendingElements* set = new SVGPendingElements;
-        set->add(obj);
+        set->add(element);
 
         m_pendingResources.add(id, set);
     }
+
+    element->setHasPendingResources(true);
 }
 
-bool SVGDocumentExtensions::isPendingResource(const AtomicString& id) const
+bool SVGDocumentExtensions::hasPendingResources(const AtomicString& id) const
 {
     if (id.isEmpty())
         return false;
@@ -236,7 +238,36 @@ bool SVGDocumentExtensions::isPendingResource(const AtomicString& id) const
     return m_pendingResources.contains(id);
 }
 
-PassOwnPtr<HashSet<RefPtr<SVGStyledElement> > > SVGDocumentExtensions::removePendingResource(const AtomicString& id)
+void SVGDocumentExtensions::removeElementFromPendingResources(SVGStyledElement* element)
+{
+    ASSERT(element);
+
+    if (m_pendingResources.isEmpty() || !element->hasPendingResources())
+        return;
+
+    element->setHasPendingResources(false);
+
+    Vector<AtomicString> toBeRemoved;
+    HashMap<AtomicString, SVGPendingElements*>::iterator end = m_pendingResources.end();
+    for (HashMap<AtomicString, SVGPendingElements*>::iterator it = m_pendingResources.begin(); it != end; ++it) {
+        SVGPendingElements* elements = it->second;
+        ASSERT(elements);
+        ASSERT(!elements->isEmpty());
+
+        elements->remove(element);
+        if (elements->isEmpty())
+            toBeRemoved.append(it->first);
+    }
+
+    if (toBeRemoved.isEmpty())
+        return;
+
+    Vector<AtomicString>::iterator endVector = toBeRemoved.end();
+    for (Vector<AtomicString>::iterator it = toBeRemoved.begin(); it != endVector; ++it)
+        m_pendingResources.remove(*it);
+}
+
+PassOwnPtr<SVGDocumentExtensions::SVGPendingElements> SVGDocumentExtensions::removePendingResource(const AtomicString& id)
 {
     ASSERT(m_pendingResources.contains(id));
 

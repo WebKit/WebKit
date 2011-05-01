@@ -171,9 +171,7 @@ static inline RenderSVGResourceContainer* paintingResourceFromSVGPaint(Document*
 static inline void registerPendingResource(SVGDocumentExtensions* extensions, const AtomicString& id, SVGElement* element)
 {
     ASSERT(element);
-    if (!element->isStyled())
-        return;
-
+    ASSERT(element->isStyled());
     extensions->addPendingResource(id, static_cast<SVGStyledElement*>(element));
 }
 

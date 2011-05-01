@@ -338,27 +338,6 @@ bool SVGElement::childShouldCreateRenderer(Node* child) const
     return false;
 }
 
-void SVGElement::insertedIntoDocument()
-{
-    StyledElement::insertedIntoDocument();
-
-    if (!needsPendingResourceHandling())
-        return;
-
-    SVGDocumentExtensions* extensions = document()->accessSVGExtensions();
-    String resourceId = getIdAttribute();
-    if (!extensions->isPendingResource(resourceId))
-        return;
-    
-    OwnPtr<SVGDocumentExtensions::SVGPendingElements> clients(extensions->removePendingResource(resourceId));
-    if (clients->isEmpty())
-        return;
-
-    const SVGDocumentExtensions::SVGPendingElements::const_iterator end = clients->end();
-    for (SVGDocumentExtensions::SVGPendingElements::const_iterator it = clients->begin(); it != end; ++it)
-        (*it)->buildPendingResource();
-}
-
 void SVGElement::attributeChanged(Attribute* attr, bool preserveDecls)
 {
     ASSERT(attr);
