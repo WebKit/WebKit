@@ -39,7 +39,7 @@
 #include <GL/gl.h>
 #endif
 
-#ifndef TEXMAP_OPENGL_ES2
+#ifndef TEXMAP_OPENGL_ES_2
 extern "C" {
     void glUniform1f(GLint, GLfloat);
     void glUniform1i(GLint, GLint);
@@ -271,7 +271,7 @@ TextureMapperGL::TextureMapperGL()
     if (shadersCompiled)
         return;
     shadersCompiled = true;
-#ifndef TEXMAP_OPENGL_ES2
+#ifndef TEXMAP_OPENGL_ES_2
 #define OES2_PRECISION_DEFINITIONS \
     "#define lowp\n#define highp\n"
 #else
