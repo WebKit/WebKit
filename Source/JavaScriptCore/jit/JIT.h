@@ -907,6 +907,8 @@ namespace JSC {
         bool isOperandConstantImmediateInt(unsigned src);
         bool isOperandConstantImmediateChar(unsigned src);
 
+        bool atJumpTarget();
+
         Jump getSlowCase(Vector<SlowCaseEntry>::iterator& iter)
         {
             return iter++->from;
@@ -984,8 +986,8 @@ namespace JSC {
         RegisterID m_mappedPayload;
 #else
         int m_lastResultBytecodeRegister;
-        unsigned m_jumpTargetsPosition;
 #endif
+        unsigned m_jumpTargetsPosition;
 
 #ifndef NDEBUG
 #if defined(ASSEMBLER_HAS_CONSTANT_POOL) && ASSEMBLER_HAS_CONSTANT_POOL

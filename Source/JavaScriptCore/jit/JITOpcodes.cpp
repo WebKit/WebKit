@@ -41,9 +41,6 @@ namespace JSC {
 
 #if USE(JSVALUE64)
 
-#define RECORD_JUMP_TARGET(targetOffset) \
-   do { m_labels[m_bytecodeOffset + (targetOffset)].used(); } while (false)
-
 void JIT::privateCompileCTIMachineTrampolines(RefPtr<ExecutablePool>* executablePool, JSGlobalData* globalData, TrampolineStructure *trampolines)
 {
 #if ENABLE(JIT_OPTIMIZE_PROPERTY_ACCESS)
@@ -340,7 +337,6 @@ void JIT::emit_op_jmp(Instruction* currentInstruction)
 {
     unsigned target = currentInstruction[1].u.operand;
     addJump(jump(), target);
-    RECORD_JUMP_TARGET(target);
 }
 
 void JIT::emit_op_loop_if_lesseq(Instruction* currentInstruction)
@@ -718,7 +714,6 @@ void JIT::emit_op_jfalse(Instruction* currentInstruction)
     addSlowCase(branchPtr(NotEqual, regT0, TrustedImmPtr(JSValue::encode(jsBoolean(true)))));
 
     isNonZero.link(this);
-    RECORD_JUMP_TARGET(target);
 }
 
 void JIT::emit_op_jeq_null(Instruction* currentInstruction)
@@ -740,7 +735,6 @@ void JIT::emit_op_jeq_null(Instruction* currentInstruction)
     addJump(branchPtr(Equal, regT0, TrustedImmPtr(JSValue::encode(jsNull()))), target);            
 
     wasNotImmediate.link(this);
-    RECORD_JUMP_TARGET(target);
 };
 void JIT::emit_op_jneq_null(Instruction* currentInstruction)
 {
@@ -761,7 +755,6 @@ void JIT::emit_op_jneq_null(Instruction* currentInstruction)
     addJump(branchPtr(NotEqual, regT0, TrustedImmPtr(JSValue::encode(jsNull()))), target);            
 
     wasNotImmediate.link(this);
-    RECORD_JUMP_TARGET(target);
 }
 
 void JIT::emit_op_jneq_ptr(Instruction* currentInstruction)
@@ -772,8 +765,6 @@ void JIT::emit_op_jneq_ptr(Instruction* currentInstruction)
     
     emitGetVirtualRegister(src, regT0);
     addJump(branchPtr(NotEqual, regT0, TrustedImmPtr(JSValue::encode(JSValue(ptr)))), target);            
-
-    RECORD_JUMP_TARGET(target);
 }
 
 void JIT::emit_op_jsr(Instruction* currentInstruction)
@@ -784,7 +775,6 @@ void JIT::emit_op_jsr(Instruction* currentInstruction)
     addJump(jump(), target);
     m_jsrSites.append(JSRInfo(storeLocation, label()));
     killLastResultRegister();
-    RECORD_JUMP_TARGET(target);
 }
 
 void JIT::emit_op_sret(Instruction* currentInstruction)
@@ -838,7 +828,6 @@ void JIT::emit_op_jtrue(Instruction* currentInstruction)
     addSlowCase(branchPtr(NotEqual, regT0, TrustedImmPtr(JSValue::encode(jsBoolean(false)))));
 
     isZero.link(this);
-    RECORD_JUMP_TARGET(target);
 }
 
 void JIT::emit_op_neq(Instruction* currentInstruction)
@@ -1076,7 +1065,6 @@ void JIT::emit_op_jmp_scopes(Instruction* currentInstruction)
     stubCall.addArgument(Imm32(currentInstruction[1].u.operand));
     stubCall.call();
     addJump(jump(), currentInstruction[2].u.operand);
-    RECORD_JUMP_TARGET(currentInstruction[2].u.operand);
 }
 
 void JIT::emit_op_switch_imm(Instruction* currentInstruction)

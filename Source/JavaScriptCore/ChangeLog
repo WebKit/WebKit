@@ -1,3 +1,149 @@
+2011-05-01  Gavin Barraclough  <barraclough@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        https://bugs.webkit.org/show_bug.cgi?id=59896
+        Remove JmpSrc/JmpDst types.
+
+        The JmpSrc/JmpDst classes predate the MacroAssembler interface. Having these
+        object be per-assembler in unhelpful, causes unnecessary code duplication,
+        and prevents the AssemblerBuffer from providing a richer type for labels.
+        The limited semantic meaning that they did convey is undermined by the manner
+        in which their meanings have been overloaded (use of JmpSrc for Call, JmpDst
+        for data labels).
+
+        Jumps on ARMv7 have had additional information added to the object via the
+        ARMv7 JmpSrc. This data should probably be in the instruction stream. This
+        patch does not fix the problem, and moves the data (ifdefed) to
+        AbstractMacroAssembler::Jump (which is effectively where it was before!).
+        This at least closes the hole such that no further data may be added to JmpSrc,
+        but this is unfortunate, and should be cleaned up.
+
+        * assembler/ARMAssembler.h:
+        (JSC::ARMAssembler::blx):
+        (JSC::ARMAssembler::label):
+        (JSC::ARMAssembler::align):
+        (JSC::ARMAssembler::loadBranchTarget):
+        (JSC::ARMAssembler::jmp):
+        (JSC::ARMAssembler::linkPointer):
+        (JSC::ARMAssembler::linkJump):
+        (JSC::ARMAssembler::linkCall):
+        (JSC::ARMAssembler::getRelocatedAddress):
+        (JSC::ARMAssembler::getDifferenceBetweenLabels):
+        (JSC::ARMAssembler::getCallReturnOffset):
+        * assembler/ARMv7Assembler.h:
+        (JSC::ARMv7Assembler::b):
+        (JSC::ARMv7Assembler::blx):
+        (JSC::ARMv7Assembler::bx):
+        (JSC::ARMv7Assembler::label):
+        (JSC::ARMv7Assembler::align):
+        (JSC::ARMv7Assembler::getRelocatedAddress):
+        (JSC::ARMv7Assembler::getDifferenceBetweenLabels):
+        (JSC::ARMv7Assembler::getCallReturnOffset):
+        (JSC::ARMv7Assembler::linkJump):
+        (JSC::ARMv7Assembler::linkCall):
+        (JSC::ARMv7Assembler::linkPointer):
+        * assembler/AbstractMacroAssembler.h:
+        (JSC::AbstractMacroAssembler::Label::isSet):
+        (JSC::AbstractMacroAssembler::Call::Call):
+        (JSC::AbstractMacroAssembler::Jump::Jump):
+        (JSC::AbstractMacroAssembler::Jump::link):
+        (JSC::AbstractMacroAssembler::Jump::linkTo):
+        (JSC::AbstractMacroAssembler::linkPointer):
+        (JSC::AbstractMacroAssembler::getLinkerAddress):
+        * assembler/AssemblerBuffer.h:
+        (JSC::AssemblerLabel::AssemblerLabel):
+        (JSC::AssemblerLabel::isSet):
+        * assembler/LinkBuffer.h:
+        (JSC::LinkBuffer::patch):
+        * assembler/MIPSAssembler.h:
+        (JSC::MIPSAssembler::label):
+        (JSC::MIPSAssembler::align):
+        (JSC::MIPSAssembler::getRelocatedAddress):
+        (JSC::MIPSAssembler::getDifferenceBetweenLabels):
+        (JSC::MIPSAssembler::getCallReturnOffset):
+        (JSC::MIPSAssembler::linkJump):
+        (JSC::MIPSAssembler::linkCall):
+        (JSC::MIPSAssembler::linkPointer):
+        * assembler/MacroAssemblerARMv7.h:
+        (JSC::MacroAssemblerARMv7::branchDouble):
+        (JSC::MacroAssemblerARMv7::branchDoubleZeroOrNaN):
+        (JSC::MacroAssemblerARMv7::jump):
+        (JSC::MacroAssemblerARMv7::nearCall):
+        (JSC::MacroAssemblerARMv7::call):
+        (JSC::MacroAssemblerARMv7::ret):
+        (JSC::MacroAssemblerARMv7::tailRecursiveCall):
+        (JSC::MacroAssemblerARMv7::makeBranch):
+        * assembler/MacroAssemblerMIPS.h:
+        (JSC::MacroAssemblerMIPS::nearCall):
+        (JSC::MacroAssemblerMIPS::call):
+        (JSC::MacroAssemblerMIPS::tailRecursiveCall):
+        (JSC::MacroAssemblerMIPS::branchTrue):
+        (JSC::MacroAssemblerMIPS::branchFalse):
+        (JSC::MacroAssemblerMIPS::branchEqual):
+        (JSC::MacroAssemblerMIPS::branchNotEqual):
+        * assembler/SH4Assembler.h:
+        (JSC::SH4Assembler::call):
+        (JSC::SH4Assembler::jmp):
+        (JSC::SH4Assembler::jne):
+        (JSC::SH4Assembler::je):
+        (JSC::SH4Assembler::label):
+        (JSC::SH4Assembler::align):
+        (JSC::SH4Assembler::linkJump):
+        (JSC::SH4Assembler::linkCall):
+        (JSC::SH4Assembler::linkPointer):
+        (JSC::SH4Assembler::getCallReturnOffset):
+        (JSC::SH4Assembler::getRelocatedAddress):
+        (JSC::SH4Assembler::getDifferenceBetweenLabels):
+        (JSC::SH4Assembler::patchPointer):
+        * assembler/X86Assembler.h:
+        (JSC::X86Assembler::call):
+        (JSC::X86Assembler::jmp):
+        (JSC::X86Assembler::jmp_r):
+        (JSC::X86Assembler::jne):
+        (JSC::X86Assembler::jnz):
+        (JSC::X86Assembler::je):
+        (JSC::X86Assembler::jz):
+        (JSC::X86Assembler::jl):
+        (JSC::X86Assembler::jb):
+        (JSC::X86Assembler::jle):
+        (JSC::X86Assembler::jbe):
+        (JSC::X86Assembler::jge):
+        (JSC::X86Assembler::jg):
+        (JSC::X86Assembler::ja):
+        (JSC::X86Assembler::jae):
+        (JSC::X86Assembler::jo):
+        (JSC::X86Assembler::jp):
+        (JSC::X86Assembler::js):
+        (JSC::X86Assembler::jCC):
+        (JSC::X86Assembler::label):
+        (JSC::X86Assembler::labelFor):
+        (JSC::X86Assembler::align):
+        (JSC::X86Assembler::linkJump):
+        (JSC::X86Assembler::linkCall):
+        (JSC::X86Assembler::linkPointer):
+        (JSC::X86Assembler::getCallReturnOffset):
+        (JSC::X86Assembler::getRelocatedAddress):
+        (JSC::X86Assembler::getDifferenceBetweenLabels):
+        (JSC::X86Assembler::rewindToLabel):
+        (JSC::X86Assembler::X86InstructionFormatter::immediateRel32):
+        (JSC::X86Assembler::X86InstructionFormatter::rewindToLabel):
+        * jit/JIT.cpp:
+        (JSC::JIT::privateCompileMainPass):
+        * jit/JIT.h:
+        * jit/JITInlineMethods.h:
+        (JSC::JIT::atJumpTarget):
+        (JSC::JIT::emitGetVirtualRegister):
+        * jit/JITOpcodes.cpp:
+        (JSC::JIT::emit_op_jmp):
+        (JSC::JIT::emit_op_jfalse):
+        (JSC::JIT::emit_op_jeq_null):
+        (JSC::JIT::emit_op_jneq_null):
+        (JSC::JIT::emit_op_jneq_ptr):
+        (JSC::JIT::emit_op_jsr):
+        (JSC::JIT::emit_op_jtrue):
+        (JSC::JIT::emit_op_jmp_scopes):
+
 2011-05-01  Chao-ying Fu  <fu@mips.com>
 
         Reviewed by Eric Seidel.

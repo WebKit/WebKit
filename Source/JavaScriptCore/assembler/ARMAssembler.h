@@ -213,47 +213,6 @@ namespace JSC {
         static const ARMWord InvalidBranchTarget = 0xffffffff;
         static const int DefaultPrefetching = 2;
 
-        class JmpSrc {
-            friend class ARMAssembler;
-        public:
-            JmpSrc()
-                : m_offset(-1)
-            {
-            }
-
-        private:
-            JmpSrc(int offset)
-                : m_offset(offset)
-            {
-            }
-
-            int m_offset;
-        };
-
-        class JmpDst {
-            friend class ARMAssembler;
-        public:
-            JmpDst()
-                : m_offset(-1)
-                , m_used(false)
-            {
-            }
-
-            bool isUsed() const { return m_used; }
-            bool isSet() const { return (m_offset != -1); }
-            void used() { m_used = true; }
-        private:
-            JmpDst(int offset)
-                : m_offset(offset)
-                , m_used(false)
-            {
-                ASSERT(m_offset == offset);
-            }
-
-            signed int m_offset : 31;
-            int m_used : 1;
-        };
-
         // Instruction formating
 
         void emitInst(ARMWord op, int rd, int rn, ARMWord op2)
@@ -622,7 +581,7 @@ namespace JSC {
 #endif
         }
 
-        JmpSrc blx(int rm, Condition cc = AL)
+        AssemblerLabel blx(int rm, Condition cc = AL)
         {
 #if WTF_ARM_ARCH_AT_LEAST(5)
             emitInst(static_cast<ARMWord>(cc) | BLX, 0, 0, RM(rm));
@@ -632,7 +591,7 @@ namespace JSC {
             mov_r(ARMRegisters::lr, ARMRegisters::pc, cc);
             bx(rm, cc);
 #endif
-            return JmpSrc(m_buffer.label());
+            return AssemblerLabel(m_buffer.label());
         }
 
         static ARMWord lsl(int reg, ARMWord value)
@@ -694,13 +653,13 @@ namespace JSC {
             return m_buffer.sizeOfConstantPool();
         }
 
-        JmpDst label()
+        AssemblerLabel label()
         {
             m_buffer.ensureSpaceForAnyOneInstruction();
-            return JmpDst(m_buffer.label());
+            return AssemblerLabel(m_buffer.label());
         }
 
-        JmpDst align(int alignment)
+        AssemblerLabel align(int alignment)
         {
             while (!m_buffer.isAligned(alignment))
                 mov_r(ARMRegisters::r0, ARMRegisters::r0);
@@ -708,15 +667,15 @@ namespace JSC {
             return label();
         }
 
-        JmpSrc loadBranchTarget(int rd, Condition cc = AL, int useConstantPool = 0)
+        AssemblerLabel loadBranchTarget(int rd, Condition cc = AL, int useConstantPool = 0)
         {
             ensureSpace(sizeof(ARMWord), sizeof(ARMWord));
             m_jumps.append(m_buffer.label() | (useConstantPool & 0x1));
             ldr_un_imm(rd, InvalidBranchTarget, cc);
-            return JmpSrc(m_buffer.label());
+            return AssemblerLabel(m_buffer.label());
         }
 
-        JmpSrc jmp(Condition cc = AL, int useConstantPool = 0)
+        AssemblerLabel jmp(Condition cc = AL, int useConstantPool = 0)
         {
             return loadBranchTarget(ARMRegisters::pc, cc, useConstantPool);
         }
@@ -776,7 +735,7 @@ namespace JSC {
 
         // Patch pointers
 
-        static void linkPointer(void* code, JmpDst from, void* to)
+        static void linkPointer(void* code, AssemblerLabel from, void* to)
         {
             patchPointerInternal(reinterpret_cast<intptr_t>(code) + from.m_offset, to);
         }
@@ -797,14 +756,14 @@ namespace JSC {
             return reinterpret_cast<intptr_t>(base) + offset - sizeof(ARMWord);
         }
 
-        void linkJump(JmpSrc from, JmpDst to)
+        void linkJump(AssemblerLabel from, AssemblerLabel to)
         {
             ARMWord* insn = reinterpret_cast<ARMWord*>(getAbsoluteJumpAddress(m_buffer.data(), from.m_offset));
             ARMWord* addr = getLdrImmAddressOnPool(insn, m_buffer.poolAddress());
             *addr = static_cast<ARMWord>(to.m_offset);
         }
 
-        static void linkJump(void* code, JmpSrc from, void* to)
+        static void linkJump(void* code, AssemblerLabel from, void* to)
         {
             patchPointerInternal(getAbsoluteJumpAddress(code, from.m_offset), to);
         }
@@ -814,7 +773,7 @@ namespace JSC {
             patchPointerInternal(getAbsoluteJumpAddress(from), to);
         }
 
-        static void linkCall(void* code, JmpSrc from, void* to)
+        static void linkCall(void* code, AssemblerLabel from, void* to)
         {
             patchPointerInternal(getAbsoluteJumpAddress(code, from.m_offset), to);
         }
@@ -826,29 +785,19 @@ namespace JSC {
 
         // Address operations
 
-        static void* getRelocatedAddress(void* code, JmpSrc jump)
-        {
-            return reinterpret_cast<void*>(reinterpret_cast<char*>(code) + jump.m_offset);
-        }
-
-        static void* getRelocatedAddress(void* code, JmpDst label)
+        static void* getRelocatedAddress(void* code, AssemblerLabel label)
         {
             return reinterpret_cast<void*>(reinterpret_cast<char*>(code) + label.m_offset);
         }
 
         // Address differences
 
-        static int getDifferenceBetweenLabels(JmpDst from, JmpSrc to)
+        static int getDifferenceBetweenLabels(AssemblerLabel a, AssemblerLabel b)
         {
-            return to.m_offset - from.m_offset;
+            return b.m_offset - a.m_offset;
         }
 
-        static int getDifferenceBetweenLabels(JmpDst from, JmpDst to)
-        {
-            return to.m_offset - from.m_offset;
-        }
-
-        static unsigned getCallReturnOffset(JmpSrc call)
+        static unsigned getCallReturnOffset(AssemblerLabel call)
         {
             return call.m_offset;
         }

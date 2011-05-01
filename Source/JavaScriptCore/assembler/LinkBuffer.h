@@ -60,7 +60,6 @@ class LinkBuffer {
     typedef MacroAssembler::Call Call;
     typedef MacroAssembler::DataLabel32 DataLabel32;
     typedef MacroAssembler::DataLabelPtr DataLabelPtr;
-    typedef MacroAssembler::JmpDst JmpDst;
 #if ENABLE(BRANCH_COMPACTION)
     typedef MacroAssembler::LinkRecord LinkRecord;
     typedef MacroAssembler::JumpLinkType JumpLinkType;
@@ -119,13 +118,13 @@ public:
 
     void patch(DataLabelPtr label, void* value)
     {
-        JmpDst target = applyOffset(label.m_label);
+        AssemblerLabel target = applyOffset(label.m_label);
         MacroAssembler::linkPointer(code(), target, value);
     }
 
     void patch(DataLabelPtr label, CodeLocationLabel value)
     {
-        JmpDst target = applyOffset(label.m_label);
+        AssemblerLabel target = applyOffset(label.m_label);
         MacroAssembler::linkPointer(code(), target, value.executableAddress());
     }
 

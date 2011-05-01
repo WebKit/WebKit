@@ -166,47 +166,6 @@ public:
         OP_SH_FT = 16
     };
 
-    class JmpSrc {
-        friend class MIPSAssembler;
-    public:
-        JmpSrc()
-            : m_offset(-1)
-        {
-        }
-
-    private:
-        JmpSrc(int offset)
-            : m_offset(offset)
-        {
-        }
-
-        int m_offset;
-    };
-
-    class JmpDst {
-        friend class MIPSAssembler;
-    public:
-        JmpDst()
-            : m_offset(-1)
-            , m_used(false)
-        {
-        }
-
-        bool isUsed() const { return m_used; }
-        bool isSet() const { return (m_offset != -1); }
-        void used() { m_used = true; }
-    private:
-        JmpDst(int offset)
-            : m_offset(offset)
-            , m_used(false)
-        {
-            ASSERT(m_offset == offset);
-        }
-
-        int m_offset : 31;
-        int m_used : 1;
-    };
-
     void emitInst(MIPSWord op)
     {
         void* oldBase = m_buffer.data();
@@ -502,11 +461,6 @@ public:
         emitInst(0x45000000);
     }
 
-    JmpSrc newJmpSrc()
-    {
-        return JmpSrc(m_buffer.label());
-    }
-
     void appendJump()
     {
         m_jumps.append(m_buffer.label());
@@ -661,12 +615,12 @@ public:
 
     // General helpers
 
-    JmpDst label()
+    AssemblerLabel label()
     {
-        return JmpDst(m_buffer.label());
+        return AssemblerLabel(m_buffer.label());
     }
 
-    JmpDst align(int alignment)
+    AssemblerLabel align(int alignment)
     {
         while (!m_buffer.isAligned(alignment))
             bkpt();
@@ -674,32 +628,14 @@ public:
         return label();
     }
 
-    static void* getRelocatedAddress(void* code, JmpSrc jump)
+    static void* getRelocatedAddress(void* code, AssemblerLabel label)
     {
-        ASSERT(jump.m_offset != -1);
-        void* b = reinterpret_cast<void*>((reinterpret_cast<intptr_t>(code)) + jump.m_offset);
-        return b;
+        return reinterpret_cast<void*>(reinterpret_cast<char*>(code) + label.m_offset);
     }
 
-    static void* getRelocatedAddress(void* code, JmpDst label)
+    static int getDifferenceBetweenLabels(AssemblerLabel a, AssemblerLabel b)
     {
-        void* b = reinterpret_cast<void*>((reinterpret_cast<intptr_t>(code)) + label.m_offset);
-        return b;
-    }
-
-    static int getDifferenceBetweenLabels(JmpDst from, JmpDst to)
-    {
-        return to.m_offset - from.m_offset;
-    }
-
-    static int getDifferenceBetweenLabels(JmpDst from, JmpSrc to)
-    {
-        return to.m_offset - from.m_offset;
-    }
-
-    static int getDifferenceBetweenLabels(JmpSrc from, JmpDst to)
-    {
-        return to.m_offset - from.m_offset;
+        return b.m_offset - a.m_offset;
     }
 
     // Assembler admin methods:
@@ -723,7 +659,7 @@ public:
     unsigned debugOffset() { return m_buffer.debugOffset(); }
 #endif
 
-    static unsigned getCallReturnOffset(JmpSrc call)
+    static unsigned getCallReturnOffset(AssemblerLabel call)
     {
         // The return address is after a call and a delay slot instruction
         return call.m_offset;
@@ -737,10 +673,10 @@ public:
     // writable region of memory; to modify the code in an execute-only execuable
     // pool the 'repatch' and 'relink' methods should be used.
 
-    void linkJump(JmpSrc from, JmpDst to)
+    void linkJump(AssemblerLabel from, AssemblerLabel to)
     {
-        ASSERT(to.m_offset != -1);
-        ASSERT(from.m_offset != -1);
+        ASSERT(to.isSet());
+        ASSERT(from.isSet());
         MIPSWord* insn = reinterpret_cast<MIPSWord*>(reinterpret_cast<intptr_t>(m_buffer.data()) + from.m_offset);
         MIPSWord* toPos = reinterpret_cast<MIPSWord*>(reinterpret_cast<intptr_t>(m_buffer.data()) + to.m_offset);
 
@@ -749,9 +685,9 @@ public:
         linkWithOffset(insn, toPos);
     }
 
-    static void linkJump(void* code, JmpSrc from, void* to)
+    static void linkJump(void* code, AssemblerLabel from, void* to)
     {
-        ASSERT(from.m_offset != -1);
+        ASSERT(from.isSet());
         MIPSWord* insn = reinterpret_cast<MIPSWord*>(reinterpret_cast<intptr_t>(code) + from.m_offset);
 
         ASSERT(!(*(insn - 1)) && !(*(insn - 2)) && !(*(insn - 3)) && !(*(insn - 5)));
@@ -759,13 +695,13 @@ public:
         linkWithOffset(insn, to);
     }
 
-    static void linkCall(void* code, JmpSrc from, void* to)
+    static void linkCall(void* code, AssemblerLabel from, void* to)
     {
         MIPSWord* insn = reinterpret_cast<MIPSWord*>(reinterpret_cast<intptr_t>(code) + from.m_offset);
         linkCallInternal(insn, to);
     }
 
-    static void linkPointer(void* code, JmpDst from, void* to)
+    static void linkPointer(void* code, AssemblerLabel from, void* to)
     {
         MIPSWord* insn = reinterpret_cast<MIPSWord*>(reinterpret_cast<intptr_t>(code) + from.m_offset);
         ASSERT((*insn & 0xffe00000) == 0x3c000000); // lui

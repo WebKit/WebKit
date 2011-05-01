@@ -49,9 +49,6 @@ public:
     class Jump;
 
     typedef typename AssemblerType::RegisterID RegisterID;
-    typedef typename AssemblerType::JmpSrc JmpSrc;
-    typedef typename AssemblerType::JmpDst JmpDst;
-
 
     // Section 1: MacroAssembler operand types
     //
@@ -260,11 +257,9 @@ public:
         {
         }
         
-        bool isUsed() const { return m_label.isUsed(); }
         bool isSet() const { return m_label.isSet(); }
-        void used() { m_label.used(); }
     private:
-        JmpDst m_label;
+        AssemblerLabel m_label;
     };
 
     // DataLabelPtr:
@@ -288,7 +283,7 @@ public:
         bool isSet() const { return m_label.isSet(); }
         
     private:
-        JmpDst m_label;
+        AssemblerLabel m_label;
     };
 
     // DataLabel32:
@@ -310,7 +305,7 @@ public:
         }
 
     private:
-        JmpDst m_label;
+        AssemblerLabel m_label;
     };
 
     // Call:
@@ -336,7 +331,7 @@ public:
         {
         }
         
-        Call(JmpSrc jmp, Flags flags)
+        Call(AssemblerLabel jmp, Flags flags)
             : m_jmp(jmp)
             , m_flags(flags)
         {
@@ -352,7 +347,7 @@ public:
             return Call(jump.m_jmp, Linkable);
         }
 
-        JmpSrc m_jmp;
+        AssemblerLabel m_jmp;
     private:
         Flags m_flags;
     };
@@ -373,25 +368,47 @@ public:
         {
         }
         
-        Jump(JmpSrc jmp)    
+#if CPU(ARMv7)
+        // Fixme: this information should be stored in the instruction stream, not in the Jump object.
+        Jump(AssemblerLabel jmp, ARMv7Assembler::JumpType type, ARMv7Assembler::Condition condition = ARMv7Assembler::ConditionInvalid)
+            : m_jmp(jmp)
+            , m_type(type)
+            , m_condition(condition)
+        {
+        }
+#else
+        Jump(AssemblerLabel jmp)    
             : m_jmp(jmp)
         {
         }
-        
+#endif
+
         void link(AbstractMacroAssembler<AssemblerType>* masm) const
         {
+#if CPU(ARMv7)
+            masm->m_assembler.linkJump(m_jmp, masm->m_assembler.label(), m_type, m_condition);
+#else
             masm->m_assembler.linkJump(m_jmp, masm->m_assembler.label());
+#endif
         }
         
         void linkTo(Label label, AbstractMacroAssembler<AssemblerType>* masm) const
         {
+#if CPU(ARMv7)
+            masm->m_assembler.linkJump(m_jmp, label.m_label, m_jmp.m_type, m_jmp.m_condition);
+#else
             masm->m_assembler.linkJump(m_jmp, label.m_label);
+#endif
         }
 
         bool isSet() const { return m_jmp.isSet(); }
 
     private:
-        JmpSrc m_jmp;
+        AssemblerLabel m_jmp;
+#if CPU(ARMv7)
+        ARMv7Assembler::JumpType m_type;
+        ARMv7Assembler::Condition m_condition;
+#endif
     };
 
     // JumpList:
@@ -522,17 +539,12 @@ protected:
         AssemblerType::linkJump(code, jump.m_jmp, target.dataLocation());
     }
 
-    static void linkPointer(void* code, typename AssemblerType::JmpDst label, void* value)
+    static void linkPointer(void* code, AssemblerLabel label, void* value)
     {
         AssemblerType::linkPointer(code, label, value);
     }
 
-    static void* getLinkerAddress(void* code, typename AssemblerType::JmpSrc label)
-    {
-        return AssemblerType::getRelocatedAddress(code, label);
-    }
-
-    static void* getLinkerAddress(void* code, typename AssemblerType::JmpDst label)
+    static void* getLinkerAddress(void* code, AssemblerLabel label)
     {
         return AssemblerType::getRelocatedAddress(code, label);
     }

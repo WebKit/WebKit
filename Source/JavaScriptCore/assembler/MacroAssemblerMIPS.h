@@ -1290,7 +1290,7 @@ public:
         m_assembler.nop();
         m_assembler.jal();
         m_assembler.nop();
-        return Call(m_assembler.newJmpSrc(), Call::LinkableNear);
+        return Call(m_assembler.label(), Call::LinkableNear);
     }
 
     Call call()
@@ -1299,14 +1299,14 @@ public:
         m_assembler.ori(MIPSRegisters::t9, MIPSRegisters::t9, 0);
         m_assembler.jalr(MIPSRegisters::t9);
         m_assembler.nop();
-        return Call(m_assembler.newJmpSrc(), Call::Linkable);
+        return Call(m_assembler.label(), Call::Linkable);
     }
 
     Call call(RegisterID target)
     {
         m_assembler.jalr(target);
         m_assembler.nop();
-        return Call(m_assembler.newJmpSrc(), Call::None);
+        return Call(m_assembler.label(), Call::None);
     }
 
     Call call(Address address)
@@ -1316,7 +1316,7 @@ public:
         m_assembler.jalr(MIPSRegisters::t9);
         m_assembler.nop();
         m_fixedWidth = false;
-        return Call(m_assembler.newJmpSrc(), Call::None);
+        return Call(m_assembler.label(), Call::None);
     }
 
     void ret()
@@ -1461,7 +1461,7 @@ public:
         m_assembler.jr(MIPSRegisters::t9);
         m_assembler.nop();
         m_fixedWidth = false;
-        return Call(m_assembler.newJmpSrc(), Call::Linkable);
+        return Call(m_assembler.label(), Call::Linkable);
     }
 
     Call makeTailRecursiveCall(Jump oldJump)
@@ -1625,7 +1625,7 @@ public:
         m_assembler.bc1t();
         m_assembler.nop();
         insertRelaxationWords();
-        return Jump(m_assembler.newJmpSrc());
+        return Jump(m_assembler.label());
     }
 
     Jump branchFalse()
@@ -1634,7 +1634,7 @@ public:
         m_assembler.bc1f();
         m_assembler.nop();
         insertRelaxationWords();
-        return Jump(m_assembler.newJmpSrc());
+        return Jump(m_assembler.label());
     }
 
     Jump branchEqual(RegisterID rs, RegisterID rt)
@@ -1643,7 +1643,7 @@ public:
         m_assembler.beq(rs, rt, 0);
         m_assembler.nop();
         insertRelaxationWords();
-        return Jump(m_assembler.newJmpSrc());
+        return Jump(m_assembler.label());
     }
 
     Jump branchNotEqual(RegisterID rs, RegisterID rt)
@@ -1652,7 +1652,7 @@ public:
         m_assembler.bne(rs, rt, 0);
         m_assembler.nop();
         insertRelaxationWords();
-        return Jump(m_assembler.newJmpSrc());
+        return Jump(m_assembler.label());
     }
 
     Jump branchDouble(DoubleCondition cond, FPRegisterID left, FPRegisterID right)

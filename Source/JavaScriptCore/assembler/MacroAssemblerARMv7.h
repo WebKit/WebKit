@@ -673,7 +673,7 @@ public:
             Jump notEqual = makeBranch(ARMv7Assembler::ConditionNE);
             unordered.link(this);
             // We get here if either unordered or equal.
-            Jump result = makeJump();
+            Jump result = jump();
             notEqual.link(this);
             return result;
         }
@@ -721,7 +721,7 @@ public:
         Jump notEqual = makeBranch(ARMv7Assembler::ConditionNE);
         unordered.link(this);
         // We get here if either unordered or equal.
-        Jump result = makeJump();
+        Jump result = jump();
         notEqual.link(this);
         return result;
     }
@@ -995,21 +995,16 @@ public:
         return branchTest8(cond, addressTempRegister, mask);
     }
 
-    Jump jump()
-    {
-        return Jump(makeJump());
-    }
-
     void jump(RegisterID target)
     {
-        m_assembler.bx(target, ARMv7Assembler::JumpFixed);
+        m_assembler.bx(target);
     }
 
     // Address is a memory location containing the address to jump to
     void jump(Address address)
     {
         load32(address, dataTempRegister);
-        m_assembler.bx(dataTempRegister, ARMv7Assembler::JumpFixed);
+        m_assembler.bx(dataTempRegister);
     }
 
 
@@ -1111,29 +1106,29 @@ public:
     Call nearCall()
     {
         moveFixedWidthEncoding(TrustedImm32(0), dataTempRegister);
-        return Call(m_assembler.blx(dataTempRegister, ARMv7Assembler::JumpFixed), Call::LinkableNear);
+        return Call(m_assembler.blx(dataTempRegister), Call::LinkableNear);
     }
 
     Call call()
     {
         moveFixedWidthEncoding(TrustedImm32(0), dataTempRegister);
-        return Call(m_assembler.blx(dataTempRegister, ARMv7Assembler::JumpFixed), Call::Linkable);
+        return Call(m_assembler.blx(dataTempRegister), Call::Linkable);
     }
 
     Call call(RegisterID target)
     {
-        return Call(m_assembler.blx(target, ARMv7Assembler::JumpFixed), Call::None);
+        return Call(m_assembler.blx(target), Call::None);
     }
 
     Call call(Address address)
     {
         load32(address, dataTempRegister);
-        return Call(m_assembler.blx(dataTempRegister, ARMv7Assembler::JumpFixed), Call::None);
+        return Call(m_assembler.blx(dataTempRegister), Call::None);
     }
 
     void ret()
     {
-        m_assembler.bx(linkRegister, ARMv7Assembler::JumpFixed);
+        m_assembler.bx(linkRegister);
     }
 
     void compare32(RelationalCondition cond, RegisterID left, RegisterID right, RegisterID dest)
@@ -1218,7 +1213,7 @@ public:
     {
         // Like a normal call, but don't link.
         moveFixedWidthEncoding(TrustedImm32(0), dataTempRegister);
-        return Call(m_assembler.bx(dataTempRegister, ARMv7Assembler::JumpFixed), Call::Linkable);
+        return Call(m_assembler.bx(dataTempRegister), Call::Linkable);
     }
 
     Call makeTailRecursiveCall(Jump oldJump)
@@ -1239,21 +1234,21 @@ protected:
         return m_inUninterruptedSequence;
     }
 
-    ARMv7Assembler::JmpSrc makeJump()
+    Jump jump()
     {
         moveFixedWidthEncoding(TrustedImm32(0), dataTempRegister);
-        return m_assembler.bx(dataTempRegister, inUninterruptedSequence() ? ARMv7Assembler::JumpNoConditionFixedSize : ARMv7Assembler::JumpNoCondition);
+        return Jump(m_assembler.bx(dataTempRegister), inUninterruptedSequence() ? ARMv7Assembler::JumpNoConditionFixedSize : ARMv7Assembler::JumpNoCondition);
     }
 
-    ARMv7Assembler::JmpSrc makeBranch(ARMv7Assembler::Condition cond)
+    Jump makeBranch(ARMv7Assembler::Condition cond)
     {
         m_assembler.it(cond, true, true);
         moveFixedWidthEncoding(TrustedImm32(0), dataTempRegister);
-        return m_assembler.bx(dataTempRegister, inUninterruptedSequence() ? ARMv7Assembler::JumpConditionFixedSize : ARMv7Assembler::JumpCondition, cond);
+        return Jump(m_assembler.bx(dataTempRegister), inUninterruptedSequence() ? ARMv7Assembler::JumpConditionFixedSize : ARMv7Assembler::JumpCondition, cond);
     }
-    ARMv7Assembler::JmpSrc makeBranch(RelationalCondition cond) { return makeBranch(armV7Condition(cond)); }
-    ARMv7Assembler::JmpSrc makeBranch(ResultCondition cond) { return makeBranch(armV7Condition(cond)); }
-    ARMv7Assembler::JmpSrc makeBranch(DoubleCondition cond) { return makeBranch(armV7Condition(cond)); }
+    Jump makeBranch(RelationalCondition cond) { return makeBranch(armV7Condition(cond)); }
+    Jump makeBranch(ResultCondition cond) { return makeBranch(armV7Condition(cond)); }
+    Jump makeBranch(DoubleCondition cond) { return makeBranch(armV7Condition(cond)); }
 
     ArmAddress setupArmAddress(BaseIndex address)
     {

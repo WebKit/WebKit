@@ -37,6 +37,17 @@
 
 namespace JSC {
 
+    struct AssemblerLabel {
+        AssemblerLabel(uint32_t offset = std::numeric_limits<uint32_t>::max())
+            : m_offset(offset)
+        {
+        }
+
+        bool isSet() const { return (m_offset != std::numeric_limits<uint32_t>::max()); }
+
+        uint32_t m_offset;
+    };
+
     class AssemblerBuffer {
         static const int inlineCapacity = 128 - sizeof(char*) - 2 * sizeof(int);
     public:

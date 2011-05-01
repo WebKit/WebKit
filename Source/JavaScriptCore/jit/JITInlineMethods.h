@@ -109,6 +109,16 @@ ALWAYS_INLINE JIT::Call JIT::emitNakedCall(CodePtr function)
     return nakedCall;
 }
 
+ALWAYS_INLINE bool JIT::atJumpTarget()
+{
+    while (m_jumpTargetsPosition < m_codeBlock->numberOfJumpTargets() && m_codeBlock->jumpTarget(m_jumpTargetsPosition) <= m_bytecodeOffset) {
+        if (m_codeBlock->jumpTarget(m_jumpTargetsPosition) == m_bytecodeOffset)
+            return true;
+        ++m_jumpTargetsPosition;
+    }
+    return false;
+}
+
 #if defined(ASSEMBLER_HAS_CONSTANT_POOL) && ASSEMBLER_HAS_CONSTANT_POOL
 
 ALWAYS_INLINE void JIT::beginUninterruptedSequence(int insnSpace, int constSpace)
@@ -651,21 +661,12 @@ ALWAYS_INLINE void JIT::emitGetVirtualRegister(int src, RegisterID dst)
         return;
     }
 
-    if (src == m_lastResultBytecodeRegister && m_codeBlock->isTemporaryRegisterIndex(src)) {
-        bool atJumpTarget = false;
-        while (m_jumpTargetsPosition < m_codeBlock->numberOfJumpTargets() && m_codeBlock->jumpTarget(m_jumpTargetsPosition) <= m_bytecodeOffset) {
-            if (m_codeBlock->jumpTarget(m_jumpTargetsPosition) == m_bytecodeOffset)
-                atJumpTarget = true;
-            ++m_jumpTargetsPosition;
-        }
-
-        if (!atJumpTarget) {
-            // The argument we want is already stored in eax
-            if (dst != cachedResultRegister)
-                move(cachedResultRegister, dst);
-            killLastResultRegister();
-            return;
-        }
+    if (src == m_lastResultBytecodeRegister && m_codeBlock->isTemporaryRegisterIndex(src) && !atJumpTarget()) {
+        // The argument we want is already stored in eax
+        if (dst != cachedResultRegister)
+            move(cachedResultRegister, dst);
+        killLastResultRegister();
+        return;
     }
 
     loadPtr(Address(callFrameRegister, src * sizeof(Register)), dst);

@@ -472,65 +472,6 @@ public:
         JumpLinkType m_linkType : 4;
         Condition m_condition : 16;
     };
-    
-    class JmpSrc {
-        friend class ARMv7Assembler;
-        friend class ARMInstructionFormatter;
-        friend class LinkBuffer;
-    public:
-        JmpSrc()
-            : m_offset(-1)
-        {
-        }
-
-    private:
-        JmpSrc(int offset, JumpType type)
-            : m_offset(offset)
-            , m_condition(ConditionInvalid)
-            , m_type(type)
-        {
-            ASSERT(m_type == JumpFixed || m_type == JumpNoCondition || m_type == JumpNoConditionFixedSize);
-        }
-
-        JmpSrc(int offset, JumpType type, Condition condition)
-            : m_offset(offset)
-            , m_condition(condition)
-            , m_type(type)
-        {
-            ASSERT(m_type == JumpFixed || m_type == JumpCondition || m_type == JumpConditionFixedSize);
-        }
-
-        int m_offset;
-        Condition m_condition : 16;
-        JumpType m_type : 16;
-        
-    };
-    
-    class JmpDst {
-        friend class ARMv7Assembler;
-        friend class ARMInstructionFormatter;
-        friend class LinkBuffer;
-    public:
-        JmpDst()
-            : m_offset(-1)
-            , m_used(false)
-        {
-        }
-
-        bool isUsed() const { return m_used; }
-        bool isSet() const { return (m_offset != -1); }
-        void used() { m_used = true; }
-    private:
-        JmpDst(int offset)
-            : m_offset(offset)
-            , m_used(false)
-        {
-            ASSERT(m_offset == offset);
-        }
-
-        signed int m_offset : 31;
-        int m_used : 1;
-    };
 
 private:
 
@@ -882,31 +823,25 @@ public:
     }
     
     // Only allowed in IT (if then) block if last instruction.
-    JmpSrc b(JumpType type)
+    AssemblerLabel b()
     {
         m_formatter.twoWordOp16Op16(OP_B_T4a, OP_B_T4b);
-        return JmpSrc(m_formatter.label(), type);
+        return AssemblerLabel(m_formatter.label());
     }
     
     // Only allowed in IT (if then) block if last instruction.
-    JmpSrc blx(RegisterID rm, JumpType type)
+    AssemblerLabel blx(RegisterID rm)
     {
         ASSERT(rm != ARMRegisters::pc);
         m_formatter.oneWordOp8RegReg143(OP_BLX, rm, (RegisterID)8);
-        return JmpSrc(m_formatter.label(), type);
+        return AssemblerLabel(m_formatter.label());
     }
 
     // Only allowed in IT (if then) block if last instruction.
-    JmpSrc bx(RegisterID rm, JumpType type, Condition condition)
+    AssemblerLabel bx(RegisterID rm)
     {
         m_formatter.oneWordOp8RegReg143(OP_BX, rm, (RegisterID)0);
-        return JmpSrc(m_formatter.label(), type, condition);
-    }
-
-    JmpSrc bx(RegisterID rm, JumpType type)
-    {
-        m_formatter.oneWordOp8RegReg143(OP_BX, rm, (RegisterID)0);
-        return JmpSrc(m_formatter.label(), type);
+        return AssemblerLabel(m_formatter.label());
     }
 
     void bkpt(uint8_t imm=0)
@@ -1591,12 +1526,12 @@ public:
         m_formatter.vfpOp(OP_VSUB_T2, OP_VSUB_T2b, true, rn, rd, rm);
     }
 
-    JmpDst label()
+    AssemblerLabel label()
     {
-        return JmpDst(m_formatter.label());
+        return AssemblerLabel(m_formatter.label());
     }
     
-    JmpDst align(int alignment)
+    AssemblerLabel align(int alignment)
     {
         while (!m_formatter.isAligned(alignment))
             bkpt();
@@ -1604,33 +1539,15 @@ public:
         return label();
     }
     
-    static void* getRelocatedAddress(void* code, JmpSrc jump)
+    static void* getRelocatedAddress(void* code, AssemblerLabel label)
     {
-        ASSERT(jump.m_offset != -1);
-
-        return reinterpret_cast<void*>(reinterpret_cast<ptrdiff_t>(code) + jump.m_offset);
+        ASSERT(label.isSet());
+        return reinterpret_cast<void*>(reinterpret_cast<ptrdiff_t>(code) + label.m_offset);
     }
     
-    static void* getRelocatedAddress(void* code, JmpDst destination)
+    static int getDifferenceBetweenLabels(AssemblerLabel a, AssemblerLabel b)
     {
-        ASSERT(destination.m_offset != -1);
-
-        return reinterpret_cast<void*>(reinterpret_cast<ptrdiff_t>(code) + destination.m_offset);
-    }
-    
-    static int getDifferenceBetweenLabels(JmpDst src, JmpDst dst)
-    {
-        return dst.m_offset - src.m_offset;
-    }
-    
-    static int getDifferenceBetweenLabels(JmpDst src, JmpSrc dst)
-    {
-        return dst.m_offset - src.m_offset;
-    }
-    
-    static int getDifferenceBetweenLabels(JmpSrc src, JmpDst dst)
-    {
-        return dst.m_offset - src.m_offset;
+        return b.m_offset - a.m_offset;
     }
 
     int executableOffsetFor(int location)
@@ -1764,9 +1681,9 @@ public:
     void* unlinkedCode() { return m_formatter.data(); }
     size_t codeSize() const { return m_formatter.codeSize(); }
 
-    static unsigned getCallReturnOffset(JmpSrc call)
+    static unsigned getCallReturnOffset(AssemblerLabel call)
     {
-        ASSERT(call.m_offset >= 0);
+        ASSERT(call.isSet());
         return call.m_offset;
     }
 
@@ -1778,33 +1695,31 @@ public:
     // writable region of memory; to modify the code in an execute-only execuable
     // pool the 'repatch' and 'relink' methods should be used.
 
-    void linkJump(JmpSrc from, JmpDst to)
+    void linkJump(AssemblerLabel from, AssemblerLabel to, JumpType type, Condition condition)
     {
-        ASSERT(to.m_offset != -1);
-        ASSERT(from.m_offset != -1);
-        m_jumpsToLink.append(LinkRecord(from.m_offset, to.m_offset, from.m_type, from.m_condition));
+        ASSERT(to.isSet());
+        ASSERT(from.isSet());
+        m_jumpsToLink.append(LinkRecord(from.m_offset, to.m_offset, type, condition));
     }
 
-    static void linkJump(void* code, JmpSrc from, void* to)
+    static void linkJump(void* code, AssemblerLabel from, void* to)
     {
-        ASSERT(from.m_offset != -1);
+        ASSERT(from.isSet());
         
         uint16_t* location = reinterpret_cast<uint16_t*>(reinterpret_cast<intptr_t>(code) + from.m_offset);
         linkJumpAbsolute(location, to);
     }
 
-    // bah, this mathod should really be static, since it is used by the LinkBuffer.
-    // return a bool saying whether the link was successful?
-    static void linkCall(void* code, JmpSrc from, void* to)
+    static void linkCall(void* code, AssemblerLabel from, void* to)
     {
         ASSERT(!(reinterpret_cast<intptr_t>(code) & 1));
-        ASSERT(from.m_offset != -1);
+        ASSERT(from.isSet());
         ASSERT(reinterpret_cast<intptr_t>(to) & 1);
 
         setPointer(reinterpret_cast<uint16_t*>(reinterpret_cast<intptr_t>(code) + from.m_offset) - 1, to);
     }
 
-    static void linkPointer(void* code, JmpDst where, void* value)
+    static void linkPointer(void* code, AssemblerLabel where, void* value)
     {
         setPointer(reinterpret_cast<char*>(code) + where.m_offset, value);
     }

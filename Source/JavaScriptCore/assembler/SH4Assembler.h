@@ -351,48 +351,6 @@ public:
 
     // Opaque label types
 public:
-    class JmpSrc {
-        friend class SH4Assembler;
-    public:
-        JmpSrc()
-            : m_offset(-1)
-        {
-        }
-
-    private:
-        JmpSrc(int offset)
-            : m_offset(offset)
-        {
-        }
-
-        int m_offset;
-    };
-
-    class JmpDst {
-        friend class SH4Assembler;
-    public:
-        JmpDst()
-            : m_offset(-1)
-            , m_used(false)
-        {
-        }
-
-        bool isUsed() const { return m_used; }
-        bool isSet() const { return (m_offset != -1); }
-        void used() { m_used = true; }
-
-    private:
-        JmpDst(int offset)
-            : m_offset(offset)
-            , m_used(false)
-        {
-            ASSERT(m_offset == offset);
-        }
-
-        int m_offset : 31;
-        int m_used : 1;
-    };
-
     bool isImmediate(int constant)
     {
         return ((constant <= 127) && (constant >= -128));
@@ -1184,7 +1142,7 @@ public:
 
     // Flow control
 
-    JmpSrc call()
+    AssemblerLabel call()
     {
         RegisterID scr = claimScratch();
         m_buffer.ensureSpace(maxInstructionSize + 4, sizeof(uint32_t));
@@ -1192,18 +1150,18 @@ public:
         branch(JSR_OPCODE, scr);
         nop();
         releaseScratch(scr);
-        return JmpSrc(m_buffer.label());
+        return AssemblerLabel(m_buffer.label());
     }
 
-    JmpSrc call(RegisterID dst)
+    AssemblerLabel call(RegisterID dst)
     {
         m_buffer.ensureSpace(maxInstructionSize + 2);
         branch(JSR_OPCODE, dst);
         nop();
-        return JmpSrc(m_buffer.label());
+        return AssemblerLabel(m_buffer.label());
     }
 
-    JmpSrc jmp()
+    AssemblerLabel jmp()
     {
         RegisterID scr = claimScratch();
         m_buffer.ensureSpace(maxInstructionSize + 4, sizeof(uint32_t));
@@ -1212,13 +1170,13 @@ public:
         branch(BRAF_OPCODE, scr);
         nop();
         releaseScratch(scr);
-        return JmpSrc(m_size);
+        return AssemblerLabel(m_size);
     }
 
-    JmpSrc jmp(RegisterID dst)
+    AssemblerLabel jmp(RegisterID dst)
     {
         jmpReg(dst);
-        return JmpSrc(m_buffer.label());
+        return AssemblerLabel(m_buffer.label());
     }
 
     void jmpReg(RegisterID dst)
@@ -1228,18 +1186,18 @@ public:
         nop();
     }
 
-    JmpSrc jne()
+    AssemblerLabel jne()
     {
         int m_size = m_buffer.label();
         branch(BF_OPCODE, 0);
-        return JmpSrc(m_size);
+        return AssemblerLabel(m_size);
     }
 
-    JmpSrc je()
+    AssemblerLabel je()
     {
         int m_size = m_buffer.label();
         branch(BT_OPCODE, 0);
-        return JmpSrc(m_size);
+        return AssemblerLabel(m_size);
     }
 
     void ret()
@@ -1248,10 +1206,10 @@ public:
         oneShortOp(RTS_OPCODE, false);
     }
 
-    JmpDst label()
+    AssemblerLabel label()
     {
         m_buffer.ensureSpaceForAnyOneInstruction();
-        return JmpDst(m_buffer.label());
+        return AssemblerLabel(m_buffer.label());
     }
 
     int sizeOfConstantPool()
@@ -1259,7 +1217,7 @@ public:
          return m_buffer.sizeOfConstantPool();
     }
 
-    JmpDst align(int alignment)
+    AssemblerLabel align(int alignment)
     {
         m_buffer.ensureSpace(maxInstructionSize + 2);
         while (!m_buffer.isAligned(alignment)) {
@@ -1280,9 +1238,9 @@ public:
         return reinterpret_cast<uint16_t*> (reinterpret_cast<uint32_t>(code) + offset);
     }
 
-    static void linkJump(void* code, JmpSrc from, void* to)
+    static void linkJump(void* code, AssemblerLabel from, void* to)
     {
-        ASSERT(from.m_offset != -1);
+        ASSERT(from.isSet());
 
         uint16_t* instructionPtr = getInstructionPtr(code, from.m_offset);
         uint16_t instruction = *instructionPtr;
@@ -1322,22 +1280,22 @@ public:
         printInstr(*instructionPtr, from.m_offset + 2);
     }
 
-    static void linkCall(void* code, JmpSrc from, void* to)
+    static void linkCall(void* code, AssemblerLabel from, void* to)
     {
         uint16_t* instructionPtr = getInstructionPtr(code, from.m_offset);
         instructionPtr -= 3;
         changePCrelativeAddress((*instructionPtr & 0xff), instructionPtr, reinterpret_cast<uint32_t>(to));
     }
 
-    static void linkPointer(void* code, JmpDst where, void* value)
+    static void linkPointer(void* code, AssemblerLabel where, void* value)
     {
         uint16_t* instructionPtr = getInstructionPtr(code, where.m_offset);
         changePCrelativeAddress((*instructionPtr & 0xff), instructionPtr, reinterpret_cast<uint32_t>(value));
     }
 
-    static unsigned getCallReturnOffset(JmpSrc call)
+    static unsigned getCallReturnOffset(AssemblerLabel call)
     {
-        ASSERT(call.m_offset >= 0);
+        ASSERT(call.isSet());
         return call.m_offset;
     }
 
@@ -1432,10 +1390,10 @@ public:
 
     // Linking & patching
 
-    void linkJump(JmpSrc from, JmpDst to)
+    void linkJump(AssemblerLabel from, AssemblerLabel to)
     {
-        ASSERT(to.m_offset != -1);
-        ASSERT(from.m_offset != -1);
+        ASSERT(to.isSet());
+        ASSERT(from.isSet());
 
         uint16_t* instructionPtr = getInstructionPtr(data(), from.m_offset);
         uint16_t instruction = *instructionPtr;
@@ -1486,33 +1444,17 @@ public:
         printInstr(*instructionPtr, from.m_offset + 2);
     }
 
-    static void* getRelocatedAddress(void* code, JmpSrc jump)
+    static void* getRelocatedAddress(void* code, AssemblerLabel label)
     {
-        return reinterpret_cast<void*>(reinterpret_cast<uint32_t>(code) + jump.m_offset);
+        return reinterpret_cast<void*>(reinterpret_cast<char*>(code) + label.m_offset);
     }
 
-    static void* getRelocatedAddress(void* code, JmpDst destination)
+    static int getDifferenceBetweenLabels(AssemblerLabel a, AssemblerLabel b)
     {
-        ASSERT(destination.m_offset != -1);
-        return reinterpret_cast<void*>(reinterpret_cast<uint32_t>(code) + destination.m_offset);
+        return b.m_offset - a.m_offset;
     }
 
-    static int getDifferenceBetweenLabels(JmpDst src, JmpDst dst)
-    {
-        return dst.m_offset - src.m_offset;
-    }
-
-    static int getDifferenceBetweenLabels(JmpDst src, JmpSrc dst)
-    {
-        return dst.m_offset - src.m_offset;
-    }
-
-    static int getDifferenceBetweenLabels(JmpSrc src, JmpDst dst)
-    {
-        return dst.m_offset - src.m_offset;
-    }
-
-    static void patchPointer(void* code, JmpDst where, void* value)
+    static void patchPointer(void* code, AssemblerLabel where, void* value)
     {
         patchPointer(reinterpret_cast<uint32_t*>(code) + where.m_offset, value);
     }

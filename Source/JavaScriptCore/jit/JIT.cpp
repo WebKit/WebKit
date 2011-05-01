@@ -183,7 +183,7 @@ void JIT::privateCompileMainPass()
 #endif
 
 #if USE(JSVALUE64)
-        if (m_labels[m_bytecodeOffset].isUsed())
+        if (atJumpTarget())
             killLastResultRegister();
 #endif
 
