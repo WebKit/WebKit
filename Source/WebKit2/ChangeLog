@@ -2,6 +2,18 @@
 
         Reviewed by Maciej Stachowiak.
 
+        Remove unnecessary keychain and CoreAudio debris from WebProcess sandbox
+        https://bugs.webkit.org/show_bug.cgi?id=59873
+
+        These rules have been obsoleted by <rdar://problem/9301520> and
+        <rdar://problem/9181468>.
+
+        * WebProcess/com.apple.WebProcess.sb:
+
+2011-05-01  Ivan Krstić  <ike@apple.com>
+
+        Reviewed by Maciej Stachowiak.
+
         Simplify WebProcess sandbox with homedir-relative path filters.
         https://bugs.webkit.org/show_bug.cgi?id=59872
 

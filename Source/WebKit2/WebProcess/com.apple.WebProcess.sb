@@ -177,11 +177,3 @@
 (allow file-read*
        (home-literal "/Library/Preferences/com.apple.Safari.RSS.plist")
        (home-literal "/Library/Preferences/com.apple.Syndication.plist"))
-
-;; Mute violations
-(deny file-write*
-      (home-literal "/Library/Caches/com.apple.coreaudio.components.plist")
-      (with no-log))
-
-;; FIXME: This should be removed when <rdar://problem/8448021> is fixed.
-(deny file* (literal "/private/tmp/kc") (with no-log))
