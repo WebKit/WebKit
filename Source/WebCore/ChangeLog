@@ -1,5 +1,12 @@
 2011-05-01  Patrick Gansterer  <paroga@webkit.org>
 
+        [WIN] Unreviewed buildfix after r85434.
+
+        * platform/graphics/win/QTMovieVisualContext.cpp:
+        (QTMovieVisualContext::QTMovieVisualContext):
+
+2011-05-01  Patrick Gansterer  <paroga@webkit.org>
+
         Reviewed by Adam Barth.
 
         [WINCE] Fix OwnPtr strict issues

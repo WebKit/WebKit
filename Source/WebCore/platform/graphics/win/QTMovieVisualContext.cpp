@@ -179,7 +179,7 @@ PassRefPtr<QTMovieVisualContext> QTMovieVisualContext::create(QTMovieVisualConte
 }
 
 QTMovieVisualContext::QTMovieVisualContext(QTMovieVisualContextClient* client, QTPixelBuffer::Type contextType) 
-    : m_private(new QTMovieVisualContextPriv(this, client, contextType))
+    : m_private(adoptPtr(new QTMovieVisualContextPriv(this, client, contextType)))
 {
 }
 
