@@ -42,7 +42,7 @@ using namespace WebCore;
 
 // WebElementPropertyBag -----------------------------------------------
 WebElementPropertyBag::WebElementPropertyBag(const HitTestResult& result)
-    : m_result(new HitTestResult(result))
+    : m_result(adoptPtr(new HitTestResult(result)))
     , m_refCount(0)
 {
     gClassCount++;

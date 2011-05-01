@@ -1,5 +1,23 @@
 2011-05-01  Patrick Gansterer  <paroga@webkit.org>
 
+        Reviewed by Adam Barth.
+
+        Fix OwnPtr strict issues in windows build
+        https://bugs.webkit.org/show_bug.cgi?id=59878
+
+        * platform/graphics/ca/win/CACFLayerTreeHost.cpp:
+        (WebCore::getDirtyRects):
+        * platform/graphics/win/MediaPlayerPrivateQuickTimeVisualContext.cpp:
+        (WebCore::MediaPlayerPrivateQuickTimeVisualContext::MediaPlayerPrivateQuickTimeVisualContext):
+        * platform/graphics/win/WKCAImageQueue.cpp:
+        (WebCore::WKCAImageQueue::WKCAImageQueue):
+        * platform/win/CursorWin.cpp:
+        (WebCore::createSharedCursor):
+        * platform/win/PasteboardWin.cpp:
+        (WebCore::Pasteboard::writeImage):
+
+2011-05-01  Patrick Gansterer  <paroga@webkit.org>
+
         Reviewed by Eric Seidel.
 
         Use PassOwnPtr as return value of GraphicsContext::createWindowsBitmap

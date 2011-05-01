@@ -221,7 +221,7 @@ void Pasteboard::writeImage(Node* node, const KURL&, const String&)
     HDC dc = GetDC(0);
     HDC compatibleDC = CreateCompatibleDC(0);
     HDC sourceDC = CreateCompatibleDC(0);
-    OwnPtr<HBITMAP> resultBitmap(CreateCompatibleBitmap(dc, image->width(), image->height()));
+    OwnPtr<HBITMAP> resultBitmap = adoptPtr(CreateCompatibleBitmap(dc, image->width(), image->height()));
     HGDIOBJ oldBitmap = SelectObject(compatibleDC, resultBitmap.get());
 
     BitmapInfo bmInfo = BitmapInfo::create(image->size());

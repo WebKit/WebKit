@@ -148,7 +148,7 @@ void WebNodeHighlight::update()
     BitmapInfo bitmapInfo = BitmapInfo::createBottomUp(IntSize(size));
 
     void* pixels = 0;
-    OwnPtr<HBITMAP> hbmp(::CreateDIBSection(hdc, &bitmapInfo, DIB_RGB_COLORS, &pixels, 0, 0));
+    OwnPtr<HBITMAP> hbmp = adoptPtr(::CreateDIBSection(hdc, &bitmapInfo, DIB_RGB_COLORS, &pixels, 0, 0));
 
     ::SelectObject(hdc, hbmp.get());
 

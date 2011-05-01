@@ -33,6 +33,7 @@
 #include "SystemInfo.h"
 
 #include <wtf/OwnPtr.h>
+#include <wtf/PassOwnPtr.h>
 
 #include <windows.h>
 
@@ -51,7 +52,7 @@ static PassRefPtr<SharedCursor> createSharedCursor(Image* img, const IntPoint& h
     HDC dc = GetDC(0);
     HDC workingDC = CreateCompatibleDC(dc);
     if (doAlpha) {
-        OwnPtr<HBITMAP> hCursor(CreateDIBSection(dc, (BITMAPINFO *)&cursorImage, DIB_RGB_COLORS, 0, 0, 0));
+        OwnPtr<HBITMAP> hCursor = adoptPtr(CreateDIBSection(dc, (BITMAPINFO *)&cursorImage, DIB_RGB_COLORS, 0, 0, 0));
         ASSERT(hCursor);
 
         img->getHBITMAP(hCursor.get()); 
@@ -61,7 +62,7 @@ static PassRefPtr<SharedCursor> createSharedCursor(Image* img, const IntPoint& h
 
         Vector<unsigned char, 128> maskBits;
         maskBits.fill(0xff, (img->width() + 7) / 8 * img->height());
-        OwnPtr<HBITMAP> hMask(CreateBitmap(img->width(), img->height(), 1, 1, maskBits.data()));
+        OwnPtr<HBITMAP> hMask = adoptPtr(CreateBitmap(img->width(), img->height(), 1, 1, maskBits.data()));
 
         ICONINFO ii;
         ii.fIcon = FALSE;
@@ -76,13 +77,13 @@ static PassRefPtr<SharedCursor> createSharedCursor(Image* img, const IntPoint& h
         // to create the mask manually
         HDC andMaskDC = CreateCompatibleDC(dc);
         HDC xorMaskDC = CreateCompatibleDC(dc);
-        OwnPtr<HBITMAP> hCursor(CreateDIBSection(dc, &cursorImage, DIB_RGB_COLORS, 0, 0, 0));
+        OwnPtr<HBITMAP> hCursor = adoptPtr(CreateDIBSection(dc, &cursorImage, DIB_RGB_COLORS, 0, 0, 0));
         ASSERT(hCursor);
         img->getHBITMAP(hCursor.get()); 
         BITMAP cursor;
         GetObject(hCursor.get(), sizeof(BITMAP), &cursor);
-        OwnPtr<HBITMAP> andMask(CreateBitmap(cursor.bmWidth, cursor.bmHeight, 1, 1, NULL));
-        OwnPtr<HBITMAP> xorMask(CreateCompatibleBitmap(dc, cursor.bmWidth, cursor.bmHeight));
+        OwnPtr<HBITMAP> andMask = adoptPtr(CreateBitmap(cursor.bmWidth, cursor.bmHeight, 1, 1, NULL));
+        OwnPtr<HBITMAP> xorMask = adoptPtr(CreateCompatibleBitmap(dc, cursor.bmWidth, cursor.bmHeight));
         HBITMAP oldCursor = (HBITMAP)SelectObject(workingDC, hCursor.get());
         HBITMAP oldAndMask = (HBITMAP)SelectObject(andMaskDC, andMask.get());
         HBITMAP oldXorMask = (HBITMAP)SelectObject(xorMaskDC, xorMask.get());

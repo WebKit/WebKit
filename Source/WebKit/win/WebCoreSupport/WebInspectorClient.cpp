@@ -181,7 +181,7 @@ void WebInspectorClient::highlight(Node*)
     bool creatingHighlight = !m_highlight;
 
     if (creatingHighlight)
-        m_highlight.set(new WebNodeHighlight(m_inspectedWebView));
+        m_highlight = adoptPtr(new WebNodeHighlight(m_inspectedWebView));
 
     if (m_highlight->isShowing())
         m_highlight->update();

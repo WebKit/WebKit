@@ -680,7 +680,7 @@ HRESULT STDMETHODCALLTYPE WebView::close()
     if (m_mouseOutTracker) {
         m_mouseOutTracker->dwFlags = TME_CANCEL;
         ::TrackMouseEvent(m_mouseOutTracker.get());
-        m_mouseOutTracker.set(0);
+        m_mouseOutTracker.clear();
     }
     
     revokeDragDrop();
@@ -1050,7 +1050,7 @@ void WebView::paint(HDC dc, LPARAM options)
     PAINTSTRUCT ps;
     WindowsToPaint windowsToPaint;
     if (!dc) {
-        region.set(CreateRectRgn(0,0,0,0));
+        region = adoptPtr(CreateRectRgn(0,0,0,0));
         regionType = GetUpdateRgn(m_viewWindow, region.get(), false);
         hdc = BeginPaint(m_viewWindow, &ps);
         rcPaint = ps.rcPaint;
@@ -1499,7 +1499,7 @@ bool WebView::handleMouseEvent(UINT message, WPARAM wParam, LPARAM lParam)
     } else if (message == WM_MOUSELEAVE && m_mouseOutTracker) {
         // Once WM_MOUSELEAVE is fired windows clears this tracker
         // so there is no need to disable it ourselves.
-        m_mouseOutTracker.set(0);
+        m_mouseOutTracker.clear();
         m_page->mainFrame()->eventHandler()->mouseMoved(mouseEvent);
         handled = true;
     } else if (message == WM_MOUSEMOVE) {
@@ -1508,7 +1508,7 @@ bool WebView::handleMouseEvent(UINT message, WPARAM wParam, LPARAM lParam)
         mouseEvent.setClickCount(globalClickCount);
         handled = m_page->mainFrame()->eventHandler()->mouseMoved(mouseEvent);
         if (!m_mouseOutTracker) {
-            m_mouseOutTracker.set(new TRACKMOUSEEVENT);
+            m_mouseOutTracker = adoptPtr(new TRACKMOUSEEVENT);
             m_mouseOutTracker->cbSize = sizeof(TRACKMOUSEEVENT);
             m_mouseOutTracker->dwFlags = TME_LEAVE;
             m_mouseOutTracker->hwndTrack = m_viewWindow;
@@ -6026,7 +6026,7 @@ HRESULT STDMETHODCALLTYPE WebView::registerEmbeddedViewMIMEType(BSTR mimeType)
         return E_POINTER;
 
     if (!m_embeddedViewMIMETypes)
-        m_embeddedViewMIMETypes.set(new HashSet<String>);
+        m_embeddedViewMIMETypes = adoptPtr(new HashSet<String>);
 
     m_embeddedViewMIMETypes->add(String(mimeType, ::SysStringLen(mimeType)));
     return S_OK;

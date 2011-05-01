@@ -239,7 +239,7 @@ static void getDirtyRects(HWND window, Vector<CGRect>& outRects)
     if (!GetClientRect(window, &clientRect))
         return;
 
-    OwnPtr<HRGN> region(CreateRectRgn(0, 0, 0, 0));
+    OwnPtr<HRGN> region = adoptPtr(CreateRectRgn(0, 0, 0, 0));
     int regionType = GetUpdateRgn(window, region.get(), false);
     if (regionType != COMPLEXREGION) {
         RECT dirtyRect;

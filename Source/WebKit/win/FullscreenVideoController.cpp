@@ -242,10 +242,10 @@ FullscreenVideoController::FullscreenVideoController()
     , m_movingWindow(false)
     , m_timer(this, &FullscreenVideoController::timerFired)
 #if USE(ACCELERATED_COMPOSITING)
-    , m_layerClient(new LayerClient(this))
+    , m_layerClient(adoptPtr(new LayerClient(this)))
     , m_rootChild(PlatformCALayer::create(PlatformCALayer::LayerTypeLayer, m_layerClient.get()))
 #endif
-    , m_fullscreenWindow(new MediaPlayerPrivateFullscreenWindow(this))
+    , m_fullscreenWindow(adoptPtr(new MediaPlayerPrivateFullscreenWindow(this)))
 {
 }
 
@@ -437,8 +437,8 @@ void FullscreenVideoController::createHUDWindow()
     // will get cleaned up when m_bitmap is destroyed in the dtor
     void* pixels;
     BitmapInfo bitmapInfo = BitmapInfo::createBottomUp(IntSize(windowWidth, windowHeight));
-    m_bitmap.set(::CreateDIBSection(0, &bitmapInfo, DIB_RGB_COLORS, &pixels, 0, 0));
-    
+    m_bitmap = adoptPtr(::CreateDIBSection(0, &bitmapInfo, DIB_RGB_COLORS, &pixels, 0, 0));
+
     // Dirty the window so the HUD draws
     RECT clearRect = { m_hudPosition.x(), m_hudPosition.y(), m_hudPosition.x() + windowWidth, m_hudPosition.y() + windowHeight };
     InvalidateRect(m_fullscreenWindow->hwnd(), &clearRect, true);

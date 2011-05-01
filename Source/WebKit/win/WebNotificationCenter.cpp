@@ -32,6 +32,7 @@
 #include <WebCore/PlatformString.h>
 #include <wtf/HashMap.h>
 #include <wtf/HashTraits.h>
+#include <wtf/PassOwnPtr.h>
 #include <wtf/Vector.h>
 #include <wtf/text/StringHash.h>
 #include <utility>
@@ -54,7 +55,7 @@ IWebNotificationCenter* WebNotificationCenter::m_defaultCenter = 0;
 
 WebNotificationCenter::WebNotificationCenter()
     : m_refCount(0)
-    , d(new WebNotificationCenterPrivate)
+    , d(adoptPtr(new WebNotificationCenterPrivate))
 {
     gClassCount++;
     gClassNameCount.add("WebNotificationCenter");
