@@ -1,3 +1,12 @@
+2011-05-01  ojab  <ojab@ojab.ru>
+
+        Reviewed by Eric Seidel.
+
+        --disable-video-track if --disable-video
+        https://bugs.webkit.org/show_bug.cgi?id=59605
+
+        * configure.ac:
+
 2011-04-29  Dean Jackson  <dino@apple.com>
 
         Reviewed by Simon Fraser.

@@ -537,6 +537,11 @@ AC_ARG_ENABLE(video,
               [],[enable_video="yes"])
 AC_MSG_RESULT([$enable_video])
 
+# turn off video features if --disable-video is requested
+if test "$enable_video" = "no"; then
+   enable_video_track=no
+fi
+
 # check whether to enable HTML5 video track support
 AC_MSG_CHECKING([whether to enable HTML5 video track support])
 AC_ARG_ENABLE(video_track,
