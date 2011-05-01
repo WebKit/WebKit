@@ -1,3 +1,15 @@
+2011-05-01  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        webkit-patch fails when not run from root
+        https://bugs.webkit.org/show_bug.cgi?id=59882
+
+        We need to set the CWD when running svn so that svn interprets file
+        paths relative to the root of the working copy.
+
+        * Scripts/webkitpy/common/checkout/scm.py:
+
 2011-04-29  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Adam Barth.

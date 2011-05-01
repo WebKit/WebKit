@@ -558,7 +558,7 @@ class SVN(SCM, SVNRepository):
             if self._bogus_dir:
                 args += ['--config-dir', self._bogus_dir]
             args.append(path)
-            return self.run(args)
+            return self.run(args, cwd=self.checkout_root)
         finally:
             self._teardown_bogus_dir(log)
 
