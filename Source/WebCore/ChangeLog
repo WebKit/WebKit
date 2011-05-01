@@ -1,3 +1,10 @@
+2011-05-01  Patrick Gansterer  <paroga@webkit.org>
+
+        [WIN] Unreviewed buildfix after r85434.
+
+        * platform/graphics/win/QTMovieVisualContext.cpp:
+        (QTMovieVisualContext::QTMovieVisualContext): Added missing header.
+
 2011-05-01  Justin Schuh  <jschuh@chromium.org>
 
         Reviewed by Adam Barth.

@@ -32,6 +32,7 @@
 #include <ImageCompression.h>
 #include <Movies.h>
 #include <windows.h>
+#include <wtf/PassOwnPtr.h>
 
 struct QTCVTimeStamp {
     CVTimeStamp t;
