@@ -43,6 +43,7 @@ struct FilterData {
     FilterData()
         : savedContext(0)
         , builded(false)
+        , markedForRemoval(false)
     {
     }
 
@@ -53,7 +54,8 @@ struct FilterData {
     AffineTransform shearFreeAbsoluteTransform;
     FloatRect boundaries;
     FloatSize scale;
-    bool builded;
+    bool builded : 1;
+    bool markedForRemoval : 1;
 };
 
 class GraphicsContext;

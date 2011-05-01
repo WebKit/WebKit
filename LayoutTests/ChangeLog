@@ -1,3 +1,13 @@
+2011-04-30  Justin Schuh  <jschuh@chromium.org>
+
+        Reviewed by Dirk Schulze.
+
+        Make RenderSVGResourceFilter take ownership of filter data when painting
+        https://bugs.webkit.org/show_bug.cgi?id=51524
+
+        * svg/custom/filter-on-svgimage-expected.txt: Added.
+        * svg/custom/filter-on-svgimage.svg: Added.
+
 2011-04-30  Adam Roben  <aroben@apple.com>
 
         Skip another test that requires layoutTestController.setAlwaysAcceptCookies on mac-wk2
