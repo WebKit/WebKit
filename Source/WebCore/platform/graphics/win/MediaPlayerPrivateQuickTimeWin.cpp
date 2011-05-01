@@ -892,7 +892,7 @@ void MediaPlayerPrivate::createLayerForMovie()
     // Create a GraphicsLayer that won't be inserted directly into the render tree, but will used 
     // as a wrapper for a PlatformCALayer which gets inserted as the content layer of the video 
     // renderer's GraphicsLayer.
-    m_qtVideoLayer.set(new GraphicsLayerCACF(this));
+    m_qtVideoLayer = adoptPtr(new GraphicsLayerCACF(this));
     if (!m_qtVideoLayer)
         return;
 
