@@ -173,7 +173,7 @@ static void drawGDIGlyphs(GraphicsContext* graphicsContext, const SimpleFontData
                            point.y() - fontMetrics.ascent() - lineGap,
                            totalWidth + fontMetrics.ascent() + fontMetrics.descent(),
                            fontMetrics.lineSpacing());
-        bitmap.set(graphicsContext->createWindowsBitmap(textRect.size()));
+        bitmap = graphicsContext->createWindowsBitmap(textRect.size());
         memset(bitmap->buffer(), 255, bitmap->bufferLength());
         hdc = bitmap->hdc();
 

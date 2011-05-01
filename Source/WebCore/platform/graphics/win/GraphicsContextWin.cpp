@@ -63,7 +63,7 @@ bool GraphicsContext::shouldIncludeChildWindows() const
     return m_data->m_shouldIncludeChildWindows;
 }
 
-GraphicsContext::WindowsBitmap::WindowsBitmap(HDC hdc, IntSize size)
+GraphicsContext::WindowsBitmap::WindowsBitmap(HDC hdc, const IntSize& size)
     : m_hdc(0)
 {
     BitmapInfo bitmapInfo = BitmapInfo::create(size);
@@ -92,9 +92,9 @@ GraphicsContext::WindowsBitmap::~WindowsBitmap()
     DeleteObject(m_bitmap);
 }
 
-GraphicsContext::WindowsBitmap* GraphicsContext::createWindowsBitmap(IntSize size)
+PassOwnPtr<GraphicsContext::WindowsBitmap> GraphicsContext::createWindowsBitmap(const IntSize& size)
 {
-    return new WindowsBitmap(m_data->m_hdc, size);
+    return adoptPtr(new WindowsBitmap(m_data->m_hdc, size));
 }
 
 HDC GraphicsContext::getWindowsContext(const IntRect& dstRect, bool supportAlphaBlend, bool mayCreateBitmap)

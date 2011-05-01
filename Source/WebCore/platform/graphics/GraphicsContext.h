@@ -452,7 +452,7 @@ namespace WebCore {
         class WindowsBitmap {
             WTF_MAKE_NONCOPYABLE(WindowsBitmap);
         public:
-            WindowsBitmap(HDC, IntSize);
+            WindowsBitmap(HDC, const IntSize&);
             ~WindowsBitmap();
 
             HDC hdc() const { return m_hdc; }
@@ -469,7 +469,7 @@ namespace WebCore {
             DIBPixelData m_pixelData;
         };
 
-        WindowsBitmap* createWindowsBitmap(IntSize);
+        PassOwnPtr<WindowsBitmap> createWindowsBitmap(const IntSize&);
         // The bitmap should be non-premultiplied.
         void drawWindowsBitmap(WindowsBitmap*, const IntPoint&);
 #endif

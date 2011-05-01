@@ -609,7 +609,7 @@ void MediaPlayerPrivate::paint(GraphicsContext* p, const IntRect& r)
         // The graphics context doesn't have an associated HDC so create a temporary
         // bitmap where QTMovieGWorld can draw the frame and we can copy it.
         usingTempBitmap = true;
-        bitmap.set(p->createWindowsBitmap(r.size()));
+        bitmap = p->createWindowsBitmap(r.size());
         hdc = bitmap->hdc();
 
         // FIXME: is this necessary??

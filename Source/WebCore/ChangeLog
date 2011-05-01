@@ -1,3 +1,21 @@
+2011-05-01  Patrick Gansterer  <paroga@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        Use PassOwnPtr as return value of GraphicsContext::createWindowsBitmap
+        https://bugs.webkit.org/show_bug.cgi?id=59876
+
+        Also pass the size "as reference" instead of "as value".
+
+        * platform/graphics/GraphicsContext.h:
+        * platform/graphics/win/FontCGWin.cpp:
+        (WebCore::drawGDIGlyphs):
+        * platform/graphics/win/GraphicsContextWin.cpp:
+        (WebCore::GraphicsContext::WindowsBitmap::WindowsBitmap):
+        (WebCore::GraphicsContext::createWindowsBitmap):
+        * platform/graphics/win/MediaPlayerPrivateQuickTimeWin.cpp:
+        (WebCore::MediaPlayerPrivate::paint):
+
 2011-05-01  Emil A Eklund  <eae@chromium.org>
 
         Reviewed by Eric Seidel.
