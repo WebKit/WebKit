@@ -2,6 +2,14 @@
 
         Not reviewed. Build fix.
 
+        Add test expectations to accomodate new tests.
+
+        * platform/chromium/test_expectations.txt:
+
+2011-05-02  Alpha Lam  <hclam@chromium.org>
+
+        Not reviewed. Build fix.
+
         Adjust test expectations.
 
         * platform/chromium/test_expectations.txt:

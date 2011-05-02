@@ -4023,3 +4023,9 @@ BUGWK59839 : animations/3d/replace-filling-transform.html = PASS IMAGE
 
 // New test added in r85303.
 BUG_HCLAM : compositing/masks/layer-mask-placement.html = IMAGE
+
+// New test added in r85454. Actual failure.
+BUG_HCLAM : fast/js/mozilla/strict/assign-to-callee-name.html = TEXT
+
+// New test added in r85382. Missing results.
+BUG_HCLAM : fast/forms/date-input-visible-strings.html = MISSING
