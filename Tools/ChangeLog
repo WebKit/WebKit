@@ -1,5 +1,11 @@
 2011-05-01  Adam Barth  <abarth@webkit.org>
 
+        Remove unadvertantly added file.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+
+2011-05-01  Adam Barth  <abarth@webkit.org>
+
         Reviewed by Eric Seidel.
 
         expectedfailures.py should report the unexpected failures when asked
