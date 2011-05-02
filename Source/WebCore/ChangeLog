@@ -1,3 +1,17 @@
+2011-05-02  Eric Carlson  <eric.carlson@apple.com>
+
+        Reviewed by Brady Eidson.
+
+        The preload attribute of the video tag is not completely implemented
+        https://bugs.webkit.org/show_bug.cgi?id=43673
+        <rdar://problem/7508322>
+
+        Manual test manual-tests/media-elements/video-preload.html added.
+
+        * manual-tests/media-elements/video-preload.html: Added. New manual test for media element 
+            'preload' attribute because it is not possible to detect if a media engine supports 
+            "preload=metadata" in a way that lets us have per-platform layout test results.
+
 2011-05-01  Abhishek Arya  <inferno@chromium.org>
 
         Reviewed by Eric Carlson.
