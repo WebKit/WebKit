@@ -1,3 +1,9 @@
+2011-05-01  Sam Weinig  <sam@webkit.org>
+
+        Fix windows build.
+
+        * WebFrame.cpp:
+
 2011-05-01  Patrick Gansterer  <paroga@webkit.org>
 
         Reviewed by Adam Barth.

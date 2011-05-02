@@ -97,6 +97,7 @@
 #include <WebCore/TextIterator.h>
 #include <WebCore/JSDOMBinding.h>
 #include <WebCore/ScriptController.h>
+#include <WebCore/ScriptValue.h>
 #include <WebCore/SecurityOrigin.h>
 #include <JavaScriptCore/APICast.h>
 #include <JavaScriptCore/JSLock.h>
