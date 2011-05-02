@@ -1,3 +1,18 @@
+2011-05-01  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Adam Barth.
+
+        Make most scm.py tests pass in preparation for splitting them up
+        https://bugs.webkit.org/show_bug.cgi?id=59904
+
+        There is one remaining failure:
+        webkitpy.common.checkout.scm.scm_unittest.GitTestWithMock.test_create_patch
+        which identifies a difference between the SVN and Git versions of the
+        SCM api.  I'm not going to bother fixing that until we split out all
+        the tests.
+
+        * Scripts/webkitpy/common/checkout/scm/scm_unittest.py:
+
 2011-05-01  Patrick Gansterer  <paroga@webkit.org>
 
         [WIN] Unreviewed buildfix after r85440.

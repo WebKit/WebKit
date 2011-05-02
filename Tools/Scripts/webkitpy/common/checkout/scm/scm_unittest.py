@@ -46,7 +46,7 @@ import shutil
 
 from datetime import date
 from webkitpy.common.checkout.api import Checkout
-from webkitpy.common.checkout.scm import detect_scm_system, SCM, SVN, Git, CheckoutNeedsUpdate, commit_error_handler, AuthenticationError, AmbiguousCommitError, find_checkout_root, default_scm
+from .scm import detect_scm_system, SCM, SVN, Git, CheckoutNeedsUpdate, commit_error_handler, AuthenticationError, AmbiguousCommitError, find_checkout_root, default_scm
 from webkitpy.common.config.committers import Committer  # FIXME: This should not be needed
 from webkitpy.common.net.bugzilla import Attachment # FIXME: This should not be needed
 from webkitpy.common.system.executive import Executive, run_command, ScriptError
@@ -285,7 +285,7 @@ class SCMTest(unittest.TestCase):
         attachment = Attachment({"bug_id": 12345}, None)
         attachment.contents = lambda: patch_contents
 
-        joe_cool = Committer(name="Joe Cool", email_or_emails=None)
+        joe_cool = Committer("Joe Cool", "joe@cool.com")
         attachment.reviewer = lambda: joe_cool
 
         return attachment
@@ -1450,7 +1450,7 @@ class GitTestWithMock(unittest.TestCase):
         executive.should_log = True
 
     def test_create_patch(self):
-        expected_stderr = "MOCK run_command: ['git', 'merge-base', u'refs/remotes/origin/master', 'HEAD']\nMOCK run_command: ['git', 'diff', '--binary', '--no-ext-diff', '--full-index', '-M', 'MOCK output of child process', '--']\n"
+        expected_stderr = "MOCK run_command: ['git', 'merge-base', u'refs/remotes/origin/master', 'HEAD']\nMOCK run_command: ['git', 'diff', '--binary', '--no-ext-diff', '--full-index', '-M', 'MOCK output of child process', '--']\nMOCK run_command: ['git', 'log', '-25']\n"
         OutputCapture().assert_outputs(self, self.scm.create_patch, kwargs={'changed_files': None}, expected_stderr=expected_stderr)
 
 
