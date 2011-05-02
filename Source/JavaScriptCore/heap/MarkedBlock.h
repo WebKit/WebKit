@@ -1,7 +1,7 @@
 /*
  *  Copyright (C) 1999-2000 Harri Porten (porten@kde.org)
  *  Copyright (C) 2001 Peter Kelly (pmk@post.com)
- *  Copyright (C) 2003, 2004, 2005, 2006, 2007, 2008, 2009 Apple Inc. All rights reserved.
+ *  Copyright (C) 2003, 2004, 2005, 2006, 2007, 2008, 2009, 2011 Apple Inc. All rights reserved.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
@@ -181,12 +181,11 @@ namespace JSC {
 
     inline bool MarkedBlock::contains(const void* p)
     {
-        // Since we mark the first atom of every cell when allocating and/or
-        // marking, any pointer to a marked atom points to the head of a valid,
-        // live cell. Checking the mark bit guards against reviving an object
-        // in a zombie state.
+        ASSERT(p && isAtomAligned(p) && atomNumber(p) < atomsPerBlock);
 
-        ASSERT(p && isAtomAligned(p));
+        // Even though we physically contain p, we only logically contain p if p
+        // points to a live cell. (Claiming to contain a dead cell would trick the
+        // conservative garbage collector into resurrecting the cell in a zombie state.)
         return isMarked(p);
     }
 

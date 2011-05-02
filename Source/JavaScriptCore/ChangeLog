@@ -1,3 +1,18 @@
+2011-05-02  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        Tiny bit of heap cleanup.
+
+        * heap/MarkedBlock.h:
+        (JSC::MarkedBlock::contains): Tightened up an assertion and a comment.
+
+        * heap/MarkedSpace.h:
+        (JSC::MarkedSpace::globalData):
+        (JSC::MarkedSpace::highWaterMark):
+        (JSC::MarkedSpace::setHighWaterMark): Moved inlines out of the class
+        definition, for better clarity.
+
 2011-05-02  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Gavin Barraclough.

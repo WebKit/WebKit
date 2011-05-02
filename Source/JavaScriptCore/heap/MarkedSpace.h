@@ -1,7 +1,7 @@
 /*
  *  Copyright (C) 1999-2000 Harri Porten (porten@kde.org)
  *  Copyright (C) 2001 Peter Kelly (pmk@post.com)
- *  Copyright (C) 2003, 2004, 2005, 2006, 2007, 2008, 2009 Apple Inc. All rights reserved.
+ *  Copyright (C) 2003, 2004, 2005, 2006, 2007, 2008, 2009, 2011 Apple Inc. All rights reserved.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
@@ -59,10 +59,10 @@ namespace JSC {
         MarkedSpace(JSGlobalData*);
         void destroy();
 
-        JSGlobalData* globalData() { return m_globalData; }
+        JSGlobalData* globalData();
 
-        size_t highWaterMark() { return m_highWaterMark; }
-        void setHighWaterMark(size_t highWaterMark) { m_highWaterMark = highWaterMark; }
+        size_t highWaterMark();
+        void setHighWaterMark(size_t);
 
         void* allocate(size_t);
 
@@ -156,7 +156,22 @@ namespace JSC {
         for (BlockIterator it = m_blocks.begin(); it != end; ++it)
             (*it)->forEach(functor);
     }
-    
+
+    inline JSGlobalData* MarkedSpace::globalData()
+    {
+        return m_globalData;
+    }
+
+    inline size_t MarkedSpace::highWaterMark()
+    {
+        return m_highWaterMark;
+    }
+
+    inline void MarkedSpace::setHighWaterMark(size_t highWaterMark)
+    {
+        m_highWaterMark = highWaterMark;
+    }
+
     inline MarkedSpace::SizeClass::SizeClass()
         : nextBlock(0)
         , cellSize(0)
