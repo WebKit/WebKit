@@ -1,3 +1,13 @@
+2011-05-02  Mark Pilgrim  <pilgrim@chromium.org>
+
+        Reviewed by Tony Chang.
+
+        Port Mozilla's IndexedDB tests: inline autoincrement key added on put
+        https://bugs.webkit.org/show_bug.cgi?id=59936
+
+        * storage/indexeddb/mozilla/object-store-inline-autoincrement-key-added-on-put-expected.txt: Added.
+        * storage/indexeddb/mozilla/object-store-inline-autoincrement-key-added-on-put.html: Added.
+
 2011-05-02  Alpha Lam  <hclam@chromium.org>
 
         Not reviewd. Build fix.
