@@ -1,3 +1,17 @@
+2011-05-02  Xan Lopez  <xlopez@igalia.com>
+
+        Reviewed by Alexey Proskuryakov.
+
+        Use native NullPtr when using GCC 4.6.0 and C++0x
+        https://bugs.webkit.org/show_bug.cgi?id=59252
+
+        GCC 4.6.0 has nullptr support, use it when possible.
+
+        * wtf/NullPtr.cpp: include config.h to pull in Platform.h before
+        NullPtr.h, since we need the GCC_VERSION_AT_LEAST definition.
+        * wtf/NullPtr.h: check for GCC >= 4.6.0 and C++0x in order to
+        use native nullptr.
+
 2011-05-02  Gavin Barraclough  <barraclough@apple.com>
 
         Reviewed by Oliver Hunt.
