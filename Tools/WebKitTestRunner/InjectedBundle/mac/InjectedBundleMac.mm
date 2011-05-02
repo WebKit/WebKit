@@ -23,7 +23,9 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "InjectedBundle.h"
+#import "InjectedBundle.h"
+
+#import <Foundation/Foundation.h>
 
 namespace WTR {
 

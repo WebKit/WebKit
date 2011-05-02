@@ -34,6 +34,7 @@
 
 #if PLATFORM(MAC)
 #include <wtf/RetainPtr.h>
+#include <CoreFoundation/CFRunLoop.h>
 typedef RetainPtr<CFRunLoopTimerRef> PlatformTimerRef;
 #elif PLATFORM(WIN)
 typedef UINT_PTR PlatformTimerRef;

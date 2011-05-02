@@ -1,3 +1,10 @@
+2011-05-02  Anders Carlsson  <andersca@apple.com>
+
+        Build fix.
+
+        * WebKitTestRunner/InjectedBundle/LayoutTestController.h:
+        * WebKitTestRunner/InjectedBundle/mac/InjectedBundleMac.mm:
+
 2011-05-02  Nico Weber  <thakis@chromium.org>
 
         Reviewed by Mihai Parparita.
