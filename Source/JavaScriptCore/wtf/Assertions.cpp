@@ -272,7 +272,9 @@ void WTFLog(WTFLogChannel* channel, const char* format, ...)
     va_start(args, format);
     vprintf_stderr_common(format, args);
     va_end(args);
-    if (format[strlen(format) - 1] != '\n')
+    
+    size_t formatLength = strlen(format);
+    if (formatLength && format[formatLength - 1] != '\n')
         printf_stderr_common("\n");
 }
 
@@ -285,8 +287,11 @@ void WTFLogVerbose(const char* file, int line, const char* function, WTFLogChann
     va_start(args, format);
     vprintf_stderr_common(format, args);
     va_end(args);
-    if (format[strlen(format) - 1] != '\n')
+
+    size_t formatLength = strlen(format);
+    if (formatLength && format[formatLength - 1] != '\n')
         printf_stderr_common("\n");
+
     printCallSite(file, line, function);
 }
 
