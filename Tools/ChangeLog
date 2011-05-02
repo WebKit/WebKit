@@ -1,3 +1,17 @@
+2011-05-02  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        workspace.py fails to import ScriptError
+        https://bugs.webkit.org/show_bug.cgi?id=59915
+
+        If the workspace fails to create a zip, webkitpy crashes instead of
+        handling the error as expected.
+
+        * Scripts/webkitpy/common/system/workspace.py:
+        * Scripts/webkitpy/common/system/workspace_unittest.py:
+        * Scripts/webkitpy/tool/mocktool.py:
+
 2011-05-01  Adam Barth  <abarth@webkit.org>
 
         Remove unadvertantly added file.

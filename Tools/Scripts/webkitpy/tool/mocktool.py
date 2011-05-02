@@ -34,6 +34,7 @@ from webkitpy.common.checkout.commitinfo import CommitInfo
 from webkitpy.common.checkout.scm import CommitMessage
 from webkitpy.common.net.bugzilla import Bug, Attachment
 from webkitpy.common.system.deprecated_logging import log
+from webkitpy.common.system.executive import ScriptError
 from webkitpy.common.system.filesystem_mock import MockFileSystem
 from webkitpy.thirdparty.mock import Mock
 
@@ -662,11 +663,12 @@ class MockStatusServer(object):
 # FIXME: This should not inherit from Mock
 # FIXME: Unify with common.system.executive_mock.MockExecutive.
 class MockExecutive(Mock):
-    def __init__(self, should_log):
-        self.should_log = should_log
+    def __init__(self, should_log, should_throw=False):
+        self._should_log = should_log
+        self._should_throw = should_throw
 
     def run_and_throw_if_fail(self, args, quiet=False):
-        if self.should_log:
+        if self._should_log:
             log("MOCK run_and_throw_if_fail: %s" % args)
         return "MOCK output of child process"
 
@@ -678,8 +680,10 @@ class MockExecutive(Mock):
                     return_exit_code=False,
                     return_stderr=True,
                     decode_output=False):
-        if self.should_log:
+        if self._should_log:
             log("MOCK run_command: %s" % args)
+        if self._should_throw:
+            raise ScriptError("MOCK ScriptError")
         return "MOCK output of child process"
 
 

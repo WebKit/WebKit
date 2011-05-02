@@ -32,6 +32,8 @@
 import logging
 import zipfile
 
+from webkitpy.common.system.executive import ScriptError
+
 
 _log = logging.getLogger(__name__)
 

@@ -56,3 +56,12 @@ class WorkspaceTest(unittest.TestCase):
                 self.filename = path
         archive = OutputCapture().assert_outputs(self, workspace.create_zip, ["/zip/path", "/source/path", MockZipFile], expected_stderr=expected_stderr)
         self.assertEqual(archive.filename, "/zip/path")
+
+    def test_create_zip_exception(self):
+        workspace = Workspace(None, MockExecutive(should_log=True, should_throw=True))
+        expected_stderr = "MOCK run_command: ['zip', '-r', '/zip/path', '/source/path']\n"
+        class MockZipFile(object):
+            def __init__(self, path):
+                self.filename = path
+        archive = OutputCapture().assert_outputs(self, workspace.create_zip, ["/zip/path", "/source/path", MockZipFile], expected_stderr=expected_stderr)
+        self.assertEqual(archive, None)
