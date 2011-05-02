@@ -48,9 +48,11 @@ typedef struct _CFURLResponse *CFURLResponseRef;
 typedef const struct __CTLine * CTLineRef;
 typedef const struct __CTTypesetter * CTTypesetterRef;
 typedef const struct __AXUIElement *AXUIElementRef;
-typedef uint32_t ATSUFontID;
-typedef uint16_t ATSGlyphRef;
 typedef struct _NSRange NSRange;
+
+typedef UInt32 FMFont;
+typedef FMFont ATSUFontID;
+typedef UInt16 ATSGlyphRef;
 
 #if PLATFORM(MAC) && USE(CA) && !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOW_LEOPARD)
 typedef struct __IOSurface *IOSurfaceRef;

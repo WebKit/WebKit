@@ -34,8 +34,17 @@
 #include <wtf/unicode/Unicode.h>
 
 typedef unsigned short CGGlyph;
+
+#if USE(CORE_TEXT)
 typedef const struct __CTRun * CTRunRef;
 typedef const struct __CTLine * CTLineRef;
+#endif
+#if USE(ATSUI)
+typedef struct OpaqueATSUTextLayout*    ATSUTextLayout;
+typedef struct ATSGlyphVector*          ATSULineRef;
+typedef UInt32 ATSULayoutOperationSelector;
+typedef UInt32 ATSULayoutOperationCallbackStatus;
+#endif
 
 namespace WebCore {
 

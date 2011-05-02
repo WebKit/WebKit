@@ -1,3 +1,12 @@
+2011-05-02  Sam Weinig  <sam@webkit.org>
+
+        Attempt to fix the Leopard build.
+
+        * platform/graphics/FontPlatformData.h:
+        * platform/graphics/mac/ComplexTextController.h:
+        * platform/graphics/mac/ComplexTextControllerATSUI.cpp:
+        * platform/mac/WebCoreSystemInterface.h:
+
 2011-05-02  Tony Chang  <tony@chromium.org>
 
         Reviewed by Kent Tamura.

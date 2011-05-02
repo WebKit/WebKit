@@ -86,7 +86,8 @@ typedef struct HFONT__* HFONT;
 typedef struct CGFont* CGFontRef;
 #if OS(DARWIN)
 typedef const struct __CTFont* CTFontRef;
-typedef UInt32 ATSUFontID;
+typedef UInt32 FMFont;
+typedef FMFont ATSUFontID;
 typedef UInt32 ATSFontRef;
 #endif
 #endif

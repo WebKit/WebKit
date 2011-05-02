@@ -28,6 +28,7 @@
 #include "Font.h"
 #include "ShapeArabic.h"
 #include "TextRun.h"
+#include <ApplicationServices/ApplicationServices.h>
 #include <wtf/unicode/CharacterNames.h>
 
 #ifdef __LP64__
