@@ -194,6 +194,7 @@ void WebPage::resetSettings()
     settings()->resetAttribute(QWebSettings::PluginsEnabled);
     settings()->resetAttribute(QWebSettings::JavascriptCanAccessClipboard);
     settings()->resetAttribute(QWebSettings::AutoLoadImages);
+    settings()->resetAttribute(QWebSettings::ZoomTextOnly);
 
     m_drt->layoutTestController()->setCaretBrowsingEnabled(false);
     m_drt->layoutTestController()->setFrameFlatteningEnabled(false);
@@ -552,12 +553,16 @@ void DumpRenderTree::resetToConsistentStateBeforeTesting(const QUrl& url)
     m_eventSender->resetClickCount();
 
     closeRemainingWindows();
+    
+    // Call setTextSizeMultiplier(1.0) to reset TextZoomFactor and PageZoomFactor too. 
+    // It should be done before resetSettings() to guarantee resetting QWebSettings::ZoomTextOnly correctly.
+    m_page->mainFrame()->setTextSizeMultiplier(1.0);
 
     m_page->resetSettings();
 #ifndef QT_NO_UNDOSTACK
     m_page->undoStack()->clear();
 #endif
-    m_page->mainFrame()->setZoomFactor(1.0);
+    
     clearHistory(m_page);
     DumpRenderTreeSupportQt::clearFrameName(m_page->mainFrame());
 

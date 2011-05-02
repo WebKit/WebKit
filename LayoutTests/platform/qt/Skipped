@@ -2274,10 +2274,6 @@ fast/media/color-does-not-include-alpha.html
 # Requires WebP support.
 fast/images/webp-image-decoding.html
 
-# [Qt] DRT sideeffect revealed by r71268
-# https://bugs.webkit.org/show_bug.cgi?id=48958
-svg/custom/text-zoom.xhtml
-
 # [Qt] svg/animations/animate-path-nested-transforms.html fails
 # https://bugs.webkit.org/show_bug.cgi?id=48987
 svg/animations/animate-path-nested-transforms.html

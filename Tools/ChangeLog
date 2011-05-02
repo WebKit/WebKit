@@ -1,3 +1,20 @@
+2011-05-02  Zsolt Fehér  <h490267@stud.u-szeged.hu>
+
+        Reviewed by Csaba Osztrogonác.
+
+        DRT sideeffect revealed by r71268.
+        https://bugs.webkit.org/show_bug.cgi?id=48958
+
+        Reset QWebSettings::ZoomTextOnly attribute before all tests. 
+
+        Call setTextSizeMultiplier(1.0) to reset TextZoomFactor and 
+        PageZoomFactor too. It should be done before resetsettings() 
+        to guarantee resetting QWebSettings::ZoomTextOnly correctly.
+
+        * DumpRenderTree/qt/DumpRenderTreeQt.cpp:
+        (WebCore::WebPage::resetSettings):
+        (WebCore::DumpRenderTree::resetToConsistentStateBeforeTesting):
+
 2011-05-02  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r85469.
