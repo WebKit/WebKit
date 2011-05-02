@@ -2017,11 +2017,14 @@ int RenderBox::computeReplacedLogicalHeightUsing(Length logicalHeight) const
             // table cells using percentage heights.
             // FIXME: This needs to be made block-flow-aware.  If the cell and image are perpendicular block-flows, this isn't right.
             // https://bugs.webkit.org/show_bug.cgi?id=46997
-            if (cb->isTableCell() && (cb->style()->logicalHeight().isAuto() || cb->style()->logicalHeight().isPercent())) {
-                // Don't let table cells squeeze percent-height replaced elements
-                // <http://bugs.webkit.org/show_bug.cgi?id=15359>
-                availableHeight = max(availableHeight, intrinsicLogicalHeight());
-                return logicalHeight.calcValue(availableHeight - borderAndPaddingLogicalHeight());
+            while (cb && !cb->isRenderView() && (cb->style()->logicalHeight().isAuto() || cb->style()->logicalHeight().isPercent())) {
+                if (cb->isTableCell()) {
+                    // Don't let table cells squeeze percent-height replaced elements
+                    // <http://bugs.webkit.org/show_bug.cgi?id=15359>
+                    availableHeight = max(availableHeight, intrinsicLogicalHeight());
+                    return logicalHeight.calcValue(availableHeight - borderAndPaddingLogicalHeight());
+                }
+                cb = cb->containingBlock();
             }
 
             return computeContentBoxLogicalHeight(logicalHeight.calcValue(availableHeight));

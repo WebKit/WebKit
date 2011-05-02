@@ -4,6 +4,8 @@
 
 
 
+
+
 Button
 Button
 
@@ -40,6 +42,10 @@ PASS getWidth('img-75') is '75px'
 PASS getHeight('img-75') is '75px'
 PASS getWidth('img-100') is '100px'
 PASS getHeight('img-100') is '100px'
+PASS getWidth('img-75-nested') is '75px'
+PASS getHeight('img-75-nested') is '75px'
+PASS getWidth('img-100-nested') is '100px'
+PASS getHeight('img-100-nested') is '100px'
 PASS getWidth('object-75') is '300px'
 PASS getHeight('object-75') is '112px'
 PASS getWidth('object-100') is '300px'

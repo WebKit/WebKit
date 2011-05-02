@@ -1,3 +1,16 @@
+2011-05-02  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Simon Fraser.
+
+        <rdar://problem/7972529> Images with percentage based height/max-height are missing when they are inside blocks inside tables
+        https://bugs.webkit.org/show_bug.cgi?id=58006
+
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::computeReplacedLogicalHeightUsing): Expanded the scope of the fix for
+        <http://webkit.org/b/15359> from r29039 to cover not just the case of a auto-or-percent-height
+        table cell as the immediate containing block, but any case where all containing block ancestors
+        up to and including a table cell are auto-or-percent height.
+
 2011-05-02  Daniel Bates  <dbates@webkit.org>
 
         Reviewed by Sam Weinig.

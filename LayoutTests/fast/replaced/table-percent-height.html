@@ -76,6 +76,11 @@ function test()
     shouldBe("getWidth('img-100')", "'100px'");
     shouldBe("getHeight('img-100')", "'100px'");
 
+    shouldBe("getWidth('img-75-nested')", "'75px'");
+    shouldBe("getHeight('img-75-nested')", "'75px'");
+    shouldBe("getWidth('img-100-nested')", "'100px'");
+    shouldBe("getHeight('img-100-nested')", "'100px'");
+
     shouldBe("getWidth('object-75')", "'300px'");
     shouldBe("getHeight('object-75')", "'112px'");
     shouldBe("getWidth('object-100')", "'300px'");
@@ -142,6 +147,9 @@ var successfullyParsed = true;
 
 <table><tr><td><img id="img-75" src="resources/square-blue-100x100.png" style="height: 75%;"></td></tr></table>
 <table><tr><td><img id="img-100" src="resources/square-blue-100x100.png" style="height: 100%;"></td></tr></table>
+
+<table><tr><td><div><img id="img-75-nested" src="resources/square-blue-100x100.png" style="height: 75%;"></div></td></tr></table>
+<table><tr><td><div><img id="img-100-nested" src="resources/square-blue-100x100.png" style="height: 100%;"></div></td></tr></table>
 
 <table><tr><td><object id="object-75" style="background-color: #00ff00; height: 75%;"></object></td></tr></table>
 <table><tr><td><object id="object-100" style="background-color: #00ff00; height: 100%;"></object></td></tr></table>

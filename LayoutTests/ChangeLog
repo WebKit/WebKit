@@ -1,3 +1,14 @@
+2011-05-02  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Simon Fraser.
+
+        <rdar://problem/7972529> Images with percentage based height/max-height are missing when they are inside blocks inside tables
+        https://bugs.webkit.org/show_bug.cgi?id=58006
+
+        * fast/replaced/table-percent-height-expected.txt: Updated.
+        * fast/replaced/table-percent-height.html: Added a test case with a replaced object nested in an
+        auto-height block inside a table cell.
+
 2011-05-02  Daniel Bates  <dbates@webkit.org>
 
         Reviewed by Sam Weinig.
