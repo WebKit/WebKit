@@ -1,3 +1,16 @@
+2011-05-02  Daniel Bates  <dbates@webkit.org>
+
+        Reviewed by Sam Weinig.
+
+        Convert manual test onblur-remove.html to a DRT test; onblur-remove.html fails
+        https://bugs.webkit.org/show_bug.cgi?id=59379
+
+        Move manual test onblur-remove.html to LayoutTests/fast/events.
+
+        Test: fast/events/onblur-remove.html
+
+        * manual-tests/onblur-remove.html: Removed.
+
 2011-05-02  Sailesh Agrawal  <sail@chromium.org>
 
         Reviewed by Dimitri Glazkov.
