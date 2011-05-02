@@ -1,3 +1,14 @@
+2011-05-02  Jessie Berlin  <jberlin@apple.com>
+
+        REGRESSION (r83928 or before): Some tests failing assertions in MarkStack::internalAppend
+        / MarkStack::drain.
+        https://bugs.webkit.org/show_bug.cgi?id=58657
+
+        Add inspector/styles/styles-cancel-editing.html to the Windows XP Skipped list because it
+        has been crashing under MarkStack::drain on the Windows XP bots.
+
+        * platform/win-xp/Skipped:
+
 2011-05-02  Csaba Osztrogonác  <ossy@webkit.org>
 
         [Qt] Update an exptected file after r85474.
