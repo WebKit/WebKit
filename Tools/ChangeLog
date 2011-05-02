@@ -1,3 +1,12 @@
+2011-05-02  Nico Weber  <thakis@chromium.org>
+
+        Reviewed by Mihai Parparita.
+
+        Add --no-webkit2 to the output of "build-webkit -h"
+        https://bugs.webkit.org/show_bug.cgi?id=59942
+
+        * Scripts/build-webkit:
+
 2011-05-02  Martin Robinson  <mrobinson@igalia.com>
 
         Reviewed by Xan Lopez.
