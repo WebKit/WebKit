@@ -9,8 +9,10 @@ function init()
             video.addEventListener("playing", function() {
                 video.pause();
                 video.currentTime = 0;
-                if (window.layoutTestController)
-                    layoutTestController.notifyDone();
+                video.addEventListener("seeked", function() {
+                    if (window.layoutTestController)
+                        layoutTestController.notifyDone();
+                });
             });
             document.body.offsetLeft;
         }

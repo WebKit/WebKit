@@ -1,3 +1,18 @@
+2011-05-02  Philippe Normand  <pnormand@igalia.com>
+
+        Reviewed by Eric Carlson.
+
+        [GTK] Media tests relying on video-paint-test.js are still flaky
+        https://bugs.webkit.org/show_bug.cgi?id=59934
+
+        Dump the render tree after the video completed the seek. This is
+        to avoid flake happening in the control slider not always being at
+        beginning of the timeline.
+
+        * media/video-paint-test.js:
+        (init.document.addEventListener.):
+        (init):
+
 2011-05-02  Zsolt Fehér  <h490267@stud.u-szeged.hu>
 
         Reviewed by Csaba Osztrogonác.
