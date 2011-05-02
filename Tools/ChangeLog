@@ -1,3 +1,17 @@
+2011-05-02  Tomasz Morawski  <t.morawski@samsung.com>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Cleanup EFL initialization/shutdown in the EWebLauncher
+        https://bugs.webkit.org/show_bug.cgi?id=59922
+
+        Removed ecore_evas_init and edje_init form main function due to they
+        are also called in the ewk_init. Moved ewk_shutdown to quit function.
+
+        * EWebLauncher/main.c:
+        (quit):
+        (main):
+
 2011-05-02  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Eric Seidel.

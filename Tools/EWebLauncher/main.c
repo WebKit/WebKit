@@ -634,8 +634,7 @@ on_closeWindow(Ecore_Evas *ee)
 static int
 quit(Eina_Bool success, const char *msg)
 {
-    edje_shutdown();
-    ecore_evas_shutdown();
+    ewk_shutdown();
 
     if (msg)
         fputs(msg, (success) ? stdout : stderr);
@@ -846,13 +845,8 @@ main(int argc, char *argv[])
         ECORE_GETOPT_VALUE_NONE
     };
 
-    if (!ecore_evas_init())
-        return EXIT_FAILURE;
-
-    if (!edje_init()) {
-        ecore_evas_shutdown();
-        return EXIT_FAILURE;
-    }
+    if (!ewk_init())
+        return quit(EINA_FALSE, "ERROR: could not initialize ewk.\n");
 
     ecore_app_args_set(argc, (const char**) argv);
     args = ecore_getopt_parse(&options, values, argc, argv);
@@ -872,7 +866,6 @@ main(int argc, char *argv[])
     if (!themePath)
         return quit(EINA_FALSE, "ERROR: could not find theme.\n");
 
-    ewk_init();
     tmp = getenv("TMPDIR");
     if (!tmp)
         tmp = "/tmp";
@@ -889,8 +882,6 @@ main(int argc, char *argv[])
     ecore_event_handler_add(ECORE_EVENT_SIGNAL_EXIT, main_signal_exit, &windows);
 
     ecore_main_loop_begin();
-
-    ewk_shutdown();
 
     return quit(EINA_TRUE, NULL);
 }
