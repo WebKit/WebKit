@@ -1404,3 +1404,7 @@ http/tests/inspector/resource-tree/resource-tree-document-url.html
 http/tests/inspector/resource-tree/resource-tree-frame-add.html
 http/tests/inspector/resource-tree/resource-tree-frame-navigate.html
 http/tests/inspector/resource-tree/resource-tree-reload.html
+
+# https://bugs.webkit.org/show_bug.cgi?id=59937
+# flaky on 64-bits Debug
+tables/mozilla_expected_failures/bugs/bug85016.html

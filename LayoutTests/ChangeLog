@@ -1,5 +1,11 @@
 2011-05-02  Philippe Normand  <pnormand@igalia.com>
 
+        Unreviewed, skip flaky test on GTK.
+
+        * platform/gtk/Skipped: Skip tables/mozilla_expected_failures/bugs/bug85016.html
+
+2011-05-02  Philippe Normand  <pnormand@igalia.com>
+
         Unreviewed, re-enable websocket tests on GTK. they moved over to a
         real http server and most of the flakiness went away.
 
