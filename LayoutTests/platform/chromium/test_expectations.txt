@@ -3623,14 +3623,14 @@ BUGDPRANKE LINUX DEBUG : fast/dom/Attr/access-after-element-destruction.html = C
 BUGDPRANKE LINUX DEBUG : fast/css/last-child-pseudo-class.html = TEXT PASS
 BUGDPRANKE LINUX DEBUG : fast/dom/HTMLLinkElement/link-and-subresource-test.html = TEXT PASS
 
-BUGDPRANKE LINUX DEBUG GPU : compositing/geometry/fixed-in-composited.html = IMAGE
+BUGDPRANKE LINUX GPU : compositing/geometry/fixed-in-composited.html = IMAGE
 BUGDPRANKE LINUX DEBUG GPU : compositing/geometry/horizontal-scroll-composited.html = IMAGE
-BUGDPRANKE LINUX DEBUG GPU : compositing/geometry/tall-page-composited.html = IMAGE
+BUGDPRANKE LINUX GPU : compositing/geometry/tall-page-composited.html = IMAGE
 BUGDPRANKE LINUX DEBUG GPU : compositing/geometry/video-fixed-scrolling.html = IMAGE
-BUGDPRANKE LINUX DEBUG GPU : compositing/masks/masked-ancestor.html = IMAGE
-BUGDPRANKE LINUX DEBUG GPU : compositing/masks/simple-composited-mask.html = IMAGE
+BUGDPRANKE LINUX GPU : compositing/masks/masked-ancestor.html = IMAGE
+BUGDPRANKE LINUX GPU : compositing/masks/simple-composited-mask.html = IMAGE
 BUGDPRANKE LINUX DEBUG GPU : fast/canvas/canvas-text-alignment.html = IMAGE
-BUGDPRANKE LINUX DEBUG GPU : platform/chromium/compositing/layout-width-change.html = IMAGE
+BUGDPRANKE LINUX GPU : platform/chromium/compositing/layout-width-change.html = IMAGE
 
 // probably just needs new baselines after r84343
 BUGDPRANKE WIN LINUX : fast/borders/border-radius-huge-assert.html = IMAGE
@@ -3858,7 +3858,7 @@ BUGDPRANKE GPU : media/video-aspect-ratio.html = IMAGE PASS
 
 BUGSENORBLANCO WIN LINUX : animations/animation-drt-api-multiple-keyframes.html = TEXT
 BUGSENORBLANCO WIN LINUX : animations/animation-drt-api.html = TEXT
-BUGSENORBLANCO GPU MAC LEOPARD : compositing/direct-image-compositing.html = IMAGE CRASH
+BUGSENORBLANCO GPU MAC LEOPARD LINUX : compositing/direct-image-compositing.html = IMAGE CRASH
 BUGSENORBLANCO MAC LINUX : fast/css/string-quote-binary.html = CRASH PASS
 BUGSENORBLANCO LINUX : fast/events/panScroll-click-hyperlink.html = TEXT
 BUGSENORBLANCO : fast/files/domurl-script-execution-context-crash.html = CRASH PASS
