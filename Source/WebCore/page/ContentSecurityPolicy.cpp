@@ -470,7 +470,7 @@ void ContentSecurityPolicy::didReceiveHeader(const String& header)
     parse(header);
     m_havePolicy = true;
 
-    if (!internalAllowEval()) {
+    if (!checkEval(operativeDirective(m_scriptSrc.get()))) {
         if (Frame* frame = m_document->frame())
             frame->script()->disableEval();
     }
@@ -508,122 +508,110 @@ void ContentSecurityPolicy::reportViolation(const String& directiveText, const S
         PingLoader::reportContentSecurityPolicyViolation(frame, m_reportURLs[i], report);
 }
 
+bool ContentSecurityPolicy::checkEval(CSPDirective* directive) const
+{
+    return !directive || directive->allowEval();
+}
+
+CSPDirective* ContentSecurityPolicy::operativeDirective(CSPDirective* directive) const
+{
+    return directive ? directive : m_defaultSrc.get();
+}
+
+bool ContentSecurityPolicy::checkInlineAndReportViolation(CSPDirective* directive, const String& consoleMessage) const
+{
+    if (!directive || directive->allowInline())
+        return true;
+    reportViolation(directive->text(), consoleMessage);
+    return false;
+}
+
+bool ContentSecurityPolicy::checkEvalAndReportViolation(CSPDirective* directive, const String& consoleMessage) const
+{
+    if (checkEval(directive))
+        return true;
+    reportViolation(directive->text(), consoleMessage);
+    return false;
+}
+
+bool ContentSecurityPolicy::checkSourceAndReportViolation(CSPDirective* directive, const KURL& url, const String& type) const
+{
+    if (!directive || directive->allows(url))
+        return true;
+    reportViolation(directive->text(), makeString("Refused to load ", type, " from '", url.string(), "' because of Content-Security-Policy.\n"));
+    return false;
+}
+
 bool ContentSecurityPolicy::allowJavaScriptURLs() const
 {
-    if (!m_scriptSrc || m_scriptSrc->allowInline())
-        return true;
-
     DEFINE_STATIC_LOCAL(String, consoleMessage, ("Refused to execute JavaScript URL because of Content-Security-Policy.\n"));
-    reportViolation(m_scriptSrc->text(), consoleMessage);
-    return false;
+    return checkInlineAndReportViolation(operativeDirective(m_scriptSrc.get()), consoleMessage);
 }
 
 bool ContentSecurityPolicy::allowInlineEventHandlers() const
 {
-    if (!m_scriptSrc || m_scriptSrc->allowInline())
-        return true;
-
     DEFINE_STATIC_LOCAL(String, consoleMessage, ("Refused to execute inline event handler because of Content-Security-Policy.\n"));
-    reportViolation(m_scriptSrc->text(), consoleMessage);
-    return false;
+    return checkInlineAndReportViolation(operativeDirective(m_scriptSrc.get()), consoleMessage);
 }
 
 bool ContentSecurityPolicy::allowInlineScript() const
 {
-    if (!m_scriptSrc || m_scriptSrc->allowInline())
-        return true;
-
     DEFINE_STATIC_LOCAL(String, consoleMessage, ("Refused to execute inline script because of Content-Security-Policy.\n"));
-    reportViolation(m_scriptSrc->text(), consoleMessage);
-    return false;
+    return checkInlineAndReportViolation(operativeDirective(m_scriptSrc.get()), consoleMessage);
 }
 
 bool ContentSecurityPolicy::allowInlineStyle() const
 {
-    if (!m_styleSrc || m_styleSrc->allowInline())
-        return true;
-
     DEFINE_STATIC_LOCAL(String, consoleMessage, ("Refused to apply inline style because of Content-Security-Policy.\n"));
-    reportViolation(m_styleSrc->text(), consoleMessage);
-    return false;
-}
-
-bool ContentSecurityPolicy::internalAllowEval() const
-{
-    return !m_scriptSrc || m_scriptSrc->allowEval();
+    return checkInlineAndReportViolation(operativeDirective(m_styleSrc.get()), consoleMessage);
 }
 
 bool ContentSecurityPolicy::allowEval() const
 {
-    if (internalAllowEval())
-        return true;
-
     DEFINE_STATIC_LOCAL(String, consoleMessage, ("Refused to evaluate script because of Content-Security-Policy.\n"));
-    reportViolation(m_scriptSrc->text(), consoleMessage);
-    return false;
+    return checkEvalAndReportViolation(operativeDirective(m_scriptSrc.get()), consoleMessage);
 }
 
 bool ContentSecurityPolicy::allowScriptFromSource(const KURL& url) const
 {
-    if (!m_scriptSrc || m_scriptSrc->allows(url))
-        return true;
-
-    reportViolation(m_scriptSrc->text(), makeString("Refused to load script from '", url.string(), "' because of Content-Security-Policy.\n"));
-    return false;
+    DEFINE_STATIC_LOCAL(String, type, ("script"));
+    return checkSourceAndReportViolation(operativeDirective(m_scriptSrc.get()), url, type);
 }
 
 bool ContentSecurityPolicy::allowObjectFromSource(const KURL& url) const
 {
-    if (!m_objectSrc || m_objectSrc->allows(url))
-        return true;
-
-    reportViolation(m_objectSrc->text(), makeString("Refused to load object from '", url.string(), "' because of Content-Security-Policy.\n"));
-    return false;
+    DEFINE_STATIC_LOCAL(String, type, ("object"));
+    return checkSourceAndReportViolation(operativeDirective(m_objectSrc.get()), url, type);
 }
 
 bool ContentSecurityPolicy::allowChildFrameFromSource(const KURL& url) const
 {
-    if (!m_frameSrc || m_frameSrc->allows(url))
-        return true;
-
-    reportViolation(m_frameSrc->text(), makeString("Refused to load frame from '", url.string(), "' because of Content-Security-Policy.\n"));
-    return false;
+    DEFINE_STATIC_LOCAL(String, type, ("frame"));
+    return checkSourceAndReportViolation(operativeDirective(m_frameSrc.get()), url, type);
 }
 
 bool ContentSecurityPolicy::allowImageFromSource(const KURL& url) const
 {
-    if (!m_imgSrc || m_imgSrc->allows(url))
-        return true;
-
-    reportViolation(m_imgSrc->text(), makeString("Refused to load image from '", url.string(), "' because of Content-Security-Policy.\n"));
-    return false;
+    DEFINE_STATIC_LOCAL(String, type, ("image"));
+    return checkSourceAndReportViolation(operativeDirective(m_imgSrc.get()), url, type);
 }
 
 bool ContentSecurityPolicy::allowStyleFromSource(const KURL& url) const
 {
-    if (!m_styleSrc || m_styleSrc->allows(url))
-        return true;
-
-    reportViolation(m_styleSrc->text(), makeString("Refused to load style from '", url.string(), "' because of Content-Security-Policy.\n"));
-    return false;
+    DEFINE_STATIC_LOCAL(String, type, ("style"));
+    return checkSourceAndReportViolation(operativeDirective(m_styleSrc.get()), url, type);
 }
 
 bool ContentSecurityPolicy::allowFontFromSource(const KURL& url) const
 {
-    if (!m_fontSrc || m_fontSrc->allows(url))
-        return true;
-
-    reportViolation(m_fontSrc->text(), makeString("Refused to load font from '", url.string(), "' because of Content-Security-Policy.\n"));
-    return false;
+    DEFINE_STATIC_LOCAL(String, type, ("font"));
+    return checkSourceAndReportViolation(operativeDirective(m_fontSrc.get()), url, type);
 }
 
 bool ContentSecurityPolicy::allowMediaFromSource(const KURL& url) const
 {
-    if (!m_mediaSrc || m_mediaSrc->allows(url))
-        return true;
-
-    reportViolation(m_mediaSrc->text(), makeString("Refused to load media from '", url.string(), "' because of Content-Security-Policy.\n"));
-    return false;
+    DEFINE_STATIC_LOCAL(String, type, ("media"));
+    return checkSourceAndReportViolation(operativeDirective(m_mediaSrc.get()), url, type);
 }
 
 // policy            = directive-list
@@ -722,6 +710,7 @@ PassOwnPtr<CSPDirective> ContentSecurityPolicy::createCSPDirective(const String&
 
 void ContentSecurityPolicy::addDirective(const String& name, const String& value)
 {
+    DEFINE_STATIC_LOCAL(String, defaultSrc, ("default-src"));
     DEFINE_STATIC_LOCAL(String, scriptSrc, ("script-src"));
     DEFINE_STATIC_LOCAL(String, objectSrc, ("object-src"));
     DEFINE_STATIC_LOCAL(String, frameSrc, ("frame-src"));
@@ -733,7 +722,9 @@ void ContentSecurityPolicy::addDirective(const String& name, const String& value
 
     ASSERT(!name.isEmpty());
 
-    if (!m_scriptSrc && equalIgnoringCase(name, scriptSrc))
+    if (!m_defaultSrc && equalIgnoringCase(name, defaultSrc))
+        m_defaultSrc = createCSPDirective(name, value);
+    else if (!m_scriptSrc && equalIgnoringCase(name, scriptSrc))
         m_scriptSrc = createCSPDirective(name, value);
     else if (!m_objectSrc && equalIgnoringCase(name, objectSrc))
         m_objectSrc = createCSPDirective(name, value);

@@ -1,3 +1,22 @@
+2011-05-01  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        CSP default-src is missing
+        https://bugs.webkit.org/show_bug.cgi?id=58641
+
+        Test that default-src controls some scripting policy and that
+        script-src, if present, overrides default-src.  In principle, we could
+        test the interaction of default-src with every other directive, but
+        that seems like overkill.
+
+        * http/tests/security/contentSecurityPolicy/default-src-inline-allowed-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/default-src-inline-allowed.html: Added.
+        * http/tests/security/contentSecurityPolicy/default-src-inline-blocked-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/default-src-inline-blocked.html: Added.
+        * http/tests/security/contentSecurityPolicy/script-src-overrides-default-src-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/script-src-overrides-default-src.html: Added.
+
 2011-05-01  Justin Schuh  <jschuh@chromium.org>
 
         Reviewed by Adam Barth.

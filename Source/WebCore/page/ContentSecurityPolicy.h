@@ -69,12 +69,18 @@ private:
 
     PassOwnPtr<CSPDirective> createCSPDirective(const String& name, const String& value);
 
+    CSPDirective* operativeDirective(CSPDirective*) const;
     void reportViolation(const String& directiveText, const String& consoleMessage) const;
-    bool internalAllowEval() const;
+    bool checkEval(CSPDirective*) const;
+
+    bool checkInlineAndReportViolation(CSPDirective*, const String& consoleMessage) const;
+    bool checkEvalAndReportViolation(CSPDirective*, const String& consoleMessage) const;
+    bool checkSourceAndReportViolation(CSPDirective*, const KURL&, const String& type) const;
 
     bool m_havePolicy;
     Document* m_document;
 
+    OwnPtr<CSPDirective> m_defaultSrc;
     OwnPtr<CSPDirective> m_scriptSrc;
     OwnPtr<CSPDirective> m_objectSrc;
     OwnPtr<CSPDirective> m_frameSrc;
