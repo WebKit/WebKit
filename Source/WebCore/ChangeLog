@@ -1,3 +1,56 @@
+2011-05-02  Sailesh Agrawal  <sail@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        Chromium Mac: Add scrollbar overlay drawing functions
+        https://bugs.webkit.org/show_bug.cgi?id=59741
+
+        These functions are simply copied from WebCoreSystemInterface. These will be used to implement overlay scrollbars for Chromium Mac.
+
+        No new tests, since this code is only enabled on future versions of Mac OS X.
+
+        * WebCore.gypi:
+        * platform/chromium/ScrollbarOverlayUtilitiesMac.h: Added.
+        * platform/chromium/ScrollbarOverlayUtilitiesMac.mm: Added.
+        (LookUpNSScrollerImpClass):
+        (LookUpNSScrollerImpPairClass):
+        (ScrollbarControlSizeToNSControlSize):
+        (wkScrollbarPainterUsesOverlayScrollers):
+        (wkScrollbarPainterIsHorizontal):
+        (wkScrollbarPainterKnobAlpha):
+        (wkScrollbarPainterSetOverlayState):
+        (wkScrollbarPainterPaint):
+        (wkScrollbarMinimumThumbLength):
+        (wkScrollbarPainterSetDelegate):
+        (wkScrollbarPainterTrackAlpha):
+        (wkMakeScrollbarPainter):
+        (wkScrollbarThickness):
+        (wkScrollbarMinimumTotalLengthNeededForThumb):
+        (wkVerticalScrollbarPainterForController):
+        (wkHorizontalScrollbarPainterForController):
+        (wkMakeScrollbarReplacementPainter):
+        (wkSetPainterForPainterController):
+        (wkSetScrollbarPainterControllerStyle):
+        (wkScrollbarPainterKnobRect):
+        (wkSetScrollbarPainterKnobAlpha):
+        (wkSetScrollbarPainterTrackAlpha):
+        (wkSetScrollbarPainterKnobStyle):
+        (wkMakeScrollbarPainterController):
+        (wkContentAreaScrolled):
+        (wkContentAreaWillPaint):
+        (wkMouseEnteredContentArea):
+        (wkMouseExitedContentArea):
+        (wkMouseMovedInContentArea):
+        (wkWillStartLiveResize):
+        (wkContentAreaResized):
+        (wkWillEndLiveResize):
+        (wkContentAreaDidShow):
+        (wkContentAreaDidHide):
+        (wkDidBeginScrollGesture):
+        (wkDidEndScrollGesture):
+        (wkScrollbarPainterForceFlashScrollers):
+        (IsScrollbarOverlayAPIAvailable):
+
 2011-05-02  Luke Macpherson   <macpherson@chromium.org>
 
         Reviewed by Dimitri Glazkov.
