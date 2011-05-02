@@ -1,3 +1,16 @@
+2011-05-02  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r85469.
+        http://trac.webkit.org/changeset/85469
+        https://bugs.webkit.org/show_bug.cgi?id=59928
+
+        Broke  webkitpy-tests on Windows 7, GTK and Qt. (Requested by
+        bbandix on #webkit).
+
+        * Scripts/webkitpy/tool/bot/earlywarningsystemtask.py: Removed.
+        * Scripts/webkitpy/tool/commands/earlywarningsystem.py:
+        * Scripts/webkitpy/tool/commands/earlywarningsystem_unittest.py:
+
 2011-05-02  Tomasz Morawski  <t.morawski@samsung.com>
 
         Reviewed by Kenneth Rohde Christiansen.
