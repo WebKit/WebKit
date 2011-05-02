@@ -6,6 +6,26 @@
         https://bugs.webkit.org/show_bug.cgi?id=43673
         <rdar://problem/7508322>
 
+        Test manually with manual-tests/media-elements/video-preload.html.
+
+        * platform/graphics/mac/MediaPlayerPrivateQTKit.h:
+        * platform/graphics/mac/MediaPlayerPrivateQTKit.mm:
+        (WebCore::MediaPlayerPrivateQTKit::commonMovieAttributes): Add new "limit read-ahead"
+            attribute when preload is not "auto".
+        (WebCore::MediaPlayerPrivateQTKit::resumeLoad): Remove m_delayingLoad, we don't need it.
+        (WebCore::MediaPlayerPrivateQTKit::load): Correct comment.
+        (WebCore::MediaPlayerPrivateQTKit::prepareToPlay): Call setPreload('auto').
+        (WebCore::MediaPlayerPrivateQTKit::setPreload): Set new attribue if we already have
+            a QTMovie.
+
+2011-05-02  Eric Carlson  <eric.carlson@apple.com>
+
+        Reviewed by Brady Eidson.
+
+        The preload attribute of the video tag is not completely implemented
+        https://bugs.webkit.org/show_bug.cgi?id=43673
+        <rdar://problem/7508322>
+
         Manual test manual-tests/media-elements/video-preload.html added.
 
         * manual-tests/media-elements/video-preload.html: Added. New manual test for media element 

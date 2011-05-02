@@ -232,9 +232,9 @@ MediaPlayerPrivateQTKit::~MediaPlayerPrivateQTKit()
     [m_objcObserver.get() disconnect];
 }
 
-NSMutableDictionary* MediaPlayerPrivateQTKit::commonMovieAttributes() 
+NSMutableDictionary *MediaPlayerPrivateQTKit::commonMovieAttributes() 
 {
-    return [NSMutableDictionary dictionaryWithObjectsAndKeys:
+    NSMutableDictionary *movieAttributes = [NSMutableDictionary dictionaryWithObjectsAndKeys:
             [NSNumber numberWithBool:m_player->preservesPitch()], QTMovieRateChangesPreservePitchAttribute,
             [NSNumber numberWithBool:YES], QTMoviePreventExternalURLLinksAttribute,
             [NSNumber numberWithBool:YES], QTSecurityPolicyNoCrossSiteAttribute,
@@ -243,6 +243,11 @@ NSMutableDictionary* MediaPlayerPrivateQTKit::commonMovieAttributes()
             [NSNumber numberWithBool:!m_privateBrowsing], @"QTMovieAllowPersistentCacheAttribute",
             QTMovieApertureModeClean, QTMovieApertureModeAttribute,
             nil];
+
+    if (m_preload < MediaPlayer::Auto)
+        [movieAttributes setValue:[NSNumber numberWithBool:YES] forKey:@"QTMovieLimitReadAheadAttribute"];
+
+    return movieAttributes;
 }
 
 void MediaPlayerPrivateQTKit::createQTMovie(const String& url)
@@ -634,8 +639,6 @@ QTTime MediaPlayerPrivateQTKit::createQTTime(float time) const
 
 void MediaPlayerPrivateQTKit::resumeLoad()
 {
-    m_delayingLoad = false;
-
     if (!m_movieURL.isNull())
         loadInternal(m_movieURL);
 }
@@ -644,12 +647,9 @@ void MediaPlayerPrivateQTKit::load(const String& url)
 {
     m_movieURL = url;
 
-    // If the element is not supposed to load any data return immediately because QTKit
-    // doesn't have API to throttle loading.
-    if (m_preload == MediaPlayer::None) {
-        m_delayingLoad = true;
+    // If the element is not supposed to load any data return immediately.
+    if (m_preload == MediaPlayer::None)
         return;
-    }
 
     loadInternal(url);
 }
@@ -685,8 +685,7 @@ void MediaPlayerPrivateQTKit::loadInternal(const String& url)
 
 void MediaPlayerPrivateQTKit::prepareToPlay()
 {
-    if (!m_qtMovie || m_delayingLoad)
-        resumeLoad();
+    setPreload(MediaPlayer::Auto);
 }
 
 PlatformMedia MediaPlayerPrivateQTKit::platformMedia() const
@@ -1592,8 +1591,13 @@ MediaPlayer::MovieLoadType MediaPlayerPrivateQTKit::movieLoadType() const
 void MediaPlayerPrivateQTKit::setPreload(MediaPlayer::Preload preload)
 {
     m_preload = preload;
-    if (m_delayingLoad && m_preload != MediaPlayer::None)
+    if (m_preload == MediaPlayer::None)
+        return;
+
+    if (!m_qtMovie)
         resumeLoad();
+    else if (m_preload == MediaPlayer::Auto)
+        [m_qtMovie.get() setAttribute:[NSNumber numberWithBool:NO] forKey:@"QTMovieLimitReadAheadAttribute"];
 }
 
 float MediaPlayerPrivateQTKit::mediaTimeForTimeValue(float timeValue) const

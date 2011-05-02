@@ -211,7 +211,6 @@ private:
     bool m_visible;
     bool m_hasUnsupportedTracks;
     bool m_videoFrameHasDrawn;
-    bool m_delayingLoad;
     bool m_isAllowedToRender;
     bool m_privateBrowsing;
 #if DRAW_FRAME_RATE
