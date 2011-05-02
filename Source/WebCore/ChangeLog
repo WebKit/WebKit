@@ -1,3 +1,23 @@
+2011-04-19  Adrienne Walker  <enne@google.com>
+
+        Reviewed by James Robinson.
+
+        [chromium] Don't unnecessarily resize skia/cg canvases when painting in compositor
+        https://bugs.webkit.org/show_bug.cgi?id=58907
+
+        Additionally, move the context save/restore logic to a place where it
+        will reset the translation added in LayerTilerChromium.
+
+        Test: compositing/repaint/same-size-invalidation.html
+
+        * platform/graphics/chromium/ContentLayerChromium.cpp:
+        (WebCore::ContentLayerPainter::paint):
+        * platform/graphics/chromium/PlatformCanvas.cpp:
+        (WebCore::PlatformCanvas::resize):
+        (WebCore::PlatformCanvas::Painter::Painter):
+        (WebCore::PlatformCanvas::Painter::~Painter):
+        * platform/graphics/chromium/PlatformCanvas.h:
+
 2011-05-02  Csaba Osztrogonác  <ossy@webkit.org>
 
         Enable strict OwnPtr for Qt

@@ -77,11 +77,9 @@ public:
 
     virtual void paint(GraphicsContext& context, const IntRect& contentRect)
     {
-        context.save();
         context.clearRect(contentRect);
         context.clip(contentRect);
         m_owner->paintGraphicsLayerContents(context, contentRect);
-        context.restore();
     }
 private:
     GraphicsLayerChromium* m_owner;

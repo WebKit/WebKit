@@ -81,6 +81,7 @@ public:
         enum TextOption { GrayscaleText, SubpixelText };
 
         Painter(PlatformCanvas*, TextOption);
+        // Destructor restores canvas context to pre-construction state.
         ~Painter();
 
         GraphicsContext* context() const { return m_context.get(); }

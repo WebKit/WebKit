@@ -1,3 +1,18 @@
+2011-04-27  Adrienne Walker  <enne@google.com>
+
+        Reviewed by James Robinson.
+
+        Add test for multiple invalidations of the same size.
+        https://bugs.webkit.org/show_bug.cgi?id=58907
+
+        This tests a bug in Chromium where canvas state was not being properly
+        reset between draw calls and a cached canvas of the same size was
+        being used to paint into that retained incorrect state.
+
+        * compositing/repaint/same-size-invalidation-expected.txt: Added.
+        * compositing/repaint/same-size-invalidation.html: Added.
+        * platform/chromium-gpu/compositing/repaint/same-size-invalidation-expected.png: Added.
+
 2011-05-02  Alpha Lam  <hclam@chromium.org>
 
         Not reviewed. Build fix.

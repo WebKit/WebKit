@@ -50,6 +50,8 @@ PlatformCanvas::~PlatformCanvas()
 
 void PlatformCanvas::resize(const IntSize& size)
 {
+    if (m_size == size)
+        return;
     m_size = size;
 #if USE(SKIA)
     m_skiaCanvas = skia::CreateBitmapCanvas(size.width(), size.height(), false);
@@ -107,10 +109,12 @@ PlatformCanvas::Painter::Painter(PlatformCanvas* canvas, PlatformCanvas::Painter
     CGContextScaleCTM(m_contextCG.get(), 1, -1);
     m_context = adoptPtr(new GraphicsContext(m_contextCG.get()));
 #endif
+    context()->save();
 }
 
 PlatformCanvas::Painter::~Painter()
 {
+    context()->restore();
 }
 
 } // namespace WebCore
