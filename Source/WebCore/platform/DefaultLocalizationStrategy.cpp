@@ -31,8 +31,10 @@
 #include "IntSize.h"
 #include "LocalizedStrings.h"
 #include "NotImplemented.h"
+#include "PlatformString.h"
 #include <wtf/MathExtras.h>
 #include <wtf/text/CString.h>
+#include <wtf/unicode/CharacterNames.h>
 #include <wtf/UnusedParam.h>
 
 #if USE(CF)
@@ -67,6 +69,22 @@ static String formatLocalizedString(String format, ...)
     return format;
 #endif
 }
+
+#if !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOW_LEOPARD)
+static String truncatedStringForLookupMenuItem(const String& original)
+{
+    if (original.isEmpty())
+        return original;
+    
+    // Truncate the string if it's too long. This is in consistency with AppKit.
+    unsigned maxNumberOfGraphemeClustersInLookupMenuItem = 24;
+    DEFINE_STATIC_LOCAL(String, ellipsis, (&horizontalEllipsis, 1));
+    
+    String trimmed = original.stripWhiteSpace();
+    unsigned numberOfCharacters = numCharactersInGraphemeClusters(trimmed, maxNumberOfGraphemeClustersInLookupMenuItem);
+    return numberOfCharacters == trimmed.length() ? trimmed : trimmed.left(numberOfCharacters) + ellipsis;
+}
+#endif
 
 DefaultLocalizationStrategy::DefaultLocalizationStrategy()
 {
@@ -303,10 +321,10 @@ String DefaultLocalizationStrategy::contextMenuItemTagLookUpInDictionary(const S
     return WEB_UI_STRING("Look Up in Dictionary", "Look Up in Dictionary context menu item");
 #else
 #if USE(CF)
-    RetainPtr<CFStringRef> selectedCFString(AdoptCF, selectedString.createCFString());
+    RetainPtr<CFStringRef> selectedCFString(AdoptCF, truncatedStringForLookupMenuItem(selectedString).createCFString());
     return formatLocalizedString(WEB_UI_STRING("Look Up “%@”", "Look Up context menu item with selected word"), selectedCFString.get());
 #else
-    return WEB_UI_STRING("Look Up “<selection>”", "Look Up context menu item with selected word").replace("<selection>", selectedString);
+    return WEB_UI_STRING("Look Up “<selection>”", "Look Up context menu item with selected word").replace("<selection>", truncatedStringForLookupMenuItem(selectedString));
 #endif
 #endif
 }

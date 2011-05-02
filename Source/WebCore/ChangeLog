@@ -1,3 +1,15 @@
+2011-05-02  Jia Pu  <jpu@apple.com>
+
+        Reviewed by Alexey Proskuryakov.
+
+        [Mac] Need to truncate the string sent to "Look Up … " menu item, if it's too long.
+        https://bugs.webkit.org/show_bug.cgi?id=59836
+        <rdar://problem/9275983>
+
+        * platform/DefaultLocalizationStrategy.cpp:
+        (WebCore::truncatedStringForLookupMenuItem):
+        (WebCore::DefaultLocalizationStrategy::contextMenuItemTagLookUpInDictionary):
+
 2011-05-02  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Anders Carlsson.
