@@ -1,5 +1,12 @@
 2011-05-02  Philippe Normand  <pnormand@igalia.com>
 
+        Unreviewed, re-enable websocket tests on GTK. they moved over to a
+        real http server and most of the flakiness went away.
+
+        * platform/gtk/Skipped:
+
+2011-05-02  Philippe Normand  <pnormand@igalia.com>
+
         Unreviewed, GTK baselines for new tests.
 
         * platform/gtk/fast/backgrounds/gradient-background-leakage-expected.png: Added.
