@@ -1,3 +1,133 @@
+2011-05-02  Alpha Lam  <hclam@chromium.org>
+
+        Not reviewed. Build fix.
+
+        Rebaseline SVG layout tests for chromium port.
+
+        * platform/chromium-linux-x86_64/svg/text/text-text-01-b-expected.png:
+        * platform/chromium-linux/editing/style/block-style-003-expected.png:
+        * platform/chromium-linux/editing/style/create-block-for-style-005-expected.png:
+        * platform/chromium-linux/editing/style/create-block-for-style-006-expected.png:
+        * platform/chromium-linux/editing/style/create-block-for-style-010-expected.png:
+        * platform/chromium-linux/editing/style/create-block-for-style-011-expected.png:
+        * platform/chromium-linux/editing/style/create-block-for-style-012-expected.png:
+        * platform/chromium-linux/editing/style/table-selection-expected.png:
+        * platform/chromium-linux/svg/custom/mouse-move-on-svg-root-expected.png:
+        * platform/chromium-linux/svg/custom/mouse-move-on-svg-root-standalone-expected.png:
+        * platform/chromium-linux/svg/text/select-textLength-spacing-squeeze-1-expected.png:
+        * platform/chromium-linux/svg/text/select-textLength-spacing-squeeze-2-expected.png:
+        * platform/chromium-linux/svg/text/select-textLength-spacing-squeeze-3-expected.png:
+        * platform/chromium-linux/svg/text/select-textLength-spacing-squeeze-4-expected.png:
+        * platform/chromium-linux/svg/text/select-textLength-spacing-stretch-1-expected.png:
+        * platform/chromium-linux/svg/text/select-textLength-spacing-stretch-2-expected.png:
+        * platform/chromium-linux/svg/text/select-textLength-spacing-stretch-3-expected.png:
+        * platform/chromium-linux/svg/text/select-textLength-spacing-stretch-4-expected.png:
+        * platform/chromium-linux/svg/text/text-align-01-b-expected.png:
+        * platform/chromium-linux/svg/text/text-align-02-b-expected.png:
+        * platform/chromium-linux/svg/text/text-align-03-b-expected.png:
+        * platform/chromium-linux/svg/text/text-align-04-b-expected.png:
+        * platform/chromium-linux/svg/text/text-align-05-b-expected.png:
+        * platform/chromium-linux/svg/text/text-align-06-b-expected.png:
+        * platform/chromium-linux/svg/text/text-altglyph-01-b-expected.png:
+        * platform/chromium-linux/svg/text/text-deco-01-b-expected.png:
+        * platform/chromium-linux/svg/text/text-fonts-02-t-expected.png:
+        * platform/chromium-linux/svg/text/text-path-01-b-expected.png:
+        * platform/chromium-linux/svg/text/text-text-01-b-expected.png:
+        * platform/chromium-linux/svg/text/text-text-03-b-expected.png:
+        * platform/chromium-linux/svg/text/text-text-05-t-expected.png:
+        * platform/chromium-linux/svg/text/text-text-06-t-expected.png:
+        * platform/chromium-linux/svg/text/text-text-07-t-expected.png:
+        * platform/chromium-linux/svg/text/text-text-08-b-expected.png:
+        * platform/chromium-linux/svg/text/text-tref-01-b-expected.png:
+        * platform/chromium-linux/svg/text/text-tselect-01-b-expected.png:
+        * platform/chromium-linux/svg/text/text-tspan-01-b-expected.png:
+        * platform/chromium-linux/svg/text/text-ws-01-t-expected.png:
+        * platform/chromium-linux/svg/text/text-ws-02-t-expected.png:
+        * platform/chromium-linux/svg/text/textPathBoundsBug-expected.png:
+        * platform/chromium-mac-leopard/editing/style/table-selection-expected.png:
+        * platform/chromium-mac-leopard/svg/text/text-align-02-b-expected.png:
+        * platform/chromium-mac-leopard/svg/text/text-fonts-02-t-expected.png:
+        * platform/chromium-mac-leopard/svg/text/text-text-01-b-expected.png:
+        * platform/chromium-mac-leopard/svg/text/text-tspan-01-b-expected.png: Removed.
+        * platform/chromium-mac/editing/style/block-style-003-expected.png: Added.
+        * platform/chromium-mac/editing/style/create-block-for-style-005-expected.png: Added.
+        * platform/chromium-mac/editing/style/create-block-for-style-006-expected.png: Added.
+        * platform/chromium-mac/editing/style/create-block-for-style-010-expected.png: Added.
+        * platform/chromium-mac/editing/style/create-block-for-style-011-expected.png: Added.
+        * platform/chromium-mac/editing/style/create-block-for-style-012-expected.png: Added.
+        * platform/chromium-mac/editing/style/table-selection-expected.png: Copied from LayoutTests/platform/chromium-mac/svg/text/textPathBoundsBug-expected.png.
+        * platform/chromium-mac/svg/text/select-textLength-spacing-squeeze-1-expected.png: Added.
+        * platform/chromium-mac/svg/text/select-textLength-spacing-squeeze-2-expected.png: Added.
+        * platform/chromium-mac/svg/text/select-textLength-spacing-squeeze-3-expected.png: Added.
+        * platform/chromium-mac/svg/text/select-textLength-spacing-squeeze-4-expected.png: Added.
+        * platform/chromium-mac/svg/text/select-textLength-spacing-stretch-1-expected.png: Added.
+        * platform/chromium-mac/svg/text/select-textLength-spacing-stretch-2-expected.png: Added.
+        * platform/chromium-mac/svg/text/select-textLength-spacing-stretch-3-expected.png: Added.
+        * platform/chromium-mac/svg/text/select-textLength-spacing-stretch-4-expected.png: Added.
+        * platform/chromium-mac/svg/text/text-align-01-b-expected.png:
+        * platform/chromium-mac/svg/text/text-align-02-b-expected.png:
+        * platform/chromium-mac/svg/text/text-align-03-b-expected.png:
+        * platform/chromium-mac/svg/text/text-align-04-b-expected.png:
+        * platform/chromium-mac/svg/text/text-align-05-b-expected.png:
+        * platform/chromium-mac/svg/text/text-align-06-b-expected.png:
+        * platform/chromium-mac/svg/text/text-altglyph-01-b-expected.png:
+        * platform/chromium-mac/svg/text/text-deco-01-b-expected.png:
+        * platform/chromium-mac/svg/text/text-fonts-02-t-expected.png:
+        * platform/chromium-mac/svg/text/text-path-01-b-expected.png:
+        * platform/chromium-mac/svg/text/text-text-01-b-expected.png:
+        * platform/chromium-mac/svg/text/text-text-03-b-expected.png:
+        * platform/chromium-mac/svg/text/text-text-05-t-expected.png:
+        * platform/chromium-mac/svg/text/text-text-06-t-expected.png:
+        * platform/chromium-mac/svg/text/text-text-07-t-expected.png:
+        * platform/chromium-mac/svg/text/text-text-08-b-expected.png:
+        * platform/chromium-mac/svg/text/text-tref-01-b-expected.png:
+        * platform/chromium-mac/svg/text/text-tselect-01-b-expected.png:
+        * platform/chromium-mac/svg/text/text-tselect-02-f-expected.png:
+        * platform/chromium-mac/svg/text/text-tspan-01-b-expected.png:
+        * platform/chromium-mac/svg/text/text-ws-01-t-expected.png:
+        * platform/chromium-mac/svg/text/text-ws-02-t-expected.png:
+        * platform/chromium-mac/svg/text/textPathBoundsBug-expected.png:
+        * platform/chromium-win/editing/style/block-style-003-expected.png:
+        * platform/chromium-win/editing/style/create-block-for-style-005-expected.png:
+        * platform/chromium-win/editing/style/create-block-for-style-006-expected.png:
+        * platform/chromium-win/editing/style/create-block-for-style-010-expected.png:
+        * platform/chromium-win/editing/style/create-block-for-style-011-expected.png:
+        * platform/chromium-win/editing/style/create-block-for-style-012-expected.png:
+        * platform/chromium-win/editing/style/table-selection-expected.png:
+        * platform/chromium-win/svg/custom/mouse-move-on-svg-root-expected.png:
+        * platform/chromium-win/svg/custom/mouse-move-on-svg-root-standalone-expected.png:
+        * platform/chromium-win/svg/text/select-textLength-spacing-squeeze-1-expected.png:
+        * platform/chromium-win/svg/text/select-textLength-spacing-squeeze-2-expected.png:
+        * platform/chromium-win/svg/text/select-textLength-spacing-squeeze-3-expected.png:
+        * platform/chromium-win/svg/text/select-textLength-spacing-squeeze-4-expected.png:
+        * platform/chromium-win/svg/text/select-textLength-spacing-stretch-1-expected.png:
+        * platform/chromium-win/svg/text/select-textLength-spacing-stretch-2-expected.png:
+        * platform/chromium-win/svg/text/select-textLength-spacing-stretch-3-expected.png:
+        * platform/chromium-win/svg/text/select-textLength-spacing-stretch-4-expected.png:
+        * platform/chromium-win/svg/text/text-align-01-b-expected.png:
+        * platform/chromium-win/svg/text/text-align-02-b-expected.png:
+        * platform/chromium-win/svg/text/text-align-03-b-expected.png:
+        * platform/chromium-win/svg/text/text-align-04-b-expected.png:
+        * platform/chromium-win/svg/text/text-align-05-b-expected.png:
+        * platform/chromium-win/svg/text/text-align-06-b-expected.png:
+        * platform/chromium-win/svg/text/text-altglyph-01-b-expected.png:
+        * platform/chromium-win/svg/text/text-deco-01-b-expected.png:
+        * platform/chromium-win/svg/text/text-fonts-02-t-expected.png:
+        * platform/chromium-win/svg/text/text-path-01-b-expected.png:
+        * platform/chromium-win/svg/text/text-text-01-b-expected.png:
+        * platform/chromium-win/svg/text/text-text-03-b-expected.png:
+        * platform/chromium-win/svg/text/text-text-05-t-expected.png:
+        * platform/chromium-win/svg/text/text-text-06-t-expected.png:
+        * platform/chromium-win/svg/text/text-text-07-t-expected.png:
+        * platform/chromium-win/svg/text/text-text-08-b-expected.png:
+        * platform/chromium-win/svg/text/text-tref-01-b-expected.png:
+        * platform/chromium-win/svg/text/text-tselect-01-b-expected.png:
+        * platform/chromium-win/svg/text/text-tselect-02-f-expected.png:
+        * platform/chromium-win/svg/text/text-tspan-01-b-expected.png:
+        * platform/chromium-win/svg/text/text-ws-01-t-expected.png:
+        * platform/chromium-win/svg/text/text-ws-02-t-expected.png:
+        * platform/chromium-win/svg/text/textPathBoundsBug-expected.png:
+
 2011-05-02  Tony Chang  <tony@chromium.org>
 
         Reviewed by Kent Tamura.
