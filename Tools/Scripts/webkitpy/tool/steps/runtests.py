@@ -63,7 +63,6 @@ class RunTests(AbstractStep):
             args.append("--no-new-test-results")
             args.append("--no-launch-safari")
             args.append("--exit-after-n-failures=%s" % self.NON_INTERACTIVE_FAILURE_LIMIT_COUNT)
-            args.append("--wait-for-httpd")
 
         if self._options.quiet:
             args.append("--quiet")

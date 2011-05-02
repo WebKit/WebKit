@@ -1,3 +1,17 @@
+2011-05-02  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        webkit-patch --non-interactive is incompatible with new-run-webkit-tests
+        https://bugs.webkit.org/show_bug.cgi?id=59919
+
+        new-run-webkit-tests doesn't support --wait-for-httpd (because it
+        always waits for HTTPD, as I understand things).  It turns out we're
+        not really using this flag for anything, so we should just remove it.
+
+        * Scripts/webkitpy/tool/steps/runtests.py:
+        * Scripts/webkitpy/tool/steps/steps_unittest.py:
+
 2011-05-01  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Adam Barth.
