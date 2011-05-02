@@ -1,3 +1,9 @@
+2011-05-02  Adrienne Walker  <enne@google.com>
+
+        Unreviewed, fix misspelled contributor name.
+
+        * Scripts/webkitpy/common/config/committers.py:
+
 2011-05-02  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Eric Seidel.

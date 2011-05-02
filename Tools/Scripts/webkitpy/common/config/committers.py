@@ -78,7 +78,7 @@ contributors_who_are_not_committers = [
     Contributor("David Dorwin", "ddorwin@chromium.org", "ddorwin"),
     Contributor("David Grogan", "dgrogan@chromium.org", "dgrogan"),
     Contributor("Finnur Thorarinsson", "finnur@chromium.org", "finnur"),
-    Contributor("Greg Tavares", ["gman@google.com", "gman@chromium.org"], "gman"),
+    Contributor("Gregg Tavares", ["gman@google.com", "gman@chromium.org"], "gman"),
     Contributor("Ian Hickson", "ian@hixie.ch", "hixie"),
     Contributor("Ilya Sherman", "isherman@chromium.org", "isherman"),
     Contributor("John Bates", ["jbates@google.com", "jbates@chromium.org"], "jbates"),
