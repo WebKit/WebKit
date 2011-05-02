@@ -28,8 +28,8 @@
 
 #include "config.h"
 #include "GlyphPageTreeNode.h"
-#include "Font.h"
 
+#include "Font.h"
 #include "SimpleFontData.h"
 #include "WebCoreSystemInterface.h"
 #include <ApplicationServices/ApplicationServices.h>

@@ -33,7 +33,6 @@
 #include "FloatSize.h"
 #include "ScrollAnimator.h"
 #include "Timer.h"
-#include "WebCoreSystemInterface.h"
 #include <wtf/RetainPtr.h>
 
 #ifdef __OBJC__
@@ -46,6 +45,10 @@ class ScrollAnimationHelperDelegate;
 class ScrollbarPainterDelegate;
 class ScrollbarPainterControllerDelegate;
 class ScrollbarPainterDelegate;
+#endif
+
+#if USE(WK_SCROLLBAR_PAINTER)
+typedef struct __WKScrollbarPainterController *WKScrollbarPainterControllerRef;
 #endif
 
 namespace WebCore {

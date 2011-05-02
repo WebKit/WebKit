@@ -1,3 +1,28 @@
+2011-05-02  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Anders Carlsson.
+
+        Prune ApplicationServices.h out of the headers
+        https://bugs.webkit.org/show_bug.cgi?id=59952
+
+        More forward declares are better.
+
+        * html/canvas/CanvasRenderingContext2D.cpp:
+        * html/canvas/CanvasRenderingContext2D.h:
+        * platform/graphics/GlyphBuffer.h:
+        * platform/graphics/cg/ImageBufferCG.cpp:
+        * platform/graphics/cg/PDFDocumentImage.cpp:
+        * platform/graphics/cg/PDFDocumentImage.h:
+        * platform/graphics/mac/ComplexTextController.h:
+        * platform/graphics/mac/ComplexTextControllerCoreText.cpp:
+        * platform/graphics/mac/GlyphPageTreeNodeMac.cpp:
+        * platform/mac/ScrollAnimatorMac.h:
+        * platform/mac/ScrollAnimatorMac.mm:
+        * platform/mac/ScrollbarThemeMac.h:
+        * platform/mac/ScrollbarThemeMac.mm:
+        * platform/mac/WebCoreNSStringExtras.h:
+        * platform/mac/WebCoreSystemInterface.h:
+
 2011-05-02  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Simon Fraser.

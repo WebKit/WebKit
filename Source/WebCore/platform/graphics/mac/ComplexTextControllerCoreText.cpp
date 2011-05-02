@@ -23,13 +23,15 @@
  */
 
 #include "config.h"
-#include "ComplexTextController.h"
-#include "TextRun.h"
-#include "WebCoreSystemInterface.h"
 
 #if USE(CORE_TEXT)
 
+#include "ComplexTextController.h"
+
 #include "Font.h"
+#include "TextRun.h"
+#include "WebCoreSystemInterface.h"
+#include <CoreText/CoreText.h>
 
 #if defined(BUILDING_ON_LEOPARD)
 // The following symbols are SPI in 10.5.

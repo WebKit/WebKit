@@ -76,6 +76,10 @@
 #include <wtf/OwnPtr.h>
 #include <wtf/UnusedParam.h>
 
+#if USE(CG)
+#include <ApplicationServices/ApplicationServices.h>
+#endif
+
 using namespace std;
 
 namespace WebCore {

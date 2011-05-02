@@ -26,14 +26,35 @@
 #ifndef WebCoreSystemInterface_h
 #define WebCoreSystemInterface_h
 
-#include <ApplicationServices/ApplicationServices.h>
 #include <objc/objc.h>
 
-#if PLATFORM(MAC) && USE(CA) && !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOW_LEOPARD)
-#include <IOSurface/IOSurface.h>
-#endif
-
+typedef const struct __CFString * CFStringRef;
+typedef const struct __CFNumber * CFNumberRef;
+typedef const struct __CFDictionary * CFDictionaryRef;
+typedef struct CGPoint CGPoint;
+typedef struct CGSize CGSize;
+typedef struct CGRect CGRect;
+typedef struct CGAffineTransform CGAffineTransform;
+typedef struct CGContext *CGContextRef;
+typedef struct CGImage *CGImageRef;
+typedef struct CGColor *CGColorRef;
+typedef struct CGFont *CGFontRef;
+typedef struct CGColorSpace *CGColorSpaceRef;
+typedef unsigned short CGGlyph;
+typedef struct __CFReadStream * CFReadStreamRef;
+typedef struct __CFRunLoop * CFRunLoopRef;
+typedef struct __CFHTTPMessage *CFHTTPMessageRef;
+typedef struct _CFURLResponse *CFURLResponseRef;
+typedef const struct __CTLine * CTLineRef;
+typedef const struct __CTTypesetter * CTTypesetterRef;
+typedef const struct __AXUIElement *AXUIElementRef;
+typedef uint32_t ATSUFontID;
+typedef uint16_t ATSGlyphRef;
 typedef struct _NSRange NSRange;
+
+#if PLATFORM(MAC) && USE(CA) && !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOW_LEOPARD)
+typedef struct __IOSurface *IOSurfaceRef;
+#endif
 
 #ifdef NSGEOMETRY_TYPES_SAME_AS_CGGEOMETRY_TYPES
 typedef struct CGPoint NSPoint;
@@ -85,8 +106,6 @@ class NSView;
 class QTMovie;
 class QTMovieView;
 #endif
-
-typedef struct _CFURLResponse *CFURLResponseRef;
 
 extern "C" {
 

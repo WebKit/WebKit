@@ -34,12 +34,8 @@
 #include "GraphicsTypes.h"
 #include "Path.h"
 #include "PlatformString.h"
-
 #include <wtf/Vector.h>
 
-#if USE(CG)
-#include <ApplicationServices/ApplicationServices.h>
-#endif
 
 #if USE(ACCELERATED_COMPOSITING)
 #include "GraphicsLayer.h"

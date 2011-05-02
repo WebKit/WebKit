@@ -25,7 +25,6 @@
 #ifndef ComplexTextController_h
 #define ComplexTextController_h
 
-#include <ApplicationServices/ApplicationServices.h>
 #include "GlyphBuffer.h"
 #include <wtf/HashSet.h>
 #include <wtf/PassRefPtr.h>
@@ -33,6 +32,10 @@
 #include <wtf/RetainPtr.h>
 #include <wtf/Vector.h>
 #include <wtf/unicode/Unicode.h>
+
+typedef unsigned short CGGlyph;
+typedef const struct __CTRun * CTRunRef;
+typedef const struct __CTLine * CTLineRef;
 
 namespace WebCore {
 

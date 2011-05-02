@@ -26,7 +26,6 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include <ApplicationServices/ApplicationServices.h>
 #include <objc/objc.h>
 
 #ifdef __OBJC__

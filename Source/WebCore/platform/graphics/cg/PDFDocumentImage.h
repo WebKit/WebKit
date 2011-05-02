@@ -26,14 +26,13 @@
 #ifndef PDFDocumentImage_h
 #define PDFDocumentImage_h
 
-#include "Image.h"
-
 #include "FloatRect.h"
 #include "GraphicsTypes.h"
+#include "Image.h"
 
 #if USE(CG)
 
-#include <ApplicationServices/ApplicationServices.h>
+typedef struct CGPDFDocument *CGPDFDocumentRef;
 
 namespace WebCore {
 

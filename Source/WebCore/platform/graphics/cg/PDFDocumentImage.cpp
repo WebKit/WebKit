@@ -32,6 +32,8 @@
 #include "GraphicsContext.h"
 #include "ImageObserver.h"
 #include "SharedBuffer.h"
+#include <CoreGraphics/CGContext.h>
+#include <CoreGraphics/CGPDFDocument.h>
 #include <wtf/MathExtras.h>
 #include <wtf/RetainPtr.h>
 

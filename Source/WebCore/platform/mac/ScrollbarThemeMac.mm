@@ -31,6 +31,7 @@
 #include "PlatformMouseEvent.h"
 #include "ScrollAnimatorMac.h"
 #include "ScrollView.h"
+#include "WebCoreSystemInterface.h"
 #include <Carbon/Carbon.h>
 #include <wtf/HashMap.h>
 #include <wtf/StdLibExtras.h>

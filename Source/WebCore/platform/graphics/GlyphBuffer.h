@@ -36,7 +36,7 @@
 #include <wtf/Vector.h>
 
 #if USE(CG) || (PLATFORM(WX) && OS(DARWIN)) || USE(SKIA_ON_MAC_CHROME)
-#include <ApplicationServices/ApplicationServices.h>
+#include <CoreGraphics/CGGeometry.h>
 #endif
 
 #if USE(CAIRO) || (PLATFORM(WX) && defined(__WXGTK__))

@@ -27,7 +27,10 @@
 #define ScrollbarThemeMac_h
 
 #include "ScrollbarThemeComposite.h"
-#include "WebCoreSystemInterface.h"
+
+#if USE(WK_SCROLLBAR_PAINTER)
+typedef struct __WKScrollbarPainter *WKScrollbarPainterRef;
+#endif
 
 namespace WebCore {
 

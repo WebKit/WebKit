@@ -36,6 +36,7 @@
 #include "ScrollableArea.h"
 #include "ScrollbarTheme.h"
 #include "ScrollbarThemeMac.h"
+#include "WebCoreSystemInterface.h"
 #include <wtf/PassOwnPtr.h>
 #include <wtf/UnusedParam.h>
 
