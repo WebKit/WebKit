@@ -157,7 +157,7 @@ void DRTUndoManager::undo()
 UIDelegate::UIDelegate()
     : m_refCount(1)
     , m_undoManager(adoptPtr(new DRTUndoManager))
-    , m_desktopNotifications(adoptPtr(new DRTDesktopNotificationPresenter))
+    , m_desktopNotifications(new DRTDesktopNotificationPresenter)
 {
     m_frame.bottom = 0;
     m_frame.top = 0;

@@ -1,5 +1,12 @@
 2011-05-01  Patrick Gansterer  <paroga@webkit.org>
 
+        [WIN] Unreviewed buildfix after r85440.
+
+        * DumpRenderTree/win/UIDelegate.cpp:
+        (UIDelegate::UIDelegate): Removed accidental added adoptPtr.
+
+2011-05-01  Patrick Gansterer  <paroga@webkit.org>
+
         [WIN] Unreviewed buildfix after r85434.
 
         * DumpRenderTree/win/FrameLoadDelegate.cpp: Added missing header.
