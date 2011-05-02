@@ -757,6 +757,7 @@ class MockTool(object):
         self._irc = None
         self.user = MockUser()
         self._scm = MockSCM()
+        self._port = MockPort()
         self._checkout = MockCheckout()
         self.status_server = MockStatusServer()
         self.irc_password = "MOCK irc password"
@@ -780,7 +781,7 @@ class MockTool(object):
         return "echo"
 
     def port(self):
-        return MockPort()
+        return self._port
 
 
 class MockBrowser(object):

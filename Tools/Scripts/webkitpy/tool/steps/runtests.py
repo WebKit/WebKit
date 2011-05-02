@@ -46,11 +46,15 @@ class RunTests(AbstractStep):
         if not self._options.test:
             return
 
-        # Run the scripting unit tests first because they're quickest.
-        log("Running Python unit tests")
-        self._tool.executive.run_and_throw_if_fail(self._tool.port().run_python_unittests_command())
-        log("Running Perl unit tests")
-        self._tool.executive.run_and_throw_if_fail(self._tool.port().run_perl_unittests_command())
+        python_unittests_command = self._tool.port().run_python_unittests_command()
+        if python_unittests_command:
+            log("Running Python unit tests")
+            self._tool.executive.run_and_throw_if_fail(python_unittests_command)
+
+        perl_unittests_command = self._tool.port().run_perl_unittests_command()
+        if perl_unittests_command:
+            log("Running Perl unit tests")
+            self._tool.executive.run_and_throw_if_fail(perl_unittests_command)
 
         javascriptcore_tests_command = self._tool.port().run_javascriptcore_tests_command()
         if javascriptcore_tests_command:

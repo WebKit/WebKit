@@ -2,6 +2,19 @@
 
         Reviewed by Eric Seidel.
 
+        Add the ability to skip python and perl unit tests on EC2
+        https://bugs.webkit.org/show_bug.cgi?id=59918
+
+        * Scripts/webkitpy/common/config/ports.py:
+            - This is slightly ugly, but it's useful...
+        * Scripts/webkitpy/common/config/ports_unittest.py:
+        * Scripts/webkitpy/tool/mocktool.py:
+        * Scripts/webkitpy/tool/steps/runtests.py:
+
+2011-05-02  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
         webkit-patch --non-interactive is incompatible with new-run-webkit-tests
         https://bugs.webkit.org/show_bug.cgi?id=59919
 

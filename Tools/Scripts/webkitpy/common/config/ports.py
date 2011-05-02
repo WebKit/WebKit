@@ -255,7 +255,10 @@ class ChromiumPort(WebKitPort):
         return None
 
 
+# FIXME: This port is a bit of a hack to get our infrastructure running on EC2.
 class ChromiumXVFBPort(ChromiumPort):
+
+    results_directory = "/tmp/layout-test-results"
 
     @classmethod
     def flag(cls):
@@ -264,4 +267,19 @@ class ChromiumXVFBPort(ChromiumPort):
     @classmethod
     def run_webkit_tests_command(cls):
         # FIXME: We should find a better way to do this.
-        return ["xvfb-run"] + ChromiumPort.run_webkit_tests_command()
+        return ["xvfb-run"] + ChromiumPort.run_webkit_tests_command() + [
+            "--results-directory=%s" % cls.results_directory,
+            "--verbose",
+        ]
+
+    @classmethod
+    def run_python_unittests_command(cls):
+        return None
+
+    @classmethod
+    def run_perl_unittests_command(cls):
+        return None
+
+    @classmethod
+    def layout_tests_results_path(cls):
+        return os.path.join(cls.results_directory, "unexpected_results.json")
