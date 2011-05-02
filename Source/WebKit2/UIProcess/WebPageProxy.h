@@ -690,6 +690,7 @@ private:
     void setCursor(const WebCore::Cursor&);
 
     void didReceiveEvent(uint32_t opaqueType, bool handled);
+    void stopResponsivenessTimer();
 
     void voidCallback(uint64_t);
     void dataCallback(const CoreIPC::DataReference&, uint64_t);

@@ -177,6 +177,8 @@ void NetscapePlugin::platformPaint(GraphicsContext* context, const IntRect& dirt
         return;
     }
 
+    m_pluginController->willSendEventToPlugin();
+    
     // FIXME: Support transparent plugins.
     LocalWindowsContext windowsContext(context, dirtyRect, false);
 
@@ -284,6 +286,8 @@ bool NetscapePlugin::platformHandleMouseEvent(const WebMouseEvent& event)
     if (m_isWindowed)
         return false;
 
+    m_pluginController->willSendEventToPlugin();
+
     NPEvent npEvent = toNP(event);
     NPP_HandleEvent(&npEvent);
     return true;
@@ -311,6 +315,8 @@ bool NetscapePlugin::platformHandleMouseEnterEvent(const WebMouseEvent& event)
     if (m_isWindowed)
         return false;
 
+    m_pluginController->willSendEventToPlugin();
+
     NPEvent npEvent = toNP(event);
     NPP_HandleEvent(&npEvent);
     return true;
@@ -322,6 +328,8 @@ bool NetscapePlugin::platformHandleMouseLeaveEvent(const WebMouseEvent& event)
 
     if (m_isWindowed)
         return false;
+
+    m_pluginController->willSendEventToPlugin();
 
     NPEvent npEvent = toNP(event);
     NPP_HandleEvent(&npEvent);

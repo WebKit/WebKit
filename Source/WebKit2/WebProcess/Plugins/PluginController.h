@@ -83,6 +83,9 @@ public:
     // Tells the controller that the plug-in process has crashed.
     virtual void pluginProcessCrashed() = 0;
     
+    // Tells the controller that we're about to dispatch an event to the plug-in.
+    virtual void willSendEventToPlugin() = 0;
+    
 #if PLATFORM(WIN)
     // The window to use as the parent of the plugin's window.
     virtual HWND nativeParentWindow() = 0;

@@ -990,6 +990,14 @@ void PluginView::pluginProcessCrashed()
     invalidateRect(frameRect());
 }
 
+void PluginView::willSendEventToPlugin()
+{
+    // If we're sending an event to a plug-in, we can't control how long the plug-in
+    // takes to process it (e.g. it may display a context menu), so we tell the UI process
+    // to stop the responsiveness timer in this case.
+    m_webPage->send(Messages::WebPageProxy::StopResponsivenessTimer());
+}
+
 #if PLATFORM(WIN)
 HWND PluginView::nativeParentWindow()
 {

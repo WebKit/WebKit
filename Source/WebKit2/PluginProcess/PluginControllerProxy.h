@@ -90,6 +90,7 @@ private:
     virtual void setStatusbarText(const String&);
     virtual bool isAcceleratedCompositingEnabled();
     virtual void pluginProcessCrashed();
+    virtual void willSendEventToPlugin();
 
 #if PLATFORM(MAC)
     virtual void setComplexTextInputEnabled(bool);

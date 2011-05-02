@@ -33,6 +33,7 @@ messages -> WebPageProxy {
     MissingPluginButtonClicked(WTF::String mimeType, WTF::String url, WTF::String pluginsPageURL)
     DidChangeViewportData(WebCore::ViewportArguments arguments)
     DidReceiveEvent(uint32_t type, bool handled)
+    StopResponsivenessTimer()
     SetCursor(WebCore::Cursor cursor)
     SetStatusText(WTF::String statusText)
     SetToolTip(WTF::String toolTip)

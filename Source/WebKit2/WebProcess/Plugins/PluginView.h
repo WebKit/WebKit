@@ -129,6 +129,7 @@ private:
     virtual void setStatusbarText(const String&);
     virtual bool isAcceleratedCompositingEnabled();
     virtual void pluginProcessCrashed();
+    virtual void willSendEventToPlugin();
 #if PLATFORM(WIN)
     virtual HWND nativeParentWindow();
 #endif

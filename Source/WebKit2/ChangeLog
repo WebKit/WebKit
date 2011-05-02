@@ -1,3 +1,42 @@
+2011-05-02  Jeff Miller  <jeffm@apple.com>
+
+        Reviewed by Adam Roben.
+
+        WebKit2 thinks the web process is unresponsive when a plugin displays a context menu
+        https://bugs.webkit.org/show_bug.cgi?id=59124
+        <rdar://problem/9318600>
+        
+        This is the Windows version of <https://bugs.webkit.org/show_bug.cgi?id=58943>.
+
+        Since we have no control over how long a plugin will take to handle an event, we need
+        to tell the UI process to stop its responsive timer when we're about to send an event
+        to the plugin. The downside of doing this is that if the plugin does become unresponsive,
+        the user won't know this immediately until they click on the web page again.  At that point,
+        if the web process is unresponsive because of a hung plugin, the responsiveness timer will fire.
+        
+        We're only doing this on Windows currently when running plugins in the web process (Anders fixed
+        bug 58943 in a different way when running plugins in a separate plugin process on the Mac).
+
+        * PluginProcess/PluginControllerProxy.cpp:
+        (WebKit::PluginControllerProxy::willSendEventToPlugin): Added, not used when running plugins in a separate process.
+        * PluginProcess/PluginControllerProxy.h: Added willSendEventToPlugin().
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::stopResponsivenessTimer): Added.
+        * UIProcess/WebPageProxy.h: Added stopResponsivenessTimer().
+        * UIProcess/WebPageProxy.messages.in: Added StopResponsivenessTimer message.
+
+        * WebProcess/Plugins/Netscape/win/NetscapePluginWin.cpp:
+        (WebKit::NetscapePlugin::platformPaint): Tell our controller when we're about to send an event to the plugin.
+        (WebKit::NetscapePlugin::platformHandleMouseEvent): Ditto.
+        (WebKit::NetscapePlugin::platformHandleMouseEnterEvent): Ditto.
+        (WebKit::NetscapePlugin::platformHandleMouseLeaveEvent): Ditto.
+
+        * WebProcess/Plugins/PluginController.h: Added willSendEventToPlugin().
+        * WebProcess/Plugins/PluginView.cpp:
+        (WebKit::PluginView::willSendEventToPlugin): Added, tell the UI process to stop its responsiveness timer.
+        * WebProcess/Plugins/PluginView.h: Added willSendEventToPlugin().
+
 2011-04-29  Steve Falkenburg  <sfalken@apple.com>
 
         Reviewed by Maciej Stachowiak.

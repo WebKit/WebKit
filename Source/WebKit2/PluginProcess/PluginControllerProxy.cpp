@@ -293,6 +293,12 @@ void PluginControllerProxy::pluginProcessCrashed()
     ASSERT_NOT_REACHED();
 }
 
+void PluginControllerProxy::willSendEventToPlugin()
+{
+    // This is only used when running plugins in the web process.
+    ASSERT_NOT_REACHED();
+}
+
 #if PLATFORM(MAC)
 void PluginControllerProxy::setComplexTextInputEnabled(bool complexTextInputEnabled)
 {
