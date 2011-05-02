@@ -1809,13 +1809,10 @@ template <class TreeBuilder> TreeExpression JSParser::parseStrictObjectLiteral(T
         if (!m_syntaxAlreadyValidated) {
             std::pair<ObjectValidationMap::iterator, bool> propertyEntryIter = objectValidator.add(context.getName(property).impl(), context.getType(property));
             if (!propertyEntryIter.second) {
-                failIfTrue(strictMode());
-                if ((context.getType(property) & propertyEntryIter.first->second) != PropertyNode::Constant) {
-                    // Can't have multiple getters or setters with the same name, nor can we define 
-                    // a property as both an accessor and a constant value
-                    failIfTrue(context.getType(property) & propertyEntryIter.first->second);
-                    failIfTrue((context.getType(property) | propertyEntryIter.first->second) & PropertyNode::Constant);
-                }
+                failIfTrue(propertyEntryIter.first->second == PropertyNode::Constant);
+                failIfTrue(context.getType(property) == PropertyNode::Constant);
+                failIfTrue(context.getType(property) & propertyEntryIter.first->second);
+                propertyEntryIter.first->second |= context.getType(property);
             }
         }
         tail = context.createPropertyList(property, tail);

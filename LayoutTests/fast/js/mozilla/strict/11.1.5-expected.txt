@@ -70,10 +70,10 @@ PASS true === true
 PASS Function("'use strict'; ({set 1(q) {}, \"1\":1})") threw exception of type SyntaxError.
 PASS Function("({set 1(q) {}, \"1\":1})") threw exception of type SyntaxError.
 PASS true === true
-FAIL !!Function("'use strict'; ({get x() {}, set x(q) {}})") should be true. Threw exception SyntaxError: Parse error
+PASS !!Function("'use strict'; ({get x() {}, set x(q) {}})") is true
 PASS !!Function("({get x() {}, set x(q) {}})") is true
 PASS true === true
-FAIL !!Function("'use strict'; ({set x(q) {}, get x() {}})") should be true. Threw exception SyntaxError: Parse error
+PASS !!Function("'use strict'; ({set x(q) {}, get x() {}})") is true
 PASS !!Function("({set x(q) {}, get x() {}})") is true
 PASS true === true
 PASS Function("'use strict'; ({get x() {}, set x(q) {}, x:1})") threw exception of type SyntaxError.
@@ -88,7 +88,7 @@ PASS true === true
 PASS Function("'use strict'; ({set x() {}, set x() {}})") threw exception of type SyntaxError.
 PASS Function("({set x() {}, set x() {}})") threw exception of type SyntaxError.
 PASS true === true
-FAIL !!Function("'use strict'; ({get x() {}, set x(q) {}, y:1})") should be true. Threw exception SyntaxError: Parse error
+PASS !!Function("'use strict'; ({get x() {}, set x(q) {}, y:1})") is true
 PASS !!Function("({get x() {}, set x(q) {}, y:1})") is true
 PASS true === true
  PASSED! 
