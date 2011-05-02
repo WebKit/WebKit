@@ -1,3 +1,32 @@
+2011-04-29  Brian Weinstein  <bweinstein@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        WebKit2: Crash closing tab with docked Web Inspector
+        https://bugs.webkit.org/show_bug.cgi?id=59914
+        <rdar://problem/9359672>
+        
+        When a tab is closed with a docked inspector, invalidate called platformClose, which
+        didn't do the tear down that is needed, but is called when we close the web inspector explcitly.
+        One part of tear down we weren't doing is removing ourselves as a WindowMessageBrodcaster listener
+        on the inspected web view, and this can cause crashes.
+        
+        This patch also renames platformClose to platformDidClose, to be clearer about when the function
+        is called.
+
+        * UIProcess/WebInspectorProxy.cpp:
+        (WebKit::WebInspectorProxy::invalidate): Call didClose instead of platformClose.
+        (WebKit::WebInspectorProxy::didClose): Call platformDidClose instead of platformClose.
+        * UIProcess/WebInspectorProxy.h:
+        * UIProcess/mac/WebInspectorProxyMac.mm:
+        (WebKit::WebInspectorProxy::platformDidClose): Renamed from platformClose.
+        * UIProcess/win/WebInspectorProxyWin.cpp:
+        (WebKit::WebInspectorProxy::platformDidClose): Ditto.
+        * UIProcess/gtk/WebInspectorGtk.cpp:
+        (WebKit::WebInspectorProxy::platformDidClose): Ditto.
+        * UIProcess/qt/WebInspectorProxyQt.cpp:
+        (WebKit::WebInspectorProxy::platformDidClose): Ditto.
+
 2011-05-01  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Anders Carlsson.

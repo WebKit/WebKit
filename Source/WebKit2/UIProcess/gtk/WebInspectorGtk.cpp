@@ -45,7 +45,7 @@ void WebInspectorProxy::platformOpen()
     notImplemented();
 }
 
-void WebInspectorProxy::platformClose()
+void WebInspectorProxy::platformDidClose()
 {
     notImplemented();
 }

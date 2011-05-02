@@ -205,7 +205,7 @@ void WebInspectorProxy::platformOpen()
     ::ShowWindow(m_inspectorWindow, SW_SHOW);
 }
 
-void WebInspectorProxy::platformClose()
+void WebInspectorProxy::platformDidClose()
 {
     ASSERT(!m_isAttached);
     ASSERT(!m_isVisible || m_inspectorWindow);

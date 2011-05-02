@@ -83,7 +83,7 @@ WebInspectorProxy::~WebInspectorProxy()
 void WebInspectorProxy::invalidate()
 {
     m_page->close();
-    platformClose();
+    didClose();
 
     m_page = 0;
 
@@ -220,7 +220,7 @@ void WebInspectorProxy::didClose()
         detach();
     }
 
-    platformClose();
+    platformDidClose();
 }
 
 void WebInspectorProxy::bringToFront()

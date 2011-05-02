@@ -115,7 +115,7 @@ private:
 
     WebPageProxy* platformCreateInspectorPage();
     void platformOpen();
-    void platformClose();
+    void platformDidClose();
     void platformBringToFront();
     void platformInspectedURLChanged(const String&);
     void platformAttach();

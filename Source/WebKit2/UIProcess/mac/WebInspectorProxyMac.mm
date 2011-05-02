@@ -141,7 +141,7 @@ void WebInspectorProxy::platformOpen()
     m_inspectorWindow.adoptNS(window);
 }
 
-void WebInspectorProxy::platformClose()
+void WebInspectorProxy::platformDidClose()
 {
     [m_inspectorWindow.get() setDelegate:nil];
     [m_inspectorWindow.get() orderOut:nil];
