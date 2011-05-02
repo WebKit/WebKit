@@ -235,6 +235,23 @@ void Connection::setShouldExitOnSyncMessageSendFailure(bool shouldExitOnSyncMess
     m_shouldExitOnSyncMessageSendFailure = shouldExitOnSyncMessageSendFailure;
 }
 
+void Connection::addQueueClient(QueueClient* queueClient)
+{
+    MutexLocker locker(m_connectionQueueClientsMutex);
+    ASSERT(!m_connectionQueueClients.contains(queueClient));
+
+    m_connectionQueueClients.append(queueClient);
+}
+
+void Connection::removeQueueClient(QueueClient* queueClient)
+{
+    MutexLocker locker(m_connectionQueueClientsMutex);
+    size_t index = m_connectionQueueClients.find(queueClient);
+
+    ASSERT(index != notFound);
+    m_connectionQueueClients.remove(index);
+}
+
 void Connection::setDidCloseOnConnectionWorkQueueCallback(DidCloseOnConnectionWorkQueueCallback callback)
 {
     ASSERT(!m_isConnected);
@@ -514,6 +531,19 @@ void Connection::processIncomingMessage(MessageID messageID, PassOwnPtr<Argument
         
             m_waitForMessageCondition.signal();
             return;
+        }
+    }
+
+    // Hand off the message to the connection queue clients.
+    {
+        MutexLocker locker(m_connectionQueueClientsMutex);
+
+        for (size_t i = 0; i < m_connectionQueueClients.size(); ++i) {
+            if (!m_connectionQueueClients[i]->willProcessMessageOnClientRunLoop(this, incomingMessage.messageID(), incomingMessage.arguments())) {
+                // A connection queue client handled the message, our work here is done.
+                incomingMessage.releaseArguments();
+                return;
+            }
         }
     }
 

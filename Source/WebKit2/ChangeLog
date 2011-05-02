@@ -1,3 +1,23 @@
+2011-05-02  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Adam Roben.
+
+        Need a way to handle CoreIPC messages on the connection work queue
+        https://bugs.webkit.org/show_bug.cgi?id=59954
+
+        Add a Connection::QueueClient abstract class. This class has a single pure virtual
+        member function, willProcessMessageOnClientRunLoop which should return true if the message 
+        should be forwarded to the next Connection::QueueClient in the list or Connection::Client's 
+        run loop for processing and false otherwise. Users of Connection can use addQueueClient to
+        add clients and all messages will be dispatched  to the queue clients first.
+
+        * Platform/CoreIPC/Connection.cpp:
+        (CoreIPC::Connection::addQueueClient):
+        (CoreIPC::Connection::removeQueueClient):
+        (CoreIPC::Connection::processIncomingMessage):
+        * Platform/CoreIPC/Connection.h:
+        (CoreIPC::Connection::QueueClient::~QueueClient):
+
 2011-05-02  Jeff Miller  <jeffm@apple.com>
 
         Reviewed by Adam Roben.

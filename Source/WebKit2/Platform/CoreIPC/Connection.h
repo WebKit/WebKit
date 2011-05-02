@@ -78,18 +78,15 @@ while (0)
 class Connection : public ThreadSafeRefCounted<Connection> {
 public:
     class MessageReceiver {
-    protected:
-        virtual ~MessageReceiver() { }
-
     public:
         virtual void didReceiveMessage(Connection*, MessageID, ArgumentDecoder*) = 0;
         virtual SyncReplyMode didReceiveSyncMessage(Connection*, MessageID, ArgumentDecoder*, ArgumentEncoder*) { ASSERT_NOT_REACHED(); return AutomaticReply; }
+
+    protected:
+        virtual ~MessageReceiver() { }
     };
     
     class Client : public MessageReceiver {
-    protected:
-        virtual ~Client() { }
-
     public:
         virtual void didClose(Connection*) = 0;
         virtual void didReceiveInvalidMessage(Connection*, MessageID) = 0;
@@ -98,6 +95,17 @@ public:
 #if PLATFORM(WIN)
         virtual Vector<HWND> windowsToReceiveSentMessagesWhileWaitingForSyncReply() = 0;
 #endif
+
+    protected:
+        virtual ~Client() { }
+    };
+
+    class QueueClient {
+    public:
+        virtual bool willProcessMessageOnClientRunLoop(Connection*, MessageID, ArgumentDecoder*) = 0;
+
+    protected:
+        virtual ~QueueClient() { }
     };
 
 #if PLATFORM(MAC)
@@ -129,7 +137,10 @@ public:
     // handling the message on the client thread first.
     typedef void (*DidCloseOnConnectionWorkQueueCallback)(WorkQueue&, Connection*);
     void setDidCloseOnConnectionWorkQueueCallback(DidCloseOnConnectionWorkQueueCallback callback);
-                                                
+
+    void addQueueClient(QueueClient*);
+    void removeQueueClient(QueueClient*);
+
     bool open();
     void invalidate();
     void markCurrentlyDispatchedMessageAsInvalid();
@@ -233,6 +244,9 @@ private:
     bool m_isConnected;
     WorkQueue m_connectionQueue;
     RunLoop* m_clientRunLoop;
+
+    Mutex m_connectionQueueClientsMutex;
+    Vector<QueueClient*> m_connectionQueueClients;
 
     unsigned m_inDispatchMessageCount;
     unsigned m_inDispatchMessageMarkedDispatchWhenWaitingForSyncReplyCount;
