@@ -761,12 +761,12 @@ size_t StringImpl::reverseFindIgnoringCase(StringImpl* matchString, unsigned ind
     return delta;
 }
 
-bool StringImpl::endsWith(StringImpl* m_data, bool caseSensitive)
+bool StringImpl::endsWith(StringImpl* matchString, bool caseSensitive)
 {
-    ASSERT(m_data);
-    if (m_length >= m_data->m_length) {
-        unsigned start = m_length - m_data->m_length;
-        return (caseSensitive ? find(m_data, start) : findIgnoringCase(m_data, start)) == start;
+    ASSERT(matchString);
+    if (m_length >= matchString->m_length) {
+        unsigned start = m_length - matchString->m_length;
+        return (caseSensitive ? find(matchString, start) : findIgnoringCase(matchString, start)) == start;
     }
     return false;
 }
