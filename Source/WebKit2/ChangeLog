@@ -1,3 +1,17 @@
+2011-04-29  Chris Marrin  <cmarrin@apple.com>
+
+        Reviewed by Simon Fraser.
+
+        Pages with accelerated compositing do not redraw unless scrolled
+        https://bugs.webkit.org/show_bug.cgi?id=59851
+
+        Added a setNeedDisplay on the non-composited content layer after
+        the size is changed so it paints the full size of the layer. Called
+        only for the areas newly exposed, if any.
+
+        * WebProcess/WebPage/ca/LayerTreeHostCA.cpp:
+        (WebKit::LayerTreeHostCA::sizeDidChange):
+
 2011-05-02  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Adam Roben.
