@@ -1,3 +1,22 @@
+2011-05-02  Mark Pilgrim  <pilgrim@chromium.org>
+
+        Reviewed by Tony Chang.
+
+        Port Mozilla's IndexedDB tests: cursor mutation in object store
+        https://bugs.webkit.org/show_bug.cgi?id=59933
+
+        This is a test case *adapted* from a test in Mozilla's IndexedDB
+        test suite. The original test checked cursor mutation while iterating
+        an index cursor (tracked as bug 59822). This test checks whether the
+        cursor mutation is successfully recognized while iterating a straight
+        objectstore cursor. Specifically, it deletes a record that's already
+        been iterated, then adds a record to the objectstore during iteration,
+        then checks that no records were skipped and that the added record is
+        eventually found during iteration.
+
+        * storage/indexeddb/mozilla/cursor-mutation-objectstore-only-expected.txt: Added.
+        * storage/indexeddb/mozilla/cursor-mutation-objectstore-only.html: Added.
+
 2011-05-02  Csaba Osztrogonác  <ossy@webkit.org>
 
         Update Qt specific expected result after r85499.
