@@ -2202,7 +2202,7 @@ static void drawPageBackground(CGContextRef context, WebPageProxy* page, const I
 - (void)_setFindIndicator:(PassRefPtr<FindIndicator>)findIndicator fadeOut:(BOOL)fadeOut
 {
     if (!findIndicator) {
-        _data->_findIndicatorWindow = 0;
+        _data->_findIndicatorWindow = nullptr;
         return;
     }
 

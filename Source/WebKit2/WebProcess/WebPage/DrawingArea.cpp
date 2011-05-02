@@ -48,7 +48,7 @@ PassOwnPtr<DrawingArea> DrawingArea::create(WebPage* webPage, const WebPageCreat
 #if PLATFORM(MAC) || PLATFORM(WIN) || PLATFORM(QT)
         return DrawingAreaImpl::create(webPage, parameters);
 #else
-        return 0;
+        return PassOwnPtr<DrawingArea>();
 #endif
     case DrawingAreaTypeChunkedUpdate:
         return adoptPtr(new ChunkedUpdateDrawingArea(webPage));
@@ -58,7 +58,7 @@ PassOwnPtr<DrawingArea> DrawingArea::create(WebPage* webPage, const WebPageCreat
 #endif
     }
 
-    return 0;
+    return PassOwnPtr<DrawingArea>();
 }
 
 DrawingArea::DrawingArea(DrawingAreaType type, WebPage* webPage)

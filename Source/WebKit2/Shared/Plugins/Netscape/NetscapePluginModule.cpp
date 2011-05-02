@@ -256,7 +256,7 @@ void NetscapePluginModule::unload()
 {
     ASSERT(!m_isInitialized);
 
-    m_module = 0;
+    m_module = nullptr;
 }
 
 } // namespace WebKit

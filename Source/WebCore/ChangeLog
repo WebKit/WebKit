@@ -1,3 +1,15 @@
+2011-05-02  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by David Levin.
+
+        PLATFORM(MAC) should (almost!) build with strict PassOwnPtr
+        https://bugs.webkit.org/show_bug.cgi?id=59924
+
+        * css/CSSGrammar.y:
+        * platform/graphics/mac/SimpleFontDataMac.mm:
+            - Memory management for the font cache is somewhat... complext.
+              This will require some careful thought to sort out.
+
 2011-05-02  Levi Weintraub  <leviw@chromium.org>
 
         Reviewed by Eric Seidel.

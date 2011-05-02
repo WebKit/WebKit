@@ -293,7 +293,7 @@ void NetscapePluginStream::stop(NPReason reason)
         return;
     }
 
-    m_deliveryData = 0;
+    m_deliveryData = nullptr;
     m_deliveryDataTimer.stop();
 
     if (m_transferMode == NP_ASFILE || m_transferMode == NP_ASFILEONLY) {

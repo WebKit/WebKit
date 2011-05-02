@@ -28,6 +28,10 @@
  */
 
 #import "config.h"
+
+// FIXME: Remove this define!
+#define LOOSE_PASS_OWN_PTR
+
 #import "SimpleFontData.h"
 
 #import "BlockExceptions.h"

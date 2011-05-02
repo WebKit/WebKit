@@ -387,7 +387,7 @@ PassOwnPtr<ArgumentDecoder> Connection::sendSyncMessage(MessageID messageID, uin
 
     if (!isValid()) {
         didFailToSendSyncMessage();
-        return 0;
+        return PassOwnPtr<ArgumentDecoder>();
     }
 
     // Push the pending sync reply information on our stack.
@@ -395,7 +395,7 @@ PassOwnPtr<ArgumentDecoder> Connection::sendSyncMessage(MessageID messageID, uin
         MutexLocker locker(m_syncReplyStateMutex);
         if (!m_shouldWaitForSyncReplies) {
             didFailToSendSyncMessage();
-            return 0;
+            return PassOwnPtr<ArgumentDecoder>();
         }
 
         m_pendingSyncReplies.append(PendingSyncReply(syncRequestID));
@@ -457,7 +457,7 @@ PassOwnPtr<ArgumentDecoder> Connection::waitForSyncReply(uint64_t syncRequestID,
         // If that happens, we need to stop waiting, or we'll hang since we won't get
         // any more incoming messages.
         if (!isValid())
-            return 0;
+            return PassOwnPtr<ArgumentDecoder>();
 
         // We didn't find a sync reply yet, keep waiting.
 #if PLATFORM(WIN)
@@ -471,7 +471,7 @@ PassOwnPtr<ArgumentDecoder> Connection::waitForSyncReply(uint64_t syncRequestID,
     if (m_client)
         m_client->syncMessageSendTimedOut(this);
 
-    return 0;
+    return PassOwnPtr<ArgumentDecoder>();
 }
 
 void Connection::processIncomingSyncReply(PassOwnPtr<ArgumentDecoder> arguments)
@@ -626,10 +626,10 @@ void Connection::dispatchSyncMessage(MessageID messageID, ArgumentDecoder* argum
     }
 
     // Create our reply encoder.
-    ArgumentEncoder* replyEncoder = ArgumentEncoder::create(syncRequestID).leakPtr();
+    OwnPtr<ArgumentEncoder> replyEncoder = ArgumentEncoder::create(syncRequestID);
     
-    // Hand off both the decoder and encoder to the client..
-    SyncReplyMode syncReplyMode = m_client->didReceiveSyncMessage(this, messageID, arguments, replyEncoder);
+    // Hand off both the decoder and encoder to the client.
+    SyncReplyMode syncReplyMode = m_client->didReceiveSyncMessage(this, messageID, arguments, replyEncoder.get());
 
     // FIXME: If the message was invalid, we should send back a SyncMessageError.
     ASSERT(!arguments->isInvalid());
@@ -641,7 +641,7 @@ void Connection::dispatchSyncMessage(MessageID messageID, ArgumentDecoder* argum
     }
 
     // Send the reply.
-    sendSyncReply(replyEncoder);
+    sendSyncReply(replyEncoder.release());
 }
 
 void Connection::didFailToSendSyncMessage()

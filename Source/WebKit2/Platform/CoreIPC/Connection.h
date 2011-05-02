@@ -185,14 +185,19 @@ private:
         
         PassOwnPtr<T> releaseArguments()
         {
-            T* arguments = m_arguments;
+            OwnPtr<T> arguments = adoptPtr(m_arguments);
             m_arguments = 0;
 
-            return arguments;
+            return arguments.release();
         }
         
     private:
         MessageID m_messageID;
+        // The memory management of this class is very unusual. The class acts
+        // as if it has an owning reference to m_arguments (e.g., accepting a
+        // PassOwnPtr in its constructor) in all ways except that it does not
+        // deallocate m_arguments on destruction.
+        // FIXME: Does this leak m_arguments on destruction?
         T* m_arguments;
     };
 

@@ -212,20 +212,20 @@ bool InjectedBundle::isPageBoxVisible(WebFrame* frame, int pageIndex)
 static PassOwnPtr<Vector<String> > toStringVector(ImmutableArray* patterns)
 {
     if (!patterns)
-        return 0;
+        return PassOwnPtr<Vector<String> >();
 
     size_t size =  patterns->size();
     if (!size)
-        return 0;
+        return PassOwnPtr<Vector<String> >();
 
-    Vector<String>* patternsVector = new Vector<String>;
+    OwnPtr<Vector<String> > patternsVector = adoptPtr(new Vector<String>);
     patternsVector->reserveInitialCapacity(size);
     for (size_t i = 0; i < size; ++i) {
         WebString* entry = patterns->at<WebString>(i);
         if (entry)
             patternsVector->uncheckedAppend(entry->string());
     }
-    return patternsVector;
+    return patternsVector.release();
 }
 
 void InjectedBundle::addUserScript(WebPageGroupProxy* pageGroup, InjectedBundleScriptWorld* scriptWorld, const String& source, const String& url, ImmutableArray* whitelist, ImmutableArray* blacklist, WebCore::UserScriptInjectionTime injectionTime, WebCore::UserContentInjectedFrames injectedFrames)

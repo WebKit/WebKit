@@ -1,3 +1,33 @@
+2011-05-02  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by David Levin.
+
+        PLATFORM(MAC) should (almost!) build with strict PassOwnPtr
+        https://bugs.webkit.org/show_bug.cgi?id=59924
+
+        * Platform/CoreIPC/Connection.cpp:
+        (CoreIPC::Connection::sendSyncMessage):
+        (CoreIPC::Connection::waitForSyncReply):
+        (CoreIPC::Connection::dispatchSyncMessage):
+        * Platform/CoreIPC/Connection.h:
+        (CoreIPC::Connection::Message::releaseArguments):
+            - The memory management for this class is very strange.  I wrote a
+              large comment.  Hopefully a kind soul will come by and fix it.
+        * Shared/Plugins/Netscape/NetscapePluginModule.cpp:
+        (WebKit::NetscapePluginModule::unload):
+        * UIProcess/API/mac/WKView.mm:
+        (-[WKView _setFindIndicator:fadeOut:]):
+        * WebProcess/FullScreen/mac/WebFullScreenManagerMac.mm:
+        (WebKit::WebFullScreenManagerMac::setRootFullScreenLayer):
+        * WebProcess/InjectedBundle/InjectedBundle.cpp:
+        (WebKit::toStringVector):
+        * WebProcess/Plugins/Netscape/NetscapePluginStream.cpp:
+        (WebKit::NetscapePluginStream::stop):
+        * WebProcess/WebCoreSupport/WebInspectorFrontendClient.cpp:
+        (WebKit::WebInspectorFrontendClient::WebInspectorFrontendClient):
+        * WebProcess/WebPage/DrawingArea.cpp:
+        (WebKit::DrawingArea::create):
+
 2011-04-29  Chris Marrin  <cmarrin@apple.com>
 
         Reviewed by Simon Fraser.

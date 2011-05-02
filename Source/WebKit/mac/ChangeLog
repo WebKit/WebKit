@@ -1,3 +1,21 @@
+2011-05-02  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by David Levin.
+
+        PLATFORM(MAC) should (almost!) build with strict PassOwnPtr
+        https://bugs.webkit.org/show_bug.cgi?id=59924
+
+        * History/WebHistory.mm:
+        (-[WebHistory _visitedURL:withTitle:method:wasFailure:increaseVisitCount:]):
+        * Plugins/WebBaseNetscapePluginView.mm:
+        (-[WebBaseNetscapePluginView initWithFrame:pluginPackage:URL:baseURL:MIMEType:attributeKeys:attributeValues:loadManually:element:WebCore::]):
+        * WebCoreSupport/WebFrameLoaderClient.mm:
+        (WebFrameLoaderClient::savePlatformDataToCachedFrame):
+        * WebView/WebView.mm:
+        (-[WebView _injectMailQuirksScript]):
+        (-[WebView _injectOutlookQuirksScript]):
+        (toStringVector):
+
 2011-05-02  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Adam Barth.

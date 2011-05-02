@@ -162,7 +162,7 @@ String WebHaltablePlugin::pluginName() const
         _mode = NP_EMBED;
     
     _loadManually = loadManually;
-    _haltable = new WebHaltablePlugin(self);
+    _haltable = adoptPtr(new WebHaltablePlugin(self));
     return self;
 }
 

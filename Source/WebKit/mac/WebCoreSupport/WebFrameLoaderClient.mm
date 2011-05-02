@@ -1205,8 +1205,8 @@ void WebFrameLoaderClient::setTitle(const StringWithDirection& title, const KURL
 
 void WebFrameLoaderClient::savePlatformDataToCachedFrame(CachedFrame* cachedFrame)
 {
-    WebCachedFramePlatformData* webPlatformData = new WebCachedFramePlatformData([m_webFrame->_private->webFrameView documentView]);
-    cachedFrame->setCachedFramePlatformData(webPlatformData);
+    OwnPtr<WebCachedFramePlatformData> webPlatformData = adoptPtr(new WebCachedFramePlatformData([m_webFrame->_private->webFrameView documentView]));
+    cachedFrame->setCachedFramePlatformData(webPlatformData.release());
 }
 
 void WebFrameLoaderClient::transitionToCommittedFromCachedFrame(CachedFrame* cachedFrame)
