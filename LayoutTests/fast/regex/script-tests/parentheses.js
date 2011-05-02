@@ -217,6 +217,16 @@ shouldBe("regexp48.exec('http://www.acme.com/this/is/a/path/file.txt')", "['http
 var regexp49 = /(?:([^:]*?)(?:(?:\?(.*?)?)?)(?:(?:#)?)$)|(?:^(?:(\w+):\/*([\w\.\-\d]+)(?::(\d+)|)(?=(?:\/|$))|)(?:$|\/?(.*?)(?:\?(.*?)?|)(?:#(.*)|)$))/;
 shouldBe("regexp49.exec('http://www.acme.com/this/is/a/path/file.txt')", "['http://www.acme.com/this/is/a/path/file.txt',undefined,undefined,'http','www.acme.com',undefined,'this/is/a/path/file.txt',undefined,undefined]");
 
+var regexp50 = /((a)b{28,}c|d)x/;
+shouldBeNull("regexp50.exec('((a)b{28,}c|d)x')");
+shouldBe("regexp50.exec('abbbbbbbbbbbbbbbbbbbbbbbbbbbbcx')", "['abbbbbbbbbbbbbbbbbbbbbbbbbbbbcx', 'abbbbbbbbbbbbbbbbbbbbbbbbbbbbc', 'a']");
+shouldBe("regexp50.exec('dx')", "['dx', 'd', undefined]");
+
+var s = "((.\s{-}).{28,}\P{Yi}?{,30}\|.)\x9e{-,}\P{Any}";
+var regexp51 = new RegExp(s);
+shouldBeNull("regexp51.exec('abc')");
+shouldBe("regexp51.exec(s)", "[')\x9e{-,}P{Any}',')',undefined]");
+
 shouldBe("'Hi Bob'.match(/(Rob)|(Bob)|(Robert)|(Bobby)/)", "['Bob',undefined,'Bob',undefined,undefined]");
 
 var successfullyParsed = true;

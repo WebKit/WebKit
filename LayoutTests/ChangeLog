@@ -1,3 +1,16 @@
+2011-05-02  Michael Saboff  <msaboff@apple.com>
+
+        Reviewed by Geoffrey Garen.
+
+        crash in JSC::RegExp::match
+        https://bugs.webkit.org/show_bug.cgi?id=58922
+
+        New tests to check for proper clearing and chaining of backtrack
+        data labels.
+
+        * fast/regex/parentheses-expected.txt:
+        * fast/regex/script-tests/parentheses.js:
+
 2011-05-02  Adrienne Walker  <enne@google.com>
 
         [chromium] Unreviewed, rebaseline small scrollbar image differences after r85527

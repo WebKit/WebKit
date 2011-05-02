@@ -950,9 +950,10 @@ class YarrGenerator : private MacroAssembler {
                 m_backtrack.clearSubDataLabelPtr();
             } else {
                 // If we have a backtrack label, connect the datalabel to it directly.
-                if (m_backtrack.isLabel())
+                if (m_backtrack.isLabel()) {
                     generator->m_expressionState.m_backtrackRecords.append(AlternativeBacktrackRecord(dataLabel, m_backtrack.getLabel()));
-                else
+                    m_backtrack.clearSubDataLabelPtr();
+                } else
                     setBacktrackDataLabel(dataLabel);
             }
         }

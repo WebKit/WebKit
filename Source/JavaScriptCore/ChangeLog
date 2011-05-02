@@ -1,3 +1,18 @@
+2011-05-02  Michael Saboff  <msaboff@apple.com>
+
+        Reviewed by Geoffrey Garen.
+
+        crash in JSC::RegExp::match
+        https://bugs.webkit.org/show_bug.cgi?id=58922
+
+        Cleared chained backtrack data label when linking label even if that 
+        label doesn't chain itself.  This is needed so that subsequent 
+        backtrack data labels point to the next outer paren and not within 
+        the current paren.
+
+        * yarr/YarrJIT.cpp:
+        (JSC::Yarr::YarrGenerator::TermGenerationState::linkDataLabelToBacktrackIfExists):
+
 2011-05-02  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Oliver Hunt.
