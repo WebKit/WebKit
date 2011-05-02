@@ -3553,7 +3553,6 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
     float zoomFactor = m_style->effectiveZoom();
 
     Length l;
-    bool apply = false;
 
     unsigned short valueType = value->cssValueType();
 
@@ -3943,203 +3942,6 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
         m_style->setResize(r);
         return;
     }
-    
-    // length, percent
-    case CSSPropertyMaxWidth:
-        // +none +inherit
-        if (primitiveValue && primitiveValue->getIdent() == CSSValueNone) {
-            l = Length(undefinedLength, Fixed);
-            apply = true;
-        }
-    case CSSPropertyTop:
-    case CSSPropertyLeft:
-    case CSSPropertyRight:
-    case CSSPropertyBottom:
-    case CSSPropertyWidth:
-    case CSSPropertyMinWidth:
-    case CSSPropertyMarginTop:
-    case CSSPropertyMarginRight:
-    case CSSPropertyMarginBottom:
-    case CSSPropertyMarginLeft:
-        // +inherit +auto
-        if (id == CSSPropertyWidth || id == CSSPropertyMinWidth || id == CSSPropertyMaxWidth) {
-            if (primitiveValue && primitiveValue->getIdent() == CSSValueIntrinsic) {
-                l = Length(Intrinsic);
-                apply = true;
-            }
-            else if (primitiveValue && primitiveValue->getIdent() == CSSValueMinIntrinsic) {
-                l = Length(MinIntrinsic);
-                apply = true;
-            }
-        }
-        if (id != CSSPropertyMaxWidth && primitiveValue && primitiveValue->getIdent() == CSSValueAuto)
-            apply = true;
-    case CSSPropertyPaddingTop:
-    case CSSPropertyPaddingRight:
-    case CSSPropertyPaddingBottom:
-    case CSSPropertyPaddingLeft:
-    case CSSPropertyTextIndent:
-        // +inherit
-    {
-        if (isInherit) {
-            HANDLE_INHERIT_COND(CSSPropertyMaxWidth, maxWidth, MaxWidth)
-            HANDLE_INHERIT_COND(CSSPropertyBottom, bottom, Bottom)
-            HANDLE_INHERIT_COND(CSSPropertyTop, top, Top)
-            HANDLE_INHERIT_COND(CSSPropertyLeft, left, Left)
-            HANDLE_INHERIT_COND(CSSPropertyRight, right, Right)
-            HANDLE_INHERIT_COND(CSSPropertyWidth, width, Width)
-            HANDLE_INHERIT_COND(CSSPropertyMinWidth, minWidth, MinWidth)
-            HANDLE_INHERIT_COND(CSSPropertyPaddingTop, paddingTop, PaddingTop)
-            HANDLE_INHERIT_COND(CSSPropertyPaddingRight, paddingRight, PaddingRight)
-            HANDLE_INHERIT_COND(CSSPropertyPaddingBottom, paddingBottom, PaddingBottom)
-            HANDLE_INHERIT_COND(CSSPropertyPaddingLeft, paddingLeft, PaddingLeft)
-            HANDLE_INHERIT_COND(CSSPropertyMarginTop, marginTop, MarginTop)
-            HANDLE_INHERIT_COND(CSSPropertyMarginRight, marginRight, MarginRight)
-            HANDLE_INHERIT_COND(CSSPropertyMarginBottom, marginBottom, MarginBottom)
-            HANDLE_INHERIT_COND(CSSPropertyMarginLeft, marginLeft, MarginLeft)
-            HANDLE_INHERIT_COND(CSSPropertyTextIndent, textIndent, TextIndent)
-            return;
-        }
-        else if (isInitial) {
-            HANDLE_INITIAL_COND_WITH_VALUE(CSSPropertyMaxWidth, MaxWidth, MaxSize)
-            HANDLE_INITIAL_COND_WITH_VALUE(CSSPropertyBottom, Bottom, Offset)
-            HANDLE_INITIAL_COND_WITH_VALUE(CSSPropertyTop, Top, Offset)
-            HANDLE_INITIAL_COND_WITH_VALUE(CSSPropertyLeft, Left, Offset)
-            HANDLE_INITIAL_COND_WITH_VALUE(CSSPropertyRight, Right, Offset)
-            HANDLE_INITIAL_COND_WITH_VALUE(CSSPropertyWidth, Width, Size)
-            HANDLE_INITIAL_COND_WITH_VALUE(CSSPropertyMinWidth, MinWidth, MinSize)
-            HANDLE_INITIAL_COND_WITH_VALUE(CSSPropertyPaddingTop, PaddingTop, Padding)
-            HANDLE_INITIAL_COND_WITH_VALUE(CSSPropertyPaddingRight, PaddingRight, Padding)
-            HANDLE_INITIAL_COND_WITH_VALUE(CSSPropertyPaddingBottom, PaddingBottom, Padding)
-            HANDLE_INITIAL_COND_WITH_VALUE(CSSPropertyPaddingLeft, PaddingLeft, Padding)
-            HANDLE_INITIAL_COND_WITH_VALUE(CSSPropertyMarginTop, MarginTop, Margin)
-            HANDLE_INITIAL_COND_WITH_VALUE(CSSPropertyMarginRight, MarginRight, Margin)
-            HANDLE_INITIAL_COND_WITH_VALUE(CSSPropertyMarginBottom, MarginBottom, Margin)
-            HANDLE_INITIAL_COND_WITH_VALUE(CSSPropertyMarginLeft, MarginLeft, Margin)
-            HANDLE_INITIAL_COND(CSSPropertyTextIndent, TextIndent)
-            return;
-        } 
-
-        if (primitiveValue && !apply) {
-            int type = primitiveValue->primitiveType();
-            if (CSSPrimitiveValue::isUnitTypeLength(type))
-                // Handle our quirky margin units if we have them.
-                l = Length(primitiveValue->computeLengthIntForLength(style(), m_rootElementStyle, zoomFactor), Fixed, 
-                           primitiveValue->isQuirkValue());
-            else if (type == CSSPrimitiveValue::CSS_PERCENTAGE)
-                l = Length(primitiveValue->getDoubleValue(), Percent);
-            else
-                return;
-            apply = true;
-        }
-        if (!apply) return;
-        switch (id) {
-            case CSSPropertyMaxWidth:
-                m_style->setMaxWidth(l);
-                break;
-            case CSSPropertyBottom:
-                m_style->setBottom(l);
-                break;
-            case CSSPropertyTop:
-                m_style->setTop(l);
-                break;
-            case CSSPropertyLeft:
-                m_style->setLeft(l);
-                break;
-            case CSSPropertyRight:
-                m_style->setRight(l);
-                break;
-            case CSSPropertyWidth:
-                m_style->setWidth(l);
-                break;
-            case CSSPropertyMinWidth:
-                m_style->setMinWidth(l);
-                break;
-            case CSSPropertyPaddingTop:
-                m_style->setPaddingTop(l);
-                break;
-            case CSSPropertyPaddingRight:
-                m_style->setPaddingRight(l);
-                break;
-            case CSSPropertyPaddingBottom:
-                m_style->setPaddingBottom(l);
-                break;
-            case CSSPropertyPaddingLeft:
-                m_style->setPaddingLeft(l);
-                break;
-            case CSSPropertyMarginTop:
-                m_style->setMarginTop(l);
-                break;
-            case CSSPropertyMarginRight:
-                m_style->setMarginRight(l);
-                break;
-            case CSSPropertyMarginBottom:
-                m_style->setMarginBottom(l);
-                break;
-            case CSSPropertyMarginLeft:
-                m_style->setMarginLeft(l);
-                break;
-            case CSSPropertyTextIndent:
-                m_style->setTextIndent(l);
-                break;
-            default:
-                break;
-            }
-        return;
-    }
-
-    case CSSPropertyMaxHeight:
-        if (primitiveValue && primitiveValue->getIdent() == CSSValueNone) {
-            l = Length(undefinedLength, Fixed);
-            apply = true;
-        }
-    case CSSPropertyHeight:
-    case CSSPropertyMinHeight:
-        if (primitiveValue && primitiveValue->getIdent() == CSSValueIntrinsic) {
-            l = Length(Intrinsic);
-            apply = true;
-        } else if (primitiveValue && primitiveValue->getIdent() == CSSValueMinIntrinsic) {
-            l = Length(MinIntrinsic);
-            apply = true;
-        } else if (id != CSSPropertyMaxHeight && primitiveValue && primitiveValue->getIdent() == CSSValueAuto)
-            apply = true;
-        if (isInherit) {
-            HANDLE_INHERIT_COND(CSSPropertyMaxHeight, maxHeight, MaxHeight)
-            HANDLE_INHERIT_COND(CSSPropertyHeight, height, Height)
-            HANDLE_INHERIT_COND(CSSPropertyMinHeight, minHeight, MinHeight)
-            return;
-        }
-        if (isInitial) {
-            HANDLE_INITIAL_COND_WITH_VALUE(CSSPropertyMaxHeight, MaxHeight, MaxSize)
-            HANDLE_INITIAL_COND_WITH_VALUE(CSSPropertyHeight, Height, Size)
-            HANDLE_INITIAL_COND_WITH_VALUE(CSSPropertyMinHeight, MinHeight, MinSize)
-            return;
-        }
-
-        if (primitiveValue && !apply) {
-            unsigned short type = primitiveValue->primitiveType();
-            if (CSSPrimitiveValue::isUnitTypeLength(type))
-                l = Length(primitiveValue->computeLengthIntForLength(style(), m_rootElementStyle, zoomFactor), Fixed);
-            else if (type == CSSPrimitiveValue::CSS_PERCENTAGE)
-                l = Length(primitiveValue->getDoubleValue(), Percent);
-            else
-                return;
-            apply = true;
-        }
-        if (apply)
-            switch (id) {
-                case CSSPropertyMaxHeight:
-                    m_style->setMaxHeight(l);
-                    break;
-                case CSSPropertyHeight:
-                    m_style->setHeight(l);
-                    break;
-                case CSSPropertyMinHeight:
-                    m_style->setMinHeight(l);
-                    break;
-            }
-        return;
-
     case CSSPropertyVerticalAlign:
         HANDLE_INHERIT_AND_INITIAL(verticalAlign, VerticalAlign)
         if (!primitiveValue)
@@ -5528,36 +5330,6 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
         HANDLE_INHERIT_AND_INITIAL(transformOriginY, TransformOriginY)
         HANDLE_INHERIT_AND_INITIAL(transformOriginZ, TransformOriginZ)
         return;
-    case CSSPropertyWebkitTransformOriginX: {
-        HANDLE_INHERIT_AND_INITIAL(transformOriginX, TransformOriginX)
-        if (!primitiveValue)
-            return;
-        Length l;
-        int type = primitiveValue->primitiveType();
-        if (CSSPrimitiveValue::isUnitTypeLength(type))
-            l = Length(primitiveValue->computeLengthIntForLength(style(), m_rootElementStyle, zoomFactor), Fixed);
-        else if (type == CSSPrimitiveValue::CSS_PERCENTAGE)
-            l = Length(primitiveValue->getDoubleValue(), Percent);
-        else
-            return;
-        m_style->setTransformOriginX(l);
-        break;
-    }
-    case CSSPropertyWebkitTransformOriginY: {
-        HANDLE_INHERIT_AND_INITIAL(transformOriginY, TransformOriginY)
-        if (!primitiveValue)
-            return;
-        Length l;
-        int type = primitiveValue->primitiveType();
-        if (CSSPrimitiveValue::isUnitTypeLength(type))
-            l = Length(primitiveValue->computeLengthIntForLength(style(), m_rootElementStyle, zoomFactor), Fixed);
-        else if (type == CSSPrimitiveValue::CSS_PERCENTAGE)
-            l = Length(primitiveValue->getDoubleValue(), Percent);
-        else
-            return;
-        m_style->setTransformOriginY(l);
-        break;
-    }
     case CSSPropertyWebkitTransformOriginZ: {
         HANDLE_INHERIT_AND_INITIAL(transformOriginZ, TransformOriginZ)
         if (!primitiveValue)
@@ -5601,36 +5373,6 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
         HANDLE_INHERIT_AND_INITIAL(perspectiveOriginX, PerspectiveOriginX)
         HANDLE_INHERIT_AND_INITIAL(perspectiveOriginY, PerspectiveOriginY)
         return;
-    case CSSPropertyWebkitPerspectiveOriginX: {
-        HANDLE_INHERIT_AND_INITIAL(perspectiveOriginX, PerspectiveOriginX)
-        if (!primitiveValue)
-            return;
-        Length l;
-        int type = primitiveValue->primitiveType();
-        if (CSSPrimitiveValue::isUnitTypeLength(type))
-            l = Length(primitiveValue->computeLengthIntForLength(style(), m_rootElementStyle, zoomFactor), Fixed);
-        else if (type == CSSPrimitiveValue::CSS_PERCENTAGE)
-            l = Length(primitiveValue->getDoubleValue(), Percent);
-        else
-            return;
-        m_style->setPerspectiveOriginX(l);
-        return;
-    }
-    case CSSPropertyWebkitPerspectiveOriginY: {
-        HANDLE_INHERIT_AND_INITIAL(perspectiveOriginY, PerspectiveOriginY)
-        if (!primitiveValue)
-            return;
-        Length l;
-        int type = primitiveValue->primitiveType();
-        if (CSSPrimitiveValue::isUnitTypeLength(type))
-            l = Length(primitiveValue->computeLengthIntForLength(style(), m_rootElementStyle, zoomFactor), Fixed);
-        else if (type == CSSPrimitiveValue::CSS_PERCENTAGE)
-            l = Length(primitiveValue->getDoubleValue(), Percent);
-        else
-            return;
-        m_style->setPerspectiveOriginY(l);
-        return;
-    }
     case CSSPropertyWebkitAnimation:
         if (isInitial)
             m_style->clearAnimations();
@@ -5950,6 +5692,29 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
     case CSSPropertyOverflow:
     case CSSPropertyOverflowX:
     case CSSPropertyOverflowY:
+    case CSSPropertyMaxWidth:
+    case CSSPropertyTop:
+    case CSSPropertyLeft:
+    case CSSPropertyRight:
+    case CSSPropertyBottom:
+    case CSSPropertyWidth:
+    case CSSPropertyMinWidth:
+    case CSSPropertyMarginTop:
+    case CSSPropertyMarginRight:
+    case CSSPropertyMarginBottom:
+    case CSSPropertyMarginLeft:
+    case CSSPropertyPaddingTop:
+    case CSSPropertyPaddingRight:
+    case CSSPropertyPaddingBottom:
+    case CSSPropertyPaddingLeft:
+    case CSSPropertyTextIndent:
+    case CSSPropertyMaxHeight:
+    case CSSPropertyHeight:
+    case CSSPropertyMinHeight:
+    case CSSPropertyWebkitTransformOriginX:
+    case CSSPropertyWebkitTransformOriginY:
+    case CSSPropertyWebkitPerspectiveOriginX:
+    case CSSPropertyWebkitPerspectiveOriginY:
         ASSERT_NOT_REACHED();
         return;
 #if ENABLE(SVG)

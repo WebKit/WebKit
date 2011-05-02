@@ -195,6 +195,51 @@ private:
     }
 };
 
+enum LengthAuto {AutoDisabled = 0, AutoEnabled = 1};
+enum LengthIntrinsic {IntrinsicDisabled = 0, IntrinsicEnabled = 1};
+enum LengthMinIntrinsic {MinIntrinsicDisabled = 0, MinIntrinsicEnabled = 1};
+enum LengthNone {NoneDisabled = 0, NoneEnabled = 1};
+enum LengthUndefined {UndefinedDisabled = 0, UndefinedEnabled = 1};
+template <LengthAuto autoEnabled = AutoDisabled,
+          LengthIntrinsic intrinsicEnabled = IntrinsicDisabled,
+          LengthMinIntrinsic minIntrinsicEnabled = MinIntrinsicDisabled,
+          LengthNone noneEnabled = NoneDisabled,
+          LengthUndefined noneUndefined = UndefinedDisabled>
+class ApplyPropertyLength : public ApplyPropertyDefaultBase<Length> {
+public:
+    ApplyPropertyLength(GetterFunction getter, SetterFunction setter, InitialFunction initial)
+        : ApplyPropertyDefaultBase<Length>(getter, setter, initial)
+    {
+    }
+
+private:
+    virtual void applyValue(CSSStyleSelector* selector, CSSValue* value) const
+    {
+        if (!value->isPrimitiveValue())
+            return;
+
+        CSSPrimitiveValue* primitiveValue = static_cast<CSSPrimitiveValue*>(value);
+        if (noneEnabled && primitiveValue->getIdent() == CSSValueNone)
+            if (noneUndefined)
+                (selector->style()->*m_setter)(Length(undefinedLength, Fixed));
+            else
+                (selector->style()->*m_setter)(Length());
+        else if (intrinsicEnabled && primitiveValue->getIdent() == CSSValueIntrinsic)
+            (selector->style()->*m_setter)(Length(Intrinsic));
+        else if (minIntrinsicEnabled && primitiveValue->getIdent() == CSSValueMinIntrinsic)
+            (selector->style()->*m_setter)(Length(MinIntrinsic));
+        else if (autoEnabled && primitiveValue->getIdent() == CSSValueAuto)
+            (selector->style()->*m_setter)(Length());
+        else {
+            int type = primitiveValue->primitiveType();
+            if (CSSPrimitiveValue::isUnitTypeLength(type))
+                (selector->style()->*m_setter)(Length(primitiveValue->computeLengthIntForLength(selector->style(), selector->rootElementStyle(), selector->style()->effectiveZoom()), Fixed, primitiveValue->isQuirkValue()));
+            else if (type == CSSPrimitiveValue::CSS_PERCENTAGE)
+                (selector->style()->*m_setter)(Length(primitiveValue->getDoubleValue(), Percent));
+        }
+    }
+};
+
 template <typename T>
 class ApplyPropertyFillLayer : public ApplyPropertyBase {
 public:
@@ -428,6 +473,36 @@ CSSStyleApplyProperty::CSSStyleApplyProperty()
     setPropertyValue(CSSPropertyWebkitTextEmphasisColor, new ApplyPropertyColor(&RenderStyle::textEmphasisColor, &RenderStyle::setTextEmphasisColor, &RenderStyle::color));
     setPropertyValue(CSSPropertyWebkitTextFillColor, new ApplyPropertyColor(&RenderStyle::textFillColor, &RenderStyle::setTextFillColor, &RenderStyle::color));
     setPropertyValue(CSSPropertyWebkitTextStrokeColor, new ApplyPropertyColor(&RenderStyle::textStrokeColor, &RenderStyle::setTextStrokeColor, &RenderStyle::color));
+
+    setPropertyValue(CSSPropertyTop, new ApplyPropertyLength<AutoEnabled>(&RenderStyle::top, &RenderStyle::setTop, &RenderStyle::initialOffset));
+    setPropertyValue(CSSPropertyRight, new ApplyPropertyLength<AutoEnabled>(&RenderStyle::right, &RenderStyle::setRight, &RenderStyle::initialOffset));
+    setPropertyValue(CSSPropertyBottom, new ApplyPropertyLength<AutoEnabled>(&RenderStyle::bottom, &RenderStyle::setBottom, &RenderStyle::initialOffset));
+    setPropertyValue(CSSPropertyLeft, new ApplyPropertyLength<AutoEnabled>(&RenderStyle::left, &RenderStyle::setLeft, &RenderStyle::initialOffset));
+
+    setPropertyValue(CSSPropertyWidth, new ApplyPropertyLength<AutoEnabled, IntrinsicEnabled, MinIntrinsicEnabled>(&RenderStyle::width, &RenderStyle::setWidth, &RenderStyle::initialSize));
+    setPropertyValue(CSSPropertyHeight, new ApplyPropertyLength<AutoEnabled, IntrinsicEnabled, MinIntrinsicEnabled>(&RenderStyle::height, &RenderStyle::setHeight, &RenderStyle::initialSize));
+
+    setPropertyValue(CSSPropertyTextIndent, new ApplyPropertyLength<>(&RenderStyle::textIndent, &RenderStyle::setTextIndent, &RenderStyle::initialTextIndent));
+
+    setPropertyValue(CSSPropertyMaxHeight, new ApplyPropertyLength<AutoEnabled, IntrinsicEnabled, MinIntrinsicEnabled, NoneEnabled, UndefinedEnabled>(&RenderStyle::maxHeight, &RenderStyle::setMaxHeight, &RenderStyle::initialMaxSize));
+    setPropertyValue(CSSPropertyMaxWidth, new ApplyPropertyLength<AutoEnabled, IntrinsicEnabled, MinIntrinsicEnabled, NoneEnabled, UndefinedEnabled>(&RenderStyle::maxWidth, &RenderStyle::setMaxWidth, &RenderStyle::initialMaxSize));
+    setPropertyValue(CSSPropertyMinHeight, new ApplyPropertyLength<AutoEnabled, IntrinsicEnabled, MinIntrinsicEnabled>(&RenderStyle::minHeight, &RenderStyle::setMinHeight, &RenderStyle::initialMinSize));
+    setPropertyValue(CSSPropertyMinWidth, new ApplyPropertyLength<AutoEnabled, IntrinsicEnabled, MinIntrinsicEnabled>(&RenderStyle::minWidth, &RenderStyle::setMinWidth, &RenderStyle::initialMinSize));
+
+    setPropertyValue(CSSPropertyMarginTop, new ApplyPropertyLength<AutoEnabled>(&RenderStyle::marginTop, &RenderStyle::setMarginTop, &RenderStyle::initialMargin));
+    setPropertyValue(CSSPropertyMarginRight, new ApplyPropertyLength<AutoEnabled>(&RenderStyle::marginRight, &RenderStyle::setMarginRight, &RenderStyle::initialMargin));
+    setPropertyValue(CSSPropertyMarginBottom, new ApplyPropertyLength<AutoEnabled>(&RenderStyle::marginBottom, &RenderStyle::setMarginBottom, &RenderStyle::initialMargin));
+    setPropertyValue(CSSPropertyMarginLeft, new ApplyPropertyLength<AutoEnabled>(&RenderStyle::marginLeft, &RenderStyle::setMarginLeft, &RenderStyle::initialMargin));
+
+    setPropertyValue(CSSPropertyPaddingTop, new ApplyPropertyLength<>(&RenderStyle::paddingTop, &RenderStyle::setPaddingTop, &RenderStyle::initialPadding));
+    setPropertyValue(CSSPropertyPaddingRight, new ApplyPropertyLength<>(&RenderStyle::paddingRight, &RenderStyle::setPaddingRight, &RenderStyle::initialPadding));
+    setPropertyValue(CSSPropertyPaddingBottom, new ApplyPropertyLength<>(&RenderStyle::paddingBottom, &RenderStyle::setPaddingBottom, &RenderStyle::initialPadding));
+    setPropertyValue(CSSPropertyPaddingLeft, new ApplyPropertyLength<>(&RenderStyle::paddingLeft, &RenderStyle::setPaddingLeft, &RenderStyle::initialPadding));
+
+    setPropertyValue(CSSPropertyWebkitPerspectiveOriginX, new ApplyPropertyLength<>(&RenderStyle::perspectiveOriginX, &RenderStyle::setPerspectiveOriginX, &RenderStyle::initialPerspectiveOriginX));
+    setPropertyValue(CSSPropertyWebkitPerspectiveOriginY, new ApplyPropertyLength<>(&RenderStyle::perspectiveOriginY, &RenderStyle::setPerspectiveOriginY, &RenderStyle::initialPerspectiveOriginY));
+    setPropertyValue(CSSPropertyWebkitTransformOriginX, new ApplyPropertyLength<>(&RenderStyle::transformOriginX, &RenderStyle::setTransformOriginX, &RenderStyle::initialTransformOriginX));
+    setPropertyValue(CSSPropertyWebkitTransformOriginY, new ApplyPropertyLength<>(&RenderStyle::transformOriginY, &RenderStyle::setTransformOriginY, &RenderStyle::initialTransformOriginY));
 }
 
 

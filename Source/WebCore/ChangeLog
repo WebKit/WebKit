@@ -1,3 +1,25 @@
+2011-05-02  Luke Macpherson   <macpherson@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        Implement Length based CSS properties in CSSStyleApplyProperty
+        https://bugs.webkit.org/show_bug.cgi?id=59314
+
+        No new tests as no functionality changed.
+
+        * css/CSSStyleApplyProperty.cpp:
+        (WebCore::ApplyPropertyLength::ApplyPropertyLength):
+        Added this class to handle all length types.
+        Property specific behavior is handled through set of boolean parameters.
+        (WebCore::CSSStyleApplyProperty::CSSStyleApplyProperty):
+        Added calls to set up entries for the newly added length properties.
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::applyProperty):
+        Remove property implementations mow implemented in CSSStyleApplyProperty.
+        * css/CSSStyleSelector.h:
+        (WebCore::CSSStyleSelector::rootElementStyle):
+        Expose m_rootElementStyle via getter.
+
 2011-05-02  Eric Carlson  <eric.carlson@apple.com>
 
         Reviewed by Eric Seidel.
