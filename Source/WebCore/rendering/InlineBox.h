@@ -147,6 +147,11 @@ private:
 public:
 #ifndef NDEBUG
     void showTreeForThis() const;
+    void showLineTreeForThis() const;
+    
+    virtual void showBox(int = 0) const;
+    virtual void showLineTreeAndMark(const InlineBox* = 0, const char* = 0, const InlineBox* = 0, const char* = 0, const RenderObject* = 0, int = 0) const;
+    virtual const char* boxName() const;
 #endif
 
     bool isText() const { return m_isText; }
@@ -386,6 +391,7 @@ inline void InlineBox::setHasBadParent()
 #ifndef NDEBUG
 // Outside the WebCore namespace for ease of invocation from gdb.
 void showTree(const WebCore::InlineBox*);
+void showLineTree(const WebCore::InlineBox*);
 #endif
 
 #endif // InlineBox_h

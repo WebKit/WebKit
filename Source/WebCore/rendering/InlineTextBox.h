@@ -88,7 +88,11 @@ public:
     int logicalBottomVisualOverflow() const { return logicalOverflowRect().maxY(); }
     int logicalLeftVisualOverflow() const { return logicalOverflowRect().x(); }
     int logicalRightVisualOverflow() const { return logicalOverflowRect().maxX(); }
-    
+
+#ifndef NDEBUG
+    virtual void showBox(int = 0) const;
+    virtual const char* boxName() const;
+#endif
 private:
     int selectionTop();
     int selectionBottom();

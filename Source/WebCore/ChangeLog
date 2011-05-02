@@ -1,3 +1,37 @@
+2011-05-02  Levi Weintraub  <leviw@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        showLineTree/showLineTreeForThis would make working with the line box tree easier
+        https://bugs.webkit.org/show_bug.cgi?id=59662
+
+        Adding a showLineTree/showLineTreeForThis method to help visualize and debug
+        the line tree. Also adding a missing showRenderTreeForThis method to RenderObject.
+
+        No new tests since this is a debugging feature only and not compiled in release.
+
+        * rendering/InlineBox.cpp:
+        (WebCore::InlineBox::showLineTreeForThis):
+        (WebCore::InlineBox::showLineTreeAndMark):
+        (WebCore::InlineBox::showBox):
+        (showLineTree):
+        * rendering/InlineBox.h:
+        * rendering/InlineFlowBox.cpp:
+        (WebCore::InlineFlowBox::showLineTreeAndMark):
+        * rendering/InlineFlowBox.h:
+        * rendering/InlineTextBox.cpp:
+        (WebCore::InlineTextBox::showBox):
+        * rendering/InlineTextBox.h:
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::showLineTreeAndMark):
+        * rendering/RenderBlock.h:
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::showRenderTreeForThis):
+        (WebCore::RenderObject::showLineTreeForThis):
+        (showTree):
+        (showLineTree):
+        * rendering/RenderObject.h:
+
 2011-05-02  Dimitri Glazkov  <dglazkov@chromium.org>
 
         Reviewed by Eric Carlson.

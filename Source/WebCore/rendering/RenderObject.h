@@ -107,6 +107,10 @@ struct DashboardRegionValue {
 };
 #endif
 
+#ifndef NDEBUG
+const int showTreeCharacterOffset = 39;
+#endif
+
 // Base class for all rendering tree objects.
 class RenderObject : public CachedResourceClient {
     friend class RenderBlock;
@@ -222,6 +226,8 @@ private:
 public:
 #ifndef NDEBUG
     void showTreeForThis() const;
+    void showRenderTreeForThis() const;
+    void showLineTreeForThis() const;
 
     void showRenderObject() const;
     // We don't make printedCharacters an optional parameter so that
@@ -1126,6 +1132,7 @@ inline void adjustFloatRectForPageScale(FloatRect& rect, float pageScale)
 #ifndef NDEBUG
 // Outside the WebCore namespace for ease of invocation from gdb.
 void showTree(const WebCore::RenderObject*);
+void showLineTree(const WebCore::RenderObject*);
 void showRenderTree(const WebCore::RenderObject* object1);
 // We don't make object2 an optional parameter so that showRenderTree
 // can be called from gdb easily.

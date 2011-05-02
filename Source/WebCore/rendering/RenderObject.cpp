@@ -1385,6 +1385,17 @@ void RenderObject::showTreeForThis() const
         node()->showTreeForThis();
 }
 
+void RenderObject::showRenderTreeForThis() const
+{
+    showRenderTree(this, 0);
+}
+
+void RenderObject::showLineTreeForThis() const
+{
+    if (containingBlock())
+        containingBlock()->showLineTreeAndMark(0, 0, 0, 0, this);
+}
+
 void RenderObject::showRenderObject() const
 {
     showRenderObject(0);
@@ -1403,7 +1414,7 @@ void RenderObject::showRenderObject(int printedCharacters) const
 
     if (node()) {
         if (printedCharacters)
-            for (; printedCharacters < 39; printedCharacters++)
+            for (; printedCharacters < showTreeCharacterOffset; printedCharacters++)
                 fputc(' ', stderr);
         fputc('\t', stderr);
         node()->showNode();
@@ -2626,10 +2637,16 @@ bool RenderObject::nodeAtFloatPoint(const HitTestRequest&, HitTestResult&, const
 
 #ifndef NDEBUG
 
-void showTree(const WebCore::RenderObject* ro)
+void showTree(const WebCore::RenderObject* object)
 {
-    if (ro)
-        ro->showTreeForThis();
+    if (object)
+        object->showTreeForThis();
+}
+
+void showLineTree(const WebCore::RenderObject* object)
+{
+    if (object)
+        object->showLineTreeForThis();
 }
 
 void showRenderTree(const WebCore::RenderObject* object1)

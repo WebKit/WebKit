@@ -79,10 +79,44 @@ void InlineBox::operator delete(void* ptr, size_t sz)
 }
 
 #ifndef NDEBUG
+const char* InlineBox::boxName() const
+{
+    return "InlineBox";
+}
+
 void InlineBox::showTreeForThis() const
 {
     if (m_renderer)
         m_renderer->showTreeForThis();
+}
+
+void InlineBox::showLineTreeForThis() const
+{
+    if (m_renderer)
+        m_renderer->containingBlock()->showLineTreeAndMark(this, "*");
+}
+
+void InlineBox::showLineTreeAndMark(const InlineBox* markedBox1, const char* markedLabel1, const InlineBox* markedBox2, const char* markedLabel2, const RenderObject* obj, int depth) const
+{
+    int printedCharacters = 0;
+    if (this == markedBox1)
+        printedCharacters += fprintf(stderr, "%s", markedLabel1);
+    if (this == markedBox2)
+        printedCharacters += fprintf(stderr, "%s", markedLabel2);
+    if (renderer() == obj)
+        printedCharacters += fprintf(stderr, "*");
+    for (; printedCharacters < depth * 2; printedCharacters++)
+        fputc(' ', stderr);
+
+    showBox(printedCharacters);
+}
+
+void InlineBox::showBox(int printedCharacters) const
+{
+    printedCharacters += fprintf(stderr, "%s\t%p", boxName(), this);
+    for (; printedCharacters < showTreeCharacterOffset; printedCharacters++)
+        fputc(' ', stderr);
+    fprintf(stderr, "\t%s %p\n", renderer() ? renderer()->renderName() : "No Renderer", renderer());
 }
 #endif
 
@@ -337,6 +371,12 @@ void showTree(const WebCore::InlineBox* b)
 {
     if (b)
         b->showTreeForThis();
+}
+
+void showLineTree(const WebCore::InlineBox* b)
+{
+    if (b)
+        b->showLineTreeForThis();
 }
 
 #endif

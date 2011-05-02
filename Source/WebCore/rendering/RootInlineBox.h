@@ -161,6 +161,9 @@ public:
 
     Node* getLogicalStartBoxWithNode(InlineBox*&) const;
     Node* getLogicalEndBoxWithNode(InlineBox*&) const;
+#ifndef NDEBUG
+    virtual const char* boxName() const;
+#endif
 private:
     bool hasEllipsisBox() const { return m_hasEllipsisBoxOrHyphen; }
     void setHasEllipsisBox(bool hasEllipsisBox) { m_hasEllipsisBoxOrHyphen = hasEllipsisBox; }

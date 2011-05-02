@@ -61,6 +61,9 @@ public:
 
 #ifndef NDEBUG
     virtual ~InlineFlowBox();
+    
+    virtual void showLineTreeAndMark(const InlineBox* = 0, const char* = 0, const InlineBox* = 0, const char* = 0, const RenderObject* = 0, int = 0) const;
+    virtual const char* boxName() const;
 #endif
 
     InlineFlowBox* prevLineBox() const { return m_prevLineBox; }

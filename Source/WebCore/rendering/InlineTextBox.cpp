@@ -1291,4 +1291,30 @@ bool InlineTextBox::containsCaretOffset(int offset) const
     return true;
 }
 
+#ifndef NDEBUG
+
+const char* InlineTextBox::boxName() const
+{
+    return "InlineTextBox";
+}
+
+void InlineTextBox::showBox(int printedCharacters) const
+{
+    const RenderText* obj = toRenderText(renderer());
+    String value = obj->text();
+    value = value.substring(start(), len());
+    value.replace('\\', "\\\\");
+    value.replace('\n', "\\n");
+    printedCharacters += fprintf(stderr, "%s\t%p", boxName(), this);
+    for (; printedCharacters < showTreeCharacterOffset; printedCharacters++)
+        fputc(' ', stderr);
+    printedCharacters = fprintf(stderr, "\t%s %p", obj->renderName(), obj);
+    const int rendererCharacterOffset = 24;
+    for (; printedCharacters < rendererCharacterOffset; printedCharacters++)
+        fputc(' ', stderr);
+    fprintf(stderr, "(%d,%d) \"%s\"\n", start(), start() + len(), value.utf8().data());
+}
+
+#endif
+
 } // namespace WebCore
