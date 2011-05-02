@@ -33,16 +33,8 @@ from optparse import make_option
 import os
 import threading
 
-from webkitpy.common.checkout.api import Checkout
-from webkitpy.common.checkout.scm import default_scm
 from webkitpy.common.config.ports import WebKitPort
 from webkitpy.common.host import Host
-from webkitpy.common.net.bugzilla import Bugzilla
-from webkitpy.common.net.buildbot import BuildBot
-from webkitpy.common.net.irc.ircproxy import IRCProxy
-from webkitpy.common.net.statusserver import StatusServer
-from webkitpy.common.system import executive, filesystem, platforminfo, user, workspace
-from webkitpy.layout_tests import port
 from webkitpy.tool.multicommandtool import MultiCommandTool
 from webkitpy.tool import commands
 

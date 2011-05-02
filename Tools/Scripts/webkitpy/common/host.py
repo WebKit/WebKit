@@ -28,7 +28,7 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 
-from webkitpy.common.checkout.api import Checkout
+from webkitpy.common.checkout import Checkout
 from webkitpy.common.checkout.scm import default_scm
 from webkitpy.common.config.ports import WebKitPort
 from webkitpy.common.net import bugzilla, buildbot, irc, statusserver

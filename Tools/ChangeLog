@@ -1,3 +1,17 @@
+2011-05-01  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        Move checkout/api.py to checkout/checkout.py
+        https://bugs.webkit.org/show_bug.cgi?id=59906
+
+        This is more consistent with Python style.
+
+        * Scripts/webkitpy/common/checkout/__init__.py:
+        * Scripts/webkitpy/common/checkout/scm_unittest.py:
+        * Scripts/webkitpy/common/host.py:
+        * Scripts/webkitpy/tool/main.py:
+
 2011-05-01  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Adam Barth.

@@ -34,9 +34,9 @@ import shutil
 import tempfile
 import unittest
 
-from webkitpy.common.checkout.api import Checkout
-from webkitpy.common.checkout.changelog import ChangeLogEntry
-from webkitpy.common.checkout.scm import detect_scm_system, CommitMessage
+from .checkout import Checkout
+from .changelog import ChangeLogEntry
+from .scm import detect_scm_system, CommitMessage
 from webkitpy.common.system.outputcapture import OutputCapture
 from webkitpy.common.system.executive import ScriptError
 from webkitpy.thirdparty.mock import Mock

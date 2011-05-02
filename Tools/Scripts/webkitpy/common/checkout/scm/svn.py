@@ -28,11 +28,15 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 import os
+import re
+import shutil
+import sys
 
 from webkitpy.common.memoized import memoized
 
 from .scm import AuthenticationError, SCM, commit_error_handler
 from webkitpy.common.system.executive import Executive, run_command, ScriptError
+from webkitpy.common.system import ospath
 
 
 # A mixin class that represents common functionality for SVN and Git-SVN.
