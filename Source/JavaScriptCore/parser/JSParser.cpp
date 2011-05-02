@@ -682,6 +682,8 @@ template <JSParser::SourceElementsMode mode, class TreeBuilder> TreeSourceElemen
     bool seenNonDirective = false;
     const Identifier* directive = 0;
     unsigned startOffset = m_token.m_info.startOffset;
+    unsigned oldLastLineNumber = m_lexer->lastLineNumber();
+    unsigned oldLineNumber = m_lexer->lineNumber();
     bool hasSetStrict = false;
     while (TreeStatement statement = parseStatement(context, directive)) {
         if (mode == CheckForStrictMode && !seenNonDirective) {
@@ -692,6 +694,8 @@ template <JSParser::SourceElementsMode mode, class TreeBuilder> TreeSourceElemen
                     failIfFalse(isValidStrictMode());
                     m_lexer->setOffset(startOffset);
                     next();
+                    m_lexer->setLastLineNumber(oldLastLineNumber);
+                    m_lexer->setLineNumber(oldLineNumber);
                     failIfTrue(m_error);
                     continue;
                 }

@@ -2,6 +2,18 @@
 
         Reviewed by Gavin Barraclough.
 
+        Strict-mode only reserved words not reserved
+        https://bugs.webkit.org/show_bug.cgi?id=55342
+
+        Fix line number tracking when we rollback the lexer.
+
+        * parser/JSParser.cpp:
+        (JSC::JSParser::parseSourceElements):
+
+2011-05-01  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Gavin Barraclough.
+
         ES5 Strict mode does not allow getter and setter for same propId
         https://bugs.webkit.org/show_bug.cgi?id=57295
 
