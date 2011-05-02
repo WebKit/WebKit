@@ -1,3 +1,10 @@
+2011-05-02  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [Qt] Update an exptected file after r85474.
+
+        * platform/qt/fast/css/preserve-user-specified-zoom-level-on-reload-expected.png:
+        * platform/qt/fast/css/preserve-user-specified-zoom-level-on-reload-expected.txt:
+
 2011-05-02  Philippe Normand  <pnormand@igalia.com>
 
         Reviewed by Eric Carlson.
