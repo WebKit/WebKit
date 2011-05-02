@@ -2903,7 +2903,7 @@ BUGWK55968 BUGWK58306 GPU MAC : compositing/webgl/webgl-nonpremultiplied-blend.h
 BUGWK55968 GPU WIN DEBUG : compositing/webgl/webgl-nonpremultiplied-blend.html = IMAGE
 
 // 2 pixel stretching when rendering some videos with the GPU
-BUGCR74102 GPU WIN LINUX : media/video-controls-rendering.html = IMAGE
+// BUGCR74102 GPU WIN LINUX : media/video-controls-rendering.html = IMAGE
 // BUGCR74102 GPU WIN : media/video-layer-crash.html = IMAGE
 
 // New test causes an assertion failure.
@@ -3613,7 +3613,6 @@ BUGCR79917 WIN LINUX : transforms/svg-vs-css.xhtml = IMAGE
 BUGDPRANKE MAC SLOW : editing/selection/move-by-word-visually.html = PASS
 BUGDPRANKE MAC : compositing/iframes/invisible-nested-iframe-show.html = TEXT
 BUGDPRANKE MAC GPU : compositing/geometry/video-fixed-scrolling.html = IMAGE
-BUGDPRANKE MAC GPU : media/video-volume-slider.html = IMAGE
 BUGDPRANKE MAC : plugins/mouse-click-iframe-to-plugin.html = TIMEOUT PASS
 BUGDPRANKE MAC : animations/3d/transform-origin-vs-functions.html = TEXT PASS
 
