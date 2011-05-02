@@ -1804,7 +1804,7 @@ BUGCR32693 MAC DEBUG : svg/dom/SVGRectElement/rect-modify-rx.svg = TEXT PASS
 BUGCR33293 SKIP : fast/media/lifetime.html = TIMEOUT
 
 // WebKit roll 53655 -> 53704
-BUGCR32900 MAC WIN LINUX : http/tests/misc/slow-loading-mask.html = IMAGE+TEXT
+BUGCR32900 MAC WIN LINUX : http/tests/misc/slow-loading-mask.html = IMAGE+TEXT IMAGE
 
 // WebKit roll 54059 -> 54075
 BUGCR33538 : fast/dom/Window/anonymous-slot-with-changes.html = TEXT
@@ -2246,7 +2246,7 @@ BUGWK44199 DEBUG : perf/array-binary-search.html = PASS TEXT TIMEOUT
 BUGWK44199 DEBUG : perf/class-list-remove.html = PASS TEXT TIMEOUT
 
 // Failing after http://trac.webkit.org/changeset/65665/
-BUGWK44278 MAC WIN LINUX : svg/transforms/text-with-mask-with-svg-transform.svg = IMAGE+TEXT
+BUGWK44278 MAC WIN LINUX : svg/transforms/text-with-mask-with-svg-transform.svg = IMAGE+TEXT IMAGE
 
 // Clip paths aren't working after http://trac.webkit.org/changeset/65729
 BUGWK44341 WIN LINUX : svg/clip-path/clip-path-pixelation.svg = IMAGE+TEXT
@@ -2454,8 +2454,8 @@ BUGWK48352 : fast/blockflow/block-level-images.html = IMAGE PASS
 
 // Vertical text needs to be implemented in platforms other than OS X.
 BUGCR65877 LINUX WIN : fast/blockflow/border-vertical-lr.html = IMAGE+TEXT
-BUGCR65877 MAC LINUX WIN : fast/blockflow/japanese-lr-selection.html = IMAGE+TEXT
-BUGCR65877 MAC LINUX WIN : fast/blockflow/japanese-rl-selection.html = IMAGE+TEXT
+BUGCR65877 MAC LINUX WIN : fast/blockflow/japanese-lr-selection.html = IMAGE+TEXT IMAGE
+BUGCR65877 MAC LINUX WIN : fast/blockflow/japanese-rl-selection.html = IMAGE+TEXT IMAGE
 BUGCR65877 WIN : fast/blockflow/broken-ideographic-font.html = IMAGE
 BUGCR65877 LINUX : fast/blockflow/broken-ideographic-font.html = IMAGE+TEXT
 BUGCR65877 LINUX WIN : fast/blockflow/vertical-font-fallback.html = IMAGE+TEXT
@@ -4029,4 +4029,3 @@ BUG_HCLAM : fast/js/mozilla/strict/assign-to-callee-name.html = TEXT
 
 // New test added in r85382. Missing results.
 BUG_HCLAM : fast/forms/date-input-visible-strings.html = MISSING
-
