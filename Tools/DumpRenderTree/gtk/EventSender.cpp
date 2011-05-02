@@ -62,7 +62,7 @@ static int lastClickPositionX;
 static int lastClickPositionY;
 static int lastClickTimeOffset;
 static int lastClickButton;
-static unsigned int buttonCurrentlyDown;
+static unsigned buttonCurrentlyDown;
 static int clickCount;
 GdkDragContext* currentDragSourceContext;
 
