@@ -670,7 +670,7 @@ namespace JSC {
         AssemblerLabel loadBranchTarget(int rd, Condition cc = AL, int useConstantPool = 0)
         {
             ensureSpace(sizeof(ARMWord), sizeof(ARMWord));
-            m_jumps.append(m_buffer.label() | (useConstantPool & 0x1));
+            m_jumps.append(m_buffer.codeSize() | (useConstantPool & 0x1));
             ldr_un_imm(rd, InvalidBranchTarget, cc);
             return m_buffer.label();
         }

@@ -1,3 +1,10 @@
+2011-05-02  Gabor Loki  <loki@webkit.org>
+
+        Buildfix for ARM after r85448
+
+        * assembler/ARMAssembler.h:
+        (JSC::ARMAssembler::loadBranchTarget):
+
 2011-05-01  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Gavin Barraclough.
