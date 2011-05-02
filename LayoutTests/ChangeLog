@@ -1,3 +1,10 @@
+2011-05-02  Philippe Normand  <pnormand@igalia.com>
+
+        Unreviewed, GTK rebaseline after r85355.
+
+        * platform/gtk/fast/table/prepend-in-anonymous-table-expected.txt:
+        * platform/gtk/tables/mozilla_expected_failures/other/test4-expected.txt:
+
 2011-05-01  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Gavin Barraclough.
