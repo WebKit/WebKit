@@ -48,10 +48,6 @@ import http_server_base
 _log = logging.getLogger("webkitpy.layout_tests.port.http_server")
 
 
-class HttpdNotStarted(Exception):
-    pass
-
-
 class Lighttpd(http_server_base.HttpServerBase):
 
     def __init__(self, port_obj, output_dir, background=False, port=None,
@@ -223,7 +219,7 @@ class Lighttpd(http_server_base.HttpServerBase):
 
         # Our process terminated already
         if not server_started or self._process.returncode != None:
-            raise google.httpd_utils.HttpdNotStarted('Failed to start httpd.')
+            raise Exception('Failed to start httpd.')
 
         _log.debug("Server successfully started")
 
