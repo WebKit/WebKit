@@ -1,3 +1,18 @@
+2011-05-02  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        Avoid wasted cycles updating paths when popping the context stack
+        https://bugs.webkit.org/show_bug.cgi?id=59967
+
+        CanvasRenderingContext2D has to map the current path through
+        transforms whenever the context stack is popped, which creates
+        a lot of platform path objects. Avoid extra work here when the
+        path is empty, or when the transform is identity.
+
+        * platform/graphics/cg/PathCG.cpp:
+        (WebCore::Path::transform):
+
 2011-05-02  Enrica Casucci  <enrica@apple.com>
 
         Reviewed by Dan Bernstein.

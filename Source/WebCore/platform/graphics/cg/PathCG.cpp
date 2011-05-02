@@ -300,6 +300,9 @@ void Path::apply(void* info, PathApplierFunction function) const
 
 void Path::transform(const AffineTransform& transform)
 {
+    if (transform.isIdentity() || isEmpty())
+        return;
+
     CGMutablePathRef path = CGPathCreateMutable();
     CGAffineTransform transformCG = transform;
     CGPathAddPath(path, &transformCG, m_path);
