@@ -1,3 +1,13 @@
+2011-05-02  Tony Chang  <tony@chromium.org>
+
+        Remove unused files.
+
+        * platform/gtk/fast/text/international/pop-up-button-text-alignment-and-direction-expected.checksum: Removed. This file differs from
+            the value in the png file, but I assume that the png is correct (more recently generated).
+        * platform/mac/fast/table/dynamic-caption-add-before-child-expected.checksum: Removed.
+        * platform/mac/fast/table/dynamic-caption-add-remove-before-child-expected.checksum: Removed.
+        * platform/mac/fast/table/multiple-captions-display-expected.checksum: Removed.
+
 2011-05-02  Csaba Osztrogonác  <ossy@webkit.org>
 
         Update Qt specific expected result after r85499.
