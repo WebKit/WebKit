@@ -1,5 +1,56 @@
 2011-05-02  Philippe Normand  <pnormand@igalia.com>
 
+        Unreviewed, GTK baselines for new tests.
+
+        * platform/gtk/fast/backgrounds/gradient-background-leakage-expected.png: Added.
+        * platform/gtk/fast/backgrounds/gradient-background-leakage-expected.txt: Added.
+        * platform/gtk/fast/block/float/float-overhangs-root-expected.png: Added.
+        * platform/gtk/fast/block/float/float-overhangs-root-expected.txt: Added.
+        * platform/gtk/fast/block/float/overhanging-tall-block-expected.png: Added.
+        * platform/gtk/fast/block/float/overhanging-tall-block-expected.txt: Added.
+        * platform/gtk/fast/block/positioning/rtl-fixed-positioning-expected.png: Added.
+        * platform/gtk/fast/block/positioning/rtl-fixed-positioning-expected.txt: Added.
+        * platform/gtk/fast/block/positioning/vertical-rl/fixed-positioning-expected.png: Added.
+        * platform/gtk/fast/block/positioning/vertical-rl/fixed-positioning-expected.txt: Added.
+        * platform/gtk/fast/box-shadow/single-pixel-shadow-expected.png: Added.
+        * platform/gtk/fast/box-shadow/single-pixel-shadow-expected.txt: Added.
+        * platform/gtk/fast/dom/HTMLMeterElement/meter-writing-mode-expected.png: Added.
+        * platform/gtk/fast/dom/HTMLMeterElement/meter-writing-mode-expected.txt: Added.
+        * platform/gtk/fast/dom/HTMLProgressElement/progress-writing-mode-expected.png: Added.
+        * platform/gtk/fast/dom/HTMLProgressElement/progress-writing-mode-expected.txt: Added.
+        * platform/gtk/fast/forms/date-input-visible-strings-expected.png: Added.
+        * platform/gtk/fast/forms/date-input-visible-strings-expected.txt: Added.
+        * platform/gtk/fast/html/details-add-child-1-expected.png: Added.
+        * platform/gtk/fast/html/details-add-child-1-expected.txt: Added.
+        * platform/gtk/fast/html/details-add-child-2-expected.png: Added.
+        * platform/gtk/fast/html/details-add-child-2-expected.txt: Added.
+        * platform/gtk/fast/html/details-add-summary-child-1-expected.png: Added.
+        * platform/gtk/fast/html/details-add-summary-child-1-expected.txt: Added.
+        * platform/gtk/fast/html/details-add-summary-child-2-expected.png: Added.
+        * platform/gtk/fast/html/details-add-summary-child-2-expected.txt: Added.
+        * platform/gtk/fast/html/details-remove-child-1-expected.png: Added.
+        * platform/gtk/fast/html/details-remove-child-1-expected.txt: Added.
+        * platform/gtk/fast/html/details-remove-child-2-expected.png: Added.
+        * platform/gtk/fast/html/details-remove-child-2-expected.txt: Added.
+        * platform/gtk/fast/html/details-remove-summary-child-1-expected.png: Added.
+        * platform/gtk/fast/html/details-remove-summary-child-1-expected.txt: Added.
+        * platform/gtk/fast/html/details-remove-summary-child-2-expected.png: Added.
+        * platform/gtk/fast/html/details-remove-summary-child-2-expected.txt: Added.
+        * platform/gtk/fast/table/auto-100-percent-width-expected.png: Added.
+        * platform/gtk/fast/table/auto-100-percent-width-expected.txt: Added.
+        * platform/gtk/fast/table/dynamic-caption-add-before-child-expected.png: Added.
+        * platform/gtk/fast/table/dynamic-caption-add-before-child-expected.txt: Added.
+        * platform/gtk/fast/table/dynamic-caption-add-remove-before-child-expected.png: Added.
+        * platform/gtk/fast/table/dynamic-caption-add-remove-before-child-expected.txt: Added.
+        * platform/gtk/fast/table/multiple-captions-display-expected.png: Added.
+        * platform/gtk/fast/table/multiple-captions-display-expected.txt: Added.
+        * platform/gtk/fast/text/selection-rect-rounding-expected.png: Added.
+        * platform/gtk/fast/text/selection-rect-rounding-expected.txt: Added.
+        * platform/gtk/svg/filters/feDropShadow-expected.png: Added.
+        * platform/gtk/svg/filters/feDropShadow-expected.txt: Added.
+
+2011-05-02  Philippe Normand  <pnormand@igalia.com>
+
         Unreviewed, GTK rebaseline after r85355.
 
         * platform/gtk/fast/table/prepend-in-anonymous-table-expected.txt:
