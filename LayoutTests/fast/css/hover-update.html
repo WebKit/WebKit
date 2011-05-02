@@ -1,0 +1,66 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN"
+        "http://www.w3.org/TR/html4/strict.dtd">
+<html lang="en">
+<head>
+<style>
+    div { width: 60px; text-align: center;
+            position: relative; }
+    div#a { background: green; }
+    div#b { background: yellow; }
+    div#a:hover { background: red; }
+    div#b:hover { background: green; }
+    span#c:hover { color: red; }
+</style>
+<script src="../js/resources/js-test-pre.js"></script>
+</head>
+<body onload="runtest()">
+<p><b>BUG ID:</b> <a href="http://bugs.webkit.org/show_bug.cgi?id=6821">Bugzilla bug 6821</a> Fix for 5983 will not always update hover correctly.</p>
+
+<p>To run manually, move your mouse over the black box.  You should see a green box.  If you see any other color, the test fails.</p>
+
+<script type="text/javascript">
+function finish()
+{
+    shouldBeEqualToString("window.getComputedStyle(document.getElementById('b'), null).backgroundColor", "rgb(0, 128, 0)");
+
+    if (window.layoutTestController)
+        layoutTestController.notifyDone();
+}
+
+function hideC()
+{
+    c.style.display = 'none';
+    window.setTimeout(finish, 0);
+}
+
+function hoveredC()
+{
+    window.setTimeout(hideC, 0);
+}
+
+function runtest()
+{
+    if (!window.layoutTestController)
+        return;
+
+    debug('Hover color before test: ' + window.getComputedStyle(document.getElementById("b"), null).backgroundColor);
+
+    layoutTestController.waitUntilDone();
+    var target = document.getElementById('target');
+    var x = target.offsetParent.offsetLeft + target.offsetLeft + target.offsetWidth / 2;
+    var y = target.offsetParent.offsetTop + target.offsetTop + target.offsetHeight / 2;
+    eventSender.mouseMoveTo(x, y);
+}
+
+</script>
+
+<div id="a">
+<div style="height: 20px;"></div>
+<span id="c" onmouseover="hoveredC()">Hover here<br><span id="target" style="background: black;">&nbsp;Wait&nbsp;</span></span>
+</div>
+<div id="b">
+Only green now
+</div>
+<div id="console"></div>
+</body>
+</html>
