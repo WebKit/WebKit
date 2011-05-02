@@ -1,3 +1,47 @@
+2011-05-01  Gavin Barraclough  <barraclough@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        https://bugs.webkit.org/show_bug.cgi?id=59903
+        Use AssemblerLabel throughout Assembler classes, AssemblerBuffer
+
+        Creating a lable() into the AssemblerBuffer should return an AssemblerLabel,
+        not an unsigned int.
+
+        * assembler/ARMAssembler.cpp:
+        (JSC::ARMAssembler::executableCopy):
+        * assembler/ARMAssembler.h:
+        (JSC::ARMAssembler::blx):
+        (JSC::ARMAssembler::label):
+        (JSC::ARMAssembler::loadBranchTarget):
+        * assembler/ARMv7Assembler.h:
+        (JSC::ARMv7Assembler::b):
+        (JSC::ARMv7Assembler::blx):
+        (JSC::ARMv7Assembler::bx):
+        (JSC::ARMv7Assembler::label):
+        (JSC::ARMv7Assembler::ARMInstructionFormatter::label):
+        * assembler/AssemblerBuffer.h:
+        (JSC::AssemblerBuffer::label):
+        * assembler/AssemblerBufferWithConstantPool.h:
+        * assembler/MIPSAssembler.h:
+        (JSC::MIPSAssembler::label):
+        (JSC::MIPSAssembler::relocateJumps):
+        * assembler/SH4Assembler.h:
+        (JSC::SH4Assembler::loadConstant):
+        (JSC::SH4Assembler::loadConstantUnReusable):
+        (JSC::SH4Assembler::call):
+        (JSC::SH4Assembler::jmp):
+        (JSC::SH4Assembler::jne):
+        (JSC::SH4Assembler::je):
+        (JSC::SH4Assembler::label):
+        (JSC::SH4Assembler::oneShortOp):
+        * assembler/X86Assembler.h:
+        (JSC::X86Assembler::call):
+        (JSC::X86Assembler::jmp_r):
+        (JSC::X86Assembler::label):
+        (JSC::X86Assembler::X86InstructionFormatter::immediateRel32):
+        (JSC::X86Assembler::X86InstructionFormatter::label):
+
 2011-05-01  Adam Barth  <abarth@webkit.org>
 
         Reviewed by David Levin.

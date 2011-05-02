@@ -254,7 +254,7 @@ private:
             m_maxDistance = maxPoolSize;
         flushIfNoSpaceFor(sizeof(IntegralType), 4);
 
-        m_loadOffsets.append(label());
+        m_loadOffsets.append(codeSize());
         if (isReusable) {
             for (int i = 0; i < m_numConsts; ++i) {
                 if (m_mask[i] == ReusableConst && m_pool[i] == constant) {
@@ -296,7 +296,7 @@ private:
                 AssemblerBuffer::putInt(AssemblerType::padForAlign32);
         }
 
-        int constPoolOffset = label();
+        int constPoolOffset = codeSize();
         append(reinterpret_cast<char*>(m_pool), m_numConsts * sizeof(uint32_t));
 
         // Patch each PC relative load

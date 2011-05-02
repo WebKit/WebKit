@@ -347,18 +347,18 @@ void* ARMAssembler::executableCopy(ExecutablePool* allocator)
 {
     // 64-bit alignment is required for next constant pool and JIT code as well
     m_buffer.flushWithoutBarrier(true);
-    if (m_buffer.label() & 0x7)
+    if (m_buffer.codeSize() & 0x7)
         bkpt(0);
 
     char* data = reinterpret_cast<char*>(m_buffer.executableCopy(allocator));
 
     for (Jumps::Iterator iter = m_jumps.begin(); iter != m_jumps.end(); ++iter) {
         // The last bit is set if the constant must be placed on constant pool.
-        int pos = (*iter) & (~0x1);
+        int pos = (iter->m_offset) & (~0x1);
         ARMWord* ldrAddr = reinterpret_cast_ptr<ARMWord*>(data + pos);
         ARMWord* addr = getLdrImmAddress(ldrAddr);
         if (*addr != InvalidBranchTarget) {
-            if (!(*iter & 1)) {
+            if (!(iter->m_offset & 1)) {
                 int diff = reinterpret_cast_ptr<ARMWord*>(data + *addr) - (ldrAddr + DefaultPrefetching);
 
                 if ((diff <= BOFFSET_MAX && diff >= BOFFSET_MIN)) {

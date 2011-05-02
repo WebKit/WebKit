@@ -150,9 +150,9 @@ namespace JSC {
             return m_size;
         }
 
-        unsigned label() const
+        AssemblerLabel label() const
         {
-            return m_size;
+            return AssemblerLabel(m_size);
         }
 
         void* executableCopy(ExecutablePool* allocator)

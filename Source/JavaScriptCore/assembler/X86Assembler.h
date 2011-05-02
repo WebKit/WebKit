@@ -1177,7 +1177,7 @@ public:
     AssemblerLabel call(RegisterID dst)
     {
         m_formatter.oneByteOp(OP_GROUP5_Ev, GROUP5_OP_CALLN, dst);
-        return AssemblerLabel(m_formatter.label());
+        return m_formatter.label();
     }
     
     void call_m(int offset, RegisterID base)
@@ -1197,7 +1197,7 @@ public:
     AssemblerLabel jmp_r(RegisterID dst)
     {
         m_formatter.oneByteOp(OP_GROUP5_Ev, GROUP5_OP_JMPN, dst);
-        return AssemblerLabel(m_formatter.label());
+        return m_formatter.label();
     }
     
     void jmp_m(int offset, RegisterID base)
@@ -1478,7 +1478,7 @@ public:
 
     AssemblerLabel label()
     {
-        return AssemblerLabel(m_formatter.label());
+        return m_formatter.label();
     }
     
     static AssemblerLabel labelFor(AssemblerLabel jump, intptr_t offset = 0)
@@ -1870,13 +1870,13 @@ private:
         AssemblerLabel immediateRel32()
         {
             m_buffer.putIntUnchecked(0);
-            return AssemblerLabel(label());
+            return label();
         }
 
         // Administrative methods:
 
         size_t codeSize() const { return m_buffer.codeSize(); }
-        size_t label() const { return m_buffer.label(); }
+        AssemblerLabel label() const { return m_buffer.label(); }
         bool isAligned(int alignment) const { return m_buffer.isAligned(alignment); }
         void* data() const { return m_buffer.data(); }
 

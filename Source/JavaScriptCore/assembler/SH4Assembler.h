@@ -1125,7 +1125,7 @@ public:
         uint16_t opc = getOpcodeGroup3(MOVIMM_OPCODE, dst, 0);
 
         m_buffer.ensureSpace(maxInstructionSize, sizeof(uint32_t));
-        printInstr(getOpcodeGroup3(MOVIMM_OPCODE, dst, constant), m_buffer.label());
+        printInstr(getOpcodeGroup3(MOVIMM_OPCODE, dst, constant), m_buffer.codeSize());
         m_buffer.putShortWithConstantInt(opc, constant, true);
     }
 
@@ -1136,7 +1136,7 @@ public:
         if (ensureSpace)
             m_buffer.ensureSpace(maxInstructionSize, sizeof(uint32_t));
 
-        printInstr(getOpcodeGroup3(MOVIMM_OPCODE, dst, constant), m_buffer.label());
+        printInstr(getOpcodeGroup3(MOVIMM_OPCODE, dst, constant), m_buffer.codeSize());
         m_buffer.putShortWithConstantInt(opc, constant);
     }
 
@@ -1150,7 +1150,7 @@ public:
         branch(JSR_OPCODE, scr);
         nop();
         releaseScratch(scr);
-        return AssemblerLabel(m_buffer.label());
+        return m_buffer.label();
     }
 
     AssemblerLabel call(RegisterID dst)
@@ -1158,25 +1158,25 @@ public:
         m_buffer.ensureSpace(maxInstructionSize + 2);
         branch(JSR_OPCODE, dst);
         nop();
-        return AssemblerLabel(m_buffer.label());
+        return m_buffer.label();
     }
 
     AssemblerLabel jmp()
     {
         RegisterID scr = claimScratch();
         m_buffer.ensureSpace(maxInstructionSize + 4, sizeof(uint32_t));
-        int m_size = m_buffer.label();
+        AssemblerLabel label = m_buffer.label();
         loadConstantUnReusable(0x0, scr);
         branch(BRAF_OPCODE, scr);
         nop();
         releaseScratch(scr);
-        return AssemblerLabel(m_size);
+        return label;
     }
 
     AssemblerLabel jmp(RegisterID dst)
     {
         jmpReg(dst);
-        return AssemblerLabel(m_buffer.label());
+        return m_buffer.label();
     }
 
     void jmpReg(RegisterID dst)
@@ -1188,16 +1188,16 @@ public:
 
     AssemblerLabel jne()
     {
-        int m_size = m_buffer.label();
+        AssemblerLabel label = m_buffer.label();
         branch(BF_OPCODE, 0);
-        return AssemblerLabel(m_size);
+        return label;
     }
 
     AssemblerLabel je()
     {
-        int m_size = m_buffer.label();
+        AssemblerLabel label = m_buffer.label();
         branch(BT_OPCODE, 0);
-        return AssemblerLabel(m_size);
+        return label;
     }
 
     void ret()
@@ -1209,7 +1209,7 @@ public:
     AssemblerLabel label()
     {
         m_buffer.ensureSpaceForAnyOneInstruction();
-        return AssemblerLabel(m_buffer.label());
+        return m_buffer.label();
     }
 
     int sizeOfConstantPool()
@@ -1481,7 +1481,7 @@ public:
 
     void oneShortOp(uint16_t opcode, bool checksize = true, bool isDouble = true)
     {
-        printInstr(opcode, m_buffer.label(), isDouble);
+        printInstr(opcode, m_buffer.codeSize(), isDouble);
         if (checksize)
             m_buffer.ensureSpace(maxInstructionSize);
         m_buffer.putShortUnchecked(opcode);

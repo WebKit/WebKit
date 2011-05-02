@@ -97,7 +97,7 @@ namespace JSC {
         typedef ARMRegisters::RegisterID RegisterID;
         typedef ARMRegisters::FPRegisterID FPRegisterID;
         typedef AssemblerBufferWithConstantPool<2048, 4, 4, ARMAssembler> ARMBuffer;
-        typedef SegmentedVector<int, 64> Jumps;
+        typedef SegmentedVector<AssemblerLabel, 64> Jumps;
 
         ARMAssembler() { }
 
@@ -591,7 +591,7 @@ namespace JSC {
             mov_r(ARMRegisters::lr, ARMRegisters::pc, cc);
             bx(rm, cc);
 #endif
-            return AssemblerLabel(m_buffer.label());
+            return m_buffer.label();
         }
 
         static ARMWord lsl(int reg, ARMWord value)
@@ -656,7 +656,7 @@ namespace JSC {
         AssemblerLabel label()
         {
             m_buffer.ensureSpaceForAnyOneInstruction();
-            return AssemblerLabel(m_buffer.label());
+            return m_buffer.label();
         }
 
         AssemblerLabel align(int alignment)
@@ -672,7 +672,7 @@ namespace JSC {
             ensureSpace(sizeof(ARMWord), sizeof(ARMWord));
             m_jumps.append(m_buffer.label() | (useConstantPool & 0x1));
             ldr_un_imm(rd, InvalidBranchTarget, cc);
-            return AssemblerLabel(m_buffer.label());
+            return m_buffer.label();
         }
 
         AssemblerLabel jmp(Condition cc = AL, int useConstantPool = 0)

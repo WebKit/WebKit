@@ -148,7 +148,7 @@ class MIPSAssembler {
 public:
     typedef MIPSRegisters::RegisterID RegisterID;
     typedef MIPSRegisters::FPRegisterID FPRegisterID;
-    typedef SegmentedVector<int, 64> Jumps;
+    typedef SegmentedVector<AssemblerLabel, 64> Jumps;
 
     MIPSAssembler()
     {
@@ -617,7 +617,7 @@ public:
 
     AssemblerLabel label()
     {
-        return AssemblerLabel(m_buffer.label());
+        return m_buffer.label();
     }
 
     AssemblerLabel align(int alignment)
@@ -757,7 +757,7 @@ private:
     {
         // Check each jump
         for (Jumps::Iterator iter = m_jumps.begin(); iter != m_jumps.end(); ++iter) {
-            int pos = *iter;
+            int pos = iter->m_offset;
             MIPSWord* insn = reinterpret_cast<MIPSWord*>(reinterpret_cast<intptr_t>(newBase) + pos);
             insn = insn + 2;
             // Need to make sure we have 5 valid instructions after pos

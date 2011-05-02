@@ -826,7 +826,7 @@ public:
     AssemblerLabel b()
     {
         m_formatter.twoWordOp16Op16(OP_B_T4a, OP_B_T4b);
-        return AssemblerLabel(m_formatter.label());
+        return m_formatter.label();
     }
     
     // Only allowed in IT (if then) block if last instruction.
@@ -834,14 +834,14 @@ public:
     {
         ASSERT(rm != ARMRegisters::pc);
         m_formatter.oneWordOp8RegReg143(OP_BLX, rm, (RegisterID)8);
-        return AssemblerLabel(m_formatter.label());
+        return m_formatter.label();
     }
 
     // Only allowed in IT (if then) block if last instruction.
     AssemblerLabel bx(RegisterID rm)
     {
         m_formatter.oneWordOp8RegReg143(OP_BX, rm, (RegisterID)0);
-        return AssemblerLabel(m_formatter.label());
+        return m_formatter.label();
     }
 
     void bkpt(uint8_t imm=0)
@@ -1528,7 +1528,7 @@ public:
 
     AssemblerLabel label()
     {
-        return AssemblerLabel(m_formatter.label());
+        return m_formatter.label();
     }
     
     AssemblerLabel align(int alignment)
@@ -2199,6 +2199,7 @@ private:
         // Administrative methods:
 
         size_t codeSize() const { return m_buffer.codeSize(); }
+        AssemblerLabel label() const { return m_buffer.label(); }
         bool isAligned(int alignment) const { return m_buffer.isAligned(alignment); }
         void* data() const { return m_buffer.data(); }
 
