@@ -35,6 +35,7 @@
 #include "ResourceHandle.h"
 #include "ResourceRequest.h"
 #include "ResourceResponse.h"
+#include "SecurityOrigin.h"
 #include "TransformSource.h"
 #include "XMLDocumentParser.h"
 #include "XSLStyleSheet.h"

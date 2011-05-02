@@ -43,6 +43,7 @@
 #include "MessageEvent.h"
 #include "ScriptCallStack.h"
 #include "ScriptExecutionContext.h"
+#include "SecurityOrigin.h"
 #include "ThreadableWebSocketChannel.h"
 #include "WebSocketChannel.h"
 #include <wtf/StdLibExtras.h>

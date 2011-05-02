@@ -46,6 +46,7 @@
 #include "ResourceHandle.h"
 #include "ResourceLoadScheduler.h"
 #include "SchemeRegistry.h"
+#include "SecurityOrigin.h"
 #include "Settings.h"
 #include <wtf/CurrentTime.h>
 

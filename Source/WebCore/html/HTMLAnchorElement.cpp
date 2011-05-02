@@ -37,6 +37,7 @@
 #include "PingLoader.h"
 #include "RenderImage.h"
 #include "ResourceHandle.h"
+#include "SecurityOrigin.h"
 #include "Settings.h"
 #include "UserGestureIndicator.h"
 

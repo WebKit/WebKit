@@ -418,6 +418,11 @@ PassRefPtr<MediaQueryList> DOMWindow::matchMedia(const String& media)
     return document() ? document()->mediaQueryMatcher()->matchMedia(media) : 0;
 }
 
+void DOMWindow::setSecurityOrigin(SecurityOrigin* securityOrigin)
+{
+    m_securityOrigin = securityOrigin;
+}
+
 void DOMWindow::disconnectFrame()
 {
     m_frame = 0;

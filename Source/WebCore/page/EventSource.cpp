@@ -48,6 +48,7 @@
 #include "ResourceResponse.h"
 #include "ScriptCallStack.h"
 #include "ScriptExecutionContext.h"
+#include "SecurityOrigin.h"
 #include "SerializedScriptValue.h"
 #include "TextResourceDecoder.h"
 #include "ThreadableLoader.h"

@@ -32,6 +32,7 @@
 #include "ExceptionCode.h"
 #include "Frame.h"
 #include "JSDOMWindowCustom.h"
+#include "SecurityOrigin.h"
 #include <runtime/JSLock.h>
 
 namespace WebCore {

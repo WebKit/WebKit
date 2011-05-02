@@ -61,6 +61,7 @@
 #include "RenderVideo.h"
 #include "RenderView.h"
 #include "ScriptEventListener.h"
+#include "SecurityOrigin.h"
 #include "Settings.h"
 #include "ShadowRoot.h"
 #include "TimeRanges.h"

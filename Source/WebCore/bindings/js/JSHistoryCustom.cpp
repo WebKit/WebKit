@@ -31,6 +31,7 @@
 
 #include "Frame.h"
 #include "History.h"
+#include "SerializedScriptValue.h"
 #include <runtime/JSFunction.h>
 
 using namespace JSC;

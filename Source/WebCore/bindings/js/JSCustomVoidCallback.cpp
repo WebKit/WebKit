@@ -32,6 +32,7 @@
 #include "Frame.h"
 #include "JSCallbackData.h"
 #include "JSDOMWindowCustom.h"
+#include "SecurityOrigin.h"
 #include <runtime/JSLock.h>
 #include <wtf/MainThread.h>
 

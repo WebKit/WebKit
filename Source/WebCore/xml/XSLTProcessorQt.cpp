@@ -28,6 +28,7 @@
 #include "Console.h"
 #include "DOMWindow.h"
 #include "Frame.h"
+#include "SecurityOrigin.h"
 #include "TransformSource.h"
 #include "markup.h"
 #include <wtf/Assertions.h>

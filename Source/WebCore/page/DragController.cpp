@@ -60,6 +60,7 @@
 #include "RenderView.h"
 #include "ReplaceSelectionCommand.h"
 #include "ResourceRequest.h"
+#include "SecurityOrigin.h"
 #include "SelectionController.h"
 #include "Settings.h"
 #include "Text.h"

@@ -83,6 +83,7 @@
 #import <WebCore/ReplaceSelectionCommand.h>
 #import <WebCore/RuntimeApplicationChecks.h>
 #import <WebCore/ScriptValue.h>
+#import <WebCore/SecurityOrigin.h>
 #import <WebCore/SmartReplace.h>
 #import <WebCore/SVGDocumentExtensions.h>
 #import <WebCore/SVGSMILElement.h>

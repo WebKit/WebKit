@@ -22,6 +22,7 @@
 #ifndef ScriptController_h
 #define ScriptController_h
 
+#include "FrameLoaderTypes.h"
 #include "JSDOMWindowShell.h"
 #include "ScriptControllerBase.h"
 #include "ScriptInstance.h"

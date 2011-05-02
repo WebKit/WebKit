@@ -55,6 +55,7 @@
 #import <WebCore/ProtectionSpace.h>
 #import <WebCore/RenderView.h>
 #import <WebCore/RenderWidget.h>
+#import <WebCore/SecurityOrigin.h>
 #import <WebCore/WebCoreObjCExtras.h>
 #import <WebKit/DOMPrivate.h>
 #import <runtime/InitializeThreading.h>

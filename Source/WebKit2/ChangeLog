@@ -1,3 +1,13 @@
+2011-05-02  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Adam Barth.
+
+        Prune some #includes from DOMWindow.h
+        https://bugs.webkit.org/show_bug.cgi?id=59907
+
+        * WebProcess/WebPage/WebFrame.cpp:
+        Add now missing SecurityOrigin.h #include.
+
 2011-04-29  Brian Weinstein  <bweinstein@apple.com>
 
         Reviewed by Dan Bernstein.

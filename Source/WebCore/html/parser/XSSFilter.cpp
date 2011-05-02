@@ -34,6 +34,7 @@
 #include "HTMLNames.h"
 #include "HTMLParamElement.h"
 #include "HTMLParserIdioms.h"
+#include "SecurityOrigin.h"
 #include "Settings.h"
 #include "TextEncoding.h"
 #include "TextResourceDecoder.h"

@@ -1,3 +1,34 @@
+2011-05-02  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Adam Barth.
+
+        Prune some #includes from DOMWindow.h
+        https://bugs.webkit.org/show_bug.cgi?id=59907
+
+        * page/DOMWindow.cpp:
+        (WebCore::DOMWindow::setSecurityOrigin):
+        * page/DOMWindow.h:
+        Remove #includes of SecurityOrigin and MessagePort by forward declaring
+        and moving the SecurityOrigin setter to the .cpp file. Also adds EventTarget
+        #include that was getting added by MessagePort.h.
+
+        * bindings/js/JSCustomVoidCallback.cpp:
+        * bindings/js/JSCustomXPathNSResolver.cpp:
+        * bindings/js/JSDOMWindowCustom.h:
+        * bindings/js/JSHistoryCustom.cpp:
+        * bindings/js/ScriptController.h:
+        * html/HTMLAnchorElement.cpp:
+        * html/HTMLMediaElement.cpp:
+        * html/parser/XSSFilter.cpp:
+        * inspector/InspectorDOMStorageResource.cpp:
+        * loader/MainResourceLoader.cpp:
+        * page/DragController.cpp:
+        * page/EventSource.cpp:
+        * page/Location.cpp:
+        * websockets/WebSocket.cpp:
+        * xml/XSLTProcessorLibxslt.cpp:
+        Add now missing SecurityOrigin.h #includes.
+
 2011-05-02  Eric Carlson  <eric.carlson@apple.com>
 
         Reviewed by Brady Eidson.

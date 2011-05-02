@@ -40,6 +40,7 @@
 #include "Frame.h"
 #include "InspectorFrontend.h"
 #include "InspectorValues.h"
+#include "SecurityOrigin.h"
 #include "Storage.h"
 #include "StorageEvent.h"
 

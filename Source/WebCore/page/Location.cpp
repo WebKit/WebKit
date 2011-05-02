@@ -35,6 +35,7 @@
 #include "Frame.h"
 #include "FrameLoader.h"
 #include "KURL.h"
+#include "SecurityOrigin.h"
 
 namespace WebCore {
 

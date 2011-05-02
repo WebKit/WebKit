@@ -27,9 +27,8 @@
 #ifndef DOMWindow_h
 #define DOMWindow_h
 
+#include "EventTarget.h"
 #include "KURL.h"
-#include "MessagePort.h"
-#include "SecurityOrigin.h"
 
 namespace WebCore {
 
@@ -50,6 +49,7 @@ namespace WebCore {
     class EventListener;
     class FileSystemCallback;
     class FloatRect;
+    class Frame;
     class History;
     class IDBFactory;
     class Location;
@@ -61,6 +61,7 @@ namespace WebCore {
     class PostMessageTimer;
     class ScheduledAction;
     class Screen;
+    class SecurityOrigin;
     class SerializedScriptValue;
     class Storage;
     class StorageInfo;
@@ -72,6 +73,8 @@ namespace WebCore {
 #endif
 
     struct WindowFeatures;
+
+    typedef Vector<RefPtr<MessagePort>, 1> MessagePortArray;
 
     typedef int ExceptionCode;
 
@@ -92,7 +95,7 @@ namespace WebCore {
 
         PassRefPtr<MediaQueryList> matchMedia(const String&);
 
-        void setSecurityOrigin(SecurityOrigin* securityOrigin) { m_securityOrigin = securityOrigin; }
+        void setSecurityOrigin(SecurityOrigin*);
         SecurityOrigin* securityOrigin() const { return m_securityOrigin.get(); }
 
         void setURL(const KURL& url) { m_url = url; }
