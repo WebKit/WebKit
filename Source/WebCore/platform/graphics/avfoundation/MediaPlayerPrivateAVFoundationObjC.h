@@ -86,13 +86,12 @@ private:
     virtual float mediaTimeForTimeValue(float) const;
 
     virtual void createAVPlayer();
-    virtual void createAVPlayerItem();
-    virtual void createAVAssetForURL(const String& url);
+    virtual void createAVPlayerForURL(const String& url);
 #if ENABLE(OFFLINE_WEB_APPLICATIONS)
-    virtual void createAVAssetForCacheResource(ApplicationCacheResource*);
+    virtual void createAVPlayerForCacheResource(ApplicationCacheResource*);
 #endif
     virtual MediaPlayerPrivateAVFoundation::ItemStatus playerItemStatus() const;
-    virtual MediaPlayerPrivateAVFoundation::AssetStatus assetStatus() const;
+    virtual MediaPlayerPrivateAVFoundation::AVAssetStatus assetStatus() const;
 
     virtual void checkPlayability();
     virtual void updateRate();
@@ -106,13 +105,12 @@ private:
     virtual void beginLoadingMetadata();
     virtual void sizeChanged();
 
-    virtual bool hasAvailableVideoFrame() const;
-
     virtual void createContextVideoRenderer();
     virtual void destroyContextVideoRenderer();
 
     virtual void createVideoLayer();
     virtual void destroyVideoLayer();
+    virtual bool videoLayerIsReadyToDisplay() const;
 
     virtual bool hasContextRenderer() const;
     virtual bool hasLayerRenderer() const;
@@ -127,7 +125,6 @@ private:
     RetainPtr<WebCoreAVFMovieObserver> m_objcObserver;
     RetainPtr<AVAssetImageGenerator> m_imageGenerator;
     id m_timeObserver;
-    bool m_videoFrameHasDrawn;
 };
 
 }
