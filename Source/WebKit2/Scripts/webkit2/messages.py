@@ -81,7 +81,7 @@ class MessageReceiver(object):
                 elif line.startswith('#endif'):
                     condition = None
                 continue
-            match = re.search(r'([A-Za-z_0-9]+)\((.*?)\)(?:(?:\s+->\s+)\((.*?)\)(?:\s+(.*))?)?', line)
+            match = re.search(r'([A-Za-z_0-9]+)\((.*?)\)(?:(?:\s+->\s+)\((.*?)\))?(?:\s+(.*))?', line)
             if match:
                 name, parameters_string, reply_parameters_string, attributes_string = match.groups()
                 if parameters_string:
@@ -375,7 +375,7 @@ def handler_function(receiver, message):
     return '%s::%s' % (receiver.name, message.name[0].lower() + message.name[1:])
 
 
-def async_case_statement(receiver, message):
+def async_case_statement(receiver, message, return_value=None):
     dispatch_function = 'handleMessage'
     if message.is_variadic:
         dispatch_function += 'Variadic'
@@ -383,7 +383,10 @@ def async_case_statement(receiver, message):
     result = []
     result.append('    case Messages::%s::%s:\n' % (receiver.name, message.id()))
     result.append('        CoreIPC::%s<Messages::%s::%s>(arguments, this, &%s);\n' % (dispatch_function, receiver.name, message.name, handler_function(receiver, message)))
-    result.append('        return;\n')
+    if return_value:
+        result.append('        return %s;\n' % return_value)
+    else:
+        result.append('        return;\n')
     return surround_in_condition(''.join(result), message.condition)
 
 
@@ -571,13 +574,31 @@ def generate_message_handler(file):
 
     result.append('namespace WebKit {\n\n')
 
+    async_dispatch_on_connection_queue_messages = []
+    sync_dispatch_on_connection_queue_messages = []
     async_messages = []
     sync_messages = []
     for message in receiver.messages:
         if message.reply_parameters is not None:
-            sync_messages.append(message)
+            if message.dispatch_on_connection_queue:
+                sync_dispatch_on_connection_queue_messages.append(message)
+            else:
+                sync_messages.append(message)
         else:
-            async_messages.append(message)
+            if message.dispatch_on_connection_queue:
+                async_dispatch_on_connection_queue_messages.append(message)
+            else:
+                async_messages.append(message)
+
+    if async_dispatch_on_connection_queue_messages:
+        result.append('bool %s::willProcess%sMessageOnClientRunLoop(CoreIPC::Connection*, CoreIPC::MessageID messageID, CoreIPC::ArgumentDecoder* arguments)\n' % (receiver.name, receiver.name))
+        result.append('{\n')
+        result.append('    switch (messageID.get<Messages::%s::Kind>()) {\n' % receiver.name)
+        result += [async_case_statement(receiver, message, 'false') for message in async_dispatch_on_connection_queue_messages]
+        result.append('    default:\n')
+        result.append('        return true;\n')
+        result.append('    }\n')
+        result.append('}\n\n')
 
     if async_messages:
         result.append('void %s::didReceive%sMessage(CoreIPC::Connection*, CoreIPC::MessageID messageID, CoreIPC::ArgumentDecoder* arguments)\n' % (receiver.name, receiver.name))

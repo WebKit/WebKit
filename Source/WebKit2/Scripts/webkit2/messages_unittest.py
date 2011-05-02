@@ -69,6 +69,7 @@ messages -> WebPage {
     GetPluginProcessConnection(WTF::String pluginPath) -> (CoreIPC::Connection::Handle connectionHandle) Delayed
 
     TestMultipleAttributes() -> () DispatchOnConnectionQueue Delayed
+    TestConnectionQueue(uint64_t pluginID) DispatchOnConnectionQueue
 
 #if PLATFORM(MAC)
     DidCreateWebProcessConnection(CoreIPC::MachPort connectionIdentifier)
@@ -183,6 +184,13 @@ _expected_results = {
             'parameters': (
             ),
             'reply_parameters': (
+            ),
+            'condition': None,
+        },
+        {
+            'name': 'TestConnectionQueue',
+            'parameters': (
+                ('uint64_t', 'pluginID'),
             ),
             'condition': None,
         },
@@ -307,6 +315,7 @@ enum Kind {
     GetPluginsID,
     GetPluginProcessConnectionID,
     TestMultipleAttributesID,
+    TestConnectionQueueID,
 #if PLATFORM(MAC)
     DidCreateWebProcessConnectionID,
 #endif
@@ -442,6 +451,15 @@ struct TestMultipleAttributes : CoreIPC::Arguments0 {
 
     typedef CoreIPC::Arguments0 Reply;
     typedef CoreIPC::Arguments0 DecodeType;
+};
+
+struct TestConnectionQueue : CoreIPC::Arguments1<uint64_t> {
+    static const Kind messageID = TestConnectionQueueID;
+    typedef CoreIPC::Arguments1<uint64_t> DecodeType;
+    explicit TestConnectionQueue(uint64_t pluginID)
+        : CoreIPC::Arguments1<uint64_t>(pluginID)
+    {
+    }
 };
 
 #if PLATFORM(MAC)
@@ -582,6 +600,17 @@ bool TestMultipleAttributes::DelayedReply::send()
 
 namespace WebKit {
 
+bool WebPage::willProcessWebPageMessageOnClientRunLoop(CoreIPC::Connection*, CoreIPC::MessageID messageID, CoreIPC::ArgumentDecoder* arguments)
+{
+    switch (messageID.get<Messages::WebPage::Kind>()) {
+    case Messages::WebPage::TestConnectionQueueID:
+        CoreIPC::handleMessage<Messages::WebPage::TestConnectionQueue>(arguments, this, &WebPage::testConnectionQueue);
+        return false;
+    default:
+        return true;
+    }
+}
+
 void WebPage::didReceiveWebPageMessage(CoreIPC::Connection*, CoreIPC::MessageID messageID, CoreIPC::ArgumentDecoder* arguments)
 {
     switch (messageID.get<Messages::WebPage::Kind>()) {
@@ -629,14 +658,8 @@ CoreIPC::SyncReplyMode WebPage::didReceiveSyncWebPageMessage(CoreIPC::Connection
     case Messages::WebPage::RunJavaScriptAlertID:
         CoreIPC::handleMessage<Messages::WebPage::RunJavaScriptAlert>(arguments, reply, this, &WebPage::runJavaScriptAlert);
         return CoreIPC::AutomaticReply;
-    case Messages::WebPage::GetPluginsID:
-        CoreIPC::handleMessage<Messages::WebPage::GetPlugins>(arguments, reply, this, &WebPage::getPlugins);
-        return CoreIPC::AutomaticReply;
     case Messages::WebPage::GetPluginProcessConnectionID:
         CoreIPC::handleMessageDelayed<Messages::WebPage::GetPluginProcessConnection>(connection, arguments, reply, this, &WebPage::getPluginProcessConnection);
-        return CoreIPC::ManualReply;
-    case Messages::WebPage::TestMultipleAttributesID:
-        CoreIPC::handleMessageDelayed<Messages::WebPage::TestMultipleAttributes>(connection, arguments, reply, this, &WebPage::testMultipleAttributes);
         return CoreIPC::ManualReply;
 #if PLATFORM(MAC)
     case Messages::WebPage::InterpretKeyEventID:

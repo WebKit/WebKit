@@ -1,3 +1,22 @@
+2011-05-02  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Adam Roben.
+
+        Handle DispatchOnConnectionQueue for asynchronous messages
+        https://bugs.webkit.org/show_bug.cgi?id=59959
+
+        If any asynchronous messages have the DispatchOnConnectionQueue attribute, 
+        create a new willProcess{Receiver}MessageOnClientRunLoop.
+
+        * Scripts/webkit2/messages.py:
+        - Fix a regex bug where we would only parse attributes on synchronous messages.
+        - Collect messages with the dispatch_on_connection_queue flag set. We only handle
+          asynchronous messages currently; sync message support will be added when/if the
+          need arises.
+
+        * Scripts/webkit2/messages_unittest.py:
+        Update test.
+
 2011-05-02  Adam Barth  <abarth@webkit.org>
 
         Reviewed by David Levin.
