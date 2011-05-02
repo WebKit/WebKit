@@ -1,3 +1,71 @@
+2011-05-02  Eric Carlson  <eric.carlson@apple.com>
+
+        Reviewed by Brady Eidson.
+
+        The preload attribute of the video tag is not completely implemented
+        https://bugs.webkit.org/show_bug.cgi?id=43673
+        <rdar://problem/7508322>
+
+        Tested manually with manual-tests/media-elements/video-preload.html.
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::HTMLMediaElement): Initialize m_havePreparedToPlay.
+        (WebCore::HTMLMediaElement::prepareForLoad): Ditto.
+        (WebCore::HTMLMediaElement::prepareToPlay): New, tell player to prepare to play.
+        (WebCore::HTMLMediaElement::seek): Call prepareToPlay when preload is less than 'metadata'
+            because we need to have media data loaded to seek.
+        (WebCore::HTMLMediaElement::updatePlayState): Call prepareToPlay.
+        * html/HTMLMediaElement.h:
+
+        * platform/graphics/avfoundation/MediaPlayerPrivateAVFoundation.cpp:
+        (WebCore::MediaPlayerPrivateAVFoundation::MediaPlayerPrivateAVFoundation):  Remove 
+            m_videoFrameHasDrawn and m_delayingLoad as they are no longer used.
+        (WebCore::MediaPlayerPrivateAVFoundation::resumeLoad): Removed.
+        (WebCore::MediaPlayerPrivateAVFoundation::load): Don't initialize m_videoFrameHasDrawn. 
+            Move all preload logic to setPreload, call it from here.
+        (WebCore::MediaPlayerPrivateAVFoundation::prepareToPlay): Move all preload logic to 
+            setPreload, call it.
+        (WebCore::MediaPlayerPrivateAVFoundation::duration): Don't cache duration = 0, it is
+            unlikely to be correct and isn't worth caching.
+        (WebCore::MediaPlayerPrivateAVFoundation::updateStates): Update for name change AVAssetStatus
+            to AssetStatus. Create the AVPlayer once we know an asset is playable but preload is
+            'metadata'. Set networkState to 'idle' when the playback buffer is full because that is
+            a signal that AVFoundation won't do any more IO. Set readyState to 'HAVE_CURRENT_DATA' 
+            when the first frame is available.
+        (WebCore::MediaPlayerPrivateAVFoundation::metadataLoaded): Call tracksChanged so we cache
+            width, height, hasVideo, etc.
+        (WebCore::MediaPlayerPrivateAVFoundation::repaint): Don't set m_videoFrameHasDrawn, it is done
+            in derived classes.
+        (WebCore::MediaPlayerPrivateAVFoundation::setPreload): Centralize all logic about when to create
+            AVAsset and AVPlayerItem here.
+        * platform/graphics/avfoundation/MediaPlayerPrivateAVFoundation.h:
+
+        * platform/graphics/avfoundation/MediaPlayerPrivateAVFoundationObjC.h:
+        * platform/graphics/avfoundation/MediaPlayerPrivateAVFoundationObjC.mm:
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::MediaPlayerPrivateAVFoundationObjC): Initialize
+            m_videoFrameHasDrawn.
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::hasAvailableVideoFrame): New, renamed from
+            videoLayerIsReadyToDisplay. Return true if we have a layer with frames available or
+            if we have painted a frame to the context.
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::createAVAssetForURL): New, create the AVAsset
+            if necessary.
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::createAVAssetForCacheResource): Ditto.
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::createAVPlayer): Restructure logic.
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::createAVPlayerItem): New, create AVPlayerItem.
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::beginLoadingMetadata): Correct logging.
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::playerItemStatus): Return "buffer full" when
+            the buffer is full.
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::platformDuration): Get the duration from the
+            AVAsset when we haven't allocated the AVPlayerItem yet so that we can return duration
+            when we only have metadata.
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::assetStatus): Update for name change.
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::paint): Set m_videoFrameHasDrawn.
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::tracksChanged): Get attributes from AVAsset
+            when when we haven't allocated the AVPlayerItem yet so that we can report attributes
+            when we only have metadata.
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::sizeChanged): Guard against being called before
+            we have allocated the AVPlayerItem.
+
 2011-05-02  Philippe Normand  <pnormand@igalia.com>
 
         Reviewed by Martin Robinson.

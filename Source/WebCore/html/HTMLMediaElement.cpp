@@ -170,6 +170,7 @@ HTMLMediaElement::HTMLMediaElement(const QualifiedName& tagName, Document* docum
     , m_dispatchingCanPlayEvent(false)
     , m_loadInitiatedByUserGesture(false)
     , m_completelyLoaded(false)
+    , m_havePreparedToPlay(false)
 {
     LOG(Media, "HTMLMediaElement::HTMLMediaElement");
     document->registerForDocumentActivationCallbacks(this);
@@ -516,6 +517,7 @@ void HTMLMediaElement::prepareForLoad()
     m_sentStalledEvent = false;
     m_haveFiredLoadedData = false;
     m_completelyLoaded = false;
+    m_havePreparedToPlay = false;
     m_displayMode = Unknown;
 
     // 1 - Abort any already-running instance of the resource selection algorithm for this element.
@@ -1082,7 +1084,15 @@ bool HTMLMediaElement::supportsSave() const
 {
     return m_player ? m_player->supportsSave() : false;
 }
-    
+
+void HTMLMediaElement::prepareToPlay()
+{
+    if (m_havePreparedToPlay)
+        return;
+    m_havePreparedToPlay = true;
+    m_player->prepareToPlay();
+}
+
 void HTMLMediaElement::seek(float time, ExceptionCode& ec)
 {
     LOG(Media, "HTMLMediaElement::seek(%f)", time);
@@ -1094,6 +1104,10 @@ void HTMLMediaElement::seek(float time, ExceptionCode& ec)
         ec = INVALID_STATE_ERR;
         return;
     }
+
+    // If the media engine has been told to postpone loading data, let it go ahead now.
+    if (m_preload < MediaPlayer::Auto && m_readyState < HAVE_FUTURE_DATA)
+        prepareToPlay();
 
     // Get the current time before setting m_seeking, m_lastSeekTime is returned once it is set.
     refreshCachedTime();
@@ -2196,7 +2210,7 @@ void HTMLMediaElement::updatePlayState()
             addPlayedRange(m_lastSeekTime, time);
 
         if (couldPlayIfEnoughData())
-            m_player->prepareToPlay();
+            prepareToPlay();
 
         if (hasMediaControls())
             mediaControls()->playbackStopped();
