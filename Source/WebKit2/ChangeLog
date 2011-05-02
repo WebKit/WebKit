@@ -1,3 +1,16 @@
+2011-04-29  Steve Falkenburg  <sfalken@apple.com>
+
+        Reviewed by Maciej Stachowiak.
+
+        Plug-in failed to initialize message should be called when Java fails to initialize
+        https://bugs.webkit.org/show_bug.cgi?id=59856
+        
+        To match the WebKit1 behavior, WebKit2 should dispatch the plug-in failed
+        to initialize message when we can't instantiate the Java plug-in.
+
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebKit::WebFrameLoaderClient::createJavaAppletWidget):
+
 2011-05-02  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Adam Barth.

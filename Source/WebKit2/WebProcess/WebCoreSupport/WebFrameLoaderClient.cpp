@@ -1254,7 +1254,13 @@ void WebFrameLoaderClient::redirectDataToPlugin(Widget* pluginWidget)
 
 PassRefPtr<Widget> WebFrameLoaderClient::createJavaAppletWidget(const IntSize& pluginSize, HTMLAppletElement* appletElement, const KURL& baseURL, const Vector<String>& paramNames, const Vector<String>& paramValues)
 {
-    return createPlugin(pluginSize, appletElement, KURL(), paramNames, paramValues, "application/x-java-applet", false);
+    const String mimeType = "application/x-java-applet";
+    RefPtr<Widget> plugin = createPlugin(pluginSize, appletElement, KURL(), paramNames, paramValues, mimeType, false);
+    if (!plugin) {
+        if (WebPage* webPage = m_frame->page())
+            webPage->send(Messages::WebPageProxy::DidFailToInitializePlugin(mimeType));
+    }
+    return plugin.release();
 }
 
 static bool pluginSupportsExtension(PluginData* pluginData, const String& extension)
