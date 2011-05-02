@@ -1,3 +1,18 @@
+2011-05-02  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        cr-linux-ews should run tests
+        https://bugs.webkit.org/show_bug.cgi?id=59272
+
+        This patch turns on testing for the cr-linux-ews.  Yay!
+
+        * Scripts/webkitpy/tool/bot/layouttestresultsreader_unittest.py:
+        * Scripts/webkitpy/tool/commands/earlywarningsystem.py:
+        * Scripts/webkitpy/tool/commands/earlywarningsystem_unittest.py:
+        * Scripts/webkitpy/tool/steps/runtests.py:
+        * Scripts/webkitpy/tool/steps/steps_unittest.py:
+
 2011-05-02  Martin Robinson  <mrobinson@igalia.com>
 
         Incorporate a review comment that I mistakenly omitted from my last commit.

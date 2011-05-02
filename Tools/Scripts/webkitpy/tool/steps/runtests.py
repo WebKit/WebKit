@@ -32,7 +32,7 @@ from webkitpy.common.system.deprecated_logging import log
 
 class RunTests(AbstractStep):
     # FIXME: This knowledge really belongs in the commit-queue.
-    NON_INTERACTIVE_FAILURE_LIMIT_COUNT = 10
+    NON_INTERACTIVE_FAILURE_LIMIT_COUNT = 20
 
     @classmethod
     def options(cls):

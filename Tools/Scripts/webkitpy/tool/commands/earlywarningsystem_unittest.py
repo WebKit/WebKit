@@ -71,7 +71,7 @@ class AbstractEarlyWarningSystemTest(QueuesTest):
 
 class EarlyWarningSytemTest(QueuesTest):
     def test_failed_builds(self):
-        ews = ChromiumLinuxEWS()
+        ews = ChromiumWindowsEWS()
         ews.bind_to_tool(MockTool())
         ews._build = lambda patch, first_run=False: False
         ews._can_build = lambda: True
@@ -108,29 +108,26 @@ class EarlyWarningSytemTest(QueuesTest):
         expected_exceptions = {"handle_script_error": SystemExit}
         self.assert_queue_outputs(ews, expected_stderr=expected_stderr, expected_exceptions=expected_exceptions)
 
-    def test_testing_ews(self):
-        class ConcreteTestingEWS(AbstractTestingEWS):
-            name = "mock-testing-ews-name"
-            port_name = "mock-port"
-        ews = ConcreteTestingEWS()
-        ews.port = MockPort()
+    def _test_testing_ews(self, ews):
         expected_stderr = {
             "begin_work_queue": self._default_begin_work_queue_stderr(ews.name, MockTool().scm().checkout_root),
             "handle_unexpected_error": """Mock error message
 """,
             "next_work_item": "",
-            "process_work_item": """MOCK: update_status: mock-testing-ews-name Pass
-MOCK: release_work_item: mock-testing-ews-name 197
-""",
+            "process_work_item": """MOCK: update_status: %s Pass
+MOCK: release_work_item: %s 197
+""" % (ews.name, ews.name),
             "handle_script_error": """ScriptError error message
 """,
         }
-        self.assert_queue_outputs(ews, expected_stderr=expected_stderr)
+        tool = MockTool()
+        tool.filesystem.write_text_file('/tmp/layout-test-results/unexpected_results.json', "")
+        self.assert_queue_outputs(ews, expected_stderr=expected_stderr, tool=tool)
 
     # FIXME: If all EWSes are going to output the same text, we
     # could test them all in one method with a for loop over an array.
     def test_chromium_linux_ews(self):
-        self._test_ews(ChromiumLinuxEWS())
+        self._test_testing_ews(ChromiumLinuxEWS())
 
     def test_chromium_windows_ews(self):
         self._test_ews(ChromiumWindowsEWS())

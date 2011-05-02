@@ -111,7 +111,7 @@ class AbstractEarlyWarningSystem(AbstractReviewQueue):
 
 # FIXME: This should merge with AbstractEarlyWarningSystem once all the EWS
 # bots run tests.
-class AbstractTestingEWS(AbstractEarlyWarningSystem):
+class AbstractTestingEWS(AbstractEarlyWarningSystem, EarlyWarningSystemTaskDelegate):
     def begin_work_queue(self):
         # FIXME: This violates abstraction
         self._tool._port = self.port
@@ -217,10 +217,15 @@ class AbstractChromiumEWS(AbstractEarlyWarningSystem):
     ]
 
 
-class ChromiumLinuxEWS(AbstractChromiumEWS):
+class ChromiumLinuxEWS(AbstractTestingEWS):
     # FIXME: We should rename this command to cr-linux-ews, but that requires
     #        a database migration. :(
     name = "chromium-ews"
+    port_name = "chromium-xvfb"
+
+    # FIXME: ChromiumLinuxEWS should inherit from AbstractChromiumEWS once
+    # all the Chromium EWS bots run tests
+    watchers = AbstractChromiumEWS.watchers
 
 
 class ChromiumWindowsEWS(AbstractChromiumEWS):
