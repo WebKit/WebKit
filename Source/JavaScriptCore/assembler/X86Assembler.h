@@ -1480,12 +1480,7 @@ public:
     {
         return m_formatter.label();
     }
-    
-    static AssemblerLabel labelFor(AssemblerLabel jump, intptr_t offset = 0)
-    {
-        return AssemblerLabel(jump.m_offset + offset);
-    }
-    
+
     AssemblerLabel align(int alignment)
     {
         while (!m_formatter.isAligned(alignment))
@@ -1885,7 +1880,7 @@ private:
             return m_buffer.executableCopy(allocator);
         }
 
-        void rewindToLabel(AssemblerLabel rewindTo) { m_buffer.rewindToOffset(rewindTo.m_offset); }
+        void rewindToLabel(AssemblerLabel rewindTo) { m_buffer.rewindToLabel(rewindTo); }
 
 #ifndef NDEBUG
         unsigned debugOffset() { return m_buffer.debugOffset(); }

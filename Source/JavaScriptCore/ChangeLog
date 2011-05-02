@@ -1,3 +1,45 @@
+2011-05-02  Gavin Barraclough  <barraclough@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        https://bugs.webkit.org/show_bug.cgi?id=59950
+        Clean up AssemblerBuffer to use a Vector internally.
+
+        AssemblerBuffer handles reallocing a byte array itself - stop that.
+
+        * assembler/ARMAssembler.cpp:
+        (JSC::ARMAssembler::executableCopy):
+        * assembler/AssemblerBuffer.h:
+        (JSC::AssemblerLabel::AssemblerLabel):
+        (JSC::AssemblerLabel::labelAtOffset):
+        (JSC::AssemblerBuffer::AssemblerBuffer):
+        (JSC::AssemblerBuffer::~AssemblerBuffer):
+        (JSC::AssemblerBuffer::isAvailable):
+        (JSC::AssemblerBuffer::ensureSpace):
+        (JSC::AssemblerBuffer::isAligned):
+        (JSC::AssemblerBuffer::putIntegral):
+        (JSC::AssemblerBuffer::putIntegralUnchecked):
+        (JSC::AssemblerBuffer::putByteUnchecked):
+        (JSC::AssemblerBuffer::putByte):
+        (JSC::AssemblerBuffer::putShortUnchecked):
+        (JSC::AssemblerBuffer::putShort):
+        (JSC::AssemblerBuffer::putIntUnchecked):
+        (JSC::AssemblerBuffer::putInt):
+        (JSC::AssemblerBuffer::putInt64Unchecked):
+        (JSC::AssemblerBuffer::putInt64):
+        (JSC::AssemblerBuffer::codeSize):
+        (JSC::AssemblerBuffer::label):
+        (JSC::AssemblerBuffer::executableCopy):
+        (JSC::AssemblerBuffer::rewindToLabel):
+        (JSC::AssemblerBuffer::debugOffset):
+        (JSC::AssemblerBuffer::append):
+        (JSC::AssemblerBuffer::grow):
+        * assembler/AssemblerBufferWithConstantPool.h:
+        * assembler/MacroAssemblerX86_64.h:
+        (JSC::MacroAssemblerX86_64::linkCall):
+        * assembler/X86Assembler.h:
+        (JSC::X86Assembler::X86InstructionFormatter::rewindToLabel):
+
 2011-05-02  Jeff Miller  <jeffm@apple.com>
 
         Reviewed by Alexy Proskuryakov.

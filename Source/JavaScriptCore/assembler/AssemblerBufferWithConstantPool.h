@@ -185,9 +185,8 @@ public:
 
     void putIntegral(TwoShorts value)
     {
-        if (m_size > m_capacity - sizeof(TwoShorts))
-            grow();
-        putIntegralUnchecked(value);
+        putIntegral(value.high);
+        putIntegral(value.low);
     }
 
     void putIntegralUnchecked(TwoShorts value)
@@ -301,8 +300,8 @@ private:
 
         // Patch each PC relative load
         for (LoadOffsets::Iterator iter = m_loadOffsets.begin(); iter != m_loadOffsets.end(); ++iter) {
-            void* loadAddr = reinterpret_cast<void*>(m_buffer + *iter);
-            AssemblerType::patchConstantPoolLoad(loadAddr, reinterpret_cast<void*>(m_buffer + constPoolOffset));
+            void* loadAddr = reinterpret_cast<char*>(data()) + *iter;
+            AssemblerType::patchConstantPoolLoad(loadAddr, reinterpret_cast<char*>(data()) + constPoolOffset);
         }
 
         m_loadOffsets.clear();

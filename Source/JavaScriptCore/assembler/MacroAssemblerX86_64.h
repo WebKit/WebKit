@@ -458,7 +458,7 @@ private:
     static void linkCall(void* code, Call call, FunctionPtr function)
     {
         if (!call.isFlagSet(Call::Near))
-            X86Assembler::linkPointer(code, X86Assembler::labelFor(call.m_jmp, -REPTACH_OFFSET_CALL_R11), function.value());
+            X86Assembler::linkPointer(code, call.m_jmp.labelAtOffset(-REPTACH_OFFSET_CALL_R11), function.value());
         else
             X86Assembler::linkCall(code, call.m_jmp, function.value());
     }
