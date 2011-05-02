@@ -54,6 +54,7 @@ class ExpectedFailuresTest(unittest.TestCase):
         self._assert_can_trust(MockResults(failing_tests=[1], failure_limit=None), False)
         self._assert_can_trust(MockResults(failing_tests=[1], failure_limit=2), True)
         self._assert_can_trust(MockResults(failing_tests=[1], failure_limit=1), False)
+        self._assert_can_trust(MockResults(failing_tests=[1, 2], failure_limit=1), False)
 
     def _assert_expected(self, expected_failures, failures, expected):
         self.assertEqual(expected_failures.failures_were_expected(MockResults(failures)), expected)

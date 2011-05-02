@@ -213,7 +213,18 @@ class PatchAnalysisTask(object):
         clean_tree_results = self._delegate.layout_test_results()
         self._expected_failures.grow_expected_failures(clean_tree_results)
 
-        return False  # Tree must be redder than we expected, just retry later.
+        # Re-check if the original results are now to be expected to avoid a full re-try.
+        if self._expected_failures.failures_were_expected(first_results):
+            return True
+
+        # Now that we have updated information about failing tests with a clean checkout, we can
+        # tell if our original failures were unexpected and fail the patch if necessary.
+        if self._expected_failures.unexpected_failures(first_results):
+            return self.report_failure(first_results_archive)
+
+        # We don't know what's going on.  The tree is likely very red (beyond our layout-test-results
+        # failure limit), just keep retrying the patch. until someone fixes the tree.
+        return False
 
     def results_archive_from_patch_test_run(self, patch):
         assert(self._patch.id() == patch.id())  # PatchAnalysisTask is not currently re-useable.

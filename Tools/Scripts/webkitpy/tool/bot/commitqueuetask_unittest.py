@@ -82,6 +82,30 @@ class MockCommitQueue(CommitQueueTaskDelegate):
         return archive
 
 
+class FailingTestCommitQueue(MockCommitQueue):
+    def __init__(self, error_plan, test_failure_plan):
+        MockCommitQueue.__init__(self, error_plan)
+        self._test_run_counter = -1  # Special value to indicate tests have never been run.
+        self._test_failure_plan = test_failure_plan
+
+    def run_command(self, command):
+        if command[0] == "build-and-test":
+            self._test_run_counter += 1
+        MockCommitQueue.run_command(self, command)
+
+    def _mock_test_result(self, testname):
+        return test_results.TestResult(testname, [test_failures.FailureTextMismatch()])
+
+    def layout_test_results(self):
+        # Doesn't make sense to ask for the layout_test_results until the tests have run at least once.
+        assert(self._test_run_counter >= 0)
+        failures_for_run = self._test_failure_plan[self._test_run_counter]
+        results = LayoutTestResults(map(self._mock_test_result, failures_for_run))
+        # This makes the results trustable by ExpectedFailures.
+        results.set_failure_limit_count(10)
+        return results
+
+
 class CommitQueueTaskTest(unittest.TestCase):
     def _run_through_task(self, commit_queue, expected_stderr, expected_exception=None, expect_retry=False):
         tool = MockTool(log_executive=True)
@@ -245,30 +269,17 @@ command_passed: success_message='Landed patch' patch='197'
         self._run_through_task(commit_queue, expected_stderr)
 
     def test_double_flaky_test_failure(self):
-        class DoubleFlakyCommitQueue(MockCommitQueue):
-            def __init__(self, error_plan):
-                MockCommitQueue.__init__(self, error_plan)
-                self._double_flaky_test_counter = 0
-
-            def run_command(self, command):
-                self._double_flaky_test_counter += 1
-                MockCommitQueue.run_command(self, command)
-
-            def _mock_test_result(self, testname):
-                return test_results.TestResult(testname, [test_failures.FailureTextMismatch()])
-
-            def layout_test_results(self):
-                if self._double_flaky_test_counter % 2:
-                    return LayoutTestResults([self._mock_test_result('foo.html')])
-                return LayoutTestResults([self._mock_test_result('bar.html')])
-
-        commit_queue = DoubleFlakyCommitQueue([
+        commit_queue = FailingTestCommitQueue([
             None,
             None,
             None,
             None,
             ScriptError("MOCK test failure"),
             ScriptError("MOCK test failure again"),
+        ], [
+            "foo.html",
+            "bar.html",
+            "foo.html",
         ])
         # The (subtle) point of this test is that report_flaky_tests does not appear
         # in the expected_stderr for this run.
@@ -322,7 +333,7 @@ command_passed: success_message='Able to pass tests without patch' patch='197'
         self._run_through_task(commit_queue, expected_stderr, ScriptError)
 
     def test_red_test_failure(self):
-        commit_queue = MockCommitQueue([
+        commit_queue = FailingTestCommitQueue([
             None,
             None,
             None,
@@ -330,7 +341,54 @@ command_passed: success_message='Able to pass tests without patch' patch='197'
             ScriptError("MOCK test failure"),
             ScriptError("MOCK test failure again"),
             ScriptError("MOCK clean test failure"),
+        ], [
+            "foo.html",
+            "foo.html",
+            "foo.html",
         ])
+
+        # Tests always fail, and always return the same results, but we
+        # should still be able to land in this case!
+        expected_stderr = """run_webkit_patch: ['clean']
+command_passed: success_message='Cleaned working directory' patch='197'
+run_webkit_patch: ['update']
+command_passed: success_message='Updated working directory' patch='197'
+run_webkit_patch: ['apply-attachment', '--no-update', '--non-interactive', 197]
+command_passed: success_message='Applied patch' patch='197'
+run_webkit_patch: ['build', '--no-clean', '--no-update', '--build-style=both']
+command_passed: success_message='Built patch' patch='197'
+run_webkit_patch: ['build-and-test', '--no-clean', '--no-update', '--test', '--non-interactive']
+command_failed: failure_message='Patch does not pass tests' script_error='MOCK test failure' patch='197'
+archive_last_layout_test_results: patch='197'
+run_webkit_patch: ['build-and-test', '--no-clean', '--no-update', '--test', '--non-interactive']
+command_failed: failure_message='Patch does not pass tests' script_error='MOCK test failure again' patch='197'
+archive_last_layout_test_results: patch='197'
+run_webkit_patch: ['build-and-test', '--force-clean', '--no-update', '--build', '--test', '--non-interactive']
+command_failed: failure_message='Unable to pass tests without patch (tree is red?)' script_error='MOCK clean test failure' patch='197'
+run_webkit_patch: ['land-attachment', '--force-clean', '--ignore-builders', '--non-interactive', '--parent-command=commit-queue', 197]
+command_passed: success_message='Landed patch' patch='197'
+"""
+        self._run_through_task(commit_queue, expected_stderr)
+
+    def test_very_red_tree_retry(self):
+        lots_of_failing_tests = map(lambda num: "test-%s.html" % num, range(0, 100))
+        commit_queue = FailingTestCommitQueue([
+            None,
+            None,
+            None,
+            None,
+            ScriptError("MOCK test failure"),
+            ScriptError("MOCK test failure again"),
+            ScriptError("MOCK clean test failure"),
+        ], [
+            lots_of_failing_tests,
+            lots_of_failing_tests,
+            lots_of_failing_tests,
+        ])
+
+        # Tests always fail, and return so many failures that we do not
+        # trust the results (see ExpectedFailures._can_trust_results) so we
+        # just give up and retry the patch.
         expected_stderr = """run_webkit_patch: ['clean']
 command_passed: success_message='Cleaned working directory' patch='197'
 run_webkit_patch: ['update']
@@ -349,6 +407,42 @@ run_webkit_patch: ['build-and-test', '--force-clean', '--no-update', '--build', 
 command_failed: failure_message='Unable to pass tests without patch (tree is red?)' script_error='MOCK clean test failure' patch='197'
 """
         self._run_through_task(commit_queue, expected_stderr, expect_retry=True)
+
+    def test_red_tree_patch_rejection(self):
+        commit_queue = FailingTestCommitQueue([
+            None,
+            None,
+            None,
+            None,
+            ScriptError("MOCK test failure"),
+            ScriptError("MOCK test failure again"),
+            ScriptError("MOCK clean test failure"),
+        ], [
+            ["foo.html", "bar.html"],
+            ["foo.html", "bar.html"],
+            ["foo.html"],
+        ])
+
+        # Tests always fail, but the clean tree only fails one test
+        # while the patch fails two.  So we should reject the patch!
+        expected_stderr = """run_webkit_patch: ['clean']
+command_passed: success_message='Cleaned working directory' patch='197'
+run_webkit_patch: ['update']
+command_passed: success_message='Updated working directory' patch='197'
+run_webkit_patch: ['apply-attachment', '--no-update', '--non-interactive', 197]
+command_passed: success_message='Applied patch' patch='197'
+run_webkit_patch: ['build', '--no-clean', '--no-update', '--build-style=both']
+command_passed: success_message='Built patch' patch='197'
+run_webkit_patch: ['build-and-test', '--no-clean', '--no-update', '--test', '--non-interactive']
+command_failed: failure_message='Patch does not pass tests' script_error='MOCK test failure' patch='197'
+archive_last_layout_test_results: patch='197'
+run_webkit_patch: ['build-and-test', '--no-clean', '--no-update', '--test', '--non-interactive']
+command_failed: failure_message='Patch does not pass tests' script_error='MOCK test failure again' patch='197'
+archive_last_layout_test_results: patch='197'
+run_webkit_patch: ['build-and-test', '--force-clean', '--no-update', '--build', '--test', '--non-interactive']
+command_failed: failure_message='Unable to pass tests without patch (tree is red?)' script_error='MOCK clean test failure' patch='197'
+"""
+        self._run_through_task(commit_queue, expected_stderr, ScriptError)
 
     def test_land_failure(self):
         commit_queue = MockCommitQueue([

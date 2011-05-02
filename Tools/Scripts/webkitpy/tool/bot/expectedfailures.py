@@ -34,7 +34,7 @@ class ExpectedFailures(object):
     def _can_trust_results(self, results):
         if not results or not results.failure_limit_count():
             return False
-        return len(results.failing_tests()) != 0 and len(results.failing_tests()) != results.failure_limit_count()
+        return len(results.failing_tests()) != 0 and len(results.failing_tests()) < results.failure_limit_count()
 
     def failures_were_expected(self, results):
         if not self._can_trust_results(results):

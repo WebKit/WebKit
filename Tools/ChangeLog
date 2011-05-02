@@ -1,3 +1,27 @@
+2011-05-01  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Adam Barth.
+
+        The bots should learn from expected failures without having to retry
+        https://bugs.webkit.org/show_bug.cgi?id=59279
+
+        Rather than re-trying the whole patch, we can just check whether we now
+        expect the failures we see with the patch applied, saving a lot of time.
+
+        This patch also teaches the CommitQueue how to reject patches even
+        when the tree is red using the new unexpected_failures() method on
+        ExpectedFailures.
+
+        Finally in testing we found a bug in ExpectedFailures where it would
+        "trust" results which had many many failures, due to using an
+        equal sign instead of a less-than sign.
+
+        * Scripts/webkitpy/tool/bot/commitqueuetask_unittest.py
+        * Scripts/webkitpy/tool/bot/expectedfailures.py
+        * Scripts/webkitpy/tool/bot/expectedfailures_unittest.py
+        * Scripts/webkitpy/tool/bot/patchanalysistask.py
+
+
 2011-05-02  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Eric Seidel.
