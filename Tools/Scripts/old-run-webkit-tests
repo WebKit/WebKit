@@ -1470,6 +1470,7 @@ sub openDumpTool()
 
     # Port specifics
     if (isGtk()) {
+        $CLEAN_ENV{LIBOVERLAY_SCROLLBAR} = "0";
         $CLEAN_ENV{GTK_MODULES} = "gail";
         $CLEAN_ENV{WEBKIT_INSPECTOR_PATH} = "$productDir/resources/inspector";
     }
