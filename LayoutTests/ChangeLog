@@ -20,6 +20,20 @@
 
         Not reviewed. Build fix.
 
+        Rebaseline SVG layout tests and add expectations for new tests.
+
+        * platform/chromium-linux/svg/text/text-fonts-01-t-expected.png:
+        * platform/chromium-linux/svg/text/text-text-04-t-expected.png:
+        * platform/chromium-mac/svg/text/text-fonts-01-t-expected.png:
+        * platform/chromium-mac/svg/text/text-text-04-t-expected.png:
+        * platform/chromium-win/fast/text/selection-rect-rounding-expected.png: Added.
+        * platform/chromium-win/fast/text/selection-rect-rounding-expected.txt: Added.
+        * platform/chromium-win/svg/text/text-text-04-t-expected.png:
+
+2011-05-02  Alpha Lam  <hclam@chromium.org>
+
+        Not reviewed. Build fix.
+
         Rebaseline SVG layout tests for chromium port.
 
         * platform/chromium-linux-x86_64/svg/text/text-text-01-b-expected.png:
