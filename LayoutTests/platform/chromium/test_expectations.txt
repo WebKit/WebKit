@@ -4020,11 +4020,4 @@ BUGWK59782 WIN MAC LINUX RELEASE : svg/dynamic-updates/SVGFEDropShadowElement-sv
 BUGWK59782 WIN MAC LINUX RELEASE : svg/dynamic-updates/SVGFEDropShadowElement-svgdom-shadow-opacity-prop.html = IMAGE
 BUGWK59782 WIN MAC LINUX RELEASE : svg/filters/feDropShadow.svg = IMAGE
 
-BUGWK59833 : fast/table/prepend-in-anonymous-table.html = PASS TEXT
-// Also affected by WK54322
-BUGWK59833 : tables/mozilla_expected_failures/other/test4.html = PASS IMAGE TEXT
-BUGWK59833 LINUX : fast/table/dynamic-caption-add-before-child.xhtml = PASS IMAGE+TEXT
-BUGWK59833 LINUX : fast/table/dynamic-caption-add-remove-before-child.xhtml = PASS IMAGE+TEXT
-BUGWK59833 LINUX : fast/table/multiple-captions-display.xhtml = PASS IMAGE+TEXT
-
 BUGWK59839 : animations/3d/replace-filling-transform.html = PASS IMAGE
