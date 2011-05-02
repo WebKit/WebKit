@@ -114,6 +114,7 @@ class CommitQueueTaskTest(unittest.TestCase):
         success = OutputCapture().assert_outputs(self, task.run, expected_stderr=expected_stderr, expected_exception=expected_exception)
         if not expected_exception:
             self.assertEqual(success, not expect_retry)
+        return task
 
     def test_success_case(self):
         commit_queue = MockCommitQueue([])
@@ -442,7 +443,8 @@ archive_last_layout_test_results: patch='197'
 run_webkit_patch: ['build-and-test', '--force-clean', '--no-update', '--build', '--test', '--non-interactive']
 command_failed: failure_message='Unable to pass tests without patch (tree is red?)' script_error='MOCK clean test failure' patch='197'
 """
-        self._run_through_task(commit_queue, expected_stderr, ScriptError)
+        task = self._run_through_task(commit_queue, expected_stderr, ScriptError)
+        self.assertEqual(task.results_from_patch_test_run(task._patch).failing_tests(), ["foo.html", "bar.html"])
 
     def test_land_failure(self):
         commit_queue = MockCommitQueue([

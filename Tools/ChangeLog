@@ -2,6 +2,21 @@
 
         Reviewed by Eric Seidel.
 
+        EWS should report the list of unexpected failures
+        https://bugs.webkit.org/show_bug.cgi?id=59923
+
+        We cache the results of the first layout test results run on the task
+        so the EWS can grab them later.  Another option is to include them in
+        the exception that's thrown, but this approach seemed slightly more
+        aesthetic.
+
+        * Scripts/webkitpy/tool/bot/commitqueuetask_unittest.py:
+        * Scripts/webkitpy/tool/bot/patchanalysistask.py:
+
+2011-05-02  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
         Add base case for a test-running EWS
         https://bugs.webkit.org/show_bug.cgi?id=59920
 

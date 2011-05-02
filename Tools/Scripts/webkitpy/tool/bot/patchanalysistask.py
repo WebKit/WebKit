@@ -66,6 +66,7 @@ class PatchAnalysisTask(object):
         self._patch = patch
         self._script_error = None
         self._results_archive_from_patch_test_run = None
+        self._results_from_patch_test_run = None
         self._expected_failures = delegate.expected_failures()
         assert(self._expected_failures)
 
@@ -208,7 +209,7 @@ class PatchAnalysisTask(object):
 
         if self._build_and_test_without_patch():
             # The error from the previous ._test() run is real, report it.
-            return self.report_failure(first_results_archive)
+            return self.report_failure(first_results_archive, first_results)
 
         clean_tree_results = self._delegate.layout_test_results()
         self._expected_failures.grow_expected_failures(clean_tree_results)
@@ -220,7 +221,7 @@ class PatchAnalysisTask(object):
         # Now that we have updated information about failing tests with a clean checkout, we can
         # tell if our original failures were unexpected and fail the patch if necessary.
         if self._expected_failures.unexpected_failures(first_results):
-            return self.report_failure(first_results_archive)
+            return self.report_failure(first_results_archive, first_results)
 
         # We don't know what's going on.  The tree is likely very red (beyond our layout-test-results
         # failure limit), just keep retrying the patch. until someone fixes the tree.
@@ -230,10 +231,15 @@ class PatchAnalysisTask(object):
         assert(self._patch.id() == patch.id())  # PatchAnalysisTask is not currently re-useable.
         return self._results_archive_from_patch_test_run
 
-    def report_failure(self, results_archive=None):
+    def results_from_patch_test_run(self, patch):
+        assert(self._patch.id() == patch.id())  # PatchAnalysisTask is not currently re-useable.
+        return self._results_from_patch_test_run
+
+    def report_failure(self, results_archive=None, results=None):
         if not self.validate():
             return False
         self._results_archive_from_patch_test_run = results_archive
+        self._results_from_patch_test_run = results
         raise self._script_error
 
     def validate(self):
