@@ -33,7 +33,7 @@ from webkitpy.common.system.outputcapture import OutputCapture
 from webkitpy.tool.bot.queueengine import QueueEngine
 from webkitpy.tool.commands.earlywarningsystem import *
 from webkitpy.tool.commands.queuestest import QueuesTest
-from webkitpy.tool.mocktool import MockTool, MockOptions
+from webkitpy.tool.mocktool import MockTool, MockOptions, MockPort
 
 
 class AbstractEarlyWarningSystemTest(QueuesTest):
@@ -107,6 +107,28 @@ class EarlyWarningSytemTest(QueuesTest):
         expected_stderr["process_work_item"] = "MOCK: update_status: %(name)s Error: %(name)s cannot process patches from non-committers :(\nMOCK: release_work_item: %(name)s 197\n" % string_replacemnts
         expected_exceptions = {"handle_script_error": SystemExit}
         self.assert_queue_outputs(ews, expected_stderr=expected_stderr, expected_exceptions=expected_exceptions)
+
+    def test_testing_ews(self):
+        class ConcreteTestingEWS(AbstractTestingEWS):
+            name = "mock-testing-ews-name"
+            port_name = "mock-port"
+        ews = ConcreteTestingEWS()
+        ews.port = MockPort()
+        expected_stderr = {
+            "begin_work_queue": """CAUTION: mock-testing-ews-name will discard all local changes in "/private/tmp"
+Running WebKit mock-testing-ews-name.
+MOCK: update_status: mock-testing-ews-name Starting Queue
+""",
+            "handle_unexpected_error": """Mock error message
+""",
+            "next_work_item": "",
+            "process_work_item": """MOCK: update_status: mock-testing-ews-name Pass
+MOCK: release_work_item: mock-testing-ews-name 197
+""",
+            "handle_script_error": """ScriptError error message
+""",
+        }
+        self.assert_queue_outputs(ews, expected_stderr=expected_stderr)
 
     # FIXME: If all EWSes are going to output the same text, we
     # could test them all in one method with a for loop over an array.
