@@ -1388,9 +1388,6 @@ fast/text/zero-width-characters-complex-script.html
 # https://bugs.webkit.org/show_bug.cgi?id=59391
 editing/text-iterator/findString.html
 
-# https://bugs.webkit.org/show_bug.cgi?id=59586
-fast/events/keydown-1.html
-
 # Unskip when https://bugs.webkit.org/show_bug.cgi?id=59571 is fixed
 fast/dom/shadow/gc-shadow.html
 fast/dom/shadow/no-renderers-for-light-children.html

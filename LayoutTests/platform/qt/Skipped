@@ -1452,7 +1452,6 @@ fast/events/autoscroll.html
 fast/events/click-count.html
 fast/events/content-changed-during-drop.html
 fast/events/js-keyboard-event-creation.html
-fast/events/keydown-1.html
 fast/events/keypress-insert-tab.html
 fast/events/ondragenter.html
 fast/events/reveal-link-when-focused.html

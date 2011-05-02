@@ -41,9 +41,9 @@ function step2() {
     
     window.frames[0].document.execCommand("InsertText", false, "This sentence should not end with a period.");
     // Move backward by one character.
-    eventSender.keyDown("b", Array("ctrlKey"));
+    eventSender.keyDown("leftArrow");
     // Delete forward by one character.
-    eventSender.keyDown("d", Array("ctrlKey"));
+    eventSender.keyDown("delete");
 
     log(window.frames[0].document.body.innerText);
     window.layoutTestController.notifyDone();
