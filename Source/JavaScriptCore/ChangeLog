@@ -1,3 +1,16 @@
+2011-05-01  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Gavin Barraclough.
+
+        Assigning to function identifier under strict should throw
+        https://bugs.webkit.org/show_bug.cgi?id=59289
+
+        Add logic to StaticScopeObject to ensure we don't silently consume
+        writes to constant properties.
+
+        * runtime/JSStaticScopeObject.cpp:
+        (JSC::JSStaticScopeObject::put):
+
 2011-05-01  Gavin Barraclough  <barraclough@apple.com>
 
         Reviewed by Sam Weinig.

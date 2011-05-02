@@ -1,5 +1,5 @@
 610350: Assigning to a function expression's name within that function should throw a TypeError in strict mode code
-FAIL didn't throw a TypeError: Error: should have thrown a TypeError, returned undefined
+PASS true === true
 PASS 42 === 42
  PASSED! 
 All tests passed!

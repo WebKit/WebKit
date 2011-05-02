@@ -27,6 +27,8 @@
 
 #include "JSStaticScopeObject.h"
 
+#include "Error.h"
+
 namespace JSC {
 ASSERT_CLASS_FITS_IN_CELL(JSStaticScopeObject);
 
@@ -46,8 +48,23 @@ JSValue JSStaticScopeObject::toStrictThisObject(ExecState*) const
     return jsNull();
 }
 
-void JSStaticScopeObject::put(ExecState* exec, const Identifier& propertyName, JSValue value, PutPropertySlot&)
+void JSStaticScopeObject::put(ExecState* exec, const Identifier& propertyName, JSValue value, PutPropertySlot& slot)
 {
+    if (slot.isStrictMode()) {
+        // Double lookup in strict mode, but this only occurs when
+        // a) indirectly writing to an exception slot
+        // b) writing to a function expression name
+        // (a) is unlikely, and (b) is an error.
+        // Also with a single entry the symbol table lookup should simply be
+        // a pointer compare.
+        PropertySlot slot;
+        bool isWritable = true;
+        symbolTableGet(propertyName, slot, isWritable);
+        if (!isWritable) {
+            throwError(exec, createTypeError(exec, StrictModeReadonlyPropertyWriteError));
+            return;
+        }
+    }
     if (symbolTablePut(exec->globalData(), propertyName, value))
         return;
     

@@ -97,6 +97,7 @@ shouldBeSyntaxError("'use strict'; (function (){ delete someDeclaredGlobal;})");
 shouldBeSyntaxError("(function (){ 'use strict'; delete someDeclaredGlobal;})");
 shouldBeTrue("'use strict'; if (0) { someGlobal = 'Shouldn\\'t be able to assign this.'; }; true;");
 shouldThrow("'use strict'; someGlobal = 'Shouldn\\'t be able to assign this.'; ");
+shouldThrow("'use strict'; (function f(){ f = 'shouldn\\'t be able to assign to function expression name'; })()");
 shouldThrow("'use strict'; eval('var introducedVariable = \"FAIL: variable introduced into containing scope\";'); introducedVariable");
 var objectWithReadonlyProperty = {};
 Object.defineProperty(objectWithReadonlyProperty, "prop", {value: "value", writable:false});
