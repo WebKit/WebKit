@@ -28,11 +28,6 @@
 #include <algorithm>
 #include <memory>
 
-// Remove this once we make all WebKit code compatible with stricter rules about OwnPtr.
-#if !PLATFORM(MAC) && !PLATFORM(CHROMIUM) && !PLATFORM(QT) && !PLATFORM(GTK) && !PLATFORM(WIN)
-#define LOOSE_OWN_PTR
-#endif
-
 namespace WTF {
 
     // Unlike most of our smart pointers, OwnPtr can take either the pointer type or the pointed-to type.
