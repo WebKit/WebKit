@@ -1404,7 +1404,7 @@ BUGCR10429 LINUX : css2.1/t100801-c544-valgn-01-d-ag.html = FAIL
 
 // May need rebaseline or expectations change (Linux looks like Mac but is using
 // expectations from Windows instead).
-BUGCR10430 WIN LINUX : svg/W3C-SVG-1.1/text-intro-05-t.svg = IMAGE+TEXT
+BUGCR10430 MAC WIN LINUX : svg/W3C-SVG-1.1/text-intro-05-t.svg = IMAGE+TEXT
 
 // Flakey. Not clear when it started, but it was before 3/9/09.
 // This test also started failing with the merge of March 25th 2009
@@ -1804,7 +1804,7 @@ BUGCR32693 MAC DEBUG : svg/dom/SVGRectElement/rect-modify-rx.svg = TEXT PASS
 BUGCR33293 SKIP : fast/media/lifetime.html = TIMEOUT
 
 // WebKit roll 53655 -> 53704
-BUGCR32900 WIN LINUX : http/tests/misc/slow-loading-mask.html = IMAGE+TEXT
+BUGCR32900 MAC WIN LINUX : http/tests/misc/slow-loading-mask.html = IMAGE+TEXT
 
 // WebKit roll 54059 -> 54075
 BUGCR33538 : fast/dom/Window/anonymous-slot-with-changes.html = TEXT
@@ -2246,7 +2246,7 @@ BUGWK44199 DEBUG : perf/array-binary-search.html = PASS TEXT TIMEOUT
 BUGWK44199 DEBUG : perf/class-list-remove.html = PASS TEXT TIMEOUT
 
 // Failing after http://trac.webkit.org/changeset/65665/
-BUGWK44278 WIN LINUX : svg/transforms/text-with-mask-with-svg-transform.svg = IMAGE+TEXT
+BUGWK44278 MAC WIN LINUX : svg/transforms/text-with-mask-with-svg-transform.svg = IMAGE+TEXT
 
 // Clip paths aren't working after http://trac.webkit.org/changeset/65729
 BUGWK44341 WIN LINUX : svg/clip-path/clip-path-pixelation.svg = IMAGE+TEXT
@@ -2454,8 +2454,8 @@ BUGWK48352 : fast/blockflow/block-level-images.html = IMAGE PASS
 
 // Vertical text needs to be implemented in platforms other than OS X.
 BUGCR65877 LINUX WIN : fast/blockflow/border-vertical-lr.html = IMAGE+TEXT
-BUGCR65877 LINUX WIN : fast/blockflow/japanese-lr-selection.html = IMAGE+TEXT
-BUGCR65877 LINUX WIN : fast/blockflow/japanese-rl-selection.html = IMAGE+TEXT
+BUGCR65877 MAC LINUX WIN : fast/blockflow/japanese-lr-selection.html = IMAGE+TEXT
+BUGCR65877 MAC LINUX WIN : fast/blockflow/japanese-rl-selection.html = IMAGE+TEXT
 BUGCR65877 WIN : fast/blockflow/broken-ideographic-font.html = IMAGE
 BUGCR65877 LINUX : fast/blockflow/broken-ideographic-font.html = IMAGE+TEXT
 BUGCR65877 LINUX WIN : fast/blockflow/vertical-font-fallback.html = IMAGE+TEXT
@@ -2483,7 +2483,7 @@ BUGWK48627 MAC : svg/custom/createImageElement2.xhtml = IMAGE
 // Failures after WebKit roll 70949:71000
 BUGCR61406 : svg/dynamic-updates/SVGFEColorMatrixElement-svgdom-values-prop.html = IMAGE+TEXT
 BUGCR61406 : svg/dynamic-updates/SVGFEColorMatrixElement-svgdom-type-prop.html = IMAGE
-BUGCR61406 WIN LINUX : svg/dynamic-updates/SVGFETurbulenceElement-svgdom-baseFrequency-prop.html = IMAGE
+BUGCR61406 MAC WIN LINUX : svg/dynamic-updates/SVGFETurbulenceElement-svgdom-baseFrequency-prop.html = IMAGE
 // from http://trac.webkit.org/changeset/53086 (expectation changed in above WK roll, was IMAGE+TEXT)
 BUGCR32153and61406 WIN LINUX : svg/dynamic-updates/SVGTextElement-svgdom-rotate-prop.html = IMAGE
 
@@ -3066,7 +3066,7 @@ BUGWK56072 WIN-VISTA : fast/blockflow/japanese-ruby-vertical-rl.html = IMAGE
 BUGWK56072 WIN-VISTA : fast/blockflow/vertical-align-table-baseline.html = IMAGE
 BUGWK56072 WIN-VISTA : fast/blockflow/vertical-baseline-alignment.html = IMAGE
 BUGWK56072 WIN-VISTA : fast/repaint/japanese-rl-selection-clear.html = IMAGE
-BUGWK56072 WIN-VISTA : fast/repaint/japanese-rl-selection-repaint.html = IMAGE
+BUGWK56072 MAC WIN-VISTA : fast/repaint/japanese-rl-selection-repaint.html = IMAGE
 BUGWK56072 WIN-VISTA : fast/repaint/repaint-across-writing-mode-boundary.html = IMAGE
 BUGWK56072 WIN-VISTA : fast/ruby/base-shorter-than-text.html = FAIL
 
@@ -3306,7 +3306,7 @@ BUGWK58193 WIN WIN7 : svg/W3C-SVG-1.1/animate-elem-31-t.svg = IMAGE+TEXT
 BUGWK58193 WIN WIN7 : svg/batik/masking/maskRegions.svg = IMAGE+TEXT
 BUGWK58193 WIN WIN7 : svg/custom/js-late-pattern-and-object-creation.svg = IMAGE+TEXT
 BUGWK58193 WIN WIN7 : svg/text/bidi-tspans.svg = IMAGE+TEXT
-BUGWK58193 WIN WIN7 : svg/text/text-fonts-01-t.svg = IMAGE+TEXT
+BUGWK58193 MAC WIN WIN7 : svg/text/text-fonts-01-t.svg = IMAGE+TEXT
 BUGWK58193 WIN WIN7 : svg/text/text-intro-05-t.svg = IMAGE+TEXT
 BUGWK58193 WIN WIN7 : svg/zoom/page/zoom-mask-with-percentages.svg = IMAGE+TEXT
 BUGWK58193 WIN WIN7 : css2.1/t1202-counter-09-b.html = IMAGE
@@ -4029,3 +4029,4 @@ BUG_HCLAM : fast/js/mozilla/strict/assign-to-callee-name.html = TEXT
 
 // New test added in r85382. Missing results.
 BUG_HCLAM : fast/forms/date-input-visible-strings.html = MISSING
+

@@ -2,6 +2,75 @@
 
         Not reviewed. Build fix.
 
+        Add test expectations for SVG changes.
+
+        * platform/chromium-mac-leopard/editing/selection/3690703-2-expected.png:
+        * platform/chromium-mac-leopard/editing/selection/3690703-expected.png:
+        * platform/chromium-mac-leopard/editing/selection/3690719-expected.png:
+        * platform/chromium-mac-leopard/editing/selection/4975120-expected.png:
+        * platform/chromium-mac-leopard/editing/selection/extend-selection-bidi-expected.png:
+        * platform/chromium-mac-leopard/editing/style/5046875-1-expected.png:
+        * platform/chromium-mac-leopard/fast/forms/input-appearance-focus-expected.png:
+        * platform/chromium-mac-leopard/fast/forms/input-appearance-readonly-expected.png:
+        * platform/chromium-mac-leopard/fast/forms/input-double-click-selection-gap-bug-expected.png:
+        * platform/chromium-mac-leopard/fast/repaint/japanese-rl-selection-repaint-expected.png:
+        * platform/chromium-mac-leopard/svg/W3C-SVG-1.1/text-tselect-02-f-expected.png: Added.
+        * platform/chromium-mac-leopard/svg/custom/mouse-move-on-svg-container-expected.png:
+        * platform/chromium-mac-leopard/svg/custom/mouse-move-on-svg-container-standalone-expected.png:
+        * platform/chromium-mac-leopard/svg/text/text-intro-05-t-expected.png:
+        * platform/chromium-mac/editing/selection/3690703-2-expected.png: Added.
+        * platform/chromium-mac/editing/selection/3690703-expected.png: Added.
+        * platform/chromium-mac/editing/selection/3690719-expected.png: Added.
+        * platform/chromium-mac/editing/selection/4975120-expected.png: Added.
+        * platform/chromium-mac/editing/selection/extend-selection-bidi-expected.png: Added.
+        * platform/chromium-mac/editing/style/5046875-1-expected.png: Added.
+        * platform/chromium-mac/fast/borders/svg-as-border-image-2-expected.png: Removed.
+        * platform/chromium-mac/fast/borders/svg-as-border-image-expected.png: Added.
+        * platform/chromium-mac/fast/forms/input-appearance-focus-expected.png: Added.
+        * platform/chromium-mac/fast/forms/input-appearance-readonly-expected.png: Added.
+        * platform/chromium-mac/fast/forms/input-double-click-selection-gap-bug-expected.png: Added.
+        * platform/chromium-mac/fast/repaint/japanese-rl-selection-repaint-expected.png:
+        * platform/chromium-mac/svg/W3C-SVG-1.1/filters-color-01-b-expected.png: Added.
+        * platform/chromium-mac/svg/W3C-SVG-1.1/filters-specular-01-f-expected.png: Added.
+        * platform/chromium-mac/svg/W3C-SVG-1.1/filters-turb-01-f-expected.png: Added.
+        * platform/chromium-mac/svg/W3C-SVG-1.1/filters-turb-02-f-expected.png:
+        * platform/chromium-mac/svg/W3C-SVG-1.1/masking-mask-01-b-expected.png: Added.
+        * platform/chromium-mac/svg/W3C-SVG-1.1/text-tselect-02-f-expected.png: Added.
+        * platform/chromium-mac/svg/css/circle-in-mask-with-shadow-expected.png:
+        * platform/chromium-mac/svg/custom/mouse-move-on-svg-container-expected.png: Added.
+        * platform/chromium-mac/svg/custom/mouse-move-on-svg-container-standalone-expected.png: Added.
+        * platform/chromium-mac/svg/dynamic-updates/SVGFEColorMatrixElement-dom-in-attr-expected.png: Added.
+        * platform/chromium-mac/svg/dynamic-updates/SVGFEColorMatrixElement-dom-type-attr-expected.png: Added.
+        * platform/chromium-mac/svg/dynamic-updates/SVGFEColorMatrixElement-dom-values-attr-expected.png: Added.
+        * platform/chromium-mac/svg/dynamic-updates/SVGFEColorMatrixElement-svgdom-in-prop-expected.png: Added.
+        * platform/chromium-mac/svg/dynamic-updates/SVGFEConvolveMatrixElement-dom-preserveAlpha-attr-expected.png:
+        * platform/chromium-mac/svg/dynamic-updates/SVGFEConvolveMatrixElement-svgdom-preserveAlpha-prop-expected.png:
+        * platform/chromium-mac/svg/dynamic-updates/SVGFESpecularLightingElement-dom-in-attr-expected.png: Added.
+        * platform/chromium-mac/svg/dynamic-updates/SVGFESpecularLightingElement-dom-specularConstant-attr-expected.png: Added.
+        * platform/chromium-mac/svg/dynamic-updates/SVGFESpecularLightingElement-dom-specularExponent-attr-expected.png: Added.
+        * platform/chromium-mac/svg/dynamic-updates/SVGFESpecularLightingElement-dom-suraceScale-attr-expected.png: Added.
+        * platform/chromium-mac/svg/dynamic-updates/SVGFESpecularLightingElement-inherit-lighting-color-css-prop-expected.png: Added.
+        * platform/chromium-mac/svg/dynamic-updates/SVGFESpecularLightingElement-lighting-color-css-prop-expected.png: Added.
+        * platform/chromium-mac/svg/dynamic-updates/SVGFESpecularLightingElement-svgdom-in-prop-expected.png: Added.
+        * platform/chromium-mac/svg/dynamic-updates/SVGFESpecularLightingElement-svgdom-specularConstant-prop-expected.png: Added.
+        * platform/chromium-mac/svg/dynamic-updates/SVGFESpecularLightingElement-svgdom-specularExponent-prop-expected.png: Added.
+        * platform/chromium-mac/svg/dynamic-updates/SVGFESpecularLightingElement-svgdom-suraceScale-prop-expected.png: Added.
+        * platform/chromium-mac/svg/dynamic-updates/SVGFETurbulenceElement-dom-numOctaves-attr-expected.png: Added.
+        * platform/chromium-mac/svg/dynamic-updates/SVGFETurbulenceElement-dom-seed-attr-expected.png: Added.
+        * platform/chromium-mac/svg/dynamic-updates/SVGFETurbulenceElement-dom-stitchTiles-attr-expected.png: Added.
+        * platform/chromium-mac/svg/dynamic-updates/SVGFETurbulenceElement-dom-type-attr-expected.png: Added.
+        * platform/chromium-mac/svg/dynamic-updates/SVGFETurbulenceElement-svgdom-numOctaves-prop-expected.png: Added.
+        * platform/chromium-mac/svg/dynamic-updates/SVGFETurbulenceElement-svgdom-seed-prop-expected.png: Added.
+        * platform/chromium-mac/svg/dynamic-updates/SVGFETurbulenceElement-svgdom-stitchTiles-prop-expected.png: Added.
+        * platform/chromium-mac/svg/dynamic-updates/SVGFETurbulenceElement-svgdom-type-prop-expected.png: Added.
+        * platform/chromium-mac/svg/filters/feLighting-crash-expected.png: Added.
+        * platform/chromium-mac/svg/text/text-intro-05-t-expected.png:
+        * platform/chromium/test_expectations.txt:
+
+2011-05-02  Alpha Lam  <hclam@chromium.org>
+
+        Not reviewed. Build fix.
+
         Add test expectations to accomodate new tests.
 
         * platform/chromium/test_expectations.txt:
