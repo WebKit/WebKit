@@ -1,3 +1,14 @@
+2011-05-02  Enrica Casucci  <enrica@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        Text does not split on white space when typing to the edge of window.
+        https://bugs.webkit.org/show_bug.cgi?id=59968
+        <rdar://problem/9112683>
+
+        * editing/inserting/typing-at-end-of-line.html: Added.
+        * platform/mac/editing/inserting/typing-at-end-of-line-expected.txt: Added.
+
 2011-05-02  Alpha Lam  <hclam@chromium.org>
 
         Not reviewed. Build fix.

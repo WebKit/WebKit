@@ -1,3 +1,21 @@
+2011-05-02  Enrica Casucci  <enrica@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        Text does not split on white space when typing to the edge of window.
+        https://bugs.webkit.org/show_bug.cgi?id=59968
+        <rdar://problem/9112683>
+
+        Test: editing/inserting/typing-at-end-of-line.html
+
+        This is a regression introduced when we converted the line box tree to
+        floating point in r78846. In findNextLineBreak, there was still one place where
+        the character width was treated as int and truncated and we were inconsistent
+        in the way we treated a character that did not fit entirely in the line.
+
+        * rendering/RenderBlockLineLayout.cpp:
+        (WebCore::RenderBlock::findNextLineBreak):
+
 2011-04-19  Adrienne Walker  <enne@google.com>
 
         Reviewed by James Robinson.
