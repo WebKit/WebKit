@@ -1,3 +1,11 @@
+2011-05-02  Alpha Lam  <hclam@chromium.org>
+
+        Not reviewed. Build fix.
+
+        Fix Chromium test expectations.
+
+        * platform/chromium/test_expectations.txt:
+
 2011-05-02  Enrica Casucci  <enrica@apple.com>
 
         Reviewed by Dan Bernstein.
