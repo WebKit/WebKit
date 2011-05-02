@@ -246,6 +246,7 @@ Structure::~Structure()
 
 void Structure::materializePropertyMap(JSGlobalData& globalData)
 {
+    ASSERT(structure()->classInfo() == &s_info);
     ASSERT(!m_propertyTable);
 
     Vector<Structure*, 8> structures;

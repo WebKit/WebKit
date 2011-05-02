@@ -1225,7 +1225,8 @@ RegisterID* BytecodeGenerator::emitResolve(RegisterID* dst, const Identifier& pr
 
 #if ENABLE(JIT)
         m_codeBlock->addGlobalResolveInfo(instructions().size());
-#else
+#endif
+#if ENABLE(INTERPRETER)
         m_codeBlock->addGlobalResolveInstruction(instructions().size());
 #endif
         emitOpcode(requiresDynamicChecks ? op_resolve_global_dynamic : op_resolve_global);
@@ -1365,7 +1366,8 @@ RegisterID* BytecodeGenerator::emitResolveWithBase(RegisterID* baseDst, Register
 
 #if ENABLE(JIT)
     m_codeBlock->addGlobalResolveInfo(instructions().size());
-#else
+#endif
+#if ENABLE(INTERPRETER)
     m_codeBlock->addGlobalResolveInstruction(instructions().size());
 #endif
     emitOpcode(requiresDynamicChecks ? op_resolve_global_dynamic : op_resolve_global);
@@ -1387,7 +1389,9 @@ RegisterID* BytecodeGenerator::emitGetById(RegisterID* dst, RegisterID* base, co
 {
 #if ENABLE(JIT)
     m_codeBlock->addStructureStubInfo(StructureStubInfo(access_get_by_id));
-#else
+#endif
+    
+#if ENABLE(INTERPRETER)
     m_codeBlock->addPropertyAccessInstruction(instructions().size());
 #endif
 
@@ -1416,7 +1420,8 @@ RegisterID* BytecodeGenerator::emitPutById(RegisterID* base, const Identifier& p
 {
 #if ENABLE(JIT)
     m_codeBlock->addStructureStubInfo(StructureStubInfo(access_put_by_id));
-#else
+#endif
+#if ENABLE(INTERPRETER)
     m_codeBlock->addPropertyAccessInstruction(instructions().size());
 #endif
 
@@ -1436,7 +1441,8 @@ RegisterID* BytecodeGenerator::emitDirectPutById(RegisterID* base, const Identif
 {
 #if ENABLE(JIT)
     m_codeBlock->addStructureStubInfo(StructureStubInfo(access_put_by_id));
-#else
+#endif
+#if ENABLE(INTERPRETER)
     m_codeBlock->addPropertyAccessInstruction(instructions().size());
 #endif
     

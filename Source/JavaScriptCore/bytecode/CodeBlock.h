@@ -340,16 +340,32 @@ namespace JSC {
         void createActivation(CallFrame*);
 
 #if ENABLE(INTERPRETER)
-        void addPropertyAccessInstruction(unsigned propertyAccessInstruction) { m_propertyAccessInstructions.append(propertyAccessInstruction); }
-        void addGlobalResolveInstruction(unsigned globalResolveInstruction) { m_globalResolveInstructions.append(globalResolveInstruction); }
+        void addPropertyAccessInstruction(unsigned propertyAccessInstruction)
+        {
+            if (!m_globalData->canUseJIT())
+                m_propertyAccessInstructions.append(propertyAccessInstruction);
+        }
+        void addGlobalResolveInstruction(unsigned globalResolveInstruction)
+        {
+            if (!m_globalData->canUseJIT())
+                m_globalResolveInstructions.append(globalResolveInstruction);
+        }
         bool hasGlobalResolveInstructionAtBytecodeOffset(unsigned bytecodeOffset);
 #endif
 #if ENABLE(JIT)
         size_t numberOfStructureStubInfos() const { return m_structureStubInfos.size(); }
-        void addStructureStubInfo(const StructureStubInfo& stubInfo) { m_structureStubInfos.append(stubInfo); }
+        void addStructureStubInfo(const StructureStubInfo& stubInfo)
+        {
+            if (m_globalData->canUseJIT())
+                m_structureStubInfos.append(stubInfo);
+        }
         StructureStubInfo& structureStubInfo(int index) { return m_structureStubInfos[index]; }
 
-        void addGlobalResolveInfo(unsigned globalResolveInstruction) { m_globalResolveInfos.append(GlobalResolveInfo(globalResolveInstruction)); }
+        void addGlobalResolveInfo(unsigned globalResolveInstruction)
+        {
+            if (m_globalData->canUseJIT())
+                m_globalResolveInfos.append(GlobalResolveInfo(globalResolveInstruction));
+        }
         GlobalResolveInfo& globalResolveInfo(int index) { return m_globalResolveInfos[index]; }
         bool hasGlobalResolveInfoAtBytecodeOffset(unsigned bytecodeOffset);
 

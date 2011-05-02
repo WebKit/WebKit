@@ -1,3 +1,41 @@
+2011-05-02  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Gavin Barraclough.
+
+        Correct marking of interpreter data in mixed mode builds
+        https://bugs.webkit.org/show_bug.cgi?id=59962
+
+        We had a few places in mixed mode builds where we would not
+        track data used by the interpreter for marking.  This patch
+        corrects the problem and adds a number of assertions to catch
+        live Structures being collected.
+
+        * JavaScriptCore.exp:
+        * assembler/ARMv7Assembler.h:
+        (JSC::ARMv7Assembler::ARMInstructionFormatter::debugOffset):
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::dump):
+        * bytecode/CodeBlock.h:
+        (JSC::CodeBlock::addPropertyAccessInstruction):
+        (JSC::CodeBlock::addGlobalResolveInstruction):
+        (JSC::CodeBlock::addStructureStubInfo):
+        (JSC::CodeBlock::addGlobalResolveInfo):
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::emitResolve):
+        (JSC::BytecodeGenerator::emitResolveWithBase):
+        (JSC::BytecodeGenerator::emitGetById):
+        (JSC::BytecodeGenerator::emitPutById):
+        (JSC::BytecodeGenerator::emitDirectPutById):
+        * runtime/Structure.cpp:
+        (JSC::Structure::materializePropertyMap):
+        * runtime/Structure.h:
+        (JSC::Structure::typeInfo):
+        (JSC::Structure::previousID):
+        (JSC::Structure::propertyStorageCapacity):
+        (JSC::Structure::propertyStorageSize):
+        (JSC::Structure::get):
+        (JSC::Structure::materializePropertyMapIfNecessary):
+
 2011-05-02  Xan Lopez  <xlopez@igalia.com>
 
         Reviewed by Alexey Proskuryakov.

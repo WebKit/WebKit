@@ -397,7 +397,8 @@ void CodeBlock::dump(ExecState* exec) const
              ++i;
         } while (i < m_structureStubInfos.size());
     }
-#else
+#endif
+#if ENABLE(INTERPRETER)
     if (!m_globalResolveInstructions.isEmpty() || !m_propertyAccessInstructions.isEmpty())
         printf("\nStructures:\n");
 
