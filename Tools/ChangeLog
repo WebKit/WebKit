@@ -1,5 +1,16 @@
 2011-05-02  Adam Barth  <abarth@webkit.org>
 
+        Reviewed by Eric Seidel.
+
+        Add runtests_unittest.py
+        https://bugs.webkit.org/show_bug.cgi?id=59955
+
+        I forgot to add this file in a previous patch.
+
+        * Scripts/webkitpy/tool/steps/runtests_unittest.py: Added.
+
+2011-05-02  Adam Barth  <abarth@webkit.org>
+
         Change the testing EWS to log failures explicitly to avoid an infinite loop.
 
         * Scripts/webkitpy/tool/commands/earlywarningsystem.py:
