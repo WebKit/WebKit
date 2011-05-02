@@ -2,6 +2,19 @@
 
         Reviewed by Eric Seidel.
 
+        JSONTestResult needs to handle multiple results
+        https://bugs.webkit.org/show_bug.cgi?id=59269
+
+        This case occurs when a test is flaky because NRWT will run the test
+        twice and report both results as "actual."
+
+        * Scripts/webkitpy/common/net/resultsjsonparser.py:
+        * Scripts/webkitpy/common/net/resultsjsonparser_unittest.py:
+
+2011-05-01  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
         Move checkout/api.py to checkout/checkout.py
         https://bugs.webkit.org/show_bug.cgi?id=59906
 

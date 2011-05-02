@@ -42,6 +42,18 @@ class ResultsJSONParserTest(unittest.TestCase):
                 "prototype-inheritance.html": {
                     "expected": "PASS",
                     "actual": "TEXT"
+                },
+                "prototype-banana.html": {
+                    "expected": "TEXT",
+                    "actual": "PASS"
+                },
+                "prototype-taco.html": {
+                    "expected": "PASS",
+                    "actual": "PASS TEXT"
+                },
+                "prototype-strawberry.html": {
+                    "expected": "PASS",
+                    "actual": "TEXT PASS"
                 }
             }
         },

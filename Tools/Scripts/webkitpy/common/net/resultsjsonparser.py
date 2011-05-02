@@ -63,16 +63,16 @@ class JSONTestResult(object):
         self._result_dict = result_dict
 
     def did_pass(self):
-        return self._actual_as_expectation() == test_expectations.PASS
+        return test_expectations.PASS in self._actual_as_expectations()
 
-    def _actual_as_expectation(self):
-        actual_result = self._result_dict['actual']
-        # There should always be only one expectation for actual
-        assert(' ' not in actual_result)
-        return test_expectations.TestExpectations.expectation_from_string(actual_result)
+    def _actual_as_expectations(self):
+        actual_results = self._result_dict['actual']
+        expectations = map(test_expectations.TestExpectations.expectation_from_string, actual_results.split(' '))
+        if None in expectations:
+            log("Unrecognized actual result in %s" % actual_results)
+        return expectations
 
-    def _failures(self):
-        actual = self._actual_as_expectation()
+    def _failure_types_from_actual_result(self, actual):
         # FIXME: There doesn't seem to be a full list of all possible values of
         # 'actual' anywhere.  However JSONLayoutResultsGenerator.FAILURE_TO_CHAR
         # is a useful reference as that's for "old" style results.json files
@@ -95,6 +95,11 @@ class JSONTestResult(object):
         else:
             log("Failed to handle: %s" % self._result_dict['actual'])
             return []
+
+    def _failures(self):
+        if self.did_pass():
+            return []
+        return sum(map(self._failure_types_from_actual_result, self._actual_as_expectations()), [])
 
     def test_result(self):
         # FIXME: Optionally pull in the test runtime from times_ms.json.
