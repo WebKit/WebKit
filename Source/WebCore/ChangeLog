@@ -1,3 +1,14 @@
+2011-05-01  Abhishek Arya  <inferno@chromium.org>
+
+        Reviewed by Eric Carlson.
+
+        Regression(r74787): Media document mouse click and double-click
+        events should be checked on target node only and not its descendants.
+        https://bugs.webkit.org/show_bug.cgi?id=59886
+
+        * html/MediaDocument.cpp:
+        (WebCore::MediaDocument::defaultEventHandler):
+
 2011-05-01  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Eric Seidel.
