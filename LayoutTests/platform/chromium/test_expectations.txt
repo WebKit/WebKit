@@ -4029,3 +4029,6 @@ BUG_HCLAM : fast/js/mozilla/strict/assign-to-callee-name.html = TEXT
 
 // New test added in r85382. Missing results.
 BUG_HCLAM : fast/forms/date-input-visible-strings.html = MISSING
+
+// New test added in r85535.
+BUG_HCLAM : editing/inserting/typing-at-end-of-line.html = FAIL MISSING
