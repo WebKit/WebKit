@@ -1,3 +1,17 @@
+2011-05-02  Martin Robinson  <mrobinson@igalia.com>
+
+        Reviewed by Eric Seidel.
+
+        [GTK] editing/selection/select-out-of-editable.html failing after r83967
+        https://bugs.webkit.org/show_bug.cgi?id=58667
+
+        Do not trigger mouse down events when the EventSender knows that a mouse button is
+        already down. These type of situations can confuse Xvfb and cause dragging failures.
+
+        * DumpRenderTree/gtk/EventSender.cpp:
+        (mouseDownCallback): Do not trigger another mouse button down event if the mouse button
+        is already down. This can interfere with drags in Xvfb.
+
 2011-05-02  Zsolt Fehér  <h490267@stud.u-szeged.hu>
 
         Reviewed by Csaba Osztrogonác.

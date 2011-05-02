@@ -62,7 +62,7 @@ static int lastClickPositionX;
 static int lastClickPositionY;
 static int lastClickTimeOffset;
 static int lastClickButton;
-static int buttonCurrentlyDown;
+static unsigned int buttonCurrentlyDown;
 static int clickCount;
 GdkDragContext* currentDragSourceContext;
 
@@ -313,6 +313,10 @@ static JSValueRef mouseDownCallback(JSContextRef context, JSObjectRef function, 
 
     GdkEvent* event = gdk_event_new(GDK_BUTTON_PRESS);
     if (!prepareMouseButtonEvent(event, button, modifiers))
+        return JSValueMakeUndefined(context);
+
+    // If the same mouse button is already in the down position don't send another event as it may confuse Xvfb.
+    if (buttonCurrentlyDown == event->button.button)
         return JSValueMakeUndefined(context);
 
     buttonCurrentlyDown = event->button.button;
