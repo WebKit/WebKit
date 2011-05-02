@@ -28,13 +28,14 @@
 
 namespace WebCore {
 
-bool applicationIsAppleMail();
-bool applicationIsSafari();
-bool applicationIsMicrosoftMessenger();
-bool applicationIsAdobeInstaller();
 bool applicationIsAOLInstantMessenger();
+bool applicationIsAdobeInstaller();
+bool applicationIsAperture();
+bool applicationIsAppleMail();
+bool applicationIsMicrosoftMessenger();
 bool applicationIsMicrosoftMyDay();
 bool applicationIsMicrosoftOutlook();
+bool applicationIsSafari();
 
 } // namespace WebCore
 

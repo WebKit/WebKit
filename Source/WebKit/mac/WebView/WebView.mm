@@ -1396,6 +1396,11 @@ static bool fastDocumentTeardownEnabled()
     return needsQuirk;
 }
 
+static bool needsSelfRetainWhileLoadingQuirk()
+{
+    static bool needsQuirk = applicationIsAperture();
+    return needsQuirk;
+}
 
 - (BOOL)_needsPreHTML5ParserQuirks
 {    
@@ -1849,6 +1854,9 @@ static inline IMP getMethod(id o, SEL s)
 
 - (void)_didStartProvisionalLoadForFrame:(WebFrame *)frame
 {
+    if (needsSelfRetainWhileLoadingQuirk())
+        [self retain];
+
     [self _willChangeBackForwardKeys];
     if (frame == [self mainFrame]){
         // Force an observer update by sending a will/did.
@@ -1870,6 +1878,9 @@ static inline IMP getMethod(id o, SEL s)
 
 - (void)_didFinishLoadForFrame:(WebFrame *)frame
 {
+    if (needsSelfRetainWhileLoadingQuirk())
+        [self performSelector:@selector(release) withObject:nil afterDelay:0];
+        
     [self _didChangeBackForwardKeys];
     if (frame == [self mainFrame]){
         // Force an observer update by sending a will/did.
@@ -1881,6 +1892,9 @@ static inline IMP getMethod(id o, SEL s)
 
 - (void)_didFailLoadWithError:(NSError *)error forFrame:(WebFrame *)frame
 {
+    if (needsSelfRetainWhileLoadingQuirk())
+        [self performSelector:@selector(release) withObject:nil afterDelay:0];
+
     [self _didChangeBackForwardKeys];
     if (frame == [self mainFrame]){
         // Force an observer update by sending a will/did.
@@ -1892,6 +1906,9 @@ static inline IMP getMethod(id o, SEL s)
 
 - (void)_didFailProvisionalLoadWithError:(NSError *)error forFrame:(WebFrame *)frame
 {
+    if (needsSelfRetainWhileLoadingQuirk())
+        [self performSelector:@selector(release) withObject:nil afterDelay:0];
+
     [self _didChangeBackForwardKeys];
     if (frame == [self mainFrame]){
         // Force an observer update by sending a will/did.

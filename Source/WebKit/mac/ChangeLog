@@ -1,3 +1,17 @@
+2011-05-02  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Anders Carlsson.
+
+        <rdar://problem/9340945> and https://bugs.webkit.org/show_bug.cgi?id=59973
+        In Aperture, a WebView might be dealloc'ed before it finishes loading.
+
+        * WebView/WebView.mm:
+        (needsSelfRetainWhileLoadingQuirk):
+        (-[WebView _didStartProvisionalLoadForFrame:]): If we need the quirk, retain self.
+        (-[WebView _didFinishLoadForFrame:]): If we need the quirk, release self on a delay.
+        (-[WebView _didFailLoadWithError:forFrame:]): Ditto.
+        (-[WebView _didFailProvisionalLoadWithError:forFrame:]): Ditto.
+
 2011-05-02  Adam Barth  <abarth@webkit.org>
 
         Reviewed by David Levin.

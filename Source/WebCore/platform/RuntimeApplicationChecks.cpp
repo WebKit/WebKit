@@ -96,4 +96,10 @@ bool applicationIsMicrosoftOutlook()
     return isMicrosoftOutlook;
 }
 
+bool applicationIsAperture()
+{
+    static bool isAperture = mainBundleIsEqualTo("com.apple.Aperture");
+    return isAperture;
+}
+
 } // namespace WebCore

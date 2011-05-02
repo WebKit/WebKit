@@ -1,3 +1,15 @@
+2011-05-02  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Anders Carlsson.
+
+        <rdar://problem/9340945> and https://bugs.webkit.org/show_bug.cgi?id=59973
+        In Aperture, a WebView might be dealloc'ed before it finishes loading.
+
+        * WebCore.exp.in:
+        * platform/RuntimeApplicationChecks.cpp:
+        (WebCore::applicationIsAperture): Perform a com.apple.Aperture bundle check.
+        * platform/RuntimeApplicationChecks.h:
+
 2011-05-02  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Dan Bernstein.
