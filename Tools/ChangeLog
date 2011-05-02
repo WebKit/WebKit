@@ -1,3 +1,16 @@
+2011-05-02  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        Add base case for a test-running EWS
+        https://bugs.webkit.org/show_bug.cgi?id=59920
+
+        Later I will subclass this to run the Chromium Linux EWS.
+
+        * Scripts/webkitpy/tool/bot/earlywarningsystemtask.py: Added.
+        * Scripts/webkitpy/tool/commands/earlywarningsystem.py:
+        * Scripts/webkitpy/tool/commands/earlywarningsystem_unittest.py:
+
 2011-05-02  Anders Carlsson  <andersca@apple.com>
 
         Build fix.
