@@ -34,6 +34,7 @@
 #include "DOMStringList.h"
 #include "IDBDatabaseBackendProxy.h"
 #include "IDBDatabaseError.h"
+#include "SecurityOrigin.h"
 #include "WebFrameImpl.h"
 #include "WebIDBCallbacksImpl.h"
 #include "WebIDBDatabase.h"
