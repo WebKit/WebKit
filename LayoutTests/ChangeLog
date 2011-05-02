@@ -2,6 +2,20 @@
 
         Reviewed by Eric Seidel.
 
+        Polish CSP host and port matching
+        https://bugs.webkit.org/show_bug.cgi?id=59899
+
+        Test two host wildcard cases.
+
+        * http/tests/security/contentSecurityPolicy/image-full-host-wildcard-allowed-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/image-full-host-wildcard-allowed.html: Added.
+        * http/tests/security/contentSecurityPolicy/image-host-wildcard-allowed-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/image-host-wildcard-allowed.html: Added.
+
+2011-05-01  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
         CSP default-src is missing
         https://bugs.webkit.org/show_bug.cgi?id=58641
 

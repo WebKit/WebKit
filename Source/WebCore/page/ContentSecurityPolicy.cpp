@@ -31,7 +31,6 @@
 #include "FormData.h"
 #include "FormDataList.h"
 #include "Frame.h"
-#include "NotImplemented.h"
 #include "PingLoader.h"
 #include "SecurityOrigin.h"
 #include "TextEncoding.h"
@@ -136,19 +135,19 @@ private:
 
     bool hostMatches(const KURL& url) const
     {
-        if (m_hostHasWildcard)
-            notImplemented();
+        const String& host = url.host();
+        if (equalIgnoringCase(host, m_host))
+            return true;
+        return m_hostHasWildcard && host.endsWith("." + m_host, false);
 
-        return equalIgnoringCase(url.host(), m_host);
     }
 
     bool portMatches(const KURL& url) const
     {
         if (m_portHasWildcard)
             return true;
-
-        // FIXME: Handle explicit default ports correctly.
-        return url.port() == m_port;
+        int port = url.port();
+        return port ? port == m_port : isDefaultPortForProtocol(m_port, url.protocol());
     }
 
     bool isSchemeOnly() const { return m_host.isEmpty(); }
