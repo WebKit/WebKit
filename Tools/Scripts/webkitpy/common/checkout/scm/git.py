@@ -33,7 +33,7 @@ import re
 from webkitpy.common.memoized import memoized
 from webkitpy.common.system.executive import Executive, run_command, ScriptError
 
-from .scm import SCM, commit_error_handler
+from .scm import AuthenticationError, SCM, commit_error_handler
 from .svn import SVN, SVNRepository
 
 

@@ -1,3 +1,15 @@
+2011-05-01  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Adam Barth.
+
+        scm.py should be split into many pieces
+        https://bugs.webkit.org/show_bug.cgi?id=59908
+
+        Forgot an AuthenticationError import.
+
+        * Scripts/webkitpy/common/checkout/scm/git.py:
+        * Scripts/webkitpy/common/checkout/scm/svn.py:
+
 2011-05-01  Arno Renevier  <arno@renevier.net>
 
         Reviewed by Eric Seidel.
