@@ -1,3 +1,17 @@
+2011-05-02  Eric Carlson  <eric.carlson@apple.com>
+
+        Reviewed by Eric Seidel.
+
+        HTMLMediaElement should not seek to time 0 when readyState reaches HAVE_METADATA
+        https://bugs.webkit.org/show_bug.cgi?id=59828
+
+        No new tests required, no functional change because seeking to time zero before playback
+        begins has no effect.
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::setReadyState): Don't seek to time 0 when readyState reaches
+            HAVE_METADATA.
+
 2011-05-02  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Gavin Barraclough.

@@ -987,7 +987,6 @@ void HTMLMediaElement::setReadyState(MediaPlayer::ReadyState state)
             mediaControls()->loadedMetadata();
         if (renderer())
             renderer()->updateFromElement();
-        m_player->seek(0);
     }
 
     bool shouldUpdateDisplayState = false;
