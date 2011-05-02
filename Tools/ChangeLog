@@ -1,3 +1,9 @@
+2011-05-02  Adam Barth  <abarth@webkit.org>
+
+        Change the testing EWS to log failures explicitly to avoid an infinite loop.
+
+        * Scripts/webkitpy/tool/commands/earlywarningsystem.py:
+
 2011-05-02  Adrienne Walker  <enne@google.com>
 
         Unreviewed, fix misspelled contributor name.

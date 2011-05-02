@@ -138,7 +138,11 @@ class AbstractTestingEWS(AbstractEarlyWarningSystem, EarlyWarningSystemTaskDeleg
             if unexpected_failures:
                 message += "\nNew failing tests:\n%s" % "\n".join(unexpected_failures)
             self._tool.bugs.post_comment_to_bug(patch.bug_id(), message, cc=self.watchers)
-            raise
+            self._did_fail(patch)
+            # FIXME: We're supposed to be able to raise e again here and have
+            # one of our base classes mark the patch as fail, but there seems
+            # to be an issue with the exit_code.
+            return False
 
     # EarlyWarningSystemDelegate methods
 
