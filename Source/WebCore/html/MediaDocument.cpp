@@ -146,6 +146,14 @@ static inline HTMLVideoElement* descendentVideoElement(Node* node)
     return 0;
 }
 
+static inline HTMLVideoElement* ancestorVideoElement(Node* node)
+{
+    while (node && !node->hasTagName(videoTag))
+        node = node->parentOrHostNode();
+
+    return static_cast<HTMLVideoElement*>(node);
+}
+
 void MediaDocument::defaultEventHandler(Event* event)
 {
     // Match the default Quicktime plugin behavior to allow 
@@ -154,8 +162,7 @@ void MediaDocument::defaultEventHandler(Event* event)
     if (!targetNode)
         return;
 
-    if (targetNode->hasTagName(videoTag)) {
-        HTMLVideoElement* video = static_cast<HTMLVideoElement*>(targetNode);
+    if (HTMLVideoElement* video = ancestorVideoElement(targetNode)) {
         if (event->type() == eventNames().clickEvent) {
             if (!video->canPlay()) {
                 video->pause(event->fromUserGesture());

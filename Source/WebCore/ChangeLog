@@ -1,3 +1,17 @@
+2011-05-02  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        Reviewed by Eric Carlson.
+
+        REGRESSIONS (r71934): In standalone media documents, (double-)clicking the media element doesn’t play/pause
+        https://bugs.webkit.org/show_bug.cgi?id=59917
+
+        Since default event handlers are not retargeted, we should always attempt ancestor
+        traversal to find out whether the event.
+
+        * html/MediaDocument.cpp:
+        (WebCore::ancestorVideoElement): Added ancestor-traversing helper.
+        (WebCore::MediaDocument::defaultEventHandler): Changed to use ancestorVideoElement.
+
 2011-05-02  Sam Weinig  <sam@webkit.org>
 
         Attempt to fix the Leopard build.
