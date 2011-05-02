@@ -71,3 +71,9 @@ class ExpectedFailuresTest(unittest.TestCase):
         self._assert_expected(failures, ['baz.html'], True)
         failures.shrink_expected_failures(MockResults(), True)
         self._assert_expected(failures, ['baz.html'], False)
+
+    def test_unexpected_failures(self):
+        failures = ExpectedFailures()
+        failures.grow_expected_failures(MockResults(['foo.html']))
+        self.assertEquals(failures.unexpected_failures(MockResults(['foo.html', 'bar.html'])), set(['bar.html']))
+        self.assertEquals(failures.unexpected_failures(MockResults(['baz.html'])), set(['baz.html']))

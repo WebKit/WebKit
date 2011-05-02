@@ -41,6 +41,11 @@ class ExpectedFailures(object):
             return False
         return set(results.failing_tests()) <= self._failures
 
+    def unexpected_failures(self, results):
+        if not self._can_trust_results(results):
+            return None
+        return set(results.failing_tests()) - self._failures
+
     def shrink_expected_failures(self, results, run_success):
         if run_success:
             self._failures = set()
