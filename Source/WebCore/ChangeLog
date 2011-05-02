@@ -1,3 +1,18 @@
+2011-05-02  Philippe Normand  <pnormand@igalia.com>
+
+        Reviewed by Martin Robinson.
+
+        [GTK] gdk_drawable_get_size() shouldn't be used with GTK+ >= 2.24
+        https://bugs.webkit.org/show_bug.cgi?id=59932
+
+        Use gdk_window_get_width() and gdk_window_get_height() if
+        available, instead of the deprecated gdk_drawable_get_size().
+
+        No new tests, build fix only.
+
+        * platform/gtk/WidgetRenderingContext.cpp:
+        (WebCore::WidgetRenderingContext::WidgetRenderingContext):
+
 2011-05-02  Eric Carlson  <eric.carlson@apple.com>
 
         Reviewed by Brady Eidson.
