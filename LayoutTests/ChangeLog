@@ -1,5 +1,13 @@
 2011-05-02  Alpha Lam  <hclam@chromium.org>
 
+        Not reviewd. Build fix.
+
+        Adjust test expectations to make build bots happy.
+
+        * platform/chromium/test_expectations.txt:
+
+2011-05-02  Alpha Lam  <hclam@chromium.org>
+
         Not reviewed. Build fix.
 
         Rebaseline SVG layout tests for chromium port.

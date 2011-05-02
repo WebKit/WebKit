@@ -2896,7 +2896,7 @@ BUGWK53469 GPU MAC : compositing/scroll-painted-composited-content.html = CRASH
 
 BUGCR74979 GPU MAC: media/video-canvas-alpha.html = IMAGE
 
-BUGWK55708 BUGCR75345 GPU MAC : media/video-controls-rendering.html = CRASH IMAGE
+BUGWK55708 BUGCR75345 GPU : media/video-controls-rendering.html = CRASH IMAGE+TEXT
 BUGWK55718 BUGCR75354 GPU : media/media-document-audio-repaint.html = IMAGE+TEXT
 
 BUGWK55968 BUGWK58306 GPU MAC : compositing/webgl/webgl-nonpremultiplied-blend.html = IMAGE+TEXT CRASH
@@ -3450,7 +3450,7 @@ BUGCR79259 : fast/js/array-proto-func-property-getter-except.html = TEXT
 
 // Temporarily marked failing for rebaselining.
 
-BUGWK58619 GPU LINUX WIN : media/video-volume-slider.html = IMAGE
+BUGWK58619 GPU : media/video-volume-slider.html = IMAGE+TEXT
 
 // Need to be re-baselined BUGCR79770
 BUGCR79770 WIN : fast/box-shadow/inset-with-extraordinary-radii-and-border.html = IMAGE
@@ -4021,3 +4021,6 @@ BUGWK59782 WIN MAC LINUX RELEASE : svg/dynamic-updates/SVGFEDropShadowElement-sv
 BUGWK59782 WIN MAC LINUX RELEASE : svg/filters/feDropShadow.svg = IMAGE
 
 BUGWK59839 : animations/3d/replace-filling-transform.html = PASS IMAGE
+
+// New test added in r85303.
+BUG_HCLAM : compositing/masks/layer-mask-placement.html = IMAGE
