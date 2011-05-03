@@ -1,3 +1,14 @@
+2011-05-03  Enrica Casucci  <enrica@apple.com>
+
+        Reviewed by Ryosuke Niwa.
+
+        Crash in SpellingCorrectionController::respondToChangedSelection.
+        https://bugs.webkit.org/show_bug.cgi?id=60071
+        <rdar://problem/9358190>
+
+        * editing/selection/undo-crash-expected.txt: Added.
+        * editing/selection/undo-crash.html: Added.
+
 2011-05-03  Csaba Osztrogonác  <ossy@webkit.org>
 
         [Qt][WK2] Incorrect line number dumping

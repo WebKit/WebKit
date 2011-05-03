@@ -385,6 +385,12 @@ void SpellingCorrectionController::respondToChangedSelection(const VisibleSelect
         return;
 
     VisiblePosition selectionPosition = currentSelection.start();
+    
+    // Creating a Visible position triggers a layout and there is no
+    // guarantee that the selection is still valid.
+    if (selectionPosition.isNull())
+        return;
+    
     VisiblePosition endPositionOfWord = endOfWord(selectionPosition, LeftWordIfOnBoundary);
     if (selectionPosition != endPositionOfWord)
         return;
