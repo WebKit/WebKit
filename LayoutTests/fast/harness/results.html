@@ -37,10 +37,6 @@ th {
     -moz-user-select: none;
 }
 
-label {
-    margin-left: 10px;
-}
-
 .results-row {
     background-color: white;
 }
@@ -54,10 +50,12 @@ label {
     display: none;
 }
 
-#options {
-    position: absolute;
-    top: 4px;
-    right: 4px;
+#toolbar {
+    position: fixed;
+    padding: 4px;
+    top: 0;
+    right: 0;
+    text-align: right;
 }
 
 .expand-button {
@@ -90,6 +88,18 @@ label {
 
 #options {
     background-color: white;
+}
+
+#options-menu {
+    border: 1px solid;
+    padding: 0 2px;
+    box-shadow: 2px 2px 2px #888;
+    -webkit-transition: opacity .2s;
+}
+
+.hidden-menu {
+    pointer-events: none;
+    opacity: 0;
 }
 
 .label {
@@ -799,20 +809,34 @@ function convertToNonTogglingHandler(resultFunction)
     }
 }
 
+function toggleOptionsMenu()
+{
+    var menu = document.getElementById('options-menu');
+    menu.className = (menu.className == 'hidden-menu') ? '' : 'hidden-menu';
+}
+
+function handleMouseDown(e)
+{
+    if (!parentOfType(e.target, '#options-menu') && e.target.id != 'options-link')
+        document.getElementById('options-menu').className = 'hidden-menu';
+}
+
+document.addEventListener('mousedown', handleMouseDown, false);
+
 function generatePage()
 {
-    var html = '<div id=options>' +
-        '<a href="javascript:void()" class="expand-all" onclick="expandAllExpectations()">expand all</a> ' +
-        '<a href="javascript:void()" class="collapse-all" onclick="collapseAllExpectations()">collapse all</a>';
+    var html = '<div id=toolbar>' +
+        '<a href="javascript:void()" onclick="expandAllExpectations()">expand all</a> ' +
+        '<a href="javascript:void()" onclick="collapseAllExpectations()">collapse all</a> ' +
+        '<a href="javascript:void()" id=options-link onclick="toggleOptionsMenu()">options</a><div id=options-menu class=hidden-menu>';
 
-    // FIXME: put these options in a menu
     // FIXME: store these as prefs in localstorage?
     if (globalState().results.uses_expectations_file)
         html += '<label><input id="unexpected-results" type=checkbox checked onchange="updateExpectedFailures()">Only show unexpected results</label>';
 
     html += '<label><input id="toggle-images" type=checkbox checked onchange="updateTogglingImages()">Toggle images</label>';
 
-    html += '</div>';
+    html += '</div></div>';
 
     var tableRowsHtml = tableRows();
 

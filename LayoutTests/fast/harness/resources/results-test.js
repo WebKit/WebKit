@@ -118,8 +118,15 @@ function runTests()
     runTest(results, function() {
         assertTrue(document.getElementById('image-results-header').textContent == '');
         assertTrue(document.getElementById('text-results-header').textContent != '');
+        
+        var optionsMenu = document.getElementById('options-menu');
+        assertTrue(window.getComputedStyle(optionsMenu, null)['opacity'] == 0)
+        toggleOptionsMenu();
+        assertTrue(window.getComputedStyle(optionsMenu, null)['opacity'] == 1)
+        toggleOptionsMenu();
+        assertTrue(window.getComputedStyle(optionsMenu, null)['opacity'] == 0)
     });
-    
+
     results = mockResults();
     var subtree = results.tests['foo'] = {}
     subtree['bar.html'] = mockExpectation('TEXT', 'MISSING');
@@ -215,7 +222,7 @@ function runTests()
         expandAllExpectations();
         assertTrue(document.querySelectorAll('.results-row').length == 2);
     });
-  
+
     runDefaultSingleRowTest('bar-skip.html', 'TEXT', 'SKIP', true, '', '');
     runDefaultSingleRowTest('bar-flaky-fail.html', 'PASS FAIL', 'TEXT', true, 'expected actual diff ', '');
     runDefaultSingleRowTest('bar-flaky-fail-unexpected.html', 'PASS TEXT', 'IMAGE', false, '', 'images diff ');

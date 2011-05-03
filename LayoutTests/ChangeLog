@@ -49,6 +49,19 @@
 
         Reviewed by Tony Chang.
 
+        put results.html options in a menu
+        https://bugs.webkit.org/show_bug.cgi?id=60042
+
+        There are currently two options. With https://bugs.webkit.org/show_bug.cgi?id=59267
+        there will be three. Put them behind a menu to reduce clutter.
+
+        * fast/harness/resources/results-test.js:
+        * fast/harness/results.html:
+
+2011-05-03  Ojan Vafai  <ojan@chromium.org>
+
+        Reviewed by Tony Chang.
+
         make pixel zooming in results.html file less jarring
         https://bugs.webkit.org/show_bug.cgi?id=60038
 
