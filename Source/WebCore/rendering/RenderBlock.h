@@ -43,6 +43,7 @@ class RenderText;
 
 struct BidiRun;
 struct PaintInfo;
+class LineInfo;
 
 template <class Iterator, class Run> class BidiResolver;
 template <class Run> class BidiRunList;
@@ -93,7 +94,7 @@ public:
 
     RootInlineBox* createAndAppendRootInlineBox();
 
-    bool generatesLineBoxesForInlineChild(RenderObject*, bool isLineEmpty = true, bool previousLineBrokeCleanly = true);
+    bool generatesLineBoxesForInlineChild(RenderObject*);
 
     void markAllDescendantsWithFloatsForLayout(RenderBox* floatToRemove = 0, bool inLayout = true);
     void markPositionedObjectsForLayout();
@@ -156,7 +157,6 @@ public:
     RenderBlock* createAnonymousBlockWithSameTypeAs(RenderBlock* otherAnonymousBlock) const;
     
     static void appendRunsForObject(BidiRunList<BidiRun>&, int start, int end, RenderObject*, InlineBidiResolver&);
-    static bool requiresLineBox(const InlineIterator&, bool isLineEmpty = true, bool previousLineBrokeCleanly = true);
 
     ColumnInfo* columnInfo() const;
     int columnGap() const;
@@ -491,23 +491,22 @@ private:
 
     // The following functions' implementations are in RenderBlockLineLayout.cpp.
     void checkFloatsInCleanLine(RootInlineBox*, Vector<FloatWithRect>&, size_t& floatIndex, bool& encounteredNewFloat, bool& dirtiedByFloat);
-    RootInlineBox* determineStartPosition(bool& firstLine, bool& fullLayout, bool& previousLineBrokeCleanly,
-                                          InlineBidiResolver&, Vector<FloatWithRect>& floats, unsigned& numCleanFloats,
+    RootInlineBox* determineStartPosition(LineInfo&, bool& fullLayout, InlineBidiResolver&, Vector<FloatWithRect>& floats, unsigned& numCleanFloats,
                                           bool& useRepaintBounds, int& repaintTop, int& repaintBottom);
     RootInlineBox* determineEndPosition(RootInlineBox* startBox, Vector<FloatWithRect>& floats, size_t floatIndex, InlineIterator& cleanLineStart,
                                         BidiStatus& cleanLineBidiStatus, int& yPos);
     bool matchedEndLine(const InlineBidiResolver&, const InlineIterator& endLineStart, const BidiStatus& endLineStatus,
                         RootInlineBox*& endLine, int& endYPos, int& repaintBottom, int& repaintTop);
 
-    void skipTrailingWhitespace(InlineIterator&, bool isLineEmpty, bool previousLineBrokeCleanly);
-    void skipLeadingWhitespace(InlineBidiResolver&, bool isLineEmpty, bool previousLineBrokeCleanly, FloatingObject* lastFloatFromPreviousLine, LineWidth&);
+    void skipTrailingWhitespace(InlineIterator&, const LineInfo&);
+    void skipLeadingWhitespace(InlineBidiResolver&, const LineInfo&, FloatingObject* lastFloatFromPreviousLine, LineWidth&);
     typedef std::pair<RenderText*, LazyLineBreakIterator> LineBreakIteratorInfo;
-    InlineIterator findNextLineBreak(InlineBidiResolver&, bool firstLine, bool& isLineEmpty, LineBreakIteratorInfo&, bool& previousLineBrokeCleanly, bool& hyphenated,
+    InlineIterator findNextLineBreak(InlineBidiResolver&, LineInfo&, LineBreakIteratorInfo&, bool& hyphenated,
                                      EClear*, FloatingObject* lastFloatFromPreviousLine, Vector<RenderBox*>& positionedObjects);
-    RootInlineBox* constructLine(BidiRunList<BidiRun>&, bool firstLine, bool lastLine);
-    InlineFlowBox* createLineBoxes(RenderObject*, bool firstLine, InlineBox* childBox);
+    RootInlineBox* constructLine(BidiRunList<BidiRun>&, const LineInfo&);
+    InlineFlowBox* createLineBoxes(RenderObject*, const LineInfo&, InlineBox* childBox);
 
-    void computeInlineDirectionPositionsForLine(RootInlineBox*, bool firstLine, BidiRun* firstRun, BidiRun* trailingSpaceRun, bool reachedEnd, GlyphOverflowAndFallbackFontsMap&, VerticalPositionCache&);
+    void computeInlineDirectionPositionsForLine(RootInlineBox*, const LineInfo&, BidiRun* firstRun, BidiRun* trailingSpaceRun, bool reachedEnd, GlyphOverflowAndFallbackFontsMap&, VerticalPositionCache&);
     void computeBlockDirectionPositionsForLine(RootInlineBox*, BidiRun*, GlyphOverflowAndFallbackFontsMap&, VerticalPositionCache&);
     void deleteEllipsisLineBoxes();
     void checkLinesForTextOverflow();

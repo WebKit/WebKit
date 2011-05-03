@@ -1,3 +1,39 @@
+2011-05-03  Levi Weintraub  <leviw@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        Extract LineInfo class
+        https://bugs.webkit.org/show_bug.cgi?id=60044
+
+        Created a LineInfo class in RenderBlockLineLayout.cpp that brings together the relevant
+        layout information about a line. This simplifies function signatures and clears up initialization.
+
+        No new tests as this is refactoring.
+
+        * rendering/RenderBlock.h: Updated internal layout function signatures to use LineInfo.
+        * rendering/RenderBlockLineLayout.cpp:
+        (WebCore::LineInfo::LineInfo):
+        (WebCore::LineInfo::isFirstLine):
+        (WebCore::LineInfo::isLastLine):
+        (WebCore::LineInfo::isEmpty):
+        (WebCore::LineInfo::previousLineBrokeCleanly):
+        (WebCore::LineInfo::setFirstLine):
+        (WebCore::LineInfo::setLastLine):
+        (WebCore::LineInfo::setEmpty):
+        (WebCore::LineInfo::setPreviousLineBrokeCleanly):
+        (WebCore::RenderBlock::createLineBoxes):
+        (WebCore::RenderBlock::constructLine):
+        (WebCore::RenderBlock::computeInlineDirectionPositionsForLine):
+        (WebCore::RenderBlock::layoutInlineChildren):
+        (WebCore::RenderBlock::determineStartPosition):
+        (WebCore::skipNonBreakingSpace):
+        (WebCore::shouldCollapseWhiteSpace):
+        (WebCore::requiresLineBox): Moved from RenderBlock.h and made it locally scoped to RenderBlockLineLayout.cpp
+        (WebCore::RenderBlock::generatesLineBoxesForInlineChild):
+        (WebCore::RenderBlock::skipTrailingWhitespace):
+        (WebCore::RenderBlock::skipLeadingWhitespace):
+        (WebCore::RenderBlock::findNextLineBreak):
+
 2011-05-03  Roland Steiner  <rolandsteiner@chromium.org>
 
         Reviewed by Dimitri Glazkov.
