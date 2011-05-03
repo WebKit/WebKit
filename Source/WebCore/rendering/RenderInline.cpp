@@ -567,6 +567,11 @@ void RenderInline::absoluteQuads(Vector<FloatQuad>& quads)
 
 void RenderInline::culledInlineAbsoluteQuads(const RenderInline* container, Vector<FloatQuad>& quads)
 {
+    if (!culledInlineFirstLineBox()) {
+        quads.append(localToAbsoluteQuad(FloatRect()));
+        return;
+    }
+
     bool isHorizontal = style()->isHorizontalWritingMode();
     for (RenderObject* curr = firstChild(); curr; curr = curr->nextSibling()) {
         if (curr->isFloatingOrPositioned())

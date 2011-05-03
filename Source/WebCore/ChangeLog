@@ -1,3 +1,19 @@
+2011-05-03  David Hyatt  <hyatt@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        https://bugs.webkit.org/show_bug.cgi?id=60040
+        <rdar://problem/9261591>
+
+        Links broken at iplanwebsites.com. Make sure that culledInlineAbsoluteQuads still does
+        a translation of a 0,0 point to absolute coordinates so that the top left position is
+        accurate.
+
+        Added fast/inline/skipped-whitespace-client-rect.html
+        
+        * rendering/RenderInline.cpp:
+        (WebCore::RenderInline::culledInlineAbsoluteQuads):
+
 2011-05-03  Sam Weinig  <sam@webkit.org>
 
         Fix chromium build.
