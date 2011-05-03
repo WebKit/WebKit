@@ -75,6 +75,13 @@ PluginProcessConnection* PluginProcessConnectionManager::getPluginProcessConnect
     RefPtr<PluginProcessConnection> pluginProcessConnection = PluginProcessConnection::create(this, pluginPath, connectionIdentifier);
     m_pluginProcessConnections.append(pluginProcessConnection);
 
+    {
+        MutexLocker locker(m_pathsAndConnectionsMutex);
+        ASSERT(!m_pathsAndConnections.contains(pluginProcessConnection->pluginPath()));
+
+        m_pathsAndConnections.set(pluginPath, pluginProcessConnection->connection());
+    }
+
     return pluginProcessConnection.get();
 }
 
@@ -83,7 +90,27 @@ void PluginProcessConnectionManager::removePluginProcessConnection(PluginProcess
     size_t vectorIndex = m_pluginProcessConnections.find(pluginProcessConnection);
     ASSERT(vectorIndex != notFound);
 
+    {
+        MutexLocker locker(m_pathsAndConnectionsMutex);
+        ASSERT(m_pathsAndConnections.contains(pluginProcessConnection->pluginPath()));
+        
+        m_pathsAndConnections.remove(pluginProcessConnection->pluginPath());
+    }
+
     m_pluginProcessConnections.remove(vectorIndex);
+}
+
+void PluginProcessConnectionManager::pluginProcessCrashed(const String& pluginPath)
+{
+    MutexLocker locker(m_pathsAndConnectionsMutex);
+    CoreIPC::Connection* connection = m_pathsAndConnections.get(pluginPath).get();
+
+    // It's OK for connection to be null here; it will happen if this web process doesn't know
+    // anything about the plug-in process.
+    if (!connection)
+        return;
+
+    connection->postConnectionDidCloseOnConnectionWorkQueue();
 }
 
 } // namespace WebKit

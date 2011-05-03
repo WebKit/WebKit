@@ -796,7 +796,7 @@ void WebProcess::clearPluginSiteData(const Vector<String>& pluginPaths, const Ve
 #if ENABLE(PLUGIN_PROCESS)
 void WebProcess::pluginProcessCrashed(const String& pluginPath)
 {
-    // FIXME: Implement.
+    m_pluginProcessConnectionManager.pluginProcessCrashed(pluginPath);
 }
 #endif
 

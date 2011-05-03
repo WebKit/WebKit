@@ -1,5 +1,28 @@
 2011-05-02  Anders Carlsson  <andersca@apple.com>
 
+        Reviewed by Sam Weinig.
+
+        The web process locks up when the plug-in process crashes
+        https://bugs.webkit.org/show_bug.cgi?id=59999
+        <rdar://problem/8889303>
+
+        Add a hash map from plug-in paths to CoreIPC connections to PluginProcessConnectionManager.
+        Add PluginProcessConnectionManager::pluginProcessCrashed and make it look up the corresponding
+        CoreIPC connection and call postConnectionDidCloseOnConnectionWorkQueue on it.
+
+        * Platform/CoreIPC/Connection.cpp:
+        (CoreIPC::Connection::postConnectionDidCloseOnConnectionWorkQueue):
+        * Platform/CoreIPC/Connection.h:
+        * WebProcess/Plugins/PluginProcessConnectionManager.cpp:
+        (WebKit::PluginProcessConnectionManager::getPluginProcessConnection):
+        (WebKit::PluginProcessConnectionManager::removePluginProcessConnection):
+        (WebKit::PluginProcessConnectionManager::pluginProcessCrashed):
+        * WebProcess/Plugins/PluginProcessConnectionManager.h:
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::pluginProcessCrashed):
+
+2011-05-02  Anders Carlsson  <andersca@apple.com>
+
         Try to fix Windows build.
 
         * Scripts/webkit2/messages.py:

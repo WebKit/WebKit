@@ -147,6 +147,8 @@ public:
 
     void setDefaultSyncMessageTimeout(double);
 
+    void postConnectionDidCloseOnConnectionWorkQueue();
+
     static const int DefaultTimeout = 0;
     static const int NoTimeout = -1;
 

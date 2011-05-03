@@ -29,10 +29,17 @@
 #if ENABLE(PLUGIN_PROCESS)
 
 #include <wtf/Forward.h>
+#include <wtf/HashMap.h>
 #include <wtf/Noncopyable.h>
+#include <wtf/Threading.h>
 #include <wtf/Vector.h>
+#include <wtf/text/StringHash.h>
 
 // Manages plug-in process connections for the given web process.
+
+namespace CoreIPC {
+    class Connection;
+}
 
 namespace WebKit {
 
@@ -47,8 +54,14 @@ public:
     PluginProcessConnection* getPluginProcessConnection(const String& pluginPath);
     void removePluginProcessConnection(PluginProcessConnection*);
 
+    // Called on the web process connection work queue.
+    void pluginProcessCrashed(const String& pluginPath);
+
 private:
     Vector<RefPtr<PluginProcessConnection> > m_pluginProcessConnections;
+
+    Mutex m_pathsAndConnectionsMutex;
+    HashMap<String, RefPtr<CoreIPC::Connection> > m_pathsAndConnections;
 };
 
 }

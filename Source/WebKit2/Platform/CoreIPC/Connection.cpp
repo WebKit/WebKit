@@ -550,6 +550,11 @@ void Connection::processIncomingMessage(MessageID messageID, PassOwnPtr<Argument
     enqueueIncomingMessage(incomingMessage);
 }
 
+void Connection::postConnectionDidCloseOnConnectionWorkQueue()
+{
+    m_connectionQueue.scheduleWork(WorkItem::create(this, &Connection::connectionDidClose));
+}
+
 void Connection::connectionDidClose()
 {
     // The connection is now invalid.
