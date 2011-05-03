@@ -122,9 +122,9 @@ function runTests()
         var optionsMenu = document.getElementById('options-menu');
         assertTrue(window.getComputedStyle(optionsMenu, null)['opacity'] == 0)
         toggleOptionsMenu();
-        assertTrue(window.getComputedStyle(optionsMenu, null)['opacity'] == 1)
         toggleOptionsMenu();
-        assertTrue(window.getComputedStyle(optionsMenu, null)['opacity'] == 0)
+        // FIXME: Test the opacity after toggling the menu.
+        // Can't just do it inline due to CSS transitions.
     });
 
     results = mockResults();

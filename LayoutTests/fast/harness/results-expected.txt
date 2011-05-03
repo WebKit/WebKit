@@ -2,8 +2,6 @@ You should see a serios of PASS lines.
 TEST-1: PASS
 TEST-1: PASS
 TEST-1: PASS
-TEST-1: PASS
-TEST-1: PASS
 TEST-2: PASS
 TEST-2: PASS
 TEST-2: PASS
