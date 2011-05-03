@@ -53,6 +53,15 @@
 
         Not reviewed. Build fix.
 
+        Test expectations fix.
+
+        * platform/chromium-gpu-mac/animations/3d/replace-filling-transform-expected.png: Added.
+        * platform/chromium/test_expectations.txt:
+
+2011-05-03  Alpha Lam  <hclam@chromium.org>
+
+        Not reviewed. Build fix.
+
         New baseline for GPU layout tests.
 
         * platform/chromium-gpu-mac/animations/3d/matrix-transform-type-animation-expected.png: Added.
