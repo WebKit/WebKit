@@ -368,7 +368,7 @@ public:
         {
         }
         
-#if CPU(ARMv7)
+#if CPU(ARM_THUMB2)
         // Fixme: this information should be stored in the instruction stream, not in the Jump object.
         Jump(AssemblerLabel jmp, ARMv7Assembler::JumpType type, ARMv7Assembler::Condition condition = ARMv7Assembler::ConditionInvalid)
             : m_jmp(jmp)
@@ -385,7 +385,7 @@ public:
 
         void link(AbstractMacroAssembler<AssemblerType>* masm) const
         {
-#if CPU(ARMv7)
+#if CPU(ARM_THUMB2)
             masm->m_assembler.linkJump(m_jmp, masm->m_assembler.label(), m_type, m_condition);
 #else
             masm->m_assembler.linkJump(m_jmp, masm->m_assembler.label());
@@ -394,8 +394,8 @@ public:
         
         void linkTo(Label label, AbstractMacroAssembler<AssemblerType>* masm) const
         {
-#if CPU(ARMv7)
-            masm->m_assembler.linkJump(m_jmp, label.m_label, m_jmp.m_type, m_jmp.m_condition);
+#if CPU(ARM_THUMB2)
+            masm->m_assembler.linkJump(m_jmp, label.m_label, m_type, m_condition);
 #else
             masm->m_assembler.linkJump(m_jmp, label.m_label);
 #endif
@@ -405,7 +405,7 @@ public:
 
     private:
         AssemblerLabel m_jmp;
-#if CPU(ARMv7)
+#if CPU(ARM_THUMB2)
         ARMv7Assembler::JumpType m_type;
         ARMv7Assembler::Condition m_condition;
 #endif

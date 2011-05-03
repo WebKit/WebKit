@@ -1,3 +1,11 @@
+2011-05-02  Gavin Barraclough  <barraclough@apple.com>
+
+        ARMv7 build fix.
+
+        * assembler/AbstractMacroAssembler.h:
+        (JSC::AbstractMacroAssembler::Jump::link):
+        (JSC::AbstractMacroAssembler::Jump::linkTo):
+
 2011-05-02  Oliver Hunt  <oliver@apple.com>
 
         Windows build fix.
