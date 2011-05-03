@@ -96,7 +96,11 @@ inline void StructureTransitionTable::remove(Structure* structure)
         // Check whether a mapping exists for structure's key, and whether the
         // entry is structure (the latter check may fail if we initially had a
         // transition with a specific value, and this has been despecified).
-        TransitionMap::iterator entry = map()->find(make_pair(structure->m_nameInPrevious, structure->m_attributesInPrevious));
+
+        // Newer versions of the STL have an std::make_pair function that takes rvalue references.
+        // When either of the parameters are bitfields, the C++ compiler will try to bind them as lvalues, which is invalid. To work around this, use unary "+" to make the parameter an rvalue.
+        // See https://bugs.webkit.org/show_bug.cgi?id=59261 for more details
+        TransitionMap::iterator entry = map()->find(make_pair(structure->m_nameInPrevious, +structure->m_attributesInPrevious));
         if (entry != map()->end() && structure == entry.get().second)
             map()->remove(entry);
     }
@@ -120,7 +124,11 @@ inline void StructureTransitionTable::add(JSGlobalData& globalData, Structure* s
     }
 
     // Add the structure to the map.
-    std::pair<TransitionMap::iterator, bool> result = map()->add(globalData, make_pair(structure->m_nameInPrevious, structure->m_attributesInPrevious), structure);
+
+    // Newer versions of the STL have an std::make_pair function that takes rvalue references.
+    // When either of the parameters are bitfields, the C++ compiler will try to bind them as lvalues, which is invalid. To work around this, use unary "+" to make the parameter an rvalue.
+    // See https://bugs.webkit.org/show_bug.cgi?id=59261 for more details
+    std::pair<TransitionMap::iterator, bool> result = map()->add(globalData, make_pair(structure->m_nameInPrevious, +structure->m_attributesInPrevious), structure);
     if (!result.second) {
         // There already is an entry! - we should only hit this when despecifying.
         ASSERT(result.first.get().second->m_specificValueInPrevious);

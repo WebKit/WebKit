@@ -1,3 +1,19 @@
+2011-05-03  Xan Lopez  <xlopez@igalia.com>
+
+        Reviewed by Anders Carlsson.
+
+        Compile error with GCC 4.6.0, tries to assign unsigned& to bitfield
+        https://bugs.webkit.org/show_bug.cgi?id=59261
+
+        Use unary '+' to force proper type detection in template arguments
+        with GCC 4.6.0. See bug report for more details.
+
+        * runtime/Structure.cpp:
+        (JSC::StructureTransitionTable::remove): Use '+' to force precise type detection.
+        (JSC::StructureTransitionTable::add): ditto.
+        * runtime/Structure.h:
+        (JSC::StructureTransitionTable::keyForWeakGCMapFinalizer): ditto.
+
 2011-05-03  Jessie Berlin  <jberlin@apple.com>
 
         Rubber-stamped by Adam Roben.
