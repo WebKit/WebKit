@@ -32,7 +32,7 @@
 
 vars = {
   'chromium_svn': 'http://src.chromium.org/svn/trunk/src',
-  'chromium_rev': '81564'
+  'chromium_rev': '83722'
 }
 
 deps = {
@@ -75,6 +75,8 @@ deps = {
   # net dependencies
   'net':
     Var('chromium_svn')+'/net@'+Var('chromium_rev'),
+  'crypto':
+    Var('chromium_svn')+'/crypto@'+Var('chromium_rev'),
   'sdch':
     Var('chromium_svn')+'/sdch@'+Var('chromium_rev'),
   'sdch/open-vcdiff':

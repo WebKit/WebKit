@@ -58,6 +58,7 @@ Source/WebKit/chromium/.gclient_entries
 Source/WebKit/chromium/app/
 Source/WebKit/chromium/base/
 Source/WebKit/chromium/chromium_deps/
+Source/WebKit/chromium/crypto/
 Source/WebKit/chromium/depot_tools/
 Source/WebKit/chromium/gfx/
 Source/WebKit/chromium/googleurl/

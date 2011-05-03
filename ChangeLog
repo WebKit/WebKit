@@ -1,3 +1,13 @@
+2011-05-02  Adam Klein  <adamk@chromium.org>
+
+        Reviewed by Tony Chang.
+
+        Roll chromium DEPS to r83722, add new crypto directory to DEPS
+        https://bugs.webkit.org/show_bug.cgi?id=59992
+
+        * .gitignore:
+        Ignore new chromium/crypto directory.
+
 2011-05-03  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Reviewed by Eric Seidel.
