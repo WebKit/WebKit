@@ -1,5 +1,13 @@
 2011-05-03  Tony Chang  <tony@chromium.org>
 
+        Update results for fast/harness/results.html.  We shouldn't be
+        ignoring these failures :(
+
+        * fast/harness/results-expected.txt:
+        * platform/chromium/test_expectations.txt:
+
+2011-05-03  Tony Chang  <tony@chromium.org>
+
         Update chromium linux test results after r85013.  The vertical
         positioning of the glyphs have improved.
 

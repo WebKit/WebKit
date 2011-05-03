@@ -3934,7 +3934,6 @@ BUGCR80745 DEBUG: editing/pasteboard/paste-blockquote-into-blockquote-3.html = P
 BUGWK59726 : fast/dom/shadow/gc-shadow.html = PASS TEXT
 
 BUGDPRANKE : fast/css/epub-properties.html = TEXT
-BUGDPRANKE : fast/harness/results.html = TEXT PASS
 
 BUGDPRANKE WIN : http/tests/xmlviewer/dumpAsText/xmlviewer.xml = TEXT
 BUGDPRANKE WIN : svg/css/composite-shadow-text.svg = IMAGE
