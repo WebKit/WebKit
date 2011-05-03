@@ -45,7 +45,7 @@ label {
     background-color: white;
 }
 
-.results-row iframe {
+.results-row iframe, .results-row img {
     width: 800px;
     height: 600px;
 }
@@ -104,6 +104,7 @@ label {
     left: 0;
     width: 100%;
     display: -webkit-box;
+    pointer-events: none;
 }
 
 .pixel-zoom-container > * {
@@ -693,6 +694,17 @@ PixelZoomer._position = function(e)
     }
 }
 
+PixelZoomer.handleMouseOut = function(e)
+{
+    if (e.relatedTarget && e.relatedTarget.tagName != 'IFRAME')
+        return;
+
+    // If e.relatedTarget is null, we've moused out of the document.
+    var container = document.querySelector('.pixel-zoom-container');
+    if (container)
+        remove(container);
+}
+
 PixelZoomer.handleMouseMove = function(e) {
     if (PixelZoomer._mouseMoveTimeout)
         clearTimeout(PixelZoomer._mouseMoveTimeout);
@@ -701,9 +713,12 @@ PixelZoomer.handleMouseMove = function(e) {
         return;
 
     var container = document.querySelector('.pixel-zoom-container');
-    if (!e.target.src || e.target.src.indexOf('.png') == -1) {
+    
+    var resultContainer = (e.target.className == 'result-container') ?
+        e.target : parentOfType(e.target, '.result-container');
+    if (!resultContainer || !resultContainer.querySelector('img')) {
         if (container)
-            container.parentNode.removeChild(container);
+            remove(container);
         return;
     }
     
@@ -723,6 +738,7 @@ PixelZoomer.handleMouseMove = function(e) {
 }
 
 document.addEventListener('mousemove', PixelZoomer.handleMouseMove, false);
+document.addEventListener('mouseout', PixelZoomer.handleMouseOut, false);
 
 function onlyShowUnexpectedFailures()
 {

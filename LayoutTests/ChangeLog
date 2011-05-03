@@ -1,3 +1,16 @@
+2011-05-03  Ojan Vafai  <ojan@chromium.org>
+
+        Reviewed by Tony Chang.
+
+        make pixel zooming in results.html file less jarring
+        https://bugs.webkit.org/show_bug.cgi?id=60038
+
+        -Hide zoomed images when you mouse out of the document or
+        mouseover an iframe.
+        -Handle the case where the zoomed images overlap the actual images.
+
+        * fast/harness/results.html:
+
 2011-05-03  David Hyatt  <hyatt@apple.com>
 
         Reviewed by Dan Bernstein.
