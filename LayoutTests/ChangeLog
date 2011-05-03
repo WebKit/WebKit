@@ -1,3 +1,10 @@
+2011-05-03  Pavel Feldman  <pfeldman@google.com>
+
+        Not reviewed: rebaseline inspector test.
+
+        * inspector/storage-panel-dom-storage-expected.txt:
+        * inspector/storage-panel-dom-storage.html:
+
 2011-05-03  Gabor Rapcsanyi  <rgabor@webkit.org>
 
         Rubber-stamped by Csaba Osztrogonác.

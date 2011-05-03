@@ -7,6 +7,7 @@ function populateDOMStorage()
 {
     localStorage.clear();
     sessionStorage.clear();
+    localStorage["resource-history"] = "{}"; // This mitigates file:// localstorage conflict.
     // Fill local and session storage with some random strings.
     for (var i = 0; i < 10; i++) {
         localStorage["a" + i] = "=value" + i + ", ";
