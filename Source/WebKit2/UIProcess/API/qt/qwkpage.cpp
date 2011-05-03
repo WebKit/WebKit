@@ -159,8 +159,7 @@ void QWKPagePrivate::scrollView(const WebCore::IntRect& scrollRect, const WebCor
 
 WebCore::IntSize QWKPagePrivate::viewSize()
 {
-    // FIXME: Implement.
-    return WebCore::IntSize();
+    return view ? WebCore::IntSize(view->boundingRect().size().toSize()) : WebCore::IntSize();
 }
 
 bool QWKPagePrivate::isViewWindowActive()

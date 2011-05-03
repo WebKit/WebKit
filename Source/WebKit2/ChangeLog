@@ -1,3 +1,16 @@
+2011-05-02  Yael Aharon  <yael.aharon@nokia.com>
+
+        Reviewed by Andreas Kling.
+
+        [Qt] White screen displays when using MiniBrowser with DrawingAreaImpl
+        https://bugs.webkit.org/show_bug.cgi?id=60003
+
+        When using DrawingAreaImpl, we need to properly pass the viewSize to the WebPage.
+        Otherwise, the dirty rect will always be empty and we will not draw.
+
+        * UIProcess/API/qt/qwkpage.cpp:
+        (QWKPagePrivate::viewSize):
+
 2011-05-02  Anders Carlsson  <andersca@apple.com>
 
         Fix crash that was introduced in r85515.
