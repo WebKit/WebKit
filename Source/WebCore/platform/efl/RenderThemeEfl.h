@@ -211,6 +211,8 @@ private:
     Color m_searchTextForegroundColor;
 #if ENABLE(VIDEO)
     Color m_panelColor;
+    Color m_sliderColor;
+    const int m_mediaSliderHeight;
 #endif
     Ecore_Evas* m_canvas;
     Evas_Object* m_edje;

@@ -49,6 +49,7 @@
 #if ENABLE(VIDEO)
 #include "HTMLMediaElement.h"
 #include "HTMLNames.h"
+#include "TimeRanges.h"
 #endif
 
 namespace WebCore {
@@ -693,6 +694,8 @@ RenderThemeEfl::RenderThemeEfl(Page* page)
     , m_searchTextForegroundColor(0, 0, 0)
 #if ENABLE(VIDEO)
     , m_panelColor(220, 220, 195) // light tannish color.
+    , m_sliderColor(Color::white)
+    , m_mediaSliderHeight(14)
 #endif
     , m_canvas(0)
     , m_edje(0)
@@ -1163,8 +1166,55 @@ bool RenderThemeEfl::paintMediaSeekForwardButton(RenderObject* object, const Pai
 
 bool RenderThemeEfl::paintMediaSliderTrack(RenderObject* object, const PaintInfo& info, const IntRect& rect)
 {
-    notImplemented();
-    return false;
+    GraphicsContext* context = info.context;
+
+    context->fillRect(FloatRect(rect), m_panelColor, ColorSpaceDeviceRGB);
+    context->fillRect(FloatRect(IntRect(rect.x(), rect.y() + (rect.height() - m_mediaSliderHeight) / 2,
+                                        rect.width(), m_mediaSliderHeight)), m_sliderColor, ColorSpaceDeviceRGB);
+
+    RenderStyle* style = object->style();
+    HTMLMediaElement* mediaElement = toParentMediaElement(object);
+
+    if (!mediaElement)
+        return false;
+
+    // Draw the buffered ranges. This code is highly inspired from
+    // Chrome for the gradient code.
+    float mediaDuration = mediaElement->duration();
+    RefPtr<TimeRanges> timeRanges = mediaElement->buffered();
+    IntRect trackRect = rect;
+    int totalWidth = trackRect.width();
+
+    trackRect.inflate(-style->borderLeftWidth());
+    context->save();
+    context->setStrokeStyle(NoStroke);
+
+    for (unsigned index = 0; index < timeRanges->length(); ++index) {
+        ExceptionCode ignoredException;
+        float start = timeRanges->start(index, ignoredException);
+        float end = timeRanges->end(index, ignoredException);
+        int width = ((end - start) * totalWidth) / mediaDuration;
+        IntRect rangeRect;
+        if (!index) {
+            rangeRect = trackRect;
+            rangeRect.setWidth(width);
+        } else {
+            rangeRect.setLocation(IntPoint(trackRect.x() + start / mediaDuration* totalWidth, trackRect.y()));
+            rangeRect.setSize(IntSize(width, trackRect.height()));
+        }
+
+        // Don't bother drawing empty range.
+        if (rangeRect.isEmpty())
+            continue;
+
+        IntPoint sliderTopLeft = rangeRect.location();
+        IntPoint sliderTopRight = sliderTopLeft;
+        sliderTopRight.move(0, rangeRect.height());
+
+        context->fillRect(FloatRect(rect), m_panelColor, ColorSpaceDeviceRGB);
+    }
+    context->restore();
+    return true;
 }
 
 bool RenderThemeEfl::paintMediaSliderThumb(RenderObject* object, const PaintInfo& info, const IntRect& rect)
