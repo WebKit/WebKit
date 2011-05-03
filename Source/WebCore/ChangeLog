@@ -1,5 +1,11 @@
 2011-05-03  Sam Weinig  <sam@webkit.org>
 
+        Fix chromium build.
+
+        * css/StyleMedia.cpp:
+
+2011-05-03  Sam Weinig  <sam@webkit.org>
+
         Reviewed by Anders Carlsson.
 
         Prune #includes from FrameView.h (Part 1)

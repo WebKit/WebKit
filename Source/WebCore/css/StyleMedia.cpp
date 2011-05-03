@@ -27,6 +27,7 @@
 #include "StyleMedia.h"
 
 #include "CSSStyleSelector.h"
+#include "Document.h"
 #include "Frame.h"
 #include "FrameView.h"
 #include "MediaList.h"
