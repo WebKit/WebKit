@@ -30,6 +30,7 @@
 #include "ClipboardQt.h"
 
 #include "CachedImage.h"
+#include "DataTransferItemsQt.h"
 #include "Document.h"
 #include "DragData.h"
 #include "Element.h"
@@ -70,23 +71,25 @@ static bool isHtmlMimeType(const String& type)
     return type == "text/html" || type.startsWith("text/html;");
 }
 
-PassRefPtr<Clipboard> Clipboard::create(ClipboardAccessPolicy policy, DragData* dragData, Frame*)
+PassRefPtr<Clipboard> Clipboard::create(ClipboardAccessPolicy policy, DragData* dragData, Frame* frame)
 {
-    return ClipboardQt::create(policy, dragData->platformData());
+    return ClipboardQt::create(policy, dragData->platformData(), frame);
 }
 
-ClipboardQt::ClipboardQt(ClipboardAccessPolicy policy, const QMimeData* readableClipboard)
+ClipboardQt::ClipboardQt(ClipboardAccessPolicy policy, const QMimeData* readableClipboard, Frame* frame)
     : Clipboard(policy, DragAndDrop)
     , m_readableData(readableClipboard)
     , m_writableData(0)
+    , m_frame(frame)
 {
     Q_ASSERT(policy == ClipboardReadable || policy == ClipboardTypesReadable);
 }
 
-ClipboardQt::ClipboardQt(ClipboardAccessPolicy policy, ClipboardType clipboardType)
+ClipboardQt::ClipboardQt(ClipboardAccessPolicy policy, ClipboardType clipboardType, Frame* frame)
     : Clipboard(policy, clipboardType)
     , m_readableData(0)
     , m_writableData(0)
+    , m_frame(frame)
 {
     Q_ASSERT(policy == ClipboardReadable || policy == ClipboardWritable || policy == ClipboardNumb);
 
@@ -359,5 +362,26 @@ bool ClipboardQt::hasData()
         return false;
     return data->formats().count() > 0;
 }
+
+#if ENABLE(DATA_TRANSFER_ITEMS)
+PassRefPtr<DataTransferItems> ClipboardQt::items()
+{
+
+    if (!m_frame && !m_frame->document())
+        return 0;
+
+    RefPtr<DataTransferItemsQt> items = DataTransferItemsQt::create(this, m_frame->document()->scriptExecutionContext());
+
+    if (!m_readableData)
+        return items;
+
+    if (isForCopyAndPaste() && policy() == ClipboardReadable) {
+        const QStringList types = m_readableData->formats();
+        for (int i = 0; i < types.count(); ++i)
+            items->addPasteboardItem(types.at(i));
+    }
+    return items;
+}
+#endif
 
 }

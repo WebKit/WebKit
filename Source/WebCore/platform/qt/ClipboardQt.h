@@ -41,13 +41,13 @@ class CachedImage;
 class ClipboardQt : public Clipboard, public CachedResourceClient {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    static PassRefPtr<ClipboardQt> create(ClipboardAccessPolicy policy, const QMimeData* readableClipboard)
+    static PassRefPtr<ClipboardQt> create(ClipboardAccessPolicy policy, const QMimeData* readableClipboard, Frame* frame)
     {
-        return adoptRef(new ClipboardQt(policy, readableClipboard));
+        return adoptRef(new ClipboardQt(policy, readableClipboard, frame));
     }
-    static PassRefPtr<ClipboardQt> create(ClipboardAccessPolicy policy, ClipboardType clipboardType = CopyAndPaste)
+    static PassRefPtr<ClipboardQt> create(ClipboardAccessPolicy policy, Frame *frame, ClipboardType clipboardType = CopyAndPaste)
     {
-        return adoptRef(new ClipboardQt(policy, clipboardType));
+        return adoptRef(new ClipboardQt(policy, clipboardType, frame));
     }
     virtual ~ClipboardQt();
 
@@ -74,16 +74,21 @@ public:
     QMimeData* clipboardData() const { return m_writableData; }
     void invalidateWritableData() { m_writableData = 0; }
 
+#if ENABLE(DATA_TRANSFER_ITEMS)
+    virtual PassRefPtr<DataTransferItems> items();
+#endif
+
 private:
-    ClipboardQt(ClipboardAccessPolicy, const QMimeData* readableClipboard);
+    ClipboardQt(ClipboardAccessPolicy, const QMimeData* readableClipboard, Frame*);
 
     // Clipboard is writable so it will create its own QMimeData object
-    ClipboardQt(ClipboardAccessPolicy, ClipboardType);
+    ClipboardQt(ClipboardAccessPolicy, ClipboardType, Frame*);
 
     void setDragImage(CachedImage*, Node*, const IntPoint& loc);
 
     const QMimeData* m_readableData;
     QMimeData* m_writableData;
+    Frame* m_frame;
 };
 }
 

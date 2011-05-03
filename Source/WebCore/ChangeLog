@@ -1,3 +1,41 @@
+2011-05-03  Igor Oliveira  <igor.oliveira@openbossa.org>
+
+        Reviewed by Eric Seidel.
+
+        [Qt] Implement initial support to DataTransferItems
+        https://bugs.webkit.org/show_bug.cgi?id=58448
+
+        Implement initial support to DataTransferItems. DataTransferItems are used to 
+        hold data for drag and drop operations. DataTransferItems hold a list of 
+        DataTransferItem objects each of which holds an item being dragged.
+
+        * WebCore.pro:
+        * dom/DataTransferItems.idl:
+        * editing/qt/EditorQt.cpp:
+        (WebCore::Editor::newGeneralClipboard):
+        * page/qt/EventHandlerQt.cpp:
+        (WebCore::EventHandler::createDraggingClipboard):
+        * platform/chromium/DataTransferItemsChromium.h:
+        * platform/qt/ClipboardQt.cpp:
+        (WebCore::Clipboard::create):
+        (WebCore::ClipboardQt::ClipboardQt):
+        (WebCore::ClipboardQt::items):
+        * platform/qt/ClipboardQt.h:
+        (WebCore::ClipboardQt::create):
+        * platform/qt/DataTransferItemQt.cpp: Added.
+        (WebCore::DataTransferItem::create):
+        (WebCore::DataTransferItemQt::createFromPasteboard):
+        (WebCore::DataTransferItemQt::create):
+        (WebCore::DataTransferItemQt::DataTransferItemQt):
+        (WebCore::DataTransferItemQt::getAsString):
+        (WebCore::DataTransferItemQt::getAsFile):
+        * platform/qt/DataTransferItemQt.h: Added.
+        * platform/qt/DataTransferItemsQt.cpp: Copied from Source/WebCore/editing/qt/EditorQt.cpp.
+        (WebCore::DataTransferItemsQt::create):
+        (WebCore::DataTransferItemsQt::DataTransferItemsQt):
+        (WebCore::DataTransferItemsQt::addPasteboardItem):
+        * platform/qt/DataTransferItemsQt.h: Copied from Source/WebCore/editing/qt/EditorQt.cpp.
+
 2011-05-03  Julien Chaffraix  <jchaffraix@codeaurora.org>
 
         Reviewed by Dimitri Glazkov.

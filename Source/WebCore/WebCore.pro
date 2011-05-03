@@ -2714,11 +2714,15 @@ contains(DEFINES, ENABLE_DATA_TRANSFER_ITEMS=1) {
     HEADERS += \
         dom/DataTransferItem.h \
         dom/DataTransferItems.h \
-        dom/StringCallback.h
+        dom/StringCallback.h \
+        platform/qt/DataTransferItemQt.h \
+        platform/qt/DataTransferItemsQt.h
     SOURCES += \
         dom/DataTransferItem.cpp \
         dom/DataTransferItems.cpp \
-        dom/StringCallback.cpp
+        dom/StringCallback.cpp \
+        platform/qt/DataTransferItemQt.cpp \
+        platform/qt/DataTransferItemsQt.cpp
 }
 
 contains(DEFINES, ENABLE_DOM_STORAGE=1) {

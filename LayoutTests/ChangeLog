@@ -1,3 +1,20 @@
+2011-05-03  Igor Oliveira  <igor.oliveira@openbossa.org>
+
+        Reviewed by Eric Seidel.
+
+        [Qt] Implement initial support to DataTransferItems
+        https://bugs.webkit.org/show_bug.cgi?id=58448
+
+        Remove data-transfer-items.html from Qt skipped tests and create an expected
+        result file for data-transfer-items.html test. The need to create a expected result
+        file is because the test presuppose that the type of the first element in
+        DataTransferItems list is a html but when Qt selects a data, it first copies a text
+        and then it copies the html, so for Qt expected test file the first element is a
+        text and the second one is a html.
+
+        * platform/qt/Skipped:
+        * platform/qt/editing/pasteboard/data-transfer-items-expected.txt: Added.
+
 2011-05-03  Alpha Lam  <hclam@chromium.org>
 
         Not reviewed. Build fix.

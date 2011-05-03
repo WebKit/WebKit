@@ -1,6 +1,5 @@
 /*
- * Copyright (C) 2006 Zack Rusin <zack@kde.org>
- * Copyright (C) 2006 Apple Inc. All rights reserved.
+ * Copyright (C) 2011 Nokia Corporation and/or its subsidiary(-ies)
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,23 +24,31 @@
  */
 
 #include "config.h"
-#include "Editor.h"
+#include "DataTransferItemsQt.h"
 
-#include "ClipboardAccessPolicy.h"
-#include "ClipboardQt.h"
-#include "Document.h"
-#include "Element.h"
-#include "SelectionController.h"
-#include "TextIterator.h"
-#include "VisibleSelection.h"
-#include "htmlediting.h"
-#include "visible_units.h"
+#if ENABLE(DATA_TRANSFER_ITEMS)
+
+#include "Clipboard.h"
+#include "DataTransferItemQt.h"
+#include "ExceptionCode.h"
 
 namespace WebCore {
 
-PassRefPtr<Clipboard> Editor::newGeneralClipboard(ClipboardAccessPolicy policy, Frame* frame)
+PassRefPtr<DataTransferItemsQt> DataTransferItemsQt::create(PassRefPtr<Clipboard> owner, ScriptExecutionContext* context)
 {
-    return ClipboardQt::create(policy, frame);
+    return adoptRef(new DataTransferItemsQt(owner, context));
+}
+
+DataTransferItemsQt::DataTransferItemsQt(PassRefPtr<Clipboard> owner, ScriptExecutionContext* context)
+    : DataTransferItems(owner,  context)
+{
+}
+
+void DataTransferItemsQt::addPasteboardItem(const String& type)
+{
+    m_items.append(DataTransferItemQt::createFromPasteboard(m_owner, m_context, type));
 }
 
 } // namespace WebCore
+
+#endif // ENABLE(DATA_TRANSFER_ITEMS)

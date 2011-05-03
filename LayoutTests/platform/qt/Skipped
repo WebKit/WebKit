@@ -113,9 +113,6 @@ inspector/debugger/live-edit.html
 # This port doesn't support v8 i18n extension.
 fast/js/i18n-bindings-locale.html
 
-# DataTransferItems is not yet implemented.
-editing/pasteboard/data-transfer-items.html
-
 # scalePage is currently Mac-specific WebKit API.
 fast/dom/Element/scale-page-bounding-client-rect.html
 fast/dom/Element/scale-page-client-rects.html

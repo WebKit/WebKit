@@ -33,7 +33,9 @@ module core {
     interface [
         Conditional=DATA_TRANSFER_ITEMS,
         HasIndexGetter,
+#if defined(V8_BINDING) && V8_BINDING
         CustomDeleteProperty,
+#endif
     ] DataTransferItems {
         readonly attribute long length;
         DataTransferItem item(in unsigned long index) getter;
