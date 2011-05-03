@@ -3437,3 +3437,18 @@ http/tests/security/contentSecurityPolicy/media-src-blocked.html
 # [Qt][WK2]fast/dom/shadow/gc-shadow.html fails
 # https://bugs.webkit.org/show_bug.cgi?id=59335
 fast/dom/shadow/gc-shadow.html
+
+# [Qt][WK2] Support PageGroup in QGraphicsWKView/QWKPage constructors
+# https://bugs.webkit.org/show_bug.cgi?id=59638
+fast/dom/Document/early-document-access.html
+fast/dom/Window/closure-access-after-navigation-window.html
+fast/dom/Window/dom-access-from-closure-window.html
+fast/dom/Window/window-early-properties.html
+fast/frames/iframe-reparenting-new-page.html
+fast/frames/sandboxed-iframe-close-top-noclose.html
+fast/frames/sandboxed-iframe-close-top.html
+fast/history/history-subframe-with-name.html
+fast/loader/ping-error.html
+fast/loader/stateobjects/replacestate-in-iframe.html
+storage/domstorage/localstorage/window-open.html
+storage/domstorage/sessionstorage/window-open.html
