@@ -79,7 +79,7 @@ public:
     void loadSessionSetting(const WTF::String& key, WTF::String* value);
 
 private:
-    ~WebInspectorClient();
+    virtual ~WebInspectorClient();
     WTF::PassOwnPtr<WebCore::InspectorFrontendClientLocal::Settings> createFrontendSettings();
 
     WebView* m_inspectedWebView;
@@ -95,7 +95,7 @@ private:
 class WebInspectorFrontendClient : public WebCore::InspectorFrontendClientLocal, WebCore::WindowMessageListener {
 public:
     WebInspectorFrontendClient(WebView* inspectedWebView, HWND inspectedWebViewHwnd, HWND frontendHwnd, const COMPtr<WebView>& frotnendWebView, HWND frontendWebViewHwnd, WebInspectorClient*, WTF::PassOwnPtr<Settings>);
-    ~WebInspectorFrontendClient();
+    virtual ~WebInspectorFrontendClient();
 
     virtual void frontendLoaded();
     

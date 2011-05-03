@@ -1,5 +1,15 @@
 2011-05-03  Adam Roben  <aroben@apple.com>
 
+        Add some missing virtual keywords on derived-class destructors
+
+        Darin Adler noticed one, I noticed the other. This doesn't change the generated code; it
+        just matches our style of explicitly marking overrides "virtual".
+
+        * WebCoreSupport/WebInspectorClient.h: Made the WebInspectorClient and
+        WebInspectorFrontendClient destructors explicitly virtual.
+
+2011-05-03  Adam Roben  <aroben@apple.com>
+
         Fix most strict PassOwnPtr violations on Windows
 
         Fixes <http://webkit.org/b/60025> Windows should (almost) build with strict PassOwnPtr
