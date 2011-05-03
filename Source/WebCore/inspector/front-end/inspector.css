@@ -545,7 +545,7 @@ select.status-bar-item:active {
 }
 
 .status-bar-item > .glyph {
-    -webkit-mask-image: url(Images/statusBarButtonGlyphs.png);
+    -webkit-mask-image: url(Images/statusbarButtonGlyphs.png);
 }
 
 #dock-status-bar-item .glyph {

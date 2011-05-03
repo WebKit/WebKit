@@ -1,3 +1,10 @@
+2011-05-03  Pavel Feldman  <pfeldman@google.com>
+
+        Not reviewed: fixed typo in inspector style.
+
+        * inspector/front-end/inspector.css:
+        (.status-bar-item > .glyph):
+
 2011-05-03  Pavel Feldman  <pfeldman@chromium.org>
 
         Reviewed by Yury Semikhatsky.
