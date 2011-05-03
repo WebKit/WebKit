@@ -1,5 +1,5 @@
 .network-larger-resources-status-bar-item .glyph {
-    -webkit-mask-image: url(Images/largerResourcesButtonGlyph.png);
+    -webkit-mask-position: -224px 0;
 }
 
 .network-sidebar .data-grid {

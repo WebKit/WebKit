@@ -1,5 +1,12 @@
 2011-05-03  Pavel Feldman  <pfeldman@google.com>
 
+        Not reviewed: fix inspector status bar image glyph reference in network panel.
+
+        * inspector/front-end/networkPanel.css:
+        (.network-larger-resources-status-bar-item .glyph):
+
+2011-05-03  Pavel Feldman  <pfeldman@google.com>
+
         Reviewed by Yury Semikhatsky.
 
         Web Inspector: rename BrowserDebugger agent to DOMDebugger.
