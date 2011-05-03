@@ -2,6 +2,14 @@
 
         Not reviewed. Build fix.
 
+        Expectation for new test.
+
+        * platform/chromium/test_expectations.txt:
+
+2011-05-02  Alpha Lam  <hclam@chromium.org>
+
+        Not reviewed. Build fix.
+
         Chromium test expectations.
 
         * platform/chromium/test_expectations.txt:

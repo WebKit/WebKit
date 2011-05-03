@@ -4032,3 +4032,6 @@ BUG_HCLAM : fast/forms/date-input-visible-strings.html = MISSING
 
 // New test added in r85535.
 BUG_HCLAM : editing/inserting/typing-at-end-of-line.html = FAIL MISSING
+
+// New test added in r85560.
+BUG_HCLAM : fast/forms/input-placeholder-text-indent.html = IMAGE+TEXT
