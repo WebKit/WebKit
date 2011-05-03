@@ -1987,11 +1987,12 @@ void GraphicsLayerCA::setDebugBorder(const Color& color, float borderWidth)
 
 FloatSize GraphicsLayerCA::constrainedSize() const
 {
+    FloatSize constrainedSize = m_size;
+#if defined(BUILDING_ON_LEOPARD) || defined(BUILDING_ON_SNOW_LEOPARD)
     float tileColumns = ceilf(m_size.width() / kTiledLayerTileSize);
     float tileRows = ceilf(m_size.height() / kTiledLayerTileSize);
     double numTiles = tileColumns * tileRows;
     
-    FloatSize constrainedSize = m_size;
     const unsigned cMaxTileCount = 512;
     while (numTiles > cMaxTileCount) {
         // Constrain the wider dimension.
@@ -2004,7 +2005,7 @@ FloatSize GraphicsLayerCA::constrainedSize() const
         }
         numTiles = tileColumns * tileRows;
     }
-    
+#endif
     return constrainedSize;
 }
 
