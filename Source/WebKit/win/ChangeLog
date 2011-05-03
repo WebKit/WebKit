@@ -1,3 +1,17 @@
+2011-05-03  Brian Weinstein  <bweinstein@apple.com>
+
+        Reviewed by Steve Falkenburg.
+
+        REGRESSION(r84990): Nightly builds don't launch on Windows
+        https://bugs.webkit.org/show_bug.cgi?id=60081
+        <rdar://problem/9358635>
+        
+        Fix nightlies on Window by moving the layered window functions to the bottom
+        of IWebViewPrivate and touch WebKit.idl to make sure Interfaces rebuild.
+
+        * Interfaces/IWebViewPrivate.idl: Move functions added in r84990 to the bottom of the file.
+        * Interfaces/WebKit.idl: Touch to force a rebuild.
+
 2011-05-03  David Kilzer  <ddkilzer@apple.com>
 
         <http://webkit.org/b/59838> Implement HTTP pipelining for CoreFoundation-based networking
