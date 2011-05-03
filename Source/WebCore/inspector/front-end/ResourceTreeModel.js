@@ -64,13 +64,16 @@ WebInspector.ResourceTreeModel.prototype = {
 
     _processCachedResources: function(error, mainFramePayload)
     {
-        if (error)
+        if (error) {
+            console.error(JSON.stringify(error));
             return;
+        }
 
         this.dispatchEventToListeners(WebInspector.ResourceTreeModel.EventTypes.WillLoadCachedResources);
         WebInspector.mainResource = this._addFramesRecursively(mainFramePayload);
         this._dispatchInspectedURLChanged(WebInspector.mainResource.url);
         this.dispatchEventToListeners(WebInspector.ResourceTreeModel.EventTypes.CachedResourcesLoaded);
+        WebInspector.Resource.restoreRevisions();
 
         this._cachedResourcesProcessed = true;
     },
@@ -142,7 +145,6 @@ WebInspector.ResourceTreeModel.prototype = {
         if (isMainFrame && this.resourceForURL(frame.url)) {
             WebInspector.mainResource = this.resourceForURL(frame.url);
             this._dispatchInspectedURLChanged(frame.url);
-            WebInspector.Resource.clearRevisionHistory();
         }
     },
 

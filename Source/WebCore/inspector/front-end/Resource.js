@@ -35,8 +35,6 @@ WebInspector.Resource = function(identifier, url, loaderId)
     this._category = WebInspector.resourceCategories.other;
     this._pendingContentCallbacks = [];
     this.history = [];
-
-    this._restoreRevisions();
 }
 
 // Keep these in sync with WebCore::InspectorResource::Type
@@ -111,15 +109,80 @@ WebInspector.Resource.registerDomainModelBinding = function(type, binding)
     WebInspector.Resource._domainModelBindings[type] = binding;
 }
 
-WebInspector.Resource.clearRevisionHistory = function()
+
+WebInspector.Resource._resourceRevisionRegistry = function()
+{
+    if (!WebInspector.Resource._resourceRevisionRegistryObject) {
+        if (window.localStorage) {
+            var resourceHistory = window.localStorage["resource-history"];
+            try {
+                WebInspector.Resource._resourceRevisionRegistryObject = resourceHistory ? JSON.parse(resourceHistory) : {};
+            } catch (e) {
+                WebInspector.Resource._resourceRevisionRegistryObject = {};
+            }
+        } else
+            WebInspector.Resource._resourceRevisionRegistryObject = {};
+    }
+    return WebInspector.Resource._resourceRevisionRegistryObject;
+}
+
+WebInspector.Resource.restoreRevisions = function()
+{
+    var registry = WebInspector.Resource._resourceRevisionRegistry();
+    var filteredRegistry = {};
+    for (var url in registry) {
+        var historyItems = registry[url];
+        var resource = WebInspector.resourceForURL(url);
+
+        var filteredHistoryItems = [];
+        for (var i = 0; historyItems && i < historyItems.length; ++i) {
+            var historyItem = historyItems[i];
+            if (resource && historyItem.loaderId === resource.loaderId) {
+                resource.addRevision(window.localStorage[historyItem.key], new Date(historyItem.timestamp), true);
+                filteredHistoryItems.push(historyItem);
+                filteredRegistry[url] = filteredHistoryItems;
+            } else
+                delete window.localStorage[historyItem.key];
+        }
+    }
+    WebInspector.Resource._resourceRevisionRegistryObject = filteredRegistry;
+
+    function persist()
+    {
+        window.localStorage["resource-history"] = JSON.stringify(filteredRegistry);
+    }
+
+    // Schedule async storage.
+    setTimeout(persist, 0);}
+
+WebInspector.Resource.persistRevision = function(resource)
 {
     if (!window.localStorage)
         return;
 
-    for (var key in window.localStorage) {
-        if (key.indexOf("resource-history|") === 0)
-            delete window.localStorage[key];
+    var url = resource.url;
+    var loaderId = resource.loaderId;
+    var timestamp = resource._contentTimestamp.getTime();
+    var key = "resource-history|" + url + "|" + loaderId + "|" + timestamp;
+    var content = resource._content;
+
+    var registry = WebInspector.Resource._resourceRevisionRegistry();
+
+    var historyItems = registry[resource.url];
+    if (!historyItems) {
+        historyItems = [];
+        registry[resource.url] = historyItems;
     }
+    historyItems.push({url: url, loaderId: loaderId, timestamp: timestamp, key: key});
+
+    function persist()
+    {
+        window.localStorage[key] = content;
+        window.localStorage["resource-history"] = JSON.stringify(registry);
+    }
+
+    // Schedule async storage.
+    setTimeout(persist, 0);
 }
 
 WebInspector.Resource.Events = {
@@ -763,52 +826,7 @@ WebInspector.Resource.prototype = {
 
     _persistRevision: function()
     {
-        if (!window.localStorage)
-            return;
-
-        var url = this.url;
-        var loaderId = this.loaderId;
-        var timestamp = this._contentTimestamp.getTime();
-        var content = this._content;
-        function persist()
-        {
-            var key = "resource-history|" + url + "|" + loaderId + "|" + timestamp;
-            window.localStorage[key] = content;
-        }
-    
-        // Schedule async storage.
-        setTimeout(persist, 0);
-    },
-
-    _restoreRevisions: function()
-    {
-        if (!window.localStorage)
-            return;
-
-        try {
-            var urlKey = "resource-history|" + this.url + "|" + this.loaderId + "|";
-
-            var content = {};
-            var timestamps = [];
-            for (var key in window.localStorage) {
-                if (key.indexOf(urlKey) !== 0)
-                    continue;
-                var timestamp = parseInt(key.substring(urlKey.length));
-                content[timestamp] = window.localStorage[key];
-                timestamps.push(timestamp);
-            }
-
-            if (!timestamps.length)
-                return;
-
-            timestamps.sort();
-            for (var i = 0; i < timestamps.length; ++i) {
-                var timestamp = timestamps[i];
-                this.addRevision(content[timestamp], new Date(timestamp), true);
-            }
-        } catch(e) {
-            console.error(e.toString());
-        }
+        WebInspector.Resource.persistRevision(this);
     },
 
     requestContent: function(callback)

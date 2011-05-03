@@ -2,6 +2,28 @@
 
         Reviewed by Yury Semikhatsky.
 
+        Web Inspector: revision history storage is too slow.
+        https://bugs.webkit.org/show_bug.cgi?id=59939
+
+        It turns out that iterating localStorage keys is very
+        expensive (results in slow inspector start), refactor revision
+        history in order not to rely upon that operation.
+
+        * inspector/front-end/Resource.js:
+        (WebInspector.Resource):
+        (WebInspector.Resource._resourceRevisionRegistry):
+        (WebInspector.Resource.restoreRevisions.persist):
+        (WebInspector.Resource.restoreRevisions):
+        (WebInspector.Resource.persistRevision):
+        (WebInspector.Resource.prototype._persistRevision):
+        * inspector/front-end/ResourceTreeModel.js:
+        (WebInspector.ResourceTreeModel.prototype._processCachedResources):
+        (WebInspector.ResourceTreeModel.prototype._frameNavigated):
+
+2011-05-03  Pavel Feldman  <pfeldman@chromium.org>
+
+        Reviewed by Yury Semikhatsky.
+
         Web Inspector: combine toolbar icon images.
         https://bugs.webkit.org/show_bug.cgi?id=59931
 
