@@ -4000,3 +4000,5 @@ BUG_HCLAM : fast/url/ipv6.html = TEXT
 
 // Failure since r85661.
 BUG_HCLAM GPU : compositing/tiling/huge-layer-img.html = FAIL
+
+BUGWK60079 LINUX : platform/chromium-linux/fast/text/international/complex-joining-using-gpos.html = IMAGE
