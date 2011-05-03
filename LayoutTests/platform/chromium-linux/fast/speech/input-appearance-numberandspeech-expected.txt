@@ -60,11 +60,11 @@ layer at (0,0) size 800x600
                   RenderTextControl {INPUT} at (2,85) size 182x25 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
                     RenderBlock {DIV} at (145,2) size 20x20
                   RenderBR {BR} at (186,103) size 0x0
-                  RenderTextControl {INPUT} at (2,114) size 204x26 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
-                  RenderBR {BR} at (208,132) size 0x0
-                  RenderTextControl {INPUT} at (2,144) size 204x26 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
-                    RenderBlock {DIV} at (166,2) size 21x21
-                  RenderBR {BR} at (208,162) size 0x0
+                  RenderTextControl {INPUT} at (2,114) size 185x26 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
+                  RenderBR {BR} at (189,132) size 0x0
+                  RenderTextControl {INPUT} at (2,144) size 185x26 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
+                    RenderBlock {DIV} at (147,2) size 21x21
+                  RenderBR {BR} at (189,162) size 0x0
                   RenderTextControl {INPUT} at (2,174) size 206x28 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
                   RenderBR {BR} at (210,194) size 0x0
                   RenderTextControl {INPUT} at (2,206) size 206x28 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
@@ -169,12 +169,12 @@ layer at (181,138) size 143x19 scrollWidth 299
   RenderBlock {DIV} at (2,3) size 143x19
     RenderText {#text} at (1,0) size 297x18
       text run at (1,0) width 297: "12,345,678,901,234,600,000,000,000,000"
-layer at (181,167) size 185x20 scrollWidth 308
-  RenderBlock {DIV} at (2,3) size 185x20
+layer at (181,167) size 166x20 scrollWidth 308
+  RenderBlock {DIV} at (2,3) size 166x20
     RenderText {#text} at (1,0) size 306x19
       text run at (1,0) width 306: "12,345,678,901,234,600,000,000,000,000"
-layer at (181,197) size 164x20 scrollWidth 308
-  RenderBlock {DIV} at (2,3) size 164x20
+layer at (181,197) size 145x20 scrollWidth 308
+  RenderBlock {DIV} at (2,3) size 145x20
     RenderText {#text} at (1,0) size 306x19
       text run at (1,0) width 306: "12,345,678,901,234,600,000,000,000,000"
 layer at (181,227) size 187x22 scrollWidth 337
@@ -261,10 +261,10 @@ layer at (344,108) size 15x21
   RenderBlock (relative positioned) {DIV} at (165,2) size 15x21
 layer at (344,137) size 15x21
   RenderBlock (relative positioned) {DIV} at (165,2) size 15x21
-layer at (366,166) size 15x22
-  RenderBlock (relative positioned) {DIV} at (187,2) size 15x22
-layer at (366,196) size 15x22
-  RenderBlock (relative positioned) {DIV} at (187,2) size 15x22
+layer at (347,166) size 15x22
+  RenderBlock (relative positioned) {DIV} at (168,2) size 15x22
+layer at (347,196) size 15x22
+  RenderBlock (relative positioned) {DIV} at (168,2) size 15x22
 layer at (368,226) size 15x24
   RenderBlock (relative positioned) {DIV} at (189,2) size 15x24
 layer at (368,258) size 15x24

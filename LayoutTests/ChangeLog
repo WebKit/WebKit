@@ -1,3 +1,22 @@
+2011-05-03  Satish Sampath  <satish@chromium.org>
+
+        Reviewed by Tony Gentilcore.
+
+        Rebaseline speech input layout test expectations for chromium.
+        https://bugs.webkit.org/show_bug.cgi?id=59742
+
+        * platform/chromium-linux/fast/speech/input-appearance-numberandspeech-expected.png:
+        * platform/chromium-linux/fast/speech/input-appearance-numberandspeech-expected.txt:
+        * platform/chromium-linux/fast/speech/input-appearance-searchandspeech-expected.png:
+        * platform/chromium-linux/fast/speech/input-appearance-searchandspeech-expected.txt:
+        * platform/chromium-linux/fast/speech/input-appearance-speechbutton-expected.png:
+        * platform/chromium-linux/fast/speech/input-appearance-speechbutton-expected.txt:
+        * platform/chromium-mac-leopard/fast/speech/input-appearance-speechbutton-expected.png:
+        * platform/chromium-mac/fast/speech/input-appearance-searchandspeech-expected.png:
+        * platform/chromium-mac/fast/speech/input-appearance-speechbutton-expected.png:
+        * platform/chromium-mac/fast/speech/input-appearance-speechbutton-expected.txt:
+        * platform/chromium/test_expectations.txt:
+
 2011-05-03  Yury Semikhatsky  <yurys@chromium.org>
 
         Unreviewed. Provide Chromium test expectaions for new test.
