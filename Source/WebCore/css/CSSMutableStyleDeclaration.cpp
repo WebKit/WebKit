@@ -642,17 +642,11 @@ void CSSMutableStyleDeclaration::parseDeclaration(const String& styleDeclaration
 void CSSMutableStyleDeclaration::addParsedProperties(const CSSProperty* const* properties, int numProperties)
 {
     ASSERT(!m_iteratorCount);
-    
+
     m_properties.reserveCapacity(numProperties);
-    
-    for (int i = 0; i < numProperties; ++i) {
-        // Only add properties that have no !important counterpart present
-        if (!getPropertyPriority(properties[i]->id()) || properties[i]->isImportant()) {
-            removeProperty(properties[i]->id(), false);
-            ASSERT(properties[i]);
-            m_properties.append(*properties[i]);
-        }
-    }
+    for (int i = 0; i < numProperties; ++i)
+        addParsedProperty(*properties[i]);
+
     // FIXME: This probably should have a call to setNeedsStyleRecalc() if something changed. We may also wish to add
     // a notifyChanged argument to this function to follow the model of other functions in this class.
 }
@@ -661,7 +655,11 @@ void CSSMutableStyleDeclaration::addParsedProperty(const CSSProperty& property)
 {
     ASSERT(!m_iteratorCount);
 
-    setPropertyInternal(property);
+    // Only add properties that have no !important counterpart present
+    if (!getPropertyPriority(property.id()) || property.isImportant()) {
+        removeProperty(property.id(), false);
+        m_properties.append(property);
+    }
 }
 
 void CSSMutableStyleDeclaration::setLengthProperty(int propertyId, const String& value, bool important, bool /*multiLength*/)
