@@ -1,3 +1,9 @@
+2011-05-03  Mario Sanchez Prada  <msanchez@igalia.com>
+
+        Unreviewed, skipping test timing out in the GTK 64-bit bot.
+
+        * platform/gtk/Skipped: Skipped media/video-volume-slider.html.
+
 2011-05-03  Ojan Vafai  <ojan@chromium.org>
 
         improve styling of options menu in results.html file
