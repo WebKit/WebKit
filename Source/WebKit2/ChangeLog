@@ -1,3 +1,12 @@
+2011-05-03  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Anders Carlsson.
+
+        More quarantine related sandbox denial when downloading files
+        <rdar://problem/9362626>
+
+        * WebProcess/com.apple.WebProcess.sb:
+
 2011-05-02  Adam Roben  <aroben@apple.com>
 
         Take advantage of implicit conversion from nullptr_t to PassOwnPtr

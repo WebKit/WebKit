@@ -78,9 +78,6 @@
        ;; FIXME: This should be removed when <rdar://problem/9276268> is fixed.
        (home-subpath "/Library/Input Methods")
 
-       ;; FIXME: This should be removed when <rdar://problem/9276430> is fixed.
-       (home-literal "/Library/Preferences/com.apple.LaunchServices.QuarantineEventsV2")
-
        (home-subpath "/Library/Dictionaries"))
 
 ;; This should be updated when <rdar://problem/9355830> is fixed.
@@ -96,7 +93,10 @@
        (home-subpath "/Library/Caches/com.apple.WebProcess")
        (home-regex "/Library/Preferences/ByHost/com\.apple\.HIToolbox\.")
        (home-regex "/Library/Preferences/com\.apple\.WebProcess\.")
-       (home-subpath "/Library/Keychains"))
+       (home-subpath "/Library/Keychains")
+
+       ;; FIXME: This should be removed when <rdar://problem/9276430> is fixed.
+       (home-literal "/Library/Preferences/com.apple.LaunchServices.QuarantineEventsV2"))
 
 ;; Darwin temporary files and Security mds caches, if present
 (if (positive? (string-length (param "DARWIN_USER_CACHE_DIR")))
