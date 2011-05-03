@@ -1,3 +1,18 @@
+2011-05-03  Caio Marcelo de Oliveira Filho  <caio.oliveira@openbossa.org>
+
+        Reviewed by Adam Roben.
+
+        Add tests to PrettyPatch
+        https://bugs.webkit.org/show_bug.cgi?id=57298
+
+        Verify that 'prettify' parse the right number of files and parts
+        (add/remove/shared) by checking a set of patches available in
+        bugs.webkit.org.
+
+        * PrettyPatch/PrettyPatch.rb: exported a couple a globals with
+        statistics information for our test script.
+        * PrettyPatch/PrettyPatch_test.rb: Added.
+
 2011-04-22  Alexey Proskuryakov  <ap@apple.com>
 
         Code changes by Adam Barth. Reviewed by Ojan Vafai.

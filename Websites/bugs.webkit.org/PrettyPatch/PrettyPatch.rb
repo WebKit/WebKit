@@ -12,6 +12,8 @@ public
     GIT_PATH = "git"
 
     def self.prettify(string)
+        $last_prettify_file_count = -1
+        $last_prettify_part_count = { "remove" => 0, "add" => 0, "shared" => 0 }
         string = normalize_line_ending(string)
         fileDiffs = FileDiff.parse(string)
 
@@ -27,6 +29,7 @@ public
             break
         end
 
+        $last_prettify_file_count = fileDiffs.count
         str += fileDiffs.collect{ |diff| diff.to_html }.join
     end
 
@@ -682,6 +685,7 @@ END
         attr :lines
 
         def initialize(className, container)
+            $last_prettify_part_count[className] += 1
             @className = className
             @lines = []
             container.parts << self
