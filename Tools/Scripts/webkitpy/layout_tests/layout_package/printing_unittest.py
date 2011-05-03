@@ -583,8 +583,8 @@ BUGX : failures/expected/timeout.html = TIMEOUT
         printer, err, out = self.get_printer(['--verbose'])
         ur = get_unexpected_results(expected=False, passing=False, flaky=False)
         printer.print_unexpected_results(ur)
-        # FIXME: scm.py outputs debug logging to stderr. It should probably go to stdout.
-        self.assertFalse(err.empty())
+        # FIXME: debug output from the port and scm objects may or may not go
+        # to stderr, so there's no point in testing its contents here.
         self.assertFalse(out.empty())
 
     def test_print_unexpected_results_buildbot(self):

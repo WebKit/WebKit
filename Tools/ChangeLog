@@ -1,3 +1,12 @@
+2011-05-03  Dirk Pranke  <dpranke@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        fix failing printing_unittest on win32
+        https://bugs.webkit.org/show_bug.cgi?id=59963
+
+        * Scripts/webkitpy/layout_tests/layout_package/printing_unittest.py:
+
 2011-05-03  Adam Roben  <aroben@apple.com>
 
         Fix most strict PassOwnPtr violations on Windows
