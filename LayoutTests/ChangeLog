@@ -1,5 +1,23 @@
 2011-05-03  Alpha Lam  <hclam@chromium.org>
 
+        Not reviewed. Build fix.
+
+        Test expectations.
+
+        * platform/chromium-win/editing/selection/select-across-readonly-input-1-expected.png: Added.
+        * platform/chromium-win/editing/selection/select-across-readonly-input-1-expected.txt: Added.
+        * platform/chromium-win/editing/selection/select-across-readonly-input-2-expected.png: Added.
+        * platform/chromium-win/editing/selection/select-across-readonly-input-2-expected.txt: Added.
+        * platform/chromium-win/editing/selection/select-across-readonly-input-3-expected.png: Added.
+        * platform/chromium-win/editing/selection/select-across-readonly-input-3-expected.txt: Added.
+        * platform/chromium-win/editing/selection/select-across-readonly-input-4-expected.png: Added.
+        * platform/chromium-win/editing/selection/select-across-readonly-input-4-expected.txt: Added.
+        * platform/chromium-win/editing/selection/select-across-readonly-input-5-expected.png: Added.
+        * platform/chromium-win/editing/selection/select-across-readonly-input-5-expected.txt: Added.
+        * platform/chromium-win/fast/forms/input-readonly-autoscroll-expected.txt:
+
+2011-05-03  Alpha Lam  <hclam@chromium.org>
+
         Build fix. Not reviewed.
 
         Add test expectations for new tests.

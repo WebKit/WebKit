@@ -26,4 +26,4 @@ layer at (12,85) size 151x16 scrollX 15 scrollWidth 166
     RenderText {#text} at (1,0) size 164x16
       text run at (1,0) width 164: "abcdefghijklmnopqrstuvwxyz"
 selection start: position 1 of child 0 {#text} of child 0 {DIV} of child 5 {INPUT} of body
-selection end:   position 1 of child 5 {INPUT} of body
+selection end:   position 26 of child 0 {#text} of child 0 {DIV} of child 5 {INPUT} of body
