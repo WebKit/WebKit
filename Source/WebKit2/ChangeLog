@@ -1,3 +1,15 @@
+2011-05-03  Darin Adler  <darin@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        <rdar://problem/9250444> Enter key doesn't work in a web text field (but Return key does)
+
+        No test at this time because the WebKit2 eventSender doesn't use this code path.
+
+        * Shared/mac/WebEventFactory.mm:
+        (WebKit::WebEventFactory::createWebKeyboardEvent): Copied the code to special-case certain
+        keys from the corresponding Mac WebKit1 code path.
+
 2011-05-03  Jeff Miller  <jeffm@apple.com>
 
         Reviewed by Darin Adler.

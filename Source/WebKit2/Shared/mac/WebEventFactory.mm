@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2010, 2011 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -29,6 +29,7 @@
 #import "WebKitSystemInterface.h"
 #import <wtf/ASCIICType.h>
 #import <WebCore/Scrollbar.h>
+#import <WebCore/WindowsKeyboardCodes.h>
 
 using namespace WebCore;
 
@@ -1110,6 +1111,24 @@ WebKeyboardEvent WebEventFactory::createWebKeyboardEvent(NSEvent *event, NSView 
     bool isSystemKey                = false; // SystemKey is always false on the Mac.
     WebEvent::Modifiers modifiers   = modifiersForEvent(event);
     double timestamp                = [event timestamp];
+
+    // Always use 13 for Enter/Return -- we don't want to use AppKit's different character for Enter.
+    if (windowsVirtualKeyCode == VK_RETURN) {
+        text = "\r";
+        unmodifiedText = "\r";
+    }
+
+    // AppKit sets text to "\x7F" for backspace, but the correct KeyboardEvent character code is 8.
+    if (windowsVirtualKeyCode == VK_BACK) {
+        text = "\x8";
+        unmodifiedText = "\x8";
+    }
+
+    // Always use 9 for Tab -- we don't want to use AppKit's different character for shift-tab.
+    if (windowsVirtualKeyCode == VK_TAB) {
+        text = "\x9";
+        unmodifiedText = "\x9";
+    }
 
     return WebKeyboardEvent(type, text, unmodifiedText, keyIdentifier, windowsVirtualKeyCode, nativeVirtualKeyCode, macCharCode, autoRepeat, isKeypad, isSystemKey, modifiers, timestamp);
 }
