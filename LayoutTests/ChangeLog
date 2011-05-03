@@ -1,3 +1,19 @@
+2011-05-03  Ojan Vafai  <ojan@chromium.org>
+
+        Reviewed by Tony Chang.
+
+        Don't include the test itself in expanded test results
+        https://bugs.webkit.org/show_bug.cgi?id=60051
+
+        When loading from local disk, we can't force it to render as
+        plain text, which causes the page to actually run. Also,
+        the extra clutter of another iframe is probably not worth it.
+
+        If we decide we want this later, we can add it back in as a
+        preference that's off by default.
+
+        * fast/harness/results.html:
+
 2011-05-03  Alpha Lam  <hclam@chromium.org>
 
         Not reviewed. Build fix.

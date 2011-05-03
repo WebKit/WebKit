@@ -261,8 +261,6 @@ function expandExpectations(expandLink)
     var newCell = document.createElement('td');
     newCell.colSpan = row.querySelectorAll('td').length;
 
-    newCell.insertAdjacentHTML('beforeEnd', resultIframe(row.querySelector('.test-link').href));    
-
     var resultLinks = row.querySelectorAll('.result-link');
     var hasTogglingImages = false;
     for (var i = 0; i < resultLinks.length; i++) {
