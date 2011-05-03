@@ -1,3 +1,15 @@
+2011-05-03  Igor Oliveira  <igor.oliveira@openbossa.org>
+
+        Reviewed by Csaba Osztrogonác.
+
+        [Qt] REGRESSION(r85648) Skip data-transfer-items.html test because data-transfer-items is not a Qt default build option
+        https://bugs.webkit.org/show_bug.cgi?id=60068
+
+        Skip data-transfer-items.html test because data-transfer-items
+        is not a Qt default build option
+
+        * platform/qt/Skipped:
+
 2011-05-03  Ryosuke Niwa  <rniwa@webkit.org>
 
         Reviewed by Darin Adler.

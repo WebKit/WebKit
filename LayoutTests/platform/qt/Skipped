@@ -161,6 +161,10 @@ editing/pasteboard/get-data-text-plain-drop.html
 editing/pasteboard/drop-text-events.html
 editing/pasteboard/drop-text-events-sideeffect.html
 
+# data-transfer-items is not a default build option
+# See bug https://bugs.webkit.org/show_bug.cgi?id=60068
+editing/pasteboard/data-transfer-items.html
+
 # Missing drag & drop functionality in DRT
 editing/pasteboard/drop-inputtext-acquires-style.html
 fast/css/user-drag-none.html
