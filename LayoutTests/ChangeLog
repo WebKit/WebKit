@@ -1,3 +1,12 @@
+2011-05-03  Alpha Lam  <hclam@chromium.org>
+
+        Not reviewed. Build fix.
+
+        New baseline and add test expectation to suppress failure.
+
+        * platform/chromium-gpu-win/animations/3d/replace-filling-transform-expected.png: Added.
+        * platform/chromium/test_expectations.txt:
+
 2011-05-03  Ojan Vafai  <ojan@chromium.org>
 
         Reviewed by Tony Chang.

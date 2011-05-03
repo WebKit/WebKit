@@ -4022,3 +4022,6 @@ BUG_HCLAM : fast/forms/input-placeholder-text-indent.html = IMAGE+TEXT
 
 // Flakiness around r85622.
 BUG_HCLAM WIN SLOW: http/tests/inspector/resource-tree/resource-tree-document-url.html = PASS
+
+// Failure introduced by Chromium r83848.
+BUG_HCLAM : fast/url/ipv6.html = TEXT
