@@ -1,3 +1,23 @@
+2011-05-03  Jessie Berlin  <jberlin@apple.com>
+
+        Rubber-stamped by Adam Roben.
+
+        Revert r85550 and r85575.
+
+        Variables cannot be exported via the .def file. Instead, they should be annotated with
+        JS_EXPORTDATA.
+
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.def:
+        * runtime/Structure.cpp:
+        (JSC::Structure::materializePropertyMap):
+        * runtime/Structure.h:
+        (JSC::Structure::typeInfo):
+        (JSC::Structure::previousID):
+        (JSC::Structure::propertyStorageCapacity):
+        (JSC::Structure::propertyStorageSize):
+        (JSC::Structure::get):
+        (JSC::Structure::materializePropertyMapIfNecessary):
+
 2011-05-02  Adam Roben  <aroben@apple.com>
 
         Allow implicit conversion from nullptr_t to PassOwnPtr
