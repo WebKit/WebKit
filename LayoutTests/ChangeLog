@@ -1,3 +1,17 @@
+2011-05-03  Mark Pilgrim  <pilgrim@chromium.org>
+
+        Reviewed by Tony Chang.
+
+        Port Mozilla's IndexedDB tests: cursor update updates indexes
+        https://bugs.webkit.org/show_bug.cgi?id=59995
+
+        This test creates an object store, adds both a unique and a non-unique index,
+        adds a record, opens a cursor, changes the record, and verifies that both
+        indexes correctly updated to reflect the modified record.
+
+        * storage/indexeddb/mozilla/cursor-update-updates-indexes-expected.txt: Added.
+        * storage/indexeddb/mozilla/cursor-update-updates-indexes.html: Added.
+
 2011-05-03  James Robinson  <jamesr@chromium.org>
 
         Remove stale expectations for animations/3d in chromium test_expectations.txt
