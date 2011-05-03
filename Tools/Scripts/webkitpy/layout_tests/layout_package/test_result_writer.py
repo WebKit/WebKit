@@ -55,13 +55,10 @@ def write_test_result(port, filename, driver_output,
             writer.create_text_diff_and_write_result(driver_output.text, expected_driver_output.text)
         elif isinstance(failure, test_failures.FailureMissingImage):
             writer.write_image_files(driver_output.image, expected_image=None)
-            writer.write_image_hashes(driver_output.image_hash, expected_driver_output.image_hash)
         elif isinstance(failure, test_failures.FailureMissingImageHash):
             writer.write_image_files(driver_output.image, expected_driver_output.image)
-            writer.write_image_hashes(driver_output.image_hash, expected_image_hash=None)
         elif isinstance(failure, test_failures.FailureImageHashMismatch):
             writer.write_image_files(driver_output.image, expected_driver_output.image)
-            writer.write_image_hashes(driver_output.image_hash, expected_driver_output.image_hash)
             images_are_different = writer.create_image_diff_and_write_result(
                 driver_output.image, expected_driver_output.image)
             if not images_are_different:
@@ -205,9 +202,6 @@ class TestResultWriter(object):
 
     def write_image_files(self, actual_image, expected_image):
         self.write_output_files('.png', actual_image, expected_image)
-
-    def write_image_hashes(self, actual_image_hash, expected_image_hash):
-        self.write_output_files('.checksum', actual_image_hash, expected_image_hash)
 
     def create_image_diff_and_write_result(self, actual_image, expected_image):
         """Writes the visual diff of the expected/actual PNGs.

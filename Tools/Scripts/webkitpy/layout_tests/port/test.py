@@ -206,7 +206,6 @@ def unit_test_filesystem(files=None):
             continue
 
         add_file(files, test, '-expected.txt', test.expected_text)
-        add_file(files, test, '-expected.checksum', test.expected_checksum)
         add_file(files, test, '-expected.png', test.expected_image)
 
 

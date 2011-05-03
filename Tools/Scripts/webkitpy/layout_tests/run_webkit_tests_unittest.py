@@ -620,9 +620,6 @@ class RebaselineTest(unittest.TestCase):
         file_list = fs.written_files.keys()
         file_list.remove('/tmp/layout-test-results/tests_run0.txt')
         self.assertEqual(len(file_list), 4)
-        # Verify that we didn't touch any .checksum files.
-        self.assertEqual(0, len([filename for filename in fs.written_files.keys()
-                                 if filename.endswith('.checksum')]))
         self.assertBaselines(file_list, "/passes/image")
         self.assertBaselines(file_list, "/failures/expected/missing_image")
 

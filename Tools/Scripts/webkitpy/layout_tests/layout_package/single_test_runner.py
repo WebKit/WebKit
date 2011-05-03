@@ -82,7 +82,7 @@ class SingleTestRunner:
             # For example, if 'foo.html' has two expectation files, 'foo-expected.html' and
             # 'foo-expected.txt', we should warn users. One test file must be used exclusively
             # in either layout tests or reftests, but not in both.
-            for suffix in ('.txt', '.checksum', '.png', '.wav'):
+            for suffix in ('.txt', '.png', '.wav'):
                 expected_filename = self._port.expected_filename(self._filename, suffix)
                 if fs.exists(expected_filename):
                     _log.error('The reftest (%s) can not have an expectation file (%s).'

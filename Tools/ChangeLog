@@ -1,3 +1,17 @@
+2011-05-02  Tony Chang  <tony@chromium.org>
+
+        Reviewed by Ojan Vafai.
+
+        [nrwt] remove some obsolete references to .checksum files
+        https://bugs.webkit.org/show_bug.cgi?id=59971
+
+        * Scripts/webkitpy/layout_tests/layout_package/printing.py:
+        * Scripts/webkitpy/layout_tests/layout_package/single_test_runner.py:
+        * Scripts/webkitpy/layout_tests/layout_package/test_failures.py:
+        * Scripts/webkitpy/layout_tests/layout_package/test_result_writer.py:
+        * Scripts/webkitpy/layout_tests/port/test.py:
+        * Scripts/webkitpy/layout_tests/run_webkit_tests_unittest.py:
+
 2011-05-02  Adam Roben  <aroben@apple.com>
 
         Take advantage of implicit nullptr_t -> PassOwnPtr conversion

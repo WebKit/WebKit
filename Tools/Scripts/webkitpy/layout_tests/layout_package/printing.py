@@ -355,12 +355,6 @@ class Printer(object):
                         self._port.relative_test_filename(txt_file))
         else:
             self._write('  txt: <none>')
-        checksum_file = self._port.expected_filename(filename, '.checksum')
-        if self._port.path_exists(checksum_file):
-            self._write('  sum: %s' %
-                        self._port.relative_test_filename(checksum_file))
-        else:
-            self._write('  sum: <none>')
         png_file = self._port.expected_filename(filename, '.png')
         if self._port.path_exists(png_file):
             self._write('  png: %s' %

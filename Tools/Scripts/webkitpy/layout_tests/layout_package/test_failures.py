@@ -154,8 +154,6 @@ class FailureTextMismatch(TestFailure):
 
 class FailureMissingImageHash(TestFailure):
     """Actual result hash was missing."""
-    # Chrome doesn't know to display a .checksum file as text, so don't bother
-    # putting in a link to the actual result.
 
     @staticmethod
     def message():
@@ -175,15 +173,11 @@ class FailureImageHashMismatch(TestFailure):
 
     @staticmethod
     def message():
-        # We call this a simple image mismatch to avoid confusion, since
-        # we link to the PNGs rather than the checksums.
         return "Image mismatch"
 
 
 class FailureImageHashIncorrect(TestFailure):
     """Actual result hash is incorrect."""
-    # Chrome doesn't know to display a .checksum file as text, so don't bother
-    # putting in a link to the actual result.
 
     @staticmethod
     def message():
