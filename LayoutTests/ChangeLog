@@ -1,3 +1,14 @@
+2011-05-03  James Robinson  <jamesr@chromium.org>
+
+        Reviewed by Kenneth Russell.
+
+        [chromium] Layout test animations/3d/replace-filling-transform.html failing
+        https://bugs.webkit.org/show_bug.cgi?id=59839
+
+        Ignore animations/3d when run in CPU mode as these are compositor tests.
+
+        * platform/chromium/test_expectations.txt:
+
 2011-05-03  Ojan Vafai  <ojan@chromium.org>
 
         Reviewed by Tony Chang.

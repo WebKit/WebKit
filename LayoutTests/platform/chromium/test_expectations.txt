@@ -286,6 +286,7 @@ BUGCR10395 WONTFIX SKIP : http/tests/webarchive = FAIL PASS
 // paths.
 BUGCR15733 WONTFIX CPU SKIP : compositing = FAIL PASS TIMEOUT
 BUGCR15733 WONTFIX CPU SKIP : platform/chromium/compositing = FAIL PASS TIMEOUT
+BUGCR15733 WONTFIX CPU SKIP : animations/3d = FAIL PASS TIMEOUT
 
 // Run the Mac-specific platform tests, but only to check for crashes.
 WONTFIX : platform/gtk = FAIL PASS
