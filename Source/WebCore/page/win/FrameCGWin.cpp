@@ -31,6 +31,7 @@
 #include "BitmapInfo.h"
 #include "FrameView.h"
 #include "GraphicsContextCG.h"
+#include "RenderObject.h"
 #include "Settings.h"
 
 #include <CoreGraphics/CoreGraphics.h>

@@ -47,6 +47,8 @@ class WebCoreAVFMovieObserver;
 typedef struct objc_object *id;
 #endif
 
+typedef struct CGImage *CGImageRef;
+
 namespace WebCore {
 
 class ApplicationCacheResource;

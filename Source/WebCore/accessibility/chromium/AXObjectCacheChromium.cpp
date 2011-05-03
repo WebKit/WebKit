@@ -26,11 +26,13 @@
 
 #include "config.h"
 #include "AXObjectCache.h"
+
 #include "AccessibilityObject.h"
 #include "AccessibilityScrollbar.h"
 #include "Chrome.h"
 #include "ChromeClient.h"
 #include "FrameView.h"
+#include "RenderObject.h"
 #include "Scrollbar.h"
 
 namespace WebCore {

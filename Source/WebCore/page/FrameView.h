@@ -26,9 +26,8 @@
 #define FrameView_h
 
 #include "Frame.h"
-#include "IntSize.h"
 #include "Page.h"
-#include "RenderObject.h" // For PaintBehavior
+#include "PaintPhase.h"
 #include "ScrollView.h"
 #include <wtf/Forward.h>
 #include <wtf/OwnPtr.h>
@@ -38,16 +37,12 @@ namespace WebCore {
 class Color;
 class Event;
 class FrameActionScheduler;
-class FrameViewPrivate;
 class IntRect;
 class Node;
-class PlatformMouseEvent;
 class RenderLayer;
 class RenderObject;
 class RenderEmbeddedObject;
 class RenderScrollbarPart;
-
-template <typename T> class Timer;
 
 class FrameView : public ScrollView {
 public:

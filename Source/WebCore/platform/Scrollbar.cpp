@@ -26,18 +26,20 @@
 #include "config.h"
 #include "Scrollbar.h"
 
-#include "AXObjectCache.h"
-#include "AccessibilityScrollbar.h"
-#include "EventHandler.h"
-#include "Frame.h"
-#include "FrameView.h"
 #include "GraphicsContext.h"
 #include "PlatformMouseEvent.h"
 #include "ScrollAnimator.h"
 #include "ScrollableArea.h"
 #include "ScrollbarTheme.h"
-
 #include <algorithm>
+
+// FIXME: The following #includes are a layering violation and should be removed.
+#include "AXObjectCache.h"
+#include "AccessibilityScrollbar.h"
+#include "Document.h"
+#include "EventHandler.h"
+#include "Frame.h"
+#include "FrameView.h"
 
 using namespace std;
 
@@ -475,6 +477,8 @@ AXObjectCache* Scrollbar::axObjectCache() const
     if (!parent() || !parent()->isFrameView())
         return 0;
     
+    // FIXME: Accessing the FrameView and Document here is a layering violation
+    // and should be removed.
     Document* document = static_cast<FrameView*>(parent())->frame()->document();
     return document->axObjectCache();
 }
