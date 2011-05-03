@@ -1,3 +1,9 @@
+2011-05-03  Mario Sanchez Prada  <msanchez@igalia.com>
+
+        Unreviewed, needed rebaseline after revision r85499.
+
+        * platform/gtk/fast/replaced/table-percent-height-expected.txt:
+
 2011-05-02  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Dan Bernstein.
