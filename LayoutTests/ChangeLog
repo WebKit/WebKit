@@ -1,3 +1,12 @@
+2011-05-03  Philippe Normand  <pnormand@igalia.com>
+
+        Unreviewed, unskip now passing test.
+
+        [GTK] media/video-controls-transformed.html fails
+        https://bugs.webkit.org/show_bug.cgi?id=50706
+
+        * platform/gtk/Skipped:
+
 2011-05-03  Mario Sanchez Prada  <msanchez@igalia.com>
 
         Unreviewed, needed rebaseline after revision r85499.

@@ -557,7 +557,6 @@ http/tests/xmlhttprequest/xmlhttprequest-contenttype-empty.html
 
 # Tests in media/ directory
 #   Tests failing
-media/video-controls-transformed.html
 media/video-controls-zoomed.html
 media/video-size-intrinsic-scale.html
 media/video-seek-past-end-playing.html
