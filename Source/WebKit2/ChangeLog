@@ -1,5 +1,17 @@
 2011-05-02  Anders Carlsson  <andersca@apple.com>
 
+        Reviewed by Simon Fraser.
+
+        Plug-in not completely repainted after a crash
+        https://bugs.webkit.org/show_bug.cgi?id=59991
+
+        Call Widget::invalidate().
+
+        * WebProcess/Plugins/PluginView.cpp:
+        (WebKit::PluginView::pluginProcessCrashed):
+
+2011-05-02  Anders Carlsson  <andersca@apple.com>
+
         Reviewed by Dan Bernstein.
 
         Make PluginProcessConnectionManager a member of WebProcess
