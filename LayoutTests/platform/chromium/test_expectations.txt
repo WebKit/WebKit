@@ -3885,32 +3885,6 @@ BUGDPRANKE MAC DEBUG :   transitions/transition-end-event-transform.html = TEXT 
 // start skipping platform tests
 BUGNONE WONTFIX SKIP : platform/qt/fast/forms = PASS FAIL CRASH TIMEOUT
 
-// rebaselines introduced by r85013
-BUGDPRANKE LINUX : fast/text/atsui-negative-spacing-features.html = IMAGE
-BUGDPRANKE LINUX : fast/text/atsui-spacing-features.html = IMAGE
-BUGDPRANKE LINUX : fast/text/international/hebrew-vowels.html = IMAGE
-BUGDPRANKE LINUX : fast/text/international/thai-baht-space.html = IMAGE
-BUGDPRANKE LINUX : fast/text/international/thai-line-breaks.html = IMAGE
-BUGDPRANKE LINUX : platform/chromium-linux/fast/text/international/complex-joining-using-gpos.html = IMAGE
-BUGDPRANKE LINUX : svg/W3C-I18N/text-anchor-dirLTR-anchorEnd.svg = IMAGE
-BUGDPRANKE LINUX : svg/W3C-I18N/text-anchor-dirLTR-anchorMiddle.svg = IMAGE
-BUGDPRANKE LINUX : svg/W3C-I18N/text-anchor-dirLTR-anchorStart.svg = IMAGE
-BUGDPRANKE LINUX : svg/W3C-I18N/text-anchor-dirNone-anchorEnd.svg = IMAGE
-BUGDPRANKE LINUX : svg/W3C-I18N/text-anchor-dirNone-anchorMiddle.svg = IMAGE
-BUGDPRANKE LINUX : svg/W3C-I18N/text-anchor-dirNone-anchorStart.svg = IMAGE
-BUGDPRANKE LINUX : svg/W3C-I18N/text-anchor-dirRTL-anchorEnd.svg = IMAGE
-BUGDPRANKE LINUX : svg/W3C-I18N/text-anchor-dirRTL-anchorMiddle.svg = IMAGE
-BUGDPRANKE LINUX : svg/W3C-I18N/text-anchor-dirRTL-anchorStart.svg = IMAGE
-BUGDPRANKE LINUX : svg/W3C-I18N/text-anchor-inherited-dirLTR-anchorEnd.svg = IMAGE
-BUGDPRANKE LINUX : svg/W3C-I18N/text-anchor-inherited-dirLTR-anchorMiddle.svg = IMAGE
-BUGDPRANKE LINUX : svg/W3C-I18N/text-anchor-inherited-dirLTR-anchorStart.svg = IMAGE
-BUGDPRANKE LINUX : svg/W3C-I18N/text-anchor-inherited-dirRTL-anchorEnd.svg = IMAGE
-BUGDPRANKE LINUX : svg/W3C-I18N/text-anchor-inherited-dirRTL-anchorMiddle.svg = IMAGE
-BUGDPRANKE LINUX : svg/W3C-I18N/text-anchor-inherited-dirRTL-anchorStart.svg = IMAGE
-BUGDPRANKE LINUX : svg/W3C-I18N/text-anchor-no-markup.svg = IMAGE
-BUGDPRANKE LINUX : svg/W3C-SVG-1.1-SE/text-intro-05-t.svg = IMAGE
-BUGDPRANKE LINUX : svg/text/text-intro-05-t.svg = IMAGE
-
 BUGWK59661 WIN LINUX MAC : media/video-controls-transformed.html = TEXT
 
 BUGDPRANKE MAC : fast/repaint/box-shadow-h.html = IMAGE
