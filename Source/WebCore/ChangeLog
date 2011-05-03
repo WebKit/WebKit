@@ -1,3 +1,20 @@
+2011-05-03  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        Bundle trailingSpaceObject and trailingPositionedBoxes in findNextLineBreak as a class
+        https://bugs.webkit.org/show_bug.cgi?id=60046
+
+        Extracted TrailingObjects that encapsulates trailingSpaceObject and trailingPositionedBoxes.
+
+        * rendering/RenderBlockLineLayout.cpp:
+        (WebCore::TrailingObjects::TrailingObjects):
+        (WebCore::TrailingObjects::setTrailingWhitespace):
+        (WebCore::TrailingObjects::clear):
+        (WebCore::TrailingObjects::appendBoxIfNeeded):
+        (WebCore::TrailingObjects::addMidpoints):
+        (WebCore::RenderBlock::findNextLineBreak):
+
 2011-05-03  Igor Oliveira  <igor.oliveira@openbossa.org>
 
         Reviewed by Eric Seidel.
