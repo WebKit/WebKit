@@ -1,3 +1,19 @@
+2011-05-03  Jeff Miller  <jeffm@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Unreachable URL is lost when canceling load of a new page
+        https://bugs.webkit.org/show_bug.cgi?id=60057
+        <rdar://problem/9049135>
+        
+        When setting the unreachable URL in the WebFrameProxy, keep track of any previous unreachable URL
+        so we can restore it if the page load fails.
+
+        * UIProcess/WebFrameProxy.cpp:
+        (WebKit::WebFrameProxy::didFailProvisionalLoad): Restore m_unreachableURL to previous value.
+        (WebKit::WebFrameProxy::setUnreachableURL): Keep track of previous unreachable URL in m_lastUnreachableURL.
+        * UIProcess/WebFrameProxy.h: Moved setUnreachableURL() implementation to .cpp file, added m_lastUnreachableURL.
+
 2011-05-03  Adam Roben  <aroben@apple.com>
 
         Fix most strict PassOwnPtr violations on Windows

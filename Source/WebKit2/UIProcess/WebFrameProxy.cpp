@@ -147,6 +147,7 @@ void WebFrameProxy::didFailProvisionalLoad()
     ASSERT(m_loadState == LoadStateProvisional);
     m_loadState = LoadStateFinished;
     m_provisionalURL = String();
+    m_unreachableURL = m_lastUnreachableURL;
 }
 
 void WebFrameProxy::didCommitLoad(const String& contentType, const PlatformCertificateInfo& certificateInfo)
@@ -319,6 +320,12 @@ void WebFrameProxy::getResourceData(WebURL* resourceURL, PassRefPtr<DataCallback
     }
 
     m_page->getResourceDataFromFrame(this, resourceURL, callback);
+}
+
+void WebFrameProxy::setUnreachableURL(const String& unreachableURL)
+{
+    m_lastUnreachableURL = m_unreachableURL;
+    m_unreachableURL = unreachableURL;
 }
 
 } // namespace WebKit

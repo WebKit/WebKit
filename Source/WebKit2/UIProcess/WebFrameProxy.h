@@ -92,7 +92,7 @@ public:
     const String& url() const { return m_url; }
     const String& provisionalURL() const { return m_provisionalURL; }
 
-    void setUnreachableURL(const String& unreachableURL) { m_unreachableURL = unreachableURL; }
+    void setUnreachableURL(const String&);
     const String& unreachableURL() const { return m_unreachableURL; }
 
     const String& mimeType() const { return m_MIMEType; }
@@ -149,6 +149,7 @@ private:
     String m_url;
     String m_provisionalURL;
     String m_unreachableURL;
+    String m_lastUnreachableURL;
     String m_MIMEType;
     String m_title;
     bool m_isFrameSet;
