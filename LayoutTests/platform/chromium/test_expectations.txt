@@ -2332,8 +2332,6 @@ BUGCR60651 WIN : fast/canvas/webgl/gl-object-get-calls.html = TIMEOUT PASS TEXT
 BUGCR60651 : fast/canvas/webgl/uniform-location.html = TEXT
 
 BUG_AUTO DEBUG : animations/suspend-resume-animation.html = PASS TEXT
-BUG_AUTO LINUX RELEASE : animations/3d/transform-origin-vs-functions.html = PASS TEXT
-BUG_AUTO WIN DEBUG : animations/3d/transform-origin-vs-functions.html = PASS TEXT
 BUG_AUTO WIN DEBUG : animations/multiple-keyframes.html = PASS TEXT
 
 // Seems to have been crashing intermittently for as long as we have test history.
@@ -2924,8 +2922,6 @@ BUGWK54051 MAC LINUX : plugins/invalidate_rect.html = TEXT
 BUGWK54051 MAC LINUX : plugins/windowless_plugin_paint_test.html = TEXT TIMEOUT
 
 // Snow Leopard-only failures (generally just need updated pixel results)
-BUGWK54322 MAC SNOWLEOPARD : animations/3d/matrix-transform-type-animation.html = IMAGE
-BUGWK54322 MAC SNOWLEOPARD : animations/3d/state-at-end-event-transform.html = IMAGE
 BUGWK54322 MAC SNOWLEOPARD : css1/text_properties/text_transform.html = IMAGE+TEXT
 BUGWK54322 MAC SNOWLEOPARD : css2.1/t1605-c545-txttrans-00-b-ag.html = IMAGE+TEXT
 BUGWK54322 MAC SNOWLEOPARD : fast/backgrounds/svg-as-background-5.html = IMAGE
@@ -3613,7 +3609,6 @@ BUGDPRANKE MAC SLOW : editing/selection/move-by-word-visually.html = PASS
 BUGDPRANKE MAC : compositing/iframes/invisible-nested-iframe-show.html = TEXT
 BUGDPRANKE MAC GPU : compositing/geometry/video-fixed-scrolling.html = IMAGE
 BUGDPRANKE MAC : plugins/mouse-click-iframe-to-plugin.html = TIMEOUT PASS
-BUGDPRANKE MAC : animations/3d/transform-origin-vs-functions.html = TEXT PASS
 
 BUGDPRANKE LINUX DEBUG : svg/custom/foreignObject-crash-on-hover.xml = CRASH PASS
 BUGDPRANKE LINUX MAC DEBUG : fast/css/getComputedStyle/getComputedStyle-margin-percentage.html = CRASH PASS
@@ -4011,8 +4006,6 @@ BUGWK59782 WIN MAC LINUX RELEASE : svg/dynamic-updates/SVGFEDropShadowElement-do
 BUGWK59782 WIN MAC LINUX RELEASE : svg/dynamic-updates/SVGFEDropShadowElement-svgdom-shadow-color-prop.html = IMAGE
 BUGWK59782 WIN MAC LINUX RELEASE : svg/dynamic-updates/SVGFEDropShadowElement-svgdom-shadow-opacity-prop.html = IMAGE
 BUGWK59782 WIN MAC LINUX RELEASE : svg/filters/feDropShadow.svg = IMAGE
-
-BUGWK59839 : animations/3d/replace-filling-transform.html = PASS IMAGE
 
 // New test added in r85303.
 BUG_HCLAM : compositing/masks/layer-mask-placement.html = IMAGE

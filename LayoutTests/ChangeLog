@@ -1,5 +1,11 @@
 2011-05-03  James Robinson  <jamesr@chromium.org>
 
+        Remove stale expectations for animations/3d in chromium test_expectations.txt
+
+        * platform/chromium/test_expectations.txt:
+
+2011-05-03  James Robinson  <jamesr@chromium.org>
+
         Reviewed by Kenneth Russell.
 
         [chromium] Layout test animations/3d/replace-filling-transform.html failing
