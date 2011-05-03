@@ -1,3 +1,16 @@
+2011-05-03  David Kilzer  <ddkilzer@apple.com>
+
+        Part 1 of 2: <http://webkit.org/b/59838> Implement HTTP pipelining for CoreFoundation-based networking
+        <rdar://problem/8924448>
+
+        Reviewed by Adam Roben.
+
+        * win/include/WebKitSystemInterface/WebKitSystemInterface.h:
+        (wkGetHTTPPipeliningPriority): Added declaration.
+        (wkSetHTTPPipeliningMaximumPriority): Added declaration.
+        (wkSetHTTPPipeliningPriority): Added declaration.
+        * win/lib/WebKitSystemInterface.lib: Updated.
+
 2011-04-28  David Levin  <levin@chromium.org>
 
         Reviewed by Adam Barth.
