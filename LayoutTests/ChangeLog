@@ -1,3 +1,19 @@
+2011-05-03  Alpha Lam  <hclam@chromium.org>
+
+        Not reviewed. Build fix.
+
+        Adding test expectations for some SVG tests on Windows.
+
+        * platform/chromium-win-vista/svg/text/text-fonts-01-t-expected.png: Removed.
+        * platform/chromium-win-vista/svg/text/text-intro-05-t-expected.png: Added.
+        * platform/chromium-win-xp/svg/text/text-fonts-01-t-expected.png: Added.
+        * platform/chromium-win-xp/svg/text/text-intro-05-t-expected.png: Added.
+        * platform/chromium-win/svg/text/text-fonts-01-t-expected.png: Added.
+        * platform/chromium-win/svg/text/text-fonts-01-t-expected.txt: Added.
+        * platform/chromium-win/svg/text/text-intro-05-t-expected.png:
+        * platform/chromium-win/svg/text/text-intro-05-t-expected.txt:
+        * platform/chromium/test_expectations.txt:
+
 2011-05-03  Mark Pilgrim  <pilgrim@chromium.org>
 
         Reviewed by Tony Chang.
