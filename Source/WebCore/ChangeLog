@@ -1,3 +1,23 @@
+2011-05-02  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        Possible crash when removing elements with reflections
+        https://bugs.webkit.org/show_bug.cgi?id=60009
+        
+        RenderLayer's destructor deleted its z-order list Vector pointers
+        before removing the reflection layer. However, the reflection cleanup
+        code could call back into the RenderLayer to dirty z-order lists,
+        so move reflection cleanup to before z-order vector deletion.
+        
+        The test crashes when run manually a few times with MallocScribble enabled,
+        but I was not able to create a test that crashed reliably.
+
+        Test: fast/reflections/remove-reflection-crash.html
+
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::~RenderLayer):
+
 2011-05-02  Ian Henderson  <ianh@apple.com>
 
         Reviewed by Dan Bernstein.

@@ -1,3 +1,15 @@
+2011-05-02  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        Possible crash when removing elements with reflections
+        https://bugs.webkit.org/show_bug.cgi?id=60009
+        
+        Testcase that sometimes crashes if run with MallocScribble enabled.
+
+        * fast/reflections/remove-reflection-crash-expected.txt: Added.
+        * fast/reflections/remove-reflection-crash.html: Added.
+
 2011-05-02  Ian Henderson  <ianh@apple.com>
 
         Reviewed by Dan Bernstein.
