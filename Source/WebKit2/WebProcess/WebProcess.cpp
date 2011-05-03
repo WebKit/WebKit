@@ -149,6 +149,7 @@ void WebProcess::initialize(CoreIPC::Connection::Identifier serverIdentifier, Ru
     m_connection = CoreIPC::Connection::createClientConnection(serverIdentifier, this, runLoop);
     m_connection->setDidCloseOnConnectionWorkQueueCallback(didCloseOnConnectionWorkQueue);
     m_connection->setShouldExitOnSyncMessageSendFailure(true);
+    m_connection->addQueueClient(this);
 
     m_connection->open();
 
@@ -550,6 +551,7 @@ void WebProcess::terminate()
 #endif
 
     // Invalidate our connection.
+    m_connection->removeQueueClient(this);
     m_connection->invalidate();
     m_connection = nullptr;
 
@@ -672,6 +674,14 @@ void WebProcess::didReceiveInvalidMessage(CoreIPC::Connection*, CoreIPC::Message
 
 void WebProcess::syncMessageSendTimedOut(CoreIPC::Connection*)
 {
+}
+
+bool WebProcess::willProcessMessageOnClientRunLoop(CoreIPC::Connection* connection, CoreIPC::MessageID messageID, CoreIPC::ArgumentDecoder* arguments)
+{
+    if (messageID.is<CoreIPC::MessageClassWebProcess>())
+        return willProcessWebProcessMessageOnClientRunLoop(connection, messageID, arguments);
+
+    return true;
 }
 
 WebFrame* WebProcess::webFrame(uint64_t frameID) const

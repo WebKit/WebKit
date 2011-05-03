@@ -1,5 +1,25 @@
 2011-05-02  Anders Carlsson  <andersca@apple.com>
 
+        Reviewed by Oliver Hunt.
+
+        Dispatch the PluginProcessCrashed on the connection work queue
+        https://bugs.webkit.org/show_bug.cgi?id=59996
+
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::initialize):
+        Add the web process as a queue client.
+
+        (WebKit::WebProcess::terminate):
+        Remove the web process as a queue client.
+
+        (WebKit::WebProcess::willProcessMessageOnClientRunLoop):
+        Try calling willProcessWebProcessMessageOnClientRunLoop.
+
+        * WebProcess/WebProcess.messages.in:
+        Add the DispatchOnConnectionQueue attribute to PluginProcessCrashed.
+
+2011-05-02  Anders Carlsson  <andersca@apple.com>
+
         Reviewed by Sam Weinig.
 
         Send a PluginProcessCrashed message to all web processes when a plug-in crashes
