@@ -40,10 +40,9 @@ import subprocess
 import sys
 import tempfile
 import time
-import urllib
 
-import factory
 import http_server
+import http_server_base
 
 from webkitpy.common.system.executive import Executive
 
@@ -55,41 +54,6 @@ _WSS_LOG_PREFIX = 'pywebsocket.wss.log-'
 
 _DEFAULT_WS_PORT = 8880
 _DEFAULT_WSS_PORT = 9323
-
-
-def url_is_alive(url):
-    """Checks to see if we get an http response from |url|.
-    We poll the url 20 times with a 0.5 second delay.  If we don't
-    get a reply in that time, we give up and assume the httpd
-    didn't start properly.
-
-    Args:
-      url: The URL to check.
-    Return:
-      True if the url is alive.
-    """
-    sleep_time = 0.5
-    wait_time = 10
-    while wait_time > 0:
-        try:
-            response = urllib.urlopen(url, proxies={})
-            # Server is up and responding.
-            return True
-        except IOError:
-            pass
-        # Wait for sleep_time before trying again.
-        wait_time -= sleep_time
-        time.sleep(sleep_time)
-
-    return False
-
-
-class PyWebSocketNotStarted(Exception):
-    pass
-
-
-class PyWebSocketNotFound(Exception):
-    pass
 
 
 class PyWebSocket(http_server.Lighttpd):
@@ -118,6 +82,7 @@ class PyWebSocket(http_server.Lighttpd):
             self._server_name = 'PyWebSocket'
         self._pidfile = pidfile
         self._wsout = None
+        self.mappings = []
 
         # Webkit tests
         if self._root:
@@ -138,8 +103,7 @@ class PyWebSocket(http_server.Lighttpd):
             _log.info('No need to start %s server.' % self._server_name)
             return
         if self.is_running():
-            raise PyWebSocketNotStarted('%s is already running.' %
-                                        self._server_name)
+            raise http_server_base.ServerError('%s is already running.' % self._server_name)
 
         time_str = time.strftime('%d%b%Y-%H%M%S')
         if self._use_tls:
@@ -149,7 +113,12 @@ class PyWebSocket(http_server.Lighttpd):
         log_file_name = log_prefix + time_str
 
         # Remove old log files. We only need to keep the last ones.
-        self.remove_log_files(self._output_dir, log_prefix)
+        # Don't worry too much if this fails.
+        try:
+            self.remove_log_files(self._output_dir, log_prefix)
+        except OSError, e:
+            _log.warning('Failed to remove old websocket server log files')
+            pass
 
         error_log = os.path.join(self._output_dir, log_file_name + "-err.txt")
 
@@ -191,6 +160,9 @@ class PyWebSocket(http_server.Lighttpd):
         env['PYTHONPATH'] = (pywebsocket_base + os.path.pathsep +
                              env.get('PYTHONPATH', ''))
 
+        self.mappings = [{'port': self._port}]
+        self.check_that_all_ports_are_available()
+
         _log.debug('Starting %s server on %d.' % (
                    self._server_name, self._port))
         _log.debug('cmdline: %s' % ' '.join(start_cmd))
@@ -202,27 +174,9 @@ class PyWebSocket(http_server.Lighttpd):
                                          stderr=subprocess.STDOUT,
                                          env=env)
 
-        if self._use_tls:
-            url = 'https'
-        else:
-            url = 'http'
-        url = url + '://127.0.0.1:%d/' % self._port
-        if not url_is_alive(url):
-            if self._process.returncode == None:
-                # FIXME: We should use a non-static Executive for easier
-                # testing.
-                Executive().kill_process(self._process.pid)
-            with codecs.open(output_log, "r", "utf-8") as fp:
-                for line in fp:
-                    _log.error(line)
-            raise PyWebSocketNotStarted(
-                'Failed to start %s server on port %s.' %
-                    (self._server_name, self._port))
-
-        # Our process terminated already
-        if self._process.returncode != None:
-            raise PyWebSocketNotStarted(
-                'Failed to start %s server.' % self._server_name)
+        server_started = self.wait_for_action(self.is_server_running_on_all_ports)
+        if not server_started or self._process.returncode != None:
+            raise http_server_base.ServerError('Failed to start websocket server on port %d.' % self._port)
         if self._pidfile:
             with codecs.open(self._pidfile, "w", "ascii") as file:
                 file.write("%d" % self._process.pid)
@@ -239,12 +193,10 @@ class PyWebSocket(http_server.Lighttpd):
                 pid = int(file.read().strip())
 
         if not pid:
-            raise PyWebSocketNotFound(
-                'Failed to find %s server pid.' % self._server_name)
+            raise http_server_base.ServerError('Failed to find %s server pid.' % self._server_name)
 
         _log.debug('Shutting down %s server %d.' % (self._server_name, pid))
-        # FIXME: We should use a non-static Executive for easier testing.
-        Executive().kill_process(pid)
+        self._port_obj._executive.kill_process(pid)
 
         if self._process:
             # wait() is not threadsafe and can throw OSError due to:

@@ -29,20 +29,27 @@
 
 """Base class with common routines between the Apache and Lighttpd servers."""
 
+import errno
 import logging
-import os
+import socket
 import time
-import urllib
 
 from webkitpy.common.system import filesystem
 
 _log = logging.getLogger("webkitpy.layout_tests.port.http_server_base")
 
 
+class ServerError(Exception):
+    pass
+
+
 class HttpServerBase(object):
 
     def __init__(self, port_obj):
         self._port_obj = port_obj
+        self._executive = port_obj._executive
+        self._filesystem = port_obj._filesystem
+        self._process = None
 
     def wait_for_action(self, action):
         """Repeat the action for 20 seconds or until it succeeds. Returns
@@ -56,28 +63,47 @@ class HttpServerBase(object):
 
         return False
 
+    def is_running(self):
+        return self._process and self._process.returncode is None
+
     def is_server_running_on_all_ports(self):
         """Returns whether the server is running on all the desired ports."""
+        if not self._executive.check_running_pid(self._process.pid):
+            _log.debug("Server isn't running at all")
+            raise ServerError("Server exited")
+
         for mapping in self.mappings:
-            if 'sslcert' in mapping:
-                http_suffix = 's'
-            else:
-                http_suffix = ''
-
-            url = 'http%s://127.0.0.1:%d/' % (http_suffix, mapping['port'])
-
+            s = socket.socket()
+            port = mapping['port']
             try:
-                response = urllib.urlopen(url, proxies={})
-                _log.debug("Server running at %s" % url)
+                s.connect(('localhost', port))
+                _log.debug("Server running on %d" % port)
             except IOError, e:
-                _log.debug("Server NOT running at %s: %s" % (url, e))
+                if e.errno not in (errno.ECONNREFUSED, errno.ECONNRESET):
+                    raise
+                _log.debug("Server NOT running on %d: %s" % (port, e))
                 return False
-
+            finally:
+                s.close()
         return True
 
+    def check_that_all_ports_are_available(self):
+        for mapping in self.mappings:
+            s = socket.socket()
+            port = mapping['port']
+            try:
+                s.bind(('localhost', port))
+            except IOError, e:
+                if e.errno in (errno.EALREADY, errno.EADDRINUSE):
+                    raise ServerError('Port %d is already in use.' % port)
+                else:
+                    raise ServerError('Unexpected error: %s.' % str(e))
+            finally:
+                s.close()
+
     def remove_log_files(self, folder, starts_with):
-        files = os.listdir(folder)
+        files = self._filesystem.listdir(folder)
         for file in files:
             if file.startswith(starts_with):
-                full_path = os.path.join(folder, file)
-                filesystem.FileSystem().remove(full_path)
+                full_path = self._filesystem.join(folder, file)
+                self._filesystem.remove(full_path)

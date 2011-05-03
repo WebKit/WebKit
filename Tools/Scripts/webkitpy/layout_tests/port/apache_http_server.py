@@ -197,10 +197,8 @@ class LayoutTestApacheHttpd(http_server_base.HttpServerBase):
         # shell=True is a trail of tears.
         # Note: Not thread safe: http://bugs.python.org/issue2320
         _log.debug('Starting http server, cmd="%s"' % str(self._start_cmd))
-        self._httpd_proc = subprocess.Popen(self._start_cmd,
-                                            stderr=subprocess.PIPE,
-            shell=True)
-        err = self._httpd_proc.stderr.read()
+        self._process = subprocess.Popen(self._start_cmd, stderr=subprocess.PIPE, shell=True)
+        err = self._process.stderr.read()
         if len(err):
             _log.debug(err)
             return False
@@ -208,8 +206,10 @@ class LayoutTestApacheHttpd(http_server_base.HttpServerBase):
 
     def start(self):
         """Starts the apache http server."""
-        # Stop any currently running servers.
-        self.stop()
+        if self._process:
+            raise http_server_base.ServerError('httpd already running')
+
+        self.check_that_all_ports_are_available()
 
         _log.debug("Starting apache http server")
         server_started = self.wait_for_action(self._start_httpd_process)
@@ -221,13 +221,24 @@ class LayoutTestApacheHttpd(http_server_base.HttpServerBase):
         if server_started:
             _log.debug("Server successfully started")
         else:
-            raise Exception('Failed to start http server')
+            raise http_server_base.ServerError('Failed to start http server')
 
     def stop(self):
         """Stops the apache http server."""
         _log.debug("Shutting down any running http servers")
         httpd_pid = None
-        if os.path.exists(self._pid_file):
+        if self._process:
+            httpd_pid = self._process.pid
+        elif os.path.exists(self._pid_file):
             httpd_pid = int(open(self._pid_file).readline())
-        # FIXME: We shouldn't be calling a protected method of _port_obj!
-        self._port_obj._shut_down_http_server(httpd_pid)
+
+        if not httpd_pid:
+            return
+
+        self._port_obj._executive.kill_process(httpd_pid)
+
+        if self._process:
+            self._process.wait()
+            self._process = None
+        if os.path.exists(self._pid_file):
+            os.remove(self._pid_file)

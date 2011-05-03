@@ -1,5 +1,33 @@
 2011-05-03  Dirk Pranke  <dpranke@chromium.org>
 
+        Reviewed by Ojan Vafai.
+
+        new-run-webkit-tests: fix http server startup/shutdown
+
+        Previous versions of the code had three problems that made startup
+        and shutdown flaky. The first is that it would throw exceptions
+        if it couldn't delete stale log files, which was overly
+        paranoid. The second is that some of the exceptions weren't
+        defined properly. The third, and most important, is that it was
+        using urllib to check if ports were available, which was leaving
+        sockets in a half-closed state, and keeping ports from being
+        reused. By switching to raw sockets, we are able to now reliably
+        restart.
+
+        This change also switches the code to using Executives to stop
+        processes, which will let us delete a bunch of code in the
+        port/* implementations and fix a weird layering problem in a
+        subsequent patch.
+
+        https://bugs.webkit.org/show_bug.cgi?id=59977
+
+        * Scripts/webkitpy/layout_tests/port/apache_http_server.py:
+        * Scripts/webkitpy/layout_tests/port/http_server.py:
+        * Scripts/webkitpy/layout_tests/port/http_server_base.py:
+        * Scripts/webkitpy/layout_tests/port/websocket_server.py:
+
+2011-05-03  Dirk Pranke  <dpranke@chromium.org>
+
         Reviewed by Adam Barth.
 
         fix failing printing_unittest on win32
