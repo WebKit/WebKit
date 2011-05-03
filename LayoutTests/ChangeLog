@@ -1,3 +1,18 @@
+2011-05-02  Joseph Pecoraro  <joepeck@webkit.org>
+
+        Reviewed by David Kilzer.
+
+        Respect fixed text-indent on ::-webkit-input-placeholder
+        https://bugs.webkit.org/show_bug.cgi?id=59825
+
+        Placeholder text does not appear in the render tree
+        dumps, so this is a pixel test for the position of
+        the placeholder affected by text-indent.
+
+        * fast/forms/input-placeholder-text-indent.html: Added.
+        * platform/mac/fast/forms/input-placeholder-text-indent-expected.png: Added.
+        * platform/mac/fast/forms/input-placeholder-text-indent-expected.txt: Added.
+
 2011-05-02  Eric Uhrhane  <ericu@chromium.org>
 
         Reviewed by Eric Seidel.

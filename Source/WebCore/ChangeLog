@@ -1,3 +1,16 @@
+2011-05-02  Joseph Pecoraro  <joepeck@webkit.org>
+
+        Reviewed by David Kilzer.
+
+        Respect fixed text-indent on ::-webkit-input-placeholder
+        https://bugs.webkit.org/show_bug.cgi?id=59825
+
+        Test: fast/forms/input-placeholder-text-indent.html
+
+        * rendering/RenderTextControl.cpp:
+        (WebCore::RenderTextControl::paintPlaceholder): indent by
+        a fixed text-indent size specified on the placeholder style.
+
 2011-05-02  Eric Uhrhane  <ericu@chromium.org>
 
         Reviewed by Eric Seidel.

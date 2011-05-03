@@ -642,10 +642,11 @@ void RenderTextControl::paintPlaceholder(PaintInfo& paintInfo, int tx, int ty)
     if (textRenderer) {
         IntPoint textPoint;
         textPoint.setY(ty + textBlockInsetTop() + placeholderStyle->fontMetrics().ascent());
+        int styleTextIndent = placeholderStyle->textIndent().isFixed() ? placeholderStyle->textIndent().calcMinValue(0) : 0;
         if (placeholderStyle->isLeftToRightDirection())
-            textPoint.setX(tx + textBlockInsetLeft());
+            textPoint.setX(tx + styleTextIndent + textBlockInsetLeft());
         else
-            textPoint.setX(tx + width() - textBlockInsetRight() - style()->font().width(textRun));
+            textPoint.setX(tx + width() - textBlockInsetRight() - styleTextIndent - style()->font().width(textRun));
         
         paintInfo.context->drawBidiText(placeholderStyle->font(), textRun, textPoint);
     }
