@@ -178,3 +178,8 @@ WebInspector.setInspectedTabId = function(tabId)
 {
     WebInspector._inspectedTabId = tabId;
 }
+
+WebInspector.InspectorFrontendHostStub.prototype.inspectedURLChanged = function(url)
+{
+    document.title = "Developer Tools - " + url;
+}
