@@ -1,5 +1,17 @@
 2011-05-03  Satish Sampath  <satish@chromium.org>
 
+        Unreviewed, update test expectations for chromium.
+
+        * platform/chromium-linux/fast/speech/input-appearance-numberandspeech-expected.png:
+        * platform/chromium-linux/fast/speech/input-appearance-numberandspeech-expected.txt:
+        * platform/chromium-linux/fast/speech/input-appearance-searchandspeech-expected.png:
+        * platform/chromium-linux/fast/speech/input-appearance-searchandspeech-expected.txt:
+        * platform/chromium-linux/fast/speech/input-appearance-speechbutton-expected.png:
+        * platform/chromium-linux/fast/speech/input-appearance-speechbutton-expected.txt:
+        * platform/chromium-mac-leopard/fast/speech/input-appearance-speechbutton-expected.txt: Removed.
+
+2011-05-03  Satish Sampath  <satish@chromium.org>
+
         Reviewed by Tony Gentilcore.
 
         Rebaseline speech input layout test expectations for chromium.
