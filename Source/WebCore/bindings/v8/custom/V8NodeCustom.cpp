@@ -164,10 +164,9 @@ v8::Handle<v8::Value> toV8Slow(Node* impl, bool forceNewObject)
         return toV8(static_cast<DocumentType*>(impl), forceNewObject);
     case Node::DOCUMENT_FRAGMENT_NODE:
         return toV8(static_cast<DocumentFragment*>(impl), forceNewObject);
-    case Node::SHADOW_ROOT_NODE:
-        return toV8(static_cast<ShadowRoot*>(impl), forceNewObject);
     case Node::NOTATION_NODE:
         return toV8(static_cast<Notation*>(impl), forceNewObject);
+    case Node::SHADOW_ROOT_NODE: // There's no IDL class for ShadowRoot, fall-through to default and use Node instead.
     default: break; // XPATH_NAMESPACE_NODE
     }
     return V8Node::wrap(impl, forceNewObject);

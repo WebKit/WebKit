@@ -1,3 +1,16 @@
+2011-05-03  Andrey Kosyakov  <caseq@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        [Chromium] toV8(Node*) will enter infinite recursion when called with a node of type SHADOW_ROOT_NODE
+        https://bugs.webkit.org/show_bug.cgi?id=60026
+
+        Return a wrapper for Node in toV8(Node*) when called with a node of type
+        SHADOW_ROOT_NODE instead of entering infinite recursion.
+
+        * bindings/v8/custom/V8NodeCustom.cpp:
+        (WebCore::toV8Slow):
+
 2011-05-02  Adam Roben  <aroben@apple.com>
 
         Take advantage of implicit conversion from nullptr_t to PassOwnPtr
