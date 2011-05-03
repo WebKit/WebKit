@@ -1,3 +1,20 @@
+2011-05-03  Keith Kyzivat  <keith.kyzivat@nokia.com>
+
+        Reviewed by Andreas Kling.
+
+        [Qt] QtDeclarative Webview element has a fixed white background
+        https://bugs.webkit.org/show_bug.cgi?id=40918
+
+        QProperty REVISION feature is not present in certain Qt Trunk clones.
+        These builds report their version as 4.8.0, and therefore break on the
+        prior #if QT_VERSION >= 0x040704.  The proper fix is to check based on
+        the existance of Q_REVISION.
+
+        * declarative/plugin.cpp:
+        (WebKitQmlPlugin::registerTypes):
+        * declarative/qdeclarativewebview.cpp:
+        * declarative/qdeclarativewebview_p.h:
+
 2011-05-01  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Anders Carlsson.
