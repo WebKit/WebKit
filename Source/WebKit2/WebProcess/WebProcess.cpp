@@ -783,6 +783,13 @@ void WebProcess::clearPluginSiteData(const Vector<String>& pluginPaths, const Ve
 }
 #endif
 
+#if ENABLE(PLUGIN_PROCESS)
+void WebProcess::pluginProcessCrashed(const String& pluginPath)
+{
+    // FIXME: Implement.
+}
+#endif
+
 void WebProcess::downloadRequest(uint64_t downloadID, uint64_t initiatingPageID, const ResourceRequest& request)
 {
     WebPage* initiatingPage = initiatingPageID ? webPage(initiatingPageID) : 0;

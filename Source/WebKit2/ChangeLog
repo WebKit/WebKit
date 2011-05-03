@@ -1,5 +1,26 @@
 2011-05-02  Anders Carlsson  <andersca@apple.com>
 
+        Reviewed by Sam Weinig.
+
+        Send a PluginProcessCrashed message to all web processes when a plug-in crashes
+        https://bugs.webkit.org/show_bug.cgi?id=59994
+
+        * UIProcess/Plugins/PluginProcessProxy.cpp:
+        (WebKit::PluginProcessProxy::didClose):
+        Iterate over all contexts and send PluginProcessCrashed to all web processes in each context.
+
+        (WebKit::PluginProcessProxy::didFinishLaunching):
+        Call setShouldCloseConnectionOnMachExceptions on the CoreIPC connection.
+
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::pluginProcessCrashed):
+        Add empty stub.
+
+        * WebProcess/WebProcess.messages.in:
+        Add message.
+
+2011-05-02  Anders Carlsson  <andersca@apple.com>
+
         Reviewed by Simon Fraser.
 
         Plug-in not completely repainted after a crash

@@ -32,8 +32,10 @@
 #include "PluginProcessManager.h"
 #include "PluginProcessMessages.h"
 #include "RunLoop.h"
+#include "WebContext.h"
 #include "WebCoreArgumentCoders.h"
 #include "WebPluginSiteDataManager.h"
+#include "WebProcessMessages.h"
 #include "WebProcessProxy.h"
 
 #if PLATFORM(MAC)
@@ -166,6 +168,10 @@ void PluginProcessProxy::didClose(CoreIPC::Connection*)
 #endif
 
     pluginProcessCrashedOrFailedToLaunch();
+
+    const Vector<WebContext*>& contexts = WebContext::allContexts();
+    for (size_t i = 0; i < contexts.size(); ++i)
+        contexts[i]->sendToAllProcesses(Messages::WebProcess::PluginProcessCrashed(m_pluginInfo.path));
 }
 
 void PluginProcessProxy::didReceiveInvalidMessage(CoreIPC::Connection*, CoreIPC::MessageID)
@@ -186,6 +192,10 @@ void PluginProcessProxy::didFinishLaunching(ProcessLauncher*, CoreIPC::Connectio
     }
     
     m_connection = CoreIPC::Connection::createServerConnection(connectionIdentifier, this, RunLoop::main());
+#if PLATFORM(MAC)
+    m_connection->setShouldCloseConnectionOnMachExceptions();
+#endif
+
     m_connection->open();
     
     PluginProcessCreationParameters parameters;
