@@ -30,10 +30,10 @@
 
 #if ENABLE(XPATH)
 
-#include "Document.h"
 #include "Element.h"
 #include "NamedNodeMap.h"
 #include "ProcessingInstruction.h"
+#include "TreeScope.h"
 #include "XMLNames.h"
 #include "XPathUtil.h"
 #include "XPathValue.h"
@@ -332,7 +332,7 @@ Value FunId::evaluate() const
         idList.append(str.characters(), str.length());
     }
     
-    Document* contextDocument = evaluationContext().node->document();
+    TreeScope* contextScope = evaluationContext().node->treeScope();
     NodeSet result;
     HashSet<Node*> resultSet;
 
@@ -351,7 +351,7 @@ Value FunId::evaluate() const
 
         // If there are several nodes with the same id, id() should return the first one.
         // In WebKit, getElementById behaves so, too, although its behavior in this case is formally undefined.
-        Node* node = contextDocument->getElementById(String(&idList[startPos], endPos - startPos));
+        Node* node = contextScope->getElementById(String(&idList[startPos], endPos - startPos));
         if (node && resultSet.add(node).second)
             result.append(node);
         

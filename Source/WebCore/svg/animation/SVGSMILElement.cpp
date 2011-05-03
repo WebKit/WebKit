@@ -425,7 +425,7 @@ void SVGSMILElement::attributeChanged(Attribute* attr, bool preserveDecls)
 
 inline Element* SVGSMILElement::eventBaseFor(const Condition& condition) const
 {
-    return condition.m_baseID.isEmpty() ? targetElement() : document()->getElementById(condition.m_baseID);
+    return condition.m_baseID.isEmpty() ? targetElement() : treeScope()->getElementById(condition.m_baseID);
 }
 
 void SVGSMILElement::connectConditions()
@@ -445,7 +445,7 @@ void SVGSMILElement::connectConditions()
             eventBase->addEventListener(condition.m_name, condition.m_eventListener, false);
         } else if (condition.m_type == Condition::Syncbase) {
             ASSERT(!condition.m_baseID.isEmpty());
-            condition.m_syncbase = document()->getElementById(condition.m_baseID);
+            condition.m_syncbase = treeScope()->getElementById(condition.m_baseID);
             if (!isSMILElement(condition.m_syncbase.get())) {
                 condition.m_syncbase = 0;
                 continue;
@@ -499,7 +499,7 @@ SVGElement* SVGSMILElement::targetElement() const
         return m_targetElement;
 
     String href = xlinkHref();
-    ContainerNode* target = href.isEmpty() ? parentNode() : document()->getElementById(SVGURIReference::getTarget(href));
+    ContainerNode* target = href.isEmpty() ? parentNode() : treeScope()->getElementById(SVGURIReference::getTarget(href));
     if (!target || !target->isSVGElement())
         return 0;
     

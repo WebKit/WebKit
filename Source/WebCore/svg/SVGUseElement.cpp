@@ -473,7 +473,7 @@ void SVGUseElement::buildPendingResource()
     // we either determine that our target is available or not - then we add ourselves to the pending resource list
     // Once the pending resource appears, it will call buildPendingResource(), so we're called a second time.
     String id = SVGURIReference::getTarget(href());
-    Element* targetElement = document()->getElementById(id);
+    Element* targetElement = treeScope()->getElementById(id);
     ASSERT(!m_targetElementInstance);
 
     if (!targetElement) {
@@ -518,7 +518,7 @@ void SVGUseElement::buildShadowAndInstanceTree(SVGShadowTreeRootElement* shadowR
     ShadowTreeUpdateBlocker blocker(this);
 
     String id = SVGURIReference::getTarget(href());
-    Element* targetElement = document()->getElementById(id);
+    Element* targetElement = treeScope()->getElementById(id);
     if (!targetElement) {
         // The only time we should get here is when the use element has not been
         // given a resource to target.
@@ -769,7 +769,7 @@ void SVGUseElement::buildInstanceTree(SVGElement* target, SVGElementInstance* ta
 bool SVGUseElement::hasCycleUseReferencing(SVGUseElement* use, SVGElementInstance* targetInstance, SVGElement*& newTarget)
 {
     String id = SVGURIReference::getTarget(use->href());
-    Element* targetElement = document()->getElementById(id); 
+    Element* targetElement = treeScope()->getElementById(id); 
     newTarget = 0;
     if (targetElement && targetElement->isSVGElement())
         newTarget = static_cast<SVGElement*>(targetElement);
@@ -850,7 +850,7 @@ void SVGUseElement::expandUseElementsInShadowTree(Node* element)
         SVGUseElement* use = static_cast<SVGUseElement*>(element);
 
         String id = SVGURIReference::getTarget(use->href());
-        Element* targetElement = document()->getElementById(id); 
+        Element* targetElement = treeScope()->getElementById(id); 
         SVGElement* target = 0;
         if (targetElement && targetElement->isSVGElement())
             target = static_cast<SVGElement*>(targetElement);

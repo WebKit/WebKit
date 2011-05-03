@@ -641,7 +641,7 @@ void SVGSVGElement::documentDidBecomeActive()
 // See http://www.w3.org/TR/SVG11/struct.html#InterfaceSVGSVGElement
 Element* SVGSVGElement::getElementById(const AtomicString& id) const
 {
-    Element* element = document()->getElementById(id);
+    Element* element = treeScope()->getElementById(id);
     if (element && element->isDescendantOf(this))
         return element;
 

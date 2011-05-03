@@ -23,7 +23,7 @@
 #include "CSSCursorImageValue.h"
 
 #include "CachedResourceLoader.h"
-#include "Document.h"
+#include "TreeScope.h"
 #include "PlatformString.h"
 #include <wtf/MathExtras.h>
 #include <wtf/UnusedParam.h>
@@ -43,9 +43,9 @@ static inline bool isSVGCursorIdentifier(const String& url)
     return kurl.hasFragmentIdentifier();
 }
 
-static inline SVGCursorElement* resourceReferencedByCursorElement(const String& fragmentId, Document* document)
+static inline SVGCursorElement* resourceReferencedByCursorElement(const String& fragmentId, TreeScope* scope)
 {
-    Element* element = document->getElementById(SVGURIReference::getTarget(fragmentId));
+    Element* element = scope->getElementById(SVGURIReference::getTarget(fragmentId));
     if (element && element->hasTagName(SVGNames::cursorTag))
         return static_cast<SVGCursorElement*>(element);
 
@@ -72,7 +72,7 @@ CSSCursorImageValue::~CSSCursorImageValue()
     for (; it != end; ++it) {
         SVGElement* referencedElement = *it;
         referencedElement->cursorImageValueRemoved();
-        if (SVGCursorElement* cursorElement = resourceReferencedByCursorElement(url, referencedElement->document()))
+        if (SVGCursorElement* cursorElement = resourceReferencedByCursorElement(url, referencedElement->treeScope()))
             cursorElement->removeClient(referencedElement);
     }
 #endif
@@ -90,7 +90,7 @@ bool CSSCursorImageValue::updateIfSVGCursorIsUsed(Element* element)
     if (!isSVGCursorIdentifier(url))
         return false;
 
-    if (SVGCursorElement* cursorElement = resourceReferencedByCursorElement(url, element->document())) {
+    if (SVGCursorElement* cursorElement = resourceReferencedByCursorElement(url, element->treeScope())) {
         // FIXME: This will override hot spot specified in CSS, which is probably incorrect.
         float x = roundf(cursorElement->x().value(0));
         m_hotSpot.setX(static_cast<int>(x));
@@ -118,6 +118,7 @@ StyleCachedImage* CSSCursorImageValue::cachedImage(CachedResourceLoader* loader)
 
 #if ENABLE(SVG) 
     if (isSVGCursorIdentifier(url) && loader && loader->document()) {
+        // FIXME: This will fail if the <cursor> element is in a shadow DOM (bug 59827)
         if (SVGCursorElement* cursorElement = resourceReferencedByCursorElement(url, loader->document()))
             url = cursorElement->href();
     }

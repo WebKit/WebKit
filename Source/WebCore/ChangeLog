@@ -1,3 +1,71 @@
+2011-05-02  Roland Steiner  <rolandsteiner@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        Bug 59966 - Update ID hash on the containing TreeScope rather than the Document
+        https://bugs.webkit.org/show_bug.cgi?id=59966
+
+        No new tests. (refactoring)
+
+        * accessibility/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::elementsFromAttribute):
+        (WebCore::AccessibilityRenderObject::activeDescendant):
+        * accessibility/AccessibilityRenderObject.h:
+        (WebCore::AccessibilityRenderObject::isAccessibilityRenderObject):
+        * css/CSSCursorImageValue.cpp:
+        (WebCore::resourceReferencedByCursorElement):
+        (WebCore::CSSCursorImageValue::~CSSCursorImageValue):
+        (WebCore::CSSCursorImageValue::updateIfSVGCursorIsUsed):
+        (WebCore::CSSCursorImageValue::cachedImage):
+        * dom/DynamicNodeList.cpp:
+        (WebCore::DynamicNodeList::itemWithName):
+        * dom/Element.h:
+        (WebCore::Element::updateId):
+        * dom/Node.cpp:
+        (WebCore::Node::querySelector):
+        * html/FormAssociatedElement.cpp:
+        (WebCore::FormAssociatedElement::insertedIntoTree):
+        (WebCore::FormAssociatedElement::resetFormOwner):
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::dataList):
+        * html/HTMLLabelElement.cpp:
+        (WebCore::HTMLLabelElement::control):
+        * rendering/svg/RenderSVGTextPath.cpp:
+        (WebCore::RenderSVGTextPath::layoutPath):
+        * svg/SVGAElement.cpp:
+        (WebCore::SVGAElement::defaultEventHandler):
+        * svg/SVGAltGlyphElement.cpp:
+        (WebCore::SVGAltGlyphElement::glyphElement):
+        * svg/SVGFEImageElement.cpp:
+        (WebCore::SVGFEImageElement::requestImageResource):
+        (WebCore::SVGFEImageElement::build):
+        * svg/SVGLinearGradientElement.cpp:
+        (WebCore::SVGLinearGradientElement::collectGradientAttributes):
+        * svg/SVGMPathElement.cpp:
+        (WebCore::SVGMPathElement::pathElement):
+        * svg/SVGPatternElement.cpp:
+        (WebCore::SVGPatternElement::collectPatternAttributes):
+        * svg/SVGRadialGradientElement.cpp:
+        (WebCore::SVGRadialGradientElement::collectGradientAttributes):
+        * svg/SVGSVGElement.cpp:
+        (WebCore::SVGSVGElement::getElementById):
+        * svg/SVGTRefElement.cpp:
+        (WebCore::SVGTRefElement::updateReferencedText):
+        * svg/SVGTextPathElement.cpp:
+        (WebCore::SVGTextPathElement::insertedIntoDocument):
+        * svg/SVGUseElement.cpp:
+        (WebCore::SVGUseElement::buildPendingResource):
+        (WebCore::SVGUseElement::hasCycleUseReferencing):
+        (WebCore::SVGUseElement::expandUseElementsInShadowTree):
+        * svg/SVGViewSpec.cpp:
+        (WebCore::SVGViewSpec::viewTarget):
+        * svg/animation/SVGSMILElement.cpp:
+        (WebCore::SVGSMILElement::eventBaseFor):
+        (WebCore::SVGSMILElement::connectConditions):
+        (WebCore::SVGSMILElement::targetElement):
+        * xml/XPathFunctions.cpp:
+        (WebCore::XPath::FunId::evaluate):
+
 2011-05-03  Sam Weinig  <sam@webkit.org>
 
         Fix chromium build.

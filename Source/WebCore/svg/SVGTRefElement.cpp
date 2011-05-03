@@ -47,7 +47,7 @@ PassRefPtr<SVGTRefElement> SVGTRefElement::create(const QualifiedName& tagName, 
 
 void SVGTRefElement::updateReferencedText()
 {
-    Element* target = document()->getElementById(SVGURIReference::getTarget(href()));
+    Element* target = treeScope()->getElementById(SVGURIReference::getTarget(href()));
     String textContent;
     if (target && target->isSVGElement())
         textContent = static_cast<SVGElement*>(target)->textContent();

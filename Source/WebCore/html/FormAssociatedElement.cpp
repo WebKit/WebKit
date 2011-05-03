@@ -77,7 +77,7 @@ void FormAssociatedElement::insertedIntoTree()
 {
     HTMLElement* element = toHTMLElement(this);
     if (element->fastHasAttribute(formAttr)) {
-        Element* formElement = element->document()->getElementById(element->fastGetAttribute(formAttr));
+        Element* formElement = element->treeScope()->getElementById(element->fastGetAttribute(formAttr));
         if (formElement && formElement->hasTagName(formTag)) {
             if (m_form)
                 m_form->removeFormElement(this);
@@ -136,8 +136,8 @@ void FormAssociatedElement::resetFormOwner(HTMLFormElement* form)
         // The HTML5 spec says that the element should be associated with
         // the first element in the document to have an ID that equal to
         // the value of form attribute, so we put the result of
-        // document()->getElementById() over the given element.
-        Element* firstElement = element->document()->getElementById(formId);
+        // treeScope()->getElementById() over the given element.
+        Element* firstElement = element->treeScope()->getElementById(formId);
         if (firstElement && firstElement->hasTagName(formTag))
             m_form = static_cast<HTMLFormElement*>(firstElement);
         else

@@ -1213,8 +1213,8 @@ void AccessibilityRenderObject::elementsFromAttribute(Vector<Element*>& elements
     if (!node || !node->isElementNode())
         return;
 
-    Document* document = m_renderer->document();
-    if (!document)
+    TreeScope* scope = node->treeScope();
+    if (!scope)
         return;
     
     String idList = getAttribute(attribute).string();
@@ -1228,7 +1228,7 @@ void AccessibilityRenderObject::elementsFromAttribute(Vector<Element*>& elements
     unsigned size = idVector.size();
     for (unsigned i = 0; i < size; ++i) {
         String idName = idVector[i];
-        Element* idElement = document->getElementById(idName);
+        Element* idElement = scope->getElementById(idName);
         if (idElement)
             elements.append(idElement);
     }
@@ -2837,7 +2837,7 @@ AccessibilityObject* AccessibilityRenderObject::activeDescendant() const
     if (activeDescendantAttrStr.isNull() || activeDescendantAttrStr.isEmpty())
         return 0;
     
-    Element* target = document()->getElementById(activeDescendantAttrStr);
+    Element* target = element->treeScope()->getElementById(activeDescendantAttrStr);
     if (!target)
         return 0;
     

@@ -45,7 +45,7 @@ Path RenderSVGTextPath::layoutPath() const
 {
     SVGTextPathElement* textPathElement = static_cast<SVGTextPathElement*>(node());
         String pathId = SVGURIReference::getTarget(textPathElement->href());
-    Element* targetElement = textPathElement->document()->getElementById(pathId);    
+    Element* targetElement = textPathElement->treeScope()->getElementById(pathId);    
     if (!targetElement || !targetElement->hasTagName(SVGNames::pathTag))
         return Path();
     

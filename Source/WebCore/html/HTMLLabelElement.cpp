@@ -81,7 +81,7 @@ HTMLFormControlElement* HTMLLabelElement::control()
     
     // Find the first element whose id is controlId. If it is found and it is a labelable form control,
     // return it, otherwise return 0.
-    return nodeAsLabelableFormControl(document()->getElementById(controlId));
+    return nodeAsLabelableFormControl(treeScope()->getElementById(controlId));
 }
 
 void HTMLLabelElement::setActive(bool down, bool pause)

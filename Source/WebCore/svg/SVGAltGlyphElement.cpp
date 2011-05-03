@@ -102,7 +102,7 @@ RenderObject* SVGAltGlyphElement::createRenderer(RenderArena* arena, RenderStyle
 
 SVGGlyphElement* SVGAltGlyphElement::glyphElement() const
 {
-    Element* elt = document()->getElementById(getTarget(getAttribute(XLinkNames::hrefAttr)));
+    Element* elt = treeScope()->getElementById(getTarget(getAttribute(XLinkNames::hrefAttr)));
     if (!elt || !elt->hasTagName(SVGNames::glyphTag))
         return 0;
     return static_cast<SVGGlyphElement*>(elt);

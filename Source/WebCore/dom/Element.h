@@ -484,11 +484,11 @@ inline void Element::updateId(const AtomicString& oldId, const AtomicString& new
     if (oldId == newId)
         return;
 
-    Document* doc = document();
+    TreeScope* scope = treeScope();
     if (!oldId.isEmpty())
-        doc->removeElementById(oldId, this);
+        scope->removeElementById(oldId, this);
     if (!newId.isEmpty())
-        doc->addElementById(newId, this);
+        scope->addElementById(newId, this);
 }
 
 inline bool Element::fastHasAttribute(const QualifiedName& name) const

@@ -157,7 +157,7 @@ void SVGTextPathElement::insertedIntoDocument()
     SVGTextContentElement::insertedIntoDocument();
 
     String id = SVGURIReference::getTarget(href());
-    Element* targetElement = ownerDocument()->getElementById(id);
+    Element* targetElement = treeScope()->getElementById(id);
     if (!targetElement) {
         document()->accessSVGExtensions()->addPendingResource(id, this);
         return;

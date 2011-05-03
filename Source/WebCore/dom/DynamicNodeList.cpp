@@ -122,7 +122,7 @@ Node* DynamicNodeList::item(unsigned offset) const
 Node* DynamicNodeList::itemWithName(const AtomicString& elementId) const
 {
     if (m_rootNode->isDocumentNode() || m_rootNode->inDocument()) {
-        Element* node = m_rootNode->document()->getElementById(elementId);
+        Element* node = m_rootNode->treeScope()->getElementById(elementId);
         if (node && nodeMatches(node)) {
             for (ContainerNode* p = node->parentNode(); p; p = p->parentNode()) {
                 if (p == m_rootNode)

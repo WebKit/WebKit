@@ -78,7 +78,7 @@ void SVGMPathElement::fillAttributeToPropertyTypeMap()
 
 SVGPathElement* SVGMPathElement::pathElement()
 {
-    Element* target = document()->getElementById(getTarget(href()));
+    Element* target = treeScope()->getElementById(getTarget(href()));
     if (target && target->hasTagName(SVGNames::pathTag))
         return static_cast<SVGPathElement*>(target);
     return 0;
