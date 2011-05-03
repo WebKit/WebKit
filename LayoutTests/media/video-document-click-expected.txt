@@ -1,5 +1,0 @@
-Clicking on the video should pause it: PASS
-Double-clicking on a paused video should resume play: PASS
-Clicking on the background should not pause the video: PASS
-Double-clicking on the background should not resume play: PASS
-

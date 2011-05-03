@@ -1,5 +1,16 @@
 2011-05-02  Dimitri Glazkov  <dglazkov@chromium.org>
 
+        Unreviewed, rolling out r85578.
+        http://trac.webkit.org/changeset/85578
+        https://bugs.webkit.org/show_bug.cgi?id=59976
+
+        The test needs more lovin'. Voluntary rollout.
+
+        * media/video-document-click-expected.txt: Removed.
+        * media/video-document-click.html: Removed.
+
+2011-05-02  Dimitri Glazkov  <dglazkov@chromium.org>
+
         Reviewed by Darin Adler.
 
         Add layout tests for clicking in media documents.
