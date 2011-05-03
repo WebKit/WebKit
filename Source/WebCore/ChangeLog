@@ -1,3 +1,26 @@
+2011-05-03  Roland Steiner  <rolandsteiner@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        Allow access keys to be used in shadow DOM
+        https://bugs.webkit.org/show_bug.cgi?id=59979
+
+        Move access key methods and members back to Document from TreeScope.
+        Also traverse into shadow trees when building the access key map.
+
+        No new tests. (refactoring)
+
+        * dom/Document.cpp:
+        (WebCore::Document::Document):
+        (WebCore::Document::getElementByAccessKey):
+        (WebCore::Document::buildAccessKeyMap):
+        (WebCore::Document::invalidateAccessKeyMap):
+        * dom/Document.h:
+        * dom/TreeScope.cpp:
+        (WebCore::TreeScope::TreeScope):
+        (WebCore::TreeScope::destroyTreeScopeData):
+        * dom/TreeScope.h:
+
 2011-05-03  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Darin Adler.

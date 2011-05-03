@@ -400,6 +400,7 @@ Document::Document(Frame* frame, const KURL& url, bool isXHTML, bool isHTML)
 #endif
     , m_createRenderers(true)
     , m_inPageCache(false)
+    , m_accessKeyMapValid(false)
     , m_useSecureKeyboardEntryWhenActive(false)
     , m_isXHTML(isXHTML)
     , m_isHTML(isHTML)
@@ -607,6 +608,36 @@ void Document::removedLastRef()
 Element* Document::getElementById(const AtomicString& id) const
 {
     return TreeScope::getElementById(id);
+}
+
+Element* Document::getElementByAccessKey(const String& key)
+{
+    if (key.isEmpty())
+        return 0;
+    if (!m_accessKeyMapValid) {
+        buildAccessKeyMap(this);
+        m_accessKeyMapValid = true;
+    }
+    return m_elementsByAccessKey.get(key.impl());
+}
+
+void Document::buildAccessKeyMap(ContainerNode* root)
+{
+     for (Node* n = root; n; n = n->traverseNextNode(root)) {
+        if (!n->isElementNode())
+            continue;
+        Element* element = static_cast<Element*>(n);
+        const AtomicString& accessKey = element->getAttribute(accesskeyAttr);
+        if (!accessKey.isEmpty())
+            m_elementsByAccessKey.set(accessKey.impl(), element);
+        buildAccessKeyMap(element->shadowRoot());
+    }
+}
+
+void Document::invalidateAccessKeyMap()
+{
+    m_accessKeyMapValid = false;
+    m_elementsByAccessKey.clear();
 }
 
 MediaQueryMatcher* Document::mediaQueryMatcher()

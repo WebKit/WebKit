@@ -245,6 +245,9 @@ public:
 
     Element* getElementById(const AtomicString& id) const;
 
+    Element* getElementByAccessKey(const String& key);
+    void invalidateAccessKeyMap();
+
     // DOM methods & attributes for Document
 
     DEFINE_ATTRIBUTE_EVENT_LISTENER(abort);
@@ -1119,6 +1122,8 @@ private:
 
     void cacheDocumentElement() const;
 
+    void buildAccessKeyMap(ContainerNode* root);
+
     void createStyleSelector();
 
     PassRefPtr<NodeList> handleZeroPadding(const HitTestRequest&, HitTestResult&) const;
@@ -1329,6 +1334,9 @@ private:
     HashSet<Element*> m_documentActivationCallbackElements;
     HashSet<Element*> m_mediaVolumeCallbackElements;
     HashSet<Element*> m_privateBrowsingStateChangedElements;
+
+    HashMap<StringImpl*, Element*, CaseFoldingHash> m_elementsByAccessKey;    
+    bool m_accessKeyMapValid;
 
     bool m_useSecureKeyboardEntryWhenActive;
 

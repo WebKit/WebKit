@@ -39,7 +39,6 @@ using namespace HTMLNames;
 TreeScope::TreeScope(Document* document)
     : ContainerNode(document)
     , m_parentTreeScope(0)
-    , m_accessKeyMapValid(false)
     , m_numNodeListCaches(0)
 {
 }
@@ -54,7 +53,6 @@ void TreeScope::destroyTreeScopeData()
 {
     m_elementsById.clear();
     m_imageMapsByName.clear();
-    m_elementsByAccessKey.clear();
 }
 
 void TreeScope::setParentTreeScope(TreeScope* newParentScope)
@@ -82,30 +80,6 @@ void TreeScope::addElementById(const AtomicString& elementId, Element* element)
 void TreeScope::removeElementById(const AtomicString& elementId, Element* element)
 {
     m_elementsById.remove(elementId.impl(), element);
-}
-
-Element* TreeScope::getElementByAccessKey(const String& key) const
-{
-    if (key.isEmpty())
-        return 0;
-    if (!m_accessKeyMapValid) {
-        for (Node* n = firstChild(); n; n = n->traverseNextNode()) {
-            if (!n->isElementNode())
-                continue;
-            Element* element = static_cast<Element*>(n);
-            const AtomicString& accessKey = element->getAttribute(accesskeyAttr);
-            if (!accessKey.isEmpty())
-                m_elementsByAccessKey.set(accessKey.impl(), element);
-        }
-        m_accessKeyMapValid = true;
-    }
-    return m_elementsByAccessKey.get(key.impl());
-}
-
-void TreeScope::invalidateAccessKeyMap()
-{
-    m_accessKeyMapValid = false;
-    m_elementsByAccessKey.clear();
 }
 
 void TreeScope::addImageMap(HTMLMapElement* imageMap)

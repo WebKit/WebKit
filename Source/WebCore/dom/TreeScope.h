@@ -51,9 +51,6 @@ public:
     void removeImageMap(HTMLMapElement*);
     HTMLMapElement* getImageMap(const String& url) const;
 
-    Element* getElementByAccessKey(const String& key) const;
-    void invalidateAccessKeyMap();
-
     void addNodeListCache() { ++m_numNodeListCaches; }
     void removeNodeListCache() { ASSERT(m_numNodeListCaches > 0); --m_numNodeListCaches; }
     bool hasNodeListCaches() const { return m_numNodeListCaches; }
@@ -78,9 +75,6 @@ private:
 
     DocumentOrderedMap m_elementsById;
     DocumentOrderedMap m_imageMapsByName;
-
-    mutable HashMap<StringImpl*, Element*, CaseFoldingHash> m_elementsByAccessKey;    
-    mutable bool m_accessKeyMapValid;
 
     unsigned m_numNodeListCaches;
 };
