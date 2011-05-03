@@ -1026,10 +1026,10 @@ void RenderObject::paintOutline(GraphicsContext* graphicsContext, int tx, int ty
         return;
 
     RenderStyle* styleToUse = style();
-    int ow = styleToUse->outlineWidth();
-    EBorderStyle os = styleToUse->outlineStyle();
+    int outlineWidth = styleToUse->outlineWidth();
+    EBorderStyle outlineStyle = styleToUse->outlineStyle();
 
-    Color oc = styleToUse->visitedDependentColor(CSSPropertyOutlineColor);
+    Color outlineColor = styleToUse->visitedDependentColor(CSSPropertyOutlineColor);
 
     int offset = styleToUse->outlineOffset();
 
@@ -1051,10 +1051,19 @@ void RenderObject::paintOutline(GraphicsContext* graphicsContext, int tx, int ty
     if (h < 0 || w < 0)
         return;
 
-    drawLineForBoxSide(graphicsContext, tx - ow, ty - ow, tx, ty + h + ow, BSLeft, oc, os, ow, ow);
-    drawLineForBoxSide(graphicsContext, tx - ow, ty - ow, tx + w + ow, ty, BSTop, oc, os, ow, ow);
-    drawLineForBoxSide(graphicsContext, tx + w, ty - ow, tx + w + ow, ty + h + ow, BSRight, oc, os, ow, ow);
-    drawLineForBoxSide(graphicsContext, tx - ow, ty + h, tx + w + ow, ty + h + ow, BSBottom, oc, os, ow, ow);
+    int leftOuter = tx - outlineWidth;
+    int leftInner = tx;
+    int rightOuter = tx + w + outlineWidth;
+    int rightInner = tx + w;
+    int topOuter = ty - outlineWidth;
+    int topInner = ty;
+    int bottomOuter = ty + h + outlineWidth;
+    int bottomInner = ty + h;
+    
+    drawLineForBoxSide(graphicsContext, leftOuter, topOuter, leftInner, bottomOuter, BSLeft, outlineColor, outlineStyle, outlineWidth, outlineWidth);
+    drawLineForBoxSide(graphicsContext, leftOuter, topOuter, rightOuter, topInner, BSTop, outlineColor, outlineStyle, outlineWidth, outlineWidth);
+    drawLineForBoxSide(graphicsContext, rightInner, topOuter, rightOuter, bottomOuter, BSRight, outlineColor, outlineStyle, outlineWidth, outlineWidth);
+    drawLineForBoxSide(graphicsContext, leftOuter, bottomInner, rightOuter, bottomOuter, BSBottom, outlineColor, outlineStyle, outlineWidth, outlineWidth);
 }
 
 IntRect RenderObject::absoluteBoundingBoxRect(bool useTransforms)

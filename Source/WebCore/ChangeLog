@@ -1,3 +1,15 @@
+2011-05-02  Ben Wells  <benwells@chromium.org>
+
+        Reviewed by Simon Fraser.
+
+        Cleanup variable usage in RenderObject.cpp paintOutline()
+        https://bugs.webkit.org/show_bug.cgi?id=59911
+
+        No new tests for this, there should be no change in behaviour.
+
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::paintOutline):
+
 2011-05-02  Ryosuke Niwa  <rniwa@webkit.org>
 
         Reviewed by James Robinson.
