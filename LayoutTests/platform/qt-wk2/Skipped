@@ -2693,6 +2693,7 @@ editing/style/iframe-onload-crash-mac.html
 editing/style/iframe-onload-crash-unix.html
 editing/style/iframe-onload-crash-win.html
 editing/style/stylewithcss-without-selection.html
+fast/block/positioning/vertical-rl/fixed-positioning.html
 fast/css/bidi-override-in-anonymous-block.html
 fast/css/font-face-descriptor-multiple-values-parsing.html
 fast/css/preserve-user-specified-zoom-level-on-reload.html
@@ -3171,6 +3172,7 @@ svg/W3C-SVG-1.1/text-tspan-01-b.svg
 svg/W3C-SVG-1.1/text-ws-01-t.svg
 svg/W3C-SVG-1.1/text-ws-02-t.svg
 svg/W3C-SVG-1.1/types-basicDOM-01-b.svg
+svg/W3C-SVG-1.1-SE/svgdom-over-01-f.svg
 tables/mozilla/bugs/bug53690-1.html
 tables/mozilla/bugs/bug9024.html
 tables/mozilla_expected_failures/bugs/bug3517.html
@@ -3396,14 +3398,17 @@ fast/dom/HTMLHeadElement/textInHead4.html
 fast/dom/HTMLHeadElement/textInHead5.html
 fast/dom/HTMLInputElement/input-image-alt-text.html
 fast/dom/HTMLLinkElement/pending-stylesheet-count.html
+fast/dom/HTMLMeterElement/meter-writing-mode.html
 fast/dom/HTMLObjectElement/vspace-hspace-as-number.html
 fast/dom/HTMLProgressElement/progress-bar-value-pseudo-element.html
 fast/dom/HTMLProgressElement/progress-element.html
+fast/dom/HTMLProgressElement/progress-writing-mode.html
 fast/dom/HTMLTableElement/colSpan.html
 fast/dom/HTMLTableElement/createCaption.html
 fast/dom/Range/create-contextual-fragment.html
 fast/dom/Range/surroundContents-1.html
 fast/dom/Window/open-existing-pop-up-blocking.html
+fast/forms/button-align.html
 fast/text/text-letter-spacing.html
 http/tests/security/contentSecurityPolicy/inline-script-blocked-goofy.html
 http/tests/security/cross-frame-access-callback-explicit-domain-DENY.html
@@ -3452,3 +3457,11 @@ fast/loader/ping-error.html
 fast/loader/stateobjects/replacestate-in-iframe.html
 storage/domstorage/localstorage/window-open.html
 storage/domstorage/sessionstorage/window-open.html
+
+# [Qt][WK2] Incorrect line number dumping
+# https://bugs.webkit.org/show_bug.cgi?id=60074
+http/tests/security/contentSecurityPolicy/eval-blocked.html
+
+# [Qt][WK2] editing/pasteboard/do-not-copy-body-color.html fails
+# https://bugs.webkit.org/show_bug.cgi?id=60076
+editing/pasteboard/do-not-copy-body-color.html
