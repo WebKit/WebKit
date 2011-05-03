@@ -1,3 +1,11 @@
+2011-05-03  Leandro Pereira  <leandro@profusion.mobi>
+
+        [EFL] Unreviewed build fix for NETWORK_BACKEND=curl.
+
+        Force linking with zlib so that uncompress() exists.
+
+        * Source/cmake/OptionsEfl.cmake: Find zlib.
+
 2011-05-03  Lucas De Marchi  <lucas.demarchi@profusion.mobi>
 
         [CMAKE] Unreviewed build fix for gcc >= 4.6

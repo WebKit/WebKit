@@ -1,3 +1,11 @@
+2011-05-03  Leandro Pereira  <leandro@profusion.mobi>
+
+        [EFL] Unreviewed build fix for NETWORK_BACKEND=curl.
+
+        Force linking with zlib so that uncompress() exists.
+
+        * CMakeListsEfl.txt: Append zlib libraries.
+
 2011-05-02  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
         Unreviewed. Style error fix.
