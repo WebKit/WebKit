@@ -55,7 +55,7 @@ static void loadURI(const gchar *uri)
 static const GOptionEntry commandLineOptions[] =
 {
     { G_OPTION_REMAINING, 0, 0, G_OPTION_ARG_FILENAME_ARRAY, &uriArguments, 0, "[URL…]" },
-    { 0 }
+    { 0, 0, 0, 0, 0, 0, 0 }
 };
 
 int main(int argc, char *argv[])

@@ -1,3 +1,15 @@
+2011-05-02  Martin Robinson  <mrobinson@igalia.com>
+
+        Reviewed by Xan Lopez.
+
+        [GTK] Compiler warning in Tools/MiniBrowser/main.c
+        https://bugs.webkit.org/show_bug.cgi?id=59986
+
+        Remove a compiler warning.
+
+        * MiniBrowser/gtk/main.c: Use full array initializers to prevent some compilers
+        from complaining.
+
 2011-05-02  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Eric Seidel.
