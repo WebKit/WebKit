@@ -58,6 +58,7 @@ class Lighttpd(http_server_base.HttpServerBase):
         # Webkit tests
         http_server_base.HttpServerBase.__init__(self, port_obj)
         self._output_dir = output_dir
+        self._process = None
         self._port = port
         self._root = root
         self._run_background = run_background
@@ -98,9 +99,12 @@ class Lighttpd(http_server_base.HttpServerBase):
                 {'port': 8443, 'docroot': self._webkit_tests,
                  'sslcert': self._pem_file}])
 
+    def is_running(self):
+        return self._process != None
+
     def start(self):
         if self.is_running():
-            raise http_server_base.ServerError('Lighttpd already running')
+            raise 'Lighttpd already running'
 
         base_conf_file = self._port_obj.path_from_webkit_base('Tools',
             'Scripts', 'webkitpy', 'layout_tests', 'port', 'lighttpd.conf')
@@ -112,14 +116,8 @@ class Lighttpd(http_server_base.HttpServerBase):
         error_log = os.path.join(self._output_dir, log_file_name)
 
         # Remove old log files. We only need to keep the last ones.
-        # Don't worry too much if we can't remove the old ones. Sometimes
-        # they are locked by other processes but this clears eventually.
-        try:
-            self.remove_log_files(self._output_dir, "access.log-")
-            self.remove_log_files(self._output_dir, "error.log-")
-        except OSError, e:
-            _log.warning('Failed to remove old http server log files')
-            pass
+        self.remove_log_files(self._output_dir, "access.log-")
+        self.remove_log_files(self._output_dir, "error.log-")
 
         # Write out the config
         with codecs.open(base_conf_file, "r", "utf-8") as file:
@@ -210,28 +208,35 @@ class Lighttpd(http_server_base.HttpServerBase):
                             os.path.join(tmp_module_path, lib_file))
 
         env = self._port_obj.setup_environ_for_server()
-
-        self.mappings = mappings
-        self.check_that_all_ports_are_available()
-
         _log.debug('Starting http server, cmd="%s"' % str(start_cmd))
         # FIXME: Should use Executive.run_command
         self._process = subprocess.Popen(start_cmd, env=env, stdin=subprocess.PIPE)
-        server_started = self.wait_for_action(self.is_server_running_on_all_ports)
+
+        # Wait for server to start.
+        self.mappings = mappings
+        server_started = self.wait_for_action(
+            self.is_server_running_on_all_ports)
+
+        # Our process terminated already
         if not server_started or self._process.returncode != None:
-            raise http_server_base.ServerError('Failed to start httpd.')
+            raise Exception('Failed to start httpd.')
 
         _log.debug("Server successfully started")
 
-    # FIXME: It would be nice if we could shut the server down cleanly.
-    def stop(self):
-        if not self.is_running():
+    # TODO(deanm): Find a nicer way to shutdown cleanly.  Our log files are
+    # probably not being flushed, etc... why doesn't our python have os.kill ?
+
+    def stop(self, force=False):
+        if not force and not self.is_running():
             return
 
-        httpd_pid = self._process.pid
-        self._executive.kill_process(httpd_pid)
+        httpd_pid = None
+        if self._process:
+            httpd_pid = self._process.pid
+        self._port_obj._shut_down_http_server(httpd_pid)
 
-        # wait() is not threadsafe and can throw OSError due to:
-        # http://bugs.python.org/issue1731717
-        self._process.wait()
-        self._process = None
+        if self._process:
+            # wait() is not threadsafe and can throw OSError due to:
+            # http://bugs.python.org/issue1731717
+            self._process.wait()
+            self._process = None
