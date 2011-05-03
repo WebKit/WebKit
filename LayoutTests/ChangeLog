@@ -1,3 +1,12 @@
+2011-05-03  Alpha Lam  <hclam@chromium.org>
+
+        Not reviewed. Build fix.
+
+        New baseline for GPU layout tests.
+
+        * platform/chromium-gpu-mac/animations/3d/matrix-transform-type-animation-expected.png: Added.
+        * platform/chromium-gpu-mac/animations/3d/state-at-end-event-transform-expected.png: Added.
+
 2011-05-03  Mario Sanchez Prada  <msanchez@igalia.com>
 
         Unreviewed, skipping test timing out in the GTK 64-bit bot.
