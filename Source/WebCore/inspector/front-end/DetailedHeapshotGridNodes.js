@@ -444,7 +444,7 @@ WebInspector.HeapSnapshotConstructorNode = function(tree, className, aggregate)
     this._count = aggregate.count;
     this._shallowSize = aggregate.self;
     this._retainedSize = aggregate.maxRet;
-    this._provider = this._createNodesProvider(tree.snapshot, aggregate.type, className);
+    this._provider = this._createNodesProvider(tree.snapshot, className);
 }
 
 WebInspector.HeapSnapshotConstructorNode.prototype = {
@@ -453,13 +453,9 @@ WebInspector.HeapSnapshotConstructorNode.prototype = {
         return new WebInspector.HeapSnapshotInstanceNode(this.dataGrid, null, this.dataGrid.snapshot, item);
     },
 
-    _createNodesProvider: function(snapshot, nodeType, nodeClassName)
+    _createNodesProvider: function(snapshot, className)
     {
-        return snapshot.createNodesProvider(
-            "function (node) {" + 
-            "     return node.type === \"" + nodeType + "\" " +
-            (nodeClassName !== null ? "&& node.className === \"" + nodeClassName + "\"" : "") +
-            "}");
+        return snapshot.createNodesProviderForClass(className);
     },
 
     comparator: function()

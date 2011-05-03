@@ -280,9 +280,9 @@ WebInspector.HeapSnapshotProxy = function(worker, objectId)
 }
 
 WebInspector.HeapSnapshotProxy.prototype = {
-    aggregates: function(withNodeIndexes, callback)
+    aggregates: function(sortedIndexes, callback)
     {
-        this.callMethod(callback, "aggregates", withNodeIndexes);
+        this.callMethod(callback, "aggregates", sortedIndexes);
     },
 
     createDiff: function(className)
@@ -298,6 +298,11 @@ WebInspector.HeapSnapshotProxy.prototype = {
     createNodesProvider: function(filter)
     {
         return this.callFactoryMethod(null, "createNodesProvider", "WebInspector.HeapSnapshotProviderProxy", filter);
+    },
+
+    createNodesProviderForClass: function(className)
+    {
+        return this.callFactoryMethod(null, "createNodesProviderForClass", "WebInspector.HeapSnapshotProviderProxy", className);
     },
 
     createPathFinder: function(targetNodeIndex)

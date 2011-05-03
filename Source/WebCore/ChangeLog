@@ -2,6 +2,28 @@
 
         Reviewed by Pavel Feldman.
 
+        WebInspector: [Chromium] Fix slowness of Summary view nodes expansion in detailed heap profiles.
+        https://bugs.webkit.org/show_bug.cgi?id=60023
+
+        * inspector/front-end/DetailedHeapshotGridNodes.js:
+        (WebInspector.HeapSnapshotConstructorNode):
+        (WebInspector.HeapSnapshotConstructorNode.prototype._createNodesProvider):
+        * inspector/front-end/HeapSnapshot.js:
+        (WebInspector.HeapSnapshot.prototype.dispose):
+        (WebInspector.HeapSnapshot.prototype.aggregates):
+        (WebInspector.HeapSnapshot.prototype._buildAggregates):
+        (WebInspector.HeapSnapshot.prototype._sortAggregateIndexes):
+        (WebInspector.HeapSnapshot.prototype.createNodesProviderForClass):
+        (WebInspector.HeapSnapshotFilteredOrderedIterator):
+        (WebInspector.HeapSnapshotNodesProvider):
+        * inspector/front-end/HeapSnapshotProxy.js:
+        (WebInspector.HeapSnapshotProxy.prototype.aggregates):
+        (WebInspector.HeapSnapshotProxy.prototype.createNodesProviderForClass):
+
+2011-05-03  Mikhail Naganov  <mnaganov@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
         WebInspector: [Chromium] Hint user that to display retaining paths, an object entry must be clicked.
         https://bugs.webkit.org/show_bug.cgi?id=60029
 

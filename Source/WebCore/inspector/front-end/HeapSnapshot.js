@@ -685,7 +685,7 @@ WebInspector.HeapSnapshot.prototype = {
         delete this._nodeIndex;
         if (this._aggregates) {
             delete this._aggregates;
-            this._aggregatesWithIndexes = false;
+            this._aggregatesIndexesSorted = false;
         }
         delete this._baseNodeIds;
     },
@@ -742,12 +742,12 @@ WebInspector.HeapSnapshot.prototype = {
         return new WebInspector.HeapSnapshotArraySlice(this, "_retainers", retIndexFrom, retIndexTo);
     },
 
-    aggregates: function(withNodeIndexes)
+    aggregates: function(sortedIndexes)
     {
         if (!this._aggregates)
             this._buildAggregates();
-        if (withNodeIndexes && !this._aggregatesWithIndexes)
-            this._buildAggregatesIndexes();
+        if (sortedIndexes && !this._aggregatesIndexesSorted)
+            this._sortAggregateIndexes();
         return this._aggregates;
     },
 
@@ -806,19 +806,15 @@ WebInspector.HeapSnapshot.prototype = {
             clss.self += node.selfSize;
             if (node.retainedSize > clss.maxRet)
                 clss.maxRet = node.retainedSize;
+            clss.idxs.push(node.nodeIndex);
         }
+        // Shave off provisionally allocated space.
+        for (var className in this._aggregates)
+            this._aggregates[className].idxs = this._aggregates[className].idxs.slice(0);
     },
 
-    _buildAggregatesIndexes: function()
+    _sortAggregateIndexes: function()
     {
-        for (var iter = this._allNodes; iter.hasNext(); iter.next()) {
-            var node = iter.node;
-            var className = node.className;
-            var clss = this._aggregates[className];
-            if (clss)
-                clss.idxs.push(node.nodeIndex);
-        }
-
         var nodeA = new WebInspector.HeapSnapshotNode(this);
         var nodeB = new WebInspector.HeapSnapshotNode(this);
         for (var clss in this._aggregates)
@@ -829,7 +825,7 @@ WebInspector.HeapSnapshot.prototype = {
                     return nodeA.id < nodeB.id ? -1 : 1;
                 });
 
-        this._aggregatesWithIndexes = true;
+        this._aggregatesIndexesSorted = true;
     },
 
     _buildNodeIndex: function()
@@ -937,6 +933,11 @@ WebInspector.HeapSnapshot.prototype = {
         return new WebInspector.HeapSnapshotNodesProvider(this, this._parseFilter(filter));
     },
 
+    createNodesProviderForClass: function(className)
+    {
+        return new WebInspector.HeapSnapshotNodesProvider(this, null, className);
+    },
+
     createPathFinder: function(targetNodeIndex, skipHidden)
     {
         return new WebInspector.HeapSnapshotPathFinder(this, targetNodeIndex, skipHidden);
@@ -948,11 +949,11 @@ WebInspector.HeapSnapshot.prototype = {
     }
 };
 
-WebInspector.HeapSnapshotFilteredOrderedIterator = function(iterator, filter)
+WebInspector.HeapSnapshotFilteredOrderedIterator = function(iterator, filter, iterationOrder)
 {
     this._filter = filter;
     this._iterator = iterator;
-    this._iterationOrder = null;
+    this._iterationOrder = iterationOrder ? iterationOrder.slice(0) : null;
     this._position = 0;
     this._lastComparator = null;
 }
@@ -1129,10 +1130,13 @@ WebInspector.HeapSnapshotEdgesProvider.prototype = {
 
 WebInspector.HeapSnapshotEdgesProvider.prototype.__proto__ = WebInspector.HeapSnapshotFilteredOrderedIterator.prototype;
 
-WebInspector.HeapSnapshotNodesProvider = function(snapshot, filter)
+WebInspector.HeapSnapshotNodesProvider = function(snapshot, filter, className)
 {
     this.snapshot = snapshot;
-    WebInspector.HeapSnapshotFilteredOrderedIterator.call(this, snapshot._allNodes, filter);
+    if (!className)
+        WebInspector.HeapSnapshotFilteredOrderedIterator.call(this, snapshot._allNodes, filter);
+    else
+        WebInspector.HeapSnapshotFilteredOrderedIterator.call(this, snapshot._allNodes, null, snapshot.aggregates(false)[className].idxs);
 }
 
 WebInspector.HeapSnapshotNodesProvider.prototype = {
