@@ -130,6 +130,9 @@ void ResourceRequest::doUpdatePlatformRequest()
     RetainPtr<CFStringRef> requestMethod(AdoptCF, httpMethod().createCFString());
     CFURLRequestSetHTTPRequestMethod(cfRequest, requestMethod.get());
 
+    if (httpPipeliningEnabled())
+        wkSetHTTPPipeliningPriority(cfRequest, toHTTPPipeliningPriority(m_priority));
+
     setHeaderFields(cfRequest, httpHeaderFields());
     WebCore::setHTTPBody(cfRequest, httpBody());
     CFURLRequestSetShouldHandleHTTPCookies(cfRequest, allowCookies());
@@ -172,6 +175,9 @@ void ResourceRequest::doUpdateResourceRequest()
         CFRelease(method);
     }
     m_allowCookies = CFURLRequestShouldHandleHTTPCookies(m_cfRequest.get());
+
+    if (httpPipeliningEnabled())
+        m_priority = toResourceLoadPriority(wkGetHTTPPipeliningPriority(m_cfRequest.get()));
 
     m_httpHeaderFields.clear();
     if (CFDictionaryRef headers = CFURLRequestCopyAllHTTPHeaderFields(m_cfRequest.get())) {
@@ -221,7 +227,7 @@ void ResourceRequest::setHTTPPipeliningEnabled(bool flag)
     s_httpPipeliningEnabled = flag;
 }
 
-#if PLATFORM(MAC) && !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOW_LEOPARD)
+#if USE(CFNETWORK) || PLATFORM(MAC) && !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOW_LEOPARD)
 static inline bool readBooleanPreference(CFStringRef key)
 {
     Boolean keyExistsAndHasValidFormat;
@@ -237,7 +243,7 @@ unsigned initializeMaximumHTTPConnectionCountPerHost()
     // Always set the connection count per host, even when pipelining.
     unsigned maximumHTTPConnectionCountPerHost = wkInitializeMaximumHTTPConnectionCountPerHost(preferredConnectionCount);
 
-#if PLATFORM(MAC) && !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOW_LEOPARD)
+#if USE(CFNETWORK) || PLATFORM(MAC) && !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOW_LEOPARD)
     static const unsigned unlimitedConnectionCount = 10000;
 
     if (!ResourceRequest::httpPipeliningEnabled() && readBooleanPreference(CFSTR("WebKitEnableHTTPPipelining")))
@@ -245,7 +251,10 @@ unsigned initializeMaximumHTTPConnectionCountPerHost()
 
     if (ResourceRequest::httpPipeliningEnabled()) {
         wkSetHTTPPipeliningMaximumPriority(ResourceLoadPriorityHighest);
+#if !PLATFORM(WIN)
+        // FIXME: <rdar://problem/9375609> Implement minimum fast lane priority setting on Windows
         wkSetHTTPPipeliningMinimumFastLanePriority(ResourceLoadPriorityMedium);
+#endif
         // When pipelining do not rate-limit requests sent from WebCore since CFNetwork handles that.
         return unlimitedConnectionCount;
     }

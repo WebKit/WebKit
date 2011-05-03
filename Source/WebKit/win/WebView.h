@@ -830,6 +830,12 @@ public:
     virtual HRESULT STDMETHODCALLTYPE setMinimumTimerInterval(
         /* [in] */ double);
 
+    virtual HRESULT STDMETHODCALLTYPE httpPipeliningEnabled(
+        /* [out, retval] */ BOOL* enabled);
+
+    virtual HRESULT STDMETHODCALLTYPE setHTTPPipeliningEnabled(
+        /* [in] */ BOOL);
+
     virtual HRESULT STDMETHODCALLTYPE setUsesLayeredWindow(BOOL);
     virtual HRESULT STDMETHODCALLTYPE usesLayeredWindow(BOOL*);
 

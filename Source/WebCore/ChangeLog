@@ -1,3 +1,20 @@
+2011-05-03  David Kilzer  <ddkilzer@apple.com>
+
+        <http://webkit.org/b/59838> Implement HTTP pipelining for CoreFoundation-based networking
+
+        Reviewed by Antti Koivisto.
+
+        * platform/network/cf/ResourceRequestCFNet.cpp:
+        (WebCore::ResourceRequest::doUpdatePlatformRequest): Set the
+        priority on the request if HTTP pipelining is enabled.
+        (WebCore::ResourceRequest::doUpdateResourceRequest): Read the
+        priority from the request if HTTP pipelining is enabled.
+        (readBooleanPreference): Enable code when compiling with
+        USE(CFNETWORK).
+        (WebCore::initializeMaximumHTTPConnectionCountPerHost): Ditto.
+        Comment out setting the minimum fast lane priority on Windows
+        since it's not currently available.
+
 2011-05-03  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Dan Bernstein.

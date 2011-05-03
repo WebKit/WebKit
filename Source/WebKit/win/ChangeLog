@@ -1,3 +1,19 @@
+2011-05-03  David Kilzer  <ddkilzer@apple.com>
+
+        <http://webkit.org/b/59838> Implement HTTP pipelining for CoreFoundation-based networking
+
+        Reviewed by Antti Koivisto.
+
+        * Interfaces/IWebViewPrivate.idl:
+        (IWebViewPrivate::httpPipeliningEnabled): Added declaration.
+        (IWebViewPrivate::setHTTPPipeliningEnabled): Added declaration.
+        * WebView.cpp:
+        (WebView::httpPipeliningEnabled): Added.
+        (WebView::setHTTPPipeliningEnabled): Added.
+        * WebView.h:
+        (WebView::httpPipeliningEnabled): Added declaration.
+        (WebView::setHTTPPipeliningEnabled): Added declaration.
+
 2011-05-03  Adam Roben  <aroben@apple.com>
 
         Add some missing virtual keywords on derived-class destructors

@@ -259,4 +259,20 @@ interface IWebViewPrivate : IUnknown
         - (double)interval;
     */
     HRESULT setMinimumTimerInterval([in] double interval);
+
+    /*!
+        @method _HTTPPipeliningEnabled
+        @abstract Checks the HTTP pipelining status.
+        @discussion Defaults to NO.
+        @result YES if HTTP pipelining is enabled, NO if not enabled.
+     */
+    HRESULT httpPipeliningEnabled([out, retval] BOOL* enabled);
+
+    /*!
+        @method _setHTTPPipeliningEnabled:
+        @abstract Set the HTTP pipelining status.
+        @discussion Defaults to NO.
+        @param enabled The new HTTP pipelining status.
+     */
+    HRESULT setHTTPPipeliningEnabled([in] BOOL enabled);
 }

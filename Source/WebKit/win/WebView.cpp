@@ -121,6 +121,7 @@
 #include <WebCore/RenderWidget.h>
 #include <WebCore/ResourceHandle.h>
 #include <WebCore/ResourceHandleClient.h>
+#include <WebCore/ResourceRequest.h>
 #include <WebCore/SchemeRegistry.h>
 #include <WebCore/ScriptValue.h>
 #include <WebCore/Scrollbar.h>
@@ -6734,6 +6735,20 @@ HRESULT WebView::defaultMinimumTimerInterval(double* interval)
 HRESULT WebView::setMinimumTimerInterval(double interval)
 {
     page()->settings()->setMinDOMTimerInterval(interval);
+    return S_OK;
+}
+
+HRESULT WebView::httpPipeliningEnabled(BOOL* enabled)
+{
+    if (!enabled)
+        return E_POINTER;
+    *enabled = ResourceRequest::httpPipeliningEnabled();
+    return S_OK;
+}
+
+HRESULT WebView::setHTTPPipeliningEnabled(BOOL enabled)
+{
+    ResourceRequest::setHTTPPipeliningEnabled(enabled);
     return S_OK;
 }
 
