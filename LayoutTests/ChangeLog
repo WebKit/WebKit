@@ -2,6 +2,14 @@
 
         Not reviewed. Build fix.
 
+        Fix Chromium test expectations.
+
+        * platform/chromium/test_expectations.txt:
+
+2011-05-02  Alpha Lam  <hclam@chromium.org>
+
+        Not reviewed. Build fix.
+
         New baselines for SVG tests for Chromium Leopard build.
 
         * platform/chromium-mac-leopard/svg/W3C-SVG-1.1/filters-color-01-b-expected.png: Added.
