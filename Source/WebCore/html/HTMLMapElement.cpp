@@ -105,21 +105,20 @@ void HTMLMapElement::parseMappedAttribute(Attribute* attribute)
 
     const QualifiedName& attrName = attribute->name();
     if (isIdAttributeName(attrName) || attrName == nameAttr) {
-        Document* document = this->document();
         if (isIdAttributeName(attrName)) {
             // Call base class so that hasID bit gets set.
             HTMLElement::parseMappedAttribute(attribute);
-            if (document->isHTMLDocument())
+            if (document()->isHTMLDocument())
                 return;
         }
         if (inDocument())
-            document->removeImageMap(this);
+            treeScope()->removeImageMap(this);
         String mapName = attribute->value();
         if (mapName[0] == '#')
             mapName = mapName.substring(1);
-        m_name = document->isHTMLDocument() ? mapName.lower() : mapName;
+        m_name = document()->isHTMLDocument() ? mapName.lower() : mapName;
         if (inDocument())
-            document->addImageMap(this);
+            treeScope()->addImageMap(this);
         return;
     }
 
@@ -133,13 +132,13 @@ PassRefPtr<HTMLCollection> HTMLMapElement::areas()
 
 void HTMLMapElement::insertedIntoDocument()
 {
-    document()->addImageMap(this);
+    treeScope()->addImageMap(this);
     HTMLElement::insertedIntoDocument();
 }
 
 void HTMLMapElement::removedFromDocument()
 {
-    document()->removeImageMap(this);
+    treeScope()->removeImageMap(this);
     HTMLElement::removedFromDocument();
 }
 

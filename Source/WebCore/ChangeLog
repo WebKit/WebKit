@@ -1,3 +1,19 @@
+2011-05-02  Roland Steiner  <rolandsteiner@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        Bug 59974 - Update image map on the containing TreeScope rather than the Document
+        https://bugs.webkit.org/show_bug.cgi?id=59974
+
+        No new tests. (reefactoring)
+
+        * html/HTMLMapElement.cpp:
+        (WebCore::HTMLMapElement::parseMappedAttribute):
+        (WebCore::HTMLMapElement::insertedIntoDocument):
+        (WebCore::HTMLMapElement::removedFromDocument):
+        * rendering/RenderImage.cpp:
+        (WebCore::RenderImage::imageMap):
+
 2011-05-03  Sam Weinig  <sam@webkit.org>
 
         Fix chromium build.
