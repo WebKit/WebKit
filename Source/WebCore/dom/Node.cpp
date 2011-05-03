@@ -54,6 +54,7 @@
 #include "ExceptionCode.h"
 #include "Frame.h"
 #include "FrameView.h"
+#include "HTMLElement.h"
 #include "HTMLNames.h"
 #include "InspectorInstrumentation.h"
 #include "KeyboardEvent.h"
@@ -73,6 +74,7 @@
 #include "RenderBlock.h"
 #include "RenderBox.h"
 #include "RenderFullScreen.h"
+#include "RenderTextControl.h"
 #include "RenderView.h"
 #include "ScopedEventQueue.h"
 #include "SelectorNodeList.h"
@@ -2460,7 +2462,12 @@ static void traverseTreeAndMark(const String& baseIndent, const Node* rootNode, 
         fprintf(stderr, "%s", indent.utf8().data());
         node->showNode();
 
-        if (ContainerNode* shadow = shadowRoot(const_cast<Node*>(node))) {
+        ContainerNode* shadow = shadowRoot(const_cast<Node*>(node));
+
+        if (!shadow && node->renderer() && node->renderer()->isTextControl())
+            shadow = static_cast<RenderTextControl*>(node->renderer())->innerTextElement();
+
+        if (shadow) {
             indent += "\t";
             traverseTreeAndMark(indent, shadow, markedNode1, markedLabel1, markedNode2, markedLabel2);
         }

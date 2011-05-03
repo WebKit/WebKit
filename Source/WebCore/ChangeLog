@@ -1,3 +1,15 @@
+2011-05-02  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Reviewed by James Robinson.
+
+        REGRESSION(r84672): showTree doesn't work for input/textarea elements
+        https://bugs.webkit.org/show_bug.cgi?id=60001
+
+        When shadow is null, try retrieving the inner element of a render text control.
+
+        * dom/Node.cpp:
+        (WebCore::traverseTreeAndMark):
+
 2011-05-02  Joseph Pecoraro  <joepeck@webkit.org>
 
         Reviewed by David Kilzer.
