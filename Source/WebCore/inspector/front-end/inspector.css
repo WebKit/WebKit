@@ -521,12 +521,16 @@ select.status-bar-item:active {
     -webkit-border-image: url(Images/statusbarMenuButtonSelected.png) 0 17 0 2;
 }
 
+.status-bar-item > .glyph {
+    -webkit-mask-image: url(Images/statusbarButtonGlyphs.png);
+}
+
 #dock-status-bar-item .glyph {
-    -webkit-mask-image: url(Images/undockButtonGlyph.png);
+    -webkit-mask-position: 0 -48px;
 }
 
 body.detached #dock-status-bar-item .glyph {
-    -webkit-mask-image: url(Images/dockButtonGlyph.png);
+    -webkit-mask-position: -32px -24px;
 }
 
 body.port-qt #dock-status-bar-item {
@@ -534,11 +538,11 @@ body.port-qt #dock-status-bar-item {
 }
 
 #console-status-bar-item .glyph {
-    -webkit-mask-image: url(Images/consoleButtonGlyph.png);
+    -webkit-mask-position: -64px -24px;
 }
 
 .clear-status-bar-item .glyph {
-    -webkit-mask-image: url(Images/clearConsoleButtonGlyph.png);
+    -webkit-mask-position: -64px 0;
 }
 
 #counters {
@@ -2540,15 +2544,15 @@ body.inactive .panel-enabler-view button:not(.status-bar-item), .panel-enabler-v
 }
 
 button.enable-toggle-status-bar-item .glyph {
-    -webkit-mask-image: url(Images/enableOutlineButtonGlyph.png);
+    -webkit-mask-position: -192px 0;
 }
 
 button.enable-toggle-status-bar-item.toggled-on .glyph {
-    -webkit-mask-image: url(Images/enableSolidButtonGlyph.png);
+    -webkit-mask-position: -96px -24px;
 }
 
 .scripts-pause-on-exceptions-status-bar-item .glyph {
-    -webkit-mask-image: url(Images/pauseOnExceptionButtonGlyph.png);
+    -webkit-mask-position: -256px 0;
 }
 
 .scripts-pause-on-exceptions-status-bar-item.toggled-all .glyph {
@@ -2560,7 +2564,7 @@ button.enable-toggle-status-bar-item.toggled-on .glyph {
 }
 
 .scripts-toggle-pretty-print-status-bar-item .glyph {
-    -webkit-mask-image: url(Images/prettyPrintButtonGlyph.png);
+    -webkit-mask-position: -256px -24px;
 }
 
 .scripts-toggle-pretty-print-status-bar-item.toggled .glyph {
@@ -2620,12 +2624,13 @@ button.enable-toggle-status-bar-item.toggled-on .glyph {
 }
 
 .toggle-breakpoints .glyph {
-    -webkit-mask-image: url(Images/breakpointsActivateButtonGlyph.png);
+    -webkit-mask-image: url(Images/statusbarButtonGlyphs.png);
+    -webkit-mask-position: -32px 0;
     background-color: rgb(96, 96, 96) !important;
 }
 
 .toggle-breakpoints.toggled-on .glyph {
-    -webkit-mask-image: url(Images/breakpointsDeactivateButtonGlyph.png);
+    -webkit-mask-position: 0 -24px;
 }
 
 #scripts-debugger-status {
@@ -2693,7 +2698,7 @@ button.enable-toggle-status-bar-item.toggled-on .glyph {
 }
 
 .resources-larger-resources-status-bar-item .glyph {
-    -webkit-mask-image: url(Images/largerResourcesButtonGlyph.png);
+    -webkit-mask-position: -224px 0;
 }
 
 #resources-filter, #console-filter.console-filter-top {
@@ -3975,7 +3980,7 @@ body.inactive li.selected .bubble.search-matches {
 }
 
 .timeline-filter-status-bar-item .glyph {
-    -webkit-mask-image: url(Images/largerResourcesButtonGlyph.png);
+    -webkit-mask-position: -224px 0;
 }
 
 .timeline-filter-status-bar-item.toggled-on .glyph {
@@ -3983,7 +3988,7 @@ body.inactive li.selected .bubble.search-matches {
 }
 
 .garbage-collect-status-bar-item .glyph {
-    -webkit-mask-image: url(Images/garbageCollectButtonGlyph.png);
+    -webkit-mask-position: -128px -24px;
 }
 
 .timeline-records-counter, .storage-application-cache-status, .storage-application-cache-connectivity {
@@ -4115,45 +4120,45 @@ button.enable-toggle-status-bar-item .glyph {
 }
 
 .record-profile-status-bar-item .glyph {
-    -webkit-mask-image: url(Images/recordButtonGlyph.png);
+    -webkit-mask-position: -288px 0;
 }
 
 .record-profile-status-bar-item.toggled-on .glyph {
-    -webkit-mask-image: url(Images/recordToggledButtonGlyph.png);
+    -webkit-mask-position: -288px -24px;
     background-color: rgb(216, 0, 0) !important;
 }
 
 /* FIXME: should have its own glyph. */
 .heap-snapshot-status-bar-item .glyph {
-    -webkit-mask-image: url(Images/focusButtonGlyph.png);
+    -webkit-mask-position: -96px 0;
 }
 
 .node-search-status-bar-item .glyph {
-    -webkit-mask-image: url(Images/nodeSearchButtonGlyph.png);
+    -webkit-mask-position: -224px -24px;
 }
 
 .percent-time-status-bar-item .glyph {
-    -webkit-mask-image: url(Images/percentButtonGlyph.png);
+    -webkit-mask-position: -192px -24px;
 }
 
 .focus-profile-node-status-bar-item .glyph {
-    -webkit-mask-image: url(Images/focusButtonGlyph.png);
+    -webkit-mask-position: -96px 0;
 }
 
 .exclude-profile-node-status-bar-item .glyph {
-    -webkit-mask-image: url(Images/excludeButtonGlyph.png);
+    -webkit-mask-position: -128px 0;
 }
 
 .reset-profile-status-bar-item .glyph {
-    -webkit-mask-image: url(Images/reloadButtonGlyph.png);
+    -webkit-mask-position: 0 0;
 }
 
 .delete-storage-status-bar-item .glyph {
-    -webkit-mask-image: url(Images/excludeButtonGlyph.png);
+    -webkit-mask-position: -128px 0;
 }
 
 .refresh-storage-status-bar-item .glyph {
-    -webkit-mask-image: url(Images/reloadButtonGlyph.png);
+    -webkit-mask-position: 0 0;
 }
 
 ol.breakpoint-list {

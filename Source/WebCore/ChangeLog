@@ -1,3 +1,61 @@
+2011-05-03  Pavel Feldman  <pfeldman@chromium.org>
+
+        Reviewed by Yury Semikhatsky.
+
+        Web Inspector: combine status bar button glyphs.
+        https://bugs.webkit.org/show_bug.cgi?id=59885
+
+        * WebCore.gypi:
+        * inspector/front-end/Images/breakpointsActivateButtonGlyph.png: Removed.
+        * inspector/front-end/Images/breakpointsDeactivateButtonGlyph.png: Removed.
+        * inspector/front-end/Images/clearConsoleButtonGlyph.png: Removed.
+        * inspector/front-end/Images/consoleButtonGlyph.png: Removed.
+        * inspector/front-end/Images/dockButtonGlyph.png: Removed.
+        * inspector/front-end/Images/enableOutlineButtonGlyph.png: Removed.
+        * inspector/front-end/Images/enableSolidButtonGlyph.png: Removed.
+        * inspector/front-end/Images/excludeButtonGlyph.png: Removed.
+        * inspector/front-end/Images/focusButtonGlyph.png: Removed.
+        * inspector/front-end/Images/garbageCollectButtonGlyph.png: Removed.
+        * inspector/front-end/Images/gearButtonGlyph.png: Removed.
+        * inspector/front-end/Images/helpButtonGlyph.png: Removed.
+        * inspector/front-end/Images/largerResourcesButtonGlyph.png: Removed.
+        * inspector/front-end/Images/nodeSearchButtonGlyph.png: Removed.
+        * inspector/front-end/Images/pauseOnExceptionButtonGlyph.png: Removed.
+        * inspector/front-end/Images/percentButtonGlyph.png: Removed.
+        * inspector/front-end/Images/prettyPrintButtonGlyph.png: Removed.
+        * inspector/front-end/Images/recordButtonGlyph.png: Removed.
+        * inspector/front-end/Images/recordToggledButtonGlyph.png: Removed.
+        * inspector/front-end/Images/reloadButtonGlyph.png: Removed.
+        * inspector/front-end/Images/statusBarButtonGlyphs.png: Added.
+        * inspector/front-end/Images/undockButtonGlyph.png: Removed.
+        * inspector/front-end/WebKit.qrc:
+        * inspector/front-end/inspector.css:
+        (.status-bar-item > .glyph):
+        (#dock-status-bar-item .glyph):
+        (body.detached #dock-status-bar-item .glyph):
+        (#console-status-bar-item .glyph):
+        (.clear-status-bar-item .glyph):
+        (button.enable-toggle-status-bar-item .glyph):
+        (button.enable-toggle-status-bar-item.toggled-on .glyph):
+        (.scripts-pause-on-exceptions-status-bar-item .glyph):
+        (.scripts-toggle-pretty-print-status-bar-item .glyph):
+        (.toggle-breakpoints .glyph):
+        (.toggle-breakpoints.toggled-on .glyph):
+        (.resources-larger-resources-status-bar-item .glyph):
+        (.timeline-filter-status-bar-item .glyph):
+        (.garbage-collect-status-bar-item .glyph):
+        (.record-profile-status-bar-item .glyph):
+        (.record-profile-status-bar-item.toggled-on .glyph):
+        (.heap-snapshot-status-bar-item .glyph):
+        (.node-search-status-bar-item .glyph):
+        (.percent-time-status-bar-item .glyph):
+        (.focus-profile-node-status-bar-item .glyph):
+        (.exclude-profile-node-status-bar-item .glyph):
+        (.reset-profile-status-bar-item .glyph):
+        (.delete-storage-status-bar-item .glyph):
+        (.refresh-storage-status-bar-item .glyph):
+        * inspector/front-end/inspector.js:
+
 2011-05-02  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Dan Bernstein.
