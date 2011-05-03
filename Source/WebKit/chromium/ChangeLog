@@ -1,5 +1,12 @@
 2011-05-03  Pavel Feldman  <pfeldman@google.com>
 
+        Not reviewed: re-applied r85589.
+
+        * src/js/DevTools.js:
+        (.WebInspector.InspectorFrontendHostStub.prototype.inspectedURLChanged):
+
+2011-05-03  Pavel Feldman  <pfeldman@google.com>
+
         Reviewed by Yury Semikhatsky.
 
         Web Inspector: [remote debugging] use document.title to set window name.
