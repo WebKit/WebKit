@@ -270,6 +270,7 @@ void WebPageProxy::reattachToWebProcessWithItem(WebBackForwardListItem* item)
     SandboxExtension::Handle sandboxExtensionHandle;
     initializeSandboxExtensionHandle(KURL(KURL(), item->url()), sandboxExtensionHandle);
     process()->send(Messages::WebPage::GoToBackForwardItem(item->itemID(), sandboxExtensionHandle), m_pageID);
+    process()->responsivenessTimer()->start();
 }
 
 void WebPageProxy::initializeWebPage()
@@ -363,6 +364,7 @@ bool WebPageProxy::tryClose()
         return true;
 
     process()->send(Messages::WebPage::TryClose(), m_pageID);
+    process()->responsivenessTimer()->start();
     return false;
 }
 
@@ -388,6 +390,7 @@ void WebPageProxy::loadURL(const String& url)
     SandboxExtension::Handle sandboxExtensionHandle;
     initializeSandboxExtensionHandle(KURL(KURL(), url), sandboxExtensionHandle);
     process()->send(Messages::WebPage::LoadURL(url, sandboxExtensionHandle), m_pageID);
+    process()->responsivenessTimer()->start();
 }
 
 void WebPageProxy::loadURLRequest(WebURLRequest* urlRequest)
@@ -400,6 +403,7 @@ void WebPageProxy::loadURLRequest(WebURLRequest* urlRequest)
     SandboxExtension::Handle sandboxExtensionHandle;
     initializeSandboxExtensionHandle(urlRequest->resourceRequest().url(), sandboxExtensionHandle);
     process()->send(Messages::WebPage::LoadURLRequest(urlRequest->resourceRequest(), sandboxExtensionHandle), m_pageID);
+    process()->responsivenessTimer()->start();
 }
 
 void WebPageProxy::loadHTMLString(const String& htmlString, const String& baseURL)
@@ -408,6 +412,7 @@ void WebPageProxy::loadHTMLString(const String& htmlString, const String& baseUR
         reattachToWebProcess();
 
     process()->send(Messages::WebPage::LoadHTMLString(htmlString, baseURL), m_pageID);
+    process()->responsivenessTimer()->start();
 }
 
 void WebPageProxy::loadAlternateHTMLString(const String& htmlString, const String& baseURL, const String& unreachableURL)
@@ -419,6 +424,7 @@ void WebPageProxy::loadAlternateHTMLString(const String& htmlString, const Strin
         m_mainFrame->setUnreachableURL(unreachableURL);
 
     process()->send(Messages::WebPage::LoadAlternateHTMLString(htmlString, baseURL, unreachableURL), m_pageID);
+    process()->responsivenessTimer()->start();
 }
 
 void WebPageProxy::loadPlainTextString(const String& string)
@@ -427,13 +433,16 @@ void WebPageProxy::loadPlainTextString(const String& string)
         reattachToWebProcess();
 
     process()->send(Messages::WebPage::LoadPlainTextString(string), m_pageID);
+    process()->responsivenessTimer()->start();
 }
 
 void WebPageProxy::stopLoading()
 {
     if (!isValid())
         return;
+
     process()->send(Messages::WebPage::StopLoading(), m_pageID);
+    process()->responsivenessTimer()->start();
 }
 
 void WebPageProxy::reload(bool reloadFromOrigin)
@@ -447,6 +456,7 @@ void WebPageProxy::reload(bool reloadFromOrigin)
     }
 
     process()->send(Messages::WebPage::Reload(reloadFromOrigin), m_pageID);
+    process()->responsivenessTimer()->start();
 }
 
 void WebPageProxy::goForward()
@@ -466,6 +476,7 @@ void WebPageProxy::goForward()
     SandboxExtension::Handle sandboxExtensionHandle;
     initializeSandboxExtensionHandle(KURL(KURL(), forwardItem->url()), sandboxExtensionHandle);
     process()->send(Messages::WebPage::GoForward(forwardItem->itemID(), sandboxExtensionHandle), m_pageID);
+    process()->responsivenessTimer()->start();
 }
 
 bool WebPageProxy::canGoForward() const
@@ -490,6 +501,7 @@ void WebPageProxy::goBack()
     SandboxExtension::Handle sandboxExtensionHandle;
     initializeSandboxExtensionHandle(KURL(KURL(), backItem->url()), sandboxExtensionHandle);
     process()->send(Messages::WebPage::GoBack(backItem->itemID(), sandboxExtensionHandle), m_pageID);
+    process()->responsivenessTimer()->start();
 }
 
 bool WebPageProxy::canGoBack() const
@@ -509,6 +521,7 @@ void WebPageProxy::goToBackForwardItem(WebBackForwardListItem* item)
     SandboxExtension::Handle sandboxExtensionHandle;
     initializeSandboxExtensionHandle(KURL(KURL(), item->url()), sandboxExtensionHandle);
     process()->send(Messages::WebPage::GoToBackForwardItem(item->itemID(), sandboxExtensionHandle), m_pageID);
+    process()->responsivenessTimer()->start();
 }
 
 void WebPageProxy::didChangeBackForwardList(WebBackForwardListItem* added, Vector<RefPtr<APIObject> >* removed)

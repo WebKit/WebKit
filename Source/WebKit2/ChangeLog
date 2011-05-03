@@ -1,3 +1,41 @@
+2011-05-03  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Dan Bernstein.
+
+        WebKit2 should treat API calls that start/stop loads as user gestures for responsiveness timer
+        https://bugs.webkit.org/show_bug.cgi?id=60083
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::reattachToWebProcessWithItem):
+        (WebKit::WebPageProxy::tryClose):
+        (WebKit::WebPageProxy::loadURL):
+        (WebKit::WebPageProxy::loadURLRequest):
+        (WebKit::WebPageProxy::loadHTMLString):
+        (WebKit::WebPageProxy::loadAlternateHTMLString):
+        (WebKit::WebPageProxy::loadPlainTextString):
+        (WebKit::WebPageProxy::stopLoading):
+        (WebKit::WebPageProxy::reload):
+        (WebKit::WebPageProxy::goForward):
+        (WebKit::WebPageProxy::goBack):
+        (WebKit::WebPageProxy::goToBackForwardItem):
+        Start responsiveness timer for load start/stop and close.
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::SendStopResponsivenessTimer::SendStopResponsivenessTimer):
+        (WebKit::SendStopResponsivenessTimer::~SendStopResponsivenessTimer):
+        Add simple RAII class to ensure the StopResponsivenessTimer is called.
+
+        (WebKit::WebPage::tryClose):
+        (WebKit::WebPage::loadURLRequest):
+        (WebKit::WebPage::loadData):
+        (WebKit::WebPage::stopLoading):
+        (WebKit::WebPage::reload):
+        (WebKit::WebPage::goForward):
+        (WebKit::WebPage::goBack):
+        (WebKit::WebPage::goToBackForwardItem):
+        Sends a message back to the UIProcess to indicate the WebProcess
+        is still responsive.
+
 2011-05-03  Darin Adler  <darin@apple.com>
 
         Reviewed by Sam Weinig.

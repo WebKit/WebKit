@@ -134,6 +134,22 @@ using namespace WebCore;
 
 namespace WebKit {
 
+class SendStopResponsivenessTimer {
+public:
+    SendStopResponsivenessTimer(WebPage* page)
+        : m_page(page)
+    {
+    }
+    
+    ~SendStopResponsivenessTimer()
+    {
+        m_page->send(Messages::WebPageProxy::StopResponsivenessTimer());
+    }
+
+private:
+    WebPage* m_page;
+};
+    
 #ifndef NDEBUG
 static WTF::RefCountedLeakCounter webPageCounter("WebPage");
 #endif
@@ -426,6 +442,8 @@ void WebPage::close()
 
 void WebPage::tryClose()
 {
+    SendStopResponsivenessTimer stopper(this);
+
     if (!m_mainFrame->coreFrame()->loader()->shouldClose())
         return;
 
@@ -444,12 +462,16 @@ void WebPage::loadURL(const String& url, const SandboxExtension::Handle& sandbox
 
 void WebPage::loadURLRequest(const ResourceRequest& request, const SandboxExtension::Handle& sandboxExtensionHandle)
 {
+    SendStopResponsivenessTimer stopper(this);
+
     m_sandboxExtensionTracker.beginLoad(m_mainFrame.get(), sandboxExtensionHandle);
     m_mainFrame->coreFrame()->loader()->load(request, false);
 }
 
 void WebPage::loadData(PassRefPtr<SharedBuffer> sharedBuffer, const String& MIMEType, const String& encodingName, const KURL& baseURL, const KURL& unreachableURL)
 {
+    SendStopResponsivenessTimer stopper(this);
+
     ResourceRequest request(baseURL);
     SubstituteData substituteData(sharedBuffer, MIMEType, encodingName, unreachableURL);
     m_mainFrame->coreFrame()->loader()->load(request, substituteData, false);
@@ -501,6 +523,8 @@ void WebPage::stopLoadingFrame(uint64_t frameID)
 
 void WebPage::stopLoading()
 {
+    SendStopResponsivenessTimer stopper(this);
+
     m_mainFrame->coreFrame()->loader()->stopForUserCancel();
 }
 
@@ -511,11 +535,15 @@ void WebPage::setDefersLoading(bool defersLoading)
 
 void WebPage::reload(bool reloadFromOrigin)
 {
+    SendStopResponsivenessTimer stopper(this);
+
     m_mainFrame->coreFrame()->loader()->reload(reloadFromOrigin);
 }
 
 void WebPage::goForward(uint64_t backForwardItemID, const SandboxExtension::Handle& sandboxExtensionHandle)
 {
+    SendStopResponsivenessTimer stopper(this);
+
     HistoryItem* item = WebBackForwardListProxy::itemForID(backForwardItemID);
     ASSERT(item);
     if (!item)
@@ -527,6 +555,8 @@ void WebPage::goForward(uint64_t backForwardItemID, const SandboxExtension::Hand
 
 void WebPage::goBack(uint64_t backForwardItemID, const SandboxExtension::Handle& sandboxExtensionHandle)
 {
+    SendStopResponsivenessTimer stopper(this);
+
     HistoryItem* item = WebBackForwardListProxy::itemForID(backForwardItemID);
     ASSERT(item);
     if (!item)
@@ -538,6 +568,8 @@ void WebPage::goBack(uint64_t backForwardItemID, const SandboxExtension::Handle&
 
 void WebPage::goToBackForwardItem(uint64_t backForwardItemID, const SandboxExtension::Handle& sandboxExtensionHandle)
 {
+    SendStopResponsivenessTimer stopper(this);
+
     HistoryItem* item = WebBackForwardListProxy::itemForID(backForwardItemID);
     ASSERT(item);
     if (!item)
