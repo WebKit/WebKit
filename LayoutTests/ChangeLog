@@ -1,3 +1,9 @@
+2011-05-03  Yury Semikhatsky  <yurys@chromium.org>
+
+        Unreviewed. Provide Chromium test expectaions for new test.
+
+        * platform/chromium/inspector/console/console-log-document-proto-expected.txt: Added.
+
 2011-05-03  Pavel Feldman  <pfeldman@google.com>
 
         Not reviewed: rebaseline inspector test.
