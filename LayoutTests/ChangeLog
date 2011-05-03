@@ -1,3 +1,11 @@
+2011-05-03  Alpha Lam  <hclam@chromium.org>
+
+        Not reviewed. Build fix.
+
+        Test expectation for a slow test to avoid flakiness.
+
+        * platform/chromium/test_expectations.txt:
+
 2011-05-03  Ojan Vafai  <ojan@chromium.org>
 
         Fix test that broke after adding CSS animations.
