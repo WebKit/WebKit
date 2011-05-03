@@ -400,6 +400,15 @@ WebInspector.HeapSnapshotRetainingPathsList.prototype = {
         this._resetPaths();
     },
 
+    reset: function()
+    {
+        delete this._cancel;
+        this.removeChildren();
+        this.resetSortingCache();
+        this._counter = 0;
+        this.appendChild(new WebInspector.DataGridNode({path:WebInspector.UIString("Click on an object to show retaining paths"), len:""}, false));
+    },
+
     showNext: function(pathsCount)
     {
         WebInspector.PleaseWaitMessage.prototype.show(this.element, this.searchCancelled.bind(this, pathsCount));
@@ -537,6 +546,7 @@ WebInspector.DetailedHeapshotView = function(parent, profile)
     retainmentView.element.appendChild(this.retainmentDataGrid.element);
     retainmentView.visible = true;
     this.element.appendChild(retainmentView.element);
+    this.retainmentDataGrid.reset();
 
     this.dataGrid = this.constructorsDataGrid;
     this.currentView = this.constructorsView;
@@ -867,10 +877,12 @@ WebInspector.DetailedHeapshotView.prototype = {
         if (!row)
             return;
         var nodeItem = row._dataGridNode;
-        if (!nodeItem || nodeItem.isEventWithinDisclosureTriangle(event) || !nodeItem.snapshotNodeIndex)
+        if (!nodeItem || nodeItem.isEventWithinDisclosureTriangle(event))
             return;
-
-        this.retainmentDataGrid.setDataSource(this, nodeItem.isDeletedNode ? nodeItem.dataGrid.baseSnapshot : nodeItem.dataGrid.snapshot, nodeItem.snapshotNodeIndex, nodeItem.isDeletedNode ? this.baseSelectElement.childNodes[this.baseSelectElement.selectedIndex].label + " | " : "");
+        if (nodeItem.snapshotNodeIndex)
+            this.retainmentDataGrid.setDataSource(this, nodeItem.isDeletedNode ? nodeItem.dataGrid.baseSnapshot : nodeItem.dataGrid.snapshot, nodeItem.snapshotNodeIndex, nodeItem.isDeletedNode ? this.baseSelectElement.childNodes[this.baseSelectElement.selectedIndex].label + " | " : "");
+        else
+            this.retainmentDataGrid.reset();
     },
 
     _mouseClickInRetainmentGrid: function(event)

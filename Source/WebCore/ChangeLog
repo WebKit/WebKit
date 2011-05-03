@@ -1,3 +1,15 @@
+2011-05-03  Mikhail Naganov  <mnaganov@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        WebInspector: [Chromium] Hint user that to display retaining paths, an object entry must be clicked.
+        https://bugs.webkit.org/show_bug.cgi?id=60029
+
+        * English.lproj/localizedStrings.js:
+        * inspector/front-end/DetailedHeapshotView.js:
+        (WebInspector.HeapSnapshotRetainingPathsList.prototype.reset):
+        (WebInspector.DetailedHeapshotView.prototype._mouseClickInContainmentGrid):
+
 2011-05-03  Beth Dakin  <bdakin@apple.com>
 
         Reviewed by Dan Bernstein.
