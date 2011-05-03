@@ -229,10 +229,6 @@ class JSONResultsGeneratorBase(object):
             file_path = self._fs.join(self._results_directory, self.INCREMENTAL_RESULTS_FILENAME)
             write_json(self._fs, json, file_path)
 
-    # FIXME: Remove this function once the chromium buildbots stop calling it.
-    def generate_full_results_file(self):
-        self.generate_times_ms_file()
-
     def generate_times_ms_file(self):
         # FIXME: rename to generate_times_ms_file. This needs to be coordinated with
         # changing the calls to this on the chromium build slaves.
