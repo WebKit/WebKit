@@ -98,18 +98,18 @@ namespace JSC {
         bool isDictionary() const { return m_dictionaryKind != NoneDictionaryKind; }
         bool isUncacheableDictionary() const { return m_dictionaryKind == UncachedDictionaryKind; }
 
-        const TypeInfo& typeInfo() const { ASSERT(structure()->classInfo() == &s_info); return m_typeInfo; }
+        const TypeInfo& typeInfo() const { return m_typeInfo; }
 
         JSValue storedPrototype() const { return m_prototype.get(); }
         JSValue prototypeForLookup(ExecState*) const;
         StructureChain* prototypeChain(ExecState*) const;
         void visitChildren(SlotVisitor&);
 
-        Structure* previousID() const { ASSERT(structure()->classInfo() == &s_info); return m_previous.get(); }
+        Structure* previousID() const { return m_previous.get(); }
 
         void growPropertyStorageCapacity();
-        unsigned propertyStorageCapacity() const { ASSERT(structure()->classInfo() == &s_info); return m_propertyStorageCapacity; }
-        unsigned propertyStorageSize() const { ASSERT(structure()->classInfo() == &s_info); return m_anonymousSlotCount + (m_propertyTable ? m_propertyTable->propertyStorageSize() : static_cast<unsigned>(m_offset + 1)); }
+        unsigned propertyStorageCapacity() const { return m_propertyStorageCapacity; }
+        unsigned propertyStorageSize() const { return m_anonymousSlotCount + (m_propertyTable ? m_propertyTable->propertyStorageSize() : static_cast<unsigned>(m_offset + 1)); }
         bool isUsingInlineStorage() const;
 
         size_t get(JSGlobalData&, const Identifier& propertyName);
@@ -117,7 +117,6 @@ namespace JSC {
         size_t get(JSGlobalData& globalData, const Identifier& propertyName, unsigned& attributes, JSCell*& specificValue)
         {
             ASSERT(!propertyName.isNull());
-            ASSERT(structure()->classInfo() == &s_info);
             return get(globalData, propertyName.impl(), attributes, specificValue);
         }
 
@@ -194,7 +193,6 @@ namespace JSC {
         void materializePropertyMap(JSGlobalData&);
         void materializePropertyMapIfNecessary(JSGlobalData& globalData)
         {
-            ASSERT(structure()->classInfo() == &s_info);
             if (!m_propertyTable && m_previous)
                 materializePropertyMap(globalData);
         }
@@ -256,7 +254,6 @@ namespace JSC {
 
     inline size_t Structure::get(JSGlobalData& globalData, const Identifier& propertyName)
     {
-        ASSERT(structure()->classInfo() == &s_info);
         materializePropertyMapIfNecessary(globalData);
         if (!m_propertyTable)
             return notFound;
