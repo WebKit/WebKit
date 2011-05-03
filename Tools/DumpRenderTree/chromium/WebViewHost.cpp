@@ -1297,7 +1297,7 @@ bool WebViewHost::navigate(const TestNavigationEntry& entry, bool reload)
     }
 
     // In case LoadRequest failed before DidCreateDataSource was called.
-    setPendingExtraData(PassOwnPtr<TestShellExtraData>());
+    setPendingExtraData(nullptr);
 
     // Restore focus to the main frame prior to loading new request.
     // This makes sure that we don't have a focused iframe. Otherwise, that

@@ -106,7 +106,7 @@ PassOwnPtr<LevelDBDatabase> LevelDBDatabase::open(const String& fileName, const 
     leveldb::Status s = leveldb::DB::Open(options, fileName.utf8().data(), &db);
 
     if (!s.ok())
-        return PassOwnPtr<LevelDBDatabase>();
+        return nullptr;
 
     result->m_db = adoptPtr(db);
     result->m_comparatorAdapter = comparatorAdapter.release();

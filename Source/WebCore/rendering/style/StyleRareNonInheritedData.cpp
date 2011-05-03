@@ -79,10 +79,10 @@ StyleRareNonInheritedData::StyleRareNonInheritedData(const StyleRareNonInherited
 #if USE(ACCELERATED_COMPOSITING)
     , m_runningAcceleratedAnimation(o.m_runningAcceleratedAnimation)
 #endif
-    , m_boxShadow(o.m_boxShadow ? adoptPtr(new ShadowData(*o.m_boxShadow)) : PassOwnPtr<ShadowData>())
+    , m_boxShadow(o.m_boxShadow ? adoptPtr(new ShadowData(*o.m_boxShadow)) : nullptr)
     , m_boxReflect(o.m_boxReflect)
-    , m_animations(o.m_animations ? adoptPtr(new AnimationList(*o.m_animations)) : PassOwnPtr<AnimationList>())
-    , m_transitions(o.m_transitions ? adoptPtr(new AnimationList(*o.m_transitions)) : PassOwnPtr<AnimationList>())
+    , m_animations(o.m_animations ? adoptPtr(new AnimationList(*o.m_animations)) : nullptr)
+    , m_transitions(o.m_transitions ? adoptPtr(new AnimationList(*o.m_transitions)) : nullptr)
     , m_mask(o.m_mask)
     , m_maskBoxImage(o.m_maskBoxImage)
     , m_transformStyle3D(o.m_transformStyle3D)

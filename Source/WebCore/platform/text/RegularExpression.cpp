@@ -59,7 +59,7 @@ private:
         JSC::Yarr::YarrPattern pattern(JSC::UString(patternString.impl()), (caseSensitivity == TextCaseInsensitive), false, &m_constructionError);
         if (m_constructionError) {
             LOG_ERROR("RegularExpression: YARR compile failed with '%s'", m_constructionError);
-            return PassOwnPtr<JSC::Yarr::BytecodePattern>();
+            return nullptr;
         }
 
         m_numSubpatterns = pattern.m_numSubpatterns;

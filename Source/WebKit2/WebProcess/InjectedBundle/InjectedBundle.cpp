@@ -212,11 +212,11 @@ bool InjectedBundle::isPageBoxVisible(WebFrame* frame, int pageIndex)
 static PassOwnPtr<Vector<String> > toStringVector(ImmutableArray* patterns)
 {
     if (!patterns)
-        return PassOwnPtr<Vector<String> >();
+        return nullptr;
 
     size_t size =  patterns->size();
     if (!size)
-        return PassOwnPtr<Vector<String> >();
+        return nullptr;
 
     OwnPtr<Vector<String> > patternsVector = adoptPtr(new Vector<String>);
     patternsVector->reserveInitialCapacity(size);

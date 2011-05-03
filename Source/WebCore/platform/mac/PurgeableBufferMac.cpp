@@ -55,21 +55,21 @@ PurgeableBuffer::~PurgeableBuffer()
 PassOwnPtr<PurgeableBuffer> PurgeableBuffer::create(const char* data, size_t size)
 {
     if (size < minPurgeableBufferSize)
-        return PassOwnPtr<PurgeableBuffer>();
+        return nullptr;
 
     vm_address_t buffer = 0;
     kern_return_t ret = vm_allocate(mach_task_self(), &buffer, size, VM_FLAGS_PURGABLE | VM_FLAGS_ANYWHERE | VM_TAG_FOR_WEBCORE_PURGEABLE_MEMORY);
 
     ASSERT(ret == KERN_SUCCESS);
     if (ret != KERN_SUCCESS)
-        return PassOwnPtr<PurgeableBuffer>();
+        return nullptr;
 
     ret = vm_copy(mach_task_self(), reinterpret_cast<vm_address_t>(data), size, buffer);
 
     ASSERT(ret == KERN_SUCCESS);
     if (ret != KERN_SUCCESS) {
         vm_deallocate(mach_task_self(), buffer, size);
-        return PassOwnPtr<PurgeableBuffer>();
+        return nullptr;
     }
 
     return adoptPtr(new PurgeableBuffer(reinterpret_cast<char*>(buffer), size));

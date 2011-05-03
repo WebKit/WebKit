@@ -371,7 +371,7 @@ PassOwnPtr<WebGLRenderingContext> WebGLRenderingContext::create(HTMLCanvasElemen
 
     if (!context) {
         canvas->dispatchEvent(WebGLContextEvent::create(eventNames().webglcontextcreationerrorEvent, false, true, "Could not create a WebGL context."));
-        return PassOwnPtr<WebGLRenderingContext>();
+        return nullptr;
     }
 
     return adoptPtr(new WebGLRenderingContext(canvas, context, attributes));
@@ -473,7 +473,7 @@ void WebGLRenderingContext::setupFlags()
 WebGLRenderingContext::~WebGLRenderingContext()
 {
     detachAndRemoveAllObjects();
-    m_context->setContextLostCallback(PassOwnPtr<GraphicsContext3D::ContextLostCallback>());
+    m_context->setContextLostCallback(nullptr);
 }
 
 void WebGLRenderingContext::markContextChanged()

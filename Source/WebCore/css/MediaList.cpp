@@ -131,7 +131,7 @@ void MediaList::deleteMedium(const String& oldMedium, ExceptionCode& ec)
     } else if (m_fallback) {
         String medium = parseMediaDescriptor(oldMedium);
         if (!medium.isNull()) {
-            createdQuery = adoptPtr(new MediaQuery(MediaQuery::None, medium, PassOwnPtr<MediaQuery::ExpressionVector>()));
+            createdQuery = adoptPtr(new MediaQuery(MediaQuery::None, medium, nullptr));
             oldQuery = createdQuery.get();
         }
     }
@@ -186,7 +186,7 @@ void MediaList::setMediaText(const String& value, ExceptionCode& ec)
                 if (m_fallback) {
                     String mediaDescriptor = parseMediaDescriptor(medium);
                     if (!mediaDescriptor.isNull())
-                        tempMediaList->m_queries.append(new MediaQuery(MediaQuery::None, mediaDescriptor, PassOwnPtr<MediaQuery::ExpressionVector>()));
+                        tempMediaList->m_queries.append(new MediaQuery(MediaQuery::None, mediaDescriptor, nullptr));
                 } else {
                     ec = SYNTAX_ERR;
                     return;
@@ -232,7 +232,7 @@ void MediaList::appendMedium(const String& newMedium, ExceptionCode& ec)
     } else if (m_fallback) {
         String medium = parseMediaDescriptor(newMedium);
         if (!medium.isNull()) {
-            m_queries.append(new MediaQuery(MediaQuery::None, medium, PassOwnPtr<MediaQuery::ExpressionVector>()));
+            m_queries.append(new MediaQuery(MediaQuery::None, medium, nullptr));
             ec = 0;
         }
     }

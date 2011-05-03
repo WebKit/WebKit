@@ -205,7 +205,7 @@ protected:
             OwnPtr<Callback> callback = adoptPtr(new MemberCallback<T>(static_cast<T*>(this), method));
             bindFallbackCallback(callback.release());
         } else
-            bindFallbackCallback(PassOwnPtr<Callback>());
+            bindFallbackCallback(nullptr);
     }
 
     // Some fields are protected because some tests depend on accessing them,

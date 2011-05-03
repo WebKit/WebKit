@@ -93,7 +93,7 @@ void RenderTheme::adjustStyle(CSSStyleSelector* selector, RenderStyle* style, El
         return;
 
     // Never support box-shadow on native controls.
-    style->setBoxShadow(PassOwnPtr<ShadowData>());
+    style->setBoxShadow(nullptr);
     
 #if USE(NEW_THEME)
     switch (part) {
@@ -929,7 +929,7 @@ bool RenderTheme::paintInputFieldSpeechButton(RenderObject* object, const PaintI
 #if ENABLE(METER_TAG)
 void RenderTheme::adjustMeterStyle(CSSStyleSelector*, RenderStyle* style, Element*) const
 {
-    style->setBoxShadow(PassOwnPtr<ShadowData>());
+    style->setBoxShadow(nullptr);
 }
 
 IntSize RenderTheme::meterSizeForBounds(const RenderMeter*, const IntRect& bounds) const

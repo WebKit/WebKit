@@ -1,3 +1,16 @@
+2011-05-02  Adam Roben  <aroben@apple.com>
+
+        Take advantage of implicit conversion from nullptr_t to PassOwnPtr
+
+        Fixes <http://webkit.org/b/59964> Implicit conversion from std::nullptr_t to PassOwnPtr
+        doesn't work, but should
+
+        Reviewed by Adam Barth.
+
+        * History/WebHistory.mm:
+        * Plugins/WebNetscapePluginEventHandler.mm:
+        * WebView/WebView.mm:
+
 2011-05-02  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Anders Carlsson.

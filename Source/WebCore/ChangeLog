@@ -1,3 +1,38 @@
+2011-05-02  Adam Roben  <aroben@apple.com>
+
+        Take advantage of implicit conversion from nullptr_t to PassOwnPtr
+
+        Fixes <http://webkit.org/b/59964> Implicit conversion from std::nullptr_t to PassOwnPtr
+        doesn't work, but should
+
+        Reviewed by Adam Barth.
+
+        * bindings/js/ScheduledAction.cpp:
+        * css/CSSStyleSelector.cpp:
+        * css/MediaList.cpp:
+        * css/MediaQueryMatcher.cpp:
+        * css/SVGCSSStyleSelector.cpp:
+        * dom/MessagePort.cpp:
+        * html/InputType.cpp:
+        * html/canvas/WebGLRenderingContext.cpp:
+        * inspector/InspectorStyleSheet.cpp:
+        * page/ContextMenuController.cpp:
+        * page/Page.cpp:
+        * platform/PlatformGestureRecognizer.cpp:
+        * platform/PurgeableBuffer.h:
+        * platform/graphics/ImageBuffer.h:
+        * platform/leveldb/LevelDBDatabase.cpp:
+        * platform/mac/PurgeableBufferMac.cpp:
+        * platform/text/RegularExpression.cpp:
+        * rendering/RenderTheme.cpp:
+        * rendering/RenderThemeMac.mm:
+        * rendering/style/RenderStyle.h:
+        * rendering/style/SVGRenderStyleDefs.cpp:
+        * rendering/style/ShadowData.cpp:
+        * rendering/style/StyleRareInheritedData.cpp:
+        * rendering/style/StyleRareNonInheritedData.cpp:
+        * rendering/svg/RenderSVGResourcePattern.cpp:
+
 2011-05-03  Pavel Feldman  <pfeldman@google.com>
 
         Not reviewed: fix inspector status bar image glyph reference in network panel.

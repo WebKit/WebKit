@@ -1,3 +1,14 @@
+2011-05-02  Adam Roben  <aroben@apple.com>
+
+        Take advantage of implicit conversion from nullptr_t to PassOwnPtr
+
+        Fixes <http://webkit.org/b/59964> Implicit conversion from std::nullptr_t to PassOwnPtr
+        doesn't work, but should
+
+        Reviewed by Adam Barth.
+
+        * src/WebMediaPlayerClientImpl.cpp:
+
 2011-05-03  Pavel Feldman  <pfeldman@google.com>
 
         Not reviewed: re-applied r85589.

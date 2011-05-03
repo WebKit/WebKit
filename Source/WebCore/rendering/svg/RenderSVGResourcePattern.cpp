@@ -260,7 +260,7 @@ PassOwnPtr<ImageBuffer> RenderSVGResourcePattern::createTileImage(RenderObject* 
     OwnPtr<ImageBuffer> tileImage;
 
     if (!SVGImageBufferTools::createImageBuffer(absoluteTileBoundaries, clampedAbsoluteTileBoundaries, tileImage, ColorSpaceDeviceRGB))
-        return PassOwnPtr<ImageBuffer>();
+        return nullptr;
 
     GraphicsContext* tileImageContext = tileImage->context();
     ASSERT(tileImageContext);

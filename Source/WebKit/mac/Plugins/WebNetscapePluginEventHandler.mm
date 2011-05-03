@@ -44,7 +44,7 @@ PassOwnPtr<WebNetscapePluginEventHandler> WebNetscapePluginEventHandler::create(
             return adoptPtr(new WebNetscapePluginEventHandlerCocoa(pluginView));
         default:
             ASSERT_NOT_REACHED();
-            return PassOwnPtr<WebNetscapePluginEventHandler>();
+            return nullptr;
     }
 }
 

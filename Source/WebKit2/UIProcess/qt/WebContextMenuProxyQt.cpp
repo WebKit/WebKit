@@ -136,7 +136,7 @@ PassOwnPtr<QMenu> WebContextMenuProxyQt::createContextMenu(const Vector<WebConte
 
     // Do not show sub-menus with just disabled actions.
     if (menu->isEmpty())
-        return PassOwnPtr<QMenu>();
+        return nullptr;
 
     bool isAnyActionEnabled = false;
     QList<QAction *> actions = menu->actions();
@@ -145,7 +145,7 @@ PassOwnPtr<QMenu> WebContextMenuProxyQt::createContextMenu(const Vector<WebConte
             isAnyActionEnabled |= actions.at(i)->isEnabled();
     }
     if (!isAnyActionEnabled)
-        return PassOwnPtr<QMenu>();
+        return nullptr;
 
     return menu.release();
 }

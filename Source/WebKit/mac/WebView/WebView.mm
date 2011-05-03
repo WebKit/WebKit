@@ -642,7 +642,7 @@ static NSString *leakMailQuirksUserScriptContents()
 {
     static NSString *mailQuirksScriptContents = leakMailQuirksUserScriptContents();
     core(self)->group().addUserScriptToWorld(core([WebScriptWorld world]),
-        mailQuirksScriptContents, KURL(), PassOwnPtr<Vector<String> >(), PassOwnPtr<Vector<String> >(), InjectAtDocumentEnd, InjectInAllFrames);
+        mailQuirksScriptContents, KURL(), nullptr, nullptr, InjectAtDocumentEnd, InjectInAllFrames);
 }
 
 static bool needsOutlookQuirksScript()
@@ -663,7 +663,7 @@ static NSString *leakOutlookQuirksUserScriptContents()
 {
     static NSString *outlookQuirksScriptContents = leakOutlookQuirksUserScriptContents();
     core(self)->group().addUserScriptToWorld(core([WebScriptWorld world]),
-        outlookQuirksScriptContents, KURL(), PassOwnPtr<Vector<String> >(), PassOwnPtr<Vector<String> >(), InjectAtDocumentEnd, InjectInAllFrames);
+        outlookQuirksScriptContents, KURL(), nullptr, nullptr, InjectAtDocumentEnd, InjectInAllFrames);
 }
 
 - (void)_commonInitializationWithFrameName:(NSString *)frameName groupName:(NSString *)groupName usesDocumentViews:(BOOL)usesDocumentViews
@@ -2580,7 +2580,7 @@ static PassOwnPtr<Vector<String> > toStringVector(NSArray* patterns)
     // Convert the patterns into Vectors.
     NSUInteger count = [patterns count];
     if (count == 0)
-        return PassOwnPtr<Vector<String> >();
+        return nullptr;
     OwnPtr<Vector<String> > patternsVector = adoptPtr(new Vector<String>);
     for (NSUInteger i = 0; i < count; ++i) {
         id entry = [patterns objectAtIndex:i];

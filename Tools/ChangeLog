@@ -1,3 +1,15 @@
+2011-05-02  Adam Roben  <aroben@apple.com>
+
+        Take advantage of implicit nullptr_t -> PassOwnPtr conversion
+
+        Fixes <http://webkit.org/b/59964> Implicit conversion from std::nullptr_t to PassOwnPtr
+        doesn't work, but should
+
+        Reviewed by Adam Barth.
+
+        * DumpRenderTree/chromium/CppBoundClass.h:
+        * DumpRenderTree/chromium/WebViewHost.cpp:
+
 2011-05-02  Martin Robinson  <mrobinson@igalia.com>
 
         Reviewed by Xan Lopez.

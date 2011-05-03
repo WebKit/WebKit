@@ -504,7 +504,7 @@ bool InputType::canSetValue(const String&)
 
 PassOwnPtr<ClickHandlingState> InputType::willDispatchClick()
 {
-    return PassOwnPtr<ClickHandlingState>();
+    return nullptr;
 }
 
 void InputType::didDispatchClick(Event*, const ClickHandlingState&)

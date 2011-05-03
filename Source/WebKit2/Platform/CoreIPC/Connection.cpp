@@ -377,7 +377,7 @@ PassOwnPtr<ArgumentDecoder> Connection::waitForMessage(MessageID messageID, uint
         }
     }
     
-    return PassOwnPtr<ArgumentDecoder>();
+    return nullptr;
 }
 
 PassOwnPtr<ArgumentDecoder> Connection::sendSyncMessage(MessageID messageID, uint64_t syncRequestID, PassOwnPtr<ArgumentEncoder> encoder, double timeout)
@@ -387,7 +387,7 @@ PassOwnPtr<ArgumentDecoder> Connection::sendSyncMessage(MessageID messageID, uin
 
     if (!isValid()) {
         didFailToSendSyncMessage();
-        return PassOwnPtr<ArgumentDecoder>();
+        return nullptr;
     }
 
     // Push the pending sync reply information on our stack.
@@ -395,7 +395,7 @@ PassOwnPtr<ArgumentDecoder> Connection::sendSyncMessage(MessageID messageID, uin
         MutexLocker locker(m_syncReplyStateMutex);
         if (!m_shouldWaitForSyncReplies) {
             didFailToSendSyncMessage();
-            return PassOwnPtr<ArgumentDecoder>();
+            return nullptr;
         }
 
         m_pendingSyncReplies.append(PendingSyncReply(syncRequestID));
@@ -457,7 +457,7 @@ PassOwnPtr<ArgumentDecoder> Connection::waitForSyncReply(uint64_t syncRequestID,
         // If that happens, we need to stop waiting, or we'll hang since we won't get
         // any more incoming messages.
         if (!isValid())
-            return PassOwnPtr<ArgumentDecoder>();
+            return nullptr;
 
         // We didn't find a sync reply yet, keep waiting.
 #if PLATFORM(WIN)
@@ -471,7 +471,7 @@ PassOwnPtr<ArgumentDecoder> Connection::waitForSyncReply(uint64_t syncRequestID,
     if (m_client)
         m_client->syncMessageSendTimedOut(this);
 
-    return PassOwnPtr<ArgumentDecoder>();
+    return nullptr;
 }
 
 void Connection::processIncomingSyncReply(PassOwnPtr<ArgumentDecoder> arguments)

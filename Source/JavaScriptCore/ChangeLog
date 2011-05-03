@@ -1,3 +1,23 @@
+2011-05-02  Adam Roben  <aroben@apple.com>
+
+        Allow implicit conversion from nullptr_t to PassOwnPtr
+
+        This makes it a lot easier to write code that just wants a null PassOwnPtr, especially in
+        strict PassOwnPtr mode.
+
+        Fixes <http://webkit.org/b/59964> Implicit conversion from std::nullptr_t to PassOwnPtr
+        doesn't work, but should
+
+        Reviewed by Adam Barth.
+
+        * wtf/PassOwnPtr.h:
+        (WTF::PassOwnPtr::PassOwnPtr): Added a non-explicit constructor that takes a nullptr_t.
+
+        * wtf/MessageQueue.h:
+        (WTF::::waitForMessageFilteredWithTimeout):
+        (WTF::::tryGetMessage):
+        Use the new implicit conversion.
+
 2011-05-02  Jessie Berlin  <jberlin@apple.com>
 
         Rubber-stamped by Oliver Hunt.

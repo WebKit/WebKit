@@ -140,12 +140,12 @@ namespace WTF {
 
         if (m_killed) {
             result = MessageQueueTerminated;
-            return PassOwnPtr<DataType>();
+            return nullptr;
         }
 
         if (timedOut) {
             result = MessageQueueTimeout;
-            return PassOwnPtr<DataType>();
+            return nullptr;
         }
 
         ASSERT(found != m_queue.end());
@@ -160,9 +160,9 @@ namespace WTF {
     {
         MutexLocker lock(m_mutex);
         if (m_killed)
-            return PassOwnPtr<DataType>();
+            return nullptr;
         if (m_queue.isEmpty())
-            return PassOwnPtr<DataType>();
+            return nullptr;
 
         return adoptPtr(m_queue.takeFirst());
     }

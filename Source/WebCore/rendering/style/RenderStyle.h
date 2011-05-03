@@ -1102,8 +1102,8 @@ public:
         rareNonInheritedData.access()->m_transitions.clear();
     }
 
-    void inheritAnimations(const AnimationList* parent) { rareNonInheritedData.access()->m_animations = parent ? adoptPtr(new AnimationList(*parent)) : PassOwnPtr<AnimationList>(); }
-    void inheritTransitions(const AnimationList* parent) { rareNonInheritedData.access()->m_transitions = parent ? adoptPtr(new AnimationList(*parent)) : PassOwnPtr<AnimationList>(); }
+    void inheritAnimations(const AnimationList* parent) { rareNonInheritedData.access()->m_animations = parent ? adoptPtr(new AnimationList(*parent)) : nullptr; }
+    void inheritTransitions(const AnimationList* parent) { rareNonInheritedData.access()->m_transitions = parent ? adoptPtr(new AnimationList(*parent)) : nullptr; }
     void adjustAnimations();
     void adjustTransitions();
 
