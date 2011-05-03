@@ -296,10 +296,8 @@ static GroupId calculateGroupId(StyleBase* styleBase)
         // we need to group them with their node or regular ones.
         if (current->isMutableStyleDeclaration()) {
             CSSMutableStyleDeclaration* cssMutableStyleDeclaration = static_cast<CSSMutableStyleDeclaration*>(current);
-            if (cssMutableStyleDeclaration->isInlineStyleDeclaration()) {
-                ASSERT(cssMutableStyleDeclaration->parent()->isStyleSheet());
+            if (cssMutableStyleDeclaration->isInlineStyleDeclaration())
                 return calculateGroupId(cssMutableStyleDeclaration->node());
-            }
             // Either we have no parent, or this parent is a CSSRule.
             ASSERT(cssMutableStyleDeclaration->parent() == cssMutableStyleDeclaration->parentRule());
         }
