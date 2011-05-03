@@ -367,7 +367,7 @@ InjectedScript.prototype = {
             return type;
 
         if (obj instanceof inspectedWindow.Node)
-            return (obj.nodeType === undefined ? type : "node");
+            return "node";
         if (obj instanceof inspectedWindow.String)
             return "string";
         if (obj instanceof inspectedWindow.Array)
