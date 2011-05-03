@@ -105,7 +105,7 @@ void LayoutTestController::processWork()
 }
 
 // Called on loadFinished on WebPage
-void LayoutTestController::maybeDump(bool success)
+void LayoutTestController::maybeDump(bool /*success*/)
 {
 
     // This can happen on any of the http/tests/security/window-events-*.html tests, where the test opens
@@ -131,8 +131,7 @@ void LayoutTestController::maybeDump(bool success)
     if (WorkQueue::shared()->count())
         QTimer::singleShot(0, this, SLOT(processWork()));
     else if (!shouldWaitUntilDone()) {
-        if (success)
-            emit done();
+        emit done();
         m_hasDumped = true;
     }
 }
