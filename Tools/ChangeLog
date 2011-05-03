@@ -1,3 +1,11 @@
+2011-05-03  Caio Marcelo de Oliveira Filho  <caio.oliveira@openbossa.org>
+
+        Reviewed by Andreas Kling.
+
+        Add myself to the committers list.
+
+        * Scripts/webkitpy/common/config/committers.py:
+
 2011-05-03  James Robinson  <jamesr@chromium.org>
 
         Reviewed by Kenneth Russell.
