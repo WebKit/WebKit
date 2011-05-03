@@ -31,6 +31,7 @@
 #include "CookieStorage.h"
 #include "DOMTimer.h"
 #include "Database.h"
+#include "Document.h"
 #include "Frame.h"
 #include "FrameTree.h"
 #include "FrameView.h"
