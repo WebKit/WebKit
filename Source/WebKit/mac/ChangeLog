@@ -1,3 +1,12 @@
+2011-05-03  Julien Chaffraix  <jchaffraix@codeaurora.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        Element:shadowRoot & Element::ensureShadowRoot should return ShadowRoot*
+        https://bugs.webkit.org/show_bug.cgi?id=58703
+
+        * DOM/WebDOMOperations.mm: Added #include for ShadowRoot.h.
+
 2011-05-02  Adam Roben  <aroben@apple.com>
 
         Take advantage of implicit conversion from nullptr_t to PassOwnPtr

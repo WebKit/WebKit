@@ -512,8 +512,7 @@ void Node::setTreeScopeRecursively(TreeScope* newTreeScope, bool includeRoot)
 
         if (!node->isElementNode())
             continue;
-        // FIXME: Remove toShadowRoot() once shadowRoot() returns a proper ShadowRoot* (bug 58703).
-        if (ShadowRoot* shadowRoot = toShadowRoot(toElement(node)->shadowRoot())) {
+        if (ShadowRoot* shadowRoot = toElement(node)->shadowRoot()) {
             shadowRoot->setParentTreeScope(newTreeScope);
             if (currentDocument != newDocument)
                 shadowRoot->setDocumentRecursively(newDocument);
@@ -848,7 +847,7 @@ bool Node::hasNonEmptyBoundingBox() const
     return false;
 }
 
-inline static ContainerNode* shadowRoot(Node* node)
+inline static ShadowRoot* shadowRoot(Node* node)
 {
     return node->isElementNode() ? toElement(node)->shadowRoot() : 0;
 }
@@ -861,7 +860,7 @@ void Node::setDocumentRecursively(Document* newDocument)
         node->setDocument(newDocument);
         if (!node->isElementNode())
             continue;
-        if (Node* shadow = shadowRoot(node))
+        if (ShadowRoot* shadow = shadowRoot(node))
             shadow->setDocumentRecursively(newDocument);
     }
 }
@@ -1504,7 +1503,7 @@ ContainerNode* NodeRendererFactory::findVisualParent()
     }
 
     if (parent->isElementNode()) {
-        m_visualParentShadowRoot = toShadowRoot(toElement(parent)->shadowRoot());
+        m_visualParentShadowRoot = toElement(parent)->shadowRoot();
         if (m_visualParentShadowRoot) {
             if (ContainerNode* contentContainer = m_visualParentShadowRoot->contentContainerFor(m_node)) {
                 m_type = AsContentChild;

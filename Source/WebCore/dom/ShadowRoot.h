@@ -61,12 +61,6 @@ inline PassRefPtr<ShadowRoot> ShadowRoot::create(Document* document)
     return adoptRef(new ShadowRoot(document));
 }
 
-inline ShadowRoot* toShadowRoot(Node* node)
-{
-    ASSERT(!node || node->isShadowBoundary());
-    return static_cast<ShadowRoot*>(node);
-}
-
 } // namespace
 
 #endif

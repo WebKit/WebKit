@@ -212,10 +212,10 @@ PassRefPtr<Element> Element::cloneElementWithoutAttributesAndChildren() const
 
 void Element::copyNonAttributeProperties(const Element* source)
 {
-    ContainerNode* sourceShadow = source->shadowRoot();
+    ShadowRoot* sourceShadow = source->shadowRoot();
     removeShadowRoot();
     if (sourceShadow) {
-        ContainerNode* clonedShadow = ensureShadowRoot();
+        ShadowRoot* clonedShadow = ensureShadowRoot();
         sourceShadow->cloneChildNodes(clonedShadow);
     }
 }
@@ -942,7 +942,7 @@ void Element::insertedIntoDocument()
     // need to do superclass processing first so inDocument() is true
     // by the time we reach updateId
     ContainerNode::insertedIntoDocument();
-    if (Node* shadow = shadowRoot())
+    if (ShadowRoot* shadow = shadowRoot())
         shadow->insertedIntoDocument();
 
     if (hasID()) {
@@ -965,7 +965,7 @@ void Element::removedFromDocument()
     }
 
     ContainerNode::removedFromDocument();
-    if (Node* shadow = shadowRoot())
+    if (ShadowRoot* shadow = shadowRoot())
         shadow->removedFromDocument();
 }
 
@@ -974,7 +974,7 @@ void Element::insertedIntoTree(bool deep)
     ContainerNode::insertedIntoTree(deep);
     if (!deep)
         return;
-    if (Node* shadow = shadowRoot())
+    if (ShadowRoot* shadow = shadowRoot())
         shadow->insertedIntoTree(true);
 }
 
@@ -983,7 +983,7 @@ void Element::removedFromTree(bool deep)
     ContainerNode::removedFromTree(deep);
     if (!deep)
         return;
-    if (Node* shadow = shadowRoot())
+    if (ShadowRoot* shadow = shadowRoot())
         shadow->removedFromTree(true);
 }
 
@@ -996,7 +996,7 @@ void Element::attach()
     
     StyleSelectorParentPusher parentPusher(this);
 
-    if (Node* shadow = shadowRoot()) {
+    if (ShadowRoot* shadow = shadowRoot()) {
         parentPusher.push();
         shadow->attach();
     }
@@ -1026,7 +1026,7 @@ void Element::detach()
     if (hasRareData())
         rareData()->resetComputedStyle();
     ContainerNode::detach();
-    if (Node* shadow = shadowRoot())
+    if (ShadowRoot* shadow = shadowRoot())
         shadow->detach();
 
     RenderWidget::resumeWidgetHierarchyUpdates();
@@ -1162,7 +1162,7 @@ void Element::recalcStyle(StyleChange change)
         }
     }
     // FIXME: This does not care about sibling combinators. Will be necessary in XBL2 world.
-    if (Node* shadow = shadowRoot()) {
+    if (ShadowRoot* shadow = shadowRoot()) {
         if (change >= Inherit || shadow->childNeedsStyleRecalc() || shadow->needsStyleRecalc()) {
             parentPusher.push();
             shadow->recalcStyle(change);
@@ -1173,14 +1173,14 @@ void Element::recalcStyle(StyleChange change)
     clearChildNeedsStyleRecalc();
 }
 
-ContainerNode* Element::shadowRoot() const
+ShadowRoot* Element::shadowRoot() const
 {
     return hasRareData() ? rareData()->m_shadowRoot : 0;
 }
 
-ContainerNode* Element::ensureShadowRoot()
+ShadowRoot* Element::ensureShadowRoot()
 {
-    if (ContainerNode* existingRoot = shadowRoot())
+    if (ShadowRoot* existingRoot = shadowRoot())
         return existingRoot;
 
     RefPtr<ShadowRoot> newRoot = ShadowRoot::create(document());
@@ -1321,7 +1321,7 @@ void Element::childrenChanged(bool changedByParser, Node* beforeChange, Node* af
         checkForEmptyStyleChange(this, renderStyle());
     else
         checkForSiblingStyleChanges(this, renderStyle(), false, beforeChange, afterChange, childCountDelta);
-    if (ShadowRoot* shadow = toShadowRoot(shadowRoot()))
+    if (ShadowRoot* shadow = shadowRoot())
         shadow->hostChildrenChanged();
 }
 

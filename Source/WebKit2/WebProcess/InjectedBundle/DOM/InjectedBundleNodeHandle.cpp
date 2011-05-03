@@ -40,6 +40,7 @@
 #include <WebCore/IntRect.h>
 #include <WebCore/JSNode.h>
 #include <WebCore/Node.h>
+#include <WebCore/ShadowRoot.h>
 #include <wtf/HashMap.h>
 #include <wtf/text/WTFString.h>
 

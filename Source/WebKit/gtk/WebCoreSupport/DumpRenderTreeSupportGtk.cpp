@@ -53,6 +53,7 @@
 #include "RenderView.h"
 #include "SecurityOrigin.h"
 #include "Settings.h"
+#include "ShadowRoot.h"
 #include "TextIterator.h"
 #include "WebKitDOMRangePrivate.h"
 #include "WorkerThread.h"

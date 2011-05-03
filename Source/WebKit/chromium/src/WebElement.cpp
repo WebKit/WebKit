@@ -34,6 +34,7 @@
 #include "Element.h"
 #include "RenderBoxModelObject.h"
 #include "RenderObject.h"
+#include "ShadowRoot.h"
 #include <wtf/PassRefPtr.h>
 
 #include "WebNamedNodeMap.h"

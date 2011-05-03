@@ -29,6 +29,7 @@
 #include "MouseEvent.h"
 #include "RenderDetails.h"
 #include "ShadowContentElement.h"
+#include "ShadowRoot.h"
 #include "Text.h"
 
 namespace WebCore {

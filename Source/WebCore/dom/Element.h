@@ -230,9 +230,8 @@ public:
     virtual RenderObject* createRenderer(RenderArena*, RenderStyle*);
     virtual void recalcStyle(StyleChange = NoChange);
 
-    // FIXME: Make these return a proper ShadowRoot* (bug 58703).
-    ContainerNode* shadowRoot() const;
-    ContainerNode* ensureShadowRoot();
+    ShadowRoot* shadowRoot() const;
+    ShadowRoot* ensureShadowRoot();
     void removeShadowRoot();
 
     virtual const AtomicString& shadowPseudoId() const;

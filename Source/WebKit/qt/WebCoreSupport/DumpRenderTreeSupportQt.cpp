@@ -64,6 +64,7 @@
 #include "PrintContext.h"
 #include "RenderListItem.h"
 #include "RenderTreeAsText.h"
+#include "ShadowRoot.h"
 #include "ScriptController.h"
 #include "ScriptValue.h"
 #include "SecurityOrigin.h"
@@ -1084,7 +1085,7 @@ QVariant DumpRenderTreeSupportQt::shadowRoot(const QWebElement& element)
     if (!webElement)
         return QVariant();
 
-    ContainerNode* webShadowRoot = webElement->shadowRoot();
+    ShadowRoot* webShadowRoot = webElement->shadowRoot();
     if (!webShadowRoot)
         return QVariant();
 

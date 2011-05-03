@@ -1,3 +1,40 @@
+2011-05-03  Julien Chaffraix  <jchaffraix@codeaurora.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        Element:shadowRoot & Element::ensureShadowRoot should return ShadowRoot*
+        https://bugs.webkit.org/show_bug.cgi?id=58703
+
+        No new tests, refactoring only.
+
+        * dom/Element.cpp:
+        (WebCore::Element::copyNonAttributeProperties):
+        (WebCore::Element::insertedIntoDocument):
+        (WebCore::Element::removedFromDocument):
+        (WebCore::Element::insertedIntoTree):
+        (WebCore::Element::removedFromTree):
+        (WebCore::Element::attach):
+        (WebCore::Element::detach):
+        (WebCore::Element::recalcStyle):
+        (WebCore::Element::shadowRoot):
+        (WebCore::Element::ensureShadowRoot):
+        (WebCore::Element::childrenChanged):
+        * dom/Node.cpp:
+        (WebCore::Node::setTreeScopeRecursively):
+        (WebCore::shadowRoot):
+        (WebCore::Node::setDocumentRecursively):
+        (WebCore::NodeRendererFactory::findVisualParent):
+        Updated all the call sites for shadowRoot and ensureShadowRoot in the 2
+        previous classes.
+
+        * dom/Element.h: Updated 2 methods' signature to return a ShadowRoot*.
+
+        * dom/ShadowRoot.h: Removed toShadowRoot as it is not used anymore.
+
+        * html/HTMLDetailsElement.cpp:
+        * html/HTMLSummaryElement.cpp:
+        Added #include for ShadowRoot.h.
+
 2011-05-03  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
         Reviewed by Kenneth Rohde Christiansen.
