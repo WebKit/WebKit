@@ -1,3 +1,13 @@
+2011-05-02  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        Add layout tests for clicking in media documents.
+        https://bugs.webkit.org/show_bug.cgi?id=59976
+
+        * media/video-document-click-expected.txt: Added.
+        * media/video-document-click.html: Added.
+
 2011-05-02  Mark Pilgrim  <pilgrim@chromium.org>
 
         Reviewed by Tony Chang.

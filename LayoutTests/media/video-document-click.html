@@ -1,0 +1,148 @@
+<html>
+<head>
+<style>
+
+body {
+    margin: 0;
+    height: 100%;
+}
+
+iframe {
+    border: 0;
+    width: 100%;
+    height: 100%;
+}
+
+#log .hidden {
+    display: none;
+}
+
+</style>
+</head>
+<body>
+<div id="log" class="hidden"></div>
+<script>
+
+if (window.layoutTestController) {
+    layoutTestController.dumpAsText();
+    layoutTestController.waitUntilDone();
+}
+
+logDiv = document.getElementById('log');
+
+var logDiv;
+var currentTest = -1;
+var pauseCounter = 0;
+var playCounter = 0;
+
+var tests = [
+    {
+        start: function()
+        {
+            moveOver(this);
+            click();
+        },
+        finish: function()
+        {
+            log('Clicking on the video should pause it', playCounter == 0 && pauseCounter == 1);
+        }
+    },
+    {
+        start: function()
+        {
+            this.pause();
+            moveOver(this);
+            click();
+            click();
+        },
+        finish: function()
+        {
+            log('Double-clicking on a paused video should resume play', playCounter == 1);
+        }
+    },
+    {
+        start: function()
+        {
+            moveOverLeftTopCornerOf(this.ownerDocument.body);
+            click();
+        },
+        finish: function()
+        {
+            log('Clicking on the background should not pause the video', pauseCounter == 0 && playCounter == 0);
+        }
+    },
+    {
+        start: function()
+        {
+            moveOverLeftTopCornerOf(this.ownerDocument.body);
+            this.pause();
+            click();
+            click();
+        },
+        finish: function()
+        {
+            log('Double-clicking on the background should not resume play', pauseCounter == 1 && playCounter == 0);
+        }
+    }
+];
+
+function log(msg, success)
+{
+    logDiv.appendChild(document.createElement('div')).textContent = msg + ': ' + (success ? 'PASS' : 'FAIL');
+}
+
+function moveOverLeftTopCornerOf(element)
+{
+    eventSender.mouseMoveTo(element.offsetLeft + 3, element.offsetTop + 3);
+}
+
+function moveOver(element)
+{
+    var x = element.offsetLeft + element.offsetWidth / 2;
+    var y = element.offsetTop + element.offsetHeight / 2;
+    eventSender.mouseMoveTo(x, y);
+}
+
+function click()
+{
+    eventSender.mouseDown();
+    eventSender.mouseUp();
+}
+
+function runNextTest()
+{
+    if (currentTest >= 0)
+        tests[currentTest].finish.call(this);
+
+    playCounter = 0;
+    pauseCounter = 0;
+
+    currentTest++;
+
+    if (currentTest == tests.length) {
+        layoutTestController.notifyDone();
+        document.body.removeChild(document.querySelector('iframe'));
+        logDiv.className = '';
+        return;
+    }
+
+    tests[currentTest].start.call(this);
+    this.currentTime = 0;
+}
+
+function runTest()
+{
+    if (!window.eventSender)
+        return;
+
+    var video = document.querySelector('iframe').contentDocument.querySelector('video');
+    video.addEventListener('seeked', runNextTest, false);
+    video.addEventListener('play', function() { playCounter++; }, false);
+    video.addEventListener('pause', function() { pauseCounter++; }, false);
+    video.currentTime = 0;
+}
+
+</script>
+<iframe src="content/test.mp4" onload="runTest()"></iframe>
+</body>
+</html>
