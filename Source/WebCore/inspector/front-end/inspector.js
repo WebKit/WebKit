@@ -28,12 +28,6 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-// Keep this ; so that concatenated version of the script worked.
-;(function preloadImages()
-{
-    (new Image()).src = "Images/statusbarButtonGlyphs.png";
-})();
-
 var WebInspector = {
     resources: {},
     missingLocalizedStrings: {},
@@ -205,6 +199,9 @@ var WebInspector = {
 
         // This may be called before onLoadedDone, hence the bulk of inspector objects may
         // not be created yet.
+        if (WebInspector.toolbar)
+            WebInspector.toolbar.attached = x;
+
         if (WebInspector.searchController)
             WebInspector.searchController.updateSearchLabel();
     },
@@ -444,6 +441,7 @@ WebInspector.doLoadedDone = function()
     this._createPanels();
     this._panelHistory = new WebInspector.PanelHistory();
     this.toolbar = new WebInspector.Toolbar();
+    this.toolbar.attached = WebInspector.attached;
 
     this.panelOrder = [];
     for (var panelName in this.panels)

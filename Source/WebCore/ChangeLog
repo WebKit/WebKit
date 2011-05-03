@@ -2,6 +2,47 @@
 
         Reviewed by Yury Semikhatsky.
 
+        Web Inspector: combine toolbar icon images.
+        https://bugs.webkit.org/show_bug.cgi?id=59931
+
+        * WebCore.gypi:
+        * inspector/front-end/Images/auditsIcon.png: Removed.
+        * inspector/front-end/Images/consoleIcon.png: Removed.
+        * inspector/front-end/Images/elementsIcon.png: Removed.
+        * inspector/front-end/Images/networkIcon.png: Removed.
+        * inspector/front-end/Images/profilesIcon.png: Removed.
+        * inspector/front-end/Images/resourcesIcon.png: Removed.
+        * inspector/front-end/Images/scriptsIcon.png: Removed.
+        * inspector/front-end/Images/timelineIcon.png: Removed.
+        * inspector/front-end/Images/toolbarIcons.png: Added.
+        * inspector/front-end/Images/toolbarIconsSmall.png: Added.
+        * inspector/front-end/WebKit.qrc:
+        * inspector/front-end/inspector.css:
+        (.toolbar-icon):
+        (#toolbar-dropdown .toolbar-icon):
+        (.toolbar-item:active .toolbar-icon):
+        (#toolbar-dropdown .toolbar-item:active .toolbar-icon):
+        (.toolbar-item.elements .toolbar-icon):
+        (.toolbar-item.resources .toolbar-icon):
+        (#toolbar-dropdown .toolbar-item.resources .toolbar-icon):
+        (.toolbar-item.network .toolbar-icon):
+        (#toolbar-dropdown .toolbar-item.network .toolbar-icon):
+        (.toolbar-item.scripts .toolbar-icon):
+        (#toolbar-dropdown .toolbar-item.scripts .toolbar-icon):
+        (.toolbar-item.timeline .toolbar-icon):
+        (#toolbar-dropdown .toolbar-item.timeline .toolbar-icon):
+        (.toolbar-item.profiles .toolbar-icon):
+        (#toolbar-dropdown .toolbar-item.profiles .toolbar-icon):
+        (.toolbar-item.audits .toolbar-icon):
+        (#toolbar-dropdown .toolbar-item.audits .toolbar-icon):
+        (.toolbar-item.console .toolbar-icon):
+        (#toolbar-dropdown .toolbar-item.console .toolbar-icon):
+        (.status-bar-item > .glyph):
+
+2011-05-03  Pavel Feldman  <pfeldman@chromium.org>
+
+        Reviewed by Yury Semikhatsky.
+
         Web Inspector: combine status bar button glyphs.
         https://bugs.webkit.org/show_bug.cgi?id=59885
 

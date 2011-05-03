@@ -42,6 +42,15 @@ WebInspector.Toolbar = function()
 }
 
 WebInspector.Toolbar.prototype = {
+    set attached(attached)
+    {
+        if (attached)
+            this.element.addStyleClass("toolbar-small");
+        else
+            this.element.removeStyleClass("toolbar-small");
+        this._updateDropdownButtonAndHideDropdown();
+    },
+
     resize: function()
     {
         this._updateDropdownButtonAndHideDropdown();
@@ -165,6 +174,7 @@ WebInspector.ToolbarDropdown = function()
     this._arrow = document.getElementById("toolbar-dropdown-arrow");
     this.element = document.createElement("div");
     this.element.id = "toolbar-dropdown";
+    this.element.className = "toolbar-small";
     this._contentElement = this.element.createChild("div", "scrollable-content");
     this._contentElement.tabIndex = 0;
     this._contentElement.addEventListener("keydown", this._onKeyDown.bind(this), true);

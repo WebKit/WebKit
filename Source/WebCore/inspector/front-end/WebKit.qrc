@@ -138,7 +138,6 @@
     <file>popover.css</file>
     <file>textViewer.css</file>
     <file>Images/applicationCache.png</file>
-    <file>Images/auditsIcon.png</file>
     <file>Images/back.png</file>
     <file>Images/breakpointBorder.png</file>
     <file>Images/breakpointConditionalBorder.png</file>
@@ -147,7 +146,6 @@
     <file>Images/checker.png</file>
     <file>Images/closeButtons.png</file>
     <file>Images/cookie.png</file>
-    <file>Images/consoleIcon.png</file>
     <file>Images/database.png</file>
     <file>Images/databaseTable.png</file>
     <file>Images/debuggerContinue.png</file>
@@ -164,7 +162,6 @@
     <file>Images/disclosureTriangleSmallRightDownBlack.png</file>
     <file>Images/disclosureTriangleSmallRightDownWhite.png</file>
     <file>Images/disclosureTriangleSmallRightWhite.png</file>
-    <file>Images/elementsIcon.png</file>
     <file>Images/errorIcon.png</file>
     <file>Images/errorMediumIcon.png</file>
     <file>Images/errorRedDot.png</file>
@@ -178,7 +175,6 @@
     <file>Images/graphLabelCalloutLeft.png</file>
     <file>Images/graphLabelCalloutRight.png</file>
     <file>Images/localStorage.png</file>
-    <file>Images/networkIcon.png</file>
     <file>Images/paneAddButtons.png</file>
     <file>Images/paneBottomGrow.png</file>
     <file>Images/paneBottomGrowActive.png</file>
@@ -188,7 +184,6 @@
     <file>Images/popoverBackground.png</file>
     <file>Images/profileGroupIcon.png</file>
     <file>Images/profileIcon.png</file>
-    <file>Images/profilesIcon.png</file>
     <file>Images/profileSmallIcon.png</file>
     <file>Images/profilesSilhouette.png</file>
     <file>Images/programCounterBorder.png</file>
@@ -199,10 +194,8 @@
     <file>Images/resourceJSIcon.png</file>
     <file>Images/resourcePlainIcon.png</file>
     <file>Images/resourcePlainIconSmall.png</file>
-    <file>Images/resourcesIcon.png</file>
     <file>Images/resourcesSizeGraphIcon.png</file>
     <file>Images/resourcesTimeGraphIcon.png</file>
-    <file>Images/scriptsIcon.png</file>
     <file>Images/scriptsSilhouette.png</file>
     <file>Images/searchSmallBlue.png</file>
     <file>Images/searchSmallBrightBlue.png</file>
@@ -249,7 +242,6 @@
     <file>Images/timelineHollowPillPurple.png</file>
     <file>Images/timelineHollowPillRed.png</file>
     <file>Images/timelineHollowPillYellow.png</file>
-    <file>Images/timelineIcon.png</file>
     <file>Images/timelinePillBlue.png</file>
     <file>Images/timelinePillGray.png</file>
     <file>Images/timelinePillGreen.png</file>
@@ -257,6 +249,8 @@
     <file>Images/timelinePillPurple.png</file>
     <file>Images/timelinePillRed.png</file>
     <file>Images/timelinePillYellow.png</file>
+    <file>Images/toolbarIcons.png</file>
+    <file>Images/toolbarIconsSmall.png</file>
     <file>Images/toolbarItemSelected.png</file>
     <file>Images/trackHoriz.png</file>
     <file>Images/trackVert.png</file>
