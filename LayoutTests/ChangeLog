@@ -1,3 +1,9 @@
+2011-05-03  Ojan Vafai  <ojan@chromium.org>
+
+        Fix test accidentally modified in http://trac.webkit.org/changeset/85610.
+
+        * fullscreen/full-screen-zIndex.html:
+
 2011-05-02  Ojan Vafai  <ojan@chromium.org>
 
         Reviewed by Tony Chang.
