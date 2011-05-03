@@ -1,3 +1,22 @@
+2011-05-03  Pavel Feldman  <pfeldman@google.com>
+
+        Reviewed by Yury Semikhatsky.
+
+        Web Inspector: rename BrowserDebugger agent to DOMDebugger.
+        https://bugs.webkit.org/show_bug.cgi?id=60019
+
+        * inspector/CodeGeneratorInspector.pm:
+        * inspector/Inspector.json:
+        * inspector/InspectorController.cpp:
+        (WebCore::InspectorController::connectFrontend):
+        * inspector/front-end/BreakpointsSidebarPane.js:
+        (WebInspector.XHRBreakpointsSidebarPane.prototype._setBreakpoint):
+        (WebInspector.XHRBreakpointsSidebarPane.prototype._removeBreakpoint):
+        (WebInspector.XHRBreakpointsSidebarPane.prototype._checkboxClicked):
+        (WebInspector.EventListenerBreakpointsSidebarPane.prototype._setBreakpoint):
+        (WebInspector.EventListenerBreakpointsSidebarPane.prototype._removeBreakpoint):
+        * inspector/generate-inspector-idl:
+
 2011-05-03  Yury Semikhatsky  <yurys@chromium.org>
 
         Reviewed by Pavel Feldman.

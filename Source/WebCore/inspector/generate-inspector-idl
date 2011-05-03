@@ -88,7 +88,7 @@ macro_traits = {
     "DOMStorage": "DOM_STORAGE",
     "ApplicationCache": "OFFLINE_WEB_APPLICATIONS",
     "Debugger": "JAVASCRIPT_DEBUGGER",
-    "BrowserDebugger": "JAVASCRIPT_DEBUGGER",
+    "DOMDebugger": "JAVASCRIPT_DEBUGGER",
     "Profiler": "JAVASCRIPT_DEBUGGER",
     "Worker": "WORKERS"
 }

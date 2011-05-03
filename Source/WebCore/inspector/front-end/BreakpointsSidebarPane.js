@@ -321,7 +321,7 @@ WebInspector.XHRBreakpointsSidebarPane.prototype = {
         this._addListElement(element, currentElement);
         this._breakpointElements[url] = element;
         if (enabled)
-            BrowserDebuggerAgent.setXHRBreakpoint(url);
+            DOMDebuggerAgent.setXHRBreakpoint(url);
     },
 
     _removeBreakpoint: function(url)
@@ -333,7 +333,7 @@ WebInspector.XHRBreakpointsSidebarPane.prototype = {
         this._removeListElement(element);
         delete this._breakpointElements[url];
         if (element._checkboxElement.checked)
-            BrowserDebuggerAgent.removeXHRBreakpoint(url);
+            DOMDebuggerAgent.removeXHRBreakpoint(url);
     },
 
     _contextMenu: function(url, event)
@@ -351,9 +351,9 @@ WebInspector.XHRBreakpointsSidebarPane.prototype = {
     _checkboxClicked: function(url, event)
     {
         if (event.target.checked)
-            BrowserDebuggerAgent.setXHRBreakpoint(url);
+            DOMDebuggerAgent.setXHRBreakpoint(url);
         else
-            BrowserDebuggerAgent.removeXHRBreakpoint(url);
+            DOMDebuggerAgent.removeXHRBreakpoint(url);
         this._saveBreakpoints();
     },
 
@@ -535,7 +535,7 @@ WebInspector.EventListenerBreakpointsSidebarPane.prototype = {
         if (!breakpointItem)
             return;
         breakpointItem.checkbox.checked = true;
-        BrowserDebuggerAgent.setEventListenerBreakpoint(eventName);
+        DOMDebuggerAgent.setEventListenerBreakpoint(eventName);
         this._updateCategoryCheckbox(breakpointItem.parent);
     },
 
@@ -545,7 +545,7 @@ WebInspector.EventListenerBreakpointsSidebarPane.prototype = {
         if (!breakpointItem)
             return;
         breakpointItem.checkbox.checked = false;
-        BrowserDebuggerAgent.removeEventListenerBreakpoint(eventName);
+        DOMDebuggerAgent.removeEventListenerBreakpoint(eventName);
         this._updateCategoryCheckbox(breakpointItem.parent);
     },
 

@@ -119,12 +119,12 @@ void InspectorController::connectFrontend()
 #if ENABLE(OFFLINE_WEB_APPLICATIONS)
         m_inspectorAgent->applicationCacheAgent(),
 #endif
-#if ENABLE(JAVASCRIPT_DEBUGGER)
-        m_inspectorAgent->browserDebuggerAgent(),
-#endif
         m_inspectorAgent->cssAgent(),
         m_inspectorAgent->consoleAgent(),
         m_inspectorAgent->domAgent(),
+#if ENABLE(JAVASCRIPT_DEBUGGER)
+        m_inspectorAgent->browserDebuggerAgent(),
+#endif
 #if ENABLE(DOM_STORAGE)
         m_inspectorAgent->domStorageAgent(),
 #endif
