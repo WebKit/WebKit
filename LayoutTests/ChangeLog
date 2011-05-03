@@ -1,3 +1,17 @@
+2011-05-02  Ojan Vafai  <ojan@chromium.org>
+
+        Reviewed by Tony Chang.
+
+        add image toggling behavior from old-run-webkit-tests
+        https://bugs.webkit.org/show_bug.cgi?id=59978
+
+        Add a checkbox to switch between image toggling (default)
+        and just showing results for expected/actual images.
+
+        * fast/harness/resources/results-test.js:
+        * fast/harness/results-expected.txt:
+        * fast/harness/results.html:
+
 2011-05-03  Satish Sampath  <satish@chromium.org>
 
         Unreviewed, update test expectations for chromium.

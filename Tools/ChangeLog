@@ -1,3 +1,16 @@
+2011-05-02  Ojan Vafai  <ojan@chromium.org>
+
+        Reviewed by Tony Chang.
+
+        add image toggling behavior from old-run-webkit-tests
+        https://bugs.webkit.org/show_bug.cgi?id=59978
+
+        Output -diffs.html files. This matches old-run-webkit-tests.
+        In theory, we could use data urls in the results.html file, but
+        data urls don't currently have access to local files.
+
+        * Scripts/webkitpy/layout_tests/layout_package/test_result_writer.py:
+
 2011-05-02  Tony Chang  <tony@chromium.org>
 
         Reviewed by Ojan Vafai.

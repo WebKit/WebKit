@@ -12,10 +12,6 @@ p {
     margin-bottom: 0.3em;
 }
 
-tbody tr:first-of-type:hover {
-    opacity: 0.7;
-}
-
 tr:not(.results-row) td {
     white-space: nowrap;
 }
@@ -52,6 +48,10 @@ label {
 .results-row iframe {
     width: 800px;
     height: 600px;
+}
+
+.results-row[data-expanded="false"] {
+    display: none;
 }
 
 #options {
@@ -135,6 +135,7 @@ function globalState()
             hasTextFailures: false,
             newTests: [],
             results: {},
+            shouldToggleImages: true,
             testsWithStderr: [],
             unexpectedPassTests: []
         }
@@ -166,7 +167,17 @@ function parentOfType(node, selector)
     return null;
 }
 
-function appendResultIframe(src, parent)
+function remove(node)
+{
+    node.parentNode.removeChild(node);
+}
+
+function forEach(nodeList, handler)
+{
+    Array.prototype.forEach.call(nodeList, handler);
+}
+
+function resultIframe(src)
 {
     // FIXME: use audio tags for AUDIO tests?
     var layoutTestsIndex = src.indexOf('LayoutTests');
@@ -184,10 +195,15 @@ function appendResultIframe(src, parent)
 
     var tagName = (src.lastIndexOf('.png') == -1) ? 'iframe' : 'img';
 
-    var container = document.createElement('div');
-    container.className = 'result-container';
-    container.innerHTML = '<div class=label>' + name + '</div><' + tagName + ' src="' + src + '?format=txt"></' + tagName + '>';
-    parent.appendChild(container);
+    if (tagName != 'img')
+        src += '?format=txt';
+    return '<div class=result-container><div class=label>' + name + '</div><' + tagName + ' src="' + src + '"></' + tagName + '></div>';
+}
+
+function togglingImage(prefix)
+{
+    return '<div class=result-container><div class="label imageText"></div><img class=animatedImage data-prefix="' +
+        prefix + '"></img></div>';
 }
 
 function toggleExpectations(e)
@@ -207,7 +223,13 @@ function collapseExpectations(expandLink)
     expandLink.textContent = '+';
     var existingResultsRow = parentOfType(expandLink, 'tbody').querySelector('.results-row');
     if (existingResultsRow)
-        existingResultsRow.style.display = 'none';
+        updateExpandedState(existingResultsRow, false);
+}
+
+function updateExpandedState(row, isExpanded)
+{
+    row.setAttribute('data-expanded', isExpanded);
+    updateImageTogglingTimer();
 }
 
 function expandExpectations(expandLink)
@@ -219,7 +241,7 @@ function expandExpectations(expandLink)
     var enDash = '\u2013';
     expandLink.textContent = enDash;
     if (existingResultsRow) {
-        existingResultsRow.style.display = '';
+        updateExpandedState(existingResultsRow, true);
         return;
     }
     
@@ -228,14 +250,43 @@ function expandExpectations(expandLink)
     var newCell = document.createElement('td');
     newCell.colSpan = row.querySelectorAll('td').length;
 
-    appendResultIframe(row.querySelector('.test-link').href, newCell);
+    newCell.insertAdjacentHTML('beforeEnd', resultIframe(row.querySelector('.test-link').href));    
 
     var resultLinks = row.querySelectorAll('.result-link');
-    for (var i = 0; i < resultLinks.length; i++)
-        appendResultIframe(resultLinks[i].href, newCell);
+    var hasTogglingImages = false;
+    for (var i = 0; i < resultLinks.length; i++) {
+        var link = resultLinks[i];
+        var result;
+        if (link.textContent == 'images') {
+            hasTogglingImages = true;
+            result = togglingImage(link.getAttribute('data-prefix'));
+        } else
+            result = resultIframe(link.href);
+
+        newCell.insertAdjacentHTML('beforeEnd', result);    
+    }
 
     newRow.appendChild(newCell);
     parentTbody.appendChild(newRow);
+
+    updateExpandedState(newRow, true);
+
+    updateImageTogglingTimer();
+}
+
+function updateImageTogglingTimer()
+{
+    var hasVisibleAnimatedImage = document.querySelector('.results-row[data-expanded="true"] .animatedImage');
+    if (!hasVisibleAnimatedImage) {
+        clearInterval(globalState().togglingImageInterval);
+        globalState().togglingImageInterval = null;
+        return;
+    }
+
+    if (!globalState().togglingImageInterval) {
+        toggleImages();
+        globalState().togglingImageInterval = setInterval(toggleImages, 2000);
+    }
 }
 
 function async(func, args)
@@ -286,7 +337,7 @@ function testLink(test)
 
 function resultLink(testPrefix, suffix, contents)
 {
-    return '<a class=result-link href="' + testPrefix + suffix + '">' + contents + '</a> ';
+    return '<a class=result-link href="' + testPrefix + suffix + '" data-prefix="' + testPrefix + '">' + contents + '</a> ';
 }
 
 function testObjectFor(test)
@@ -338,6 +389,23 @@ function processGlobalStateFor(testObject)
         globalState().unexpectedPassTests.push(test);            
 }
 
+function toggleImages()
+{
+    var images = document.querySelectorAll('.animatedImage');
+    var imageTexts = document.querySelectorAll('.imageText');
+    for (var i = 0, len = images.length; i < len; i++) {
+        var image = images[i];
+        var text = imageTexts[i];
+        if (text.textContent == 'Expected Image') {
+            text.textContent = 'Actual Image';
+            image.src = image.getAttribute('data-prefix') + '-actual.png';
+        } else {
+            text.textContent = 'Expected Image';
+            image.src = image.getAttribute('data-prefix') + '-expected.png';
+        }
+    }
+}
+
 function tableRow(testObject)
 {    
     var row = '<tbody'
@@ -384,10 +452,16 @@ function tableRow(testObject)
         } else {
             if (testObject.is_reftest)
                 row += resultLink(test_prefix, '-expected.html', 'ref html');
+            
+            if (globalState().shouldToggleImages) {
+                row += resultLink(test_prefix, '-diffs.html', 'images');
+            } else {
+                row += resultLink(test_prefix, '-expected.png', 'expected');
+                row += resultLink(test_prefix, '-actual.png', 'actual');
+            }
 
-            row += resultLink(test_prefix, '-expected.png', 'expected') +
-                resultLink(test_prefix, '-actual.png', 'actual') +
-                resultLink(test_prefix, '-diff.png', 'diff');
+            // FIXME: old-run-webkit-tests shows the diff percentage as the text contents of the "diff" link.
+            row += resultLink(test_prefix, '-diff.png', 'diff');
         }
     }
 
@@ -571,18 +645,32 @@ var PixelZoomer = {};
 
 PixelZoomer.showOnDelay = true;
 
+PixelZoomer._zoomImageContainer = function(url)
+{
+    return '<div class=zoom-image-container><img src="' + url + '"></div>';
+}
+
 PixelZoomer._createContainer = function(e)
 {
     var tbody = parentOfType(e.target, 'tbody');
-    var imageDiffLinks = tbody.querySelector('tr').querySelectorAll('a[href$=".png"]');
+    var row = tbody.querySelector('tr');
+    var imageDiffLinks = row.querySelectorAll('a[href$=".png"]');
     
     var container = document.createElement('div');
     container.className = 'pixel-zoom-container';
     
     var html = '';
-    for (var i = 0; i < imageDiffLinks.length; i++)
-        html += '<div class=zoom-image-container><img src="' + imageDiffLinks[i].href + '"></div>';
     
+    var togglingImageLink = row.querySelector('a[href$="-diffs.html"]');
+    if (togglingImageLink) {
+        var prefix = togglingImageLink.getAttribute('data-prefix');
+        html += PixelZoomer._zoomImageContainer(prefix + '-expected.png') +
+            PixelZoomer._zoomImageContainer(prefix + '-actual.png');
+    }
+    
+    for (var i = 0; i < imageDiffLinks.length; i++)
+        html += PixelZoomer._zoomImageContainer(imageDiffLinks[i].href);
+
     container.innerHTML = html;
     document.body.appendChild(container);
 
@@ -638,7 +726,7 @@ document.addEventListener('mousemove', PixelZoomer.handleMouseMove, false);
 
 function onlyShowUnexpectedFailures()
 {
-    var checkBox = document.querySelector('.unexpected-results');
+    var checkBox = document.getElementById('unexpected-results');
     return !checkBox || checkBox.checked;
 }
 
@@ -648,14 +736,65 @@ function updateExpectedFailures()
         '.expected { display: none; }' : '';
 }
 
+function updateTogglingImages()
+{
+    var shouldToggle = document.getElementById('toggle-images').checked;
+    globalState().shouldToggleImages = shouldToggle;
+    
+    if (shouldToggle) {
+        forEach(document.querySelectorAll('a[href$=".png"]'), convertToTogglingHandler(function(prefix) {
+            return resultLink(prefix, '-diffs.html', 'images');
+        }));
+        forEach(document.querySelectorAll('img[src$=".png"]'), convertToTogglingHandler(togglingImage));
+    } else {
+        forEach(document.querySelectorAll('a[href$="-diffs.html"]'), convertToNonTogglingHandler(resultLink));
+        forEach(document.querySelectorAll('.animatedImage'), convertToNonTogglingHandler(function (absolutePrefix, suffix) {
+            return resultIframe(absolutePrefix + suffix);
+        }));
+    }
+
+    updateImageTogglingTimer();
+}
+
+
+function getResultContainer(node)
+{
+    return (node.tagName == 'IMG') ? parentOfType(node, '.result-container') : node;
+}
+
+function convertToTogglingHandler(togglingImageFunction)
+{
+    return function(node) {
+        var url = (node.tagName == 'IMG') ? node.src : node.href;
+        if (url.match('-expected.png$'))
+            remove(getResultContainer(node));
+        else if (url.match('-actual.png$')) {
+            var name = parentOfType(node, 'tbody').querySelector('.test-link').textContent;
+            getResultContainer(node).outerHTML = togglingImageFunction(stripExtension(name));
+        }   
+    }
+}
+
+function convertToNonTogglingHandler(resultFunction)
+{
+    return function(node) {
+        var prefix = node.getAttribute('data-prefix');
+        getResultContainer(node).outerHTML = resultFunction(prefix, '-expected.png', 'expected') + resultFunction(prefix, '-actual.png', 'actual');
+    }
+}
+
 function generatePage()
 {
     var html = '<div id=options>' +
         '<a href="javascript:void()" class="expand-all" onclick="expandAllExpectations()">expand all</a> ' +
         '<a href="javascript:void()" class="collapse-all" onclick="collapseAllExpectations()">collapse all</a>';
 
+    // FIXME: put these options in a menu
+    // FIXME: store these as prefs in localstorage?
     if (globalState().results.uses_expectations_file)
-        html += '<label><input class="unexpected-results" type=checkbox checked onchange="updateExpectedFailures()">Only show unexpected results</label>';
+        html += '<label><input id="unexpected-results" type=checkbox checked onchange="updateExpectedFailures()">Only show unexpected results</label>';
+
+    html += '<label><input id="toggle-images" type=checkbox checked onchange="updateTogglingImages()">Toggle images</label>';
 
     html += '</div>';
 
@@ -665,7 +804,7 @@ function generatePage()
         html += '<p>Tests where results did not match expected results:</p>' +
             '<table id="results-table"><thead><tr>' +
             '<th>test</th>' +
-            '<th id="text-results-header">text results</th>' +
+            '<th id="text-results-header">results</th>' +
             '<th id="image-results-header">image results</th>' +
             '<th>failure type</th>';
 
@@ -696,8 +835,10 @@ function generatePage()
         TableSorter.sortColumn(0);
         if (!globalState().hasTextFailures)
             document.getElementById('text-results-header').textContent = '';
-        if (!globalState().hasImageFailures)
+        if (!globalState().hasImageFailures) {
             document.getElementById('image-results-header').textContent = '';
+            parentOfType(document.getElementById('toggle-images'), 'label').style.display = 'none';
+        }
     }
     
     updateExpectedFailures();

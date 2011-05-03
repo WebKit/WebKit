@@ -102,6 +102,7 @@ class TestResultWriter(object):
     FILENAME_SUFFIX_WDIFF = "-wdiff.html"
     FILENAME_SUFFIX_PRETTY_PATCH = "-pretty-diff.html"
     FILENAME_SUFFIX_IMAGE_DIFF = "-diff.png"
+    FILENAME_SUFFIX_IMAGE_DIFFS_HTML = "-diffs.html"
 
     def __init__(self, port, root_output_dir, filename):
         self._port = port
@@ -212,7 +213,38 @@ class TestResultWriter(object):
         # It might be better to extract 'diff' code and make it a separate function.
         # To do so, we have to change port.diff_image() as well.
         diff_filename = self.output_filename(self.FILENAME_SUFFIX_IMAGE_DIFF)
-        return self._port.diff_image(actual_image, expected_image, diff_filename)
+        images_are_different = self._port.diff_image(actual_image, expected_image, diff_filename)
+
+        if not images_are_different:
+            return False
+
+        diffs_html_filename = self.output_filename(self.FILENAME_SUFFIX_IMAGE_DIFFS_HTML)
+        # FIXME: old-run-webkit-tests shows the diff percentage as the text contents of the "diff" link.
+        # FIXME: old-run-webkit-tests include a link to the test file.
+        html = """<!DOCTYPE HTML><title>%(title)s</title>
+<style>.label{font-weight:bold}</style>
+Difference between images: <a href="%(diff_filename)s">diff</a><br>
+<div class=imageText></div><img class=animatedImage data-prefix="%(prefix)s"></img>;
+<script>
+    function toggleImages()
+    {
+        var image = document.querySelector('.animatedImage');
+        var text = document.querySelector('.imageText');
+        if (text.textContent == 'Expected Image') {
+            text.textContent = 'Actual Image';
+            image.src = image.getAttribute('data-prefix') + '-actual.png';
+        } else {
+            text.textContent = 'Expected Image';
+            image.src = image.getAttribute('data-prefix') + '-expected.png';
+        }
+    }
+    toggleImages();
+    setInterval(toggleImages, 2000)
+</script>
+""" % { 'title': self._testname, 'diff_filename': self.output_filename('-diff.png'), 'prefix': self.output_filename('') }
+        self._port._filesystem.write_binary_file(diffs_html_filename, html)
+
+        return True
 
     def copy_file(self, src_filepath, dst_extension):
         fs = self._port._filesystem
