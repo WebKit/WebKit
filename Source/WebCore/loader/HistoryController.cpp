@@ -33,6 +33,7 @@
 
 #include "BackForwardController.h"
 #include "CachedPage.h"
+#include "Document.h"
 #include "DocumentLoader.h"
 #include "Frame.h"
 #include "FrameLoader.h"
