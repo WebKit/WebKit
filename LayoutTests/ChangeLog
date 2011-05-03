@@ -1,3 +1,12 @@
+2011-05-03  Dan Bernstein  <mitz@apple.com>
+
+        Rubber-stamped by Darin Adler.
+
+        Account for font metric differences exposed by r85411.
+        Fixes <rdar://problem/9377892> REGRESSION (r85403-r85475): platform/mac/fast/text/ligature-subdivision.html failing
+
+        * platform/mac/fast/text/script-tests/ligature-subdivision.js:
+
 2011-05-03  Tony Chang  <tony@chromium.org>
 
         Update results for fast/harness/results.html.  We shouldn't be
