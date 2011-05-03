@@ -1,3 +1,14 @@
+2011-05-02  Eric Uhrhane  <ericu@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        Some FileWriter progress events should be queued
+        https://bugs.webkit.org/show_bug.cgi?id=50846
+
+        * fileapi/FileWriter.cpp:
+        * fileapi/FileWriter.h:
+        Create a new asynchronous Task [FileWriterCompletionEventTask] that will set readyState to DONE and fire off the right events.
+
 2011-05-02  Jia Pu  <jpu@apple.com>
 
         Reviewed by Alexey Proskuryakov.

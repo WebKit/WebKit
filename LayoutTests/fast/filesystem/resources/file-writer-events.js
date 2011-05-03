@@ -49,7 +49,7 @@ function onProgress(e) {
 }
 
 function onWrite(e) {
-    assert(writer.readyState == writer.WRITING);
+    assert(writer.readyState == writer.DONE);
     assert(sawWriteStart);
     assert(sawProgress);
     assert(lastProgress == e.total);

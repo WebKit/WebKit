@@ -36,6 +36,7 @@
 #include "ActiveDOMObject.h"
 #include "EventTarget.h"
 #include "FileWriterBase.h"
+#include "ScriptExecutionContext.h"
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefPtr.h>
 
@@ -101,6 +102,31 @@ private:
     void fireEvent(const AtomicString& type);
 
     void setError(FileError::ErrorCode, ExceptionCode&);
+
+    void signalCompletion(FileError::ErrorCode);
+
+    class FileWriterCompletionEventTask : public ScriptExecutionContext::Task {
+    public:
+        static PassOwnPtr<FileWriterCompletionEventTask> create(PassRefPtr<FileWriter> fileWriter, FileError::ErrorCode code)
+        {
+            return adoptPtr(new FileWriterCompletionEventTask(fileWriter, code));
+        }
+
+
+        virtual void performTask(ScriptExecutionContext*)
+        {
+            m_fileWriter->signalCompletion(m_code);
+        }
+    private:
+        FileWriterCompletionEventTask(PassRefPtr<FileWriter> fileWriter, FileError::ErrorCode code)
+            : m_fileWriter(fileWriter)
+            , m_code(code)
+        {
+        }
+
+        RefPtr<FileWriter> m_fileWriter;
+        FileError::ErrorCode m_code;
+    };
 
     RefPtr<FileError> m_error;
     EventTargetData m_eventTargetData;

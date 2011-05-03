@@ -1,3 +1,15 @@
+2011-05-02  Eric Uhrhane  <ericu@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        Some FileWriter progress events should be queued
+        https://bugs.webkit.org/show_bug.cgi?id=50846
+
+        * fast/filesystem/resources/file-writer-events.js:
+        (onWrite): Expect readyState at onwrite to be DONE now, not WRITING.
+        * fast/filesystem/resources/file-writer-utils.js:
+        Switch to using onwrite, now that it works.
+
 2011-05-02  Mark Pilgrim  <pilgrim@chromium.org>
 
         Reviewed by Tony Chang.

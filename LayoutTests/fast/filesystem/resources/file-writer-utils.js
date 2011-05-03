@@ -116,8 +116,8 @@ function createEmptyFile(fileSystem, fileName, onSuccess)
         return function(fileWriter) {
             var successFunc = getSuccessFunc(fileEntry);
             fileWriter.onError = onError;
-            // FIXME: This should be onwrite, but the spec and code need to be changed to allow that.  See https://bugs.webkit.org/show_bug.cgi?id=50846.
-            fileWriter.onwriteend = function() {
+            fileWriter.onwrite = function() {
+                fileWriter.onwrite = null;
                 verifyFileLength(fileEntry, 0, successFunc);
             };
             fileWriter.truncate(0);
@@ -143,17 +143,16 @@ function writeString(fileEntry, fileWriter, offset, data, onSuccess)
     if (offset < 0)
         offset += fileWriter.length;
     assert(offset >= 0);
-    // FIXME: This should be onwrite, but the spec and code need to be changed to allow that.  See https://bugs.webkit.org/show_bug.cgi?id=50846.
-    fileWriter.onwriteend = function() {
-        fileWriter.onwriteend = null;
+    fileWriter.onwrite = function() {
+        fileWriter.onwrite = null;
         verifyByteRangeAsString(fileEntry, offset, data, onSuccess);
     };
 }
 
 function setFileContents(fileEntry, fileWriter, contents, onSuccess) {
     fileWriter.onerror = onError;
-    // FIXME: This should be onwrite, but the spec and code need to be changed to allow that.  See https://bugs.webkit.org/show_bug.cgi?id=50846.
-    fileWriter.onwriteend = function() {
+    fileWriter.onwrite = function() {
+        fileWriter.onwrite = null;
         writeString(fileEntry, fileWriter, 0, contents, onSuccess);
     };
     fileWriter.truncate(0);

@@ -133,7 +133,6 @@ void FileWriter::abort(ExceptionCode& ec)
         return;
     }
 
-    m_error = FileError::create(FileError::ABORT_ERR);
     writer()->abort();
 }
 
@@ -153,9 +152,7 @@ void FileWriter::didWrite(long long bytes, bool complete)
     fireEvent(eventNames().progressEvent);
     if (complete) {
         m_blobBeingWritten.clear();
-        fireEvent(eventNames().writeEvent);
-        m_readyState = DONE;
-        fireEvent(eventNames().writeendEvent);
+        scriptExecutionContext()->postTask(FileWriterCompletionEventTask::create(this, FileError::OK));
     }
 }
 
@@ -167,20 +164,26 @@ void FileWriter::didTruncate()
     if (position() > length())
         setPosition(length());
     m_truncateLength = -1;
-    fireEvent(eventNames().writeEvent);
-    m_readyState = DONE;
-    fireEvent(eventNames().writeendEvent);
+    scriptExecutionContext()->postTask(FileWriterCompletionEventTask::create(this, FileError::OK));
 }
 
 void FileWriter::didFail(FileError::ErrorCode code)
 {
-    m_error = FileError::create(code);
-    fireEvent(eventNames().errorEvent);
-    if (FileError::ABORT_ERR == code)
-        fireEvent(eventNames().abortEvent);
-    fireEvent(eventNames().errorEvent);
+    ASSERT(code != FileError::OK);
     m_blobBeingWritten.clear();
+    scriptExecutionContext()->postTask(FileWriterCompletionEventTask::create(this, code));
+}
+
+void FileWriter::signalCompletion(FileError::ErrorCode code)
+{
     m_readyState = DONE;
+    if (FileError::OK != code) {
+        m_error = FileError::create(code);
+        fireEvent(eventNames().errorEvent);
+        if (FileError::ABORT_ERR == code)
+            fireEvent(eventNames().abortEvent);
+    } else
+        fireEvent(eventNames().writeEvent);
     fireEvent(eventNames().writeendEvent);
 }
 
