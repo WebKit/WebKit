@@ -47,6 +47,14 @@
 
         Build fix. Not reviewed.
 
+        Test expectation change after r85674.
+
+        * platform/chromium-linux/platform/chromium-linux/fast/text/international/complex-joining-using-gpos-expected.png: Added.
+
+2011-05-03  Alpha Lam  <hclam@chromium.org>
+
+        Build fix. Not reviewed.
+
         Add test expectations for new tests.
 
         * platform/chromium-linux/editing/selection/select-across-readonly-input-1-expected.png: Added.
