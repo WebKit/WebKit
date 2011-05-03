@@ -443,6 +443,91 @@ static void updateLogicalWidthForCenterAlignedBlock(bool isLeftToRightDirection,
         logicalLeft += totalLogicalWidth > availableLogicalWidth ? (availableLogicalWidth - totalLogicalWidth) : (availableLogicalWidth - totalLogicalWidth) / 2 - trailingSpaceWidth;
 }
 
+void RenderBlock::setMarginsForRubyRun(BidiRun* run, RenderRubyRun* renderer, RenderObject* previousObject, const LineInfo& lineInfo)
+{
+    int startOverhang;
+    int endOverhang;
+    RenderObject* nextObject = 0;
+    for (BidiRun* runWithNextObject = run->next(); runWithNextObject; runWithNextObject = runWithNextObject->next()) {
+        if (!runWithNextObject->m_object->isPositioned() && !runWithNextObject->m_box->isLineBreak()) {
+            nextObject = runWithNextObject->m_object;
+            break;
+        }
+    }
+    renderer->getOverhang(lineInfo.isFirstLine(), renderer->style()->isLeftToRightDirection() ? previousObject : nextObject, renderer->style()->isLeftToRightDirection() ? nextObject : previousObject, startOverhang, endOverhang);
+    setMarginStartForChild(renderer, -startOverhang);
+    setMarginEndForChild(renderer, -endOverhang);
+}
+
+static inline void setLogicalWidthForTextRun(RootInlineBox* lineBox, BidiRun* run, RenderText* renderer, float xPos, const LineInfo& lineInfo,
+                                   GlyphOverflowAndFallbackFontsMap& textBoxDataMap, VerticalPositionCache& verticalPositionCache)
+{
+    HashSet<const SimpleFontData*> fallbackFonts;
+    GlyphOverflow glyphOverflow;
+    
+    // Always compute glyph overflow if the block's line-box-contain value is "glyphs".
+    if (lineBox->fitsToGlyphs()) {
+        // If we don't stick out of the root line's font box, then don't bother computing our glyph overflow. This optimization
+        // will keep us from computing glyph bounds in nearly all cases.
+        bool includeRootLine = lineBox->includesRootLineBoxFontOrLeading();
+        int baselineShift = lineBox->verticalPositionForBox(run->m_box, verticalPositionCache);
+        int rootDescent = includeRootLine ? lineBox->renderer()->style(lineInfo.isFirstLine())->font().fontMetrics().descent() : 0;
+        int rootAscent = includeRootLine ? lineBox->renderer()->style(lineInfo.isFirstLine())->font().fontMetrics().ascent() : 0;
+        int boxAscent = renderer->style(lineInfo.isFirstLine())->font().fontMetrics().ascent() - baselineShift;
+        int boxDescent = renderer->style(lineInfo.isFirstLine())->font().fontMetrics().descent() + baselineShift;
+        if (boxAscent > rootDescent ||  boxDescent > rootAscent)
+            glyphOverflow.computeBounds = true; 
+    }
+    
+    int hyphenWidth = 0;
+    if (static_cast<InlineTextBox*>(run->m_box)->hasHyphen()) {
+        const AtomicString& hyphenString = renderer->style()->hyphenString();
+        hyphenWidth = renderer->style(lineInfo.isFirstLine())->font().width(TextRun(hyphenString.characters(), hyphenString.length()));
+    }
+    run->m_box->setLogicalWidth(renderer->width(run->m_start, run->m_stop - run->m_start, xPos, lineInfo.isFirstLine(), &fallbackFonts, &glyphOverflow) + hyphenWidth);
+    if (!fallbackFonts.isEmpty()) {
+        ASSERT(run->m_box->isText());
+        GlyphOverflowAndFallbackFontsMap::iterator it = textBoxDataMap.add(static_cast<InlineTextBox*>(run->m_box), make_pair(Vector<const SimpleFontData*>(), GlyphOverflow())).first;
+        ASSERT(it->second.first.isEmpty());
+        copyToVector(fallbackFonts, it->second.first);
+        run->m_box->parent()->clearDescendantsHaveSameLineHeightAndBaseline();
+    }
+    if ((glyphOverflow.top || glyphOverflow.bottom || glyphOverflow.left || glyphOverflow.right)) {
+        ASSERT(run->m_box->isText());
+        GlyphOverflowAndFallbackFontsMap::iterator it = textBoxDataMap.add(static_cast<InlineTextBox*>(run->m_box), make_pair(Vector<const SimpleFontData*>(), GlyphOverflow())).first;
+        it->second.second = glyphOverflow;
+        run->m_box->clearKnownToHaveNoOverflow();
+    }
+}
+
+static inline void computeExpansionForJustifiedText(BidiRun* firstRun, BidiRun* trailingSpaceRun, Vector<unsigned, 16>& expansionOpportunities, unsigned expansionOpportunityCount, float& totalLogicalWidth, float availableLogicalWidth)
+{
+    if (expansionOpportunityCount && availableLogicalWidth > totalLogicalWidth) {
+        size_t i = 0;
+        for (BidiRun* r = firstRun; r; r = r->next()) {
+            if (!r->m_box || r == trailingSpaceRun)
+                continue;
+            
+            if (r->m_object->isText()) {
+                unsigned opportunitiesInRun = expansionOpportunities[i++];
+                
+                ASSERT(opportunitiesInRun <= expansionOpportunityCount);
+                
+                // Only justify text if whitespace is collapsed.
+                if (r->m_object->style()->collapseWhiteSpace()) {
+                    InlineTextBox* textBox = static_cast<InlineTextBox*>(r->m_box);
+                    float expansion = (availableLogicalWidth - totalLogicalWidth) * opportunitiesInRun / expansionOpportunityCount;
+                    textBox->setExpansion(expansion);
+                    totalLogicalWidth += expansion;
+                }
+                expansionOpportunityCount -= opportunitiesInRun;
+                if (!expansionOpportunityCount)
+                    break;
+            }
+        }
+    }
+}
+
 void RenderBlock::computeInlineDirectionPositionsForLine(RootInlineBox* lineBox, const LineInfo& lineInfo, BidiRun* firstRun, BidiRun* trailingSpaceRun, bool reachedEnd,
                                                          GlyphOverflowAndFallbackFontsMap& textBoxDataMap, VerticalPositionCache& verticalPositionCache)
 {
@@ -464,7 +549,6 @@ void RenderBlock::computeInlineDirectionPositionsForLine(RootInlineBox* lineBox,
                       // Similarly, line break boxes have no effect on the width.
         if (r->m_object->isText()) {
             RenderText* rt = toRenderText(r->m_object);
-
             if (textAlign == JUSTIFY && r != trailingSpaceRun) {
                 if (!isAfterExpansion)
                     static_cast<InlineTextBox*>(r->m_box)->setCanHaveLeadingExpansion(true);
@@ -478,60 +562,14 @@ void RenderBlock::computeInlineDirectionPositionsForLine(RootInlineBox* lineBox,
                     totalLogicalWidth += rt->style(lineInfo.isFirstLine())->font().wordSpacing();
                 needsWordSpacing = !isSpaceOrNewline(rt->characters()[r->m_stop - 1]) && r->m_stop == length;
             }
-            HashSet<const SimpleFontData*> fallbackFonts;
-            GlyphOverflow glyphOverflow;
 
-            // Always compute glyph overflow if the block's line-box-contain value is "glyphs".
-            if (lineBox->fitsToGlyphs()) {
-                // If we don't stick out of the root line's font box, then don't bother computing our glyph overflow. This optimization
-                // will keep us from computing glyph bounds in nearly all cases.
-                bool includeRootLine = lineBox->includesRootLineBoxFontOrLeading();
-                int baselineShift = lineBox->verticalPositionForBox(r->m_box, verticalPositionCache);
-                int rootDescent = includeRootLine ? lineBox->renderer()->style(lineInfo.isFirstLine())->font().fontMetrics().descent() : 0;
-                int rootAscent = includeRootLine ? lineBox->renderer()->style(lineInfo.isFirstLine())->font().fontMetrics().ascent() : 0;
-                int boxAscent = rt->style(lineInfo.isFirstLine())->font().fontMetrics().ascent() - baselineShift;
-                int boxDescent = rt->style(lineInfo.isFirstLine())->font().fontMetrics().descent() + baselineShift;
-                if (boxAscent > rootDescent ||  boxDescent > rootAscent)
-                    glyphOverflow.computeBounds = true;
-            }
-
-            int hyphenWidth = 0;
-            if (static_cast<InlineTextBox*>(r->m_box)->hasHyphen()) {
-                const AtomicString& hyphenString = rt->style()->hyphenString();
-                hyphenWidth = rt->style(lineInfo.isFirstLine())->font().width(TextRun(hyphenString.characters(), hyphenString.length()));
-            }
-            r->m_box->setLogicalWidth(rt->width(r->m_start, r->m_stop - r->m_start, totalLogicalWidth, lineInfo.isFirstLine(), &fallbackFonts, &glyphOverflow) + hyphenWidth);
-            if (!fallbackFonts.isEmpty()) {
-                ASSERT(r->m_box->isText());
-                GlyphOverflowAndFallbackFontsMap::iterator it = textBoxDataMap.add(static_cast<InlineTextBox*>(r->m_box), make_pair(Vector<const SimpleFontData*>(), GlyphOverflow())).first;
-                ASSERT(it->second.first.isEmpty());
-                copyToVector(fallbackFonts, it->second.first);
-                r->m_box->parent()->clearDescendantsHaveSameLineHeightAndBaseline();
-            }
-            if ((glyphOverflow.top || glyphOverflow.bottom || glyphOverflow.left || glyphOverflow.right)) {
-                ASSERT(r->m_box->isText());
-                GlyphOverflowAndFallbackFontsMap::iterator it = textBoxDataMap.add(static_cast<InlineTextBox*>(r->m_box), make_pair(Vector<const SimpleFontData*>(), GlyphOverflow())).first;
-                it->second.second = glyphOverflow;
-                r->m_box->clearKnownToHaveNoOverflow();
-            }
+            setLogicalWidthForTextRun(lineBox, r, rt, totalLogicalWidth, lineInfo, textBoxDataMap, verticalPositionCache);
         } else {
             isAfterExpansion = false;
             if (!r->m_object->isRenderInline()) {
                 RenderBox* renderBox = toRenderBox(r->m_object);
-                if (renderBox->isRubyRun()) {
-                    int startOverhang;
-                    int endOverhang;
-                    RenderObject* nextObject = 0;
-                    for (BidiRun* runWithNextObject = r->next(); runWithNextObject; runWithNextObject = runWithNextObject->next()) {
-                        if (!runWithNextObject->m_object->isPositioned() && !runWithNextObject->m_box->isLineBreak()) {
-                            nextObject = runWithNextObject->m_object;
-                            break;
-                        }
-                    }
-                    toRenderRubyRun(renderBox)->getOverhang(lineInfo.isFirstLine(), renderBox->style()->isLeftToRightDirection() ? previousObject : nextObject, renderBox->style()->isLeftToRightDirection() ? nextObject : previousObject, startOverhang, endOverhang);
-                    setMarginStartForChild(renderBox, -startOverhang);
-                    setMarginEndForChild(renderBox, -endOverhang);
-                }
+                if (renderBox->isRubyRun())
+                    setMarginsForRubyRun(r, toRenderRubyRun(renderBox), previousObject, lineInfo);
                 r->m_box->setLogicalWidth(logicalWidthForChild(renderBox));
                 totalLogicalWidth += marginStartForChild(renderBox) + marginEndForChild(renderBox);
             }
@@ -594,30 +632,7 @@ void RenderBlock::computeInlineDirectionPositionsForLine(RootInlineBox* lineBox,
             break;
     }
 
-    if (expansionOpportunityCount && availableLogicalWidth > totalLogicalWidth) {
-        size_t i = 0;
-        for (BidiRun* r = firstRun; r; r = r->next()) {
-            if (!r->m_box || r == trailingSpaceRun)
-                continue;
-
-            if (r->m_object->isText()) {
-                unsigned opportunitiesInRun = expansionOpportunities[i++];
-
-                ASSERT(opportunitiesInRun <= expansionOpportunityCount);
-
-                // Only justify text if whitespace is collapsed.
-                if (r->m_object->style()->collapseWhiteSpace()) {
-                    InlineTextBox* textBox = static_cast<InlineTextBox*>(r->m_box);
-                    float expansion = (availableLogicalWidth - totalLogicalWidth) * opportunitiesInRun / expansionOpportunityCount;
-                    textBox->setExpansion(expansion);
-                    totalLogicalWidth += expansion;
-                }
-                expansionOpportunityCount -= opportunitiesInRun;
-                if (!expansionOpportunityCount)
-                    break;
-            }
-        }
-    }
+    computeExpansionForJustifiedText(firstRun, trailingSpaceRun, expansionOpportunities, expansionOpportunityCount, totalLogicalWidth, availableLogicalWidth);
 
     // The widths of all runs are now known.  We can now place every inline box (and
     // compute accurate widths for the inline flow boxes).

@@ -1,3 +1,22 @@
+2011-05-03  Levi Weintraub  <leviw@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        Refactor computeInlineDirectionPositionsForLine into smaller functions
+        https://bugs.webkit.org/show_bug.cgi?id=60072
+
+        Split three functions off from computeInlineDirectionPositionsForLine
+        to improve its readability.
+
+        No new tests since this is just moving code around.
+
+        * rendering/RenderBlock.h:
+        * rendering/RenderBlockLineLayout.cpp:
+        (WebCore::RenderBlock::setMarginsForRubyRun):
+        (WebCore::setLogicalWidthForTextRun):
+        (WebCore::computeExpansionForJustifiedText):
+        (WebCore::RenderBlock::computeInlineDirectionPositionsForLine):
+
 2011-05-03  David Kilzer  <ddkilzer@apple.com>
 
         <http://webkit.org/b/59838> Implement HTTP pipelining for CoreFoundation-based networking

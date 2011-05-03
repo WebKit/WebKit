@@ -44,6 +44,7 @@ class RenderText;
 struct BidiRun;
 struct PaintInfo;
 class LineInfo;
+class RenderRubyRun;
 
 template <class Iterator, class Run> class BidiResolver;
 template <class Run> class BidiRunList;
@@ -505,6 +506,8 @@ private:
                                      EClear*, FloatingObject* lastFloatFromPreviousLine, Vector<RenderBox*>& positionedObjects);
     RootInlineBox* constructLine(BidiRunList<BidiRun>&, const LineInfo&);
     InlineFlowBox* createLineBoxes(RenderObject*, const LineInfo&, InlineBox* childBox);
+
+    void setMarginsForRubyRun(BidiRun*, RenderRubyRun*, RenderObject*, const LineInfo&);
 
     void computeInlineDirectionPositionsForLine(RootInlineBox*, const LineInfo&, BidiRun* firstRun, BidiRun* trailingSpaceRun, bool reachedEnd, GlyphOverflowAndFallbackFontsMap&, VerticalPositionCache&);
     void computeBlockDirectionPositionsForLine(RootInlineBox*, BidiRun*, GlyphOverflowAndFallbackFontsMap&, VerticalPositionCache&);
