@@ -1,3 +1,13 @@
+2011-05-02  Mark Pilgrim  <pilgrim@chromium.org>
+
+        Reviewed by Tony Chang.
+
+        Port Mozilla's IndexedDB tests: adding and removing values
+        https://bugs.webkit.org/show_bug.cgi?id=59953
+
+        * storage/indexeddb/mozilla/object-store-remove-values-expected.txt: Added.
+        * storage/indexeddb/mozilla/object-store-remove-values.html: Added.
+
 2011-05-02  Alpha Lam  <hclam@chromium.org>
 
         Not reviewed. Build fix.

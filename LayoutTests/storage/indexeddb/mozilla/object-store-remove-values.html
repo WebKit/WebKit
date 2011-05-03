@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<!--
+  original test: http://mxr.mozilla.org/mozilla2.0/source/dom/indexedDB/test/test_objectStore_remove_values.html?force=1
+  license of original test:
+    " Any copyright is dedicated to the Public Domain.
+      http://creativecommons.org/publicdomain/zero/1.0/ "
+-->
+<html>
+<head>
+<link rel="stylesheet" href="../../../fast/js/resources/js-test-style.css">
+<script src="../../../fast/js/resources/js-test-pre.js"></script>
+<script src="../../../fast/js/resources/js-test-post-function.js"></script>
+<script src="../resources/shared.js"></script>
+</head>
+<body>
+<p id="description"></p>
+<div id="console"></div>
+<script>
+
+description("Test IndexedDB: adds, gets, deletes, and re-gets a record in a variety of different object store configurations");
+if (window.layoutTestController)
+    layoutTestController.waitUntilDone();
+
+function test()
+{
+    indexedDB = evalAndLog("indexedDB = window.indexedDB || window.webkitIndexedDB || window.mozIndexedDB;");
+    shouldBeFalse("indexedDB == null");
+
+    name = window.location.pathname;
+    description = "My Test Database";
+    request = evalAndLog("indexedDB.open(name, description)");
+    request.onsuccess = openSuccess;
+    request.onerror = unexpectedErrorCallback;
+}
+
+function openSuccess()
+{
+    db = evalAndLog("db = event.target.result");
+
+    data = evalAndLog("data = [\n" +
+"        { name: 'inline key; key generator',\n" +
+"          autoIncrement: true,\n" +
+"          storedObject: {name: 'Lincoln'},\n" +
+"          keyName: 'id',\n" +
+"          keyValue: undefined,\n" +
+"        },\n" +
+"        { name: 'inline key; no key generator',\n" +
+"          autoIncrement: false,\n" +
+"          storedObject: {id: 1, name: 'Lincoln'},\n" +
+"          keyName: 'id',\n" +
+"          keyValue: undefined,\n" +
+"        },\n" +
+"        { name: 'out of line key; key generator',\n" +
+"          autoIncrement: true,\n" +
+"          storedObject: {name: 'Lincoln'},\n" +
+"          keyName: undefined,\n" +
+"          keyValue: undefined,\n" +
+"        },\n" +
+"        { name: 'out of line key; no key generator',\n" +
+"          autoIncrement: false,\n" +
+"          storedObject: {name: 'Lincoln'},\n" +
+"          keyName: undefined,\n" +
+"          keyValue: 1,\n" +
+"        }\n" +
+"    ];");
+
+    i = evalAndLog("i = 0;");
+    setVersion();
+}
+
+function setVersion()
+{
+    if (i < data.length) {
+        test = data[i];
+        request = evalAndLog("request = db.setVersion('1')");
+        request.onsuccess = createObjectStore;
+        request.onerror = unexpectedErrorCallback;
+    } else {
+        done();
+    }
+}
+
+function createObjectStore()
+{
+    deleteAllObjectStores(db);
+
+    if (test.keyName) {
+        objectStore = evalAndLog("objectStore = db.createObjectStore(test.name, { keyPath: test.keyName, autoIncrement: test.autoIncrement });");
+    } else {
+        objectStore = evalAndLog("objectStore = db.createObjectStore(test.name, { autoIncrement: test.autoIncrement });");
+    }
+    if (test.keyValue) {
+        request = evalAndLog("request = objectStore.add(test.storedObject, test.keyValue);");
+    } else {
+        request = evalAndLog("request = objectStore.add(test.storedObject);");
+    }
+    request.onsuccess = getRecord;
+    request.onerror = unexpectedErrorCallback;
+}
+
+function getRecord()
+{
+    id = evalAndLog("id = event.target.result;");
+    request = evalAndLog("request = objectStore.get(id);");
+    request.onerror = unexpectedErrorCallback;
+    request.onsuccess = deleteRecord;
+}
+
+function deleteRecord()
+{
+    shouldBe("test.storedObject.name", "event.target.result.name");
+
+    request = evalAndLog("request = objectStore.delete(id);");
+    request.onerror = unexpectedErrorCallback;
+    request.onsuccess = getRecordAgain;
+}
+
+function getRecordAgain()
+{
+    request = evalAndLog("request = objectStore.get(id);");
+    request.onerror = unexpectedErrorCallback;
+    request.onsuccess = finalCheck;
+}
+
+function finalCheck()
+{
+    shouldBeTrue("event.target.result === undefined");
+    i++;
+    setVersion();
+}
+
+var successfullyParsed = true;
+
+test();
+
+</script>
+</body>
+</html>
+
