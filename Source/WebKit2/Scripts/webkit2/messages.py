@@ -593,11 +593,18 @@ def generate_message_handler(file):
     if async_dispatch_on_connection_queue_messages:
         result.append('bool %s::willProcess%sMessageOnClientRunLoop(CoreIPC::Connection*, CoreIPC::MessageID messageID, CoreIPC::ArgumentDecoder* arguments)\n' % (receiver.name, receiver.name))
         result.append('{\n')
+        result.append('#if COMPILER(MSVC)\n')
+        result.append('#pragma warning(push)\n')
+        result.append('#pragma warning(disable: 4065)\n')
+        result.append('#endif\n')
         result.append('    switch (messageID.get<Messages::%s::Kind>()) {\n' % receiver.name)
         result += [async_case_statement(receiver, message, 'false') for message in async_dispatch_on_connection_queue_messages]
         result.append('    default:\n')
         result.append('        return true;\n')
         result.append('    }\n')
+        result.append('#if COMPILER(MSVC)\n')
+        result.append('#pragma warning(pop)\n')
+        result.append('#endif\n')
         result.append('}\n\n')
 
     if async_messages:

@@ -602,6 +602,10 @@ namespace WebKit {
 
 bool WebPage::willProcessWebPageMessageOnClientRunLoop(CoreIPC::Connection*, CoreIPC::MessageID messageID, CoreIPC::ArgumentDecoder* arguments)
 {
+#if COMPILER(MSVC)
+#pragma warning(push)
+#pragma warning(disable: 4065)
+#endif
     switch (messageID.get<Messages::WebPage::Kind>()) {
     case Messages::WebPage::TestConnectionQueueID:
         CoreIPC::handleMessage<Messages::WebPage::TestConnectionQueue>(arguments, this, &WebPage::testConnectionQueue);
@@ -609,6 +613,9 @@ bool WebPage::willProcessWebPageMessageOnClientRunLoop(CoreIPC::Connection*, Cor
     default:
         return true;
     }
+#if COMPILER(MSVC)
+#pragma warning(pop)
+#endif
 }
 
 void WebPage::didReceiveWebPageMessage(CoreIPC::Connection*, CoreIPC::MessageID messageID, CoreIPC::ArgumentDecoder* arguments)

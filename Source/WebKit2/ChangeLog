@@ -1,5 +1,12 @@
 2011-05-02  Anders Carlsson  <andersca@apple.com>
 
+        Try to fix Windows build.
+
+        * Scripts/webkit2/messages.py:
+        * Scripts/webkit2/messages_unittest.py:
+
+2011-05-02  Anders Carlsson  <andersca@apple.com>
+
         Reviewed by Oliver Hunt.
 
         Dispatch the PluginProcessCrashed on the connection work queue
