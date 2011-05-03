@@ -1,3 +1,37 @@
+2011-05-02  Alpha Lam  <hclam@chromium.org>
+
+        Not reviewed. Build fix.
+
+        New baselines for SVG tests for Chromium Leopard build.
+
+        * platform/chromium-mac-leopard/svg/W3C-SVG-1.1/filters-color-01-b-expected.png: Added.
+        * platform/chromium-mac-leopard/svg/W3C-SVG-1.1/filters-specular-01-f-expected.png: Added.
+        * platform/chromium-mac-leopard/svg/W3C-SVG-1.1/filters-turb-01-f-expected.png: Added.
+        * platform/chromium-mac-leopard/svg/W3C-SVG-1.1/masking-mask-01-b-expected.png: Added.
+        * platform/chromium-mac-leopard/svg/dynamic-updates/SVGFEColorMatrixElement-dom-in-attr-expected.png: Added.
+        * platform/chromium-mac-leopard/svg/dynamic-updates/SVGFEColorMatrixElement-dom-type-attr-expected.png: Added.
+        * platform/chromium-mac-leopard/svg/dynamic-updates/SVGFEColorMatrixElement-dom-values-attr-expected.png: Added.
+        * platform/chromium-mac-leopard/svg/dynamic-updates/SVGFEColorMatrixElement-svgdom-in-prop-expected.png: Added.
+        * platform/chromium-mac-leopard/svg/dynamic-updates/SVGFESpecularLightingElement-dom-in-attr-expected.png: Added.
+        * platform/chromium-mac-leopard/svg/dynamic-updates/SVGFESpecularLightingElement-dom-specularConstant-attr-expected.png: Added.
+        * platform/chromium-mac-leopard/svg/dynamic-updates/SVGFESpecularLightingElement-dom-specularExponent-attr-expected.png: Added.
+        * platform/chromium-mac-leopard/svg/dynamic-updates/SVGFESpecularLightingElement-dom-suraceScale-attr-expected.png: Added.
+        * platform/chromium-mac-leopard/svg/dynamic-updates/SVGFESpecularLightingElement-svgdom-in-prop-expected.png: Added.
+        * platform/chromium-mac-leopard/svg/dynamic-updates/SVGFESpecularLightingElement-svgdom-specularConstant-prop-expected.png: Added.
+        * platform/chromium-mac-leopard/svg/dynamic-updates/SVGFESpecularLightingElement-svgdom-specularExponent-prop-expected.png: Added.
+        * platform/chromium-mac-leopard/svg/dynamic-updates/SVGFESpecularLightingElement-svgdom-suraceScale-prop-expected.png: Added.
+        * platform/chromium-mac-leopard/svg/dynamic-updates/SVGFETurbulenceElement-dom-baseFrequency-attr-expected.png: Added.
+        * platform/chromium-mac-leopard/svg/dynamic-updates/SVGFETurbulenceElement-dom-numOctaves-attr-expected.png: Added.
+        * platform/chromium-mac-leopard/svg/dynamic-updates/SVGFETurbulenceElement-dom-seed-attr-expected.png: Added.
+        * platform/chromium-mac-leopard/svg/dynamic-updates/SVGFETurbulenceElement-dom-stitchTiles-attr-expected.png: Added.
+        * platform/chromium-mac-leopard/svg/dynamic-updates/SVGFETurbulenceElement-dom-type-attr-expected.png: Added.
+        * platform/chromium-mac-leopard/svg/dynamic-updates/SVGFETurbulenceElement-svgdom-numOctaves-prop-expected.png: Added.
+        * platform/chromium-mac-leopard/svg/dynamic-updates/SVGFETurbulenceElement-svgdom-seed-prop-expected.png: Added.
+        * platform/chromium-mac-leopard/svg/dynamic-updates/SVGFETurbulenceElement-svgdom-stitchTiles-prop-expected.png: Added.
+        * platform/chromium-mac-leopard/svg/dynamic-updates/SVGFETurbulenceElement-svgdom-type-prop-expected.png: Added.
+        * platform/chromium-mac-leopard/svg/filters/feLighting-crash-expected.png: Added.
+        * platform/chromium-mac-leopard/tables/mozilla_expected_failures/other/test4-expected.png: Added.
+
 2011-05-02  Dimitri Glazkov  <dglazkov@chromium.org>
 
         Unreviewed, rolling out r85578.
