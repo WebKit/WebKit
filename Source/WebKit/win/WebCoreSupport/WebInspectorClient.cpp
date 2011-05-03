@@ -171,8 +171,7 @@ void WebInspectorClient::openInspectorFrontend(InspectorController* inspectorCon
         return;
 
     m_frontendPage = core(frontendWebView.get());
-    WebInspectorFrontendClient* frontendClient = new WebInspectorFrontendClient(m_inspectedWebView, m_inspectedWebViewHwnd, frontendHwnd, frontendWebView, frontendWebViewHwnd, this, createFrontendSettings());
-    m_frontendPage->inspectorController()->setInspectorFrontendClient(frontendClient);
+    m_frontendPage->inspectorController()->setInspectorFrontendClient(adoptPtr(new WebInspectorFrontendClient(m_inspectedWebView, m_inspectedWebViewHwnd, frontendHwnd, frontendWebView, frontendWebViewHwnd, this, createFrontendSettings())));
     m_frontendHwnd = frontendHwnd;
 }
 

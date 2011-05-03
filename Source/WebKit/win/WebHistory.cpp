@@ -738,7 +738,7 @@ void WebHistory::visitedURL(const KURL& url, const String& title, const String& 
         entryPrivate->setLastVisitWasHTTPNonGet(!equalIgnoringCase(httpMethod, "GET") && url.protocolInHTTPFamily());
 
     COMPtr<WebHistoryItem> item(Query, entry);
-    item->historyItem()->setRedirectURLs(0);
+    item->historyItem()->setRedirectURLs(nullptr);
 
     COMPtr<CFDictionaryPropertyBag> userInfo = createUserInfoFromHistoryItem(
         getNotificationString(kWebHistoryItemsAddedNotification), entry);

@@ -43,7 +43,7 @@ RefPtr<PositionError>* GeolocationServiceMock::s_lastError;
 PassOwnPtr<GeolocationService> GeolocationServiceMock::create(GeolocationServiceClient* client)
 {
     initStatics();
-    return new GeolocationServiceMock(client);
+    return adoptPtr(new GeolocationServiceMock(client));
 }
 
 GeolocationServiceMock::GeolocationServiceMock(GeolocationServiceClient* client)

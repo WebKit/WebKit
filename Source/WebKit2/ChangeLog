@@ -1,3 +1,15 @@
+2011-05-03  Adam Roben  <aroben@apple.com>
+
+        Fix most strict PassOwnPtr violations on Windows
+
+        Fixes <http://webkit.org/b/60025> Windows should (almost) build with strict PassOwnPtr
+        enabled
+
+        Reviewed by Anders Carlsson.
+
+        * Platform/CoreIPC/win/ConnectionWin.cpp:
+        (CoreIPC::Connection::writeEventHandler): Use nullptr.
+
 2011-05-03  Julien Chaffraix  <jchaffraix@codeaurora.org>
 
         Reviewed by Dimitri Glazkov.

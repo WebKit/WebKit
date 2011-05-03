@@ -6133,7 +6133,7 @@ void WebView::enterFullscreenForNode(Node* node)
         ASSERT(!m_fullScreenVideoController);
     }
 
-    m_fullScreenVideoController = new FullscreenVideoController;
+    m_fullScreenVideoController = adoptPtr(new FullscreenVideoController);
     m_fullScreenVideoController->setMediaElement(videoElement);
     m_fullScreenVideoController->enterFullscreen();
 #endif
@@ -6152,11 +6152,11 @@ static PassOwnPtr<Vector<String> > toStringVector(unsigned patternsCount, BSTR* 
 {
     // Convert the patterns into a Vector.
     if (patternsCount == 0)
-        return 0;
-    Vector<String>* patternsVector = new Vector<String>;
+        return nullptr;
+    OwnPtr<Vector<String> > patternsVector = adoptPtr(new Vector<String>);
     for (unsigned i = 0; i < patternsCount; ++i)
         patternsVector->append(toString(patterns[i]));
-    return patternsVector;
+    return patternsVector.release();
 }
 
 HRESULT WebView::addUserScriptToGroup(BSTR groupName, IWebScriptWorld* iWorld, BSTR source, BSTR url, 
@@ -6427,7 +6427,7 @@ void WebView::setAcceleratedCompositing(bool accelerated)
         m_layerTreeHost->setClient(0);
         m_layerTreeHost->setWindow(0);
         m_layerTreeHost = 0;
-        m_backingLayer = 0;
+        m_backingLayer = nullptr;
         m_isAcceleratedCompositing = false;
     }
 }

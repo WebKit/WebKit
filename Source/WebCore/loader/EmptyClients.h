@@ -539,7 +539,7 @@ public:
     virtual void contextMenuDestroyed() { }
 
 #if USE(CROSS_PLATFORM_CONTEXT_MENUS)
-    virtual PassOwnPtr<ContextMenu> customizeMenu(PassOwnPtr<ContextMenu>) { return 0; }
+    virtual PassOwnPtr<ContextMenu> customizeMenu(PassOwnPtr<ContextMenu>) { return nullptr; }
 #else
     virtual PlatformMenuDescription getCustomMenuFromDefaultItems(ContextMenu*) { return 0; }
 #endif

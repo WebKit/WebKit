@@ -251,7 +251,7 @@ void Connection::writeEventHandler()
 
     // The pending write has finished, so we are now done with its arguments. Clearing this member
     // will allow us to send messages again.
-    m_pendingWriteArguments = 0;
+    m_pendingWriteArguments = nullptr;
 
     // Now that the pending write has finished, we can try to send a new message.
     sendOutgoingMessages();

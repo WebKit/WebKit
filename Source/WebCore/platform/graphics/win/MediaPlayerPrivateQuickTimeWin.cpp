@@ -912,7 +912,7 @@ void MediaPlayerPrivate::destroyLayerForMovie()
 #if USE(ACCELERATED_COMPOSITING)
     if (!m_qtVideoLayer)
         return;
-    m_qtVideoLayer = 0;
+    m_qtVideoLayer = nullptr;
 #endif
 }
 

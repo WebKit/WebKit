@@ -299,7 +299,7 @@ void FullscreenVideoController::exitFullscreen()
     SetWindowLongPtr(m_hudWindow, 0, 0);
 
     if (m_fullscreenWindow)
-        m_fullscreenWindow = 0;
+        m_fullscreenWindow = nullptr;
 
     ASSERT(!IsWindow(m_hudWindow));
     m_hudWindow = 0;

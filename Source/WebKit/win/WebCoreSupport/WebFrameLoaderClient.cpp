@@ -717,8 +717,7 @@ void WebFrameLoaderClient::savePlatformDataToCachedFrame(CachedFrame* cachedFram
 
     ASSERT(coreFrame->loader()->documentLoader() == cachedFrame->documentLoader());
 
-    WebCachedFramePlatformData* webPlatformData = new WebCachedFramePlatformData(static_cast<IWebDataSource*>(getWebDataSource(coreFrame->loader()->documentLoader())));
-    cachedFrame->setCachedFramePlatformData(webPlatformData);
+    cachedFrame->setCachedFramePlatformData(adoptPtr(new WebCachedFramePlatformData(static_cast<IWebDataSource*>(getWebDataSource(coreFrame->loader()->documentLoader())))));
 #else
     notImplemented();
 #endif

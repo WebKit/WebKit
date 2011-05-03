@@ -989,7 +989,7 @@ bool RenderThemeSafari::paintSliderTrack(RenderObject* o, const PaintInfo& paint
 
 void RenderThemeSafari::adjustSliderThumbStyle(CSSStyleSelector* selector, RenderStyle* style, Element* e) const 
 { 
-    style->setBoxShadow(0); 
+    style->setBoxShadow(nullptr); 
 } 
 
 const float verticalSliderHeightPadding = 0.1f;

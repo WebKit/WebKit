@@ -1,3 +1,20 @@
+2011-05-03  Adam Roben  <aroben@apple.com>
+
+        Fix most strict PassOwnPtr violations on Windows
+
+        Fixes <http://webkit.org/b/60025> Windows should (almost) build with strict PassOwnPtr
+        enabled
+
+        Reviewed by Anders Carlsson.
+
+        * loader/EmptyClients.h:
+        * platform/GeolocationService.cpp:
+        * platform/graphics/win/MediaPlayerPrivateQuickTimeVisualContext.cpp:
+        * platform/graphics/win/MediaPlayerPrivateQuickTimeWin.cpp:
+        * platform/mock/GeolocationServiceMock.cpp:
+        * rendering/RenderTheme.cpp:
+        * rendering/RenderThemeSafari.cpp:
+
 2011-05-03  Levi Weintraub  <leviw@chromium.org>
 
         Reviewed by Eric Seidel.

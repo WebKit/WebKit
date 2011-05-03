@@ -38,7 +38,7 @@ namespace WebCore {
 #if !ENABLE(GEOLOCATION) || ENABLE(CLIENT_BASED_GEOLOCATION)
 static PassOwnPtr<GeolocationService> createGeolocationServiceNull(GeolocationServiceClient*)
 {
-    return 0;
+    return nullptr;
 }
 
 GeolocationService::FactoryFunction* GeolocationService::s_factoryFunction = &createGeolocationServiceNull;

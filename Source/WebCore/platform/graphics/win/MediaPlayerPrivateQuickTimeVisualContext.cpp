@@ -885,7 +885,7 @@ void MediaPlayerPrivateQuickTimeVisualContext::retrieveCurrentImage()
         if (!buffer.lockBaseAddress()) {
             if (requiredDllsAvailable()) {
                 if (!m_imageQueue) {
-                    m_imageQueue = new WKCAImageQueue(buffer.width(), buffer.height(), 30);
+                    m_imageQueue = adoptPtr(new WKCAImageQueue(buffer.width(), buffer.height(), 30));
                     m_imageQueue->setFlags(WKCAImageQueue::Fill, WKCAImageQueue::Fill);
                     layer->setContents(m_imageQueue->get());
                 }
@@ -1243,7 +1243,7 @@ void MediaPlayerPrivateQuickTimeVisualContext::destroyLayerForMovie()
         m_transformLayer = 0;
 
     if (m_imageQueue)
-        m_imageQueue = 0;
+        m_imageQueue = nullptr;
 #endif
 }
 

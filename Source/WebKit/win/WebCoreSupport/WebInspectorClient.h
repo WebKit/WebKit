@@ -95,6 +95,7 @@ private:
 class WebInspectorFrontendClient : public WebCore::InspectorFrontendClientLocal, WebCore::WindowMessageListener {
 public:
     WebInspectorFrontendClient(WebView* inspectedWebView, HWND inspectedWebViewHwnd, HWND frontendHwnd, const COMPtr<WebView>& frotnendWebView, HWND frontendWebViewHwnd, WebInspectorClient*, WTF::PassOwnPtr<Settings>);
+    ~WebInspectorFrontendClient();
 
     virtual void frontendLoaded();
     
@@ -115,8 +116,6 @@ public:
     virtual void loadSessionSetting(const WTF::String& key, WTF::String* value);
 
 private:
-    ~WebInspectorFrontendClient();
-
     void closeWindowWithoutNotifications();
     void showWindowWithoutNotifications();
 

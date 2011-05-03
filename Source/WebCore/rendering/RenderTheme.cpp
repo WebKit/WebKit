@@ -865,7 +865,7 @@ void RenderTheme::adjustCheckboxStyle(CSSStyleSelector*, RenderStyle* style, Ele
     // for now, we will not honor it.
     style->resetBorder();
 
-    style->setBoxShadow(0);
+    style->setBoxShadow(nullptr);
 }
 
 void RenderTheme::adjustRadioStyle(CSSStyleSelector*, RenderStyle* style, Element*) const
@@ -882,7 +882,7 @@ void RenderTheme::adjustRadioStyle(CSSStyleSelector*, RenderStyle* style, Elemen
     // for now, we will not honor it.
     style->resetBorder();
 
-    style->setBoxShadow(0);
+    style->setBoxShadow(nullptr);
 }
 
 void RenderTheme::adjustButtonStyle(CSSStyleSelector*, RenderStyle* style, Element*) const

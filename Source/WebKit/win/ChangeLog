@@ -1,3 +1,23 @@
+2011-05-03  Adam Roben  <aroben@apple.com>
+
+        Fix most strict PassOwnPtr violations on Windows
+
+        Fixes <http://webkit.org/b/60025> Windows should (almost) build with strict PassOwnPtr
+        enabled
+
+        Reviewed by Anders Carlsson.
+
+        * WebCoreSupport/WebInspectorClient.h: Made the destructor public, which is required now
+        that this type is put into a PassOwnPtr. (Previously, only
+        WebCore::InspectorFrontendClientLocal was put into a [Pass]OwnPtr.)
+
+        * FullscreenVideoController.cpp:
+        * WebCoreSupport/WebFrameLoaderClient.cpp:
+        * WebCoreSupport/WebInspectorClient.cpp:
+        * WebHistory.cpp:
+        * WebHistoryItem.cpp:
+        * WebView.cpp:
+
 2011-05-01  Sam Weinig  <sam@webkit.org>
 
         Fix windows build.

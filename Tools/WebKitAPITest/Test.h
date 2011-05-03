@@ -48,7 +48,7 @@ public:
         static const bool initialized; \
     }; \
     \
-    const bool TEST_CLASS_NAME(testCaseName, testName)::initialized = (TestsController::shared().addTest(new TEST_CLASS_NAME(testCaseName, testName)), true); \
+    const bool TEST_CLASS_NAME(testCaseName, testName)::initialized = (TestsController::shared().addTest(adoptPtr(new TEST_CLASS_NAME(testCaseName, testName))), true); \
     \
     void TEST_CLASS_NAME(testCaseName, testName)::run()
 
