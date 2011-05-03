@@ -1,3 +1,26 @@
+2011-05-03  James Robinson  <jamesr@chromium.org>
+
+        Reviewed by Kenneth Russell.
+
+        [chromium] Resizing a 2d canvas to huge dimensions after compositing crashes with accelerated 2d canvas option enabled
+        https://bugs.webkit.org/show_bug.cgi?id=59965
+
+        Fixes a few bugs leading to a crash if a canvas already being composited was resized to huge dimensions.
+
+        Test: fast/canvas/canvas-resize-after-paint.html
+
+        * html/canvas/CanvasRenderingContext2D.cpp:
+        (WebCore::CanvasRenderingContext2D::reset):
+            Mark the canvas's layer as needing a synthetic style recalculation when creating or destroying the backing
+            DrawingBuffer so that we exit compositing mode properly if we can't handle the canvas dimensions.
+        * platform/graphics/chromium/Canvas2DLayerChromium.cpp:
+        (WebCore::Canvas2DLayerChromium::setLayerRenderer):
+            Add a null check for m_drawingBuffer
+        * platform/graphics/gpu/DrawingBuffer.cpp:
+        (WebCore::DrawingBuffer::clear):
+            Avoid clearing the m_context pointer in reset() - we destroy the DrawingBuffer whenever reset() fails, so
+            this is unnecessary.
+
 2011-05-03  Adam Roben  <aroben@apple.com>
 
         Fix most strict PassOwnPtr violations on Windows

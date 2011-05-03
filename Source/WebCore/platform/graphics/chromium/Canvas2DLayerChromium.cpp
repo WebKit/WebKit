@@ -119,7 +119,7 @@ void Canvas2DLayerChromium::setDrawingBuffer(DrawingBuffer* drawingBuffer)
 
 void Canvas2DLayerChromium::setLayerRenderer(LayerRendererChromium* newLayerRenderer)
 {
-    if (layerRenderer() != newLayerRenderer) {
+    if (layerRenderer() != newLayerRenderer && m_drawingBuffer) {
         if (m_drawingBuffer->graphicsContext3D()) {
             if (layerRenderer())
                 layerRenderer()->removeChildContext(m_drawingBuffer->graphicsContext3D().get());

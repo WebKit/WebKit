@@ -199,16 +199,16 @@ void CanvasRenderingContext2D::reset()
         if (m_context3D && m_drawingBuffer) {
             if (m_drawingBuffer->reset(IntSize(canvas()->width(), canvas()->height()))) {
                 c->setSharedGraphicsContext3D(m_context3D.get(), m_drawingBuffer.get(), IntSize(canvas()->width(), canvas()->height()));
-#if USE(ACCELERATED_COMPOSITING)
-                RenderBox* renderBox = canvas()->renderBox();
-                if (renderBox && renderBox->hasLayer() && renderBox->layer()->hasAcceleratedCompositing())
-                    renderBox->layer()->contentChanged(RenderLayer::CanvasChanged);
-#endif
             } else {
                 c->setSharedGraphicsContext3D(0, 0, IntSize());
                 m_drawingBuffer.clear();
                 m_context3D.clear();
             }
+#if USE(ACCELERATED_COMPOSITING)
+            RenderBox* renderBox = canvas()->renderBox();
+            if (renderBox && renderBox->hasLayer() && renderBox->layer()->hasAcceleratedCompositing())
+                renderBox->layer()->contentChanged(RenderLayer::CanvasChanged);
+#endif
         }
     }
 #endif

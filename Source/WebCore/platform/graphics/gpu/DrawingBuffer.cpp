@@ -92,8 +92,6 @@ void DrawingBuffer::clear()
     m_context->bindFramebuffer(GraphicsContext3D::FRAMEBUFFER, m_fbo);
     m_context->deleteFramebuffer(m_fbo);
     m_fbo = 0;
-    
-    m_context.clear();
 }
 
 void DrawingBuffer::createSecondaryBuffers()
