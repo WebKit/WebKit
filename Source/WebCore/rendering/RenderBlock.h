@@ -701,6 +701,9 @@ private:
     void setCollapsedBottomMargin(const MarginInfo&);
     // End helper functions and structs used by layoutBlockChildren.
 
+    // Helper function for layoutInlineChildren()
+    void layoutRunsAndFloats(bool fullLayout, bool hasInlineChild, Vector<FloatWithRect>&, int& repaintLogicalTop, int& repaintLogicalBottom);
+
     // Pagination routines.
     int nextPageLogicalTop(int logicalOffset) const; // Returns the top of the next page following logicalOffset.
     int applyBeforeBreak(RenderBox* child, int logicalOffset); // If the child has a before break, then return a new yPos that shifts to the top of the next page/column.

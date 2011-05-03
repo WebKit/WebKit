@@ -1,3 +1,18 @@
+2011-05-03  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Ryosuke Niwa.
+
+        Split out layoutRunsAndFloats from layoutInlineChildren
+        https://bugs.webkit.org/show_bug.cgi?id=60052
+
+        No new tests, just moving code here.  There should be
+        no change in behavior.
+
+        * rendering/RenderBlock.h:
+        * rendering/RenderBlockLineLayout.cpp:
+        (WebCore::RenderBlock::layoutRunsAndFloats):
+        (WebCore::RenderBlock::layoutInlineChildren):
+
 2011-05-03  James Robinson  <jamesr@chromium.org>
 
         Reviewed by Kenneth Russell.
