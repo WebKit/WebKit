@@ -41,15 +41,13 @@ class PluginProcessConnection;
 class PluginProcessConnectionManager {
     WTF_MAKE_NONCOPYABLE(PluginProcessConnectionManager);
 public:
-    static PluginProcessConnectionManager& shared();
+    PluginProcessConnectionManager();
+    ~PluginProcessConnectionManager();
 
     PluginProcessConnection* getPluginProcessConnection(const String& pluginPath);
     void removePluginProcessConnection(PluginProcessConnection*);
 
 private:
-    PluginProcessConnectionManager();
-    ~PluginProcessConnectionManager();
-
     Vector<RefPtr<PluginProcessConnection> > m_pluginProcessConnections;
 };
 

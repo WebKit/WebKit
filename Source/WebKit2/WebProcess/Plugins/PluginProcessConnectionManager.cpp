@@ -34,19 +34,12 @@
 #include "WebCoreArgumentCoders.h"
 #include "WebProcess.h"
 #include "WebProcessProxyMessages.h"
-#include <wtf/StdLibExtras.h>
 
 #if PLATFORM(MAC)
 #include "MachPort.h"
 #endif
 
 namespace WebKit {
-
-PluginProcessConnectionManager& PluginProcessConnectionManager::shared()
-{
-    DEFINE_STATIC_LOCAL(PluginProcessConnectionManager, pluginProcessConnectionManager, ());
-    return pluginProcessConnectionManager;
-}
 
 PluginProcessConnectionManager::PluginProcessConnectionManager()
 {

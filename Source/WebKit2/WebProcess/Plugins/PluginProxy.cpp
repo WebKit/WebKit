@@ -39,6 +39,7 @@
 #include "ShareableBitmap.h"
 #include "WebCoreArgumentCoders.h"
 #include "WebEvent.h"
+#include "WebProcess.h"
 #include "WebProcessConnectionMessages.h"
 #include <WebCore/GraphicsContext.h>
 
@@ -86,7 +87,7 @@ bool PluginProxy::initialize(PluginController* pluginController, const Parameter
     m_pluginController = pluginController;
 
     ASSERT(!m_connection);
-    m_connection = PluginProcessConnectionManager::shared().getPluginProcessConnection(m_pluginPath);
+    m_connection = WebProcess::shared().pluginProcessConnectionManager().getPluginProcessConnection(m_pluginPath);
     
     if (!m_connection)
         return false;

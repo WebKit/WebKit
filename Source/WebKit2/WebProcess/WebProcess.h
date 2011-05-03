@@ -42,12 +42,12 @@
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
 
-#if PLATFORM(MAC)
-#include "MachPort.h"
-#endif
-
 #if PLATFORM(QT)
 class QNetworkAccessManager;
+#endif
+
+#if ENABLE(PLUGIN_PROCESS)
+#include "PluginProcessConnectionManager.h"
 #endif
 
 namespace WebCore {
@@ -118,6 +118,10 @@ public:
     void clearResourceCaches(ResourceCachesToClear = AllResourceCaches);
     
     const String& localStorageDirectory() const { return m_localStorageDirectory; }
+
+#if ENABLE(PLUGIN_PROCESS)
+    PluginProcessConnectionManager& pluginProcessConnectionManager() { return m_pluginProcessConnectionManager; }
+#endif
 
 private:
     WebProcess();
@@ -219,6 +223,10 @@ private:
 
 #if ENABLE(OFFLINE_WEB_APPLICATIONS)
     RefPtr<SandboxExtension> m_applicationCachePathExtension;
+#endif
+
+#if ENABLE(PLUGIN_PROCESS)
+    PluginProcessConnectionManager m_pluginProcessConnectionManager;
 #endif
 };
 
