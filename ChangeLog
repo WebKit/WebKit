@@ -1,3 +1,12 @@
+2011-05-03  Lucas De Marchi  <lucas.demarchi@profusion.mobi>
+
+        [CMAKE] Unreviewed build fix for gcc >= 4.6
+
+        Same fix as done in r84123. CMake explicitly pass the arguments to
+        make_names.pl, so let's make them the same.
+
+        * Source/cmake/OptionsCommon.cmake: ditto.
+
 2011-05-02  Adam Klein  <adamk@chromium.org>
 
         Reviewed by Tony Chang.
