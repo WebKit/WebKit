@@ -1,3 +1,13 @@
+2011-05-02  Mark Rowe  <mrowe@apple.com>
+
+        Reviewed by Brady Eidson.
+
+        <rdar://problem/9371289> WebKit2 can persist an invalid current back/forward item index when URLs are filtered from back/forward list
+
+        * UIProcess/cf/WebBackForwardListCF.cpp:
+        (WebKit::WebBackForwardList::createCFDictionaryRepresentation): We need to update the current index to account for filtered items
+        for all items before the current item in the array.
+
 2011-05-02  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Adam Roben.

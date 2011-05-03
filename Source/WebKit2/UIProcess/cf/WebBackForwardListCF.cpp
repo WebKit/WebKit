@@ -62,7 +62,7 @@ CFDictionaryRef WebBackForwardList::createCFDictionaryRepresentation(WebPageProx
     for (size_t i = 0; i < m_entries.size(); ++i) {
         RefPtr<WebURL> webURL = WebURL::create(m_entries[i]->url());
         if (filter && !filter(toAPI(m_page), WKPageGetSessionHistoryURLValueType(), toURLRef(m_entries[i]->originalURL().impl()), context)) {
-            if (i <= static_cast<size_t>(currentIndex))
+            if (i <= static_cast<size_t>(m_current))
                 currentIndex--;
             continue;
         }
@@ -78,6 +78,8 @@ CFDictionaryRef WebBackForwardList::createCFDictionaryRepresentation(WebPageProx
         RetainPtr<CFDictionaryRef> entryDictionary(AdoptCF, CFDictionaryCreate(0, keys, values, 4, &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks));
         CFArrayAppendValue(entries.get(), entryDictionary.get());
     }
+
+    ASSERT(currentIndex < CFArrayGetCount(entries.get()));
     RetainPtr<CFNumberRef> currentIndexNumber(AdoptCF, CFNumberCreate(0, kCFNumberIntType, &currentIndex));
 
     const void* keys[2] = { SessionHistoryCurrentIndexKey(), SessionHistoryEntriesKey() };
