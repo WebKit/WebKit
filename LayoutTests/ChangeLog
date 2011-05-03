@@ -2,6 +2,14 @@
 
         Not reviewed. Build fix.
 
+        new baseline for SVG test.
+
+        * platform/chromium-win-vista/svg/text/text-intro-05-t-expected.txt: Added.
+
+2011-05-03  Alpha Lam  <hclam@chromium.org>
+
+        Not reviewed. Build fix.
+
         New baseline for GPU layout tests.
 
         * platform/chromium-gpu-mac/animations/3d/matrix-transform-type-animation-expected.png: Added.
