@@ -62,11 +62,12 @@ function assertTrue(bool)
         logFail('FAIL');
 }
 
-function runTest(results, assertions)
+function runTest(results, assertions, opt_localStorageValue)
 {
     document.body.innerHTML = '';
     g_testIndex++;
     g_state = undefined;
+    localStorage.setItem(OptionWriter._key, opt_localStorageValue || '');
 
     try {
         ADD_RESULTS(results);
@@ -389,6 +390,13 @@ function runTests()
         updateTogglingImages();
         assertTrue(document.querySelector('tbody td:nth-child(3)').textContent == ' images   diff ');
     });
+    
+    results = mockResults();
+    results.tests['reading-options-from-localstorage.html'] = mockExpectation('IMAGE+TEXT', 'IMAGE+TEXT');
+    runTest(results, function() {
+        assertTrue(window.getComputedStyle(document.querySelector('tbody'), null)['display'] != 'none');
+        assertTrue(document.querySelector('tbody td:nth-child(3)').textContent == 'expected actual  diff ');
+    }, '{"toggle-images":false,"unexpected-results":false}');
 
     document.body.innerHTML = '<pre>' + g_log.join('\n') + '</pre>';
 }

@@ -756,14 +756,56 @@ document.addEventListener('mouseout', PixelZoomer.handleMouseOut, false);
 
 function onlyShowUnexpectedFailures()
 {
-    var checkBox = document.getElementById('unexpected-results');
-    return !checkBox || checkBox.checked;
+    return document.getElementById('unexpected-results').checked;
+}
+
+function handleUnexpectedResultsChange()
+{
+    OptionWriter.save();
+    updateExpectedFailures();
 }
 
 function updateExpectedFailures()
 {
     document.getElementById('unexpected-style').innerText = onlyShowUnexpectedFailures() ?
         '.expected { display: none; }' : '';
+}
+
+var OptionWriter = {};
+
+OptionWriter._key = 'run-webkit-tests-options';
+
+OptionWriter.save = function()
+{
+    var options = document.querySelectorAll('label input');
+    var data = {};
+    for (var i = 0, len = options.length; i < len; i++) {
+        var option = options[i];
+        data[option.id] = option.checked;
+    }
+    localStorage.setItem(OptionWriter._key, JSON.stringify(data));
+}
+
+OptionWriter.apply = function()
+{
+    var json = localStorage.getItem(OptionWriter._key);
+    if (!json)
+        return;
+
+    var data = JSON.parse(json);
+    for (var id in data) {
+        var input = document.getElementById(id);
+        if (input) {
+            input.checked = data[id];
+            input.onchange();
+        }
+    }
+}
+
+function handleToggleImagesChange()
+{
+    OptionWriter.save();
+    updateTogglingImages();
 }
 
 function updateTogglingImages()
@@ -785,7 +827,6 @@ function updateTogglingImages()
 
     updateImageTogglingTimer();
 }
-
 
 function getResultContainer(node)
 {
@@ -832,15 +873,11 @@ function generatePage()
     var html = '<div id=toolbar>' +
         '<a href="javascript:void()" onclick="expandAllExpectations()">expand all</a> ' +
         '<a href="javascript:void()" onclick="collapseAllExpectations()">collapse all</a> ' +
-        '<a href="javascript:void()" id=options-link onclick="toggleOptionsMenu()">options</a><div id=options-menu class=hidden-menu>';
-
-    // FIXME: store these as prefs in localstorage?
-    if (globalState().results.uses_expectations_file)
-        html += '<label><input id="unexpected-results" type=checkbox checked onchange="updateExpectedFailures()">Only show unexpected results</label>';
-
-    html += '<label><input id="toggle-images" type=checkbox checked onchange="updateTogglingImages()">Toggle images</label>';
-
-    html += '</div></div>';
+        '<a href="javascript:void()" id=options-link onclick="toggleOptionsMenu()">options</a>' +
+        '<div id=options-menu class=hidden-menu>' +
+            '<label><input id="unexpected-results" type=checkbox checked onchange="handleUnexpectedResultsChange()">Only show unexpected results</label>' +
+            '<label><input id="toggle-images" type=checkbox checked onchange="handleToggleImagesChange()">Toggle images</label>' +
+        '</div></div>';
 
     var tableRowsHtml = tableRows();
 
@@ -874,9 +911,13 @@ function generatePage()
 
     document.body.innerHTML = html;
 
+    OptionWriter.apply();
+
     if (document.getElementById('results-table')) {
         document.getElementById('results-table').addEventListener('click', TableSorter.handleClick, false);
         TableSorter.sortColumn(0);
+        if (!globalState().results.uses_expectations_file)
+            parentOfType(document.getElementById('unexpected-results'), 'label').style.display = 'none';
         if (!globalState().hasTextFailures)
             document.getElementById('text-results-header').textContent = '';
         if (!globalState().hasImageFailures) {
@@ -884,8 +925,6 @@ function generatePage()
             parentOfType(document.getElementById('toggle-images'), 'label').style.display = 'none';
         }
     }
-    
-    updateExpectedFailures();
 }
 </script>
 <!-- HACK: when json_results_test.js is included, loading this page runs the tests.

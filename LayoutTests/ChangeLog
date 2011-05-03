@@ -1,3 +1,17 @@
+2011-05-03  Ojan Vafai  <ojan@chromium.org>
+
+        Reviewed by Tony Chang.
+
+        store results.html options in localstorage
+        https://bugs.webkit.org/show_bug.cgi?id=60048
+
+        This makes options persistent per-domain. It's not perfect,
+        but it should make it possible to have preferences for how
+        people would like the results.html page to render.
+
+        * fast/harness/resources/results-test.js:
+        * fast/harness/results.html:
+
 2011-05-03  Igor Oliveira  <igor.oliveira@openbossa.org>
 
         Reviewed by Eric Seidel.
