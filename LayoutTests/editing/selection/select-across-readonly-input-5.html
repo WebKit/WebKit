@@ -1,0 +1,13 @@
+<!DOCTYPE>
+<html>
+<body>
+<p>This test ensures selection that crosses the shadow DOM boundary of a readonly input element cannot be made by a mouse drag.</p>
+<p>To manually test, select text by a mouse drag starting in "WebKit" and ending in "hello". Selection should extend only in the input element that contains "WebKit".</p>
+<div id="test">
+<input id="to" type="text" value="hello" readonly>
+<span>world</span>
+<input id="from" type="text" value="WebKit" readonly>
+</div>
+<script src="resources/select-across-readonly-input.js"></script>
+</body>
+</html>

@@ -1,3 +1,33 @@
+2011-05-03  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        WebKit allows selection that crosses the shadow boundary of a readonly input element
+        https://bugs.webkit.org/show_bug.cgi?id=60000
+
+        Added pixel tests to ensure WebKit doesn't create a selection that spans across
+        the shadow DOM boundary of a readonly input element. Also rebaselined a test that
+        previously exhibited this behavior.
+
+        * editing/selection/resources/select-across-readonly-input.js: Added.
+        (moveMouseToMiddleOfElement):
+        * editing/selection/select-across-readonly-input-1.html: Added.
+        * editing/selection/select-across-readonly-input-2.html: Added.
+        * editing/selection/select-across-readonly-input-3.html: Added.
+        * editing/selection/select-across-readonly-input-4.html: Added.
+        * editing/selection/select-across-readonly-input-5.html: Added.
+        * platform/mac/editing/selection/select-across-readonly-input-1-expected.png: Added.
+        * platform/mac/editing/selection/select-across-readonly-input-1-expected.txt: Added.
+        * platform/mac/editing/selection/select-across-readonly-input-2-expected.png: Added.
+        * platform/mac/editing/selection/select-across-readonly-input-2-expected.txt: Added.
+        * platform/mac/editing/selection/select-across-readonly-input-3-expected.png: Added.
+        * platform/mac/editing/selection/select-across-readonly-input-3-expected.txt: Added.
+        * platform/mac/editing/selection/select-across-readonly-input-4-expected.png: Added.
+        * platform/mac/editing/selection/select-across-readonly-input-4-expected.txt: Added.
+        * platform/mac/editing/selection/select-across-readonly-input-5-expected.png: Added.
+        * platform/mac/editing/selection/select-across-readonly-input-5-expected.txt: Added.
+        * platform/mac/fast/forms/input-readonly-autoscroll-expected.txt:
+
 2011-05-03  Alpha Lam  <hclam@chromium.org>
 
         Not reviewed. Build fix.

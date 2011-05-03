@@ -112,6 +112,7 @@ private:
     // Support methods for validate()
     void setBaseAndExtentToDeepEquivalents();
     void setStartAndEndFromBaseAndExtentRespectingGranularity(TextGranularity);
+    void adjustSelectionToAvoidCrossingShadowBoundaries();
     void adjustSelectionToAvoidCrossingEditingBoundaries();
     void updateSelectionType();
 

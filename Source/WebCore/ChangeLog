@@ -1,3 +1,25 @@
+2011-05-03  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        WebKit allows selection that crosses the shadow boundary of a readonly input element
+        https://bugs.webkit.org/show_bug.cgi?id=60000
+
+        The bug was caused by VisibleSelection's not validating shadow DOM boundaries.
+        Fixed the bug by adding an extra adjustment, adjustSelectionToAvoidCrossingShadowBoundaries,
+        in its validation process.
+
+        Tests: editing/selection/select-across-readonly-input-1.html
+               editing/selection/select-across-readonly-input-2.html
+               editing/selection/select-across-readonly-input-3.html
+               editing/selection/select-across-readonly-input-4.html
+               editing/selection/select-across-readonly-input-5.html
+
+        * editing/VisibleSelection.cpp:
+        (WebCore::VisibleSelection::validate): Calls adjustSelectionToAvoidCrossingShadowBoundaries.
+        (WebCore::VisibleSelection::adjustSelectionToAvoidCrossingShadowBoundaries): Added.
+        * editing/VisibleSelection.h:
+
 2011-05-03  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Ryosuke Niwa.

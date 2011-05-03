@@ -410,6 +410,7 @@ void VisibleSelection::validate(TextGranularity granularity)
 {
     setBaseAndExtentToDeepEquivalents();
     setStartAndEndFromBaseAndExtentRespectingGranularity(granularity);
+    adjustSelectionToAvoidCrossingShadowBoundaries();
     adjustSelectionToAvoidCrossingEditingBoundaries();
     updateSelectionType();
 
@@ -449,6 +450,29 @@ void VisibleSelection::setWithoutValidation(const Position& base, const Position
         m_end = base;
     }
     m_selectionType = base == extent ? CaretSelection : RangeSelection;
+}
+
+void VisibleSelection::adjustSelectionToAvoidCrossingShadowBoundaries()
+{
+    if (m_base.isNull() || m_start.isNull() || m_end.isNull())
+        return;
+
+    Node* startRootNode = m_start.anchorNode()->shadowTreeRootNode();
+    Node* endRootNode = m_end.anchorNode()->shadowTreeRootNode();
+
+    if (!startRootNode && !endRootNode)
+        return;
+
+    if (startRootNode == endRootNode)
+        return;
+
+    if (m_baseIsFirst) {
+        m_extent = startRootNode ? lastPositionInNode(startRootNode) : positionBeforeNode(endRootNode->shadowHost());
+        m_end = m_extent;
+    } else {
+        m_extent = endRootNode ? firstPositionInNode(endRootNode) : positionAfterNode(startRootNode->shadowHost());
+        m_start = m_extent;
+    }
 }
 
 void VisibleSelection::adjustSelectionToAvoidCrossingEditingBoundaries()
