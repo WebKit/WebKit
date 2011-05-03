@@ -1,3 +1,15 @@
+2011-05-03  Alpha Lam  <hclam@chromium.org>
+
+        Not reviewed. Build fix.
+
+        Adding rebaseline for recent changes for mac.
+
+        * platform/chromium-mac-leopard/editing/selection/select-across-readonly-input-1-expected.png: Added.
+        * platform/chromium-mac-leopard/editing/selection/select-across-readonly-input-2-expected.png: Added.
+        * platform/chromium-mac-leopard/editing/selection/select-across-readonly-input-3-expected.png: Added.
+        * platform/chromium-mac-leopard/editing/selection/select-across-readonly-input-4-expected.png: Added.
+        * platform/chromium-mac-leopard/editing/selection/select-across-readonly-input-5-expected.png: Added.
+
 2011-05-03  Enrica Casucci  <enrica@apple.com>
 
         Reviewed by Ryosuke Niwa.
