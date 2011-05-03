@@ -138,6 +138,9 @@ static ScrollbarButtonsPlacement gButtonPlacement = ScrollbarButtonsDoubleEnd;
 
 static void updateArrowPlacement()
 {
+#if USE(WK_SCROLLBAR_PAINTER)
+    return;
+#endif
     NSString *buttonPlacement = [[NSUserDefaults standardUserDefaults] objectForKey:@"AppleScrollBarVariant"];
     if ([buttonPlacement isEqualToString:@"Single"])
         gButtonPlacement = ScrollbarButtonsSingle;
@@ -146,11 +149,8 @@ static void updateArrowPlacement()
     else if ([buttonPlacement isEqualToString:@"DoubleBoth"])
         gButtonPlacement = ScrollbarButtonsDoubleBoth;
     else {
-#if USE(WK_SCROLLBAR_PAINTER)
-        gButtonPlacement = ScrollbarButtonsNone;
-#else
+
         gButtonPlacement = ScrollbarButtonsDoubleEnd;
-#endif
     }
 }
 
