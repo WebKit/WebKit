@@ -1,3 +1,13 @@
+2011-05-03  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Reviewed by Eric Seidel.
+
+        [GTK] Build webkit1 even when webkit2 is enabled
+        https://bugs.webkit.org/show_bug.cgi?id=59695
+
+        * GNUmakefile.am:
+        * configure.ac:
+
 2011-05-01  ojab  <ojab@ojab.ru>
 
         Reviewed by Eric Seidel.

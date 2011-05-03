@@ -1044,10 +1044,6 @@ AC_ARG_ENABLE(webkit2,
                 [build webkit2 [default=no]]),
                 [], [enable_webkit2="no"])
 AC_MSG_RESULT([$enable_webkit2])
-if test "$enable_webkit2" = "yes"; then
-    WEBKITGTK_PC_NAME=${WEBKITGTK_PC_NAME}2
-    AC_SUBST([WEBKITGTK_PC_NAME])
-fi
 
 GTK_DOC_CHECK([1.10])
 
@@ -1143,25 +1139,25 @@ AC_CONFIG_FILES([
 GNUmakefile
 ])
  
-if test "$enable_webkit2" = "no"; then
-    AC_CONFIG_FILES([
-    Source/WebKit/gtk/webkit/webkitversion.h
-    Source/WebKit/gtk/docs/GNUmakefile
-    Source/WebKit/gtk/docs/version.xml
-    ]
-    )
 
+AC_CONFIG_FILES([
+Source/WebKit/gtk/webkit/webkitversion.h
+Source/WebKit/gtk/docs/GNUmakefile
+Source/WebKit/gtk/docs/version.xml
+])
+
+AC_CONFIG_FILES([
+Source/WebKit/gtk/${WEBKITGTK_PC_NAME}-${WEBKITGTK_API_VERSION}.pc:Source/WebKit/gtk/webkit.pc.in
+Source/WebKit/gtk/JSCore-${WEBKITGTK_API_VERSION}.gir:Source/WebKit/gtk/JSCore.gir.in
+Source/WebKit/gtk/org.webkitgtk-${WEBKITGTK_API_VERSION}.gschema.xml:Source/WebKit/gtk/org.webkitgtk.gschema.xml.in
+Source/WebKit/gtk/javascriptcoregtk-${WEBKITGTK_API_VERSION}.pc:Source/WebKit/gtk/javascriptcoregtk.pc.in
+]
+,[WEBKITGTK_API_VERSION=$WEBKITGTK_API_VERSION,WEBKITGTK_PC_NAME=$WEBKITGTK_PC_NAME]
+)
+
+if test "$enable_webkit2" = "yes"; then
     AC_CONFIG_FILES([
-    Source/WebKit/gtk/${WEBKITGTK_PC_NAME}-${WEBKITGTK_API_VERSION}.pc:Source/WebKit/gtk/webkit.pc.in
-    Source/WebKit/gtk/JSCore-${WEBKITGTK_API_VERSION}.gir:Source/WebKit/gtk/JSCore.gir.in
-    Source/WebKit/gtk/org.webkitgtk-${WEBKITGTK_API_VERSION}.gschema.xml:Source/WebKit/gtk/org.webkitgtk.gschema.xml.in
-    Source/WebKit/gtk/javascriptcoregtk-${WEBKITGTK_API_VERSION}.pc:Source/WebKit/gtk/javascriptcoregtk.pc.in
-    ]
-    ,[WEBKITGTK_API_VERSION=$WEBKITGTK_API_VERSION,WEBKITGTK_PC_NAME=$WEBKITGTK_PC_NAME]
-    )
-else
-    AC_CONFIG_FILES([
-    Source/WebKit2/gtk/${WEBKITGTK_PC_NAME}-${WEBKITGTK_API_VERSION}.pc:Source/WebKit2/gtk/webkit2.pc.in
+    Source/WebKit2/gtk/${WEBKITGTK_PC_NAME}2-${WEBKITGTK_API_VERSION}.pc:Source/WebKit2/gtk/webkit2.pc.in
     ]
     ,[WEBKITGTK_API_VERSION=$WEBKITGTK_API_VERSION,WEBKITGTK_PC_NAME=$WEBKITGTK_PC_NAME]
     )
