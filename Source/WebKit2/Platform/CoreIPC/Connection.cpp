@@ -641,7 +641,9 @@ void Connection::dispatchSyncMessage(MessageID messageID, ArgumentDecoder* argum
 
     if (syncReplyMode == ManualReply) {
         // The client will take ownership of the reply encoder and send it at some point in the future.
-        // We won't do anything here.
+        ArgumentEncoder *encoder = replyEncoder.leakPtr();
+        (void)encoder;
+
         return;
     }
 

@@ -1,5 +1,14 @@
 2011-05-02  Anders Carlsson  <andersca@apple.com>
 
+        Fix crash that was introduced in r85515.
+
+        * Platform/CoreIPC/Connection.cpp:
+        (CoreIPC::Connection::dispatchSyncMessage):
+        If didReceiveSyncMessage returns ManualReply, the client took ownership of the reply
+        encoder so we must leak it to avoid a double-free.
+
+2011-05-02  Anders Carlsson  <andersca@apple.com>
+
         Reviewed by Sam Weinig.
 
         The web process locks up when the plug-in process crashes
