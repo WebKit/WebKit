@@ -1,3 +1,11 @@
+2011-05-03  Alpha Lam  <hclam@chromium.org>
+
+        Not reviewed. Build fix.
+
+        Add expectation to suppress new failure.
+
+        * platform/chromium/test_expectations.txt:
+
 2011-05-03  Csaba Osztrogonác  <ossy@webkit.org>
 
         [Qt][WK2] Support PageGroup in QGraphicsWKView/QWKPage constructors

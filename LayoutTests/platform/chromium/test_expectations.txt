@@ -3845,7 +3845,6 @@ BUGDPRANKE : http/tests/misc/will-send-request-returns-null-on-redirect.html = T
 // changed in r84745 (see commented-out entry above)
 BUGWK50661 WIN LINUX : fast/dom/HTMLMeterElement/meter-element.html = TEXT
 
-BUGDPRANKE GPU SLOW : compositing/tiling/huge-layer-img.html = PASS TEXT
 BUGDPRANKE GPU : media/video-aspect-ratio.html = IMAGE PASS
 
 BUGSENORBLANCO WIN LINUX : animations/animation-drt-api-multiple-keyframes.html = TEXT
@@ -4025,3 +4024,6 @@ BUG_HCLAM WIN SLOW: http/tests/inspector/resource-tree/resource-tree-document-ur
 
 // Failure introduced by Chromium r83848.
 BUG_HCLAM : fast/url/ipv6.html = TEXT
+
+// Failure since r85661.
+BUG_HCLAM GPU : compositing/tiling/huge-layer-img.html = FAIL
