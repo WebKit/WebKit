@@ -291,30 +291,33 @@ void RenderText::absoluteRectsForRange(Vector<IntRect>& rects, unsigned start, u
     for (InlineTextBox* box = firstTextBox(); box; box = box->nextTextBox()) {
         // Note: box->end() returns the index of the last character, not the index past it
         if (start <= box->start() && box->end() < end) {
-            IntRect r = IntRect(box->x(), box->y(), box->logicalWidth(), box->logicalHeight());
+            IntRect r = box->calculateBoundaries();
             if (useSelectionHeight) {
                 IntRect selectionRect = box->selectionRect(0, 0, start, end);
-                r.setHeight(selectionRect.height());
-                r.setY(selectionRect.y());
+                if (box->isHorizontal()) {
+                    r.setHeight(selectionRect.height());
+                    r.setY(selectionRect.y());
+                } else {
+                    r.setWidth(selectionRect.width());
+                    r.setX(selectionRect.x());
+                }
             }
-            FloatPoint origin = localToAbsolute(r.location());
-            r.setX(origin.x());
-            r.setY(origin.y());
-            rects.append(r);
+            rects.append(localToAbsoluteQuad(FloatQuad(r)).enclosingBoundingBox());
         } else {
             unsigned realEnd = min(box->end() + 1, end);
             IntRect r = box->selectionRect(0, 0, start, realEnd);
             if (!r.isEmpty()) {
                 if (!useSelectionHeight) {
                     // change the height and y position because selectionRect uses selection-specific values
-                    r.setHeight(box->logicalHeight());
-                    r.setY(box->y());
+                    if (box->isHorizontal()) {
+                        r.setHeight(box->logicalHeight());
+                        r.setY(box->y());
+                    } else {
+                        r.setWidth(box->logicalWidth());
+                        r.setX(box->x());
+                    }
                 }
-                FloatPoint origin = localToAbsolute(r.location());
-                localToAbsolute(origin);
-                r.setX(origin.x());
-                r.setY(origin.y());
-                rects.append(r);
+                rects.append(localToAbsoluteQuad(FloatQuad(r)).enclosingBoundingBox());
             }
         }
     }
