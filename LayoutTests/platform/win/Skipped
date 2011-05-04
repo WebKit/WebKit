@@ -1263,6 +1263,7 @@ fast/images/animated-gif-restored-from-bfcache.html
 # Windows DRT needs an implementation of shadowRoot
 # https://bugs.webkit.org/show_bug.cgi?id=59081
 fast/dom/shadow
+inspector/elements/shadow-dom.html
 media/audio-controls-do-not-fade-out.html
 
 # Causes the next test to fail http://webkit.org/b/59099
