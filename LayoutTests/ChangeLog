@@ -1,3 +1,10 @@
+2011-05-04  Andrey Kosyakov  <caseq@chromium.org>
+
+        Unreviewed. Skipped inspector/elements/shadow-dom.html on win.
+        https://bugs.webkit.org/show_bug.cgi?id=60195
+
+        * platform/win/Skipped:
+
 2011-04-01  Luiz Agostini  <luiz.agostini@openbossa.org>
 
         Reviewed by Kenneth Rohde Christiansen.
