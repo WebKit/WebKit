@@ -11,9 +11,9 @@ Running: testDumpInitial
   </meter>
 
 Running: testDumpUpdated
-Before controls enabled
+Before shadow root added
   <div id="delayed-shadow-host"></div>
-After controls enabled
+After shadow root added
 - <div id="delayed-shadow-host">
     - (shadow)
     - <div>

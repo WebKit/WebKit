@@ -1,3 +1,10 @@
+2011-05-04  Andrey Kosyakov  <caseq@chromium.org>
+
+        Unreviewed. Another shot at fixing flakiness under win (also renamed a couple of obsolete things).
+
+        * inspector/elements/shadow-dom-expected.txt:
+        * inspector/elements/shadow-dom.html:
+
 2011-05-04  Ojan Vafai  <ojan@chromium.org>
 
         Reviewed by Eric Seidel.

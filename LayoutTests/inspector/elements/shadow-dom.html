@@ -33,9 +33,9 @@ function test()
         function testDumpUpdated(next) {
             var host;
 
-            function dumpWithControlsEnabled()
+            function dumpWithShadowRoot()
             {
-                InspectorTest.addResult("After controls enabled");
+                InspectorTest.addResult("After shadow root added");
                 InspectorTest.runAfterPendingDispatches(function() {
                     InspectorTest.dumpElementsTree(host);
                     next();
@@ -44,13 +44,13 @@ function test()
 
             InspectorTest.selectNodeWithId("delayed-shadow-host", function(node) {
                 host = node;
-                InspectorTest.addResult("Before controls enabled");
+                InspectorTest.addResult("Before shadow root added");
                 InspectorTest.dumpElementsTree(node);
-                InspectorTest.evaluateInPage("addShadowRoot()", function() {
-                    InspectorTest.runAfterPendingDispatches(function() {
-                        InspectorTest.expandElementsTree(dumpWithControlsEnabled);
-                    });
+
+                WebInspector.domAgent.addEventListener(WebInspector.DOMAgent.Events.ShadowRootUpdated, function() {
+                    InspectorTest.expandElementsTree(dumpWithShadowRoot);
                 });
+                InspectorTest.evaluateInPage("addShadowRoot()");
             });
         }
     ]);
