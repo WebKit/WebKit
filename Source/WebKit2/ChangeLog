@@ -1,3 +1,24 @@
+2011-05-04  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Add bundle API for making a page paint as the background of another page
+        https://bugs.webkit.org/show_bug.cgi?id=60227
+
+        * WebProcess/InjectedBundle/API/c/WKBundlePage.cpp:
+        (WKBundlePageSetUnderlayPage):
+        Call WebPage::setUnderlayPage.
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::close):
+        Null out the underlay page.
+
+        (WebKit::WebPage::layoutIfNeeded):
+        Layout the underlay page if necessary.
+
+        (WebKit::WebPage::drawRect):
+        Draw the underlay page.
+
 2011-05-04  Siddharth Mathur  <siddharth.mathur@nokia.com>
 
         Reviewed by Laszlo Gombos.

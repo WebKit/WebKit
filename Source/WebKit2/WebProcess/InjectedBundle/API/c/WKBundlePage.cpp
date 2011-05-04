@@ -207,6 +207,11 @@ WKBundleBackForwardListRef WKBundlePageGetBackForwardList(WKBundlePageRef pageRe
     return toAPI(toImpl(pageRef)->backForwardList());
 }
 
+void WKBundlePageSetUnderlayPage(WKBundlePageRef pageRef, WKBundlePageRef pageUnderlayRef)
+{
+    toImpl(pageRef)->setUnderlayPage(toImpl(pageUnderlayRef));
+}
+
 void WKBundlePageInstallPageOverlay(WKBundlePageRef pageRef, WKBundlePageOverlayRef pageOverlayRef)
 {
     toImpl(pageRef)->installPageOverlay(toImpl(pageOverlayRef));

@@ -423,12 +423,11 @@ void WebPage::close()
 
     m_sandboxExtensionTracker.invalidate();
 
+    m_underlayPage = nullptr;
     m_printContext = nullptr;
-
     m_mainFrame->coreFrame()->loader()->detachFromParent();
-    m_page.clear();
-
-    m_drawingArea.clear();
+    m_page = nullptr;
+    m_drawingArea = nullptr;
 
     bool isRunningModal = m_isRunningModal;
     m_isRunningModal = false;
@@ -583,6 +582,11 @@ void WebPage::layoutIfNeeded()
 {
     if (m_mainFrame->coreFrame()->view())
         m_mainFrame->coreFrame()->view()->updateLayoutAndStyleIfNeededRecursive();
+
+    if (m_underlayPage) {
+        if (FrameView *frameView = m_underlayPage->mainFrame()->coreFrame()->view())
+            frameView->updateLayoutAndStyleIfNeededRecursive();
+    }
 }
 
 void WebPage::setSize(const WebCore::IntSize& viewSize)
@@ -676,6 +680,12 @@ void WebPage::drawRect(GraphicsContext& graphicsContext, const IntRect& rect)
 {
     GraphicsContextStateSaver stateSaver(graphicsContext);
     graphicsContext.clip(rect);
+
+    if (m_underlayPage) {
+        GraphicsContextStateSaver stateSaver(graphicsContext);
+        m_underlayPage->drawRect(graphicsContext, rect);
+    }
+
     m_mainFrame->coreFrame()->view()->paint(&graphicsContext, rect);
 }
 

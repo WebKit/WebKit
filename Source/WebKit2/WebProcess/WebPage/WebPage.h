@@ -212,6 +212,8 @@ public:
     InjectedBundlePageFullScreenClient& injectedBundleFullScreenClient() { return m_fullScreenClient; }
 #endif
 
+    void setUnderlayPage(PassRefPtr<WebPage> underlayPage) { m_underlayPage = underlayPage; }
+
     bool findStringFromInjectedBundle(const String&, FindOptions);
 
     WebFrame* mainFrame() const { return m_mainFrame.get(); }
@@ -629,6 +631,8 @@ private:
 
     FindController m_findController;
     RefPtr<PageOverlay> m_pageOverlay;
+
+    RefPtr<WebPage> m_underlayPage;
 
 #if ENABLE(INSPECTOR)
     RefPtr<WebInspector> m_inspector;
