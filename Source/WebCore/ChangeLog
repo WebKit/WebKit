@@ -1,3 +1,12 @@
+2011-05-04  Dominic Battre  <battre@chromium.org>
+
+        Reviewed by Tony Gentilcore.
+
+        Fix missing header in case SVG is disabled
+        https://bugs.webkit.org/show_bug.cgi?id=60153
+
+        * dom/EventDispatcher.cpp:
+
 2011-05-04  Luke Macpherson   <macpherson@chromium.org>
 
         Reviewed by Eric Seidel.

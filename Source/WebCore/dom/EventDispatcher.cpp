@@ -26,6 +26,7 @@
 #include "config.h"
 #include "EventDispatcher.h"
 
+#include "Element.h"
 #include "Event.h"
 #include "EventContext.h"
 #include "EventTarget.h"
@@ -391,4 +392,3 @@ EventDispatchBehavior EventDispatcher::determineDispatchBehavior(Event* event)
 }
 
 }
-
