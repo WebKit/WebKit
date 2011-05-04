@@ -160,7 +160,7 @@ void HTMLLinkElement::parseMappedAttribute(Attribute* attr)
 void HTMLLinkElement::tokenizeRelAttribute(const AtomicString& rel, RelAttribute& relAttribute)
 {
     relAttribute.m_isStyleSheet = false;
-    relAttribute.m_isIcon = false;
+    relAttribute.m_iconType = InvalidIcon;
     relAttribute.m_isAlternate = false;
     relAttribute.m_isDNSPrefetch = false;
 #if ENABLE(LINK_PREFETCH)
@@ -170,7 +170,13 @@ void HTMLLinkElement::tokenizeRelAttribute(const AtomicString& rel, RelAttribute
     if (equalIgnoringCase(rel, "stylesheet"))
         relAttribute.m_isStyleSheet = true;
     else if (equalIgnoringCase(rel, "icon") || equalIgnoringCase(rel, "shortcut icon"))
-        relAttribute.m_isIcon = true;
+        relAttribute.m_iconType = Favicon;
+#if ENABLE(TOUCH_ICON_LOADING)
+    else if (equalIgnoringCase(rel, "apple-touch-icon"))
+        relAttribute.m_iconType = TouchIcon;
+    else if (equalIgnoringCase(rel, "apple-touch-icon-precomposed"))
+        relAttribute.m_iconType = TouchPrecomposedIcon;
+#endif
     else if (equalIgnoringCase(rel, "dns-prefetch"))
         relAttribute.m_isDNSPrefetch = true;
     else if (equalIgnoringCase(rel, "alternate stylesheet") || equalIgnoringCase(rel, "stylesheet alternate")) {
@@ -189,7 +195,13 @@ void HTMLLinkElement::tokenizeRelAttribute(const AtomicString& rel, RelAttribute
             else if (equalIgnoringCase(*it, "alternate"))
                 relAttribute.m_isAlternate = true;
             else if (equalIgnoringCase(*it, "icon"))
-                relAttribute.m_isIcon = true;
+                relAttribute.m_iconType = Favicon;
+#if ENABLE(TOUCH_ICON_LOADING)
+            else if (equalIgnoringCase(*it, "apple-touch-icon"))
+                relAttribute.m_iconType = TouchIcon;
+            else if (equalIgnoringCase(*it, "apple-touch-icon-precomposed"))
+                relAttribute.m_iconType = TouchPrecomposedIcon;
+#endif
 #if ENABLE(LINK_PREFETCH)
             else if (equalIgnoringCase(*it, "prefetch"))
               relAttribute.m_isLinkPrefetch = true;
@@ -222,10 +234,10 @@ void HTMLLinkElement::process()
 
     // IE extension: location of small icon for locationbar / bookmarks
     // We'll record this URL per document, even if we later only use it in top level frames
-    if (m_relAttribute.m_isIcon && m_url.isValid() && !m_url.isEmpty()) {
+    if (m_relAttribute.m_iconType != InvalidIcon && m_url.isValid() && !m_url.isEmpty()) {
         if (!checkBeforeLoadEvent()) 
             return;
-        document()->setIconURL(m_url.string(), type);
+        document()->setIconURL(m_url.string(), type, m_relAttribute.m_iconType);
     }
 
     if (m_relAttribute.m_isDNSPrefetch) {
@@ -473,7 +485,7 @@ void HTMLLinkElement::addSubresourceAttributeURLs(ListHashSet<KURL>& urls) const
     HTMLElement::addSubresourceAttributeURLs(urls);
 
     // Favicons are handled by a special case in LegacyWebArchive::create()
-    if (m_relAttribute.m_isIcon)
+    if (m_relAttribute.m_iconType != InvalidIcon)
         return;
 
     if (!m_relAttribute.m_isStyleSheet)

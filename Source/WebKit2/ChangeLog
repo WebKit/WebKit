@@ -1,3 +1,19 @@
+2011-05-04  Tao Bai  <michaelbai@chromium.org>
+
+        Reviewed by David Kilzer.
+
+        Populate touch-icon url to FrameLoaderClient
+        https://bugs.webkit.org/show_bug.cgi?id=59143
+
+        Respected the change of FrameLoaderClient.
+        Added WebIconURL and WebIconType responding the new IconURL and IconType.
+        Supported to get the multiple icon urls.
+
+        * Configurations/FeatureDefines.xcconfig:
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebKit::WebFrameLoaderClient::dispatchDidChangeIcons):
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.h:
+
 2011-05-04  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Dan Bernstein.

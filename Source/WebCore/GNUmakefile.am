@@ -261,6 +261,16 @@ webcore_built_sources += \
 endif # END ENABLE_QUOTA
 
 # ----
+# Touch Icon Loading
+# ----
+if ENABLE_TOUCH_ICON_LOADING
+FEATURE_DEFINES += ENABLE_TOUCH_ICON_LOADING=1
+webcore_cppflags += -DENABLE_TOUCH_ICON_LOADING=1
+else
+webcore_cppflags += -DENABLE_TOUCH_ICON_LOADING=0
+endif # END ENABLE_TOUCH_ICON_LOADING
+
+# ----
 # Speech Input API support
 # ----
 if ENABLE_INPUT_SPEECH

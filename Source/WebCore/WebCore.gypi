@@ -2470,6 +2470,8 @@
             'dom/ExceptionCode.cpp',
             'dom/HashChangeEvent.h',
             'dom/IgnoreDestructiveWriteCountIncrementer.h',
+            'dom/IconURL.cpp',
+            'dom/IconURL.h',
             'dom/InputElement.cpp',
             'dom/KeyboardEvent.cpp',
             'dom/MessageChannel.cpp',

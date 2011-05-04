@@ -373,8 +373,11 @@ void WebFrameLoaderClient::dispatchDidReceiveTitle(const StringWithDirection& ti
         frameLoadDelegate->didReceiveTitle(webView, BString(title.string()), m_webFrame);
 }
 
-void WebFrameLoaderClient::dispatchDidChangeIcons()
+void WebFrameLoaderClient::dispatchDidChangeIcons(WebCore::IconType type)
 {
+    if (type != WebCore::Favicon)
+        return;
+
     WebView* webView = m_webFrame->webView();
     COMPtr<IWebFrameLoadDelegatePrivate> frameLoadDelegatePriv;
     if (FAILED(webView->frameLoadDelegatePrivate(&frameLoadDelegatePriv)) || !frameLoadDelegatePriv)

@@ -1,3 +1,16 @@
+2011-05-04  Tao Bai  <michaelbai@chromium.org>
+
+        Reviewed by David Kilzer.
+
+        Populate touch-icon url to FrameLoaderClient
+        https://bugs.webkit.org/show_bug.cgi?id=59143
+
+        Respect the interface change in FrameLoaderClient
+
+        * WebCoreSupport/FrameLoaderClientEfl.cpp:
+        (WebCore::FrameLoaderClientEfl::dispatchDidChangeIcons):
+        * WebCoreSupport/FrameLoaderClientEfl.h:
+
 2011-05-04  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
         Reviewed by Kenneth Rohde Christiansen.

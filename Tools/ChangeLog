@@ -1,3 +1,14 @@
+2011-05-04  Tao Bai  <michaelbai@chromium.org>
+
+        Reviewed by David Kilzer.
+
+        Populate touch-icon url to FrameLoaderClient
+        https://bugs.webkit.org/show_bug.cgi?id=59143
+
+        Disable touch icon by default. 
+
+        * Scripts/build-webkit:
+
 2011-05-04  Justin Novosad  <junov@chromium.org>
 
         Reviewed by Kenneth Russell.

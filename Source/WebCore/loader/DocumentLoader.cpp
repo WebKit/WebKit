@@ -661,14 +661,19 @@ void DocumentLoader::setTitle(const StringWithDirection& title)
     }
 }
 
-void DocumentLoader::setIconURL(const String& iconURL)
+IconURL DocumentLoader::iconURL(IconType iconType) const
 {
-    if (iconURL.isEmpty())
+    return m_iconURLs[toIconIndex(iconType)];
+}
+
+void DocumentLoader::setIconURL(const IconURL& url)
+{
+    if (url.m_iconURL.isEmpty())
         return;
 
-    if (m_pageIconURL != iconURL) {
-        m_pageIconURL = iconURL;
-        frameLoader()->didChangeIcons(this);
+    if (iconURL(url.m_iconType).m_iconURL != url.m_iconURL) {
+        m_iconURLs[toIconIndex(url.m_iconType)] = url;
+        frameLoader()->didChangeIcons(this, url.m_iconType);
     }
 }
 

@@ -1,3 +1,16 @@
+2011-05-04  Tao Bai  <michaelbai@chromium.org>
+
+        Reviewed by David Kilzer.
+
+        Populate touch-icon url to FrameLoaderClient
+        https://bugs.webkit.org/show_bug.cgi?id=59143
+
+        Respect the interface change in FrameLoaderClient.
+
+        * WebCoreSupport/FrameLoaderClientWinCE.cpp:
+        (WebKit::FrameLoaderClientWinCE::dispatchDidChangeIcons):
+        * WebCoreSupport/FrameLoaderClientWinCE.h:
+
 2011-05-01  Patrick Gansterer  <paroga@webkit.org>
 
         [WIN] Unreviewed buildfix after r85434.

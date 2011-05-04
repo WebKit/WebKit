@@ -33,6 +33,7 @@
 #include "Color.h"
 #include "DOMTimeStamp.h"
 #include "DocumentTiming.h"
+#include "IconURL.h"
 #include "QualifiedName.h"
 #include "ScriptExecutionContext.h"
 #include "StringWithDirection.h"
@@ -920,8 +921,9 @@ public:
     
     void setHasNodesWithPlaceholderStyle() { m_hasNodesWithPlaceholderStyle = true; }
 
-    const String& iconURL() const { return m_iconURL; }
-    void setIconURL(const String& iconURL, const String& type);
+    IconURL iconURL(IconType) const;
+    void setIconURL(const String&, const String&, IconType);
+    void setIconURL(const IconURL&);
 
     void setUseSecureKeyboardEntryWhenActive(bool);
     bool useSecureKeyboardEntryWhenActive() const;
@@ -1329,8 +1331,8 @@ private:
 
     bool m_createRenderers;
     bool m_inPageCache;
-    String m_iconURL;
-    
+    IconURL m_iconURLs[ICON_COUNT];
+
     HashSet<Element*> m_documentActivationCallbackElements;
     HashSet<Element*> m_mediaVolumeCallbackElements;
     HashSet<Element*> m_privateBrowsingStateChangedElements;

@@ -4395,15 +4395,26 @@ unsigned FormElementKeyHash::hash(const FormElementKey& key)
     return StringHasher::hashMemory<sizeof(FormElementKey)>(&key);
 }
 
-void Document::setIconURL(const String& iconURL, const String& type)
+IconURL Document::iconURL(IconType iconType) const
 {
-    // FIXME - <rdar://problem/4727645> - At some point in the future, we might actually honor the "type" 
-    if (m_iconURL.isEmpty())
-        m_iconURL = iconURL;
-    else if (!type.isEmpty())
-        m_iconURL = iconURL;
+    return m_iconURLs[toIconIndex(iconType)];
+}
+
+void Document::setIconURL(const String& url, const String& mimeType, IconType iconType)
+{
+    // FIXME - <rdar://problem/4727645> - At some point in the future, we might actually honor the "mimeType"
+    IconURL newURL(KURL(ParsedURLString, url), iconType);
+    if (!iconURL(iconType).m_iconURL.isEmpty())
+        setIconURL(newURL);
+    else if (!mimeType.isEmpty())
+        setIconURL(newURL);
     if (Frame* f = frame())
-        f->loader()->setIconURL(m_iconURL);
+        f->loader()->setIconURL(newURL);
+}
+
+void Document::setIconURL(const IconURL& iconURL)
+{
+    m_iconURLs[toIconIndex(iconURL.m_iconType)] = iconURL;
 }
 
 void Document::registerFormElementWithFormAttribute(FormAssociatedElement* element)

@@ -587,7 +587,7 @@ void FrameLoaderClientEfl::dispatchDidReceiveTitle(const StringWithDirection& ti
     ewk_view_title_set(m_view, cs.data());
 }
 
-void FrameLoaderClientEfl::dispatchDidChangeIcons()
+void FrameLoaderClientEfl::dispatchDidChangeIcons(WebCore::IconType)
 {
     notImplemented();
 }

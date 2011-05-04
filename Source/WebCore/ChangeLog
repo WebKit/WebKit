@@ -1,3 +1,54 @@
+2011-05-04  Tao Bai  <michaelbai@chromium.org>
+
+        Reviewed by David Kilzer.
+
+        Populate touch-icon url to FrameLoaderClient
+        https://bugs.webkit.org/show_bug.cgi?id=59143
+        
+        Parsed and populated apple-touch-icon url to FrameLoaderClient.
+        Changed favicon to be a type of icon.
+
+        * CMakeLists.txt:
+        * Configurations/FeatureDefines.xcconfig:
+        * GNUmakefile.am:
+        * GNUmakefile.list.am:
+        * WebCore.gypi:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * dom/Document.cpp:
+        (WebCore::Document::iconURL):
+        (WebCore::Document::setIconURL):
+        * dom/Document.h:
+        * dom/IconURL.cpp: Added.
+        (WebCore::toIconIndex):
+        * dom/IconURL.h: Added.
+        (WebCore::IconURL::IconURL):
+        * features.pri:
+        * html/HTMLLinkElement.cpp:
+        (WebCore::HTMLLinkElement::tokenizeRelAttribute):
+        (WebCore::HTMLLinkElement::process):
+        (WebCore::HTMLLinkElement::addSubresourceAttributeURLs):
+        * html/HTMLLinkElement.h:
+        (WebCore::HTMLLinkElement::RelAttribute::RelAttribute):
+        (WebCore::HTMLLinkElement::isEnabledViaScript):
+        * html/parser/HTMLPreloadScanner.cpp:
+        (WebCore::HTMLNames::PreloadTask::relAttributeIsStyleSheet):
+        * loader/DocumentLoader.cpp:
+        (WebCore::DocumentLoader::iconURL):
+        (WebCore::DocumentLoader::setIconURL):
+        * loader/DocumentLoader.h:
+        * loader/EmptyClients.h:
+        (WebCore::EmptyFrameLoaderClient::dispatchDidChangeIcons):
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::iconURL):
+        (WebCore::FrameLoader::iconURLs):
+        (WebCore::FrameLoader::fillIconURL):
+        (WebCore::FrameLoader::getDefaultIconURL):
+        (WebCore::FrameLoader::setIconURL):
+        (WebCore::FrameLoader::didChangeIcons):
+        * loader/FrameLoader.h:
+        * loader/FrameLoaderClient.h:
+
 2011-05-04  Chris Marrin  <cmarrin@apple.com>
 
         Reviewed by Simon Fraser.

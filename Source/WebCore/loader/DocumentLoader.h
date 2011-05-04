@@ -32,6 +32,7 @@
 #include "DocumentLoadTiming.h"
 #include "DocumentWriter.h"
 #include "IconDatabaseBase.h"
+#include "IconURL.h"
 #include "NavigationAction.h"
 #include "ResourceError.h"
 #include "ResourceRequest.h"
@@ -123,7 +124,7 @@ namespace WebCore {
         bool isLoadingInAPISense() const;
         void setPrimaryLoadComplete(bool);
         void setTitle(const StringWithDirection&);
-        void setIconURL(const String&);
+        void setIconURL(const IconURL&);
         const String& overrideEncoding() const { return m_overrideEncoding; }
 
 #if PLATFORM(MAC)
@@ -170,7 +171,7 @@ namespace WebCore {
 
         void stopRecordingResponses();
         const StringWithDirection& title() const { return m_pageTitle; }
-        const String& iconURL() const { return m_pageIconURL; }
+        IconURL iconURL(IconType) const;
 
         KURL urlForHistory() const;
         bool urlForHistoryReflectsFailure() const;
@@ -300,7 +301,7 @@ namespace WebCore {
         bool m_wasOnloadHandled;
 
         StringWithDirection m_pageTitle;
-        String m_pageIconURL;
+        IconURL m_iconURLs[ICON_COUNT];
 
         String m_overrideEncoding;
 

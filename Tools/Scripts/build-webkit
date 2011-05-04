@@ -112,6 +112,7 @@ my (
     $systemMallocSupport,
     $tiledBackingStoreSupport,
     $touchEventsSupport,
+    $touchIconLoadingSupport,
     $videoSupport,
     $wcssSupport,
     $webAudioSupport,
@@ -271,6 +272,9 @@ my @features = (
 
     { option => "touch-events", desc => "Toggle Touch Events support",
       define => "ENABLE_TOUCH_EVENTS", default => isQt(), value => \$touchEventsSupport },
+
+    { option => "touch-icon-loading", desc => "Toggle Touch Icon Loading Support",
+      define => "ENABLE_TOUCH_ICON_LOADING", default => 0, value => \$touchIconLoadingSupport },
 
     { option => "video", desc => "Toggle Video support",
       define => "ENABLE_VIDEO", default => (isAppleWebKit() || isGtk()), value => \$videoSupport },

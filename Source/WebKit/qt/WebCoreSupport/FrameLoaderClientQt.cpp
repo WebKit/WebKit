@@ -460,7 +460,7 @@ void FrameLoaderClientQt::dispatchDidReceiveTitle(const StringWithDirection& tit
 }
 
 
-void FrameLoaderClientQt::dispatchDidChangeIcons()
+void FrameLoaderClientQt::dispatchDidChangeIcons(WebCore::IconType)
 {
     if (dumpFrameLoaderCallbacks)
         printf("%s - didChangeIcons\n", qPrintable(drtDescriptionSuitableForTestResult(m_frame)));

@@ -95,7 +95,7 @@ public:
     {
         HTMLLinkElement::RelAttribute rel;
         HTMLLinkElement::tokenizeRelAttribute(attributeValue, rel);
-        return rel.m_isStyleSheet && !rel.m_isAlternate && !rel.m_isIcon && !rel.m_isDNSPrefetch;
+        return rel.m_isStyleSheet && !rel.m_isAlternate && rel.m_iconType == InvalidIcon && !rel.m_isDNSPrefetch;
     }
 
     static bool linkMediaAttributeIsScreen(const String& attributeValue)

@@ -103,7 +103,7 @@ class FrameLoaderClientEfl : public FrameLoaderClient {
     virtual void dispatchDidReceiveIcon();
     virtual void dispatchDidStartProvisionalLoad();
     virtual void dispatchDidReceiveTitle(const StringWithDirection&);
-    virtual void dispatchDidChangeIcons();
+    virtual void dispatchDidChangeIcons(WebCore::IconType);
     virtual void dispatchDidCommitLoad();
     virtual void dispatchDidFailProvisionalLoad(const ResourceError&);
     virtual void dispatchDidFailLoad(const ResourceError&);

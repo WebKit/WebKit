@@ -271,7 +271,7 @@ public:
     virtual void dispatchDidReceiveIcon() { }
     virtual void dispatchDidStartProvisionalLoad() { }
     virtual void dispatchDidReceiveTitle(const StringWithDirection&) { }
-    virtual void dispatchDidChangeIcons() { }
+    virtual void dispatchDidChangeIcons(IconType) { }
     virtual void dispatchDidCommitLoad() { }
     virtual void dispatchDidFailProvisionalLoad(const ResourceError&) { }
     virtual void dispatchDidFailLoad(const ResourceError&) { }

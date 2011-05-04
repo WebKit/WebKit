@@ -69,6 +69,7 @@
 #include "HistoryItem.h"
 #include "IconDatabase.h"
 #include "IconLoader.h"
+#include "IconURL.h"
 #include "InspectorController.h"
 #include "InspectorInstrumentation.h"
 #include "Logging.h"
@@ -467,18 +468,56 @@ bool FrameLoader::closeURL()
 
 KURL FrameLoader::iconURL()
 {
-    // If this isn't a top level frame, return nothing
+    IconURLs urls = iconURLs(Favicon);
+    return urls.isEmpty() ? KURL() : urls[0].m_iconURL;
+}
+
+IconURLs FrameLoader::iconURLs(int iconTypes)
+{
+    IconURLs iconURLs;
+    if (iconTypes & Favicon && !fillIconURL(Favicon, &iconURLs))
+        iconURLs.append(getDefaultIconURL(Favicon));
+
+#if ENABLE(TOUCH_ICON_LOADING)
+    bool havePrecomposedIcon = false;
+    if (iconTypes & TouchPrecomposedIcon)
+        havePrecomposedIcon = fillIconURL(TouchPrecomposedIcon, &iconURLs);
+
+    bool haveTouchIcon = false;
+    if (iconTypes & TouchIcon)
+        haveTouchIcon = fillIconURL(TouchIcon, &iconURLs);
+
+    // Only return the default touch icons when the both were required and neither was gotten.
+    if (iconTypes & TouchPrecomposedIcon && iconTypes & TouchIcon && !havePrecomposedIcon && !haveTouchIcon) {
+        iconURLs.append(getDefaultIconURL(TouchPrecomposedIcon));
+        iconURLs.append(getDefaultIconURL(TouchIcon));
+    }
+#endif
+    return iconURLs;
+}
+
+bool FrameLoader::fillIconURL(IconType iconType, IconURLs* iconURLs)
+{
+    // If this isn't a top level frame, return
     if (m_frame->tree() && m_frame->tree()->parent())
-        return KURL();
+        return false;
 
     // If we have an iconURL from a Link element, return that
-    if (!m_frame->document()->iconURL().isEmpty())
-        return KURL(ParsedURLString, m_frame->document()->iconURL());
+    IconURL url = m_frame->document()->iconURL(iconType);
+    if (url.m_iconURL.isEmpty())
+        return false;
 
+    iconURLs->append(url);
+
+    return true;
+}
+
+IconURL FrameLoader::getDefaultIconURL(IconType iconType)
+{
     // Don't return a favicon iconURL unless we're http or https
     KURL documentURL = m_frame->document()->url();
     if (!documentURL.protocolInHTTPFamily())
-        return KURL();
+        return IconURL();
 
     KURL url;
     bool couldSetProtocol = url.setProtocol(documentURL.protocol());
@@ -486,8 +525,21 @@ KURL FrameLoader::iconURL()
     url.setHost(documentURL.host());
     if (documentURL.hasPort())
         url.setPort(documentURL.port());
-    url.setPath("/favicon.ico");
-    return url;
+    if (iconType == Favicon) {
+        url.setPath("/favicon.ico");
+        return IconURL(KURL(ParsedURLString, url), Favicon);
+    }
+#if ENABLE(TOUCH_ICON_LOADING)
+    if (iconType == TouchPrecomposedIcon) {
+        url.setPath("/apple-touch-icon-precomposed.png");
+        return IconURL(KURL(ParsedURLString, url), TouchPrecomposedIcon);
+    }
+    if (iconType == TouchIcon) {
+        url.setPath("/apple-touch-icon.png");
+        return IconURL(KURL(ParsedURLString, url), TouchIcon);
+    }
+#endif
+    return IconURL();
 }
 
 bool FrameLoader::didOpenURL(const KURL& url)
@@ -3357,7 +3409,7 @@ void FrameLoader::setTitle(const StringWithDirection& title)
     documentLoader()->setTitle(title);
 }
 
-void FrameLoader::setIconURL(const String& iconURL)
+void FrameLoader::setIconURL(const IconURL& iconURL)
 {
     documentLoader()->setIconURL(iconURL);
 }
@@ -3435,10 +3487,10 @@ void FrameLoader::didChangeTitle(DocumentLoader* loader)
     }
 }
 
-void FrameLoader::didChangeIcons(DocumentLoader* loader)
+void FrameLoader::didChangeIcons(DocumentLoader* loader, IconType type)
 {
     if (loader == m_documentLoader)
-        m_client->dispatchDidChangeIcons();
+        m_client->dispatchDidChangeIcons(type);
 }
 
 void FrameLoader::dispatchDidCommitLoad()

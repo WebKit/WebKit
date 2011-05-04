@@ -633,7 +633,7 @@ void WebFrameLoaderClient::dispatchDidReceiveTitle(const StringWithDirection& ti
         CallFrameLoadDelegate(implementations->didReceiveTitleForFrameFunc, webView, @selector(webView:didReceiveTitle:forFrame:), (NSString *)title.string(), m_webFrame.get());
 }
 
-void WebFrameLoaderClient::dispatchDidChangeIcons()
+void WebFrameLoaderClient::dispatchDidChangeIcons(WebCore::IconType)
 {
      // FIXME: Implement this to allow container to update favicon.
 }

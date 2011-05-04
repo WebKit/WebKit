@@ -327,7 +327,7 @@ void FrameLoaderClientWx::dispatchDidFinishDocumentLoad()
     }
 }
 
-void FrameLoaderClientWx::dispatchDidChangeIcons()
+void FrameLoaderClientWx::dispatchDidChangeIcons(WebCore::IconType)
 {
     notImplemented();
 }

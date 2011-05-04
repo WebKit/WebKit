@@ -376,7 +376,7 @@ void FrameLoaderClientWinCE::dispatchDidReceiveTitle(const StringWithDirection&)
     notImplemented();
 }
 
-void FrameLoaderClientWinCE::dispatchDidChangeIcons()
+void FrameLoaderClientWinCE::dispatchDidChangeIcons(WebCore::IconType)
 {
     notImplemented();
 }

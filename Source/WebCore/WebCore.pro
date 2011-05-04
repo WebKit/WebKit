@@ -492,6 +492,7 @@ SOURCES += \
     dom/EventQueue.cpp \
     dom/ExceptionBase.cpp \
     dom/ExceptionCode.cpp \
+    dom/IconURL.cpp \
     dom/InputElement.cpp \
     dom/KeyboardEvent.cpp \
     dom/MessageChannel.cpp \

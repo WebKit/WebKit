@@ -418,7 +418,7 @@ void WebFrameLoaderClient::dispatchDidReceiveTitle(const StringWithDirection& ti
     webPage->send(Messages::WebPageProxy::DidReceiveTitleForFrame(m_frame->frameID(), title.string(), InjectedBundleUserMessageEncoder(userData.get())));
 }
 
-void WebFrameLoaderClient::dispatchDidChangeIcons()
+void WebFrameLoaderClient::dispatchDidChangeIcons(WebCore::IconType)
 {
     notImplemented();
 }

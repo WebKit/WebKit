@@ -27,6 +27,7 @@
 #include "CachedResourceClient.h"
 #include "CachedResourceHandle.h"
 #include "HTMLElement.h"
+#include "IconURL.h"
 #include "Timer.h"
 
 namespace WebCore {
@@ -39,7 +40,7 @@ class HTMLLinkElement : public HTMLElement, public CachedResourceClient {
 public:
     struct RelAttribute {
         bool m_isStyleSheet;
-        bool m_isIcon;
+        IconType m_iconType;
         bool m_isAlternate;
         bool m_isDNSPrefetch;
 #if ENABLE(LINK_PREFETCH)
@@ -49,7 +50,7 @@ public:
 
         RelAttribute()
             : m_isStyleSheet(false)
-            , m_isIcon(false)
+            , m_iconType(InvalidIcon)
             , m_isAlternate(false)
             , m_isDNSPrefetch(false)
 #if ENABLE(LINK_PREFETCH)
@@ -76,7 +77,6 @@ public:
 
     bool isDisabled() const { return m_disabledState == Disabled; }
     bool isEnabledViaScript() const { return m_disabledState == EnabledViaScript; }
-    bool isIcon() const { return m_relAttribute.m_isIcon; }
     bool disabled() const;
     void setDisabled(bool);
 

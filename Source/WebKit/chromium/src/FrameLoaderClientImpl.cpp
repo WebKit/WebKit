@@ -757,7 +757,7 @@ void FrameLoaderClientImpl::dispatchDidReceiveTitle(const StringWithDirection& t
         m_webFrame->client()->didReceiveTitle(m_webFrame, title.string(), title.direction() == LTR ? WebTextDirectionLeftToRight : WebTextDirectionRightToLeft);
 }
 
-void FrameLoaderClientImpl::dispatchDidChangeIcons()
+void FrameLoaderClientImpl::dispatchDidChangeIcons(WebCore::IconType type)
 {
     if (m_webFrame->client())
         m_webFrame->client()->didChangeIcons(m_webFrame);

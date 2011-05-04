@@ -82,7 +82,7 @@ namespace WebKit {
         virtual void dispatchDidReceiveIcon();
         virtual void dispatchDidStartProvisionalLoad();
         virtual void dispatchDidReceiveTitle(const WebCore::StringWithDirection&);
-        virtual void dispatchDidChangeIcons();
+        virtual void dispatchDidChangeIcons(WebCore::IconType);
         virtual void dispatchDidCommitLoad();
         virtual void dispatchDidFailProvisionalLoad(const WebCore::ResourceError&);
         virtual void dispatchDidFailLoad(const WebCore::ResourceError&);

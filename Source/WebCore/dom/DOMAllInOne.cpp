@@ -75,6 +75,7 @@
 #include "EventTarget.cpp"
 #include "ExceptionBase.cpp"
 #include "ExceptionCode.cpp"
+#include "IconURL.cpp"
 #include "InputElement.cpp"
 #include "KeyboardEvent.cpp"
 #include "MessageChannel.cpp"

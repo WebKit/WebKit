@@ -36,6 +36,7 @@
 #include "FrameLoaderTypes.h"
 #include "HistoryController.h"
 #include "IconDatabaseBase.h"
+#include "IconURL.h"
 #include "PolicyChecker.h"
 #include "ResourceLoadNotifier.h"
 #include "SubframeLoader.h"
@@ -191,7 +192,7 @@ public:
     bool subframeIsLoading() const;
     void willChangeTitle(DocumentLoader*);
     void didChangeTitle(DocumentLoader*);
-    void didChangeIcons(DocumentLoader*);
+    void didChangeIcons(DocumentLoader*, IconType);
 
     FrameLoadType loadType() const;
 
@@ -233,7 +234,11 @@ public:
     void didEndDocument();
     void willSetEncoding();
 
+    // Returns favicon.
     KURL iconURL();
+
+    // Returns the given iconTypes' IconURLs, iconTypes could be any combination of IconType.
+    IconURLs iconURLs(int iconTypes);
     void commitIconURLToIconDatabase(const KURL&);
 
     KURL baseURL() const;
@@ -284,7 +289,7 @@ public:
     void cancelAndClear();
 
     void setTitle(const StringWithDirection&);
-    void setIconURL(const String&);
+    void setIconURL(const IconURL&);
 
     void commitProvisionalLoad();
     bool isLoadingFromCachedPage() const { return m_loadingFromCachedPage; }
@@ -427,6 +432,9 @@ private:
     bool shouldTreatURLAsSameAsCurrent(const KURL&) const;
 
     void updateSandboxFlags();
+
+    bool fillIconURL(IconType, IconURLs*);
+    IconURL getDefaultIconURL(IconType);
 
     Frame* m_frame;
     FrameLoaderClient* m_client;

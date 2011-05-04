@@ -970,6 +970,8 @@
 		449B19F50FA72ECE0015CA4A /* HTMLParserQuirks.h in Headers */ = {isa = PBXBuildFile; fileRef = 449B19F30FA72ECE0015CA4A /* HTMLParserQuirks.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		44A28AAC12DFB8AC00AE923B /* MathMLElementFactory.h in Headers */ = {isa = PBXBuildFile; fileRef = 44A28AAB12DFB8AC00AE923B /* MathMLElementFactory.h */; };
 		44A28AAF12DFB8BF00AE923B /* MathMLNames.h in Headers */ = {isa = PBXBuildFile; fileRef = 44A28AAE12DFB8BF00AE923B /* MathMLNames.h */; };
+		45099C411370A7800058D513 /* IconURL.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 45099C401370A7800058D513 /* IconURL.cpp */; };
+		45BAC2B01360BBAB005DA258 /* IconURL.h in Headers */ = {isa = PBXBuildFile; fileRef = 45BAC2AF1360BBAB005DA258 /* IconURL.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		4614A1FE0B23A8D600446E1C /* copyCursor.png in Resources */ = {isa = PBXBuildFile; fileRef = 4614A1FD0B23A8D600446E1C /* copyCursor.png */; };
 		464EA2730B8A350B00A8E6E3 /* crossHairCursor.png in Resources */ = {isa = PBXBuildFile; fileRef = 464EA2710B8A350B00A8E6E3 /* crossHairCursor.png */; };
 		464EA2740B8A350B00A8E6E3 /* notAllowedCursor.png in Resources */ = {isa = PBXBuildFile; fileRef = 464EA2720B8A350B00A8E6E3 /* notAllowedCursor.png */; };
@@ -7441,6 +7443,8 @@
 		449B19F30FA72ECE0015CA4A /* HTMLParserQuirks.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HTMLParserQuirks.h; sourceTree = "<group>"; };
 		44A28AAB12DFB8AC00AE923B /* MathMLElementFactory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MathMLElementFactory.h; sourceTree = "<group>"; };
 		44A28AAE12DFB8BF00AE923B /* MathMLNames.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MathMLNames.h; sourceTree = "<group>"; };
+		45099C401370A7800058D513 /* IconURL.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = IconURL.cpp; path = dom/IconURL.cpp; sourceTree = "<group>"; };
+		45BAC2AF1360BBAB005DA258 /* IconURL.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = IconURL.h; path = dom/IconURL.h; sourceTree = "<group>"; };
 		4614A1FD0B23A8D600446E1C /* copyCursor.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = copyCursor.png; sourceTree = "<group>"; };
 		464EA2710B8A350B00A8E6E3 /* crossHairCursor.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = crossHairCursor.png; sourceTree = "<group>"; };
 		464EA2720B8A350B00A8E6E3 /* notAllowedCursor.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = notAllowedCursor.png; sourceTree = "<group>"; };
@@ -12527,6 +12531,8 @@
 		0867D691FE84028FC02AAC07 /* WebKit */ = {
 			isa = PBXGroup;
 			children = (
+				45099C401370A7800058D513 /* IconURL.cpp */,
+				45BAC2AF1360BBAB005DA258 /* IconURL.h */,
 				65C97AF208EA908800ACD273 /* config.h */,
 				EDEC98020AED7E170059137F /* WebCorePrefix.h */,
 				9307061309E0CA8200B17FE4 /* DerivedSources.make */,
@@ -22717,6 +22723,7 @@
 				93F199ED08245E59001E9ABC /* XSLTProcessor.h in Headers */,
 				E1BE512E0CF6C512002EA959 /* XSLTUnicodeSort.h in Headers */,
 				977E2E0F12F0FC9C00C13379 /* XSSFilter.h in Headers */,
+				45BAC2B01360BBAB005DA258 /* IconURL.h in Headers */,
 				B1E54594134629C10092A545 /* MediaStreamClient.h in Headers */,
 				B1E54598134629C10092A545 /* MediaStreamController.h in Headers */,
 				B1E54596134629C10092A545 /* MediaStreamFrameController.h in Headers */,
@@ -25380,6 +25387,7 @@
 				93F19B0508245E59001E9ABC /* XSLTProcessorLibxslt.cpp in Sources */,
 				E1BE512D0CF6C512002EA959 /* XSLTUnicodeSort.cpp in Sources */,
 				977E2E0E12F0FC9C00C13379 /* XSSFilter.cpp in Sources */,
+				45099C411370A7800058D513 /* IconURL.cpp in Sources */,
 				B1E54597134629C10092A545 /* MediaStreamController.cpp in Sources */,
 				B1E54595134629C10092A545 /* MediaStreamFrameController.cpp in Sources */,
 			);

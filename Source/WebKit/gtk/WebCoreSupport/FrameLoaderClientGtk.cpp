@@ -969,7 +969,7 @@ void FrameLoaderClient::dispatchDidReceiveTitle(const StringWithDirection& title
     }
 }
 
-void FrameLoaderClient::dispatchDidChangeIcons()
+void FrameLoaderClient::dispatchDidChangeIcons(WebCore::IconType)
 {
     notImplemented();
 }
