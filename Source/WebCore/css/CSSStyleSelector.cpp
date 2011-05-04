@@ -5193,11 +5193,9 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
             m_style->setHighlight(primitiveValue->getStringValue());
         return;
     }
-    case CSSPropertyWebkitHyphens: {
-        HANDLE_INHERIT_AND_INITIAL(hyphens, Hyphens);
-        m_style->setHyphens(*primitiveValue);
+    case CSSPropertyWebkitHyphens:
+        HANDLE_INHERIT_AND_INITIAL_AND_PRIMITIVE(hyphens, Hyphens);
         return;
-    }
     case CSSPropertyWebkitHyphenateCharacter: {
         HANDLE_INHERIT_AND_INITIAL(hyphenationString, HyphenationString);
         if (primitiveValue->getIdent() == CSSValueAuto)

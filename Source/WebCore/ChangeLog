@@ -1,3 +1,16 @@
+2011-05-04  Luke Macpherson   <macpherson@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        Make CSSStyleSelector::applyProperty() CSSPropertyWebkitHyphens case use appropriate macro.
+        https://bugs.webkit.org/show_bug.cgi?id=60114
+
+        No new tests as no functionality changes.
+
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::applyProperty):
+        Use HANDLE_INHERIT_AND_INITIAL_AND_PRIMITIVE macro to remove code duplication.
+
 2011-05-04  Caio Marcelo de Oliveira Filho  <caio.oliveira@openbossa.org>
 
         Reviewed by Andreas Kling.
