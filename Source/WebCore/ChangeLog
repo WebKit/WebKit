@@ -1,3 +1,17 @@
+2011-05-04  Chris Marrin  <cmarrin@apple.com>
+
+        Reviewed by Simon Fraser.
+
+        Crash in PlatformCALayer ::replaceSublayer when layer has not superlayer
+        https://bugs.webkit.org/show_bug.cgi?id=60191
+
+        Skip replaceSublayer when there is no superlayer rather than asserting.
+        This is probably not a problem and happens when restructuring the layer
+        tree. Avoiding this crash will allow us to get more testing.
+
+        * platform/graphics/ca/GraphicsLayerCA.cpp:
+        (WebCore::GraphicsLayerCA::swapFromOrToTiledLayer):
+
 2011-05-04  Martin Robinson  <mrobinson@igalia.com>
 
         Reviewed by Gustavo Noronha Silva.

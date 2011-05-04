@@ -2041,10 +2041,11 @@ void GraphicsLayerCA::swapFromOrToTiledLayer(bool useTiledLayer)
 
     m_layer->adoptSublayers(oldLayer.get());
     
-    // If m_layer doesn't have a parent, it means it's the root layer and
-    // is likely hosted by something that is not expecting to be changed
+    // FIXME: Skip this step if we don't have a superlayer. This is problably a benign
+    // case that happens while restructuring the layer tree.
     ASSERT(oldLayer->superlayer());
-    oldLayer->superlayer()->replaceSublayer(oldLayer.get(), m_layer.get());
+    if (oldLayer->superlayer())
+        oldLayer->superlayer()->replaceSublayer(oldLayer.get(), m_layer.get());
 
     updateContentsTransform();
 
