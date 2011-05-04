@@ -1,3 +1,27 @@
+2011-05-04  Jeff Miller  <jeffm@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Add NativeWebWheelEvent class
+        https://bugs.webkit.org/show_bug.cgi?id=60182
+        
+        This will be needed soon when we start notifying the UI process that a mouse wheel event wasn't handled by WebKit.
+
+        * GNUmakefile.am: Added NativeWebWheelEventGtk.cpp and NativeWebWheelEvent.h.
+        * Shared/NativeWebWheelEvent.h: Added.
+        (WebKit::NativeWebWheelEvent::nativeEvent): Added.
+        * Shared/gtk/NativeWebWheelEventGtk.cpp: Added.
+        (WebKit::NativeWebWheelEvent::NativeWebWheelEvent): Added.
+        * Shared/mac/NativeWebWheelEventMac.mm: Added.
+        (WebKit::NativeWebWheelEvent::NativeWebWheelEvent): Added.
+        * Shared/qt/NativeWebWheelEventQt.cpp: Added.
+        (WebKit::NativeWebWheelEvent::NativeWebWheelEvent): Added.
+        * Shared/win/NativeWebWheelEventWin.cpp: Added.
+        (WebKit::NativeWebWheelEvent::NativeWebWheelEvent):Added.
+        * WebKit2.pro: Added NativeWebWheelEventQt.cpp and NativeWebWheelEvent.h.
+        * WebKit2.xcodeproj/project.pbxproj: Added NativeWebWheelEventMac.mm and NativeWebWheelEvent.h.
+        * win/WebKit2.vcproj: Added NativeWebWheelEventWin.cpp and NativeWebWheelEvent.h.
+
 2011-05-04  Siddharth Mathur  <siddharth.mathur@nokia.com>
 
         Reviewed by Anders Carlsson.

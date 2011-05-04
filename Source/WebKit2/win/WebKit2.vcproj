@@ -491,6 +491,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\Shared\NativeWebWheelEvent.h"
+				>
+			</File>
+			<File
 				RelativePath="..\Shared\OriginAndDatabases.cpp"
 				>
 			</File>
@@ -1195,6 +1199,10 @@
 				</File>
 				<File
 					RelativePath="..\Shared\win\NativeWebMouseEventWin.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\Shared\win\NativeWebWheelEventWin.cpp"
 					>
 				</File>
 				<File

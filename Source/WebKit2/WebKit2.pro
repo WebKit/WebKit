@@ -128,6 +128,7 @@ HEADERS += \
     Shared/MutableDictionary.h \
     Shared/NativeWebKeyboardEvent.h \
     Shared/NativeWebMouseEvent.h \
+    Shared/NativeWebWheelEvent.h \
     Shared/OriginAndDatabases.h \
     Shared/PlatformPopupMenuData.h \
     Shared/PrintInfo.h \
@@ -376,6 +377,7 @@ SOURCES += \
     Shared/qt/ShareableBitmapQt.cpp \
     Shared/qt/NativeWebKeyboardEventQt.cpp \
     Shared/qt/NativeWebMouseEventQt.cpp \
+    Shared/qt/NativeWebWheelEventQt.cpp \
     Shared/qt/UpdateChunk.cpp \
     Shared/qt/WebCoreArgumentCodersQt.cpp \
     Shared/qt/WebEventFactoryQt.cpp \
