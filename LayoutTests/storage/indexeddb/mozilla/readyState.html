@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<!--
+  original test: http://mxr.mozilla.org/mozilla2.0/source/dom/indexedDB/test/test_request_readyState.html?force=1
+  license of original test:
+    " Any copyright is dedicated to the Public Domain.
+      http://creativecommons.org/publicdomain/zero/1.0/ "
+-->
+<html>
+<head>
+<link rel="stylesheet" href="../../../fast/js/resources/js-test-style.css">
+<script src="../../../fast/js/resources/js-test-pre.js"></script>
+<script src="../../../fast/js/resources/js-test-post-function.js"></script>
+<script src="../resources/shared.js"></script>
+</head>
+<body>
+<p id="description"></p>
+<div id="console"></div>
+<script>
+
+description("Test IndexedDB readyState property during different operations");
+if (window.layoutTestController)
+    layoutTestController.waitUntilDone();
+
+function test()
+{
+    indexedDB = evalAndLog("indexedDB = window.indexedDB || window.webkitIndexedDB || window.mozIndexedDB;");
+    shouldBeFalse("indexedDB == null");
+    IDBDatabaseException = evalAndLog("IDBDatabaseException = window.IDBDatabaseException || window.webkitIDBDatabaseException;");
+    shouldBeFalse("IDBDatabaseException == null");
+    IDBTransaction = evalAndLog("IDBTransaction = window.IDBTransaction || window.webkitIDBTransaction;");
+    shouldBeFalse("IDBTransaction == null");
+    IDBRequest = evalAndLog("IDBRequest = window.IDBRequest || window.webkitIDBRequest;");
+    shouldBeFalse("IDBRequest == null");
+
+    name = window.location.pathname;
+    description = "My Test Database";
+    request = evalAndLog("indexedDB.open(name, description)");
+    shouldBe("request.readyState", "IDBRequest.LOADING");
+    request.onsuccess = openSuccess;
+    request.onerror = unexpectedErrorCallback;
+}
+
+function openSuccess()
+{
+    debug("openSuccess():");
+    shouldBe("request.readyState", "IDBRequest.DONE");
+    db = evalAndLog("db = event.target.result");
+    request = evalAndLog("request = db.setVersion('1')");
+    shouldBe("request.readyState", "IDBRequest.LOADING");
+    request.onsuccess = setupObjectStore;
+    request.onerror = unexpectedErrorCallback;
+}
+
+function setupObjectStore()
+{
+    debug("setupObjectStore():");
+    shouldBe("request.readyState", "IDBRequest.DONE");
+    deleteAllObjectStores(db);
+
+    objectStore = evalAndLog("objectStore = db.createObjectStore('foo');");
+    key = evalAndLog("key = 10;");
+    request = evalAndLog("request = objectStore.add({}, key);");
+    shouldBe("request.readyState", "IDBRequest.LOADING");
+    request.onsuccess = getRecord;
+    request.onerror = unexpectedErrorCallback;
+}
+
+function getRecord()
+{
+    debug("getRecord():");
+    shouldBe("request.readyState", "IDBRequest.DONE");
+    shouldBe("event.target.result", "key");
+    request = evalAndLog("request = objectStore.get(key);");
+    shouldBe("request.readyState", "IDBRequest.LOADING");
+    request.onsuccess = finalCheck;
+    request.onerror = unexpectedErrorCallback;
+}
+
+function finalCheck()
+{
+    debug("finalCheck():");
+    shouldBe("request.readyState", "IDBRequest.DONE");
+    shouldBeFalse("event.target.result == null");
+    done();
+}
+
+var successfullyParsed = true;
+
+test();
+
+</script>
+</body>
+</html>
+

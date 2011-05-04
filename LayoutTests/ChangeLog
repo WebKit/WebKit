@@ -1,3 +1,17 @@
+2011-05-04  Mark Pilgrim  <pilgrim@chromium.org>
+
+        Reviewed by Tony Chang.
+
+        Port Mozilla's IndexedDB tests: readyState
+        https://bugs.webkit.org/show_bug.cgi?id=60069
+
+        Checks the value of the request.readyState property during and
+        after opening a database, setting the version, creating a datastore,
+        adding a record, and retrieving a record.
+
+        * storage/indexeddb/mozilla/readyState-expected.txt: Added.
+        * storage/indexeddb/mozilla/readyState.html: Added.
+
 2011-05-04  Philippe Normand  <pnormand@igalia.com>
 
         Unreviewed, GTK rebaseline after r85669.
