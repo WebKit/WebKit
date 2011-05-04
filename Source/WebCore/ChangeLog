@@ -1,3 +1,20 @@
+2011-05-04  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Avoid allocating a new image buffer in ~CanvasRenderingContext2D()
+        https://bugs.webkit.org/show_bug.cgi?id=59849
+
+        When attempting to unwind the graphics state stack in the
+        CanvasRenderingContext2D destructor, don't allow HTMLCanvasElement
+        to create a new ImageBuffer.
+
+        * html/HTMLCanvasElement.cpp:
+        (WebCore::HTMLCanvasElement::existingDrawingContext):
+        * html/HTMLCanvasElement.h:
+        * html/canvas/CanvasRenderingContext2D.cpp:
+        (WebCore::CanvasRenderingContext2D::~CanvasRenderingContext2D):
+
 2011-05-04  Andrey Kosyakov  <caseq@chromium.org>
 
         Reviewed by Yury Semikhatsky.

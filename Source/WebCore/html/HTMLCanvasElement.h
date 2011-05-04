@@ -100,6 +100,7 @@ public:
     void paint(GraphicsContext*, const IntRect&);
 
     GraphicsContext* drawingContext() const;
+    GraphicsContext* existingDrawingContext() const;
 
     CanvasRenderingContext* renderingContext() const { return m_context.get(); }
 

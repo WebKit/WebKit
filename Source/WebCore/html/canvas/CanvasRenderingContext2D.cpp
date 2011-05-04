@@ -154,7 +154,7 @@ CanvasRenderingContext2D::~CanvasRenderingContext2D()
     // is cleared before destruction, to avoid assertions in the
     // GraphicsContext dtor.
     if (size_t stackSize = m_stateStack.size()) {
-        if (GraphicsContext* context = drawingContext()) {
+        if (GraphicsContext* context = canvas()->existingDrawingContext()) {
             while (--stackSize)
                 context->restore();
         }
