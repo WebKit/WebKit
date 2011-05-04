@@ -44,6 +44,7 @@
 #include "HTMLFormElement.h"
 #include "HTMLPlugInElement.h"
 #include "HTTPParsers.h"
+#include "HTTPStatusCodes.h"
 #include "HistoryItem.h"
 #include "HitTestResult.h"
 #if ENABLE(ICONDATABASE)
@@ -1193,6 +1194,15 @@ WebCore::Frame* FrameLoaderClientQt::dispatchCreatePage(const WebCore::Navigatio
 void FrameLoaderClientQt::dispatchDecidePolicyForResponse(FramePolicyFunction function, const WebCore::ResourceResponse& response, const WebCore::ResourceRequest&)
 {
     // We need to call directly here.
+    switch (response.httpStatusCode()) {
+    case HTTPResetContent:
+        // FIXME: a 205 response requires that the requester reset the document view.
+        // Fallthrough
+    case HTTPNoContent:
+        callPolicyFunction(function, PolicyIgnore);
+        return;
+    }
+
     if (WebCore::contentDispositionType(response.httpHeaderField("Content-Disposition")) == WebCore::ContentDispositionAttachment)
         callPolicyFunction(function, PolicyDownload);
     else if (canShowMIMEType(response.mimeType()))
