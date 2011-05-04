@@ -129,16 +129,6 @@ public:
             return false;
         return m_data->font.capitalization() == QFont::SmallCaps;
     }
-    int pixelSize() const
-    {
-        Q_ASSERT(!isHashTableDeletedValue());
-        if (!m_data)
-            return 0;
-        // WebCore allows a font size of zero, but QFont does not.
-        if (!m_data->size)
-            return 0;
-        return m_data->font.pixelSize();
-    }
     
     FontOrientation orientation() const { return Horizontal; } // FIXME: Implement.
     void setOrientation(FontOrientation) { } // FIXME: Implement.
