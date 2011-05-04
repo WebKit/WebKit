@@ -1,3 +1,17 @@
+2011-05-04  Luke Macpherson   <macpherson@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        Rename CSSStyleApplyProperty::propertyValue and setPropertyValue.
+        https://bugs.webkit.org/show_bug.cgi?id=60006
+
+        No new tests as no functionality added. Simple rename only.
+
+        * css/CSSStyleApplyProperty.cpp:
+        Rename propertyValue propertyHandler and setPropertyValue setPropertyHandler.
+        * css/CSSStyleApplyProperty.h:
+        Rename propertyValue propertyHandler and setPropertyValue setPropertyHandler.
+
 2011-05-04  Ryosuke Niwa  <rniwa@webkit.org>
 
         Reviewed by Eric Seidel.

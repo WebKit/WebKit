@@ -52,24 +52,24 @@ public:
     void applyInheritValue(CSSPropertyID property, CSSStyleSelector* selector) const
     {
         ASSERT(implements(property));
-        propertyValue(property)->applyInheritValue(selector);
+        propertyHandler(property)->applyInheritValue(selector);
     }
 
     void applyInitialValue(CSSPropertyID property, CSSStyleSelector* selector) const
     {
         ASSERT(implements(property));
-        propertyValue(property)->applyInitialValue(selector);
+        propertyHandler(property)->applyInitialValue(selector);
     }
 
     void applyValue(CSSPropertyID property, CSSStyleSelector* selector, CSSValue* value) const
     {
         ASSERT(implements(property));
-        propertyValue(property)->applyValue(selector, value);
+        propertyHandler(property)->applyValue(selector, value);
     }
 
     bool implements(CSSPropertyID property) const
     {
-        return propertyValue(property);
+        return propertyHandler(property);
     }
 
 private:
@@ -85,22 +85,22 @@ private:
         return i >= 0 && i < numCSSProperties;
     }
 
-    void setPropertyValue(CSSPropertyID property, ApplyPropertyBase* value)
+    void setPropertyHandler(CSSPropertyID property, ApplyPropertyBase* value)
     {
         ASSERT(valid(property));
-        ASSERT(!propertyValue(property));
+        ASSERT(!propertyHandler(property));
         m_propertyMap[index(property)] = value;
     }
 
-    void setPropertyValue(CSSPropertyID newProperty, CSSPropertyID equivalentProperty)
+    void setPropertyHandler(CSSPropertyID newProperty, CSSPropertyID equivalentProperty)
     {
         ASSERT(valid(newProperty));
         ASSERT(valid(equivalentProperty));
-        ASSERT(!propertyValue(newProperty));
+        ASSERT(!propertyHandler(newProperty));
         m_propertyMap[index(newProperty)] = m_propertyMap[index(equivalentProperty)];
     }
 
-    ApplyPropertyBase* propertyValue(CSSPropertyID property) const
+    ApplyPropertyBase* propertyHandler(CSSPropertyID property) const
     {
         ASSERT(valid(property));
         return m_propertyMap[index(property)];

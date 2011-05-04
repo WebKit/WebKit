@@ -386,125 +386,125 @@ CSSStyleApplyProperty::CSSStyleApplyProperty()
     for (int i = 0; i < numCSSProperties; ++i)
        m_propertyMap[i] = 0;
 
-    setPropertyValue(CSSPropertyColor, new ApplyPropertyColor<InheritFromParent>(&RenderStyle::color, &RenderStyle::setColor, 0, RenderStyle::initialColor));
-    setPropertyValue(CSSPropertyDirection, new ApplyPropertyDirection(&RenderStyle::direction, &RenderStyle::setDirection, RenderStyle::initialDirection));
+    setPropertyHandler(CSSPropertyColor, new ApplyPropertyColor<InheritFromParent>(&RenderStyle::color, &RenderStyle::setColor, 0, RenderStyle::initialColor));
+    setPropertyHandler(CSSPropertyDirection, new ApplyPropertyDirection(&RenderStyle::direction, &RenderStyle::setDirection, RenderStyle::initialDirection));
 
-    setPropertyValue(CSSPropertyBackgroundAttachment, new ApplyPropertyFillLayer<EFillAttachment>(CSSPropertyBackgroundAttachment, BackgroundFillLayer, &RenderStyle::accessBackgroundLayers, &RenderStyle::backgroundLayers,
+    setPropertyHandler(CSSPropertyBackgroundAttachment, new ApplyPropertyFillLayer<EFillAttachment>(CSSPropertyBackgroundAttachment, BackgroundFillLayer, &RenderStyle::accessBackgroundLayers, &RenderStyle::backgroundLayers,
             &FillLayer::isAttachmentSet, &FillLayer::attachment, &FillLayer::setAttachment, &FillLayer::clearAttachment, &FillLayer::initialFillAttachment, &CSSStyleSelector::mapFillAttachment));
-    setPropertyValue(CSSPropertyBackgroundClip, new ApplyPropertyFillLayer<EFillBox>(CSSPropertyBackgroundClip, BackgroundFillLayer, &RenderStyle::accessBackgroundLayers, &RenderStyle::backgroundLayers,
+    setPropertyHandler(CSSPropertyBackgroundClip, new ApplyPropertyFillLayer<EFillBox>(CSSPropertyBackgroundClip, BackgroundFillLayer, &RenderStyle::accessBackgroundLayers, &RenderStyle::backgroundLayers,
             &FillLayer::isClipSet, &FillLayer::clip, &FillLayer::setClip, &FillLayer::clearClip, &FillLayer::initialFillClip, &CSSStyleSelector::mapFillClip));
-    setPropertyValue(CSSPropertyWebkitBackgroundClip, CSSPropertyBackgroundClip);
-    setPropertyValue(CSSPropertyWebkitBackgroundComposite, new ApplyPropertyFillLayer<CompositeOperator>(CSSPropertyWebkitBackgroundComposite, BackgroundFillLayer, &RenderStyle::accessBackgroundLayers, &RenderStyle::backgroundLayers,
+    setPropertyHandler(CSSPropertyWebkitBackgroundClip, CSSPropertyBackgroundClip);
+    setPropertyHandler(CSSPropertyWebkitBackgroundComposite, new ApplyPropertyFillLayer<CompositeOperator>(CSSPropertyWebkitBackgroundComposite, BackgroundFillLayer, &RenderStyle::accessBackgroundLayers, &RenderStyle::backgroundLayers,
             &FillLayer::isCompositeSet, &FillLayer::composite, &FillLayer::setComposite, &FillLayer::clearComposite, &FillLayer::initialFillComposite, &CSSStyleSelector::mapFillComposite));
 
-    setPropertyValue(CSSPropertyBackgroundImage, new ApplyPropertyFillLayer<StyleImage*>(CSSPropertyBackgroundImage, BackgroundFillLayer, &RenderStyle::accessBackgroundLayers, &RenderStyle::backgroundLayers,
+    setPropertyHandler(CSSPropertyBackgroundImage, new ApplyPropertyFillLayer<StyleImage*>(CSSPropertyBackgroundImage, BackgroundFillLayer, &RenderStyle::accessBackgroundLayers, &RenderStyle::backgroundLayers,
                 &FillLayer::isImageSet, &FillLayer::image, &FillLayer::setImage, &FillLayer::clearImage, &FillLayer::initialFillImage, &CSSStyleSelector::mapFillImage));
 
-    setPropertyValue(CSSPropertyBackgroundOrigin, new ApplyPropertyFillLayer<EFillBox>(CSSPropertyBackgroundOrigin, BackgroundFillLayer, &RenderStyle::accessBackgroundLayers, &RenderStyle::backgroundLayers,
+    setPropertyHandler(CSSPropertyBackgroundOrigin, new ApplyPropertyFillLayer<EFillBox>(CSSPropertyBackgroundOrigin, BackgroundFillLayer, &RenderStyle::accessBackgroundLayers, &RenderStyle::backgroundLayers,
             &FillLayer::isOriginSet, &FillLayer::origin, &FillLayer::setOrigin, &FillLayer::clearOrigin, &FillLayer::initialFillOrigin, &CSSStyleSelector::mapFillOrigin));
-    setPropertyValue(CSSPropertyWebkitBackgroundOrigin, CSSPropertyBackgroundOrigin);
+    setPropertyHandler(CSSPropertyWebkitBackgroundOrigin, CSSPropertyBackgroundOrigin);
 
-    setPropertyValue(CSSPropertyBackgroundPositionX, new ApplyPropertyFillLayer<Length>(CSSPropertyBackgroundPositionX, BackgroundFillLayer, &RenderStyle::accessBackgroundLayers, &RenderStyle::backgroundLayers,
+    setPropertyHandler(CSSPropertyBackgroundPositionX, new ApplyPropertyFillLayer<Length>(CSSPropertyBackgroundPositionX, BackgroundFillLayer, &RenderStyle::accessBackgroundLayers, &RenderStyle::backgroundLayers,
                 &FillLayer::isXPositionSet, &FillLayer::xPosition, &FillLayer::setXPosition, &FillLayer::clearXPosition, &FillLayer::initialFillXPosition, &CSSStyleSelector::mapFillXPosition));
-    setPropertyValue(CSSPropertyBackgroundPositionY, new ApplyPropertyFillLayer<Length>(CSSPropertyBackgroundPositionY, BackgroundFillLayer, &RenderStyle::accessBackgroundLayers, &RenderStyle::backgroundLayers,
+    setPropertyHandler(CSSPropertyBackgroundPositionY, new ApplyPropertyFillLayer<Length>(CSSPropertyBackgroundPositionY, BackgroundFillLayer, &RenderStyle::accessBackgroundLayers, &RenderStyle::backgroundLayers,
                     &FillLayer::isYPositionSet, &FillLayer::yPosition, &FillLayer::setYPosition, &FillLayer::clearYPosition, &FillLayer::initialFillYPosition, &CSSStyleSelector::mapFillYPosition));
-    setPropertyValue(CSSPropertyBackgroundPosition, new ApplyPropertyExpandingSuppressValue(propertyValue(CSSPropertyBackgroundPositionX), propertyValue(CSSPropertyBackgroundPositionY)));
+    setPropertyHandler(CSSPropertyBackgroundPosition, new ApplyPropertyExpandingSuppressValue(propertyHandler(CSSPropertyBackgroundPositionX), propertyHandler(CSSPropertyBackgroundPositionY)));
 
-    setPropertyValue(CSSPropertyBackgroundRepeatX, new ApplyPropertyFillLayer<EFillRepeat>(CSSPropertyBackgroundRepeatX, BackgroundFillLayer, &RenderStyle::accessBackgroundLayers, &RenderStyle::backgroundLayers,
+    setPropertyHandler(CSSPropertyBackgroundRepeatX, new ApplyPropertyFillLayer<EFillRepeat>(CSSPropertyBackgroundRepeatX, BackgroundFillLayer, &RenderStyle::accessBackgroundLayers, &RenderStyle::backgroundLayers,
                 &FillLayer::isRepeatXSet, &FillLayer::repeatX, &FillLayer::setRepeatX, &FillLayer::clearRepeatX, &FillLayer::initialFillRepeatX, &CSSStyleSelector::mapFillRepeatX));
-    setPropertyValue(CSSPropertyBackgroundRepeatY, new ApplyPropertyFillLayer<EFillRepeat>(CSSPropertyBackgroundRepeatY, BackgroundFillLayer, &RenderStyle::accessBackgroundLayers, &RenderStyle::backgroundLayers,
+    setPropertyHandler(CSSPropertyBackgroundRepeatY, new ApplyPropertyFillLayer<EFillRepeat>(CSSPropertyBackgroundRepeatY, BackgroundFillLayer, &RenderStyle::accessBackgroundLayers, &RenderStyle::backgroundLayers,
                     &FillLayer::isRepeatYSet, &FillLayer::repeatY, &FillLayer::setRepeatY, &FillLayer::clearRepeatY, &FillLayer::initialFillRepeatY, &CSSStyleSelector::mapFillRepeatY));
-    setPropertyValue(CSSPropertyBackgroundRepeat, new ApplyPropertyExpandingSuppressValue(propertyValue(CSSPropertyBackgroundRepeatX), propertyValue(CSSPropertyBackgroundRepeatY)));
+    setPropertyHandler(CSSPropertyBackgroundRepeat, new ApplyPropertyExpandingSuppressValue(propertyHandler(CSSPropertyBackgroundRepeatX), propertyHandler(CSSPropertyBackgroundRepeatY)));
 
-    setPropertyValue(CSSPropertyBackgroundSize, new ApplyPropertyFillLayer<FillSize>(CSSPropertyBackgroundSize, BackgroundFillLayer, &RenderStyle::accessBackgroundLayers, &RenderStyle::backgroundLayers,
+    setPropertyHandler(CSSPropertyBackgroundSize, new ApplyPropertyFillLayer<FillSize>(CSSPropertyBackgroundSize, BackgroundFillLayer, &RenderStyle::accessBackgroundLayers, &RenderStyle::backgroundLayers,
             &FillLayer::isSizeSet, &FillLayer::size, &FillLayer::setSize, &FillLayer::clearSize, &FillLayer::initialFillSize, &CSSStyleSelector::mapFillSize));
-    setPropertyValue(CSSPropertyWebkitBackgroundSize, CSSPropertyBackgroundSize);
+    setPropertyHandler(CSSPropertyWebkitBackgroundSize, CSSPropertyBackgroundSize);
 
-    setPropertyValue(CSSPropertyWebkitMaskAttachment, new ApplyPropertyFillLayer<EFillAttachment>(CSSPropertyWebkitMaskAttachment, MaskFillLayer, &RenderStyle::accessMaskLayers, &RenderStyle::maskLayers,
+    setPropertyHandler(CSSPropertyWebkitMaskAttachment, new ApplyPropertyFillLayer<EFillAttachment>(CSSPropertyWebkitMaskAttachment, MaskFillLayer, &RenderStyle::accessMaskLayers, &RenderStyle::maskLayers,
             &FillLayer::isAttachmentSet, &FillLayer::attachment, &FillLayer::setAttachment, &FillLayer::clearAttachment, &FillLayer::initialFillAttachment, &CSSStyleSelector::mapFillAttachment));
-    setPropertyValue(CSSPropertyWebkitMaskClip, new ApplyPropertyFillLayer<EFillBox>(CSSPropertyWebkitMaskClip, MaskFillLayer, &RenderStyle::accessMaskLayers, &RenderStyle::maskLayers,
+    setPropertyHandler(CSSPropertyWebkitMaskClip, new ApplyPropertyFillLayer<EFillBox>(CSSPropertyWebkitMaskClip, MaskFillLayer, &RenderStyle::accessMaskLayers, &RenderStyle::maskLayers,
             &FillLayer::isClipSet, &FillLayer::clip, &FillLayer::setClip, &FillLayer::clearClip, &FillLayer::initialFillClip, &CSSStyleSelector::mapFillClip));
-    setPropertyValue(CSSPropertyWebkitMaskComposite, new ApplyPropertyFillLayer<CompositeOperator>(CSSPropertyWebkitMaskComposite, MaskFillLayer, &RenderStyle::accessMaskLayers, &RenderStyle::maskLayers,
+    setPropertyHandler(CSSPropertyWebkitMaskComposite, new ApplyPropertyFillLayer<CompositeOperator>(CSSPropertyWebkitMaskComposite, MaskFillLayer, &RenderStyle::accessMaskLayers, &RenderStyle::maskLayers,
             &FillLayer::isCompositeSet, &FillLayer::composite, &FillLayer::setComposite, &FillLayer::clearComposite, &FillLayer::initialFillComposite, &CSSStyleSelector::mapFillComposite));
 
-    setPropertyValue(CSSPropertyWebkitMaskImage, new ApplyPropertyFillLayer<StyleImage*>(CSSPropertyWebkitMaskImage, MaskFillLayer, &RenderStyle::accessMaskLayers, &RenderStyle::maskLayers,
+    setPropertyHandler(CSSPropertyWebkitMaskImage, new ApplyPropertyFillLayer<StyleImage*>(CSSPropertyWebkitMaskImage, MaskFillLayer, &RenderStyle::accessMaskLayers, &RenderStyle::maskLayers,
                 &FillLayer::isImageSet, &FillLayer::image, &FillLayer::setImage, &FillLayer::clearImage, &FillLayer::initialFillImage, &CSSStyleSelector::mapFillImage));
 
-    setPropertyValue(CSSPropertyWebkitMaskOrigin, new ApplyPropertyFillLayer<EFillBox>(CSSPropertyWebkitMaskOrigin, MaskFillLayer, &RenderStyle::accessMaskLayers, &RenderStyle::maskLayers,
+    setPropertyHandler(CSSPropertyWebkitMaskOrigin, new ApplyPropertyFillLayer<EFillBox>(CSSPropertyWebkitMaskOrigin, MaskFillLayer, &RenderStyle::accessMaskLayers, &RenderStyle::maskLayers,
             &FillLayer::isOriginSet, &FillLayer::origin, &FillLayer::setOrigin, &FillLayer::clearOrigin, &FillLayer::initialFillOrigin, &CSSStyleSelector::mapFillOrigin));
-    setPropertyValue(CSSPropertyWebkitMaskSize, new ApplyPropertyFillLayer<FillSize>(CSSPropertyWebkitMaskSize, MaskFillLayer, &RenderStyle::accessMaskLayers, &RenderStyle::maskLayers,
+    setPropertyHandler(CSSPropertyWebkitMaskSize, new ApplyPropertyFillLayer<FillSize>(CSSPropertyWebkitMaskSize, MaskFillLayer, &RenderStyle::accessMaskLayers, &RenderStyle::maskLayers,
             &FillLayer::isSizeSet, &FillLayer::size, &FillLayer::setSize, &FillLayer::clearSize, &FillLayer::initialFillSize, &CSSStyleSelector::mapFillSize));
 
-    setPropertyValue(CSSPropertyWebkitMaskPositionX, new ApplyPropertyFillLayer<Length>(CSSPropertyWebkitMaskPositionX, MaskFillLayer, &RenderStyle::accessMaskLayers, &RenderStyle::maskLayers,
+    setPropertyHandler(CSSPropertyWebkitMaskPositionX, new ApplyPropertyFillLayer<Length>(CSSPropertyWebkitMaskPositionX, MaskFillLayer, &RenderStyle::accessMaskLayers, &RenderStyle::maskLayers,
                 &FillLayer::isXPositionSet, &FillLayer::xPosition, &FillLayer::setXPosition, &FillLayer::clearXPosition, &FillLayer::initialFillXPosition, &CSSStyleSelector::mapFillXPosition));
-    setPropertyValue(CSSPropertyWebkitMaskPositionY, new ApplyPropertyFillLayer<Length>(CSSPropertyWebkitMaskPositionY, MaskFillLayer, &RenderStyle::accessMaskLayers, &RenderStyle::maskLayers,
+    setPropertyHandler(CSSPropertyWebkitMaskPositionY, new ApplyPropertyFillLayer<Length>(CSSPropertyWebkitMaskPositionY, MaskFillLayer, &RenderStyle::accessMaskLayers, &RenderStyle::maskLayers,
                     &FillLayer::isYPositionSet, &FillLayer::yPosition, &FillLayer::setYPosition, &FillLayer::clearYPosition, &FillLayer::initialFillYPosition, &CSSStyleSelector::mapFillYPosition));
-    setPropertyValue(CSSPropertyWebkitMaskPosition, new ApplyPropertyExpandingSuppressValue(propertyValue(CSSPropertyWebkitMaskPositionX), propertyValue(CSSPropertyWebkitMaskPositionY)));
+    setPropertyHandler(CSSPropertyWebkitMaskPosition, new ApplyPropertyExpandingSuppressValue(propertyHandler(CSSPropertyWebkitMaskPositionX), propertyHandler(CSSPropertyWebkitMaskPositionY)));
 
-    setPropertyValue(CSSPropertyWebkitMaskRepeatX, new ApplyPropertyFillLayer<EFillRepeat>(CSSPropertyWebkitMaskRepeatX, MaskFillLayer, &RenderStyle::accessMaskLayers, &RenderStyle::maskLayers,
+    setPropertyHandler(CSSPropertyWebkitMaskRepeatX, new ApplyPropertyFillLayer<EFillRepeat>(CSSPropertyWebkitMaskRepeatX, MaskFillLayer, &RenderStyle::accessMaskLayers, &RenderStyle::maskLayers,
                 &FillLayer::isRepeatXSet, &FillLayer::repeatX, &FillLayer::setRepeatX, &FillLayer::clearRepeatX, &FillLayer::initialFillRepeatX, &CSSStyleSelector::mapFillRepeatX));
-    setPropertyValue(CSSPropertyWebkitMaskRepeatY, new ApplyPropertyFillLayer<EFillRepeat>(CSSPropertyWebkitMaskRepeatY, MaskFillLayer, &RenderStyle::accessMaskLayers, &RenderStyle::maskLayers,
+    setPropertyHandler(CSSPropertyWebkitMaskRepeatY, new ApplyPropertyFillLayer<EFillRepeat>(CSSPropertyWebkitMaskRepeatY, MaskFillLayer, &RenderStyle::accessMaskLayers, &RenderStyle::maskLayers,
                     &FillLayer::isRepeatYSet, &FillLayer::repeatY, &FillLayer::setRepeatY, &FillLayer::clearRepeatY, &FillLayer::initialFillRepeatY, &CSSStyleSelector::mapFillRepeatY));
-    setPropertyValue(CSSPropertyWebkitMaskRepeat, new ApplyPropertyExpandingSuppressValue(propertyValue(CSSPropertyBackgroundRepeatX), propertyValue(CSSPropertyBackgroundRepeatY)));
+    setPropertyHandler(CSSPropertyWebkitMaskRepeat, new ApplyPropertyExpandingSuppressValue(propertyHandler(CSSPropertyBackgroundRepeatX), propertyHandler(CSSPropertyBackgroundRepeatY)));
 
-    setPropertyValue(CSSPropertyBackgroundColor, new ApplyPropertyColor<NoInheritFromParent>(&RenderStyle::backgroundColor, &RenderStyle::setBackgroundColor, 0));
-    setPropertyValue(CSSPropertyBorderBottomColor, new ApplyPropertyColor<NoInheritFromParent>(&RenderStyle::borderBottomColor, &RenderStyle::setBorderBottomColor, &RenderStyle::color));
-    setPropertyValue(CSSPropertyBorderLeftColor, new ApplyPropertyColor<NoInheritFromParent>(&RenderStyle::borderLeftColor, &RenderStyle::setBorderLeftColor, &RenderStyle::color));
-    setPropertyValue(CSSPropertyBorderRightColor, new ApplyPropertyColor<NoInheritFromParent>(&RenderStyle::borderRightColor, &RenderStyle::setBorderRightColor, &RenderStyle::color));
-    setPropertyValue(CSSPropertyBorderTopColor, new ApplyPropertyColor<NoInheritFromParent>(&RenderStyle::borderTopColor, &RenderStyle::setBorderTopColor, &RenderStyle::color));
+    setPropertyHandler(CSSPropertyBackgroundColor, new ApplyPropertyColor<NoInheritFromParent>(&RenderStyle::backgroundColor, &RenderStyle::setBackgroundColor, 0));
+    setPropertyHandler(CSSPropertyBorderBottomColor, new ApplyPropertyColor<NoInheritFromParent>(&RenderStyle::borderBottomColor, &RenderStyle::setBorderBottomColor, &RenderStyle::color));
+    setPropertyHandler(CSSPropertyBorderLeftColor, new ApplyPropertyColor<NoInheritFromParent>(&RenderStyle::borderLeftColor, &RenderStyle::setBorderLeftColor, &RenderStyle::color));
+    setPropertyHandler(CSSPropertyBorderRightColor, new ApplyPropertyColor<NoInheritFromParent>(&RenderStyle::borderRightColor, &RenderStyle::setBorderRightColor, &RenderStyle::color));
+    setPropertyHandler(CSSPropertyBorderTopColor, new ApplyPropertyColor<NoInheritFromParent>(&RenderStyle::borderTopColor, &RenderStyle::setBorderTopColor, &RenderStyle::color));
 
-    setPropertyValue(CSSPropertyBorderTopStyle, new ApplyPropertyDefault<EBorderStyle>(&RenderStyle::borderTopStyle, &RenderStyle::setBorderTopStyle, &RenderStyle::initialBorderStyle));
-    setPropertyValue(CSSPropertyBorderRightStyle, new ApplyPropertyDefault<EBorderStyle>(&RenderStyle::borderRightStyle, &RenderStyle::setBorderRightStyle, &RenderStyle::initialBorderStyle));
-    setPropertyValue(CSSPropertyBorderBottomStyle, new ApplyPropertyDefault<EBorderStyle>(&RenderStyle::borderBottomStyle, &RenderStyle::setBorderBottomStyle, &RenderStyle::initialBorderStyle));
-    setPropertyValue(CSSPropertyBorderLeftStyle, new ApplyPropertyDefault<EBorderStyle>(&RenderStyle::borderLeftStyle, &RenderStyle::setBorderLeftStyle, &RenderStyle::initialBorderStyle));
+    setPropertyHandler(CSSPropertyBorderTopStyle, new ApplyPropertyDefault<EBorderStyle>(&RenderStyle::borderTopStyle, &RenderStyle::setBorderTopStyle, &RenderStyle::initialBorderStyle));
+    setPropertyHandler(CSSPropertyBorderRightStyle, new ApplyPropertyDefault<EBorderStyle>(&RenderStyle::borderRightStyle, &RenderStyle::setBorderRightStyle, &RenderStyle::initialBorderStyle));
+    setPropertyHandler(CSSPropertyBorderBottomStyle, new ApplyPropertyDefault<EBorderStyle>(&RenderStyle::borderBottomStyle, &RenderStyle::setBorderBottomStyle, &RenderStyle::initialBorderStyle));
+    setPropertyHandler(CSSPropertyBorderLeftStyle, new ApplyPropertyDefault<EBorderStyle>(&RenderStyle::borderLeftStyle, &RenderStyle::setBorderLeftStyle, &RenderStyle::initialBorderStyle));
 
-    setPropertyValue(CSSPropertyBorderTopWidth, new ApplyPropertyWidth(&RenderStyle::borderTopWidth, &RenderStyle::setBorderTopWidth, &RenderStyle::initialBorderWidth));
-    setPropertyValue(CSSPropertyBorderRightWidth, new ApplyPropertyWidth(&RenderStyle::borderRightWidth, &RenderStyle::setBorderRightWidth, &RenderStyle::initialBorderWidth));
-    setPropertyValue(CSSPropertyBorderBottomWidth, new ApplyPropertyWidth(&RenderStyle::borderBottomWidth, &RenderStyle::setBorderBottomWidth, &RenderStyle::initialBorderWidth));
-    setPropertyValue(CSSPropertyBorderLeftWidth, new ApplyPropertyWidth(&RenderStyle::borderLeftWidth, &RenderStyle::setBorderLeftWidth, &RenderStyle::initialBorderWidth));
-    setPropertyValue(CSSPropertyOutlineWidth, new ApplyPropertyWidth(&RenderStyle::outlineWidth, &RenderStyle::setOutlineWidth, &RenderStyle::initialBorderWidth));
-    setPropertyValue(CSSPropertyWebkitColumnRuleWidth, new ApplyPropertyWidth(&RenderStyle::columnRuleWidth, &RenderStyle::setColumnRuleWidth, &RenderStyle::initialBorderWidth));
+    setPropertyHandler(CSSPropertyBorderTopWidth, new ApplyPropertyWidth(&RenderStyle::borderTopWidth, &RenderStyle::setBorderTopWidth, &RenderStyle::initialBorderWidth));
+    setPropertyHandler(CSSPropertyBorderRightWidth, new ApplyPropertyWidth(&RenderStyle::borderRightWidth, &RenderStyle::setBorderRightWidth, &RenderStyle::initialBorderWidth));
+    setPropertyHandler(CSSPropertyBorderBottomWidth, new ApplyPropertyWidth(&RenderStyle::borderBottomWidth, &RenderStyle::setBorderBottomWidth, &RenderStyle::initialBorderWidth));
+    setPropertyHandler(CSSPropertyBorderLeftWidth, new ApplyPropertyWidth(&RenderStyle::borderLeftWidth, &RenderStyle::setBorderLeftWidth, &RenderStyle::initialBorderWidth));
+    setPropertyHandler(CSSPropertyOutlineWidth, new ApplyPropertyWidth(&RenderStyle::outlineWidth, &RenderStyle::setOutlineWidth, &RenderStyle::initialBorderWidth));
+    setPropertyHandler(CSSPropertyWebkitColumnRuleWidth, new ApplyPropertyWidth(&RenderStyle::columnRuleWidth, &RenderStyle::setColumnRuleWidth, &RenderStyle::initialBorderWidth));
 
-    setPropertyValue(CSSPropertyOutlineColor, new ApplyPropertyColor<InheritFromParent>(&RenderStyle::outlineColor, &RenderStyle::setOutlineColor, &RenderStyle::color));
+    setPropertyHandler(CSSPropertyOutlineColor, new ApplyPropertyColor<InheritFromParent>(&RenderStyle::outlineColor, &RenderStyle::setOutlineColor, &RenderStyle::color));
 
-    setPropertyValue(CSSPropertyOverflowX, new ApplyPropertyDefault<EOverflow>(&RenderStyle::overflowX, &RenderStyle::setOverflowX, &RenderStyle::initialOverflowX));
-    setPropertyValue(CSSPropertyOverflowY, new ApplyPropertyDefault<EOverflow>(&RenderStyle::overflowY, &RenderStyle::setOverflowY, &RenderStyle::initialOverflowY));
-    setPropertyValue(CSSPropertyOverflow, new ApplyPropertyExpanding(propertyValue(CSSPropertyOverflowX), propertyValue(CSSPropertyOverflowY)));
+    setPropertyHandler(CSSPropertyOverflowX, new ApplyPropertyDefault<EOverflow>(&RenderStyle::overflowX, &RenderStyle::setOverflowX, &RenderStyle::initialOverflowX));
+    setPropertyHandler(CSSPropertyOverflowY, new ApplyPropertyDefault<EOverflow>(&RenderStyle::overflowY, &RenderStyle::setOverflowY, &RenderStyle::initialOverflowY));
+    setPropertyHandler(CSSPropertyOverflow, new ApplyPropertyExpanding(propertyHandler(CSSPropertyOverflowX), propertyHandler(CSSPropertyOverflowY)));
 
-    setPropertyValue(CSSPropertyWebkitColumnRuleColor, new ApplyPropertyColor<NoInheritFromParent>(&RenderStyle::columnRuleColor, &RenderStyle::setColumnRuleColor, &RenderStyle::color));
-    setPropertyValue(CSSPropertyWebkitTextEmphasisColor, new ApplyPropertyColor<NoInheritFromParent>(&RenderStyle::textEmphasisColor, &RenderStyle::setTextEmphasisColor, &RenderStyle::color));
-    setPropertyValue(CSSPropertyWebkitTextFillColor, new ApplyPropertyColor<NoInheritFromParent>(&RenderStyle::textFillColor, &RenderStyle::setTextFillColor, &RenderStyle::color));
-    setPropertyValue(CSSPropertyWebkitTextStrokeColor, new ApplyPropertyColor<NoInheritFromParent>(&RenderStyle::textStrokeColor, &RenderStyle::setTextStrokeColor, &RenderStyle::color));
+    setPropertyHandler(CSSPropertyWebkitColumnRuleColor, new ApplyPropertyColor<NoInheritFromParent>(&RenderStyle::columnRuleColor, &RenderStyle::setColumnRuleColor, &RenderStyle::color));
+    setPropertyHandler(CSSPropertyWebkitTextEmphasisColor, new ApplyPropertyColor<NoInheritFromParent>(&RenderStyle::textEmphasisColor, &RenderStyle::setTextEmphasisColor, &RenderStyle::color));
+    setPropertyHandler(CSSPropertyWebkitTextFillColor, new ApplyPropertyColor<NoInheritFromParent>(&RenderStyle::textFillColor, &RenderStyle::setTextFillColor, &RenderStyle::color));
+    setPropertyHandler(CSSPropertyWebkitTextStrokeColor, new ApplyPropertyColor<NoInheritFromParent>(&RenderStyle::textStrokeColor, &RenderStyle::setTextStrokeColor, &RenderStyle::color));
 
-    setPropertyValue(CSSPropertyTop, new ApplyPropertyLength<AutoEnabled>(&RenderStyle::top, &RenderStyle::setTop, &RenderStyle::initialOffset));
-    setPropertyValue(CSSPropertyRight, new ApplyPropertyLength<AutoEnabled>(&RenderStyle::right, &RenderStyle::setRight, &RenderStyle::initialOffset));
-    setPropertyValue(CSSPropertyBottom, new ApplyPropertyLength<AutoEnabled>(&RenderStyle::bottom, &RenderStyle::setBottom, &RenderStyle::initialOffset));
-    setPropertyValue(CSSPropertyLeft, new ApplyPropertyLength<AutoEnabled>(&RenderStyle::left, &RenderStyle::setLeft, &RenderStyle::initialOffset));
+    setPropertyHandler(CSSPropertyTop, new ApplyPropertyLength<AutoEnabled>(&RenderStyle::top, &RenderStyle::setTop, &RenderStyle::initialOffset));
+    setPropertyHandler(CSSPropertyRight, new ApplyPropertyLength<AutoEnabled>(&RenderStyle::right, &RenderStyle::setRight, &RenderStyle::initialOffset));
+    setPropertyHandler(CSSPropertyBottom, new ApplyPropertyLength<AutoEnabled>(&RenderStyle::bottom, &RenderStyle::setBottom, &RenderStyle::initialOffset));
+    setPropertyHandler(CSSPropertyLeft, new ApplyPropertyLength<AutoEnabled>(&RenderStyle::left, &RenderStyle::setLeft, &RenderStyle::initialOffset));
 
-    setPropertyValue(CSSPropertyWidth, new ApplyPropertyLength<AutoEnabled, IntrinsicEnabled, MinIntrinsicEnabled>(&RenderStyle::width, &RenderStyle::setWidth, &RenderStyle::initialSize));
-    setPropertyValue(CSSPropertyHeight, new ApplyPropertyLength<AutoEnabled, IntrinsicEnabled, MinIntrinsicEnabled>(&RenderStyle::height, &RenderStyle::setHeight, &RenderStyle::initialSize));
+    setPropertyHandler(CSSPropertyWidth, new ApplyPropertyLength<AutoEnabled, IntrinsicEnabled, MinIntrinsicEnabled>(&RenderStyle::width, &RenderStyle::setWidth, &RenderStyle::initialSize));
+    setPropertyHandler(CSSPropertyHeight, new ApplyPropertyLength<AutoEnabled, IntrinsicEnabled, MinIntrinsicEnabled>(&RenderStyle::height, &RenderStyle::setHeight, &RenderStyle::initialSize));
 
-    setPropertyValue(CSSPropertyTextIndent, new ApplyPropertyLength<>(&RenderStyle::textIndent, &RenderStyle::setTextIndent, &RenderStyle::initialTextIndent));
+    setPropertyHandler(CSSPropertyTextIndent, new ApplyPropertyLength<>(&RenderStyle::textIndent, &RenderStyle::setTextIndent, &RenderStyle::initialTextIndent));
 
-    setPropertyValue(CSSPropertyMaxHeight, new ApplyPropertyLength<AutoEnabled, IntrinsicEnabled, MinIntrinsicEnabled, NoneEnabled, UndefinedEnabled>(&RenderStyle::maxHeight, &RenderStyle::setMaxHeight, &RenderStyle::initialMaxSize));
-    setPropertyValue(CSSPropertyMaxWidth, new ApplyPropertyLength<AutoEnabled, IntrinsicEnabled, MinIntrinsicEnabled, NoneEnabled, UndefinedEnabled>(&RenderStyle::maxWidth, &RenderStyle::setMaxWidth, &RenderStyle::initialMaxSize));
-    setPropertyValue(CSSPropertyMinHeight, new ApplyPropertyLength<AutoEnabled, IntrinsicEnabled, MinIntrinsicEnabled>(&RenderStyle::minHeight, &RenderStyle::setMinHeight, &RenderStyle::initialMinSize));
-    setPropertyValue(CSSPropertyMinWidth, new ApplyPropertyLength<AutoEnabled, IntrinsicEnabled, MinIntrinsicEnabled>(&RenderStyle::minWidth, &RenderStyle::setMinWidth, &RenderStyle::initialMinSize));
+    setPropertyHandler(CSSPropertyMaxHeight, new ApplyPropertyLength<AutoEnabled, IntrinsicEnabled, MinIntrinsicEnabled, NoneEnabled, UndefinedEnabled>(&RenderStyle::maxHeight, &RenderStyle::setMaxHeight, &RenderStyle::initialMaxSize));
+    setPropertyHandler(CSSPropertyMaxWidth, new ApplyPropertyLength<AutoEnabled, IntrinsicEnabled, MinIntrinsicEnabled, NoneEnabled, UndefinedEnabled>(&RenderStyle::maxWidth, &RenderStyle::setMaxWidth, &RenderStyle::initialMaxSize));
+    setPropertyHandler(CSSPropertyMinHeight, new ApplyPropertyLength<AutoEnabled, IntrinsicEnabled, MinIntrinsicEnabled>(&RenderStyle::minHeight, &RenderStyle::setMinHeight, &RenderStyle::initialMinSize));
+    setPropertyHandler(CSSPropertyMinWidth, new ApplyPropertyLength<AutoEnabled, IntrinsicEnabled, MinIntrinsicEnabled>(&RenderStyle::minWidth, &RenderStyle::setMinWidth, &RenderStyle::initialMinSize));
 
-    setPropertyValue(CSSPropertyMarginTop, new ApplyPropertyLength<AutoEnabled>(&RenderStyle::marginTop, &RenderStyle::setMarginTop, &RenderStyle::initialMargin));
-    setPropertyValue(CSSPropertyMarginRight, new ApplyPropertyLength<AutoEnabled>(&RenderStyle::marginRight, &RenderStyle::setMarginRight, &RenderStyle::initialMargin));
-    setPropertyValue(CSSPropertyMarginBottom, new ApplyPropertyLength<AutoEnabled>(&RenderStyle::marginBottom, &RenderStyle::setMarginBottom, &RenderStyle::initialMargin));
-    setPropertyValue(CSSPropertyMarginLeft, new ApplyPropertyLength<AutoEnabled>(&RenderStyle::marginLeft, &RenderStyle::setMarginLeft, &RenderStyle::initialMargin));
+    setPropertyHandler(CSSPropertyMarginTop, new ApplyPropertyLength<AutoEnabled>(&RenderStyle::marginTop, &RenderStyle::setMarginTop, &RenderStyle::initialMargin));
+    setPropertyHandler(CSSPropertyMarginRight, new ApplyPropertyLength<AutoEnabled>(&RenderStyle::marginRight, &RenderStyle::setMarginRight, &RenderStyle::initialMargin));
+    setPropertyHandler(CSSPropertyMarginBottom, new ApplyPropertyLength<AutoEnabled>(&RenderStyle::marginBottom, &RenderStyle::setMarginBottom, &RenderStyle::initialMargin));
+    setPropertyHandler(CSSPropertyMarginLeft, new ApplyPropertyLength<AutoEnabled>(&RenderStyle::marginLeft, &RenderStyle::setMarginLeft, &RenderStyle::initialMargin));
 
-    setPropertyValue(CSSPropertyPaddingTop, new ApplyPropertyLength<>(&RenderStyle::paddingTop, &RenderStyle::setPaddingTop, &RenderStyle::initialPadding));
-    setPropertyValue(CSSPropertyPaddingRight, new ApplyPropertyLength<>(&RenderStyle::paddingRight, &RenderStyle::setPaddingRight, &RenderStyle::initialPadding));
-    setPropertyValue(CSSPropertyPaddingBottom, new ApplyPropertyLength<>(&RenderStyle::paddingBottom, &RenderStyle::setPaddingBottom, &RenderStyle::initialPadding));
-    setPropertyValue(CSSPropertyPaddingLeft, new ApplyPropertyLength<>(&RenderStyle::paddingLeft, &RenderStyle::setPaddingLeft, &RenderStyle::initialPadding));
+    setPropertyHandler(CSSPropertyPaddingTop, new ApplyPropertyLength<>(&RenderStyle::paddingTop, &RenderStyle::setPaddingTop, &RenderStyle::initialPadding));
+    setPropertyHandler(CSSPropertyPaddingRight, new ApplyPropertyLength<>(&RenderStyle::paddingRight, &RenderStyle::setPaddingRight, &RenderStyle::initialPadding));
+    setPropertyHandler(CSSPropertyPaddingBottom, new ApplyPropertyLength<>(&RenderStyle::paddingBottom, &RenderStyle::setPaddingBottom, &RenderStyle::initialPadding));
+    setPropertyHandler(CSSPropertyPaddingLeft, new ApplyPropertyLength<>(&RenderStyle::paddingLeft, &RenderStyle::setPaddingLeft, &RenderStyle::initialPadding));
 
-    setPropertyValue(CSSPropertyWebkitPerspectiveOriginX, new ApplyPropertyLength<>(&RenderStyle::perspectiveOriginX, &RenderStyle::setPerspectiveOriginX, &RenderStyle::initialPerspectiveOriginX));
-    setPropertyValue(CSSPropertyWebkitPerspectiveOriginY, new ApplyPropertyLength<>(&RenderStyle::perspectiveOriginY, &RenderStyle::setPerspectiveOriginY, &RenderStyle::initialPerspectiveOriginY));
-    setPropertyValue(CSSPropertyWebkitTransformOriginX, new ApplyPropertyLength<>(&RenderStyle::transformOriginX, &RenderStyle::setTransformOriginX, &RenderStyle::initialTransformOriginX));
-    setPropertyValue(CSSPropertyWebkitTransformOriginY, new ApplyPropertyLength<>(&RenderStyle::transformOriginY, &RenderStyle::setTransformOriginY, &RenderStyle::initialTransformOriginY));
+    setPropertyHandler(CSSPropertyWebkitPerspectiveOriginX, new ApplyPropertyLength<>(&RenderStyle::perspectiveOriginX, &RenderStyle::setPerspectiveOriginX, &RenderStyle::initialPerspectiveOriginX));
+    setPropertyHandler(CSSPropertyWebkitPerspectiveOriginY, new ApplyPropertyLength<>(&RenderStyle::perspectiveOriginY, &RenderStyle::setPerspectiveOriginY, &RenderStyle::initialPerspectiveOriginY));
+    setPropertyHandler(CSSPropertyWebkitTransformOriginX, new ApplyPropertyLength<>(&RenderStyle::transformOriginX, &RenderStyle::setTransformOriginX, &RenderStyle::initialTransformOriginX));
+    setPropertyHandler(CSSPropertyWebkitTransformOriginY, new ApplyPropertyLength<>(&RenderStyle::transformOriginY, &RenderStyle::setTransformOriginY, &RenderStyle::initialTransformOriginY));
 }
 
 
