@@ -1,3 +1,31 @@
+2011-05-02  Jer Noble  <jer.noble@apple.com>
+
+        Reviewed by Adam Roben.
+
+        Implement FULLSCREEN_API on Windows, Part 3: WebKit2
+        https://bugs.webkit.org/show_bug.cgi?id=59845
+
+        Implementation of WebFullScreenController has been moved into WebCore, and 
+        required virutal functions of WebFullScreenControllerClient have been added to
+        WebView.  These functions are mostly simple accessors of existing ivars, but 
+        m_fullScreenElement and its accessors have also been added to WebView.
+
+        * WebCoreSupport/WebChromeClient.cpp:
+        (WebChromeClient::enterFullScreenForElement):
+        * WebFullScreenController.cpp: Removed.
+        * WebKit.vcproj/WebKit.vcproj:
+        * WebView.cpp:
+        (WebView::setFullScreenElement): Added accessor.
+        (WebVIew::fullScreenElement): Ditto.
+        (WebView::fullScreenClientWindow): Ditto.
+        (WebView::fullScreenClientParentWindow): Ditto.
+        (WebView::fullScreenClientSetParentWindow): Ditto.
+        (WebView::fullScreenClientWillEnterFullScreen): Pass through to Document.
+        (WebView::fullScreenClientDidEnterFullScreen): Ditto.
+        (WebView::fullScreenClientWillExitFullScreen): Ditto.
+        (WebView::fullScreenClientDidExitFullScreen): Ditto.
+        * WebView.h:
+
 2011-05-03  Brian Weinstein  <bweinstein@apple.com>
 
         Reviewed by Steve Falkenburg.

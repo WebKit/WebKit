@@ -1,3 +1,43 @@
+2011-05-02  Jer Noble  <jer.noble@apple.com>
+
+        Reviewed by Adam Roben.
+
+        Implement FULLSCREEN_API on Windows, Part 3: WebKit2
+        https://bugs.webkit.org/show_bug.cgi?id=59845
+
+        Implement a similar full screen mode to WebKit; Re-use the same
+        full screen window class used in WebKit in the new WebFullScreenController.
+        No animations (yet), so many of the stubs remain unimplemented.
+
+        * UIProcess/win/WebView.cpp:
+        (WebKit::WebView::onKeyEvent): Handle VK_ESCAPE and cancel full screen
+            mode if caught.
+        (WebKit::WebView::fullScreenController): Lazily instantiate m_fullScreenController.
+        (WebKit::WebView::fullScreenClientWindow): Added accessor.
+        (WebKit::WebView::fullScreenClientParentWindow): Ditto.
+        (WebKit::WebView::fullScreenClientSetParentWindow): Ditto.
+        (WebKit::WebView::fullScreenClientWillEnterFullScreen): Pass through to WebFullScreenManagerProxy.
+        (WebKit::WebView::fullScreenClientDidEnterFullScreen): Ditto.
+        (WebKit::WebView::fullScreenClientWillExitFullScreen): Ditto.
+        (WebKit::WebView::fullScreenClientDidExitFullScreen): Ditto.
+        * UIProcess/win/WebView.h:
+        * UIProcess/win/WebFullScreenManagerProxyWin.cpp:
+        (WebKit::WebFullScreenManagerProxy::enterFullScreen): Pass through to 
+            WebFullScreenController.
+        (WebKit::WebFullScreenManagerProxy::exitFullScreen): Ditto.
+        * UIProcess/win/WebView.cpp:
+        (WebKit::WebView::WebView):
+        (WebKit::WebView::onKeyEvent): Handle the escape key and exit
+           full screen mode when detected.
+        (WebKit::WebView::fullScreenWindowController): Added.
+        * UIProcess/win/WebView.h:
+        * WebProcess/FullScreen/win/WebFullScreenManagerWin.cpp:
+        (WebKit::WebFullScreenManagerWin::~WebFullScreenManagerWin):
+        (WebKit::WebFullScreenManagerWin::setRootFullScreenLayer): Host the root
+            full screen layer if it gets detached.
+        * WebProcess/FullScreen/win/WebFullScreenManagerWin.h:
+        * win/WebKit2.vcproj:
+
 2011-05-03  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Sam Weinig.

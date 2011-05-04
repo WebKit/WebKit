@@ -24721,14 +24721,14 @@
 				RelativePath="..\page\PageGroupLoadDeferrer.h"
 				>
 			</File>
-                        <File
-                                RelativePath="..\page\PageSerializer.cpp"
-                                >
-                        </File>
-                        <File
-                                RelativePath="..\page\PageSerializer.h"
-                                >
-                        </File>
+			<File
+				RelativePath="..\page\PageSerializer.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\page\PageSerializer.h"
+				>
+			</File>
 			<File
 				RelativePath="..\page\Performance.cpp"
 				>
@@ -27116,6 +27116,18 @@
 						>
 					</File>
 					<File
+						RelativePath="..\platform\graphics\win\FullScreenController.cpp"
+						>
+					</File>
+					<File
+						RelativePath="..\platform\graphics\win\FullScreenController.h"
+						>
+					</File>
+					<File
+						RelativePath="..\platform\graphics\win\FullScreenControllerClient.h"
+						>
+					</File>
+					<File
 						RelativePath="..\platform\graphics\win\GlyphPageTreeNodeCairoWin.cpp"
 						>
 						<FileConfiguration
@@ -28952,11 +28964,27 @@
 						>
 					</File>
 					<File
+						RelativePath="..\platform\graphics\filters\arm\FEGaussianBlurNEON.cpp"
+						>
+					</File>
+					<File
+						RelativePath="..\platform\graphics\filters\arm\FEGaussianBlurNEON.h"
+						>
+					</File>
+					<File
 						RelativePath="..\platform\graphics\filters\FELighting.cpp"
 						>
 					</File>
 					<File
 						RelativePath="..\platform\graphics\filters\FELighting.h"
+						>
+					</File>
+					<File
+						RelativePath="..\platform\graphics\filters\arm\FELightingNEON.cpp"
+						>
+					</File>
+					<File
+						RelativePath="..\platform\graphics\filters\arm\FELightingNEON.h"
 						>
 					</File>
 					<File
@@ -29057,22 +29085,6 @@
 					</File>
 					<File
 						RelativePath="..\platform\graphics\filters\SpotLightSource.h"
-						>
-					</File>
-					<File
-						RelativePath="..\platform\graphics\filters\arm\FEGaussianBlurNEON.cpp"
-						>
-					</File>
-					<File
-						RelativePath="..\platform\graphics\filters\arm\FEGaussianBlurNEON.h"
-						>
-					</File>
-					<File
-						RelativePath="..\platform\graphics\filters\arm\FELightingNEON.cpp"
-						>
-					</File>
-					<File
-						RelativePath="..\platform\graphics\filters\arm\FELightingNEON.h"
 						>
 					</File>
 				</Filter>
@@ -42706,6 +42718,10 @@
 				</FileConfiguration>
 			</File>
 			<File
+				RelativePath="..\dom\DataTransferItem.h"
+				>
+			</File>
+			<File
 				RelativePath="..\dom\DataTransferItems.cpp"
 				>
 				<FileConfiguration
@@ -42756,10 +42772,6 @@
 						Name="VCCLCompilerTool"
 					/>
 				</FileConfiguration>
-			</File>
-			<File
-				RelativePath="..\dom\DataTransferItem.h"
-				>
 			</File>
 			<File
 				RelativePath="..\dom\DataTransferItems.h"
@@ -66705,6 +66717,10 @@
 					>
 				</File>
 				<File
+					RelativePath="..\inspector\front-end\UglifyJS\JavaScriptFormatter.js"
+					>
+				</File>
+				<File
 					RelativePath="..\inspector\front-end\JavaScriptFormatter.js"
 					>
 				</File>
@@ -66746,10 +66762,6 @@
 				</File>
 				<File
 					RelativePath="..\inspector\front-end\PanelEnablerView.js"
-					>
-				</File>
-				<File
-					RelativePath="..\inspector\front-end\UglifyJS\JavaScriptFormatter.js"
 					>
 				</File>
 				<File

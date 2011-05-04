@@ -40,13 +40,29 @@
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefPtr.h>
 
+#if ENABLE(FULLSCREEN_API)
+#include <WebCore/FullScreenControllerClient.h>
+#endif
+
+namespace WebCore {
+    class FullScreenController;
+}
+
 interface IDropTargetHelper;
 
 namespace WebKit {
 
 class DrawingAreaProxy;
 
-class WebView : public APIObject, public PageClient, WebCore::WindowMessageListener, public IDropTarget {
+class WebView
+    : public APIObject
+    , public PageClient
+    , WebCore::WindowMessageListener
+    , public IDropTarget 
+#if ENABLE(FULLSCREEN_API)
+    , WebCore::FullScreenControllerClient
+#endif
+{
 public:
     static PassRefPtr<WebView> create(RECT rect, WebContext* context, WebPageGroup* pageGroup, HWND parentWindow)
     {
@@ -84,6 +100,10 @@ public:
     virtual HRESULT STDMETHODCALLTYPE Drop(IDataObject* pDataObject, DWORD grfKeyState, POINTL pt, DWORD* pdwEffect);
 
     WebPageProxy* page() const { return m_page.get(); }
+
+#if ENABLE(FULLSCREEN_API)
+    WebCore::FullScreenController* fullScreenController();
+#endif
 
 private:
     WebView(RECT, WebContext*, WebPageGroup*, HWND parentWindow);
@@ -195,6 +215,16 @@ private:
     // WebCore::WindowMessageListener
     virtual void windowReceivedMessage(HWND, UINT message, WPARAM, LPARAM);
 
+#if ENABLE(FULLSCREEN_API)
+    virtual HWND fullScreenClientWindow() const;
+    virtual HWND fullScreenClientParentWindow() const;
+    virtual void fullScreenClientSetParentWindow(HWND);
+    virtual void fullScreenClientWillEnterFullScreen();
+    virtual void fullScreenClientDidEnterFullScreen();
+    virtual void fullScreenClientWillExitFullScreen();
+    virtual void fullScreenClientDidExitFullScreen();
+#endif
+
     HWND m_window;
     HWND m_topLevelParentWindow;
     HWND m_toolTipWindow;
@@ -234,6 +264,10 @@ private:
     int m_overPanY;
 
     bool m_gestureReachedScrollingLimit;
+
+#if ENABLE(FULLSCREEN_API)
+    OwnPtr<WebCore::FullScreenController> m_fullScreenController;
+#endif
 };
 
 } // namespace WebKit

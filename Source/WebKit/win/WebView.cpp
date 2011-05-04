@@ -162,7 +162,7 @@
 #endif
 
 #if ENABLE(FULLSCREEN_API)
-#include "WebFullScreenController.h"
+#include <WebCore/FullScreenController.h>
 #endif
 
 #include <ShlObj.h>
@@ -6775,10 +6775,57 @@ bool WebView::isFullScreen() const
     return m_fullscreenController && m_fullscreenController->isFullScreen();
 }
 
-WebFullScreenController* WebView::fullScreenController()
+FullScreenController* WebView::fullScreenController()
 {
     if (!m_fullscreenController)
-        m_fullscreenController = adoptPtr(new WebFullScreenController(this));
+        m_fullscreenController = adoptPtr(new FullScreenController(this));
     return m_fullscreenController.get();
 }
+
+void WebView::setFullScreenElement(PassRefPtr<Element> element)
+{
+    m_fullScreenElement = element;
+}
+
+HWND WebView::fullScreenClientWindow() const
+{
+    return m_viewWindow;
+}
+
+HWND WebView::fullScreenClientParentWindow() const
+{
+    return m_hostWindow;
+}
+
+void WebView::fullScreenClientSetParentWindow(HWND hostWindow)
+{
+    setHostWindow(reinterpret_cast<OLE_HANDLE>(hostWindow));
+}
+
+void WebView::fullScreenClientWillEnterFullScreen()
+{
+    ASSERT(m_fullScreenElement);
+    m_fullScreenElement->document()->webkitWillEnterFullScreenForElement(m_fullScreenElement.get());
+}
+
+void WebView::fullScreenClientDidEnterFullScreen()
+{
+    ASSERT(m_fullScreenElement);
+    m_fullScreenElement->document()->webkitDidEnterFullScreenForElement(m_fullScreenElement.get());
+}
+
+void WebView::fullScreenClientWillExitFullScreen()
+{
+    ASSERT(m_fullScreenElement);
+    m_fullScreenElement->document()->webkitWillExitFullScreenForElement(m_fullScreenElement.get());
+}
+
+void WebView::fullScreenClientDidExitFullScreen()
+{
+    ASSERT(m_fullScreenElement);
+    m_fullScreenElement->document()->webkitDidExitFullScreenForElement(m_fullScreenElement.get());
+    m_fullScreenElement = nullptr;
+}
+
+
 #endif

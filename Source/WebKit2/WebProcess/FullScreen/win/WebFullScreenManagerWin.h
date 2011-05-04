@@ -45,6 +45,9 @@ private:
     virtual void setRootFullScreenLayer(WebCore::GraphicsLayer*);
     virtual void beginEnterFullScreenAnimation(float duration);
     virtual void beginExitFullScreenAnimation(float duration);
+
+    OwnPtr<WebCore::GraphicsLayer> m_rootLayer;
+    WebCore::GraphicsLayer* m_fullScreenRootLayer;
 };
 
 }

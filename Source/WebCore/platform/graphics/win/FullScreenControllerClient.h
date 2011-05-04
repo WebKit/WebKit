@@ -23,40 +23,27 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef WebFullScreenController_h
-#define WebFullScreenController_h
+#ifndef FullScreenControllerClient_h
+#define FullScreenControllerClient_h
 
 #if ENABLE(FULLSCREEN_API)
 
-#include "WebKit.h"
-#include <wtf/OwnPtr.h>
-#include <wtf/RefPtr.h>
-
 namespace WebCore {
-    class Element;
-}
 
-class WebView;
-
-class WebFullScreenController {
+class FullScreenControllerClient {
 public:
-    WebFullScreenController(WebView*);
-    ~WebFullScreenController();
-
-public:
-    void setElement(PassRefPtr<WebCore::Element>);
-    WebCore::Element* element() const;
-
-    void enterFullScreen();
-    void exitFullScreen();
-    
-    bool isFullScreen() const;
-
+    virtual HWND fullScreenClientWindow() const = 0;
+    virtual HWND fullScreenClientParentWindow() const = 0;
+    virtual void fullScreenClientSetParentWindow(HWND) = 0;
+    virtual void fullScreenClientWillEnterFullScreen() = 0;
+    virtual void fullScreenClientDidEnterFullScreen() = 0;
+    virtual void fullScreenClientWillExitFullScreen() = 0;
+    virtual void fullScreenClientDidExitFullScreen() = 0;
 protected:
-    class Private;
-    friend class Private;
-    OwnPtr<WebFullScreenController::Private> m_private;
+    virtual ~FullScreenControllerClient() { }
 };
+
+}
 
 #endif
 

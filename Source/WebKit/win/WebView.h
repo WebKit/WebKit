@@ -14,7 +14,7 @@
  *
  * THIS SOFTWARE IS PROVIDED BY APPLE COMPUTER, INC. ``AS IS'' AND ANY
  * EXPRESS OR IMPLIED WARRANTIES, INCfLUDING, BUT NOT LIMITED TO, THE
- * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * IMPLIED WARRANTIES OF MERCHANTABIuLITY AND FITNESS FOR A PARTICULAR
  * PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL APPLE COMPUTER, INC. OR
  * CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
  * EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
@@ -44,11 +44,18 @@
 #if USE(ACCELERATED_COMPOSITING)
 #include <WebCore/CACFLayerTreeHostClient.h>
 #include <WebCore/GraphicsLayerClient.h>
+#endif
+
+#if ENABLE(FULLSCREEN_API)
+#include <WebCore/FullScreenControllerClient.h>
+#endif
 
 namespace WebCore {
+#if USE(ACCELERATED_COMPOSITING)
     class CACFLayerTreeHost;
-}
 #endif
+    class FullScreenController;
+}
 
 namespace WebCore {
     class HistoryItem;
@@ -57,13 +64,8 @@ namespace WebCore {
 class FullscreenVideoController;
 class WebBackForwardList;
 class WebFrame;
-class WebFullScreenController;
 class WebInspector;
 class WebInspectorClient;
-
-#if ENABLE(FULLSCREEN_API)
-class WebFullScreenController;
-#endif
 
 typedef WebCore::RefCountedGDIHandle<HBITMAP> RefCountedHBITMAP;
 typedef WebCore::RefCountedGDIHandle<HRGN> RefCountedHRGN;
@@ -87,6 +89,9 @@ class WebView
 #if USE(ACCELERATED_COMPOSITING)
     , WebCore::GraphicsLayerClient
     , WebCore::CACFLayerTreeHostClient
+#endif
+#if ENABLE(FULLSCREEN_API)
+    , WebCore::FullScreenControllerClient
 #endif
 {
 public:
@@ -950,7 +955,9 @@ public:
 #if ENABLE(FULLSCREEN_API)
     bool supportsFullScreenForElement(const WebCore::Element*, bool withKeyboard) const;
     bool isFullScreen() const;
-    WebFullScreenController* fullScreenController();
+    WebCore::FullScreenController* fullScreenController();
+    void setFullScreenElement(PassRefPtr<WebCore::Element>);
+    WebCore::Element* fullScreenElement() const { return m_fullScreenElement.get(); }
 #endif
 
 private:
@@ -1015,6 +1022,16 @@ protected:
     void removeFromAllWebViewsSet();
 
     virtual void windowReceivedMessage(HWND, UINT message, WPARAM, LPARAM);
+
+#if ENABLE(FULLSCREEN_API)
+    virtual HWND fullScreenClientWindow() const;
+    virtual HWND fullScreenClientParentWindow() const;
+    virtual void fullScreenClientSetParentWindow(HWND);
+    virtual void fullScreenClientWillEnterFullScreen();
+    virtual void fullScreenClientDidEnterFullScreen();
+    virtual void fullScreenClientWillExitFullScreen();
+    virtual void fullScreenClientDidExitFullScreen();
+#endif
 
     ULONG m_refCount;
 #if !ASSERT_DISABLED
@@ -1109,7 +1126,8 @@ protected:
     RefPtr<WebCore::HistoryItem> m_globalHistoryItem;
 
 #if ENABLE(FULLSCREEN_API)
-    OwnPtr<WebFullScreenController> m_fullscreenController;
+    RefPtr<WebCore::Element> m_fullScreenElement;
+    OwnPtr<WebCore::FullScreenController> m_fullscreenController;
 #endif
 };
 

@@ -35,7 +35,6 @@
 #include "WebHistory.h"
 #include "WebMutableURLRequest.h"
 #include "WebDesktopNotificationsDelegate.h"
-#include "WebFullScreenController.h"
 #include "WebSecurityOrigin.h"
 #include "WebView.h"
 #include <WebCore/BString.h>
@@ -46,6 +45,7 @@
 #include <WebCore/FloatRect.h>
 #include <WebCore/FrameLoadRequest.h>
 #include <WebCore/FrameView.h>
+#include <WebCore/FullScreenController.h>
 #include <WebCore/HTMLNames.h>
 #include <WebCore/Icon.h>
 #include <WebCore/LocalWindowsContext.h>
@@ -904,7 +904,7 @@ void WebChromeClient::enterFullScreenForElement(Element* element)
             return;
     } 
 
-    m_webView->fullScreenController()->setElement(element);
+    m_webView->setFullScreenElement(element);
     m_webView->fullScreenController()->enterFullScreen();
 }
 
@@ -918,7 +918,7 @@ void WebChromeClient::exitFullScreenForElement(Element* element)
             return;
     }
 
-    ASSERT(element == m_webView->fullScreenController()->element());
+    ASSERT(element == m_webView->fullScreenElement());
     m_webView->fullScreenController()->exitFullScreen();
 }
 

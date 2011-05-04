@@ -277,6 +277,7 @@ void FullscreenVideoController::enterFullscreen()
     HWND parentHwnd = webView ? webView->viewWindow() : 0;
 
     m_fullscreenWindow->createWindow(parentHwnd);
+    ::ShowWindow(m_fullscreenWindow->hwnd(), SW_SHOW);
 #if USE(ACCELERATED_COMPOSITING)
     m_fullscreenWindow->setRootChildLayer(m_rootChild);
 

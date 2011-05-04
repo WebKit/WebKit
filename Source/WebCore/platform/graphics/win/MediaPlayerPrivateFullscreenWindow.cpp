@@ -44,9 +44,6 @@ namespace WebCore {
 MediaPlayerPrivateFullscreenWindow::MediaPlayerPrivateFullscreenWindow(MediaPlayerPrivateFullscreenClient* client)
     : m_client(client)
     , m_hwnd(0)
-#if USE(ACCELERATED_COMPOSITING)
-    , m_layerTreeHost(CACFLayerTreeHost::create())
-#endif
 {
 }
 
@@ -82,13 +79,14 @@ void MediaPlayerPrivateFullscreenWindow::createWindow(HWND parentHwnd)
 
     IntRect monitorRect = mi.rcMonitor;
     
-    ::CreateWindowExW(WS_EX_TOOLWINDOW, windowClassName, L"", WS_POPUP | WS_VISIBLE, 
+    ::CreateWindowExW(WS_EX_TOOLWINDOW, windowClassName, L"", WS_POPUP, 
         monitorRect.x(), monitorRect.y(), monitorRect.width(), monitorRect.height(),
         parentHwnd, 0, WebCore::instanceHandle(), this);
     ASSERT(IsWindow(m_hwnd));
 
 #if USE(ACCELERATED_COMPOSITING)
-    m_layerTreeHost->setWindow(m_hwnd);
+    if (m_layerTreeHost)
+        m_layerTreeHost->setWindow(m_hwnd);
 #endif
 
     ::SetFocus(m_hwnd);
@@ -105,8 +103,16 @@ void MediaPlayerPrivateFullscreenWindow::setRootChildLayer(PassRefPtr<PlatformCA
 
     m_rootChild = rootChild;
 
-    if (!m_rootChild)
+    if (!m_rootChild) {
+        m_layerTreeHost = nullptr;
         return;
+    }
+
+    if (!m_layerTreeHost) {
+        m_layerTreeHost = CACFLayerTreeHost::create();
+        if (m_hwnd)
+            m_layerTreeHost->setWindow(m_hwnd);
+    }
 
     m_layerTreeHost->setRootChildLayer(m_rootChild.get());
     PlatformCALayer* rootLayer = m_rootChild->rootLayer();
@@ -148,7 +154,8 @@ LRESULT MediaPlayerPrivateFullscreenWindow::wndProc(HWND hWnd, UINT message, WPA
     case WM_DESTROY:
         m_hwnd = 0;
 #if USE(ACCELERATED_COMPOSITING)
-        m_layerTreeHost->setWindow(0);
+        if (m_layerTreeHost)
+            m_layerTreeHost->setWindow(0);
 #endif
         break;
     case WM_WINDOWPOSCHANGED:
@@ -157,22 +164,38 @@ LRESULT MediaPlayerPrivateFullscreenWindow::wndProc(HWND hWnd, UINT message, WPA
             if (wp->flags & SWP_NOSIZE)
                 break;
 #if USE(ACCELERATED_COMPOSITING)
-            m_layerTreeHost->resize();
-            PlatformCALayer* rootLayer = m_rootChild->rootLayer();
-            CGRect rootBounds = m_rootChild->rootLayer()->bounds();
-            m_rootChild->setFrame(rootBounds);
-            m_rootChild->setNeedsLayout();
+            if (m_layerTreeHost) {
+                m_layerTreeHost->resize();
+                PlatformCALayer* rootLayer = m_rootChild->rootLayer();
+                CGRect rootBounds = m_rootChild->rootLayer()->bounds();
+                m_rootChild->setFrame(rootBounds);
+                m_rootChild->setNeedsLayout();
+            }
 #endif
         }
         break;
     case WM_PAINT:
 #if USE(ACCELERATED_COMPOSITING)
-        m_layerTreeHost->paint();
-        ::ValidateRect(m_hwnd, 0);
+        if (m_layerTreeHost) {
+            m_layerTreeHost->paint();
+            ::ValidateRect(m_hwnd, 0);
+        } else
 #endif
+        {
+            PAINTSTRUCT ps;
+            HDC hdc = ::BeginPaint(m_hwnd, &ps);
+            ::FillRect(hdc, &ps.rcPaint, (HBRUSH)::GetStockObject(BLACK_BRUSH));
+            ::EndPaint(m_hwnd, &ps);
+        }
         break;
+    case WM_PRINTCLIENT:
+        {
+            RECT clientRect;
+            HDC context = (HDC)wParam;
+            ::GetClientRect(m_hwnd, &clientRect);
+            ::FillRect(context, &clientRect, (HBRUSH)::GetStockObject(BLACK_BRUSH));
+        }
     }
-
     if (m_client)
         lResult = m_client->fullscreenClientWndProc(hWnd, message, wParam, lParam);
 

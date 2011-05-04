@@ -32,6 +32,10 @@
 #include "WebFullScreenManagerProxyMessages.h"
 #include "WebPage.h"
 #include "WebProcess.h"
+#include <WebCore/Frame.h>
+#include <WebCore/FrameView.h>
+#include <WebCore/GraphicsLayer.h>
+#include <WebCore/Page.h>
 #include <WebKitSystemInterface/WebKitSystemInterface.h>
 
 using namespace WebCore;
@@ -55,21 +59,53 @@ WebFullScreenManagerWin::WebFullScreenManagerWin(WebPage* page)
 
 WebFullScreenManagerWin::~WebFullScreenManagerWin()
 {
+    m_page->send(Messages::WebFullScreenManagerProxy::ExitAcceleratedCompositingMode());
 }
 
-void WebFullScreenManagerWin::setRootFullScreenLayer(WebCore::GraphicsLayer*)
+void WebFullScreenManagerWin::setRootFullScreenLayer(WebCore::GraphicsLayer* layer)
 {
-    // FIXME: Implement
+    // Host the full screen layer if its given to us; otherwise it will be disconnected 
+    // from the layer heirarchy and cause an ASSERT during resync.
+    // FIXME: Disable setting RenderLayer::setAnimating() to make this unnecessary.
+    if (m_fullScreenRootLayer == layer)
+        return;
+    m_fullScreenRootLayer = layer;
+
+    if (!m_fullScreenRootLayer) {
+        m_page->send(Messages::WebFullScreenManagerProxy::ExitAcceleratedCompositingMode());
+        if (m_rootLayer) {
+            m_rootLayer->removeAllChildren();
+            m_rootLayer = 0;
+        }
+        return;
+    }
+
+    if (!m_rootLayer) {
+        m_rootLayer = GraphicsLayer::create(0);
+#ifndef NDEBUG
+        m_rootLayer->setName("Full screen root layer");
+#endif
+        m_rootLayer->setDrawsContent(false);
+        m_rootLayer->setSize(getFullScreenRect().size());
+    }
+
+    m_rootLayer->removeAllChildren();
+
+    if (m_fullScreenRootLayer)
+        m_rootLayer->addChild(m_fullScreenRootLayer);
+
+    m_rootLayer->syncCompositingStateForThisLayerOnly();
+    m_page->corePage()->mainFrame()->view()->syncCompositingStateIncludingSubframes();
 }
 
 void WebFullScreenManagerWin::beginEnterFullScreenAnimation(float)
 {
-    // FIXME: Implement
+    // FIXME: Add support for animating the content into full screen.
 }
 
 void WebFullScreenManagerWin::beginExitFullScreenAnimation(float)
 {
-    // FIXME: Implement
+    // FIXME: Add support for animating the content into full screen.
 }
 
 } // namespace WebKit

@@ -1,3 +1,31 @@
+2011-05-02  Jer Noble  <jer.noble@apple.com>
+
+        Reviewed by Adam Roben.
+
+        Implement FULLSCREEN_API on Windows, Part 3: WebKit2
+        https://bugs.webkit.org/show_bug.cgi?id=59845
+
+        Move WebFullScreenController into WebCore to facilitate code sharing between WebKit
+        and WebKit2.  WebFullScreenController now uses a Client class to request work on its
+        behalf by WebKit and WebKit2.  MediaPlayerPrivateFullscreenWindow now only creates a 
+        CALayerHost once a root layer is set, as the CALayerHost was causing child window drawing
+        problems, and because a CALayerHost is overkill if the window is only drawing black to
+        its client area.
+
+        * WebCore.vcproj/WebCore.vcproj:
+        * platform/graphics/win/MediaPlayerPrivateFullscreenWindow.cpp:
+        (WebCore::MediaPlayerPrivateFullscreenWindow::MediaPlayerPrivateFullscreenWindow): Do not create 
+            m_layerHost in the constructor.
+        (WebCore::MediaPlayerPrivateFullscreenWindow::createWindow): NULL check m_layerHost.
+        (WebCore::MediaPlayerPrivateFullscreenWindow::setRootChildLayer): Lazily instantiate m_layerHost.
+        (WebCore::MediaPlayerPrivateFullscreenWindow::wndProc): NULL check m_layerHost; if a root layer is
+            not present, fill the window with black in WM_PAINT.
+        * platform/graphics/win/MediaPlayerPrivateFullscreenWindow.h:
+        * platform/graphics/win/FullScreenController.cpp: Renamed from Source/WebKit/win/WebFullScreenController.cpp.
+        * platform/graphics/win/FullScreenController.h: Renamed from Source/WebKit/win/WebFullScreenController.h.
+        * platform/graphics/win/FullScreenControllerClient.h: Split out from FullScreenController.h
+        (WebCore::FullScreenControllerClient::~FullScreenControllerClient):
+
 2011-05-03  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Sam Weinig.

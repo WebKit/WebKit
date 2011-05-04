@@ -28,6 +28,8 @@
 
 #if ENABLE(FULLSCREEN_API)
 
+#include "WebView.h"
+#include <WebCore/FullScreenController.h>
 #include <WebCore/IntRect.h>
 
 namespace WebKit {
@@ -36,14 +38,14 @@ void WebFullScreenManagerProxy::enterFullScreen()
 {
     if (!m_webView)
         return;
-    // FIXME: Implement
+    m_webView->fullScreenController()->enterFullScreen();
 }
 
 void WebFullScreenManagerProxy::exitFullScreen()
 {
     if (!m_webView)
         return;
-    // FIXME: Implement
+    m_webView->fullScreenController()->exitFullScreen();
 }
 
 void WebFullScreenManagerProxy::beganEnterFullScreenAnimation()

@@ -55,6 +55,11 @@
 #include <WebCore/WindowsTouch.h>
 #include <wtf/text/WTFString.h>
 
+#if ENABLE(FULLSCREEN_API)
+#include "WebFullScreenManagerProxy.h"
+#include <WebCore/FullScreenController.h>
+#endif
+
 namespace Ime {
 // We need these functions in a separate namespace, because in the global namespace they conflict
 // with the definitions in imm.h only by the type modifier (the macro defines them as static) and
@@ -299,6 +304,10 @@ WebView::WebView(RECT rect, WebContext* context, WebPageGroup* pageGroup, HWND p
 
     // Initialize the top level parent window and register it with the WindowMessageBroadcaster.
     windowAncestryDidChange();
+
+#if ENABLE(FULLSCREEN_API)
+    m_page->fullScreenManager()->setWebView(this);
+#endif
 }
 
 WebView::~WebView()
@@ -608,6 +617,14 @@ LRESULT WebView::onGesture(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam
 
 LRESULT WebView::onKeyEvent(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam, bool& handled)
 {
+#if ENABLE(FULLSCREEN_API)
+    // Trap the ESC key when in full screen mode.
+    if (message == WM_KEYDOWN && wParam == VK_ESCAPE && m_fullScreenController && m_fullScreenController->isFullScreen()) {
+        m_fullScreenController->exitFullScreen();
+        return false;
+    }
+#endif
+
     m_page->handleKeyboardEvent(NativeWebKeyboardEvent(hWnd, message, wParam, lParam));
 
     // We claim here to always have handled the event. If the event is not in fact handled, we will
@@ -1650,4 +1667,48 @@ HRESULT STDMETHODCALLTYPE WebView::Drop(IDataObject* pDataObject, DWORD grfKeySt
     return S_OK;
 }
 
+#if ENABLE(FULLSCREEN_API)
+FullScreenController* WebView::fullScreenController()
+{
+    if (!m_fullScreenController)
+        m_fullScreenController = adoptPtr(new FullScreenController(this));
+    return m_fullScreenController.get();
+}
+
+HWND WebView::fullScreenClientWindow() const
+{
+    return m_window;
+}
+
+HWND WebView::fullScreenClientParentWindow() const
+{
+    return ::GetParent(m_window);
+}
+
+void WebView::fullScreenClientSetParentWindow(HWND hostWindow)
+{
+    setParentWindow(hostWindow);
+}
+
+void WebView::fullScreenClientWillEnterFullScreen()
+{
+    page()->fullScreenManager()->willEnterFullScreen();
+}
+
+void WebView::fullScreenClientDidEnterFullScreen()
+{
+    page()->fullScreenManager()->didEnterFullScreen();
+}
+
+void WebView::fullScreenClientWillExitFullScreen()
+{
+    page()->fullScreenManager()->willExitFullScreen();
+}
+
+void WebView::fullScreenClientDidExitFullScreen()
+{
+    page()->fullScreenManager()->didExitFullScreen();
+}
+
+#endif
 } // namespace WebKit
