@@ -260,13 +260,13 @@ bool WebPage::performDefaultBehaviorForKeyEvent(const WebKeyboardEvent& keyboard
     return true;
 }
 
-bool WebPage::platformHasLocalDataForURL(const WebCore::KURL& url)
-{
 #if USE(CFNETWORK)
+static RetainPtr<CFCachedURLResponseRef> cachedResponseForURL(WebPage* webPage, const KURL& url)
+{
     RetainPtr<CFURLRef> cfURL(AdoptCF, url.createCFURL());
     RetainPtr<CFMutableURLRequestRef> request(AdoptCF, CFURLRequestCreateMutable(0, cfURL.get(), kCFURLRequestCachePolicyReloadIgnoringCache, 60, 0));
-    
-    RetainPtr<CFStringRef> userAgent(AdoptCF, userAgent().createCFString());
+
+    RetainPtr<CFStringRef> userAgent(AdoptCF, webPage->userAgent().createCFString());
     CFURLRequestSetHTTPHeaderFieldValue(request.get(), CFSTR("User-Agent"), userAgent.get());
 
     RetainPtr<CFURLCacheRef> cache;
@@ -277,38 +277,54 @@ bool WebPage::platformHasLocalDataForURL(const WebCore::KURL& url)
 #endif
         cache.adoptCF(CFURLCacheCopySharedURLCache());
 
-    RetainPtr<CFCachedURLResponseRef> response(AdoptCF, CFURLCacheCopyResponseForRequest(cache.get(), request.get()));    
-    return response;
+    RetainPtr<CFCachedURLResponseRef> response(AdoptCF, CFURLCacheCopyResponseForRequest(cache.get(), request.get()));
+    return response;        
+}
+#endif
+
+bool WebPage::platformHasLocalDataForURL(const KURL& url)
+{
+#if USE(CFNETWORK)
+    return cachedResponseForURL(this, url);
 #else
     return false;
 #endif
 }
 
-String WebPage::cachedResponseMIMETypeForURL(const WebCore::KURL& url)
+String WebPage::cachedResponseMIMETypeForURL(const KURL& url)
 {
 #if USE(CFNETWORK)
-    RetainPtr<CFURLRef> cfURL(AdoptCF, url.createCFURL());
-    RetainPtr<CFMutableURLRequestRef> request(AdoptCF, CFURLRequestCreateMutable(0, cfURL.get(), kCFURLRequestCachePolicyReloadIgnoringCache, 60, 0));
-    
-    RetainPtr<CFStringRef> userAgent(AdoptCF, userAgent().createCFString());
-    CFURLRequestSetHTTPHeaderFieldValue(request.get(), CFSTR("User-Agent"), userAgent.get());
-
-    RetainPtr<CFURLCacheRef> cache;
-#if USE(CFURLSTORAGESESSIONS)
-    if (CFURLStorageSessionRef storageSession = ResourceHandle::privateBrowsingStorageSession())
-        cache.adoptCF(wkCopyURLCache(storageSession));
-    else
-#endif
-        cache.adoptCF(CFURLCacheCopySharedURLCache());
-
-    RetainPtr<CFCachedURLResponseRef> cachedResponse(AdoptCF, CFURLCacheCopyResponseForRequest(cache.get(), request.get()));
-    
+    RetainPtr<CFCachedURLResponseRef> cachedResponse = cachedResponseForURL(this, url);
     CFURLResponseRef response = CFCachedURLResponseGetWrappedResponse(cachedResponse.get());
-    
     return response ? CFURLResponseGetMIMEType(response) : String();
 #else
     return String();
 #endif
+}
+
+String WebPage::cachedSuggestedFilenameForURL(const KURL& url)
+{
+#if USE(CFNETWORK)
+    RetainPtr<CFCachedURLResponseRef> cachedResponse = cachedResponseForURL(this, url);
+    CFURLResponseRef response = CFCachedURLResponseGetWrappedResponse(cachedResponse.get());
+    if (!response)
+        return String();
+    RetainPtr<CFStringRef> suggestedFilename(AdoptCF, CFURLResponseCopySuggestedFilename(response));
+
+    return suggestedFilename.get();
+#else
+    return String();
+#endif
+}
+
+PassRefPtr<SharedBuffer> WebPage::cachedResponseDataForURL(const KURL& url)
+{
+    RetainPtr<CFCachedURLResponseRef> cachedResponse = cachedResponseForURL(this, url);
+    CFDataRef data = CFCachedURLResponseGetReceiverData(cachedResponse.get());
+    if (!data)
+        return 0;
+
+    return SharedBuffer::wrapCFData(data);
 }
 
 bool WebPage::platformCanHandleRequest(const WebCore::ResourceRequest& request)

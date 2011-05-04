@@ -291,7 +291,9 @@ public:
     
     bool hasLocalDataForURL(const WebCore::KURL&);
     String cachedResponseMIMETypeForURL(const WebCore::KURL&);
-    
+    String cachedSuggestedFilenameForURL(const WebCore::KURL&);
+    PassRefPtr<WebCore::SharedBuffer> cachedResponseDataForURL(const WebCore::KURL&);
+
     static bool canHandleRequest(const WebCore::ResourceRequest&);
 
     class SandboxExtensionTracker {

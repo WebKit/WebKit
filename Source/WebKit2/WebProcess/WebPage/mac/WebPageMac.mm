@@ -633,20 +633,32 @@ bool WebPage::platformHasLocalDataForURL(const WebCore::KURL& url)
     return cachedResponse;
 }
 
-String WebPage::cachedResponseMIMETypeForURL(const WebCore::KURL& url)
+static NSCachedURLResponse *cachedResponseForURL(WebPage* webPage, const KURL& url)
 {
-    NSMutableURLRequest* request = [[NSMutableURLRequest alloc] initWithURL:url];
-    [request setValue:(NSString*)userAgent() forHTTPHeaderField:@"User-Agent"];
-    NSCachedURLResponse *cachedResponse;
+    RetainPtr<NSMutableURLRequest> request(AdoptNS, [[NSMutableURLRequest alloc] initWithURL:url]);
+    [request.get() setValue:(NSString *)webPage->userAgent() forHTTPHeaderField:@"User-Agent"];
+
 #if USE(CFURLSTORAGESESSIONS)
     if (CFURLStorageSessionRef storageSession = ResourceHandle::privateBrowsingStorageSession())
-        cachedResponse = WKCachedResponseForRequest(storageSession, request);
-    else
+        return WKCachedResponseForRequest(storageSession, request.get());
 #endif
-        cachedResponse = [[NSURLCache sharedURLCache] cachedResponseForRequest:request];
-    [request release];
-    
-    return [[cachedResponse response] MIMEType];
+
+    return [[NSURLCache sharedURLCache] cachedResponseForRequest:request.get()];
+}
+
+String WebPage::cachedSuggestedFilenameForURL(const KURL& url)
+{
+    return [[cachedResponseForURL(this, url) response] suggestedFilename];
+}
+
+String WebPage::cachedResponseMIMETypeForURL(const KURL& url)
+{
+    return [[cachedResponseForURL(this, url) response] MIMEType];
+}
+
+PassRefPtr<SharedBuffer> WebPage::cachedResponseDataForURL(const KURL& url)
+{
+    return SharedBuffer::wrapNSData([cachedResponseForURL(this, url) data]);
 }
 
 bool WebPage::platformCanHandleRequest(const WebCore::ResourceRequest& request)

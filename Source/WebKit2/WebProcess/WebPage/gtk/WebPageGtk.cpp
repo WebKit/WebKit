@@ -103,23 +103,34 @@ bool WebPage::performDefaultBehaviorForKeyEvent(const WebKeyboardEvent& keyboard
     return true;
 }
 
-bool WebPage::platformHasLocalDataForURL(const WebCore::KURL&)
+bool WebPage::platformHasLocalDataForURL(const KURL&)
 {
-    // FIXME: Implement
     notImplemented();
     return false;
 }
 
-String WebPage::cachedResponseMIMETypeForURL(const WebCore::KURL&)
+String WebPage::cachedResponseMIMETypeForURL(const KURL&)
 {
-    // FIXME: Implement
+    notImplemented();
     return String();
 }
 
-bool WebPage::platformCanHandleRequest(const WebCore::ResourceRequest&)
+bool WebPage::platformCanHandleRequest(const ResourceRequest&)
 {
-    // FIXME: Implement
+    notImplemented();
     return true;
+}
+
+String WebPage::cachedSuggestedFilenameForURL(const KURL&)
+{
+    notImplemented();
+    return String();
+}
+
+PassRefPtr<SharedBuffer> WebPage::cachedResponseDataForURL(const KURL&)
+{
+    notImplemented();
+    return 0;
 }
 
 } // namespace WebKit

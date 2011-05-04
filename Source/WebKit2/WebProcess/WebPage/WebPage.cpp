@@ -1386,18 +1386,34 @@ void WebPage::getMainResourceDataOfFrame(uint64_t frameID, uint64_t callbackID)
     send(Messages::WebPageProxy::DataCallback(dataReference, callbackID));
 }
 
-void WebPage::getResourceDataFromFrame(uint64_t frameID, const String& resourceURL, uint64_t callbackID)
+static PassRefPtr<SharedBuffer> resourceDataForFrame(Frame* frame, const KURL& resourceURL)
+{
+    DocumentLoader* loader = frame->loader()->documentLoader();
+    if (!loader)
+        return 0;
+
+    RefPtr<ArchiveResource> subresource = loader->subresource(resourceURL);
+    if (!subresource)
+        return 0;
+
+    return subresource->data();
+}
+
+void WebPage::getResourceDataFromFrame(uint64_t frameID, const String& resourceURLString, uint64_t callbackID)
 {
     CoreIPC::DataReference dataReference;
+    KURL resourceURL(KURL(), resourceURLString);
 
     RefPtr<SharedBuffer> buffer;
     if (WebFrame* frame = WebProcess::shared().webFrame(frameID)) {
-        if (DocumentLoader* loader = frame->coreFrame()->loader()->documentLoader()) {
-            if (RefPtr<ArchiveResource> subresource = loader->subresource(KURL(KURL(), resourceURL))) {
-                if ((buffer = subresource->data()))
-                    dataReference = CoreIPC::DataReference(reinterpret_cast<const uint8_t*>(buffer->data()), buffer->size());
-            }
+        buffer = resourceDataForFrame(frame->coreFrame(), resourceURL);
+        if (!buffer) {
+            // Try to get the resource data from the cache.
+            buffer = cachedResponseDataForURL(resourceURL);
         }
+
+        if (buffer)
+            dataReference = CoreIPC::DataReference(reinterpret_cast<const uint8_t*>(buffer->data()), buffer->size());
     }
 
     send(Messages::WebPageProxy::DataCallback(dataReference, callbackID));

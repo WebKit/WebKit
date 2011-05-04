@@ -1,3 +1,61 @@
+2011-05-04  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        Can't save a link from "Save Linked File to Download" popup menu
+        https://bugs.webkit.org/show_bug.cgi?id=60190
+        <rdar://problem/9367927>
+
+        Make sure that suggestedFilenameForResourceWithURL and resourceDataForFrame both look
+        in the cache if the resource can't be found in the current web page. This matches WebKit1.
+
+        * WebProcess/WebPage/WebFrame.cpp:
+        (WebKit::WebFrame::suggestedFilenameForResourceWithURL):
+        Call WebPage::cachedSuggestedFilenameForURL if we can't find a resource in the page.
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::resourceDataForFrame):
+        Move code out from getResourceDataFromFrame.
+
+        (WebKit::WebPage::getResourceDataFromFrame):
+        Call resourceDataForFrame first and then cachedResponseDataForURL.
+
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/gtk/WebPageGtk.cpp:
+        (WebKit::WebPage::platformHasLocalDataForURL):
+        (WebKit::WebPage::cachedResponseMIMETypeForURL):
+        (WebKit::WebPage::platformCanHandleRequest):
+        (WebKit::WebPage::cachedSuggestedFilenameForURL):
+        (WebKit::WebPage::cachedResponseDataForURL):
+        Add stubs.
+
+        * WebProcess/WebPage/mac/WebPageMac.mm:
+        (WebKit::cachedResponseForURL):
+        Add helper function.
+
+        (WebKit::WebPage::cachedSuggestedFilenameForURL):
+        (WebKit::WebPage::cachedResponseMIMETypeForURL):
+        (WebKit::WebPage::cachedResponseDataForURL):
+        Call helper function.
+
+        * WebProcess/WebPage/qt/WebPageQt.cpp:
+        (WebKit::WebPage::platformHasLocalDataForURL):
+        (WebKit::WebPage::cachedResponseMIMETypeForURL):
+        (WebKit::WebPage::platformCanHandleRequest):
+        (WebKit::WebPage::cachedSuggestedFilenameForURL):
+        (WebKit::WebPage::cachedResponseDataForURL):
+        Add stubs.
+        
+        * WebProcess/WebPage/win/WebPageWin.cpp:
+        (WebKit::cachedResponseForURL):
+        Add helper function.
+
+        (WebKit::WebPage::platformHasLocalDataForURL):
+        (WebKit::WebPage::cachedResponseMIMETypeForURL):
+        (WebKit::WebPage::cachedSuggestedFilenameForURL):
+        (WebKit::WebPage::cachedResponseDataForURL):
+        Call helper function.
+
 2011-05-04  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Anders Carlsson.

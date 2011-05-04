@@ -640,10 +640,10 @@ String WebFrame::suggestedFilenameForResourceWithURL(const KURL& url) const
 
     // Next, try subresources.
     RefPtr<ArchiveResource> resource = loader->subresource(url);
-    if (!resource)
-        return String();
-    
-    return resource->response().suggestedFilename();
+    if (resource)
+        return resource->response().suggestedFilename();
+
+    return page()->cachedSuggestedFilenameForURL(url);
 }
 
 String WebFrame::mimeTypeForResourceWithURL(const KURL& url) const
