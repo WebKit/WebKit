@@ -238,6 +238,12 @@ function runTests()
         assertTrue(document.querySelectorAll('.results-row').length == 2);
         assertTrue(window.getComputedStyle(document.querySelectorAll('tbody')[0], null)['display'] != 'none');
     });
+    
+    results = mockResults();
+    results.tests['only-expected-fail.html'] = mockExpectation('TEXT', 'TEXT');
+    runTest(results, function() {
+        assertTrue(window.getComputedStyle(document.getElementById('results-table').parentNode, null)['display'] == 'none');
+    });
 
     runDefaultSingleRowTest('bar-skip.html', 'TEXT', 'SKIP', true, '', '');
     runDefaultSingleRowTest('bar-flaky-fail.html', 'PASS FAIL', 'TEXT', true, 'expected actual diff ', '');
@@ -303,6 +309,7 @@ function runTests()
     subtree['flaky-fail.html'] = mockExpectation('PASS TEXT', 'IMAGE PASS');
     results.uses_expectations_file = false;
     runTest(results, function() {
+        assertTrue(window.getComputedStyle(document.getElementById('results-table').parentNode, null)['display'] != 'none');
         assertTrue(document.querySelectorAll('#results-table tbody td').length == 3);
         assertTrue(!document.querySelector('tbody.expected'));
         assertTrue(!document.getElementById('passes-table'));

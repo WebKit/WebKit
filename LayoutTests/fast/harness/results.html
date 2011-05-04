@@ -367,6 +367,23 @@ function resultLink(testPrefix, suffix, contents)
     return '<a class=result-link href="' + testPrefix + suffix + '" data-prefix="' + testPrefix + '">' + contents + '</a> ';
 }
 
+function isFailureExpected(expected, actual)
+{
+    var isExpected = true;
+    if (actual != 'SKIP') {
+        var expectedArray = expected.split(' ');
+        var actualArray = actual.split(' ');
+        for (var i = 0; i < actualArray.length; i++) {
+            var actualValue = actualArray[i];
+            if (expectedArray.indexOf(actualValue) == -1 &&
+                (expectedArray.indexOf('FAIL') == -1 ||
+                 (actualValue != 'IMAGE' && actualValue != 'TEXT' && actualValue != 'IMAGE+TEXT')))
+                isExpected = false;
+        }
+    }
+    return isExpected;
+}
+
 function processGlobalStateFor(testObject)
 {
     var test = testObject.name;
@@ -384,18 +401,8 @@ function processGlobalStateFor(testObject)
     }
 
     var expected = testObject.expected || 'PASS';
-    testObject.isExpected = true;
-    if (actual != 'SKIP' && globalState().results.uses_expectations_file) {
-        var expectedArray = expected.split(' ');
-        var actualArray = actual.split(' ');
-        for (var i = 0; i < actualArray.length; i++) {
-            var actualValue = actualArray[i];
-            if (expectedArray.indexOf(actualValue) == -1 &&
-                (expectedArray.indexOf('FAIL') == -1 ||
-                 (actualValue != 'IMAGE' && actualValue != 'TEXT' && actualValue != 'IMAGE+TEXT')))
-                testObject.isExpected = false;
-        }
-    }
+    if (globalState().results.uses_expectations_file)
+        testObject.isExpected = isFailureExpected(expected, actual);
 
     if (actual.indexOf(' ') != -1) {
         globalState().flakyTests.push(testObject);
@@ -896,24 +903,34 @@ function failingTestsTable(tests, title, id)
     if (!tests.length)
         return '';
 
-    var html = '<p>' + title + ':</p>' +
+    var tableRowHtml = '';
+    var hasUnexpected = false;
+    for (var i = 0; i < tests.length; i++) {
+        if (!tests[i].isExpected)
+            hasUnexpected = true;
+        tableRowHtml += tableRow(tests[i]);
+    }
+
+    var header = '<div';
+    if (!hasUnexpected)
+        header += ' class=expected';
+
+    header += '><p>' + title + ':</p>' +
         '<table id="' + id + '"><thead><tr>' +
         '<th>test</th>' +
         '<th id="text-results-header">results</th>' +
         '<th id="image-results-header">image results</th>';
 
     if (globalState().results.uses_expectations_file)
-        html += '<th>actual failure</th><th>expected failure</th>';
+        header += '<th>actual failure</th><th>expected failure</th>';
 
     if (id == 'flaky-tests-table')
-        html += '<th>failures</th>';
+        header += '<th>failures</th>';
 
-    html += '</tr></thead>';
+    header += '</tr></thead>';
 
-    for (var i = 0; i < tests.length; i++)
-        html += tableRow(tests[i]);
 
-    return html + '</table>';
+    return header + tableRowHtml + '</table></div>';
 }
 
 

@@ -1,3 +1,17 @@
+2011-05-04  Ojan Vafai  <ojan@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        [results.html] Hide the entire table if all failures are expected
+        https://bugs.webkit.org/show_bug.cgi?id=60225
+
+        If in a port that uses expected results and all failures are expected,
+        hide the table as well as the rows when hiding expected failures.
+
+        * fast/harness/resources/results-test.js:
+        * fast/harness/results-expected.txt:
+        * fast/harness/results.html:
+
 2011-05-04  Mark Pilgrim  <pilgrim@chromium.org>
 
         Reviewed by Tony Chang.
