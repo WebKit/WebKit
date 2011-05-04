@@ -151,6 +151,7 @@ void CompositeAnimation::updateTransitions(RenderObject* renderer, RenderStyle* 
                             implAnim->blendPropertyValueInStyle(prop, modifiedCurrentStyle.get());
                         }
     #endif
+                        animationController()->animationWillBeRemoved(implAnim);
                         m_transitions.remove(prop);
                         equal = false;
                     }

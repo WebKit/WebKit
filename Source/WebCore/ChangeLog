@@ -1,3 +1,22 @@
+2011-05-03  Dean Jackson  <dino@apple.com>
+
+        Reviewed by Simon Fraser.
+
+        Interrupted transitions are not correctly removed
+        https://bugs.webkit.org/show_bug.cgi?id=60062
+
+        CompositeAnimation was replacing any existing
+        transition as a new one was created. However, it wasn't
+        clearing the lists in AnimationControllerPrivate that
+        signal when a hardware animation starts. Rather than
+        simple removing the existing transition, we now tell
+        AnimationControllerPrivate that is has gone.
+
+        Test: transitions/3d/interrupted-transition.html
+
+        * page/animation/CompositeAnimation.cpp:
+        (WebCore::CompositeAnimation::updateTransitions):
+
 2011-05-03  Enrica Casucci  <enrica@apple.com>
 
         Reviewed by Ryosuke Niwa.
