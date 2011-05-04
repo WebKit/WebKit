@@ -1,3 +1,19 @@
+2011-05-04  Mark Pilgrim  <pilgrim@chromium.org>
+
+        Reviewed by Tony Chang.
+
+        IndexedDB open (database) should fail if name is null
+        https://bugs.webkit.org/show_bug.cgi?id=60022
+
+        Test: storage/indexeddb/mozilla/open-database-null-name.html
+
+        Combination problem: Bug in IDL didn't pass null values to .cpp layer,
+        then .cpp layer didn't check for null value anyway.
+
+        * storage/IDBFactory.cpp:
+        (WebCore::IDBFactory::open): check for null name
+        * storage/IDBFactory.idl: pass null name as null
+
 2011-05-04  Jer Noble  <jer.noble@apple.com>
 
         Reviewed by Darin Adler.

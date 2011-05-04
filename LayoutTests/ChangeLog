@@ -1,3 +1,13 @@
+2011-05-04  Mark Pilgrim  <pilgrim@chromium.org>
+
+        Reviewed by Tony Chang.
+
+        IndexedDB open (database) should fail if name is null
+        https://bugs.webkit.org/show_bug.cgi?id=60022
+
+        * storage/indexeddb/mozilla/open-database-null-name-expected.txt: Added.
+        * storage/indexeddb/mozilla/open-database-null-name.html: Added.
+
 2011-05-04  Ojan Vafai  <ojan@chromium.org>
 
         Improve styling on the toolbar. Make the background opaque.

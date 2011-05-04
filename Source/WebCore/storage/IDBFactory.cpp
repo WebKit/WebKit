@@ -69,9 +69,10 @@ PassRefPtr<IDBRequest> IDBFactory::open(ScriptExecutionContext* context, const S
     if (!document->frame() || !document->page())
         return 0;
 
-
-    // FIXME: Raise a NON_TRANSIENT_ERR if the name is invalid.
-
+    if (name.isNull()) {
+        ec = IDBDatabaseException::NON_TRANSIENT_ERR;
+        return 0;
+    }
 
     RefPtr<IDBRequest> request = IDBRequest::create(document, IDBAny::create(this), 0);
     GroupSettings* groupSettings = document->page()->group().groupSettings();
