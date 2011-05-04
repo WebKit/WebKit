@@ -231,7 +231,7 @@ PlatformContextSkia::~PlatformContextSkia()
             context->makeContextCurrent();
             context->grContext()->flush(0);
         }
-        m_gpuCanvas->drawingBuffer()->setWillPublishCallback(0);
+        m_gpuCanvas->drawingBuffer()->setWillPublishCallback(nullptr);
     }
 #endif
 }

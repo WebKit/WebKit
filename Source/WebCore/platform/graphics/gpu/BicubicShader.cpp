@@ -104,7 +104,7 @@ PassOwnPtr<BicubicShader> BicubicShader::create(GraphicsContext3D* context)
 
     unsigned program = loadProgram(context, vertexShaderSource, fragmentShaderSource);
     if (!program)
-        return 0;
+        return nullptr;
 
     return new BicubicShader(context, program);
 }

@@ -92,7 +92,7 @@ PassOwnPtr<ConvolutionShader> ConvolutionShader::create(GraphicsContext3D* conte
 
     unsigned program = loadProgram(context, vertexShaderSource, fragmentShaderSource);
     if (!program)
-        return 0;
+        return nullptr;
     return new ConvolutionShader(context, program, kernelWidth);
 }
 

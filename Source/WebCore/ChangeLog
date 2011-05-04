@@ -2,6 +2,33 @@
 
         Not reviewed. Build fix.
 
+        More places from 0 to nullptr.
+
+        * bindings/v8/V8Proxy.cpp:
+        (WebCore::V8Proxy::precompileScript):
+        * platform/graphics/chromium/LayerTilerChromium.cpp:
+        (WebCore::LayerTilerChromium::create):
+        * platform/graphics/gpu/BicubicShader.cpp:
+        (WebCore::BicubicShader::create):
+        * platform/graphics/gpu/ConvolutionShader.cpp:
+        (WebCore::ConvolutionShader::create):
+        * platform/graphics/gpu/LoopBlinnSolidFillShader.cpp:
+        (WebCore::LoopBlinnSolidFillShader::create):
+        * platform/graphics/gpu/SolidFillShader.cpp:
+        (WebCore::SolidFillShader::create):
+        * platform/graphics/gpu/TexShader.cpp:
+        (WebCore::TexShader::create):
+        * platform/graphics/skia/PlatformContextSkia.cpp:
+        (WebCore::PlatformContextSkia::~PlatformContextSkia):
+        * platform/leveldb/LevelDBDatabase.cpp:
+        (WebCore::LevelDBDatabase::createIterator):
+        * platform/text/LocalizedNumberICU.cpp:
+        (WebCore::createFormatterForCurrentLocale):
+
+2011-05-03  Alpha Lam  <hclam@chromium.org>
+
+        Not reviewed. Build fix.
+
         Using nullptr instead of 0. This makes visual studio happy.
 
         * storage/IDBTransactionBackendInterface.h:

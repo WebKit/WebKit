@@ -45,7 +45,7 @@ namespace WebCore {
 PassOwnPtr<LayerTilerChromium> LayerTilerChromium::create(LayerRendererChromium* layerRenderer, const IntSize& tileSize, BorderTexelOption border)
 {
     if (!layerRenderer || tileSize.isEmpty())
-        return 0;
+        return nullptr;
 
     return adoptPtr(new LayerTilerChromium(layerRenderer, tileSize, border));
 }

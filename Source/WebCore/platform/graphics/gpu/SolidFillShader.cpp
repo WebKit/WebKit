@@ -53,7 +53,7 @@ PassOwnPtr<SolidFillShader> SolidFillShader::create(GraphicsContext3D* context)
                                    generateVertex(Shader::TwoDimensional, Shader::SolidFill),
                                    generateFragment(Shader::TwoDimensional, Shader::SolidFill, Shader::NotAntialiased));
     if (!program)
-        return 0;
+        return nullptr;
     return new SolidFillShader(context, program);
 }
 

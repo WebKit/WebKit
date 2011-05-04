@@ -54,7 +54,7 @@ PassOwnPtr<TexShader> TexShader::create(GraphicsContext3D* context)
                                    generateVertex(Shader::TwoDimensional, Shader::TextureFill),
                                    generateFragment(Shader::TwoDimensional, Shader::TextureFill, Shader::NotAntialiased));
     if (!program)
-        return 0;
+        return nullptr;
     return new TexShader(context, program);
 }
 

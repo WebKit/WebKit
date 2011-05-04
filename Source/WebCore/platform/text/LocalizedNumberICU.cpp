@@ -46,7 +46,7 @@ static PassOwnPtr<NumberFormat> createFormatterForCurrentLocale()
 {
     UErrorCode status = U_ZERO_ERROR;
     OwnPtr<NumberFormat> formatter = adoptPtr(NumberFormat::createInstance(status));
-    return U_SUCCESS(status) ? formatter.release() : 0;
+    return U_SUCCESS(status) ? formatter.release() : nullptr;
 }
 
 // This might return 0.

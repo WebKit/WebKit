@@ -41,7 +41,7 @@ PassOwnPtr<LoopBlinnSolidFillShader> LoopBlinnSolidFillShader::create(GraphicsCo
                                    generateVertex(type, SolidFill),
                                    generateFragment(type, SolidFill, antialiasType));
     if (!program)
-        return 0;
+        return nullptr;
     return new LoopBlinnSolidFillShader(context, program);
 }
 

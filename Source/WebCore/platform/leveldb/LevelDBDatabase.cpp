@@ -145,7 +145,7 @@ PassOwnPtr<LevelDBIterator> LevelDBDatabase::createIterator()
 {
     OwnPtr<leveldb::Iterator> i = adoptPtr(m_db->NewIterator(leveldb::ReadOptions()));
     if (!i) // FIXME: Double check if we actually need to check this.
-        return 0;
+        return nullptr;
     return adoptPtr(new LevelDBIterator(i.release()));
 }
 
