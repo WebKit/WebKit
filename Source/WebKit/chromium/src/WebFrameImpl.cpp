@@ -945,8 +945,10 @@ void WebFrameImpl::loadHistoryItem(const WebHistoryItem& item)
         m_frame->page()->backForward()->setCurrentItem(currentItem.get());
     }
 
+    m_inSameDocumentHistoryLoad = currentItem->shouldDoSameDocumentNavigationTo(historyItem.get());
     m_frame->page()->goToItem(historyItem.get(),
                               FrameLoadTypeIndexedBackForward);
+    m_inSameDocumentHistoryLoad = false;
 }
 
 void WebFrameImpl::loadData(const WebData& data,
@@ -1040,8 +1042,10 @@ WebHistoryItem WebFrameImpl::currentHistoryItem() const
     // If we are still loading, then we don't want to clobber the current
     // history item as this could cause us to lose the scroll position and
     // document state.  However, it is OK for new navigations.
-    if (m_frame->loader()->loadType() == FrameLoadTypeStandard
-        || !m_frame->loader()->activeDocumentLoader()->isLoadingInAPISense())
+    // FIXME: Can we make this a plain old getter, instead of worrying about
+    // clobbering here?
+    if (!m_inSameDocumentHistoryLoad && (m_frame->loader()->loadType() == FrameLoadTypeStandard
+        || !m_frame->loader()->activeDocumentLoader()->isLoadingInAPISense()))
         m_frame->loader()->history()->saveDocumentAndScrollState();
 
     return WebHistoryItem(m_frame->page()->backForward()->currentItem());
@@ -1928,6 +1932,7 @@ WebFrameImpl::WebFrameImpl(WebFrameClient* client)
     , m_nextInvalidateAfter(0)
     , m_animationController(this)
     , m_identifier(generateFrameIdentifier())
+    , m_inSameDocumentHistoryLoad(false)
 {
     PlatformBridge::incrementStatsCounter(webFrameActiveCount);
     frameCount++;

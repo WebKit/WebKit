@@ -412,6 +412,10 @@ private:
 
     // The identifier of this frame.
     long long m_identifier;
+
+    // Ensure we don't overwrite valid history data during same document loads
+    // from HistoryItems
+    bool m_inSameDocumentHistoryLoad;
 };
 
 } // namespace WebKit
