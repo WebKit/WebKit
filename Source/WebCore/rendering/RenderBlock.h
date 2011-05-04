@@ -708,6 +708,7 @@ private:
     // End helper functions and structs used by layoutBlockChildren.
 
     // Helper function for layoutInlineChildren()
+    RootInlineBox* createLineBoxesFromBidiRuns(BidiRunList<BidiRun>&, const InlineIterator& end, LineInfo&, VerticalPositionCache&, BidiRun* trailingSpaceRun);
     void layoutRunsAndFloats(bool fullLayout, bool hasInlineChild, Vector<FloatWithRect>&, int& repaintLogicalTop, int& repaintLogicalBottom);
 
     // Pagination routines.

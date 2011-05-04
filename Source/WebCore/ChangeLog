@@ -1,3 +1,17 @@
+2011-05-04  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Ryosuke Niwa.
+
+        Split createLineBoxesFromBidiRuns out from layoutRunsAndFloats
+        https://bugs.webkit.org/show_bug.cgi?id=60080
+
+        No functional change, just moving code.
+
+        * rendering/RenderBlock.h:
+        * rendering/RenderBlockLineLayout.cpp:
+        (WebCore::RenderBlock::createLineBoxesFromBidiRuns):
+        (WebCore::RenderBlock::layoutRunsAndFloats):
+
 2011-05-04  Andreas Kling  <andreas.kling@nokia.com>
 
         Reviewed by Kenneth Rohde Christiansen.

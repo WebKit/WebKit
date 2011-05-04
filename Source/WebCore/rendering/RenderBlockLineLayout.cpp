@@ -762,6 +762,59 @@ void RenderBlock::appendFloatingObjectToLastLine(FloatingObject* floatingObject)
     lastRootBox()->appendFloat(floatingObject->renderer());
 }
 
+// This function constructs line boxes for all of the text runs in the resolver and computes their position.
+RootInlineBox* RenderBlock::createLineBoxesFromBidiRuns(BidiRunList<BidiRun>& bidiRuns, const InlineIterator& end, LineInfo& lineInfo, VerticalPositionCache& verticalPositionCache, BidiRun* trailingSpaceRun)
+{
+    if (!bidiRuns.runCount())
+        return 0;
+
+    // FIXME: Why is this only done when we had runs?
+    lineInfo.setLastLine(!end.m_obj);
+
+    RootInlineBox* lineBox = constructLine(bidiRuns, lineInfo);
+    if (!lineBox)
+        return 0;
+
+    lineBox->setEndsWithBreak(lineInfo.previousLineBrokeCleanly());
+    
+#if ENABLE(SVG)
+    bool isSVGRootInlineBox = lineBox->isSVGRootInlineBox();
+#else
+    bool isSVGRootInlineBox = false;
+#endif
+    
+    GlyphOverflowAndFallbackFontsMap textBoxDataMap;
+    
+    // Now we position all of our text runs horizontally.
+    if (!isSVGRootInlineBox)
+        computeInlineDirectionPositionsForLine(lineBox, lineInfo, bidiRuns.firstRun(), trailingSpaceRun, end.atEnd(), textBoxDataMap, verticalPositionCache);
+    
+    // Now position our text runs vertically.
+    computeBlockDirectionPositionsForLine(lineBox, bidiRuns.firstRun(), textBoxDataMap, verticalPositionCache);
+    
+#if ENABLE(SVG)
+    // SVG text layout code computes vertical & horizontal positions on its own.
+    // Note that we still need to execute computeVerticalPositionsForLine() as
+    // it calls InlineTextBox::positionLineBox(), which tracks whether the box
+    // contains reversed text or not. If we wouldn't do that editing and thus
+    // text selection in RTL boxes would not work as expected.
+    if (isSVGRootInlineBox) {
+        ASSERT(isSVGText());
+        static_cast<SVGRootInlineBox*>(lineBox)->computePerCharacterLayoutInformation();
+    }
+#endif
+    
+    // Compute our overflow now.
+    lineBox->computeOverflow(lineBox->lineTop(), lineBox->lineBottom(), textBoxDataMap);
+    
+#if PLATFORM(MAC)
+    // Highlight acts as an overflow inflation.
+    if (style()->highlight() != nullAtom)
+        lineBox->addHighlightOverflow();
+#endif
+    return lineBox;
+}
+
 void RenderBlock::layoutRunsAndFloats(bool fullLayout, bool hasInlineChild, Vector<FloatWithRect>& floats, int& repaintLogicalTop, int& repaintLogicalBottom)
 {
     // We want to skip ahead to the first dirty line
@@ -871,6 +924,7 @@ void RenderBlock::layoutRunsAndFloats(bool fullLayout, bool hasInlineChild, Vect
         }
         ASSERT(end != resolver.position());
 
+        // This is a short-cut for empty lines.
         if (lineInfo.isEmpty()) {
             if (lastRootBox())
                 lastRootBox()->setLineBreakInfo(end.m_obj, end.m_pos, resolver.status());
@@ -883,57 +937,15 @@ void RenderBlock::layoutRunsAndFloats(bool fullLayout, bool hasInlineChild, Vect
 
             BidiRun* trailingSpaceRun = !lineInfo.previousLineBrokeCleanly() ? handleTrailingSpaces(bidiRuns, resolver.context()) : 0;
 
+            if (bidiRuns.runCount() && hyphenated)
+                bidiRuns.logicallyLastRun()->m_hasHyphen = true;
+
             // Now that the runs have been ordered, we create the line boxes.
             // At the same time we figure out where border/padding/margin should be applied for
             // inline flow boxes.
 
-            RootInlineBox* lineBox = 0;
             int oldLogicalHeight = logicalHeight();
-            if (bidiRuns.runCount()) {
-                if (hyphenated)
-                    bidiRuns.logicallyLastRun()->m_hasHyphen = true;
-                lineInfo.setLastLine(!end.m_obj);
-                lineBox = constructLine(bidiRuns, lineInfo);
-                if (lineBox) {
-                    lineBox->setEndsWithBreak(lineInfo.previousLineBrokeCleanly());
-
-#if ENABLE(SVG)
-                    bool isSVGRootInlineBox = lineBox->isSVGRootInlineBox();
-#else
-                    bool isSVGRootInlineBox = false;
-#endif
-
-                    GlyphOverflowAndFallbackFontsMap textBoxDataMap;
-
-                    // Now we position all of our text runs horizontally.
-                    if (!isSVGRootInlineBox)
-                        computeInlineDirectionPositionsForLine(lineBox, lineInfo, bidiRuns.firstRun(), trailingSpaceRun, end.atEnd(), textBoxDataMap, verticalPositionCache);
-
-                    // Now position our text runs vertically.
-                    computeBlockDirectionPositionsForLine(lineBox, bidiRuns.firstRun(), textBoxDataMap, verticalPositionCache);
-
-#if ENABLE(SVG)
-                    // SVG text layout code computes vertical & horizontal positions on its own.
-                    // Note that we still need to execute computeVerticalPositionsForLine() as
-                    // it calls InlineTextBox::positionLineBox(), which tracks whether the box
-                    // contains reversed text or not. If we wouldn't do that editing and thus
-                    // text selection in RTL boxes would not work as expected.
-                    if (isSVGRootInlineBox) {
-                        ASSERT(isSVGText());
-                        static_cast<SVGRootInlineBox*>(lineBox)->computePerCharacterLayoutInformation();
-                    }
-#endif
-
-                    // Compute our overflow now.
-                    lineBox->computeOverflow(lineBox->lineTop(), lineBox->lineBottom(), textBoxDataMap);
-
-#if PLATFORM(MAC)
-                    // Highlight acts as an overflow inflation.
-                    if (style()->highlight() != nullAtom)
-                        lineBox->addHighlightOverflow();
-#endif
-                }
-            }
+            RootInlineBox* lineBox = createLineBoxesFromBidiRuns(bidiRuns, end, lineInfo, verticalPositionCache, trailingSpaceRun);
 
             bidiRuns.deleteRuns();
             resolver.markCurrentRunEmpty(); // FIXME: This can probably be replaced by an ASSERT (or just removed).
