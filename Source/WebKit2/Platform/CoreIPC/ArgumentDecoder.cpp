@@ -45,8 +45,8 @@ ArgumentDecoder::ArgumentDecoder(const uint8_t* buffer, size_t bufferSize, Deque
 
 ArgumentDecoder::~ArgumentDecoder()
 {
-    ASSERT(m_buffer);
-    fastFree(m_buffer);
+    ASSERT(m_allocatedBase);
+    fastFree(m_allocatedBase);
 #if !PLATFORM(QT) && !PLATFORM(GTK)
     // FIXME: We need to dispose of the mach ports in cases of failure.
 #else
@@ -56,22 +56,27 @@ ArgumentDecoder::~ArgumentDecoder()
 #endif
 }
 
+static inline uint8_t* roundUpToAlignment(uint8_t* ptr, unsigned alignment)
+{
+    ASSERT(alignment);
+    uintptr_t alignmentMask = alignment - 1;
+    return reinterpret_cast<uint8_t*>((reinterpret_cast<uintptr_t>(ptr) + alignmentMask) & ~alignmentMask);
+}
+
 void ArgumentDecoder::initialize(const uint8_t* buffer, size_t bufferSize)
 {
-    m_buffer = static_cast<uint8_t*>(fastMalloc(bufferSize));
+    // This is the largest primitive type we expect to unpack from the message.
+    const size_t expectedAlignment = sizeof(uint64_t);
+    m_allocatedBase = static_cast<uint8_t*>(fastMalloc(bufferSize + expectedAlignment));
+    m_buffer = roundUpToAlignment(m_allocatedBase, expectedAlignment);
+    ASSERT(!(reinterpret_cast<uintptr_t>(m_buffer) % expectedAlignment));
+
     m_bufferPos = m_buffer;
     m_bufferEnd = m_buffer + bufferSize;
     memcpy(m_buffer, buffer, bufferSize);
 
     // Decode the destination ID.
     decodeUInt64(m_destinationID);
-}
-
-static inline uint8_t* roundUpToAlignment(uint8_t* ptr, unsigned alignment)
-{
-    ASSERT(alignment);
-    uintptr_t alignmentMask = alignment - 1;
-    return reinterpret_cast<uint8_t*>((reinterpret_cast<uintptr_t>(ptr) + alignmentMask) & ~alignmentMask);
 }
 
 bool ArgumentDecoder::alignBufferPosition(unsigned alignment, size_t size)

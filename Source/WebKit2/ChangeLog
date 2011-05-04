@@ -1,3 +1,20 @@
+2011-05-04  Siddharth Mathur  <siddharth.mathur@nokia.com>
+
+        Reviewed by Anders Carlsson.
+
+        ArgumentDecoder should use aligned memory for its internal copy of data
+        https://bugs.webkit.org/show_bug.cgi?id=59960 
+
+        Since we check for memory alignment when unpacking primitive types from the buffer,
+        insure alignment of the base address.
+        As uint64_t is the largest type we use in Argument encoder/decoder, use 8 byte alignment. 
+
+        * Platform/CoreIPC/ArgumentDecoder.cpp:
+        (CoreIPC::ArgumentDecoder::~ArgumentDecoder): free m_alignedBase
+        (CoreIPC::roundUpToAlignment): move this up in the source file
+        (CoreIPC::ArgumentDecoder::initialize): m_buffer is now guaranteed sizeof(uint64_t) aligned
+        * Platform/CoreIPC/ArgumentDecoder.h: add m_alignedBase member which needs to be freed in d'tor
+
 2011-05-04  Adam Roben  <aroben@apple.com>
 
         Make ShareableBitmap::makeCGImageCopy use a copy-on-write copy on Windows when possible

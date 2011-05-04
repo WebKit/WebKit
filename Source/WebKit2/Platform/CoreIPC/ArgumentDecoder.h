@@ -114,6 +114,7 @@ private:
 
     uint64_t m_destinationID;
 
+    uint8_t* m_allocatedBase;
     uint8_t* m_buffer;
     uint8_t* m_bufferPos;
     uint8_t* m_bufferEnd;
