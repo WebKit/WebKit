@@ -1,3 +1,25 @@
+2011-05-04  David Kilzer  <ddkilzer@apple.com>
+
+        Part 1 of 2: <http://webkit.org/b/56337> Enable -Werror on ANGLE
+
+        Merge ANGLE upstream commits r572, r573, r574, r575.
+
+        This unblocks enabling -Werror on ANGLE.  Since all changes are
+        in the upstream repository, they may be safely overwritten
+        during the next ANGLE update.
+
+        * src/compiler/ConstantUnion.h:
+        (ConstantUnion::operator==): Added a default case.
+        * src/compiler/Intermediate.cpp:
+        (TIntermBinary::promote): Added parentheses.
+        * src/compiler/ParseHelper.cpp:
+        (TParseContext::precisionErrorCheck): Added a default case.
+        * src/compiler/PoolAlloc.cpp:
+        (TAllocation::checkGuardBlock): Changed '%u' to '%lu' for size_t
+        variable.  Put for loop inside #ifdef GUARD_BLOCKS/#endif macros
+        to fix tautological-compare warning.
+        (TAllocation::checkAllocList): Added newline to end of file.
+
 2011-04-26  Dan Bernstein  <mitz@apple.com>
 
         Build fix.

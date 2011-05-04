@@ -69,6 +69,8 @@ public:
                 return true;
 
             break;
+        default:
+            return false;
         }
 
         return false;

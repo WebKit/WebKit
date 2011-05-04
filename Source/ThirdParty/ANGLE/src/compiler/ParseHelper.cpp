@@ -274,6 +274,8 @@ bool TParseContext::precisionErrorCheck(int line, TPrecision precision, TBasicTy
             return true;
         }
         break;
+    default:
+        return false;
     }
     return false;
 }

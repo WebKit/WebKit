@@ -1005,8 +1005,8 @@ bool TIntermBinary::promote(TInfoSink& infoSink)
         case EOpAddAssign:
         case EOpSubAssign:
         case EOpDivAssign:
-            if (left->isMatrix() && right->isVector() ||
-                left->isVector() && right->isMatrix())
+            if ((left->isMatrix() && right->isVector()) ||
+                (left->isVector() && right->isMatrix()))
                 return false;
             setType(TType(basicType, higherPrecision, EvqTemporary, size, left->isMatrix() || right->isMatrix()));
             break;
@@ -1017,8 +1017,8 @@ bool TIntermBinary::promote(TInfoSink& infoSink)
         case EOpGreaterThan:
         case EOpLessThanEqual:
         case EOpGreaterThanEqual:
-            if (left->isMatrix() && right->isVector() ||
-                left->isVector() && right->isMatrix())
+            if ((left->isMatrix() && right->isVector()) ||
+                (left->isVector() && right->isMatrix()))
                 return false;
             setType(TType(EbtBool, EbpUndefined));
             break;
