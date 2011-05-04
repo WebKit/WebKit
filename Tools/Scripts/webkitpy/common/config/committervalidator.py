@@ -55,8 +55,6 @@ class CommitterValidator(object):
         return ".".join([path, "py"])
 
     def _flag_permission_rejection_message(self, setter_email, flag_name):
-        # This could be queried from the status_server.
-        queue_administrator = "eseidel@chromium.org"
         # This could be queried from the tool.
         queue_name = "commit-queue"
         committers_list = self._committers_py_path()

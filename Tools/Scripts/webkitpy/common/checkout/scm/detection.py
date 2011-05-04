@@ -29,6 +29,8 @@
 
 import os
 
+from webkitpy.common.system.deprecated_logging import error, log
+
 from .svn import SVN
 from .git import Git
 

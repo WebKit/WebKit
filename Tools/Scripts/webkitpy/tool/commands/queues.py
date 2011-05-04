@@ -239,6 +239,23 @@ class AbstractPatchQueue(AbstractQueue):
         self._update_status(message, patch)
         self._release_work_item(patch)
 
+    # FIXME: This probably belongs at a layer below AbstractPatchQueue, but shared by CommitQueue and the EarlyWarningSystem.
+    def _upload_results_archive_for_patch(self, patch, results_archive_zip):
+        bot_id = self._tool.status_server.bot_id or "bot"
+        description = "Archive of layout-test-results from %s" % bot_id
+        # results_archive is a ZipFile object, grab the File object (.fp) to pass to Mechanize for uploading.
+        results_archive_file = results_archive_zip.fp
+        # Rewind the file object to start (since Mechanize won't do that automatically)
+        # See https://bugs.webkit.org/show_bug.cgi?id=54593
+        results_archive_file.seek(0)
+        # FIXME: This is a small lie to always say run-webkit-tests since Chromium uses new-run-webkit-tests.
+        # We could make this code look up the test script name off the port.
+        comment_text = "The attached test failures were seen while running run-webkit-tests on the %s.\n" % (self.name)
+        # FIXME: We could easily list the test failures from the archive here,
+        # currently callers do that separately.
+        comment_text += BotInfo(self._tool).summary_text()
+        self._tool.bugs.add_attachment_to_bug(patch.bug_id(), results_archive_file, description, filename="layout-test-results.zip", comment_text=comment_text)
+
     def work_item_log_path(self, patch):
         return os.path.join(self._log_directory(), "%s.log" % patch.bug_id())
 
@@ -261,20 +278,6 @@ class CommitQueue(AbstractPatchQueue, StepSequenceErrorHandler, CommitQueueTaskD
         patch_text = "rollout patch" if patch.is_rollout() else "patch"
         self._update_status("Processing %s" % patch_text, patch)
         return True
-
-    # FIXME: This is not really specific to the commit-queue and could be shared.
-    def _upload_results_archive_for_patch(self, patch, results_archive_zip):
-        bot_id = self._tool.status_server.bot_id or "bot"
-        description = "Archive of layout-test-results from %s" % bot_id
-        # results_archive is a ZipFile object, grab the File object (.fp) to pass to Mechanize for uploading.
-        results_archive_file = results_archive_zip.fp
-        # Rewind the file object to start (since Mechanize won't do that automatically)
-        # See https://bugs.webkit.org/show_bug.cgi?id=54593
-        results_archive_file.seek(0)
-        comment_text = "The attached test failures were seen while running run-webkit-tests on the %s.\n" % (self.name)
-        # FIXME: We could easily list the test failures from the archive here.
-        comment_text += BotInfo(self._tool).summary_text()
-        self._tool.bugs.add_attachment_to_bug(patch.bug_id(), results_archive_file, description, filename="layout-test-results.zip", comment_text=comment_text)
 
     def process_work_item(self, patch):
         self._cc_watchers(patch.bug_id())

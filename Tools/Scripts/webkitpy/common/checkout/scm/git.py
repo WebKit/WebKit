@@ -104,11 +104,11 @@ class Git(SCM, SVNRepository):
         return filepath.replace(root_end_with_slash, '')
 
     @classmethod
-    def read_git_config(cls, key):
+    def read_git_config(cls, key, cwd=None):
         # FIXME: This should probably use cwd=self.checkout_root.
         # Pass --get-all for cases where the config has multiple values
-        return run_command(["git", "config", "--get-all", key],
-            error_handler=Executive.ignore_error).rstrip('\n')
+        # Pass the cwd if provided so that we can handle the case of running webkit-patch outside of the working directory.
+        return run_command(["git", "config", "--get-all", key], error_handler=Executive.ignore_error, cwd=cwd).rstrip('\n')
 
     @staticmethod
     def commit_success_regexp():
@@ -119,15 +119,13 @@ class Git(SCM, SVNRepository):
         self.run(['git', 'reset', '--hard', self.remote_branch_ref()])
 
     def local_commits(self):
-        # FIXME: This should probably use cwd=self.checkout_root
-        return self.run(['git', 'log', '--pretty=oneline', 'HEAD...' + self.remote_branch_ref()]).splitlines()
+        return self.run(['git', 'log', '--pretty=oneline', 'HEAD...' + self.remote_branch_ref()], cwd=self.checkout_root).splitlines()
 
     def rebase_in_progress(self):
         return os.path.exists(os.path.join(self.checkout_root, '.git/rebase-apply'))
 
     def working_directory_is_clean(self):
-        # FIXME: This should probably use cwd=self.checkout_root
-        return self.run(['git', 'diff', 'HEAD', '--name-only']) == ""
+        return self.run(['git', 'diff', 'HEAD', '--name-only'], cwd=self.checkout_root) == ""
 
     def clean_working_directory(self):
         # FIXME: These should probably use cwd=self.checkout_root.
@@ -264,7 +262,7 @@ class Git(SCM, SVNRepository):
         return self.create_patch(git_commit)
 
     def diff_for_file(self, path, log=None):
-        return self.run(['git', 'diff', 'HEAD', '--', path])
+        return self.run(['git', 'diff', 'HEAD', '--', path], cwd=self.checkout_root)
 
     def show_head(self, path):
         return self.run(['git', 'show', 'HEAD:' + self.to_object_name(path)], decode_output=False)
@@ -285,7 +283,7 @@ class Git(SCM, SVNRepository):
         self.run(['git', 'checkout', 'HEAD'] + file_paths)
 
     def _assert_can_squash(self, working_directory_is_clean):
-        squash = Git.read_git_config('webkit-patch.commit-should-always-squash')
+        squash = Git.read_git_config('webkit-patch.commit-should-always-squash', cwd=self.checkout_root)
         should_squash = squash and squash.lower() == "true"
 
         if not should_squash:
@@ -316,7 +314,7 @@ class Git(SCM, SVNRepository):
 
         if not force_squash:
             self._assert_can_squash(working_directory_is_clean)
-        self.run(['git', 'reset', '--soft', self.remote_merge_base()])
+        self.run(['git', 'reset', '--soft', self.remote_merge_base()], cwd=self.checkout_root)
         self.commit_locally_with_message(message)
         return self.push_local_commits_to_server(username=username, password=password)
 
@@ -378,11 +376,11 @@ class Git(SCM, SVNRepository):
             self.run(['git', 'branch', '-D', branch_name])
 
     def remote_merge_base(self):
-        return self.run(['git', 'merge-base', self.remote_branch_ref(), 'HEAD']).strip()
+        return self.run(['git', 'merge-base', self.remote_branch_ref(), 'HEAD'], cwd=self.checkout_root).strip()
 
     def remote_branch_ref(self):
         # Use references so that we can avoid collisions, e.g. we don't want to operate on refs/heads/trunk if it exists.
-        remote_branch_refs = Git.read_git_config('svn-remote.svn.fetch')
+        remote_branch_refs = Git.read_git_config('svn-remote.svn.fetch', cwd=self.checkout_root)
         if not remote_branch_refs:
             remote_master_ref = 'refs/remotes/origin/master'
             if not self._branch_ref_exists(remote_master_ref):
@@ -395,7 +393,7 @@ class Git(SCM, SVNRepository):
         return first_remote_branch_ref.split(':')[1]
 
     def commit_locally_with_message(self, message):
-        self.run(['git', 'commit', '--all', '-F', '-'], input=message)
+        self.run(['git', 'commit', '--all', '-F', '-'], input=message, cwd=self.checkout_root)
 
     def push_local_commits_to_server(self, username=None, password=None):
         dcommit_command = ['git', 'svn', 'dcommit']
@@ -405,7 +403,7 @@ class Git(SCM, SVNRepository):
             raise AuthenticationError(SVN.svn_server_host, prompt_for_password=True)
         if username:
             dcommit_command.extend(["--username", username])
-        output = self.run(dcommit_command, error_handler=commit_error_handler, input=password)
+        output = self.run(dcommit_command, error_handler=commit_error_handler, input=password, cwd=self.checkout_root)
         # Return a string which looks like a commit so that things which parse this output will succeed.
         if self.dryrun:
             output += "\nCommitted r0"

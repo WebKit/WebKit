@@ -170,6 +170,22 @@ class AbstractPatchQueueTest(CommandsTest):
         self.assertEquals(patch_id, None)  # 2 is an invalid patch id
         self.assertEquals(queue._next_patch().id(), 197)
 
+    def test_upload_results_archive_for_patch(self):
+        queue = AbstractPatchQueue()
+        queue.name = "mock-queue"
+        tool = MockTool()
+        queue.bind_to_tool(tool)
+        queue._options = Mock()
+        queue._options.port = None
+        patch = queue._tool.bugs.fetch_attachment(128)
+        expected_stderr = """MOCK add_attachment_to_bug: bug_id=42, description=Archive of layout-test-results from bot filename=layout-test-results.zip
+-- Begin comment --
+The attached test failures were seen while running run-webkit-tests on the mock-queue.
+Port: MockPort  Platform: MockPlatform 1.0
+-- End comment --
+"""
+        OutputCapture().assert_outputs(self, queue._upload_results_archive_for_patch, [patch, Mock()], expected_stderr=expected_stderr)
+
 
 class NeedsUpdateSequence(StepSequence):
     def _run(self, tool, options, state):
@@ -389,18 +405,6 @@ The commit-queue is continuing to process your patch.
                 return ['foo/bar-diffs.txt']
 
         OutputCapture().assert_outputs(self, queue.report_flaky_tests, [QueuesTest.mock_work_item, test_results, MockZipFile()], expected_stderr=expected_stderr)
-
-    def test_upload_results_archive_for_patch(self):
-        queue = TestCommitQueue(MockTool())
-        queue.begin_work_queue()
-        patch = queue._tool.bugs.fetch_attachment(128)
-        expected_stderr = """MOCK add_attachment_to_bug: bug_id=42, description=Archive of layout-test-results from bot filename=layout-test-results.zip
--- Begin comment --
-The attached test failures were seen while running run-webkit-tests on the commit-queue.
-Port: MockPort  Platform: MockPlatform 1.0
--- End comment --
-"""
-        OutputCapture().assert_outputs(self, queue._upload_results_archive_for_patch, [patch, Mock()], expected_stderr=expected_stderr)
 
 
 class StyleQueueTest(QueuesTest):

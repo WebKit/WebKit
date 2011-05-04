@@ -119,6 +119,15 @@ class AbstractTestingEWS(AbstractEarlyWarningSystem, EarlyWarningSystemTaskDeleg
         self._expected_failures = ExpectedFailures()
         self._layout_test_results_reader = LayoutTestResultsReader(self._tool, self._log_directory())
 
+    def _post_reject_message_on_bug(self, task, patch):
+        results_link = self._tool.status_server.results_url_for_status(task.failure_status_id)
+        message = "Attachment %s did not pass %s:\nOutput: %s" % (patch.id(), self.name, results_link)
+        results = task.results_from_patch_test_run(patch)
+        unexpected_failures = self._expected_failures.unexpected_failures(results)
+        if unexpected_failures:
+            message += "\nNew failing tests:\n%s" % "\n".join(unexpected_failures)
+        self._tool.bugs.post_comment_to_bug(patch.bug_id(), message, cc=self.watchers)
+
     def review_patch(self, patch):
         task = EarlyWarningSystemTask(self, patch)
         if not task.validate():
@@ -130,14 +139,11 @@ class AbstractTestingEWS(AbstractEarlyWarningSystem, EarlyWarningSystemTaskDeleg
             self._did_error(patch, "%s unable to apply patch." % self.name)
             return False
         except ScriptError, e:
-            # FIXME: We should upload the results archive on failure.
-            results_link = self._tool.status_server.results_url_for_status(task.failure_status_id)
-            message = "Attachment %s did not pass %s:\nOutput: %s" % (patch.id(), self.name, results_link)
-            results = task.results_from_patch_test_run(patch)
-            unexpected_failures = self._expected_failures.unexpected_failures(results)
-            if unexpected_failures:
-                message += "\nNew failing tests:\n%s" % "\n".join(unexpected_failures)
-            self._tool.bugs.post_comment_to_bug(patch.bug_id(), message, cc=self.watchers)
+            # FIXME: This should just use CommitterValidator.reject_patch_from_commit_queue
+            self._post_reject_message_on_bug(patch)
+            results_archive = task.results_archive_from_patch_test_run(patch)
+            if results_archive:
+                self._upload_results_archive_for_patch(patch, results_archive)
             self._did_fail(patch)
             # FIXME: We're supposed to be able to raise e again here and have
             # one of our base classes mark the patch as fail, but there seems
@@ -178,6 +184,7 @@ class AbstractTestingEWS(AbstractEarlyWarningSystem, EarlyWarningSystemTaskDeleg
 
     @classmethod
     def handle_script_error(cls, tool, state, script_error):
+        # FIXME: Why does this not exit(1) like the superclass does?
         log(script_error.message_with_output())
 
 

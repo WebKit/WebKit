@@ -1,3 +1,22 @@
+2011-05-04  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Adam Barth.
+
+        The testing EWS bots should upload layout-test-results.zip to bugs after failures
+        https://bugs.webkit.org/show_bug.cgi?id=60223
+
+        This required sharing a bit of code between the commit-queue
+        (which already knew how to do this) and the new EWS testing bots.
+
+        In the process I also cleaned up EWS testing a little and
+        removed some dead code from the commit-queue.
+
+        * Scripts/webkitpy/common/config/committervalidator.py:
+        * Scripts/webkitpy/tool/commands/earlywarningsystem.py:
+        * Scripts/webkitpy/tool/commands/earlywarningsystem_unittest.py:
+        * Scripts/webkitpy/tool/commands/queues.py:
+        * Scripts/webkitpy/tool/commands/queues_unittest.py:
+
 2011-05-04  James Kozianski  <koz@chromium.org>
 
         Reviewed by Eric Seidel.

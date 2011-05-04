@@ -93,7 +93,7 @@ class EarlyWarningSytemTest(QueuesTest):
         }
         return expected_stderr
 
-    def _test_ews(self, ews):
+    def _test_builder_ews(self, ews):
         ews.bind_to_tool(MockTool())
         expected_exceptions = {
             "handle_script_error": SystemExit,
@@ -109,40 +109,21 @@ class EarlyWarningSytemTest(QueuesTest):
         self.assert_queue_outputs(ews, expected_stderr=expected_stderr, expected_exceptions=expected_exceptions)
 
     def _test_testing_ews(self, ews):
-        expected_stderr = {
-            "begin_work_queue": self._default_begin_work_queue_stderr(ews.name, MockTool().scm().checkout_root),
-            "handle_unexpected_error": """Mock error message
-""",
-            "next_work_item": "",
-            "process_work_item": """MOCK: update_status: %s Pass
-MOCK: release_work_item: %s 197
-""" % (ews.name, ews.name),
-            "handle_script_error": """ScriptError error message
-""",
-        }
-        tool = MockTool()
-        tool.filesystem.write_text_file('/tmp/layout-test-results/unexpected_results.json', "")
-        self.assert_queue_outputs(ews, expected_stderr=expected_stderr, tool=tool)
+        ews.layout_test_results = lambda: None
+        ews.bind_to_tool(MockTool())
+        expected_stderr = self._default_expected_stderr(ews)
+        expected_stderr["handle_script_error"] = "ScriptError error message\n"
+        self.assert_queue_outputs(ews, expected_stderr=expected_stderr)
 
-    # FIXME: If all EWSes are going to output the same text, we
-    # could test them all in one method with a for loop over an array.
-    def test_chromium_linux_ews(self):
-        self._test_testing_ews(ChromiumLinuxEWS())
-
-    def test_chromium_windows_ews(self):
-        self._test_ews(ChromiumWindowsEWS())
-
-    def test_qt_ews(self):
-        self._test_ews(QtEWS())
-
-    def test_gtk_ews(self):
-        self._test_ews(GtkEWS())
-
-    def test_efl_ews(self):
-        self._test_ews(EflEWS())
-
-    def test_mac_ews(self):
+    def test_committer_only_ewses(self):
         self._test_committer_only_ews(MacEWS())
-
-    def test_chromium_mac_ews(self):
         self._test_committer_only_ews(ChromiumMacEWS())
+
+    def test_builder_ewses(self):
+        self._test_builder_ews(ChromiumWindowsEWS())
+        self._test_builder_ews(QtEWS())
+        self._test_builder_ews(GtkEWS())
+        self._test_builder_ews(EflEWS())
+
+    def test_testing_ewses(self):
+        self._test_testing_ews(ChromiumLinuxEWS())
