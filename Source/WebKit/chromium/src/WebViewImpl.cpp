@@ -596,9 +596,10 @@ bool WebViewImpl::keyEvent(const WebKeyboardEvent& event)
     // event.
     m_suppressNextKeypressEvent = false;
 
-    // Give any select popup a chance at consuming the key event.
-    if (selectPopupHandleKeyEvent(event))
-        return true;
+    // If there is a select popup, it should be the one processing the event,
+    // not the page.
+    if (m_selectPopup)
+        return m_selectPopup->handleKeyEvent(PlatformKeyboardEventBuilder(event));
 
     // Give Autocomplete a chance to consume the key events it is interested in.
     if (autocompleteHandleKeyEvent(event))
@@ -642,14 +643,6 @@ bool WebViewImpl::keyEvent(const WebKeyboardEvent& event)
     }
 
     return keyEventDefault(event);
-}
-
-bool WebViewImpl::selectPopupHandleKeyEvent(const WebKeyboardEvent& event)
-{
-    if (!m_selectPopup)
-        return false;
-
-    return m_selectPopup->handleKeyEvent(PlatformKeyboardEventBuilder(event));
 }
 
 bool WebViewImpl::autocompleteHandleKeyEvent(const WebKeyboardEvent& event)
@@ -714,6 +707,11 @@ bool WebViewImpl::charEvent(const WebKeyboardEvent& event)
     // only applies to the current keyPress event.
     bool suppress = m_suppressNextKeypressEvent;
     m_suppressNextKeypressEvent = false;
+
+    // If there is a select popup, it should be the one processing the event,
+    // not the page.
+    if (m_selectPopup)
+        return m_selectPopup->handleKeyEvent(PlatformKeyboardEventBuilder(event));
 
     Frame* frame = focusedWebCoreFrame();
     if (!frame)

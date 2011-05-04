@@ -1,3 +1,16 @@
+2011-05-04  Jay Civelli  <jcivelli@chromium.org>
+
+        Reviewed by Ojan Vafai.
+
+        Send the char events to the select popup if one is showing to fix
+        a bug were pressing a letter would not select the matching option.
+        https://bugs.webkit.org/show_bug.cgi?id=47769
+
+        * src/WebViewImpl.cpp:
+        (WebKit::WebViewImpl::keyEvent):
+        (WebKit::WebViewImpl::charEvent):
+        * src/WebViewImpl.h:
+
 2011-05-03  Justin Novosad  <junov@chromium.org>
 
         Reviewed by Kenneth Russell.

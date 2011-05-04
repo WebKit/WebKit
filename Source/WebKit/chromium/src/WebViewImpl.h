@@ -383,9 +383,6 @@ private:
     // Returns true if the event was actually processed.
     bool keyEventDefault(const WebKeyboardEvent&);
 
-    // Returns true if the select popup has consumed the event.
-    bool selectPopupHandleKeyEvent(const WebKeyboardEvent&);
-
     // Returns true if the autocomple has consumed the event.
     bool autocompleteHandleKeyEvent(const WebKeyboardEvent&);
 
