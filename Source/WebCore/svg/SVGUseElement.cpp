@@ -829,7 +829,7 @@ void SVGUseElement::buildShadowTree(SVGShadowTreeRootElement* shadowRoot, SVGEle
     SVGElement* newChildPtr = 0;
     if (newChild->isSVGElement())
         newChildPtr = static_cast<SVGElement*>(newChild.get());
-    ASSERT(newChildPtr);
+    ASSERT_UNUSED(newChildPtr, newChildPtr);
 
     ExceptionCode ec = 0;
     shadowRoot->appendChild(newChild.release(), ec);
@@ -871,7 +871,7 @@ void SVGUseElement::expandUseElementsInShadowTree(Node* element)
             SVGElement* newChildPtr = 0;
             if (newChild->isSVGElement())
                 newChildPtr = static_cast<SVGElement*>(newChild.get());
-            ASSERT(newChildPtr);
+            ASSERT_UNUSED(newChildPtr, newChildPtr);
 
             cloneParent->appendChild(newChild.release(), ec);
             ASSERT(!ec);

@@ -5,6 +5,25 @@
         The variable is just used in the ASSERT macro. Let's use ASSERT_UNUSED to avoid
         a warning in Release build.
 
+        * dom/Node.cpp:
+        (WebCore::Node::removeEventListener):
+        * platform/DateComponents.cpp:
+        (WebCore::DateComponents::parseTime):
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::convertToLayerCoords):
+        * storage/StorageMap.cpp:
+        (WebCore::StorageMap::importItem):
+        * svg/SVGUseElement.cpp:
+        (WebCore::SVGUseElement::buildShadowTree):
+        (WebCore::SVGUseElement::expandUseElementsInShadowTree):
+
+2011-05-04  Alexis Menard  <alexis.menard@openbossa.org>
+
+        Unreviewed warning fix.
+
+        The variable is just used in the ASSERT macro. Let's use ASSERT_UNUSED to avoid
+        a warning in Release build.
+
         * accessibility/AccessibilityRenderObject.cpp:
         (WebCore::lastChildConsideringContinuation):
 

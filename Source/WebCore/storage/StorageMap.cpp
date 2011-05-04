@@ -174,7 +174,7 @@ void StorageMap::importItem(const String& key, const String& value)
     // Be sure to copy the keys/values as items imported on a background thread are destined
     // to cross a thread boundary
     pair<HashMap<String, String>::iterator, bool> result = m_map.add(key.threadsafeCopy(), value.threadsafeCopy());
-    ASSERT(result.second);  // True if the key didn't exist previously.
+    ASSERT_UNUSED(result, result.second);  // True if the key didn't exist previously.
 
     ASSERT(m_currentLength + key.length() >= m_currentLength);
     m_currentLength += key.length();

@@ -1588,7 +1588,6 @@ void tst_QWebPage::inputMethods()
 
     //ImMicroFocus
     QVariant variant = page->inputMethodQuery(Qt::ImMicroFocus);
-    QRect focusRect = variant.toRect();
     QVERIFY(inputs.at(0).geometry().contains(variant.toRect().topLeft()));
 
     //ImFont

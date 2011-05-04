@@ -1159,7 +1159,7 @@ RenderLayer::convertToLayerCoords(const RenderLayer* ancestorLayer, int& xPos, i
 
             if (isFixedPositionedContainer(currLayer)) {
                 fixedPositionContainerLayer = currLayer;
-                ASSERT(foundAncestor);
+                ASSERT_UNUSED(foundAncestor, foundAncestor);
                 break;
             }
         }
