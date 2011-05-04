@@ -48,6 +48,10 @@
 
 namespace WebCore {
 
+// This would be a static method, except that forward declaring GType is tricky, since its
+// definition depends on including glib.h, negating the benefit of using a forward declaration.
+extern GRefPtr<GdkPixbuf> getStockIconForWidgetType(GType, const char* iconName, gint direction, gint state, gint iconSize);
+
 using namespace HTMLNames;
 
 #if ENABLE(VIDEO)
@@ -323,10 +327,10 @@ bool RenderThemeGtk::paintSearchFieldResultsDecoration(RenderObject* renderObjec
     if (iconRect.isEmpty())
         return false;
 
-    GRefPtr<GdkPixbuf> icon = getStockIcon(GTK_TYPE_ENTRY, GTK_STOCK_FIND,
-                                           gtkTextDirection(renderObject->style()->direction()),
-                                           gtkIconState(this, renderObject),
-                                           getIconSizeForPixelSize(rect.height()));
+    GRefPtr<GdkPixbuf> icon = getStockIconForWidgetType(GTK_TYPE_ENTRY, GTK_STOCK_FIND,
+                                                        gtkTextDirection(renderObject->style()->direction()),
+                                                        gtkIconState(this, renderObject),
+                                                        getIconSizeForPixelSize(rect.height()));
     paintGdkPixbuf(paintInfo.context, icon.get(), iconRect);
     return false;
 }
@@ -342,10 +346,10 @@ bool RenderThemeGtk::paintSearchFieldCancelButton(RenderObject* renderObject, co
     if (iconRect.isEmpty())
         return false;
 
-    GRefPtr<GdkPixbuf> icon = getStockIcon(GTK_TYPE_ENTRY, GTK_STOCK_CLEAR,
-                                           gtkTextDirection(renderObject->style()->direction()),
-                                           gtkIconState(this, renderObject),
-                                           getIconSizeForPixelSize(rect.height()));
+    GRefPtr<GdkPixbuf> icon = getStockIconForWidgetType(GTK_TYPE_ENTRY, GTK_STOCK_CLEAR,
+                                                        gtkTextDirection(renderObject->style()->direction()),
+                                                        gtkIconState(this, renderObject),
+                                                        getIconSizeForPixelSize(rect.height()));
     paintGdkPixbuf(paintInfo.context, icon.get(), iconRect);
     return false;
 }
@@ -370,9 +374,9 @@ bool RenderThemeGtk::paintCapsLockIndicator(RenderObject* renderObject, const Pa
         return true;
 
     int iconSize = std::min(rect.width(), rect.height());
-    GRefPtr<GdkPixbuf> icon = getStockIcon(GTK_TYPE_ENTRY, GTK_STOCK_CAPS_LOCK_WARNING,
-                                           gtkTextDirection(renderObject->style()->direction()),
-                                           0, getIconSizeForPixelSize(iconSize));
+    GRefPtr<GdkPixbuf> icon = getStockIconForWidgetType(GTK_TYPE_ENTRY, GTK_STOCK_CAPS_LOCK_WARNING,
+                                                        gtkTextDirection(renderObject->style()->direction()),
+                                                        0, getIconSizeForPixelSize(iconSize));
 
     // Only re-scale the icon when it's smaller than the minimum icon size.
     if (iconSize >= gtkIconSizeMenu)
@@ -477,10 +481,10 @@ void RenderThemeGtk::adjustMediaSliderThumbSize(RenderObject* renderObject) cons
 
 bool RenderThemeGtk::paintMediaButton(RenderObject* renderObject, GraphicsContext* context, const IntRect& rect, const char* iconName)
 {
-    GRefPtr<GdkPixbuf> icon = getStockIcon(GTK_TYPE_CONTAINER, iconName,
-                                           gtkTextDirection(renderObject->style()->direction()),
-                                           gtkIconState(this, renderObject),
-                                           getMediaButtonIconSize(m_mediaIconSize));
+    GRefPtr<GdkPixbuf> icon = getStockIconForWidgetType(GTK_TYPE_CONTAINER, iconName,
+                                                        gtkTextDirection(renderObject->style()->direction()),
+                                                        gtkIconState(this, renderObject),
+                                                        getMediaButtonIconSize(m_mediaIconSize));
     IntRect iconRect(rect.x() + (rect.width() - m_mediaIconSize) / 2,
                      rect.y() + (rect.height() - m_mediaIconSize) / 2,
                      m_mediaIconSize, m_mediaIconSize);

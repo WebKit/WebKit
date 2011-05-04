@@ -1,3 +1,26 @@
+2011-05-04  Martin Robinson  <mrobinson@igalia.com>
+
+        Reviewed by Gustavo Noronha Silva.
+
+        Fix the GTK+ 2.x build for Windows. Instead of making getStockIcon a RenderTheme
+        method, just use extern declarations to avoid having to declare it in the header.
+        This will prevent having to include glib.h in RenderThemeGtk.h, which is included
+        in many C++ files.
+
+        No new tests. This is just a build fix.
+
+        * platform/gtk/RenderThemeGtk.cpp: Update getStockIcon calls to say getStockIconForWidgetType.
+        (WebCore::RenderThemeGtk::paintSearchFieldResultsDecoration):
+        (WebCore::RenderThemeGtk::paintSearchFieldCancelButton):
+        (WebCore::RenderThemeGtk::paintCapsLockIndicator):
+        (WebCore::RenderThemeGtk::paintMediaButton):
+        * platform/gtk/RenderThemeGtk.h: Removed getStockIcon declaration. Make gtkContainer() and
+        gtkEntry() public because they are now accessed externally from getStockIcon().
+        * platform/gtk/RenderThemeGtk2.cpp: Update getStockIcon calls.
+        (WebCore::getStockIconForWidgetType):
+        * platform/gtk/RenderThemeGtk3.cpp: Ditto.
+        (WebCore::getStockIconForWidgetType):
+
 2011-05-04  Mark Pilgrim  <pilgrim@chromium.org>
 
         Reviewed by Tony Chang.

@@ -834,7 +834,7 @@ bool RenderThemeGtk::paintInnerSpinButton(RenderObject* renderObject, const Pain
     return false;
 }
 
-GRefPtr<GdkPixbuf> RenderThemeGtk::getStockIcon(GType widgetType, const char* iconName, gint direction, gint state, gint iconSize)
+GRefPtr<GdkPixbuf> getStockIconForWidgetType(GType widgetType, const char* iconName, gint direction, gint state, gint iconSize)
 {
     GtkStyleContext* context = getStyleContext(widgetType);
     GtkIconSet* iconSet = gtk_style_context_lookup_icon_set(context, iconName);

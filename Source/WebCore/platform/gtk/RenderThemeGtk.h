@@ -31,7 +31,6 @@
 #include "GRefPtr.h"
 #include "RenderTheme.h"
 
-typedef gulong GType;
 typedef struct _GdkColormap GdkColormap;
 
 namespace WebCore {
@@ -89,6 +88,8 @@ public:
 #endif
 
 #ifdef GTK_API_VERSION_2
+    GtkWidget* gtkContainer() const;
+    GtkWidget* gtkEntry() const;
     GtkWidget* gtkVScrollbar() const;
     GtkWidget* gtkHScrollbar() const;
     static void getIndicatorMetrics(ControlPart, int& indicatorSize, int& indicatorSpacing);
@@ -176,7 +177,6 @@ protected:
 private:
     void platformInit();
     static void setTextInputBorders(RenderStyle*);
-    GRefPtr<GdkPixbuf> getStockIcon(GType, const char* iconName, gint direction, gint state, gint iconSize);
     static double getScreenDPI();
 
 #if ENABLE(VIDEO)
@@ -203,11 +203,9 @@ private:
     int comboBoxArrowSize(RenderStyle*) const;
 
     GtkWidget* gtkButton() const;
-    GtkWidget* gtkEntry() const;
     GtkWidget* gtkTreeView() const;
     GtkWidget* gtkVScale() const;
     GtkWidget* gtkHScale() const;
-    GtkWidget* gtkContainer() const;
     GtkWidget* gtkRadioButton() const;
     GtkWidget* gtkCheckButton() const;
     GtkWidget* gtkProgressBar() const;
