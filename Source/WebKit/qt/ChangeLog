@@ -1,3 +1,24 @@
+2011-05-04  Caio Marcelo de Oliveira Filho  <caio.oliveira@openbossa.org>
+
+        Reviewed by Benjamin Poulain.
+
+        [Qt] Fix signals emitted in FakeReply used in autotests
+        https://bugs.webkit.org/show_bug.cgi?id=60049
+
+        The signals emitted for each case of FakeReply were swapped (error case
+        emitting metaDataChanged() and redirect case emitting error()). Emitting
+        readyRead() is not necessary.
+
+        * tests/qwebframe/tst_qwebframe.cpp:
+        (FakeReply::FakeReply):
+        Choose the different continue function for each case of FakeReply. This removes
+        the need of the if-statement in timeout() and let us replace timeout() with two
+        simpler functions.
+
+        (FakeReply::continueRedirect):
+        (FakeReply::continueError):
+        Continuation cases, emitting the minimal set of signals needed for each case.
+
 2011-05-03  Julien Chaffraix  <jchaffraix@codeaurora.org>
 
         Reviewed by Dimitri Glazkov.

@@ -2309,16 +2309,20 @@ public:
         if (request.url() == QUrl("qrc:/test1.html")) {
             setHeader(QNetworkRequest::LocationHeader, QString("qrc:/test2.html"));
             setAttribute(QNetworkRequest::RedirectionTargetAttribute, QUrl("qrc:/test2.html"));
+            QTimer::singleShot(0, this, SLOT(continueRedirect()));
         }
 #ifndef QT_NO_OPENSSL
-        else if (request.url() == QUrl("qrc:/fake-ssl-error.html"))
-            setError(QNetworkReply::SslHandshakeFailedError, tr("Fake error !")); // force a ssl error
+        else if (request.url() == QUrl("qrc:/fake-ssl-error.html")) {
+            setError(QNetworkReply::SslHandshakeFailedError, tr("Fake error!"));
+            QTimer::singleShot(0, this, SLOT(continueError()));
+        }
 #endif
-        else if (request.url().host() == QLatin1String("abcdef.abcdef"))
+        else if (request.url().host() == QLatin1String("abcdef.abcdef")) {
             setError(QNetworkReply::HostNotFoundError, tr("Invalid URL"));
+            QTimer::singleShot(0, this, SLOT(continueError()));
+        }
 
         open(QIODevice::ReadOnly);
-        QTimer::singleShot(0, this, SLOT(timeout()));
     }
     ~FakeReply()
     {
@@ -2334,18 +2338,15 @@ protected:
     }
 
 private slots:
-    void timeout()
+    void continueRedirect()
     {
-        if (request().url() == QUrl("qrc://test1.html"))
-            emit error(this->error());
-        else if (request().url() == QUrl("http://abcdef.abcdef/"))
-            emit metaDataChanged();
-#ifndef QT_NO_OPENSSL
-        else if (request().url() == QUrl("qrc:/fake-ssl-error.html"))
-            return;
-#endif
+        emit metaDataChanged();
+        emit finished();
+    }
 
-        emit readyRead();
+    void continueError()
+    {
+        emit error(this->error());
         emit finished();
     }
 };
