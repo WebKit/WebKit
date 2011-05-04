@@ -1,3 +1,9 @@
+2011-05-04  Philippe Normand  <pnormand@igalia.com>
+
+        Unreviewed, GTK rebaseline after r85669.
+
+        * platform/gtk/fast/forms/input-readonly-autoscroll-expected.txt:
+
 2011-05-04  Satish Sampath  <satish@chromium.org>
 
         Reviewed by Tony Gentilcore.
