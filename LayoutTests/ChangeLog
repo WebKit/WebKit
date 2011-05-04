@@ -1,3 +1,16 @@
+2011-05-04  Mark Pilgrim  <pilgrim@chromium.org>
+
+        Reviewed by Tony Chang.
+
+        Port Mozilla's IndexedDB tests: odd result order
+        https://bugs.webkit.org/show_bug.cgi?id=60193
+
+        This test uses setTimeout to check that the result property of
+        asynchronous requests persists into the setTimeout callback.
+
+        * storage/indexeddb/mozilla/odd-result-order-expected.txt: Added.
+        * storage/indexeddb/mozilla/odd-result-order.html: Added.
+
 2011-05-04  Alpha Lam  <hclam@chromium.org>
 
         Not reviewed. Build fix.
