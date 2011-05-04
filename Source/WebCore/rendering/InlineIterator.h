@@ -65,6 +65,7 @@ public:
 
     RenderObject* root() const { return m_root; }
 
+    void fastIncrementInTextNode();
     void increment(InlineBidiResolver* = 0);
     bool atEnd() const;
 
@@ -80,6 +81,7 @@ public:
     }
 
     UChar current() const;
+    UChar previousInSameNode() const;
     ALWAYS_INLINE WTF::Unicode::Direction direction() const;
 
 private:
@@ -236,12 +238,20 @@ static inline RenderObject* bidiFirstNotSkippingInlines(RenderObject* root)
     return bidiNext(root, o, 0, false);
 }
 
+inline void InlineIterator::fastIncrementInTextNode()
+{
+    ASSERT(m_obj);
+    ASSERT(m_obj->isText());
+    ASSERT(m_pos <= toRenderText(m_obj)->textLength());
+    m_pos++;
+}
+
 inline void InlineIterator::increment(InlineBidiResolver* resolver)
 {
     if (!m_obj)
         return;
     if (m_obj->isText()) {
-        m_pos++;
+        fastIncrementInTextNode();
         if (m_pos < toRenderText(m_obj)->textLength())
             return;
     }
@@ -264,6 +274,15 @@ inline UChar InlineIterator::current() const
         return 0;
 
     return text->characters()[m_pos];
+}
+
+inline UChar InlineIterator::previousInSameNode() const
+{
+    if (!m_obj || !m_obj->isText() || !m_pos)
+        return 0;
+
+    RenderText* text = toRenderText(m_obj);
+    return text->characters()[m_pos - 1];
 }
 
 ALWAYS_INLINE WTF::Unicode::Direction InlineIterator::direction() const

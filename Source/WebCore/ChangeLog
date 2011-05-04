@@ -1,3 +1,18 @@
+2011-05-03  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        findNextLineBreak splits InlineIterator into 3 pieces
+        https://bugs.webkit.org/show_bug.cgi?id=60082
+
+        Avoid splitting InlineIterator into 3 variables with inter-dependencies.
+
+        * rendering/InlineIterator.h:
+        (WebCore::InlineIterator::fastIncrementInTextNode): Added.
+        (WebCore::InlineIterator::previousInSameNode): Added.
+        * rendering/RenderBlockLineLayout.cpp:
+        (WebCore::RenderBlock::findNextLineBreak):
+
 2011-05-03  Dean Jackson  <dino@apple.com>
 
         Reviewed by Simon Fraser.
