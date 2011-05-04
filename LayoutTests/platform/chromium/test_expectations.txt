@@ -2043,7 +2043,6 @@ BUGWK45991 LINUX WIN : canvas/philip/tests/2d.shadow.image.transparent.2.html = 
 BUGWK45991 CPU LINUX WIN : canvas/philip/tests/2d.transformation.setTransform.skewed.html = TEXT
 BUGWK45991 CPU LINUX WIN : canvas/philip/tests/2d.transformation.transform.skewed.html = TEXT
 
-BUGWK45991 WIN : canvas/philip/tests/2d.gradient.radial.touch2.html = TEXT
 
 BUGCR62301 MAC : canvas/philip/tests/2d.gradient.radial.cone.front.html = TEXT
 BUGCR62301 MAC : canvas/philip/tests/2d.gradient.radial.inside2.html = TEXT
@@ -3660,11 +3659,7 @@ BUGWK60103 : fast/overflow/border-radius-clipping.html = IMAGE
 BUGWK60103 WIN LINUX : fast/repaint/border-radius-repaint.html = IMAGE
 BUGWK60103 WIN LINUX : fast/replaced/border-radius-clip.html = IMAGE
 
-BUGDPRANKE : fast/box-shadow/inset.html = IMAGE
-BUGDPRANKE LINUX : fast/css/text-input-with-webkit-border-radius.html = IMAGE
-BUGDPRANKE : fast/forms/basic-selects.html = IMAGE
-BUGDPRANKE : fast/layers/video-layer.html = IMAGE IMAGE+TEXT
-BUGDPRANKE : svg/custom/svg-fonts-in-html.html = IMAGE
+BUGWK60129 : fast/layers/video-layer.html = IMAGE IMAGE+TEXT
 
 // Needs a rebaseline after moving controls to absolute positioning
 BUGCR74826 : media/audio-controls-rendering.html = IMAGE+TEXT
@@ -3681,10 +3676,10 @@ BUGCR74826 : media/controls-styling.html = TEXT
 BUGCR74826 : media/controls-without-preload.html = TEXT
 
 // probably just needs a new baseline
-BUGDPRANKE WIN LINUX : fast/backgrounds/background-leakage-transforms.html = IMAGE+TEXT
+BUGWK60130 WIN LINUX : fast/backgrounds/background-leakage-transforms.html = IMAGE+TEXT
 
-// figure out why this is slow.
-BUGDPRANKE SLOW : fast/css/visited-link-hang.html = PASS
+// Need to figure out why this is slow.
+BUGWK60131 SLOW : fast/css/visited-link-hang.html = PASS
 
 // webkit roll : 84350:84431
 BUGDPRANKE LINUX : fast/canvas/webgl/css-webkit-canvas-repaint.html = IMAGE
@@ -3716,7 +3711,7 @@ BUGDPRANKE WIN DEBUG : perf/typing-at-end-of-line.html = TEXT TIMEOUT PASS
 BUGDPRANKE DEBUG : fast/notifications/notifications-display-close-events.html = TIMEOUT PASS
 BUGDPRANKE WIN MAC DEBUG : fast/css-generated-content/table-row-group-to-inline.html = IMAGE+TEXT PASS
 
-BUGDPRANKE LINUX : canvas/philip/tests/2d.gradient.radial.touch2.html = TEXT
+BUGWK60127 WIN LINUX : canvas/philip/tests/2d.gradient.radial.touch2.html = TEXT
 
 BUGDPRANKE MAC LEOPARD : http/tests/navigation/lockedhistory-iframe.html = TEXT PASS
 BUGDPRANKE LINUX DEBUG : http/tests/navigation/lockedhistory-iframe.html = TEXT PASS
@@ -3727,7 +3722,7 @@ BUGDPRANKE WIN: http/tests/misc/empty-file-formdata.html = TIMEOUT PASS
 BUGDPRANKE WIN: http/tests/xmlhttprequest/access-control-preflight-headers-async.html = TIMEOUT PASS
 
 BUGDPRANKE WIN : http/tests/mime/standard-mode-does-not-load-stylesheet-with-text-plain.html = TIMEOUT PASS
-BUGDPRANKE MAC DEBUG : fast/css/only-of-type-pseudo-class.html = TEXT PASS
+BUGDPRANKE MAC LINUX DEBUG : fast/css/only-of-type-pseudo-class.html = TEXT PASS
 BUGDPRANKE LINUX DEBUG : fullscreen/full-screen-iframe-allowed.html = TEXT PASS
 BUGDPRANKE LINUX DEBUG : jquery/deferred.html = TEXT PASS
 
@@ -3735,22 +3730,18 @@ BUGDPRANKE LINUX DEBUG : jquery/deferred.html = TEXT PASS
 BUGWK59063 : fast/images/animated-gif-restored-from-bfcache.html = TEXT
 
 // Introduced in r84454
-BUGDPRANKE : fast/transforms/selection-bounds-in-transformed-view.html = TEXT
-
-// Introduced in r84457
-BUGDPRANKE : http/tests/security/contentSecurityPolicy/image-allowed.html = TEXT PASS
+BUGWK60126 : fast/transforms/selection-bounds-in-transformed-view.html = TEXT
 
 // more failures for triaging, fails on deps bots at least?
-BUGDPRANKE DEBUG LINUX : editing/pasteboard/merge-end-2.html = CRASH PASS
+BUGWK60123 DEBUG LINUX : editing/pasteboard/merge-end-2.html = CRASH PASS
 BUGDPRANKE DEBUG : animations/keyframes-out-of-order.html = TEXT PASS
 BUGDPRANKE : fast/frames/meta-refresh-user-gesture.html = TIMEOUT PASS
 BUGDPRANKE : http/tests/navigation/redirect-on-back-updates-history-item.html = TIMEOUT PASS
-BUGDPRANKE : fast/files/create-blob-url-crash.html = CRASH PASS
+BUGWK60125 : fast/files/create-blob-url-crash.html = CRASH PASS
 
-BUGDPRANKE DEBUG : http/tests/security/contentSecurityPolicy/media-src-allowed.html = TIMEOUT PASS
+BUGWK60122 DEBUG : http/tests/security/contentSecurityPolicy/media-src-allowed.html = TIMEOUT PASS
 
 // flakiness
-BUGDPRANKE WIN DEBUG : fast/css/only-of-type-pseudo-class.html = TEXT PASS
 BUGDPRANKE : fast/dom/Document/document-reopen.html = TEXT PASS
 
 BUGDPRANKE : fast/parser/javascript-url-compat-mode.html = TEXT PASS

@@ -1,5 +1,23 @@
 2011-05-03  Dirk Pranke  <dpranke@chromium.org>
 
+        Unreviewed, expectations triage and new baselines.
+
+        * platform/chromium-linux/fast/box-shadow/inset-expected.png:
+        * platform/chromium-linux/fast/css/text-input-with-webkit-border-radius-expected.png:
+        * platform/chromium-linux/fast/forms/basic-selects-expected.png:
+        * platform/chromium-linux/svg/custom/svg-fonts-in-html-expected.png:
+        * platform/chromium-mac-leopard/fast/box-shadow/inset-expected.png: Added.
+        * platform/chromium-mac-leopard/fast/forms/basic-selects-expected.png:
+        * platform/chromium-mac/fast/box-shadow/inset-expected.png: Removed.
+        * platform/chromium-mac/fast/forms/basic-selects-expected.png: Removed.
+        * platform/chromium-mac/svg/custom/svg-fonts-in-html-expected.png:
+        * platform/chromium-win/fast/box-shadow/inset-expected.png:
+        * platform/chromium-win/fast/forms/basic-selects-expected.png:
+        * platform/chromium-win/svg/custom/svg-fonts-in-html-expected.png:
+        * platform/chromium/test_expectations.txt:
+
+2011-05-03  Dirk Pranke  <dpranke@chromium.org>
+
         Unreviewed, expectations change and new baselines.
 
         * platform/chromium-linux/fast/backgrounds/gradient-background-leakage-expected.png: Added.
