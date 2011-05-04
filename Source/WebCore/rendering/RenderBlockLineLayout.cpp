@@ -1888,48 +1888,45 @@ InlineIterator RenderBlock::findNextLineBreak(InlineBidiResolver& resolver, Line
             goto end;
         }
 
-        if (current.m_obj->isFloatingOrPositioned()) {
-            // add to special objects...
-            if (current.m_obj->isFloating()) {
-                RenderBox* floatBox = toRenderBox(current.m_obj);
-                FloatingObject* f = insertFloatingObject(floatBox);
-                // check if it fits in the current line.
-                // If it does, position it now, otherwise, position
-                // it after moving to next line (in newLine() func)
-                if (floatsFitOnLine && width.fitsOnLine(logicalWidthForFloat(f))) {
-                    positionNewFloatOnLine(f, lastFloatFromPreviousLine, width);
-                    if (lBreak.m_obj == current.m_obj) {
-                        ASSERT(!lBreak.m_pos);
-                        lBreak.increment();
-                    }
-                } else
-                    floatsFitOnLine = false;
-            } else if (current.m_obj->isPositioned()) {
-                // If our original display wasn't an inline type, then we can
-                // go ahead and determine our static inline position now.
-                RenderBox* box = toRenderBox(current.m_obj);
-                bool isInlineType = box->style()->isOriginalDisplayInlineType();
-                if (!isInlineType)
-                    box->layer()->setStaticInlinePosition(borderAndPaddingStart());
-                else  {
-                    // If our original display was an INLINE type, then we can go ahead
-                    // and determine our static y position now.
-                    box->layer()->setStaticBlockPosition(logicalHeight());
+        if (current.m_obj->isFloating()) {
+            RenderBox* floatBox = toRenderBox(current.m_obj);
+            FloatingObject* f = insertFloatingObject(floatBox);
+            // check if it fits in the current line.
+            // If it does, position it now, otherwise, position
+            // it after moving to next line (in newLine() func)
+            if (floatsFitOnLine && width.fitsOnLine(logicalWidthForFloat(f))) {
+                positionNewFloatOnLine(f, lastFloatFromPreviousLine, width);
+                if (lBreak.m_obj == current.m_obj) {
+                    ASSERT(!lBreak.m_pos);
+                    lBreak.increment();
                 }
-
-                // If we're ignoring spaces, we have to stop and include this object and
-                // then start ignoring spaces again.
-                if (isInlineType || current.m_obj->container()->isRenderInline()) {
-                    if (ignoringSpaces) {
-                        ignoreStart.m_obj = current.m_obj;
-                        ignoreStart.m_pos = 0;
-                        addMidpoint(lineMidpointState, ignoreStart); // Stop ignoring spaces.
-                        addMidpoint(lineMidpointState, ignoreStart); // Start ignoring again.
-                    }
-                    trailingObjects.appendBoxIfNeeded(box);
-                } else
-                    positionedBoxes.append(box);
+            } else
+                floatsFitOnLine = false;
+        } else if (current.m_obj->isPositioned()) {
+            // If our original display wasn't an inline type, then we can
+            // go ahead and determine our static inline position now.
+            RenderBox* box = toRenderBox(current.m_obj);
+            bool isInlineType = box->style()->isOriginalDisplayInlineType();
+            if (!isInlineType)
+                box->layer()->setStaticInlinePosition(borderAndPaddingStart());
+            else  {
+                // If our original display was an INLINE type, then we can go ahead
+                // and determine our static y position now.
+                box->layer()->setStaticBlockPosition(logicalHeight());
             }
+
+            // If we're ignoring spaces, we have to stop and include this object and
+            // then start ignoring spaces again.
+            if (isInlineType || current.m_obj->container()->isRenderInline()) {
+                if (ignoringSpaces) {
+                    ignoreStart.m_obj = current.m_obj;
+                    ignoreStart.m_pos = 0;
+                    addMidpoint(lineMidpointState, ignoreStart); // Stop ignoring spaces.
+                    addMidpoint(lineMidpointState, ignoreStart); // Start ignoring again.
+                }
+                trailingObjects.appendBoxIfNeeded(box);
+            } else
+                positionedBoxes.append(box);
         } else if (current.m_obj->isRenderInline()) {
             // Right now, we should only encounter empty inlines here.
             ASSERT(!current.m_obj->firstChild());
@@ -2237,7 +2234,7 @@ InlineIterator RenderBlock::findNextLineBreak(InlineBidiResolver& resolver, Line
                 if (canHyphenate)
                     tryHyphenating(t, f, style->locale(), style->hyphenationLimitBefore(), style->hyphenationLimitAfter(), lastSpace, current.m_pos, width.currentWidth() - additionalTmpW, width.availableWidth(), isFixedPitch, collapseWhiteSpace, lastSpaceWordSpacing, lBreak, current.m_nextBreakablePosition, hyphenated);
 
-                if (!hyphenated && lBreak.m_obj && lBreak.m_pos && lBreak.m_obj->isText() && toRenderText(lBreak.m_obj)->textLength() && toRenderText(lBreak.m_obj)->characters()[lBreak.m_pos - 1] == softHyphen && style->hyphens() != HyphensNone)
+                if (!hyphenated && lBreak.previousInSameNode() == softHyphen && style->hyphens() != HyphensNone)
                     hyphenated = true;
 
                 if (hyphenated)
@@ -2249,31 +2246,27 @@ InlineIterator RenderBlock::findNextLineBreak(InlineBidiResolver& resolver, Line
         bool checkForBreak = autoWrap;
         if (width.committedWidth() && !width.fitsOnLine() && lBreak.m_obj && currWS == NOWRAP)
             checkForBreak = true;
-        else if (next && current.m_obj->isText() && next->isText() && !next->isBR()) {
-            if (autoWrap || (next->style()->autoWrap())) {
-                if (currentCharacterIsSpace)
+        else if (next && current.m_obj->isText() && next->isText() && !next->isBR() && (autoWrap || (next->style()->autoWrap()))) {
+            if (currentCharacterIsSpace)
+                checkForBreak = true;
+            else {
+                RenderText* nextText = toRenderText(next);
+                if (nextText->textLength()) {
+                    UChar c = nextText->characters()[0];
+                    checkForBreak = (c == ' ' || c == '\t' || (c == '\n' && !next->preservesNewline()));
+                    // If the next item on the line is text, and if we did not end with
+                    // a space, then the next text run continues our word (and so it needs to
+                    // keep adding to |tmpW|. Just update and continue.
+                } else if (nextText->isWordBreak())
                     checkForBreak = true;
-                else {
-                    checkForBreak = false;
-                    RenderText* nextText = toRenderText(next);
-                    if (nextText->textLength()) {
-                        UChar c = nextText->characters()[0];
-                        if (c == ' ' || c == '\t' || (c == '\n' && !next->preservesNewline()))
-                            // If the next item on the line is text, and if we did not end with
-                            // a space, then the next text run continues our word (and so it needs to
-                            // keep adding to |tmpW|.  Just update and continue.
-                            checkForBreak = true;
-                    } else if (nextText->isWordBreak())
-                        checkForBreak = true;
 
-                    if (!width.fitsOnLine() && !width.committedWidth())
-                        width.fitBelowFloats();
+                if (!width.fitsOnLine() && !width.committedWidth())
+                    width.fitBelowFloats();
 
-                    bool canPlaceOnLine = width.fitsOnLine() || !autoWrapWasEverTrueOnLine;
-                    if (canPlaceOnLine && checkForBreak) {
-                        width.commit();
-                        lBreak.moveToStartOf(next);
-                    }
+                bool canPlaceOnLine = width.fitsOnLine() || !autoWrapWasEverTrueOnLine;
+                if (canPlaceOnLine && checkForBreak) {
+                    width.commit();
+                    lBreak.moveToStartOf(next);
                 }
             }
         }

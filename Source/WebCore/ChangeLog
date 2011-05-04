@@ -1,3 +1,15 @@
+2011-05-04  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        Cleanup conditionals in findNextLineBreak
+        https://bugs.webkit.org/show_bug.cgi?id=60117
+
+        Simplified conditional statements in findNextLineBreak.
+
+        * rendering/RenderBlockLineLayout.cpp:
+        (WebCore::RenderBlock::findNextLineBreak):
+
 2011-05-04  Luke Macpherson   <macpherson@chromium.org>
 
         Reviewed by Eric Seidel.
