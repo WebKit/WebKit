@@ -1,5 +1,18 @@
 2011-05-04  Alexis Menard  <alexis.menard@openbossa.org>
 
+        Reviewed by Gavin Barraclough.
+
+        JITArithmetic.cpp produces a warning on a unused variable.
+        https://bugs.webkit.org/show_bug.cgi?id=60060
+
+        Just properly use what we already have converted.
+
+        * jit/JITArithmetic.cpp:
+        (JSC::JIT::emitSlow_op_add):
+        (JSC::JIT::emitSlow_op_mul):
+
+2011-05-04  Alexis Menard  <alexis.menard@openbossa.org>
+
         Reviewed by Geoffrey Garen.
 
         JITPropertyAccess produces a unused but set variable warning in gcc 4.6.0.

@@ -1095,7 +1095,7 @@ void JIT::emitSlow_op_add(Instruction* currentInstruction, Vector<SlowCaseEntry>
 
     bool op1HasImmediateIntFastCase = isOperandConstantImmediateInt(op1);
     bool op2HasImmediateIntFastCase = !op1HasImmediateIntFastCase && isOperandConstantImmediateInt(op2);
-    compileBinaryArithOpSlowCase(op_add, iter, result, op1, op2, OperandTypes::fromInt(currentInstruction[4].u.operand), op1HasImmediateIntFastCase, op2HasImmediateIntFastCase);
+    compileBinaryArithOpSlowCase(op_add, iter, result, op1, op2, types, op1HasImmediateIntFastCase, op2HasImmediateIntFastCase);
 }
 
 void JIT::emit_op_mul(Instruction* currentInstruction)
@@ -1132,7 +1132,7 @@ void JIT::emitSlow_op_mul(Instruction* currentInstruction, Vector<SlowCaseEntry>
 
     bool op1HasImmediateIntFastCase = isOperandConstantImmediateInt(op1) && getConstantOperandImmediateInt(op1) > 0;
     bool op2HasImmediateIntFastCase = !op1HasImmediateIntFastCase && isOperandConstantImmediateInt(op2) && getConstantOperandImmediateInt(op2) > 0;
-    compileBinaryArithOpSlowCase(op_mul, iter, result, op1, op2, OperandTypes::fromInt(currentInstruction[4].u.operand), op1HasImmediateIntFastCase, op2HasImmediateIntFastCase);
+    compileBinaryArithOpSlowCase(op_mul, iter, result, op1, op2, types, op1HasImmediateIntFastCase, op2HasImmediateIntFastCase);
 }
 
 void JIT::emit_op_div(Instruction* currentInstruction)
