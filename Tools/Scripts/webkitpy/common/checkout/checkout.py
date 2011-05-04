@@ -30,12 +30,11 @@ import os
 import StringIO
 
 from webkitpy.common.config import urls
-from webkitpy.common.checkout.changelog import ChangeLog
+from webkitpy.common.checkout.changelog import ChangeLog, parse_bug_id_from_changelog
 from webkitpy.common.checkout.commitinfo import CommitInfo
 from webkitpy.common.checkout.scm import CommitMessage
 from webkitpy.common.checkout.deps import DEPS
 from webkitpy.common.memoized import memoized
-from webkitpy.common.net.bugzilla import parse_bug_id_from_changelog
 from webkitpy.common.system.executive import Executive, run_command, ScriptError
 from webkitpy.common.system.deprecated_logging import log
 

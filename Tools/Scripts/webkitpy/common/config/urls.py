@@ -26,6 +26,8 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+import re
+
 
 def view_source_url(local_path):
     return "http://trac.webkit.org/browser/trunk/%s" % local_path
@@ -34,6 +36,13 @@ def view_source_url(local_path):
 def view_revision_url(revision_number):
     return "http://trac.webkit.org/changeset/%s" % revision_number
 
+
 chromium_lkgr_url = "http://chromium-status.appspot.com/lkgr"
 
 contribution_guidelines = "http://webkit.org/coding/contributing.html"
+
+bug_server_host = "bugs.webkit.org"
+_bug_server_regex = "https?://%s/" % re.sub('\.', '\\.', bug_server_host)
+bug_server_url = "https://%s/" % bug_server_host
+bug_url_long = _bug_server_regex + r"show_bug\.cgi\?id=(?P<bug_id>\d+)(&ctype=xml)?"
+bug_url_short = r"http\://webkit\.org/b/(?P<bug_id>\d+)"

@@ -43,39 +43,11 @@ from .bug import Bug
 
 from webkitpy.common.system.deprecated_logging import log
 from webkitpy.common.config import committers
+import webkitpy.common.config.urls as config_urls
 from webkitpy.common.net.credentials import Credentials
 from webkitpy.common.system.user import User
 from webkitpy.thirdparty.BeautifulSoup import BeautifulSoup, BeautifulStoneSoup, SoupStrainer
 
-
-# FIXME: parse_bug_id should not be a free function.
-def parse_bug_id(message):
-    if not message:
-        return None
-    match = re.search(Bugzilla.bug_url_short, message)
-    if match:
-        return int(match.group('bug_id'))
-    match = re.search(Bugzilla.bug_url_long, message)
-    if match:
-        return int(match.group('bug_id'))
-    return None
-
-
-# FIXME: parse_bug_id_from_changelog should not be a free function.
-# Parse the bug ID out of a Changelog message based on the format that is
-# used by prepare-ChangeLog
-def parse_bug_id_from_changelog(message):
-    if not message:
-        return None
-    match = re.search("^\s*" + Bugzilla.bug_url_short + "$", message, re.MULTILINE)
-    if match:
-        return int(match.group('bug_id'))
-    match = re.search("^\s*" + Bugzilla.bug_url_long + "$", message, re.MULTILINE)
-    if match:
-        return int(match.group('bug_id'))
-    # We weren't able to find a bug URL in the format used by prepare-ChangeLog. Fall back to the
-    # first bug URL found anywhere in the message.
-    return parse_bug_id(message)
 
 def timestamp():
     return datetime.now().strftime("%Y%m%d%H%M%S")
@@ -107,7 +79,7 @@ class BugzillaQueries(object):
 
     def _load_query(self, query):
         self._bugzilla.authenticate()
-        full_url = "%s%s" % (self._bugzilla.bug_server_url, query)
+        full_url = "%s%s" % (config_urls.bug_server_url, query)
         return self._bugzilla.browser.open(full_url)
 
     def _fetch_bugs_from_advanced_query(self, query):
@@ -220,14 +192,6 @@ class Bugzilla(object):
         # script.
         self.browser.set_handle_robots(False)
 
-    # FIXME: Much of this should go into some sort of config module,
-    # such as common.config.urls.
-    bug_server_host = "bugs.webkit.org"
-    bug_server_regex = "https?://%s/" % re.sub('\.', '\\.', bug_server_host)
-    bug_server_url = "https://%s/" % bug_server_host
-    bug_url_long = bug_server_regex + r"show_bug\.cgi\?id=(?P<bug_id>\d+)(&ctype=xml)?"
-    bug_url_short = r"http\://webkit\.org/b/(?P<bug_id>\d+)"
-
     def quips(self):
         # We only fetch and parse the list of quips once per instantiation
         # so that we do not burden bugs.webkit.org.
@@ -239,7 +203,7 @@ class Bugzilla(object):
         if not bug_id:
             return None
         content_type = "&ctype=xml" if xml else ""
-        return "%sshow_bug.cgi?id=%s%s" % (self.bug_server_url, bug_id, content_type)
+        return "%sshow_bug.cgi?id=%s%s" % (config_urls.bug_server_url, bug_id, content_type)
 
     def short_bug_url_for_bug_id(self, bug_id):
         if not bug_id:
@@ -247,7 +211,7 @@ class Bugzilla(object):
         return "http://webkit.org/b/%s" % bug_id
 
     def add_attachment_url(self, bug_id):
-        return "%sattachment.cgi?action=enter&bugid=%s" % (self.bug_server_url, bug_id)
+        return "%sattachment.cgi?action=enter&bugid=%s" % (config_urls.bug_server_url, bug_id)
 
     def attachment_url_for_id(self, attachment_id, action="view"):
         if not attachment_id:
@@ -255,7 +219,7 @@ class Bugzilla(object):
         action_param = ""
         if action and action != "view":
             action_param = "&action=%s" % action
-        return "%sattachment.cgi?id=%s%s" % (self.bug_server_url,
+        return "%sattachment.cgi?id=%s%s" % (config_urls.bug_server_url,
                                              attachment_id,
                                              action_param)
 
@@ -405,7 +369,7 @@ class Bugzilla(object):
             self.authenticated = True
             return
 
-        credentials = Credentials(self.bug_server_host, git_prefix="bugzilla")
+        credentials = Credentials(config_urls.bug_server_host, git_prefix="bugzilla")
 
         attempts = 0
         while not self.authenticated:
@@ -413,7 +377,7 @@ class Bugzilla(object):
             username, password = credentials.read_credentials()
 
             log("Logging in as %s..." % username)
-            self.browser.open(self.bug_server_url +
+            self.browser.open(config_urls.bug_server_url +
                               "index.cgi?GoAheadAndLogIn=1")
             self.browser.select_form(name="login")
             self.browser['Bugzilla_login'] = username
@@ -574,7 +538,7 @@ class Bugzilla(object):
             # FIXME: This will make some paths fail, as they assume this returns an id.
             return
 
-        self.browser.open(self.bug_server_url + "enter_bug.cgi?product=WebKit")
+        self.browser.open(config_urls.bug_server_url + "enter_bug.cgi?product=WebKit")
         self.browser.select_form(name="Create")
         component_items = self.browser.find_control('component').items
         component_names = map(lambda item: item.name, component_items)
@@ -610,7 +574,7 @@ class Bugzilla(object):
 
         bug_id = self._check_create_bug_response(response.read())
         log("Bug %s created." % bug_id)
-        log("%sshow_bug.cgi?id=%s" % (self.bug_server_url, bug_id))
+        log("%sshow_bug.cgi?id=%s" % (config_urls.bug_server_url, bug_id))
         return bug_id
 
     def _find_select_element_for_flag(self, flag_name):

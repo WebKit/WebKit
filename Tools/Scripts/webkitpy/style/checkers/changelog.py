@@ -27,7 +27,7 @@
 
 import re
 from common import TabChecker
-from webkitpy.common.net.bugzilla import parse_bug_id_from_changelog
+from webkitpy.common.checkout.changelog import parse_bug_id_from_changelog
 
 
 class ChangeLogChecker(object):

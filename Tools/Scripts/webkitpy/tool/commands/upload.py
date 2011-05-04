@@ -36,8 +36,8 @@ from optparse import make_option
 
 from webkitpy.tool import steps
 
+from webkitpy.common.checkout.changelog import parse_bug_id_from_changelog
 from webkitpy.common.config.committers import CommitterList
-from webkitpy.common.net.bugzilla import parse_bug_id_from_changelog
 from webkitpy.common.system.deprecated_logging import error, log
 from webkitpy.common.system.user import User
 from webkitpy.thirdparty.mock import Mock

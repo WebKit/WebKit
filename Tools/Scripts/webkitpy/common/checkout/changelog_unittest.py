@@ -91,6 +91,51 @@ class ChangeLogTest(unittest.TestCase):
 == Rolled over to ChangeLog-2009-06-16 ==
 """
 
+    def test_parse_bug_id_from_changelog(self):
+        commit_text = '''
+2011-03-23  Ojan Vafai  <ojan@chromium.org>
+
+        Add failing result for WebKit2. All tests that require
+        focus fail on WebKit2. See https://bugs.webkit.org/show_bug.cgi?id=56988.
+
+        * platform/mac-wk2/fast/css/pseudo-any-expected.txt: Added.
+
+        '''
+
+        self.assertEquals(56988, parse_bug_id_from_changelog(commit_text))
+
+        commit_text = '''
+2011-03-23  Ojan Vafai  <ojan@chromium.org>
+
+        Add failing result for WebKit2. All tests that require
+        focus fail on WebKit2. See https://bugs.webkit.org/show_bug.cgi?id=56988.
+        https://bugs.webkit.org/show_bug.cgi?id=12345
+
+        * platform/mac-wk2/fast/css/pseudo-any-expected.txt: Added.
+
+        '''
+
+        self.assertEquals(12345, parse_bug_id_from_changelog(commit_text))
+
+        commit_text = '''
+2011-03-31  Adam Roben  <aroben@apple.com>
+
+        Quote the executable path we pass to ::CreateProcessW
+
+        This will ensure that spaces in the path will be interpreted correctly.
+
+        Fixes <http://webkit.org/b/57569> Web process sometimes fails to launch when there are
+        spaces in its path
+
+        Reviewed by Steve Falkenburg.
+
+        * UIProcess/Launcher/win/ProcessLauncherWin.cpp:
+        (WebKit::ProcessLauncher::launchProcess): Surround the executable path in quotes.
+
+        '''
+
+        self.assertEquals(57569, parse_bug_id_from_changelog(commit_text))
+
     def test_latest_entry_parse(self):
         changelog_contents = u"%s\n%s" % (self._example_entry, self._example_changelog)
         changelog_file = StringIO(changelog_contents)
