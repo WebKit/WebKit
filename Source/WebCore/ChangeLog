@@ -1,3 +1,16 @@
+2011-05-04  Luke Macpherson   <macpherson@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        Remove redundant conversion from auto table layout to auto table layout in CSSStyleSelector::applyProperty()
+        https://bugs.webkit.org/show_bug.cgi?id=60011
+
+        No new tests added as no functionality changed.
+
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::applyProperty):
+        Remove reundant check for auto table layout.
+
 2011-05-04  Mihai Parparita  <mihaip@chromium.org>
 
         Reviewed by Darin Adler.

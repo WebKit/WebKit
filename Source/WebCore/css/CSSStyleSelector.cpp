@@ -3743,17 +3743,9 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
     case CSSPropertyPosition:
         HANDLE_INHERIT_AND_INITIAL_AND_PRIMITIVE(position, Position)
         return;
-    case CSSPropertyTableLayout: {
-        HANDLE_INHERIT_AND_INITIAL(tableLayout, TableLayout)
-
-        ETableLayout l = *primitiveValue;
-        if (l == TAUTO)
-            l = RenderStyle::initialTableLayout();
-
-        m_style->setTableLayout(l);
+    case CSSPropertyTableLayout:
+        HANDLE_INHERIT_AND_INITIAL_AND_PRIMITIVE(tableLayout, TableLayout)
         return;
-    }
-        
     case CSSPropertyUnicodeBidi: 
         HANDLE_INHERIT_AND_INITIAL_AND_PRIMITIVE(unicodeBidi, UnicodeBidi)
         return;
