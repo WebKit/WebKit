@@ -1,3 +1,16 @@
+2011-05-04  Tomasz Morawski  <t.morawski@samsung.com>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        [EFL] Added error check for _ewk_init_body result.
+        https://bugs.webkit.org/show_bug.cgi?id=60149
+
+        The ewk_init function should be failed when _ewk_init_body function
+        return false.
+
+        * ewk/ewk_main.cpp:
+        (ewk_init):
+
 2011-05-04  Tao Bai  <michaelbai@chromium.org>
 
         Reviewed by David Kilzer.

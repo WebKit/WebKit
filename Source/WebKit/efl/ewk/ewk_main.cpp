@@ -109,7 +109,10 @@ int ewk_init(void)
         goto error_edje;
     }
 
-    _ewk_init_body();
+    if (!_ewk_init_body()) {
+        CRITICAL("could not init body");
+        goto error_edje;
+    }
 
     return ++_ewk_init_count;
 
