@@ -36,7 +36,7 @@ void WebCookieManager::platformSetHTTPCookieAcceptPolicy(HTTPCookieAcceptPolicy 
 {
     CFHTTPCookieStorageSetCookieAcceptPolicy(WebCore::defaultCookieStorage(), policy);
 
-    CFHTTPCookieStorageRef privateBrowsingCookieStorage = WebCore::privateBrowsingCookieStorage();
+    CFHTTPCookieStorageRef privateBrowsingCookieStorage = WebCore::privateBrowsingCookieStorage().get();
     if (!privateBrowsingCookieStorage)
         return;
     CFHTTPCookieStorageSetCookieAcceptPolicy(privateBrowsingCookieStorage, policy);

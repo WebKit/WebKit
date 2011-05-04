@@ -33,7 +33,7 @@ typedef struct OpaqueCFHTTPCookieStorage* CFHTTPCookieStorageRef;
 namespace WebCore {
 
 
-#if USE(CFURLSTORAGESESSIONS) && PLATFORM(MAC)
+#if USE(CFNETWORK) || (USE(CFURLSTORAGESESSIONS) && PLATFORM(MAC))
 RetainPtr<CFHTTPCookieStorageRef>& privateBrowsingCookieStorage();
 #endif
 

@@ -1,3 +1,15 @@
+2011-05-03  Pratik Solanki  <psolanki@apple.com>
+
+        Reviewed by Antti Koivisto.
+
+        Part of WebCore should use CFNetwork-based loader on Mac
+        https://bugs.webkit.org/show_bug.cgi?id=51836
+
+        Merge the conflicting definitions of WebCore::privateBrowsingCookieStorage() into one.
+
+        * WebProcess/Cookies/cf/WebCookieManagerCFNet.cpp:
+        (WebKit::WebCookieManager::platformSetHTTPCookieAcceptPolicy):
+
 2011-05-02  Jer Noble  <jer.noble@apple.com>
 
         Reviewed by Adam Roben.

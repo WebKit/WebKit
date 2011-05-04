@@ -26,6 +26,8 @@
 #import "config.h"
 #import "CookieJar.h"
 
+#if !USE(CFNETWORK)
+
 #import "BlockExceptions.h"
 #import "Cookie.h"
 #import "CookieStorage.h"
@@ -268,3 +270,5 @@ void deleteAllCookies()
 }
 
 }
+
+#endif // !USE(CFNETWORK)

@@ -34,7 +34,6 @@ namespace WebCore {
 
     CFHTTPCookieStorageRef currentCookieStorage();
     CFHTTPCookieStorageRef defaultCookieStorage();
-    CFHTTPCookieStorageRef privateBrowsingCookieStorage();
 
     // Needed for WebKit1 API only.
     void setCurrentCookieStorage(CFHTTPCookieStorageRef cookieStorage);

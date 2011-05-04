@@ -27,6 +27,9 @@
 #include "CookieStorage.h"
 
 #import "ResourceHandle.h"
+
+#if !USE(CFNETWORK)
+
 #import "WebCoreSystemInterface.h"
 #import <wtf/RetainPtr.h>
 #import <wtf/UnusedParam.h>
@@ -75,16 +78,6 @@ using namespace WebCore;
 
 namespace WebCore {
 
-#if USE(CFURLSTORAGESESSIONS)
-
-RetainPtr<CFHTTPCookieStorageRef>& privateBrowsingCookieStorage()
-{
-    DEFINE_STATIC_LOCAL(RetainPtr<CFHTTPCookieStorageRef>, cookieStorage, ());
-    return cookieStorage;
-}
-
-#endif
-
 void setCookieStoragePrivateBrowsingEnabled(bool enabled)
 {
 #if USE(CFURLSTORAGESESSIONS)
@@ -124,3 +117,5 @@ void stopObservingCookieChanges()
 }
 
 }
+
+#endif // !USE(CFNETWORK)
