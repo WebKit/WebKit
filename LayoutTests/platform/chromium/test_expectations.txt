@@ -3677,17 +3677,14 @@ BUGCR74826 : media/controls-without-preload.html = TEXT
 
 // probably just needs a new baseline
 BUGWK60130 WIN LINUX : fast/backgrounds/background-leakage-transforms.html = IMAGE+TEXT
+BUGWK60130 WIN LINUX : fast/backgrounds/background-leakage.html = IMAGE+TEXT IMAGE
 
 // Need to figure out why this is slow.
 BUGWK60131 SLOW : fast/css/visited-link-hang.html = PASS
 
 // webkit roll : 84350:84431
-BUGDPRANKE LINUX : fast/canvas/webgl/css-webkit-canvas-repaint.html = IMAGE
-BUGDPRANKE LINUX : fast/canvas/webgl/css-webkit-canvas.html = IMAGE
 BUGDPRANKE MAC LINUX : transitions/interrupt-zero-duration.html = TEXT PASS
-BUGDPRANKE : media/controls-css-overload.html = TIMEOUT PASS
-BUGDPRANKE WIN LINUX : fast/borders/bidi-012.html = IMAGE+TEXT
-BUGDPRANKE MAC LEOPARD : fast/borders/bidi-012.html = IMAGE
+BUGWK60132 : media/controls-css-overload.html = TIMEOUT PASS
 BUGDPRANKE WIN LINUX : animations/change-one-anim.html = TEXT PASS
 
 // pulled in from downstream during webkit roll 84350:84431
@@ -3695,8 +3692,6 @@ BUGCASEQ WIN LINUX : editing/selection/select-from-textfield-outwards.html = IMA
 BUGCASEQ WIN LINUX : fast/forms/input-text-drag-down.html = IMAGE+TEXT
 BUGCASEQ MAC LEOPARD : fast/canvas/image-object-in-canvas.html = IMAGE
 
-BUGDPRANKE WIN LINUX : fast/backgrounds/background-leakage.html = IMAGE+TEXT IMAGE
-BUGDPRANKE MAC LEOPARD : fast/multicol/client-rects.html = IMAGE
 
 BUGDPRANKE MAC DEBUG : transitions/cancel-transition.html = TEXT PASS
 
@@ -3883,12 +3878,10 @@ BUGNONE WONTFIX SKIP : platform/qt/fast/forms = PASS FAIL CRASH TIMEOUT
 
 BUGWK59661 WIN LINUX MAC : media/video-controls-transformed.html = TEXT
 
-BUGDPRANKE MAC : fast/repaint/box-shadow-h.html = IMAGE
-BUGDPRANKE MAC : fast/block/float/float-overhangs-root.html = MISSING
-BUGDPRANKE MAC DEBUG : fast/blockflow/Kusa-Makura-background-canvas.html = CRASH
-BUGDPRANKE MAC DEBUG : storage/domstorage/events/documentURI.html = CRASH
+BUGDPRANKE MAC DEBUG : fast/blockflow/Kusa-Makura-background-canvas.html = CRASH PASS
+BUGDPRANKE MAC DEBUG : storage/domstorage/events/documentURI.html = CRASH PASS
 BUGDPRANKE MAC DEBUG : svg/W3C-SVG-1.1-SE/types-dom-04-b.svg = CRASH PASS
-BUGDPRANKE MAC DEBUG : http/tests/media/remove-while-loading.html = TIMEOUT
+BUGDPRANKE MAC DEBUG : http/tests/media/remove-while-loading.html = TIMEOUT PASS
 BUGDPRANKE WIN DEBUG : http/tests/security/credentials-in-referer.html = PASS TIMEOUT
 BUGDPRANKE MAC DEBUG : fast/css/getComputedStyle/font-family-fallback-reset.html = CRASH PASS
 
@@ -3897,16 +3890,16 @@ BUGKBR WIN DEBUG : animations/animation-controller-drt-api.html = PASS TEXT
 
 BUGWK59642 WIN : editing/input/scroll-viewport-page-up-down.html = PASS TEXT
 
-BUGDPRANKE SNOWLEOPARD DEBUG : http/tests/loading/preload-slow-loading.php = TEXT
-BUGDPRANKE SNOWLEOPARD DEBUG : http/tests/misc/image-error.html = TEXT
-BUGDPRANKE SNOWLEOPARD DEBUG : http/tests/ssl/verify-ssl-enabled.php = TEXT
-BUGDPRANKE SNOWLEOPARD DEBUG : fast/text/international/thai-line-breaks.html = IMAGE
-BUGDPRANKE SNOWLEOPARD DEBUG : http/tests/misc/object-image-error.html = TIMEOUT
-BUGDPRANKE SNOWLEOPARD DEBUG : css1/font_properties/font.html = IMAGE+TEXT
-BUGDPRANKE SNOWLEOPARD DEBUG : css2.1/t1508-c527-font-05-b.html = IMAGE+TEXT
-BUGDPRANKE SNOWLEOPARD DEBUG : css2.1/t1508-c527-font-10-c.html = IMAGE+TEXT
-BUGDPRANKE SNOWLEOPARD DEBUG : fast/text/international/thai-baht-space.html = IMAGE+TEXT
-BUGDPRANKE SNOWLEOPARD DEBUG : http/tests/multipart/multipart-wait-before-boundary.html = TIMEOUT PASS
+// These seem to be minor debug-only differences.
+BUGWK60135 SNOWLEOPARD DEBUG CPU : css2.1/t1508-c527-font-05-b.html = IMAGE+TEXT
+BUGWK60135 SNOWLEOPARD DEBUG CPU : css2.1/t1508-c527-font-10-c.html = IMAGE+TEXT
+BUGWK60135 SNOWLEOPARD DEBUG CPU : fast/text/international/thai-line-breaks.html = IMAGE
+BUGWK60135 SNOWLEOPARD DEBUG CPU : fast/text/international/thai-baht-space.html = IMAGE+TEXT
+BUGWK60135 SNOWLEOPARD DEBUG : css1/font_properties/font.html = IMAGE+TEXT
+
+BUGWK60133 DEBUG : http/tests/multipart/multipart-wait-before-boundary.html = TIMEOUT PASS
+
+BUGWK60134 SNOWLEOPARD DEBUG : http/tests/loading/preload-slow-loading.php = TEXT
 
 BUGWK59673 : fast/dom/Window/get-set-properties.html = TEXT
 BUGWK59673 : fast/dom/Window/window-property-shadowing.html = TEXT
@@ -3928,7 +3921,7 @@ BUGWK59726 : fast/dom/shadow/gc-shadow.html = PASS TEXT
 
 BUGWK60112 : fast/css/epub-properties.html = TEXT
 
-BUGDPRANKE WIN : http/tests/xmlviewer/dumpAsText/xmlviewer.xml = TEXT
+BUGWK60136 WIN : http/tests/xmlviewer/dumpAsText/xmlviewer.xml = TEXT
 
 // Flakiness on canaries (noted ~ r85280)
 BUGDPRANKE SNOWLEOPARD DEBUG : svg/dom/vkern-element-crash.html = CRASH PASS

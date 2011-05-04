@@ -2,6 +2,19 @@
 
         Unreviewed, expectations triage and new baselines.
 
+        * platform/chromium-linux/fast/borders/bidi-012-expected.png: Added.
+        * platform/chromium-mac-leopard/fast/borders/bidi-012-expected.png: Added.
+        * platform/chromium-mac-leopard/fast/multicol/client-rects-expected.png: Added.
+        * platform/chromium-mac/fast/repaint/box-shadow-h-expected.png: Removed.
+        * platform/chromium-win/fast/borders/bidi-012-expected.png: Added.
+        * platform/chromium-win/fast/borders/bidi-012-expected.txt: Added.
+        * platform/chromium/test_expectations.txt:
+        * platform/mac/fast/block/float/float-overhangs-root-expected.png:
+
+2011-05-03  Dirk Pranke  <dpranke@chromium.org>
+
+        Unreviewed, expectations triage and new baselines.
+
         * platform/chromium-linux/fast/box-shadow/inset-expected.png:
         * platform/chromium-linux/fast/css/text-input-with-webkit-border-radius-expected.png:
         * platform/chromium-linux/fast/forms/basic-selects-expected.png:
