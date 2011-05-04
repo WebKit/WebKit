@@ -507,10 +507,9 @@ function tableRow(testObject)
     }
 
     row += '</td>';
-    row += '<td>' + actual + '</td>';
 
     if (globalState().results.uses_expectations_file)
-      row += '<td>' + testObject.expected + '</td>';
+        row += '<td>' + actual + '</td><td>' + testObject.expected + '</td>';
 
     row += '</tr></tbody>';
     return row;
@@ -554,7 +553,7 @@ function testList(tests, header, tableId)
     var html = '<p>' + header + '</p><table id="' + tableId + '">';
 
     if (tableId == 'passes-table')
-        html += '<thead><th>test</th><th>expected failure type</th>';
+        html += '<thead><th>test</th><th>expected failure</th></thead>';
 
     for (var i = 0; i < tests.length; i++) {
         var test = tests[i];
@@ -921,11 +920,10 @@ function generatePage()
             '<table id="results-table"><thead><tr>' +
             '<th>test</th>' +
             '<th id="text-results-header">results</th>' +
-            '<th id="image-results-header">image results</th>' +
-            '<th>failure type</th>';
+            '<th id="image-results-header">image results</th>';
 
         if (globalState().results.uses_expectations_file)
-            html += '<th>expected failure type</th>';
+            html += '<th>actual failure</th><th>expected failure</th>';
 
         html += '</tr></thead>' + tableRowsHtml + '</table>';
     }

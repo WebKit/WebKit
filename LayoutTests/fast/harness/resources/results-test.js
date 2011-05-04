@@ -285,7 +285,7 @@ function runTests()
     subtree['bar2.html'] = mockExpectation('IMAGE', 'PASS');
     results.uses_expectations_file = false;
     runTest(results, function() {
-        assertTrue(document.querySelectorAll('#results-table tbody td').length == 4);
+        assertTrue(document.querySelectorAll('#results-table tbody td').length == 3);
         assertTrue(!document.querySelector('tbody.expected'));
         assertTrue(!document.getElementById('passes-table'));
     });

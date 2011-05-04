@@ -1,3 +1,18 @@
+2011-05-04  Ojan Vafai  <ojan@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        [results.html] Don't show actual failure type column for ports that don't use expectations files
+        https://bugs.webkit.org/show_bug.cgi?id=60199
+
+        For the most part, the links shown tell you what type of failure it is.
+        The only case where we lose some information here is for a test that
+        failed one run, but passed or had a different failure on retry.i
+        We should probably put those tests in their own table anyways.
+
+        * fast/harness/resources/results-test.js:
+        * fast/harness/results.html:
+
 2011-05-04  Andrey Kosyakov  <caseq@chromium.org>
 
         Unreviewed. Skipped inspector/elements/shadow-dom.html on win.
