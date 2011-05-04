@@ -30,14 +30,22 @@
 
 #include "RenderLayer.h"
 
+#if USE(ACCELERATED_COMPOSITING)
+#include "RenderLayerCompositor.h"
+#endif
+
 using namespace WebCore;
 
 void RenderFullScreen::setAnimating(bool animating)
 {
     m_isAnimating = animating;
 #if USE(ACCELERATED_COMPOSITING)
-    if (layer())
+    if (layer()) {
         layer()->contentChanged(RenderLayer::FullScreenChanged);
+        // Clearing the layer's backing will force the compositor to reparent
+        // the layer the next time layers are synchronized.
+        layer()->clearBacking();
+    }
 #endif
 }
 

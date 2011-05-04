@@ -1,3 +1,18 @@
+2011-05-04  Jer Noble  <jer.noble@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Entering full screen fails >= second time on Vimeo.com.
+        https://bugs.webkit.org/show_bug.cgi?id=60143
+
+        Force the RenderFullScreen's layer backing to be recreated when setAnimating() is called.
+        Previously, the RenderLayerCompositor would fail to reparent the RenderFullScreen's layer
+        at the end of an animation, if it determined that the RenderFullScreen would still require
+        a layer even when not animating.
+
+        * rendering/RenderFullScreen.cpp:
+        (RenderFullScreen::setAnimating): Clear the renderer's layer.
+
 2011-05-04  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Darin Adler.
