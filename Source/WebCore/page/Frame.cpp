@@ -59,6 +59,7 @@
 #include "HitTestResult.h"
 #include "Logging.h"
 #include "MediaFeatureNames.h"
+#include "MediaStreamFrameController.h"
 #include "Navigator.h"
 #include "NodeList.h"
 #include "Page.h"
@@ -70,6 +71,7 @@
 #include "RenderTextControl.h"
 #include "RenderTheme.h"
 #include "RenderView.h"
+#include "RuntimeEnabledFeatures.h"
 #include "ScriptController.h"
 #include "ScriptSourceCode.h"
 #include "ScriptValue.h"
@@ -163,6 +165,9 @@ inline Frame::Frame(Page* page, HTMLFrameOwnerElement* ownerElement, FrameLoader
     , m_inViewSourceMode(false)
     , m_isDisconnected(false)
     , m_excludeFromTextSearch(false)
+#if ENABLE(MEDIA_STREAM)
+    , m_mediaStreamFrameController(RuntimeEnabledFeatures::mediaStreamEnabled() ? adoptPtr(new MediaStreamFrameController(this)) : PassOwnPtr<MediaStreamFrameController>())
+#endif
 {
     ASSERT(page);
     AtomicString::init();
@@ -219,6 +224,12 @@ Frame::~Frame()
 
     if (m_domWindow)
         m_domWindow->disconnectFrame();
+
+#if ENABLE(MEDIA_STREAM)
+    if (m_mediaStreamFrameController)
+        m_mediaStreamFrameController->disconnectFrame();
+#endif
+
     script()->clearWindowShell();
 
     HashSet<DOMWindow*>::iterator end = m_liveFormerWindows.end();
@@ -730,6 +741,11 @@ void Frame::pageDestroyed()
         m_domWindow->pageDestroyed();
     }
 
+#if ENABLE(MEDIA_STREAM)
+    if (m_mediaStreamFrameController)
+        m_mediaStreamFrameController->disconnectPage();
+#endif
+
     // FIXME: It's unclear as to why this is called more than once, but it is,
     // so page() could be NULL.
     if (page() && page()->focusController()->focusedFrame() == this)
@@ -780,6 +796,10 @@ void Frame::transferChildFrameToNewDocument()
         if (m_domWindow)
             m_domWindow->resetGeolocation();
 
+#if ENABLE(MEDIA_STREAM)
+        if (m_mediaStreamFrameController)
+            m_mediaStreamFrameController->transferToNewPage(newPage);
+#endif
         m_page = newPage;
 
         if (newPage)

@@ -3071,14 +3071,20 @@ contains(DEFINES, ENABLE_GEOLOCATION=1) {
 
 contains(DEFINES, ENABLE_MEDIA_STREAM=1) {
     HEADERS += \
+        page/MediaStreamClient.h \
+        page/MediaStreamController.h \
+        page/MediaStreamFrameController.h \
         page/NavigatorUserMediaError.h \
         page/NavigatorUserMediaErrorCallback.h \
         page/NavigatorUserMediaSuccessCallback.h
 
+    SOURCES += \
+        page/MediaStreamController.cpp \
+        page/MediaStreamFrameController.cpp
+
     v8 {
         SOURCES += \
             bindings/v8/custom/V8NavigatorCustom.cpp
-
     }
 }
 

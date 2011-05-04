@@ -24658,6 +24658,26 @@
 				>
 			</File>
 			<File
+				RelativePath="..\page\MediaStreamClient.h"
+				>
+			</File>
+			<File
+				RelativePath="..\page\MediaStreamController.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\page\MediaStreamController.h"
+				>
+			</File>
+			<File
+				RelativePath="..\page\MediaStreamFrameController.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\page\MediaStreamFrameController.h"
+				>
+			</File>
+			<File
 				RelativePath="..\page\MouseEventWithHitTestResults.cpp"
 				>
 			</File>

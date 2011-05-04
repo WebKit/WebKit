@@ -1,3 +1,64 @@
+2011-05-04  Leandro Gracia Gil  <leandrogracia@chromium.org>
+
+        Reviewed by Tony Gentilcore.
+
+        Media Stream API: add the skeleton of the frame and page controllers and the embedder client.
+        https://bugs.webkit.org/show_bug.cgi?id=56922
+
+        Add the basic outlines of the page controller, the per-frame controller and the embedder
+        client interface for the Media Stream API. Provide methods to handle the situations
+        where a frame is detached from the page or transferred between pages.
+
+        Tests for the Media Stream API will be provided by the bug 56587.
+
+        * CMakeLists.txt:
+        * GNUmakefile.list.am:
+        * WebCore.gypi:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * page/Frame.cpp:
+        (WebCore::Frame::Frame):
+        (WebCore::Frame::~Frame):
+        (WebCore::Frame::pageDestroyed):
+        (WebCore::Frame::transferChildFrameToNewDocument):
+        * page/Frame.h:
+        (WebCore::Frame::mediaStreamFrameController):
+        * page/MediaStreamClient.h: Added.
+        (WebCore::MediaStreamClient::~MediaStreamClient):
+        * page/MediaStreamController.cpp: Added.
+        (WebCore::MediaStreamController::Request::Request):
+        (WebCore::MediaStreamController::Request::localId):
+        (WebCore::MediaStreamController::Request::frameController):
+        (WebCore::MediaStreamController::MediaStreamController):
+        (WebCore::MediaStreamController::~MediaStreamController):
+        (WebCore::MediaStreamController::unregisterFrameController):
+        (WebCore::MediaStreamController::registerRequest):
+        * page/MediaStreamController.h: Added.
+        * page/MediaStreamFrameController.cpp: Added.
+        (WebCore::MediaStreamFrameController::Request::Request):
+        (WebCore::MediaStreamFrameController::Request::~Request):
+        (WebCore::MediaStreamFrameController::Request::scriptExecutionContext):
+        (WebCore::MediaStreamFrameController::Request::isGenerateStreamRequest):
+        (WebCore::MediaStreamFrameController::Request::isRecordedDataRequest):
+        (WebCore::MediaStreamFrameController::RequestMap::abort):
+        (WebCore::MediaStreamFrameController::RequestMap::abortAll):
+        (WebCore::MediaStreamFrameController::MediaStreamFrameController):
+        (WebCore::MediaStreamFrameController::~MediaStreamFrameController):
+        (WebCore::MediaStreamFrameController::securityOrigin):
+        (WebCore::MediaStreamFrameController::scriptExecutionContext):
+        (WebCore::MediaStreamFrameController::pageController):
+        (WebCore::MediaStreamFrameController::enterDetachedState):
+        (WebCore::MediaStreamFrameController::disconnectPage):
+        (WebCore::MediaStreamFrameController::disconnectFrame):
+        (WebCore::MediaStreamFrameController::transferToNewPage):
+        * page/MediaStreamFrameController.h: Added.
+        * page/Page.cpp:
+        (WebCore::Page::Page):
+        (WebCore::Page::PageClients::PageClients):
+        * page/Page.h:
+        (WebCore::Page::mediaStreamController):
+
 2011-05-04  Alexander Pavlov  <apavlov@chromium.org>
 
         Reviewed by Yury Semikhatsky.

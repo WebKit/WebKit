@@ -2192,6 +2192,11 @@ webcore_sources += \
 	Source/WebCore/page/Location.cpp \
 	Source/WebCore/page/Location.h \
 	Source/WebCore/page/MediaCanStartListener.h \
+	Source/WebCore/page/MediaStreamClient.h \
+	Source/WebCore/page/MediaStreamController.cpp \
+	Source/WebCore/page/MediaStreamController.h \
+	Source/WebCore/page/MediaStreamFrameController.cpp \
+	Source/WebCore/page/MediaStreamFrameController.h \
 	Source/WebCore/page/MemoryInfo.cpp \
 	Source/WebCore/page/MemoryInfo.h \
 	Source/WebCore/page/MouseEventWithHitTestResults.cpp \

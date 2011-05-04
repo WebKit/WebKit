@@ -4077,6 +4077,11 @@
 		ADDF1AD71257CD9A0003A759 /* RenderSVGPath.h in Headers */ = {isa = PBXBuildFile; fileRef = ADDF1AD51257CD9A0003A759 /* RenderSVGPath.h */; };
 		B1827493134CA4C100B98C2D /* CallbackFunction.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B1827492134CA4C100B98C2D /* CallbackFunction.cpp */; };
 		B1D5ECB5134B58DA0087C78F /* CallbackFunction.h in Headers */ = {isa = PBXBuildFile; fileRef = B1D5ECB4134B58DA0087C78F /* CallbackFunction.h */; };
+		B1E54594134629C10092A545 /* MediaStreamClient.h in Headers */ = {isa = PBXBuildFile; fileRef = B1E54588134629C10092A545 /* MediaStreamClient.h */; };
+		B1E54597134629C10092A545 /* MediaStreamController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B1E5458B134629C10092A545 /* MediaStreamController.cpp */; };
+		B1E54598134629C10092A545 /* MediaStreamController.h in Headers */ = {isa = PBXBuildFile; fileRef = B1E5458C134629C10092A545 /* MediaStreamController.h */; };
+		B1E54595134629C10092A545 /* MediaStreamFrameController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B1E54589134629C10092A545 /* MediaStreamFrameController.cpp */; };
+		B1E54596134629C10092A545 /* MediaStreamFrameController.h in Headers */ = {isa = PBXBuildFile; fileRef = B1E5458A134629C10092A545 /* MediaStreamFrameController.h */; };
 		B1E54599134629C10092A545 /* NavigatorUserMediaError.h in Headers */ = {isa = PBXBuildFile; fileRef = B1E5458D134629C10092A545 /* NavigatorUserMediaError.h */; };
 		B1E5459B134629C10092A545 /* NavigatorUserMediaErrorCallback.h in Headers */ = {isa = PBXBuildFile; fileRef = B1E5458F134629C10092A545 /* NavigatorUserMediaErrorCallback.h */; };
 		B1E5459D134629C10092A545 /* NavigatorUserMediaSuccessCallback.h in Headers */ = {isa = PBXBuildFile; fileRef = B1E54591134629C10092A545 /* NavigatorUserMediaSuccessCallback.h */; };
@@ -10314,6 +10319,11 @@
 		ADDF1AD51257CD9A0003A759 /* RenderSVGPath.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RenderSVGPath.h; sourceTree = "<group>"; };
 		B1827492134CA4C100B98C2D /* CallbackFunction.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CallbackFunction.cpp; sourceTree = "<group>"; };
 		B1D5ECB4134B58DA0087C78F /* CallbackFunction.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CallbackFunction.h; sourceTree = "<group>"; };
+		B1E54588134629C10092A545 /* MediaStreamClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MediaStreamClient.h; sourceTree = "<group>"; };
+		B1E5458B134629C10092A545 /* MediaStreamController.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MediaStreamController.cpp; sourceTree = "<group>"; };
+		B1E5458C134629C10092A545 /* MediaStreamController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MediaStreamController.h; sourceTree = "<group>"; };
+		B1E54589134629C10092A545 /* MediaStreamFrameController.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MediaStreamFrameController.cpp; sourceTree = "<group>"; };
+		B1E5458A134629C10092A545 /* MediaStreamFrameController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MediaStreamFrameController.h; sourceTree = "<group>"; };
 		B1E5458D134629C10092A545 /* NavigatorUserMediaError.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NavigatorUserMediaError.h; sourceTree = "<group>"; };
 		B1E5458E134629C10092A545 /* NavigatorUserMediaError.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = NavigatorUserMediaError.idl; sourceTree = "<group>"; };
 		B1E5458F134629C10092A545 /* NavigatorUserMediaErrorCallback.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NavigatorUserMediaErrorCallback.h; sourceTree = "<group>"; };
@@ -14121,6 +14131,11 @@
 				BCE1C4190D982980003B02F2 /* Location.h */,
 				BCE1C4220D9829F2003B02F2 /* Location.idl */,
 				931BCC601124DFCB00BE70DD /* MediaCanStartListener.h */,
+				B1E54588134629C10092A545 /* MediaStreamClient.h */,
+				B1E5458B134629C10092A545 /* MediaStreamController.cpp */,
+				B1E5458C134629C10092A545 /* MediaStreamController.h */,
+				B1E54589134629C10092A545 /* MediaStreamFrameController.cpp */,
+				B1E5458A134629C10092A545 /* MediaStreamFrameController.h */,
 				9FFE3E7811B59C5D0037874E /* MemoryInfo.cpp */,
 				9FFE3E7911B59C5D0037874E /* MemoryInfo.h */,
 				9FFE3E7C11B59C6E0037874E /* MemoryInfo.idl */,
@@ -22702,6 +22717,9 @@
 				93F199ED08245E59001E9ABC /* XSLTProcessor.h in Headers */,
 				E1BE512E0CF6C512002EA959 /* XSLTUnicodeSort.h in Headers */,
 				977E2E0F12F0FC9C00C13379 /* XSSFilter.h in Headers */,
+				B1E54594134629C10092A545 /* MediaStreamClient.h in Headers */,
+				B1E54598134629C10092A545 /* MediaStreamController.h in Headers */,
+				B1E54596134629C10092A545 /* MediaStreamFrameController.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -25362,6 +25380,8 @@
 				93F19B0508245E59001E9ABC /* XSLTProcessorLibxslt.cpp in Sources */,
 				E1BE512D0CF6C512002EA959 /* XSLTUnicodeSort.cpp in Sources */,
 				977E2E0E12F0FC9C00C13379 /* XSSFilter.cpp in Sources */,
+				B1E54597134629C10092A545 /* MediaStreamController.cpp in Sources */,
+				B1E54595134629C10092A545 /* MediaStreamFrameController.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

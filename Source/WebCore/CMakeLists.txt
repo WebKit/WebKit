@@ -1932,6 +1932,8 @@ ENDIF ()
 IF (ENABLE_MEDIA_STREAM)
     LIST(APPEND WebCore_SOURCES
         bindings/js/JSNavigatorCustom.cpp
+        page/MediaStreamController.cpp
+        page/MediaStreamFrameController.cpp
     )
 
     LIST(APPEND WebCore_IDL_FILES

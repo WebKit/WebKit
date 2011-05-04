@@ -64,6 +64,7 @@ namespace WebCore {
     class Document;
     class FrameView;
     class HTMLTableCellElement;
+    class MediaStreamFrameController;
     class RegularExpression;
     class RenderPart;
     class TiledBackingStore;
@@ -198,6 +199,10 @@ namespace WebCore {
         NSImage* imageFromRect(NSRect) const;
 #endif
 
+#if ENABLE(MEDIA_STREAM)
+        MediaStreamFrameController* mediaStreamFrameController() const { return m_mediaStreamFrameController.get(); }
+#endif
+
     // ========
 
     private:
@@ -263,6 +268,10 @@ namespace WebCore {
         virtual Color tiledBackingStoreBackgroundColor() const;
 
         OwnPtr<TiledBackingStore> m_tiledBackingStore;
+#endif
+
+#if ENABLE(MEDIA_STREAM)
+        OwnPtr<MediaStreamFrameController> m_mediaStreamFrameController;
 #endif
     };
 

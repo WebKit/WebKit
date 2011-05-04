@@ -66,6 +66,8 @@ namespace WebCore {
     class InspectorClient;
     class InspectorController;
     class MediaCanStartListener;
+    class MediaStreamClient;
+    class MediaStreamController;
     class Node;
     class PageGroup;
     class PluginData;
@@ -115,6 +117,7 @@ namespace WebCore {
             DeviceOrientationClient* deviceOrientationClient;
             RefPtr<BackForwardList> backForwardClient;
             SpeechInputClient* speechInputClient;
+            MediaStreamClient* mediaStreamClient;
         };
 
         Page(const PageClients&);
@@ -179,6 +182,9 @@ namespace WebCore {
 #if ENABLE(DEVICE_ORIENTATION)
         DeviceMotionController* deviceMotionController() const { return m_deviceMotionController.get(); }
         DeviceOrientationController* deviceOrientationController() const { return m_deviceOrientationController.get(); }
+#endif
+#if ENABLE(MEDIA_STREAM)
+        MediaStreamController* mediaStreamController() const { return m_mediaStreamController.get(); }
 #endif
 #if ENABLE(INPUT_SPEECH)
         SpeechInput* speechInput();
@@ -331,6 +337,9 @@ namespace WebCore {
 #if ENABLE(DEVICE_ORIENTATION)
         OwnPtr<DeviceMotionController> m_deviceMotionController;
         OwnPtr<DeviceOrientationController> m_deviceOrientationController;
+#endif
+#if ENABLE(MEDIA_STREAM)
+        OwnPtr<MediaStreamController> m_mediaStreamController;
 #endif
 #if ENABLE(INPUT_SPEECH)
         SpeechInputClient* m_speechInputClient;

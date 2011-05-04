@@ -50,6 +50,8 @@
 #include "InspectorInstrumentation.h"
 #include "Logging.h"
 #include "MediaCanStartListener.h"
+#include "MediaStreamClient.h"
+#include "MediaStreamController.h"
 #include "Navigator.h"
 #include "NetworkStateNotifier.h"
 #include "PageGroup.h"
@@ -130,6 +132,9 @@ Page::Page(const PageClients& pageClients)
 #if ENABLE(DEVICE_ORIENTATION)
     , m_deviceMotionController(RuntimeEnabledFeatures::deviceMotionEnabled() ? adoptPtr(new DeviceMotionController(pageClients.deviceMotionClient)) : nullptr)
     , m_deviceOrientationController(RuntimeEnabledFeatures::deviceOrientationEnabled() ? adoptPtr(new DeviceOrientationController(this, pageClients.deviceOrientationClient)) : nullptr)
+#endif
+#if ENABLE(MEDIA_STREAM)
+    , m_mediaStreamController(RuntimeEnabledFeatures::mediaStreamEnabled() ? adoptPtr(new MediaStreamController(pageClients.mediaStreamClient)) : PassOwnPtr<MediaStreamController>())
 #endif
 #if ENABLE(INPUT_SPEECH)
     , m_speechInputClient(pageClients.speechInputClient)
@@ -940,6 +945,7 @@ Page::PageClients::PageClients()
     , deviceMotionClient(0)
     , deviceOrientationClient(0)
     , speechInputClient(0)
+    , mediaStreamClient(0)
 {
 }
 
