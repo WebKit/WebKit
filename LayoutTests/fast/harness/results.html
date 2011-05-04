@@ -147,6 +147,7 @@ function globalState()
 {
     if (!g_state) {
         g_state = {
+            crashTests: [],
             hasHttpTests: false,
             hasImageFailures: false,
             hasTextFailures: false,
@@ -154,6 +155,7 @@ function globalState()
             results: {},
             shouldToggleImages: true,
             testsWithStderr: [],
+            timeoutTests: [],
             unexpectedPassTests: []
         }
     }
@@ -385,7 +387,7 @@ function processGlobalStateFor(testObject)
         globalState().newTests.push(test);
         return;
     }
-    
+
     var expected = testObject.expected || 'PASS';
     testObject.isExpected = true;
     if (actual != 'SKIP' && globalState().results.uses_expectations_file) {
@@ -402,6 +404,19 @@ function processGlobalStateFor(testObject)
 
     if (actual == 'PASS' && expected != 'PASS')
         globalState().unexpectedPassTests.push(test);            
+
+    if (globalState().results.uses_expectations_file && testObject.isExpected)
+        return;
+
+    // FIXME: Show some indication in the UI for a test that doesn't crash on the first run but crashes on the second run.
+    if (actual.indexOf('CRASH') != -1) {
+        globalState().crashTests.push(test);
+        return;
+    }
+
+    // FIXME: Show some indication in the UI for a test only times out on one run?
+    if (actual.indexOf('TIMEOUT') != -1)
+        globalState().timeoutTests.push(test);
 }
 
 function toggleImages()
@@ -421,6 +436,21 @@ function toggleImages()
     }
 }
 
+function textResultLinks(prefix)
+{
+    var html = resultLink(prefix, '-expected.txt', 'expected') +
+        resultLink(prefix, '-actual.txt', 'actual') +
+        resultLink(prefix, '-diff.txt', 'diff');
+
+    if (globalState().results.has_pretty_patch)
+        html += resultLink(prefix, '-pretty-diff.html', 'pretty diff');
+
+    if (globalState().results.has_wdiff)
+        html += resultLink(prefix, '-wdiff.html', 'wdiff');
+
+    return html;
+}
+
 function tableRow(testObject)
 {    
     var row = '<tbody'
@@ -434,22 +464,10 @@ function tableRow(testObject)
     row += '<td>';
     
     var actual = testObject.actual;
-    if (actual.indexOf('TEXT') != -1 || actual.indexOf('TIMEOUT') != -1) {
-        // FIXME: only include timeout actual/expected results here if we actually spit out results for timeout tests.
+    if (actual.indexOf('TEXT') != -1) {
         globalState().hasTextFailures = true;
-        row += resultLink(test_prefix, '-expected.txt', 'expected') +
-            resultLink(test_prefix, '-actual.txt', 'actual') +
-            resultLink(test_prefix, '-diff.txt', 'diff');
-  
-        if (globalState().results.has_pretty_patch)
-            row += resultLink(test_prefix, '-pretty-diff.html', 'pretty diff');
-
-        if (globalState().results.has_wdiff)
-            row += resultLink(test_prefix, '-wdiff.html', 'wdiff');
+        row += textResultLinks(test_prefix);
     }
-
-    if (actual.indexOf('CRASH') != -1)
-        row += resultLink(test_prefix, '-stack.txt', 'stack');
     
     if (actual.indexOf('AUDIO') != -1) {
         row += resultLink(test_prefix, '-expected.wav', 'expected audio');
@@ -513,7 +531,9 @@ function tableRows()
         processGlobalStateFor(testObject)
         var test = testObject.name;
         if (globalState().unexpectedPassTests.indexOf(test) == -1 &&
-            globalState().newTests.indexOf(test) == -1)
+            globalState().newTests.indexOf(test) == -1 &&
+            globalState().crashTests.indexOf(test) == -1 &&
+            globalState().timeoutTests.indexOf(test) == -1)
             html += tableRow(testObject);
     });
     return html;
@@ -536,7 +556,12 @@ function testList(tests, header, tableId)
             html += resultLink(stripExtension(test), '-stderr.txt', 'stderr');
         else if (tableId == 'passes-table')
             html += testObjectFor(test).expected;
-        else if (tableId == 'new-tests-table') {
+        else if (tableId == 'crash-tests-table')
+            html += resultLink(stripExtension(test), '-stack.txt', 'crash stack');
+        else if (tableId == 'timeout-tests-table') {
+            // FIXME: only include timeout actual/diff results here if we actually spit out results for timeout tests.
+            html += textResultLinks(stripExtension(test));
+        } else if (tableId == 'new-tests-table') {
             var testObject = testObjectFor(test);
             if (testObject.is_missing_audio)
                 html += resultLink(stripExtension(test), '-actual.wav', 'audio result');
@@ -895,13 +920,19 @@ function generatePage()
         html += '</tr></thead>' + tableRowsHtml + '</table>';
     }
 
+    if (globalState().crashTests.length)
+        html += testList(globalState().crashTests, 'Tests that crashed:', 'crash-tests-table');
+
+    if (globalState().timeoutTests.length)
+        html += testList(globalState().timeoutTests, 'Tests that timed out:', 'timeout-tests-table');
+
     if (globalState().newTests.length)
         html += testList(globalState().newTests, 'Tests that had no expected results (probably new):', 'new-tests-table');
 
     if (globalState().testsWithStderr.length)
         html += testList(globalState().testsWithStderr, 'Tests that had stderr output:', 'stderr-table');
 
-    if (globalState().unexpectedPassTests.length)
+    if (globalState().results.uses_expectations_file && globalState().unexpectedPassTests.length)
         html += testList(globalState().unexpectedPassTests, 'Tests expected to fail but passed:', 'passes-table');
 
     if (globalState().hasHttpTests) {

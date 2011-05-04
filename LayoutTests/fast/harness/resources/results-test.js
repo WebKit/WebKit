@@ -156,6 +156,8 @@ function runTests()
     subtree['bar.html'] = mockExpectation('TEXT', 'PASS');
     subtree['bar1.html'] = mockExpectation('CRASH', 'PASS');
     subtree['bar2.html'] = mockExpectation('IMAGE', 'PASS');
+    subtree['crash.html'] = mockExpectation('IMAGE', 'CRASH');
+    subtree['timeout.html'] = mockExpectation('IMAGE', 'TIMEOUT');
     runTest(results, function() {
         assertTrue(!document.getElementById('results-table'));
 
@@ -168,6 +170,11 @@ function runTests()
         assertTrue(expectationTypes[0].textContent == 'TEXT');
         assertTrue(expectationTypes[1].textContent == 'CRASH');
         assertTrue(expectationTypes[2].textContent == 'IMAGE');
+        
+        assertTrue(document.getElementById('crash-tests-table'));
+        assertTrue(document.getElementById('crash-tests-table').textContent.indexOf('stack') != -1);
+        assertTrue(document.getElementById('timeout-tests-table'));
+        assertTrue(document.getElementById('timeout-tests-table').textContent.indexOf('expected actual diff') != -1);
     });
 
     results = mockResults();
@@ -227,9 +234,7 @@ function runTests()
     runDefaultSingleRowTest('bar-skip.html', 'TEXT', 'SKIP', true, '', '');
     runDefaultSingleRowTest('bar-flaky-fail.html', 'PASS FAIL', 'TEXT', true, 'expected actual diff ', '');
     runDefaultSingleRowTest('bar-flaky-fail-unexpected.html', 'PASS TEXT', 'IMAGE', false, '', 'images diff ');
-    runDefaultSingleRowTest('bar-crash.html', 'TEXT', 'CRASH', false, 'stack ', '');
     runDefaultSingleRowTest('bar-audio.html', 'TEXT', 'AUDIO', false, 'expected audio actual audio ', '');
-    runDefaultSingleRowTest('bar-timeout.html', 'TEXT', 'TIMEOUT', false, 'expected actual diff ', '');
     runDefaultSingleRowTest('bar-image.html', 'TEXT', 'IMAGE', false, '', 'images diff ');
     runDefaultSingleRowTest('bar-image-plus-text.html', 'TEXT', 'IMAGE+TEXT', false, 'expected actual diff ', 'images diff ');
 
@@ -274,10 +279,13 @@ function runTests()
     results = mockResults();
     var subtree = results.tests['foo'] = {}
     subtree['bar.html'] = mockExpectation('TEXT', 'TEXT');
+    subtree['bar1.html'] = mockExpectation('CRASH', 'PASS');
+    subtree['bar2.html'] = mockExpectation('IMAGE', 'PASS');
     results.uses_expectations_file = false;
     runTest(results, function() {
-        assertTrue(document.querySelectorAll('tbody td').length == 4);
-        assertTrue(document.querySelector('tbody').className.indexOf('expected') == -1);
+        assertTrue(document.querySelectorAll('#results-table tbody td').length == 4);
+        assertTrue(!document.querySelector('tbody.expected'));
+        assertTrue(!document.getElementById('passes-table'));
     });
 
     results = mockResults();
@@ -372,8 +380,6 @@ function runTests()
     });
 
     shouldUseTracLinks = oldShouldUseTracLinks;
-
-    runDefaultSingleRowTest('bar-flaky-crash.html', 'TEXT', 'TIMEOUT CRASH AUDIO', false, 'expected actual diff stack expected audio actual audio ', '');
 
     results = mockResults();
     results.tests['bar.html'] = mockExpectation('PASS', 'IMAGE');

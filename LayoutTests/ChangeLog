@@ -1,3 +1,16 @@
+2011-05-04  Ojan Vafai  <ojan@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        [results.html] bucket crashes/timeouts into their own test lists
+        https://bugs.webkit.org/show_bug.cgi?id=60181
+
+        Also, don't show the "expected to fail but passed" table for ports
+        that don't use an expectation file.
+
+        * fast/harness/resources/results-test.js:
+        * fast/harness/results.html:
+
 2011-05-04  Andrey Kosyakov  <caseq@chromium.org>
 
         Unreviewed. Attempt to resolve flakiness on windows.
