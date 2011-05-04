@@ -925,7 +925,7 @@ WebInspector.StylePropertiesSection.prototype = {
 
     _handleEmptySpaceDoubleClick: function(event)
     {
-        if (event.target.hasStyleClass("header")) {
+        if (event.target.hasStyleClass("header") || this.element.hasStyleClass("read-only")) {
             event.stopPropagation();
             return;
         }
