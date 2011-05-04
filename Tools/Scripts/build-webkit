@@ -477,7 +477,6 @@ if (isGtk()) {
 
     # Copy library and header from WebKitLibraries to a findable place in the product directory.
     my @librariesToCopy = (
-        "libWebKitSystemInterfaceTiger.a",
         "libWebKitSystemInterfaceLeopard.a",
         "libWebKitSystemInterfaceSnowLeopard.a",
         "libWebCoreSQLite3.a",
