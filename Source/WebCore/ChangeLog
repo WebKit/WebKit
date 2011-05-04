@@ -1,3 +1,19 @@
+2011-05-04  Mihai Parparita  <mihaip@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        Remove double-free checks for bug 56124
+        https://bugs.webkit.org/show_bug.cgi?id=60037
+
+        Antti's speculative fix for bug 56124 (r84151) appears to have worked,
+        these CRASH() calls are not triggering anymore.
+
+        * css/CSSSelector.h:
+        (WebCore::CSSSelector::CSSSelector):
+        (WebCore::CSSSelector::~CSSSelector):
+        * css/CSSSelectorList.cpp:
+        (WebCore::CSSSelectorList::deleteSelectors):
+
 2011-05-04  Satish Sampath  <satish@chromium.org>
 
         Reviewed by Tony Gentilcore.
