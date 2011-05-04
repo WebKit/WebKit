@@ -1,3 +1,21 @@
+2011-05-04  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Ojan Vafai.
+
+        sheriff-bot can't parse results.html
+        https://bugs.webkit.org/show_bug.cgi?id=60196
+
+        The problem was that the NRWT bots are currently core
+        and so sheriff-bot was trying to diagnose failures on
+        them.  It was trying to parse their results.html file
+        and BeautifulSoup was throwing an exception.
+
+        It seems our version of BeautifulSoup was quite old
+        and unable to handle <script> tags correctly.
+        This moves us to 3.2 which doesn't seem to have this bug.
+
+        * Scripts/webkitpy/thirdparty/BeautifulSoup.py:
+
 2011-05-04  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Eric Seidel.
