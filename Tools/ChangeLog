@@ -1,3 +1,10 @@
+2011-05-04  Adam Barth  <abarth@webkit.org>
+
+        Fix import of ircproxy module to actually import the module.  I don't
+        really understand how this code could have worked before.
+
+        * Scripts/webkitpy/common/host.py:
+
 2011-05-04  Siddharth Mathur  <siddharth.mathur@nokia.com>
 
         Reviewed by Andreas Kling.

@@ -31,7 +31,8 @@
 from webkitpy.common.checkout import Checkout
 from webkitpy.common.checkout.scm import default_scm
 from webkitpy.common.config.ports import WebKitPort
-from webkitpy.common.net import bugzilla, buildbot, irc, statusserver
+from webkitpy.common.net import bugzilla, buildbot, statusserver
+from webkitpy.common.net.irc import ircproxy
 from webkitpy.common.system import executive, filesystem, platforminfo, user, workspace
 from webkitpy.layout_tests import port
 
@@ -67,7 +68,7 @@ class Host(object):
 
     def ensure_irc_connected(self, irc_delegate):
         if not self._irc:
-            self._irc = irc.ircproxy.IRCProxy(irc_delegate)
+            self._irc = ircproxy.IRCProxy(irc_delegate)
 
     def irc(self):
         # We don't automatically construct IRCProxy here because constructing
