@@ -1,3 +1,16 @@
+2011-05-04  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        [EFL] Initialize viewport argument in ewk_view.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=60147
+
+        viewport computation logic can't be worked correctly because viewport argument
+        isn't initialized. So, we need to initialize viewport argument.
+
+        * ewk/ewk_view.cpp:
+        (_ewk_view_priv_new):
+
 2011-05-03  Leandro Pereira  <leandro@profusion.mobi>
 
         [EFL] Unreviewed build fix for NETWORK_BACKEND=curl.

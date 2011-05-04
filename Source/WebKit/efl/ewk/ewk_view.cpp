@@ -562,6 +562,14 @@ static Ewk_View_Private_Data* _ewk_view_priv_new(Ewk_View_Smart_Data* sd)
         goto error_settings;
     }
 
+    priv->viewport_arguments.width = WebCore::ViewportArguments::ValueAuto;
+    priv->viewport_arguments.height = WebCore::ViewportArguments::ValueAuto;
+    priv->viewport_arguments.initialScale = WebCore::ViewportArguments::ValueAuto;
+    priv->viewport_arguments.minimumScale = WebCore::ViewportArguments::ValueAuto;
+    priv->viewport_arguments.maximumScale = WebCore::ViewportArguments::ValueAuto;
+    priv->viewport_arguments.targetDensityDpi = WebCore::ViewportArguments::ValueAuto;
+    priv->viewport_arguments.userScalable = EINA_TRUE;
+
     priv->page_settings->setLoadsImagesAutomatically(true);
     priv->page_settings->setDefaultFixedFontSize(12);
     priv->page_settings->setDefaultFontSize(16);
