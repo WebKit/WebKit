@@ -3941,9 +3941,6 @@ BUGWK59768 WIN LINUX GPU : canvas/philip/tests/2d.shadow.alpha.5.html = TEXT
 // flakiness on the deps bots (noted r~83476)
 BUGWK60105 DEBUG : fast/css/empty-pseudo-class.html = PASS TEXT
 
-// Also affected by WK50661
-BUGWK59742 MAC : fast/speech/input-appearance-numberandspeech.html = IMAGE+TEXT PASS
-
 BUGWK59782 WIN LINUX : fast/box-shadow/single-pixel-shadow.html = IMAGE
 BUGWK59782 WIN MAC LINUX RELEASE : svg/dynamic-updates/SVGFEDropShadowElement-dom-shadow-color-attr.html = IMAGE
 BUGWK59782 WIN MAC LINUX RELEASE : svg/dynamic-updates/SVGFEDropShadowElement-dom-shadow-opacity-attr.html = IMAGE

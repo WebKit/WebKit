@@ -1,3 +1,13 @@
+2011-05-04  Satish Sampath  <satish@chromium.org>
+
+        Reviewed by Tony Gentilcore.
+
+        Layout the speech input button to the left of outer spin button properly.
+        https://bugs.webkit.org/show_bug.cgi?id=59742
+
+        * rendering/RenderTextControlSingleLine.cpp:
+        (WebCore::RenderTextControlSingleLine::layout):
+
 2011-05-04  Yury Semikhatsky  <yurys@chromium.org>
 
         Unreviewed. Build fix.

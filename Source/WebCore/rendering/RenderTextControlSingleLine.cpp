@@ -309,6 +309,9 @@ void RenderTextControlSingleLine::layout()
             button->setLocation(x, y);
         } else {
             int x = width() - borderRight() - paddingRight() - button->width();
+            if (m_outerSpinButton && m_outerSpinButton->renderBox())
+                x -= m_outerSpinButton->renderBox()->width();
+
             RenderBox* spinBox = m_innerSpinButton ? m_innerSpinButton->renderBox() : 0;
             if (style()->isLeftToRightDirection())
                 x -= spinBox ? spinBox->width() : 0;
