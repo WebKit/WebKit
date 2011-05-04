@@ -152,12 +152,14 @@ function globalState()
     if (!g_state) {
         g_state = {
             crashTests: [],
+            flakyTests: [],
             hasHttpTests: false,
             hasImageFailures: false,
             hasTextFailures: false,
             newTests: [],
             results: {},
             shouldToggleImages: true,
+            nonFlakyFailingTests: [],
             testsWithStderr: [],
             timeoutTests: [],
             unexpectedPassTests: []
@@ -365,34 +367,19 @@ function resultLink(testPrefix, suffix, contents)
     return '<a class=result-link href="' + testPrefix + suffix + '" data-prefix="' + testPrefix + '">' + contents + '</a> ';
 }
 
-function testObjectFor(test)
-{
-    var parts = test.split('/');
-    var tree = globalState().results.tests;
-    for (var i = 0; i < parts.length; i++) {
-        if (parts[i] in tree)
-            tree = tree[parts[i]];
-        else {
-            console.error('Test not in the results tree: ' + test);
-            return null;
-        }
-    }
-    return tree;
-}
-
 function processGlobalStateFor(testObject)
 {
     var test = testObject.name;
     if (testObject.has_stderr)
-        globalState().testsWithStderr.push(test);
+        globalState().testsWithStderr.push(testObject);
 
     globalState().hasHttpTests = globalState().hasHttpTests || test.indexOf('http/') == 0;
 
-    var actual = testObject.actual;
+    var actual = testObject.actual;    
     if (actual == 'MISSING') {
         // FIXME: make sure that new-run-webkit-tests spits out an -actual.txt file for
         // tests with MISSING results.
-        globalState().newTests.push(test);
+        globalState().newTests.push(testObject);
         return;
     }
 
@@ -410,21 +397,27 @@ function processGlobalStateFor(testObject)
         }
     }
 
-    if (actual == 'PASS' && expected != 'PASS')
-        globalState().unexpectedPassTests.push(test);            
-
-    if (globalState().results.uses_expectations_file && testObject.isExpected)
-        return;
-
-    // FIXME: Show some indication in the UI for a test that doesn't crash on the first run but crashes on the second run.
-    if (actual.indexOf('CRASH') != -1) {
-        globalState().crashTests.push(test);
+    if (actual.indexOf(' ') != -1) {
+        globalState().flakyTests.push(testObject);
         return;
     }
 
-    // FIXME: Show some indication in the UI for a test only times out on one run?
-    if (actual.indexOf('TIMEOUT') != -1)
-        globalState().timeoutTests.push(test);
+    if (actual == 'PASS' && expected != 'PASS') {
+        globalState().unexpectedPassTests.push(testObject);
+        return;
+    }
+
+    if (actual == 'CRASH' && expected != 'CRASH') {
+        globalState().crashTests.push(testObject);
+        return;
+    }
+
+    if (actual == 'TIMEOUT' && expected != 'TIMEOUT') {
+        globalState().timeoutTests.push(testObject);
+        return;
+    }
+    
+    globalState().nonFlakyFailingTests.push(testObject);
 }
 
 function toggleImages()
@@ -510,8 +503,11 @@ function tableRow(testObject)
 
     row += '</td>';
 
+    if (globalState().results.uses_expectations_file || actual.indexOf(' ') != -1)
+        row += '<td>' + actual + '</td>';
+
     if (globalState().results.uses_expectations_file)
-        row += '<td>' + actual + '</td><td>' + testObject.expected + '</td>';
+        row += '<td>' + testObject.expected + '</td>';
 
     row += '</tr></tbody>';
     return row;
@@ -533,21 +529,6 @@ function forEachTest(handler, opt_tree, opt_prefix)
     }
 }
 
-function tableRows()
-{
-    var html = '';
-    forEachTest(function(testObject) {
-        processGlobalStateFor(testObject)
-        var test = testObject.name;
-        if (globalState().unexpectedPassTests.indexOf(test) == -1 &&
-            globalState().newTests.indexOf(test) == -1 &&
-            globalState().crashTests.indexOf(test) == -1 &&
-            globalState().timeoutTests.indexOf(test) == -1)
-            html += tableRow(testObject);
-    });
-    return html;
-}
-
 function testList(tests, header, tableId)
 {
     tests.sort();
@@ -558,7 +539,8 @@ function testList(tests, header, tableId)
         html += '<thead><th>test</th><th>expected failure</th></thead>';
 
     for (var i = 0; i < tests.length; i++) {
-        var test = tests[i];
+        var testObject = tests[i];
+        var test = testObject.name;
         html += '<tbody><tr><td>';
         html += (tableId == 'passes-table') ? testLink(test) : testLinkWithExpandButton(test);
         html += '</td><td>';
@@ -566,14 +548,13 @@ function testList(tests, header, tableId)
         if (tableId == 'stderr-table')
             html += resultLink(stripExtension(test), '-stderr.txt', 'stderr');
         else if (tableId == 'passes-table')
-            html += testObjectFor(test).expected;
+            html += testObject.expected;
         else if (tableId == 'crash-tests-table')
             html += resultLink(stripExtension(test), '-stack.txt', 'crash stack');
         else if (tableId == 'timeout-tests-table') {
             // FIXME: only include timeout actual/diff results here if we actually spit out results for timeout tests.
             html += textResultLinks(stripExtension(test));
         } else if (tableId == 'new-tests-table') {
-            var testObject = testObjectFor(test);
             if (testObject.is_missing_audio)
                 html += resultLink(stripExtension(test), '-actual.wav', 'audio result');
             if (testObject.is_missing_text)
@@ -910,8 +891,36 @@ function handleMouseDown(e)
 
 document.addEventListener('mousedown', handleMouseDown, false);
 
+function failingTestsTable(tests, title, id)
+{
+    if (!tests.length)
+        return '';
+
+    var html = '<p>' + title + ':</p>' +
+        '<table id="' + id + '"><thead><tr>' +
+        '<th>test</th>' +
+        '<th id="text-results-header">results</th>' +
+        '<th id="image-results-header">image results</th>';
+
+    if (globalState().results.uses_expectations_file)
+        html += '<th>actual failure</th><th>expected failure</th>';
+
+    if (id == 'flaky-tests-table')
+        html += '<th>failures</th>';
+
+    html += '</tr></thead>';
+
+    for (var i = 0; i < tests.length; i++)
+        html += tableRow(tests[i]);
+
+    return html + '</table>';
+}
+
+
 function generatePage()
 {
+    forEachTest(processGlobalStateFor);
+
     var html = '<div id=toolbar>' +
         '<a href="javascript:void()" onclick="expandAllExpectations()">expand all</a> ' +
         '<a href="javascript:void()" onclick="collapseAllExpectations()">collapse all</a> ' +
@@ -921,20 +930,11 @@ function generatePage()
             '<label><input id="toggle-images" type=checkbox checked onchange="handleToggleImagesChange()">Toggle images</label>' +
         '</div></div>';
 
-    var tableRowsHtml = tableRows();
+    html += failingTestsTable(globalState().nonFlakyFailingTests,
+        'Tests where results did not match expected results', 'results-table');
 
-    if (tableRowsHtml) {
-        html += '<p>Tests where results did not match expected results:</p>' +
-            '<table id="results-table"><thead><tr>' +
-            '<th>test</th>' +
-            '<th id="text-results-header">results</th>' +
-            '<th id="image-results-header">image results</th>';
-
-        if (globalState().results.uses_expectations_file)
-            html += '<th>actual failure</th><th>expected failure</th>';
-
-        html += '</tr></thead>' + tableRowsHtml + '</table>';
-    }
+    html += failingTestsTable(globalState().flakyTests,
+        'Flaky tests (failed the first run and got a different result on retry)', 'flaky-tests-table');
 
     if (globalState().crashTests.length)
         html += testList(globalState().crashTests, 'Tests that crashed:', 'crash-tests-table');

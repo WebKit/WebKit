@@ -2,6 +2,17 @@
 
         Reviewed by Eric Seidel.
 
+        [results.html] put flaky tests into their own table
+        https://bugs.webkit.org/show_bug.cgi?id=60214
+
+        * fast/harness/resources/results-test.js:
+        * fast/harness/results-expected.txt:
+        * fast/harness/results.html:
+
+2011-05-04  Ojan Vafai  <ojan@chromium.org>
+
+        Reviewed by Eric Seidel.
+
         [results.html] fix apply options on page load
         https://bugs.webkit.org/show_bug.cgi?id=60217
 

@@ -269,8 +269,19 @@ function runTests()
     var subtree = results.tests['foo'] = {}
     subtree['bar-flaky-fail.html'] = mockExpectation('PASS TEXT', 'IMAGE PASS');
     runTest(results, function() {
-        assertTrue(document.getElementById('results-table'));
+        assertTrue(!document.getElementById('results-table'));
+        assertTrue(document.getElementById('flaky-tests-table'));
         assertTrue(document.body.textContent.indexOf('bar-flaky-fail.html') != -1);
+    });
+
+    results = mockResults();
+    var subtree = results.tests['foo'] = {}
+    subtree['bar-flaky-expected.html'] = mockExpectation('PASS FAIL', 'PASS TEXT');
+    runTest(results, function() {
+        assertTrue(!document.getElementById('results-table'));
+        assertTrue(document.getElementById('flaky-tests-table'));
+        assertTrue(document.body.textContent.indexOf('bar-flaky-expected.html') != -1);
+        assertTrue(document.querySelector('tbody').className == 'expected');
     });
 
     results = mockResults();
@@ -289,11 +300,13 @@ function runTests()
     subtree['bar.html'] = mockExpectation('TEXT', 'TEXT');
     subtree['bar1.html'] = mockExpectation('CRASH', 'PASS');
     subtree['bar2.html'] = mockExpectation('IMAGE', 'PASS');
+    subtree['flaky-fail.html'] = mockExpectation('PASS TEXT', 'IMAGE PASS');
     results.uses_expectations_file = false;
     runTest(results, function() {
         assertTrue(document.querySelectorAll('#results-table tbody td').length == 3);
         assertTrue(!document.querySelector('tbody.expected'));
         assertTrue(!document.getElementById('passes-table'));
+        assertTrue(document.querySelectorAll('#flaky-tests-table tbody td').length == 4);
     });
 
     results = mockResults();
