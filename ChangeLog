@@ -1,3 +1,13 @@
+2011-05-03  Lucas De Marchi  <lucas.demarchi@profusion.mobi>
+
+        Unreviewed, rolling out r85624.
+        http://trac.webkit.org/changeset/85624
+
+        The same command is used also for make_names.pl, which breaks
+        the build.
+
+        * Source/cmake/OptionsCommon.cmake: ditto.
+
 2011-05-03  Leandro Pereira  <leandro@profusion.mobi>
 
         [EFL] Unreviewed build fix for NETWORK_BACKEND=curl.
