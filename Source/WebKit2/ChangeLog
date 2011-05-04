@@ -1,3 +1,19 @@
+2011-05-04  Adam Roben  <aroben@apple.com>
+
+        Let transparent windowless plugins draw into a graphics context with an alpha channel
+
+        Fixes <http://webkit.org/b/57647> <rdar://problem/9168462> Flash plugins with
+        wmode=transparent have black (instead of transparent) background in WebKit2 on Windows
+
+        I had trouble writing a test case for this, so I split that task out into
+        <http://webkit.org/b/60169>.
+
+        Reviewed by Sam Weinig.
+
+        * WebProcess/Plugins/Netscape/win/NetscapePluginWin.cpp:
+        (WebKit::NetscapePlugin::platformPaint): Give the graphics context an alpha channel if this
+        is a transparent windowless plugin.
+
 2011-05-03  Adam Roben  <aroben@apple.com>
 
         Remove WebPageProxy::setDrawingArea

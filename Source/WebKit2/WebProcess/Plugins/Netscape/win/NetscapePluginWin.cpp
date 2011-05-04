@@ -179,8 +179,7 @@ void NetscapePlugin::platformPaint(GraphicsContext* context, const IntRect& dirt
 
     m_pluginController->willSendEventToPlugin();
     
-    // FIXME: Support transparent plugins.
-    LocalWindowsContext windowsContext(context, dirtyRect, false);
+    LocalWindowsContext windowsContext(context, dirtyRect, m_isTransparent);
 
     m_npWindow.type = NPWindowTypeDrawable;
     m_npWindow.window = windowsContext.hdc();
