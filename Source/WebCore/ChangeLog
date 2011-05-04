@@ -1,3 +1,11 @@
+2011-05-03  Alpha Lam  <hclam@chromium.org>
+
+        Not reviewed. Build fix.
+
+        Using nullptr instead of 0. This makes visual studio happy.
+
+        * storage/IDBTransactionBackendInterface.h:
+
 2011-05-03  Luke Macpherson   <macpherson@chromium.org>
 
         Reviewed by Dimitri Glazkov.
