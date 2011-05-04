@@ -888,6 +888,14 @@ AC_ARG_ENABLE(animation_api,
               [], [enable_animation_api="no"])
 AC_MSG_RESULT([$enable_animation_api])
 
+# check whether to enable animation API
+AC_MSG_CHECKING([whether to enable touch icon loading])
+AC_ARG_ENABLE(animation_api,
+              AC_HELP_STRING([--enable-touch-icon-loading],
+                             [enable support for loading touch icons [default=no]]),
+              [], [enable_touch_icon_loading="no"])
+AC_MSG_RESULT([$enable_touch_icon_loading])
+
 G_IR_SCANNER=
 G_IR_COMPILER=
 G_IR_GENERATE=
@@ -1131,6 +1139,7 @@ AM_CONDITIONAL([ENABLE_OPCODE_STATS],[test "$enable_opcode_stats" = "yes"])
 AM_CONDITIONAL([ENABLE_WEBKIT2],[test "$enable_webkit2" = "yes"])
 AM_CONDITIONAL([ENABLE_SPELLCHECK],[test "$enable_spellcheck" = "yes"])
 AM_CONDITIONAL([ENABLE_ANIMATION_API],[test "$enable_animation_api" = "yes"])
+AM_CONDITIONAL([ENABLE_TOUCH_ICON_LOADING],[test "$enable_touch_icon_loading" = "yes"])
 
 # Gtk conditionals
 AM_CONDITIONAL([ENABLE_INTROSPECTION],[test "$enable_introspection" = "yes"])
