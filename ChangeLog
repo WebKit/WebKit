@@ -1,5 +1,18 @@
 2011-05-03  Lucas De Marchi  <lucas.demarchi@profusion.mobi>
 
+        Reviewed by Xan Lopez.
+
+        [CMAKE] Remove C++0x compat mode warnings for GCC >= 4.6.0
+        https://bugs.webkit.org/show_bug.cgi?id=60041
+
+        Hardcode -Wno-c++0x-compat for the default compiler (if version >=
+        4.6.0) until our codebase is ready. This is the same as done for
+        autotools.
+
+        * Source/cmake/WebKitHelpers.cmake: ditto.
+
+2011-05-03  Lucas De Marchi  <lucas.demarchi@profusion.mobi>
+
         Unreviewed, rolling out r85624.
         http://trac.webkit.org/changeset/85624
 

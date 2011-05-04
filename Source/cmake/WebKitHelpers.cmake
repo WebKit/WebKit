@@ -23,6 +23,12 @@ MACRO(WEBKIT_SET_EXTRA_COMPILER_FLAGS _target)
     # Enable warnings by default
     SET(OLD_COMPILE_FLAGS "-W -DANOTHER_BRICK_IN_THE -Wall -Wextra -Wcast-align -Wchar-subscripts -Wformat -Wformat-security -Wmissing-format-attribute -Wno-format-y2k -Wno-parentheses -Wno-unused-parameter -Wpointer-arith  -Wreturn-type -Wundef -Wwrite-strings ${OLD_COMPILE_FLAGS}")
 
+    # Disable C++0x compat warnings for GCC >= 4.6.0 until we build
+    # cleanly with that.
+    IF (NOT ${COMPILER_VERSION} VERSION_LESS "4.6.0")
+        SET(OLD_COMPILE_FLAGS "${OLD_COMPILE_FLAGS} -Wno-c++0x-compat")
+    ENDIF ()
+
     SET_TARGET_PROPERTIES (${_target} PROPERTIES
 	COMPILE_FLAGS "${OLD_COMPILE_FLAGS}")
 
