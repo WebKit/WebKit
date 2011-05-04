@@ -21,8 +21,9 @@
 
 #include <QObject>
 
-#include <QNetworkRequest>
 #include <QNetworkAccessManager>
+#include <QNetworkReply>
+#include <QNetworkRequest>
 
 #include "FormData.h"
 #include "QtMIMETypeSniffer.h"
@@ -70,7 +71,7 @@ public:
     QNetworkReply* reply() const { return m_reply; }
     QNetworkReply* release();
 
-    void synchronousLoad() { receiveMetaData(); }
+    void synchronousLoad();
 
     QUrl redirectionTargetUrl() const { return m_redirectionTargetUrl; }
     QString encoding() const { return m_encoding; }
@@ -80,11 +81,15 @@ public:
     bool responseContainsData() const { return m_responseContainsData; }
     bool wasRedirected() const { return m_redirectionTargetUrl.isValid(); }
 
+    // See setFinished().
+    bool isFinished() const { return m_reply->property("_q_isFinished").toBool(); }
+
 private Q_SLOTS:
     void receiveMetaData();
     void didReceiveFinished();
     void didReceiveReadyRead();
     void receiveSniffedMIMEType();
+    void setFinished();
 
 private:
     void resetConnections();

@@ -1,3 +1,49 @@
+2011-05-04  Caio Marcelo de Oliveira Filho  <caio.oliveira@openbossa.org>
+
+        Reviewed by Andreas Kling.
+
+        [Qt] Fix QNetworkReplyWrapper to not depend on QNetworkReply::isFinished() method
+        https://bugs.webkit.org/show_bug.cgi?id=59070
+
+        Applications using our API and our autotests subclass QNetworkReply as part of providing a
+        custom QNetworkAccessManager. But there's an API limitation in Qt 4.7, that makes
+        QNetworkReply::isFinished() always be false for these custom replies. This was fixed in Qt
+        4.8, see http://bugreports.qt.nokia.com/browse/QTBUG-11737.
+
+        The consequence is that QtWebKit cannot rely on this function. So now QNetworkReplyWrapper
+        watches for the finished() signal and set a dynamic property "_q_isFinished" on the reply
+        indicating that it is finished. When there's no finished signal (synchronous) we set the
+        dynamic property once we get the reply.
+
+        This fixes tst_QWebFrame::requestedUrl(), that was breaking because sniffer was not
+        emitting its own finished() signal, causing QWebFrame::loadFinished() to not be emitted.
+
+        * platform/network/qt/QNetworkReplyHandler.cpp:
+        (WebCore::QNetworkReplyWrapper::QNetworkReplyWrapper):
+        Connect the finished signal to the new setFinished() slot.
+
+        (WebCore::QNetworkReplyWrapper::synchronousLoad):
+        Since we don't get the finished signal for synchronous loads, set the dynamic property
+        before processing it.
+
+        (WebCore::QNetworkReplyWrapper::resetConnections):
+        Do not reset the connection to setFinished().
+
+        (WebCore::QNetworkReplyWrapper::setFinished):
+        Set the dynamic property in the reply.
+
+        (WebCore::QNetworkReplyWrapper::emitMetaDataChanged):
+        (WebCore::QNetworkReplyHandler::start):
+        Change to use wrapper's isFinished() instead of asking the reply directly.
+
+        * platform/network/qt/QNetworkReplyHandler.h:
+        (WebCore::QNetworkReplyWrapper::isFinished):
+        Checks the dynamic property of the reply.
+
+        * platform/network/qt/QtMIMETypeSniffer.cpp:
+        (QtMIMETypeSniffer::sniff):
+        Use the dynamic property to check if the reply is finished.
+
 2011-05-04  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Ryosuke Niwa.

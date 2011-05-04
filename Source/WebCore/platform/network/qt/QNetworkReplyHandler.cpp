@@ -214,8 +214,10 @@ QNetworkReplyWrapper::QNetworkReplyWrapper(QNetworkReplyHandlerCallQueue* queue,
 {
     Q_ASSERT(m_reply);
 
-    connect(m_reply, SIGNAL(readyRead()), this, SLOT(receiveMetaData()));
+    // setFinished() must be the first that we connect, so isFinished() is updated when running other slots.
+    connect(m_reply, SIGNAL(finished()), this, SLOT(setFinished()));
     connect(m_reply, SIGNAL(finished()), this, SLOT(receiveMetaData()));
+    connect(m_reply, SIGNAL(readyRead()), this, SLOT(receiveMetaData()));
 }
 
 QNetworkReplyWrapper::~QNetworkReplyWrapper()
@@ -239,10 +241,20 @@ QNetworkReply* QNetworkReplyWrapper::release()
     return reply;
 }
 
+void QNetworkReplyWrapper::synchronousLoad()
+{
+    setFinished();
+    receiveMetaData();
+}
+
 void QNetworkReplyWrapper::resetConnections()
 {
-    if (m_reply)
-        m_reply->disconnect(this);
+    if (m_reply) {
+        // Disconnect all connections except the one to setFinished() slot.
+        m_reply->disconnect(this, SLOT(receiveMetaData()));
+        m_reply->disconnect(this, SLOT(didReceiveFinished()));
+        m_reply->disconnect(this, SLOT(didReceiveReadyRead()));
+    }
     QCoreApplication::removePostedEvents(this, QEvent::MetaCall);
 }
 
@@ -293,6 +305,16 @@ void QNetworkReplyWrapper::receiveSniffedMIMEType()
     emitMetaDataChanged();
 }
 
+void QNetworkReplyWrapper::setFinished()
+{
+    // Due to a limitation of QNetworkReply public API, its subclasses never get the chance to
+    // change the result of QNetworkReply::isFinished() method. So we need to keep track of the
+    // finished state ourselves. This limitation is fixed in 4.8, but we'll still have applications
+    // that don't use the solution. See http://bugreports.qt.nokia.com/browse/QTBUG-11737.
+    Q_ASSERT(!isFinished());
+    m_reply->setProperty("_q_isFinished", true);
+}
+
 void QNetworkReplyWrapper::emitMetaDataChanged()
 {
     QueueLocker lock(m_queue);
@@ -303,7 +325,7 @@ void QNetworkReplyWrapper::emitMetaDataChanged()
         m_queue->push(&QNetworkReplyHandler::forwardData);
     }
 
-    if (m_reply->isFinished()) {
+    if (isFinished()) {
         m_queue->push(&QNetworkReplyHandler::finish);
         return;
     }
@@ -640,7 +662,7 @@ void QNetworkReplyHandler::start()
 
     m_replyWrapper = new QNetworkReplyWrapper(&m_queue, reply, m_resourceHandle->shouldContentSniff() && d->m_context->mimeSniffingEnabled(), this);
 
-    if (m_loadType == SynchronousLoad && m_replyWrapper->reply()->isFinished()) {
+    if (m_loadType == SynchronousLoad) {
         m_replyWrapper->synchronousLoad();
         // If supported, a synchronous request will be finished at this point, no need to hook up the signals.
         return;
