@@ -1,3 +1,12 @@
+2011-05-03  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Darin Adler.
+
+        <rdar://problem/9366557> Various crashes due to bad DFG codegen at canalplus.fr
+
+        * fast/js/trivial-functions-expected.txt: Added.
+        * fast/js/trivial-functions.html: Added.
+
 2011-05-04  Mark Pilgrim  <pilgrim@chromium.org>
 
         Reviewed by Tony Chang.

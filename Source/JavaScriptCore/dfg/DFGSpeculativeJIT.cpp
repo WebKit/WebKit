@@ -904,7 +904,6 @@ void SpeculativeJIT::checkArgumentTypes()
     ASSERT(!m_compileIndex);
     for (int i = 0; i < m_jit.codeBlock()->m_numParameters; ++i) {
         VirtualRegister virtualRegister = (VirtualRegister)(m_jit.codeBlock()->thisRegister() + i);
-        if (m_jit.graph().getPrediction(virtualRegister) == PredictInt32)
         switch (m_jit.graph().getPrediction(virtualRegister)) {
         case PredictInt32:
             speculationCheck(m_jit.branchPtr(MacroAssembler::Below, JITCompiler::addressFor(virtualRegister), GPRInfo::tagTypeNumberRegister));

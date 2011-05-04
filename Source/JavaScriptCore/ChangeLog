@@ -1,3 +1,17 @@
+2011-05-03  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Darin Adler.
+
+        <rdar://problem/9366557> Various crashes due to bad DFG codegen at canalplus.fr
+
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::checkArgumentTypes): Removed a stray line of
+        code that accidentally survived the conversion to a switch statement,
+        causing a lot of important code not to run most of the time.
+
+        Since this is not a trivial finger-picking mistake, I will not call it a
+        typo.
+
 2011-05-04  Adam Roben  <aroben@apple.com>
 
         Another attempted build fix
