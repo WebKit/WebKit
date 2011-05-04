@@ -2,6 +2,13 @@
 
         Unreviewed, expectations triage.
 
+        * platform/chromium-win-xp/svg/css/text-shadow-multiple-expected.png: Removed.
+        * platform/chromium/test_expectations.txt:
+
+2011-05-03  Dirk Pranke  <dpranke@chromium.org>
+
+        Unreviewed, expectations triage.
+
         * platform/chromium/test_expectations.txt:
 
 2011-05-03  Dirk Pranke  <dpranke@chromium.org>

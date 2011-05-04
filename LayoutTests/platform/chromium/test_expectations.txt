@@ -1252,7 +1252,6 @@ BUGCR23488 MAC : fast/layers/layer-content-visibility-change.html = IMAGE
 BUGCR23488 MAC : fast/layers/remove-layer-with-nested-stacking.html = IMAGE
 BUGCR23488 MAC LEOPARD : fast/lists/ol-start-parsing.html = IMAGE
 BUGCR23488 MAC LEOPARD : fast/multicol/positioned-with-constrained-height.html = IMAGE
-BUGCR23488 MAC LEOPARD : fast/text/shadow-translucent-fill.html = IMAGE
 BUGCR23488 MAC : svg/transforms/animated-path-inside-transformed-html.xhtml = IMAGE
 BUGCR23488 MAC : tables/mozilla_expected_failures/bugs/bug178855.xml = IMAGE
 
@@ -2806,7 +2805,6 @@ BUGWK53347 WIN LINUX DEBUG : fast/repaint/4774354.html = PASS TIMEOUT
 BUGCR71418 MAC : fast/borders/border-radius-split-inline.html = IMAGE
 //BUGCR71418 MAC : fast/repaint/box-shadow-h.html = IMAGE PASS
 //BUGCR71418 MAC : fast/repaint/box-shadow-v.html = IMAGE PASS
-BUGCR71418 MAC : fast/transforms/shadows.html = IMAGE PASS
 
 BUGWK53446 DEBUG : http/tests/navigation/forward-and-cancel.html = PASS TEXT
 BUGWK53446 LINUX RELEASE : http/tests/navigation/forward-and-cancel.html = PASS TEXT
@@ -3831,12 +3829,15 @@ BUGCR80301 MAC LEOPARD : fast/canvas/canvas-largedraws.html = TIMEOUT
 BUGDPRANKE : fast/dom/dataset-gc.html = TEXT
 BUGDPRANKE WIN LINUX : fast/backgrounds/gradient-background-leakage.html = IMAGE
 BUGDPRANKE : fast/forms/validation-message-appearance.html = IMAGE
-BUGDPRANKE : fast/multicol/shadow-breaking.html = IMAGE
-BUGDPRANKE WIN : fast/text/shadow-translucent-fill.html = IMAGE
-BUGDPRANKE WIN : fast/transforms/shadows.html = IMAGE
-BUGDPRANKE WIN : svg/css/group-with-shadow.svg = IMAGE
-BUGDPRANKE WIN : svg/css/text-shadow-multiple.xhtml = IMAGE
-BUGDPRANKE WIN : transitions/svg-text-shadow-transition.html = IMAGE
+
+BUGWK60115 WIN LINUX : fast/multicol/shadow-breaking.html = IMAGE
+BUGWK60115 WIN : fast/text/shadow-translucent-fill.html = IMAGE
+BUGWK60115 LEOPARD : fast/text/shadow-translucent-fill.html = IMAGE
+BUGWK60115 WIN MAC : fast/transforms/shadows.html = IMAGE
+BUGWK60115 WIN : svg/css/group-with-shadow.svg = IMAGE
+BUGWK60115 WIN : transitions/svg-text-shadow-transition.html = IMAGE
+BUGWK60115 WIN : svg/css/composite-shadow-text.svg = IMAGE
+BUGWK60115 WIN : svg/css/shadow-changes.svg = IMAGE
 
 // flakiness on deps bots from r84685:r84721??
 BUGDPRANKE MAC LEOPARD DEBUG : http/tests/local/stylesheet-and-script-load-order.html = CRASH PASS
@@ -3938,11 +3939,9 @@ BUGKBR WIN LINUX : http/tests/inspector/resource-tree/resource-tree-frame-naviga
 BUGCR80745 DEBUG: editing/pasteboard/paste-blockquote-into-blockquote-3.html = PASS CRASH
 BUGWK59726 : fast/dom/shadow/gc-shadow.html = PASS TEXT
 
-BUGDPRANKE : fast/css/epub-properties.html = TEXT
+BUGWK60112 : fast/css/epub-properties.html = TEXT
 
 BUGDPRANKE WIN : http/tests/xmlviewer/dumpAsText/xmlviewer.xml = TEXT
-BUGDPRANKE WIN : svg/css/composite-shadow-text.svg = IMAGE
-BUGDPRANKE WIN : svg/css/shadow-changes.svg = IMAGE
 
 // Flakiness on canaries (noted ~ r85280)
 BUGDPRANKE SNOWLEOPARD DEBUG : svg/dom/vkern-element-crash.html = CRASH PASS
