@@ -47,7 +47,9 @@ function test()
                 InspectorTest.addResult("Before controls enabled");
                 InspectorTest.dumpElementsTree(node);
                 InspectorTest.evaluateInPage("addShadowRoot()", function() {
-                    InspectorTest.expandElementsTree(dumpWithControlsEnabled);
+                    InspectorTest.runAfterPendingDispatches(function() {
+                        InspectorTest.expandElementsTree(dumpWithControlsEnabled);
+                    });
                 });
             });
         }

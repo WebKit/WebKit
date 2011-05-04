@@ -1,5 +1,11 @@
 2011-05-04  Andrey Kosyakov  <caseq@chromium.org>
 
+        Unreviewed. Attempt to resolve flakiness on windows.
+
+        * inspector/elements/shadow-dom.html:
+
+2011-05-04  Andrey Kosyakov  <caseq@chromium.org>
+
         Reviewed by Yury Semikhatsky.
 
         Web Inspector: expose shadow DOM in the Elements panel
