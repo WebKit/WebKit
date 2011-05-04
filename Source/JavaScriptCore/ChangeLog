@@ -1,3 +1,45 @@
+2011-05-03  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Geoffrey Garen.
+
+        Make malloc validation useful
+        https://bugs.webkit.org/show_bug.cgi?id=57502
+
+        Reland this patch (rolled out in 82905) without
+        turning it on by default.
+
+        * JavaScriptCore.exp:
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.def:
+        * wtf/FastMalloc.cpp:
+        (WTF::tryFastMalloc):
+        (WTF::fastMalloc):
+        (WTF::tryFastCalloc):
+        (WTF::fastCalloc):
+        (WTF::fastFree):
+        (WTF::tryFastRealloc):
+        (WTF::fastRealloc):
+        (WTF::fastMallocSize):
+        (WTF::TCMalloc_PageHeap::isScavengerSuspended):
+        (WTF::TCMalloc_PageHeap::scheduleScavenger):
+        (WTF::TCMalloc_PageHeap::suspendScavenger):
+        (WTF::TCMalloc_PageHeap::signalScavenger):
+        (WTF::TCMallocStats::malloc):
+        (WTF::TCMallocStats::free):
+        (WTF::TCMallocStats::fastCalloc):
+        (WTF::TCMallocStats::tryFastCalloc):
+        (WTF::TCMallocStats::calloc):
+        (WTF::TCMallocStats::fastRealloc):
+        (WTF::TCMallocStats::tryFastRealloc):
+        (WTF::TCMallocStats::realloc):
+        (WTF::TCMallocStats::fastMallocSize):
+        * wtf/FastMalloc.h:
+        (WTF::Internal::fastMallocValidationHeader):
+        (WTF::Internal::fastMallocValidationSuffix):
+        (WTF::Internal::fastMallocMatchValidationType):
+        (WTF::Internal::setFastMallocMatchValidationType):
+        (WTF::fastMallocMatchValidateFree):
+        (WTF::fastMallocValidate):
+
 2011-05-03  Xan Lopez  <xlopez@igalia.com>
 
         Reviewed by Anders Carlsson.
