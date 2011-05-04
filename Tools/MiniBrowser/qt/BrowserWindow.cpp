@@ -123,11 +123,19 @@ BrowserWindow::BrowserWindow(QWKContext* context, WindowOptions* options)
     connect(m_addressBar, SIGNAL(returnPressed()), SLOT(changeLocation()));
 
     QToolBar* bar = addToolBar("Navigation");
+#if defined(Q_OS_SYMBIAN)
+    bar->setIconSize(QSize(16, 16));
+#endif
     bar->addAction(page()->action(QWKPage::Back));
     bar->addAction(page()->action(QWKPage::Forward));
     bar->addAction(page()->action(QWKPage::Reload));
     bar->addAction(page()->action(QWKPage::Stop));
+#if defined(Q_OS_SYMBIAN)
+    addToolBarBreak();
+    addToolBar("Location")->addWidget(m_addressBar);
+#else
     bar->addWidget(m_addressBar);
+#endif
 
     QShortcut* selectAddressBar = new QShortcut(Qt::CTRL | Qt::Key_L, this);
     connect(selectAddressBar, SIGNAL(activated()), this, SLOT(openLocation()));
