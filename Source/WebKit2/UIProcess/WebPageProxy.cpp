@@ -194,14 +194,6 @@ bool WebPageProxy::isValid()
     return m_isValid;
 }
 
-void WebPageProxy::setDrawingArea(PassOwnPtr<DrawingAreaProxy> drawingArea)
-{
-    if (drawingArea == m_drawingArea)
-        return;
-
-    m_drawingArea = drawingArea;
-}
-
 void WebPageProxy::initializeLoaderClient(const WKPageLoaderClient* loadClient)
 {
     m_loaderClient.initialize(loadClient);

@@ -1,3 +1,23 @@
+2011-05-03  Adam Roben  <aroben@apple.com>
+
+        Disallow equality comparisons between [Pass]OwnPtrs
+
+        If you have two OwnPtrs that are equal, you've already lost. (Unless you're doing something
+        really sneaky, in which case you should stop!)
+
+        Fixes <http://webkit.org/b/60053> Testing OwnPtrs for equality should cause a compiler error
+
+        Reviewed by Anders Carlsson and Antti Koivisto.
+
+        * wtf/OwnPtr.h:
+        (WTF::OwnPtr::operator==):
+        (WTF::OwnPtr::operator!=):
+        * wtf/PassOwnPtr.h:
+        (WTF::PassOwnPtr::operator==):
+        (WTF::PassOwnPtr::operator!=):
+        Added private equality operators that fail to compile when used. (When not used, the
+        compiler will skip over them because they are function templates.)
+
 2011-05-04  Alexis Menard  <alexis.menard@openbossa.org>
 
         Reviewed by Gavin Barraclough.

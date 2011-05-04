@@ -1,3 +1,20 @@
+2011-05-03  Adam Roben  <aroben@apple.com>
+
+        Remove WebPageProxy::setDrawingArea
+
+        It is unused. It also does a useless equality comparison between OwnPtrs; if they are equal,
+        we've already lost.
+
+        Reviewed by Anders Carlsson and Antti Koivisto.
+
+        * UIProcess/WebPageProxy.cpp:
+        * UIProcess/WebPageProxy.h:
+        Removed setDrawingArea.
+
+        (WebKit::WebPageProxy::drawingArea):
+        (WebKit::WebPageProxy::backForwardList):
+        Made these functions const while I was at it.
+
 2011-05-03  Pratik Solanki  <psolanki@apple.com>
 
         Reviewed by Antti Koivisto.

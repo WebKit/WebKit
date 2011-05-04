@@ -176,10 +176,9 @@ public:
     WebFrameProxy* focusedFrame() const { return m_focusedFrame.get(); }
     WebFrameProxy* frameSetLargestFrame() const { return m_frameSetLargestFrame.get(); }
 
-    DrawingAreaProxy* drawingArea() { return m_drawingArea.get(); }
-    void setDrawingArea(PassOwnPtr<DrawingAreaProxy>);
+    DrawingAreaProxy* drawingArea() const { return m_drawingArea.get(); }
 
-    WebBackForwardList* backForwardList() { return m_backForwardList.get(); }
+    WebBackForwardList* backForwardList() const { return m_backForwardList.get(); }
 
 #if ENABLE(INSPECTOR)
     WebInspectorProxy* inspector();

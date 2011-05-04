@@ -1,3 +1,16 @@
+2011-05-03  Adam Roben  <aroben@apple.com>
+
+        Remove an unnecessary OwnPtr equality check in XSLT code
+
+        Fixes <http://webkit.org/b/60053> Testing OwnPtrs for equality should cause a compiler error
+
+        Reviewed by Anders Carlsson and Antti Koivisto.
+
+        * dom/Document.cpp:
+        (WebCore::Document::setTransformSource): No need to check for equality. If the pointers are
+        equal, we're screwed anyway. (And the caller always passes in a newly-allocated object, so
+        we're safe.)
+
 2011-05-04  Leandro Gracia Gil  <leandrogracia@chromium.org>
 
         Reviewed by Tony Gentilcore.

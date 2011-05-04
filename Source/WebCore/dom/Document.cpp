@@ -4058,8 +4058,6 @@ void Document::applyXSLTransform(ProcessingInstruction* pi)
 
 void Document::setTransformSource(PassOwnPtr<TransformSource> source)
 {
-    if (m_transformSource == source)
-        return;
     m_transformSource = source;
 }
 
