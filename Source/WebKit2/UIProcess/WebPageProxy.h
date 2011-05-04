@@ -733,6 +733,10 @@ private:
 
     void updateBackingStoreDiscardableState();
 
+#if PLATFORM(WIN)
+    void scheduleChildWindowGeometryUpdate(uint64_t window, const WebCore::IntRect& rectInParentClientCoordinates, const WebCore::IntRect& clipRectInChildClientCoordinates);
+#endif
+
     PageClient* m_pageClient;
     WebLoaderClient m_loaderClient;
     WebPolicyClient m_policyClient;

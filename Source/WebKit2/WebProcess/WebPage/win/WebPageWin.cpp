@@ -27,9 +27,11 @@
 #include "WebPage.h"
 
 #include "FontSmoothingLevel.h"
+#include "WebCoreArgumentCoders.h"
 #include "WebEvent.h"
 #include "WebPageProxyMessages.h"
 #include "WebPreferencesStore.h"
+#include "WebProcess.h"
 #include <WebCore/FocusController.h>
 #include <WebCore/FontRenderingMode.h>
 #include <WebCore/Frame.h>
@@ -455,6 +457,11 @@ void WebPage::gestureDidScroll(const IntSize& size)
 void WebPage::gestureDidEnd()
 {
     m_gestureTargetNode = nullptr;
+}
+
+void WebPage::scheduleChildWindowGeometryUpdate(HWND window, const IntRect& rectInParentClientCoordinates, const IntRect& clipRectInChildClientCoordinates)
+{
+    WebProcess::shared().connection()->send(Messages::WebPageProxy::ScheduleChildWindowGeometryUpdate(reinterpret_cast<uint64_t>(window), rectInParentClientCoordinates, clipRectInChildClientCoordinates), m_pageID);
 }
 
 } // namespace WebKit

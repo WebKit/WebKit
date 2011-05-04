@@ -241,6 +241,9 @@ messages -> WebPageProxy {
 #if PLATFORM(WIN)
     # Windows 7 Gesture Messages
     SetGestureReachedScrollingLimit(bool limitReached)
+
+    # Miscellaneous Windows messages
+    ScheduleChildWindowGeometryUpdate(uint64_t window, WebCore::IntRect rectInParentClientCoordinates, WebCore::IntRect clipRectInChildClientCoordinates)
 #endif
 
     # Search popup menus

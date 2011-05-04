@@ -1,3 +1,51 @@
+2011-05-04  Adam Roben  <aroben@apple.com>
+
+        Clip and reposition windowed plugins when the UI process paints
+
+        This ensures that their geometry updates in sync with the rest of the page.
+
+        Most of this patch is just plumbing the scheduleWindowedPluginGeometryUpdate and
+        scheduleChildWindowGeometryUpdate calls through from NetscapePlugin all the way over to
+        WebView. I've tried to call out the other parts below.
+
+        Fixes <http://webkit.org/b/60210> <rdar://problem/8483441> REGRESSION (WebKit2): Windowed
+        plugins don't scroll at the same speed as the rest of the page
+
+        Reviewed by Darin Adler and Anders Carlsson.
+
+        * UIProcess/PageClient.h:
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPageProxy.messages.in:
+        * UIProcess/win/WebPageProxyWin.cpp:
+        (WebKit::WebPageProxy::scheduleChildWindowGeometryUpdate):
+        Added plumbing.
+
+        * UIProcess/win/WebView.cpp:
+        (WebKit::WebView::onPaintEvent): Update child windows before painting so that they will stay
+        in sync with the rest of the page.
+        (WebKit::WebView::scheduleChildWindowGeometryUpdate): Add this update information to the
+        set of geometries to update on the next paint.
+        (WebKit::setWindowRegion): Moved this helper function here from NetscapePluginWin.cpp.
+        (WebKit::WebView::updateChildWindowGeometries): Update the size, position, and clip rects of
+        all the child windows with scheduled geometry updates.
+
+        * UIProcess/win/WebView.h: Added new members to track and update child window geometries.
+
+        * WebProcess/Plugins/Netscape/win/NetscapePluginWin.cpp:
+        (WebKit::NetscapePlugin::platformPostInitialize): Don't show the window immediately. Let the
+        UI process take care of it.
+        (WebKit::NetscapePlugin::platformGeometryDidChange): Don't update the window's position or
+        clip rect. Let the UI process take care of it.
+
+        * WebProcess/Plugins/PluginController.h:
+        * WebProcess/Plugins/PluginView.cpp:
+        (WebKit::PluginView::scheduleWindowedPluginGeometryUpdate):
+        * WebProcess/Plugins/PluginView.h:
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/win/WebPageWin.cpp:
+        (WebKit::WebPage::scheduleChildWindowGeometryUpdate):
+        Added plumbing.
+
 2011-05-04  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Adam Roben.

@@ -258,6 +258,7 @@ public:
     const WebCore::IntRect& viewFrameInWindowCoordinates() const { return m_viewFrameInWindowCoordinates; }
 #elif PLATFORM(WIN)
     HWND nativeWindow() const { return m_nativeWindow; }
+    void scheduleChildWindowGeometryUpdate(HWND, const WebCore::IntRect& rectInParentClientCoordinates, const WebCore::IntRect& clipRectInChildClientCoordinates);
 #endif
 
     bool windowIsFocused() const;

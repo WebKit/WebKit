@@ -139,6 +139,7 @@ public:
 #if PLATFORM(WIN)
     virtual HWND nativeWindow() = 0;
     virtual void setGestureReachedScrollingLimit(bool) = 0;
+    virtual void scheduleChildWindowGeometryUpdate(HWND, const WebCore::IntRect& rectInParentClientCoordinates, const WebCore::IntRect& clipRectInChildClientCoordinates) = 0;
 #endif
 
 #if PLATFORM(MAC)

@@ -101,7 +101,8 @@ bool NetscapePlugin::platformPostInitialize()
 
     registerPluginView();
 
-    m_window = ::CreateWindowExW(0, windowClassName, 0, WS_CHILD | WS_VISIBLE, 0, 0, 0, 0, containingWindow(), 0, instanceHandle(), 0);
+    // Start out with the window hidden. The UI process will take care of showing it once it's correctly positioned the window.
+    m_window = ::CreateWindowExW(0, windowClassName, 0, WS_CHILD, 0, 0, 0, 0, containingWindow(), 0, instanceHandle(), 0);
     if (!m_window)
         return false;
 
@@ -138,18 +139,6 @@ bool NetscapePlugin::platformInvalidate(const IntRect& invalidRect)
     return true;
 }
 
-enum RedrawOrNot { DoNotRedraw, Redraw };
-static void setWindowRegion(HWND window, PassOwnPtr<HRGN> popRegion, RedrawOrNot redrawOrNot)
-{
-    OwnPtr<HRGN> region = popRegion;
-
-    if (!::SetWindowRgn(window, region.get(), redrawOrNot == Redraw))
-        return;
-
-    // Windows owns the region now.
-    region.leakPtr();
-}
-
 void NetscapePlugin::platformGeometryDidChange()
 {
     if (!m_isWindowed)
@@ -158,12 +147,11 @@ void NetscapePlugin::platformGeometryDidChange()
     IntRect clipRectInPluginWindowCoordinates = m_clipRect;
     clipRectInPluginWindowCoordinates.move(-m_frameRect.x(), -m_frameRect.y());
 
-    OwnPtr<HRGN> clipRegion = adoptPtr(::CreateRectRgn(clipRectInPluginWindowCoordinates.x(), clipRectInPluginWindowCoordinates.y(), clipRectInPluginWindowCoordinates.maxX(), clipRectInPluginWindowCoordinates.maxY()));
-    setWindowRegion(m_window, clipRegion.release(), Redraw);
+    // We only update the size here and let the UI process update our position and clip rect so
+    // that we can keep our position in sync when scrolling, etc. See <http://webkit.org/b/60210>.
+    ::SetWindowPos(m_window, 0, 0, 0, m_frameRect.width(), m_frameRect.height(), SWP_NOACTIVATE | SWP_NOMOVE | SWP_NOOWNERZORDER | SWP_NOZORDER);
 
-    // FIXME: We should only update the size here and let the UI process update our position so
-    // that we can keep our position in sync when scrolling, etc.
-    ::MoveWindow(m_window, m_frameRect.x(), m_frameRect.y(), m_frameRect.width(), m_frameRect.height(), TRUE);
+    m_pluginController->scheduleWindowedPluginGeometryUpdate(m_window, m_frameRect, clipRectInPluginWindowCoordinates);
 }
 
 void NetscapePlugin::platformPaint(GraphicsContext* context, const IntRect& dirtyRect, bool)

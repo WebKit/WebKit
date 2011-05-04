@@ -1003,6 +1003,11 @@ HWND PluginView::nativeParentWindow()
 {
     return m_webPage->nativeWindow();
 }
+
+void PluginView::scheduleWindowedPluginGeometryUpdate(HWND pluginWindow, const IntRect& rectInParentClientCoordinates, const IntRect& clipRectInPluginWindowCoordinates)
+{
+    m_webPage->scheduleChildWindowGeometryUpdate(pluginWindow, rectInParentClientCoordinates, clipRectInPluginWindowCoordinates);
+}
 #endif
 
 #if PLATFORM(MAC)

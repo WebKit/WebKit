@@ -89,6 +89,10 @@ public:
 #if PLATFORM(WIN)
     // The window to use as the parent of the plugin's window.
     virtual HWND nativeParentWindow() = 0;
+
+    // Tells the controller that the given HWND needs to be positioned and clipped to the given
+    // coordinates sometime soon. The controller will decide exactly when this will happen.
+    virtual void scheduleWindowedPluginGeometryUpdate(HWND, const WebCore::IntRect& rectInParentClientCoordinates, const WebCore::IntRect& clipRectInPluginWindowCoordinates) = 0;
 #endif
 
 #if PLATFORM(MAC)

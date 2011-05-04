@@ -161,6 +161,8 @@ private:
     HCURSOR cursorToShow() const;
     void updateNativeCursor();
 
+    void updateChildWindowGeometries();
+
     // PageClient
     virtual PassOwnPtr<DrawingAreaProxy> createDrawingAreaProxy();
     virtual void setViewNeedsDisplay(const WebCore::IntRect&);
@@ -209,6 +211,7 @@ private:
     virtual void countStringMatchesInCustomRepresentation(const String&, FindOptions, unsigned maxMatchCount);
 
     virtual HWND nativeWindow();
+    virtual void scheduleChildWindowGeometryUpdate(HWND, const WebCore::IntRect& rectInParentClientCoordinates, const WebCore::IntRect& clipRectInChildClientCoordinates);
 
     virtual void setGestureReachedScrollingLimit(bool limitReached) { m_gestureReachedScrollingLimit = limitReached; }
 
@@ -264,6 +267,13 @@ private:
     int m_overPanY;
 
     bool m_gestureReachedScrollingLimit;
+
+    struct ChildWindowGeometry {
+        WebCore::IntRect rectInParentClientCoordinates;
+        WebCore::IntRect clipRectInChildClientCoordinates;
+    };
+
+    HashMap<HWND, ChildWindowGeometry> m_childWindowGeometriesToUpdate;
 
 #if ENABLE(FULLSCREEN_API)
     OwnPtr<WebCore::FullScreenController> m_fullScreenController;

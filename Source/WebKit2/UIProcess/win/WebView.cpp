@@ -685,6 +685,10 @@ static OwnPtr<HBRUSH> createBrush(const Color& color)
 
 LRESULT WebView::onPaintEvent(HWND hWnd, UINT message, WPARAM, LPARAM, bool& handled)
 {
+    // Update child windows now so that any areas of our window they reveal will be included in the
+    // invalid region that ::BeginPaint sees.
+    updateChildWindowGeometries();
+
     PAINTSTRUCT paintStruct;
     HDC hdc = ::BeginPaint(m_window, &paintStruct);
 
@@ -1522,6 +1526,51 @@ void WebView::exitAcceleratedCompositingMode()
 HWND WebView::nativeWindow()
 {
     return m_window;
+}
+
+void WebView::scheduleChildWindowGeometryUpdate(HWND window, const WebCore::IntRect& rectInParentClientCoordinates, const WebCore::IntRect& clipRectInChildClientCoordinates)
+{
+    ChildWindowGeometry geometry;
+    geometry.rectInParentClientCoordinates = rectInParentClientCoordinates;
+    geometry.clipRectInChildClientCoordinates = clipRectInChildClientCoordinates;
+
+    m_childWindowGeometriesToUpdate.set(window, geometry);
+}
+
+static void setWindowRegion(HWND window, PassOwnPtr<HRGN> popRegion)
+{
+    OwnPtr<HRGN> region = popRegion;
+
+    if (!::SetWindowRgn(window, region.get(), TRUE))
+        return;
+
+    // Windows owns the region now.
+    region.leakPtr();
+}
+
+void WebView::updateChildWindowGeometries()
+{
+    HashMap<HWND, ChildWindowGeometry> geometriesToUpdate;
+    geometriesToUpdate.swap(m_childWindowGeometriesToUpdate);
+
+    HDWP deferWindowPos = ::BeginDeferWindowPos(geometriesToUpdate.size());
+
+    HashMap<HWND, ChildWindowGeometry>::const_iterator end = geometriesToUpdate.end();
+    for (HashMap<HWND, ChildWindowGeometry>::const_iterator it = geometriesToUpdate.begin(); it != end; ++it) {
+        HWND window = it->first;
+        if (!::IsWindow(window))
+            continue;
+
+        const ChildWindowGeometry& geometry = it->second;
+
+        const IntRect& windowRect = geometry.rectInParentClientCoordinates;
+        deferWindowPos = ::DeferWindowPos(deferWindowPos, window, 0, windowRect.x(), windowRect.y(), windowRect.width(), windowRect.height(), SWP_SHOWWINDOW | SWP_NOACTIVATE | SWP_NOOWNERZORDER | SWP_NOZORDER);
+
+        const IntRect& clipRect = geometry.clipRectInChildClientCoordinates;
+        setWindowRegion(window, adoptPtr(::CreateRectRgn(clipRect.x(), clipRect.y(), clipRect.maxX(), clipRect.maxY())));
+    }
+
+    ::EndDeferWindowPos(deferWindowPos);
 }
 
 // WebCore::WindowMessageListener

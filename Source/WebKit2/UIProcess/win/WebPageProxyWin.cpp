@@ -70,4 +70,9 @@ HWND WebPageProxy::nativeWindow() const
     return m_pageClient->nativeWindow();
 }
 
+void WebPageProxy::scheduleChildWindowGeometryUpdate(uint64_t window, const IntRect& rectInParentClientCoordinates, const IntRect& clipRectInChildClientCoordinates)
+{
+    m_pageClient->scheduleChildWindowGeometryUpdate(reinterpret_cast<HWND>(window), rectInParentClientCoordinates, clipRectInChildClientCoordinates);
+}
+
 } // namespace WebKit
