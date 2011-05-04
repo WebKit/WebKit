@@ -1,3 +1,15 @@
+2011-05-04  Ademar de Souza Reis Jr.  <ademar.reis@openbossa.org>
+
+        Reviewed by Csaba Osztrogonác.
+
+        [Qt] run-qtwebkit-tests misses exec bit
+        https://bugs.webkit.org/show_bug.cgi?id=60188
+
+        Also removing an unecessary import (mostly to let this bugfix goes
+        through the system, as this is just a chmod).
+
+        * Scripts/run-qtwebkit-tests:
+
 2011-05-04  Adam Barth  <abarth@webkit.org>
 
         Fix import of ircproxy module to actually import the module.  I don't

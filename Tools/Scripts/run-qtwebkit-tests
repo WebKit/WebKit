@@ -22,7 +22,6 @@ from __future__ import with_statement
 
 import sys
 import os
-import os.path
 import re
 import logging
 from subprocess import Popen, PIPE, STDOUT
