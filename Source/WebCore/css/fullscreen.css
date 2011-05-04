@@ -17,7 +17,7 @@ video:-webkit-full-screen {
 }
 
 img:-webkit-full-screen {
-    width: auto;   
+    width: auto;
     height: 100%;
     max-width: 100%;
 }

@@ -98,7 +98,7 @@
 	/>
   <UserMacro
 		Name="ENABLE_FULLSCREEN_API"
-		Value=""
+		Value="ENABLE_FULLSCREEN_API"
 		PerformEnvironmentSet="true"
 	/>
   <UserMacro

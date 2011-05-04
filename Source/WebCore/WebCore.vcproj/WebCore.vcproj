@@ -33966,6 +33966,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\rendering\RenderFullScreen.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\rendering\RenderFullScreen.h"
+				>
+			</File>
+			<File
 				RelativePath="..\rendering\RenderHTMLCanvas.cpp"
 				>
 				<FileConfiguration
