@@ -389,6 +389,7 @@ private:
 
         FloatingObject(Type type)
             : m_renderer(0)
+            , m_originatingLine(0)
             , m_paginationStrut(0)
             , m_type(type)
             , m_shouldPaint(true)
@@ -399,6 +400,7 @@ private:
 
         FloatingObject(Type type, const IntRect& frameRect)
             : m_renderer(0)
+            , m_originatingLine(0)
             , m_frameRect(frameRect)
             , m_paginationStrut(0)
             , m_type(type)
@@ -430,6 +432,7 @@ private:
         void setFrameRect(const IntRect& frameRect) { m_frameRect = frameRect; }
 
         RenderBox* m_renderer;
+        RootInlineBox* m_originatingLine;
         IntRect m_frameRect;
         int m_paginationStrut;
         unsigned m_type : 2; // Type (left or right aligned)

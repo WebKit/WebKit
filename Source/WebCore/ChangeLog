@@ -1,3 +1,24 @@
+2011-05-03  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Darin Adler.
+
+        <rdar://problem/9313186> Make the fix for <rdar://problem/9190108> more robust.
+
+        Added a pointer from FloatingObject to its originating line, if there is one, and made sure to
+        dirty the line when the float is removed, instead of relying on the float always intersecting
+        its originating line.
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::removeFloatingObject):
+        (WebCore::RenderBlock::removeFloatingObjectsBelow):
+        (WebCore::RenderBlock::clearFloats):
+        * rendering/RenderBlock.h:
+        (WebCore::RenderBlock::FloatingObject::FloatingObject):
+        * rendering/RenderBlockLineLayout.cpp:
+        (WebCore::RenderBlock::appendFloatingObjectToLastLine):
+        (WebCore::RenderBlock::layoutRunsAndFloats):
+        (WebCore::RenderBlock::determineStartPosition):
+
 2011-05-02  Jer Noble  <jer.noble@apple.com>
 
         Reviewed by Adam Roben.

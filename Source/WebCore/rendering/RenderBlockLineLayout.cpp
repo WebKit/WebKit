@@ -757,12 +757,8 @@ inline BidiRun* RenderBlock::handleTrailingSpaces(BidiRunList<BidiRun>& bidiRuns
 
 void RenderBlock::appendFloatingObjectToLastLine(FloatingObject* floatingObject)
 {
-    // Ensure that the float touches the line.
-    if (RootInlineBox* previousLine = lastRootBox()->prevRootBox()) {
-        if (logicalBottomForFloat(floatingObject) < previousLine->blockLogicalHeight())
-            setLogicalHeightForFloat(floatingObject, previousLine->blockLogicalHeight() - logicalTopForFloat(floatingObject));
-    }
-
+    ASSERT(!floatingObject->m_originatingLine);
+    floatingObject->m_originatingLine = lastRootBox();
     lastRootBox()->appendFloat(floatingObject->renderer());
 }
 
@@ -1024,7 +1020,9 @@ void RenderBlock::layoutRunsAndFloats(bool fullLayout, bool hasInlineChild, Vect
                 if (Vector<RenderBox*>* cleanLineFloats = line->floatsPtr()) {
                     Vector<RenderBox*>::iterator end = cleanLineFloats->end();
                     for (Vector<RenderBox*>::iterator f = cleanLineFloats->begin(); f != end; ++f) {
-                        insertFloatingObject(*f);
+                        FloatingObject* floatingObject = insertFloatingObject(*f);
+                        ASSERT(!floatingObject->m_originatingLine);
+                        floatingObject->m_originatingLine = line;
                         setLogicalHeight(logicalTopForChild(*f) - marginBeforeForChild(*f) + delta);
                         positionNewFloats();
                     }
@@ -1291,7 +1289,9 @@ RootInlineBox* RenderBlock::determineStartPosition(LineInfo& lineInfo, bool& ful
             if (Vector<RenderBox*>* cleanLineFloats = line->floatsPtr()) {
                 Vector<RenderBox*>::iterator end = cleanLineFloats->end();
                 for (Vector<RenderBox*>::iterator f = cleanLineFloats->begin(); f != end; ++f) {
-                    insertFloatingObject(*f);
+                    FloatingObject* floatingObject = insertFloatingObject(*f);
+                    ASSERT(!floatingObject->m_originatingLine);
+                    floatingObject->m_originatingLine = line;
                     setLogicalHeight(logicalTopForChild(*f) - marginBeforeForChild(*f));
                     positionNewFloats();
                     ASSERT(floats[numCleanFloats].object == *f);

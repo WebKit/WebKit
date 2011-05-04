@@ -3163,10 +3163,18 @@ void RenderBlock::removeFloatingObject(RenderBox* o)
                     // accomplished by pretending they have a height of 1.
                     logicalBottom = max(logicalBottom, logicalTop + 1);
                 }
+                if (r->m_originatingLine) {
+                    ASSERT(r->m_originatingLine->renderer() == this);
+                    r->m_originatingLine->markDirty();
+#if !ASSERT_DISABLED
+                    r->m_originatingLine = 0;
+#endif
+                }
                 markLinesDirtyInBlockRange(0, logicalBottom);
             }
             m_floatingObjects->decreaseObjectsCount(r->type());
             floatingObjectSet.remove(it);
+            ASSERT(!r->m_originatingLine);
             delete r;
         }
     }
@@ -3182,6 +3190,7 @@ void RenderBlock::removeFloatingObjectsBelow(FloatingObject* lastFloat, int logi
     while (curr != lastFloat && (!curr->isPlaced() || logicalTopForFloat(curr) >= logicalOffset)) {
         m_floatingObjects->decreaseObjectsCount(curr->type());
         floatingObjectSet.removeLast();
+        ASSERT(!curr->m_originatingLine);
         delete curr;
         curr = floatingObjectSet.last();
     }
@@ -3619,6 +3628,10 @@ void RenderBlock::clearFloats()
                     }
 
                     floatMap.remove(f->m_renderer);
+                    if (oldFloatingObject->m_originatingLine) {
+                        ASSERT(oldFloatingObject->m_originatingLine->renderer() == this);
+                        oldFloatingObject->m_originatingLine->markDirty();
+                    }
                     delete oldFloatingObject;
                 } else {
                     changeLogicalTop = 0;
