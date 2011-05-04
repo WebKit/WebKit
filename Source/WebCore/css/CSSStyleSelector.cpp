@@ -7,6 +7,7 @@
  * Copyright (C) 2007, 2008 Eric Seidel <eric@webkit.org>
  * Copyright (C) 2008, 2009 Torch Mobile Inc. All rights reserved. (http://www.torchmobile.com/)
  * Copyright (c) 2011, Code Aurora Forum. All rights reserved.
+ * Copyright (C) 2011 Research In Motion Limited. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -3531,6 +3532,55 @@ inline bool isValidVisitedLinkProperty(int id)
     return false;
 }
 
+class SVGDisplayPropertyGuard {
+    WTF_MAKE_NONCOPYABLE(SVGDisplayPropertyGuard);
+public:
+    SVGDisplayPropertyGuard(Element*, RenderStyle*);
+    ~SVGDisplayPropertyGuard();
+private:
+#if ENABLE(SVG)
+    RenderStyle* m_style;
+    EDisplay m_originalDisplayPropertyValue;
+#endif
+};
+
+#if !ENABLE(SVG)
+inline SVGDisplayPropertyGuard::SVGDisplayPropertyGuard(Element*, RenderStyle*)
+{
+}
+
+inline SVGDisplayPropertyGuard::~SVGDisplayPropertyGuard()
+{
+}
+#else
+static inline bool isAcceptableForSVGElement(EDisplay displayPropertyValue)
+{
+    return displayPropertyValue == INLINE || displayPropertyValue == BLOCK || displayPropertyValue == NONE;
+}
+
+inline SVGDisplayPropertyGuard::SVGDisplayPropertyGuard(Element* element, RenderStyle* style)
+{
+    if (!(element && element->isSVGElement())) {
+        m_originalDisplayPropertyValue = NONE;
+        m_style = 0;
+        return;
+    }
+    m_style = style;
+    m_originalDisplayPropertyValue = style->display();
+    ASSERT(isAcceptableForSVGElement(m_originalDisplayPropertyValue));
+}
+
+inline SVGDisplayPropertyGuard::~SVGDisplayPropertyGuard()
+{
+    if (!m_style)
+        return;
+    if (isAcceptableForSVGElement(m_style->display()))
+        return;
+    m_style->setDisplay(m_originalDisplayPropertyValue);
+}
+#endif
+
+
 // SVG handles zooming in a different way compared to CSS. The whole document is scaled instead
 // of each individual length value in the render style / tree. CSSPrimitiveValue::computeLength*()
 // multiplies each resolved length with the zoom multiplier - so for SVG we need to disable that.
@@ -3602,7 +3652,8 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
     case CSSPropertyClear:
         HANDLE_INHERIT_AND_INITIAL_AND_PRIMITIVE(clear, Clear)
         return;
-    case CSSPropertyDisplay:
+    case CSSPropertyDisplay: {
+        SVGDisplayPropertyGuard guard(m_element, m_style.get());
         HANDLE_INHERIT_AND_INITIAL_AND_PRIMITIVE(display, Display)
 #if ENABLE(WCSS)
         if (primitiveValue && primitiveValue->getIdent() == CSSValueWapMarquee) {
@@ -3620,6 +3671,7 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
         }
 #endif
         return;
+    }
     case CSSPropertyEmptyCells:
         HANDLE_INHERIT_AND_INITIAL_AND_PRIMITIVE(emptyCells, EmptyCells)
         return;
