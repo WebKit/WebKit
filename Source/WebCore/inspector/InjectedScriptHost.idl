@@ -38,6 +38,8 @@ module core {
         [Custom] void inspect(in DOMObject objectId, in DOMObject hints);
         [Custom] DOMObject inspectedNode(in int num);
         [Custom] DOMObject internalConstructorName(in DOMObject object);
+        [Custom] boolean isHTMLAllCollection(in DOMObject object);
+        [Custom] DOMString type(in DOMObject object);
 
         [Custom] int databaseId(in DOMObject database);
         [Custom] int storageId(in DOMObject storage);

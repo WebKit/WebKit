@@ -39,7 +39,10 @@
 #include "V8Binding.h"
 #include "V8BindingState.h"
 #include "V8Database.h"
+#include "V8HTMLAllCollection.h"
+#include "V8HTMLCollection.h"
 #include "V8HiddenPropertyName.h"
+#include "V8NodeList.h"
 #include "V8Node.h"
 #include "V8Proxy.h"
 #include "V8Storage.h"
@@ -87,6 +90,47 @@ v8::Handle<v8::Value> V8InjectedScriptHost::internalConstructorNameCallback(cons
         return v8::Undefined();
 
     return args[0]->ToObject()->GetConstructorName();
+}
+
+v8::Handle<v8::Value> V8InjectedScriptHost::isHTMLAllCollectionCallback(const v8::Arguments& args)
+{
+    INC_STATS("InjectedScriptHost.isHTMLAllCollectionCallback()");
+    if (args.Length() < 1)
+        return v8::Undefined();
+
+    if (!args[0]->IsObject())
+        return v8::False();
+
+    v8::HandleScope handleScope;
+    return v8::Boolean::New(V8HTMLAllCollection::HasInstance(args[0]));
+}
+
+v8::Handle<v8::Value> V8InjectedScriptHost::typeCallback(const v8::Arguments& args)
+{
+    INC_STATS("InjectedScriptHost.typeCallback()");
+    if (args.Length() < 1)
+        return v8::Undefined();
+
+    v8::Handle<v8::Value> value = args[0];
+    if (value->IsString())
+        return v8::String::New("string");
+    if (value->IsArray())
+        return v8::String::New("array");
+    if (value->IsBoolean())
+        return v8::String::New("boolean");
+    if (value->IsNumber())
+        return v8::String::New("number");
+    if (value->IsDate())
+        return v8::String::New("date");
+    if (value->IsRegExp())
+        return v8::String::New("regexp");
+    if (V8Node::HasInstance(value))
+        return v8::String::New("node");
+    if (V8NodeList::HasInstance(value))
+        return v8::String::New("array");
+    if (V8HTMLCollection::HasInstance(value))
+        return v8::String::New("array");
+    return v8::Undefined();
 }
 
 v8::Handle<v8::Value> V8InjectedScriptHost::inspectCallback(const v8::Arguments& args)

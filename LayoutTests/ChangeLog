@@ -1,3 +1,13 @@
+2011-05-03  Yury Semikhatsky  <yurys@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: can't inspect element in an iframe when element originates from non-frame document
+        https://bugs.webkit.org/show_bug.cgi?id=60031
+
+        * inspector/elements/elements-inspect-iframe-from-different-domain-expected.txt: Added.
+        * inspector/elements/elements-inspect-iframe-from-different-domain.html: Added.
+
 2011-05-03  Dan Bernstein  <mitz@apple.com>
 
         Updated expected results after updating this test in r85676.

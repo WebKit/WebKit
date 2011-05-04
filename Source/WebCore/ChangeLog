@@ -1,3 +1,27 @@
+2011-05-03  Yury Semikhatsky  <yurys@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: can't inspect element in an iframe when element originates from non-frame document
+        https://bugs.webkit.org/show_bug.cgi?id=60031
+        
+        Inspected object type evaluation has moved into native bindings. This way it doesn't
+        depend on the current JS context.
+
+        Test: inspector/elements/elements-inspect-iframe-from-different-domain.html
+
+        * bindings/js/JSInjectedScriptHostCustom.cpp:
+        (WebCore::JSInjectedScriptHost::isHTMLAllCollection): this method helps distinguish
+        real undefined values from HTMLAllCollection
+        (WebCore::JSInjectedScriptHost::type): method that returns presice type of the passed
+        value
+        * bindings/v8/custom/V8InjectedScriptHostCustom.cpp:
+        (WebCore::V8InjectedScriptHost::isHTMLAllCollectionCallback):
+        (WebCore::V8InjectedScriptHost::typeCallback):
+        * inspector/InjectedScriptHost.idl:
+        * inspector/InjectedScriptSource.js:
+        (.):
+
 2011-05-03  Pratik Solanki  <psolanki@apple.com>
 
         Reviewed by Antti Koivisto.

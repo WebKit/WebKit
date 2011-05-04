@@ -345,7 +345,7 @@ InjectedScript.prototype = {
     _isHTMLAllCollection: function(object)
     {
         // document.all is reported as undefined, but we still want to process it.
-        return (typeof object === "undefined") && inspectedWindow.HTMLAllCollection && object instanceof inspectedWindow.HTMLAllCollection;
+        return (typeof object === "undefined") && InjectedScriptHost.isHTMLAllCollection(object);
     },
 
     _type: function(obj)
@@ -361,25 +361,10 @@ InjectedScript.prototype = {
             return type;
         }
 
-        // If owning frame has navigated to somewhere else window properties will be undefined.
-        // In this case just return result of the typeof.
-        if (!inspectedWindow.document)
-            return type;
+        var preciseType = InjectedScriptHost.type(obj);
+        if (preciseType)
+            return preciseType;
 
-        if (obj instanceof inspectedWindow.Node)
-            return "node";
-        if (obj instanceof inspectedWindow.String)
-            return "string";
-        if (obj instanceof inspectedWindow.Array)
-            return "array";
-        if (obj instanceof inspectedWindow.Boolean)
-            return "boolean";
-        if (obj instanceof inspectedWindow.Number)
-            return "number";
-        if (obj instanceof inspectedWindow.Date)
-            return "date";
-        if (obj instanceof inspectedWindow.RegExp)
-            return "regexp";
         // FireBug's array detection.
         try {
             if (isFinite(obj.length) && typeof obj.splice === "function")
@@ -387,12 +372,10 @@ InjectedScript.prototype = {
             if (isFinite(obj.length) && typeof obj.callee === "function") // arguments.
                 return "array";
         } catch (e) {
-            return type;
         }
-        if (obj instanceof inspectedWindow.NodeList)
-            return "array";
-        if (obj instanceof inspectedWindow.HTMLCollection)
-            return "array";
+
+        // If owning frame has navigated to somewhere else window properties will be undefined.
+        // In this case just return result of the typeof.
         return type;
     },
 

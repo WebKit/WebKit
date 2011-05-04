@@ -39,11 +39,17 @@
 #include "Database.h"
 #include "JSDatabase.h"
 #endif
+#include "DateInstance.h"
 #include "ExceptionCode.h"
 #include "InjectedScriptHost.h"
 #include "InspectorDebuggerAgent.h"
 #include "InspectorValues.h"
+#include "JSArray.h"
+#include "JSHTMLAllCollection.h"
+#include "JSHTMLCollection.h"
 #include "JSNode.h"
+#include "JSNodeList.h"
+#include "RegExpObject.h"
 #include "ScriptValue.h"
 #if ENABLE(DOM_STORAGE)
 #include "Storage.h"
@@ -88,6 +94,42 @@ JSValue JSInjectedScriptHost::internalConstructorName(ExecState* exec)
 
     UString result = exec->argument(0).toThisObject(exec)->className();
     return jsString(exec, result);
+}
+
+JSValue JSInjectedScriptHost::isHTMLAllCollection(ExecState* exec)
+{
+    if (exec->argumentCount() < 1)
+        return jsUndefined();
+
+    JSValue value = exec->argument(0);
+    return jsBoolean(value.inherits(&JSHTMLAllCollection::s_info));
+}
+
+JSValue JSInjectedScriptHost::type(ExecState* exec)
+{
+    if (exec->argumentCount() < 1)
+        return jsUndefined();
+
+    JSValue value = exec->argument(0);
+    if (value.isString())
+        return jsString(exec, String("string"));
+    if (value.inherits(&JSArray::s_info))
+        return jsString(exec, String("array"));
+    if (value.isBoolean())
+        return jsString(exec, String("boolean"));
+    if (value.isNumber())
+        return jsString(exec, String("number"));
+    if (value.inherits(&DateInstance::s_info))
+        return jsString(exec, String("date"));
+    if (value.inherits(&RegExpObject::s_info))
+        return jsString(exec, String("regexp"));
+    if (value.inherits(&JSNode::s_info))
+        return jsString(exec, String("node"));
+    if (value.inherits(&JSNodeList::s_info))
+        return jsString(exec, String("array"));
+    if (value.inherits(&JSHTMLCollection::s_info))
+        return jsString(exec, String("array"));
+    return jsUndefined();
 }
 
 JSValue JSInjectedScriptHost::inspect(ExecState* exec)
