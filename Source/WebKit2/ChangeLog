@@ -1,3 +1,15 @@
+2011-05-03  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        https://bugs.webkit.org/show_bug.cgi?id=60087 and <rdar://problem/9373182>
+        WK2 Icon Database should provide access to all image representations in the icon.
+
+        Expose a CFArrayRef of CGImageRefs as API for CG platforms:
+        * UIProcess/API/C/cg/WKIconDatabaseCG.cpp:
+        (WKIconDatabaseTryCopyCGImageArrayForURL):
+        * UIProcess/API/C/cg/WKIconDatabaseCG.h:
+
 2011-05-03  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Dan Bernstein.

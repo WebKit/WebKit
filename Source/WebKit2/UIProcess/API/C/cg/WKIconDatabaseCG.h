@@ -26,6 +26,7 @@
 #ifndef WKIconDatabaseCG_h
 #define WKIconDatabaseCG_h
 
+#include <CoreFoundation/CFArray.h>
 #include <CoreGraphics/CGImage.h>
 #include <WebKit2/WKBase.h>
 #include <WebKit2/WKGeometry.h>
@@ -34,7 +35,8 @@
 extern "C" {
 #endif
 
-WK_EXPORT CGImageRef WKIconDatabaseTryGetCGImageForURL(WKIconDatabaseRef iconDatabase, WKURLRef urlString, WKSize size);
+WK_EXPORT CGImageRef WKIconDatabaseTryGetCGImageForURL(WKIconDatabaseRef iconDatabase, WKURLRef url, WKSize size);
+WK_EXPORT CFArrayRef WKIconDatabaseTryCopyCGImageArrayForURL(WKIconDatabaseRef iconDatabase, WKURLRef url);
 
 #ifdef __cplusplus
 }

@@ -36,6 +36,7 @@
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
+#include <wtf/RetainPtr.h>
 
 #if PLATFORM(MAC)
 #ifdef __OBJC__
@@ -139,6 +140,7 @@ public:
 #if USE(CG)
     virtual CGImageRef getCGImageRef() { return 0; }
     virtual CGImageRef getFirstCGImageRefOfSize(const IntSize&) { return 0; }
+    virtual RetainPtr<CFArrayRef> getCGImageArray() { return 0; }
 #endif
 
 #if PLATFORM(WIN)

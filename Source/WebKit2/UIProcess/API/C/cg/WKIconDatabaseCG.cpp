@@ -39,3 +39,10 @@ CGImageRef WKIconDatabaseTryGetCGImageForURL(WKIconDatabaseRef iconDatabaseRef, 
     Image* image = toImpl(iconDatabaseRef)->imageForPageURL(toWTFString(urlRef));
     return image ? image->getFirstCGImageRefOfSize(IntSize(static_cast<int>(size.width), static_cast<int>(size.height))) : 0;
 }
+
+CFArrayRef WKIconDatabaseTryCopyCGImageArrayForURL(WKIconDatabaseRef iconDatabaseRef, WKURLRef urlRef)
+{
+    Image* image = toImpl(iconDatabaseRef)->imageForPageURL(toWTFString(urlRef));
+    return image ? image->getCGImageArray().leakRef() : 0;
+}
+

@@ -142,6 +142,7 @@ public:
 #if USE(CG)
     virtual CGImageRef getCGImageRef();
     virtual CGImageRef getFirstCGImageRefOfSize(const IntSize&);
+    virtual RetainPtr<CFArrayRef> getCGImageArray();
 #endif
 
 #if PLATFORM(WIN) || (PLATFORM(QT) && OS(WINDOWS))

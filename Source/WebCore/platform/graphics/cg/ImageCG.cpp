@@ -36,6 +36,7 @@
 #include "PDFDocumentImage.h"
 #include "PlatformString.h"
 #include <ApplicationServices/ApplicationServices.h>
+#include <CoreFoundation/CFArray.h>
 #include <wtf/RetainPtr.h>
 
 #if PLATFORM(MAC) || PLATFORM(CHROMIUM)
@@ -165,6 +166,19 @@ CGImageRef BitmapImage::getFirstCGImageRefOfSize(const IntSize& size)
 
     // Fallback to the default CGImageRef if we can't find the right size
     return getCGImageRef();
+}
+
+RetainPtr<CFArrayRef> BitmapImage::getCGImageArray()
+{
+    size_t count = frameCount();
+    if (!count)
+        return 0;
+    
+    CFMutableArrayRef array = CFArrayCreateMutable(NULL, count, &kCFTypeArrayCallBacks);
+    for (size_t i = 0; i < count; ++i)
+        CFArrayAppendValue(array, frameAtIndex(i));
+        
+    return RetainPtr<CFArrayRef>(AdoptCF, array);
 }
 
 void BitmapImage::draw(GraphicsContext* ctxt, const FloatRect& destRect, const FloatRect& srcRect, ColorSpace styleColorSpace, CompositeOperator compositeOp)
