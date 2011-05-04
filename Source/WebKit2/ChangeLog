@@ -1,3 +1,13 @@
+2011-05-04  Siddharth Mathur  <siddharth.mathur@nokia.com>
+
+        Reviewed by Laszlo Gombos.
+
+        [Qt][Wk2][Symbian] Capabilities for Qt MiniBrowser and QtWebProcess on Symbian
+        https://bugs.webkit.org/show_bug.cgi?id=59462
+
+        * WebProcess.pro: Add Symbian OS capabilities to web process executable. Also enable
+        data paging flag and prevent application's icon from showing up in the application grid. 
+
 2011-05-04  Adam Roben  <aroben@apple.com>
 
         Clip and reposition windowed plugins when the UI process paints

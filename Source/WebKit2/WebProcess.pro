@@ -35,7 +35,18 @@ linux-* {
 
 symbian {
     TARGET.UID3 = 0xA000E544
-    TARGET.CAPABILITY = ReadUserData WriteUserData NetworkServices
+    MMP_RULES += pageddata
+    RSS_RULES += "hidden = KAppIsHidden;" # No icon in application grid
+    
+    TARGET.CAPABILITY *= ReadUserData 
+    TARGET.CAPABILITY *= WriteUserData
+    TARGET.CAPABILITY *= NetworkServices  # QtNetwork and Bearer
+    
+    # See QtMobility docs on Symbian capabilities: 
+    # http://doc.qt.nokia.com/qtmobility/quickstart.html
+    TARGET.CAPABILITY *= ReadDeviceData
+    TARGET.CAPABILITY *= WriteDeviceData
+    TARGET.CAPABILITY *= LocalServices
 }
 
 contains(QT_CONFIG, opengl) {

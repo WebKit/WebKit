@@ -1,3 +1,12 @@
+2011-05-04  Siddharth Mathur  <siddharth.mathur@nokia.com>
+
+        Reviewed by Laszlo Gombos.
+
+        [Qt][Wk2][Symbian] Capabilities for Qt MiniBrowser and QtWebProcess on Symbian
+        https://bugs.webkit.org/show_bug.cgi?id=59462
+
+        * MiniBrowser/qt/MiniBrowser.pro: Add Symbian OS capabilities to executable. Also enable data paging. 
+
 2011-05-04  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Adam Barth.
