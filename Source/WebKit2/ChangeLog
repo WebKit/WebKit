@@ -1,5 +1,11 @@
 2011-05-04  Jeff Miller  <jeffm@apple.com>
 
+        Fix typo in svn property in r85756.
+
+        * Shared/mac/NativeWebWheelEventMac.mm: Added property svn:eol-style. Removed property snv:eol-style.
+
+2011-05-04  Jeff Miller  <jeffm@apple.com>
+
         Reviewed by Darin Adler.
 
         Add NativeWebWheelEvent class
