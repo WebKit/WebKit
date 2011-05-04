@@ -56,6 +56,7 @@ th {
     top: 0;
     right: 0;
     text-align: right;
+    background-color: white;
 }
 
 .expand-button {
@@ -97,6 +98,9 @@ th {
     box-shadow: 2px 2px 2px #888;
     -webkit-transition: opacity .2s;
     text-align: left;
+    position: absolute;
+    right: 4px;
+    background-color: white;
 }
 
 #options-menu label {
@@ -906,7 +910,7 @@ function generatePage()
         '<a href="javascript:void()" onclick="collapseAllExpectations()">collapse all</a> ' +
         '<a href="javascript:void()" id=options-link onclick="toggleOptionsMenu()">options</a>' +
         '<div id=options-menu class=hidden-menu>' +
-            '<label><input id="unexpected-results" type=checkbox checked onchange="handleUnexpectedResultsChange()">Only show unexpected results</label>' +
+            '<label><input id="unexpected-results" type=checkbox checked onchange="handleUnexpectedResultsChange()">Only unexpected results</label>' +
             '<label><input id="toggle-images" type=checkbox checked onchange="handleToggleImagesChange()">Toggle images</label>' +
         '</div></div>';
 
