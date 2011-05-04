@@ -1,5 +1,11 @@
 2011-05-03  Dirk Pranke  <dpranke@chromium.org>
 
+        Unreviewed, expectations triage.
+
+        * platform/chromium/test_expectations.txt:
+
+2011-05-03  Dirk Pranke  <dpranke@chromium.org>
+
         Unreviewed, remove obsolete baselines.
 
         * platform/chromium-win-xp/fast/repaint/shadow-multiple-horizontal-expected.png: Removed.

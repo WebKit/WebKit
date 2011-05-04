@@ -648,7 +648,7 @@ WONTFIX SKIP : http/tests/inspector/extensions-resources-redirect.html = FAIL
 BUG_DRT WIN LINUX DEBUG SLOW : inspector = PASS
 BUG_DRT WIN LINUX DEBUG SLOW : http/tests/inspector = PASS
 BUG_DRT WIN LINUX DEBUG SLOW : http/tests/inspector-enabled = PASS
-BUG_DRT WIN LINUX DEBUG : http/tests/inspector/network-preflight-options.html = PASS TIMEOUT TEXT
+BUG_DRT WIN LINUX DEBUG SLOW : http/tests/inspector/network-preflight-options.html = PASS
 BUG_DRT WIN LINUX DEBUG SLOW : inspector/protocol/console-agent.html = PASS CRASH
 
 // Add support for inspector layout tests on non-Windows.
@@ -670,9 +670,23 @@ BUGWK56602 SKIP : http/tests/inspector/network/network-size.html = FAIL
 BUGWK56602 SKIP : http/tests/inspector/network/network-size-chunked.html = FAIL
 BUGWK56602 SKIP : http/tests/inspector/network/network-size-sync.html = FAIL
 
+BUGWK60110 WIN RELEASE : http/tests/inspector/resource-tree/resource-tree-reload.html = PASS TEXT
+BUGWK60110 WIN DEBUG SLOW : http/tests/inspector/resource-tree/resource-tree-reload.html = PASS TEXT
+
 BUGJAMESR WIN LINUX : inspector/styles/styles-disable-then-delete.html = TIMEOUT PASS
 
 BUGCR77630 WIN LINUX DEBUG SLOW : inspector/debugger/debugger-activation-crash.html = PASS TEXT
+
+BUGWK60106 DEBUG WIN LINUX : inspector/debugger/live-edit.html = TEXT TIMEOUT PASS
+BUGWK60106 RELEASE LINUX : inspector/debugger/live-edit.html = TEXT PASS
+
+BUGWK60107 WIN LINUX : inspector/console/console-object-constructor-name.html = TEXT PASS TIMEOUT
+BUGWK60107 WIN LINUX : inspector/console/console-log-before-inspector-open.html = TEXT PASS TIMEOUT
+BUGWK60107 WIN LINUX : inspector/console/console-tests.html = TEXT PASS TIMEOUT
+BUGWK60107 WIN LINUX : inspector/console/console-clear.html = PASS TEXT
+
+BUGWK60109 WIN LINUX RELEASE : inspector/elements/edit-dom-actions.html = PASS TEXT
+BUGWK60109 SLOW LINUX WIN DEBUG : inspector/elements/edit-dom-actions.html = PASS TEXT
 
 // -----------------------------------------------------------------
 // Other
@@ -3607,7 +3621,9 @@ BUGWK60095 SLOW DEBUG : editing/selection/move-by-word-visually.html = PASS
 BUGWK58951 MAC : compositing/iframes/invisible-nested-iframe-show.html = TEXT
 BUGWK58924 MAC : plugins/mouse-click-iframe-to-plugin.html = TIMEOUT
 
-BUGWK60100 MAC LINUX DEBUG : svg/custom/foreignObject-crash-on-hover.xml = CRASH PASS
+BUGWK60100 DEBUG : svg/custom/foreignObject-crash-on-hover.xml = CRASH PASS
+BUGWK60100 LINUX DEBUG : svg/custom/foreign-object-skew.svg = CRASH PASS
+
 BUGWK60099 DEBUG : fast/dom/Attr/access-after-element-destruction.html = CRASH PASS
 BUGWK60096 DEBUG : fast/css/last-child-pseudo-class.html = TEXT PASS
 BUGWK60097 DEBUG : fast/dom/HTMLLinkElement/link-and-subresource-test.html = TEXT PASS
@@ -3694,8 +3710,6 @@ BUGDPRANKE MAC DEBUG : transitions/cancel-transition.html = TEXT PASS
 
 BUGDPRANKE LINUX DEBUG : perf/array-nested-loop.html = TEXT TIMEOUT PASS
 BUGDPRANKE LINUX DEBUG : fast/dom/Node/mutation-blur.html = CRASH PASS
-BUGDPRANKE WIN DEBUG : svg/custom/foreignObject-crash-on-hover.xml = CRASH PASS
-BUGDPRANKE WIN LINUX DEBUG : svg/custom/foreign-object-skew.svg = CRASH IMAGE PASS
 
 // flakiness
 BUGDPRANKE DEBUG : http/tests/navigation/forward-to-fragment-fires-onload.html = TIMEOUT PASS
@@ -3730,10 +3744,6 @@ BUGDPRANKE : fast/transforms/selection-bounds-in-transformed-view.html = TEXT
 BUGDPRANKE : http/tests/security/contentSecurityPolicy/image-allowed.html = TEXT PASS
 
 // more failures for triaging, fails on deps bots at least?
-BUGDPRANKE DEBUG WIN LINUX : inspector/debugger/live-edit.html = TEXT TIMEOUT PASS
-BUGDPRANKE RELEASE LINUX : inspector/debugger/live-edit.html = TEXT PASS
-BUGDPRANKE : inspector/console/console-object-constructor-name.html = TEXT PASS TIMEOUT
-BUGDPRANKE : inspector/console/console-log-before-inspector-open.html = TEXT PASS TIMEOUT
 BUGDPRANKE DEBUG LINUX : editing/pasteboard/merge-end-2.html = CRASH PASS
 BUGDPRANKE DEBUG : animations/keyframes-out-of-order.html = TEXT PASS
 BUGDPRANKE : fast/frames/meta-refresh-user-gesture.html = TIMEOUT PASS
@@ -3747,7 +3757,6 @@ BUGDPRANKE WIN DEBUG : fast/css/only-of-type-pseudo-class.html = TEXT PASS
 BUGDPRANKE : fast/dom/Document/document-reopen.html = TEXT PASS
 
 BUGDPRANKE : fast/parser/javascript-url-compat-mode.html = TEXT PASS
-BUGDPRANKE : inspector/console/console-tests.html = TEXT PASS TIMEOUT
 
 // these tests were introduced in r58522. Needed new baselines, but I'm
 // not sure why debug is timing out.
@@ -3909,8 +3918,6 @@ BUGDPRANKE SNOWLEOPARD DEBUG : css2.1/t1508-c527-font-05-b.html = IMAGE+TEXT
 BUGDPRANKE SNOWLEOPARD DEBUG : css2.1/t1508-c527-font-10-c.html = IMAGE+TEXT
 BUGDPRANKE SNOWLEOPARD DEBUG : fast/text/international/thai-baht-space.html = IMAGE+TEXT
 BUGDPRANKE SNOWLEOPARD DEBUG : http/tests/multipart/multipart-wait-before-boundary.html = TIMEOUT PASS
-BUGDPRANKE WIN RELEASE : inspector/elements/edit-dom-actions.html = PASS TEXT
-BUGDPRANKE SLOW LINUX WIN DEBUG : inspector/elements/edit-dom-actions.html = PASS TEXT
 
 BUGWK59673 : fast/dom/Window/get-set-properties.html = TEXT
 BUGWK59673 : fast/dom/Window/window-property-shadowing.html = TEXT
@@ -3938,8 +3945,6 @@ BUGDPRANKE WIN : svg/css/composite-shadow-text.svg = IMAGE
 BUGDPRANKE WIN : svg/css/shadow-changes.svg = IMAGE
 
 // Flakiness on canaries (noted ~ r85280)
-BUGDPRANKE WIN : inspector/console/console-clear.html = PASS TEXT
-BUGDPRANKE WIN SLOW : inspector/profiler/detailed-heapshots-dominators-show-next.html = PASS
 BUGDPRANKE SNOWLEOPARD DEBUG : svg/dom/vkern-element-crash.html = CRASH PASS
 BUGDPRANKE DEBUG : editing/pasteboard/drag-image-in-about-blank-frame.html = CRASH PASS
 
@@ -3948,7 +3953,6 @@ BUGDPRANKE DEBUG : http/tests/misc/window-dot-stop.html = PASS TEXT
 BUGDPRANKE WIN DEBUG : fast/css/getComputedStyle/counterIncrement-without-counter.html = CRASH PASS
 
 // failing on the deps bots??
-BUGDPRANKE SNOWLEOPARD : svg/custom/foreign-object-skew.svg = IMAGE PASS
 
 BUGWK59768 WIN LINUX GPU : canvas/philip/tests/2d.shadow.alpha.3.html = TEXT
 BUGWK59768 WIN LINUX GPU : canvas/philip/tests/2d.shadow.alpha.4.html = TEXT
@@ -3957,9 +3961,7 @@ BUGWK59768 WIN LINUX GPU : canvas/philip/tests/2d.shadow.alpha.5.html = TEXT
 // just needs new baselines?
 
 // flakiness on the deps bots (noted r~83476)
-BUGDPRANKE DEBUG : fast/css/empty-pseudo-class.html = PASS TEXT
-BUGDPRANKE WIN RELEASE : http/tests/inspector/network-preflight-options.html = PASS TIMEOUT
-BUGDPRANKE WIN : http/tests/inspector/resource-tree/resource-tree-reload.html = PASS TEXT
+BUGWK60105 DEBUG : fast/css/empty-pseudo-class.html = PASS TEXT
 
 // Also affected by WK50661
 BUGWK59742 MAC : fast/speech/input-appearance-numberandspeech.html = IMAGE+TEXT PASS
