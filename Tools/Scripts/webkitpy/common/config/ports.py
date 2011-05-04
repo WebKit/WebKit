@@ -269,7 +269,7 @@ class ChromiumXVFBPort(ChromiumPort):
         # FIXME: We should find a better way to do this.
         return ["xvfb-run"] + ChromiumPort.run_webkit_tests_command() + [
             "--results-directory=%s" % cls.results_directory,
-            "--verbose",
+            "--print=actual,config,expected,misc,slowest,unexpected,unexpected-results",
         ]
 
     @classmethod

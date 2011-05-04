@@ -1,3 +1,15 @@
+2011-05-04  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        Make the EWS test logging less verbose
+        https://bugs.webkit.org/show_bug.cgi?id=60201
+
+        This should help us generate less than a hundred MB of logs per hour.
+
+        * Scripts/webkitpy/common/config/ports.py:
+        * Scripts/webkitpy/common/config/ports_unittest.py:
+
 2011-05-04  Tao Bai  <michaelbai@chromium.org>
 
         Reviewed by David Kilzer.
