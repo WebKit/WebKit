@@ -1,3 +1,18 @@
+2011-05-03  Luke Macpherson   <macpherson@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        Add template parameter to ApplyPropertyColor to improve clarity by removing constructor parameter side effects.
+        https://bugs.webkit.org/show_bug.cgi?id=59774
+
+        No new tests required as on new functionality.
+
+        * css/CSSStyleApplyProperty.cpp:
+        (WebCore::ApplyPropertyColor::applyValue):
+        Added template parameter "inheritColorFromParent = false".
+        (WebCore::CSSStyleApplyProperty::CSSStyleApplyProperty):
+        Use template parameter where appropriate.
+
 2011-05-03  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Darin Adler.

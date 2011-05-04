@@ -129,6 +129,8 @@ protected:
     }
 };
 
+enum ColorInherit {NoInheritFromParent = 0, InheritFromParent};
+template <ColorInherit inheritColorFromParent>
 class ApplyPropertyColor : public ApplyPropertyBase {
 public:
     typedef const Color& (RenderStyle::*GetterFunction)() const;
@@ -165,7 +167,7 @@ private:
             return;
 
         CSSPrimitiveValue* primitiveValue = static_cast<CSSPrimitiveValue*>(value);
-        if (m_initial && primitiveValue->getIdent() == CSSValueCurrentcolor)
+        if (inheritColorFromParent && primitiveValue->getIdent() == CSSValueCurrentcolor)
             applyInheritValue(selector);
         else
             (selector->style()->*m_setter)(selector->getColorFromPrimitiveValue(primitiveValue));
@@ -384,7 +386,7 @@ CSSStyleApplyProperty::CSSStyleApplyProperty()
     for (int i = 0; i < numCSSProperties; ++i)
        m_propertyMap[i] = 0;
 
-    setPropertyValue(CSSPropertyColor, new ApplyPropertyColor(&RenderStyle::color, &RenderStyle::setColor, 0, RenderStyle::initialColor));
+    setPropertyValue(CSSPropertyColor, new ApplyPropertyColor<InheritFromParent>(&RenderStyle::color, &RenderStyle::setColor, 0, RenderStyle::initialColor));
     setPropertyValue(CSSPropertyDirection, new ApplyPropertyDirection(&RenderStyle::direction, &RenderStyle::setDirection, RenderStyle::initialDirection));
 
     setPropertyValue(CSSPropertyBackgroundAttachment, new ApplyPropertyFillLayer<EFillAttachment>(CSSPropertyBackgroundAttachment, BackgroundFillLayer, &RenderStyle::accessBackgroundLayers, &RenderStyle::backgroundLayers,
@@ -445,11 +447,11 @@ CSSStyleApplyProperty::CSSStyleApplyProperty()
                     &FillLayer::isRepeatYSet, &FillLayer::repeatY, &FillLayer::setRepeatY, &FillLayer::clearRepeatY, &FillLayer::initialFillRepeatY, &CSSStyleSelector::mapFillRepeatY));
     setPropertyValue(CSSPropertyWebkitMaskRepeat, new ApplyPropertyExpandingSuppressValue(propertyValue(CSSPropertyBackgroundRepeatX), propertyValue(CSSPropertyBackgroundRepeatY)));
 
-    setPropertyValue(CSSPropertyBackgroundColor, new ApplyPropertyColor(&RenderStyle::backgroundColor, &RenderStyle::setBackgroundColor, 0));
-    setPropertyValue(CSSPropertyBorderBottomColor, new ApplyPropertyColor(&RenderStyle::borderBottomColor, &RenderStyle::setBorderBottomColor, &RenderStyle::color));
-    setPropertyValue(CSSPropertyBorderLeftColor, new ApplyPropertyColor(&RenderStyle::borderLeftColor, &RenderStyle::setBorderLeftColor, &RenderStyle::color));
-    setPropertyValue(CSSPropertyBorderRightColor, new ApplyPropertyColor(&RenderStyle::borderRightColor, &RenderStyle::setBorderRightColor, &RenderStyle::color));
-    setPropertyValue(CSSPropertyBorderTopColor, new ApplyPropertyColor(&RenderStyle::borderTopColor, &RenderStyle::setBorderTopColor, &RenderStyle::color));
+    setPropertyValue(CSSPropertyBackgroundColor, new ApplyPropertyColor<NoInheritFromParent>(&RenderStyle::backgroundColor, &RenderStyle::setBackgroundColor, 0));
+    setPropertyValue(CSSPropertyBorderBottomColor, new ApplyPropertyColor<NoInheritFromParent>(&RenderStyle::borderBottomColor, &RenderStyle::setBorderBottomColor, &RenderStyle::color));
+    setPropertyValue(CSSPropertyBorderLeftColor, new ApplyPropertyColor<NoInheritFromParent>(&RenderStyle::borderLeftColor, &RenderStyle::setBorderLeftColor, &RenderStyle::color));
+    setPropertyValue(CSSPropertyBorderRightColor, new ApplyPropertyColor<NoInheritFromParent>(&RenderStyle::borderRightColor, &RenderStyle::setBorderRightColor, &RenderStyle::color));
+    setPropertyValue(CSSPropertyBorderTopColor, new ApplyPropertyColor<NoInheritFromParent>(&RenderStyle::borderTopColor, &RenderStyle::setBorderTopColor, &RenderStyle::color));
 
     setPropertyValue(CSSPropertyBorderTopStyle, new ApplyPropertyDefault<EBorderStyle>(&RenderStyle::borderTopStyle, &RenderStyle::setBorderTopStyle, &RenderStyle::initialBorderStyle));
     setPropertyValue(CSSPropertyBorderRightStyle, new ApplyPropertyDefault<EBorderStyle>(&RenderStyle::borderRightStyle, &RenderStyle::setBorderRightStyle, &RenderStyle::initialBorderStyle));
@@ -463,16 +465,16 @@ CSSStyleApplyProperty::CSSStyleApplyProperty()
     setPropertyValue(CSSPropertyOutlineWidth, new ApplyPropertyWidth(&RenderStyle::outlineWidth, &RenderStyle::setOutlineWidth, &RenderStyle::initialBorderWidth));
     setPropertyValue(CSSPropertyWebkitColumnRuleWidth, new ApplyPropertyWidth(&RenderStyle::columnRuleWidth, &RenderStyle::setColumnRuleWidth, &RenderStyle::initialBorderWidth));
 
-    setPropertyValue(CSSPropertyOutlineColor, new ApplyPropertyColor(&RenderStyle::outlineColor, &RenderStyle::setOutlineColor, &RenderStyle::color));
+    setPropertyValue(CSSPropertyOutlineColor, new ApplyPropertyColor<InheritFromParent>(&RenderStyle::outlineColor, &RenderStyle::setOutlineColor, &RenderStyle::color));
 
     setPropertyValue(CSSPropertyOverflowX, new ApplyPropertyDefault<EOverflow>(&RenderStyle::overflowX, &RenderStyle::setOverflowX, &RenderStyle::initialOverflowX));
     setPropertyValue(CSSPropertyOverflowY, new ApplyPropertyDefault<EOverflow>(&RenderStyle::overflowY, &RenderStyle::setOverflowY, &RenderStyle::initialOverflowY));
     setPropertyValue(CSSPropertyOverflow, new ApplyPropertyExpanding(propertyValue(CSSPropertyOverflowX), propertyValue(CSSPropertyOverflowY)));
 
-    setPropertyValue(CSSPropertyWebkitColumnRuleColor, new ApplyPropertyColor(&RenderStyle::columnRuleColor, &RenderStyle::setColumnRuleColor, &RenderStyle::color));
-    setPropertyValue(CSSPropertyWebkitTextEmphasisColor, new ApplyPropertyColor(&RenderStyle::textEmphasisColor, &RenderStyle::setTextEmphasisColor, &RenderStyle::color));
-    setPropertyValue(CSSPropertyWebkitTextFillColor, new ApplyPropertyColor(&RenderStyle::textFillColor, &RenderStyle::setTextFillColor, &RenderStyle::color));
-    setPropertyValue(CSSPropertyWebkitTextStrokeColor, new ApplyPropertyColor(&RenderStyle::textStrokeColor, &RenderStyle::setTextStrokeColor, &RenderStyle::color));
+    setPropertyValue(CSSPropertyWebkitColumnRuleColor, new ApplyPropertyColor<NoInheritFromParent>(&RenderStyle::columnRuleColor, &RenderStyle::setColumnRuleColor, &RenderStyle::color));
+    setPropertyValue(CSSPropertyWebkitTextEmphasisColor, new ApplyPropertyColor<NoInheritFromParent>(&RenderStyle::textEmphasisColor, &RenderStyle::setTextEmphasisColor, &RenderStyle::color));
+    setPropertyValue(CSSPropertyWebkitTextFillColor, new ApplyPropertyColor<NoInheritFromParent>(&RenderStyle::textFillColor, &RenderStyle::setTextFillColor, &RenderStyle::color));
+    setPropertyValue(CSSPropertyWebkitTextStrokeColor, new ApplyPropertyColor<NoInheritFromParent>(&RenderStyle::textStrokeColor, &RenderStyle::setTextStrokeColor, &RenderStyle::color));
 
     setPropertyValue(CSSPropertyTop, new ApplyPropertyLength<AutoEnabled>(&RenderStyle::top, &RenderStyle::setTop, &RenderStyle::initialOffset));
     setPropertyValue(CSSPropertyRight, new ApplyPropertyLength<AutoEnabled>(&RenderStyle::right, &RenderStyle::setRight, &RenderStyle::initialOffset));
