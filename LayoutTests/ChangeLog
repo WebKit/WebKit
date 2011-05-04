@@ -1,3 +1,12 @@
+2011-05-04  Alpha Lam  <hclam@chromium.org>
+
+        Not reviewed. Build fix.
+
+        Test expectations for Linux.
+
+        * platform/chromium-linux/fast/canvas/webgl/css-webkit-canvas-expected.png: Added.
+        * platform/chromium-linux/fast/canvas/webgl/css-webkit-canvas-repaint-expected.png: Added.
+
 2011-05-04  Andrey Kosyakov  <caseq@chromium.org>
 
         Unreviewed. Another shot at fixing flakiness under win (also renamed a couple of obsolete things).
