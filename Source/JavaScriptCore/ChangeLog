@@ -1,3 +1,15 @@
+2011-05-03  Alexis Menard  <alexis.menard@openbossa.org>
+
+        Reviewed by Eric Seidel.
+
+        Unused but set variable warning in MacroAssemberX86_64
+        https://bugs.webkit.org/show_bug.cgi?id=59482
+
+        * assembler/MacroAssemblerX86_64.h:
+        (JSC::MacroAssemblerX86_64::call):
+        (JSC::MacroAssemblerX86_64::tailRecursiveCall):
+        (JSC::MacroAssemblerX86_64::makeTailRecursiveCall):
+
 2011-05-03  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Geoffrey Garen.

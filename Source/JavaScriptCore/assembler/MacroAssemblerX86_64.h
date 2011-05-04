@@ -117,7 +117,7 @@ public:
     {
         DataLabelPtr label = moveWithPatch(TrustedImmPtr(0), scratchRegister);
         Call result = Call(m_assembler.call(scratchRegister), Call::Linkable);
-        ASSERT(differenceBetween(label, result) == REPTACH_OFFSET_CALL_R11);
+        ASSERT_UNUSED(label, differenceBetween(label, result) == REPTACH_OFFSET_CALL_R11);
         return result;
     }
 
@@ -125,7 +125,7 @@ public:
     {
         DataLabelPtr label = moveWithPatch(TrustedImmPtr(0), scratchRegister);
         Jump newJump = Jump(m_assembler.jmp_r(scratchRegister));
-        ASSERT(differenceBetween(label, newJump) == REPTACH_OFFSET_CALL_R11);
+        ASSERT_UNUSED(label, differenceBetween(label, newJump) == REPTACH_OFFSET_CALL_R11);
         return Call::fromTailJump(newJump);
     }
 
@@ -134,7 +134,7 @@ public:
         oldJump.link(this);
         DataLabelPtr label = moveWithPatch(TrustedImmPtr(0), scratchRegister);
         Jump newJump = Jump(m_assembler.jmp_r(scratchRegister));
-        ASSERT(differenceBetween(label, newJump) == REPTACH_OFFSET_CALL_R11);
+        ASSERT_UNUSED(label, differenceBetween(label, newJump) == REPTACH_OFFSET_CALL_R11);
         return Call::fromTailJump(newJump);
     }
 
