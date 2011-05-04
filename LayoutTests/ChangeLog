@@ -1,5 +1,17 @@
 2011-05-03  Dirk Pranke  <dpranke@chromium.org>
 
+        Unreviewed, expectations change and new baselines.
+
+        * platform/chromium-linux/fast/backgrounds/gradient-background-leakage-expected.png: Added.
+        * platform/chromium-linux/fast/forms/validation-message-appearance-expected.png:
+        * platform/chromium-mac-leopard/fast/forms/validation-message-appearance-expected.png:
+        * platform/chromium-mac/fast/forms/validation-message-appearance-expected.png:
+        * platform/chromium-win/fast/backgrounds/gradient-background-leakage-expected.png: Added.
+        * platform/chromium-win/fast/forms/validation-message-appearance-expected.png:
+        * platform/chromium/test_expectations.txt:
+
+2011-05-03  Dirk Pranke  <dpranke@chromium.org>
+
         Unreviewed, expectations triage.
 
         * platform/chromium/test_expectations.txt:

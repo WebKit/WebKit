@@ -3825,9 +3825,7 @@ BUGWK59172 : fast/html/details-writing-mode.html = IMAGE+TEXT
 BUGCR80301 MAC LEOPARD : fast/canvas/canvas-largedraws.html = TIMEOUT
 
 // roll up from r84685:r84721??
-BUGDPRANKE : fast/dom/dataset-gc.html = TEXT
-BUGDPRANKE WIN LINUX : fast/backgrounds/gradient-background-leakage.html = IMAGE
-BUGDPRANKE : fast/forms/validation-message-appearance.html = IMAGE
+BUGWK84665 : fast/dom/dataset-gc.html = TEXT
 
 BUGWK60115 WIN LINUX : fast/multicol/shadow-breaking.html = IMAGE
 BUGWK60115 WIN : fast/text/shadow-translucent-fill.html = IMAGE
@@ -3847,7 +3845,7 @@ BUGWK60118 MAC : svg/dom/SVGScriptElement/script-set-href.svg = PASS TEXT
 BUGWK60118 WIN DEBUG : svg/dom/SVGScriptElement/script-set-href.svg = TEXT PASS
 
 // broke in r84742 - just needs a new baseline?
-BUGDPRANKE : http/tests/misc/will-send-request-returns-null-on-redirect.html = TEXT
+BUGWK60121 : http/tests/misc/will-send-request-returns-null-on-redirect.html = TEXT
 
 // changed in r84745 (see commented-out entry above)
 BUGWK50661 WIN LINUX : fast/dom/HTMLMeterElement/meter-element.html = TEXT
