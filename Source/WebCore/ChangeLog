@@ -1,3 +1,50 @@
+2011-05-04  Andrey Kosyakov  <caseq@chromium.org>
+
+        Reviewed by Yury Semikhatsky.
+
+        Web Inspector: expose shadow DOM in the Elements panel
+        https://bugs.webkit.org/show_bug.cgi?id=60160
+
+        Test: inspector/elements/shadow-dom.html
+
+        * dom/Element.cpp:
+        (WebCore::Element::ensureShadowRoot):
+        (WebCore::Element::removeShadowRoot):
+        * inspector/Inspector.json:
+        * inspector/InspectorDOMAgent.cpp:
+        (WebCore::InspectorDOMAgent::pushChildNodesToFrontend):
+        (WebCore::InspectorDOMAgent::buildObjectForNode):
+        (WebCore::InspectorDOMAgent::didInsertDOMNode):
+        (WebCore::InspectorDOMAgent::didRemoveDOMNode):
+        (WebCore::InspectorDOMAgent::isContainerNode):
+        * inspector/InspectorDOMAgent.h:
+        * inspector/front-end/DOMAgent.js:
+        (WebInspector.DOMNode):
+        (WebInspector.DOMNode.prototype.inShadowTree):
+        (WebInspector.DOMNode.prototype._setShadowRootPayload):
+        (WebInspector.DOMNode.prototype._renumber):
+        (WebInspector.DOMAgent.prototype._bindNodes):
+        (WebInspector.DOMAgent.prototype.querySelectorAll):
+        (WebInspector.DOMAgent.prototype._shadowRootUpdated):
+        (WebInspector.DOMDispatcher.prototype.searchResults):
+        (WebInspector.DOMDispatcher.prototype.shadowRootUpdated):
+        * inspector/front-end/ElementsPanel.js:
+        (WebInspector.ElementsPanel):
+        (WebInspector.ElementsPanel.prototype._nodeUpdated):
+        (WebInspector.ElementsPanel.prototype._attributesUpdated):
+        (WebInspector.ElementsPanel.prototype._nodeRemoved):
+        (WebInspector.ElementsPanel.prototype.updateModifiedNodes):
+        (WebInspector.ElementsPanel.prototype.updateBreadcrumb):
+        * inspector/front-end/ElementsTreeOutline.js:
+        (WebInspector.ElementsTreeElement):
+        (WebInspector.ElementsTreeElement.prototype._updateChildren.updateChildrenOfNode):
+        (WebInspector.ElementsTreeElement.prototype._updateChildren):
+        ():
+        * inspector/front-end/inspector.css:
+        (#elements-content .dom-shadow-root):
+        (.outline-disclosure li .webkit-html-tag.shadow):
+        * inspector/front-end/utilities.js:
+
 2011-05-03  Adam Roben  <aroben@apple.com>
 
         Remove an unnecessary OwnPtr equality check in XSLT code

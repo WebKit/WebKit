@@ -76,6 +76,7 @@
 #include "RenderStyle.h"
 #include "RenderStyleConstants.h"
 #include "ScriptEventListener.h"
+#include "ShadowRoot.h"
 #include "StyleSheetList.h"
 #include "Text.h"
 
@@ -452,7 +453,7 @@ void InspectorDOMAgent::getDocument(ErrorString*, RefPtr<InspectorObject>* root)
 void InspectorDOMAgent::pushChildNodesToFrontend(int nodeId)
 {
     Node* node = nodeForId(nodeId);
-    if (!node || (node->nodeType() != Node::ELEMENT_NODE && node->nodeType() != Node::DOCUMENT_NODE && node->nodeType() != Node::DOCUMENT_FRAGMENT_NODE))
+    if (!node || !isContainerNode(*node))
         return;
     if (m_childrenRequested.contains(nodeId))
         return;
@@ -1022,6 +1023,7 @@ PassRefPtr<InspectorObject> InspectorDOMAgent::buildObjectForNode(Node* node, in
         case Node::ATTRIBUTE_NODE:
             localName = node->localName();
             break;
+        case Node::SHADOW_ROOT_NODE:
         case Node::DOCUMENT_FRAGMENT_NODE:
             break;
         case Node::DOCUMENT_NODE:
@@ -1038,7 +1040,7 @@ PassRefPtr<InspectorObject> InspectorDOMAgent::buildObjectForNode(Node* node, in
     value->setString("localName", localName);
     value->setString("nodeValue", nodeValue);
 
-    if (node->nodeType() == Node::ELEMENT_NODE || node->nodeType() == Node::DOCUMENT_NODE || node->nodeType() == Node::DOCUMENT_FRAGMENT_NODE) {
+    if (isContainerNode(*node)) {
         int nodeCount = innerChildNodeCount(node);
         value->setNumber("childNodeCount", nodeCount);
         RefPtr<InspectorArray> children = buildArrayForContainerChildren(node, depth, nodesMap);
@@ -1052,6 +1054,8 @@ PassRefPtr<InspectorObject> InspectorDOMAgent::buildObjectForNode(Node* node, in
                 HTMLFrameOwnerElement* frameOwner = static_cast<HTMLFrameOwnerElement*>(node);
                 value->setString("documentURL", documentURLString(frameOwner->contentDocument()));
             }
+            if (ShadowRoot* shadowRoot = element->shadowRoot())
+                value->setObject("shadowRoot", buildObjectForNode(shadowRoot, depth, nodesMap));
         } else if (node->nodeType() == Node::DOCUMENT_NODE) {
             Document* document = static_cast<Document*>(node);
             value->setString("documentURL", documentURLString(document));
@@ -1223,12 +1227,17 @@ void InspectorDOMAgent::didInsertDOMNode(Node* node)
     // We could be attaching existing subtree. Forget the bindings.
     unbind(node, &m_documentNodeToIdMap);
 
-    ContainerNode* parent = node->parentNode();
+    ContainerNode* parent = node->isShadowRoot() ? node->shadowHost() : node->parentNode();
     int parentId = m_documentNodeToIdMap.get(parent);
     // Return if parent is not mapped yet.
     if (!parentId)
         return;
 
+    if (node->isShadowRoot()) {
+        RefPtr<InspectorObject> value = buildObjectForNode(node, 0, &m_documentNodeToIdMap);
+        m_frontend->shadowRootUpdated(parentId, value.release());
+        return;
+    }
     if (!m_childrenRequested.contains(parentId)) {
         // No children are mapped yet -> only notify on changes of hasChildren.
         m_frontend->childNodeCountUpdated(parentId, innerChildNodeCount(parent));
@@ -1246,7 +1255,7 @@ void InspectorDOMAgent::didRemoveDOMNode(Node* node)
     if (isWhitespace(node))
         return;
 
-    ContainerNode* parent = node->parentNode();
+    ContainerNode* parent = node->isShadowRoot() ? node->shadowHost() : node->parentNode();
     int parentId = m_documentNodeToIdMap.get(parent);
     // If parent is not mapped yet -> ignore the event.
     if (!parentId)
@@ -1255,7 +1264,9 @@ void InspectorDOMAgent::didRemoveDOMNode(Node* node)
     if (m_domListener)
         m_domListener->didRemoveDOMNode(node);
 
-    if (!m_childrenRequested.contains(parentId)) {
+    if (node->isShadowRoot())
+        m_frontend->shadowRootUpdated(parentId, 0);
+    else if (!m_childrenRequested.contains(parentId)) {
         // No children are mapped yet -> only notify on changes of hasChildren.
         if (innerChildNodeCount(parent) == 1)
             m_frontend->childNodeCountUpdated(parentId, 0);
@@ -1402,6 +1413,15 @@ void InspectorDOMAgent::drawNodeHighlight(GraphicsContext& context) const
     else if (m_highlightMode == "margin")
         mode = DOMNodeHighlighter::HighlightMargin;
     DOMNodeHighlighter::DrawNodeHighlight(context, m_highlightedNode.get(), mode);
+}
+
+bool InspectorDOMAgent::isContainerNode(const Node& node)
+{
+     Node::NodeType type = node.nodeType();
+     return type == Node::ELEMENT_NODE
+         || type == Node::DOCUMENT_NODE
+         || type == Node::DOCUMENT_FRAGMENT_NODE
+         || type == Node::SHADOW_ROOT_NODE;
 }
 
 } // namespace WebCore

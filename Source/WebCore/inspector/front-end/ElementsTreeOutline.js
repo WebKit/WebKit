@@ -300,7 +300,7 @@ WebInspector.ElementsTreeOutline.prototype.__proto__ = TreeOutline.prototype;
 WebInspector.ElementsTreeElement = function(node, elementCloseTag)
 {
     this._elementCloseTag = elementCloseTag;
-    var hasChildrenOverride = !elementCloseTag && node.hasChildNodes() && !this._showInlineText(node);
+    var hasChildrenOverride = !elementCloseTag && (node.hasChildNodes() || node.shadowRoot) && !this._showInlineText(node);
 
     // The title will be updated in onattach.
     TreeElement.call(this, "", node, hasChildrenOverride);
@@ -567,6 +567,15 @@ WebInspector.ElementsTreeElement.prototype = {
                 child = child.nextSibling;
                 ++treeChildIndex;
             }
+            // If we ever had shadow root child, it's going to be second to last (before closing tag)
+            var shadowRootChild = treeElement.children[treeElement.children.length - 2];
+            if (shadowRootChild && shadowRootChild.representedObject.nodeType() === Node.SHADOW_ROOT_NODE) {
+            if (!node.shadowRoot)
+                treeElement.removeChild(shadowRootChild);
+            else
+                treeElement.representedObject = node.shadowRoot;
+            } else if (node.shadowRoot)
+                treeElement.insertChildElement(node.shadowRoot, treeChildIndex);
         }
 
         // Remove any tree elements that no longer have this node (or this node's contentDocument) as their parent.
@@ -1257,10 +1266,15 @@ WebInspector.ElementsTreeElement.prototype = {
         return html;
     },
 
-    _tagHTML: function(tagName, isClosingTag, isDistinctTreeElement, linkify)
+    _tagHTML: function(tagName, isClosingTag, isDistinctTreeElement, linkify, isShadow)
     {
         var node = this.representedObject;
-        var result = "<span class=\"webkit-html-tag" + (isClosingTag && isDistinctTreeElement ? " close" : "")  + "\">&lt;";
+        var classes = [ "webkit-html-tag" ];
+        if (isClosingTag && isDistinctTreeElement)
+            classes.push("close");
+        if (isShadow)
+            classes.push("shadow");
+        var result = "<span class=\"" + classes.join(" ") + "\">&lt;";
         result += "<span " + (isClosingTag ? "" : "class=\"webkit-html-tag-name\"") + ">" + (isClosingTag ? "/" : "") + tagName + "</span>";
         if (!isClosingTag && node.hasAttributes()) {
             var attributes = node.attributes();
@@ -1296,12 +1310,12 @@ WebInspector.ElementsTreeElement.prototype = {
             case Node.ELEMENT_NODE:
                 var tagName = this.treeOutline.nodeNameToCorrectCase(node.nodeName()).escapeHTML();
                 if (this._elementCloseTag) {
-                    info.titleHTML = this._tagHTML(tagName, true, true);
+                    info.titleHTML = this._tagHTML(tagName, true, true, false, node.inShadowTree());
                     info.hasChildren = false;
                     break;
                 }
 
-                var titleHTML = this._tagHTML(tagName, false, false, linkify);
+                var titleHTML = this._tagHTML(tagName, false, false, linkify, node.inShadowTree());
 
                 var textChild = this._singleTextChild(node);
                 var showInlineText = textChild && textChild.nodeValue().length < Preferences.maxInlineTextChildLength;
@@ -1309,14 +1323,14 @@ WebInspector.ElementsTreeElement.prototype = {
                 if (!this.expanded && (!showInlineText && (this.treeOutline.isXMLMimeType || !WebInspector.ElementsTreeElement.ForbiddenClosingTagElements[tagName]))) {
                     if (this.hasChildren)
                         titleHTML += "<span class=\"webkit-html-text-node\">&#8230;</span>&#8203;";
-                    titleHTML += this._tagHTML(tagName, true, false);
+                    titleHTML += this._tagHTML(tagName, true, false, false, node.inShadowTree());
                 }
 
                 // If this element only has a single child that is a text node,
                 // just show that text and the closing tag inline rather than
                 // create a subtree for them
                 if (showInlineText) {
-                    titleHTML += "<span class=\"webkit-html-text-node\">" + textChild.nodeValue().escapeHTML() + "</span>&#8203;" + this._tagHTML(tagName, true, false);
+                    titleHTML += "<span class=\"webkit-html-text-node\">" + textChild.nodeValue().escapeHTML() + "</span>&#8203;" + this._tagHTML(tagName, true, false, node.inShadowTree());
                     info.hasChildren = false;
                 }
                 info.titleHTML = titleHTML;
@@ -1368,6 +1382,11 @@ WebInspector.ElementsTreeElement.prototype = {
             case Node.CDATA_SECTION_NODE:
                 info.titleHTML = "<span class=\"webkit-html-text-node\">&lt;![CDATA[" + node.nodeValue().escapeHTML() + "]]&gt;</span>";
                 break;
+
+            case Node.SHADOW_ROOT_NODE:
+                info.titleHTML = "<span class=\"dom-shadow-root\">(shadow)</span>";
+                break;
+
             default:
                 info.titleHTML = this.treeOutline.nodeNameToCorrectCase(node.nodeName()).collapseWhitespace().escapeHTML();
         }
@@ -1377,7 +1396,7 @@ WebInspector.ElementsTreeElement.prototype = {
 
     _singleTextChild: function(node)
     {
-        if (!node)
+        if (!node || node.shadowRoot)
             return null;
 
         var firstChild = node.firstChild;

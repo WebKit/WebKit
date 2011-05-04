@@ -228,7 +228,9 @@ Node.prototype.enclosingNodeWithClass = function(className)
     return this.parentNode.enclosingNodeOrSelfWithClass(className);
 }
 
-Element.prototype.query = function(query) 
+Node.SHADOW_ROOT_NODE = 14;
+
+Element.prototype.query = function(query)
 {
     return this.ownerDocument.evaluate(query, this, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue;
 }

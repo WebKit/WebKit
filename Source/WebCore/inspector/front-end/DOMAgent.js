@@ -67,6 +67,8 @@ WebInspector.DOMNode = function(doc, payload) {
             this.ownerDocument.body = this;
         if (payload.documentURL)
             this.documentURL = payload.documentURL;
+        if (payload.shadowRoot)
+            this._setShadowRootPayload(payload.shadowRoot);
     } else if (this._nodeType === Node.DOCUMENT_TYPE_NODE) {
         this.publicId = payload.publicId;
         this.systemId = payload.systemId;
@@ -93,6 +95,11 @@ WebInspector.DOMNode.prototype = {
     nodeType: function()
     {
         return this._nodeType;
+    },
+
+    inShadowTree: function()
+    {
+        return this._inShadowTree;
     },
 
     nodeName: function()
@@ -284,6 +291,17 @@ WebInspector.DOMNode.prototype = {
         this._renumber();
     },
 
+    _setShadowRootPayload: function(payload)
+    {
+        if (!payload) {
+            this.shadowRoot = null;
+            return;
+        }
+        this.shadowRoot = new WebInspector.DOMNode(this.ownerDocument, payload);
+        this.shadowRoot.parentNode = this;
+        this.shadowRoot._inShadowTree = true;
+    },
+
     _renumber: function()
     {
         this._childNodeCount = this.children.length;
@@ -300,6 +318,7 @@ WebInspector.DOMNode.prototype = {
             child.nextSibling = i + 1 < this._childNodeCount ? this.children[i + 1] : null;
             child.prevSibling = i - 1 >= 0 ? this.children[i - 1] : null;
             child.parentNode = this;
+            child._inShadowTree = this._inShadowTree;
         }
     },
 
@@ -346,7 +365,8 @@ WebInspector.DOMAgent.Events = {
     NodeInserted: "NodeInserted",
     NodeRemoved: "NodeRemoved",
     DocumentUpdated: "DocumentUpdated",
-    ChildNodeCountUpdated: "ChildNodeCountUpdated"
+    ChildNodeCountUpdated: "ChildNodeCountUpdated",
+    ShadowRootUpdated: "ShadowRootUpdated"
 }
 
 WebInspector.DOMAgent.prototype = {
@@ -486,6 +506,9 @@ WebInspector.DOMAgent.prototype = {
         for (var i = 0; i < children.length; ++i) {
             var child = children[i];
             this._idToDOMNode[child.id] = child;
+            if (child.shadowRoot)
+                this._idToDOMNode[child.shadowRoot.id] = child.shadowRoot;
+
             if (child.children)
                 this._bindNodes(child.children);
         }
@@ -538,6 +561,17 @@ WebInspector.DOMAgent.prototype = {
     querySelectorAll: function(nodeId, selectors, callback)
     {
         DOMAgent.querySelectorAll(nodeId, selectors, this._wrapClientCallback(callback));
+    },
+
+    _shadowRootUpdated: function(hostId, payload)
+    {
+        var host = this._idToDOMNode[hostId];
+        if (host.shadowRoot && !payload)
+            delete this._idToDOMNode[host.shadowRoot.id];
+        host._setShadowRootPayload(payload);
+        if (host.shadowRoot)
+            this._idToDOMNode[host.shadowRoot.id] = host.shadowRoot;
+        this.dispatchEventToListeners(WebInspector.DOMAgent.Events.ShadowRootUpdated, host);
     }
 }
 
@@ -593,5 +627,10 @@ WebInspector.DOMDispatcher.prototype = {
     {
         if (this._domAgent._searchResultCollector)
             this._domAgent._searchResultCollector(nodeIds);
+    },
+
+    shadowRootUpdated: function(hostId, shadowRoot)
+    {
+        this._domAgent._shadowRootUpdated(hostId, shadowRoot);
     }
 }

@@ -113,12 +113,13 @@ WebInspector.ElementsPanel = function()
 
     this._registerShortcuts();
 
-    WebInspector.domAgent.addEventListener(WebInspector.DOMAgent.Events.NodeInserted, this._nodeInserted, this);
+    WebInspector.domAgent.addEventListener(WebInspector.DOMAgent.Events.NodeInserted, this._nodeUpdated.bind(this, true));
     WebInspector.domAgent.addEventListener(WebInspector.DOMAgent.Events.NodeRemoved, this._nodeRemoved, this);
     WebInspector.domAgent.addEventListener(WebInspector.DOMAgent.Events.AttrModified, this._attributesUpdated, this);
-    WebInspector.domAgent.addEventListener(WebInspector.DOMAgent.Events.CharacterDataModified, this._characterDataModified, this);
+    WebInspector.domAgent.addEventListener(WebInspector.DOMAgent.Events.CharacterDataModified, this._nodeUpdated.bind(this, false));
     WebInspector.domAgent.addEventListener(WebInspector.DOMAgent.Events.DocumentUpdated, this._documentUpdated, this);
     WebInspector.domAgent.addEventListener(WebInspector.DOMAgent.Events.ChildNodeCountUpdated, this._childNodeCountUpdated, this);
+    WebInspector.domAgent.addEventListener(WebInspector.DOMAgent.Events.ShadowRootUpdated, this._nodeUpdated.bind(this, true));
 
     this.recentlyModifiedNodes = [];
 }
@@ -431,33 +432,27 @@ WebInspector.ElementsPanel.prototype = {
         delete this._isEditingStyle;
     },
 
-    _attributesUpdated: function(event)
+    _nodeUpdated: function(hierarchyUpdated, event)
     {
-        this.recentlyModifiedNodes.push({node: event.data, updated: true});
+        var updatedNodeDetails = { node: event.data };
+        if (hierarchyUpdated)
+            updatedNodeDetails.parent = event.data.parentNode;
+        this.recentlyModifiedNodes.push(updatedNodeDetails);
         if (this.visible)
             this._updateModifiedNodesSoon();
+    },
+
+    _attributesUpdated: function(event)
+    {
+        this._nodeUpdated(false, event);
 
         if (!this._isEditingStyle && event.data === this.focusedDOMNode)
             this._styleSheetChanged();
     },
 
-    _characterDataModified: function(event)
-    {
-        this.recentlyModifiedNodes.push({node: event.data, updated: true});
-        if (this.visible)
-            this._updateModifiedNodesSoon();
-    },
-
-    _nodeInserted: function(event)
-    {
-        this.recentlyModifiedNodes.push({node: event.data, parent: event.data.parentNode, inserted: true});
-        if (this.visible)
-            this._updateModifiedNodesSoon();
-    },
-
     _nodeRemoved: function(event)
     {
-        this.recentlyModifiedNodes.push({node: event.data.node, parent: event.data.parent, removed: true});
+        this.recentlyModifiedNodes.push({node: event.data.node, parent: event.data.parent});
         if (this.visible)
             this._updateModifiedNodesSoon();
     },
@@ -490,15 +485,12 @@ WebInspector.ElementsPanel.prototype = {
             var parent = this.recentlyModifiedNodes[i].parent;
             var node = this.recentlyModifiedNodes[i].node;
 
-            if (this.recentlyModifiedNodes[i].updated) {
+            if (!parent) {
                 var nodeItem = this.treeOutline.findTreeElement(node);
                 if (nodeItem)
                     nodeItem.updateTitle();
                 continue;
             }
-
-            if (!parent)
-                continue;
 
             var parentNodeItem = this.treeOutline.findTreeElement(parent);
             if (parentNodeItem && !parentNodeItem.alreadyUpdatedChildren) {
@@ -667,6 +659,10 @@ WebInspector.ElementsPanel.prototype = {
 
                 case Node.DOCUMENT_TYPE_NODE:
                     crumbTitle = "<!DOCTYPE>";
+                    break;
+
+                case Node.SHADOW_ROOT_NODE:
+                    crumbTitle = "(shadow)";
                     break;
 
                 default:

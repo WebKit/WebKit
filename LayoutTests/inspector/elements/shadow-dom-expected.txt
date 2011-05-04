@@ -1,0 +1,23 @@
+Tests that shadow DOM tree is properly displayed.
+
+
+
+Running: testDumpInitial
+- <meter id="meter" min="0" max="100" value="20">
+    - (shadow)
+    - <div>
+          <div style="width: 20%; "></div>
+      </div>
+  </meter>
+
+Running: testDumpUpdated
+Before controls enabled
+  <div id="delayed-shadow-host"></div>
+After controls enabled
+- <div id="delayed-shadow-host">
+    - (shadow)
+    - <div>
+          <span>text</span>
+      </div>
+  </div>
+

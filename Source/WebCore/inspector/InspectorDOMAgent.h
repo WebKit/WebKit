@@ -207,6 +207,7 @@ private:
 
     void discardBindings();
 
+    static bool isContainerNode(const Node&);
     InstrumentingAgents* m_instrumentingAgents;
     InspectorPageAgent* m_pageAgent;
     InspectorClient* m_client;
