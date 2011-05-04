@@ -3627,15 +3627,14 @@ BUGWK60097 DEBUG : fast/dom/HTMLLinkElement/link-and-subresource-test.html = TEX
 BUGWK60102 LINUX DEBUG GPU : compositing/geometry/fixed-in-composited.html = IMAGE
 BUGWK60102 LINUX DEBUG GPU : compositing/geometry/horizontal-scroll-composited.html = IMAGE
 BUGWK60102 LINUX GPU : compositing/geometry/tall-page-composited.html = IMAGE
-BUGWK60102 LINUX DEBUG GPU : compositing/geometry/video-fixed-scrolling.html = IMAGE
+BUGWK60102 GPU : compositing/geometry/video-fixed-scrolling.html = IMAGE
 BUGWK60102 LINUX GPU : compositing/masks/masked-ancestor.html = IMAGE
 BUGWK60102 LINUX GPU : compositing/masks/simple-composited-mask.html = IMAGE
 BUGWK60102 LINUX DEBUG GPU : fast/canvas/canvas-text-alignment.html = IMAGE
 BUGWK60102 LINUX GPU : platform/chromium/compositing/layout-width-change.html = IMAGE
 
 // probably just needs new baselines after r84343
-BUGWK60103 WIN LINUX LEOPARD : fast/borders/border-radius-huge-assert.html = IMAGE
-BUGWK60103 MAC LEOPARD : fast/borders/border-radius-huge-assert.html = IMAGE
+BUGWK60103 : fast/borders/border-radius-huge-assert.html = IMAGE
 BUGWK60103 : fast/borders/borderRadiusAllStylesAllCorners.html = IMAGE
 BUGWK60103 WIN LINUX : fast/borders/borderRadiusArcs01.html = IMAGE
 BUGWK60103 WIN LINUX : fast/borders/borderRadiusDashed02.html = IMAGE
