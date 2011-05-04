@@ -633,11 +633,11 @@ LRESULT WebView::onKeyEvent(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPara
     return 0;
 }
 
-static void drawPageBackground(HDC dc, const RECT& rect)
+static void drawPageBackground(HDC dc, const WebPageProxy* page, const RECT& rect)
 {
-    // Mac checks WebPageProxy::drawsBackground and
-    // WebPageProxy::drawsTransparentBackground here, but those are always false on
-    // Windows currently (see <http://webkit.org/b/52009>).
+    if (!page->drawsBackground() || page->drawsTransparentBackground())
+        return;
+
     ::FillRect(dc, &rect, reinterpret_cast<HBRUSH>(COLOR_WINDOW + 1));
 }
 
@@ -653,17 +653,17 @@ void WebView::paint(HDC hdc, const IntRect& dirtyRect)
             Vector<IntRect> unpaintedRects = unpaintedRegion.rects();
             for (size_t i = 0; i < unpaintedRects.size(); ++i) {
                 RECT winRect = unpaintedRects[i];
-                drawPageBackground(hdc, unpaintedRects[i]);
+                drawPageBackground(hdc, m_page.get(), unpaintedRects[i]);
             }
         } else
-            drawPageBackground(hdc, dirtyRect);
+            drawPageBackground(hdc, m_page.get(), dirtyRect);
 
         m_page->didDraw();
     } else {
         if (m_page->isValid() && m_page->drawingArea() && m_page->drawingArea()->paint(dirtyRect, hdc))
             m_page->didDraw();
         else
-            drawPageBackground(hdc, dirtyRect);
+            drawPageBackground(hdc, m_page.get(), dirtyRect);
     }
 }
 

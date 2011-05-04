@@ -103,3 +103,14 @@ void WKViewUnapplyEditCommand(WKViewRef viewRef, WKEditCommandRef command)
 {
     toImpl(viewRef)->unapplyEditCommand(toImpl(command));
 }
+
+void WKViewSetDrawsTransparentBackground(WKViewRef viewRef, bool drawsTransparentBackground)
+{
+    toImpl(viewRef)->page()->setDrawsTransparentBackground(drawsTransparentBackground);
+}
+
+bool WKViewDrawsTransparentBackground(WKViewRef viewRef)
+{
+    return toImpl(viewRef)->page()->drawsTransparentBackground();
+}
+

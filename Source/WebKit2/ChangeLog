@@ -1,3 +1,28 @@
+2011-05-04  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Adam Roben.
+
+        WKView on Windows has no equivalent of Mac's -[WKView setDraws[Transparent]Background:]
+        https://bugs.webkit.org/show_bug.cgi?id=52009
+        <rdar://problem/8829746>
+
+        Add and implement WKViewSetDrawsTransparentBackground on windows.
+
+        * UIProcess/API/C/win/WKView.cpp:
+        (WKViewSetDrawsTransparentBackground):
+        (WKViewDrawsTransparentBackground):
+        Call through to the WebPageProxy object.
+
+        * UIProcess/API/C/win/WKView.h:
+        * UIProcess/win/WebView.cpp:
+        (WebKit::drawPageBackground):
+        Don't fill the rect with white if WebPageProxy::drawsBackground() or 
+        WebPageProxy::drawsTransparentBackground() returns false. Because of limitations in Win32,
+        both drawsBackground and drawsTransparentBackground are pretty much equivalent.
+
+        (WebKit::WebView::paint):
+        Pass the WebPageProxy object to drawPageBackground.
+
 2011-05-04  Tao Bai  <michaelbai@chromium.org>
 
         Reviewed by David Kilzer.
