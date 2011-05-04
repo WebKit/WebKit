@@ -165,6 +165,8 @@ function runTests()
         assertTrue(testLinks[0].textContent == 'foo/bar.html');
         assertTrue(testLinks[1].textContent == 'foo/bar1.html');
         assertTrue(testLinks[2].textContent == 'foo/bar2.html');
+        
+        assertTrue(!document.querySelector('#passes-table .expand-button'));
 
         var expectationTypes = document.querySelectorAll('#passes-table td:last-of-type');
         assertTrue(expectationTypes[0].textContent == 'TEXT');
@@ -188,7 +190,7 @@ function runTests()
     runTest(results, function() {
         assertTrue(document.querySelectorAll('tbody tr').length == 5);
         expandAllExpectations();
-        assertTrue(document.querySelectorAll('tbody tr').length == 10);
+        assertTrue(document.querySelectorAll('tbody tr').length == 8);
         var expandLinks = document.querySelectorAll('.expand-button-text');
         var enDash = '\u2013';
         for (var i = 0; i < expandLinks.length; i++) {
@@ -197,7 +199,7 @@ function runTests()
         
         collapseAllExpectations();
         // Collapsed expectations stay in the dom, but are display:none.
-        assertTrue(document.querySelectorAll('tbody tr').length == 10);
+        assertTrue(document.querySelectorAll('tbody tr').length == 8);
         var expandLinks = document.querySelectorAll('.expand-button-text');
         for (var i = 0; i < expandLinks.length; i++)
             assertTrue(expandLinks[i].textContent == '+');

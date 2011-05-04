@@ -9,6 +9,19 @@
 
         Reviewed by Eric Seidel.
 
+        [results.html] don't show expand buttons for passing tests
+        https://bugs.webkit.org/show_bug.cgi?id=60187
+
+        After http://trac.webkit.org/changeset/85636 there's nothing
+        to expand for the unexpected passes table.
+
+        * fast/harness/resources/results-test.js:
+        * fast/harness/results.html:
+
+2011-05-04  Ojan Vafai  <ojan@chromium.org>
+
+        Reviewed by Eric Seidel.
+
         [results.html] bucket crashes/timeouts into their own test lists
         https://bugs.webkit.org/show_bug.cgi?id=60181
 

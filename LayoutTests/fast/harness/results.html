@@ -348,8 +348,12 @@ function testLink(test)
         basePath += '/trunk/LayoutTests/';
     } else
         basePath = globalState().results.layout_tests_dir + '/';
-    return '<span class=expand-button onclick="toggleExpectations(event)"><span class=expand-button-text>+</span></span>' +
-        '<a class=test-link href="' + basePath + test + '">' + test + '</a>';
+    return '<a class=test-link href="' + basePath + test + '">' + test + '</a>';
+}
+
+function testLinkWithExpandButton(test)
+{
+    return '<span class=expand-button onclick="toggleExpectations(event)"><span class=expand-button-text>+</span></span>' + testLink(test);
 }
 
 function resultLink(testPrefix, suffix, contents)
@@ -458,7 +462,7 @@ function tableRow(testObject)
         row += ' class="' + (testObject.isExpected ? 'expected' : '') + '"';
     row += '><tr>';
 
-    row += '<td>' + testLink(testObject.name) + '</td>';
+    row += '<td>' + testLinkWithExpandButton(testObject.name) + '</td>';
 
     var test_prefix = stripExtension(testObject.name);
     row += '<td>';
@@ -550,7 +554,9 @@ function testList(tests, header, tableId)
 
     for (var i = 0; i < tests.length; i++) {
         var test = tests[i];
-        html += '<tbody><tr><td>' + testLink(test) + '</td><td>';
+        html += '<tbody><tr><td>';
+        html += (tableId == 'passes-table') ? testLink(test) : testLinkWithExpandButton(test);
+        html += '</td><td>';
         
         if (tableId == 'stderr-table')
             html += resultLink(stripExtension(test), '-stderr.txt', 'stderr');
