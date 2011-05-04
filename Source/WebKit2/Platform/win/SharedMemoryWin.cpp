@@ -200,6 +200,31 @@ bool SharedMemory::createHandle(Handle& handle, Protection protection)
     return true;
 }
 
+PassRefPtr<SharedMemory> SharedMemory::createCopyOnWriteCopy(size_t size) const
+{
+    ASSERT_ARG(size, size <= this->size());
+
+    HANDLE duplicatedHandle;
+    BOOL result = ::DuplicateHandle(::GetCurrentProcess(), m_handle, ::GetCurrentProcess(), &duplicatedHandle, 0, FALSE, DUPLICATE_SAME_ACCESS);
+    ASSERT_WITH_MESSAGE(result, "::DuplicateHandle failed with error %lu", ::GetLastError());
+    if (!result)
+        return 0;
+
+    void* newMapping = ::MapViewOfFile(duplicatedHandle, FILE_MAP_COPY, 0, 0, size);
+    ASSERT_WITH_MESSAGE(newMapping, "::MapViewOfFile failed with error %lu", ::GetLastError());
+    if (!newMapping) {
+        ::CloseHandle(duplicatedHandle);
+        return 0;
+    }
+
+    RefPtr<SharedMemory> memory = adoptRef(new SharedMemory);
+    memory->m_size = size;
+    memory->m_data = newMapping;
+    memory->m_handle = duplicatedHandle;
+
+    return memory.release();
+}
+
 unsigned SharedMemory::systemPageSize()
 {
     static unsigned pageSize = 0;

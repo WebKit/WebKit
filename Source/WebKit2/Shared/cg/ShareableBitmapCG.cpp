@@ -67,20 +67,28 @@ void ShareableBitmap::paint(WebCore::GraphicsContext& context, const IntPoint& d
     paintImage(context.platformContext(), makeCGImageCopy().get(), dstPoint, srcRect);
 }
 
+#if !PLATFORM(WIN)
 RetainPtr<CGImageRef> ShareableBitmap::makeCGImageCopy()
 {
     OwnPtr<GraphicsContext> graphicsContext = createGraphicsContext();
     RetainPtr<CGImageRef> image(AdoptCF, CGBitmapContextCreateImage(graphicsContext->platformContext()));
     return image;
 }
+#endif
 
 RetainPtr<CGImageRef> ShareableBitmap::makeCGImage()
 {
     ref(); // Balanced by deref in releaseDataProviderData.
     RetainPtr<CGDataProvider> dataProvider(AdoptCF, CGDataProviderCreateWithData(this, data(), sizeInBytes(), releaseDataProviderData));
+    return createCGImage(dataProvider.get());
+}
+
+RetainPtr<CGImageRef> ShareableBitmap::createCGImage(CGDataProviderRef dataProvider) const
+{
+    ASSERT_ARG(dataProvider, dataProvider);
 
     RetainPtr<CGColorSpaceRef> colorSpace(AdoptCF, CGColorSpaceCreateDeviceRGB());
-    RetainPtr<CGImageRef> image(AdoptCF, CGImageCreate(m_size.width(), m_size.height(), 8, 32, m_size.width() * 4, colorSpace.get(), bitmapInfo(m_flags), dataProvider.get(), 0, false, kCGRenderingIntentDefault));
+    RetainPtr<CGImageRef> image(AdoptCF, CGImageCreate(m_size.width(), m_size.height(), 8, 32, m_size.width() * 4, colorSpace.get(), bitmapInfo(m_flags), dataProvider, 0, false, kCGRenderingIntentDefault));
     return image;
 }
 

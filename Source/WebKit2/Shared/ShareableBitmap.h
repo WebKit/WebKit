@@ -114,6 +114,7 @@ private:
     static size_t numBytesForSize(const WebCore::IntSize& size) { return size.width() * size.height() * 4; }
 
 #if USE(CG)
+    RetainPtr<CGImageRef> createCGImage(CGDataProviderRef) const;
     static void releaseBitmapContextData(void* typelessBitmap, void* typelessData);
     static void releaseDataProviderData(void* typelessBitmap, const void* typelessData, size_t);
 #endif

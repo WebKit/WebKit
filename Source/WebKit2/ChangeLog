@@ -1,5 +1,40 @@
 2011-05-04  Adam Roben  <aroben@apple.com>
 
+        Make ShareableBitmap::makeCGImageCopy use a copy-on-write copy on Windows when possible
+
+        Fixes <http://webkit.org/b/57269> <rdar://problem/9198788> REGRESSION (r82151): Every WKView
+        paint now makes an extra copy of the painted bits
+
+        Reviewed by Anders Carlsson.
+
+        * Platform/SharedMemory.h:
+        * Platform/win/SharedMemoryWin.cpp:
+        (WebKit::SharedMemory::createCopyOnWriteCopy):
+        Added this new function. Creates a copy-on-write copy of the first |size| bytes of the
+        original SharedMemory.
+
+        * Shared/ShareableBitmap.h: Added createCGImage helper function.
+
+        * Shared/cg/ShareableBitmapCG.cpp:
+        (WebKit::ShareableBitmap::makeCGImageCopy): Don't compile this version of this function on
+        Windows; we'll provide our own implementation since CGBitmapContextCreateImage isn't smart
+        enough to make a copy-on-write copy on Windows.
+        (WebKit::ShareableBitmap::makeCGImage): Moved some code from here...
+        (WebKit::ShareableBitmap::createCGImage): ...to this new function.
+
+        * Shared/cg/win/ShareableBitmapCGWin.cpp: Added.
+        (WebKit::derefSharedMemory): This function is called when the CGDataProvider is finalized.
+        All we have to do is deref the SharedMemory that was backing the CGDataProvider.
+        (WebKit::ShareableBitmap::makeCGImageCopy): Create a copy-on-write copy of the image data
+        when possible. We use the copy-on-write copy to back this ShareableBitmap from here on out,
+        and use the original SharedMemory to back the CGImage. This should prevent future
+        modifications to the ShareableBitmap from affecting the CGImage. If we can't make a
+        copy-on-write copy, we fall back to just copying the data normally.
+
+        * win/WebKit2.vcproj: Added ShareableBitmapCGWin.cpp.
+
+2011-05-04  Adam Roben  <aroben@apple.com>
+
         Let transparent windowless plugins draw into a graphics context with an alpha channel
 
         Fixes <http://webkit.org/b/57647> <rdar://problem/9168462> Flash plugins with

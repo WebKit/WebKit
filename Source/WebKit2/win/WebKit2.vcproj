@@ -1317,6 +1317,30 @@
 						/>
 					</FileConfiguration>
 				</File>
+				<Filter
+					Name="win"
+					>
+					<File
+						RelativePath="..\Shared\cg\win\ShareableBitmapCGWin.cpp"
+						>
+						<FileConfiguration
+							Name="Debug_Cairo_CFLite|Win32"
+							ExcludedFromBuild="true"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+							/>
+						</FileConfiguration>
+						<FileConfiguration
+							Name="Release_Cairo_CFLite|Win32"
+							ExcludedFromBuild="true"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+							/>
+						</FileConfiguration>
+					</File>
+				</Filter>
 			</Filter>
 			<Filter
 				Name="cairo"

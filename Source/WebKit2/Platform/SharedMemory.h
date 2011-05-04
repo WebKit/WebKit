@@ -93,6 +93,9 @@ public:
     size_t size() const { return m_size; }
     void* data() const { return m_data; }
 
+    // Creates a copy-on-write copy of the first |size| bytes.
+    PassRefPtr<SharedMemory> createCopyOnWriteCopy(size_t) const;
+
     // Return the system page size in bytes.
     static unsigned systemPageSize();
 
