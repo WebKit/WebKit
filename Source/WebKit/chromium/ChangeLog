@@ -1,3 +1,25 @@
+2011-05-03  John Abd-El-Malek  <jam@chromium.org>
+
+        Reviewed by James Robinson.
+
+        [chromium] Go through WebPermissionClient for local storage access.  Also cleanup left over code from previous WebPermissionClient change.
+        https://bugs.webkit.org/show_bug.cgi?id=60066
+
+        * public/WebFrameClient.h:
+        * public/WebPermissionClient.h:
+        (WebKit::WebPermissionClient::allowLocalStorage):
+        * src/DatabaseObserver.cpp:
+        (WebCore::DatabaseObserver::canEstablishDatabase):
+        * src/FrameLoaderClientImpl.cpp:
+        (WebKit::FrameLoaderClientImpl::allowScriptExtension):
+        (WebKit::FrameLoaderClientImpl::allowJavaScript):
+        (WebKit::FrameLoaderClientImpl::allowPlugins):
+        (WebKit::FrameLoaderClientImpl::allowImages):
+        (WebKit::FrameLoaderClientImpl::didNotAllowScript):
+        (WebKit::FrameLoaderClientImpl::didNotAllowPlugins):
+        * src/StorageAreaProxy.cpp:
+        (WebCore::StorageAreaProxy::setItem):
+
 2011-05-03  Tony Chang  <tony@chromium.org>
 
         Unreviewed, rolling the version of chromium to r83922.

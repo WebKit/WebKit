@@ -294,15 +294,6 @@ public:
     // scripts.
     virtual void didCreateIsolatedScriptContext(WebFrame*) { }
 
-    // FIXME(jam): remove me once Chrome's WebKit is rolled.
-    virtual bool allowPlugins(WebFrame*, bool enabledPerSettings) { return enabledPerSettings; }
-    virtual void didNotAllowPlugins(WebFrame*) { }
-    virtual bool allowImages(WebFrame*, bool enabledPerSettings) { return enabledPerSettings; }
-    virtual bool allowScript(WebFrame*, bool enabledPerSettings) { return enabledPerSettings; }
-    virtual bool allowDatabase(WebFrame*, const WebString& name, const WebString& displayName, unsigned long estimatedSize) { return true; }
-    virtual void didNotAllowScript(WebFrame*) { }
-    virtual bool allowScriptExtension(WebFrame*, const WebString& extensionName, int extensionGroup) { return true; }
-
 
     // Geometry notifications ----------------------------------------------
 

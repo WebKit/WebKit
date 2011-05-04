@@ -61,8 +61,6 @@ bool DatabaseObserver::canEstablishDatabase(ScriptExecutionContext* scriptExecut
         WebViewImpl* webView = webFrame->viewImpl();
         if (webView->permissionClient())
             return webView->permissionClient()->allowDatabase(webFrame, name, displayName, estimatedSize);
-        // FIXME(jam): remove this.
-        return webFrame->client()->allowDatabase(webFrame, name, displayName, estimatedSize);
     } else {
         WorkerContext* workerContext = static_cast<WorkerContext*>(scriptExecutionContext);
         WorkerLoaderProxy* workerLoaderProxy = &workerContext->thread()->workerLoaderProxy();

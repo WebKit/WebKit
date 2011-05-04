@@ -57,6 +57,10 @@ public:
     // value.
     virtual bool allowScriptExtension(WebFrame*, const WebString& extensionName, int extensionGroup) { return true; }
 
+    // Controls whether HTML5 Web Storage is allowed for this frame.
+    // If local is true, then this is for local storage, otherwise it's for session storage.
+    virtual bool allowStorage(WebFrame*, bool local) { return true; }
+
     // Controls whether access to read the clipboard is allowed for this frame.
     virtual bool allowReadFromClipboard(WebFrame*, bool defaultValue) { return defaultValue; }
 

@@ -158,10 +158,6 @@ bool FrameLoaderClientImpl::allowScriptExtension(const String& extensionName,
     if (webview && webview->permissionClient())
         return webview->permissionClient()->allowScriptExtension(m_webFrame, extensionName, extensionGroup);
 
-    // FIXME(jam): remove this.
-    if (m_webFrame->client())
-        return m_webFrame->client()->allowScriptExtension(m_webFrame, extensionName, extensionGroup);
-
     return true;
 }
 
@@ -185,10 +181,6 @@ bool FrameLoaderClientImpl::allowJavaScript(bool enabledPerSettings)
     if (webview && webview->permissionClient())
         return webview->permissionClient()->allowScript(m_webFrame, enabledPerSettings);
 
-    // FIXME(jam): remove this.
-    if (m_webFrame->client())
-        return m_webFrame->client()->allowScript(m_webFrame, enabledPerSettings);
-
     return enabledPerSettings;
 }
 
@@ -197,10 +189,6 @@ bool FrameLoaderClientImpl::allowPlugins(bool enabledPerSettings)
     WebViewImpl* webview = m_webFrame->viewImpl();
     if (webview && webview->permissionClient())
         return webview->permissionClient()->allowPlugins(m_webFrame, enabledPerSettings);
-
-    // FIXME(jam): remove this.
-    if (m_webFrame->client())
-        return m_webFrame->client()->allowPlugins(m_webFrame, enabledPerSettings);
 
     return enabledPerSettings;
 }
@@ -211,10 +199,6 @@ bool FrameLoaderClientImpl::allowImages(bool enabledPerSettings)
     if (webview && webview->permissionClient())
         return webview->permissionClient()->allowImages(m_webFrame, enabledPerSettings);
 
-    // FIXME(jam): remove this.
-    if (m_webFrame->client())
-        return m_webFrame->client()->allowImages(m_webFrame, enabledPerSettings);
-
     return enabledPerSettings;
 }
 
@@ -223,10 +207,6 @@ void FrameLoaderClientImpl::didNotAllowScript()
     WebViewImpl* webview = m_webFrame->viewImpl();
     if (webview && webview->permissionClient())
         webview->permissionClient()->didNotAllowScript(m_webFrame);
-
-    // FIXME(jam): remove this.
-    if (m_webFrame->client())
-        m_webFrame->client()->didNotAllowScript(m_webFrame);
 }
 
 void FrameLoaderClientImpl::didNotAllowPlugins()
@@ -235,9 +215,6 @@ void FrameLoaderClientImpl::didNotAllowPlugins()
     if (webview && webview->permissionClient())
         webview->permissionClient()->didNotAllowPlugins(m_webFrame);
 
-    // FIXME(jam): remove this.
-    if (m_webFrame->client())
-        m_webFrame->client()->didNotAllowPlugins(m_webFrame);
 }
 
 bool FrameLoaderClientImpl::hasWebView() const
