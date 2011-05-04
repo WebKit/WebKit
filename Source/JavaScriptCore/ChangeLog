@@ -1,3 +1,23 @@
+2011-05-04  Alexis Menard  <alexis.menard@openbossa.org>
+
+        Reviewed by Geoffrey Garen.
+
+        JITPropertyAccess produces a unused but set variable warning in gcc 4.6.0.
+        https://bugs.webkit.org/show_bug.cgi?id=60050
+
+        This patch fix a compilation warning. The new warning scenario -Wunused-but-set-variable
+        in gcc 4.6.0 is included in -Wall and therefore stops the compilation when warnings are treated
+        as errors. The patch introduces a new macro ASSERT_JIT_OFFSET_UNUSED and ASSERT_WITH_MESSAGE_UNUSED
+        which copy the idea of ASSERT_UNUSED.
+
+        * jit/JIT.h:
+        * jit/JITPropertyAccess.cpp:
+        (JSC::JIT::emit_op_method_check):
+        (JSC::JIT::compileGetByIdHotPath):
+        (JSC::JIT::emit_op_put_by_id):
+        * wtf/Assertions.h:
+        (assertWithMessageUnused):
+
 2011-04-29  Jer Noble  <jer.noble@apple.com>
 
         Reviewed by Eric Seidel.

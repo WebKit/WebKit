@@ -279,6 +279,29 @@ while (0)
     } \
 while (0)
 #endif
+
+/* ASSERT_WITH_MESSAGE_UNUSED */
+
+#if COMPILER(MSVC7_OR_LOWER)
+#define ASSERT_WITH_MESSAGE_UNUSED(variable, assertion) ((void)0)
+#elif COMPILER(WINSCW)
+#define ASSERT_WITH_MESSAGE_UNUSED(variable, assertion, arg...) ((void)0)
+#elif ASSERT_MSG_DISABLED
+#if COMPILER(INTEL) && !OS(WINDOWS) || COMPILER(RVCT)
+template<typename T>
+inline void assertWithMessageUnused(T& x) { (void)x; }
+#define ASSERT_WITH_MESSAGE_UNUSED(variable, assertion, ...) (assertWithMessageUnused(variable))
+#else
+#define ASSERT_WITH_MESSAGE_UNUSED(variable, assertion, ...) ((void)variable)
+#endif
+#else
+#define ASSERT_WITH_MESSAGE_UNUSED(variable, assertion, ...) do \
+    if (!(assertion)) { \
+        WTFReportAssertionFailureWithMessage(__FILE__, __LINE__, WTF_PRETTY_FUNCTION, #assertion, __VA_ARGS__); \
+        CRASH(); \
+    } \
+while (0)
+#endif
                         
                         
 /* ASSERT_ARG */

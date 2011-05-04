@@ -347,9 +347,9 @@ void JIT::emit_op_method_check(Instruction* currentInstruction)
 
     Jump match = jump();
 
-    ASSERT_JIT_OFFSET(differenceBetween(info.structureToCompare, protoObj), patchOffsetMethodCheckProtoObj);
+    ASSERT_JIT_OFFSET_UNUSED(protoObj, differenceBetween(info.structureToCompare, protoObj), patchOffsetMethodCheckProtoObj);
     ASSERT_JIT_OFFSET(differenceBetween(info.structureToCompare, protoStructureToCompare), patchOffsetMethodCheckProtoStruct);
-    ASSERT_JIT_OFFSET(differenceBetween(info.structureToCompare, putFunction), patchOffsetMethodCheckPutFunction);
+    ASSERT_JIT_OFFSET_UNUSED(putFunction, differenceBetween(info.structureToCompare, putFunction), patchOffsetMethodCheckPutFunction);
 
     // Link the failure cases here.
     notCell.link(this);
@@ -421,7 +421,7 @@ void JIT::compileGetByIdHotPath(int, int baseVReg, Identifier*, unsigned propert
 
     loadPtr(Address(regT0, OBJECT_OFFSETOF(JSObject, m_propertyStorage)), regT0);
     DataLabel32 displacementLabel = loadPtrWithAddressOffsetPatch(Address(regT0, patchGetByIdDefaultOffset), regT0);
-    ASSERT_JIT_OFFSET(differenceBetween(hotPathBegin, displacementLabel), patchOffsetGetByIdPropertyMapOffset);
+    ASSERT_JIT_OFFSET_UNUSED(displacementLabel, differenceBetween(hotPathBegin, displacementLabel), patchOffsetGetByIdPropertyMapOffset);
 
     Label putResult(this);
 
@@ -500,7 +500,7 @@ void JIT::emit_op_put_by_id(Instruction* currentInstruction)
 
     END_UNINTERRUPTED_SEQUENCE(sequencePutById);
 
-    ASSERT_JIT_OFFSET(differenceBetween(hotPathBegin, displacementLabel), patchOffsetPutByIdPropertyMapOffset);
+    ASSERT_JIT_OFFSET_UNUSED(displacementLabel, differenceBetween(hotPathBegin, displacementLabel), patchOffsetPutByIdPropertyMapOffset);
 }
 
 void JIT::emitSlow_op_put_by_id(Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
