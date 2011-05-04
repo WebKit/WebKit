@@ -81,6 +81,8 @@ struct WebPreferences {
     bool compositeToTexture;
     bool forceCompositingMode;
     bool accelerated2dCanvasEnabled;
+    bool legacyAccelerated2dCanvasEnabled;
+    bool acceleratedDrawingEnabled;
 
     WebPreferences() { reset(); }
     void reset();

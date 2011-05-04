@@ -105,6 +105,8 @@ void WebPreferences::reset()
     acceleratedCompositingEnabled = false;
     compositeToTexture = false;
     accelerated2dCanvasEnabled = false;
+    legacyAccelerated2dCanvasEnabled = false;
+    acceleratedDrawingEnabled = false;
     forceCompositingMode = false;
 }
 
@@ -154,6 +156,8 @@ void WebPreferences::applyTo(WebView* webView)
     settings->setCompositeToTextureEnabled(compositeToTexture);
     settings->setForceCompositingMode(forceCompositingMode);
     settings->setAccelerated2dCanvasEnabled(accelerated2dCanvasEnabled);
+    settings->setLegacyAccelerated2dCanvasEnabled(legacyAccelerated2dCanvasEnabled);
+    settings->setAcceleratedDrawingEnabled(acceleratedDrawingEnabled);
 
     // Fixed values.
     settings->setShouldPaintCustomScrollbars(true);

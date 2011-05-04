@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Google Inc. All rights reserved.
+ * Copyright (C) 2011 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -56,6 +56,8 @@ static const char optionHardwareAcceleratedGL[] = "--enable-hardware-gpu";
 static const char optionEnableAcceleratedCompositing[] = "--enable-accelerated-compositing";
 static const char optionForceCompositingMode[] = "--force-compositing-mode";
 static const char optionEnableAccelerated2DCanvas[] = "--enable-accelerated-2d-canvas";
+static const char optionEnableLegacyAccelerated2DCanvas[] = "--enable-legacy-accelerated-2d-canvas";
+static const char optionEnableAcceleratedDrawing[] = "--enable-accelerated-drawing";
 static const char optionEnableCompositeToTexture[] = "--enable-composite-to-texture";
 
 static const char optionStressOpt[] = "--stress-opt";
@@ -137,6 +139,8 @@ int main(int argc, char* argv[])
     bool compositeToTexture = false;
     bool forceCompositingMode = false;
     bool accelerated2DCanvasEnabled = false;
+    bool legacyAccelerated2DCanvasEnabled = false;
+    bool acceleratedDrawingEnabled = false;
     bool stressOpt = false;
     bool stressDeopt = false;
     bool hardwareAcceleratedGL = false;
@@ -176,6 +180,10 @@ int main(int argc, char* argv[])
             forceCompositingMode = true;
         else if (argument == optionEnableAccelerated2DCanvas)
             accelerated2DCanvasEnabled = true;
+        else if (argument == optionEnableLegacyAccelerated2DCanvas)
+            legacyAccelerated2DCanvasEnabled = true;
+        else if (argument == optionEnableAcceleratedDrawing)
+            acceleratedDrawingEnabled = true;
         else if (argument == optionStressOpt)
             stressOpt = true;
         else if (argument == optionStressDeopt)
@@ -210,6 +218,8 @@ int main(int argc, char* argv[])
         shell.setCompositeToTexture(compositeToTexture);
         shell.setForceCompositingMode(forceCompositingMode);
         shell.setAccelerated2dCanvasEnabled(accelerated2DCanvasEnabled);
+        shell.setLegacyAccelerated2dCanvasEnabled(legacyAccelerated2DCanvasEnabled);
+        shell.setAcceleratedDrawingEnabled(acceleratedDrawingEnabled);
         shell.setJavaScriptFlags(javaScriptFlags);
         shell.setStressOpt(stressOpt);
         shell.setStressDeopt(stressDeopt);

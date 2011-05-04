@@ -1,3 +1,26 @@
+2011-05-04  Justin Novosad  <junov@chromium.org>
+
+        Reviewed by Kenneth Russell.
+
+        [Chromium] Add gpu acceleration flags to DumpRenderTree
+        https://bugs.webkit.org/show_bug.cgi?id=60168
+        Adding support for command line flags 
+        enable-accelerated-2d-canvas an
+        enable-accelerated-drawing in DumpRenderTree.
+
+        * DumpRenderTree/chromium/DumpRenderTree.cpp:
+        (main):
+        * DumpRenderTree/chromium/TestShell.cpp:
+        (TestShell::TestShell):
+        (TestShell::resetWebSettings):
+        * DumpRenderTree/chromium/TestShell.h:
+        (TestShell::setLegacyAccelerated2dCanvasEnabled):
+        (TestShell::setAcceleratedDrawingEnabled):
+        * DumpRenderTree/chromium/WebPreferences.cpp:
+        (WebPreferences::reset):
+        (WebPreferences::applyTo):
+        * DumpRenderTree/chromium/WebPreferences.h:
+
 2011-05-04  Ademar de Souza Reis Jr.  <ademar.reis@openbossa.org>
 
         Reviewed by Csaba Osztrogonác.

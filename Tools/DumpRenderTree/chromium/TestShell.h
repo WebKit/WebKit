@@ -129,7 +129,8 @@ public:
     void setCompositeToTexture(bool enabled) { m_compositeToTexture = enabled; }
     void setForceCompositingMode(bool enabled) { m_forceCompositingMode = enabled; }
     void setAccelerated2dCanvasEnabled(bool enabled) { m_accelerated2dCanvasEnabled = enabled; }
-
+    void setLegacyAccelerated2dCanvasEnabled(bool enabled) { m_legacyAccelerated2dCanvasEnabled = enabled; }
+    void setAcceleratedDrawingEnabled(bool enabled) { m_acceleratedDrawingEnabled = enabled; }
 #if defined(OS_WIN)
     // Access to the finished event.  Used by the static WatchDog thread.
     HANDLE finishedEvent() { return m_finishedEvent; }
@@ -206,6 +207,8 @@ private:
     bool m_compositeToTexture;
     bool m_forceCompositingMode;
     bool m_accelerated2dCanvasEnabled;
+    bool m_legacyAccelerated2dCanvasEnabled;
+    bool m_acceleratedDrawingEnabled;
     WebPreferences m_prefs;
     bool m_stressOpt;
     bool m_stressDeopt;
