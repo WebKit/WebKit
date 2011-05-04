@@ -820,7 +820,7 @@ BUGCR59635 SKIP : media/video-display-aspect-ratio.html = PASS FAIL TIMEOUT
 BUGCR49165 SKIP : http/tests/media/video-buffered.html = PASS
 
 // We sometimes emit an error from the same source element twice.
-BUGCR72234 : media/video-source-error.html = PASS FAIL TIMEOUT
+BUGCR80874 : media/video-source-error.html = PASS FAIL TIMEOUT
 
 // Failing because we sometimes emit additional timeupdate events.
 // Test may need to be rewritten or only log the first timeupdate event.
@@ -2590,7 +2590,7 @@ BUGCR57950 WIN XP : svg/batik/text/verticalText.svg = CRASH PASS
 BUGWK58193 WIN WIN7 : svg/batik/text/verticalText.svg = IMAGE+TEXT
 
 // media/video-* flakyness
-BUGCR59665 : media/video-layer-crash.html = CRASH TIMEOUT PASS IMAGE
+BUGCR60744 : media/video-layer-crash.html = CRASH TIMEOUT PASS IMAGE
 // BUGCR59415 : cannot repro the flakiness
 BUGCR59415 WIN : media/video-loop.html = TIMEOUT TEXT PASS
 // This test needs enhanced eventSender.contextMenu() return value.
@@ -3000,7 +3000,7 @@ BUGCR72861 : fast/css/test-setting-canvas-color.html = TEXT
 // need rebaseline.
 BUGWK54499 LINUX : svg/transforms/text-with-pattern-with-svg-transform.svg = IMAGE
 
-BUGWK54472 BUGCR74826 : media/audio-delete-while-slider-thumb-clicked.html = TEXT TIMEOUT
+BUGWK54472 BUGCR59399 : media/audio-delete-while-slider-thumb-clicked.html = TEXT TIMEOUT
 
 // Flaky
 BUGCR73080 LINUX DEBUG : fast/forms/form-attribute-elements-order.html = PASS TIMEOUT
@@ -3179,7 +3179,7 @@ BUGCR77494 WIN LINUX : fast/repaint/layout-state-scrolloffset3.html = FAIL
 BUGCR77494 WIN LINUX : tables/mozilla/bugs/bug51140.html = TEXT
 // Not included in tests modified by 81992, but started failing at same time:
 BUGCR77494 WIN LINUX : fast/repaint/transform-replaced-shadows.html = IMAGE
-BUGCR77494 : media/audio-repaint.html = FAIL
+BUGCR80769 : media/audio-repaint.html = FAIL
 
 // New test added in r81994.
 BUGCR77582 WIN LINUX RELEASE : inspector/debugger/debugger-activation-crash2.html = TEXT
@@ -3453,7 +3453,7 @@ BUGCR79259 : fast/js/array-proto-func-property-getter-except.html = TEXT
 
 // Temporarily marked failing for rebaselining.
 
-BUGWK58619 GPU : media/video-volume-slider.html = IMAGE+TEXT
+BUGCR81482 GPU : media/video-volume-slider.html = IMAGE+TEXT
 
 // Need to be re-baselined BUGCR79770
 BUGCR79770 WIN : fast/box-shadow/inset-with-extraordinary-radii-and-border.html = IMAGE
@@ -3658,21 +3658,21 @@ BUGWK60103 : fast/overflow/border-radius-clipping.html = IMAGE
 BUGWK60103 WIN LINUX : fast/repaint/border-radius-repaint.html = IMAGE
 BUGWK60103 WIN LINUX : fast/replaced/border-radius-clip.html = IMAGE
 
-BUGWK60129 : fast/layers/video-layer.html = IMAGE IMAGE+TEXT
+BUGWK60129 BUGCR75354 : fast/layers/video-layer.html = IMAGE IMAGE+TEXT
 
 // Needs a rebaseline after moving controls to absolute positioning
-BUGCR74826 : media/audio-controls-rendering.html = IMAGE+TEXT
-BUGCR74826 CPU : media/media-document-audio-repaint.html = IMAGE+TEXT
-BUGCR74826 CPU : media/video-controls-rendering.html = IMAGE+TEXT
-BUGCR74826 : media/video-display-toggle.html = IMAGE+TEXT
-BUGCR74826 : media/video-empty-source.html = IMAGE+TEXT
-BUGCR74826 : media/video-no-audio.html = IMAGE+TEXT
-BUGCR74826 CPU : media/video-volume-slider.html = IMAGE+TEXT
-BUGCR74826 : media/video-zoom-controls.html = IMAGE+TEXT
-BUGCR74826 : media/controls-after-reload.html = TEXT
-BUGCR74826 : media/controls-strict.html = TEXT
-BUGCR74826 : media/controls-styling.html = TEXT
-BUGCR74826 : media/controls-without-preload.html = TEXT
+BUGCR75354 : media/audio-controls-rendering.html = IMAGE+TEXT
+BUGCR75354 CPU : media/media-document-audio-repaint.html = IMAGE+TEXT
+BUGCR75354 CPU : media/video-controls-rendering.html = IMAGE+TEXT
+BUGCR75354 : media/video-display-toggle.html = IMAGE+TEXT
+BUGCR75354 : media/video-empty-source.html = IMAGE+TEXT
+BUGCR75354 : media/video-no-audio.html = IMAGE+TEXT
+BUGCR75354 CPU : media/video-volume-slider.html = IMAGE+TEXT
+BUGCR75354 : media/video-zoom-controls.html = IMAGE+TEXT
+BUGCR75354 : media/controls-after-reload.html = TEXT
+BUGCR75354 : media/controls-strict.html = TEXT
+BUGCR75354 : media/controls-styling.html = TEXT
+BUGCR75354 : media/controls-without-preload.html = TEXT
 
 // probably just needs a new baseline
 BUGWK60130 WIN LINUX : fast/backgrounds/background-leakage-transforms.html = IMAGE+TEXT
@@ -3683,7 +3683,7 @@ BUGWK60131 SLOW : fast/css/visited-link-hang.html = PASS
 
 // webkit roll : 84350:84431
 BUGDPRANKE MAC LINUX : transitions/interrupt-zero-duration.html = TEXT PASS
-BUGWK60132 : media/controls-css-overload.html = TIMEOUT PASS
+BUGWK60132 BUGCR80771 : media/controls-css-overload.html = TIMEOUT PASS
 BUGDPRANKE WIN LINUX : animations/change-one-anim.html = TEXT PASS
 
 // pulled in from downstream during webkit roll 84350:84431
@@ -3756,7 +3756,7 @@ BUGWK59166 WIN LINUX DEBUG CPU : svg/dynamic-updates/SVGFEDropShadowElement-svgd
 BUGWK59166 WIN LINUX DEBUG CPU : svg/dynamic-updates/SVGFEDropShadowElement-svgdom-stdDeviation-prop.html = TIMEOUT
 BUGWK59166 WIN LINUX DEBUG CPU : svg/filters/feDropShadow.svg = TIMEOUT
 
-BUGWK59167 MAC LINUX GPU : media/video-zoom.html = IMAGE
+BUGWK59167 BUGCR80878 MAC LINUX GPU : media/video-zoom.html = IMAGE
 
 BUGWK59172 : fast/html/details-children-merge-crash.html = TEXT
 BUGWK59172 : fast/html/details-element-render-inline-crash.html = TEXT
@@ -3835,7 +3835,7 @@ BUGWK60121 : http/tests/misc/will-send-request-returns-null-on-redirect.html = T
 // changed in r84745 (see commented-out entry above)
 BUGWK50661 WIN LINUX : fast/dom/HTMLMeterElement/meter-element.html = TEXT
 
-BUGWK60116 GPU : media/video-aspect-ratio.html = IMAGE
+BUGWK60116 BUGCR80855 GPU : media/video-aspect-ratio.html = IMAGE
 
 BUGSENORBLANCO WIN LINUX : animations/animation-drt-api-multiple-keyframes.html = TEXT
 BUGSENORBLANCO WIN LINUX : animations/animation-drt-api.html = TEXT
@@ -3875,7 +3875,7 @@ BUGDPRANKE MAC DEBUG :   transitions/transition-end-event-transform.html = TEXT 
 // start skipping platform tests
 BUGNONE WONTFIX SKIP : platform/qt/fast/forms = PASS FAIL CRASH TIMEOUT
 
-BUGWK59661 WIN LINUX MAC : media/video-controls-transformed.html = TEXT
+BUGWK59661 BUGCR80858 WIN LINUX MAC : media/video-controls-transformed.html = TEXT
 
 BUGDPRANKE MAC DEBUG : fast/blockflow/Kusa-Makura-background-canvas.html = CRASH PASS
 BUGDPRANKE MAC DEBUG : storage/domstorage/events/documentURI.html = CRASH PASS
