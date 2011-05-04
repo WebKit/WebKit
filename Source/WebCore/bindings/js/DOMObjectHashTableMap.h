@@ -38,7 +38,6 @@ public:
 
     ~DOMObjectHashTableMap()
     {
-        HashMap<const JSC::HashTable*, JSC::HashTable>::iterator mapEnd = m_map.end();
         for (HashMap<const JSC::HashTable*, JSC::HashTable>::iterator iter = m_map.begin(); iter != m_map.end(); ++iter)
             iter->second.deleteTable();
     }

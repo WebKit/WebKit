@@ -1,3 +1,12 @@
+2011-05-04  Alexis Menard  <alexis.menard@openbossa.org>
+
+        Reviewed by Adam Barth.
+
+        Warning fix.
+
+        * bindings/js/DOMObjectHashTableMap.h:
+        (WebCore::DOMObjectHashTableMap::~DOMObjectHashTableMap):
+
 2011-05-04  Rob Buis  <rbuis@rim.com>
 
         Reviewed by Darin Adler.
