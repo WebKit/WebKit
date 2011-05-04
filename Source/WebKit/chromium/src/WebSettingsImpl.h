@@ -103,6 +103,7 @@ public:
     virtual void setAcceleratedCompositingForCanvasEnabled(bool);
     virtual void setAcceleratedCompositingForAnimationEnabled(bool);
     virtual void setAccelerated2dCanvasEnabled(bool);
+    virtual void setLegacyAccelerated2dCanvasEnabled(bool);
     virtual void setAcceleratedDrawingEnabled(bool);
     virtual void setMemoryInfoEnabled(bool);
     virtual void setHyperlinkAuditingEnabled(bool);

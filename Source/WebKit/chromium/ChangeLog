@@ -1,3 +1,17 @@
+2011-05-03  Justin Novosad  <junov@chromium.org>
+
+        Reviewed by Kenneth Russell.
+
+        [Chromium] Make accelerated 2d canvas enabled by default with skia
+        https://bugs.webkit.org/show_bug.cgi?id=59929
+        Added new flag for enabling the legacy accelerated 2d canvas
+        The flag is not yet functional with this change.
+
+        * public/WebSettings.h:
+        * src/WebSettingsImpl.cpp:
+        (WebKit::WebSettingsImpl::setLegacyAccelerated2dCanvasEnabled):
+        * src/WebSettingsImpl.h:
+
 2011-05-03  Alpha Lam  <hclam@chromium.org>
 
         Not reviewed. Build fix.

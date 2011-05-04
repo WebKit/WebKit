@@ -110,6 +110,7 @@ public:
     virtual void setAcceleratedCompositingForPluginsEnabled(bool) = 0;
     virtual void setAcceleratedCompositingForAnimationEnabled(bool) = 0;
     virtual void setAccelerated2dCanvasEnabled(bool) = 0;
+    virtual void setLegacyAccelerated2dCanvasEnabled(bool) = 0;
     virtual void setAcceleratedDrawingEnabled(bool) = 0;
     virtual void setMemoryInfoEnabled(bool) = 0;
     virtual void setHyperlinkAuditingEnabled(bool) = 0;

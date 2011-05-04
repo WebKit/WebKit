@@ -749,7 +749,8 @@ SharedGraphicsContext3D* Page::sharedGraphicsContext3D()
 #if ENABLE(ACCELERATED_2D_CANVAS)
     if (!m_sharedGraphicsContext3D)
 #if USE(SKIA)
-        m_sharedGraphicsContext3D = SharedGraphicsContext3D::create(chrome(), settings()->acceleratedDrawingEnabled() ? SharedGraphicsContext3D::UseSkiaGPU : 0);
+        // Temporary code to postpone massive test rebaselining
+        m_sharedGraphicsContext3D = SharedGraphicsContext3D::create(chrome(), 0 /*settings()->legacyAccelerated2dCanvasEnabled() ? 0 : SharedGraphicsContext3D::UseSkiaGPU*/);
 #else
         m_sharedGraphicsContext3D = SharedGraphicsContext3D::create(chrome(), 0);
 #endif

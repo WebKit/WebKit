@@ -341,6 +341,9 @@ namespace WebCore {
         void setAccelerated2dCanvasEnabled(bool);
         bool accelerated2dCanvasEnabled() const { return m_acceleratedCanvas2dEnabled; }
 
+        void setLegacyAccelerated2dCanvasEnabled(bool);
+        bool legacyAccelerated2dCanvasEnabled() const { return m_legacyAcceleratedCanvas2dEnabled; }
+
         void setLoadDeferringEnabled(bool);
         bool loadDeferringEnabled() const { return m_loadDeferringEnabled; }
         
@@ -491,6 +494,7 @@ namespace WebCore {
         bool m_openGLMultisamplingEnabled : 1;
         bool m_webAudioEnabled : 1;
         bool m_acceleratedCanvas2dEnabled : 1;
+        bool m_legacyAcceleratedCanvas2dEnabled : 1;
         bool m_loadDeferringEnabled : 1;
         bool m_tiledBackingStoreEnabled : 1;
         bool m_paginateDuringLayoutEnabled : 1;

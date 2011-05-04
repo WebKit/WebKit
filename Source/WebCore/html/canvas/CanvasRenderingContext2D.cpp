@@ -131,7 +131,7 @@ CanvasRenderingContext2D::CanvasRenderingContext2D(HTMLCanvasElement* canvas, bo
     Page* p = canvas->document()->page();
     if (!p)
         return;
-    if (!p->settings()->accelerated2dCanvasEnabled())
+    if (!(p->settings()->accelerated2dCanvasEnabled() || p->settings()->legacyAccelerated2dCanvasEnabled()))
         return;
     if (GraphicsContext* c = drawingContext()) {
         m_context3D = p->sharedGraphicsContext3D();

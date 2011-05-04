@@ -163,6 +163,7 @@ Settings::Settings(Page* page)
     , m_openGLMultisamplingEnabled(true)
     , m_webAudioEnabled(false)
     , m_acceleratedCanvas2dEnabled(false)
+    , m_legacyAcceleratedCanvas2dEnabled(false)
     , m_loadDeferringEnabled(true)
     , m_tiledBackingStoreEnabled(false)
     , m_paginateDuringLayoutEnabled(false)
@@ -720,6 +721,11 @@ void Settings::setOpenGLMultisamplingEnabled(bool enabled)
 void Settings::setAccelerated2dCanvasEnabled(bool enabled)
 {
     m_acceleratedCanvas2dEnabled = enabled;
+}
+
+void Settings::setLegacyAccelerated2dCanvasEnabled(bool enabled)
+{
+    m_legacyAcceleratedCanvas2dEnabled = enabled;
 }
 
 void Settings::setLoadDeferringEnabled(bool enabled)

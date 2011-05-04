@@ -1,3 +1,28 @@
+2011-05-03  Justin Novosad  <junov@chromium.org>
+
+        Reviewed by Kenneth Russell.
+
+        [Chromium] Make accelerated 2d canvas enabled by default with skia
+        https://bugs.webkit.org/show_bug.cgi?id=59929
+
+        No new tests. Covered by existing layout tests
+
+        * html/canvas/CanvasRenderingContext2D.cpp:
+        (WebCore::CanvasRenderingContext2D::CanvasRenderingContext2D):
+        Initialized for accelerated canvas if either the accelerated2dCanvas
+        or the legacyAccelerated2dCanvas flags are enabled
+        * page/Page.cpp:
+        (WebCore::Page::sharedGraphicsContext3D):
+        This is where the code goes to implement the functionality for the
+        legacy vs current acceleration paths for the 2D canvas. Currently,
+        this is a no-op, and always select the legacy path.  This is temporary
+        until we are ready to sort the GPU layout tests (rebasline vs. bug)
+        * page/Settings.cpp:  Added new flage for legacyAccelerated2dCanvas
+        (WebCore::Settings::Settings):
+        (WebCore::Settings::setLegacyAccelerated2dCanvasEnabled):
+        * page/Settings.h:
+        (WebCore::Settings::legacyAccelerated2dCanvasEnabled):
+
 2011-04-29  Jer Noble  <jer.noble@apple.com>
 
         Reviewed by Eric Seidel.
