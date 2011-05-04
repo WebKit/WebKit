@@ -1,3 +1,32 @@
+2011-05-04  Jeff Miller  <jeffm@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Send unhandled wheel events to parent window on Windows
+        https://bugs.webkit.org/show_bug.cgi?id=60220
+
+        Keep track of wheel events using NativeWebWheelEvent instead of WebWheelEvent in WebPageProxy
+        so we can send the native event to the parent window if WebKit doesn't handle it.
+
+        * UIProcess/API/mac/WKView.mm: Use NativeWebWheelEvent instead of WebWheelEvent.
+
+        * UIProcess/API/qt/qwkpage.cpp:
+        (QWKPagePrivate::wheelEvent): Use NativeWebWheelEvent instead of WebWheelEvent.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::WebPageProxy): Removed initialization of obsolete m_processingWheelEvent member variable.
+        (WebKit::coalesceWheelEvents): Use NativeWebWheelEvent instead of WebWheelEvent and add a note that this won't work if we ever enable MERGE_WHEEL_EVENTS. 
+        (WebKit::WebPageProxy::handleWheelEvent): Use NativeWebWheelEvent instead of WebWheelEvent, keep track of the current event in m_currentlyProcessedWheelEvent.
+        (WebKit::WebPageProxy::didReceiveEvent): Call wheelEventNotHandled() on Windows if wheel event is not handled.
+        (WebKit::WebPageProxy::processDidCrash): Clear out m_currentlyProcessedWheelEvent.
+        * UIProcess/WebPageProxy.h: Change handleWheelEvent() to take a NativeWebWheelEvent, added wheelEventNotHandled() on Windows, remove m_processingWheelEvent, add m_currentlyProcessedWheelEvent.
+
+        * UIProcess/win/WebPageProxyWin.cpp:
+        (WebKit::WebPageProxy::wheelEventNotHandled): Added.
+        
+        * UIProcess/win/WebView.cpp:
+        (WebKit::WebView::onWheelEvent): Use NativeWebWheelEvent instead of WebWheelEvent.
+
 2011-05-04  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Darin Adler.

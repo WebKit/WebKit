@@ -37,6 +37,7 @@
 #import "Logging.h"
 #import "NativeWebKeyboardEvent.h"
 #import "NativeWebMouseEvent.h"
+#import "NativeWebWheelEvent.h"
 #import "PDFViewController.h"
 #import "PageClientImpl.h"
 #import "PasteboardTypes.h"
@@ -994,16 +995,16 @@ NATIVE_MOUSE_EVENT_HANDLER(rightMouseUp)
 
 #undef NATIVE_MOUSE_EVENT_HANDLER
 
-#define EVENT_HANDLER(Selector, Type) \
+#define NATIVE_EVENT_HANDLER(Selector, Type) \
     - (void)Selector:(NSEvent *)theEvent \
     { \
-        Web##Type##Event webEvent = WebEventFactory::createWeb##Type##Event(theEvent, self); \
+        NativeWeb##Type##Event webEvent = NativeWeb##Type##Event(theEvent, self); \
         _data->_page->handle##Type##Event(webEvent); \
     }
 
-EVENT_HANDLER(scrollWheel, Wheel)
+NATIVE_EVENT_HANDLER(scrollWheel, Wheel)
 
-#undef EVENT_HANDLER
+#undef NATIVE_EVENT_HANDLER
 
 - (void)mouseMoved:(NSEvent *)event
 {

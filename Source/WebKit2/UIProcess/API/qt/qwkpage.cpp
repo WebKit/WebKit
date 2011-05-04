@@ -36,6 +36,7 @@
 #include "LocalizedStrings.h"
 #include "NativeWebKeyboardEvent.h"
 #include "NativeWebMouseEvent.h"
+#include "NativeWebWheelEvent.h"
 #include "NotImplemented.h"
 #include "Region.h"
 #include "TiledDrawingAreaProxy.h"
@@ -338,8 +339,7 @@ void QWKPagePrivate::mouseDoubleClickEvent(QGraphicsSceneMouseEvent* ev)
 
 void QWKPagePrivate::wheelEvent(QGraphicsSceneWheelEvent* ev)
 {
-    WebWheelEvent wheelEvent = WebEventFactory::createWebWheelEvent(ev);
-    page->handleWheelEvent(wheelEvent);
+    page->handleWheelEvent(NativeWebWheelEvent(ev));
 }
 
 void QWKPagePrivate::updateAction(QWKPage::WebAction action)

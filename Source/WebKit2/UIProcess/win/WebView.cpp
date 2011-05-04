@@ -32,6 +32,7 @@
 #include "Logging.h"
 #include "NativeWebKeyboardEvent.h"
 #include "NativeWebMouseEvent.h"
+#include "NativeWebWheelEvent.h"
 #include "Region.h"
 #include "RunLoop.h"
 #include "WKAPICast.h"
@@ -434,7 +435,7 @@ LRESULT WebView::onMouseEvent(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPa
 
 LRESULT WebView::onWheelEvent(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam, bool& handled)
 {
-    WebWheelEvent wheelEvent = WebEventFactory::createWebWheelEvent(hWnd, message, wParam, lParam);
+    NativeWebWheelEvent wheelEvent(hWnd, message, wParam, lParam);
     if (wheelEvent.controlKey()) {
         // We do not want WebKit to handle Control + Wheel, this should be handled by the client application
         // to zoom the page.

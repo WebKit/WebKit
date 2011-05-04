@@ -87,6 +87,7 @@ namespace WebKit {
 
 class NativeWebKeyboardEvent;
 class NativeWebMouseEvent;
+class NativeWebWheelEvent;
 class PageClient;
 class PlatformCertificateInfo;
 class StringPairVector;
@@ -306,7 +307,7 @@ public:
 #endif
 
     void handleMouseEvent(const NativeWebMouseEvent&);
-    void handleWheelEvent(const WebWheelEvent&);
+    void handleWheelEvent(const NativeWebWheelEvent&);
     void handleKeyboardEvent(const NativeWebKeyboardEvent&);
 #if ENABLE(GESTURE_EVENTS)
     void handleGestureEvent(const WebGestureEvent&);
@@ -691,6 +692,10 @@ private:
     void didReceiveEvent(uint32_t opaqueType, bool handled);
     void stopResponsivenessTimer();
 
+#if PLATFORM(WIN)
+    void wheelEventNotHandled(NativeWebWheelEvent&) const;
+#endif
+
     void voidCallback(uint64_t);
     void dataCallback(const CoreIPC::DataReference&, uint64_t);
     void stringCallback(const String&, uint64_t);
@@ -833,7 +838,8 @@ private:
 
     Deque<NativeWebKeyboardEvent> m_keyEventQueue;
     bool m_processingWheelEvent;
-    OwnPtr<WebWheelEvent> m_nextWheelEvent;
+    OwnPtr<NativeWebWheelEvent> m_currentlyProcessedWheelEvent;
+    OwnPtr<NativeWebWheelEvent> m_nextWheelEvent;
 
     bool m_processingMouseMoveEvent;
     OwnPtr<NativeWebMouseEvent> m_nextMouseMoveEvent;

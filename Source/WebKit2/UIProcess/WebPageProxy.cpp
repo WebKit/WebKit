@@ -35,6 +35,7 @@
 #include "MessageID.h"
 #include "NativeWebKeyboardEvent.h"
 #include "NativeWebMouseEvent.h"
+#include "NativeWebWheelEvent.h"
 #include "PageClient.h"
 #include "PrintInfo.h"
 #include "SessionState.h"
@@ -138,7 +139,6 @@ WebPageProxy::WebPageProxy(PageClient* pageClient, PassRefPtr<WebProcessProxy> p
     , m_syncNavigationActionPolicyActionIsValid(false)
     , m_syncNavigationActionPolicyAction(PolicyUse)
     , m_syncNavigationActionPolicyDownloadID(0)
-    , m_processingWheelEvent(false)
     , m_processingMouseMoveEvent(false)
     , m_pageID(pageID)
 #if PLATFORM(MAC)
@@ -869,39 +869,41 @@ void WebPageProxy::handleMouseEvent(const NativeWebMouseEvent& event)
     process()->send(Messages::WebPage::MouseEvent(event), m_pageID);
 }
 
-static PassOwnPtr<WebWheelEvent> coalesceWheelEvents(WebWheelEvent* oldNextWheelEvent, const WebWheelEvent& newWheelEvent)
+static PassOwnPtr<NativeWebWheelEvent> coalesceWheelEvents(NativeWebWheelEvent* oldNextWheelEvent, const NativeWebWheelEvent& newWheelEvent)
 {
 #if MERGE_WHEEL_EVENTS
     // Merge model: Combine wheel event deltas (and wheel ticks) into a single wheel event.
     if (!oldNextWheelEvent)
-        return adoptPtr(new WebWheelEvent(newWheelEvent));
+        return adoptPtr(new NativeWebWheelEvent(newWheelEvent));
 
     if (oldNextWheelEvent->position() != newWheelEvent.position() || oldNextWheelEvent->modifiers() != newWheelEvent.modifiers() || oldNextWheelEvent->granularity() != newWheelEvent.granularity())
-        return adoptPtr(new WebWheelEvent(newWheelEvent));
+        return adoptPtr(new NativeWebWheelEvent(newWheelEvent));
 
     FloatSize mergedDelta = oldNextWheelEvent->delta() + newWheelEvent.delta();
     FloatSize mergedWheelTicks = oldNextWheelEvent->wheelTicks() + newWheelEvent.wheelTicks();
 
-    return adoptPtr(new WebWheelEvent(WebEvent::Wheel, newWheelEvent.position(), newWheelEvent.globalPosition(), mergedDelta, mergedWheelTicks, newWheelEvent.granularity(), newWheelEvent.modifiers(), newWheelEvent.timestamp()));
+    // FIXME: This won't compile, if we ever turn on MERGE_WHEEL_EVENTS we'll have to generate a NativeWebWheelEvent synthetically for each platform.
+    return adoptPtr(new NativeWebWheelEvent(WebEvent::Wheel, newWheelEvent.position(), newWheelEvent.globalPosition(), mergedDelta, mergedWheelTicks, newWheelEvent.granularity(), newWheelEvent.modifiers(), newWheelEvent.timestamp()));
 #else
     // Simple model: Just keep the last event, dropping all interim events.
-    return adoptPtr(new WebWheelEvent(newWheelEvent));
+    return adoptPtr(new NativeWebWheelEvent(newWheelEvent));
 #endif
 }
 
-void WebPageProxy::handleWheelEvent(const WebWheelEvent& event)
+void WebPageProxy::handleWheelEvent(const NativeWebWheelEvent& event)
 {
     if (!isValid())
         return;
 
-    if (m_processingWheelEvent) {
+    if (m_currentlyProcessedWheelEvent) {
         m_nextWheelEvent = coalesceWheelEvents(m_nextWheelEvent.get(), event);
         return;
     }
+    
+    m_currentlyProcessedWheelEvent = adoptPtr(new NativeWebWheelEvent(event));
 
     process()->responsivenessTimer()->start();
     process()->send(Messages::WebPage::WheelEvent(event), m_pageID);
-    m_processingWheelEvent = true;
 }
 
 void WebPageProxy::handleKeyboardEvent(const NativeWebKeyboardEvent& event)
@@ -2623,7 +2625,14 @@ void WebPageProxy::didReceiveEvent(uint32_t opaqueType, bool handled)
         break;
 
     case WebEvent::Wheel: {
-        m_processingWheelEvent = false;
+        ASSERT(m_currentlyProcessedWheelEvent);
+
+#if PLATFORM(WIN)
+        if (!handled && m_currentlyProcessedWheelEvent)
+            wheelEventNotHandled(*m_currentlyProcessedWheelEvent);
+#endif
+
+        m_currentlyProcessedWheelEvent = nullptr;
         if (m_nextWheelEvent) {
             handleWheelEvent(*m_nextWheelEvent);
             m_nextWheelEvent = nullptr;
@@ -2841,6 +2850,7 @@ void WebPageProxy::processDidCrash()
     // Can't expect DidReceiveEvent notifications from a crashed web process.
     m_keyEventQueue.clear();
     m_nextWheelEvent = nullptr;
+    m_currentlyProcessedWheelEvent = nullptr;
     m_nextMouseMoveEvent = nullptr;
     m_currentlyProcessedMouseDownEvent = nullptr;
 
