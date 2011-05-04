@@ -3955,10 +3955,6 @@ BUGWK59768 WIN LINUX GPU : canvas/philip/tests/2d.shadow.alpha.4.html = TEXT
 BUGWK59768 WIN LINUX GPU : canvas/philip/tests/2d.shadow.alpha.5.html = TEXT
 
 // just needs new baselines?
-BUGDPRANKE XP : fast/repaint/shadow-multiple-vertical.html = IMAGE
-BUGDPRANKE XP : fast/repaint/shadow-multiple-strict-vertical.html = IMAGE
-BUGDPRANKE XP : fast/repaint/shadow-multiple-strict-horizontal.html = IMAGE
-BUGDPRANKE XP : fast/repaint/shadow-multiple-horizontal.html = IMAGe
 
 // flakiness on the deps bots (noted r~83476)
 BUGDPRANKE DEBUG : fast/css/empty-pseudo-class.html = PASS TEXT
