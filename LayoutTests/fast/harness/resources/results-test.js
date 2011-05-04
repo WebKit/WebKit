@@ -139,7 +139,7 @@ function runTests()
         assertTrue(document.querySelector('#new-tests-table .test-link').textContent == 'foo/bar.html');
         assertTrue(document.querySelector('#new-tests-table .result-link:nth-child(1)').textContent == 'audio result');
         assertTrue(document.querySelector('#new-tests-table .result-link:nth-child(2)').textContent == 'result');
-        assertTrue(document.querySelector('#new-tests-table .result-link:nth-child(3)').textContent == 'png result');
+        assertTrue(document.querySelector('#new-tests-table .result-link:nth-child(3)').textContent == 'images');
     });
 
     results = mockResults();
@@ -220,17 +220,23 @@ function runTests()
         assertTrue(document.querySelectorAll('.expected').length == 1);
         assertTrue(document.querySelector('.expected .test-link').textContent == 'foo/bar-expected-fail.html');
 
+        assertTrue(window.getComputedStyle(document.querySelectorAll('tbody')[0], null)['display'] == 'none');
+
         expandAllExpectations();
         assertTrue(visibleExpandLinks().length == 1);
         assertTrue(document.querySelectorAll('.results-row').length == 1);
+        assertTrue(window.getComputedStyle(document.querySelectorAll('tbody')[0], null)['display'] == 'none');
         
         document.getElementById('unexpected-results').checked = false;
+        document.getElementById('unexpected-results').onchange();
 
         assertTrue(visibleExpandLinks().length == 2);
         assertTrue(document.querySelectorAll('.results-row').length == 1);
+        assertTrue(window.getComputedStyle(document.querySelectorAll('tbody')[0], null)['display'] != 'none');
         
         expandAllExpectations();
         assertTrue(document.querySelectorAll('.results-row').length == 2);
+        assertTrue(window.getComputedStyle(document.querySelectorAll('tbody')[0], null)['display'] != 'none');
     });
 
     runDefaultSingleRowTest('bar-skip.html', 'TEXT', 'SKIP', true, '', '');

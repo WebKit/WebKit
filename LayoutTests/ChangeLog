@@ -1,3 +1,16 @@
+2011-05-04  Ojan Vafai  <ojan@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        [results.html] fix apply options on page load
+        https://bugs.webkit.org/show_bug.cgi?id=60217
+
+        This broke when we started storing options in localstorage.
+        Also fixes regressions exposed by fixing this.
+
+        * fast/harness/resources/results-test.js:
+        * fast/harness/results.html:
+
 2011-05-04  Rob Buis  <rbuis@rim.com>
 
         Reviewed by Darin Adler.

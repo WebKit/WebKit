@@ -464,6 +464,8 @@ function tableRow(testObject)
     var row = '<tbody'
     if (globalState().results.uses_expectations_file)
         row += ' class="' + (testObject.isExpected ? 'expected' : '') + '"';
+    if (testObject.is_mismatch_reftest)
+        row += ' mismatchreftest=true';
     row += '><tr>';
 
     row += '<td>' + testLinkWithExpandButton(testObject.name) + '</td>';
@@ -823,17 +825,23 @@ OptionWriter.save = function()
 OptionWriter.apply = function()
 {
     var json = localStorage.getItem(OptionWriter._key);
-    if (!json)
+    if (!json) {
+        updateAllOptions();
         return;
+    }
 
     var data = JSON.parse(json);
     for (var id in data) {
         var input = document.getElementById(id);
-        if (input) {
+        if (input)
             input.checked = data[id];
-            input.onchange();
-        }
     }
+    updateAllOptions();
+}
+
+function updateAllOptions()
+{
+    forEach(document.querySelectorAll('#options-menu input'), function(input) { input.onchange(); });
 }
 
 function handleToggleImagesChange()
@@ -848,10 +856,10 @@ function updateTogglingImages()
     globalState().shouldToggleImages = shouldToggle;
     
     if (shouldToggle) {
-        forEach(document.querySelectorAll('a[href$=".png"]'), convertToTogglingHandler(function(prefix) {
+        forEach(document.querySelectorAll('tbody:not([mismatchreftest]) a[href$=".png"]'), convertToTogglingHandler(function(prefix) {
             return resultLink(prefix, '-diffs.html', 'images');
         }));
-        forEach(document.querySelectorAll('img[src$=".png"]'), convertToTogglingHandler(togglingImage));
+        forEach(document.querySelectorAll('tbody:not([mismatchreftest]) img[src$=".png"]'), convertToTogglingHandler(togglingImage));
     } else {
         forEach(document.querySelectorAll('a[href$="-diffs.html"]'), convertToNonTogglingHandler(resultLink));
         forEach(document.querySelectorAll('.animatedImage'), convertToNonTogglingHandler(function (absolutePrefix, suffix) {
@@ -950,8 +958,6 @@ function generatePage()
 
     document.body.innerHTML = html;
 
-    OptionWriter.apply();
-
     if (document.getElementById('results-table')) {
         document.getElementById('results-table').addEventListener('click', TableSorter.handleClick, false);
         TableSorter.sortColumn(0);
@@ -964,6 +970,8 @@ function generatePage()
             parentOfType(document.getElementById('toggle-images'), 'label').style.display = 'none';
         }
     }
+
+    OptionWriter.apply();
 }
 </script>
 <!-- HACK: when json_results_test.js is included, loading this page runs the tests.
