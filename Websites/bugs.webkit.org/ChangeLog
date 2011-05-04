@@ -1,3 +1,15 @@
+2011-05-04  Caio Marcelo de Oliveira Filho  <caio.oliveira@openbossa.org>
+
+        Reviewed by Adam Roben.
+
+        REGRESSION (r85657): webkitpy.common.prettypatch_unittest.PrettyPatchTest.test_pretty_diff_encodings failing on Leopard
+        https://bugs.webkit.org/show_bug.cgi?id=60164
+
+        Use Array#length to get the number of elements in an array. Array#count
+        was added in Ruby 1.8.7, but Leopard have Ruby 1.8.6.
+
+        * PrettyPatch/PrettyPatch.rb:
+
 2011-05-03  Caio Marcelo de Oliveira Filho  <caio.oliveira@openbossa.org>
 
         Reviewed by Adam Roben.

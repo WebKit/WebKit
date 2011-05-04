@@ -29,7 +29,7 @@ public
             break
         end
 
-        $last_prettify_file_count = fileDiffs.count
+        $last_prettify_file_count = fileDiffs.length
         str += fileDiffs.collect{ |diff| diff.to_html }.join
     end
 
