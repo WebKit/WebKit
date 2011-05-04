@@ -1,3 +1,14 @@
+2011-05-04  Fridrich Strba  <fridrich.strba@bluewin.ch>
+
+        Reviewed by Adam Barth.
+
+        Add COMPILER(MINGW) to the compilers using the Microsoft C Runtime's vsnprintf.
+        The vsnprintf is part of Microsoft C runtime used also by MinGW (GCC) toolchain.
+        https://bugs.webkit.org/show_bug.cgi?id=58579
+
+        * dom/XMLDocumentParserLibxml2.cpp:
+        (WebCore::XMLDocumentParser::error):
+
 2011-05-04  Alexis Menard  <alexis.menard@openbossa.org>
 
         Unreviewed warning fix.
