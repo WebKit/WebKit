@@ -70,6 +70,7 @@ private:
 
     void enterAcceleratedCompositingMode(WebCore::GraphicsLayer*);
     void exitAcceleratedCompositingModeSoon();
+    bool exitAcceleratedCompositingModePending() const { return m_exitCompositingTimer.isActive(); }
     void exitAcceleratedCompositingMode();
 
     void scheduleDisplay();
@@ -93,6 +94,9 @@ private:
     // Whether we're waiting for a DidUpdate message. Used for throttling paints so that the 
     // web process won't paint more frequent than the UI process can handle.
     bool m_isWaitingForDidUpdate;
+    
+    // True between sending the 'enter compositing' messages, and the 'exit compositing' message.
+    bool m_compositingAccordingToProxyMessages;
 
     // Whether painting is suspended. We'll still keep track of the dirty region but we 
     // won't paint until painting has resumed again.

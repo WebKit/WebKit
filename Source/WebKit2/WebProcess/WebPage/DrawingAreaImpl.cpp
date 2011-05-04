@@ -59,6 +59,7 @@ DrawingAreaImpl::DrawingAreaImpl(WebPage* webPage, const WebPageCreationParamete
     , m_inUpdateBackingStoreState(false)
     , m_shouldSendDidUpdateBackingStoreState(false)
     , m_isWaitingForDidUpdate(false)
+    , m_compositingAccordingToProxyMessages(false)
     , m_isPaintingSuspended(!parameters.isVisible)
     , m_alwaysUseCompositing(false)
     , m_lastDisplayTime(0)
@@ -214,7 +215,11 @@ void DrawingAreaImpl::layerHostDidFlushLayers()
     }
 
 #if USE(ACCELERATED_COMPOSITING)
-    m_webPage->send(Messages::DrawingAreaProxy::EnterAcceleratedCompositingMode(m_backingStoreStateID, m_layerTreeHost->layerTreeContext()));
+    ASSERT(!m_compositingAccordingToProxyMessages);
+    if (!exitAcceleratedCompositingModePending()) {
+        m_webPage->send(Messages::DrawingAreaProxy::EnterAcceleratedCompositingMode(m_backingStoreStateID, m_layerTreeHost->layerTreeContext()));
+        m_compositingAccordingToProxyMessages = true;
+    }
 #endif
 }
 
@@ -437,14 +442,17 @@ void DrawingAreaImpl::exitAcceleratedCompositingMode()
     } else {
         // Send along a complete update of the page so we can paint the contents right after we exit the
         // accelerated compositing mode, eliminiating flicker.
-        m_webPage->send(Messages::DrawingAreaProxy::ExitAcceleratedCompositingMode(m_backingStoreStateID, updateInfo));
+        if (m_compositingAccordingToProxyMessages) {
+            m_webPage->send(Messages::DrawingAreaProxy::ExitAcceleratedCompositingMode(m_backingStoreStateID, updateInfo));
+            m_compositingAccordingToProxyMessages = false;
+        }
     }
 #endif
 }
 
 void DrawingAreaImpl::exitAcceleratedCompositingModeSoon()
 {
-    if (m_exitCompositingTimer.isActive())
+    if (exitAcceleratedCompositingModePending())
         return;
 
     m_exitCompositingTimer.startOneShot(0);

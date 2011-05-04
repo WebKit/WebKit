@@ -1,3 +1,28 @@
+2011-05-04  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Anders Carlsson.
+
+        WebKit2 flashes if entering and exiting compositing rapidly
+        https://bugs.webkit.org/show_bug.cgi?id=60198
+        
+        If a page enters then immediately leaves compositing mode, the
+        DrawingAreaImpl would send a message to the UI process that it
+        had entered compositing even after all the layers had been torn
+        down. Fix this by never sending the 'enter' message if we're
+        waiting for the 'exit' timer to fire.
+        
+        Also fix an assertion in the UI process caused by sending mismatched
+        'enter' and 'leave' messages by keeping track of which messages
+        we've sent.
+
+        * WebProcess/WebPage/DrawingAreaImpl.cpp:
+        (WebKit::DrawingAreaImpl::DrawingAreaImpl):
+        (WebKit::DrawingAreaImpl::layerHostDidFlushLayers):
+        (WebKit::DrawingAreaImpl::exitAcceleratedCompositingMode):
+        (WebKit::DrawingAreaImpl::exitAcceleratedCompositingModeSoon):
+        * WebProcess/WebPage/DrawingAreaImpl.h:
+        (WebKit::DrawingAreaImpl::exitAcceleratedCompositingModePending):
+
 2011-05-04  Jeff Miller  <jeffm@apple.com>
 
         Fix typo in svn property in r85756.

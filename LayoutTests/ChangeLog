@@ -1,3 +1,15 @@
+2011-05-04  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Anders Carlsson.
+
+        WebKit2 flashes if entering and exiting compositing rapidly
+        https://bugs.webkit.org/show_bug.cgi?id=60198
+        
+        Testcase that toggles compositing 10 times and should not flash or assert.
+
+        * compositing/toggle-compositing-expected.txt: Added.
+        * compositing/toggle-compositing.html: Added.
+
 2011-05-04  Jessie Berlin  <jberlin@apple.com>
 
         Windows DRT needs an implementation of shadowRoot
