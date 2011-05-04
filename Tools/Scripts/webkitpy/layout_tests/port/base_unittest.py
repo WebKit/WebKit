@@ -236,7 +236,7 @@ class PortTest(unittest.TestCase):
         filesystem = MockFileSystem()
         options, args = optparse.OptionParser().parse_args([])
         port = base.Port(port_name='foo', filesystem=filesystem, options=options)
-        port.baseline_search_path = lambda: []
+        port.baseline_search_path = lambda: ['LayoutTests/platform/foo']
         layout_test_dir = port.layout_tests_dir()
         test_file = filesystem.join(layout_test_dir, 'fast', 'test.html')
 
@@ -244,6 +244,7 @@ class PortTest(unittest.TestCase):
         self.assertEqual(
             port.expected_baselines(test_file, '.txt'),
             [(None, 'fast/test-expected.txt')])
+        self.assertEqual(port.baseline_path(), 'LayoutTests/platform/foo')
 
         # Simple additional platform directory
         options.additional_platform_directory = ['/tmp/local-baselines']
@@ -253,12 +254,14 @@ class PortTest(unittest.TestCase):
         self.assertEqual(
             port.expected_baselines(test_file, '.txt'),
             [('/tmp/local-baselines', 'fast/test-expected.txt')])
+        self.assertEqual(port.baseline_path(), '/tmp/local-baselines')
 
         # Multiple additional platform directories
         options.additional_platform_directory = ['/foo', '/tmp/local-baselines']
         self.assertEqual(
             port.expected_baselines(test_file, '.txt'),
             [('/tmp/local-baselines', 'fast/test-expected.txt')])
+        self.assertEqual(port.baseline_path(), '/foo')
 
 class VirtualTest(unittest.TestCase):
     """Tests that various methods expected to be virtual are."""

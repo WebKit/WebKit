@@ -82,9 +82,6 @@ class ChromiumPort(base.Port):
         return True
 
 
-    def baseline_path(self):
-        return self._webkit_baseline_path(self._name)
-
     def check_build(self, needs_http):
         result = True
 

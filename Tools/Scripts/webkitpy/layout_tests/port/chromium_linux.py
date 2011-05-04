@@ -91,11 +91,6 @@ class ChromiumLinuxPort(chromium.ChromiumPort):
         # if we actually try to use the binary, check_build() should fail.
         return 'x86'
 
-    def baseline_path(self):
-        if self._architecture == 'x86_64':
-            return self._webkit_baseline_path(self._name)
-        return self._webkit_baseline_path('chromium-linux')
-
     def baseline_search_path(self):
         port_names = self.FALLBACK_PATHS[self._architecture]
         return map(self._webkit_baseline_path, port_names)

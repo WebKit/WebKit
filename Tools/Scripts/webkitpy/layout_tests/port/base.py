@@ -163,7 +163,9 @@ class Port(object):
     def baseline_path(self):
         """Return the absolute path to the directory to store new baselines
         in for this port."""
-        raise NotImplementedError('Port.baseline_path')
+        baseline_search_paths = \
+            self.get_option('additional_platform_directory', []) + self.baseline_search_path()
+        return baseline_search_paths[0]
 
     def baseline_search_path(self):
         """Return a list of absolute paths to directories to search under for

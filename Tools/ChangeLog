@@ -1,3 +1,29 @@
+2011-05-04  Mihai Parparita  <mihaip@chromium.org>
+
+        Reviewed by Ojan Vafai.
+
+        [NRWT] --new-baseline should put baselines in the directory specified by --additional-platform-directory
+        https://bugs.webkit.org/show_bug.cgi?id=60088
+        
+        Makes --new-baseline put new baselines into the first entry in the
+        baseline search path, including any additional directories passed in via
+        --additional-platform-directory.
+        
+        Simplifies baseline_path() by making it return the first entry in the
+        baseline search path instead of requiring each port to have an
+        implementation (should not result in any behavior change).
+
+        * Scripts/webkitpy/layout_tests/port/base.py:
+        * Scripts/webkitpy/layout_tests/port/base_unittest.py:
+        * Scripts/webkitpy/layout_tests/port/chromium.py:
+        * Scripts/webkitpy/layout_tests/port/chromium_gpu.py:
+        * Scripts/webkitpy/layout_tests/port/chromium_linux.py:
+        * Scripts/webkitpy/layout_tests/port/chromium_mac.py:
+        * Scripts/webkitpy/layout_tests/port/chromium_win.py:
+        * Scripts/webkitpy/layout_tests/port/mac.py:
+        * Scripts/webkitpy/layout_tests/port/test.py:
+        * Scripts/webkitpy/layout_tests/port/webkit.py:
+
 2011-05-04  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Eric Seidel.

@@ -60,9 +60,6 @@ class WebKitPort(base.Port):
         if not hasattr(self._options, "pixel_tests") or self._options.pixel_tests == None:
             self._options.pixel_tests = False
 
-    def baseline_path(self):
-        return self._webkit_baseline_path(self._name)
-
     def baseline_search_path(self):
         return [self._webkit_baseline_path(self._name)]
 

@@ -80,13 +80,6 @@ class ChromiumMacPort(chromium.ChromiumPort):
             assert self._version in self.SUPPORTED_OS_VERSIONS
         self._operating_system = 'mac'
 
-    def baseline_path(self):
-        if self.version() in ('snowleopard', 'future'):
-            # We treat Snow Leopard as the newest version of mac,
-            # so it gets the base dir.
-            return self._webkit_baseline_path('chromium-mac')
-        return self._webkit_baseline_path(self.name())
-
     def baseline_search_path(self):
         return map(self._webkit_baseline_path, self.FALLBACK_PATHS[self._version])
 

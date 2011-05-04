@@ -94,13 +94,6 @@ class MacPort(WebKitPort):
             return 4
         return child_processes
 
-    def baseline_path(self):
-        if self.version() != 'future':
-            return WebKitPort.baseline_path(self)
-
-        assert(self._name[-7:] == '-future')
-        return self._webkit_baseline_path(self._name[:-7])
-
     def baseline_search_path(self):
         return map(self._webkit_baseline_path, self.FALLBACK_PATHS[self._version])
 

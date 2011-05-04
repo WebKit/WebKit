@@ -283,10 +283,6 @@ class TestPort(base.Port):
         # the mock_drt Driver. We return something, but make sure it's useless.
         return 'junk'
 
-    def baseline_path(self):
-        # We don't bother with a fallback path.
-        return self._filesystem.join(self.layout_tests_dir(), 'platform', self.name())
-
     def baseline_search_path(self):
         search_paths = {
             'test-mac-snowleopard': ['test-mac-snowleopard'],
