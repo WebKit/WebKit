@@ -1,5 +1,14 @@
 2011-05-04  David Kilzer  <ddkilzer@apple.com>
 
+        Part 2 of 2: <http://webkit.org/b/56337> Enable -Werror on ANGLE
+
+        Reviewed by Adam Barth.
+
+        * Configurations/Base.xcconfig:
+        (GCC_TREAT_WARNINGS_AS_ERRORS): Set to YES.
+
+2011-05-04  David Kilzer  <ddkilzer@apple.com>
+
         Part 1 of 2: <http://webkit.org/b/56337> Enable -Werror on ANGLE
 
         Merge ANGLE upstream commits r572, r573, r574, r575.
