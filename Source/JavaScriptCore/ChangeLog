@@ -1,5 +1,17 @@
 2011-05-04  Adam Roben  <aroben@apple.com>
 
+        Another attempted build fix
+
+        * wtf/OwnPtr.h:
+        (WTF::OwnPtr::operator==):
+        (WTF::OwnPtr::operator!=):
+        * wtf/PassOwnPtr.h:
+        (WTF::PassOwnPtr::operator==):
+        (WTF::PassOwnPtr::operator!=):
+        Added a return statement. And made a tweak based on a suggestion from Anders Carlsson.
+
+2011-05-04  Adam Roben  <aroben@apple.com>
+
         Try to fix Leopard, Qt, and probably others
 
         * wtf/OwnPtr.h:

@@ -92,10 +92,10 @@ namespace WTF {
 
         // We should never have two OwnPtrs for the same underlying object (otherwise we'll get
         // double-destruction), so these equality operators should never be needed.
-        template<typename U> bool operator==(const PassOwnPtr<U>&) { COMPILE_ASSERT(sizeof(U) && false, OwnPtrs_should_never_be_equal); }
-        template<typename U> bool operator!=(const PassOwnPtr<U>&) { COMPILE_ASSERT(sizeof(U) && false, OwnPtrs_should_never_be_equal); }
-        template<typename U> bool operator==(const OwnPtr<U>&) { COMPILE_ASSERT(sizeof(U) && false, OwnPtrs_should_never_be_equal); }
-        template<typename U> bool operator!=(const OwnPtr<U>&) { COMPILE_ASSERT(sizeof(U) && false, OwnPtrs_should_never_be_equal); }
+        template<typename U> bool operator==(const PassOwnPtr<U>&) { COMPILE_ASSERT(!sizeof(U*), OwnPtrs_should_never_be_equal); return false; }
+        template<typename U> bool operator!=(const PassOwnPtr<U>&) { COMPILE_ASSERT(!sizeof(U*), OwnPtrs_should_never_be_equal); return false; }
+        template<typename U> bool operator==(const OwnPtr<U>&) { COMPILE_ASSERT(!sizeof(U*), OwnPtrs_should_never_be_equal); return false; }
+        template<typename U> bool operator!=(const OwnPtr<U>&) { COMPILE_ASSERT(!sizeof(U*), OwnPtrs_should_never_be_equal); return false; }
 
         mutable PtrType m_ptr;
     };
