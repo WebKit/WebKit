@@ -1,3 +1,15 @@
+2011-05-04  Adam Roben  <aroben@apple.com>
+
+        Try to fix Leopard, Qt, and probably others
+
+        * wtf/OwnPtr.h:
+        (WTF::OwnPtr::operator==):
+        (WTF::OwnPtr::operator!=):
+        * wtf/PassOwnPtr.h:
+        (WTF::PassOwnPtr::operator==):
+        (WTF::PassOwnPtr::operator!=):
+        Try to get the compiler not to instantiate these function templates unnecessarily.
+
 2011-05-03  Adam Roben  <aroben@apple.com>
 
         Disallow equality comparisons between [Pass]OwnPtrs
