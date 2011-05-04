@@ -1,3 +1,9 @@
+2011-05-04  Yury Semikhatsky  <yurys@chromium.org>
+
+        Unreviewed. Build fix.
+
+        * bindings/js/JSInjectedScriptHostCustom.cpp: fix includes declaration
+
 2011-05-03  Yury Semikhatsky  <yurys@chromium.org>
 
         Reviewed by Pavel Feldman.

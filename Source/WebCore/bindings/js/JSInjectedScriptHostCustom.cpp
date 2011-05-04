@@ -39,23 +39,23 @@
 #include "Database.h"
 #include "JSDatabase.h"
 #endif
-#include "DateInstance.h"
 #include "ExceptionCode.h"
 #include "InjectedScriptHost.h"
 #include "InspectorDebuggerAgent.h"
 #include "InspectorValues.h"
-#include "JSArray.h"
 #include "JSHTMLAllCollection.h"
 #include "JSHTMLCollection.h"
 #include "JSNode.h"
 #include "JSNodeList.h"
-#include "RegExpObject.h"
 #include "ScriptValue.h"
 #if ENABLE(DOM_STORAGE)
 #include "Storage.h"
 #include "JSStorage.h"
 #endif
+#include <runtime/DateInstance.h>
+#include <runtime/JSArray.h>
 #include <runtime/JSLock.h>
+#include <runtime/RegExpObject.h>
 
 using namespace JSC;
 
