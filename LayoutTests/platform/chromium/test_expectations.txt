@@ -686,7 +686,7 @@ BUGCR20844 LINUX WIN RELEASE : editing/selection/designmode-no-caret.html = FAIL
 // Regression from merge 41268:41286
 BUGCR10435 MAC RELEASE : editing/selection/designmode-no-caret.html = FAIL
 
-BUGDPRANKE DEBUG : editing/selection/designmode-no-caret.html = FAIL CRASH
+BUGWK60089 DEBUG : editing/selection/designmode-no-caret.html = FAIL CRASH
 
 // Issue 3273: TextInputController::firstRectForCharacterRange not returning
 // the correct values for bidi/rtl text.
@@ -2309,8 +2309,8 @@ BUGWK45667 LINUX : fast/files/read-blob-async.html = CRASH PASS
 BUGWK45737 DEBUG SLOW : fast/frames/frame-limit.html = PASS
 
 // Regressions from webkit roll r67178:t67358
-BUGDPRANKE WIN LINUX DEBUG : fast/forms/select-set-length-with-mutation-remove.html = TIMEOUT PASS
-BUGDPRANKE LINUX DEBUG : http/tests/incremental/slow-utf8-text.pl = TIMEOUT PASS
+BUGWK60092 WIN LINUX SLOW DEBUG : fast/forms/select-set-length-with-mutation-remove.html = PASS
+BUGWK60093 LINUX SLOW DEBUG : http/tests/incremental/slow-utf8-text.pl = PASS
 
 BUGWEBGL WIN : fast/canvas/webgl/tex-image-and-sub-image-2d-with-array-buffer-view.html = CRASH PASS
 BUGWEBGL WIN DEBUG : fast/canvas/webgl/texture-complete.html = PASS TEXT
@@ -3215,17 +3215,17 @@ BUGXXX : media/video-delay-load-event.html = PASS TEXT
 BUGV8: http/tests/security/contentSecurityPolicy/eval-blocked.html = TEXT
 
 // These tests appears to timeout every 10 or 20 runs.
-BUGWK51721 : fast/encoding/parser-tests.html = TIMEOUT PASS
-BUGDPRANKE : fast/encoding/parser-tests-10.html = TIMEOUT PASS
-BUGDPRANKE : fast/encoding/parser-tests-20.html = TIMEOUT PASS
-BUGDPRANKE : fast/encoding/parser-tests-30.html = TIMEOUT PASS
-BUGDPRANKE : fast/encoding/parser-tests-50.html = TIMEOUT PASS
-BUGDPRANKE : fast/encoding/parser-tests-60.html = TIMEOUT PASS
-BUGDPRANKE : fast/encoding/parser-tests-70.html = TIMEOUT PASS
-BUGDPRANKE : fast/encoding/parser-tests-80.html = TIMEOUT PASS
-BUGDPRANKE : fast/encoding/parser-tests-100.html = TIMEOUT PASS
-BUGDPRANKE : fast/encoding/parser-tests-110.html = TIMEOUT PASS
-BUGDPRANKE : fast/encoding/parser-tests-120.html = TIMEOUT PASS
+BUGWK60094 : fast/encoding/parser-tests.html = TIMEOUT PASS
+BUGWK60094 : fast/encoding/parser-tests-10.html = TIMEOUT PASS
+BUGWK60094 : fast/encoding/parser-tests-20.html = TIMEOUT PASS
+BUGWK60094 : fast/encoding/parser-tests-30.html = TIMEOUT PASS
+BUGWK60094 : fast/encoding/parser-tests-50.html = TIMEOUT PASS
+BUGWK60094 : fast/encoding/parser-tests-60.html = TIMEOUT PASS
+BUGWK60094 : fast/encoding/parser-tests-70.html = TIMEOUT PASS
+BUGWK60094 : fast/encoding/parser-tests-80.html = TIMEOUT PASS
+BUGWK60094 : fast/encoding/parser-tests-100.html = TIMEOUT PASS
+BUGWK60094 : fast/encoding/parser-tests-110.html = TIMEOUT PASS
+BUGWK60094 : fast/encoding/parser-tests-120.html = TIMEOUT PASS
 
 BUGWK57547 WIN LINUX GPU : fast/canvas/canvas-strokePath-gradient-shadow.html = TIMEOUT
 BUGWK57547 WIN LINUX GPU : fast/canvas/canvas-strokeRect-gradient-shadow.html = TIMEOUT
@@ -3603,56 +3603,54 @@ BUGCR79917 WIN LINUX : tables/mozilla_expected_failures/marvin/backgr_position-t
 BUGCR79917 WIN LINUX : tables/mozilla_expected_failures/marvin/backgr_position-table-row.html = IMAGE
 BUGCR79917 WIN LINUX : transforms/svg-vs-css.xhtml = IMAGE
 
-BUGDPRANKE MAC SLOW : editing/selection/move-by-word-visually.html = PASS
-BUGDPRANKE MAC : compositing/iframes/invisible-nested-iframe-show.html = TEXT
-BUGDPRANKE MAC GPU : compositing/geometry/video-fixed-scrolling.html = IMAGE
-BUGDPRANKE MAC : plugins/mouse-click-iframe-to-plugin.html = TIMEOUT PASS
+BUGWK60095 SLOW DEBUG : editing/selection/move-by-word-visually.html = PASS
+BUGWK58951 MAC : compositing/iframes/invisible-nested-iframe-show.html = TEXT
+BUGWK58924 MAC : plugins/mouse-click-iframe-to-plugin.html = TIMEOUT
 
-BUGDPRANKE LINUX DEBUG : svg/custom/foreignObject-crash-on-hover.xml = CRASH PASS
-BUGDPRANKE LINUX MAC DEBUG : fast/css/getComputedStyle/getComputedStyle-margin-percentage.html = CRASH PASS
-BUGDPRANKE LINUX MAC DEBUG : fast/css/getComputedStyle/getComputedStyle-relayout.html = CRASH PASS
-BUGDPRANKE LINUX DEBUG : fast/dom/Attr/access-after-element-destruction.html = CRASH PASS
-BUGDPRANKE LINUX DEBUG : fast/css/last-child-pseudo-class.html = TEXT PASS
-BUGDPRANKE LINUX DEBUG : fast/dom/HTMLLinkElement/link-and-subresource-test.html = TEXT PASS
+BUGWK60100 MAC LINUX DEBUG : svg/custom/foreignObject-crash-on-hover.xml = CRASH PASS
+BUGWK60099 DEBUG : fast/dom/Attr/access-after-element-destruction.html = CRASH PASS
+BUGWK60096 DEBUG : fast/css/last-child-pseudo-class.html = TEXT PASS
+BUGWK60097 DEBUG : fast/dom/HTMLLinkElement/link-and-subresource-test.html = TEXT PASS
 
-BUGDPRANKE LINUX GPU : compositing/geometry/fixed-in-composited.html = IMAGE
-BUGDPRANKE LINUX DEBUG GPU : compositing/geometry/horizontal-scroll-composited.html = IMAGE
-BUGDPRANKE LINUX GPU : compositing/geometry/tall-page-composited.html = IMAGE
-BUGDPRANKE LINUX DEBUG GPU : compositing/geometry/video-fixed-scrolling.html = IMAGE
-BUGDPRANKE LINUX GPU : compositing/masks/masked-ancestor.html = IMAGE
-BUGDPRANKE LINUX GPU : compositing/masks/simple-composited-mask.html = IMAGE
-BUGDPRANKE LINUX DEBUG GPU : fast/canvas/canvas-text-alignment.html = IMAGE
-BUGDPRANKE LINUX GPU : platform/chromium/compositing/layout-width-change.html = IMAGE
+BUGWK60102 LINUX DEBUG GPU : compositing/geometry/fixed-in-composited.html = IMAGE
+BUGWK60102 LINUX DEBUG GPU : compositing/geometry/horizontal-scroll-composited.html = IMAGE
+BUGWK60102 LINUX GPU : compositing/geometry/tall-page-composited.html = IMAGE
+BUGWK60102 LINUX DEBUG GPU : compositing/geometry/video-fixed-scrolling.html = IMAGE
+BUGWK60102 LINUX GPU : compositing/masks/masked-ancestor.html = IMAGE
+BUGWK60102 LINUX GPU : compositing/masks/simple-composited-mask.html = IMAGE
+BUGWK60102 LINUX DEBUG GPU : fast/canvas/canvas-text-alignment.html = IMAGE
+BUGWK60102 LINUX GPU : platform/chromium/compositing/layout-width-change.html = IMAGE
 
 // probably just needs new baselines after r84343
-BUGDPRANKE WIN LINUX : fast/borders/border-radius-huge-assert.html = IMAGE
-BUGDPRANKE MAC LEOPARD : fast/borders/border-radius-huge-assert.html = IMAGE
-BUGDPRANKE : fast/borders/borderRadiusAllStylesAllCorners.html = IMAGE
-BUGDPRANKE WIN LINUX : fast/borders/borderRadiusArcs01.html = IMAGE
-BUGDPRANKE WIN LINUX : fast/borders/borderRadiusDashed02.html = IMAGE
-BUGDPRANKE WIN LINUX : fast/borders/borderRadiusDashed03.html = IMAGE
-BUGDPRANKE WIN LINUX : fast/borders/borderRadiusDotted01.html = IMAGE
-BUGDPRANKE WIN LINUX : fast/borders/borderRadiusDouble01.html = IMAGE
-BUGDPRANKE WIN LINUX : fast/borders/borderRadiusDouble02.html = IMAGE
-BUGDPRANKE WIN LINUX : fast/borders/borderRadiusDouble03.html = IMAGE
-BUGDPRANKE WIN LINUX : fast/borders/borderRadiusGroove01.html = IMAGE
-BUGDPRANKE WIN LINUX : fast/borders/borderRadiusGroove02.html = IMAGE
-BUGDPRANKE WIN LINUX : fast/borders/borderRadiusInset01.html = IMAGE
-BUGDPRANKE WIN LINUX : fast/borders/borderRadiusInvalidColor.html = IMAGE
-BUGDPRANKE MAC LEOPARD : fast/borders/borderRadiusInvalidColor.html = IMAGE
-BUGDPRANKE WIN LINUX : fast/borders/borderRadiusOutset01.html = IMAGE
-BUGDPRANKE WIN LINUX : fast/borders/borderRadiusRidge01.html = IMAGE
-BUGDPRANKE WIN LINUX : fast/borders/borderRadiusSolid01.html = IMAGE
-BUGDPRANKE WIN LINUX : fast/borders/borderRadiusSolid02.html = IMAGE
-BUGDPRANKE WIN LINUX : fast/borders/borderRadiusSolid03.html = IMAGE
-BUGDPRANKE MAC LINUX : fast/box-shadow/inset-with-extraordinary-radii-and-border.html = IMAGE
+BUGWK60103 WIN LINUX LEOPARD : fast/borders/border-radius-huge-assert.html = IMAGE
+BUGWK60103 MAC LEOPARD : fast/borders/border-radius-huge-assert.html = IMAGE
+BUGWK60103 : fast/borders/borderRadiusAllStylesAllCorners.html = IMAGE
+BUGWK60103 WIN LINUX : fast/borders/borderRadiusArcs01.html = IMAGE
+BUGWK60103 WIN LINUX : fast/borders/borderRadiusDashed02.html = IMAGE
+BUGWK60103 WIN LINUX : fast/borders/borderRadiusDashed03.html = IMAGE
+BUGWK60103 WIN LINUX : fast/borders/borderRadiusDotted01.html = IMAGE
+BUGWK60103 WIN LINUX : fast/borders/borderRadiusDouble01.html = IMAGE
+BUGWK60103 WIN LINUX : fast/borders/borderRadiusDouble02.html = IMAGE
+BUGWK60103 WIN LINUX : fast/borders/borderRadiusDouble03.html = IMAGE
+BUGWK60103 WIN LINUX : fast/borders/borderRadiusGroove01.html = IMAGE
+BUGWK60103 WIN LINUX : fast/borders/borderRadiusGroove02.html = IMAGE
+BUGWK60103 WIN LINUX : fast/borders/borderRadiusInset01.html = IMAGE
+BUGWK60103 WIN LINUX : fast/borders/borderRadiusInvalidColor.html = IMAGE
+BUGWK60103 MAC LEOPARD : fast/borders/borderRadiusInvalidColor.html = IMAGE
+BUGWK60103 WIN LINUX : fast/borders/borderRadiusOutset01.html = IMAGE
+BUGWK60103 WIN LINUX : fast/borders/borderRadiusRidge01.html = IMAGE
+BUGWK60103 WIN LINUX : fast/borders/borderRadiusSolid01.html = IMAGE
+BUGWK60103 WIN LINUX : fast/borders/borderRadiusSolid02.html = IMAGE
+BUGWK60103 WIN LINUX : fast/borders/borderRadiusSolid03.html = IMAGE
+BUGWK60103 MAC LINUX : fast/box-shadow/inset-with-extraordinary-radii-and-border.html = IMAGE
+BUGWK60103 : fast/overflow/border-radius-clipping.html = IMAGE
+BUGWK60103 WIN LINUX : fast/repaint/border-radius-repaint.html = IMAGE
+BUGWK60103 WIN LINUX : fast/replaced/border-radius-clip.html = IMAGE
+
 BUGDPRANKE : fast/box-shadow/inset.html = IMAGE
 BUGDPRANKE LINUX : fast/css/text-input-with-webkit-border-radius.html = IMAGE
 BUGDPRANKE : fast/forms/basic-selects.html = IMAGE
 BUGDPRANKE : fast/layers/video-layer.html = IMAGE IMAGE+TEXT
-BUGDPRANKE : fast/overflow/border-radius-clipping.html = IMAGE
-BUGDPRANKE WIN LINUX : fast/repaint/border-radius-repaint.html = IMAGE
-BUGDPRANKE WIN LINUX : fast/replaced/border-radius-clip.html = IMAGE
 BUGDPRANKE : svg/custom/svg-fonts-in-html.html = IMAGE
 
 // Needs a rebaseline after moving controls to absolute positioning
