@@ -1,3 +1,15 @@
+2011-05-03  Mihai Parparita  <mihaip@chromium.org>
+
+        Reviewed by Ojan Vafai.
+
+        Update rebaseline queue server to handle hierarchical test results
+        https://bugs.webkit.org/show_bug.cgi?id=60063
+        
+        Update test result parsing done by the rebaseline queue server to handle
+        the hierarchical test result output that is generated as of r85254.
+
+        * RebaselineQueueServer/templates/builder-queue-edit.html:
+
 2011-05-03  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Adam Roben.

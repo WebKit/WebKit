@@ -44,7 +44,7 @@ var queuedTestNames = {{ queued_test_names|safe }};
 
 function init()
 {
-  var builderMaster = BUILDER_TO_MASTER[builderName];
+  var builderMaster = BUILDER_TO_MASTER[builderName] || CHROMIUM_GPU_BUILDER_MASTER;
   var resultsUrl = TEST_RESULTS_SERVER + 'testfile?builder=' + builderName +
       '&master=' + builderMaster.name +
       '&testtype=layout-tests&name=full_results.json';
@@ -58,28 +58,42 @@ function ADD_RESULTS(results)
 {
     var builderGroupName = BUILDER_TO_GROUP[builderName];
 
-    var tests = results.tests;
     var failingTests = [];
     var queuedTests = [];
-    for (var test in tests) {
-        var testResults = tests[test];
-        if (testResults.actual == testResults.expected ||
-            testResults.expected.split(' ').indexOf(testResults.actual) != -1 ||
-            testResults.actual == 'SKIP' ||
-            testResults.actual.indexOf('PASS') != -1 ||
-            (testResults.actual != 'PASS' && testResults.expected.indexOf('FAIL') != -1)) {
+    function processTestResult(test, results) {
+        var actual = results.actual;
+        var expected = results.expected;
+        if (actual == expected ||
+            expected.split(' ').indexOf(actual) != -1 ||
+            actual == 'SKIP' ||
+            actual.indexOf('PASS') != -1 ||
+            (expected.indexOf('FAIL') != -1 && actual.indexOf('TIMEOUT') == -1)) {
             continue;
         }
 
-        testResults.name = test;
+        results.name = test;
 
         if (queuedTestNames.indexOf(test) != -1) {
-            queuedTests.push(testResults);
+            queuedTests.push(results);
             queuedTestNames.splice(queuedTestNames.indexOf(test), 1);
         } else {
-            failingTests.push(testResults);
+            failingTests.push(results);
         }
     }
+
+    function gatherTests(path, testTree) {
+        if ('actual' in testTree) {
+            processTestResult(path, testTree);
+        } else {
+            if (path) {
+              path += '/';
+            }
+            for (var key in testTree) {
+                gatherTests(path + key, testTree[key]);
+            }
+        }
+    }
+    gatherTests('', results.tests);
 
     // If we have remaining queued tests that are currently not failing,
     // synthesize results for them.
