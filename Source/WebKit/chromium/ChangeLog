@@ -1,3 +1,21 @@
+2011-05-03  Alpha Lam  <hclam@chromium.org>
+
+        Not reviewed. Build fix.
+
+        More 0 to nullptr.
+
+        * src/FrameLoaderClientImpl.cpp:
+        (WebKit::FrameLoaderClientImpl::pluginLoadObserver):
+        * src/GraphicsContext3DChromium.cpp:
+        (WebCore::GraphicsContext3D::~GraphicsContext3D):
+        * src/WebAudioBus.cpp:
+        (WebKit::WebAudioBus::release):
+        * src/WebBlobData.cpp:
+        (WebKit::WebBlobData::reset):
+        * src/WebViewImpl.cpp:
+        (WebKit::WebView::addUserScript):
+        (WebKit::WebView::addUserStyleSheet):
+
 2011-05-03  John Abd-El-Malek  <jam@chromium.org>
 
         Reviewed by James Robinson.

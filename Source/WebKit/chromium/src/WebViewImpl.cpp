@@ -2176,7 +2176,7 @@ void WebView::addUserScript(const WebString& sourceCode,
 
     PageGroup* pageGroup = PageGroup::pageGroup(pageGroupName);
     RefPtr<DOMWrapperWorld> world(DOMWrapperWorld::create());
-    pageGroup->addUserScriptToWorld(world.get(), sourceCode, WebURL(), patterns.release(), 0,
+    pageGroup->addUserScriptToWorld(world.get(), sourceCode, WebURL(), patterns.release(), nullptr,
                                     static_cast<UserScriptInjectionTime>(injectAt),
                                     static_cast<UserContentInjectedFrames>(injectIn));
 }
@@ -2197,7 +2197,7 @@ void WebView::addUserStyleSheet(const WebString& sourceCode,
     // callers specify this though, since in other cases the caller will probably want "user" level.
     //
     // FIXME: It would be nice to populate the URL correctly, instead of passing an empty URL.
-    pageGroup->addUserStyleSheetToWorld(world.get(), sourceCode, WebURL(), patterns.release(), 0,
+    pageGroup->addUserStyleSheetToWorld(world.get(), sourceCode, WebURL(), patterns.release(), nullptr,
                                         static_cast<UserContentInjectedFrames>(injectIn),
                                         UserStyleAuthorLevel,
                                         static_cast<WebCore::UserStyleInjectionTime>(injectionTime));

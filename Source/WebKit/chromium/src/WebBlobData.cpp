@@ -48,7 +48,7 @@ void WebBlobData::initialize()
 
 void WebBlobData::reset()
 {
-    assign(0);
+    assign(nullptr);
 }
 
 size_t WebBlobData::itemCount() const

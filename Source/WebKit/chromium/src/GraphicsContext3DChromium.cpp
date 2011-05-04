@@ -935,8 +935,8 @@ GraphicsContext3D::~GraphicsContext3D()
     WebGLLayerChromium* canvasLayer = m_internal->platformLayer();
     if (canvasLayer)
         canvasLayer->setContext(0);
-    m_internal->setContextLostCallback(0);
-    m_internal->setSwapBuffersCompleteCallbackCHROMIUM(0);
+    m_internal->setContextLostCallback(nullptr);
+    m_internal->setSwapBuffersCompleteCallbackCHROMIUM(nullptr);
 }
 
 PassRefPtr<GraphicsContext3D> GraphicsContext3D::create(GraphicsContext3D::Attributes attrs, HostWindow* hostWindow, GraphicsContext3D::RenderStyle renderStyle)

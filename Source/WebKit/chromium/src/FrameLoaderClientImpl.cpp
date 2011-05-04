@@ -1574,7 +1574,7 @@ PassOwnPtr<WebPluginLoadObserver> FrameLoaderClientImpl::pluginLoadObserver()
         // We can arrive here if a popstate event handler detaches this frame.
         // FIXME: Remove this code once http://webkit.org/b/36202 is fixed.
         ASSERT(!m_webFrame->frame()->page());
-        return 0;
+        return nullptr;
     }
     return ds->releasePluginLoadObserver();
 }

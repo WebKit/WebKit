@@ -125,7 +125,7 @@ PassOwnPtr<AudioBus> WebAudioBus::release()
     return audioBus.release();
 #else
     ASSERT_NOT_REACHED();
-    return 0;
+    return nullptr;
 #endif
 }
 
