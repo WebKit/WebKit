@@ -1,3 +1,19 @@
+2011-05-04  James Kozianski  <koz@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        Add method to make a Port able to retrieve TestOutputSets from its builders.
+        https://bugs.webkit.org/show_bug.cgi?id=58211
+
+        This will be used in the new rebaseline script - TestOutputs are
+        potential new baselines.
+
+        * Scripts/webkitpy/common/config/urls.py:
+        * Scripts/webkitpy/layout_tests/port/base.py:
+        * Scripts/webkitpy/layout_tests/port/chromium.py:
+        * Scripts/webkitpy/layout_tests/port/factory.py:
+        * Scripts/webkitpy/layout_tests/port/webkit.py:
+
 2011-05-04  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Ojan Vafai.

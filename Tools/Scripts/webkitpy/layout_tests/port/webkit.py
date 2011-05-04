@@ -41,9 +41,9 @@ import sys
 import time
 import webbrowser
 
+from webkitpy.common.net.buildbot import BuildBot
 from webkitpy.common.system import ospath
-from webkitpy.layout_tests.port import base
-from webkitpy.layout_tests.port import server_process
+from webkitpy.layout_tests.port import base, builders, server_process
 
 _log = logging.getLogger("webkitpy.layout_tests.port.webkit")
 
@@ -66,6 +66,16 @@ class WebKitPort(base.Port):
     def path_to_test_expectations_file(self):
         return self._filesystem.join(self._webkit_baseline_path(self._name),
                                      'test_expectations.txt')
+
+    def _results_for_platform(self, platform):
+        builder_name = builders.builder_name_for_platform(platform)
+        if not builder_name:
+            raise Exception("Can't find builder for %s" % platform)
+        builders_by_name = dict([(builder.name(), builder) for builder in BuildBot().builders()])
+        builder = builders_by_name[builder_name]
+        result_set = builder.latest_cached_build().results()
+        result_set.set_platform(platform)
+        return result_set
 
     def _build_driver(self):
         configuration = self.get_option('configuration')
