@@ -1,3 +1,17 @@
+2011-05-04  Andrey Kosyakov  <caseq@chromium.org>
+
+        Reviewed by Yury Semikhatsky.
+
+        Web Inspector: add test for shadow DOM access in the console API
+        https://bugs.webkit.org/show_bug.cgi?id=60192
+
+        * http/tests/inspector/elements-test.js:
+        (initialize_ElementTest.InspectorTest.findNode.processChildren):
+        (initialize_ElementTest.InspectorTest.nodeWithId):
+        (initialize_ElementTest.InspectorTest.selectNode):
+        * inspector/console/console-shadow-dom-access-expected.txt: Added.
+        * inspector/console/console-shadow-dom-access.html: Added.
+
 2011-05-05  Philippe Normand  <pnormand@igalia.com>
 
         Unreviewed, GTK baselines for new tests.

@@ -1,7 +1,6 @@
 var initialize_ElementTest = function() {
 
-
-InspectorTest.nodeWithId = function(idValue, callback)
+InspectorTest.findNode = function(matchFunction, callback)
 {
     callback = InspectorTest.safeWrap(callback);
     var result = null;
@@ -15,8 +14,13 @@ InspectorTest.nodeWithId = function(idValue, callback)
 
         for (var i = 0; children && i < children.length; ++i) {
             var childNode = children[i];
-            if (childNode.getAttribute("id") === idValue) {
+            if (matchFunction(childNode)) {
                 result = childNode;
+                callback(result);
+                return;
+            }
+            if (childNode.shadowRoot && matchFunction(childNode.shadowRoot)) {
+                result = childNode.shadowRoot;
                 callback(result);
                 return;
             }
@@ -42,6 +46,15 @@ InspectorTest.nodeWithId = function(idValue, callback)
     }
 };
 
+InspectorTest.nodeWithId = function(idValue, callback)
+{
+    function nodeIdMatches(node)
+    {
+        return node.getAttribute("id") === idValue;
+    }
+    InspectorTest.findNode(nodeIdMatches, callback);
+}
+
 InspectorTest.expandedNodeWithId = function(idValue)
 {
     var result;
@@ -55,15 +68,20 @@ InspectorTest.expandedNodeWithId = function(idValue)
 
 InspectorTest.selectNodeWithId = function(idValue, callback)
 {
-    callback = InspectorTest.safeWrap(callback);
-    function mycallback(node)
+    function onNodeFound(node)
     {
-        if (node)
-            WebInspector.updateFocusedNode(node.id);
-        InspectorTest.runAfterPendingDispatches(callback.bind(null, node));
+        InspectorTest.selectNode(node, callback);
     }
-    InspectorTest.nodeWithId(idValue, mycallback);
+    InspectorTest.nodeWithId(idValue, onNodeFound);
 };
+
+InspectorTest.selectNode = function(node, callback)
+{
+    callback = InspectorTest.safeWrap(callback);
+    if (node)
+        WebInspector.updateFocusedNode(node.id);
+    InspectorTest.runAfterPendingDispatches(callback.bind(null, node));
+}
 
 InspectorTest.dumpSelectedElementStyles = function(excludeComputed, excludeMatched, omitLonghands)
 {
@@ -192,13 +210,13 @@ InspectorTest.expandElementsTree = function(callback)
         }
     }
 
-    function mycallback()
+    function onAllNodesAvailable()
     {
         WebInspector.panels.elements.updateModifiedNodes();
         expand(WebInspector.panels.elements.treeOutline);
         callback();
     }
-    InspectorTest.nodeWithId(/nonstring/, mycallback);
+    InspectorTest.findNode(function() { return false; }, onAllNodesAvailable);
 };
 
 InspectorTest.dumpDOMAgentTree = function()
