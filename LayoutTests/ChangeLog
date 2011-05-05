@@ -1,3 +1,18 @@
+2011-05-05  Alpha Lam  <hclam@chromium.org>
+
+        Build fix. Not reviewed.
+
+        Add test expectations.
+
+        * platform/chromium-linux/fast/block/float/float-not-removed-from-next-sibling-expected.png: Added.
+        * platform/chromium-linux/fast/block/float/float-not-removed-from-next-sibling2-expected.png: Added.
+        * platform/chromium-linux/fast/block/float/float-not-removed-from-next-sibling3-expected.png: Added.
+        * platform/chromium-linux/fast/block/float/float-not-removed-from-next-sibling4-expected.png: Added.
+        * platform/chromium-win/fast/block/float/float-not-removed-from-next-sibling-expected.png: Added.
+        * platform/chromium-win/fast/block/float/float-not-removed-from-next-sibling2-expected.png: Added.
+        * platform/chromium-win/fast/block/float/float-not-removed-from-next-sibling3-expected.png: Added.
+        * platform/chromium-win/fast/block/float/float-not-removed-from-next-sibling4-expected.png: Added.
+
 2011-05-05  Adam Roben  <aroben@apple.com>
 
         Update pixel results for draws-gradient.html to have an alpha channel
