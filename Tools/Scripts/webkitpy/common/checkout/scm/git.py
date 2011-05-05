@@ -31,6 +31,7 @@ import os
 import re
 
 from webkitpy.common.memoized import memoized
+from webkitpy.common.system.deprecated_logging import log
 from webkitpy.common.system.executive import Executive, run_command, ScriptError
 
 from .commitmessage import CommitMessage

@@ -2,6 +2,16 @@
 
         Reviewed by Adam Barth.
 
+        Add more missing imports from scm refactor
+        https://bugs.webkit.org/show_bug.cgi?id=60239
+
+        * Scripts/webkitpy/common/checkout/scm/git.py:
+        * Scripts/webkitpy/common/checkout/scm/svn.py:
+
+2011-05-04  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Adam Barth.
+
         sheriff-bot is having more exception trouble
         https://bugs.webkit.org/show_bug.cgi?id=60233
 
