@@ -1,3 +1,9 @@
+2011-05-04  MORITA Hajime <morrita@google.com>
+
+        Marking at r85822 was not enough. Re-marked it.
+
+        * platform/chromium/test_expectations.txt:
+
 2011-05-04  MORITA Hajime  <morrita@google.com>
 
         Unreviewed flaky marking to full-screen-stacking-context.html.

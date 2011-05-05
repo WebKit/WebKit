@@ -3981,7 +3981,7 @@ BUG_HCLAM GPU : compositing/tiling/huge-layer-img.html = FAIL
 BUGWK60079 LINUX : platform/chromium-linux/fast/text/international/complex-joining-using-gpos.html = IMAGE
 
 // Since http://trac.webkit.org/changeset/85788
-BUGWK60237 DEBUG : svg/text/text-block-child-crash.xhtml = CRASH
+BUGWK60237 DEBUG : svg/text/text-block-child-crash.xhtml = PASS CRASH
 
 // Flaky. The test is added at r85811.
 BUGWK60243 : fullscreen/full-screen-stacking-context.html = PASS TEXT
