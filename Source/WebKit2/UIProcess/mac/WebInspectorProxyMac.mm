@@ -34,6 +34,7 @@
 #import "WebPageProxy.h"
 #import "WebProcessProxy.h"
 #import <WebKitSystemInterface.h>
+#import <WebCore/InspectorFrontendClientLocal.h>
 #import <WebCore/LocalizedStrings.h>
 #import <WebCore/NotImplemented.h>
 #import <wtf/text/WTFString.h>
@@ -176,6 +177,9 @@ void WebInspectorProxy::inspectedViewFrameDidChange()
     CGFloat inspectedTop = NSMaxY(inspectedViewFrame);
     CGFloat inspectedWidth = NSWidth(inspectedViewFrame);
     CGFloat inspectorHeight = NSHeight([m_inspectorView.get() frame]);
+    
+    CGFloat parentHeight = NSHeight([[inspectedView superview] frame]);
+    inspectorHeight = InspectorFrontendClientLocal::constrainedAttachedWindowHeight(inspectorHeight, parentHeight);
 
     [m_inspectorView.get() setFrame:NSMakeRect(inspectedLeft, 0.0, inspectedWidth, inspectorHeight)];
     [inspectedView setFrame:NSMakeRect(inspectedLeft, inspectorHeight, inspectedWidth, inspectedTop - inspectorHeight)];

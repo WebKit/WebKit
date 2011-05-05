@@ -72,14 +72,14 @@ public:
 
     virtual void sendMessageToBackend(const String& message);
 
+    static unsigned constrainedAttachedWindowHeight(unsigned preferredHeight, unsigned totalWindowHeight);
+
 protected:
     virtual void setAttachedWindowHeight(unsigned) = 0;
     void setAttachedWindow(bool);
     void restoreAttachedWindowHeight();
 
 private:
-    static unsigned constrainedAttachedWindowHeight(unsigned preferredHeight, unsigned totalWindowHeight);
-
     friend class FrontendMenuProvider;
     InspectorController* m_inspectorController;
     Page* m_frontendPage;

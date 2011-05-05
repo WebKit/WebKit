@@ -1,3 +1,20 @@
+2011-05-05  Brian Weinstein  <bweinstein@apple.com>
+
+        Reviewed by Timothy Hatcher.
+
+        WebKit2: Docking Web Inspector doesn't respect maximum inspector size
+        https://bugs.webkit.org/show_bug.cgi?id=60294
+        <rdar://problem/9388518>
+        
+        Before we place the inspector and the inspected views, make sure that we have constrained the height
+        of the docked inspector. Putting the code here covers both when the inspector is initially attached 
+        and when a window with the docked inspector is resized.
+
+        * UIProcess/mac/WebInspectorProxyMac.mm:
+        (WebKit::WebInspectorProxy::inspectedViewFrameDidChange): Constrain the height before laying out the views.
+        * UIProcess/win/WebInspectorProxyWin.cpp:
+        (WebKit::WebInspectorProxy::onWebViewWindowPosChangingEvent): Ditto.
+
 2011-05-05  Chang Shu  <cshu@webkit.org>
 
         Reviewed by Andreas Kling.

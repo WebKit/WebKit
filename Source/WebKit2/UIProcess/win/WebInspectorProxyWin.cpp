@@ -32,6 +32,7 @@
 #include "WebPageProxy.h"
 #include "WebProcessProxy.h"
 #include "WebView.h"
+#include <WebCore/InspectorFrontendClientLocal.h>
 #include <WebCore/WebCoreInstanceHandle.h>
 #include <WebCore/WindowMessageBroadcaster.h>
 #include <wtf/PassRefPtr.h>
@@ -176,6 +177,10 @@ void WebInspectorProxy::onWebViewWindowPosChangingEvent(WPARAM wParam, LPARAM lP
     RECT inspectorRect;
     ::GetClientRect(inspectorWindow, &inspectorRect);
     unsigned inspectorHeight = inspectorRect.bottom - inspectorRect.top;
+
+    RECT parentRect;
+    ::GetClientRect(::GetParent(inspectorWindow), &parentRect);
+    inspectorHeight = InspectorFrontendClientLocal::constrainedAttachedWindowHeight(inspectorHeight, parentRect.bottom - parentRect.top);
 
     windowPos->cy -= inspectorHeight;
 
