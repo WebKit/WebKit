@@ -288,6 +288,7 @@ private:
     void mediaEngineError(PassRefPtr<MediaError> err);
     void cancelPendingEventsAndCallbacks();
     void waitForSourceChange();
+    void prepareToPlay();
 
     enum InvalidSourceAction { DoNothing, Complain };
     bool isSafeToLoadURL(const KURL&, InvalidSourceAction);
@@ -419,6 +420,7 @@ private:
     bool m_dispatchingCanPlayEvent : 1;
     bool m_loadInitiatedByUserGesture : 1;
     bool m_completelyLoaded : 1;
+    bool m_havePreparedToPlay : 1;
 };
 
 } //namespace

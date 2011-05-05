@@ -138,6 +138,8 @@ MediaPlayerPrivateAVFoundationObjC::MediaPlayerPrivateAVFoundationObjC(MediaPlay
     : MediaPlayerPrivateAVFoundation(player)
     , m_objcObserver(AdoptNS, [[WebCoreAVFMovieObserver alloc] initWithCallback:this])
     , m_timeObserver(0)
+    , m_videoFrameHasDrawn(false)
+    , m_haveCheckedPlayability(false)
 {
 }
 
@@ -234,77 +236,101 @@ void MediaPlayerPrivateAVFoundationObjC::destroyVideoLayer()
     m_videoLayer = 0;
 }
 
-bool MediaPlayerPrivateAVFoundationObjC::videoLayerIsReadyToDisplay() const
+bool MediaPlayerPrivateAVFoundationObjC::hasAvailableVideoFrame() const
 {
-    return (m_videoLayer && [m_videoLayer.get() isReadyForDisplay]);
+    return (m_videoFrameHasDrawn || (m_videoLayer && [m_videoLayer.get() isReadyForDisplay]));
 }
 
-void MediaPlayerPrivateAVFoundationObjC::createAVPlayerForURL(const String& url)
+void MediaPlayerPrivateAVFoundationObjC::createAVAssetForURL(const String& url)
 {
+    if (m_avAsset)
+        return;
+
+    LOG(Media, "MediaPlayerPrivateAVFoundationObjC::createAVAssetForURL(%p)", this);
+
     setDelayCallbacks(true);
 
-    if (!m_avAsset) {
-        NSURL *cocoaURL = KURL(ParsedURLString, url);
-        m_avAsset.adoptNS([[AVURLAsset alloc] initWithURL:cocoaURL options:nil]);
-    }
-    
-    createAVPlayer();
+    NSURL *cocoaURL = KURL(ParsedURLString, url);
+    m_avAsset.adoptNS([[AVURLAsset alloc] initWithURL:cocoaURL options:nil]);
+    m_haveCheckedPlayability = false;
+
+    setDelayCallbacks(false);
 }
 
 #if ENABLE(OFFLINE_WEB_APPLICATIONS)
-void MediaPlayerPrivateAVFoundationObjC::createAVPlayerForCacheResource(ApplicationCacheResource* resource)
+void MediaPlayerPrivateAVFoundationObjC::createAVAssetForCacheResource(ApplicationCacheResource* resource)
 {
-    // AVFoundation can't open arbitrary data pointers, so if this ApplicationCacheResource doesn't 
-    // have a valid local path, just open the resource's original URL.
-    if (resource->path().isEmpty()) {
-        createAVPlayerForURL(resource->url());
+    if (m_avAsset)
         return;
-    }
+
+    LOG(Media, "MediaPlayerPrivateAVFoundationObjC::createAVAssetForCacheResource(%p)", this);
+
+    // AVFoundation can't open arbitrary data pointers.
+    ASSERT(!resource->path().isEmpty());
     
     setDelayCallbacks(true);
 
-    if (!m_avAsset) {
-        NSURL* localURL = [NSURL fileURLWithPath:resource->path()];
-        m_avAsset.adoptNS([[AVURLAsset alloc] initWithURL:localURL options:nil]);
-    }
+    NSURL* localURL = [NSURL fileURLWithPath:resource->path()];
+    m_avAsset.adoptNS([[AVURLAsset alloc] initWithURL:localURL options:nil]);
+    m_haveCheckedPlayability = false;
 
-    createAVPlayer();
+    setDelayCallbacks(false);
 }
 #endif
 
 void MediaPlayerPrivateAVFoundationObjC::createAVPlayer()
 {
-    if (!m_avPlayer) {
-        m_avPlayer.adoptNS([[AVPlayer alloc] init]);
-        
-        [m_avPlayer.get() addObserver:m_objcObserver.get() forKeyPath:@"rate" options:nil context:(void *)MediaPlayerAVFoundationObservationContextPlayer];
-        
-        // Add a time observer, ask to be called infrequently because we don't really want periodic callbacks but
-        // our observer will also be called whenever a seek happens.
-        const double veryLongInterval = 60*60*60*24*30;
-        WebCoreAVFMovieObserver *observer = m_objcObserver.get();
-        m_timeObserver = [m_avPlayer.get() addPeriodicTimeObserverForInterval:CMTimeMakeWithSeconds(veryLongInterval, 10) queue:nil usingBlock:^(CMTime time){
-            [observer timeChanged:CMTimeGetSeconds(time)];
-        }];
-    }
+    if (m_avPlayer)
+        return;
 
-    if (!m_avPlayerItem) {
-        // Create the player item so we can media data. 
-        m_avPlayerItem.adoptNS([[AVPlayerItem alloc] initWithAsset:m_avAsset.get()]);
-        
-        [[NSNotificationCenter defaultCenter] addObserver:m_objcObserver.get()selector:@selector(didEnd:) name:AVPlayerItemDidPlayToEndTimeNotification object:m_avPlayerItem.get()];
+    LOG(Media, "MediaPlayerPrivateAVFoundationObjC::createAVPlayer(%p)", this);
 
-        for (NSString *keyName in itemKVOProperties())
-            [m_avPlayerItem.get() addObserver:m_objcObserver.get() forKeyPath:keyName options:nil context:(void *)MediaPlayerAVFoundationObservationContextPlayerItem];
+    setDelayCallbacks(true);
 
-        [m_avPlayer.get() replaceCurrentItemWithPlayerItem:m_avPlayerItem.get()];
-    }
+    m_avPlayer.adoptNS([[AVPlayer alloc] init]);
+    [m_avPlayer.get() addObserver:m_objcObserver.get() forKeyPath:@"rate" options:nil context:(void *)MediaPlayerAVFoundationObservationContextPlayer];
+    
+    // Add a time observer, ask to be called infrequently because we don't really want periodic callbacks but
+    // our observer will also be called whenever a seek happens.
+    const double veryLongInterval = 60 * 60 * 24 * 30;
+    WebCoreAVFMovieObserver *observer = m_objcObserver.get();
+    m_timeObserver = [m_avPlayer.get() addPeriodicTimeObserverForInterval:CMTimeMakeWithSeconds(veryLongInterval, 10) queue:nil usingBlock:^(CMTime time){
+        [observer timeChanged:CMTimeGetSeconds(time)];
+    }];
+
+    setDelayCallbacks(false);
+}
+
+void MediaPlayerPrivateAVFoundationObjC::createAVPlayerItem()
+{
+    if (m_avPlayerItem)
+        return;
+
+    LOG(Media, "MediaPlayerPrivateAVFoundationObjC::createAVPlayerItem(%p)", this);
+
+    ASSERT(m_avPlayer);
+
+    setDelayCallbacks(true);
+
+    // Create the player item so we can load media data. 
+    m_avPlayerItem.adoptNS([[AVPlayerItem alloc] initWithAsset:m_avAsset.get()]);
+    
+    [[NSNotificationCenter defaultCenter] addObserver:m_objcObserver.get() selector:@selector(didEnd:) name:AVPlayerItemDidPlayToEndTimeNotification object:m_avPlayerItem.get()];
+
+    for (NSString *keyName in itemKVOProperties())
+        [m_avPlayerItem.get() addObserver:m_objcObserver.get() forKeyPath:keyName options:nil context:(void *)MediaPlayerAVFoundationObservationContextPlayerItem];
+
+    [m_avPlayer.get() replaceCurrentItemWithPlayerItem:m_avPlayerItem.get()];
 
     setDelayCallbacks(false);
 }
 
 void MediaPlayerPrivateAVFoundationObjC::checkPlayability()
 {
+    if (m_haveCheckedPlayability)
+        return;
+    m_haveCheckedPlayability = true;
+
     LOG(Media, "MediaPlayerPrivateAVFoundationObjC::checkPlayability(%p)", this);
 
     [m_avAsset.get() loadValuesAsynchronouslyForKeys:[NSArray arrayWithObject:@"playable"] completionHandler:^{
@@ -314,7 +340,7 @@ void MediaPlayerPrivateAVFoundationObjC::checkPlayability()
 
 void MediaPlayerPrivateAVFoundationObjC::beginLoadingMetadata()
 {
-    LOG(Media, "MediaPlayerPrivateAVFoundationObjC::playabilityKnown(%p) - requesting metadata loading", this);
+    LOG(Media, "MediaPlayerPrivateAVFoundationObjC::beginLoadingMetadata(%p) - requesting metadata loading", this);
     [m_avAsset.get() loadValuesAsynchronouslyForKeys:[assetMetadataKeyNames() retain] completionHandler:^{
         [m_objcObserver.get() metadataLoaded];
     }];
@@ -323,7 +349,7 @@ void MediaPlayerPrivateAVFoundationObjC::beginLoadingMetadata()
 MediaPlayerPrivateAVFoundation::ItemStatus MediaPlayerPrivateAVFoundationObjC::playerItemStatus() const
 {
     if (!m_avPlayerItem)
-        return MediaPlayerPrivateAVFoundation::MediaPlayerAVPlayerItemStatusUnknown;
+        return MediaPlayerPrivateAVFoundation::MediaPlayerAVPlayerItemStatusDoesNotExist;
 
     AVPlayerItemStatus status = [m_avPlayerItem.get() status];
     if (status == AVPlayerItemStatusUnknown)
@@ -332,9 +358,9 @@ MediaPlayerPrivateAVFoundation::ItemStatus MediaPlayerPrivateAVFoundationObjC::p
         return MediaPlayerPrivateAVFoundation::MediaPlayerAVPlayerItemStatusFailed;
     if ([m_avPlayerItem.get() isPlaybackLikelyToKeepUp])
         return MediaPlayerPrivateAVFoundation::MediaPlayerAVPlayerItemStatusPlaybackLikelyToKeepUp;
-    if (buffered()->contain(duration()))
+    if ([m_avPlayerItem.get() isPlaybackBufferFull])
         return MediaPlayerPrivateAVFoundation::MediaPlayerAVPlayerItemStatusPlaybackBufferFull;
-    if (buffered()->contain(currentTime()))
+    if ([m_avPlayerItem.get() isPlaybackBufferEmpty])
         return MediaPlayerPrivateAVFoundation::MediaPlayerAVPlayerItemStatusPlaybackBufferEmpty;
 
     return MediaPlayerPrivateAVFoundation::MediaPlayerAVPlayerItemStatusReadyToPlay;
@@ -385,21 +411,25 @@ void MediaPlayerPrivateAVFoundationObjC::platformPause()
 
 float MediaPlayerPrivateAVFoundationObjC::platformDuration() const
 {
-    if (!metaDataAvailable() || !m_avPlayerItem)
-        return 0;
+    if (!m_avAsset)
+        return invalidTime();
     
-    float duration;
-    CMTime cmDuration = [m_avPlayerItem.get() duration];
-    if (CMTIME_IS_NUMERIC(cmDuration))
-        duration = narrowPrecisionToFloat(CMTimeGetSeconds(cmDuration));
-    else if (CMTIME_IS_INDEFINITE(cmDuration))
-        duration = numeric_limits<float>::infinity();
-    else {
-        LOG(Media, "MediaPlayerPrivateAVFoundationObjC::duration(%p) - invalid duration, returning 0", this);
-        return 0;
-    }
+    CMTime cmDuration;
+    
+    // Check the AVItem if we have one, some assets never report duration.
+    if (m_avPlayerItem)
+        cmDuration = [m_avPlayerItem.get() duration];
+    else
+        cmDuration= [m_avAsset.get() duration];
 
-    return duration;
+    if (CMTIME_IS_NUMERIC(cmDuration))
+        return narrowPrecisionToFloat(CMTimeGetSeconds(cmDuration));
+
+    if (CMTIME_IS_INDEFINITE(cmDuration))
+        return numeric_limits<float>::infinity();
+
+    LOG(Media, "MediaPlayerPrivateAVFoundationObjC::duration(%p) - invalid duration, returning %.0f", this, invalidTime());
+    return invalidTime();
 }
 
 float MediaPlayerPrivateAVFoundationObjC::currentTime() const
@@ -535,10 +565,10 @@ void MediaPlayerPrivateAVFoundationObjC::setAsset(id asset)
     m_avAsset = asset;
 }
 
-MediaPlayerPrivateAVFoundation::AVAssetStatus MediaPlayerPrivateAVFoundationObjC::assetStatus() const
+MediaPlayerPrivateAVFoundation::AssetStatus MediaPlayerPrivateAVFoundationObjC::assetStatus() const
 {
     if (!m_avAsset)
-        return MediaPlayerAVAssetStatusUnknown;
+        return MediaPlayerAVAssetStatusDoesNotExist;
 
     for (NSString *keyName in assetMetadataKeyNames()) {
         AVKeyValueStatus keyStatus = [m_avAsset.get() statusOfValueForKey:keyName error:nil];
@@ -547,6 +577,7 @@ MediaPlayerPrivateAVFoundation::AVAssetStatus MediaPlayerPrivateAVFoundationObjC
         
         if (keyStatus == AVKeyValueStatusFailed)
             return MediaPlayerAVAssetStatusFailed; // At least one key could not be loaded.
+
         if (keyStatus == AVKeyValueStatusCancelled)
             return MediaPlayerAVAssetStatusCancelled; // Loading of at least one key was cancelled.
     }
@@ -587,7 +618,7 @@ void MediaPlayerPrivateAVFoundationObjC::paint(GraphicsContext* context, const I
     END_BLOCK_OBJC_EXCEPTIONS;
     setDelayCallbacks(false);
 
-    MediaPlayerPrivateAVFoundation::paint(context, rect);
+    m_videoFrameHasDrawn = true;
 }
 
 static HashSet<String> mimeTypeCache()
@@ -662,37 +693,54 @@ float MediaPlayerPrivateAVFoundationObjC::mediaTimeForTimeValue(float timeValue)
 
 void MediaPlayerPrivateAVFoundationObjC::tracksChanged()
 {
+    if (!m_avAsset)
+        return;
+
     // This is called whenever the tracks collection changes so cache hasVideo and hasAudio since we are
     // asked about those fairly fequently.
-    bool hasVideo = false;
-    bool hasAudio = false;
-    bool hasCaptions = false;
-    NSArray *tracks = [m_avPlayerItem.get() tracks];
-    for (AVPlayerItemTrack *track in tracks) {
-        if ([track isEnabled]) {
-            AVAssetTrack *assetTrack = [track assetTrack];
-            if ([[assetTrack mediaType] isEqualToString:AVMediaTypeVideo])
-                hasVideo = true;
-            else if ([[assetTrack mediaType] isEqualToString:AVMediaTypeAudio])
-                hasAudio = true;
-            else if ([[assetTrack mediaType] isEqualToString:AVMediaTypeClosedCaption])
-                hasCaptions = true;
+    if (!m_avPlayerItem) {
+        // We don't have a player item yet, so check with the asset because some assets support inspection
+        // prior to becoming ready to play.
+        setHasVideo([[m_avAsset.get() tracksWithMediaCharacteristic:AVMediaCharacteristicVisual] count]);
+        setHasAudio([[m_avAsset.get() tracksWithMediaCharacteristic:AVMediaCharacteristicAudible] count]);
+        setHasClosedCaptions([[m_avAsset.get() tracksWithMediaType:AVMediaTypeClosedCaption] count]);
+    } else {
+        bool hasVideo = false;
+        bool hasAudio = false;
+        bool hasCaptions = false;
+        NSArray *tracks = [m_avPlayerItem.get() tracks];
+        for (AVPlayerItemTrack *track in tracks) {
+            if ([track isEnabled]) {
+                AVAssetTrack *assetTrack = [track assetTrack];
+                if ([[assetTrack mediaType] isEqualToString:AVMediaTypeVideo])
+                    hasVideo = true;
+                else if ([[assetTrack mediaType] isEqualToString:AVMediaTypeAudio])
+                    hasAudio = true;
+                else if ([[assetTrack mediaType] isEqualToString:AVMediaTypeClosedCaption])
+                    hasCaptions = true;
+            }
         }
+        setHasVideo(hasVideo);
+        setHasAudio(hasAudio);
+        setHasClosedCaptions(hasCaptions);
     }
-    setHasVideo(hasVideo);
-    setHasAudio(hasAudio);
-    setHasClosedCaptions(hasCaptions);
+
+    LOG(Media, "WebCoreAVFMovieObserver:tracksChanged(%p) - hasVideo = %s, hasAudio = %s, hasCaptions = %s", 
+        this, boolString(hasVideo()), boolString(hasAudio()), boolString(hasClosedCaptions()));
 
     sizeChanged();
 }
 
 void MediaPlayerPrivateAVFoundationObjC::sizeChanged()
 {
+    if (!m_avAsset)
+        return;
+
     NSArray *tracks = [m_avAsset.get() tracks];
 
     // Some assets don't report track properties until they are completely ready to play, but we
     // want to report a size as early as possible so use presentationSize when an asset has no tracks.
-    if (![tracks count]) {
+    if (m_avPlayerItem && ![tracks count]) {
         setNaturalSize(IntSize([m_avPlayerItem.get() presentationSize]));
         return;
     }

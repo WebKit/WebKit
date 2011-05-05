@@ -95,9 +95,9 @@
             }
         }
 
-        function setURL(url, vidID)
+        function setURL(url)
         {
-            var vid = document.getElementById(vidID);
+            var vid = document.getElementById("vid");
 
             logMsg(vid, "###############");
             logMsg(vid, "##### setting url to " + url);
@@ -199,6 +199,7 @@
         <table>
             <tbody>
                 <tr><td>Preload</td><td id="Preload"></td></tr>
+                <tr><td>Error</td><td id="Error"></td></tr>
                 <tr><td>Duration</td> <td id="Duration"></td></tr>
                 <tr><td>Video Width</td><td id="Video Width"></td></tr>
                 <tr><td>Video Height</td><td id="Video Height"></td></tr>
@@ -216,7 +217,7 @@
 
     <br>
     <div class="info">
-        Enter a url:<input  type="text" size="90" maxlength="2048" onchange="setURL(this.value, 'vid-1')" >
+        Enter a url:<input  type="text" size="90" maxlength="2048" onchange="setURL(this.value)" >
         <br>
         <input id="clear_log" type="button" value="Clear" onclick="clearlog()"> 
         <input type="checkbox" id="log-progress"> log 'progress' events

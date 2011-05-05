@@ -142,10 +142,9 @@ protected:
     virtual PassRefPtr<TimeRanges> buffered() const;
     virtual unsigned bytesLoaded() const;
     virtual void setSize(const IntSize&);
-    virtual void paint(GraphicsContext*, const IntRect&);
+    virtual void paint(GraphicsContext*, const IntRect&) = 0;
     virtual void paintCurrentFrameInContext(GraphicsContext*, const IntRect&) = 0;
     virtual void setPreload(MediaPlayer::Preload);
-    virtual bool hasAvailableVideoFrame() const;
 #if USE(ACCELERATED_COMPOSITING)
     virtual PlatformLayer* platformLayer() const { return 0; }
     virtual bool supportsAcceleratedRendering() const = 0;
@@ -159,12 +158,15 @@ protected:
     virtual bool supportsFullscreen() const;
 
     // Required interfaces for concrete derived classes.
-    virtual void createAVPlayerForURL(const String& url) = 0;
+    virtual void createAVAssetForURL(const String&) = 0;
+    virtual void createAVPlayer() = 0;
+    virtual void createAVPlayerItem() = 0;
 #if ENABLE(OFFLINE_WEB_APPLICATIONS)
-    virtual void createAVPlayerForCacheResource(ApplicationCacheResource*) = 0;
+    virtual void createAVAssetForCacheResource(ApplicationCacheResource*) = 0;
 #endif
 
     enum ItemStatus {
+        MediaPlayerAVPlayerItemStatusDoesNotExist,
         MediaPlayerAVPlayerItemStatusUnknown,
         MediaPlayerAVPlayerItemStatusFailed,
         MediaPlayerAVPlayerItemStatusReadyToPlay,
@@ -174,7 +176,8 @@ protected:
     };
     virtual ItemStatus playerItemStatus() const = 0;
 
-    enum AVAssetStatus {
+    enum AssetStatus {
+        MediaPlayerAVAssetStatusDoesNotExist,
         MediaPlayerAVAssetStatusUnknown,
         MediaPlayerAVAssetStatusLoading,
         MediaPlayerAVAssetStatusFailed,
@@ -182,7 +185,7 @@ protected:
         MediaPlayerAVAssetStatusLoaded,
         MediaPlayerAVAssetStatusPlayable,
     };
-    virtual AVAssetStatus assetStatus() const = 0;
+    virtual AssetStatus assetStatus() const = 0;
 
     virtual void platformSetVisible(bool) = 0;
     virtual void platformPlay() = 0;
@@ -206,13 +209,13 @@ protected:
 
     virtual void createVideoLayer() = 0;
     virtual void destroyVideoLayer() = 0;
-    virtual bool videoLayerIsReadyToDisplay() const = 0;
+
+    virtual bool hasAvailableVideoFrame() const = 0;
 
     virtual bool hasContextRenderer() const = 0;
     virtual bool hasLayerRenderer() const = 0;
 
 protected:
-    void resumeLoad();
     void updateStates();
 
     void setHasVideo(bool b) { m_cachedHasVideo = b; };
@@ -236,14 +239,14 @@ protected:
     bool hasSetUpVideoRendering() const;
 
     static void mainThreadCallback(void*);
+    
+    float invalidTime() const { return -1.0f; }
 
 private:
-
     MediaPlayer* m_player;
 
     Vector<Notification> m_queuedNotifications;
     Mutex m_queueMutex;
-    bool m_mainThreadCallPending;
 
     mutable RefPtr<TimeRanges> m_cachedLoadedTimeRanges;
 
@@ -263,12 +266,10 @@ private:
     float m_seekTo;
     float m_requestedRate;
     int m_delayCallbacks;
-    bool m_havePreparedToPlay;
+    bool m_mainThreadCallPending;
     bool m_assetIsPlayable;
     bool m_visible;
-    bool m_videoFrameHasDrawn;
     bool m_loadingMetadata;
-    bool m_delayingLoad;
     bool m_isAllowedToRender;
     bool m_cachedHasAudio;
     bool m_cachedHasVideo;

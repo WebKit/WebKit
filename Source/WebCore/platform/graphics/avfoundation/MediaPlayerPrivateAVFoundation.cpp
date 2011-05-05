@@ -30,6 +30,7 @@
 #include "MediaPlayerPrivateAVFoundation.h"
 
 #include "ApplicationCacheHost.h"
+#include "ApplicationCacheResource.h"
 #include "DocumentLoader.h"
 #include "FrameView.h"
 #include "GraphicsContext.h"
@@ -45,30 +46,25 @@ using namespace std;
 
 namespace WebCore {
 
-static const float invalidTime = -1.0f;
-
 MediaPlayerPrivateAVFoundation::MediaPlayerPrivateAVFoundation(MediaPlayer* player)
     : m_player(player)
     , m_queuedNotifications()
     , m_queueMutex()
-    , m_mainThreadCallPending(false)
     , m_networkState(MediaPlayer::Empty)
     , m_readyState(MediaPlayer::HaveNothing)
     , m_preload(MediaPlayer::Auto)
     , m_scaleFactor(1, 1)
     , m_cachedMaxTimeLoaded(0)
     , m_cachedMaxTimeSeekable(0)
-    , m_cachedDuration(invalidTime)
-    , m_reportedDuration(invalidTime)
-    , m_seekTo(invalidTime)
+    , m_cachedDuration(invalidTime())
+    , m_reportedDuration(invalidTime())
+    , m_seekTo(invalidTime())
     , m_requestedRate(1)
-    , m_delayCallbacks(false)
-    , m_havePreparedToPlay(false)
+    , m_delayCallbacks(0)
+    , m_mainThreadCallPending(false)
     , m_assetIsPlayable(false)
     , m_visible(false)
-    , m_videoFrameHasDrawn(false)
     , m_loadingMetadata(false)
-    , m_delayingLoad(false)
     , m_isAllowedToRender(false)
     , m_cachedHasAudio(false)
     , m_cachedHasVideo(false)
@@ -167,17 +163,6 @@ bool MediaPlayerPrivateAVFoundation::hasSetUpVideoRendering() const
     return hasLayerRenderer() || hasContextRenderer();
 }
 
-void MediaPlayerPrivateAVFoundation::resumeLoad()
-{
-    LOG(Media, "MediaPlayerPrivateAVFoundation::resumeLoad(%p)", this);
-
-    ASSERT(m_delayingLoad);
-    m_delayingLoad = false;
-
-    if (m_assetURL.length())
-        prepareToPlay();
-}
-
 void MediaPlayerPrivateAVFoundation::load(const String& url)
 {
     LOG(Media, "MediaPlayerPrivateAVFoundation::load(%p)", this);
@@ -191,20 +176,13 @@ void MediaPlayerPrivateAVFoundation::load(const String& url)
         m_player->readyStateChanged();
     }
 
-    m_videoFrameHasDrawn = false;
     m_assetURL = url;
 
     // Don't do any more work if the url is empty.
     if (!url.length())
         return;
 
-    if (m_preload == MediaPlayer::None) {
-        LOG(Media, "MediaPlayerPrivateAVFoundation::load(%p) - preload==none so returning", this);
-        m_delayingLoad = true;
-        return;
-    }
-
-    prepareToPlay();
+    setPreload(m_preload);
 }
 
 void MediaPlayerPrivateAVFoundation::playabilityKnown()
@@ -232,22 +210,7 @@ void MediaPlayerPrivateAVFoundation::prepareToPlay()
 {
     LOG(Media, "MediaPlayerPrivateAVFoundation::prepareToPlay(%p)", this);
 
-    m_preload = MediaPlayer::Auto;
-    if (m_havePreparedToPlay)
-        return;
-    m_havePreparedToPlay = true;
-
-    m_delayingLoad = false;
-#if ENABLE(OFFLINE_WEB_APPLICATIONS)
-    Frame* frame = m_player->frameView() ? m_player->frameView()->frame() : 0;
-    ApplicationCacheHost* cacheHost = frame ? frame->loader()->documentLoader()->applicationCacheHost() : 0;
-    ApplicationCacheResource* resource = 0;
-    if (cacheHost && cacheHost->shouldLoadResourceFromApplicationCache(ResourceRequest(m_assetURL), resource) && resource)
-        createAVPlayerForCacheResource(resource);
-    else
-#endif    
-    createAVPlayerForURL(m_assetURL);
-    checkPlayability();
+    setPreload(MediaPlayer::Auto);
 }
 
 void MediaPlayerPrivateAVFoundation::play()
@@ -269,22 +232,17 @@ void MediaPlayerPrivateAVFoundation::pause()
     platformPause();
 }
 
-void MediaPlayerPrivateAVFoundation::paint(GraphicsContext*, const IntRect&)
-{
-    // This is the base class, only need to remember that a frame has been drawn.
-    m_videoFrameHasDrawn = true;
-}
-
 float MediaPlayerPrivateAVFoundation::duration() const
 {
-    if (!metaDataAvailable())
+    if (m_cachedDuration != invalidTime())
+        return m_cachedDuration;
+
+    float duration = platformDuration();
+    if (!duration || duration == invalidTime())
         return 0;
 
-    if (m_cachedDuration == invalidTime) {
-        m_cachedDuration = platformDuration();
-        LOG(Media, "MediaPlayerPrivateAVFMac::duration(%p) - caching %f", this, m_cachedDuration);
-    }
-
+    m_cachedDuration = duration;
+    LOG(Media, "MediaPlayerPrivateAVFoundation::duration(%p) - caching %f", this, m_cachedDuration);
     return m_cachedDuration;
 }
 
@@ -326,7 +284,7 @@ bool MediaPlayerPrivateAVFoundation::seeking() const
     if (!metaDataAvailable())
         return false;
 
-    return m_seekTo != invalidTime;
+    return m_seekTo != invalidTime();
 }
 
 IntSize MediaPlayerPrivateAVFoundation::naturalSize() const
@@ -346,6 +304,8 @@ IntSize MediaPlayerPrivateAVFoundation::naturalSize() const
 
 void MediaPlayerPrivateAVFoundation::setNaturalSize(IntSize size)
 {
+    LOG(Media, "MediaPlayerPrivateAVFoundation:sizeChanged(%p) - size = %d x %d", this, size.width(), size.height());
+
     IntSize oldSize = m_cachedNaturalSize;
     m_cachedNaturalSize = size;
     if (oldSize != m_cachedNaturalSize)
@@ -432,24 +392,23 @@ void MediaPlayerPrivateAVFoundation::updateStates()
         m_networkState = MediaPlayer::Loading;
     else {
         // -loadValuesAsynchronouslyForKeys:completionHandler: has invoked its handler; test status of keys and determine state.
-        AVAssetStatus avAssetStatus = assetStatus();
+        AssetStatus assetStatus = this->assetStatus();
         ItemStatus itemStatus = playerItemStatus();
         
-        m_assetIsPlayable = (avAssetStatus == MediaPlayerAVAssetStatusPlayable);
-        if (m_readyState < MediaPlayer::HaveMetadata && avAssetStatus > MediaPlayerAVAssetStatusLoading) {
+        m_assetIsPlayable = (assetStatus == MediaPlayerAVAssetStatusPlayable);
+        if (m_readyState < MediaPlayer::HaveMetadata && assetStatus > MediaPlayerAVAssetStatusLoading) {
             if (m_assetIsPlayable) {
-                if (itemStatus == MediaPlayerAVPlayerItemStatusUnknown) {
-                    if (avAssetStatus == MediaPlayerAVAssetStatusFailed || m_preload > MediaPlayer::MetaData) {
-                        // We may have a playable asset that doesn't support inspection prior to playback; go ahead 
-                        // and create the AVPlayerItem now. When the AVPlayerItem becomes ready to play, we will 
-                        // have access to its metadata. Or we may have been asked to become ready to play immediately.
+                if (assetStatus >= MediaPlayerAVAssetStatusLoaded)
+                    m_readyState = MediaPlayer::HaveMetadata;
+                if (itemStatus <= MediaPlayerAVPlayerItemStatusUnknown) {
+                    if (assetStatus == MediaPlayerAVAssetStatusFailed || m_preload > MediaPlayer::MetaData || isLiveStream()) {
+                        // The asset is playable but doesn't support inspection prior to playback (eg. streaming files),
+                        // or we are supposed to prepare for playback immediately, so create the player item now.
                         m_networkState = MediaPlayer::Loading;
                         prepareToPlay();
                     } else
                         m_networkState = MediaPlayer::Idle;
                 }
-                if (avAssetStatus == MediaPlayerAVAssetStatusLoaded)
-                    m_readyState = MediaPlayer::HaveMetadata;
             } else {
                 // FIX ME: fetch the error associated with the @"playable" key to distinguish between format 
                 // and network errors.
@@ -457,36 +416,40 @@ void MediaPlayerPrivateAVFoundation::updateStates()
             }
         }
         
-        if (avAssetStatus >= MediaPlayerAVAssetStatusLoaded && itemStatus > MediaPlayerAVPlayerItemStatusUnknown) {
+        if (assetStatus >= MediaPlayerAVAssetStatusLoaded && itemStatus > MediaPlayerAVPlayerItemStatusUnknown) {
             if (seeking())
                 m_readyState = m_readyState >= MediaPlayer::HaveMetadata ? MediaPlayer::HaveMetadata : MediaPlayer::HaveNothing;
             else {
-                float maxLoaded = maxTimeLoaded();
                 switch (itemStatus) {
+                case MediaPlayerAVPlayerItemStatusDoesNotExist:
                 case MediaPlayerAVPlayerItemStatusUnknown:
-                    break;
                 case MediaPlayerAVPlayerItemStatusFailed:
-                    m_networkState = MediaPlayer::DecodeError;
                     break;
+
                 case MediaPlayerAVPlayerItemStatusPlaybackLikelyToKeepUp:
                     m_readyState = MediaPlayer::HaveEnoughData;
                     break;
-                case MediaPlayerAVPlayerItemStatusReadyToPlay:
+
                 case MediaPlayerAVPlayerItemStatusPlaybackBufferFull:
+                case MediaPlayerAVPlayerItemStatusReadyToPlay:
                     // If the readyState is already HaveEnoughData, don't go lower because of this state change.
                     if (m_readyState == MediaPlayer::HaveEnoughData)
                         break;
 
                 case MediaPlayerAVPlayerItemStatusPlaybackBufferEmpty:
-                    if (maxLoaded > currentTime())
+                    if (maxTimeLoaded() > currentTime())
                         m_readyState = MediaPlayer::HaveFutureData;
                     else
                         m_readyState = MediaPlayer::HaveCurrentData;
                     break;
                 }
 
-                if (itemStatus >= MediaPlayerAVPlayerItemStatusReadyToPlay)
-                    m_networkState = (maxLoaded == duration()) ? MediaPlayer::Loaded : MediaPlayer::Loading;
+                if (itemStatus == MediaPlayerAVPlayerItemStatusPlaybackBufferFull)
+                    m_networkState = MediaPlayer::Idle;
+                else if (itemStatus == MediaPlayerAVPlayerItemStatusFailed)
+                    m_networkState = MediaPlayer::DecodeError;
+                else if (itemStatus != MediaPlayerAVPlayerItemStatusPlaybackBufferFull && itemStatus >= MediaPlayerAVPlayerItemStatusReadyToPlay)
+                    m_networkState = (maxTimeLoaded() == duration()) ? MediaPlayer::Loaded : MediaPlayer::Loading;
             }
         }
     }
@@ -495,6 +458,8 @@ void MediaPlayerPrivateAVFoundation::updateStates()
         setUpVideoRendering();
 
     if (!m_haveReportedFirstVideoFrame && m_cachedHasVideo && hasAvailableVideoFrame()) {
+        if (m_readyState < MediaPlayer::HaveCurrentData)
+            m_readyState = MediaPlayer::HaveCurrentData;
         m_haveReportedFirstVideoFrame = true;
         m_player->firstVideoFrameAvailable();
     }
@@ -530,16 +495,6 @@ void MediaPlayerPrivateAVFoundation::setVisible(bool visible)
     platformSetVisible(visible);
 }
 
-bool MediaPlayerPrivateAVFoundation::hasAvailableVideoFrame() const
-{
-    if (currentRenderingMode() == MediaRenderingToLayer)
-        return videoLayerIsReadyToDisplay();
-
-    // When using the software renderer we hope someone will signal that a frame is available so we might as well
-    // wait until we know that a frame has been drawn.
-    return m_videoFrameHasDrawn;
-}
-
 void MediaPlayerPrivateAVFoundation::acceleratedRenderingStateChanged()
 {
     // Set up or change the rendering path if necessary.
@@ -549,6 +504,7 @@ void MediaPlayerPrivateAVFoundation::acceleratedRenderingStateChanged()
 void MediaPlayerPrivateAVFoundation::metadataLoaded()
 {
     m_loadingMetadata = false;
+    tracksChanged();
     updateStates();
 }
 
@@ -575,7 +531,7 @@ void MediaPlayerPrivateAVFoundation::loadedTimeRangesChanged()
     // so report duration changed when the estimate is upated.
     float dur = duration();
     if (dur != m_reportedDuration) {
-        if (m_reportedDuration != invalidTime)
+        if (m_reportedDuration != invalidTime())
             m_player->durationChanged();
         m_reportedDuration = dur;
     }
@@ -590,7 +546,7 @@ void MediaPlayerPrivateAVFoundation::timeChanged(double time)
 {
     LOG(Media, "MediaPlayerPrivateAVFoundation::timeChanged(%p) - time = %f", this, time);
 
-    if (m_seekTo == invalidTime)
+    if (m_seekTo == invalidTime())
         return;
 
     // AVFoundation may call our observer more than once during a seek, and we can't currently tell
@@ -600,7 +556,7 @@ void MediaPlayerPrivateAVFoundation::timeChanged(double time)
 
     float currentRate = rate();
     if ((currentRate > 0 && time >= m_seekTo) || (currentRate < 0 && time <= m_seekTo) || (abs(m_seekTo - time) <= smallSeekDelta)) {
-        m_seekTo = invalidTime;
+        m_seekTo = invalidTime();
         updateStates();
         m_player->timeChanged();
     }
@@ -611,7 +567,7 @@ void MediaPlayerPrivateAVFoundation::seekCompleted(bool finished)
     LOG(Media, "MediaPlayerPrivateAVFoundation::seekCompleted(%p) - finished = %d", this, finished);
     
     if (finished)
-        m_seekTo = invalidTime;
+        m_seekTo = invalidTime();
 }
 
 void MediaPlayerPrivateAVFoundation::didEnd()
@@ -628,7 +584,6 @@ void MediaPlayerPrivateAVFoundation::didEnd()
 
 void MediaPlayerPrivateAVFoundation::repaint()
 {
-    m_videoFrameHasDrawn = true;
     m_player->repaint();
 }
 
@@ -646,8 +601,38 @@ MediaPlayer::MovieLoadType MediaPlayerPrivateAVFoundation::movieLoadType() const
 void MediaPlayerPrivateAVFoundation::setPreload(MediaPlayer::Preload preload)
 {
     m_preload = preload;
-    if (m_delayingLoad && m_preload != MediaPlayer::None)
-        resumeLoad();
+    if (!m_assetURL.length())
+        return;
+
+    setDelayCallbacks(true);
+
+    if (m_preload >= MediaPlayer::MetaData && assetStatus() == MediaPlayerAVAssetStatusDoesNotExist) {
+#if ENABLE(OFFLINE_WEB_APPLICATIONS)
+        Frame* frame = m_player->frameView() ? m_player->frameView()->frame() : 0;
+        ApplicationCacheHost* cacheHost = frame ? frame->loader()->documentLoader()->applicationCacheHost() : 0;
+        ApplicationCacheResource* resource;
+        if (cacheHost && cacheHost->shouldLoadResourceFromApplicationCache(ResourceRequest(m_assetURL), resource) && resource) {
+            // AVFoundation can't open arbitrary data pointers, so if this ApplicationCacheResource doesn't 
+            // have a valid local path, just open the resource's original URL.
+            if (resource->path().isEmpty())
+                createAVAssetForURL(resource->url());
+            else
+                createAVAssetForCacheResource(resource);
+        } else
+#endif    
+            createAVAssetForURL(m_assetURL);
+
+        createAVPlayer();
+
+        checkPlayability();
+    }
+
+    // Don't force creation of the player item unless we already know that the asset is playable. If we aren't
+    // there yet, or if we already know it is not playable, creating it now won't help.
+    if (m_preload == MediaPlayer::Auto && m_assetIsPlayable)
+        createAVPlayerItem();
+
+    setDelayCallbacks(false);
 }
 
 void MediaPlayerPrivateAVFoundation::setDelayCallbacks(bool delay)
@@ -742,6 +727,7 @@ void MediaPlayerPrivateAVFoundation::dispatchNotification()
         break;
     case Notification::ItemTracksChanged:
         tracksChanged();
+        updateStates();
         break;
     case Notification::ItemStatusChanged:
         loadStateChanged();
@@ -756,6 +742,7 @@ void MediaPlayerPrivateAVFoundation::dispatchNotification()
         break;
     case Notification::ItemPresentationSizeChanged:
         sizeChanged();
+        updateStates();
         break;
     case Notification::ItemIsPlaybackLikelyToKeepUpChanged:
         loadStateChanged();
