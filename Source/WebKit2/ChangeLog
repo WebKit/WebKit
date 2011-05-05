@@ -1,3 +1,16 @@
+2011-05-05  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        When an underlay surface is active, paint normal web contents in a transparency layer
+        https://bugs.webkit.org/show_bug.cgi?id=60296
+
+        In order for the page contents to correctly blend with the underlay, the page contents
+        needs to be painted in a transparency layer.
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::drawRect):
+
 2011-05-05  Brian Weinstein  <bweinstein@apple.com>
 
         Reviewed by Timothy Hatcher.

@@ -682,8 +682,12 @@ void WebPage::drawRect(GraphicsContext& graphicsContext, const IntRect& rect)
     graphicsContext.clip(rect);
 
     if (m_underlayPage) {
-        GraphicsContextStateSaver stateSaver(graphicsContext);
         m_underlayPage->drawRect(graphicsContext, rect);
+
+        graphicsContext.beginTransparencyLayer(1);
+        m_mainFrame->coreFrame()->view()->paint(&graphicsContext, rect);
+        graphicsContext.endTransparencyLayer();
+        return;
     }
 
     m_mainFrame->coreFrame()->view()->paint(&graphicsContext, rect);
