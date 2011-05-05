@@ -1,3 +1,13 @@
+2011-05-04  Cris Neckar  <cdn@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        Tests whether a style media specifier inside an svg image will crash.
+        https://bugs.webkit.org/show_bug.cgi?id=49902
+
+        * fast/media/media-svg-crash-expected.txt: Added.
+        * fast/media/media-svg-crash.html: Added.
+
 2011-05-04  MORITA Hajime  <morrita@google.com>
 
         Unreviewed skipping text-block-child-crash.xhtml

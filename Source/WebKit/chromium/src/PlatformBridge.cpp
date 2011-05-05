@@ -102,7 +102,7 @@ using namespace WebKit;
 
 namespace WebCore {
 
-static ChromeClientImpl* toChromeClientImpl(Widget* widget)
+static WebWidgetClient* toWebWidgetClient(Widget* widget)
 {
     if (!widget)
         return 0;
@@ -119,15 +119,11 @@ static ChromeClientImpl* toChromeClientImpl(Widget* widget)
     if (!page)
         return 0;
 
-    return static_cast<ChromeClientImpl*>(page->chrome()->client());
-}
-
-static WebWidgetClient* toWebWidgetClient(Widget* widget)
-{
-    ChromeClientImpl* chromeClientImpl = toChromeClientImpl(widget);
-    if (!chromeClientImpl || !chromeClientImpl->webView())
+    void* webView = page->chrome()->client()->webView();
+    if (!webView)
         return 0;
-    return chromeClientImpl->webView()->client();
+
+    return static_cast<WebViewImpl*>(webView)->client();
 }
 
 static WebCookieJar* getCookieJar(const Document* document)

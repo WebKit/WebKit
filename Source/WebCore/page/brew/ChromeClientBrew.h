@@ -42,6 +42,7 @@ class PopupMenuClient;
 // things here that don't make sense for other ports.
 class ChromeClientBrew : public ChromeClient {
 public:
+    virtual void* webView() const { return 0; }
     virtual void createSelectPopup(PopupMenuClient*, int selected, const IntRect& rect) = 0;
     virtual bool destroySelectPopup() = 0;
 };

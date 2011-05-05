@@ -47,6 +47,8 @@ public:
     
     WebPage* page() const { return m_page; }
 
+    virtual void* webView() const { return 0; }
+
 private:
     virtual void chromeDestroyed();
     

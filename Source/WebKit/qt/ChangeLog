@@ -1,3 +1,13 @@
+2011-05-04  Cris Neckar  <cdn@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        Expose WebView directly through ChromeClient.
+        https://bugs.webkit.org/show_bug.cgi?id=49902
+
+        * WebCoreSupport/ChromeClientQt.h:
+        (WebCore::ChromeClientQt::webView):
+
 2011-05-04  Alexis Menard  <alexis.menard@openbossa.org>
 
         Unreviewed warning fix.

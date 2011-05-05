@@ -114,9 +114,7 @@ bool GraphicsContext3DInternal::initialize(GraphicsContext3D::Attributes attrs, 
         return false;
 
     Chrome* chrome = static_cast<Chrome*>(hostWindow);
-    WebKit::ChromeClientImpl* chromeClientImpl = static_cast<WebKit::ChromeClientImpl*>(chrome->client());
-
-    m_webViewImpl = chromeClientImpl->webView();
+    m_webViewImpl = static_cast<WebKit::WebViewImpl*>(chrome->client()->webView());
 
     if (!m_webViewImpl)
         return false;

@@ -35,8 +35,8 @@
 
 class WebChromeClient : public WebCore::ChromeClient {
 public:
-    WebChromeClient(WebView *webView);
-    WebView *webView() const { return m_webView; }
+    WebChromeClient(WebView*);
+    virtual void* webView() const { return static_cast<void*>(m_webView); }
     
     virtual void chromeDestroyed();
     

@@ -162,6 +162,11 @@ ChromeClientImpl::~ChromeClientImpl()
 {
 }
 
+void* ChromeClientImpl::webView() const
+{
+    return static_cast<void*>(m_webView);
+}
+
 void ChromeClientImpl::chromeDestroyed()
 {
     // Our lifetime is bound to the WebViewImpl.

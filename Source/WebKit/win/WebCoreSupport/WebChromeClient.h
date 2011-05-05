@@ -43,6 +43,7 @@ public:
 
     virtual void chromeDestroyed();
 
+    virtual void* webView() const { return 0; }
     virtual void setWindowRect(const WebCore::FloatRect&);
     virtual WebCore::FloatRect windowRect();
     
