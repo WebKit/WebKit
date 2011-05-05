@@ -1,3 +1,17 @@
+2011-05-05  Andy Estes  <aestes@apple.com>
+
+        Reviewed by Daniel Bates.
+
+        update-webkit should handle Internal using a different VCS than OpenSource.
+        https://bugs.webkit.org/show_bug.cgi?id=60310
+
+        isGit() and isSVN() cache their results, so Internal will always be
+        updated using the VCS commands used for OpenSource. If Internal uses a
+        different VCS, this will fail. Fix this by calling isGitDirectory() and
+        isSVNDirectory() instead, which do not cache their results.
+
+        * Scripts/update-webkit:
+
 2011-05-05  Dirk Pranke  <dpranke@chromium.org>
 
         Reviewed by Ojan Vafai.

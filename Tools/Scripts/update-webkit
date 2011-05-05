@@ -87,8 +87,8 @@ runGitUpdate() if isGit();
 if (-d "../Internal") {
     chdir("../Internal");
     print "Updating Internal\n" unless $quiet;
-    runSvnUpdate() if isSVN();
-    runGitUpdate() if isGit();
+    runSvnUpdate() if isSVNDirectory(".");
+    runGitUpdate() if isGitDirectory(".");
 } elsif (isChromium()) {
     # Workaround for https://bugs.webkit.org/show_bug.cgi?id=38926
     # We should remove the following "if" block when we find a right fix.
