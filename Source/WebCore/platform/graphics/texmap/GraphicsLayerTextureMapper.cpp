@@ -26,7 +26,7 @@ namespace WebCore {
 
 GraphicsLayerTextureMapper::GraphicsLayerTextureMapper(GraphicsLayerClient* client)
     : GraphicsLayer(client)
-    , m_node(new TextureMapperNode())
+    , m_node(adoptPtr(new TextureMapperNode()))
     , m_changeMask(0)
 {
 }
