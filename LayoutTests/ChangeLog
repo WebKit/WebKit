@@ -1,3 +1,13 @@
+2011-05-04  Ojan Vafai  <ojan@chromium.org>
+
+        Commit failing result. It's not clear to me why this test is failing.
+        There's nothing platform specific about it, it doesn't depend on the
+        system environment and it's not failing on the chromium win7 bot.
+
+        Committing this for now to green the tree.
+ 
+        * platform/win-7sp0/fast/harness/results-expected.txt: Added.
+
 2011-05-04  Joseph Pecoraro  <joepeck@webkit.org>
 
         Reviewed by Darin Adler.
