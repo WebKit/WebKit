@@ -112,15 +112,17 @@ static void setupFontconfig()
         "/usr/share/fonts/truetype/msttcorefonts/Verdana_Bold.ttf",
         "/usr/share/fonts/truetype/msttcorefonts/Verdana_Bold_Italic.ttf",
         "/usr/share/fonts/truetype/msttcorefonts/Verdana_Italic.ttf",
+        "/usr/share/fonts/truetype/thai/Garuda.ttf",
         // The DejaVuSans font is used by the css2.1 tests.
         "/usr/share/fonts/truetype/ttf-dejavu/DejaVuSans.ttf",
+        "/usr/share/fonts/truetype/ttf-indic-fonts-core/lohit_hi.ttf",
         "/usr/share/fonts/truetype/ttf-indic-fonts-core/lohit_ta.ttf",
         "/usr/share/fonts/truetype/ttf-indic-fonts-core/MuktiNarrow.ttf",
     };
     for (size_t i = 0; i < arraysize(fonts); ++i) {
         if (access(fonts[i], R_OK)) {
-            fprintf(stderr, "You are missing %s. Try installing msttcorefonts. Also see "
-                            "http://code.google.com/p/chromium/wiki/LinuxBuildInstructions",
+            fprintf(stderr, "You are missing %s. Try re-running build/install-build-deps.sh. Also see "
+                            "http://code.google.com/p/chromium/wiki/LayoutTestsLinux",
                             fonts[i]);
             exit(1);
         }
@@ -133,7 +135,6 @@ static void setupFontconfig()
     // We special case these fonts because they're only needed in a
     // few layout tests.
     static const char* const optionalFonts[] = {
-        "/usr/share/fonts/truetype/ttf-lucida/LucidaSansRegular.ttf",
         "/usr/share/fonts/truetype/ttf-indic-fonts-core/lohit_pa.ttf",
     };
     for (size_t i = 0; i < arraysize(optionalFonts); ++i) {
@@ -146,7 +147,7 @@ static void setupFontconfig()
 
         if (access(font, R_OK) < 0) {
             fprintf(stderr, "You are missing %s. Without this, some layout tests may fail. "
-                            "See http://code.google.com/p/chromium/wiki/LinuxBuildInstructionsPrerequisites "
+                            "See http://code.google.com/p/chromium/wiki/LayoutTestsLinux "
                             "for more.\n", font);
         } else if (!FcConfigAppFontAddFile(fontcfg, (FcChar8 *) font)) {
             fprintf(stderr, "Failed to load font %s\n", font);

@@ -1,3 +1,44 @@
+2011-05-05  Tony Chang  <tony@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        [chromium] switch from Lucida to free fonts for Hindi and Thai
+        https://bugs.webkit.org/show_bug.cgi?id=60287
+
+        Rebase tests that have Thai or Hindi glyphs.  We have different
+        results for x86_64 (lucid) and x86 (hardy) because the fonts have
+        changed.  Since it's only a handful of tests, seems ok to have
+        separate baselines (also, hardy is going away real soon now).
+
+        * platform/chromium-linux-x86_64/fast/text/atsui-multiple-renderers-expected.png: Copied from LayoutTests/platform/chromium-linux/fast/text/atsui-multiple-renderers-expected.png.
+        * platform/chromium-linux-x86_64/fast/text/atsui-multiple-renderers-expected.txt: Copied from LayoutTests/platform/chromium-linux/fast/text/atsui-multiple-renderers-expected.txt.
+        * platform/chromium-linux-x86_64/fast/text/capitalize-boundaries-expected.png: Added.
+        * platform/chromium-linux-x86_64/fast/text/capitalize-boundaries-expected.txt: Added.
+        * platform/chromium-linux-x86_64/fast/text/complex-text-opacity-expected.png: Added.
+        * platform/chromium-linux-x86_64/fast/text/complex-text-opacity-expected.txt: Copied from LayoutTests/platform/chromium-linux/fast/text/complex-text-opacity-expected.txt.
+        * platform/chromium-linux-x86_64/fast/text/international/danda-space-expected.png:
+        * platform/chromium-linux-x86_64/fast/text/international/danda-space-expected.txt: Copied from LayoutTests/platform/chromium-linux/fast/text/international/danda-space-expected.txt.
+        * platform/chromium-linux-x86_64/fast/text/international/hindi-spacing-expected.png: Added.
+        * platform/chromium-linux-x86_64/fast/text/international/hindi-spacing-expected.txt: Added.
+        * platform/chromium-linux-x86_64/fast/text/international/thai-baht-space-expected.png: Added.
+        * platform/chromium-linux-x86_64/fast/text/international/thai-baht-space-expected.txt: Copied from LayoutTests/platform/chromium-linux/fast/text/international/thai-baht-space-expected.txt.
+        * platform/chromium-linux-x86_64/fast/text/international/thai-line-breaks-expected.png: Added.
+        * platform/chromium-linux-x86_64/fast/text/international/thai-line-breaks-expected.txt: Added.
+        * platform/chromium-linux-x86_64/platform/chromium-linux/fast/text/international/complex-joining-using-gpos-expected.txt: Copied from LayoutTests/platform/chromium-linux/fast/text/international/complex-joining-using-gpos-expected.txt.
+        * platform/chromium-linux/fast/text/atsui-multiple-renderers-expected.png:
+        * platform/chromium-linux/fast/text/atsui-multiple-renderers-expected.txt:
+        * platform/chromium-linux/fast/text/complex-text-opacity-expected.png:
+        * platform/chromium-linux/fast/text/complex-text-opacity-expected.txt:
+        * platform/chromium-linux/fast/text/international/complex-joining-using-gpos-expected.txt:
+        * platform/chromium-linux/fast/text/international/danda-space-expected.png:
+        * platform/chromium-linux/fast/text/international/danda-space-expected.txt:
+        * platform/chromium-linux/fast/text/international/hindi-spacing-expected.png:
+        * platform/chromium-linux/fast/text/international/hindi-spacing-expected.txt:
+        * platform/chromium-linux/fast/text/international/thai-baht-space-expected.png:
+        * platform/chromium-linux/fast/text/international/thai-baht-space-expected.txt:
+        * platform/chromium-linux/fast/text/international/thai-line-breaks-expected.png:
+        * platform/chromium-linux/fast/text/international/thai-line-breaks-expected.txt:
+
 2011-05-04  Abhishek Arya  <inferno@chromium.org>
 
         Reviewed by Dave Hyatt.

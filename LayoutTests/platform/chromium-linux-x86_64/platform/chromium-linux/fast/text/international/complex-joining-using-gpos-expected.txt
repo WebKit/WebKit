@@ -19,10 +19,10 @@ layer at (0,0) size 800x600
         RenderText {#text} at (0,0) size 586x19
           text run at (0,0) width 586: "The three words should be separated by spaces, and there should be no marks above the spaces."
       RenderBlock {DIV} at (0,242) size 784x83
-        RenderText {#text} at (0,1) size 764x80
-          text run at (0,1) width 425: "\x{E40}\x{E01}\x{E21}\x{E2A}\x{E4C} \x{E1F}\x{E31}\x{E07}\x{E40}\x{E1E}\x{E25}\x{E07} "
-          text run at (425,1) width 339: "\x{E42}\x{E1B}\x{E23}\x{E42}\x{E21}\x{E17}\x{E40}\x{E27}\x{E47}\x{E1A}"
+        RenderText {#text} at (0,1) size 766x80
+          text run at (0,1) width 426: "\x{E40}\x{E01}\x{E21}\x{E2A}\x{E4C} \x{E1F}\x{E31}\x{E07}\x{E40}\x{E1E}\x{E25}\x{E07} "
+          text run at (426,1) width 340: "\x{E42}\x{E1B}\x{E23}\x{E42}\x{E21}\x{E17}\x{E40}\x{E27}\x{E47}\x{E1A}"
       RenderBlock {DIV} at (0,325) size 784x35
         RenderText {#text} at (0,0) size 326x34
-          text run at (0,0) width 181: "\x{E40}\x{E01}\x{E21}\x{E2A}\x{E4C} \x{E1F}\x{E31}\x{E07}\x{E40}\x{E1E}\x{E25}\x{E07} "
-          text run at (181,0) width 145: "\x{E42}\x{E1B}\x{E23}\x{E42}\x{E21}\x{E17}\x{E40}\x{E27}\x{E47}\x{E1A}"
+          text run at (0,0) width 182: "\x{E40}\x{E01}\x{E21}\x{E2A}\x{E4C} \x{E1F}\x{E31}\x{E07}\x{E40}\x{E1E}\x{E25}\x{E07} "
+          text run at (182,0) width 144: "\x{E42}\x{E1B}\x{E23}\x{E42}\x{E21}\x{E17}\x{E40}\x{E27}\x{E47}\x{E1A}"
