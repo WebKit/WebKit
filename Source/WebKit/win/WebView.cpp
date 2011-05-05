@@ -196,7 +196,7 @@ static String webKitVersionString();
 
 WebView* kit(Page* page)
 {
-    return page ? static_cast<WebChromeClient*>(page->chrome()->client())->webView() : 0;
+    return page ? static_cast<WebView*>(static_cast<WebChromeClient*>(page->chrome()->client())->webView()) : 0;
 }
 
 class PreferencesChangedOrRemovedObserver : public IWebNotificationObserver {

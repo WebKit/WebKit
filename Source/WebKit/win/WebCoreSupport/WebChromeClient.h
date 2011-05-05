@@ -43,7 +43,7 @@ public:
 
     virtual void chromeDestroyed();
 
-    virtual void* webView() const { return 0; }
+    virtual void* webView() const { return m_webView; }
     virtual void setWindowRect(const WebCore::FloatRect&);
     virtual WebCore::FloatRect windowRect();
     
@@ -140,8 +140,6 @@ public:
 
     virtual void setCursor(const WebCore::Cursor&);
     virtual void setLastSetCursorToCurrentCursor();
-
-    WebView* webView() const { return m_webView; }
 
     virtual void formStateDidChange(const WebCore::Node*) { }
 
