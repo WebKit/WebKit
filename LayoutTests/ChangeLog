@@ -1,3 +1,9 @@
+2011-05-05  MORITA Hajime <morrita@google.com>
+
+        Unreviewed, fixed a syntax error on expectations file.
+
+        * platform/chromium/test_expectations.txt:
+
 2011-05-05  MORITA Hajime  <morrita@google.com>
 
         Unreviewed expectations update for MAC GPU flakiness.

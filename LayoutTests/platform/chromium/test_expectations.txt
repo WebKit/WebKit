@@ -3682,7 +3682,7 @@ BUGCR75354 CPU : media/controls-strict.html = TEXT
 BUGCR75354 MAC GPU : media/controls-strict.html = IMAGE+TEXT TEXT
 BUGCR75354 CPU : media/controls-styling.html = TEXT
 BUGCR75354 MAC GPU : media/controls-styling.html = IMAGE+TEXT TEXT
-oBUGCR75354 CPU : media/controls-without-preload.html = TEXT
+BUGCR75354 CPU : media/controls-without-preload.html = TEXT
 BUGCR75354 MAC GPU : media/controls-without-preload.html = IMAGE+TEXT TEXT
 
 // probably just needs a new baseline
