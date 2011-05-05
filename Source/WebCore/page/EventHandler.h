@@ -106,8 +106,6 @@ public:
     void setMousePressNode(PassRefPtr<Node>);
 
     void startPanScrolling(RenderObject*);
-    bool panScrollInProgress() { return m_panScrollInProgress; }
-    void setPanScrollInProgress(bool inProgress) { m_panScrollInProgress = inProgress; }
 
     void stopAutoscrollTimer(bool rendererIsBeingDestroyed = false);
     RenderObject* autoscrollRenderer() const;
@@ -140,14 +138,10 @@ public:
 
     IntPoint currentMousePosition() const;
 
-    void setIgnoreWheelEvents(bool);
-
     static Frame* subframeForTargetNode(Node*);
     static Frame* subframeForHitTestResult(const MouseEventWithHitTestResults&);
 
     bool scrollOverflow(ScrollDirection, ScrollGranularity, Node* startingNode = 0);
-    bool logicalScrollOverflow(ScrollLogicalDirection, ScrollGranularity, Node* startingNode = 0);
-
     bool scrollRecursively(ScrollDirection, ScrollGranularity, Node* startingNode = 0);
     bool logicalScrollRecursively(ScrollLogicalDirection, ScrollGranularity, Node* startingNode = 0);
 
@@ -155,12 +149,8 @@ public:
     bool shouldDragAutoNode(Node*, const IntPoint&) const; // -webkit-user-drag == auto
 #endif
 
-    bool shouldTurnVerticalTicksIntoHorizontal(const HitTestResult&) const;
-
     bool tabsToLinks(KeyboardEvent*) const;
     bool tabsToAllFormControls(KeyboardEvent*) const;
-
-    bool mouseDownMayStartSelect() const { return m_mouseDownMayStartSelect; }
 
     bool mouseMoved(const PlatformMouseEvent&);
 
@@ -201,11 +191,11 @@ public:
 
     void focusDocumentView();
 
-    void capsLockStateMayHaveChanged();
+    void capsLockStateMayHaveChanged(); // Only called by SelectionController
     
-    void sendResizeEvent();
-    void sendScrollEvent();
-    
+    void sendResizeEvent(); // Only called in FrameView
+    void sendScrollEvent(); // Ditto
+
 #if PLATFORM(MAC) && defined(__OBJC__)
     void mouseDown(NSEvent *);
     void mouseDragged(NSEvent *);
@@ -224,8 +214,6 @@ public:
 #if ENABLE(TOUCH_EVENTS)
     bool handleTouchEvent(const PlatformTouchEvent&);
 #endif
-
-    static bool isKeyboardOptionTab(KeyboardEvent*);
 
 private:
 #if ENABLE(DRAG_SUPPORT)
@@ -292,6 +280,13 @@ private:
     void startAutoscrollTimer();
     void setAutoscrollRenderer(RenderObject*);
     void autoscrollTimerFired(Timer<EventHandler>*);
+    bool logicalScrollOverflow(ScrollLogicalDirection, ScrollGranularity, Node* startingNode = 0);
+    
+    bool shouldTurnVerticalTicksIntoHorizontal(const HitTestResult&) const;
+    bool mouseDownMayStartSelect() const { return m_mouseDownMayStartSelect; }
+
+    static bool isKeyboardOptionTab(KeyboardEvent*);
+    static bool eventInvertsTabsToLinksClientCallResult(KeyboardEvent*);
 
     void fakeMouseMoveEventTimerFired(Timer<EventHandler>*);
     void cancelFakeMouseMoveEvent();

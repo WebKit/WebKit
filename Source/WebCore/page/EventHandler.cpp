@@ -774,7 +774,7 @@ void EventHandler::handleAutoscroll(RenderObject* renderer)
         if (Page* page = m_frame->page()) {
             Frame* mainFrame = page->mainFrame();
             if (m_frame != mainFrame)
-                mainFrame->eventHandler()->setPanScrollInProgress(true);
+                mainFrame->eventHandler()->m_panScrollInProgress = true;
         }
     }
 #endif
@@ -799,7 +799,7 @@ void EventHandler::autoscrollTimerFired(Timer<EventHandler>*)
     } else {
         // we verify that the main frame hasn't received the order to stop the panScroll
         if (Page* page = m_frame->page()) {
-            if (!page->mainFrame()->eventHandler()->panScrollInProgress()) {
+            if (!page->mainFrame()->eventHandler()->m_panScrollInProgress) {
                 stopAutoscrollTimer();
                 return;
             }
@@ -1004,7 +1004,7 @@ void EventHandler::stopAutoscrollTimer(bool rendererIsBeingDestroyed)
     if (Page* page = m_frame->page()) {
         Frame* mainFrame = page->mainFrame();
         if (m_frame != mainFrame)
-            mainFrame->eventHandler()->setPanScrollInProgress(false);
+            mainFrame->eventHandler()->m_panScrollInProgress = false;
     }
 
     m_autoscrollInProgress = false;
@@ -1393,7 +1393,7 @@ bool EventHandler::handleMousePressEvent(const PlatformMouseEvent& mouseEvent)
 #if ENABLE(PAN_SCROLLING)
     // We store whether pan scrolling is in progress before calling stopAutoscrollTimer()
     // because it will set m_panScrollInProgress to false on return.
-    bool isPanScrollInProgress = m_frame->page() && m_frame->page()->mainFrame()->eventHandler()->panScrollInProgress();
+    bool isPanScrollInProgress = m_frame->page() && m_frame->page()->mainFrame()->eventHandler()->m_panScrollInProgress;
     if (isPanScrollInProgress || m_autoscrollInProgress)
         stopAutoscrollTimer();
     if (isPanScrollInProgress) {
@@ -1626,7 +1626,7 @@ bool EventHandler::handleMouseMoveEvent(const PlatformMouseEvent& mouseEvent, Hi
         if (scrollbar && !m_mousePressed)
             scrollbar->mouseMoved(mouseEvent); // Handle hover effects on platforms that support visual feedback on scrollbar hovering.
         if (Page* page = m_frame->page()) {
-            if ((!m_resizeLayer || !m_resizeLayer->inResizeMode()) && !page->mainFrame()->eventHandler()->panScrollInProgress()) {
+            if ((!m_resizeLayer || !m_resizeLayer->inResizeMode()) && !page->mainFrame()->eventHandler()->m_panScrollInProgress) {
                 // Plugins set cursor on their own. The only case WebKit intervenes is resetting cursor to arrow on mouse enter,
                 // in case the particular plugin doesn't manipulate cursor at all. Thus,  even a CSS cursor set on body has no
                 // effect on plugins (which matches Firefox).
@@ -2428,7 +2428,7 @@ bool EventHandler::keyEvent(const PlatformKeyboardEvent& initialKeyEvent)
 
 #if ENABLE(PAN_SCROLLING)
     if (Page* page = m_frame->page()) {
-        if (page->mainFrame()->eventHandler()->panScrollInProgress() || m_autoscrollInProgress) {
+        if (page->mainFrame()->eventHandler()->m_panScrollInProgress || m_autoscrollInProgress) {
             // If a key is pressed while the autoscroll/panScroll is in progress then we want to stop
             if (initialKeyEvent.type() == PlatformKeyboardEvent::KeyDown || initialKeyEvent.type() == PlatformKeyboardEvent::RawKeyDown) 
                 stopAutoscrollTimer();
@@ -2841,7 +2841,7 @@ bool EventHandler::isKeyboardOptionTab(KeyboardEvent* event)
         && event->keyIdentifier() == "U+0009";    
 }
 
-static bool eventInvertsTabsToLinksClientCallResult(KeyboardEvent* event)
+bool EventHandler::eventInvertsTabsToLinksClientCallResult(KeyboardEvent* event)
 {
 #if PLATFORM(MAC) || PLATFORM(QT) || PLATFORM(HAIKU) || PLATFORM(EFL)
     return EventHandler::isKeyboardOptionTab(event);

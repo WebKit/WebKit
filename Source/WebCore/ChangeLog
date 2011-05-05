@@ -1,3 +1,24 @@
+2011-05-04  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        Make more member functions in EventHandler private
+        https://bugs.webkit.org/show_bug.cgi?id=60200
+
+        Reduced the number of public member functions in EventHandler.
+
+        * WebCore.exp.in:
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::handleAutoscroll):
+        (WebCore::EventHandler::autoscrollTimerFired):
+        (WebCore::EventHandler::stopAutoscrollTimer):
+        (WebCore::EventHandler::handleMousePressEvent):
+        (WebCore::EventHandler::handleMouseMoveEvent):
+        (WebCore::EventHandler::keyEvent):
+        (WebCore::EventHandler::eventInvertsTabsToLinksClientCallResult):
+        * page/EventHandler.h:
+        (WebCore::EventHandler::mouseDownMayStartSelect):
+
 2011-05-04  James Robinson  <jamesr@chromium.org>
 
         Reviewed by Kenneth Russell.
