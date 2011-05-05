@@ -1,3 +1,13 @@
+2011-05-05  Tony Gentilcore  <tonyg@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        ASSERT(m_state == ParsingState) fires @ www.canalplus.fr
+        https://bugs.webkit.org/show_bug.cgi?id=60101
+
+        * fast/parser/close-while-stopping-expected.txt: Added.
+        * fast/parser/close-while-stopping.html: Added.
+
 2011-05-03  Evan Martin  <evan@chromium.org>
 
         Reviewed by Ojan Vafai.

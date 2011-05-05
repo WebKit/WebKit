@@ -2019,7 +2019,7 @@ void Document::close()
     // FIXME: We should follow the specification more closely:
     //        http://www.whatwg.org/specs/web-apps/current-work/#dom-document-close
 
-    if (!scriptableDocumentParser() || !scriptableDocumentParser()->wasCreatedByScript())
+    if (!scriptableDocumentParser() || !scriptableDocumentParser()->wasCreatedByScript() || !scriptableDocumentParser()->isParsing())
         return;
 
     explicitClose();
