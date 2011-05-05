@@ -1,3 +1,21 @@
+2011-05-04  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r85788.
+        http://trac.webkit.org/changeset/85788
+        https://bugs.webkit.org/show_bug.cgi?id=60250
+
+        svg/text/text-block-child-crash.xhtml asserts (Requested by
+        Ossy on #webkit).
+
+        * svg/custom/display-table-caption-foreignObject-expected.txt: Removed.
+        * svg/custom/display-table-caption-foreignObject.svg: Removed.
+        * svg/custom/display-table-caption-inherit-foreignObject-expected.txt: Removed.
+        * svg/custom/display-table-caption-inherit-foreignObject.xhtml: Removed.
+        * svg/custom/display-table-caption-inherit-text-expected.txt: Removed.
+        * svg/custom/display-table-caption-inherit-text.xhtml: Removed.
+        * svg/custom/display-table-caption-text-expected.txt: Removed.
+        * svg/custom/display-table-caption-text.svg: Removed.
+
 2011-05-04  MORITA Hajime <morrita@google.com>
 
         Marking at r85822 was not enough. Re-marked it.

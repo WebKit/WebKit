@@ -1,3 +1,15 @@
+2011-05-04  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r85788.
+        http://trac.webkit.org/changeset/85788
+        https://bugs.webkit.org/show_bug.cgi?id=60250
+
+        svg/text/text-block-child-crash.xhtml asserts (Requested by
+        Ossy on #webkit).
+
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::applyProperty):
+
 2011-05-04  Ryosuke Niwa  <rniwa@webkit.org>
 
         Reviewed by Eric Seidel.
