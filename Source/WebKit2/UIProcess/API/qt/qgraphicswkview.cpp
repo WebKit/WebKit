@@ -65,16 +65,28 @@ QGraphicsWKView::QGraphicsWKView(QWKContext* context, BackingStoreType backingSt
     : QGraphicsWidget(parent)
     , d(new QGraphicsWKViewPrivate(this))
 {
+    d->page = new QWKPage(context);
+    init(backingStoreType);
+}
+
+QGraphicsWKView::QGraphicsWKView(QWKContext* context, WKPageGroupRef pageGroupRef, BackingStoreType backingStoreType, QGraphicsItem* parent)
+    : QGraphicsWidget(parent)
+    , d(new QGraphicsWKViewPrivate(this))
+{
+    d->page = new QWKPage(context, pageGroupRef);
+    init(backingStoreType);
+}
+
+void QGraphicsWKView::init(BackingStoreType backingStoreType)
+{
     setFocusPolicy(Qt::StrongFocus);
     setAcceptHoverEvents(true);
-
 
 #if ENABLE(TILED_BACKING_STORE)
     if (backingStoreType == Tiled)
         connect(this, SIGNAL(scaleChanged()), this, SLOT(onScaleChanged()));
 #endif
 
-    d->page = new QWKPage(context);
     d->page->d->init(this, backingStoreType);
     connect(d->page, SIGNAL(titleChanged(QString)), this, SIGNAL(titleChanged(QString)));
     connect(d->page, SIGNAL(loadStarted()), this, SIGNAL(loadStarted()));

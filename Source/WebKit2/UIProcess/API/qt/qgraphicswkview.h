@@ -13,6 +13,9 @@ QT_END_NAMESPACE
 
 class QWKContext;
 class QGraphicsWKViewPrivate;
+namespace WTR {
+class WebView;
+};
 
 WKStringRef WKStringCreateWithQString(const QString& qString);
 QString WKStringCopyQString(WKStringRef stringRef);
@@ -90,12 +93,16 @@ protected:
     virtual void focusOutEvent(QFocusEvent*);
 
 private:
+    QGraphicsWKView(QWKContext*, WKPageGroupRef, BackingStoreType = Simple, QGraphicsItem* parent = 0);
+    void init(BackingStoreType);
+
     Q_PRIVATE_SLOT(d, void onScaleChanged())
     Q_PRIVATE_SLOT(d, void onToolTipChanged(const QString&))
 
     QGraphicsWKViewPrivate* d;
     friend class QGraphicsWKViewPrivate;
     friend class TiledDrawingAreaProxy;
+    friend class WTR::WebView;
 };
 
 #endif /* qgraphicswkview_h */

@@ -1,3 +1,26 @@
+2011-05-05  Chang Shu  <cshu@webkit.org>
+
+        Reviewed by Andreas Kling.
+
+        [Qt][WK2] Support PageGroup in QGraphicsWKView/QWKPage constructors
+        https://bugs.webkit.org/show_bug.cgi?id=59638
+
+        Added private constructors for class QGraphicsWKView and QWKPage to support
+        WKPageGroupRef.
+
+        * UIProcess/API/qt/qgraphicswkview.cpp:
+        (QGraphicsWKView::QGraphicsWKView):
+        (QGraphicsWKView::~QGraphicsWKView):
+        (QGraphicsWKView::init):
+        * UIProcess/API/qt/qgraphicswkview.h:
+        * UIProcess/API/qt/qwkpage.cpp:
+        (QWKPagePrivate::QWKPagePrivate):
+        (QWKPage::QWKPage):
+        (QWKPage::~QWKPage):
+        (QWKPage::init):
+        * UIProcess/API/qt/qwkpage.h:
+        * UIProcess/API/qt/qwkpage_p.h:
+
 2011-05-05  Brent Fulgham  <bfulgham@webkit.org>
 
         [WinCairo] Unreviewed build fix.

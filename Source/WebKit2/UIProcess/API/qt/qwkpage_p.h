@@ -40,7 +40,7 @@ using namespace WebKit;
 
 class QWKPagePrivate : WebKit::PageClient {
 public:
-    QWKPagePrivate(QWKPage*, QWKContext*);
+    QWKPagePrivate(QWKPage*, QWKContext*, WKPageGroupRef = 0);
     ~QWKPagePrivate();
 
     static QWKPagePrivate* get(QWKPage* page) { return page->d; }

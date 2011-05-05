@@ -89,7 +89,7 @@ static WebCore::ContextMenuAction contextMenuActionForWebAction(QWKPage::WebActi
     return WebCore::ContextMenuItemTagNoAction;
 }
 
-QWKPagePrivate::QWKPagePrivate(QWKPage* qq, QWKContext* c)
+QWKPagePrivate::QWKPagePrivate(QWKPage* qq, QWKContext* c, WKPageGroupRef pageGroupRef)
     : q(qq)
     , view(0)
     , context(c)
@@ -99,7 +99,7 @@ QWKPagePrivate::QWKPagePrivate(QWKPage* qq, QWKContext* c)
     , isConnectedToEngine(true)
 {
     memset(actions, 0, sizeof(actions));
-    page = context->d->context->createWebPage(this, 0);
+    page = context->d->context->createWebPage(this, toImpl(pageGroupRef));
     history = QWKHistoryPrivate::createHistory(page->backForwardList());
 }
 
@@ -427,8 +427,19 @@ void QWKPagePrivate::processDidCrash()
     emit q->engineConnectionChanged(false);
 }
 
+QWKPage::QWKPage(QWKContext* context, WKPageGroupRef pageGroupRef)
+    : d(new QWKPagePrivate(this, context, pageGroupRef))
+{
+    init();
+}
+
 QWKPage::QWKPage(QWKContext* context)
     : d(new QWKPagePrivate(this, context))
+{
+    init();
+}
+
+void QWKPage::init()
 {
     WKPageLoaderClient loadClient = {
         0,      /* version */

@@ -1,3 +1,19 @@
+2011-05-05  Chang Shu  <cshu@webkit.org>
+
+        Reviewed by Andreas Kling.
+
+        [Qt][WK2] Support PageGroup in QGraphicsWKView/QWKPage constructors
+        https://bugs.webkit.org/show_bug.cgi?id=59638
+
+        1. Call QGraphicsWKView constructor with pageGroupRef.
+        2. Disable setFontFamily calls as it breaks Qt test fonts.
+
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::TestController::resetStateToConsistentValues):
+        * WebKitTestRunner/qt/PlatformWebViewQt.cpp:
+        (WTR::WebView::WebView):
+        (WTR::PlatformWebView::PlatformWebView):
+
 2011-05-05  Joseph Pecoraro  <joepeck@webkit.org>
 
         Reviewed by David Kilzer.

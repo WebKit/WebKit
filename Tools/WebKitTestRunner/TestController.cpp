@@ -385,6 +385,7 @@ bool TestController::resetStateToConsistentValues()
     WKPreferencesSetFullScreenEnabled(preferences, true);
 #endif
 
+#if !PLATFORM(QT)
     static WKStringRef standardFontFamily = WKStringCreateWithUTF8CString("Times");
     static WKStringRef cursiveFontFamily = WKStringCreateWithUTF8CString("Apple Chancery");
     static WKStringRef fantasyFontFamily = WKStringCreateWithUTF8CString("Papyrus");
@@ -398,6 +399,7 @@ bool TestController::resetStateToConsistentValues()
     WKPreferencesSetFixedFontFamily(preferences, fixedFontFamily);
     WKPreferencesSetSansSerifFontFamily(preferences, sansSerifFontFamily);
     WKPreferencesSetSerifFontFamily(preferences, serifFontFamily);
+#endif
 
     m_mainWebView->focus();
 

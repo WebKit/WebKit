@@ -1,3 +1,14 @@
+2011-05-05  Chang Shu  <cshu@webkit.org>
+
+        Reviewed by Andreas Kling.
+
+        [Qt][WK2] Support PageGroup in QGraphicsWKView/QWKPage constructors
+        https://bugs.webkit.org/show_bug.cgi?id=59638
+
+        Unskip passed tests.
+
+        * platform/qt-wk2/Skipped:
+
 2011-05-05  Andrey Kosyakov  <caseq@chromium.org>
 
         Unreviewed. Skip inspector/console/console-shadow-dom-access.html (crashes in debug)

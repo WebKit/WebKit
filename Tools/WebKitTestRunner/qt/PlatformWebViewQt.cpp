@@ -35,7 +35,7 @@ namespace WTR {
 
 class WebView : public QGraphicsView {
 public:
-    WebView(WKContextRef);
+    WebView(WKContextRef, WKPageGroupRef);
 
     QGraphicsWKView* wkView() const { return m_item; }
 
@@ -45,16 +45,16 @@ private:
     QGraphicsWKView* m_item;
 };
 
-WebView::WebView(WKContextRef contextRef)
+WebView::WebView(WKContextRef contextRef, WKPageGroupRef pageGroupRef)
     : QGraphicsView()
-    , m_item(new QGraphicsWKView(new QWKContext(contextRef, this)))
+    , m_item(new QGraphicsWKView(new QWKContext(contextRef, this), pageGroupRef))
 {
     setScene(new QGraphicsScene(this));
     scene()->addItem(m_item);
 }
 
-PlatformWebView::PlatformWebView(WKContextRef contextRef, WKPageGroupRef)
-    : m_view(new WebView(contextRef))
+PlatformWebView::PlatformWebView(WKContextRef contextRef, WKPageGroupRef pageGroupRef)
+    : m_view(new WebView(contextRef, pageGroupRef))
     , m_window(new QMainWindow())
 {
     m_view->setParent(m_window);

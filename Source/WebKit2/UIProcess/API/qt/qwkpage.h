@@ -143,6 +143,8 @@ protected:
     void timerEvent(QTimerEvent*);
 
 private:
+    QWKPage(QWKContext*, WKPageGroupRef);
+    void init();
 #ifndef QT_NO_ACTION
     Q_PRIVATE_SLOT(d, void _q_webActionTriggered(bool checked));
 #endif
