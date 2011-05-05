@@ -215,6 +215,8 @@ protected:
     enum DisplayMode { Unknown, None, Poster, PosterWaitingForVideo, Video };
     DisplayMode displayMode() const { return m_displayMode; }
     virtual void setDisplayMode(DisplayMode mode) { m_displayMode = mode; }
+    
+    virtual bool isMediaElement() const { return true; }
 
 private:
     virtual void attributeChanged(Attribute*, bool preserveDecls);

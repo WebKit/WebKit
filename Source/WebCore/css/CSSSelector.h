@@ -189,6 +189,7 @@ namespace WebCore {
 #if ENABLE(FULLSCREEN_API)
             PseudoFullScreen,
             PseudoFullScreenDocument,
+            PseudoFullScreenMediaDocument,
 #endif
             PseudoInRange,
             PseudoOutOfRange,

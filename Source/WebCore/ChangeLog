@@ -1,3 +1,38 @@
+2011-05-03  Jer Noble  <jer.noble@apple.com>
+
+        Reviewed by Antti Koivisto.
+
+        Safari: Video at apple.com cannot play at full screen mode with layout distortion
+        https://bugs.webkit.org/show_bug.cgi?id=60140
+
+        Because a fullscreen element may be in a stacking context with a lower z-index than
+        a sibling stacking context, those higher contexts would sometimes "pop" through the 
+        full screen renderer. To facilitate eliminating all the stacking contexts aside from
+        the full screen renderer, added a new pseudo-class specific to video or audio full
+        screen elements. Then, added a new UA rule which resets the z-index and opacities of 
+        all elements under said pseudo-class to auto and 1 respectively. To facilitate quick
+        identity checking of HTMLMediaElements, added isMediaElement() virtual function to 
+        Element and HTMLMediaElement. 
+
+        Test: fullscreen/full-screen-stacking-context.html
+
+        * css/CSSSelector.cpp:
+        (WebCore::CSSSelector::pseudoId): Support PseudoFullScreenMediaDocument.
+        (WebCore::nameToPseudoTypeMap): Support fullScreenMediaDocument.
+        (WebCore::CSSSelector::extractPseudoType): Support PseudoFullScreenMediaDocument.
+        * css/CSSSelector.h: Add PseudoFullScreenMediaDocument.
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::SelectorChecker::checkOneSelector): Support PseudoFullScreenMediaDocument.
+        * css/fullscreen.css:
+        (:root:-webkit-full-screen-document:not(:-webkit-full-screen)): Corrected these names, 
+            which were missing the -webkit prefix.
+        (:root:-webkit-full-screen-media-document *:not(-webkit-full-screen)): Added.
+        * dom/Element.h:
+        (WebCore::Element::isMediaElement): Added, returns false.
+        * html/HTMLMediaElement.h:
+        (WebCore::HTMLMediaElement::isMediaElement): Added, returns true.
+        * rendering/style/RenderStyleConstants.h: Added FULL_SCREEN_MEDIA_DOCUMENT.
+
 2011-05-04  Levi Weintraub  <leviw@chromium.org>
 
         Reviewed by Eric Seidel.

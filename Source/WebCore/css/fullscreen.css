@@ -2,8 +2,14 @@
     background-color: white;
 }
 
-:root:full-screen-document:not(:full-screen) {
+:root:-webkit-full-screen-document:not(:-webkit-full-screen) {
     overflow:hidden;
+}
+
+:root:-webkit-full-screen-media-document *:not(:-webkit-full-screen) {
+    z-index: auto !important;
+    opacity: 1 !important;
+    -webkit-tranform: none !important;
 }
 
 video:-webkit-full-screen {
