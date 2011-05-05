@@ -34,7 +34,7 @@ OBJC_CLASS NSView;
 #elif PLATFORM(QT)
 #include <qgraphicssceneevent.h>
 #elif PLATFORM(GTK)
-typedef union _GdkEvent GdkEvent;
+typedef struct _GdkEventScroll GdkEventScroll;
 #endif
 
 namespace WebKit {

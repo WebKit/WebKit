@@ -33,6 +33,7 @@
 #include "GtkVersioning.h"
 #include "NativeWebKeyboardEvent.h"
 #include "NativeWebMouseEvent.h"
+#include "NativeWebWheelEvent.h"
 #include "NotImplemented.h"
 #include "PageClientImpl.h"
 #include "RefPtrCairo.h"
@@ -264,7 +265,7 @@ static gboolean webkitWebViewBaseScrollEvent(GtkWidget* widget, GdkEventScroll* 
     WebKitWebViewBase* webViewBase = WEBKIT_WEB_VIEW_BASE(widget);
     WebKitWebViewBasePrivate* priv = webViewBase->priv;
 
-    priv->pageProxy->handleWheelEvent(WebEventFactory::createWebWheelEvent(event));
+    priv->pageProxy->handleWheelEvent(NativeWebWheelEvent(event));
 
     return FALSE;
 }

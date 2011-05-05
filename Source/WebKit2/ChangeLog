@@ -1,3 +1,11 @@
+2011-05-05  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Fix WebKit2 GTK build after r85808.
+
+        * Shared/NativeWebWheelEvent.h:
+        * UIProcess/API/gtk/WebKitWebViewBase.cpp:
+        (webkitWebViewBaseScrollEvent):
+
 2011-05-04  Cris Neckar  <cdn@chromium.org>
 
         Reviewed by Adam Barth.
