@@ -1,3 +1,22 @@
+2011-05-05  Philippe Normand  <pnormand@igalia.com>
+
+        Unreviewed, GTK baselines for new tests.
+
+        * platform/gtk/editing/inserting/typing-at-end-of-line-expected.png: Added.
+        * platform/gtk/editing/inserting/typing-at-end-of-line-expected.txt: Added.
+        * platform/gtk/editing/selection/select-across-readonly-input-1-expected.png: Added.
+        * platform/gtk/editing/selection/select-across-readonly-input-1-expected.txt: Added.
+        * platform/gtk/editing/selection/select-across-readonly-input-2-expected.png: Added.
+        * platform/gtk/editing/selection/select-across-readonly-input-2-expected.txt: Added.
+        * platform/gtk/editing/selection/select-across-readonly-input-3-expected.png: Added.
+        * platform/gtk/editing/selection/select-across-readonly-input-3-expected.txt: Added.
+        * platform/gtk/editing/selection/select-across-readonly-input-4-expected.png: Added.
+        * platform/gtk/editing/selection/select-across-readonly-input-4-expected.txt: Added.
+        * platform/gtk/editing/selection/select-across-readonly-input-5-expected.png: Added.
+        * platform/gtk/editing/selection/select-across-readonly-input-5-expected.txt: Added.
+        * platform/gtk/fast/forms/input-placeholder-text-indent-expected.png: Added.
+        * platform/gtk/fast/forms/input-placeholder-text-indent-expected.txt: Added.
+
 2011-05-05  MORITA Hajime  <morrita@google.com>
 
         Unreviewed, marking flaky tests.
