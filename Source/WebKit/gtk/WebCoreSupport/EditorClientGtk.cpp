@@ -62,7 +62,7 @@ namespace WebKit {
 
 static void imContextCommitted(GtkIMContext* context, const gchar* compositionString, EditorClient* client)
 {
-    Frame* frame = core(client->webView())->focusController()->focusedOrMainFrame();
+    Frame* frame = core(static_cast<WebKitWebView*>(client->webView()))->focusController()->focusedOrMainFrame();
     if (!frame || !frame->editor()->canEdit())
         return;
 
@@ -85,7 +85,7 @@ static void imContextCommitted(GtkIMContext* context, const gchar* compositionSt
 
 static void imContextPreeditChanged(GtkIMContext* context, EditorClient* client)
 {
-    Frame* frame = core(client->webView())->focusController()->focusedOrMainFrame();
+    Frame* frame = core(static_cast<WebKitWebView*>(client->webView()))->focusController()->focusedOrMainFrame();
     if (!frame || !frame->editor()->canEdit())
         return;
 

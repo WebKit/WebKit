@@ -37,11 +37,10 @@ namespace WebKit {
     class ChromeClient : public WebCore::ChromeClient {
     public:
         ChromeClient(WebKitWebView*);
-        WebKitWebView* webView() const { return m_webView; }
 
         virtual void chromeDestroyed();
 
-        virtual void* webView() const { return 0; }
+        virtual void* webView() const { return m_webView; }
         virtual void setWindowRect(const WebCore::FloatRect&);
         virtual WebCore::FloatRect windowRect();
 

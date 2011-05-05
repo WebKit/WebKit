@@ -1,3 +1,15 @@
+2011-05-04  Ryosuke Niwa  <rniwa@webkit.org>
+
+        GTK build fix attempt after r85823
+
+        * WebCoreSupport/ChromeClientGtk.h:
+        (WebKit::ChromeClient::webView):
+        * WebCoreSupport/EditorClientGtk.cpp:
+        (WebKit::imContextCommitted):
+        (WebKit::imContextPreeditChanged):
+        * webkit/webkitwebview.cpp:
+        (WebKit::kit):
+
 2011-05-04  Cris Neckar  <cdn@chromium.org>
 
         Reviewed by Adam Barth.
