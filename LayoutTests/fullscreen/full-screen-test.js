@@ -4,8 +4,8 @@ var runPixelTests;
 
 logConsole();
 
-if (!runPixelTests && window.layoutTestController) {
-    layoutTestController.dumpAsText();
+if (window.layoutTestController) {
+    layoutTestController.dumpAsText(runPixelTests);
     layoutTestController.waitUntilDone();
 }
 
