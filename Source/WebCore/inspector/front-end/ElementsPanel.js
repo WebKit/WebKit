@@ -1126,7 +1126,10 @@ WebInspector.ElementsPanel.prototype = {
             return;
 
         this.focusedDOMNode = node;
-        this._nodeSearchButton.toggled = false;
+        if (this._nodeSearchButton.toggled) {
+            InspectorFrontendHost.bringToFront();
+            this._nodeSearchButton.toggled = false;
+        }
     },
 
     _setSearchingForNode: function(enabled)

@@ -1,3 +1,13 @@
+2011-05-05  Pavel Feldman  <pfeldman@chromium.org>
+
+        Reviewed by Yury Semikhatsky.
+
+        Web Inspector: searching for node does not result in bringToFront call.
+        https://bugs.webkit.org/show_bug.cgi?id=60222
+
+        * inspector/front-end/ElementsPanel.js:
+        (WebInspector.ElementsPanel.prototype.updateFocusedNode):
+
 2011-05-05  Andreas Kling  <andreas.kling@nokia.com>
 
         Reviewed by Simon Hausmann.
