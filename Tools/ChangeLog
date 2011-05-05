@@ -1,3 +1,29 @@
+2011-05-05  Adam Roben  <aroben@apple.com>
+
+        Add support for layoutTestController.dumpAsText(true) to WebKitTestRunner
+
+        Passing true tells the test harness to dump pixels even though we're not dumping a render
+        tree.
+
+        Fixes <http://webkit.org/b/60298> Calling layoutTestController.dumpAsText(true) in
+        WebKitTestRunner doesn't result in pixel results being generated
+
+        Reviewed by Sam Weinig.
+
+        * WebKitTestRunner/InjectedBundle/Bindings/LayoutTestController.idl: Added dumpPixels
+        argument to dumpAsText.
+
+        * WebKitTestRunner/InjectedBundle/InjectedBundlePage.cpp:
+        (WTR::InjectedBundlePage::dump): Updated for dumpAsText change.
+
+        * WebKitTestRunner/InjectedBundle/LayoutTestController.cpp:
+        (WTR::LayoutTestController::dumpAsText): Store the dumpPixels argument.
+
+        * WebKitTestRunner/InjectedBundle/LayoutTestController.h: Updated for IDL change.
+
+        * WebKitTestRunner/win/InjectedBundle.vcproj: Added .idl files as a convenience for Windows
+        developers.
+
 2011-05-05  Dirk Pranke  <dpranke@chromium.org>
 
         Reviewed by Ojan Vafai.

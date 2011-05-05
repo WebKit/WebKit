@@ -56,7 +56,7 @@ public:
     void makeWindowObject(JSContextRef, JSObjectRef windowObject, JSValueRef* exception);
 
     // The basics.
-    void dumpAsText();
+    void dumpAsText(bool dumpPixels);
     void dumpChildFramesAsText() { m_whatToDump = AllFramesText; }
     void waitUntilDone();
     void notifyDone();

@@ -122,10 +122,10 @@ void LayoutTestController::display()
     // FIXME: actually implement, once we want pixel tests
 }
 
-void LayoutTestController::dumpAsText()
+void LayoutTestController::dumpAsText(bool dumpPixels)
 {
     m_whatToDump = MainFrameText;
-    m_dumpPixels = false;
+    m_dumpPixels = dumpPixels;
 }
     
 void LayoutTestController::waitUntilDone()

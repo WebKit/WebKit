@@ -27,7 +27,7 @@ module WTR {
 
     interface LayoutTestController {
         // The basics.
-        void dumpAsText();
+        void dumpAsText(in boolean dumpPixels);
         void dumpChildFramesAsText();
         void waitUntilDone();
         void notifyDone();
