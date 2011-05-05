@@ -27,12 +27,19 @@
 #include "NativeWebWheelEvent.h"
 
 #include "WebEventFactory.h"
+#include <gdk/gdk.h>
 
 namespace WebKit {
 
-NativeWebWheelEvent::NativeWebWheelEvent(GdkEventScroll* event)
+NativeWebWheelEvent::NativeWebWheelEvent(GdkEvent* event)
     : WebWheelEvent(WebEventFactory::createWebWheelEvent(event))
-    , m_nativeEvent(event)
+    , m_nativeEvent(gdk_event_copy(event))
+{
+}
+
+NativeWebWheelEvent::NativeWebWheelEvent(const NativeWebWheelEvent& event)
+    : WebWheelEvent(WebEventFactory::createWebWheelEvent(event.nativeEvent()))
+    , m_nativeEvent(gdk_event_copy(event.nativeEvent()))
 {
 }
 

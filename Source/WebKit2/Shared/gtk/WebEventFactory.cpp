@@ -64,7 +64,7 @@ static inline WebEvent::Modifiers modifiersForEvent(const GdkEvent* event)
     return static_cast<WebEvent::Modifiers>(modifiers);
 }
 
-static inline WebMouseEvent::Button buttonForEvent(GdkEvent* event)
+static inline WebMouseEvent::Button buttonForEvent(const GdkEvent* event)
 {
     unsigned button = 0;
 
@@ -96,7 +96,7 @@ static inline WebMouseEvent::Button buttonForEvent(GdkEvent* event)
     return static_cast<WebMouseEvent::Button>(button);
 }
 
-WebMouseEvent WebEventFactory::createWebMouseEvent(GdkEvent *event, int currentClickCount)
+WebMouseEvent WebEventFactory::createWebMouseEvent(const GdkEvent* event, int currentClickCount)
 {
     double x, y, xRoot, yRoot;
     gdk_event_get_coords(event, &x, &y);
@@ -131,15 +131,14 @@ WebMouseEvent WebEventFactory::createWebMouseEvent(GdkEvent *event, int currentC
                          gdk_event_get_time(event));
 }
 
-WebWheelEvent WebEventFactory::createWebWheelEvent(GdkEventScroll* scrollEvent)
+WebWheelEvent WebEventFactory::createWebWheelEvent(const GdkEvent* event)
 {
-    GdkEvent* event(reinterpret_cast<GdkEvent*>(scrollEvent));
     double x, y, xRoot, yRoot;
     gdk_event_get_coords(event, &x, &y);
     gdk_event_get_root_coords(event, &xRoot, &yRoot);
 
     FloatSize wheelTicks;
-    switch (scrollEvent->direction) {
+    switch (event->scroll.direction) {
     case GDK_SCROLL_UP:
         wheelTicks = FloatSize(0, 1);
         break;
@@ -171,20 +170,20 @@ WebWheelEvent WebEventFactory::createWebWheelEvent(GdkEventScroll* scrollEvent)
                          gdk_event_get_time(event));
 }
 
-WebKeyboardEvent WebEventFactory::createWebKeyboardEvent(const GdkEventKey* event)
+WebKeyboardEvent WebEventFactory::createWebKeyboardEvent(const GdkEvent* event)
 {
     return WebKeyboardEvent((event->type == GDK_KEY_RELEASE) ? WebEvent::KeyUp : WebEvent::KeyDown,
-                            PlatformKeyboardEvent::singleCharacterString(event->keyval),
-                            PlatformKeyboardEvent::singleCharacterString(event->keyval),
-                            PlatformKeyboardEvent::keyIdentifierForGdkKeyCode(event->keyval),
-                            PlatformKeyboardEvent::windowsKeyCodeForGdkKeyCode(event->keyval),
-                            static_cast<int>(event->keyval),
+                            PlatformKeyboardEvent::singleCharacterString(event->key.keyval),
+                            PlatformKeyboardEvent::singleCharacterString(event->key.keyval),
+                            PlatformKeyboardEvent::keyIdentifierForGdkKeyCode(event->key.keyval),
+                            PlatformKeyboardEvent::windowsKeyCodeForGdkKeyCode(event->key.keyval),
+                            static_cast<int>(event->key.keyval),
                             0 /* macCharCode */,
                             false /* isAutoRepeat */,
-                            isGdkKeyCodeFromKeyPad(event->keyval),
+                            isGdkKeyCodeFromKeyPad(event->key.keyval),
                             false /* isSystemKey */,
-                            modifiersForEvent(reinterpret_cast<const GdkEvent*>(event)),
-                            gdk_event_get_time(reinterpret_cast<const GdkEvent*>(event)));
+                            modifiersForEvent(event),
+                            gdk_event_get_time(event));
 }
 
 } // namespace WebKit

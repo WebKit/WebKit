@@ -34,13 +34,13 @@
 namespace WebKit {
 
 NativeWebKeyboardEvent::NativeWebKeyboardEvent(GdkEvent* event)
-    : WebKeyboardEvent(WebEventFactory::createWebKeyboardEvent(&event->key))
+    : WebKeyboardEvent(WebEventFactory::createWebKeyboardEvent(event))
     , m_nativeEvent(gdk_event_copy(event))
 {
 }
 
 NativeWebKeyboardEvent::NativeWebKeyboardEvent(const NativeWebKeyboardEvent& event)
-    : WebKeyboardEvent(WebEventFactory::createWebKeyboardEvent(&event.nativeEvent()->key))
+    : WebKeyboardEvent(WebEventFactory::createWebKeyboardEvent(event.nativeEvent()))
     , m_nativeEvent(gdk_event_copy(event.nativeEvent()))
 {
 }

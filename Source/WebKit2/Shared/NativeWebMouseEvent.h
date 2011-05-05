@@ -34,6 +34,7 @@ OBJC_CLASS NSView;
 #elif PLATFORM(QT)
 #include <qgraphicssceneevent.h>
 #elif PLATFORM(GTK)
+#include <GOwnPtrGtk.h>
 typedef union _GdkEvent GdkEvent;
 #endif
 
@@ -48,6 +49,7 @@ public:
 #elif PLATFORM(QT)
     explicit NativeWebMouseEvent(QGraphicsSceneMouseEvent*, int);
 #elif PLATFORM(GTK)
+    NativeWebMouseEvent(const NativeWebMouseEvent&);
     NativeWebMouseEvent(GdkEvent*, int);
 #endif
 
@@ -58,7 +60,7 @@ public:
 #elif PLATFORM(QT)
     const QGraphicsSceneMouseEvent* nativeEvent() const { return m_nativeEvent; }
 #elif PLATFORM(GTK)
-    GdkEvent* nativeEvent() const { return m_nativeEvent; }
+    const GdkEvent* nativeEvent() const { return m_nativeEvent.get(); }
 #endif
 
 private:
@@ -69,7 +71,7 @@ private:
 #elif PLATFORM(QT)
     QGraphicsSceneMouseEvent* m_nativeEvent;
 #elif PLATFORM(GTK)
-    GdkEvent* m_nativeEvent;
+    GOwnPtr<GdkEvent> m_nativeEvent;
 #endif
 };
 

@@ -30,16 +30,14 @@
 #include "WebEvent.h"
 
 typedef union _GdkEvent GdkEvent;
-typedef struct _GdkEventScroll GdkEventScroll;
-typedef struct _GdkEventKey GdkEventKey;
 
 namespace WebKit {
 
 class WebEventFactory {
 public:
-    static WebMouseEvent createWebMouseEvent(GdkEvent*, int);
-    static WebWheelEvent createWebWheelEvent(GdkEventScroll*);
-    static WebKeyboardEvent createWebKeyboardEvent(const GdkEventKey*);
+    static WebMouseEvent createWebMouseEvent(const GdkEvent*, int);
+    static WebWheelEvent createWebWheelEvent(const GdkEvent*);
+    static WebKeyboardEvent createWebKeyboardEvent(const GdkEvent*);
 };
 
 } // namespace WebKit

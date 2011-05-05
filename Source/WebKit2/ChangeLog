@@ -2,6 +2,38 @@
 
         Reviewed by Martin Robinson.
 
+        [GTK] Make native events code more consistent
+        https://bugs.webkit.org/show_bug.cgi?id=60258
+
+        Make all other native events code follow the current keyboard
+        events approach: use a GOwnPtr for the native event, and use
+        const GdkEvent* in the API. We need to implement the copy
+        constructors for native events to copy the gdk events with
+        gdk_event_copy().
+
+        * Shared/NativeWebMouseEvent.h:
+        (WebKit::NativeWebMouseEvent::nativeEvent):
+        * Shared/NativeWebWheelEvent.h:
+        (WebKit::NativeWebWheelEvent::nativeEvent):
+        * Shared/gtk/NativeWebKeyboardEventGtk.cpp:
+        (WebKit::NativeWebKeyboardEvent::NativeWebKeyboardEvent):
+        * Shared/gtk/NativeWebMouseEventGtk.cpp:
+        (WebKit::NativeWebMouseEvent::NativeWebMouseEvent):
+        * Shared/gtk/NativeWebWheelEventGtk.cpp:
+        (WebKit::NativeWebWheelEvent::NativeWebWheelEvent):
+        * Shared/gtk/WebEventFactory.cpp:
+        (WebKit::buttonForEvent):
+        (WebKit::WebEventFactory::createWebMouseEvent):
+        (WebKit::WebEventFactory::createWebWheelEvent):
+        (WebKit::WebEventFactory::createWebKeyboardEvent):
+        * Shared/gtk/WebEventFactory.h:
+        * UIProcess/API/gtk/WebKitWebViewBase.cpp:
+        (webkitWebViewBaseScrollEvent):
+
+2011-05-05  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Reviewed by Martin Robinson.
+
         [GTK] Module::load() should return true when g_module_open() returns a valid pointer
         https://bugs.webkit.org/show_bug.cgi?id=60261
 

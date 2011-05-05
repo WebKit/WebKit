@@ -34,7 +34,8 @@ OBJC_CLASS NSView;
 #elif PLATFORM(QT)
 #include <qgraphicssceneevent.h>
 #elif PLATFORM(GTK)
-typedef struct _GdkEventScroll GdkEventScroll;
+#include <GOwnPtrGtk.h>
+typedef union _GdkEvent GdkEvent;
 #endif
 
 namespace WebKit {
@@ -48,7 +49,8 @@ public:
 #elif PLATFORM(QT)
     explicit NativeWebWheelEvent(QGraphicsSceneWheelEvent*);
 #elif PLATFORM(GTK)
-    NativeWebWheelEvent(GdkEventScroll*);
+    NativeWebWheelEvent(const NativeWebWheelEvent&);
+    NativeWebWheelEvent(GdkEvent*);
 #endif
 
 #if PLATFORM(MAC)
@@ -58,7 +60,7 @@ public:
 #elif PLATFORM(QT)
     const QGraphicsSceneWheelEvent* nativeEvent() const { return m_nativeEvent; }
 #elif PLATFORM(GTK)
-    GdkEventScroll* nativeEvent() const { return m_nativeEvent; }
+    const GdkEvent* nativeEvent() const { return m_nativeEvent.get(); }
 #endif
 
 private:
@@ -69,7 +71,7 @@ private:
 #elif PLATFORM(QT)
     QGraphicsSceneWheelEvent* m_nativeEvent;
 #elif PLATFORM(GTK)
-    GdkEventScroll* m_nativeEvent;
+    GOwnPtr<GdkEvent> m_nativeEvent;
 #endif
 };
 
