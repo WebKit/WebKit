@@ -275,7 +275,7 @@ class ExpectationSyntaxTests(Base):
 
     def test_macro(self):
         exp_str = """
-BUG_TEST WIN-XP : failures/expected/text.html = TEXT
+BUG_TEST WIN : failures/expected/text.html = TEXT
 """
         self.parse_exp(exp_str)
         self.assert_exp('failures/expected/text.html', TEXT)
@@ -358,17 +358,10 @@ BUG_TEST RELEASE : passes/text.html = PASS
 """
         self.assertRaises(ParseError, self.parse_exp, exp_str)
 
-    def test_version_overrides(self):
-        exp_str = """
-BUG_TEST WIN : passes/text.html = PASS
-BUG_TEST WIN XP : passes/text.html = TEXT
-"""
-        self.assertRaises(ParseError, self.parse_exp, exp_str)
-
     def test_macro_overrides(self):
         exp_str = """
 BUG_TEST WIN : passes/text.html = PASS
-BUG_TEST WIN-XP : passes/text.html = TEXT
+BUG_TEST XP : passes/text.html = TEXT
 """
         self.assertRaises(ParseError, self.parse_exp, exp_str)
 
@@ -450,8 +443,8 @@ class ModifierTests(unittest.TestCase):
 
     def test_duplicates(self):
         self.match(['release', 'release'], num_errors=1)
-        self.match(['win-xp', 'xp'], num_errors=1)
-        self.match(['win-xp', 'win-xp'], num_errors=1)
+        self.match(['win', 'xp'], num_errors=1)
+        self.match(['xp', 'xp'], num_errors=1)
         self.match(['xp', 'release', 'xp', 'release'], num_errors=2)
         self.match(['rebaseline', 'rebaseline'], num_errors=1)
 
@@ -461,10 +454,6 @@ class ModifierTests(unittest.TestCase):
     def test_duplicate_bugs(self):
         # BUG* regexes can appear multiple times.
         self.match(['bugfoo', 'bugbar'], 0)
-
-    def test_invalid_combinations(self):
-        # FIXME: This should probably raise an error instead of NO_MATCH.
-        self.match(['mac', 'xp'], num_errors=0)
 
     def test_regexes_are_ignored(self):
         self.match(['bug123xy', 'rebaseline', 'wontfix', 'slow', 'skip'], 0)

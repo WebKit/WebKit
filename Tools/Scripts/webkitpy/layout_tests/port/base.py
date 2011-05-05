@@ -996,9 +996,7 @@ class Driver:
 
 
 class TestConfiguration(object):
-    def __init__(self, port=None, os=None, version=None, architecture=None,
-                 build_type=None, graphics_type=None):
-        self.os = os or port.operating_system()
+    def __init__(self, port=None, version=None, architecture=None, build_type=None, graphics_type=None):
         self.version = version or port.version()
         self.architecture = architecture or port.architecture()
         self.build_type = build_type or port._options.configuration.lower()
@@ -1011,11 +1009,11 @@ class TestConfiguration(object):
         return self.__dict__.keys()
 
     def __str__(self):
-        return ("<%(os)s, %(version)s, %(architecture)s, %(build_type)s, %(graphics_type)s>" %
+        return ("<%(version)s, %(architecture)s, %(build_type)s, %(graphics_type)s>" %
                 self.__dict__)
 
     def __repr__(self):
-        return "TestConfig(os='%(os)s', version='%(version)s', architecture='%(architecture)s', build_type='%(build_type)s', graphics_type='%(graphics_type)s')" % self.__dict__
+        return "TestConfig(version='%(version)s', architecture='%(architecture)s', build_type='%(build_type)s', graphics_type='%(graphics_type)s')" % self.__dict__
 
     def values(self):
         """Returns the configuration values of this instance as a tuple."""
@@ -1030,21 +1028,20 @@ class TestConfiguration(object):
             for build_type in self.all_build_types():
                 for graphics_type in self.all_graphics_types():
                     test_configurations.append(TestConfiguration(
-                        os=system[0],
-                        version=system[1],
-                        architecture=system[2],
+                        version=system[0],
+                        architecture=system[1],
                         build_type=build_type,
                         graphics_type=graphics_type))
         return test_configurations
 
     def all_systems(self):
-        return (('mac', 'leopard', 'x86'),
-                ('mac', 'snowleopard', 'x86'),
-                ('win', 'xp', 'x86'),
-                ('win', 'vista', 'x86'),
-                ('win', 'win7', 'x86'),
-                ('linux', 'hardy', 'x86'),
-                ('linux', 'hardy', 'x86_64'))
+        return (('leopard', 'x86'),
+                ('snowleopard', 'x86'),
+                ('xp', 'x86'),
+                ('vista', 'x86'),
+                ('win7', 'x86'),
+                ('hardy', 'x86'),
+                ('hardy', 'x86_64'))
 
     def all_build_types(self):
         return ('debug', 'release')

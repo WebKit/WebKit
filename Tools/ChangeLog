@@ -1,3 +1,29 @@
+2011-05-05  Dirk Pranke  <dpranke@chromium.org>
+
+        Reviewed by Ojan Vafai.
+
+        new-run-webkit-tests: merge os, version fields in test config
+        https://bugs.webkit.org/show_bug.cgi?id=60004
+
+        This change removes the 'o/s' field from the TestConfiguration
+        object, and changes the 'MAC', 'WIN', and 'LINUX' modifiers in
+        the expectations file to macros that expand to the version names
+        for each platform.
+
+        This means that you can once again put any subset of the
+        operating system versions on a single line, e.g.:
+          BUGX LEOPARD XP LINUX : fast/html/foo.html = FAIL
+
+        This change will break any existing test_expectations.txt
+        file that uses the "OS-VERSION" macros, which are no longer
+        needed. It turns out they were never needed, as just VERSION
+        by itself was sufficient. The test_expectations.txt file should
+        be updated accordingly prior to landing this change.
+
+        * Scripts/webkitpy/layout_tests/layout_package/test_expectations.py:
+        * Scripts/webkitpy/layout_tests/layout_package/test_expectations_unittest.py:
+        * Scripts/webkitpy/layout_tests/port/base.py:
+
 2011-05-05  Tony Chang  <tony@chromium.org>
 
         Reviewed by Adam Barth.

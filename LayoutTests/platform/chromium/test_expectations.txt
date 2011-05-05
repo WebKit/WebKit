@@ -21,7 +21,7 @@
 // WONTFIX: For tests that we never intend to pass on a given platform.
 // DEBUG: Expectations apply only to the debug build.
 // RELEASE: Expectations apply only to release build.
-// LINUX/WIN/WIN-XP/WIN-VISTA/MAC: Expectations apply only to these platforms.
+// LINUX/WIN/XP/VISTA/MAC: Expectations apply only to these platforms.
 // GPU/CPU: Expectations only apply to a particular compositor. Default: both.
 //
 // Valid values for EXPECTATIONS:
@@ -88,8 +88,8 @@ BUGCR24182 SLOW : http/tests/cache/subresource-failover-to-network.html = PASS
 BUGCR24182 WIN DEBUG SLOW : fast/parser/block-nesting-cap.html = PASS
 
 // Usually <1s in release, ~1s in debug, but occasionally >5s in release.
-BUGCR27335 WIN XP RELEASE : plugins/embed-attributes-setting.html = PASS TIMEOUT
-BUGCR27335 WIN XP DEBUG SLOW : plugins/embed-attributes-setting.html = PASS
+BUGCR27335 XP RELEASE : plugins/embed-attributes-setting.html = PASS TIMEOUT
+BUGCR27335 XP DEBUG SLOW : plugins/embed-attributes-setting.html = PASS
 
 // --- collecting results for supported-xml-content-types.html ---
 // was slow, started to timeout
@@ -744,7 +744,7 @@ BUGCR58254 MAC : platform/mac/editing/spelling/autocorrection-simple.html = IMAG
 // match that in the <select> option lists.
 // Low priority, unclear if test expectations are correct (see bug)
 BUGCR6139 WIN LINUX : fast/forms/select-writing-direction-natural.html = IMAGE+TEXT
-BUGCR6139 MAC LEOPARD : fast/forms/select-writing-direction-natural.html = IMAGE+TEXT
+BUGCR6139 LEOPARD : fast/forms/select-writing-direction-natural.html = IMAGE+TEXT
 
 BUGCR67767 : http/tests/security/cross-frame-access-call.html = TEXT
 BUGCR67767 : http/tests/security/aboutBlank/xss-DENIED-set-opener.html = TEXT
@@ -890,7 +890,7 @@ BUGCR62433 WIN : fast/images/gif-loop-count.html = IMAGE
 BUGCR8763 MAC : svg/custom/use-on-g-containing-foreignObject-and-image.svg = IMAGE
 
 // We show reduced version of the entire SVN image rather than an image
-BUGCR23463 MAC LEOPARD : svg/W3C-SVG-1.1/struct-symbol-01-b.svg = IMAGE
+BUGCR23463 LEOPARD : svg/W3C-SVG-1.1/struct-symbol-01-b.svg = IMAGE
 BUGCR23463 WIN LINUX : svg/W3C-SVG-1.1/struct-symbol-01-b.svg = IMAGE+TEXT
 BUGCR23463 WIN LINUX : svg/W3C-SVG-1.1/struct-use-01-t.svg = IMAGE IMAGE+TEXT PASS
 BUGCR23463 WIN LINUX : svg/W3C-SVG-1.1/struct-image-02-b.svg = IMAGE+TEXT
@@ -926,7 +926,7 @@ BUGWK42370 WIN MAC : svg/custom/image-rescale-clip.html = FAIL
 BUGCR10295 MAC : fast/dom/prototype-chain.html = FAIL
 
 // Font differences, requiring overriden metrics, not a real bug, not fixing for Beta
-BUGCR10296 MAC LEOPARD : fast/text/international/bidi-menulist.html = FAIL
+BUGCR10296 LEOPARD : fast/text/international/bidi-menulist.html = FAIL
 // Maybe need to be rebaselined - should be looked at in more detail.
 BUGCR10296 LINUX : svg/batik/text/textLength.svg = FAIL
 
@@ -1234,24 +1234,24 @@ BUGCR23495 MAC : fast/forms/box-shadow-override.html = IMAGE+TEXT
 
 // Text declared as "monospace" with no size is bigger in Chromium
 BUGCR23494 MAC : css1/font_properties/font_family.html = IMAGE
-BUGCR23494 MAC LEOPARD : css2.1/t1503-c522-font-family-00-b.html = IMAGE
-BUGCR23494 MAC LEOPARD : fast/text/monospace-width-cache.html = IMAGE
+BUGCR23494 LEOPARD : css2.1/t1503-c522-font-family-00-b.html = IMAGE
+BUGCR23494 LEOPARD : fast/text/monospace-width-cache.html = IMAGE
 
 // Actual is just slightly off in color than expected
-BUGCR23488 MAC RELEASE LEOPARD : fast/backgrounds/size/backgroundSize15.html = IMAGE
-BUGCR23488 MAC DEBUG SLOW LEOPARD : fast/backgrounds/size/backgroundSize15.html = IMAGE
-BUGCR23488 MAC LEOPARD : fast/block/float/float-avoidance.html = IMAGE
+BUGCR23488 LEOPARD RELEASE : fast/backgrounds/size/backgroundSize15.html = IMAGE
+BUGCR23488 LEOPARD DEBUG SLOW : fast/backgrounds/size/backgroundSize15.html = IMAGE
+BUGCR23488 LEOPARD : fast/block/float/float-avoidance.html = IMAGE
 BUGCR23488 MAC : fast/canvas/canvas-incremental-repaint-2.html = IMAGE
-BUGCR23488 MAC LEOPARD : fast/css/shadow-multiple.html = IMAGE
+BUGCR23488 LEOPARD : fast/css/shadow-multiple.html = IMAGE
 BUGCR23488 MAC : fast/forms/search-vertical-alignment.html = IMAGE
-BUGCR23488 MAC LEOPARD : fast/frames/content-opacity-1.html = IMAGE
-BUGCR23488 MAC LEOPARD : fast/frames/content-opacity-2.html = IMAGE
+BUGCR23488 LEOPARD : fast/frames/content-opacity-1.html = IMAGE
+BUGCR23488 LEOPARD : fast/frames/content-opacity-2.html = IMAGE
 BUGCR23488 MAC : fast/layers/add-layer-with-nested-stacking.html = IMAGE
 BUGCR23488 MAC : fast/layers/inline-dirty-z-order-lists.html = IMAGE
 BUGCR23488 MAC : fast/layers/layer-content-visibility-change.html = IMAGE
 BUGCR23488 MAC : fast/layers/remove-layer-with-nested-stacking.html = IMAGE
-BUGCR23488 MAC LEOPARD : fast/lists/ol-start-parsing.html = IMAGE
-BUGCR23488 MAC LEOPARD : fast/multicol/positioned-with-constrained-height.html = IMAGE
+BUGCR23488 LEOPARD : fast/lists/ol-start-parsing.html = IMAGE
+BUGCR23488 LEOPARD : fast/multicol/positioned-with-constrained-height.html = IMAGE
 BUGCR23488 MAC : svg/transforms/animated-path-inside-transformed-html.xhtml = IMAGE
 BUGCR23488 MAC : tables/mozilla_expected_failures/bugs/bug178855.xml = IMAGE
 
@@ -1271,8 +1271,8 @@ BUGCR23476 MAC : fast/frames/inline-object-inside-frameset.html = IMAGE
 BUGCR23476 MAC : fast/text/font-initial.html = IMAGE
 
 // Disagreeing XML parsing error messages
-BUGCR23475 MAC LEOPARD : fast/parser/xhtml-alternate-entities.xml = IMAGE
-BUGCR23475 MAC LEOPARD : fast/xsl/xslt-extra-content-at-end.xml = IMAGE
+BUGCR23475 LEOPARD : fast/parser/xhtml-alternate-entities.xml = IMAGE
+BUGCR23475 LEOPARD : fast/xsl/xslt-extra-content-at-end.xml = IMAGE
 
 // Repaint tests failing on Mac.  Need to be manually triaged.
 BUGCR23473 MAC : fast/repaint/4774354.html = IMAGE
@@ -1379,7 +1379,7 @@ BUGCR23473 MAC : fast/repaint/transform-translate.html = IMAGE
 BUGWK39966 : fast/repaint/table-cell-collapsed-border.html = IMAGE
 
 // Thicker shadow than expected
-BUGCR23471 MAC LEOPARD : fast/text/stroking.html = IMAGE
+BUGCR23471 LEOPARD : fast/text/stroking.html = IMAGE
 
 // Failing on the bots but not locally; need investigation
 BUGCR23560 MAC : fast/images/animated-svg-as-image.html = IMAGE PASS
@@ -1647,10 +1647,10 @@ BUGCR25433 WIN LINUX : css2.1/t040103-ident-03-c.html = IMAGE
 BUGCR26344 LINUX DEBUG : fast/text/atsui-partial-selection.html = CRASH IMAGE
 
 BUGWK45957 WIN LINUX : fast/multicol/column-rules-stacking.html = IMAGE+TEXT
-BUGWK45957 MAC LEOPARD : fast/multicol/column-rules-stacking.html = IMAGE
+BUGWK45957 LEOPARD : fast/multicol/column-rules-stacking.html = IMAGE
 
 // ==== WebKit roll 50258:50313 ====
-BUGCR26291 MAC LEOPARD : fast/text/atsui-multiple-renderers.html = IMAGE
+BUGCR26291 LEOPARD : fast/text/atsui-multiple-renderers.html = IMAGE
 BUGCR26291 : transforms/2d/hindi-rotated.html = IMAGE IMAGE+TEXT
 
 // The following upstream patches add -Webkit-color-correction support:
@@ -2147,7 +2147,7 @@ BUGCR48239 : fast/js/function-apply-many-args.html = TEXT
 // The error gives a different line number than upstream.  Maybe a V8/JSC
 // difference?
 BUGCR48452 WIN LINUX : svg/custom/use-font-face-crash.svg = IMAGE+TEXT
-BUGCR48452 MAC LEOPARD : svg/custom/use-font-face-crash.svg = IMAGE+TEXT
+BUGCR48452 LEOPARD : svg/custom/use-font-face-crash.svg = IMAGE+TEXT
 
 BUGCR48668 MAC : svg/W3C-SVG-1.1/struct-use-01-t.svg = FAIL
 
@@ -2439,7 +2439,7 @@ BUGCR59671 LINUX : svg/carto.net/slider.svg = IMAGE PASS
 
 // Needs investigation
 BUGJAMESR LINUX WIN : fast/text/international/vertical-text-glyph-test.html = IMAGE+TEXT
-BUGJAMESR MAC LEOPARD : fast/text/international/vertical-text-glyph-test.html = IMAGE
+BUGJAMESR LEOPARD : fast/text/international/vertical-text-glyph-test.html = IMAGE
 BUGJAMESR WIN LINUX : fast/text/international/vertical-text-metrics-test.html = TEXT
 
 // Added in WebKit r69755, failed immediately.
@@ -2458,9 +2458,9 @@ BUGJAPHET : fast/js/date-parse-test.html = TEXT
 // Have been flaky for a long time.
 BUGWK48143 : svg/dom/altGlyph-dom.xhtml = CRASH PASS
 BUGWK48256 WIN LINUX : fast/multicol/float-multicol.html = IMAGE+TEXT PASS
-BUGWK48341 WIN XP DEBUG : svg/W3C-SVG-1.1/masking-intro-01-f.svg = CRASH
+BUGWK48341 XP DEBUG : svg/W3C-SVG-1.1/masking-intro-01-f.svg = CRASH
 BUGWK48341 MAC LINUX DEBUG : svg/W3C-SVG-1.1/masking-intro-01-f.svg = CRASH
-BUGWK58193 WIN WIN7 : svg/W3C-SVG-1.1/masking-intro-01-f.svg = IMAGE
+BUGWK58193 WIN7 : svg/W3C-SVG-1.1/masking-intro-01-f.svg = IMAGE
 BUGWK48352 : fast/blockflow/block-level-images.html = IMAGE PASS
 
 // Vertical text needs to be implemented in platforms other than OS X.
@@ -2488,7 +2488,7 @@ BUGWK61161 LINUX WIN : fast/blockflow/border-image-vertical-lr.html = IMAGE+TEXT
 //BUGWK61166 LINUX MAC WIN : media/video-seek-by-small-increment.html = TEXT
 
 // These tests started failing presumably after r70850
-BUGWK48627 MAC LEOPARD : fast/invalid/missing-end-tag.xhtml = IMAGE
+BUGWK48627 LEOPARD : fast/invalid/missing-end-tag.xhtml = IMAGE
 BUGWK48627 MAC : svg/custom/createImageElement2.xhtml = IMAGE
 
 // Failures after WebKit roll 70949:71000
@@ -2529,7 +2529,7 @@ BUGCR61739 DEBUG : animations/suspend-resume-animation-events.html = CRASH TEXT 
 // New tests added with http://trac.webkit.org/changeset/72472 and further.
 // See https://bugs.webkit.org/show_bug.cgi?id=51982 for more info.
 BUGWK52509 WIN LINUX : svg/css/rect-gradient-stroke-shadow.svg = IMAGE
-BUGWK52509 MAC LEOPARD : svg/css/rect-gradient-stroke-shadow.svg = IMAGE
+BUGWK52509 LEOPARD : svg/css/rect-gradient-stroke-shadow.svg = IMAGE
 BUGCR63921 CPU LINUX WIN : fast/canvas/canvas-fillPath-shadow.html = TEXT
 BUGCR63921 GPU : fast/canvas/canvas-fillPath-alpha-shadow.html = TEXT TIMEOUT
 BUGCR63921 GPU : fast/canvas/canvas-strokeRect-alpha-shadow.html = TEXT TIMEOUT
@@ -2546,27 +2546,27 @@ BUGCR64733 : editing/text-iterator/findString.html = TEXT
 BUGV8_953 : fast/regex/pcre-test-1.html = TIMEOUT
 
 BUGCR50282 MAC : fast/images/imagemap-case.html = IMAGE
-BUGCR50282 MAC LEOPARD : fast/images/imagemap-focus-ring-zoom.html = IMAGE
-BUGCR50282 MAC LEOPARD : fast/images/imagemap-focus-ring.html = IMAGE
+BUGCR50282 LEOPARD : fast/images/imagemap-focus-ring-zoom.html = IMAGE
+BUGCR50282 LEOPARD : fast/images/imagemap-focus-ring.html = IMAGE
 BUGCR50282 WIN LINUX : fast/images/imagemap-focus-ring-outline-color-explicitly-inherited-from-map.html = IMAGE+TEXT
-BUGCR50282 MAC LEOPARD : fast/images/imagemap-focus-ring-outline-color-explicitly-inherited-from-map.html = IMAGE
+BUGCR50282 LEOPARD : fast/images/imagemap-focus-ring-outline-color-explicitly-inherited-from-map.html = IMAGE
 BUGCR50282 WIN LINUX : fast/images/imagemap-focus-ring-outline-color-not-inherited-from-map.html = IMAGE+TEXT
-BUGCR50282 MAC LEOPARD : fast/images/imagemap-focus-ring-outline-color-not-inherited-from-map.html = IMAGE
+BUGCR50282 LEOPARD : fast/images/imagemap-focus-ring-outline-color-not-inherited-from-map.html = IMAGE
 BUGCR50282 WIN LINUX : fast/images/imagemap-focus-ring-outline-color.html = IMAGE+TEXT
-BUGCR50282 MAC LEOPARD : fast/images/imagemap-focus-ring-outline-color.html = IMAGE
+BUGCR50282 LEOPARD : fast/images/imagemap-focus-ring-outline-color.html = IMAGE
 
 // Selection is wrong.
 BUGCR64938 : editing/selection/5354455-1.html = TEXT
 
 // Regressed at r73423. All areas are painted green.
 BUGWK50734 WIN LINUX : fast/repaint/positioned-document-element.html = IMAGE
-BUGWK50734 MAC LEOPARD : fast/repaint/positioned-document-element.html = IMAGE
+BUGWK50734 LEOPARD : fast/repaint/positioned-document-element.html = IMAGE
 
 // r73490. Win/Linux: Focus ring is not rendered. Mac: Just rebaseline?
 BUG_YUTAK WIN LINUX : fast/images/imagemap-circle-focus-ring.html = IMAGE+TEXT
-BUG_YUTAK MAC LEOPARD : fast/images/imagemap-circle-focus-ring.html = IMAGE
+BUG_YUTAK LEOPARD : fast/images/imagemap-circle-focus-ring.html = IMAGE
 BUG_YUTAK WIN LINUX : fast/images/imagemap-polygon-focus-ring.html = IMAGE+TEXT
-BUG_YUTAK MAC LEOPARD : fast/images/imagemap-polygon-focus-ring.html = IMAGE
+BUG_YUTAK LEOPARD : fast/images/imagemap-polygon-focus-ring.html = IMAGE
 
 ///////////////////////////////////////////////////////////////////////////
 // Regressions caused by switching to DRT.
@@ -2586,8 +2586,8 @@ BUG_DRT MAC : fast/reflections/inline-crash.html = IMAGE
 BUG_DRT : http/tests/misc/slow-loading-image-in-pattern.html = IMAGE
 
 // Flaky since 2010-09-17?
-BUGCR57950 WIN XP : svg/batik/text/verticalText.svg = CRASH PASS
-BUGWK58193 WIN WIN7 : svg/batik/text/verticalText.svg = IMAGE+TEXT
+BUGCR57950 XP : svg/batik/text/verticalText.svg = CRASH PASS
+BUGWK58193 WIN7 : svg/batik/text/verticalText.svg = IMAGE+TEXT
 
 // media/video-* flakyness
 BUGCR60744 : media/video-layer-crash.html = CRASH TIMEOUT PASS IMAGE
@@ -2691,7 +2691,7 @@ BUGCR67139 WIN MAC LINUX DEBUG : storage/close-during-stress-test.html = CRASH P
 
 // WebKit roll 74255:74308
 BUGCR67416 WIN LINUX : fast/text/emphasis.html = IMAGE+TEXT
-BUGCR67416 MAC LEOPARD : fast/text/emphasis.html = IMAGE
+BUGCR67416 LEOPARD : fast/text/emphasis.html = IMAGE
 BUGCR67416 : fast/text/emphasis-vertical.html = FAIL
 BUGCR67540 WIN LINUX : fast/text/emphasis-overlap.html = IMAGE+TEXT
 BUGCR67540 WIN LINUX : fast/text/emphasis-avoid-ruby.html = IMAGE
@@ -2720,17 +2720,17 @@ BUGWK52414 MAC : fast/overflow/006.html = IMAGE
 BUGWK52414 MAC : fast/overflow/overflow-x-y.html = IMAGE
 
 // MAC not passing the CSS3 elliptical gradient tests.
-BUGWK55745 MAC LEOPARD : fast/gradients/css3-color-stop-units.html = IMAGE
-BUGWK55745 MAC LEOPARD : fast/gradients/css3-color-stops.html = IMAGE
-BUGWK55745 MAC LEOPARD : fast/gradients/css3-linear-angle-gradients.html = IMAGE
+BUGWK55745 LEOPARD : fast/gradients/css3-color-stop-units.html = IMAGE
+BUGWK55745 LEOPARD : fast/gradients/css3-color-stops.html = IMAGE
+BUGWK55745 LEOPARD : fast/gradients/css3-linear-angle-gradients.html = IMAGE
 BUGWK55745 MAC : fast/gradients/css3-radial-gradients.html = IMAGE
 BUGWK55745 MAC : fast/gradients/css3-radial-gradients2.html = IMAGE
 BUGWK55745 MAC : fast/gradients/css3-radial-gradients3.html = IMAGE
 BUGWK55745 MAC : fast/gradients/css3-repeating-radial-gradients.html = IMAGE
 
 // This was introduced by r75077.
-BUGWK52082 MAC LEOPARD : fast/text/basic/014.html = IMAGE
-BUGWK52082 MAC LEOPARD: fast/text/midword-break-after-breakable-char.html = IMAGE
+BUGWK52082 LEOPARD : fast/text/basic/014.html = IMAGE
+BUGWK52082 LEOPARD: fast/text/midword-break-after-breakable-char.html = IMAGE
 BUGWK52082 WIN LINUX : fast/text/basic/014.html = IMAGE+TEXT
 BUGWK52082 WIN LINUX : fast/text/midword-break-after-breakable-char.html = IMAGE+TEXT
 
@@ -2797,7 +2797,7 @@ BUGCR71022 MAC : fast/text/justify-ideograph-complex.html = IMAGE
 BUGCR71022 WIN LINUX : fast/text/justify-ideograph-simple.html = IMAGE+TEXT
 BUGCR71022 WIN : fast/text/justify-ideograph-vertical.html = IMAGE+TEXT
 // Seems to have started failing at http://trac.webkit.org/changeset/80582
-BUGCR71022 MAC LEOPARD : fast/text/justify-ideograph-vertical.html = IMAGE
+BUGCR71022 LEOPARD : fast/text/justify-ideograph-vertical.html = IMAGE
 
 BUGWK53347 WIN LINUX DEBUG : fast/repaint/4774354.html = PASS TIMEOUT
 
@@ -2825,10 +2825,10 @@ BUGCR71783 : scrollbars/custom-scrollbar-with-incomplete-style.html = IMAGE
 //
 
 // We only maintain pixel GPU baselines for Snow Leopard
-WONTFIX GPU MAC LEOPARD : compositing = IMAGE PASS
-WONTFIX GPU MAC LEOPARD : platform/chromium/compositing = IMAGE PASS
-WONTFIX GPU MAC LEOPARD : media = IMAGE PASS
-BUGJAMESR GPU MAC LEOPARD : compositing/overflow/content-gains-scrollbars.html = CRASH
+WONTFIX GPU LEOPARD : compositing = IMAGE PASS
+WONTFIX GPU LEOPARD : platform/chromium/compositing = IMAGE PASS
+WONTFIX GPU LEOPARD : media = IMAGE PASS
+BUGJAMESR GPU LEOPARD : compositing/overflow/content-gains-scrollbars.html = CRASH
 
 // Will need windows and linux baselines
 BUGWK58182 GPU : compositing/images/content-image-change.html = PASS FAIL
@@ -2934,64 +2934,64 @@ BUGWK54051 MAC LINUX : plugins/invalidate_rect.html = TEXT
 BUGWK54051 MAC LINUX : plugins/windowless_plugin_paint_test.html = TEXT TIMEOUT
 
 // Snow Leopard-only failures (generally just need updated pixel results)
-BUGWK54322 MAC SNOWLEOPARD : css1/text_properties/text_transform.html = IMAGE+TEXT
-BUGWK54322 MAC SNOWLEOPARD : css2.1/t1605-c545-txttrans-00-b-ag.html = IMAGE+TEXT
-BUGWK54322 MAC SNOWLEOPARD : fast/backgrounds/svg-as-background-5.html = IMAGE
-BUGWK54322 MAC SNOWLEOPARD : fast/backgrounds/svg-as-background-6.html = IMAGE
-BUGWK54322 MAC SNOWLEOPARD : fast/canvas/arc360.html = IMAGE
-BUGWK54322 MAC SNOWLEOPARD : fast/canvas/set-colors.html = TEXT
-BUGWK54322 MAC SNOWLEOPARD : fast/css/transform-default-parameter.html = IMAGE
-BUGWK54322 MAC SNOWLEOPARD : fast/dom/blur-contenteditable.html = IMAGE
-BUGWK54322 MAC SNOWLEOPARD : fast/dom/HTMLInputElement/input-slider-update.html = IMAGE
-BUGWK54322 MAC SNOWLEOPARD : fast/forms/basic-buttons.html = IMAGE
-BUGWK54322 MAC SNOWLEOPARD : fast/forms/button-sizes.html = IMAGE
-BUGWK54322 MAC SNOWLEOPARD : fast/forms/file-input-direction.html = IMAGE+TEXT
-BUGWK54322 MAC SNOWLEOPARD : fast/forms/input-appearance-bkcolor.html = IMAGE
-BUGWK54322 MAC SNOWLEOPARD : fast/forms/input-file-re-render.html = IMAGE
-BUGWK54322 MAC SNOWLEOPARD : fast/forms/preserveFormDuringResidualStyle.html = IMAGE
-BUGWK54322 MAC SNOWLEOPARD : fast/forms/search-transformed.html = IMAGE
-BUGWK54322 MAC SNOWLEOPARD : fast/forms/slider-padding.html = IMAGE
-BUGWK54322 MAC SNOWLEOPARD : fast/images/favicon-as-image.html = IMAGE+TEXT
-//BUGWK54322 MAC SNOWLEOPARD : fast/inline/inline-box-background-long-image.html = IMAGE
-BUGWK54322 MAC SNOWLEOPARD : fast/media/mq-transform-02.html = IMAGE+TEXT
-BUGWK54322 MAC SNOWLEOPARD : fast/media/mq-transform-03.html = IMAGE+TEXT
-BUGWK54322 MAC SNOWLEOPARD : fast/replaced/width100percent-textarea.html = IMAGE
-BUGWK54322 MAC SNOWLEOPARD : fast/text/international/pop-up-button-text-alignment-and-direction.html = IMAGE
-BUGWK54322 MAC SNOWLEOPARD : fast/text/international/text-combine-image-test.html = IMAGE
-BUGWK54322 MAC SNOWLEOPARD : fast/text/justify-nbsp.html = IMAGE
-BUGWK54322 MAC SNOWLEOPARD : fonts/monospace.html = IMAGE
-BUGWK54322 MAC SNOWLEOPARD : http/tests/misc/acid3.html = IMAGE
-BUGWK54322 MAC SNOWLEOPARD : svg/custom/animate-path-discrete.svg = IMAGE
-BUGWK54322 MAC SNOWLEOPARD : svg/W3C-SVG-1.1/coords-viewattr-01-b.svg = IMAGE+TEXT
-BUGWK54322 MAC SNOWLEOPARD : svg/zoom/page/zoom-coords-viewattr-01-b.svg = IMAGE+TEXT
-BUGWK54322 MAC SNOWLEOPARD : svg/zoom/text/zoom-coords-viewattr-01-b.svg = IMAGE+TEXT
-BUGWK54322 MAC SNOWLEOPARD : tables/mozilla_expected_failures/bugs/bug85016.html = IMAGE
-BUGWK54322 MAC SNOWLEOPARD : tables/mozilla/core/bloomberg.html = IMAGE
-BUGWK54322 MAC SNOWLEOPARD : tables/mozilla/core/misc.html = IMAGE
-BUGWK54322 MAC SNOWLEOPARD : tables/mozilla/core/row_span.html = IMAGE
-BUGWK54322 MAC SNOWLEOPARD : tables/mozilla/other/cell_widths.html = IMAGE
-BUGWK54322 MAC SNOWLEOPARD : transforms/no_transform_hit_testing.html = IMAGE
-BUGWK54322 MAC SNOWLEOPARD : transforms/svg-vs-css.xhtml = IMAGE
-BUGWK54322 MAC SNOWLEOPARD : transitions/move-after-transition.html = IMAGE
-BUGWK54322 MAC SNOWLEOPARD : fast/dom/scroll-reveal-left-overflow.html = IMAGE
+BUGWK54322 SNOWLEOPARD : css1/text_properties/text_transform.html = IMAGE+TEXT
+BUGWK54322 SNOWLEOPARD : css2.1/t1605-c545-txttrans-00-b-ag.html = IMAGE+TEXT
+BUGWK54322 SNOWLEOPARD : fast/backgrounds/svg-as-background-5.html = IMAGE
+BUGWK54322 SNOWLEOPARD : fast/backgrounds/svg-as-background-6.html = IMAGE
+BUGWK54322 SNOWLEOPARD : fast/canvas/arc360.html = IMAGE
+BUGWK54322 SNOWLEOPARD : fast/canvas/set-colors.html = TEXT
+BUGWK54322 SNOWLEOPARD : fast/css/transform-default-parameter.html = IMAGE
+BUGWK54322 SNOWLEOPARD : fast/dom/blur-contenteditable.html = IMAGE
+BUGWK54322 SNOWLEOPARD : fast/dom/HTMLInputElement/input-slider-update.html = IMAGE
+BUGWK54322 SNOWLEOPARD : fast/forms/basic-buttons.html = IMAGE
+BUGWK54322 SNOWLEOPARD : fast/forms/button-sizes.html = IMAGE
+BUGWK54322 SNOWLEOPARD : fast/forms/file-input-direction.html = IMAGE+TEXT
+BUGWK54322 SNOWLEOPARD : fast/forms/input-appearance-bkcolor.html = IMAGE
+BUGWK54322 SNOWLEOPARD : fast/forms/input-file-re-render.html = IMAGE
+BUGWK54322 SNOWLEOPARD : fast/forms/preserveFormDuringResidualStyle.html = IMAGE
+BUGWK54322 SNOWLEOPARD : fast/forms/search-transformed.html = IMAGE
+BUGWK54322 SNOWLEOPARD : fast/forms/slider-padding.html = IMAGE
+BUGWK54322 SNOWLEOPARD : fast/images/favicon-as-image.html = IMAGE+TEXT
+//BUGWK54322 SNOWLEOPARD : fast/inline/inline-box-background-long-image.html = IMAGE
+BUGWK54322 SNOWLEOPARD : fast/media/mq-transform-02.html = IMAGE+TEXT
+BUGWK54322 SNOWLEOPARD : fast/media/mq-transform-03.html = IMAGE+TEXT
+BUGWK54322 SNOWLEOPARD : fast/replaced/width100percent-textarea.html = IMAGE
+BUGWK54322 SNOWLEOPARD : fast/text/international/pop-up-button-text-alignment-and-direction.html = IMAGE
+BUGWK54322 SNOWLEOPARD : fast/text/international/text-combine-image-test.html = IMAGE
+BUGWK54322 SNOWLEOPARD : fast/text/justify-nbsp.html = IMAGE
+BUGWK54322 SNOWLEOPARD : fonts/monospace.html = IMAGE
+BUGWK54322 SNOWLEOPARD : http/tests/misc/acid3.html = IMAGE
+BUGWK54322 SNOWLEOPARD : svg/custom/animate-path-discrete.svg = IMAGE
+BUGWK54322 SNOWLEOPARD : svg/W3C-SVG-1.1/coords-viewattr-01-b.svg = IMAGE+TEXT
+BUGWK54322 SNOWLEOPARD : svg/zoom/page/zoom-coords-viewattr-01-b.svg = IMAGE+TEXT
+BUGWK54322 SNOWLEOPARD : svg/zoom/text/zoom-coords-viewattr-01-b.svg = IMAGE+TEXT
+BUGWK54322 SNOWLEOPARD : tables/mozilla_expected_failures/bugs/bug85016.html = IMAGE
+BUGWK54322 SNOWLEOPARD : tables/mozilla/core/bloomberg.html = IMAGE
+BUGWK54322 SNOWLEOPARD : tables/mozilla/core/misc.html = IMAGE
+BUGWK54322 SNOWLEOPARD : tables/mozilla/core/row_span.html = IMAGE
+BUGWK54322 SNOWLEOPARD : tables/mozilla/other/cell_widths.html = IMAGE
+BUGWK54322 SNOWLEOPARD : transforms/no_transform_hit_testing.html = IMAGE
+BUGWK54322 SNOWLEOPARD : transforms/svg-vs-css.xhtml = IMAGE
+BUGWK54322 SNOWLEOPARD : transitions/move-after-transition.html = IMAGE
+BUGWK54322 SNOWLEOPARD : fast/dom/scroll-reveal-left-overflow.html = IMAGE
 
 // Snow Leopard-only flakiness
-BUGWK54322 MAC SNOWLEOPARD : dom/html/level1/core/hc_textwithnomarkup.html = TIMEOUT PASS
-BUGWK54322 MAC SNOWLEOPARD : fast/canvas/translate-text.html = PASS TIMEOUT
-BUGWK54322 MAC SNOWLEOPARD : fast/css/font-face-in-shadow-DOM.html = IMAGE+TEXT PASS
-BUGWK54322 MAC SNOWLEOPARD : fast/history/history-back-within-subframe-hash.html = TIMEOUT PASS
-BUGWK54322 MAC SNOWLEOPARD : fast/loader/loadInProgress.html = PASS TIMEOUT
-BUGWK54322 MAC SNOWLEOPARD : http/tests/loading/location-hash-reload-cycle.html = TEXT PASS
-BUGWK54322 MAC SNOWLEOPARD : http/tests/loading/slow-parsing-subframe.html = CRASH PASS
-BUGWK54322 MAC SNOWLEOPARD : http/tests/navigation/image-load-in-unload-handler.html = TEXT PASS
-BUGWK54322 MAC SNOWLEOPARD : http/tests/navigation/ping-same-origin.html = TEXT PASS
-BUGWK54322 MAC SNOWLEOPARD : http/tests/security/isolatedWorld/all-window-properties.html = TEXT PASS
-BUGWK54322 MAC SNOWLEOPARD : http/tests/security/isolatedWorld/all-window-prototypes.html = TEXT PASS
-BUGWK54322 MAC SNOWLEOPARD : http/tests/xmlhttprequest/small-chunks-response-text.html = PASS TIMEOUT
-BUGWK54322 MAC SNOWLEOPARD : scrollbars/hidden-iframe-scrollbar-crash2.html = TEXT PASS
-BUGWK54322 MAC SNOWLEOPARD : storage/indexeddb/data-corruption.html = TIMEOUT PASS
-BUGWK54322 MAC SNOWLEOPARD : svg/custom/acid3-test-77.html = TIMEOUT PASS
-BUGWK54322 MAC SNOWLEOPARD : transitions/transition-end-event-rendering.html = PASS TEXT
+BUGWK54322 SNOWLEOPARD : dom/html/level1/core/hc_textwithnomarkup.html = TIMEOUT PASS
+BUGWK54322 SNOWLEOPARD : fast/canvas/translate-text.html = PASS TIMEOUT
+BUGWK54322 SNOWLEOPARD : fast/css/font-face-in-shadow-DOM.html = IMAGE+TEXT PASS
+BUGWK54322 SNOWLEOPARD : fast/history/history-back-within-subframe-hash.html = TIMEOUT PASS
+BUGWK54322 SNOWLEOPARD : fast/loader/loadInProgress.html = PASS TIMEOUT
+BUGWK54322 SNOWLEOPARD : http/tests/loading/location-hash-reload-cycle.html = TEXT PASS
+BUGWK54322 SNOWLEOPARD : http/tests/loading/slow-parsing-subframe.html = CRASH PASS
+BUGWK54322 SNOWLEOPARD : http/tests/navigation/image-load-in-unload-handler.html = TEXT PASS
+BUGWK54322 SNOWLEOPARD : http/tests/navigation/ping-same-origin.html = TEXT PASS
+BUGWK54322 SNOWLEOPARD : http/tests/security/isolatedWorld/all-window-properties.html = TEXT PASS
+BUGWK54322 SNOWLEOPARD : http/tests/security/isolatedWorld/all-window-prototypes.html = TEXT PASS
+BUGWK54322 SNOWLEOPARD : http/tests/xmlhttprequest/small-chunks-response-text.html = PASS TIMEOUT
+BUGWK54322 SNOWLEOPARD : scrollbars/hidden-iframe-scrollbar-crash2.html = TEXT PASS
+BUGWK54322 SNOWLEOPARD : storage/indexeddb/data-corruption.html = TIMEOUT PASS
+BUGWK54322 SNOWLEOPARD : svg/custom/acid3-test-77.html = TIMEOUT PASS
+BUGWK54322 SNOWLEOPARD : transitions/transition-end-event-rendering.html = PASS TEXT
 
 BUGCR72428 : fast/dom/HTMLAnchorElement/set-href-attribute-hash.html = TEXT
 
@@ -3034,7 +3034,7 @@ BUGWK55117 : fast/js/i18n-bindings-locale.html = TEXT
 BUGCR80745 DEBUG : html5lib/runner.html = PASS TIMEOUT CRASH
 
 BUG_ANTONM WIN LINUX : svg/dynamic-updates/SVGFESpecularLightingElement-remove-lightSource.html = IMAGE
-BUG_ANTONM MAC LEOPARD : svg/dynamic-updates/SVGFESpecularLightingElement-remove-lightSource.html = IMAGE
+BUG_ANTONM LEOPARD : svg/dynamic-updates/SVGFESpecularLightingElement-remove-lightSource.html = IMAGE
 
 BUGCR74497 : platform/win/plugins/windowless-paint-rect-coordinates.html = CRASH
 
@@ -3061,26 +3061,27 @@ BUGWK58587 DEBUG GPU LINUX : fast/canvas/image-object-in-canvas.html = IMAGE
 //BUGWK58587 DEBUG GPU LINUX : platform/chromium/compositing/layout-width-change.html = IMAGE
 BUGWK58587 GPU LINUX : compositing/direct-image-compositing.html = IMAGE
 
-// WebKit roll 80564:80631: rendering on Mac LEOPARD is shifted to the top right
+// WebKit roll 80564:80631: rendering on Leopard is shifted to the top right
 // started at some point at or after WK r80582 (Dave Hyatt's vertical text change - a very likely candidate)
-BUGCR75424 MAC LEOPARD : fast/blockflow/broken-ideograph-small-caps.html = IMAGE
-BUGCR75424 MAC LEOPARD : fast/blockflow/japanese-rl-text-with-broken-font.html = IMAGE
+BUGCR75424 LEOPARD : fast/blockflow/broken-ideograph-small-caps.html = IMAGE
+BUGCR75424 LEOPARD : fast/blockflow/japanese-rl-text-with-broken-font.html = IMAGE
 
 // WebKit roll 80564:80631: vertical text fallout - these probably just need rebaseline:
-BUGWK56072 WIN-VISTA : fast/blockflow/japanese-lr-text.html = IMAGE
-BUGWK56072 WIN-VISTA : fast/blockflow/japanese-rl-text.html = IMAGE
-BUGWK56072 WIN-VISTA : fast/blockflow/japanese-ruby-vertical-lr.html = IMAGE
-BUGWK56072 WIN-VISTA : fast/blockflow/japanese-ruby-vertical-rl.html = IMAGE
-BUGWK56072 WIN-VISTA : fast/blockflow/vertical-align-table-baseline.html = IMAGE
-BUGWK56072 WIN-VISTA : fast/blockflow/vertical-baseline-alignment.html = IMAGE
-BUGWK56072 WIN-VISTA : fast/repaint/japanese-rl-selection-clear.html = IMAGE
-BUGWK56072 MAC WIN-VISTA : fast/repaint/japanese-rl-selection-repaint.html = IMAGE
-BUGWK56072 WIN-VISTA : fast/repaint/repaint-across-writing-mode-boundary.html = IMAGE
-BUGWK56072 WIN-VISTA : fast/ruby/base-shorter-than-text.html = FAIL
+BUGWK56072 VISTA : fast/blockflow/japanese-lr-text.html = IMAGE
+BUGWK56072 VISTA : fast/blockflow/japanese-rl-text.html = IMAGE
+BUGWK56072 VISTA : fast/blockflow/japanese-ruby-vertical-lr.html = IMAGE
+BUGWK56072 VISTA : fast/blockflow/japanese-ruby-vertical-rl.html = IMAGE
+BUGWK56072 VISTA : fast/blockflow/vertical-align-table-baseline.html = IMAGE
+BUGWK56072 VISTA : fast/blockflow/vertical-baseline-alignment.html = IMAGE
+BUGWK56072 VISTA : fast/repaint/japanese-rl-selection-clear.html = IMAGE
+BUGWK56072 VISTA : fast/repaint/japanese-rl-selection-repaint.html = IMAGE
+BUGWK56072 MAC : fast/repaint/japanese-rl-selection-repaint.html = IMAGE
+BUGWK56072 VISTA : fast/repaint/repaint-across-writing-mode-boundary.html = IMAGE
+BUGWK56072 VISTA : fast/ruby/base-shorter-than-text.html = FAIL
 
 // introduced by Dave Hyatt in WK r80582
 BUGCR75561 WIN LINUX : fast/blockflow/text-orientation-basic.html = IMAGE+TEXT
-BUGCR75561 MAC LEOPARD : fast/blockflow/text-orientation-basic.html = IMAGE
+BUGCR75561 LEOPARD : fast/blockflow/text-orientation-basic.html = IMAGE
 
 // introduced by brarraclough in WK r80621
 BUGCR75562 : fast/js/array-proto-func-length-getter-except.html = TEXT
@@ -3098,8 +3099,8 @@ BUGCR75740 : fast/js/regexp-test-null-string.html = FAIL
 BUGCR69594 SKIP : http/tests/appcache/different-https-origin-resource-main.html = FAIL
 
 // Need a rebaseline.
-BUG_ANTONM MAC LEOPARD : http/tests/security/xss-DENIED-xml-external-entity.xhtml = TEXT
-BUG_ANTONM MAC LEOPARD : http/tests/security/xss-DENIED-xsl-external-entity.xml = TEXT
+BUG_ANTONM LEOPARD : http/tests/security/xss-DENIED-xml-external-entity.xhtml = TEXT
+BUG_ANTONM LEOPARD : http/tests/security/xss-DENIED-xsl-external-entity.xml = TEXT
 
 // are failing after roll 80582 -> 80608
 BUG_LOISLO MAC DEBUG : fast/text/font-size-zero.html = TEXT
@@ -3127,7 +3128,7 @@ BUGCR76979 LINUX DEBUG : inspector/console/console-dirxml.html = PASS TEXT TIMEO
 // New in WebKit r81404. Text orientation is wrong and emphasis marks are wrong.
 BUGCR76616 WIN LINUX : fast/text/emphasis-combined-text.html = IMAGE+TEXT
 // Needs leopard baseline.
-BUGCR76616 MAC LEOPARD : fast/text/emphasis-combined-text.html = IMAGE
+BUGCR76616 LEOPARD : fast/text/emphasis-combined-text.html = IMAGE
 
 BUGWK56677 GPU WIN LINUX : fast/canvas/canvas-drawImage-shadow.html = TEXT
 BUGWK56677 GPU WIN LINUX : fast/canvas/canvas-scale-drawImage-shadow.html = TEXT
@@ -3146,19 +3147,19 @@ BUGCR77468 : fast/forms/input-file-directory-upload.html = TIMEOUT
 // http://trac.webkit.org/changeset/81992
 BUGCR77494 WIN LINUX : fast/block/positioning/056.html = FAIL
 BUGCR77494 WIN LINUX : fast/block/positioning/auto/005.html = IMAGE+TEXT
-BUGCR77494 MAC LEOPARD : fast/block/positioning/auto/005.html = IMAGE
+BUGCR77494 LEOPARD : fast/block/positioning/auto/005.html = IMAGE
 BUGCR77494 WIN LINUX : fast/block/positioning/auto/006.html = IMAGE+TEXT
-BUGCR77494 MAC LEOPARD : fast/block/positioning/auto/006.html = IMAGE
+BUGCR77494 LEOPARD : fast/block/positioning/auto/006.html = IMAGE
 BUGCR77494 WIN LINUX : fast/block/positioning/auto/vertical-lr/005.html = FAIL
 BUGCR77494 WIN LINUX : fast/block/positioning/auto/vertical-lr/006.html = FAIL
 BUGCR77494 WIN LINUX : fast/block/positioning/auto/vertical-rl/005.html = FAIL
 BUGCR77494 WIN LINUX : fast/block/positioning/auto/vertical-rl/006.html = FAIL
 BUGCR77494 WIN LINUX : fast/block/positioning/fixed-positioning-scrollbar-bug.html = FAIL
 BUGCR77494 WIN LINUX : fast/block/positioning/inline-block-relposition.html = IMAGE+TEXT
-BUGCR77494 MAC LEOPARD : fast/block/positioning/inline-block-relposition.html = IMAGE
+BUGCR77494 LEOPARD : fast/block/positioning/inline-block-relposition.html = IMAGE
 BUGCR77494 WIN LINUX : fast/block/positioning/relative-overflow-block.html = FAIL
 BUGCR77494 WIN LINUX : fast/block/positioning/trailing-space-test.html = IMAGE+TEXT
-BUGCR77494 MAC LEOPARD : fast/block/positioning/trailing-space-test.html = IMAGE
+BUGCR77494 LEOPARD : fast/block/positioning/trailing-space-test.html = IMAGE
 BUGCR77494 WIN LINUX : fast/clip/001.html = FAIL
 BUGCR77494 WIN LINUX : fast/clip/004.html = FAIL
 BUGCR77494 WIN LINUX : fast/clip/006.html = FAIL
@@ -3187,7 +3188,7 @@ BUGCR77582 WIN LINUX RELEASE : inspector/debugger/debugger-activation-crash2.htm
 BUGCR77582 BUG_DRT WIN LINUX DEBUG SLOW : inspector/debugger/debugger-activation-crash2.html = TEXT
 
 // Regression since r82001.
-BUGCR77619 MAC SNOWLEOPARD : plugins/plugin-javascript-access.html = TEXT
+BUGCR77619 SNOWLEOPARD : plugins/plugin-javascript-access.html = TEXT
 
 // New test in r82013.
 BUGWK82013 WIN LINUX : fast/text/justify-ideograph-leading-expansion.html = IMAGE+TEXT
@@ -3197,8 +3198,8 @@ BUGWK82013 SNOWLEOPARD: fast/text/justify-ideograph-leading-expansion.html = IMA
 BUGCR77574 LINUX : fast/blockflow/fallback-orientation.html = IMAGE
 
 // Regression in r82056.
-BUGWK57302 MAC LEOPARD : fast/ruby/base-shorter-than-text.html = IMAGE+TEXT
-BUGWK57302 MAC LEOPARD : fast/text/international/text-combine-image-test.html = IMAGE+TEXT
+BUGWK57302 LEOPARD : fast/ruby/base-shorter-than-text.html = IMAGE+TEXT
+BUGWK57302 LEOPARD : fast/text/international/text-combine-image-test.html = IMAGE+TEXT
 
 // New test added in r82159
 BUGCR77706 : editing/spelling/grammar.html = FAIL
@@ -3207,13 +3208,13 @@ BUGCR77706 : editing/spelling/grammar.html = FAIL
 BUGCR77734 : http/tests/uri/username-with-no-hostname.html = TEXT
 
 // These are fine, I just can't figure out how to add baselines for them.  :(
-BUGXXX GPU MAC SNOWLEOPARD : compositing/geometry/clipped-video-controller.html = FAIL
-BUGXXX GPU MAC SNOWLEOPARD : compositing/geometry/video-opacity-overlay.html = FAIL
-BUGXXX GPU MAC SNOWLEOPARD : compositing/layers-inside-overflow-scroll.html = FAIL
-BUGXXX GPU MAC SNOWLEOPARD : compositing/overflow/overflow-compositing-descendant.html = FAIL
-BUGXXX GPU MAC SNOWLEOPARD : compositing/overflow/scroll-ancestor-update.html = FAIL
-BUGXXX GPU MAC SNOWLEOPARD : compositing/reflections/load-video-in-reflection.html = FAIL
-BUGXXX GPU MAC SNOWLEOPARD : compositing/self-painting-layers.html = FAIL
+BUGXXX GPU SNOWLEOPARD : compositing/geometry/clipped-video-controller.html = FAIL
+BUGXXX GPU SNOWLEOPARD : compositing/geometry/video-opacity-overlay.html = FAIL
+BUGXXX GPU SNOWLEOPARD : compositing/layers-inside-overflow-scroll.html = FAIL
+BUGXXX GPU SNOWLEOPARD : compositing/overflow/overflow-compositing-descendant.html = FAIL
+BUGXXX GPU SNOWLEOPARD : compositing/overflow/scroll-ancestor-update.html = FAIL
+BUGXXX GPU SNOWLEOPARD : compositing/reflections/load-video-in-reflection.html = FAIL
+BUGXXX GPU SNOWLEOPARD : compositing/self-painting-layers.html = FAIL
 
 // Chrome doesn't load favicons in DRT tests.
 BUGWK57259 : http/tests/misc/link-rel-icon-beforeload.html = FAIL PASS
@@ -3261,21 +3262,21 @@ BUGWK50661 WIN LINUX : fast/dom/HTMLMeterElement/meter-styles.html = IMAGE+TEXT 
 
 // Need expectations
 BUGWK59281 WIN LINUX : fast/dom/HTMLMeterElement/meter-writing-mode.html = IMAGE+TEXT
-BUGWK59281 MAC LEOPARD : fast/dom/HTMLMeterElement/meter-writing-mode.html = IMAGE PASS
+BUGWK59281 LEOPARD : fast/dom/HTMLMeterElement/meter-writing-mode.html = IMAGE PASS
 BUGWK59281 WIN LINUX : fast/dom/HTMLProgressElement/progress-writing-mode.html = TEXT
 
 // We need to skip Geeza Pro quirk in SimpleFontDataMac.mm for non-Leopard.
 // http://trac.webkit.org/changeset/83126
-BUGWK58008 MAC SNOWLEOPARD : fast/dom/52776.html = IMAGE+TEXT
-BUGWK58008 MAC SNOWLEOPARD : fast/text/complex-text-opacity.html = IMAGE+TEXT
-BUGWK58008 MAC SNOWLEOPARD : fast/text/international/bidi-AN-after-L.html = IMAGE+TEXT
-BUGWK58008 MAC SNOWLEOPARD : fast/text/international/bidi-AN-after-empty-run.html = IMAGE+TEXT
-BUGWK58008 MAC SNOWLEOPARD : fast/text/international/bidi-CS-after-AN.html = IMAGE+TEXT
-BUGWK58008 MAC SNOWLEOPARD : fast/text/international/bidi-mirror-he-ar.html = IMAGE+TEXT
-BUGWK58008 MAC SNOWLEOPARD : fast/text/international/bidi-neutral-run.html = IMAGE+TEXT
+BUGWK58008 SNOWLEOPARD : fast/dom/52776.html = IMAGE+TEXT
+BUGWK58008 SNOWLEOPARD : fast/text/complex-text-opacity.html = IMAGE+TEXT
+BUGWK58008 SNOWLEOPARD : fast/text/international/bidi-AN-after-L.html = IMAGE+TEXT
+BUGWK58008 SNOWLEOPARD : fast/text/international/bidi-AN-after-empty-run.html = IMAGE+TEXT
+BUGWK58008 SNOWLEOPARD : fast/text/international/bidi-CS-after-AN.html = IMAGE+TEXT
+BUGWK58008 SNOWLEOPARD : fast/text/international/bidi-mirror-he-ar.html = IMAGE+TEXT
+BUGWK58008 SNOWLEOPARD : fast/text/international/bidi-neutral-run.html = IMAGE+TEXT
 
 BUGCR78638 WIN : fast/frames/set-unloaded-frame-location.html = CRASH PASS
-BUGWK58005 MAC LEOPARD : editing/inserting/editable-inline-element.html = IMAGE
+BUGWK58005 LEOPARD : editing/inserting/editable-inline-element.html = IMAGE
 BUGCR780807 : http/tests/misc/webtiming-origins.html = PASS TEXT
 
 BUGCR78835 : plugins/npp-set-window-called-during-destruction.html = CRASH
@@ -3288,147 +3289,147 @@ BUGCR78998 DEBUG : fast/frames/frame-element-name.html = TEXT PASS
 
 // Windows 7 failures that need triaging and probably mostly just need
 // new baselines.
-BUGWK58193 WIN WIN7 : fast/css/first-letter-first-line-hover.html = IMAGE+TEXT
-BUGWK58193 WIN WIN7 : fast/forms/search-styled.html = IMAGE+TEXT
-BUGWK58193 WIN WIN7 : fast/text/backslash-to-yen-sign-euc.html = IMAGE+TEXT
-BUGWK58193 WIN WIN7 : fast/text/backslash-to-yen-sign.html = IMAGE+TEXT
-BUGWK58193 WIN WIN7 : fast/text/international/bidi-mirror-he-ar.html = IMAGE+TEXT
+BUGWK58193 WIN7 : fast/css/first-letter-first-line-hover.html = IMAGE+TEXT
+BUGWK58193 WIN7 : fast/forms/search-styled.html = IMAGE+TEXT
+BUGWK58193 WIN7 : fast/text/backslash-to-yen-sign-euc.html = IMAGE+TEXT
+BUGWK58193 WIN7 : fast/text/backslash-to-yen-sign.html = IMAGE+TEXT
+BUGWK58193 WIN7 : fast/text/international/bidi-mirror-he-ar.html = IMAGE+TEXT
 BUGWK58193  : fast/text/international/hindi-whitespace.html = IMAGE+TEXT
-BUGWK58193 WIN WIN7 : fast/text/international/khmer-selection.html = IMAGE+TEXT
-BUGWK58193 WIN WIN7 : fast/text/international/plane2.html = IMAGE+TEXT
-BUGWK58193 WIN WIN7 : svg/W3C-I18N/g-dirLTR-ubNone.svg = IMAGE+TEXT
-BUGWK58193 WIN WIN7 : svg/W3C-I18N/g-dirLTR-ubOverride.svg = IMAGE+TEXT
-BUGWK58193 WIN WIN7 : svg/W3C-I18N/g-dirRTL-ubNone.svg = IMAGE+TEXT
-BUGWK58193 WIN WIN7 : svg/W3C-I18N/g-dirRTL-ubOverride.svg = IMAGE+TEXT
-BUGWK58193 WIN WIN7 : svg/W3C-I18N/text-dirLTR-ubNone.svg = IMAGE+TEXT
-BUGWK58193 WIN WIN7 : svg/W3C-I18N/text-dirLTR-ubOverride.svg = IMAGE+TEXT
-BUGWK58193 WIN WIN7 : svg/W3C-I18N/text-dirRTL-ubNone.svg = IMAGE+TEXT
-BUGWK58193 WIN WIN7 : svg/W3C-I18N/text-dirRTL-ubOverride.svg = IMAGE+TEXT
-BUGWK58193 WIN WIN7 : svg/W3C-I18N/tspan-dirLTR-ubEmbed-in-rtl-context.svg = IMAGE+TEXT
-BUGWK58193 WIN WIN7 : svg/W3C-I18N/tspan-dirLTR-ubNone-in-rtl-context.svg = IMAGE+TEXT
-BUGWK58193 WIN WIN7 : svg/W3C-I18N/tspan-dirLTR-ubOverride-in-rtl-context.svg = IMAGE+TEXT
-BUGWK58193 WIN WIN7 : svg/W3C-I18N/tspan-dirRTL-ubOverride-in-rtl-context.svg = IMAGE+TEXT
-BUGWK58193 WIN WIN7 : svg/W3C-I18N/tspan-direction-rtl.svg = IMAGE+TEXT
-BUGWK58193 WIN WIN7 : svg/W3C-SVG-1.1-SE/text-intro-05-t.svg = IMAGE+TEXT
-BUGWK58193 WIN WIN7 : svg/W3C-SVG-1.1/animate-elem-31-t.svg = IMAGE+TEXT
-BUGWK58193 WIN WIN7 : svg/batik/masking/maskRegions.svg = IMAGE+TEXT
-BUGWK58193 WIN WIN7 : svg/custom/js-late-pattern-and-object-creation.svg = IMAGE+TEXT
-BUGWK58193 WIN WIN7 : svg/text/bidi-tspans.svg = IMAGE+TEXT
-BUGWK58193 WIN WIN7 : svg/zoom/page/zoom-mask-with-percentages.svg = IMAGE+TEXT
-BUGWK58193 WIN WIN7 : css2.1/t1202-counter-09-b.html = IMAGE
-BUGWK58193 WIN WIN7 : css2.1/t1202-counters-09-b.html = IMAGE
-BUGWK58193 WIN WIN7 : editing/pasteboard/block-wrappers-necessary.html = IMAGE
-BUGWK58193 WIN WIN7 : fast/block/positioning/auto/vertical-lr/007.html = IMAGE
-BUGWK58193 WIN WIN7 : fast/block/positioning/auto/vertical-rl/007.html = IMAGE
-BUGWK58193 WIN WIN7 : fast/blockflow/english-lr-text.html = IMAGE
-BUGWK58193 WIN WIN7 : fast/blockflow/fallback-orientation.html = IMAGE
-BUGWK58193 WIN WIN7 : fast/blockflow/japanese-lr-text.html = IMAGE
-BUGWK58193 WIN WIN7 : fast/blockflow/japanese-rl-text.html = IMAGE
-BUGWK58193 WIN WIN7 : fast/blockflow/japanese-ruby-horizontal-bt.html = IMAGE
-BUGWK58193 WIN WIN7 : fast/blockflow/japanese-ruby-vertical-lr.html = IMAGE
-BUGWK58193 WIN WIN7 : fast/blockflow/japanese-ruby-vertical-rl.html = IMAGE
-BUGWK58193 WIN WIN7 : fast/blockflow/vertical-align-table-baseline.html = IMAGE
-BUGWK58193 WIN WIN7 : fast/blockflow/vertical-baseline-alignment.html = IMAGE
-BUGWK58193 WIN WIN7 : fast/css/line-height-determined-by-primary-font.html = IMAGE
-BUGWK58193 WIN WIN7 : fast/dom/34176.html = IMAGE
-BUGWK58193 WIN WIN7 : fast/dynamic/text-combine.html = IMAGE
-BUGWK58193 WIN WIN7 : fast/repaint/japanese-rl-selection-clear.html = IMAGE
-BUGWK58193 WIN WIN7 : fast/repaint/japanese-rl-selection-repaint.html = IMAGE
-BUGWK58193 WIN WIN7 : fast/repaint/repaint-across-writing-mode-boundary.html = IMAGE
-BUGWK58193 WIN WIN7 : fast/ruby/base-shorter-than-text.html = IMAGE
-BUGWK58193 WIN WIN7 : fast/ruby/nested-ruby.html = IMAGE
-BUGWK58193 WIN WIN7 : fast/text/atsui-negative-spacing-features.html = IMAGE
-BUGWK58193 WIN WIN7 : fast/text/atsui-spacing-features.html = IMAGE
-BUGWK58193 WIN WIN7 : fast/text/drawBidiText.html = IMAGE
-BUGWK58193 WIN WIN7 : fast/text/international/hebrew-vowels.html = IMAGE
-BUGWK58193 WIN WIN7 : fast/text/international/hindi-spacing.html = IMAGE
-BUGWK58193 WIN WIN7 : fast/text/stroking-decorations.html = IMAGE
-BUGWK58193 WIN WIN7 : fast/text/stroking.html = IMAGE
-BUGWK58193 WIN WIN7 : svg/W3C-I18N/text-anchor-dirLTR-anchorEnd.svg = IMAGE
-BUGWK58193 WIN WIN7 : svg/W3C-I18N/text-anchor-dirLTR-anchorMiddle.svg = IMAGE
-BUGWK58193 WIN WIN7 : svg/W3C-I18N/text-anchor-dirLTR-anchorStart.svg = IMAGE
-BUGWK58193 WIN WIN7 : svg/W3C-I18N/text-anchor-dirNone-anchorEnd.svg = IMAGE
-BUGWK58193 WIN WIN7 : svg/W3C-I18N/text-anchor-dirNone-anchorMiddle.svg = IMAGE
-BUGWK58193 WIN WIN7 : svg/W3C-I18N/text-anchor-dirNone-anchorStart.svg = IMAGE
-BUGWK58193 WIN WIN7 : svg/W3C-I18N/text-anchor-dirRTL-anchorEnd.svg = IMAGE
-BUGWK58193 WIN WIN7 : svg/W3C-I18N/text-anchor-dirRTL-anchorMiddle.svg = IMAGE
-BUGWK58193 WIN WIN7 : svg/W3C-I18N/text-anchor-dirRTL-anchorStart.svg = IMAGE
-BUGWK58193 WIN WIN7 : svg/W3C-I18N/text-anchor-inherited-dirLTR-anchorEnd.svg = IMAGE
-BUGWK58193 WIN WIN7 : svg/W3C-I18N/text-anchor-inherited-dirLTR-anchorMiddle.svg = IMAGE
-BUGWK58193 WIN WIN7 : svg/W3C-I18N/text-anchor-inherited-dirLTR-anchorStart.svg = IMAGE
-BUGWK58193 WIN WIN7 : svg/W3C-I18N/text-anchor-inherited-dirRTL-anchorEnd.svg = IMAGE
-BUGWK58193 WIN WIN7 : svg/W3C-I18N/text-anchor-inherited-dirRTL-anchorMiddle.svg = IMAGE
-BUGWK58193 WIN WIN7 : svg/W3C-I18N/text-anchor-inherited-dirRTL-anchorStart.svg = IMAGE
-BUGWK58193 WIN WIN7 : svg/W3C-I18N/text-anchor-no-markup.svg = IMAGE
-BUGWK58193 WIN WIN7 : svg/W3C-SVG-1.1/metadata-example-01-b.svg = IMAGE
-BUGWK58193 WIN WIN7 : svg/batik/paints/patternRegions-positioned-objects.svg = IMAGE
-BUGWK58193 WIN WIN7 : svg/batik/text/textFeatures.svg = IMAGE
-BUGWK58193 WIN WIN7 : svg/custom/js-late-gradient-and-object-creation.svg = IMAGE
-BUGWK58193 WIN WIN7 : svg/custom/nested-pattern-boundingBoxModeContent.svg = IMAGE
-BUGWK58193 WIN WIN7 : svg/dynamic-updates/SVGPatternElement-dom-patternContentUnits-attr.html = IMAGE
-BUGWK58193 WIN WIN7 : svg/dynamic-updates/SVGPatternElement-svgdom-patternContentUnits-prop.html = IMAGE
-BUGWK58193 WIN WIN7 : svg/zoom/page/zoom-foreignObject.svg = IMAGE
-BUGWK58193 WIN WIN7 : svg/zoom/text/zoom-foreignObject.svg = IMAGE
-BUGWK58193 WIN WIN7 : svg/custom/circular-marker-reference-1.svg = TEXT
-BUGWK58193 WIN WIN7 : svg/custom/circular-marker-reference-3.svg = TEXT
-BUGWK58193 WIN WIN7 : svg/custom/circular-marker-reference-4.svg = TEXT
-BUGWK58193 WIN WIN7 : fast/filesystem/async-operations.html = TIMEOUT PASS
-BUGWK58193 WIN WIN7 : http/tests/local/fileapi/send-sliced-dragged-file.html = TIMEOUT PASS TEXT
+BUGWK58193 WIN7 : fast/text/international/khmer-selection.html = IMAGE+TEXT
+BUGWK58193 WIN7 : fast/text/international/plane2.html = IMAGE+TEXT
+BUGWK58193 WIN7 : svg/W3C-I18N/g-dirLTR-ubNone.svg = IMAGE+TEXT
+BUGWK58193 WIN7 : svg/W3C-I18N/g-dirLTR-ubOverride.svg = IMAGE+TEXT
+BUGWK58193 WIN7 : svg/W3C-I18N/g-dirRTL-ubNone.svg = IMAGE+TEXT
+BUGWK58193 WIN7 : svg/W3C-I18N/g-dirRTL-ubOverride.svg = IMAGE+TEXT
+BUGWK58193 WIN7 : svg/W3C-I18N/text-dirLTR-ubNone.svg = IMAGE+TEXT
+BUGWK58193 WIN7 : svg/W3C-I18N/text-dirLTR-ubOverride.svg = IMAGE+TEXT
+BUGWK58193 WIN7 : svg/W3C-I18N/text-dirRTL-ubNone.svg = IMAGE+TEXT
+BUGWK58193 WIN7 : svg/W3C-I18N/text-dirRTL-ubOverride.svg = IMAGE+TEXT
+BUGWK58193 WIN7 : svg/W3C-I18N/tspan-dirLTR-ubEmbed-in-rtl-context.svg = IMAGE+TEXT
+BUGWK58193 WIN7 : svg/W3C-I18N/tspan-dirLTR-ubNone-in-rtl-context.svg = IMAGE+TEXT
+BUGWK58193 WIN7 : svg/W3C-I18N/tspan-dirLTR-ubOverride-in-rtl-context.svg = IMAGE+TEXT
+BUGWK58193 WIN7 : svg/W3C-I18N/tspan-dirRTL-ubOverride-in-rtl-context.svg = IMAGE+TEXT
+BUGWK58193 WIN7 : svg/W3C-I18N/tspan-direction-rtl.svg = IMAGE+TEXT
+BUGWK58193 WIN7 : svg/W3C-SVG-1.1-SE/text-intro-05-t.svg = IMAGE+TEXT
+BUGWK58193 WIN7 : svg/W3C-SVG-1.1/animate-elem-31-t.svg = IMAGE+TEXT
+BUGWK58193 WIN7 : svg/batik/masking/maskRegions.svg = IMAGE+TEXT
+BUGWK58193 WIN7 : svg/custom/js-late-pattern-and-object-creation.svg = IMAGE+TEXT
+BUGWK58193 WIN7 : svg/text/bidi-tspans.svg = IMAGE+TEXT
+BUGWK58193 WIN7 : svg/zoom/page/zoom-mask-with-percentages.svg = IMAGE+TEXT
+BUGWK58193 WIN7 : css2.1/t1202-counter-09-b.html = IMAGE
+BUGWK58193 WIN7 : css2.1/t1202-counters-09-b.html = IMAGE
+BUGWK58193 WIN7 : editing/pasteboard/block-wrappers-necessary.html = IMAGE
+BUGWK58193 WIN7 : fast/block/positioning/auto/vertical-lr/007.html = IMAGE
+BUGWK58193 WIN7 : fast/block/positioning/auto/vertical-rl/007.html = IMAGE
+BUGWK58193 WIN7 : fast/blockflow/english-lr-text.html = IMAGE
+BUGWK58193 WIN7 : fast/blockflow/fallback-orientation.html = IMAGE
+BUGWK58193 WIN7 : fast/blockflow/japanese-lr-text.html = IMAGE
+BUGWK58193 WIN7 : fast/blockflow/japanese-rl-text.html = IMAGE
+BUGWK58193 WIN7 : fast/blockflow/japanese-ruby-horizontal-bt.html = IMAGE
+BUGWK58193 WIN7 : fast/blockflow/japanese-ruby-vertical-lr.html = IMAGE
+BUGWK58193 WIN7 : fast/blockflow/japanese-ruby-vertical-rl.html = IMAGE
+BUGWK58193 WIN7 : fast/blockflow/vertical-align-table-baseline.html = IMAGE
+BUGWK58193 WIN7 : fast/blockflow/vertical-baseline-alignment.html = IMAGE
+BUGWK58193 WIN7 : fast/css/line-height-determined-by-primary-font.html = IMAGE
+BUGWK58193 WIN7 : fast/dom/34176.html = IMAGE
+BUGWK58193 WIN7 : fast/dynamic/text-combine.html = IMAGE
+BUGWK58193 WIN7 : fast/repaint/japanese-rl-selection-clear.html = IMAGE
+BUGWK58193 WIN7 : fast/repaint/japanese-rl-selection-repaint.html = IMAGE
+BUGWK58193 WIN7 : fast/repaint/repaint-across-writing-mode-boundary.html = IMAGE
+BUGWK58193 WIN7 : fast/ruby/base-shorter-than-text.html = IMAGE
+BUGWK58193 WIN7 : fast/ruby/nested-ruby.html = IMAGE
+BUGWK58193 WIN7 : fast/text/atsui-negative-spacing-features.html = IMAGE
+BUGWK58193 WIN7 : fast/text/atsui-spacing-features.html = IMAGE
+BUGWK58193 WIN7 : fast/text/drawBidiText.html = IMAGE
+BUGWK58193 WIN7 : fast/text/international/hebrew-vowels.html = IMAGE
+BUGWK58193 WIN7 : fast/text/international/hindi-spacing.html = IMAGE
+BUGWK58193 WIN7 : fast/text/stroking-decorations.html = IMAGE
+BUGWK58193 WIN7 : fast/text/stroking.html = IMAGE
+BUGWK58193 WIN7 : svg/W3C-I18N/text-anchor-dirLTR-anchorEnd.svg = IMAGE
+BUGWK58193 WIN7 : svg/W3C-I18N/text-anchor-dirLTR-anchorMiddle.svg = IMAGE
+BUGWK58193 WIN7 : svg/W3C-I18N/text-anchor-dirLTR-anchorStart.svg = IMAGE
+BUGWK58193 WIN7 : svg/W3C-I18N/text-anchor-dirNone-anchorEnd.svg = IMAGE
+BUGWK58193 WIN7 : svg/W3C-I18N/text-anchor-dirNone-anchorMiddle.svg = IMAGE
+BUGWK58193 WIN7 : svg/W3C-I18N/text-anchor-dirNone-anchorStart.svg = IMAGE
+BUGWK58193 WIN7 : svg/W3C-I18N/text-anchor-dirRTL-anchorEnd.svg = IMAGE
+BUGWK58193 WIN7 : svg/W3C-I18N/text-anchor-dirRTL-anchorMiddle.svg = IMAGE
+BUGWK58193 WIN7 : svg/W3C-I18N/text-anchor-dirRTL-anchorStart.svg = IMAGE
+BUGWK58193 WIN7 : svg/W3C-I18N/text-anchor-inherited-dirLTR-anchorEnd.svg = IMAGE
+BUGWK58193 WIN7 : svg/W3C-I18N/text-anchor-inherited-dirLTR-anchorMiddle.svg = IMAGE
+BUGWK58193 WIN7 : svg/W3C-I18N/text-anchor-inherited-dirLTR-anchorStart.svg = IMAGE
+BUGWK58193 WIN7 : svg/W3C-I18N/text-anchor-inherited-dirRTL-anchorEnd.svg = IMAGE
+BUGWK58193 WIN7 : svg/W3C-I18N/text-anchor-inherited-dirRTL-anchorMiddle.svg = IMAGE
+BUGWK58193 WIN7 : svg/W3C-I18N/text-anchor-inherited-dirRTL-anchorStart.svg = IMAGE
+BUGWK58193 WIN7 : svg/W3C-I18N/text-anchor-no-markup.svg = IMAGE
+BUGWK58193 WIN7 : svg/W3C-SVG-1.1/metadata-example-01-b.svg = IMAGE
+BUGWK58193 WIN7 : svg/batik/paints/patternRegions-positioned-objects.svg = IMAGE
+BUGWK58193 WIN7 : svg/batik/text/textFeatures.svg = IMAGE
+BUGWK58193 WIN7 : svg/custom/js-late-gradient-and-object-creation.svg = IMAGE
+BUGWK58193 WIN7 : svg/custom/nested-pattern-boundingBoxModeContent.svg = IMAGE
+BUGWK58193 WIN7 : svg/dynamic-updates/SVGPatternElement-dom-patternContentUnits-attr.html = IMAGE
+BUGWK58193 WIN7 : svg/dynamic-updates/SVGPatternElement-svgdom-patternContentUnits-prop.html = IMAGE
+BUGWK58193 WIN7 : svg/zoom/page/zoom-foreignObject.svg = IMAGE
+BUGWK58193 WIN7 : svg/zoom/text/zoom-foreignObject.svg = IMAGE
+BUGWK58193 WIN7 : svg/custom/circular-marker-reference-1.svg = TEXT
+BUGWK58193 WIN7 : svg/custom/circular-marker-reference-3.svg = TEXT
+BUGWK58193 WIN7 : svg/custom/circular-marker-reference-4.svg = TEXT
+BUGWK58193 WIN7 : fast/filesystem/async-operations.html = TIMEOUT PASS
+BUGWK58193 WIN7 : http/tests/local/fileapi/send-sliced-dragged-file.html = TIMEOUT PASS TEXT
 
-BUGWK58193 WIN VISTA : fast/forms/search-styled.html = IMAGE+TEXT
-BUGWK58193 WIN VISTA : fast/text/backslash-to-yen-sign-euc.html = IMAGE+TEXT
-BUGWK58193 WIN VISTA : fast/text/international/khmer-selection.html = IMAGE+TEXT
-BUGWK58193 WIN VISTA : svg/W3C-I18N/text-dirLTR-ubOverride.svg = IMAGE+TEXT
-BUGWK58193 WIN VISTA : svg/W3C-I18N/tspan-dirLTR-ubOverride-in-default-context.svg = IMAGE+TEXT
-BUGWK58193 WIN VISTA : svg/W3C-I18N/tspan-dirLTR-ubOverride-in-ltr-context.svg = IMAGE+TEXT
-BUGWK58193 WIN VISTA : svg/W3C-I18N/tspan-dirNone-ubOverride-in-default-context.svg = IMAGE+TEXT
-BUGWK58193 WIN VISTA : svg/W3C-I18N/tspan-dirNone-ubOverride-in-ltr-context.svg = IMAGE+TEXT
-BUGWK58193 WIN VISTA : svg/W3C-SVG-1.1/animate-elem-31-t.svg = IMAGE+TEXT
-BUGWK58193 WIN VISTA : svg/batik/masking/maskRegions.svg = IMAGE+TEXT
-BUGWK58193 WIN VISTA : svg/batik/text/verticalText.svg = IMAGE+TEXT
-BUGWK58193 WIN VISTA : svg/custom/js-late-pattern-and-object-creation.svg = IMAGE+TEXT
-BUGWK58193 WIN VISTA : svg/text/bidi-text-query.svg = IMAGE+TEXT
-BUGWK58193 WIN VISTA : css2.1/t1202-counter-09-b.html = IMAGE
-BUGWK58193 WIN VISTA : css2.1/t1202-counters-09-b.html = IMAGE
-BUGWK58193 WIN VISTA : editing/pasteboard/block-wrappers-necessary.html = IMAGE
-BUGWK58193 WIN VISTA : fast/blockflow/japanese-ruby-horizontal-bt.html = IMAGE
-BUGWK58193 WIN VISTA : fast/css/line-height-determined-by-primary-font.html = IMAGE
-BUGWK58193 WIN VISTA : fast/dom/34176.html = IMAGE
-BUGWK58193 WIN VISTA : fast/dynamic/text-combine.html = IMAGE
-BUGWK58193 WIN VISTA : fast/ruby/nested-ruby.html = IMAGE
-BUGWK58193 WIN VISTA : fast/text/atsui-negative-spacing-features.html = IMAGE
-BUGWK58193 WIN VISTA : fast/text/atsui-spacing-features.html = IMAGE
-BUGWK58193 WIN VISTA : fast/text/drawBidiText.html = IMAGE
-BUGWK58193 WIN VISTA : fast/text/international/danda-space.html = IMAGE
-BUGWK58193 WIN VISTA : fast/text/international/hebrew-vowels.html = IMAGE
-BUGWK58193 WIN VISTA : svg/W3C-I18N/text-anchor-dirLTR-anchorEnd.svg = IMAGE
-BUGWK58193 WIN VISTA : svg/W3C-I18N/text-anchor-dirLTR-anchorMiddle.svg = IMAGE
-BUGWK58193 WIN VISTA : svg/W3C-I18N/text-anchor-dirLTR-anchorStart.svg = IMAGE
-BUGWK58193 WIN VISTA : svg/W3C-I18N/text-anchor-dirNone-anchorEnd.svg = IMAGE
-BUGWK58193 WIN VISTA : svg/W3C-I18N/text-anchor-dirNone-anchorMiddle.svg = IMAGE
-BUGWK58193 WIN VISTA : svg/W3C-I18N/text-anchor-dirNone-anchorStart.svg = IMAGE
-BUGWK58193 WIN VISTA : svg/W3C-I18N/text-anchor-dirRTL-anchorEnd.svg = IMAGE
-BUGWK58193 WIN VISTA : svg/W3C-I18N/text-anchor-dirRTL-anchorMiddle.svg = IMAGE
-BUGWK58193 WIN VISTA : svg/W3C-I18N/text-anchor-dirRTL-anchorStart.svg = IMAGE
-BUGWK58193 WIN VISTA : svg/W3C-I18N/text-anchor-inherited-dirLTR-anchorEnd.svg = IMAGE
-BUGWK58193 WIN VISTA : svg/W3C-I18N/text-anchor-inherited-dirLTR-anchorMiddle.svg = IMAGE
-BUGWK58193 WIN VISTA : svg/W3C-I18N/text-anchor-inherited-dirLTR-anchorStart.svg = IMAGE
-BUGWK58193 WIN VISTA : svg/W3C-I18N/text-anchor-inherited-dirRTL-anchorEnd.svg = IMAGE
-BUGWK58193 WIN VISTA : svg/W3C-I18N/text-anchor-inherited-dirRTL-anchorMiddle.svg = IMAGE
-BUGWK58193 WIN VISTA : svg/W3C-I18N/text-anchor-inherited-dirRTL-anchorStart.svg = IMAGE
-BUGWK58193 WIN VISTA : svg/W3C-I18N/text-anchor-no-markup.svg = IMAGE
-BUGWK58193 WIN VISTA : svg/W3C-I18N/tspan-dirLTR-ubOverride-in-rtl-context.svg = IMAGE
-BUGWK58193 WIN VISTA : svg/W3C-SVG-1.1-SE/text-intro-05-t.svg = IMAGE
-BUGWK58193 WIN VISTA : svg/W3C-SVG-1.1/metadata-example-01-b.svg = IMAGE
-BUGWK58193 WIN VISTA : svg/batik/paints/patternRegions-positioned-objects.svg = IMAGE
-BUGWK58193 WIN VISTA : svg/batik/text/textFeatures.svg = IMAGE
-BUGWK58193 WIN VISTA : svg/custom/nested-pattern-boundingBoxModeContent.svg = IMAGE
-BUGWK58193 WIN VISTA : svg/dynamic-updates/SVGPatternElement-dom-patternContentUnits-attr.html = IMAGE
-BUGWK58193 WIN VISTA : svg/dynamic-updates/SVGPatternElement-svgdom-patternContentUnits-prop.html = IMAGE
-BUGWK58193 WIN VISTA : svg/custom/circular-marker-reference-1.svg = TEXT
-BUGWK58193 WIN VISTA : svg/custom/circular-marker-reference-3.svg = TEXT
-BUGWK58193 WIN VISTA : svg/custom/circular-marker-reference-4.svg = TEXT
-BUGWK58193 WIN VISTA : svg/zoom/page/zoom-mask-with-percentages.svg = TEXT
+BUGWK58193 VISTA : fast/forms/search-styled.html = IMAGE+TEXT
+BUGWK58193 VISTA : fast/text/backslash-to-yen-sign-euc.html = IMAGE+TEXT
+BUGWK58193 VISTA : fast/text/international/khmer-selection.html = IMAGE+TEXT
+BUGWK58193 VISTA : svg/W3C-I18N/text-dirLTR-ubOverride.svg = IMAGE+TEXT
+BUGWK58193 VISTA : svg/W3C-I18N/tspan-dirLTR-ubOverride-in-default-context.svg = IMAGE+TEXT
+BUGWK58193 VISTA : svg/W3C-I18N/tspan-dirLTR-ubOverride-in-ltr-context.svg = IMAGE+TEXT
+BUGWK58193 VISTA : svg/W3C-I18N/tspan-dirNone-ubOverride-in-default-context.svg = IMAGE+TEXT
+BUGWK58193 VISTA : svg/W3C-I18N/tspan-dirNone-ubOverride-in-ltr-context.svg = IMAGE+TEXT
+BUGWK58193 VISTA : svg/W3C-SVG-1.1/animate-elem-31-t.svg = IMAGE+TEXT
+BUGWK58193 VISTA : svg/batik/masking/maskRegions.svg = IMAGE+TEXT
+BUGWK58193 VISTA : svg/batik/text/verticalText.svg = IMAGE+TEXT
+BUGWK58193 VISTA : svg/custom/js-late-pattern-and-object-creation.svg = IMAGE+TEXT
+BUGWK58193 VISTA : svg/text/bidi-text-query.svg = IMAGE+TEXT
+BUGWK58193 VISTA : css2.1/t1202-counter-09-b.html = IMAGE
+BUGWK58193 VISTA : css2.1/t1202-counters-09-b.html = IMAGE
+BUGWK58193 VISTA : editing/pasteboard/block-wrappers-necessary.html = IMAGE
+BUGWK58193 VISTA : fast/blockflow/japanese-ruby-horizontal-bt.html = IMAGE
+BUGWK58193 VISTA : fast/css/line-height-determined-by-primary-font.html = IMAGE
+BUGWK58193 VISTA : fast/dom/34176.html = IMAGE
+BUGWK58193 VISTA : fast/dynamic/text-combine.html = IMAGE
+BUGWK58193 VISTA : fast/ruby/nested-ruby.html = IMAGE
+BUGWK58193 VISTA : fast/text/atsui-negative-spacing-features.html = IMAGE
+BUGWK58193 VISTA : fast/text/atsui-spacing-features.html = IMAGE
+BUGWK58193 VISTA : fast/text/drawBidiText.html = IMAGE
+BUGWK58193 VISTA : fast/text/international/danda-space.html = IMAGE
+BUGWK58193 VISTA : fast/text/international/hebrew-vowels.html = IMAGE
+BUGWK58193 VISTA : svg/W3C-I18N/text-anchor-dirLTR-anchorEnd.svg = IMAGE
+BUGWK58193 VISTA : svg/W3C-I18N/text-anchor-dirLTR-anchorMiddle.svg = IMAGE
+BUGWK58193 VISTA : svg/W3C-I18N/text-anchor-dirLTR-anchorStart.svg = IMAGE
+BUGWK58193 VISTA : svg/W3C-I18N/text-anchor-dirNone-anchorEnd.svg = IMAGE
+BUGWK58193 VISTA : svg/W3C-I18N/text-anchor-dirNone-anchorMiddle.svg = IMAGE
+BUGWK58193 VISTA : svg/W3C-I18N/text-anchor-dirNone-anchorStart.svg = IMAGE
+BUGWK58193 VISTA : svg/W3C-I18N/text-anchor-dirRTL-anchorEnd.svg = IMAGE
+BUGWK58193 VISTA : svg/W3C-I18N/text-anchor-dirRTL-anchorMiddle.svg = IMAGE
+BUGWK58193 VISTA : svg/W3C-I18N/text-anchor-dirRTL-anchorStart.svg = IMAGE
+BUGWK58193 VISTA : svg/W3C-I18N/text-anchor-inherited-dirLTR-anchorEnd.svg = IMAGE
+BUGWK58193 VISTA : svg/W3C-I18N/text-anchor-inherited-dirLTR-anchorMiddle.svg = IMAGE
+BUGWK58193 VISTA : svg/W3C-I18N/text-anchor-inherited-dirLTR-anchorStart.svg = IMAGE
+BUGWK58193 VISTA : svg/W3C-I18N/text-anchor-inherited-dirRTL-anchorEnd.svg = IMAGE
+BUGWK58193 VISTA : svg/W3C-I18N/text-anchor-inherited-dirRTL-anchorMiddle.svg = IMAGE
+BUGWK58193 VISTA : svg/W3C-I18N/text-anchor-inherited-dirRTL-anchorStart.svg = IMAGE
+BUGWK58193 VISTA : svg/W3C-I18N/text-anchor-no-markup.svg = IMAGE
+BUGWK58193 VISTA : svg/W3C-I18N/tspan-dirLTR-ubOverride-in-rtl-context.svg = IMAGE
+BUGWK58193 VISTA : svg/W3C-SVG-1.1-SE/text-intro-05-t.svg = IMAGE
+BUGWK58193 VISTA : svg/W3C-SVG-1.1/metadata-example-01-b.svg = IMAGE
+BUGWK58193 VISTA : svg/batik/paints/patternRegions-positioned-objects.svg = IMAGE
+BUGWK58193 VISTA : svg/batik/text/textFeatures.svg = IMAGE
+BUGWK58193 VISTA : svg/custom/nested-pattern-boundingBoxModeContent.svg = IMAGE
+BUGWK58193 VISTA : svg/dynamic-updates/SVGPatternElement-dom-patternContentUnits-attr.html = IMAGE
+BUGWK58193 VISTA : svg/dynamic-updates/SVGPatternElement-svgdom-patternContentUnits-prop.html = IMAGE
+BUGWK58193 VISTA : svg/custom/circular-marker-reference-1.svg = TEXT
+BUGWK58193 VISTA : svg/custom/circular-marker-reference-3.svg = TEXT
+BUGWK58193 VISTA : svg/custom/circular-marker-reference-4.svg = TEXT
+BUGWK58193 VISTA : svg/zoom/page/zoom-mask-with-percentages.svg = TEXT
 
 // Added in Webkit r83470 without expected results.
 BUGJIANLI : fast/multicol/huge-column-count.html = MISSING
@@ -3490,11 +3491,11 @@ BUGCR79859 LINUX DEBUG : fast/css/create_element_align.xhtml = PASS TIMEOUT
 
 
 // line height may be incorrect
-BUGCR79908 MAC SNOWLEOPARD : fast/css/line-height-font-order.html = IMAGE
+BUGCR79908 SNOWLEOPARD : fast/css/line-height-font-order.html = IMAGE
 
-BUGCR79910 MAC SNOWLEOPARD: fast/text/international/bidi-linebreak-001.html = IMAGE
-BUGCR79910 MAC SNOWLEOPARD: fast/text/international/bidi-linebreak-002.html = IMAGE
-BUGCR79910 MAC SNOWLEOPARD: fast/text/international/bidi-linebreak-003.html = IMAGE
+BUGCR79910 SNOWLEOPARD: fast/text/international/bidi-linebreak-001.html = IMAGE
+BUGCR79910 SNOWLEOPARD: fast/text/international/bidi-linebreak-002.html = IMAGE
+BUGCR79910 SNOWLEOPARD: fast/text/international/bidi-linebreak-003.html = IMAGE
 
 // The following are failures due to Skia bugs on Win/Linux
 // http://code.google.com/p/chromium/issues/detail?id=79917
@@ -3648,7 +3649,7 @@ BUGWK60103 WIN LINUX : fast/borders/borderRadiusGroove01.html = IMAGE
 BUGWK60103 WIN LINUX : fast/borders/borderRadiusGroove02.html = IMAGE
 BUGWK60103 WIN LINUX : fast/borders/borderRadiusInset01.html = IMAGE
 BUGWK60103 WIN LINUX : fast/borders/borderRadiusInvalidColor.html = IMAGE
-BUGWK60103 MAC LEOPARD : fast/borders/borderRadiusInvalidColor.html = IMAGE
+BUGWK60103 LEOPARD : fast/borders/borderRadiusInvalidColor.html = IMAGE
 BUGWK60103 WIN LINUX : fast/borders/borderRadiusOutset01.html = IMAGE
 BUGWK60103 WIN LINUX : fast/borders/borderRadiusRidge01.html = IMAGE
 BUGWK60103 WIN LINUX : fast/borders/borderRadiusSolid01.html = IMAGE
@@ -3697,7 +3698,7 @@ BUGDPRANKE WIN LINUX : animations/change-one-anim.html = TEXT PASS
 // pulled in from downstream during webkit roll 84350:84431
 BUGCASEQ WIN LINUX : editing/selection/select-from-textfield-outwards.html = IMAGE+TEXT
 BUGCASEQ WIN LINUX : fast/forms/input-text-drag-down.html = IMAGE+TEXT
-BUGCASEQ MAC LEOPARD : fast/canvas/image-object-in-canvas.html = IMAGE
+BUGCASEQ LEOPARD : fast/canvas/image-object-in-canvas.html = IMAGE
 
 
 BUGDPRANKE MAC DEBUG : transitions/cancel-transition.html = TEXT PASS
@@ -3715,7 +3716,7 @@ BUGDPRANKE WIN MAC DEBUG : fast/css-generated-content/table-row-group-to-inline.
 
 BUGWK60127 WIN LINUX : canvas/philip/tests/2d.gradient.radial.touch2.html = TEXT
 
-BUGDPRANKE MAC LEOPARD : http/tests/navigation/lockedhistory-iframe.html = TEXT PASS
+BUGDPRANKE LEOPARD : http/tests/navigation/lockedhistory-iframe.html = TEXT PASS
 BUGDPRANKE LINUX DEBUG : http/tests/navigation/lockedhistory-iframe.html = TEXT PASS
 BUGDPRANKE : fast/parser/iframe-sets-parent-to-javascript-url.html = TEXT PASS
 BUGDPRANKE : fast/repaint/moving-shadow-on-path.html = TEXT PASS
@@ -3815,7 +3816,7 @@ BUGWK59172 : fast/html/details-remove-summary-6-and-click.html = IMAGE+TEXT
 BUGWK59172 : fast/html/details-remove-summary-6.html = IMAGE+TEXT
 BUGWK59172 : fast/html/details-writing-mode.html = IMAGE+TEXT
 
-BUGCR80301 MAC LEOPARD : fast/canvas/canvas-largedraws.html = TIMEOUT
+BUGCR80301 LEOPARD : fast/canvas/canvas-largedraws.html = TIMEOUT
 
 // roll up from r84685:r84721??
 BUGWK84665 : fast/dom/dataset-gc.html = TEXT
@@ -3847,7 +3848,7 @@ BUGWK60116 BUGCR80855 GPU : media/video-aspect-ratio.html = IMAGE
 
 BUGSENORBLANCO WIN LINUX : animations/animation-drt-api-multiple-keyframes.html = TEXT
 BUGSENORBLANCO WIN LINUX : animations/animation-drt-api.html = TEXT
-BUGSENORBLANCO GPU MAC LEOPARD LINUX : compositing/direct-image-compositing.html = IMAGE CRASH
+BUGSENORBLANCO GPU LEOPARD : compositing/direct-image-compositing.html = IMAGE CRASH
 BUGSENORBLANCO MAC LINUX : fast/css/string-quote-binary.html = CRASH PASS
 BUGSENORBLANCO LINUX : fast/events/panScroll-click-hyperlink.html = TEXT
 BUGSENORBLANCO : fast/files/domurl-script-execution-context-crash.html = CRASH PASS

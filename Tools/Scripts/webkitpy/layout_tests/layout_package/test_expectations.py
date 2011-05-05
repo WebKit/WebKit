@@ -803,11 +803,9 @@ class ModifierMatcher(object):
     regexes" that can be used to skip over modifiers like the BUG* modifiers.
     """
     MACROS = {
-        'mac-snowleopard': ['mac', 'snowleopard'],
-        'mac-leopard': ['mac', 'leopard'],
-        'win-xp': ['win', 'xp'],
-        'win-vista': ['win', 'vista'],
-        'win-win7': ['win', 'win7'],
+        'mac': ['leopard', 'snowleopard'],
+        'win': ['xp', 'vista', 'win7'],
+        'linux': ['hardy'],
     }
 
     # We don't include the "none" modifier because it isn't actually legal.

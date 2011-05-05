@@ -1,3 +1,13 @@
+2011-05-05  Dirk Pranke  <dpranke@chromium.org>
+
+        Reviewed by Ojan Vafai.
+
+        Modify the chromium expectations so that you no longer need to
+        specify both the operating system and the version. I.e., you
+        don't need "MAC LEOPARD", just "LEOPARD".
+
+        * platform/chromium/test_expectations.txt:
+
 2011-05-05  Tony Chang  <tony@chromium.org>
 
         Reviewed by Adam Barth.
