@@ -97,6 +97,7 @@ String MIMETypeRegistry::getMIMETypeForExtension(const String &ext)
         mimetypeMap.add("bmp", "image/bmp");
         mimetypeMap.add("wml", "text/vnd.wap.wml");
         mimetypeMap.add("wmlc", "application/vnd.wap.wmlc");
+        mimetypeMap.add("m4a", "audio/x-m4a");
     }
     String result = mimetypeMap.get(ext);
     if (result.isEmpty()) {
