@@ -2833,6 +2833,7 @@ BUGJAMESR GPU MAC LEOPARD : compositing/overflow/content-gains-scrollbars.html =
 // Will need windows and linux baselines
 BUGWK58182 GPU : compositing/images/content-image-change.html = PASS FAIL
 BUGWK58398 GPU : platform/chromium/compositing/child-layer-3d-sorting.html = PASS FAIL MISSING
+BUGVANGELIS GPU WIN LINUX : platform/chromium/compositing/perpendicular-layer-sorting.html = PASS FAIL MISSING
 
 // The picture does not match the video in the test.
 BUGWK55519 GPU WIN LINUX : compositing/video/video-background-color.html = IMAGE+TEXT

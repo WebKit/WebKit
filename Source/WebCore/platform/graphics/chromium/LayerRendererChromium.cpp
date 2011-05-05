@@ -93,11 +93,6 @@ static bool isScaleOrTranslation(const TransformationMatrix& m)
 
 }
 
-bool LayerRendererChromium::compareLayerZ(const RefPtr<CCLayerImpl>& a, const RefPtr<CCLayerImpl>& b)
-{
-    return a->drawDepth() < b->drawDepth();
-}
-
 PassRefPtr<LayerRendererChromium> LayerRendererChromium::create(PassRefPtr<GraphicsContext3D> context, PassOwnPtr<TilePaintInterface> contentPaint)
 {
     if (!context)
@@ -614,6 +609,7 @@ void LayerRendererChromium::updatePropertiesAndRenderSurfaces(LayerChromium* lay
     // 2. If the layer has opacity != 1 and does not have a preserves-3d transform style.
     // 3. The layer uses a mask
     // 4. The layer has a replica (used for reflections)
+    // 5. The layer doesn't preserve-3d but is the child of a layer which does.
     // If a layer preserves-3d then we don't create a RenderSurface for it to avoid flattening
     // out its children. The opacity value of the children layers is multiplied by the opacity
     // of their parent.
@@ -621,7 +617,8 @@ void LayerRendererChromium::updatePropertiesAndRenderSurfaces(LayerChromium* lay
     bool useSurfaceForOpacity = drawLayer->opacity() != 1 && !drawLayer->preserves3D();
     bool useSurfaceForMasking = drawLayer->maskLayer();
     bool useSurfaceForReflection = drawLayer->replicaLayer();
-    if (useSurfaceForMasking || useSurfaceForReflection || ((useSurfaceForClipping || useSurfaceForOpacity) && drawLayer->descendantsDrawsContent())) {
+    bool useSurfaceForFlatDescendants = (drawLayer->superlayer() && drawLayer->superlayer()->preserves3D() && !drawLayer->preserves3D() && drawLayer->descendantsDrawsContent());
+    if (useSurfaceForMasking || useSurfaceForReflection || useSurfaceForFlatDescendants || ((useSurfaceForClipping || useSurfaceForOpacity) && drawLayer->descendantsDrawsContent())) {
         RenderSurfaceChromium* renderSurface = drawLayer->renderSurface();
         if (!renderSurface)
             renderSurface = drawLayer->createRenderSurface();
@@ -728,17 +725,6 @@ void LayerRendererChromium::updatePropertiesAndRenderSurfaces(LayerChromium* lay
     // M[s] = M * Tr[-center]
     sublayerMatrix.translate3d(-bounds.width() * 0.5, -bounds.height() * 0.5, 0);
 
-    // Compute the depth value of the center of the layer which will be used when
-    // sorting the layers for the preserves-3d property.
-    const TransformationMatrix& layerDrawMatrix = drawLayer->renderSurface() ? drawLayer->renderSurface()->m_drawTransform : drawLayer->drawTransform();
-    if (drawLayer->superlayer()) {
-        if (!drawLayer->superlayer()->preserves3D())
-            drawLayer->setDrawDepth(drawLayer->superlayer()->drawDepth());
-        else
-            drawLayer->setDrawDepth(layerDrawMatrix.m43());
-    } else
-        drawLayer->setDrawDepth(0);
-
     LayerList& descendants = (drawLayer->renderSurface() ? drawLayer->renderSurface()->m_layerList : layerList);
     descendants.append(drawLayer);
     unsigned thisLayerIndex = descendants.size() - 1;
@@ -810,11 +796,11 @@ void LayerRendererChromium::updatePropertiesAndRenderSurfaces(LayerChromium* lay
         }
     }
 
-    // If preserves-3d then sort all the descendants by the Z coordinate of their
-    // center. If the preserves-3d property is also set on the superlayer then
+    // If preserves-3d then sort all the descendants in 3D so that they can be 
+    // drawn from back to front. If the preserves-3d property is also set on the superlayer then
     // skip the sorting as the superlayer will sort all the descendants anyway.
     if (drawLayer->preserves3D() && (!drawLayer->superlayer() || !drawLayer->superlayer()->preserves3D()))
-        std::stable_sort(&descendants.at(thisLayerIndex), descendants.end(), compareLayerZ);
+        m_layerSorter.sort(&descendants.at(thisLayerIndex), descendants.end());
 }
 
 void LayerRendererChromium::updateCompositorResourcesRecursive(LayerChromium* layer)

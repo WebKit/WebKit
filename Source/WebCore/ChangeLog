@@ -1,3 +1,41 @@
+2011-05-04  Vangelis Kokkevis  <vangelis@chromium.org>
+
+        Reviewed by Kenneth Russell.
+
+        [chromium] Improve sorting of layers in hierarchies that preserve-3d
+        by testing for overlapping regions between layer pairs and doing a
+        topological sort to determine the right order.
+        https://bugs.webkit.org/show_bug.cgi?id=59255
+
+        Test: platform/chromium/compositing/perpendicular-layer-sorting.html
+
+        * WebCore.gypi:
+        * platform/graphics/chromium/LayerRendererChromium.cpp:
+        (WebCore::LayerRendererChromium::updatePropertiesAndRenderSurfaces):
+        * platform/graphics/chromium/LayerRendererChromium.h:
+        * platform/graphics/chromium/cc/CCLayerImpl.h:
+        (WebCore::CCLayerImpl::clearRenderSurface):
+        * platform/graphics/chromium/cc/CCLayerSorter.cpp: Added.
+        (WebCore::perpProduct):
+        (WebCore::innerProduct):
+        (WebCore::pointInColinearEdge):
+        (WebCore::edgeEdgeTest):
+        (WebCore::CCLayerSorter::LayerIntersector::LayerIntersector):
+        (WebCore::CCLayerSorter::LayerIntersector::go):
+        (WebCore::CCLayerSorter::LayerIntersector::edgeTriangleTest):
+        (WebCore::CCLayerSorter::LayerIntersector::triangleTriangleTest):
+        (WebCore::CCLayerSorter::LayerIntersector::checkZDiff):
+        (WebCore::CCLayerSorter::LayerIntersector::layerZFromProjectedPoint):
+        (WebCore::CCLayerSorter::CCLayerSorter):
+        (WebCore::CCLayerSorter::checkOverlap):
+        (WebCore::CCLayerSorter::createGraphNodes):
+        (WebCore::CCLayerSorter::createGraphEdges):
+        (WebCore::CCLayerSorter::removeEdgeFromList):
+        (WebCore::CCLayerSorter::sort):
+        * platform/graphics/chromium/cc/CCLayerSorter.h: Added.
+        (WebCore::CCLayerSorter::GraphNode::GraphNode):
+        (WebCore::CCLayerSorter::GraphEdge::GraphEdge):
+
 2011-05-03  Jer Noble  <jer.noble@apple.com>
 
         Reviewed by Antti Koivisto.

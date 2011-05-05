@@ -116,8 +116,6 @@ public:
 
     RenderSurfaceChromium* renderSurface() const { return m_renderSurface.get(); }
     void clearRenderSurface() { m_renderSurface.clear(); }
-    float drawDepth() const { return m_drawDepth; }
-    void setDrawDepth(float depth) { m_drawDepth = depth; }
     float drawOpacity() const { return m_drawOpacity; }
     void setDrawOpacity(float opacity) { m_drawOpacity = opacity; }
     const IntRect& scissorRect() const { return m_scissorRect; }

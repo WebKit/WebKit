@@ -43,6 +43,7 @@
 #include "VideoLayerChromium.h"
 #include "cc/CCCanvasLayerImpl.h"
 #include "cc/CCHeadsUpDisplay.h"
+#include "cc/CCLayerSorter.h"
 #include "cc/CCPluginLayerImpl.h"
 #include "cc/CCVideoLayerImpl.h"
 #include <wtf/HashMap.h>
@@ -234,6 +235,8 @@ private:
     bool m_contextSupportsLatch;
 
     RenderSurfaceChromium* m_defaultRenderSurface;
+
+    CCLayerSorter m_layerSorter;
 };
 
 // Setting DEBUG_GL_CALLS to 1 will call glGetError() after almost every GL
