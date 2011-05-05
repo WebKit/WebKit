@@ -1,3 +1,20 @@
+2011-05-05  Tony Chang  <tony@chromium.org>
+
+        Remove google-chrome-linux results.  We're switching the official
+        builders from hardy to lucid and want to clear the old hardy based
+        results.
+
+        * platform/google-chrome-linux32/css1: Removed.
+        * platform/google-chrome-linux32/css2.1: Removed.
+        * platform/google-chrome-linux32/editing: Removed.
+        * platform/google-chrome-linux32/fast: Removed.
+        * platform/google-chrome-linux32/plugins: Removed.
+        * platform/google-chrome-linux32/svg: Removed.
+        * platform/google-chrome-linux32/tables: Removed.
+        * platform/google-chrome-linux32/transforms: Removed.
+        * platform/google-chrome-linux64/fast: Removed.
+        * platform/google-chrome-linux64/svg: Removed.
+
 2011-05-05  Abhishek Arya  <inferno@chromium.org>
 
         Unreviewed.
