@@ -142,6 +142,9 @@ class Port(object):
         self._multiprocessing_is_available = (multiprocessing is not None)
         self._results_directory = None
 
+        if not hasattr(self._options, 'use_apache') or self._options.use_apache is None:
+            self._options.use_apache = self._default_to_apache()
+
     def wdiff_available(self):
         if self._wdiff_available is None:
             self._wdiff_available = self.check_wdiff(logging=False)
@@ -638,22 +641,23 @@ class Port(object):
         pass
 
     def start_http_server(self):
-        """Start a web server if it is available. Do nothing if
-        it isn't. This routine is allowed to (and may) fail if a server
-        is already running."""
+        """Start a web server. Raise an error if it can't start or is already running.
+
+        Ports can stub this out if they don't need a web server to be running."""
         if self.get_option('use_apache'):
-            self._http_server = apache_http_server.LayoutTestApacheHttpd(self,
-                self.results_directory())
+            server = apache_http_server.LayoutTestApacheHttpd(self, self.results_directory())
         else:
-            self._http_server = http_server.Lighttpd(self, self.results_directory())
-        self._http_server.start()
+            server = http_server.Lighttpd(self, self.results_directory())
+        server.start()
+        self._http_server = server
 
     def start_websocket_server(self):
-        """Start a websocket server if it is available. Do nothing if
-        it isn't. This routine is allowed to (and may) fail if a server
-        is already running."""
-        self._websocket_server = websocket_server.PyWebSocket(self, self.results_directory())
-        self._websocket_server.start()
+        """Start a web server. Raise an error if it can't start or is already running.
+
+        Ports can stub this out if they don't need a websocket server to be running."""
+        server = websocket_server.PyWebSocket(self, self.results_directory())
+        server.start()
+        self._websocket_server = server
 
     def acquire_http_lock(self):
         self._http_lock = http_lock.HttpLock(None)
@@ -666,14 +670,12 @@ class Port(object):
         pass
 
     def stop_http_server(self):
-        """Shut down the http server if it is running. Do nothing if
-        it isn't, or it isn't available."""
+        """Shut down the http server if it is running. Do nothing if it isn't."""
         if self._http_server:
             self._http_server.stop()
 
     def stop_websocket_server(self):
-        """Shut down the websocket server if it is running. Do nothing if
-        it isn't, or it isn't available."""
+        """Shut down the websocket server if it is running. Do nothing if it isn't."""
         if self._websocket_server:
             self._websocket_server.stop()
 
@@ -820,6 +822,12 @@ class Port(object):
     #
     def _webkit_build_directory(self, args):
         return self._config.build_directory(args[0])
+
+    def _default_to_apache(self):
+        """Override if the port should use LigHTTPd instead of Apache by default.
+
+        Ports that override start_http_server() ignore this method."""
+        return True
 
     def _path_to_apache(self):
         """Returns the full path to the apache binary.

@@ -1,3 +1,32 @@
+2011-05-05  Dirk Pranke  <dpranke@chromium.org>
+
+        Reviewed by Ojan Vafai.
+
+        nrwt: revamp integration tests incl. tests for servers
+        https://bugs.webkit.org/show_bug.cgi?id=59985
+
+        This change adds the ability to run "integration tests" that
+        depend on (and affect) the local environment on your machine.
+        These tests can be run manually by invoking python on the
+        test file in question and passing the '-i' flag, but are
+        not run automatically as part of test-webkitpy.
+
+        Integration tests are identified by being methods named as
+        "integration_test_*" instead of "test_*", and we use a
+        custom TestLoader instead of the default one provided by
+        unittest.
+
+        This change also adds a protected "_default_to_apache" method
+        to the port object so we can do the right thing when starting
+        and stopping web servers with less mechanism.
+
+        * Scripts/webkitpy/layout_tests/port/base.py:
+        * Scripts/webkitpy/layout_tests/port/chromium_linux_unittest.py:
+        * Scripts/webkitpy/layout_tests/port/chromium_mac_unittest.py:
+        * Scripts/webkitpy/layout_tests/port/chromium_win_unittest.py:
+        * Scripts/webkitpy/layout_tests/port/mac_unittest.py:
+        * Scripts/webkitpy/layout_tests/port/port_testcase.py:
+
 2011-05-05  Adam Roben  <aroben@apple.com>
 
         Robustify DRT's pixel-dumping code against semi-random alpha channel values on Windows

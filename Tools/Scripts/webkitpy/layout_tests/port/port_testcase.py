@@ -28,6 +28,9 @@
 
 """Unit testing base class for Port implementations."""
 
+import errno
+import socket
+
 import sys
 import unittest
 
@@ -37,15 +40,18 @@ try:
 except ImportError:
     multiprocessing = None
 
-from webkitpy.tool import mocktool
-mock_options = mocktool.MockOptions(use_apache=True,
-                                    configuration='Release')
+from webkitpy.layout_tests.port import http_server_base
 
-# FIXME: This should be used for all ports, not just WebKit Mac. See
-# https://bugs.webkit.org/show_bug.cgi?id=50043 .
+from webkitpy.tool import mocktool
+mock_options = mocktool.MockOptions(configuration='Release')
+
 
 class PortTestCase(unittest.TestCase):
-    """Tests the WebKit port implementation."""
+    """Tests that all Port implementations must pass."""
+
+    HTTP_PORTS = [8000, 8080, 8443]
+    WEBSOCKET_PORTS = [8880]
+
     def port_maker(self, platform):
         """Override to return the class object of the port to be tested,
         or None if a valid port object cannot be constructed on the specified
@@ -83,14 +89,100 @@ class PortTestCase(unittest.TestCase):
         self.assertTrue('--foo=bar' in cmd_line)
         self.assertTrue('--foo=baz' in cmd_line)
 
-    def disabled_test_http_server(self):
+    def assert_servers_are_down(self, host, ports):
+        for port in ports:
+            try:
+                s = socket.socket()
+                s.connect((host, port))
+                self.fail()
+            except IOError, e:
+                self.assertTrue(e.errno in (errno.ECONNREFUSED, errno.ECONNRESET))
+            finally:
+                s.close()
+
+    def assert_servers_are_up(self, host, ports):
+        for port in ports:
+            try:
+                s = socket.socket()
+                s.connect((host, port))
+            except IOError, e:
+                self.fail('failed to connect to %s:%d' % (host, port))
+            finally:
+                s.close()
+
+    def integration_test_http_lock(self):
         port = self.make_port()
         if not port:
             return
+        # Only checking that no exception is raised.
+        port.acquire_http_lock()
+        port.release_http_lock()
+
+    def integration_test_check_sys_deps(self):
+        port = self.make_port()
+        if not port:
+            return
+        # Only checking that no exception is raised.
+        port.check_sys_deps(True)
+
+    def integration_test_helper(self):
+        port = self.make_port()
+        if not port:
+            return
+        # Only checking that no exception is raised.
+        port.start_helper()
+        port.stop_helper()
+
+    def integration_test_http_server__normal(self):
+        port = self.make_port()
+        if not port:
+            return
+
+        self.assert_servers_are_down('localhost', self.HTTP_PORTS)
         port.start_http_server()
+        self.assert_servers_are_up('localhost', self.HTTP_PORTS)
+        port.stop_http_server()
+        self.assert_servers_are_down('localhost', self.HTTP_PORTS)
+
+    def integration_test_http_server__fails(self):
+        port = self.make_port()
+        if not port:
+            return
+
+        # Test that if a port isn't available, the call fails.
+        for port_number in self.HTTP_PORTS:
+            s = socket.socket()
+            try:
+                try:
+                    s.bind(('localhost', port_number))
+                except socket.error, e:
+                    if e.errno in (errno.EADDRINUSE, errno.EALREADY):
+                        self.fail('could not bind to port %d' % port_number)
+                    raise
+                try:
+                    port.start_http_server()
+                    self.fail('should not have been able to start the server while bound to %d' % port_number)
+                except http_server_base.ServerError, e:
+                    pass
+            finally:
+                port.stop_http_server()
+                s.close()
+
+        # Test that calling start() twice fails.
+        try:
+            port.start_http_server()
+            try:
+                port.start_http_server()
+                self.fail('calling port.start_http_server() twice worked')
+            except http_server_base.ServerError, e:
+                pass
+        finally:
+            port.stop_http_server()
+
+        # Test that calling stop() twice is harmless.
         port.stop_http_server()
 
-    def disabled_test_image_diff(self):
+    def integration_test_image_diff(self):
         port = self.make_port()
         if not port:
             return
@@ -150,11 +242,48 @@ class PortTestCase(unittest.TestCase):
             return
         port.check_wdiff()
 
-    def disabled_test_websocket_server(self):
+    def integration_test_websocket_server__normal(self):
         port = self.make_port()
         if not port:
             return
+
+        self.assert_servers_are_down('localhost', self.WEBSOCKET_PORTS)
         port.start_websocket_server()
+        self.assert_servers_are_up('localhost', self.WEBSOCKET_PORTS)
+        port.stop_websocket_server()
+        self.assert_servers_are_down('localhost', self.WEBSOCKET_PORTS)
+
+    def integration_test_websocket_server__fails(self):
+        port = self.make_port()
+        if not port:
+            return
+
+        # Test that start() fails if a port isn't available.
+        for port_number in self.WEBSOCKET_PORTS:
+            s = socket.socket()
+            try:
+                s.bind(('localhost', port_number))
+                try:
+                    port.start_websocket_server()
+                    self.fail('should not have been able to start the server while bound to %d' % port_number)
+                except http_server_base.ServerError, e:
+                    pass
+            finally:
+                port.stop_websocket_server()
+                s.close()
+
+        # Test that calling start() twice fails.
+        try:
+            port.start_websocket_server()
+            try:
+                port.start_websocket_server()
+                self.fail('calling port.start_websocket_server() twice worked')
+            except http_server_base.ServerError, e:
+                pass
+        finally:
+            port.stop_websocket_server()
+
+        # Test that calling stop() twice is harmless.
         port.stop_websocket_server()
 
     def test_test_configuration(self):
@@ -174,3 +303,34 @@ class PortTestCase(unittest.TestCase):
         if not port:
             return
         self.assertTrue(port.baseline_path() in port.baseline_search_path())
+
+
+# FIXME: This class and main() should be merged into test-webkitpy.
+class EnhancedTestLoader(unittest.TestLoader):
+    integration_tests = False
+    unit_tests = True
+
+    def getTestCaseNames(self, testCaseClass):
+        def isTestMethod(attrname, testCaseClass=testCaseClass):
+            if not hasattr(getattr(testCaseClass, attrname), '__call__'):
+                return False
+            return ((self.unit_tests and attrname.startswith('test_')) or
+                    (self.integration_tests and attrname.startswith('integration_test_')))
+        testFnNames = filter(isTestMethod, dir(testCaseClass))
+        testFnNames.sort()
+        return testFnNames
+
+
+def main(argv=None):
+    if argv is None:
+        argv = sys.argv
+
+    test_loader = EnhancedTestLoader()
+    if '-i' in argv:
+        test_loader.integration_tests = True
+        argv.remove('-i')
+    if '--no-unit-tests' in argv:
+        test_loader.unit_tests = False
+        argv.remove('--no-unit-tests')
+
+    unittest.main(argv=argv, testLoader=test_loader)

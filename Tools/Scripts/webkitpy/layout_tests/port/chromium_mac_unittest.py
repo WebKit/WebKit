@@ -83,4 +83,4 @@ class ChromiumMacPortTest(port_testcase.PortTestCase):
 
 
 if __name__ == '__main__':
-    unittest.main()
+    port_testcase.main()

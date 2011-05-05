@@ -58,41 +58,29 @@ class MockDRTPortTest(port_testcase.PortTestCase):
     def test_port_name_in_constructor(self):
         self.assertTrue(mock_drt.MockDRTPort(port_name='mock-test'))
 
-    def test_acquire_http_lock(self):
-        # Only checking that no exception is raised.
-        self.make_port().acquire_http_lock()
-
-    def test_release_http_lock(self):
-        # Only checking that no exception is raised.
-        self.make_port().release_http_lock()
-
     def test_check_sys_deps(self):
-        port = self.make_port()
-        self.assertTrue(port.check_sys_deps(True))
+        pass
 
-    def test_start_helper(self):
-        # Only checking that no exception is raised.
-        self.make_port().start_helper()
+    def integration_test_http_lock(self):
+        pass
 
-    def test_start_http_server(self):
-        # Only checking that no exception is raised.
-        self.make_port().start_http_server()
+    def integration_test_start_helper(self):
+        pass
 
-    def test_start_websocket_server(self):
-        # Only checking that no exception is raised.
-        self.make_port().start_websocket_server()
+    def integration_test_http_server__normal(self):
+        pass
 
-    def test_stop_helper(self):
-        # Only checking that no exception is raised.
-        self.make_port().stop_helper()
+    def integration_test_http_server__fails(self):
+        pass
 
-    def test_stop_http_server(self):
-        # Only checking that no exception is raised.
-        self.make_port().stop_http_server()
+    def integration_test_websocket_server__normal(self):
+        pass
 
-    def test_stop_websocket_server(self):
-        # Only checking that no exception is raised.
-        self.make_port().stop_websocket_server()
+    def integration_test_websocket_server__fails(self):
+        pass
+
+    def integration_test_helper(self):
+        pass
 
 
 class MockDRTTest(unittest.TestCase):
@@ -269,4 +257,4 @@ class MockChromiumDRTTest(MockDRTTest):
 
 
 if __name__ == '__main__':
-    unittest.main()
+    port_testcase.main()

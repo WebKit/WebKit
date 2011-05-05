@@ -69,12 +69,13 @@ class WebKitPortTest(port_testcase.PortTestCase):
     def port_maker(self, platform):
         return WebKitPort
 
+    def test_check_build(self):
+        pass
+
     def test_driver_cmd_line(self):
-        # Routine is not implemented.
         pass
 
     def test_baseline_search_path(self):
-        # Routine is not implemented.
         pass
 
     def test_skipped_directories_for_symbols(self):

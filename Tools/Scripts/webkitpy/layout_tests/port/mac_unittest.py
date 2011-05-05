@@ -131,4 +131,4 @@ svg/batik/text/smallFonts.svg
 
 
 if __name__ == '__main__':
-    unittest.main()
+    port_testcase.main()

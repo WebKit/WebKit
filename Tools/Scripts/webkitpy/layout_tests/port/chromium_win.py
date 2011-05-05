@@ -130,6 +130,9 @@ class ChromiumWinPort(chromium.ChromiumPort):
             return p
         return self._filesystem.join(self.path_from_webkit_base(), 'Source', 'WebKit', 'chromium', *comps)
 
+    def _default_to_apache(self):
+        return False
+
     def _lighttpd_path(self, *comps):
         return self.path_from_chromium_base('third_party', 'lighttpd', 'win',
                                             *comps)
