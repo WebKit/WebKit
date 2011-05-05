@@ -1,3 +1,17 @@
+2011-05-05  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Anders Carlsson.
+
+        WebKit2 (Mac): Background tabs/windows can force themselves to the front
+        <rdar://problem/9386346>
+        https://bugs.webkit.org/show_bug.cgi?id=60315
+
+        * platform/mac/WidgetMac.mm:
+        (WebCore::Widget::setFocus):
+        It is incorrect for us to call Chrome::focus() here, which could bring a window/tab
+        to the front. Calling focusNSView() was only necessary because in WebKit we must inform
+        the platform widget that the focus has changed. WebKit2 Mac now matches other ports.
+
 2011-05-05  Justin Novosad  <junov@chromium.org>
 
         Reviewed by Kenneth Russell.
