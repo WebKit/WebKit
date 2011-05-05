@@ -1937,6 +1937,7 @@ HEADERS += \
     platform/graphics/FontMetrics.h \
     platform/graphics/Font.h \
     platform/graphics/GeneratedImage.h \
+    platform/graphics/GlyphPageTreeNode.h \
     platform/graphics/Gradient.h \
     platform/graphics/GraphicsContext.h \
     platform/graphics/GraphicsLayer.h \
@@ -3062,6 +3063,20 @@ contains(DEFINES, WTF_USE_QT_BEARER=1) {
 
     SOURCES += \
         platform/network/qt/NetworkStateNotifierQt.cpp
+}
+
+!lessThan(QT_MAJOR_VERSION,4):!lessThan(QT_MINOR_VERSION, 8):HAVE_QRAWFONT=1
+
+!isEmpty(HAVE_QRAWFONT) {
+    DEFINES += HAVE_QRAWFONT=1
+
+    SOURCES += \
+        platform/graphics/FontFastPath.cpp \
+        platform/graphics/GlyphPageTreeNode.cpp \
+        platform/graphics/WidthIterator.cpp
+
+    HEADERS += \
+        platform/graphics/WidthIterator.h
 }
 
 contains(DEFINES, ENABLE_GEOLOCATION=1) {

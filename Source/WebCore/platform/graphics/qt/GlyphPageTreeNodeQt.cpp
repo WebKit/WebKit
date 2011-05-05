@@ -23,7 +23,35 @@
 #include "config.h"
 #include "GlyphPageTreeNode.h"
 
+#if HAVE(QRAWFONT)
+#include "SimpleFontData.h"
+#include <QFontMetricsF>
+#include <QTextLayout>
+#endif
+
 namespace WebCore {
+
+#if HAVE(QRAWFONT)
+bool GlyphPage::fill(unsigned offset, unsigned length, UChar* buffer, unsigned bufferLength, const SimpleFontData* fontData)
+{
+    QRawFont rawFont = fontData->platformData().rawFont();
+    QString qstring = QString::fromRawData(reinterpret_cast<const QChar*>(buffer), static_cast<int>(bufferLength));
+    QVector<quint32> indexes = rawFont.glyphIndexesForString(qstring);
+
+    bool haveGlyphs = false;
+
+    for (unsigned i = 0; i < length; ++i) {
+        Glyph glyph = (i < indexes.size()) ? indexes.at(i) : 0;
+        if (!glyph)
+            setGlyphDataForIndex(offset + i, 0, 0);
+        else {
+            haveGlyphs = true;
+            setGlyphDataForIndex(offset + i, glyph, fontData);
+        }
+    }
+    return haveGlyphs;
+}
+#else
 
 void GlyphPageTreeNode::pruneTreeCustomFontData(const FontData*)
 {
@@ -32,5 +60,6 @@ void GlyphPageTreeNode::pruneTreeCustomFontData(const FontData*)
 void GlyphPageTreeNode::pruneTreeFontData(const WebCore::SimpleFontData*)
 {
 }
+#endif // HAVE(QRAWFONT)
 
 }

@@ -80,7 +80,23 @@ FontPlatformData::FontPlatformData(const FontDescription& description, const Ato
     // m_data->size if a font size of zero is requested and pixelSize()
     // otherwise.
     m_data->size = (!requestedSize) ? requestedSize : font.pixelSize();
+#if HAVE(QRAWFONT)
+    m_data->rawFont = QRawFont::fromFont(font, QFontDatabase::Any);
+#endif
 }
+
+#if HAVE(QRAWFONT)
+FontPlatformData::FontPlatformData(const FontPlatformData& other, float size)
+    : m_data(adoptRef(new FontPlatformDataPrivate()))
+{
+    m_data->font = other.m_data->font;
+    m_data->rawFont = other.m_data->rawFont;
+    m_data->bold = other.m_data->bold;
+    m_data->oblique = other.m_data->oblique;
+    m_data->font.setPixelSize(size);
+    m_data->size = size ? m_data->font.pixelSize() : 0;
+}
+#endif
 
 bool FontPlatformData::operator==(const FontPlatformData& other) const
 {

@@ -279,9 +279,8 @@ private:
 #endif
 #endif
 };
-    
-    
-#if !PLATFORM(QT)
+
+#if !(PLATFORM(QT) && !HAVE(QRAWFONT))
 ALWAYS_INLINE FloatRect SimpleFontData::boundsForGlyph(Glyph glyph) const
 {
     if (isZeroWidthSpaceGlyph(glyph))

@@ -35,6 +35,9 @@
 #include <wtf/text/StringHash.h>
 
 #include <QFont>
+#if HAVE(QRAWFONT)
+#include <QTextLayout>
+#endif
 
 using namespace WTF;
 
@@ -44,9 +47,46 @@ void FontCache::platformInit()
 {
 }
 
-const SimpleFontData* FontCache::getFontDataForCharacters(const Font&, const UChar*, int)
+#if HAVE(QRAWFONT)
+static QRawFont rawFontForCharacters(const QString& string, const QFont& requestedFont)
 {
+    QFont font(requestedFont);
+    font.setStyleStrategy(QFont::NoFontMerging);
+
+    QTextLayout layout(string, font);
+    layout.beginLayout();
+    layout.createLine();
+    layout.endLayout();
+
+    QList<QGlyphs> glyphList = layout.glyphs();
+
+    ASSERT(glyphList.size() == 1);
+
+    const QGlyphs& glyphs(glyphList.at(0));
+    QVector<quint32> glyphIndexes = glyphs.glyphIndexes();
+
+    if (glyphIndexes.isEmpty())
+        return QRawFont();
+
+    return glyphs.font();
+}
+#endif
+
+const SimpleFontData* FontCache::getFontDataForCharacters(const Font& font, const UChar* characters, int length)
+{
+#if HAVE(QRAWFONT)
+    QString qstring = QString::fromRawData(reinterpret_cast<const QChar*>(characters), length);
+    QRawFont computedFont = rawFontForCharacters(qstring, font.font());
+    if (!computedFont.isValid())
+        return 0;
+    FontPlatformData alternateFont(computedFont);
+    return getCachedFontData(&alternateFont);
+#else
+    Q_UNUSED(font);
+    Q_UNUSED(characters);
+    Q_UNUSED(length);
     return 0;
+#endif
 }
 
 SimpleFontData* FontCache::getSimilarFontPlatformData(const Font& font)

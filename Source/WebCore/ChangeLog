@@ -1,3 +1,58 @@
+2011-05-05  Andreas Kling  <andreas.kling@nokia.com>
+
+        Reviewed by Simon Hausmann.
+
+        [Qt] Implement the fast font path for Qt.
+        https://bugs.webkit.org/show_bug.cgi?id=51106
+
+        Use the new QRawFont and QGlyphs APIs in Qt 4.8 to implement the fast paths for
+        rendering and measurement of simple text.
+
+        Since this is still unreleased API, it's guarded by HAVE(QRAWFONT) until the new
+        classes are fully integrated into the Qt 4.8 release branch.
+
+        * WebCore.pro: Add HAVE_QRAWFONT define (for Qt >= 4.8) and new files to build.
+
+        * platform/graphics/Font.cpp:
+        (WebCore::Font::drawText): Disable fast font path for stroked text, and when
+        painting text with a shadow. (Qt-only)
+        (WebCore::Font::codePath): Try to use fast font path in more cases.
+
+        * platform/graphics/qt/FontCacheQt.cpp:
+        (WebCore::rawFontForCharacters): Helper function, returns a suitable QRawFont
+        to use for rendering a given string. Goes through QTextLayout to find the best
+        font based on the original QFont query.
+        (WebCore::FontCache::getFontDataForCharacters): Implemented using helper above.
+
+        * platform/graphics/qt/FontPlatformData.h:
+        (WebCore::FontPlatformDataPrivate::FontPlatformDataPrivate):
+        (WebCore::FontPlatformData::FontPlatformData):
+        (WebCore::FontPlatformData::rawFont):
+        * platform/graphics/qt/FontPlatformDataQt.cpp:
+        (WebCore::FontPlatformData::FontPlatformData): Add a QRawFont member to FontPlatformData.
+
+        * platform/graphics/qt/FontQt.cpp:
+        (WebCore::fillPenForContext):
+        (WebCore::strokePenForContext):
+        (WebCore::drawTextCommon): Factored QPen creation out of drawTextCommon
+        to share code between complex and simple font rendering paths.
+        (WebCore::Font::drawGlyphs): Implemented using QPainter::drawGlyphs().
+
+        * platform/graphics/qt/GlyphPageTreeNodeQt.cpp:
+        (WebCore::GlyphPage::fill): Implemented using QRawFont::glyphIndexesForString().
+
+        * platform/graphics/qt/SimpleFontDataQt.cpp:
+        (WebCore::SimpleFontData::determinePitch): Return false when using QRawFont since we
+        have no way of knowing the pitch.
+        (WebCore::SimpleFontData::containsCharacters): Implemented using QRawFont::supportsCharacter().
+        (WebCore::SimpleFontData::platformWidthForGlyph): Implemented using QRawFont::advancesForGlyphIndexes().
+        (WebCore::SimpleFontData::scaledFontData): Added, based on other ports.
+        (WebCore::SimpleFontData::smallCapsFontData): Ditto.
+        (WebCore::SimpleFontData::emphasisMarkFontData): Ditto.
+        (WebCore::SimpleFontData::platformBoundsForGlyph): Stub.
+        (WebCore::SimpleFontData::platformInit): Use QRawFont APIs to retrieve font metrics.
+        (WebCore::SimpleFontData::platformCharWidthInit): Ditto.
+
 2011-05-05  Alexis Menard  <alexis.menard@openbossa.org>
 
         Reviewed by Andreas Kling.

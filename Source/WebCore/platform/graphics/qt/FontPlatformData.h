@@ -28,6 +28,9 @@
 #include "FontOrientation.h"
 #include <QFont>
 #include <QHash>
+#if HAVE(QRAWFONT)
+#include <QRawFont>
+#endif
 #include <wtf/Forward.h>
 #include <wtf/RefCounted.h>
 
@@ -50,16 +53,32 @@ public:
     { }
     FontPlatformDataPrivate(const QFont& font)
         : font(font)
+#if HAVE(QRAWFONT)
+        , rawFont(QRawFont::fromFont(font, QFontDatabase::Any))
+#endif
         , size(font.pixelSize())
         , bold(font.bold())
         , oblique(false)
         , isDeletedValue(false)
     { }
+#if HAVE(QRAWFONT)
+    FontPlatformDataPrivate(const QRawFont& rawFont)
+        : font()
+        , rawFont(rawFont)
+        , size(rawFont.pixelSize())
+        , bold(rawFont.weight() >= QFont::Bold)
+        , oblique(false)
+        , isDeletedValue(false)
+    { }
+#endif
     FontPlatformDataPrivate(WTF::HashTableDeletedValueType)
         : isDeletedValue(true)
     { }
 
     QFont font;
+#if HAVE(QRAWFONT)
+    QRawFont rawFont;
+#endif
     float size;
     bool bold : 1;
     bool oblique : 1;
@@ -74,6 +93,12 @@ public:
     FontPlatformData(const QFont& font)
         : m_data(adoptRef(new FontPlatformDataPrivate(font)))
     { }
+#if HAVE(QRAWFONT)
+    FontPlatformData(const FontPlatformData&, float size);
+    FontPlatformData(const QRawFont& rawFont)
+        : m_data(adoptRef(new FontPlatformDataPrivate(rawFont)))
+    { }
+#endif
     FontPlatformData(WTF::HashTableDeletedValueType)
         : m_data(adoptRef(new FontPlatformDataPrivate()))
     {
@@ -94,6 +119,15 @@ public:
             return QFont();
         return m_data->font;
     }
+#if HAVE(QRAWFONT)
+    QRawFont rawFont() const
+    {
+        Q_ASSERT(!isHashTableDeletedValue());
+        if (!m_data)
+            return QRawFont();
+        return m_data->rawFont;
+    }
+#endif
     float size() const
     {
         Q_ASSERT(!isHashTableDeletedValue());
