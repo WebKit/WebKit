@@ -1,3 +1,9 @@
+2011-05-05  Adam Barth  <abarth@webkit.org>
+
+        Remove a couple stray mentions of WML that I missed before.
+
+        * configure.ac:
+
 2011-05-05  Alexis Menard  <alexis.menard@openbossa.org>
 
         Reviewed by Benjamin Poulain.

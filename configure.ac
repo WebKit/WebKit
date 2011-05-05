@@ -622,14 +622,6 @@ AC_ARG_ENABLE(svg,
               [],[enable_svg="yes"])
 AC_MSG_RESULT([$enable_svg])
 
-# check whether to enable WML support
-AC_MSG_CHECKING([whether to enable WML support])
-AC_ARG_ENABLE(wml,
-              AC_HELP_STRING([--enable-wml],
-                             [enable support for WML [default=no]]),
-              [],[enable_wml="no"])
-AC_MSG_RESULT([$enable_wml])
-
 # check whether to enable WCSS support
 AC_MSG_CHECKING([whether to enable WCSS support])
 AC_ARG_ENABLE(wcss,
@@ -1126,7 +1118,6 @@ AM_CONDITIONAL([ENABLE_SVG_AS_IMAGE],[test "$enable_svg_as_image" = "yes"])
 AM_CONDITIONAL([ENABLE_SVG_USE],[test "$enable_svg_use" = "yes"])
 AM_CONDITIONAL([ENABLE_COVERAGE],[test "$enable_coverage" = "yes"])
 AM_CONDITIONAL([ENABLE_FAST_MALLOC],[test "$enable_fast_malloc" = "yes"])
-AM_CONDITIONAL([ENABLE_WML],[test "$enable_wml" = "yes"])
 AM_CONDITIONAL([ENABLE_WCSS],[test "$enable_wcss" = "yes"])
 AM_CONDITIONAL([ENABLE_WORKERS],[test "$enable_workers" = "yes"])
 AM_CONDITIONAL([ENABLE_SHARED_WORKERS],[test "$enable_shared_workers" = "yes"])
@@ -1225,7 +1216,6 @@ Features:
  SVG foreign object support                               : $enable_svg_foreign_object
  SVG as image support                                     : $enable_svg_as_image
  SVG use element support                                  : $enable_svg_use
- WML support                                              : $enable_wml
  WCSS support                                             : $enable_wcss
  Web Audio support                                        : $enable_web_audio
  Web Sockets support                                      : $enable_web_sockets
