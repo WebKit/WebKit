@@ -1,3 +1,16 @@
+2011-05-04  James Robinson  <jamesr@chromium.org>
+
+        Reviewed by Kenneth Russell.
+
+        [chromium] REGRESSION(85136): Composited content vanishes when transform-style changes from preserve-3d to flat
+        https://bugs.webkit.org/show_bug.cgi?id=60202
+
+        Adds a regression test for composited content changing from transform-style: preserve-3d to flat.
+
+        * compositing/repaint/transform-style-change-expected.png: Added.
+        * compositing/repaint/transform-style-change-expected.txt: Added.
+        * compositing/repaint/transform-style-change.html: Added.
+
 2011-05-04  MORITA Hajime <morrita@google.com>
 
         Unreviewed expectations update.

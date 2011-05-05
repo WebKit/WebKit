@@ -1,3 +1,18 @@
+2011-05-04  James Robinson  <jamesr@chromium.org>
+
+        Reviewed by Kenneth Russell.
+
+        [chromium] REGRESSION(85136): Composited content vanishes when transform-style changes from preserve-3d to flat
+        https://bugs.webkit.org/show_bug.cgi?id=60202
+
+        In r85136 I accidentally transposed two lines in GraphicsLayerChromium when adding a null check.  This switches
+        the order back and adds a regression test.
+
+        Test: compositing/repaint/transform-style-change.html
+
+        * platform/graphics/chromium/GraphicsLayerChromium.cpp:
+        (WebCore::GraphicsLayerChromium::updateLayerPreserves3D):
+
 2011-05-04  Cris Neckar  <cdn@chromium.org>
 
         Reviewed by Adam Barth.
