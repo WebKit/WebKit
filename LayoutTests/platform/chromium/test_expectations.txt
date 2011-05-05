@@ -3674,11 +3674,15 @@ BUGCR75354 : media/video-display-toggle.html = IMAGE+TEXT
 BUGCR75354 : media/video-empty-source.html = IMAGE+TEXT
 BUGCR75354 : media/video-no-audio.html = IMAGE+TEXT
 BUGCR75354 CPU : media/video-volume-slider.html = IMAGE+TEXT
-BUGCR75354 : media/video-zoom-controls.html = IMAGE+TEXT
-BUGCR75354 : media/controls-after-reload.html = TEXT
-BUGCR75354 : media/controls-strict.html = TEXT
-BUGCR75354 : media/controls-styling.html = TEXT
-BUGCR75354 : media/controls-without-preload.html = TEXT
+BUGCR75354 CPU : media/video-zoom-controls.html = IMAGE+TEXT
+BUGCR75354 CPU : media/controls-after-reload.html = TEXT
+BUGCR75354 GPU : media/controls-after-reload.html = IMAGE+TEXT
+BUGCR75354 CPU : media/controls-strict.html = TEXT
+BUGCR75354 GPU : media/controls-strict.html = IMAGE+TEXT
+BUGCR75354 CPU : media/controls-styling.html = TEXT
+BUGCR75354 GPU : media/controls-styling.html = IMAGE+TEXT
+BUGCR75354 CPU : media/controls-without-preload.html = TEXT
+BUGCR75354 GPU : media/controls-without-preload.html = IMAGE+TEXT TIMEOUT TEXT
 
 // probably just needs a new baseline
 BUGWK60130 WIN LINUX : fast/backgrounds/background-leakage-transforms.html = IMAGE+TEXT
