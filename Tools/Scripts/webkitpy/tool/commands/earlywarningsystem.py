@@ -140,7 +140,7 @@ class AbstractTestingEWS(AbstractEarlyWarningSystem, EarlyWarningSystemTaskDeleg
             return False
         except ScriptError, e:
             # FIXME: This should just use CommitterValidator.reject_patch_from_commit_queue
-            self._post_reject_message_on_bug(patch)
+            self._post_reject_message_on_bug(task, patch)
             results_archive = task.results_archive_from_patch_test_run(patch)
             if results_archive:
                 self._upload_results_archive_for_patch(patch, results_archive)

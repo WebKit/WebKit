@@ -77,10 +77,14 @@ class Builder(object):
         build_dictionary = self._buildbot._fetch_build_dictionary(self, build_number)
         if not build_dictionary:
             return None
+        revision_string = build_dictionary['sourceStamp']['revision']
         return Build(self,
             build_number=int(build_dictionary['number']),
-            revision=int(build_dictionary['sourceStamp']['revision']),
-            is_green=(build_dictionary['results'] == 0) # Undocumented, 0 seems to mean "pass"
+            # 'revision' may be None if a trunk build was started by the force-build button on the web page.
+            revision=(int(revision_string) if revision_string else None),
+            # Buildbot uses any nubmer other than 0 to mean fail.  Since we fetch with
+            # filter=1, passing builds may contain no 'results' value.
+            is_green=(not build_dictionary.get('results')),
         )
 
     def build(self, build_number):
@@ -375,16 +379,16 @@ class BuildBot(object):
 
     # FIXME: These _fetch methods should move to a networking class.
     def _fetch_build_dictionary(self, builder, build_number):
+        # Note: filter=1 will remove None and {} and '', which cuts noise but can
+        # cause keys to be missing which you might otherwise expect.
+        # FIXME: The bot sends a *huge* amount of data for each request, we should
+        # find a way to reduce the response size further.
+        json_url = "http://%s/json/builders/%s/builds/%s?filter=1" % (self.buildbot_host, urllib.quote(builder.name()), build_number)
         try:
-            base = "http://%s" % self.buildbot_host
-            path = urllib.quote("json/builders/%s/builds/%s" % (builder.name(),
-                                                                build_number))
-            url = "%s/%s" % (base, path)
-            jsondata = urllib2.urlopen(url)
-            return json.load(jsondata)
+            return json.load(urllib2.urlopen(json_url))
         except urllib2.URLError, err:
             build_url = Build.build_url(builder, build_number)
-            _log.error("Error fetching data for %s build %s (%s): %s" % (builder.name(), build_number, build_url, err))
+            _log.error("Error fetching data for %s build %s (%s, json: %s): %s" % (builder.name(), build_number, build_url, json_url, err))
             return None
         except ValueError, err:
             build_url = Build.build_url(builder, build_number)

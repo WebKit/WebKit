@@ -1,3 +1,22 @@
+2011-05-04  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Adam Barth.
+
+        sheriff-bot is having more exception trouble
+        https://bugs.webkit.org/show_bug.cgi?id=60233
+
+        A webpage-forced build was causing SB to throw an exception.
+        We've long had this bug, but we just didn't notice it until now.
+
+        In debugging this I found we fetch an absurd amount of data now
+        that we use buildbot's json (instead of xmlrpc), so I added
+        the filter=1 parameter to reduce it a little.  That required
+        me to handle the case where filter=1 would strip
+        result=0 in some cases (it's unclear why it does that).
+
+        * Scripts/webkitpy/common/net/buildbot/buildbot.py:
+        * Scripts/webkitpy/common/net/buildbot/buildbot_unittest.py:
+
 2011-05-04  Cris Neckar  <cdn@chromium.org>
 
         Unreviewed, Adding Cris Neckar as a committer

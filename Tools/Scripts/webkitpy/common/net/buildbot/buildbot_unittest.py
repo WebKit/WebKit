@@ -116,6 +116,22 @@ class BuilderTest(unittest.TestCase):
         for filename, revision_and_build in expectations.items():
             self.assertEqual(self.builder._revision_and_build_for_filename(filename), revision_and_build)
 
+    def test_fetch_build(self):
+        buildbot = BuildBot()
+        builder = Builder(u"Test Builder \u2661", buildbot)
+
+        def mock_fetch_build_dictionary(self, build_number):
+            build_dictionary = {
+                "sourceStamp": {
+                    "revision": None,  # revision=None means a trunk build started from the force-build button on the builder page.
+                    },
+                "number": int(build_number),
+                # Intentionally missing the 'results' key, meaning it's a "pass" build.
+            }
+            return build_dictionary
+        buildbot._fetch_build_dictionary = mock_fetch_build_dictionary
+        self.assertNotEqual(builder._fetch_build(1), None)
+
 
 class BuildTest(unittest.TestCase):
     def test_layout_test_results(self):
