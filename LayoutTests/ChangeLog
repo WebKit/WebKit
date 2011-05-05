@@ -1,3 +1,12 @@
+2011-05-05  MORITA Hajime  <morrita@google.com>
+
+        Unreviewed, rolling out r85817.
+        http://trac.webkit.org/changeset/85817
+
+        It looks these lines are mis-skipped.
+
+        * platform/chromium/test_expectations.txt:
+
 2011-05-05  Philippe Normand  <pnormand@igalia.com>
 
         Unreviewed, GTK baselines for new fullscreen test.
