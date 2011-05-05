@@ -86,9 +86,7 @@ def GetGoogleChromePort(**kwargs):
             def architecture(self):
                 return 'x86_64'
 
-        # We use chromium-linux-x86 here in order to skip over the linux-x86_64
-        # baselines.
-        return GoogleChromeLinux64Port(port_name='chromium-linux-x86', **kwargs)
+        return GoogleChromeLinux64Port(port_name='chromium-linux-x86_64', **kwargs)
     elif port_name.startswith('google-chrome-mac'):
         import chromium_mac
 

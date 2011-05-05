@@ -1,3 +1,20 @@
+2011-05-05  Tony Chang  <tony@chromium.org>
+
+        Reviewed by Ojan Vafai.
+
+        [chromium] google-chrome-64 builds should now fallback to chromium-linux-x86_64 results
+        https://bugs.webkit.org/show_bug.cgi?id=60290
+
+        It used to be that google-chrome-32 was hardy32, google-chrome-64 was
+        hardy64, chromium-linux was hardy32 and chromium-linux-x86_64 was
+        lucid64.  Because of that, google-chrome-64 used to skip the
+        chromium-linux-x86_64 results since they were more incorrect.
+
+        Now that we're switching to lucid for google-chrome, we want
+        google-chrome-64 to fall back to chromium-linux-x86_64.
+
+        * Scripts/webkitpy/layout_tests/port/google_chrome.py:
+
 2011-05-05  Dirk Pranke  <dpranke@chromium.org>
 
         Reviewed by Ojan Vafai.
