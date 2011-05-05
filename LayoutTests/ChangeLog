@@ -1,3 +1,14 @@
+2011-05-05  Abhishek Arya  <inferno@chromium.org>
+
+        Unreviewed.
+
+        Minor rebaselines for qt after my r85876.
+
+        * platform/qt/fast/block/float/float-not-removed-from-next-sibling-expected.txt: Added.
+        * platform/qt/fast/block/float/float-not-removed-from-next-sibling2-expected.txt: Added.
+        * platform/qt/fast/block/float/float-not-removed-from-next-sibling3-expected.txt: Added.
+        * platform/qt/fast/block/float/float-not-removed-from-next-sibling4-expected.txt: Added.
+
 2011-05-05  Dirk Pranke  <dpranke@chromium.org>
 
         Reviewed by Ojan Vafai.
