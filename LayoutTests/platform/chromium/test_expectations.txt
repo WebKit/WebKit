@@ -3743,26 +3743,14 @@ BUGWK60103 WIN LINUX : fast/replaced/border-radius-clip.html = IMAGE
 
 BUGWK60129 BUGCR75354 : fast/layers/video-layer.html = IMAGE IMAGE+TEXT
 
-// Needs a rebaseline after moving controls to absolute positioning
-BUGCR75354 : media/audio-controls-rendering.html = IMAGE+TEXT
-BUGCR75354 CPU : media/media-document-audio-repaint.html = IMAGE+TEXT
-BUGCR75354 CPU : media/video-controls-rendering.html = IMAGE+TEXT
-BUGCR75354 : media/video-display-toggle.html = IMAGE+TEXT
-BUGCR75354 : media/video-empty-source.html = IMAGE+TEXT
-BUGCR75354 : media/video-no-audio.html = IMAGE+TEXT
-BUGCR75354 CPU : media/video-volume-slider.html = IMAGE+TEXT
-BUGCR75354 CPU : media/video-zoom-controls.html = IMAGE+TEXT
-BUGCR75354 CPU : media/controls-after-reload.html = TEXT
-BUGCR75354 CPU : media/controls-strict.html = TEXT
-BUGCR75354 CPU : media/controls-styling.html = TEXT
-BUGCR75354 CPU : media/controls-without-preload.html = TEXT
-
 // These are flaky and results are so unstable to give precise expectations.
 BUGWK60259 GPU : media/controls-after-reload.html = FAIL
 BUGWK60259 GPU : media/controls-strict.html = FAIL
 BUGWK60259 GPU : media/controls-styling.html = FAIL
 BUGWK60259 GPU : media/video-zoom-controls.html = FAIL
 BUGWK60259 GPU : media/controls-without-preload.html = FAIL
+
+BUGCR59704 : media/video-zoom-controls.html = IMAGE+TEXT
 
 // probably just needs a new baseline
 BUGWK60130 WIN LINUX : fast/backgrounds/background-leakage-transforms.html = IMAGE+TEXT
