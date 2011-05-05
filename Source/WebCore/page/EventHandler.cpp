@@ -2906,6 +2906,9 @@ void EventHandler::defaultBackspaceEventHandler(KeyboardEvent* event)
     if (event->ctrlKey() || event->metaKey() || event->altKey() || event->altGraphKey())
         return;
 
+    if (!m_frame->editor()->behavior().shouldNavigateBackOnBackspace())
+        return;
+
     Page* page = m_frame->page();
     if (!page)
         return;

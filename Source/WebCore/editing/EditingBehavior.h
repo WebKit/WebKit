@@ -60,6 +60,9 @@ public:
     // On Mac, when processing a contextual click, the object being clicked upon should be selected.
     bool shouldSelectOnContextualMenuClick() const { return m_type == EditingMacBehavior; }
 
+    // On Mac and Windows, pressing backspace (when it isn't handled otherwise) should navigate back.
+    bool shouldNavigateBackOnBackspace() const { return m_type != EditingUnixBehavior; }
+
 private:
     EditingBehaviorType m_type;
 };

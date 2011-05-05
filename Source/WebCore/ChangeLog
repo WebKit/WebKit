@@ -1,3 +1,18 @@
+2011-04-28  Evan Martin  <evan@chromium.org>
+
+        Reviewed by Ojan Vafai.
+
+        REGRESSION: backspace should not go back on Linux
+        https://bugs.webkit.org/show_bug.cgi?id=59731
+
+        Add a new EditingBehavior, shouldNavigateBackOnBackspace, which is false on
+        Linux, and test for it in the default backspace handler.
+
+        * editing/EditingBehavior.h:
+        (WebCore::EditingBehavior::shouldNavigateBackOnBackspace):
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::defaultBackspaceEventHandler):
+
 2011-05-05  Igor Oliveira  <igor.oliveira@openbossa.org>
 
         Reviewed by Kenneth Russell.

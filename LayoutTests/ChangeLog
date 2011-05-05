@@ -1,3 +1,16 @@
+2011-05-03  Evan Martin  <evan@chromium.org>
+
+        Reviewed by Ojan Vafai.
+
+        REGRESSION: backspace should not go back on Linux
+        https://bugs.webkit.org/show_bug.cgi?id=59731
+
+        Add a test that verifies that pressing backspace goes back on Mac
+        and Windows but does not go back on Linux.
+
+        * fast/events/backspace-navigates-back-expected.txt: Added.
+        * fast/events/backspace-navigates-back.html: Added.
+
 2011-05-05  Alpha Lam  <hclam@chromium.org>
 
         Build fix. Not reviewed.
