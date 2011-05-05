@@ -1,3 +1,19 @@
+2011-05-05  Igor Oliveira  <igor.oliveira@openbossa.org>
+
+        Reviewed by Kenneth Russell.
+
+        Framebuffer object is being created twice
+        https://bugs.webkit.org/show_bug.cgi?id=60207
+
+        Does not create more than one opengl framebuffer
+
+        * platform/graphics/gpu/mac/DrawingBufferMac.mm:
+        (WebCore::DrawingBuffer::DrawingBuffer):
+        * platform/graphics/gpu/qt/DrawingBufferQt.cpp:
+        (WebCore::DrawingBuffer::DrawingBuffer):
+        * platform/graphics/gtk/DrawingBufferGtk.cpp:
+        (WebCore::DrawingBuffer::DrawingBuffer):
+
 2011-05-05  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Beth Dakin.

@@ -62,14 +62,6 @@ DrawingBuffer::DrawingBuffer(GraphicsContext3D* context,
     context->texParameteri(GraphicsContext3D::TEXTURE_2D, GraphicsContext3D::TEXTURE_WRAP_T, GraphicsContext3D::CLAMP_TO_EDGE);
     context->bindTexture(GraphicsContext3D::TEXTURE_2D, 0);
 
-    // Create the FBO
-    m_fbo = context->createFramebuffer();
-    ASSERT(m_fbo);
-    if (!m_fbo) {
-        clear();
-        return;
-    }
-
     createSecondaryBuffers();
     reset(size);
 }
