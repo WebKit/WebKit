@@ -270,7 +270,7 @@ void SpellingCorrectionController::respondToUnappliedSpellCorrection(const Visib
 {
     client()->recordAutocorrectionResponse(EditorClient::AutocorrectionReverted, corrected, correction);
     m_frame->document()->updateLayout();
-    m_frame->selection()->setSelection(selectionOfCorrected, SelectionController::CloseTyping | SelectionController::ClearTypingStyle | SelectionController::SpellCorrectionTriggered);
+    m_frame->selection()->setSelection(selectionOfCorrected, FrameSelection::CloseTyping | FrameSelection::ClearTypingStyle | FrameSelection::SpellCorrectionTriggered);
     RefPtr<Range> range = Range::create(m_frame->document(), m_frame->selection()->selection().start(), m_frame->selection()->selection().end());
 
     DocumentMarkerController* markers = m_frame->document()->markers();

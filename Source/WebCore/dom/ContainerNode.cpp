@@ -802,7 +802,7 @@ void ContainerNode::cloneChildNodes(ContainerNode *clone)
     // disable the delete button so it's elements are not serialized into the markup
     bool isEditorEnabled = false;
     if (document()->frame() && document()->frame()->editor()->canEdit()) {
-        SelectionController* selection = document()->frame()->selection();
+        FrameSelection* selection = document()->frame()->selection();
         Element* root = selection ? selection->rootEditableElement() : 0;
         isEditorEnabled = root && isDescendantOf(root);
 

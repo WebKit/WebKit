@@ -40,7 +40,7 @@ class WebDOMRange;
 
 namespace WebCore {
 
-class SelectionController;
+class FrameSelection;
 
 }
 
@@ -51,7 +51,7 @@ DECLARE_DYNAMIC_CLASS(wxWebKitDOMSelection)
 
 public:
     wxWebKitSelection() {}
-    wxWebKitSelection(WebCore::SelectionController* selection)
+    wxWebKitSelection(WebCore::FrameSelection* selection)
         : m_selection(selection) 
         { }
         
@@ -62,7 +62,7 @@ public:
     WebDOMRange* GetAsRange();
 
 private:
-    WebCore::SelectionController* m_selection;
+    WebCore::FrameSelection* m_selection;
 
 };
 

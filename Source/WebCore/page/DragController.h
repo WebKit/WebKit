@@ -39,13 +39,13 @@ namespace WebCore {
     class DragData;
     class Element;
     class Frame;
+    class FrameSelection;
     class Image;
     class IntRect;
     class Node;
     class Page;
     class PlatformMouseEvent;
     class Range;
-    class SelectionController;
     
     class DragController {
         WTF_MAKE_NONCOPYABLE(DragController); WTF_MAKE_FAST_ALLOCATED;
@@ -99,7 +99,7 @@ namespace WebCore {
         bool tryDHTMLDrag(DragData*, DragOperation&);
         DragOperation dragOperation(DragData*);
         void cancelDrag();
-        bool dragIsMove(SelectionController*, DragData*);
+        bool dragIsMove(FrameSelection*, DragData*);
         bool isCopyKeyDown(DragData*);
 
         void mouseMovedIntoDocument(Document*);

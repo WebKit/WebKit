@@ -43,6 +43,7 @@
 #include "FocusController.h"
 #include "Frame.h"
 #include "FrameLoader.h"
+#include "FrameSelection.h"
 #include "FrameTree.h"
 #include "FrameView.h"
 #include "htmlediting.h"
@@ -68,7 +69,6 @@
 #include "RenderWidget.h"
 #include "ScrollAnimator.h"
 #include "Scrollbar.h"
-#include "SelectionController.h"
 #include "Settings.h"
 #include "StyleCachedImage.h"
 #include "TextEvent.h"
@@ -256,14 +256,14 @@ void EventHandler::clear()
 #endif
 }
 
-static void setSelectionIfNeeded(SelectionController* selection, const VisibleSelection& newSelection)
+static void setSelectionIfNeeded(FrameSelection* selection, const VisibleSelection& newSelection)
 {
     ASSERT(selection);
     if (selection->selection() != newSelection && selection->shouldChangeSelection(newSelection))
         selection->setSelection(newSelection);
 }
 
-static void setNonDirectionalSelectionIfNeeded(SelectionController* selection, const VisibleSelection& newSelection, TextGranularity granularity)
+static void setNonDirectionalSelectionIfNeeded(FrameSelection* selection, const VisibleSelection& newSelection, TextGranularity granularity)
 {
     ASSERT(selection);
     if (selection->selection() != newSelection && selection->shouldChangeSelection(newSelection))
@@ -2223,12 +2223,12 @@ bool EventHandler::sendContextMenuEventForKey()
     IntPoint location;
 
     Node* focusedNode = doc->focusedNode();
-    SelectionController* selectionController = m_frame->selection();
-    Position start = selectionController->selection().start();
+    FrameSelection* selection = m_frame->selection();
+    Position start = selection->selection().start();
 
-    if (start.deprecatedNode() && (selectionController->rootEditableElement() || selectionController->isRange())) {
-        RefPtr<Range> selection = selectionController->toNormalizedRange();
-        IntRect firstRect = m_frame->editor()->firstRectForRange(selection.get());
+    if (start.deprecatedNode() && (selection->rootEditableElement() || selection->isRange())) {
+        RefPtr<Range> selectionRange = selection->toNormalizedRange();
+        IntRect firstRect = m_frame->editor()->firstRectForRange(selectionRange.get());
 
         int x = rightAligned ? firstRect.maxX() : firstRect.x();
         location = IntPoint(x, firstRect.maxY());
@@ -2543,16 +2543,16 @@ void EventHandler::handleKeyboardSelectionMovement(KeyboardEvent* event)
     bool isCommanded = event->getModifierState("Meta");
     
     if (key == "Up") {
-        m_frame->selection()->modify((isShifted) ? SelectionController::AlterationExtend : SelectionController::AlterationMove, DirectionBackward, (isCommanded) ? DocumentBoundary : LineGranularity, true);
+        m_frame->selection()->modify((isShifted) ? FrameSelection::AlterationExtend : FrameSelection::AlterationMove, DirectionBackward, (isCommanded) ? DocumentBoundary : LineGranularity, true);
         event->setDefaultHandled();
     } else if (key == "Down") {
-        m_frame->selection()->modify((isShifted) ? SelectionController::AlterationExtend : SelectionController::AlterationMove, DirectionForward, (isCommanded) ? DocumentBoundary : LineGranularity, true);
+        m_frame->selection()->modify((isShifted) ? FrameSelection::AlterationExtend : FrameSelection::AlterationMove, DirectionForward, (isCommanded) ? DocumentBoundary : LineGranularity, true);
         event->setDefaultHandled();
     } else if (key == "Left") {
-        m_frame->selection()->modify((isShifted) ? SelectionController::AlterationExtend : SelectionController::AlterationMove, DirectionLeft, (isCommanded) ? LineBoundary : (isOptioned) ? WordGranularity : CharacterGranularity, true);
+        m_frame->selection()->modify((isShifted) ? FrameSelection::AlterationExtend : FrameSelection::AlterationMove, DirectionLeft, (isCommanded) ? LineBoundary : (isOptioned) ? WordGranularity : CharacterGranularity, true);
         event->setDefaultHandled();
     } else if (key == "Right") {
-        m_frame->selection()->modify((isShifted) ? SelectionController::AlterationExtend : SelectionController::AlterationMove, DirectionRight, (isCommanded) ? LineBoundary : (isOptioned) ? WordGranularity : CharacterGranularity, true);
+        m_frame->selection()->modify((isShifted) ? FrameSelection::AlterationExtend : FrameSelection::AlterationMove, DirectionRight, (isCommanded) ? LineBoundary : (isOptioned) ? WordGranularity : CharacterGranularity, true);
         event->setDefaultHandled();
     }    
 }

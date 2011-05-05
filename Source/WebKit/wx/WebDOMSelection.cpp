@@ -29,7 +29,7 @@
 #include "WebDOMSelection.h"
 
 #include "Element.h"
-#include "SelectionController.h"
+#include "FrameSelection.h"
 #include "WebDOMElement.h"
 #include "WebDOMRange.h"
 

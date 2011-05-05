@@ -23,6 +23,7 @@
 
 #include "DocumentMarkerController.h"
 #include "Frame.h"
+#include "FrameSelection.h"
 #include "FrameTree.h"
 #include "HTMLAnchorElement.h"
 #include "HTMLVideoElement.h"
@@ -34,7 +35,6 @@
 #include "RenderImage.h"
 #include "RenderInline.h"
 #include "Scrollbar.h"
-#include "SelectionController.h"
 
 #if ENABLE(SVG)
 #include "SVGNames.h"

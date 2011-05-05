@@ -652,6 +652,7 @@ SET(WebCore_SOURCES
     editing/Editor.cpp
     editing/EditorCommand.cpp
     editing/FormatBlockCommand.cpp
+    editing/FrameSelection.cpp
     editing/HTMLInterchange.cpp
     editing/IndentOutdentCommand.cpp
     editing/InsertIntoTextNodeCommand.cpp
@@ -671,7 +672,6 @@ SET(WebCore_SOURCES
     editing/RemoveNodePreservingChildrenCommand.cpp
     editing/ReplaceNodeWithSpanCommand.cpp
     editing/ReplaceSelectionCommand.cpp
-    editing/SelectionController.cpp
     editing/SetNodeAttributeCommand.cpp
     editing/SmartReplace.cpp
     editing/SpellChecker.cpp

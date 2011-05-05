@@ -24,7 +24,7 @@
  */
  
 #import "config.h"
-#import "SelectionController.h"
+#import "FrameSelection.h"
 
 #import "AXObjectCache.h"
 #import "Frame.h"
@@ -46,7 +46,7 @@ static CGRect accessibilityConvertScreenRect(CGRect bounds)
 }
     
     
-void SelectionController::notifyAccessibilityForSelectionChange()
+void FrameSelection::notifyAccessibilityForSelectionChange()
 {
     Document* document = m_frame->document();
 

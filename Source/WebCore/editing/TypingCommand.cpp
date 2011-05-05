@@ -33,12 +33,12 @@
 #include "Editor.h"
 #include "Element.h"
 #include "Frame.h"
+#include "FrameSelection.h"
 #include "HTMLNames.h"
 #include "InsertLineBreakCommand.h"
 #include "InsertParagraphSeparatorCommand.h"
 #include "InsertTextCommand.h"
 #include "RenderObject.h"
-#include "SelectionController.h"
 #include "TextIterator.h"
 #include "VisiblePosition.h"
 #include "htmlediting.h"
@@ -161,7 +161,7 @@ void TypingCommand::insertText(Document* document, const String& text, Options o
     insertText(document, text, frame->selection()->selection(), options, composition);
 }
 
-// FIXME: We shouldn't need to take selectionForInsertion. It should be identical to SelectionController's current selection.
+// FIXME: We shouldn't need to take selectionForInsertion. It should be identical to FrameSelection's current selection.
 void TypingCommand::insertText(Document* document, const String& text, const VisibleSelection& selectionForInsertion, Options options, TextCompositionType compositionType)
 {
     ASSERT(document);
@@ -485,11 +485,11 @@ void TypingCommand::deleteKeyPressed(TextGranularity granularity, bool killRing)
 
         m_smartDelete = false;
 
-        SelectionController selection;
+        FrameSelection selection;
         selection.setSelection(endingSelection());
-        selection.modify(SelectionController::AlterationExtend, DirectionBackward, granularity);
+        selection.modify(FrameSelection::AlterationExtend, DirectionBackward, granularity);
         if (killRing && selection.isCaret() && granularity != CharacterGranularity)
-            selection.modify(SelectionController::AlterationExtend, DirectionBackward, CharacterGranularity);
+            selection.modify(FrameSelection::AlterationExtend, DirectionBackward, CharacterGranularity);
 
         if (endingSelection().visibleStart().previous(CannotCrossEditingBoundary).isNull()) {
             // When the caret is at the start of the editable area in an empty list item, break out of the list item.
@@ -515,7 +515,7 @@ void TypingCommand::deleteKeyPressed(TextGranularity granularity, bool killRing)
             if (isLastPositionBeforeTable(visibleStart))
                 return;
             // Extend the selection backward into the last cell, then deletion will handle the move.
-            selection.modify(SelectionController::AlterationExtend, DirectionBackward, granularity);
+            selection.modify(FrameSelection::AlterationExtend, DirectionBackward, granularity);
         // If the caret is just after a table, select the table and don't delete anything.
         } else if (Node* table = isFirstPositionAfterTable(visibleStart)) {
             setEndingSelection(VisibleSelection(positionBeforeNode(table), endingSelection().start(), DOWNSTREAM));
@@ -582,11 +582,11 @@ void TypingCommand::forwardDeleteKeyPressed(TextGranularity granularity, bool ki
         // Handle delete at beginning-of-block case.
         // Do nothing in the case that the caret is at the start of a
         // root editable element or at the start of a document.
-        SelectionController selection;
+        FrameSelection selection;
         selection.setSelection(endingSelection());
-        selection.modify(SelectionController::AlterationExtend, DirectionForward, granularity);
+        selection.modify(FrameSelection::AlterationExtend, DirectionForward, granularity);
         if (killRing && selection.isCaret() && granularity != CharacterGranularity)
-            selection.modify(SelectionController::AlterationExtend, DirectionForward, CharacterGranularity);
+            selection.modify(FrameSelection::AlterationExtend, DirectionForward, CharacterGranularity);
 
         Position downstreamEnd = endingSelection().end().downstream();
         VisiblePosition visibleEnd = endingSelection().visibleEnd();
@@ -602,7 +602,7 @@ void TypingCommand::forwardDeleteKeyPressed(TextGranularity granularity, bool ki
 
         // deleting to end of paragraph when at end of paragraph needs to merge the next paragraph (if any)
         if (granularity == ParagraphBoundary && selection.selection().isCaret() && isEndOfParagraph(selection.selection().visibleEnd()))
-            selection.modify(SelectionController::AlterationExtend, DirectionForward, CharacterGranularity);
+            selection.modify(FrameSelection::AlterationExtend, DirectionForward, CharacterGranularity);
 
         selectionToDelete = selection.selection();
         if (!startingSelection().isRange() || selectionToDelete.base() != startingSelection().start())

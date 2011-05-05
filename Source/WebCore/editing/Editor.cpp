@@ -237,7 +237,7 @@ bool Editor::canCopy() const
 {
     if (imageElementFromImageDocument(m_frame->document()))
         return true;
-    SelectionController* selection = m_frame->selection();
+    FrameSelection* selection = m_frame->selection();
     return selection->isRange() && !selection->isInPasswordField();
 }
 
@@ -248,7 +248,7 @@ bool Editor::canPaste() const
 
 bool Editor::canDelete() const
 {
-    SelectionController* selection = m_frame->selection();
+    FrameSelection* selection = m_frame->selection();
     return selection->isRange() && selection->rootEditableElement();
 }
 
@@ -2032,7 +2032,7 @@ void Editor::markMisspellingsAfterTypingToWord(const VisiblePosition &wordStart,
 
         // Reset the charet one character further.
         frame()->selection()->moveTo(frame()->selection()->end());
-        frame()->selection()->modify(SelectionController::AlterationMove, DirectionForward, CharacterGranularity);
+        frame()->selection()->modify(FrameSelection::AlterationMove, DirectionForward, CharacterGranularity);
     }
 
     if (!isGrammarCheckingEnabled())
@@ -2296,11 +2296,11 @@ void Editor::markAllMisspellingsAndBadGrammarInRanges(TextCheckingOptions textCh
             RefPtr<Range> selectionRange = spellingParagraph.subrange(0, selectionOffset);
             m_frame->selection()->moveTo(selectionRange->endPosition(), DOWNSTREAM);
             if (adjustSelectionForParagraphBoundaries)
-                m_frame->selection()->modify(SelectionController::AlterationMove, DirectionForward, CharacterGranularity);
+                m_frame->selection()->modify(FrameSelection::AlterationMove, DirectionForward, CharacterGranularity);
         } else {
             // If this fails for any reason, the fallback is to go one position beyond the last replacement
             m_frame->selection()->moveTo(m_frame->selection()->end());
-            m_frame->selection()->modify(SelectionController::AlterationMove, DirectionForward, CharacterGranularity);
+            m_frame->selection()->modify(FrameSelection::AlterationMove, DirectionForward, CharacterGranularity);
         }
     }
 #else
@@ -2714,11 +2714,11 @@ void Editor::changeSelectionAfterCommand(const VisibleSelection& newSelection, b
     // See <rdar://problem/5729315> Some shouldChangeSelectedDOMRange contain Ranges for selections that are no longer valid
     bool selectionDidNotChangeDOMPosition = newSelection == m_frame->selection()->selection();
     if (selectionDidNotChangeDOMPosition || m_frame->selection()->shouldChangeSelection(newSelection)) {
-        SelectionController::SetSelectionOptions options = 0;
+        FrameSelection::SetSelectionOptions options = 0;
         if (closeTyping)
-            options |= SelectionController::CloseTyping;
+            options |= FrameSelection::CloseTyping;
         if (clearTypingStyle)
-            options |= SelectionController::ClearTypingStyle;
+            options |= FrameSelection::ClearTypingStyle;
         m_frame->selection()->setSelection(newSelection, options);
     }
 
@@ -2726,7 +2726,7 @@ void Editor::changeSelectionAfterCommand(const VisibleSelection& newSelection, b
     // For example when you press return in the following (the caret is marked by ^):
     // <div contentEditable="true"><div>^Hello</div></div>
     // WebCore inserts <div><br></div> *before* the current block, which correctly moves the paragraph down but which doesn't
-    // change the caret's DOM position (["hello", 0]).  In these situations the above SelectionController::setSelection call
+    // change the caret's DOM position (["hello", 0]). In these situations the above FrameSelection::setSelection call
     // does not call EditorClient::respondToChangedSelection(), which, on the Mac, sends selection change notifications and
     // starts a new kill ring sequence, but we want to do these things (matches AppKit).
     if (selectionDidNotChangeDOMPosition)
@@ -3134,11 +3134,11 @@ void Editor::setMarkedTextMatchesAreHighlighted(bool flag)
     m_frame->document()->markers()->repaintMarkers(DocumentMarker::TextMatch);
 }
 
-void Editor::respondToChangedSelection(const VisibleSelection& oldSelection, SelectionController::SetSelectionOptions options)
+void Editor::respondToChangedSelection(const VisibleSelection& oldSelection, FrameSelection::SetSelectionOptions options)
 {
     m_spellingCorrector->stopPendingCorrection(oldSelection);
 
-    bool closeTyping = options & SelectionController::CloseTyping;
+    bool closeTyping = options & FrameSelection::CloseTyping;
     bool isContinuousSpellCheckingEnabled = this->isContinuousSpellCheckingEnabled();
     bool isContinuousGrammarCheckingEnabled = isContinuousSpellCheckingEnabled && isGrammarCheckingEnabled();
     if (isContinuousSpellCheckingEnabled) {
@@ -3153,7 +3153,7 @@ void Editor::respondToChangedSelection(const VisibleSelection& oldSelection, Sel
         }
 
         // Don't check spelling and grammar if the change of selection is triggered by spelling correction itself.
-        bool shouldCheckSpellingAndGrammar = !(options & SelectionController::SpellCorrectionTriggered);
+        bool shouldCheckSpellingAndGrammar = !(options & FrameSelection::SpellCorrectionTriggered);
 
         // When typing we check spelling elsewhere, so don't redo it here.
         // If this is a change in selection resulting from a delete operation,

@@ -35,6 +35,7 @@
 #include "Document.h"
 #include "Editor.h"
 #include "Frame.h"
+#include "FrameSelection.h"
 #include "htmlediting.h"
 #include "HTMLDivElement.h"
 #include "HTMLNames.h"
@@ -43,7 +44,6 @@
 #include "Range.h"
 #include "RemoveNodeCommand.h"
 #include "RenderBox.h"
-#include "SelectionController.h"
 
 namespace WebCore {
 

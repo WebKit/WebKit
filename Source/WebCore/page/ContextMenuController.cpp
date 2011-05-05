@@ -47,6 +47,7 @@
 #include "Frame.h"
 #include "FrameLoadRequest.h"
 #include "FrameLoader.h"
+#include "FrameSelection.h"
 #include "HTMLFormElement.h"
 #include "HitTestRequest.h"
 #include "HitTestResult.h"
@@ -60,7 +61,6 @@
 #include "RenderObject.h"
 #include "ReplaceSelectionCommand.h"
 #include "ResourceRequest.h"
-#include "SelectionController.h"
 #include "Settings.h"
 #include "TextIterator.h"
 #include "UserTypingGestureIndicator.h"
@@ -803,7 +803,7 @@ void ContextMenuController::populate()
             }
         }
     } else { // Make an editing context menu
-        SelectionController* selection = frame->selection();
+        FrameSelection* selection = frame->selection();
         bool inPasswordField = selection->isInPasswordField();
         bool spellCheckingEnabled = frame->editor()->isSpellCheckingEnabledFor(node);
 

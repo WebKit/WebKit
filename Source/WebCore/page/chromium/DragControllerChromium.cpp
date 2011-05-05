@@ -28,7 +28,7 @@
 #include "DragController.h"
 
 #include "DragData.h"
-#include "SelectionController.h"
+#include "FrameSelection.h"
 #include <wtf/RefPtr.h>
 
 #if OS(WINDOWS)

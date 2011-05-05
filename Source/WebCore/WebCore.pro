@@ -572,6 +572,7 @@ SOURCES += \
     editing/Editor.cpp \
     editing/EditorCommand.cpp \
     editing/FormatBlockCommand.cpp \
+    editing/FrameSelection.cpp \
     editing/htmlediting.cpp \
     editing/HTMLInterchange.cpp \
     editing/IndentOutdentCommand.cpp \
@@ -593,7 +594,6 @@ SOURCES += \
     editing/RemoveNodePreservingChildrenCommand.cpp \
     editing/ReplaceNodeWithSpanCommand.cpp \
     editing/ReplaceSelectionCommand.cpp \
-    editing/SelectionController.cpp \
     editing/SetNodeAttributeCommand.cpp \
     editing/SmartReplaceICU.cpp \
     editing/SpellChecker.cpp \
@@ -1544,6 +1544,7 @@ HEADERS += \
     editing/Editor.h \
     editing/FindOptions.h \
     editing/FormatBlockCommand.h \
+    editing/FrameSelection.h \
     editing/htmlediting.h \
     editing/HTMLInterchange.h \
     editing/IndentOutdentCommand.h \
@@ -1564,7 +1565,6 @@ HEADERS += \
     editing/RemoveNodePreservingChildrenCommand.h \
     editing/ReplaceNodeWithSpanCommand.h \
     editing/ReplaceSelectionCommand.h \
-    editing/SelectionController.h \
     editing/SetNodeAttributeCommand.h \
     editing/SmartReplace.h \
     editing/SpellingCorrectionController.h \

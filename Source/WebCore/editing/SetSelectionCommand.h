@@ -27,23 +27,23 @@
 #define SetSelectionCommand_h
 
 #include "EditCommand.h"
-#include "SelectionController.h"
+#include "FrameSelection.h"
 
 namespace WebCore {
 
 class SetSelectionCommand : public SimpleEditCommand {
 public:
-    static PassRefPtr<SetSelectionCommand> create(const VisibleSelection& selection, SelectionController::SetSelectionOptions options)
+    static PassRefPtr<SetSelectionCommand> create(const VisibleSelection& selection, FrameSelection::SetSelectionOptions options)
     {
         return adoptRef(new SetSelectionCommand(selection, options));
     }
 
 private:
-    SetSelectionCommand(const VisibleSelection&, SelectionController::SetSelectionOptions);
+    SetSelectionCommand(const VisibleSelection&, FrameSelection::SetSelectionOptions);
     virtual void doApply();
     virtual void doUnapply();
 
-    SelectionController::SetSelectionOptions m_options;
+    FrameSelection::SetSelectionOptions m_options;
     VisibleSelection m_selectionToSet;
 };
 

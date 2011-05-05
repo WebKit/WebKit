@@ -28,6 +28,7 @@
 #include "FocusController.h"
 #include "FontSelector.h"
 #include "Frame.h"
+#include "FrameSelection.h"
 #include "GraphicsContext.h"
 #include "HTMLInputElement.h"
 #include "HTMLNames.h"
@@ -36,7 +37,6 @@
 #include "PaintInfo.h"
 #include "RenderStyle.h"
 #include "RenderView.h"
-#include "SelectionController.h"
 #include "Settings.h"
 #include "TextControlInnerElements.h"
 

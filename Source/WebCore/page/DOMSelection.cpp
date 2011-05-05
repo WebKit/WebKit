@@ -32,10 +32,10 @@
 
 #include "ExceptionCode.h"
 #include "Frame.h"
+#include "FrameSelection.h"
 #include "Node.h"
 #include "PlatformString.h"
 #include "Range.h"
-#include "SelectionController.h"
 #include "TextIterator.h"
 #include "htmlediting.h"
 
@@ -179,7 +179,7 @@ String DOMSelection::type() const
     if (!m_frame)
         return String();
 
-    SelectionController* selection = m_frame->selection();
+    FrameSelection* selection = m_frame->selection();
 
     // This is a WebKit DOM extension, incompatible with an IE extension
     // IE has this same attribute, but returns "none", "text" and "control"
@@ -293,11 +293,11 @@ void DOMSelection::modify(const String& alterString, const String& directionStri
     if (!m_frame)
         return;
 
-    SelectionController::EAlteration alter;
+    FrameSelection::EAlteration alter;
     if (equalIgnoringCase(alterString, "extend"))
-        alter = SelectionController::AlterationExtend;
+        alter = FrameSelection::AlterationExtend;
     else if (equalIgnoringCase(alterString, "move"))
-        alter = SelectionController::AlterationMove;
+        alter = FrameSelection::AlterationMove;
     else
         return;
 
@@ -399,7 +399,7 @@ void DOMSelection::addRange(Range* r)
     if (!r)
         return;
 
-    SelectionController* selection = m_frame->selection();
+    FrameSelection* selection = m_frame->selection();
 
     if (selection->isNone()) {
         selection->setSelection(VisibleSelection(r));
@@ -436,13 +436,13 @@ void DOMSelection::deleteFromDocument()
     if (!m_frame)
         return;
 
-    SelectionController* selection = m_frame->selection();
+    FrameSelection* selection = m_frame->selection();
 
     if (selection->isNone())
         return;
 
     if (isCollapsed())
-        selection->modify(SelectionController::AlterationExtend, DirectionBackward, CharacterGranularity);
+        selection->modify(FrameSelection::AlterationExtend, DirectionBackward, CharacterGranularity);
 
     RefPtr<Range> selectedRange = selection->selection().toNormalizedRange();
     if (!selectedRange)
@@ -461,7 +461,7 @@ bool DOMSelection::containsNode(const Node* n, bool allowPartial) const
     if (!m_frame)
         return false;
 
-    SelectionController* selection = m_frame->selection();
+    FrameSelection* selection = m_frame->selection();
 
     if (!n || m_frame->document() != n->document() || selection->isNone())
         return false;

@@ -43,6 +43,7 @@
 #include "FloatRect.h"
 #include "Frame.h"
 #include "FrameLoader.h"
+#include "FrameSelection.h"
 #include "FrameView.h"
 #include "HTMLAnchorElement.h"
 #include "HTMLInputElement.h"
@@ -61,7 +62,6 @@
 #include "ReplaceSelectionCommand.h"
 #include "ResourceRequest.h"
 #include "SecurityOrigin.h"
-#include "SelectionController.h"
 #include "Settings.h"
 #include "Text.h"
 #include "TextEvent.h"
@@ -142,7 +142,7 @@ static PassRefPtr<DocumentFragment> documentFragmentFromDragData(DragData* dragD
     return 0;
 }
 
-bool DragController::dragIsMove(SelectionController* selection, DragData* dragData)
+bool DragController::dragIsMove(FrameSelection* selection, DragData* dragData)
 {
     return m_documentUnderMouse == m_dragInitiator && selection->isContentEditable() && !isCopyKeyDown(dragData);
 }

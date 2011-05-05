@@ -34,7 +34,7 @@
 #include "EditorDeleteAction.h"
 #include "EditorInsertAction.h"
 #include "FindOptions.h"
-#include "SelectionController.h"
+#include "FrameSelection.h"
 #include "TextChecking.h"
 #include "VisibleSelection.h"
 #include "WritingDirection.h"
@@ -355,7 +355,7 @@ public:
 
     IntRect firstRectForRange(Range*) const;
 
-    void respondToChangedSelection(const VisibleSelection& oldSelection, SelectionController::SetSelectionOptions);
+    void respondToChangedSelection(const VisibleSelection& oldSelection, FrameSelection::SetSelectionOptions);
     bool shouldChangeSelection(const VisibleSelection& oldSelection, const VisibleSelection& newSelection, EAffinity, bool stillSelecting) const;
 
     RenderStyle* styleForSelectionStart(Node*& nodeToRemove) const;

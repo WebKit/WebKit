@@ -267,25 +267,25 @@ void EditorClientHaiku::handleKeyboardEvent(KeyboardEvent* event)
                                                  false, true);
             break;
         case VK_LEFT:
-            frame->selection()->modify(kevent->shiftKey() ? SelectionController::AlterationExtend : SelectionController::AlterationMove,
+            frame->selection()->modify(kevent->shiftKey() ? FrameSelection::AlterationExtend : FrameSelection::AlterationMove,
                                        DirectionLeft,
                                        kevent->ctrlKey() ? WordGranularity : CharacterGranularity,
                                        true);
             break;
         case VK_RIGHT:
-            frame->selection()->modify(kevent->shiftKey() ? SelectionController::AlterationExtend : SelectionController::AlterationMove,
+            frame->selection()->modify(kevent->shiftKey() ? FrameSelection::AlterationExtend : FrameSelection::AlterationMove,
                                        DirectionRight,
                                        kevent->ctrlKey() ? WordGranularity : CharacterGranularity,
                                        true);
             break;
         case VK_UP:
-            frame->selection()->modify(kevent->shiftKey() ? SelectionController::AlterationExtend : SelectionController::AlterationMove,
+            frame->selection()->modify(kevent->shiftKey() ? FrameSelection::AlterationExtend : FrameSelection::AlterationMove,
                                        DirectionBackward,
                                        kevent->ctrlKey() ? ParagraphGranularity : LineGranularity,
                                        true);
             break;
         case VK_DOWN:
-            frame->selection()->modify(kevent->shiftKey() ? SelectionController::AlterationExtend : SelectionController::AlterationMove,
+            frame->selection()->modify(kevent->shiftKey() ? FrameSelection::AlterationExtend : FrameSelection::AlterationMove,
                                        DirectionForward,
                                        kevent->ctrlKey() ? ParagraphGranularity : LineGranularity,
                                        true);

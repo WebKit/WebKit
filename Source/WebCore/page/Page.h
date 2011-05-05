@@ -59,6 +59,7 @@ namespace WebCore {
     class EditorClient;
     class FocusController;
     class Frame;
+    class FrameSelection;
     class GeolocationClient;
     class GeolocationController;
     class HaltablePlugin;
@@ -77,7 +78,6 @@ namespace WebCore {
     class RenderTheme;
     class VisibleSelection;
     class ScrollableArea;
-    class SelectionController;
     class Settings;
     class SharedGraphicsContext3D;
     class SpeechInput;
@@ -165,7 +165,7 @@ namespace WebCore {
         int frameCount() const { checkFrameCountConsistency(); return m_frameCount; }
 
         Chrome* chrome() const { return m_chrome.get(); }
-        SelectionController* dragCaretController() const { return m_dragCaretController.get(); }
+        FrameSelection* dragCaretController() const { return m_dragCaretController.get(); }
 #if ENABLE(DRAG_SUPPORT)
         DragController* dragController() const { return m_dragController.get(); }
 #endif
@@ -315,7 +315,7 @@ namespace WebCore {
         double minimumTimerInterval() const;
 
         OwnPtr<Chrome> m_chrome;
-        OwnPtr<SelectionController> m_dragCaretController;
+        OwnPtr<FrameSelection> m_dragCaretController;
 
 #if ENABLE(ACCELERATED_2D_CANVAS)
         RefPtr<SharedGraphicsContext3D> m_sharedGraphicsContext3D;

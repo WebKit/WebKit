@@ -109,7 +109,7 @@ RenderObject* RenderObjectChildList::removeChildNode(RenderObject* owner, Render
     
     // If oldChild is the start or end of the selection, then clear the selection to
     // avoid problems of invalid pointers.
-    // FIXME: The SelectionController should be responsible for this when it
+    // FIXME: The FrameSelection should be responsible for this when it
     // is notified of DOM mutations.
     if (!owner->documentBeingDestroyed() && oldChild->isSelectionBorder())
         owner->view()->clearSelection();

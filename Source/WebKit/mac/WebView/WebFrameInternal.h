@@ -32,8 +32,8 @@
 #import "WebPreferencesPrivate.h"
 #import <WebCore/EditAction.h>
 #import <WebCore/FrameLoaderTypes.h>
+#import <WebCore/FrameSelection.h>
 #import <WebCore/Position.h>
-#import <WebCore/SelectionController.h>
 #import <WebCore/Settings.h>
 
 @class DOMCSSStyleDeclaration;
@@ -136,7 +136,7 @@ WebView *getWebView(WebFrame *webFrame);
 - (NSRect)_firstRectForDOMRange:(DOMRange *)range;
 - (void)_scrollDOMRangeToVisible:(DOMRange *)range;
 
-- (DOMRange *)_rangeByAlteringCurrentSelection:(WebCore::SelectionController::EAlteration)alteration direction:(WebCore::SelectionDirection)direction granularity:(WebCore::TextGranularity)granularity;
+- (DOMRange *)_rangeByAlteringCurrentSelection:(WebCore::FrameSelection::EAlteration)alteration direction:(WebCore::SelectionDirection)direction granularity:(WebCore::TextGranularity)granularity;
 - (NSRange)_convertToNSRange:(WebCore::Range*)range;
 - (DOMRange *)_convertNSRangeToDOMRange:(NSRange)range;
 - (NSRange)_convertDOMRangeToNSRange:(DOMRange *)range;

@@ -56,6 +56,7 @@
 #include "FocusController.h"
 #include "FontDescription.h"
 #include "FrameLoader.h"
+#include "FrameSelection.h"
 #include "FrameTree.h"
 #include "FrameView.h"
 #include "GeolocationClientProxy.h"
@@ -88,7 +89,6 @@
 #include "RenderView.h"
 #include "ResourceHandle.h"
 #include "SecurityOrigin.h"
-#include "SelectionController.h"
 #include "Settings.h"
 #include "SpeechInputClientImpl.h"
 #include "TextIterator.h"
@@ -1436,17 +1436,17 @@ WebTextInputType WebViewImpl::textInputType()
     if (!editor || !editor->canEdit())
         return type;
 
-    SelectionController* controller = focused->selection();
-    if (!controller)
+    FrameSelection* selection = focused->selection();
+    if (!selection)
         return type;
 
-    const Node* node = controller->start().deprecatedNode();
+    const Node* node = selection->start().deprecatedNode();
     if (!node)
         return type;
 
     // FIXME: Support more text input types when necessary, eg. Number,
     // Date, Email, URL, etc.
-    if (controller->isInPasswordField())
+    if (selection->isInPasswordField())
         type = WebTextInputTypePassword;
     else if (node->shouldUseInputMethod())
         type = WebTextInputTypeText;
@@ -1461,23 +1461,23 @@ WebRect WebViewImpl::caretOrSelectionBounds()
     if (!focused)
         return rect;
 
-    SelectionController* controller = focused->selection();
-    if (!controller)
+    FrameSelection* selection = focused->selection();
+    if (!selection)
         return rect;
 
     const FrameView* view = focused->view();
     if (!view)
         return rect;
 
-    const Node* node = controller->base().containerNode();
+    const Node* node = selection->base().containerNode();
     if (!node || !node->renderer())
         return rect;
 
-    if (controller->isCaret())
-        rect = view->contentsToWindow(controller->absoluteCaretBounds());
-    else if (controller->isRange()) {
-        node = controller->extent().containerNode();
-        RefPtr<Range> range = controller->toNormalizedRange();
+    if (selection->isCaret())
+        rect = view->contentsToWindow(selection->absoluteCaretBounds());
+    else if (selection->isRange()) {
+        node = selection->extent().containerNode();
+        RefPtr<Range> range = selection->toNormalizedRange();
         if (!node || !node->renderer() || !range)
             return rect;
         rect = view->contentsToWindow(focused->editor()->firstRectForRange(range.get()));
@@ -1522,11 +1522,11 @@ bool WebViewImpl::caretOrSelectionRange(size_t* location, size_t* length)
     if (!focused)
         return false;
 
-    SelectionController* controller = focused->selection();
-    if (!controller)
+    FrameSelection* selection = focused->selection();
+    if (!selection)
         return false;
 
-    RefPtr<Range> range = controller->selection().firstRange();
+    RefPtr<Range> range = selection->selection().firstRange();
     if (!range.get())
         return false;
 
@@ -1712,9 +1712,7 @@ void WebViewImpl::clearFocusedNode()
     if (oldFocusedNode->hasTagName(HTMLNames::textareaTag)
         || (oldFocusedNode->hasTagName(HTMLNames::inputTag)
             && static_cast<HTMLInputElement*>(oldFocusedNode.get())->isTextField())) {
-        // Clear the selection.
-        SelectionController* selection = frame->selection();
-        selection->clear();
+        frame->selection()->clear();
     }
 }
 

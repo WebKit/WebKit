@@ -32,8 +32,9 @@
 #include "Cursor.h"
 #include "FloatPoint.h"
 #include "FocusController.h"
-#include "FrameView.h"
 #include "Frame.h"
+#include "FrameSelection.h"
+#include "FrameView.h"
 #include "HitTestRequest.h"
 #include "HitTestResult.h"
 #include "MouseEventWithHitTestResults.h"
@@ -42,7 +43,6 @@
 #include "PlatformKeyboardEvent.h"
 #include "PlatformWheelEvent.h"
 #include "RenderWidget.h"
-#include "SelectionController.h"
 
 namespace WebCore {
 

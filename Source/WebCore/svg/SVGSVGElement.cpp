@@ -33,6 +33,7 @@
 #include "EventNames.h"
 #include "FloatConversion.h"
 #include "FloatRect.h"
+#include "FrameSelection.h"
 #include "FrameView.h"
 #include "HTMLNames.h"
 #include "RenderSVGResource.h"
@@ -48,7 +49,6 @@
 #include "SVGViewSpec.h"
 #include "SVGZoomEvent.h"
 #include "ScriptEventListener.h"
-#include "SelectionController.h"
 #include <wtf/StdLibExtras.h>
 
 namespace WebCore {

@@ -40,6 +40,7 @@
 #include <Editor.cpp>
 #include <EditorCommand.cpp>
 #include <FormatBlockCommand.cpp>
+#include <FrameSelection.cpp>
 #include <HTMLInterchange.cpp>
 #include <IndentOutdentCommand.cpp>
 #include <InsertIntoTextNodeCommand.cpp>
@@ -59,7 +60,6 @@
 #include <RemoveNodePreservingChildrenCommand.cpp>
 #include <ReplaceNodeWithSpanCommand.cpp>
 #include <ReplaceSelectionCommand.cpp>
-#include <SelectionController.cpp>
 #include <SetNodeAttributeCommand.cpp>
 #include <SmartReplace.cpp>
 #include <SmartReplaceCF.cpp>

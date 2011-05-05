@@ -87,6 +87,7 @@
 #include <WebCore/FloatQuad.h>
 #include <WebCore/FocusController.h>
 #include <WebCore/FrameLoader.h>
+#include <WebCore/FrameSelection.h>
 #include <WebCore/FrameTree.h>
 #include <WebCore/FrameView.h>
 #include <WebCore/FrameWin.h>
@@ -127,7 +128,6 @@
 #include <WebCore/Scrollbar.h>
 #include <WebCore/ScrollbarTheme.h>
 #include <WebCore/SecurityOrigin.h>
-#include <WebCore/SelectionController.h>
 #include <WebCore/Settings.h>
 #include <WebCore/SimpleFontData.h>
 #include <WebCore/SystemInfo.h>

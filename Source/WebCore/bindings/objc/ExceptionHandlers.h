@@ -42,7 +42,7 @@ namespace WebCore {
     
     typedef int ExceptionCode;
     
-    class SelectionController;
+    class FrameSelection;
     class Range;
 
     void raiseDOMException(ExceptionCode);

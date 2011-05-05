@@ -28,6 +28,7 @@
 #include "RenderImage.h"
 
 #include "Frame.h"
+#include "FrameSelection.h"
 #include "GraphicsContext.h"
 #include "HTMLAreaElement.h"
 #include "HTMLImageElement.h"
@@ -38,7 +39,6 @@
 #include "Page.h"
 #include "RenderLayer.h"
 #include "RenderView.h"
-#include "SelectionController.h"
 #include "TextRun.h"
 #include <wtf/UnusedParam.h>
 

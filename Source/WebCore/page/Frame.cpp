@@ -152,7 +152,7 @@ inline Frame::Frame(Page* page, HTMLFrameOwnerElement* ownerElement, FrameLoader
     , m_ownerElement(ownerElement)
     , m_script(this)
     , m_editor(this)
-    , m_selectionController(this)
+    , m_selection(this)
     , m_eventHandler(this)
     , m_animationController(this)
     , m_lifeSupportTimer(this, &Frame::lifeSupportTimerFired)

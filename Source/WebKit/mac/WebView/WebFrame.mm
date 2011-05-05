@@ -651,12 +651,12 @@ static inline WebDataSource *dataSource(DocumentLoader* loader)
     return _private->coreFrame->view() ? _private->coreFrame->view()->needsLayout() : false;
 }
 
-- (DOMRange *)_rangeByAlteringCurrentSelection:(SelectionController::EAlteration)alteration direction:(SelectionDirection)direction granularity:(TextGranularity)granularity
+- (DOMRange *)_rangeByAlteringCurrentSelection:(FrameSelection::EAlteration)alteration direction:(SelectionDirection)direction granularity:(TextGranularity)granularity
 {
     if (_private->coreFrame->selection()->isNone())
         return nil;
 
-    SelectionController selection;
+    FrameSelection selection;
     selection.setSelection(_private->coreFrame->selection()->selection());
     selection.modify(alteration, direction, granularity);
     return kit(selection.toNormalizedRange().get());

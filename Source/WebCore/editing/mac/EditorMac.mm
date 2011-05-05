@@ -190,7 +190,7 @@ NSWritingDirection Editor::baseWritingDirectionForSelectionStart() const
 
 bool Editor::canCopyExcludingStandaloneImages()
 {
-    SelectionController* selection = m_frame->selection();
+    FrameSelection* selection = m_frame->selection();
     return selection->isRange() && !selection->isInPasswordField();
 }
 

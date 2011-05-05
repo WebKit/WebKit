@@ -38,6 +38,7 @@
 #include "EventNames.h"
 #include "ExceptionCode.h"
 #include "Frame.h"
+#include "FrameSelection.h"
 #include "FrameTree.h"
 #include "FrameView.h"
 #include "HTMLAreaElement.h"
@@ -51,7 +52,6 @@
 #include "RenderObject.h"
 #include "RenderWidget.h"
 #include "ScrollAnimator.h"
-#include "SelectionController.h"
 #include "Settings.h"
 #include "SpatialNavigation.h"
 #include "Widget.h"
@@ -327,7 +327,7 @@ static void clearSelectionIfNeeded(Frame* oldFocusedFrame, Frame* newFocusedFram
     if (oldFocusedFrame->document() != newFocusedFrame->document())
         return;
     
-    SelectionController* s = oldFocusedFrame->selection();
+    FrameSelection* s = oldFocusedFrame->selection();
     if (s->isNone())
         return;
 

@@ -93,6 +93,7 @@
 #import <WebCore/FocusController.h>
 #import <WebCore/Frame.h>
 #import <WebCore/FrameLoader.h>
+#import <WebCore/FrameSelection.h>
 #import <WebCore/FrameView.h>
 #import <WebCore/HTMLConverter.h>
 #import <WebCore/HTMLNames.h>
@@ -107,7 +108,6 @@
 #import <WebCore/RenderWidget.h>
 #import <WebCore/RenderView.h>
 #import <WebCore/RuntimeApplicationChecks.h>
-#import <WebCore/SelectionController.h>
 #import <WebCore/SharedBuffer.h>
 #import <WebCore/SimpleFontData.h>
 #import <WebCore/Text.h>

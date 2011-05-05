@@ -29,7 +29,7 @@
  */
 
 #include "config.h"
-#include "SelectionController.h"
+#include "FrameSelection.h"
 
 #include "AXObjectCache.h"
 #include "Document.h"
@@ -37,7 +37,7 @@
 
 namespace WebCore {
 
-void SelectionController::notifyAccessibilityForSelectionChange()
+void FrameSelection::notifyAccessibilityForSelectionChange()
 {
     // FIXME: Support editable text in chromium.
     if (AXObjectCache::accessibilityEnabled() && m_selection.start().isNotNull() && m_selection.end().isNotNull()) {

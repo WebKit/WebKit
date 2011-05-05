@@ -1,3 +1,12 @@
+2011-05-05  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        Rename SelectionController to FrameSelection
+        https://bugs.webkit.org/show_bug.cgi?id=60234
+
+        * Api/qwebframe.cpp:
+
 2011-05-05  Alexis Menard  <alexis.menard@openbossa.org>
 
         Reviewed by Andreas Kling.

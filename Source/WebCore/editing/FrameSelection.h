@@ -23,8 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef SelectionController_h
-#define SelectionController_h
+#ifndef FrameSelection_h
+#define FrameSelection_h
 
 #include "EditingStyle.h"
 #include "IntRect.h"
@@ -48,8 +48,9 @@ class VisiblePosition;
 
 enum DirectionalityPolicy { MakeNonDirectionalSelection, MakeDirectionalSelection };
 
-class SelectionController {
-    WTF_MAKE_NONCOPYABLE(SelectionController); WTF_MAKE_FAST_ALLOCATED;
+class FrameSelection {
+    WTF_MAKE_NONCOPYABLE(FrameSelection);
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     enum EAlteration { AlterationMove, AlterationExtend };
     enum CursorAlignOnScroll { AlignCursorOnScrollIfNeeded,
@@ -62,7 +63,7 @@ public:
     };
     typedef unsigned SetSelectionOptions;
 
-    SelectionController(Frame* = 0, bool isDragCaretController = false);
+    FrameSelection(Frame* = 0, bool isDragCaretController = false);
 
     Element* rootEditableElement() const { return m_selection.rootEditableElement(); }
     bool isContentEditable() const { return m_selection.isContentEditable(); }
@@ -215,7 +216,7 @@ private:
     
     IntRect absoluteBoundsForLocalRect(const IntRect&) const;
 
-    void caretBlinkTimerFired(Timer<SelectionController>*);
+    void caretBlinkTimerFired(Timer<FrameSelection>*);
 
     void setUseSecureKeyboardEntry(bool);
 
@@ -228,7 +229,7 @@ private:
 
     RefPtr<EditingStyle> m_typingStyle;
 
-    Timer<SelectionController> m_caretBlinkTimer;
+    Timer<FrameSelection> m_caretBlinkTimer;
 
     IntRect m_caretRect; // caret rect in coords local to the renderer responsible for painting the caret
     IntRect m_absCaretBounds; // absolute bounding rect for the caret
@@ -244,23 +245,23 @@ private:
     bool m_caretPaint;
 };
 
-inline EditingStyle* SelectionController::typingStyle() const
+inline EditingStyle* FrameSelection::typingStyle() const
 {
     return m_typingStyle.get();
 }
 
-inline void SelectionController::clearTypingStyle()
+inline void FrameSelection::clearTypingStyle()
 {
     m_typingStyle.clear();
 }
 
-inline void SelectionController::setTypingStyle(PassRefPtr<EditingStyle> style)
+inline void FrameSelection::setTypingStyle(PassRefPtr<EditingStyle> style)
 {
     m_typingStyle = style;
 }
 
 #if !(PLATFORM(MAC) || PLATFORM(GTK) || PLATFORM(CHROMIUM))
-inline void SelectionController::notifyAccessibilityForSelectionChange()
+inline void FrameSelection::notifyAccessibilityForSelectionChange()
 {
 }
 #endif
@@ -269,9 +270,9 @@ inline void SelectionController::notifyAccessibilityForSelectionChange()
 
 #ifndef NDEBUG
 // Outside the WebCore namespace for ease of invocation from gdb.
-void showTree(const WebCore::SelectionController&);
-void showTree(const WebCore::SelectionController*);
+void showTree(const WebCore::FrameSelection&);
+void showTree(const WebCore::FrameSelection*);
 #endif
 
-#endif // SelectionController_h
+#endif // FrameSelection_h
 

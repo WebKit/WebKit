@@ -30,7 +30,7 @@
 
 namespace WebCore {
 
-SetSelectionCommand::SetSelectionCommand(const VisibleSelection& selection, SelectionController::SetSelectionOptions options)
+SetSelectionCommand::SetSelectionCommand(const VisibleSelection& selection, FrameSelection::SetSelectionOptions options)
     : SimpleEditCommand(selection.base().anchorNode()->document())
     , m_options(options)
     , m_selectionToSet(selection)
@@ -39,22 +39,22 @@ SetSelectionCommand::SetSelectionCommand(const VisibleSelection& selection, Sele
 
 void SetSelectionCommand::doApply()
 {
-    SelectionController* selectionController = document()->frame()->selection();
-    ASSERT(selectionController);
+    FrameSelection* selection = document()->frame()->selection();
+    ASSERT(selection);
 
-    if (selectionController->shouldChangeSelection(m_selectionToSet) && m_selectionToSet.isNonOrphanedCaretOrRange()) {
-        selectionController->setSelection(m_selectionToSet, m_options);
+    if (selection->shouldChangeSelection(m_selectionToSet) && m_selectionToSet.isNonOrphanedCaretOrRange()) {
+        selection->setSelection(m_selectionToSet, m_options);
         setEndingSelection(m_selectionToSet);
     }
 }
 
 void SetSelectionCommand::doUnapply()
 {
-    SelectionController* selectionController = document()->frame()->selection();
-    ASSERT(selectionController);
+    FrameSelection* selection = document()->frame()->selection();
+    ASSERT(selection);
 
-    if (selectionController->shouldChangeSelection(startingSelection()) && startingSelection().isNonOrphanedCaretOrRange())
-        selectionController->setSelection(startingSelection(), m_options);
+    if (selection->shouldChangeSelection(startingSelection()) && startingSelection().isNonOrphanedCaretOrRange())
+        selection->setSelection(startingSelection(), m_options);
 }
 
 } // namespace WebCore

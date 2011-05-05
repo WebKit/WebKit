@@ -384,7 +384,7 @@ static gboolean webkit_web_view_forward_context_menu_event(WebKitWebView* webVie
 static const int gContextMenuMargin = 1;
 static IntPoint getLocationForKeyboardGeneratedContextMenu(Frame* frame)
 {
-    SelectionController* selection = frame->selection();
+    FrameSelection* selection = frame->selection();
     if (!selection->selection().isNonOrphanedCaretOrRange()
          || (selection->selection().isCaret() && !selection->selection().isContentEditable())) {
         if (Node* focusedNode = getFocusedNode(frame))

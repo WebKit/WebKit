@@ -36,6 +36,7 @@
 #include "FloatRect.h"
 #include "Frame.h"
 #include "FrameLoader.h"
+#include "FrameSelection.h"
 #include "HTMLAreaElement.h"
 #include "HTMLFormElement.h"
 #include "HTMLFrameElementBase.h"
@@ -71,7 +72,6 @@
 #include "RenderView.h"
 #include "RenderWidget.h"
 #include "SelectElement.h"
-#include "SelectionController.h"
 #include "Text.h"
 #include "TextIterator.h"
 #include "htmlediting.h"
@@ -2439,9 +2439,9 @@ VisiblePositionRange AccessibilityRenderObject::visiblePositionRangeForLine(unsi
     // NOTE: ignores results of sel.modify because it returns false when
     // starting at an empty line.  The resulting selection in that case
     // will be a caret at visiblePos.
-    SelectionController selection;
+    FrameSelection selection;
     selection.setSelection(VisibleSelection(visiblePos));
-    selection.modify(SelectionController::AlterationExtend, DirectionRight, LineBoundary);
+    selection.modify(FrameSelection::AlterationExtend, DirectionRight, LineBoundary);
     
     return VisiblePositionRange(selection.selection().visibleStart(), selection.selection().visibleEnd());
 }

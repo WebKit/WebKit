@@ -191,7 +191,7 @@ public:
 
     void focusDocumentView();
 
-    void capsLockStateMayHaveChanged(); // Only called by SelectionController
+    void capsLockStateMayHaveChanged(); // Only called by FrameSelection
     
     void sendResizeEvent(); // Only called in FrameView
     void sendScrollEvent(); // Ditto

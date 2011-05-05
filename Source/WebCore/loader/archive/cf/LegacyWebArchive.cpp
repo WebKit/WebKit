@@ -34,6 +34,7 @@
 #include "DocumentLoader.h"
 #include "Frame.h"
 #include "FrameLoader.h"
+#include "FrameSelection.h"
 #include "FrameTree.h"
 #include "HTMLFrameOwnerElement.h"
 #include "HTMLNames.h"
@@ -44,7 +45,6 @@
 #include "markup.h"
 #include "Node.h"
 #include "Range.h"
-#include "SelectionController.h"
 #include "SharedBuffer.h"
 #include <wtf/text/CString.h>
 #include <wtf/text/StringConcatenate.h>

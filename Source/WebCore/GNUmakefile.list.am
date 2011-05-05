@@ -1323,7 +1323,9 @@ webcore_sources += \
 	Source/WebCore/editing/FindOptions.h \
 	Source/WebCore/editing/FormatBlockCommand.cpp \
 	Source/WebCore/editing/FormatBlockCommand.h \
-	Source/WebCore/editing/gtk/SelectionControllerGtk.cpp \
+	Source/WebCore/editing/FrameSelection.cpp \
+	Source/WebCore/editing/FrameSelection.h \
+	Source/WebCore/editing/gtk/FrameSelectionGtk.cpp \
 	Source/WebCore/editing/htmlediting.cpp \
 	Source/WebCore/editing/htmlediting.h \
 	Source/WebCore/editing/HTMLInterchange.cpp \
@@ -1366,8 +1368,6 @@ webcore_sources += \
 	Source/WebCore/editing/ReplaceNodeWithSpanCommand.h \
 	Source/WebCore/editing/ReplaceSelectionCommand.cpp \
 	Source/WebCore/editing/ReplaceSelectionCommand.h \
-	Source/WebCore/editing/SelectionController.cpp \
-	Source/WebCore/editing/SelectionController.h \
 	Source/WebCore/editing/SetNodeAttributeCommand.cpp \
 	Source/WebCore/editing/SetNodeAttributeCommand.h \
 	Source/WebCore/editing/SmartReplace.cpp \

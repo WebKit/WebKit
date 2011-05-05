@@ -18,7 +18,7 @@
  */
  
 #include "config.h"
-#include "SelectionController.h"
+#include "FrameSelection.h"
 
 #include "AccessibilityObjectWrapperAtk.h"
 #include "AXObjectCache.h"
@@ -75,7 +75,7 @@ static void maybeEmitTextFocusChange(PassRefPtr<AccessibilityObject> prpObject)
 }
 
 
-void SelectionController::notifyAccessibilityForSelectionChange()
+void FrameSelection::notifyAccessibilityForSelectionChange()
 {
     if (!AXObjectCache::accessibilityEnabled())
         return;

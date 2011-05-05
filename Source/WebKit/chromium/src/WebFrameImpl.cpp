@@ -89,6 +89,7 @@
 #include "FormState.h"
 #include "FrameLoadRequest.h"
 #include "FrameLoader.h"
+#include "FrameSelection.h"
 #include "FrameTree.h"
 #include "FrameView.h"
 #include "HTMLCollection.h"
@@ -123,7 +124,6 @@
 #include "ScriptValue.h"
 #include "ScrollTypes.h"
 #include "ScrollbarTheme.h"
-#include "SelectionController.h"
 #include "Settings.h"
 #include "SkiaUtils.h"
 #include "SubstituteData.h"
@@ -1345,11 +1345,11 @@ void WebFrameImpl::selectWordAroundPosition(Frame* frame, VisiblePosition pos)
 
 bool WebFrameImpl::selectWordAroundCaret()
 {
-    SelectionController* controller = frame()->selection();
-    ASSERT(!controller->isNone());
-    if (controller->isNone() || controller->isRange())
+    FrameSelection* selection = frame()->selection();
+    ASSERT(!selection->isNone());
+    if (selection->isNone() || selection->isRange())
         return false;
-    selectWordAroundPosition(frame(), controller->selection().visibleStart());
+    selectWordAroundPosition(frame(), selection->selection().visibleStart());
     return true;
 }
 

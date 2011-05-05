@@ -35,12 +35,12 @@
 #include "CSSValueKeywords.h"
 #include "CSSValueList.h"
 #include "Frame.h"
+#include "FrameSelection.h"
 #include "HTMLFontElement.h"
 #include "HTMLNames.h"
 #include "Node.h"
 #include "Position.h"
 #include "RenderStyle.h"
-#include "SelectionController.h"
 #include "StyledElement.h"
 #include "htmlediting.h"
 

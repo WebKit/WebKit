@@ -29,6 +29,7 @@
 #include "CSSMutableStyleDeclaration.h"
 #include "Document.h"
 #include "Frame.h"
+#include "FrameSelection.h"
 #include "FrameView.h"
 #include "HTMLElement.h"
 #include "HTMLNames.h"
@@ -45,7 +46,6 @@
 #include "RenderTableCell.h"
 #include "RenderView.h"
 #include "RenderWidget.h"
-#include "SelectionController.h"
 #include <wtf/HexNumber.h>
 #include <wtf/UnusedParam.h>
 #include <wtf/Vector.h>

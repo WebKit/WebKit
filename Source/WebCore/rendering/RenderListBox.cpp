@@ -37,6 +37,7 @@
 #include "EventQueue.h"
 #include "FocusController.h"
 #include "Frame.h"
+#include "FrameSelection.h"
 #include "FrameView.h"
 #include "GraphicsContext.h"
 #include "HTMLNames.h"
@@ -53,7 +54,6 @@
 #include "Scrollbar.h"
 #include "ScrollbarTheme.h"
 #include "SelectElement.h"
-#include "SelectionController.h"
 #include "TextRun.h"
 #include <math.h>
 

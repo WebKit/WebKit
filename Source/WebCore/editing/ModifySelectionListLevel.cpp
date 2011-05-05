@@ -28,9 +28,9 @@
 
 #include "Document.h"
 #include "Frame.h"
+#include "FrameSelection.h"
 #include "HTMLElement.h"
 #include "RenderObject.h"
-#include "SelectionController.h"
 #include "htmlediting.h"
 
 namespace WebCore {

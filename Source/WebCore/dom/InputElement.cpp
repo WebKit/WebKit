@@ -38,9 +38,9 @@
 #include "Event.h"
 #include "EventNames.h"
 #include "Frame.h"
+#include "FrameSelection.h"
 #include "Page.h"
 #include "RenderTextControlSingleLine.h"
-#include "SelectionController.h"
 #include "TextIterator.h"
 
 namespace WebCore {

@@ -33,9 +33,9 @@
 #include "Editor.h"
 #include "EventHandler.h"
 #include "FrameLoader.h"
+#include "FrameSelection.h"
 #include "FrameTree.h"
 #include "NavigationScheduler.h"
-#include "SelectionController.h"
 #include "ScriptController.h"
 #include "UserScriptTypes.h"
 
@@ -109,7 +109,7 @@ namespace WebCore {
         EventHandler* eventHandler() const;
         FrameLoader* loader() const;
         NavigationScheduler* navigationScheduler() const;
-        SelectionController* selection() const;
+        FrameSelection* selection() const;
         FrameTree* tree() const;
         AnimationController* animation() const;
         ScriptController* script();
@@ -232,7 +232,7 @@ namespace WebCore {
         ScriptController m_script;
 
         mutable Editor m_editor;
-        mutable SelectionController m_selectionController;
+        mutable FrameSelection m_selection;
         mutable EventHandler m_eventHandler;
         mutable AnimationController m_animationController;
 
@@ -305,9 +305,9 @@ namespace WebCore {
         return m_doc.get();
     }
 
-    inline SelectionController* Frame::selection() const
+    inline FrameSelection* Frame::selection() const
     {
-        return &m_selectionController;
+        return &m_selection;
     }
 
     inline Editor* Frame::editor() const

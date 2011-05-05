@@ -1,3 +1,243 @@
+2011-05-05  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        Rename SelectionController to FrameSelection
+        https://bugs.webkit.org/show_bug.cgi?id=60234
+
+        * CMakeLists.txt:
+        * GNUmakefile.list.am:
+        * WebCore.exp.in:
+        * WebCore.gypi:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * accessibility/AccessibilityObject.cpp:
+        * accessibility/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::visiblePositionRangeForLine):
+        * accessibility/mac/AccessibilityObjectWrapper.mm:
+        * bindings/objc/ExceptionHandlers.h:
+        * css/CSSStyleSelector.cpp:
+        * dom/ContainerNode.cpp:
+        (WebCore::ContainerNode::cloneChildNodes):
+        * dom/Document.cpp:
+        * dom/InputElement.cpp:
+        * editing/DeleteButtonController.cpp:
+        * editing/EditCommand.cpp:
+        * editing/EditingAllInOne.cpp:
+        * editing/EditingStyle.cpp:
+        * editing/Editor.cpp:
+        (WebCore::Editor::canCopy):
+        (WebCore::Editor::canDelete):
+        (WebCore::Editor::markMisspellingsAfterTypingToWord):
+        (WebCore::Editor::markAllMisspellingsAndBadGrammarInRanges):
+        (WebCore::Editor::changeSelectionAfterCommand):
+        (WebCore::Editor::respondToChangedSelection):
+        * editing/Editor.h:
+        * editing/EditorCommand.cpp:
+        (WebCore::executeDeleteToMark):
+        (WebCore::executeMoveBackward):
+        (WebCore::executeMoveBackwardAndModifySelection):
+        (WebCore::executeMoveDown):
+        (WebCore::executeMoveDownAndModifySelection):
+        (WebCore::executeMoveForward):
+        (WebCore::executeMoveForwardAndModifySelection):
+        (WebCore::executeMoveLeft):
+        (WebCore::executeMoveLeftAndModifySelection):
+        (WebCore::executeMovePageDown):
+        (WebCore::executeMovePageDownAndModifySelection):
+        (WebCore::executeMovePageUp):
+        (WebCore::executeMovePageUpAndModifySelection):
+        (WebCore::executeMoveRight):
+        (WebCore::executeMoveRightAndModifySelection):
+        (WebCore::executeMoveToBeginningOfDocument):
+        (WebCore::executeMoveToBeginningOfDocumentAndModifySelection):
+        (WebCore::executeMoveToBeginningOfLine):
+        (WebCore::executeMoveToBeginningOfLineAndModifySelection):
+        (WebCore::executeMoveToBeginningOfParagraph):
+        (WebCore::executeMoveToBeginningOfParagraphAndModifySelection):
+        (WebCore::executeMoveToBeginningOfSentence):
+        (WebCore::executeMoveToBeginningOfSentenceAndModifySelection):
+        (WebCore::executeMoveToEndOfDocument):
+        (WebCore::executeMoveToEndOfDocumentAndModifySelection):
+        (WebCore::executeMoveToEndOfSentence):
+        (WebCore::executeMoveToEndOfSentenceAndModifySelection):
+        (WebCore::executeMoveToEndOfLine):
+        (WebCore::executeMoveToEndOfLineAndModifySelection):
+        (WebCore::executeMoveToEndOfParagraph):
+        (WebCore::executeMoveToEndOfParagraphAndModifySelection):
+        (WebCore::executeMoveParagraphBackwardAndModifySelection):
+        (WebCore::executeMoveParagraphForwardAndModifySelection):
+        (WebCore::executeMoveUp):
+        (WebCore::executeMoveUpAndModifySelection):
+        (WebCore::executeMoveWordBackward):
+        (WebCore::executeMoveWordBackwardAndModifySelection):
+        (WebCore::executeMoveWordForward):
+        (WebCore::executeMoveWordForwardAndModifySelection):
+        (WebCore::executeMoveWordLeft):
+        (WebCore::executeMoveWordLeftAndModifySelection):
+        (WebCore::executeMoveWordRight):
+        (WebCore::executeMoveWordRightAndModifySelection):
+        (WebCore::executeMoveToLeftEndOfLine):
+        (WebCore::executeMoveToLeftEndOfLineAndModifySelection):
+        (WebCore::executeMoveToRightEndOfLine):
+        (WebCore::executeMoveToRightEndOfLineAndModifySelection):
+        * editing/FrameSelection.cpp: Copied from Source/WebCore/editing/SelectionController.cpp.
+        (WebCore::FrameSelection::FrameSelection):
+        (WebCore::FrameSelection::moveTo):
+        (WebCore::FrameSelection::setSelection):
+        (WebCore::FrameSelection::nodeWillBeRemoved):
+        (WebCore::FrameSelection::respondToNodeModification):
+        (WebCore::FrameSelection::textWillBeReplaced):
+        (WebCore::FrameSelection::setIsDirectional):
+        (WebCore::FrameSelection::directionOfEnclosingBlock):
+        (WebCore::FrameSelection::willBeModified):
+        (WebCore::FrameSelection::positionForPlatform):
+        (WebCore::FrameSelection::startForPlatform):
+        (WebCore::FrameSelection::endForPlatform):
+        (WebCore::FrameSelection::modifyExtendingRight):
+        (WebCore::FrameSelection::modifyExtendingForward):
+        (WebCore::FrameSelection::modifyMovingRight):
+        (WebCore::FrameSelection::modifyMovingForward):
+        (WebCore::FrameSelection::modifyExtendingLeft):
+        (WebCore::FrameSelection::modifyExtendingBackward):
+        (WebCore::FrameSelection::modifyMovingLeft):
+        (WebCore::FrameSelection::modifyMovingBackward):
+        (WebCore::FrameSelection::modify):
+        (WebCore::FrameSelection::xPosForVerticalArrowNavigation):
+        (WebCore::FrameSelection::clear):
+        (WebCore::FrameSelection::setStart):
+        (WebCore::FrameSelection::setEnd):
+        (WebCore::FrameSelection::setBase):
+        (WebCore::FrameSelection::setExtent):
+        (WebCore::FrameSelection::setCaretRectNeedsUpdate):
+        (WebCore::FrameSelection::updateCaretRect):
+        (WebCore::FrameSelection::caretRenderer):
+        (WebCore::FrameSelection::localCaretRect):
+        (WebCore::FrameSelection::absoluteBoundsForLocalRect):
+        (WebCore::FrameSelection::absoluteCaretBounds):
+        (WebCore::FrameSelection::caretRepaintRect):
+        (WebCore::FrameSelection::recomputeCaretRect):
+        (WebCore::FrameSelection::shouldRepaintCaret):
+        (WebCore::FrameSelection::invalidateCaretRect):
+        (WebCore::FrameSelection::paintCaret):
+        (WebCore::FrameSelection::debugRenderer):
+        (WebCore::FrameSelection::contains):
+        (WebCore::FrameSelection::selectFrameElementInParentIfFullySelected):
+        (WebCore::FrameSelection::selectAll):
+        (WebCore::FrameSelection::setSelectedRange):
+        (WebCore::FrameSelection::isInPasswordField):
+        (WebCore::FrameSelection::caretRendersInsideNode):
+        (WebCore::FrameSelection::focusedOrActiveStateChanged):
+        (WebCore::FrameSelection::pageActivationChanged):
+        (WebCore::FrameSelection::updateSecureKeyboardEntryIfActive):
+        (WebCore::FrameSelection::setUseSecureKeyboardEntry):
+        (WebCore::FrameSelection::setFocused):
+        (WebCore::FrameSelection::isFocusedAndActive):
+        (WebCore::FrameSelection::updateAppearance):
+        (WebCore::FrameSelection::setCaretVisible):
+        (WebCore::FrameSelection::clearCaretRectIfNeeded):
+        (WebCore::FrameSelection::caretBlinkTimerFired):
+        (WebCore::FrameSelection::notifyRendererOfSelectionChange):
+        (WebCore::FrameSelection::setFocusedNodeIfNeeded):
+        (WebCore::FrameSelection::paintDragCaret):
+        (WebCore::FrameSelection::copyTypingStyle):
+        (WebCore::FrameSelection::shouldDeleteSelection):
+        (WebCore::FrameSelection::bounds):
+        (WebCore::FrameSelection::getClippedVisibleTextRectangles):
+        (WebCore::FrameSelection::currentForm):
+        (WebCore::FrameSelection::revealSelection):
+        (WebCore::FrameSelection::setSelectionFromNone):
+        (WebCore::FrameSelection::shouldChangeSelection):
+        (WebCore::FrameSelection::formatForDebugger):
+        (WebCore::FrameSelection::showTreeForThis):
+        (showTree):
+        * editing/FrameSelection.h: Copied from Source/WebCore/editing/SelectionController.h.
+        (WebCore::FrameSelection::typingStyle):
+        (WebCore::FrameSelection::clearTypingStyle):
+        (WebCore::FrameSelection::setTypingStyle):
+        (WebCore::FrameSelection::notifyAccessibilityForSelectionChange):
+        * editing/ModifySelectionListLevel.cpp:
+        * editing/RemoveFormatCommand.cpp:
+        * editing/ReplaceSelectionCommand.cpp:
+        * editing/SelectionController.cpp: Removed.
+        * editing/SelectionController.h: Removed.
+        * editing/SetSelectionCommand.cpp:
+        (WebCore::SetSelectionCommand::SetSelectionCommand):
+        (WebCore::SetSelectionCommand::doApply):
+        (WebCore::SetSelectionCommand::doUnapply):
+        * editing/SetSelectionCommand.h:
+        (WebCore::SetSelectionCommand::create):
+        * editing/SpellingCorrectionCommand.cpp:
+        (WebCore::SpellingCorrectionCommand::doApply):
+        * editing/SpellingCorrectionController.cpp:
+        (WebCore::SpellingCorrectionController::respondToUnappliedSpellCorrection):
+        * editing/TypingCommand.cpp:
+        (WebCore::TypingCommand::deleteKeyPressed):
+        (WebCore::TypingCommand::forwardDeleteKeyPressed):
+        * editing/chromium/FrameSelectionChromium.cpp: Copied from Source/WebCore/editing/chromium/SelectionControllerChromium.cpp.
+        (WebCore::FrameSelection::notifyAccessibilityForSelectionChange):
+        * editing/chromium/SelectionControllerChromium.cpp: Removed.
+        * editing/gtk/FrameSelectionGtk.cpp: Copied from Source/WebCore/editing/gtk/SelectionControllerGtk.cpp.
+        (WebCore::FrameSelection::notifyAccessibilityForSelectionChange):
+        * editing/gtk/SelectionControllerGtk.cpp: Removed.
+        * editing/mac/EditorMac.mm:
+        (WebCore::Editor::canCopyExcludingStandaloneImages):
+        * editing/mac/FrameSelectionMac.mm: Copied from Source/WebCore/editing/mac/SelectionControllerMac.mm.
+        (WebCore::FrameSelection::notifyAccessibilityForSelectionChange):
+        * editing/mac/SelectionControllerMac.mm: Removed.
+        * editing/qt/EditorQt.cpp:
+        * loader/archive/cf/LegacyWebArchive.cpp:
+        * page/ContextMenuController.cpp:
+        (WebCore::ContextMenuController::populate):
+        * page/DOMSelection.cpp:
+        (WebCore::DOMSelection::type):
+        (WebCore::DOMSelection::modify):
+        (WebCore::DOMSelection::addRange):
+        (WebCore::DOMSelection::deleteFromDocument):
+        (WebCore::DOMSelection::containsNode):
+        * page/DragController.cpp:
+        (WebCore::DragController::dragIsMove):
+        * page/DragController.h:
+        * page/EventHandler.cpp:
+        (WebCore::setSelectionIfNeeded):
+        (WebCore::setNonDirectionalSelectionIfNeeded):
+        (WebCore::EventHandler::sendContextMenuEventForKey):
+        (WebCore::EventHandler::handleKeyboardSelectionMovement):
+        * page/EventHandler.h:
+        * page/FocusController.cpp:
+        (WebCore::clearSelectionIfNeeded):
+        * page/Frame.cpp:
+        (WebCore::Frame::Frame):
+        * page/Frame.h:
+        (WebCore::Frame::selection):
+        * page/Page.cpp:
+        (WebCore::Page::Page):
+        * page/Page.h:
+        (WebCore::Page::dragCaretController):
+        * page/chromium/DragControllerChromium.cpp:
+        * page/chromium/EventHandlerChromium.cpp:
+        * page/win/DragControllerWin.cpp:
+        * page/win/EventHandlerWin.cpp:
+        * rendering/HitTestResult.cpp:
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::destroy):
+        (WebCore::RenderBlock::paintCaret):
+        * rendering/RenderImage.cpp:
+        * rendering/RenderInline.cpp:
+        (WebCore::RenderInline::destroy):
+        * rendering/RenderLayer.cpp:
+        * rendering/RenderListBox.cpp:
+        * rendering/RenderObjectChildList.cpp:
+        (WebCore::RenderObjectChildList::removeChildNode):
+        * rendering/RenderTextControl.cpp:
+        * rendering/RenderTextControlSingleLine.cpp:
+        * rendering/RenderTheme.cpp:
+        * rendering/RenderTreeAsText.cpp:
+        * svg/SVGSVGElement.cpp:
+        * svg/SVGTextContentElement.cpp:
+        (WebCore::SVGTextContentElement::selectSubString):
+
 2011-05-05  Brent Fulgham  <bfulgham@webkit.org>
 
         [WinCairo] unreviewed build correction.

@@ -27,8 +27,8 @@
 #include "DragController.h"
 
 #include "DragData.h"
-#include "windows.h" 
-#include "SelectionController.h"
+#include "FrameSelection.h"
+#include "windows.h"
 #include <wtf/RefPtr.h>
 
 namespace WebCore {

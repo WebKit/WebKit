@@ -32,6 +32,7 @@
 #include "FocusController.h"
 #include "FrameView.h"
 #include "Frame.h"
+#include "FrameSelection.h"
 #include "HitTestRequest.h"
 #include "HitTestResult.h"
 #include "MouseEventWithHitTestResults.h"
@@ -39,7 +40,6 @@
 #include "PlatformKeyboardEvent.h"
 #include "PlatformWheelEvent.h"
 #include "Scrollbar.h"
-#include "SelectionController.h"
 #include "WCDataObject.h"
 #include "NotImplemented.h"
 

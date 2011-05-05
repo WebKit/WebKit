@@ -29,6 +29,7 @@
 #include "Element.h"
 #include "FloatQuad.h"
 #include "Frame.h"
+#include "FrameSelection.h"
 #include "FrameView.h"
 #include "GraphicsContext.h"
 #include "HTMLFormElement.h"
@@ -48,7 +49,6 @@
 #include "RenderTextFragment.h"
 #include "RenderTheme.h"
 #include "RenderView.h"
-#include "SelectionController.h"
 #include "Settings.h"
 #include "TextRun.h"
 #include "TransformState.h"
@@ -168,7 +168,7 @@ void RenderBlock::destroy()
         if (firstLineBox()) {
             // We can't wait for RenderBox::destroy to clear the selection,
             // because by then we will have nuked the line boxes.
-            // FIXME: The SelectionController should be responsible for this when it
+            // FIXME: The FrameSelection should be responsible for this when it
             // is notified of DOM mutations.
             if (isSelectionBorder())
                 view()->clearSelection();
@@ -2417,14 +2417,14 @@ void RenderBlock::paintChildren(PaintInfo& paintInfo, int tx, int ty)
 
 void RenderBlock::paintCaret(PaintInfo& paintInfo, int tx, int ty, CaretType type)
 {
-    SelectionController* selection = type == CursorCaret ? frame()->selection() : frame()->page()->dragCaretController();
+    FrameSelection* selection = type == CursorCaret ? frame()->selection() : frame()->page()->dragCaretController();
 
-    // Paint the caret if the SelectionController says so or if caret browsing is enabled
+    // Paint the caret if the FrameSelection says so or if caret browsing is enabled
     bool caretBrowsing = frame()->settings() && frame()->settings()->caretBrowsingEnabled();
     RenderObject* caretPainter = selection->caretRenderer();
     if (caretPainter == this && (selection->isContentEditable() || caretBrowsing)) {
         // Convert the painting offset into the local coordinate system of this renderer,
-        // to match the localCaretRect computed by the SelectionController
+        // to match the localCaretRect computed by the FrameSelection
         offsetForContents(tx, ty);
 
         if (type == CursorCaret)

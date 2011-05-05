@@ -26,12 +26,12 @@
 #include "CSSPropertyNames.h"
 #include "CSSValueKeywords.h"
 #include "Frame.h"
+#include "FrameSelection.h"
 #include "RenderObject.h"
 #include "RenderSVGResource.h"
 #include "SVGDocumentExtensions.h"
 #include "SVGNames.h"
 #include "SVGTextQuery.h"
-#include "SelectionController.h"
 #include "XMLNames.h"
 
 namespace WebCore {
@@ -162,8 +162,8 @@ void SVGTextContentElement::selectSubString(unsigned charnum, unsigned nchars, E
     ASSERT(document());
     ASSERT(document()->frame());
 
-    SelectionController* controller = document()->frame()->selection();
-    if (!controller)
+    FrameSelection* selection = document()->frame()->selection();
+    if (!selection)
         return;
 
     // Find selection start
@@ -176,7 +176,7 @@ void SVGTextContentElement::selectSubString(unsigned charnum, unsigned nchars, E
     for (unsigned i = 0; i < nchars; ++i)
         end = end.next();
 
-    controller->setSelection(VisibleSelection(start, end));
+    selection->setSelection(VisibleSelection(start, end));
 }
 
 void SVGTextContentElement::parseMappedAttribute(Attribute* attr)

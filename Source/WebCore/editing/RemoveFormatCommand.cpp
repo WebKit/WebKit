@@ -31,8 +31,8 @@
 #include "EditingStyle.h"
 #include "Element.h"
 #include "Frame.h"
+#include "FrameSelection.h"
 #include "HTMLNames.h"
-#include "SelectionController.h"
 
 namespace WebCore {
 

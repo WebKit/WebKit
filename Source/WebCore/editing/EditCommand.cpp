@@ -33,8 +33,8 @@
 #include "Element.h"
 #include "EventNames.h"
 #include "Frame.h"
+#include "FrameSelection.h"
 #include "ScopedEventQueue.h"
-#include "SelectionController.h"
 #include "VisiblePosition.h"
 #include "htmlediting.h"
 
