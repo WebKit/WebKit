@@ -1,3 +1,13 @@
+2011-05-05  Justin Novosad  <junov@chromium.org>
+
+        Reviewed by Kenneth Russell.
+
+        [Chromium] Change the --accelerated-2d-canvas flag to mean Ganesh, and stop using --enable-accelerated-drawing for that purpose
+        https://bugs.webkit.org/show_bug.cgi?id=60173
+
+        * platform/chromium/test_expectations.txt:
+        Adding expected failures for the the switch to Ganesh
+
 2011-05-05  Tony Gentilcore  <tonyg@chromium.org>
 
         Reviewed by Adam Barth.

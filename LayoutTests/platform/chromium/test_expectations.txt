@@ -997,6 +997,91 @@ BUGCR10322 SKIP : platform/mac/accessibility = PASS FAIL
 BUGCR10322 SKIP : platform/win/accessibility = PASS FAIL
 
 // -----------------------------------------------------------------
+// Test failures with Skia GPU rendering of canvas 2D
+// -----------------------------------------------------------------
+
+// shadow rendering issues
+BUGCR79896 WIN LINUX GPU : fast/canvas/shadow-offset-1.html = IMAGE
+BUGCR79896 WIN LINUX GPU : fast/canvas/shadow-offset-2.html = IMAGE
+BUGCR79896 WIN LINUX GPU : fast/canvas/shadow-offset-3.html = IMAGE
+BUGCR79896 WIN LINUX GPU : fast/canvas/shadow-offset-4.html = IMAGE
+BUGCR79896 WIN LINUX GPU : fast/canvas/shadow-offset-5.html = IMAGE
+BUGCR79896 WIN LINUX GPU : fast/canvas/shadow-offset-6.html = IMAGE
+BUGCR79896 WIN LINUX GPU : fast/canvas/shadow-offset-7.html = IMAGE
+BUGCR79896 WIN LINUX GPU : canvas/philip/tests/2d.fillRect.shadow.html = TEXT
+BUGCR79896 WIN LINUX GPU : canvas/philip/tests/2d.shadow.alpha.2.html = TEXT
+BUGCR79896 WIN LINUX GPU : canvas/philip/tests/2d.shadow.clip.1.html = TEXT
+BUGCR79896 WIN LINUX GPU : canvas/philip/tests/2d.shadow.clip.3.html = TEXT
+BUGCR79896 WIN LINUX GPU : canvas/philip/tests/2d.shadow.enable.x.html = TEXT
+BUGCR79896 WIN LINUX GPU : canvas/philip/tests/2d.shadow.enable.y.html = TEXT
+BUGCR79896 WIN LINUX GPU : canvas/philip/tests/2d.shadow.gradient.alpha.html = TEXT
+BUGCR79896 WIN LINUX GPU : canvas/philip/tests/2d.shadow.gradient.basic.html = TEXT
+BUGCR79896 WIN LINUX GPU : canvas/philip/tests/2d.shadow.gradient.transparent.2.html = TEXT
+BUGCR79896 WIN LINUX GPU : canvas/philip/tests/2d.shadow.outside.html = TEXT
+BUGCR79896 WIN LINUX GPU : canvas/philip/tests/2d.shadow.pattern.alpha.html = TEXT
+BUGCR79896 WIN LINUX GPU : canvas/philip/tests/2d.shadow.pattern.basic.html = TEXT
+BUGCR79896 WIN LINUX GPU : canvas/philip/tests/2d.shadow.pattern.transparent.2.html = TEXT
+BUGCR79896 WIN LINUX GPU : canvas/philip/tests/2d.shadow.stroke.basic.html = TEXT
+BUGCR79896 WIN LINUX GPU : canvas/philip/tests/2d.shadow.stroke.cap.2.html = TEXT
+BUGCR79896 WIN LINUX GPU : canvas/philip/tests/2d.shadow.stroke.join.2.html = TEXT
+BUGCR79896 WIN LINUX GPU : canvas/philip/tests/2d.shadow.transform.1.html = TEXT
+BUGCR79896 WIN LINUX GPU : canvas/philip/tests/2d.shadow.transform.2.html = TEXT
+BUGCR79896 WIN LINUX GPU : canvas/philip/tests/2d.strokeRect.shadow.html = TEXT
+BUGCR79896 WIN LINUX GPU : fast/canvas/canvas-createPattern-fillRect-shadow.html = TEXT
+BUGCR79896 WIN LINUX GPU : fast/canvas/canvas-fillRect-gradient-shadow.html = TEXT
+BUGCR79896 WIN LINUX GPU : fast/canvas/canvas-fillRect-shadow.html = TEXT
+BUGCR79896 WIN LINUX GPU : fast/canvas/canvas-scale-fillPath-shadow.html = TEXT
+BUGCR79896 WIN LINUX GPU : fast/canvas/canvas-scale-fillRect-shadow.html = TEXT
+BUGCR79896 WIN LINUX GPU : fast/canvas/canvas-scale-shadowBlur.html = TEXT
+BUGCR79896 WIN LINUX GPU : fast/canvas/canvas-scale-strokePath-shadow.html = TEXT
+BUGCR79896 WIN LINUX GPU : fast/canvas/canvas-fillPath-shadow.html = TEXT
+BUGCR79896 WIN LINUX GPU : fast/canvas/canvas-shadow.html = TEXT
+
+// Once BUGCR79896 is resolved, these 4 tests may still be expected to time out (BUGWK57547)
+BUGCR79896 WIN LINUX GPU : fast/canvas/canvas-strokePath-gradient-shadow.html = TEXT TIMEOUT
+BUGCR79896 WIN LINUX GPU : fast/canvas/canvas-strokeRect-gradient-shadow.html = TEXT TIMEOUT
+BUGCR79896 WIN LINUX GPU : fast/canvas/canvas-fillPath-gradient-shadow.html = TEXT TIMEOUT
+BUGCR79896 WIN LINUX GPU : fast/canvas/canvas-fillPath-pattern-shadow.html = TEXT TIMEOUT
+
+BUGCR79896 WIN LINUX GPU : fast/canvas/canvas-strokePath-shadow.html = TEXT
+BUGCR79896 WIN LINUX GPU : fast/canvas/canvas-transforms-fillRect-shadow.html = TEXT
+
+// Flaky test
+BUGCR81585 LINUX GPU : canvas/philip/tests/2d.drawImage.alpha.html = TEXT
+BUGCR81585 LINUX GPU : canvas/philip/tests/2d.drawImage.9arg.basic.html = TEXT
+
+// Misc. render failures
+BUGCR81718 WIN LINUX GPU : compositing/tiling/huge-layer-img.html = CRASH
+BUGCR80593 WIN LINUX GPU : canvas/philip/tests/2d.strokeRect.zero.4.html = TEXT
+BUGCR79741 WIN LINUX GPU : fast/canvas/canvasDrawingIntoSelf.html = IMAGE
+BUGCR79741 WIN LINUX GPU : fast/canvas/drawImage.html = IMAGE
+BUGCR81601 WIN LINUX GPU : fast/repaint/canvas-putImageData.html = IMAGE+TEXT
+BUGCR81600 WIN LINUX GPU : canvas/philip/tests/2d.line.miter.lineedge.html = TEXT
+BUGCR81606 WIN LINUX GPU : fast/canvas/drawImage-with-globalAlpha.html = IMAGE
+BUGCR81668 WIN LINUX GPU : compositing/geometry/object-clip-rects-assertion.html = TEXT
+BUGCR81670 WIN LINUX GPU : fast/canvas/webgl/css-webkit-canvas-repaint.html = IMAGE
+BUGCR81670 WIN LINUX GPU : fast/canvas/webgl/css-webkit-canvas.html = IMAGE
+
+// fillRect failures
+BUGCR78457 WIN LINUX GPU : fast/canvas/fillrect_gradient.html = IMAGE
+BUGCR78457 WIN LINUX GPU : fast/canvas/image-object-in-canvas.html = IMAGE
+BUGCR78457 WIN LINUX GPU : fast/canvas/image-pattern-rotate.html = IMAGE
+BUGCR78457 WIN LINUX GPU : fast/canvas/patternfill-repeat.html = IMAGE
+BUGCR78457 WIN LINUX GPU : media/video-canvas-alpha.html = IMAGE
+BUGCR78457 WIN LINUX GPU : fast/canvas/canvas-transforms-during-path.html = IMAGE
+BUGCR78457 WIN LINUX GPU : fast/canvas/fillrect-gradient-zero-stops.html = IMAGE
+BUGCR78457 WIN LINUX GPU : fast/canvas/canvas-longlived-context.html = TEXT
+
+//Text rendering failures
+BUGCR81605 WIN LINUX GPU : fast/canvas/canvas-text-alignment.html = IMAGE
+BUGCR81605 WIN LINUX GPU : fast/canvas/canvas-text-baseline.html = IMAGE
+
+// Skia/GPU Anti-aliasing
+BUGCR78458 WIN LINUX GPU : fast/canvas/arc360.html = IMAGE
+BUGCR78458 WIN LINUX GPU : fast/canvas/quadraticCurveTo.xml = IMAGE
+BUGCR78458 WIN LINUX GPU : fast/canvas/canvas-composite.html = IMAGE
+
+// -----------------------------------------------------------------
 // Other failures
 // -----------------------------------------------------------------
 
@@ -3055,9 +3140,9 @@ BUGCR75109 WIN LINUX : svg/css/getComputedStyle-basic.xhtml = TEXT
 BUGCR75019 WIN LINUX MAC :fast/text/hyphenate-limit-before-after.html = IMAGE+TEXT
 
 // Seems to blend scrollbars very slightly differently in debug vs. release.
-// Commented out because BUGWK57113 supersedes it below.
+// Commented out because BUGWK57113 supersedes it below, and BUGCR78457
 //BUGWK58587 DEBUG GPU LINUX : compositing/geometry/horizontal-scroll-composited.html = IMAGE
-BUGWK58587 DEBUG GPU LINUX : fast/canvas/image-object-in-canvas.html = IMAGE
+//BUGWK58587 DEBUG GPU LINUX : fast/canvas/image-object-in-canvas.html = IMAGE
 //BUGWK58587 DEBUG GPU LINUX : platform/chromium/compositing/layout-width-change.html = IMAGE
 BUGWK58587 GPU LINUX : compositing/direct-image-compositing.html = IMAGE
 
@@ -3238,11 +3323,6 @@ BUGWK60094 : fast/encoding/parser-tests-80.html = TIMEOUT PASS
 BUGWK60094 : fast/encoding/parser-tests-100.html = TIMEOUT PASS
 BUGWK60094 : fast/encoding/parser-tests-110.html = TIMEOUT PASS
 BUGWK60094 : fast/encoding/parser-tests-120.html = TIMEOUT PASS
-
-BUGWK57547 WIN LINUX GPU : fast/canvas/canvas-strokePath-gradient-shadow.html = TIMEOUT
-BUGWK57547 WIN LINUX GPU : fast/canvas/canvas-strokeRect-gradient-shadow.html = TIMEOUT
-BUGWK57547 WIN LINUX GPU : fast/canvas/canvas-fillPath-gradient-shadow.html = TIMEOUT
-BUGWK57547 WIN LINUX GPU : fast/canvas/canvas-fillPath-pattern-shadow.html = TIMEOUT
 
 // Flaky since creation because we lack layoutTestController.setSerializeHTTPLoads
 BUGWK57593 : fast/preloader/document-write-2.html = TEXT
@@ -3632,7 +3712,8 @@ BUGWK60102 LINUX GPU : compositing/geometry/tall-page-composited.html = IMAGE
 BUGWK60102 GPU : compositing/geometry/video-fixed-scrolling.html = IMAGE
 BUGWK60102 LINUX GPU : compositing/masks/masked-ancestor.html = IMAGE
 BUGWK60102 LINUX GPU : compositing/masks/simple-composited-mask.html = IMAGE
-BUGWK60102 LINUX DEBUG GPU : fast/canvas/canvas-text-alignment.html = IMAGE
+// Commented because of BUGCR81605
+//BUGWK60102 LINUX DEBUG GPU : fast/canvas/canvas-text-alignment.html = IMAGE
 BUGWK60102 LINUX GPU : platform/chromium/compositing/layout-width-change.html = IMAGE
 
 // probably just needs new baselines after r84343
@@ -3979,7 +4060,7 @@ BUG_HCLAM WIN SLOW: http/tests/inspector/resource-tree/resource-tree-document-ur
 BUG_HCLAM : fast/url/ipv6.html = TEXT
 
 // Failure since r85661.
-BUG_HCLAM GPU : compositing/tiling/huge-layer-img.html = FAIL
+BUG_HCLAM MAC GPU : compositing/tiling/huge-layer-img.html = FAIL
 
 BUGWK60079 LINUX : platform/chromium-linux/fast/text/international/complex-joining-using-gpos.html = IMAGE
 
