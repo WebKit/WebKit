@@ -1,3 +1,9 @@
+2011-05-04  Cris Neckar  <cdn@chromium.org>
+
+        Unreviewed, Adding Cris Neckar as a committer
+
+        * Scripts/webkitpy/common/config/committers.py:
+
 2011-05-04  Siddharth Mathur  <siddharth.mathur@nokia.com>
 
         Reviewed by Laszlo Gombos.
