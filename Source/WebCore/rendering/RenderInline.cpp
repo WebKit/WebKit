@@ -99,8 +99,7 @@ void RenderInline::destroy()
                 for (InlineFlowBox* box = firstLineBox(); box; box = box->nextLineBox())
                     box->remove();
             }
-        } else if (isInline() && parent())
-            parent()->dirtyLinesFromChangedChild(this);
+        }
     }
 
     m_lineBoxes.deleteLineBoxes(renderArena());
@@ -845,11 +844,9 @@ InlineBox* RenderInline::culledInlineFirstLineBox() const
             
         // We want to get the margin box in the inline direction, and then use our font ascent/descent in the block
         // direction (aligned to the root box's baseline).
-        if (curr->isBox()) {
-            RenderBox* currBox = toRenderBox(curr);
-            if (currBox->inlineBoxWrapper())
-                return currBox->inlineBoxWrapper();
-        } else if (curr->isRenderInline()) {
+        if (curr->isBox())
+            return toRenderBox(curr)->inlineBoxWrapper();
+        if (curr->isRenderInline()) {
             RenderInline* currInline = toRenderInline(curr);
             InlineBox* result = currInline->firstLineBoxIncludingCulling();
             if (result)
@@ -871,11 +868,9 @@ InlineBox* RenderInline::culledInlineLastLineBox() const
             
         // We want to get the margin box in the inline direction, and then use our font ascent/descent in the block
         // direction (aligned to the root box's baseline).
-        if (curr->isBox()) {
-            RenderBox* currBox = toRenderBox(curr);
-            if (currBox->inlineBoxWrapper())
-                return currBox->inlineBoxWrapper();
-        } else if (curr->isRenderInline()) {
+        if (curr->isBox())
+            return toRenderBox(curr)->inlineBoxWrapper();
+        if (curr->isRenderInline()) {
             RenderInline* currInline = toRenderInline(curr);
             InlineBox* result = currInline->lastLineBoxIncludingCulling();
             if (result)

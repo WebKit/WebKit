@@ -182,8 +182,7 @@ void RenderBlock::destroy()
                         childBox->remove();
                 }
             }
-        } else if (isInline() && parent())
-            parent()->dirtyLinesFromChangedChild(this);
+        }
     }
 
     m_lineBoxes.deleteLineBoxes(renderArena());

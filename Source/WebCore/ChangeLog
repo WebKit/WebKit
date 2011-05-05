@@ -1,3 +1,24 @@
+2011-05-05  David Hyatt  <hyatt@apple.com>
+
+        Reviewed by Darin Adler.
+
+        <rdar://problem/9354979> REGRESSION (r83070-r83126): Conversation takes 10 seconds to load and makes mail unresponsive
+
+        Culled inlines were triggering some pathological line box tree groveling that isn't even necessary.
+        Removed the ancient code (that used to be in RenderFlow), since it made no sense in the RenderBlock case
+        (it was running for inline blocks, which was definitely not even the intent) or in the RenderInline case
+        (the object being removed has no effect on any lines).
+        
+        Also tweaked culledInlineFirstLineBox and culledInlineLastLineBox to avoid bailing if the first replaced object that
+        is encountered has a null inlineBoxWrapper().  Just a slight speed optimization to avoid an extra null check.
+        
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::destroy):
+        * rendering/RenderInline.cpp:
+        (WebCore::RenderInline::destroy):
+        (WebCore::RenderInline::culledInlineFirstLineBox):
+        (WebCore::RenderInline::culledInlineLastLineBox):
+
 2011-05-05  Bharathwaaj Srinivasan  <bharathwaaj.s@gmail.com>
 
         Reviewed by Holger Freyther.
