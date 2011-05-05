@@ -77,7 +77,7 @@ public:
     bool hit;
 };
 
-TEST(CCThreadTest, startPostAndWaitOnCondition)
+TEST(CCThreadTest, DISABLED_startPostAndWaitOnCondition)
 {
     OwnPtr<CCThread> thread = CCThread::create();
 

@@ -1,3 +1,11 @@
+2011-05-04  MORITA Hajime  <morrita@google.com>
+
+        Unreviewed unit test skip (startPostAndWaitOnCondition)
+        which fails on Windows 7. See bug 60248 for tracking.
+        
+        * tests/CCThreadTest.cpp:
+        (WebCore::TEST):
+
 2011-05-04  Cris Neckar  <cdn@chromium.org>
 
         Reviewed by Adam Barth.
