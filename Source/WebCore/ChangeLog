@@ -1,3 +1,15 @@
+2011-05-04  Fridrich Strba  <fridrich.strba@bluewin.ch>
+
+        Reviewed by Martin Robinson.
+
+        Windows build of WebKit GTK needs to be able to find SystemInfo.h
+        https://bugs.webkit.org/show_bug.cgi?id=60221
+
+        * GNUmakefile.am: add Source/WebCore/platform/win to the paths searched
+        for headers, since Source/WebCore/platform/win/SystemInfo.h
+        header is needed by Source/WebKit/gtk/webkit/webkitwebsettings.cpp
+        on Windows.
+
 2011-05-04  Vangelis Kokkevis  <vangelis@chromium.org>
 
         Reviewed by Kenneth Russell.
