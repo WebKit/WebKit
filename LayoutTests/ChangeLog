@@ -1,3 +1,9 @@
+2011-05-04  MORITA Hajime  <morrita@google.com>
+
+        Unreviewed skipping text-block-child-crash.xhtml
+
+        * platform/chromium/test_expectations.txt:
+
 2011-05-04  Ojan Vafai  <ojan@chromium.org>
 
         Commit failing result. It's not clear to me why this test is failing.
