@@ -1,0 +1,23 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x162
+  RenderBlock {HTML} at (0,0) size 800x162
+    RenderBody {BODY} at (8,8) size 784x146
+      RenderBlock {DIV} at (0,0) size 784x46
+        RenderText {#text} at (0,0) size 744x42
+          text run at (0,0) width 641: "This tests that a full screen element in a lower stacking context blocks a sibling in a higher stacking context. "
+          text run at (641,0) width 103: "After entering full"
+          text run at (0,23) width 296: "screen mode, only a black box should be visible. "
+          text run at (296,23) width 36: "Click "
+        RenderButton {BUTTON} at (334,22) size 93x22 [bgcolor=#DDDDDD] [border: (2px outset #DDDDDD)]
+          RenderBlock (anonymous) at (8,3) size 77x16
+            RenderText {#text} at (0,0) size 77x16
+              text run at (0,0) width 77: "go full screen"
+        RenderText {#text} at (429,23) size 90x19
+          text run at (429,23) width 90: " to run the test."
+layer at (58,104) size 100x100
+  RenderBlock (relative positioned) {DIV} at (0,46) size 100x100 [bgcolor=#FF0000]
+layer at (0,0) size 800x600
+  RenderFullScreen zI: 2147483647 at (0,0) size 800x600 [bgcolor=#000000]
+layer at (0,0) size 800x600
+  RenderVideo {VIDEO} at (0,0) size 800x600

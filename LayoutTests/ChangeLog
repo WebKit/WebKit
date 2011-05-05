@@ -1,3 +1,10 @@
+2011-05-04  MORITA Hajime <morrita@google.com>
+
+        Unreviewed expectations update.
+
+        * platform/chromium-linux/fullscreen/full-screen-stacking-context-expected.txt: Added.
+        * platform/chromium-win/fullscreen/full-screen-stacking-context-expected.txt: Added.
+
 2011-05-04  Cris Neckar  <cdn@chromium.org>
 
         Reviewed by Adam Barth.
