@@ -37,9 +37,13 @@
 #endif
 #include "JSRangeException.h"
 #include "JSSQLException.h"
+#if ENABLE(SVG)
 #include "JSSVGException.h"
+#endif
 #include "JSXMLHttpRequestException.h"
+#if ENABLE(XPATH)
 #include "JSXPathException.h"
+#endif
 #include "RangeException.h"
 #include "SQLException.h"
 #include "SVGException.h"

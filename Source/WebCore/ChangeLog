@@ -1,3 +1,14 @@
+2011-05-05  Bharathwaaj Srinivasan  <bharathwaaj.s@gmail.com>
+
+        Reviewed by Holger Freyther.
+
+        Fix build-webkit --minimal.
+        https://bugs.webkit.org/show_bug.cgi?id=60257
+
+        No new tests. This is just a build fix.
+
+        * bindings/js/JSDOMBinding.cpp:
+
 2011-05-05  Eric Carlson  <eric.carlson@apple.com>
 
         Reviewed by Adam Roben.
