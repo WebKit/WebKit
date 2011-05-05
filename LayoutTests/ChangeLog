@@ -1,3 +1,11 @@
+2011-05-05  MORITA Hajime  <morrita@google.com>
+
+        Unreviewed expectations update for MAC GPU flakiness.
+        - video-zoom-controls.html: Added IMAGE
+        - media/controls-without-preload.html, media/controls-styling.html, media/controls-strict.html, media/controls-after-reload.html
+          Added TEXT
+        * platform/chromium/test_expectations.txt:
+
 2011-05-04  MORITA Hajime  <morrita@google.com>
 
         Unreviewed expectations update.
