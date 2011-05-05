@@ -28,6 +28,7 @@
 
 #include "ImmutableDictionary.h"
 #include "NativeWebKeyboardEvent.h"
+#include "NativeWebWheelEvent.h"
 #include "WKAPICast.h"
 #include "WebNumber.h"
 #include "WebOpenPanelResultListenerProxy.h"
@@ -173,6 +174,18 @@ void WebUIClient::didNotHandleKeyEvent(WebPageProxy* page, const NativeWebKeyboa
     if (!m_client.didNotHandleKeyEvent)
         return;
     m_client.didNotHandleKeyEvent(toAPI(page), event.nativeEvent(), m_client.clientInfo);
+}
+
+bool WebUIClient::implementsDidNotHandleWheelEvent() const
+{
+    return m_client.didNotHandleWheelEvent;
+}
+
+void WebUIClient::didNotHandleWheelEvent(WebPageProxy* page, const NativeWebWheelEvent& event)
+{
+    if (!m_client.didNotHandleWheelEvent)
+        return;
+    m_client.didNotHandleWheelEvent(toAPI(page), event.nativeEvent(), m_client.clientInfo);
 }
 
 bool WebUIClient::toolbarsAreVisible(WebPageProxy* page)

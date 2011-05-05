@@ -426,6 +426,11 @@ void PageClientImpl::didNotHandleKeyEvent(const NativeWebKeyboardEvent& event)
     notImplemented();
 }
 
+void PageClientImpl::didNotHandleWheelEvent(const NativeWebWheelEvent&)
+{
+    notImplemented();
+}
+
 PassRefPtr<WebPopupMenuProxy> PageClientImpl::createPopupMenuProxy(WebPageProxy*)
 {
     notImplemented();

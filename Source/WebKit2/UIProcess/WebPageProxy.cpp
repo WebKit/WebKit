@@ -2627,10 +2627,8 @@ void WebPageProxy::didReceiveEvent(uint32_t opaqueType, bool handled)
     case WebEvent::Wheel: {
         ASSERT(m_currentlyProcessedWheelEvent);
 
-#if PLATFORM(WIN)
-        if (!handled && m_currentlyProcessedWheelEvent)
-            wheelEventNotHandled(*m_currentlyProcessedWheelEvent);
-#endif
+        if (!handled && m_currentlyProcessedWheelEvent && m_uiClient.implementsDidNotHandleWheelEvent())
+            m_uiClient.didNotHandleWheelEvent(this, *m_currentlyProcessedWheelEvent);
 
         m_currentlyProcessedWheelEvent = nullptr;
         if (m_nextWheelEvent) {

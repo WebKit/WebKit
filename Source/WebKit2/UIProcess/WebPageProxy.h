@@ -692,10 +692,6 @@ private:
     void didReceiveEvent(uint32_t opaqueType, bool handled);
     void stopResponsivenessTimer();
 
-#if PLATFORM(WIN)
-    void wheelEventNotHandled(NativeWebWheelEvent&) const;
-#endif
-
     void voidCallback(uint64_t);
     void dataCallback(const CoreIPC::DataReference&, uint64_t);
     void stringCallback(const String&, uint64_t);

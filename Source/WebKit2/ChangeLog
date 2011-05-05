@@ -1,3 +1,34 @@
+2011-05-05  Jeff Miller  <jeffm@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Add didNotHandleWheelEvent callback to WKPageUIClient
+        https://bugs.webkit.org/show_bug.cgi?id=60203
+        
+        Remove Windows-specific WebPageProxy::wheelEventNotHandled() member function and use
+        didNotHandleWheelEvent callback in WKPageUIClient instead.  It turns out that just
+        resending the wheel event to the parent window doesn't provide the client with enough context
+        to know that WebKit has already attempted to handle the event.
+
+        * UIProcess/API/C/WKPage.h: Added WKPageDidNotHandleWheelEventCallback typedef and didNotHandleWheelEvent to WKPageUIClient.
+
+        * UIProcess/API/gtk/PageClientImpl.cpp:
+        (WebKit::PageClientImpl::didNotHandleWheelEvent): Added, but not implemented.
+        * UIProcess/API/gtk/PageClientImpl.h: Added didNotHandleWheelEvent().
+        * UIProcess/API/qt/qwkpage.cpp:
+        (QWKPage::QWKPage):Stubbed out didNotHandleWheelEvent callback.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::didReceiveEvent): Call didNotHandleWheelEvent in WKPageUIClient if wheel event is not handled.
+        * UIProcess/WebPageProxy.h: Removed wheelEventNotHandled().
+        
+        * UIProcess/WebUIClient.cpp:
+        (WebKit::WebUIClient::implementsDidNotHandleWheelEvent): Added.
+        (WebKit::WebUIClient::didNotHandleWheelEvent): Added.
+        * UIProcess/WebUIClient.h: Added implementsDidNotHandleWheelEvent() and didNotHandleWheelEvent().
+
+        * UIProcess/win/WebPageProxyWin.cpp: Removed wheelEventNotHandled().
+
 2011-05-05  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Reviewed by Martin Robinson.

@@ -26,7 +26,6 @@
 #include "config.h"
 #include "WebPageProxy.h"
 
-#include "NativeWebWheelEvent.h"
 #include "PageClient.h"
 #include "WebPopupMenuProxyWin.h"
 
@@ -74,12 +73,6 @@ HWND WebPageProxy::nativeWindow() const
 void WebPageProxy::scheduleChildWindowGeometryUpdate(uint64_t window, const IntRect& rectInParentClientCoordinates, const IntRect& clipRectInChildClientCoordinates)
 {
     m_pageClient->scheduleChildWindowGeometryUpdate(reinterpret_cast<HWND>(window), rectInParentClientCoordinates, clipRectInChildClientCoordinates);
-}
-
-void WebPageProxy::wheelEventNotHandled(NativeWebWheelEvent& event) const
-{
-    const MSG* msg = event.nativeEvent();
-    ::PostMessage(::GetParent(nativeWindow()), msg->message, msg->wParam, msg->lParam);
 }
 
 } // namespace WebKit

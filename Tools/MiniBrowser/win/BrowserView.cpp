@@ -107,6 +107,7 @@ void BrowserView::create(RECT webViewRect, BrowserWindow* parentWindow)
         setStatusText,
         mouseDidMoveOverElement,
         0,          /* didNotHandleKeyEvent */
+        0,          /* didNotHandleWheelEvent */
         0,          /* toolbarsAreVisible */
         0,          /* setToolbarsAreVisible */
         0,          /* menuBarIsVisible */

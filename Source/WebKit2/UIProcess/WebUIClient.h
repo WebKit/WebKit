@@ -44,6 +44,7 @@ namespace WebKit {
 class APIObject;
 class GeolocationPermissionRequestProxy;
 class NativeWebKeyboardEvent;
+class NativeWebWheelEvent;
 class WebData;
 class WebFrameProxy;
 class WebPageProxy;
@@ -70,6 +71,9 @@ public:
     
     bool implementsDidNotHandleKeyEvent() const;
     void didNotHandleKeyEvent(WebPageProxy*, const NativeWebKeyboardEvent&);
+
+    bool implementsDidNotHandleWheelEvent() const;
+    void didNotHandleWheelEvent(WebPageProxy*, const NativeWebWheelEvent&);
 
     bool toolbarsAreVisible(WebPageProxy*);
     void setToolbarsAreVisible(WebPageProxy*, bool);

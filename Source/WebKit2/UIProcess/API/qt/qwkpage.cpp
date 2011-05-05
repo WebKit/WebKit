@@ -477,6 +477,7 @@ QWKPage::QWKPage(QWKContext* context)
         0,  /* mouseDidMoveOverElement */
         0,  /* missingPluginButtonClicked */
         0,  /* didNotHandleKeyEvent */
+        0,  /* didNotHandleWheelEvent */
         0,  /* toolbarsAreVisible */
         0,  /* setToolbarsAreVisible */
         0,  /* menuBarIsVisible */

@@ -77,6 +77,7 @@ private:
     virtual WebCore::IntRect windowToScreen(const WebCore::IntRect&);
     virtual void doneWithKeyEvent(const NativeWebKeyboardEvent&, bool wasEventHandled);
     virtual void didNotHandleKeyEvent(const NativeWebKeyboardEvent&);
+    virtual void didNotHandleWheelEvent(const NativeWebWhellboardEvent&);
     virtual PassRefPtr<WebPopupMenuProxy> createPopupMenuProxy(WebPageProxy*);
     virtual PassRefPtr<WebContextMenuProxy> createContextMenuProxy(WebPageProxy*);
     virtual void setFindIndicator(PassRefPtr<FindIndicator>, bool fadeOut);

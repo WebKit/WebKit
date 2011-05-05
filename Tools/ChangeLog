@@ -1,3 +1,20 @@
+2011-05-05  Jeff Miller  <jeffm@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Add didNotHandleWheelEvent callback to WKPageUIClient
+        https://bugs.webkit.org/show_bug.cgi?id=60203
+
+        * MiniBrowser/gtk/BrowserWindow.c:
+        (browserWindowUIClientInit): Stub out didNotHandleWheelEvent callback.
+        * MiniBrowser/mac/BrowserWindowController.m:
+        (-[BrowserWindowController awakeFromNib]): Stub out didNotHandleWheelEvent callback.
+        * MiniBrowser/win/BrowserView.cpp:
+        (BrowserView::create): Stub out didNotHandleWheelEvent callback.
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::TestController::createOtherPage): Stub out didNotHandleWheelEvent callback.
+        (WTR::TestController::initialize): Stub out didNotHandleWheelEvent callback.
+
 2011-05-04  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Adam Barth.

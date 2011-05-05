@@ -151,6 +151,7 @@ WKPageRef TestController::createOtherPage(WKPageRef oldPage, WKDictionaryRef, WK
         0, // mouseDidMoveOverElement
         0, // missingPluginButtonClicked
         0, // didNotHandleKeyEvent
+        0, // didNotHandleWheelEvent
         0, // toolbarsAreVisible
         0, // setToolbarsAreVisible
         0, // menuBarIsVisible
@@ -293,6 +294,7 @@ void TestController::initialize(int argc, const char* argv[])
         0, // mouseDidMoveOverElement
         0, // missingPluginButtonClicked
         0, // didNotHandleKeyEvent
+        0, // didNotHandleWheelEvent
         0, // toolbarsAreVisible
         0, // setToolbarsAreVisible
         0, // menuBarIsVisible
