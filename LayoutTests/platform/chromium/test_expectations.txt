@@ -3670,15 +3670,17 @@ BUGCR75354 : media/video-empty-source.html = IMAGE+TEXT
 BUGCR75354 : media/video-no-audio.html = IMAGE+TEXT
 BUGCR75354 CPU : media/video-volume-slider.html = IMAGE+TEXT
 BUGCR75354 CPU : media/video-zoom-controls.html = IMAGE+TEXT
-BUGCR75354 MAC GPU : media/video-zoom-controls.html = IMAGE+TEXT IMAGE PASS
 BUGCR75354 CPU : media/controls-after-reload.html = TEXT
-BUGCR75354 MAC GPU : media/controls-after-reload.html = IMAGE+TEXT TEXT
 BUGCR75354 CPU : media/controls-strict.html = TEXT
-BUGCR75354 MAC GPU : media/controls-strict.html = IMAGE+TEXT TEXT
 BUGCR75354 CPU : media/controls-styling.html = TEXT
-BUGCR75354 MAC GPU : media/controls-styling.html = IMAGE+TEXT TEXT
 BUGCR75354 CPU : media/controls-without-preload.html = TEXT
-BUGCR75354 MAC GPU : media/controls-without-preload.html = IMAGE+TEXT TEXT
+
+// These are flaky and results are so unstable to give precise expectations.
+BUGWK60259 GPU : media/controls-after-reload.html = FAIL
+BUGWK60259 GPU : media/controls-strict.html = FAIL
+BUGWK60259 GPU : media/controls-styling.html = FAIL
+BUGWK60259 GPU : media/video-zoom-controls.html = FAIL
+BUGWK60259 GPU : media/controls-without-preload.html = FAIL
 
 // probably just needs a new baseline
 BUGWK60130 WIN LINUX : fast/backgrounds/background-leakage-transforms.html = IMAGE+TEXT

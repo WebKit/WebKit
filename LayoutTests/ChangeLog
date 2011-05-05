@@ -1,5 +1,11 @@
 2011-05-05  MORITA Hajime  <morrita@google.com>
 
+        Unreviewed, marking flaky tests.
+
+        * platform/chromium/test_expectations.txt:
+
+2011-05-05  MORITA Hajime <morrita@google.com>
+
         Unreviewed, rolling out r85817.
         http://trac.webkit.org/changeset/85817
 
