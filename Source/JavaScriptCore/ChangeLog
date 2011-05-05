@@ -1,5 +1,17 @@
 2011-05-04  Fridrich Strba  <fridrich.strba@bluewin.ch>
 
+        Reviewed by Geoffrey Garen.
+
+        Port MachineStackMarker.cpp to Windows x64
+        https://bugs.webkit.org/show_bug.cgi?id=60216
+
+        * heap/MachineStackMarker.cpp:
+        (JSC::getPlatformThreadRegisters): the CONTEXT struct is usable also
+        on 64-bit Windows.
+        (JSC::otherThreadStackPointer): return the Rsp register on Windows x64.
+
+2011-05-04  Fridrich Strba  <fridrich.strba@bluewin.ch>
+
         Reviewed by Martin Robinson.
 
         Link libjavascriptcoregtk on Windows with winmm.dll

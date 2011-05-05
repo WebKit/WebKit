@@ -323,7 +323,7 @@ typedef arm_thread_state_t PlatformThreadRegisters;
 #error Unknown Architecture
 #endif
 
-#elif OS(WINDOWS) && CPU(X86)
+#elif OS(WINDOWS)
 typedef CONTEXT PlatformThreadRegisters;
 #elif USE(PTHREADS)
 typedef pthread_attr_t PlatformThreadRegisters;
@@ -363,7 +363,7 @@ static size_t getPlatformThreadRegisters(const PlatformThread& platformThread, P
     return user_count * sizeof(usword_t);
 // end OS(DARWIN)
 
-#elif OS(WINDOWS) && CPU(X86)
+#elif OS(WINDOWS)
     regs.ContextFlags = CONTEXT_INTEGER | CONTEXT_CONTROL | CONTEXT_SEGMENTS;
     GetThreadContext(platformThread, &regs);
     return sizeof(CONTEXT);
@@ -417,6 +417,8 @@ static inline void* otherThreadStackPointer(const PlatformThreadRegisters& regs)
 // end OS(DARWIN)
 #elif CPU(X86) && OS(WINDOWS)
     return reinterpret_cast<void*>((uintptr_t) regs.Esp);
+#elif CPU(X86_64) && OS(WINDOWS)
+    return reinterpret_cast<void*>((uintptr_t) regs.Rsp);
 #elif USE(PTHREADS)
     void* stackBase = 0;
     size_t stackSize = 0;
