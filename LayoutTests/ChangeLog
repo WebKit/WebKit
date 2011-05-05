@@ -1,3 +1,9 @@
+2011-05-04  MORITA Hajime  <morrita@google.com>
+
+        Unreviewed marking flaky tests.
+
+        * platform/chromium/test_expectations.txt:
+
 2011-05-04  Vangelis Kokkevis  <vangelis@chromium.org>
 
         Reviewed by Kenneth Russell.

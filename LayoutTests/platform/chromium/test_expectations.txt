@@ -3259,6 +3259,11 @@ BUGWK50661 MAC : fast/forms/input-appearance-spinbutton-visibility.html = IMAGE+
 //BUGWK50661 WIN LINUX : fast/dom/HTMLMeterElement/meter-element.html = IMAGE+TEXT PASS
 BUGWK50661 WIN LINUX : fast/dom/HTMLMeterElement/meter-styles.html = IMAGE+TEXT PASS
 
+// Flaky
+BUGWK59742 LINUX MAC : fast/speech/input-appearance-numberandspeech.html = IMAGE+TEXT PASS
+BUGWK59742 LINUX MAC : fast/speech/input-appearance-searchandspeech.html = IMAGE+TEXT PASS
+BUGWK59742 LINUX MAC : fast/speech/input-appearance-speechbutton.html = IMAGE+TEXT PASS
+
 // Need expectations
 BUGWK59281 WIN LINUX : fast/dom/HTMLMeterElement/meter-writing-mode.html = IMAGE+TEXT
 BUGWK59281 MAC LEOPARD : fast/dom/HTMLMeterElement/meter-writing-mode.html = IMAGE PASS
