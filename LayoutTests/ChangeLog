@@ -1,3 +1,10 @@
+2011-05-05  Andrey Kosyakov  <caseq@chromium.org>
+
+        Unreviewed. Skip inspector/console/console-shadow-dom-access.html (crashes in debug)
+        https://bugs.webkit.org/show_bug.cgi?id=60266
+
+        * platform/mac/Skipped:
+
 2011-05-04  Andrey Kosyakov  <caseq@chromium.org>
 
         Reviewed by Yury Semikhatsky.
