@@ -182,19 +182,13 @@ RenderLayer::RenderLayer(RenderBoxModelObject* renderer)
     , m_reflection(0)
     , m_scrollCorner(0)
     , m_resizer(0)
+    , m_scrollableAreaPage(0)
 {
     ScrollableArea::setConstrainsScrollingToContentEdge(false);
 
     if (!renderer->firstChild() && renderer->style()) {
         m_visibleContentStatusDirty = false;
         m_hasVisibleContent = renderer->style()->visibility() == VISIBLE;
-    }
-
-    if (Frame* frame = renderer->frame()) {
-        if (Page* page = frame->page()) {
-            m_page = page;
-            m_page->addScrollableArea(this);
-        }
     }
 }
 
@@ -205,8 +199,8 @@ RenderLayer::~RenderLayer()
             frame->eventHandler()->resizeLayerDestroyed();
     }
 
-    if (m_page)
-        m_page->removeScrollableArea(this);
+    if (m_scrollableAreaPage)
+        m_scrollableAreaPage->removeScrollableArea(this);
 
     destroyScrollbar(HorizontalScrollbar);
     destroyScrollbar(VerticalScrollbar);
@@ -1901,6 +1895,14 @@ void RenderLayer::destroyScrollbar(ScrollbarOrientation orientation)
         scrollbar->disconnectFromScrollableArea();
         scrollbar = 0;
     }
+}
+
+bool RenderLayer::scrollsOverflow() const
+{
+    if (!renderer()->isBox())
+        return false;
+    
+    return toRenderBox(renderer())->scrollsOverflow();
 }
 
 void RenderLayer::setHasHorizontalScrollbar(bool hasScrollbar)
@@ -3988,6 +3990,20 @@ void RenderLayer::styleChanged(StyleDifference diff, const RenderStyle* oldStyle
         if (!m_reflection)
             createReflection();
         updateReflectionStyle();
+    }
+    
+    if (scrollsOverflow()) {
+        if (!m_scrollableAreaPage) {
+            if (Frame* frame = renderer()->frame()) {
+                if (Page* page = frame->page()) {
+                    m_scrollableAreaPage = page;
+                    m_scrollableAreaPage->addScrollableArea(this);
+                }
+            }
+        }
+    } else if (m_scrollableAreaPage) {
+        m_scrollableAreaPage->removeScrollableArea(this);
+        m_scrollableAreaPage = 0;
     }
     
     // FIXME: Need to detect a swap from custom to native scrollbars (and vice versa).

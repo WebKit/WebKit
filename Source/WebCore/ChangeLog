@@ -1,3 +1,21 @@
+2011-05-05  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Beth Dakin.
+
+        Every RenderLayer registers itself as a ScrollableArea
+        https://bugs.webkit.org/show_bug.cgi?id=59650
+
+        Rather than registering every RenderLayer as a ScrollableArea
+        on layer creation, only register RenderLayers which are overflow-
+        scrollable. Use the m_scrollableAreaPage pointer to keep track
+        of whether we've registered to avoid excess work.
+
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::RenderLayer):
+        (WebCore::RenderLayer::scrollsOverflow):
+        (WebCore::RenderLayer::styleChanged):
+        * rendering/RenderLayer.h:
+
 2011-05-05  Jer Noble  <jer.noble@apple.com>
 
         Reviewed by Steve Falkenburg.
