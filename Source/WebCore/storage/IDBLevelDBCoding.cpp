@@ -189,9 +189,11 @@ int64_t decodeInt(const char* begin, const char* end)
     ASSERT(begin <= end);
     int64_t ret = 0;
 
+    int shift = 0;
     while (begin < end) {
         unsigned char c = *begin++;
-        ret = (ret << 8) | c;
+        ret |= static_cast<int64_t>(c) << shift;
+        shift += 8;
     }
 
     return ret;
@@ -205,7 +207,7 @@ Vector<char> encodeVarInt(int64_t n)
         unsigned char c = n & 0x7f;
         n >>= 7;
         if (n)
-            c |= 128;
+            c |= 0x80;
         ret.append(c);
     } while (n);
 
@@ -216,13 +218,16 @@ const char* decodeVarInt(const char *p, const char* limit, int64_t& foundInt)
 {
     ASSERT(limit >= p);
     foundInt = 0;
+    int shift = 0;
 
     do {
         if (p >= limit)
             return 0;
 
-        foundInt = (foundInt << 7) | (*p & 0x7f);
-    } while (*p++ & 128);
+        unsigned char c = *p;
+        foundInt |= static_cast<int64_t>(c & 0x7f) << shift;
+        shift += 7;
+    } while (*p++ & 0x80);
     return p;
 }
 

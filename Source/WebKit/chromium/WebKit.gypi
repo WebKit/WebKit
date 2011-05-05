@@ -57,6 +57,7 @@
             'tests/CCThreadTest.cpp',
             'tests/IDBBindingUtilitiesTest.cpp',
             'tests/IDBKeyPathTest.cpp',
+            'tests/IDBLevelDBCodingTest.cpp',
             'tests/KeyboardTest.cpp',
             'tests/KURLTest.cpp',
             'tests/PODArenaTest.cpp',
