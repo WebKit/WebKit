@@ -1,3 +1,10 @@
+2011-05-05  Philippe Normand  <pnormand@igalia.com>
+
+        Unreviewed, GTK baselines for new fullscreen test.
+
+        * platform/gtk/fullscreen/full-screen-stacking-context-expected.png: Added.
+        * platform/gtk/fullscreen/full-screen-stacking-context-expected.txt: Added.
+
 2011-05-05  MORITA Hajime <morrita@google.com>
 
         Unreviewed, fixed a syntax error on expectations file.
