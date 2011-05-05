@@ -1,3 +1,23 @@
+2011-05-04  Joseph Pecoraro  <joepeck@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        Unable to Paste After Deleting Text from Input due to -webkit-user-select
+        https://bugs.webkit.org/show_bug.cgi?id=60219
+
+        When deleting all the text inside the input a placeholder <br>
+        element was inserted for the selection point. However, when
+        pasting, the test run computes the -webkit-user-select for the
+        <br> element, instead of what would be the text inside the
+        <input> and incorrectly disallows selection and prevented
+        the paste.
+
+        Test: editing/pasteboard/paste-placeholder-input.html
+
+        * editing/ReplaceSelectionCommand.cpp:
+        (WebCore::ReplacementFragment::insertFragmentForTestRendering): skip
+        <br> elements above us as those are likely placeholder elements.
+
 2011-05-04  Fridrich Strba  <fridrich.strba@bluewin.ch>
 
         Reviewed by Martin Robinson.

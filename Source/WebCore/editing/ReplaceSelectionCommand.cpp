@@ -246,9 +246,10 @@ PassRefPtr<StyledElement> ReplacementFragment::insertFragmentForTestRendering(No
     ExceptionCode ec = 0;
 
     // Copy the whitespace and user-select style from the context onto this element.
+    // Walk up past <br> elements which may be placeholders and might have their own specified styles.
     // FIXME: We should examine other style properties to see if they would be appropriate to consider during the test rendering.
     Node* n = context;
-    while (n && !n->isElementNode())
+    while (n && (!n->isElementNode() || n->hasTagName(brTag)))
         n = n->parentNode();
     if (n) {
         RefPtr<CSSComputedStyleDeclaration> conFontStyle = computedStyle(n);

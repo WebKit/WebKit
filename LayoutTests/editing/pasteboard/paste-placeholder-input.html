@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Test -webkit-user-select with a placeholder in a textfield.</title>
+    <link rel="stylesheet" href="../../fast/js/resources/js-test-style.css">
+    <script src="../../fast/js/resources/js-test-pre.js"></script>
+    <style>
+    * { -webkit-user-select: none; }
+    input { -webkit-user-select: text; }
+    </style>
+</head>
+<body>
+    <p id="description"></p>
+    <div id="console"></div>
+    <input id="x" value="PASS">
+    <script>
+    description("Test that deleting the text in a textfield, and pasting, doesn't hit an issue with -webkit-user-select on br");
+
+    var input = document.getElementById("x");
+    input.focus();
+    input.select();
+
+    document.execCommand("Copy");
+    document.execCommand("Delete");
+    document.execCommand("Paste");
+
+    shouldBe('input.value', '"PASS"');
+
+    var successfullyParsed = true;
+    </script>
+    <script src="../../fast/js/resources/js-test-post.js"></script>
+</body>
+</html>
