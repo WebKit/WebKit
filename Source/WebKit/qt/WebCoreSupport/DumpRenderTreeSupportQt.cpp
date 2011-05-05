@@ -937,7 +937,7 @@ QString DumpRenderTreeSupportQt::pageProperty(QWebFrame* frame, const QString& p
 
 void DumpRenderTreeSupportQt::addUserStyleSheet(QWebPage* page, const QString& sourceCode)
 {
-    page->handle()->page->group().addUserStyleSheetToWorld(mainThreadNormalWorld(), sourceCode, QUrl(), 0, 0, WebCore::InjectInAllFrames);
+    page->handle()->page->group().addUserStyleSheetToWorld(mainThreadNormalWorld(), sourceCode, QUrl(), nullptr, nullptr, WebCore::InjectInAllFrames);
 }
 
 void DumpRenderTreeSupportQt::simulateDesktopNotificationClick(const QString& title)

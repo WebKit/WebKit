@@ -1,3 +1,18 @@
+2011-05-05  Alexis Menard  <alexis.menard@openbossa.org>
+
+        Reviewed by Andreas Kling.
+
+        [Qt] RenderThemeQt and DumpRenderTreeSupportQt should use nullptr rather than 0.
+        https://bugs.webkit.org/show_bug.cgi?id=60224
+
+        We should use nullptr rather than 0. nullptr will be added in the new C++ standard
+        but WebKit already has a nullptr class if there is no c++0x support.
+
+        * platform/qt/RenderThemeQt.cpp:
+        (WebCore::RenderThemeQt::adjustProgressBarStyle):
+        (WebCore::RenderThemeQt::adjustSliderTrackStyle):
+        (WebCore::RenderThemeQt::adjustSliderThumbStyle):
+
 2011-05-05  Ilya Tikhonovsky  <loislo@chromium.org>
 
         Reviewed by Yury Semikhatsky.

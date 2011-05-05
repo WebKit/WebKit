@@ -1,3 +1,16 @@
+2011-05-05  Alexis Menard  <alexis.menard@openbossa.org>
+
+        Reviewed by Andreas Kling.
+
+        [Qt] RenderThemeQt and DumpRenderTreeSupportQt should use nullptr rather than 0.
+        https://bugs.webkit.org/show_bug.cgi?id=60224
+
+        We should use nullptr rather than 0. nullptr will be added in the new C++ standard
+        but WebKit already has a nullptr class if there is no c++0x support.
+
+        * WebCoreSupport/DumpRenderTreeSupportQt.cpp:
+        (DumpRenderTreeSupportQt::addUserStyleSheet):
+
 2011-05-04  Cris Neckar  <cdn@chromium.org>
 
         Reviewed by Adam Barth.

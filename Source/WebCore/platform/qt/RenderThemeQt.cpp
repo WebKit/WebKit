@@ -853,7 +853,7 @@ double RenderThemeQt::animationDurationForProgressBar(RenderProgress* renderProg
 
 void RenderThemeQt::adjustProgressBarStyle(CSSStyleSelector*, RenderStyle* style, Element*) const
 {
-    style->setBoxShadow(0);
+    style->setBoxShadow(nullptr);
 }
 
 bool RenderThemeQt::paintProgressBar(RenderObject* o, const PaintInfo& pi, const IntRect& r)
@@ -950,7 +950,7 @@ bool RenderThemeQt::paintSliderTrack(RenderObject* o, const PaintInfo& pi,
 
 void RenderThemeQt::adjustSliderTrackStyle(CSSStyleSelector*, RenderStyle* style, Element*) const
 {
-    style->setBoxShadow(0);
+    style->setBoxShadow(nullptr);
 }
 
 bool RenderThemeQt::paintSliderThumb(RenderObject* o, const PaintInfo& pi,
@@ -962,7 +962,7 @@ bool RenderThemeQt::paintSliderThumb(RenderObject* o, const PaintInfo& pi,
 
 void RenderThemeQt::adjustSliderThumbStyle(CSSStyleSelector*, RenderStyle* style, Element*) const
 {
-    style->setBoxShadow(0);
+    style->setBoxShadow(nullptr);
 }
 
 bool RenderThemeQt::paintSearchField(RenderObject* o, const PaintInfo& pi,
