@@ -1,3 +1,23 @@
+2011-05-05  Adam Roben  <aroben@apple.com>
+
+        Update pixel results for draws-gradient.html to have an alpha channel
+
+        These pixel results were generated in r71418, when DRT was changed not to use an alpha
+        channel for pixel results. DRT was changed back to using an alpha channel in r71516, but
+        these pixel results were never updated. Now that DRT ensures that the alpha channel is
+        filled with constant opacity, we can safely update these pixel results without negatively
+        affecting their appearance. (The draws-gradient plugin uses ::GradientFill, which fills the
+        alpha channel with 0, so the plugin would have shown up as fully transparent in the pixel
+        results if DRT didn't modify the alpha channel.)
+
+        Fixes <http://webkit.org/b/60300> draws-gradient.html's pixel results can't be correctly
+        generated due to alpha channel weirdness
+
+        Reviewed by Sam Weinig.
+
+        * platform/win/platform/win/plugins/draws-gradient-expected.png: Regenerated. Looks the same
+        as before, but with an alpha channel.
+
 2011-05-05  Abhishek Arya  <inferno@chromium.org>
 
         Unreviewed.

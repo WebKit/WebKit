@@ -1,5 +1,29 @@
 2011-05-05  Adam Roben  <aroben@apple.com>
 
+        Robustify DRT's pixel-dumping code against semi-random alpha channel values on Windows
+
+        DRT generates a pixel dump on Windows using the WM_PRINT message. This message (just like
+        most of GDI) doesn't write anything meaningful into the alpha channel. In some cases, the
+        alpha channel will even get filled with zeros (like when ::GradientFill is used). To
+        safeguard against this, we fill the alpha channel with constant full opacity after the
+        WM_PRINT message is handled to ensure we end up with an opaque image. (Note that we can't
+        just ignore the alpha channel when creating the PNG; Mac's pixel results have an alpha
+        channel, and we want to be able to compare Mac and Windows pixel results, so Windows pixel
+        results need an alpha channel, too.)
+
+        Fixes <http://webkit.org/b/60300> draws-gradient.html's pixel results can't be correctly
+        generated due to alpha channel weirdness
+
+        Reviewed by Sam Weinig.
+
+        * DumpRenderTree/win/PixelDumpSupportWin.cpp:
+        (makeAlphaChannelOpaque): Added this helper function to fill a bitmap's alpha channel with
+        constant full opacity.
+        (createBitmapContextFromWebView): Make the bitmap's alpha channel opaque before wrapping it
+        in a CGContext or cairo_surface.
+
+2011-05-05  Adam Roben  <aroben@apple.com>
+
         Add support for layoutTestController.dumpAsText(true) to WebKitTestRunner
 
         Passing true tells the test harness to dump pixels even though we're not dumping a render

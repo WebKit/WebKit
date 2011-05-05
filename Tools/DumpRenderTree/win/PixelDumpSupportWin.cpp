@@ -44,6 +44,15 @@
 #include <wtf/Assertions.h>
 #include <wtf/RetainPtr.h>
 
+static void makeAlphaChannelOpaque(void* argbBits, LONG width, LONG height)
+{
+    unsigned* pixel = static_cast<unsigned*>(argbBits);
+    for (LONG row = 0; row < height; ++row) {
+        for (LONG column = 0; column < width; ++column)
+            *pixel++ |= 0xff000000;
+    }
+}
+
 PassRefPtr<BitmapContext> createBitmapContextFromWebView(bool onscreen, bool incrementalRepaint, bool sweepHorizontally, bool drawSelectionRect)
 {
     RECT frame;
@@ -69,6 +78,11 @@ PassRefPtr<BitmapContext> createBitmapContextFromWebView(bool onscreen, bool inc
     BITMAP info = {0};
     GetObject(bitmap, sizeof(info), &info);
     ASSERT(info.bmBitsPixel == 32);
+
+    // We create a context that has an alpha channel below so that the PNGs we generate will also
+    // have an alpha channel. But WM_PRINT doesn't necessarily write anything into the alpha
+    // channel, so we set the alpha channel to constant full opacity to make sure the resulting image is opaque.
+    makeAlphaChannelOpaque(info.bmBits, info.bmWidth, info.bmHeight);
 
 #if USE(CG)
     RetainPtr<CGColorSpaceRef> colorSpace(AdoptCF, CGColorSpaceCreateDeviceRGB());
