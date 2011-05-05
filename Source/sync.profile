@@ -15,3 +15,4 @@
 %modulepris = (
     "QtWebKit" => "$basedir/WebKit/qt/qt_webkit_version.pri",
 );
+@ignore_for_master_contents = ( "qwebscriptworld.h" );

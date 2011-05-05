@@ -1,3 +1,17 @@
+2011-05-05  Prasanth Ullattil  <prasanth.ullattil@nokia.com>
+
+        Reviewed by Simon Hausmann.
+
+        Install correct header files for webkit.
+
+        Since WebKit is no longer inside Qt, we can remove the detection for
+        that.
+
+        [Qt] Install targets are not working correctly for modularized Qt and QtWebkit
+        https://bugs.webkit.org/show_bug.cgi?id=57621
+
+        * Source/sync.profile:
+
 2011-05-05  Adam Barth  <abarth@webkit.org>
 
         Remove a couple stray mentions of WML that I missed before.
