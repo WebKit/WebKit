@@ -508,6 +508,9 @@ static NPError NPN_GetValue(NPP npp, NPNVariable variable, void *value)
            break;
 
        case NPNVToolkit: {
+#if PLATFORM(GTK)
+           *reinterpret_cast<uint32_t*>(value) = 2;
+#else
            const uint32_t expectedGTKToolKitVersion = 2;
 
            // Set the expected GTK version if we know that this plugin needs it or if the plugin call us
@@ -521,6 +524,7 @@ static NPError NPN_GetValue(NPP npp, NPNVariable variable, void *value)
            }
 
            *reinterpret_cast<uint32_t*>(value) = requiresGTKToolKitVersion ? expectedGTKToolKitVersion : 0;
+#endif
            break;
        }
 
