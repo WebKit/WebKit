@@ -84,100 +84,6 @@ def remove_pixel_failures(expected_results):
     return expected_results
 
 
-class TestExpectations:
-    TEST_LIST = "test_expectations.txt"
-
-    def __init__(self, port, tests, expectations, test_config,
-                 is_lint_mode, overrides=None):
-        """Loads and parses the test expectations given in the string.
-        Args:
-            port: handle to object containing platform-specific functionality
-            tests: list of all of the test files
-            expectations: test expectations as a string
-            test_config: specific values to check against when
-                parsing the file (usually port.test_config(),
-                but may be different when linting or doing other things).
-            is_lint_mode: If True, just parse the expectations string
-                looking for errors.
-            overrides: test expectations that are allowed to override any
-                entries in |expectations|. This is used by callers
-                that need to manage two sets of expectations (e.g., upstream
-                and downstream expectations).
-        """
-        self._expected_failures = TestExpectationsFile(port, expectations,
-            tests, test_config, is_lint_mode,
-            overrides=overrides)
-
-    # TODO(ojan): Allow for removing skipped tests when getting the list of
-    # tests to run, but not when getting metrics.
-    # TODO(ojan): Replace the Get* calls here with the more sane API exposed
-    # by TestExpectationsFile below. Maybe merge the two classes entirely?
-
-    def get_expectations_json_for_all_platforms(self):
-        return (
-            self._expected_failures.get_expectations_json_for_all_platforms())
-
-    def get_rebaselining_failures(self):
-        return (self._expected_failures.get_test_set(REBASELINE, FAIL) |
-                self._expected_failures.get_test_set(REBASELINE, IMAGE) |
-                self._expected_failures.get_test_set(REBASELINE, TEXT) |
-                self._expected_failures.get_test_set(REBASELINE,
-                                                     IMAGE_PLUS_TEXT) |
-                self._expected_failures.get_test_set(REBASELINE, AUDIO))
-
-    def get_options(self, test):
-        return self._expected_failures.get_options(test)
-
-    def get_expectations(self, test):
-        return self._expected_failures.get_expectations(test)
-
-    def get_expectations_string(self, test):
-        """Returns the expectatons for the given test as an uppercase string.
-        If there are no expectations for the test, then "PASS" is returned."""
-        expectations = self.get_expectations(test)
-        retval = []
-
-        for expectation in expectations:
-            retval.append(self.expectation_to_string(expectation))
-
-        return " ".join(retval)
-
-    def expectation_to_string(self, expectation):
-        """Return the uppercased string equivalent of a given expectation."""
-        for item in TestExpectationsFile.EXPECTATIONS.items():
-            if item[1] == expectation:
-                return item[0].upper()
-        raise ValueError(expectation)
-
-    @classmethod
-    def expectation_from_string(cls, string):
-        assert(' ' not in string)  # This only handles one expectation at a time.
-        return TestExpectationsFile.EXPECTATIONS.get(string.lower())
-
-    def get_tests_with_result_type(self, result_type):
-        return self._expected_failures.get_tests_with_result_type(result_type)
-
-    def get_tests_with_timeline(self, timeline):
-        return self._expected_failures.get_tests_with_timeline(timeline)
-
-    def matches_an_expected_result(self, test, result,
-                                   pixel_tests_are_enabled):
-        expected_results = self._expected_failures.get_expectations(test)
-        if not pixel_tests_are_enabled:
-            expected_results = remove_pixel_failures(expected_results)
-        return result_was_expected(result, expected_results,
-            self.is_rebaselining(test), self.has_modifier(test, SKIP))
-
-    def is_rebaselining(self, test):
-        return self._expected_failures.has_modifier(test, REBASELINE)
-
-    def has_modifier(self, test, modifier):
-        return self._expected_failures.has_modifier(test, modifier)
-
-    def remove_rebaselined_tests(self, tests):
-        return self._expected_failures.remove_rebaselined_tests(tests)
-
-
 def strip_comments(line):
     """Strips comments from a line and return None if the line is empty
     or else the contents of line with leading and trailing spaces removed
@@ -227,12 +133,11 @@ class ExpectationsJsonEncoder(simplejson.JSONEncoder):
                 "expectations": obj.expectations}
 
 
-class TestExpectationsFile:
-    """Test expectation files consist of lines with specifications of what
+class TestExpectations:
+    """Test expectations consist of lines with specifications of what
     to expect from layout test cases. The test cases can be directories
     in which case the expectations apply to all test cases in that
-    directory and any subdirectory. The format of the file is along the
-    lines of:
+    directory and any subdirectory. The format is along the lines of:
 
       LayoutTests/fast/js/fixme.js = FAIL
       LayoutTests/fast/js/flaky.js = FAIL PASS
@@ -261,6 +166,8 @@ class TestExpectationsFile:
       -If a test is included twice, then the more precise path wins.
       -CRASH tests cannot be WONTFIX
     """
+
+    TEST_LIST = "test_expectations.txt"
 
     EXPECTATIONS = {'pass': PASS,
                     'fail': FAIL,
@@ -306,14 +213,32 @@ class TestExpectationsFile:
                     'fail': FAIL,
                     'flaky': FLAKY}
 
-    def __init__(self, port, expectations, full_test_list,
-                 test_config, is_lint_mode, overrides=None):
-        # See argument documentation in TestExpectation(), above.
+    @classmethod
+    def expectation_from_string(cls, string):
+        assert(' ' not in string)  # This only handles one expectation at a time.
+        return cls.EXPECTATIONS.get(string.lower())
 
+    def __init__(self, port, tests, expectations,
+                 test_config, is_lint_mode, overrides=None):
+        """Loads and parses the test expectations given in the string.
+        Args:
+            port: handle to object containing platform-specific functionality
+            tests: list of all of the test files
+            expectations: test expectations as a string
+            test_config: specific values to check against when
+                parsing the file (usually port.test_config(),
+                but may be different when linting or doing other things).
+            is_lint_mode: If True, just parse the expectations string
+                looking for errors.
+            overrides: test expectations that are allowed to override any
+                entries in |expectations|. This is used by callers
+                that need to manage two sets of expectations (e.g., upstream
+                and downstream expectations).
+        """
         self._port = port
         self._fs = port._filesystem
         self._expectations = expectations
-        self._full_test_list = full_test_list
+        self._full_test_list = tests
         self._test_config = test_config
         self._is_lint_mode = is_lint_mode
         self._overrides = overrides
@@ -362,6 +287,47 @@ class TestExpectationsFile:
 
         self._handle_any_read_errors()
         self._process_tests_without_expectations()
+
+    # TODO(ojan): Allow for removing skipped tests when getting the list of
+    # tests to run, but not when getting metrics.
+
+    def get_rebaselining_failures(self):
+        return (self.get_test_set(REBASELINE, FAIL) |
+                self.get_test_set(REBASELINE, IMAGE) |
+                self.get_test_set(REBASELINE, TEXT) |
+                self.get_test_set(REBASELINE, IMAGE_PLUS_TEXT) |
+                self.get_test_set(REBASELINE, AUDIO))
+
+    def get_expectations_string(self, test):
+        """Returns the expectatons for the given test as an uppercase string.
+        If there are no expectations for the test, then "PASS" is returned."""
+        expectations = self.get_expectations(test)
+        retval = []
+
+        for expectation in expectations:
+            retval.append(self.expectation_to_string(expectation))
+
+        return " ".join(retval)
+
+    def expectation_to_string(self, expectation):
+        """Return the uppercased string equivalent of a given expectation."""
+        for item in self.EXPECTATIONS.items():
+            if item[1] == expectation:
+                return item[0].upper()
+        raise ValueError(expectation)
+
+    def matches_an_expected_result(self, test, result, pixel_tests_are_enabled):
+        expected_results = self.get_expectations(test)
+        if not pixel_tests_are_enabled:
+            expected_results = remove_pixel_failures(expected_results)
+        return result_was_expected(result,
+                                   expected_results,
+                                   self.is_rebaselining(test),
+                                   self.has_modifier(test, SKIP))
+
+    def is_rebaselining(self, test):
+        return self.has_modifier(test, REBASELINE)
+
 
     def _handle_any_read_errors(self):
         if len(self._errors) or len(self._non_fatal_errors):
@@ -846,7 +812,7 @@ class ModifierMatcher(object):
 
     # We don't include the "none" modifier because it isn't actually legal.
     REGEXES_TO_IGNORE = (['bug\w+'] +
-                         TestExpectationsFile.MODIFIERS.keys()[:-1])
+                         TestExpectations.MODIFIERS.keys()[:-1])
     DUPLICATE_REGEXES_ALLOWED = ['bug\w+']
 
     # Magic value returned when the options don't match.

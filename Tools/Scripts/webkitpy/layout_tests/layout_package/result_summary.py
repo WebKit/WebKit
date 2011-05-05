@@ -36,7 +36,7 @@ import test_expectations
 
 _log = logging.getLogger("webkitpy.layout_tests.run_webkit_tests")
 
-TestExpectationsFile = test_expectations.TestExpectationsFile
+TestExpectations = test_expectations.TestExpectations
 
 
 class ResultSummary(object):
@@ -59,9 +59,9 @@ class ResultSummary(object):
         self.unexpected_results = {}
         self.failures = {}
         self.tests_by_expectation[test_expectations.SKIP] = set()
-        for expectation in TestExpectationsFile.EXPECTATIONS.values():
+        for expectation in TestExpectations.EXPECTATIONS.values():
             self.tests_by_expectation[expectation] = set()
-        for timeline in TestExpectationsFile.TIMELINES.values():
+        for timeline in TestExpectations.TIMELINES.values():
             self.tests_by_timeline[timeline] = (
                 expectations.get_tests_with_timeline(timeline))
 

@@ -38,7 +38,7 @@ from webkitpy.layout_tests.layout_package import test_expectations
 
 _log = logging.getLogger("webkitpy.layout_tests.printer")
 
-TestExpectationsFile = test_expectations.TestExpectationsFile
+TestExpectations = test_expectations.TestExpectations
 
 NUM_SLOW_TESTS_TO_LOG = 10
 
@@ -368,7 +368,7 @@ class Printer(object):
 
     def _print_unexpected_test_result(self, result):
         """Prints one unexpected test result line."""
-        desc = TestExpectationsFile.EXPECTATION_DESCRIPTIONS[result.type][0]
+        desc = TestExpectations.EXPECTATION_DESCRIPTIONS[result.type][0]
         self.write("  %s -> unexpected %s" %
                    (self._port.relative_test_filename(result.filename),
                     desc), "unexpected")
@@ -486,9 +486,9 @@ class Printer(object):
             self._buildbot_stream.write("\n")
 
         if len(flaky):
-            descriptions = TestExpectationsFile.EXPECTATION_DESCRIPTIONS
+            descriptions = TestExpectations.EXPECTATION_DESCRIPTIONS
             for key, tests in flaky.iteritems():
-                result = TestExpectationsFile.EXPECTATIONS[key.lower()]
+                result = TestExpectations.EXPECTATIONS[key.lower()]
                 self._buildbot_stream.write("Unexpected flakiness: %s (%d)\n"
                     % (descriptions[result][1], len(tests)))
                 tests.sort()
@@ -497,7 +497,7 @@ class Printer(object):
                     result = resultsjsonparser.result_for_test(unexpected_results['tests'], test)
                     actual = result['actual'].split(" ")
                     expected = result['expected'].split(" ")
-                    result = TestExpectationsFile.EXPECTATIONS[key.lower()]
+                    result = TestExpectations.EXPECTATIONS[key.lower()]
                     new_expectations_list = list(set(actual) | set(expected))
                     self._buildbot_stream.write("  %s = %s\n" %
                         (test, " ".join(new_expectations_list)))
@@ -505,9 +505,9 @@ class Printer(object):
             self._buildbot_stream.write("\n")
 
         if len(regressions):
-            descriptions = TestExpectationsFile.EXPECTATION_DESCRIPTIONS
+            descriptions = TestExpectations.EXPECTATION_DESCRIPTIONS
             for key, tests in regressions.iteritems():
-                result = TestExpectationsFile.EXPECTATIONS[key.lower()]
+                result = TestExpectations.EXPECTATIONS[key.lower()]
                 self._buildbot_stream.write(
                     "Regressions: Unexpected %s : (%d)\n" % (
                     descriptions[result][1], len(tests)))

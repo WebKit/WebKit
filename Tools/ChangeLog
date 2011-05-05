@@ -1,3 +1,17 @@
+2011-05-05  Dirk Pranke  <dpranke@chromium.org>
+
+        Reviewed by Ojan Vafai.
+
+        new-run-webkit-tests: merge TestExpectations, TestExpectationsFile classes
+        https://bugs.webkit.org/show_bug.cgi?id=60002
+
+        * Scripts/webkitpy/layout_tests/layout_package/manager.py:
+        * Scripts/webkitpy/layout_tests/layout_package/printing.py:
+        * Scripts/webkitpy/layout_tests/layout_package/result_summary.py:
+        * Scripts/webkitpy/layout_tests/layout_package/test_expectations.py:
+        * Scripts/webkitpy/layout_tests/layout_package/test_expectations_unittest.py:
+        * Scripts/webkitpy/style/checkers/test_expectations.py:
+
 2011-05-05  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Adam Barth.

@@ -178,15 +178,14 @@ BUGX WONTFIX : failures/expected = IMAGE
     def test_get_test_set(self):
         # Handle some corner cases for this routine not covered by other tests.
         self.parse_exp(self.get_basic_expectations())
-        s = self._exp._expected_failures.get_test_set(WONTFIX)
+        s = self._exp.get_test_set(WONTFIX)
         self.assertEqual(s,
             set([self.get_test('failures/expected/crash.html'),
                  self.get_test('failures/expected/image_checksum.html')]))
-        s = self._exp._expected_failures.get_test_set(WONTFIX, CRASH)
+        s = self._exp.get_test_set(WONTFIX, CRASH)
         self.assertEqual(s,
             set([self.get_test('failures/expected/crash.html')]))
-        s = self._exp._expected_failures.get_test_set(WONTFIX, CRASH,
-                                                      include_skips=False)
+        s = self._exp.get_test_set(WONTFIX, CRASH, include_skips=False)
         self.assertEqual(s, set([]))
 
     def test_parse_error_fatal(self):
@@ -290,7 +289,7 @@ class SemanticTests(Base):
         # This should log a non-fatal error.
         self.parse_exp('SLOW : failures/expected/text.html = TEXT')
         self.assertEqual(
-            len(self._exp._expected_failures.get_non_fatal_errors()), 1)
+            len(self._exp.get_non_fatal_errors()), 1)
 
     def test_slow_and_timeout(self):
         # A test cannot be SLOW and expected to TIMEOUT.
@@ -316,8 +315,7 @@ BUG_OVERRIDE : failures/expected/text.html = IMAGE""", )
     def test_missing_file(self):
         # This should log a non-fatal error.
         self.parse_exp('BUG_TEST : missing_file.html = TEXT')
-        self.assertEqual(
-            len(self._exp._expected_failures.get_non_fatal_errors()), 1)
+        self.assertEqual(len(self._exp.get_non_fatal_errors()), 1)
 
 
 class PrecedenceTests(Base):

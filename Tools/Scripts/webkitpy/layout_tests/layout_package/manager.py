@@ -69,7 +69,7 @@ _log = logging.getLogger(__name__)
 # Builder base URL where we have the archived test results.
 BUILDER_BASE_URL = "http://build.chromium.org/buildbot/layout_test_results/"
 
-TestExpectationsFile = test_expectations.TestExpectationsFile
+TestExpectations = test_expectations.TestExpectations
 
 
 def summarize_results(port_obj, expectations, result_summary, retry_summary, test_timings, only_unexpected):
@@ -109,10 +109,10 @@ def summarize_results(port_obj, expectations, result_summary, retry_summary, tes
     num_flaky = 0
     num_regressions = 0
     keywords = {}
-    for expecation_string, expectation_enum in TestExpectationsFile.EXPECTATIONS.iteritems():
+    for expecation_string, expectation_enum in TestExpectations.EXPECTATIONS.iteritems():
         keywords[expectation_enum] = expecation_string.upper()
 
-    for modifier_string, modifier_enum in TestExpectationsFile.MODIFIERS.iteritems():
+    for modifier_string, modifier_enum in TestExpectations.MODIFIERS.iteritems():
         keywords[modifier_enum] = modifier_string.upper()
 
     tests = {}
@@ -914,10 +914,10 @@ class Manager:
 
     def _char_for_result(self, result):
         result = result.lower()
-        if result in TestExpectationsFile.EXPECTATIONS:
-            result_enum_value = TestExpectationsFile.EXPECTATIONS[result]
+        if result in TestExpectations.EXPECTATIONS:
+            result_enum_value = TestExpectations.EXPECTATIONS[result]
         else:
-            result_enum_value = TestExpectationsFile.MODIFIERS[result]
+            result_enum_value = TestExpectations.MODIFIERS[result]
         return json_layout_results_generator.JSONLayoutResultsGenerator.FAILURE_TO_CHAR[result_enum_value]
 
     def _upload_json_files(self, unexpected_results, summarized_results, result_summary,
@@ -1232,12 +1232,12 @@ class Manager:
                result_summary.tests_by_timeline[timeline]))
         self._printer.print_actual("=> %s (%d):" % (heading, not_passing))
 
-        for result in TestExpectationsFile.EXPECTATION_ORDER:
+        for result in TestExpectations.EXPECTATION_ORDER:
             if result == test_expectations.PASS:
                 continue
             results = (result_summary.tests_by_expectation[result] &
                        result_summary.tests_by_timeline[timeline])
-            desc = TestExpectationsFile.EXPECTATION_DESCRIPTIONS[result]
+            desc = TestExpectations.EXPECTATION_DESCRIPTIONS[result]
             if not_passing and len(results):
                 pct = len(results) * 100.0 / not_passing
                 self._printer.print_actual("  %5d %-24s (%4.1f%%)" %

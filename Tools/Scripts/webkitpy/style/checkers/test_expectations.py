@@ -88,8 +88,8 @@ class TestExpectationsChecker(object):
         err = None
         expectations = None
         try:
-            expectations = test_expectations.TestExpectationsFile(
-                port=self._port_obj, expectations=expectations_str, full_test_list=tests,
+            expectations = test_expectations.TestExpectations(
+                port=self._port_obj, expectations=expectations_str, tests=tests,
                 test_config=self._port_obj.test_configuration(),
                 is_lint_mode=True, overrides=overrides)
         except test_expectations.ParseError, error:
