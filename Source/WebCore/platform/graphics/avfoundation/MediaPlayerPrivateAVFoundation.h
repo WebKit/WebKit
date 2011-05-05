@@ -42,7 +42,6 @@ public:
 
     virtual void repaint();
     virtual void metadataLoaded();
-    virtual void loadStateChanged();
     virtual void playabilityKnown();
     virtual void rateChanged();
     virtual void loadedTimeRangesChanged();

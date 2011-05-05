@@ -1,3 +1,22 @@
+2011-05-05  Eric Carlson  <eric.carlson@apple.com>
+
+        Reviewed by Adam Roben.
+
+        Block callbacks delivered during destruction
+        https://bugs.webkit.org/show_bug.cgi?id=60291
+        <rdar://problem/9382942>
+
+        No new tests, tested by existing tests.
+
+        * platform/graphics/avfoundation/MediaPlayerPrivateAVFoundation.cpp:
+        (WebCore::MediaPlayerPrivateAVFoundation::~MediaPlayerPrivateAVFoundation): Call 
+            setIgnoreLoadStateChanges(true) to cancel all callbacks.
+        (WebCore::MediaPlayerPrivateAVFoundation::updateStates): Return immediately if 
+            m_ignoreLoadStateChanges is true.
+        (WebCore::MediaPlayerPrivateAVFoundation::dispatchNotification): loadStateChanged -> updateStates.
+            Don't call updateStates after calling loadedTimeRangesChanged, it already does it.
+        * platform/graphics/avfoundation/MediaPlayerPrivateAVFoundation.h:
+
 2011-05-05  David Hyatt  <hyatt@apple.com>
 
         Reviewed by Darin Adler.

@@ -79,6 +79,7 @@ MediaPlayerPrivateAVFoundation::MediaPlayerPrivateAVFoundation(MediaPlayer* play
 MediaPlayerPrivateAVFoundation::~MediaPlayerPrivateAVFoundation()
 {
     LOG(Media, "MediaPlayerPrivateAVFoundation::~MediaPlayerPrivateAVFoundation(%p)", this);
+    setIgnoreLoadStateChanges(true);
     cancelCallOnMainThread(mainThreadCallback, this);
 }
 
@@ -382,6 +383,9 @@ bool MediaPlayerPrivateAVFoundation::supportsFullscreen() const
 
 void MediaPlayerPrivateAVFoundation::updateStates()
 {
+    if (m_ignoreLoadStateChanges)
+        return;
+
     MediaPlayer::NetworkState oldNetworkState = m_networkState;
     MediaPlayer::ReadyState oldReadyState = m_readyState;
 
@@ -505,13 +509,6 @@ void MediaPlayerPrivateAVFoundation::metadataLoaded()
 {
     m_loadingMetadata = false;
     tracksChanged();
-    updateStates();
-}
-
-void MediaPlayerPrivateAVFoundation::loadStateChanged()
-{
-    if (m_ignoreLoadStateChanges)
-        return;
     updateStates();
 }
 
@@ -730,28 +727,26 @@ void MediaPlayerPrivateAVFoundation::dispatchNotification()
         updateStates();
         break;
     case Notification::ItemStatusChanged:
-        loadStateChanged();
+        updateStates();
         break;
     case Notification::ItemSeekableTimeRangesChanged:
         seekableTimeRangesChanged();
-        loadStateChanged();
         break;
     case Notification::ItemLoadedTimeRangesChanged:
         loadedTimeRangesChanged();
-        loadStateChanged();
         break;
     case Notification::ItemPresentationSizeChanged:
         sizeChanged();
         updateStates();
         break;
     case Notification::ItemIsPlaybackLikelyToKeepUpChanged:
-        loadStateChanged();
+        updateStates();
         break;
     case Notification::ItemIsPlaybackBufferEmptyChanged:
-        loadStateChanged();
+        updateStates();
         break;
     case Notification::ItemIsPlaybackBufferFullChanged:
-        loadStateChanged();
+        updateStates();
         break;
     case Notification::PlayerRateChanged:
         rateChanged();
