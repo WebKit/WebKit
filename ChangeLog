@@ -1,3 +1,15 @@
+2011-05-04  Xan Lopez  <xlopez@igalia.com>
+
+        Reviewed by Martin Robinson.
+
+        [GTK] Fix warnings in webkit.m4 with autoconf 2.68
+        https://bugs.webkit.org/show_bug.cgi?id=60189
+
+        Use AC_LANG_SOURCE when passing source code to AC_COMPILE_IFELSE
+        to remove warnings.
+
+        * Source/autotools/webkit.m4: ditto.
+
 2011-05-04  Martin Robinson  <mrobinson@igalia.com>
 
         Fix the WebKitGTK+ build.

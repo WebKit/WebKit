@@ -31,7 +31,7 @@ AC_REQUIRE([INIT_C_CXX_FLAGS])
 saved_CFLAGS="$CFLAGS"
 CFLAGS="$CFLAGS -fvisibility=hidden -fvisibility-inlines-hidden"
 AC_MSG_CHECKING([if ${CXX} supports -fvisibility=hidden -fvisibility-inlines-hidden])
-AC_COMPILE_IFELSE([char foo;],
+AC_COMPILE_IFELSE([AC_LANG_SOURCE([char foo;])],
       [ AC_MSG_RESULT([yes])
         SYMBOL_VISIBILITY="-fvisibility=hidden" SYMBOL_VISIBILITY_INLINES="-fvisibility-inlines-hidden" ],
         AC_MSG_RESULT([no]))
