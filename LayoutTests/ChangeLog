@@ -1,3 +1,9 @@
+2011-05-04  MORITA Hajime <morrita@google.com>
+
+        r85835 skipped too much. narrowed skipped target.
+
+        * platform/chromium/test_expectations.txt:
+
 2011-05-04  MORITA Hajime  <morrita@google.com>
 
         Unreviewed marking failing gpu tests:
