@@ -153,6 +153,11 @@ var WebInspector = {
 
     _createPanels: function()
     {
+        if (WebInspector.WorkerManager.isWorkerFrontend()) {
+            this.panels.scripts = new WebInspector.ScriptsPanel();
+            this.panels.console = new WebInspector.ConsolePanel();
+            return;
+        }
         var hiddenPanels = (InspectorFrontendHost.hiddenPanels() || "").split(',');
         if (hiddenPanels.indexOf("elements") === -1)
             this.panels.elements = new WebInspector.ElementsPanel();

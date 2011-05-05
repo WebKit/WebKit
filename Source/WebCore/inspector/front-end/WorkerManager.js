@@ -32,6 +32,11 @@ WebInspector.WorkerManager = function()
 {
 }
 
+WebInspector.WorkerManager.isWorkerFrontend = function()
+{
+    return !!WebInspector.queryParamsObject["workerId"];
+}
+
 WebInspector.WorkerManager.loaded = function()
 {
     var workerId = WebInspector.queryParamsObject["workerId"];

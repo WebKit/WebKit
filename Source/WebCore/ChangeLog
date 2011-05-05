@@ -1,3 +1,14 @@
+2011-05-04  Yury Semikhatsky  <yurys@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: show only Console and Scripts panels in worker inspector front-end
+        https://bugs.webkit.org/show_bug.cgi?id=60159
+
+        * inspector/front-end/WorkerManager.js:
+        (WebInspector.WorkerManager.isWorkerFrontend):
+        * inspector/front-end/inspector.js: show only Scripts and Console panels in the worker inspector front-end.
+
 2011-05-03  Hans Wennborg  <hans@chromium.org>
 
         Reviewed by Steve Block.
