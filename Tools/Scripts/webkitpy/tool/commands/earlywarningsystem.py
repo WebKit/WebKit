@@ -99,15 +99,24 @@ class AbstractEarlyWarningSystem(AbstractReviewQueue):
         return True
 
     @classmethod
+    def _post_reject_message_on_bug(cls, tool, patch, status_id, extra_message_text=None):
+        results_link = tool.status_server.results_url_for_status(status_id)
+        message = "Attachment %s did not pass %s (%s):\nOutput: %s" % (patch.id(), cls.name, cls.port_name, results_link)
+        # FIXME: We might want to add some text about rejecting from the commit-queue in
+        # the case where patch.commit_queue() isn't already set to '-'.
+        if cls.watchers:
+            tool.bugs.add_cc_to_bug(patch.bug_id(), cls.watchers)
+        tool.bugs.set_flag_on_attachment(patch.bug_id(), "commit-queue", "-", message, extra_message_text)
+
+    @classmethod
     def handle_script_error(cls, tool, state, script_error):
         is_svn_apply = script_error.command_name() == "svn-apply"
         status_id = cls._update_status_for_script_error(tool, state, script_error, is_error=is_svn_apply)
         if is_svn_apply:
             QueueEngine.exit_after_handled_error(script_error)
-        results_link = tool.status_server.results_url_for_status(status_id)
-        message = "Attachment %s did not build on %s:\nBuild output: %s" % (state["patch"].id(), cls.port_name, results_link)
-        tool.bugs.post_comment_to_bug(state["patch"].bug_id(), message, cc=cls.watchers)
+        cls._post_reject_message_on_bug(tool, state['patch'], status_id)
         exit(1)
+
 
 # FIXME: This should merge with AbstractEarlyWarningSystem once all the EWS
 # bots run tests.
@@ -119,14 +128,12 @@ class AbstractTestingEWS(AbstractEarlyWarningSystem, EarlyWarningSystemTaskDeleg
         self._expected_failures = ExpectedFailures()
         self._layout_test_results_reader = LayoutTestResultsReader(self._tool, self._log_directory())
 
-    def _post_reject_message_on_bug(self, task, patch):
-        results_link = self._tool.status_server.results_url_for_status(task.failure_status_id)
-        message = "Attachment %s did not pass %s:\nOutput: %s" % (patch.id(), self.name, results_link)
+    def _failing_tests_message(self, task, patch):
         results = task.results_from_patch_test_run(patch)
         unexpected_failures = self._expected_failures.unexpected_failures(results)
-        if unexpected_failures:
-            message += "\nNew failing tests:\n%s" % "\n".join(unexpected_failures)
-        self._tool.bugs.post_comment_to_bug(patch.bug_id(), message, cc=self.watchers)
+        if not unexpected_failures:
+            return None
+        return "New failing tests:\n%s" % "\n".join(unexpected_failures)
 
     def review_patch(self, patch):
         task = EarlyWarningSystemTask(self, patch)
@@ -139,8 +146,7 @@ class AbstractTestingEWS(AbstractEarlyWarningSystem, EarlyWarningSystemTaskDeleg
             self._did_error(patch, "%s unable to apply patch." % self.name)
             return False
         except ScriptError, e:
-            # FIXME: This should just use CommitterValidator.reject_patch_from_commit_queue
-            self._post_reject_message_on_bug(task, patch)
+            self._post_reject_message_on_bug(self._tool, patch, task.failure_status_id, self._failing_tests_message(task, patch))
             results_archive = task.results_archive_from_patch_test_run(patch)
             if results_archive:
                 self._upload_results_archive_for_patch(patch, results_archive)

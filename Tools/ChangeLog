@@ -1,3 +1,14 @@
+2011-05-05  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Adam Barth.
+
+        commit-queue should reject patches which fail ewses
+        https://bugs.webkit.org/show_bug.cgi?id=47534
+
+        * Scripts/webkitpy/common/net/bugzilla/bugzilla.py:
+        * Scripts/webkitpy/tool/commands/earlywarningsystem.py:
+        * Scripts/webkitpy/tool/commands/earlywarningsystem_unittest.py:
+
 2011-05-05  Chang Shu  <cshu@webkit.org>
 
         Reviewed by Andreas Kling.

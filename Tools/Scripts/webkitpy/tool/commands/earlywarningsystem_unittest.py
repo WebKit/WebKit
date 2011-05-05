@@ -37,12 +37,13 @@ from webkitpy.tool.mocktool import MockTool, MockOptions, MockPort
 
 
 class AbstractEarlyWarningSystemTest(QueuesTest):
-    def test_can_build(self):
-        # Needed to define port_name, used in AbstractEarlyWarningSystem.__init__
-        class TestEWS(AbstractEarlyWarningSystem):
-            port_name = "win"  # Needs to be a port which port/factory understands.
+    # Needed to define port_name, used in AbstractEarlyWarningSystem.__init__
+    class TestEWS(AbstractEarlyWarningSystem):
+        name = "mock-ews"
+        port_name = "win"  # Needs to be a port which port/factory understands.
 
-        queue = TestEWS()
+    def test_can_build(self):
+        queue = self.TestEWS()
         queue.bind_to_tool(MockTool(log_executive=True))
         queue._options = MockOptions(port=None)
         expected_stderr = "MOCK run_and_throw_if_fail: ['echo', '--status-host=example.com', 'build', '--port=win', '--build-style=release', '--force-clean', '--no-update']\n"
@@ -52,7 +53,7 @@ class AbstractEarlyWarningSystemTest(QueuesTest):
             raise ScriptError("MOCK script error")
 
         queue.run_webkit_patch = mock_run_webkit_patch
-        expected_stderr = "MOCK: update_status: None Unable to perform a build\n"
+        expected_stderr = "MOCK: update_status: mock-ews Unable to perform a build\n"
         OutputCapture().assert_outputs(self, queue._can_build, [], expected_stderr=expected_stderr)
 
     # FIXME: This belongs on an AbstractReviewQueueTest object in queues_unittest.py
@@ -67,6 +68,33 @@ class AbstractEarlyWarningSystemTest(QueuesTest):
         mock_patch = queue._tool.bugs.fetch_attachment(197)
         expected_stderr = "MOCK: release_work_item: None 197\n"
         OutputCapture().assert_outputs(self, queue.process_work_item, [mock_patch], expected_stderr=expected_stderr, expected_exception=ScriptError)
+
+    def test_post_reject_message_on_bug(self):
+        tool = MockTool()
+        patch = tool.bugs.fetch_attachment(197)
+        expected_stderr = """MOCK setting flag 'commit-queue' to '-' on attachment '42' with comment 'Attachment 197 did not pass mock-ews (win):
+Output: http://dummy_url' and additional comment 'EXTRA'
+"""
+        OutputCapture().assert_outputs(self,
+            self.TestEWS._post_reject_message_on_bug,
+            kwargs={'tool': tool, 'patch': patch, 'status_id': 1, 'extra_message_text': "EXTRA"},
+            expected_stderr=expected_stderr)
+
+
+class AbstractTestingEWSTest(QueuesTest):
+    def test_failing_tests_message(self):
+        # Needed to define port_name, used in AbstractEarlyWarningSystem.__init__
+        class TestEWS(AbstractTestingEWS):
+            port_name = "win"  # Needs to be a port which port/factory understands.
+
+        ews = TestEWS()
+        ews.bind_to_tool(MockTool())
+        ews._options = MockOptions(port=None, confirm=False)
+        OutputCapture().assert_outputs(self, ews.begin_work_queue, expected_stderr=self._default_begin_work_queue_stderr(ews.name, ews._tool.scm().checkout_root))
+        ews._expected_failures.unexpected_failures = lambda results: set(["foo.html", "bar.html"])
+        task = Mock()
+        patch = ews._tool.bugs.fetch_attachment(197)
+        self.assertEqual(ews._failing_tests_message(task, patch), "New failing tests:\nbar.html\nfoo.html")
 
 
 class EarlyWarningSytemTest(QueuesTest):
@@ -89,7 +117,10 @@ class EarlyWarningSytemTest(QueuesTest):
             "handle_unexpected_error": "Mock error message\n",
             "next_work_item": "",
             "process_work_item": "MOCK: update_status: %(name)s Pass\nMOCK: release_work_item: %(name)s 197\n" % string_replacemnts,
-            "handle_script_error": "MOCK: update_status: %(name)s ScriptError error message\nMOCK bug comment: bug_id=42, cc=%(watchers)s\n--- Begin comment ---\nAttachment 197 did not build on %(port)s:\nBuild output: http://dummy_url\n--- End comment ---\n\n" % string_replacemnts,
+            "handle_script_error": """MOCK: update_status: %(name)s ScriptError error message
+MOCK setting flag 'commit-queue' to '-' on attachment '42' with comment 'Attachment 197 did not pass %(name)s (%(port)s):
+Output: http://dummy_url' and additional comment 'None'
+""" % string_replacemnts,
         }
         return expected_stderr
 

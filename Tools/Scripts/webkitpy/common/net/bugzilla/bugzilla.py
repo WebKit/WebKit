@@ -616,6 +616,7 @@ class Bugzilla(object):
 
         self.authenticate()
 
+        # FIXME: additional_comment_text seems useless and should be merged into comment-text.
         if additional_comment_text:
             comment_text += "\n\n%s" % additional_comment_text
         log(comment_text)
@@ -659,8 +660,7 @@ class Bugzilla(object):
     def add_cc_to_bug(self, bug_id, email_address_list):
         self.authenticate()
 
-        log("Adding %s to the CC list for bug %s" % (email_address_list,
-                                                     bug_id))
+        log("Adding %s to the CC list for bug %s" % (email_address_list, bug_id))
         if self.dryrun:
             return
 
