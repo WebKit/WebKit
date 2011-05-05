@@ -59,6 +59,7 @@ my $installHeaders;
 my $installLibs;
 my $prefixPath;
 my $makeArgs = "";
+my $onlyWebKitProject = 0;
 my $noWebKit2 = 0;
 my $startTime = time();
 
@@ -371,6 +372,7 @@ Usage: $programName [options] [options to pass to build system]
 
   --minimal                         No optional features, unless explicitly enabled
 
+  --only-webkit                     Build only the WebKit project
   --no-webkit2                      Omit WebKit2 code from the build
 
 EOF
@@ -385,6 +387,7 @@ my %options = (
     'makeargs=s' => \$makeArgs,
     'minimal' => \$minimal,
     'v8' => \$v8,
+    'only-webkit' => \$onlyWebKitProject,
     'no-webkit2' => \$noWebKit2,
 );
 
@@ -535,6 +538,11 @@ if (isGtk()) {
         push @options, "CONFIG+=v8";
     }
 }
+
+# If asked to build just the WebKit project, overwrite the projects
+# list after all of the port specific tweaks have been made to
+# build options, etc.
+@projects = ("Source/WebKit") if $onlyWebKitProject;
 
 # Force re-link of existing libraries if different than expected
 removeLibraryDependingOnFeature("WebCore", "SVG", $svgSupport);

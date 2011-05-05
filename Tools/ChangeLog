@@ -1,3 +1,13 @@
+2011-05-05  Joseph Pecoraro  <joepeck@webkit.org>
+
+        Reviewed by David Kilzer.
+
+        Add --only-webkit option to build-webkit
+        https://bugs.webkit.org/show_bug.cgi?id=60245
+
+        * Scripts/build-webkit: If --only-webkit was specified
+        just build the WebKit project, and not its dependencies.
+
 2011-05-05  Jeff Miller  <jeffm@apple.com>
 
         Reviewed by Darin Adler.
