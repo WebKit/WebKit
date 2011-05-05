@@ -36,7 +36,7 @@ namespace WebKit {
 bool Module::load()
 {
     m_handle = g_module_open(m_path.utf8().data(), G_MODULE_BIND_LAZY);
-    return !m_handle;
+    return m_handle;
 }
 
 void Module::unload()
