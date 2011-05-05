@@ -55,7 +55,7 @@ PASS timing.domainLookupStart is non-zero.
 PASS timing.fetchStart is non-zero.
 PASS timing.loadEventEnd is 0
 PASS timing.loadEventStart is non-zero.
-PASS timing.navigationStart is 0
+PASS timing.navigationStart is non-zero.
 PASS timing.redirectEnd is 0
 PASS timing.redirectStart is 0
 PASS timing.requestStart is non-zero.
@@ -90,7 +90,7 @@ PASS timing.domainLookupStart is non-zero.
 PASS timing.fetchStart is non-zero.
 PASS timing.loadEventEnd is 0
 PASS timing.loadEventStart is non-zero.
-PASS timing.navigationStart is 0
+PASS timing.navigationStart is non-zero.
 PASS timing.redirectEnd is 0
 PASS timing.redirectStart is 0
 PASS timing.requestStart is non-zero.

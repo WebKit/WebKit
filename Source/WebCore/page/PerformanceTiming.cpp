@@ -95,9 +95,6 @@ unsigned long long PerformanceTiming::navigationStart() const
     if (!timing)
         return 0;
 
-    if (timing->hasCrossOriginRedirect)
-        return 0;
-
     return toIntegerMilliseconds(timing->navigationStart);
 }
 
