@@ -1,3 +1,36 @@
+2011-05-04  Abhishek Arya  <inferno@chromium.org>
+
+        Reviewed by Dave Hyatt.
+
+        Tests that we do not crash when trying to add overflow from a float not in the
+        descendant list and whose renderer is already removed.
+        https://bugs.webkit.org/show_bug.cgi?id=56299
+
+        * fast/block/float/float-not-removed-from-next-sibling-crash-expected.txt: Added.
+        * fast/block/float/float-not-removed-from-next-sibling-crash.html: Added.
+        * fast/block/float/float-not-removed-from-next-sibling.html: Added. Black
+        text boxes should be inside the silver float. Failing test will have float
+        added to the text div block which will push the text downward.
+        * fast/block/float/float-not-removed-from-next-sibling-expected.png: Added.
+        * fast/block/float/float-not-removed-from-next-sibling-expected.txt: Added.
+        * fast/block/float/float-not-removed-from-next-sibling2.html: Added. Black
+        text boxes should be inside the silver float. Failing test will have float
+        added to the text div block which will push the text downward.
+        * fast/block/float/float-not-removed-from-next-sibling2-expected.png: Added.
+        * fast/block/float/float-not-removed-from-next-sibling2-expected.txt: Added.
+        * fast/block/float/float-not-removed-from-next-sibling3.html: Added. Distance
+        between the silver float and black text boxes should be less than height of
+        silver float. Failing test will have float overflow added to the text div
+        block which will cause large space between silver float and and black text boxes.
+        * fast/block/float/float-not-removed-from-next-sibling3-expected.png: Added.
+        * fast/block/float/float-not-removed-from-next-sibling3-expected.txt: Added.
+        * fast/block/float/float-not-removed-from-next-sibling4.html: Added. Distance
+        between the silver float and black text boxes should be less than height of
+        silver float. Failing test will have float overflow added to the text div
+        block which will cause large space between silver float and and black text boxes.
+        * fast/block/float/float-not-removed-from-next-sibling4-expected.png: Added.
+        * fast/block/float/float-not-removed-from-next-sibling4-expected.txt: Added.
+
 2011-05-05  Tony Gentilcore  <tonyg@chromium.org>
 
         Reviewed by Nate Chapin.

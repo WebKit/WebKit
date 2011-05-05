@@ -77,6 +77,8 @@ typedef WTF::HashSet<RenderBlock*> DelayedUpdateScrollInfoSet;
 static int gDelayUpdateScrollInfo = 0;
 static DelayedUpdateScrollInfoSet* gDelayedUpdateScrollInfoSet = 0;
 
+bool RenderBlock::s_canPropagateFloatIntoSibling = false;
+
 // Our MarginInfo state used when laying out block children.
 RenderBlock::MarginInfo::MarginInfo(RenderBlock* block, int beforeBorderPadding, int afterBorderPadding)
     : m_atBeforeSideOfBlock(true)
@@ -192,6 +194,8 @@ void RenderBlock::destroy()
 
 void RenderBlock::styleWillChange(StyleDifference diff, const RenderStyle* newStyle)
 {
+    s_canPropagateFloatIntoSibling = style() ? !isFloatingOrPositioned() && !avoidsFloats() : false;
+
     setReplaced(newStyle->isDisplayInlineType());
     
     if (style() && parent() && diff == StyleDifferenceLayout && style()->position() != newStyle->position()) {
@@ -254,6 +258,15 @@ void RenderBlock::styleDidChange(StyleDifference diff, const RenderStyle* oldSty
     if (!isAnonymous() && document()->usesBeforeAfterRules() && canHaveChildren()) {
         updateBeforeAfterContent(BEFORE);
         updateBeforeAfterContent(AFTER);
+    }
+
+    // After our style changed, if we lose our ability to propagate floats into next sibling
+    // blocks, then we need to mark our descendants with floats for layout and clear all floats
+    // from next sibling blocks that exist in our floating objects list. See bug 56299.
+    bool canPropagateFloatIntoSibling = !isFloatingOrPositioned() && !avoidsFloats();
+    if (diff == StyleDifferenceLayout && s_canPropagateFloatIntoSibling && !canPropagateFloatIntoSibling && hasOverhangingFloats()) {
+        markAllDescendantsWithFloatsForLayout();
+        markSiblingsWithFloatsForLayout();
     }
 }
 
@@ -3790,6 +3803,30 @@ void RenderBlock::markAllDescendantsWithFloatsForLayout(RenderBox* floatToRemove
             RenderBlock* childBlock = toRenderBlock(child);
             if ((floatToRemove ? childBlock->containsFloat(floatToRemove) : childBlock->containsFloats()) || childBlock->shrinkToAvoidFloats())
                 childBlock->markAllDescendantsWithFloatsForLayout(floatToRemove, inLayout);
+        }
+    }
+}
+
+void RenderBlock::markSiblingsWithFloatsForLayout()
+{
+    FloatingObjectSet& floatingObjectSet = m_floatingObjects->set();
+    FloatingObjectSetIterator end = floatingObjectSet.end();
+    for (FloatingObjectSetIterator it = floatingObjectSet.begin(); it != end; ++it) {
+        if (logicalBottomForFloat(*it) > logicalHeight()) {
+            RenderBox* floatingBox = (*it)->renderer();
+
+            RenderObject* next = nextSibling();
+            while (next) {
+                if (next->isRenderBlock() && !next->isFloatingOrPositioned() && !toRenderBlock(next)->avoidsFloats()) {
+                    RenderBlock* nextBlock = toRenderBlock(next);
+                    if (nextBlock->containsFloat(floatingBox))
+                        nextBlock->markAllDescendantsWithFloatsForLayout(floatingBox);
+                    else
+                        break;
+                }
+
+                next = next->nextSibling();
+            }
         }
     }
 }
