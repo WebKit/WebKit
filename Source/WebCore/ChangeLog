@@ -1,3 +1,10 @@
+2011-05-05  Brent Fulgham  <bfulgham@webkit.org>
+
+        [WinCairo] unreviewed build correction.
+
+        * platform/network/curl/ResourceRequest.h:
+        Stub out the new pipelined http logic for cURL.
+
 2011-05-05  Pavel Feldman  <pfeldman@chromium.org>
 
         Reviewed by Yury Semikhatsky.
