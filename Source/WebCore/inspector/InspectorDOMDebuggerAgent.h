@@ -28,8 +28,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef InspectorBrowserDebuggerAgent_h
-#define InspectorBrowserDebuggerAgent_h
+#ifndef InspectorDOMDebuggerAgent_h
+#define InspectorDOMDebuggerAgent_h
 
 #if ENABLE(JAVASCRIPT_DEBUGGER) && ENABLE(INSPECTOR)
 
@@ -53,16 +53,16 @@ class Node;
 
 typedef String ErrorString;
 
-class InspectorBrowserDebuggerAgent : public InspectorDebuggerAgent::Listener {
-    WTF_MAKE_NONCOPYABLE(InspectorBrowserDebuggerAgent);
+class InspectorDOMDebuggerAgent : public InspectorDebuggerAgent::Listener {
+    WTF_MAKE_NONCOPYABLE(InspectorDOMDebuggerAgent);
 public:
-    static PassOwnPtr<InspectorBrowserDebuggerAgent> create(InstrumentingAgents*, InspectorState*, InspectorDOMAgent*, InspectorDebuggerAgent*, InspectorAgent*);
+    static PassOwnPtr<InspectorDOMDebuggerAgent> create(InstrumentingAgents*, InspectorState*, InspectorDOMAgent*, InspectorDebuggerAgent*, InspectorAgent*);
 
-    virtual ~InspectorBrowserDebuggerAgent();
+    virtual ~InspectorDOMDebuggerAgent();
 
     void clearFrontend();
 
-    // BrowserDebugger API for InspectorFrontend
+    // DOMDebugger API for InspectorFrontend
     void setXHRBreakpoint(ErrorString*, const String& url);
     void removeXHRBreakpoint(ErrorString*, const String& url);
     void setEventListenerBreakpoint(ErrorString*, const String& eventName);
@@ -80,7 +80,7 @@ public:
     void pauseOnNativeEventIfNeeded(const String& categoryType, const String& eventName, bool synchronous);
 
 private:
-    InspectorBrowserDebuggerAgent(InstrumentingAgents*, InspectorState*, InspectorDOMAgent*, InspectorDebuggerAgent*, InspectorAgent*);
+    InspectorDOMDebuggerAgent(InstrumentingAgents*, InspectorState*, InspectorDOMAgent*, InspectorDebuggerAgent*, InspectorAgent*);
 
     // InspectorDebuggerAgent::Listener implementation.
     virtual void debuggerWasEnabled();
@@ -106,4 +106,4 @@ private:
 
 #endif // ENABLE(JAVASCRIPT_DEBUGGER) && ENABLE(INSPECTOR)
 
-#endif // !defined(InspectorBrowserDebuggerAgent_h)
+#endif // !defined(InspectorDOMDebuggerAgent_h)

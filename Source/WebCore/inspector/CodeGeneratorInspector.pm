@@ -36,9 +36,9 @@ $typeTransform{"Debugger"} = {
     "domainAccessor" => "m_debuggerAgent",
 };
 $typeTransform{"DOMDebugger"} = {
-    "forward" => "InspectorBrowserDebuggerAgent",
-    "header" => "InspectorBrowserDebuggerAgent.h",
-    "domainAccessor" => "m_browserDebuggerAgent",
+    "forward" => "InspectorDOMDebuggerAgent",
+    "header" => "InspectorDOMDebuggerAgent.h",
+    "domainAccessor" => "m_domDebuggerAgent",
 };
 $typeTransform{"Database"} = {
     "forward" => "InspectorDatabaseAgent",

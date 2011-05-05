@@ -50,7 +50,7 @@ class HTTPHeaderMap;
 class InjectedScript;
 class InjectedScriptManager;
 class InspectorArray;
-class InspectorBrowserDebuggerAgent;
+class InspectorDOMDebuggerAgent;
 class InspectorClient;
 class InspectorConsoleAgent;
 class InspectorCSSAgent;
@@ -133,7 +133,7 @@ public:
     InspectorDOMStorageAgent* domStorageAgent() { return m_domStorageAgent.get(); }
 #endif
 #if ENABLE(JAVASCRIPT_DEBUGGER)
-    InspectorBrowserDebuggerAgent* browserDebuggerAgent() const { return m_browserDebuggerAgent.get(); }
+    InspectorDOMDebuggerAgent* domDebuggerAgent() const { return m_domDebuggerAgent.get(); }
     InspectorDebuggerAgent* debuggerAgent() const { return m_debuggerAgent.get(); }
     InspectorProfilerAgent* profilerAgent() const { return m_profilerAgent.get(); }
 #endif
@@ -220,7 +220,7 @@ private:
     String m_inspectorExtensionAPI;
 #if ENABLE(JAVASCRIPT_DEBUGGER)
     OwnPtr<InspectorDebuggerAgent> m_debuggerAgent;
-    OwnPtr<InspectorBrowserDebuggerAgent> m_browserDebuggerAgent;
+    OwnPtr<InspectorDOMDebuggerAgent> m_domDebuggerAgent;
     OwnPtr<InspectorProfilerAgent> m_profilerAgent;
 #endif
 #if ENABLE(WORKERS)

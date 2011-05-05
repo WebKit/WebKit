@@ -1909,8 +1909,6 @@ webcore_sources += \
 	Source/WebCore/inspector/InspectorAgent.h \
 	Source/WebCore/inspector/InspectorApplicationCacheAgent.cpp \
 	Source/WebCore/inspector/InspectorApplicationCacheAgent.h \
-	Source/WebCore/inspector/InspectorBrowserDebuggerAgent.cpp \
-	Source/WebCore/inspector/InspectorBrowserDebuggerAgent.h \
 	Source/WebCore/inspector/InspectorClient.cpp \
 	Source/WebCore/inspector/InspectorClient.h \
 	Source/WebCore/inspector/InspectorController.cpp \
@@ -1929,6 +1927,8 @@ webcore_sources += \
 	Source/WebCore/inspector/InspectorDebuggerAgent.h \
 	Source/WebCore/inspector/InspectorDOMAgent.cpp \
 	Source/WebCore/inspector/InspectorDOMAgent.h \
+	Source/WebCore/inspector/InspectorDOMDebuggerAgent.cpp \
+	Source/WebCore/inspector/InspectorDOMDebuggerAgent.h \
 	Source/WebCore/inspector/InspectorDOMStorageAgent.cpp \
 	Source/WebCore/inspector/InspectorDOMStorageAgent.h \
 	Source/WebCore/inspector/InspectorDOMStorageResource.cpp \

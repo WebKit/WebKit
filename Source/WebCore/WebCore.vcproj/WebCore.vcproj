@@ -66266,14 +66266,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\inspector\InspectorBrowserDebuggerAgent.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\inspector\InspectorBrowserDebuggerAgent.h"
-				>
-			</File>
-			<File
 				RelativePath="..\inspector\InspectorClient.cpp"
 				>
 			</File>
@@ -66343,6 +66335,14 @@
 			</File>
 			<File
 				RelativePath="..\inspector\InspectorDOMAgent.h"
+				>
+			</File>
+			<File
+				RelativePath="..\inspector\InspectorDOMDebuggerAgent.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\inspector\InspectorDOMDebuggerAgent.h"
 				>
 			</File>
 			<File

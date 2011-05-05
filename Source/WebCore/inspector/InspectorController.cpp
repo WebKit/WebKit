@@ -39,7 +39,6 @@
 #include "InjectedScriptManager.h"
 #include "InspectorAgent.h"
 #include "InspectorBackendDispatcher.h"
-#include "InspectorBrowserDebuggerAgent.h"
 #include "InspectorDebuggerAgent.h"
 #include "InspectorClient.h"
 #include "InspectorDOMAgent.h"
@@ -123,7 +122,7 @@ void InspectorController::connectFrontend()
         m_inspectorAgent->consoleAgent(),
         m_inspectorAgent->domAgent(),
 #if ENABLE(JAVASCRIPT_DEBUGGER)
-        m_inspectorAgent->browserDebuggerAgent(),
+        m_inspectorAgent->domDebuggerAgent(),
 #endif
 #if ENABLE(DOM_STORAGE)
         m_inspectorAgent->domStorageAgent(),

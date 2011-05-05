@@ -39,7 +39,7 @@
 #include "GraphicsContext.h"
 #include "InjectedScriptHost.h"
 #include "InjectedScriptManager.h"
-#include "InspectorBrowserDebuggerAgent.h"
+#include "InspectorDOMDebuggerAgent.h"
 #include "InspectorCSSAgent.h"
 #include "InspectorClient.h"
 #include "InspectorConsoleAgent.h"
@@ -131,7 +131,7 @@ InspectorAgent::InspectorAgent(Page* page, InspectorClient* client, InjectedScri
     , m_consoleAgent(adoptPtr(new InspectorConsoleAgent(m_instrumentingAgents.get(), this, m_state.get(), injectedScriptManager, m_domAgent.get())))
 #if ENABLE(JAVASCRIPT_DEBUGGER)
     , m_debuggerAgent(PageDebuggerAgent::create(m_instrumentingAgents.get(), m_state.get(), page, injectedScriptManager))
-    , m_browserDebuggerAgent(InspectorBrowserDebuggerAgent::create(m_instrumentingAgents.get(), m_state.get(), m_domAgent.get(), m_debuggerAgent.get(), this))
+    , m_domDebuggerAgent(InspectorDOMDebuggerAgent::create(m_instrumentingAgents.get(), m_state.get(), m_domAgent.get(), m_debuggerAgent.get(), this))
     , m_profilerAgent(InspectorProfilerAgent::create(m_instrumentingAgents.get(), m_consoleAgent.get(), page, m_state.get()))
 #endif
 #if ENABLE(WORKERS)
@@ -172,7 +172,7 @@ void InspectorAgent::inspectedPageDestroyed()
     }
 
 #if ENABLE(JAVASCRIPT_DEBUGGER)
-    m_browserDebuggerAgent.clear();
+    m_domDebuggerAgent.clear();
     m_debuggerAgent.clear();
 #endif
 
@@ -280,7 +280,7 @@ void InspectorAgent::disconnectFrontend()
 
 #if ENABLE(JAVASCRIPT_DEBUGGER)
     m_debuggerAgent->clearFrontend();
-    m_browserDebuggerAgent->clearFrontend();
+    m_domDebuggerAgent->clearFrontend();
     m_profilerAgent->clearFrontend();
 #endif
 

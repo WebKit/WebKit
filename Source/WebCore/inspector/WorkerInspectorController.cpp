@@ -104,7 +104,7 @@ void WorkerInspectorController::connectFrontend(InspectorFrontendChannel* channe
         0, // InspectorApplicationCacheAgent
 #endif
 #if ENABLE(JAVASCRIPT_DEBUGGER)
-        0, // InspectorBrowserDebuggerAgent
+        0, // InspectorDOMDebuggerAgent
 #endif
         0, // InspectorCSSAgent
         0, // InspectorConsoleAgent

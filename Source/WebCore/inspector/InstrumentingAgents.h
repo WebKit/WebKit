@@ -39,7 +39,7 @@ namespace WebCore {
 class InspectorAgent;
 class InspectorApplicationCacheAgent;
 class InspectorPageAgent;
-class InspectorBrowserDebuggerAgent;
+class InspectorDOMDebuggerAgent;
 class InspectorCSSAgent;
 class InspectorConsoleAgent;
 class InspectorDOMAgent;
@@ -76,7 +76,7 @@ public:
 #endif
 #if ENABLE(JAVASCRIPT_DEBUGGER)
         , m_inspectorDebuggerAgent(0)
-        , m_inspectorBrowserDebuggerAgent(0)
+        , m_inspectorDOMDebuggerAgent(0)
         , m_inspectorProfilerAgent(0)
 #endif
 #if ENABLE(WORKERS)
@@ -125,8 +125,8 @@ public:
     InspectorDebuggerAgent* inspectorDebuggerAgent() const { return m_inspectorDebuggerAgent; }
     void setInspectorDebuggerAgent(InspectorDebuggerAgent* agent) { m_inspectorDebuggerAgent = agent; }
 
-    InspectorBrowserDebuggerAgent* inspectorBrowserDebuggerAgent() const { return m_inspectorBrowserDebuggerAgent; }
-    void setInspectorBrowserDebuggerAgent(InspectorBrowserDebuggerAgent* agent) { m_inspectorBrowserDebuggerAgent = agent; }
+    InspectorDOMDebuggerAgent* inspectorDOMDebuggerAgent() const { return m_inspectorDOMDebuggerAgent; }
+    void setInspectorDOMDebuggerAgent(InspectorDOMDebuggerAgent* agent) { m_inspectorDOMDebuggerAgent = agent; }
 
     InspectorProfilerAgent* inspectorProfilerAgent() const { return m_inspectorProfilerAgent; }
     void setInspectorProfilerAgent(InspectorProfilerAgent* agent) { m_inspectorProfilerAgent = agent; }
@@ -156,7 +156,7 @@ private:
 #endif
 #if ENABLE(JAVASCRIPT_DEBUGGER)
     InspectorDebuggerAgent* m_inspectorDebuggerAgent;
-    InspectorBrowserDebuggerAgent* m_inspectorBrowserDebuggerAgent;
+    InspectorDOMDebuggerAgent* m_inspectorDOMDebuggerAgent;
     InspectorProfilerAgent* m_inspectorProfilerAgent;
 #endif
 #if ENABLE(WORKERS)
