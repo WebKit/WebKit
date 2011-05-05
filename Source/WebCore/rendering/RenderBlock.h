@@ -494,6 +494,32 @@ private:
     }
 
     // The following functions' implementations are in RenderBlockLineLayout.cpp.
+    typedef std::pair<RenderText*, LazyLineBreakIterator> LineBreakIteratorInfo;
+    class LineBreaker {
+    public:
+        LineBreaker(RenderBlock* block)
+            : m_block(block)
+        {
+            reset();
+        }
+
+        InlineIterator nextLineBreak(InlineBidiResolver&, LineInfo&, LineBreakIteratorInfo&, FloatingObject* lastFloatFromPreviousLine);
+
+        bool lineWasHyphenated() { return m_hyphenated; }
+        const Vector<RenderBox*>& positionedObjects() { return m_positionedObjects; }
+        EClear clear() { return m_clear; }
+    private:
+        void reset();
+        
+        void skipTrailingWhitespace(InlineIterator&, const LineInfo&);
+        void skipLeadingWhitespace(InlineBidiResolver&, const LineInfo&, FloatingObject* lastFloatFromPreviousLine, LineWidth&);
+        
+        RenderBlock* m_block;
+        bool m_hyphenated;
+        EClear m_clear;
+        Vector<RenderBox*> m_positionedObjects;
+    };
+    
     void checkFloatsInCleanLine(RootInlineBox*, Vector<FloatWithRect>&, size_t& floatIndex, bool& encounteredNewFloat, bool& dirtiedByFloat);
     RootInlineBox* determineStartPosition(LineInfo&, bool& fullLayout, InlineBidiResolver&, Vector<FloatWithRect>& floats, unsigned& numCleanFloats,
                                           bool& useRepaintBounds, int& repaintTop, int& repaintBottom);
@@ -502,11 +528,6 @@ private:
     bool matchedEndLine(const InlineBidiResolver&, const InlineIterator& endLineStart, const BidiStatus& endLineStatus,
                         RootInlineBox*& endLine, int& endYPos, int& repaintBottom, int& repaintTop);
 
-    void skipTrailingWhitespace(InlineIterator&, const LineInfo&);
-    void skipLeadingWhitespace(InlineBidiResolver&, const LineInfo&, FloatingObject* lastFloatFromPreviousLine, LineWidth&);
-    typedef std::pair<RenderText*, LazyLineBreakIterator> LineBreakIteratorInfo;
-    InlineIterator findNextLineBreak(InlineBidiResolver&, LineInfo&, LineBreakIteratorInfo&, bool& hyphenated,
-                                     EClear*, FloatingObject* lastFloatFromPreviousLine, Vector<RenderBox*>& positionedObjects);
     RootInlineBox* constructLine(BidiRunList<BidiRun>&, const LineInfo&);
     InlineFlowBox* createLineBoxes(RenderObject*, const LineInfo&, InlineBox* childBox);
 

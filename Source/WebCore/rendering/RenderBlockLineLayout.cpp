@@ -898,6 +898,8 @@ void RenderBlock::layoutRunsAndFloats(bool fullLayout, bool hasInlineChild, Vect
     LineBreakIteratorInfo lineBreakIteratorInfo;
     VerticalPositionCache verticalPositionCache;
 
+    LineBreaker lineBreaker(this);
+
     while (!end.atEnd()) {
         // FIXME: Is this check necessary before the first iteration or can it be moved to the end?
         if (checkForEndLineMatch && (endLineMatched = matchedEndLine(resolver, cleanLineStart, cleanLineBidiStatus, endLine, endLineLogicalTop, repaintLogicalBottom, repaintLogicalTop)))
@@ -907,13 +909,9 @@ void RenderBlock::layoutRunsAndFloats(bool fullLayout, bool hasInlineChild, Vect
 
         lineInfo.setEmpty(true);
 
-        EClear clear = CNONE;
-        bool hyphenated;
-        Vector<RenderBox*> positionedObjects;
-
         InlineIterator oldEnd = end;
         FloatingObject* lastFloatFromPreviousLine = (m_floatingObjects && !m_floatingObjects->set().isEmpty()) ? m_floatingObjects->set().last() : 0;
-        end = findNextLineBreak(resolver, lineInfo, lineBreakIteratorInfo, hyphenated, &clear, lastFloatFromPreviousLine, positionedObjects);
+        end = lineBreaker.nextLineBreak(resolver, lineInfo, lineBreakIteratorInfo, lastFloatFromPreviousLine);
         if (resolver.position().atEnd()) {
             // FIXME: We shouldn't be creating any runs in findNextLineBreak to begin with!
             // Once BidiRunList is separated from BidiResolver this will not be needed.
@@ -937,7 +935,7 @@ void RenderBlock::layoutRunsAndFloats(bool fullLayout, bool hasInlineChild, Vect
 
             BidiRun* trailingSpaceRun = !lineInfo.previousLineBrokeCleanly() ? handleTrailingSpaces(bidiRuns, resolver.context()) : 0;
 
-            if (bidiRuns.runCount() && hyphenated)
+            if (bidiRuns.runCount() && lineBreaker.lineWasHyphenated())
                 bidiRuns.logicallyLastRun()->m_hasHyphen = true;
 
             // Now that the runs have been ordered, we create the line boxes.
@@ -981,11 +979,11 @@ void RenderBlock::layoutRunsAndFloats(bool fullLayout, bool hasInlineChild, Vect
                 }
             }
 
-            for (size_t i = 0; i < positionedObjects.size(); ++i)
-                setStaticPositions(this, positionedObjects[i]);
+            for (size_t i = 0; i < lineBreaker.positionedObjects().size(); ++i)
+                setStaticPositions(this, lineBreaker.positionedObjects()[i]);
 
             lineInfo.setFirstLine(false);
-            newLine(clear);
+            newLine(lineBreaker.clear());
         }
 
         if (m_floatingObjects && lastRootBox()) {
@@ -1506,32 +1504,32 @@ bool RenderBlock::generatesLineBoxesForInlineChild(RenderObject* inlineObj)
 }
 
 // FIXME: The entire concept of the skipTrailingWhitespace function is flawed, since we really need to be building
-// line boxes even for containers that may ultimately collapse away.  Otherwise we'll never get positioned
-// elements quite right.  In other words, we need to build this function's work into the normal line
+// line boxes even for containers that may ultimately collapse away. Otherwise we'll never get positioned
+// elements quite right. In other words, we need to build this function's work into the normal line
 // object iteration process.
 // NB. this function will insert any floating elements that would otherwise
 // be skipped but it will not position them.
-void RenderBlock::skipTrailingWhitespace(InlineIterator& iterator, const LineInfo& lineInfo)
+void RenderBlock::LineBreaker::skipTrailingWhitespace(InlineIterator& iterator, const LineInfo& lineInfo)
 {
     while (!iterator.atEnd() && !requiresLineBox(iterator, lineInfo)) {
         RenderObject* object = iterator.m_obj;
         if (object->isFloating()) {
-            insertFloatingObject(toRenderBox(object));
+            m_block->insertFloatingObject(toRenderBox(object));
         } else if (object->isPositioned())
-            setStaticPositions(this, toRenderBox(object));
+            setStaticPositions(m_block, toRenderBox(object));
         iterator.increment();
     }
 }
 
-void RenderBlock::skipLeadingWhitespace(InlineBidiResolver& resolver, const LineInfo& lineInfo,
-    FloatingObject* lastFloatFromPreviousLine, LineWidth& width)
+void RenderBlock::LineBreaker::skipLeadingWhitespace(InlineBidiResolver& resolver, const LineInfo& lineInfo,
+                                                     FloatingObject* lastFloatFromPreviousLine, LineWidth& width)
 {
     while (!resolver.position().atEnd() && !requiresLineBox(resolver.position(), lineInfo)) {
         RenderObject* object = resolver.position().m_obj;
         if (object->isFloating())
-            positionNewFloatOnLine(insertFloatingObject(toRenderBox(object)), lastFloatFromPreviousLine, width);
+            m_block->positionNewFloatOnLine(m_block->insertFloatingObject(toRenderBox(object)), lastFloatFromPreviousLine, width);
         else if (object->isPositioned())
-            setStaticPositions(this, toRenderBox(object));
+            setStaticPositions(m_block, toRenderBox(object));
         resolver.increment();
     }
     resolver.commitExplicitEmbedding();
@@ -1800,15 +1798,24 @@ void TrailingObjects::updateMidpointsForTrailingBoxes(LineMidpointState& lineMid
     }
 }
 
-InlineIterator RenderBlock::findNextLineBreak(InlineBidiResolver& resolver, LineInfo& lineInfo, LineBreakIteratorInfo& lineBreakIteratorInfo,
-                                              bool& hyphenated, EClear* clear, FloatingObject* lastFloatFromPreviousLine, Vector<RenderBox*>& positionedBoxes)
+void RenderBlock::LineBreaker::reset()
 {
-    ASSERT(resolver.position().root() == this);
+    m_positionedObjects.clear();
+    m_hyphenated = false;
+    m_clear = CNONE;
+}
+
+InlineIterator RenderBlock::LineBreaker::nextLineBreak(InlineBidiResolver& resolver, LineInfo& lineInfo,
+    LineBreakIteratorInfo& lineBreakIteratorInfo, FloatingObject* lastFloatFromPreviousLine)
+{
+    reset();
+
+    ASSERT(resolver.position().root() == m_block);
 
     bool appliedStartWidth = resolver.position().m_pos > 0;
     LineMidpointState& lineMidpointState = resolver.midpointState();
 
-    LineWidth width(this, lineInfo.isFirstLine());
+    LineWidth width(m_block, lineInfo.isFirstLine());
 
     skipLeadingWhitespace(resolver, lineInfo, lastFloatFromPreviousLine, width);
 
@@ -1838,20 +1845,18 @@ InlineIterator RenderBlock::findNextLineBreak(InlineBidiResolver& resolver, Line
     bool startingNewParagraph = lineInfo.previousLineBrokeCleanly();
     lineInfo.setPreviousLineBrokeCleanly(false);
 
-    hyphenated = false;
-
     bool autoWrapWasEverTrueOnLine = false;
     bool floatsFitOnLine = true;
 
     // Firefox and Opera will allow a table cell to grow to fit an image inside it under
     // very specific circumstances (in order to match common WinIE renderings).
     // Not supporting the quirk has caused us to mis-render some real sites. (See Bugzilla 10517.)
-    bool allowImagesToBreak = !document()->inQuirksMode() || !isTableCell() || !style()->logicalWidth().isIntrinsicOrAuto();
+    bool allowImagesToBreak = !m_block->document()->inQuirksMode() || !m_block->isTableCell() || !m_block->style()->logicalWidth().isIntrinsicOrAuto();
 
-    EWhiteSpace currWS = style()->whiteSpace();
+    EWhiteSpace currWS = m_block->style()->whiteSpace();
     EWhiteSpace lastWS = currWS;
     while (current.m_obj) {
-        RenderObject* next = bidiNext(this, current.m_obj);
+        RenderObject* next = bidiNext(m_block, current.m_obj);
 
         currWS = current.m_obj->isReplaced() ? current.m_obj->parent()->style()->whiteSpace() : current.m_obj->style()->whiteSpace();
         lastWS = last->isReplaced() ? last->parent()->style()->whiteSpace() : last->style()->whiteSpace();
@@ -1882,20 +1887,20 @@ InlineIterator RenderBlock::findNextLineBreak(InlineBidiResolver& resolver, Line
                 trailingObjects.clear();
                 lineInfo.setPreviousLineBrokeCleanly(true);
 
-                if (!lineInfo.isEmpty() && clear)
-                    *clear = current.m_obj->style()->clear();
+                if (!lineInfo.isEmpty())
+                    m_clear = current.m_obj->style()->clear();
             }
             goto end;
         }
 
         if (current.m_obj->isFloating()) {
             RenderBox* floatBox = toRenderBox(current.m_obj);
-            FloatingObject* f = insertFloatingObject(floatBox);
+            FloatingObject* f = m_block->insertFloatingObject(floatBox);
             // check if it fits in the current line.
             // If it does, position it now, otherwise, position
             // it after moving to next line (in newLine() func)
-            if (floatsFitOnLine && width.fitsOnLine(logicalWidthForFloat(f))) {
-                positionNewFloatOnLine(f, lastFloatFromPreviousLine, width);
+            if (floatsFitOnLine && width.fitsOnLine(m_block->logicalWidthForFloat(f))) {
+                m_block->positionNewFloatOnLine(f, lastFloatFromPreviousLine, width);
                 if (lBreak.m_obj == current.m_obj) {
                     ASSERT(!lBreak.m_pos);
                     lBreak.increment();
@@ -1908,11 +1913,11 @@ InlineIterator RenderBlock::findNextLineBreak(InlineBidiResolver& resolver, Line
             RenderBox* box = toRenderBox(current.m_obj);
             bool isInlineType = box->style()->isOriginalDisplayInlineType();
             if (!isInlineType)
-                box->layer()->setStaticInlinePosition(borderAndPaddingStart());
+                box->layer()->setStaticInlinePosition(m_block->borderAndPaddingStart());
             else  {
                 // If our original display was an INLINE type, then we can go ahead
                 // and determine our static y position now.
-                box->layer()->setStaticBlockPosition(logicalHeight());
+                box->layer()->setStaticBlockPosition(m_block->logicalHeight());
             }
 
             // If we're ignoring spaces, we have to stop and include this object and
@@ -1926,7 +1931,7 @@ InlineIterator RenderBlock::findNextLineBreak(InlineBidiResolver& resolver, Line
                 }
                 trailingObjects.appendBoxIfNeeded(box);
             } else
-                positionedBoxes.append(box);
+                m_positionedObjects.append(box);
         } else if (current.m_obj->isRenderInline()) {
             // Right now, we should only encounter empty inlines here.
             ASSERT(!current.m_obj->firstChild());
@@ -1943,8 +1948,8 @@ InlineIterator RenderBlock::findNextLineBreak(InlineBidiResolver& resolver, Line
                     trailingObjects.clear();
                     addMidpoint(lineMidpointState, InlineIterator(0, current.m_obj, 0)); // Stop ignoring spaces.
                     addMidpoint(lineMidpointState, InlineIterator(0, current.m_obj, 0)); // Start ignoring again.
-                } else if (style()->collapseWhiteSpace() && resolver.position().m_obj == current.m_obj
-                    && shouldSkipWhitespaceAfterStartObject(this, current.m_obj, lineMidpointState)) {
+                } else if (m_block->style()->collapseWhiteSpace() && resolver.position().m_obj == current.m_obj
+                    && shouldSkipWhitespaceAfterStartObject(m_block, current.m_obj, lineMidpointState)) {
                     // Like with list markers, we start ignoring spaces to make sure that any
                     // additional spaces we see will be discarded.
                     currentCharacterIsSpace = true;
@@ -1974,9 +1979,9 @@ InlineIterator RenderBlock::findNextLineBreak(InlineBidiResolver& resolver, Line
 
             // Optimize for a common case. If we can't find whitespace after the list
             // item, then this is all moot.
-            int replacedLogicalWidth = logicalWidthForChild(replacedBox) + marginStartForChild(replacedBox) + marginEndForChild(replacedBox) + inlineLogicalWidth(current.m_obj);
+            int replacedLogicalWidth = m_block->logicalWidthForChild(replacedBox) + m_block->marginStartForChild(replacedBox) + m_block->marginEndForChild(replacedBox) + inlineLogicalWidth(current.m_obj);
             if (current.m_obj->isListMarker()) {
-                if (style()->collapseWhiteSpace() && shouldSkipWhitespaceAfterStartObject(this, current.m_obj, lineMidpointState)) {
+                if (m_block->style()->collapseWhiteSpace() && shouldSkipWhitespaceAfterStartObject(m_block, current.m_obj, lineMidpointState)) {
                     // Like with inline flows, we start ignoring spaces to make sure that any
                     // additional spaces we see will be discarded.
                     currentCharacterIsSpace = true;
@@ -2116,8 +2121,8 @@ InlineIterator RenderBlock::findNextLineBreak(InlineBidiResolver& resolver, Line
                         }
                         if (lineWasTooWide || !width.fitsOnLine()) {
                             if (canHyphenate && !width.fitsOnLine()) {
-                                tryHyphenating(t, f, style->locale(), style->hyphenationLimitBefore(), style->hyphenationLimitAfter(), lastSpace, current.m_pos, width.currentWidth() - additionalTmpW, width.availableWidth(), isFixedPitch, collapseWhiteSpace, lastSpaceWordSpacing, lBreak, current.m_nextBreakablePosition, hyphenated);
-                                if (hyphenated)
+                                tryHyphenating(t, f, style->locale(), style->hyphenationLimitBefore(), style->hyphenationLimitAfter(), lastSpace, current.m_pos, width.currentWidth() - additionalTmpW, width.availableWidth(), isFixedPitch, collapseWhiteSpace, lastSpaceWordSpacing, lBreak, current.m_nextBreakablePosition, m_hyphenated);
+                                if (m_hyphenated)
                                     goto end;
                             }
                             if (lBreak.atTextParagraphSeparator()) {
@@ -2130,7 +2135,7 @@ InlineIterator RenderBlock::findNextLineBreak(InlineBidiResolver& resolver, Line
                                 lineInfo.setPreviousLineBrokeCleanly(true);
                             }
                             if (lBreak.m_obj && lBreak.m_pos && lBreak.m_obj->isText() && toRenderText(lBreak.m_obj)->textLength() && toRenderText(lBreak.m_obj)->characters()[lBreak.m_pos - 1] == softHyphen && style->hyphens() != HyphensNone)
-                                hyphenated = true;
+                                m_hyphenated = true;
                             goto end; // Didn't fit. Jump to the end.
                         } else {
                             if (!betweenWords || (midWordBreak && !autoWrap))
@@ -2232,12 +2237,12 @@ InlineIterator RenderBlock::findNextLineBreak(InlineBidiResolver& resolver, Line
 
             if (!width.fitsOnLine()) {
                 if (canHyphenate)
-                    tryHyphenating(t, f, style->locale(), style->hyphenationLimitBefore(), style->hyphenationLimitAfter(), lastSpace, current.m_pos, width.currentWidth() - additionalTmpW, width.availableWidth(), isFixedPitch, collapseWhiteSpace, lastSpaceWordSpacing, lBreak, current.m_nextBreakablePosition, hyphenated);
+                    tryHyphenating(t, f, style->locale(), style->hyphenationLimitBefore(), style->hyphenationLimitAfter(), lastSpace, current.m_pos, width.currentWidth() - additionalTmpW, width.availableWidth(), isFixedPitch, collapseWhiteSpace, lastSpaceWordSpacing, lBreak, current.m_nextBreakablePosition, m_hyphenated);
 
-                if (!hyphenated && lBreak.previousInSameNode() == softHyphen && style->hyphens() != HyphensNone)
-                    hyphenated = true;
+                if (!m_hyphenated && lBreak.previousInSameNode() == softHyphen && style->hyphens() != HyphensNone)
+                    m_hyphenated = true;
 
-                if (hyphenated)
+                if (m_hyphenated)
                     goto end;
             }
         } else
@@ -2311,7 +2316,7 @@ InlineIterator RenderBlock::findNextLineBreak(InlineBidiResolver& resolver, Line
  end:
     if (lBreak == resolver.position() && (!lBreak.m_obj || !lBreak.m_obj->isBR())) {
         // we just add as much as possible
-        if (style()->whiteSpace() == PRE) {
+        if (m_block->style()->whiteSpace() == PRE) {
             // FIXME: Don't really understand this case.
             if (current.m_pos) {
                 // FIXME: This should call moveTo which would clear m_nextBreakablePosition

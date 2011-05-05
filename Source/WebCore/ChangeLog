@@ -1,3 +1,30 @@
+2011-05-04  Levi Weintraub  <leviw@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        Split findNextLineBreak into a LineBreaker class
+        https://bugs.webkit.org/show_bug.cgi?id=60209
+
+        Breaking findNextLineBreak into a new class inside RenderBlock. Currently it's tracking
+        nearly no state, but subsequent patches will move some of the local variables used throughout
+        the nextLineBreak function into member variables to simplify breaking off helper functions from
+        the bloated function.
+
+        No new tests since this is just moving code around.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * rendering/RenderBlock.h:
+        (WebCore::RenderBlock::LineBreaker::LineBreaker):
+        (WebCore::RenderBlock::LineBreaker::lineWasHyphenated): Accessor.
+        (WebCore::RenderBlock::LineBreaker::positionedObjects): Ditto.
+        (WebCore::RenderBlock::LineBreaker::clear): Ditto.
+        * rendering/RenderBlockLineLayout.cpp:
+        (WebCore::RenderBlock::layoutRunsAndFloats):
+        (WebCore::RenderBlock::LineBreaker::skipTrailingWhitespace):
+        (WebCore::RenderBlock::LineBreaker::skipLeadingWhitespace):
+        (WebCore::RenderBlock::LineBreaker::reset):
+        (WebCore::RenderBlock::LineBreaker::nextLineBreak):
+
 2011-05-04  Fridrich Strba  <fridrich.strba@bluewin.ch>
 
         Reviewed by Adam Barth.
