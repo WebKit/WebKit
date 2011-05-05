@@ -1,3 +1,9 @@
+2011-05-04  MORITA Hajime  <morrita@google.com>
+
+        Unreviewed flaky marking to full-screen-stacking-context.html.
+
+        * platform/chromium/test_expectations.txt:
+
 2011-05-04  James Robinson  <jamesr@chromium.org>
 
         Reviewed by Kenneth Russell.
