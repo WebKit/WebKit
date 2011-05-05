@@ -141,6 +141,7 @@ static const type& name() \
 
 #endif
 
+#ifndef PLUGIN_ARCHITECTURE_UNSUPPORTED
 #if PLATFORM(MAC)
 #define PLUGIN_ARCHITECTURE_MAC 1
 #elif PLATFORM(WIN)
@@ -149,6 +150,7 @@ static const type& name() \
 #define PLUGIN_ARCHITECTURE_X11 1
 #else
 #define PLUGIN_ARCHITECTURE_UNSUPPORTED 1
+#endif
 #endif
 
 #define PLUGIN_ARCHITECTURE(ARCH) (defined PLUGIN_ARCHITECTURE_##ARCH && PLUGIN_ARCHITECTURE_##ARCH)

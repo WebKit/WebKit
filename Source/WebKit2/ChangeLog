@@ -1,3 +1,12 @@
+2011-05-05  Keith Kyzivat  <keith.kyzivat@nokia.com>
+
+        Reviewed by Laszlo Gombos.
+
+        [Qt] [WK2] Add method to disable plugins under WK2
+        https://bugs.webkit.org/show_bug.cgi?id=57796
+
+        * config.h: Allow PLUGIN_ARCHITECTURE_UNSUPPORTED to be defined on build command line
+
 2011-05-05  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Sam Weinig.
