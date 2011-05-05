@@ -1,3 +1,15 @@
+2011-05-05  Alexis Menard  <alexis.menard@openbossa.org>
+
+        Reviewed by Benjamin Poulain.
+
+        [Qt] Make QtWebKit build when using gcc 4.6.0
+        https://bugs.webkit.org/show_bug.cgi?id=60265
+
+        If QtWebKit is compiled with gcc 4.6.0 or later we don't want to deactivate
+        the c++0x support because it works.
+
+        * JavaScriptCore.pro:
+
 2011-05-04  Fridrich Strba  <fridrich.strba@bluewin.ch>
 
         Reviewed by Geoffrey Garen.

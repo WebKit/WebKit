@@ -1,3 +1,20 @@
+2011-05-05  Alexis Menard  <alexis.menard@openbossa.org>
+
+        Reviewed by Benjamin Poulain.
+
+        [Qt] Make QtWebKit build when using gcc 4.6.0
+        https://bugs.webkit.org/show_bug.cgi?id=60265
+
+        If QtWebKit is compiled with gcc 4.6.0 and the build is not done
+        with c++0x support we need to deactivate warnings about compatibility.
+        Some WebKit types have names which conflicts with upcoming c++0x
+        types. If QtWebKit is built with c++0x support, WebKit has code to
+        fallback to the standard type rather than the WebKit implementation.
+        For example nullptr will be the one of the std if build options turns on
+        c++0x support.
+
+        * Source/WebKit.pri:
+
 2011-05-04  Xan Lopez  <xlopez@igalia.com>
 
         Reviewed by Martin Robinson.
