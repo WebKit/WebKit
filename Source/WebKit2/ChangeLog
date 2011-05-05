@@ -1,3 +1,11 @@
+2011-05-05  Brent Fulgham  <bfulgham@webkit.org>
+
+        [WinCairo] Unreviewed build fix.
+
+        * WebProcess/WebPage/win/WebPageWin.cpp:
+        (WebKit::WebPage::cachedResponseDataForURL): Stub out
+        implementation for cURL networking case.
+
 2011-05-05  Jeff Miller  <jeffm@apple.com>
 
         Reviewed by Darin Adler.

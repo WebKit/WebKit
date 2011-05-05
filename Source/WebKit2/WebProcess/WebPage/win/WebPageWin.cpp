@@ -321,12 +321,16 @@ String WebPage::cachedSuggestedFilenameForURL(const KURL& url)
 
 PassRefPtr<SharedBuffer> WebPage::cachedResponseDataForURL(const KURL& url)
 {
+#if USE(CFNETWORK)
     RetainPtr<CFCachedURLResponseRef> cachedResponse = cachedResponseForURL(this, url);
     CFDataRef data = CFCachedURLResponseGetReceiverData(cachedResponse.get());
     if (!data)
         return 0;
 
     return SharedBuffer::wrapCFData(data);
+#else
+    return 0;
+#endif
 }
 
 bool WebPage::platformCanHandleRequest(const WebCore::ResourceRequest& request)
