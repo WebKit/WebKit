@@ -806,6 +806,8 @@
 		379E61CC126CA5C400B63E8D /* BaseCheckableInputType.h in Headers */ = {isa = PBXBuildFile; fileRef = 379E61C8126CA5C300B63E8D /* BaseCheckableInputType.h */; };
 		37ACCE420DA2980F0089E602 /* FontRenderingMode.h in Headers */ = {isa = PBXBuildFile; fileRef = 37ACCE410DA2980F0089E602 /* FontRenderingMode.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		37ACCF690DA414E70089E602 /* FontDescription.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 37ACCE620DA2AA960089E602 /* FontDescription.cpp */; };
+		37AFFDF61370A0B800E895C0 /* SharedBufferCRLFLineReader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 37AFFDF41370A0B800E895C0 /* SharedBufferCRLFLineReader.cpp */; };
+		37AFFDF71370A0B800E895C0 /* SharedBufferCRLFLineReader.h in Headers */ = {isa = PBXBuildFile; fileRef = 37AFFDF51370A0B800E895C0 /* SharedBufferCRLFLineReader.h */; };
 		37C2360B1097EDED00EF9F72 /* FontComplexTextMac.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 37C2360A1097EDED00EF9F72 /* FontComplexTextMac.cpp */; };
 		37C236101097EE7700EF9F72 /* ComplexTextController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 37C2360E1097EE7700EF9F72 /* ComplexTextController.cpp */; };
 		37C236111097EE7700EF9F72 /* ComplexTextController.h in Headers */ = {isa = PBXBuildFile; fileRef = 37C2360F1097EE7700EF9F72 /* ComplexTextController.h */; };
@@ -7245,6 +7247,8 @@
 		379E61C8126CA5C300B63E8D /* BaseCheckableInputType.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BaseCheckableInputType.h; sourceTree = "<group>"; };
 		37ACCE410DA2980F0089E602 /* FontRenderingMode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FontRenderingMode.h; sourceTree = "<group>"; };
 		37ACCE620DA2AA960089E602 /* FontDescription.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FontDescription.cpp; sourceTree = "<group>"; };
+		37AFFDF41370A0B800E895C0 /* SharedBufferCRLFLineReader.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SharedBufferCRLFLineReader.cpp; sourceTree = "<group>"; };
+		37AFFDF51370A0B800E895C0 /* SharedBufferCRLFLineReader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SharedBufferCRLFLineReader.h; sourceTree = "<group>"; };
 		37C2360A1097EDED00EF9F72 /* FontComplexTextMac.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FontComplexTextMac.cpp; sourceTree = "<group>"; };
 		37C2360E1097EE7700EF9F72 /* ComplexTextController.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ComplexTextController.cpp; sourceTree = "<group>"; };
 		37C2360F1097EE7700EF9F72 /* ComplexTextController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ComplexTextController.h; sourceTree = "<group>"; };
@@ -18521,6 +18525,8 @@
 				33C0CCD3112C5E6200CE057D /* SecureTextInput.h */,
 				1A4A954B0B4EDCCB002D8C3C /* SharedBuffer.cpp */,
 				1A4A954C0B4EDCCB002D8C3C /* SharedBuffer.h */,
+				37AFFDF41370A0B800E895C0 /* SharedBufferCRLFLineReader.cpp */,
+				37AFFDF51370A0B800E895C0 /* SharedBufferCRLFLineReader.h */,
 				93309EA0099EB78C0056E581 /* SharedTimer.h */,
 				4B3043C60AE0370300A82647 /* Sound.h */,
 				F587866202DE3B1101EA4122 /* SSLKeyGenerator.h */,
@@ -22727,6 +22733,7 @@
 				93F199ED08245E59001E9ABC /* XSLTProcessor.h in Headers */,
 				E1BE512E0CF6C512002EA959 /* XSLTUnicodeSort.h in Headers */,
 				977E2E0F12F0FC9C00C13379 /* XSSFilter.h in Headers */,
+				37AFFDF71370A0B800E895C0 /* SharedBufferCRLFLineReader.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -25390,6 +25397,7 @@
 				93F19B0508245E59001E9ABC /* XSLTProcessorLibxslt.cpp in Sources */,
 				E1BE512D0CF6C512002EA959 /* XSLTUnicodeSort.cpp in Sources */,
 				977E2E0E12F0FC9C00C13379 /* XSSFilter.cpp in Sources */,
+				37AFFDF61370A0B800E895C0 /* SharedBufferCRLFLineReader.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
