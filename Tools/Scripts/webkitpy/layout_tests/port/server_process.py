@@ -202,6 +202,9 @@ class ServerProcess:
 
     def stop(self):
         """Stop (shut down) the subprocess), if it is running."""
+        if not self._proc:
+            return
+
         pid = self._proc.pid
         self._proc.stdin.close()
         self._proc.stdout.close()

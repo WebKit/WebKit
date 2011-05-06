@@ -1,3 +1,18 @@
+2011-05-06  Dirk Pranke  <dpranke@chromium.org>
+
+        Reviewed by Ojan Vafai.
+
+        new-run-webkit-tests: crashes in race with crashing DRT
+        https://bugs.webkit.org/show_bug.cgi?id=60238
+
+        This fixes a race where if we wrote the URL to DRT and
+        DRT crashed immediately, we could get a broken pipe
+        error back during the write() and not handle it correctly,
+        causing NRWT to also crash.
+
+        * Scripts/webkitpy/layout_tests/port/server_process.py:
+        * Scripts/webkitpy/layout_tests/port/webkit.py:
+
 2011-05-06  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Eric Seidel.

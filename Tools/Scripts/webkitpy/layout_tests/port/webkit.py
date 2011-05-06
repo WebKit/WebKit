@@ -428,17 +428,19 @@ class WebKitDriver(base.Driver):
         deadline = time.time() + int(driver_input.timeout) / 1000.0
 
         # First block is either text or audio
-        block = self._read_block(deadline)
-        if block.content_type == 'audio/wav':
-            audio = block.decoded_content
-        else:
-            text = block.decoded_content
+        if not self._server_process.crashed:
+            block = self._read_block(deadline)
+            if block.content_type == 'audio/wav':
+                audio = block.decoded_content
+            else:
+                text = block.decoded_content
 
         # Now read an optional second block of image data
-        block = self._read_block(deadline)
-        if block.content and block.content_type == 'image/png':
-            image = block.decoded_content
-            actual_image_hash = block.content_hash
+        if not self._server_process.crashed:
+            block = self._read_block(deadline)
+            if block.content and block.content_type == 'image/png':
+                image = block.decoded_content
+                actual_image_hash = block.content_hash
 
         error_lines = self._server_process.error.splitlines()
         # FIXME: This is a hack.  It is unclear why sometimes
