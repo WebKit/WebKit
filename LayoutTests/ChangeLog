@@ -1,3 +1,12 @@
+2011-05-06  Ojan Vafai  <ojan@chromium.org>
+
+        Reviewed by Tony Chang.
+
+        [results.html] label the zoomed pixel containers (expected, actual, diff)
+        https://bugs.webkit.org/show_bug.cgi?id=60383
+
+        * fast/harness/results.html:
+
 2011-05-06  Joseph Pecoraro  <joepeck@webkit.org>
 
         Unreviewed. Add pixel results for mac.

@@ -83,7 +83,6 @@ th {
 
 .result-container iframe, .result-container img {
     border: 0;
-    border-top: 1px solid lightgray;
     vertical-align: top;
 }
 
@@ -116,6 +115,7 @@ th {
     padding-left: 3px;
     font-weight: bold;
     font-size: small;
+    border-bottom: 1px solid lightgray;
 }
 
 .pixel-zoom-container {
@@ -126,6 +126,7 @@ th {
     display: -webkit-box;
     display: -moz-box;
     pointer-events: none;
+    background-color: white;
 }
 
 .pixel-zoom-container > * {
@@ -133,7 +134,6 @@ th {
     -moz-box-flex: 1;
     border: 2px inset lightgray;
     overflow: hidden;
-    line-height: 0;
     width: 0;
 }
 
@@ -709,9 +709,11 @@ PixelZoomer._zoomImageContainer = function(url)
 {
     var container = document.createElement('div');
     container.className = 'zoom-image-container';
-    var canvas = document.createElement('canvas');
-    container.appendChild(canvas);
+
+    var title = url.match(/\-([^\-]*)\.png/)[1];
+    container.innerHTML = '<div class=label>' + title + '</div><canvas></canvas>';    
     
+    var canvas = container.querySelector('canvas');    
     canvas.backingImage = new Image();
     canvas.backingImage.onload = function() {
         canvas.backingImageIsLoaded = true;
