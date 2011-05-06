@@ -1,3 +1,15 @@
+2011-05-05  John Abd-El-Malek  <jam@chromium.org>
+
+        Reviewed by James Robinson.
+
+        [chromium] Make IndexedDB code use WebPermissionClient API
+        https://bugs.webkit.org/show_bug.cgi?id=60340
+
+        * public/WebPermissionClient.h:
+        (WebKit::WebPermissionClient::allowIndexedDB):
+        * src/IDBFactoryBackendProxy.cpp:
+        (WebKit::IDBFactoryBackendProxy::open):
+
 2011-05-05  Adam Barth  <abarth@webkit.org>
 
         Roll Chromium DEPS.

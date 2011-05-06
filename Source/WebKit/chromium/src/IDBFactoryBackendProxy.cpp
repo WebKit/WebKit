@@ -42,7 +42,9 @@
 #include "WebIDBFactory.h"
 #include "WebKit.h"
 #include "WebKitClient.h"
+#include "WebPermissionClient.h"
 #include "WebVector.h"
+#include "WebViewImpl.h"
 
 using namespace WebCore;
 
@@ -64,7 +66,13 @@ IDBFactoryBackendProxy::~IDBFactoryBackendProxy()
 
 void IDBFactoryBackendProxy::open(const String& name, PassRefPtr<IDBCallbacks> callbacks, PassRefPtr<SecurityOrigin> origin, Frame* frame, const String& dataDir, int64_t maximumSize, BackingStoreType backingStoreType)
 {
-    WebFrame* webFrame = WebFrameImpl::fromFrame(frame);
+    WebFrameImpl* webFrame = WebFrameImpl::fromFrame(frame);
+    WebViewImpl* webView = webFrame->viewImpl();
+    if (webView->permissionClient() && !webView->permissionClient()->allowIndexedDB(webFrame, name, origin)) {
+        callbacks->onError(WebIDBDatabaseError(0, "The user denied permission to access the database."));
+        return;
+    }
+
     m_webIDBFactory->open(name, new WebIDBCallbacksImpl(callbacks), origin, webFrame, dataDir, maximumSize, static_cast<WebIDBFactory::BackingStoreType>(backingStoreType));
 }
 
