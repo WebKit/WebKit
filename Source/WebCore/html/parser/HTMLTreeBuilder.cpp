@@ -374,6 +374,8 @@ HTMLTreeBuilder::HTMLTreeBuilder(HTMLDocumentParser* parser, DocumentFragment* f
     , m_usePreHTML5ParserQuirks(usePreHTML5ParserQuirks)
     , m_hasPendingForeignInsertionModeSteps(false)
 {
+    // FIXME: This assertion will become invalid if <http://webkit.org/b/60316> is fixed.
+    ASSERT(contextElement);
     if (contextElement) {
         // Steps 4.2-4.6 of the HTML5 Fragment Case parsing algorithm:
         // http://www.whatwg.org/specs/web-apps/current-work/multipage/the-end.html#fragment-case

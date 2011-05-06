@@ -1,3 +1,18 @@
+2011-05-05  Andy Estes  <aestes@apple.com>
+
+        Reviewed by Eric Seidel.
+
+        Implement document.innerHTML
+        https://bugs.webkit.org/show_bug.cgi?id=60316
+
+        ASSERT that contextElement is non-0 when constructing a HTMLTreeBuilder
+        for fragment parsing. This assertion will become invalid when
+        document.innerHTML is implemented, which is the only case where HTML5
+        specifies that a fragment will not have a context element.
+
+        * html/parser/HTMLTreeBuilder.cpp:
+        (WebCore::HTMLTreeBuilder::HTMLTreeBuilder):
+
 2011-05-05  Kevin Ollivier  <kevino@theolliviers.com>
 
         [wx] Unreviewed build fix. Include ApplicationServices for wx port.
