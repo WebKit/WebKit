@@ -4061,3 +4061,5 @@ BUGWK60243 : fullscreen/full-screen-stacking-context.html = IMAGE
 
 BUGWK60252 MAC GPU : animations/3d/matrix-transform-type-animation.html = IMAGE
 BUGWK60252 MAC GPU : animations/3d/state-at-end-event-transform.html = IMAGE
+
+BUGWK60351 DEBUG : http/tests/local/formdata/send-form-data-with-sliced-file.html = PASS CRASH
