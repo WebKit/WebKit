@@ -71,6 +71,7 @@ public:
     PassRefPtr<InjectedBundleNodeHandle> elementShadowRoot();
     PassRefPtr<InjectedBundleNodeHandle> elementEnsureShadowRoot();
     void elementRemoveShadowRoot();
+    String elementShadowPseudoId();
 
     PassRefPtr<WebFrame> documentFrame();
     PassRefPtr<WebFrame> htmlFrameElementContentFrame();

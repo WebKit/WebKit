@@ -75,6 +75,11 @@ using namespace JSC;
     return WebCore::markerTextForListItem(core(self));
 }
 
+- (NSString *)_shadowPseudoId
+{
+    return core(self)->shadowPseudoId();
+}
+
 - (JSValueRef)_shadowRoot:(JSContextRef)context
 {
     JSLock lock(SilenceAssertionsOnly);

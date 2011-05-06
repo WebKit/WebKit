@@ -416,6 +416,16 @@ CString DumpRenderTreeSupportGtk::markerTextForListItem(WebKitWebFrame* frame, J
     return WebCore::markerTextForListItem(element).utf8();
 }
 
+CString DumpRenderTreeSupportGtk::shadowPseudoId(JSContextRef context, JSValueRef nodeObject)
+{
+    JSC::ExecState* exec = toJS(context);
+    Element* element = toElement(toJS(exec, nodeObject));
+    if (!element)
+        return CString();
+
+    return element->shadowPseudoId().string().utf8();
+}
+
 unsigned int DumpRenderTreeSupportGtk::numberOfActiveAnimations(WebKitWebFrame* frame)
 {
     Frame* coreFrame = core(frame);

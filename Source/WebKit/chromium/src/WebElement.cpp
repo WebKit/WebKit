@@ -106,6 +106,11 @@ void WebElement::removeShadowRoot()
     unwrap<Element>()->removeShadowRoot();
 }
 
+WebString WebElement::shadowPseudoId() const
+{
+    return WebString(constUnwrap<Element>()->shadowPseudoId().string());
+}
+
 WebString WebElement::computeInheritedLanguage() const
 {
     return WebString(constUnwrap<Element>()->computeInheritedLanguage());

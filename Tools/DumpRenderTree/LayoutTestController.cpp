@@ -2086,6 +2086,16 @@ static JSValueRef setSerializeHTTPLoadsCallback(JSContextRef context, JSObjectRe
     return JSValueMakeUndefined(context);
 }
 
+static JSValueRef shadowPseudoIdCallback(JSContextRef context, JSObjectRef thisObject, JSObjectRef, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
+{
+    if (argumentCount < 1)
+        return JSValueMakeUndefined(context);
+
+    LayoutTestController* controller = static_cast<LayoutTestController*>(JSObjectGetPrivate(thisObject));
+
+    return JSValueMakeString(context, controller->shadowPseudoId(context, arguments[0]).get());
+}
+
 // Static Values
 
 static JSValueRef getGlobalFlagCallback(JSContextRef context, JSObjectRef thisObject, JSStringRef propertyName, JSValueRef* exception)
@@ -2330,6 +2340,7 @@ JSStaticFunction* LayoutTestController::staticFunctions()
         { "deleteLocalStorageForOrigin", deleteLocalStorageForOriginCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "originsWithLocalStorage", originsWithLocalStorageCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "setShouldPaintBrokenImage", setShouldPaintBrokenImageCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
+        { "shadowPseudoId", shadowPseudoIdCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { 0, 0, 0 }
     };
 

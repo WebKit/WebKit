@@ -253,6 +253,7 @@ public slots:
     QVariant shadowRoot(const QWebElement&);
     QVariant ensureShadowRoot(const QWebElement&);
     void removeShadowRoot(const QWebElement&);
+    QString shadowPseudoId(const QWebElement&);
 
     void evaluateScriptInIsolatedWorld(int worldID, const QString& script);
     bool isPageBoxVisible(int pageIndex);

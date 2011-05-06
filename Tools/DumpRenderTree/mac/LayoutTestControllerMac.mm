@@ -279,6 +279,16 @@ JSRetainPtr<JSStringRef> LayoutTestController::markerTextForListItem(JSContextRe
     return markerText;
 }
 
+JSRetainPtr<JSStringRef> LayoutTestController::shadowPseudoId(JSContextRef context, JSValueRef nodeObject) const
+{
+    DOMElement *element = [DOMElement _DOMElementFromJSContext:context value:nodeObject];
+    if (!element)
+        return JSRetainPtr<JSStringRef>();
+
+    JSRetainPtr<JSStringRef> shadowId(Adopt, JSStringCreateWithCFString((CFStringRef)[element _shadowPseudoId]));
+    return shadowId;
+}
+
 int LayoutTestController::pageNumberForElementById(JSStringRef id, float pageWidthInPixels, float pageHeightInPixels)
 {
     RetainPtr<CFStringRef> idCF(AdoptCF, JSStringCopyCFString(kCFAllocatorDefault, id));

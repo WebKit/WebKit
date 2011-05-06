@@ -423,6 +423,24 @@ void LayoutTestController::removeShadowRoot(JSValueRef element)
     WKBundleNodeHandleRemoveShadowRoot(domElement.get());
 }
 
+JSRetainPtr<JSStringRef> LayoutTestController::shadowPseudoId(JSValueRef element) const
+{
+    WKBundleFrameRef mainFrame = WKBundlePageGetMainFrame(InjectedBundle::shared().page()->page());
+    JSContextRef context = WKBundleFrameGetJavaScriptContext(mainFrame);
+
+    if (!element || !JSValueIsObject(context, element))
+        return 0;
+
+    WKRetainPtr<WKBundleNodeHandleRef> domElement = adoptWK(WKBundleNodeHandleCreate(context, const_cast<JSObjectRef>(element)));
+    if (!domElement)
+        return 0;
+
+    WKRetainPtr<WKStringRef> id(AdoptWK, WKBundleNodeHandleShadowPseudoId(domElement.get()));
+    if (WKStringIsEmpty(id.get()))
+        return 0;
+    return toJS(id);
+}
+
 void LayoutTestController::clearBackForwardList()
 {
     WKBundleBackForwardListClear(WKBundlePageGetBackForwardList(InjectedBundle::shared().page()->page()));

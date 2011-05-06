@@ -1160,6 +1160,18 @@ HRESULT STDMETHODCALLTYPE DOMElement::markerTextForListItem(
     return S_OK;
 }
 
+HRESULT STDMETHODCALLTYPE DOMElement::shadowPseudoId(
+    /* [retval][out] */ BSTR* result)
+{
+    if (!result)
+        return E_POINTER;
+
+    ASSERT(m_element);
+
+    *result = BString(m_element->shadowPseudoId().string()).release();
+    return S_OK;
+}
+
 // IDOMElementCSSInlineStyle --------------------------------------------------
 
 HRESULT STDMETHODCALLTYPE DOMElement::style( 

@@ -799,6 +799,11 @@ void LayoutTestController::removeShadowRoot(const QWebElement& element)
     DumpRenderTreeSupportQt::removeShadowRoot(element);
 }
 
+QString LayoutTestController::shadowPseudoId(const QWebElement& element)
+{
+    return DumpRenderTreeSupportQt::shadowPseudoId(element);
+}
+
 int LayoutTestController::numberOfPendingGeolocationPermissionRequests()
 {
     int pendingPermissionCount = 0;

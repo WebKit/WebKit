@@ -190,6 +190,14 @@ void InjectedBundleNodeHandle::elementRemoveShadowRoot()
     static_cast<Element*>(m_node.get())->removeShadowRoot();
 }
 
+String InjectedBundleNodeHandle::elementShadowPseudoId()
+{
+    if (!m_node->isElementNode())
+        return String();
+
+    return static_cast<Element*>(m_node.get())->shadowPseudoId();
+}
+
 PassRefPtr<WebFrame> InjectedBundleNodeHandle::documentFrame()
 {
     if (!m_node->isDocumentNode())

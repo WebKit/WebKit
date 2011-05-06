@@ -49,6 +49,7 @@ WK_EXPORT WKRect WKBundleNodeHandleGetElementBounds(WKBundleNodeHandleRef elemen
 WK_EXPORT WKBundleNodeHandleRef WKBundleNodeHandleCopyElementShadowRoot(WKBundleNodeHandleRef elementHandle);
 WK_EXPORT WKBundleNodeHandleRef WKBundleNodeHandleCopyElementEnsureShadowRoot(WKBundleNodeHandleRef elementHandle);
 WK_EXPORT void WKBundleNodeHandleRemoveShadowRoot(WKBundleNodeHandleRef elementHandle);
+WK_EXPORT WKStringRef WKBundleNodeHandleShadowPseudoId(WKBundleNodeHandleRef elementHandle);
 
 /* HTMLInputElement Specific Operations */
 WK_EXPORT void WKBundleNodeHandleSetHTMLInputElementValueForUser(WKBundleNodeHandleRef htmlInputElementHandle, WKStringRef value);

@@ -95,6 +95,7 @@ public:
     JSValueRef shadowRoot(JSValueRef element);
     JSValueRef ensureShadowRoot(JSValueRef element);
     void removeShadowRoot(JSValueRef element);
+    JSRetainPtr<JSStringRef> shadowPseudoId(JSValueRef) const;
 
     // Repaint testing.
     void testRepaint() { m_testRepaint = true; }

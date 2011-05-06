@@ -1,3 +1,14 @@
+2011-05-04  Philippe Normand  <pnormand@igalia.com>
+
+        Reviewed by Dimitri Glazkov.
+
+        Implement LayoutTestController::pseudoShadowId()
+        https://bugs.webkit.org/show_bug.cgi?id=60034
+
+        * WebCoreSupport/DumpRenderTreeSupportQt.cpp:
+        (DumpRenderTreeSupportQt::shadowPseudoId):
+        * WebCoreSupport/DumpRenderTreeSupportQt.h:
+
 2011-05-05  Prasanth Ullattil  <prasanth.ullattil@nokia.com>
 
         Reviewed by Simon Hausmann.

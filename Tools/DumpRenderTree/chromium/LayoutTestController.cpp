@@ -176,6 +176,7 @@ LayoutTestController::LayoutTestController(TestShell* shell)
     bindMethod("setXSSAuditorEnabled", &LayoutTestController::setXSSAuditorEnabled);
     bindMethod("setAsynchronousSpellCheckingEnabled", &LayoutTestController::setAsynchronousSpellCheckingEnabled);
     bindMethod("shadowRoot", &LayoutTestController::shadowRoot);
+    bindMethod("shadowPseudoId", &LayoutTestController::shadowPseudoId);
     bindMethod("showWebInspector", &LayoutTestController::showWebInspector);
     bindMethod("simulateDesktopNotificationClick", &LayoutTestController::simulateDesktopNotificationClick);
     bindMethod("suspendAnimations", &LayoutTestController::suspendAnimations);
@@ -708,6 +709,15 @@ void LayoutTestController::removeShadowRoot(const CppArgumentList& arguments, Cp
         return;
 
     element.removeShadowRoot();
+}
+
+void LayoutTestController::shadowPseudoId(const CppArgumentList& arguments, CppVariant* result)
+{
+    WebElement element;
+    if (!WebBindings::getElement(arguments[0].value.objectValue, &element))
+        result->setNull();
+    else
+        result->set(element.shadowPseudoId().utf8());
 }
 
 void LayoutTestController::showWebInspector(const CppArgumentList&, CppVariant* result)

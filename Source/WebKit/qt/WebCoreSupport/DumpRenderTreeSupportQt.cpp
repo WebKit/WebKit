@@ -1109,6 +1109,15 @@ void DumpRenderTreeSupportQt::removeShadowRoot(const QWebElement& element)
     webElement->removeShadowRoot();
 }
 
+QString DumpRenderTreeSupportQt::shadowPseudoId(const QWebElement& element)
+{
+    WebCore::Element* webElement = element.m_element;
+    QString pseudoId;
+    if (webElement)
+        pseudoId = webElement->shadowPseudoId().string();
+    return pseudoId;
+}
+
 // Provide a backward compatibility with previously exported private symbols as of QtWebKit 4.6 release
 
 void QWEBKIT_EXPORT qt_resumeActiveDOMObjects(QWebFrame* frame)

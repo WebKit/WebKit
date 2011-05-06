@@ -1,3 +1,18 @@
+2011-05-05  Philippe Normand  <pnormand@igalia.com>
+
+        Reviewed by Dimitri Glazkov.
+
+        Implement LayoutTestController::pseudoShadowId()
+        https://bugs.webkit.org/show_bug.cgi?id=60034
+
+        * WebProcess/InjectedBundle/API/c/WKBundleNodeHandle.cpp:
+        (WKBundleNodeHandleShadowPseudoId):
+        * WebProcess/InjectedBundle/API/c/WKBundleNodeHandlePrivate.h:
+        * WebProcess/InjectedBundle/DOM/InjectedBundleNodeHandle.cpp:
+        (WebKit::InjectedBundleNodeHandle::elementRemoveShadowRoot):
+        (WebKit::InjectedBundleNodeHandle::elementShadowPseudoId):
+        * WebProcess/InjectedBundle/DOM/InjectedBundleNodeHandle.h:
+
 2011-05-05  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Anders Carlsson.

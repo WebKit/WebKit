@@ -905,6 +905,16 @@ JSRetainPtr<JSStringRef> LayoutTestController::markerTextForListItem(JSContextRe
     return markerText;
 }
 
+JSRetainPtr<JSStringRef> LayoutTestController::shadowPseudoId(JSContextRef context, JSValueRef nodeObject) const
+{
+    CString id = DumpRenderTreeSupportGtk::shadowPseudoId(context, nodeObject);
+    if (id.isNull())
+        return 0;
+
+    JSRetainPtr<JSStringRef> result(Adopt, JSStringCreateWithUTF8CString(id.data()));
+    return result;
+}
+
 void LayoutTestController::authenticateSession(JSStringRef, JSStringRef, JSStringRef)
 {
 }

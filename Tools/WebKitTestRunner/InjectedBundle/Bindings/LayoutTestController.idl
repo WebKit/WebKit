@@ -66,6 +66,7 @@ module WTR {
         object shadowRoot(in object element);
         object ensureShadowRoot(in object element);
         void removeShadowRoot(in object element);
+        DOMString shadowPseudoId(in object element);
 
         // Repaint testing.
         void testRepaint();

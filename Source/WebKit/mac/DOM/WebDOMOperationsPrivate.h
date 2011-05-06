@@ -35,6 +35,7 @@
 - (JSValueRef)_shadowRoot:(JSContextRef)context;
 - (JSValueRef)_ensureShadowRoot:(JSContextRef)context;
 - (void)_removeShadowRoot;
+- (NSString *)_shadowPseudoId;
 @end
 
 @interface DOMDocument (WebDOMDocumentOperationsPrivate)

@@ -779,6 +779,9 @@ public:
     virtual HRESULT STDMETHODCALLTYPE markerTextForListItem(
         /* [retval][out] */ BSTR* markerText);
 
+    virtual HRESULT STDMETHODCALLTYPE shadowPseudoId(
+        /* [retval][out] */ BSTR* result);
+
     // IDOMElementCSSInlineStyle
     virtual HRESULT STDMETHODCALLTYPE style(
         /* [retval][out] */ IDOMCSSStyleDeclaration** result);

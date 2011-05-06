@@ -1,3 +1,37 @@
+2011-05-04  Philippe Normand  <pnormand@igalia.com>
+
+        Reviewed by Dimitri Glazkov.
+
+        Implement LayoutTestController::pseudoShadowId()
+        https://bugs.webkit.org/show_bug.cgi?id=60034
+
+        shadowPseudoId support in the various LayoutTestController
+        implementations.
+
+        * DumpRenderTree/LayoutTestController.cpp:
+        (shadowPseudoIdCallback):
+        (LayoutTestController::staticFunctions):
+        * DumpRenderTree/LayoutTestController.h:
+        * DumpRenderTree/chromium/LayoutTestController.cpp:
+        (LayoutTestController::LayoutTestController):
+        (LayoutTestController::shadowPseudoId):
+        * DumpRenderTree/chromium/LayoutTestController.h:
+        * DumpRenderTree/gtk/LayoutTestControllerGtk.cpp:
+        (LayoutTestController::shadowPseudoId):
+        * DumpRenderTree/mac/LayoutTestControllerMac.mm:
+        (LayoutTestController::shadowPseudoId):
+        * DumpRenderTree/qt/LayoutTestControllerQt.cpp:
+        (LayoutTestController::shadowPseudoId):
+        * DumpRenderTree/qt/LayoutTestControllerQt.h:
+        * DumpRenderTree/win/LayoutTestControllerWin.cpp:
+        (LayoutTestController::shadowPseudoId):
+        * DumpRenderTree/wx/LayoutTestControllerWx.cpp:
+        (LayoutTestController::shadowPseudoId):
+        * WebKitTestRunner/InjectedBundle/Bindings/LayoutTestController.idl:
+        * WebKitTestRunner/InjectedBundle/LayoutTestController.cpp:
+        (WTR::LayoutTestController::shadowPseudoId):
+        * WebKitTestRunner/InjectedBundle/LayoutTestController.h:
+
 2011-05-06  Adam Barth  <abarth@webkit.org>
 
         EWS can't reject patches

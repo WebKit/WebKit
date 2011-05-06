@@ -19,11 +19,15 @@
         waitForEvent('canplaythrough', function () {
             if (window.eventSender) {
                 // Find the play button and click the middle of its bounding box.
-                // This approach hard-codes the construction order of the media
-                // controls, which is ugly, but sadly is also currently the only
-                // way to do it.
-                // http://bugs.webkit.org/show_bug.cgi?id=58584 is tracking fixing that.
-                var playButton = layoutTestController.shadowRoot(video).firstChild.firstChild.children[1];
+                var playButton;
+                var controlsShadow = layoutTestController.shadowRoot(video).firstChild.firstChild;
+                for (child = controlsShadow.firstChild; child; child = child.nextSibling) {
+                     if (layoutTestController.shadowPseudoId(child) == "-webkit-media-controls-play-button") {
+                         playButton = child;
+                         break;
+                     }
+                }
+
                 if (!playButton) {
                     failTest("Failed to find play/pause button.");
                 }
