@@ -1,3 +1,13 @@
+2011-05-06  Philippe Normand  <pnormand@igalia.com>
+
+        Windows DRT needs an implementation of shadowRoot
+        https://bugs.webkit.org/show_bug.cgi?id=59081
+
+        Skip media/video-controls-visible-audio-only.html that now
+        requires shadowRoot support.
+
+        * platform/win/Skipped:
+
 2011-05-06  Joe Mason  <jmason@rim.com>
 
         Reviewed by Adam Barth.

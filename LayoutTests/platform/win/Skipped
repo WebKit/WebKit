@@ -1265,6 +1265,7 @@ fast/images/animated-gif-restored-from-bfcache.html
 fast/dom/shadow
 inspector/elements/shadow-dom.html
 media/audio-controls-do-not-fade-out.html
+media/video-controls-visible-audio-only.html
 
 # Causes the next test to fail http://webkit.org/b/59099
 http/tests/security/contentSecurityPolicy/frame-src-blocked.html
