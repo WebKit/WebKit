@@ -2,6 +2,102 @@
 
         Unreviewed.
 
+        Rebaselines for r85926.
+        https://bugs.webkit.org/show_bug.cgi?id=60356
+
+        * platform/chromium-linux/svg/W3C-SVG-1.1/filters-color-01-b-expected.png:
+        * platform/chromium-linux/svg/W3C-SVG-1.1/filters-comptran-01-b-expected.png:
+        * platform/chromium-linux/svg/W3C-SVG-1.1/filters-gauss-01-b-expected.png:
+        * platform/chromium-linux/svg/W3C-SVG-1.1/filters-morph-01-f-expected.png:
+        * platform/chromium-linux/svg/batik/filters/feTile-expected.png:
+        * platform/chromium-linux/svg/batik/filters/filterRegions-expected.png:
+        * platform/chromium-linux/svg/custom/feComponentTransfer-Discrete-expected.png:
+        * platform/chromium-linux/svg/custom/feComponentTransfer-Gamma-expected.png:
+        * platform/chromium-linux/svg/custom/feComponentTransfer-Linear-expected.png:
+        * platform/chromium-linux/svg/custom/feComponentTransfer-Table-expected.png:
+        * platform/chromium-linux/svg/dynamic-updates/SVGFEImageElement-dom-preserveAspectRatio-attr-expected.png:
+        * platform/chromium-linux/svg/dynamic-updates/SVGFEImageElement-svgdom-preserveAspectRatio-prop-expected.png:
+        * platform/chromium-linux/svg/filters/filter-on-tspan-expected.png:
+        * platform/chromium-linux/svg/filters/filterRes-expected.png: Added.
+        * platform/chromium-linux/svg/filters/subRegion-one-effect-expected.png:
+        * platform/chromium-linux/svg/filters/subRegion-two-effects-expected.png:
+        * platform/chromium-mac-leopard/svg/W3C-SVG-1.1-SE/filters-image-03-f-expected.png:
+        * platform/chromium-mac-leopard/svg/W3C-SVG-1.1/filters-color-01-b-expected.png:
+        * platform/chromium-mac-leopard/svg/W3C-SVG-1.1/filters-comptran-01-b-expected.png:
+        * platform/chromium-mac-leopard/svg/W3C-SVG-1.1/filters-gauss-01-b-expected.png: Added.
+        * platform/chromium-mac-leopard/svg/W3C-SVG-1.1/filters-morph-01-f-expected.png:
+        * platform/chromium-mac-leopard/svg/batik/filters: Added.
+        * platform/chromium-mac-leopard/svg/batik/filters/feTile-expected.png: Added.
+        * platform/chromium-mac-leopard/svg/batik/filters/filterRegions-expected.png: Added.
+        * platform/chromium-mac-leopard/svg/batik/text/textFeatures-expected.png: Added.
+        * platform/chromium-mac-leopard/svg/custom/feComponentTransfer-Discrete-expected.png:
+        * platform/chromium-mac-leopard/svg/custom/feComponentTransfer-Gamma-expected.png:
+        * platform/chromium-mac-leopard/svg/custom/feComponentTransfer-Linear-expected.png:
+        * platform/chromium-mac-leopard/svg/custom/feComponentTransfer-Table-expected.png:
+        * platform/chromium-mac-leopard/svg/dynamic-updates/SVGFEImageElement-dom-preserveAspectRatio-attr-expected.png:
+        * platform/chromium-mac-leopard/svg/dynamic-updates/SVGFEImageElement-svgdom-preserveAspectRatio-prop-expected.png:
+        * platform/chromium-mac-leopard/svg/filters/feGaussianBlur-expected.png: Added.
+        * platform/chromium-mac-leopard/svg/filters/feOffset-expected.png:
+        * platform/chromium-mac-leopard/svg/filters/feTile-expected.png: Added.
+        * platform/chromium-mac-leopard/svg/filters/filter-on-tspan-expected.png: Added.
+        * platform/chromium-mac-leopard/svg/filters/filter-rounding-issues-expected.png: Added.
+        * platform/chromium-mac-leopard/svg/filters/filterRes-expected.png:
+        * platform/chromium-mac/svg/W3C-SVG-1.1-SE/filters-image-03-f-expected.png:
+        * platform/chromium-mac/svg/W3C-SVG-1.1/filters-color-01-b-expected.png:
+        * platform/chromium-mac/svg/W3C-SVG-1.1/filters-comptran-01-b-expected.png: Added.
+        * platform/chromium-mac/svg/W3C-SVG-1.1/filters-gauss-01-b-expected.png: Added.
+        * platform/chromium-mac/svg/W3C-SVG-1.1/filters-morph-01-f-expected.png:
+        * platform/chromium-mac/svg/batik/filters/feTile-expected.png: Added.
+        * platform/chromium-mac/svg/batik/filters/filterRegions-expected.png: Added.
+        * platform/chromium-mac/svg/batik/text/textFeatures-expected.png: Added.
+        * platform/chromium-mac/svg/custom/feComponentTransfer-Discrete-expected.png:
+        * platform/chromium-mac/svg/custom/feComponentTransfer-Gamma-expected.png:
+        * platform/chromium-mac/svg/custom/feComponentTransfer-Linear-expected.png:
+        * platform/chromium-mac/svg/custom/feComponentTransfer-Table-expected.png:
+        * platform/chromium-mac/svg/dynamic-updates/SVGFEImageElement-dom-preserveAspectRatio-attr-expected.png:
+        * platform/chromium-mac/svg/dynamic-updates/SVGFEImageElement-svgdom-preserveAspectRatio-prop-expected.png:
+        * platform/chromium-mac/svg/filters/feGaussianBlur-expected.png: Added.
+        * platform/chromium-mac/svg/filters/feOffset-expected.png: Added.
+        * platform/chromium-mac/svg/filters/feTile-expected.png: Added.
+        * platform/chromium-mac/svg/filters/filter-on-tspan-expected.png: Added.
+        * platform/chromium-mac/svg/filters/filter-rounding-issues-expected.png: Added.
+        * platform/chromium-mac/svg/filters/filterRes-expected.png: Added.
+        * platform/chromium-mac/svg/filters/filterRes1-expected.png: Added.
+        * platform/chromium-mac/svg/filters/filterRes3-expected.png: Added.
+        * platform/chromium-mac/svg/filters/parent-children-with-same-filter-expected.png: Added.
+        * platform/chromium-mac/svg/filters/subRegion-one-effect-expected.png: Added.
+        * platform/chromium-mac/svg/filters/subRegion-two-effects-expected.png: Added.
+        * platform/chromium-win-vista/svg/batik/text/textFeatures-expected.png: Added.
+        * platform/chromium-win/svg/W3C-SVG-1.1/filters-color-01-b-expected.png:
+        * platform/chromium-win/svg/W3C-SVG-1.1/filters-comptran-01-b-expected.png:
+        * platform/chromium-win/svg/W3C-SVG-1.1/filters-gauss-01-b-expected.png:
+        * platform/chromium-win/svg/W3C-SVG-1.1/filters-morph-01-f-expected.png:
+        * platform/chromium-win/svg/batik/filters/feTile-expected.png:
+        * platform/chromium-win/svg/batik/filters/filterRegions-expected.png:
+        * platform/chromium-win/svg/batik/text/textFeatures-expected.png:
+        * platform/chromium-win/svg/custom/feComponentTransfer-Discrete-expected.png:
+        * platform/chromium-win/svg/custom/feComponentTransfer-Gamma-expected.png:
+        * platform/chromium-win/svg/custom/feComponentTransfer-Linear-expected.png:
+        * platform/chromium-win/svg/custom/feComponentTransfer-Table-expected.png:
+        * platform/chromium-win/svg/dynamic-updates/SVGFEImageElement-dom-preserveAspectRatio-attr-expected.png:
+        * platform/chromium-win/svg/dynamic-updates/SVGFEImageElement-svgdom-preserveAspectRatio-prop-expected.png:
+        * platform/chromium-win/svg/filters/feGaussianBlur-expected.png:
+        * platform/chromium-win/svg/filters/feOffset-expected.png:
+        * platform/chromium-win/svg/filters/feTile-expected.png:
+        * platform/chromium-win/svg/filters/filter-on-tspan-expected.png:
+        * platform/chromium-win/svg/filters/filter-rounding-issues-expected.png:
+        * platform/chromium-win/svg/filters/filterRes-expected.png: Added.
+        * platform/chromium-win/svg/filters/filterRes1-expected.png:
+        * platform/chromium-win/svg/filters/filterRes3-expected.png:
+        * platform/chromium-win/svg/filters/parent-children-with-same-filter-expected.png:
+        * platform/chromium-win/svg/filters/subRegion-one-effect-expected.png:
+        * platform/chromium-win/svg/filters/subRegion-two-effects-expected.png:
+        * platform/chromium/test_expectations.txt:
+
+2011-05-06  Abhishek Arya  <inferno@chromium.org>
+
+        Unreviewed.
+
         Chromium Rebaselines for r85964, r85971 and r85967.
 
         * platform/chromium-linux/fast/block/positioning/hiding-inside-relpositioned-inline-expected.png: Added.
