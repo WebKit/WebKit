@@ -266,9 +266,12 @@ class ChromiumXVFBPort(ChromiumPort):
 
     @classmethod
     def run_webkit_tests_command(cls):
-        # FIXME: We should find a better way to do this.
+        # FIXME: We should find a better way to do this. Some of these options
+        # are specific to new-run-webkit-tests and some of them are due to
+        # running in non-interactive mode.
         return ["xvfb-run"] + ChromiumPort.run_webkit_tests_command() + [
             "--results-directory=%s" % cls.results_directory,
+            "--skip-failing-tests",
             "--print=actual,config,expected,misc,slowest,unexpected,unexpected-results",
         ]
 
