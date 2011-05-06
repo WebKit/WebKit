@@ -201,11 +201,6 @@ static gboolean statusWillBeHandledBySoup(guint statusCode)
     return false;
 }
 
-static void fillResponseFromMessage(SoupMessage* msg, ResourceResponse* response)
-{
-    response->updateFromSoupMessage(msg);
-}
-
 // Called each time the message is going to be sent again except the first time.
 // It's used mostly to let webkit know about redirects.
 static void restartedCallback(SoupMessage* msg, gpointer data)
@@ -225,7 +220,7 @@ static void restartedCallback(SoupMessage* msg, gpointer data)
     ResourceResponse response;
     request.setURL(newURL);
     request.setHTTPMethod(msg->method);
-    fillResponseFromMessage(msg, &response);
+    response.updateFromSoupMessage(msg);
 
     // Should not set Referer after a redirect from a secure resource to non-secure one.
     if (!request.url().protocolIs("https") && protocolIs(request.httpReferrer(), "https")) {
@@ -290,7 +285,7 @@ static void gotHeadersCallback(SoupMessage* msg, gpointer data)
 
     ASSERT(d->m_response.isNull());
 
-    fillResponseFromMessage(msg, &d->m_response);
+    d->m_response.updateFromSoupMessage(msg);
     client->didReceiveResponse(handle.get(), d->m_response);
 }
 
@@ -350,7 +345,7 @@ static void contentSniffedCallback(SoupMessage* msg, const char* sniffedType, GH
         }
     }
 
-    fillResponseFromMessage(msg, &d->m_response);
+    d->m_response.updateFromSoupMessage(msg);
     client->didReceiveResponse(handle.get(), d->m_response);
 }
 
@@ -375,11 +370,6 @@ static void gotChunkCallback(SoupMessage* msg, SoupBuffer* chunk, gpointer data)
     // -1 means we do not provide any data about transfer size to inspector so it would use
     // Content-Length headers or content size to show transfer size.
     client->didReceiveData(handle.get(), chunk->data, chunk->length, -1);
-}
-
-static SoupSession* createSoupSession()
-{
-    return soup_session_async_new();
 }
 
 static void cleanupSoupRequestOperation(ResourceHandle* handle, bool isDestroying = false)
@@ -457,7 +447,7 @@ static void sendRequestCallback(GObject* source, GAsyncResult* res, gpointer use
         if (d->m_soupMessage && statusWillBeHandledBySoup(d->m_soupMessage->status_code)) {
             ASSERT(d->m_response.isNull());
 
-            fillResponseFromMessage(soupMsg, &d->m_response);
+            d->m_response.updateFromSoupMessage(soupMsg);
             client->didReceiveResponse(handle.get(), d->m_response);
 
             // WebCore might have cancelled the job in the while. We
@@ -848,8 +838,7 @@ static bool startNonHTTPRequest(ResourceHandle* handle, KURL url)
 
 SoupSession* ResourceHandle::defaultSession()
 {
-    static SoupSession* session = createSoupSession();
-
+    static SoupSession* session = soup_session_async_new();
     return session;
 }
 

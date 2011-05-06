@@ -2,6 +2,21 @@
 
         Reviewed by Xan Lopez.
 
+        Remove some unnecessary static methods in ResourceHandleSoup.
+
+        No new tests. This is only a small cleanup.
+
+        * platform/network/soup/ResourceHandleSoup.cpp:
+        (WebCore::restartedCallback): Call ResourceResponse::updateFromSoupMessage directly.
+        (WebCore::gotHeadersCallback):Ditto.
+        (WebCore::contentSniffedCallback):Ditto.
+        (WebCore::sendRequestCallback):Ditto.
+        (WebCore::ResourceHandle::defaultSession): Create the soup session directly.
+
+2011-05-06  Martin Robinson  <mrobinson@igalia.com>
+
+        Reviewed by Xan Lopez.
+
         [Soup] ResourceHandles are leaked on 304 responses
         https://bugs.webkit.org/show_bug.cgi?id=60413
 
