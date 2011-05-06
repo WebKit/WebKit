@@ -39,6 +39,9 @@
 #include <QPixmap>
 #include <QX11Info>
 #elif PLATFORM(GTK)
+#include "PlatformContextCairo.h"
+#include "RefPtrCairo.h"
+#include <cairo/cairo-xlib.h>
 #include <gdk/gdkx.h>
 #include <WebCore/GtkVersioning.h>
 #endif
@@ -213,7 +216,7 @@ void NetscapePlugin::platformPaint(GraphicsContext* context, const IntRect& dirt
 #if PLATFORM(QT)
     QPainter* painter = context->platformContext();
     painter->translate(m_frameRect.x(), m_frameRect.y());
-#else
+#elif !PLATFORM(GTK)
     notImplemented();
     return;
 #endif
@@ -247,6 +250,23 @@ void NetscapePlugin::platformPaint(GraphicsContext* context, const IntRect& dirt
     painter->drawPixmap(QPoint(exposedRect.x(), exposedRect.y()), qtDrawable, exposedRect);
 
     painter->translate(-m_frameRect.x(), -m_frameRect.y());
+#elif PLATFORM(GTK)
+    RefPtr<cairo_surface_t> drawableSurface = adoptRef(cairo_xlib_surface_create(m_pluginDisplay,
+                                                                                 m_drawable,
+                                                                                 static_cast<NPSetWindowCallbackStruct*>(m_npWindow.ws_info)->visual,
+                                                                                 m_frameRect.width(),
+                                                                                 m_frameRect.height()));
+    cairo_t* cr = context->platformContext()->cr();
+    cairo_save(cr);
+
+    cairo_set_source_surface(cr, drawableSurface.get(), m_frameRect.x(), m_frameRect.y());
+
+    cairo_rectangle(cr, m_frameRect.x() + exposedRect.x(), m_frameRect.y() + exposedRect.y(), exposedRect.width(), exposedRect.height());
+    cairo_clip(cr);
+    cairo_set_operator(cr, CAIRO_OPERATOR_SOURCE);
+    cairo_paint(cr);
+
+    cairo_restore(cr);
 #endif
 }
 
