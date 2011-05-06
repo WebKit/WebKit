@@ -1,3 +1,11 @@
+2011-05-06  Adam Roben  <aroben@apple.com>
+
+        Touch WebKit.idl to fix the build
+
+        I needed this on my own machine. Maybe others will need it, too.
+
+        * Interfaces/WebKit.idl:
+
 2011-05-04  Philippe Normand  <pnormand@igalia.com>
 
         Reviewed by Dimitri Glazkov.
