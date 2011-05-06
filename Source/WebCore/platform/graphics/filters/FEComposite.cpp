@@ -187,7 +187,7 @@ void FEComposite::determineAbsolutePaintRect()
     case FECOMPOSITE_OPERATOR_ARITHMETIC:
         // Arithmetic may influnce the compele filter primitive region. So we can't
         // optimize the paint region here.
-        setAbsolutePaintRect(maxEffectRect());
+        setAbsolutePaintRect(enclosingIntRect(maxEffectRect()));
         return;
     default:
         // Take the union of both input effects.

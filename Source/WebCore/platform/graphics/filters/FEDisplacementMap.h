@@ -53,7 +53,7 @@ public:
     virtual void apply();
     virtual void dump();
 
-    virtual void determineAbsolutePaintRect() { setAbsolutePaintRect(maxEffectRect()); }
+    virtual void determineAbsolutePaintRect() { setAbsolutePaintRect(enclosingIntRect(maxEffectRect())); }
 
     virtual TextStream& externalRepresentation(TextStream&, int indention) const;
 

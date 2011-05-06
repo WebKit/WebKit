@@ -32,6 +32,8 @@
 #include <wtf/RefPtr.h>
 #include <wtf/Vector.h>
 
+static const float kMaxFilterSize = 5000.0f;
+
 namespace WebCore {
 
 class Filter;
@@ -74,8 +76,8 @@ public:
     IntRect absolutePaintRect() const { return m_absolutePaintRect; }
     void setAbsolutePaintRect(const IntRect& absolutePaintRect) { m_absolutePaintRect = absolutePaintRect; }
 
-    IntRect maxEffectRect() const { return m_maxEffectRect; }
-    void setMaxEffectRect(const IntRect& maxEffectRect) { m_maxEffectRect = maxEffectRect; } 
+    FloatRect maxEffectRect() const { return m_maxEffectRect; }
+    void setMaxEffectRect(const FloatRect& maxEffectRect) { m_maxEffectRect = maxEffectRect; } 
 
     virtual void apply() = 0;
     virtual void dump() = 0;
@@ -128,7 +130,7 @@ private:
     
     // The maximum size of a filter primitive. In SVG this is the primitive subregion in absolute coordinate space.
     // The absolute paint rect should never be bigger than m_maxEffectRect.
-    IntRect m_maxEffectRect;
+    FloatRect m_maxEffectRect;
     Filter* m_filter;
 
 private:

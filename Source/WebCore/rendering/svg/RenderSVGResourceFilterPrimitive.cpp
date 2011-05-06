@@ -128,7 +128,7 @@ FloatRect RenderSVGResourceFilterPrimitive::determineFilterPrimitiveSubregion(Fi
     absoluteScaledFilterRegion.scale(filterResolution.width(), filterResolution.height());
     absoluteSubregion.intersect(absoluteScaledFilterRegion);
 
-    effect->setMaxEffectRect(enclosingIntRect(absoluteSubregion));
+    effect->setMaxEffectRect(absoluteSubregion);
     return subregion;
 }
 

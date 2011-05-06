@@ -27,6 +27,7 @@
 #include "RenderSVGResourceFilter.h"
 
 #include "AffineTransform.h"
+#include "FilterEffect.h"
 #include "FloatPoint.h"
 #include "FloatRect.h"
 #include "GraphicsContext.h"
@@ -47,8 +48,6 @@
 
 #include <wtf/UnusedParam.h>
 #include <wtf/Vector.h>
-
-static const float kMaxFilterSize = 5000.0f;
 
 using namespace std;
 
