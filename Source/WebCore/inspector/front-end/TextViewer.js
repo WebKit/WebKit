@@ -278,16 +278,16 @@ WebInspector.TextViewer.prototype = {
 
     _contextMenu: function(event)
     {
-        var selection = this._mainPanel._getSelection();
-        if (selection && !selection.isEmpty())
-            return; // Show default context menu for selection.
-
         var contextMenu = new WebInspector.ContextMenu();
         var target = event.target.enclosingNodeOrSelfWithClass("webkit-line-number");
         if (target)
             this._delegate.populateLineGutterContextMenu(target.lineNumber, contextMenu);
-        else
+        else {
+            var selection = this._mainPanel._getSelection();
+            if (selection && !selection.isEmpty())
+                return; // Show default context menu for selection.
             this._delegate.populateTextAreaContextMenu(contextMenu);
+        }
 
         var fileName = this._delegate.suggestedFileName();
         if (fileName)

@@ -1,3 +1,10 @@
+2011-05-06  Pavel Feldman  <pfeldman@chromium.org>
+
+        Not reviewed: move selection test into the text area branch.
+
+        * inspector/front-end/TextViewer.js:
+        (WebInspector.TextViewer.prototype._contextMenu):
+
 2011-05-04  Adrienne Walker  <enne@google.com>
 
         Reviewed by James Robinson.
