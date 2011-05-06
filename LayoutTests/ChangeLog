@@ -1,3 +1,14 @@
+2011-05-05  Evan Martin  <evan@chromium.org>
+
+        Unreviewed, just skipping a test.
+
+        New test fast/events/backspace-nagivates-back fails on Qt
+        https://bugs.webkit.org/show_bug.cgi?id=60311
+
+        Skip this test until Antonoi has time to look at it.
+
+        * platform/qt-linux/Skipped:
+
 2011-05-05  Jer Noble  <jer.noble@apple.com>
 
         Unreviewed, partial rollout of r85843 and r85824.  r85897 made these expected results unnecessary.
