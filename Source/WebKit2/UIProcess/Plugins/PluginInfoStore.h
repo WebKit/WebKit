@@ -40,12 +40,6 @@ class PluginInfoStore {
 public:
     PluginInfoStore();
 
-    void setAdditionalPluginsDirectories(const Vector<String>&);
-
-    void refresh();
-    void getPlugins(Vector<WebCore::PluginInfo>&);
-    void getPluginPaths(Vector<String>&);
-
     // Represents a single plug-in.
     struct Plugin {
         String path;
@@ -59,7 +53,10 @@ public:
 #endif
     };
 
-    const Vector<Plugin>& plugins();
+    void setAdditionalPluginsDirectories(const Vector<String>&);
+
+    void refresh();
+    Vector<Plugin> plugins();
 
     // Returns the info for a plug-in that can handle the given MIME type.
     // If the MIME type is null, the file extension of the given url will be used to infer the

@@ -107,27 +107,13 @@ void PluginInfoStore::loadPlugin(Vector<Plugin>& plugins, const String& pluginPa
     plugins.append(plugin);
 }
 
-void PluginInfoStore::getPlugins(Vector<PluginInfo>& plugins)
+Vector<PluginInfoStore::Plugin> PluginInfoStore::plugins()
 {
     loadPluginsIfNecessary();
 
-    for (size_t i = 0; i < m_plugins.size(); ++i)
-        plugins.append(m_plugins[i].info);
-}
+    Vector<Plugin> plugins(m_plugins);
 
-void PluginInfoStore::getPluginPaths(Vector<String>& pluginPaths)
-{
-    loadPluginsIfNecessary();
-    
-    for (size_t i = 0; i < m_plugins.size(); ++i)
-        pluginPaths.append(m_plugins[i].path);
-}
-
-const Vector<PluginInfoStore::Plugin>& PluginInfoStore::plugins()
-{
-    loadPluginsIfNecessary();
-
-    return m_plugins;
+    return plugins;
 }
 
 PluginInfoStore::Plugin PluginInfoStore::findPluginForMIMEType(const String& mimeType)

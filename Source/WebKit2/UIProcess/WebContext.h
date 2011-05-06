@@ -105,7 +105,7 @@ public:
     
     void setAdditionalPluginsDirectory(const String&);
 
-    PluginInfoStore* pluginInfoStore() { return &m_pluginInfoStore; }
+    PluginInfoStore& pluginInfoStore() { return m_pluginInfoStore; }
     String applicationCacheDirectory();
 
     void setAlwaysUsesComplexTextCodePath(bool);
@@ -190,7 +190,7 @@ private:
     void didUpdateHistoryTitle(uint64_t pageID, const String& title, const String& url, uint64_t frameID);
 
     // Plugins
-    void getPlugins(bool refresh, Vector<WebCore::PluginInfo>& plugins);
+    void getPlugins(bool refresh, Vector<WebCore::PluginInfo>&);
     void getPluginPath(const String& mimeType, const String& urlString, String& pluginPath);
 #if !ENABLE(PLUGIN_PROCESS)
     void didGetSitesWithPluginData(const Vector<String>& sites, uint64_t callbackID);

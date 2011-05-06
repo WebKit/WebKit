@@ -1,5 +1,36 @@
 2011-05-06  Anders Carlsson  <andersca@apple.com>
 
+        Reviewed by Dan Bernstein.
+
+        Simplify the PluginInfoStore interface
+        https://bugs.webkit.org/show_bug.cgi?id=60406
+
+        Just expose a single API for getting a list of plug-ins from the info store,
+        PluginInfoStore::plugins and remove PluginInfoStore::getPlugins and PluginInfoStore::getPluginPaths.
+
+        Also, change the WebContext::pluginInfoStore() getter to return a reference.
+
+        * UIProcess/Plugins/PluginInfoStore.cpp:
+        (WebKit::PluginInfoStore::plugins):
+        * UIProcess/Plugins/PluginInfoStore.h:
+        * UIProcess/Plugins/PluginProcessManager.cpp:
+        (WebKit::PluginProcessManager::getPluginProcessConnection):
+        * UIProcess/Plugins/PluginProcessManager.h:
+        * UIProcess/Plugins/WebPluginSiteDataManager.cpp:
+        (WebKit::WebPluginSiteDataManager::GetSitesWithDataState::GetSitesWithDataState):
+        (WebKit::WebPluginSiteDataManager::ClearSiteDataState::ClearSiteDataState):
+        (WebKit::WebPluginSiteDataManager::getSitesWithData):
+        (WebKit::WebPluginSiteDataManager::clearSiteData):
+        * UIProcess/WebContext.cpp:
+        (WebKit::WebContext::getPlugins):
+        (WebKit::WebContext::getPluginPath):
+        * UIProcess/WebContext.h:
+        (WebKit::WebContext::pluginInfoStore):
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::canShowMIMEType):
+
+2011-05-06  Anders Carlsson  <andersca@apple.com>
+
         Windows build fix.
 
         * UIProcess/Plugins/win/PluginInfoStoreWin.cpp:

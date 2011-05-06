@@ -50,7 +50,7 @@ class PluginProcessManager {
 public:
     static PluginProcessManager& shared();
 
-    void getPluginProcessConnection(PluginInfoStore*, const String& pluginPath, PassRefPtr<Messages::WebProcessProxy::GetPluginProcessConnection::DelayedReply>);
+    void getPluginProcessConnection(PluginInfoStore&, const String& pluginPath, PassRefPtr<Messages::WebProcessProxy::GetPluginProcessConnection::DelayedReply>);
     void removePluginProcessProxy(PluginProcessProxy*);
 
     void getSitesWithData(const PluginInfoStore::Plugin&, WebPluginSiteDataManager*, uint64_t callbackID);

@@ -515,18 +515,21 @@ void WebContext::addVisitedLinkHash(LinkHash linkHash)
     m_visitedLinkProvider.addVisitedLink(linkHash);
 }
 
-void WebContext::getPlugins(bool refresh, Vector<PluginInfo>& plugins)
+void WebContext::getPlugins(bool refresh, Vector<PluginInfo>& pluginInfos)
 {
     if (refresh)
-        pluginInfoStore()->refresh();
-    pluginInfoStore()->getPlugins(plugins);
+        m_pluginInfoStore.refresh();
+
+    Vector<PluginInfoStore::Plugin> plugins = m_pluginInfoStore.plugins();
+    for (size_t i = 0; i < plugins.size(); ++i)
+        pluginInfos.append(plugins[i].info);
 }
 
 void WebContext::getPluginPath(const String& mimeType, const String& urlString, String& pluginPath)
 {
     String newMimeType = mimeType.lower();
 
-    PluginInfoStore::Plugin plugin = pluginInfoStore()->findPlugin(newMimeType, KURL(ParsedURLString, urlString));
+    PluginInfoStore::Plugin plugin = pluginInfoStore().findPlugin(newMimeType, KURL(ParsedURLString, urlString));
     if (!plugin.path)
         return;
 

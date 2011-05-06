@@ -41,7 +41,7 @@ public:
     explicit GetSitesWithDataState(WebPluginSiteDataManager* webPluginSiteDataManager, uint64_t callbackID)
         : m_webPluginSiteDataManager(webPluginSiteDataManager)
         , m_callbackID(callbackID)
-        , m_plugins(webPluginSiteDataManager->m_webContext->pluginInfoStore()->plugins())
+        , m_plugins(webPluginSiteDataManager->m_webContext->pluginInfoStore().plugins())
     {
     }
 
@@ -82,7 +82,7 @@ public:
         , m_flags(flags)
         , m_maxAgeInSeconds(maxAgeInSeconds)
         , m_callbackID(callbackID)
-        , m_plugins(webPluginSiteDataManager->m_webContext->pluginInfoStore()->plugins())
+        , m_plugins(webPluginSiteDataManager->m_webContext->pluginInfoStore().plugins())
     {
     }
 
@@ -165,8 +165,10 @@ void WebPluginSiteDataManager::getSitesWithData(PassRefPtr<ArrayCallback> prpCal
 #else
     m_webContext->relaunchProcessIfNecessary();
 
+    Vector<PluginInfoStore::Plugin> plugins = m_webContext->pluginInfoStore().plugins();
     Vector<String> pluginPaths;
-    m_webContext->pluginInfoStore()->getPluginPaths(pluginPaths);
+    for (size_t i = 0; i < plugins.size(); ++i)
+        pluginPaths.append(plugins[i].path);
 
     // FIXME (Multi-WebProcess): When multi-process is enabled, we must always use a plug-in process for this,
     // so this code should just be removed.
@@ -224,10 +226,12 @@ void WebPluginSiteDataManager::clearSiteData(ImmutableArray* sites, uint64_t fla
     m_pendingClearSiteData.set(callbackID, state);
     state->clearSiteDataForNextPlugin();
 #else
-
     m_webContext->relaunchProcessIfNecessary();
+
+    Vector<PluginInfoStore::Plugin> plugins = m_webContext->pluginInfoStore().plugins();
     Vector<String> pluginPaths;
-    m_webContext->pluginInfoStore()->getPluginPaths(pluginPaths);
+    for (size_t i = 0; i < plugins.size(); ++i)
+        pluginPaths.append(plugins[i].path);
 
     // FIXME (Multi-WebProcess): When multi-process is enabled, we must always use a plug-in process for this,
     // so this code should just be removed.
