@@ -4049,6 +4049,9 @@ BUG_HCLAM MAC GPU : compositing/tiling/huge-layer-img.html = FAIL
 
 BUGWK60079 LINUX : platform/chromium-linux/fast/text/international/complex-joining-using-gpos.html = IMAGE
 
+// Flaky
+BUGWK60344 MAC DEBUG : fast/css/counters/complex-before.html = PASS CRASH
+
 // Since http://trac.webkit.org/changeset/85788
 BUGWK60237 DEBUG : svg/text/text-block-child-crash.xhtml = PASS CRASH
 

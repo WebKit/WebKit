@@ -1,3 +1,9 @@
+2011-05-05  MORITA Hajime  <morrita@google.com>
+
+        Unreviewed flakiness marking.
+
+        * platform/chromium/test_expectations.txt:
+
 2011-05-05  MORITA Hajime <morrita@google.com>
 
         Unreviewed attempt to error fix on test_expectations.txt.
