@@ -1,3 +1,23 @@
+2011-05-03  Philippe Normand  <pnormand@igalia.com>
+
+        Reviewed by Martin Robinson.
+
+        Layout tests shouldn't have to hard code media controller element locations
+        https://bugs.webkit.org/show_bug.cgi?id=28220
+
+        New mediaControlsButtonCoordinates() function to get the middle
+        coordinates of a media controls button. This avoids hardcoding
+        positions in the tests.
+
+        Also unskipped the affected GTK media tests now passing.
+
+        * media/audio-delete-while-step-button-clicked.html:
+        * media/video-controls-transformed.html:
+        * media/video-controls-zoomed.html:
+        * media/video-test.js:
+        (mediaControlsButtonCoordinates):
+        * platform/gtk/Skipped:
+
 2011-05-06  MORITA Hajime  <morrita@google.com>
 
         Unreviewed flakiness marking. (send-form-data-with-sliced-file.html)

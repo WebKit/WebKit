@@ -6,6 +6,7 @@
             #mouse-parking:hover { padding:8; background-color: blue; }
         </style>
         <script src=media-file.js></script>
+        <script src=video-test.js></script>
         <script>
             if (window.layoutTestController) {
                 layoutTestController.dumpAsText();
@@ -31,15 +32,16 @@
             function start()
             {
                 video = document.getElementById("no-video-media");
-                var left = video.offsetLeft;
-                var bottom = video.offsetTop + video.offsetHeight;
 
                 testcondition("video.paused");
                 if (!window.layoutTestController)
                     return;
 
                 // start playback
-                eventSender.mouseMoveTo(left + 8, bottom - 8);
+                var playCoords = mediaControlsButtonCoordinates(video, "play-button");
+                var clickX = playCoords[0];
+                var clickY = playCoords[1];
+                eventSender.mouseMoveTo(clickX, clickY);
                 eventSender.mouseDown();
                 eventSender.mouseUp();
                 testcondition("!video.paused");

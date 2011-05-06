@@ -12,14 +12,28 @@
     {
       window.setTimeout(function() {
         document.documentElement.style.zoom = '150%';
-        if (window.eventSender) 
+        video.addEventListener("playing", function() {
+            testExpected("video.paused", false);
+            endTest();
+        });
+
+        if (window.eventSender)
         {
-            eventSender.mouseMoveTo(120,432); // over play button
+            // Find the play button and click the middle of its bounding box.
+            var playCoords = mediaControlsButtonCoordinates(video, "play-button");
+            var clickX = playCoords[0];
+            var clickY = playCoords[1];
+
+            // Apply the page zoom value to the coordinates because
+            // getBoundingClientRect() used in
+            // mediaControlsButtonCoordinates() doesn't do it.
+            clickX = clickX * 1.5;
+            clickY = clickY * 1.5;
+
+            eventSender.mouseMoveTo(clickX, clickY);
             eventSender.mouseDown();
             eventSender.mouseUp();
         }
-        testExpected("video.paused", false);
-        endTest();
       }, 50);
     }
   </script>

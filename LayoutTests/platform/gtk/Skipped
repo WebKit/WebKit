@@ -564,7 +564,6 @@ http/tests/xmlhttprequest/xmlhttprequest-contenttype-empty.html
 
 # Tests in media/ directory
 #   Tests failing
-media/video-controls-zoomed.html
 media/video-size-intrinsic-scale.html
 media/video-seek-past-end-playing.html
 # https://bugs.webkit.org/show_bug.cgi?id=30198
@@ -639,9 +638,6 @@ editing/selection/move-left-right.html
 # Probably related to https://bugs.webkit.org/show_bug.cgi?id=27637
 http/tests/security/mixedContent/insecure-plugin-in-iframe.html
 http/tests/loading/basic-auth-resend-wrong-credentials.html 
-
-# https://bugs.webkit.org/show_bug.cgi?id=30680
-media/audio-delete-while-step-button-clicked.html
 
 # https://bugs.webkit.org/show_bug.cgi?id=30620
 fast/xsl/sort-locale.xml

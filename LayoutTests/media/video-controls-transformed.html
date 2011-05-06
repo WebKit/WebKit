@@ -19,21 +19,9 @@
         waitForEvent('canplaythrough', function () {
             if (window.eventSender) {
                 // Find the play button and click the middle of its bounding box.
-                var playButton;
-                var controlsShadow = layoutTestController.shadowRoot(video).firstChild.firstChild;
-                for (child = controlsShadow.firstChild; child; child = child.nextSibling) {
-                     if (layoutTestController.shadowPseudoId(child) == "-webkit-media-controls-play-button") {
-                         playButton = child;
-                         break;
-                     }
-                }
-
-                if (!playButton) {
-                    failTest("Failed to find play/pause button.");
-                }
-                var playButtonBoundingRect = playButton.getBoundingClientRect();
-                var clickX = playButtonBoundingRect.left + playButtonBoundingRect.width / 2;
-                var clickY = playButtonBoundingRect.top + playButtonBoundingRect.height / 2;
+                var playCoords = mediaControlsButtonCoordinates(video, "play-button");
+                var clickX = playCoords[0];
+                var clickY = playCoords[1];
                 eventSender.mouseMoveTo(clickX, clickY);
                 eventSender.mouseDown();
                 eventSender.mouseUp();
