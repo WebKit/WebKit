@@ -1,3 +1,16 @@
+2011-05-06  Martin Robinson  <mrobinson@igalia.com>
+
+        Reviewed by Xan Lopez.
+
+        [GTK] [WebKit2] WebView::windowToScreen needs an implementation
+        https://bugs.webkit.org/show_bug.cgi?id=55960
+
+        Add an implementation of PageClient::windowToScreen for GTK+ WebKit2 using
+        the newly abstracted widget to screen coordinate translation code in WebCore.
+
+        * UIProcess/API/gtk/PageClientImpl.cpp:
+        (WebKit::PageClientImpl::windowToScreen): Added implementation.
+
 2011-05-06  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Dan Bernstein.

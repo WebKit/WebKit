@@ -37,6 +37,7 @@
 #include "WebEventFactory.h"
 #include "WebKitWebViewBasePrivate.h"
 #include "WebPageProxy.h"
+#include <WebCore/GtkUtilities.h>
 #include <wtf/text/WTFString.h>
 
 typedef HashMap<int, const char*> IntConstCharHashMap;
@@ -412,8 +413,7 @@ FloatRect PageClientImpl::convertToUserSpace(const FloatRect& viewRect)
 
 IntRect PageClientImpl::windowToScreen(const IntRect& rect)
 {
-    notImplemented();
-    return IntRect();
+    return convertWidgetRectToScreenRect(m_viewWidget, rect);
 }
 
 void PageClientImpl::doneWithKeyEvent(const NativeWebKeyboardEvent&, bool wasEventHandled)

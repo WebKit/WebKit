@@ -2,6 +2,22 @@
 
         Reviewed by Xan Lopez.
 
+        [GTK] [WebKit2] WebView::windowToScreen needs an implementation
+        https://bugs.webkit.org/show_bug.cgi?id=55960
+
+        Abstract coordinate system translation code from WebKit into WebCore.
+        This will allow the code to be shared between WebKit and WebKit2. The code
+        now lives in a new GtkUtilities.cpp helper file.
+
+        * GNUmakefile.list.am: Added GtkUtilities to the source list.
+        * platform/gtk/GtkUtilities.cpp: Added.
+        (WebCore::convertWidgetRectToScreenRect):
+        * platform/gtk/GtkUtilities.h: Added.
+
+2011-05-06  Martin Robinson  <mrobinson@igalia.com>
+
+        Reviewed by Xan Lopez.
+
         Remove some unnecessary static methods in ResourceHandleSoup.
 
         No new tests. This is only a small cleanup.

@@ -33,6 +33,7 @@
 #include "FloatRect.h"
 #include "FrameLoadRequest.h"
 #include "FrameView.h"
+#include "GtkUtilities.h"
 #include "GtkVersioning.h"
 #include "HTMLNames.h"
 #include "HitTestResult.h"
@@ -450,37 +451,17 @@ void ChromeClient::scroll(const IntSize& delta, const IntRect& rectToScroll, con
 #endif
 }
 
-// FIXME: this does not take into account the WM decorations
-static IntPoint widgetScreenPosition(GtkWidget* widget)
-{
-    GtkWidget* window = gtk_widget_get_toplevel(widget);
-    int widgetX = 0, widgetY = 0;
-
-    gtk_widget_translate_coordinates(widget, window, 0, 0, &widgetX, &widgetY);
-
-    IntPoint result(widgetX, widgetY);
-    int originX, originY;
-    gdk_window_get_origin(gtk_widget_get_window(window), &originX, &originY);
-    result.move(originX, originY);
-
-    return result;
-}
-
 IntRect ChromeClient::windowToScreen(const IntRect& rect) const
 {
-    IntRect result(rect);
-    IntPoint screenPosition = widgetScreenPosition(GTK_WIDGET(m_webView));
-    result.move(screenPosition.x(), screenPosition.y());
-
-    return result;
+    return convertWidgetRectToScreenRect(GTK_WIDGET(m_webView), rect);
 }
 
 IntPoint ChromeClient::screenToWindow(const IntPoint& point) const
 {
+    IntPoint widgetPositionOnScreen = convertWidgetRectToScreenRect(GTK_WIDGET(m_webView),
+                                                                    IntRect(IntPoint(), IntSize())).location();
     IntPoint result(point);
-    IntPoint screenPosition = widgetScreenPosition(GTK_WIDGET(m_webView));
-    result.move(-screenPosition.x(), -screenPosition.y());
-
+    result.move(-widgetPositionOnScreen.x(), -widgetPositionOnScreen.y());
     return result;
 }
 

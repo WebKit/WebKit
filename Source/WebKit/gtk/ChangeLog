@@ -1,3 +1,17 @@
+2011-05-06  Martin Robinson  <mrobinson@igalia.com>
+
+        Reviewed by Xan Lopez.
+
+        [GTK] [WebKit2] WebView::windowToScreen needs an implementation
+        https://bugs.webkit.org/show_bug.cgi?id=55960
+
+        Abstract the code to translate from widget space to screen space into
+        a helper method in WebCore.
+
+        * WebCoreSupport/ChromeClientGtk.cpp: Use the new helper method from GtkUtilities.
+        (WebKit::ChromeClient::windowToScreen):
+        (WebKit::ChromeClient::screenToWindow):
+
 2011-05-04  Philippe Normand  <pnormand@igalia.com>
 
         Reviewed by Dimitri Glazkov.
