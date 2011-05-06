@@ -1618,8 +1618,8 @@ bool GraphicsLayerCA::createTransformAnimationsFromKeyframes(const KeyframeValue
 
         bool additive;
 #if !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOW_LEOPARD) && !PLATFORM(WIN)
-        // Old vertsions of Core Animation apply animations in reverse order (<rdar://problem/7095638>) so we need the last one we add (per property)
-        // to be non-additive. For binary compatibility, the current version of Core Animation preserves this behaviors for applications linked
+        // Old versions of Core Animation apply animations in reverse order (<rdar://problem/7095638>) so we need the last one we add (per property)
+        // to be non-additive. For binary compatibility, the current version of Core Animation preserves this behavior for applications linked
         // on or before Snow Leopard.
         // FIXME: This fix has not been added to QuartzCore on Windows yet (<rdar://problem/9112233>) so we expect the
         // reversed animation behavior
