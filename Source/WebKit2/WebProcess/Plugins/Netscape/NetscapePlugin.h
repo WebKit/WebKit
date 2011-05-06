@@ -129,6 +129,7 @@ private:
     void platformDestroy();
     bool platformInvalidate(const WebCore::IntRect&);
     void platformGeometryDidChange();
+    void platformVisibilityDidChange();
     void platformPaint(WebCore::GraphicsContext*, const WebCore::IntRect& dirtyRect, bool isSnapshot = false);
 
     bool platformHandleMouseEvent(const WebMouseEvent&);
@@ -148,6 +149,7 @@ private:
 #endif
     virtual bool isTransparent();
     virtual void geometryDidChange(const WebCore::IntRect& frameRect, const WebCore::IntRect& clipRect);
+    virtual void visibilityDidChange();
     virtual void frameDidFinishLoading(uint64_t requestID);
     virtual void frameDidFail(uint64_t requestID, bool wasCancelled);
     virtual void didEvaluateJavaScript(uint64_t requestID, const String& requestURLString, const String& result);
@@ -187,6 +189,7 @@ private:
 
 #if PLUGIN_ARCHITECTURE(WIN)
     static BOOL WINAPI hookedTrackPopupMenu(HMENU, UINT uFlags, int x, int y, int nReserved, HWND, const RECT*);
+    void scheduleWindowedGeometryUpdate();
 #endif
 
     PluginController* m_pluginController;

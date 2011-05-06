@@ -40,6 +40,7 @@
 #include "WebCoreArgumentCoders.h"
 #include "WebProcessConnection.h"
 #include <WebCore/GraphicsContext.h>
+#include <WebCore/NotImplemented.h>
 #include <wtf/text/WTFString.h>
 
 using namespace WebCore;
@@ -178,6 +179,13 @@ void PluginControllerProxy::startPaintTimer()
     m_paintTimer.startOneShot(0);
 
     m_waitingForDidUpdate = true;
+}
+
+bool PluginControllerProxy::isPluginVisible()
+{
+    // FIXME: Implement this.
+    notImplemented();
+    return false;
 }
 
 void PluginControllerProxy::invalidate(const IntRect& rect)

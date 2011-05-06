@@ -145,6 +145,19 @@ void NetscapePlugin::platformGeometryDidChange()
     if (!m_isWindowed)
         return;
 
+    scheduleWindowedGeometryUpdate();
+}
+
+void NetscapePlugin::platformVisibilityDidChange()
+{
+    if (!m_isWindowed)
+        return;
+
+    scheduleWindowedGeometryUpdate();
+}
+
+void NetscapePlugin::scheduleWindowedGeometryUpdate()
+{
     IntRect clipRectInPluginWindowCoordinates = m_clipRect;
     clipRectInPluginWindowCoordinates.move(-m_frameRect.x(), -m_frameRect.y());
 
@@ -154,6 +167,7 @@ void NetscapePlugin::platformGeometryDidChange()
 
     WindowGeometry geometry;
     geometry.window = m_window;
+    geometry.visible = m_pluginController->isPluginVisible();
     geometry.frame = m_frameRect;
     geometry.clipRect = clipRectInPluginWindowCoordinates;
 

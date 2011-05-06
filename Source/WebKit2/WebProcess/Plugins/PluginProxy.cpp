@@ -42,6 +42,7 @@
 #include "WebProcess.h"
 #include "WebProcessConnectionMessages.h"
 #include <WebCore/GraphicsContext.h>
+#include <WebCore/NotImplemented.h>
 
 using namespace WebCore;
 
@@ -210,6 +211,12 @@ void PluginProxy::geometryDidChange(const IntRect& frameRect, const IntRect& cli
     }
 
     m_connection->connection()->send(Messages::PluginControllerProxy::GeometryDidChange(frameRect, clipRect, pluginBackingStoreHandle), m_pluginInstanceID, CoreIPC::DispatchMessageEvenWhenWaitingForSyncReply);
+}
+
+void PluginProxy::visibilityDidChange()
+{
+    ASSERT(m_isStarted);
+    notImplemented();
 }
 
 void PluginProxy::frameDidFinishLoading(uint64_t requestID)

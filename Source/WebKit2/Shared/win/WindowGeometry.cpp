@@ -32,12 +32,14 @@ namespace WebKit {
 
 WindowGeometry::WindowGeometry()
     : window(0)
+    , visible(false)
 {
 }
 
 void WindowGeometry::encode(CoreIPC::ArgumentEncoder* encoder) const
 {
     encoder->encodeUInt64(reinterpret_cast<uint64_t>(window));
+    encoder->encode(visible);
     encoder->encode(frame);
     encoder->encode(clipRect);
 }
@@ -49,6 +51,9 @@ bool WindowGeometry::decode(CoreIPC::ArgumentDecoder* decoder, WindowGeometry& g
         return false;
 
     geometry.window = reinterpret_cast<HWND>(window);
+
+    if (!decoder->decode(geometry.visible))
+        return false;
 
     if (!decoder->decode(geometry.frame))
         return false;

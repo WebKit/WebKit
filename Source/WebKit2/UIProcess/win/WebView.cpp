@@ -1559,7 +1559,13 @@ void WebView::updateChildWindowGeometries()
         if (!::IsWindow(geometry.window))
             continue;
 
-        deferWindowPos = ::DeferWindowPos(deferWindowPos, geometry.window, 0, geometry.frame.x(), geometry.frame.y(), geometry.frame.width(), geometry.frame.height(), SWP_SHOWWINDOW | SWP_NOACTIVATE | SWP_NOOWNERZORDER | SWP_NOZORDER);
+        UINT flags = SWP_NOACTIVATE | SWP_NOOWNERZORDER | SWP_NOZORDER;
+        if (geometry.visible)
+            flags |= SWP_SHOWWINDOW;
+        else
+            flags |= SWP_HIDEWINDOW;
+
+        deferWindowPos = ::DeferWindowPos(deferWindowPos, geometry.window, 0, geometry.frame.x(), geometry.frame.y(), geometry.frame.width(), geometry.frame.height(), flags);
 
         setWindowRegion(geometry.window, adoptPtr(::CreateRectRgn(geometry.clipRect.x(), geometry.clipRect.y(), geometry.clipRect.maxX(), geometry.clipRect.maxY())));
     }

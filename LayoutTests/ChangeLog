@@ -1,3 +1,21 @@
+2011-05-06  Adam Roben  <aroben@apple.com>
+
+        Add a test that shows that windowed plugins with visibility:hidden do not appear on screen
+
+        I could only figure out how to make this a pixel test. Note that the pixel test doesn't pass
+        in WebKit2 due to <http://webkit.org/b/58050>, but I verified it works correctly in
+        MiniBrowser.
+
+        Test for <http://webkit.org/b/60285> REGRESSION (WebKit2): A white rectangle covers up
+        important UI elements when composing a new message at mail.yahoo.com with BrowserPlus!
+        plug-in installed
+
+        Reviewed by Anders Carlsson.
+
+        * platform/win/plugins/visibility-hidden-expected.png: Added.
+        * platform/win/plugins/visibility-hidden-expected.txt: Added.
+        * platform/win/plugins/visibility-hidden.html: Added.
+
 2011-05-04  Adrienne Walker  <enne@google.com>
 
         Reviewed by James Robinson.

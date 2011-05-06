@@ -91,6 +91,9 @@ public:
     // Tells the plug-in that either the plug-ins frame rect or its clip rect has changed. Both rects are in window coordinates.
     virtual void geometryDidChange(const WebCore::IntRect& frameRect, const WebCore::IntRect& clipRect) = 0;
 
+    // Tells the plug-in that it has been explicitly hidden or shown. (Note that this is not called when the plug-in becomes obscured from view on screen.)
+    virtual void visibilityDidChange() = 0;
+
     // Tells the plug-in that a frame load request that the plug-in made by calling PluginController::loadURL has finished.
     virtual void frameDidFinishLoading(uint64_t requestID) = 0;
 

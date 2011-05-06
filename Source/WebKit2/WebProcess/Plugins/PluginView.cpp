@@ -605,6 +605,30 @@ void PluginView::notifyWidget(WidgetNotification notification)
     }
 }
 
+void PluginView::show()
+{
+    bool wasVisible = isVisible();
+
+    setSelfVisible(true);
+
+    if (!wasVisible)
+        viewVisibilityDidChange();
+
+    Widget::show();
+}
+
+void PluginView::hide()
+{
+    bool wasVisible = isVisible();
+
+    setSelfVisible(false);
+
+    if (wasVisible)
+        viewVisibilityDidChange();
+
+    Widget::hide();
+}
+
 void PluginView::viewGeometryDidChange()
 {
     if (!m_isInitialized || !m_plugin || !parent())
@@ -614,6 +638,14 @@ void PluginView::viewGeometryDidChange()
     IntRect frameRectInWindowCoordinates = parent()->contentsToWindow(frameRect());
     frameRectInWindowCoordinates.setSize(m_boundsSize);
     m_plugin->geometryDidChange(frameRectInWindowCoordinates, clipRectInWindowCoordinates());
+}
+
+void PluginView::viewVisibilityDidChange()
+{
+    if (!m_isInitialized || !m_plugin || !parent())
+        return;
+
+    m_plugin->visibilityDidChange();
 }
 
 IntRect PluginView::clipRectInWindowCoordinates() const
@@ -853,6 +885,11 @@ void PluginView::mediaCanStart()
     m_isWaitingUntilMediaCanStart = false;
     
     initializePlugin();
+}
+
+bool PluginView::isPluginVisible()
+{
+    return isVisible();
 }
 
 void PluginView::invalidate(const IntRect& dirtyRect)

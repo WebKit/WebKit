@@ -549,6 +549,13 @@ void NetscapePlugin::geometryDidChange(const IntRect& frameRect, const IntRect& 
     callSetWindow();
 }
 
+void NetscapePlugin::visibilityDidChange()
+{
+    ASSERT(m_isStarted);
+
+    platformVisibilityDidChange();
+}
+
 void NetscapePlugin::frameDidFinishLoading(uint64_t requestID)
 {
     ASSERT(m_isStarted);

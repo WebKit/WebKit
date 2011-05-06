@@ -43,6 +43,9 @@ struct WindowGeometry {
 
     HWND window;
 
+    // Whether the window is visible.
+    bool visible;
+
     // The position and size of the window in its parent's client coordinate space.
     WebCore::IntRect frame;
 

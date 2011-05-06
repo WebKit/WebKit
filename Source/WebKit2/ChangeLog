@@ -1,5 +1,70 @@
 2011-05-06  Adam Roben  <aroben@apple.com>
 
+        Show/hide windowed plugins according to the plugin element's visibility CSS property
+
+        Fixes <http://webkit.org/b/60285> <rdar://problem/9152400> REGRESSION (WebKit2): A white
+        rectangle covers up important UI elements when composing a new message at mail.yahoo.com
+        with BrowserPlus! plug-in installed
+
+        Reviewed by Anders Carlsson.
+
+        * PluginProcess/PluginControllerProxy.cpp:
+        (WebKit::PluginControllerProxy::isPluginVisible):
+        * PluginProcess/PluginControllerProxy.h:
+        Stubbed out.
+
+        * Shared/win/WindowGeometry.cpp:
+        (WebKit::WindowGeometry::WindowGeometry):
+        (WebKit::WindowGeometry::encode):
+        (WebKit::WindowGeometry::decode):
+        * Shared/win/WindowGeometry.h:
+        Added visible member.
+
+        * UIProcess/win/WebView.cpp:
+        (WebKit::WebView::updateChildWindowGeometries): Show or hide the window as specified in the
+        geometry.
+
+        * WebProcess/Plugins/Netscape/NetscapePlugin.cpp:
+        (WebKit::NetscapePlugin::visibilityDidChange):
+        * WebProcess/Plugins/Netscape/NetscapePlugin.h:
+        Added. Calls through to platform-specific code.
+
+        * WebProcess/Plugins/Netscape/mac/NetscapePluginMac.mm:
+        (WebKit::NetscapePlugin::platformVisibilityDidChange):
+        * WebProcess/Plugins/Netscape/x11/NetscapePluginX11.cpp:
+        (WebKit::NetscapePlugin::platformVisibilityDidChange):
+        Stubbed out.
+
+        * WebProcess/Plugins/Netscape/win/NetscapePluginWin.cpp:
+        (WebKit::NetscapePlugin::platformGeometryDidChange): Moved most logic from here to
+        scheduleWindowedGeometryUpdate.
+        (WebKit::NetscapePlugin::platformVisibilityDidChange): Added. Calls through to
+        scheduleWindowedGeometryUpdate.
+        (WebKit::NetscapePlugin::scheduleWindowedGeometryUpdate): Added. Code came from
+        platformGeometryDidChange. Now also records whether the plugin element is visible.
+
+        * WebProcess/Plugins/Plugin.h: Added visibilityDidChange.
+
+        * WebProcess/Plugins/PluginController.h: Added isPluginVisible.
+
+        * WebProcess/Plugins/PluginProxy.cpp:
+        (WebKit::PluginProxy::visibilityDidChange):
+        * WebProcess/Plugins/PluginProxy.h:
+        Stubbed out.
+
+        * WebProcess/Plugins/PluginView.cpp:
+        (WebKit::PluginView::show):
+        (WebKit::PluginView::hide):
+        Added. These Widget overrides were based on WebCore's PluginView class.
+
+        (WebKit::PluginView::viewVisibilityDidChange): Added. Similar to viewGeometryDidChange.
+        Calls down to the plugin if it's been initialized.
+        (WebKit::PluginView::isPluginVisible): Added. Just calls up to the Widget base class.
+
+        * WebProcess/Plugins/PluginView.h: Updated for PluginController changes.
+
+2011-05-06  Adam Roben  <aroben@apple.com>
+
         Add a WindowGeometry struct for use in the ScheduleChildWindowGeometryUpdate message
 
         This will make it easier to add more info to this message in the future (like whether the

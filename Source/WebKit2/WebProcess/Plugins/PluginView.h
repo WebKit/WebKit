@@ -75,6 +75,7 @@ private:
     void destroyPlugin();
 
     void viewGeometryDidChange();
+    void viewVisibilityDidChange();
     WebCore::IntRect clipRectInWindowCoordinates() const;
     void focusPluginElement();
     
@@ -112,11 +113,14 @@ private:
     virtual void setParent(WebCore::ScrollView*);
     virtual void handleEvent(WebCore::Event*);
     virtual void notifyWidget(WebCore::WidgetNotification);
+    virtual void show();
+    virtual void hide();
 
     // WebCore::MediaCanStartListener
     virtual void mediaCanStart();
 
     // PluginController
+    virtual bool isPluginVisible();
     virtual void invalidate(const WebCore::IntRect&);
     virtual String userAgent();
     virtual void loadURL(uint64_t requestID, const String& method, const String& urlString, const String& target, 

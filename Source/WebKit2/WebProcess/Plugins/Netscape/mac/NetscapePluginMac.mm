@@ -290,6 +290,12 @@ void NetscapePlugin::platformGeometryDidChange()
 {
 }
 
+void NetscapePlugin::platformVisibilityDidChange()
+{
+    // FIXME: Implement this. <http://webkit.org/b/44368>.
+    notImplemented();
+}
+
 static inline NPCocoaEvent initializeEvent(NPCocoaEventType type)
 {
     NPCocoaEvent event;

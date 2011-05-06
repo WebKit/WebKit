@@ -79,6 +79,7 @@ private:
     void paint();
 
     // PluginController
+    virtual bool isPluginVisible();
     virtual void invalidate(const WebCore::IntRect&);
     virtual String userAgent();
     virtual void loadURL(uint64_t requestID, const String& method, const String& urlString, const String& target, const WebCore::HTTPHeaderMap& headerFields, const Vector<uint8_t>& httpBody, bool allowPopups);

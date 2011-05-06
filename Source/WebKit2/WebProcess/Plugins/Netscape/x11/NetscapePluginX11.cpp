@@ -196,6 +196,11 @@ void NetscapePlugin::platformGeometryDidChange()
     XSync(display, false); // Make sure that the server knows about the Drawable.
 }
 
+void NetscapePlugin::platformVisibilityDidChange()
+{
+    notImplemented();
+}
+
 void NetscapePlugin::platformPaint(GraphicsContext* context, const IntRect& dirtyRect, bool /*isSnapshot*/)
 {
     if (m_isWindowed) {
