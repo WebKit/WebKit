@@ -106,7 +106,7 @@ class AbstractEarlyWarningSystem(AbstractReviewQueue):
         # the case where patch.commit_queue() isn't already set to '-'.
         if cls.watchers:
             tool.bugs.add_cc_to_bug(patch.bug_id(), cls.watchers)
-        tool.bugs.set_flag_on_attachment(patch.bug_id(), "commit-queue", "-", message, extra_message_text)
+        tool.bugs.set_flag_on_attachment(patch.id(), "commit-queue", "-", message, extra_message_text)
 
     @classmethod
     def handle_script_error(cls, tool, state, script_error):

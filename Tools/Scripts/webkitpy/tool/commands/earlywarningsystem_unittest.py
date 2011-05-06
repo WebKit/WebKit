@@ -72,7 +72,7 @@ class AbstractEarlyWarningSystemTest(QueuesTest):
     def test_post_reject_message_on_bug(self):
         tool = MockTool()
         patch = tool.bugs.fetch_attachment(197)
-        expected_stderr = """MOCK setting flag 'commit-queue' to '-' on attachment '42' with comment 'Attachment 197 did not pass mock-ews (win):
+        expected_stderr = """MOCK setting flag 'commit-queue' to '-' on attachment '197' with comment 'Attachment 197 did not pass mock-ews (win):
 Output: http://dummy_url' and additional comment 'EXTRA'
 """
         OutputCapture().assert_outputs(self,
@@ -118,7 +118,7 @@ class EarlyWarningSytemTest(QueuesTest):
             "next_work_item": "",
             "process_work_item": "MOCK: update_status: %(name)s Pass\nMOCK: release_work_item: %(name)s 197\n" % string_replacemnts,
             "handle_script_error": """MOCK: update_status: %(name)s ScriptError error message
-MOCK setting flag 'commit-queue' to '-' on attachment '42' with comment 'Attachment 197 did not pass %(name)s (%(port)s):
+MOCK setting flag 'commit-queue' to '-' on attachment '197' with comment 'Attachment 197 did not pass %(name)s (%(port)s):
 Output: http://dummy_url' and additional comment 'None'
 """ % string_replacemnts,
         }
