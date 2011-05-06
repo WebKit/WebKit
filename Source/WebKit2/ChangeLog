@@ -1,3 +1,9 @@
+2011-05-06  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Fix WebKit2 GTK build after r85860.
+
+        * UIProcess/API/gtk/PageClientImpl.h: Fix typo.
+
 2011-05-05  Philippe Normand  <pnormand@igalia.com>
 
         Reviewed by Dimitri Glazkov.
