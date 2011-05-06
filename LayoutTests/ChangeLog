@@ -1,3 +1,9 @@
+2011-05-05  Ojan Vafai  <ojan@chromium.org>
+
+        Move failing result as it appears to be failing on all Apple Win platforms.
+
+        * platform/win/fast/harness/results-expected.txt: Renamed from LayoutTests/platform/win-7sp0/fast/harness/results-expected.txt.
+
 2011-05-05  Evan Martin  <evan@chromium.org>
 
         Unreviewed, just skipping a test.
