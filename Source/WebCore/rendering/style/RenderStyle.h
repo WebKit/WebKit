@@ -1026,7 +1026,8 @@ public:
     void setColorSpace(ColorSpace space) { SET_VAR(rareInheritedData, colorSpace, space) }
     void setOpacity(float f) { SET_VAR(rareNonInheritedData, opacity, f); }
     void setAppearance(ControlPart a) { SET_VAR(rareNonInheritedData, m_appearance, a); }
-    void setBoxAlign(EBoxAlignment a) { SET_VAR(rareNonInheritedData.access()->flexibleBox, align, a); }
+    // For valid values of box-align see http://www.w3.org/TR/2009/WD-css3-flexbox-20090723/#alignment
+    void setBoxAlign(EBoxAlignment a) { ASSERT(a == BSTRETCH || a == BSTART || a == BCENTER || a == BEND || a == BBASELINE); SET_VAR(rareNonInheritedData.access()->flexibleBox, align, a); }
     void setBoxDirection(EBoxDirection d) { inherited_flags._box_direction = d; }
     void setBoxFlex(float f) { SET_VAR(rareNonInheritedData.access()->flexibleBox, flex, f); }
     void setBoxFlexGroup(unsigned int fg) { SET_VAR(rareNonInheritedData.access()->flexibleBox, flex_group, fg); }

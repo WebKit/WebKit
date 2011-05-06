@@ -4873,15 +4873,8 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
         m_style->setOpacity(min(1.0f, max(0.0f, primitiveValue->getFloatValue())));
         return;
     case CSSPropertyWebkitBoxAlign:
-    {
-        HANDLE_INHERIT_AND_INITIAL(boxAlign, BoxAlign)
-        if (!primitiveValue)
-            return;
-        EBoxAlignment boxAlignment = *primitiveValue;
-        if (boxAlignment != BJUSTIFY)
-            m_style->setBoxAlign(boxAlignment);
+        HANDLE_INHERIT_AND_INITIAL_AND_PRIMITIVE(boxAlign, BoxAlign)
         return;
-    }
     case CSSPropertySrc: // Only used in @font-face rules.
         return;
     case CSSPropertyUnicodeRange: // Only used in @font-face rules.

@@ -2,6 +2,22 @@
 
         Reviewed by Eric Seidel.
 
+        Move burden of checking for BJustify box alignment into RenderStyle
+        https://bugs.webkit.org/show_bug.cgi?id=60246
+
+        No new tests added as no functionality changed.
+
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::applyProperty):
+        Remove special-case logic checking for BJUSTIFY and use existing macro.
+        * rendering/style/RenderStyle.h:
+        (WebCore::InheritedFlags::setBoxAlign):
+        Assert valid values are used.
+
+2011-05-06  Luke Macpherson   <macpherson@chromium.org>
+
+        Reviewed by Eric Seidel.
+
         Make CSSStyleSelector::applyProperty() CSSPropertyPointerEvents use the correct macro.
         https://bugs.webkit.org/show_bug.cgi?id=60338
 
