@@ -124,17 +124,17 @@ th {
     left: 0;
     width: 100%;
     display: -webkit-box;
+    display: -moz-box;
     pointer-events: none;
 }
 
 .pixel-zoom-container > * {
-    display: -webkit-box;
     -webkit-box-flex: 1;
-    border: 1px inset lightgray;
-    height: 100px;
+    -moz-box-flex: 1;
+    border: 2px inset lightgray;
     overflow: hidden;
-    zoom: 300%;
-    background-color: white;
+    line-height: 0;
+    width: 0;
 }
 
 .pixel-zoom-container img {
@@ -183,14 +183,25 @@ function stripExtension(test)
     return test.substring(0, index);
 }
 
+function matchesSelector(node, selector)
+{
+    if (node.webkitMatchesSelector)
+        return node.webkitMatchesSelector(selector);
+
+    if (node.mozMatchesSelector)
+        return node.mozMatchesSelector(selector);
+}
+
 function parentOfType(node, selector)
 {
-    while (node = node.parentElement) {
-        if (node.webkitMatchesSelector(selector))
+    while (node = node.parentNode) {
+        if (matchesSelector(node, selector))
             return node;
     }
     return null;
 }
+
+
 
 function remove(node)
 {
@@ -257,6 +268,14 @@ function updateExpandedState(row, isExpanded)
     updateImageTogglingTimer();
 }
 
+function appendHTML(node, html)
+{
+    if (node.insertAdjacentHTML)
+        node.insertAdjacentHTML('beforeEnd', html);
+    else
+        node.innerHTML += html;
+}
+
 function expandExpectations(expandLink)
 {
     var row = parentOfType(expandLink, 'tr');
@@ -286,7 +305,7 @@ function expandExpectations(expandLink)
         } else
             result = resultIframe(link.href);
 
-        newCell.insertAdjacentHTML('beforeEnd', result);    
+        appendHTML(newCell, result);    
     }
 
     newRow.appendChild(newCell);
@@ -684,9 +703,22 @@ var PixelZoomer = {};
 
 PixelZoomer.showOnDelay = true;
 
+PixelZoomer._zoomFactor = 6;
+
 PixelZoomer._zoomImageContainer = function(url)
 {
-    return '<div class=zoom-image-container><img src="' + url + '"></div>';
+    var container = document.createElement('div');
+    container.className = 'zoom-image-container';
+    var canvas = document.createElement('canvas');
+    container.appendChild(canvas);
+    
+    canvas.backingImage = new Image();
+    canvas.backingImage.onload = function() {
+        canvas.backingImageIsLoaded = true;
+        PixelZoomer._drawAll();
+    }
+    canvas.backingImage.src = url;
+    return container;
 }
 
 PixelZoomer._createContainer = function(e)
@@ -703,33 +735,56 @@ PixelZoomer._createContainer = function(e)
     var togglingImageLink = row.querySelector('a[href$="-diffs.html"]');
     if (togglingImageLink) {
         var prefix = togglingImageLink.getAttribute('data-prefix');
-        html += PixelZoomer._zoomImageContainer(prefix + '-expected.png') +
-            PixelZoomer._zoomImageContainer(prefix + '-actual.png');
+        container.appendChild(PixelZoomer._zoomImageContainer(prefix + '-expected.png'));
+        container.appendChild(PixelZoomer._zoomImageContainer(prefix + '-actual.png'));
     }
     
     for (var i = 0; i < imageDiffLinks.length; i++)
-        html += PixelZoomer._zoomImageContainer(imageDiffLinks[i].href);
+        container.appendChild(PixelZoomer._zoomImageContainer(imageDiffLinks[i].href));
 
-    container.innerHTML = html;
     document.body.appendChild(container);
-
-    PixelZoomer._position(e);
+    PixelZoomer._drawAll();
 }
 
-PixelZoomer._position = function(e)
+PixelZoomer._draw = function(canvas)
 {
-    var pageX = e.clientX;
-    var pageY = e.clientY;
-    var targetLocation = e.target.getBoundingClientRect();
-    var x = pageX - targetLocation.left;
-    var y = pageY - targetLocation.top;
+    if (!canvas.backingImageIsLoaded)
+        return;
 
-    var zoomContainers = document.querySelectorAll('.pixel-zoom-container > .zoom-image-container');
-    for (var i = 0; i < zoomContainers.length; i++) {
-        var container = zoomContainers[i];
-        container.scrollLeft = x - container.offsetWidth / 2;
-        container.scrollTop = y - container.offsetHeight / 2;
+    var destinationWidth = Math.floor(document.body.offsetWidth / 3) + 100;
+    var destinationHeight = 300;
+    
+    var sourceWidth = Math.ceil(destinationWidth / PixelZoomer._zoomFactor);
+    var sourceHeight = Math.ceil(destinationHeight / PixelZoomer._zoomFactor);
+
+    canvas.width = destinationWidth;
+    canvas.height = destinationHeight;
+    
+    var startX = Math.floor(PixelZoomer._currentX - sourceWidth / 2);
+    var startY = Math.floor(PixelZoomer._currentY - sourceHeight / 2);
+        
+    startX = Math.max(startX, 0);
+    startX = Math.min(startX, 800 - sourceWidth);
+    
+    startY = Math.max(startY, 0);
+    startY = Math.min(startY, 600 - sourceHeight);
+
+    var sourceNumPixels = 1;
+    var destinationNumPixels = PixelZoomer._zoomFactor;
+    var context = canvas.getContext('2d');
+    for (var sourceX = startX; sourceX < startX + sourceWidth; sourceX++) {
+        for (var sourceY = startY; sourceY < startY + sourceHeight; sourceY++) {
+            var destinationX = PixelZoomer._zoomFactor * (sourceX - startX);
+            var destinationY = PixelZoomer._zoomFactor * (sourceY - startY);            
+            context.drawImage(canvas.backingImage, sourceX, sourceY, sourceNumPixels, sourceNumPixels,
+                destinationX, destinationY, destinationNumPixels, destinationNumPixels);            
+        }
     }
+}
+
+PixelZoomer._drawAll = function()
+{
+    forEach(document.querySelectorAll('.pixel-zoom-container canvas'), PixelZoomer._draw);
 }
 
 PixelZoomer.handleMouseOut = function(e)
@@ -760,6 +815,10 @@ PixelZoomer.handleMouseMove = function(e) {
         return;
     }
     
+    var targetLocation = e.target.getBoundingClientRect();
+    PixelZoomer._currentX = e.clientX - targetLocation.left;
+    PixelZoomer._currentY = e.clientY - targetLocation.top;
+
     if (!container) {
         if (PixelZoomer.showOnDelay) {
             PixelZoomer._mouseMoveTimeout = setTimeout(function() {
@@ -772,7 +831,7 @@ PixelZoomer.handleMouseMove = function(e) {
         return;
     }
     
-    PixelZoomer._position(e);
+    PixelZoomer._drawAll();
 }
 
 document.addEventListener('mousemove', PixelZoomer.handleMouseMove, false);

@@ -1,3 +1,17 @@
+2011-05-05  Ojan Vafai  <ojan@chromium.org>
+
+        Reviewed by Mihai Parparita.
+
+        [results.html] zoomed pixel results should not be antialiased
+        https://bugs.webkit.org/show_bug.cgi?id=60330
+
+        -Use canvas instead of CSS zoom.
+        -Only zoom the part of the image we need to show.
+        -Make pixel zooming mostly work in Firefox.
+        -Increase the zoom from 3x to 6x.
+
+        * fast/harness/results.html:
+
 2011-05-06  Adrienne Walker  <enne@google.com>
 
         [chromium] Unreviewed, fix parse errors in test_expectations.
