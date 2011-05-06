@@ -146,12 +146,16 @@ namespace WTF {
     inline unsigned toASCIIUpper(unsigned c) { return static_cast<unsigned>(c & ~((c >= 'a' && c <= 'z') << 5)); }
 
     inline int toASCIIHexValue(char c) { ASSERT(isASCIIHexDigit(c)); return c < 'A' ? c - '0' : (c - 'A' + 10) & 0xF; }
+    inline int toASCIIHexValue(char upperValue, char lowerValue) { ASSERT(isASCIIHexDigit(upperValue) && isASCIIHexDigit(lowerValue)); return ((toASCIIHexValue(upperValue) << 4) & 0xF0) | toASCIIHexValue(lowerValue); }
     inline int toASCIIHexValue(unsigned short c) { ASSERT(isASCIIHexDigit(c)); return c < 'A' ? c - '0' : (c - 'A' + 10) & 0xF; }
 #if !COMPILER(MSVC) || defined(_NATIVE_WCHAR_T_DEFINED)
     inline int toASCIIHexValue(wchar_t c) { ASSERT(isASCIIHexDigit(c)); return c < 'A' ? c - '0' : (c - 'A' + 10) & 0xF; }
 #endif
     inline int toASCIIHexValue(int c) { ASSERT(isASCIIHexDigit(c)); return c < 'A' ? c - '0' : (c - 'A' + 10) & 0xF; }
     inline int toASCIIHexValue(unsigned c) { ASSERT(isASCIIHexDigit(c)); return c < 'A' ? c - '0' : (c - 'A' + 10) & 0xF; }
+
+    inline char lowerNibbleToASCIIHexDigit(char c) { char nibble = c & 0xF; return nibble < 10 ? '0' + nibble : 'A' + nibble - 10; }
+    inline char upperNibbleToASCIIHexDigit(char c) { char nibble = (c >> 4) & 0xF; return nibble < 10 ? '0' + nibble : 'A' + nibble - 10; }
 
     inline bool isASCIIPrintable(char c) { return c >= ' ' && c <= '~'; }
     inline bool isASCIIPrintable(unsigned short c) { return c >= ' ' && c <= '~'; }
@@ -175,5 +179,7 @@ using WTF::isASCIIUpper;
 using WTF::toASCIIHexValue;
 using WTF::toASCIILower;
 using WTF::toASCIIUpper;
+using WTF::lowerNibbleToASCIIHexDigit;
+using WTF::upperNibbleToASCIIHexDigit;
 
 #endif

@@ -1,3 +1,16 @@
+2011-05-05  Jay Civelli  <jcivelli@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        Added convenience methods to convert from a byte to hex ASCII digit
+        characters and vice-versa.
+        https://bugs.webkit.org/show_bug.cgi?id=59834
+
+        * wtf/ASCIICType.h:
+        (WTF::toASCIIHexValue):
+        (WTF::lowerNibbleToASCIIHexDigit):
+        (WTF::upperNibbleToASCIIHexDigit):
+
 2011-05-05  Alexis Menard  <alexis.menard@openbossa.org>
 
         Reviewed by Benjamin Poulain.

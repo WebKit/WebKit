@@ -947,6 +947,7 @@ SOURCES += \
     platform/text/Hyphenation.cpp \
     platform/text/LocalizedDateNone.cpp \
     platform/text/LocalizedNumberNone.cpp \
+    platform/text/QuotedPrintable.cpp \
     platform/ContentType.cpp \
     platform/CrossThreadCopier.cpp \
     platform/DateComponents.cpp \
@@ -2038,6 +2039,7 @@ HEADERS += \
     platform/text/Base64.h \
     platform/text/BidiContext.h \
     platform/text/Hyphenation.h \
+    platform/text/QuotedPrintable.h \
     platform/text/qt/TextCodecQt.h \
     platform/text/RegularExpression.h \
     platform/text/SegmentedString.h \

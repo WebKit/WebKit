@@ -800,6 +800,8 @@
 		379919961200DDF400EA041C /* WOFFFileFormat.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 379919941200DDF400EA041C /* WOFFFileFormat.cpp */; };
 		379919971200DDF400EA041C /* WOFFFileFormat.h in Headers */ = {isa = PBXBuildFile; fileRef = 379919951200DDF400EA041C /* WOFFFileFormat.h */; };
 		379919B21200DE5000EA041C /* libz.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 379919B11200DE5000EA041C /* libz.dylib */; };
+		379E371613736A6600B9E919 /* QuotedPrintable.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 379E371413736A6600B9E919 /* QuotedPrintable.cpp */; };
+		379E371713736A6600B9E919 /* QuotedPrintable.h in Headers */ = {isa = PBXBuildFile; fileRef = 379E371513736A6600B9E919 /* QuotedPrintable.h */; };
 		379E61C9126CA5C300B63E8D /* BaseButtonInputType.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 379E61C5126CA5C300B63E8D /* BaseButtonInputType.cpp */; };
 		379E61CA126CA5C400B63E8D /* BaseButtonInputType.h in Headers */ = {isa = PBXBuildFile; fileRef = 379E61C6126CA5C300B63E8D /* BaseButtonInputType.h */; };
 		379E61CB126CA5C400B63E8D /* BaseCheckableInputType.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 379E61C7126CA5C300B63E8D /* BaseCheckableInputType.cpp */; };
@@ -7241,6 +7243,8 @@
 		379919941200DDF400EA041C /* WOFFFileFormat.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WOFFFileFormat.cpp; sourceTree = "<group>"; };
 		379919951200DDF400EA041C /* WOFFFileFormat.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WOFFFileFormat.h; sourceTree = "<group>"; };
 		379919B11200DE5000EA041C /* libz.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libz.dylib; path = /usr/lib/libz.dylib; sourceTree = "<absolute>"; };
+		379E371413736A6600B9E919 /* QuotedPrintable.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = QuotedPrintable.cpp; sourceTree = "<group>"; };
+		379E371513736A6600B9E919 /* QuotedPrintable.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = QuotedPrintable.h; sourceTree = "<group>"; };
 		379E61C5126CA5C300B63E8D /* BaseButtonInputType.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = BaseButtonInputType.cpp; sourceTree = "<group>"; };
 		379E61C6126CA5C300B63E8D /* BaseButtonInputType.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BaseButtonInputType.h; sourceTree = "<group>"; };
 		379E61C7126CA5C300B63E8D /* BaseCheckableInputType.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = BaseCheckableInputType.cpp; sourceTree = "<group>"; };
@@ -17737,6 +17741,8 @@
 				F5142C68123F12B000F5BD4C /* LocalizedNumber.h */,
 				BC76AC110DD7AD5C00415F34 /* ParserUtilities.h */,
 				B2C3D9FB0D006C1D00EF6F26 /* PlatformString.h */,
+				379E371413736A6600B9E919 /* QuotedPrintable.cpp */,
+				379E371513736A6600B9E919 /* QuotedPrintable.h */,
 				B2C3D9FC0D006C1D00EF6F26 /* RegularExpression.cpp */,
 				B2C3D9FD0D006C1D00EF6F26 /* RegularExpression.h */,
 				B2C3D9FE0D006C1D00EF6F26 /* SegmentedString.cpp */,
@@ -22734,6 +22740,7 @@
 				E1BE512E0CF6C512002EA959 /* XSLTUnicodeSort.h in Headers */,
 				977E2E0F12F0FC9C00C13379 /* XSSFilter.h in Headers */,
 				37AFFDF71370A0B800E895C0 /* SharedBufferCRLFLineReader.h in Headers */,
+				379E371713736A6600B9E919 /* QuotedPrintable.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -25398,6 +25405,7 @@
 				E1BE512D0CF6C512002EA959 /* XSLTUnicodeSort.cpp in Sources */,
 				977E2E0E12F0FC9C00C13379 /* XSSFilter.cpp in Sources */,
 				37AFFDF61370A0B800E895C0 /* SharedBufferCRLFLineReader.cpp in Sources */,
+				379E371613736A6600B9E919 /* QuotedPrintable.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -1,3 +1,20 @@
+2011-05-05  Jay Civelli  <jcivelli@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        Adding quoted-printable encoding/decoding capabilities.
+        This is needed for MHTML support.
+        https://bugs.webkit.org/show_bug.cgi?id=59834
+
+        * CMakeLists.txt:
+        * GNUmakefile.list.am:
+        * WebCore.gypi:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * platform/text/QuotedPrintable.cpp: Added.
+        * platform/text/QuotedPrintable.h: Added.
+
 2011-05-05  Andy Estes  <aestes@apple.com>
 
         Reviewed by Eric Seidel.

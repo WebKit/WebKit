@@ -4907,6 +4907,8 @@
             'platform/text/LocalizedNumberICU.cpp',
             'platform/text/LocalizedNumberNone.cpp',
             'platform/text/ParserUtilities.h',
+            'platform/text/QuotedPrintable.h',
+            'platform/text/QuotedPrintable.cpp',
             'platform/text/RegularExpression.cpp',
             'platform/text/SegmentedString.cpp',
             'platform/text/String.cpp',

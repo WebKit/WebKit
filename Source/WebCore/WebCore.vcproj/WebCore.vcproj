@@ -30520,6 +30520,14 @@
 					RelativePath="..\platform\text\PlatformString.h"
 					>
 				</File>
+                                <File
+                                        RelativePath="..\platform\text\QuotedPrintable.cpp"
+                                        >
+                                </File>
+                                <File
+                                        RelativePath="..\platform\text\QuotedPrintable.h"
+                                        >
+                                </File>
 				<File
 					RelativePath="..\platform\text\RegularExpression.cpp"
 					>

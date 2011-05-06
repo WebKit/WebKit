@@ -2637,6 +2637,8 @@ webcore_sources += \
 	Source/WebCore/platform/text/LocalizedNumberNone.cpp \
 	Source/WebCore/platform/text/ParserUtilities.h \
 	Source/WebCore/platform/text/PlatformString.h \
+	Source/WebCore/platform/text/QuotedPrintable.cpp \
+	Source/WebCore/platform/text/QuotedPrintable.h \
 	Source/WebCore/platform/text/RegularExpression.cpp \
 	Source/WebCore/platform/text/RegularExpression.h \
 	Source/WebCore/platform/text/SegmentedString.cpp \
