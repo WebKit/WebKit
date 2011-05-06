@@ -211,7 +211,7 @@ private:
     virtual void countStringMatchesInCustomRepresentation(const String&, FindOptions, unsigned maxMatchCount);
 
     virtual HWND nativeWindow();
-    virtual void scheduleChildWindowGeometryUpdate(HWND, const WebCore::IntRect& rectInParentClientCoordinates, const WebCore::IntRect& clipRectInChildClientCoordinates);
+    virtual void scheduleChildWindowGeometryUpdate(const WindowGeometry&);
 
     virtual void setGestureReachedScrollingLimit(bool limitReached) { m_gestureReachedScrollingLimit = limitReached; }
 
@@ -268,12 +268,7 @@ private:
 
     bool m_gestureReachedScrollingLimit;
 
-    struct ChildWindowGeometry {
-        WebCore::IntRect rectInParentClientCoordinates;
-        WebCore::IntRect clipRectInChildClientCoordinates;
-    };
-
-    HashMap<HWND, ChildWindowGeometry> m_childWindowGeometriesToUpdate;
+    HashMap<HWND, WindowGeometry> m_childWindowGeometriesToUpdate;
 
 #if ENABLE(FULLSCREEN_API)
     OwnPtr<WebCore::FullScreenController> m_fullScreenController;

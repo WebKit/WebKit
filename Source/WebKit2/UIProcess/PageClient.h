@@ -54,6 +54,10 @@ class WebContextMenuProxy;
 class WebEditCommandProxy;
 class WebPopupMenuProxy;
 
+#if PLATFORM(WIN)
+struct WindowGeometry;
+#endif
+
 class PageClient {
 public:
     virtual ~PageClient() { }
@@ -139,7 +143,7 @@ public:
 #if PLATFORM(WIN)
     virtual HWND nativeWindow() = 0;
     virtual void setGestureReachedScrollingLimit(bool) = 0;
-    virtual void scheduleChildWindowGeometryUpdate(HWND, const WebCore::IntRect& rectInParentClientCoordinates, const WebCore::IntRect& clipRectInChildClientCoordinates) = 0;
+    virtual void scheduleChildWindowGeometryUpdate(const WindowGeometry&) = 0;
 #endif
 
 #if PLATFORM(MAC)

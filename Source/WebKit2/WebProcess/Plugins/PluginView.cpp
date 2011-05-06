@@ -1004,9 +1004,9 @@ HWND PluginView::nativeParentWindow()
     return m_webPage->nativeWindow();
 }
 
-void PluginView::scheduleWindowedPluginGeometryUpdate(HWND pluginWindow, const IntRect& rectInParentClientCoordinates, const IntRect& clipRectInPluginWindowCoordinates)
+void PluginView::scheduleWindowedPluginGeometryUpdate(const WindowGeometry& geometry)
 {
-    m_webPage->scheduleChildWindowGeometryUpdate(pluginWindow, rectInParentClientCoordinates, clipRectInPluginWindowCoordinates);
+    m_webPage->scheduleChildWindowGeometryUpdate(geometry);
 }
 #endif
 

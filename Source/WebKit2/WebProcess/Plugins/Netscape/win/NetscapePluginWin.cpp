@@ -28,6 +28,7 @@
 
 #include "PluginController.h"
 #include "WebEvent.h"
+#include "WindowGeometry.h"
 #include <WebCore/DefWndProcWindowClass.h>
 #include <WebCore/GraphicsContext.h>
 #include <WebCore/LocalWindowsContext.h>
@@ -151,7 +152,12 @@ void NetscapePlugin::platformGeometryDidChange()
     // that we can keep our position in sync when scrolling, etc. See <http://webkit.org/b/60210>.
     ::SetWindowPos(m_window, 0, 0, 0, m_frameRect.width(), m_frameRect.height(), SWP_NOACTIVATE | SWP_NOMOVE | SWP_NOOWNERZORDER | SWP_NOZORDER);
 
-    m_pluginController->scheduleWindowedPluginGeometryUpdate(m_window, m_frameRect, clipRectInPluginWindowCoordinates);
+    WindowGeometry geometry;
+    geometry.window = m_window;
+    geometry.frame = m_frameRect;
+    geometry.clipRect = clipRectInPluginWindowCoordinates;
+
+    m_pluginController->scheduleWindowedPluginGeometryUpdate(geometry);
 }
 
 void NetscapePlugin::platformPaint(GraphicsContext* context, const IntRect& dirtyRect, bool)

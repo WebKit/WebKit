@@ -274,6 +274,7 @@ def struct_or_class(namespace, type):
         'WebKit::WebPageCreationParameters',
         'WebKit::WebPreferencesStore',
         'WebKit::WebProcessCreationParameters',
+        'WebKit::WindowGeometry',
     ])
 
     qualified_name = '%s::%s' % (namespace, type)

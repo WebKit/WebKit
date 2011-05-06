@@ -1,3 +1,43 @@
+2011-05-06  Adam Roben  <aroben@apple.com>
+
+        Add a WindowGeometry struct for use in the ScheduleChildWindowGeometryUpdate message
+
+        This will make it easier to add more info to this message in the future (like whether the
+        window is visible).
+
+        Fixes <http://webkit.org/b/60374> Adding parameters to ScheduleChildWindowGeometryUpdate
+        message is tedious
+
+        Reviewed by Anders Carlsson.
+
+        * Scripts/webkit2/messages.py:
+        (struct_or_class): Added WindowGeometry to the list of structs.
+
+        * Shared/win/WindowGeometry.cpp: Added.
+        * Shared/win/WindowGeometry.h: Added.
+
+        * win/WebKit2.vcproj: Added new files.
+
+        * UIProcess/PageClient.h:
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPageProxy.messages.in:
+        * UIProcess/win/WebPageProxyWin.cpp:
+        (WebKit::WebPageProxy::scheduleChildWindowGeometryUpdate):
+        * UIProcess/win/WebView.cpp:
+        (WebKit::WebView::scheduleChildWindowGeometryUpdate):
+        (WebKit::WebView::updateChildWindowGeometries):
+        * UIProcess/win/WebView.h:
+        * WebProcess/Plugins/Netscape/win/NetscapePluginWin.cpp:
+        (WebKit::NetscapePlugin::platformGeometryDidChange):
+        * WebProcess/Plugins/PluginController.h:
+        * WebProcess/Plugins/PluginView.cpp:
+        (WebKit::PluginView::scheduleWindowedPluginGeometryUpdate):
+        * WebProcess/Plugins/PluginView.h:
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/win/WebPageWin.cpp:
+        (WebKit::WebPage::scheduleChildWindowGeometryUpdate):
+        Changed to use WindowGeometry.
+
 2011-05-06  David Kilzer  <ddkilzer@apple.com>
 
         Remove unused GCC_ENABLE_FIX_AND_CONTINUE and ZERO_LINK settings

@@ -112,6 +112,10 @@ struct PrintInfo;
 struct WebPageCreationParameters;
 struct WebPreferencesStore;
 
+#if PLATFORM(WIN)
+struct WindowGeometry;
+#endif
+
 #if ENABLE(GESTURE_EVENTS)
 class WebGestureEvent;
 #endif
@@ -260,7 +264,7 @@ public:
     const WebCore::IntRect& viewFrameInWindowCoordinates() const { return m_viewFrameInWindowCoordinates; }
 #elif PLATFORM(WIN)
     HWND nativeWindow() const { return m_nativeWindow; }
-    void scheduleChildWindowGeometryUpdate(HWND, const WebCore::IntRect& rectInParentClientCoordinates, const WebCore::IntRect& clipRectInChildClientCoordinates);
+    void scheduleChildWindowGeometryUpdate(const WindowGeometry&);
 #endif
 
     bool windowIsFocused() const;

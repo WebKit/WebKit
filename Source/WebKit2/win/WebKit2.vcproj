@@ -1281,6 +1281,14 @@
 						/>
 					</FileConfiguration>
 				</File>
+				<File
+					RelativePath="..\Shared\win\WindowGeometry.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\Shared\win\WindowGeometry.h"
+					>
+				</File>
 			</Filter>
 			<Filter
 				Name="cg"

@@ -39,6 +39,10 @@ namespace WebCore {
 
 namespace WebKit {
 
+#if PLATFORM(WIN)
+struct WindowGeometry;
+#endif
+
 class PluginController {
 public:
     // Tells the controller that the plug-in wants the given rect to be repainted. The rect is in the plug-in's coordinate system.
@@ -92,7 +96,7 @@ public:
 
     // Tells the controller that the given HWND needs to be positioned and clipped to the given
     // coordinates sometime soon. The controller will decide exactly when this will happen.
-    virtual void scheduleWindowedPluginGeometryUpdate(HWND, const WebCore::IntRect& rectInParentClientCoordinates, const WebCore::IntRect& clipRectInPluginWindowCoordinates) = 0;
+    virtual void scheduleWindowedPluginGeometryUpdate(const WindowGeometry&) = 0;
 #endif
 
 #if PLATFORM(MAC)

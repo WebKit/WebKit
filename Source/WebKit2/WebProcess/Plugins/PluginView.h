@@ -132,7 +132,7 @@ private:
     virtual void willSendEventToPlugin();
 #if PLATFORM(WIN)
     virtual HWND nativeParentWindow();
-    virtual void scheduleWindowedPluginGeometryUpdate(HWND, const WebCore::IntRect& rectInClientCoordinates, const WebCore::IntRect& clipRectInPluginWindowCoordinates);
+    virtual void scheduleWindowedPluginGeometryUpdate(const WindowGeometry&);
 #endif
 #if PLATFORM(MAC)
     virtual void setComplexTextInputEnabled(bool);

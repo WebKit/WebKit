@@ -112,6 +112,10 @@ struct PrintInfo;
 struct WebPageCreationParameters;
 struct WebPopupItem;
 
+#if PLATFORM(WIN)
+struct WindowGeometry;
+#endif
+
 #if ENABLE(GESTURE_EVENTS)
 class WebGestureEvent;
 #endif
@@ -735,7 +739,7 @@ private:
     void updateBackingStoreDiscardableState();
 
 #if PLATFORM(WIN)
-    void scheduleChildWindowGeometryUpdate(uint64_t window, const WebCore::IntRect& rectInParentClientCoordinates, const WebCore::IntRect& clipRectInChildClientCoordinates);
+    void scheduleChildWindowGeometryUpdate(const WindowGeometry&);
 #endif
 
     PageClient* m_pageClient;

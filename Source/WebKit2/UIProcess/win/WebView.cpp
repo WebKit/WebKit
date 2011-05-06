@@ -42,6 +42,7 @@
 #include "WebEventFactory.h"
 #include "WebPageProxy.h"
 #include "WebPopupMenuProxyWin.h"
+#include "WindowGeometry.h"
 #include <Commctrl.h>
 #include <WebCore/BitmapInfo.h>
 #include <WebCore/Cursor.h>
@@ -1529,13 +1530,9 @@ HWND WebView::nativeWindow()
     return m_window;
 }
 
-void WebView::scheduleChildWindowGeometryUpdate(HWND window, const WebCore::IntRect& rectInParentClientCoordinates, const WebCore::IntRect& clipRectInChildClientCoordinates)
+void WebView::scheduleChildWindowGeometryUpdate(const WindowGeometry& geometry)
 {
-    ChildWindowGeometry geometry;
-    geometry.rectInParentClientCoordinates = rectInParentClientCoordinates;
-    geometry.clipRectInChildClientCoordinates = clipRectInChildClientCoordinates;
-
-    m_childWindowGeometriesToUpdate.set(window, geometry);
+    m_childWindowGeometriesToUpdate.set(geometry.window, geometry);
 }
 
 static void setWindowRegion(HWND window, PassOwnPtr<HRGN> popRegion)
@@ -1551,24 +1548,20 @@ static void setWindowRegion(HWND window, PassOwnPtr<HRGN> popRegion)
 
 void WebView::updateChildWindowGeometries()
 {
-    HashMap<HWND, ChildWindowGeometry> geometriesToUpdate;
+    HashMap<HWND, WindowGeometry> geometriesToUpdate;
     geometriesToUpdate.swap(m_childWindowGeometriesToUpdate);
 
     HDWP deferWindowPos = ::BeginDeferWindowPos(geometriesToUpdate.size());
 
-    HashMap<HWND, ChildWindowGeometry>::const_iterator end = geometriesToUpdate.end();
-    for (HashMap<HWND, ChildWindowGeometry>::const_iterator it = geometriesToUpdate.begin(); it != end; ++it) {
-        HWND window = it->first;
-        if (!::IsWindow(window))
+    for (HashMap<HWND, WindowGeometry>::const_iterator::Values it = geometriesToUpdate.begin().values(), end = geometriesToUpdate.end().values(); it != end; ++it) {
+        const WindowGeometry& geometry = *it;
+
+        if (!::IsWindow(geometry.window))
             continue;
 
-        const ChildWindowGeometry& geometry = it->second;
+        deferWindowPos = ::DeferWindowPos(deferWindowPos, geometry.window, 0, geometry.frame.x(), geometry.frame.y(), geometry.frame.width(), geometry.frame.height(), SWP_SHOWWINDOW | SWP_NOACTIVATE | SWP_NOOWNERZORDER | SWP_NOZORDER);
 
-        const IntRect& windowRect = geometry.rectInParentClientCoordinates;
-        deferWindowPos = ::DeferWindowPos(deferWindowPos, window, 0, windowRect.x(), windowRect.y(), windowRect.width(), windowRect.height(), SWP_SHOWWINDOW | SWP_NOACTIVATE | SWP_NOOWNERZORDER | SWP_NOZORDER);
-
-        const IntRect& clipRect = geometry.clipRectInChildClientCoordinates;
-        setWindowRegion(window, adoptPtr(::CreateRectRgn(clipRect.x(), clipRect.y(), clipRect.maxX(), clipRect.maxY())));
+        setWindowRegion(geometry.window, adoptPtr(::CreateRectRgn(geometry.clipRect.x(), geometry.clipRect.y(), geometry.clipRect.maxX(), geometry.clipRect.maxY())));
     }
 
     ::EndDeferWindowPos(deferWindowPos);
