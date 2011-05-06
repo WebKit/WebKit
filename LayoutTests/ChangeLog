@@ -2,6 +2,16 @@
 
         Reviewed by Eric Seidel.
 
+        Add disable-javascript-urls CSP directive
+        https://bugs.webkit.org/show_bug.cgi?id=60301
+
+        * http/tests/security/contentSecurityPolicy/javascript-urls-blocked-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/javascript-urls-blocked.html: Added.
+
+2011-05-06  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
         Wire up CSP's eval blocking to V8's new API
         https://bugs.webkit.org/show_bug.cgi?id=60384
 

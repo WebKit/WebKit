@@ -1,3 +1,23 @@
+2011-05-06  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        Add disable-javascript-urls CSP directive
+        https://bugs.webkit.org/show_bug.cgi?id=60301
+
+        This CSP directive is not in the CSP spec.  This patch is somewhat of
+        an experiment to see whether this feature is useful.  Based on our
+        implementation experience, we will coordinate with folks via the W3C to
+        see if this makes sense to add to the spec.
+
+        Test: http/tests/security/contentSecurityPolicy/javascript-urls-blocked.html
+
+        * page/ContentSecurityPolicy.cpp:
+        (WebCore::ContentSecurityPolicy::ContentSecurityPolicy):
+        (WebCore::ContentSecurityPolicy::allowJavaScriptURLs):
+        (WebCore::ContentSecurityPolicy::addDirective):
+        * page/ContentSecurityPolicy.h:
+
 2011-05-06  Brett Wilson  <brettw@chromium.org>
 
         Reviewed by Adam Barth.
