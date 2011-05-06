@@ -3736,16 +3736,9 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
     case CSSPropertyPageBreakAfter:
         HANDLE_INHERIT_AND_INITIAL_AND_PRIMITIVE_WITH_VALUE(pageBreakAfter, PageBreakAfter, PageBreak)
         return;
-    case CSSPropertyPageBreakInside: {
-        HANDLE_INHERIT_AND_INITIAL_WITH_VALUE(pageBreakInside, PageBreakInside, PageBreak)
-        if (!primitiveValue)
-            return;
-        EPageBreak pageBreak = *primitiveValue;
-        if (pageBreak != PBALWAYS)
-            m_style->setPageBreakInside(pageBreak);
+    case CSSPropertyPageBreakInside:
+        HANDLE_INHERIT_AND_INITIAL_AND_PRIMITIVE_WITH_VALUE(pageBreakInside, PageBreakInside, PageBreak)
         return;
-    }
-        
     case CSSPropertyPosition:
         HANDLE_INHERIT_AND_INITIAL_AND_PRIMITIVE(position, Position)
         return;

@@ -1013,7 +1013,8 @@ public:
 
     void setWidows(short w) { SET_VAR(rareInheritedData, widows, w); }
     void setOrphans(short o) { SET_VAR(rareInheritedData, orphans, o); }
-    void setPageBreakInside(EPageBreak b) { noninherited_flags._page_break_inside = b; }
+    // For valid values of page-break-inside see http://www.w3.org/TR/CSS21/page.html#page-break-props
+    void setPageBreakInside(EPageBreak b) { ASSERT(b == PBAUTO || b == PBAVOID); noninherited_flags._page_break_inside = b; }
     void setPageBreakBefore(EPageBreak b) { noninherited_flags._page_break_before = b; }
     void setPageBreakAfter(EPageBreak b) { noninherited_flags._page_break_after = b; }
 

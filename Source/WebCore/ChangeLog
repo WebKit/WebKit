@@ -2,6 +2,22 @@
 
         Reviewed by Eric Seidel.
 
+        Make RenderStyle::setPageBreakInside() reject unsupported enum values.
+        https://bugs.webkit.org/show_bug.cgi?id=60235
+
+        No tests added as no functionality changed.
+
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::applyProperty):
+        Remove special-case code and use appropriate macro.
+        * rendering/style/RenderStyle.h:
+        (WebCore::InheritedFlags::setPageBreakInside):
+        Assert that only supported values are used.
+
+2011-05-06  Luke Macpherson   <macpherson@chromium.org>
+
+        Reviewed by Eric Seidel.
+
         Move burden of checking for BJustify box alignment into RenderStyle
         https://bugs.webkit.org/show_bug.cgi?id=60246
 
