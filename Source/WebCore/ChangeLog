@@ -1,3 +1,19 @@
+2011-05-06  David Hyatt  <hyatt@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        https://bugs.webkit.org/show_bug.cgi?id=60390 (<rdar://problem/9364449>)
+        REGRESSION (r81992): portions of ticketmaster site render blank
+
+        Make simplified layout skip from a positioned object out to its containing block.  There is no
+        need to dirty the intermediate inlines, and in this case it's actively harmful, since the
+        block responsible for the layout of the positioned object doesn't get m_posChildNeedsLayout set.
+
+        Added fast/block/positioning/hiding-inside-relpositioned-inline.html
+
+        * rendering/RenderObject.h:
+        (WebCore::RenderObject::markContainingBlocksForLayout):
+
 2011-05-06  Pavel Feldman  <pfeldman@chromium.org>
 
         Not reviewed: move selection test into the text area branch.

@@ -1018,7 +1018,9 @@ inline void RenderObject::markContainingBlocksForLayout(bool scheduleRelayout, R
         if (!container && !o->isRenderView())
             return;
         if (!last->isText() && (last->style()->position() == FixedPosition || last->style()->position() == AbsolutePosition)) {
-            if (o->m_posChildNeedsLayout)
+            while (o && !o->isRenderBlock()) // Skip relatively positioned inlines and get to the enclosing RenderBlock.
+                o = o->container();
+            if (!o || o->m_posChildNeedsLayout)
                 return;
             o->m_posChildNeedsLayout = true;
             simplifiedNormalFlowLayout = true;
