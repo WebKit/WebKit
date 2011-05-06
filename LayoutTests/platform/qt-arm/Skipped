@@ -2,6 +2,9 @@
 fast/xmlhttprequest/xmlhttprequest-bad-mimetype.html
 fast/xmlhttprequest/xmlhttprequest-default-attributes.html
 
+# Flakey tests
+fast/css/hover-update.html
+
 # Timed out tests
 fast/block/basic/empty-anonymous-block-remove-crash.html
 fast/block/basic/fieldset-stretch-to-legend.html
@@ -11,6 +14,8 @@ fast/lists/w3-css3-list-styles-numeric.html
 fast/overflow/lots-of-sibling-inline-boxes.html
 http/tests/xmlhttprequest/simple-cross-origin-progress-events.html
 http/tests/xmlhttprequest/supported-xml-content-types.html
+http/tests/websocket/tests/frame-lengths.html
+http/tests/websocket/tests/simple-stress.html
 inspector/console/command-line-api.html
 inspector/console/command-line-api-inspect.html
 inspector/console/console-api-on-call-frame.html

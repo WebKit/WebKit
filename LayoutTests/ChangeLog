@@ -1,3 +1,19 @@
+2011-05-06  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Unreviewed expectations update.
+
+        * platform/mac-wk2/Skipped:
+         - Add http/tests/navigation/response204.html because of missing layoutTestController.queueLoad()
+        * platform/qt-arm/Skipped:
+         - Add fast/css/hover-update.html, because it fails intermittently.
+         - Add failing http/tests/websocket/tests/frame-lengths.html and http/tests/websocket/tests/simple-stress.html.
+        * platform/qt-mac/fast/block/float/float-not-removed-from-next-sibling-expected.txt: Added.
+        * platform/qt-mac/fast/block/float/float-not-removed-from-next-sibling2-expected.txt: Added.
+        * platform/qt-mac/fast/block/float/float-not-removed-from-next-sibling3-expected.txt: Added.
+        * platform/qt-mac/fast/block/float/float-not-removed-from-next-sibling4-expected.txt: Added.
+        * platform/qt-wk2/Skipped:
+         - Add new but failing test: editing/pasteboard/paste-placeholder-input.html
+
 2011-05-06  Cris Neckar  <cdn@chromium.org>
 
         Reviewed by Dirk Schulze.

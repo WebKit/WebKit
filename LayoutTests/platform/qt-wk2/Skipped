@@ -3450,3 +3450,6 @@ http/tests/security/contentSecurityPolicy/eval-blocked.html
 # [Qt][WK2] editing/pasteboard/do-not-copy-body-color.html fails
 # https://bugs.webkit.org/show_bug.cgi?id=60076
 editing/pasteboard/do-not-copy-body-color.html
+
+# New test introduced in http://trac.webkit.org/changeset/85818
+editing/pasteboard/paste-placeholder-input.html

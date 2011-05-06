@@ -1300,6 +1300,7 @@ http/tests/navigation/relativeanchor-goback.html
 http/tests/navigation/reload-subframe-frame.html
 http/tests/navigation/reload-subframe-iframe.html
 http/tests/navigation/reload-subframe-object.html
+http/tests/navigation/response204.html
 http/tests/navigation/restore-form-state-https.html
 http/tests/navigation/slowmetaredirect-basic.html
 http/tests/navigation/slowtimerredirect-basic.html
