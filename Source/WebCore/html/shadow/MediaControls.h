@@ -61,12 +61,12 @@ class MediaControls : public HTMLDivElement {
     virtual void exitedFullscreen() = 0;
 
     virtual void reportedError() = 0;
-    virtual void changedNetworkState() = 0;
     virtual void loadedMetadata() = 0;
     virtual void changedClosedCaptionsVisibility() = 0;
 
     virtual void showVolumeSlider() = 0;
     virtual void updateTimeDisplay() = 0;
+    virtual void updateStatusDisplay() = 0;
 
 protected:
     MediaControls(HTMLMediaElement*);

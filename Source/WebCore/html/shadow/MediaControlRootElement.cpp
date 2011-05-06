@@ -274,7 +274,7 @@ void MediaControlRootElement::reset()
     if (!page)
         return;
 
-    changedNetworkState();
+    updateStatusDisplay();
 
     if (m_mediaElement->supportsFullscreen())
         m_fullScreenButton->show();
@@ -374,7 +374,7 @@ void MediaControlRootElement::reportedError()
         m_toggleClosedCaptionsButton->hide();
 }
 
-void MediaControlRootElement::changedNetworkState()
+void MediaControlRootElement::updateStatusDisplay()
 {
     if (m_statusDisplay)
         m_statusDisplay->update();

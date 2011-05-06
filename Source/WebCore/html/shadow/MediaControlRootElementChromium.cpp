@@ -182,7 +182,7 @@ void MediaControlRootElementChromium::reset()
     if (!page)
         return;
 
-    changedNetworkState();
+    updateStatusDisplay();
 
     float duration = m_mediaElement->duration();
     m_timeline->setDuration(duration);
@@ -245,7 +245,7 @@ void MediaControlRootElementChromium::reportedError()
     m_volumeSliderContainer->hide();
 }
 
-void MediaControlRootElementChromium::changedNetworkState()
+void MediaControlRootElementChromium::updateStatusDisplay()
 {
 }
 

@@ -77,12 +77,12 @@ public:
     void exitedFullscreen();
 
     void reportedError();
-    void changedNetworkState();
     void loadedMetadata();
     void changedClosedCaptionsVisibility();
 
     void showVolumeSlider();
     void updateTimeDisplay();
+    void updateStatusDisplay();
 
 private:
     MediaControlRootElementChromium(HTMLMediaElement*);
