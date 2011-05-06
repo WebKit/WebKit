@@ -224,12 +224,12 @@ if (isAppleMacWebKit()) {
 } elsif (isQt()) {
     if (isDarwin()) {
         $platform = "qt-mac";
+    } elsif (isARM()) {
+        $platform = "qt-arm";
     } elsif (isLinux()) {
         $platform = "qt-linux";
     } elsif (isWindows() || isCygwin()) {
         $platform = "qt-win";
-    } elsif (isARM()) {
-        $platform = "qt-arm";
     } else {
         $platform = "qt";
     }
