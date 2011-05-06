@@ -299,6 +299,10 @@ def parse_args(args=None):
         optparse.make_option("--reset-results", action="store_true",
             default=False, help="Reset any existing baselines to the "
                  "generated results"),
+        optparse.make_option("--skip-failing-tests", action="store_true",
+            default=False, help="Skip tests that are expected to fail. "
+                 "Note: When using this option, you might miss new crashes "
+                 "in these tests."),
         optparse.make_option("--additional-drt-flag", action="append",
             default=[], help="Additional command line flag to pass to DumpRenderTree "
                  "Specify multiple times to add multiple flags."),

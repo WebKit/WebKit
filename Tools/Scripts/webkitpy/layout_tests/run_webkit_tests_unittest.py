@@ -338,6 +338,14 @@ class MainTest(unittest.TestCase):
         for batch in batch_tests_run:
             self.assertEquals(len(batch), 1, '%s had too many tests' % ', '.join(batch))
 
+    def test_skip_failing_tests(self):
+        batches = get_tests_run(['--skip-failing-tests'])
+        has_passes_text = False
+        for batch in batches:
+            self.assertFalse('failures/expected/text.html' in batch)
+            has_passes_text = has_passes_text or ('passes/text.html' in batch)
+        self.assertTrue(has_passes_text)
+
     def test_run_singly_actually_runs_tests(self):
         res, _, _, _ = logging_run(['--run-singly', 'failures/unexpected'])
         self.assertEquals(res, 5)

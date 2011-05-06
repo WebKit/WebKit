@@ -358,6 +358,10 @@ class Manager:
             skipped = self._expectations.get_tests_with_result_type(
                            test_expectations.SKIP)
             self._test_files -= skipped
+            if self._options.skip_failing_tests:
+                failing = self._expectations.get_tests_with_result_type(
+                               test_expectations.FAIL)
+                self._test_files -= failing
 
         # Create a sorted list of test files so the subset chunk,
         # if used, contains alphabetically consecutive tests.

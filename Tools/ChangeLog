@@ -1,3 +1,18 @@
+2011-05-06  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Ojan Vafai.
+
+        Add an option to NRWT to skip failing tests
+        https://bugs.webkit.org/show_bug.cgi?id=60295
+
+        This option is similar to the way old-run-webkit-tests works.  We're
+        planning to use this option on the testing EWS bots because they don't
+        use information from failing tests yet.
+
+        * Scripts/webkitpy/layout_tests/layout_package/manager.py:
+        * Scripts/webkitpy/layout_tests/run_webkit_tests.py:
+        * Scripts/webkitpy/layout_tests/run_webkit_tests_unittest.py:
+
 2011-05-04  Philippe Normand  <pnormand@igalia.com>
 
         Reviewed by Dimitri Glazkov.
