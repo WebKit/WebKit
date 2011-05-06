@@ -1,3 +1,13 @@
+2011-05-06  Alexander Pavlov  <apavlov@chromium.org>
+
+        Reviewed by Yury Semikhatsky.
+
+        Web Inspector: editing CSS in the Resources panel and not committing does not revert the change.
+        https://bugs.webkit.org/show_bug.cgi?id=60319
+
+        * inspector/front-end/ResourceView.js:
+        (WebInspector.ResourceSourceFrame.prototype.cancelEditing):
+
 2011-05-06  Joe Mason  <jmason@rim.com>
 
         Reviewed by Adam Barth.

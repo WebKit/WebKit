@@ -148,6 +148,14 @@ WebInspector.ResourceSourceFrame.prototype = {
         this._resource.setContent(newText, majorChange, callback);
     },
 
+    cancelEditing: function()
+    {
+        this._clearIncrementalUpdateTimer();
+        const majorChange = false;
+        this._resource.setContent(this._viewerState.textModelContent, majorChange);
+        WebInspector.SourceFrame.prototype.cancelEditing.call(this);
+    },
+
     endEditing: function(oldRange, newRange)
     {
         function commitIncrementalEdit()
