@@ -1,3 +1,23 @@
+2011-05-05  Eric Carlson  <eric.carlson@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Live streams sometimes won't play with AVFoundation backend
+        https://bugs.webkit.org/show_bug.cgi?id=58961
+        rdar://problem/9284748
+
+        Tested manually because we don't have any live streams to test in DRT.
+
+        * platform/graphics/avfoundation/MediaPlayerPrivateAVFoundation.cpp:
+        (WebCore::MediaPlayerPrivateAVFoundation::updateStates): Don't special case seeking, assume
+            AVFoundation will notify us when internal states change.
+
+        * platform/graphics/avfoundation/MediaPlayerPrivateAVFoundationObjC.h: Make m_timeObserver
+            a RetainPtr
+        * platform/graphics/avfoundation/MediaPlayerPrivateAVFoundationObjC.mm:
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::MediaPlayerPrivateAVFoundationObjC): Ditto.
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::cancelLoad): Ditto.
+
 2011-05-05  Jay Civelli  <jcivelli@chromium.org>
 
         Reviewed by Adam Barth.

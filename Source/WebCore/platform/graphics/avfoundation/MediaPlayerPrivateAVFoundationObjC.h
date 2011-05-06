@@ -128,7 +128,7 @@ private:
     RetainPtr<AVPlayerLayer> m_videoLayer;
     RetainPtr<WebCoreAVFMovieObserver> m_objcObserver;
     RetainPtr<AVAssetImageGenerator> m_imageGenerator;
-    id m_timeObserver;
+    RetainPtr<id> m_timeObserver;
     bool m_videoFrameHasDrawn;
     bool m_haveCheckedPlayability;
 };

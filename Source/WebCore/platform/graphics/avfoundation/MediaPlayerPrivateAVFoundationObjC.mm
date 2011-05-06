@@ -137,7 +137,6 @@ void MediaPlayerPrivateAVFoundationObjC::registerMediaEngine(MediaEngineRegistra
 MediaPlayerPrivateAVFoundationObjC::MediaPlayerPrivateAVFoundationObjC(MediaPlayer* player)
     : MediaPlayerPrivateAVFoundation(player)
     , m_objcObserver(AdoptNS, [[WebCoreAVFMovieObserver alloc] initWithCallback:this])
-    , m_timeObserver(0)
     , m_videoFrameHasDrawn(false)
     , m_haveCheckedPlayability(false)
 {
@@ -170,7 +169,8 @@ void MediaPlayerPrivateAVFoundationObjC::cancelLoad()
     }
     if (m_avPlayer) {
         if (m_timeObserver)
-            [m_avPlayer.get() removeTimeObserver:m_timeObserver];
+            [m_avPlayer.get() removeTimeObserver:m_timeObserver.get()];
+        m_timeObserver = nil;
         [m_avPlayer.get() removeObserver:m_objcObserver.get() forKeyPath:@"rate"];
         m_avPlayer = nil;
     }

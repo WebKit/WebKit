@@ -421,40 +421,36 @@ void MediaPlayerPrivateAVFoundation::updateStates()
         }
         
         if (assetStatus >= MediaPlayerAVAssetStatusLoaded && itemStatus > MediaPlayerAVPlayerItemStatusUnknown) {
-            if (seeking())
-                m_readyState = m_readyState >= MediaPlayer::HaveMetadata ? MediaPlayer::HaveMetadata : MediaPlayer::HaveNothing;
-            else {
-                switch (itemStatus) {
-                case MediaPlayerAVPlayerItemStatusDoesNotExist:
-                case MediaPlayerAVPlayerItemStatusUnknown:
-                case MediaPlayerAVPlayerItemStatusFailed:
+            switch (itemStatus) {
+            case MediaPlayerAVPlayerItemStatusDoesNotExist:
+            case MediaPlayerAVPlayerItemStatusUnknown:
+            case MediaPlayerAVPlayerItemStatusFailed:
+                break;
+
+            case MediaPlayerAVPlayerItemStatusPlaybackLikelyToKeepUp:
+                m_readyState = MediaPlayer::HaveEnoughData;
+                break;
+
+            case MediaPlayerAVPlayerItemStatusPlaybackBufferFull:
+            case MediaPlayerAVPlayerItemStatusReadyToPlay:
+                // If the readyState is already HaveEnoughData, don't go lower because of this state change.
+                if (m_readyState == MediaPlayer::HaveEnoughData)
                     break;
 
-                case MediaPlayerAVPlayerItemStatusPlaybackLikelyToKeepUp:
-                    m_readyState = MediaPlayer::HaveEnoughData;
-                    break;
-
-                case MediaPlayerAVPlayerItemStatusPlaybackBufferFull:
-                case MediaPlayerAVPlayerItemStatusReadyToPlay:
-                    // If the readyState is already HaveEnoughData, don't go lower because of this state change.
-                    if (m_readyState == MediaPlayer::HaveEnoughData)
-                        break;
-
-                case MediaPlayerAVPlayerItemStatusPlaybackBufferEmpty:
-                    if (maxTimeLoaded() > currentTime())
-                        m_readyState = MediaPlayer::HaveFutureData;
-                    else
-                        m_readyState = MediaPlayer::HaveCurrentData;
-                    break;
-                }
-
-                if (itemStatus == MediaPlayerAVPlayerItemStatusPlaybackBufferFull)
-                    m_networkState = MediaPlayer::Idle;
-                else if (itemStatus == MediaPlayerAVPlayerItemStatusFailed)
-                    m_networkState = MediaPlayer::DecodeError;
-                else if (itemStatus != MediaPlayerAVPlayerItemStatusPlaybackBufferFull && itemStatus >= MediaPlayerAVPlayerItemStatusReadyToPlay)
-                    m_networkState = (maxTimeLoaded() == duration()) ? MediaPlayer::Loaded : MediaPlayer::Loading;
+            case MediaPlayerAVPlayerItemStatusPlaybackBufferEmpty:
+                if (maxTimeLoaded() > currentTime())
+                    m_readyState = MediaPlayer::HaveFutureData;
+                else
+                    m_readyState = MediaPlayer::HaveCurrentData;
+                break;
             }
+
+            if (itemStatus == MediaPlayerAVPlayerItemStatusPlaybackBufferFull)
+                m_networkState = MediaPlayer::Idle;
+            else if (itemStatus == MediaPlayerAVPlayerItemStatusFailed)
+                m_networkState = MediaPlayer::DecodeError;
+            else if (itemStatus != MediaPlayerAVPlayerItemStatusPlaybackBufferFull && itemStatus >= MediaPlayerAVPlayerItemStatusReadyToPlay)
+                m_networkState = (maxTimeLoaded() == duration()) ? MediaPlayer::Loaded : MediaPlayer::Loading;
         }
     }
 
