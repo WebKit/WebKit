@@ -486,9 +486,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				COPY_PHASE_STRIP = YES;
-				GCC_ENABLE_FIX_AND_CONTINUE = NO;
 				PRODUCT_NAME = All;
-				ZERO_LINK = NO;
 			};
 			name = Release;
 		};

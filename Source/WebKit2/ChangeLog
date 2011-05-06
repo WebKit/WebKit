@@ -1,3 +1,14 @@
+2011-05-06  David Kilzer  <ddkilzer@apple.com>
+
+        Remove unused GCC_ENABLE_FIX_AND_CONTINUE and ZERO_LINK settings
+
+        Reviewed by Jon Honeycutt.
+
+        This fixes an Xcode 4 warning about using obsolete settings.
+
+        * WebKit2.xcodeproj/project.pbxproj: Removed
+        GCC_ENABLE_FIX_AND_CONTINUE and ZERO_LINK settings.
+
 2011-05-06  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Reviewed by Martin Robinson.
