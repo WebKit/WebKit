@@ -75,18 +75,26 @@ private:
     Plugin findPluginForExtension(const String& extension, String& mimeType);
 
     void loadPluginsIfNecessary();
-    void loadPlugin(const String& pluginPath);
+    static void loadPlugin(Vector<Plugin>& plugins, const String& pluginPath);
     
-    // Platform-specific member functions
+    // Platform-specific member functions:
 
     // Returns paths to directories that should be searched for plug-ins (via pluginPathsInDirectory).
     static Vector<String> pluginsDirectories();
+
     // Returns paths to all plug-ins in the specified directory.
     static Vector<String> pluginPathsInDirectory(const String& directory);
+
     // Returns paths to individual plug-ins that won't be found via pluginsDirectories/pluginPathsInDirectory.
     static Vector<String> individualPluginPaths();
+
+    // Load plug-in info for the plug-in with the specified path.
     static bool getPluginInfo(const String& pluginPath, Plugin& plugin);
-    bool shouldUsePlugin(const Plugin& plugin);
+
+    // Return whether this plug-in should be used (added to the list of plug-ins) or not.
+    static bool shouldUsePlugin(Vector<Plugin>& alreadyLoadedPlugins, const Plugin&);
+
+    // Get the MIME type for the given extension.
     static String getMIMETypeForExtension(const String& extension);
 
     Vector<String> m_additionalPluginsDirectories;

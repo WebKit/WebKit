@@ -1,3 +1,23 @@
+2011-05-06  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        Make more PluginInfoStore member functions static
+        https://bugs.webkit.org/show_bug.cgi?id=60401
+
+        This is a first step towards making PluginInfoStore thread safe.
+
+        * UIProcess/Plugins/PluginInfoStore.cpp:
+        (WebKit::PluginInfoStore::loadPluginsIfNecessary):
+        (WebKit::PluginInfoStore::loadPlugin):
+        * UIProcess/Plugins/PluginInfoStore.h:
+        * UIProcess/Plugins/mac/PluginInfoStoreMac.mm:
+        (WebKit::PluginInfoStore::shouldUsePlugin):
+        * UIProcess/Plugins/unix/PluginInfoStoreUnix.cpp:
+        (WebKit::PluginInfoStore::shouldUsePlugin):
+        * UIProcess/Plugins/win/PluginInfoStoreWin.cpp:
+        (WebKit::PluginInfoStore::shouldUsePlugin):
+
 2011-05-06  Adam Roben  <aroben@apple.com>
 
         Mac build fix

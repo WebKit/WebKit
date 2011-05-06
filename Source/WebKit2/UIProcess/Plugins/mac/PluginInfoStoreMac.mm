@@ -76,10 +76,10 @@ bool PluginInfoStore::getPluginInfo(const String& pluginPath, Plugin& plugin)
     return NetscapePluginModule::getPluginInfo(pluginPath, plugin);
 }
 
-bool PluginInfoStore::shouldUsePlugin(const Plugin& plugin)
+bool PluginInfoStore::shouldUsePlugin(Vector<Plugin>& alreadyLoadedPlugins, const Plugin& plugin)
 {
-    for (size_t i = 0; i < m_plugins.size(); ++i) {
-        const Plugin& loadedPlugin = m_plugins[i];
+    for (size_t i = 0; i < alreadyLoadedPlugins.size(); ++i) {
+        const Plugin& loadedPlugin = alreadyLoadedPlugins[i];
 
         // If a plug-in with the same bundle identifier already exists, we don't want to load it.
         if (loadedPlugin.bundleIdentifier == plugin.bundleIdentifier)

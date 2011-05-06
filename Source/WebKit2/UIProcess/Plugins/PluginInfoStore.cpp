@@ -70,8 +70,6 @@ void PluginInfoStore::loadPluginsIfNecessary()
     if (m_pluginListIsUpToDate)
         return;
 
-    m_plugins.clear();
-
     PathHashSet uniquePluginPaths;
 
     // First, load plug-ins from the additional plug-ins directories specified.
@@ -86,25 +84,27 @@ void PluginInfoStore::loadPluginsIfNecessary()
     // Then load plug-ins that are not in the standard plug-ins directories.
     addFromVector(uniquePluginPaths, individualPluginPaths());
 
+    Vector<Plugin> plugins;
+
     PathHashSet::const_iterator end = uniquePluginPaths.end();
     for (PathHashSet::const_iterator it = uniquePluginPaths.begin(); it != end; ++it)
-        loadPlugin(*it);
+        loadPlugin(plugins, *it);
 
+    m_plugins.swap(plugins);
     m_pluginListIsUpToDate = true;
 }
 
-void PluginInfoStore::loadPlugin(const String& pluginPath)
+void PluginInfoStore::loadPlugin(Vector<Plugin>& plugins, const String& pluginPath)
 {
     Plugin plugin;
     
     if (!getPluginInfo(pluginPath, plugin))
         return;
 
-    if (!shouldUsePlugin(plugin))
+    if (!shouldUsePlugin(plugins, plugin))
         return;
     
-    // Add the plug-in.
-    m_plugins.append(plugin);
+    plugins.append(plugin);
 }
 
 void PluginInfoStore::getPlugins(Vector<PluginInfo>& plugins)

@@ -64,7 +64,7 @@ bool PluginInfoStore::getPluginInfo(const String& pluginPath, Plugin& plugin)
     return NetscapePluginModule::getPluginInfo(pluginPath, plugin);
 }
 
-bool PluginInfoStore::shouldUsePlugin(const Plugin& plugin)
+bool PluginInfoStore::shouldUsePlugin(Vector<Plugin>& alreadyLoadedPlugins, const Plugin& plugin)
 {
     // We do not do any black-listing presently.
     return true;

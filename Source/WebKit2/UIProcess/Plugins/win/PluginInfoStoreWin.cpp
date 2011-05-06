@@ -338,7 +338,7 @@ static bool isNewWindowsMediaPlayerPlugin(const PluginInfoStore::Plugin& plugin)
     return equalIgnoringCase(plugin.info.file, "np-mswmp.dll");
 }
 
-bool PluginInfoStore::shouldUsePlugin(const Plugin& plugin)
+bool PluginInfoStore::shouldUsePlugin(const Vector<Plugin>& alreadyLoadedPlugins, const Plugin& plugin)
 {
     if (plugin.info.name == "Citrix ICA Client") {
         // The Citrix ICA Client plug-in requires a Mozilla-based browser; see <rdar://6418681>.
@@ -373,8 +373,8 @@ bool PluginInfoStore::shouldUsePlugin(const Plugin& plugin)
     if (isOldWindowsMediaPlayerPlugin(plugin)) {
         // Don't load the old Windows Media Player plugin if we've already loaded the new Windows
         // Media Player plugin.
-        for (size_t i = 0; i < m_plugins.size(); ++i) {
-            if (!isNewWindowsMediaPlayerPlugin(m_plugins[i]))
+        for (size_t i = 0; i < alreadyLoadedPlugins.size(); ++i) {
+            if (!isNewWindowsMediaPlayerPlugin(alreadyLoadedPlugins[i]))
                 continue;
             return false;
         }
@@ -382,11 +382,11 @@ bool PluginInfoStore::shouldUsePlugin(const Plugin& plugin)
     }
 
     if (isNewWindowsMediaPlayerPlugin(plugin)) {
-        // Unload the old Windows Media Player plugin if we've already loaded it.
+        // Remove the old Windows Media Player plugin if we've already added it.
         for (size_t i = 0; i < m_plugins.size(); ++i) {
             if (!isOldWindowsMediaPlayerPlugin(m_plugins[i]))
                 continue;
-            m_plugins.remove(i);
+            alreadyLoadedPlugins.remove(i);
         }
         return true;
     }
@@ -394,8 +394,8 @@ bool PluginInfoStore::shouldUsePlugin(const Plugin& plugin)
     // FIXME: We should prefer a newer version of a plugin to an older version, rather than loading
     // only the first. <http://webkit.org/b/58469>
     String pluginFileName = pathGetFileName(plugin.path);
-    for (size_t i = 0; i < m_plugins.size(); ++i) {
-        Plugin& loadedPlugin = m_plugins[i];
+    for (size_t i = 0; i < alreadyLoadedPlugins.size(); ++i) {
+        const Plugin& loadedPlugin = alreadyLoadedPlugins[i];
 
         // If a plug-in with the same filename already exists, we don't want to load it.
         if (equalIgnoringCase(pluginFileName, pathGetFileName(loadedPlugin.path)))
