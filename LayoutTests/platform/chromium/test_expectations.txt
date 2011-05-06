@@ -3086,7 +3086,9 @@ BUGCR72861 : fast/css/test-setting-canvas-color.html = TEXT
 // need rebaseline.
 BUGWK54499 LINUX : svg/transforms/text-with-pattern-with-svg-transform.svg = IMAGE
 
-BUGWK54472 BUGCR59399 : media/audio-delete-while-slider-thumb-clicked.html = TEXT TIMEOUT
+// This is skipped since we do not support mac-specific clicking tests
+// (BUGCR59399).
+BUGWK54472 BUGCR59399 SKIP : media/audio-delete-while-slider-thumb-clicked.html = TEXT TIMEOUT
 
 // Flaky
 BUGCR73080 LINUX DEBUG : fast/forms/form-attribute-elements-order.html = PASS TIMEOUT
@@ -3303,9 +3305,6 @@ BUGXXX GPU SNOWLEOPARD : compositing/self-painting-layers.html = FAIL
 
 // Chrome doesn't load favicons in DRT tests.
 BUGWK57259 : http/tests/misc/link-rel-icon-beforeload.html = FAIL PASS
-
-// This test is very flaky on Mac and a little flaky on Win and Linux.
-BUGXXX : media/video-delay-load-event.html = PASS TEXT
 
 // We need help from V8 to implement this feature.
 // http://code.google.com/p/v8/issues/detail?id=1258
@@ -3945,7 +3944,6 @@ BUGDPRANKE CPU : svg/hixie/rendering-model/003.xhtml = IMAGE+TEXT PASS
 BUGDPRANKE CPU : svg/in-html/by-reference.html = IMAGE+TEXT PASS
 BUGDPRANKE CPU : fast/dom/HTMLFormElement/document-deactivation-callback-crash.html = PASS TEXT
 BUGDPRANKE LINUX DEBUG CPU : svg/custom/font-platformDestroy-crash.svg = PASS CRASH
-BUGDPRANKE CPU MAC DEBUG : http/tests/media/text-served-as-text.html = PASS CRASH
 BUGDPRANKE CPU : fast/dom/HTMLObjectElement/object-as-frame.html = PASS TEXT
 BUGDPRANKE CPU LINUX DEBUG : editing/pasteboard/drop-text-events.html = PASS CRASH
 BUGDPRANKE MAC DEBUG :   transitions/transition-end-event-transform.html = TEXT PASS
@@ -3958,7 +3956,6 @@ BUGWK59661 BUGCR80858 WIN LINUX MAC : media/video-controls-transformed.html = TE
 BUGDPRANKE MAC DEBUG : fast/blockflow/Kusa-Makura-background-canvas.html = CRASH PASS
 BUGDPRANKE MAC DEBUG : storage/domstorage/events/documentURI.html = CRASH PASS
 BUGDPRANKE MAC DEBUG : svg/W3C-SVG-1.1-SE/types-dom-04-b.svg = CRASH PASS
-BUGDPRANKE MAC DEBUG : http/tests/media/remove-while-loading.html = TIMEOUT PASS
 BUGDPRANKE WIN DEBUG : http/tests/security/credentials-in-referer.html = PASS TIMEOUT
 BUGDPRANKE MAC DEBUG : fast/css/getComputedStyle/font-family-fallback-reset.html = CRASH PASS
 
