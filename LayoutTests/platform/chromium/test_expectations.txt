@@ -4084,6 +4084,3 @@ BUGWK60356 : svg/filters/filterRes3.svg = IMAGE
 BUGWK60356 : svg/filters/parent-children-with-same-filter.svg = IMAGE
 BUGWK60356 : svg/filters/subRegion-one-effect.svg = IMAGE
 BUGWK60356 : svg/filters/subRegion-two-effects.svg = IMAGE
-
-// Needs baselines everywhere
-BUGENNE GPU : compositing/flat-with-transformed-child.html = PASS FAIL MISSING
