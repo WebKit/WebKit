@@ -203,6 +203,10 @@ class TestRebaseliner(unittest.TestCase):
         zip_factory = test_zip_factory()
         mock_scm = mocktool.MockSCM(filesystem)
         filesystem.maybe_make_directory(mock_scm.checkout_root)
+
+        # FIXME: SCM module doesn't handle paths that aren't relative to the checkout_root consistently.
+        filesystem.chdir("/test.checkout")
+
         rebaseliner = rebaseline_chromium_webkit_tests.Rebaseliner(host_port_obj,
             target_port_obj, platform, options, url_fetcher, zip_factory, mock_scm)
         return rebaseliner, filesystem
@@ -231,16 +235,17 @@ class TestRebaseliner(unittest.TestCase):
     def test_one_platform(self):
         rebaseliner, filesystem = self.make_rebaseliner(
             "BUGX REBASELINE MAC : failures/expected/image.html = IMAGE")
+
         rebaseliner.run()
-        # We expect to have written 12 files over the course of this rebaseline:
+        # We expect to have written 13 files over the course of this rebaseline:
         # *) 3 files in /__im_tmp for the extracted archive members
         # *) 3 new baselines under '/test.checkout/LayoutTests'
         # *) 4 files in /tmp for the new and old baselines in the result file
         #    (-{old,new}.{txt,png}
-        # *) 1 text diff in /tmp for the result file (-diff.txt). We don't
-        #    create image diffs (FIXME?) and don't display the checksums.
+        # *) 1 text diff in /tmp for the result file (-diff.txt).
+        # *) 1 image diff in /tmp for the result file (-diff.png).
         # *) 1 updated test_expectations file
-        self.assertEqual(len(filesystem.written_files), 12)
+        self.assertEqual(len(filesystem.written_files), 13)
         self.assertEqual(filesystem.files['/test.checkout/LayoutTests/platform/test-mac-leopard/failures/expected/image-expected.checksum'], 'new-image-checksum')
         self.assertEqual(filesystem.files['/test.checkout/LayoutTests/platform/test-mac-leopard/failures/expected/image-expected.png'], 'new-image-png')
         self.assertEqual(filesystem.files['/test.checkout/LayoutTests/platform/test-mac-leopard/failures/expected/image-expected.txt'], 'new-image-txt')
@@ -249,10 +254,10 @@ class TestRebaseliner(unittest.TestCase):
         rebaseliner, filesystem = self.make_rebaseliner(
             "BUGX REBASELINE : failures/expected/image.html = IMAGE")
         rebaseliner.run()
-        # See comment in test_one_platform for an explanation of the 12 written tests.
+        # See comment in test_one_platform for an explanation of the 13 written tests.
         # Note that even though the rebaseline is marked for all platforms, each
         # rebaseliner only ever does one.
-        self.assertEqual(len(filesystem.written_files), 12)
+        self.assertEqual(len(filesystem.written_files), 13)
         self.assertEqual(filesystem.files['/test.checkout/LayoutTests/platform/test-mac-leopard/failures/expected/image-expected.checksum'], 'new-image-checksum')
         self.assertEqual(filesystem.files['/test.checkout/LayoutTests/platform/test-mac-leopard/failures/expected/image-expected.png'], 'new-image-png')
         self.assertEqual(filesystem.files['/test.checkout/LayoutTests/platform/test-mac-leopard/failures/expected/image-expected.txt'], 'new-image-txt')
@@ -266,7 +271,7 @@ class TestRebaseliner(unittest.TestCase):
         rebaseliner.run()
         # There is one less file written than |test_one_platform| because we only
         # write 2 expectations (the png and the txt file).
-        self.assertEqual(len(filesystem.written_files), 11)
+        self.assertEqual(len(filesystem.written_files), 12)
         self.assertEqual(filesystem.files['/test.checkout/LayoutTests/platform/test-mac-leopard/failures/expected/image_checksum-expected.png'], 'tEXtchecksum\x000123456789')
         self.assertEqual(filesystem.files['/test.checkout/LayoutTests/platform/test-mac-leopard/failures/expected/image_checksum-expected.txt'], 'png-comment-txt')
         self.assertFalse(filesystem.files.get('/test.checkout/LayoutTests/platform/test-mac-leopard/failures/expected/image_checksum-expected.checksum', None))
@@ -284,7 +289,7 @@ class TestRebaseliner(unittest.TestCase):
         rebaseliner.run()
         # There is one more file written than |test_png_file_with_comment_remove_old_checksum|
         # because we also delete the old checksum.
-        self.assertEqual(len(filesystem.written_files), 12)
+        self.assertEqual(len(filesystem.written_files), 13)
         self.assertEqual(filesystem.files['/test.checkout/LayoutTests/platform/test-mac-leopard/failures/expected/image_checksum-expected.png'], 'tEXtchecksum\x000123456789')
         self.assertEqual(filesystem.files['/test.checkout/LayoutTests/platform/test-mac-leopard/failures/expected/image_checksum-expected.txt'], 'png-comment-txt')
         self.assertEqual(filesystem.files.get('/test.checkout/LayoutTests/platform/test-mac-leopard/failures/expected/image_checksum-expected.checksum', None), None)
@@ -338,21 +343,26 @@ class TestRealMain(unittest.TestCase):
         zip_factory = test_zip_factory()
         mock_scm = mocktool.MockSCM()
         filesystem.maybe_make_directory(mock_scm.checkout_root)
+
+        # FIXME: SCM module doesn't handle paths that aren't relative to the checkout_root consistently.
+        filesystem.chdir("/test.checkout")
+
         oc = outputcapture.OutputCapture()
         oc.capture_output()
         res = rebaseline_chromium_webkit_tests.real_main(options, options,
             host_port_obj, host_port_obj, url_fetcher, zip_factory, mock_scm)
         oc.restore_output()
 
-        # We expect to have written 36 files over the course of this rebaseline:
+        # We expect to have written 38 files over the course of this rebaseline:
         # *) 6*3 files in /__im_tmp/ for the archived members of the 6 ports
         # *) 2*3 files in /test.checkout for actually differing baselines
         # *) 1 file in /test.checkout for the updated test_expectations file
         # *) 2*4 files in /tmp for the old/new baselines for the two actual ports
         # *) 2 files in /tmp for the text diffs for the two ports
+        # *) 2 files in /tmp for the image diffs for the two ports
         # *) 1 file in /tmp for the rebaseline results html file
         self.assertEqual(res, 0)
-        self.assertEqual(len(filesystem.written_files), 36)
+        self.assertEqual(len(filesystem.written_files), 38)
 
 
 class TestHtmlGenerator(unittest.TestCase):

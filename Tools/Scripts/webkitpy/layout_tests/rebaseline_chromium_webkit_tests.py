@@ -405,9 +405,7 @@ class Rebaseliner(object):
             self._filesystem.maybe_make_directory(self._filesystem.dirname(expected_fullpath))
             self._filesystem.move(temp_name, expected_fullpath)
 
-            # FIXME: SCM module doesn't handle paths that aren't relative to the checkout_root consistently.
-            self._filesystem.chdir(self._scm.checkout_root)
-            path_from_base = self._filesystem.relpath(expected_fullpath, self._filesystem.getcwd())
+            path_from_base = self._filesystem.relpath(expected_fullpath)
             if self._scm.exists(path_from_base):
                 _log.info('  Updating %s' % relpath)
             else:
@@ -543,11 +541,16 @@ class Rebaseliner(object):
           baseline_fullpath: full path of the expected baseline file.
         """
 
+        baseline_relpath = self._filesystem.relpath(baseline_fullpath)
+        _log.debug('  Html: create baselines for "%s"', baseline_relpath)
+
         if (not baseline_fullpath
             or not self._filesystem.exists(baseline_fullpath)):
+            _log.debug('  Html: Does not exist: "%s"', baseline_fullpath)
             return
 
-        if not self._scm.exists(baseline_fullpath):
+        if not self._scm.exists(baseline_relpath):
+            _log.debug('  Html: Does not exist in scm: "%s"', baseline_relpath)
             return
 
         # Copy the new baseline to html directory for result comparison.
@@ -560,7 +563,7 @@ class Rebaseliner(object):
 
         # Get the old baseline from the repository and save to the html directory.
         try:
-            output = self._scm.show_head(baseline_fullpath)
+            output = self._scm.show_head(baseline_relpath)
         except ScriptError, e:
             _log.warning(e)
             output = ""
@@ -577,14 +580,32 @@ class Rebaseliner(object):
         _log.debug('  Html: created old baseline file: "%s".', base_file)
 
         # Get the diff between old and new baselines and save to the html dir.
+        diff_file = get_result_file_fullpath(self._filesystem,
+                                             self._options.html_directory,
+                                             baseline_filename,
+                                             self._platform, 'diff')
+        has_diff = False
         if baseline_filename.upper().endswith('.TXT'):
-            output = self._scm.diff_for_file(baseline_fullpath, log=_log)
+            output = self._scm.diff_for_file(baseline_relpath, log=_log)
             if output:
-                diff_file = get_result_file_fullpath(self._filesystem,
-                    self._options.html_directory, baseline_filename,
-                    self._platform, 'diff')
                 self._filesystem.write_text_file(diff_file, output)
-                _log.debug('  Html: created baseline diff file: "%s".', diff_file)
+                has_diff = True
+        elif baseline_filename.upper().endswith('.PNG'):
+            old_file = get_result_file_fullpath(self._filesystem,
+                                                self._options.html_directory,
+                                                baseline_filename,
+                                                self._platform, 'old')
+            new_file = get_result_file_fullpath(self._filesystem,
+                                                self._options.html_directory,
+                                                baseline_filename,
+                                                self._platform, 'new')
+            _log.debug(' Html: diffing "%s" and "%s"', old_file, new_file)
+            old_output = self._filesystem.read_binary_file(old_file)
+            new_output = self._filesystem.read_binary_file(new_file)
+            has_diff = self._port.diff_image(old_output, new_output, diff_file)
+
+        if has_diff:
+            _log.debug('  Html: created baseline diff file: "%s".', diff_file)
 
 
 class HtmlGenerator(object):
@@ -930,6 +951,9 @@ def main(args):
 
     # We use the default zip factory method.
     zip_factory = None
+
+    # FIXME: SCM module doesn't handle paths that aren't relative to the checkout_root consistently.
+    host_port_obj._filesystem.chdir(scm_obj.checkout_root)
 
     ret_code = real_main(options, target_options, host_port_obj, target_port_obj, url_fetcher,
                          zip_factory, scm_obj)
