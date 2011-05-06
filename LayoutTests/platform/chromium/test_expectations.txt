@@ -1953,9 +1953,6 @@ BUGCR40680 SKIP : fast/media/media-query-list-07.html = FAIL
 // Unknown flakiness.
 BUGCR38706 : svg/custom/deep-dynamic-updates.svg = IMAGE+TEXT IMAGE PASS
 
-// Caused by http://trac.webkit.org/changeset/56288/
-BUGCR29737 WIN LINUX : svg/filters/filterRes.svg = IMAGE
-
 // Caused by http://trac.webkit.org/changeset/56394.
 BUG_JAPHET WIN : http/tests/xmlhttprequest/xmlhttprequest-50ms-download-dispatch.html = TEXT TIMEOUT
 

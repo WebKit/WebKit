@@ -1,3 +1,11 @@
+2011-05-06  Adrienne Walker  <enne@google.com>
+
+        [chromium] Unreviewed, fix parse errors in test_expectations.
+
+        I will annotate bug 60356 so that this case gets looked at.
+
+        * platform/chromium/test_expectations.txt:
+
 2011-05-06  Csaba Osztrogonác  <ossy@webkit.org>
 
         Unreviewed expectations update.
