@@ -1,3 +1,16 @@
+2011-05-06  Steve Lacey  <sjl@chromium.org>
+
+        Reviewed by Eric Carlson.
+
+        Add baselines to chromium for video-source-error that reflect the fact that
+        chromium does not support mp4.
+
+        [chromium] Rebaseline needed for video-source-error
+        https://bugs.webkit.org/show_bug.cgi?id=60292
+
+        * platform/chromium/media/video-source-error-expected.txt: Added.
+        * platform/chromium/test_expectations.txt:
+
 2011-05-06  David Hyatt  <hyatt@apple.com>
 
         Reviewed by Dan Bernstein.
