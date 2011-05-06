@@ -5446,17 +5446,11 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
     case CSSPropertySize:
         applyPageSizeProperty(value);
         return;
-    
     case CSSPropertySpeak:
-        HANDLE_INHERIT_AND_INITIAL(speak, Speak);
-        if (!primitiveValue)
-            return;
-        m_style->setSpeak(*primitiveValue);
+        HANDLE_INHERIT_AND_INITIAL_AND_PRIMITIVE(speak, Speak);
         return;
-            
     case CSSPropertyInvalid:
         return;
-
     // Directional properties are resolved by resolveDirectionAwareProperty() before the switch.
     case CSSPropertyWebkitBorderEnd:
     case CSSPropertyWebkitBorderEndColor:
