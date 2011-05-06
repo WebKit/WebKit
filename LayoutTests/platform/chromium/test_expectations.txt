@@ -3534,7 +3534,8 @@ BUGCR79259 : fast/js/array-proto-func-property-getter-except.html = TEXT
 
 // Temporarily marked failing for rebaselining.
 
-BUGCR81482 GPU : media/video-volume-slider.html = IMAGE+TEXT
+BUGCR81482 GPU : media/video-volume-slider.html = IMAGE
+BUGCR81482 GPU : media/video-controls-rendering.html = IMAGE
 
 // Need to be re-baselined BUGCR79770
 BUGCR79770 WIN : fast/box-shadow/inset-with-extraordinary-radii-and-border.html = IMAGE
