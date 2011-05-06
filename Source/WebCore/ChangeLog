@@ -1,3 +1,16 @@
+2011-05-06  Luke Macpherson   <macpherson@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        Make CSSStyleSelector::applyProperty() CSSPropertyPointerEvents use the correct macro.
+        https://bugs.webkit.org/show_bug.cgi?id=60338
+
+        No tests added as no functionality changed.
+
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::applyProperty):
+        Use correct macro for CSSPropertySpeak.
+
 2011-05-06  Alexis Menard  <alexis.menard@openbossa.org>
 
         Reviewed by Alexey Proskuryakov.

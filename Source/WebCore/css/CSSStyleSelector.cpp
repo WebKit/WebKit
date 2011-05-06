@@ -5407,10 +5407,7 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
         if (settings && settings->usesDashboardBackwardCompatibilityMode())
             return;
 #endif
-        HANDLE_INHERIT_AND_INITIAL(pointerEvents, PointerEvents)
-        if (!primitiveValue)
-            return;
-        m_style->setPointerEvents(*primitiveValue);
+        HANDLE_INHERIT_AND_INITIAL_AND_PRIMITIVE(pointerEvents, PointerEvents)
         return;
     }
     case CSSPropertyWebkitColorCorrection:
