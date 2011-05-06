@@ -307,8 +307,14 @@ bool ScriptController::haveInterpreter() const
 
 void ScriptController::disableEval()
 {
-    // FIXME: We need help from V8 to implement this function:
-    // http://code.google.com/p/v8/issues/detail?id=1258
+    m_proxy->windowShell()->initContextIfNeeded();
+
+    v8::HandleScope handleScope;
+    v8::Handle<v8::Context> v8Context = V8Proxy::mainWorldContext(m_frame);
+    if (v8Context.IsEmpty())
+        return;
+
+    v8Context->AllowCodeGenerationFromStrings(false);
 }
 
 PassScriptInstance ScriptController::createScriptInstanceForWidget(Widget* widget)
