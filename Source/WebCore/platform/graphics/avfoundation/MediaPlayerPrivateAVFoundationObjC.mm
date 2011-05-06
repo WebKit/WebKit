@@ -46,8 +46,8 @@
 #import <CoreMedia/CoreMedia.h>
 #import <AVFoundation/AVFoundation.h>
 
-SOFT_LINK_FRAMEWORK(AVFoundation)
-SOFT_LINK_FRAMEWORK(CoreMedia)
+SOFT_LINK_FRAMEWORK_OPTIONAL(AVFoundation)
+SOFT_LINK_FRAMEWORK_OPTIONAL(CoreMedia)
 
 SOFT_LINK(CoreMedia, CMTimeCompare, int32_t, (CMTime time1, CMTime time2), (time1, time2))
 SOFT_LINK(CoreMedia, CMTimeMakeWithSeconds, CMTime, (Float64 seconds, int32_t preferredTimeScale), (seconds, preferredTimeScale))
@@ -679,7 +679,7 @@ MediaPlayer::SupportsType MediaPlayerPrivateAVFoundationObjC::supportsType(const
 
 bool MediaPlayerPrivateAVFoundationObjC::isAvailable()
 {
-    return true;
+    return AVFoundationLibrary() && CoreMediaLibrary();
 }
 
 float MediaPlayerPrivateAVFoundationObjC::mediaTimeForTimeValue(float timeValue) const

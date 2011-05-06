@@ -1,5 +1,22 @@
 2011-05-05  Eric Carlson  <eric.carlson@apple.com>
 
+        Reviewed by Maciej Stachowiak.
+
+        <rdar://problem/9390864>
+        https://bugs.webkit.org/show_bug.cgi?id=60343
+        Crash on Recovery System when trying to load page that includes media element
+
+        Automated test not possible, tested manually.
+
+        * platform/graphics/avfoundation/MediaPlayerPrivateAVFoundationObjC.mm:
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::isAvailable): Only return true if
+            AVFoundation and CoreMedia are installed.
+
+        * platform/mac/SoftLinking.h: Define SOFT_LINK_FRAMEWORK_OPTIONAL, identical to 
+            SOFT_LINK_FRAMEWORK except that it doesn't ASSERT if the framework doesn't exist.
+
+2011-05-05  Eric Carlson  <eric.carlson@apple.com>
+
         Reviewed by Darin Adler.
 
         Live streams sometimes won't play with AVFoundation backend
