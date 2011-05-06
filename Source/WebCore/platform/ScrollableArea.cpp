@@ -43,8 +43,7 @@
 namespace WebCore {
 
 ScrollableArea::ScrollableArea()
-    : m_scrollAnimator(ScrollAnimator::create(this))
-    , m_constrainsScrollingToContentEdge(true)
+    : m_constrainsScrollingToContentEdge(true)
     , m_inLiveResize(false)
     , m_verticalScrollElasticity(ScrollElasticityNone)
     , m_horizontalScrollElasticity(ScrollElasticityNone)
@@ -55,6 +54,14 @@ ScrollableArea::~ScrollableArea()
 {
 }
 
+ScrollAnimator* ScrollableArea::scrollAnimator() const
+{
+    if (!m_scrollAnimator)
+        m_scrollAnimator = ScrollAnimator::create(const_cast<ScrollableArea*>(this));
+
+    return m_scrollAnimator.get();
+}
+ 
 bool ScrollableArea::scroll(ScrollDirection direction, ScrollGranularity granularity, float multiplier)
 {
     ScrollbarOrientation orientation;
@@ -89,12 +96,12 @@ bool ScrollableArea::scroll(ScrollDirection direction, ScrollGranularity granula
     if (direction == ScrollUp || direction == ScrollLeft)
         multiplier = -multiplier;
 
-    return m_scrollAnimator->scroll(orientation, granularity, step, multiplier);
+    return scrollAnimator()->scroll(orientation, granularity, step, multiplier);
 }
 
 void ScrollableArea::scrollToOffsetWithoutAnimation(const FloatPoint& offset)
 {
-    m_scrollAnimator->scrollToOffsetWithoutAnimation(offset);
+    scrollAnimator()->scrollToOffsetWithoutAnimation(offset);
 }
 
 void ScrollableArea::scrollToOffsetWithoutAnimation(ScrollbarOrientation orientation, float offset)
@@ -107,23 +114,23 @@ void ScrollableArea::scrollToOffsetWithoutAnimation(ScrollbarOrientation orienta
 
 void ScrollableArea::scrollToXOffsetWithoutAnimation(float x)
 {
-    scrollToOffsetWithoutAnimation(FloatPoint(x, m_scrollAnimator->currentPosition().y()));
+    scrollToOffsetWithoutAnimation(FloatPoint(x, scrollAnimator()->currentPosition().y()));
 }
 
 void ScrollableArea::scrollToYOffsetWithoutAnimation(float y)
 {
-    scrollToOffsetWithoutAnimation(FloatPoint(m_scrollAnimator->currentPosition().x(), y));
+    scrollToOffsetWithoutAnimation(FloatPoint(scrollAnimator()->currentPosition().x(), y));
 }
 
 void ScrollableArea::handleWheelEvent(PlatformWheelEvent& wheelEvent)
 {
-    m_scrollAnimator->handleWheelEvent(wheelEvent);
+    scrollAnimator()->handleWheelEvent(wheelEvent);
 }
 
 #if ENABLE(GESTURE_EVENTS)
 void ScrollableArea::handleGestureEvent(const PlatformGestureEvent& gestureEvent)
 {
-    m_scrollAnimator->handleGestureEvent(gestureEvent);
+    scrollAnimator()->handleGestureEvent(gestureEvent);
 }
 #endif
 

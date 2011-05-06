@@ -1,3 +1,25 @@
+2011-05-06  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Lazily allocate ScrollAnimator in ScrollableArea
+        https://bugs.webkit.org/show_bug.cgi?id=60327
+
+        Avoid allocating the ScrollAnimator up-front, because we
+        create lots of ScrollableAreas via RenderLayer, and we should
+        only need the animator when scrolling.
+
+        * platform/ScrollableArea.cpp:
+        (WebCore::ScrollableArea::ScrollableArea):
+        (WebCore::ScrollableArea::scrollAnimator):
+        (WebCore::ScrollableArea::scroll):
+        (WebCore::ScrollableArea::scrollToOffsetWithoutAnimation):
+        (WebCore::ScrollableArea::scrollToXOffsetWithoutAnimation):
+        (WebCore::ScrollableArea::scrollToYOffsetWithoutAnimation):
+        (WebCore::ScrollableArea::handleWheelEvent):
+        (WebCore::ScrollableArea::handleGestureEvent):
+        * platform/ScrollableArea.h:
+
 2011-05-06  Eric Carlson  <eric.carlson@apple.com>
 
         Reviewed by Darin Adler.

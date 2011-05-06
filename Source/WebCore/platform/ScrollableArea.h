@@ -79,7 +79,7 @@ public:
     bool hasOverlayScrollbars() const;
     virtual ScrollbarOverlayStyle recommendedScrollbarOverlayStyle() const { return ScrollbarOverlayStyleDefault; }
 
-    ScrollAnimator* scrollAnimator() const { return m_scrollAnimator.get(); }
+    ScrollAnimator* scrollAnimator() const;
     const IntPoint& scrollOrigin() const { return m_scrollOrigin; }
 
     virtual bool isActive() const = 0;
@@ -138,8 +138,8 @@ private:
     // NOTE: Only called from the ScrollAnimator.
     friend class ScrollAnimator;
     void setScrollOffsetFromAnimation(const IntPoint&);
-
-    OwnPtr<ScrollAnimator> m_scrollAnimator;
+    
+    mutable OwnPtr<ScrollAnimator> m_scrollAnimator;
     bool m_constrainsScrollingToContentEdge;
 
     bool m_inLiveResize;
