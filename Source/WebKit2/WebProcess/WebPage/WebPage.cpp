@@ -443,15 +443,17 @@ void WebPage::tryClose()
 {
     SendStopResponsivenessTimer stopper(this);
 
-    if (!m_mainFrame->coreFrame()->loader()->shouldClose())
+    if (!m_mainFrame->coreFrame()->loader()->shouldClose()) {
+        send(Messages::WebPageProxy::StopResponsivenessTimer());
         return;
+    }
 
-    sendClose();
+    send(Messages::WebPageProxy::ClosePage(true));
 }
 
 void WebPage::sendClose()
 {
-    send(Messages::WebPageProxy::ClosePage());
+    send(Messages::WebPageProxy::ClosePage(false));
 }
 
 void WebPage::loadURL(const String& url, const SandboxExtension::Handle& sandboxExtensionHandle)

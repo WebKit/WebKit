@@ -1932,8 +1932,11 @@ void WebPageProxy::showPage()
     m_uiClient.showPage(this);
 }
 
-void WebPageProxy::closePage()
+void WebPageProxy::closePage(bool stopResponsivenessTimer)
 {
+    if (stopResponsivenessTimer)
+        process()->responsivenessTimer()->stop();
+
     m_uiClient.close(this);
 }
 

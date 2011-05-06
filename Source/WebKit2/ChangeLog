@@ -1,3 +1,27 @@
+2011-05-05  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Anders Carlsson.
+
+        REGRESSION (r85689): Unresponsive timer firing when closing background tabs
+        <rdar://problem/9385988>
+        https://bugs.webkit.org/show_bug.cgi?id=60325
+
+        When calling WKPageTryClose(), if the page close succeeded, the notification to stop
+        the responsiveness timer would be dropped because the page was closed by the time it
+        got to the UIProcess.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::closePage):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPageProxy.messages.in:
+        Add parameter to closePage stipulating whether or not to stop the responsiveness timer.
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::tryClose):
+        (WebKit::WebPage::sendClose):
+        Instead of sending a StopResponsivenessTimer message after sending the ClosePage message,
+        add a bit to the ClosePage message.
+
 2011-05-05  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Simon Fraser.

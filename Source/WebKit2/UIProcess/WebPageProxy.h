@@ -571,7 +571,7 @@ private:
     // UI client
     void createNewPage(const WebCore::WindowFeatures&, uint32_t modifiers, int32_t mouseButton, uint64_t& newPageID, WebPageCreationParameters&);
     void showPage();
-    void closePage();
+    void closePage(bool stopResponsivenessTimer);
     void runJavaScriptAlert(uint64_t frameID, const String&);
     void runJavaScriptConfirm(uint64_t frameID, const String&, bool& result);
     void runJavaScriptPrompt(uint64_t frameID, const String&, const String&, String& result);

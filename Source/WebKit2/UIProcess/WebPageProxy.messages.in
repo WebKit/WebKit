@@ -24,7 +24,7 @@ messages -> WebPageProxy {
     # UI messages
     CreateNewPage(WebCore::WindowFeatures windowFeatures, uint32_t modifiers, int32_t mouseButton) -> (uint64_t newPageID, WebKit::WebPageCreationParameters newPageParameters)
     ShowPage()
-    ClosePage()
+    ClosePage(bool stopResponsivenessTimer)
     RunJavaScriptAlert(uint64_t frameID, WTF::String message) -> ()
     RunJavaScriptConfirm(uint64_t frameID, WTF::String message) -> (bool result)
     RunJavaScriptPrompt(uint64_t frameID, WTF::String message, WTF::String defaultValue) -> (WTF::String result)
