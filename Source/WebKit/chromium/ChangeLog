@@ -1,3 +1,16 @@
+2011-05-06  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r85919.
+        http://trac.webkit.org/changeset/85919
+        https://bugs.webkit.org/show_bug.cgi?id=60378
+
+        broke chromium database tests (Requested by inferno-sec on
+        #webkit).
+
+        * public/WebPermissionClient.h:
+        * src/IDBFactoryBackendProxy.cpp:
+        (WebKit::IDBFactoryBackendProxy::open):
+
 2011-05-04  Philippe Normand  <pnormand@igalia.com>
 
         Reviewed by Dimitri Glazkov.

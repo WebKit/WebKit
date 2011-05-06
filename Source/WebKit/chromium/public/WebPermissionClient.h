@@ -34,7 +34,6 @@
 namespace WebKit {
 
 class WebFrame;
-class WebSecurityOrigin;
 class WebString;
 
 class WebPermissionClient {
@@ -44,9 +43,6 @@ public:
 
     // Controls whether images are allowed for this frame.
     virtual bool allowImages(WebFrame*, bool enabledPerSettings) { return enabledPerSettings; }
-
-    // Controls whether access to Indexed DB are allowed for this frame.
-    virtual bool allowIndexedDB(WebFrame*, const WebString& name, const WebSecurityOrigin&) { return true; }
 
     // Controls whether plugins are allowed for this frame.
     virtual bool allowPlugins(WebFrame*, bool enabledPerSettings) { return enabledPerSettings; }
