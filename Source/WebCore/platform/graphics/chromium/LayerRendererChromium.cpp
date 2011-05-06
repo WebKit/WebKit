@@ -365,7 +365,10 @@ void LayerRendererChromium::paintLayerContents(const LayerList& renderSurfaceLay
             if (layer->bounds().isEmpty())
                 continue;
 
-            const IntRect targetSurfaceRect = layer->ccLayerImpl()->scissorRect();
+            IntRect targetSurfaceRect = ccLayerImpl->targetRenderSurface() ? ccLayerImpl->targetRenderSurface()->contentRect() : m_defaultRenderSurface->contentRect();
+            IntRect scissorRect = layer->ccLayerImpl()->scissorRect();
+            if (!scissorRect.isEmpty())
+                targetSurfaceRect.intersect(scissorRect);
 
             if (layer->drawsContent())
                 layer->paintContentsIfDirty(targetSurfaceRect);
@@ -639,12 +642,7 @@ void LayerRendererChromium::updatePropertiesAndRenderSurfaces(LayerChromium* lay
         TransformationMatrix layerOriginTransform = combinedTransform;
         layerOriginTransform.translate3d(-0.5 * bounds.width(), -0.5 * bounds.height(), 0);
         renderSurface->m_originTransform = layerOriginTransform;
-        if (layerOriginTransform.isInvertible() && drawLayer->superlayer()) {
-            TransformationMatrix parentToLayer = layerOriginTransform.inverse();
-
-            drawLayer->setScissorRect(parentToLayer.mapRect(drawLayer->superlayer()->scissorRect()));
-        } else
-            drawLayer->setScissorRect(IntRect());
+        drawLayer->setScissorRect(IntRect());
 
         // The render surface scissor rect is the scissor rect that needs to
         // be applied before drawing the render surface onto its containing
@@ -684,8 +682,9 @@ void LayerRendererChromium::updatePropertiesAndRenderSurfaces(LayerChromium* lay
             drawLayer->clearRenderSurface();
 
         if (drawLayer->masksToBounds()) {
-            IntRect scissor = drawLayer->scissorRect();
-            scissor.intersect(transformedLayerRect);
+            IntRect scissor = transformedLayerRect;
+            if (!drawLayer->scissorRect().isEmpty())
+                scissor.intersect(drawLayer->scissorRect());
             drawLayer->setScissorRect(scissor);
         }
     }
@@ -765,7 +764,8 @@ void LayerRendererChromium::updatePropertiesAndRenderSurfaces(LayerChromium* lay
         // Don't clip if the layer is reflected as the reflection shouldn't be
         // clipped.
         if (!drawLayer->replicaLayer()) {
-            renderSurface->m_contentRect.intersect(drawLayer->scissorRect());
+            if (!drawLayer->scissorRect().isEmpty())
+                renderSurface->m_contentRect.intersect(drawLayer->scissorRect());
             FloatPoint clippedSurfaceCenter = renderSurface->contentRectCenter();
             centerOffsetDueToClipping = clippedSurfaceCenter - surfaceCenter;
         }
@@ -907,9 +907,14 @@ void LayerRendererChromium::drawLayer(CCLayerImpl* layer, RenderSurfaceChromium*
 
     setScissorToRect(layer->scissorRect());
 
+    IntRect targetSurfaceRect = m_currentRenderSurface ? m_currentRenderSurface->contentRect() : m_defaultRenderSurface->contentRect();
+    IntRect scissorRect = layer->scissorRect();
+    if (!scissorRect.isEmpty())
+        targetSurfaceRect.intersect(scissorRect);
+
     // Check if the layer falls within the visible bounds of the page.
     IntRect layerRect = layer->getDrawRect();
-    bool isLayerVisible = layer->scissorRect().intersects(layerRect);
+    bool isLayerVisible = targetSurfaceRect.intersects(layerRect);
     if (!isLayerVisible) {
         layer->unreserveContentsTexture();
         return;
@@ -933,7 +938,7 @@ void LayerRendererChromium::drawLayer(CCLayerImpl* layer, RenderSurfaceChromium*
         }
     }
 
-    layer->draw(layer->scissorRect());
+    layer->draw(targetSurfaceRect);
 
     // Draw the debug border if there is one.
     layer->drawDebugBorder();
@@ -941,9 +946,11 @@ void LayerRendererChromium::drawLayer(CCLayerImpl* layer, RenderSurfaceChromium*
 
 // Sets the scissor region to the given rectangle. The coordinate system for the
 // scissorRect has its origin at the top left corner of the current visible rect.
-void LayerRendererChromium::setScissorToRect(const IntRect& scissorRect)
+void LayerRendererChromium::setScissorToRect(const IntRect& requestedScissor)
 {
     IntRect contentRect = (m_currentRenderSurface ? m_currentRenderSurface->m_contentRect : m_defaultRenderSurface->m_contentRect);
+
+    const IntRect scissorRect = requestedScissor.isEmpty() ? contentRect : requestedScissor;
 
     // The scissor coordinates must be supplied in viewport space so we need to offset
     // by the relative position of the top left corner of the current render surface.

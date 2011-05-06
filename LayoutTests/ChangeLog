@@ -1,3 +1,16 @@
+2011-05-04  Adrienne Walker  <enne@google.com>
+
+        Reviewed by James Robinson.
+
+        [chromium] Fix incorrect scissor rect for layers that render into a rendersurface
+        https://bugs.webkit.org/show_bug.cgi?id=59020
+
+        * compositing/flat-with-transformed-child-expected.txt: Added.
+        * compositing/flat-with-transformed-child.html: Added.
+        * platform/chromium-gpu-linux/compositing/flat-with-transformed-child-expected.checksum: Added.
+        * platform/chromium-gpu-linux/compositing/flat-with-transformed-child-expected.png: Added.
+        * platform/chromium/test_expectations.txt:
+
 2011-05-05  Ojan Vafai  <ojan@chromium.org>
 
         Reviewed by Mihai Parparita.

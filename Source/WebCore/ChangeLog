@@ -1,3 +1,24 @@
+2011-05-04  Adrienne Walker  <enne@google.com>
+
+        Reviewed by James Robinson.
+
+        [chromium] Fix incorrect scissor rect for layers that render into a rendersurface
+        https://bugs.webkit.org/show_bug.cgi?id=59020
+
+        Allow for empty scissor rects, which implies scissoring to the render
+        surface. The previous code and previous patch on this bug both didn't
+        take into account that the scissor rect should be the render surface
+        and not the projection of the layer itself, because child layers
+        aren't necessarily contained within the bounds of their superlayer.
+
+        Test: compositing/flat-with-transformed-child.html
+
+        * platform/graphics/chromium/LayerRendererChromium.cpp:
+        (WebCore::LayerRendererChromium::paintLayerContents):
+        (WebCore::LayerRendererChromium::updatePropertiesAndRenderSurfaces):
+        (WebCore::LayerRendererChromium::drawLayer):
+        (WebCore::LayerRendererChromium::setScissorToRect):
+
 2011-05-06  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Sam Weinig.
