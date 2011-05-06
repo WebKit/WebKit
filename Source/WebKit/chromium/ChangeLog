@@ -1,3 +1,15 @@
+2011-05-06  Justin Schuh  <jschuh@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        [Chromium] Whitelist input events interpreted as user gestures
+        https://bugs.webkit.org/show_bug.cgi?id=60213
+
+        * public/WebInputEvent.h:
+        (WebKit::WebInputEvent::isUserGestureEventType):
+        * src/WebViewImpl.cpp:
+        (WebKit::WebViewImpl::handleInputEvent):
+
 2011-05-06  Brett Wilson  <brettw@chromium.org>
 
         Reviewed by Adam Barth.
