@@ -4062,7 +4062,6 @@ BUGWK60356 : svg/W3C-SVG-1.1/filters-gauss-01-b.svg = IMAGE
 BUGWK60356 : svg/W3C-SVG-1.1/filters-morph-01-f.svg = IMAGE
 BUGWK60356 : svg/batik/filters/feTile.svg = IMAGE
 BUGWK60356 : svg/batik/filters/filterRegions.svg = IMAGE
-BUGWK60356 : svg/batik/text/textFeatures.svg = IMAGE
 BUGWK60356 : svg/custom/feComponentTransfer-Discrete.svg = IMAGE
 BUGWK60356 : svg/custom/feComponentTransfer-Gamma.svg = IMAGE
 BUGWK60356 : svg/custom/feComponentTransfer-Linear.svg = IMAGE

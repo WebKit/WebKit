@@ -1,3 +1,11 @@
+2011-05-06  Abhishek Arya  <inferno@chromium.org>
+
+        Unreviewed.
+
+        Fix error due to duplicate entry.
+
+        * platform/chromium/test_expectations.txt:
+
 2011-05-06  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Eric Seidel.
