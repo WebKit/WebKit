@@ -1,5 +1,12 @@
 2011-05-05  Ojan Vafai  <ojan@chromium.org>
 
+        Now that win has a failing result, chromium-win needs to
+        have the passing result. http://trac.webkit.org/changeset/85911
+
+        * platform/chromium/fast/harness/results-expected.txt: Added.
+
+2011-05-05  Ojan Vafai  <ojan@chromium.org>
+
         Move failing result as it appears to be failing on all Apple Win platforms.
 
         * platform/win/fast/harness/results-expected.txt: Renamed from LayoutTests/platform/win-7sp0/fast/harness/results-expected.txt.
