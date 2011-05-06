@@ -3749,7 +3749,7 @@ BUGWK60259 GPU : media/controls-styling.html = FAIL
 BUGWK60259 GPU : media/video-zoom-controls.html = FAIL
 BUGWK60259 GPU : media/controls-without-preload.html = FAIL
 
-BUGCR59704 : media/video-zoom-controls.html = IMAGE+TEXT
+BUGCR59704 CPU : media/video-zoom-controls.html = IMAGE+TEXT
 
 // probably just needs a new baseline
 BUGWK60130 WIN LINUX : fast/backgrounds/background-leakage-transforms.html = IMAGE+TEXT
