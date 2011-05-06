@@ -1,3 +1,16 @@
+2011-05-06  Luke Macpherson   <macpherson@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        Use cast to convert primitive value to FontSmoothingMode.
+        https://bugs.webkit.org/show_bug.cgi?id=60242
+
+        No tests added as no functionality changed.
+
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::applyProperty):
+        Use cast to convert primitive value to FontSmoothingMode.
+
 2011-05-05  Luke Macpherson   <macpherson@chromium.org>
 
         Reviewed by Eric Seidel.

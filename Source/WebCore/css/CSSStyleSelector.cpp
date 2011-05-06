@@ -3846,26 +3846,7 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
         else {
             if (!primitiveValue)
                 return;
-            int id = primitiveValue->getIdent();
-            FontSmoothingMode smoothing;
-            switch (id) {
-                case CSSValueAuto:
-                    smoothing = AutoSmoothing;
-                    break;
-                case CSSValueNone:
-                    smoothing = NoSmoothing;
-                    break;
-                case CSSValueAntialiased:
-                    smoothing = Antialiased;
-                    break;
-                case CSSValueSubpixelAntialiased:
-                    smoothing = SubpixelAntialiased;
-                    break;
-                default:
-                    ASSERT_NOT_REACHED();
-                    smoothing = AutoSmoothing;
-            }
-            fontDescription.setFontSmoothing(smoothing);
+            fontDescription.setFontSmoothing(*primitiveValue);
         }
         if (m_style->setFontDescription(fontDescription))
             m_fontDirty = true;
