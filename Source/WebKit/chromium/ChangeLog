@@ -1,3 +1,15 @@
+2011-05-06  John Abd-El-Malek  <jam@chromium.org>
+
+        Reviewed by James Robinson.
+
+        [chromium]: Reland using WebPermissionClient for checking indexed db usage
+        https://bugs.webkit.org/show_bug.cgi?id=60386
+
+        * public/WebPermissionClient.h:
+        (WebKit::WebPermissionClient::allowIndexedDB):
+        * src/IDBFactoryBackendProxy.cpp:
+        (WebKit::IDBFactoryBackendProxy::open):
+
 2011-05-06  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r85919.
