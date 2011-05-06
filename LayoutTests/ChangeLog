@@ -1,3 +1,11 @@
+2011-05-05  Jer Noble  <jer.noble@apple.com>
+
+        Unreviewed, partial rollout of r85843 and r85824.  r85897 made these expected results unnecessary.
+
+        * platform/chromium-linux/fullscreen/full-screen-stacking-context-expected.txt: Removed.
+        * platform/chromium-win/fullscreen/full-screen-stacking-context-expected.txt: Removed.
+        * platform/gtk/fullscreen/full-screen-stacking-context-expected.txt: Removed.
+
 2011-05-05  Kenji Imasaki  <imasaki@chromium.org>
 
         Reviewed by Jian Li.
