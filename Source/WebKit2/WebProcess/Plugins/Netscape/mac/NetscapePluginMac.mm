@@ -28,8 +28,9 @@
 
 #import "PluginController.h"
 #import "WebEvent.h"
-#import <WebCore/GraphicsContext.h>
 #import <Carbon/Carbon.h>
+#import <WebCore/GraphicsContext.h>
+#import <WebCore/NotImplemented.h>
 #import <WebKitSystemInterface.h>
 
 using namespace WebCore;

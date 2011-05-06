@@ -1,5 +1,12 @@
 2011-05-06  Adam Roben  <aroben@apple.com>
 
+        Mac build fix
+
+        * WebProcess/Plugins/Netscape/mac/NetscapePluginMac.mm: Added a
+        missing #import.
+
+2011-05-06  Adam Roben  <aroben@apple.com>
+
         Show/hide windowed plugins according to the plugin element's visibility CSS property
 
         Fixes <http://webkit.org/b/60285> <rdar://problem/9152400> REGRESSION (WebKit2): A white
