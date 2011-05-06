@@ -468,13 +468,11 @@ static void sendRequestCallback(GObject* source, GAsyncResult* res, gpointer use
                 client->didReceiveData(handle.get(), soupMsg->response_body->data, soupMsg->response_body->length, soupMsg->response_body->length);
         }
 
-        // didReceiveData above might have cancelled it
-        if (d->m_cancelled || !client) {
-            cleanupSoupRequestOperation(handle.get());
-            return;
-        }
+        // didReceiveData above might have canceled this operation. If not, inform the client we've finished loading.
+        if (!d->m_cancelled && client)
+            client->didFinishLoading(handle.get(), 0);
 
-        client->didFinishLoading(handle.get(), 0);
+        cleanupSoupRequestOperation(handle.get());
         return;
     }
 

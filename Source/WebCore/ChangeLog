@@ -1,3 +1,19 @@
+2011-05-06  Martin Robinson  <mrobinson@igalia.com>
+
+        Reviewed by Xan Lopez.
+
+        [Soup] ResourceHandles are leaked on 304 responses
+        https://bugs.webkit.org/show_bug.cgi?id=60413
+
+        Always call cleanupSoupRequestOperation, even when the request was not
+        canceled. Before the code would call didFinishLoading and then never clean up
+        the request.
+
+        No new tests. This simply fixes a memory leak.
+
+        * platform/network/soup/ResourceHandleSoup.cpp:
+        (WebCore::sendRequestCallback):
+
 2011-05-06  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Eric Seidel.
