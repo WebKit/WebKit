@@ -37,13 +37,13 @@ class Tester(object):
 
     """Discovers and runs webkitpy unit tests."""
 
-    def _find_unittest_files(self, webkitpy_dir):
+    def _find_test_files(self, webkitpy_dir, suffix):
         """Return a list of paths to all unit-test files."""
         unittest_paths = []  # Return value.
 
         for dir_path, dir_names, file_names in os.walk(webkitpy_dir):
             for file_name in file_names:
-                if not file_name.endswith("_unittest.py"):
+                if not file_name.endswith(suffix):
                     continue
                 unittest_path = os.path.join(dir_path, file_name)
                 unittest_paths.append(unittest_path)
@@ -122,9 +122,16 @@ class Tester(object):
         # FIXME: This should be combined with the external_package_paths code above.
         webkitpy_dir = os.path.dirname(webkitpy.__file__)
 
+        skip_integration_tests = False
+        if len(sys_argv) > 1 and sys.argv[1] == "--skip-integrationtests":
+            sys.argv.remove("--skip-integrationtests")
+            skip_integration_tests = True
+
         modules = []
         for path in [webkitpy_dir] + external_package_paths:
-            modules.extend(self._modules_from_paths(path, self._find_unittest_files(path)))
+            modules.extend(self._modules_from_paths(path, self._find_test_files(path, "_unittest.py")))
+            if not skip_integration_tests:
+                modules.extend(self._modules_from_paths(path, self._find_test_files(path, "_integrationtest.py")))
         modules.sort()
 
         # This is a sanity check to ensure that the unit-test discovery
