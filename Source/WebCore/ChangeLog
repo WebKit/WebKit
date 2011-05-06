@@ -1,3 +1,23 @@
+2011-05-06  Joe Mason  <jmason@rim.com>
+
+        Reviewed by Adam Barth.
+
+        WebSocket urls should always be encoded as UTF-8.
+        https://bugs.webkit.org/show_bug.cgi?id=57138
+
+        Change WebSocket::connect to take the raw URL string and parse it
+        internally using the simple KURL constructor, which expects an absolute
+        UTF-8 encoded URL.  This ensures that all code that creates a WebSocket
+        goes through this method instead of completeURL.
+
+        Test: http/tests/websocket/tests/url-with-nonascii-query.html
+
+        * bindings/js/JSWebSocketCustom.cpp:
+        (WebCore::JSWebSocketConstructor::constructJSWebSocket): Pass String instead of KURL to WebSocket::connect().
+        * websockets/WebSocket.cpp:
+        (WebCore::WebSocket::connect): Now takes a String instead of a KURL and parses it using UTF-8.
+        * websockets/WebSocket.h:
+
 2011-05-06  Luke Macpherson   <macpherson@chromium.org>
 
         Reviewed by Eric Seidel.

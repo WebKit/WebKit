@@ -106,32 +106,32 @@ WebSocket::~WebSocket()
         m_channel->disconnect();
 }
 
-void WebSocket::connect(const KURL& url, ExceptionCode& ec)
+void WebSocket::connect(const String& url, ExceptionCode& ec)
 {
     connect(url, String(), ec);
 }
 
-void WebSocket::connect(const KURL& url, const String& protocol, ExceptionCode& ec)
+void WebSocket::connect(const String& url, const String& protocol, ExceptionCode& ec)
 {
-    LOG(Network, "WebSocket %p connect to %s protocol=%s", this, url.string().utf8().data(), protocol.utf8().data());
-    m_url = url;
+    LOG(Network, "WebSocket %p connect to %s protocol=%s", this, url.utf8().data(), protocol.utf8().data());
+    m_url = KURL(KURL(), url);
     m_protocol = protocol;
 
     if (!m_url.isValid()) {
-        scriptExecutionContext()->addMessage(JSMessageSource, LogMessageType, ErrorMessageLevel, "Invalid url for WebSocket " + url.string(), 0, scriptExecutionContext()->securityOrigin()->toString(), 0);
+        scriptExecutionContext()->addMessage(JSMessageSource, LogMessageType, ErrorMessageLevel, "Invalid url for WebSocket " + m_url.string(), 0, scriptExecutionContext()->securityOrigin()->toString(), 0);
         m_state = CLOSED;
         ec = SYNTAX_ERR;
         return;
     }
 
     if (!m_url.protocolIs("ws") && !m_url.protocolIs("wss")) {
-        scriptExecutionContext()->addMessage(JSMessageSource, LogMessageType, ErrorMessageLevel, "Wrong url scheme for WebSocket " + url.string(), 0, scriptExecutionContext()->securityOrigin()->toString(), 0);
+        scriptExecutionContext()->addMessage(JSMessageSource, LogMessageType, ErrorMessageLevel, "Wrong url scheme for WebSocket " + m_url.string(), 0, scriptExecutionContext()->securityOrigin()->toString(), 0);
         m_state = CLOSED;
         ec = SYNTAX_ERR;
         return;
     }
     if (m_url.hasFragmentIdentifier()) {
-        scriptExecutionContext()->addMessage(JSMessageSource, LogMessageType, ErrorMessageLevel, "URL has fragment component " + url.string(), 0, scriptExecutionContext()->securityOrigin()->toString(), 0);
+        scriptExecutionContext()->addMessage(JSMessageSource, LogMessageType, ErrorMessageLevel, "URL has fragment component " + m_url.string(), 0, scriptExecutionContext()->securityOrigin()->toString(), 0);
         m_state = CLOSED;
         ec = SYNTAX_ERR;
         return;
@@ -142,8 +142,8 @@ void WebSocket::connect(const KURL& url, const String& protocol, ExceptionCode& 
         ec = SYNTAX_ERR;
         return;
     }
-    if (!portAllowed(url)) {
-        scriptExecutionContext()->addMessage(JSMessageSource, LogMessageType, ErrorMessageLevel, makeString("WebSocket port ", String::number(url.port()), " blocked"), 0, scriptExecutionContext()->securityOrigin()->toString(), 0);
+    if (!portAllowed(m_url)) {
+        scriptExecutionContext()->addMessage(JSMessageSource, LogMessageType, ErrorMessageLevel, makeString("WebSocket port ", String::number(m_url.port()), " blocked"), 0, scriptExecutionContext()->securityOrigin()->toString(), 0);
         m_state = CLOSED;
         ec = SECURITY_ERR;
         return;

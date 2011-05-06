@@ -61,8 +61,8 @@ namespace WebCore {
             CLOSED = 2
         };
 
-        void connect(const KURL&, ExceptionCode&);
-        void connect(const KURL&, const String& protocol, ExceptionCode&);
+        void connect(const String& url, ExceptionCode&);
+        void connect(const String& url, const String& protocol, ExceptionCode&);
 
         bool send(const String& message, ExceptionCode&);
 

@@ -57,16 +57,15 @@ EncodedJSValue JSC_HOST_CALL JSWebSocketConstructor::constructJSWebSocket(ExecSt
     String urlString = ustringToString(exec->argument(0).toString(exec));
     if (exec->hadException())
         return throwVMError(exec, createSyntaxError(exec, "wrong URL"));
-    KURL url = context->completeURL(urlString);
     RefPtr<WebSocket> webSocket = WebSocket::create(context);
     ExceptionCode ec = 0;
     if (exec->argumentCount() < 2)
-        webSocket->connect(url, ec);
+        webSocket->connect(urlString, ec);
     else {
         String protocol = ustringToString(exec->argument(1).toString(exec));
         if (exec->hadException())
             return JSValue::encode(JSValue());
-        webSocket->connect(url, protocol, ec);
+        webSocket->connect(urlString, protocol, ec);
     }
     setDOMException(exec, ec);
     return JSValue::encode(CREATE_DOM_WRAPPER(exec, jsConstructor->globalObject(), WebSocket, webSocket.get()));

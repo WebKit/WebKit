@@ -1,5 +1,5 @@
 CONSOLE MESSAGE: line 0: Invalid url for WebSocket ws://javascript:a
-CONSOLE MESSAGE: line 0: Wrong url scheme for WebSocket http://127.0.0.1:8000/applet
+CONSOLE MESSAGE: line 0: Invalid url for WebSocket /applet
 CONSOLE MESSAGE: line 0: Wrong url scheme for WebSocket javascript:a
 CONSOLE MESSAGE: line 0: WebSocket port 25 blocked
 CONSOLE MESSAGE: line 0: URL has fragment component ws://127.0.0.1/path#

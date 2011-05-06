@@ -1,3 +1,14 @@
+2011-05-06  Joe Mason  <jmason@rim.com>
+
+        Reviewed by Adam Barth.
+
+        WebSocket urls should always be encoded as UTF-8. Relative urls should not be expanded.
+        https://bugs.webkit.org/show_bug.cgi?id=57138
+
+        * http/tests/websocket/tests/url-with-nonascii-query-expected.txt: Added.
+        * http/tests/websocket/tests/url-with-nonascii-query.html: Added.
+        * http/tests/websocket/tests/url-parsing-expected.txt: Failure message for relative url has changed since it is no longer expanded.
+
 2011-05-06  MORITA Hajime  <morrita@google.com>
 
         Unreviewed, marking tests whose expectations became obsolete since r85926.
