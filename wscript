@@ -145,7 +145,8 @@ def build(bld):
     if Options.options.port == "wx":
         webcore_sources['wx'] = [
             'Source/WebCore/bindings/cpp/WebDOMEventTarget.cpp',
-            'Source/WebCore/platform/KillRingNone.cpp',                     
+            'Source/WebCore/platform/KillRingNone.cpp',
+            'Source/WebCore/platform/text/LocalizedDateNone.cpp',
             'Source/WebCore/platform/text/LocalizedNumberNone.cpp'
         ]  
     

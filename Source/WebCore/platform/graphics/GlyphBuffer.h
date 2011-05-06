@@ -35,8 +35,12 @@
 #include <wtf/UnusedParam.h>
 #include <wtf/Vector.h>
 
-#if USE(CG) || (PLATFORM(WX) && OS(DARWIN)) || USE(SKIA_ON_MAC_CHROME)
+#if USE(CG) || USE(SKIA_ON_MAC_CHROME)
 #include <CoreGraphics/CGGeometry.h>
+#endif
+
+#if PLATFORM(WX) && OS(DARWIN)
+#include <ApplicationServices/ApplicationServices.h>
 #endif
 
 #if USE(CAIRO) || (PLATFORM(WX) && defined(__WXGTK__))

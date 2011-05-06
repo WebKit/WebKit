@@ -31,7 +31,12 @@
 #include "Font.h"
 #include "TextRun.h"
 #include "WebCoreSystemInterface.h"
+
+#if PLATFORM(WX)
+#include <ApplicationServices/ApplicationServices.h>
+#else
 #include <CoreText/CoreText.h>
+#endif
 
 #if defined(BUILDING_ON_LEOPARD)
 // The following symbols are SPI in 10.5.

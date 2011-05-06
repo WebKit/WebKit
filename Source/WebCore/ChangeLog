@@ -1,3 +1,10 @@
+2011-05-05  Kevin Ollivier  <kevino@theolliviers.com>
+
+        [wx] Unreviewed build fix. Include ApplicationServices for wx port.
+
+        * platform/graphics/GlyphBuffer.h:
+        * platform/graphics/mac/ComplexTextControllerCoreText.cpp:
+
 2011-05-05  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Simon Fraser.
