@@ -1,3 +1,23 @@
+2011-05-06  Alexis Menard  <alexis.menard@openbossa.org>
+
+        Reviewed by Alexey Proskuryakov.
+
+        Build fix with gcc 4.6 and c++0x support.
+        https://bugs.webkit.org/show_bug.cgi?id=60284
+
+        When enabling support of c++0x the compilation fails because of an
+        ambiguous overload error. In this code when constructing the pair
+        we use the new c++0x rvalue reference feature (&&). It means we are
+        calling String(const WTF::AtomicString&) which becomes ambiguous because
+        it has an overload WTF::String::String(const WTF::String&) and usually one
+        with the native port string type (e.g. QString). In this code we want the
+        String version because the pair store Strings.
+
+        No new tests, build fix.
+
+        * loader/FormSubmission.cpp:
+        (WebCore::FormSubmission::create):
+
 2011-05-06  Cris Neckar  <cdn@chromium.org>
 
         Reviewed by Dirk Schulze.

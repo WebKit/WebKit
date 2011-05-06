@@ -182,7 +182,7 @@ PassRefPtr<FormSubmission> FormSubmission::create(HTMLFormElement* form, const A
         if (element->hasLocalName(inputTag)) {
             HTMLInputElement* input = static_cast<HTMLInputElement*>(control);
             if (input->isTextField()) {
-                formValues.append(pair<String, String>(input->name(), input->value()));
+                formValues.append(pair<String, String>(input->name().string(), input->value()));
                 if (input->isSearchField())
                     input->addSearchResult();
             }
