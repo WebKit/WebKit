@@ -4063,3 +4063,30 @@ BUGWK60252 MAC GPU : animations/3d/matrix-transform-type-animation.html = IMAGE
 BUGWK60252 MAC GPU : animations/3d/state-at-end-event-transform.html = IMAGE
 
 BUGWK60351 DEBUG : http/tests/local/formdata/send-form-data-with-sliced-file.html = PASS CRASH
+
+// Needs rebaseline
+BUGWK60356 : svg/W3C-SVG-1.1-SE/filters-image-03-f.svg = IMAGE
+BUGWK60356 : svg/W3C-SVG-1.1/filters-color-01-b.svg = IMAGE
+BUGWK60356 : svg/W3C-SVG-1.1/filters-comptran-01-b.svg = IMAGE
+BUGWK60356 : svg/W3C-SVG-1.1/filters-gauss-01-b.svg = IMAGE
+BUGWK60356 : svg/W3C-SVG-1.1/filters-morph-01-f.svg = IMAGE
+BUGWK60356 : svg/batik/filters/feTile.svg = IMAGE
+BUGWK60356 : svg/batik/filters/filterRegions.svg = IMAGE
+BUGWK60356 : svg/batik/text/textFeatures.svg = IMAGE
+BUGWK60356 : svg/custom/feComponentTransfer-Discrete.svg = IMAGE
+BUGWK60356 : svg/custom/feComponentTransfer-Gamma.svg = IMAGE
+BUGWK60356 : svg/custom/feComponentTransfer-Linear.svg = IMAGE
+BUGWK60356 : svg/custom/feComponentTransfer-Table.svg = IMAGE
+BUGWK60356 : svg/dynamic-updates/SVGFEImageElement-dom-preserveAspectRatio-attr.html = IMAGE
+BUGWK60356 : svg/dynamic-updates/SVGFEImageElement-svgdom-preserveAspectRatio-prop.html = IMAGE
+BUGWK60356 : svg/filters/feGaussianBlur.svg = IMAGE
+BUGWK60356 : svg/filters/feOffset.svg = IMAGE
+BUGWK60356 : svg/filters/feTile.svg = IMAGE
+BUGWK60356 : svg/filters/filter-on-tspan.svg = IMAGE
+BUGWK60356 : svg/filters/filter-rounding-issues.svg = IMAGE
+BUGWK60356 : svg/filters/filterRes.svg = IMAGE
+BUGWK60356 : svg/filters/filterRes1.svg = IMAGE
+BUGWK60356 : svg/filters/filterRes3.svg = IMAGE
+BUGWK60356 : svg/filters/parent-children-with-same-filter.svg = IMAGE
+BUGWK60356 : svg/filters/subRegion-one-effect.svg = IMAGE
+BUGWK60356 : svg/filters/subRegion-two-effects.svg = IMAGE

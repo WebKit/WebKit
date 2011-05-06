@@ -1,3 +1,9 @@
+2011-05-06  MORITA Hajime  <morrita@google.com>
+
+        Unreviewed, marking tests whose expectations became obsolete since r85926.
+
+        * platform/chromium/test_expectations.txt:
+
 2011-05-03  Philippe Normand  <pnormand@igalia.com>
 
         Reviewed by Martin Robinson.
