@@ -5397,15 +5397,7 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
         return;
     }
     case CSSPropertyWebkitColorCorrection:
-        if (isInherit) 
-            m_style->setColorSpace(m_parentStyle->colorSpace());
-        else if (isInitial)
-            m_style->setColorSpace(ColorSpaceDeviceRGB);
-        else {
-            if (!primitiveValue)
-                return;
-            m_style->setColorSpace(*primitiveValue);
-        }
+        HANDLE_INHERIT_AND_INITIAL_AND_PRIMITIVE(colorSpace, ColorSpace);
         return;
     case CSSPropertySize:
         applyPageSizeProperty(value);
