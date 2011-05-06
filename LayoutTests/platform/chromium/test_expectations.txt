@@ -2992,7 +2992,6 @@ BUGWK53469 GPU MAC : compositing/scroll-painted-composited-content.html = CRASH
 
 BUGCR74979 GPU MAC: media/video-canvas-alpha.html = IMAGE
 
-BUGWK55708 BUGCR75345 GPU : media/video-controls-rendering.html = CRASH IMAGE+TEXT
 BUGWK55718 BUGCR75354 GPU : media/media-document-audio-repaint.html = IMAGE+TEXT
 
 BUGWK55968 BUGWK58306 GPU MAC : compositing/webgl/webgl-nonpremultiplied-blend.html = IMAGE+TEXT CRASH
