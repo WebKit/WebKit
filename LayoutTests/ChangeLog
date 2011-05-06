@@ -1,3 +1,18 @@
+2011-05-06  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Unreviewed expectations update.
+
+        [Qt]fast/events/backspace-navigates-back.html fails
+        https://bugs.webkit.org/show_bug.cgi?id=60349
+
+        * platform/mac-wk2/Skipped: Add fast/events/backspace-navigates-back.html because of missing layoutTestController.setEditingBehavior().
+        * platform/qt-arm/Skipped: Add fast/events/backspace-navigates-back.html.
+        * platform/qt-arm/fast/block/float/float-not-removed-from-next-sibling-expected.txt: Added.
+        * platform/qt-arm/fast/block/float/float-not-removed-from-next-sibling2-expected.txt: Added.
+        * platform/qt-arm/fast/block/float/float-not-removed-from-next-sibling3-expected.txt: Added.
+        * platform/qt-arm/fast/block/float/float-not-removed-from-next-sibling4-expected.txt: Added.
+        * platform/qt-mac/Skipped: Add fast/events/backspace-navigates-back.html.
+
 2011-05-06  Philippe Normand  <pnormand@igalia.com>
 
         Windows DRT needs an implementation of shadowRoot

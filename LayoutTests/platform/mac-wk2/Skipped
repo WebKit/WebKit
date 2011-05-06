@@ -1370,6 +1370,7 @@ editing/execCommand/toggle-compound-styles.html
 editing/style/iframe-onload-crash-mac.html
 editing/style/iframe-onload-crash-unix.html
 editing/style/iframe-onload-crash-win.html
+fast/events/backspace-navigates-back.html
 
 # WebKitTestRunner needs layoutTestController.setStopProvisionalFrameLoads
 # <https://bugs.webkit.org/show_bug.cgi?id=42691>
