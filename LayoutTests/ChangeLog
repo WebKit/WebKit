@@ -1,3 +1,23 @@
+2011-05-06  Abhishek Arya  <inferno@chromium.org>
+
+        Unreviewed.
+
+        Chromium Rebaselines for r85964, r85971 and r85967.
+
+        * platform/chromium-linux/fast/block/positioning/hiding-inside-relpositioned-inline-expected.png: Added.
+        * platform/chromium-linux/fast/forms/date-input-visible-strings-expected.png: Added.
+        * platform/chromium-linux/fast/inline/nested-top-alignment-expected.png: Added.
+        * platform/chromium-mac-leopard/fast/block/positioning/hiding-inside-relpositioned-inline-expected.png: Added.
+        * platform/chromium-mac-leopard/fast/forms/date-input-visible-strings-expected.png: Added.
+        * platform/chromium-mac-leopard/fast/inline/nested-top-alignment-expected.png: Added.
+        * platform/chromium-win/fast/block/positioning/hiding-inside-relpositioned-inline-expected.png: Added.
+        * platform/chromium-win/fast/block/positioning/hiding-inside-relpositioned-inline-expected.txt: Added.
+        * platform/chromium-win/fast/forms/date-input-visible-strings-expected.png: Added.
+        * platform/chromium-win/fast/forms/date-input-visible-strings-expected.txt: Added.
+        * platform/chromium-win/fast/inline/nested-top-alignment-expected.png: Added.
+        * platform/chromium-win/fast/inline/nested-top-alignment-expected.txt: Added.
+        * platform/chromium/test_expectations.txt:
+
 2011-05-06  Justin Schuh  <jschuh@chromium.org>
 
         Reviewed by Adam Barth.
