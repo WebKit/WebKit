@@ -631,10 +631,7 @@ void RenderFlexibleBox::layoutHorizontalBox(bool relayoutChildren)
 
 void RenderFlexibleBox::layoutVerticalBox(bool relayoutChildren)
 {
-    int xPos = borderLeft() + paddingLeft();
     int yPos = borderTop() + paddingTop();
-    if (!style()->isLeftToRightDirection())
-        xPos = width() - paddingRight() - borderRight();
     int toAdd = borderBottom() + paddingBottom() + horizontalScrollbarHeight();
     bool heightSpecified = false;
     int oldHeight = 0;

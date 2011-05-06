@@ -1,3 +1,19 @@
+2011-05-06  Alexis Menard  <alexis.menard@openbossa.org>
+
+        Reviewed by Darin Adler.
+
+        Fix two warnings of unused variables.
+        https://bugs.webkit.org/show_bug.cgi?id=60370
+
+        Remove two unused local variable from the code.
+
+        No new tests, the existing ones should cover.
+
+        * rendering/RenderFlexibleBox.cpp:
+        (WebCore::RenderFlexibleBox::layoutVerticalBox):
+        * svg/animation/SVGSMILElement.cpp:
+        (WebCore::SVGSMILElement::calculateNextProgressTime):
+
 2011-05-06  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Eric Seidel.
