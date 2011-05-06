@@ -4049,3 +4049,5 @@ BUGWK60252 MAC GPU : animations/3d/state-at-end-event-transform.html = IMAGE
 
 BUGWK60351 DEBUG : http/tests/local/formdata/send-form-data-with-sliced-file.html = PASS CRASH
 
+// The test is added at r85961.
+BUGWK60414 WIN : platform/win/plugins/visibility-hidden.html = CRASH
