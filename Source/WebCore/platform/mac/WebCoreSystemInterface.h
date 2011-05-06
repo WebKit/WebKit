@@ -258,6 +258,8 @@ extern void (*wkDidBeginScrollGesture)(WKScrollbarPainterControllerRef);
 extern void (*wkDidEndScrollGesture)(WKScrollbarPainterControllerRef);
 
 extern bool (*wkScrollbarPainterUsesOverlayScrollers)(void);
+
+extern bool (*wkExecutableWasLinkedOnOrBeforeSnowLeopard)(void);
 #endif
 
 extern void (*wkUnregisterUniqueIdForElement)(id element);

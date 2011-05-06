@@ -150,6 +150,7 @@ void InitWebCoreSystemInterface(void)
     INIT(DidBeginScrollGesture);
     INIT(DidEndScrollGesture);
     INIT(ScrollbarPainterUsesOverlayScrollers);
+    INIT(ExecutableWasLinkedOnOrBeforeSnowLeopard);
 #endif
 
     INIT(GetAXTextMarkerTypeID);

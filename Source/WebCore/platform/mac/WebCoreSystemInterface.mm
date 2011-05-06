@@ -154,6 +154,8 @@ void (*wkDidBeginScrollGesture)(WKScrollbarPainterControllerRef);
 void (*wkDidEndScrollGesture)(WKScrollbarPainterControllerRef);
 
 bool (*wkScrollbarPainterUsesOverlayScrollers)(void);
+
+bool (*wkExecutableWasLinkedOnOrBeforeSnowLeopard)(void);
 #endif
 
 void (*wkUnregisterUniqueIdForElement)(id element);

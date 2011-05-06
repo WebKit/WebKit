@@ -1,3 +1,12 @@
+2011-05-05  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Simon Fraser.
+
+        WebKit2 part of <rdar://problem/9155590> Broken animation in iAd producer
+
+        * WebProcess/WebCoreSupport/mac/WebSystemInterface.mm:
+        (InitWebCoreSystemInterface): Initialize wkExecutableWasLinkedOnOrBeforeSnowLeopard.
+
 2011-05-05  Keith Kyzivat  <keith.kyzivat@nokia.com>
 
         Reviewed by Laszlo Gombos.

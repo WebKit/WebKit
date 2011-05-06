@@ -448,6 +448,8 @@ void WKDidEndScrollGesture(WKScrollbarPainterControllerRef);
 
 bool WKScrollbarPainterUsesOverlayScrollers(void);
 
+bool WKExecutableWasLinkedOnOrBeforeSnowLeopard(void);
+
 NSRange WKExtractWordDefinitionTokenRangeFromContextualString(NSString *contextString, NSRange range, NSDictionary **options);
 void WKShowWordDefinitionWindow(NSAttributedString *term, NSPoint screenPoint, NSDictionary *options);
 void WKHideWordDefinitionWindow(void);

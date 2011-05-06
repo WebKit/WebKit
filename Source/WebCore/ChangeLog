@@ -1,3 +1,16 @@
+2011-05-05  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Simon Fraser.
+
+        WebCore part of <rdar://problem/9155590> Broken animation in iAd producer
+
+        * WebCore.exp.in: Export wkExecutableWasLinkedOnOrBeforeSnowLeopard.
+        * platform/graphics/ca/GraphicsLayerCA.cpp:
+        (WebCore::GraphicsLayerCA::createTransformAnimationsFromKeyframes): Account for the binary-compatiblity
+        check in Core Animation.
+        * platform/mac/WebCoreSystemInterface.h: Added wkExecutableWasLinkedOnOrBeforeSnowLeopard.
+        * platform/mac/WebCoreSystemInterface.mm: Ditto.
+
 2011-05-05  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Anders Carlsson.

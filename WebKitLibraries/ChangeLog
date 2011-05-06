@@ -1,3 +1,11 @@
+2011-05-05  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Simon Fraser.
+
+        WebKitSystemInterface part of <rdar://problem/9155590> Broken animation in iAd producer
+
+        * WebKitSystemInterface.h: Added WKExecutableWasLinkedOnOrBeforeSnowLeopard().
+
 2011-04-29  Jer Noble  <jer.noble@apple.com>
 
         Reviewed by Eric Seidel.

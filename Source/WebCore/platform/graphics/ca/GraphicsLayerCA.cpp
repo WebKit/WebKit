@@ -43,6 +43,10 @@
 #include <wtf/CurrentTime.h>
 #include <wtf/text/StringConcatenate.h>
 
+#if PLATFORM(MAC)
+#include "WebCoreSystemInterface.h"
+#endif
+
 using namespace std;
 
 #define HAVE_MODERN_QUARTZCORE (!defined(BUILDING_ON_LEOPARD))
@@ -1612,15 +1616,20 @@ bool GraphicsLayerCA::createTransformAnimationsFromKeyframes(const KeyframeValue
         TransformOperation::OperationType transformOp = isMatrixAnimation ? TransformOperation::MATRIX_3D : functionList[animationIndex];
         RefPtr<PlatformCAAnimation> caAnimation;
 
-#if defined(BUILDING_ON_LEOPARD) || defined(BUILDING_ON_SNOW_LEOPARD) || PLATFORM(WIN)
-        // CA applies animations in reverse order (<rdar://problem/7095638>) so we need the last one we add (per property)
-        // to be non-additive.
+        bool additive;
+#if !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOW_LEOPARD) && !PLATFORM(WIN)
+        // Old vertsions of Core Animation apply animations in reverse order (<rdar://problem/7095638>) so we need the last one we add (per property)
+        // to be non-additive. For binary compatibility, the current version of Core Animation preserves this behaviors for applications linked
+        // on or before Snow Leopard.
         // FIXME: This fix has not been added to QuartzCore on Windows yet (<rdar://problem/9112233>) so we expect the
         // reversed animation behavior
-        bool additive = animationIndex < (numAnimations - 1);
-#else
-        bool additive = animationIndex > 0;
+        static bool executableWasLinkedOnOrBeforeSnowLeopard = wkExecutableWasLinkedOnOrBeforeSnowLeopard();
+        if (!executableWasLinkedOnOrBeforeSnowLeopard)
+            additive = animationIndex > 0;
+        else
 #endif
+            additive = animationIndex < (numAnimations - 1);
+
         if (isKeyframe) {
             caAnimation = createKeyframeAnimation(animation, valueList.property(), additive);
             validMatrices = setTransformAnimationKeyframes(valueList, animation, caAnimation.get(), animationIndex, transformOp, isMatrixAnimation, boxSize);
