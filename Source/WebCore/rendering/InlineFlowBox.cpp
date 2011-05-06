@@ -539,7 +539,7 @@ void InlineFlowBox::computeLogicalBoxHeights(RootInlineBox* rootBox, int& maxPos
 
         int boxHeight = ascent + descent;
         if (curr->verticalAlign() == TOP) {
-            if (maxPositionTop < ascent)
+            if (maxPositionTop < boxHeight)
                 maxPositionTop = boxHeight;
         } else if (curr->verticalAlign() == BOTTOM) {
             if (maxPositionBottom < boxHeight)
