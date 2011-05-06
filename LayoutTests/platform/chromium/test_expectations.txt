@@ -4052,8 +4052,8 @@ BUGWK60079 LINUX : platform/chromium-linux/fast/text/international/complex-joini
 // Since http://trac.webkit.org/changeset/85788
 BUGWK60237 DEBUG : svg/text/text-block-child-crash.xhtml = PASS CRASH
 
-// Flaky. The test is added at r85811.
-BUGWK60243 : fullscreen/full-screen-stacking-context.html = PASS TEXT
+// The test is added at r85811.
+BUGWK60243 : fullscreen/full-screen-stacking-context.html = IMAGE
 
 BUGWK60252 MAC GPU : animations/3d/matrix-transform-type-animation.html = IMAGE
 BUGWK60252 MAC GPU : animations/3d/state-at-end-event-transform.html = IMAGE

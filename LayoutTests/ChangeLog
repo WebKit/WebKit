@@ -1,3 +1,9 @@
+2011-05-05  MORITA Hajime  <morrita@google.com>
+
+        Unreviewed addding skip line for full-screen-stacking-context.html.
+
+        * platform/chromium/test_expectations.txt:
+
 2011-05-05  Ojan Vafai  <ojan@chromium.org>
 
         Now that win has a failing result, chromium-win needs to
