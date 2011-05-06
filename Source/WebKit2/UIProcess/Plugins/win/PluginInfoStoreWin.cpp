@@ -338,7 +338,7 @@ static bool isNewWindowsMediaPlayerPlugin(const PluginInfoStore::Plugin& plugin)
     return equalIgnoringCase(plugin.info.file, "np-mswmp.dll");
 }
 
-bool PluginInfoStore::shouldUsePlugin(const Vector<Plugin>& alreadyLoadedPlugins, const Plugin& plugin)
+bool PluginInfoStore::shouldUsePlugin(Vector<Plugin>& alreadyLoadedPlugins, const Plugin& plugin)
 {
     if (plugin.info.name == "Citrix ICA Client") {
         // The Citrix ICA Client plug-in requires a Mozilla-based browser; see <rdar://6418681>.
@@ -383,8 +383,8 @@ bool PluginInfoStore::shouldUsePlugin(const Vector<Plugin>& alreadyLoadedPlugins
 
     if (isNewWindowsMediaPlayerPlugin(plugin)) {
         // Remove the old Windows Media Player plugin if we've already added it.
-        for (size_t i = 0; i < m_plugins.size(); ++i) {
-            if (!isOldWindowsMediaPlayerPlugin(m_plugins[i]))
+        for (size_t i = 0; i < alreadyLoadedPlugins.size(); ++i) {
+            if (!isOldWindowsMediaPlayerPlugin(alreadyLoadedPlugins[i]))
                 continue;
             alreadyLoadedPlugins.remove(i);
         }

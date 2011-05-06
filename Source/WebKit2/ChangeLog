@@ -1,5 +1,12 @@
 2011-05-06  Anders Carlsson  <andersca@apple.com>
 
+        Windows build fix.
+
+        * UIProcess/Plugins/win/PluginInfoStoreWin.cpp:
+        (WebKit::PluginInfoStore::shouldUsePlugin):
+
+2011-05-06  Anders Carlsson  <andersca@apple.com>
+
         Reviewed by Dan Bernstein.
 
         Make more PluginInfoStore member functions static
