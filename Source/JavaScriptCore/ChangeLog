@@ -1,3 +1,11 @@
+2011-05-06  Alexis Menard  <alexis.menard@openbossa.org>
+
+        Unreviewed build fix with gcc 4.6.0 on linux and c++0x support.
+
+        std::tr1::has_trivial_constructor is in <tr1/memory>.
+
+        * wtf/TypeTraits.h:
+
 2011-05-05  Jay Civelli  <jcivelli@chromium.org>
 
         Reviewed by Adam Barth.
