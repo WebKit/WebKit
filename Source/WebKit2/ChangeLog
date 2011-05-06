@@ -1,5 +1,22 @@
 2011-05-06  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        Reviewed by Martin Robinson.
+
+        Share PluginInfoStore implementation between Qt and GTK ports
+        https://bugs.webkit.org/show_bug.cgi?id=60366
+
+        * GNUmakefile.am:
+        * UIProcess/Plugins/gtk/PluginInfoStoreGtk.cpp: Removed.
+        * UIProcess/Plugins/unix/PluginInfoStoreUnix.cpp: Renamed from Source/WebKit2/UIProcess/Plugins/qt/PluginInfoStoreQt.cpp.
+        (WebKit::PluginInfoStore::pluginsDirectories):
+        (WebKit::PluginInfoStore::pluginPathsInDirectory):
+        (WebKit::PluginInfoStore::individualPluginPaths):
+        (WebKit::PluginInfoStore::getPluginInfo):
+        (WebKit::PluginInfoStore::shouldUsePlugin):
+        * WebKit2.pro:
+
+2011-05-06  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         Unreviewed. Fix WebKit2 GTK build after r85860.
 
         * UIProcess/API/gtk/PageClientImpl.h: Fix typo.

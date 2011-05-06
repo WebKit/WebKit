@@ -404,8 +404,8 @@ SOURCES += \
     UIProcess/Plugins/PluginProcessProxy.cpp \
     UIProcess/Plugins/PluginProcessManager.cpp \
     UIProcess/Plugins/WebPluginSiteDataManager.cpp \
-    UIProcess/Plugins/qt/PluginInfoStoreQt.cpp \
     UIProcess/Plugins/qt/PluginProcessProxyQt.cpp \
+    UIProcess/Plugins/unix/PluginInfoStoreUnix.cpp \
     UIProcess/ResponsivenessTimer.cpp \
     UIProcess/TiledDrawingAreaProxy.cpp \
     UIProcess/VisitedLinkProvider.cpp \
