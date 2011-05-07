@@ -1,3 +1,15 @@
+2011-05-07  Dawit Alemayehu  <adawit@kde.org>
+
+        Reviewed by Daniel Bates.
+
+        Fix compile with GCC 4.6.0
+        https://bugs.webkit.org/show_bug.cgi?id=60380
+
+        Remove unused local variable from code.
+
+        * runtime/StringPrototype.cpp:
+        (JSC::stringProtoFuncMatch):
+
 2011-05-06  Alexis Menard  <alexis.menard@openbossa.org>
 
         Unreviewed build fix with gcc 4.6.0 on linux and c++0x support.

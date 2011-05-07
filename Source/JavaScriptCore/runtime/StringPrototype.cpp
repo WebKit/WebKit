@@ -628,10 +628,8 @@ EncodedJSValue JSC_HOST_CALL stringProtoFuncMatch(ExecState* exec)
 
     // return array of matches
     MarkedArgumentBuffer list;
-    unsigned lastIndex = 0;
     while (pos >= 0) {
         list.append(jsSubstring(exec, s, pos, matchLength));
-        lastIndex = pos;
         pos += matchLength == 0 ? 1 : matchLength;
         regExpConstructor->performMatch(reg.get(), s, pos, pos, matchLength);
     }
