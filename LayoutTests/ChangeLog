@@ -1,3 +1,19 @@
+2011-05-06  Steve Lacey  <sjl@chromium.org>
+
+        Reviewed by David Levin.
+
+        [chromium] Rebaseline needed for media/audio-repaint
+        https://bugs.webkit.org/show_bug.cgi?id=60416
+
+        * platform/chromium-linux/media/audio-repaint-expected.png:
+        * platform/chromium-mac-leopard/media/audio-repaint-expected.png:
+        * platform/chromium-mac-leopard/media/audio-repaint-expected.txt: Removed.
+        * platform/chromium-mac/media/audio-repaint-expected.png:
+        * platform/chromium-mac/media/audio-repaint-expected.txt:
+        * platform/chromium-win/media/audio-repaint-expected.png:
+        * platform/chromium-win/media/audio-repaint-expected.txt:
+        * platform/chromium/test_expectations.txt:
+
 2011-05-06  Beth Dakin  <bdakin@apple.com>
 
         Reviewed by Darin Adler.
