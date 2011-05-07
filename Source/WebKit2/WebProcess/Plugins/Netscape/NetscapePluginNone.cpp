@@ -51,6 +51,10 @@ void NetscapePlugin::platformGeometryDidChange()
 {
 }
 
+void NetscapePlugin::platformVisibilityDidChange()
+{
+}
+
 void NetscapePlugin::platformPaint(GraphicsContext*, const IntRect&, bool)
 {
 }
