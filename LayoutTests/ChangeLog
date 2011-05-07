@@ -1,3 +1,20 @@
+2011-05-07  Jessie Berlin  <jberlin@apple.com>
+
+        [WebKit2] editing/selection/select-across-readonly-input-{1-5}.html failing since
+        introduction in r85669.
+        https://bugs.webkit.org/show_bug.cgi?id=60272
+
+        Add expected failing text results to get the bots green.
+
+        Note: these tests still need pixel results to be generated both for mac-wk2 and win-wk2.
+
+        * platform/mac-wk2/editing/selection: Added.
+        * platform/mac-wk2/editing/selection/select-across-readonly-input-1-expected.txt: Added.
+        * platform/mac-wk2/editing/selection/select-across-readonly-input-2-expected.txt: Added.
+        * platform/mac-wk2/editing/selection/select-across-readonly-input-3-expected.txt: Added.
+        * platform/mac-wk2/editing/selection/select-across-readonly-input-4-expected.txt: Added.
+        * platform/mac-wk2/editing/selection/select-across-readonly-input-5-expected.txt: Added.
+
 2011-05-06  Abhishek Arya  <inferno@chromium.org>
 
         Unreviewed.
