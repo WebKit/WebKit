@@ -2,7 +2,7 @@
 
         Reviewed by Daniel Bates.
 
-        [EFL] Remove ewk_tile_unused_cache_free function form public api
+        [EFL] Remove ewk_tile_unused_cache_free function from public API
         https://bugs.webkit.org/show_bug.cgi?id=60151
 
         The ewk_tile_unused_cache_free function should be only called by
