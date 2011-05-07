@@ -1600,6 +1600,7 @@ fast/events/popup-blocked-from-fake-focus.html
 fast/events/popup-blocked-from-fake-user-gesture.html
 fast/events/popup-blocked-from-history-reload.html
 fast/events/popup-blocked-from-iframe-script.html
+fast/events/popup-blocked-from-mousemove.html
 fast/events/popup-blocked-from-untrusted-mouse-click.html
 fast/events/popup-blocked-from-window-open.html
 fast/events/popup-blocked-to-post-blank.html

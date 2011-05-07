@@ -1,3 +1,12 @@
+2011-05-07  Jessie Berlin  <jberlin@apple.com>
+
+        WebKitTestRunner needs layoutTestController.setPopupBlockingEnabled
+
+        Add another test (fast/events/popup-blocked-from-mousemove.html) to the mac-wk2 Skipped list
+        to get the bots green.
+
+        * platform/mac-wk2/Skipped:
+
 2011-05-07  Joe Mason  <jmason@rim.com>
 
         Reviewed by Daniel Bates.
