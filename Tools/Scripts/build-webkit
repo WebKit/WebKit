@@ -128,10 +128,10 @@ my (
 
 my @features = (
     { option => "3d-canvas", desc => "Toggle 3D canvas (WebGL) support",
-      define => "ENABLE_WEBGL", default => (isAppleMacWebKit() && !isTiger() && !isLeopard()), value => \$threeDCanvasSupport },
+      define => "ENABLE_WEBGL", default => (isAppleMacWebKit() && !isLeopard()), value => \$threeDCanvasSupport },
 
     { option => "3d-rendering", desc => "Toggle 3D rendering support",
-      define => "ENABLE_3D_RENDERING", default => (isAppleMacWebKit() && !isTiger()), value => \$threeDRenderingSupport },
+      define => "ENABLE_3D_RENDERING", default => isAppleMacWebKit(), value => \$threeDRenderingSupport },
 
     { option => "accelerated-2d-canvas", desc => "Toggle accelerated 2D canvas support",
       define => "ENABLE_ACCELERATED_2D_CANVAS", default => 0, value => \$accelerated2dCanvasSupport },

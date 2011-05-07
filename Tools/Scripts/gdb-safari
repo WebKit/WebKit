@@ -49,5 +49,5 @@ $ENV{DYLD_FRAMEWORK_PATH} = $productDir;
 $ENV{WEBKIT_UNSET_DYLD_FRAMEWORK_PATH} = 'YES';
 
 print "Starting Safari under gdb with DYLD_FRAMEWORK_PATH set to point to built WebKit in $productDir.\n";
-my @architectureFlags = ("-arch", architecture()) if !isTiger();
+my @architectureFlags = ("-arch", architecture());
 exec $gdbPath, @architectureFlags, "--arg", $safariPath, @ARGV or die;

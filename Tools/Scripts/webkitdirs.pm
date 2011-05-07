@@ -226,7 +226,7 @@ sub determineArchitecture
     if ($architecture) {
         chomp $architecture;
     } else {
-        if (isTiger() or isLeopard()) {
+        if (isLeopard()) {
             $architecture = `arch`;
         } else {
             my $supports64Bit = `sysctl -n hw.optional.x86_64`;
@@ -1012,11 +1012,6 @@ sub osXVersion()
 {
     determineOSXVersion();
     return $osXVersion;
-}
-
-sub isTiger()
-{
-    return isDarwin() && osXVersion()->{"minor"} == 4;
 }
 
 sub isLeopard()
@@ -1910,7 +1905,7 @@ sub runSafari
         print "Starting Safari with DYLD_FRAMEWORK_PATH set to point to built WebKit in $productDir.\n";
         $ENV{DYLD_FRAMEWORK_PATH} = $productDir;
         $ENV{WEBKIT_UNSET_DYLD_FRAMEWORK_PATH} = "YES";
-        if (!isTiger() && architecture()) {
+        if (architecture()) {
             return system "arch", "-" . architecture(), safariPath(), @ARGV;
         } else {
             return system safariPath(), @ARGV;
@@ -1943,7 +1938,7 @@ sub runMiniBrowser
         $ENV{DYLD_FRAMEWORK_PATH} = $productDir;
         $ENV{WEBKIT_UNSET_DYLD_FRAMEWORK_PATH} = "YES";
         my $miniBrowserPath = "$productDir/MiniBrowser.app/Contents/MacOS/MiniBrowser";
-        if (!isTiger() && architecture()) {
+        if (architecture()) {
             return system "arch", "-" . architecture(), $miniBrowserPath, @ARGV;
         } else {
             return system $miniBrowserPath, @ARGV;
@@ -1967,7 +1962,7 @@ sub debugMiniBrowser
         my $miniBrowserPath = "$productDir/MiniBrowser.app/Contents/MacOS/MiniBrowser";
 
         print "Starting MiniBrowser under gdb with DYLD_FRAMEWORK_PATH set to point to built WebKit2 in $productDir.\n";
-        my @architectureFlags = ("-arch", architecture()) if !isTiger();
+        my @architectureFlags = ("-arch", architecture());
         exec $gdbPath, @architectureFlags, $miniBrowserPath or die;
         return;
     }
@@ -1983,7 +1978,7 @@ sub runWebKitTestRunner
         $ENV{DYLD_FRAMEWORK_PATH} = $productDir;
         $ENV{WEBKIT_UNSET_DYLD_FRAMEWORK_PATH} = "YES";
         my $webKitTestRunnerPath = "$productDir/WebKitTestRunner";
-        if (!isTiger() && architecture()) {
+        if (architecture()) {
             return system "arch", "-" . architecture(), $webKitTestRunnerPath, @ARGV;
         } else {
             return system $webKitTestRunnerPath, @ARGV;
@@ -2006,7 +2001,7 @@ sub debugWebKitTestRunner
         my $webKitTestRunnerPath = "$productDir/WebKitTestRunner";
 
         print "Starting WebKitTestRunner under gdb with DYLD_FRAMEWORK_PATH set to point to $productDir.\n";
-        my @architectureFlags = ("-arch", architecture()) if !isTiger();
+        my @architectureFlags = ("-arch", architecture());
         exec $gdbPath, @architectureFlags, $webKitTestRunnerPath or die;
         return;
     }
@@ -2022,7 +2017,7 @@ sub runTestWebKitAPI
         $ENV{DYLD_FRAMEWORK_PATH} = $productDir;
         $ENV{WEBKIT_UNSET_DYLD_FRAMEWORK_PATH} = "YES";
         my $testWebKitAPIPath = "$productDir/TestWebKitAPI";
-        if (!isTiger() && architecture()) {
+        if (architecture()) {
             return system "arch", "-" . architecture(), $testWebKitAPIPath, @ARGV;
         } else {
             return system $testWebKitAPIPath, @ARGV;
