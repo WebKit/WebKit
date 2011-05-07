@@ -1,3 +1,37 @@
+2011-05-06  Cary Clark  <caryclark@google.com>
+
+        Reviewed by Eric Seidel.
+
+        Add utility for converting SkCanvas to CGContext
+        https://bugs.webkit.org/show_bug.cgi?id=59808
+
+        Skia on Mac uses Skia to render WebKit, and CG 
+        to render UI elements. The CG elements need a 
+        transcribed graphics context that preserves the 
+        canvas matrix, and the canvas clip. 
+
+        The BitLockerSkia utility class sets up a CGContext 
+        from the SkCanvas, locks the bitmap's bits, and 
+        releases the lock when the class goes out of scope. 
+
+        Each time the CGContext is retrieved, it is rebuilt. 
+        This permits the caller to modify the same canvas 
+        between calls. 
+
+        This change adds utilities but does not modify any 
+        existing code. For now, there are no callers to these 
+        utilities, so there is no functional change.
+
+        No new tests.
+
+        * platform/graphics/skia/BitLockerSkia.cpp: Added.
+        (WebCore::SkMatrixToCGAffineTransform): Conversion utility.
+        (WebCore::BitLockerSkia::BitLockerSkia): Takes SkCanvas.
+        (WebCore::BitLockerSkia::~BitLockerSkia): Unlocks, cleans up.
+        (WebCore::BitLockerSkia::release): Internal private helper.
+        (WebCore::BitLockerSkia::cgContext): Returns CGContextRef.
+        * platform/graphics/skia/BitLockerSkia.h: Added.
+
 2011-05-06  Martin Robinson  <mrobinson@igalia.com>
 
         Reviewed by Xan Lopez.
