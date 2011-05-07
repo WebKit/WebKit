@@ -43,7 +43,12 @@ public:
     }
     ~ContentSecurityPolicy();
 
-    void didReceiveHeader(const String&);
+    enum HeaderType {
+        ReportOnly,
+        EnforcePolicy
+    };
+
+    void didReceiveHeader(const String&, HeaderType);
 
     bool allowJavaScriptURLs() const;
     bool allowInlineEventHandlers() const;
@@ -77,9 +82,12 @@ private:
     bool checkEvalAndReportViolation(CSPDirective*, const String& consoleMessage) const;
     bool checkSourceAndReportViolation(CSPDirective*, const KURL&, const String& type) const;
 
+    bool denyIfEnforcingPolicy() const { return m_reportOnly; }
+
     bool m_havePolicy;
     Document* m_document;
 
+    bool m_reportOnly;
     OwnPtr<CSPDirective> m_defaultSrc;
     OwnPtr<CSPDirective> m_scriptSrc;
     OwnPtr<CSPDirective> m_objectSrc;

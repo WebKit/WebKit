@@ -719,7 +719,11 @@ void FrameLoader::didBeginDocument(bool dispatch)
 
         String contentSecurityPolicy = m_documentLoader->response().httpHeaderField("X-WebKit-CSP");
         if (!contentSecurityPolicy.isEmpty())
-            m_frame->document()->contentSecurityPolicy()->didReceiveHeader(contentSecurityPolicy);
+            m_frame->document()->contentSecurityPolicy()->didReceiveHeader(contentSecurityPolicy, ContentSecurityPolicy::EnforcePolicy);
+
+        String reportOnlyContentSecurityPolicy = m_documentLoader->response().httpHeaderField("X-WebKit-CSP-Report-Only");
+        if (!contentSecurityPolicy.isEmpty())
+            m_frame->document()->contentSecurityPolicy()->didReceiveHeader(reportOnlyContentSecurityPolicy, ContentSecurityPolicy::ReportOnly);
     }
 
     history()->restoreDocumentState();

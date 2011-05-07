@@ -1,3 +1,29 @@
+2011-05-06  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        Implement "Report-Only" mode for CSP
+        https://bugs.webkit.org/show_bug.cgi?id=60402
+
+        This mode lets web sites try out CSP by getting violation reports (and
+        console spam) without actually changing the behavior of their web sites.
+
+        Test: http/tests/security/contentSecurityPolicy/report-only.html
+
+        * dom/Document.cpp:
+        (WebCore::Document::processHttpEquiv):
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::didBeginDocument):
+        * page/ContentSecurityPolicy.cpp:
+        (WebCore::ContentSecurityPolicy::ContentSecurityPolicy):
+        (WebCore::ContentSecurityPolicy::didReceiveHeader):
+        (WebCore::ContentSecurityPolicy::reportViolation):
+        (WebCore::ContentSecurityPolicy::checkInlineAndReportViolation):
+        (WebCore::ContentSecurityPolicy::checkEvalAndReportViolation):
+        (WebCore::ContentSecurityPolicy::checkSourceAndReportViolation):
+        (WebCore::ContentSecurityPolicy::allowJavaScriptURLs):
+        * page/ContentSecurityPolicy.h:
+
 2011-05-06  Beth Dakin  <bdakin@apple.com>
 
         Reviewed by Darin Adler.

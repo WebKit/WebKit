@@ -1,3 +1,13 @@
+2011-05-06  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        Implement "Report-Only" mode for CSP
+        https://bugs.webkit.org/show_bug.cgi?id=60402
+
+        * http/tests/security/contentSecurityPolicy/report-only-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/report-only.html: Added.
+
 2011-05-06  Kenji Imasaki  <imasaki@chromium.org>
 
         Reviewed by David Levin.

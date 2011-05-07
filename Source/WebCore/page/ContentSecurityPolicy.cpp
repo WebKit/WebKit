@@ -454,6 +454,7 @@ private:
 ContentSecurityPolicy::ContentSecurityPolicy(Document* document)
     : m_havePolicy(false)
     , m_document(document)
+    , m_reportOnly(false)
     , m_disableJavaScriptURLs(false)
 {
 }
@@ -462,13 +463,22 @@ ContentSecurityPolicy::~ContentSecurityPolicy()
 {
 }
 
-void ContentSecurityPolicy::didReceiveHeader(const String& header)
+void ContentSecurityPolicy::didReceiveHeader(const String& header, HeaderType type)
 {
     if (m_havePolicy)
         return; // The first policy wins.
 
     parse(header);
     m_havePolicy = true;
+
+    switch (type) {
+    case ReportOnly:
+        m_reportOnly = true;
+        return;
+    case EnforcePolicy:
+        ASSERT(!m_reportOnly);
+        break;
+    }
 
     if (!checkEval(operativeDirective(m_scriptSrc.get()))) {
         if (Frame* frame = m_document->frame())
@@ -482,7 +492,8 @@ void ContentSecurityPolicy::reportViolation(const String& directiveText, const S
     if (!frame)
         return;
 
-    frame->domWindow()->console()->addMessage(JSMessageSource, LogMessageType, ErrorMessageLevel, consoleMessage, 1, String());
+    String message = m_reportOnly ? "[Report Only] " + consoleMessage : consoleMessage;
+    frame->domWindow()->console()->addMessage(JSMessageSource, LogMessageType, ErrorMessageLevel, message, 1, String());
 
     if (m_reportURLs.isEmpty())
         return;
@@ -523,7 +534,7 @@ bool ContentSecurityPolicy::checkInlineAndReportViolation(CSPDirective* directiv
     if (!directive || directive->allowInline())
         return true;
     reportViolation(directive->text(), consoleMessage);
-    return false;
+    return denyIfEnforcingPolicy();
 }
 
 bool ContentSecurityPolicy::checkEvalAndReportViolation(CSPDirective* directive, const String& consoleMessage) const
@@ -531,7 +542,7 @@ bool ContentSecurityPolicy::checkEvalAndReportViolation(CSPDirective* directive,
     if (checkEval(directive))
         return true;
     reportViolation(directive->text(), consoleMessage);
-    return false;
+    return denyIfEnforcingPolicy();
 }
 
 bool ContentSecurityPolicy::checkSourceAndReportViolation(CSPDirective* directive, const KURL& url, const String& type) const
@@ -539,7 +550,7 @@ bool ContentSecurityPolicy::checkSourceAndReportViolation(CSPDirective* directiv
     if (!directive || directive->allows(url))
         return true;
     reportViolation(directive->text(), makeString("Refused to load ", type, " from '", url.string(), "' because of Content-Security-Policy.\n"));
-    return false;
+    return denyIfEnforcingPolicy();
 }
 
 bool ContentSecurityPolicy::allowJavaScriptURLs() const
@@ -547,7 +558,7 @@ bool ContentSecurityPolicy::allowJavaScriptURLs() const
     DEFINE_STATIC_LOCAL(String, consoleMessage, ("Refused to execute JavaScript URL because of Content-Security-Policy.\n"));
     if (m_disableJavaScriptURLs) {
         reportViolation(String(), consoleMessage);
-        return false;
+        return denyIfEnforcingPolicy();
     }
     return checkInlineAndReportViolation(operativeDirective(m_scriptSrc.get()), consoleMessage);
 }
