@@ -41,7 +41,6 @@ EAPI void ewk_tile_updates_clear(Ewk_Tile *t);
 EAPI Ewk_Tile_Unused_Cache *ewk_tile_unused_cache_new(size_t max);
 EAPI void ewk_tile_unused_cache_lock_area(Ewk_Tile_Unused_Cache *tuc, Evas_Coord x, Evas_Coord y, Evas_Coord w, Evas_Coord h, float zoom);
 EAPI void ewk_tile_unused_cache_unlock_area(Ewk_Tile_Unused_Cache *tuc);
-EAPI void ewk_tile_unused_cache_free(Ewk_Tile_Unused_Cache *tuc);
 EAPI Ewk_Tile_Unused_Cache *ewk_tile_unused_cache_ref(Ewk_Tile_Unused_Cache *tuc);
 EAPI void ewk_tile_unused_cache_unref(Ewk_Tile_Unused_Cache *tuc);
 

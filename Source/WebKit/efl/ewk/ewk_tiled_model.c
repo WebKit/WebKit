@@ -560,12 +560,16 @@ void ewk_tile_unused_cache_unlock_area(Ewk_Tile_Unused_Cache *tuc)
 /**
  * Free cache of unused tiles.
  *
+ * This function should be only called by ewk_tile_unused_cache_unref
+ * function. Calling this function without considering reference counting
+ * may lead to unknown results.
+ *
  * Those tiles that are still visible will remain live. The unused
  * tiles will be freed.
  *
  * @see ewk_tile_unused_cache_unref()
  */
-void ewk_tile_unused_cache_free(Ewk_Tile_Unused_Cache *tuc)
+static void _ewk_tile_unused_cache_free(Ewk_Tile_Unused_Cache *tuc)
 {
     EINA_SAFETY_ON_NULL_RETURN(tuc);
 
@@ -628,7 +632,7 @@ void ewk_tile_unused_cache_unref(Ewk_Tile_Unused_Cache *tuc)
     EINA_SAFETY_ON_NULL_RETURN(tuc);
     tuc->references--;
     if (!tuc->references)
-        ewk_tile_unused_cache_free(tuc);
+        _ewk_tile_unused_cache_free(tuc);
 }
 
 /**
