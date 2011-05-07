@@ -1,3 +1,17 @@
+2011-05-06  David Grogan  <dgrogan@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        update link to message about mac 64bit git binaries
+        https://bugs.webkit.org/show_bug.cgi?id=60411
+
+        The original message implied (correctly, at-the-time) that
+        http://code.google.com/p/git-osx-installer/ doesn't provide 64-bit
+        binaries. The new message notes that they do. This might prevent someone
+        else from spending a few minutes confused.
+
+        * Scripts/webkitpy/common/checkout/scm/git.py:
+
 2011-05-06  Dirk Pranke  <dpranke@chromium.org>
 
         Reviewed by Ojan Vafai.

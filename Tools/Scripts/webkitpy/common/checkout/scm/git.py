@@ -83,7 +83,7 @@ class Git(SCM, SVNRepository):
         if self._executable_is_64bit(git_path):
             return
 
-        webkit_dev_thead_url = "https://lists.webkit.org/pipermail/webkit-dev/2010-December/015249.html"
+        webkit_dev_thead_url = "https://lists.webkit.org/pipermail/webkit-dev/2010-December/015287.html"
         log("Warning: This machine is 64-bit, but the git binary (%s) does not support 64-bit.\nInstall a 64-bit git for better performance, see:\n%s\n" % (git_path, webkit_dev_thead_url))
 
     @classmethod
