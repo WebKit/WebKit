@@ -1,6 +1,6 @@
 2011-05-07  Daniel Bates  <dbates@webkit.org>
 
-        Remove some more references to isTiger(), which was removed in changeset 86007
+        Attempt to fix the build; remove some more references to isTiger(), which was removed in changeset 86007
         <http://trac.webkit.org/changeset/86007> (bug #60438).
 
         * Scripts/old-run-webkit-tests:
