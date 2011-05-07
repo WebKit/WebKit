@@ -1,3 +1,15 @@
+2011-05-06  Abhishek Arya  <inferno@chromium.org>
+
+        Unreviewed.
+
+        Chromium rebaselines for r85990
+
+        * platform/chromium-linux/scrollbars/scrollbars-on-positioned-content-expected.png: Added.
+        * platform/chromium-mac-leopard/scrollbars/scrollbars-on-positioned-content-expected.png: Added.
+        * platform/chromium-mac/scrollbars/scrollbars-on-positioned-content-expected.png: Added.
+        * platform/chromium-win/scrollbars/scrollbars-on-positioned-content-expected.png: Added.
+        * platform/chromium-win/scrollbars/scrollbars-on-positioned-content-expected.txt: Added.
+
 2011-05-06  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Eric Seidel.
