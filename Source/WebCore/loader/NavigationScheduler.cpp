@@ -114,6 +114,8 @@ protected:
         if (m_haveToldClient)
             return;
         m_haveToldClient = true;
+
+        UserGestureIndicator gestureIndicator(wasUserGesture() ? DefinitelyProcessingUserGesture : DefinitelyNotProcessingUserGesture);
         frame->loader()->clientRedirected(KURL(ParsedURLString, m_url), delay(), currentTime() + timer->nextFireInterval(), lockBackForwardList());
     }
 
@@ -121,6 +123,13 @@ protected:
     {
         if (!m_haveToldClient)
             return;
+
+        // Do not set a UserGestureIndicator because
+        // clientRedirectCancelledOrFinished() is also called from many places
+        // inside FrameLoader, where the gesture state is not set and is in
+        // fact unavailable. We need to be consistent with them, otherwise the
+        // gesture state will sometimes be set and sometimes not within
+        // dispatchDidCancelClientRedirect().
         frame->loader()->clientRedirectCancelledOrFinished(newLoadInProgress);
     }
 
@@ -224,6 +233,8 @@ public:
         if (m_haveToldClient)
             return;
         m_haveToldClient = true;
+
+        UserGestureIndicator gestureIndicator(wasUserGesture() ? DefinitelyProcessingUserGesture : DefinitelyNotProcessingUserGesture);
         frame->loader()->clientRedirected(m_submission->requestURL(), delay(), currentTime() + timer->nextFireInterval(), lockBackForwardList());
     }
 
@@ -231,6 +242,13 @@ public:
     {
         if (!m_haveToldClient)
             return;
+
+        // Do not set a UserGestureIndicator because
+        // clientRedirectCancelledOrFinished() is also called from many places
+        // inside FrameLoader, where the gesture state is not set and is in
+        // fact unavailable. We need to be consistent with them, otherwise the
+        // gesture state will sometimes be set and sometimes not within
+        // dispatchDidCancelClientRedirect().
         frame->loader()->clientRedirectCancelledOrFinished(newLoadInProgress);
     }
 

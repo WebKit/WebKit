@@ -353,6 +353,11 @@
         NSString *string = [NSString stringWithFormat:@"%@ - willPerformClientRedirectToURL: %@ ", [frame _drt_descriptionSuitableForTestResult], [URL _drt_descriptionSuitableForTestResult]];
         printf ("%s\n", [string UTF8String]);
     }
+
+    if (!done && gLayoutTestController->dumpUserGestureInFrameLoadCallbacks()) {
+        NSString *string = [NSString stringWithFormat:@"%@ - in willPerformClientRedirect", [frame _drt_printFrameUserGestureStatus]];
+        printf ("%s\n", [string UTF8String]);
+    }
 }
 
 - (void)webView:(WebView *)sender didCancelClientRedirectForFrame:(WebFrame *)frame

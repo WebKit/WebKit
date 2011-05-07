@@ -375,6 +375,9 @@ void FrameLoaderClientQt::dispatchWillPerformClientRedirect(const KURL& url, dou
     if (dumpFrameLoaderCallbacks)
         printf("%s - willPerformClientRedirectToURL: %s \n", qPrintable(drtDescriptionSuitableForTestResult(m_frame)), qPrintable(drtDescriptionSuitableForTestResult(url)));
 
+    if (dumpUserGestureInFrameLoaderCallbacks)
+        printf("%s - in willPerformClientRedirect\n", qPrintable(drtPrintFrameUserGestureStatus(m_frame)));
+
     notImplemented();
 }
 

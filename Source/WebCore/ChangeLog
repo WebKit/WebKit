@@ -1,3 +1,18 @@
+2011-05-07  Joe Mason  <jmason@rim.com>
+
+        Reviewed by Daniel Bates.
+
+        FrameLoader::isProcessingUserGesture is wrong in dispatchWillPerformClientRedirect
+        https://bugs.webkit.org/show_bug.cgi?id=52211
+
+        Create a UserGestureIndicator when calling the clientRedirected callback.
+
+        * loader/NavigationScheduler.cpp:
+        (WebCore::ScheduledURLNavigation::didStartTimer):
+        (WebCore::ScheduledURLNavigation::didStopTimer):
+        (WebCore::ScheduledFormSubmission::didStartTimer):
+        (WebCore::ScheduledFormSubmission::didStopTimer):
+
 2011-05-06  Jon Lee  <jonlee@apple.com>
 
         Reviewed by Alice Liu.

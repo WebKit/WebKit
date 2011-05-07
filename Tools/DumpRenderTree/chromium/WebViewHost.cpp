@@ -855,10 +855,13 @@ void WebViewHost::unableToImplementPolicyWithError(WebFrame* frame, const WebURL
 void WebViewHost::willPerformClientRedirect(WebFrame* frame, const WebURL& from, const WebURL& to,
                                             double interval, double fire_time)
 {
-    if (!m_shell->shouldDumpFrameLoadCallbacks())
-        return;
-    printFrameDescription(frame);
-    printf(" - willPerformClientRedirectToURL: %s \n", to.spec().data());
+    if (m_shell->shouldDumpFrameLoadCallbacks()) {
+        printFrameDescription(frame);
+        printf(" - willPerformClientRedirectToURL: %s \n", to.spec().data());
+    }
+
+    if (m_shell->shouldDumpUserGestureInFrameLoadCallbacks())
+        printFrameUserGestureStatus(frame, " - in willPerformClientRedirect\n");
 }
 
 void WebViewHost::didCancelClientRedirect(WebFrame* frame)
@@ -878,12 +881,13 @@ void WebViewHost::didCreateDataSource(WebFrame*, WebDataSource* ds)
 
 void WebViewHost::didStartProvisionalLoad(WebFrame* frame)
 {
-    if (m_shell->shouldDumpUserGestureInFrameLoadCallbacks())
-        printFrameUserGestureStatus(frame, " - in didStartProvisionalLoadForFrame\n");
     if (m_shell->shouldDumpFrameLoadCallbacks()) {
         printFrameDescription(frame);
         fputs(" - didStartProvisionalLoadForFrame\n", stdout);
     }
+
+    if (m_shell->shouldDumpUserGestureInFrameLoadCallbacks())
+        printFrameUserGestureStatus(frame, " - in didStartProvisionalLoadForFrame\n");
 
     if (!m_topLoadingFrame)
         m_topLoadingFrame = frame;

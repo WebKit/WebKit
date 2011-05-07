@@ -1,3 +1,15 @@
+2011-05-07  Joe Mason  <jmason@rim.com>
+
+        Reviewed by Daniel Bates.
+
+        FrameLoader::isProcessingUserGesture is wrong in dispatchWillPerformClientRedirect
+        https://bugs.webkit.org/show_bug.cgi?id=52211
+
+        Dump isUserProcessingGesture in willPerformClientRedirect so that the layout tests can be extended.
+
+        * WebCoreSupport/FrameLoaderClientQt.cpp:
+        (WebCore::FrameLoaderClientQt::dispatchWillPerformClientRedirect):
+
 2011-05-06  Kent Tamura  <tkent@chromium.org>
 
         Reviewed by Ryosuke Niwa.
