@@ -54,7 +54,7 @@ class EventContext;
 class EventListener;
 class FloatPoint;
 class Frame;
-class InputElement;
+class HTMLInputElement;
 class IntRect;
 class KeyboardEvent;
 class NSResolver;
@@ -524,7 +524,7 @@ public:
 
     virtual Node* toNode() { return this; }
 
-    virtual InputElement* toInputElement();
+    virtual HTMLInputElement* toInputElement();
 
     virtual ScriptExecutionContext* scriptExecutionContext() const;
 

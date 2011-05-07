@@ -751,7 +751,7 @@ bool RenderTheme::isChecked(const RenderObject* o) const
     if (!o->node())
         return false;
 
-    InputElement* inputElement = o->node()->toInputElement();
+    HTMLInputElement* inputElement = o->node()->toInputElement();
     if (!inputElement)
         return false;
 
@@ -763,7 +763,7 @@ bool RenderTheme::isIndeterminate(const RenderObject* o) const
     if (!o->node())
         return false;
 
-    InputElement* inputElement = o->node()->toInputElement();
+    HTMLInputElement* inputElement = o->node()->toInputElement();
     if (!inputElement)
         return false;
 
@@ -965,7 +965,7 @@ void RenderTheme::adjustProgressBarStyle(CSSStyleSelector*, RenderStyle*, Elemen
 }
 #endif
 
-bool RenderTheme::shouldHaveSpinButton(InputElement* inputElement) const
+bool RenderTheme::shouldHaveSpinButton(HTMLInputElement* inputElement) const
 {
     return inputElement->isSteppable() && !inputElement->isRangeControl();
 }

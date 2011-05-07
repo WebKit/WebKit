@@ -493,7 +493,6 @@ SOURCES += \
     dom/ExceptionBase.cpp \
     dom/ExceptionCode.cpp \
     dom/IconURL.cpp \
-    dom/InputElement.cpp \
     dom/KeyboardEvent.cpp \
     dom/MessageChannel.cpp \
     dom/MessageEvent.cpp \
@@ -1470,7 +1469,6 @@ HEADERS += \
     dom/ExceptionBase.h \
     dom/ExceptionCode.h \
     dom/FragmentScriptingPermission.h \
-    dom/InputElement.h \
     dom/KeyboardEvent.h \
     dom/MessageChannel.h \
     dom/MessageEvent.h \

@@ -152,7 +152,7 @@ bool WebInputElement::isChecked() const
 
 int WebInputElement::defaultMaxLength()
 {
-    return HTMLInputElement::s_maximumLength;
+    return HTMLInputElement::maximumLength;
 }
 
 WebInputElement::WebInputElement(const PassRefPtr<HTMLInputElement>& elem)
@@ -173,11 +173,9 @@ WebInputElement::operator PassRefPtr<HTMLInputElement>() const
 
 WebInputElement* toWebInputElement(WebElement* webElement)
 {
-    InputElement* inputElement = webElement->unwrap<Element>()->toInputElement();
+    HTMLInputElement* inputElement = webElement->unwrap<Element>()->toInputElement();
     if (!inputElement)
         return 0;
-
-    ASSERT(webElement->unwrap<Element>()->isHTMLElement());
 
     return static_cast<WebInputElement*>(webElement);
 }

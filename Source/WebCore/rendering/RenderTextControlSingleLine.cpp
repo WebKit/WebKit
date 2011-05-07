@@ -34,7 +34,6 @@
 #include "HTMLInputElement.h"
 #include "HTMLNames.h"
 #include "HitTestResult.h"
-#include "InputElement.h"
 #include "LocalizedStrings.h"
 #include "MouseEvent.h"
 #include "PlatformKeyboardEvent.h"
@@ -75,6 +74,8 @@ RenderTextControlSingleLine::RenderTextControlSingleLine(Node* node, bool placeh
     , m_searchEventTimer(this, &RenderTextControlSingleLine::searchEventTimerFired)
     , m_searchPopup(0)
 {
+    ASSERT(node->isHTMLElement());
+    ASSERT(node->toInputElement());
 }
 
 RenderTextControlSingleLine::~RenderTextControlSingleLine()
@@ -106,8 +107,7 @@ RenderStyle* RenderTextControlSingleLine::textBaseStyle() const
 
 void RenderTextControlSingleLine::addSearchResult()
 {
-    ASSERT(node()->isHTMLElement());
-    HTMLInputElement* input = static_cast<HTMLInputElement*>(node());
+    HTMLInputElement* input = inputElement();
     if (input->maxResults() <= 0)
         return;
 
@@ -138,13 +138,11 @@ void RenderTextControlSingleLine::addSearchResult()
 
 void RenderTextControlSingleLine::stopSearchEventTimer()
 {
-    ASSERT(node()->isHTMLElement());
     m_searchEventTimer.stop();
 }
 
 void RenderTextControlSingleLine::showPopup()
 {
-    ASSERT(node()->isHTMLElement());
     if (m_searchPopupIsVisible)
         return;
 
@@ -160,7 +158,7 @@ void RenderTextControlSingleLine::showPopup()
     m_searchPopup->loadRecentSearches(name, m_recentSearches);
 
     // Trim the recent searches list if the maximum size has changed since we last saved.
-    HTMLInputElement* input = static_cast<HTMLInputElement*>(node());
+    HTMLInputElement* input = inputElement();
     if (static_cast<int>(m_recentSearches.size()) > input->maxResults()) {
         do {
             m_recentSearches.removeLast();
@@ -174,7 +172,6 @@ void RenderTextControlSingleLine::showPopup()
 
 void RenderTextControlSingleLine::hidePopup()
 {
-    ASSERT(node()->isHTMLElement());
     if (m_searchPopup)
         m_searchPopup->popupMenu()->hide();
 }
@@ -188,18 +185,16 @@ void RenderTextControlSingleLine::subtreeHasChanged()
     bool wasChanged = element->wasChangedSinceLastFormControlChangeEvent();
     element->setChangedSinceLastFormControlChangeEvent(true);
 
-    InputElement* input = inputElement();
+    HTMLInputElement* input = inputElement();
     // We don't need to call sanitizeUserInputValue() function here because
-    // InputElement::handleBeforeTextInsertedEvent() has already called
+    // HTMLInputElement::handleBeforeTextInsertedEvent() has already called
     // sanitizeUserInputValue().
     // sanitizeValue() is needed because IME input doesn't dispatch BeforeTextInsertedEvent.
     String value = text();
     if (input->isAcceptableValue(value))
         input->setValueFromRenderer(input->sanitizeValue(input->convertFromVisibleValue(value)));
-    if (node()->isHTMLElement()) {
-        // Recalc for :invalid and hasUnacceptableValue() change.
-        static_cast<HTMLInputElement*>(input)->setNeedsStyleRecalc();
-    }
+    // Recalc for :invalid and hasUnacceptableValue() change.
+    input->setNeedsStyleRecalc();
 
     if (m_cancelButton)
         updateCancelButtonVisibility();
@@ -710,7 +705,7 @@ void RenderTextControlSingleLine::updateFromElement()
             // For HTMLInputElement, update the renderer value if the formControlValueMatchesRenderer()
             // flag is false. It protects an unacceptable renderer value from
             // being overwritten with the DOM value.
-            if (!static_cast<HTMLInputElement*>(node())->formControlValueMatchesRenderer())
+            if (!inputElement()->formControlValueMatchesRenderer())
                 setInnerTextValue(inputElement()->visibleValue());
         }
     }
@@ -755,8 +750,6 @@ PassRefPtr<RenderStyle> RenderTextControlSingleLine::createInnerTextStyle(const 
 
 PassRefPtr<RenderStyle> RenderTextControlSingleLine::createInnerBlockStyle(const RenderStyle* startStyle) const
 {
-    ASSERT(node()->isHTMLElement());
-
     RefPtr<RenderStyle> innerBlockStyle = RenderStyle::create();
     innerBlockStyle->inheritFrom(startStyle);
 
@@ -771,8 +764,7 @@ PassRefPtr<RenderStyle> RenderTextControlSingleLine::createInnerBlockStyle(const
 
 PassRefPtr<RenderStyle> RenderTextControlSingleLine::createResultsButtonStyle(const RenderStyle* startStyle) const
 {
-    ASSERT(node()->isHTMLElement());
-    HTMLInputElement* input = static_cast<HTMLInputElement*>(node());
+    HTMLInputElement* input = inputElement();
 
     RefPtr<RenderStyle> resultsBlockStyle;
     if (input->maxResults() < 0)
@@ -793,7 +785,6 @@ PassRefPtr<RenderStyle> RenderTextControlSingleLine::createResultsButtonStyle(co
 
 PassRefPtr<RenderStyle> RenderTextControlSingleLine::createCancelButtonStyle(const RenderStyle* startStyle) const
 {
-    ASSERT(node()->isHTMLElement());
     RefPtr<RenderStyle> cancelBlockStyle;
     
     if (RefPtr<RenderStyle> pseudoStyle = getCachedPseudoStyle(SEARCH_CANCEL_BUTTON))
@@ -811,7 +802,6 @@ PassRefPtr<RenderStyle> RenderTextControlSingleLine::createCancelButtonStyle(con
 
 PassRefPtr<RenderStyle> RenderTextControlSingleLine::createInnerSpinButtonStyle() const
 {
-    ASSERT(node()->isHTMLElement());
     RefPtr<RenderStyle> buttonStyle = getCachedPseudoStyle(INNER_SPIN_BUTTON);
     if (!buttonStyle)
         buttonStyle = RenderStyle::create();
@@ -821,7 +811,6 @@ PassRefPtr<RenderStyle> RenderTextControlSingleLine::createInnerSpinButtonStyle(
 
 PassRefPtr<RenderStyle> RenderTextControlSingleLine::createOuterSpinButtonStyle() const
 {
-    ASSERT(node()->isHTMLElement());
     RefPtr<RenderStyle> buttonStyle = getCachedPseudoStyle(OUTER_SPIN_BUTTON);
     if (!buttonStyle)
         buttonStyle = RenderStyle::create();
@@ -832,7 +821,6 @@ PassRefPtr<RenderStyle> RenderTextControlSingleLine::createOuterSpinButtonStyle(
 #if ENABLE(INPUT_SPEECH)
 PassRefPtr<RenderStyle> RenderTextControlSingleLine::createSpeechButtonStyle() const
 {
-    ASSERT(node()->isHTMLElement());
     RefPtr<RenderStyle> buttonStyle = getCachedPseudoStyle(INPUT_SPEECH_BUTTON);
     if (!buttonStyle)
         buttonStyle = RenderStyle::create();
@@ -858,9 +846,7 @@ void RenderTextControlSingleLine::updateCancelButtonVisibility() const
 
 EVisibility RenderTextControlSingleLine::visibilityForCancelButton() const
 {
-    ASSERT(node()->isHTMLElement());
-    HTMLInputElement* input = static_cast<HTMLInputElement*>(node());
-    return input->value().isEmpty() ? HIDDEN : VISIBLE;
+    return inputElement()->value().isEmpty() ? HIDDEN : VISIBLE;
 }
 
 const AtomicString& RenderTextControlSingleLine::autosaveName() const
@@ -870,13 +856,12 @@ const AtomicString& RenderTextControlSingleLine::autosaveName() const
 
 void RenderTextControlSingleLine::startSearchEventTimer()
 {
-    ASSERT(node()->isHTMLElement());
     unsigned length = text().length();
 
     // If there's no text, fire the event right away.
     if (!length) {
         stopSearchEventTimer();
-        static_cast<HTMLInputElement*>(node())->onSearch();
+        inputElement()->onSearch();
         return;
     }
 
@@ -887,16 +872,14 @@ void RenderTextControlSingleLine::startSearchEventTimer()
 
 void RenderTextControlSingleLine::searchEventTimerFired(Timer<RenderTextControlSingleLine>*)
 {
-    ASSERT(node()->isHTMLElement());
-    static_cast<HTMLInputElement*>(node())->onSearch();
+    inputElement()->onSearch();
 }
 
 // PopupMenuClient methods
 void RenderTextControlSingleLine::valueChanged(unsigned listIndex, bool fireEvents)
 {
-    ASSERT(node()->isHTMLElement());
     ASSERT(static_cast<int>(listIndex) < listSize());
-    HTMLInputElement* input = static_cast<HTMLInputElement*>(node());
+    HTMLInputElement* input = inputElement();
     if (static_cast<int>(listIndex) == (listSize() - 1)) {
         if (fireEvents) {
             m_recentSearches.clear();
@@ -1030,8 +1013,7 @@ bool RenderTextControlSingleLine::itemIsSelected(unsigned) const
 
 void RenderTextControlSingleLine::setTextFromItem(unsigned listIndex)
 {
-    ASSERT(node()->isHTMLElement());
-    static_cast<HTMLInputElement*>(node())->setValue(itemText(listIndex));
+    inputElement()->setValue(itemText(listIndex));
 }
 
 FontSelector* RenderTextControlSingleLine::fontSelector() const
@@ -1118,7 +1100,7 @@ PassRefPtr<Scrollbar> RenderTextControlSingleLine::createScrollbar(ScrollableAre
     return widget.release();
 }
 
-InputElement* RenderTextControlSingleLine::inputElement() const
+HTMLInputElement* RenderTextControlSingleLine::inputElement() const
 {
     return node()->toInputElement();
 }

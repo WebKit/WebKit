@@ -55,11 +55,11 @@
 #include "Frame.h"
 #include "HTMLAreaElement.h"
 #include "HTMLImageElement.h"
+#include "HTMLInputElement.h"
 #include "HTMLNames.h"
 #if ENABLE(VIDEO)
 #include "MediaControlElements.h"
 #endif
-#include "InputElement.h"
 #include "Page.h"
 #include "RenderListBox.h"
 #include "RenderMenuList.h"
@@ -616,7 +616,7 @@ void AXObjectCache::textMarkerDataForVisiblePosition(TextMarkerData& textMarkerD
         return;
     
     if (domNode->isHTMLElement()) {
-        InputElement* inputElement = domNode->toInputElement();
+        HTMLInputElement* inputElement = domNode->toInputElement();
         if (inputElement && inputElement->isPasswordField())
             return;
     }

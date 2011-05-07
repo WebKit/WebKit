@@ -32,11 +32,13 @@
 #include "config.h"
 #include "TextFieldInputType.h"
 
+#include "BeforeTextInsertedEvent.h"
 #include "Frame.h"
 #include "HTMLInputElement.h"
 #include "KeyboardEvent.h"
 #include "RenderTextControlSingleLine.h"
 #include "TextEvent.h"
+#include "TextIterator.h"
 #include "WheelEvent.h"
 #include <wtf/text/WTFString.h>
 
@@ -119,9 +121,72 @@ bool TextFieldInputType::shouldUseInputMethod() const
     return true;
 }
 
+static String replaceEOLAndLimitLength(const String& proposedValue, int maxLength)
+{
+    String string = proposedValue;
+    string.replace("\r\n", " ");
+    string.replace('\r', ' ');
+    string.replace('\n', ' ');
+
+    unsigned newLength = numCharactersInGraphemeClusters(string, maxLength);
+    for (unsigned i = 0; i < newLength; ++i) {
+        const UChar current = string[i];
+        if (current < ' ' && current != '\t') {
+            newLength = i;
+            break;
+        }
+    }
+    return string.left(newLength);
+}
+
 String TextFieldInputType::sanitizeValue(const String& proposedValue)
 {
-    return InputElement::sanitizeValueForTextField(element(), proposedValue);
+#if ENABLE(WCSS)
+    if (!element()->isConformToInputMask(proposedValue)) {
+        if (isConformToInputMask(element()->value()))
+            return element->value();
+        return String();
+    }
+#endif
+    return replaceEOLAndLimitLength(proposedValue, HTMLInputElement::maximumLength);
+}
+
+void TextFieldInputType::handleBeforeTextInsertedEvent(BeforeTextInsertedEvent* event)
+{
+    // Make sure that the text to be inserted will not violate the maxLength.
+
+    // We use RenderTextControlSingleLine::text() instead of InputElement::value()
+    // because they can be mismatched by sanitizeValue() in
+    // RenderTextControlSingleLine::subtreeHasChanged() in some cases.
+    unsigned oldLength = numGraphemeClusters(toRenderTextControlSingleLine(element()->renderer())->text());
+
+    // selectionLength represents the selection length of this text field to be
+    // removed by this insertion.
+    // If the text field has no focus, we don't need to take account of the
+    // selection length. The selection is the source of text drag-and-drop in
+    // that case, and nothing in the text field will be removed.
+    unsigned selectionLength = element()->focused() ? numGraphemeClusters(plainText(element()->document()->frame()->selection()->selection().toNormalizedRange().get())) : 0;
+    ASSERT(oldLength >= selectionLength);
+
+    // Selected characters will be removed by the next text event.
+    unsigned baseLength = oldLength - selectionLength;
+    unsigned maxLength = static_cast<unsigned>(isTextType() ? element()->maxLength() : HTMLInputElement::maximumLength); // maxLength can never be negative.
+    unsigned appendableLength = maxLength > baseLength ? maxLength - baseLength : 0;
+
+    // Truncate the inserted text to avoid violating the maxLength and other constraints.
+#if ENABLE(WCSS)
+    RefPtr<Range> range = element()->document()->frame()->selection()->selection().toNormalizedRange();
+    String candidateString = toRenderTextControlSingleLine(element()->renderer())->text();
+    if (selectionLength)
+        candidateString.replace(range->startOffset(), range->endOffset(), event->text());
+    else
+        candidateString.insert(event->text(), range->startOffset());
+    if (!element()->isConformToInputMask(candidateString)) {
+        event->setText("");
+        return;
+    }
+#endif
+    event->setText(replaceEOLAndLimitLength(event->text(), appendableLength));
 }
 
 bool TextFieldInputType::shouldRespectListAttribute()

@@ -25,7 +25,6 @@
 #define HTMLInputElement_h
 
 #include "HTMLFormControlElement.h"
-#include "InputElement.h"
 
 namespace WebCore {
 
@@ -35,14 +34,14 @@ class HTMLOptionElement;
 class InputType;
 class KURL;
 
-class HTMLInputElement : public HTMLTextFormControlElement, public InputElement {
+class HTMLInputElement : public HTMLTextFormControlElement {
 public:
     static PassRefPtr<HTMLInputElement> create(const QualifiedName&, Document*, HTMLFormElement*, bool createdByParser);
     virtual ~HTMLInputElement();
 
     DEFINE_ATTRIBUTE_EVENT_LISTENER(webkitspeechchange);
 
-    virtual InputElement* toInputElement() { return this; }
+    virtual HTMLInputElement* toInputElement() { return this; }
 
     bool autoComplete() const;
 
@@ -78,18 +77,18 @@ public:
     void stepUp(ExceptionCode& ec) { stepUp(1, ec); }
     void stepDown(ExceptionCode& ec) { stepDown(1, ec); }
     // stepUp()/stepDown() for user-interaction.
-    virtual bool isSteppable() const;
+    bool isSteppable() const;
     void stepUpFromRenderer(int);
 
     bool isTextButton() const;
 
     virtual bool isRadioButton() const;
-    virtual bool isTextField() const;
-    virtual bool isSearchField() const;
-    virtual bool isInputTypeHidden() const;
-    virtual bool isPasswordField() const;
-    virtual bool isCheckbox() const;
-    virtual bool isRangeControl() const;
+    bool isTextField() const;
+    bool isSearchField() const;
+    bool isInputTypeHidden() const;
+    bool isPasswordField() const;
+    bool isCheckbox() const;
+    bool isRangeControl() const;
 
     // FIXME: It's highly likely that any call site calling this function should instead
     // be using a different one. Many input elements behave like text fields, and in addition
@@ -106,7 +105,7 @@ public:
     bool isURLField() const;
 
 #if ENABLE(INPUT_SPEECH)
-    virtual bool isSpeechEnabled() const;
+    bool isSpeechEnabled() const;
 #endif
 
     bool checked() const { return m_isChecked; }
@@ -116,18 +115,30 @@ public:
     bool indeterminate() const { return m_isIndeterminate; }
     void setIndeterminate(bool);
 
-    virtual int size() const;
+    // isChecked is used by the rendering tree/CSS while checked() is used by JS to determine checked state
+    virtual bool isChecked() const;
+    virtual bool isIndeterminate() const { return indeterminate(); }
+
+    int size() const;
 
     void setType(const String&);
 
-    virtual String value() const;
-    virtual void setValue(const String&, bool sendChangeEvent = false);
-    virtual void setValueForUser(const String&);
+    String value() const;
+    void setValue(const String&, bool sendChangeEvent = false);
+    void setValueForUser(const String&);
     // Checks if the specified string would be a valid value.
     // We should not call this for types with no string value such as CHECKBOX and RADIO.
     bool isValidValue(const String&) const;
 
-    virtual const String& suggestedValue() const;
+    String sanitizeValue(const String&) const;
+
+    // The value which is drawn by a renderer.
+    String visibleValue() const;
+    String convertFromVisibleValue(const String&) const;
+    // Returns true if the specified string can be set as the value of HTMLInputElement.
+    bool isAcceptableValue(const String&) const;
+
+    const String& suggestedValue() const;
     void setSuggestedValue(const String&);
 
     double valueAsDate() const;
@@ -141,11 +152,10 @@ public:
 
     String valueWithDefault() const;
 
-    virtual void setValueFromRenderer(const String&);
+    void setValueFromRenderer(const String&);
     void setFileListFromRenderer(const Vector<String>&);
 
     bool canHaveSelection() const;
-    virtual void select() { HTMLTextFormControlElement::select(); }
 
     virtual bool rendererIsNeeded(RenderStyle*);
     virtual RenderObject* createRenderer(RenderArena*, RenderStyle*);
@@ -178,13 +188,14 @@ public:
 
     bool multiple() const;
 
-    virtual bool isAutofilled() const { return m_isAutofilled; }
+    bool isAutofilled() const { return m_isAutofilled; }
     void setAutofilled(bool = true);
 
     FileList* files();
 
     void addSearchResult();
     void onSearch();
+    bool searchEventsShouldBeDispatched() const;
 
 #if ENABLE(DATALIST)
     HTMLElement* list() const;
@@ -198,11 +209,16 @@ public:
     // These functions are public so they can be used in InputType classes.
     // Otherwise, they would be private.
     CheckedRadioButtons& checkedRadioButtons() const;
-    void handleBeforeTextInsertedEvent(Event*);
     void updateCheckedRadioButtons();
+#if ENABLE(WCSS)
+    bool isConformToInputMask(const String&) const;
+#endif
 
     bool lastChangeWasUserEdit() const;
-    
+    void cacheSelection(int start, int end);
+
+    static const int maximumLength;
+
 protected:
     HTMLInputElement(const QualifiedName&, Document*, HTMLFormElement*, bool createdByParser);
 
@@ -223,17 +239,11 @@ private:
 
     virtual const AtomicString& formControlName() const;
 
-    // isChecked is used by the rendering tree/CSS while checked() is used by JS to determine checked state
-    virtual bool isChecked() const;
-    virtual bool isIndeterminate() const { return indeterminate(); }
-
     virtual bool isTextFormControl() const { return isTextField(); }
 
     virtual bool canTriggerImplicitSubmission() const { return isTextField(); }
 
     virtual const AtomicString& formControlType() const;
-
-    virtual bool searchEventsShouldBeDispatched() const;
 
     virtual bool saveFormControlState(String& value) const;
     virtual void restoreFormControlState(const String&);
@@ -261,12 +271,6 @@ private:
 
     virtual bool isURLAttribute(Attribute*) const;
 
-    virtual void cacheSelection(int start, int end);
-
-    virtual String visibleValue() const;
-    virtual String convertFromVisibleValue(const String&) const;
-    virtual bool isAcceptableValue(const String&) const;
-    virtual String sanitizeValue(const String&) const;
     virtual bool hasUnacceptableValue() const;
 
     virtual bool isInRange() const;
@@ -280,7 +284,7 @@ private:
     void registerForActivationCallbackIfNeeded();
     void unregisterForActivationCallbackIfNeeded();
 
-    virtual bool supportsMaxLength() const { return isTextType(); }
+    bool supportsMaxLength() const { return isTextType(); }
     bool isTextType() const;
 
     virtual bool supportsPlaceholder() const;
@@ -288,8 +292,8 @@ private:
     virtual bool isEmptySuggestedValue() const { return suggestedValue().isEmpty(); }
     virtual void handleFocusEvent();
     virtual void handleBlurEvent();
-    virtual int cachedSelectionStart() const { return m_data.cachedSelectionStart(); }
-    virtual int cachedSelectionEnd() const { return m_data.cachedSelectionEnd(); }
+    virtual int cachedSelectionStart() const { return m_cachedSelectionStart; }
+    virtual int cachedSelectionEnd() const { return m_cachedSelectionEnd; }
 
     virtual bool isOptionalFormControl() const { return !isRequiredFormControl(); }
     virtual bool isRequiredFormControl() const;
@@ -303,12 +307,25 @@ private:
 #if ENABLE(DATALIST)
     HTMLDataListElement* dataList() const;
 #endif
-
+    void notifyFormStateChanged();
+    void parseMaxLengthAttribute(Attribute*);
+    void updateValueIfNeeded();
 #if ENABLE(WCSS)
-    virtual InputElementData data() const { return m_data; }
+    bool isConformToInputMask(UChar, unsigned) const;
+    String validateInputMask(String&);
 #endif
 
-    InputElementData m_data;
+    AtomicString m_name;
+    String m_value;
+    String m_suggestedValue;
+    int m_size;
+    int m_maxLength;
+    int m_cachedSelectionStart;
+    int m_cachedSelectionEnd;
+#if ENABLE(WCSS)
+    String m_inputFormatMask;
+    unsigned m_maxInputCharsAllowed;
+#endif
     short m_maxResults;
     bool m_isChecked : 1;
     bool m_reflectsCheckedAttribute : 1;

@@ -1,3 +1,128 @@
+2011-05-06  Kent Tamura  <tkent@chromium.org>
+
+        Reviewed by Ryosuke Niwa.
+
+        Eliminate WebCore/dom/InputElement.{cpp,h}
+        https://bugs.webkit.org/show_bug.cgi?id=60262
+
+        - Fold in all of the code of InputElement.{cpp,h} into HTMLInputElement
+          and TextFieldInputType.
+        - Change the return type of Node::toInputElement():
+          InputElement* -> HTMLInputElement*
+
+        No new tests. This change should not change the existing behaviour.
+
+        * CMakeLists.txt: Remove InpuntElement.cpp and/or InputElement.h.
+        * GNUmakefile.list.am: ditto.
+        * WebCore.exp.in: Add symbols of functions exposed to WebKit.
+        * WebCore.gypi: Remove InpuntElement.cpp and/or InputElement.h.
+        * WebCore.pro: ditto.
+        * WebCore.vcproj/WebCore.vcproj: ditto.
+        * WebCore.xcodeproj/project.pbxproj: ditto.
+        * accessibility/AXObjectCache.cpp:
+        (WebCore::AXObjectCache::textMarkerDataForVisiblePosition):
+          Follow the return type change of Node::toInputElement().
+        * accessibility/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::isPasswordField): ditto.
+        (WebCore::AccessibilityRenderObject::isIndeterminate): ditto.
+        (WebCore::AccessibilityRenderObject::isNativeCheckboxOrRadio): ditto.
+        (WebCore::AccessibilityRenderObject::isChecked): ditto.
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::canShareStyleWithElement): ditto.
+        (WebCore::CSSStyleSelector::SelectorChecker::checkOneSelector): ditto.
+        * dom/CheckedRadioButtons.cpp:
+        (WebCore::CheckedRadioButtons::removeButton): ditto.
+        * dom/DOMAllInOne.cpp: Remove InputElement.h.
+        * dom/InputElement.cpp: Removed.
+        * dom/InputElement.h: Removed.
+        * dom/Node.cpp:
+        (WebCore::Node::toInputElement):
+          Change the return type from InputElement* to HTMLInputElement*.
+        * dom/Node.h: ditto.
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::HTMLInputElement):
+        (WebCore::HTMLInputElement::formControlName):
+        (WebCore::HTMLInputElement::tooLong):
+        (WebCore::HTMLInputElement::updateFocusAppearance):
+        (WebCore::HTMLInputElement::aboutToUnload):
+        (WebCore::HTMLInputElement::handleFocusEvent):
+        (WebCore::HTMLInputElement::handleBlurEvent):
+        (WebCore::HTMLInputElement::updateType):
+        (WebCore::HTMLInputElement::parseMappedAttribute):
+        (WebCore::HTMLInputElement::size):
+        (WebCore::HTMLInputElement::copyNonAttributeProperties):
+        (WebCore::HTMLInputElement::value):
+        (WebCore::HTMLInputElement::suggestedValue):
+        (WebCore::HTMLInputElement::setSuggestedValue):
+        (WebCore::HTMLInputElement::setValue):
+        (WebCore::HTMLInputElement::setValueFromRenderer):
+        (WebCore::HTMLInputElement::setFileListFromRenderer):
+        (WebCore::HTMLInputElement::setDefaultName):
+        (WebCore::HTMLInputElement::maxLength):
+        (WebCore::HTMLInputElement::cacheSelection):
+        (WebCore::formatCodes): Moved from InputElement.
+        (WebCore::cursorPositionToMaskIndex): ditto.
+        (WebCore::HTMLInputElement::isConformToInputMask): ditto.
+        (WebCore::HTMLInputElement::validateInputMask): ditto.
+        (WebCore::HTMLInputElement::setWapInputFormat): ditto.
+        (WebCore::HTMLInputElement::notifyFormStateChanged): ditto.
+        (WebCore::HTMLInputElement::parseMaxLengthAttribute): ditto.
+        (WebCore::HTMLInputElement::updateValueIfNeeded):ditto.
+        * html/HTMLInputElement.h:
+          - Add data members which were defined in InputElementData.
+          - Make some functions public because the public interface InputElement is removed.
+          - Make some functions non-virtual because they don't override
+            corresponding virtual functions of InputElement anymore.
+        (WebCore::HTMLInputElement::toInputElement):
+          Follow the return type change of Node::toInputElement().
+        (WebCore::HTMLInputElement::isIndeterminate):
+        (WebCore::HTMLInputElement::isAutofilled):
+        (WebCore::HTMLInputElement::supportsMaxLength):
+        (WebCore::HTMLInputElement::cachedSelectionStart):
+        (WebCore::HTMLInputElement::cachedSelectionEnd):
+        * html/HTMLTextAreaElement.cpp: Remove unused InputElement.h.
+        * html/InputType.cpp:
+        (WebCore::InputType::handleBeforeTextInsertedEvent): Remove the code.
+        * html/InputType.h: Update for the above.
+        * html/TextFieldInputType.cpp:
+        (WebCore::replaceEOLAndLimitLength): Moved from InputElement.cpp.
+        (WebCore::TextFieldInputType::sanitizeValue): Implement with replaceEOLAndLimitLength().
+        (WebCore::TextFieldInputType::handleBeforeTextInsertedEvent):
+          Move the code from InputElement::handleBeforeTextInsertedEvent().
+        * html/TextFieldInputType.h: Update declarations.
+        * rendering/RenderTextControlSingleLine.cpp:
+          - Remove ASSERT(node()->isHTMLElement()) because it is checked in the constructor.
+          - Follow the return type change of inputElement().
+        (WebCore::RenderTextControlSingleLine::RenderTextControlSingleLine):
+          Make sure node() is an HTMLInputElement instance.
+        (WebCore::RenderTextControlSingleLine::addSearchResult):
+        (WebCore::RenderTextControlSingleLine::stopSearchEventTimer):
+        (WebCore::RenderTextControlSingleLine::showPopup):
+        (WebCore::RenderTextControlSingleLine::hidePopup):
+        (WebCore::RenderTextControlSingleLine::subtreeHasChanged):
+        (WebCore::RenderTextControlSingleLine::updateFromElement):
+        (WebCore::RenderTextControlSingleLine::createInnerBlockStyle):
+        (WebCore::RenderTextControlSingleLine::createResultsButtonStyle):
+        (WebCore::RenderTextControlSingleLine::createCancelButtonStyle):
+        (WebCore::RenderTextControlSingleLine::createInnerSpinButtonStyle):
+        (WebCore::RenderTextControlSingleLine::createOuterSpinButtonStyle):
+        (WebCore::RenderTextControlSingleLine::createSpeechButtonStyle):
+        (WebCore::RenderTextControlSingleLine::visibilityForCancelButton):
+        (WebCore::RenderTextControlSingleLine::startSearchEventTimer):
+        (WebCore::RenderTextControlSingleLine::searchEventTimerFired):
+        (WebCore::RenderTextControlSingleLine::valueChanged):
+        (WebCore::RenderTextControlSingleLine::setTextFromItem):
+        (WebCore::RenderTextControlSingleLine::inputElement):
+        * rendering/RenderTextControlSingleLine.h:
+          Change the return type of inputElement(): InputElement* -> HTMLInputElement*.
+        * rendering/RenderTheme.cpp:
+        (WebCore::RenderTheme::isChecked):
+          Follow the return type change of Node::toInputElement().
+        (WebCore::RenderTheme::isIndeterminate): ditto.
+        (WebCore::RenderTheme::shouldHaveSpinButton):
+          Change the parameter type: InputElement* -> HTMLInputElement*.
+        * rendering/RenderTheme.h: ditto.
+
 2011-05-06  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Eric Seidel.

@@ -1,3 +1,16 @@
+2011-05-06  Kent Tamura  <tkent@chromium.org>
+
+        Reviewed by Ryosuke Niwa.
+
+        Eliminate WebCore/dom/InputElement.{cpp,h}
+        https://bugs.webkit.org/show_bug.cgi?id=60262
+
+        * src/WebInputElement.cpp:
+        (WebKit::WebInputElement::defaultMaxLength):
+          Replace InputElement::s_maximumLength with HTMLInputElement::maximumLength.
+        (WebKit::toWebInputElement):
+          Follow the return type change of Node::toInputElement().
+
 2011-05-06  Justin Schuh  <jschuh@chromium.org>
 
         Reviewed by Adam Barth.

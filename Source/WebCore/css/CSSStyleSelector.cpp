@@ -1069,8 +1069,8 @@ bool CSSStyleSelector::canShareStyleWithElement(Node* node) const
         return false;
 
     if (isControl) {
-        InputElement* thisInputElement = element->toInputElement();
-        InputElement* otherInputElement = m_element->toInputElement();
+        HTMLInputElement* thisInputElement = element->toInputElement();
+        HTMLInputElement* otherInputElement = m_element->toInputElement();
 
         if (!thisInputElement || !otherInputElement)
             return false;
@@ -2773,7 +2773,7 @@ bool CSSStyleSelector::SelectorChecker::checkOneSelector(CSSSelector* sel, Eleme
             case CSSSelector::PseudoAutofill: {
                 if (!e || !e->isFormControlElement())
                     break;
-                if (InputElement* inputElement = e->toInputElement())
+                if (HTMLInputElement* inputElement = e->toInputElement())
                     return inputElement->isAutofilled();
                 break;
             }
@@ -2866,7 +2866,7 @@ bool CSSStyleSelector::SelectorChecker::checkOneSelector(CSSSelector* sel, Eleme
                 // Even though WinIE allows checked and indeterminate to co-exist, the CSS selector spec says that
                 // you can't be both checked and indeterminate.  We will behave like WinIE behind the scenes and just
                 // obey the CSS spec here in the test for matching the pseudo.
-                InputElement* inputElement = e->toInputElement();
+                HTMLInputElement* inputElement = e->toInputElement();
                 if (inputElement && inputElement->isChecked() && !inputElement->isIndeterminate())
                     return true;
                 break;
@@ -2874,7 +2874,7 @@ bool CSSStyleSelector::SelectorChecker::checkOneSelector(CSSSelector* sel, Eleme
             case CSSSelector::PseudoIndeterminate: {
                 if (!e || !e->isFormControlElement())
                     break;
-                InputElement* inputElement = e->toInputElement();
+                HTMLInputElement* inputElement = e->toInputElement();
                 if (inputElement && inputElement->isIndeterminate())
                     return true;
                 break;

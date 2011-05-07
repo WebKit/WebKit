@@ -30,7 +30,7 @@
 
 namespace WebCore {
 
-class InputElement;
+class HTMLInputElement;
 class InputFieldSpeechButtonElement;
 class SearchFieldCancelButtonElement;
 class SearchFieldResultsButtonElement;
@@ -142,7 +142,7 @@ private:
     virtual HostWindow* hostWindow() const;
     virtual PassRefPtr<Scrollbar> createScrollbar(ScrollableArea*, ScrollbarOrientation, ScrollbarControlSize);
 
-    InputElement* inputElement() const;
+    HTMLInputElement* inputElement() const;
 
     virtual int textBlockInsetLeft() const;
     virtual int textBlockInsetRight() const;

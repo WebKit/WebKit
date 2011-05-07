@@ -48,11 +48,12 @@ protected:
 private:
     virtual bool isTextField() const;
     virtual bool valueMissing(const String&) const;
+    virtual void handleBeforeTextInsertedEvent(BeforeTextInsertedEvent*);
     virtual void forwardEvent(Event*);
     virtual bool shouldSubmitImplicitly(Event*);
     virtual RenderObject* createRenderer(RenderArena*, RenderStyle*) const;
     virtual bool shouldUseInputMethod() const;
-    virtual String sanitizeValue(const String& proposedValue);
+    virtual String sanitizeValue(const String&);
     virtual bool shouldRespectListAttribute();
 };
 

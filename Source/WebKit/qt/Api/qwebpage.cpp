@@ -1446,7 +1446,7 @@ QVariant QWebPage::inputMethodQuery(Qt::InputMethodQuery property) const
                         return QVariant(inputElement->maxLength());
                     }
                 }
-                return QVariant(InputElement::s_maximumLength);
+                return QVariant(HTMLInputElement::maximumLength);
             }
             return QVariant(0);
         }

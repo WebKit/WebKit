@@ -326,9 +326,8 @@ void InputType::handleKeyupEvent(KeyboardEvent*)
 {
 }
 
-void InputType::handleBeforeTextInsertedEvent(BeforeTextInsertedEvent* event)
+void InputType::handleBeforeTextInsertedEvent(BeforeTextInsertedEvent*)
 {
-    element()->handleBeforeTextInsertedEvent(event);
 }
 
 void InputType::handleWheelEvent(WheelEvent*)

@@ -1,3 +1,15 @@
+2011-05-06  Kent Tamura  <tkent@chromium.org>
+
+        Reviewed by Ryosuke Niwa.
+
+        Eliminate WebCore/dom/InputElement.{cpp,h}
+        https://bugs.webkit.org/show_bug.cgi?id=60262
+
+        * WebCoreSupport/DumpRenderTreeSupportGtk.cpp:
+        (DumpRenderTreeSupportGtk::setAutofilled):
+          Follow the return type change of Node::toInputElement().
+        (DumpRenderTreeSupportGtk::setValueForUser): ditto.
+
 2011-05-06  Martin Robinson  <mrobinson@igalia.com>
 
         Reviewed by Xan Lopez.

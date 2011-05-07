@@ -39,7 +39,6 @@
 #include "FormDataList.h"
 #include "Frame.h"
 #include "HTMLNames.h"
-#include "InputElement.h"
 #include "Page.h"
 #include "RenderStyle.h"
 #include "RenderTextControlMultiLine.h"

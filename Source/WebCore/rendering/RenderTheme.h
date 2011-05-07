@@ -36,6 +36,7 @@
 namespace WebCore {
 
 class Element;
+class HTMLInputElement;
 class PopupMenu;
 class RenderMenuList;
 #if ENABLE(METER_TAG)
@@ -201,7 +202,7 @@ public:
 #endif
     
     virtual bool shouldShowPlaceholderWhenFocused() const { return false; }
-    virtual bool shouldHaveSpinButton(InputElement*) const;
+    virtual bool shouldHaveSpinButton(HTMLInputElement*) const;
 
 protected:
     // The platform selection color.

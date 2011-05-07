@@ -6,6 +6,7 @@
  *           (C) 2006 Alexey Proskuryakov (ap@nypop.com)
  * Copyright (C) 2007 Samuel Weinig (sam@webkit.org)
  * Copyright (C) 2010 Google Inc. All rights reserved.
+ * Copyright (C) 2008 Torch Mobile Inc. All rights reserved. (http://www.torchmobile.com/)
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -30,11 +31,14 @@
 #include "AXObjectCache.h"
 #include "Attribute.h"
 #include "BeforeTextInsertedEvent.h"
+#include "Chrome.h"
+#include "ChromeClient.h"
 #include "CSSPropertyNames.h"
 #include "Document.h"
 #include "EventNames.h"
 #include "ExceptionCode.h"
 #include "FileList.h"
+#include "Frame.h"
 #include "HTMLCollection.h"
 #include "HTMLDataListElement.h"
 #include "HTMLFormElement.h"
@@ -45,6 +49,7 @@
 #include "KeyboardEvent.h"
 #include "LocalizedStrings.h"
 #include "MouseEvent.h"
+#include "Page.h"
 #include "PlatformMouseEvent.h"
 #include "RenderTextControlSingleLine.h"
 #include "RenderTheme.h"
@@ -60,10 +65,24 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
+// FIXME: According to HTML4, the length attribute's value can be arbitrarily
+// large. However, due to https://bugs.webkit.org/show_bug.cgi?id=14536 things
+// get rather sluggish when a text field has a larger number of characters than
+// this, even when just clicking in the text field.
+const int HTMLInputElement::maximumLength = 524288;
+const int defaultSize = 20;
 const int maxSavedResults = 256;
 
 HTMLInputElement::HTMLInputElement(const QualifiedName& tagName, Document* document, HTMLFormElement* form, bool createdByParser)
     : HTMLTextFormControlElement(tagName, document, form)
+    , m_size(defaultSize)
+    , m_maxLength(maximumLength)
+    , m_cachedSelectionStart(-1)
+    , m_cachedSelectionEnd(-1)
+#if ENABLE(WCSS)
+    , m_inputFormatMask("*m")
+    , m_maxInputCharsAllowed(maximumLength)
+#endif
     , m_maxResults(-1)
     , m_isChecked(false)
     , m_reflectsCheckedAttribute(true)
@@ -98,7 +117,7 @@ HTMLInputElement::~HTMLInputElement()
 
 const AtomicString& HTMLInputElement::formControlName() const
 {
-    return m_data.name();
+    return m_name.isNull() ? emptyAtom : m_name;
 }
 
 bool HTMLInputElement::autoComplete() const
@@ -200,7 +219,7 @@ bool HTMLInputElement::tooLong(const String& value, NeedsToCheckDirtyFlag check)
         return false;
     if (check == CheckDirtyFlag) {
         // Return false for the default value even if it is longer than maxLength.
-        bool userEdited = !m_data.value().isNull();
+        bool userEdited = !m_value.isNull();
         if (!userEdited)
             return false;
     }
@@ -393,15 +412,29 @@ bool HTMLInputElement::isMouseFocusable() const
 
 void HTMLInputElement::updateFocusAppearance(bool restorePreviousSelection)
 {
-    if (isTextField())
-        InputElement::updateFocusAppearance(m_data, this, this, restorePreviousSelection);
-    else
+    if (isTextField()) {
+        if (!restorePreviousSelection || m_cachedSelectionStart == -1)
+            select();
+        else {
+            // Restore the cached selection.
+            WebCore::setSelectionRange(this, m_cachedSelectionStart, m_cachedSelectionEnd);
+        }
+        if (document()->frame())
+            document()->frame()->selection()->revealSelection();
+    } else
         HTMLFormControlElementWithState::updateFocusAppearance(restorePreviousSelection);
 }
 
 void HTMLInputElement::aboutToUnload()
 {
-    InputElement::aboutToUnload(this, this);
+    if (!isTextField() || !focused())
+        return;
+
+    Frame* frame = document()->frame();
+    if (!frame)
+        return;
+
+    frame->editor()->textFieldDidEndEditing(this);
 }
 
 bool HTMLInputElement::shouldUseInputMethod() const
@@ -411,13 +444,24 @@ bool HTMLInputElement::shouldUseInputMethod() const
 
 void HTMLInputElement::handleFocusEvent()
 {
-    InputElement::dispatchFocusEvent(this, this);
+    if (!isTextField())
+        return;
+    if (isPasswordField() && document()->frame())
+        document()->setUseSecureKeyboardEntryWhenActive(true);
 }
 
 void HTMLInputElement::handleBlurEvent()
 {
     m_inputType->handleBlurEvent();
-    InputElement::dispatchBlurEvent(this, this);
+
+    if (!isTextField())
+        return;
+    Frame* frame = document()->frame();
+    if (!frame)
+        return;
+    if (isPasswordField())
+        document()->setUseSecureKeyboardEntryWhenActive(false);
+    frame->editor()->textFieldDidEndEditing(this);
 }
 
 void HTMLInputElement::setType(const String& type)
@@ -466,14 +510,14 @@ void HTMLInputElement::updateType()
 
     bool willStoreValue = m_inputType->storesValueSeparateFromAttribute();
 
-    if (didStoreValue && !willStoreValue && !m_data.value().isNull()) {
-        setAttribute(valueAttr, m_data.value());
-        m_data.setValue(String());
+    if (didStoreValue && !willStoreValue && !m_value.isNull()) {
+        setAttribute(valueAttr, m_value);
+        m_value = String();
     }
     if (!didStoreValue && willStoreValue)
-        m_data.setValue(sanitizeValue(fastGetAttribute(valueAttr)));
+        m_value = sanitizeValue(fastGetAttribute(valueAttr));
     else
-        InputElement::updateValueIfNeeded(m_data, this);
+        updateValueIfNeeded();
 
     if (neededActivationCallback)
         unregisterForActivationCallbackIfNeeded();
@@ -502,7 +546,7 @@ void HTMLInputElement::updateType()
     checkedRadioButtons().addButton(this);
 
     setNeedsValidityCheck();
-    InputElement::notifyFormStateChanged(this);
+    notifyFormStateChanged();
 }
 
 const AtomicString& HTMLInputElement::formControlType() const
@@ -560,7 +604,7 @@ void HTMLInputElement::parseMappedAttribute(Attribute* attr)
 {
     if (attr->name() == nameAttr) {
         checkedRadioButtons().removeButton(this);
-        m_data.setName(attr->value());
+        m_name = attr->value();
         checkedRadioButtons().addButton(this);
         HTMLFormControlElementWithState::parseMappedAttribute(attr);
     } else if (attr->name() == autocompleteAttr) {
@@ -582,7 +626,7 @@ void HTMLInputElement::parseMappedAttribute(Attribute* attr)
         updateType();
     } else if (attr->name() == valueAttr) {
         // We only need to setChanged if the form is looking at the default value right now.
-        if (m_data.value().isNull())
+        if (m_value.isNull())
             setNeedsStyleRecalc();
         setFormControlValueMatchesRenderer(false);
         setNeedsValidityCheck();
@@ -595,12 +639,13 @@ void HTMLInputElement::parseMappedAttribute(Attribute* attr)
             setChecked(!attr->isNull());
             m_reflectsCheckedAttribute = true;
         }
-    } else if (attr->name() == maxlengthAttr) {
-        InputElement::parseMaxLengthAttribute(m_data, this, this, attr);
-        setNeedsValidityCheck();
-    } else if (attr->name() == sizeAttr)
-        InputElement::parseSizeAttribute(m_data, this, attr);
-    else if (attr->name() == altAttr)
+    } else if (attr->name() == maxlengthAttr)
+        parseMaxLengthAttribute(attr);
+    else if (attr->name() == sizeAttr) {
+        m_size = attr->isNull() ? defaultSize : attr->value().toInt();
+        if (renderer())
+            renderer()->setNeedsLayoutAndPrefWidthsRecalc();
+    } else if (attr->name() == altAttr)
         m_inputType->altAttributeChanged();
     else if (attr->name() == srcAttr)
         m_inputType->srcAttributeChanged();
@@ -808,14 +853,14 @@ void HTMLInputElement::setIndeterminate(bool newValue)
 
 int HTMLInputElement::size() const
 {
-    return m_data.size();
+    return m_size;
 }
 
 void HTMLInputElement::copyNonAttributeProperties(const Element* source)
 {
     const HTMLInputElement* sourceElement = static_cast<const HTMLInputElement*>(source);
 
-    m_data.setValue(sourceElement->m_data.value());
+    m_value = sourceElement->m_value;
     setChecked(sourceElement->m_isChecked);
     m_reflectsCheckedAttribute = sourceElement->m_reflectsCheckedAttribute;
     m_isIndeterminate = sourceElement->m_isIndeterminate;
@@ -829,7 +874,7 @@ String HTMLInputElement::value() const
     if (m_inputType->getTypeSpecificValue(value))
         return value;
 
-    value = m_data.value();
+    value = m_value;
     if (!value.isNull())
         return value;
 
@@ -857,7 +902,7 @@ void HTMLInputElement::setValueForUser(const String& value)
 
 const String& HTMLInputElement::suggestedValue() const
 {
-    return m_data.suggestedValue();
+    return m_suggestedValue;
 }
 
 void HTMLInputElement::setSuggestedValue(const String& value)
@@ -865,7 +910,7 @@ void HTMLInputElement::setSuggestedValue(const String& value)
     if (!m_inputType->canSetSuggestedValue())
         return;
     setFormControlValueMatchesRenderer(false);
-    m_data.setSuggestedValue(sanitizeValue(value));
+    m_suggestedValue = sanitizeValue(value);
     updatePlaceholderVisibility(false);
     if (renderer())
         renderer()->updateFromElement();
@@ -882,7 +927,7 @@ void HTMLInputElement::setValue(const String& value, bool sendChangeEvent)
         if (files())
             files()->clear();
         else {
-            m_data.setValue(sanitizeValue(value));
+            m_value = sanitizeValue(value);
             if (isTextField())
                 updatePlaceholderVisibility(false);
         }
@@ -893,12 +938,12 @@ void HTMLInputElement::setValue(const String& value, bool sendChangeEvent)
     setNeedsValidityCheck();
 
     if (isTextField()) {
-        unsigned max = m_data.value().length();
+        unsigned max = m_value.length();
         if (document()->focusedNode() == this)
-            InputElement::updateSelectionRange(this, this, max, max);
+            WebCore::setSelectionRange(this, max, max);
         else
             cacheSelection(max, max);
-        m_data.setSuggestedValue(String());
+        m_suggestedValue = String();
     }
     m_inputType->valueChanged();
 
@@ -914,7 +959,7 @@ void HTMLInputElement::setValue(const String& value, bool sendChangeEvent)
     if (isText() && (!focused() || !sendChangeEvent))
         setTextAsOfLastFormControlChangeEvent(value);
 
-    InputElement::notifyFormStateChanged(this);
+    notifyFormStateChanged();
 }
 
 double HTMLInputElement::valueAsDate() const
@@ -961,8 +1006,23 @@ void HTMLInputElement::setValueFromRenderer(const String& value)
     // File upload controls will always use setFileListFromRenderer.
     ASSERT(!isFileUpload());
 
-    m_data.setSuggestedValue(String());
-    InputElement::setValueFromRenderer(m_data, this, this, value);
+    m_suggestedValue = String();
+
+    // Renderer and our event handler are responsible for sanitizing values.
+    ASSERT(value == sanitizeValue(value) || sanitizeValue(value).isEmpty());
+
+    // Workaround for bug where trailing \n is included in the result of textContent.
+    // The assert macro above may also be simplified to: value == constrainValue(value)
+    // http://bugs.webkit.org/show_bug.cgi?id=9661
+    m_value = value == "\n" ? String("") : value;
+
+    setFormControlValueMatchesRenderer(true);
+
+    // Input event is fired by the Node::defaultEventHandler for editable controls.
+    if (!isTextField())
+        dispatchInputEvent();
+    notifyFormStateChanged();
+
     updatePlaceholderVisibility(false);
     setNeedsValidityCheck();
 
@@ -975,7 +1035,7 @@ void HTMLInputElement::setFileListFromRenderer(const Vector<String>& paths)
     m_inputType->setFileList(paths);
 
     setFormControlValueMatchesRenderer(true);
-    InputElement::notifyFormStateChanged(this);
+    notifyFormStateChanged();
     setNeedsValidityCheck();
 }
 
@@ -1105,7 +1165,7 @@ void HTMLInputElement::setDefaultValue(const String &value)
 
 void HTMLInputElement::setDefaultName(const AtomicString& name)
 {
-    m_data.setName(name);
+    m_name = name;
 }
 
 String HTMLInputElement::accept() const
@@ -1120,7 +1180,7 @@ String HTMLInputElement::alt() const
 
 int HTMLInputElement::maxLength() const
 {
-    return m_data.maxLength();
+    return m_maxLength;
 }
 
 void HTMLInputElement::setMaxLength(int maxLength, ExceptionCode& ec)
@@ -1219,8 +1279,8 @@ bool HTMLInputElement::isRequiredFormControl() const
 
 void HTMLInputElement::cacheSelection(int start, int end)
 {
-    m_data.setCachedSelectionStart(start);
-    m_data.setCachedSelectionEnd(end);
+    m_cachedSelectionStart = start;
+    m_cachedSelectionEnd = end;
 }
 
 void HTMLInputElement::addSearchResult()
@@ -1444,11 +1504,140 @@ void HTMLInputElement::stepUpFromRenderer(int n)
 
 #if ENABLE(WCSS)
 
+static inline const AtomicString& formatCodes()
+{
+    DEFINE_STATIC_LOCAL(AtomicString, codes, ("AaNnXxMm"));
+    return codes;
+}
+
+static unsigned cursorPositionToMaskIndex(const String& inputFormatMask, unsigned cursorPosition)
+{
+    UChar mask;
+    int index = -1;
+    do {
+        mask = inputFormatMask[++index];
+        if (mask == '\\')
+            ++index;
+        else if (mask == '*' || (isASCIIDigit(mask) && mask != '0')) {
+            index = inputFormatMask.length() - 1;
+            break;
+        }
+    } while (cursorPosition--);
+
+    return index;
+}
+
+bool HTMLInputElement::isConformToInputMask(const String& inputChars) const
+{
+    for (unsigned i = 0; i < inputChars.length(); ++i) {
+        if (!isConformToInputMask(inputChars[i], i))
+            return false;
+    }
+    return true;
+}
+
+bool HTMLInputElement::isConformToInputMask(UChar inChar, unsigned cursorPosition) const
+{
+    if (m_inputFormatMask.isEmpty() || m_inputFormatMask == "*M" || m_inputFormatMask == "*m")
+        return true;
+
+    if (cursorPosition >= m_maxInputCharsAllowed())
+        return false;
+
+    unsigned maskIndex = cursorPositionToMaskIndex(m_inputFormatMask, cursorPosition);
+    bool ok = true;
+    UChar mask = m_inputFormatMask[maskIndex];
+    // Match the inputed character with input mask
+    switch (mask) {
+    case 'A':
+        ok = !isASCIIDigit(inChar) && !isASCIILower(inChar) && isASCIIPrintable(inChar);
+        break;
+    case 'a':
+        ok = !isASCIIDigit(inChar) && !isASCIIUpper(inChar) && isASCIIPrintable(inChar);
+        break;
+    case 'N':
+        ok = isASCIIDigit(inChar);
+        break;
+    case 'n':
+        ok = !isASCIIAlpha(inChar) && isASCIIPrintable(inChar);
+        break;
+    case 'X':
+        ok = !isASCIILower(inChar) && isASCIIPrintable(inChar);
+        break;
+    case 'x':
+        ok = !isASCIIUpper(inChar) && isASCIIPrintable(inChar);
+        break;
+    case 'M':
+    case 'm':
+        ok = isASCIIPrintable(inChar);
+        break;
+    default:
+        ok = (mask == inChar);
+        break;
+    }
+
+    return ok;
+}
+
+String HTMLInputElement::validateInputMask(String& inputMask)
+{
+    inputMask.replace("\\\\", "\\");
+
+    bool isValid = true;
+    bool hasWildcard = false;
+    unsigned escapeCharCount = 0;
+    unsigned maskLength = inputMask.length();
+    UChar formatCode;
+    for (unsigned i = 0; i < maskLength; ++i) {
+        formatCode = inputMask[i];
+        if (formatCodes().find(formatCode) == -1) {
+            if (formatCode == '*' || (isASCIIDigit(formatCode) && formatCode != '0')) {
+                // Validate codes which ends with '*f' or 'nf'
+                formatCode = inputMask[++i];
+                if ((i + 1 != maskLength) || formatCodes().find(formatCode) == -1) {
+                    isValid = false;
+                    break;
+                }
+                hasWildcard = true;
+            } else if (formatCode == '\\') {
+                // skip over the next mask character
+                ++i;
+                ++escapeCharCount;
+            } else {
+                isValid = false;
+                break;
+            }
+        }
+    }
+
+    if (!isValid)
+        return String();
+    // calculate the number of characters allowed to be entered by input mask
+    unsigned allowedLength = maskLength;
+    if (escapeCharCount)
+        allowedLength -= escapeCharCount;
+
+    if (hasWildcard) {
+        formatCode = inputMask[maskLength - 2];
+        if (formatCode == '*')
+            allowedLength = m_maxInputCharsAllowed;
+        else {
+            unsigned leftLen = String(&formatCode).toInt();
+            allowedLength = leftLen + allowedLength - 2;
+        }
+    }
+
+    if (allowedLength < m_maxInputCharsAllowed)
+        m_maxInputCharsAllowed = allowedLength;
+
+    return inputMask;
+}
+
 void HTMLInputElement::setWapInputFormat(String& mask)
 {
-    String validateMask = validateInputMask(m_data, mask);
+    String validateMask = validateInputMask(mask);
     if (!validateMask.isEmpty())
-        m_data.setInputFormatMask(validateMask);
+        m_inputFormatMask = validateMask;
 }
 
 #endif
@@ -1560,9 +1749,34 @@ CheckedRadioButtons& HTMLInputElement::checkedRadioButtons() const
     return document()->checkedRadioButtons();
 }
 
-void HTMLInputElement::handleBeforeTextInsertedEvent(Event* event)
+void HTMLInputElement::notifyFormStateChanged()
 {
-    InputElement::handleBeforeTextInsertedEvent(m_data, this, this, event);
+    Frame* frame = document()->frame();
+    if (!frame)
+        return;
+
+    if (Page* page = frame->page())
+        page->chrome()->client()->formStateDidChange(this);
+}
+
+void HTMLInputElement::parseMaxLengthAttribute(Attribute* attribute)
+{
+    int maxLength = attribute->isNull() ? maximumLength : attribute->value().toInt();
+    if (maxLength <= 0 || maxLength > maximumLength)
+        maxLength = maximumLength;
+    int oldMaxLength = m_maxLength;
+    m_maxLength = maxLength;
+    if (oldMaxLength != maxLength)
+        updateValueIfNeeded();
+    setNeedsStyleRecalc();
+    setNeedsValidityCheck();
+}
+
+void HTMLInputElement::updateValueIfNeeded()
+{
+    String newValue = sanitizeValue(m_value);
+    if (newValue != m_value)
+        setValue(newValue);
 }
 
 } // namespace

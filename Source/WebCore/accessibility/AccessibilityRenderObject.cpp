@@ -496,7 +496,7 @@ bool AccessibilityRenderObject::isPasswordField() const
     if (ariaRoleAttribute() != UnknownRole)
         return false;
 
-    InputElement* inputElement = m_renderer->node()->toInputElement();
+    HTMLInputElement* inputElement = m_renderer->node()->toInputElement();
     if (!inputElement)
         return false;
 
@@ -589,7 +589,7 @@ bool AccessibilityRenderObject::isIndeterminate() const
     if (!m_renderer->node())
         return false;
 
-    InputElement* inputElement = m_renderer->node()->toInputElement();
+    HTMLInputElement* inputElement = m_renderer->node()->toInputElement();
     if (!inputElement)
         return false;
 
@@ -600,7 +600,7 @@ bool AccessibilityRenderObject::isNativeCheckboxOrRadio() const
 {
     Node* elementNode = node();
     if (elementNode) {
-        InputElement* input = elementNode->toInputElement();
+        HTMLInputElement* input = elementNode->toInputElement();
         if (input)
             return input->isCheckbox() || input->isRadioButton();
     }
@@ -615,7 +615,7 @@ bool AccessibilityRenderObject::isChecked() const
         return false;
 
     // First test for native checkedness semantics
-    InputElement* inputElement = m_renderer->node()->toInputElement();
+    HTMLInputElement* inputElement = m_renderer->node()->toInputElement();
     if (inputElement)
         return inputElement->isChecked();
 

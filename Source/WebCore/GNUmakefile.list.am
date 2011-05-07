@@ -1153,8 +1153,6 @@ webcore_sources += \
 	Source/WebCore/dom/IgnoreDestructiveWriteCountIncrementer.h \
 	Source/WebCore/dom/IconURL.cpp \
 	Source/WebCore/dom/IconURL.h \
-	Source/WebCore/dom/InputElement.cpp \
-	Source/WebCore/dom/InputElement.h \
 	Source/WebCore/dom/HashChangeEvent.h \
 	Source/WebCore/dom/KeyboardEvent.cpp \
 	Source/WebCore/dom/KeyboardEvent.h \
