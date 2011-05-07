@@ -2251,6 +2251,10 @@ void RenderLayer::paintOverflowControls(GraphicsContext* context, int tx, int ty
         return;
     }
 
+    // This check is required to avoid painting custom CSS scrollbars twice.
+    if (paintingOverlayControls && !hasOverlayScrollbars())
+        return;
+
     int offsetX = tx;
     int offsetY = ty;
     if (paintingOverlayControls) {
