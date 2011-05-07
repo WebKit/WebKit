@@ -2122,7 +2122,7 @@ bool EventHandler::handleWheelEvent(PlatformWheelEvent& e)
         }
 
         node = node->shadowAncestorNode();
-        if (!node->dispatchWheelEvent(e)) {
+        if (node && !node->dispatchWheelEvent(e)) {
             e.accept();
             return true;
         }

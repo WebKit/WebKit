@@ -1,3 +1,14 @@
+2011-05-06  Jon Lee  <jonlee@apple.com>
+
+        Reviewed by Alice Liu.
+
+        Crash when sending a wheel event to a node with no shadow ancestor node
+        https://bugs.webkit.org/show_bug.cgi?id=60429
+        <rdar://problem/9389619>
+
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::handleWheelEvent):add check to see if the shadow ancestor node of the node that was under the mouse exists before trying to dispatch the wheel event to it.
+
 2011-05-06  Kent Tamura  <tkent@chromium.org>
 
         Reviewed by Ryosuke Niwa.
