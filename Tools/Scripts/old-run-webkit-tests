@@ -406,9 +406,6 @@ if ($shouldCheckLeaks && $testsPerDumpTool > 1000) {
     print STDERR "\nWARNING: Running more than 1000 tests at a time with MallocStackLogging enabled may cause a crash.\n\n";
 }
 
-# Stack logging does not play well with QuickTime on Tiger (rdar://problem/5537157)
-$testMedia = 0 if $shouldCheckLeaks && isTiger();
-
 # Generating remote links causes a lot of unnecessary spew on GTK build bot
 $useRemoteLinksToTests = 0 if isGtk();
 
@@ -1481,7 +1478,7 @@ sub openDumpTool()
     }
     
     my @args = ($dumpTool, @toolArgs);
-    if (isAppleMacWebKit() and !isTiger()) { 
+    if (isAppleMacWebKit()) { 
         unshift @args, "arch", "-" . architecture();             
     }
 
@@ -1751,7 +1748,7 @@ sub captureSavedCrashLog($$)
         $glob = File::Spec->catfile($testResultsDirectory, $windowsCrashLogFilePrefix . "*.txt");
     } elsif (isAppleMacWebKit()) {
         my $crashLogDirectoryName;
-        if (isTiger() || isLeopard()) {
+        if (isLeopard()) {
             $crashLogDirectoryName = "CrashReporter";
         } else {
             $crashLogDirectoryName = "DiagnosticReports";
