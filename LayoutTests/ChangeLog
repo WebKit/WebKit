@@ -2,6 +2,14 @@
 
         Unreviewed.
 
+        Forgot it since my last svg rebaseline r85981.
+
+        * platform/chromium-win-xp/svg/batik/text/textFeatures-expected.png: Added.
+
+2011-05-06  Abhishek Arya  <inferno@chromium.org>
+
+        Unreviewed.
+
         Chromium rebaselines for r85990
 
         * platform/chromium-linux/scrollbars/scrollbars-on-positioned-content-expected.png: Added.
