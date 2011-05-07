@@ -3727,8 +3727,6 @@ BUGWK60103 : fast/overflow/border-radius-clipping.html = IMAGE
 BUGWK60103 WIN LINUX : fast/repaint/border-radius-repaint.html = IMAGE
 BUGWK60103 WIN LINUX : fast/replaced/border-radius-clip.html = IMAGE
 
-BUGWK60129 BUGCR75354 : fast/layers/video-layer.html = IMAGE IMAGE+TEXT
-
 // These are flaky and results are so unstable to give precise expectations.
 BUGWK60259 GPU : media/controls-after-reload.html = FAIL
 BUGWK60259 GPU : media/controls-strict.html = FAIL
