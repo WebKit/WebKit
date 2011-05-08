@@ -2,6 +2,35 @@
 
         Unreviewed.
 
+        More chromium rebaseline for r86028.
+
+        * platform/chromium-linux/css1/box_properties/float_on_text_elements-expected.png:
+        * platform/chromium-linux/fast/text/justified-selection-expected.png:
+        * platform/chromium-linux/fast/text/justify-ideograph-leading-expansion-expected.png: Added.
+        * platform/chromium-linux/fast/text/justify-nbsp-expected.png: Removed.
+        * platform/chromium-linux/fast/text/trailing-white-space-2-expected.png:
+        * platform/chromium-linux/fast/text/trailing-white-space-expected.png:
+        * platform/chromium-mac-leopard/fast/text/justify-nbsp-expected.png: Removed.
+        * platform/chromium-mac/fast/text/justify-ideograph-leading-expansion-expected.png: Added.
+        * platform/chromium-mac/fast/text/justify-ideograph-leading-expansion-expected.txt:
+        * platform/chromium-win-xp/fast/text/justify-ideograph-leading-expansion-expected.png: Added.
+        * platform/chromium-win/css1/box_properties/float_on_text_elements-expected.png:
+        * platform/chromium-win/css1/box_properties/float_on_text_elements-expected.txt:
+        * platform/chromium-win/fast/text/justified-selection-expected.png:
+        * platform/chromium-win/fast/text/justified-selection-expected.txt:
+        * platform/chromium-win/fast/text/justify-ideograph-leading-expansion-expected.png: Added.
+        * platform/chromium-win/fast/text/justify-ideograph-leading-expansion-expected.txt: Added.
+        * platform/chromium-win/fast/text/justify-nbsp-expected.png: Added.
+        * platform/chromium-win/fast/text/trailing-white-space-2-expected.png:
+        * platform/chromium-win/fast/text/trailing-white-space-2-expected.txt:
+        * platform/chromium-win/fast/text/trailing-white-space-expected.png:
+        * platform/chromium-win/fast/text/trailing-white-space-expected.txt:
+        * platform/chromium/test_expectations.txt:
+
+2011-05-08  Abhishek Arya  <inferno@chromium.org>
+
+        Unreviewed.
+
         Chromium Rebaselines for r86028.
 
         * platform/chromium-linux/css1/box_properties/clear_float-expected.png:

@@ -3035,7 +3035,6 @@ BUGWK54322 SNOWLEOPARD : fast/media/mq-transform-03.html = IMAGE+TEXT
 BUGWK54322 SNOWLEOPARD : fast/replaced/width100percent-textarea.html = IMAGE
 BUGWK54322 SNOWLEOPARD : fast/text/international/pop-up-button-text-alignment-and-direction.html = IMAGE
 BUGWK54322 SNOWLEOPARD : fast/text/international/text-combine-image-test.html = IMAGE
-BUGWK54322 SNOWLEOPARD : fast/text/justify-nbsp.html = IMAGE
 BUGWK54322 SNOWLEOPARD : fonts/monospace.html = IMAGE
 BUGWK54322 SNOWLEOPARD : http/tests/misc/acid3.html = IMAGE
 BUGWK54322 SNOWLEOPARD : svg/custom/animate-path-discrete.svg = IMAGE
@@ -3267,10 +3266,6 @@ BUGCR77582 BUG_DRT WIN LINUX DEBUG SLOW : inspector/debugger/debugger-activation
 
 // Regression since r82001.
 BUGCR77619 SNOWLEOPARD : plugins/plugin-javascript-access.html = TEXT
-
-// New test in r82013.
-BUGWK82013 WIN LINUX : fast/text/justify-ideograph-leading-expansion.html = IMAGE+TEXT
-BUGWK82013 SNOWLEOPARD: fast/text/justify-ideograph-leading-expansion.html = IMAGE
 
 // New test added in r82056. The arrow does not point upwards.
 BUGCR77574 LINUX : fast/blockflow/fallback-orientation.html = IMAGE
@@ -4046,4 +4041,3 @@ BUGWK60351 DEBUG : http/tests/local/formdata/send-form-data-with-sliced-file.htm
 
 // The test is added at r85961.
 BUGWK60414 WIN : platform/win/plugins/visibility-hidden.html = CRASH
-
