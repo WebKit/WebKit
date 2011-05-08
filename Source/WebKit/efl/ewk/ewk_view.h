@@ -347,18 +347,18 @@ EAPI void         ewk_view_bg_color_set(Evas_Object *o, int r, int g, int b, int
 EAPI void         ewk_view_bg_color_get(const Evas_Object *o, int *r, int *g, int *b, int *a);
 
 EAPI char        *ewk_view_selection_get(const Evas_Object *o);
-EAPI Eina_Bool    ewk_view_select_none(Evas_Object *o);
-EAPI Eina_Bool    ewk_view_select_all(Evas_Object *o);
-EAPI Eina_Bool    ewk_view_select_paragraph(Evas_Object *o);
-EAPI Eina_Bool    ewk_view_select_sentence(Evas_Object *o);
-EAPI Eina_Bool    ewk_view_select_line(Evas_Object *o);
-EAPI Eina_Bool    ewk_view_select_word(Evas_Object *o);
 
 EAPI Eina_Bool    ewk_view_context_menu_forward_event(Evas_Object *o, const Evas_Event_Mouse_Down *ev);
 
 enum _Ewk_Editor_Command {
     EWK_EDITOR_COMMAND_INSERT_IMAGE = 0,
-    EWK_EDITOR_COMMAND_INSERT_TEXT
+    EWK_EDITOR_COMMAND_INSERT_TEXT,
+    EWK_EDITOR_COMMAND_SELECT_NONE,
+    EWK_EDITOR_COMMAND_SELECT_ALL,
+    EWK_EDITOR_COMMAND_SELECT_PARAGRAPH,
+    EWK_EDITOR_COMMAND_SELECT_SENTENCE,
+    EWK_EDITOR_COMMAND_SELECT_LINE,
+    EWK_EDITOR_COMMAND_SELECT_WORD
 };
 typedef enum _Ewk_Editor_Command Ewk_Editor_Command;
 

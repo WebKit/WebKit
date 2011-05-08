@@ -1548,78 +1548,6 @@ static Eina_Bool _ewk_view_editor_command(Ewk_View_Private_Data* priv, const cha
 }
 
 /**
- * Unselects whatever was selected.
- *
- * @return @c EINA_TRUE if operation was executed, @c EINA_FALSE otherwise.
- */
-Eina_Bool ewk_view_select_none(Evas_Object* o)
-{
-    EWK_VIEW_SD_GET_OR_RETURN(o, sd, EINA_FALSE);
-    EWK_VIEW_PRIV_GET_OR_RETURN(sd, priv, EINA_FALSE);
-    return _ewk_view_editor_command(priv, "Unselect");
-}
-
-/**
- * Selects everything.
- *
- * @return @c EINA_TRUE if operation was executed, @c EINA_FALSE otherwise.
- */
-Eina_Bool ewk_view_select_all(Evas_Object* o)
-{
-    EWK_VIEW_SD_GET_OR_RETURN(o, sd, EINA_FALSE);
-    EWK_VIEW_PRIV_GET_OR_RETURN(sd, priv, EINA_FALSE);
-    return _ewk_view_editor_command(priv, "SelectAll");
-}
-
-/**
- * Selects the current paragrah.
- *
- * @return @c EINA_TRUE if operation was executed, @c EINA_FALSE otherwise.
- */
-Eina_Bool ewk_view_select_paragraph(Evas_Object* o)
-{
-    EWK_VIEW_SD_GET_OR_RETURN(o, sd, EINA_FALSE);
-    EWK_VIEW_PRIV_GET_OR_RETURN(sd, priv, EINA_FALSE);
-    return _ewk_view_editor_command(priv, "SelectParagraph");
-}
-
-/**
- * Selects the current sentence.
- *
- * @return @c EINA_TRUE if operation was executed, @c EINA_FALSE otherwise.
- */
-Eina_Bool ewk_view_select_sentence(Evas_Object* o)
-{
-    EWK_VIEW_SD_GET_OR_RETURN(o, sd, EINA_FALSE);
-    EWK_VIEW_PRIV_GET_OR_RETURN(sd, priv, EINA_FALSE);
-    return _ewk_view_editor_command(priv, "SelectSentence");
-}
-
-/**
- * Selects the current line.
- *
- * @return @c EINA_TRUE if operation was executed, @c EINA_FALSE otherwise.
- */
-Eina_Bool ewk_view_select_line(Evas_Object* o)
-{
-    EWK_VIEW_SD_GET_OR_RETURN(o, sd, EINA_FALSE);
-    EWK_VIEW_PRIV_GET_OR_RETURN(sd, priv, EINA_FALSE);
-    return _ewk_view_editor_command(priv, "SelectLine");
-}
-
-/**
- * Selects the current word.
- *
- * @return @c EINA_TRUE if operation was executed, @c EINA_FALSE otherwise.
- */
-Eina_Bool ewk_view_select_word(Evas_Object* o)
-{
-    EWK_VIEW_SD_GET_OR_RETURN(o, sd, EINA_FALSE);
-    EWK_VIEW_PRIV_GET_OR_RETURN(sd, priv, EINA_FALSE);
-    return _ewk_view_editor_command(priv, "SelectWord");
-}
-
-/**
  * Executes editor command.
  *
  * @param o view object to execute command.
@@ -1638,6 +1566,18 @@ Eina_Bool ewk_view_execute_editor_command(Evas_Object* o, const Ewk_Editor_Comma
         return _ewk_view_editor_command(priv, "InsertImage", value);
     case EWK_EDITOR_COMMAND_INSERT_TEXT:
         return _ewk_view_editor_command(priv, "InsertText", value);
+    case EWK_EDITOR_COMMAND_SELECT_NONE:
+        return _ewk_view_editor_command(priv, "Unselect");
+    case EWK_EDITOR_COMMAND_SELECT_ALL:
+        return _ewk_view_editor_command(priv, "SelectAll");
+    case EWK_EDITOR_COMMAND_SELECT_PARAGRAPH:
+        return _ewk_view_editor_command(priv, "SelectParagraph");
+    case EWK_EDITOR_COMMAND_SELECT_SENTENCE:
+        return _ewk_view_editor_command(priv, "SelectSentence");
+    case EWK_EDITOR_COMMAND_SELECT_LINE:
+        return _ewk_view_editor_command(priv, "SelectLine");
+    case EWK_EDITOR_COMMAND_SELECT_WORD:
+        return _ewk_view_editor_command(priv, "SelectWord");
     default:
         return EINA_FALSE;
     }

@@ -1,3 +1,15 @@
+2011-05-08  Kamil Blank  <k.blank@samsung.com>
+
+        Reviewed by Antonio Gomes.
+
+        Added new commands to be called by ewk_view_editor_command.
+        Due to this change ewk_view_select_* functions have been removed.
+        https://bugs.webkit.org/show_bug.cgi?id=60435
+
+        * ewk/ewk_view.cpp:
+        (ewk_view_execute_editor_command):
+        * ewk/ewk_view.h:
+
 2011-05-07  Tomasz Morawski  <t.morawski@samsung.com>
 
         Reviewed by Daniel Bates.
