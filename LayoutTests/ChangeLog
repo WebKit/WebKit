@@ -1,3 +1,13 @@
+2011-05-08  Abhishek Arya  <inferno@chromium.org>
+
+        Unreviewed.
+
+        More rebaselines for r86028.
+
+        * platform/chromium-linux/fast/text/basic/002-expected.png:
+        * platform/chromium-win/fast/text/basic/002-expected.png:
+        * platform/chromium-win/fast/text/basic/002-expected.txt:
+
 2011-05-08  Kenji Imasaki  <imasaki@chromium.org>
 
         Reviewed by Eric Seidel.
