@@ -1,5 +1,14 @@
 2011-05-07  Dan Bernstein  <mitz@apple.com>
 
+        Reviewed by Timothy Hatcher.
+
+        <rdar://problem/9365358> REGRESSION (WebKit2): When clicking in the page, Find overlay fades out instead of disappearing immediately
+
+        * WebProcess/WebPage/FindController.cpp:
+        (WebKit::FindController::hideFindUI): Do not fade out the overlay.
+
+2011-05-07  Dan Bernstein  <mitz@apple.com>
+
         Avoid copying a header file into the WebKit2 framework wrapper.
 
         * WebKit2.xcodeproj/project.pbxproj: Corrected the target membership of HTTPCookieAcceptPolicy.h.

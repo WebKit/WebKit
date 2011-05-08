@@ -153,7 +153,7 @@ void FindController::findString(const String& string, FindOptions options, unsig
 void FindController::hideFindUI()
 {
     if (m_findPageOverlay)
-        m_webPage->uninstallPageOverlay(m_findPageOverlay, true);
+        m_webPage->uninstallPageOverlay(m_findPageOverlay, false);
 
     hideFindIndicator();
 }
