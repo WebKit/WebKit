@@ -1,5 +1,11 @@
 2011-05-08  Dan Bernstein  <mitz@apple.com>
 
+        Updated a platform-specific expected result again after r86028.
+
+        * platform/qt/fast/multicol/vertical-lr/float-avoidance-expected.txt:
+
+2011-05-08  Dan Bernstein  <mitz@apple.com>
+
         Updated some platform-specific expected results after r86028.
 
         * platform/gtk/css1/box_properties/clear_float-expected.txt:
