@@ -1,5 +1,17 @@
 2011-05-07  Jessie Berlin  <jberlin@apple.com>
 
+        [Windows WebKit2 Release Tests]
+        platform/win/plugins/window-geometry-initialized-before-set-window.html and
+        platform/win/plugins/window-region-is-set-to-clip-rect.html failing since r85795.
+        https://bugs.webkit.org/show_bug.cgi?id=60442
+
+        Add win-wk2 failing expected results to get the bots green.
+
+        * platform/win-wk2/platform/win/plugins/window-geometry-initialized-before-set-window-expected.txt: Added.
+        * platform/win-wk2/platform/win/plugins/window-region-is-set-to-clip-rect-expected.txt: Added.
+
+2011-05-07  Jessie Berlin  <jberlin@apple.com>
+
         WebKitTestRunner needs layoutTestController.setPopupBlockingEnabled
 
         Add another test (fast/events/popup-blocked-from-mousemove.html) to the mac-wk2 Skipped list
