@@ -502,28 +502,29 @@ static inline void setLogicalWidthForTextRun(RootInlineBox* lineBox, BidiRun* ru
 
 static inline void computeExpansionForJustifiedText(BidiRun* firstRun, BidiRun* trailingSpaceRun, Vector<unsigned, 16>& expansionOpportunities, unsigned expansionOpportunityCount, float& totalLogicalWidth, float availableLogicalWidth)
 {
-    if (expansionOpportunityCount && availableLogicalWidth > totalLogicalWidth) {
-        size_t i = 0;
-        for (BidiRun* r = firstRun; r; r = r->next()) {
-            if (!r->m_box || r == trailingSpaceRun)
-                continue;
+    if (!expansionOpportunityCount || availableLogicalWidth <= totalLogicalWidth)
+        return;
+
+    size_t i = 0;
+    for (BidiRun* r = firstRun; r; r = r->next()) {
+        if (!r->m_box || r == trailingSpaceRun)
+            continue;
+        
+        if (r->m_object->isText()) {
+            unsigned opportunitiesInRun = expansionOpportunities[i++];
             
-            if (r->m_object->isText()) {
-                unsigned opportunitiesInRun = expansionOpportunities[i++];
-                
-                ASSERT(opportunitiesInRun <= expansionOpportunityCount);
-                
-                // Only justify text if whitespace is collapsed.
-                if (r->m_object->style()->collapseWhiteSpace()) {
-                    InlineTextBox* textBox = static_cast<InlineTextBox*>(r->m_box);
-                    float expansion = (availableLogicalWidth - totalLogicalWidth) * opportunitiesInRun / expansionOpportunityCount;
-                    textBox->setExpansion(expansion);
-                    totalLogicalWidth += expansion;
-                }
-                expansionOpportunityCount -= opportunitiesInRun;
-                if (!expansionOpportunityCount)
-                    break;
+            ASSERT(opportunitiesInRun <= expansionOpportunityCount);
+            
+            // Only justify text if whitespace is collapsed.
+            if (r->m_object->style()->collapseWhiteSpace()) {
+                InlineTextBox* textBox = static_cast<InlineTextBox*>(r->m_box);
+                int expansion = (availableLogicalWidth - totalLogicalWidth) * opportunitiesInRun / expansionOpportunityCount;
+                textBox->setExpansion(expansion);
+                totalLogicalWidth += expansion;
             }
+            expansionOpportunityCount -= opportunitiesInRun;
+            if (!expansionOpportunityCount)
+                break;
         }
     }
 }

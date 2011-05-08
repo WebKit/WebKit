@@ -1,3 +1,17 @@
+2011-05-08  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Darin Adler.
+
+        <rdar://problem/9401853> REGRESSION (r78846): Insufficient expansion for justification when there are multiple inline boxes
+        https://bugs.webkit.org/show_bug.cgi?id=60432
+
+        * rendering/InlineTextBox.h:
+        (WebCore::InlineTextBox::setExpansion): Changed back to take a int, since the m_expansion member
+        variable is a (truncated) int anyway.
+        * rendering/RenderBlockLineLayout.cpp:
+        (WebCore::computeExpansionForJustifiedText): Changed the expansion local variable into an int
+        so that the right amount is added to the total width. Also changed to use an early return.
+
 2011-05-08  Pavel Feldman  <pfeldman@chromium.org>
 
         Not reviewed: ignore 0 responses in the inspector network instrumentation.

@@ -127,7 +127,7 @@ private:
 public:
     virtual bool isLineBreak() const;
 
-    void setExpansion(float expansion) { m_logicalWidth -= m_expansion; m_expansion = expansion; m_logicalWidth += m_expansion; }
+    void setExpansion(int expansion) { m_logicalWidth -= m_expansion; m_expansion = expansion; m_logicalWidth += m_expansion; }
 
 private:
     virtual bool isInlineTextBox() const { return true; }    
