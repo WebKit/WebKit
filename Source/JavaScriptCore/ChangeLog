@@ -1,3 +1,16 @@
+2011-05-08  Jessie Berlin  <jberlin@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        Make JSRetainPtr work with JSGlobalContextRefs.
+        https://bugs.webkit.org/show_bug.cgi?id=60452
+
+        Add specialized functions for JSRetain and JSRelease when dealing with JSGlobalContextRefs.
+
+        * API/JSRetainPtr.h:
+        (JSRetain):
+        (JSRelease):
+
 2011-05-07  Dawit Alemayehu  <adawit@kde.org>
 
         Reviewed by Daniel Bates.
