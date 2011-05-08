@@ -52,12 +52,12 @@ layer at (173,365) size 453x120
             text run at (205,13) width 25: "CSS"
         RenderText {#text} at (230,13) size 52x16
           text run at (230,13) width 52: " support."
-    RenderText {#text} at (282,13) size 5x16
-      text run at (282,13) width 5: " "
+    RenderText {#text} at (282,13) size 6x16
+      text run at (282,13) width 6: " "
     RenderInline {P} at (0,0) size 431x44
       RenderInline {SPAN} at (0,0) size 431x44
-        RenderText {#text} at (287,13) size 431x44
-          text run at (287,13) width 152: "Today, we must clear the"
+        RenderText {#text} at (288,13) size 431x44
+          text run at (288,13) width 154: "Today, we must clear the"
           text run at (11,27) width 431: "mind of past practices. Web enlightenment has been achieved thanks to the"
           text run at (11,41) width 173: "tireless efforts of folk like the "
         RenderInline {ACRONYM} at (0,0) size 27x16
@@ -68,8 +68,8 @@ layer at (173,365) size 453x120
         RenderInline {ACRONYM} at (0,0) size 34x16
           RenderText {#text} at (217,41) size 34x16
             text run at (217,41) width 34: "WaSP"
-        RenderText {#text} at (251,41) size 189x16
-          text run at (251,41) width 189: " and the major browser creators."
+        RenderText {#text} at (251,41) size 191x16
+          text run at (251,41) width 191: " and the major browser creators."
     RenderText {#text} at (0,0) size 0x0
     RenderInline {P} at (0,0) size 431x58
       RenderInline {SPAN} at (0,0) size 431x58

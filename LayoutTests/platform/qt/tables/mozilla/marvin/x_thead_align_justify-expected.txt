@@ -16,7 +16,7 @@ layer at (0,0) size 800x242
                 text run at (232,24) width 60: "and left"
                 text run at (2,46) width 290: "margins should line up, no matter how"
                 text run at (2,68) width 120: "long the content "
-                text run at (122,68) width 169: "becomes (except the last"
+                text run at (122,68) width 170: "becomes (except the last"
                 text run at (2,90) width 221: "line which should be left aligned)"
         RenderTableSection {tfoot} at (1,149) size 298x30
           RenderTableRow {tr} at (0,2) size 298x26

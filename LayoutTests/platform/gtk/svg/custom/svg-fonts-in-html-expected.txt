@@ -57,7 +57,7 @@ layer at (173,379) size 453x106
     RenderInline {P} at (0,0) size 431x42
       RenderInline {SPAN} at (0,0) size 431x42
         RenderText {#text} at (262,14) size 431x42
-          text run at (262,14) width 178: "Today, we must clear the mind of"
+          text run at (262,14) width 180: "Today, we must clear the mind of"
           text run at (11,28) width 431: "past practices. Web enlightenment has been achieved thanks to the tireless efforts of"
           text run at (11,42) width 69: "folk like the "
         RenderInline {ACRONYM} at (0,0) size 27x14
@@ -75,7 +75,7 @@ layer at (173,379) size 453x106
     RenderInline {P} at (0,0) size 431x56
       RenderInline {SPAN} at (0,0) size 431x56
         RenderText {#text} at (331,42) size 431x56
-          text run at (331,42) width 109: "The css Zen Garden"
+          text run at (331,42) width 111: "The css Zen Garden"
           text run at (11,56) width 431: "invites you to relax and meditate on the important lessons of the masters. Begin to"
           text run at (11,70) width 431: "see with clarity. Learn to use the (yet to be) time-honored techniques in new and"
           text run at (11,84) width 241: "invigorating fashion. Become one with the web."

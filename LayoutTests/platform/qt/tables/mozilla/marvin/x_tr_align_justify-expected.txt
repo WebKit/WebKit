@@ -10,17 +10,17 @@ layer at (0,0) size 800x136
               RenderText {#text} at (2,2) size 292x110
                 text run at (2,2) width 292: "Cell text should be justified which means"
                 text run at (2,24) width 129: "that the right and "
-                text run at (131,24) width 162: "left margins should line"
+                text run at (131,24) width 163: "left margins should line"
                 text run at (2,46) width 292: "up, no matter how long the content"
                 text run at (2,68) width 62: "becomes "
-                text run at (64,68) width 229: "(except the last line which should"
+                text run at (64,68) width 230: "(except the last line which should"
                 text run at (2,90) width 103: "be left aligned)."
             RenderTableCell {td} at (300,2) size 296x114 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
               RenderText {#text} at (2,2) size 292x110
                 text run at (2,2) width 292: "Cell text should be justified which means"
                 text run at (2,24) width 129: "that the right and "
-                text run at (131,24) width 162: "left margins should line"
+                text run at (131,24) width 163: "left margins should line"
                 text run at (2,46) width 292: "up, no matter how long the content"
                 text run at (2,68) width 62: "becomes "
-                text run at (64,68) width 229: "(except the last line which should"
+                text run at (64,68) width 230: "(except the last line which should"
                 text run at (2,90) width 103: "be left aligned)."
