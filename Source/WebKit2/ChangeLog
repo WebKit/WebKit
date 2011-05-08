@@ -1,3 +1,9 @@
+2011-05-07  Dan Bernstein  <mitz@apple.com>
+
+        Avoid copying a header file into the WebKit2 framework wrapper.
+
+        * WebKit2.xcodeproj/project.pbxproj: Corrected the target membership of HTTPCookieAcceptPolicy.h.
+
 2011-05-07  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r86016.

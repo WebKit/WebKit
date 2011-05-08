@@ -274,6 +274,7 @@
 		33F9D5B91312F1EE000D683F /* WebResourceCacheManagerCFNet.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 33F9D5B81312F1EE000D683F /* WebResourceCacheManagerCFNet.cpp */; };
 		37C4E9F6131C6E7E0029BD5A /* config.h in Headers */ = {isa = PBXBuildFile; fileRef = B396EA5512E0ED2D00F4FEB7 /* config.h */; };
 		37F623B812A57B6200E3FDF6 /* WKFindOptions.h in Headers */ = {isa = PBXBuildFile; fileRef = 37F623B712A57B6200E3FDF6 /* WKFindOptions.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		37F90DE31376560E0051CF68 /* HTTPCookieAcceptPolicy.h in Headers */ = {isa = PBXBuildFile; fileRef = F638954F133BEF38008941D5 /* HTTPCookieAcceptPolicy.h */; };
 		51021E9C12B16788005C033C /* WebContextMenuClientMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 51021E9B12B16788005C033C /* WebContextMenuClientMac.mm */; };
 		510FBB9A1288C95E00AFFDF4 /* WebContextMenuItemData.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 510FBB981288C95E00AFFDF4 /* WebContextMenuItemData.cpp */; };
 		510FBB9B1288C95E00AFFDF4 /* WebContextMenuItemData.h in Headers */ = {isa = PBXBuildFile; fileRef = 510FBB991288C95E00AFFDF4 /* WebContextMenuItemData.h */; };
@@ -817,7 +818,6 @@
 		F634445612A885C8000612D8 /* WebSecurityOrigin.h in Headers */ = {isa = PBXBuildFile; fileRef = F634445512A885C8000612D8 /* WebSecurityOrigin.h */; };
 		F634445C12A885E9000612D8 /* WKSecurityOrigin.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F634445A12A885E9000612D8 /* WKSecurityOrigin.cpp */; };
 		F634445D12A885E9000612D8 /* WKSecurityOrigin.h in Headers */ = {isa = PBXBuildFile; fileRef = F634445B12A885E9000612D8 /* WKSecurityOrigin.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		F6389550133BEF38008941D5 /* HTTPCookieAcceptPolicy.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = F638954F133BEF38008941D5 /* HTTPCookieAcceptPolicy.h */; };
 		F67DD7BA125E40D9007BDCB8 /* WKSerializedScriptValuePrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = F67DD7B9125E40D9007BDCB8 /* WKSerializedScriptValuePrivate.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		F6A25FDC12ADC6CC00DC40CC /* WebDatabaseManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F6A25FDA12ADC6CC00DC40CC /* WebDatabaseManager.cpp */; };
 		F6A25FDD12ADC6CC00DC40CC /* WebDatabaseManager.h in Headers */ = {isa = PBXBuildFile; fileRef = F6A25FDB12ADC6CC00DC40CC /* WebDatabaseManager.h */; };
@@ -879,7 +879,6 @@
 			files = (
 				1A50DB66110A3D57000D3FE5 /* WebProcess.app in CopyFiles */,
 				BCDE0ABF13272708001259FB /* PluginProcess.app in CopyFiles */,
-				F6389550133BEF38008941D5 /* HTTPCookieAcceptPolicy.h in CopyFiles */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -3712,6 +3711,7 @@
 				E179FD9C134D38060015B883 /* ArgumentCodersMac.h in Headers */,
 				CD5C66A1134B9D38004FE2A8 /* InjectedBundlePageFullScreenClient.h in Headers */,
 				6EE849C81368D9390038D481 /* WKInspectorMac.h in Headers */,
+				37F90DE31376560E0051CF68 /* HTTPCookieAcceptPolicy.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
