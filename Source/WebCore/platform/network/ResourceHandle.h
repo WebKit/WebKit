@@ -194,7 +194,12 @@ public:
     static void setPrivateBrowsingEnabled(bool);
     static CFURLStorageSessionRef privateBrowsingStorageSession();
     static void setPrivateBrowsingStorageSessionIdentifierBase(const String&);
-#endif
+    static CFURLStorageSessionRef currentStorageSession();
+#if PLATFORM(WIN)
+    static void setDefaultStorageSession(CFURLStorageSessionRef);
+    static CFURLStorageSessionRef defaultStorageSession();
+#endif // PLATFORM(WIN)
+#endif // USE(CFURLSTORAGESESSIONS)
 
     using RefCounted<ResourceHandle>::ref;
     using RefCounted<ResourceHandle>::deref;
