@@ -1043,9 +1043,10 @@ BUGCR79896 WIN LINUX GPU : fast/canvas/canvas-fillPath-pattern-shadow.html = TEX
 BUGCR79896 WIN LINUX GPU : fast/canvas/canvas-strokePath-shadow.html = TEXT
 BUGCR79896 WIN LINUX GPU : fast/canvas/canvas-transforms-fillRect-shadow.html = TEXT
 
-// Flaky test
-BUGCR81585 LINUX GPU : canvas/philip/tests/2d.drawImage.alpha.html = TEXT
-BUGCR81585 LINUX GPU : canvas/philip/tests/2d.drawImage.9arg.basic.html = TEXT
+// Flaky tests
+BUGCR81585 LINUX GPU : canvas/philip/tests/2d.drawImage.alpha.html = PASS TEXT
+BUGCR81585 LINUX GPU : canvas/philip/tests/2d.drawImage.9arg.basic.html = PASS TEXT
+BUGCR81858 WIN LINUX GPU : fast/canvas/canvas-longlived-context.html = PASS TEXT
 
 // Misc. render failures
 BUGCR81718 WIN LINUX GPU : compositing/tiling/huge-layer-img.html = CRASH
@@ -1055,9 +1056,6 @@ BUGCR79741 WIN LINUX GPU : fast/canvas/drawImage.html = IMAGE
 BUGCR81601 WIN LINUX GPU : fast/repaint/canvas-putImageData.html = IMAGE+TEXT
 BUGCR81600 WIN LINUX GPU : canvas/philip/tests/2d.line.miter.lineedge.html = TEXT
 BUGCR81606 WIN LINUX GPU : fast/canvas/drawImage-with-globalAlpha.html = IMAGE
-BUGCR81668 WIN LINUX GPU : compositing/geometry/object-clip-rects-assertion.html = TEXT
-BUGCR81670 WIN LINUX GPU : fast/canvas/webgl/css-webkit-canvas-repaint.html = IMAGE
-BUGCR81670 WIN LINUX GPU : fast/canvas/webgl/css-webkit-canvas.html = IMAGE
 
 // fillRect failures
 BUGCR78457 WIN LINUX GPU : fast/canvas/fillrect_gradient.html = IMAGE
@@ -1067,7 +1065,6 @@ BUGCR78457 WIN LINUX GPU : fast/canvas/patternfill-repeat.html = IMAGE
 BUGCR78457 WIN LINUX GPU : media/video-canvas-alpha.html = IMAGE
 BUGCR78457 WIN LINUX GPU : fast/canvas/canvas-transforms-during-path.html = IMAGE
 BUGCR78457 WIN LINUX GPU : fast/canvas/fillrect-gradient-zero-stops.html = IMAGE
-BUGCR78457 WIN LINUX GPU : fast/canvas/canvas-longlived-context.html = TEXT
 
 //Text rendering failures
 BUGCR81605 WIN LINUX GPU : fast/canvas/canvas-text-alignment.html = IMAGE
@@ -1811,7 +1808,7 @@ BUGWK SKIP : http/tests/appcache/origins-with-appcache.html = FAIL
 BUGCR29164 WIN LINUX MAC : fast/frames/sandboxed-iframe-plugins.html = TEXT
 
 // Failures introduced by USE_NEW_BUILDER in Skia.
-BUGCR33287 WIN LINUX : fast/canvas/set-colors.html = TEXT
+BUGCR33287 WIN LINUX CPU : fast/canvas/set-colors.html = TEXT
 
 // Failures from WebKit merge 51711:51724
 BUGCR32003 : fast/js/string-property-deletion.html = TEXT
@@ -2097,13 +2094,14 @@ BUGWK45991 : canvas/philip/tests/2d.text.measure.width.space.html = TEXT
 BUGWK45991 LINUX WIN : canvas/philip/tests/2d.gradient.object.update.html = TEXT
 BUGWK45991 LINUX WIN : canvas/philip/tests/2d.gradient.radial.cone.behind.html = TEXT
 BUGWK45991 LINUX WIN : canvas/philip/tests/2d.gradient.radial.cone.beside.html = TEXT
-BUGWK45991 LINUX WIN : canvas/philip/tests/2d.gradient.radial.cone.cylinder.html = TEXT
+BUGWK45991 WIN : canvas/philip/tests/2d.gradient.radial.cone.cylinder.html = TEXT
+BUGWK45991 LINUX CPU : canvas/philip/tests/2d.gradient.radial.cone.cylinder.html = TEXT
 BUGWK45991 LINUX WIN : canvas/philip/tests/2d.gradient.radial.cone.shape2.html = TEXT
 BUGWK45991 LINUX WIN : canvas/philip/tests/2d.gradient.radial.outside3.html = TEXT
 BUGWK45991 LINUX WIN : canvas/philip/tests/2d.gradient.radial.touch1.html = TEXT
 BUGWK45991 LINUX WIN : canvas/philip/tests/2d.gradient.radial.touch3.html = TEXT
-BUGWK45991 LINUX WIN : canvas/philip/tests/2d.line.width.basic.html = TEXT
-BUGWK45991 LINUX WIN : canvas/philip/tests/2d.line.width.transformed.html = TEXT
+BUGWK45991 CPU LINUX WIN : canvas/philip/tests/2d.line.width.basic.html = TEXT
+BUGWK45991 CPU LINUX WIN : canvas/philip/tests/2d.line.width.transformed.html = TEXT
 BUGWK45991 LINUX WIN : canvas/philip/tests/2d.path.arc.angle.3.html = TEXT
 BUGWK45991 LINUX WIN : canvas/philip/tests/2d.path.arc.angle.5.html = TEXT
 BUGWK45991 CPU LINUX WIN : canvas/philip/tests/2d.path.arcTo.shape.curve1.html = TEXT
@@ -2522,7 +2520,8 @@ BUGJAMESR LEOPARD : fast/text/international/vertical-text-glyph-test.html = IMAG
 BUGJAMESR WIN LINUX : fast/text/international/vertical-text-metrics-test.html = TEXT
 
 // Added in WebKit r69755, failed immediately.
-BUGJAPHET WIN LINUX : fast/canvas/canvas-currentColor.html = TEXT
+BUGCR81837 WIN : fast/canvas/canvas-currentColor.html = TEXT
+BUGCR81837 LINUX CPU : fast/canvas/canvas-currentColor.html = TEXT
 
 // Added in Webkit r69707 without expected results.
 // Expected result file added in r83450. Still no match.
@@ -3695,9 +3694,10 @@ BUGWK60097 DEBUG : fast/dom/HTMLLinkElement/link-and-subresource-test.html = TEX
 BUGWK60102 LINUX DEBUG GPU : compositing/geometry/fixed-in-composited.html = IMAGE
 BUGWK60102 LINUX DEBUG GPU : compositing/geometry/horizontal-scroll-composited.html = IMAGE
 BUGWK60102 LINUX GPU : compositing/geometry/tall-page-composited.html = IMAGE
-BUGWK60102 GPU : compositing/geometry/video-fixed-scrolling.html = IMAGE
+BUGWK60102 MAC GPU : compositing/geometry/video-fixed-scrolling.html = IMAGE
+BUGWK60102 LINUX DEBUG GPU : compositing/geometry/video-fixed-scrolling.html = IMAGE
 BUGWK60102 LINUX GPU : compositing/masks/masked-ancestor.html = IMAGE
-BUGWK60102 LINUX GPU : compositing/masks/simple-composited-mask.html = IMAGE
+BUGWK60102 LINUX DEBUG GPU : compositing/masks/simple-composited-mask.html = IMAGE
 // Commented because of BUGCR81605
 //BUGWK60102 LINUX DEBUG GPU : fast/canvas/canvas-text-alignment.html = IMAGE
 BUGWK60102 LINUX GPU : platform/chromium/compositing/layout-width-change.html = IMAGE
@@ -3728,11 +3728,11 @@ BUGWK60103 WIN LINUX : fast/repaint/border-radius-repaint.html = IMAGE
 BUGWK60103 WIN LINUX : fast/replaced/border-radius-clip.html = IMAGE
 
 // These are flaky and results are so unstable to give precise expectations.
-BUGWK60259 GPU : media/controls-after-reload.html = FAIL
-BUGWK60259 GPU : media/controls-strict.html = FAIL
-BUGWK60259 GPU : media/controls-styling.html = FAIL
-BUGWK60259 GPU : media/video-zoom-controls.html = FAIL
-BUGWK60259 GPU : media/controls-without-preload.html = FAIL
+BUGWK60259 GPU : media/controls-after-reload.html = PASS FAIL
+BUGWK60259 GPU : media/controls-strict.html = PASS FAIL
+BUGWK60259 GPU : media/controls-styling.html = PASS FAIL
+BUGWK60259 GPU : media/video-zoom-controls.html = PASS FAIL
+BUGWK60259 GPU : media/controls-without-preload.html = PASS FAIL
 
 BUGCR59704 CPU : media/video-zoom-controls.html = IMAGE+TEXT
 
@@ -3935,8 +3935,6 @@ BUGDPRANKE MAC DEBUG :   transitions/transition-end-event-transform.html = TEXT 
 
 // start skipping platform tests
 BUGNONE WONTFIX SKIP : platform/qt/fast/forms = PASS FAIL CRASH TIMEOUT
-
-BUGWK59661 BUGCR80858 WIN LINUX MAC : media/video-controls-transformed.html = TEXT
 
 BUGDPRANKE MAC DEBUG : fast/blockflow/Kusa-Makura-background-canvas.html = CRASH PASS
 BUGDPRANKE MAC DEBUG : storage/domstorage/events/documentURI.html = CRASH PASS
