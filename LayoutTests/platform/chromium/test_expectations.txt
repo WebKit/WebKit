@@ -3513,8 +3513,6 @@ BUGCR79241 : http/tests/misc/favicon-loads-with-icon-loading-override.html = TEX
 BUGCR79259 : fast/js/array-proto-func-property-getter-except.html = TEXT
 
 // Temporarily marked failing for rebaselining.
-
-BUGCR81482 GPU : media/video-volume-slider.html = IMAGE
 BUGCR81482 GPU : media/video-controls-rendering.html = IMAGE
 
 // Need to be re-baselined BUGCR79770
