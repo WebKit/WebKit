@@ -1,3 +1,15 @@
+2011-05-07  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r85974.
+        http://trac.webkit.org/changeset/85974
+        https://bugs.webkit.org/show_bug.cgi?id=60444
+
+        broke browser tests (Requested by inferno-sec on #webkit).
+
+        * src/WebURLResponse.cpp:
+        (WebKit::WebURLResponse::downloadFilePath):
+        (WebKit::WebURLResponse::setDownloadFilePath):
+
 2011-05-06  Kent Tamura  <tkent@chromium.org>
 
         Reviewed by Ryosuke Niwa.
