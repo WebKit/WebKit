@@ -1,3 +1,121 @@
+2011-05-08  Abhishek Arya  <inferno@chromium.org>
+
+        Unreviewed.
+
+        Chromium Rebaselines for r86028.
+
+        * platform/chromium-linux/css1/box_properties/clear_float-expected.png:
+        * platform/chromium-linux/css2.1/t0905-c5525-fltcont-00-d-g-expected.png:
+        * platform/chromium-linux/css2.1/t0905-c5525-fltcont-00-d-g-expected.txt:
+        * platform/chromium-linux/css2.1/t0905-c5525-fltwidth-00-c-g-expected.png:
+        * platform/chromium-linux/css2.1/t0905-c5525-fltwidth-00-c-g-expected.txt:
+        * platform/chromium-linux/css2.1/t1602-c546-txt-align-00-b-expected.png:
+        * platform/chromium-linux/fast/multicol/float-avoidance-expected.png:
+        * platform/chromium-linux/fast/multicol/vertical-lr/float-avoidance-expected.png:
+        * platform/chromium-linux/fast/multicol/vertical-rl/float-avoidance-expected.png:
+        * platform/chromium-linux/fast/repaint/line-flow-with-floats-1-expected.png:
+        * platform/chromium-linux/fast/repaint/line-flow-with-floats-10-expected.png:
+        * platform/chromium-linux/fast/repaint/line-flow-with-floats-2-expected.png:
+        * platform/chromium-linux/fast/repaint/line-flow-with-floats-3-expected.png:
+        * platform/chromium-linux/fast/repaint/line-flow-with-floats-4-expected.png:
+        * platform/chromium-linux/fast/repaint/line-flow-with-floats-5-expected.png:
+        * platform/chromium-linux/fast/repaint/line-flow-with-floats-6-expected.png:
+        * platform/chromium-linux/fast/repaint/line-flow-with-floats-7-expected.png:
+        * platform/chromium-linux/fast/repaint/line-flow-with-floats-8-expected.png:
+        * platform/chromium-linux/fast/repaint/line-flow-with-floats-9-expected.png:
+        * platform/chromium-linux/fast/text/justified-selection-at-edge-expected.png:
+        * platform/chromium-linux/svg/custom/svg-fonts-in-html-expected.png:
+        * platform/chromium-linux/tables/mozilla/marvin/x_tbody_align_justify-expected.png:
+        * platform/chromium-linux/tables/mozilla/marvin/x_td_align_justify-expected.png:
+        * platform/chromium-linux/tables/mozilla/marvin/x_tfoot_align_justify-expected.png:
+        * platform/chromium-linux/tables/mozilla/marvin/x_th_align_justify-expected.png:
+        * platform/chromium-linux/tables/mozilla/marvin/x_thead_align_justify-expected.png:
+        * platform/chromium-linux/tables/mozilla/marvin/x_tr_align_justify-expected.png:
+        * platform/chromium-mac-leopard/css1/box_properties/clear_float-expected.png: Added.
+        * platform/chromium-mac-leopard/css2.1/t0905-c5525-fltcont-00-d-g-expected.png: Added.
+        * platform/chromium-mac-leopard/css2.1/t0905-c5525-fltwidth-00-c-g-expected.png: Added.
+        * platform/chromium-mac-leopard/css2.1/t1602-c546-txt-align-00-b-expected.png:
+        * platform/chromium-mac-leopard/fast/multicol/float-avoidance-expected.png:
+        * platform/chromium-mac-leopard/fast/repaint/line-flow-with-floats-1-expected.png:
+        * platform/chromium-mac-leopard/fast/repaint/line-flow-with-floats-10-expected.png:
+        * platform/chromium-mac-leopard/fast/repaint/line-flow-with-floats-2-expected.png:
+        * platform/chromium-mac-leopard/fast/repaint/line-flow-with-floats-3-expected.png:
+        * platform/chromium-mac-leopard/fast/repaint/line-flow-with-floats-4-expected.png:
+        * platform/chromium-mac-leopard/fast/repaint/line-flow-with-floats-5-expected.png:
+        * platform/chromium-mac-leopard/fast/repaint/line-flow-with-floats-6-expected.png:
+        * platform/chromium-mac-leopard/fast/repaint/line-flow-with-floats-7-expected.png:
+        * platform/chromium-mac-leopard/fast/repaint/line-flow-with-floats-8-expected.png:
+        * platform/chromium-mac-leopard/fast/repaint/line-flow-with-floats-9-expected.png:
+        * platform/chromium-mac-leopard/fast/text/justified-selection-at-edge-expected.png:
+        * platform/chromium-mac-leopard/tables/mozilla/marvin/x_tbody_align_justify-expected.png:
+        * platform/chromium-mac-leopard/tables/mozilla/marvin/x_td_align_justify-expected.png:
+        * platform/chromium-mac-leopard/tables/mozilla/marvin/x_tfoot_align_justify-expected.png:
+        * platform/chromium-mac-leopard/tables/mozilla/marvin/x_th_align_justify-expected.png:
+        * platform/chromium-mac-leopard/tables/mozilla/marvin/x_thead_align_justify-expected.png: Added.
+        * platform/chromium-mac-leopard/tables/mozilla/marvin/x_tr_align_justify-expected.png:
+        * platform/chromium-mac/fast/repaint/line-flow-with-floats-1-expected.png:
+        * platform/chromium-mac/fast/repaint/line-flow-with-floats-10-expected.png:
+        * platform/chromium-mac/fast/repaint/line-flow-with-floats-2-expected.png:
+        * platform/chromium-mac/fast/repaint/line-flow-with-floats-3-expected.png:
+        * platform/chromium-mac/fast/repaint/line-flow-with-floats-4-expected.png:
+        * platform/chromium-mac/fast/repaint/line-flow-with-floats-5-expected.png:
+        * platform/chromium-mac/fast/repaint/line-flow-with-floats-6-expected.png:
+        * platform/chromium-mac/fast/repaint/line-flow-with-floats-7-expected.png:
+        * platform/chromium-mac/fast/repaint/line-flow-with-floats-8-expected.png:
+        * platform/chromium-mac/fast/repaint/line-flow-with-floats-9-expected.png:
+        * platform/chromium-mac/svg/custom/svg-fonts-in-html-expected.png:
+        * platform/chromium-win/css1/box_properties/clear_float-expected.png:
+        * platform/chromium-win/css1/box_properties/clear_float-expected.txt:
+        * platform/chromium-win/css2.1/t0905-c5525-fltcont-00-d-g-expected.png:
+        * platform/chromium-win/css2.1/t0905-c5525-fltcont-00-d-g-expected.txt:
+        * platform/chromium-win/css2.1/t0905-c5525-fltwidth-00-c-g-expected.png:
+        * platform/chromium-win/css2.1/t0905-c5525-fltwidth-00-c-g-expected.txt:
+        * platform/chromium-win/css2.1/t1602-c546-txt-align-00-b-expected.png:
+        * platform/chromium-win/css2.1/t1602-c546-txt-align-00-b-expected.txt:
+        * platform/chromium-win/fast/multicol/float-avoidance-expected.png:
+        * platform/chromium-win/fast/multicol/float-avoidance-expected.txt:
+        * platform/chromium-win/fast/multicol/vertical-lr/float-avoidance-expected.png:
+        * platform/chromium-win/fast/multicol/vertical-lr/float-avoidance-expected.txt:
+        * platform/chromium-win/fast/multicol/vertical-rl/float-avoidance-expected.png:
+        * platform/chromium-win/fast/multicol/vertical-rl/float-avoidance-expected.txt:
+        * platform/chromium-win/fast/repaint/line-flow-with-floats-1-expected.png:
+        * platform/chromium-win/fast/repaint/line-flow-with-floats-1-expected.txt:
+        * platform/chromium-win/fast/repaint/line-flow-with-floats-10-expected.png:
+        * platform/chromium-win/fast/repaint/line-flow-with-floats-10-expected.txt:
+        * platform/chromium-win/fast/repaint/line-flow-with-floats-2-expected.png:
+        * platform/chromium-win/fast/repaint/line-flow-with-floats-2-expected.txt:
+        * platform/chromium-win/fast/repaint/line-flow-with-floats-3-expected.png:
+        * platform/chromium-win/fast/repaint/line-flow-with-floats-3-expected.txt:
+        * platform/chromium-win/fast/repaint/line-flow-with-floats-4-expected.png:
+        * platform/chromium-win/fast/repaint/line-flow-with-floats-4-expected.txt:
+        * platform/chromium-win/fast/repaint/line-flow-with-floats-5-expected.png:
+        * platform/chromium-win/fast/repaint/line-flow-with-floats-5-expected.txt:
+        * platform/chromium-win/fast/repaint/line-flow-with-floats-6-expected.png:
+        * platform/chromium-win/fast/repaint/line-flow-with-floats-6-expected.txt:
+        * platform/chromium-win/fast/repaint/line-flow-with-floats-7-expected.png:
+        * platform/chromium-win/fast/repaint/line-flow-with-floats-7-expected.txt:
+        * platform/chromium-win/fast/repaint/line-flow-with-floats-8-expected.png:
+        * platform/chromium-win/fast/repaint/line-flow-with-floats-8-expected.txt:
+        * platform/chromium-win/fast/repaint/line-flow-with-floats-9-expected.png:
+        * platform/chromium-win/fast/repaint/line-flow-with-floats-9-expected.txt:
+        * platform/chromium-win/fast/text/justified-selection-at-edge-expected.png:
+        * platform/chromium-win/fast/text/justified-selection-at-edge-expected.txt:
+        * platform/chromium-win/svg/custom/svg-fonts-in-html-expected.png:
+        * platform/chromium-win/svg/custom/svg-fonts-in-html-expected.txt:
+        * platform/chromium-win/tables/mozilla/marvin/x_tbody_align_justify-expected.png:
+        * platform/chromium-win/tables/mozilla/marvin/x_tbody_align_justify-expected.txt:
+        * platform/chromium-win/tables/mozilla/marvin/x_td_align_justify-expected.png:
+        * platform/chromium-win/tables/mozilla/marvin/x_td_align_justify-expected.txt:
+        * platform/chromium-win/tables/mozilla/marvin/x_tfoot_align_justify-expected.png:
+        * platform/chromium-win/tables/mozilla/marvin/x_tfoot_align_justify-expected.txt:
+        * platform/chromium-win/tables/mozilla/marvin/x_th_align_justify-expected.png:
+        * platform/chromium-win/tables/mozilla/marvin/x_th_align_justify-expected.txt:
+        * platform/chromium-win/tables/mozilla/marvin/x_thead_align_justify-expected.png:
+        * platform/chromium-win/tables/mozilla/marvin/x_thead_align_justify-expected.txt:
+        * platform/chromium-win/tables/mozilla/marvin/x_tr_align_justify-expected.png:
+        * platform/chromium-win/tables/mozilla/marvin/x_tr_align_justify-expected.txt:
+        * platform/chromium/test_expectations.txt:
+
 2011-05-08  Dan Bernstein  <mitz@apple.com>
 
         Updated a platform-specific expected result again after r86028.

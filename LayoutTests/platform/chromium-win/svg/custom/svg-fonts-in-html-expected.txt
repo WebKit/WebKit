@@ -50,8 +50,8 @@ layer at (173,351) size 453x134
         RenderInline {ACRONYM} at (0,0) size 27x14
           RenderText {#text} at (350,14) size 27x14
             text run at (350,14) width 27: "CSS"
-        RenderText {#text} at (377,14) size 64x14
-          text run at (377,14) width 64: " support."
+        RenderText {#text} at (377,14) size 65x14
+          text run at (377,14) width 65: " support."
     RenderText {#text} at (0,0) size 0x0
     RenderInline {P} at (0,0) size 431x42
       RenderInline {SPAN} at (0,0) size 431x42
@@ -67,14 +67,14 @@ layer at (173,351) size 453x134
         RenderInline {ACRONYM} at (0,0) size 40x14
           RenderText {#text} at (141,56) size 40x14
             text run at (141,56) width 40: "WaSP"
-        RenderText {#text} at (181,56) size 229x14
-          text run at (181,56) width 229: " and the major browser creators."
-    RenderText {#text} at (410,56) size 6x14
-      text run at (410,56) width 6: " "
+        RenderText {#text} at (181,56) size 230x14
+          text run at (181,56) width 230: " and the major browser creators."
+    RenderText {#text} at (411,56) size 7x14
+      text run at (411,56) width 7: " "
     RenderInline {P} at (0,0) size 431x70
       RenderInline {SPAN} at (0,0) size 431x70
-        RenderText {#text} at (416,56) size 431x70
-          text run at (416,56) width 24: "The"
+        RenderText {#text} at (418,56) size 431x70
+          text run at (418,56) width 24: "The"
           text run at (11,70) width 431: "css Zen Garden invites you to relax and meditate on the"
           text run at (11,84) width 431: "important lessons of the masters. Begin to see with clarity. Learn"
           text run at (11,98) width 431: "to use the (yet to be) time-honored techniques in new and"
