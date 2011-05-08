@@ -1,3 +1,15 @@
+2011-05-07  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r86016.
+        http://trac.webkit.org/changeset/86016
+        https://bugs.webkit.org/show_bug.cgi?id=60445
+
+        caused crashes on the WK2 Windows bots (Requested by
+        jessieberlin on #webkit).
+
+        * WebView.cpp:
+        (WebView::setCacheModel):
+
 2011-05-07  Jessie Berlin  <jberlin@apple.com>
 
         Reviewed by Steve Falkenburg.

@@ -1,5 +1,25 @@
 2011-05-07  Sheriff Bot  <webkit.review.bot@gmail.com>
 
+        Unreviewed, rolling out r86016.
+        http://trac.webkit.org/changeset/86016
+        https://bugs.webkit.org/show_bug.cgi?id=60445
+
+        caused crashes on the WK2 Windows bots (Requested by
+        jessieberlin on #webkit).
+
+        * platform/network/ResourceHandle.h:
+        * platform/network/cf/CookieStorageCFNet.cpp:
+        (WebCore::currentCookieStorage):
+        (WebCore::defaultCookieStorage):
+        * platform/network/cf/ResourceHandleCFNet.cpp:
+        (WebCore::willSendRequest):
+        (WebCore::makeFinalRequest):
+        (WebCore::ResourceHandle::willSendRequest):
+        * platform/network/cf/ResourceRequestCFNet.cpp:
+        (WebCore::ResourceRequest::doUpdatePlatformRequest):
+
+2011-05-07  Sheriff Bot  <webkit.review.bot@gmail.com>
+
         Unreviewed, rolling out r85974.
         http://trac.webkit.org/changeset/85974
         https://bugs.webkit.org/show_bug.cgi?id=60444

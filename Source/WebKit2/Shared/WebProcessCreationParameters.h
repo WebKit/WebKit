@@ -29,7 +29,6 @@
 #include "CacheModel.h"
 #include "SandboxExtension.h"
 #include "TextCheckerState.h"
-#include <wtf/RetainPtr.h>
 #include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>
 
@@ -104,11 +103,7 @@ struct WebProcessCreationParameters {
     uint32_t initialHTTPCookieAcceptPolicy;
 
     bool shouldPaintNativeControls;
-
-#if USE(CFURLSTORAGESESSIONS)
-    RetainPtr<CFDataRef> serializedDefaultStorageSession;
-#endif // USE(CFURLSTORAGESESSIONS)
-#endif // PLATFORM(WIN)
+#endif
 };
 
 } // namespace WebKit

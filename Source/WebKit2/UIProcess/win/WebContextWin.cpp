@@ -60,7 +60,7 @@ void WebContext::platformInitializeWebProcess(WebProcessCreationParameters& para
     parameters.cfURLCacheDiskCapacity = CFURLCacheDiskCapacity(cfurlCache.get());
     parameters.cfURLCacheMemoryCapacity = CFURLCacheMemoryCapacity(cfurlCache.get());
 
-    RetainPtr<CFStringRef> cfURLCachePath(AdoptCF, wkCopyFoundationCacheDirectory(0));
+    RetainPtr<CFStringRef> cfURLCachePath(AdoptCF, wkCopyFoundationCacheDirectory());
     parameters.cfURLCachePath = String(cfURLCachePath.get());
     // Remove the ending '\' (necessary to have CFNetwork find the Cache file).
     ASSERT(parameters.cfURLCachePath.length());
@@ -69,7 +69,6 @@ void WebContext::platformInitializeWebProcess(WebProcessCreationParameters& para
 
 #if USE(CFURLSTORAGESESSIONS)
     parameters.uiProcessBundleIdentifier = String(reinterpret_cast<CFStringRef>(CFBundleGetValueForInfoDictionaryKey(CFBundleGetMainBundle(), kCFBundleIdentifierKey)));
-    parameters.serializedDefaultStorageSession.adoptCF(wkCopySerializedDefaultStorageSession());
 #endif // USE(CFURLSTORAGESESSIONS)
 
     parameters.initialHTTPCookieAcceptPolicy = m_initialHTTPCookieAcceptPolicy;
