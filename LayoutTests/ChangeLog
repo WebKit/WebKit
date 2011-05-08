@@ -1,3 +1,14 @@
+2011-05-07  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Maciej Stachowiak.
+
+        <rdar://problem/9403055> REGRESSION (r85499): Inline images in iChat overflow their chat bubbles
+        https://bugs.webkit.org/show_bug.cgi?id=60443
+
+        * fast/replaced/table-percent-height-positioned-expected.png: Added.
+        * fast/replaced/table-percent-height-positioned-expected.txt: Added.
+        * fast/replaced/table-percent-height-positioned.html: Added.
+
 2011-05-07  Justin Novosad  <junov@chromium.org>
 
         Reviewed by Kenneth Russell.

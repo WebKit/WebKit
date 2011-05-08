@@ -1,3 +1,17 @@
+2011-05-07  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Maciej Stachowiak.
+
+        <rdar://problem/9403055> REGRESSION (r85499): Inline images in iChat overflow their chat bubbles
+        https://bugs.webkit.org/show_bug.cgi?id=60443
+
+        Test: fast/replaced/table-percent-height-positioned.html
+
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::computeReplacedLogicalHeightUsing): Do not apply the logic to prevent precent-height
+        replaced elements from being squeezed by table cells when the replaced element is positioned (and thus
+        doesn’t affect the table cell’s height).
+
 2011-05-07  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r86016.
@@ -1498,7 +1512,7 @@
 
 2011-05-05  Young Han Lee  <joybro@company100.net>
 
-        Reviewed by Csaba Osztrogonác.
+        Reviewed by Csaba Osztrogon√°c.
 
         [Texmap][Qt] Enable strict OwnPtr for Qt with texmap enabled.
         https://bugs.webkit.org/show_bug.cgi?id=60251
@@ -3308,7 +3322,7 @@
 
         Reviewed by Alexey Proskuryakov.
 
-        [Mac] Need to truncate the string sent to "Look Up … " menu item, if it's too long.
+        [Mac] Need to truncate the string sent to "Look Up ‚Ä¶ " menu item, if it's too long.
         https://bugs.webkit.org/show_bug.cgi?id=59836
         <rdar://problem/9275983>
 
@@ -3381,7 +3395,7 @@
         (WebCore::PlatformCanvas::Painter::~Painter):
         * platform/graphics/chromium/PlatformCanvas.h:
 
-2011-05-02  Csaba Osztrogonác  <ossy@webkit.org>
+2011-05-02  Csaba Osztrogon√°c  <ossy@webkit.org>
 
         Enable strict OwnPtr for Qt
         https://bugs.webkit.org/show_bug.cgi?id=59667
@@ -3488,7 +3502,7 @@
 
         Reviewed by Eric Carlson.
 
-        REGRESSIONS (r71934): In standalone media documents, (double-)clicking the media element doesn’t play/pause
+        REGRESSIONS (r71934): In standalone media documents, (double-)clicking the media element doesn‚Äôt play/pause
         https://bugs.webkit.org/show_bug.cgi?id=59917
 
         Since default event handlers are not retargeted, we should always attempt ancestor
@@ -4180,7 +4194,7 @@
 
 2011-05-01  Rafael Brandao  <rafael.lobo@openbossa.org>
 
-        Reviewed by Csaba Osztrogonác.
+        Reviewed by Csaba Osztrogon√°c.
 
         [Qt] build-webkit warning Inspector.idl is missing
         https://bugs.webkit.org/show_bug.cgi?id=59047
@@ -4546,7 +4560,7 @@
         Initialize m_textAsOfLastFormControlChangeEvent to empty string rather
         than null for empty fields.
 
-2011-04-29  Csaba Osztrogonác  <ossy@webkit.org>
+2011-04-29  Csaba Osztrogon√°c  <ossy@webkit.org>
 
         [Qt] Unreviewed buildfix after r85343.
 
@@ -4621,7 +4635,7 @@
         (WebCore::GraphicsContext::drawConvexPolygon):
         (WebCore::GraphicsContext::clipConvexPolygon):
 
-2011-04-29  Csaba Osztrogonác  <ossy@webkit.org>
+2011-04-29  Csaba Osztrogon√°c  <ossy@webkit.org>
 
         [Qt] Unreviewed buildfix after r85343.
 
@@ -4632,7 +4646,7 @@
         (WebCore::PluginView::wndProc):
         (WebCore::PluginView::snapshot):
 
-2011-04-29  Csaba Osztrogonác  <ossy@webkit.org>
+2011-04-29  Csaba Osztrogon√°c  <ossy@webkit.org>
 
         Reviewed by Adam Barth.
 
@@ -4759,7 +4773,7 @@
         (WebInspector.startEditing.keyDownEventListener):
         (WebInspector.startEditing):
 
-2011-04-29  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
+2011-04-29  Tor Arne Vestb√∏  <tor.arne.vestbo@nokia.com>
 
         Reviewed by Simon Hausmann.
 
@@ -4771,7 +4785,7 @@
         * platform/network/NetworkStateNotifier.h:
         * platform/network/qt/NetworkStateNotifierQt.cpp:
 
-2011-04-29  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
+2011-04-29  Tor Arne Vestb√∏  <tor.arne.vestbo@nokia.com>
 
         Reviewed by Simon Hausmann.
 
@@ -7859,7 +7873,7 @@
 
 2011-04-26  Gabor Loki  <loki@webkit.org>
 
-        Reviewed by Csaba Osztrogonác.
+        Reviewed by Csaba Osztrogon√°c.
 
         Speeding up SVG filters with multicore (SMP) support
         https://bugs.webkit.org/show_bug.cgi?id=43903
@@ -7999,7 +8013,7 @@
         (WebInspector.ResourcesPanel.prototype._frameNavigated):
         * inspector/front-end/inspector.js:
 
-2011-04-26  Csaba Osztrogonác  <ossy@webkit.org>
+2011-04-26  Csaba Osztrogon√°c  <ossy@webkit.org>
 
         Unreviewed rollout r84877 and StyleRareInheritedData.cpp changes of r84892,
         because it broke transitions/multiple-text-shadow-transition.html
@@ -10287,7 +10301,7 @@
         (WebCore::JSWebGLRenderingContext::getAttachedShaders):
         (WebCore::JSWebGLRenderingContext::getSupportedExtensions):
 
-2011-04-22  Csaba Osztrogonác  <ossy@webkit.org>
+2011-04-22  Csaba Osztrogon√°c  <ossy@webkit.org>
 
         [Qt] Unreviewed typo fix after r84522.
 
@@ -13414,7 +13428,7 @@
 
 2011-04-20  Balazs Kelemen  <kbalazs@webkit.org>
 
-        Reviewed by Csaba Osztrogonác.
+        Reviewed by Csaba Osztrogon√°c.
 
         [Qt] Cleanup includepath adjustment for generated files
         https://bugs.webkit.org/show_bug.cgi?id=58869
@@ -13909,7 +13923,7 @@
 
         * page/FrameView.cpp:
         (WebCore::FrameView::calculateScrollbarModesForLayout): Reset m_viewportRenderer, in case this
-        function takes a code path that doesn’t call applyOverflowToViewport().
+        function takes a code path that doesn‚Äôt call applyOverflowToViewport().
         (WebCore::FrameView::layout): Whitespace change.
 
 2011-04-19  Beth Dakin  <bdakin@apple.com>
@@ -14411,7 +14425,7 @@
         * platform/graphics/skia/PlatformContextSkia.cpp:
         (WebCore::PlatformContextSkia::~PlatformContextSkia):
 
-2011-04-19  Csaba Osztrogonác  <ossy@webkit.org>
+2011-04-19  Csaba Osztrogon√°c  <ossy@webkit.org>
 
         [Qt] REGRESSION(84176): http/tests/xmlhttprequest/event-listener-gc.html fails
         https://bugs.webkit.org/show_bug.cgi?id=58871
@@ -15067,8 +15081,8 @@
         Test: fast/repaint/text-in-relative-positioned-inline.html
 
         * rendering/RenderText.cpp:
-        (WebCore::RenderText::clippedOverflowRectForRepaint): Use the container’s repaint rect, not
-        the containing block’s. This matters when the containing block is outside the RenderText’s
+        (WebCore::RenderText::clippedOverflowRectForRepaint): Use the container‚Äôs repaint rect, not
+        the containing block‚Äôs. This matters when the containing block is outside the RenderText‚Äôs
         enclosing layer, as is the case here.
 
 2011-04-15  Stephen White  <senorblanco@chromium.org>
@@ -19833,7 +19847,7 @@
 
         * inspector/Inspector.json:
 
-2011-04-13  Csaba Osztrogonác  <ossy@webkit.org>
+2011-04-13  Csaba Osztrogon√°c  <ossy@webkit.org>
 
         Unreviewed, rolling out r83695.
         http://trac.webkit.org/changeset/83695
@@ -20370,7 +20384,7 @@
         (WebCore::TilingData::TilingData):
         (WebCore::TilingData::setMaxTextureSize):
 
-2011-04-12  Csaba Osztrogonác  <ossy@webkit.org>
+2011-04-12  Csaba Osztrogon√°c  <ossy@webkit.org>
 
         Unreviewed, rolling out r83634 and r83659.
         http://trac.webkit.org/changeset/83634
@@ -21158,7 +21172,7 @@
         * rendering/ShadowElement.cpp:
         * rendering/ShadowElement.h:
 
-2011-04-12  Csaba Osztrogonác  <ossy@webkit.org>
+2011-04-12  Csaba Osztrogon√°c  <ossy@webkit.org>
 
         Reviewed by Benjamin Poulain.
 
@@ -23037,7 +23051,7 @@
 
         * WebCore.pri: qpa=>embedded should be done very early so all cases of embedded are uniform.
 
-2011-04-09  Csaba Osztrogonác  <ossy@webkit.org>
+2011-04-09  Csaba Osztrogon√°c  <ossy@webkit.org>
 
         [Qt] Unreviewed trivial fix after r83344.
 
@@ -25423,7 +25437,7 @@
         * rendering/style/RenderStyle.cpp:
         (WebCore::RenderStyle::visitedDependentColor):
 
-2011-04-06  Csaba Osztrogonác  <ossy@webkit.org>
+2011-04-06  Csaba Osztrogon√°c  <ossy@webkit.org>
 
         Unreviewed Qt buildfix after r83079.
 
@@ -26068,7 +26082,7 @@
 
 2011-04-02  Diego Gonzalez  <diegohcg@webkit.org>
 
-        Reviewed by Csaba Osztrogonác.
+        Reviewed by Csaba Osztrogon√°c.
 
         [Qt] Radio buttons are showing wrong with mobile theme
         https://bugs.webkit.org/show_bug.cgi?id=57706
@@ -27914,11 +27928,11 @@
 
         The crash happens because resetting the page scale as part of preparing the WebView for the
         next test triggered layout, which in turn caused a plug-in to make a resource request, and
-        DumpRenderTree's delegate to be dispatched. The delegate doesn’t expect to be called between
+        DumpRenderTree's delegate to be dispatched. The delegate doesn‚Äôt expect to be called between
         tests, and it references the layout test controller, which is null.
 
         * page/Frame.cpp:
-        (WebCore::Frame::scalePage): Avoid an unnecessary layout if the page scale isn’t changing. This
+        (WebCore::Frame::scalePage): Avoid an unnecessary layout if the page scale isn‚Äôt changing. This
         is more efficient, and has the side effect of avoiding the crash in DumpRenderTree, although
         DumpRenderTree could still crash when after a test with disabled plug-ins and a non-1 page scale.
         I think there are currently no such tests, so I am not fixing DumpRenderTree.
@@ -31713,7 +31727,7 @@
         * dom/DatasetDOMStringMap.cpp:
         (WebCore::propertyNameMatchesAttributeName):
 
-2011-03-29  Csaba Osztrogonác  <ossy@webkit.org>
+2011-03-29  Csaba Osztrogon√°c  <ossy@webkit.org>
 
         Unreviewed rollout r82282, part of r82288, r82298.
 
@@ -33363,7 +33377,7 @@
 
         * inspector/generate-inspector-idl:
 
-2011-03-28  Csaba Osztrogonác  <ossy@webkit.org>
+2011-03-28  Csaba Osztrogon√°c  <ossy@webkit.org>
 
         Buildfix after r82125.
 
@@ -33791,7 +33805,7 @@
 
 2011-03-28  Nancy Piedra  <nancy.piedra@nokia.com>
 
-        Reviewed by Csaba Osztrogonác.
+        Reviewed by Csaba Osztrogon√°c.
 
         This patch fixes linking errors on Qt Webkit Windows MinGW builds.
         This patch sets the BUILDING_WEBKIT & QT_MAKEDLL macros so that
@@ -38462,7 +38476,7 @@
 
 2011-03-21  Andreas Kling  <kling@webkit.org>
 
-        Reviewed by Tor Arne Vestbø.
+        Reviewed by Tor Arne Vestb√∏.
 
         [Qt] Add QNetworkReplyHandler::wasAborted()
 
@@ -40893,7 +40907,7 @@
         * accessibility/AXObjectCache.h:
         (WebCore::AXObjectCache::setEnhancedUserInterfaceAccessibility):
 
-2011-03-16  Csaba Osztrogonác  <ossy@webkit.org>
+2011-03-16  Csaba Osztrogon√°c  <ossy@webkit.org>
 
         [Qt] Buildfix after r81230.
 
@@ -41096,12 +41110,12 @@
         (WebCore::CSSStyleSelector::applyProperty): Allow styles with text-combine to be shared, since
         only the clones on the RenderCombineText will be mutated.
         * rendering/RenderCombineText.cpp:
-        (WebCore::RenderCombineText::styleDidChange): Clone the style, to avoid mutating the parent’s
+        (WebCore::RenderCombineText::styleDidChange): Clone the style, to avoid mutating the parent‚Äôs
         style.
         (WebCore::RenderCombineText::combineText): Start off with the original font; restore it if
         the text cannot be combined.
         * rendering/RenderCombineText.h:
-        (WebCore::RenderCombineText::originalFont): Added. Returns the parent’s font.
+        (WebCore::RenderCombineText::originalFont): Added. Returns the parent‚Äôs font.
 
 2011-03-14  Pavel Podivilov  <podivilov@chromium.org>
 
@@ -47808,7 +47822,7 @@ revision.
 
 2011-03-08  Joe Wild  <joseph.wild@nokia.com>
 
-        Reviewed by Csaba Osztrogonác.
+        Reviewed by Csaba Osztrogon√°c.
 
         [Qt] Missing SVG variables
         https://bugs.webkit.org/show_bug.cgi?id=32941
@@ -48898,7 +48912,7 @@ revision.
 
         * WebCore.gypi:
 
-2011-03-07  Csaba Osztrogonác  <ossy@webkit.org>
+2011-03-07  Csaba Osztrogon√°c  <ossy@webkit.org>
 
         Unreviewed buildfix after r80478.
 
@@ -51857,7 +51871,7 @@ revision.
 
         * editing/EditingStyle.h:
 
-2011-03-03  Csaba Osztrogonác  <ossy@webkit.org>
+2011-03-03  Csaba Osztrogon√°c  <ossy@webkit.org>
 
         Unreviewed trivial fix after r80169.
 
@@ -52552,7 +52566,7 @@ revision.
 
 2011-03-02  Aravind Akella  <aravind.akella@nokia.com>
 
-         Reviewed by Csaba Osztrogonác.
+         Reviewed by Csaba Osztrogon√°c.
 
          [Qt][WK2] Memory exhausted when building qtwebkit2 on linux
          https://bugs.webkit.org/show_bug.cgi?id=55484
@@ -54466,7 +54480,7 @@ revision.
 
 2011-03-01  Andras Becsi  <abecsi@webkit.org>
 
-        Reviewed by Csaba Osztrogonác.
+        Reviewed by Csaba Osztrogon√°c.
 
         [Qt] Clean up the project files and move common options to WebKit.pri.
 
@@ -54931,7 +54945,7 @@ revision.
 
         Reviewed by Darin Adler.
 
-        [Mac] Make "Change back to …" contextual menu item work with new autocorrection.
+        [Mac] Make "Change back to ‚Ä¶" contextual menu item work with new autocorrection.
         https://bugs.webkit.org/show_bug.cgi?id=55396
         <rdar://problem/8836093>
 
@@ -55898,7 +55912,7 @@ revision.
 
         Reviewed by Eric Seidel.
 
-        <input value="type=submit"> throws a warning (“HTML parse error”)
+        <input value="type=submit"> throws a warning (‚ÄúHTML parse error‚Äù)
         https://bugs.webkit.org/show_bug.cgi?id=55120
 
         This patch removes parse error messages from the HTML parser.  These
@@ -58862,8 +58876,8 @@ revision.
 
         * page/EventHandler.cpp:
         (WebCore::EventHandler::EventHandler): Initialize m_activationEventNumber
-        to -1. Since WebKit2 doesn�t support non-activating clicks yet (<http://webkit.org/b/55053>
-        <rdar://problem/9042197>) and doesn�t send event numbers, all events were considered to be
+        to -1. Since WebKit2 doesnÔøΩt support non-activating clicks yet (<http://webkit.org/b/55053>
+        <rdar://problem/9042197>) and doesnÔøΩt send event numbers, all events were considered to be
         window-activating events. This in turn prevented them from clearing the selection and resuming
         caret blinking on mouse up.
 
@@ -59362,7 +59376,7 @@ revision.
 
 2011-02-22  Chang Shu  <cshu@webkit.org>
 
-        Reviewed by Csaba Osztrogonác.
+        Reviewed by Csaba Osztrogon√°c.
 
         [Qt] editing/deleting/5408255.html fails
         https://bugs.webkit.org/show_bug.cgi?id=54964
@@ -59431,7 +59445,7 @@ revision.
 
 2011-02-22  Andras Becsi  <abecsi@webkit.org>
 
-        Reviewed by Csaba Osztrogonác.
+        Reviewed by Csaba Osztrogon√°c.
 
         [Qt] Redesign the build system
         https://bugs.webkit.org/show_bug.cgi?id=51339
@@ -59556,7 +59570,7 @@ revision.
 2011-02-22  Andras Becsi  <abecsi@webkit.org>
 
         Reviewed by Laszlo Gombos.
-        Rubber-stamped by Csaba Osztrogonác.
+        Rubber-stamped by Csaba Osztrogon√°c.
 
         [Qt] Redesign the build system
         https://bugs.webkit.org/show_bug.cgi?id=51339
@@ -60493,7 +60507,7 @@ revision.
         * inspector/InspectorDOMAgent.h:
         (WebCore::InspectorDOMAgent::create):
 
-2011-02-21  Csaba Osztrogonác  <ossy@webkit.org>
+2011-02-21  Csaba Osztrogon√°c  <ossy@webkit.org>
 
         Reviewed by Andreas Kling.
 
@@ -61270,7 +61284,7 @@ revision.
 
 2011-02-18  Yi Shen  <yi.4.shen@nokia.com>
 
-        Reviewed by Tor Arne Vestbø.
+        Reviewed by Tor Arne Vestb√∏.
 
         Always display the media controls when requiresFullscreenForVideoPlayback() is true
         https://bugs.webkit.org/show_bug.cgi?id=54308
@@ -61909,7 +61923,7 @@ revision.
         * html/DateComponents.cpp:
         (WebCore::DateComponents::parseTime):
 
-2011-02-18  Csaba Osztrogonác  <ossy@webkit.org>
+2011-02-18  Csaba Osztrogon√°c  <ossy@webkit.org>
 
         Rubber-stamped by Andreas Kling.
 
@@ -62104,8 +62118,8 @@ revision.
         (WebCore::HTMLBodyElement::setScrollTop): Ditto.
         * page/FrameView.cpp:
         (WebCore::FrameView::scrollXForFixedPosition): Moved from ScrollView here and changed to
-        account for page scale: when the page is scaled, the “viewport” with respect to which fixed
-        objects are positioned is scaled as well. Since it’s now bigger than the real viewport (that is,
+        account for page scale: when the page is scaled, the ‚Äúviewport‚Äù with respect to which fixed
+        objects are positioned is scaled as well. Since it‚Äôs now bigger than the real viewport (that is,
         the frame view), we move it around in proportion to the document scroll, so that when the document
         is fully scrolled to the bottom-right, the bottom right of the scaled viewport is visible.
         (WebCore::FrameView::scrollYForFixedPosition): Ditto.
@@ -62761,7 +62775,7 @@ revision.
         (WebCore::RenderSVGResourcePattern::buildTileImageTransform):
         (WebCore::RenderSVGResourcePattern::createTileImage):
 
-2011-02-17  Csaba Osztrogonác  <ossy@webkit.org>
+2011-02-17  Csaba Osztrogon√°c  <ossy@webkit.org>
 
         Unreviewed.
 

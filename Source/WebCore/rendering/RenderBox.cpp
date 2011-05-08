@@ -2010,23 +2010,26 @@ int RenderBox::computeReplacedLogicalHeightUsing(Length logicalHeight) const
             // FIXME: availableLogicalHeight() is wrong if the replaced element's block-flow is perpendicular to the
             // containing block's block-flow.
             // https://bugs.webkit.org/show_bug.cgi?id=46496
-            int availableHeight = isPositioned() ? containingBlockLogicalHeightForPositioned(toRenderBoxModelObject(cb)) : toRenderBox(cb)->availableLogicalHeight();
-
-            // It is necessary to use the border-box to match WinIE's broken
-            // box model.  This is essential for sizing inside
-            // table cells using percentage heights.
-            // FIXME: This needs to be made block-flow-aware.  If the cell and image are perpendicular block-flows, this isn't right.
-            // https://bugs.webkit.org/show_bug.cgi?id=46997
-            while (cb && !cb->isRenderView() && (cb->style()->logicalHeight().isAuto() || cb->style()->logicalHeight().isPercent())) {
-                if (cb->isTableCell()) {
-                    // Don't let table cells squeeze percent-height replaced elements
-                    // <http://bugs.webkit.org/show_bug.cgi?id=15359>
-                    availableHeight = max(availableHeight, intrinsicLogicalHeight());
-                    return logicalHeight.calcValue(availableHeight - borderAndPaddingLogicalHeight());
+            int availableHeight;
+            if (isPositioned())
+                availableHeight = containingBlockLogicalHeightForPositioned(toRenderBoxModelObject(cb));
+            else {
+                availableHeight =  toRenderBox(cb)->availableLogicalHeight();
+                // It is necessary to use the border-box to match WinIE's broken
+                // box model.  This is essential for sizing inside
+                // table cells using percentage heights.
+                // FIXME: This needs to be made block-flow-aware.  If the cell and image are perpendicular block-flows, this isn't right.
+                // https://bugs.webkit.org/show_bug.cgi?id=46997
+                while (cb && !cb->isRenderView() && (cb->style()->logicalHeight().isAuto() || cb->style()->logicalHeight().isPercent())) {
+                    if (cb->isTableCell()) {
+                        // Don't let table cells squeeze percent-height replaced elements
+                        // <http://bugs.webkit.org/show_bug.cgi?id=15359>
+                        availableHeight = max(availableHeight, intrinsicLogicalHeight());
+                        return logicalHeight.calcValue(availableHeight - borderAndPaddingLogicalHeight());
+                    }
+                    cb = cb->containingBlock();
                 }
-                cb = cb->containingBlock();
             }
-
             return computeContentBoxLogicalHeight(logicalHeight.calcValue(availableHeight));
         }
         default:
