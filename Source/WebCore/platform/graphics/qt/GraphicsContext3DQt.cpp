@@ -30,6 +30,7 @@
 #include "ImageData.h"
 #include "NotImplemented.h"
 #include "QWebPageClient.h"
+#include "SharedBuffer.h"
 #include "qwebpage.h"
 #include <QAbstractScrollArea>
 #include <QGraphicsObject>
@@ -1739,18 +1740,19 @@ bool GraphicsContext3D::getImageData(Image* image,
     UNUSED_PARAM(ignoreGammaAndColorProfile);
     if (!image)
         return false;
-    QPixmap* nativePixmap = image->nativeImageForCurrentFrame();
-    if (!nativePixmap)
-        return false;
-
+    QImage nativeImage;
+    // Is image already loaded? If not, load it.
+    if (image->data())
+        nativeImage = QImage::fromData(reinterpret_cast<const uchar*>(image->data()->data()), image->data()->size()).convertToFormat(QImage::Format_ARGB32);
+    else {
+        QPixmap* nativePixmap = image->nativeImageForCurrentFrame();
+        nativeImage = nativePixmap->toImage().convertToFormat(QImage::Format_ARGB32);
+    }
     AlphaOp neededAlphaOp = AlphaDoNothing;
-    if (!premultiplyAlpha)
-        // FIXME: must fetch the image data before the premultiplication step
-        neededAlphaOp = AlphaDoUnmultiply;
-    QImage nativeImage = nativePixmap->toImage().convertToFormat(QImage::Format_ARGB32);
+    if (premultiplyAlpha)
+        neededAlphaOp = AlphaDoPremultiply;
     outputVector.resize(nativeImage.byteCount());
-    return packPixels(nativeImage.rgbSwapped().bits(), SourceFormatRGBA8, image->width(), image->height(), 0,
-                      format, type, neededAlphaOp, outputVector.data());
+    return packPixels(nativeImage.bits(), SourceFormatBGRA8, image->width(), image->height(), 0, format, type, neededAlphaOp, outputVector.data());
 }
 
 void GraphicsContext3D::setContextLostCallback(PassOwnPtr<ContextLostCallback>)
