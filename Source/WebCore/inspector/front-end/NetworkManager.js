@@ -113,10 +113,18 @@ WebInspector.NetworkDispatcher.prototype = {
         this._updateResourceWithResponse(resource, cachedResource.response);
     },
 
+    _isNull: function(response)
+    {
+        return response && !response.status && !response.mimeType && !Object.keys(response.headers).length;
+    },
+
     requestWillBeSent: function(identifier, frameId, loaderId, documentURL, request, time, stackTrace, redirectResponse)
     {
         var resource = this._inflightResourcesById[identifier];
         if (resource) {
+            // FIXME: move this check to the backend.
+            if (this._isNull(redirectResponse))
+                return;
             this.responseReceived(identifier, time, "Other", redirectResponse);
             resource = this._appendRedirect(identifier, time, request.url);
         } else
@@ -139,6 +147,10 @@ WebInspector.NetworkDispatcher.prototype = {
 
     responseReceived: function(identifier, time, resourceType, response)
     {
+        // FIXME: move this check to the backend.
+        if (this._isNull(response))
+            return;
+
         var resource = this._inflightResourcesById[identifier];
         if (!resource)
             return;

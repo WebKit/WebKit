@@ -1,3 +1,9 @@
+2011-05-08  Pavel Feldman  <pfeldman@chromium.org>
+
+        Not reviewed: ignore 0 responses in the inspector network instrumentation.
+
+        * inspector/front-end/NetworkManager.js:
+
 2011-05-08  Jarkko Sakkinen  <jarkko.j.sakkinen@gmail.com>
 
         Reviewed by Kenneth Rohde Christiansen.
