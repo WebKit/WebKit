@@ -73,8 +73,22 @@ class ExpectedFailuresTest(unittest.TestCase):
         failures.shrink_expected_failures(MockResults(), True)
         self._assert_expected(failures, ['baz.html'], False)
 
-    def test_unexpected_failures(self):
+    def test_unexpected_failures_observed(self):
         failures = ExpectedFailures()
         failures.grow_expected_failures(MockResults(['foo.html']))
-        self.assertEquals(failures.unexpected_failures(MockResults(['foo.html', 'bar.html'])), set(['bar.html']))
-        self.assertEquals(failures.unexpected_failures(MockResults(['baz.html'])), set(['baz.html']))
+        self.assertEquals(failures.unexpected_failures_observed(MockResults(['foo.html', 'bar.html'])), set(['bar.html']))
+        self.assertEquals(failures.unexpected_failures_observed(MockResults(['baz.html'])), set(['baz.html']))
+        unbounded_results = MockResults(['baz.html', 'qux.html', 'taco.html'], failure_limit=3)
+        self.assertEquals(failures.unexpected_failures_observed(unbounded_results), set(['baz.html', 'qux.html', 'taco.html']))
+        unbounded_results_with_existing_failure = MockResults(['foo.html', 'baz.html', 'qux.html', 'taco.html'], failure_limit=4)
+        self.assertEquals(failures.unexpected_failures_observed(unbounded_results_with_existing_failure), set(['baz.html', 'qux.html', 'taco.html']))
+
+    def test_unexpected_failures_observed_when_tree_is_hosed(self):
+        failures = ExpectedFailures()
+        failures.grow_expected_failures(MockResults(['foo.html', 'banana.html'], failure_limit=2))
+        self.assertEquals(failures.unexpected_failures_observed(MockResults(['foo.html', 'bar.html'])), None)
+        self.assertEquals(failures.unexpected_failures_observed(MockResults(['baz.html'])), None)
+        unbounded_results = MockResults(['baz.html', 'qux.html', 'taco.html'], failure_limit=3)
+        self.assertEquals(failures.unexpected_failures_observed(unbounded_results), None)
+        unbounded_results_with_existing_failure = MockResults(['foo.html', 'baz.html', 'qux.html', 'taco.html'], failure_limit=4)
+        self.assertEquals(failures.unexpected_failures_observed(unbounded_results_with_existing_failure), None)

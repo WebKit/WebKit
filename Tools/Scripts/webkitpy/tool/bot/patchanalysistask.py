@@ -220,7 +220,7 @@ class PatchAnalysisTask(object):
 
         # Now that we have updated information about failing tests with a clean checkout, we can
         # tell if our original failures were unexpected and fail the patch if necessary.
-        if self._expected_failures.unexpected_failures(first_results):
+        if self._expected_failures.unexpected_failures_observed(first_results):
             return self.report_failure(first_results_archive, first_results)
 
         # We don't know what's going on.  The tree is likely very red (beyond our layout-test-results

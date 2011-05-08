@@ -1,3 +1,27 @@
+2011-05-07  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        Testing EWS spins on patches with a large number of failures
+        https://bugs.webkit.org/show_bug.cgi?id=60441
+
+        In cases where the tree has a small number of persistent failures but a
+        patch has a large number of failures, we weren't believing any results.
+        That lead to us retrying the patch forever while we waited for
+        trustworthy results that would never come.
+
+        This patch loosens the semantics of unexpected_failures to return a
+        subset (rather than the exact set) of unexpected failures.  In the case
+        where the tree has a bounded number of failures and the patch has an
+        unbounded number of failures, we can accurately compute such a subset
+        and reject the patch.
+
+        * Scripts/webkitpy/tool/bot/expectedfailures.py:
+        * Scripts/webkitpy/tool/bot/expectedfailures_unittest.py:
+        * Scripts/webkitpy/tool/bot/patchanalysistask.py:
+        * Scripts/webkitpy/tool/commands/earlywarningsystem.py:
+        * Scripts/webkitpy/tool/commands/earlywarningsystem_unittest.py:
+
 2011-05-07  Joe Mason  <jmason@rim.com>
 
         Reviewed by Daniel Bates.

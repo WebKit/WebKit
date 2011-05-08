@@ -91,7 +91,7 @@ class AbstractTestingEWSTest(QueuesTest):
         ews.bind_to_tool(MockTool())
         ews._options = MockOptions(port=None, confirm=False)
         OutputCapture().assert_outputs(self, ews.begin_work_queue, expected_stderr=self._default_begin_work_queue_stderr(ews.name, ews._tool.scm().checkout_root))
-        ews._expected_failures.unexpected_failures = lambda results: set(["foo.html", "bar.html"])
+        ews._expected_failures.unexpected_failures_observed = lambda results: set(["foo.html", "bar.html"])
         task = Mock()
         patch = ews._tool.bugs.fetch_attachment(197)
         self.assertEqual(ews._failing_tests_message(task, patch), "New failing tests:\nbar.html\nfoo.html")

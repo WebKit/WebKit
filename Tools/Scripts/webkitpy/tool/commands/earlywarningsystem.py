@@ -130,7 +130,7 @@ class AbstractTestingEWS(AbstractEarlyWarningSystem, EarlyWarningSystemTaskDeleg
 
     def _failing_tests_message(self, task, patch):
         results = task.results_from_patch_test_run(patch)
-        unexpected_failures = self._expected_failures.unexpected_failures(results)
+        unexpected_failures = self._expected_failures.unexpected_failures_observed(results)
         if not unexpected_failures:
             return None
         return "New failing tests:\n%s" % "\n".join(unexpected_failures)
