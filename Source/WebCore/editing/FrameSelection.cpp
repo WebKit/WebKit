@@ -143,15 +143,12 @@ void FrameSelection::moveTo(const Position &base, const Position &extent, EAffin
 
 void DragCaretController::setCaretPosition(const VisiblePosition& position)
 {
-    if (m_position == position)
-        return;
-
-    if (Node* node = m_position.deepEquivalent().containerNode())
+    if (Node* node = m_position.deepEquivalent().deprecatedNode())
         invalidateCaretRect(node);
     m_position = position;
     m_caretRectNeedsUpdate = true;
     Document* document = 0;
-    if (Node* node = m_position.deepEquivalent().containerNode()) {
+    if (Node* node = m_position.deepEquivalent().deprecatedNode()) {
         invalidateCaretRect(node);
         document = node->document();
     }

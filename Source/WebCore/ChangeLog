@@ -1,3 +1,17 @@
+2011-05-09  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        REGRESSION(r86039): DragCaretController doesn't draw caret
+        https://bugs.webkit.org/show_bug.cgi?id=60505
+
+        Removed an early exit in setCaretPosition introduced by r86039.
+        Also replaced calls to containerNode by deprecatedNode since rendering code doesn't
+        support container node for rendering caret.
+
+        * editing/FrameSelection.cpp:
+        (WebCore::DragCaretController::setCaretPosition):
+
 2011-04-29  Martin Robinson  <mrobinson@igalia.com>
 
         Reviewed by Gustavo Noronha Silva.
