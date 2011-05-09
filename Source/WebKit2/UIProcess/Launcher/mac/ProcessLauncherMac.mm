@@ -26,6 +26,7 @@
 #import "config.h"
 #import "ProcessLauncher.h"
 
+#import "EnvironmentVariables.h"
 #import "RunLoop.h"
 #import "WebProcess.h"
 #import "WebKitSystemInterface.h"
@@ -65,127 +66,6 @@ static void setUpTerminationNotificationHandler(pid_t pid)
     dispatch_resume(processDiedSource);
 #endif
 }
-
-class EnvironmentVariables {
-    WTF_MAKE_NONCOPYABLE(EnvironmentVariables);
-
-public:
-    EnvironmentVariables()
-        : m_environmentPointer(*_NSGetEnviron())
-    {
-    }
-
-    ~EnvironmentVariables()
-    {
-        size_t size = m_allocatedStrings.size();
-        for (size_t i = 0; i < size; ++i)
-            fastFree(m_allocatedStrings[i]);
-    }
-
-    void set(const char* name, const char* value)
-    {
-        // Check if we need to copy the environment.
-        if (m_environmentPointer == *_NSGetEnviron())
-            copyEnvironmentVariables();
-
-        // Allocate a string for the name and value.
-        const char* nameAndValue = createStringForVariable(name, value);
-
-        for (size_t i = 0; i < m_environmentVariables.size() - 1; ++i) {
-            if (valueIfVariableHasName(m_environmentVariables[i], name)) {
-                // Just replace the environment variable.
-                m_environmentVariables[i] = const_cast<char*>(nameAndValue);
-                return;
-            }
-        }
-
-        // Append the new string.
-        ASSERT(!m_environmentVariables.last());
-        m_environmentVariables.last() = const_cast<char*>(nameAndValue);
-        m_environmentVariables.append(static_cast<char*>(0));
-
-        m_environmentPointer = m_environmentVariables.data();
-    }
-
-    const char* get(const char* name) const
-    {
-        for (size_t i = 0; m_environmentPointer[i]; ++i) {
-            if (const char* value = valueIfVariableHasName(m_environmentPointer[i], name))
-                return value;
-        }
-        return 0;
-    }
-
-    // Will append the value with the given separator if the environment variable already exists.
-    void appendValue(const char* name, const char* value, char separator)
-    {
-        const char* existingValue = get(name);
-        if (!existingValue) {
-            set(name, value);
-            return;
-        }
-
-        Vector<char, 128> newValue;
-        newValue.append(existingValue, strlen(existingValue));
-        newValue.append(separator);
-        newValue.append(value, strlen(value) + 1);
-
-        set(name, newValue.data());
-    }
-
-    char** environmentPointer() const { return m_environmentPointer; }
-
-private:
-    const char* valueIfVariableHasName(const char* environmentVariable, const char* name) const
-    {
-        // Find the environment variable name.
-        const char* equalsLocation = strchr(environmentVariable, '=');
-        ASSERT(equalsLocation);
-
-        size_t nameLength = equalsLocation - environmentVariable;
-        if (strlen(name) != nameLength)
-            return 0;
-        if (memcmp(environmentVariable, name, nameLength))
-            return 0;
-
-        return equalsLocation + 1;
-    }
-
-    const char* createStringForVariable(const char* name, const char* value)
-    {
-        int nameLength = strlen(name);
-        int valueLength = strlen(value);
-
-        // Allocate enough room to hold 'name=value' and the null character.
-        char* string = static_cast<char*>(fastMalloc(nameLength + 1 + valueLength + 1));
-        memcpy(string, name, nameLength);
-        string[nameLength] = '=';
-        memcpy(string + nameLength + 1, value, valueLength);
-        string[nameLength + 1 + valueLength] = '\0';
-
-        m_allocatedStrings.append(string);
-
-        return string;
-    }
-
-    void copyEnvironmentVariables()
-    {
-        for (size_t i = 0; (*_NSGetEnviron())[i]; i++)
-            m_environmentVariables.append((*_NSGetEnviron())[i]);
-
-        // Null-terminate the array.
-        m_environmentVariables.append(static_cast<char*>(0));
-
-        // Update the environment pointer.
-        m_environmentPointer = m_environmentVariables.data();
-    }
-
-    char** m_environmentPointer;
-    Vector<char*> m_environmentVariables;
-
-    // These allocated strings will be freed in the destructor.
-    Vector<char*> m_allocatedStrings;
-};
 
 void ProcessLauncher::launchProcess()
 {

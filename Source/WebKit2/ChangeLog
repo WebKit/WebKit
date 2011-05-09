@@ -1,3 +1,24 @@
+2011-05-09  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Move EnvironmentVariables out into its own .cpp file
+        https://bugs.webkit.org/show_bug.cgi?id=60507
+
+        * UIProcess/Launcher/mac/EnvironmentVariables.cpp: Added.
+        (WebKit::EnvironmentVariables::EnvironmentVariables):
+        (WebKit::EnvironmentVariables::~EnvironmentVariables):
+        (WebKit::EnvironmentVariables::set):
+        (WebKit::EnvironmentVariables::get):
+        (WebKit::EnvironmentVariables::appendValue):
+        (WebKit::EnvironmentVariables::valueIfVariableHasName):
+        (WebKit::EnvironmentVariables::createStringForVariable):
+        (WebKit::EnvironmentVariables::copyEnvironmentVariables):
+        * UIProcess/Launcher/mac/EnvironmentVariables.h: Added.
+        (WebKit::EnvironmentVariables::environmentPointer):
+        * UIProcess/Launcher/mac/ProcessLauncherMac.mm:
+        * WebKit2.xcodeproj/project.pbxproj:
+
 2011-05-09  Adam Roben  <aroben@apple.com>
 
         Always set the font rendering mode based on preference values
