@@ -1,3 +1,26 @@
+2011-05-09  Shishir Agrawal  <shishir@chromium.org>
+
+        Reviewed by Tony Gentilcore.
+
+        Implement Page Visibility API.
+        https://bugs.webkit.org/show_bug.cgi?id=54181
+
+        * fast/events/page-visibility-iframe-delete-test-expected.txt: Added.
+        * fast/events/page-visibility-iframe-delete-test.html: Added.
+        * fast/events/page-visibility-iframe-move-test-expected.txt: Added.
+        * fast/events/page-visibility-iframe-move-test.html: Added.
+        * fast/events/page-visibility-iframe-propagation-test-expected.txt: Added.
+        * fast/events/page-visibility-iframe-propagation-test.html: Added.
+        * fast/events/page-visibility-transition-test-expected.txt: Added.
+        * fast/events/page-visibility-transition-test.html: Added.
+        * fast/events/resources/page-visibility-iframe-delete-test-frame.html: Added.
+        * fast/events/resources/page-visibility-iframe-move-new-page.html: Added.
+        * platform/chromium/test_expectations.txt:
+        * platform/gtk/Skipped:
+        * platform/mac/Skipped:
+        * platform/qt/Skipped:
+        * platform/win/Skipped:
+
 2011-05-09  Venkat Penukonda  <venkat.2.penukonda@nokia.com>
 
         Reviewed by Csaba Osztrogonác.

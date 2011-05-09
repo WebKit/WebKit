@@ -1010,6 +1010,7 @@ SET(WebCore_SOURCES
     page/PageGroup.cpp
     page/PageGroupLoadDeferrer.cpp
     page/PageSerializer.cpp
+    page/PageVisibilityState.cpp
     page/Performance.cpp
     page/PerformanceNavigation.cpp
     page/PerformanceTiming.cpp

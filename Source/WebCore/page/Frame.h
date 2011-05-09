@@ -119,6 +119,10 @@ namespace WebCore {
 
         void transferChildFrameToNewDocument();
 
+#if ENABLE(PAGE_VISIBILITY_API)
+        void dispatchVisibilityStateChangeEvent();
+#endif
+
     // ======== All public functions below this point are candidates to move out of Frame into another class. ========
 
         bool isDisconnected() const;

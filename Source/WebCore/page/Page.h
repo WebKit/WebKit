@@ -23,6 +23,7 @@
 
 #include "FrameLoaderTypes.h"
 #include "FindOptions.h"
+#include "PageVisibilityState.h"
 #include "PlatformString.h"
 #include "ViewportArguments.h"
 #include <wtf/Forward.h>
@@ -301,6 +302,11 @@ namespace WebCore {
         void setEditable(bool isEditable) { m_isEditable = isEditable; }
         bool isEditable() { return m_isEditable; }
 
+#if ENABLE(PAGE_VISIBILITY_API)
+        PageVisibilityState visibilityState() const;
+        void setVisibilityState(PageVisibilityState, bool);
+#endif
+
     private:
         void initGroup();
 
@@ -406,6 +412,10 @@ namespace WebCore {
         OwnPtr<ScrollableAreaSet> m_scrollableAreaSet;
 
         bool m_isEditable;
+
+#if ENABLE(PAGE_VISIBILITY_API)
+        PageVisibilityState m_visibilityState;
+#endif
     };
 
 } // namespace WebCore

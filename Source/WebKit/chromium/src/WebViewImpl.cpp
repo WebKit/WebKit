@@ -366,6 +366,10 @@ WebViewImpl::WebViewImpl(WebViewClient* client)
 
     m_page->setGroupName(pageGroupName);
 
+#if ENABLE(PAGE_VISIBILITY_API)
+    setVisibilityState(m_client->visibilityState(), true);
+#endif
+
     m_inspectorSettingsMap = adoptPtr(new SettingsMap);
 }
 
@@ -2557,6 +2561,18 @@ WebGraphicsContext3D* WebViewImpl::graphicsContext3D()
     }
 #endif
     return 0;
+}
+
+
+void WebViewImpl::setVisibilityState(WebPageVisibilityState visibilityState,
+                                     bool isInitialState) {
+#if ENABLE(PAGE_VISIBILITY_API)
+    if (!page())
+        return;
+
+    ASSERT(visibilityState == WebPageVisibilityStateVisible || visibilityState == WebPageVisibilityStateHidden);
+    m_page->setVisibilityState(static_cast<PageVisibilityState>(static_cast<int>(visibilityState)), isInitialState);
+#endif
 }
 
 } // namespace WebKit

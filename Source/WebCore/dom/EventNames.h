@@ -106,6 +106,7 @@ namespace WebCore {
     macro(unload) \
     macro(updateready) \
     macro(versionchange) \
+    macro(webkitvisibilitystatechange) \
     macro(write) \
     macro(writeend) \
     macro(writestart) \

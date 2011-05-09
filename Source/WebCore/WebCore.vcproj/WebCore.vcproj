@@ -24750,6 +24750,12 @@
 				>
 			</File>
 			<File
+				RelativePath="..\page\PageVisibilityState.cpp"
+				>
+			<File
+				RelativePath="..\page\PageVisibilityState.h"
+				>
+			<File
 				RelativePath="..\page\Performance.cpp"
 				>
 			</File>

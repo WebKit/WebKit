@@ -920,6 +920,7 @@ SOURCES += \
     page/PageGroup.cpp \
     page/PageGroupLoadDeferrer.cpp \
     page/PageSerializer.cpp \
+    page/PageVisibilityState.cpp \
     page/Performance.cpp \
     page/PerformanceNavigation.cpp \
     page/PerformanceTiming.cpp \
@@ -1861,6 +1862,7 @@ HEADERS += \
     page/PageGroupLoadDeferrer.h \
     page/Page.h \
     page/PageSerializer.h \
+    page/PageVisibilityState.h \
     page/PluginHalter.h \
     page/PluginHalterClient.h \
     page/PrintContext.h \

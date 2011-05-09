@@ -134,6 +134,7 @@ LayoutTestController::LayoutTestController(TestShell* shell)
     bindMethod("removeOriginAccessWhitelistEntry", &LayoutTestController::removeOriginAccessWhitelistEntry);
     bindMethod("removeShadowRoot", &LayoutTestController::removeShadowRoot);
     bindMethod("repaintSweepHorizontally", &LayoutTestController::repaintSweepHorizontally);
+    bindMethod("resetPageVisibility", &LayoutTestController::resetPageVisibility);
     bindMethod("resumeAnimations", &LayoutTestController::resumeAnimations);
     bindMethod("sampleSVGAnimationForElementAtTime", &LayoutTestController::sampleSVGAnimationForElementAtTime);
     bindMethod("setAcceptsEditing", &LayoutTestController::setAcceptsEditing);
@@ -157,6 +158,7 @@ LayoutTestController::LayoutTestController(TestShell* shell)
     bindMethod("setMockGeolocationError", &LayoutTestController::setMockGeolocationError);
     bindMethod("setMockGeolocationPosition", &LayoutTestController::setMockGeolocationPosition);
     bindMethod("addMockSpeechInputResult", &LayoutTestController::addMockSpeechInputResult);
+    bindMethod("setPageVisibility", &LayoutTestController::setPageVisibility);
     bindMethod("setPluginsEnabled", &LayoutTestController::setPluginsEnabled);
     bindMethod("setPopupBlockingEnabled", &LayoutTestController::setPopupBlockingEnabled);
     bindMethod("setPOSIXLocale", &LayoutTestController::setPOSIXLocale);
@@ -1775,4 +1777,20 @@ void LayoutTestController::setPluginsEnabled(const CppArgumentList& arguments, C
         m_shell->applyPreferences();
     }
     result->setNull();
+}
+
+void LayoutTestController::resetPageVisibility(const CppArgumentList& arguments, CppVariant* result)
+{
+    m_shell->webView()->setVisibilityState(WebPageVisibilityStateVisible, true);
+}
+
+void LayoutTestController::setPageVisibility(const CppArgumentList& arguments, CppVariant* result)
+{
+    if (arguments.size() > 0 && arguments[0].isString()) {
+        string newVisibility = arguments[0].toString();
+        if (newVisibility == "visible")
+            m_shell->webView()->setVisibilityState(WebPageVisibilityStateVisible, false);
+        else if (newVisibility == "hidden")
+            m_shell->webView()->setVisibilityState(WebPageVisibilityStateHidden, false);
+    }
 }

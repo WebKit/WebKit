@@ -34,6 +34,7 @@
 #include "DOMTimeStamp.h"
 #include "DocumentTiming.h"
 #include "IconURL.h"
+#include "PageVisibilityState.h"
 #include "QualifiedName.h"
 #include "ScriptExecutionContext.h"
 #include "StringWithDirection.h"
@@ -304,6 +305,9 @@ public:
 #if ENABLE(FULLSCREEN_API)
     DEFINE_ATTRIBUTE_EVENT_LISTENER(webkitfullscreenchange);
 #endif
+#if ENABLE(PAGE_VISIBILITY_API)
+    DEFINE_ATTRIBUTE_EVENT_LISTENER(webkitvisibilitystatechange);
+#endif
 
     ViewportArguments viewportArguments() const { return m_viewportArguments; }
 
@@ -378,6 +382,12 @@ public:
     void setDocumentURI(const String&);
 
     virtual KURL baseURI() const;
+
+#if ENABLE(PAGE_VISIBILITY_API)
+    String webkitVisibilityState() const;
+    bool webkitIsVisible() const;
+    void dispatchVisibilityStateChangeEvent();
+#endif
 
     PassRefPtr<Node> adoptNode(PassRefPtr<Node> source, ExceptionCode&);
 
@@ -1131,6 +1141,10 @@ private:
     PassRefPtr<NodeList> handleZeroPadding(const HitTestRequest&, HitTestResult&) const;
 
     void loadEventDelayTimerFired(Timer<Document>*);
+
+#if ENABLE(PAGE_VISIBILITY_API)
+    PageVisibilityState visibilityState() const;
+#endif
 
     int m_guardRefCount;
 

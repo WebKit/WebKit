@@ -366,6 +366,10 @@ public:
     // Enable or disable plugins.
     void setPluginsEnabled(const CppArgumentList&, CppVariant*);
 
+    // Switch the visibility of the page.
+    void setPageVisibility(const CppArgumentList&, CppVariant*);
+    void resetPageVisibility(const CppArgumentList&, CppVariant*);
+
 public:
     // The following methods are not exposed to JavaScript.
     void setWorkQueueFrozen(bool frozen) { m_workQueue.setFrozen(frozen); }

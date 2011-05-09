@@ -32,6 +32,7 @@
 #define WebView_h
 
 #include "WebDragOperation.h"
+#include "WebPageVisibilityState.h"
 #include "WebString.h"
 #include "WebVector.h"
 #include "WebWidget.h"
@@ -356,6 +357,12 @@ public:
     // that used by the compositor) and contexts for WebGL and other
     // APIs.
     virtual WebGraphicsContext3D* graphicsContext3D() = 0;
+
+    // Visibility -----------------------------------------------------------
+
+    // Sets the visibility of the WebView.
+    virtual void setVisibilityState(WebPageVisibilityState visibilityState,
+                                    bool isInitialState) { }
 
 protected:
     ~WebView() {}

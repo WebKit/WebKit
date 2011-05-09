@@ -1,0 +1,21 @@
+This test checks that an iframe that moves between pages with different visibility will have the correct visibility value.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Window 1 Loaded
+Window 2 Loaded
+PASS window.document.webkitIsVisible is true
+PASS window2.document.webkitIsVisible is true
+PASS iframe.contentDocument.webkitIsVisible is true
+PASS window.document.webkitIsVisible is false
+PASS window2.document.webkitIsVisible is true
+PASS iframe.contentDocument.webkitIsVisible is true
+Adopted iframe to Window 1
+PASS window.document.webkitIsVisible is false
+PASS window2.document.webkitIsVisible is true
+PASS iframe.contentDocument.webkitIsVisible is false
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

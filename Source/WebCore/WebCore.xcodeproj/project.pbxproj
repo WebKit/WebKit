@@ -5926,6 +5926,8 @@
 		FE80DA660E9C4703000D6F75 /* JSGeoposition.h in Headers */ = {isa = PBXBuildFile; fileRef = FE80DA620E9C4703000D6F75 /* JSGeoposition.h */; };
 		FE80DA710E9C472F000D6F75 /* JSPositionError.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FE80DA6D0E9C472F000D6F75 /* JSPositionError.cpp */; };
 		FE80DA720E9C472F000D6F75 /* JSPositionError.h in Headers */ = {isa = PBXBuildFile; fileRef = FE80DA6E0E9C472F000D6F75 /* JSPositionError.h */; };
+		FFD5B97A135CC97800D5E92A /* PageVisibilityState.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FFD5B977135CC97800D5E92A /* PageVisibilityState.cpp */; };
+		FFD5B97B135CC97800D5E92A /* PageVisibilityState.h in Headers */ = {isa = PBXBuildFile; fileRef = FFD5B978135CC97800D5E92A /* PageVisibilityState.h */; settings = {ATTRIBUTES = (Private, ); }; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -12447,6 +12449,8 @@
 		FE80DA620E9C4703000D6F75 /* JSGeoposition.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSGeoposition.h; sourceTree = "<group>"; };
 		FE80DA6D0E9C472F000D6F75 /* JSPositionError.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSPositionError.cpp; sourceTree = "<group>"; };
 		FE80DA6E0E9C472F000D6F75 /* JSPositionError.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSPositionError.h; sourceTree = "<group>"; };
+		FFD5B977135CC97800D5E92A /* PageVisibilityState.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PageVisibilityState.cpp; sourceTree = "<group>"; };
+		FFD5B978135CC97800D5E92A /* PageVisibilityState.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PageVisibilityState.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -14172,6 +14176,8 @@
 				7A674BDA0F9EBF4E006CF099 /* PageGroupLoadDeferrer.h */,
 				371E65CD13661EED00BEEDB0 /* PageSerializer.cpp */,
 				371E65CB13661EDC00BEEDB0 /* PageSerializer.h */,
+				FFD5B977135CC97800D5E92A /* PageVisibilityState.cpp */,
+				FFD5B978135CC97800D5E92A /* PageVisibilityState.h */,
 				8A844D0111D3C18E0014065C /* Performance.cpp */,
 				8A844D0211D3C18E0014065C /* Performance.h */,
 				8A844D0311D3C18E0014065C /* Performance.idl */,
@@ -21875,6 +21881,7 @@
 				F34742E51343633C00531BC2 /* PageScriptDebugServer.h in Headers */,
 				371E65CC13661EDC00BEEDB0 /* PageSerializer.h in Headers */,
 				E1284AE110447D4500EAEB52 /* PageTransitionEvent.h in Headers */,
+				FFD5B97B135CC97800D5E92A /* PageVisibilityState.h in Headers */,
 				51E1ECC30C91C90400DC255B /* PageURLRecord.h in Headers */,
 				0885067F11DA045B00182B98 /* PaintInfo.h in Headers */,
 				0885068011DA045B00182B98 /* PaintPhase.h in Headers */,
@@ -24742,6 +24749,7 @@
 				371E65CE13661EED00BEEDB0 /* PageSerializer.cpp in Sources */,
 				E1284AEA10447DEE00EAEB52 /* PageTransitionEvent.cpp in Sources */,
 				51E1ECC20C91C90400DC255B /* PageURLRecord.cpp in Sources */,
+				FFD5B97A135CC97800D5E92A /* PageVisibilityState.cpp in Sources */,
 				FD3160A212B026F700C1A359 /* Panner.cpp in Sources */,
 				F55B3DC91251F12D003EF269 /* PasswordInputType.cpp in Sources */,
 				4B2709830AF2E5E00065127F /* PasteboardMac.mm in Sources */,

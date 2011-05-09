@@ -163,6 +163,9 @@ Page::Page(const PageClients& pageClients)
     , m_viewMode(ViewModeWindowed)
     , m_minimumTimerInterval(Settings::defaultMinDOMTimerInterval())
     , m_isEditable(false)
+#if ENABLE(PAGE_VISIBILITY_API)
+    , m_visibilityState(PageVisibilityStateVisible)
+#endif
 {
     if (!allPages) {
         allPages = new HashSet<Page*>;
@@ -931,6 +934,23 @@ void Page::checkFrameCountConsistency() const
         ++frameCount;
 
     ASSERT(m_frameCount + 1 == frameCount);
+}
+#endif
+
+#if ENABLE(PAGE_VISIBILITY_API)
+void Page::setVisibilityState(PageVisibilityState visibilityState, bool isInitialState)
+{
+    if (m_visibilityState == visibilityState)
+        return;
+    m_visibilityState = visibilityState;
+
+    if (!isInitialState && m_mainFrame)
+        m_mainFrame->dispatchVisibilityStateChangeEvent();
+}
+
+PageVisibilityState Page::visibilityState() const
+{
+    return m_visibilityState;
 }
 #endif
 

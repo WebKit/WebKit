@@ -1354,6 +1354,34 @@ void Document::removeTitle(Element* titleElement)
         updateTitle(StringWithDirection());
 }
 
+#if ENABLE(PAGE_VISIBILITY_API)
+PageVisibilityState Document::visibilityState() const
+{
+    // The visibility of the document is inherited from the visibility of the
+    // page. If there is no page associated with the document, we will assume
+    // that the page is visible i.e. invisibility has to be explicitly
+    // specified by the embedder.
+    if (!m_frame || !m_frame->page())
+        return PageVisibilityStateVisible;
+    return m_frame->page()->visibilityState();
+}
+
+String Document::webkitVisibilityState() const
+{
+    return GetPageVisibilityStateString(visibilityState());
+}
+
+bool Document::webkitIsVisible() const
+{
+    return visibilityState() == PageVisibilityStateVisible;
+}
+
+void Document::dispatchVisibilityStateChangeEvent()
+{
+    dispatchEvent(Event::create(eventNames().webkitvisibilitystatechangeEvent, false, false));
+}
+#endif
+
 String Document::nodeName() const
 {
     return "#document";

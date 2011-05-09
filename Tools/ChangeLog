@@ -1,3 +1,23 @@
+2011-05-09  Shishir Agrawal  <shishir@chromium.org>
+
+        Reviewed by Tony Gentilcore.
+
+        Implement Page Visibility API.
+        https://bugs.webkit.org/show_bug.cgi?id=54181
+
+        * DumpRenderTree/LayoutTestController.cpp:
+        (setPageVisibilityCallback):
+        (resetPageVisibilityCallback):
+        (LayoutTestController::staticFunctions):
+        * DumpRenderTree/LayoutTestController.h:
+        (LayoutTestController::setPageVisibility):
+        (LayoutTestController::resetPageVisibility):
+        * DumpRenderTree/chromium/LayoutTestController.cpp:
+        (LayoutTestController::LayoutTestController):
+        (LayoutTestController::resetPageVisibility):
+        (LayoutTestController::setPageVisibility):
+        * DumpRenderTree/chromium/LayoutTestController.h:
+
 2011-05-07  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Eric Seidel.

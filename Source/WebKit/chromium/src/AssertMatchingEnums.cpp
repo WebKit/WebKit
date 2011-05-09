@@ -50,6 +50,7 @@
 #include "IDBKey.h"
 #include "MediaPlayer.h"
 #include "NotificationPresenter.h"
+#include "PageVisibilityState.h"
 #include "PasteboardPrivate.h"
 #include "PlatformCursor.h"
 #include "Settings.h"
@@ -75,6 +76,7 @@
 #include "WebInputElement.h"
 #include "WebMediaPlayer.h"
 #include "WebNotificationPresenter.h"
+#include "WebPageVisibilityState.h"
 #include "WebScrollbar.h"
 #include "WebSettings.h"
 #include "WebStorageQuotaError.h"
@@ -445,3 +447,6 @@ COMPILE_ASSERT_MATCHING_ENUM(WebThemeEngine::ScrollbarOrientationVertical, Platf
 COMPILE_ASSERT_MATCHING_ENUM(WebThemeEngine::ScrollbarParentScrollView, PlatformBridge::ScrollbarParentScrollView);
 COMPILE_ASSERT_MATCHING_ENUM(WebThemeEngine::ScrollbarParentRenderLayer, PlatformBridge::ScrollbarParentRenderLayer);
 #endif
+
+COMPILE_ASSERT_MATCHING_ENUM(WebPageVisibilityStateVisible, PageVisibilityStateVisible);
+COMPILE_ASSERT_MATCHING_ENUM(WebPageVisibilityStateHidden, PageVisibilityStateHidden);

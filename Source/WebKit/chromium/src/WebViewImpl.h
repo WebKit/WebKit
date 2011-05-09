@@ -355,6 +355,8 @@ public:
     // WebGL. Returns 0 if compositing support is not compiled in.
     virtual WebGraphicsContext3D* graphicsContext3D();
 
+    virtual void setVisibilityState(WebPageVisibilityState, bool);
+
     WebCore::PopupContainer* selectPopup() const { return m_selectPopup.get(); }
 
     // Returns true if the event leads to scrolling.

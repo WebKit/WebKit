@@ -718,6 +718,16 @@ void Frame::setDOMWindow(DOMWindow* domWindow)
     m_domWindow = domWindow;
 }
 
+#if ENABLE(PAGE_VISIBILITY_API)
+void Frame::dispatchVisibilityStateChangeEvent()
+{
+    if (m_doc)
+        m_doc->dispatchVisibilityStateChangeEvent();
+    for (Frame* child = tree()->firstChild(); child; child = child->tree()->nextSibling())
+        child->dispatchVisibilityStateChangeEvent();
+}
+#endif
+
 DOMWindow* Frame::domWindow() const
 {
     if (!m_domWindow)

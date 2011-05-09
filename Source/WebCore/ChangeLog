@@ -1,3 +1,41 @@
+2011-05-09  Shishir Agrawal  <shishir@chromium.org>
+
+        Reviewed by Tony Gentilcore.
+
+        Implement Page Visibility API.
+        https://bugs.webkit.org/show_bug.cgi?id=54181
+
+        Tests: fast/events/page-visibility-iframe-delete-test.html
+               fast/events/page-visibility-iframe-move-test.html
+               fast/events/page-visibility-iframe-propagation-test.html
+               fast/events/page-visibility-transition-test.html
+
+        * CMakeLists.txt:
+        * GNUmakefile.list.am:
+        * WebCore.gypi:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * dom/Document.cpp:
+        (WebCore::Document::visibilityState):
+        (WebCore::Document::webkitVisibilityState):
+        (WebCore::Document::webkitIsVisible):
+        (WebCore::Document::dispatchVisibilityStateChangeEvent):
+        * dom/Document.h:
+        * dom/Document.idl:
+        * dom/EventNames.h:
+        * page/Frame.cpp:
+        (WebCore::Frame::dispatchVisibilityStateChangeEvent):
+        * page/Frame.h:
+        * page/Page.cpp:
+        (WebCore::Page::Page):
+        (WebCore::Page::setVisibilityState):
+        (WebCore::Page::visibilityState):
+        * page/Page.h:
+        * page/PageVisibilityState.cpp: Added.
+        (WebCore::GetPageVisibilityStateString):
+        * page/PageVisibilityState.h: Added.
+
 2011-05-09  Luke Macpherson   <macpherson@chromium.org>
 
         Reviewed by Eric Seidel.

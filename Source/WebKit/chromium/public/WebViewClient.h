@@ -36,6 +36,7 @@
 #include "WebEditingAction.h"
 #include "WebFileChooserCompletion.h"
 #include "WebFileChooserParams.h"
+#include "WebPageVisibilityState.h"
 #include "WebPopupType.h"
 #include "WebString.h"
 #include "WebTextAffinity.h"
@@ -314,6 +315,14 @@ public:
                                          const WebString& baseUrl,
                                          const WebString& url,
                                          const WebString& title) { }
+
+    // Visibility -----------------------------------------------------------
+
+    // Returns the current visibility of the WebView.
+    virtual WebPageVisibilityState visibilityState() const
+    {
+        return WebPageVisibilityStateVisible;
+    }
 
 protected:
     ~WebViewClient() { }

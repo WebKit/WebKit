@@ -1670,6 +1670,37 @@ static JSValueRef setPluginsEnabledCallback(JSContextRef context, JSObjectRef fu
     return JSValueMakeUndefined(context);
 }    
 
+static JSValueRef setPageVisibilityCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
+{
+    // Has mac & windows implementation
+    if (argumentCount < 1)
+        return JSValueMakeUndefined(context);
+
+    JSRetainPtr<JSStringRef> visibility(Adopt, JSValueToStringCopy(context, arguments[0], exception));
+    ASSERT(!*exception);
+
+    size_t maxLength = JSStringGetMaximumUTF8CStringSize(visibility.get());
+    char* visibilityBuffer = new char[maxLength + 1];
+    JSStringGetUTF8CString(visibility.get(), visibilityBuffer, maxLength + 1);
+    
+    LayoutTestController* controller = static_cast<LayoutTestController*>(JSObjectGetPrivate(thisObject));
+    controller->setPageVisibility(visibilityBuffer);
+    delete[] visibilityBuffer;
+    
+    return JSValueMakeUndefined(context);
+}    
+
+static JSValueRef resetPageVisibilityCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
+{
+    // Has mac & windows implementation
+    if (argumentCount < 1)
+        return JSValueMakeUndefined(context);
+
+    LayoutTestController* controller = static_cast<LayoutTestController*>(JSObjectGetPrivate(thisObject));
+    controller->resetPageVisibility();
+    return JSValueMakeUndefined(context);
+}    
+
 static JSValueRef setSmartInsertDeleteEnabledCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
 {
     if (argumentCount < 1)
@@ -2266,6 +2297,7 @@ JSStaticFunction* LayoutTestController::staticFunctions()
         { "removeAllVisitedLinks", removeAllVisitedLinksCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "removeOriginAccessWhitelistEntry", removeOriginAccessWhitelistEntryCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "repaintSweepHorizontally", repaintSweepHorizontallyCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
+        { "resetPageVisibility", resetPageVisibilityCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "setAcceptsEditing", setAcceptsEditingCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "setAllowUniversalAccessFromFileURLs", setAllowUniversalAccessFromFileURLsCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "setAllowFileAccessFromFileURLs", setAllowFileAccessFromFileURLsCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
@@ -2298,6 +2330,7 @@ JSStaticFunction* LayoutTestController::staticFunctions()
         { "setMockGeolocationPosition", setMockGeolocationPositionCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "addMockSpeechInputResult", addMockSpeechInputResultCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "setNewWindowsCopyBackForwardList", setNewWindowsCopyBackForwardListCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
+        { "setPageVisibility", setPageVisibilityCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "setPOSIXLocale", setPOSIXLocaleCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "setPersistentUserStyleSheetLocation", setPersistentUserStyleSheetLocationCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "setPopupBlockingEnabled", setPopupBlockingEnabledCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },

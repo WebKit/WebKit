@@ -1283,3 +1283,9 @@ animations/animation-api-1.html
 # HTTP 204 (No Content) should be ignored
 # https://bugs.webkit.org/show_bug.cgi?id=60206
 http/tests/navigation/response204.html
+
+# This platform does not support the Page Visibility API.
+fast/events/page-visibility-iframe-delete-test.html
+fast/events/page-visibility-iframe-move-test.html
+fast/events/page-visibility-iframe-propagation-test.html
+fast/events/page-visibility-transition-test.html

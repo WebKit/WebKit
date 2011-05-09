@@ -124,6 +124,9 @@ public:
     void setScrollbarPolicy(JSStringRef orientation, JSStringRef policy);
     void setEditingBehavior(const char* editingBehavior);
 
+    void setPageVisibility(const char* visibility) { }
+    void resetPageVisibility() { }
+
     JSValueRef shadowRoot(JSContextRef, JSValueRef);
     JSValueRef ensureShadowRoot(JSContextRef, JSValueRef);
     void removeShadowRoot(JSContextRef, JSValueRef);
