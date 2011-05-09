@@ -1,3 +1,18 @@
+2011-05-06  Chris Marrin  <cmarrin@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Fix layer names to say "tiled" and show CALayer addresses, not PlatformCALayer addresses
+        https://bugs.webkit.org/show_bug.cgi?id=60417
+
+        Layer name now has "Tiled" prepended if it is a TiledLayer. This is true on Mac where
+        the layer is a CATiledLayer and on Win where the layer is actually still a CACFLayer
+        but implements a tiled layer. I also now print the address of the CALayer or CACFLayer
+        instead of the PlatformCALayer everywhere.
+
+        * platform/graphics/ca/GraphicsLayerCA.cpp:
+        (WebCore::GraphicsLayerCA::swapFromOrToTiledLayer):
+
 2011-05-09  Rob Buis  <rbuis@rim.com>
 
         Reviewed by Dirk Schulze.

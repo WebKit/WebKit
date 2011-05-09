@@ -284,7 +284,7 @@ GraphicsLayerCA::~GraphicsLayerCA()
 
 void GraphicsLayerCA::setName(const String& name)
 {
-    String longName = String::format("CALayer(%p) GraphicsLayer(%p) ", m_layer.get(), this) + name;
+    String longName = String::format("CALayer(%p) GraphicsLayer(%p) ", m_layer->platformLayer(), this) + name;
     GraphicsLayer::setName(longName);
     noteLayerPropertyChanged(NameChanged);
 }
@@ -2071,7 +2071,7 @@ void GraphicsLayerCA::swapFromOrToTiledLayer(bool useTiledLayer)
     updateOpacityOnLayer();
     
 #ifndef NDEBUG
-    String name = String::format("CALayer(%p) GraphicsLayer(%p) ", m_layer.get(), this) + m_name;
+    String name = String::format("%sCALayer(%p) GraphicsLayer(%p) ", (m_layer->layerType() == PlatformCALayer::LayerTypeWebTiledLayer) ? "Tiled " : "", m_layer->platformLayer(), this) + m_name;
     m_layer->setName(name);
 #endif
 
@@ -2148,7 +2148,7 @@ PassRefPtr<PlatformCALayer> GraphicsLayerCA::findOrMakeClone(CloneID cloneID, Pl
     } else {
         resultLayer = cloneLayer(sourceLayer, cloneLevel);
 #ifndef NDEBUG
-        resultLayer->setName(String::format("Clone %d of layer %p", cloneID[0U], sourceLayer));
+        resultLayer->setName(String::format("Clone %d of layer %p", cloneID[0U], sourceLayer->platformLayer()));
 #endif
         addResult.first->second = resultLayer;
     }
