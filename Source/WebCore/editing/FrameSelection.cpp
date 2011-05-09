@@ -43,6 +43,7 @@
 #include "HTMLFormElement.h"
 #include "HTMLFrameElementBase.h"
 #include "HTMLInputElement.h"
+#include "HTMLSelectElement.h"
 #include "HTMLNames.h"
 #include "HitTestRequest.h"
 #include "HitTestResult.h"
@@ -1452,25 +1453,43 @@ void FrameSelection::selectFrameElementInParentIfFullySelected()
 void FrameSelection::selectAll()
 {
     Document* document = m_frame->document();
-    
-    if (document->focusedNode() && document->focusedNode()->canSelectAll()) {
-        document->focusedNode()->selectAll();
-        return;
+
+    if (document->focusedNode() && document->focusedNode()->hasTagName(selectTag)) {
+        HTMLSelectElement* selectElement = static_cast<HTMLSelectElement*>(document->focusedNode());
+        if (selectElement->canSelectAll()) {
+            selectElement->selectAll();
+            return;
+        }
     }
-    
+
     Node* root = 0;
-    if (isContentEditable())
+    Node* selectStartTarget = 0;
+    if (isContentEditable()) {
         root = highestEditableRoot(m_selection.start());
-    else {
+        if (Node* shadowRoot = shadowTreeRootNode())
+            selectStartTarget = shadowRoot->shadowHost();
+        else
+            selectStartTarget = root;
+    } else {
         root = shadowTreeRootNode();
-        if (!root)
+        if (root)
+            selectStartTarget = root->shadowHost();
+        else {
             root = document->documentElement();
+            selectStartTarget = document->body();
+        }
     }
     if (!root)
         return;
+
+    if (selectStartTarget && !selectStartTarget->dispatchEvent(Event::create(eventNames().selectstartEvent, true, true)))
+        return;
+
     VisibleSelection newSelection(VisibleSelection::selectionFromContentsOfNode(root));
+
     if (shouldChangeSelection(newSelection))
         setSelection(newSelection);
+
     selectFrameElementInParentIfFullySelected();
     notifyRendererOfSelectionChange(true);
 }

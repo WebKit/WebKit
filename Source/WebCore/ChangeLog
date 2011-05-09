@@ -1,3 +1,24 @@
+2011-05-08  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Reviewed by Kent Tamura.
+
+        selectstart event does not fire when selection is made via select all
+        https://bugs.webkit.org/show_bug.cgi?id=60376
+
+        Fire selectstart event when a user selects all contents (i.e. document.execCommand('SelectAll')) in
+        document, editable region, or text control.
+
+        Tests: editing/selection/selectstart-on-selectall.html
+               editing/selection/selectstart-prevent-selectall.html
+
+        * dom/Node.h: Removed canSelectAll and selectAll as they are left over from WMLSelectElement.
+        * editing/FrameSelection.cpp:
+        (WebCore::FrameSelection::selectAll): Dispatch selectstart event on selectStartTarget, which is
+        input element or textarea element when the current selection is inside a shadow DOM, and the root
+        editable element if it's inside a non-shadow editable region, and the body element otherwise.
+        * html/HTMLSelectElement.h: Made canSelectAll and selectAll public since they are no longer
+        declared in Node.
+
 2011-05-08  Luke Macpherson   <macpherson@chromium.org>
 
         Reviewed by Eric Seidel.

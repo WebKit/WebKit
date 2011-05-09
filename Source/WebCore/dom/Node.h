@@ -415,10 +415,6 @@ public:
     // Number of DOM 16-bit units contained in node. Note that rendered text length can be different - e.g. because of
     // css-transform:capitalize breaking up precomposed characters and ligatures.
     virtual int maxCharacterOffset() const;
-    
-    // FIXME: We should try to find a better location for these methods.
-    virtual bool canSelectAll() const { return false; }
-    virtual void selectAll() { }
 
     // Whether or not a selection can be started in this object
     virtual bool canStartSelection() const;

@@ -88,6 +88,9 @@ public:
 
     virtual void updateValidity() { setNeedsValidityCheck(); }
 
+    virtual bool canSelectAll() const;
+    virtual void selectAll();
+
 protected:
     HTMLSelectElement(const QualifiedName&, Document*, HTMLFormElement*);
 
@@ -96,8 +99,6 @@ private:
     
     virtual bool isKeyboardFocusable(KeyboardEvent*) const;
     virtual bool isMouseFocusable() const;
-    virtual bool canSelectAll() const;
-    virtual void selectAll();
 
     virtual void recalcStyle(StyleChange);
 

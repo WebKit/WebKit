@@ -1,3 +1,18 @@
+2011-05-08  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Reviewed by Kent Tamura.
+
+        selectstart event does not fire when selection is made via select all
+        https://bugs.webkit.org/show_bug.cgi?id=60376
+
+        Added tests to ensure selectstart event is fired when a user selects all contents
+        and script can prevent such selection change in selectstart's event handler.
+
+        * fast/events/selectstart-on-selectall-expected.txt: Added.
+        * fast/events/selectstart-on-selectall.html: Added.
+        * fast/events/selectstart-prevent-selectall-expected.txt: Added.
+        * fast/events/selectstart-prevent-selectall.html: Added.
+
 2011-05-08  Abhishek Arya  <inferno@chromium.org>
 
         Unreviewed.
