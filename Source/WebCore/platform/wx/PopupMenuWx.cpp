@@ -26,6 +26,7 @@
 
 #include "Frame.h"
 #include "FrameView.h"
+#include "HostWindow.h"
 #include "PopupMenuClient.h"
 #include "PlatformString.h"
 
@@ -65,11 +66,12 @@ PopupMenuWx::PopupMenuWx(PopupMenuClient* client)
     : m_popupClient(client)
     , m_menu(0)
 {
-    PopupMenuEventHandler m_popupHandler(client);
+    m_popupHandler = new PopupMenuEventHandler(client);
 }
 
 PopupMenuWx::~PopupMenuWx()
 {
+    delete m_popupHandler;
     delete m_menu;
 }
 
@@ -83,8 +85,9 @@ void PopupMenuWx::show(const IntRect& r, FrameView* v, int index)
     // just delete and recreate
     delete m_menu;
     ASSERT(client());
+    ASSERT(v);
 
-    wxWindow* nativeWin = v->platformWidget();
+    wxWindow* nativeWin = v->hostWindow()->platformPageClient();
 
     if (nativeWin) {
         // construct the menu
