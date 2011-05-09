@@ -320,6 +320,7 @@ BEGIN_EVENT_TABLE(wxWebView, wxWindow)
     EVT_CHAR(wxWebView::OnKeyEvents)
     EVT_SET_FOCUS(wxWebView::OnSetFocus)
     EVT_KILL_FOCUS(wxWebView::OnKillFocus)
+    EVT_MOUSE_CAPTURE_LOST(wxWebView::OnMouseCaptureLost)
 END_EVENT_TABLE()
 
 IMPLEMENT_DYNAMIC_CLASS(wxWebView, wxWindow)
@@ -841,6 +842,12 @@ void wxWebView::OnMenuSelectEvents(wxCommandEvent& event)
 
     m_impl->page->contextMenuController()->contextMenuItemSelected(item);
     delete item;
+}
+
+void wxWebView::OnMouseCaptureLost(wxMouseCaptureLostEvent& event)
+{
+    // do nothing - unfortunately, we MUST handle this event due to wxWidgets rules,
+    // otherwise we will assert, even though there is nothing for us to do here.
 }
 
 bool wxWebView::CanCopy()

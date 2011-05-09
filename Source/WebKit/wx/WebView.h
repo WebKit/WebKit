@@ -241,6 +241,7 @@ protected:
     void OnSetFocus(wxFocusEvent& event);
     void OnKillFocus(wxFocusEvent& event);
     void OnTLWActivated(wxActivateEvent& event);
+    void OnMouseCaptureLost(wxMouseCaptureLostEvent&);
     
 private:
     // any class wishing to process wxWindows events must use this macro
