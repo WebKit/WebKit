@@ -3647,6 +3647,7 @@
             'platform/audio/Biquad.h',
             'platform/audio/Cone.cpp',
             'platform/audio/Cone.h',
+            'platform/audio/DenormalDisabler.h',
             'platform/audio/Distance.cpp',
             'platform/audio/Distance.h',
             'platform/audio/EqualPowerPanner.cpp',

@@ -5735,6 +5735,7 @@
 		FBC220DF1237FBEB00BCF788 /* GraphicsContext3DOpenGL.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FBC220DE1237FBEB00BCF788 /* GraphicsContext3DOpenGL.cpp */; };
 		FD06DFA5134A4DEF006F5D7D /* DefaultAudioDestinationNode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FD06DFA3134A4DEF006F5D7D /* DefaultAudioDestinationNode.cpp */; };
 		FD06DFA6134A4DEF006F5D7D /* DefaultAudioDestinationNode.h in Headers */ = {isa = PBXBuildFile; fileRef = FD06DFA4134A4DEF006F5D7D /* DefaultAudioDestinationNode.h */; };
+		FD1660A513787C6D001FFA7B /* DenormalDisabler.h in Headers */ = {isa = PBXBuildFile; fileRef = FD1660A413787C6D001FFA7B /* DenormalDisabler.h */; };
 		FD2DBF1212B048A300ED98C6 /* Accelerate.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FD2DBF0E12B048A300ED98C6 /* Accelerate.framework */; };
 		FD2DBF1312B048A300ED98C6 /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FD2DBF0F12B048A300ED98C6 /* AudioToolbox.framework */; };
 		FD2DBF1412B048A300ED98C6 /* AudioUnit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FD2DBF1012B048A300ED98C6 /* AudioUnit.framework */; };
@@ -12232,6 +12233,7 @@
 		FBC220DE1237FBEB00BCF788 /* GraphicsContext3DOpenGL.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GraphicsContext3DOpenGL.cpp; sourceTree = "<group>"; };
 		FD06DFA3134A4DEF006F5D7D /* DefaultAudioDestinationNode.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DefaultAudioDestinationNode.cpp; sourceTree = "<group>"; };
 		FD06DFA4134A4DEF006F5D7D /* DefaultAudioDestinationNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DefaultAudioDestinationNode.h; sourceTree = "<group>"; };
+		FD1660A413787C6D001FFA7B /* DenormalDisabler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DenormalDisabler.h; path = webaudio/audio/DenormalDisabler.h; sourceTree = SOURCE_ROOT; };
 		FD2DBF0E12B048A300ED98C6 /* Accelerate.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Accelerate.framework; path = /System/Library/Frameworks/Accelerate.framework; sourceTree = "<absolute>"; };
 		FD2DBF0F12B048A300ED98C6 /* AudioToolbox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioToolbox.framework; path = /System/Library/Frameworks/AudioToolbox.framework; sourceTree = "<absolute>"; };
 		FD2DBF1012B048A300ED98C6 /* AudioUnit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioUnit.framework; path = /System/Library/Frameworks/AudioUnit.framework; sourceTree = "<absolute>"; };
@@ -19562,6 +19564,7 @@
 				FD31605912B026F700C1A359 /* Cone.h */,
 				FD31605A12B026F700C1A359 /* Distance.cpp */,
 				FD31605B12B026F700C1A359 /* Distance.h */,
+				FD1660A413787C6D001FFA7B /* DenormalDisabler.h */,
 				FD31605C12B026F700C1A359 /* EqualPowerPanner.cpp */,
 				FD31605D12B026F700C1A359 /* EqualPowerPanner.h */,
 				FD31605E12B026F700C1A359 /* FFTConvolver.cpp */,
@@ -22741,6 +22744,7 @@
 				977E2E0F12F0FC9C00C13379 /* XSSFilter.h in Headers */,
 				37AFFDF71370A0B800E895C0 /* SharedBufferCRLFLineReader.h in Headers */,
 				379E371713736A6600B9E919 /* QuotedPrintable.h in Headers */,
+				FD1660A513787C6D001FFA7B /* DenormalDisabler.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

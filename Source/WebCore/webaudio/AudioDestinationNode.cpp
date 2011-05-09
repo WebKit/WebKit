@@ -32,6 +32,7 @@
 #include "AudioContext.h"
 #include "AudioNodeInput.h"
 #include "AudioNodeOutput.h"
+#include "DenormalDisabler.h"
 
 namespace WebCore {
     
@@ -52,6 +53,11 @@ AudioDestinationNode::~AudioDestinationNode()
 // The audio hardware calls us back here to gets its input stream.
 void AudioDestinationNode::provideInput(AudioBus* destinationBus, size_t numberOfFrames)
 {
+    // We don't want denormals slowing down any of the audio processing
+    // since they can very seriously hurt performance.
+    // This will take care of all AudioNodes because they all process within this scope.
+    DenormalDisabler denormalDisabler;
+    
     context()->setAudioThread(currentThread());
     
     if (!context()->isRunnable()) {
