@@ -1,3 +1,26 @@
+2011-05-09  Abhishek Arya  <inferno@chromium.org>
+
+        Unreviewed.
+
+        Rebaselines for r86065.
+
+        * platform/chromium-linux/platform/gtk: Added.
+        * platform/chromium-linux/platform/gtk/fonts: Added.
+        * platform/chromium-linux/platform/gtk/fonts/fontconfig-synthetic-bold-expected.png: Added.
+        * platform/chromium-mac-leopard/platform: Added.
+        * platform/chromium-mac-leopard/platform/gtk: Added.
+        * platform/chromium-mac-leopard/platform/gtk/fonts: Added.
+        * platform/chromium-mac-leopard/platform/gtk/fonts/fontconfig-synthetic-bold-expected.png: Added.
+        * platform/chromium-mac/platform/gtk: Added.
+        * platform/chromium-mac/platform/gtk/fonts: Added.
+        * platform/chromium-mac/platform/gtk/fonts/fontconfig-synthetic-bold-expected.png: Added.
+        * platform/chromium-mac/platform/gtk/fonts/fontconfig-synthetic-bold-expected.txt: Added.
+        * platform/chromium-win/platform/gtk: Added.
+        * platform/chromium-win/platform/gtk/fonts: Added.
+        * platform/chromium-win/platform/gtk/fonts/fontconfig-synthetic-bold-expected.png: Added.
+        * platform/chromium-win/platform/gtk/fonts/fontconfig-synthetic-bold-expected.txt: Added.
+        * platform/chromium/test_expectations.txt:
+
 2011-05-09  Chang Shu  <cshu@webkit.org>
 
         Unreviewed.
