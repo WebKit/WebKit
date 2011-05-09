@@ -1,3 +1,17 @@
+2011-05-09  Erik Arvidsson  <arv@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        radiogroup: onchange not detected when triggered by keyboard
+        https://bugs.webkit.org/show_bug.cgi?id=32013
+
+        Test: fast/forms/radio-group-keyboard-change-event.html
+
+        * html/RadioInputType.cpp:
+        (WebCore::RadioInputType::handleKeydownEvent): Ensure that we do not check the radio input before we simulate the click
+            event. The simulated click event will check it for us but more importantly it will fire the "change" event as
+            expected.
+
 2011-05-09  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Daniel Bates.

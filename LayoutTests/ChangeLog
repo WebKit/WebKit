@@ -1,3 +1,13 @@
+2011-05-09  Erik Arvidsson  <arv@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        radiogroup: onchange not detected when triggered by keyboard
+        https://bugs.webkit.org/show_bug.cgi?id=32013
+
+        * fast/forms/radio-group-keyboard-change-event-expected.txt: Added.
+        * fast/forms/radio-group-keyboard-change-event.html: Added.
+
 2011-05-09  Robert Hogan  <robert@webkit.org>
 
         Reviewed by Adam Roben.
