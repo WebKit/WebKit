@@ -1,3 +1,10 @@
+2011-05-09  Alejandro G. Castro  <alex@igalia.com>
+
+        Unreviewed, skip 2 more flaky svg tests failing by one pixel in
+        32-bits Debug, see bug 39022.
+
+        * platform/gtk/Skipped:
+
 2011-05-09  Andreas Kling  <andreas.kling@nokia.com>
 
         Unreviewed. Re-skip two failing inspector tests on Qt.
