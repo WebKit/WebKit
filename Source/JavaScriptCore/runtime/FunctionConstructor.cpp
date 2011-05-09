@@ -74,6 +74,13 @@ CallType FunctionConstructor::getCallData(CallData& callData)
 // ECMA 15.3.2 The Function Constructor
 JSObject* constructFunction(ExecState* exec, JSGlobalObject* globalObject, const ArgList& args, const Identifier& functionName, const UString& sourceURL, int lineNumber)
 {
+    if (!globalObject->isEvalEnabled())
+        return throwError(exec, createEvalError(exec, "Function constructor is disabled"));
+    return constructFunctionSkippingEvalEnabledCheck(exec, globalObject, args, functionName, sourceURL, lineNumber);
+}
+
+JSObject* constructFunctionSkippingEvalEnabledCheck(ExecState* exec, JSGlobalObject* globalObject, const ArgList& args, const Identifier& functionName, const UString& sourceURL, int lineNumber)
+{
     // Functions need to have a space following the opening { due to for web compatibility
     // see https://bugs.webkit.org/show_bug.cgi?id=24350
     // We also need \n before the closing } to handle // comments at the end of the last line

@@ -1,3 +1,18 @@
+2011-05-09  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        CSP should block Function constructor
+        https://bugs.webkit.org/show_bug.cgi?id=60240
+
+        Test that the function constructor is properly blocked.
+
+        * http/tests/security/contentSecurityPolicy/function-constructor-allowed-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/function-constructor-allowed.html: Added.
+        * http/tests/security/contentSecurityPolicy/function-constructor-blocked-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/function-constructor-blocked.html: Added.
+        * platform/chromium/test_expectations.txt:
+
 2011-05-09  Robert Hogan  <robert@webkit.org>
 
         Unreviewed, update test expectations.

@@ -1,3 +1,20 @@
+2011-05-09  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        CSP should block Function constructor
+        https://bugs.webkit.org/show_bug.cgi?id=60240
+
+        Tests: http/tests/security/contentSecurityPolicy/function-constructor-allowed.html
+               http/tests/security/contentSecurityPolicy/function-constructor-blocked.html
+
+        * bindings/js/JSLazyEventListener.cpp:
+        (WebCore::JSLazyEventListener::initializeJSFunction):
+            - Update call site to the new entrypoint.
+        * bindings/v8/V8LazyEventListener.cpp:
+        (WebCore::V8LazyEventListener::prepareListenerObject):
+            - Add some comments about the rediculousness of this implementation.
+
 2011-05-09  Chris Rogers  <crogers@google.com>
 
         Reviewed by Kenneth Russell.

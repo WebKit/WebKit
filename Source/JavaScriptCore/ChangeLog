@@ -1,3 +1,23 @@
+2011-05-09  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        CSP should block Function constructor
+        https://bugs.webkit.org/show_bug.cgi?id=60240
+
+        When eval is disabled, we need to block the use of the function
+        constructor.  However, the WebCore JSC bindings call the function
+        constructor directly to create inline event listeners.  To support that
+        use, this patch adds an entrypoint that bypasses the check for whether
+        eval is enabled.
+
+        * JavaScriptCore.exp:
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.def:
+        * runtime/FunctionConstructor.cpp:
+        (JSC::constructFunction):
+        (JSC::constructFunctionSkippingEvalEnabledCheck):
+        * runtime/FunctionConstructor.h:
+
 2011-05-09  Adam Roben  <aroben@apple.com>
 
         Automatically touch WebKit.idl whenever any other WebKit1 IDL file changes

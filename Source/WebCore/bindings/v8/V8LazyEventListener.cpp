@@ -100,7 +100,8 @@ void V8LazyEventListener::prepareListenerObject(ScriptExecutionContext* context)
 
     // FIXME: cache the wrapper function.
 
-    // Nodes other than the document object, when executing inline event handlers push document, form, and the target node on the scope chain.
+    // Nodes other than the document object, when executing inline event
+    // handlers push document, form, and the target node on the scope chain.
     // We do this by using 'with' statement.
     // See chrome/fast/forms/form-action.html
     //     chrome/fast/forms/selected-index-value.html
@@ -108,6 +109,9 @@ void V8LazyEventListener::prepareListenerObject(ScriptExecutionContext* context)
     //
     // Don't use new lines so that lines in the modified handler
     // have the same numbers as in the original code.
+    // FIXME: What about m_eventParameterName from JSLazyEventListener?
+    // FIXME: This approach is a giant hack! What if m_code escapes to run
+    //        arbitrary script?
     String code = "(function (evt) {" \
             "with (this.ownerDocument ? this.ownerDocument : {}) {" \
             "with (this.form ? this.form : {}) {" \

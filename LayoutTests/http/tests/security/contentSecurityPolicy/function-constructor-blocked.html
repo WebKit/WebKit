@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="X-WebKit-CSP" content="script-src 'unsafe-inline'">
+<script>
+if (window.layoutTestController)
+    layoutTestController.dumpAsText();
+</script>
+</head>
+<body>
+<script>
+(new Function("alert('FAIL')"))();
+</script>
+</body>
+</html>

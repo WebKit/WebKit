@@ -39,6 +39,8 @@ namespace JSC {
     JSObject* constructFunction(ExecState*, JSGlobalObject*, const ArgList&, const Identifier& functionName, const UString& sourceURL, int lineNumber);
     JSObject* constructFunction(ExecState*, JSGlobalObject*, const ArgList&);
 
+    JSObject* constructFunctionSkippingEvalEnabledCheck(ExecState*, JSGlobalObject*, const ArgList&, const Identifier&, const UString&, int lineNumber);
+
 } // namespace JSC
 
 #endif // FunctionConstructor_h
