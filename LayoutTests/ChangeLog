@@ -1,3 +1,9 @@
+2011-05-09  Martin Robinson  <mrobinson@igalia.com>
+
+        Add a pixel result for platform/gtk/fonts/fontconfig-synthetic-bold.html.
+
+        * platform/gtk/fonts/fontconfig-synthetic-bold-expected.png: Added.
+
 2011-05-08  Abhishek Arya  <inferno@chromium.org>
 
         Reviewed by Dave Hyatt.
