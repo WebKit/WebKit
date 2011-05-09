@@ -1,3 +1,20 @@
+2011-05-09  Leandro Gracia Gil  <leandrogracia@chromium.org>
+
+        Reviewed by Tony Gentilcore.
+
+        Media Stream API: add exception raising to the getUserMedia method.
+        https://bugs.webkit.org/show_bug.cgi?id=60387
+
+        Update the expected results for the argument types after the lastest updates
+        in the getUserMedia specification. The test has been disabled temporarily
+        and will be re-enabled by 60177 since some exceptions are risen after parsing
+        the provided options.
+
+        * fast/dom/MediaStream/argument-types-expected.txt:
+        * fast/dom/MediaStream/script-tests/argument-types.js:
+        (ObjectThrowingException.prototype.toString):
+        * platform/chromium/test_expectations.txt:
+
 2011-05-09  Andreas Kling  <andreas.kling@nokia.com>
 
         Reviewed by Benjamin Poulain.

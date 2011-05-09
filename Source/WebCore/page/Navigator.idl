@@ -56,7 +56,8 @@ module window {
 #if defined(ENABLE_MEDIA_STREAM) && ENABLE_MEDIA_STREAM
         [Custom, EnabledAtRuntime] void webkitGetUserMedia(in DOMString options,
                                                            in [Callback=FunctionOnly] NavigatorUserMediaSuccessCallback successCallback,
-                                                           in [Callback=FunctionOnly, Optional] NavigatorUserMediaErrorCallback errorCallback);
+                                                           in [Callback=FunctionOnly, Optional] NavigatorUserMediaErrorCallback errorCallback)
+            raises(DOMException);
 #endif
     };
 

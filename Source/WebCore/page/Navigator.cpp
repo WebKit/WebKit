@@ -245,9 +245,7 @@ void Navigator::registerProtocolHandler(const String& scheme, const String& url,
 #endif
 
 #if ENABLE(MEDIA_STREAM)
-void Navigator::webkitGetUserMedia(const String& options,
-                                   PassRefPtr<NavigatorUserMediaSuccessCallback> successCallback,
-                                   PassRefPtr<NavigatorUserMediaErrorCallback> errorCallback)
+void Navigator::webkitGetUserMedia(const String&, PassRefPtr<NavigatorUserMediaSuccessCallback>, PassRefPtr<NavigatorUserMediaErrorCallback>, ExceptionCode&)
 {
     // FIXME: implement a call to the media stream context when available.
 }

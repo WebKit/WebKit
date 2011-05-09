@@ -24,6 +24,7 @@
 #include "JSNavigator.h"
 
 #include "CallbackFunction.h"
+#include "ExceptionCode.h"
 #include "JSNavigatorUserMediaErrorCallback.h"
 #include "JSNavigatorUserMediaSuccessCallback.h"
 #include "Navigator.h"
@@ -49,7 +50,12 @@ JSValue JSNavigator::webkitGetUserMedia(ExecState* exec)
     if (exec->hadException())
         return jsUndefined();
 
-    m_impl->webkitGetUserMedia(options, successCallback.release(), errorCallback.release());
+    ExceptionCode ec;
+    m_impl->webkitGetUserMedia(options, successCallback.release(), errorCallback.release(), ec);
+
+    if (ec)
+        setDOMException(exec, ec);
+
     return jsUndefined();
 }
 #endif // ENABLE(MEDIA_STREAM)

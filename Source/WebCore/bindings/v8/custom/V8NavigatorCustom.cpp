@@ -27,6 +27,7 @@
 
 #if ENABLE(MEDIA_STREAM)
 
+#include "ExceptionCode.h"
 #include "Navigator.h"
 #include "V8Binding.h"
 #include "V8NavigatorUserMediaErrorCallback.h"
@@ -42,12 +43,11 @@ v8::Handle<v8::Value> V8Navigator::webkitGetUserMediaCallback(const v8::Argument
     INC_STATS("DOM.Navigator.webkitGetUserMedia()");
 
     v8::TryCatch exceptionCatcher;
-    String options = toWebCoreString(args[0]);
+    v8::Handle<v8::String> options = args[0]->ToString();
     if (exceptionCatcher.HasCaught())
         return throwError(exceptionCatcher.Exception());
 
     bool succeeded = false;
-
     RefPtr<NavigatorUserMediaSuccessCallback> successCallback = createFunctionOnlyCallback<V8NavigatorUserMediaSuccessCallback>(args[1], succeeded);
     if (!succeeded)
         return v8::Undefined();
@@ -57,9 +57,10 @@ v8::Handle<v8::Value> V8Navigator::webkitGetUserMediaCallback(const v8::Argument
     if (!succeeded)
         return v8::Undefined();
 
+    ExceptionCode ec = 0;
     Navigator* navigator = V8Navigator::toNative(args.Holder());
-    navigator->webkitGetUserMedia(options, successCallback.release(), errorCallback.release());
-    return v8::Undefined();
+    navigator->webkitGetUserMedia(toWebCoreString(options), successCallback.release(), errorCallback.release(), ec);
+    return throwError(ec);
 }
 
 } // namespace WebCore

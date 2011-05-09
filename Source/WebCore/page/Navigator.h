@@ -68,8 +68,7 @@ public:
 #endif
 
 #if ENABLE(MEDIA_STREAM)
-    virtual void webkitGetUserMedia(const String& options, PassRefPtr<NavigatorUserMediaSuccessCallback>,
-                                    PassRefPtr<NavigatorUserMediaErrorCallback> = 0);
+    virtual void webkitGetUserMedia(const String& options, PassRefPtr<NavigatorUserMediaSuccessCallback>, PassRefPtr<NavigatorUserMediaErrorCallback>, ExceptionCode&);
 #endif
 
 private:
