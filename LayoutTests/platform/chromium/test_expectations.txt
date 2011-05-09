@@ -3717,13 +3717,7 @@ BUGWK60103 : fast/overflow/border-radius-clipping.html = IMAGE
 BUGWK60103 WIN LINUX : fast/repaint/border-radius-repaint.html = IMAGE
 BUGWK60103 WIN LINUX : fast/replaced/border-radius-clip.html = IMAGE
 
-// These are flaky and results are so unstable to give precise expectations.
-BUGWK60259 GPU : media/controls-after-reload.html = PASS FAIL
-BUGWK60259 GPU : media/controls-strict.html = PASS FAIL
-BUGWK60259 GPU : media/controls-styling.html = PASS FAIL
-BUGWK60259 GPU : media/video-zoom-controls.html = PASS FAIL
-BUGWK60259 GPU : media/controls-without-preload.html = PASS FAIL
-
+BUGCR82004 GPU : media/video-zoom-controls.html = PASS FAIL
 BUGCR59704 CPU : media/video-zoom-controls.html = IMAGE+TEXT
 
 // probably just needs a new baseline

@@ -1,3 +1,13 @@
+2011-05-09  Kenji Imasaki  <imasaki@chromium.org>
+
+        Reviewed by David Levin.
+
+        [Chromium] Remove unflaky media-related tests from test expectation.
+        https://bugs.webkit.org/show_bug.cgi?id=60500
+
+        Chromium bug is http://crbug.com/81660.
+        * platform/chromium/test_expectations.txt:
+
 2011-05-09  Erik Arvidsson  <arv@chromium.org>
 
         Reviewed by Darin Adler.
