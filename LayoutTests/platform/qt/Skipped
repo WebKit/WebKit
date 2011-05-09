@@ -2646,8 +2646,12 @@ fast/transforms/scrollIntoView-transformed.html
 
 # Stuff Kling broke while happy-hacking DRT (r84010, r84012)
 fast/css/font-face-repeated-url.html
-http/tests/inspector/network/download.html
-http/tests/inspector/network/x-frame-options-deny.html
+
+# We cannot implement FrameLoaderClient::canHandleRequest() since QNAM doesn't know
+# whether or not a given scheme is supported prior to createRequest().
+# This means we will never reach FrameLoaderClient::dispatchUnableToImplementPolicy()
+# due to spaceballs:// being an unhandled scheme, and thus the expected warning
+# will not be in the output.
 http/tests/misc/redirect-to-external-url.html
 
 # Quota API is not yet supported.

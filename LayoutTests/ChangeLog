@@ -1,3 +1,14 @@
+2011-05-09  Andreas Kling  <andreas.kling@nokia.com>
+
+        Reviewed by Benjamin Poulain.
+
+        [Qt] Minor skiplist cleanup.
+
+        Unskip two inspector tests that aren't failing.
+        Added explanation for why http/tests/misc/redirect-to-external-url.html is skipped.
+
+        * platform/qt/Skipped:
+
 2011-05-09  Mahesh Kulkarni  <mahesh.kulkarni@nokia.com>
 
         Reviewed by Andreas Kling.
