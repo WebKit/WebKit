@@ -1,3 +1,15 @@
+2011-05-09  Igor Oliveira  <igor.oliveira@openbossa.org>
+
+        Reviewed by Andreas Kling.
+
+        [Qt] DRT eventSender.addTouchPoint method is not setting the start position
+        https://bugs.webkit.org/show_bug.cgi?id=60487
+
+        When adding a new touch point, the start position of this point needs to be set.
+
+        * DumpRenderTree/qt/EventSenderQt.cpp:
+        (EventSender::addTouchPoint):
+
 2011-05-09  Robert Hogan  <robert@webkit.org>
 
         Reviewed by Adam Roben.
