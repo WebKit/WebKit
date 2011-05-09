@@ -1,3 +1,17 @@
+2011-05-09  Alejandro G. Castro  <alex@igalia.com>
+
+        Reviewed by Martin Robinson.
+
+        [GTK] WidgetGtk setFocus can not access directly the widget in WK2
+        https://bugs.webkit.org/show_bug.cgi?id=60016
+
+        Added code to check the situation where we do not have direct
+        access to the widget. We use the page to grab the focus which
+        would send a request to the UIProcess in WK2.
+
+        * platform/gtk/WidgetGtk.cpp:
+        (WebCore::Widget::setFocus):
+
 2011-05-09  Leandro Gracia Gil  <leandrogracia@chromium.org>
 
         Reviewed by Tony Gentilcore.

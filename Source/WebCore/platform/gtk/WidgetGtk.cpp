@@ -28,6 +28,7 @@
 #include "config.h"
 #include "Widget.h"
 
+#include "Chrome.h"
 #include "Cursor.h"
 #include "FrameView.h"
 #include "GraphicsContext.h"
@@ -54,8 +55,18 @@ Widget::~Widget()
 
 void Widget::setFocus(bool focused)
 {
-    if (focused)
-        gtk_widget_grab_focus(platformWidget() ? platformWidget() : GTK_WIDGET(root()->hostWindow()->platformPageClient()));
+    if (!focused)
+        return;
+
+    GtkWidget* widget = platformWidget() ? platformWidget() : root()->hostWindow()->platformPageClient();
+    if (widget) {
+        gtk_widget_grab_focus(widget);
+        return;
+    }
+
+    // We are running WK2.
+    if (Frame* frame = Frame::frameForWidget(this))
+        frame->page()->chrome()->focus();
 }
 
 void Widget::setCursor(const Cursor& cursor)
