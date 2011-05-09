@@ -1,3 +1,9 @@
+2011-05-09  Jessie Berlin  <jberlin@apple.com>
+
+        Take 2 on updating the WKSI libraries.
+
+        * win/lib/WebKitSystemInterface.lib:
+
 2011-05-08  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r86037.
