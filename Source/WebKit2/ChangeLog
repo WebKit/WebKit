@@ -1,3 +1,14 @@
+2011-05-09  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Darin Adler.
+
+        <rdar://problem/9005982> REGRESSION (r85780): Flash of white when a WKView with composited content moves on-screen
+        https://bugs.webkit.org/show_bug.cgi?id=60488
+
+        * WebProcess/WebPage/DrawingAreaImpl.cpp:
+        (WebKit::DrawingAreaImpl::sendDidUpdateBackingStoreState): Update m_compositingAccordingToProxyMessages,
+        since the DidUpdateBackingStoreState message also changes the compositing state in the proxy.
+
 2011-05-09  Benjamin Poulain  <benjamin.poulain@nokia.com>
 
         Reviewed by Andreas Kling.

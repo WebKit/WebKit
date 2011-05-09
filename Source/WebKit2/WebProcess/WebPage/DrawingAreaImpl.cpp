@@ -337,6 +337,7 @@ void DrawingAreaImpl::sendDidUpdateBackingStoreState()
     }
 
     m_webPage->send(Messages::DrawingAreaProxy::DidUpdateBackingStoreState(m_backingStoreStateID, updateInfo, layerTreeContext));
+    m_compositingAccordingToProxyMessages = !layerTreeContext.isEmpty();
 #endif
 }
 
