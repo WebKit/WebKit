@@ -45,6 +45,29 @@
 
 namespace WebCore {
 
+IntRect getAdjustedRect(wxDC* dc, const IntRect& r)
+{
+    IntRect rect = r;
+// On Mac, wxGraphicsContext and wxDC share the same native implementation,
+// and so transformations are available.
+// On Win and Linux, however, this is not true and transforms are lost,
+// so we need to restore them here.
+#if !wxCHECK_VERSION(2, 9, 2) && USE(WXGC) && !defined(__WXMAC__)
+    LOG_ERROR("Rect is (%d, %d)\n", rect.x(), rect.y());
+    double xtrans = 0;
+    double ytrans = 0;
+    
+    wxGCDC* gcdc = static_cast<wxGCDC*>(dc);
+    wxGraphicsContext* gc = gcdc->GetGraphicsContext();
+    gc->GetTransform().TransformPoint(&xtrans, &ytrans);
+    rect.setX(r.x() + (int)xtrans);
+    rect.setY(r.y() + (int)ytrans);
+    LOG_ERROR("Transform is (%f, %f), (%d, %d)\n", xtrans, ytrans, rect.x(), rect.y());
+#endif
+
+    return rect;
+}
+
 class RenderThemeWx : public RenderTheme {
 private:
     RenderThemeWx() : RenderTheme() { }
@@ -249,6 +272,7 @@ bool RenderThemeWx::supportsFocus(ControlPart part) const
         case PushButtonPart:
         case ButtonPart:
         case TextFieldPart:
+        case MenulistPart:
             return true;
         default: // No for all others...
             return false;
@@ -266,22 +290,7 @@ bool RenderThemeWx::paintButton(RenderObject* o, const PaintInfo& i, const IntRe
     wxDC* dc = static_cast<wxDC*>(i.context->platformContext());
     int flags = 0;
     
-    IntRect rect = r; 
-
-// On Mac, wxGraphicsContext and wxDC share the same native implementation,
-// and so transformations are available.
-// On Win and Linux, however, this is not true and transforms are lost,
-// so we need to restore them here.
-#if USE(WXGC) && !defined(__WXMAC__)
-    double xtrans = 0;
-    double ytrans = 0;
-    
-    wxGCDC* gcdc = static_cast<wxGCDC*>(dc);
-    wxGraphicsContext* gc = gcdc->GetGraphicsContext();
-    gc->GetTransform().TransformPoint(&xtrans, &ytrans);
-    rect.setX(r.x() + (int)xtrans);
-    rect.setY(r.y() + (int)ytrans);
-#endif
+    IntRect rect = getAdjustedRect(dc, r);
 
     if (!isEnabled(o))
         flags |= wxCONTROL_DISABLED;
@@ -316,15 +325,23 @@ bool RenderThemeWx::paintButton(RenderObject* o, const PaintInfo& i, const IntRe
 
 void RenderThemeWx::adjustTextFieldStyle(CSSStyleSelector*, RenderStyle* style, Element*) const
 {
-    
+
 }
 
 bool RenderThemeWx::paintTextField(RenderObject* o, const PaintInfo& i, const IntRect& r)
 {
     wxWindow* window = nativeWindowForRenderObject(o);
     wxDC* dc = static_cast<wxDC*>(i.context->platformContext());
+    int flags = 0;
+    
+    IntRect rect = getAdjustedRect(dc, r);
+
+    ControlPart part = o->style()->appearance();
+    if (supportsFocus(part) && isFocused(o))
+        flags |= wxCONTROL_FOCUSED;
+
 #if wxCHECK_VERSION(2,9,0)
-    wxRendererNative::Get().DrawTextCtrl(window, *dc, r, 0);
+    wxRendererNative::Get().DrawTextCtrl(window, *dc, rect, flags);
 #else
     wxRenderer_DrawTextCtrl(window, *dc, r, 0);
 #endif
@@ -339,13 +356,22 @@ int RenderThemeWx::minimumMenuListSize(RenderStyle*) const
 
 void RenderThemeWx::adjustMenuListStyle(CSSStyleSelector*, RenderStyle* style, Element*) const
 {
+     style->resetBorder();
+
+    // Height is locked to auto.
+    style->setHeight(Length(Auto));
+    
+    style->setPaddingTop(Length(2, Fixed));
+    style->setPaddingBottom(Length(2, Fixed));
 }
     
 bool RenderThemeWx::paintMenuList(RenderObject* o, const PaintInfo& i, const IntRect& r)
 {
     wxWindow* window = nativeWindowForRenderObject(o);
     wxDC* dc = static_cast<wxDC*>(i.context->platformContext());
-    
+ 
+    IntRect rect = getAdjustedRect(dc, r);
+
     int flags = 0;      
     if (!isEnabled(o))
         flags |= wxCONTROL_DISABLED;
@@ -357,9 +383,9 @@ bool RenderThemeWx::paintMenuList(RenderObject* o, const PaintInfo& i, const Int
         flags |= wxCONTROL_PRESSED;
 
 #if wxCHECK_VERSION(2,9,0)
-    wxRendererNative::Get().DrawChoice(window, *dc, r, flags);
+    wxRendererNative::Get().DrawChoice(window, *dc, rect, flags);
 #else
-    wxRenderer_DrawChoice(window, *dc, r, flags);
+    wxRenderer_DrawChoice(window, *dc, rect, flags);
 #endif
 
     return false;
@@ -374,7 +400,9 @@ bool RenderThemeWx::paintMenuListButton(RenderObject* o, const PaintInfo& i, con
 {
     wxWindow* window = nativeWindowForRenderObject(o);
     wxDC* dc = static_cast<wxDC*>(i.context->platformContext());
-    
+
+    IntRect rect = getAdjustedRect(dc, r);
+
     int flags = 0;      
     if (!isEnabled(o))
         flags |= wxCONTROL_DISABLED;
@@ -385,7 +413,7 @@ bool RenderThemeWx::paintMenuListButton(RenderObject* o, const PaintInfo& i, con
     if (isPressed(o))
         flags |= wxCONTROL_PRESSED;
 
-    wxRendererNative::Get().DrawComboBoxDropButton(window, *dc, r, flags);
+    wxRendererNative::Get().DrawComboBoxDropButton(window, *dc, rect, flags);
             
     return false;
 }
