@@ -1,3 +1,10 @@
+2011-05-09  Darin Adler  <darin@apple.com>
+
+        Cleared some stray executable bits on source files.
+
+        * bindings/js/WorkerScriptDebugServer.cpp: Removed property svn:executable.
+        * bindings/js/WorkerScriptDebugServer.h: Removed property svn:executable.
+
 2011-05-09  Erik Arvidsson  <arv@chromium.org>
 
         Reviewed by Darin Adler.
