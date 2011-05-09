@@ -2235,7 +2235,6 @@ tables/mozilla/bugs/bug92647-2.html
 tables/mozilla/bugs/bug196870.html
 tables/mozilla/other/slashlogo.html
 tables/mozilla_expected_failures/bugs/bug23847.html
-transforms/2d/transform-2d.html
 transforms/2d/transform-fixed-container.html
 transitions/font-family-during-transition.html
 transitions/svg-text-shadow-transition.html
