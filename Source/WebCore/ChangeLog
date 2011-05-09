@@ -1,3 +1,15 @@
+2011-05-09  Alexis Menard  <alexis.menard@openbossa.org>
+
+        Reviewed by Andreas Kling.
+
+        [Qt] Fix the build on Embedded Linux.
+        https://bugs.webkit.org/show_bug.cgi?id=60347        
+
+        qpa is the name for lighthouse but the old name for Qt for Embedded Linux should
+        still be used in order to build properly.
+
+        * WebCore.pri:
+
 2011-05-09  Andreas Kling  <kling@webkit.org>
 
         Reviewed by Kenneth Rohde Christiansen.

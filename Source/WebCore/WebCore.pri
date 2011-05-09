@@ -10,7 +10,7 @@ QT *= network
 
 SOURCE_DIR = $$replace(PWD, /WebCore, "")
 
-contains(QT_CONFIG, qpa):CONFIG += embedded
+contains(QT_CONFIG, qpa)|contains(QT_CONFIG, embedded): CONFIG += embedded
 
 # Use a config-specific target to prevent parallel builds file clashes on Mac
 mac: CONFIG(debug, debug|release): WEBCORE_TARGET = webcored

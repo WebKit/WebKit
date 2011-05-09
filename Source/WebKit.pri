@@ -1,6 +1,6 @@
 # Include file to make it easy to include WebKit into Qt projects
 
-contains(QT_CONFIG, qpa):CONFIG += embedded
+contains(QT_CONFIG, qpa)|contains(QT_CONFIG, embedded): CONFIG += embedded
 
 # Detect that we are building as a standalone package by the presence of
 # either the generated files directory or as part of the Qt package through
