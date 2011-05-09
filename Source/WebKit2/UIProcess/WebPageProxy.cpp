@@ -683,9 +683,6 @@ void WebPageProxy::executeEditCommand(const String& commandName)
 #if PLATFORM(WIN)
 IntRect WebPageProxy::firstRectForCharacterInSelectedRange(int characterPosition)
 {
-    if (!isValid())
-        return IntRect();
-
     IntRect resultRect;
     process()->sendSync(Messages::WebPage::FirstRectForCharacterInSelectedRange(characterPosition), Messages::WebPage::FirstRectForCharacterInSelectedRange::Reply(resultRect), m_pageID);
     return resultRect;
@@ -693,9 +690,6 @@ IntRect WebPageProxy::firstRectForCharacterInSelectedRange(int characterPosition
 
 String WebPageProxy::getSelectedText()
 {
-    if (!isValid())
-        return String();
-
     String text;
     process()->sendSync(Messages::WebPage::GetSelectedText(), Messages::WebPage::GetSelectedText::Reply(text), m_pageID);
     return text;
@@ -703,9 +697,6 @@ String WebPageProxy::getSelectedText()
 
 bool WebPageProxy::gestureWillBegin(const IntPoint& point)
 {
-    if (!isValid())
-        return false;
-
     bool canBeginPanning = false;
     process()->sendSync(Messages::WebPage::GestureWillBegin(point), Messages::WebPage::GestureWillBegin::Reply(canBeginPanning), m_pageID);
     return canBeginPanning;

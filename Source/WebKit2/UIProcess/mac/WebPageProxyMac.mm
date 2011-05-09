@@ -173,28 +173,30 @@ bool WebPageProxy::insertText(const String& text, uint64_t replacementRangeStart
     if (!isValid())
         return true;
 
-    bool handled;
+    bool handled = true;
     process()->sendSync(Messages::WebPage::InsertText(text, replacementRangeStart, replacementRangeEnd), Messages::WebPage::InsertText::Reply(handled, m_editorState), m_pageID);
     return handled;
 }
 
 void WebPageProxy::getMarkedRange(uint64_t& location, uint64_t& length)
 {
-    if (!isValid()) {
-        location = NSNotFound;
-        length = 0;
+    location = NSNotFound;
+    length = 0;
+
+    if (!isValid())
         return;
-    }
+
     process()->sendSync(Messages::WebPage::GetMarkedRange(), Messages::WebPage::GetMarkedRange::Reply(location, length), m_pageID);
 }
 
 void WebPageProxy::getSelectedRange(uint64_t& location, uint64_t& length)
 {
-    if (!isValid()) {
-        location = NSNotFound;
-        length = 0;
+    location = NSNotFound;
+    length = 0;
+
+    if (!isValid())
         return;
-    }
+
     process()->sendSync(Messages::WebPage::GetSelectedRange(), Messages::WebPage::GetSelectedRange::Reply(location, length), m_pageID);
 }
 
@@ -210,7 +212,7 @@ uint64_t WebPageProxy::characterIndexForPoint(const IntPoint point)
     if (!isValid())
         return 0;
 
-    uint64_t result;
+    uint64_t result = 0;
     process()->sendSync(Messages::WebPage::CharacterIndexForPoint(point), Messages::WebPage::CharacterIndexForPoint::Reply(result), m_pageID);
     return result;
 }
@@ -230,7 +232,7 @@ bool WebPageProxy::executeKeypressCommands(const Vector<WebCore::KeypressCommand
     if (!isValid())
         return false;
 
-    bool result;
+    bool result = false;
     process()->sendSync(Messages::WebPage::ExecuteKeypressCommands(commands), Messages::WebPage::ExecuteKeypressCommands::Reply(result, m_editorState), m_pageID);
     return result;
 }
@@ -240,7 +242,7 @@ bool WebPageProxy::writeSelectionToPasteboard(const String& pasteboardName, cons
     if (!isValid())
         return false;
 
-    bool result;
+    bool result = false;
     const double messageTimeout = 20;
     process()->sendSync(Messages::WebPage::WriteSelectionToPasteboard(pasteboardName, pasteboardTypes), Messages::WebPage::WriteSelectionToPasteboard::Reply(result), m_pageID, messageTimeout);
     return result;
@@ -251,7 +253,7 @@ bool WebPageProxy::readSelectionFromPasteboard(const String& pasteboardName)
     if (!isValid())
         return false;
 
-    bool result;
+    bool result = false;
     const double messageTimeout = 20;
     process()->sendSync(Messages::WebPage::ReadSelectionFromPasteboard(pasteboardName), Messages::WebPage::ReadSelectionFromPasteboard::Reply(result), m_pageID, messageTimeout);
     return result;

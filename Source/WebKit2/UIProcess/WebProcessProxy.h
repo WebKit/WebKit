@@ -187,6 +187,9 @@ bool WebProcessProxy::send(const T& message, uint64_t destinationID, unsigned me
 template<typename U> 
 bool WebProcessProxy::sendSync(const U& message, const typename U::Reply& reply, uint64_t destinationID, double timeout)
 {
+    if (!m_connection)
+        return false;
+
     return m_connection->sendSync(message, reply, destinationID, timeout);
 }
     

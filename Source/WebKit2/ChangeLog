@@ -1,5 +1,32 @@
 2011-05-09  Anders Carlsson  <andersca@apple.com>
 
+        Reviewed by Dan Bernstein.
+
+        Crash when sending a sync message to a crashed web process
+        https://bugs.webkit.org/show_bug.cgi?id=60514
+        <rdar://problem/9281270>
+
+        Change WebProcessProxy::sendSync to return false if there's no connection.
+
+        Audit all WebProcessProxy::sendSync call sites to initialize reply parameters.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::firstRectForCharacterInSelectedRange):
+        (WebKit::WebPageProxy::getSelectedText):
+        (WebKit::WebPageProxy::gestureWillBegin):
+        * UIProcess/WebProcessProxy.h:
+        (WebKit::WebProcessProxy::sendSync):
+        * UIProcess/mac/WebPageProxyMac.mm:
+        (WebKit::WebPageProxy::insertText):
+        (WebKit::WebPageProxy::getMarkedRange):
+        (WebKit::WebPageProxy::getSelectedRange):
+        (WebKit::WebPageProxy::characterIndexForPoint):
+        (WebKit::WebPageProxy::executeKeypressCommands):
+        (WebKit::WebPageProxy::writeSelectionToPasteboard):
+        (WebKit::WebPageProxy::readSelectionFromPasteboard):
+
+2011-05-09  Anders Carlsson  <andersca@apple.com>
+
         Reviewed by Sam Weinig.
 
         Create a plug-in's MIME types preferences plist if it doesn't exist.
