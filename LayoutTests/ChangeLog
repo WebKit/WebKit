@@ -1,3 +1,9 @@
+2011-05-08  MORITA Hajime  <morrita@google.com>
+
+        Unreviewed marking flaky test (insecure-plugin-in-iframe.html)
+        
+        * platform/chromium/test_expectations.txt:
+
 2011-05-08  Ryosuke Niwa  <rniwa@webkit.org>
 
         Reviewed by Kent Tamura.
