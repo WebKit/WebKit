@@ -1,3 +1,13 @@
+2011-05-08  Abhishek Arya  <inferno@chromium.org>
+
+        Reviewed by Dave Hyatt.
+
+        Add a crash test for r85964.
+        https://bugs.webkit.org/show_bug.cgi?id=59473
+
+        * fast/block/positioning/removing-inside-relpositioned-inline-crash-expected.txt: Added.
+        * fast/block/positioning/removing-inside-relpositioned-inline-crash.html: Added.
+
 2011-05-09  Abhishek Arya  <inferno@chromium.org>
 
         Reviewed by Dave Hyatt.
