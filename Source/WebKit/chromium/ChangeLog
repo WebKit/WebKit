@@ -1,3 +1,74 @@
+2011-05-09  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Tony Gentilcore.
+
+        Make Chromium build with strict PassOwnPtr
+        https://bugs.webkit.org/show_bug.cgi?id=60461
+
+        Fixed many, many PassOwnPtr nits.
+
+        * src/EditorClientImpl.cpp:
+        (WebKit::EditorClientImpl::autofill):
+        * src/IDBDatabaseBackendProxy.cpp:
+        (WebKit::IDBDatabaseBackendProxy::createObjectStore):
+        (WebKit::IDBDatabaseBackendProxy::transaction):
+        * src/IDBObjectStoreBackendProxy.cpp:
+        (WebKit::IDBObjectStoreBackendProxy::createIndex):
+        (WebKit::IDBObjectStoreBackendProxy::index):
+        * src/IDBTransactionBackendProxy.cpp:
+        (WebKit::IDBTransactionBackendProxy::objectStore):
+        * src/PlatformMessagePortChannel.cpp:
+        (WebCore::MessagePortChannel::create):
+        (WebCore::PlatformMessagePortChannel::tryGetMessageFromRemote):
+        * src/SharedWorkerRepository.cpp:
+        (WebCore::SharedWorkerRepository::connect):
+        * src/SocketStreamHandle.cpp:
+        (WebCore::SocketStreamHandleInternal::create):
+        * src/WebDevToolsAgentImpl.cpp:
+        (WebKit::DebuggerTask::DebuggerTask):
+        (WebKit::DebuggerTask::~DebuggerTask):
+        (WebKit::DebuggerTask::run):
+        (WebKit::WebDevToolsAgent::interruptAndDispatch):
+        * src/WebDevToolsFrontendImpl.cpp:
+        (WebKit::WebDevToolsFrontendImpl::WebDevToolsFrontendImpl):
+        * src/WebIDBCallbacksImpl.cpp:
+        (WebKit::WebIDBCallbacksImpl::onSuccess):
+        * src/WebIDBCursorImpl.cpp:
+        (WebKit::WebIDBCursorImpl::update):
+        (WebKit::WebIDBCursorImpl::continueFunction):
+        (WebKit::WebIDBCursorImpl::deleteFunction):
+        * src/WebIDBDatabaseImpl.cpp:
+        (WebKit::WebIDBDatabaseImpl::setVersion):
+        (WebKit::WebIDBDatabaseImpl::open):
+        * src/WebIDBFactoryImpl.cpp:
+        (WebKit::WebIDBFactoryImpl::open):
+        * src/WebIDBIndexImpl.cpp:
+        (WebKit::WebIDBIndexImpl::openObjectCursor):
+        (WebKit::WebIDBIndexImpl::openKeyCursor):
+        (WebKit::WebIDBIndexImpl::getObject):
+        (WebKit::WebIDBIndexImpl::getKey):
+        * src/WebIDBObjectStoreImpl.cpp:
+        (WebKit::WebIDBObjectStoreImpl::get):
+        (WebKit::WebIDBObjectStoreImpl::put):
+        (WebKit::WebIDBObjectStoreImpl::deleteFunction):
+        (WebKit::WebIDBObjectStoreImpl::clear):
+        (WebKit::WebIDBObjectStoreImpl::openCursor):
+        * src/WebIDBTransactionImpl.cpp:
+        (WebKit::WebIDBTransactionImpl::setCallbacks):
+        * src/WebPluginContainerImpl.cpp:
+        (WebKit::WebPluginContainerImpl::loadFrameRequest):
+        * src/WebViewImpl.cpp:
+        (WebKit::WebViewImpl::setDevToolsAgentClient):
+        * src/WebWorkerClientImpl.cpp:
+        (WebKit::WebWorkerClientImpl::postMessageToWorkerObject):
+        * src/WebWorkerImpl.cpp:
+        (WebKit::WebWorkerImpl::postMessageToWorkerContext):
+        * src/WorkerFileWriterCallbacksBridge.cpp:
+        (WebKit::WorkerFileWriterCallbacksBridge::initOnMainThread):
+        (WebKit::WorkerFileWriterCallbacksBridge::didWrite):
+        (WebKit::WorkerFileWriterCallbacksBridge::didFail):
+        (WebKit::WorkerFileWriterCallbacksBridge::didTruncate):
+
 2011-05-09  Shishir Agrawal  <shishir@chromium.org>
 
         Reviewed by Tony Gentilcore.

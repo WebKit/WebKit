@@ -93,7 +93,7 @@ PassOwnPtr<ConvolutionShader> ConvolutionShader::create(GraphicsContext3D* conte
     unsigned program = loadProgram(context, vertexShaderSource, fragmentShaderSource);
     if (!program)
         return nullptr;
-    return new ConvolutionShader(context, program, kernelWidth);
+    return adoptPtr(new ConvolutionShader(context, program, kernelWidth));
 }
 
 void ConvolutionShader::use(const AffineTransform& transform, const AffineTransform& texTransform, const float* kernel, int kernelWidth, float imageIncrement[2])

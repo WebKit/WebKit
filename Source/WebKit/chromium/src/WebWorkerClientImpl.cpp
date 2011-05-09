@@ -211,7 +211,7 @@ void WebWorkerClientImpl::postMessageToWorkerObject(const WebString& message,
 {
     OwnPtr<MessagePortChannelArray> channels2;
     if (channels.size()) {
-        channels2 = new MessagePortChannelArray(channels.size());
+        channels2 = adoptPtr(new MessagePortChannelArray(channels.size()));
         for (size_t i = 0; i < channels.size(); ++i) {
             RefPtr<PlatformMessagePortChannel> platform_channel =
                             PlatformMessagePortChannel::create(channels[i]);

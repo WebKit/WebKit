@@ -55,7 +55,7 @@ PassOwnPtr<TexShader> TexShader::create(GraphicsContext3D* context)
                                    generateFragment(Shader::TwoDimensional, Shader::TextureFill, Shader::NotAntialiased));
     if (!program)
         return nullptr;
-    return new TexShader(context, program);
+    return adoptPtr(new TexShader(context, program));
 }
 
 void TexShader::use(const AffineTransform& transform, const AffineTransform& texTransform, int sampler, float alpha)

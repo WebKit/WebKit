@@ -54,7 +54,7 @@ PassOwnPtr<SolidFillShader> SolidFillShader::create(GraphicsContext3D* context)
                                    generateFragment(Shader::TwoDimensional, Shader::SolidFill, Shader::NotAntialiased));
     if (!program)
         return nullptr;
-    return new SolidFillShader(context, program);
+    return adoptPtr(new SolidFillShader(context, program));
 }
 
 void SolidFillShader::use(const AffineTransform& transform, const Color& color)

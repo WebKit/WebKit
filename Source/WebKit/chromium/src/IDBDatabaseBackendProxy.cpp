@@ -80,10 +80,10 @@ PassRefPtr<IDBObjectStoreBackendInterface> IDBDatabaseBackendProxy::createObject
     // The transaction pointer is guaranteed to be a pointer to a proxy object as, in the renderer,
     // all implementations of IDB interfaces are proxy objects.
     IDBTransactionBackendProxy* transactionProxy = static_cast<IDBTransactionBackendProxy*>(transaction);
-    WebIDBObjectStore* objectStore = m_webIDBDatabase->createObjectStore(name, keyPath, autoIncrement, *transactionProxy->getWebIDBTransaction(), ec);
+    OwnPtr<WebIDBObjectStore> objectStore = adoptPtr(m_webIDBDatabase->createObjectStore(name, keyPath, autoIncrement, *transactionProxy->getWebIDBTransaction(), ec));
     if (!objectStore)
         return 0;
-    return IDBObjectStoreBackendProxy::create(objectStore);
+    return IDBObjectStoreBackendProxy::create(objectStore.release());
 }
 
 void IDBDatabaseBackendProxy::deleteObjectStore(const String& name, IDBTransactionBackendInterface* transaction, ExceptionCode& ec)
@@ -102,12 +102,12 @@ void IDBDatabaseBackendProxy::setVersion(const String& version, PassRefPtr<IDBCa
 PassRefPtr<IDBTransactionBackendInterface> IDBDatabaseBackendProxy::transaction(DOMStringList* storeNames, unsigned short mode, ExceptionCode& ec)
 {
     WebDOMStringList names(storeNames);
-    WebIDBTransaction* transaction = m_webIDBDatabase->transaction(names, mode, ec);
+    OwnPtr<WebIDBTransaction> transaction = adoptPtr(m_webIDBDatabase->transaction(names, mode, ec));
     if (!transaction) {
         ASSERT(ec);
         return 0;
     }
-    return IDBTransactionBackendProxy::create(transaction);
+    return IDBTransactionBackendProxy::create(transaction.release());
 }
 
 void IDBDatabaseBackendProxy::close(PassRefPtr<IDBDatabaseCallbacks>)

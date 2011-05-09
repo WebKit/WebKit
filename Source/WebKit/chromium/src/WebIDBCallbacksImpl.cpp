@@ -61,12 +61,12 @@ void WebIDBCallbacksImpl::onError(const WebIDBDatabaseError& error)
 
 void WebIDBCallbacksImpl::onSuccess(WebIDBCursor* cursor)
 {
-    m_callbacks->onSuccess(IDBCursorBackendProxy::create(cursor));
+    m_callbacks->onSuccess(IDBCursorBackendProxy::create(adoptPtr(cursor)));
 }
 
 void WebIDBCallbacksImpl::onSuccess(WebIDBDatabase* webKitInstance)
 {
-    m_callbacks->onSuccess(IDBDatabaseBackendProxy::create(webKitInstance));
+    m_callbacks->onSuccess(IDBDatabaseBackendProxy::create(adoptPtr(webKitInstance)));
 }
 
 void WebIDBCallbacksImpl::onSuccess(const WebIDBKey& key)
@@ -76,7 +76,7 @@ void WebIDBCallbacksImpl::onSuccess(const WebIDBKey& key)
 
 void WebIDBCallbacksImpl::onSuccess(WebIDBTransaction* webKitInstance)
 {
-    m_callbacks->onSuccess(IDBTransactionBackendProxy::create(webKitInstance));
+    m_callbacks->onSuccess(IDBTransactionBackendProxy::create(adoptPtr(webKitInstance)));
 }
 
 void WebIDBCallbacksImpl::onSuccess(const WebSerializedScriptValue& serializedScriptValue)

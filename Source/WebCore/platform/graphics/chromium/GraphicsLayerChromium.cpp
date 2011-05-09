@@ -86,7 +86,7 @@ static void clearLayerBackgroundColor(LayerChromium& layer)
 
 PassOwnPtr<GraphicsLayer> GraphicsLayer::create(GraphicsLayerClient* client)
 {
-    return new GraphicsLayerChromium(client);
+    return adoptPtr(new GraphicsLayerChromium(client));
 }
 
 GraphicsLayerChromium::GraphicsLayerChromium(GraphicsLayerClient* client)

@@ -102,7 +102,7 @@ void DOMFileSystem::scheduleCallback(ScriptExecutionContext* scriptExecutionCont
 {
     ASSERT(scriptExecutionContext->isContextThread());
     ASSERT(callback);
-    scriptExecutionContext->postTask(new DispatchCallbackTask<CB, CBArg>(callback, arg));
+    scriptExecutionContext->postTask(adoptPtr(new DispatchCallbackTask<CB, CBArg>(callback, arg)));
 }
 
 } // namespace

@@ -56,10 +56,10 @@ IDBTransactionBackendProxy::~IDBTransactionBackendProxy()
 
 PassRefPtr<IDBObjectStoreBackendInterface> IDBTransactionBackendProxy::objectStore(const String& name, ExceptionCode& ec)
 {
-    WebIDBObjectStore* objectStore = m_webIDBTransaction->objectStore(name, ec);
+    OwnPtr<WebIDBObjectStore> objectStore = adoptPtr(m_webIDBTransaction->objectStore(name, ec));
     if (!objectStore)
         return 0;
-    return IDBObjectStoreBackendProxy::create(objectStore);
+    return IDBObjectStoreBackendProxy::create(objectStore.release());
 }
 
 unsigned short IDBTransactionBackendProxy::mode() const

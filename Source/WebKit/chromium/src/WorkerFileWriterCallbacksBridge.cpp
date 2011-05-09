@@ -104,7 +104,7 @@ void WorkerFileWriterCallbacksBridge::abortOnMainThread(ScriptExecutionContext*,
 void WorkerFileWriterCallbacksBridge::initOnMainThread(ScriptExecutionContext*, PassRefPtr<WorkerFileWriterCallbacksBridge> bridge, const String& path)
 {
     ASSERT(!bridge->m_writer);
-    bridge->m_writer = webKitClient()->fileSystem()->createFileWriter(path, bridge.get());
+    bridge->m_writer = adoptPtr(webKitClient()->fileSystem()->createFileWriter(path, bridge.get()));
 }
 
 void WorkerFileWriterCallbacksBridge::shutdownOnMainThread(ScriptExecutionContext*, PassRefPtr<WorkerFileWriterCallbacksBridge> bridge)
@@ -115,20 +115,17 @@ void WorkerFileWriterCallbacksBridge::shutdownOnMainThread(ScriptExecutionContex
 
 void WorkerFileWriterCallbacksBridge::didWrite(long long bytes, bool complete)
 {
-    dispatchTaskToWorkerThread(
-        createCallbackTask(&didWriteOnWorkerThread, AllowCrossThreadAccess(this), bytes, complete));
+    dispatchTaskToWorkerThread(createCallbackTask(&didWriteOnWorkerThread, AllowCrossThreadAccess(this), bytes, complete));
 }
 
 void WorkerFileWriterCallbacksBridge::didFail(WebFileError error)
 {
-    dispatchTaskToWorkerThread(
-        createCallbackTask(&didFailOnWorkerThread, AllowCrossThreadAccess(this), error));
+    dispatchTaskToWorkerThread(createCallbackTask(&didFailOnWorkerThread, AllowCrossThreadAccess(this), error));
 }
 
 void WorkerFileWriterCallbacksBridge::didTruncate()
 {
-    dispatchTaskToWorkerThread(
-        createCallbackTask(&didTruncateOnWorkerThread, AllowCrossThreadAccess(this)));
+    dispatchTaskToWorkerThread(createCallbackTask(&didTruncateOnWorkerThread, AllowCrossThreadAccess(this)));
 }
 
 static const char fileWriterOperationsMode[] = "fileWriterOperationsMode";

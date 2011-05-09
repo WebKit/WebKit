@@ -281,7 +281,7 @@ void WebViewImpl::setAutoFillClient(WebAutoFillClient* autoFillClient)
 void WebViewImpl::setDevToolsAgentClient(WebDevToolsAgentClient* devToolsClient) 
 {
     if (devToolsClient)
-        m_devToolsAgent = new WebDevToolsAgentImpl(this, devToolsClient);
+        m_devToolsAgent = adoptPtr(new WebDevToolsAgentImpl(this, devToolsClient));
     else
         m_devToolsAgent.clear();
 }

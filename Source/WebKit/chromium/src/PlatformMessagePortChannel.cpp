@@ -46,7 +46,7 @@ namespace WebCore {
 
 PassOwnPtr<MessagePortChannel> MessagePortChannel::create(PassRefPtr<PlatformMessagePortChannel> channel)
 {
-    return new MessagePortChannel(channel);
+    return adoptPtr(new MessagePortChannel(channel));
 }
 
 void MessagePortChannel::createChannel(PassRefPtr<MessagePort> port1, PassRefPtr<MessagePort> port2)
@@ -204,7 +204,7 @@ bool PlatformMessagePortChannel::tryGetMessageFromRemote(OwnPtr<MessagePortChann
     if (rv) {
         OwnPtr<MessagePortChannelArray> channels;
         if (webChannels.size()) {
-            channels = new MessagePortChannelArray(webChannels.size());
+            channels = adoptPtr(new MessagePortChannelArray(webChannels.size()));
             for (size_t i = 0; i < webChannels.size(); ++i) {
                 RefPtr<PlatformMessagePortChannel> platformChannel = create(webChannels[i]);
                 webChannels[i]->setClient(platformChannel.get());

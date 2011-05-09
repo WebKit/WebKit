@@ -747,7 +747,7 @@ bool EditorClientImpl::autofill(HTMLInputElement* inputElement,
     if (inputElement->value().length() > maximumTextSizeForAutofill)
         return false;
 
-    m_autofillArgs = new AutofillArgs();
+    m_autofillArgs = adoptPtr(new AutofillArgs);
     m_autofillArgs->inputElement = inputElement;
     m_autofillArgs->autofillFormOnly = autofillFormOnly;
     m_autofillArgs->autofillOnEmptyValue = autofillOnEmptyValue;

@@ -52,7 +52,7 @@ class SocketStreamHandleInternal : public WebSocketStreamHandleClient {
 public:
     static PassOwnPtr<SocketStreamHandleInternal> create(SocketStreamHandle* handle)
     {
-        return new SocketStreamHandleInternal(handle);
+        return adoptPtr(new SocketStreamHandleInternal(handle));
     }
     virtual ~SocketStreamHandleInternal();
 

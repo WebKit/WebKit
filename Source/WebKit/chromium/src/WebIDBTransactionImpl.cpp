@@ -71,7 +71,7 @@ void WebIDBTransactionImpl::didCompleteTaskEvents()
 
 void WebIDBTransactionImpl::setCallbacks(WebIDBTransactionCallbacks* callbacks)
 {
-    RefPtr<IDBTransactionCallbacks> idbCallbacks = IDBTransactionCallbacksProxy::create(callbacks);
+    RefPtr<IDBTransactionCallbacks> idbCallbacks = IDBTransactionCallbacksProxy::create(adoptPtr(callbacks));
     m_backend->setCallbacks(idbCallbacks.get());
 }
 

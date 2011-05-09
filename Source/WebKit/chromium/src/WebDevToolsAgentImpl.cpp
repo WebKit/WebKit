@@ -78,8 +78,9 @@ public:
     {
         if (s_instance)
             return;
-        s_instance = new ClientMessageLoopAdapter(client->createClientMessageLoop());
-        PageScriptDebugServer::shared().setClientMessageLoop(s_instance);
+        OwnPtr<ClientMessageLoopAdapter> instance = adoptPtr(new ClientMessageLoopAdapter(adoptPtr(client->createClientMessageLoop())));
+        s_instance = instance.get();
+        PageScriptDebugServer::shared().setClientMessageLoop(instance.release());
     }
 
     static void inspectedViewClosed(WebViewImpl* view)
@@ -150,13 +151,31 @@ private:
     OwnPtr<WebKit::WebDevToolsAgentClient::WebKitClientMessageLoop> m_messageLoop;
     typedef HashSet<WebViewImpl*> FrozenViewsSet;
     FrozenViewsSet m_frozenViews;
+    // FIXME: The ownership model for s_instance is somewhat complicated. Can we make this simpler?
     static ClientMessageLoopAdapter* s_instance;
-
 };
 
 ClientMessageLoopAdapter* ClientMessageLoopAdapter::s_instance = 0;
 
 } //  namespace
+
+class DebuggerTask : public PageScriptDebugServer::Task {
+public:
+    DebuggerTask(PassOwnPtr<WebDevToolsAgent::MessageDescriptor> descriptor)
+        : m_descriptor(descriptor)
+    {
+    }
+
+    virtual ~DebuggerTask() { }
+    virtual void run()
+    {
+        if (WebDevToolsAgent* webagent = m_descriptor->agent())
+            webagent->dispatchOnInspectorBackend(m_descriptor->message());
+    }
+
+private:
+    OwnPtr<WebDevToolsAgent::MessageDescriptor> m_descriptor;
+};
 
 WebDevToolsAgentImpl::WebDevToolsAgentImpl(
     WebViewImpl* webViewImpl,
@@ -320,26 +339,8 @@ void WebDevToolsAgent::interruptAndDispatch(MessageDescriptor* rawDescriptor)
 {
     // rawDescriptor can't be a PassOwnPtr because interruptAndDispatch is a WebKit API function.
     OwnPtr<MessageDescriptor> descriptor = adoptPtr(rawDescriptor);
-
-    class DebuggerTask : public PageScriptDebugServer::Task {
-    public:
-        DebuggerTask(PassOwnPtr<WebDevToolsAgent::MessageDescriptor> descriptor)
-            : m_descriptor(descriptor)
-        {
-        }
-
-        virtual ~DebuggerTask() { }
-        virtual void run()
-        {
-            if (WebDevToolsAgent* webagent = m_descriptor->agent())
-                webagent->dispatchOnInspectorBackend(m_descriptor->message());
-        }
-
-    private:
-        OwnPtr<WebDevToolsAgent::MessageDescriptor> m_descriptor;
-    };
-
-    PageScriptDebugServer::interruptAndRun(new DebuggerTask(descriptor.release()));
+    OwnPtr<DebuggerTask> task = adoptPtr(new DebuggerTask(descriptor.release()));
+    PageScriptDebugServer::interruptAndRun(task.release());
 }
 
 bool WebDevToolsAgent::shouldInterruptForMessage(const WebString& message)

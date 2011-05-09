@@ -93,7 +93,7 @@ WebDevToolsFrontendImpl::WebDevToolsFrontendImpl(
     , m_applicationLocale(applicationLocale)
 {
     InspectorController* ic = m_webViewImpl->page()->inspectorController();
-    ic->setInspectorFrontendClient(new InspectorFrontendClientImpl(m_webViewImpl->page(), m_client, this));
+    ic->setInspectorFrontendClient(adoptPtr(new InspectorFrontendClientImpl(m_webViewImpl->page(), m_client, this)));
 
     // Put each DevTools frontend Page into its own (single page) group so that it's not
     // deferred along with the inspected page.

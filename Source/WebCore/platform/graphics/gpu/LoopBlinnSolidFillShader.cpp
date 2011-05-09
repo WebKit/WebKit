@@ -42,7 +42,7 @@ PassOwnPtr<LoopBlinnSolidFillShader> LoopBlinnSolidFillShader::create(GraphicsCo
                                    generateFragment(type, SolidFill, antialiasType));
     if (!program)
         return nullptr;
-    return new LoopBlinnSolidFillShader(context, program);
+    return adoptPtr(new LoopBlinnSolidFillShader(context, program));
 }
 
 LoopBlinnSolidFillShader::LoopBlinnSolidFillShader(GraphicsContext3D* context, unsigned program)

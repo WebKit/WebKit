@@ -79,7 +79,7 @@ v8::Handle<v8::Value> V8MessageEvent::initMessageEventCallback(const v8::Argumen
     OwnPtr<MessagePortArray> portArray;
 
     if (!isUndefinedOrNull(args[7])) {
-        portArray = new MessagePortArray();
+        portArray = adoptPtr(new MessagePortArray);
         if (!getMessagePortArray(args[7], *portArray))
             return v8::Undefined();
     }

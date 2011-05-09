@@ -43,7 +43,7 @@ class NotifyDatabaseChangedTask : public ScriptExecutionContext::Task {
 public:
     static PassOwnPtr<NotifyDatabaseChangedTask> create(AbstractDatabase *database)
     {
-        return new NotifyDatabaseChangedTask(database);
+        return adoptPtr(new NotifyDatabaseChangedTask(database));
     }
 
     virtual void performTask(ScriptExecutionContext*)

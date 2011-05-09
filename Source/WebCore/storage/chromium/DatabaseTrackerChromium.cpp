@@ -100,7 +100,7 @@ class TrackerRemoveOpenDatabaseTask : public ScriptExecutionContext::Task {
 public:
     static PassOwnPtr<TrackerRemoveOpenDatabaseTask> create(PassRefPtr<AbstractDatabase> database)
     {
-        return new TrackerRemoveOpenDatabaseTask(database);
+        return adoptPtr(new TrackerRemoveOpenDatabaseTask(database));
     }
 
     virtual void performTask(ScriptExecutionContext* context)

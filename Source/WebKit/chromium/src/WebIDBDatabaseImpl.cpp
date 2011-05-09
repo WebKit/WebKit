@@ -83,7 +83,7 @@ void WebIDBDatabaseImpl::deleteObjectStore(const WebString& name, const WebIDBTr
 
 void WebIDBDatabaseImpl::setVersion(const WebString& version, WebIDBCallbacks* callbacks, WebExceptionCode& ec)
 {
-    m_databaseBackend->setVersion(version, IDBCallbacksProxy::create(callbacks), m_databaseCallbacks, ec);
+    m_databaseBackend->setVersion(version, IDBCallbacksProxy::create(adoptPtr(callbacks)), m_databaseCallbacks, ec);
 }
 
 WebIDBTransaction* WebIDBDatabaseImpl::transaction(const WebDOMStringList& names, unsigned short mode, WebExceptionCode& ec)
@@ -108,7 +108,7 @@ void WebIDBDatabaseImpl::close()
 void WebIDBDatabaseImpl::open(WebIDBDatabaseCallbacks* callbacks)
 {
     ASSERT(!m_databaseCallbacks);
-    m_databaseCallbacks = IDBDatabaseCallbacksProxy::create(callbacks);
+    m_databaseCallbacks = IDBDatabaseCallbacksProxy::create(adoptPtr(callbacks));
     m_databaseBackend->open(m_databaseCallbacks);
 }
 

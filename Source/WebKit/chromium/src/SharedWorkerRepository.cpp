@@ -204,7 +204,7 @@ void SharedWorkerRepository::connect(PassRefPtr<SharedWorker> worker, PassOwnPtr
     Document* document = static_cast<Document*>(worker->scriptExecutionContext());
     WebFrameImpl* webFrame = WebFrameImpl::fromFrame(document->frame());
     OwnPtr<WebSharedWorker> webWorker;
-    webWorker = webFrame->client()->createSharedWorker(webFrame, url, name, getId(document));
+    webWorker = adoptPtr(webFrame->client()->createSharedWorker(webFrame, url, name, getId(document)));
 
     if (!webWorker) {
         // Existing worker does not match this url, so return an error back to the caller.

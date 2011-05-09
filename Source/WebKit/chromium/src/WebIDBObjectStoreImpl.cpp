@@ -69,22 +69,22 @@ WebDOMStringList WebIDBObjectStoreImpl::indexNames() const
 
 void WebIDBObjectStoreImpl::get(const WebIDBKey& key, WebIDBCallbacks* callbacks, const WebIDBTransaction& transaction, WebExceptionCode& ec)
 {
-    m_objectStore->get(key, IDBCallbacksProxy::create(callbacks), transaction.getIDBTransactionBackendInterface(), ec);
+    m_objectStore->get(key, IDBCallbacksProxy::create(adoptPtr(callbacks)), transaction.getIDBTransactionBackendInterface(), ec);
 }
 
 void WebIDBObjectStoreImpl::put(const WebSerializedScriptValue& value, const WebIDBKey& key, PutMode putMode, WebIDBCallbacks* callbacks, const WebIDBTransaction& transaction, WebExceptionCode& ec)
 {
-    m_objectStore->put(value, key, static_cast<IDBObjectStoreBackendInterface::PutMode>(putMode), IDBCallbacksProxy::create(callbacks), transaction.getIDBTransactionBackendInterface(), ec);
+    m_objectStore->put(value, key, static_cast<IDBObjectStoreBackendInterface::PutMode>(putMode), IDBCallbacksProxy::create(adoptPtr(callbacks)), transaction.getIDBTransactionBackendInterface(), ec);
 }
 
 void WebIDBObjectStoreImpl::deleteFunction(const WebIDBKey& key, WebIDBCallbacks* callbacks, const WebIDBTransaction& transaction, WebExceptionCode& ec)
 {
-    m_objectStore->deleteFunction(key, IDBCallbacksProxy::create(callbacks), transaction.getIDBTransactionBackendInterface(), ec);
+    m_objectStore->deleteFunction(key, IDBCallbacksProxy::create(adoptPtr(callbacks)), transaction.getIDBTransactionBackendInterface(), ec);
 }
 
 void WebIDBObjectStoreImpl::clear(WebIDBCallbacks* callbacks, const WebIDBTransaction& transaction, WebExceptionCode& ec)
 {
-    m_objectStore->clear(IDBCallbacksProxy::create(callbacks), transaction.getIDBTransactionBackendInterface(), ec);
+    m_objectStore->clear(IDBCallbacksProxy::create(adoptPtr(callbacks)), transaction.getIDBTransactionBackendInterface(), ec);
 }
 
 WebIDBIndex* WebIDBObjectStoreImpl::createIndex(const WebString& name, const WebString& keyPath, bool unique, const WebIDBTransaction& transaction, WebExceptionCode& ec)
@@ -110,7 +110,7 @@ void WebIDBObjectStoreImpl::deleteIndex(const WebString& name, const WebIDBTrans
 
 void WebIDBObjectStoreImpl::openCursor(const WebIDBKeyRange& keyRange, unsigned short direction, WebIDBCallbacks* callbacks, const WebIDBTransaction& transaction, WebExceptionCode& ec)
 {
-    m_objectStore->openCursor(keyRange, direction, IDBCallbacksProxy::create(callbacks), transaction.getIDBTransactionBackendInterface(), ec);
+    m_objectStore->openCursor(keyRange, direction, IDBCallbacksProxy::create(adoptPtr(callbacks)), transaction.getIDBTransactionBackendInterface(), ec);
 }
 
 } // namespace WebKit

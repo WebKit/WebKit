@@ -126,15 +126,16 @@ v8::Handle<v8::Value> WindowSetTimeoutImpl(const v8::Arguments& args, bool singl
         }
 
         // params is passed to action, and released in action's destructor
-        ScheduledAction* action = new ScheduledAction(V8Proxy::context(imp->frame()), v8::Handle<v8::Function>::Cast(function), paramCount, params);
+        OwnPtr<ScheduledAction> action = adoptPtr(new ScheduledAction(V8Proxy::context(imp->frame()), v8::Handle<v8::Function>::Cast(function), paramCount, params));
 
+        // FIXME: We should use OwnArrayPtr for params.
         delete[] params;
 
-        id = DOMTimer::install(scriptContext, action, timeout, singleShot);
+        id = DOMTimer::install(scriptContext, action.release(), timeout, singleShot);
     } else {
         if (imp->document() && !imp->document()->contentSecurityPolicy()->allowEval())
             return v8::Integer::New(0);
-        id = DOMTimer::install(scriptContext, new ScheduledAction(V8Proxy::context(imp->frame()), functionString), timeout, singleShot);
+        id = DOMTimer::install(scriptContext, adoptPtr(new ScheduledAction(V8Proxy::context(imp->frame()), functionString)), timeout, singleShot);
     }
 
     // Try to do the idle notification before the timeout expires to get better

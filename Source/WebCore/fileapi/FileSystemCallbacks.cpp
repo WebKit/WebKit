@@ -186,7 +186,8 @@ void FileSystemCallbacks::didOpenFileSystem(const String& name, PassOwnPtr<Async
 {
     if (m_successCallback) {
         ASSERT(asyncFileSystem);
-        m_successCallback->handleEvent(DOMFileSystem::create(m_scriptExecutionContext.get(), name, asyncFileSystem.leakPtr()).get());
+        RefPtr<DOMFileSystem> fileSystem = DOMFileSystem::create(m_scriptExecutionContext.get(), name, asyncFileSystem);
+        m_successCallback->handleEvent(fileSystem.get());
         m_scriptExecutionContext.clear();
     }
     m_successCallback.clear();
@@ -247,7 +248,7 @@ ResolveURICallbacks::ResolveURICallbacks(PassRefPtr<EntryCallback> successCallba
 void ResolveURICallbacks::didOpenFileSystem(const String& name, PassOwnPtr<AsyncFileSystem> asyncFileSystem)
 {
     ASSERT(asyncFileSystem);
-    RefPtr<DirectoryEntry> root = DOMFileSystem::create(m_scriptExecutionContext.get(), name, asyncFileSystem.leakPtr())->root();
+    RefPtr<DirectoryEntry> root = DOMFileSystem::create(m_scriptExecutionContext.get(), name, asyncFileSystem)->root();
     root->getDirectory(m_filePath, 0, m_successCallback, ErrorCallbackWrapper::create(m_successCallback, m_errorCallback, root, m_filePath));
 }
 

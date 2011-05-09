@@ -1,3 +1,49 @@
+2011-05-09  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Tony Gentilcore.
+
+        Make Chromium build with strict PassOwnPtr
+        https://bugs.webkit.org/show_bug.cgi?id=60461
+
+        Fix many, many PassOwnPtr nits.
+
+        * bindings/v8/V8Proxy.cpp:
+        (WebCore::V8Proxy::precompileScript):
+        * bindings/v8/custom/V8DOMWindowCustom.cpp:
+        (WebCore::WindowSetTimeoutImpl):
+        * bindings/v8/custom/V8MessageEventCustom.cpp:
+        (WebCore::V8MessageEvent::initMessageEventCallback):
+        * bindings/v8/custom/V8WorkerContextCustom.cpp:
+        (WebCore::SetTimeoutOrInterval):
+        * dom/Document.cpp:
+        (WebCore::Document::removedLastRef):
+        (WebCore::Document::detach):
+        * fileapi/DOMFileSystem.h:
+        (WebCore::DOMFileSystem::scheduleCallback):
+        * fileapi/FileSystemCallbacks.cpp:
+        (WebCore::FileSystemCallbacks::didOpenFileSystem):
+        (WebCore::ResolveURICallbacks::didOpenFileSystem):
+        * platform/graphics/chromium/GraphicsLayerChromium.cpp:
+        (WebCore::GraphicsLayer::create):
+        * platform/graphics/chromium/cc/CCLayerImpl.cpp:
+        (WebCore::CCLayerImpl::createRenderSurface):
+        * platform/graphics/gpu/BicubicShader.cpp:
+        (WebCore::BicubicShader::create):
+        * platform/graphics/gpu/ConvolutionShader.cpp:
+        (WebCore::ConvolutionShader::create):
+        * platform/graphics/gpu/LoopBlinnSolidFillShader.cpp:
+        (WebCore::LoopBlinnSolidFillShader::create):
+        * platform/graphics/gpu/SolidFillShader.cpp:
+        (WebCore::SolidFillShader::create):
+        * platform/graphics/gpu/TexShader.cpp:
+        (WebCore::TexShader::create):
+        * platform/graphics/gpu/Texture.cpp:
+        (WebCore::Texture::create):
+        * storage/chromium/DatabaseTrackerChromium.cpp:
+        (WebCore::TrackerRemoveOpenDatabaseTask::create):
+        * storage/chromium/SQLTransactionClientChromium.cpp:
+        (WebCore::NotifyDatabaseChangedTask::create):
+
 2011-05-07  Martin Robinson  <mrobinson@igalia.com>
 
         Reviewed by Daniel Bates.

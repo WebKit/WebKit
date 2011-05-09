@@ -116,7 +116,7 @@ PassRefPtr<Texture> Texture::create(GraphicsContext3D* context, Format format, i
                                         tileBoundsWithBorder.height(),
                                         0, glFormat, glType);
     }
-    return adoptRef(new Texture(context, textureIds.leakPtr(), format, width, height, maxTextureSize));
+    return adoptRef(new Texture(context, textureIds.release(), format, width, height, maxTextureSize));
 }
 
 template <bool swizzle>

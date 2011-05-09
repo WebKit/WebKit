@@ -107,7 +107,7 @@ void CCLayerImpl::setLayerRenderer(LayerRendererChromium* renderer)
 
 RenderSurfaceChromium* CCLayerImpl::createRenderSurface()
 {
-    m_renderSurface = new RenderSurfaceChromium(this);
+    m_renderSurface = adoptPtr(new RenderSurfaceChromium(this));
     return m_renderSurface.get();
 }
 

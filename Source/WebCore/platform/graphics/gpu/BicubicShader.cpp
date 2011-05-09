@@ -106,7 +106,7 @@ PassOwnPtr<BicubicShader> BicubicShader::create(GraphicsContext3D* context)
     if (!program)
         return nullptr;
 
-    return new BicubicShader(context, program);
+    return adoptPtr(new BicubicShader(context, program));
 }
 
 void BicubicShader::use(const AffineTransform& transform, const AffineTransform& texTransform, const float coefficients[16], const float imageIncrement[2], float alpha)
