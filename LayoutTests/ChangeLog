@@ -1,3 +1,12 @@
+2011-05-09  Chang Shu  <cshu@webkit.org>
+
+        Unreviewed.
+
+        [Qt] editing/inserting/5803706-1.html has the incorrect expected result
+        https://bugs.webkit.org/show_bug.cgi?id=60479
+
+        * platform/qt/editing/inserting/5803706-1-expected.txt: Removed.
+
 2011-05-09  Martin Robinson  <mrobinson@igalia.com>
 
         Add a pixel result for platform/gtk/fonts/fontconfig-synthetic-bold.html.
