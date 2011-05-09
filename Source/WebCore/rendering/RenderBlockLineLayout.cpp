@@ -816,6 +816,18 @@ RootInlineBox* RenderBlock::createLineBoxesFromBidiRuns(BidiRunList<BidiRun>& bi
     return lineBox;
 }
 
+static void deleteLineRange(RenderArena* arena, RootInlineBox* startLine, int& repaintLogicalTop, int& repaintLogicalBottom, RootInlineBox* stopLine = 0)
+{
+    RootInlineBox* boxToDelete = startLine;
+    while (boxToDelete && boxToDelete != stopLine) {
+        repaintLogicalTop = min(repaintLogicalTop, boxToDelete->logicalTopVisualOverflow());
+        repaintLogicalBottom = max(repaintLogicalBottom, boxToDelete->logicalBottomVisualOverflow());
+        RootInlineBox* next = boxToDelete->nextRootBox();
+        boxToDelete->deleteLine(arena);
+        boxToDelete = next;
+    }
+}
+
 void RenderBlock::layoutRunsAndFloats(bool fullLayout, bool hasInlineChild, Vector<FloatWithRect>& floats, int& repaintLogicalTop, int& repaintLogicalBottom)
 {
     // We want to skip ahead to the first dirty line
@@ -861,15 +873,7 @@ void RenderBlock::layoutRunsAndFloats(bool fullLayout, bool hasInlineChild, Vect
             repaintLogicalTop = logicalHeight();
             repaintLogicalBottom = logicalHeight();
         }
-        RenderArena* arena = renderArena();
-        RootInlineBox* box = startLine;
-        while (box) {
-            repaintLogicalTop = min(repaintLogicalTop, box->logicalTopVisualOverflow());
-            repaintLogicalBottom = max(repaintLogicalBottom, box->logicalBottomVisualOverflow());
-            RootInlineBox* next = box->nextRootBox();
-            box->deleteLine(arena);
-            box = next;
-        }
+        deleteLineRange(renderArena(), startLine, repaintLogicalTop, repaintLogicalBottom);
     }
 
     InlineIterator end = resolver.position();
@@ -1042,15 +1046,7 @@ void RenderBlock::layoutRunsAndFloats(bool fullLayout, bool hasInlineChild, Vect
             setLogicalHeight(lastRootBox()->blockLogicalHeight());
         } else {
             // Delete all the remaining lines.
-            RootInlineBox* line = endLine;
-            RenderArena* arena = renderArena();
-            while (line) {
-                repaintLogicalTop = min(repaintLogicalTop, line->logicalTopVisualOverflow());
-                repaintLogicalBottom = max(repaintLogicalBottom, line->logicalBottomVisualOverflow());
-                RootInlineBox* next = line->nextRootBox();
-                line->deleteLine(arena);
-                line = next;
-            }
+            deleteLineRange(renderArena(), endLine, repaintLogicalTop, repaintLogicalBottom);
         }
     }
     if (m_floatingObjects && (checkForFloatsFromLastLine || positionNewFloats()) && lastRootBox()) {
@@ -1430,16 +1426,7 @@ bool RenderBlock::matchedEndLine(const InlineBidiResolver& resolver, const Inlin
             }
 
             // Now delete the lines that we failed to sync.
-            RootInlineBox* boxToDelete = endLine;
-            RenderArena* arena = renderArena();
-            while (boxToDelete && boxToDelete != result) {
-                repaintLogicalTop = min(repaintLogicalTop, boxToDelete->logicalTopVisualOverflow());
-                repaintLogicalBottom = max(repaintLogicalBottom, boxToDelete->logicalBottomVisualOverflow());
-                RootInlineBox* next = boxToDelete->nextRootBox();
-                boxToDelete->deleteLine(arena);
-                boxToDelete = next;
-            }
-
+            deleteLineRange(renderArena(), endLine, repaintLogicalTop, repaintLogicalBottom, result);
             endLine = result;
             return result;
         }

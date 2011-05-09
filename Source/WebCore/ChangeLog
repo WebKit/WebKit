@@ -1,3 +1,18 @@
+2011-05-09  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Ryosuke Niwa.
+
+        Abstract line deletion code into a function
+        https://bugs.webkit.org/show_bug.cgi?id=60501
+
+        No change in behavior, thus no testing.
+
+        * rendering/RenderBlockLineLayout.cpp:
+        (WebCore::deleteLineRange):
+        (WebCore::RenderBlock::layoutRunsAndFloats):
+        (WebCore::RenderBlock::determineStartPosition):
+        (WebCore::RenderBlock::matchedEndLine):
+
 2011-05-09  Darin Adler  <darin@apple.com>
 
         Cleared some stray executable bits on source files.
