@@ -1,3 +1,11 @@
+2011-05-09  Xan Lopez  <xlopez@igalia.com>
+
+        Reviewed by Gustavo Noronha.
+
+        Fix logic in GCC version detection, it was reversed.
+
+        * configure.ac:
+
 2011-05-09  Alexis Menard  <alexis.menard@openbossa.org>
 
         Reviewed by Andreas Kling.
