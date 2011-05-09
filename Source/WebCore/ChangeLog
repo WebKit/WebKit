@@ -1,3 +1,15 @@
+2011-05-09  Jeremy Noble  <jer.noble@apple.com>
+
+        Reviewed by Simon Fraser.
+
+        REGRESSION (r84706): Crazy rendering of vimeo.com after exiting fullscreen video
+        https://bugs.webkit.org/show_bug.cgi?id=60512
+
+        Initialize m_containsFullScreenElement.
+
+        * html/HTMLFrameElementBase.cpp:
+        (WebCore::HTMLFrameElementBase::HTMLFrameElementBase):
+
 2011-05-09  Ryosuke Niwa  <rniwa@webkit.org>
 
         Reviewed by Darin Adler.

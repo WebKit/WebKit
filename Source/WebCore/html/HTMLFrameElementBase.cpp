@@ -55,6 +55,9 @@ HTMLFrameElementBase::HTMLFrameElementBase(const QualifiedName& tagName, Documen
     , m_checkInDocumentTimer(this, &HTMLFrameElementBase::checkInDocumentTimerFired)
     , m_viewSource(false)
     , m_remainsAliveOnRemovalFromTree(false)
+#if ENABLE(FULLSCREEN_API)
+    , m_containsFullScreenElement(false)
+#endif
 {
 }
 
