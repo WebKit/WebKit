@@ -1,3 +1,19 @@
+2011-05-08  Luke Macpherson   <macpherson@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        Make RenderStyle::setColumnBreakInside() reject unsupported enum values.
+        https://bugs.webkit.org/show_bug.cgi?id=60249
+
+        No new tests added as no functionality changed.
+
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::applyProperty):
+        Remove special-case code and use appropriate macro.
+        * rendering/style/RenderStyle.h:
+        (WebCore::InheritedFlags::setColumnBreakInside):
+        Assert that supported values are used.
+
 2011-05-08  Ryosuke Niwa  <rniwa@webkit.org>
 
         Reviewed by Darin Adler.
