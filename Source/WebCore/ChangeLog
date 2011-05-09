@@ -1,3 +1,15 @@
+2011-05-05  Matthew Delaney  <mdelaney@apple.com>
+
+        Reviewed by Simon Fraser.
+
+        Remove canvas usage of roundToDevicePixels
+        https://bugs.webkit.org/show_bug.cgi?id=60331
+
+        No new tests. This could only affect canvases at non-integral scale factors. Our tests only run in 1.0x.
+
+        * html/canvas/CanvasRenderingContext2D.cpp:
+        (WebCore::CanvasRenderingContext2D::drawImage):
+
 2011-05-09  Alexis Menard  <alexis.menard@openbossa.org>
 
         Reviewed by Andreas Kling.

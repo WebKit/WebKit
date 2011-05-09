@@ -1313,10 +1313,8 @@ void CanvasRenderingContext2D::drawImage(HTMLImageElement* image, const FloatRec
 
     checkOrigin(image);
 
-    FloatRect sourceRect = c->roundToDevicePixels(normalizedSrcRect);
-    FloatRect destRect = c->roundToDevicePixels(normalizedDstRect);
-    c->drawImage(cachedImage->image(), ColorSpaceDeviceRGB, destRect, sourceRect, op);
-    didDraw(destRect);
+    c->drawImage(cachedImage->image(), ColorSpaceDeviceRGB, normalizedDstRect, normalizedSrcRect, op);
+    didDraw(normalizedDstRect);
 }
 
 void CanvasRenderingContext2D::drawImage(HTMLCanvasElement* canvas, float x, float y, ExceptionCode& ec)
@@ -1376,9 +1374,6 @@ void CanvasRenderingContext2D::drawImage(HTMLCanvasElement* sourceCanvas, const 
     if (!state().m_invertibleCTM)
         return;
 
-    FloatRect sourceRect = c->roundToDevicePixels(srcRect);
-    FloatRect destRect = c->roundToDevicePixels(dstRect);
-
     // FIXME: Do this through platform-independent GraphicsContext API.
     ImageBuffer* buffer = sourceCanvas->buffer();
     if (!buffer)
@@ -1397,8 +1392,8 @@ void CanvasRenderingContext2D::drawImage(HTMLCanvasElement* sourceCanvas, const 
     sourceCanvas->makeRenderingResultsAvailable();
 #endif
 
-    c->drawImageBuffer(buffer, ColorSpaceDeviceRGB, destRect, sourceRect, state().m_globalComposite);
-    didDraw(destRect);
+    c->drawImageBuffer(buffer, ColorSpaceDeviceRGB, dstRect, srcRect, state().m_globalComposite);
+    didDraw(dstRect);
 }
 
 #if ENABLE(VIDEO)
@@ -1460,17 +1455,14 @@ void CanvasRenderingContext2D::drawImage(HTMLVideoElement* video, const FloatRec
 
     checkOrigin(video);
 
-    FloatRect sourceRect = c->roundToDevicePixels(srcRect);
-    FloatRect destRect = c->roundToDevicePixels(dstRect);
-
     GraphicsContextStateSaver stateSaver(*c);
-    c->clip(destRect);
-    c->translate(destRect.x(), destRect.y());
-    c->scale(FloatSize(destRect.width() / sourceRect.width(), destRect.height() / sourceRect.height()));
-    c->translate(-sourceRect.x(), -sourceRect.y());
+    c->clip(dstRect);
+    c->translate(dstRect.x(), dstRect.y());
+    c->scale(FloatSize(dstRect.width() / srcRect.width(), dstRect.height() / srcRect.height()));
+    c->translate(-srcRect.x(), -srcRect.y());
     video->paintCurrentFrameInContext(c, IntRect(IntPoint(), size(video)));
     stateSaver.restore();
-    didDraw(destRect);
+    didDraw(dstRect);
 }
 #endif
 
