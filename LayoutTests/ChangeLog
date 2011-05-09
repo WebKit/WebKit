@@ -1,3 +1,16 @@
+2011-05-09  Robert Hogan  <robert@webkit.org>
+
+        Unreviewed, update test expectations.
+
+        Update platform-specific results after r86086
+
+        The unix test NPAPI plugin now supports the png mime type.
+
+        https://bugs.webkit.org/show_bug.cgi?id=57137
+
+        * platform/gtk/plugins/plugin-javascript-access-expected.txt:
+        * platform/qt-linux/plugins/plugin-javascript-access-expected.txt:
+
 2011-05-09  Kenji Imasaki  <imasaki@chromium.org>
 
         Reviewed by David Levin.
