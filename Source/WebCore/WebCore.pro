@@ -3067,8 +3067,7 @@ contains(DEFINES, WTF_USE_QT_BEARER=1) {
         platform/network/qt/NetworkStateNotifierQt.cpp
 }
 
-# FIXME: Uncomment when Qt 4.8 bots are updated with the full QRawFont API.
-#!lessThan(QT_MAJOR_VERSION,4):!lessThan(QT_MINOR_VERSION, 8):HAVE_QRAWFONT=1
+!lessThan(QT_MAJOR_VERSION,4):!lessThan(QT_MINOR_VERSION, 8):HAVE_QRAWFONT=1
 
 !isEmpty(HAVE_QRAWFONT) {
     DEFINES += HAVE_QRAWFONT=1
