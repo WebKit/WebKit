@@ -1678,7 +1678,6 @@ fast/borders/borderRadiusDotted02.html
 fast/borders/borderRadiusDotted03.html
 fast/borders/svg-as-border-image-2.html
 fast/borders/svg-as-border-image.html
-fast/canvas/canvas-incremental-repaint.html
 fast/compact/001.html
 fast/compact/002.html
 fast/css/apple-prefix.html
@@ -2000,7 +1999,6 @@ canvas/philip/tests/2d.composite.uncovered.pattern.destination-in.html
 canvas/philip/tests/2d.composite.uncovered.pattern.source-in.html
 canvas/philip/tests/2d.composite.uncovered.pattern.source-out.html
 canvas/philip/tests/2d.drawImage.broken.html
-canvas/philip/tests/2d.drawImage.null.html
 canvas/philip/tests/2d.gradient.radial.cone.behind.html
 canvas/philip/tests/2d.gradient.radial.cone.beside.html
 canvas/philip/tests/2d.gradient.radial.cone.bottom.html
@@ -2018,14 +2016,11 @@ canvas/philip/tests/2d.imageData.object.wrap.html
 canvas/philip/tests/2d.imageData.put.unchanged.html
 canvas/philip/tests/2d.line.cap.open.html
 canvas/philip/tests/2d.line.join.open.html
-canvas/philip/tests/2d.line.miter.lineedge.html
 canvas/philip/tests/2d.missingargs.html
 canvas/philip/tests/2d.path.quadraticCurveTo.shape.html
 canvas/philip/tests/2d.path.quadraticCurveTo.scaled.html
-canvas/philip/tests/2d.path.rect.zero.6.html
 canvas/philip/tests/2d.path.stroke.scale2.html
 canvas/philip/tests/2d.pattern.image.broken.html
-canvas/philip/tests/2d.shadow.transform.2.html
 canvas/philip/tests/2d.text.draw.baseline.bottom.html
 canvas/philip/tests/2d.text.draw.baseline.hanging.html
 canvas/philip/tests/2d.text.draw.baseline.ideographic.html
@@ -2053,8 +2048,6 @@ canvas/philip/tests/type.prototype.html
 # https://bugs.webkit.org/show_bug.cgi?id=40362
 canvas/philip/tests/2d.path.stroke.overlap.html
 
-# Originally worked because we didn't set the GC's join style properly.
-canvas/philip/tests/2d.path.rect.zero.1.html
 
 # Failing tests after sync with Philip Taylor's upstream tests
 canvas/philip/tests/2d.drawImage.image.incomplete.omitted.html

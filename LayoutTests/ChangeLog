@@ -1,3 +1,12 @@
+2011-05-09  Venkat Penukonda  <venkat.2.penukonda@nokia.com>
+
+        Reviewed by Csaba Osztrogonác.
+
+        [Qt]6 of the skipped canvas layout tests pass on Qt Linux
+        https://bugs.webkit.org/show_bug.cgi?id=60382
+
+        * platform/qt/Skipped: Removed passing canvas tests
+
 2011-05-08  MORITA Hajime  <morrita@google.com>
 
         Unreviewed, rolling out r86042.
