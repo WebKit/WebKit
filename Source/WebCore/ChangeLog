@@ -1,3 +1,30 @@
+2011-05-09  Tony Chang  <tony@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        Style cleanups in RenderFlexibleBox.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=60504
+
+        No new tests, just refactoring.
+
+        * rendering/RenderFlexibleBox.cpp:
+        (WebCore::FlexBoxIterator::FlexBoxIterator): Use m_ for member variables, and
+            use class initializer list.
+        (WebCore::FlexBoxIterator::reset):
+        (WebCore::FlexBoxIterator::next):
+        (WebCore::RenderFlexibleBox::RenderFlexibleBox):
+        (WebCore::marginWidthForChild): Pull out common code used in calc*PrefWidths
+        (WebCore::RenderFlexibleBox::calcHorizontalPrefWidths):
+        (WebCore::RenderFlexibleBox::calcVerticalPrefWidths):
+        (WebCore::RenderFlexibleBox::computePreferredLogicalWidths):
+        (WebCore::RenderFlexibleBox::layoutBlock):
+        (WebCore::gatherFlexChildrenInfo): Rewrite uses of FlexBoxIterator into for statements
+            rather than while loops.
+        (WebCore::RenderFlexibleBox::layoutHorizontalBox): ditto
+        (WebCore::RenderFlexibleBox::layoutVerticalBox): ditto
+        (WebCore::RenderFlexibleBox::applyLineClamp):
+        (WebCore::RenderFlexibleBox::allowedChildFlex): Rename variables w/h to width/height.
+
 2011-05-09  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Ryosuke Niwa.
