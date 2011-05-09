@@ -29,6 +29,7 @@
 #if ENABLE(PLUGIN_PROCESS)
 
 #import "CommandLine.h"
+#import "NetscapePluginModule.h"
 #import "PluginProcess.h"
 #import "RunLoop.h"
 #import <WebKitSystemInterface.h>
@@ -53,6 +54,18 @@ int PluginProcessMain(const CommandLine& commandLine)
     // Unset DYLD_INSERT_LIBRARIES. We don't want our plug-in process shim to be loaded 
     // by any child processes that the plug-in may launch.
     unsetenv("DYLD_INSERT_LIBRARIES");
+
+    // Check if we're being spawned to write a MIME type preferences file.
+    String pluginPath = commandLine["createPluginMIMETypesPreferences"];
+    if (!pluginPath.isEmpty()) {
+        JSC::initializeThreading();
+        WTF::initializeMainThread();
+
+        if (!NetscapePluginModule::createPluginMIMETypesPreferences(pluginPath))
+            return EXIT_FAILURE;
+
+        return EXIT_SUCCESS;
+    }
 
     String serviceName = commandLine["servicename"];
     if (serviceName.isEmpty())

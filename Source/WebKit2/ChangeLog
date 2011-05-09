@@ -2,6 +2,39 @@
 
         Reviewed by Sam Weinig.
 
+        Create a plug-in's MIME types preferences plist if it doesn't exist.
+        https://bugs.webkit.org/show_bug.cgi?id=57204
+        <rdar://problem/9195048>
+
+        Spawn a plug-in process and let it create the plist. For now, we'll do this on the
+        main thread since it's a rare one-time computation and we have an API function,
+        WKFrameCanShowMIMEType, which would have to block anyway.
+
+        * PluginProcess/mac/PluginProcessMainMac.mm:
+        (WebKit::PluginProcessMain):
+        If -createPluginMIMETypesPreferences is one of the command line argument keys,
+        the plug-in path will be the argument value. Call NetscapePluginModule::createPluginMIMETypesPreferences
+        to create the preferences file and then exit.
+
+        * Shared/Plugins/Netscape/mac/NetscapePluginModuleMac.mm:
+        (WebKit::contentsOfPropertyListAtURL):
+        Move code to read a property list out into a helper function.
+
+        (WebKit::getMIMETypesFromPluginBundle):
+        If there's no property list file, try to create one.
+
+        (WebKit::NetscapePluginModule::createPluginMIMETypesPreferences):
+        Load the plug-in, find the BP_CreatePluginMIMETypesPreferences and call it.
+
+        * UIProcess/Plugins/mac/PluginProcessProxyMac.mm:
+        (WebKit::PluginProcessProxy::createPropertyListFile):
+        Spawn a plug-in process and pass the -createPluginMIMETypesPreferences flag to it and then wait
+        for it to exit.
+
+2011-05-09  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Sam Weinig.
+
         Move EnvironmentVariables out into its own .cpp file
         https://bugs.webkit.org/show_bug.cgi?id=60507
 

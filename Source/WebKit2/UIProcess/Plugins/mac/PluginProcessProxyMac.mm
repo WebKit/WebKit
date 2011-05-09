@@ -28,8 +28,12 @@
 
 #if ENABLE(PLUGIN_PROCESS)
 
+#import "EnvironmentVariables.h"
 #import "PluginProcessCreationParameters.h"
 #import "WebKitSystemInterface.h"
+#import <WebCore/FileSystem.h>
+#import <spawn.h>
+#import <wtf/text/CString.h>
 
 @interface WKPlaceholderModalWindow : NSWindow 
 @end
@@ -45,6 +49,8 @@
 
 @end
 
+using namespace WebCore;
+
 namespace WebKit {
     
 bool PluginProcessProxy::pluginNeedsExecutableHeap(const PluginInfoStore::Plugin& pluginInfo)
@@ -56,6 +62,53 @@ bool PluginProcessProxy::pluginNeedsExecutableHeap(const PluginInfoStore::Plugin
     if (pluginInfo.bundleIdentifier == "com.apple.QuickTime Plugin.plugin")
         return false;
     
+    return true;
+}
+
+bool PluginProcessProxy::createPropertyListFile(const PluginInfoStore::Plugin& plugin)
+{
+    NSBundle *webKit2Bundle = [NSBundle bundleWithIdentifier:@"com.apple.WebKit2"];
+    NSString *frameworksPath = [[webKit2Bundle bundlePath] stringByDeletingLastPathComponent];
+    const char* frameworkExecutablePath = [[webKit2Bundle executablePath] fileSystemRepresentation];
+    
+    NSString *processPath = [webKit2Bundle pathForAuxiliaryExecutable:@"PluginProcess.app"];
+    NSString *processAppExecutablePath = [[NSBundle bundleWithPath:processPath] executablePath];
+
+    CString pluginPathString = fileSystemRepresentation(plugin.path);
+
+    posix_spawnattr_t attr;
+    posix_spawnattr_init(&attr);
+
+    cpu_type_t cpuTypes[] = { plugin.pluginArchitecture };    
+    size_t outCount = 0;
+    posix_spawnattr_setbinpref_np(&attr, 1, cpuTypes, &outCount);
+
+    EnvironmentVariables environmentVariables;
+    
+    // To make engineering builds work, if the path is outside of /System set up
+    // DYLD_FRAMEWORK_PATH to pick up other frameworks, but don't do it for the
+    // production configuration because it involves extra file system access.
+    if (![frameworksPath hasPrefix:@"/System/"])
+        environmentVariables.appendValue("DYLD_FRAMEWORK_PATH", [frameworksPath fileSystemRepresentation], ':');
+
+    const char* args[] = { [processAppExecutablePath fileSystemRepresentation], frameworkExecutablePath, "-type", "pluginprocess", "-createPluginMIMETypesPreferences", pluginPathString.data(), 0 };
+
+    pid_t pid;
+    int result = posix_spawn(&pid, args[0], 0, &attr, const_cast<char* const*>(args), environmentVariables.environmentPointer());
+    posix_spawnattr_destroy(&attr);
+
+    if (result < 0)
+        return false;
+    int status;
+    if (waitpid(pid, &status, 0) < 0)
+        return false;
+
+    if (!WIFEXITED(status))
+        return false;
+
+    if (WEXITSTATUS(status) != EXIT_SUCCESS)
+        return false;
+
     return true;
 }
 

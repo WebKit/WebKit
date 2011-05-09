@@ -54,9 +54,6 @@ struct PluginProcessCreationParameters;
 
 class PluginProcessProxy : CoreIPC::Connection::Client, ProcessLauncher::Client {
 public:
-#if PLATFORM(MAC)
-    static bool pluginNeedsExecutableHeap(const PluginInfoStore::Plugin&);
-#endif
     static PassOwnPtr<PluginProcessProxy> create(PluginProcessManager*, const PluginInfoStore::Plugin&);
     ~PluginProcessProxy();
 
@@ -74,6 +71,14 @@ public:
 
     // Terminates the plug-in process.
     void terminate();
+
+#if PLATFORM(MAC)
+    // Returns whether the plug-in needs the heap to be marked executable.
+    static bool pluginNeedsExecutableHeap(const PluginInfoStore::Plugin&);
+
+    // Creates a property list in ~/Library/Preferences that contains all the MIME types supported by the plug-in.
+    static bool createPropertyListFile(const PluginInfoStore::Plugin&);
+#endif
 
 private:
     PluginProcessProxy(PluginProcessManager*, const PluginInfoStore::Plugin&);

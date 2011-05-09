@@ -61,6 +61,10 @@ public:
 
     Module* module() const { return m_module.get(); }
 
+#if PLUGIN_ARCHITECTURE(MAC)
+    static bool createPluginMIMETypesPreferences(const String& pluginPath);
+#endif
+
 private:
     explicit NetscapePluginModule(const String& pluginPath);
 
