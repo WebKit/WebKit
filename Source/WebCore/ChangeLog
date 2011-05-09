@@ -1,3 +1,16 @@
+2011-05-09  Tony Gentilcore  <tonyg@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        Style fix: Function names must begin with lowercase letter and should not use "get".
+        https://bugs.webkit.org/show_bug.cgi?id=60475
+
+        * dom/Document.cpp:
+        (WebCore::Document::webkitVisibilityState):
+        * page/PageVisibilityState.cpp:
+        (WebCore::pageVisibilityStateString): Renamed.
+        * page/PageVisibilityState.h:
+
 2011-05-09  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Tony Gentilcore.

@@ -1368,7 +1368,7 @@ PageVisibilityState Document::visibilityState() const
 
 String Document::webkitVisibilityState() const
 {
-    return GetPageVisibilityStateString(visibilityState());
+    return pageVisibilityStateString(visibilityState());
 }
 
 bool Document::webkitIsVisible() const

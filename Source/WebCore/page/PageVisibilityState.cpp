@@ -35,7 +35,7 @@
 
 namespace WebCore {
 
-String GetPageVisibilityStateString(PageVisibilityState state)
+String pageVisibilityStateString(PageVisibilityState state)
 {
     DEFINE_STATIC_LOCAL(const String, visible, ("visible"));
     DEFINE_STATIC_LOCAL(const String, hidden, ("hidden"));
