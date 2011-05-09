@@ -33,7 +33,7 @@ using namespace WebCore;
 
 namespace WebKit {
 
-static bool getPluginArchitecture(CFBundleRef bundle, cpu_type_t& pluginArchitecture)
+static bool getPluginArchitecture(CFBundleRef bundle, PluginInfoStore::Plugin& plugin)
 {
     RetainPtr<CFArrayRef> pluginArchitecturesArray(AdoptCF, CFBundleCopyExecutableArchitectures(bundle));
     if (!pluginArchitecturesArray)
@@ -53,31 +53,31 @@ static bool getPluginArchitecture(CFBundleRef bundle, cpu_type_t& pluginArchitec
 #ifdef __x86_64__
     // We only support 64-bit Intel plug-ins on 64-bit Intel.
     if (architectures.contains(kCFBundleExecutableArchitectureX86_64)) {
-        pluginArchitecture = CPU_TYPE_X86_64;
+        plugin.pluginArchitecture = CPU_TYPE_X86_64;
         return true;
     }
 
     // We also support 32-bit Intel plug-ins on 64-bit Intel.
     if (architectures.contains(kCFBundleExecutableArchitectureI386)) {
-        pluginArchitecture = CPU_TYPE_X86;
+        plugin.pluginArchitecture = CPU_TYPE_X86;
         return true;
     }
 #elif defined(__i386__)
     // We only support 32-bit Intel plug-ins on 32-bit Intel.
     if (architectures.contains(kCFBundleExecutableArchitectureI386)) {
-        pluginArchitecture = CPU_TYPE_X86;
+        plugin.pluginArchitecture = CPU_TYPE_X86;
         return true;
     }
 #elif defined(__ppc64__)
     // We only support 64-bit PPC plug-ins on 64-bit PPC.
     if (architectures.contains(kCFBundleExecutableArchitecturePPC64)) {
-        pluginArchitecture = CPU_TYPE_POWERPC64;
+        plugin.pluginArchitecture = CPU_TYPE_POWERPC64;
         return true;
     }
 #elif defined(__ppc__)
     // We only support 32-bit PPC plug-ins on 32-bit PPC.
     if (architectures.contains(kCFBundleExecutableArchitecturePPC)) {
-        pluginArchitecture = CPU_TYPE_POWERPC;
+        plugin.pluginArchitecture = CPU_TYPE_POWERPC;
         return true;
     }
 #else
@@ -111,7 +111,7 @@ static RetainPtr<CFDictionaryRef> getMIMETypesFromPluginBundle(CFBundleRef bundl
     return static_cast<CFDictionaryRef>(CFBundleGetValueForInfoDictionaryKey(bundle, CFSTR("WebPluginMIMETypes")));
 }
 
-static bool getPluginInfoFromPropertyLists(CFBundleRef bundle, PluginInfo& pluginInfo)
+static bool getPluginInfoFromPropertyLists(CFBundleRef bundle, PluginInfoStore::Plugin& plugin)
 {
     RetainPtr<CFDictionaryRef> mimeTypes = getMIMETypesFromPluginBundle(bundle);
     if (!mimeTypes || CFGetTypeID(mimeTypes.get()) != CFDictionaryGetTypeID())
@@ -120,12 +120,12 @@ static bool getPluginInfoFromPropertyLists(CFBundleRef bundle, PluginInfo& plugi
     // Get the plug-in name.
     CFStringRef pluginName = static_cast<CFStringRef>(CFBundleGetValueForInfoDictionaryKey(bundle, CFSTR("WebPluginName")));
     if (pluginName && CFGetTypeID(pluginName) == CFStringGetTypeID())
-        pluginInfo.name = pluginName;
+        plugin.info.name = pluginName;
     
     // Get the plug-in description.
     CFStringRef pluginDescription = static_cast<CFStringRef>(CFBundleGetValueForInfoDictionaryKey(bundle, CFSTR("WebPluginDescription")));
     if (pluginDescription && CFGetTypeID(pluginDescription) == CFStringGetTypeID())
-        pluginInfo.desc = pluginDescription;
+        plugin.info.desc = pluginDescription;
     
     // Get the MIME type mapping dictionary.
     CFIndex numMimeTypes = CFDictionaryGetCount(mimeTypes.get());          
@@ -190,7 +190,7 @@ static bool getPluginInfoFromPropertyLists(CFBundleRef bundle, PluginInfo& plugi
         }
 
         // Add this MIME type.
-        pluginInfo.mimes.append(mimeClassInfo);
+        plugin.info.mimes.append(mimeClassInfo);
     }
 
     return true;    
@@ -268,7 +268,7 @@ static const ResID PluginNameOrDescriptionStringNumber = 126;
 static const ResID MIMEDescriptionStringNumber = 127;
 static const ResID MIMEListStringStringNumber = 128;
 
-static bool getPluginInfoFromCarbonResources(CFBundleRef bundle, PluginInfo& pluginInfo)
+static bool getPluginInfoFromCarbonResources(CFBundleRef bundle, PluginInfoStore::Plugin& plugin)
 {
     ResourceMap resourceMap(bundle);
     if (!resourceMap.isValid())
@@ -310,14 +310,14 @@ static bool getPluginInfoFromCarbonResources(CFBundleRef bundle, PluginInfo& plu
         for (size_t i = 0; i < extensions.size(); ++i)
             mimeClassInfo.extensions.append(extensions[i].lower());
 
-        pluginInfo.mimes.append(mimeClassInfo);
+        plugin.info.mimes.append(mimeClassInfo);
     }
 
     // Set the description and name if they exist.
     if (descriptionAndName.size() > 0)
-        pluginInfo.desc = descriptionAndName[0];
+        plugin.info.desc = descriptionAndName[0];
     if (descriptionAndName.size() > 1)
-        pluginInfo.name = descriptionAndName[1];
+        plugin.info.name = descriptionAndName[1];
 
     return true;
 }
@@ -339,19 +339,17 @@ bool NetscapePluginModule::getPluginInfo(const String& pluginPath, PluginInfoSto
         return false;
     
     // Check that the architecture is valid.
-    cpu_type_t pluginArchitecture = 0;
-    if (!getPluginArchitecture(bundle.get(), pluginArchitecture))
+    if (!getPluginArchitecture(bundle.get(), plugin))
         return false;
-    
-    // Check that there's valid info for this plug-in.
-    if (!getPluginInfoFromPropertyLists(bundle.get(), plugin.info) &&
-        !getPluginInfoFromCarbonResources(bundle.get(), plugin.info))
-        return false;
-    
+
     plugin.path = pluginPath;
-    plugin.pluginArchitecture = pluginArchitecture;
     plugin.bundleIdentifier = CFBundleGetIdentifier(bundle.get());
     plugin.versionNumber = CFBundleGetVersionNumber(bundle.get());
+    
+    // Check that there's valid info for this plug-in.
+    if (!getPluginInfoFromPropertyLists(bundle.get(), plugin) &&
+        !getPluginInfoFromCarbonResources(bundle.get(), plugin))
+        return false;
     
     RetainPtr<CFStringRef> filename(AdoptCF, CFURLCopyLastPathComponent(bundleURL.get()));
     plugin.info.file = filename.get();

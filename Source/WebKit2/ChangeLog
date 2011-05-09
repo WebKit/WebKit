@@ -1,3 +1,19 @@
+2011-05-09  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by John Sullivan.
+
+        Clean up NetscapePluginModule::getPluginInfo
+        https://bugs.webkit.org/show_bug.cgi?id=60486
+
+        Make all 'get' functions take a PluginInfoStore::Plugin reference, since getPluginInfoFromPropertyLists
+        is going to need it to know the path and plug-in architecture.
+
+        * Shared/Plugins/Netscape/mac/NetscapePluginModuleMac.mm:
+        (WebKit::getPluginArchitecture):
+        (WebKit::getPluginInfoFromPropertyLists):
+        (WebKit::getPluginInfoFromCarbonResources):
+        (WebKit::NetscapePluginModule::getPluginInfo):
+
 2011-05-09  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Darin Adler.
