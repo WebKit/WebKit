@@ -1,5 +1,14 @@
 2011-05-08  MORITA Hajime  <morrita@google.com>
 
+        Unreviewed, rolling out r86042.
+        http://trac.webkit.org/changeset/86042
+
+        The change contains an incorrect specification.
+
+        * platform/chromium/test_expectations.txt:
+
+2011-05-08  MORITA Hajime  <morrita@google.com>
+
         Unreviewed marking flaky test (insecure-plugin-in-iframe.html)
         
         * platform/chromium/test_expectations.txt:
