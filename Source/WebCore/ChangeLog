@@ -1,3 +1,21 @@
+2011-05-07  Martin Robinson  <mrobinson@igalia.com>
+
+        Reviewed by Daniel Bates.
+
+        [Soup] Clean up error handling in ResourceHandleSoup
+        https://bugs.webkit.org/show_bug.cgi?id=60436
+
+        Instead of repeating the ResourceError creation twice, abstract
+        it into a helper method.
+
+        No new tests. This is a code cleanup.
+
+        * platform/network/soup/ResourceHandleSoup.cpp:
+        (WebCore::soupErrorShouldCauseLoadFailure): Added.
+        (WebCore::convertSoupErrorToResourceError): Added.
+        (WebCore::sendRequestCallback): Use the new helpers.
+        (WebCore::readCallback): Ditto.
+
 2011-05-09  Abhishek Arya  <inferno@chromium.org>
 
         Reviewed by Dave Hyatt.

@@ -5,7 +5,7 @@
  * Copyright (C) 2009 Holger Hans Peter Freyther
  * Copyright (C) 2009 Gustavo Noronha Silva <gns@gnome.org>
  * Copyright (C) 2009 Christian Dywan <christian@imendio.com>
- * Copyright (C) 2009 Igalia S.L.
+ * Copyright (C) 2009, 2010, 2011 Igalia S.L.
  * Copyright (C) 2009 John Kjellberg <john.kjellberg@power.alstom.com>
  *
  * This library is free software; you can redistribute it and/or
@@ -403,6 +403,32 @@ static void cleanupSoupRequestOperation(ResourceHandle* handle, bool isDestroyin
         handle->deref();
 }
 
+static bool soupErrorShouldCauseLoadFailure(GError* error, SoupMessage* message)
+{
+    // Libsoup treats some non-error conditions as errors, including redirects and 304 Not Modified responses.
+    return message && SOUP_STATUS_IS_TRANSPORT_ERROR(message->status_code) || error->domain == G_IO_ERROR;
+}
+
+static ResourceError convertSoupErrorToResourceError(GError* error, SoupRequest* request, SoupMessage* message = 0)
+{
+    ASSERT(error);
+    ASSERT(request);
+
+    GOwnPtr<char> uri(soup_uri_to_string(soup_request_get_uri(request), FALSE));
+    if (message && SOUP_STATUS_IS_TRANSPORT_ERROR(message->status_code)) {
+        return ResourceError(g_quark_to_string(SOUP_HTTP_ERROR),
+                             static_cast<gint>(message->status_code),
+                             uri.get(),
+                             String::fromUTF8(message->reason_phrase));
+    }
+
+    // Non-transport errors are handled differently.
+    return ResourceError(g_quark_to_string(G_IO_ERROR),
+                         error->code,
+                         uri.get(),
+                         String::fromUTF8(error->message));
+}
+
 static void sendRequestCallback(GObject* source, GAsyncResult* res, gpointer userData)
 {
     RefPtr<ResourceHandle> handle = static_cast<ResourceHandle*>(g_object_get_data(source, "webkit-resource"));
@@ -426,36 +452,28 @@ static void sendRequestCallback(GObject* source, GAsyncResult* res, gpointer use
 
     GOwnPtr<GError> error;
     GInputStream* in = soup_request_send_finish(d->m_soupRequest.get(), res, &error.outPtr());
-
     if (error) {
-        SoupMessage* soupMsg = d->m_soupMessage.get();
-        gboolean isTransportError = d->m_soupMessage && SOUP_STATUS_IS_TRANSPORT_ERROR(soupMsg->status_code);
+        SoupMessage* soupMessage = d->m_soupMessage.get();
 
-        if (isTransportError || (error->domain == G_IO_ERROR)) {
-            SoupURI* uri = soup_request_get_uri(d->m_soupRequest.get());
-            GOwnPtr<char> uriStr(soup_uri_to_string(uri, false));
-            gint errorCode = isTransportError ? static_cast<gint>(soupMsg->status_code) : error->code;
-            const gchar* errorMsg = isTransportError ? soupMsg->reason_phrase : error->message;
-            const gchar* quarkStr = isTransportError ? g_quark_to_string(SOUP_HTTP_ERROR) : g_quark_to_string(G_IO_ERROR);
-            ResourceError resourceError(quarkStr, errorCode, uriStr.get(), String::fromUTF8(errorMsg));
-
+        if (soupErrorShouldCauseLoadFailure(error.get(), soupMessage)) {
+            client->didFail(handle.get(), convertSoupErrorToResourceError(error.get(), d->m_soupRequest.get(), soupMessage));
             cleanupSoupRequestOperation(handle.get());
-            client->didFail(handle.get(), resourceError);
             return;
         }
 
-        if (d->m_soupMessage && statusWillBeHandledBySoup(d->m_soupMessage->status_code)) {
+        if (soupMessage && statusWillBeHandledBySoup(soupMessage->status_code)) {
             ASSERT(d->m_response.isNull());
 
-            d->m_response.updateFromSoupMessage(soupMsg);
+            d->m_response.updateFromSoupMessage(soupMessage);
             client->didReceiveResponse(handle.get(), d->m_response);
 
             // WebCore might have cancelled the job in the while. We
             // must check for response_body->length and not
             // response_body->data as libsoup always creates the
             // SoupBuffer for the body even if the length is 0
-            if (!d->m_cancelled && soupMsg->response_body->length)
-                client->didReceiveData(handle.get(), soupMsg->response_body->data, soupMsg->response_body->length, soupMsg->response_body->length);
+            if (!d->m_cancelled && soupMessage->response_body->length)
+                client->didReceiveData(handle.get(), soupMessage->response_body->data,
+                                       soupMessage->response_body->length, soupMessage->response_body->length);
         }
 
         // didReceiveData above might have canceled this operation. If not, inform the client we've finished loading.
@@ -761,25 +779,18 @@ static void readCallback(GObject* source, GAsyncResult* asyncResult, gpointer da
     }
 
     GOwnPtr<GError> error;
-
     gssize bytesRead = g_input_stream_read_finish(d->m_inputStream.get(), asyncResult, &error.outPtr());
     if (error) {
-        SoupURI* uri = soup_request_get_uri(d->m_soupRequest.get());
-        GOwnPtr<char> uriStr(soup_uri_to_string(uri, false));
-        ResourceError resourceError(g_quark_to_string(G_IO_ERROR), error->code, uriStr.get(),
-                                    error ? String::fromUTF8(error->message) : String());
+        client->didFail(handle.get(), convertSoupErrorToResourceError(error.get(), d->m_soupRequest.get()));
         cleanupSoupRequestOperation(handle.get());
-        client->didFail(handle.get(), resourceError);
         return;
     }
 
     if (!bytesRead) {
-        // Finish the load. We do not wait for the stream to
-        // close. Instead we better notify WebCore as soon as possible
+        // We inform WebCore of load completion now instead of waiting for the input
+        // stream to close because the input stream is closed asynchronously.
         client->didFinishLoading(handle.get(), 0);
-
-        g_input_stream_close_async(d->m_inputStream.get(), G_PRIORITY_DEFAULT,
-                                   0, closeCallback, 0);
+        g_input_stream_close_async(d->m_inputStream.get(), G_PRIORITY_DEFAULT, 0, closeCallback, 0);
         return;
     }
 
