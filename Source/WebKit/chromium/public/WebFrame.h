@@ -33,6 +33,7 @@
 
 #include "WebCanvas.h"
 #include "WebFileSystem.h"
+#include "WebIconURL.h"
 #include "WebNode.h"
 #include "WebURL.h"
 
@@ -129,9 +130,9 @@ public:
     // dataSource()->request().url().
     virtual WebURL url() const = 0;
 
-    // The url of the favicon (if any) specified by the document loaded in
-    // this frame.
-    virtual WebURL favIconURL() const = 0;
+    // The urls of the given combination types of favicon (if any) specified by
+    // the document loaded in this frame.
+    virtual WebVector<WebIconURL> favIconURL(int iconTypes) const = 0;
 
     // The url of the OpenSearch Desription Document (if any) specified by
     // the document loaded in this frame.
