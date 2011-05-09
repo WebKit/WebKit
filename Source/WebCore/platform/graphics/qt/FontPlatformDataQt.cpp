@@ -94,6 +94,7 @@ FontPlatformData::FontPlatformData(const FontPlatformData& other, float size)
     m_data->bold = other.m_data->bold;
     m_data->oblique = other.m_data->oblique;
     m_data->font.setPixelSize(size);
+    m_data->rawFont.setPixelSize(size);
     m_data->size = size ? m_data->font.pixelSize() : 0;
 }
 #endif
