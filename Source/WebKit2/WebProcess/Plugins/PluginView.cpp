@@ -273,7 +273,6 @@ PluginView::~PluginView()
         m_pluginElement->document()->removeMediaCanStartListener(this);
 
     // Cancel all pending frame loads.
-    FrameLoadMap::iterator end = m_pendingFrameLoads.end();
     for (FrameLoadMap::iterator it = m_pendingFrameLoads.begin(), end = m_pendingFrameLoads.end(); it != end; ++it)
         it->first->setLoadListener(0);
 

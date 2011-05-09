@@ -424,9 +424,6 @@ void TiledDrawingAreaProxy::createTiles()
     // Remove tiles outside out current maximum keep rect.
     dropTilesOutsideRect(calculateKeepRect(visibleRect));
 
-    // Cover the cover rect with tiles.
-    IntRect coverRect = calculateCoverRect(visibleRect);
-
     // Search for the tile position closest to the viewport center that does not yet contain a tile.
     // Which position is considered the closest depends on the tileDistance function.
     double shortestDistance = std::numeric_limits<double>::infinity();
