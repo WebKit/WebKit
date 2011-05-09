@@ -1,3 +1,14 @@
+2011-05-09  Abhishek Arya  <inferno@chromium.org>
+
+        Reviewed by Dave Hyatt.
+
+        Tests that we do not when failing to dirty lines while removing
+        a inline.
+        https://bugs.webkit.org/show_bug.cgi?id=60448
+
+        * fast/inline/inline-destroy-dirty-lines-crash-expected.txt: Added.
+        * fast/inline/inline-destroy-dirty-lines-crash.html: Added.
+
 2011-05-09  Alejandro G. Castro  <alex@igalia.com>
 
         Unreviewed, skip 2 more flaky svg tests failing by one pixel in

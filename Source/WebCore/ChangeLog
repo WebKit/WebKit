@@ -1,3 +1,15 @@
+2011-05-09  Abhishek Arya  <inferno@chromium.org>
+
+        Reviewed by Dave Hyatt.
+
+        Regression(r85869): Restore dirty line logic in RenderInline::destroy.
+        https://bugs.webkit.org/show_bug.cgi?id=60448
+
+        Test: fast/inline/inline-destroy-dirty-lines-crash.html
+
+        * rendering/RenderInline.cpp:
+        (WebCore::RenderInline::destroy):
+
 2011-05-09  Alejandro G. Castro  <alex@igalia.com>
 
         Reviewed by Martin Robinson.
