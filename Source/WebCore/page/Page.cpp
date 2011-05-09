@@ -115,7 +115,7 @@ static void networkStateChanged()
 
 Page::Page(const PageClients& pageClients)
     : m_chrome(adoptPtr(new Chrome(this, pageClients.chromeClient)))
-    , m_dragCaretController(adoptPtr(new FrameSelection(0, true)))
+    , m_dragCaretController(adoptPtr(new DragCaretController))
 #if ENABLE(DRAG_SUPPORT)
     , m_dragController(adoptPtr(new DragController(this, pageClients.dragClient)))
 #endif

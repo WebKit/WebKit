@@ -1,3 +1,69 @@
+2011-05-08  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        Extract a DragCaretController from FrameSelection
+        https://bugs.webkit.org/show_bug.cgi?id=60273
+
+        Extracted CaretBase and DragCaretController from FrameSelection. CaretBase is a base class for
+        DragCaretController and FrameSelection and provides functions to paint caret.
+
+        Since DragCaretController doesn't need to store selection, it only holds one VisiblePosition.
+
+        * WebCore.exp.in:
+        * editing/FrameSelection.cpp:
+        (WebCore::CaretBase::CaretBase): Added.
+        (WebCore::DragCaretController::DragCaretController): Added; Set m_caretVisible true.
+        (WebCore::DragCaretController::isContentRichlyEditable): Added.
+        (WebCore::FrameSelection::FrameSelection): Several member variables are move to CaretBase.
+        (WebCore::DragCaretController::setCaretPosition): Extracted from FrameSelection::setSelection.
+        (WebCore::FrameSelection::setSelection): Removed an early exit for DragCaretController.
+        (WebCore::clearRenderViewSelection): Extracted from FrameSelection::respondToNodeModification.
+        (WebCore::DragCaretController::nodeWillBeRemoved): Extracted from FrameSelection::nodeWillBeRemoved
+        and respondToNodeModification. Note that the position DragCaretController holds is equivalent to
+        FrameSelection's base or start so when removingNodeRemovesPosition returns true for m_position,
+        we used to execute the first if clause and cleared render tree selection and DOM tree selection.
+        This is exactly what new DragCaretController::nodeWillBeRemoved does.
+        (WebCore::FrameSelection::nodeWillBeRemoved): Simplified early exist conditions.
+        (WebCore::FrameSelection::respondToNodeModification): Calls clearRenderViewSelection.
+        (WebCore::CaretBase::updateCaretRect): Takes document, caretPosition, selection type, and boolean isOrphaned.
+        Note that we can't obtain the document from caretPosition because VisiblePosition can be null even if
+        FrameSelection's start was not null.
+        (WebCore::caretRendersInsideNode): Moved; Made static local.
+        (WebCore::CaretBase::caretRenderer): Extracted from FrameSelection::caretRenderer.
+        (WebCore::FrameSelection::caretRenderer): Calls CaretBase::caretRenderer.
+        (WebCore::DragCaretController::caretRenderer): Ditto.
+        (WebCore::FrameSelection::localCaretRect): Calls updateCaretRect with extra arguments.
+        (WebCore::CaretBase::absoluteBoundsForLocalRect): Moved from FrameSelection; Takes Node*.
+        (WebCore::CaretBase::caretRepaintRect): Ditto.
+        (WebCore::FrameSelection::recomputeCaretRect): Calls absoluteBoundsForLocalRect, caretRepaintRect,
+        and shouldRepaintCaret with extra arguments.
+        (WebCore::CaretBase::shouldRepaintCaret): Takes a boolean isContentEditable.
+        (WebCore::FrameSelection::invalidateCaretRect): Calls CaretBase::invalidateCaretRect.
+        (WebCore::CaretBase::invalidateCaretRect): Extracted from FrameSelection::invalidateCaretRect.
+        (WebCore::FrameSelection::paintCaret): Calls CaretBase::paintCaret.
+        (WebCore::CaretBase::paintCaret): Extracted from FrameSelection::paintCaret.
+        (WebCore::FrameSelection::updateAppearance): Removed an assertion that this function is never called for
+        DragCaretController.
+        (WebCore::DragCaretController::paintDragCaret): Moved from FrameSelection::paintDragCaret.
+        * editing/FrameSelection.h:
+        (WebCore::CaretBase::localCaretRectForPainting): Added.
+        (WebCore::DragCaretController::isContentEditable): Added.
+        (WebCore::DragCaretController::hasCaret): Added.
+        (WebCore::DragCaretController::caretPosition): Added.
+        (WebCore::DragCaretController::clear): Added.
+        * page/DragController.cpp:
+        (WebCore::DragController::tryDocumentDrag): Uses DragCaretController.
+        (WebCore::DragController::dispatchTextInputEventFor): Ditto.
+        (WebCore::DragController::concludeEditDrag): Ditto.
+        (WebCore::DragController::placeDragCaret): Ditto.
+        * page/Page.cpp:
+        (WebCore::Page::Page): Instantiates DragCaretController instead of FrameSelection.
+        * page/Page.h:
+        (WebCore::Page::dragCaretController): Returns DragCaretController* instead of FrameSelection*.
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::paintCaret): Uses FrameSelection and DragCaretController.
+
 2011-05-08  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Darin Adler.

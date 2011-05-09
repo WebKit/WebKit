@@ -330,10 +330,8 @@ bool DragController::tryDocumentDrag(DragData* dragData, DragDestinationAction a
         Element* element = elementUnderMouse(m_documentUnderMouse.get(), point);
         if (!element)
             return false;
-        if (!asFileInput(element)) {
-            VisibleSelection dragCaret = m_documentUnderMouse->frame()->visiblePositionForPoint(point);
-            m_page->dragCaretController()->setSelection(dragCaret);
-        }
+        if (!asFileInput(element))
+            m_page->dragCaretController()->setCaretPosition(m_documentUnderMouse->frame()->visiblePositionForPoint(point));
 
         Frame* innerFrame = element->document()->frame();
         operation = dragIsMove(innerFrame->selection(), dragData) ? DragOperationMove : DragOperationCopy;
@@ -372,10 +370,9 @@ static bool setSelectionToDragCaret(Frame* frame, VisibleSelection& dragCaret, R
 
 bool DragController::dispatchTextInputEventFor(Frame* innerFrame, DragData* dragData)
 {
-    ASSERT(!m_page->dragCaretController()->isNone());
-    VisibleSelection dragCaret(m_page->dragCaretController()->selection());
-    String text = dragCaret.isContentRichlyEditable() ? "" : dragData->asPlainText(innerFrame);
-    Node* target = innerFrame->editor()->findEventTargetFrom(dragCaret);
+    ASSERT(m_page->dragCaretController()->hasCaret());
+    String text = m_page->dragCaretController()->isContentRichlyEditable() ? "" : dragData->asPlainText(innerFrame);
+    Node* target = innerFrame->editor()->findEventTargetFrom(m_page->dragCaretController()->caretPosition());
     ExceptionCode ec = 0;
     return target->dispatchEvent(TextEvent::createForDrop(innerFrame->domWindow(), text), ec);
 }
@@ -395,7 +392,7 @@ bool DragController::concludeEditDrag(DragData* dragData)
     Frame* innerFrame = element->ownerDocument()->frame();
     ASSERT(innerFrame);
 
-    if (!m_page->dragCaretController()->isNone() && !dispatchTextInputEventFor(innerFrame, dragData))
+    if (m_page->dragCaretController()->hasCaret() && !dispatchTextInputEventFor(innerFrame, dragData))
         return true;
 
     if (dragData->containsColor()) {
@@ -441,7 +438,7 @@ bool DragController::concludeEditDrag(DragData* dragData)
         return true;
     }
 
-    VisibleSelection dragCaret(m_page->dragCaretController()->selection());
+    VisibleSelection dragCaret = m_page->dragCaretController()->caretPosition();
     m_page->dragCaretController()->clear();
     RefPtr<Range> range = dragCaret.toNormalizedRange();
 
@@ -851,8 +848,8 @@ void DragController::placeDragCaret(const IntPoint& windowPoint)
     if (!frameView)
         return;
     IntPoint framePoint = frameView->windowToContents(windowPoint);
-    VisibleSelection dragCaret(frame->visiblePositionForPoint(framePoint));
-    m_page->dragCaretController()->setSelection(dragCaret);
+
+    m_page->dragCaretController()->setCaretPosition(frame->visiblePositionForPoint(framePoint));
 }
 
 } // namespace WebCore

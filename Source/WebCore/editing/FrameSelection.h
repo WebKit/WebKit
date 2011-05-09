@@ -48,7 +48,58 @@ class VisiblePosition;
 
 enum DirectionalityPolicy { MakeNonDirectionalSelection, MakeDirectionalSelection };
 
-class FrameSelection {
+class CaretBase {
+    WTF_MAKE_NONCOPYABLE(CaretBase);
+    WTF_MAKE_FAST_ALLOCATED;
+protected:
+    CaretBase();
+
+    void invalidateCaretRect(Node*, bool caretRectChanged = false);
+    void updateCaretRect(Document*, const VisiblePosition& caretPosition, VisibleSelection::SelectionType, bool isOrphaned);
+    IntRect absoluteBoundsForLocalRect(Node*, const IntRect&) const;
+    IntRect absoluteCaretBounds(bool isContentEditable);
+    IntRect caretRepaintRect(Node*) const;
+    bool shouldRepaintCaret(const RenderView*, bool isContentEditable) const;
+
+    IntRect localCaretRectForPainting() const { return m_caretRect; }
+    void paintCaret(Node*, GraphicsContext*, int tx, int ty, const IntRect& clipRect) const;
+
+    RenderObject* caretRenderer(Node*) const;
+
+    IntRect m_caretRect; // caret rect in coords local to the renderer responsible for painting the caret
+    IntRect m_absCaretBounds; // absolute bounding rect for the caret
+    IntRect m_absoluteCaretRepaintBounds;
+
+    bool m_caretRectNeedsUpdate; // true if m_caretRect and m_absCaretBounds need to be calculated
+    bool m_absCaretBoundsDirty;
+    bool m_caretVisible;
+    bool m_caretPaint;
+};
+
+class DragCaretController : private CaretBase {
+    WTF_MAKE_NONCOPYABLE(DragCaretController);
+    WTF_MAKE_FAST_ALLOCATED;
+public:
+    DragCaretController();
+
+    RenderObject* caretRenderer() const;
+    void paintDragCaret(Frame*, GraphicsContext*, int tx, int ty, const IntRect& clipRect) const;
+
+    bool isContentEditable() const { return m_position.rootEditableElement(); }
+    bool isContentRichlyEditable() const;
+
+    bool hasCaret() const { return m_position.isNotNull(); }
+    const VisiblePosition& caretPosition() { return m_position; }
+    void setCaretPosition(const VisiblePosition&);
+    void clear() { setCaretPosition(VisiblePosition()); }
+
+    void nodeWillBeRemoved(Node*);
+
+private:
+    VisiblePosition m_position;
+};
+
+class FrameSelection : private CaretBase {
     WTF_MAKE_NONCOPYABLE(FrameSelection);
     WTF_MAKE_FAST_ALLOCATED;
 public:
@@ -63,7 +114,7 @@ public:
     };
     typedef unsigned SetSelectionOptions;
 
-    FrameSelection(Frame* = 0, bool isDragCaretController = false);
+    FrameSelection(Frame* = 0);
 
     Element* rootEditableElement() const { return m_selection.rootEditableElement(); }
     bool isContentEditable() const { return m_selection.isContentEditable(); }
@@ -114,7 +165,6 @@ public:
 
     // Caret rect local to the caret's renderer
     IntRect localCaretRect();
-    IntRect localCaretRectForPainting() const { return m_caretRect; }
 
     // Bounds of (possibly transformed) caret in absolute coords
     IntRect absoluteCaretBounds();
@@ -139,7 +189,7 @@ public:
 
     void setCaretVisible(bool = true);
     void clearCaretRectIfNeeded();
-    bool recomputeCaretRect(); // returns true if caret rect moved
+    bool recomputeCaretRect();
     void invalidateCaretRect();
     void paintCaret(GraphicsContext*, int tx, int ty, const IntRect& clipRect);
 
@@ -203,18 +253,11 @@ private:
     VisiblePosition modifyMovingLeft(TextGranularity);
     VisiblePosition modifyMovingBackward(TextGranularity);
 
-    void updateCaretRect();
-    IntRect caretRepaintRect() const;
-    bool shouldRepaintCaret(const RenderView* view) const;
-
     int xPosForVerticalArrowNavigation(EPositionType);
     
     void notifyAccessibilityForSelectionChange();
 
     void focusedOrActiveStateChanged();
-    bool caretRendersInsideNode(Node*) const;
-    
-    IntRect absoluteBoundsForLocalRect(const IntRect&) const;
 
     void caretBlinkTimerFired(Timer<FrameSelection>*);
 
@@ -231,18 +274,9 @@ private:
 
     Timer<FrameSelection> m_caretBlinkTimer;
 
-    IntRect m_caretRect; // caret rect in coords local to the renderer responsible for painting the caret
-    IntRect m_absCaretBounds; // absolute bounding rect for the caret
-    IntRect m_absoluteCaretRepaintBounds;
-    
-    bool m_caretRectNeedsUpdate; // true if m_caretRect and m_absCaretBounds need to be calculated
-    bool m_absCaretBoundsDirty;
     bool m_isDirectional;
-    bool m_isDragCaretController;
     bool m_isCaretBlinkingSuspended;
     bool m_focused;
-    bool m_caretVisible;
-    bool m_caretPaint;
 };
 
 inline EditingStyle* FrameSelection::typingStyle() const

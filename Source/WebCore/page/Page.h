@@ -54,6 +54,7 @@ namespace WebCore {
     class DeviceOrientationClient;
     class DeviceOrientationController;
     class Document;
+    class DragCaretController;
     class DragClient;
     class DragController;
     class EditorClient;
@@ -165,7 +166,7 @@ namespace WebCore {
         int frameCount() const { checkFrameCountConsistency(); return m_frameCount; }
 
         Chrome* chrome() const { return m_chrome.get(); }
-        FrameSelection* dragCaretController() const { return m_dragCaretController.get(); }
+        DragCaretController* dragCaretController() const { return m_dragCaretController.get(); }
 #if ENABLE(DRAG_SUPPORT)
         DragController* dragController() const { return m_dragController.get(); }
 #endif
@@ -315,7 +316,7 @@ namespace WebCore {
         double minimumTimerInterval() const;
 
         OwnPtr<Chrome> m_chrome;
-        OwnPtr<FrameSelection> m_dragCaretController;
+        OwnPtr<DragCaretController> m_dragCaretController;
 
 #if ENABLE(ACCELERATED_2D_CANVAS)
         RefPtr<SharedGraphicsContext3D> m_sharedGraphicsContext3D;

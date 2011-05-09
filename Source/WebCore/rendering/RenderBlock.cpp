@@ -2429,12 +2429,19 @@ void RenderBlock::paintChildren(PaintInfo& paintInfo, int tx, int ty)
 
 void RenderBlock::paintCaret(PaintInfo& paintInfo, int tx, int ty, CaretType type)
 {
-    FrameSelection* selection = type == CursorCaret ? frame()->selection() : frame()->page()->dragCaretController();
-
     // Paint the caret if the FrameSelection says so or if caret browsing is enabled
     bool caretBrowsing = frame()->settings() && frame()->settings()->caretBrowsingEnabled();
-    RenderObject* caretPainter = selection->caretRenderer();
-    if (caretPainter == this && (selection->isContentEditable() || caretBrowsing)) {
+    RenderObject* caretPainter;
+    bool isContentEditable;
+    if (type == CursorCaret) {
+        caretPainter = frame()->selection()->caretRenderer();
+        isContentEditable = frame()->selection()->isContentEditable();
+    } else {
+        caretPainter = frame()->page()->dragCaretController()->caretRenderer();
+        isContentEditable = frame()->page()->dragCaretController()->isContentEditable();
+    }
+
+    if (caretPainter == this && (isContentEditable || caretBrowsing)) {
         // Convert the painting offset into the local coordinate system of this renderer,
         // to match the localCaretRect computed by the FrameSelection
         offsetForContents(tx, ty);
@@ -2442,7 +2449,7 @@ void RenderBlock::paintCaret(PaintInfo& paintInfo, int tx, int ty, CaretType typ
         if (type == CursorCaret)
             frame()->selection()->paintCaret(paintInfo.context, tx, ty, paintInfo.rect);
         else
-            frame()->selection()->paintDragCaret(paintInfo.context, tx, ty, paintInfo.rect);
+            frame()->page()->dragCaretController()->paintDragCaret(frame(), paintInfo.context, tx, ty, paintInfo.rect);
     }
 }
 
