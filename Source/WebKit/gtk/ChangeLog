@@ -1,3 +1,52 @@
+2011-04-29  Martin Robinson  <mrobinson@igalia.com>
+
+        Reviewed by Gustavo Noronha Silva.
+
+        [GTK] Untangle GtkAdjustments from WebCore
+        https://bugs.webkit.org/show_bug.cgi?id=59821
+
+        Have ChromeClient manage the GtkAdjustments of the parent widget instead of passing
+        them to WebCore to manage. This simplifies the code quite a bit and should be less
+        crash prone in the future.
+
+        * GNUmakefile.am: Added new GtkAdjustmentWatcher class to the sources list.
+        * WebCoreSupport/ChromeClientGtk.cpp: Added new GtkAdjustmentWatcher member.
+        (WebKit::ChromeClient::ChromeClient) Initialize the new member.
+        (WebKit::ChromeClient::scroll): Poke the adjustment watcher to update the adjustments.
+        (WebKit::ChromeClient::contentsSizeChanged): Ditto.
+        (WebKit::ChromeClient::scrollbarsModeDidChange): This may now be called at a time when there
+        is no main frame, so do an early return in that case.
+        * WebCoreSupport/ChromeClientGtk.h: Add the new member.
+        (WebKit::ChromeClient::adjustmentWatcher): Add this getter for WebKitWebView.
+        * WebCoreSupport/FrameLoaderClientGtk.cpp: Remove calls which pushed the adjustments into
+        WebCore.
+        (WebKit::FrameLoaderClient::savePlatformDataToCachedFrame):
+        (WebKit::postCommitFrameViewSetup):
+        * WebCoreSupport/GtkAdjustmentWatcher.cpp: Added.
+        (WebKit::GtkAdjustmentWatcher::GtkAdjustmentWatcher):
+        (WebKit::updateAdjustmentFromScrollbar):
+        (WebKit::GtkAdjustmentWatcher::updateAdjustmentsFromScrollbars):
+        (WebKit::updateAdjustmentCallback):
+        (WebKit::GtkAdjustmentWatcher::updateAdjustmentsFromScrollbarsLater):
+        (WebKit::adjustmentValueChangedCallback):
+        (WebKit::setAdjustment):
+        (WebKit::GtkAdjustmentWatcher::setHorizontalAdjustment):
+        (WebKit::GtkAdjustmentWatcher::setVerticalAdjustment):
+        (WebKit::GtkAdjustmentWatcher::adjustmentValueChanged):
+        * WebCoreSupport/GtkAdjustmentWatcher.h: Added.
+        (WebKit::GtkAdjustmentWatcher::horizontalAdjustment):
+        (WebKit::GtkAdjustmentWatcher::verticalAdjustment):
+        * webkit/webkitwebview.cpp:
+        (setHorizontalAdjustment):
+        (setVerticalAdjustment): Remove the adjustment member. Call into the adjustment watcher.
+        (getHorizontalAdjustment): Ditto.
+        (getVerticalAdjustment): Ditto.
+        (webkit_web_view_size_allocate): Ditto.
+        (webkit_web_view_set_scroll_adjustments): Ditto.
+        (webkit_web_view_dispose): Ditto.
+        (webkit_web_view_init): Ditto.
+        * webkit/webkitwebviewprivate.h: Ditto.
+
 2011-05-06  Kent Tamura  <tkent@chromium.org>
 
         Reviewed by Ryosuke Niwa.

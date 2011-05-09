@@ -1,3 +1,29 @@
+2011-04-29  Martin Robinson  <mrobinson@igalia.com>
+
+        Reviewed by Gustavo Noronha Silva.
+
+        [GTK] Untangle GtkAdjustments from WebCore
+        https://bugs.webkit.org/show_bug.cgi?id=59821
+
+        Completely remove the ability for WebKit to set GtkAdjustments on ScrollViews
+        and, consequently, Scrollbars. Handling adjustment updates can now be managed
+        in WebKit.
+
+        No new tests. This is covered by existing Scrollbar tests.
+
+        * platform/ScrollView.cpp: platformInit and platformDestroy can now be shared
+        between ScrollView.cpp and ScrollViewGtk.cpp.
+        * platform/ScrollView.h: Remove unused methods.
+        * platform/gtk/MainFrameScrollbarGtk.cpp:
+        (MainFrameScrollbarGtk::create): No longer need to pass in the adjustment.
+        (MainFrameScrollbarGtk::MainFrameScrollbarGtk): Update the comments here.
+        * platform/gtk/MainFrameScrollbarGtk.h: Lots of code removal.
+        * platform/gtk/ScrollViewGtk.cpp: Ditto.
+        (WebCore::ScrollView::createScrollbar): Ditto.
+        (WebCore::ScrollView::setScrollbarModes): Ditto.
+        * plugins/gtk/PluginViewGtk.cpp: This file needs the GRefPtrGtk.h include now
+        that it doesn't receive it transitively.
+
 2011-05-09  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Eric Seidel.

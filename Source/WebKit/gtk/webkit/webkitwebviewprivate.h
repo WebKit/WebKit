@@ -71,9 +71,6 @@ struct _WebKitWebViewPrivate {
 
     gboolean transparent;
 
-    GRefPtr<GtkAdjustment> horizontalAdjustment;
-    GRefPtr<GtkAdjustment> verticalAdjustment;
-
 #ifndef GTK_API_VERSION_2
     // GtkScrollablePolicy needs to be checked when
     // driving the scrollable adjustment values

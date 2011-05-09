@@ -1346,12 +1346,6 @@ void FrameLoaderClient::updateGlobalHistoryRedirectLinks()
 
 void FrameLoaderClient::savePlatformDataToCachedFrame(CachedFrame* cachedFrame)
 {
-    // We need to do this here in order to disconnect the scrollbars
-    // that are being used by the frame that is being cached from the
-    // adjustments, otherwise they will react to changes in the
-    // adjustments, and bad things will happen.
-    if (cachedFrame->view())
-        cachedFrame->view()->setGtkAdjustments(0, 0);
 }
 
 static void postCommitFrameViewSetup(WebKitWebFrame *frame, FrameView *view, bool resetValues)
@@ -1359,14 +1353,12 @@ static void postCommitFrameViewSetup(WebKitWebFrame *frame, FrameView *view, boo
     WebKitWebView* containingWindow = getViewFromFrame(frame);
     webkit_web_view_clear_resources(containingWindow);
 
-    WebKitWebViewPrivate* priv = containingWindow->priv;
-    view->setGtkAdjustments(priv->horizontalAdjustment.get(), priv->verticalAdjustment.get(), resetValues);
-
     // Invalidate the viewport attributes - they will only be valid
     // again if the page we're beginning to load now has an
     // appropriate viewport meta tag.
-    containingWindow->priv->viewportAttributes->priv->isValid = FALSE;
-    g_object_notify(G_OBJECT(containingWindow->priv->viewportAttributes.get()), "valid");
+    WebKitWebViewPrivate* priv = containingWindow->priv;
+    priv->viewportAttributes->priv->isValid = FALSE;
+    g_object_notify(G_OBJECT(priv->viewportAttributes.get()), "valid");
 
     if (priv->currentMenu) {
         gtk_widget_destroy(GTK_WIDGET(priv->currentMenu));

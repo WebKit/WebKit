@@ -39,6 +39,7 @@
 #include "FrameTree.h"
 #include "Frame.h"
 #include "FrameView.h"
+#include "GRefPtrGtk.h"
 #include "GraphicsContext.h"
 #include "GtkVersioning.h"
 #include "HTMLNames.h"

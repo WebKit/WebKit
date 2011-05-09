@@ -31,34 +31,14 @@
 #include "config.h"
 #include "ScrollView.h"
 
-#include "ChromeClient.h"
-#include "FloatRect.h"
-#include "Frame.h"
-#include "FrameView.h"
-#include "GraphicsContext.h"
-#include "GtkVersioning.h"
 #include "HostWindow.h"
-#include "IntRect.h"
 #include "MainFrameScrollbarGtk.h"
-#include "Page.h"
-#include "PlatformMouseEvent.h"
-#include "PlatformWheelEvent.h"
 #include "ScrollbarTheme.h"
 #include <gtk/gtk.h>
 
 using namespace std;
 
 namespace WebCore {
-
-void ScrollView::platformInit()
-{
-}
-
-void ScrollView::platformDestroy()
-{
-    m_horizontalAdjustment = 0;
-    m_verticalAdjustment = 0;
-}
 
 PassRefPtr<Scrollbar> ScrollView::createScrollbar(ScrollbarOrientation orientation)
 {
@@ -71,94 +51,10 @@ PassRefPtr<Scrollbar> ScrollView::createScrollbar(ScrollbarOrientation orientati
     // and defers to our GtkAdjustment for all of its state. Note that the GtkAdjustment
     // may be null here.
     if (orientation == HorizontalScrollbar)
-        return MainFrameScrollbarGtk::create(this, orientation, m_horizontalAdjustment.get());
+        return MainFrameScrollbarGtk::create(this, orientation);
 
     // VerticalScrollbar
-    return MainFrameScrollbarGtk::create(this, orientation, m_verticalAdjustment.get());
-}
-
-void ScrollView::setHorizontalAdjustment(GtkAdjustment* hadj, bool resetValues)
-{
-    ASSERT(!parent() || !hadj);
-    if (parent())
-        return;
-
-    m_horizontalAdjustment = hadj;
-
-    if (!m_horizontalAdjustment) {
-        MainFrameScrollbarGtk* hScrollbar = reinterpret_cast<MainFrameScrollbarGtk*>(horizontalScrollbar());
-        if (hScrollbar)
-            hScrollbar->detachAdjustment();
-
-        return;
-    }
-
-    // We may be lacking scrollbars when returning to a cached
-    // page, this kicks the page to recreate the scrollbars.
-    setHasHorizontalScrollbar(true);
-
-    MainFrameScrollbarGtk* hScrollbar = reinterpret_cast<MainFrameScrollbarGtk*>(horizontalScrollbar());
-    hScrollbar->attachAdjustment(m_horizontalAdjustment.get());
-
-    // We used to reset everything to 0 here, but when page cache
-    // is enabled we reuse FrameViews that are cached. Since their
-    // size is not going to change when being restored, (which is
-    // what would cause the upper limit in the adjusments to be
-    // set in the normal case), we make sure they are up-to-date
-    // here. This is needed for the parent scrolling widget to be
-    // able to report correct values.
-    int horizontalPageStep = max(max<int>(frameRect().width() * Scrollbar::minFractionToStepWhenPaging(), frameRect().width() - Scrollbar::maxOverlapBetweenPages()), 1);
-    gtk_adjustment_configure(m_horizontalAdjustment.get(),
-                             resetValues ? 0 : scrollOffset().width(), 0,
-                             resetValues ? 0 : contentsSize().width(),
-                             resetValues ? 0 : Scrollbar::pixelsPerLineStep(),
-                             resetValues ? 0 : horizontalPageStep,
-                             resetValues ? 0 : frameRect().width());
-}
-
-void ScrollView::setVerticalAdjustment(GtkAdjustment* vadj, bool resetValues)
-{
-    ASSERT(!parent() || !vadj);
-    if (parent())
-        return;
-
-    m_verticalAdjustment = vadj;
-
-    if (!m_verticalAdjustment) {
-        MainFrameScrollbarGtk* vScrollbar = reinterpret_cast<MainFrameScrollbarGtk*>(verticalScrollbar());
-        if (vScrollbar)
-            vScrollbar->detachAdjustment();
-
-        return;
-    }
-
-    // We may be lacking scrollbars when returning to a cached
-    // page, this kicks the page to recreate the scrollbars.
-    setHasVerticalScrollbar(true);
-
-    MainFrameScrollbarGtk* vScrollbar = reinterpret_cast<MainFrameScrollbarGtk*>(verticalScrollbar());
-    vScrollbar->attachAdjustment(m_verticalAdjustment.get());
-
-    // We used to reset everything to 0 here, but when page cache
-    // is enabled we reuse FrameViews that are cached. Since their
-    // size is not going to change when being restored, (which is
-    // what would cause the upper limit in the adjusments to be
-    // set in the normal case), we make sure they are up-to-date
-    // here. This is needed for the parent scrolling widget to be
-    // able to report correct values.
-    int verticalPageStep = max(max<int>(frameRect().width() * Scrollbar::minFractionToStepWhenPaging(), frameRect().width() - Scrollbar::maxOverlapBetweenPages()), 1);
-    gtk_adjustment_configure(m_verticalAdjustment.get(),
-                             resetValues ? 0 : scrollOffset().height(), 0,
-                             resetValues ? 0 : contentsSize().height(),
-                             resetValues ? 0 : Scrollbar::pixelsPerLineStep(),
-                             resetValues ? 0 : verticalPageStep,
-                             resetValues ? 0 : frameRect().height());
-}
-
-void ScrollView::setGtkAdjustments(GtkAdjustment* hadj, GtkAdjustment* vadj, bool resetValues)
-{
-    setHorizontalAdjustment(hadj, resetValues);
-    setVerticalAdjustment(vadj, resetValues);
+    return MainFrameScrollbarGtk::create(this, orientation);
 }
 
 IntRect ScrollView::visibleContentRect(bool includeScrollbars) const
@@ -216,7 +112,7 @@ void ScrollView::setScrollbarModes(ScrollbarMode horizontalMode, ScrollbarMode v
 
     // We don't need to report policy changes on ScrollView's unless this
     // one has an adjustment attached and it is a main frame.
-    if (!m_horizontalAdjustment || parent() || !isFrameView())
+    if (parent() || !isFrameView())
         return;
 
     // For frames that do have adjustments attached, we want to report

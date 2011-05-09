@@ -20,32 +20,18 @@
 #ifndef MainFrameScrollbarGtk_h
 #define MainFrameScrollbarGtk_h
 
-#include "GRefPtrGtk.h"
 #include "Scrollbar.h"
 #include <wtf/PassRefPtr.h>
-
-typedef struct _GtkAdjustment GtkAdjustment;
 
 namespace WebCore {
 
 class MainFrameScrollbarGtk : public Scrollbar {
 public:
-    static PassRefPtr<MainFrameScrollbarGtk> create(ScrollableArea*, ScrollbarOrientation, GtkAdjustment*);
-
-    ~MainFrameScrollbarGtk();
+    static PassRefPtr<MainFrameScrollbarGtk> create(ScrollableArea*, ScrollbarOrientation);
     virtual void paint(GraphicsContext*, const IntRect&);
-    void detachAdjustment();
-    void attachAdjustment(GtkAdjustment*);
-
-protected:
-    virtual void updateThumbPosition();
-    virtual void updateThumbProportion();
 
 private:
-    MainFrameScrollbarGtk(ScrollableArea*, ScrollbarOrientation, GtkAdjustment*);
-    static void gtkValueChanged(GtkAdjustment*, MainFrameScrollbarGtk*);
-
-    GRefPtr<GtkAdjustment> m_adjustment;
+    MainFrameScrollbarGtk(ScrollableArea*, ScrollbarOrientation);
 };
 
 }

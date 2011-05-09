@@ -39,11 +39,6 @@
 @protocol WebCoreFrameScrollView;
 #endif
 
-#if PLATFORM(GTK)
-#include "GRefPtrGtk.h"
-typedef struct _GtkAdjustment GtkAdjustment;
-#endif
-
 #if PLATFORM(WX)
 class wxScrollWinEvent;
 #endif
@@ -400,18 +395,6 @@ public:
 
 private:
     NSScrollView<WebCoreFrameScrollView>* scrollView() const;
-#endif
-
-#if PLATFORM(GTK)
-public:
-    void setGtkAdjustments(GtkAdjustment* hadj, GtkAdjustment* vadj, bool resetValues = true);
-    void setHorizontalAdjustment(GtkAdjustment* hadj, bool resetValues = true);
-    void setVerticalAdjustment(GtkAdjustment* vadj, bool resetValues = true);
-    void setScrollOffset(const IntSize& offset) { m_scrollOffset = offset; }
-
-private:
-    GRefPtr<GtkAdjustment> m_horizontalAdjustment;
-    GRefPtr<GtkAdjustment> m_verticalAdjustment;
 #endif
 
 #if PLATFORM(WX)

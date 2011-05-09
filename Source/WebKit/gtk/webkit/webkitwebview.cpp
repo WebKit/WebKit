@@ -76,7 +76,6 @@
 #include "RenderView.h"
 #include "ResourceHandle.h"
 #include "ScriptValue.h"
-#include "Scrollbar.h"
 #include "Settings.h"
 #include "webkit/WebKitDOMDocumentPrivate.h"
 #include "webkitdownload.h"
@@ -424,36 +423,34 @@ static gboolean webkit_web_view_popup_menu_handler(GtkWidget* widget)
 #ifndef GTK_API_VERSION_2
 static void setHorizontalAdjustment(WebKitWebView* webView, GtkAdjustment* adjustment)
 {
-    if (!core(webView))
-        return;
-
-    webView->priv->horizontalAdjustment = adjustment;
-    FrameView* view = core(webkit_web_view_get_main_frame(webView))->view();
-    if (!view)
-        return;
-    view->setHorizontalAdjustment(adjustment);
+    // This may be called after the page has been destroyed, in which case we do nothing.
+    Page* page = core(webView);
+    if (page)
+        static_cast<WebKit::ChromeClient*>(page->chrome()->client())->adjustmentWatcher()->setHorizontalAdjustment(adjustment);
 }
 
 static void setVerticalAdjustment(WebKitWebView* webView, GtkAdjustment* adjustment)
 {
-    if (!core(webView))
-        return;
-
-    webView->priv->verticalAdjustment = adjustment;
-    FrameView* view = core(webkit_web_view_get_main_frame(webView))->view();
-    if (!view)
-        return;
-    view->setVerticalAdjustment(adjustment);
+    // This may be called after the page has been destroyed, in which case we do nothing.
+    Page* page = core(webView);
+    if (page)
+        static_cast<WebKit::ChromeClient*>(page->chrome()->client())->adjustmentWatcher()->setVerticalAdjustment(adjustment);
 }
 
 static GtkAdjustment* getHorizontalAdjustment(WebKitWebView* webView)
 {
-    return webView->priv->horizontalAdjustment.get();
+    Page* page = core(webView);
+    if (page)
+        return static_cast<WebKit::ChromeClient*>(page->chrome()->client())->horizontalAdjustment();
+    return 0;
 }
 
 static GtkAdjustment* getVerticalAdjustment(WebKitWebView* webView)
 {
-    return webView->priv->verticalAdjustment.get();
+    Page* page = core(webView);
+    if (page)
+        return static_cast<WebKit::ChromeClient*>(page->chrome()->client())->verticalAdjustment();
+    return 0;
 }
 
 static void setHorizontalScrollPolicy(WebKitWebView* webView, GtkScrollablePolicy policy)
@@ -896,15 +893,17 @@ static void webkit_web_view_get_preferred_height(GtkWidget* widget, gint* minimu
 
 static void webkit_web_view_size_allocate(GtkWidget* widget, GtkAllocation* allocation)
 {
-    GTK_WIDGET_CLASS(webkit_web_view_parent_class)->size_allocate(widget,allocation);
+    GTK_WIDGET_CLASS(webkit_web_view_parent_class)->size_allocate(widget, allocation);
 
     WebKitWebView* webView = WEBKIT_WEB_VIEW(widget);
 
-    Frame* frame = core(webView)->mainFrame();
+    Page* page = core(webView);
+    Frame* frame = page->mainFrame();
     if (!frame->view())
         return;
 
     frame->view()->resize(allocation->width, allocation->height);
+    static_cast<WebKit::ChromeClient*>(page->chrome()->client())->adjustmentWatcher()->updateAdjustmentsFromScrollbars();
 }
 
 static void webkit_web_view_grab_focus(GtkWidget* widget)
@@ -1024,18 +1023,16 @@ static void webkit_web_view_realize(GtkWidget* widget)
 }
 
 #ifdef GTK_API_VERSION_2
-static void webkit_web_view_set_scroll_adjustments(WebKitWebView* webView, GtkAdjustment* hadj, GtkAdjustment* vadj)
+static void webkit_web_view_set_scroll_adjustments(WebKitWebView* webView, GtkAdjustment* horizontalAdjustment, GtkAdjustment* verticalAdjustment)
 {
-    if (!core(webView))
+    // This may be called after the page has been destroyed, in which case we do nothing.
+    Page* page = core(webView);
+    if (!page)
         return;
 
-    webView->priv->horizontalAdjustment = hadj;
-    webView->priv->verticalAdjustment = vadj;
-
-    FrameView* view = core(webkit_web_view_get_main_frame(webView))->view();
-    if (!view)
-        return;
-    view->setGtkAdjustments(hadj, vadj);
+    WebKit::ChromeClient* client = static_cast<WebKit::ChromeClient*>(page->chrome()->client());
+    client->adjustmentWatcher()->setHorizontalAdjustment(horizontalAdjustment);
+    client->adjustmentWatcher()->setVerticalAdjustment(verticalAdjustment);
 }
 #endif
 
@@ -1298,8 +1295,6 @@ static void webkit_web_view_dispose(GObject* object)
 
     // These smart pointers are cleared manually, because some cleanup operations are
     // very sensitive to their value. We may crash if these are done in the wrong order.
-    priv->horizontalAdjustment.clear();
-    priv->verticalAdjustment.clear();
     priv->backForwardList.clear();
 
     if (priv->corePage) {
@@ -3470,10 +3465,6 @@ static void webkit_web_view_init(WebKitWebView* webView)
     // And our ViewportAttributes friend.
     priv->viewportAttributes = adoptGRef(WEBKIT_VIEWPORT_ATTRIBUTES(g_object_new(WEBKIT_TYPE_VIEWPORT_ATTRIBUTES, NULL)));
     priv->viewportAttributes->priv->webView = webView;
-
-    // The smart pointer will call g_object_ref_sink on these adjustments.
-    priv->horizontalAdjustment = GTK_ADJUSTMENT(gtk_adjustment_new(0.0, 0.0, 0.0, 0.0, 0.0, 0.0));
-    priv->verticalAdjustment = GTK_ADJUSTMENT(gtk_adjustment_new(0.0, 0.0, 0.0, 0.0, 0.0, 0.0));
 
     gtk_widget_set_can_focus(GTK_WIDGET(webView), TRUE);
     priv->mainFrame = WEBKIT_WEB_FRAME(webkit_web_frame_new(webView));
