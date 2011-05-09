@@ -1,3 +1,11 @@
+2011-05-09  Andreas Kling  <andreas.kling@nokia.com>
+
+        Unreviewed. Re-skip two failing inspector tests on Qt.
+
+        They still fail in the bot's environment for whatever reason.
+
+        * platform/qt/Skipped:
+
 2011-05-09  Leandro Gracia Gil  <leandrogracia@chromium.org>
 
         Reviewed by Tony Gentilcore.

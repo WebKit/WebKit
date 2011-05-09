@@ -2695,3 +2695,7 @@ fast/events/page-visibility-iframe-delete-test.html
 fast/events/page-visibility-iframe-move-test.html
 fast/events/page-visibility-iframe-propagation-test.html
 fast/events/page-visibility-transition-test.html
+
+# Fails with Qt 4.7.3.
+http/tests/inspector/network/download.html
+http/tests/inspector/network/x-frame-options-deny.html
