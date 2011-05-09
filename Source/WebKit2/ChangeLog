@@ -1,3 +1,22 @@
+2011-05-09  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Darin Adler.
+
+        A WKView with plug-ins paints white when first moved into a window
+        https://bugs.webkit.org/show_bug.cgi?id=60511
+
+        The UI process’s wait for DidUpdateBackingStoreState would always time out because the Web process
+        was blocked on a synchronous message the UI process trying to get the connections for plug-ins in
+        the view. This is avoided by deferring the call to Page::setCanStartMedia().
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::WebPage): Initialize the new m_setCanStartMediaTimer.
+        (WebKit::WebPage::setCanStartMediaTimerFired): Added. Calls setCanStartMedia(true) when the timer
+        fires.
+        (WebKit::WebPage::setIsInWindow): When going out of a window, stop the timer. When going into a
+        window, start it.
+        * WebProcess/WebPage/WebPage.h:
+
 2011-05-09  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Dan Bernstein.

@@ -561,6 +561,8 @@ private:
 
     void platformDragEnded();
 
+    void setCanStartMediaTimerFired();
+
     static bool platformCanHandleRequest(const WebCore::ResourceRequest&);
 
     OwnPtr<WebCore::Page> m_page;
@@ -600,7 +602,7 @@ private:
     
     // All plug-in views on this web page.
     HashSet<PluginView*> m_pluginViews;
-    
+
     RetainPtr<AccessibilityWebPageObject> m_mockAccessibilityElement;
 
     RetainPtr<NSObject> m_dragSource;
@@ -614,6 +616,8 @@ private:
     RefPtr<WebCore::Node> m_gestureTargetNode;
 #endif
     
+    RunLoop::Timer<WebPage> m_setCanStartMediaTimer;
+
     HashMap<uint64_t, RefPtr<WebEditCommand> > m_editCommandMap;
 
     WebCore::IntSize m_windowResizerSize;
