@@ -1,3 +1,14 @@
+2011-05-09  Mahesh Kulkarni  <mahesh.kulkarni@nokia.com>
+
+        Reviewed by Andreas Kling.
+
+        [Qt] fix fast/dom/Geolocation/window-close-crash.html
+        https://bugs.webkit.org/show_bug.cgi?id=60458
+
+        Unskipping fast/dom/Geolocation/window-close-crash.html.
+
+        * platform/qt/Skipped:
+
 2011-05-09  Srinivasulu Chereddy  <srinivasulu.chereddy@nokia.com>
 
         Reviewed by Laszlo Gombos.

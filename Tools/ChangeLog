@@ -1,3 +1,17 @@
+2011-05-09  Mahesh Kulkarni  <mahesh.kulkarni@nokia.com>
+
+        Reviewed by Andreas Kling.
+
+        [Qt] fix fast/dom/Geolocation/window-close-crash.html
+        https://bugs.webkit.org/show_bug.cgi?id=60458
+
+        Update all pages with Mock position/error/permission.
+
+        * DumpRenderTree/qt/LayoutTestControllerQt.cpp:
+        (LayoutTestController::setGeolocationPermission):
+        (LayoutTestController::setMockGeolocationError):
+        (LayoutTestController::setMockGeolocationPosition):
+
 2011-05-09  Shishir Agrawal  <shishir@chromium.org>
 
         Reviewed by Tony Gentilcore.
