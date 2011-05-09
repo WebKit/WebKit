@@ -146,7 +146,7 @@ class JsonResultsTest(unittest.TestCase):
         actual_results = JsonResults.get_test_list(self._builder, input_results)
         self.assertEquals(actual_results, expected_results)
 
-    def test(self):
+    def test_merge_null_incremental_results(self):
         # Empty incremental results json.
         # Nothing to merge.
         self._test_merge(
@@ -157,6 +157,7 @@ class JsonResultsTest(unittest.TestCase):
             # Expect no merge happens.
             None)
 
+    def test_merge_empty_incremental_results(self):
         # No actual incremental test results (only prefix and suffix) to merge.
         # Nothing to merge.
         self._test_merge(
@@ -167,6 +168,7 @@ class JsonResultsTest(unittest.TestCase):
             # Expected no merge happens.
             None)
 
+    def test_merge_empty_aggregated_results(self):
         # No existing aggregated results.
         # Merged results == new incremental results.
         self._test_merge(
@@ -177,11 +179,11 @@ class JsonResultsTest(unittest.TestCase):
             # Expected results
             (["2", "1"], [["001.html", "[200,\"F\"]", "[200,0]"]]))
 
-        # Single test for single run.
+    def test_merge_incremental_single_test_single_run_same_result(self):
         # Incremental results has the latest build and same test results for
         # that run.
         # Insert the incremental results at the first place and sum number
-        # of runs for "P" (200 + 1) to get merged results.
+        # of runs for "F" (200 + 1) to get merged results.
         self._test_merge(
             # Aggregated results
             (["2", "1"], [["001.html", "[200,\"F\"]", "[200,0]"]]),
@@ -190,7 +192,7 @@ class JsonResultsTest(unittest.TestCase):
             # Expected results
             (["3", "2", "1"], [["001.html", "[201,\"F\"]", "[201,0]"]]))
 
-        # Single test for single run.
+    def test_merge_single_test_single_run_different_result(self):
         # Incremental results has the latest build but different test results
         # for that run.
         # Insert the incremental results at the first place.
@@ -202,9 +204,9 @@ class JsonResultsTest(unittest.TestCase):
             # Expected results
             (["3", "2", "1"], [["001.html", "[1,\"I\"],[200,\"F\"]", "[1,1],[200,0]"]]))
 
-        # Single test for single run.
-        # Incremental results has the latest build but different test results
-        # for that run.
+    def test_merge_single_test_single_run_result_changed(self):
+        # Incremental results has the latest build but results which differ from
+        # the latest result (but are the same as an older result).
         self._test_merge(
             # Aggregated results
             (["2", "1"], [["001.html", "[200,\"F\"],[10,\"I\"]", "[200,0],[10,1]"]]),
@@ -213,7 +215,7 @@ class JsonResultsTest(unittest.TestCase):
             # Expected results
             (["3", "2", "1"], [["001.html", "[1,\"I\"],[200,\"F\"],[10,\"I\"]", "[1,1],[200,0],[10,1]"]]))
 
-        # Multiple tests for single run.
+    def test_merge_multiple_tests_single_run(self):
         # All tests have incremental updates.
         self._test_merge(
             # Aggregated results
@@ -223,7 +225,7 @@ class JsonResultsTest(unittest.TestCase):
             # Expected results
             (["3", "2", "1"], [["001.html", "[201,\"F\"]", "[201,0]"], ["002.html", "[101,\"I\"]", "[101,1]"]]))
 
-        # Multiple tests for single run.
+    def test_merge_multiple_tests_single_run_one_no_result(self):
         self._test_merge(
             # Aggregated results
             (["2", "1"], [["001.html", "[200,\"F\"]", "[200,0]"], ["002.html", "[100,\"I\"]", "[100,1]"]]),
@@ -232,7 +234,7 @@ class JsonResultsTest(unittest.TestCase):
             # Expected results
             (["3", "2", "1"], [["001.html", "[1,\"N\"],[200,\"F\"]", "[201,0]"], ["002.html", "[101,\"I\"]", "[101,1]"]]))
 
-        # Single test for multiple runs.
+    def test_merge_single_test_multiple_runs(self):
         self._test_merge(
             # Aggregated results
             (["2", "1"], [["001.html", "[200,\"F\"]", "[200,0]"]]),
@@ -241,7 +243,7 @@ class JsonResultsTest(unittest.TestCase):
             # Expected results
             (["4", "3", "2", "1"], [["001.html", "[2,\"I\"],[200,\"F\"]", "[2,2],[200,0]"]]))
 
-        # Multiple tests for multiple runs.
+    def test_merge_multiple_tests_multiple_runs(self):
         self._test_merge(
             # Aggregated results
             (["2", "1"], [["001.html", "[200,\"F\"]", "[200,0]"], ["002.html", "[10,\"Z\"]", "[10,0]"]]),
@@ -250,6 +252,7 @@ class JsonResultsTest(unittest.TestCase):
             # Expected results
             (["4", "3", "2", "1"], [["001.html", "[2,\"I\"],[200,\"F\"]", "[2,2],[200,0]"], ["002.html", "[1,\"C\"],[10,\"Z\"]", "[1,1],[10,0]"]]))
 
+    def test_merge_incremental_result_older_build(self):
         # Test the build in incremental results is older than the most recent
         # build in aggregated results.
         # The incremental results should be dropped and no merge happens.
@@ -261,6 +264,7 @@ class JsonResultsTest(unittest.TestCase):
             # Expected no merge happens.
             None)
 
+    def test_merge_incremental_result_same_build(self):
         # Test the build in incremental results is same as the build in
         # aggregated results.
         # The incremental results should be dropped and no merge happens.
@@ -272,6 +276,7 @@ class JsonResultsTest(unittest.TestCase):
             # Expected no merge happens.
             None)
 
+    def test_merge_remove_test_with_no_data(self):
         # Remove test where there is no data in all runs.
         self._test_merge(
             # Aggregated results
@@ -281,6 +286,7 @@ class JsonResultsTest(unittest.TestCase):
             # Expected results
             (["3", "2", "1"], [["002.html", "[1,\"P\"],[10,\"F\"]", "[11,0]"]]))
 
+    def test_merge_remove_test_with_all_pass(self):
         # Remove test where all run pass and max running time < 1 seconds
         self._test_merge(
             # Aggregated results
@@ -290,6 +296,7 @@ class JsonResultsTest(unittest.TestCase):
             # Expected results
             (["3", "2", "1"], [["002.html", "[1,\"P\"],[10,\"F\"]", "[11,0]"]]))
 
+    def test_merge_keep_test_with_all_pass_but_slow_time(self):
         # Do not remove test where all run pass but max running time >= 1 seconds
         self._test_merge(
             # Aggregated results
@@ -299,6 +306,7 @@ class JsonResultsTest(unittest.TestCase):
             # Expected results
             (["3", "2", "1"], [["001.html", "[201,\"P\"]", "[1,1],[200,0]"], ["002.html", "[1,\"P\"],[10,\"F\"]", "[11,0]"]]))
 
+    def test_merge_prune_extra_results(self):
         # Remove items from test results and times that exceed the max number
         # of builds to track.
         max_builds = str(jsonresults.JSON_RESULTS_MAX_BUILDS)
@@ -310,6 +318,7 @@ class JsonResultsTest(unittest.TestCase):
             # Expected results
             (["3", "2", "1"], [["001.html", "[1,\"T\"],[" + max_builds + ",\"F\"]", "[1,1],[" + max_builds + ",0]"]]))
 
+    def test_merge_prune_extra_results_small(self):
         # Remove items from test results and times that exceed the max number
         # of builds to track, using smaller threshold.
         max_builds = str(jsonresults.JSON_RESULTS_MAX_BUILDS_SMALL)
@@ -322,6 +331,7 @@ class JsonResultsTest(unittest.TestCase):
             (["3", "2", "1"], [["001.html", "[1,\"T\"],[" + max_builds + ",\"F\"]", "[1,1],[" + max_builds + ",0]"]]),
             int(max_builds))
 
+    def test_merge_prune_extra_results_with_new_result_of_same_type(self):
         # Test that merging in a new result of the same type as the last result
         # causes old results to fall off.
         max_builds = str(jsonresults.JSON_RESULTS_MAX_BUILDS_SMALL)
@@ -334,6 +344,7 @@ class JsonResultsTest(unittest.TestCase):
             (["3", "2", "1"], [["001.html", "[" + max_builds + ",\"F\"]", "[" + max_builds + ",0]"]]),
             int(max_builds))
 
+    def test_get_test_name_list(self):
         # Get test name list only. Don't include non-test-list data and
         # of test result details.
         self._test_get_test_list(
