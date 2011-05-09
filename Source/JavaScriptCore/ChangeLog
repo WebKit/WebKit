@@ -1,3 +1,14 @@
+2011-05-09  Darin Adler  <darin@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        http://bugs.webkit.org/show_bug.cgi?id=60509
+        Wrong type used for return value from strlen
+
+        * wtf/FastMalloc.cpp:
+        (WTF::fastStrDup): Use size_t. Also don't bother checking for failure since
+        fastMalloc won't return if it fails.
+
 2011-05-09  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Eric Seidel.
