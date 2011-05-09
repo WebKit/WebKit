@@ -1,3 +1,21 @@
+2011-05-09  Adam Roben  <aroben@apple.com>
+
+        Always set the font rendering mode based on preference values
+
+        WebPage::platformInitialize and WebPage::platformPreferencesDidChange were fighting over the
+        font rendering mode. The platformInitialize code predates preference-based font rendering
+        mode support, and is now redundant and incorrect.
+
+        Fixes <http://webkit.org/b/60494> WebKit2 uses GDI text instead of CG text when
+        FontSmoothing preference is set to kWKFontSmoothingLevelNoSubpixelAntiAliasing in a .plist
+        on disk
+
+        Reviewed by Sam Weinig.
+
+        * WebProcess/WebPage/win/WebPageWin.cpp:
+        (WebKit::WebPage::platformInitialize): Removed code to set the font rendering mode.
+        platformPreferencesDidChange will take care of this for us.
+
 2011-05-09  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by John Sullivan.

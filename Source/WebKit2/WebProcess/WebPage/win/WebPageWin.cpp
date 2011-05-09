@@ -63,7 +63,6 @@ namespace WebKit {
 
 void WebPage::platformInitialize()
 {
-    m_page->settings()->setFontRenderingMode(AlternateRenderingMode);
 }
 
 void WebPage::platformPreferencesDidChange(const WebPreferencesStore& store)
