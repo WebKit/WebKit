@@ -760,7 +760,7 @@ void FrameLoaderClientImpl::dispatchDidReceiveTitle(const StringWithDirection& t
 void FrameLoaderClientImpl::dispatchDidChangeIcons(WebCore::IconType type)
 {
     if (m_webFrame->client())
-        m_webFrame->client()->didChangeIcons(m_webFrame, static_cast<WebIconURL::WebIconType>(type));
+        m_webFrame->client()->didChangeIcons(m_webFrame);
 }
 
 void FrameLoaderClientImpl::dispatchDidCommitLoad()

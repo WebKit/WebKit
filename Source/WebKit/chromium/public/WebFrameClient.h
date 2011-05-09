@@ -33,7 +33,6 @@
 
 #include "WebCommon.h"
 #include "WebFileSystem.h"
-#include "WebIconURL.h"
 #include "WebNavigationPolicy.h"
 #include "WebNavigationType.h"
 #include "WebStorageQuotaType.h"
@@ -203,7 +202,7 @@ public:
     }
 
     // The icons for the page have changed.
-    virtual void didChangeIcons(WebFrame*, WebIconURL::WebIconType) { }
+    virtual void didChangeIcons(WebFrame*) { }
 
     // The frame's document finished loading.
     virtual void didFinishDocumentLoad(WebFrame*) { }

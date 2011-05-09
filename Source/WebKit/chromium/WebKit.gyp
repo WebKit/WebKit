@@ -185,7 +185,6 @@
                 'public/WebHTTPBody.h',
                 'public/WebHTTPLoadInfo.h',
                 'public/WebIconLoadingCompletion.h',
-                'public/WebIconType.h',
                 'public/WebImage.h',
                 'public/WebImageDecoder.h',
                 'public/WebIDBCallbacks.h',

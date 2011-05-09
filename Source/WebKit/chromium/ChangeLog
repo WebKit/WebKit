@@ -1,3 +1,25 @@
+2011-05-09  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r86091.
+        http://trac.webkit.org/changeset/86091
+        https://bugs.webkit.org/show_bug.cgi?id=60510
+
+        Broke Chromium win release build. (Requested by dave_levin on
+        #webkit).
+
+        * WebKit.gyp:
+        * features.gypi:
+        * public/WebFrame.h:
+        * public/WebFrameClient.h:
+        (WebKit::WebFrameClient::didChangeIcons):
+        * public/WebIconURL.h: Removed.
+        * src/AssertMatchingEnums.cpp:
+        * src/FrameLoaderClientImpl.cpp:
+        (WebKit::FrameLoaderClientImpl::dispatchDidChangeIcons):
+        * src/WebFrameImpl.cpp:
+        (WebKit::WebFrameImpl::favIconURL):
+        * src/WebFrameImpl.h:
+
 2011-05-09  Tao Bai  <michaelbai@chromium.org>
 
         Reviewed by David Levin.
