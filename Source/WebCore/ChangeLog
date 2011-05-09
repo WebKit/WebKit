@@ -1,3 +1,16 @@
+2011-05-09  Andreas Kling  <kling@webkit.org>
+
+        Reviewed by Tor Arne Vestbø.
+
+        [Qt] Remove unused FontPlatformData functions.
+        https://bugs.webkit.org/show_bug.cgi?id=60485
+
+        * platform/graphics/qt/FontPlatformData.h:
+        (WebCore::FontPlatformData::bold): Removed.
+        (WebCore::FontPlatformData::family): Removed.
+        (WebCore::FontPlatformData::italic): Removed.
+        (WebCore::FontPlatformData::smallCaps): Removed.
+
 2011-05-09  Robin Dunn  <robin@alldunn.com>
 
         Reviewed by Kevin Ollivier.

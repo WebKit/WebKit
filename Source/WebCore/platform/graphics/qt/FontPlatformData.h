@@ -135,35 +135,7 @@ public:
             return 0;
         return m_data->size;
     }
-    QString family() const
-    {
-        Q_ASSERT(!isHashTableDeletedValue());
-        if (!m_data)
-            return QString();
-        return m_data->font.family();
-    }
-    bool bold() const
-    {
-        Q_ASSERT(!isHashTableDeletedValue());
-        if (!m_data)
-            return false;
-        return m_data->bold;
-    }
-    bool italic() const
-    {
-        Q_ASSERT(!isHashTableDeletedValue());
-        if (!m_data)
-            return false;
-        return m_data->font.italic();
-    }
-    bool smallCaps() const
-    {
-        Q_ASSERT(!isHashTableDeletedValue());
-        if (!m_data)
-            return false;
-        return m_data->font.capitalization() == QFont::SmallCaps;
-    }
-    
+
     FontOrientation orientation() const { return Horizontal; } // FIXME: Implement.
     void setOrientation(FontOrientation) { } // FIXME: Implement.
 
