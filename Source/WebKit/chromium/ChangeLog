@@ -1,3 +1,13 @@
+2011-05-09  Evan Martin  <evan@chromium.org>
+
+        Reviewed by Tony Chang.
+
+        [chromium] make DumpRenderTree build in components for linux
+        https://bugs.webkit.org/show_bug.cgi?id=60491
+
+        * WebKit.gyp: move some code that was in a Windows-only block to be used
+        on all platforms.
+
 2011-05-09  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Tony Gentilcore.

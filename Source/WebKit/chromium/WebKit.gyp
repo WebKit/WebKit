@@ -974,18 +974,6 @@
                         '<(SHARED_INTERMEDIATE_DIR)/webkit/webkit_strings_en-US.rc',
                     ],
                     'conditions': [
-                        ['inside_chromium_build==1 and component=="shared_library"', {
-                            'sources': [
-                                'src/ChromiumCurrentTime.cpp',
-                                'src/ChromiumThreading.cpp',
-                            ],
-                            'include_dirs': [
-                                'public',
-                            ],
-                            'dependencies': [
-                                '../../JavaScriptCore/JavaScriptCore.gyp/JavaScriptCore.gyp:wtf',
-                            ],
-                        }],
                         ['inside_chromium_build==1', {
                             'configurations': {
                                 'Debug_Base': {
@@ -1078,6 +1066,18 @@
                     'sources/': [
                         ['exclude', '(Gtk|Linux)\\.cpp$']
                     ]
+                }],
+                ['inside_chromium_build==1 and component=="shared_library"', {
+                    'sources': [
+                        'src/ChromiumCurrentTime.cpp',
+                        'src/ChromiumThreading.cpp',
+                    ],
+                    'include_dirs': [
+                        'public',
+                    ],
+                    'dependencies': [
+                        '../../JavaScriptCore/JavaScriptCore.gyp/JavaScriptCore.gyp:wtf',
+                    ],
                 }],
                 ['inside_chromium_build==0', {
                     'dependencies': [
