@@ -2,6 +2,17 @@
 
         Reviewed by Kevin Ollivier.
 
+        [wx] Add invalid file handle check.
+        
+        https://bugs.webkit.org/show_bug.cgi?id=60483
+
+        * platform/wx/FileSystemWx.cpp:
+        (WebCore::closeFile):
+
+2011-05-09  Robin Dunn  <robin@alldunn.com>
+
+        Reviewed by Kevin Ollivier.
+
         [wx] Update the popup menu code to grab the native control and initialize the
         event handler properly.
         

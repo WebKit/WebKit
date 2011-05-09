@@ -121,7 +121,7 @@ String openTemporaryFile(const String& prefix, PlatformFileHandle& handle)
 
 void closeFile(PlatformFileHandle& handle)
 {
-    if (handle)
+    if (handle && handle != invalidPlatformFileHandle)
         delete handle;
 }
 
