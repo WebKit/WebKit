@@ -386,7 +386,7 @@ NP_GetMIMEDescription(void)
 {
     // We sentence-case the mime-type here to ensure that ports are not
     // case-sensitive when loading plugins. See https://webkit.org/b/36815
-    return const_cast<char*>("application/x-Webkit-Test-Netscape:testnetscape:test netscape content");
+    return const_cast<char*>("application/x-Webkit-Test-Netscape:testnetscape:test netscape content;image/png:png:PNG image");
 }
 
 NPError

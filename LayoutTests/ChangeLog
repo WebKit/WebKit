@@ -1,3 +1,16 @@
+2011-05-09  Robert Hogan  <robert@webkit.org>
+
+        Reviewed by Adam Roben.
+
+        https://bugs.webkit.org/show_bug.cgi?id=57137
+
+        Unskip plugins/embed-prefers-plugins-for-images.html
+
+        Add image/png mime-type to test netscape plugin on Unix.
+
+        * platform/gtk/Skipped:
+        * platform/qt/Skipped:
+
 2011-05-09  Chang Shu  <cshu@webkit.org>
 
         Unreviewed.
