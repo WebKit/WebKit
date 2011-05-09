@@ -4469,93 +4469,6 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
         else if (isInherit)
             m_style->inheritMaskLayers(*m_parentStyle->maskLayers());
         return;
-
-    case CSSPropertyBorder:
-    case CSSPropertyBorderStyle:
-    case CSSPropertyBorderWidth:
-    case CSSPropertyBorderColor:
-        if (id == CSSPropertyBorder || id == CSSPropertyBorderColor)
-        {
-            if (isInherit) {
-                m_style->setBorderTopColor(m_parentStyle->borderTopColor().isValid() ? m_parentStyle->borderTopColor() : m_parentStyle->color());
-                m_style->setBorderBottomColor(m_parentStyle->borderBottomColor().isValid() ? m_parentStyle->borderBottomColor() : m_parentStyle->color());
-                m_style->setBorderLeftColor(m_parentStyle->borderLeftColor().isValid() ? m_parentStyle->borderLeftColor() : m_parentStyle->color());
-                m_style->setBorderRightColor(m_parentStyle->borderRightColor().isValid() ? m_parentStyle->borderRightColor(): m_parentStyle->color());
-            }
-            else if (isInitial) {
-                m_style->setBorderTopColor(Color()); // Reset to invalid color so currentColor is used instead.
-                m_style->setBorderBottomColor(Color());
-                m_style->setBorderLeftColor(Color());
-                m_style->setBorderRightColor(Color());
-            }
-        }
-        if (id == CSSPropertyBorder || id == CSSPropertyBorderStyle)
-        {
-            if (isInherit) {
-                m_style->setBorderTopStyle(m_parentStyle->borderTopStyle());
-                m_style->setBorderBottomStyle(m_parentStyle->borderBottomStyle());
-                m_style->setBorderLeftStyle(m_parentStyle->borderLeftStyle());
-                m_style->setBorderRightStyle(m_parentStyle->borderRightStyle());
-            }
-            else if (isInitial) {
-                m_style->setBorderTopStyle(RenderStyle::initialBorderStyle());
-                m_style->setBorderBottomStyle(RenderStyle::initialBorderStyle());
-                m_style->setBorderLeftStyle(RenderStyle::initialBorderStyle());
-                m_style->setBorderRightStyle(RenderStyle::initialBorderStyle());
-            }
-        }
-        if (id == CSSPropertyBorder || id == CSSPropertyBorderWidth)
-        {
-            if (isInherit) {
-                m_style->setBorderTopWidth(m_parentStyle->borderTopWidth());
-                m_style->setBorderBottomWidth(m_parentStyle->borderBottomWidth());
-                m_style->setBorderLeftWidth(m_parentStyle->borderLeftWidth());
-                m_style->setBorderRightWidth(m_parentStyle->borderRightWidth());
-            }
-            else if (isInitial) {
-                m_style->setBorderTopWidth(RenderStyle::initialBorderWidth());
-                m_style->setBorderBottomWidth(RenderStyle::initialBorderWidth());
-                m_style->setBorderLeftWidth(RenderStyle::initialBorderWidth());
-                m_style->setBorderRightWidth(RenderStyle::initialBorderWidth());
-            }
-        }
-        return;
-    case CSSPropertyBorderTop:
-        if (isInherit) {
-            m_style->setBorderTopColor(m_parentStyle->borderTopColor().isValid() ? m_parentStyle->borderTopColor() : m_parentStyle->color());
-            m_style->setBorderTopStyle(m_parentStyle->borderTopStyle());
-            m_style->setBorderTopWidth(m_parentStyle->borderTopWidth());
-        }
-        else if (isInitial)
-            m_style->resetBorderTop();
-        return;
-    case CSSPropertyBorderRight:
-        if (isInherit) {
-            m_style->setBorderRightColor(m_parentStyle->borderRightColor().isValid() ? m_parentStyle->borderRightColor() : m_parentStyle->color());
-            m_style->setBorderRightStyle(m_parentStyle->borderRightStyle());
-            m_style->setBorderRightWidth(m_parentStyle->borderRightWidth());
-        }
-        else if (isInitial)
-            m_style->resetBorderRight();
-        return;
-    case CSSPropertyBorderBottom:
-        if (isInherit) {
-            m_style->setBorderBottomColor(m_parentStyle->borderBottomColor().isValid() ? m_parentStyle->borderBottomColor() : m_parentStyle->color());
-            m_style->setBorderBottomStyle(m_parentStyle->borderBottomStyle());
-            m_style->setBorderBottomWidth(m_parentStyle->borderBottomWidth());
-        }
-        else if (isInitial)
-            m_style->resetBorderBottom();
-        return;
-    case CSSPropertyBorderLeft:
-        if (isInherit) {
-            m_style->setBorderLeftColor(m_parentStyle->borderLeftColor().isValid() ? m_parentStyle->borderLeftColor() : m_parentStyle->color());
-            m_style->setBorderLeftStyle(m_parentStyle->borderLeftStyle());
-            m_style->setBorderLeftWidth(m_parentStyle->borderLeftWidth());
-        }
-        else if (isInitial)
-            m_style->resetBorderLeft();
-        return;
     case CSSPropertyMargin:
         if (isInherit) {
             m_style->setMarginTop(m_parentStyle->marginTop());
@@ -5612,6 +5525,14 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
     case CSSPropertyBorderRightWidth:
     case CSSPropertyBorderBottomWidth:
     case CSSPropertyBorderLeftWidth:
+    case CSSPropertyBorder:
+    case CSSPropertyBorderStyle:
+    case CSSPropertyBorderWidth:
+    case CSSPropertyBorderColor:
+    case CSSPropertyBorderTop:
+    case CSSPropertyBorderRight:
+    case CSSPropertyBorderBottom:
+    case CSSPropertyBorderLeft:
     case CSSPropertyOutlineWidth:
     case CSSPropertyWebkitColumnRuleWidth:
     case CSSPropertyOutlineColor:

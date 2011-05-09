@@ -465,6 +465,16 @@ CSSStyleApplyProperty::CSSStyleApplyProperty()
     setPropertyHandler(CSSPropertyOutlineWidth, new ApplyPropertyWidth(&RenderStyle::outlineWidth, &RenderStyle::setOutlineWidth, &RenderStyle::initialBorderWidth));
     setPropertyHandler(CSSPropertyWebkitColumnRuleWidth, new ApplyPropertyWidth(&RenderStyle::columnRuleWidth, &RenderStyle::setColumnRuleWidth, &RenderStyle::initialBorderWidth));
 
+    setPropertyHandler(CSSPropertyBorderTop, new ApplyPropertyExpandingSuppressValue(propertyHandler(CSSPropertyBorderTopColor), propertyHandler(CSSPropertyBorderTopStyle), propertyHandler(CSSPropertyBorderTopWidth)));
+    setPropertyHandler(CSSPropertyBorderRight, new ApplyPropertyExpandingSuppressValue(propertyHandler(CSSPropertyBorderRightColor), propertyHandler(CSSPropertyBorderRightStyle), propertyHandler(CSSPropertyBorderRightWidth)));
+    setPropertyHandler(CSSPropertyBorderBottom, new ApplyPropertyExpandingSuppressValue(propertyHandler(CSSPropertyBorderBottomColor), propertyHandler(CSSPropertyBorderBottomStyle), propertyHandler(CSSPropertyBorderBottomWidth)));
+    setPropertyHandler(CSSPropertyBorderLeft, new ApplyPropertyExpandingSuppressValue(propertyHandler(CSSPropertyBorderLeftColor), propertyHandler(CSSPropertyBorderLeftStyle), propertyHandler(CSSPropertyBorderLeftWidth)));
+
+    setPropertyHandler(CSSPropertyBorderStyle, new ApplyPropertyExpandingSuppressValue(propertyHandler(CSSPropertyBorderTopStyle), propertyHandler(CSSPropertyBorderRightStyle), propertyHandler(CSSPropertyBorderBottomStyle), propertyHandler(CSSPropertyBorderLeftStyle)));
+    setPropertyHandler(CSSPropertyBorderWidth, new ApplyPropertyExpandingSuppressValue(propertyHandler(CSSPropertyBorderTopWidth), propertyHandler(CSSPropertyBorderRightWidth), propertyHandler(CSSPropertyBorderBottomWidth), propertyHandler(CSSPropertyBorderLeftWidth)));
+    setPropertyHandler(CSSPropertyBorderColor, new ApplyPropertyExpandingSuppressValue(propertyHandler(CSSPropertyBorderTopColor), propertyHandler(CSSPropertyBorderRightColor), propertyHandler(CSSPropertyBorderBottomColor), propertyHandler(CSSPropertyBorderLeftColor)));
+    setPropertyHandler(CSSPropertyBorder, new ApplyPropertyExpandingSuppressValue(propertyHandler(CSSPropertyBorderStyle), propertyHandler(CSSPropertyBorderWidth), propertyHandler(CSSPropertyBorderColor)));
+
     setPropertyHandler(CSSPropertyOutlineColor, new ApplyPropertyColor<InheritFromParent>(&RenderStyle::outlineColor, &RenderStyle::setOutlineColor, &RenderStyle::color));
 
     setPropertyHandler(CSSPropertyOverflowX, new ApplyPropertyDefault<EOverflow>(&RenderStyle::overflowX, &RenderStyle::setOverflowX, &RenderStyle::initialOverflowX));
