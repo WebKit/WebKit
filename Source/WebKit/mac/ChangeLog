@@ -1,3 +1,18 @@
+2011-05-09  Jeremy Noble  <jer.noble@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Command-~/Exposé to another window while <video> is in full screen, breaks Safari, eventually leading to crash
+        https://bugs.webkit.org/show_bug.cgi?id=60496
+
+        When animating into and out of full screen, order out and back in the original webView window,
+        disabling animations when necessary.  The exitFullscreen method was targeting the wrong window,
+        as the webView is hosted in the full screen window when we ask for it's parent window.
+
+        * WebView/WebFullScreenController.mm:
+        (-[WebFullScreenController windowDidEnterFullscreen:]):
+        (-[WebFullScreenController exitFullscreen]):
+
 2011-05-04  Philippe Normand  <pnormand@igalia.com>
 
         Reviewed by Dimitri Glazkov.

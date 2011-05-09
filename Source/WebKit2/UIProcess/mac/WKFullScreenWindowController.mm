@@ -251,9 +251,17 @@ using namespace WebCore;
         [[[self _fullScreenWindow] backgroundLayer] setHidden:YES];
         [CATransaction commit];
         
-        // FIXME: In Barolo, orderIn will animate, which is not what we want.  Find a way
-        // to work around this behavior.
-        //[[_webViewPlaceholder.get() window] orderOut:self];
+        NSWindow *webWindow = [_webViewPlaceholder.get() window];
+#if !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOW_LEOPARD)
+        // In Lion, NSWindow will animate into and out of orderOut operations. Suppress that
+        // behavior here, making sure to reset the animation behavior afterward.
+        NSWindowAnimationBehavior animationBehavior = [webWindow animationBehavior];
+        [webWindow setAnimationBehavior:NSWindowAnimationBehaviorNone];
+#endif
+        [webWindow orderOut:self];
+#if !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOW_LEOPARD)
+        [webWindow setAnimationBehavior:animationBehavior];
+#endif
         [[self window] makeKeyAndOrderFront:self];
     }
     
@@ -282,17 +290,26 @@ using namespace WebCore;
     [self _updateMenuAndDockForFullScreen];   
     [self _updatePowerAssertions];
     
-    // The user may have moved the fullScreen window in Spaces, so temporarily change 
-    // the collectionBehavior of the webView's window:
-    NSWindow* webWindow = [[self webView] window];
-    NSWindowCollectionBehavior behavior = [webWindow collectionBehavior];
-    [webWindow setCollectionBehavior:NSWindowCollectionBehaviorCanJoinAllSpaces];
-    [webWindow orderWindow:NSWindowBelow relativeTo:[[self window] windowNumber]];
-    [webWindow setCollectionBehavior:behavior];
-    
     // Swap the webView back into its original position:
-    if ([_webView window] == [self window])
+    if ([_webView window] == [self window]) {
         [self _swapView:_webViewPlaceholder.get() with:_webView];
+        NSWindow* webWindow = [_webView window];
+#if !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOW_LEOPARD)
+        // In Lion, NSWindow will animate into and out of orderOut operations. Suppress that
+        // behavior here, making sure to reset the animation behavior afterward.
+        NSWindowAnimationBehavior animationBehavior = [webWindow animationBehavior];
+        [webWindow setAnimationBehavior:NSWindowAnimationBehaviorNone];
+#endif
+        // The user may have moved the fullScreen window in Spaces, so temporarily change 
+        // the collectionBehavior of the webView's window:
+        NSWindowCollectionBehavior behavior = [webWindow collectionBehavior];
+        [webWindow setCollectionBehavior:NSWindowCollectionBehaviorCanJoinAllSpaces];
+        [webWindow orderWindow:NSWindowBelow relativeTo:[[self window] windowNumber]];
+        [webWindow setCollectionBehavior:behavior];
+#if !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOW_LEOPARD)
+        [webWindow setAnimationBehavior:animationBehavior];
+#endif
+    }
     
     [CATransaction begin];
     [CATransaction setAnimationDuration:[self _animationDuration]];

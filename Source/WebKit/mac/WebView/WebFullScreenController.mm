@@ -271,11 +271,13 @@ private:
         if (!_placeholderView)
             _placeholderView = [[NSView alloc] init];
 
+        WebView *webView = [self webView];
+        NSWindow *webWindow = [webView window];
+
         // Do not swap the placeholder into place if already is in a window,
         // assuming the placeholder's window will always be the webView's 
         // original window.
         if (![_placeholderView window]) {
-            WebView* webView = [self webView];
             [_placeholderView setFrame:[webView frame]];        
             [_placeholderView setAutoresizingMask:[webView autoresizingMask]];
             [_placeholderView removeFromSuperview];
@@ -285,6 +287,17 @@ private:
             [webView setAutoresizingMask:NSViewWidthSizable|NSViewHeightSizable];
             [webView setFrame:[(NSView *)[[self window] contentView] bounds]];
         }
+
+#if !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOW_LEOPARD)
+        // In Lion, NSWindow will animate into and out of orderOut operations. Suppress that
+        // behavior here, making sure to reset the animation behavior afterward.
+        NSWindowAnimationBehavior animationBehavior = [webWindow animationBehavior];
+        [webWindow setAnimationBehavior:NSWindowAnimationBehaviorNone];
+#endif
+        [webWindow orderOut:self];
+#if !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOW_LEOPARD)
+        [webWindow setAnimationBehavior:animationBehavior];
+#endif
         
         WebFullscreenWindow* window = [self _fullscreenWindow];
         [window setBackgroundColor:[NSColor blackColor]];
@@ -502,13 +515,6 @@ private:
     
     NSDisableScreenUpdates();
     
-    // The user may have moved the fullscreen window in Spaces, so temporarily change 
-    // the collectionBehavior of the webView's window:
-    NSWindow* webWindow = [[self webView] window];
-    NSWindowCollectionBehavior behavior = [webWindow collectionBehavior];
-    [webWindow setCollectionBehavior:NSWindowCollectionBehaviorCanJoinAllSpaces];
-    [webWindow orderWindow:NSWindowBelow relativeTo:[[self window] windowNumber]];
-    [webWindow setCollectionBehavior:behavior];
     
     // The fullscreen animation may have been cancelled before the 
     // webView was moved to the fullscreen window. Check to see
@@ -522,6 +528,23 @@ private:
         [webView removeFromSuperview];
         [[_placeholderView superview] replaceSubview:_placeholderView with:webView];
         
+        NSWindow *webWindow = [[self webView] window];
+#if !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOW_LEOPARD)
+        // In Lion, NSWindow will animate into and out of orderOut operations. Suppress that
+        // behavior here, making sure to reset the animation behavior afterward.
+        NSWindowAnimationBehavior animationBehavior = [webWindow animationBehavior];
+        [webWindow setAnimationBehavior:NSWindowAnimationBehaviorNone];
+#endif
+        // The user may have moved the fullscreen window in Spaces, so temporarily change 
+        // the collectionBehavior of the fullscreen window:
+        NSWindowCollectionBehavior behavior = [webWindow collectionBehavior];
+        [webWindow setCollectionBehavior:NSWindowCollectionBehaviorCanJoinAllSpaces];
+        [webWindow orderWindow:NSWindowBelow relativeTo:[[self window] windowNumber]];
+        [webWindow setCollectionBehavior:behavior];
+#if !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOW_LEOPARD)
+        [webWindow setAnimationBehavior:animationBehavior];
+#endif
+
         // Because the animation view is layer-hosted, make sure to 
         // disable animations when changing the layer's opacity. Other-
         // wise, the content will appear to fade into view.
