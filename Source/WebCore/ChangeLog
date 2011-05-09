@@ -1,3 +1,36 @@
+2011-05-09  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Daniel Bates.
+
+        XSSAuditor should be more selective about the <meta http-equivs> that it blocks
+        https://bugs.webkit.org/show_bug.cgi?id=60489
+
+        We don't need to filter most http-equiv attributes.  This patch
+        introduces a blacklist for two that we probably do want to filter.
+        It's possible a whitelist would be more appropriate, but I'm inclined
+        to start with a blacklist and see how it works.
+
+        This patch will hopefully fix a false positive that is causing errors
+        with copy-and-pasted text in Gmail in some configurations (due to using
+        the <meta> tag to request UTF-8 encoding both in the pasted text and in
+        the page itself).
+
+        * html/parser/XSSFilter.cpp:
+        (WebCore::isNonCanonicalCharacter):
+        (WebCore::canonicalize):
+        (WebCore::isRequiredForInjection):
+        (WebCore::hasName):
+        (WebCore::findAttributeWithName):
+        (WebCore::isNameOfInlineEventHandler):
+        (WebCore::isDangerousHTTPEquiv):
+            - This function is new in the patch and includes a blacklist of
+              dangerous http-equivs.  Many of the other functions listed here
+              are just being moved from an anonymous namespace to use static
+              for internal linkage.
+        (WebCore::containsJavaScriptURL):
+        (WebCore::decodeURL):
+        (WebCore::XSSFilter::eraseAttributeIfInjected):
+
 2011-05-05  Matthew Delaney  <mdelaney@apple.com>
 
         Reviewed by Simon Fraser.

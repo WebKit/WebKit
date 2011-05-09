@@ -44,9 +44,7 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
-namespace {
-
-bool isNonCanonicalCharacter(UChar c)
+static bool isNonCanonicalCharacter(UChar c)
 {
     // We remove all non-ASCII characters, including non-printable ASCII characters.
     //
@@ -58,22 +56,22 @@ bool isNonCanonicalCharacter(UChar c)
     return (c == '\\' || c == '0' || c == '\0' || c >= 127);
 }
 
-String canonicalize(const String& string)
+static String canonicalize(const String& string)
 {
     return string.removeCharacters(&isNonCanonicalCharacter);
 }
 
-bool isRequiredForInjection(UChar c)
+static bool isRequiredForInjection(UChar c)
 {
     return (c == '\'' || c == '"' || c == '<' || c == '>');
 }
 
-bool hasName(const HTMLToken& token, const QualifiedName& name)
+static bool hasName(const HTMLToken& token, const QualifiedName& name)
 {
     return equalIgnoringNullity(token.name(), static_cast<const String&>(name.localName()));
 }
 
-bool findAttributeWithName(const HTMLToken& token, const QualifiedName& name, size_t& indexOfMatchingAttribute)
+static bool findAttributeWithName(const HTMLToken& token, const QualifiedName& name, size_t& indexOfMatchingAttribute)
 {
     for (size_t i = 0; i < token.attributes().size(); ++i) {
         if (equalIgnoringNullity(token.attributes().at(i).m_name, name.localName())) {
@@ -84,7 +82,7 @@ bool findAttributeWithName(const HTMLToken& token, const QualifiedName& name, si
     return false;
 }
 
-bool isNameOfInlineEventHandler(const Vector<UChar, 32>& name)
+static bool isNameOfInlineEventHandler(const Vector<UChar, 32>& name)
 {
     const size_t lengthOfShortestInlineEventHandlerName = 5; // To wit: oncut.
     if (name.size() < lengthOfShortestInlineEventHandlerName)
@@ -92,7 +90,13 @@ bool isNameOfInlineEventHandler(const Vector<UChar, 32>& name)
     return name[0] == 'o' && name[1] == 'n';
 }
 
-bool containsJavaScriptURL(const Vector<UChar, 32>& value)
+static bool isDangerousHTTPEquiv(const String& value)
+{
+    String equiv = value.stripWhiteSpace();
+    return equalIgnoringCase(equiv, "refresh") || equalIgnoringCase(equiv, "set-cookie");
+}
+
+static bool containsJavaScriptURL(const Vector<UChar, 32>& value)
 {
     static const char javaScriptScheme[] = "javascript:";
     static const size_t lengthOfJavaScriptScheme = sizeof(javaScriptScheme) - 1;
@@ -109,7 +113,7 @@ bool containsJavaScriptURL(const Vector<UChar, 32>& value)
     return equalIgnoringCase(value.data() + i, javaScriptScheme, lengthOfJavaScriptScheme);
 }
 
-String decodeURL(const String& string, const TextEncoding& encoding)
+static String decodeURL(const String& string, const TextEncoding& encoding)
 {
     String workingString = string;
     workingString.replace('+', ' ');
@@ -120,8 +124,6 @@ String decodeURL(const String& string, const TextEncoding& encoding)
     if (decodedString.isEmpty())
         return canonicalize(workingString);
     return canonicalize(decodedString);
-}
-
 }
 
 XSSFilter::XSSFilter(HTMLDocumentParser* parser)
@@ -420,6 +422,8 @@ bool XSSFilter::eraseAttributeIfInjected(HTMLToken& token, const QualifiedName& 
         const HTMLToken::Attribute& attribute = token.attributes().at(indexOfAttribute);
         if (isContainedInRequest(snippetForAttribute(token, attribute))) {
             if (attributeName == srcAttr && isSameOriginResource(String(attribute.m_value.data(), attribute.m_value.size())))
+                return false;
+            if (attributeName == http_equivAttr && !isDangerousHTTPEquiv(String(attribute.m_value.data(), attribute.m_value.size())))
                 return false;
             token.eraseValueOfAttribute(indexOfAttribute);
             if (!replacementValue.isEmpty())
