@@ -99,7 +99,7 @@
 			>
 		</File>
 		<File
-			RelativePath=".\react-to-vsprops-changes.py"
+			RelativePath=".\work-around-vs-dependency-tracking-bugs.py"
 			>
 		</File>
 	</Files>

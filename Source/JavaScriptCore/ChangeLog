@@ -1,3 +1,30 @@
+2011-05-09  Adam Roben  <aroben@apple.com>
+
+        Automatically touch WebKit.idl whenever any other WebKit1 IDL file changes
+
+        Fixes <http://webkit.org/b/60468> WebKit.idl needs to be manually touched whenever any other
+        WebKit1 IDL file changes to avoid build errors
+
+        Reviewed by Tim Hatcher.
+
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCoreGenerated.make:
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCoreGenerated.vcproj:
+        Updated for script rename.
+
+        * JavaScriptCore.vcproj/JavaScriptCore/react-to-vsprops-changes.py: Removed.
+        * JavaScriptCore.vcproj/JavaScriptCore/work-around-vs-dependency-tracking-bugs.py: Renamed
+        from react-to-vsprops-changes.py.
+        (top level): Moved a constant here from main.
+        (main): Moved most code from here to react_to_vsprops_changes. Added a call to the new
+        react_to_webkit1_interface_changes function.
+        (react_to_vsprops_changes): Moved code here from main. Updated to use the
+        TOP_LEVEL_DIRECTORY global. Moved some code from here to mtime_of_newest_file_matching_globa
+        and touch_if_older_than.
+        (react_to_webkit1_interface_changes): Added. Touches WebKit.idl if any other WebKit1 IDL
+        file has changed.
+        (mtime_of_newest_file_matching_glob): Added. Code came from main.
+        (touch_if_older_than): Added. Code came from main.
+
 2011-05-08  Jessie Berlin  <jberlin@apple.com>
 
         Reviewed by Dan Bernstein.
