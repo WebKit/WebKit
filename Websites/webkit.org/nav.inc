@@ -17,6 +17,7 @@
         <li><a href="/building/debug.html">Debugging WebKit</a></li>
         <li><a href="/coding/contributing.html">Contributing Code</a></li>
         <li><a href="/coding/commit-review-policy.html">Commit and Review Policy</a></li>
+        <li><a href="/coding/adding-features.html">Adding Features</a></li>
         <li><a href="/security/">Security Policy</a></li>
 
         <li class="subtitle">Documentation</li>
