@@ -41,6 +41,7 @@ inline SVGFEDisplacementMapElement::SVGFEDisplacementMapElement(const QualifiedN
     , m_xChannelSelector(CHANNEL_A)
     , m_yChannelSelector(CHANNEL_A)
 {
+    ASSERT(hasTagName(SVGNames::feDisplacementMapTag));
 }
 
 PassRefPtr<SVGFEDisplacementMapElement> SVGFEDisplacementMapElement::create(const QualifiedName& tagName, Document* document)

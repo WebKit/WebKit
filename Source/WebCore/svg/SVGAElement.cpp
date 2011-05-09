@@ -55,6 +55,7 @@ DEFINE_ANIMATED_BOOLEAN(SVGAElement, SVGNames::externalResourcesRequiredAttr, Ex
 inline SVGAElement::SVGAElement(const QualifiedName& tagName, Document* document)
     : SVGStyledTransformableElement(tagName, document)
 {
+    ASSERT(hasTagName(SVGNames::aTag));
 }
 
 PassRefPtr<SVGAElement> SVGAElement::create(const QualifiedName& tagName, Document* document)

@@ -64,6 +64,7 @@ inline SVGPatternElement::SVGPatternElement(const QualifiedName& tagName, Docume
     , m_patternUnits(SVGUnitTypes::SVG_UNIT_TYPE_OBJECTBOUNDINGBOX)
     , m_patternContentUnits(SVGUnitTypes::SVG_UNIT_TYPE_USERSPACEONUSE)
 {
+    ASSERT(hasTagName(SVGNames::patternTag));
 }
 
 PassRefPtr<SVGPatternElement> SVGPatternElement::create(const QualifiedName& tagName, Document* document)

@@ -46,6 +46,7 @@ inline SVGEllipseElement::SVGEllipseElement(const QualifiedName& tagName, Docume
     , m_rx(LengthModeWidth)
     , m_ry(LengthModeHeight)
 {
+    ASSERT(hasTagName(SVGNames::ellipseTag));
 }    
 
 PassRefPtr<SVGEllipseElement> SVGEllipseElement::create(const QualifiedName& tagName, Document* document)

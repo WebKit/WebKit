@@ -39,6 +39,7 @@ inline SVGFEColorMatrixElement::SVGFEColorMatrixElement(const QualifiedName& tag
     : SVGFilterPrimitiveStandardAttributes(tagName, document)
     , m_type(FECOLORMATRIX_TYPE_UNKNOWN)
 {
+    ASSERT(hasTagName(SVGNames::feColorMatrixTag));
 }
 
 PassRefPtr<SVGFEColorMatrixElement> SVGFEColorMatrixElement::create(const QualifiedName& tagName, Document* document)

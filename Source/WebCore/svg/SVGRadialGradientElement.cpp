@@ -55,6 +55,7 @@ inline SVGRadialGradientElement::SVGRadialGradientElement(const QualifiedName& t
     , m_fy(LengthModeHeight)
 {
     // Spec: If the cx/cy/r attribute is not specified, the effect is as if a value of "50%" were specified.
+    ASSERT(hasTagName(SVGNames::radialGradientTag));
 }
 
 PassRefPtr<SVGRadialGradientElement> SVGRadialGradientElement::create(const QualifiedName& tagName, Document* document)

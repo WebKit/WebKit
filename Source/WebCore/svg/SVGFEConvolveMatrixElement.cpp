@@ -51,6 +51,7 @@ inline SVGFEConvolveMatrixElement::SVGFEConvolveMatrixElement(const QualifiedNam
     : SVGFilterPrimitiveStandardAttributes(tagName, document)
     , m_edgeMode(EDGEMODE_DUPLICATE)
 {
+    ASSERT(hasTagName(SVGNames::feConvolveMatrixTag));
 }
 
 PassRefPtr<SVGFEConvolveMatrixElement> SVGFEConvolveMatrixElement::create(const QualifiedName& tagName, Document* document)

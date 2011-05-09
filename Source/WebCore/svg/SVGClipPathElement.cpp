@@ -42,6 +42,7 @@ inline SVGClipPathElement::SVGClipPathElement(const QualifiedName& tagName, Docu
     : SVGStyledTransformableElement(tagName, document)
     , m_clipPathUnits(SVGUnitTypes::SVG_UNIT_TYPE_USERSPACEONUSE)
 {
+    ASSERT(hasTagName(SVGNames::clipPathTag));
 }
 
 PassRefPtr<SVGClipPathElement> SVGClipPathElement::create(const QualifiedName& tagName, Document* document)

@@ -54,6 +54,7 @@ inline SVGMarkerElement::SVGMarkerElement(const QualifiedName& tagName, Document
     , m_orientType(SVG_MARKER_ORIENT_ANGLE)
 {
     // Spec: If the markerWidth/markerHeight attribute is not specified, the effect is as if a value of "3" were specified.
+    ASSERT(hasTagName(SVGNames::markerTag));
 }
 
 PassRefPtr<SVGMarkerElement> SVGMarkerElement::create(const QualifiedName& tagName, Document* document)

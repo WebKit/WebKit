@@ -30,6 +30,7 @@ namespace WebCore {
 inline SVGFontFaceNameElement::SVGFontFaceNameElement(const QualifiedName& tagName, Document* document)
     : SVGElement(tagName, document)
 {
+    ASSERT(hasTagName(SVGNames::font_face_nameTag));
 }
 
 PassRefPtr<SVGFontFaceNameElement> SVGFontFaceNameElement::create(const QualifiedName& tagName, Document* document)

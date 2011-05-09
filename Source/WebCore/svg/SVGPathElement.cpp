@@ -54,6 +54,7 @@ inline SVGPathElement::SVGPathElement(const QualifiedName& tagName, Document* do
     , m_pathByteStream(SVGPathByteStream::create())
     , m_pathSegList(PathSegUnalteredRole)
 {
+    ASSERT(hasTagName(SVGNames::pathTag));
 }
 
 PassRefPtr<SVGPathElement> SVGPathElement::create(const QualifiedName& tagName, Document* document)

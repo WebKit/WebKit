@@ -35,6 +35,7 @@ DEFINE_ANIMATED_BOOLEAN(SVGMPathElement, SVGNames::externalResourcesRequiredAttr
 inline SVGMPathElement::SVGMPathElement(const QualifiedName& tagName, Document* document)
     : SVGElement(tagName, document)
 {
+    ASSERT(hasTagName(SVGNames::mpathTag));
 }
 
 PassRefPtr<SVGMPathElement> SVGMPathElement::create(const QualifiedName& tagName, Document* document)

@@ -48,6 +48,7 @@ inline SVGForeignObjectElement::SVGForeignObjectElement(const QualifiedName& tag
     , m_width(LengthModeWidth)
     , m_height(LengthModeHeight)
 {
+    ASSERT(hasTagName(SVGNames::foreignObjectTag));
 }
 
 PassRefPtr<SVGForeignObjectElement> SVGForeignObjectElement::create(const QualifiedName& tagName, Document* document)

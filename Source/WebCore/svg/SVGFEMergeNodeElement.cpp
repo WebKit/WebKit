@@ -37,6 +37,7 @@ DEFINE_ANIMATED_STRING(SVGFEMergeNodeElement, SVGNames::inAttr, In1, in1)
 inline SVGFEMergeNodeElement::SVGFEMergeNodeElement(const QualifiedName& tagName, Document* document)
     : SVGElement(tagName, document)
 {
+    ASSERT(hasTagName(SVGNames::feMergeNodeTag));
 }
 
 PassRefPtr<SVGFEMergeNodeElement> SVGFEMergeNodeElement::create(const QualifiedName& tagName, Document* document)

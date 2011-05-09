@@ -21,12 +21,14 @@
 #include "config.h"
 #if ENABLE(SVG)
 #include "SVGMetadataElement.h"
+#include "SVGNames.h"
 
 namespace WebCore {
 
 inline SVGMetadataElement::SVGMetadataElement(const QualifiedName& tagName, Document* document)
     : SVGElement(tagName, document)
 {
+    ASSERT(hasTagName(SVGNames::metadataTag));
 }
 
 PassRefPtr<SVGMetadataElement> SVGMetadataElement::create(const QualifiedName& tagName, Document* document)

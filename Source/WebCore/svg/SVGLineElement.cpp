@@ -46,6 +46,7 @@ inline SVGLineElement::SVGLineElement(const QualifiedName& tagName, Document* do
     , m_x2(LengthModeWidth)
     , m_y2(LengthModeHeight)
 {
+    ASSERT(hasTagName(SVGNames::lineTag));
 }
 
 PassRefPtr<SVGLineElement> SVGLineElement::create(const QualifiedName& tagName, Document* document)

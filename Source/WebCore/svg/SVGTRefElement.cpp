@@ -38,6 +38,7 @@ DEFINE_ANIMATED_STRING(SVGTRefElement, XLinkNames::hrefAttr, Href, href)
 inline SVGTRefElement::SVGTRefElement(const QualifiedName& tagName, Document* document)
     : SVGTextPositioningElement(tagName, document)
 {
+    ASSERT(hasTagName(SVGNames::trefTag));
 }
 
 PassRefPtr<SVGTRefElement> SVGTRefElement::create(const QualifiedName& tagName, Document* document)

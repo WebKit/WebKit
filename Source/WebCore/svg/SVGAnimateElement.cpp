@@ -51,6 +51,7 @@ SVGAnimateElement::SVGAnimateElement(const QualifiedName& tagName, Document* doc
     , m_animatedNumber(numeric_limits<double>::infinity())
     , m_animatedPathPointer(0)
 {
+    ASSERT(hasTagName(SVGNames::animateTag) || hasTagName(SVGNames::setTag) || hasTagName(SVGNames::animateColorTag));
 }
 
 PassRefPtr<SVGAnimateElement> SVGAnimateElement::create(const QualifiedName& tagName, Document* document)

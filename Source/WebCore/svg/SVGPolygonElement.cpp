@@ -22,6 +22,7 @@
 
 #if ENABLE(SVG)
 #include "SVGPolygonElement.h"
+#include "SVGNames.h"
 
 #include "Path.h"
 
@@ -30,6 +31,7 @@ namespace WebCore {
 inline SVGPolygonElement::SVGPolygonElement(const QualifiedName& tagName, Document* document)
     : SVGPolyElement(tagName, document)
 {
+    ASSERT(hasTagName(SVGNames::polygonTag));
 }
 
 PassRefPtr<SVGPolygonElement> SVGPolygonElement::create(const QualifiedName& tagName, Document* document)

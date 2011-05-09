@@ -21,6 +21,7 @@
 
 #if ENABLE(SVG) && ENABLE(FILTERS)
 #include "SVGFEPointLightElement.h"
+#include "SVGNames.h"
 
 #include "PointLightSource.h"
 
@@ -29,6 +30,7 @@ namespace WebCore {
 inline SVGFEPointLightElement::SVGFEPointLightElement(const QualifiedName& tagName, Document* document)
     : SVGFELightElement(tagName, document)
 {
+    ASSERT(hasTagName(SVGNames::fePointLightTag));
 }
 
 PassRefPtr<SVGFEPointLightElement> SVGFEPointLightElement::create(const QualifiedName& tagName, Document* document)

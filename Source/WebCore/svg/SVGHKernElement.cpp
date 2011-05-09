@@ -38,6 +38,7 @@ using namespace SVGNames;
 inline SVGHKernElement::SVGHKernElement(const QualifiedName& tagName, Document* document)
     : SVGElement(tagName, document)
 {
+    ASSERT(hasTagName(hkernTag));
 }
 
 PassRefPtr<SVGHKernElement> SVGHKernElement::create(const QualifiedName& tagName, Document* document)

@@ -40,6 +40,7 @@ DEFINE_ANIMATED_STRING(SVGFEComponentTransferElement, SVGNames::inAttr, In1, in1
 inline SVGFEComponentTransferElement::SVGFEComponentTransferElement(const QualifiedName& tagName, Document* document)
     : SVGFilterPrimitiveStandardAttributes(tagName, document)
 {
+    ASSERT(hasTagName(SVGNames::feComponentTransferTag));
 }
 
 PassRefPtr<SVGFEComponentTransferElement> SVGFEComponentTransferElement::create(const QualifiedName& tagName, Document* document)

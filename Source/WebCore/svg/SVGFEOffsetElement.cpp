@@ -38,6 +38,7 @@ DEFINE_ANIMATED_NUMBER(SVGFEOffsetElement, SVGNames::dyAttr, Dy, dy)
 inline SVGFEOffsetElement::SVGFEOffsetElement(const QualifiedName& tagName, Document* document)
     : SVGFilterPrimitiveStandardAttributes(tagName, document)
 {
+    ASSERT(hasTagName(SVGNames::feOffsetTag));
 }
 
 PassRefPtr<SVGFEOffsetElement> SVGFEOffsetElement::create(const QualifiedName& tagName, Document* document)

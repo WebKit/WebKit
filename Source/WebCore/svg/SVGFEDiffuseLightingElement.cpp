@@ -46,6 +46,7 @@ inline SVGFEDiffuseLightingElement::SVGFEDiffuseLightingElement(const QualifiedN
     , m_diffuseConstant(1)
     , m_surfaceScale(1)
 {
+    ASSERT(hasTagName(SVGNames::feDiffuseLightingTag));
 }
 
 PassRefPtr<SVGFEDiffuseLightingElement> SVGFEDiffuseLightingElement::create(const QualifiedName& tagName, Document* document)

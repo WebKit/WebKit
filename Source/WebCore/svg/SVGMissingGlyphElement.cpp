@@ -21,12 +21,14 @@
 
 #if ENABLE(SVG_FONTS)
 #include "SVGMissingGlyphElement.h"
+#include "SVGNames.h"
 
 namespace WebCore {
 
 inline SVGMissingGlyphElement::SVGMissingGlyphElement(const QualifiedName& tagName, Document* document)
     : SVGStyledElement(tagName, document)
 {
+    ASSERT(hasTagName(SVGNames::missing_glyphTag));
 }
 
 PassRefPtr<SVGMissingGlyphElement> SVGMissingGlyphElement::create(const QualifiedName& tagName, Document* document)

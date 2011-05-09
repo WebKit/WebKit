@@ -1,3 +1,169 @@
+2011-05-09  Rob Buis  <rbuis@rim.com>
+
+        Reviewed by Dirk Schulze.
+
+        Elements should assert that the QualifiedName given to their constructor corresponds to the Element constructed
+        https://bugs.webkit.org/show_bug.cgi?id=22576
+
+        Add tag name ASSERTs in SVG Element constructors.
+
+        No new tests, since no change in behaviour.
+
+        * svg/SVGAElement.cpp:
+        (WebCore::SVGAElement::SVGAElement):
+        * svg/SVGAltGlyphElement.cpp:
+        (WebCore::SVGAltGlyphElement::SVGAltGlyphElement):
+        * svg/SVGAnimateColorElement.cpp:
+        (WebCore::SVGAnimateColorElement::SVGAnimateColorElement):
+        * svg/SVGAnimateElement.cpp:
+        (WebCore::SVGAnimateElement::SVGAnimateElement):
+        * svg/SVGAnimateMotionElement.cpp:
+        (WebCore::SVGAnimateMotionElement::SVGAnimateMotionElement):
+        * svg/SVGAnimateTransformElement.cpp:
+        (WebCore::SVGAnimateTransformElement::SVGAnimateTransformElement):
+        * svg/SVGCircleElement.cpp:
+        (WebCore::SVGCircleElement::SVGCircleElement):
+        * svg/SVGClipPathElement.cpp:
+        (WebCore::SVGClipPathElement::SVGClipPathElement):
+        * svg/SVGCursorElement.cpp:
+        (WebCore::SVGCursorElement::SVGCursorElement):
+        * svg/SVGDefsElement.cpp:
+        (WebCore::SVGDefsElement::SVGDefsElement):
+        * svg/SVGDescElement.cpp:
+        (WebCore::SVGDescElement::SVGDescElement):
+        * svg/SVGEllipseElement.cpp:
+        (WebCore::SVGEllipseElement::SVGEllipseElement):
+        * svg/SVGFEBlendElement.cpp:
+        (WebCore::SVGFEBlendElement::SVGFEBlendElement):
+        * svg/SVGFEColorMatrixElement.cpp:
+        (WebCore::SVGFEColorMatrixElement::SVGFEColorMatrixElement):
+        * svg/SVGFEComponentTransferElement.cpp:
+        (WebCore::SVGFEComponentTransferElement::SVGFEComponentTransferElement):
+        * svg/SVGFECompositeElement.cpp:
+        (WebCore::SVGFECompositeElement::SVGFECompositeElement):
+        * svg/SVGFEConvolveMatrixElement.cpp:
+        (WebCore::SVGFEConvolveMatrixElement::SVGFEConvolveMatrixElement):
+        * svg/SVGFEDiffuseLightingElement.cpp:
+        (WebCore::SVGFEDiffuseLightingElement::SVGFEDiffuseLightingElement):
+        * svg/SVGFEDisplacementMapElement.cpp:
+        (WebCore::SVGFEDisplacementMapElement::SVGFEDisplacementMapElement):
+        * svg/SVGFEDistantLightElement.cpp:
+        (WebCore::SVGFEDistantLightElement::SVGFEDistantLightElement):
+        * svg/SVGFEDropShadowElement.cpp:
+        (WebCore::SVGFEDropShadowElement::SVGFEDropShadowElement):
+        * svg/SVGFEFloodElement.cpp:
+        (WebCore::SVGFEFloodElement::SVGFEFloodElement):
+        * svg/SVGFEFuncAElement.cpp:
+        (WebCore::SVGFEFuncAElement::SVGFEFuncAElement):
+        * svg/SVGFEFuncBElement.cpp:
+        (WebCore::SVGFEFuncBElement::SVGFEFuncBElement):
+        * svg/SVGFEFuncGElement.cpp:
+        (WebCore::SVGFEFuncGElement::SVGFEFuncGElement):
+        * svg/SVGFEFuncRElement.cpp:
+        (WebCore::SVGFEFuncRElement::SVGFEFuncRElement):
+        * svg/SVGFEGaussianBlurElement.cpp:
+        (WebCore::SVGFEGaussianBlurElement::SVGFEGaussianBlurElement):
+        * svg/SVGFEImageElement.cpp:
+        (WebCore::SVGFEImageElement::SVGFEImageElement):
+        * svg/SVGFEMergeElement.cpp:
+        (WebCore::SVGFEMergeElement::SVGFEMergeElement):
+        * svg/SVGFEMergeNodeElement.cpp:
+        (WebCore::SVGFEMergeNodeElement::SVGFEMergeNodeElement):
+        * svg/SVGFEMorphologyElement.cpp:
+        (WebCore::SVGFEMorphologyElement::SVGFEMorphologyElement):
+        * svg/SVGFEOffsetElement.cpp:
+        (WebCore::SVGFEOffsetElement::SVGFEOffsetElement):
+        * svg/SVGFEPointLightElement.cpp:
+        (WebCore::SVGFEPointLightElement::SVGFEPointLightElement):
+        * svg/SVGFESpecularLightingElement.cpp:
+        (WebCore::SVGFESpecularLightingElement::SVGFESpecularLightingElement):
+        * svg/SVGFESpotLightElement.cpp:
+        (WebCore::SVGFESpotLightElement::SVGFESpotLightElement):
+        * svg/SVGFETileElement.cpp:
+        (WebCore::SVGFETileElement::SVGFETileElement):
+        * svg/SVGFETurbulenceElement.cpp:
+        (WebCore::SVGFETurbulenceElement::SVGFETurbulenceElement):
+        * svg/SVGFilterElement.cpp:
+        (WebCore::SVGFilterElement::SVGFilterElement):
+        * svg/SVGFontElement.cpp:
+        (WebCore::SVGFontElement::SVGFontElement):
+        * svg/SVGFontFaceElement.cpp:
+        (WebCore::SVGFontFaceElement::SVGFontFaceElement):
+        * svg/SVGFontFaceFormatElement.cpp:
+        (WebCore::SVGFontFaceFormatElement::SVGFontFaceFormatElement):
+        * svg/SVGFontFaceNameElement.cpp:
+        (WebCore::SVGFontFaceNameElement::SVGFontFaceNameElement):
+        * svg/SVGFontFaceSrcElement.cpp:
+        (WebCore::SVGFontFaceSrcElement::SVGFontFaceSrcElement):
+        * svg/SVGFontFaceUriElement.cpp:
+        (WebCore::SVGFontFaceUriElement::SVGFontFaceUriElement):
+        * svg/SVGForeignObjectElement.cpp:
+        (WebCore::SVGForeignObjectElement::SVGForeignObjectElement):
+        * svg/SVGGElement.cpp:
+        (WebCore::SVGGElement::SVGGElement):
+        * svg/SVGGlyphElement.cpp:
+        (WebCore::SVGGlyphElement::SVGGlyphElement):
+        * svg/SVGHKernElement.cpp:
+        (WebCore::SVGHKernElement::SVGHKernElement):
+        * svg/SVGImageElement.cpp:
+        (WebCore::SVGImageElement::SVGImageElement):
+        * svg/SVGLineElement.cpp:
+        (WebCore::SVGLineElement::SVGLineElement):
+        * svg/SVGLinearGradientElement.cpp:
+        (WebCore::SVGLinearGradientElement::SVGLinearGradientElement):
+        * svg/SVGMPathElement.cpp:
+        (WebCore::SVGMPathElement::SVGMPathElement):
+        * svg/SVGMarkerElement.cpp:
+        (WebCore::SVGMarkerElement::SVGMarkerElement):
+        * svg/SVGMaskElement.cpp:
+        (WebCore::SVGMaskElement::SVGMaskElement):
+        * svg/SVGMetadataElement.cpp:
+        (WebCore::SVGMetadataElement::SVGMetadataElement):
+        * svg/SVGMissingGlyphElement.cpp:
+        (WebCore::SVGMissingGlyphElement::SVGMissingGlyphElement):
+        * svg/SVGPathElement.cpp:
+        (WebCore::SVGPathElement::SVGPathElement):
+        * svg/SVGPatternElement.cpp:
+        (WebCore::SVGPatternElement::SVGPatternElement):
+        * svg/SVGPolygonElement.cpp:
+        (WebCore::SVGPolygonElement::SVGPolygonElement):
+        * svg/SVGPolylineElement.cpp:
+        (WebCore::SVGPolylineElement::SVGPolylineElement):
+        * svg/SVGRadialGradientElement.cpp:
+        (WebCore::SVGRadialGradientElement::SVGRadialGradientElement):
+        * svg/SVGRectElement.cpp:
+        (WebCore::SVGRectElement::SVGRectElement):
+        * svg/SVGSVGElement.cpp:
+        (WebCore::SVGSVGElement::SVGSVGElement):
+        * svg/SVGScriptElement.cpp:
+        (WebCore::SVGScriptElement::SVGScriptElement):
+        * svg/SVGSetElement.cpp:
+        (WebCore::SVGSetElement::SVGSetElement):
+        * svg/SVGStopElement.cpp:
+        (WebCore::SVGStopElement::SVGStopElement):
+        * svg/SVGStyleElement.cpp:
+        (WebCore::SVGStyleElement::SVGStyleElement):
+        * svg/SVGSwitchElement.cpp:
+        (WebCore::SVGSwitchElement::SVGSwitchElement):
+        * svg/SVGSymbolElement.cpp:
+        (WebCore::SVGSymbolElement::SVGSymbolElement):
+        * svg/SVGTRefElement.cpp:
+        (WebCore::SVGTRefElement::SVGTRefElement):
+        * svg/SVGTSpanElement.cpp:
+        (WebCore::SVGTSpanElement::SVGTSpanElement):
+        * svg/SVGTextElement.cpp:
+        (WebCore::SVGTextElement::SVGTextElement):
+        * svg/SVGTextPathElement.cpp:
+        (WebCore::SVGTextPathElement::SVGTextPathElement):
+        * svg/SVGTitleElement.cpp:
+        (WebCore::SVGTitleElement::SVGTitleElement):
+        * svg/SVGUseElement.cpp:
+        (WebCore::SVGUseElement::SVGUseElement):
+        * svg/SVGVKernElement.cpp:
+        (WebCore::SVGVKernElement::SVGVKernElement):
+        * svg/SVGViewElement.cpp:
+        (WebCore::SVGViewElement::SVGViewElement):
+
 2011-05-09  Shishir Agrawal  <shishir@chromium.org>
 
         Reviewed by Tony Gentilcore.

@@ -43,6 +43,7 @@ inline SVGFontElement::SVGFontElement(const QualifiedName& tagName, Document* do
     : SVGStyledElement(tagName, document) 
     , m_isGlyphCacheValid(false)
 {
+    ASSERT(hasTagName(SVGNames::fontTag));
 }
 
 PassRefPtr<SVGFontElement> SVGFontElement::create(const QualifiedName& tagName, Document* document)

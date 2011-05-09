@@ -49,6 +49,7 @@ inline SVGFESpecularLightingElement::SVGFESpecularLightingElement(const Qualifie
     , m_specularExponent(1)
     , m_surfaceScale(1)
 {
+    ASSERT(hasTagName(SVGNames::feSpecularLightingTag));
 }
 
 PassRefPtr<SVGFESpecularLightingElement> SVGFESpecularLightingElement::create(const QualifiedName& tagName, Document* document)

@@ -43,6 +43,7 @@ inline SVGFETurbulenceElement::SVGFETurbulenceElement(const QualifiedName& tagNa
     , m_stitchTiles(SVG_STITCHTYPE_NOSTITCH)
     , m_type(FETURBULENCE_TYPE_TURBULENCE)
 {
+    ASSERT(hasTagName(SVGNames::feTurbulenceTag));
 }
 
 PassRefPtr<SVGFETurbulenceElement> SVGFETurbulenceElement::create(const QualifiedName& tagName, Document* document)

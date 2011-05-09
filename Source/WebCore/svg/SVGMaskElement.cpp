@@ -55,6 +55,7 @@ inline SVGMaskElement::SVGMaskElement(const QualifiedName& tagName, Document* do
 {
     // Spec: If the x/y attribute is not specified, the effect is as if a value of "-10%" were specified.
     // Spec: If the width/height attribute is not specified, the effect is as if a value of "120%" were specified.
+    ASSERT(hasTagName(SVGNames::maskTag));
 }
 
 PassRefPtr<SVGMaskElement> SVGMaskElement::create(const QualifiedName& tagName, Document* document)

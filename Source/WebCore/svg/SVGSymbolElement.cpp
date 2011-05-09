@@ -36,6 +36,7 @@ DEFINE_ANIMATED_RECT(SVGSymbolElement, SVGNames::viewBoxAttr, ViewBox, viewBox)
 inline SVGSymbolElement::SVGSymbolElement(const QualifiedName& tagName, Document* document)
     : SVGStyledElement(tagName, document)
 {
+    ASSERT(hasTagName(SVGNames::symbolTag));
 }
 
 PassRefPtr<SVGSymbolElement> SVGSymbolElement::create(const QualifiedName& tagName, Document* document)

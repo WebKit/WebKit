@@ -39,6 +39,7 @@ DEFINE_ANIMATED_STRING(SVGAltGlyphElement, XLinkNames::hrefAttr, Href, href)
 inline SVGAltGlyphElement::SVGAltGlyphElement(const QualifiedName& tagName, Document* document)
     : SVGTextPositioningElement(tagName, document)
 {
+    ASSERT(hasTagName(SVGNames::altGlyphTag));
 }
 
 PassRefPtr<SVGAltGlyphElement> SVGAltGlyphElement::create(const QualifiedName& tagName, Document* document)

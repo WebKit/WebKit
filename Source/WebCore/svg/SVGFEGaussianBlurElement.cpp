@@ -39,6 +39,7 @@ DEFINE_ANIMATED_NUMBER_MULTIPLE_WRAPPERS(SVGFEGaussianBlurElement, SVGNames::std
 inline SVGFEGaussianBlurElement::SVGFEGaussianBlurElement(const QualifiedName& tagName, Document* document)
     : SVGFilterPrimitiveStandardAttributes(tagName, document)
 {
+    ASSERT(hasTagName(SVGNames::feGaussianBlurTag));
 }
 
 PassRefPtr<SVGFEGaussianBlurElement> SVGFEGaussianBlurElement::create(const QualifiedName& tagName, Document* document)

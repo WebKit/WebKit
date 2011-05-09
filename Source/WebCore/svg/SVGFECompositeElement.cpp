@@ -43,6 +43,7 @@ inline SVGFECompositeElement::SVGFECompositeElement(const QualifiedName& tagName
     : SVGFilterPrimitiveStandardAttributes(tagName, document)
     , m__operator(FECOMPOSITE_OPERATOR_OVER)
 {
+    ASSERT(hasTagName(SVGNames::feCompositeTag));
 }
 
 PassRefPtr<SVGFECompositeElement> SVGFECompositeElement::create(const QualifiedName& tagName, Document* document)

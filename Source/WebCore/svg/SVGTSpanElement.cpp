@@ -32,6 +32,7 @@ namespace WebCore {
 inline SVGTSpanElement::SVGTSpanElement(const QualifiedName& tagName, Document* document)
     : SVGTextPositioningElement(tagName, document)
 {
+    ASSERT(hasTagName(SVGNames::tspanTag));
 }
 
 PassRefPtr<SVGTSpanElement> SVGTSpanElement::create(const QualifiedName& tagName, Document* document)

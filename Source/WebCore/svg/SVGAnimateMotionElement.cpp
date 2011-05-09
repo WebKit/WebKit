@@ -46,6 +46,7 @@ inline SVGAnimateMotionElement::SVGAnimateMotionElement(const QualifiedName& tag
     , m_baseIndexInTransformList(0)
     , m_angle(0)
 {
+    ASSERT(hasTagName(animateMotionTag));
 }
 
 PassRefPtr<SVGAnimateMotionElement> SVGAnimateMotionElement::create(const QualifiedName& tagName, Document* document)

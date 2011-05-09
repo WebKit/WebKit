@@ -45,6 +45,7 @@ inline SVGFEDropShadowElement::SVGFEDropShadowElement(const QualifiedName& tagNa
     , m_stdDeviationX(2)
     , m_stdDeviationY(2)
 {
+    ASSERT(hasTagName(SVGNames::feDropShadowTag));
 }
 
 PassRefPtr<SVGFEDropShadowElement> SVGFEDropShadowElement::create(const QualifiedName& tagName, Document* document)

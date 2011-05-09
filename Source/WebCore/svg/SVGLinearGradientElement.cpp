@@ -53,6 +53,7 @@ inline SVGLinearGradientElement::SVGLinearGradientElement(const QualifiedName& t
     , m_y2(LengthModeHeight)
 {
     // Spec: If the x2 attribute is not specified, the effect is as if a value of "100%" were specified.
+    ASSERT(hasTagName(SVGNames::linearGradientTag));
 }
 
 PassRefPtr<SVGLinearGradientElement> SVGLinearGradientElement::create(const QualifiedName& tagName, Document* document)

@@ -46,6 +46,7 @@ DEFINE_ANIMATED_BOOLEAN(SVGFEImageElement, SVGNames::externalResourcesRequiredAt
 inline SVGFEImageElement::SVGFEImageElement(const QualifiedName& tagName, Document* document)
     : SVGFilterPrimitiveStandardAttributes(tagName, document)
 {
+    ASSERT(hasTagName(SVGNames::feImageTag));
 }
 
 PassRefPtr<SVGFEImageElement> SVGFEImageElement::create(const QualifiedName& tagName, Document* document)

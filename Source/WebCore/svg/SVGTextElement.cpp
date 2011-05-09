@@ -40,6 +40,7 @@ DEFINE_ANIMATED_TRANSFORM_LIST(SVGTextElement, SVGNames::transformAttr, Transfor
 inline SVGTextElement::SVGTextElement(const QualifiedName& tagName, Document* doc)
     : SVGTextPositioningElement(tagName, doc)
 {
+    ASSERT(hasTagName(SVGNames::textTag));
 }
 
 PassRefPtr<SVGTextElement> SVGTextElement::create(const QualifiedName& tagName, Document* document)

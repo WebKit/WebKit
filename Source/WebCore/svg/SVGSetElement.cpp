@@ -21,12 +21,14 @@
 #include "config.h"
 #if ENABLE(SVG_ANIMATION)
 #include "SVGSetElement.h"
+#include "SVGNames.h"
 
 namespace WebCore {
     
 inline SVGSetElement::SVGSetElement(const QualifiedName& tagName, Document* document)
     : SVGAnimateElement(tagName, document)
 {
+    ASSERT(hasTagName(SVGNames::setTag));
 }
 
 PassRefPtr<SVGSetElement> SVGSetElement::create(const QualifiedName& tagName, Document* document)

@@ -52,6 +52,7 @@ inline SVGAnimateTransformElement::SVGAnimateTransformElement(const QualifiedNam
     , m_type(SVGTransform::SVG_TRANSFORM_UNKNOWN)
     , m_baseIndexInTransformList(0)
 {
+    ASSERT(hasTagName(SVGNames::animateTransformTag));
 }
 
 PassRefPtr<SVGAnimateTransformElement> SVGAnimateTransformElement::create(const QualifiedName& tagName, Document* document)

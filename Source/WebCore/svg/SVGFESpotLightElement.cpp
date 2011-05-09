@@ -21,6 +21,7 @@
 
 #if ENABLE(SVG) && ENABLE(FILTERS)
 #include "SVGFESpotLightElement.h"
+#include "SVGNames.h"
 
 #include "SpotLightSource.h"
 
@@ -29,6 +30,7 @@ namespace WebCore {
 inline SVGFESpotLightElement::SVGFESpotLightElement(const QualifiedName& tagName, Document* document)
     : SVGFELightElement(tagName, document)
 {
+    ASSERT(hasTagName(SVGNames::feSpotLightTag));
 }
 
 PassRefPtr<SVGFESpotLightElement> SVGFESpotLightElement::create(const QualifiedName& tagName, Document* document)

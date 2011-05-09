@@ -74,6 +74,7 @@ inline SVGSVGElement::SVGSVGElement(const QualifiedName& tagName, Document* doc)
     , m_containerSize(300, 150)
     , m_hasSetContainerSize(false)
 {
+    ASSERT(hasTagName(SVGNames::svgTag));
     doc->registerForDocumentActivationCallbacks(this);
 }
 

@@ -44,6 +44,7 @@ inline SVGCircleElement::SVGCircleElement(const QualifiedName& tagName, Document
     , m_cy(LengthModeHeight)
     , m_r(LengthModeOther)
 {
+    ASSERT(hasTagName(SVGNames::circleTag));
 }
 
 PassRefPtr<SVGCircleElement> SVGCircleElement::create(const QualifiedName& tagName, Document* document)

@@ -39,6 +39,7 @@ inline SVGFEBlendElement::SVGFEBlendElement(const QualifiedName& tagName, Docume
     : SVGFilterPrimitiveStandardAttributes(tagName, document)
     , m_mode(FEBLEND_MODE_NORMAL)
 {
+    ASSERT(hasTagName(SVGNames::feBlendTag));
 }
 
 PassRefPtr<SVGFEBlendElement> SVGFEBlendElement::create(const QualifiedName& tagName, Document* document)

@@ -40,6 +40,7 @@ using namespace SVGNames;
 inline SVGGlyphElement::SVGGlyphElement(const QualifiedName& tagName, Document* document)
     : SVGStyledElement(tagName, document)
 {
+    ASSERT(hasTagName(glyphTag));
 }
 
 PassRefPtr<SVGGlyphElement> SVGGlyphElement::create(const QualifiedName& tagName, Document* document)

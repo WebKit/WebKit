@@ -21,12 +21,14 @@
 #include "config.h"
 #if ENABLE(SVG)
 #include "SVGDescElement.h"
+#include "SVGNames.h"
 
 namespace WebCore {
 
 inline SVGDescElement::SVGDescElement(const QualifiedName& tagName, Document* document)
     : SVGStyledElement(tagName, document)
 {
+    ASSERT(hasTagName(SVGNames::descTag));
 }
 
 PassRefPtr<SVGDescElement> SVGDescElement::create(const QualifiedName& tagName, Document* document)

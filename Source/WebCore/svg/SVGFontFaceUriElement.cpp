@@ -39,6 +39,7 @@ using namespace SVGNames;
 inline SVGFontFaceUriElement::SVGFontFaceUriElement(const QualifiedName& tagName, Document* document)
     : SVGElement(tagName, document)
 {
+    ASSERT(hasTagName(font_face_uriTag));
 }
 
 PassRefPtr<SVGFontFaceUriElement> SVGFontFaceUriElement::create(const QualifiedName& tagName, Document* document)

@@ -52,6 +52,7 @@ inline SVGImageElement::SVGImageElement(const QualifiedName& tagName, Document* 
     , m_height(LengthModeHeight)
     , m_imageLoader(this)
 {
+    ASSERT(hasTagName(SVGNames::imageTag));
 }
 
 PassRefPtr<SVGImageElement> SVGImageElement::create(const QualifiedName& tagName, Document* document)

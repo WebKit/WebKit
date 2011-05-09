@@ -39,6 +39,7 @@ inline SVGStopElement::SVGStopElement(const QualifiedName& tagName, Document* do
     : SVGStyledElement(tagName, document)
     , m_offset(0)
 {
+    ASSERT(hasTagName(SVGNames::stopTag));
 }
 
 PassRefPtr<SVGStopElement> SVGStopElement::create(const QualifiedName& tagName, Document* document)

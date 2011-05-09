@@ -74,6 +74,7 @@ inline SVGUseElement::SVGUseElement(const QualifiedName& tagName, Document* docu
     , m_updatesBlocked(false)
     , m_needsShadowTreeRecreation(false)
 {
+    ASSERT(hasTagName(SVGNames::useTag));
 }
 
 PassRefPtr<SVGUseElement> SVGUseElement::create(const QualifiedName& tagName, Document* document)

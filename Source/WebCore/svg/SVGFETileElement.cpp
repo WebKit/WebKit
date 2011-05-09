@@ -37,6 +37,7 @@ DEFINE_ANIMATED_STRING(SVGFETileElement, SVGNames::inAttr, In1, in1)
 inline SVGFETileElement::SVGFETileElement(const QualifiedName& tagName, Document* document)
     : SVGFilterPrimitiveStandardAttributes(tagName, document)
 {
+    ASSERT(hasTagName(SVGNames::feTileTag));
 }
 
 PassRefPtr<SVGFETileElement> SVGFETileElement::create(const QualifiedName& tagName, Document* document)

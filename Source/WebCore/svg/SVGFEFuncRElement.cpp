@@ -22,12 +22,14 @@
 
 #if ENABLE(SVG) && ENABLE(FILTERS)
 #include "SVGFEFuncRElement.h"
+#include "SVGNames.h"
 
 namespace WebCore {
 
 inline SVGFEFuncRElement::SVGFEFuncRElement(const QualifiedName& tagName, Document* document)
     : SVGComponentTransferFunctionElement(tagName, document)
 {
+    ASSERT(hasTagName(SVGNames::feFuncRTag));
 }
 
 PassRefPtr<SVGFEFuncRElement> SVGFEFuncRElement::create(const QualifiedName& tagName, Document* document)

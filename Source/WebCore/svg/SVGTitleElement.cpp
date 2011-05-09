@@ -21,6 +21,7 @@
 #include "config.h"
 #if ENABLE(SVG)
 #include "SVGTitleElement.h"
+#include "SVGNames.h"
 
 #include "Document.h"
 
@@ -29,6 +30,7 @@ namespace WebCore {
 inline SVGTitleElement::SVGTitleElement(const QualifiedName& tagName, Document* document)
     : SVGStyledElement(tagName, document)
 {
+    ASSERT(hasTagName(SVGNames::titleTag));
 }
 
 PassRefPtr<SVGTitleElement> SVGTitleElement::create(const QualifiedName& tagName, Document* document)

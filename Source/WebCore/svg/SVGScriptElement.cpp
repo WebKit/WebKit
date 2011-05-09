@@ -41,6 +41,7 @@ inline SVGScriptElement::SVGScriptElement(const QualifiedName& tagName, Document
     : SVGElement(tagName, document)
     , ScriptElement(this, wasInsertedByParser, alreadyStarted)
 {
+    ASSERT(hasTagName(SVGNames::scriptTag));
 }
 
 PassRefPtr<SVGScriptElement> SVGScriptElement::create(const QualifiedName& tagName, Document* document, bool insertedByParser)

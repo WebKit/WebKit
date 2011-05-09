@@ -40,6 +40,7 @@ inline SVGCursorElement::SVGCursorElement(const QualifiedName& tagName, Document
     , m_x(LengthModeWidth)
     , m_y(LengthModeHeight)
 {
+    ASSERT(hasTagName(SVGNames::cursorTag));
 }
 
 PassRefPtr<SVGCursorElement> SVGCursorElement::create(const QualifiedName& tagName, Document* document)

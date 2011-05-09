@@ -40,6 +40,7 @@ inline SVGFEMorphologyElement::SVGFEMorphologyElement(const QualifiedName& tagNa
     : SVGFilterPrimitiveStandardAttributes(tagName, document)
     , m__operator(FEMORPHOLOGY_OPERATOR_ERODE)
 {
+    ASSERT(hasTagName(SVGNames::feMorphologyTag));
 }
 
 PassRefPtr<SVGFEMorphologyElement> SVGFEMorphologyElement::create(const QualifiedName& tagName, Document* document)

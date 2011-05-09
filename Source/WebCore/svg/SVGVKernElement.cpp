@@ -36,6 +36,7 @@ using namespace SVGNames;
 inline SVGVKernElement::SVGVKernElement(const QualifiedName& tagName, Document* document)
     : SVGElement(tagName, document)
 {
+    ASSERT(hasTagName(vkernTag));
 }
 
 PassRefPtr<SVGVKernElement> SVGVKernElement::create(const QualifiedName& tagName, Document* document)

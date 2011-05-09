@@ -49,6 +49,7 @@ inline SVGRectElement::SVGRectElement(const QualifiedName& tagName, Document* do
     , m_rx(LengthModeWidth)
     , m_ry(LengthModeHeight)
 {
+    ASSERT(hasTagName(SVGNames::rectTag));
 }
 
 PassRefPtr<SVGRectElement> SVGRectElement::create(const QualifiedName& tagName, Document* document)

@@ -42,6 +42,7 @@ inline SVGTextPathElement::SVGTextPathElement(const QualifiedName& tagName, Docu
     , m_method(SVG_TEXTPATH_METHODTYPE_ALIGN)
     , m_spacing(SVG_TEXTPATH_SPACINGTYPE_EXACT)
 {
+    ASSERT(hasTagName(SVGNames::textPathTag));
 }
 
 PassRefPtr<SVGTextPathElement> SVGTextPathElement::create(const QualifiedName& tagName, Document* document)

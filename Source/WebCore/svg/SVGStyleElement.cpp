@@ -38,6 +38,7 @@ inline SVGStyleElement::SVGStyleElement(const QualifiedName& tagName, Document* 
     : SVGElement(tagName, document)
     , StyleElement(document, createdByParser)
 {
+    ASSERT(hasTagName(SVGNames::styleTag));
 }
 
 SVGStyleElement::~SVGStyleElement()

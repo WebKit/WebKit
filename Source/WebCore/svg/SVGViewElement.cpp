@@ -40,6 +40,7 @@ inline SVGViewElement::SVGViewElement(const QualifiedName& tagName, Document* do
     : SVGStyledElement(tagName, document)
     , m_viewTarget(SVGNames::viewTargetAttr)
 {
+    ASSERT(hasTagName(SVGNames::viewTag));
 }
 
 PassRefPtr<SVGViewElement> SVGViewElement::create(const QualifiedName& tagName, Document* document)
