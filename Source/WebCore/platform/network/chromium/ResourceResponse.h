@@ -27,6 +27,7 @@
 #ifndef ResourceResponse_h
 #define ResourceResponse_h
 
+#include "File.h"
 #include "NotImplemented.h"
 #include "ResourceResponseBase.h"
 #include <wtf/text/CString.h>
@@ -99,8 +100,8 @@ namespace WebCore {
         unsigned short remotePort() const { return m_remotePort; }
         void setRemotePort(unsigned short value) { m_remotePort = value; }
 
-        const String& downloadFilePath() const { return m_downloadFilePath; }
-        void setDownloadFilePath(const String& downloadFilePath) { m_downloadFilePath = downloadFilePath; }
+        const File* downloadedFile() const { return m_downloadedFile.get(); }
+        void setDownloadedFile(PassRefPtr<File> downloadedFile) { m_downloadedFile = downloadedFile; }
 
     private:
         friend class ResourceResponseBase;
@@ -152,8 +153,8 @@ namespace WebCore {
         // Remote port number of the socket which fetched this resource.
         unsigned short m_remotePort;
 
-        // The path to the downloaded file.
-        String m_downloadFilePath;
+        // The downloaded file if the load streamed to a file.
+        RefPtr<File> m_downloadedFile;
     };
 
     struct CrossThreadResourceResponseData : public CrossThreadResourceResponseDataBase {

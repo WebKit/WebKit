@@ -1,3 +1,18 @@
+2011-05-06  Brett Wilson  <brettw@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        Use a File object to store the downloaded file reference rather than
+        just the path. This keeps the file and permissions in scope (using the
+        already-existing blob system) so the browser won't delete the file
+        when the load is complete. Instead, the file will be cleaned up when
+        the request objects are deleted.
+        https://bugs.webkit.org/show_bug.cgi?id=60281
+
+        * src/WebURLResponse.cpp:
+        (WebKit::WebURLResponse::downloadFilePath):
+        (WebKit::WebURLResponse::setDownloadFilePath):
+
 2011-05-10  Mikhail Naganov  <mnaganov@chromium.org>
 
         Reviewed by Yury Semikhatsky.

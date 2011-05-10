@@ -40,7 +40,7 @@ PassOwnPtr<CrossThreadResourceResponseData> ResourceResponse::doPlatformCopyData
     data->m_responseTime = m_responseTime;
     data->m_remoteIPAddress = m_remoteIPAddress;
     data->m_remotePort = m_remotePort;
-    data->m_downloadFilePath = m_downloadFilePath;
+    // Bug https://bugs.webkit.org/show_bug.cgi?id=60397 this doesn't support m_downloadedFile.
     return data;
 }
 
@@ -56,7 +56,7 @@ void ResourceResponse::doPlatformAdopt(PassOwnPtr<CrossThreadResourceResponseDat
     m_responseTime = data->m_responseTime;
     m_remoteIPAddress = data->m_remoteIPAddress;
     m_remotePort = data->m_remotePort;
-    m_downloadFilePath = data->m_downloadFilePath;
+    // Bug https://bugs.webkit.org/show_bug.cgi?id=60397 this doesn't support m_downloadedFile.
 }
 
 } // namespace WebCore

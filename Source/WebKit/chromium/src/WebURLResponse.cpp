@@ -365,12 +365,15 @@ void WebURLResponse::setIsMultipartPayload(bool value)
 
 WebString WebURLResponse::downloadFilePath() const
 {
-    return m_private->m_resourceResponse->downloadFilePath();
+    const File* downloadedFile = m_private->m_resourceResponse->downloadedFile();
+    if (downloadedFile)
+        return downloadedFile->path();
+    return WebString();
 }
 
 void WebURLResponse::setDownloadFilePath(const WebString& downloadFilePath)
 {
-    m_private->m_resourceResponse->setDownloadFilePath(downloadFilePath.utf8().data());
+    m_private->m_resourceResponse->setDownloadedFile(File::create(downloadFilePath));
 }
 
 WebString WebURLResponse::remoteIPAddress() const
