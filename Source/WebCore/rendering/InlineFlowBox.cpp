@@ -1213,7 +1213,7 @@ void InlineFlowBox::paintMask(PaintInfo& paintInfo, int tx, int ty)
     // The simple case is where we are the only box for this object.  In those
     // cases only a single call to draw is required.
     if (!prevLineBox() && !nextLineBox()) {
-        boxModelObject()->paintNinePieceImage(paintInfo.context, tx, ty, w, h, renderer()->style(), maskNinePieceImage, compositeOp);
+        boxModelObject()->paintNinePieceImage(paintInfo.context, IntRect(tx, ty, w, h), renderer()->style(), maskNinePieceImage, compositeOp);
     } else {
         // We have a mask image that spans multiple lines.
         // We need to adjust _tx and _ty by the width of all previous lines.
@@ -1230,7 +1230,7 @@ void InlineFlowBox::paintMask(PaintInfo& paintInfo, int tx, int ty)
 
         GraphicsContextStateSaver stateSaver(*paintInfo.context);
         paintInfo.context->clip(IntRect(tx, ty, w, h));
-        boxModelObject()->paintNinePieceImage(paintInfo.context, stripX, stripY, stripWidth, stripHeight, renderer()->style(), maskNinePieceImage, compositeOp);
+        boxModelObject()->paintNinePieceImage(paintInfo.context, IntRect(stripX, stripY, stripWidth, stripHeight), renderer()->style(), maskNinePieceImage, compositeOp);
     }
     
     if (pushTransparencyLayer)

@@ -953,7 +953,7 @@ void RenderBox::paintMaskImages(const PaintInfo& paintInfo, int tx, int ty, int 
 
     if (allMaskImagesLoaded) {
         paintFillLayers(paintInfo, Color(), style()->maskLayers(), tx, ty, w, h, BackgroundBleedNone, compositeOp);
-        paintNinePieceImage(paintInfo.context, tx, ty, w, h, style(), style()->maskBoxImage(), compositeOp);
+        paintNinePieceImage(paintInfo.context, IntRect(tx, ty, w, h), style(), style()->maskBoxImage(), compositeOp);
     }
     
     if (pushTransparencyLayer)
