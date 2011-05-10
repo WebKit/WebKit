@@ -2324,6 +2324,75 @@ template<> inline CSSPrimitiveValue::operator FontSmoothingMode() const
     return AutoSmoothing;
 }
 
+template<> inline CSSPrimitiveValue::CSSPrimitiveValue(FontWeight weight)
+    : m_type(CSS_IDENT)
+    , m_hasCachedCSSText(false)
+{
+    switch (weight) {
+    case FontWeight900:
+        m_value.ident = CSSValue900;
+        return;
+    case FontWeight800:
+        m_value.ident = CSSValue800;
+        return;
+    case FontWeight700:
+        m_value.ident = CSSValue700;
+        return;
+    case FontWeight600:
+        m_value.ident = CSSValue600;
+        return;
+    case FontWeight500:
+        m_value.ident = CSSValue500;
+        return;
+    case FontWeight400:
+        m_value.ident = CSSValue400;
+        return;
+    case FontWeight300:
+        m_value.ident = CSSValue300;
+        return;
+    case FontWeight200:
+        m_value.ident = CSSValue200;
+        return;
+    case FontWeight100:
+        m_value.ident = CSSValue100;
+        return;
+    }
+
+    ASSERT_NOT_REACHED();
+    m_value.ident = CSSValueNormal;
+}
+
+template<> inline CSSPrimitiveValue::operator FontWeight() const
+{
+    switch (m_value.ident) {
+    case CSSValueBold:
+        return FontWeightBold;
+    case CSSValueNormal:
+        return FontWeightNormal;
+    case CSSValue900:
+        return FontWeight900;
+    case CSSValue800:
+        return FontWeight800;
+    case CSSValue700:
+        return FontWeight700;
+    case CSSValue600:
+        return FontWeight600;
+    case CSSValue500:
+        return FontWeight500;
+    case CSSValue400:
+        return FontWeight400;
+    case CSSValue300:
+        return FontWeight300;
+    case CSSValue200:
+        return FontWeight200;
+    case CSSValue100:
+        return FontWeight100;
+    }
+
+    ASSERT_NOT_REACHED();
+    return FontWeightNormal;
+}
+
 template<> inline CSSPrimitiveValue::CSSPrimitiveValue(FontItalic italic)
     : m_type(CSS_IDENT)
     , m_hasCachedCSSText(false)

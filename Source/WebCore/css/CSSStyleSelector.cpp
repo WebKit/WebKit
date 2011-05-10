@@ -3676,48 +3676,19 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
         else {
             if (!primitiveValue)
                 return;
-            if (primitiveValue->getIdent()) {
-                switch (primitiveValue->getIdent()) {
-                    case CSSValueBolder:
-                        fontDescription.setWeight(fontDescription.bolderWeight());
-                        break;
-                    case CSSValueLighter:
-                        fontDescription.setWeight(fontDescription.lighterWeight());
-                        break;
-                    case CSSValueBold:
-                    case CSSValue700:
-                        fontDescription.setWeight(FontWeightBold);
-                        break;
-                    case CSSValueNormal:
-                    case CSSValue400:
-                        fontDescription.setWeight(FontWeightNormal);
-                        break;
-                    case CSSValue900:
-                        fontDescription.setWeight(FontWeight900);
-                        break;
-                    case CSSValue800:
-                        fontDescription.setWeight(FontWeight800);
-                        break;
-                    case CSSValue600:
-                        fontDescription.setWeight(FontWeight600);
-                        break;
-                    case CSSValue500:
-                        fontDescription.setWeight(FontWeight500);
-                        break;
-                    case CSSValue300:
-                        fontDescription.setWeight(FontWeight300);
-                        break;
-                    case CSSValue200:
-                        fontDescription.setWeight(FontWeight200);
-                        break;
-                    case CSSValue100:
-                        fontDescription.setWeight(FontWeight100);
-                        break;
-                    default:
-                        return;
-                }
-            } else
+            switch (primitiveValue->getIdent()) {
+            case CSSValueInvalid:
                 ASSERT_NOT_REACHED();
+                break;
+            case CSSValueBolder:
+                fontDescription.setWeight(fontDescription.bolderWeight());
+                break;
+            case CSSValueLighter:
+                fontDescription.setWeight(fontDescription.lighterWeight());
+                break;
+            default:
+                fontDescription.setWeight(*primitiveValue);
+            }
         }
         if (m_style->setFontDescription(fontDescription))
             m_fontDirty = true;

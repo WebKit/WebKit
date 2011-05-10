@@ -1,3 +1,22 @@
+2011-05-09  Luke Macpherson   <macpherson@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        Enable casting between CSSPrimitiveValue and FontWeight enum
+        https://bugs.webkit.org/show_bug.cgi?id=60516
+
+        No new tests added as no functionality changed.
+
+        * css/CSSPrimitiveValueMappings.h:
+        (WebCore::CSSPrimitiveValue::CSSPrimitiveValue):
+        Implement cast from FontWeight to CSSPrimitiveValue.
+        (WebCore::CSSPrimitiveValue::operator FontWeight):
+        Implement cast from CSSPrimitiveValue to FontWeight
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::applyProperty):
+        Use new cast to reduce code size.
+        Flatten switch inside if.
+
 2011-05-09  Simon Fraser  <simon.fraser@apple.com>
 
         Move IconURL.* into the dom grouping.
