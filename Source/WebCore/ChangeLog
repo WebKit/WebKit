@@ -3,9 +3,25 @@
         Reviewed by Alice Liu.
 
         <rdar://problem/9343191> and https://bugs.webkit.org/show_bug.cgi?id=60572
+        REGRESSION - Canon On-screen Manual.app crashes after a search
 
         No new tests - There's no way to reproduce the truly bizarre things Canon does in their app
         that would reasonably fit in to our testing infrastructure.
+
+        In r66577 a new behavior was added where changing the "setLoadsImagesAutomatically" setting to "true" would immediately
+        start loading those images that had been disabled.
+
+        If this happens while a WebView is being dealloc'ed, and we don't know the WebView is being dealloc'ed, these new loads
+        can cause crashes downstream when the WebView memory has actually been free'd.
+
+        One example where this can happen is in Mac apps that subclass WebView then do work in their overridden dealloc methods.
+        And the Canon Onscreen Manual is one such app.
+
+        Starting these loads synchronously is not important.  By putting it on a 0-delay, properly closing the Page cancels them
+        before they have a chance to really start.
+
+        See http://webkit.org/b/60572 for more discussion.
+
 
         Add a timer to Settings and instead of calling setLoadsImagesAutomaticallyInAllFrames right
         away when this pref changes, call it on a 0-delay:

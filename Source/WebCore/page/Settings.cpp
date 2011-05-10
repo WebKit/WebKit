@@ -282,7 +282,20 @@ void Settings::setDefaultFixedFontSize(int defaultFontSize)
 void Settings::setLoadsImagesAutomatically(bool loadsImagesAutomatically)
 {
     m_loadsImagesAutomatically = loadsImagesAutomatically;
+    
+    // Changing this setting to true might immediately start new loads for images that had previously had loading disabled.
+    // If this happens while a WebView is being dealloc'ed, and we don't know the WebView is being dealloc'ed, these new loads
+    // can cause crashes downstream when the WebView memory has actually been free'd.
+    // One example where this can happen is in Mac apps that subclass WebView then do work in their overridden dealloc methods.
+    // Starting these loads synchronously is not important.  By putting it on a 0-delay, properly closing the Page cancels them
+    // before they have a chance to really start.
+    // See http://webkit.org/b/60572 for more discussion.
     m_loadsImagesAutomaticallyTimer.startOneShot(0);
+}
+
+void Settings::loadsImagesAutomaticallyTimerFired(Timer<Settings>*)
+{
+    setLoadsImagesAutomaticallyInAllFrames(m_page);
 }
 
 void Settings::setLoadsSiteIconsIgnoringImageLoadingSetting(bool loadsSiteIcons)
@@ -741,11 +754,6 @@ void Settings::setTiledBackingStoreEnabled(bool enabled)
     if (m_page->mainFrame())
         m_page->mainFrame()->setTiledBackingStoreEnabled(enabled);
 #endif
-}
-
-void Settings::loadsImagesAutomaticallyTimerFired(Timer<Settings>*)
-{
-    setLoadsImagesAutomaticallyInAllFrames(m_page);
 }
 
 } // namespace WebCore
