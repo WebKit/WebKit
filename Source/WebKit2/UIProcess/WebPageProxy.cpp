@@ -860,38 +860,17 @@ void WebPageProxy::handleMouseEvent(const NativeWebMouseEvent& event)
     process()->send(Messages::WebPage::MouseEvent(event), m_pageID);
 }
 
-static PassOwnPtr<NativeWebWheelEvent> coalesceWheelEvents(NativeWebWheelEvent* oldNextWheelEvent, const NativeWebWheelEvent& newWheelEvent)
-{
-#if MERGE_WHEEL_EVENTS
-    // Merge model: Combine wheel event deltas (and wheel ticks) into a single wheel event.
-    if (!oldNextWheelEvent)
-        return adoptPtr(new NativeWebWheelEvent(newWheelEvent));
-
-    if (oldNextWheelEvent->position() != newWheelEvent.position() || oldNextWheelEvent->modifiers() != newWheelEvent.modifiers() || oldNextWheelEvent->granularity() != newWheelEvent.granularity())
-        return adoptPtr(new NativeWebWheelEvent(newWheelEvent));
-
-    FloatSize mergedDelta = oldNextWheelEvent->delta() + newWheelEvent.delta();
-    FloatSize mergedWheelTicks = oldNextWheelEvent->wheelTicks() + newWheelEvent.wheelTicks();
-
-    // FIXME: This won't compile, if we ever turn on MERGE_WHEEL_EVENTS we'll have to generate a NativeWebWheelEvent synthetically for each platform.
-    return adoptPtr(new NativeWebWheelEvent(WebEvent::Wheel, newWheelEvent.position(), newWheelEvent.globalPosition(), mergedDelta, mergedWheelTicks, newWheelEvent.granularity(), newWheelEvent.modifiers(), newWheelEvent.timestamp()));
-#else
-    // Simple model: Just keep the last event, dropping all interim events.
-    return adoptPtr(new NativeWebWheelEvent(newWheelEvent));
-#endif
-}
-
 void WebPageProxy::handleWheelEvent(const NativeWebWheelEvent& event)
 {
     if (!isValid())
         return;
 
-    if (m_currentlyProcessedWheelEvent) {
-        m_nextWheelEvent = coalesceWheelEvents(m_nextWheelEvent.get(), event);
+    if (!m_currentlyProcessedWheelEvents.isEmpty()) {
+        m_wheelEventQueue.append(event);
         return;
     }
-    
-    m_currentlyProcessedWheelEvent = adoptPtr(new NativeWebWheelEvent(event));
+
+    m_currentlyProcessedWheelEvents.append(event);
 
     process()->responsivenessTimer()->start();
     process()->send(Messages::WebPage::WheelEvent(event), m_pageID);
@@ -2574,6 +2553,68 @@ void WebPageProxy::setCursor(const WebCore::Cursor& cursor)
     m_pageClient->setCursor(cursor);
 }
 
+#if MERGE_WHEEL_EVENTS
+static bool canCoalesce(const WebWheelEvent& a, const WebWheelEvent& b)
+{
+    if (a.position() != b.position())
+        return false;
+    if (a.globalPosition() != b.globalPosition())
+        return false;
+    if (a.modifiers() != b.modifiers())
+        return false;
+    if (a.granularity() != b.granularity())
+        return false;
+#if PLATFORM(MAC)
+    if (a.phase() != b.phase())
+        return false;
+    if (a.momentumPhase() != b.momentumPhase())
+        return false;
+    if (a.hasPreciseScrollingDeltas() != b.hasPreciseScrollingDeltas())
+        return false;
+#endif
+
+    return true;
+}
+
+static WebWheelEvent coalesce(const WebWheelEvent& a, const WebWheelEvent& b)
+{
+    ASSERT(canCoalesce(a, b));
+
+    FloatSize mergedDelta = a.delta() + b.delta();
+    FloatSize mergedWheelTicks = a.wheelTicks() + b.wheelTicks();
+
+#if PLATFORM(MAC)
+    return WebWheelEvent(WebEvent::Wheel, b.position(), b.globalPosition(), mergedDelta, mergedWheelTicks, b.granularity(), b.phase(), b.momentumPhase(), b.hasPreciseScrollingDeltas(), b.modifiers(), b.timestamp());
+#else
+    return WebWheelEvent(WebEvent::Wheel, b.position(), b.globalPosition(), mergedDelta, mergedWheelTicks, b.granularity(), b.modifiers(), b.timestamp());
+#endif
+}
+#endif
+
+static WebWheelEvent coalescedWheelEvent(Deque<NativeWebWheelEvent>& queue, Vector<NativeWebWheelEvent>& coalescedEvents)
+{
+    ASSERT(!queue.isEmpty());
+    ASSERT(coalescedEvents.isEmpty());
+
+#if MERGE_WHEEL_EVENTS
+    NativeWebWheelEvent firstEvent = queue.takeFirst();
+    coalescedEvents.append(firstEvent);
+
+    WebWheelEvent event = firstEvent;
+    while (!queue.isEmpty() && canCoalesce(event, queue.first())) {
+        NativeWebWheelEvent firstEvent = queue.takeFirst();
+        coalescedEvents.append(firstEvent);
+        event = coalesce(event, firstEvent);
+    }
+
+    return event;
+#else
+    while (!queue.isEmpty())
+        coalescedEvents.append(queue.takeFirst());
+    return coalescedEvents.last();
+#endif
+}
+
 void WebPageProxy::didReceiveEvent(uint32_t opaqueType, bool handled)
 {
     WebEvent::Type type = static_cast<WebEvent::Type>(opaqueType);
@@ -2619,16 +2660,21 @@ void WebPageProxy::didReceiveEvent(uint32_t opaqueType, bool handled)
         break;
 
     case WebEvent::Wheel: {
-        ASSERT(m_currentlyProcessedWheelEvent);
+        ASSERT(!m_currentlyProcessedWheelEvents.isEmpty());
 
-        if (!handled && m_currentlyProcessedWheelEvent && m_uiClient.implementsDidNotHandleWheelEvent())
-            m_uiClient.didNotHandleWheelEvent(this, *m_currentlyProcessedWheelEvent);
+        // FIXME: Dispatch additional events to the didNotHandleWheelEvent client function.
+        if (!handled && m_uiClient.implementsDidNotHandleWheelEvent())
+            m_uiClient.didNotHandleWheelEvent(this, m_currentlyProcessedWheelEvents.last());
 
-        m_currentlyProcessedWheelEvent = nullptr;
-        if (m_nextWheelEvent) {
-            handleWheelEvent(*m_nextWheelEvent);
-            m_nextWheelEvent = nullptr;
+        m_currentlyProcessedWheelEvents.clear();
+
+        if (!m_wheelEventQueue.isEmpty()) {
+            WebWheelEvent newWheelEvent = coalescedWheelEvent(m_wheelEventQueue, m_currentlyProcessedWheelEvents);
+
+            process()->responsivenessTimer()->start();
+            process()->send(Messages::WebPage::WheelEvent(newWheelEvent), m_pageID);
         }
+
         break;
     }
 
@@ -2841,8 +2887,10 @@ void WebPageProxy::processDidCrash()
 
     // Can't expect DidReceiveEvent notifications from a crashed web process.
     m_keyEventQueue.clear();
-    m_nextWheelEvent = nullptr;
-    m_currentlyProcessedWheelEvent = nullptr;
+    
+    m_wheelEventQueue.clear();
+    m_currentlyProcessedWheelEvents.clear();
+
     m_nextMouseMoveEvent = nullptr;
     m_currentlyProcessedMouseDownEvent = nullptr;
 

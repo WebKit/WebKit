@@ -840,9 +840,9 @@ private:
     uint64_t m_syncNavigationActionPolicyDownloadID;
 
     Deque<NativeWebKeyboardEvent> m_keyEventQueue;
-    bool m_processingWheelEvent;
-    OwnPtr<NativeWebWheelEvent> m_currentlyProcessedWheelEvent;
-    OwnPtr<NativeWebWheelEvent> m_nextWheelEvent;
+
+    Deque<NativeWebWheelEvent> m_wheelEventQueue;
+    Vector<NativeWebWheelEvent> m_currentlyProcessedWheelEvents;
 
     bool m_processingMouseMoveEvent;
     OwnPtr<NativeWebMouseEvent> m_nextMouseMoveEvent;

@@ -1,3 +1,25 @@
+2011-05-10  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Anders Carlsson.
+
+        WebKit2: Coalesced wheel events should be saved to hand back to the client on unhandled return
+        https://bugs.webkit.org/show_bug.cgi?id=60584
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::handleWheelEvent):
+        (WebKit::canCoalesce):
+        (WebKit::coalesce):
+        (WebKit::coalescedWheelEvent):
+        (WebKit::WebPageProxy::didReceiveEvent):
+        (WebKit::WebPageProxy::processDidCrash):
+        Reworks coalescing/merging code to happen on didReceiveEvent rather than in
+        handleWheelEvent. This means we now store the pending events in a queue, and
+        pull them out when we can.
+
+        * UIProcess/WebPageProxy.h:
+        Change single event containers to contain all pending/merged/coalesced events
+        and remove unused flag.
+
 2011-05-09  Jeremy Noble  <jer.noble@apple.com>
 
         Reviewed by Darin Adler.
