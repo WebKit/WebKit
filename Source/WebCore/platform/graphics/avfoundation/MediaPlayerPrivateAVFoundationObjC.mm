@@ -220,6 +220,9 @@ void MediaPlayerPrivateAVFoundationObjC::createVideoLayer()
     if (!m_videoLayer) {
         m_videoLayer.adoptNS([[AVPlayerLayer alloc] init]);
         [m_videoLayer.get() setPlayer:m_avPlayer.get()];
+#ifndef NDEBUG
+        [m_videoLayer.get() setName:@"Video layer"];
+#endif
         LOG(Media, "MediaPlayerPrivateAVFoundationObjC::createVideoLayer(%p) - returning %p", this, m_videoLayer.get());
     }
 }

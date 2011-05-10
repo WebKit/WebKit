@@ -1,3 +1,30 @@
+2011-05-10  Eric Carlson  <eric.carlson@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Files that load quickly sometimes won't play.
+        https://bugs.webkit.org/show_bug.cgi?id=60556
+        <rdar://problem/9330567>
+
+        No new tests, this failure is very difficult to reproduce on some machines. The fix was
+        verified manually.
+
+        * platform/graphics/avfoundation/MediaPlayerPrivateAVFoundation.cpp:
+        (WebCore::MediaPlayerPrivateAVFoundation::playabilityKnown): Move the call to updateStates
+            to dispatchNotification so it is more obvious which state changes call it.
+        (WebCore::MediaPlayerPrivateAVFoundation::setNaturalSize): Correct logging typo.
+        (WebCore::MediaPlayerPrivateAVFoundation::metadataLoaded): Move updateStates call to 
+            dispatchNotification.
+        (WebCore::MediaPlayerPrivateAVFoundation::rateChanged): Ditto.
+        (WebCore::MediaPlayerPrivateAVFoundation::loadedTimeRangesChanged): Ditto.
+        (WebCore::MediaPlayerPrivateAVFoundation::dispatchNotification): Call updateStates after
+            processing "size changed" notification so we detect all state changes. Consolidate
+            calls to updateStates here.
+
+        * platform/graphics/avfoundation/MediaPlayerPrivateAVFoundationObjC.mm:
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::createVideoLayer): Name the video layer in
+            a debug build.
+
 2011-05-10  Abhishek Arya  <inferno@chromium.org>
 
         Reviewed by Simon Fraser.
