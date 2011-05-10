@@ -2,6 +2,18 @@
 
         Reviewed by Csaba Osztrogonác.
 
+        [Qt] Increment QtWebKit trunk version to 4.10.0
+        https://bugs.webkit.org/show_bug.cgi?id=60549
+
+        QtWebKit-2.2 (branched) will be 4.9.0, so we need to
+        increase the trunk version by 1.
+
+        * qt_webkit_version.pri:
+
+2011-05-10  Ademar de Souza Reis Jr.  <ademar.reis@openbossa.org>
+
+        Reviewed by Csaba Osztrogonác.
+
         [Qt] tst_QWebPage creates temporary files in the current working dir
         https://bugs.webkit.org/show_bug.cgi?id=60497
 
