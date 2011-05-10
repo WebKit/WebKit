@@ -78,6 +78,8 @@ typedef void (*WKViewFindIndicatorCallback)(WKViewRef, HBITMAP selectionBitmap, 
 WK_EXPORT void WKViewSetFindIndicatorCallback(WKViewRef view, WKViewFindIndicatorCallback callback, void* context);
 WK_EXPORT WKViewFindIndicatorCallback WKViewGetFindIndicatorCallback(WKViewRef view, void** context);
 
+WK_EXPORT bool WKViewIsPageOverlayInstalled(WKViewRef view);
+
 WK_EXPORT void WKViewSetDrawsTransparentBackground(WKViewRef view, bool drawsTransparentBackground);
 WK_EXPORT bool WKViewDrawsTransparentBackground(WKViewRef view);
 

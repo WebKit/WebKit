@@ -75,4 +75,9 @@ void WebPageProxy::scheduleChildWindowGeometryUpdate(const WindowGeometry& geome
     m_pageClient->scheduleChildWindowGeometryUpdate(geometry);
 }
 
+void WebPageProxy::didInstallOrUninstallPageOverlay(bool didInstall)
+{
+    m_pageClient->didInstallOrUninstallPageOverlay(didInstall);
+}
+
 } // namespace WebKit

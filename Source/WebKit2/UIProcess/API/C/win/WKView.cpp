@@ -87,6 +87,11 @@ WKViewFindIndicatorCallback WKViewGetFindIndicatorCallback(WKViewRef viewRef, vo
     return toImpl(viewRef)->getFindIndicatorCallback(context);
 }
 
+bool WKViewIsPageOverlayInstalled(WKViewRef viewRef)
+{
+    return toImpl(viewRef)->pageOverlayInstalled();
+}
+
 void WKViewSetViewUndoClient(WKViewRef viewRef, const WKViewUndoClient* wkClient)
 {
     if (wkClient && wkClient->version)

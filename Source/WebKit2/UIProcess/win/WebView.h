@@ -82,6 +82,7 @@ public:
     void setScrollOffsetOnNextResize(const WebCore::IntSize&);
     void setFindIndicatorCallback(WKViewFindIndicatorCallback, void*);
     WKViewFindIndicatorCallback getFindIndicatorCallback(void**);
+    bool pageOverlayInstalled() const { return m_pageOverlayInstalled; }
     void initialize();
     
     void initializeUndoClient(const WKViewUndoClient*);
@@ -194,6 +195,7 @@ private:
     virtual PassRefPtr<WebPopupMenuProxy> createPopupMenuProxy(WebPageProxy*);
     virtual PassRefPtr<WebContextMenuProxy> createContextMenuProxy(WebPageProxy*);
     virtual void setFindIndicator(PassRefPtr<FindIndicator>, bool fadeOut);
+    virtual void didInstallOrUninstallPageOverlay(bool);
 
 #if USE(ACCELERATED_COMPOSITING)
     virtual void enterAcceleratedCompositingMode(const LayerTreeContext&);
@@ -252,6 +254,7 @@ private:
 
     WKViewFindIndicatorCallback m_findIndicatorCallback;
     void* m_findIndicatorCallbackContext;
+    bool m_pageOverlayInstalled;
 
     COMPtr<IDataObject> m_dragData;
     COMPtr<IDropTargetHelper> m_dropTargetHelper;

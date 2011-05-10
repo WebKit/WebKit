@@ -134,6 +134,9 @@ public:
     virtual PassRefPtr<WebContextMenuProxy> createContextMenuProxy(WebPageProxy*) = 0;
 
     virtual void setFindIndicator(PassRefPtr<FindIndicator>, bool fadeOut) = 0;
+#if PLATFORM(WIN)
+    virtual void didInstallOrUninstallPageOverlay(bool) = 0;
+#endif
 
 #if USE(ACCELERATED_COMPOSITING)
     virtual void enterAcceleratedCompositingMode(const LayerTreeContext&) = 0;

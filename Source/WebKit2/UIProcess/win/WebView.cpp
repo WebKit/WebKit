@@ -280,6 +280,7 @@ WebView::WebView(RECT rect, WebContext* context, WebPageGroup* pageGroup, HWND p
     , m_inIMEComposition(0)
     , m_findIndicatorCallback(0)
     , m_findIndicatorCallbackContext(0)
+    , m_pageOverlayInstalled(false)
     , m_lastPanX(0)
     , m_lastPanY(0)
     , m_overPanY(0)
@@ -1462,6 +1463,11 @@ WKViewFindIndicatorCallback WebView::getFindIndicatorCallback(void** context)
         *context = m_findIndicatorCallbackContext;
     
     return m_findIndicatorCallback;
+}
+
+void WebView::didInstallOrUninstallPageOverlay(bool didInstall)
+{
+    m_pageOverlayInstalled = didInstall;
 }
 
 void WebView::didCommitLoadForMainFrame(bool useCustomRepresentation)

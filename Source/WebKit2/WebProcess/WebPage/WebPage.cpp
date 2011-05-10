@@ -813,6 +813,10 @@ void WebPage::installPageOverlay(PassRefPtr<PageOverlay> pageOverlay)
         m_pageOverlay->startFadeInAnimation();
 
     m_drawingArea->didInstallPageOverlay();
+#if PLATFORM(WIN)
+    send(Messages::WebPageProxy::DidInstallOrUninstallPageOverlay(true));
+#endif
+
     m_pageOverlay->setNeedsDisplay();
 }
 
@@ -830,6 +834,9 @@ void WebPage::uninstallPageOverlay(PageOverlay* pageOverlay, bool fadeOut)
     m_pageOverlay = nullptr;
 
     m_drawingArea->didUninstallPageOverlay();
+#if PLATFORM(WIN)
+    send(Messages::WebPageProxy::DidInstallOrUninstallPageOverlay(false));
+#endif
 }
 
 PassRefPtr<WebImage> WebPage::snapshotInViewCoordinates(const IntRect& rect, ImageOptions options)

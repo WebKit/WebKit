@@ -1,3 +1,35 @@
+2011-05-10  Jeff Miller  <jeffm@apple.com>
+
+        Reviewed by Anders Carlsson.
+
+        WebKit2: Windows clients need to know if the page overlay is installed
+        https://bugs.webkit.org/show_bug.cgi?id=60562
+        <rdar://problem/8940164>
+        
+        Until we move all the UI for find on page into WebKit on Windows (specifically, drawing the find bouncy),
+        WebKit clients need to know whether WebKit is drawing the page overlay or not.  Keep track of this in
+        the WebPageProxy in the UI process and provide a WebKit2 API to retrieve this information.
+
+        * UIProcess/API/C/win/WKView.cpp:
+        (WKViewIsPageOverlayInstalled): Added.
+        * UIProcess/API/C/win/WKView.h: Added WKViewIsPageOverlayInstalled().
+        
+        * UIProcess/PageClient.h: Added didInstallOrUninstallPageOverlay().
+        * UIProcess/WebPageProxy.h: Added didInstallOrUninstallPageOverlay().
+        * UIProcess/WebPageProxy.messages.in: Added DidInstallOrUninstallPageOverlay.
+        * UIProcess/win/WebPageProxyWin.cpp:
+        (WebKit::WebPageProxy::didInstallOrUninstallPageOverlay): Added.
+        
+        * UIProcess/win/WebView.cpp:
+        (WebKit::WebView::WebView): Initialize m_pageOverlayInstalled.
+        (WebKit::WebView::didInstallOrUninstallPageOverlay): Added.
+        * UIProcess/win/WebView.h: Added didInstallOrUninstallPageOverlay() and m_pageOverlayInstalled.
+        (WebKit::WebView::pageOverlayInstalled): Added.
+        
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::installPageOverlay): Send message to UI process to tell it the page overlay is installed.
+        (WebKit::WebPage::uninstallPageOverlay): Send message to UI process to tell it the page overlay is uninstalled.
+
 2011-05-10  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Adam Roben.

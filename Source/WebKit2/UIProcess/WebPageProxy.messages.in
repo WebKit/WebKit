@@ -161,6 +161,9 @@ messages -> WebPageProxy {
     SetFindIndicator(WebCore::FloatRect selectionRect, Vector<WebCore::FloatRect> textRects, WebKit::ShareableBitmap::Handle contentImageHandle, bool fadeOut)
     DidFindString(WTF::String string, uint32_t matchCount)
     DidFailToFindString(WTF::String string)
+#if PLATFORM(WIN)
+    DidInstallOrUninstallPageOverlay(bool didInstall)
+#endif
 
     # PopupMenu messages
     ShowPopupMenu(WebCore::IntRect rect, uint64_t textDirection, Vector<WebKit::WebPopupItem> items, int32_t selectedIndex, WebKit::PlatformPopupMenuData data)

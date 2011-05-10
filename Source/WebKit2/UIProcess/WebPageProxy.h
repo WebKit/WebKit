@@ -386,6 +386,9 @@ public:
     void setFindIndicator(const WebCore::FloatRect& selectionRectInWindowCoordinates, const Vector<WebCore::FloatRect>& textRectsInSelectionRectCoordinates, const ShareableBitmap::Handle& contentImageHandle, bool fadeOut);
     void didFindString(const String&, uint32_t matchCount);
     void didFailToFindString(const String&);
+#if PLATFORM(WIN)
+    void didInstallOrUninstallPageOverlay(bool);
+#endif
 
     void getContentsAsString(PassRefPtr<StringCallback>);
     void getMainResourceDataOfFrame(WebFrameProxy*, PassRefPtr<DataCallback>);
