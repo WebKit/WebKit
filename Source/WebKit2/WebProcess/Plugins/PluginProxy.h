@@ -38,6 +38,7 @@ OBJC_CLASS CALayer;
 
 namespace WebCore {
     class HTTPHeaderMap;
+    class ProtectionSpace;
 }
 
 namespace WebKit {
@@ -110,6 +111,7 @@ private:
     void proxiesForURL(const String& urlString, String& proxyString);
     void cookiesForURL(const String& urlString, String& cookieString);
     void setCookiesForURL(const String& urlString, const String& cookieString);
+    void getAuthenticationInfo(const WebCore::ProtectionSpace&, bool& returnValue, String& username, String& password);
     void getWindowScriptNPObject(uint64_t& windowScriptNPObjectID);
     void getPluginElementNPObject(uint64_t& pluginElementNPObjectID);
     void evaluate(const NPVariantData& npObjectAsVariantData, const String& scriptString, bool allowPopups, bool& returnValue, NPVariantData& resultData);

@@ -32,6 +32,7 @@
 #include <WebCore/HTTPHeaderMap.h>
 #include <WebCore/IdentifierRep.h>
 #include <WebCore/NotImplemented.h>
+#include <WebCore/ProtectionSpace.h>
 #include <WebCore/SharedBuffer.h>
 #include <utility>
 
@@ -854,11 +855,57 @@ static NPError NPN_SetValueForURL(NPP npp, NPNURLVariable variable, const char* 
     }
 }
 
-static NPError NPN_GetAuthenticationInfo(NPP instance, const char* protocol, const char* host, int32_t port, const char* scheme, 
-                                         const char* realm, char** username, uint32_t* ulen, char** password, uint32_t* plen)
+static bool initializeProtectionSpace(const char* protocol, const char* host, int port, const char* scheme, const char* realm, ProtectionSpace& protectionSpace)
 {
-    notImplemented();
-    return NPERR_GENERIC_ERROR;
+    ProtectionSpaceServerType serverType;
+    if (!strcasecmp(protocol, "http"))
+        serverType = ProtectionSpaceServerHTTP;
+    else if (!strcasecmp(protocol, "https"))
+        serverType = ProtectionSpaceServerHTTPS;
+    else {
+        // We only care about http and https.
+        return false;
+    }
+
+    ProtectionSpaceAuthenticationScheme authenticationScheme = ProtectionSpaceAuthenticationSchemeDefault;
+    if (serverType == ProtectionSpaceServerHTTP) {
+        if (!strcasecmp(scheme, "basic"))
+            authenticationScheme = ProtectionSpaceAuthenticationSchemeHTTPBasic;
+        else if (!strcmp(scheme, "digest"))
+            authenticationScheme = ProtectionSpaceAuthenticationSchemeHTTPDigest;
+    }
+
+    protectionSpace = ProtectionSpace(host, port, serverType, realm, authenticationScheme);
+    return true;
+}
+
+static NPError NPN_GetAuthenticationInfo(NPP npp, const char* protocol, const char* host, int32_t port, const char* scheme, 
+                                         const char* realm, char** username, uint32_t* usernameLength, char** password, uint32_t* passwordLength)
+{
+    if (!protocol || !host || !scheme || !realm || !username || !usernameLength || !password || !passwordLength)
+        return NPERR_GENERIC_ERROR;
+
+    ProtectionSpace protectionSpace;
+    if (!initializeProtectionSpace(protocol, host, port, scheme, realm, protectionSpace))
+        return NPERR_GENERIC_ERROR;
+
+    RefPtr<NetscapePlugin> plugin = NetscapePlugin::fromNPP(npp);
+    String usernameString;
+    String passwordString;
+    if (!plugin->getAuthenticationInfo(protectionSpace, usernameString, passwordString))
+        return NPERR_GENERIC_ERROR;
+
+    NPError result = copyCString(usernameString.utf8(), username, usernameLength);
+    if (result != NPERR_NO_ERROR)
+        return result;
+
+    result = copyCString(passwordString.utf8(), password, passwordLength);
+    if (result != NPERR_NO_ERROR) {
+        npnMemFree(*username);
+        return result;
+    }
+
+    return NPERR_NO_ERROR;
 }
 
 static uint32_t NPN_ScheduleTimer(NPP instance, uint32_t interval, NPBool repeat, void (*timerFunc)(NPP npp, uint32_t timerID))

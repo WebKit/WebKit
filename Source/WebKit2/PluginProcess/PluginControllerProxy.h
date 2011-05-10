@@ -102,6 +102,7 @@ private:
     virtual String cookiesForURL(const String&);
     virtual void setCookiesForURL(const String& urlString, const String& cookieString);
     virtual bool isPrivateBrowsingEnabled();
+    virtual bool getAuthenticationInfo(const WebCore::ProtectionSpace&, String& username, String& password);
     virtual void protectPluginFromDestruction();
     virtual void unprotectPluginFromDestruction();
     

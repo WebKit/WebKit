@@ -35,6 +35,7 @@ namespace WebCore {
     class HTTPHeaderMap;
     class IntRect;
     class KURL;
+    class ProtectionSpace;
 }
 
 namespace WebKit {
@@ -118,6 +119,9 @@ public:
 
     // Sets the cookies for the given URL.
     virtual void setCookiesForURL(const String& urlString, const String& cookieString) = 0;
+
+    // Get authentication credentials for the given protection space.
+    virtual bool getAuthenticationInfo(const WebCore::ProtectionSpace&, String& username, String& password) = 0;
 
     // Returns whether private browsing is enabled.
     virtual bool isPrivateBrowsingEnabled() = 0;

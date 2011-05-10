@@ -354,6 +354,15 @@ bool PluginControllerProxy::isPrivateBrowsingEnabled()
     return m_isPrivateBrowsingEnabled;
 }
 
+bool PluginControllerProxy::getAuthenticationInfo(const ProtectionSpace& protectionSpace, String& username, String& password)
+{
+    bool returnValue;
+    if (!m_connection->connection()->sendSync(Messages::PluginProxy::GetAuthenticationInfo(protectionSpace), Messages::PluginProxy::GetAuthenticationInfo::Reply(returnValue, username, password), m_pluginInstanceID))
+        return false;
+
+    return returnValue;
+}
+
 void PluginControllerProxy::protectPluginFromDestruction()
 {
     m_pluginDestructionProtectCount++;

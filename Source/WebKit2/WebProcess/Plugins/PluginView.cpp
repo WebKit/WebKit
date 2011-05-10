@@ -35,6 +35,7 @@
 #include "WebProcess.h"
 #include <WebCore/Chrome.h>
 #include <WebCore/CookieJar.h>
+#include <WebCore/CredentialStorage.h>
 #include <WebCore/DocumentLoader.h>
 #include <WebCore/Event.h>
 #include <WebCore/FocusController.h>
@@ -46,6 +47,7 @@
 #include <WebCore/HostWindow.h>
 #include <WebCore/NetscapePlugInStreamLoader.h>
 #include <WebCore/NetworkingContext.h>
+#include <WebCore/ProtectionSpace.h>
 #include <WebCore/ProxyServer.h>
 #include <WebCore/RenderEmbeddedObject.h>
 #include <WebCore/RenderLayer.h>
@@ -1075,6 +1077,21 @@ String PluginView::cookiesForURL(const String& urlString)
 void PluginView::setCookiesForURL(const String& urlString, const String& cookieString)
 {
     setCookies(m_pluginElement->document(), KURL(KURL(), urlString), cookieString);
+}
+
+bool PluginView::getAuthenticationInfo(const ProtectionSpace& protectionSpace, String& username, String& password)
+{
+    Credential credential = CredentialStorage::get(protectionSpace);
+    if (credential.isEmpty())
+        credential = CredentialStorage::getFromPersistentStorage(protectionSpace);
+
+    if (!credential.hasPassword())
+        return false;
+
+    username = credential.user();
+    password = credential.password();
+
+    return true;
 }
 
 bool PluginView::isPrivateBrowsingEnabled()

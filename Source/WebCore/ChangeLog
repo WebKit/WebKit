@@ -1,3 +1,15 @@
+2011-05-10  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Extra sign in required to view video on MobileMe Gallery album
+        https://bugs.webkit.org/show_bug.cgi?id=60560
+        <rdar://problem/9338693>
+
+        Add symbols required by WebKit2.
+
+        * WebCore.exp.in:
+
 2011-05-10  Alexander Pavlov  <apavlov@chromium.org>
 
         Reviewed by Pavel Feldman.

@@ -145,6 +145,7 @@ private:
     virtual String proxiesForURL(const String&);
     virtual String cookiesForURL(const String&);
     virtual void setCookiesForURL(const String& urlString, const String& cookieString);
+    virtual bool getAuthenticationInfo(const WebCore::ProtectionSpace&, String& username, String& password);
     virtual bool isPrivateBrowsingEnabled();
     virtual void protectPluginFromDestruction();
     virtual void unprotectPluginFromDestruction();

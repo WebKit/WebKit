@@ -395,6 +395,11 @@ void PluginProxy::setCookiesForURL(const String& urlString, const String& cookie
     m_pluginController->setCookiesForURL(urlString, cookieString);
 }
 
+void PluginProxy::getAuthenticationInfo(const ProtectionSpace& protectionSpace, bool& returnValue, String& username, String& password)
+{
+    returnValue = m_pluginController->getAuthenticationInfo(protectionSpace, username, password);
+}
+
 void PluginProxy::getWindowScriptNPObject(uint64_t& windowScriptNPObjectID)
 {
     NPObject* windowScriptNPObject = m_pluginController->windowScriptNPObject();

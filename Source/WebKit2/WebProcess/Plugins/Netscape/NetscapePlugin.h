@@ -37,6 +37,7 @@
 
 namespace WebCore {
     class HTTPHeaderMap;
+    class ProtectionSpace;
 }
 
 namespace WebKit {
@@ -99,6 +100,7 @@ public:
     String proxiesForURL(const String& urlString);
     String cookiesForURL(const String& urlString);
     void setCookiesForURL(const String& urlString, const String& cookieString);
+    bool getAuthenticationInfo(const WebCore::ProtectionSpace&, String& username, String& password);
 
     // Member functions for calling into the plug-in.
     NPError NPP_New(NPMIMEType pluginType, uint16_t mode, int16_t argc, char* argn[], char* argv[], NPSavedData*);
