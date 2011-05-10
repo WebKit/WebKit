@@ -66,14 +66,14 @@ public:
     virtual ~LayerChromium();
 
     const LayerChromium* rootLayer() const;
-    LayerChromium* superlayer() const;
-    void addSublayer(PassRefPtr<LayerChromium>);
-    void insertSublayer(PassRefPtr<LayerChromium>, size_t index);
-    void replaceSublayer(LayerChromium* reference, PassRefPtr<LayerChromium> newLayer);
-    void removeFromSuperlayer();
-    void removeAllSublayers();
-    void setSublayers(const Vector<RefPtr<LayerChromium> >&);
-    const Vector<RefPtr<LayerChromium> >& getSublayers() const { return m_sublayers; }
+    LayerChromium* parent() const;
+    void addChild(PassRefPtr<LayerChromium>);
+    void insertChild(PassRefPtr<LayerChromium>, size_t index);
+    void replaceChild(LayerChromium* reference, PassRefPtr<LayerChromium> newLayer);
+    void removeFromParent();
+    void removeAllChildren();
+    void setChildren(const Vector<RefPtr<LayerChromium> >&);
+    const Vector<RefPtr<LayerChromium> >& children() const { return m_children; }
 
     void setAnchorPoint(const FloatPoint& anchorPoint) { m_anchorPoint = anchorPoint; setNeedsCommit(); }
     FloatPoint anchorPoint() const { return m_anchorPoint; }
@@ -224,21 +224,21 @@ protected:
 private:
     void setNeedsCommit();
 
-    void setSuperlayer(LayerChromium* superlayer) { m_superlayer = superlayer; }
+    void setParent(LayerChromium* parent) { m_parent = parent; }
 
-    size_t numSublayers() const
+    size_t numChildren() const
     {
-        return m_sublayers.size();
+        return m_children.size();
     }
 
-    // Returns the index of the sublayer or -1 if not found.
-    int indexOfSublayer(const LayerChromium*);
+    // Returns the index of the child or -1 if not found.
+    int indexOfChild(const LayerChromium*);
 
-    // This should only be called from removeFromSuperlayer.
-    void removeSublayer(LayerChromium*);
+    // This should only be called from removeFromParent.
+    void removeChild(LayerChromium*);
 
-    Vector<RefPtr<LayerChromium> > m_sublayers;
-    LayerChromium* m_superlayer;
+    Vector<RefPtr<LayerChromium> > m_children;
+    LayerChromium* m_parent;
 
     RefPtr<LayerRendererChromium> m_layerRenderer;
 

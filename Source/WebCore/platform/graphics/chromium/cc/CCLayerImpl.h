@@ -57,7 +57,7 @@ public:
     int debugID() const { return m_debugID; }
 #endif
 
-    CCLayerImpl* superlayer() const;
+    CCLayerImpl* parent() const;
     CCLayerImpl* maskLayer() const;
     CCLayerImpl* replicaLayer() const;
 

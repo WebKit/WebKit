@@ -567,7 +567,7 @@ void LayerRendererChromium::updatePropertiesAndRenderSurfaces(LayerChromium* lay
     layer->pushPropertiesTo(drawLayer);
 
     // Compute the new matrix transformation that will be applied to this layer and
-    // all its sublayers. It's important to remember that the layer's position
+    // all its children. It's important to remember that the layer's position
     // is the position of the layer's anchor point. Also, the coordinate system used
     // assumes that the origin is at the lower left even though the coordinates the browser
     // gives us for the layers are for the upper left corner. The Y flip happens via
@@ -620,7 +620,7 @@ void LayerRendererChromium::updatePropertiesAndRenderSurfaces(LayerChromium* lay
     bool useSurfaceForOpacity = drawLayer->opacity() != 1 && !drawLayer->preserves3D();
     bool useSurfaceForMasking = drawLayer->maskLayer();
     bool useSurfaceForReflection = drawLayer->replicaLayer();
-    bool useSurfaceForFlatDescendants = (drawLayer->superlayer() && drawLayer->superlayer()->preserves3D() && !drawLayer->preserves3D() && drawLayer->descendantsDrawsContent());
+    bool useSurfaceForFlatDescendants = (drawLayer->parent() && drawLayer->parent()->preserves3D() && !drawLayer->preserves3D() && drawLayer->descendantsDrawsContent());
     if (useSurfaceForMasking || useSurfaceForReflection || useSurfaceForFlatDescendants || ((useSurfaceForClipping || useSurfaceForOpacity) && drawLayer->descendantsDrawsContent())) {
         RenderSurfaceChromium* renderSurface = drawLayer->renderSurface();
         if (!renderSurface)
@@ -635,8 +635,8 @@ void LayerRendererChromium::updatePropertiesAndRenderSurfaces(LayerChromium* lay
 
         // Layer's opacity will be applied when drawing the render surface.
         renderSurface->m_drawOpacity = drawLayer->opacity();
-        if (drawLayer->superlayer() && drawLayer->superlayer()->preserves3D())
-            renderSurface->m_drawOpacity *= drawLayer->superlayer()->drawOpacity();
+        if (drawLayer->parent() && drawLayer->parent()->preserves3D())
+            renderSurface->m_drawOpacity *= drawLayer->parent()->drawOpacity();
         drawLayer->setDrawOpacity(1);
 
         TransformationMatrix layerOriginTransform = combinedTransform;
@@ -646,8 +646,8 @@ void LayerRendererChromium::updatePropertiesAndRenderSurfaces(LayerChromium* lay
 
         // The render surface scissor rect is the scissor rect that needs to
         // be applied before drawing the render surface onto its containing
-        // surface and is therefore expressed in the superlayer's coordinate system.
-        renderSurface->m_scissorRect = drawLayer->superlayer() ? drawLayer->superlayer()->scissorRect() : drawLayer->scissorRect();
+        // surface and is therefore expressed in the parent's coordinate system.
+        renderSurface->m_scissorRect = drawLayer->parent() ? drawLayer->parent()->scissorRect() : drawLayer->scissorRect();
 
         renderSurface->m_layerList.clear();
 
@@ -668,14 +668,14 @@ void LayerRendererChromium::updatePropertiesAndRenderSurfaces(LayerChromium* lay
 
         drawLayer->setDrawOpacity(drawLayer->opacity());
 
-        if (drawLayer->superlayer()) {
-            if (drawLayer->superlayer()->preserves3D())
-               drawLayer->setDrawOpacity(drawLayer->drawOpacity() * drawLayer->superlayer()->drawOpacity());
+        if (drawLayer->parent()) {
+            if (drawLayer->parent()->preserves3D())
+               drawLayer->setDrawOpacity(drawLayer->drawOpacity() * drawLayer->parent()->drawOpacity());
 
-            // Layers inherit the scissor rect from their superlayer.
-            drawLayer->setScissorRect(drawLayer->superlayer()->scissorRect());
+            // Layers inherit the scissor rect from their parent.
+            drawLayer->setScissorRect(drawLayer->parent()->scissorRect());
 
-            drawLayer->setTargetRenderSurface(drawLayer->superlayer()->targetRenderSurface());
+            drawLayer->setTargetRenderSurface(drawLayer->parent()->targetRenderSurface());
         }
 
         if (layer != m_rootLayer)
@@ -692,8 +692,8 @@ void LayerRendererChromium::updatePropertiesAndRenderSurfaces(LayerChromium* lay
     if (drawLayer->renderSurface())
         drawLayer->setTargetRenderSurface(drawLayer->renderSurface());
     else {
-        ASSERT(drawLayer->superlayer());
-        drawLayer->setTargetRenderSurface(drawLayer->superlayer()->targetRenderSurface());
+        ASSERT(drawLayer->parent());
+        drawLayer->setTargetRenderSurface(drawLayer->parent()->targetRenderSurface());
     }
 
     // drawableContentRect() is always stored in the coordinate system of the
@@ -719,8 +719,8 @@ void LayerRendererChromium::updatePropertiesAndRenderSurfaces(LayerChromium* lay
     // Apply the sublayer transform at the center of the layer.
     sublayerMatrix.multiply(drawLayer->sublayerTransform());
 
-    // The origin of the sublayers is the top left corner of the layer, not the
-    // center. The matrix passed down to the sublayers is therefore:
+    // The origin of the children is the top left corner of the layer, not the
+    // center. The matrix passed down to the children is therefore:
     // M[s] = M * Tr[-center]
     sublayerMatrix.translate3d(-bounds.width() * 0.5, -bounds.height() * 0.5, 0);
 
@@ -728,21 +728,21 @@ void LayerRendererChromium::updatePropertiesAndRenderSurfaces(LayerChromium* lay
     descendants.append(drawLayer);
     unsigned thisLayerIndex = descendants.size() - 1;
 
-    const Vector<RefPtr<LayerChromium> >& sublayers = layer->getSublayers();
-    for (size_t i = 0; i < sublayers.size(); ++i) {
-        sublayers[i]->createCCLayerImplIfNeeded();
-        CCLayerImpl* sublayer = sublayers[i]->ccLayerImpl();
-        updatePropertiesAndRenderSurfaces(sublayers[i].get(), sublayerMatrix, renderSurfaceLayerList, descendants);
+    const Vector<RefPtr<LayerChromium> >& children = layer->children();
+    for (size_t i = 0; i < children.size(); ++i) {
+        children[i]->createCCLayerImplIfNeeded();
+        CCLayerImpl* child = children[i]->ccLayerImpl();
+        updatePropertiesAndRenderSurfaces(children[i].get(), sublayerMatrix, renderSurfaceLayerList, descendants);
 
-        if (sublayer->renderSurface()) {
-            RenderSurfaceChromium* sublayerRenderSurface = sublayer->renderSurface();
+        if (child->renderSurface()) {
+            RenderSurfaceChromium* childRenderSurface = child->renderSurface();
             IntRect drawableContentRect = drawLayer->drawableContentRect();
-            drawableContentRect.unite(enclosingIntRect(sublayerRenderSurface->drawableContentRect()));
+            drawableContentRect.unite(enclosingIntRect(childRenderSurface->drawableContentRect()));
             drawLayer->setDrawableContentRect(drawableContentRect);
-            descendants.append(sublayer);
+            descendants.append(child);
         } else {
             IntRect drawableContentRect = drawLayer->drawableContentRect();
-            drawableContentRect.unite(sublayer->drawableContentRect());
+            drawableContentRect.unite(child->drawableContentRect());
             drawLayer->setDrawableContentRect(drawableContentRect);
         }
     }
@@ -797,17 +797,17 @@ void LayerRendererChromium::updatePropertiesAndRenderSurfaces(LayerChromium* lay
     }
 
     // If preserves-3d then sort all the descendants in 3D so that they can be 
-    // drawn from back to front. If the preserves-3d property is also set on the superlayer then
-    // skip the sorting as the superlayer will sort all the descendants anyway.
-    if (drawLayer->preserves3D() && (!drawLayer->superlayer() || !drawLayer->superlayer()->preserves3D()))
+    // drawn from back to front. If the preserves-3d property is also set on the parent then
+    // skip the sorting as the parent will sort all the descendants anyway.
+    if (drawLayer->preserves3D() && (!drawLayer->parent() || !drawLayer->parent()->preserves3D()))
         m_layerSorter.sort(&descendants.at(thisLayerIndex), descendants.end());
 }
 
 void LayerRendererChromium::updateCompositorResourcesRecursive(LayerChromium* layer)
 {
-    const Vector<RefPtr<LayerChromium> >& sublayers = layer->getSublayers();
-    for (size_t i = 0; i < sublayers.size(); ++i)
-        updateCompositorResourcesRecursive(sublayers[i].get());
+    const Vector<RefPtr<LayerChromium> >& children = layer->children();
+    for (size_t i = 0; i < children.size(); ++i)
+        updateCompositorResourcesRecursive(children[i].get());
 
     if (layer->bounds().isEmpty())
         return;
@@ -1118,8 +1118,8 @@ void LayerRendererChromium::dumpRenderSurfaces(TextStream& ts, int indent, Layer
     if (layer->ccLayerImpl()->renderSurface())
         layer->ccLayerImpl()->renderSurface()->dumpSurface(ts, indent);
 
-    for (size_t i = 0; i < layer->getSublayers().size(); ++i)
-        dumpRenderSurfaces(ts, indent, layer->getSublayers()[i].get());
+    for (size_t i = 0; i < layer->children().size(); ++i)
+        dumpRenderSurfaces(ts, indent, layer->children()[i].get());
 }
 
 } // namespace WebCore

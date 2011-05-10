@@ -104,11 +104,11 @@ private:
     void updateOpacityOnLayer();
 
     LayerChromium* primaryLayer() const  { return m_transformLayer.get() ? m_transformLayer.get() : m_layer.get(); }
-    LayerChromium* hostLayerForSublayers() const;
-    LayerChromium* layerForSuperlayer() const;
+    LayerChromium* hostLayerForChildren() const;
+    LayerChromium* layerForParent() const;
 
     void updateNames();
-    void updateSublayerList();
+    void updateChildList();
     void updateLayerPosition();
     void updateLayerSize();
     void updateAnchorPoint();

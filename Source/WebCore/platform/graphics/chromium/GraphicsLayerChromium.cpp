@@ -130,10 +130,10 @@ void GraphicsLayerChromium::updateNames()
 bool GraphicsLayerChromium::setChildren(const Vector<GraphicsLayer*>& children)
 {
     bool childrenChanged = GraphicsLayer::setChildren(children);
-    // FIXME: GraphicsLayer::setChildren calls addChild() for each sublayer, which
-    // will end up calling updateSublayerList() N times.
+    // FIXME: GraphicsLayer::setChildren calls addChild() for each child, which
+    // will end up calling updateChildList() N times.
     if (childrenChanged)
-        updateSublayerList();
+        updateChildList();
 
     return childrenChanged;
 }
@@ -141,31 +141,31 @@ bool GraphicsLayerChromium::setChildren(const Vector<GraphicsLayer*>& children)
 void GraphicsLayerChromium::addChild(GraphicsLayer* childLayer)
 {
     GraphicsLayer::addChild(childLayer);
-    updateSublayerList();
+    updateChildList();
 }
 
 void GraphicsLayerChromium::addChildAtIndex(GraphicsLayer* childLayer, int index)
 {
     GraphicsLayer::addChildAtIndex(childLayer, index);
-    updateSublayerList();
+    updateChildList();
 }
 
 void GraphicsLayerChromium::addChildBelow(GraphicsLayer* childLayer, GraphicsLayer* sibling)
 {
     GraphicsLayer::addChildBelow(childLayer, sibling);
-    updateSublayerList();
+    updateChildList();
 }
 
 void GraphicsLayerChromium::addChildAbove(GraphicsLayer* childLayer, GraphicsLayer *sibling)
 {
     GraphicsLayer::addChildAbove(childLayer, sibling);
-    updateSublayerList();
+    updateChildList();
 }
 
 bool GraphicsLayerChromium::replaceChild(GraphicsLayer* oldChild, GraphicsLayer* newChild)
 {
     if (GraphicsLayer::replaceChild(oldChild, newChild)) {
-        updateSublayerList();
+        updateChildList();
         return true;
     }
     return false;
@@ -174,7 +174,7 @@ bool GraphicsLayerChromium::replaceChild(GraphicsLayer* oldChild, GraphicsLayer*
 void GraphicsLayerChromium::removeFromParent()
 {
     GraphicsLayer::removeFromParent();
-    layerForSuperlayer()->removeFromSuperlayer();
+    layerForParent()->removeFromParent();
 }
 
 void GraphicsLayerChromium::setPosition(const FloatPoint& point)
@@ -362,13 +362,13 @@ void GraphicsLayerChromium::setContentsToImage(Image* image)
         if (m_contentsLayer) {
             childrenChanged = true;
 
-            // The old contents layer will be removed via updateSublayerList.
+            // The old contents layer will be removed via updateChildList.
             m_contentsLayer = 0;
         }
     }
 
     if (childrenChanged)
-        updateSublayerList();
+        updateChildList();
 }
 
 void GraphicsLayerChromium::setContentsToCanvas(PlatformLayer* platformLayer)
@@ -388,13 +388,13 @@ void GraphicsLayerChromium::setContentsToCanvas(PlatformLayer* platformLayer)
         if (m_contentsLayer) {
             childrenChanged = true;
 
-            // The old contents layer will be removed via updateSublayerList.
+            // The old contents layer will be removed via updateChildList.
             m_contentsLayer = 0;
         }
     }
 
     if (childrenChanged)
-        updateSublayerList();
+        updateChildList();
 }
 
 void GraphicsLayerChromium::setContentsToMedia(PlatformLayer* layer)
@@ -414,21 +414,21 @@ void GraphicsLayerChromium::setContentsToMedia(PlatformLayer* layer)
         if (m_contentsLayer) {
             childrenChanged = true;
   
-            // The old contents layer will be removed via updateSublayerList.
+            // The old contents layer will be removed via updateChildList.
             m_contentsLayer = 0;
         }
     }
   
     if (childrenChanged)
-        updateSublayerList();
+        updateChildList();
 }
 
-PlatformLayer* GraphicsLayerChromium::hostLayerForSublayers() const
+PlatformLayer* GraphicsLayerChromium::hostLayerForChildren() const
 {
     return m_transformLayer ? m_transformLayer.get() : m_layer.get();
 }
 
-PlatformLayer* GraphicsLayerChromium::layerForSuperlayer() const
+PlatformLayer* GraphicsLayerChromium::layerForParent() const
 {
     return m_transformLayer ? m_transformLayer.get() : m_layer.get();
 }
@@ -457,18 +457,18 @@ void GraphicsLayerChromium::setDebugBorder(const Color& color, float borderWidth
     }
 }
 
-void GraphicsLayerChromium::updateSublayerList()
+void GraphicsLayerChromium::updateChildList()
 {
-    Vector<RefPtr<LayerChromium> > newSublayers;
+    Vector<RefPtr<LayerChromium> > newChildren;
 
     if (m_transformLayer) {
         // Add the primary layer first. Even if we have negative z-order children, the primary layer always comes behind.
-        newSublayers.append(m_layer.get());
+        newChildren.append(m_layer.get());
     } else if (m_contentsLayer) {
         // FIXME: add the contents layer in the correct order with negative z-order children.
         // This does not cause visible rendering issues because currently contents layers are only used
         // for replaced elements that don't have children.
-        newSublayers.append(m_contentsLayer.get());
+        newChildren.append(m_contentsLayer.get());
     }
 
     const Vector<GraphicsLayer*>& childLayers = children();
@@ -476,24 +476,24 @@ void GraphicsLayerChromium::updateSublayerList()
     for (size_t i = 0; i < numChildren; ++i) {
         GraphicsLayerChromium* curChild = static_cast<GraphicsLayerChromium*>(childLayers[i]);
 
-        LayerChromium* childLayer = curChild->layerForSuperlayer();
-        newSublayers.append(childLayer);
+        LayerChromium* childLayer = curChild->layerForParent();
+        newChildren.append(childLayer);
     }
 
-    for (size_t i = 0; i < newSublayers.size(); ++i)
-        newSublayers[i]->removeFromSuperlayer();
+    for (size_t i = 0; i < newChildren.size(); ++i)
+        newChildren[i]->removeFromParent();
 
     if (m_transformLayer) {
-        m_transformLayer->setSublayers(newSublayers);
+        m_transformLayer->setChildren(newChildren);
 
         if (m_contentsLayer) {
             // If we have a transform layer, then the contents layer is parented in the
             // primary layer (which is itself a child of the transform layer).
-            m_layer->removeAllSublayers();
-            m_layer->addSublayer(m_contentsLayer);
+            m_layer->removeAllChildren();
+            m_layer->addChild(m_contentsLayer);
         }
     } else
-        m_layer->setSublayers(newSublayers);
+        m_layer->setChildren(newChildren);
 }
 
 void GraphicsLayerChromium::updateLayerPosition()
@@ -581,16 +581,16 @@ void GraphicsLayerChromium::updateLayerPreserves3D()
         m_layer->setOpacity(1);
 
         // Move this layer to be a child of the transform layer.
-        if (m_layer->superlayer())
-            m_layer->superlayer()->replaceSublayer(m_layer.get(), m_transformLayer.get());
-        m_transformLayer->addSublayer(m_layer.get());
+        if (m_layer->parent())
+            m_layer->parent()->replaceChild(m_layer.get(), m_transformLayer.get());
+        m_transformLayer->addChild(m_layer.get());
 
-        updateSublayerList();
+        updateChildList();
     } else if (!m_preserves3D && m_transformLayer) {
         // Relace the transformLayer in the parent with this layer.
-        m_layer->removeFromSuperlayer();
-        if (m_transformLayer->superlayer())
-            m_transformLayer->superlayer()->replaceSublayer(m_transformLayer.get(), m_layer.get());
+        m_layer->removeFromParent();
+        if (m_transformLayer->parent())
+            m_transformLayer->parent()->replaceChild(m_transformLayer.get(), m_layer.get());
 
         // Release the transform layer.
         m_transformLayer = 0;
@@ -601,7 +601,7 @@ void GraphicsLayerChromium::updateLayerPreserves3D()
         updateTransform();
         updateChildrenTransform();
 
-        updateSublayerList();
+        updateChildList();
     }
 
     updateOpacityOnLayer();
@@ -648,7 +648,7 @@ void GraphicsLayerChromium::setupContentsLayer(LayerChromium* contentsLayer)
         return;
 
     if (m_contentsLayer) {
-        m_contentsLayer->removeFromSuperlayer();
+        m_contentsLayer->removeFromParent();
         m_contentsLayer = 0;
     }
 
@@ -659,7 +659,7 @@ void GraphicsLayerChromium::setupContentsLayer(LayerChromium* contentsLayer)
 
         // Insert the content layer first. Video elements require this, because they have
         // shadow content that must display in front of the video.
-        m_layer->insertSublayer(m_contentsLayer.get(), 0);
+        m_layer->insertChild(m_contentsLayer.get(), 0);
 
         updateContentsRect();
 

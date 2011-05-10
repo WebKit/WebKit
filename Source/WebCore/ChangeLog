@@ -1,3 +1,60 @@
+2011-05-10  James Robinson  <jamesr@chromium.org>
+
+        Reviewed by Nate Chapin.
+
+        [chromium] Use parent/child terms for compositor tree structures consistently instead of superlayer/sublayer
+        https://bugs.webkit.org/show_bug.cgi?id=60588
+
+        GraphicsLayer uses parent/child terminology for tree structure, as does CCLayerImpl.  LayerChromium was using
+        superlayer/sublayer terms, inherited from this code's branching from the platform/graphics/win/CACF code.  The
+        mixed terminology is confusing and parent/child is more common, so this unifies everything to use parent/child.
+
+        No new tests, refactor only.
+
+        * platform/graphics/chromium/GraphicsLayerChromium.cpp:
+        (WebCore::GraphicsLayerChromium::setChildren):
+        (WebCore::GraphicsLayerChromium::addChild):
+        (WebCore::GraphicsLayerChromium::addChildAtIndex):
+        (WebCore::GraphicsLayerChromium::addChildBelow):
+        (WebCore::GraphicsLayerChromium::addChildAbove):
+        (WebCore::GraphicsLayerChromium::replaceChild):
+        (WebCore::GraphicsLayerChromium::removeFromParent):
+        (WebCore::GraphicsLayerChromium::setContentsToImage):
+        (WebCore::GraphicsLayerChromium::setContentsToCanvas):
+        (WebCore::GraphicsLayerChromium::setContentsToMedia):
+        (WebCore::GraphicsLayerChromium::hostLayerForChildren):
+        (WebCore::GraphicsLayerChromium::layerForParent):
+        (WebCore::GraphicsLayerChromium::updateChildList):
+        (WebCore::GraphicsLayerChromium::updateLayerPreserves3D):
+        (WebCore::GraphicsLayerChromium::setupContentsLayer):
+        * platform/graphics/chromium/GraphicsLayerChromium.h:
+        * platform/graphics/chromium/LayerChromium.cpp:
+        (WebCore::LayerChromium::LayerChromium):
+        (WebCore::LayerChromium::~LayerChromium):
+        (WebCore::LayerChromium::addChild):
+        (WebCore::LayerChromium::insertChild):
+        (WebCore::LayerChromium::removeFromParent):
+        (WebCore::LayerChromium::removeChild):
+        (WebCore::LayerChromium::replaceChild):
+        (WebCore::LayerChromium::indexOfChild):
+        (WebCore::LayerChromium::rootLayer):
+        (WebCore::LayerChromium::removeAllChildren):
+        (WebCore::LayerChromium::setChildren):
+        (WebCore::LayerChromium::parent):
+        (WebCore::LayerChromium::dumpLayer):
+        * platform/graphics/chromium/LayerChromium.h:
+        (WebCore::LayerChromium::children):
+        (WebCore::LayerChromium::setParent):
+        (WebCore::LayerChromium::numChildren):
+        * platform/graphics/chromium/LayerRendererChromium.cpp:
+        (WebCore::LayerRendererChromium::updatePropertiesAndRenderSurfaces):
+        (WebCore::LayerRendererChromium::updateCompositorResourcesRecursive):
+        (WebCore::LayerRendererChromium::dumpRenderSurfaces):
+        * platform/graphics/chromium/cc/CCLayerImpl.cpp:
+        (WebCore::CCLayerImpl::parent):
+        (WebCore::CCLayerImpl::descendantsDrawsContent):
+        * platform/graphics/chromium/cc/CCLayerImpl.h:
+
 2011-05-10  Levi Weintraub  <leviw@chromium.org>
 
         Reviewed by Darin Adler.

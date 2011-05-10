@@ -63,7 +63,7 @@ LayerChromium::LayerChromium(GraphicsLayerChromium* owner)
     , m_contentsDirty(false)
     , m_maskLayer(0)
     , m_ccLayerImpl(0)
-    , m_superlayer(0)
+    , m_parent(0)
 #ifndef NDEBUG
     , m_debugID(s_nextLayerDebugID++)
 #endif
@@ -87,15 +87,15 @@ LayerChromium::LayerChromium(GraphicsLayerChromium* owner)
 LayerChromium::~LayerChromium()
 {
     ASSERT(!LayerRendererChromium::s_inPaintLayerContents);
-    // Our superlayer should be holding a reference to us so there should be no
-    // way for us to be destroyed while we still have a superlayer.
-    ASSERT(!superlayer());
+    // Our parent should be holding a reference to us so there should be no
+    // way for us to be destroyed while we still have a parent.
+    ASSERT(!parent());
 
     if (m_ccLayerImpl)
         m_ccLayerImpl->resetOwner();
 
-    // Remove the superlayer reference from all sublayers.
-    removeAllSublayers();
+    // Remove the parent reference from all children.
+    removeAllChildren();
 }
 
 void LayerChromium::cleanupResources()
@@ -125,63 +125,63 @@ void LayerChromium::setNeedsCommit()
         m_owner->notifySyncRequired();
 }
 
-void LayerChromium::addSublayer(PassRefPtr<LayerChromium> sublayer)
+void LayerChromium::addChild(PassRefPtr<LayerChromium> child)
 {
-    insertSublayer(sublayer, numSublayers());
+    insertChild(child, numChildren());
 }
 
-void LayerChromium::insertSublayer(PassRefPtr<LayerChromium> sublayer, size_t index)
+void LayerChromium::insertChild(PassRefPtr<LayerChromium> child, size_t index)
 {
-    index = min(index, m_sublayers.size());
-    sublayer->removeFromSuperlayer();
-    sublayer->setSuperlayer(this);
-    m_sublayers.insert(index, sublayer);
+    index = min(index, m_children.size());
+    child->removeFromParent();
+    child->setParent(this);
+    m_children.insert(index, child);
     setNeedsCommit();
 }
 
-void LayerChromium::removeFromSuperlayer()
+void LayerChromium::removeFromParent()
 {
-    if (m_superlayer)
-        m_superlayer->removeSublayer(this);
+    if (m_parent)
+        m_parent->removeChild(this);
 }
 
-void LayerChromium::removeSublayer(LayerChromium* sublayer)
+void LayerChromium::removeChild(LayerChromium* child)
 {
-    int foundIndex = indexOfSublayer(sublayer);
+    int foundIndex = indexOfChild(child);
     if (foundIndex == -1)
         return;
 
-    sublayer->setSuperlayer(0);
-    m_sublayers.remove(foundIndex);
+    child->setParent(0);
+    m_children.remove(foundIndex);
     setNeedsCommit();
 }
 
-void LayerChromium::replaceSublayer(LayerChromium* reference, PassRefPtr<LayerChromium> newLayer)
+void LayerChromium::replaceChild(LayerChromium* reference, PassRefPtr<LayerChromium> newLayer)
 {
     ASSERT_ARG(reference, reference);
-    ASSERT_ARG(reference, reference->superlayer() == this);
+    ASSERT_ARG(reference, reference->parent() == this);
 
     if (reference == newLayer)
         return;
 
-    int referenceIndex = indexOfSublayer(reference);
+    int referenceIndex = indexOfChild(reference);
     if (referenceIndex == -1) {
         ASSERT_NOT_REACHED();
         return;
     }
 
-    reference->removeFromSuperlayer();
+    reference->removeFromParent();
 
     if (newLayer) {
-        newLayer->removeFromSuperlayer();
-        insertSublayer(newLayer, referenceIndex);
+        newLayer->removeFromParent();
+        insertChild(newLayer, referenceIndex);
     }
 }
 
-int LayerChromium::indexOfSublayer(const LayerChromium* reference)
+int LayerChromium::indexOfChild(const LayerChromium* reference)
 {
-    for (size_t i = 0; i < m_sublayers.size(); i++) {
-        if (m_sublayers[i] == reference)
+    for (size_t i = 0; i < m_children.size(); i++) {
+        if (m_children[i] == reference)
             return i;
     }
     return -1;
@@ -214,33 +214,33 @@ void LayerChromium::setFrame(const FloatRect& rect)
 const LayerChromium* LayerChromium::rootLayer() const
 {
     const LayerChromium* layer = this;
-    for (LayerChromium* superlayer = layer->superlayer(); superlayer; layer = superlayer, superlayer = superlayer->superlayer()) { }
+    for (LayerChromium* parent = layer->parent(); parent; layer = parent, parent = parent->parent()) { }
     return layer;
 }
 
-void LayerChromium::removeAllSublayers()
+void LayerChromium::removeAllChildren()
 {
-    while (m_sublayers.size()) {
-        LayerChromium* layer = m_sublayers[0].get();
-        ASSERT(layer->superlayer());
-        layer->removeFromSuperlayer();
+    while (m_children.size()) {
+        LayerChromium* layer = m_children[0].get();
+        ASSERT(layer->parent());
+        layer->removeFromParent();
     }
 }
 
-void LayerChromium::setSublayers(const Vector<RefPtr<LayerChromium> >& sublayers)
+void LayerChromium::setChildren(const Vector<RefPtr<LayerChromium> >& children)
 {
-    if (sublayers == m_sublayers)
+    if (children == m_children)
         return;
 
-    removeAllSublayers();
-    size_t listSize = sublayers.size();
+    removeAllChildren();
+    size_t listSize = children.size();
     for (size_t i = 0; i < listSize; i++)
-        addSublayer(sublayers[i]);
+        addChild(children[i]);
 }
 
-LayerChromium* LayerChromium::superlayer() const
+LayerChromium* LayerChromium::parent() const
 {
-    return m_superlayer;
+    return m_parent;
 }
 
 void LayerChromium::setName(const String& name)
@@ -374,8 +374,8 @@ void LayerChromium::dumpLayer(TextStream& ts, int indent) const
         ts << "Mask:\n";
         m_maskLayer->dumpLayer(ts, indent+3);
     }
-    for (size_t i = 0; i < m_sublayers.size(); ++i)
-        m_sublayers[i]->dumpLayer(ts, indent+1);
+    for (size_t i = 0; i < m_children.size(); ++i)
+        m_children[i]->dumpLayer(ts, indent+1);
 }
 
 void LayerChromium::dumpLayerProperties(TextStream& ts, int indent) const

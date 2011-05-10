@@ -85,9 +85,9 @@ CCLayerImpl::~CCLayerImpl()
 }
 
 // These are pseudo-structural hacks until we get real tree syncing up in this piece.
-CCLayerImpl* CCLayerImpl::superlayer() const
+CCLayerImpl* CCLayerImpl::parent() const
 {
-    return m_owner->superlayer() ? m_owner->superlayer()->ccLayerImpl() : 0;
+    return m_owner->parent() ? m_owner->parent()->ccLayerImpl() : 0;
 }
 
 CCLayerImpl* CCLayerImpl::maskLayer() const
@@ -113,10 +113,10 @@ RenderSurfaceChromium* CCLayerImpl::createRenderSurface()
 
 bool CCLayerImpl::descendantsDrawsContent()
 {
-    const Vector<RefPtr<LayerChromium> >& sublayers = m_owner->getSublayers();
-    for (size_t i = 0; i < sublayers.size(); ++i) {
-        sublayers[i]->createCCLayerImplIfNeeded();
-        if (sublayers[i]->ccLayerImpl()->drawsContent() || sublayers[i]->ccLayerImpl()->descendantsDrawsContent())
+    const Vector<RefPtr<LayerChromium> >& children = m_owner->children();
+    for (size_t i = 0; i < children.size(); ++i) {
+        children[i]->createCCLayerImplIfNeeded();
+        if (children[i]->ccLayerImpl()->drawsContent() || children[i]->ccLayerImpl()->descendantsDrawsContent())
             return true;
     }
     return false;
