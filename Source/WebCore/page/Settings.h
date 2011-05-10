@@ -30,6 +30,7 @@
 #include "EditingBehaviorTypes.h"
 #include "FontRenderingMode.h"
 #include "KURL.h"
+#include "Timer.h"
 #include <wtf/text/AtomicString.h>
 
 namespace WebCore {
@@ -513,6 +514,9 @@ namespace WebCore {
         bool m_shouldInjectUserScriptsInInitialEmptyDocument : 1;
         bool m_allowDisplayOfInsecureContent : 1;
         bool m_allowRunningOfInsecureContent : 1;
+
+        Timer<Settings> m_loadsImagesAutomaticallyTimer;
+        void loadsImagesAutomaticallyTimerFired(Timer<Settings>*);
 
 #if USE(AVFOUNDATION)
         static bool gAVFoundationEnabled;

@@ -182,6 +182,7 @@ Settings::Settings(Page* page)
     , m_shouldInjectUserScriptsInInitialEmptyDocument(false)
     , m_allowDisplayOfInsecureContent(true)
     , m_allowRunningOfInsecureContent(true)
+    , m_loadsImagesAutomaticallyTimer(this, &Settings::loadsImagesAutomaticallyTimerFired)
 {
     // A Frame may not have been created yet, so we initialize the AtomicString 
     // hash before trying to use it.
@@ -281,7 +282,7 @@ void Settings::setDefaultFixedFontSize(int defaultFontSize)
 void Settings::setLoadsImagesAutomatically(bool loadsImagesAutomatically)
 {
     m_loadsImagesAutomatically = loadsImagesAutomatically;
-    setLoadsImagesAutomaticallyInAllFrames(m_page);
+    m_loadsImagesAutomaticallyTimer.startOneShot(0);
 }
 
 void Settings::setLoadsSiteIconsIgnoringImageLoadingSetting(bool loadsSiteIcons)
@@ -740,6 +741,11 @@ void Settings::setTiledBackingStoreEnabled(bool enabled)
     if (m_page->mainFrame())
         m_page->mainFrame()->setTiledBackingStoreEnabled(enabled);
 #endif
+}
+
+void Settings::loadsImagesAutomaticallyTimerFired(Timer<Settings>*)
+{
+    setLoadsImagesAutomaticallyInAllFrames(m_page);
 }
 
 } // namespace WebCore
