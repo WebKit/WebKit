@@ -1,3 +1,12 @@
+2011-05-10  Andrey Kosyakov  <caseq@chromium.org>
+
+        Reviewed by Sam Weinig.
+
+        Web Inspector: inspector/console/console-shadow-dom-access.html crashes on mac debug
+        https://bugs.webkit.org/show_bug.cgi?id=60266
+
+        * platform/mac/Skipped: removed suppression of console-shadow-dom-access.html
+
 2011-05-10  Csaba Osztrogonác  <ossy@webkit.org>
 
         [WK2] eventSender.keyDown is unimplemented

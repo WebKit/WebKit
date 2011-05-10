@@ -328,8 +328,7 @@ Class kitClass(WebCore::Node* impl)
             // See http://bugs.webkit.org/show_bug.cgi?id=8755
             return nil;
         case WebCore::Node::SHADOW_ROOT_NODE:
-            ASSERT_NOT_REACHED();
-            return nil;
+            return [DOMNode class];
     }
     ASSERT_NOT_REACHED();
     return nil;
