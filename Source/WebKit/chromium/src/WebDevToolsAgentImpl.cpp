@@ -67,8 +67,6 @@ using namespace WebCore;
 
 namespace WebKit {
 
-namespace {
-
 static const char kFrontendConnectedFeatureName[] = "frontend-connected";
 static const char kInspectorStateFeatureName[] = "inspector-state";
 
@@ -156,8 +154,6 @@ private:
 };
 
 ClientMessageLoopAdapter* ClientMessageLoopAdapter::s_instance = 0;
-
-} //  namespace
 
 class DebuggerTask : public PageScriptDebugServer::Task {
 public:

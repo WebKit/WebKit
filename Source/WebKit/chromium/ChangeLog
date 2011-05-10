@@ -1,3 +1,9 @@
+2011-05-10  Adam Barth  <abarth@webkit.org>
+
+        Attempt to fix the clang build.
+
+        * src/WebDevToolsAgentImpl.cpp:
+
 2011-05-09  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r86091.
