@@ -1,5 +1,14 @@
 2011-05-09  Daniel Cheng  <dcheng@chromium.org>
 
+        Fix the build.
+
+        Really add the file this time.
+
+        * page/DragState.h: Added.
+        (WebCore::DragState::DragState):
+
+2011-05-09  Daniel Cheng  <dcheng@chromium.org>
+
         Reviewed by Tony Chang.
 
         Refactor RenderObject::draggableNode.
