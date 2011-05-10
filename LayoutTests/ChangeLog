@@ -1,5 +1,12 @@
 2011-05-10  Csaba Osztrogonác  <ossy@webkit.org>
 
+        plugins/embed-prefers-plugins-for-images.html fails on non-Apple platforms.
+        https://bugs.webkit.org/show_bug.cgi?id=57137
+
+        * platform/qt-mac/Skipped: Add plugins/embed-prefers-plugins-for-images.html.
+
+2011-05-10  Csaba Osztrogonác  <ossy@webkit.org>
+
         Unreviewed fix.
 
         [Qt] DumpRenderTreeQt needs an implementation of unmarkText
