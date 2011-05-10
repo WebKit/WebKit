@@ -2,6 +2,16 @@
 
         Unreviewed.
 
+        [Qt][Mac] Add platform specific expected result for plugins/plugin-javascript-access.html,
+        which is same as the platform independent one, but differs from the general Qt specific.
+
+        * platform/qt-mac/plugins: Added.
+        * platform/qt-mac/plugins/plugin-javascript-access-expected.txt: Added.
+
+2011-05-10  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Unreviewed.
+
         [Qt] fast/events/backspace-nagivates-back fails on Qt bots (Mac and Linux)
         https://bugs.webkit.org/show_bug.cgi?id=60311
 
