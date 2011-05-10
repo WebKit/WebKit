@@ -2,6 +2,20 @@
 
         Unreviewed.
 
+        [Qt] fast/events/backspace-nagivates-back fails on Qt bots (Mac and Linux)
+        https://bugs.webkit.org/show_bug.cgi?id=60311
+
+        It is a general Qt related bug, so we should add it to qt/Skipped instead of all Skipped list.
+
+        * platform/qt-arm/Skipped: Remove fast/events/backspace-navigates-back.html.
+        * platform/qt-linux/Skipped: Remove fast/events/backspace-navigates-back.html.
+        * platform/qt-mac/Skipped: Remove fast/events/backspace-navigates-back.html.
+        * platform/qt/Skipped: Add fast/events/backspace-navigates-back.html.
+
+2011-05-10  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Unreviewed.
+
         Move plugins/plugin-javascript-access-expected.txt from qt-linux platform
         to qt, because it should be used by qt-4.8, qt-arm Linux platforms too.
 

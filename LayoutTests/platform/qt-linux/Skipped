@@ -1,3 +1,0 @@
-# New test fails on Qt, Linux only?
-# https://bugs.webkit.org/show_bug.cgi?id=60311
-fast/events/backspace-navigates-back.html

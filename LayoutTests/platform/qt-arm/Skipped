@@ -4066,7 +4066,3 @@ tables/mozilla/other/test3.html
 tables/mozilla/other/test6.html
 tables/mozilla/other/wa_table_thtd_rowspan.html
 tables/mozilla/other/wa_table_tr_align.html
-
-# [Qt]fast/events/backspace-navigates-back.html fails
-# https://bugs.webkit.org/show_bug.cgi?id=60349
-fast/events/backspace-navigates-back.html

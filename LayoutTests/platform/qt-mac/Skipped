@@ -4125,10 +4125,6 @@ inspector/extensions/extensions-resources.html
 plugins/private-browsing-mode-2.html
 plugins/private-browsing-mode.html
 
-# [Qt]fast/events/backspace-navigates-back.html fails
-# https://bugs.webkit.org/show_bug.cgi?id=60349
-fast/events/backspace-navigates-back.html
-
 # plugins/embed-prefers-plugins-for-images.html fails on non-Apple platforms.
 # https://bugs.webkit.org/show_bug.cgi?id=57137
 plugins/embed-prefers-plugins-for-images.html
