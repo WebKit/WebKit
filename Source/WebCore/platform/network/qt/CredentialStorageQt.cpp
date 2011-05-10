@@ -35,4 +35,9 @@ Credential CredentialStorage::getFromPersistentStorage(const ProtectionSpace&)
     return Credential();
 }
 
+Credential CredentialStorage::get(const ProtectionSpace&)
+{
+    return Credential();
+}
+
 } // namespace WebCore

@@ -1,3 +1,11 @@
+2011-05-10  Anders Carlsson  <andersca@apple.com>
+
+        Attempt to fix Qt build.
+
+        * platform/network/qt/CredentialStorageQt.cpp:
+        (WebCore::CredentialStorage::get):
+        Add stub.
+
 2011-05-10  Kenichi Ishibashi  <bashi@chromium.org>
 
         Reviewed by Tony Chang.
