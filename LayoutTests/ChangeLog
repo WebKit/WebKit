@@ -1,3 +1,9 @@
+2011-05-10  MORITA Hajime  <morrita@google.com>
+
+        Unreviewed flakiness marking (video-controls-rendering.html)
+        
+        * platform/chromium/test_expectations.txt:
+
 2011-05-09  Martin Robinson  <mrobinson@igalia.com>
 
         Update the results for a test after r86102. This test was susceptible to

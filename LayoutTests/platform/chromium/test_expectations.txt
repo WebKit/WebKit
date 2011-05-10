@@ -2987,8 +2987,8 @@ BUGWK55718 BUGCR75354 GPU : media/media-document-audio-repaint.html = IMAGE+TEXT
 BUGWK55968 BUGWK58306 GPU MAC : compositing/webgl/webgl-nonpremultiplied-blend.html = IMAGE+TEXT CRASH
 BUGWK55968 GPU WIN DEBUG : compositing/webgl/webgl-nonpremultiplied-blend.html = IMAGE
 
-// 2 pixel stretching when rendering some videos with the GPU
-// BUGCR74102 GPU WIN LINUX : media/video-controls-rendering.html = IMAGE
+// 2 pixel stretching when rendering some videos with the GPU (Now it's flaky)
+BUGCR74102 GPU LINUX : media/video-controls-rendering.html = IMAGE PASS
 // BUGCR74102 GPU WIN : media/video-layer-crash.html = IMAGE
 
 // New test causes an assertion failure.
