@@ -1,3 +1,14 @@
+2011-05-09  Xan Lopez  <xlopez@igalia.com>
+
+        Unreviewed build fix..
+
+        Fix GTK+3.x build.
+
+        * webkit/webkitwebview.cpp:
+        (getHorizontalAdjustment): the adjustment is in
+        adjustmentWatcher() now.
+        (getVerticalAdjustment): ditto.
+
 2011-04-29  Martin Robinson  <mrobinson@igalia.com>
 
         Reviewed by Gustavo Noronha Silva.
