@@ -438,6 +438,7 @@ private:
 #if PLATFORM(GTK)
         static gboolean plugRemovedCallback(GtkSocket*, PluginView*);
         static void plugAddedCallback(GtkSocket*, PluginView*);
+        void updateWidgetAllocationAndClip();
         bool m_plugAdded;
         IntRect m_delayedAllocation;
 #endif
