@@ -412,7 +412,7 @@ protected:
     void paintMaskImages(const PaintInfo&, int tx, int ty, int width, int height);
 
 #if PLATFORM(MAC)
-    void paintCustomHighlight(int tx, int ty, const AtomicString& type, bool behindText);
+    void paintCustomHighlight(LayerOffset, const AtomicString& type, bool behindText);
 #endif
 
     void computePositionedLogicalWidth();

@@ -546,7 +546,7 @@ void InlineTextBox::paint(PaintInfo& paintInfo, int tx, int ty, int /*lineTop*/,
 #if PLATFORM(MAC)
         // Custom highlighters go behind everything else.
         if (styleToUse->highlight() != nullAtom && !context->paintingDisabled())
-            paintCustomHighlight(tx, ty, styleToUse->highlight());
+            paintCustomHighlight(LayerOffset(tx, ty), styleToUse->highlight());
 #endif
 
         if (containsComposition && !useCustomUnderlines)
@@ -857,7 +857,7 @@ void InlineTextBox::paintCompositionBackground(GraphicsContext* context, const F
 
 #if PLATFORM(MAC)
 
-void InlineTextBox::paintCustomHighlight(int tx, int ty, const AtomicString& type)
+void InlineTextBox::paintCustomHighlight(LayerOffset layerOffset, const AtomicString& type)
 {
     Frame* frame = renderer()->frame();
     if (!frame)
@@ -867,8 +867,8 @@ void InlineTextBox::paintCustomHighlight(int tx, int ty, const AtomicString& typ
         return;
 
     RootInlineBox* r = root();
-    FloatRect rootRect(tx + r->x(), ty + selectionTop(), r->logicalWidth(), selectionHeight());
-    FloatRect textRect(tx + x(), rootRect.y(), logicalWidth(), rootRect.height());
+    FloatRect rootRect(layerOffset.x() + r->x(), layerOffset.y() + selectionTop(), r->logicalWidth(), selectionHeight());
+    FloatRect textRect(layerOffset.x() + x(), rootRect.y(), logicalWidth(), rootRect.height());
 
     page->chrome()->client()->paintCustomHighlight(renderer()->node(), type, textRect, rootRect, true, false);
 }

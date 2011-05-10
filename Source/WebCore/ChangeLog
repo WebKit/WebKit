@@ -1,3 +1,46 @@
+2011-05-10  Levi Weintraub  <leviw@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        Create LayerOffset class
+        https://bugs.webkit.org/show_bug.cgi?id=60490
+
+        Adding a LayerOffset class that will replace existing usage of tx/ty.
+        LayerOffset is necessary since these values are commonly used as both
+        a size and a point. Updating paintIntoRect to use this new class.
+
+        No new tests since this doesn't change any behavior.
+
+        * GNUmakefile.list.am:
+        * WebCore.gypi:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * page/FrameView.cpp:
+        (WebCore::FrameView::paintScrollCorner):
+        * platform/graphics/LayerOffset.h: Added.
+        (WebCore::LayerOffset::LayerOffset):
+        (WebCore::LayerOffset::x):
+        (WebCore::LayerOffset::y):
+        (WebCore::LayerOffset::setX):
+        (WebCore::LayerOffset::setY):
+        (WebCore::LayerOffset::toSize):
+        (WebCore::LayerOffset::toPoint):
+        (WebCore::operator+=):
+        (WebCore::operator-=):
+        (WebCore::operator+):
+        (WebCore::operator-):
+        (WebCore::operator==):
+        (WebCore::operator!=):
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::paintScrollCorner):
+        (WebCore::RenderLayer::paintResizer):
+        * rendering/RenderScrollbar.cpp:
+        (WebCore::RenderScrollbar::paintPart):
+        * rendering/RenderScrollbarPart.cpp:
+        (WebCore::RenderScrollbarPart::paintIntoRect):
+        * rendering/RenderScrollbarPart.h:
+
 2011-05-10  Ryosuke Niwa  <rniwa@webkit.org>
 
         Reviewed by Darin Adler.

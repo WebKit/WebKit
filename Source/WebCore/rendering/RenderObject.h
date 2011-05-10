@@ -30,6 +30,7 @@
 #include "Document.h"
 #include "Element.h"
 #include "FloatQuad.h"
+#include "LayerOffset.h"
 #include "PaintPhase.h"
 #include "RenderObjectChildList.h"
 #include "RenderStyle.h"

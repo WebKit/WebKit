@@ -267,7 +267,7 @@ void RenderWidget::paint(PaintInfo& paintInfo, int tx, int ty)
 
 #if PLATFORM(MAC)
     if (style()->highlight() != nullAtom && !paintInfo.context->paintingDisabled())
-        paintCustomHighlight(tx - x(), ty - y(), style()->highlight(), true);
+        paintCustomHighlight(LayerOffset(tx - x(), ty - y()), style()->highlight(), true);
 #endif
 
     if (style()->hasBorderRadius()) {

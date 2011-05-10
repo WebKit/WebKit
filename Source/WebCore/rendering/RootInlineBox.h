@@ -92,7 +92,7 @@ public:
 
 #if PLATFORM(MAC)
     void addHighlightOverflow();
-    void paintCustomHighlight(PaintInfo&, int tx, int ty, const AtomicString& highlightType);
+    void paintCustomHighlight(PaintInfo&, LayerOffset, const AtomicString& highlightType);
 #endif
 
     virtual void paint(PaintInfo&, int tx, int ty, int lineTop, int lineBottom);

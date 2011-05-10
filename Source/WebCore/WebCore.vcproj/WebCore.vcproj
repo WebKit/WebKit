@@ -26917,6 +26917,10 @@
 					>
 				</File>
 				<File
+					RelativePath="..\platform\graphics\LayerOffset.h"
+					>
+				</File>
+				<File
 					RelativePath="..\platform\graphics\MediaPlayer.cpp"
 					>
 				</File>

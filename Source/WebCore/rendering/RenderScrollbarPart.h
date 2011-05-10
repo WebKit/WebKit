@@ -26,6 +26,7 @@
 #ifndef RenderScrollbarPart_h
 #define RenderScrollbarPart_h
 
+#include "LayerOffset.h"
 #include "RenderBlock.h"
 #include "ScrollTypes.h"
 
@@ -45,7 +46,7 @@ public:
     virtual void layout();
     virtual void computePreferredLogicalWidths();
     
-    void paintIntoRect(GraphicsContext*, int tx, int ty, const IntRect&);
+    void paintIntoRect(GraphicsContext*, LayerOffset, const IntRect&);
     
 protected:
     virtual void styleWillChange(StyleDifference diff, const RenderStyle* newStyle);

@@ -217,7 +217,7 @@ private:
     virtual void paint(PaintInfo&, int tx, int ty);
     virtual void paintObject(PaintInfo&, int tx, int ty);
     virtual void paintBoxDecorations(PaintInfo&, int tx, int ty);
-    virtual void paintMask(PaintInfo&, int tx, int ty);
+    virtual void paintMask(PaintInfo&, LayerOffset);
     virtual void layout();
     virtual void computePreferredLogicalWidths();
     virtual bool nodeAtPoint(const HitTestRequest&, HitTestResult&, int xPos, int yPos, int tx, int ty, HitTestAction);

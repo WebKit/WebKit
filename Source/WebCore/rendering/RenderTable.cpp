@@ -480,7 +480,7 @@ void RenderTable::paintObject(PaintInfo& paintInfo, int tx, int ty)
         paintBoxDecorations(paintInfo, tx, ty);
 
     if (paintPhase == PaintPhaseMask) {
-        paintMask(paintInfo, tx, ty);
+        paintMask(paintInfo, LayerOffset(tx, ty));
         return;
     }
 
@@ -573,12 +573,12 @@ void RenderTable::paintBoxDecorations(PaintInfo& paintInfo, int tx, int ty)
         paintBorder(paintInfo.context, rect.x(), rect.y(), rect.width(), rect.height(), style());
 }
 
-void RenderTable::paintMask(PaintInfo& paintInfo, int tx, int ty)
+void RenderTable::paintMask(PaintInfo& paintInfo, LayerOffset layerOffset)
 {
     if (style()->visibility() != VISIBLE || paintInfo.phase != PaintPhaseMask)
         return;
 
-    IntRect rect(tx, ty, width(), height());
+    IntRect rect(layerOffset.toPoint(), IntSize(width(), height()));
     subtractCaptionRect(rect);
 
     paintMaskImages(paintInfo, rect.x(), rect.y(), rect.width(), rect.height());

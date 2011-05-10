@@ -2261,7 +2261,7 @@ void FrameView::paintScrollCorner(GraphicsContext* context, const IntRect& corne
     }
 
     if (m_scrollCorner) {
-        m_scrollCorner->paintIntoRect(context, cornerRect.x(), cornerRect.y(), cornerRect);
+        m_scrollCorner->paintIntoRect(context, cornerRect.location(), cornerRect);
         return;
     }
 

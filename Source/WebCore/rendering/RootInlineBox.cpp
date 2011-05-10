@@ -157,7 +157,7 @@ void RootInlineBox::addHighlightOverflow()
     setOverflowFromLogicalRects(inflatedRect, inflatedRect, lineTop(), lineBottom());
 }
 
-void RootInlineBox::paintCustomHighlight(PaintInfo& paintInfo, int tx, int ty, const AtomicString& highlightType)
+void RootInlineBox::paintCustomHighlight(PaintInfo& paintInfo, LayerOffset layerOffset, const AtomicString& highlightType)
 {
     if (!paintInfo.shouldPaintWithinRoot(renderer()) || renderer()->style()->visibility() != VISIBLE || paintInfo.phase != PaintPhaseForeground)
         return;
@@ -170,7 +170,7 @@ void RootInlineBox::paintCustomHighlight(PaintInfo& paintInfo, int tx, int ty, c
         return;
 
     // Get the inflated rect so that we can properly hit test.
-    FloatRect rootRect(tx + x(), ty + selectionTop(), logicalWidth(), selectionHeight());
+    FloatRect rootRect(layerOffset.x() + x(), layerOffset.y() + selectionTop(), logicalWidth(), selectionHeight());
     FloatRect inflatedRect = page->chrome()->client()->customHighlightRect(renderer()->node(), highlightType, rootRect);
     if (inflatedRect.intersects(paintInfo.rect))
         page->chrome()->client()->paintCustomHighlight(renderer()->node(), highlightType, rootRect, rootRect, false, true);
@@ -185,7 +185,7 @@ void RootInlineBox::paint(PaintInfo& paintInfo, int tx, int ty, int lineTop, int
 #if PLATFORM(MAC)
     RenderStyle* styleToUse = renderer()->style(m_firstLine);
     if (styleToUse->highlight() != nullAtom && !paintInfo.context->paintingDisabled())
-        paintCustomHighlight(paintInfo, tx, ty, styleToUse->highlight());
+        paintCustomHighlight(paintInfo, LayerOffset(tx, ty), styleToUse->highlight());
 #endif
 }
 
