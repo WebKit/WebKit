@@ -36,6 +36,11 @@ WindowedPluginTest::WindowedPluginTest(NPP npp, const string& identifier)
 {
 }
 
+HWND WindowedPluginTest::testHarnessWindow() const
+{
+    return ::GetAncestor(window(), GA_ROOT);
+}
+
 NPError WindowedPluginTest::NPP_SetWindow(NPP instance, NPWindow* window)
 {
     HWND newWindow = reinterpret_cast<HWND>(window->window);

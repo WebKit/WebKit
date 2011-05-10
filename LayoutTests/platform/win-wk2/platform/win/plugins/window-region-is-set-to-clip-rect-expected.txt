@@ -1,3 +1,0 @@
-CONSOLE MESSAGE: line 0: PLUGIN: ::GetWindowRgnBox failed with error 0
-
-This tests that a plugin's window's window region is set to its clip rect.

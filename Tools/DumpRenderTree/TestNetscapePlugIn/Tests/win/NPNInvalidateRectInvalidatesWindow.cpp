@@ -109,7 +109,7 @@ NPError NPNInvalidateRectInvalidatesWindow::NPP_SetWindow(NPP instance, NPWindow
     // We need to move it on-screen and make it visible in order for the plugin's window to
     // accumulate an update region when the DWM is disabled.
 
-    HWND testHarnessWindow = ::GetAncestor(window(), GA_ROOT);
+    HWND testHarnessWindow = this->testHarnessWindow();
     if (!testHarnessWindow) {
         pluginLog(instance, "Failed to get test harness window");
         return NPERR_GENERIC_ERROR;

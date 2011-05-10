@@ -1,3 +1,51 @@
+2011-05-10  Adam Roben  <aroben@apple.com>
+
+        Update some plugin tests to work with WebKit2's asynchronous windowed plugin positioning on Windows
+
+        Fixes <http://webkit.org/b/60442> <rdar://problem/9403200> REGRESSION (r85795):
+        platform/win/plugins/window-geometry-initialized-before-set-window.html and
+        platform/win/plugins/window-region-is-set-to-clip-rect.html failing on Windows 7 Release
+        (WebKit2 Tests)
+
+        Reviewed by Anders Carlsson.
+
+        * DumpRenderTree/TestNetscapePlugIn/Tests/win/NPNInvalidateRectInvalidatesWindow.cpp:
+        (NPNInvalidateRectInvalidatesWindow::NPP_SetWindow): Moved some code from here to the new
+        WindowedPluginTest::testHarnessWindow function.
+
+        * DumpRenderTree/TestNetscapePlugIn/Tests/win/WindowGeometryInitializedBeforeSetWindow.cpp:
+        (WindowGeometryInitializedBeforeSetWindow::NPP_SetWindow): Only check the window's size, not
+        its position. In WebKit2, the position won't have been set yet, so we can't test it. But it
+        turns out only the size mattered for <http://webkit.org/b/46716>, which this test was
+        created for.
+
+        * DumpRenderTree/TestNetscapePlugIn/Tests/win/WindowRegionIsSetToClipRect.cpp:
+        (WindowRegionIsSetToClipRect::WindowRegionIsSetToClipRect): Converted to be a
+        WindowedPluginTest, and initialized new members.
+        (WindowRegionIsSetToClipRect::startTest): Make our plugin window visible, and set things up
+        to ensure we get a WM_WINDOWPOSCHANGED message about it becoming visible.
+        (WindowRegionIsSetToClipRect::finishTest): Check that the window region is what we expect,
+        then clean up and tell the test harness we're done.
+        (WindowRegionIsSetToClipRect::checkWindowRegion): Moved code to check the window region here
+        from NPP_SetWindow. Changed to use the fancy new log() function instead of pluginLog().
+        (WindowRegionIsSetToClipRect::showTestHarnessWindowIfNeeded): Show the test harness's window
+        if it is hidden. This is needed to ensure we get a WM_WINDOWPOSCHANGED message when our own
+        window becomes visible.
+        (WindowRegionIsSetToClipRect::hideTestHarnessWindowIfNeeded): Hide the test harness's window
+        if it was hidden at the start of the test.
+        (WindowRegionIsSetToClipRect::wndProc): When our timer fires, tell the UI process to paint.
+        This should cause our window to become visible and our window region to get set. When we get
+        a WM_WINDOWPOSCHANGED message, we can finally finish the test.
+        (WindowRegionIsSetToClipRect::NPP_GetValue): Return our script object.
+        (WindowRegionIsSetToClipRect::ScriptObject::hasMethod): We only have one method:
+        "startTest".
+        (WindowRegionIsSetToClipRect::ScriptObject::invoke): Call through to the PluginTest object.
+
+        * DumpRenderTree/TestNetscapePlugIn/win/WindowedPluginTest.cpp:
+        (WindowedPluginTest::testHarnessWindow):
+        * DumpRenderTree/TestNetscapePlugIn/win/WindowedPluginTest.h:
+        Added this helper function. Code came from NPNInvalidateRectInvalidatesWindow.
+
 2011-05-10  Csaba Osztrogonác  <ossy@webkit.org>
 
         Reviewed by Kenneth Rohde Christiansen.

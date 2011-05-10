@@ -33,6 +33,7 @@ protected:
     WindowedPluginTest(NPP, const std::string& identifier);
 
     HWND window() const { return m_window; }
+    HWND testHarnessWindow() const;
 
     // For derived classes to override
     virtual LRESULT wndProc(UINT message, WPARAM, LPARAM, bool& handled) = 0;

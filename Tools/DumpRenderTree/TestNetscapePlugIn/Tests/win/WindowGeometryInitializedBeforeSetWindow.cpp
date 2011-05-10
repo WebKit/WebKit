@@ -63,24 +63,12 @@ private:
             return NPERR_GENERIC_ERROR;
         }
 
-        HWND parent = ::GetParent(hwnd);
-        if (!parent) {
-            pluginLog(instance, "::GetParent failed");
+        if ((rect.right - rect.left) != window->width || (rect.bottom - rect.top) != window->height) {
+            pluginLog(instance, "Size of HWND's rect and size of NPWindow's rect are not equal");
             return NPERR_GENERIC_ERROR;
         }
 
-        // MSDN says that calling ::MapWindowPoints this way will tell it we're passing a RECT rather than two POINTs.
-        if (!::MapWindowPoints(hwnd, parent, reinterpret_cast<POINT*>(&rect), 2)) {
-            pluginLog(instance, "::MapWindowPoints failed");
-            return NPERR_GENERIC_ERROR;
-        }
-
-        if (rect.left != window->x || rect.top != window->y || (rect.right - rect.left) != window->width || (rect.bottom - rect.top) != window->height) {
-            pluginLog(instance, "HWND's rect and NPWindow's rect are not equal");
-            return NPERR_GENERIC_ERROR;
-        }
-
-        pluginLog(instance, "Plugin's HWND has been sized and positioned before NPP_SetWindow was called");
+        pluginLog(instance, "Plugin's HWND has been sized before NPP_SetWindow was called");
         return NPERR_NO_ERROR;
     }
 

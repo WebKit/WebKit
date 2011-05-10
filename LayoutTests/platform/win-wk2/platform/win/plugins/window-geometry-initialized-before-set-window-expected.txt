@@ -1,3 +1,0 @@
-CONSOLE MESSAGE: line 0: PLUGIN: ::MapWindowPoints failed
-
-This tests that a plugin's HWND is already sized and positioned before NPP_SetWindow is called.

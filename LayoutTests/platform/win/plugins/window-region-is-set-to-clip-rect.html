@@ -4,6 +4,7 @@
     <script>
         if (window.layoutTestController)
             layoutTestController.dumpAsText();
+        addEventListener('load', function() { document.getElementsByTagName('embed')[0].startTest() }, false);
     </script>
     <style>
         #container {
@@ -16,6 +17,7 @@
             position: relative;
             top: -50px;
             left: -50px;
+            visibility: hidden;
         }
     </style>
 </head>

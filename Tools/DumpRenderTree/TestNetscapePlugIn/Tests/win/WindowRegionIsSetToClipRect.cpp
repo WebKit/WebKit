@@ -23,7 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "PluginTest.h"
+#include "WindowedPluginTest.h"
 
 #include "PluginObject.h"
 
@@ -31,51 +31,96 @@ using namespace std;
 
 // The plugin's window's window region should be set to the plugin's clip rect.
 
-class WindowRegionIsSetToClipRect : public PluginTest {
+class WindowRegionIsSetToClipRect : public WindowedPluginTest {
 public:
     WindowRegionIsSetToClipRect(NPP, const string& identifier);
 
 private:
-    virtual NPError NPP_SetWindow(NPP, NPWindow*);
+    struct ScriptObject : Object<ScriptObject> {
+        bool hasMethod(NPIdentifier);
+        bool invoke(NPIdentifier, const NPVariant*, uint32_t, NPVariant*);
+    };
 
-    bool m_didReceiveInitialSetWindowCall;
+    static const UINT_PTR triggerPaintTimerID = 1;
+
+    void startTest();
+    void finishTest();
+    void checkWindowRegion();
+
+    void showTestHarnessWindowIfNeeded();
+    void hideTestHarnessWindowIfNeeded();
+
+    // WindowedPluginTest
+    virtual LRESULT wndProc(UINT message, WPARAM, LPARAM, bool& handled);
+
+    // PluginTest
+    virtual NPError NPP_GetValue(NPPVariable, void*);
+
+    bool m_didCheckWindowRegion;
+    bool m_testHarnessWindowWasVisible;
 };
 
 static PluginTest::Register<WindowRegionIsSetToClipRect> registrar("window-region-is-set-to-clip-rect");
 
 WindowRegionIsSetToClipRect::WindowRegionIsSetToClipRect(NPP npp, const string& identifier)
-    : PluginTest(npp, identifier)
-    , m_didReceiveInitialSetWindowCall(false)
+    : WindowedPluginTest(npp, identifier)
+    , m_didCheckWindowRegion(false)
+    , m_testHarnessWindowWasVisible(false)
 {
 }
 
-NPError WindowRegionIsSetToClipRect::NPP_SetWindow(NPP instance, NPWindow* window)
+void WindowRegionIsSetToClipRect::startTest()
 {
-    if (m_didReceiveInitialSetWindowCall)
-        return NPERR_NO_ERROR;
-    m_didReceiveInitialSetWindowCall = true;
+    // In WebKit1, our window's window region will be set immediately. In WebKit2, it won't be set
+    // until the UI process paints. Since the UI process will also show our window when it paints,
+    // we can detect when the paint occurs (and thus when our window region should be set) by
+    // starting with our plugin element hidden, then making it visible and waiting for a
+    // WM_WINDOWPOSCHANGED event to tell us our window has been shown.
 
-    if (window->type != NPWindowTypeWindow) {
-        pluginLog(instance, "window->type should be NPWindowTypeWindow but was %d", window->type);
-        return NPERR_GENERIC_ERROR;
-    }
+    waitUntilDone();
 
-    HWND hwnd = reinterpret_cast<HWND>(window->window);
+    // If the test harness window isn't visible, we might not receive a WM_WINDOWPOSCHANGED message
+    // when our window is made visible. So we temporarily show the test harness window during this test.
+    showTestHarnessWindowIfNeeded();
+
+    // Make our window visible. (In WebKit2, this won't take effect immediately.)
+    executeScript("document.getElementsByTagName('embed')[0].style.visibility = 'visible';");
+
+    // We trigger a UI process paint after a slight delay to ensure that the UI process has
+    // received the "make the plugin window visible" message before it paints.
+    // FIXME: It would be nice to have a way to guarantee that the UI process had received that
+    // message before we triggered a paint. Hopefully that would let us get rid of this semi-
+    // arbitrary timeout.
+    ::SetTimer(window(), triggerPaintTimerID, 250, 0);
+}
+
+void WindowRegionIsSetToClipRect::finishTest()
+{
+    checkWindowRegion();
+    hideTestHarnessWindowIfNeeded();
+    notifyDone();
+}
+
+void WindowRegionIsSetToClipRect::checkWindowRegion()
+{
+    if (m_didCheckWindowRegion)
+        return;
+    m_didCheckWindowRegion = true;
 
     RECT regionRect;
-    if (::GetWindowRgnBox(hwnd, &regionRect) == ERROR) {
-        pluginLog(instance, "::GetWindowRgnBox failed with error %u", ::GetLastError());
-        return NPERR_GENERIC_ERROR;
+    if (::GetWindowRgnBox(window(), &regionRect) == ERROR) {
+        log("::GetWindowRgnBox failed, or window has no window region");
+        return;
     }
 
     // This expected rect is based on the layout of window-region-is-set-to-clip-rect.html.
     RECT expectedRect = { 50, 50, 100, 100 };
     if (!::EqualRect(&regionRect, &expectedRect)) {
-        pluginLog(instance, "Expected region rect {left=%u, top=%u, right=%u, bottom=%u}, but got {left=%d, top=%d, right=%d, bottom=%d}", expectedRect.left, expectedRect.top, expectedRect.right, expectedRect.bottom, regionRect.left, regionRect.top, regionRect.right, regionRect.bottom);
-        return NPERR_GENERIC_ERROR;
+        log("Expected region rect {left=%u, top=%u, right=%u, bottom=%u}, but got {left=%d, top=%d, right=%d, bottom=%d}", expectedRect.left, expectedRect.top, expectedRect.right, expectedRect.bottom, regionRect.left, regionRect.top, regionRect.right, regionRect.bottom);
+        return;
     }
 
-    pluginLog(instance, "PASS: Plugin's window's window region has been set as expected");
+    log("PASS: Plugin's window's window region has been set as expected");
 
     // While we're here, check that our window class doesn't have the CS_PARENTDC style, which
     // defeats clipping by ignoring the window region and always clipping to the parent window.
@@ -83,9 +128,9 @@ NPError WindowRegionIsSetToClipRect::NPP_SetWindow(NPP instance, NPWindow* windo
     // getting clipped correctly, but unfortunately window regions are ignored
     // during WM_PRINT (see <http://webkit.org/b/49034>).
     wchar_t className[512];
-    if (!::GetClassNameW(hwnd, className, _countof(className))) {
-        pluginLog(instance, "::GetClassName failed with error %u", ::GetLastError());
-        return NPERR_GENERIC_ERROR;
+    if (!::GetClassNameW(window(), className, _countof(className))) {
+        log("::GetClassName failed with error %u", ::GetLastError());
+        return;
     }
 
 #ifdef DEBUG_ALL
@@ -95,20 +140,80 @@ NPError WindowRegionIsSetToClipRect::NPP_SetWindow(NPP instance, NPWindow* windo
 #endif
     HMODULE webKitModule = ::GetModuleHandleW(webKitDLLName);
     if (!webKitModule) {
-        pluginLog(instance, "::GetModuleHandleW failed with error %u", ::GetLastError());
-        return NPERR_GENERIC_ERROR;
+        log("::GetModuleHandleW failed with error %u", ::GetLastError());
+        return;
     }
 
     WNDCLASSW wndClass;
     if (!::GetClassInfoW(webKitModule, className, &wndClass)) {
-        pluginLog(instance, "::GetClassInfoW failed with error %u", ::GetLastError());
-        return NPERR_GENERIC_ERROR;
+        log("::GetClassInfoW failed with error %u", ::GetLastError());
+        return;
     }
 
     if (wndClass.style & CS_PARENTDC)
-        pluginLog(instance, "FAIL: Plugin's window's class has the CS_PARENTDC style, which will defeat clipping");
+        log("FAIL: Plugin's window's class has the CS_PARENTDC style, which will defeat clipping");
     else
-        pluginLog(instance, "PASS: Plugin's window's class does not have the CS_PARENTDC style");
+        log("PASS: Plugin's window's class does not have the CS_PARENTDC style");
+}
+
+void WindowRegionIsSetToClipRect::showTestHarnessWindowIfNeeded()
+{
+    HWND testHarnessWindow = this->testHarnessWindow();
+    m_testHarnessWindowWasVisible = ::IsWindowVisible(testHarnessWindow);
+    if (m_testHarnessWindowWasVisible)
+        return;
+    ::ShowWindow(testHarnessWindow, SW_SHOWNA);
+}
+
+void WindowRegionIsSetToClipRect::hideTestHarnessWindowIfNeeded()
+{
+    if (m_testHarnessWindowWasVisible)
+        return;
+    ::ShowWindow(testHarnessWindow(), SW_HIDE);
+}
+
+LRESULT WindowRegionIsSetToClipRect::wndProc(UINT message, WPARAM wParam, LPARAM lParam, bool& handled)
+{
+    switch (message) {
+    case WM_TIMER:
+        if (wParam != triggerPaintTimerID)
+            break;
+        handled = true;
+        ::KillTimer(window(), wParam);
+        // Tell the UI process to paint.
+        ::PostMessageW(::GetParent(window()), WM_PAINT, 0, 0);
+        break;
+    case WM_WINDOWPOSCHANGED: {
+        WINDOWPOS* windowPos = reinterpret_cast<WINDOWPOS*>(lParam);
+        if (!(windowPos->flags & SWP_SHOWWINDOW))
+            break;
+        finishTest();
+        break;
+    }
+
+    }
+
+    return 0;
+}
+
+NPError WindowRegionIsSetToClipRect::NPP_GetValue(NPPVariable variable, void* value)
+{
+    if (variable != NPPVpluginScriptableNPObject)
+        return NPERR_GENERIC_ERROR;
+
+    *static_cast<NPObject**>(value) = ScriptObject::create(this);
 
     return NPERR_NO_ERROR;
+}
+
+bool WindowRegionIsSetToClipRect::ScriptObject::hasMethod(NPIdentifier methodName)
+{
+    return methodName == pluginTest()->NPN_GetStringIdentifier("startTest");
+}
+
+bool WindowRegionIsSetToClipRect::ScriptObject::invoke(NPIdentifier identifier, const NPVariant*, uint32_t, NPVariant*)
+{
+    assert(identifier == pluginTest()->NPN_GetStringIdentifier("startTest"));
+    static_cast<WindowRegionIsSetToClipRect*>(pluginTest())->startTest();
+    return true;
 }

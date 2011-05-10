@@ -1,3 +1,23 @@
+2011-05-10  Adam Roben  <aroben@apple.com>
+
+        Update some plugin tests to work with WebKit2's asynchronous windowed plugin positioning on Windows
+
+        Fixes <http://webkit.org/b/60442> <rdar://problem/9403200> REGRESSION (r85795):
+        platform/win/plugins/window-geometry-initialized-before-set-window.html and
+        platform/win/plugins/window-region-is-set-to-clip-rect.html failing on Windows 7 Release
+        (WebKit2 Tests)
+
+        Reviewed by Anders Carlsson.
+
+        * platform/win/plugins/window-geometry-initialized-before-set-window-expected.txt: Updated
+        for new test output that doesn't claim anything about the window's position.
+
+        * platform/win/plugins/window-region-is-set-to-clip-rect.html: Hide the plugin initially,
+        and tell the plugin when the load event has fired.
+
+        * platform/win-wk2/platform/win/plugins/window-geometry-initialized-before-set-window-expected.txt: Removed.
+        * platform/win-wk2/platform/win/plugins/window-region-is-set-to-clip-rect-expected.txt: Removed.
+
 2011-05-10  Csaba Osztrogonác  <ossy@webkit.org>
 
         Unreviewed.
