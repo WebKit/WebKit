@@ -1,3 +1,13 @@
+2011-05-10  Andreas Kling  <andreas.kling@nokia.com>
+
+        Rubber-stamped by Csaba Osztrogonác.
+
+        [Qt] Disable HAVE_QRAWFONT until Qt API stabilizes.
+        https://bugs.webkit.org/show_bug.cgi?id=60551
+
+        * WebCore.pro: Disable the line that enables HAVE_QRAWFONT
+        if the feature is found. Added a comment about why.
+
 2011-05-10  Andrey Kosyakov  <caseq@chromium.org>
 
         Reviewed by Sam Weinig.

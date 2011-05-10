@@ -3069,7 +3069,12 @@ contains(DEFINES, WTF_USE_QT_BEARER=1) {
 }
 
 # QRawFont feature added in Qt 4.8.0
-exists($$[QT_INSTALL_HEADERS]/QtGui/QRawFont): HAVE_QRAWFONT=1
+# 
+# If available, this is used to implement the fast path for text rendering
+# and measurement in WebCore. Because the feature is still undergoing
+# development, it is disabled in builds.
+#
+# exists($$[QT_INSTALL_HEADERS]/QtGui/QRawFont): HAVE_QRAWFONT=1
 
 !isEmpty(HAVE_QRAWFONT) {
     DEFINES += HAVE_QRAWFONT=1
