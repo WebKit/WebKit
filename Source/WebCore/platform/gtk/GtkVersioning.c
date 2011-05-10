@@ -261,6 +261,27 @@ gdk_pixbuf_get_from_surface(cairo_surface_t * surface,
     return dest;
 }
 
+#if GTK_CHECK_VERSION(2, 24, 0)
+void getGdkDrawableSize(GdkDrawable *drawable, int *width, int *height)
+{
+    g_return_if_fail(GDK_IS_PIXMAP(drawable) || GDK_IS_WINDOW(drawable));
+
+    if (GDK_IS_PIXMAP(drawable)) {
+        gdk_pixmap_get_size(GDK_PIXMAP(drawable), width, height);
+        return;
+    }
+
+    GdkWindow *window = GDK_WINDOW(drawable);
+    *width = gdk_window_get_width(window);
+    *height = gdk_window_get_height(window);
+}
+#else
+void getGdkDrawableSize(GdkDrawable *drawable, int *width, int *height)
+{
+    gdk_drawable_get_size(drawable, &width, &height);
+}
+#endif // GTK_CHECK_VERSION(2, 24, 0)
+
 #endif // GTK_API_VERSION_2
 
 #if !GLIB_CHECK_VERSION(2, 27, 1)

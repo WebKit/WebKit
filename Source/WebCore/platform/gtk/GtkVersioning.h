@@ -35,6 +35,7 @@ G_BEGIN_DECLS
 #else
 GdkPixbuf* gdk_pixbuf_get_from_surface(cairo_surface_t* surface, int srcX, int srcY,
                                        int width, int height);
+void getGdkDrawableSize(GdkDrawable* drawable, int* width, int* height);
 #endif
 
 #if !GTK_CHECK_VERSION(2, 23, 4)
