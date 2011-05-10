@@ -3453,3 +3453,6 @@ editing/pasteboard/do-not-copy-body-color.html
 
 # New test introduced in http://trac.webkit.org/changeset/85818
 editing/pasteboard/paste-placeholder-input.html
+
+# eventSender.keyDown is unimplemented
+fast/forms/radio-group-keyboard-change-event.html
