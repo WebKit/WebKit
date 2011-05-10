@@ -36,6 +36,7 @@ import time
 from webkitpy.common.system import stack_utils
 from webkitpy.layout_tests.layout_package import manager_worker_broker
 from webkitpy.layout_tests.layout_package import single_test_runner
+from webkitpy.layout_tests.layout_package import test_expectations
 from webkitpy.layout_tests.layout_package import test_results
 
 _log = logging.getLogger(__name__)
@@ -214,6 +215,8 @@ class Worker(manager_worker_broker.AbstractWorker):
             _log.debug("%s %s failed:" % (self._name, test_name))
             for f in result.failures:
                 _log.debug("%s  %s" % (self._name, f.message()))
+        elif result.type == test_expectations.SKIP:
+            _log.debug("%s %s skipped" % (self._name, test_name))
         else:
             _log.debug("%s %s passed" % (self._name, test_name))
 

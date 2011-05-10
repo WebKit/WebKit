@@ -31,6 +31,7 @@ import logging
 import time
 
 from webkitpy.layout_tests.port import base
+from webkitpy.layout_tests.layout_package import test_expectations
 from webkitpy.layout_tests.layout_package import test_failures
 from webkitpy.layout_tests.layout_package import test_result_writer
 from webkitpy.layout_tests.layout_package.test_results import TestResult
@@ -116,7 +117,11 @@ class SingleTestRunner:
             else:
                 return self._run_rebaseline()
         if self._is_reftest:
-            return self._run_reftest()
+            if self._port.get_option('pixel_tests'):
+                return self._run_reftest()
+            result = TestResult(self._filename)
+            result.type = test_expectations.SKIP
+            return result
         return self._run_compare_test()
 
     def _run_compare_test(self):

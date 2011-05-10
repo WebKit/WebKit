@@ -577,6 +577,10 @@ class MainTest(unittest.TestCase):
         tests_run = get_tests_run(['passes/reftest.html'], tests_included=True, flatten_batches=True)
         self.assertEquals(['passes/reftest.html'], tests_run)
 
+    def test_reftest_skip_reftests_if_pixel_tests_are_disabled(self):
+        tests_run = get_tests_run(['--no-pixel-tests', 'passes/reftest.html'], tests_included=True, flatten_batches=True)
+        self.assertEquals([], tests_run)
+
     def test_reftest_expected_html_should_be_ignored(self):
         tests_run = get_tests_run(['passes/reftest-expected.html'], tests_included=True, flatten_batches=True)
         self.assertEquals([], tests_run)
