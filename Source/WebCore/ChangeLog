@@ -1,3 +1,16 @@
+2011-05-10  Alexis Menard  <alexis.menard@openbossa.org>
+
+        Reviewed by Antonio Gomes.
+
+        Warning fix on PluginPackage.cpp.
+        https://bugs.webkit.org/show_bug.cgi?id=60371
+
+        Warning fix on conversion from time_t to unsigned on Linux with GCC 4.6.0.
+        Let's use a struct rather than an array so we can pass everything to StringHasher.
+
+        * plugins/PluginPackage.cpp:
+        (WebCore::PluginPackage::hash):
+
 2011-05-10  Andreas Kling  <andreas.kling@nokia.com>
 
         Rubber-stamped by Csaba Osztrogonác.

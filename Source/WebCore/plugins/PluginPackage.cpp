@@ -343,12 +343,15 @@ void PluginPackage::initializeBrowserFuncs()
 #if ENABLE(PLUGIN_PACKAGE_SIMPLE_HASH)
 unsigned PluginPackage::hash() const
 {
-    unsigned hashCodes[] = {
-        m_path.impl()->hash(),
-        m_lastModified
-    };
+    struct HashCodes {
+        unsigned hash;
+        time_t modifiedDate;
+    } hashCodes;
 
-    return StringHasher::hashMemory<sizeof(hashCodes)>(hashCodes);
+    hashCodes.hash = m_path.impl()->hash();
+    hashCodes.modifiedDate = m_lastModified;
+
+    return StringHasher::hashMemory<sizeof(hashCodes)>(&hashCodes);
 }
 
 bool PluginPackage::equal(const PluginPackage& a, const PluginPackage& b)
