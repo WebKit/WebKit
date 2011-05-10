@@ -39,7 +39,7 @@ class Node;
 class SpellChecker {
     WTF_MAKE_NONCOPYABLE(SpellChecker);
 public:
-    explicit SpellChecker(Frame*, TextCheckerClient*);
+    explicit SpellChecker(Frame*);
     ~SpellChecker();
 
     bool isAsynchronousEnabled() const;
@@ -53,9 +53,9 @@ public:
 private:
     bool initRequest(Node*);
     void clearRequest();
+    TextCheckerClient* client() const;
 
     Frame* m_frame;
-    TextCheckerClient* m_client;
 
     RefPtr<Node> m_requestNode;
     String m_requestText;

@@ -1,3 +1,26 @@
+2011-05-10  MORITA Hajime  <morrita@google.com>
+
+        Reviewed by Ryosuke Niwa.
+
+        REGRESSION(r73886): Frequent crashes in replaceSelectionWithFragment
+        https://bugs.webkit.org/show_bug.cgi?id=60090
+
+        SpellChecker uses TextCheckerClient, which belongs Page object,
+        which is possibly destroyed during SpellChecker's lifetime.
+        This change added to a guard before using TextCheckerClient to
+        ensure it being live.
+        
+        No new tests, this is a speculative fix for a real crash.
+
+        * editing/Editor.cpp:
+        (WebCore::Editor::Editor):
+        * editing/SpellChecker.cpp:
+        (WebCore::SpellChecker::SpellChecker):
+        (WebCore::SpellChecker::client):
+        (WebCore::SpellChecker::canCheckAsynchronously):
+        (WebCore::SpellChecker::requestCheckingFor):
+        * editing/SpellChecker.h:
+
 2011-05-09  Dan Bernstein  <mitz@apple.com>
 
         Try to fix the LLVM Compiler build.

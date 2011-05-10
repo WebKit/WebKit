@@ -33,6 +33,7 @@
 #include "HTMLInputElement.h"
 #include "HTMLTextAreaElement.h"
 #include "Node.h"
+#include "Page.h"
 #include "PositionIterator.h"
 #include "Range.h"
 #include "RenderObject.h"
@@ -43,15 +44,22 @@
 
 namespace WebCore {
 
-SpellChecker::SpellChecker(Frame* frame, TextCheckerClient* client)
+SpellChecker::SpellChecker(Frame* frame)
     : m_frame(frame)
-    , m_client(client)
     , m_requestSequence(0)
 {
 }
 
 SpellChecker::~SpellChecker()
 {
+}
+
+TextCheckerClient* SpellChecker::client() const
+{
+    Page* page = m_frame->page();
+    if (!page)
+        return 0;
+    return page->editorClient()->textChecker();
 }
 
 bool SpellChecker::initRequest(Node* node)
@@ -82,7 +90,7 @@ bool SpellChecker::isAsynchronousEnabled() const
 
 bool SpellChecker::canCheckAsynchronously(Node* node) const
 {
-    return isCheckable(node) && isAsynchronousEnabled() && !isBusy();
+    return client() && isCheckable(node) && isAsynchronousEnabled() && !isBusy();
 }
 
 bool SpellChecker::isBusy() const
@@ -106,7 +114,7 @@ void SpellChecker::requestCheckingFor(TextCheckingTypeMask mask, Node* node)
 
     if (!initRequest(node))
         return;
-    m_client->requestCheckingOfString(this, m_requestSequence, mask, m_requestText);
+    client()->requestCheckingOfString(this, m_requestSequence, mask, m_requestText);
 }
 
 static bool forwardIterator(PositionIterator& iterator, int distance)
