@@ -1666,6 +1666,7 @@ fast/dom/Geolocation/timeout.html
 fast/dom/Geolocation/timeout-zero.html
 fast/dom/Geolocation/timestamp.html
 fast/dom/Geolocation/watch.html
+fast/dom/Geolocation/window-close-crash.html
 fast/dom/HTMLDocument/frameless-location-bugzilla10837.html
 fast/dom/HTMLElement/bdo.html
 fast/dom/HTMLHeadElement/head-link-style-href-check.html
