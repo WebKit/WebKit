@@ -1,3 +1,18 @@
+2011-05-08  Jeremy Noble  <jer.noble@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        Full-screen video disappears behind black screen with scrollbar, followed by crash at jerryseinfeld.com
+        https://bugs.webkit.org/show_bug.cgi?id=60449
+
+        Make RenderFullScreen a non-anonymous block, so that it does not get deleted when a parent attempts to 
+        coalesce anonymous children.
+
+        Test: fullscreen/full-screen-remove-sibling.html
+
+        * rendering/RenderObject.h:
+        (WebCore::RenderObject::isAnonymousBlock):
+
 2011-05-09  Jeremy Noble  <jer.noble@apple.com>
 
         Reviewed by Simon Fraser.
