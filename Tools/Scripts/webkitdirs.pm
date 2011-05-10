@@ -685,6 +685,13 @@ sub isQt()
     return $isQt;
 }
 
+sub getQtVersion()
+{
+    my $qtVersion = `$qmakebin --version`;
+    $qtVersion =~ s/^(.*)Qt version (\d\.\d)(.*)/$2/s ;
+    return $qtVersion;
+}
+
 sub isSymbian()
 {
     determineIsSymbian();

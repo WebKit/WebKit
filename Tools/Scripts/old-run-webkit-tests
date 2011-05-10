@@ -226,6 +226,8 @@ if (isAppleMacWebKit()) {
         $platform = "qt-mac";
     } elsif (isARM()) {
         $platform = "qt-arm";
+    } elsif (getQtVersion() eq "4.8") {
+        $platform = "qt-4.8";
     } elsif (isLinux()) {
         $platform = "qt-linux";
     } elsif (isWindows() || isCygwin()) {
