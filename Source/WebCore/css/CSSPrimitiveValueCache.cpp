@@ -25,6 +25,7 @@
 
 #include "config.h"
 #include "CSSPrimitiveValueCache.h"
+#include "CSSValueKeywords.h"
 
 namespace WebCore {
 

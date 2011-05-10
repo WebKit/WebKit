@@ -95,6 +95,7 @@
 #if ENABLE(TOUCH_EVENTS)
 #include "PlatformTouchEvent.h"
 #include "TouchEvent.h"
+#include "TouchList.h"
 #endif
 
 #if ENABLE(GESTURE_RECOGNIZER)

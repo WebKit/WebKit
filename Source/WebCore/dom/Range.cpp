@@ -28,6 +28,7 @@
 #include "ClientRect.h"
 #include "ClientRectList.h"
 #include "DocumentFragment.h"
+#include "FloatQuad.h"
 #include "FrameView.h"
 #include "HTMLElement.h"
 #include "NodeWithIndex.h"

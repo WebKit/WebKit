@@ -41,6 +41,7 @@
 #include "DOMWindow.h"
 #include "Event.h"
 #include "EventException.h"
+#include "ExceptionCode.h"
 #include "PlatformString.h"
 #include "MessageEvent.h"
 #include "ResourceError.h"

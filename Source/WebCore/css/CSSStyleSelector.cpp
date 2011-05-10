@@ -34,6 +34,7 @@
 #include "CSSBorderImageValue.h"
 #include "CSSCursorImageValue.h"
 #include "CSSFontFaceRule.h"
+#include "CSSFontSelector.h"
 #include "CSSImportRule.h"
 #include "CSSLineBoxContainValue.h"
 #include "CSSMediaRule.h"

@@ -24,8 +24,9 @@
 #include "config.h"
 #include "RenderTextControlSingleLine.h"
 
-#include "Chrome.h"
+#include "CSSFontSelector.h"
 #include "CSSStyleSelector.h"
+#include "Chrome.h"
 #include "Event.h"
 #include "EventNames.h"
 #include "Frame.h"

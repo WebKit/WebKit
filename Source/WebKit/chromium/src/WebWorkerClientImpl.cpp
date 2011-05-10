@@ -35,6 +35,7 @@
 
 #include "CrossThreadTask.h"
 #include "DedicatedWorkerThread.h"
+#include "Document.h"
 #include "ErrorEvent.h"
 #include "Frame.h"
 #include "FrameLoaderClient.h"

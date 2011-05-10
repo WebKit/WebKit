@@ -26,6 +26,7 @@
 
 #if USE(SAFARI_THEME)
 
+#include "CSSFontSelector.h"
 #include "CSSValueKeywords.h"
 #include "Document.h"
 #include "Element.h"

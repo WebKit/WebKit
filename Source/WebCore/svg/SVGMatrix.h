@@ -22,6 +22,7 @@
 
 #if ENABLE(SVG)
 #include "AffineTransform.h"
+#include "ExceptionCode.h"
 #include "SVGException.h"
 
 namespace WebCore {

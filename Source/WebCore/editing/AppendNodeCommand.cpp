@@ -27,6 +27,7 @@
 #include "AppendNodeCommand.h"
 
 #include "AXObjectCache.h"
+#include "Document.h"
 #include "htmlediting.h"
 
 namespace WebCore {

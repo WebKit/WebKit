@@ -84,6 +84,7 @@
 
 #include "BitmapImage.h"
 #include "Cookie.h"
+#include "Document.h"
 #include "FrameView.h"
 #include "GraphicsContext.h"
 #include "IDBFactoryBackendProxy.h"

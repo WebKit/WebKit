@@ -27,6 +27,7 @@
 #define HTMLSelectElement_h
 
 #include "CollectionCache.h"
+#include "Event.h"
 #include "HTMLFormControlElement.h"
 #include "SelectElement.h"
 

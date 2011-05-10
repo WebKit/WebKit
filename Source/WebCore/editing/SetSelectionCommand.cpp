@@ -26,6 +26,7 @@
 #include "config.h"
 #include "SetSelectionCommand.h"
 
+#include "Document.h"
 #include "Frame.h"
 
 namespace WebCore {

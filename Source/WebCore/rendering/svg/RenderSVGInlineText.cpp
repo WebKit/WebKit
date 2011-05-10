@@ -26,6 +26,7 @@
 #if ENABLE(SVG)
 #include "RenderSVGInlineText.h"
 
+#include "CSSFontSelector.h"
 #include "CSSStyleSelector.h"
 #include "FloatConversion.h"
 #include "FloatQuad.h"

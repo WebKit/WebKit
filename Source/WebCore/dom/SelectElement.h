@@ -22,9 +22,11 @@
 #ifndef SelectElement_h
 #define SelectElement_h
 
-#include "Event.h"
+#include "DOMTimeStamp.h"
+#include "PlatformString.h"
 #include <wtf/Forward.h>
 #include <wtf/Vector.h>
+#include <wtf/unicode/Unicode.h>
 
 namespace WebCore {
 

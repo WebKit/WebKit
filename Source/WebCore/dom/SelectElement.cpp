@@ -25,6 +25,7 @@
 #include "Chrome.h"
 #include "ChromeClient.h"
 #include "Element.h"
+#include "Event.h"
 #include "EventHandler.h"
 #include "EventNames.h"
 #include "FormDataList.h"

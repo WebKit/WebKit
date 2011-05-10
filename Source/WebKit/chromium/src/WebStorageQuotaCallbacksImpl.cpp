@@ -34,6 +34,7 @@
 #if ENABLE(QUOTA)
 
 #include "DOMCoreException.h"
+#include "ExceptionCode.h"
 #include "StorageInfoErrorCallback.h"
 #include "StorageInfoQuotaCallback.h"
 #include "StorageInfoUsageCallback.h"

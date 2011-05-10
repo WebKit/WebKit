@@ -30,6 +30,7 @@
 #if ENABLE(XPATH)
 
 #include "Document.h"
+#include "ExceptionCode.h"
 #include "PlatformString.h"
 #include "XPathException.h"
 #include "XPathExpressionNode.h"

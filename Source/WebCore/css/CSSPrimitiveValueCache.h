@@ -27,14 +27,11 @@
 #define CSSPrimitiveValueCache_h
 
 #include "CSSPrimitiveValue.h"
-#include "CSSValueKeywords.h"
 #include <wtf/HashMap.h>
 #include <wtf/RefPtr.h>
 
 namespace WebCore {
     
-class CSSPrimitiveValue;
-
 class CSSPrimitiveValueCache : public RefCounted<CSSPrimitiveValueCache> {
 public:
     static PassRefPtr<CSSPrimitiveValueCache> create() { return adoptRef(new CSSPrimitiveValueCache); }

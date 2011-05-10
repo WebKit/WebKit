@@ -29,9 +29,10 @@
 #if ENABLE(TOUCH_EVENTS)
 
 #include "MouseRelatedEvent.h"
-#include "TouchList.h"
 
 namespace WebCore {
+
+class TouchList;
 
 class TouchEvent : public MouseRelatedEvent {
 public:

@@ -27,12 +27,13 @@
 #define EditCommand_h
 
 #include "EditAction.h"
-#include "Element.h"
 #include "VisibleSelection.h"
 
 namespace WebCore {
 
 class CompositeEditCommand;
+class Document;
+class Element;
 
 class EditCommand : public RefCounted<EditCommand> {
 public:

@@ -29,11 +29,12 @@
 #ifndef ExceptionBase_h
 #define ExceptionBase_h
 
-#include "ExceptionCode.h"
 #include "PlatformString.h"
 #include <wtf/RefCounted.h>
 
 namespace WebCore {
+
+    struct ExceptionCodeDescription;
 
     class ExceptionBase : public RefCounted<ExceptionBase> {
     public:

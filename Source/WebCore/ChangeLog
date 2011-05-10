@@ -1,3 +1,62 @@
+2011-05-06  Tony Gentilcore  <tonyg@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        Fix some unnecessary includes in headers
+        https://bugs.webkit.org/show_bug.cgi?id=60388
+
+        These were all found using the include-what-you-use clang plugin.
+
+        * css/CSSFontFaceSrcValue.h:
+        * css/CSSImageGeneratorValue.h:
+        * css/CSSParser.h:
+        * css/CSSPrimitiveValueCache.cpp:
+        * css/CSSPrimitiveValueCache.h:
+        * css/CSSStyleSelector.cpp:
+        * css/CSSStyleSelector.h:
+        * css/RGBColor.cpp:
+        * css/RGBColor.h:
+        * dom/EventTarget.h:
+        * dom/ExceptionBase.cpp:
+        * dom/ExceptionBase.h:
+        * dom/MessagePort.cpp:
+        * dom/Range.cpp:
+        * dom/Range.h:
+        * dom/SelectElement.cpp:
+        * dom/SelectElement.h:
+        * dom/TextEvent.cpp:
+        * dom/TextEvent.h:
+        * dom/Touch.cpp:
+        * dom/Touch.h:
+        * dom/TouchEvent.cpp:
+        * dom/TouchEvent.h:
+        * dom/XMLDocumentParser.h:
+        * dom/XMLDocumentParserScope.h:
+        * editing/AppendNodeCommand.cpp:
+        * editing/ApplyBlockElementCommand.h:
+        * editing/DeleteFromTextNodeCommand.cpp:
+        * editing/EditCommand.h:
+        * editing/Editor.h:
+        * editing/FormatBlockCommand.h:
+        * editing/IndentOutdentCommand.h:
+        * editing/InsertIntoTextNodeCommand.cpp:
+        * editing/InsertNodeBeforeCommand.cpp:
+        * editing/ReplaceSelectionCommand.h:
+        * editing/SetNodeAttributeCommand.h:
+        * html/HTMLSelectElement.h:
+        * html/canvas/CanvasRenderingContext2D.cpp:
+        * loader/appcache/DOMApplicationCache.cpp:
+        * page/EventSource.cpp:
+        * rendering/RenderListBox.cpp:
+        * rendering/RenderMenuList.cpp:
+        * rendering/RenderTextControlSingleLine.cpp:
+        * rendering/svg/RenderSVGInlineText.cpp:
+        * svg/SVGMatrix.h:
+        * websockets/WebSocket.cpp:
+        * workers/AbstractWorker.cpp:
+        * xml/XMLHttpRequest.cpp:
+        * xml/XPathExpression.cpp:
+
 2011-05-10  MORITA Hajime  <morrita@google.com>
 
         Reviewed by Ryosuke Niwa.

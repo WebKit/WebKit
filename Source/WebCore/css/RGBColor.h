@@ -27,11 +27,12 @@
 #ifndef RGBColor_h
 #define RGBColor_h
 
-#include "CSSPrimitiveValue.h"
 #include "Color.h"
 #include <wtf/RefCounted.h>
 
 namespace WebCore {
+
+    class CSSPrimitiveValue;
 
     class RGBColor : public RefCounted<RGBColor> {
     public:

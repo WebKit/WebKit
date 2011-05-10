@@ -33,6 +33,7 @@
 #include "EventException.h"
 #include "EventListener.h"
 #include "EventNames.h"
+#include "ExceptionCode.h"
 #include "File.h"
 #include "HTTPParsers.h"
 #include "InspectorInstrumentation.h"

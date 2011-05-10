@@ -190,6 +190,7 @@
 #include "RuntimeEnabledFeatures.h"
 #endif
 #include "TouchEvent.h"
+#include "TouchList.h"
 #endif
 
 #if ENABLE(MATHML)

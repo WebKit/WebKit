@@ -25,6 +25,7 @@
 
 #include "config.h"
 #include "DeleteFromTextNodeCommand.h"
+#include "Document.h"
 
 #include "AXObjectCache.h"
 #include "Text.h"

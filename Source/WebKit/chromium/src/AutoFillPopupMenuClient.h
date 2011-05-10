@@ -34,6 +34,7 @@
 #include "PopupMenuClient.h"
 
 namespace WebCore {
+class FontSelector;
 class HTMLInputElement;
 class PopupMenuStyle;
 class RenderStyle;

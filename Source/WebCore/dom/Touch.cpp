@@ -29,6 +29,7 @@
 
 #include "Touch.h"
 
+#include "Frame.h"
 #include "FrameView.h"
 
 namespace WebCore {

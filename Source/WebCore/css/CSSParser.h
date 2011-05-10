@@ -26,7 +26,7 @@
 #include "CSSGradientValue.h"
 #include "CSSParserValues.h"
 #include "CSSPropertySourceData.h"
-#include "CSSSelectorList.h"
+#include "CSSSelector.h"
 #include "Color.h"
 #include "MediaQuery.h"
 #include <wtf/HashMap.h>
@@ -42,8 +42,7 @@ namespace WebCore {
     class CSSProperty;
     class CSSRule;
     class CSSRuleList;
-    class CSSSelector;
-    class CSSStyleRule;
+    class CSSSelectorList;
     class CSSStyleSheet;
     class CSSValue;
     class CSSValueList;
@@ -51,7 +50,6 @@ namespace WebCore {
     class MediaList;
     class MediaQueryExp;
     class StyleBase;
-    class StyleList;
     class WebKitCSSKeyframeRule;
     class WebKitCSSKeyframesRule;
 

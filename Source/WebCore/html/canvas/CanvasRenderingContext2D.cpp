@@ -32,6 +32,7 @@
 #include "CanvasRenderingContext2D.h"
 
 #include "AffineTransform.h"
+#include "CSSFontSelector.h"
 #include "CSSMutableStyleDeclaration.h"
 #include "CSSParser.h"
 #include "CSSPropertyNames.h"

@@ -29,12 +29,13 @@
 #if ENABLE(TOUCH_EVENTS)
 
 #include "EventTarget.h"
-#include "Frame.h"
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
 
 namespace WebCore {
+
+class Frame;
 
 class Touch : public RefCounted<Touch> {
 public:

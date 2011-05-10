@@ -31,6 +31,7 @@
 #include "config.h"
 #include "AutoFillPopupMenuClient.h"
 
+#include "CSSFontSelector.h"
 #include "CSSStyleSelector.h"
 #include "CSSValueKeywords.h"
 #include "Chrome.h"

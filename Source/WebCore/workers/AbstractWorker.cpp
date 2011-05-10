@@ -38,6 +38,7 @@
 #include "Event.h"
 #include "EventException.h"
 #include "EventNames.h"
+#include "ExceptionCode.h"
 #include "InspectorInstrumentation.h"
 #include "ScriptExecutionContext.h"
 #include "SecurityOrigin.h"

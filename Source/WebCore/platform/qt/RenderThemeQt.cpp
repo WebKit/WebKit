@@ -30,6 +30,7 @@
 #include "config.h"
 #include "RenderThemeQt.h"
 
+#include "CSSFontSelector.h"
 #include "CSSStyleSelector.h"
 #include "CSSStyleSheet.h"
 #include "CSSValueKeywords.h"

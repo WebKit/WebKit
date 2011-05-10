@@ -31,7 +31,7 @@
 #include "DocumentMarker.h"
 #include "EditAction.h"
 #include "EditingBehavior.h"
-#include "EditorDeleteAction.h"
+#include "EditingStyle.h"
 #include "EditorInsertAction.h"
 #include "FindOptions.h"
 #include "FrameSelection.h"
@@ -46,7 +46,6 @@ typedef int NSWritingDirection;
 
 namespace WebCore {
 
-class CSSMutableStyleDeclaration;
 class CSSStyleDeclaration;
 class Clipboard;
 class SpellingCorrectionController;

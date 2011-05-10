@@ -39,6 +39,7 @@
 #include "EventException.h"
 #include "EventListener.h"
 #include "EventNames.h"
+#include "ExceptionCode.h"
 #include "Logging.h"
 #include "MessageEvent.h"
 #include "ScriptCallStack.h"

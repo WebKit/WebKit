@@ -28,6 +28,7 @@
 
 #include "config.h"
 #include "ExceptionBase.h"
+#include "ExceptionCode.h"
 
 #include <wtf/text/StringConcatenate.h>
 

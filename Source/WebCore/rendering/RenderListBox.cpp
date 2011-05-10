@@ -31,6 +31,7 @@
 #include "RenderListBox.h"
 
 #include "AXObjectCache.h"
+#include "CSSFontSelector.h"
 #include "CSSStyleSelector.h"
 #include "Document.h"
 #include "EventHandler.h"

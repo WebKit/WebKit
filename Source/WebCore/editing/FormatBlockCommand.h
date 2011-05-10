@@ -27,9 +27,16 @@
 #define FormatBlockCommand_h
 
 #include "ApplyBlockElementCommand.h"
-#include "CompositeEditCommand.h"
+#include "EditAction.h"
+#include "QualifiedName.h"
 
 namespace WebCore {
+
+class Document;
+class Element;
+class Position;
+class Range;
+class VisiblePosition;
 
 class FormatBlockCommand : public ApplyBlockElementCommand {
 public:

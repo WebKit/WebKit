@@ -51,7 +51,6 @@ namespace WebCore {
     class Element;
     class FrameView;
     class PendingCallbacks;
-    class ScriptElement;
 
 #if !USE(QXMLSTREAM)
     class XMLParserContext : public RefCounted<XMLParserContext> {

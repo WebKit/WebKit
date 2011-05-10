@@ -29,7 +29,7 @@
 #include <wtf/Noncopyable.h>
 
 #if ENABLE(XSLT)
-#include <libxml/tree.h>
+#include <libxml/xmlerror.h>
 #endif
 
 namespace WebCore {

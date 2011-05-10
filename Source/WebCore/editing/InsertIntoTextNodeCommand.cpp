@@ -27,6 +27,7 @@
 #include "InsertIntoTextNodeCommand.h"
 
 #include "AXObjectCache.h"
+#include "Document.h"
 #include "Text.h"
 
 namespace WebCore {

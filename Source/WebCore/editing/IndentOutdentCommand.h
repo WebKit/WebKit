@@ -27,7 +27,7 @@
 #define IndentOutdentCommand_h
 
 #include "ApplyBlockElementCommand.h"
-#include "CompositeEditCommand.h"
+#include "EditAction.h"
 
 namespace WebCore {
 

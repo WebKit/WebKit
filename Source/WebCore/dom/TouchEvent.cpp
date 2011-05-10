@@ -28,6 +28,7 @@
 #if ENABLE(TOUCH_EVENTS)
 
 #include "TouchEvent.h"
+#include "TouchList.h"
 
 namespace WebCore {
 

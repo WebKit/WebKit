@@ -31,6 +31,7 @@
 #include "Document.h"
 #include "EventException.h"
 #include "EventNames.h"
+#include "ExceptionCode.h"
 #include "MessageEvent.h"
 #include "SecurityOrigin.h"
 #include "Timer.h"

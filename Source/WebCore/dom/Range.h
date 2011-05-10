@@ -25,7 +25,9 @@
 #ifndef Range_h
 #define Range_h
 
-#include "FloatQuad.h"
+#include "FloatRect.h"
+#include "IntRect.h"
+#include "Node.h"
 #include "RangeBoundaryPoint.h"
 #include <wtf/Forward.h>
 #include <wtf/RefCounted.h>
@@ -35,7 +37,10 @@ namespace WebCore {
 
 class ClientRect;
 class ClientRectList;
+class ContainerNode;
+class Document;
 class DocumentFragment;
+class FloatQuad;
 class NodeWithIndex;
 class Text;
 

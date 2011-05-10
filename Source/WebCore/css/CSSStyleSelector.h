@@ -22,7 +22,6 @@
 #ifndef CSSStyleSelector_h
 #define CSSStyleSelector_h
 
-#include "CSSFontSelector.h"
 #include "CSSRule.h"
 #include "LinkHash.h"
 #include "MediaQueryExp.h"
@@ -36,6 +35,7 @@
 
 namespace WebCore {
 
+class CSSFontSelector;
 class CSSMutableStyleDeclaration;
 class CSSPageRule;
 class CSSPrimitiveValue;

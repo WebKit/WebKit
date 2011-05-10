@@ -27,11 +27,12 @@
 #ifndef TextEvent_h
 #define TextEvent_h
 
-#include "DocumentFragment.h"
 #include "TextEventInputType.h"
 #include "UIEvent.h"
 
 namespace WebCore {
+
+    class DocumentFragment;
 
     class TextEvent : public UIEvent {
     public:

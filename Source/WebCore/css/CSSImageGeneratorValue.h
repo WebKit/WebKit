@@ -35,8 +35,8 @@
 namespace WebCore {
 
 class Image;
-class StyleGeneratedImage;
 class RenderObject;
+class StyleGeneratedImage;
 
 class CSSImageGeneratorValue : public CSSValue {
 public:
