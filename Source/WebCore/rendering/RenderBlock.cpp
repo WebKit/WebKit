@@ -2217,30 +2217,26 @@ void RenderBlock::markForPaginationRelayoutIfNeeded()
 void RenderBlock::repaintOverhangingFloats(bool paintAllDescendants)
 {
     // Repaint any overhanging floats (if we know we're the one to paint them).
-    if (hasOverhangingFloats()) {
-        // We think that we must be in a bad state if m_floatingObjects is nil at this point, so 
-        // we assert on Debug builds and nil-check Release builds.
-        ASSERT(m_floatingObjects);
-        if (!m_floatingObjects)
-            return;
+    // Otherwise, bail out.
+    if (!hasOverhangingFloats())
+        return;
 
-        // FIXME: Avoid disabling LayoutState. At the very least, don't disable it for floats originating
-        // in this block. Better yet would be to push extra state for the containers of other floats.
-        view()->disableLayoutState();
-        FloatingObjectSet& floatingObjectSet = m_floatingObjects->set();
-        FloatingObjectSetIterator end = floatingObjectSet.end();
-        for (FloatingObjectSetIterator it = floatingObjectSet.begin(); it != end; ++it) {
-            FloatingObject* r = *it;
-            // Only repaint the object if it is overhanging, is not in its own layer, and
-            // is our responsibility to paint (m_shouldPaint is set). When paintAllDescendants is true, the latter
-            // condition is replaced with being a descendant of us.
-            if (logicalBottomForFloat(r) > logicalHeight() && ((paintAllDescendants && r->m_renderer->isDescendantOf(this)) || r->m_shouldPaint) && !r->m_renderer->hasSelfPaintingLayer()) {
-                r->m_renderer->repaint();
-                r->m_renderer->repaintOverhangingFloats();
-            }
+    // FIXME: Avoid disabling LayoutState. At the very least, don't disable it for floats originating
+    // in this block. Better yet would be to push extra state for the containers of other floats.
+    view()->disableLayoutState();
+    FloatingObjectSet& floatingObjectSet = m_floatingObjects->set();
+    FloatingObjectSetIterator end = floatingObjectSet.end();
+    for (FloatingObjectSetIterator it = floatingObjectSet.begin(); it != end; ++it) {
+        FloatingObject* r = *it;
+        // Only repaint the object if it is overhanging, is not in its own layer, and
+        // is our responsibility to paint (m_shouldPaint is set). When paintAllDescendants is true, the latter
+        // condition is replaced with being a descendant of us.
+        if (logicalBottomForFloat(r) > logicalHeight() && ((paintAllDescendants && r->m_renderer->isDescendantOf(this)) || r->m_shouldPaint) && !r->m_renderer->hasSelfPaintingLayer()) {
+            r->m_renderer->repaint();
+            r->m_renderer->repaintOverhangingFloats();
         }
-        view()->enableLayoutState();
     }
+    view()->enableLayoutState();
 }
  
 void RenderBlock::paint(PaintInfo& paintInfo, int tx, int ty)

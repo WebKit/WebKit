@@ -1,3 +1,17 @@
+2011-05-10  Abhishek Arya  <inferno@chromium.org>
+
+        Reviewed by Simon Fraser.
+
+        Add containsFloats call to hasOverhangingFloats.
+        https://bugs.webkit.org/show_bug.cgi?id=60537
+
+        Test: fast/block/float/no-overhanging-float-crash.html
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::repaintOverhangingFloats):
+        * rendering/RenderBlock.h:
+        (WebCore::RenderBlock::hasOverhangingFloats):
+
 2011-05-10  Alexis Menard  <alexis.menard@openbossa.org>
 
         Reviewed by Antonio Gomes.

@@ -1,3 +1,14 @@
+2011-05-10  Abhishek Arya  <inferno@chromium.org>
+
+        Reviewed by Simon Fraser.
+
+        Tests that we do not crash due to wrong result from
+        hasOverhangingFloats.
+        https://bugs.webkit.org/show_bug.cgi?id=60537
+
+        * fast/block/float/no-overhanging-float-crash-expected.txt: Added.
+        * fast/block/float/no-overhanging-float-crash.html: Added.
+
 2011-05-10  Adam Roben  <aroben@apple.com>
 
         Update some plugin tests to work with WebKit2's asynchronous windowed plugin positioning on Windows
