@@ -113,9 +113,6 @@ void BitmapImage::draw(GraphicsContext* context, const FloatRect& dst, const Flo
         return;
     }
 
-    IntSize selfSize = size();
-
-    cairo_t* cr = context->platformContext()->cr();
     context->save();
 
     // Set the compositing operation.
@@ -123,39 +120,7 @@ void BitmapImage::draw(GraphicsContext* context, const FloatRect& dst, const Flo
         context->setCompositeOperation(CompositeCopy);
     else
         context->setCompositeOperation(op);
-
-    // If we're drawing a sub portion of the image or scaling then create
-    // a pattern transformation on the image and draw the transformed pattern.
-    // Test using example site at http://www.meyerweb.com/eric/css/edge/complexspiral/demo.html
-    cairo_pattern_t* pattern = cairo_pattern_create_for_surface(image);
-
-    cairo_pattern_set_extend(pattern, CAIRO_EXTEND_PAD);
-
-    float scaleX = srcRect.width() / dstRect.width();
-    float scaleY = srcRect.height() / dstRect.height();
-    cairo_matrix_t matrix = { scaleX, 0, 0, scaleY, srcRect.x(), srcRect.y() };
-    cairo_pattern_set_matrix(pattern, &matrix);
-
-    ContextShadow* shadow = context->contextShadow();
-    ASSERT(shadow);
-    if (shadow->m_type != ContextShadow::NoShadow) {
-        cairo_t* shadowContext = shadow->beginShadowLayer(context, dstRect);
-        if (shadowContext) {
-            cairo_translate(shadowContext, dstRect.x(), dstRect.y());
-            cairo_set_source(shadowContext, pattern);
-            cairo_rectangle(shadowContext, 0, 0, dstRect.width(), dstRect.height());
-            cairo_fill(shadowContext);
-            shadow->endShadowLayer(context);
-        }
-    }
-
-    // Draw the image.
-    cairo_translate(cr, dstRect.x(), dstRect.y());
-    cairo_set_source(cr, pattern);
-    cairo_pattern_destroy(pattern);
-    cairo_rectangle(cr, 0, 0, dstRect.width(), dstRect.height());
-    cairo_clip(cr);
-    cairo_paint_with_alpha(cr, context->getAlpha());
+    context->platformContext()->drawSurfaceToContext(image, dstRect, srcRect, context);
 
     context->restore();
 

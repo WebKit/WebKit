@@ -26,6 +26,7 @@
 #include "config.h"
 #include "PlatformContextCairo.h"
 
+#include "GraphicsContext.h"
 #include <cairo.h>
 
 namespace WebCore {
@@ -79,6 +80,41 @@ void PlatformContextCairo::pushImageMask(cairo_surface_t* surface, const FloatRe
     cairo_set_source_surface(m_cr.get(), currentTarget, 0, 0);
     cairo_rectangle(m_cr.get(), rect.x(), rect.y(), rect.width(), rect.height());
     cairo_fill(m_cr.get());
+}
+
+static void drawPatternToCairoContext(cairo_t* cr, cairo_pattern_t* pattern, const FloatRect& destRect, float alpha)
+{
+    cairo_translate(cr, destRect.x(), destRect.y());
+    cairo_set_source(cr, pattern);
+    cairo_rectangle(cr, 0, 0, destRect.width(), destRect.height());
+    cairo_clip(cr);
+    cairo_paint_with_alpha(cr, alpha);
+}
+
+void PlatformContextCairo::drawSurfaceToContext(cairo_surface_t* surface, const FloatRect& destRect, const FloatRect& srcRect, GraphicsContext* context)
+{
+    // If we're drawing a sub portion of the image or scaling then create
+    // a pattern transformation on the image and draw the transformed pattern.
+    // Test using example site at http://www.meyerweb.com/eric/css/edge/complexspiral/demo.html
+    RefPtr<cairo_pattern_t> pattern = adoptRef(cairo_pattern_create_for_surface(surface));
+    cairo_pattern_set_extend(pattern.get(), CAIRO_EXTEND_PAD);
+
+    float scaleX = srcRect.width() / destRect.width();
+    float scaleY = srcRect.height() / destRect.height();
+    cairo_matrix_t matrix = { scaleX, 0, 0, scaleY, srcRect.x(), srcRect.y() };
+    cairo_pattern_set_matrix(pattern.get(), &matrix);
+
+    ContextShadow* shadow = context->contextShadow();
+    if (shadow && shadow->m_type != ContextShadow::NoShadow) {
+        if (cairo_t* shadowContext = shadow->beginShadowLayer(context, destRect)) {
+            drawPatternToCairoContext(shadowContext, pattern.get(), destRect, 1);
+            shadow->endShadowLayer(context);
+        }
+    }
+
+    cairo_save(m_cr.get());
+    drawPatternToCairoContext(m_cr.get(), pattern.get(), destRect, context->getAlpha());
+    cairo_restore(m_cr.get());
 }
 
 

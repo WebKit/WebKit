@@ -35,6 +35,8 @@
 
 #if USE(CG)
 #include <wtf/RetainPtr.h>
+#elif PLATFORM(CAIRO)
+typedef struct _cairo_surface cairo_surface_t; 
 #endif
 
 namespace WebCore {
@@ -105,6 +107,10 @@ public:
     // This creates a CGImageRef that directly references the shared bitmap data.
     // This is only safe to use when we know that the contents of the shareable bitmap won't change.
     RetainPtr<CGImageRef> makeCGImage();
+#elif USE(CAIRO)
+    // This creates a BitmapImage that directly references the shared bitmap data.
+    // This is only safe to use when we know that the contents of the shareable bitmap won't change.
+    PassRefPtr<cairo_surface_t> createCairoSurface();
 #endif
 
 private:
@@ -117,6 +123,10 @@ private:
     RetainPtr<CGImageRef> createCGImage(CGDataProviderRef) const;
     static void releaseBitmapContextData(void* typelessBitmap, void* typelessData);
     static void releaseDataProviderData(void* typelessBitmap, const void* typelessData, size_t);
+#endif
+
+#if USE(CAIRO)
+    static void releaseSurfaceData(void* typelessBitmap);
 #endif
 
     void* data() const;

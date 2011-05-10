@@ -66,6 +66,7 @@ public:
     void save();
     void restore();
     void pushImageMask(cairo_surface_t*, const FloatRect&);
+    void drawSurfaceToContext(cairo_surface_t*, const FloatRect& destRect, const FloatRect& srcRect, GraphicsContext*);
 
 private:
     RefPtr<cairo_t> m_cr;

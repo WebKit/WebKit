@@ -31,6 +31,7 @@
 
 #include "Base64.h"
 #include "BitmapImage.h"
+#include "CairoUtilities.h"
 #include "Color.h"
 #include "GraphicsContext.h"
 #include "ImageData.h"
@@ -44,24 +45,6 @@
 #include <wtf/Vector.h>
 
 using namespace std;
-
-// Cairo doesn't provide a way to copy a cairo_surface_t.
-// See http://lists.cairographics.org/archives/cairo/2007-June/010877.html
-// Once cairo provides the way, use the function instead of this.
-static inline cairo_surface_t* copySurface(cairo_surface_t* surface)
-{
-    cairo_format_t format = cairo_image_surface_get_format(surface);
-    int width = cairo_image_surface_get_width(surface);
-    int height = cairo_image_surface_get_height(surface);
-    cairo_surface_t* newsurface = cairo_image_surface_create(format, width, height);
-
-    RefPtr<cairo_t> cr = adoptRef(cairo_create(newsurface));
-    cairo_set_source_surface(cr.get(), surface, 0, 0);
-    cairo_set_operator(cr.get(), CAIRO_OPERATOR_SOURCE);
-    cairo_paint(cr.get());
-
-    return newsurface;
-}
 
 namespace WebCore {
 
@@ -111,7 +94,7 @@ bool ImageBuffer::drawsUsingCopy() const
 PassRefPtr<Image> ImageBuffer::copyImage() const
 {
     // BitmapImage will release the passed in surface on destruction
-    return BitmapImage::create(copySurface(m_data.m_surface));
+    return BitmapImage::create(copyCairoImageSurface(m_data.m_surface).leakRef());
 }
 
 void ImageBuffer::clip(GraphicsContext* context, const FloatRect& maskRect) const

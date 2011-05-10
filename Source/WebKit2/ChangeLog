@@ -1,3 +1,18 @@
+2011-05-05  Brent Fulgham  <bfulgham@webkit.org> and Martin Robinson  <mrobinson@igalia.com>
+
+        Reviewed by Anders Carlsson.
+
+        [Cairo][WebKit2] Add an implementation of ShareableBitmap for Cairo
+        https://bugs.webkit.org/show_bug.cgi?id=60293
+
+        * GNUmakefile.am: Remove ShareableBitmapGtk in favor of ShareableBitmapCairo.
+        * Shared/ShareableBitmap.h: Added a couple Cairo-specific declarations.
+        * Shared/cairo/ShareableBitmapCairo.cpp:
+        (WebKit::ShareableBitmap::createGraphicsContext): Added.
+        (WebKit::ShareableBitmap::paint): Added.
+        (WebKit::ShareableBitmap::createCairoSurface): Added.
+        (WebKit::ShareableBitmap::releaseSurfaceData): Added.
+
 2011-05-10  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Sam Weinig.

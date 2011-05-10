@@ -45,6 +45,7 @@ void appendWebCorePathToCairoContext(cairo_t* context, const Path& path);
 cairo_operator_t toCairoOperator(CompositeOperator op);
 void drawPatternToCairoContext(cairo_t* cr, cairo_surface_t* image, const IntSize& imageSize, const FloatRect& tileRect,
                                const AffineTransform& patternTransform, const FloatPoint& phase, cairo_operator_t op, const FloatRect& destRect);
+PassRefPtr<cairo_surface_t> copyCairoImageSurface(cairo_surface_t*);
 
 } // namespace WebCore
 

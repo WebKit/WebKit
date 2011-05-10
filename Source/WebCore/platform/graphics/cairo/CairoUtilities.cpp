@@ -159,4 +159,20 @@ void drawPatternToCairoContext(cairo_t* cr, cairo_surface_t* image, const IntSiz
     cairo_restore(cr);
 }
 
+PassRefPtr<cairo_surface_t> copyCairoImageSurface(cairo_surface_t* originalSurface)
+{
+    // Cairo doesn't provide a way to copy a cairo_surface_t.
+    // See http://lists.cairographics.org/archives/cairo/2007-June/010877.html
+    // Once cairo provides the way, use the function instead of this.
+    RefPtr<cairo_surface_t> newSurface = adoptRef(cairo_image_surface_create(cairo_image_surface_get_format(originalSurface), 
+                                                                             cairo_image_surface_get_width(originalSurface),
+                                                                             cairo_image_surface_get_height(originalSurface)));
+
+    RefPtr<cairo_t> cr = adoptRef(cairo_create(newSurface.get()));
+    cairo_set_source_surface(cr.get(), originalSurface, 0, 0);
+    cairo_set_operator(cr.get(), CAIRO_OPERATOR_SOURCE);
+    cairo_paint(cr.get());
+    return newSurface.release();
+}
+
 } // namespace WebCore

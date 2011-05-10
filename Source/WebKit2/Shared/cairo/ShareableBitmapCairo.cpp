@@ -1,5 +1,7 @@
 /*
  * Copyright (C) 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2011 Brent Fulgham <bfulgham@webkit.org>
+ * Copyright (C) 2011 Igalia S.L.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,8 +28,10 @@
 #include "config.h"
 #include "ShareableBitmap.h"
 
+#include <WebCore/CairoUtilities.h>
 #include <WebCore/GraphicsContext.h>
 #include <WebCore/NotImplemented.h>
+#include <WebCore/PlatformContextCairo.h>
 
 using namespace WebCore;
 
@@ -35,13 +39,40 @@ namespace WebKit {
 
 PassOwnPtr<GraphicsContext> ShareableBitmap::createGraphicsContext()
 {
-    notImplemented();
-    return 0;
+    RefPtr<cairo_surface_t> image = createCairoSurface();
+    RefPtr<cairo_t> bitmapContext = adoptRef(cairo_create(image.get()));
+    return adoptPtr(new GraphicsContext(bitmapContext.get()));
 }
 
-void ShareableBitmap::paint(GraphicsContext&, const IntPoint&, const IntRect&)
+void ShareableBitmap::paint(GraphicsContext& context, const IntPoint& dstPoint, const IntRect& srcRect)
 {
-    notImplemented();
+    RefPtr<cairo_surface_t> surface = adoptRef(cairo_image_surface_create_for_data(static_cast<unsigned char*>(data()),
+                                                                                   CAIRO_FORMAT_ARGB32,
+                                                                                   m_size.width(), m_size.height(),
+                                                                                   m_size.width() * 4));
+
+    // This copy is not copy-on-write, so this is probably sub-optimal.
+    RefPtr<cairo_surface_t> surfaceCopy = copyCairoImageSurface(surface.get());
+    FloatRect destRect(dstPoint, srcRect.size());
+    context.platformContext()->drawSurfaceToContext(surfaceCopy.get(), destRect, srcRect, &context);
 }
-        
+
+PassRefPtr<cairo_surface_t> ShareableBitmap::createCairoSurface()
+{
+    RefPtr<cairo_surface_t> image = adoptRef(cairo_image_surface_create_for_data(static_cast<unsigned char*>(data()),
+                                                                                 CAIRO_FORMAT_ARGB32,
+                                                                                 m_size.width(), m_size.height(),
+                                                                                 m_size.width() * 4));
+
+    ref(); // Balanced by deref in releaseSurfaceData.
+    static cairo_user_data_key_t dataKey;
+    cairo_surface_set_user_data(image.get(), &dataKey, this, releaseSurfaceData);
+    return image.release();
+}
+
+void ShareableBitmap::releaseSurfaceData(void* typelessBitmap)
+{
+    static_cast<ShareableBitmap*>(typelessBitmap)->deref(); // Balanced by ref in createCairoSurface.
+}
+
 } // namespace WebKit
