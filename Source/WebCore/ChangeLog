@@ -1,3 +1,14 @@
+2011-05-10  Ben Murdoch  <benm@google.com>
+
+        Reviewed by Steve Block.
+
+        Fix build in WebCore/xml/XSLTProcessorLibxslt.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=60478
+
+        No new tests), build fix only.
+
+        * xml/XSLTProcessorLibxslt.cpp: Add CString.h include.
+
 2011-05-10  Keith Kyzivat  <keith.kyzivat@nokia.com>
 
         Reviewed by Kenneth Rohde Christiansen.
