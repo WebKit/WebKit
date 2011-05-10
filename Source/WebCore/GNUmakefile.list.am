@@ -2157,6 +2157,7 @@ webcore_sources += \
 	Source/WebCore/page/DragClient.h \
 	Source/WebCore/page/DragController.cpp \
 	Source/WebCore/page/DragController.h \
+	Source/WebCore/page/DragState.h \
 	Source/WebCore/page/EditorClient.h \
 	Source/WebCore/page/EventHandler.cpp \
 	Source/WebCore/page/EventHandler.h \

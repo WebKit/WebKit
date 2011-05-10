@@ -49,6 +49,7 @@ namespace WebCore {
 
 class Clipboard;
 class Cursor;
+class DragState;
 class Event;
 class EventTarget;
 class FloatPoint;
@@ -145,10 +146,6 @@ public:
     bool scrollRecursively(ScrollDirection, ScrollGranularity, Node* startingNode = 0);
     bool logicalScrollRecursively(ScrollLogicalDirection, ScrollGranularity, Node* startingNode = 0);
 
-#if ENABLE(DRAG_SUPPORT)
-    bool shouldDragAutoNode(Node*, const IntPoint&) const; // -webkit-user-drag == auto
-#endif
-
     bool tabsToLinks(KeyboardEvent*) const;
     bool tabsToAllFormControls(KeyboardEvent*) const;
 
@@ -223,20 +220,7 @@ private:
         PerformDragAndDrop
     };
 
-    struct EventHandlerDragState {
-        WTF_MAKE_NONCOPYABLE(EventHandlerDragState); WTF_MAKE_FAST_ALLOCATED;
-    public:
-        EventHandlerDragState() { }
-        RefPtr<Node> m_dragSrc; // element that may be a drag source, for the current mouse gesture
-        bool m_dragSrcIsLink;
-        bool m_dragSrcIsImage;
-        bool m_dragSrcInSelection;
-        bool m_dragSrcMayBeDHTML;
-        bool m_dragSrcMayBeUA; // Are DHTML and/or the UserAgent allowed to drag out?
-        bool m_dragSrcIsDHTML;
-        RefPtr<Clipboard> m_dragClipboard; // used on only the source side of dragging
-    };
-    static EventHandlerDragState& dragState();
+    static DragState& dragState();
     static const double TextDragDelay;
 
     bool canHandleDragAndDropForTarget(DragAndDropHandleType, Node* target, const PlatformMouseEvent&, Clipboard*, bool* accepted = 0);

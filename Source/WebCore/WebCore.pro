@@ -1841,6 +1841,7 @@ HEADERS += \
     page/DOMTimer.h \
     page/DOMWindow.h \
     page/DragController.h \
+    page/DragState.h \
     page/EventHandler.h \
     page/EventSource.h \
     page/EditorClient.h \

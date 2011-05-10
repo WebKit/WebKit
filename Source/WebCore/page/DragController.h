@@ -75,7 +75,8 @@ namespace WebCore {
         DragDestinationAction dragDestinationAction() const { return m_dragDestinationAction; }
         DragSourceAction delegateDragSourceAction(const IntPoint& pagePoint);
         
-        bool mayStartDragAtEventLocation(const Frame*, const IntPoint& framePos, Node*);
+        Node* draggableNode(const Frame*, Node*, bool dhtmlOK, bool uaOK, int x, int y, bool& dhtmlWillDrag) const;
+        bool mayStartDragAtEventLocation(const Frame*, const IntPoint& framePos, Node*) const;
         void dragEnded();
         
         void placeDragCaret(const IntPoint&);

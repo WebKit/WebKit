@@ -569,7 +569,41 @@ bool DragController::tryDHTMLDrag(DragData* dragData, DragOperation& operation)
     return true;
 }
 
-bool DragController::mayStartDragAtEventLocation(const Frame* frame, const IntPoint& framePos, Node* node)
+Node* DragController::draggableNode(const Frame* src, Node* startNode, bool dhtmlOK, bool uaOK, int x, int y, bool& dhtmlWillDrag) const
+{
+    if (!dhtmlOK && !uaOK)
+        return 0;
+
+    for (const RenderObject* renderer = startNode->renderer(); renderer; renderer = renderer->parent()) {
+        Node* node = renderer->node();
+        if (node && node->nodeType() == Node::TEXT_NODE) {
+            // Since there's no way for the author to address the -webkit-user-drag style for a text node,
+            // we use our own judgement.
+            if (uaOK && mayStartDragAtEventLocation(src, IntPoint(x, y), node)) {
+                dhtmlWillDrag = false;
+                return node;
+            }
+            if (node->canStartSelection())
+                // In this case we have a click in the unselected portion of text. If this text is
+                // selectable, we want to start the selection process instead of looking for a parent
+                // to try to drag.
+                return 0;
+        } else {
+            EUserDrag dragMode = renderer->style()->userDrag();
+            if (dhtmlOK && dragMode == DRAG_ELEMENT) {
+                dhtmlWillDrag = true;
+                return node;
+            }
+            if (uaOK && dragMode == DRAG_AUTO && mayStartDragAtEventLocation(src, IntPoint(x, y), node)) {
+                dhtmlWillDrag = false;
+                return node;
+            }
+        }
+    }
+    return 0;
+}
+
+bool DragController::mayStartDragAtEventLocation(const Frame* frame, const IntPoint& framePos, Node* node) const
 {
     ASSERT(frame);
     ASSERT(frame->settings());

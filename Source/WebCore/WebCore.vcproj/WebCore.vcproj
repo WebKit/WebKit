@@ -24498,6 +24498,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\page\DragState.h"
+				>
+			</File>
+			<File
 				RelativePath="..\page\win\DragControllerWin.cpp"
 				>
 			</File>

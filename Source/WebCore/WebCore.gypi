@@ -688,6 +688,7 @@
             'page/DragActions.h',
             'page/DragClient.h',
             'page/DragController.h',
+            'page/DragState.h',
             'page/EditorClient.h',
             'page/EventHandler.h',
             'page/FocusController.h',

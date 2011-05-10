@@ -1,3 +1,36 @@
+2011-05-09  Daniel Cheng  <dcheng@chromium.org>
+
+        Reviewed by Tony Chang.
+
+        Refactor RenderObject::draggableNode.
+        https://bugs.webkit.org/show_bug.cgi?id=60503
+
+        This patch lays the ground for refactoring the drag start logic. It moves draggableNode to
+        DragController to avoid the awkward plumbing of calling DragController from RenderObject and
+        also moves EventHandlerDragState out from EventHandler so it can be shared between
+        EventHandler and DragController where appropriate.
+
+        No new tests since there should be no behavior change.
+
+        * GNUmakefile.list.am:
+        * WebCore.gypi:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * page/DragController.cpp:
+        (WebCore::DragController::draggableNode):
+        (WebCore::DragController::mayStartDragAtEventLocation):
+        * page/DragController.h:
+        * page/DragState.h: Added.
+        (WebCore::DragState::DragState):
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::dragState):
+        (WebCore::EventHandler::eventMayStartDrag):
+        (WebCore::EventHandler::handleDrag):
+        * page/EventHandler.h:
+        * rendering/RenderObject.cpp:
+        * rendering/RenderObject.h:
+
 2011-05-09  Luke Macpherson   <macpherson@chromium.org>
 
         Reviewed by Darin Adler.

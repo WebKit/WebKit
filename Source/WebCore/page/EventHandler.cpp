@@ -35,6 +35,7 @@
 #include "CursorList.h"
 #include "Document.h"
 #include "DragController.h"
+#include "DragState.h"
 #include "Editor.h"
 #include "EventNames.h"
 #include "EventQueue.h"
@@ -217,9 +218,9 @@ EventHandler::~EventHandler()
 }
     
 #if ENABLE(DRAG_SUPPORT)
-EventHandler::EventHandlerDragState& EventHandler::dragState()
+DragState& EventHandler::dragState()
 {
-    DEFINE_STATIC_LOCAL(EventHandlerDragState, state, ());
+    DEFINE_STATIC_LOCAL(DragState, state, ());
     return state;
 }
 #endif // ENABLE(DRAG_SUPPORT)
@@ -595,11 +596,15 @@ bool EventHandler::eventMayStartDrag(const PlatformMouseEvent& event) const
     if (!view)
         return false;
 
+    Page* page = m_frame->page();
+    if (!page)
+        return false;
+
     HitTestRequest request(HitTestRequest::ReadOnly);
     HitTestResult result(view->windowToContents(event.pos()));
     m_frame->contentRenderer()->layer()->hitTest(request, result);
     bool srcIsDHTML;
-    return result.innerNode() && result.innerNode()->renderer()->draggableNode(DHTMLFlag, UAFlag, result.point().x(), result.point().y(), srcIsDHTML);
+    return result.innerNode() && page->dragController()->draggableNode(m_frame, result.innerNode(), DHTMLFlag, UAFlag, result.point().x(), result.point().y(), srcIsDHTML);
 }
 
 void EventHandler::updateSelectionForMouseDrag()
@@ -2639,14 +2644,6 @@ void EventHandler::freeClipboard()
         dragState().m_dragClipboard->setAccessPolicy(ClipboardNumb);
 }
 
-bool EventHandler::shouldDragAutoNode(Node* node, const IntPoint& point) const
-{
-    if (!node || !m_frame->view())
-        return false;
-    Page* page = m_frame->page();
-    return page && page->dragController()->mayStartDragAtEventLocation(m_frame, point, node);
-}
-
 void EventHandler::dragSourceEndedAt(const PlatformMouseEvent& event, DragOperation operation)
 {
     if (dragState().m_dragSrc && dragState().m_dragSrcMayBeDHTML) {
@@ -2695,9 +2692,9 @@ bool EventHandler::handleDrag(const MouseEventWithHitTestResults& event)
         HitTestResult result(m_mouseDownPos);
         m_frame->contentRenderer()->layer()->hitTest(request, result);
         Node* node = result.innerNode();
-        if (node && node->renderer())
-            dragState().m_dragSrc = node->renderer()->draggableNode(dragState().m_dragSrcMayBeDHTML, dragState().m_dragSrcMayBeUA,
-                                                                    m_mouseDownPos.x(), m_mouseDownPos.y(), dragState().m_dragSrcIsDHTML);
+        if (node && m_frame->page())
+            dragState().m_dragSrc = m_frame->page()->dragController()->draggableNode(m_frame, node, dragState().m_dragSrcMayBeDHTML, dragState().m_dragSrcMayBeUA,
+                                                                                     m_mouseDownPos.x(), m_mouseDownPos.y(), dragState().m_dragSrcIsDHTML);
         else
             dragState().m_dragSrc = 0;
         

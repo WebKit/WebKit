@@ -1498,43 +1498,6 @@ Color RenderObject::selectionEmphasisMarkColor() const
     return selectionColor(CSSPropertyWebkitTextEmphasisColor);
 }
 
-#if ENABLE(DRAG_SUPPORT)
-Node* RenderObject::draggableNode(bool dhtmlOK, bool uaOK, int x, int y, bool& dhtmlWillDrag) const
-{
-    if (!dhtmlOK && !uaOK)
-        return 0;
-
-    for (const RenderObject* curr = this; curr; curr = curr->parent()) {
-        Node* elt = curr->node();
-        if (elt && elt->nodeType() == Node::TEXT_NODE) {
-            // Since there's no way for the author to address the -webkit-user-drag style for a text node,
-            // we use our own judgement.
-            if (uaOK && view()->frameView()->frame()->eventHandler()->shouldDragAutoNode(curr->node(), IntPoint(x, y))) {
-                dhtmlWillDrag = false;
-                return curr->node();
-            }
-            if (elt->canStartSelection())
-                // In this case we have a click in the unselected portion of text.  If this text is
-                // selectable, we want to start the selection process instead of looking for a parent
-                // to try to drag.
-                return 0;
-        } else {
-            EUserDrag dragMode = curr->style()->userDrag();
-            if (dhtmlOK && dragMode == DRAG_ELEMENT) {
-                dhtmlWillDrag = true;
-                return curr->node();
-            }
-            if (uaOK && dragMode == DRAG_AUTO
-                    && view()->frameView()->frame()->eventHandler()->shouldDragAutoNode(curr->node(), IntPoint(x, y))) {
-                dhtmlWillDrag = false;
-                return curr->node();
-            }
-        }
-    }
-    return 0;
-}
-#endif // ENABLE(DRAG_SUPPORT)
-
 void RenderObject::selectionStartEnd(int& spos, int& epos) const
 {
     view()->selectionStartEnd(spos, epos);
