@@ -45,6 +45,18 @@
 #include <qwebview.h>
 #include <qimagewriter.h>
 
+static void removeRecursive(const QString& dirname)
+{
+    QDir dir(dirname);
+    QFileInfoList entries(dir.entryInfoList(QDir::Dirs | QDir::Files | QDir::NoDotAndDotDot));
+    for (int i = 0; i < entries.count(); ++i)
+        if (entries[i].isDir())
+            removeRecursive(entries[i].filePath());
+        else
+            dir.remove(entries[i].fileName());
+    QDir().rmdir(dirname);
+}
+
 class EventSpy : public QObject, public QList<QEvent::Type>
 {
     Q_OBJECT
@@ -145,10 +157,16 @@ private slots:
 #ifdef Q_OS_MAC
     void macCopyUnicodeToClipboard();
 #endif
-    
+
 private:
     QWebView* m_view;
     QWebPage* m_page;
+    QString tmpDirPath() const
+    {
+        static QString tmpd = QDir::tempPath() + "/tst_qwebpage-"
+            + QDateTime::currentDateTime().toString(QLatin1String("yyyyMMddhhmmss"));
+        return tmpd;
+    }
 };
 
 tst_QWebPage::tst_QWebPage()
@@ -172,9 +190,7 @@ void tst_QWebPage::cleanup()
 
 void tst_QWebPage::cleanupFiles()
 {
-    QFile::remove("Databases.db");
-    QDir::current().rmdir("http_www.myexample.com_0");
-    QFile::remove("http_www.myexample.com_0.localstorage");
+    removeRecursive(tmpDirPath());
 }
 
 void tst_QWebPage::initTestCase()
@@ -553,7 +569,7 @@ void tst_QWebPage::contextMenuCrash()
 
 void tst_QWebPage::database()
 {
-    QString path = QDir::currentPath();
+    QString path = tmpDirPath();
     m_page->settings()->setOfflineStoragePath(path);
     QVERIFY(m_page->settings()->offlineStoragePath() == path);
 
@@ -907,7 +923,7 @@ void tst_QWebPage::createViewlessPlugin()
 
 void tst_QWebPage::multiplePageGroupsAndLocalStorage()
 {
-    QDir dir(QDir::currentPath());
+    QDir dir(tmpDirPath());
     dir.mkdir("path1");
     dir.mkdir("path2");
 
@@ -915,10 +931,10 @@ void tst_QWebPage::multiplePageGroupsAndLocalStorage()
     QWebView view2;
 
     view1.page()->settings()->setAttribute(QWebSettings::LocalStorageEnabled, true);
-    view1.page()->settings()->setLocalStoragePath(QDir::toNativeSeparators(QDir::currentPath() + "/path1"));
+    view1.page()->settings()->setLocalStoragePath(QDir::toNativeSeparators(tmpDirPath() + "/path1"));
     DumpRenderTreeSupportQt::webPageSetGroupName(view1.page(), "group1");
     view2.page()->settings()->setAttribute(QWebSettings::LocalStorageEnabled, true);    
-    view2.page()->settings()->setLocalStoragePath(QDir::toNativeSeparators(QDir::currentPath() + "/path2"));
+    view2.page()->settings()->setLocalStoragePath(QDir::toNativeSeparators(tmpDirPath() + "/path2"));
     DumpRenderTreeSupportQt::webPageSetGroupName(view2.page(), "group2");
     QCOMPARE(DumpRenderTreeSupportQt::webPageGroupName(view1.page()), QString("group1"));
     QCOMPARE(DumpRenderTreeSupportQt::webPageGroupName(view2.page()), QString("group2"));
@@ -941,8 +957,8 @@ void tst_QWebPage::multiplePageGroupsAndLocalStorage()
 
     QTest::qWait(1000);
 
-    QFile::remove(QDir::toNativeSeparators(QDir::currentPath() + "/path1/http_www.myexample.com_0.localstorage"));
-    QFile::remove(QDir::toNativeSeparators(QDir::currentPath() + "/path2/http_www.myexample.com_0.localstorage"));
+    QFile::remove(QDir::toNativeSeparators(tmpDirPath() + "/path1/http_www.myexample.com_0.localstorage"));
+    QFile::remove(QDir::toNativeSeparators(tmpDirPath() + "/path2/http_www.myexample.com_0.localstorage"));
     dir.rmdir(QDir::toNativeSeparators("./path1"));
     dir.rmdir(QDir::toNativeSeparators("./path2"));
 }

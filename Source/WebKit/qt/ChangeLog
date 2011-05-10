@@ -1,3 +1,21 @@
+2011-05-10  Ademar de Souza Reis Jr.  <ademar.reis@openbossa.org>
+
+        Reviewed by Csaba Osztrogonác.
+
+        [Qt] tst_QWebPage creates temporary files in the current working dir
+        https://bugs.webkit.org/show_bug.cgi?id=60497
+
+        tst_QWebPage was using QDir::currentPath when creating temporary dirs
+        and leaving them after the test was run. I basically borrowed the fix
+        from tst_QDeclarativeWebView.
+
+        * tests/qwebpage/tst_qwebpage.cpp:
+        (removeRecursive):
+        (tst_QWebPage::tmpDirPath):
+        (tst_QWebPage::cleanupFiles):
+        (tst_QWebPage::database):
+        (tst_QWebPage::multiplePageGroupsAndLocalStorage):
+
 2011-05-09  Chang Shu  <cshu@webkit.org>
 
         Reviewed by Kenneth Rohde Christiansen.
