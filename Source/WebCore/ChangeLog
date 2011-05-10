@@ -1,3 +1,9 @@
+2011-05-09  Simon Fraser  <simon.fraser@apple.com>
+
+        Move IconURL.* into the dom grouping.
+
+        * WebCore.xcodeproj/project.pbxproj:
+
 2011-05-08  Jeremy Noble  <jer.noble@apple.com>
 
         Reviewed by Dan Bernstein.
