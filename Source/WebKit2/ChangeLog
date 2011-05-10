@@ -1,3 +1,26 @@
+2011-05-09  Jeremy Noble  <jer.noble@apple.com>
+
+        Reviewed by Darin Adler.
+
+        WebKit2: Cancelling full screen before animation completes leads to full screen window staying up.
+        https://bugs.webkit.org/show_bug.cgi?id=60531
+
+        Remove the (unused) _isAnimating ivar and replace it with two ivars: _isEnteringFullScreen and 
+        _isExitingFullScreen.  These will ensure each is only called once per full screen request, and
+        that if one exit/enter request interrupts another, that the required functions are called in 
+        order.
+
+        * UIProcess/mac/WKFullScreenWindowController.h:
+        * UIProcess/mac/WKFullScreenWindowController.mm:
+        (-[WKFullScreenWindowController enterFullScreen:]): Removed _isAnimating.
+        (-[WKFullScreenWindowController exitFullScreen]): Ditto.
+        (-[WKFullScreenWindowController beganEnterFullScreenAnimation]): Gate on _isEnteringFullScreen. Check _isExitingFullScreen
+            and call [self finishedExitFullScreenAnimation:] if necessary.
+        (-[WKFullScreenWindowController finishedEnterFullScreenAnimation:]): Gate on _isEnteringFullScreen.
+        (-[WKFullScreenWindowController beganExitFullScreenAnimation]): Gate on _isExitingFullScreen. Check _isEnteringFullScreen
+            and call [self finishedEnterFullScreenAnimation:] if necessary.
+        (-[WKFullScreenWindowController finishedExitFullScreenAnimation:]): Gate on _isExitingFullScreen.
+
 2011-05-10  Beth Dakin  <bdakin@apple.com>
 
         Reviewed by Darin Adler.

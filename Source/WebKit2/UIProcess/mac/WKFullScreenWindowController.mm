@@ -176,7 +176,6 @@ using namespace WebCore;
         return;
     
     _isFullScreen = YES;
-    _isAnimating = YES;
     
     NSDisableScreenUpdates();
     
@@ -208,7 +207,14 @@ using namespace WebCore;
 }
 
 - (void)beganEnterFullScreenAnimation
-{    
+{
+    if (_isEnteringFullScreen)
+        return;
+    _isEnteringFullScreen = YES;
+
+    if (_isExitingFullScreen)
+        [self finishedExitFullScreenAnimation:NO];
+
     [self _updateMenuAndDockForFullScreen];   
     [self _updatePowerAssertions];
     
@@ -228,11 +234,14 @@ using namespace WebCore;
     [CATransaction commit];
 
     NSEnableScreenUpdates();
-    _isAnimating = YES;
 }
 
 - (void)finishedEnterFullScreenAnimation:(bool)completed
 {
+    if (!_isEnteringFullScreen)
+        return;
+    _isEnteringFullScreen = NO;
+
     NSDisableScreenUpdates();
     
     if (completed) {                
@@ -267,8 +276,6 @@ using namespace WebCore;
     
     [self _manager]->didEnterFullScreen();
     NSEnableScreenUpdates();
-    
-    _isAnimating = NO;
 }
 
 - (void)exitFullScreen
@@ -277,7 +284,6 @@ using namespace WebCore;
         return;
     
     _isFullScreen = NO;
-    _isAnimating = YES;
     
     NSDisableScreenUpdates();
     
@@ -286,7 +292,14 @@ using namespace WebCore;
 }
 
 - (void)beganExitFullScreenAnimation
-{   
+{
+    if (_isExitingFullScreen)
+        return;
+    _isExitingFullScreen = YES;
+
+    if (_isEnteringFullScreen)
+        [self finishedExitFullScreenAnimation:NO];
+
     [self _updateMenuAndDockForFullScreen];   
     [self _updatePowerAssertions];
     
@@ -317,11 +330,14 @@ using namespace WebCore;
     [CATransaction commit];
     
     NSEnableScreenUpdates();
-    _isAnimating = YES;
 }
 
 - (void)finishedExitFullScreenAnimation:(bool)completed
 {
+    if (!_isExitingFullScreen)
+        return;
+    _isExitingFullScreen = NO;
+
     NSDisableScreenUpdates();
     
     if (completed) {
@@ -334,9 +350,7 @@ using namespace WebCore;
     }
     
     [self _manager]->didExitFullScreen();
-    NSEnableScreenUpdates();
-    
-    _isAnimating = NO;
+    NSEnableScreenUpdates();    
 }
 
 - (void)enterAcceleratedCompositingMode:(const WebKit::LayerTreeContext&)layerTreeContext

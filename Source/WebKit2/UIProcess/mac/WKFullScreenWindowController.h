@@ -45,7 +45,8 @@ class IntRect;
     RetainPtr<NSView> _layerViewPlaceholder;
     RetainPtr<NSView> _layerHostingView;
     
-    BOOL _isAnimating;
+    BOOL _isEnteringFullScreen;
+    BOOL _isExitingFullScreen;
     BOOL _isFullScreen;
     BOOL _isWindowLoaded;
     BOOL _forceDisableAnimation;
