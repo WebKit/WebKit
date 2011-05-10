@@ -122,7 +122,7 @@ sub runAllTestsInSuite($)
 sub runTest($$)
 {
     my ($suite, $testName) = @_;
-    my $test = $suite . "." . $testName;
+    my $test = $suite . "/" . $testName;
 
     print "    Test: $testName -> ";
 
@@ -235,7 +235,7 @@ sub populateTests()
     my %keyedTests = ();
     for my $test (@tests) {
         $test =~ s/[\r\n]*$//;
-        my ($suite, $testName) = split(/\./, $test);
+        my ($suite, $testName) = split(/\//, $test);
         push @{$keyedTests{$suite}}, $testName;
     }
     

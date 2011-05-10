@@ -33,15 +33,11 @@ int main(int argc, const char* argv[])
 
     bool passed = true;
 
-    if (argc == 1)
-        passed = TestWebKitAPI::TestsController::shared().runAllTests();
-    else {
-        std::string argument(argv[1]);
-        if (argument == "--dump-tests")
-            TestWebKitAPI::TestsController::shared().dumpTestNames();
-        else
-            passed = TestWebKitAPI::TestsController::shared().runTestNamed(argument);
-    }
+    std::string argument(argv[1]);
+    if (argument == "--dump-tests")
+        TestWebKitAPI::TestsController::shared().dumpTestNames();
+    else   
+        passed = TestWebKitAPI::TestsController::shared().runTestNamed(argument);
 
     [pool drain];
 

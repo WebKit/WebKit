@@ -56,15 +56,12 @@ setConfiguration();
 chdirWebKit();
 
 # Build
+chdir "Tools/TestWebKitAPI" or die;
 
 my $result;
 if (isAppleMacWebKit()) {
-    chdir "Source/ThirdParty/gtest";
-    buildXCodeProject("xcode/gtest", $clean, XcodeOptions(), @ARGV);
-    chdir "../../../Tools/TestWebKitAPI" or die;
     $result = buildXCodeProject("TestWebKitAPI", $clean, XcodeOptions(), @ARGV);
 } elsif (isAppleWinWebKit()) {
-    chdir "Tools/TestWebKitAPI" or die;
     $result = buildVisualStudioProject("win/TestWebKitAPI.sln", $clean);
 } else {
     die "TestWebKitAPI is not supported on this platform.\n";
