@@ -128,6 +128,9 @@ class DefaultStyleErrorHandler(object):
         # Was the line that was modified?
         return self._line_numbers is None or line_number in self._line_numbers
 
+    def turn_off_line_filtering(self):
+        self._line_numbers = None
+
     def __call__(self, line_number, category, confidence, message):
         """Handle the occurrence of a style error.
 

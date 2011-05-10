@@ -58,6 +58,7 @@ class TestExpectationsChecker(object):
     def __init__(self, file_path, handle_style_error):
         self._file_path = file_path
         self._handle_style_error = handle_style_error
+        self._handle_style_error.turn_off_line_filtering()
         self._tab_checker = TabChecker(file_path, handle_style_error)
         self._output_regex = re.compile('Line:(?P<line>\d+)\s*(?P<message>.+)')
         # Determining the port of this expectations.

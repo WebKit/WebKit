@@ -29,23 +29,43 @@ import unittest
 import xml
 
 
+class MockErrorHandler(object):
+    def __init__(self, handle_style_error):
+        self.turned_off_filtering = False
+        self._handle_style_error = handle_style_error
+
+    def turn_off_line_filtering(self):
+        self.turned_off_filtering = True
+
+    def __call__(self, line_number, category, confidence, message):
+        self._handle_style_error(self, line_number, category, confidence, message)
+
+
 class XMLCheckerTest(unittest.TestCase):
     """Tests XMLChecker class."""
 
     def assert_no_error(self, xml_data):
-        def handle_style_error(line_number, category, confidence, message):
+        def handle_style_error(mock_error_handler, line_number, category, confidence, message):
             self.fail('Unexpected error: %d %s %d %s' % (line_number, category, confidence, message))
-        checker = xml.XMLChecker('foo.xml', handle_style_error)
+
+        error_handler = MockErrorHandler(handle_style_error)
+        checker = xml.XMLChecker('foo.xml', error_handler)
         checker.check(xml_data.split('\n'))
+        self.assertTrue(error_handler.turned_off_filtering)
 
     def assert_error(self, expected_line_number, expected_category, xml_data):
-        def handle_style_error(line_number, category, confidence, message):
-            self.had_error = True
+        def handle_style_error(mock_error_handler, line_number, category, confidence, message):
+            mock_error_handler.had_error = True
             self.assertEquals(expected_line_number, line_number)
             self.assertEquals(expected_category, category)
-        checker = xml.XMLChecker('foo.xml', handle_style_error)
+
+        error_handler = MockErrorHandler(handle_style_error)
+        error_handler.had_error = False
+
+        checker = xml.XMLChecker('foo.xml', error_handler)
         checker.check(xml_data.split('\n'))
-        self.assertTrue(self.had_error)
+        self.assertTrue(error_handler.had_error)
+        self.assertTrue(error_handler.turned_off_filtering)
 
     def mock_handle_style_error(self):
         pass
@@ -57,16 +77,15 @@ class XMLCheckerTest(unittest.TestCase):
         self.assert_error(3, 'xml/syntax', '<foo>\n</foo>\n</foo>\n')
 
     def test_init(self):
-        checker = xml.XMLChecker('foo.xml', self.mock_handle_style_error)
-        self.assertEquals(checker.file_path, 'foo.xml')
-        self.assertEquals(checker.handle_style_error, self.mock_handle_style_error)
+        error_handler = MockErrorHandler(self.mock_handle_style_error)
+        checker = xml.XMLChecker('foo.xml', error_handler)
+        self.assertEquals(checker._handle_style_error, error_handler)
 
     def test_missing_closing_tag(self):
         self.assert_error(3, 'xml/syntax', '<foo>\n<bar>\n</foo>\n')
 
     def test_no_error(self):
-        checker = xml.XMLChecker('foo.xml', self.assert_no_error)
-        checker.check(['<foo>', '</foo>'])
+        self.assert_no_error('<foo>\n</foo>')
 
 if __name__ == '__main__':
     unittest.main()

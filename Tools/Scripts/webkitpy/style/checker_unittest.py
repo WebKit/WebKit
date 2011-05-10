@@ -547,8 +547,7 @@ class CheckerDispatcherDispatchTest(unittest.TestCase):
         file_path = file_base + "." + file_extension
         self.assert_checker_xml(file_path)
         checker = self.dispatch(file_path)
-        self.assertEquals(checker.file_path, file_path)
-        self.assertEquals(checker.handle_style_error,
+        self.assertEquals(checker._handle_style_error,
                           self.mock_handle_style_error)
 
     def test_none_paths(self):

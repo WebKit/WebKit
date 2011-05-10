@@ -1,3 +1,26 @@
+2011-05-10  David Levin  <levin@chromium.org>
+
+        Reviewed by Shinichiro Hamaji.
+
+        check-webkit-style shouldn't filter the errors using the modified lines for the xml and test expectations checkers.
+        https://bugs.webkit.org/show_bug.cgi?id=60466
+
+        * Scripts/webkitpy/style/checker.py: (unrelated) style fix.
+        * Scripts/webkitpy/style/checker_unittest.py: Remove the file_path check since
+          that property was removed.
+        * Scripts/webkitpy/style/checkers/test_expectations.py: Turn off the line
+          filtering for errors.
+        * Scripts/webkitpy/style/checkers/test_expectations_unittest.py: Add testing to
+          verify that the line filtering is turned off.
+        * Scripts/webkitpy/style/checkers/xml.py: Turn off the line filtering for errors
+          and remove the unused file_path parameter.
+        * Scripts/webkitpy/style/checkers/xml_unittest.py: Add testing to verify that the
+          line filtering is turned off (and fix test_no_error).
+        * Scripts/webkitpy/style/error_handlers.py: Added a way to turn off the filtering
+          of errors based on the lines changed in the patch.
+        * Scripts/webkitpy/style/error_handlers_unittest.py: Added a test for turning off
+          the filtering.
+
 2011-05-10  Adam Roben  <aroben@apple.com>
 
         Update some plugin tests to work with WebKit2's asynchronous windowed plugin positioning on Windows

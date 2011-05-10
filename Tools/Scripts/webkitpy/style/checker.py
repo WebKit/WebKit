@@ -765,8 +765,8 @@ class StyleProcessor(ProcessorBase):
 
         min_confidence = self._configuration.min_confidence
         checker = self._dispatcher.dispatch(file_path,
-                                                      style_error_handler,
-                                                      min_confidence)
+                                            style_error_handler,
+                                            min_confidence)
 
         if checker is None:
             raise AssertionError("File should not be checked: '%s'" % file_path)

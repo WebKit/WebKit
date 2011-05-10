@@ -185,3 +185,12 @@ class DefaultStyleErrorHandlerTest(unittest.TestCase):
         self.assertEquals(1, self._error_count)
         self.assertEquals(self._error_messages,
                           ["foo.h(50):  message  [whitespace/tab] [5]\n"])
+
+        # Error on non-modified line after turning off line filtering: error.
+        error_handler.turn_off_line_filtering()
+        self._call_error_handler(error_handler, confidence, line_number=60)
+        self.assertEquals(2, self._error_count)
+        self.assertEquals(self._error_messages,
+                          ['foo.h(50):  message  [whitespace/tab] [5]\n',
+                           'foo.h(60):  message  [whitespace/tab] [5]\n',
+                           'Suppressing further [whitespace/tab] reports for this file.\n'])

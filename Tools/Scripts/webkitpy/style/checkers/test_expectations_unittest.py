@@ -50,6 +50,10 @@ class ErrorCollector(object):
 
     def __init__(self):
         self._errors = []
+        self.turned_off_filtering = False
+
+    def turn_off_line_filtering(self):
+        self.turned_off_filtering = True
 
     def __call__(self, lineno, category, confidence, message):
         self._errors.append('%s  [%s] [%d]' % (message, category, confidence))
@@ -59,6 +63,7 @@ class ErrorCollector(object):
 
     def reset_errors(self):
         self._errors = []
+        self.turned_off_filtering = False
 
 
 class TestExpectationsTestCase(unittest.TestCase):
@@ -81,6 +86,7 @@ class TestExpectationsTestCase(unittest.TestCase):
                                         overrides=None)
         checker.check_tabs(lines)
         self.assertEqual(expected, self._error_collector.get_errors())
+        self.assertTrue(self._error_collector.turned_off_filtering)
 
     def test_valid_expectations(self):
         self.assert_lines_lint(

@@ -31,8 +31,8 @@ class XMLChecker(object):
     """Processes XML lines for checking style."""
 
     def __init__(self, file_path, handle_style_error):
-        self.file_path = file_path
-        self.handle_style_error = handle_style_error
+        self._handle_style_error = handle_style_error
+        self._handle_style_error.turn_off_line_filtering()
 
     def check(self, lines):
         parser = expat.ParserCreate()
@@ -42,4 +42,4 @@ class XMLChecker(object):
                 parser.Parse('\n')
             parser.Parse('', True)
         except expat.ExpatError, error:
-            self.handle_style_error(error.lineno, 'xml/syntax', 5, expat.ErrorString(error.code))
+            self._handle_style_error(error.lineno, 'xml/syntax', 5, expat.ErrorString(error.code))
