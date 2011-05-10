@@ -1,3 +1,22 @@
+2011-05-10  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by David Levin.
+
+        Enable strict PassOwnPtr on Chromium
+        https://bugs.webkit.org/show_bug.cgi?id=60502
+
+        Technically there are a few bits in here that weren't reviewed by Dave,
+        but close enough for government work.  This patch all fixes  the
+        remaining strict PassOwnPtr violations on Chromium Linux.
+
+        * platform/graphics/chromium/PlatformCanvas.cpp:
+        (WebCore::PlatformCanvas::resize):
+        * platform/graphics/chromium/SimpleFontDataLinux.cpp:
+        * platform/graphics/skia/ImageBufferSkia.cpp:
+        (WebCore::ImageBuffer::ImageBuffer):
+        * platform/graphics/skia/PlatformContextSkia.cpp:
+        (WebCore::PlatformContextSkia::setSharedGraphicsContext3D):
+
 2011-05-10  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Alice Liu.

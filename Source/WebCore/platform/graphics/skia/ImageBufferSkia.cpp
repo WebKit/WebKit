@@ -66,13 +66,13 @@ ImageBuffer::ImageBuffer(const IntSize& size, ColorSpace, RenderingMode, bool& s
     : m_data(size)
     , m_size(size)
 {
-    SkCanvas* canvas = skia::CreateBitmapCanvas(size.width(), size.height(), false);
+    OwnPtr<SkCanvas> canvas = adoptPtr(skia::CreateBitmapCanvas(size.width(), size.height(), false));
     if (!canvas) {
         success = false;
         return;
     }
 
-    m_data.m_canvas = canvas;
+    m_data.m_canvas = canvas.release();
     m_data.m_platformContext.setCanvas(m_data.m_canvas.get());
     m_context = adoptPtr(new GraphicsContext(&m_data.m_platformContext));
     m_context->platformContext()->setDrawingToImageBuffer(true);

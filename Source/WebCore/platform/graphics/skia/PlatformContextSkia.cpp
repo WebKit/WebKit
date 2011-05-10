@@ -723,7 +723,7 @@ void PlatformContextSkia::setSharedGraphicsContext3D(SharedGraphicsContext3D* co
     m_accelerationMode = NoAcceleration;
 #if ENABLE(ACCELERATED_2D_CANVAS)
     if (context && drawingBuffer) {
-        m_gpuCanvas = new GraphicsContextGPU(context, drawingBuffer, size);
+        m_gpuCanvas = adoptPtr(new GraphicsContextGPU(context, drawingBuffer, size));
         m_uploadTexture.clear();
         drawingBuffer->setWillPublishCallback(WillPublishCallbackImpl::create(this));
 
@@ -731,7 +731,7 @@ void PlatformContextSkia::setSharedGraphicsContext3D(SharedGraphicsContext3D* co
         GrContext* gr = context->grContext();
         if (gr) {
             m_accelerationMode = SkiaGPU;
-            
+
             context->makeContextCurrent();
             m_gpuCanvas->bindFramebuffer();
 
@@ -741,10 +741,14 @@ void PlatformContextSkia::setSharedGraphicsContext3D(SharedGraphicsContext3D* co
             GrPlatformSurfaceDesc drawBufDesc;
             drawingBuffer->getGrPlatformSurfaceDesc(&drawBufDesc);
             GrTexture* drawBufTex = static_cast<GrTexture*>(gr->createPlatformSurface(drawBufDesc));
+            // FIXME: This should use a smart pointer.
             SkDeviceFactory* factory = new SkGpuDeviceFactory(gr, drawBufTex);
+            // FIXME: This should use a smart pointer.
             drawBufTex->unref();
 
+            // FIXME: This should use a smart pointer.
             SkDevice* device = factory->newDevice(m_canvas, SkBitmap::kARGB_8888_Config, drawingBuffer->size().width(), drawingBuffer->size().height(), false, false);
+            // FIXME: This should use a smart pointer.
             m_canvas->setDevice(device)->unref();
             m_canvas->setDeviceFactory(factory);
         } else
