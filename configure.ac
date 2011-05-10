@@ -99,6 +99,13 @@ if test -z "$GPERF"; then
    AC_MSG_ERROR([You need the 'gperf' hash function generator to compile WebKit])
 fi
 
+# Disable C++0x compat warnings for GCC >= 4.6.0 until we build
+# cleanly with that.
+if test "$CXX" = "g++"; then
+   CXX_VERSION=`$CXX -dumpversion`
+   AX_COMPARE_VERSION([4.6.0],[ge],[$CXX_VERSION],CXXFLAGS="$CXXFLAGS -Wno-c++0x-compat")
+fi
+
 # pthread (not needed on Windows)
 if test "$os_win32" = "no"; then
 AC_CHECK_HEADERS([pthread.h],
