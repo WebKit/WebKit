@@ -1760,6 +1760,9 @@ storage/domstorage/localstorage/storagetracker/storage-tracker-5-delete-one.html
 fast/forms/input-autofilled.html
 fast/forms/reset-autofilled.html
 
+# eventSender.keyDown is unimplemented
+fast/forms/radio-group-keyboard-change-event.html
+
 ### END OF (2) Classified failures without bug reports (yet)
 ########################################
 

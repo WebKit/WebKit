@@ -1,5 +1,15 @@
 2011-05-10  Csaba Osztrogonác  <ossy@webkit.org>
 
+        [WK2] eventSender.keyDown is unimplemented
+
+        Move fast/forms/radio-group-keyboard-change-event.html from qt-wk2/Skipped to
+        mac-wk2/Skipped, because it isn't Qt specific bug, but general WK2 specific one.
+
+        * platform/mac-wk2/Skipped:
+        * platform/qt-wk2/Skipped:
+
+2011-05-10  Csaba Osztrogonác  <ossy@webkit.org>
+
         Unreviewed.
 
         [Qt][Mac] Add platform specific expected result for plugins/plugin-javascript-access.html,
