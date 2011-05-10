@@ -1,3 +1,13 @@
+2011-05-09  Dmitry Lomov  <dslomov@google.com>
+
+        Reviewed by Sam Weinig.
+        
+        Switch TestWebKitAPI to GTest
+        https://bugs.webkit.org/show_bug.cgi?id=59561
+
+        * Source/ThirdParty/gtest/README.WebKit:
+        * Source/ThirdParty/gtest/msvc/gtest-md.vcproj:
+
 2011-05-09  Xan Lopez  <xlopez@igalia.com>
 
         Reviewed by Gustavo Noronha.

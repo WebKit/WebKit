@@ -32,9 +32,9 @@ namespace TestWebKitAPI {
 TEST(WTF, VectorBasic)
 {
     Vector<int> intVector;
-    TEST_ASSERT(intVector.isEmpty());
-    TEST_ASSERT(intVector.size() == 0);
-    TEST_ASSERT(intVector.capacity() == 0);
+    ASSERT_TRUE(intVector.isEmpty());
+    ASSERT_EQ(0ul, intVector.size());
+    ASSERT_EQ(0ul, intVector.capacity());
 }
 
 } // namespace TestWebKitAPI

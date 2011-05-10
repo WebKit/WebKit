@@ -1,3 +1,26 @@
+2011-05-09  Dmitry Lomov  <dslomov@google.com>
+
+        Reviewed by Sam Weinig.
+
+        Switch TestWebKitAPI to GTest
+        https://bugs.webkit.org/show_bug.cgi?id=59561
+
+        * Scripts/build-api-tests:
+        * Scripts/run-api-tests:
+        * TestWebKitAPI/Configurations/TestWebKitAPICommon.vsprops:
+        * TestWebKitAPI/Test.h:
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WTF/VectorBasic.cpp:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/TestsController.cpp:
+        (TestWebKitAPI::TestsController::TestsController):
+        (TestWebKitAPI::TestsController::dumpTestNames):
+        (TestWebKitAPI::TestsController::runTestNamed):
+        (TestWebKitAPI::TestsController::runAllTests):
+        * TestWebKitAPI/TestsController.h:
+        * TestWebKitAPI/mac/main.mm:
+        (main):
+
 2011-05-09  Igor Oliveira  <igor.oliveira@openbossa.org>
 
         Reviewed by Andreas Kling.

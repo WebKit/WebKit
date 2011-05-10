@@ -6,12 +6,12 @@
 	>
 	<Tool
 		Name="VCCLCompilerTool"
-		AdditionalIncludeDirectories="&quot;$(ProjectDir)&quot;;&quot;$(ProjectDir)\..&quot;;&quot;$(ConfigurationBuildDir)\include&quot;;&quot;$(ConfigurationBuildDir)\include\WebCore\ForwardingHeaders&quot;;&quot;$(ConfigurationBuildDir)\include\private&quot;;&quot;$(WebKitLibrariesDir)\include&quot;"
+                AdditionalIncludeDirectories="&quot;$(ProjectDir)&quot;;&quot;$(ProjectDir)\..&quot;;&quot;$(ConfigurationBuildDir)\include&quot;;&quot;$(ConfigurationBuildDir)\include\WebCore\ForwardingHeaders&quot;;&quot;$(ConfigurationBuildDir)\include\private&quot;;&quot;$(WebKitLibrariesDir)\include&quot;;&quot;$(ProjectDir)\..\..\..\Source\ThirdParty\gtest\include&quot;"
 		ForcedIncludeFiles="TestWebKitAPIPrefix.h"
 	/>
 	<Tool
 		Name="VCLinkerTool"
-		AdditionalDependencies="WebKit$(WebKitDLLConfigSuffix).lib JavaScriptCore$(WebKitDLLConfigSuffix).lib"
+		AdditionalDependencies="WebKit$(WebKitDLLConfigSuffix).lib JavaScriptCore$(WebKitDLLConfigSuffix).lib gtest.lib"
 		SubSystem="1"
 	/>
 </VisualStudioPropertySheet>

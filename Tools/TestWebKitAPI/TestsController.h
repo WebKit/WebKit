@@ -39,21 +39,11 @@ public:
 
     void dumpTestNames();
     bool runTestNamed(const std::string&);
-
-    // Called by the tests themselves.
-    void testFailed(const char* file, int line, const char* message);
-
-    typedef Test* (*CreateTestFunction)(const std::string&);
-    void registerCreateTestFunction(const std::string&, CreateTestFunction);
+    bool runAllTests();
 
 private:
     TestsController();
     ~TestsController();
-
-    bool m_testFailed;
-    Test* m_currentTest;
-
-    std::map<std::string, CreateTestFunction> m_createTestFunctions;
 };
 
 } // namespace TestWebKitAPI
