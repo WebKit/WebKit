@@ -1,3 +1,15 @@
+2011-05-10  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [Qt]http/tests/security/xss-DENIED-xsl-document.xml fails with Qt 4.8
+        http://trac.webkit.org/changeset/86143
+
+        [Qt]http/tests/xmlhttprequest/xmlhttprequest-missing-file-exception.html fails with Qt 4.8
+        https://bugs.webkit.org/show_bug.cgi?id=60176
+
+        * platform/qt-4.8/Skipped:
+         - Add http/tests/security/xss-DENIED-xsl-document.xml
+         - Add http/tests/xmlhttprequest/xmlhttprequest-missing-file-exception.html
+
 2011-05-10  Andrey Kosyakov  <caseq@chromium.org>
 
         Reviewed by Sam Weinig.
