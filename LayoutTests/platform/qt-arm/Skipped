@@ -4,6 +4,7 @@ fast/xmlhttprequest/xmlhttprequest-default-attributes.html
 
 # Flakey tests
 fast/css/hover-update.html
+fast/workers/wrapper-map-gc.html
 
 # Timed out tests
 fast/block/basic/empty-anonymous-block-remove-crash.html

@@ -2,6 +2,12 @@
 
         Unreviewed.
 
+        * platform/qt-arm/Skipped: Add fast/workers/wrapper-map-gc.html, because it crashes intermittently.
+
+2011-05-10  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Unreviewed.
+
         * platform/qt-arm/Skipped: Add fast/dom/Geolocation/window-close-crash.html.
 
 2011-05-10  Steve Lacey  <sjl@chromium.org>
