@@ -7,8 +7,8 @@ layer at (0,0) size 800x600
         RenderText {#text} at (0,0) size 417x19
           text run at (0,0) width 417: "This pixel test verifies that we position combining characters properly."
       RenderBlock {P} at (0,36) size 784x20
-        RenderText {#text} at (0,0) size 668x19
-          text run at (0,0) width 668: "The backslash-looking mark should connect into the the character on the right, not be positioned off to the side."
+        RenderText {#text} at (0,0) size 679x19
+          text run at (0,0) width 679: "The backslash-looking mark should connect into the the character on the center, not be positioned off to the side."
       RenderBlock {DIV} at (0,72) size 784x83
         RenderText {#text} at (0,1) size 279x80
           text run at (0,1) width 279: "\x{915}+\x{947} = \x{915}\x{947}"

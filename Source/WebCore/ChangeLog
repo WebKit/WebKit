@@ -1,3 +1,16 @@
+2011-05-10  Kenichi Ishibashi  <bashi@chromium.org>
+
+        Reviewed by Tony Chang.
+
+        REGRESSION(r85013): platform/chromium-linux/fast/text/international/complex-joining-using-gpos.html is failing
+        https://bugs.webkit.org/show_bug.cgi?id=60079
+
+        Set resultingNumPoints = 0 so that harfbuzz uses the design coordinate
+        value pair.
+
+        * platform/graphics/chromium/HarfbuzzSkia.cpp:
+        (WebCore::getOutlinePoint): Just return HB_Err_Ok with resultingNumPoints = 0.
+
 2011-05-10  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Sam Weinig.

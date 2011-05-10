@@ -1,3 +1,20 @@
+2011-05-10  Kenichi Ishibashi  <bashi@chromium.org>
+
+        Reviewed by Tony Chang.
+
+        REGRESSION(r85013): platform/chromium-linux/fast/text/international/complex-joining-using-gpos.html is failing
+        https://bugs.webkit.org/show_bug.cgi?id=60079
+
+        Update the expected results.
+
+        * platform/chromium-linux-x86_64/platform/chromium-linux/fast/text/international/complex-joining-using-gpos-expected.png: Added.
+        * platform/chromium-linux-x86_64/platform/chromium-linux/fast/text/international/complex-joining-using-gpos-expected.txt:
+        * platform/chromium-linux/fast/text/international/complex-joining-using-gpos-expected.png:
+        * platform/chromium-linux/fast/text/international/complex-joining-using-gpos-expected.txt:
+        * platform/chromium-linux/fast/text/international/complex-joining-using-gpos.html:
+        * platform/chromium-linux/platform/chromium-linux/fast/text/international/complex-joining-using-gpos-expected.png: Removed.
+        * platform/chromium/test_expectations.txt:
+
 2011-05-10  Kenji Imasaki  <imasaki@chromium.org>
 
         Reviewed by David Levin.

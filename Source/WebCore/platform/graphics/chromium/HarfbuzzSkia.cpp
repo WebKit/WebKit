@@ -138,30 +138,11 @@ static HB_Bool canRender(HB_Font hbFont, const HB_UChar16* characters, hb_uint32
 
 static HB_Error getOutlinePoint(HB_Font hbFont, HB_Glyph glyph, int flags, hb_uint32 point, HB_Fixed* xPos, HB_Fixed* yPos, hb_uint32* resultingNumPoints)
 {
-    FontPlatformData* font = reinterpret_cast<FontPlatformData*>(hbFont->userData);
-    SkPaint paint;
-
-    if (flags & HB_ShaperFlag_UseDesignMetrics)
-        return HB_Err_Invalid_Argument;  // This is requesting pre-hinted positions. We can't support this.
-
-    font->setupPaint(&paint);
-    paint.setTextEncoding(SkPaint::kGlyphID_TextEncoding);
-    uint16_t glyph16 = glyph;
-    SkPath path;
-    paint.getTextPath(&glyph16, sizeof(glyph16), 0, 0, &path);
-    int numPoints = path.getPoints(0, 0);
-    if (point >= static_cast<unsigned>(numPoints))
-        return HB_Err_Invalid_SubTable;
-    SkPoint* points = reinterpret_cast<SkPoint*>(fastMalloc(sizeof(SkPoint) * (point + 1)));
-    if (!points)
-        return HB_Err_Invalid_SubTable;
-    // Skia does let us get a single point from the path.
-    path.getPoints(points, point + 1);
-    *xPos = SkiaScalarToHarfbuzzFixed(points[point].fX);
-    *yPos = SkiaScalarToHarfbuzzFixed(points[point].fY);
-    *resultingNumPoints = numPoints;
-    fastFree(points);
-
+    // We cannot provide the right position of outline points from point index.
+    // Just return HB_Err_Ok with resultingNumPoints = 0 so that harfbuzz
+    // falls back on using design coordinate value pair.
+    // See https://bugs.webkit.org/show_bug.cgi?id=60079 for more details.
+    *resultingNumPoints = 0;
     return HB_Err_Ok;
 }
 

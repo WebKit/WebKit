@@ -4005,8 +4005,6 @@ BUG_HCLAM : fast/url/ipv6.html = TEXT
 // Failure since r85661.
 BUG_HCLAM MAC GPU : compositing/tiling/huge-layer-img.html = FAIL
 
-BUGWK60079 LINUX : platform/chromium-linux/fast/text/international/complex-joining-using-gpos.html = IMAGE
-
 // Flaky
 BUGWK60344 MAC DEBUG : fast/css/counters/complex-before.html = PASS CRASH
 BUGWK60346 : fast/xpath/4XPath/Core/test_boolean_expr.html = PASS CRASH
