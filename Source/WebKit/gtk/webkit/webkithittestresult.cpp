@@ -22,6 +22,7 @@
 #include "webkithittestresult.h"
 
 #include "GOwnPtr.h"
+#include "GRefPtr.h"
 #include "HitTestResult.h"
 #include "KURL.h"
 #include "WebKitDOMBinding.h"
@@ -47,7 +48,7 @@ struct _WebKitHitTestResultPrivate {
     char* linkURI;
     char* imageURI;
     char* mediaURI;
-    WebKitDOMNode* innerNode;
+    GRefPtr<WebKitDOMNode> innerNode;
 };
 
 enum {
@@ -74,7 +75,7 @@ static void webkit_hit_test_result_finalize(GObject* object)
 
 static void webkit_hit_test_result_dispose(GObject* object)
 {
-    g_object_unref(WEBKIT_HIT_TEST_RESULT(object)->priv->innerNode);
+    WEBKIT_HIT_TEST_RESULT(object)->priv->~WebKitHitTestResultPrivate();
 
     G_OBJECT_CLASS(webkit_hit_test_result_parent_class)->dispose(object);
 }
@@ -98,7 +99,7 @@ static void webkit_hit_test_result_get_property(GObject* object, guint propertyI
         g_value_set_string(value, priv->mediaURI);
         break;
     case PROP_INNER_NODE:
-        g_value_set_object(value, priv->innerNode);
+        g_value_set_object(value, priv->innerNode.get());
         break;
     default:
         G_OBJECT_WARN_INVALID_PROPERTY_ID(object, propertyID, pspec);
@@ -230,6 +231,7 @@ static void webkit_hit_test_result_class_init(WebKitHitTestResultClass* webHitTe
 static void webkit_hit_test_result_init(WebKitHitTestResult* web_hit_test_result)
 {
     web_hit_test_result->priv = G_TYPE_INSTANCE_GET_PRIVATE(web_hit_test_result, WEBKIT_TYPE_HIT_TEST_RESULT, WebKitHitTestResultPrivate);
+    new (web_hit_test_result->priv) WebKitHitTestResultPrivate();
 }
 
 namespace WebKit {
