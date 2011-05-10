@@ -1,3 +1,15 @@
+2011-05-10  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Unreviewed fix.
+
+        [Qt] DumpRenderTreeQt needs an implementation of unmarkText
+        https://bugs.webkit.org/show_bug.cgi?id=60499
+
+        r86124 implemented unmarkText() and it fixed a test,
+        which doesn't need Qt specific expected failure anymore.
+
+        * platform/qt/fast/events/ime-composition-events-001-expected.txt: Removed.
+
 2011-05-10  MORITA Hajime  <morrita@google.com>
 
         Unreviewed flakiness marking (video-controls-rendering.html)
