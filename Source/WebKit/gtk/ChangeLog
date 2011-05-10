@@ -1,5 +1,14 @@
 2011-05-09  Xan Lopez  <xlopez@igalia.com>
 
+        Unreviewed build fix.
+
+        Fix build, for real.
+
+        * webkit/webkitwebview.cpp:
+        (getHorizontalAdjustment):
+
+2011-05-09  Xan Lopez  <xlopez@igalia.com>
+
         Unreviewed build fix..
 
         Fix GTK+3.x build.
