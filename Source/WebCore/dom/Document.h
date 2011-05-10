@@ -1068,6 +1068,8 @@ public:
     
     void fullScreenChangeDelayTimerFired(Timer<Document>*);
     bool fullScreenIsAllowedForElement(Element*) const;
+    void fullScreenElementRemoved();
+    void removeFullScreenElementOfSubtree(Node*, bool amongChildrenOnly = false);
 #endif
 
     // Used to allow element that loads data without going through a FrameLoader to delay the 'load' event.

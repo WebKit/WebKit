@@ -434,6 +434,11 @@ bool ContainerNode::removeChild(Node* oldChild, ExceptionCode& ec)
 
     document()->removeFocusedNodeOfSubtree(child.get());
 
+#if ENABLE(FULLSCREEN_API)
+    document()->removeFullScreenElementOfSubtree(child.get());
+#endif
+
+
     // Events fired when blurring currently focused node might have moved this
     // child into a different parent.
     if (child->parentNode() != this) {
@@ -524,6 +529,10 @@ void ContainerNode::removeChildren()
 
     // exclude this node when looking for removed focusedNode since only children will be removed
     document()->removeFocusedNodeOfSubtree(this, true);
+
+#if ENABLE(FULLSCREEN_API)
+    document()->removeFullScreenElementOfSubtree(this, true);
+#endif
 
     forbidEventDispatch();
     Vector<RefPtr<Node>, 10> removedChildren;

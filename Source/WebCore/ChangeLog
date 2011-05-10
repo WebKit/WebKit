@@ -1,3 +1,23 @@
+2011-05-05  Jer Noble  <jer.noble@apple.com>
+
+        Reviewed by Maciej Stachowiak.
+
+        Removing the full screen element via parent.innerHTML="" does not result in a webkitfullscreenchange event.
+        https://bugs.webkit.org/show_bug.cgi?id=60278
+
+        Handle the removal of a full screen element from within Node::willRemove() instead
+        of Document::nodeWillBeRemoved().  The new function Document::fullScreenElementWillBeRemoved() will
+        be called by Node::willRemove() to handle those changes which used to occur in nodeWillBeRemoved().
+
+        Test: fullscreen/full-screen-remove-children.html
+
+        * dom/Document.cpp:
+        (WebCore::Document::nodeWillBeRemoved): Removed the code checking for the full screen element.
+        (WebCore::Document::fullScreenElementWillBeRemoved): Added, moved from nodeWillBeRemoved.
+        * dom/Document.h:
+        * dom/Node.cpp:
+        (WebCore::Node::willRemove): Check to see if this is the current full screen element.
+
 2011-05-10  Beth Dakin  <bdakin@apple.com>
 
         Reviewed by Darin Adler.

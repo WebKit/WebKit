@@ -3421,24 +3421,6 @@ void Document::nodeWillBeRemoved(Node* n)
         frame->selection()->nodeWillBeRemoved(n);
         frame->page()->dragCaretController()->nodeWillBeRemoved(n);
     }
-    
-#if ENABLE(FULLSCREEN_API)
-    // If the current full screen element or any of its ancestors is removed, set the current
-    // full screen element to the document root, and fire a fullscreenchange event to inform 
-    // clients of the DOM.
-    ASSERT(n);
-    if (n->contains(m_fullScreenElement.get())) {
-        ASSERT(n != documentElement());
-        
-        if (m_fullScreenRenderer)
-            m_fullScreenRenderer->remove();
-
-        setFullScreenRenderer(0);
-        m_fullScreenElement = documentElement();
-        recalcStyle(Force);
-        m_fullScreenChangeDelayTimer.startOneShot(0);
-    }
-#endif
 }
 
 void Document::textInserted(Node* text, unsigned offset, unsigned length)
@@ -5000,6 +4982,34 @@ void Document::fullScreenChangeDelayTimerFired(Timer<Document>*)
     element->dispatchEvent(Event::create(eventNames().webkitfullscreenchangeEvent, true, false));
 }
 
+void Document::fullScreenElementRemoved()
+{
+    // If the current full screen element or any of its ancestors is removed, set the current
+    // full screen element to the document root, and fire a fullscreenchange event to inform 
+    // clients of the DOM.
+    if (m_fullScreenRenderer)
+        m_fullScreenRenderer->remove();
+    
+    setFullScreenRenderer(0);
+    m_fullScreenElement = documentElement();
+    recalcStyle(Force);
+    m_fullScreenChangeDelayTimer.startOneShot(0);
+}
+
+void Document::removeFullScreenElementOfSubtree(Node* node, bool amongChildrenOnly)
+{
+    if (!m_fullScreenElement)
+        return;
+    
+    bool elementInSubtree = false;
+    if (amongChildrenOnly)
+        elementInSubtree = m_fullScreenElement->isDescendantOf(node);
+    else
+        elementInSubtree = (m_fullScreenElement == node) || m_fullScreenElement->isDescendantOf(node);
+    
+    if (elementInSubtree)
+        fullScreenElementRemoved();
+}
 #endif
 
 void Document::decrementLoadEventDelayCount()

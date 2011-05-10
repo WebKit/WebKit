@@ -1,3 +1,14 @@
+2011-05-05  Jer Noble  <jer.noble@apple.com>
+
+        Reviewed by Maciej Stachowiak.
+
+        Removing the full screen element via parent.innerHTML="" does not result in a webkitfullscreenchange event.
+        https://bugs.webkit.org/show_bug.cgi?id=60278
+
+        * fullscreen/full-screen-remove-children-expected.txt: Added.
+        * fullscreen/full-screen-remove-children.html: Added.
+        * fullscreen/full-screen-test.js: Fixed an exception when running in Safari.
+
 2011-05-10  Kenichi Ishibashi  <bashi@chromium.org>
 
         Reviewed by Tony Chang.
