@@ -324,8 +324,10 @@ void RenderLineBoxList::dirtyLinesFromChangedChild(RenderObject* container, Rend
     if (!firstBox) {
         // For an empty inline, go ahead and propagate the check up to our parent, unless the parent
         // is already dirty.
-        if (container->isInline() && !container->parent()->selfNeedsLayout())
+        if (container->isInline() && !container->parent()->selfNeedsLayout()) {
             container->parent()->dirtyLinesFromChangedChild(container);
+            container->setNeedsLayout(true); // Mark the container as needing layout to avoid dirtying the same lines again across multiple destroy() calls of the same subtree.
+        }
         return;
     }
 

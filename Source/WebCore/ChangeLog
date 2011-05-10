@@ -1,3 +1,17 @@
+2011-05-09  David Hyatt  <hyatt@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        <rdar://problem/9354979> REGRESSION (r83070-r83126): This conversation takes 10 seconds to load and makes mail unresponsive
+        
+        Second attempts at a fix for this bug.  Instead of removing the dirtying (which turned out to be needed in a few cases),
+        make dirtyLinesFromChangedChild mark a child as needing layout when it has to recur to the parent.  Because the method already
+        aborts the recursion if selfNeedsLayout() is set on the parent, this has the effect of stopping the O(n^2) pathological
+        behavior, since you can use the selfNeedsLayout() bit to understand that you've dirtied the lines already.
+
+        * rendering/RenderLineBoxList.cpp:
+        (WebCore::RenderLineBoxList::dirtyLinesFromChangedChild):
+
 2011-05-05  Brent Fulgham  <bfulgham@webkit.org> and Martin Robinson  <mrobinson@igalia.com>
 
         Reviewed by Anders Carlsson.
