@@ -234,47 +234,8 @@ static NSSize abs(NSSize size)
     if (!_animator)
         return;
 
-    WKScrollbarPainterControllerRef painterController = (WKScrollbarPainterControllerRef)scrollerImpPair;
-    WebCore::ScrollbarThemeMac* macTheme = (WebCore::ScrollbarThemeMac*)WebCore::ScrollbarTheme::nativeTheme();
-
-    WKScrollbarPainterRef oldVerticalPainter = wkVerticalScrollbarPainterForController(painterController);
-    if (oldVerticalPainter) {
-        WebCore::Scrollbar* verticalScrollbar = _animator->scrollableArea()->verticalScrollbar();
-        WKScrollbarPainterRef newVerticalPainter = wkMakeScrollbarReplacementPainter(oldVerticalPainter,
-                                                                                     newRecommendedScrollerStyle,
-                                                                                     verticalScrollbar->controlSize(),
-                                                                                     false);
-        macTheme->setNewPainterForScrollbar(verticalScrollbar, newVerticalPainter);
-        wkSetPainterForPainterController(painterController, newVerticalPainter, false);
-
-        // The different scrollbar styles have different thicknesses, so we must re-set the 
-        // frameRect to the new thickness, and the re-layout below will ensure the position
-        // and length are properly updated.
-        int thickness = macTheme->scrollbarThickness(verticalScrollbar->controlSize());
-        verticalScrollbar->setFrameRect(WebCore::IntRect(0, 0, thickness, thickness));
-    }
-
-    WKScrollbarPainterRef oldHorizontalPainter = wkHorizontalScrollbarPainterForController(painterController);
-    if (oldHorizontalPainter) {
-        WebCore::Scrollbar* horizontalScrollbar = _animator->scrollableArea()->horizontalScrollbar();
-        WKScrollbarPainterRef newHorizontalPainter = wkMakeScrollbarReplacementPainter(oldHorizontalPainter,
-                                                                                       newRecommendedScrollerStyle,
-                                                                                       horizontalScrollbar->controlSize(),
-                                                                                       true);
-        macTheme->setNewPainterForScrollbar(horizontalScrollbar, newHorizontalPainter);
-        wkSetPainterForPainterController(painterController, newHorizontalPainter, true);
-
-        // The different scrollbar styles have different thicknesses, so we must re-set the 
-        // frameRect to the new thickness, and the re-layout below will ensure the position
-        // and length are properly updated.
-        int thickness = macTheme->scrollbarThickness(horizontalScrollbar->controlSize());
-        horizontalScrollbar->setFrameRect(WebCore::IntRect(0, 0, thickness, thickness));
-    }
-
-    wkSetScrollbarPainterControllerStyle(painterController, newRecommendedScrollerStyle);
-
-    // The different scrollbar styles affect layout, so we must re-layout everything.
-    _animator->scrollableArea()->scrollbarStyleChanged();
+    wkSetScrollbarPainterControllerStyle((WKScrollbarPainterControllerRef)scrollerImpPair, newRecommendedScrollerStyle);
+    _animator->updateScrollerStyle();
 }
 
 @end
@@ -504,6 +465,7 @@ ScrollAnimatorMac::ScrollAnimatorMac(ScrollableArea* scrollableArea)
 #endif
     , m_drawingIntoLayer(false)
     , m_haveScrolledSincePageLoad(false)
+    , m_needsScrollerStyleUpdate(false)
 {
     m_scrollAnimationHelperDelegate.adoptNS([[ScrollAnimationHelperDelegate alloc] initWithScrollAnimator:this]);
     m_scrollAnimationHelper.adoptNS([[NSClassFromString(@"NSScrollAnimationHelper") alloc] initWithDelegate:m_scrollAnimationHelperDelegate.get()]);
@@ -1194,7 +1156,67 @@ void ScrollAnimatorMac::snapRubberBandTimerFired(Timer<ScrollAnimatorMac>*)
 }
 #endif
 
+void ScrollAnimatorMac::setIsActive(bool active)
+{
+    ScrollAnimator::setIsActive(active);
+
 #if USE(WK_SCROLLBAR_PAINTER)
+    if (needsScrollerStyleUpdate())
+        updateScrollerStyle();
+#endif
+}
+
+#if USE(WK_SCROLLBAR_PAINTER)
+void ScrollAnimatorMac::updateScrollerStyle()
+{
+    if (!isActive()) {
+        setNeedsScrollerStyleUpdate(true);
+        return;
+    }
+
+    ScrollbarThemeMac* macTheme = (ScrollbarThemeMac*)ScrollbarTheme::nativeTheme();
+    int newStyle = wkScrollbarPainterControllerStyle(m_scrollbarPainterController.get());
+
+    if (Scrollbar* verticalScrollbar = scrollableArea()->verticalScrollbar()) {
+        WKScrollbarPainterRef oldVerticalPainter = wkVerticalScrollbarPainterForController(m_scrollbarPainterController.get());
+        WKScrollbarPainterRef newVerticalPainter = wkMakeScrollbarReplacementPainter(oldVerticalPainter,
+                                                                                     newStyle,
+                                                                                     verticalScrollbar->controlSize(),
+                                                                                     false);
+        macTheme->setNewPainterForScrollbar(verticalScrollbar, newVerticalPainter);
+        wkSetPainterForPainterController(m_scrollbarPainterController.get(), newVerticalPainter, false);
+
+        // The different scrollbar styles have different thicknesses, so we must re-set the 
+        // frameRect to the new thickness, and the re-layout below will ensure the position
+        // and length are properly updated.
+        int thickness = macTheme->scrollbarThickness(verticalScrollbar->controlSize());
+        verticalScrollbar->setFrameRect(IntRect(0, 0, thickness, thickness));
+    }
+
+    if (Scrollbar* horizontalScrollbar = scrollableArea()->horizontalScrollbar()) {
+        WKScrollbarPainterRef oldHorizontalPainter = wkHorizontalScrollbarPainterForController(m_scrollbarPainterController.get());
+        WKScrollbarPainterRef newHorizontalPainter = wkMakeScrollbarReplacementPainter(oldHorizontalPainter,
+                                                                                       newStyle,
+                                                                                       horizontalScrollbar->controlSize(),
+                                                                                       true);
+        macTheme->setNewPainterForScrollbar(horizontalScrollbar, newHorizontalPainter);
+        wkSetPainterForPainterController(m_scrollbarPainterController.get(), newHorizontalPainter, true);
+
+        // The different scrollbar styles have different thicknesses, so we must re-set the 
+        // frameRect to the new thickness, and the re-layout below will ensure the position
+        // and length are properly updated.
+        int thickness = macTheme->scrollbarThickness(horizontalScrollbar->controlSize());
+        horizontalScrollbar->setFrameRect(IntRect(0, 0, thickness, thickness));
+    }
+
+    // If needsScrollerStyleUpdate() is true, then the page is restoring from the page cache, and 
+    // a relayout will happen on its own. Otherwise, we must initiate a re-layout ourselves.
+    if (!needsScrollerStyleUpdate())
+        scrollableArea()->scrollbarStyleChanged();
+
+    setNeedsScrollerStyleUpdate(false);
+}
+
 void ScrollAnimatorMac::startScrollbarPaintTimer()
 {
     m_initialScrollbarPaintTimer.startOneShot(0.1);

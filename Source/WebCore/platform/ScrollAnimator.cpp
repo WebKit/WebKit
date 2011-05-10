@@ -52,6 +52,7 @@ ScrollAnimator::ScrollAnimator(ScrollableArea* scrollableArea)
     : m_scrollableArea(scrollableArea)
     , m_currentPosX(0)
     , m_currentPosY(0)
+    , m_isActive(true)
 {
 }
 

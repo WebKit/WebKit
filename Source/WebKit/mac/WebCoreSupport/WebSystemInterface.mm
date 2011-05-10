@@ -136,6 +136,7 @@ void InitWebCoreSystemInterface(void)
     INIT(SetPainterForPainterController);
     INIT(VerticalScrollbarPainterForController);
     INIT(HorizontalScrollbarPainterForController);
+    INIT(ScrollbarPainterControllerStyle);
     INIT(SetScrollbarPainterControllerStyle);
     INIT(ContentAreaScrolled);
     INIT(ContentAreaWillPaint);

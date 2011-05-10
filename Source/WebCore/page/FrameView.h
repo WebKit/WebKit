@@ -267,6 +267,8 @@ public:
 
     virtual bool shouldSuspendScrollAnimations() const;
 
+    void setAnimatorsAreActive(bool);
+
 protected:
     virtual bool scrollContentsFastPath(const IntSize& scrollDelta, const IntRect& rectToScroll, const IntRect& clipRect);
     virtual void scrollContentsSlowPath(const IntRect& updateRect);

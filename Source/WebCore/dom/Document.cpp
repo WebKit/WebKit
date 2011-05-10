@@ -3922,10 +3922,12 @@ void Document::setInPageCache(bool flag)
         return;
 
     m_inPageCache = flag;
+
+    FrameView* v = view();
     if (flag) {
         ASSERT(!m_savedRenderer);
         m_savedRenderer = renderer();
-        if (FrameView* v = view()) {
+        if (v) {
             v->cacheCurrentScrollPosition();
             if (page() && page()->mainFrame() == m_frame)
                 v->resetScrollbarsAndClearContentsSize();
@@ -3945,6 +3947,9 @@ void Document::setInPageCache(bool flag)
         if (childNeedsStyleRecalc())
             scheduleStyleRecalc();
     }
+
+    if (v)
+        v->setAnimatorsAreActive(!m_inPageCache);
 }
 
 void Document::documentWillBecomeInactive() 

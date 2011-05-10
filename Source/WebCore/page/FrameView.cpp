@@ -2165,6 +2165,21 @@ bool FrameView::shouldSuspendScrollAnimations() const
     return m_frame->loader()->state() != FrameStateComplete;
 }
 
+void FrameView::setAnimatorsAreActive(bool active)
+{
+    Page* page = m_frame->page();
+    if (!page)
+        return;
+
+    const HashSet<ScrollableArea*>* scrollableAreas = page->scrollableAreaSet();
+    if (!scrollableAreas)
+        return;
+
+    HashSet<ScrollableArea*>::const_iterator end = scrollableAreas->end(); 
+    for (HashSet<ScrollableArea*>::const_iterator it = scrollableAreas->begin(); it != end; ++it)
+        (*it)->scrollAnimator()->setIsActive(active);
+}
+
 void FrameView::notifyPageThatContentAreaWillPaint() const
 {
     Page* page = m_frame->page();

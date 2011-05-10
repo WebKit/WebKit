@@ -61,6 +61,9 @@ public:
 
     ScrollableArea* scrollableArea() const { return m_scrollableArea; }
 
+    virtual void setIsActive(bool active) { m_isActive = active; }
+    bool isActive() const { return m_isActive; }
+
     virtual void handleWheelEvent(PlatformWheelEvent&);
 #if ENABLE(GESTURE_EVENTS)
     virtual void handleGestureEvent(const PlatformGestureEvent&);
@@ -93,6 +96,7 @@ protected:
     ScrollableArea* m_scrollableArea;
     float m_currentPosX; // We avoid using a FloatPoint in order to reduce
     float m_currentPosY; // subclass code complexity.
+    bool m_isActive;
 };
 
 } // namespace WebCore

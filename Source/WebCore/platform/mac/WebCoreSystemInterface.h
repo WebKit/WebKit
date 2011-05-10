@@ -243,6 +243,7 @@ extern WKScrollbarPainterControllerRef (*wkMakeScrollbarPainterController)(id pa
 extern void (*wkSetPainterForPainterController)(WKScrollbarPainterControllerRef, WKScrollbarPainterRef, bool isHorizontal);
 extern WKScrollbarPainterRef (*wkVerticalScrollbarPainterForController)(WKScrollbarPainterControllerRef);
 extern WKScrollbarPainterRef (*wkHorizontalScrollbarPainterForController)(WKScrollbarPainterControllerRef);
+extern int (*wkScrollbarPainterControllerStyle)(WKScrollbarPainterControllerRef);
 extern void (*wkSetScrollbarPainterControllerStyle)(WKScrollbarPainterControllerRef, int newStyle);
 extern void (*wkContentAreaScrolled)(WKScrollbarPainterControllerRef);
 extern void (*wkContentAreaWillPaint)(WKScrollbarPainterControllerRef);

@@ -81,7 +81,11 @@ public:
 
     bool haveScrolledSincePageLoad() const { return m_haveScrolledSincePageLoad; }
 
+    virtual void setIsActive(bool);
+
 #if USE(WK_SCROLLBAR_PAINTER)
+    void updateScrollerStyle();
+
     bool scrollbarPaintTimerIsActive() const;
     void startScrollbarPaintTimer();
     void stopScrollbarPaintTimer();
@@ -120,6 +124,9 @@ private:
     virtual void didAddHorizontalScrollbar(Scrollbar*);
     virtual void willRemoveHorizontalScrollbar(Scrollbar*);
 
+    void setNeedsScrollerStyleUpdate(bool needsUpdate) { m_needsScrollerStyleUpdate = needsUpdate; }
+    bool needsScrollerStyleUpdate() const { return m_needsScrollerStyleUpdate; }
+
     float adjustScrollXPositionIfNecessary(float) const;
     float adjustScrollYPositionIfNecessary(float) const;
     FloatPoint adjustScrollPositionIfNecessary(const FloatPoint&) const;
@@ -152,6 +159,7 @@ private:
 #endif
     bool m_drawingIntoLayer;
     bool m_haveScrolledSincePageLoad;
+    bool m_needsScrollerStyleUpdate;
     IntRect m_visibleScrollerThumbRect;
 };
 

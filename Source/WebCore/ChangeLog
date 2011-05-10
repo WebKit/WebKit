@@ -1,3 +1,65 @@
+2011-05-10  Beth Dakin  <bdakin@apple.com>
+
+        Reviewed by Darin Adler.
+
+        https://bugs.webkit.org/show_bug.cgi?id=60582
+        Crash switching overlay/non-overlay scrollbar preference still possible
+        -and corresponding-
+        <rdar://problem/9323983>
+
+        This patch prevents any work from being done on pages that are in the page cache 
+        when the preference is switched.
+
+        When the Document is going into or coming out of the page cache, have the 
+        FrameView inactivate or activate the Page's ScrollAnimators as appropriate.
+        * dom/Document.cpp:
+        (WebCore::Document::setInPageCache):
+
+        Iterate through the Page's ScrollableAreas setting the active state of the 
+        ScrollAnimators.
+        * page/FrameView.cpp:
+        (WebCore::FrameView::setAnimatorsAreActive):
+        * page/FrameView.h:
+
+        ScrollAnimator has a new bit -- m_isActive. Right now m_isActive is always true 
+        unless the ScrollAnimator belongs to a ScrollableArea that is in the page cache.
+        * platform/ScrollAnimator.cpp:
+        (WebCore::ScrollAnimator::ScrollAnimator):
+        * platform/ScrollAnimator.h:
+        (WebCore::ScrollAnimator::setIsActive):
+        (WebCore::ScrollAnimator::isActive):
+
+        ScrollAnimatorMac has a new bit -- m_needsScrollerStyleUpdate. This is set to true 
+        when a ScrollAnimator is inactive and has received the 
+        updateScrollerStyleForNewRecommendedScrollerStyle delegate notification. It 
+        prevents any work from being done for this delegate until the ScrollAnimator 
+        becomes active again.
+        * platform/mac/ScrollAnimatorMac.h:
+        (WebCore::ScrollAnimatorMac::setNeedsScrollerStyleUpdate):
+        (WebCore::ScrollAnimatorMac::needsScrollerStyleUpdate):
+
+        This delegate method has been re-factored into ScrollAnimatorMac:: 
+        updateScrollerStyle(). This way the meat of the function can be called by both the 
+        delegate and ScrollAnimatorMac::setIsActive()
+        * platform/mac/ScrollAnimatorMac.mm:
+        (-[ScrollbarPainterControllerDelegate scrollerImpPair:updateScrollerStyleForNewRecommendedScrollerStyle:]):
+        (WebCore::ScrollAnimatorMac::ScrollAnimatorMac):
+
+        This override of ScrollAnimator::setIsActive() calls the base class, and then calls updateScrollerStyle() if needsScrollerStyleUpdate() is set to true.
+        (WebCore::ScrollAnimatorMac::setIsActive):
+
+        This is mostly the same as the old delegate method. Key differences are that if 
+        the ScrollAnimator is inactive, we now setNeedsScrollerStyleUpdate(true) and 
+        return early. We also only call scrollableArea()->scrollbarStyleChanged() if 
+        needsScrollerStyleUpdate() is false since in the true case when we are restoring 
+        from the page cache, this would be duplicated work.
+        (WebCore::ScrollAnimatorMac::updateScrollerStyle):
+
+        New WKSystemInterface function is needed to retrieve the scrollbar style.
+        * WebCore.exp.in:
+        * platform/mac/WebCoreSystemInterface.h:
+        * platform/mac/WebCoreSystemInterface.mm:
+
 2011-05-10  Adam Barth  <abarth@webkit.org>
 
         Reviewed by David Levin.
