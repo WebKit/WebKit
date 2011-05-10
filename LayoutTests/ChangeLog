@@ -1,3 +1,17 @@
+2011-05-10  Steve Lacey  <sjl@chromium.org>
+
+        Reviewed by Eric Carlson.
+
+        Fix video-play-stall-before-metadata.
+
+        A stalled event won't be sent until no progress has happened for 3
+        seconds. Make sure that the connection is still open for at least that long.
+        https://bugs.webkit.org/show_bug.cgi?id=60306
+
+        * http/tests/media/video-load-and-stall.cgi:
+        * http/tests/media/video-play-stall-before-meta-data.html:
+        * platform/chromium/test_expectations.txt:
+
 2011-05-10  Csaba Osztrogonác  <ossy@webkit.org>
 
         One more unreviewed typo fix after r86148. :(

@@ -3180,9 +3180,6 @@ BUG_ANTONM LEOPARD : http/tests/security/xss-DENIED-xsl-external-entity.xml = TE
 // are failing after roll 80582 -> 80608
 BUG_LOISLO MAC DEBUG : fast/text/font-size-zero.html = TEXT
 
-// Failure from WebKit r81104
-BUGCR76159 MAC LINUX : http/tests/media/video-play-stall-before-meta-data.html = TEXT
-
 BUGCR76253 : plugins/npruntime/np-deallocate-called-before-np-shutdown.html = CRASH
 
 // Slow
