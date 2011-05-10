@@ -1,3 +1,12 @@
+2011-05-10  Enrica Casucci  <enrica@apple.com>
+
+        Reviewed by Beth Dakin.
+
+        Added my name to the reviewers list and removed my name from
+        to committer-only list.
+
+        * Scripts/webkitpy/common/config/committers.py:
+
 2011-05-10  David Levin  <levin@chromium.org>
 
         Reviewed by Shinichiro Hamaji.
