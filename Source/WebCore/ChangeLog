@@ -1,3 +1,9 @@
+2011-05-09  Dan Bernstein  <mitz@apple.com>
+
+        Try to fix the LLVM Compiler build.
+
+        * page/EventHandler.h:
+
 2011-05-09  Daniel Cheng  <dcheng@chromium.org>
 
         Fix the build.

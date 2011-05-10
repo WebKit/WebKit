@@ -49,7 +49,7 @@ namespace WebCore {
 
 class Clipboard;
 class Cursor;
-class DragState;
+struct DragState;
 class Event;
 class EventTarget;
 class FloatPoint;
