@@ -25,6 +25,7 @@
 #include "DOMObjectHashTableMap.h"
 #include "EventException.h"
 #include "ExceptionBase.h"
+#include "ExceptionCode.h"
 #include "FileException.h"
 #include "Frame.h"
 #include "IDBDatabaseException.h"
