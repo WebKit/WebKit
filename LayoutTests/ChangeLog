@@ -1,3 +1,22 @@
+2011-05-10  Chang Shu  <cshu@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        Convert editing/inserting/typing-tab-designmode-forms.html to dumpAsText
+        https://bugs.webkit.org/show_bug.cgi?id=60554
+
+        * editing/inserting/typing-tab-designmode-forms-expected.txt: Added.
+        * editing/inserting/typing-tab-designmode-forms.html:
+        * platform/chromium-linux/editing/inserting/typing-tab-designmode-forms-expected.png: Removed.
+        * platform/chromium-mac-leopard/editing/inserting/typing-tab-designmode-forms-expected.png: Removed.
+        * platform/chromium-win/editing/inserting/typing-tab-designmode-forms-expected.png: Removed.
+        * platform/chromium-win/editing/inserting/typing-tab-designmode-forms-expected.txt: Removed.
+        * platform/gtk/editing/inserting/typing-tab-designmode-forms-expected.png: Removed.
+        * platform/gtk/editing/inserting/typing-tab-designmode-forms-expected.txt: Removed.
+        * platform/mac-leopard/editing/inserting/typing-tab-designmode-forms-expected.png: Removed.
+        * platform/mac/editing/inserting/typing-tab-designmode-forms-expected.png: Removed.
+        * platform/mac/editing/inserting/typing-tab-designmode-forms-expected.txt: Removed.
+
 2011-05-10  Abhishek Arya  <inferno@chromium.org>
 
         Reviewed by Simon Fraser.

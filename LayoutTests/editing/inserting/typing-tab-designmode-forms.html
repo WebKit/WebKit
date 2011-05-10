@@ -1,8 +1,19 @@
 <body>
+tabbing between forms in design mode: should result tab-space in the focused form.<br>
+
+<pre id="console"></pre>
 <input id=i><br>
-<input>
+<input id=j>
 <script>
-        
+
+function log(msg)
+{
+    document.getElementById("console").appendChild(document.createTextNode(msg + "\n"));
+}
+
+if (window.layoutTestController)
+    layoutTestController.dumpAsText();
+
 document.designMode="on";
 
 var e = document.getElementById('i');
@@ -12,7 +23,8 @@ if (window.eventSender) {
     var mod = [];
     eventSender.keyDown('\t', mod);
 }
-</script>
-tabbing between forms in design mode (nothing happens at the moment)<br>
+
+log("text in the first input[" + e.value + "]");
+log("text in the second input[" + document.getElementById('j').value + "]");
 
 </script>
