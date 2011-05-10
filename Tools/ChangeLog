@@ -1,3 +1,16 @@
+2011-05-09  Chang Shu  <cshu@webkit.org>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        [Qt] DumpRenderTreeQt needs an implementation of unmarkText
+        https://bugs.webkit.org/show_bug.cgi?id=60499
+
+        The implementation is similar to gtk.
+
+        * DumpRenderTree/qt/TextInputControllerQt.cpp:
+        (TextInputController::unmarkText):
+        * DumpRenderTree/qt/TextInputControllerQt.h:
+
 2011-05-09  James Robinson  <jamesr@chromium.org>
 
         Reviewed by Eric Seidel.

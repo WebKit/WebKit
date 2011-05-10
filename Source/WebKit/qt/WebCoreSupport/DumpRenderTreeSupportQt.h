@@ -94,6 +94,7 @@ public:
     static void setSelectTrailingWhitespaceEnabled(QWebPage* page, bool enabled);
     static QVariantList selectedRange(QWebPage* page);
     static QVariantList firstRectForCharacterRange(QWebPage* page, int location, int length);
+    static void confirmComposition(QWebPage*, const char* text);
 
     static bool pauseAnimation(QWebFrame*, const QString& name, double time, const QString& elementId);
     static bool pauseTransitionOfProperty(QWebFrame*, const QString& name, double time, const QString& elementId);

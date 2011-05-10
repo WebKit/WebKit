@@ -44,7 +44,7 @@ public slots:
     void doCommand(const QString& command);
     void setMarkedText(const QString& string, int start, int end);
 //     bool hasMarkedText();
-//     void unmarkText();
+     void unmarkText();
 //     QList<int> markedRange();
     QVariantList selectedRange();
 //     void validAttributesForMarkedText();

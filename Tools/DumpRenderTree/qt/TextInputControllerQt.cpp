@@ -156,3 +156,8 @@ QVariantList TextInputController::firstRectForCharacterRange(int location, int l
 {
     return DumpRenderTreeSupportQt::firstRectForCharacterRange(qobject_cast<QWebPage*>(parent()), location, length);
 }
+
+void TextInputController::unmarkText()
+{
+    DumpRenderTreeSupportQt::confirmComposition(qobject_cast<QWebPage*>(parent()), 0);
+}

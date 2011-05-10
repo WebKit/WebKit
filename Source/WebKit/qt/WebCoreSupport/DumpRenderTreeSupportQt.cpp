@@ -1117,6 +1117,25 @@ QString DumpRenderTreeSupportQt::shadowPseudoId(const QWebElement& element)
     return pseudoId;
 }
 
+void DumpRenderTreeSupportQt::confirmComposition(QWebPage* page, const char* text)
+{
+    Frame* frame = page->handle()->page->focusController()->focusedOrMainFrame();
+    if (!frame)
+        return;
+
+    Editor* editor = frame->editor();
+    if (!editor || (!editor->hasComposition() && !text))
+        return;
+
+    if (editor->hasComposition()) {
+        if (text)
+            editor->confirmComposition(String::fromUTF8(text));
+        else
+            editor->confirmComposition();
+    } else
+        editor->insertText(String::fromUTF8(text), 0);
+}
+
 // Provide a backward compatibility with previously exported private symbols as of QtWebKit 4.6 release
 
 void QWEBKIT_EXPORT qt_resumeActiveDOMObjects(QWebFrame* frame)
