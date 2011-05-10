@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+  <body>
+    <p id="result">
+    </p>
+    <script>
+    var expected = -1;
+    function getFileWriter(callback) {
+      webkitRequestFileSystem(PERSISTENT, 1024, function(fs) {
+        fs.root.getFile("/caching-test.js", {create:true}, function(file) {
+          file.createWriter(function(writer) {
+            writer.onwriteend = function() {
+              writer.onwriteend = undefined;
+              callback(file, writer);
+            }
+            writer.truncate(0);
+          });
+        });
+      });
+    }
+
+    function writeRandToFile(writer, callback) {
+      var rand = Math.round(Math.random() * 1000);
+      writer.onwriteend = function() {
+        callback(rand);
+      };
+      var bb = new WebKitBlobBuilder();
+      bb.append('document.getElementById("result").innerHTML = (expected == ' + rand + ') ? "SUCCESS" : "FAILURE";');
+      writer.write(bb.getBlob('text/plain'));
+    }
+
+    getFileWriter(function(file, writer) {
+      writeRandToFile(writer, function(rand) {
+        var script = document.createElement('script');
+        script.src = file.toURL();
+        if (window.location.search != '?reload=1') {
+          script.onload = function() {
+            window.location.href = window.location.href + '?reload=1'
+          };
+        } else {
+          script.onload = function() {
+            file.remove(function() {
+              if (window.layoutTestController) {
+                layoutTestController.notifyDone();
+              }
+            });
+          };
+        }
+        expected = rand;
+        document.body.appendChild(script);
+      });
+    });
+
+    if (window.layoutTestController) {
+      layoutTestController.dumpAsText();
+      layoutTestController.waitUntilDone();
+    }
+    </script>
+  </body>
+</html>

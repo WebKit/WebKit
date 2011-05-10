@@ -1,3 +1,15 @@
+2011-05-10  Adam Klein  <adamk@chromium.org>
+
+        Reviewed by David Levin.
+
+        LayoutTest demonstrating that filesystem: URLs are not cached in WebKit
+        https://bugs.webkit.org/show_bug.cgi?id=58854
+
+        Regression test for http://crbug.com/79539.
+
+        * http/tests/filesystem/no-cache-filesystem-url-expected.txt: Added.
+        * http/tests/filesystem/no-cache-filesystem-url.html: Added.
+
 2011-05-05  Jer Noble  <jer.noble@apple.com>
 
         Reviewed by Maciej Stachowiak.
