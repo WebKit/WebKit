@@ -1,3 +1,12 @@
+2011-05-09  James Robinson  <jamesr@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        [chromium] Teach new-run-webkit-tests to follow symlinks when trying to determine the arch of DumpRenderTree on linux
+        https://bugs.webkit.org/show_bug.cgi?id=60520
+
+        * Scripts/webkitpy/layout_tests/port/chromium_linux.py:
+
 2011-05-09  Dmitry Lomov  <dslomov@google.com>
 
         Reviewed by Sam Weinig.

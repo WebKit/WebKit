@@ -75,7 +75,8 @@ class ChromiumLinuxPort(chromium.ChromiumPort):
         driver_path = self._path_to_driver()
         file_output = ''
         if self._filesystem.exists(driver_path):
-            file_output = self._executive.run_command(['file', driver_path],
+            # The --dereference flag tells file to follow symlinks
+            file_output = self._executive.run_command(['file', '--dereference', driver_path],
                                                       return_stderr=True)
 
         if 'ELF 32-bit LSB executable' in file_output:
