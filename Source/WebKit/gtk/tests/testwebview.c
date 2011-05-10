@@ -137,6 +137,12 @@ static gboolean map_event_cb(GtkWidget *widget, GdkEvent* event, gpointer data)
     return FALSE;
 }
 
+static gboolean quit_after_short_delay_cb(gpointer data)
+{
+    g_main_loop_quit((GMainLoop*)data);
+    return FALSE;
+}
+
 static void test_webkit_web_view_grab_focus()
 {
     char* uri = g_strconcat(base_uri, "iframe.html", NULL);
@@ -184,6 +190,10 @@ static void test_webkit_web_view_grab_focus()
 
     /* Focus an element using JavaScript */
     webkit_web_view_execute_script(view, script);
+
+    /* Adjustments update asynchronously, so we must wait a bit. */
+    g_timeout_add(100, quit_after_short_delay_cb, loop);
+    g_main_loop_run(loop);
 
     /* Make sure the ScrolledWindow noticed the scroll */
     g_assert_cmpfloat(gtk_adjustment_get_value(adjustment), !=, 0.0);
@@ -241,11 +251,19 @@ static void do_test_webkit_web_view_adjustments(gboolean with_page_cache)
     /* Scroll the view using JavaScript */
     webkit_web_view_execute_script(view, "window.scrollBy(0, 100)");
 
+    /* Adjustments update asynchronously, so we must wait a bit. */
+    g_timeout_add(100, quit_after_short_delay_cb, loop);
+    g_main_loop_run(loop);
+
     /* Make sure the ScrolledWindow noticed the scroll */
     g_assert_cmpfloat(gtk_adjustment_get_value(adjustment), ==, 100.0);
 
     /* Load a second URI */
     webkit_web_view_load_uri(view, second_uri);
+    g_main_loop_run(loop);
+
+    /* The page loaded but the adjustments may not be updated yet. Wait a bit. */
+    g_timeout_add(100, quit_after_short_delay_cb, loop);
     g_main_loop_run(loop);
 
     /* Make sure the scrollbar has been reset */
@@ -265,11 +283,7 @@ static void do_test_webkit_web_view_adjustments(gboolean with_page_cache)
     /* Make sure upper and lower bounds have been restored correctly */
     g_assert_cmpfloat(lower, ==, gtk_adjustment_get_lower(adjustment));
     g_assert_cmpfloat(upper, ==, gtk_adjustment_get_upper(adjustment));
-
-    /* This assert is temporarily disabled until we fix the following bug: */
-    /* https://bugs.webkit.org/show_bug.cgi?id=57315 */
-    /* It should be re-enabled ASAP. */
-    /* g_assert_cmpfloat(gtk_adjustment_get_value(adjustment), ==, 100.0); */
+    g_assert_cmpfloat(gtk_adjustment_get_value(adjustment), ==, 100.0);
 
     g_free(effective_uri);
     g_free(second_uri);

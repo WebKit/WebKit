@@ -1,3 +1,10 @@
+2011-05-09  Martin Robinson  <mrobinson@igalia.com>
+
+        Update the results for a test after r86102. This test was susceptible to
+        scrollbar race conditions and r86102 changed timing slightly.
+
+        * platform/gtk/scrollbars/custom-scrollbar-with-incomplete-style-expected.txt:
+
 2011-05-09  Chang Shu  <cshu@webkit.org>
 
         Reviewed by Kenneth Rohde Christiansen.
