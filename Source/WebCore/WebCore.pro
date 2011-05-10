@@ -3068,7 +3068,8 @@ contains(DEFINES, WTF_USE_QT_BEARER=1) {
         platform/network/qt/NetworkStateNotifierQt.cpp
 }
 
-!lessThan(QT_MAJOR_VERSION,4):!lessThan(QT_MINOR_VERSION, 8):HAVE_QRAWFONT=1
+# QRawFont feature added in Qt 4.8.0
+exists($$[QT_INSTALL_HEADERS]/QtGui/QRawFont): HAVE_QRAWFONT=1
 
 !isEmpty(HAVE_QRAWFONT) {
     DEFINES += HAVE_QRAWFONT=1
