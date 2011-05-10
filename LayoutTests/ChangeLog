@@ -1,5 +1,11 @@
 2011-05-10  Csaba Osztrogonác  <ossy@webkit.org>
 
+        One more unreviewed typo fix after r86148. :(
+
+        * platform/qt-4.8/Skipped:
+
+2011-05-10  Csaba Osztrogonác  <ossy@webkit.org>
+
         Unreviewed typo fix after r86148.
 
         * platform/qt-4.8/Skipped:
