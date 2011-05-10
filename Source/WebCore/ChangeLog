@@ -1,3 +1,43 @@
+2011-05-10  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        Make member variables of CaretBase private
+        https://bugs.webkit.org/show_bug.cgi?id=60454
+
+        Moved m_absCaretBounds, m_absoluteCaretRepaintBounds, m_absCaretBoundsDirty, and m_caretPaint back
+        from CaretBase to FrameSelection because they are only used in FrameSelection, and made the rest
+        of member variables in CaretBase private.
+
+        * editing/FrameSelection.cpp:
+        (WebCore::CaretBase::CaretBase): Takes CaretVisibility as an argument.
+        (WebCore::DragCaretController::DragCaretController):
+        (WebCore::FrameSelection::FrameSelection): Initializes m_absCaretBoundsDirty and m_caretPaint
+        now that they are part of FrameSelection again.
+        (WebCore::DragCaretController::setCaretPosition):
+        (WebCore::FrameSelection::setSelection):
+        (WebCore::CaretBase::clearCaretRect): Extracted from updateCaretRect.
+        (WebCore::CaretBase::updateCaretRect): No longer clears caret; all call sites (namely setCaretPosition
+        and localCaretRect) that used to call updateCaretRect now need to call clearCaretRect or updateCaretRect
+        based on some conditions.
+        (WebCore::FrameSelection::localCaretRect):
+        (WebCore::CaretBase::caretRepaintRect):
+        (WebCore::FrameSelection::recomputeCaretRect):
+        (WebCore::FrameSelection::paintCaret): Only calls CaretBase::paintCaret if m_caretPaint is true.
+        (WebCore::CaretBase::paintCaret): Removed an early exit for when m_caretPaint is false since m_caretPaint
+        has been moved from CaretBase to FrameSelection.
+        (WebCore::FrameSelection::focusedOrActiveStateChanged):
+        (WebCore::FrameSelection::updateAppearance):
+        (WebCore::FrameSelection::setCaretVisibility): Takes CaretVisibility instead of bool.
+        (WebCore::FrameSelection::caretBlinkTimerFired):
+        * editing/FrameSelection.h:
+        (WebCore::CaretBase::fastLocalCaretRect): Added; replaces localCaretRectForPainting.
+        (WebCore::CaretBase::shouldUpdateCaretRect): Added.
+        (WebCore::CaretBase::setCaretRectNeedsUpdate): Added.
+        (WebCore::CaretBase::setCaretVisibility): Added.
+        (WebCore::CaretBase::caretIsVisible): Added.
+        (WebCore::FrameSelection::setCaretRectNeedsUpdate): Added.
+
 2011-05-10  James Robinson  <jamesr@chromium.org>
 
         Reviewed by Nate Chapin.

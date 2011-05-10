@@ -52,28 +52,31 @@ class CaretBase {
     WTF_MAKE_NONCOPYABLE(CaretBase);
     WTF_MAKE_FAST_ALLOCATED;
 protected:
-    CaretBase();
+    enum CaretVisibility { Visible, Hidden };
+    explicit CaretBase(CaretVisibility = Hidden);
 
     void invalidateCaretRect(Node*, bool caretRectChanged = false);
-    void updateCaretRect(Document*, const VisiblePosition& caretPosition, VisibleSelection::SelectionType, bool isOrphaned);
+    void clearCaretRect();
+    bool updateCaretRect(Document*, const VisiblePosition& caretPosition);
     IntRect absoluteBoundsForLocalRect(Node*, const IntRect&) const;
-    IntRect absoluteCaretBounds(bool isContentEditable);
     IntRect caretRepaintRect(Node*) const;
     bool shouldRepaintCaret(const RenderView*, bool isContentEditable) const;
-
-    IntRect localCaretRectForPainting() const { return m_caretRect; }
     void paintCaret(Node*, GraphicsContext*, int tx, int ty, const IntRect& clipRect) const;
-
     RenderObject* caretRenderer(Node*) const;
 
-    IntRect m_caretRect; // caret rect in coords local to the renderer responsible for painting the caret
-    IntRect m_absCaretBounds; // absolute bounding rect for the caret
-    IntRect m_absoluteCaretRepaintBounds;
+    const IntRect& localCaretRectWithoutUpdate() const { return m_caretLocalRect; }
 
-    bool m_caretRectNeedsUpdate; // true if m_caretRect and m_absCaretBounds need to be calculated
-    bool m_absCaretBoundsDirty;
-    bool m_caretVisible;
-    bool m_caretPaint;
+    bool shouldUpdateCaretRect() const { return m_caretRectNeedsUpdate; }
+    void setCaretRectNeedsUpdate() { m_caretRectNeedsUpdate = true; }
+
+    void setCaretVisibility(CaretVisibility visibility) { m_caretVisibility = visibility; }
+    bool caretIsVisible() const { return m_caretVisibility == Visible; }
+    CaretVisibility caretVisibility() const { return m_caretVisibility; }
+
+private:
+    IntRect m_caretLocalRect; // caret rect in coords local to the renderer responsible for painting the caret
+    bool m_caretRectNeedsUpdate; // true if m_caretRect (and m_absCaretBounds in FrameSelection) need to be calculated
+    CaretVisibility m_caretVisibility;
 };
 
 class DragCaretController : private CaretBase {
@@ -168,7 +171,7 @@ public:
 
     // Bounds of (possibly transformed) caret in absolute coords
     IntRect absoluteCaretBounds();
-    void setCaretRectNeedsUpdate(bool flag = true);
+    void setCaretRectNeedsUpdate() { CaretBase::setCaretRectNeedsUpdate(); }
 
     void setIsDirectional(bool);
     void willBeModified(EAlteration, SelectionDirection);
@@ -187,7 +190,7 @@ public:
     void nodeWillBeRemoved(Node*);
     void textWillBeReplaced(CharacterData*, unsigned offset, unsigned oldLength, unsigned newLength);
 
-    void setCaretVisible(bool = true);
+    void setCaretVisible(bool caretIsVisible) { setCaretVisibility(caretIsVisible ? Visible : Hidden); }
     void clearCaretRectIfNeeded();
     bool recomputeCaretRect();
     void invalidateCaretRect();
@@ -263,6 +266,8 @@ private:
 
     void setUseSecureKeyboardEntry(bool);
 
+    void setCaretVisibility(CaretVisibility);
+
     Frame* m_frame;
 
     int m_xPosForVerticalArrowNavigation;
@@ -273,6 +278,10 @@ private:
     RefPtr<EditingStyle> m_typingStyle;
 
     Timer<FrameSelection> m_caretBlinkTimer;
+    IntRect m_absCaretBounds; // absolute bounding rect for the caret
+    IntRect m_absoluteCaretRepaintBounds;
+    bool m_absCaretBoundsDirty;
+    bool m_caretPaint;
 
     bool m_isDirectional;
     bool m_isCaretBlinkingSuspended;

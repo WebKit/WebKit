@@ -71,17 +71,15 @@ using namespace HTMLNames;
 
 const int NoXPosForVerticalArrowNavigation = INT_MIN;
 
-CaretBase::CaretBase()
+CaretBase::CaretBase(CaretVisibility visibility)
     : m_caretRectNeedsUpdate(true)
-    , m_absCaretBoundsDirty(true)
-    , m_caretVisible(false)
-    , m_caretPaint(true)
+    , m_caretVisibility(visibility)
 {
 }
 
 DragCaretController::DragCaretController()
+    : CaretBase(Visible)
 {
-    m_caretVisible = true;
 }
 
 bool DragCaretController::isContentRichlyEditable() const
@@ -94,6 +92,8 @@ FrameSelection::FrameSelection(Frame* frame)
     , m_xPosForVerticalArrowNavigation(NoXPosForVerticalArrowNavigation)
     , m_granularity(CharacterGranularity)
     , m_caretBlinkTimer(this, &FrameSelection::caretBlinkTimerFired)
+    , m_absCaretBoundsDirty(true)
+    , m_caretPaint(true)
     , m_isCaretBlinkingSuspended(false)
     , m_focused(frame && frame->page() && frame->page()->focusController()->focusedFrame() == frame)
 {
@@ -146,13 +146,16 @@ void DragCaretController::setCaretPosition(const VisiblePosition& position)
     if (Node* node = m_position.deepEquivalent().deprecatedNode())
         invalidateCaretRect(node);
     m_position = position;
-    m_caretRectNeedsUpdate = true;
+    setCaretRectNeedsUpdate();
     Document* document = 0;
     if (Node* node = m_position.deepEquivalent().deprecatedNode()) {
         invalidateCaretRect(node);
         document = node->document();
     }
-    updateCaretRect(document, m_position, m_position.isNotNull() ? VisibleSelection::CaretSelection : VisibleSelection::NoSelection, m_position.isOrphan());
+    if (m_position.isNull() || m_position.isOrphan())
+        clearCaretRect();
+    else
+        updateCaretRect(document, m_position);
 }
 
 void FrameSelection::setSelection(const VisibleSelection& s, SetSelectionOptions options, CursorAlignOnScroll align, TextGranularity granularity, DirectionalityPolicy directionalityPolicy)
@@ -195,8 +198,7 @@ void FrameSelection::setSelection(const VisibleSelection& s, SetSelectionOptions
     VisibleSelection oldSelection = m_selection;
 
     m_selection = s;
-    
-    m_caretRectNeedsUpdate = true;
+    setCaretRectNeedsUpdate();
     
     if (!s.isNone())
         setFocusedNodeIfNeeded();
@@ -1059,54 +1061,47 @@ void FrameSelection::setExtent(const Position &pos, EAffinity affinity, bool use
     setSelection(VisibleSelection(m_selection.base(), pos, affinity), options);
 }
 
-void FrameSelection::setCaretRectNeedsUpdate(bool flag)
+void CaretBase::clearCaretRect()
 {
-    m_caretRectNeedsUpdate = flag;
+    m_caretLocalRect = IntRect();
 }
 
-void CaretBase::updateCaretRect(Document* document, const VisiblePosition& caretPosition, VisibleSelection::SelectionType type, bool isOrphaned)
+bool CaretBase::updateCaretRect(Document* document, const VisiblePosition& caretPosition)
 {
-    if (type == VisibleSelection::NoSelection || isOrphaned) {
-        m_caretRect = IntRect();
-        return;
-    }
-
     document->updateStyleIfNeeded();
-
-    m_caretRect = IntRect();
-    
-    if (type == VisibleSelection::CaretSelection) {
-        if (caretPosition.isNotNull()) {
-            ASSERT(caretPosition.deepEquivalent().deprecatedNode()->renderer());
-
-            // First compute a rect local to the renderer at the selection start
-            RenderObject* renderer;
-            IntRect localRect = caretPosition.localCaretRect(renderer);
-
-            // Get the renderer that will be responsible for painting the caret (which
-            // is either the renderer we just found, or one of its containers)
-            RenderObject* caretPainter = caretRenderer(caretPosition.deepEquivalent().deprecatedNode());
-
-            // Compute an offset between the renderer and the caretPainter
-            bool unrooted = false;
-            while (renderer != caretPainter) {
-                RenderObject* containerObject = renderer->container();
-                if (!containerObject) {
-                    unrooted = true;
-                    break;
-                }
-                localRect.move(renderer->offsetFromContainer(containerObject, localRect.location()));
-                renderer = containerObject;
-            }
-            
-            if (!unrooted)
-                m_caretRect = localRect;
-            
-            m_absCaretBoundsDirty = true;
-        }
-    }
+    m_caretLocalRect = IntRect();
 
     m_caretRectNeedsUpdate = false;
+
+    if (caretPosition.isNull())
+        return false;
+
+    ASSERT(caretPosition.deepEquivalent().deprecatedNode()->renderer());
+
+    // First compute a rect local to the renderer at the selection start.
+    RenderObject* renderer;
+    IntRect localRect = caretPosition.localCaretRect(renderer);
+
+    // Get the renderer that will be responsible for painting the caret
+    // (which is either the renderer we just found, or one of its containers).
+    RenderObject* caretPainter = caretRenderer(caretPosition.deepEquivalent().deprecatedNode());
+
+    // Compute an offset between the renderer and the caretPainter.
+    bool unrooted = false;
+    while (renderer != caretPainter) {
+        RenderObject* containerObject = renderer->container();
+        if (!containerObject) {
+            unrooted = true;
+            break;
+        }
+        localRect.move(renderer->offsetFromContainer(containerObject, localRect.location()));
+        renderer = containerObject;
+    }
+
+    if (!unrooted)
+        m_caretLocalRect = localRect;
+
+    return true;
 }
 
 static inline bool caretRendersInsideNode(Node* node)
@@ -1140,12 +1135,14 @@ RenderObject* DragCaretController::caretRenderer() const
 
 IntRect FrameSelection::localCaretRect()
 {
-    if (m_caretRectNeedsUpdate) {
-        bool isOrphaned = !isNone() && (!m_selection.start().anchorNode()->inDocument() || !m_selection.end().anchorNode()->inDocument());
-        updateCaretRect(m_frame->document(), VisiblePosition(m_selection.start(), m_selection.affinity()), m_selection.selectionType(), isOrphaned);
+    if (shouldUpdateCaretRect()) {
+        if (!isCaret() || m_selection.start().isOrphan() || m_selection.end().isOrphan())
+            clearCaretRect();
+        else if (updateCaretRect(m_frame->document(), VisiblePosition(m_selection.start(), m_selection.affinity())))
+            m_absCaretBoundsDirty = true;
     }
 
-    return m_caretRect;
+    return localCaretRectWithoutUpdate();
 }
 
 IntRect CaretBase::absoluteBoundsForLocalRect(Node* node, const IntRect& rect) const
@@ -1178,12 +1175,12 @@ static IntRect repaintRectForCaret(IntRect caret)
 
 IntRect CaretBase::caretRepaintRect(Node* node) const
 {
-    return absoluteBoundsForLocalRect(node, repaintRectForCaret(localCaretRectForPainting()));
+    return absoluteBoundsForLocalRect(node, repaintRectForCaret(localCaretRectWithoutUpdate()));
 }
 
 bool FrameSelection::recomputeCaretRect()
 {
-    if (!m_caretRectNeedsUpdate)
+    if (!shouldUpdateCaretRect())
         return false;
 
     if (!m_frame)
@@ -1193,14 +1190,14 @@ bool FrameSelection::recomputeCaretRect()
     if (!v)
         return false;
 
-    IntRect oldRect = m_caretRect;
+    IntRect oldRect = localCaretRectWithoutUpdate();
     IntRect newRect = localCaretRect();
     if (oldRect == newRect && !m_absCaretBoundsDirty)
         return false;
 
     IntRect oldAbsCaretBounds = m_absCaretBounds;
     // FIXME: Rename m_caretRect to m_localCaretRect.
-    m_absCaretBounds = absoluteBoundsForLocalRect(m_selection.start().deprecatedNode(), m_caretRect);
+    m_absCaretBounds = absoluteBoundsForLocalRect(m_selection.start().deprecatedNode(), localCaretRectWithoutUpdate());
     m_absCaretBoundsDirty = false;
     
     if (oldAbsCaretBounds == m_absCaretBounds)
@@ -1261,21 +1258,17 @@ void CaretBase::invalidateCaretRect(Node* node, bool caretRectChanged)
 
 void FrameSelection::paintCaret(GraphicsContext* context, int tx, int ty, const IntRect& clipRect)
 {
-    if (!m_selection.isCaret())
-        return;
-
-    CaretBase::paintCaret(m_selection.start().deprecatedNode(), context, tx, ty, clipRect);
+    if (m_selection.isCaret() && m_caretPaint)
+        CaretBase::paintCaret(m_selection.start().deprecatedNode(), context, tx, ty, clipRect);
 }
 
 void CaretBase::paintCaret(Node* node, GraphicsContext* context, int tx, int ty, const IntRect& clipRect) const
 {
 #if ENABLE(TEXT_CARET)
-    if (!m_caretVisible)
-        return;
-    if (!m_caretPaint)
+    if (m_caretVisibility == Hidden)
         return;
 
-    IntRect drawingRect = localCaretRectForPainting();
+    IntRect drawingRect = localCaretRectWithoutUpdate();
     RenderObject* renderer = caretRenderer(node);
     if (renderer && renderer->isBox())
         toRenderBox(renderer)->flipForWritingMode(drawingRect);
@@ -1566,7 +1559,7 @@ void FrameSelection::focusedOrActiveStateChanged()
     // Caret appears in the active frame.
     if (activeAndFocused)
         setSelectionFromNone();
-    setCaretVisible(activeAndFocused);
+    setCaretVisibility(activeAndFocused ? Visible : Hidden);
 
     // Update for caps lock state
     m_frame->eventHandler()->capsLockStateMayHaveChanged();
@@ -1625,8 +1618,7 @@ void FrameSelection::updateAppearance()
     bool caretRectChanged = recomputeCaretRect();
 
     bool caretBrowsing = m_frame->settings() && m_frame->settings()->caretBrowsingEnabled();
-    bool shouldBlink = m_caretVisible
-        && isCaret() && (isContentEditable() || caretBrowsing);
+    bool shouldBlink = caretIsVisible() && isCaret() && (isContentEditable() || caretBrowsing);
 
     // If the caret moved, stop the blink timer so we can restart with a
     // black caret in the new location.
@@ -1682,12 +1674,12 @@ void FrameSelection::updateAppearance()
     }
 }
 
-void FrameSelection::setCaretVisible(bool flag)
+void FrameSelection::setCaretVisibility(CaretVisibility visibility)
 {
-    if (m_caretVisible == flag)
+    if (caretVisibility() == visibility)
         return;
     clearCaretRectIfNeeded();
-    m_caretVisible = flag;
+    CaretBase::setCaretVisibility(visibility);
     updateAppearance();
 }
 
@@ -1704,7 +1696,7 @@ void FrameSelection::clearCaretRectIfNeeded()
 void FrameSelection::caretBlinkTimerFired(Timer<FrameSelection>*)
 {
 #if ENABLE(TEXT_CARET)
-    ASSERT(m_caretVisible);
+    ASSERT(caretIsVisible());
     ASSERT(isCaret());
     bool caretPaint = m_caretPaint;
     if (isCaretBlinkingSuspended() && caretPaint)
