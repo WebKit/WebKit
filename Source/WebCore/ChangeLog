@@ -1,3 +1,13 @@
+2011-05-10  Alexander Pavlov  <apavlov@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: Styles sidebar is not updated upon changes in the Resources panel.
+        https://bugs.webkit.org/show_bug.cgi?id=60320
+
+        * inspector/front-end/ElementsPanel.js:
+        (WebInspector.ElementsPanel):
+
 2011-05-06  Brett Wilson  <brettw@chromium.org>
 
         Reviewed by Adam Barth.
