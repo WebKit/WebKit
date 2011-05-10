@@ -81,8 +81,14 @@ namespace WebKit {
     macro(PDFScaleFactor, pdfScaleFactor, Double, double, 0) \
     \
 
+#if PLATFORM(WIN)
+#define DEFAULT_WEBKIT_FONT_SMOOTHING_LEVEL FontSmoothingLevelWindows
+#else
+#define DEFAULT_WEBKIT_FONT_SMOOTHING_LEVEL FontSmoothingLevelMedium
+#endif
+
 #define FOR_EACH_WEBKIT_UINT32_PREFERENCE(macro) \
-    macro(FontSmoothingLevel, fontSmoothingLevel, UInt32, uint32_t, FontSmoothingLevelMedium) \
+    macro(FontSmoothingLevel, fontSmoothingLevel, UInt32, uint32_t, DEFAULT_WEBKIT_FONT_SMOOTHING_LEVEL) \
     macro(MinimumFontSize, minimumFontSize, UInt32, uint32_t, 0) \
     macro(MinimumLogicalFontSize, minimumLogicalFontSize, UInt32, uint32_t, 9) \
     macro(DefaultFontSize, defaultFontSize, UInt32, uint32_t, 16) \

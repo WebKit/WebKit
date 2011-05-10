@@ -1,3 +1,18 @@
+2011-05-10  Adam Roben  <aroben@apple.com>
+
+        Use FontSmoothingLevelWindows by default on Windows
+
+        Fixes <http://webkit.org/b/60557> REGRESSION (r86077): Web Inspector uses CG font rendering
+        in WebKit2 on Windows
+
+        Reviewed by Darin Adler.
+
+        * Shared/WebPreferencesStore.h: Added and deployed a new DEFAULT_WEBKIT_FONT_SMOOTHING_LEVEL
+        macro to let Windows have a different default font smoothing level from other platforms.
+
+        * UIProcess/API/C/WKPreferencesPrivate.h: Updated the comment about the default font
+        smoothing level.
+
 2011-05-06  Tony Gentilcore  <tonyg@chromium.org>
 
         Reviewed by Darin Adler.
