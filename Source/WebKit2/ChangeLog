@@ -1,3 +1,17 @@
+2011-05-10  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Adam Roben.
+
+        Remove incorrect ASSERTs from CoreIPC::Connection::processIncomingSyncReply
+        https://bugs.webkit.org/show_bug.cgi?id=60567
+        <rdar://problem/9377845>
+
+        It is possible to receive an incoming sync reply that is for a request we don't know about.
+        This could happen if the sync message send timed out for example.
+
+        * Platform/CoreIPC/Connection.cpp:
+        (CoreIPC::Connection::processIncomingSyncReply):
+
 2011-05-05  Brent Fulgham  <bfulgham@webkit.org> and Martin Robinson  <mrobinson@igalia.com>
 
         Reviewed by Anders Carlsson.

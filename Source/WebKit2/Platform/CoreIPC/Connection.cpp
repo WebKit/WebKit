@@ -477,7 +477,6 @@ PassOwnPtr<ArgumentDecoder> Connection::waitForSyncReply(uint64_t syncRequestID,
 void Connection::processIncomingSyncReply(PassOwnPtr<ArgumentDecoder> arguments)
 {
     MutexLocker locker(m_syncReplyStateMutex);
-    ASSERT(!m_pendingSyncReplies.isEmpty());
 
     // Go through the stack of sync requests that have pending replies and see which one
     // this reply is for.
@@ -499,9 +498,8 @@ void Connection::processIncomingSyncReply(PassOwnPtr<ArgumentDecoder> arguments)
         return;
     }
 
-    // We got a reply for a message we never sent.
-    // FIXME: Dispatch a didReceiveInvalidMessage callback on the client.
-    ASSERT_NOT_REACHED();
+    // If we get here, it means we got a reply for a message that wasn't in the sync request stack.
+    // This can happen if the send timed out, so it's fine to ignore.
 }
 
 void Connection::processIncomingMessage(MessageID messageID, PassOwnPtr<ArgumentDecoder> arguments)
