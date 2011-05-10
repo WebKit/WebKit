@@ -26,6 +26,7 @@
 #include "DataObjectGtk.h"
 #include "FullscreenVideoController.h"
 #include "GOwnPtr.h"
+#include "Page.h"
 #include "ResourceHandle.h"
 #include <webkit/webkitwebview.h>
 

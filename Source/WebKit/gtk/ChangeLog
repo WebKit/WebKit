@@ -1,3 +1,12 @@
+2011-05-09  ojab  <ojab@ojab.ru>
+
+        Reviewed by Martin Robinson.
+
+        Webkit-gtk build failure, no type/member 'Page' in namespace 'WebCore'
+        https://bugs.webkit.org/show_bug.cgi?id=59585
+
+        * webkit/webkitwebviewprivate.h:
+
 2011-05-09  Xan Lopez  <xlopez@igalia.com>
 
         Reviewed by Martin Robinson.
