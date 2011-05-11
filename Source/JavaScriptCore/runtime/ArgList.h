@@ -24,6 +24,7 @@
 
 #include "CallFrame.h"
 #include "Register.h"
+#include "WriteBarrier.h"
 #include <wtf/HashSet.h>
 #include <wtf/Vector.h>
 

@@ -61,7 +61,10 @@ namespace JSC {
         static bool isMarked(const JSCell*);
         static bool testAndSetMarked(const JSCell*);
         static void setMarked(JSCell*);
-        
+
+        static void writeBarrier(const JSCell*, JSValue);
+        static void writeBarrier(const JSCell*, JSCell*);
+
         Heap(JSGlobalData*);
         ~Heap();
         void destroy(); // JSGlobalData must call destroy() before ~Heap().
@@ -156,6 +159,14 @@ namespace JSC {
     inline void Heap::setMarked(JSCell* cell)
     {
         MarkedSpace::setMarked(cell);
+    }
+
+    inline void Heap::writeBarrier(const JSCell*, JSValue)
+    {
+    }
+
+    inline void Heap::writeBarrier(const JSCell*, JSCell*)
+    {
     }
 
     inline bool Heap::contains(void* p)

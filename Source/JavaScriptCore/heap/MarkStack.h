@@ -26,9 +26,9 @@
 #ifndef MarkStack_h
 #define MarkStack_h
 
+#include "HandleTypes.h"
 #include "JSValue.h"
 #include "Register.h"
-#include "WriteBarrier.h"
 #include <wtf/HashSet.h>
 #include <wtf/Vector.h>
 #include <wtf/Noncopyable.h>
@@ -39,6 +39,7 @@ namespace JSC {
     class ConservativeRoots;
     class JSGlobalData;
     class Register;
+    template<typename T> class WriteBarrierBase;
     
     enum MarkSetProperties { MayContainNullValues, NoNullValues };
     
@@ -60,20 +61,8 @@ namespace JSC {
             ASSERT(m_values.isEmpty());
         }
 
-        template <typename T> void append(WriteBarrierBase<T>*);
-
-        static void validateSet(JSValue*, size_t);
-        static void validateValue(JSValue);
-
-        void appendValues(WriteBarrierBase<Unknown>* barriers, size_t count, MarkSetProperties properties = NoNullValues)
-        {
-            JSValue* values = barriers->slot();
-#if !ASSERT_DISABLED
-            validateSet(values, count);
-#endif
-            if (count)
-                m_markSets.append(MarkSet(values, values + count, properties));
-        }
+        template<typename T> inline void append(WriteBarrierBase<T>*);
+        inline void appendValues(WriteBarrierBase<Unknown>*, size_t count, MarkSetProperties = NoNullValues);
         
         void append(ConservativeRoots&);
 
@@ -86,6 +75,10 @@ namespace JSC {
 
     private:
         friend class HeapRootVisitor; // Allowed to mark a JSValue* or JSCell** directly.
+
+        static void validateSet(JSValue*, size_t);
+        static void validateValue(JSValue);
+
         void append(JSValue*);
         void append(JSValue*, size_t count);
         void append(JSCell**);
@@ -118,7 +111,7 @@ namespace JSC {
             return s_pageSize;
         }
 
-        template <typename T> struct MarkStackArray {
+        template<typename T> struct MarkStackArray {
             MarkStackArray()
                 : m_top(0)
                 , m_allocated(MarkStack::pageSize())
@@ -219,11 +212,6 @@ namespace JSC {
         m_markSets.append(MarkSet(slot, slot + count, NoNullValues));
     }
     
-    template <typename T> inline void MarkStack::append(WriteBarrierBase<T>* slot)
-    {
-        internalAppend(*slot->slot());
-    }
-
     ALWAYS_INLINE void MarkStack::append(JSValue* value)
     {
         ASSERT(value);

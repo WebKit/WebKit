@@ -31,6 +31,7 @@
             'heap/Handle.h',
             'heap/HandleHeap.h',
             'heap/HandleStack.h',
+            'heap/HandleTypes.h',
             'heap/Heap.h',
             'heap/Local.h',
             'heap/LocalScope.h',

@@ -26,39 +26,24 @@
 #ifndef WriteBarrier_h
 #define WriteBarrier_h
 
-#include "JSValue.h"
+#include "HandleTypes.h"
+#include "Heap.h"
 
 namespace JSC {
+
 class JSCell;
 class JSGlobalData;
 
-inline void writeBarrier(JSGlobalData&, const JSCell*, JSValue)
-{
-}
-
-inline void writeBarrier(JSGlobalData&, const JSCell*, JSCell*)
-{
-}
-
-typedef enum { } Unknown;
-typedef JSValue* HandleSlot;
-
-template <typename T> struct JSValueChecker {
-    static const bool IsJSValue = false;
-};
-
-template <> struct JSValueChecker<JSValue> {
-    static const bool IsJSValue = true;
-};
+template<class T> class WriteBarrierBase;
+template<> class WriteBarrierBase<JSValue>;
 
 // We have a separate base class with no constructors for use in Unions.
 template <typename T> class WriteBarrierBase {
 public:
-    COMPILE_ASSERT(!JSValueChecker<T>::IsJSValue, WriteBarrier_JSValue_is_invalid__use_unknown);
-    void set(JSGlobalData& globalData, const JSCell* owner, T* value)
+    void set(JSGlobalData&, const JSCell* owner, T* value)
     {
         this->m_cell = reinterpret_cast<JSCell*>(value);
-        writeBarrier(globalData, owner, this->m_cell);
+        Heap::writeBarrier(owner, this->m_cell);
 #if ENABLE(JSC_ZOMBIES)
         ASSERT(!isZombie(owner));
         ASSERT(!isZombie(m_cell));
@@ -108,15 +93,16 @@ private:
 
 template <> class WriteBarrierBase<Unknown> {
 public:
-    void set(JSGlobalData& globalData, const JSCell* owner, JSValue value)
+    void set(JSGlobalData&, const JSCell* owner, JSValue value)
     {
 #if ENABLE(JSC_ZOMBIES)
         ASSERT(!isZombie(owner));
         ASSERT(!value.isZombie());
 #endif
         m_value = JSValue::encode(value);
-        writeBarrier(globalData, owner, value);
+        Heap::writeBarrier(owner, value);
     }
+
     void setWithoutWriteBarrier(JSValue value)
     {
 #if ENABLE(JSC_ZOMBIES)
@@ -183,6 +169,23 @@ public:
 template <typename U, typename V> inline bool operator==(const WriteBarrierBase<U>& lhs, const WriteBarrierBase<V>& rhs)
 {
     return lhs.get() == rhs.get();
+}
+
+// MarkStack functions
+
+template<typename T> inline void MarkStack::append(WriteBarrierBase<T>* slot)
+{
+    internalAppend(*slot->slot());
+}
+
+inline void MarkStack::appendValues(WriteBarrierBase<Unknown>* barriers, size_t count, MarkSetProperties properties)
+{
+    JSValue* values = barriers->slot();
+#if !ASSERT_DISABLED
+    validateSet(values, count);
+#endif
+    if (count)
+        m_markSets.append(MarkSet(values, values + count, properties));
 }
 
 } // namespace JSC

@@ -94,6 +94,7 @@ javascriptcore_sources += \
 	Source/JavaScriptCore/heap/HandleHeap.h \
 	Source/JavaScriptCore/heap/HandleStack.cpp \
 	Source/JavaScriptCore/heap/HandleStack.h \
+	Source/JavaScriptCore/heap/HandleTypes.h \
 	Source/JavaScriptCore/heap/Heap.cpp \
 	Source/JavaScriptCore/heap/Heap.h \
 	Source/JavaScriptCore/heap/Local.h \

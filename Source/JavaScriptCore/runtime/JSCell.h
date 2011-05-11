@@ -30,6 +30,7 @@
 #include "JSLock.h"
 #include "JSValueInlineMethods.h"
 #include "MarkStack.h"
+#include "WriteBarrier.h"
 #include <wtf/Noncopyable.h>
 
 namespace JSC {

@@ -1,3 +1,41 @@
+2011-05-10  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Fixed up some #include dependencies so the WriteBarrier class can actually call Heap::writeBarrier
+        https://bugs.webkit.org/show_bug.cgi?id=60532
+
+        * GNUmakefile.list.am:
+        * JavaScriptCore.gypi:
+        * JavaScriptCore.xcodeproj/project.pbxproj: Build!
+
+        * heap/Handle.h: Moved HandleTypes to its own header because that's the
+        WebKit style, and it was necessary to resolve a circular dependency
+        between Handle.h and WriteBarrier.h.
+
+        * heap/Heap.h:
+        (JSC::Heap::writeBarrier): Added an inline no-op writeBarrier(), to
+        verify that all the code is in the right place.
+
+        * heap/MarkStack.h: Moved WriteBarrier operations to WriteBarrier.h to
+        resolve a circular dependency.
+
+        * runtime/ArgList.h:
+        * runtime/JSCell.h: #include WriteBarrier.h since we don't get it for
+        free anymore.
+
+        * runtime/PropertyMapHashTable.h:
+        (JSC::PropertyTable::PropertyTable): Call the real writeBarrier()
+        function, now that it exists.
+
+        * runtime/SmallStrings.h: Removed a stray #include to resolve a circular
+        dependency.
+
+        * runtime/WriteBarrier.h:
+        (JSC::WriteBarrierBase::set):
+        (JSC::MarkStack::append):
+        (JSC::MarkStack::appendValues): Updated to match the changes above.
+
 2011-05-10  Oliver Hunt  <oliver@apple.com>
 
         Build fix.

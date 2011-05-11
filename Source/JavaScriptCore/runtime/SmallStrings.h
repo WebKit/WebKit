@@ -27,7 +27,6 @@
 #define SmallStrings_h
 
 #include "UString.h"
-#include "WriteBarrier.h"
 #include <wtf/FixedArray.h>
 #include <wtf/OwnPtr.h>
 

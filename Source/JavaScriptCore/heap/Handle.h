@@ -26,8 +26,7 @@
 #ifndef Handle_h
 #define Handle_h
 
-#include "WriteBarrier.h"
-#include <wtf/Assertions.h>
+#include "HandleTypes.h"
 
 namespace JSC {
 
@@ -75,20 +74,6 @@ protected:
 
 private:
     HandleSlot m_slot;
-};
-
-template <typename T> struct HandleTypes {
-    typedef T* ExternalType;
-    static ExternalType getFromSlot(HandleSlot slot) { return (slot && *slot) ? reinterpret_cast<ExternalType>(slot->asCell()) : 0; }
-    static JSValue toJSValue(T* cell) { return reinterpret_cast<JSCell*>(cell); }
-    template <typename U> static void validateUpcast() { T* temp; temp = (U*)0; }
-};
-
-template <> struct HandleTypes<Unknown> {
-    typedef JSValue ExternalType;
-    static ExternalType getFromSlot(HandleSlot slot) { return slot ? *slot : JSValue(); }
-    static JSValue toJSValue(const JSValue& v) { return v; }
-    template <typename U> static void validateUpcast() {}
 };
 
 template <typename Base, typename T> struct HandleConverter {
