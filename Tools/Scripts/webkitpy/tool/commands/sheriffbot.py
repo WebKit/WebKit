@@ -78,6 +78,7 @@ class SheriffBot(AbstractQueue, StepSequenceErrorHandler):
 
     def process_work_item(self, failure_map):
         failing_revisions = failure_map.failing_revisions()
+        number_of_failing_revisions = len(failing_revisions)
         for revision in failing_revisions:
             builders = failure_map.builders_failing_for(revision)
             tests = failure_map.tests_failing_for(revision)
@@ -87,7 +88,11 @@ class SheriffBot(AbstractQueue, StepSequenceErrorHandler):
                     print "FAILED to fetch CommitInfo for r%s, likely missing ChangeLog" % revision
                     continue
                 self._sheriff.post_irc_warning(commit_info, builders)
-                self._sheriff.post_blame_comment_on_bug(commit_info, builders, tests)
+                # We skip the bug post if there are too many failing_revisions
+                # because these posts are likely to be spammy.
+                # FIXME: Add better huerstics to narrow down the blamelist!
+                if number_of_failing_revisions <= 3:
+                    self._sheriff.post_blame_comment_on_bug(commit_info, builders, tests)
 
             finally:
                 for builder in builders:

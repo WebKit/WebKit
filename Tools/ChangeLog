@@ -1,3 +1,16 @@
+2011-05-11  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        sheriffbot shouldn't spam bugs when it can't figure out who to blame
+        https://bugs.webkit.org/show_bug.cgi?id=60613
+
+        This patch limits the number of bugs sheriffbot will spam to three.
+        Ideally, we'd come up with some smarter huerstics, but hopefully this
+        will cut down on the bugmail spam for slow bots.
+
+        * Scripts/webkitpy/tool/commands/sheriffbot.py:
+
 2011-05-10  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Adam Barth.
