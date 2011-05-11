@@ -78,7 +78,6 @@ webcore_cppflags += \
 	-I$(srcdir)/Source/WebCore/svg/properties \
 	-I$(srcdir)/Source/WebCore/webaudio \
 	-I$(srcdir)/Source/WebCore/websockets \
-	-I$(srcdir)/Source/WebCore/wml \
 	-I$(srcdir)/Source/WebCore/workers \
 	-I$(srcdir)/Source/WebCore/xml \
 	-I$(top_builddir)/WebCore/bindings/js \

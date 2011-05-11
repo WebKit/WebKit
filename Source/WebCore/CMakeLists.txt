@@ -58,7 +58,6 @@ SET(WebCore_INCLUDE_DIRECTORIES
     "${WEBCORE_DIR}/svg/properties"
     "${WEBCORE_DIR}/webaudio"
     "${WEBCORE_DIR}/websockets"
-    "${WEBCORE_DIR}/wml"
     "${WEBCORE_DIR}/workers"
     "${WEBCORE_DIR}/xml"
     "${JAVASCRIPTCORE_DIR}"

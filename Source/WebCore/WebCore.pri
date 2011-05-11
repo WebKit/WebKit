@@ -114,7 +114,6 @@ WEBCORE_INCLUDEPATH = \
     $$SOURCE_DIR/WebCore/svg/properties \
     $$SOURCE_DIR/WebCore/webaudio \
     $$SOURCE_DIR/WebCore/websockets \
-    $$SOURCE_DIR/WebCore/wml \
     $$SOURCE_DIR/WebCore/workers \
     $$SOURCE_DIR/WebCore/xml \
     $$WEBCORE_INCLUDEPATH

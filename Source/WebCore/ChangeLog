@@ -1,5 +1,21 @@
 2011-05-11  Lucas De Marchi  <lucas.demarchi@profusion.mobi>
 
+        Reviewed by David Kilzer.
+
+        Remove wml directory from include lists
+        https://bugs.webkit.org/show_bug.cgi?id=60646
+
+        Remove wml dir from CMake, Autotools and qmake build systems since WML
+        was removed in r85256.
+
+        No new tests since no change in functionality.
+
+        * CMakeLists.txt:
+        * GNUmakefile.am:
+        * WebCore.pri:
+
+2011-05-11  Lucas De Marchi  <lucas.demarchi@profusion.mobi>
+
         Reviewed by Antonio Gomes.
 
         [CMAKE] Move EFL-specific file to CMakeListsEfl.txt
