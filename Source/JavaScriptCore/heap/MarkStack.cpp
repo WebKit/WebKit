@@ -142,15 +142,21 @@ void MarkStack::validateSet(JSValue* values, size_t count)
 
 void MarkStack::validateValue(JSValue value)
 {
-    ASSERT(value);
+    if (!value)
+        CRASH();
     if (!value.isCell())
         return;
     JSCell* cell = value.asCell();
-    ASSERT_UNUSED(cell, cell);
-    ASSERT(cell->structure());
+    if (!cell)
+        CRASH();
+
+    if (!cell->structure())
+        CRASH();
+
     // Both the cell's structure, and the cell's structure's structure should be the Structure Structure.
     // I hate this sentence.
-    ASSERT(cell->structure()->structure()->JSCell::classInfo() == cell->structure()->JSCell::classInfo());
+    if (cell->structure()->structure()->JSCell::classInfo() != cell->structure()->JSCell::classInfo())
+        CRASH();
 }
 
 

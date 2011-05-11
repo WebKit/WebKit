@@ -1,3 +1,15 @@
+2011-05-11  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Gavin Barraclough.
+
+        Make mark stack validation functions do something useful in a release build
+        https://bugs.webkit.org/show_bug.cgi?id=60645
+
+        Turn ASSERTs into actual if(...) CRASH(); statements.
+
+        * heap/MarkStack.cpp:
+        (JSC::MarkStack::validateValue):
+
 2011-05-11  Xan Lopez  <xlopez@igalia.com>
 
         Reviewed by Martin Robinson.
