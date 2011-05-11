@@ -62,6 +62,10 @@ fast/dom/StyleSheet/detached-stylesheet-without-wrapper.html
 # https://bugs.webkit.org/show_bug.cgi?id=58183
 editing/execCommand/convert-style-elements-to-spans.html
 
+# Flakey on Snow Leopard Intel WebKit2 Release Tests
+# https://bugs.webkit.org/show_bug.cgi?id=60648
+fast/frames/flattening/frameset-flattening-subframesets.html
+
 # WebKitTestRunner needs an implementation of eventSender
 # <https://bugs.webkit.org/show_bug.cgi?id=42194>
 editing/deleting/5729680.html

@@ -1,3 +1,13 @@
+2011-05-11  Jessie Berlin  <jberlin@apple.com>
+
+        [SnowLeopard WebKit2 Tests] fast/frames/flattening/frameset-flattening-subframesets.html
+        flakey.
+        https://bugs.webkit.org/show_bug.cgi?id=60648
+
+        Add the test to the mac-wk2 Skipped list to get the bots green.
+
+        * platform/mac-wk2/Skipped:
+
 2011-05-11  Anton Muhin  <antonnm@chromium.org>
 
         Unreviewed.
