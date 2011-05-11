@@ -2,6 +2,22 @@
 
         Reviewed by Kenneth Rohde Christiansen.
 
+
+        [Texmap][Qt] Upstream texture-mapper changes from Qt's WebKit2 branch
+        https://bugs.webkit.org/show_bug.cgi?id=60439
+
+        Patch 3/12: TextureMapper shouldn't depend on OpenGL, but rather only allow the GL backend when
+        OpenGL is present.
+
+        No new tests. This is a build fix.
+
+        * WebCore.pri:
+        * WebCore.pro:
+
+2011-05-11  Noam Rosenthal  <noam.rosenthal@nokia.com>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
         [Texmap][Qt] Upstream texture-mapper changes from Qt's WebKit2 branch
         https://bugs.webkit.org/show_bug.cgi?id=60439
 

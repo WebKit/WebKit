@@ -269,11 +269,18 @@ contains(DEFINES, ENABLE_VIDEO=1) {
     }
 }
 
-contains(DEFINES, ENABLE_WEBGL=1)|contains(CONFIG, texmap) {
+contains(DEFINES, ENABLE_WEBGL=1) {
     !contains(QT_CONFIG, opengl) {
         error( "This configuration needs an OpenGL enabled Qt. Your Qt is missing OpenGL.")
     }
     QT *= opengl
+}
+
+contains(CONFIG, texmap) {
+    DEFINES += WTF_USE_TEXTURE_MAPPER=1
+    contains(QT_CONFIG, opengl) {
+        QT *= opengl
+    }
 }
 
 !CONFIG(webkit-debug):CONFIG(QTDIR_build) {

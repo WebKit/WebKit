@@ -3488,7 +3488,6 @@ win32:!win32-g++*:contains(QMAKE_HOST.arch, x86_64):{
 }
 
 contains(CONFIG, texmap) {
-    DEFINES += WTF_USE_TEXTURE_MAPPER=1
     HEADERS += \
         platform/graphics/qt/TextureMapperQt.h \
         platform/graphics/texmap/GraphicsLayerTextureMapper.h \
