@@ -88,7 +88,13 @@ TEST(WebKit2, WKPreferencesDefaults)
     TEST_ASSERT(WKPreferencesGetPrivateBrowsingEnabled(preference) == false);
     TEST_ASSERT(WKPreferencesGetDeveloperExtrasEnabled(preference) == false);
     TEST_ASSERT(WKPreferencesGetTextAreasAreResizable(preference) == true);
+
+#if PLATFORM(WIN)
+    TEST_ASSERT(WKPreferencesGetFontSmoothingLevel(preference) == kWKFontSmoothingLevelWindows);
+#else
     TEST_ASSERT(WKPreferencesGetFontSmoothingLevel(preference) == kWKFontSmoothingLevelMedium);
+#endif
+
     TEST_ASSERT(WKPreferencesGetAcceleratedCompositingEnabled(preference) == true);
     TEST_ASSERT(WKPreferencesGetCompositingBordersVisible(preference) == false);
     TEST_ASSERT(WKPreferencesGetCompositingRepaintCountersVisible(preference) == false);
