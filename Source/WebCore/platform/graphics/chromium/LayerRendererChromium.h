@@ -91,7 +91,7 @@ public:
 
     void setRootLayer(PassRefPtr<LayerChromium>);
     LayerChromium* rootLayer() { return m_rootLayer.get(); }
-    void transferRootLayer(LayerRendererChromium* other) { other->m_rootLayer = m_rootLayer.release(); }
+    void transferRootLayer(LayerRendererChromium* other);
 
     bool hardwareCompositing() const { return m_hardwareCompositing; }
 
@@ -172,6 +172,8 @@ private:
 
     bool initializeSharedObjects();
     void cleanupSharedObjects();
+
+    void setLayerRendererRecursive(LayerChromium*);
 
     IntRect m_viewportVisibleRect;
     IntRect m_viewportContentRect;

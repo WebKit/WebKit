@@ -1,3 +1,37 @@
+2011-05-10  James Robinson  <jamesr@chromium.org>
+
+        Reviewed by Kenneth Russell.
+
+        [chromium] Clean up setLayerRenderer() calls in LayerRendererChromium
+        https://bugs.webkit.org/show_bug.cgi?id=60524
+
+        This refactors the way LayerRendererChromium calls setLayerRenderer on its layers in a few ways to clean things
+        up:
+
+        *) Move the pre-paint call to setLayerRenderer from updatePropertiesAndRenderSurfaces() to paintLayerContents().
+            updatePropertiesAndRenderSurfaces() does too much and the layer renderer pointer only has to be up to date to do
+            the actual paint. Longer term we won't need to call this at all in order to call paint and this call will just
+            go away.
+        *) Tweaks updateCompositorResourcesRecursive() to be slightly shorter and less error-prone.
+        *) Explicitly set the LayerRendererChromium for each layer in the tree when transfering the root layer (used
+            during lost context).  LayerChromium::setLayerRenderer checks if the new LayerRendererChromium is different
+            by comparing the pointer value to the old one.  This check will be incorrect if there are multiple lost
+            contexts between a setLayerRenderer() call and a new LayerRendererChromium happens to be allocated at the
+            same address as the old one.  An explicit call to setLayerRenderer() for every layer in the tree fixes this
+            since when this function is called the new and old LayerRendererChromium are still live and so they cannot
+            live at the same address.
+
+        The first two changes are purely refactors and do not change behavior.  The third issue can't be tested via a
+        layout test directly as we don't have a way to induce a lost context on the compositor in a layout test.
+
+        * platform/graphics/chromium/LayerRendererChromium.cpp:
+        (WebCore::LayerRendererChromium::paintLayerContents):
+        (WebCore::LayerRendererChromium::clearLayerRendererRecursive):
+        (WebCore::LayerRendererChromium::transferRootLayer):
+        (WebCore::LayerRendererChromium::updatePropertiesAndRenderSurfaces):
+        (WebCore::LayerRendererChromium::updateCompositorResourcesRecursive):
+        * platform/graphics/chromium/LayerRendererChromium.h:
+
 2011-05-10  Anton D'Auria  <adauria@apple.com>
 
         Reviewed by David Levin.

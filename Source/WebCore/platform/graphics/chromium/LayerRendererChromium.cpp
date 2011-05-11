@@ -365,6 +365,15 @@ void LayerRendererChromium::paintLayerContents(const LayerList& renderSurfaceLay
             if (layer->bounds().isEmpty())
                 continue;
 
+            layer->setLayerRenderer(this);
+            if (layer->maskLayer())
+                layer->maskLayer()->setLayerRenderer(this);
+            if (layer->replicaLayer()) {
+                layer->replicaLayer()->setLayerRenderer(this);
+                if (layer->replicaLayer()->maskLayer())
+                    layer->replicaLayer()->maskLayer()->setLayerRenderer(this);
+            }
+
             IntRect targetSurfaceRect = ccLayerImpl->targetRenderSurface() ? ccLayerImpl->targetRenderSurface()->contentRect() : m_defaultRenderSurface->contentRect();
             IntRect scissorRect = layer->ccLayerImpl()->scissorRect();
             if (!scissorRect.isEmpty())
@@ -485,6 +494,26 @@ void LayerRendererChromium::setRootLayer(PassRefPtr<LayerChromium> layer)
     m_rootLayerContentTiler->invalidateEntireLayer();
 }
 
+void LayerRendererChromium::setLayerRendererRecursive(LayerChromium* layer)
+{
+    const Vector<RefPtr<LayerChromium> >& children = layer->children();
+    for (size_t i = 0; i < children.size(); ++i)
+        setLayerRendererRecursive(children[i].get());
+
+    if (layer->maskLayer())
+        setLayerRendererRecursive(layer->maskLayer());
+    if (layer->replicaLayer())
+        setLayerRendererRecursive(layer->replicaLayer());
+
+    layer->setLayerRenderer(this);
+}
+
+void LayerRendererChromium::transferRootLayer(LayerRendererChromium* other)
+{
+    other->setLayerRendererRecursive(m_rootLayer.get());
+    other->m_rootLayer = m_rootLayer.release();
+}
+
 void LayerRendererChromium::getFramebufferPixels(void *pixels, const IntRect& rect)
 {
     ASSERT(rect.maxX() <= m_viewportVisibleRect.width() && rect.maxY() <= m_viewportVisibleRect.height());
@@ -544,19 +573,12 @@ void LayerRendererChromium::updatePropertiesAndRenderSurfaces(LayerChromium* lay
 {
     // Make sure we have CCLayerImpls for this subtree.
     layer->createCCLayerImplIfNeeded();
-    layer->setLayerRenderer(this);
-    if (layer->maskLayer()) {
+    if (layer->maskLayer())
         layer->maskLayer()->createCCLayerImplIfNeeded();
-        layer->maskLayer()->setLayerRenderer(this);
-    }
-    if (layer->replicaLayer()) {
+    if (layer->replicaLayer())
         layer->replicaLayer()->createCCLayerImplIfNeeded();
-        layer->replicaLayer()->setLayerRenderer(this);
-    }
-    if (layer->replicaLayer() && layer->replicaLayer()->maskLayer()) {
+    if (layer->replicaLayer() && layer->replicaLayer()->maskLayer())
         layer->replicaLayer()->maskLayer()->createCCLayerImplIfNeeded();
-        layer->replicaLayer()->maskLayer()->setLayerRenderer(this);
-    }
 
     CCLayerImpl* drawLayer = layer->ccLayerImpl();
     // Currently we're calling pushPropertiesTo() twice - once here and once in updateCompositorResourcesRecursive().
@@ -812,16 +834,15 @@ void LayerRendererChromium::updateCompositorResourcesRecursive(LayerChromium* la
     if (layer->bounds().isEmpty())
         return;
 
+    if (layer->maskLayer())
+        updateCompositorResourcesRecursive(layer->maskLayer());
+    if (layer->replicaLayer())
+        updateCompositorResourcesRecursive(layer->replicaLayer());
+
     CCLayerImpl* drawLayer = layer->ccLayerImpl();
 
     if (drawLayer->drawsContent())
         drawLayer->updateCompositorResources();
-    if (drawLayer->maskLayer() && drawLayer->maskLayer()->drawsContent())
-        drawLayer->maskLayer()->updateCompositorResources();
-    if (drawLayer->replicaLayer() && drawLayer->replicaLayer()->drawsContent())
-        drawLayer->replicaLayer()->updateCompositorResources();
-    if (drawLayer->replicaLayer() && drawLayer->replicaLayer()->maskLayer() && drawLayer->replicaLayer()->maskLayer()->drawsContent())
-        drawLayer->replicaLayer()->maskLayer()->updateCompositorResources();
 
     layer->pushPropertiesTo(drawLayer);
 }
