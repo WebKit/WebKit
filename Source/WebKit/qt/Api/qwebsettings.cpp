@@ -57,7 +57,7 @@
 
 void QWEBKIT_EXPORT qt_networkAccessAllowed(bool isAllowed)
 {
-#if USE(QT_BEARER)
+#if ENABLE(QT_BEARER)
     WebCore::networkStateNotifier().setNetworkAccessAllowed(isAllowed);
 #endif
 }
@@ -172,13 +172,18 @@ void QWebSettingsPrivate::apply()
         value = attributes.value(QWebSettings::AcceleratedCompositingEnabled,
                                       global->attributes.value(QWebSettings::AcceleratedCompositingEnabled));
 
-        settings->setAcceleratedCompositingEnabled(value);
+        settings->setAcceleratedCompositingFor3DTransformsEnabled(value);
+        settings->setAcceleratedCompositingForAnimationEnabled(value);
+        settings->setAcceleratedCompositingForVideoEnabled(value);
 #endif
 #if ENABLE(WEBGL)
         value = attributes.value(QWebSettings::WebGLEnabled,
                                  global->attributes.value(QWebSettings::WebGLEnabled));
 
         settings->setWebGLEnabled(value);
+#if USE(ACCELERATED_COMPOSITING)
+        settings->setAcceleratedCompositingForCanvasEnabled(value);
+#endif
 #endif
 
         value = attributes.value(QWebSettings::HyperlinkAuditingEnabled,
