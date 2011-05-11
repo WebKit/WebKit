@@ -1,3 +1,10 @@
+2011-05-11  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Unreviewed update after r86230.
+
+        * platform/qt-arm/transforms/2d/compound-transforms-vs-containers-expected.txt: Added.
+        * platform/qt-mac/transforms/2d/compound-transforms-vs-containers-expected.txt: Added.
+
 2011-05-11  Chang Shu  <cshu@webkit.org>
 
         Reviewed by Csaba Osztrogonác.
