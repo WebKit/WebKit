@@ -2,6 +2,20 @@
 
         Unreviewed.
 
+        More rebaselines after r86261.
+
+        * platform/chromium-mac-leopard/fast/dom/HTMLInputElement/input-slider-update-expected.png: Added.
+        * platform/chromium-mac-leopard/fast/forms/slider-padding-expected.png: Added.
+        * platform/chromium-mac-leopard/fast/forms/slider-thumb-shared-style-expected.png:
+        * platform/chromium-mac-leopard/fast/repaint/slider-thumb-drag-release-expected.png:
+        * platform/chromium-mac/fast/dom/HTMLInputElement/input-slider-update-expected.png:
+        * platform/chromium-mac/fast/forms/slider-padding-expected.png: Added.
+        * platform/chromium/test_expectations.txt:
+
+2011-05-11  Abhishek Arya  <inferno@chromium.org>
+
+        Unreviewed.
+
         Rebaselines after r86261.
 
         * platform/chromium-mac/fast/forms/slider-thumb-shared-style-expected.png:
