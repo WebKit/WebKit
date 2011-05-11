@@ -54,6 +54,7 @@ private:
     RetainPtr<WKView> m_view;
     RetainPtr<NSString> m_resultForSynchronousDismissal;
     RetainPtr<NSCondition> m_resultCondition;
+    bool m_isDismissing;
 };
 
 } // namespace WebKit

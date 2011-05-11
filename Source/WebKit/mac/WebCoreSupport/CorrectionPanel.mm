@@ -47,6 +47,7 @@ CorrectionPanel::CorrectionPanel()
     : m_wasDismissedExternally(false)
     , m_reasonForDismissing(ReasonForDismissingCorrectionPanelIgnored)
     , m_resultCondition(AdoptNS, [[NSCondition alloc] init])
+    , m_isDismissing(false)
 {
 }
 
@@ -78,6 +79,7 @@ void CorrectionPanel::show(WebView* view, CorrectionPanelInfo::PanelType type, c
     [[NSSpellChecker sharedSpellChecker] showCorrectionIndicatorOfType:indicatorType primaryString:replacementStringAsNSString alternativeStrings:alternativeStrings forStringInRect:[view convertRect:boundingBoxOfReplacedString fromView:nil] view:m_view.get() completionHandler:^(NSString* acceptedString) {
         handleAcceptedReplacement(acceptedString, replacedStringAsNSString, replacementStringAsNSString, indicatorType);
     }];
+    m_isDismissing = false;
 }
 
 void CorrectionPanel::dismiss(ReasonForDismissingCorrectionPanel reason)
@@ -87,12 +89,9 @@ void CorrectionPanel::dismiss(ReasonForDismissingCorrectionPanel reason)
 
 String CorrectionPanel::dismissSoon(ReasonForDismissingCorrectionPanel reason)
 {
-    if (!isShowing())
-        return String();
-
     dismissInternal(reason, true);
     [m_resultCondition.get() lock];
-    while (!m_resultForSynchronousDismissal)
+    while (m_isDismissing)
         [m_resultCondition.get() wait];
     [m_resultCondition.get() unlock];
     return m_resultForSynchronousDismissal.get();
@@ -100,10 +99,11 @@ String CorrectionPanel::dismissSoon(ReasonForDismissingCorrectionPanel reason)
 
 void CorrectionPanel::dismissInternal(ReasonForDismissingCorrectionPanel reason, bool dismissingExternally)
 {
-    m_wasDismissedExternally = dismissingExternally;
     if (!isShowing())
         return;
-    
+        
+    m_isDismissing = true;
+    m_wasDismissedExternally = dismissingExternally;
     m_reasonForDismissing = reason;
     m_resultForSynchronousDismissal.clear();
     [[NSSpellChecker sharedSpellChecker] dismissCorrectionIndicatorForView:m_view.get()];
@@ -141,14 +141,13 @@ void CorrectionPanel::handleAcceptedReplacement(NSString* acceptedReplacement, N
         break;
     }
     
-    if (!m_wasDismissedExternally) {
+    if (!m_wasDismissedExternally)
         [m_view.get() handleCorrectionPanelResult:acceptedReplacement];
-        return;
-    }
-    
-    [m_resultCondition.get() lock];
     if (acceptedReplacement)
         m_resultForSynchronousDismissal.adoptNS([acceptedReplacement copy]);
+    
+    [m_resultCondition.get() lock];
+    m_isDismissing = false;
     [m_resultCondition.get() signal];
     [m_resultCondition.get() unlock];
 }

@@ -53,6 +53,7 @@ private:
     RetainPtr<WebView> m_view;
     RetainPtr<NSString> m_resultForSynchronousDismissal;
     RetainPtr<NSCondition> m_resultCondition;
+    bool m_isDismissing;
 };
 
 #endif // !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOW_LEOPARD)

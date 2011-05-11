@@ -1,3 +1,23 @@
+2011-05-11  Jia Pu  <jpu@apple.com>
+
+        Reviewed by Darin Adler.
+
+        CorrectionPanel sometimes hangs in dismissSoon().
+        https://bugs.webkit.org/show_bug.cgi?id=60599
+        <rdar://problem/9313628>
+
+        Make sure dismissSoon() won't wait indefinitely if handleAcceptedReplacement() sets m_resultForSynchronousDismissal
+        to nil. Added a designated variable m_isDismissing, instead of piggy-backing m_resultForSynchronousDismissal,
+        for condition checking.
+
+        * WebCoreSupport/CorrectionPanel.h:
+        * WebCoreSupport/CorrectionPanel.mm:
+        (CorrectionPanel::CorrectionPanel):
+        (CorrectionPanel::show):
+        (CorrectionPanel::dismissSoon):
+        (CorrectionPanel::dismissInternal):
+        (CorrectionPanel::handleAcceptedReplacement):
+
 2011-05-10  Anton D'Auria  <adauria@apple.com>
 
         Reviewed by David Levin.
