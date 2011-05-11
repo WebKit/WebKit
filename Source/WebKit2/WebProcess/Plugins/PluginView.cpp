@@ -781,19 +781,14 @@ void PluginView::performJavaScriptURLRequest(URLRequest* request)
     if (!plugin->controller())
         return;
 
+    // Don't notify the plug-in at all about targeted javascript: requests. This matches Mozilla and WebKit1.
+    if (!request->target().isNull())
+        return;
+
     ScriptState* scriptState = frame->script()->globalObject(pluginWorld())->globalExec();
     String resultString;
     result.getString(scriptState, resultString);
   
-    if (!request->target().isNull()) {
-        // Just send back whether the frame load succeeded or not.
-        if (resultString.isNull())
-            m_plugin->frameDidFail(request->requestID(), false);
-        else
-            m_plugin->frameDidFinishLoading(request->requestID());
-        return;
-    }
-
     // Send the result back to the plug-in.
     plugin->didEvaluateJavaScript(request->requestID(), decodeURLEscapeSequences(request->request().url()), resultString);
 }

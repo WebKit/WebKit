@@ -1,3 +1,20 @@
+2011-05-11  Adam Roben  <aroben@apple.com>
+
+        Test what happens when a plugin makes a targeted javascript: request
+
+        Test for <http://webkit.org/b/60568> <rdar://problem/8610657> REGRESSION (WebKit2): Flash
+        plugin doesn't appear on a hanes.com page
+
+        Reviewed by Anders Carlsson.
+
+        * plugins/get-targeted-javascript-url-expected.txt: Added.
+        * plugins/get-targeted-javascript-url.html: Added.
+        (startTest): Tell the plugin to make two targeted javascript: requests. One calls a function
+        with a return value, the other calls a function with no return value.
+        (finishTest): Check that both functions were called, and that we either didn't get an
+        NPP_URLNotify call (like in Mozilla, WebKit1, and WebKit2), or got an NPP_URLNotify call
+        with NPRES_DONE (like in Chrome).
+
 2011-05-11  Kenji Imasaki  <imasaki@chromium.org>
 
         Reviewed by David Levin.

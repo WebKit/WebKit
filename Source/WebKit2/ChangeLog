@@ -1,3 +1,20 @@
+2011-05-11  Adam Roben  <aroben@apple.com>
+
+        Don't notify the plugin when a targeted javascript: URL request completes
+
+        This matches Mozilla and WebKit1.
+
+        Fixes <http://webkit.org/b/60568> <rdar://problem/8610657> REGRESSION (WebKit2): Flash
+        plugin doesn't appear on a hanes.com page
+
+        Test: plugins/get-targeted-javascript-url.html
+
+        Reviewed by Anders Carlsson.
+
+        * WebProcess/Plugins/PluginView.cpp:
+        (WebKit::PluginView::performJavaScriptURLRequest): Don't call back to the plugin if the
+        request had a target.
+
 2011-05-11  Jessie Berlin  <jberlin@apple.com>
 
         Reviewed by Steve Falkenburg.
