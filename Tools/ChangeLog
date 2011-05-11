@@ -1,3 +1,15 @@
+2011-05-11  Alice Boxhall  <aboxhall@chromium.org>
+
+        Reviewed by Ojan Vafai.
+
+        Modify jsonresults_unittest.py to use a dict format for its test data, and modify jsonresults.py to flatten hierarchical directory structures in input JSON.
+        https://bugs.webkit.org/show_bug.cgi?id=60521
+
+        First steps towards making the results JSON all hierarchical.
+
+        * TestResultServer/model/jsonresults.py:
+        * TestResultServer/model/jsonresults_unittest.py:
+
 2011-05-11  Kevin Ollivier  <kevino@theolliviers.com>
 
         [wx] Build fix, adding new LayoutTestController method stubs.

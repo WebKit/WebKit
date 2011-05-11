@@ -45,6 +45,7 @@ JSON_RESULTS_PASS = "P"
 JSON_RESULTS_NO_DATA = "N"
 JSON_RESULTS_MIN_TIME = 1
 JSON_RESULTS_VERSION = 3
+JSON_RESULTS_HIERARCHICAL_VERSION = 4
 JSON_RESULTS_MAX_BUILDS = 750
 JSON_RESULTS_MAX_BUILDS_SMALL = 200
 
@@ -319,12 +320,38 @@ class JsonResults(object):
         return len(results) == 1 and results[0][1] == type
 
     @classmethod
+    def _flatten_json_tests(cls, json, prefix=None):
+        """Flattens a trie directory structure in tests into a flat structure.
+
+        Args:
+            json: json tests structure.
+            prefix: aleady-computed path to append to the eventual test name, if any.
+
+        Returns:
+            The flattened json tests structure.
+        """
+        result = {}
+        for name, test in json.iteritems():
+            if prefix:
+                fullname = prefix + "/" + name
+            else:
+                fullname = name
+
+            if "results" in test:
+                result[fullname] = test
+            else:
+                result.update(cls._flatten_json_tests(test, fullname))
+
+        return result
+
+    @classmethod
     def _check_json(cls, builder, json):
         """Check whether the given json is valid.
+        Converts partially-supported json to supported version json.
 
         Args:
             builder: builder name this json is for.
-            json: json object to check.
+            json: json object to check and convert if necessary.
 
         Returns:
             True if the json is valid or
@@ -332,7 +359,7 @@ class JsonResults(object):
         """
 
         version = json[JSON_RESULTS_VERSION_KEY]
-        if version > JSON_RESULTS_VERSION:
+        if version > JSON_RESULTS_HIERARCHICAL_VERSION:
             logging.error("Results JSON version '%s' is not supported.",
                 version)
             return False
@@ -345,6 +372,14 @@ class JsonResults(object):
         if not JSON_RESULTS_BUILD_NUMBERS in results_for_builder:
             logging.error("Missing build number in json results.")
             return False
+
+        # FIXME(aboxhall): Once the dashboard can read hierarchical JSON, both
+        # incremental and aggregated JSON can be hierarchical, with no need to
+        # flatten here.
+        if version == JSON_RESULTS_HIERARCHICAL_VERSION:
+            flattened_tests = cls._flatten_json_tests(results_for_builder[JSON_RESULTS_TESTS])
+            json[builder][JSON_RESULTS_TESTS] = flattened_tests
+            json[JSON_RESULTS_VERSION_KEY] = JSON_RESULTS_VERSION
 
         return True
 
