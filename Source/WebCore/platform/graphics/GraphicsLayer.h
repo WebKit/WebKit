@@ -40,10 +40,6 @@
 #include <wtf/OwnPtr.h>
 #include <wtf/PassOwnPtr.h>
 
-#if USE(TEXTURE_MAPPER)
-#include "texmap/TextureMapperPlatformLayer.h"
-#endif
-
 #if PLATFORM(MAC)
 #ifdef __OBJC__
 @class CALayer;

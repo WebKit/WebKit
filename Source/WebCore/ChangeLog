@@ -1,3 +1,19 @@
+2011-05-11  Noam Rosenthal  <noam.rosenthal@nokia.com>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        [Texmap][Qt] Upstream texture-mapper changes from Qt's WebKit2 branch
+        https://bugs.webkit.org/show_bug.cgi?id=60439
+
+        Patch 1/12: Change the TextureMapperPlatformLayer API to allow a 3D-context or a
+        media player to decide how to paint into the TextureMapper, rather than mandate specific
+        types of platform layers.
+
+        No new tests. Tests in LayoutTests/compositing test this.
+
+        * platform/graphics/GraphicsLayer.h:
+        * platform/graphics/texmap/TextureMapperPlatformLayer.h:
+
 2011-05-11  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Darin Adler.

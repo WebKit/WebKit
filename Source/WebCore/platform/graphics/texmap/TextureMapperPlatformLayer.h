@@ -20,58 +20,19 @@
 #ifndef TextureMapperPlatformLayer_h
 #define TextureMapperPlatformLayer_h
 
+#include "FloatRect.h"
+#include "TransformationMatrix.h"
+
 namespace WebCore {
 
-class GraphicsContext;
-class IntRect;
-class IntSize;
 class TextureMapper;
-class TransformationMatrix;
-
-
-// Glue layer to connect the texmap layer to the platform specific container.
-class TextureMapperLayerClient {
-public:
-    virtual ~TextureMapperLayerClient() {}
-    virtual void setNeedsDisplay() = 0;
-    virtual void setNeedsDisplayInRect(const IntRect& rect) = 0;
-    virtual void setSizeChanged(const IntSize&) = 0;
-    virtual TextureMapper* textureMapper() = 0;
-};
+class BitmapTexture;
 
 class TextureMapperPlatformLayer {
 public:
-    enum Type {
-        ContentLayer,
-        MediaLayer
-    };
-
-    virtual Type layerType() const = 0;
-    virtual ~TextureMapperPlatformLayer() {}
+    virtual void paintToTextureMapper(TextureMapper*, const FloatRect&, const TransformationMatrix& modelViewMatrix = TransformationMatrix(), float opacity = 1.0, BitmapTexture* mask = 0) const = 0;
 };
 
-class TextureMapperContentLayer : public TextureMapperPlatformLayer {
-public:
-    struct PaintOptions {
-        IntRect visibleRect;
-        IntRect targetRect;
-        IntSize viewportSize;
-        TransformationMatrix transform;
-        float opacity;
-    };
-
-    virtual void setPlatformLayerClient(TextureMapperLayerClient*) = 0;
-    virtual void paint(TextureMapper*, const PaintOptions&) {}
-    virtual IntSize size() const = 0;
-    virtual Type layerType() const { return ContentLayer; }
 };
-
-class TextureMapperMediaLayer : public TextureMapperPlatformLayer {
-public:
-    virtual void paint(GraphicsContext*) = 0;
-    virtual Type layerType() const { return MediaLayer; }
-};
-
-}
 
 #endif // TextureMapperPlatformLayer_h
