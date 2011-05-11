@@ -57,6 +57,7 @@
 		C0ADBE9612FCA79B00D2C129 /* simple-form.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = C0ADBE8412FCA6B600D2C129 /* simple-form.html */; };
 		C0BD669D131D3CF700E18F2A /* ResponsivenessTimerDoesntFireEarly.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C0BD669C131D3CF700E18F2A /* ResponsivenessTimerDoesntFireEarly.cpp */; };
 		C0BD669F131D3CFF00E18F2A /* ResponsivenessTimerDoesntFireEarly_Bundle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C0BD669E131D3CFF00E18F2A /* ResponsivenessTimerDoesntFireEarly_Bundle.cpp */; };
+		F3FC3EE313678B7300126A65 /* libgtest.a in Frameworks */ = {isa = PBXBuildFile; fileRef = F3FC3EE213678B7300126A65 /* libgtest.a */; };
 		F6F3F29113342FEB00A6BF19 /* CookieManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F6F3F29013342FEB00A6BF19 /* CookieManager.cpp */; };
 /* End PBXBuildFile section */
 
@@ -160,6 +161,7 @@
 		C0ADBE8412FCA6B600D2C129 /* simple-form.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = "simple-form.html"; sourceTree = "<group>"; };
 		C0BD669C131D3CF700E18F2A /* ResponsivenessTimerDoesntFireEarly.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ResponsivenessTimerDoesntFireEarly.cpp; sourceTree = "<group>"; };
 		C0BD669E131D3CFF00E18F2A /* ResponsivenessTimerDoesntFireEarly_Bundle.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ResponsivenessTimerDoesntFireEarly_Bundle.cpp; sourceTree = "<group>"; };
+		F3FC3EE213678B7300126A65 /* libgtest.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libgtest.a; path = ../../WebKitBuild/Debug/libgtest.a; sourceTree = SOURCE_ROOT; };
 		F6F3F29013342FEB00A6BF19 /* CookieManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CookieManager.cpp; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -172,6 +174,7 @@
 				BCA61DB511700EFD00460D1E /* WebKit2.framework in Frameworks */,
 				BC90964E1255620C00083756 /* JavaScriptCore.framework in Frameworks */,
 				C02B7854126613AE0026BF0F /* Carbon.framework in Frameworks */,
+				F3FC3EE313678B7300126A65 /* libgtest.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -222,6 +225,7 @@
 		08FB779DFE84155DC02AAC07 /* External Frameworks and Libraries */ = {
 			isa = PBXGroup;
 			children = (
+				F3FC3EE213678B7300126A65 /* libgtest.a */,
 				BCB9E9F011235BDE00A137E0 /* Cocoa.framework */,
 				BC90964D1255620C00083756 /* JavaScriptCore.framework */,
 				BCA61DB411700EFD00460D1E /* WebKit2.framework */,
@@ -479,6 +483,14 @@
 			baseConfigurationReference = BC90958012554CF900083756 /* TestWebKitAPI.xcconfig */;
 			buildSettings = {
 				FRAMEWORK_SEARCH_PATHS = "$(inherited)";
+				HEADER_SEARCH_PATHS = (
+					../../Source/ThirdParty/gtest/include,
+					"$(WEBCORE_PRIVATE_HEADERS_DIR)/ForwardingHeaders",
+				);
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(SRCROOT)/../../WebKitBuild/Debug\"",
+				);
 			};
 			name = Debug;
 		};
@@ -487,6 +499,14 @@
 			baseConfigurationReference = BC90958012554CF900083756 /* TestWebKitAPI.xcconfig */;
 			buildSettings = {
 				FRAMEWORK_SEARCH_PATHS = "$(inherited)";
+				HEADER_SEARCH_PATHS = (
+					../../Source/ThirdParty/gtest/include,
+					"$(WEBCORE_PRIVATE_HEADERS_DIR)/ForwardingHeaders",
+				);
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(SRCROOT)/../../WebKitBuild/Release\"",
+				);
 			};
 			name = Release;
 		};

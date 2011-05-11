@@ -28,60 +28,18 @@
 
 #include "TestsController.h"
 
+#include <gtest/gtest.h>
+
 namespace TestWebKitAPI {
 
-// Abstract base class that all tests inherit from.
-class Test {
-public:
-    virtual ~Test() { }
-    
-    virtual void run() = 0;
-    std::string name() const { return m_identifier; }
-    
-    template<typename TestClassTy> class Register {
-    public:
-        Register(const std::string& testSuite, const std::string& testCase)
-        {
-            TestsController::shared().registerCreateTestFunction(testSuite + "/" + testCase, Register::create);
-        }
-    
-    private:
-        static Test* create(const std::string& identifier) 
-        {
-            return new TestClassTy(identifier);
-        }
-    };
-
-protected:
-    Test(const std::string& identifier)
-        : m_identifier(identifier)
-    {
-    }
-
-    std::string m_identifier;
-};
-
-#define TEST_CLASS_NAME(testSuite, testCaseName) testSuite##testCaseName##_Test
-#define TEST_REGISTRAR_NAME(testSuite, testCaseName) testSuite##testCaseName##_Registrar
-
-// Use this to define a new test.
-#define TEST(testSuite, testCaseName) \
-    class TEST_CLASS_NAME(testSuite, testCaseName) : public Test { \
-    public: \
-        TEST_CLASS_NAME(testSuite, testCaseName)(const std::string& identifier) \
-            : Test(identifier) \
-        { \
+#define TEST_ASSERT(expression) EXPECT_TRUE(expression)
+#define TEST_ASSERT_RETURN(expression, returnValue) \
+    do { \
+        if (!(expression)) { \
+            EXPECT_FALSE(true) << #expression; \
+            return (returnValue); \
         } \
-        virtual void run(); \
-    }; \
-    \
-    static Test::Register<TEST_CLASS_NAME(testSuite, testCaseName)> TEST_REGISTRAR_NAME(testSuite, testCaseName)(#testSuite, #testCaseName); \
-    \
-    void TEST_CLASS_NAME(testSuite, testCaseName)::run()
-
-#define _TEST_ASSERT_HELPER(expression, returnStatement) do { if (!(expression)) { TestsController::shared().testFailed(__FILE__, __LINE__, #expression); returnStatement; } } while (0)
-#define TEST_ASSERT(expression) _TEST_ASSERT_HELPER(expression, return)
-#define TEST_ASSERT_RETURN(expression, returnValue) _TEST_ASSERT_HELPER(expression, return (returnValue))
+    } while (0)
 
 } // namespace TestWebKitAPI
 

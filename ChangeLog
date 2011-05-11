@@ -1,3 +1,17 @@
+2011-05-11  Dmitry Lomov  <dslomov@google.com>
+
+        Reviewed by David Levin.
+
+        https://bugs.webkit.org/show_bug.cgi?id=59561
+        Switch TestWebKitAPI to GTest
+
+        Fixes Makefiles and WinCairo build as well
+
+        * Source/ThirdParty/gtest/README.WebKit:
+        * Source/ThirdParty/gtest/msvc/gtest-md.vcproj:
+        * Source/ThirdParty/gtest/xcode/Config/General.xcconfig:
+        * Source/ThirdParty/gtest/xcode/Makefile: Added.
+
 2011-05-09  Dmitry Lomov  <dslomov@google.com>
 
         Reviewed by Sam Weinig.

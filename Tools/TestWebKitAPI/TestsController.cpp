@@ -26,8 +26,9 @@
 #include "TestsController.h"
 
 #include "Test.h"
-#include <algorithm>
 #include <assert.h>
+#include <gtest/gtest.h>
+#include <cstdio>
 
 namespace TestWebKitAPI {
 
@@ -38,45 +39,33 @@ TestsController& TestsController::shared()
 }
 
 TestsController::TestsController()
-    : m_testFailed(false)
-    , m_currentTest(0)
 {
+    int argc = 0;
+    ::testing::InitGoogleTest(&argc, (char**)0);
 }
 
 void TestsController::dumpTestNames()
 {
-    std::map<std::string, CreateTestFunction>::const_iterator it = m_createTestFunctions.begin();
-    std::map<std::string, CreateTestFunction>::const_iterator end = m_createTestFunctions.end();
-    for (; it != end; ++it)
-        printf("%s\n", (*it).first.c_str());
+    ::testing::UnitTest* unit_test = ::testing::UnitTest::GetInstance();
+
+    for (int i = 0; i < unit_test->total_test_case_count(); i++) {
+        const ::testing::TestCase* test_case = unit_test->GetTestCase(i);
+        for (int j = 0; j < test_case->total_test_count(); j++) {
+          const ::testing::TestInfo* test_info = test_case->GetTestInfo(j);
+          printf("%s.%s\n", test_case->name(), test_info->name());
+        }
+    }
 }
 
 bool TestsController::runTestNamed(const std::string& identifier)
 {
-    CreateTestFunction createTestFunction = m_createTestFunctions[identifier];
-    if (!createTestFunction) {
-        printf("ERROR: Test not found - %s\n", identifier.c_str());
-        return false;
-    }
-
-    m_currentTest = createTestFunction(identifier);
-    m_currentTest->run();
-
-    delete m_currentTest;
-    m_currentTest = 0;
-
-    return !m_testFailed;
+    ::testing::GTEST_FLAG(filter) = identifier;
+    return !RUN_ALL_TESTS();
 }
 
-void TestsController::testFailed(const char* file, int line, const char* message)
+bool TestsController::runAllTests()
 {
-    m_testFailed = true;
-    printf("FAIL: %s\n\t%s (%s:%d)\n", m_currentTest->name().c_str(), message, file, line);
-}
-
-void TestsController::registerCreateTestFunction(const std::string& identifier, CreateTestFunction createTestFunction)
-{
-    m_createTestFunctions[identifier] = createTestFunction;
+    return !RUN_ALL_TESTS();
 }
 
 } // namespace TestWebKitAPI
