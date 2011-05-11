@@ -1,3 +1,10 @@
+2011-05-11  Simon Fraser  <simon.fraser@apple.com>
+
+        Attempt to fix Chromium Mac build.
+
+        * rendering/RenderThemeMac.mm:
+        (WebCore::RenderThemeMac::paintSliderThumb):
+
 2011-05-11  Daniel Bates  <dbates@rim.com>
 
         Reviewed by Antonio Gomes.
