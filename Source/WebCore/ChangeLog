@@ -1,3 +1,11 @@
+2011-05-10  David Kilzer  <ddkilzer@apple.com>
+
+        BUILD FIX for !ENABLE(TEXT_CARET) after r86039
+
+        * editing/FrameSelection.cpp:
+        (WebCore::DragCaretController::paintDragCaret): Added
+        UNUSED_PARAM(frame) for !ENABLE(TEXT_CARET).
+
 2011-05-10  James Robinson  <jamesr@chromium.org>
 
         Reviewed by Kenneth Russell.

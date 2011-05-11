@@ -1771,6 +1771,7 @@ void DragCaretController::paintDragCaret(Frame* frame, GraphicsContext* p, int t
     if (m_position.deepEquivalent().deprecatedNode()->document()->frame() == frame)
         paintCaret(m_position.deepEquivalent().deprecatedNode(), p, tx, ty, clipRect);
 #else
+    UNUSED_PARAM(frame);
     UNUSED_PARAM(p);
     UNUSED_PARAM(tx);
     UNUSED_PARAM(ty);
