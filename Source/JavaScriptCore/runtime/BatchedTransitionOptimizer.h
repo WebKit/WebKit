@@ -38,13 +38,12 @@ namespace JSC {
             : m_globalData(&globalData)
             , m_object(object)
         {
-            if (!m_object->structure()->isDictionary())
-                m_object->setStructure(globalData, Structure::toCacheableDictionaryTransition(globalData, m_object->structure()));
         }
 
         ~BatchedTransitionOptimizer()
         {
-            m_object->flattenDictionaryObject(*m_globalData);
+            if (m_object->structure()->isDictionary())
+                m_object->flattenDictionaryObject(*m_globalData);
         }
 
     private:

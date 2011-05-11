@@ -134,6 +134,12 @@ JSObject* EvalExecutable::compileInternal(ExecState* exec, ScopeChainNode* scope
     }
 #endif
 
+#if ENABLE(JIT)
+    Heap::heap(this)->reportExtraMemoryCost(sizeof(*m_evalCodeBlock) + m_jitCodeForCall.size());
+#else
+    Heap::heap(this)->reportExtraMemoryCost(sizeof(*m_evalCodeBlock));
+#endif
+
     return 0;
 }
 
@@ -192,7 +198,13 @@ JSObject* ProgramExecutable::compileInternal(ExecState* exec, ScopeChainNode* sc
     }
 #endif
 
-   return 0;
+#if ENABLE(JIT)
+    Heap::heap(this)->reportExtraMemoryCost(sizeof(*m_programCodeBlock) + m_jitCodeForCall.size());
+#else
+    Heap::heap(this)->reportExtraMemoryCost(sizeof(*m_programCodeBlock));
+#endif
+
+    return 0;
 }
 
 #if ENABLE(JIT)
@@ -275,6 +287,12 @@ JSObject* FunctionExecutable::compileForCallInternal(ExecState* exec, ScopeChain
     }
 #endif
 
+#if ENABLE(JIT)
+    Heap::heap(this)->reportExtraMemoryCost(sizeof(*m_codeBlockForCall) + m_jitCodeForCall.size());
+#else
+    Heap::heap(this)->reportExtraMemoryCost(sizeof(*m_codeBlockForCall));
+#endif
+
     return 0;
 }
 
@@ -318,6 +336,12 @@ JSObject* FunctionExecutable::compileForConstructInternal(ExecState* exec, Scope
             m_codeBlockForConstruct->discardBytecode();
 #endif
     }
+#endif
+
+#if ENABLE(JIT)
+    Heap::heap(this)->reportExtraMemoryCost(sizeof(*m_codeBlockForConstruct) + m_jitCodeForConstruct.size());
+#else
+    Heap::heap(this)->reportExtraMemoryCost(sizeof(*m_codeBlockForConstruct));
 #endif
 
     return 0;

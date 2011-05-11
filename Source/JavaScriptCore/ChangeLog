@@ -1,3 +1,36 @@
+2011-05-11  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        <rdar://problem/9331651> REGRESSION: RPRVT grows by 1MB / sec @ dvd2blu.com
+        
+        SunSpider reports no change.
+
+        This bug was caused by changing Structure and Executable to being GC
+        objects, and by a long-standing bug that would thrash the global object
+        between dictionary and non-dictionary states.
+
+        * runtime/BatchedTransitionOptimizer.h:
+        (JSC::BatchedTransitionOptimizer::BatchedTransitionOptimizer): Don't
+        eagerly transition to dictionary -- this can cause pathological dictionary
+        churn, and it's not necessary, since objects know how to automatically
+        transition to dictionary when necessary.
+
+        * runtime/Executable.cpp:
+        (JSC::EvalExecutable::compileInternal):
+        (JSC::ProgramExecutable::compileInternal):
+        (JSC::FunctionExecutable::compileForCallInternal):
+        (JSC::FunctionExecutable::compileForConstructInternal): Be sure to report
+        extra cost from compilation, because it can be quite high. This is especially
+        important for program code, since DOM timers can repeatedly allocate
+        program code without allocating any other objects.
+
+        * runtime/JSObject.cpp:
+        (JSC::JSObject::removeDirect): Don't transition to the uncacheable state
+        if the thing we're trying to remove doesn't exist. This can happen during
+        compilation, since the compiler needs to ensure that no pre-existing
+        conflicting definitions exist for certain declarations.
+
 2011-05-11  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Gavin Barraclough.

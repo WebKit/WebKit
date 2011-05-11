@@ -524,6 +524,9 @@ void JSObject::preventExtensions(JSGlobalData& globalData)
 
 void JSObject::removeDirect(JSGlobalData& globalData, const Identifier& propertyName)
 {
+    if (m_structure->get(globalData, propertyName) == WTF::notFound)
+        return;
+
     size_t offset;
     if (m_structure->isUncacheableDictionary()) {
         offset = m_structure->removePropertyWithoutTransition(globalData, propertyName);
