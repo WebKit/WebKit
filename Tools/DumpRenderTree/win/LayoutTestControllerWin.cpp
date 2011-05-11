@@ -995,6 +995,12 @@ JSValueRef LayoutTestController::originsWithApplicationCache(JSContextRef contex
     return JSValueMakeUndefined(context);
 }
 
+long long LayoutTestController::applicationCacheDiskUsageForOrigin(JSStringRef name)
+{
+    // FIXME: Implement to get disk usage by all application caches for an origin.
+    return 0;
+}
+
 void LayoutTestController::clearAllDatabases()
 {
     COMPtr<IWebDatabaseManager> databaseManager;

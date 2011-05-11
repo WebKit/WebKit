@@ -35,6 +35,8 @@
 + (long long)defaultOriginQuota;
 + (void)setDefaultOriginQuota:(long long)size;
 
++ (long long)diskUsageForOrigin:(WebSecurityOrigin *)origin;
+
 + (void)deleteAllApplicationCaches;
 + (void)deleteCacheForOrigin:(WebSecurityOrigin *)origin;
 

@@ -297,6 +297,8 @@ public:
     void originsWithApplicationCache(const CppArgumentList&, CppVariant*);
     // Sets the application cache quota for the localhost origin.
     void setApplicationCacheOriginQuota(const CppArgumentList&, CppVariant*);
+    // Returns disk usage by all application caches for an origin.
+    void applicationCacheDiskUsageForOrigin(const CppArgumentList&, CppVariant*);
 
     // Clears all databases.
     void clearAllDatabases(const CppArgumentList&, CppVariant*);

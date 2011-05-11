@@ -206,7 +206,14 @@ void ApplicationCache::deleteCacheForOrigin(SecurityOrigin* origin)
         }
     }
 }
-    
+
+int64_t ApplicationCache::diskUsageForOrigin(SecurityOrigin* origin)
+{
+    int64_t usage = 0;
+    cacheStorage().usageForOrigin(origin, usage);
+    return usage;
+}
+
 #ifndef NDEBUG
 void ApplicationCache::dump()
 {

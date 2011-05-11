@@ -571,6 +571,12 @@ void LayoutTestController::setApplicationCacheOriginQuota(unsigned long long quo
     m_topLoadingFrame->securityOrigin().setApplicationCacheQuota(quota);
 }
 
+long long LayoutTestController::applicationCacheDiskUsageForOrigin(const QString& origin)
+{
+    // FIXME: Implement to support getting disk usage by all application caches for an origin.
+    return 0;
+}
+
 QStringList LayoutTestController::originsWithApplicationCache()
 {
     // FIXME: Implement to get origins that have application caches.

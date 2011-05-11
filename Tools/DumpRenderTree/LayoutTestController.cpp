@@ -420,6 +420,19 @@ static JSValueRef clearApplicationCacheForOriginCallback(JSContextRef context, J
     return JSValueMakeUndefined(context);
 }
 
+static JSValueRef applicationCacheDiskUsageForOriginCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
+{
+    if (argumentCount < 1)
+        return JSValueMakeUndefined(context);
+
+    JSRetainPtr<JSStringRef> originURL(Adopt, JSValueToStringCopy(context, arguments[0], exception));
+    ASSERT(!*exception);
+    
+    LayoutTestController* controller = static_cast<LayoutTestController*>(JSObjectGetPrivate(thisObject));
+
+    return JSValueMakeNumber(context, controller->applicationCacheDiskUsageForOrigin(originURL.get()));
+}
+
 static JSValueRef originsWithApplicationCacheCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
 {
     LayoutTestController* controller = static_cast<LayoutTestController*>(JSObjectGetPrivate(thisObject));
@@ -2221,6 +2234,7 @@ JSStaticFunction* LayoutTestController::staticFunctions()
         { "addUserStyleSheet", addUserStyleSheetCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "apiTestNewWindowDataLoadBaseURL", apiTestNewWindowDataLoadBaseURLCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "apiTestGoToCurrentBackForwardItem", apiTestGoToCurrentBackForwardItemCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
+        { "applicationCacheDiskUsageForOrigin", applicationCacheDiskUsageForOriginCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "callShouldCloseOnWebView", callShouldCloseOnWebViewCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "clearAllApplicationCaches", clearAllApplicationCachesCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "clearAllDatabases", clearAllDatabasesCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },

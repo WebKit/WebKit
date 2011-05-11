@@ -58,6 +58,11 @@ using namespace WebCore;
     cacheStorage().setDefaultOriginQuota(size);
 }
 
++ (long long)diskUsageForOrigin:(WebSecurityOrigin *)origin
+{
+    return ApplicationCache::diskUsageForOrigin([origin _core]);
+}
+
 + (void)deleteAllApplicationCaches
 {
     cacheStorage().deleteAllEntries();

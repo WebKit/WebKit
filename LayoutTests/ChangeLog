@@ -1,3 +1,21 @@
+2011-05-10  Anton D'Auria  <adauria@apple.com>
+
+        Reviewed by Alexey Proskuryakov.
+
+        Add ApplicationCache API to get disk usage per origin
+        https://bugs.webkit.org/show_bug.cgi?id=57127
+
+        * http/tests/appcache/origin-usage-expected.txt: Added.
+        * http/tests/appcache/origin-usage.html: Added.
+        * http/tests/appcache/resources/origin-usage-iframe-1.html: Added.
+        * http/tests/appcache/resources/origin-usage-iframe-1.manifest: Added.
+        * http/tests/appcache/resources/origin-usage-iframe-2.html: Added.
+        * http/tests/appcache/resources/origin-usage-iframe-2.manifest: Added.
+        * platform/chromium/test_expectations.txt:
+        * platform/gtk/Skipped:
+        * platform/mac-wk2/Skipped:
+        * platform/qt/Skipped:
+
 2011-05-10  Adam Klein  <adamk@chromium.org>
 
         Reviewed by David Levin.

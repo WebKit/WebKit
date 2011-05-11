@@ -92,6 +92,8 @@ public:
     
     static bool requestIsHTTPOrHTTPSGet(const ResourceRequest&);
 
+    static int64_t diskUsageForOrigin(SecurityOrigin*);
+    
     int64_t estimatedSizeInStorage() const { return m_estimatedSizeInStorage; }
 
 private:

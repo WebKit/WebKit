@@ -135,6 +135,13 @@ void LayoutTestController::clearAllApplicationCaches()
     [WebApplicationCache deleteAllApplicationCaches];
 }
 
+long long LayoutTestController::applicationCacheDiskUsageForOrigin(JSStringRef url)
+{
+    RetainPtr<CFStringRef> urlCF(AdoptCF, JSStringCopyCFString(kCFAllocatorDefault, url));
+    WebSecurityOrigin *origin = [[WebSecurityOrigin alloc] initWithURL:[NSURL URLWithString:(NSString *)urlCF.get()]];
+    return [WebApplicationCache diskUsageForOrigin:origin];
+}
+
 void LayoutTestController::syncLocalStorage()
 {
     [[WebStorageManager sharedWebStorageManager] syncLocalStorage];

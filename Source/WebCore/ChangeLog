@@ -1,3 +1,21 @@
+2011-05-10  Anton D'Auria  <adauria@apple.com>
+
+        Reviewed by Alexey Proskuryakov.
+
+        Add ApplicationCache API to get disk usage per origin
+        https://bugs.webkit.org/show_bug.cgi?id=57127
+
+        ApplicationCacheStorage already provides an API to get per-origin
+        disk usage. This should be exposed through WebCore::ApplicationCache
+        to not be dependent on storage implementation.
+
+        Test: http/tests/appcache/origin-usage.html
+
+        * WebCore.exp.in:
+        * loader/appcache/ApplicationCache.cpp:
+        (WebCore::ApplicationCache::diskUsageForOrigin):
+        * loader/appcache/ApplicationCache.h:
+
 2011-05-10  Pratik Solanki  <psolanki@apple.com>
 
         Reviewed by Alexey Proskuryakov.

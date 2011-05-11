@@ -1,3 +1,16 @@
+2011-05-10  Anton D'Auria  <adauria@apple.com>
+
+        Reviewed by Alexey Proskuryakov.
+
+        Add ApplicationCache API to get disk usage per origin
+        https://bugs.webkit.org/show_bug.cgi?id=57127
+
+        Added Mac port API.
+
+        * WebCoreSupport/WebApplicationCache.h:
+        * WebCoreSupport/WebApplicationCache.mm:
+        (+[WebApplicationCache diskUsageForOrigin:]):
+
 2011-05-10  Beth Dakin  <bdakin@apple.com>
 
         Reviewed by Darin Adler.

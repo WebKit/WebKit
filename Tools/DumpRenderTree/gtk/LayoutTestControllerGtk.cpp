@@ -666,6 +666,12 @@ JSValueRef LayoutTestController::originsWithApplicationCache(JSContextRef contex
     return JSValueMakeUndefined(context);
 }
 
+long long LayoutTestController::applicationCacheDiskUsageForOrigin(JSStringRef name)
+{
+    // FIXME: implement
+    return 0;
+}
+
 void LayoutTestController::clearAllDatabases()
 {
     webkit_remove_all_web_databases();

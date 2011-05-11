@@ -193,6 +193,7 @@ LayoutTestController::LayoutTestController(TestShell* shell)
     bindMethod("abortModal", &LayoutTestController::abortModal);
     bindMethod("accessStoredWebScriptObject", &LayoutTestController::accessStoredWebScriptObject);
     bindMethod("addDisallowedURL", &LayoutTestController::addDisallowedURL);
+    bindMethod("applicationCacheDiskUsageForOrigin", &LayoutTestController::applicationCacheDiskUsageForOrigin);
     bindMethod("callShouldCloseOnWebView", &LayoutTestController::callShouldCloseOnWebView);
     bindMethod("clearAllApplicationCaches", &LayoutTestController::clearAllApplicationCaches);
     bindMethod("clearApplicationCacheForOrigin", &LayoutTestController::clearApplicationCacheForOrigin);
@@ -838,6 +839,12 @@ void LayoutTestController::setApplicationCacheOriginQuota(const CppArgumentList&
 void LayoutTestController::originsWithApplicationCache(const CppArgumentList&, CppVariant* result)
 {
     // FIXME: Implement to support getting origins that have application caches.
+    result->setNull();
+}
+
+void LayoutTestController::applicationCacheDiskUsageForOrigin(const CppArgumentList&, CppVariant* result)
+{
+    // FIXME: Implement to support getting disk usage by all application cache for an origin.
     result->setNull();
 }
 
