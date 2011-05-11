@@ -1,3 +1,13 @@
+2011-05-10  Abhishek Arya  <inferno@chromium.org>
+
+        Unreviewed.
+
+        Chromium rebaselines.
+
+        * platform/chromium-gpu-linux/media/video-transformed-expected.png:
+        * platform/chromium-gpu-mac/media/video-transformed-expected.png:
+        * platform/chromium-gpu-win/media/video-transformed-expected.png:
+
 2011-05-10  Anton D'Auria  <adauria@apple.com>
 
         Reviewed by David Levin.
