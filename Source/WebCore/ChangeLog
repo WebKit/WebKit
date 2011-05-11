@@ -1,3 +1,49 @@
+2011-05-11  Jessie Berlin  <jberlin@apple.com>
+
+        Reviewed by Steve Falkenburg.
+
+        [Windows WebKit2] Use cookies set in WebKit1
+        https://bugs.webkit.org/show_bug.cgi?id=60274
+
+        Share the default storage session between the UI and Web Processes.
+
+        * platform/network/cf/CookieStorageCFNet.cpp:
+        (WebCore::defaultSessionCookieStorage):
+        Keep track of the default storage session cookie storage.
+        (WebCore::currentCookieStorage):
+        Call defaultCookieStorage to get the default cookie storage.
+        (WebCore::defaultCookieStorage):
+        If there is a default storage session cookie storage, prefer that over getting the default
+        cookie storage. In the Web Process, asking CFNetwork for the default cookie storage directly
+        without specifying a storage session will not get the cookie storage being shared by the UI
+        and Web Processes.
+
+        * platform/network/ResourceHandle.h:
+        * platform/network/cf/ResourceHandleCFNet.cpp:
+        (WebCore::willSendRequest):
+        Make sure to set the current storage session on any requests used by the Web
+        Process before CFNetwork has to do anything with them, in order for CFNetwork to avoid
+        doing anything with the Web Process's default storage session (which is not the one shared
+        with the UI Process).
+        (WebCore::makeFinalRequest):
+        Ditto.
+        (WebCore::ResourceHandle::willSendRequest):
+        Ditto.
+        (WebCore::ResourceHandle::currentStorageSession):
+        If there is a Private Browsing storage session, return that.
+        If not, on Windows return the default storage session that is being shared with the UI
+        Process and on Mac return 0.
+        (WebCore::defaultCFURLStorageSession):
+        (WebCore::ResourceHandle::setDefaultStorageSession):
+        (WebCore::ResourceHandle::defaultStorageSession):
+
+        * platform/network/cf/ResourceRequestCFNet.cpp:
+        (WebCore::ResourceRequest::doUpdatePlatformRequest):
+        Make sure to set the current storage session on any requests used by the Web
+        Process before CFNetwork has to do anything with them, in order for CFNetwork to avoid
+        doing anything with the Web Process's default storage session (which is not the one shared
+        with the UI Process).
+
 2011-05-11  Lucas De Marchi  <lucas.demarchi@profusion.mobi>
 
         Reviewed by David Kilzer.
