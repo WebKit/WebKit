@@ -57,7 +57,8 @@ public:
     void deleteOrigin(SecurityOrigin*);
     void deleteOrigin(const String& originIdentifier);
     void origins(Vector<RefPtr<SecurityOrigin> >& result);
-
+    long long diskUsageForOrigin(SecurityOrigin*);
+    
     void cancelDeletingOrigin(const String& originIdentifier);
     
     void setClient(StorageTrackerClient*);
@@ -82,6 +83,7 @@ private:
     void setStorageDirectoryPath(const String&);
 
     void deleteTrackerFiles();
+    String databasePathForOrigin(const String& originIdentifier);
 
     bool canDeleteOrigin(const String& originIdentifier);
     void willDeleteOrigin(const String& originIdentifier);

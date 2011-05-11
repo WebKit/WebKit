@@ -267,6 +267,7 @@ public slots:
     void originsWithLocalStorage();
     void deleteAllLocalStorage();
     void deleteLocalStorageForOrigin(const QString& originIdentifier);
+    long long localStorageDiskUsageForOrigin(const QString& originIdentifier);
     void observeStorageTrackerNotifications(unsigned number);
     void syncLocalStorage();
 

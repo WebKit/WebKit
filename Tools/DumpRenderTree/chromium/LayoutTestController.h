@@ -364,6 +364,7 @@ public:
     void deleteAllLocalStorage(const CppArgumentList&, CppVariant*);
     void originsWithLocalStorage(const CppArgumentList&, CppVariant*);
     void deleteLocalStorageForOrigin(const CppArgumentList&, CppVariant*);
+    void localStorageDiskUsageForOrigin(const CppArgumentList&, CppVariant*);
     void observeStorageTrackerNotifications(const CppArgumentList&, CppVariant*);
     void syncLocalStorage(const CppArgumentList&, CppVariant*);
 

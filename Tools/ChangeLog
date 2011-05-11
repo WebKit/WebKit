@@ -1,5 +1,30 @@
 2011-05-10  Anton D'Auria  <adauria@apple.com>
 
+        Reviewed by David Levin.
+
+        StorageTracker should report actual local storage usage on disk
+        https://bugs.webkit.org/show_bug.cgi?id=60558
+
+        * DumpRenderTree/LayoutTestController.cpp:
+        (localStorageDiskUsageForOriginCallback):
+        (LayoutTestController::staticFunctions):
+        * DumpRenderTree/LayoutTestController.h:
+        * DumpRenderTree/chromium/LayoutTestController.cpp:
+        (LayoutTestController::LayoutTestController):
+        (LayoutTestController::localStorageDiskUsageForOrigin):
+        * DumpRenderTree/chromium/LayoutTestController.h:
+        * DumpRenderTree/gtk/LayoutTestControllerGtk.cpp:
+        (LayoutTestController::localStorageDiskUsageForOrigin):
+        * DumpRenderTree/mac/LayoutTestControllerMac.mm:
+        (LayoutTestController::localStorageDiskUsageForOrigin):
+        * DumpRenderTree/qt/LayoutTestControllerQt.cpp:
+        (LayoutTestController::localStorageDiskUsageForOrigin):
+        * DumpRenderTree/qt/LayoutTestControllerQt.h:
+        * DumpRenderTree/win/LayoutTestControllerWin.cpp:
+        (LayoutTestController::localStorageDiskUsageForOrigin):
+
+2011-05-10  Anton D'Auria  <adauria@apple.com>
+
         Reviewed by Alexey Proskuryakov.
 
         Add ApplicationCache API to get disk usage per origin

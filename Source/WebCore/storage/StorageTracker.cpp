@@ -453,20 +453,7 @@ void StorageTracker::syncDeleteOrigin(const String& originIdentifier)
     if (!m_database.isOpen())
         return;
     
-    // Get origin's db file path, delete entry in tracker's db, then delete db file.
-    SQLiteStatement pathStatement(m_database, "SELECT path FROM Origins WHERE origin=?");
-    if (pathStatement.prepare() != SQLResultOk) {
-        LOG_ERROR("Unable to prepare selection of path for origin '%s'", originIdentifier.ascii().data());
-        return;
-    }
-    pathStatement.bindText(1, originIdentifier);
-    int result = pathStatement.step();
-    if (result != SQLResultRow) {
-        LOG_ERROR("Unable to find origin '%s' in Origins table", originIdentifier.ascii().data());
-        return;
-    }
-    
-    String path = pathStatement.getColumnText(0);
+    String path = databasePathForOrigin(originIdentifier);
 
     ASSERT(!path.isEmpty());
     
@@ -558,7 +545,42 @@ void StorageTracker::setIsActive(bool flag)
 {
     m_isActive = flag;
 }
+    
+String StorageTracker::databasePathForOrigin(const String& originIdentifier)
+{
+    ASSERT(!m_databaseGuard.tryLock());
+    ASSERT(m_isActive);
+    
+    if (!m_database.isOpen())
+        return String();
+    
+    SQLiteStatement pathStatement(m_database, "SELECT path FROM Origins WHERE origin=?");
+    if (pathStatement.prepare() != SQLResultOk) {
+        LOG_ERROR("Unable to prepare selection of path for origin '%s'", originIdentifier.ascii().data());
+        return String();
+    }
+    pathStatement.bindText(1, originIdentifier);
+    int result = pathStatement.step();
+    if (result != SQLResultRow)
+        return String();
 
+    return pathStatement.getColumnText(0);
+}
+    
+long long StorageTracker::diskUsageForOrigin(SecurityOrigin* origin)
+{
+    if (!m_isActive)
+        return 0;
+
+    MutexLocker lock(m_databaseGuard);
+
+    String path = databasePathForOrigin(origin->databaseIdentifier());
+    if (path.isEmpty())
+        return 0;
+
+    return SQLiteFileSystem::getDatabaseFileSize(path);
+}
+    
 } // namespace WebCore
 
 #endif // ENABLE(DOM_STORAGE)

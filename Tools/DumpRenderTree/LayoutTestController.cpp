@@ -496,6 +496,19 @@ static JSValueRef deleteLocalStorageForOriginCallback(JSContextRef context, JSOb
     return JSValueMakeUndefined(context);
 }
 
+static JSValueRef localStorageDiskUsageForOriginCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
+{
+    LayoutTestController* controller = static_cast<LayoutTestController*>(JSObjectGetPrivate(thisObject));
+
+    if (argumentCount < 1)
+        return JSValueMakeUndefined(context);
+
+    JSRetainPtr<JSStringRef> originURL(Adopt, JSValueToStringCopy(context, arguments[0], exception));
+    ASSERT(!*exception);
+
+    return JSValueMakeNumber(context, controller->localStorageDiskUsageForOrigin(originURL.get()));
+}
+
 static JSValueRef originsWithLocalStorageCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
 {
     LayoutTestController* controller = static_cast<LayoutTestController*>(JSObjectGetPrivate(thisObject));
@@ -2385,6 +2398,7 @@ JSStaticFunction* LayoutTestController::staticFunctions()
         { "syncLocalStorage", syncLocalStorageCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },                
         { "observeStorageTrackerNotifications", observeStorageTrackerNotificationsCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },        
         { "deleteLocalStorageForOrigin", deleteLocalStorageForOriginCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
+        { "localStorageDiskUsageForOrigin", localStorageDiskUsageForOriginCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "originsWithLocalStorage", originsWithLocalStorageCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "setShouldPaintBrokenImage", setShouldPaintBrokenImageCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "shadowPseudoId", shadowPseudoIdCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },

@@ -564,6 +564,12 @@ void LayoutTestController::clearApplicationCacheForOrigin(const QString& url)
     // FIXME: Implement to support deleting all application caches for an origin.
 }
 
+long long LayoutTestController::localStorageDiskUsageForOrigin(const QString& originIdentifier)
+{
+    // FIXME: Implement to support getting disk usage in bytes for an origin.
+    return 0;
+}
+
 void LayoutTestController::setApplicationCacheOriginQuota(unsigned long long quota)
 {
     if (!m_topLoadingFrame)

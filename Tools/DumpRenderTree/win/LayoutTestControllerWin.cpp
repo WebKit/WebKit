@@ -1543,6 +1543,12 @@ JSValueRef LayoutTestController::originsWithLocalStorage(JSContextRef context)
     return JSValueMakeUndefined(context);
 }
 
+long long LayoutTestController::localStorageDiskUsageForOrigin(JSStringRef originIdentifier)
+{
+    // FIXME: Implement to support getting local storage disk usage for an origin.
+    return 0;
+}
+
 void LayoutTestController::deleteLocalStorageForOrigin(JSStringRef URL)
 {
     // FIXME: Implement.

@@ -75,6 +75,11 @@ static NSString *storageDirectoryPath();
     StorageTracker::tracker().deleteOrigin([origin _core]);
 }
 
+- (unsigned long long)diskUsageForOrigin:(WebSecurityOrigin *)origin
+{
+    return StorageTracker::tracker().diskUsageForOrigin([origin _core]);
+}
+
 - (void)syncLocalStorage
 {
     StorageTracker::tracker().syncLocalStorage();

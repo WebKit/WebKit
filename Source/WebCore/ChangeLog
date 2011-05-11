@@ -1,5 +1,29 @@
 2011-05-10  Anton D'Auria  <adauria@apple.com>
 
+        Reviewed by David Levin.
+
+        StorageTracker should report actual local storage usage on disk
+        https://bugs.webkit.org/show_bug.cgi?id=60558
+
+        Tests: storage/domstorage/localstorage/storagetracker/storage-tracker-6-create.html
+               storage/domstorage/localstorage/storagetracker/storage-tracker-7-usage.html
+
+        Use SQLiteFileSystem::getDatabaseFileSize to get actual usage by
+        an origin's local storage db. Factored out code that retrieves
+        path of local storage db.
+
+        * WebCore.exp.in: Sorted alphabetically StorageTracker's mangled
+        function names.
+        * storage/StorageTracker.cpp:
+        (WebCore::StorageTracker::syncDeleteOrigin): Uses helper function
+        to get path of origin's db
+        (WebCore::StorageTracker::databasePathForOrigin): New helper function.
+        that gets the path of an origin's local storage db from StorageTracker.
+        (WebCore::StorageTracker::diskUsageForOrigin): New API.
+        * storage/StorageTracker.h:
+
+2011-05-10  Anton D'Auria  <adauria@apple.com>
+
         Reviewed by Alexey Proskuryakov.
 
         Add ApplicationCache API to get disk usage per origin

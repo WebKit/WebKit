@@ -331,6 +331,7 @@ public:
     JSValueRef originsWithLocalStorage(JSContextRef);
     void deleteAllLocalStorage();
     void deleteLocalStorageForOrigin(JSStringRef originIdentifier);
+    long long localStorageDiskUsageForOrigin(JSStringRef originIdentifier);
     void observeStorageTrackerNotifications(unsigned number);
     void syncLocalStorage();
 

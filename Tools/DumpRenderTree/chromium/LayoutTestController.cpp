@@ -208,6 +208,7 @@ LayoutTestController::LayoutTestController(TestShell* shell)
     bindMethod("setUseDashboardCompatibilityMode", &LayoutTestController::setUseDashboardCompatibilityMode);
     bindMethod("storeWebScriptObject", &LayoutTestController::storeWebScriptObject);
     bindMethod("deleteAllLocalStorage", &LayoutTestController::deleteAllLocalStorage);
+    bindMethod("localStorageDiskUsageForOrigin", &LayoutTestController::localStorageDiskUsageForOrigin);
     bindMethod("originsWithLocalStorage", &LayoutTestController::originsWithLocalStorage);
     bindMethod("deleteLocalStorageForOrigin", &LayoutTestController::deleteLocalStorageForOrigin);
     bindMethod("observeStorageTrackerNotifications", &LayoutTestController::observeStorageTrackerNotifications);
@@ -1773,6 +1774,11 @@ void LayoutTestController::setValueForUser(const CppArgumentList& arguments, Cpp
 }
 
 void LayoutTestController::deleteAllLocalStorage(const CppArgumentList& arguments, CppVariant*)
+{
+    // Not Implemented
+}
+
+void LayoutTestController::localStorageDiskUsageForOrigin(const CppArgumentList& arguments, CppVariant*)
 {
     // Not Implemented
 }

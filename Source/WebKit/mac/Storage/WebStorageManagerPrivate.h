@@ -37,6 +37,7 @@ extern NSString * const WebStorageDidModifyOriginNotification;
 
 - (void)deleteAllOrigins;
 - (void)deleteOrigin:(WebSecurityOrigin *)origin;
+- (unsigned long long)diskUsageForOrigin:(WebSecurityOrigin *)origin;
 
 - (void)syncLocalStorage;
 - (void)syncFileSystemAndTrackerDatabase;

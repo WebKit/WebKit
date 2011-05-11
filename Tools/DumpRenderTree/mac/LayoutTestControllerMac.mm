@@ -147,6 +147,13 @@ void LayoutTestController::syncLocalStorage()
     [[WebStorageManager sharedWebStorageManager] syncLocalStorage];
 }
 
+long long LayoutTestController::localStorageDiskUsageForOrigin(JSStringRef url)
+{
+    RetainPtr<CFStringRef> urlCF(AdoptCF, JSStringCopyCFString(kCFAllocatorDefault, url));
+    WebSecurityOrigin *origin = [[WebSecurityOrigin alloc] initWithURL:[NSURL URLWithString:(NSString *)urlCF.get()]];
+    return [[WebStorageManager sharedWebStorageManager] diskUsageForOrigin:origin];
+}
+
 void LayoutTestController::observeStorageTrackerNotifications(unsigned number)
 {
     [storageDelegate logNotifications:number controller:this];
