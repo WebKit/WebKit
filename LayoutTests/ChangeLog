@@ -1,3 +1,12 @@
+2011-05-11  Jessie Berlin  <jberlin@apple.com>
+
+        WebKitTestRunner needs layoutTestController.originsWithLocalStorage.
+
+        Add two more storage tracker tests (added in r86205) to the mac-wk2 Skipped list to get the
+        bots green.
+
+        * platform/mac-wk2/Skipped:
+
 2011-05-11  Srinivasulu Chereddy  <srinivasulu.chereddy@nokia.com>
 
         Reviewed by Csaba Osztrogonác.
