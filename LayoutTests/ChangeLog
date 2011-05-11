@@ -1,3 +1,16 @@
+2011-05-11  Srinivasulu Chereddy  <srinivasulu.chereddy@nokia.com>
+
+        Reviewed by Csaba Osztrogonác.
+
+        [Qt] Expected results for 2d-transforms new test
+        https://bugs.webkit.org/show_bug.cgi?id=60565
+
+        Added expected results for 1 new 2d-transforms test.
+
+        * platform/qt/transforms/2d/compound-transforms-vs-containers-expected.png: Added.
+        * platform/qt/transforms/2d/compound-transforms-vs-containers-expected.txt: Added.
+        * platform/qt/Skipped: Unskip now passing test.
+
 2011-05-11  Kent Tamura  <tkent@chromium.org>
 
         The tests added by r86224 don't work on WebKit2/mac.

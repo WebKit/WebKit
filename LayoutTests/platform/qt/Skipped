@@ -2061,7 +2061,6 @@ canvas/philip/tests/2d.pattern.image.incomplete.omitted.html
 # -- fail with --platform mac --ignore-metrics
 transforms/2d/zoom-menulist.html
 # -- pass with --platform mac --ignore-metrics
-transforms/2d/compound-transforms-vs-containers.html
 transforms/2d/transform-borderbox.html
 transforms/2d/transform-origin-borderbox.html
 transforms/no_transform_hit_testing.html
