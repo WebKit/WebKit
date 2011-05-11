@@ -189,7 +189,7 @@ bool SharedBitmap::freeMemory()
 PassOwnPtr<HBITMAP> SharedBitmap::createHandle(void** pixels, BitmapInfo* bmpInfo, int height, bool use16bit) const
 {
     if (!m_pixels)
-        return 0;
+        return nullptr;
 
     if (height == -1)
         height = this->height();
@@ -198,7 +198,7 @@ PassOwnPtr<HBITMAP> SharedBitmap::createHandle(void** pixels, BitmapInfo* bmpInf
     OwnPtr<HBITMAP> hbmp = adoptPtr(CreateDIBSection(0, bmpInfo, DIB_RGB_COLORS, pixels, 0, 0));
 
     if (!hbmp)
-        return 0;
+        return nullptr;
 
     OwnPtr<HDC> bmpDC = adoptPtr(CreateCompatibleDC(0));
     HGDIOBJ hOldBmp = SelectObject(bmpDC.get(), hbmp.get());
@@ -295,20 +295,20 @@ void SharedBitmap::draw(HDC hdc, const IntRect& dstRect, const IntRect& srcRect,
 PassOwnPtr<HBITMAP> SharedBitmap::clipBitmap(const IntRect& rect, bool useAlpha, BitmapInfo& bmpInfo, void*& pixels)
 {
     if (!bytes())
-        return 0;
+        return nullptr;
 
     int oldWidth = width();
     int oldHeight = height();
     int copyWidth = std::min<int>(rect.width(), oldWidth - rect.x());
     int copyHeight = std::min<int>(rect.height(), oldHeight - rect.y());
     if (!copyWidth || !copyHeight)
-        return 0;
+        return nullptr;
 
     bmpInfo = BitmapInfo::createBottomUp(IntSize(copyWidth, copyHeight), (useAlpha && is32bit()) ? BitmapInfo::BitCount32 : BitmapInfo::BitCount16);
     OwnPtr<HBITMAP> newBmp = adoptPtr(CreateDIBSection(0, &bmpInfo, DIB_RGB_COLORS, &pixels, 0, 0));
 
     if (!newBmp)
-        return 0;
+        return nullptr;
 
     OwnPtr<HDC> dcNew = adoptPtr(CreateCompatibleDC(0));
     HGDIOBJ tmpNew = SelectObject(dcNew.get(), newBmp.get());

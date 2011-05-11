@@ -1,3 +1,18 @@
+2011-05-11  Adam Roben  <aroben@apple.com>
+
+        WinCE build fixes for strict PassOwnPtr
+
+        * platform/graphics/wince/SharedBitmap.cpp:
+        (WebCore::SharedBitmap::createHandle):
+        (WebCore::SharedBitmap::clipBitmap):
+        Use nullptr instead of 0.
+
+        * platform/graphics/wince/SimpleFontDataWinCE.cpp: Keep LOOSE_PASS_OWN_PTR turned on for
+        this file until SimpleFontData::scaledFontData is dealt with on all platforms.
+
+        * platform/text/wince/TextCodecWinCE.cpp:
+        (WebCore::newTextCodecWinCE): Use adoptPtr.
+
 2011-05-11  Chang Shu  <cshu@webkit.org>
 
         Reviewed by Antonio Gomes.

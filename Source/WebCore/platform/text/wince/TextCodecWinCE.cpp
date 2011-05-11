@@ -130,7 +130,7 @@ static UINT getCodePage(const char* name)
 
 static PassOwnPtr<TextCodec> newTextCodecWinCE(const TextEncoding& encoding, const void*)
 {
-    return new TextCodecWinCE(getCodePage(encoding.name()));
+    return adoptPtr(new TextCodecWinCE(getCodePage(encoding.name())));
 }
 
 TextCodecWinCE::TextCodecWinCE(UINT codePage)

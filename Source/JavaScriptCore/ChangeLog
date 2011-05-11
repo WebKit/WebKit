@@ -1,3 +1,10 @@
+2011-05-11  Adam Roben  <aroben@apple.com>
+
+        WinCE build fixes for strict PassOwnPtr
+
+        * wtf/unicode/CollatorDefault.cpp:
+        (WTF::Collator::userDefault): Use adoptPtr.
+
 2011-05-11  Holger Hans Peter Freyther  <holger@moiji-mobile.com>
 
         Unreviewed build fix.
