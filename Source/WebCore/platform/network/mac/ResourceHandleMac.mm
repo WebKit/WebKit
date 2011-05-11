@@ -826,8 +826,14 @@ String ResourceHandle::privateBrowsingStorageSessionIdentifierDefaultBase()
     if (m_handle->client()->supportsDataArray())
         m_handle->client()->didReceiveDataArray(m_handle, reinterpret_cast<CFArrayRef>(dataArray));
     else {
-        for (NSData *data in dataArray)
+        // The call to didReceiveData below could cancel a load, which would result in the delegate
+        // (self) being released.
+        RetainPtr<WebCoreResourceHandleAsDelegate> protect(self);
+        for (NSData *data in dataArray) {
+            if (!m_handle)
+                break;
             m_handle->client()->didReceiveData(m_handle, static_cast<const char*>([data bytes]), [data length], static_cast<int>([data length]));
+        }
     }
     return;
 }

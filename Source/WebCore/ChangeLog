@@ -1,3 +1,19 @@
+2011-05-10  Pratik Solanki  <psolanki@apple.com>
+
+        Reviewed by Alexey Proskuryakov.
+
+        Protect self in [WebCoreResourceHandleAsDelegate connection:didReceiveDataArray:]
+        https://bugs.webkit.org/show_bug.cgi?id=60594
+        <rdar://problem/9203259>
+
+        No tests since we don't have any bots testing CFNETWORK_DATA_ARRAY_CALLBACK.
+
+        * platform/network/mac/ResourceHandleMac.mm:
+        (-[WebCoreResourceHandleAsDelegate connection:didReceiveDataArray:]): The didReceiveData()
+        callback on client can result in the load being cancelled. This results in the delegate
+        (self) being freed.  Protect self during the loop so we can check for m_handle and safely
+        return without crashing.
+
 2011-05-10  Chris Guillory  <chris.guillory@google.com>
 
         Reviewed by James Robinson.
