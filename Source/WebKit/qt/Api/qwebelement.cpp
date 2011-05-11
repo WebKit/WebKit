@@ -46,6 +46,7 @@
 #endif
 #include "NodeList.h"
 #include "RenderImage.h"
+#include "ScriptState.h"
 #include "StaticNodeList.h"
 #include "qwebframe.h"
 #include "qwebframe_p.h"

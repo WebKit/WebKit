@@ -56,6 +56,10 @@ Console::Console(Frame* frame)
 {
 }
 
+Console::~Console()
+{
+}
+
 Frame* Console::frame() const
 {
     return m_frame;

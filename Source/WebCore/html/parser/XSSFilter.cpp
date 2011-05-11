@@ -26,6 +26,7 @@
 #include "config.h"
 #include "XSSFilter.h"
 
+#include "Console.h"
 #include "DOMWindow.h"
 #include "Document.h"
 #include "DocumentLoader.h"

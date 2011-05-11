@@ -315,6 +315,7 @@ sub AddClassForwardIfNeeded
         push(@headerContent, "class $implClassName;\n\n");
     # ScriptProfile and ScriptProfileNode are typedefs to JSC::Profile and JSC::ProfileNode.
     } elsif (IsScriptProfileType($implClassName)) {
+        $headerIncludes{"<profiler/ProfileNode.h>"} = 1;
         AddTypedefForScriptProfileType($implClassName);
     }
 }

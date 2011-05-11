@@ -680,6 +680,7 @@
             'page/Chrome.h',
             'page/ChromeClient.h',
             'page/Console.h',
+            'page/ConsoleTypes.h',
             'page/ContentSecurityPolicy.h',
             'page/ContextMenuClient.h',
             'page/ContextMenuController.h',

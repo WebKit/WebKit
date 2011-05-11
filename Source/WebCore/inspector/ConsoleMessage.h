@@ -31,14 +31,14 @@
 #ifndef ConsoleMessage_h
 #define ConsoleMessage_h
 
-#include "Console.h"
+#include "ConsoleTypes.h"
 #include "InspectorFrontend.h"
 #include "ScriptState.h"
-
 #include <wtf/Forward.h>
 #include <wtf/Vector.h>
 
 namespace WebCore {
+
 class InjectedScriptManager;
 class InspectorFrontend;
 class InspectorObject;

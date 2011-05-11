@@ -25,7 +25,7 @@
 #ifndef InspectorConsoleAgent_h
 #define InspectorConsoleAgent_h
 
-#include "Console.h"
+#include "ConsoleTypes.h"
 #include "InspectorFrontend.h"
 #include <wtf/Forward.h>
 #include <wtf/HashMap.h>

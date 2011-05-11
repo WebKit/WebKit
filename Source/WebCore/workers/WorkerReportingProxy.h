@@ -33,9 +33,8 @@
 
 #if ENABLE(WORKERS)
 
+#include "ConsoleTypes.h"
 #include <wtf/Forward.h>
-
-#include "Console.h"
 
 namespace WebCore {
 
@@ -54,6 +53,7 @@ namespace WebCore {
         // Invoked when the thread has stopped.
         virtual void workerContextDestroyed() = 0;
     };
+
 } // namespace WebCore
 
 #endif // ENABLE(WORKERS)

@@ -40,6 +40,7 @@
 #include "ResourceError.h"
 #include "ResourceRequest.h"
 #include "ScriptCallStack.h"
+#include "ScriptProfile.h"
 #include "SecurityOrigin.h"
 #include "Settings.h"
 #include "SharedBuffer.h"

@@ -34,9 +34,9 @@
 #include "ApplicationCacheStorage.h"
 #include "Chrome.h"
 #include "ChromeClient.h"
-#include "DocumentLoader.h"
 #include "DOMApplicationCache.h"
 #include "DOMWindow.h"
+#include "DocumentLoader.h"
 #include "Frame.h"
 #include "FrameLoader.h"
 #include "FrameLoaderClient.h"
@@ -44,6 +44,7 @@
 #include "MainResourceLoader.h"
 #include "ManifestParser.h"
 #include "Page.h"
+#include "ScriptProfile.h"
 #include "SecurityOrigin.h"
 #include "Settings.h"
 #include <wtf/HashMap.h>

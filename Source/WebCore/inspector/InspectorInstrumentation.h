@@ -31,7 +31,7 @@
 #ifndef InspectorInstrumentation_h
 #define InspectorInstrumentation_h
 
-#include "Console.h"
+#include "ConsoleTypes.h"
 #include "Document.h"
 #include "Frame.h"
 #include "Page.h"
@@ -58,6 +58,7 @@ class ResourceResponse;
 class ScriptArguments;
 class ScriptCallStack;
 class ScriptExecutionContext;
+class ScriptProfile;
 class StorageArea;
 class WorkerContextProxy;
 class XMLHttpRequest;

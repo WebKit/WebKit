@@ -24422,6 +24422,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\page\ConsoleTypes.h"
+				>
+			</File>
+			<File
 				RelativePath="..\page\ContentSecurityPolicy.cpp"
 				>
 			</File>

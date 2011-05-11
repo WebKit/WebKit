@@ -30,12 +30,9 @@
 #ifndef InjectedScriptHost_h
 #define InjectedScriptHost_h
 
-#include "Console.h"
+#include "ConsoleTypes.h"
 #include "InspectorAgent.h"
-#include "PlatformString.h"
 #include "ScriptState.h"
-
-#include <wtf/HashMap.h>
 #include <wtf/RefCounted.h>
 #include <wtf/Vector.h>
 
@@ -54,8 +51,7 @@ class ScriptObject;
 class ScriptValue;
 class Storage;
 
-class InjectedScriptHost : public RefCounted<InjectedScriptHost>
-{
+class InjectedScriptHost : public RefCounted<InjectedScriptHost> {
 public:
     static PassRefPtr<InjectedScriptHost> create();
     ~InjectedScriptHost();

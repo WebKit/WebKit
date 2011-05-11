@@ -30,7 +30,7 @@
 #define InspectorAgent_h
 
 #include "CharacterData.h"
-#include "Console.h"
+#include "ConsoleTypes.h"
 #include "Page.h"
 #include "PlatformString.h"
 #include <wtf/HashMap.h>

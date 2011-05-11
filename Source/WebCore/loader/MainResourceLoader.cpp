@@ -31,6 +31,7 @@
 #include "MainResourceLoader.h"
 
 #include "ApplicationCacheHost.h"
+#include "Console.h"
 #include "DOMWindow.h"
 #include "Document.h"
 #include "DocumentLoadTiming.h"

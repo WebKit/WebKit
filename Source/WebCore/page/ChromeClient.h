@@ -22,7 +22,7 @@
 #define ChromeClient_h
 
 #include "AXObjectCache.h"
-#include "Console.h"
+#include "ConsoleTypes.h"
 #include "Cursor.h"
 #include "FocusDirection.h"
 #include "GraphicsContext.h"

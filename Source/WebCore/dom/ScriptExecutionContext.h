@@ -28,7 +28,7 @@
 #define ScriptExecutionContext_h
 
 #include "ActiveDOMObject.h"
-#include "Console.h"
+#include "ConsoleTypes.h"
 #include "KURL.h"
 #include <wtf/Forward.h>
 #include <wtf/HashMap.h>
@@ -48,21 +48,23 @@
 namespace WebCore {
 
     class Blob;
+    class DOMTimer;
+    class DOMURL;
+    class EventListener;
+    class EventTarget;
+    class MessagePort;
+    class ScriptCallStack;
+    class SecurityOrigin;
+
 #if ENABLE(DATABASE)
     class Database;
     class DatabaseTaskSynchronizer;
     class DatabaseThread;
 #endif
-    class DOMTimer;
-    class EventListener;
-    class EventTarget;
+
 #if ENABLE(BLOB) || ENABLE(FILE_SYSTEM)
     class FileThread;
 #endif
-    class MessagePort;
-    class DOMURL;
-    class SecurityOrigin;
-    class ScriptCallStack;
 
     class ScriptExecutionContext {
     public:

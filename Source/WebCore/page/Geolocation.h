@@ -42,6 +42,7 @@
 namespace WebCore {
 
 class Frame;
+class Page;
 
 #if ENABLE(CLIENT_BASED_GEOLOCATION)
 class GeolocationPosition;

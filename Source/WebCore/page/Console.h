@@ -29,58 +29,29 @@
 #ifndef Console_h
 #define Console_h
 
-#include "MemoryInfo.h"
-#include "PlatformString.h"
+#include "ConsoleTypes.h"
 #include "ScriptProfile.h"
 #include "ScriptState.h"
-
 #include <wtf/Forward.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
 
 namespace WebCore {
 
+class Frame;
+class MemoryInfo;
+class Page;
 class ScriptArguments;
+class ScriptCallStack;
 
 #if ENABLE(JAVASCRIPT_DEBUGGER)
 typedef Vector<RefPtr<ScriptProfile> > ProfilesArray;
 #endif
 
-class Frame;
-class Page;
-class ScriptCallStack;
-
-enum MessageSource {
-    HTMLMessageSource,
-    XMLMessageSource,
-    JSMessageSource,
-    CSSMessageSource,
-    OtherMessageSource
-};
-
-enum MessageType {
-    LogMessageType,
-    ObjectMessageType,
-    TraceMessageType,
-    StartGroupMessageType,
-    StartGroupCollapsedMessageType,
-    EndGroupMessageType,
-    AssertMessageType,
-    UncaughtExceptionMessageType,
-    NetworkErrorMessageType
-};
-
-enum MessageLevel {
-    TipMessageLevel,
-    LogMessageLevel,
-    WarningMessageLevel,
-    ErrorMessageLevel,
-    DebugMessageLevel
-};
-
 class Console : public RefCounted<Console> {
 public:
     static PassRefPtr<Console> create(Frame* frame) { return adoptRef(new Console(frame)); }
+    virtual ~Console();
 
     Frame* frame() const;
     void disconnectFrame();

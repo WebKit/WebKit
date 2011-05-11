@@ -29,7 +29,7 @@
 #ifndef InspectorFrontendHost_h
 #define InspectorFrontendHost_h
 
-#include "Console.h"
+#include "ConsoleTypes.h"
 #include "ContextMenu.h"
 #include "ContextMenuProvider.h"
 #include "PlatformString.h"
@@ -47,8 +47,7 @@ class InspectorFrontendClient;
 class Node;
 class Page;
 
-class InspectorFrontendHost : public RefCounted<InspectorFrontendHost>
-{
+class InspectorFrontendHost : public RefCounted<InspectorFrontendHost> {
 public:
     static PassRefPtr<InspectorFrontendHost> create(InspectorFrontendClient* client, Page* frontendPage)
     {

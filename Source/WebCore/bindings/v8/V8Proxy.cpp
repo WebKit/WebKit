@@ -33,6 +33,7 @@
 
 #include "CSSMutableStyleDeclaration.h"
 #include "CachedMetadata.h"
+#include "Console.h"
 #include "DateExtension.h"
 #include "Document.h"
 #include "DocumentLoader.h"

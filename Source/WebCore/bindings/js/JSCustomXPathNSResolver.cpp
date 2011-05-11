@@ -28,6 +28,7 @@
 
 #if ENABLE(XPATH)
 
+#include "Console.h"
 #include "Document.h"
 #include "ExceptionCode.h"
 #include "Frame.h"

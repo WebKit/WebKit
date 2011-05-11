@@ -29,7 +29,6 @@
 #define EmptyClients_h
 
 #include "ChromeClient.h"
-#include "Console.h"
 #include "ContextMenuClient.h"
 #include "DeviceMotionClient.h"
 #include "DeviceOrientationClient.h"

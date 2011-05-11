@@ -55,6 +55,7 @@
 #include "InstrumentingAgents.h"
 #include "ScriptArguments.h"
 #include "ScriptCallStack.h"
+#include "ScriptProfile.h"
 #include "XMLHttpRequest.h"
 #include <wtf/text/CString.h>
 

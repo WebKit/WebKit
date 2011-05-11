@@ -26,6 +26,7 @@
 #include "HTMLFormElement.h"
 
 #include "Attribute.h"
+#include "Console.h"
 #include "DOMFormData.h"
 #include "DOMWindow.h"
 #include "Document.h"

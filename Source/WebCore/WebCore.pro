@@ -1835,6 +1835,7 @@ HEADERS += \
     page/BarInfo.h \
     page/Chrome.h \
     page/Console.h \
+    page/ConsoleTypes.h \
     page/ContextMenuController.h \
     page/ContextMenuProvider.h \
     page/Coordinates.h \

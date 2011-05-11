@@ -2139,6 +2139,7 @@ webcore_sources += \
 	Source/WebCore/page/ChromeClient.h \
 	Source/WebCore/page/Console.cpp \
 	Source/WebCore/page/Console.h \
+	Source/WebCore/page/ConsoleTypes.h \
 	Source/WebCore/page/ContentSecurityPolicy.cpp \
 	Source/WebCore/page/ContentSecurityPolicy.h \
 	Source/WebCore/page/ContextMenuClient.h \

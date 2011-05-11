@@ -5207,6 +5207,7 @@
 		BCE4413312F748E2009B84B8 /* RenderCombineText.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCE4413112F748E2009B84B8 /* RenderCombineText.cpp */; };
 		BCE4413412F748E2009B84B8 /* RenderCombineText.h in Headers */ = {isa = PBXBuildFile; fileRef = BCE4413212F748E2009B84B8 /* RenderCombineText.h */; };
 		BCE4413612F7490B009B84B8 /* FontWidthVariant.h in Headers */ = {isa = PBXBuildFile; fileRef = BCE4413512F7490B009B84B8 /* FontWidthVariant.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		BCE5644E137A34D6007D2934 /* ConsoleTypes.h in Headers */ = {isa = PBXBuildFile; fileRef = BCE5644D137A34D6007D2934 /* ConsoleTypes.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BCE658FF0EA9248A007E4533 /* Theme.h in Headers */ = {isa = PBXBuildFile; fileRef = BCE658FE0EA9248A007E4533 /* Theme.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BCE659A90EA927B9007E4533 /* ThemeTypes.h in Headers */ = {isa = PBXBuildFile; fileRef = BCE659A80EA927B9007E4533 /* ThemeTypes.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BCE659E60EA92FB2007E4533 /* ThemeMac.h in Headers */ = {isa = PBXBuildFile; fileRef = BCE659E50EA92FB2007E4533 /* ThemeMac.h */; };
@@ -11639,6 +11640,7 @@
 		BCE4413112F748E2009B84B8 /* RenderCombineText.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RenderCombineText.cpp; sourceTree = "<group>"; };
 		BCE4413212F748E2009B84B8 /* RenderCombineText.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RenderCombineText.h; sourceTree = "<group>"; };
 		BCE4413512F7490B009B84B8 /* FontWidthVariant.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FontWidthVariant.h; sourceTree = "<group>"; };
+		BCE5644D137A34D6007D2934 /* ConsoleTypes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ConsoleTypes.h; sourceTree = "<group>"; };
 		BCE658FE0EA9248A007E4533 /* Theme.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Theme.h; sourceTree = "<group>"; };
 		BCE659A80EA927B9007E4533 /* ThemeTypes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ThemeTypes.h; sourceTree = "<group>"; };
 		BCE659E50EA92FB2007E4533 /* ThemeMac.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ThemeMac.h; sourceTree = "<group>"; };
@@ -14086,6 +14088,7 @@
 				BC0B36A10CD3C67C00AC7EB5 /* Console.cpp */,
 				BC0B36A20CD3C67C00AC7EB5 /* Console.h */,
 				BC0B36A30CD3C67C00AC7EB5 /* Console.idl */,
+				BCE5644D137A34D6007D2934 /* ConsoleTypes.h */,
 				97C471D912F925BC0086354B /* ContentSecurityPolicy.cpp */,
 				97C471DA12F925BD0086354B /* ContentSecurityPolicy.h */,
 				065AD4F20B0C2EDA005A2B1D /* ContextMenuClient.h */,
@@ -22752,6 +22755,7 @@
 				37AFFDF71370A0B800E895C0 /* SharedBufferCRLFLineReader.h in Headers */,
 				379E371713736A6600B9E919 /* QuotedPrintable.h in Headers */,
 				FD1660A513787C6D001FFA7B /* DenormalDisabler.h in Headers */,
+				BCE5644E137A34D6007D2934 /* ConsoleTypes.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
