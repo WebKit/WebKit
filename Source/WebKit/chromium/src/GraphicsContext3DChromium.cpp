@@ -945,6 +945,7 @@ PassRefPtr<GraphicsContext3D> GraphicsContext3D::create(GraphicsContext3D::Attri
     }
     RefPtr<GraphicsContext3D> result = adoptRef(new GraphicsContext3D(attrs, hostWindow, renderStyle == RenderDirectlyToHostWindow));
     result->m_internal = internal.release();
+    result->m_isResourceSafe = result->getExtensions()->isEnabled("GL_CHROMIUM_resource_safe");
     return result.release();
 }
 

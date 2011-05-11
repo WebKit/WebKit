@@ -3069,7 +3069,7 @@ void WebGLRenderingContext::texImage2DBase(GC3Denum target, GC3Dint level, GC3De
             return;
         }
     }
-    if (!pixels && !isResourceSafe()) {
+    if (!pixels) {
         bool succeed = m_context->texImage2DResourceSafe(target, level, internalformat, width, height,
                                                          border, format, type, m_unpackAlignment);
         if (!succeed)

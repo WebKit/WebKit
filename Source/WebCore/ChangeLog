@@ -1,3 +1,28 @@
+2011-05-11  John Bauman  <jbauman@chromium.org>
+
+        Reviewed by Kenneth Russell.
+
+        Don't send zeros in TexImage if GL implementation handles that
+        https://bugs.webkit.org/show_bug.cgi?id=60581
+
+        Chromium already handles zeroing textures upon creation, so don't
+        bother zeroing them in WebKit, as that causes some unnecessary memcpys
+        of zeros.
+
+        No new tests as functionality is the same.
+
+        * html/canvas/WebGLRenderingContext.cpp:
+        (WebCore::WebGLRenderingContext::texImage2DBase):
+        * platform/graphics/GraphicsContext3D.cpp:
+        (WebCore::GraphicsContext3D::texImage2DResourceSafe):
+        * platform/graphics/GraphicsContext3D.h:
+        * platform/graphics/gtk/GraphicsContext3DGtk.cpp:
+        (WebCore::GraphicsContext3D::GraphicsContext3D):
+        * platform/graphics/mac/GraphicsContext3DMac.mm:
+        (WebCore::GraphicsContext3D::GraphicsContext3D):
+        * platform/graphics/qt/GraphicsContext3DQt.cpp:
+        (WebCore::GraphicsContext3D::GraphicsContext3D):
+
 2011-05-11  Simon Fraser  <simon.fraser@apple.com>
 
         Attempt to fix Chromium Mac build.

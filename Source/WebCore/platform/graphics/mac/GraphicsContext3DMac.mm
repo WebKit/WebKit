@@ -90,6 +90,7 @@ PassRefPtr<GraphicsContext3D> GraphicsContext3D::create(GraphicsContext3D::Attri
 GraphicsContext3D::GraphicsContext3D(GraphicsContext3D::Attributes attrs, HostWindow* hostWindow, bool)
     : m_currentWidth(0)
     , m_currentHeight(0)
+    , m_isResourceSafe(false)
     , m_contextObj(0)
     , m_attrs(attrs)
     , m_texture(0)
