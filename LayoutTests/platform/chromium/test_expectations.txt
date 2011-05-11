@@ -2666,8 +2666,6 @@ BUG_DRT : http/tests/misc/slow-loading-image-in-pattern.html = IMAGE
 BUGCR57950 XP : svg/batik/text/verticalText.svg = CRASH PASS
 BUGWK58193 WIN7 : svg/batik/text/verticalText.svg = IMAGE+TEXT
 
-// media/video-* flakyness
-BUGCR60744 : media/video-layer-crash.html = CRASH TIMEOUT PASS IMAGE
 // BUGCR59415 : cannot repro the flakiness
 BUGCR59415 WIN : media/video-loop.html = TIMEOUT TEXT PASS
 // This test needs enhanced eventSender.contextMenu() return value.
