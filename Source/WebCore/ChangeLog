@@ -1,3 +1,10 @@
+2011-05-10  Adam Barth  <abarth@webkit.org>
+
+        Build fix for font data madness.  I've had to whitelist this on several
+        ports.  They need to all be fixed at once.
+
+        * platform/graphics/chromium/SimpleFontDataChromiumWin.cpp:
+
 2011-05-10  David Kilzer  <ddkilzer@apple.com>
 
         BUILD FIX for !ENABLE(TEXT_CARET) after r86039
