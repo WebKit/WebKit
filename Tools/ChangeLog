@@ -1,3 +1,9 @@
+2011-05-10  MORITA Hajime  <morrita@google.com>
+
+        Unreviewed, moved myself to the reviewers list.
+
+        * Scripts/webkitpy/common/config/committers.py:
+
 2011-05-10  Anton D'Auria  <adauria@apple.com>
 
         Reviewed by David Levin.
