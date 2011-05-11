@@ -1,3 +1,30 @@
+2011-05-11  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        Unreviewed, rolling out r85650.
+        http://trac.webkit.org/changeset/85650
+        https://bugs.webkit.org/show_bug.cgi?id=59983
+
+        Triggers m_numNodeListCaches > 0 assert in gc-heavy sites.
+
+        * dom/ContainerNode.cpp:
+        (WebCore::ContainerNode::childrenChanged):
+        * dom/Node.cpp:
+        (WebCore::Node::~Node):
+        (WebCore::Node::setDocument):
+        (WebCore::Node::setTreeScopeRecursively):
+        (WebCore::Node::childNodes):
+        (WebCore::Node::registerDynamicNodeList):
+        (WebCore::Node::unregisterDynamicNodeList):
+        (WebCore::Node::notifyLocalNodeListsAttributeChanged):
+        (WebCore::Node::notifyLocalNodeListsChildrenChanged):
+        (WebCore::Node::getElementsByTagName):
+        (WebCore::Node::getElementsByTagNameNS):
+        (WebCore::Node::getElementsByName):
+        (WebCore::Node::getElementsByClassName):
+        * dom/Node.h:
+        * html/HTMLFormControlElement.cpp:
+        (WebCore::HTMLFormControlElement::labels):
+
 2011-05-11  Eric Carlson  <eric.carlson@apple.com>
 
         Reviewed by Darin Adler.
