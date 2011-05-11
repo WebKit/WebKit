@@ -96,7 +96,8 @@
        (home-subpath "/Library/Keychains")
 
        ;; FIXME: This should be removed when <rdar://problem/9276430> is fixed.
-       (home-literal "/Library/Preferences/com.apple.LaunchServices.QuarantineEventsV2"))
+       (home-literal "/Library/Preferences/com.apple.LaunchServices.QuarantineEventsV2")
+       (home-literal "/Library/Preferences/com.apple.LaunchServices.QuarantineEventsV2-journal"))
 
 ;; Darwin temporary files and Security mds caches, if present
 (if (positive? (string-length (param "DARWIN_USER_CACHE_DIR")))

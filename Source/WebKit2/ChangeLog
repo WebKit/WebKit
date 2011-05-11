@@ -1,5 +1,14 @@
 2011-05-10  Sam Weinig  <sam@webkit.org>
 
+        Reviewed by Dan Bernstein.
+
+        Yet more quarantine related sandbox denial when downloading files
+        <rdar://problem/9397494>
+
+        * WebProcess/com.apple.WebProcess.sb:
+
+2011-05-10  Sam Weinig  <sam@webkit.org>
+
         Reviewed by Anders Carlsson.
 
         WebKit2: Coalesced wheel events should be saved to hand back to the client on unhandled return
