@@ -1,3 +1,16 @@
+2011-05-10  Kent Tamura  <tkent@chromium.org>
+
+        Reviewed by Hajime Morita.
+
+        [Chromium] Fix a bug of WebFrameImpl::forms()
+        https://bugs.webkit.org/show_bug.cgi?id=60606
+
+        If document()->forms() contained non-HTML element, the second for
+        loop didn't stop.
+
+        * src/WebFrameImpl.cpp:
+        (WebKit::WebFrameImpl::forms): Simplify the function by wtf::Vector().
+
 2011-05-10  Ilya Tikhonovsky  <loislo@chromium.org>
 
         Unreviewed buildfix for strict OwnPtr patch.

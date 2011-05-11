@@ -706,23 +706,16 @@ void WebFrameImpl::forms(WebVector<WebFormElement>& results) const
         return;
 
     RefPtr<HTMLCollection> forms = m_frame->document()->forms();
-    size_t formCount = 0;
-    for (size_t i = 0; i < forms->length(); ++i) {
+    size_t sourceLength = forms->length();
+    Vector<WebFormElement> temp;
+    temp.reserveCapacity(sourceLength);
+    for (size_t i = 0; i < sourceLength; ++i) {
         Node* node = forms->item(i);
+        // Strange but true, sometimes node can be 0.
         if (node && node->isHTMLElement())
-            ++formCount;
+            temp.append(WebFormElement(static_cast<HTMLFormElement*>(node)));
     }
-
-    WebVector<WebFormElement> temp(formCount);
-    size_t j = 0;
-    for (size_t sourceIndex = 0; j < forms->length(); ++sourceIndex) {
-        Node* node = forms->item(sourceIndex);
-        // Strange but true, sometimes item can be 0.
-        if (node && node->isHTMLElement())
-            temp[j++] = static_cast<HTMLFormElement*>(node);
-    }
-    ASSERT(j == formCount);
-    results.swap(temp);
+    results.assign(temp);
 }
 
 WebAnimationController* WebFrameImpl::animationController()
