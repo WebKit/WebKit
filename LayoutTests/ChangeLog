@@ -1,3 +1,14 @@
+2011-05-11  Chang Shu  <cshu@webkit.org>
+
+        Reviewed by Csaba Osztrogonác.
+
+        [Qt] Some skipped editing tests actually work and just need rebaseline.
+        https://bugs.webkit.org/show_bug.cgi?id=60469
+
+        Unskip some editing tests that actually work.
+
+        * platform/qt/Skipped:
+
 2011-05-11  Julien Chaffraix  <jchaffraix@webkit.org>
 
         Reviewed by Geoffrey Garen.
