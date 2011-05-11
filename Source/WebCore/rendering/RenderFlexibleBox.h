@@ -50,7 +50,7 @@ public:
     virtual bool isFlexingChildren() const { return m_flexingChildren; }
     virtual bool isStretchingChildren() const { return m_stretchingChildren; }
 
-    void placeChild(RenderBox* child, int x, int y);
+    void placeChild(RenderBox* child, IntPoint location);
 
 protected:
     int allowedChildFlex(RenderBox* child, bool expanding, unsigned group);

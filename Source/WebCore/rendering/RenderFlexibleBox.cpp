@@ -209,17 +209,16 @@ void RenderFlexibleBox::layoutBlock(bool relayoutChildren, int /*pageHeight FIXM
     LayoutRepainter repainter(*this, checkForRepaintDuringLayout());
     LayoutStateMaintainer statePusher(view(), this, IntSize(x(), y()), hasTransform() || hasReflection() || style()->isFlippedBlocksWritingMode());
 
-    int previousWidth = width();
-    int previousHeight = height();
+    IntSize previousSize = size();
 
     computeLogicalWidth();
     computeLogicalHeight();
 
     m_overflow.clear();
 
-    if (previousWidth != width() || previousHeight != height() ||
-        (parent()->isFlexibleBox() && parent()->style()->boxOrient() == HORIZONTAL &&
-         parent()->style()->boxAlign() == BSTRETCH))
+    if (previousSize != size()
+        || (parent()->isFlexibleBox() && parent()->style()->boxOrient() == HORIZONTAL
+        && parent()->style()->boxAlign() == BSTRETCH))
         relayoutChildren = true;
 
     setHeight(0);
@@ -244,7 +243,7 @@ void RenderFlexibleBox::layoutBlock(bool relayoutChildren, int /*pageHeight FIXM
     int oldClientAfterEdge = clientLogicalBottom();
     computeLogicalHeight();
 
-    if (previousHeight != height())
+    if (previousSize.height() != height())
         relayoutChildren = true;
 
     layoutPositionedObjects(relayoutChildren || isRoot());
@@ -442,7 +441,7 @@ void RenderFlexibleBox::layoutHorizontalBox(bool relayoutChildren)
                     break;
             }
 
-            placeChild(child, xPos, childY);
+            placeChild(child, IntPoint(xPos, childY));
 
             xPos += child->width() + child->marginRight();
         }
@@ -567,7 +566,7 @@ void RenderFlexibleBox::layoutHorizontalBox(bool relayoutChildren)
                     remainingSpace -= (remainingSpace/totalChildren);
                     --totalChildren;
 
-                    placeChild(child, child->x() + offset, child->y());
+                    placeChild(child, child->location() + IntSize(offset, 0));
                 }
             }
         } else {
@@ -579,7 +578,7 @@ void RenderFlexibleBox::layoutHorizontalBox(bool relayoutChildren)
                 if (child->isPositioned())
                     continue;
 
-                placeChild(child, child->x() + offset, child->y());
+                placeChild(child, child->location() + IntSize(offset, 0));
             }
         }
     }
@@ -672,7 +671,7 @@ void RenderFlexibleBox::layoutVerticalBox(bool relayoutChildren)
             }
 
             // Place the child.
-            placeChild(child, childX, height());
+            placeChild(child, IntPoint(childX, height()));
             setHeight(height() + child->height() + child->marginBottom());
         }
 
@@ -810,7 +809,7 @@ void RenderFlexibleBox::layoutVerticalBox(bool relayoutChildren)
                     offset += remainingSpace/totalChildren;
                     remainingSpace -= (remainingSpace/totalChildren);
                     --totalChildren;
-                    placeChild(child, child->x(), child->y() + offset);
+                    placeChild(child, child->location() + IntSize(0, offset));
                 }
             }
         } else {
@@ -821,7 +820,7 @@ void RenderFlexibleBox::layoutVerticalBox(bool relayoutChildren)
             for (RenderBox* child = iterator.first(); child; child = iterator.next()) {
                 if (child->isPositioned())
                     continue;
-                placeChild(child, child->x(), child->y() + offset);
+                placeChild(child, child->location() + IntSize(0, offset));
             }
         }
     }
@@ -934,12 +933,12 @@ void RenderFlexibleBox::applyLineClamp(FlexBoxIterator& iterator, bool relayoutC
     }
 }
 
-void RenderFlexibleBox::placeChild(RenderBox* child, int x, int y)
+void RenderFlexibleBox::placeChild(RenderBox* child, IntPoint location)
 {
-    IntRect oldRect(child->x(), child->y() , child->width(), child->height());
+    IntRect oldRect = child->frameRect();
 
     // Place the child.
-    child->setLocation(x, y);
+    child->setLocation(location);
 
     // If the child moved, we have to repaint it as well as any floating/positioned
     // descendants.  An exception is if we need a layout.  In this case, we know we're going to
