@@ -66,8 +66,6 @@ JSNPObject::~JSNPObject()
 {
     if (!m_npObject)
         return;
-
-    m_objectMap->jsNPObjectDestroyed(this);
     releaseNPObject(m_npObject);
 }
 

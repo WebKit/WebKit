@@ -26,6 +26,7 @@
 #ifndef NPJSObjectWrapperMap_h
 #define NPJSObjectWrapperMap_h
 
+#include <JavaScriptCore/WeakGCMap.h>
 #include <wtf/Forward.h>
 #include <wtf/HashMap.h>
 
@@ -87,7 +88,7 @@ private:
     PluginView* m_pluginView;
 
     HashMap<JSC::JSObject*, NPJSObject*> m_npJSObjects;
-    HashMap<NPObject*, JSNPObject*> m_jsNPObjects;
+    JSC::WeakGCMap<NPObject*, JSNPObject> m_jsNPObjects;
 };
 
 } // namespace WebKit

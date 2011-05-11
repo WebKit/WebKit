@@ -99,16 +99,9 @@ JSObject* NPRuntimeObjectMap::getOrCreateJSObject(JSGlobalObject* globalObject, 
         return jsNPObject;
 
     JSNPObject* jsNPObject = new (&globalObject->globalData()) JSNPObject(globalObject, this, npObject);
-    m_jsNPObjects.set(npObject, jsNPObject);
+    m_jsNPObjects.set(globalObject->globalData(), npObject, jsNPObject);
 
     return jsNPObject;
-}
-
-void NPRuntimeObjectMap::jsNPObjectDestroyed(JSNPObject* jsNPObject)
-{
-    // Remove the object from the map.
-    ASSERT(m_jsNPObjects.contains(jsNPObject->npObject()));
-    m_jsNPObjects.remove(jsNPObject->npObject());
 }
 
 JSValue NPRuntimeObjectMap::convertNPVariantToJSValue(JSC::ExecState* exec, JSC::JSGlobalObject* globalObject, const NPVariant& variant)
@@ -224,13 +217,9 @@ void NPRuntimeObjectMap::invalidate()
     // We shouldn't have any NPJSObjects left now.
     ASSERT(m_npJSObjects.isEmpty());
 
-    Vector<JSNPObject*> jsNPObjects;
-    copyValuesToVector(m_jsNPObjects, jsNPObjects);
-
-    // Invalidate all the JSObjects that wrap NPObjects.
-    for (size_t i = 0; i < jsNPObjects.size(); ++i)
-        jsNPObjects[i]->invalidate();
-
+    WeakGCMap<NPObject*, JSNPObject>::iterator end = m_jsNPObjects.end();
+    for (WeakGCMap<NPObject*, JSNPObject>::iterator ptr = m_jsNPObjects.begin(); ptr != end; ++ptr)
+        ptr.get().second->invalidate();
     m_jsNPObjects.clear();
 }
 
