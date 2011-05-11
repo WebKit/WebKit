@@ -1,3 +1,17 @@
+2011-05-11  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        Reviewed by Antonio Gomes.
+
+        [EFL] Remove fixed_layout structure in ewk_view
+        https://bugs.webkit.org/show_bug.cgi?id=60615
+
+        Remove unnecessary fixed_layout structure. The ewk_view_fixed_layout_size_set/get()
+        use WebCore's functions directly.
+
+        * ewk/ewk_view.cpp:
+        (ewk_view_fixed_layout_size_set):
+        (ewk_view_fixed_layout_size_get):
+
 2011-05-11  Tomasz Morawski  <t.morawski@samsung.com>
 
         Rubber-stamped by Daniel Bates.

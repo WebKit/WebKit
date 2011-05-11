@@ -151,10 +151,6 @@ struct _Ewk_View_Private_Data {
         } center;
         Ecore_Animator* animator;
     } animated_zoom;
-    struct {
-        Evas_Coord w, h;
-        Eina_Bool use:1;
-    } fixed_layout;
 };
 
 #ifndef EWK_TYPE_CHECK
@@ -1134,28 +1130,22 @@ void ewk_view_fixed_layout_size_set(Evas_Object* o, Evas_Coord w, Evas_Coord h)
     EWK_VIEW_SD_GET_OR_RETURN(o, sd);
     EWK_VIEW_PRIV_GET_OR_RETURN(sd, priv);
 
-    WebCore::FrameView* view = sd->_priv->main_frame->view();
+    WebCore::FrameView* view = priv->main_frame->view();
     if (w <= 0 && h <= 0) {
-        if (!priv->fixed_layout.use)
+        if (!view->useFixedLayout())
             return;
-        priv->fixed_layout.w = 0;
-        priv->fixed_layout.h = 0;
-        priv->fixed_layout.use = EINA_FALSE;
+        view->setUseFixedLayout(EINA_FALSE);
     } else {
-        if (priv->fixed_layout.use
-            && priv->fixed_layout.w == w && priv->fixed_layout.h == h)
+        WebCore::IntSize size = view->fixedLayoutSize();
+        if (size.width() == w && size.height() == h)
             return;
-        priv->fixed_layout.w = w;
-        priv->fixed_layout.h = h;
-        priv->fixed_layout.use = EINA_TRUE;
-
         if (view)
             view->setFixedLayoutSize(WebCore::IntSize(w, h));
     }
 
     if (!view)
         return;
-    view->setUseFixedLayout(priv->fixed_layout.use);
+    view->setUseFixedLayout(EINA_TRUE);
     view->forceLayout();
 }
 
@@ -1176,11 +1166,13 @@ void ewk_view_fixed_layout_size_get(Evas_Object* o, Evas_Coord* w, Evas_Coord* h
         *h = 0;
     EWK_VIEW_SD_GET_OR_RETURN(o, sd);
     EWK_VIEW_PRIV_GET_OR_RETURN(sd, priv);
-    if (priv->fixed_layout.use) {
+    WebCore::FrameView* view = priv->main_frame->view();
+    if (view->useFixedLayout()) {
+        WebCore::IntSize size = view->fixedLayoutSize();
         if (w)
-            *w = priv->fixed_layout.w;
+            *w = size.width();
         if (h)
-            *h = priv->fixed_layout.h;
+            *h = size.height();
     }
 }
 
