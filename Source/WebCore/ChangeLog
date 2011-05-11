@@ -1,3 +1,10 @@
+2011-05-11  Martin Robinson  <mrobinson@igalia.com>
+
+        Try once more to fix the WinCairo build.
+
+        * platform/graphics/cairo/CairoUtilities.h: Include GraphicsTypes.h with a relative
+        include rather than a system include.
+
 2011-05-11  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Eric Seidel.
