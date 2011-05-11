@@ -93,7 +93,7 @@ public:
     void didDraw(WebPageProxy*);
     void pageDidScroll(WebPageProxy*);
 
-    unsigned long long exceededDatabaseQuota(WebPageProxy*, WebFrameProxy*, WebSecurityOrigin*, const String& databaseName, const String& databaseDisplayName, unsigned long long currentQuota, unsigned long long currentUsage, unsigned long long expectedUsage);
+    unsigned long long exceededDatabaseQuota(WebPageProxy*, WebFrameProxy*, WebSecurityOrigin*, const String& databaseName, const String& databaseDisplayName, unsigned long long currentQuota, unsigned long long currentOriginUsage, unsigned long long currentDatabaseUsage, unsigned long long expectedUsage);
 
     bool runOpenPanel(WebPageProxy*, WebFrameProxy*, const WebOpenPanelParameters::Data&, WebOpenPanelResultListenerProxy*);
     bool decidePolicyForGeolocationPermissionRequest(WebPageProxy*, WebFrameProxy*, WebSecurityOrigin*, GeolocationPermissionRequestProxy*);

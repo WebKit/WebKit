@@ -1,3 +1,14 @@
+2011-05-11  Jessie Berlin  <jberlin@apple.com>
+
+        Reviewed by Darin Adler.
+
+        [WebKit2] exceededDatabaseQuota function on WKPageUIClient needs to provide information
+        about the usage for both the origin overall and the database in question.
+        https://bugs.webkit.org/show_bug.cgi?id=60573
+
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::exceededDatabaseQuota):
+
 2011-05-10  Stephen White  <senorblanco@chromium.org>
 
         Reviewed by David Levin.

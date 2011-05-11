@@ -289,12 +289,12 @@ void WebUIClient::pageDidScroll(WebPageProxy* page)
     m_client.pageDidScroll(toAPI(page), m_client.clientInfo);
 }
 
-unsigned long long WebUIClient::exceededDatabaseQuota(WebPageProxy* page, WebFrameProxy* frame, WebSecurityOrigin* origin, const String& databaseName, const String& databaseDisplayName, unsigned long long currentQuota, unsigned long long currentUsage, unsigned long long expectedUsage)
+unsigned long long WebUIClient::exceededDatabaseQuota(WebPageProxy* page, WebFrameProxy* frame, WebSecurityOrigin* origin, const String& databaseName, const String& databaseDisplayName, unsigned long long currentQuota, unsigned long long currentOriginUsage, unsigned long long currentDatabaseUsage, unsigned long long expectedUsage)
 {
     if (!m_client.exceededDatabaseQuota)
         return currentQuota;
 
-    return m_client.exceededDatabaseQuota(toAPI(page), toAPI(frame), toAPI(origin), toAPI(databaseName.impl()), toAPI(databaseDisplayName.impl()), currentQuota, currentUsage, expectedUsage, m_client.clientInfo);
+    return m_client.exceededDatabaseQuota(toAPI(page), toAPI(frame), toAPI(origin), toAPI(databaseName.impl()), toAPI(databaseDisplayName.impl()), currentQuota, currentOriginUsage, currentDatabaseUsage, expectedUsage, m_client.clientInfo);
 }
 
 bool WebUIClient::runOpenPanel(WebPageProxy* page, WebFrameProxy* frame, const WebOpenPanelParameters::Data& parameterData, WebOpenPanelResultListenerProxy* listener)

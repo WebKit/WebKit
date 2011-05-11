@@ -1,3 +1,26 @@
+2011-05-11  Jessie Berlin  <jberlin@apple.com>
+
+        Reviewed by Darin Adler.
+
+        [WebKit2] exceededDatabaseQuota function on WKPageUIClient needs to provide information
+        about the usage for both the origin overall and the database in question.
+        https://bugs.webkit.org/show_bug.cgi?id=60573
+
+        Add the currentOriginUsage parameter.
+
+        * Platform/CoreIPC/HandleMessage.h:
+        (CoreIPC::callMemberFunction):
+        * UIProcess/API/C/WKPage.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::exceededDatabaseQuota):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPageProxy.messages.in:
+        * UIProcess/WebUIClient.cpp:
+        (WebKit::WebUIClient::exceededDatabaseQuota):
+        * UIProcess/WebUIClient.h:
+        * WebProcess/WebCoreSupport/WebChromeClient.cpp:
+        (WebKit::WebChromeClient::exceededDatabaseQuota):
+
 2011-05-10  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Geoffrey Garen.
