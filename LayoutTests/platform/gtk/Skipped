@@ -1139,14 +1139,19 @@ http/tests/local/formdata/send-form-data-with-sliced-file.html
 # https://bugs.webkit.org/show_bug.cgi?id=52094
 editing/pasteboard/files-during-page-drags.html
 
-# The feature was disabled due to a compatibility issue.
-# https://bugs.webkit.org/show_bug.cgi?id=40520
+# Need to call Settings::setInteractiveFormValidationEnabled(true).
 fast/forms/interactive-validation-prevented.html
 fast/forms/interactive-validation-attach-assertion.html
 fast/forms/interactive-validation-assertion-by-validate-twice.html
 fast/forms/interactive-validation-select-crash.html
 fast/forms/interactive-validation-crash-by-style-override.html
+# Need to call Settings::setValidationMessageTimerMagnification(-1) in DRT.
 fast/forms/validation-message-appearance.html
+fast/forms/validation-message-on-checkbox.html
+fast/forms/validation-message-on-listbox.html
+fast/forms/validation-message-on-menulist.html
+fast/forms/validation-message-on-radio.html
+fast/forms/validation-message-on-textarea.html
 
 # Tests that seem to be Mac only, assume that smart drag-and-drop
 # is enabled or assume platform-dependent sizing.

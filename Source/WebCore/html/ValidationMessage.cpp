@@ -121,6 +121,20 @@ private:
     AtomicString m_pseudoName;
 };
 
+static void adjustBubblePosition(const IntRect& hostRect, HTMLElement* bubble)
+{
+    ASSERT(bubble);
+    if (hostRect.isEmpty())
+        return;
+    bubble->getInlineStyleDecl()->setProperty(CSSPropertyTop, static_cast<double>(hostRect.y() + hostRect.height()), CSSPrimitiveValue::CSS_PX);
+    // The 'left' value of ::-webkit-validation-bubble-arrow.
+    const int bubbleArrowTopOffset = 32;
+    double bubbleX = hostRect.x();
+    if (hostRect.width() / 2 < bubbleArrowTopOffset)
+        bubbleX = max(hostRect.x() + hostRect.width() / 2 - bubbleArrowTopOffset, 0);
+    bubble->getInlineStyleDecl()->setProperty(CSSPropertyLeft, bubbleX, CSSPrimitiveValue::CSS_PX);
+}
+
 void ValidationMessage::buildBubbleTree(Timer<ValidationMessage>*)
 {
     HTMLElement* host = toHTMLElement(m_element);
@@ -129,6 +143,7 @@ void ValidationMessage::buildBubbleTree(Timer<ValidationMessage>*)
     // Need to force position:absolute because RenderMenuList doesn't assume it
     // contains non-absolute or non-fixed renderers as children.
     m_bubble->getInlineStyleDecl()->setProperty(CSSPropertyPosition, CSSValueAbsolute);
+    adjustBubblePosition(host->getRect(), m_bubble.get());
     ExceptionCode ec = 0;
     host->ensureShadowRoot()->appendChild(m_bubble.get(), ec);
 
@@ -141,8 +156,6 @@ void ValidationMessage::buildBubbleTree(Timer<ValidationMessage>*)
     setMessageDOMAndStartTimer();
 
     // FIXME: Use transition to show the bubble.
-
-    // We don't need to adjust the bubble location. The default position is enough.
 }
 
 void ValidationMessage::requestToHideMessage()

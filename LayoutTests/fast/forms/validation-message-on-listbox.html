@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<head>
+<script src="../js/resources/js-test-pre.js"></script>
+<script src="resources/common.js"></script>
+</head>
+<body>
+<p>Check if the position of a validation message for a listbox is good.</p>
+
+<form action="validation-message-on-listbox.html">
+<select id=host name=select multiple required>
+<option>One
+<option>Two
+</select>
+<input type=submit id=submit>
+</form>
+
+<div id="console"></div>
+<script>
+function check() {
+    hostRect = getAbsoluteRect(host);
+    bubbleRect = getAbsoluteRect(getValidationMessageBubbleNode(host));
+    debug('The top of the bubble should be on the bottom of the host node:');
+    shouldBe('bubbleRect.top', 'hostRect.bottom');
+    debug('');
+
+    finishJSTest();
+}
+
+var host = $('host');
+var hostRect;
+var bubbleRect;
+$('submit').click();
+if (window.layoutTestController) {
+    setTimeout(check, 0);
+} else {
+    debug('The test requires layoutTestController.');
+}
+
+var jsTestIsAsync = true;
+var successfullyParsed = true;
+</script>
+<script src="../js/resources/js-test-post.js"></script>
+</body>
+

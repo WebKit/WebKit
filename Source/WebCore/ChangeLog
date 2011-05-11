@@ -1,3 +1,29 @@
+2011-05-11  Kent Tamura  <tkent@chromium.org>
+
+        Reviewed by Hajime Morita.
+
+        The position of validation message bubble is wrong for non text fields.
+        https://bugs.webkit.org/show_bug.cgi?id=60341
+
+        Tests: fast/forms/validation-message-on-checkbox.html
+               fast/forms/validation-message-on-listbox.html
+               fast/forms/validation-message-on-menulist.html
+               fast/forms/validation-message-on-radio.html
+               fast/forms/validation-message-on-textarea.html
+
+        * css/html.css:
+        (::-webkit-validation-bubble-message):
+          Add white-space:normal in order not to inherit white-space:pre for <select>.
+        * html/ValidationMessage.cpp:
+        (WebCore::adjustBubblePosition):
+          Adjust the bubble position.
+          - The top of the bubble should be same as the bottom of the target control.
+          - The left of the bubble should be same as the left of the target control.
+            But If the left+32 is larger than the center of the target control,
+            left+32 should be at the center of the target control.
+            But the left position should not be less than 0.
+        (WebCore::ValidationMessage::buildBubbleTree): Call adjustBubblePosition().
+
 2011-05-11  Emil A Eklund  <eae@chromium.org>
 
         Reviewed by Eric Seidel.

@@ -648,6 +648,7 @@ output {
         inset -2px -2px 1px #d0c4c4,
         inset 2px 2px 1px white;
     line-height: normal;
+    white-space: normal;
     z-index: 2147483644;
 }
 
