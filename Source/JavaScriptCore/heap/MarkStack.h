@@ -62,9 +62,15 @@ namespace JSC {
 
         template <typename T> void append(WriteBarrierBase<T>*);
 
+        static void validateSet(JSValue*, size_t);
+        static void validateValue(JSValue);
+
         void appendValues(WriteBarrierBase<Unknown>* barriers, size_t count, MarkSetProperties properties = NoNullValues)
         {
             JSValue* values = barriers->slot();
+#if !ASSERT_DISABLED
+            validateSet(values, count);
+#endif
             if (count)
                 m_markSets.append(MarkSet(values, values + count, properties));
         }
@@ -207,6 +213,9 @@ namespace JSC {
     {
         if (!count)
             return;
+#if !ASSERT_DISABLED
+        validateSet(slot, count);
+#endif
         m_markSets.append(MarkSet(slot, slot + count, NoNullValues));
     }
     
@@ -230,6 +239,9 @@ namespace JSC {
     ALWAYS_INLINE void MarkStack::internalAppend(JSValue value)
     {
         ASSERT(value);
+#if !ASSERT_DISABLED
+        validateValue(value);
+#endif
         if (value.isCell())
             internalAppend(value.asCell());
     }

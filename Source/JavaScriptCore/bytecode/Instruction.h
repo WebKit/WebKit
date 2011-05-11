@@ -67,6 +67,11 @@ namespace JSC {
                 WriteBarrierBase<StructureChain> chain;
             } u;
 
+            PolymorphicStubInfo()
+            {
+                u.proto.clear();
+            }
+
             void set(JSGlobalData& globalData, JSCell* owner, PolymorphicAccessStructureListStubRoutineType _stubRoutine, Structure* _base)
             {
                 stubRoutine = _stubRoutine;
@@ -111,7 +116,11 @@ namespace JSC {
         {
             for (int i = 0; i < count; ++i) {
                 PolymorphicStubInfo& info = list[i];
-                ASSERT(info.base);
+                if (!info.base) {
+                    // We're being marked during initialisation of an entry
+                    ASSERT(!info.u.proto);
+                    continue;
+                }
                 
                 visitor.append(&info.base);
                 if (info.u.proto && !info.isChain)

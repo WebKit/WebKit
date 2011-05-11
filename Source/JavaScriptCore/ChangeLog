@@ -1,3 +1,24 @@
+2011-05-10  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Gavin Barraclough.
+
+        Add some aggressive GC validation to debug builds.
+        https://bugs.webkit.org/show_bug.cgi?id=60601
+
+        When assertions are enabled we now do some validity checking
+        of objects being added to the mark stack.
+
+        * bytecode/Instruction.h:
+        (JSC::PolymorphicAccessStructureList::PolymorphicStubInfo::PolymorphicStubInfo):
+        (JSC::PolymorphicAccessStructureList::visitAggregate):
+        * heap/MarkStack.cpp:
+        (JSC::MarkStack::validateSet):
+        (JSC::MarkStack::validateValue):
+        * heap/MarkStack.h:
+        (JSC::MarkStack::appendValues):
+        (JSC::MarkStack::append):
+        (JSC::MarkStack::internalAppend):
+
 2011-05-09  Darin Adler  <darin@apple.com>
 
         Reviewed by Oliver Hunt.

@@ -132,4 +132,26 @@ void MarkStack::drain()
 #endif
 }
 
+void MarkStack::validateSet(JSValue* values, size_t count)
+{
+    for (size_t i = 0; i < count; i++) {
+        if (values[i])
+            validateValue(values[i]);
+    }
+}
+
+void MarkStack::validateValue(JSValue value)
+{
+    ASSERT(value);
+    if (!value.isCell())
+        return;
+    JSCell* cell = value.asCell();
+    ASSERT(cell);
+    ASSERT(cell->structure());
+    // Both the cell's structure, and the cell's structure's structure should be the Structure Structure.
+    // I hate this sentence.
+    ASSERT(cell->structure()->structure()->JSCell::classInfo() == cell->structure()->JSCell::classInfo());
+}
+
+
 } // namespace JSC
