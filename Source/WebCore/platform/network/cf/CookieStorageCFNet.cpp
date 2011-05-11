@@ -62,13 +62,23 @@ RetainPtr<CFHTTPCookieStorageRef>& privateBrowsingCookieStorage()
 
 #if USE(CFNETWORK)
 
+static RetainPtr<CFHTTPCookieStorageRef>& defaultSessionCookieStorage()
+{
+    DEFINE_STATIC_LOCAL(RetainPtr<CFHTTPCookieStorageRef>, cookieStorage, ());
+#if USE(CFURLSTORAGESESSIONS) && PLATFORM(WIN)
+    if (!cookieStorage && ResourceHandle::defaultStorageSession())
+        cookieStorage.adoptCF(wkCopyHTTPCookieStorage(ResourceHandle::defaultStorageSession()));
+#endif
+    return cookieStorage;
+}
+
 CFHTTPCookieStorageRef currentCookieStorage()
 {
     ASSERT(isMainThread());
 
     if (CFHTTPCookieStorageRef cookieStorage = privateBrowsingCookieStorage().get())
         return cookieStorage;
-    return wkGetDefaultHTTPCookieStorage();
+    return defaultCookieStorage();
 }
 
 void setCurrentCookieStorage(CFHTTPCookieStorageRef cookieStorage)
@@ -97,6 +107,8 @@ void setCookieStoragePrivateBrowsingEnabled(bool enabled)
 
 CFHTTPCookieStorageRef defaultCookieStorage()
 {
+    if (CFHTTPCookieStorageRef defaultCookieStorage = defaultSessionCookieStorage().get())
+        return defaultCookieStorage;
     return wkGetDefaultHTTPCookieStorage();
 }
 

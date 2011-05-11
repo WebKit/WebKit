@@ -93,7 +93,7 @@ void* wkGetSSLCertificateChainContext(CFDictionaryRef);
 CFHTTPCookieStorageRef wkGetDefaultHTTPCookieStorage();
 CFHTTPCookieStorageRef wkCreateInMemoryHTTPCookieStorage();
 void wkSetCFURLRequestShouldContentSniff(CFMutableURLRequestRef, bool);
-CFStringRef wkCopyFoundationCacheDirectory();
+CFStringRef wkCopyFoundationCacheDirectory(CFURLStorageSessionRef);
 void wkSetClientCertificateInSSLProperties(CFMutableDictionaryRef, CFDataRef);
 
 CFArrayRef wkCFURLRequestCopyHTTPRequestBodyParts(CFURLRequestRef);
@@ -103,6 +103,8 @@ CFURLStorageSessionRef wkCreatePrivateStorageSession(CFStringRef identifier);
 void wkSetRequestStorageSession(CFURLStorageSessionRef, CFMutableURLRequestRef);
 CFURLCacheRef wkCopyURLCache(CFURLStorageSessionRef);
 CFHTTPCookieStorageRef wkCopyHTTPCookieStorage(CFURLStorageSessionRef);
+CFDataRef wkCopySerializedDefaultStorageSession();
+CFURLStorageSessionRef wkDeserializeStorageSession(CFDataRef);
 
 CFArrayRef wkCFURLCacheCopyAllHostNamesInPersistentStore();
 void wkCFURLCacheDeleteHostNamesInPersistentStore(CFArrayRef hostNames);

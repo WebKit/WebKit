@@ -1,3 +1,14 @@
+2011-05-11  Jessie Berlin  <jberlin@apple.com>
+
+        Reviewed by Steve Falkenburg.
+
+        [Windows WebKit2] Use cookies set in WebKit1
+        https://bugs.webkit.org/show_bug.cgi?id=60274
+
+        * WebView.cpp:
+        (WebView::setCacheModel):
+        Pass 0 to wkCopyFoundationCacheDirectory so that it uses the default session.
+
 2011-05-09  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r86108.
