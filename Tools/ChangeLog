@@ -1,3 +1,16 @@
+2011-05-10  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Adam Barth.
+
+        EWS bots should be robust against test-webkitpy hangs
+        https://bugs.webkit.org/show_bug.cgi?id=60579
+
+        Added a killAfterTimeout subroutine, which takes a child_pid
+        and timeout, and will setup a watchdog process to kill that child
+        after the timeout.  killAfterTimeout will waitpid on the child.
+
+        * EWSTools/start-queue.sh:
+
 2011-05-10  MORITA Hajime  <morrita@google.com>
 
         Unreviewed, moved myself to the reviewers list.
