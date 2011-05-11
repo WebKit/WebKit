@@ -43,6 +43,7 @@ public:
     //   GL_CHROMIUM_copy_texture_to_parent_texture
     //   GL_CHROMIUM_latch
     //   GL_CHROMIUM_swapbuffers_complete_callback
+    //   GL_CHROMIUM_rate_limit_offscreen_context
 
     // Extensions3D methods.
     virtual bool supports(const String&);
@@ -84,6 +85,9 @@ public:
         virtual ~SwapBuffersCompleteCallbackCHROMIUM() { }
     };
     void setSwapBuffersCompleteCallbackCHROMIUM(PassOwnPtr<SwapBuffersCompleteCallbackCHROMIUM>);
+
+    // GL_CHROMIUM_rate_limit_offscreen_context
+    void rateLimitOffscreenContextCHROMIUM();
 
 private:
     // Instances of this class are strictly owned by the GraphicsContext3D implementation and do not

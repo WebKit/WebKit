@@ -183,6 +183,9 @@ public:
     // GL_CHROMIUM_swapbuffers_complete_callback
     virtual void setSwapBuffersCompleteCallbackCHROMIUM(WebGraphicsSwapBuffersCompleteCallbackCHROMIUM* callback) { }
 
+    // GL_CHROMIUM_rate_limit_offscreen_context
+    virtual void rateLimitOffscreenContextCHROMIUM() { }
+
     // The entry points below map directly to the OpenGL ES 2.0 API.
     // See: http://www.khronos.org/registry/gles/
     // and: http://www.khronos.org/opengles/sdk/docs/man/

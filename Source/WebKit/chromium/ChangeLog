@@ -1,3 +1,21 @@
+2011-05-11  Nat Duca  <nduca@chromium.org>
+
+        Reviewed by Kenneth Russell.
+
+        [chromium] Make throttling of WebGL based on webgl frames, not compositor frames
+        https://bugs.webkit.org/show_bug.cgi?id=60508
+
+        Tell LayerRendererChromium when the requestAnimFrame-callbacks are running.
+
+        * public/WebGraphicsContext3D.h:
+        (WebKit::WebGraphicsContext3D::rateLimitOffscreenContextCHROMIUM):
+        * src/Extensions3DChromium.cpp:
+        (WebCore::Extensions3DChromium::rateLimitOffscreenContextCHROMIUM):
+        * src/GraphicsContext3DChromium.cpp:
+        * src/GraphicsContext3DInternal.h:
+        * src/WebViewImpl.cpp:
+        (WebKit::WebViewImpl::animate):
+
 2011-05-11  John Bauman  <jbauman@chromium.org>
 
         Reviewed by Kenneth Russell.

@@ -1007,8 +1007,13 @@ void WebViewImpl::animate()
     WebFrameImpl* webframe = mainFrameImpl();
     if (webframe) {
         FrameView* view = webframe->frameView();
-        if (view)
+        if (view) {
+            if (m_layerRenderer)
+                m_layerRenderer->setIsAnimating(true);
             view->serviceScriptedAnimations(convertSecondsToDOMTimeStamp(currentTime()));
+            if (m_layerRenderer)
+                m_layerRenderer->setIsAnimating(false);
+        }
     }
 #endif
 }

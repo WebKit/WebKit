@@ -145,6 +145,11 @@ void Extensions3DChromium::setSwapBuffersCompleteCallbackCHROMIUM(PassOwnPtr<Swa
     m_internal->setSwapBuffersCompleteCallbackCHROMIUM(callback);
 }
 
+void Extensions3DChromium::rateLimitOffscreenContextCHROMIUM()
+{
+    m_internal->rateLimitOffscreenContextCHROMIUM();
+}
+
 } // namespace WebCore
 
 #endif // ENABLE(WEBGL)

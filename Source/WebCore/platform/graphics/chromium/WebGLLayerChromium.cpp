@@ -34,8 +34,10 @@
 
 #include "WebGLLayerChromium.h"
 
+#include "Extensions3DChromium.h"
 #include "GraphicsContext3D.h"
 #include "LayerRendererChromium.h"
+#include "TraceEvent.h"
 
 namespace WebCore {
 
@@ -47,6 +49,8 @@ PassRefPtr<WebGLLayerChromium> WebGLLayerChromium::create(GraphicsLayerChromium*
 WebGLLayerChromium::WebGLLayerChromium(GraphicsLayerChromium* owner)
     : CanvasLayerChromium(owner)
     , m_context(0)
+    , m_contextSupportsRateLimitingExtension(false)
+    , m_rateLimitingTimer(this, &WebGLLayerChromium::rateLimitContext)
     , m_textureUpdated(false)
 {
 }
@@ -91,6 +95,10 @@ void WebGLLayerChromium::updateCompositorResources()
 void WebGLLayerChromium::setTextureUpdated()
 {
     m_textureUpdated = true;
+    // If WebGL commands are issued outside of a the animation callbacks, then use
+    // call rateLimitOffscreenContextCHROMIUM() to keep the context from getting too far ahead.
+    if (layerRenderer() && !layerRenderer()->isAnimating() && m_contextSupportsRateLimitingExtension && !m_rateLimitingTimer.isActive())
+        m_rateLimitingTimer.startOneShot(0);
 }
 
 void WebGLLayerChromium::setContext(const GraphicsContext3D* context)
@@ -114,6 +122,7 @@ void WebGLLayerChromium::setContext(const GraphicsContext3D* context)
     }
     m_textureId = textureId;
     m_premultipliedAlpha = m_context->getContextAttributes().premultipliedAlpha;
+    m_contextSupportsRateLimitingExtension = m_context->getExtensions()->supports("GL_CHROMIUM_rate_limit_offscreen_context");
 }
 
 void WebGLLayerChromium::setLayerRenderer(LayerRendererChromium* newLayerRenderer)
@@ -128,6 +137,17 @@ void WebGLLayerChromium::setLayerRenderer(LayerRendererChromium* newLayerRendere
 
         LayerChromium::setLayerRenderer(newLayerRenderer);
     }
+}
+
+void WebGLLayerChromium::rateLimitContext(Timer<WebGLLayerChromium>*)
+{
+    TRACE_EVENT("WebGLLayerChromium::rateLimitContext", this, 0);
+
+    if (!m_context)
+        return;
+
+    Extensions3DChromium* extensions = static_cast<Extensions3DChromium*>(m_context->getExtensions());
+    extensions->rateLimitOffscreenContextCHROMIUM();
 }
 
 }

@@ -1,3 +1,37 @@
+2011-05-11  Nat Duca  <nduca@chromium.org>
+
+        Reviewed by Kenneth Russell.
+
+        [chromium] Make throttling of WebGL based on webgl frames, not compositor frames
+        https://bugs.webkit.org/show_bug.cgi?id=60508
+
+        When a WebGL layer is dirtied outside of a requestAnimFrame callback, we need
+        to prevent WebGL from running too far ahead of the GPU process. The current
+        throttling mechanism relies on prepareTexture being called for every WebGL frame.
+        However, in a non-requestAnimFrame application, multiple frames might get created
+        before the compositor runs and calls prepareTexture on the surface.
+
+        To address this, we post a task that calls a special rate limiting GL extension on
+        the WebGL context after every WebGL "frame." When the compositor runs, it calls
+        prepareTexture as usual.
+
+        * platform/graphics/chromium/Extensions3DChromium.h:
+        * platform/graphics/chromium/LayerRendererChromium.cpp:
+        (WebCore::LayerRendererChromium::LayerRendererChromium):
+        * platform/graphics/chromium/LayerRendererChromium.h:
+        (WebCore::LayerRendererChromium::setIsAnimating):
+        (WebCore::LayerRendererChromium::isAnimating):
+        * platform/graphics/chromium/WebGLLayerChromium.cpp:
+        (WebCore::WebGLLayerChromiumRateLimitTask::WebGLLayerChromiumRateLimitTask):
+        (WebCore::WebGLLayerChromiumRateLimitTask::run):
+        (WebCore::WebGLLayerChromiumRateLimitTask::cancel):
+        (WebCore::WebGLLayerChromium::WebGLLayerChromium):
+        (WebCore::WebGLLayerChromium::~WebGLLayerChromium):
+        (WebCore::WebGLLayerChromium::setTextureUpdated):
+        (WebCore::WebGLLayerChromium::setContext):
+        * platform/graphics/chromium/WebGLLayerChromium.h:
+        (WebCore::WebGLLayerChromium::context):
+
 2011-05-11  Noam Rosenthal  <noam.rosenthal@nokia.com>
 
         Reviewed by Kenneth Rohde Christiansen.

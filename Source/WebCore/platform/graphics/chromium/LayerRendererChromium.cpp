@@ -117,6 +117,7 @@ LayerRendererChromium::LayerRendererChromium(PassRefPtr<GraphicsContext3D> conte
     , m_context(context)
     , m_childContextsWereCopied(false)
     , m_contextSupportsLatch(false)
+    , m_animating(false)
     , m_defaultRenderSurface(0)
 {
     m_contextSupportsLatch = m_context->getExtensions()->supports("GL_CHROMIUM_latch");

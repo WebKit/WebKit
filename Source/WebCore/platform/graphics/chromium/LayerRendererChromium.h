@@ -81,6 +81,11 @@ public:
     // updates and draws the current layers onto the backbuffer
     void updateAndDrawLayers();
 
+    // Set by WebViewImpl when animation callbacks are running.
+    // FIXME: When we move scheduling into the compositor, we can remove this flag.
+    void setIsAnimating(bool animating) { m_animating = animating; }
+    bool isAnimating() const { return m_animating; }
+
     // waits for rendering to finish
     void finish();
 
@@ -235,6 +240,8 @@ private:
     bool m_childContextsWereCopied;
 
     bool m_contextSupportsLatch;
+
+    bool m_animating;
 
     RenderSurfaceChromium* m_defaultRenderSurface;
 
