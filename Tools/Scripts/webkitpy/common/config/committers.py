@@ -83,9 +83,10 @@ contributors_who_are_not_committers = [
     Contributor("Ilya Sherman", "isherman@chromium.org", "isherman"),
     Contributor("John Bates", ["jbates@google.com", "jbates@chromium.org"], "jbates"),
     Contributor("John Bauman", ["jbauman@chromium.org", "jbauman@google.com"], "jbauman"),
+    Contributor("Luke Macpherson", ["macpherson@chromium.org", "macpherson@google.com"], "macpherson"),
+    Contributor("Naoki Takano", "takano.naoki@gmail.com", "honten"),
     Contributor("Nat Duca", ["nduca@chromium.org", "nduca@google.com"], "nduca"),
     Contributor("Steve Lacey", "sjl@chromium.org", "stevela"),
-    Contributor("Naoki Takano", "takano.naoki@gmail.com", "honten"),
 ]
 
 
