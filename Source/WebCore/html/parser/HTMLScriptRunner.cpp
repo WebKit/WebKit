@@ -284,7 +284,14 @@ void HTMLScriptRunner::runScript(Element* script, const TextPosition1& scriptSta
         NestingLevelIncrementer nestingLevelIncrementer(m_scriptNestingLevel);
 
         ScriptElement* scriptElement = toScriptElement(script);
+
+        // This contains both and ASSERTION and a null check since we should not
+        // be getting into the case of a null script element, but seem to be from
+        // time to time. The assertion is left in to help find those cases and
+        // is being tracked by <https://bugs.webkit.org/show_bug.cgi?id=60559>.
         ASSERT(scriptElement);
+        if (!scriptElement)
+            return;
 
         scriptElement->prepareScript(scriptStartPosition);
 

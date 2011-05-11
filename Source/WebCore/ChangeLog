@@ -1,3 +1,15 @@
+2011-05-11  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        Frequent crashes beneath WebCore::ScriptElement::prepareScript
+        https://bugs.webkit.org/show_bug.cgi?id=60559
+
+        * html/parser/HTMLScriptRunner.cpp:
+        (WebCore::HTMLScriptRunner::runScript):
+        Add null check and explanation that we are keeping the ASSERT to help
+        track down the cause and produce a test.
+
 2011-05-11  Noam Rosenthal  <noam.rosenthal@nokia.com>
 
         Reviewed by Kenneth Rohde Christiansen.
