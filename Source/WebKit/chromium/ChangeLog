@@ -1,3 +1,11 @@
+2011-05-10  Ilya Tikhonovsky  <loislo@chromium.org>
+
+        Unreviewed buildfix for strict OwnPtr patch.
+
+        * src/PlatformBridge.cpp:
+        (WebCore::PlatformBridge::loadPlatformAudioResource):
+        (WebCore::PlatformBridge::decodeAudioFileData):
+
 2011-05-06  Brett Wilson  <brettw@chromium.org>
 
         Reviewed by Adam Barth.

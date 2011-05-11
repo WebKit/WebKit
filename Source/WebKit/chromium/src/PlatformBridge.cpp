@@ -620,7 +620,7 @@ PassOwnPtr<AudioBus> PlatformBridge::loadPlatformAudioResource(const char* name,
 {
     const WebData& resource = webKitClient()->loadResource(name);
     if (resource.isEmpty())
-        return 0;
+        return nullptr;
     
     return decodeAudioFileData(resource.data(), resource.size(), sampleRate);
 }
@@ -630,7 +630,7 @@ PassOwnPtr<AudioBus> PlatformBridge::decodeAudioFileData(const char* data, size_
     WebAudioBus webAudioBus;
     if (webKitClient()->loadAudioResource(&webAudioBus, data, size, sampleRate))
         return webAudioBus.release();
-    return 0;
+    return nullptr;
 }
 
 #endif // ENABLE(WEB_AUDIO)
