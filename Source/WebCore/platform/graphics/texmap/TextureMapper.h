@@ -30,6 +30,7 @@
 #include "GraphicsContext.h"
 #include "IntRect.h"
 #include "IntSize.h"
+#include "TextureMapperPlatformLayer.h"
 #include "TransformationMatrix.h"
 #include <wtf/UnusedParam.h>
 
@@ -47,10 +48,11 @@ class BitmapTexture  : public RefCounted<BitmapTexture> {
 public:
     BitmapTexture() : m_lockCount(0) {}
     virtual ~BitmapTexture() { }
+    virtual void destroy() { }
 
     virtual bool allowOfflineTextureUpload() const { return false; }
-    virtual void destroy() = 0;
     virtual IntSize size() const = 0;
+    virtual int bpp() const { return 32; }
     virtual bool isValid() const = 0;
     virtual void reset(const IntSize& size, bool opaque = false)
     {
@@ -75,16 +77,12 @@ public:
     inline void unlock() { --m_lockCount; }
     inline bool isLocked() { return m_lockCount; }
     inline IntSize contentSize() const { return m_contentSize; }
-    inline void setOffset(const IntPoint& o) { m_offset = o; }
-    inline IntPoint offset() const { return m_offset; }
+    inline int numberOfBytes() const { return size().width() * size().height() * bpp() >> 3; }
 
 protected:
-
-private:
     int m_lockCount;
     IntSize m_contentSize;
     bool m_isOpaque;
-    IntPoint m_offset;
 };
 
 // A "context" class used to encapsulate accelerated texture mapping functions: i.e. drawing a texture
@@ -96,28 +94,33 @@ public:
     static PassOwnPtr<TextureMapper> create(GraphicsContext* graphicsContext = 0);
     virtual ~TextureMapper() { }
 
-    virtual void drawTexture(const BitmapTexture& texture, const IntRect& target, const TransformationMatrix& matrix = TransformationMatrix(), float opacity = 1.0f, const BitmapTexture* maskTexture = 0) = 0;
+    virtual void drawTexture(const BitmapTexture&, const FloatRect& target, const TransformationMatrix& modelViewMatrix = TransformationMatrix(), float opacity = 1.0f, const BitmapTexture* maskTexture = 0) = 0;
 
     // makes a surface the target for the following drawTexture calls.
     virtual void bindSurface(BitmapTexture* surface) = 0;
-    virtual void paintToTarget(const BitmapTexture& texture, const IntSize&, const TransformationMatrix& matrix, float opacity, const IntRect& visibleRect)
-    {
-        UNUSED_PARAM(visibleRect);
-        drawTexture(texture, IntRect(0, 0, texture.contentSize().width(), texture.contentSize().height()), matrix, opacity, 0);
-    }
-
-    virtual void setGraphicsContext(GraphicsContext*) { }
-    virtual void setClip(const IntRect&) = 0;
+    virtual void setGraphicsContext(GraphicsContext*) = 0;
+    virtual GraphicsContext* graphicsContext() = 0;
+    virtual void beginClip(const TransformationMatrix&, const FloatRect&) = 0;
+    virtual void endClip() = 0;
     virtual bool allowSurfaceForRoot() const = 0;
     virtual PassRefPtr<BitmapTexture> createTexture() = 0;
+    IntSize viewportSize() const { return m_viewportSize; }
+    void setViewportSize(const IntSize& s) { m_viewportSize = s; }
 
     void setImageInterpolationQuality(InterpolationQuality quality) { m_interpolationQuality = quality; }
     void setTextDrawingMode(TextDrawingModeFlags mode) { m_textDrawingMode = mode; }
 
     InterpolationQuality imageInterpolationQuality() const { return m_interpolationQuality; }
     TextDrawingModeFlags textDrawingMode() const { return m_textDrawingMode; }
+    virtual bool allowPartialUpdates() const { return false; }
+    virtual bool isOpenGLBacked() const { return false; }
 
-    void setViewportSize(const IntSize&);
+    void setTransform(const TransformationMatrix& matrix) { m_transform = matrix; }
+    TransformationMatrix transform() const { return m_transform; }
+
+    virtual void beginPainting() { }
+    virtual void endPainting() { }
+
 
 protected:
     TextureMapper()
@@ -128,6 +131,8 @@ protected:
 private:
     InterpolationQuality m_interpolationQuality;
     TextDrawingModeFlags m_textDrawingMode;
+    TransformationMatrix m_transform;
+    IntSize m_viewportSize;
 };
 
 };
