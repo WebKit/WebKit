@@ -72,6 +72,8 @@ namespace WebCore {
         Node* iterateNext(ExceptionCode&);
         Node* snapshotItem(unsigned long index, ExceptionCode&);
 
+        const XPath::Value& value() const { return m_value; }
+
     private:
         XPathResult(Document*, const XPath::Value&);
         

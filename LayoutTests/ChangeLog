@@ -1,3 +1,28 @@
+2011-05-11  Julien Chaffraix  <jchaffraix@webkit.org>
+
+        Reviewed by Geoffrey Garen.
+
+        Tests for: XPathResult should keep its node set's JS wrappers alive
+        https://bugs.webkit.org/show_bug.cgi?id=34231
+
+        * fast/xpath/xpath-result-eventlistener-crash-expected.txt: Added.
+        * fast/xpath/xpath-result-eventlistener-crash.html: Added.
+        Test that an event listener registered on an XPATH result snapshots' node does
+        not crash. This case was already fixed prior to this change. However it is better
+        to keep it as a regression test.
+
+        * fast/xpath/xpath-snapshot-result-should-mark-its-nodeset-expected.txt: Added.
+        * fast/xpath/xpath-snapshot-result-should-mark-its-nodeset.html: Added.
+        Test that an XPath snapshot result keeps its node wrapper alive.
+
+        * fast/xpath/xpath-iterator-result-should-mark-its-nodeset-expected.txt: Added.
+        * fast/xpath/xpath-iterator-result-should-mark-its-nodeset.html: Added.
+        Test that an XPath iterator result keeps its node wrapper alive.
+
+        * fast/xpath/xpath-other-nodeset-result-should-mark-its-nodeset-expected.txt: Added.
+        * fast/xpath/xpath-other-nodeset-result-should-mark-its-nodeset.html: Added.
+        Test that other XPath result that holds nodes keeps their wrapper alive.
+
 2011-05-11  Jessie Berlin  <jberlin@apple.com>
 
         WebKitTestRunner needs layoutTestController.originsWithLocalStorage.

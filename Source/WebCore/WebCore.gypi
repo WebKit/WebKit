@@ -1869,6 +1869,7 @@
             'bindings/js/JSWorkerCustom.cpp',
             'bindings/js/JSXMLHttpRequestCustom.cpp',
             'bindings/js/JSXMLHttpRequestUploadCustom.cpp',
+            'bindings/js/JSXPathResultCustom.cpp',
             'bindings/js/JSXSLTProcessorCustom.cpp',
             'bindings/js/JavaScriptCallFrame.cpp',
             'bindings/js/JavaScriptCallFrame.h',

@@ -139,6 +139,7 @@ LIST(APPEND WebCore_SOURCES
     bindings/js/JSXMLHttpRequestCustom.cpp
     bindings/js/JSXMLHttpRequestUploadCustom.cpp
     bindings/js/JSXSLTProcessorCustom.cpp
+    bindings/js/JSXPathResultCustom.cpp
     bindings/js/JavaScriptCallFrame.cpp
     bindings/js/PageScriptDebugServer.cpp
     bindings/js/ScheduledAction.cpp

@@ -1,3 +1,37 @@
+2011-05-11  Julien Chaffraix  <jchaffraix@webkit.org>
+
+        Reviewed by Geoffrey Garen.
+
+        XPathResult should keep its node set's JS wrappers alive
+        https://bugs.webkit.org/show_bug.cgi?id=34231
+
+        The change added a custom mark function for JSC. V8 was already properly
+        marking the nodes so no change were done on the V8 side.
+
+        Tests: fast/xpath/xpath-iterator-result-should-mark-its-nodeset.html
+               fast/xpath/xpath-other-nodeset-result-should-mark-its-nodeset.html
+               fast/xpath/xpath-result-eventlistener-crash.html
+               fast/xpath/xpath-snapshot-result-should-mark-its-nodeset.html
+
+        * Android.jscbindings.mk:
+        * GNUmakefile.list.am:
+        * UseJSC.cmake:
+        * WebCore.gypi:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/JSBindingsAllInOne.cpp:
+        Added the new file to our build systems.
+
+        * bindings/js/JSXPathResultCustom.cpp: Added.
+        (WebCore::JSXPathResult::markChildren): Added code to mark the
+        XPathResult snapshot's nodes.
+        * xml/XPathResult.h:
+        (WebCore::XPathResult::value): Exposed this getter so that we can
+        mark our XPathValue.
+        * xml/XPathResult.idl: Told the IDL parser that we now need
+        a custom mark function.
+
 2011-05-04  Philippe Normand  <pnormand@igalia.com>
 
         Reviewed by Martin Robinson.

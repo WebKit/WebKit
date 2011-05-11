@@ -156,6 +156,7 @@
 #include "JSWorkerCustom.cpp"
 #include "JSXMLHttpRequestCustom.cpp"
 #include "JSXMLHttpRequestUploadCustom.cpp"
+#include "JSXPathResultCustom.cpp"
 #include "JSXSLTProcessorCustom.cpp"
 #include "JavaScriptCallFrame.cpp"
 #include "MemoryInfo.cpp"

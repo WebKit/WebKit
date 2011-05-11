@@ -343,6 +343,7 @@ v8 {
         bindings/js/JSWebKitPointCustom.cpp \
         bindings/js/JSXMLHttpRequestCustom.cpp \
         bindings/js/JSXMLHttpRequestUploadCustom.cpp \
+        bindings/js/JSXPathResultCustom.cpp \
         bindings/js/PageScriptDebugServer.cpp \
         bindings/js/ScheduledAction.cpp \
         bindings/js/ScriptCachedFrameData.cpp \
