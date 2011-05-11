@@ -35,8 +35,10 @@
 
 #if USE(CG)
 #include <wtf/RetainPtr.h>
-#elif PLATFORM(CAIRO)
-typedef struct _cairo_surface cairo_surface_t; 
+#endif
+
+#if USE(CAIRO)
+#include <WebCore/RefPtrCairo.h>
 #endif
 
 namespace WebCore {

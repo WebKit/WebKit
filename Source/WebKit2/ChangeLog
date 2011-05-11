@@ -1,3 +1,10 @@
+2011-05-11  Martin Robinson  <mrobinson@igalia.com>
+
+        Try to fix the WinCairo build.
+
+        * Shared/ShareableBitmap.h: Correctly include RefPtrCairo here and
+        guard it with USE(CAIRO) instead of PLATFORM(CAIRO).
+
 2011-05-11  John Sullivan  <sullivan@apple.com>
 
         Reviewed by Darin Adler.
