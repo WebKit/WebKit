@@ -1,3 +1,9 @@
+2011-05-11  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Unreviewed fix after r86228.
+
+        * platform/qt-mac/Skipped: Add failing editing tets.
+
 2011-05-11  Anton Muhin  <antonnm@chromium.org>
 
         Unreviewed.
