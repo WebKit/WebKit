@@ -710,6 +710,9 @@ void HTMLMediaElement::loadResource(const KURL& initialURL, ContentType& content
     bool privateMode = !settings || settings->privateBrowsingEnabled();
     m_player->setPrivateBrowsingMode(privateMode);
 
+    // Reset display mode to force a recalculation of what to show because we are resetting the player.
+    setDisplayMode(Unknown);
+
     if (!autoplay())
         m_player->setPreload(m_preload);
     m_player->setPreservesPitch(m_webkitPreservesPitch);

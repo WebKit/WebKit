@@ -1,3 +1,17 @@
+2011-05-11  Eric Carlson  <eric.carlson@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Video track sometimes fails to draw.
+        https://bugs.webkit.org/show_bug.cgi?id=60635
+        <rdar://problem/9281951>
+
+        No new tests, covered by existing pixel tests.
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::loadResource): Set display mode to "Unknown" to force a 
+            recalculation, and media engine notification, the next time the state machine runs.
+
 2011-05-11  Adam Roben  <aroben@apple.com>
 
         WinCE build fixes for strict PassOwnPtr
