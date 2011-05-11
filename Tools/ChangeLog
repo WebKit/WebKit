@@ -1,3 +1,11 @@
+2011-05-11  Kevin Ollivier  <kevino@theolliviers.com>
+
+        [wx] Build fix, adding new LayoutTestController method stubs.
+
+        * DumpRenderTree/wx/LayoutTestControllerWx.cpp:
+        (LayoutTestController::localStorageDiskUsageForOrigin):
+        (LayoutTestController::applicationCacheDiskUsageForOrigin):
+
 2011-05-11  Jessie Berlin  <jberlin@apple.com>
 
         Reviewed by Darin Adler.

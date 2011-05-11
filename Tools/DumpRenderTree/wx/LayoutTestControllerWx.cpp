@@ -253,10 +253,23 @@ void LayoutTestController::clearApplicationCacheForOrigin(JSStringRef url)
     // FIXME: Implement to support deleting all application cache for an origin.
 }
 
+long long LayoutTestController::localStorageDiskUsageForOrigin(JSStringRef originIdentifier)
+{
+    // FIXME: Implement to support getting disk usage in bytes for an origin.
+    return 0;
+}
+
 void LayoutTestController::setApplicationCacheOriginQuota(unsigned long long quota)
 {
     // FIXME: Implement to support application cache quotas.
 }
+
+long long LayoutTestController::applicationCacheDiskUsageForOrigin(JSStringRef origin)
+{
+    // FIXME: Implement to support getting disk usage by all application caches for an origin.
+    return 0;
+}
+
 
 JSValueRef LayoutTestController::originsWithApplicationCache(JSContextRef context)
 {
