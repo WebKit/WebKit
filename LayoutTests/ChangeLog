@@ -1,3 +1,14 @@
+2011-05-10  Yury Semikhatsky  <yurys@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: test that browser doesn't crash if alert() arguments conversion throws to an exception
+        https://bugs.webkit.org/show_bug.cgi?id=60541
+
+        * inspector/console/alert-toString-exception-expected.txt: Added.
+        * inspector/console/alert-toString-exception.html: Added.
+        * platform/chromium/inspector/console/alert-toString-exception-expected.txt: Added.
+
 2011-05-10  Abhishek Arya  <inferno@chromium.org>
 
         Unreviewed.
