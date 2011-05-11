@@ -1,5 +1,12 @@
 2011-05-10  Oliver Hunt  <oliver@apple.com>
 
+        Build fix.
+
+        * heap/MarkStack.cpp:
+        (JSC::MarkStack::validateValue):
+
+2011-05-10  Oliver Hunt  <oliver@apple.com>
+
         Reviewed by Gavin Barraclough.
 
         Add some aggressive GC validation to debug builds.

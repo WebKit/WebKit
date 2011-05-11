@@ -146,7 +146,7 @@ void MarkStack::validateValue(JSValue value)
     if (!value.isCell())
         return;
     JSCell* cell = value.asCell();
-    ASSERT(cell);
+    ASSERT_UNUSED(cell, cell);
     ASSERT(cell->structure());
     // Both the cell's structure, and the cell's structure's structure should be the Structure Structure.
     // I hate this sentence.
