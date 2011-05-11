@@ -1,3 +1,17 @@
+2011-05-11  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Adam Roben.
+
+        WebKit2 should tell app that is unresponsive in more cases
+        <rdar://problem/9110151>
+        https://bugs.webkit.org/show_bug.cgi?id=60608
+
+        * UIProcess/DrawingAreaProxyImpl.cpp:
+        (WebKit::DrawingAreaProxyImpl::didUpdateBackingStoreState):
+        (WebKit::DrawingAreaProxyImpl::sendUpdateBackingStoreState):
+        Invoke the responsiveness time when forcing a backing store update
+        to catch the cases of activating tabs, resizing the window, etc.
+
 2011-05-11  Martin Robinson  <mrobinson@igalia.com>
 
         Try to fix the WinCairo build.

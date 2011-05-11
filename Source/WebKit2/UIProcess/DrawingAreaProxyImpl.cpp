@@ -182,6 +182,9 @@ void DrawingAreaProxyImpl::didUpdateBackingStoreState(uint64_t backingStoreState
 
     m_isWaitingForDidUpdateBackingStoreState = false;
 
+    // Stop the responsiveness timer that was started in sendUpdateBackingStoreState.
+    m_webPageProxy->process()->responsivenessTimer()->stop();
+
     if (m_nextBackingStoreStateID != m_currentBackingStoreStateID)
         sendUpdateBackingStoreState(RespondImmediately);
     else
@@ -283,8 +286,15 @@ void DrawingAreaProxyImpl::sendUpdateBackingStoreState(RespondImmediatelyOrNot r
         return;
 
     m_isWaitingForDidUpdateBackingStoreState = respondImmediatelyOrNot == RespondImmediately;
+
     m_webPageProxy->process()->send(Messages::DrawingArea::UpdateBackingStoreState(m_nextBackingStoreStateID, respondImmediatelyOrNot == RespondImmediately, m_size, m_scrollOffset), m_webPageProxy->pageID());
     m_scrollOffset = IntSize();
+
+    if (m_isWaitingForDidUpdateBackingStoreState) {
+        // Start the responsiveness timer. We will stop it when we hear back from the WebProcess
+        // in didUpdateBackingStoreState.
+        m_webPageProxy->process()->responsivenessTimer()->start();
+    }
 
 #if USE(ACCELERATED_COMPOSITING)
     if (m_isWaitingForDidUpdateBackingStoreState && !m_layerTreeContext.isEmpty()) {
