@@ -152,7 +152,7 @@ PassOwnPtr<AudioBus> AudioBus::createBufferFromRange(AudioBus* sourceBuffer, uns
     bool isRangeSafe = startFrame < endFrame && endFrame <= numberOfSourceFrames;
     ASSERT(isRangeSafe);
     if (!isRangeSafe)
-        return 0;
+        return nullptr;
 
     size_t rangeLength = endFrame - startFrame;
 
@@ -369,7 +369,7 @@ PassOwnPtr<AudioBus> AudioBus::createBySampleRateConverting(AudioBus* sourceBus,
     // sourceBus's sample-rate must be known.
     ASSERT(sourceBus && sourceBus->sampleRate());
     if (!sourceBus || !sourceBus->sampleRate())
-        return 0;
+        return nullptr;
 
     double sourceSampleRate = sourceBus->sampleRate();
     double destinationSampleRate = newSampleRate;
@@ -446,7 +446,7 @@ PassOwnPtr<AudioBus> AudioBus::createByMixingToMono(AudioBus* sourceBus)
     }
 
     ASSERT_NOT_REACHED();
-    return 0;
+    return nullptr;
 }
 
 } // WebCore

@@ -55,7 +55,7 @@ PassOwnPtr<Panner> Panner::create(PanningModel model, double sampleRate)
     case PanningModelSoundField:
     default:
         ASSERT_NOT_REACHED();
-        return 0;
+        return nullptr;
     }
 
     return panner.release();

@@ -39,7 +39,7 @@ PassOwnPtr<AudioBus> AudioBus::loadPlatformResource(const char* name, double sam
     // FIXME: the sampleRate parameter is ignored. It should be removed from the API.
     OwnPtr<AudioBus> audioBus = PlatformBridge::loadPlatformAudioResource(name, sampleRate);
     if (!audioBus.get())
-        return 0;
+        return nullptr;
     
     // If the bus is already at the requested sample-rate then return as is.
     if (audioBus->sampleRate() == sampleRate)
@@ -53,7 +53,7 @@ PassOwnPtr<AudioBus> createBusFromInMemoryAudioFile(const void* data, size_t dat
     // FIXME: the sampleRate parameter is ignored. It should be removed from the API.
     OwnPtr<AudioBus> audioBus = PlatformBridge::decodeAudioFileData(static_cast<const char*>(data), dataSize, sampleRate);
     if (!audioBus.get())
-      return 0;
+        return nullptr;
       
     // If the bus needs no conversion then return as is.
     if ((!mixToMono || audioBus->numberOfChannels() == 1) && audioBus->sampleRate() == sampleRate)

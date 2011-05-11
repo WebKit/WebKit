@@ -163,7 +163,7 @@ PassOwnPtr<HRTFElevation> HRTFElevation::createForSubject(const String& subjectN
     bool isElevationGood = elevation >= -45 && elevation <= 90 && (elevation / 15) * 15 == elevation;
     ASSERT(isElevationGood);
     if (!isElevationGood)
-        return 0;
+        return nullptr;
         
     OwnPtr<HRTFKernelList> kernelListL = adoptPtr(new HRTFKernelList(NumberOfTotalAzimuths));
     OwnPtr<HRTFKernelList> kernelListR = adoptPtr(new HRTFKernelList(NumberOfTotalAzimuths));
@@ -177,7 +177,7 @@ PassOwnPtr<HRTFElevation> HRTFElevation::createForSubject(const String& subjectN
 
         bool success = calculateKernelsForAzimuthElevation(rawIndex * AzimuthSpacing, actualElevation, sampleRate, subjectName, kernelListL->at(interpolatedIndex), kernelListR->at(interpolatedIndex));
         if (!success)
-            return 0;
+            return nullptr;
             
         interpolatedIndex += InterpolationFactor;
     }
@@ -203,7 +203,7 @@ PassOwnPtr<HRTFElevation> HRTFElevation::createByInterpolatingSlices(HRTFElevati
 {
     ASSERT(hrtfElevation1 && hrtfElevation2);
     if (!hrtfElevation1 || !hrtfElevation2)
-        return 0;
+        return nullptr;
         
     ASSERT(x >= 0.0 && x < 1.0);
     

@@ -1,3 +1,22 @@
+2011-05-10  Ilya Tikhonovsky  <loislo@chromium.org>
+
+        Unreviewed buildfix for strict OwnPtr.
+
+        * platform/audio/AudioBus.cpp:
+        (WebCore::AudioBus::createBufferFromRange):
+        (WebCore::AudioBus::createBySampleRateConverting):
+        (WebCore::AudioBus::createByMixingToMono):
+        * platform/audio/HRTFElevation.cpp:
+        (WebCore::HRTFElevation::createForSubject):
+        (WebCore::HRTFElevation::createByInterpolatingSlices):
+        * platform/audio/Panner.cpp:
+        (WebCore::Panner::create):
+        * platform/audio/Reverb.cpp:
+        (WebCore::Reverb::initialize):
+        * platform/audio/chromium/AudioBusChromium.cpp:
+        (WebCore::AudioBus::loadPlatformResource):
+        (WebCore::createBusFromInMemoryAudioFile):
+
 2011-05-10  Adam Barth  <abarth@webkit.org>
 
         Build fix for font data madness.  I've had to whitelist this on several
