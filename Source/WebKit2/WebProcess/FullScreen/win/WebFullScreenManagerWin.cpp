@@ -75,7 +75,7 @@ void WebFullScreenManagerWin::setRootFullScreenLayer(WebCore::GraphicsLayer* lay
         m_page->send(Messages::WebFullScreenManagerProxy::ExitAcceleratedCompositingMode());
         if (m_rootLayer) {
             m_rootLayer->removeAllChildren();
-            m_rootLayer = 0;
+            m_rootLayer = nullptr;
         }
         return;
     }

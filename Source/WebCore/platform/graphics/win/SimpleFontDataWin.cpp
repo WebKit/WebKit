@@ -27,6 +27,10 @@
  */
 
 #include "config.h"
+
+// FIXME: Remove this define!
+#define LOOSE_PASS_OWN_PTR
+
 #include "SimpleFontData.h"
 
 #include "Font.h"

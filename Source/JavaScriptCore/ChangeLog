@@ -1,3 +1,13 @@
+2011-05-11  Adam Roben  <aroben@apple.com>
+
+        Turn on strict PassOwnPtr on Windows
+
+        Fixes <http://webkit.org/b/60632> Windows should build with strict PassOwnPtr enabled
+
+        Reviewed by Adam Barth.
+
+        * wtf/PassOwnPtr.h:
+
 2011-05-10  Stephanie Lewis  <slewis@apple.com>
 
         Unreviewed.

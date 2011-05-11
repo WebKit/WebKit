@@ -1,3 +1,14 @@
+2011-05-11  Adam Roben  <aroben@apple.com>
+
+        Turn on strict PassOwnPtr on Windows
+
+        Fixes <http://webkit.org/b/60632> Windows should build with strict PassOwnPtr enabled
+
+        Reviewed by Adam Barth.
+
+        * platform/graphics/win/SimpleFontDataWin.cpp: Keep LOOSE_PASS_OWN_PTR turned on for this
+        file until SimpleFontData::scaledFontData is dealt with on all platforms.
+
 2011-05-11  Julien Chaffraix  <jchaffraix@webkit.org>
 
         Reviewed by Geoffrey Garen.

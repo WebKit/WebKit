@@ -1,3 +1,14 @@
+2011-05-11  Adam Roben  <aroben@apple.com>
+
+        Turn on strict PassOwnPtr on Windows
+
+        Fixes <http://webkit.org/b/60632> Windows should build with strict PassOwnPtr enabled
+
+        Reviewed by Adam Barth.
+
+        * WebProcess/FullScreen/win/WebFullScreenManagerWin.cpp:
+        (WebKit::WebFullScreenManagerWin::setRootFullScreenLayer): Use nullptr instead of 0.
+
 2011-05-11  Jessie Berlin  <jberlin@apple.com>
 
         Reviewed by Darin Adler.
