@@ -4422,7 +4422,7 @@ void Document::setIconURL(const String& url, const String& mimeType, IconType ic
 {
     // FIXME - <rdar://problem/4727645> - At some point in the future, we might actually honor the "mimeType"
     IconURL newURL(KURL(ParsedURLString, url), iconType);
-    if (!iconURL(iconType).m_iconURL.isEmpty())
+    if (iconURL(iconType).m_iconURL.isEmpty())
         setIconURL(newURL);
     else if (!mimeType.isEmpty())
         setIconURL(newURL);

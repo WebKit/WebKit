@@ -1,3 +1,20 @@
+2011-05-11  Tao Bai  <michaelbai@chromium.org>
+
+        Reviewed by David Kilzer.
+
+        Return empty Favicon URL instead of default one when the frame isn't top level one
+        https://bugs.webkit.org/show_bug.cgi?id=60527
+        This issue was discovered by chromium browser test.
+
+        * dom/Document.cpp:
+        (WebCore::Document::setIconURL):
+        Restored original logic which was inadvertently flipped by http://trac.webkit.org/changeset/85785.
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::iconURLs):
+        (WebCore::FrameLoader::fillIconURL):
+        Restored original logic, the empty URL should be returned instead of default one. The client (at
+        least chromium) may rely on the returned value to decided whether the favicon should be changed.
+
 2011-05-11  Nat Duca  <nduca@chromium.org>
 
         Reviewed by Kenneth Russell.

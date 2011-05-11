@@ -476,6 +476,10 @@ KURL FrameLoader::iconURL()
 IconURLs FrameLoader::iconURLs(int iconTypes)
 {
     IconURLs iconURLs;
+    // If this isn't a top level frame, return
+    if (m_frame->tree() && m_frame->tree()->parent())
+        return iconURLs;
+
     if (iconTypes & Favicon && !fillIconURL(Favicon, &iconURLs))
         iconURLs.append(getDefaultIconURL(Favicon));
 
@@ -499,10 +503,6 @@ IconURLs FrameLoader::iconURLs(int iconTypes)
 
 bool FrameLoader::fillIconURL(IconType iconType, IconURLs* iconURLs)
 {
-    // If this isn't a top level frame, return
-    if (m_frame->tree() && m_frame->tree()->parent())
-        return false;
-
     // If we have an iconURL from a Link element, return that
     IconURL url = m_frame->document()->iconURL(iconType);
     if (url.m_iconURL.isEmpty())
