@@ -54,7 +54,9 @@ struct WebPreferences {
 
     bool DOMPasteAllowed;
     bool XSSAuditorEnabled;
+    bool allowDisplayOfInsecureContent;
     bool allowFileAccessFromFileURLs;
+    bool allowRunningOfInsecureContent;
     bool authorAndUserStylesEnabled;
     WebKit::WebString defaultTextEncodingName;
     bool developerExtrasEnabled;

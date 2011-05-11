@@ -70,7 +70,9 @@ void WebPreferences::reset()
 
     DOMPasteAllowed = true;
     XSSAuditorEnabled = false;
+    allowDisplayOfInsecureContent = true;
     allowFileAccessFromFileURLs = true;
+    allowRunningOfInsecureContent = true;
     authorAndUserStylesEnabled = true;
     defaultTextEncodingName = WebString::fromUTF8("ISO-8859-1");
     developerExtrasEnabled = true;
@@ -127,7 +129,9 @@ void WebPreferences::applyTo(WebView* webView)
 
     settings->setDOMPasteAllowed(DOMPasteAllowed);
     settings->setXSSAuditorEnabled(XSSAuditorEnabled);
+    settings->setAllowDisplayOfInsecureContent(allowDisplayOfInsecureContent);
     settings->setAllowFileAccessFromFileURLs(allowFileAccessFromFileURLs);
+    settings->setAllowRunningOfInsecureContent(allowRunningOfInsecureContent);
     settings->setAuthorAndUserStylesEnabled(authorAndUserStylesEnabled);
     settings->setDefaultTextEncodingName(defaultTextEncodingName);
     settings->setDeveloperExtrasEnabled(developerExtrasEnabled);

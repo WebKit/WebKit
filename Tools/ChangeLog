@@ -1,3 +1,21 @@
+2011-05-10  Chris Evans  <cevans@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        Add WebCore::Setting to block displaying and/or running insecure content on secure pages
+        https://bugs.webkit.org/show_bug.cgi?id=58378
+
+        * DumpRenderTree/chromium/LayoutTestController.cpp:
+        (LayoutTestController::LayoutTestController):
+        (LayoutTestController::setAllowDisplayOfInsecureContent):
+        (LayoutTestController::setAllowRunningOfInsecureContent):
+        * DumpRenderTree/chromium/LayoutTestController.h:
+        * DumpRenderTree/chromium/WebPreferences.cpp:
+        (WebPreferences::reset):
+        (WebPreferences::applyTo):
+        * DumpRenderTree/chromium/WebPreferences.h:
+        Add plumbing for new settings to Chromium DRT.
+
 2011-05-10  Enrica Casucci  <enrica@apple.com>
 
         Reviewed by Beth Dakin.

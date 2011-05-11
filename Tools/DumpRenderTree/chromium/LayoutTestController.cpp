@@ -138,7 +138,9 @@ LayoutTestController::LayoutTestController(TestShell* shell)
     bindMethod("resumeAnimations", &LayoutTestController::resumeAnimations);
     bindMethod("sampleSVGAnimationForElementAtTime", &LayoutTestController::sampleSVGAnimationForElementAtTime);
     bindMethod("setAcceptsEditing", &LayoutTestController::setAcceptsEditing);
+    bindMethod("setAllowDisplayOfInsecureContent", &LayoutTestController::setAllowDisplayOfInsecureContent);
     bindMethod("setAllowFileAccessFromFileURLs", &LayoutTestController::setAllowFileAccessFromFileURLs);
+    bindMethod("setAllowRunningOfInsecureContent", &LayoutTestController::setAllowRunningOfInsecureContent);
     bindMethod("setAllowUniversalAccessFromFileURLs", &LayoutTestController::setAllowUniversalAccessFromFileURLs);
     bindMethod("setAlwaysAcceptCookies", &LayoutTestController::setAlwaysAcceptCookies);
     bindMethod("setAuthorAndUserStylesEnabled", &LayoutTestController::setAuthorAndUserStylesEnabled);
@@ -1282,10 +1284,28 @@ void LayoutTestController::setAllowUniversalAccessFromFileURLs(const CppArgument
     result->setNull();
 }
 
+void LayoutTestController::setAllowDisplayOfInsecureContent(const CppArgumentList& arguments, CppVariant* result)
+{
+    if (arguments.size() > 0 && arguments[0].isBool()) {
+        m_shell->preferences()->allowDisplayOfInsecureContent = arguments[0].value.boolValue;
+        m_shell->applyPreferences();
+    }
+    result->setNull();
+}
+
 void LayoutTestController::setAllowFileAccessFromFileURLs(const CppArgumentList& arguments, CppVariant* result)
 {
     if (arguments.size() > 0 && arguments[0].isBool()) {
         m_shell->preferences()->allowFileAccessFromFileURLs = arguments[0].value.boolValue;
+        m_shell->applyPreferences();
+    }
+    result->setNull();
+}
+
+void LayoutTestController::setAllowRunningOfInsecureContent(const CppArgumentList& arguments, CppVariant* result)
+{
+    if (arguments.size() > 0 && arguments[0].isBool()) {
+        m_shell->preferences()->allowRunningOfInsecureContent = arguments[0].value.boolValue;
         m_shell->applyPreferences();
     }
     result->setNull();
