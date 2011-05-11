@@ -1,3 +1,15 @@
+2011-05-11  Holger Hans Peter Freyther  <holger@moiji-mobile.com>
+
+        Unreviewed build fix.
+
+        [MIPS] Fix compilation of the MIPS JIT
+
+        Include the MIPSAssembler.h first to indirectly include
+        AssemblerBuffer.h before the AbstractMacroAssembler.h. This
+        order is used for the ARM and X86 MacroAssembler*.h
+
+        * assembler/MacroAssemblerMIPS.h:
+
 2011-05-11  Adam Roben  <aroben@apple.com>
 
         Turn on strict PassOwnPtr on Windows
