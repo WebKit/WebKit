@@ -1,3 +1,11 @@
+2011-05-11  Anton Muhin  <antonnm@chromium.org>
+
+        Unreviewed.
+
+        Removing now unnecessary Chromium suppressions.
+
+        * platform/chromium/test_expectations.txt:
+
 2011-05-11  Chang Shu  <cshu@webkit.org>
 
         Reviewed by Antonio Gomes.

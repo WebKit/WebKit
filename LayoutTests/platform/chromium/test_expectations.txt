@@ -3108,8 +3108,6 @@ BUGV8_1203 DEBUG : fast/canvas/webgl/gl-get-calls.html = PASS CRASH
 
 BUGWK55117 : fast/js/i18n-bindings-locale.html = TEXT
 
-BUGCR80745 DEBUG : html5lib/runner.html = PASS TIMEOUT CRASH
-
 BUG_ANTONM WIN LINUX : svg/dynamic-updates/SVGFESpecularLightingElement-remove-lightSource.html = IMAGE
 BUG_ANTONM LEOPARD : svg/dynamic-updates/SVGFESpecularLightingElement-remove-lightSource.html = IMAGE
 
@@ -3942,10 +3940,6 @@ BUGWK59673 : fast/dom/Window/get-set-properties.html = TEXT
 BUGWK59673 : fast/dom/Window/window-property-shadowing.html = TEXT
 BUGWK59673 : http/tests/history/cross-origin-replace-history-object-child.html = TIMEOUT
 
-// Crashiness on canaries (noted ~ r85140)
-BUGCR80745 DEBUG : editing/pasteboard/paste-event-only-once.html = PASS CRASH
-BUGCR80745 DEBUG : fast/css/getComputedStyle/getComputedStyle-border-box.html = PASS CRASH
-
 // Flakiness on canaries (noted ~ r85140)
 BUGKBR WIN DEBUG : fast/filesystem/file-writer-truncate-extend.html = PASS TEXT
 BUGKBR WIN DEBUG : fast/events/change-overflow-on-overflow-change.html = PASS TIMEOUT
@@ -3953,7 +3947,6 @@ BUGKBR WIN DEBUG : fast/events/change-overflow-on-overflow-change.html = PASS TI
 // Flakiness on canaries (noted ~ r85220)
 BUGKBR WIN : editing/input/option-page-up-down.html = PASS TEXT
 BUGKBR WIN LINUX : http/tests/inspector/resource-tree/resource-tree-frame-navigate.html = PASS TIMEOUT TEXT
-BUGCR80745 DEBUG: editing/pasteboard/paste-blockquote-into-blockquote-3.html = PASS CRASH
 BUGWK59726 : fast/dom/shadow/gc-shadow.html = PASS TEXT
 
 BUGWK60112 : fast/css/epub-properties.html = TEXT
