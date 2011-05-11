@@ -1,3 +1,14 @@
+2011-05-11  Chang Shu  <cshu@webkit.org>
+
+        Reviewed by Antonio Gomes.
+
+        [Qt] Tab not working in editing/inserting/typing-tab-designmode-forms.html
+        https://bugs.webkit.org/show_bug.cgi?id=60477
+
+        Unskip passed tests.
+
+        * platform/qt/Skipped:
+
 2011-05-11  Csaba Osztrogonác  <ossy@webkit.org>
 
         Unreviewed fix after r86228.

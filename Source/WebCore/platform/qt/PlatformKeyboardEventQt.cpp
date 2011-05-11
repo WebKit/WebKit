@@ -578,12 +578,23 @@ static bool isVirtualKeyCodeRepresentingCharacter(int code)
     }
 }
 
+static String keyTextForKeyEvent(const QKeyEvent* event)
+{
+    switch (event->key()) {
+    case Qt::Key_Tab:
+    case Qt::Key_Backtab:
+        if (event->text().isNull())
+            return "\t";
+    }
+    return event->text();
+}
+
 PlatformKeyboardEvent::PlatformKeyboardEvent(QKeyEvent* event)
 {
     const int state = event->modifiers();
     m_type = (event->type() == QEvent::KeyRelease) ? KeyUp : KeyDown;
-    m_text = event->text();
-    m_unmodifiedText = event->text(); // FIXME: not correct
+    m_text = keyTextForKeyEvent(event);
+    m_unmodifiedText = m_text; // FIXME: not correct
     m_keyIdentifier = keyIdentifierForQtKeyCode(event->key());
     m_autoRepeat = event->isAutoRepeat();
     m_ctrlKey = (state & Qt::ControlModifier);

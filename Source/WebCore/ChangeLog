@@ -1,3 +1,20 @@
+2011-05-11  Chang Shu  <cshu@webkit.org>
+
+        Reviewed by Antonio Gomes.
+
+        [Qt] Tab not working in editing/inserting/typing-tab-designmode-forms.html
+        https://bugs.webkit.org/show_bug.cgi?id=60477
+
+        PlatformKeyboardEvent.m_text should be set to "\t" instead of leaving as null.
+        The value is checked at EventHandler.cpp:2527 (r86166).
+
+        Function keyTextForKeyEvent is partially implemented and can be enhanced in
+        a need-base.
+
+        * platform/qt/PlatformKeyboardEventQt.cpp:
+        (WebCore::keyTextForKeyEvent):
+        (WebCore::PlatformKeyboardEvent::PlatformKeyboardEvent):
+
 2011-05-11  Adam Roben  <aroben@apple.com>
 
         Use case-insensitive comparisons when checking plugin filenames on Windows
