@@ -9,13 +9,13 @@
 
 <h3>Summary</h3>
 <div>
-Last Pass: {{ last_pass.date|timesince }} ago
+Last Pass: {% if last_pass %}{{ last_pass.date|timesince }} ago{% else %}never{% endif %}
 {% if not bot_id and last_pass.bot_id %}
 by <a href="/queue-status/{{last_pass.queue_name}}/bots/{{last_pass.bot_id}}">{{ last_pass.bot_id }}</a>
 {% endif %}
 </div>
 <div>
-Last Boot: {{ last_boot.date|timesince }} ago
+Last Boot: {% if last_boot %}{{ last_boot.date|timesince }} ago{% else %}never{% endif %}
 {% if not bot_id and last_boot.bot_id %}
 by <a href="/queue-status/{{last_boot.queue_name}}/bots/{{last_boot.bot_id}}">{{ last_boot.bot_id }}</a>
 {% endif %}

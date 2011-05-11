@@ -82,6 +82,13 @@ class QueueStatus(webapp.RequestHandler):
         statuses.filter("message =", "Pass")
         return statuses.count()
 
+    def _fetch_trailing_days_pass_count_string(self, queue, bot_id, days):
+        status_count = self._fetch_trailing_days_pass_count(queue, bot_id, days)
+        # GQL has a result limit of 1000, so we return a special string to indicate we hit that limit.
+        if status_count == 1000:
+            status_count = "1000+"
+        return str(status_count)
+
     def _page_title(self, queue, bot_id):
         title = "%s Messages" % queue.display_name()
         if bot_id:
@@ -103,7 +110,7 @@ class QueueStatus(webapp.RequestHandler):
             "bot_id": bot_id,
             "last_pass": self._fetch_last_message_matching(queue, bot_id, "Pass"),
             "last_boot": self._fetch_last_message_matching(queue, bot_id, "Starting Queue"),
-            "trailing_month_pass_count": self._fetch_trailing_days_pass_count(queue, bot_id, 30),
-            "trailing_week_pass_count": self._fetch_trailing_days_pass_count(queue, bot_id, 7),
+            "trailing_month_pass_count": self._fetch_trailing_days_pass_count_string(queue, bot_id, 30),
+            "trailing_week_pass_count": self._fetch_trailing_days_pass_count_string(queue, bot_id, 7),
         }
         self.response.out.write(template.render("templates/queuestatus.html", template_values))

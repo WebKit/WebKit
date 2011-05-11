@@ -1,3 +1,21 @@
+2011-05-11  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Csaba Osztrogonác.
+
+        queues.webkit.org should show 1000+ instead of 1000 when we hit the query limit
+        https://bugs.webkit.org/show_bug.cgi?id=60614
+
+        AppEngine has a result limit of 1000.  We hit that when trying
+        to find out how many patches the style-queue (and other queues)
+        have passed in the last 30 days.  So lets display 1000+ instead
+        of 1000 to avoid confusion. (Ossy was asking about this in #webkit tonight.)
+
+        I also made the status pages show "never" instead of just "ago" when we
+        haven't seen a pass or boot message in the last 1000 messages.
+
+        * QueueStatusServer/handlers/queuestatus.py:
+        * QueueStatusServer/templates/queuestatus.html:
+
 2011-05-11  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Eric Seidel.
