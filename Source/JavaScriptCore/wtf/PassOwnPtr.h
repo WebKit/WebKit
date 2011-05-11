@@ -31,8 +31,10 @@
 #include "OwnPtrCommon.h"
 #include "TypeTraits.h"
 
+#if !PLATFORM(CHROMIUM)
 // Remove this once we make all WebKit code compatible with stricter rules about PassOwnPtr.
 #define LOOSE_PASS_OWN_PTR
+#endif
 
 namespace WTF {
 
