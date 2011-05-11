@@ -1,3 +1,11 @@
+2011-05-10  Stephanie Lewis  <slewis@apple.com>
+
+        Unreviewed.
+
+        Revert accidental JavaScriptCore change in http://trac.webkit.org/changeset/86130
+
+        * Configurations/JavaScriptCore.xcconfig:
+
 2011-05-10  Adam Barth  <abarth@webkit.org>
 
         Reviewed by David Levin.
