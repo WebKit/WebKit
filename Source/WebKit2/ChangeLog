@@ -1,3 +1,16 @@
+2011-05-11  John Sullivan  <sullivan@apple.com>
+
+        Reviewed by Darin Adler.
+
+        <https://bugs.webkit.org/show_bug.cgi?id=60631>
+        <rdar://problem/9420520>
+        
+        WebKit2 doesn't clear the pendingAPIRequestURL on in-page anchor navigation [60631]
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::didSameDocumentNavigationForFrame):
+        Call clearPendingAPIRequestURL().
+
 2011-05-11  Adam Roben  <aroben@apple.com>
 
         Turn on strict PassOwnPtr on Windows
