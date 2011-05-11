@@ -179,7 +179,8 @@ TransparencyAwareFontPainter::~TransparencyAwareFontPainter()
     if (m_createdTransparencyLayer)
         m_graphicsContext->endTransparencyLayer();
     m_graphicsContext->restore();
-    skia::EndPlatformPaint(m_platformContext->canvas());
+    if (m_transparency.platformContext())
+        skia::EndPlatformPaint(m_transparency.platformContext()->canvas());
 }
 
 // Specialization for simple GlyphBuffer painting.
@@ -524,8 +525,6 @@ void Font::drawComplexText(GraphicsContext* graphicsContext,
     // Uniscribe counts the coordinates from the upper left, while WebKit uses
     // the baseline, so we have to subtract off the ascent.
     state.draw(graphicsContext, hdc, lroundf(point.x()), lroundf(point.y() - fontMetrics().ascent()), from, to);
-
-    skia::EndPlatformPaint(context->canvas());
 }
 
 void Font::drawEmphasisMarksForComplexText(GraphicsContext* /* context */, const TextRun& /* run */, const AtomicString& /* mark */, const FloatPoint& /* point */, int /* from */, int /* to */) const
