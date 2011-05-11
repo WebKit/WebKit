@@ -135,18 +135,6 @@ RenderLayer::RenderLayer(RenderBoxModelObject* renderer)
     , m_next(0)
     , m_first(0)
     , m_last(0)
-    , m_relX(0)
-    , m_relY(0)
-    , m_x(0)
-    , m_y(0)
-    , m_width(0)
-    , m_height(0)
-    , m_scrollX(0)
-    , m_scrollY(0)
-    , m_scrollLeftOverflow(0)
-    , m_scrollTopOverflow(0)
-    , m_scrollWidth(0)
-    , m_scrollHeight(0)
     , m_inResizeMode(false)
     , m_posZOrderList(0)
     , m_negZOrderList(0)
@@ -282,10 +270,10 @@ void RenderLayer::updateLayerPositions(UpdateLayerPositionsFlags flags, IntPoint
         else {
             oldCachedOffset = *cachedOffset;
             // Frequently our parent layer's renderer will be the same as our renderer's containing block.  In that case,
-            // we just update the cache using our offset to our parent (which is m_x / m_y).  Otherwise, regenerated cached
+            // we just update the cache using our offset to our parent (which is m_topLeft). Otherwise, regenerated cached
             // offsets to the root from the render tree.
             if (!m_parent || m_parent->renderer() == renderer()->containingBlock())
-                cachedOffset->move(m_x, m_y); // Fast case
+                cachedOffset->move(m_topLeft.x(), m_topLeft.y()); // Fast case
             else {
                 int x = 0;
                 int y = 0;
@@ -719,11 +707,11 @@ void RenderLayer::updateLayerPosition()
         localPoint -= scrollOffset;
     }
         
-    m_relX = m_relY = 0;
     if (renderer()->isRelPositioned()) {
-        m_relX = renderer()->relativePositionOffsetX();
-        m_relY = renderer()->relativePositionOffsetY();
-        localPoint.move(m_relX, m_relY);
+        m_relativeOffset = renderer()->relativePositionOffset();
+        localPoint.move(m_relativeOffset);
+    } else {
+        m_relativeOffset = IntSize();
     }
 
     // FIXME: We'd really like to just get rid of the concept of a layer rectangle and rely on the renderers.
@@ -1338,12 +1326,10 @@ void RenderLayer::scrollTo(int x, int y)
     // complicated (since it will involve testing whether our layer
     // is either occluded by another layer or clipped by an enclosing
     // layer or contains fixed backgrounds, etc.).
-    int newScrollX = x - m_scrollOrigin.x();
-    int newScrollY = y - m_scrollOrigin.y();
-    if (m_scrollY == newScrollY && m_scrollX == newScrollX)
+    IntSize newScrollOffset = IntSize(x - m_scrollOrigin.x(), y - m_scrollOrigin.y());
+    if (m_scrollOffset == newScrollOffset)
         return;
-    m_scrollX = newScrollX;
-    m_scrollY = newScrollY;
+    m_scrollOffset = newScrollOffset;
 
     // Update the positions of our child layers. Don't have updateLayerPositions() update
     // compositing layers, because we need to do a deep update from the compositing ancestor.
@@ -1786,12 +1772,12 @@ IntSize RenderLayer::contentsSize() const
 
 int RenderLayer::visibleHeight() const
 {
-    return m_height;
+    return m_layerSize.height();
 }
 
 int RenderLayer::visibleWidth() const
 {
-    return m_width;
+    return m_layerSize.width();
 }
 
 bool RenderLayer::shouldSuspendScrollAnimations() const
@@ -2036,14 +2022,14 @@ int RenderLayer::scrollWidth()
 {
     if (m_scrollDimensionsDirty)
         computeScrollDimensions();
-    return m_scrollWidth;
+    return m_scrollSize.width();
 }
 
 int RenderLayer::scrollHeight()
 {
     if (m_scrollDimensionsDirty)
         computeScrollDimensions();
-    return m_scrollHeight;
+    return m_scrollSize.height();
 }
 
 int RenderLayer::overflowTop() const
@@ -2085,18 +2071,18 @@ void RenderLayer::computeScrollDimensions(bool* needHBar, bool* needVBar)
     
     m_scrollDimensionsDirty = false;
 
-    m_scrollLeftOverflow = overflowLeft() - box->borderLeft();
-    m_scrollTopOverflow = overflowTop() - box->borderTop();
+    m_scrollOverflow.setWidth(overflowLeft() - box->borderLeft());
+    m_scrollOverflow.setHeight(overflowTop() - box->borderTop());
 
-    m_scrollWidth = overflowRight() - overflowLeft();
-    m_scrollHeight = overflowBottom() - overflowTop();
+    m_scrollSize.setWidth(overflowRight() - overflowLeft());
+    m_scrollSize.setHeight(overflowBottom() - overflowTop());
     
-    m_scrollOrigin = IntPoint(-m_scrollLeftOverflow, -m_scrollTopOverflow);
+    m_scrollOrigin = IntPoint(-m_scrollOverflow.width(), -m_scrollOverflow.height());
 
     if (needHBar)
-        *needHBar = m_scrollWidth > box->clientWidth();
+        *needHBar = m_scrollSize.width() > box->clientWidth();
     if (needVBar)
-        *needVBar = m_scrollHeight > box->clientHeight();
+        *needVBar = m_scrollSize.height() > box->clientHeight();
 }
 
 void RenderLayer::updateOverflowStatus(bool horizontalOverflow, bool verticalOverflow)
@@ -2213,13 +2199,13 @@ void RenderLayer::updateScrollInfoAfterLayout()
         int clientWidth = box->clientWidth();
         int pageStep = max(max<int>(clientWidth * Scrollbar::minFractionToStepWhenPaging(), clientWidth - Scrollbar::maxOverlapBetweenPages()), 1);
         m_hBar->setSteps(Scrollbar::pixelsPerLineStep(), pageStep);
-        m_hBar->setProportion(clientWidth, m_scrollWidth);
+        m_hBar->setProportion(clientWidth, m_scrollSize.width());
     }
     if (m_vBar) {
         int clientHeight = box->clientHeight();
         int pageStep = max(max<int>(clientHeight * Scrollbar::minFractionToStepWhenPaging(), clientHeight - Scrollbar::maxOverlapBetweenPages()), 1);
         m_vBar->setSteps(Scrollbar::pixelsPerLineStep(), pageStep);
-        m_vBar->setProportion(clientHeight, m_scrollHeight);
+        m_vBar->setProportion(clientHeight, m_scrollSize.height());
     }
  
     RenderView* view = renderer()->view();

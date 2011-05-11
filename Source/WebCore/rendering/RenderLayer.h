@@ -211,20 +211,19 @@ public:
         return curr;
     }
     
-    int x() const { return m_x; }
-    int y() const { return m_y; }
+    int x() const { return m_topLeft.x(); }
+    int y() const { return m_topLeft.y(); }
     void setLocation(int x, int y)
     {
-        m_x = x;
-        m_y = y;
+        m_topLeft = IntPoint(x, y);
     }
 
-    int width() const { return m_width; }
-    int height() const { return m_height; }
-    IntSize size() const { return IntSize(m_width, m_height); }
+    int width() const { return m_layerSize.width(); }
+    int height() const { return m_layerSize.height(); }
+    const IntSize& size() const { return m_layerSize; }
     
-    void setWidth(int w) { m_width = w; }
-    void setHeight(int h) { m_height = h; }
+    void setWidth(int w) { m_layerSize.setWidth(w); }
+    void setHeight(int h) { m_layerSize.setHeight(h); }
 
     int scrollWidth();
     int scrollHeight();
@@ -234,14 +233,15 @@ public:
     // Scrolling methods for layers that can scroll their overflow.
     void scrollByRecursively(int xDelta, int yDelta);
 
-    IntSize scrolledContentOffset() const { return IntSize(scrollXOffset() + m_scrollLeftOverflow, scrollYOffset() + m_scrollTopOverflow); }
+    IntSize scrolledContentOffset() const { return scrollOffset() + m_scrollOverflow; }
 
-    int scrollXOffset() const { return m_scrollX + m_scrollOrigin.x(); }
-    int scrollYOffset() const { return m_scrollY + m_scrollOrigin.y(); }
+    int scrollXOffset() const { return m_scrollOffset.width() + m_scrollOrigin.x(); }
+    int scrollYOffset() const { return m_scrollOffset.height() + m_scrollOrigin.y(); }
+    IntSize scrollOffset() const { return IntSize(scrollXOffset(), scrollYOffset()); }
 
     void scrollToOffset(int x, int y);
-    void scrollToXOffset(int x) { scrollToOffset(x, m_scrollY + m_scrollOrigin.y()); }
-    void scrollToYOffset(int y) { scrollToOffset(m_scrollX + m_scrollOrigin.x(), y); }
+    void scrollToXOffset(int x) { scrollToOffset(x, scrollYOffset()); }
+    void scrollToYOffset(int y) { scrollToOffset(scrollXOffset(), y); }
     void scrollRectToVisible(const IntRect&, bool scrollToAnchor = false, const ScrollAlignment& alignX = ScrollAlignment::alignCenterIfNeeded, const ScrollAlignment& alignY = ScrollAlignment::alignCenterIfNeeded);
 
     IntRect getRectToExpose(const IntRect& visibleRect, const IntRect& exposeRect, const ScrollAlignment& alignX, const ScrollAlignment& alignY);
@@ -307,8 +307,8 @@ public:
 
     void updateTransform();
 
-    void relativePositionOffset(int& relX, int& relY) const { relX += m_relX; relY += m_relY; }
-    IntSize relativePositionOffset() const { return IntSize(m_relX, m_relY); }
+    void relativePositionOffset(int& relX, int& relY) const { relX += m_relativeOffset.width(); relY += m_relativeOffset.height(); }
+    const IntSize& relativePositionOffset() const { return m_relativeOffset; }
 
     void clearClipRectsIncludingDescendants();
     void clearClipRects();
@@ -623,27 +623,21 @@ protected:
     IntRect m_outlineBox;
 
     // Our current relative position offset.
-    int m_relX;
-    int m_relY;
+    IntSize m_relativeOffset;
 
     // Our (x,y) coordinates are in our parent layer's coordinate space.
-    int m_x;
-    int m_y;
+    IntPoint m_topLeft;
 
     // The layer's width/height
-    int m_width;
-    int m_height;
+    IntSize m_layerSize;
 
     // Our scroll offsets if the view is scrolled.
-    int m_scrollX;
-    int m_scrollY;
-    
-    int m_scrollLeftOverflow;
-    int m_scrollTopOverflow;
+    IntSize m_scrollOffset;
+
+    IntSize m_scrollOverflow;
     
     // The width/height of our scrolled area.
-    int m_scrollWidth;
-    int m_scrollHeight;
+    IntSize m_scrollSize;
 
     // For layers with overflow, we have a pair of scrollbars.
     RefPtr<Scrollbar> m_hBar;
