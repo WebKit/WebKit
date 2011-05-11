@@ -2,8 +2,33 @@
 
         Reviewed by Kenneth Rohde Christiansen.
 
-
         [Texmap][Qt] Upstream texture-mapper changes from Qt's WebKit2 branch
+        https://bugs.webkit.org/show_bug.cgi?id=60439
+
+        Patch 5/12: Implement the new TextureMapper functions for the Qt backend.
+        This allow non-rectangular clipping, some stub functions, and getting a unique
+        id for an image.
+
+        No new tests. Tests in LayoutTests/compositing cover this.
+
+        * platform/graphics/qt/TextureMapperQt.cpp:
+        (WebCore::TextureMapperQt::beginClip):
+        (WebCore::TextureMapperQt::endClip):
+        (WebCore::TextureMapperQt::viewportSize):
+        (WebCore::TextureMapperQt::setGraphicsContext):
+        (WebCore::TextureMapperQt::graphicsContext):
+        (WebCore::TextureMapperQt::drawTexture):
+        (WebCore::TextureMapperQt::beginPainting):
+        (WebCore::TextureMapperQt::endPainting):
+        (WebCore::RGBA32PremultimpliedBufferQt::beginPaint):
+        (WebCore::uidForImage):
+        * platform/graphics/qt/TextureMapperQt.h:
+
+2011-05-11  Noam Rosenthal  <noam.rosenthal@nokia.com>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        [Texmap] Upstream texture-mapper changes from Qt's WebKit2 branch
         https://bugs.webkit.org/show_bug.cgi?id=60439
 
         Patch 3/12: TextureMapper shouldn't depend on OpenGL, but rather only allow the GL backend when

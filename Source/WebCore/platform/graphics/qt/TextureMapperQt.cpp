@@ -98,11 +98,26 @@ void BitmapTextureQt::unpack()
     m_image = QImage();
 }
 
-void TextureMapperQt::setClip(const IntRect& rect)
+void TextureMapperQt::beginClip(const TransformationMatrix& matrix, const FloatRect& rect)
 {
-     QPainter* painter = m_currentSurface ? &m_currentSurface->m_painter : m_painter;
+     QPainter* painter = currentPainter();
+     painter->save();
+     QTransform prevTransform = painter->transform();
+     painter->setTransform(matrix, false);
      painter->setClipRect(rect);
+     painter->setTransform(prevTransform, false);
 }
+
+void TextureMapperQt::endClip()
+{
+    currentPainter()->restore();
+}
+
+IntSize TextureMapperQt::viewportSize() const
+{
+    return IntSize(m_painter->device()->width(), m_painter->device()->height());
+}
+
 
 TextureMapperQt::TextureMapperQt()
     : m_currentSurface(0)
@@ -111,8 +126,14 @@ TextureMapperQt::TextureMapperQt()
 
 void TextureMapperQt::setGraphicsContext(GraphicsContext* context)
 {
+    m_context = context;
     m_painter = context->platformContext();
     initialize(m_painter);
+}
+
+GraphicsContext* TextureMapperQt::graphicsContext()
+{
+    return m_context;
 }
 
 void TextureMapperQt::bindSurface(BitmapTexture* surface)
@@ -132,7 +153,7 @@ void TextureMapperQt::bindSurface(BitmapTexture* surface)
 }
 
 
-void TextureMapperQt::drawTexture(const BitmapTexture& texture, const IntRect& targetRect, const TransformationMatrix& matrix, float opacity, const BitmapTexture* maskTexture)
+void TextureMapperQt::drawTexture(const BitmapTexture& texture, const FloatRect& targetRect, const TransformationMatrix& matrix, float opacity, const BitmapTexture* maskTexture)
 {
     const BitmapTextureQt& textureQt = static_cast<const BitmapTextureQt&>(texture);
     QPainter* painter = m_painter;
@@ -157,7 +178,7 @@ void TextureMapperQt::drawTexture(const BitmapTexture& texture, const IntRect& t
     const QTransform prevTransform = painter->transform();
     painter->setOpacity(opacity);
     painter->setTransform(matrix, true);
-    painter->drawPixmap(targetRect, pixmap, textureQt.sourceRect());
+    painter->drawPixmap(targetRect, pixmap, FloatRect(textureQt.sourceRect()));
     painter->setTransform(prevTransform);
     painter->setOpacity(prevOpacity);
 }
@@ -182,13 +203,23 @@ BitmapTextureQt::BitmapTextureQt()
 
 }
 
+void TextureMapperQt::beginPainting()
+{
+    m_painter->save();
+}
+
+void TextureMapperQt::endPainting()
+{
+    m_painter->restore();
+}
+
 #ifdef QT_OPENGL_LIB
 class RGBA32PremultimpliedBufferQt : public RGBA32PremultimpliedBuffer {
 public:
     virtual PlatformGraphicsContext* beginPaint(const IntRect& rect, bool opaque)
     {
         // m_image is only using during paint, it's safe to override it.
-        m_image = QImage(rect.size().width(), rect.size().height(), QImage::Format_ARGB32_Premultiplied);
+        m_image = QImage(rect.size().width(), rect.size().height(), opaque ? QImage::Format_RGB32 : QImage::Format_ARGB32_Premultiplied);
         if (!opaque)
             m_image.fill(0);
         m_painter.begin(&m_image);
@@ -210,5 +241,9 @@ PassRefPtr<RGBA32PremultimpliedBuffer> RGBA32PremultimpliedBuffer::create()
     return adoptRef(new RGBA32PremultimpliedBufferQt());
 }
 
+uint64_t uidForImage(Image* image)
+{
+    return image->nativeImageForCurrentFrame()->serialNumber();
+}
 #endif
 };

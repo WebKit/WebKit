@@ -42,6 +42,8 @@ public:
     virtual void unpack();
     virtual bool isPacked() const { return m_isPacked; }
 
+    QPainter* painter() { return &m_painter; }
+
 private:
     QPainter m_painter;
     QPixmap m_pixmap;
@@ -53,12 +55,17 @@ class TextureMapperQt : public TextureMapper {
 public:
     TextureMapperQt();
 
-    virtual void drawTexture(const BitmapTexture& texture, const IntRect& targetRect, const TransformationMatrix& matrix, float opacity, const BitmapTexture* maskTexture);
+    virtual void drawTexture(const BitmapTexture&, const FloatRect& targetRect, const TransformationMatrix&, float opacity, const BitmapTexture* maskTexture);
     virtual void bindSurface(BitmapTexture* surface);
-    virtual void setClip(const IntRect&);
+    virtual void beginClip(const TransformationMatrix&, const FloatRect&);
+    virtual void endClip();
     virtual void setGraphicsContext(GraphicsContext*);
+    virtual GraphicsContext* graphicsContext();
     virtual bool allowSurfaceForRoot() const { return false; }
     virtual PassRefPtr<BitmapTexture> createTexture();
+    virtual IntSize viewportSize() const;
+    virtual void beginPainting();
+    virtual void endPainting();
 
     static void initialize(QPainter* painter)
     {
@@ -66,9 +73,11 @@ public:
     }
 
     static PassOwnPtr<TextureMapper> create() { return new TextureMapperQt; }
-
 private:
+    inline QPainter* currentPainter() { return m_currentSurface ? m_currentSurface->painter() : m_painter; }
+
     QPainter* m_painter;
+    GraphicsContext* m_context;
     RefPtr<BitmapTextureQt> m_currentSurface;
 };
 
