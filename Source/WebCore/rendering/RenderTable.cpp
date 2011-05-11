@@ -570,7 +570,7 @@ void RenderTable::paintBoxDecorations(PaintInfo& paintInfo, int tx, int ty)
     paintBoxShadow(paintInfo.context, rect.x(), rect.y(), rect.width(), rect.height(), style(), Inset);
 
     if (style()->hasBorder() && !collapseBorders())
-        paintBorder(paintInfo.context, rect.x(), rect.y(), rect.width(), rect.height(), style());
+        paintBorder(paintInfo.context, rect, style());
 }
 
 void RenderTable::paintMask(PaintInfo& paintInfo, int tx, int ty)

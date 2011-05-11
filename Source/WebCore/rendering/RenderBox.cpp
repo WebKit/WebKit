@@ -873,7 +873,7 @@ void RenderBox::paintBoxDecorationsWithSize(PaintInfo& paintInfo, int tx, int ty
 
     // The theme will tell us whether or not we should also paint the CSS border.
     if ((!style()->hasAppearance() || (!themePainted && theme()->paintBorderOnly(this, paintInfo, IntRect(tx, ty, width, height)))) && style()->hasBorder())
-        paintBorder(paintInfo.context, tx, ty, width, height, style(), bleedAvoidance);
+        paintBorder(paintInfo.context, IntRect(tx, ty, width, height), style(), bleedAvoidance);
 
     if (bleedAvoidance == BackgroundBleedUseTransparencyLayer)
         paintInfo.context->endTransparencyLayer();

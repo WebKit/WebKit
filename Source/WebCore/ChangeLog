@@ -1,3 +1,28 @@
+2011-05-11  Levi Weintraub  <leviw@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        Switch RenderBoxModelObject::paintBorder to use IntRect instead of four ints
+        https://bugs.webkit.org/show_bug.cgi?id=60591
+
+        Switching RenderBoxModelObject::paintBorder to use IntRect instead of four ints representing a rect.
+
+        No new tests since there is no functionality change.
+
+        * rendering/InlineFlowBox.cpp:
+        (WebCore::InlineFlowBox::paintBoxDecorations):
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::paintBoxDecorationsWithSize):
+        * rendering/RenderBoxModelObject.cpp:
+        (WebCore::RenderBoxModelObject::paintBorder):
+        * rendering/RenderBoxModelObject.h:
+        * rendering/RenderFieldset.cpp:
+        (WebCore::RenderFieldset::paintBoxDecorations):
+        * rendering/RenderTable.cpp:
+        (WebCore::RenderTable::paintBoxDecorations):
+        * rendering/RenderTableCell.cpp:
+        (WebCore::RenderTableCell::paintBoxDecorations):
+
 2011-05-11  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r86255.

@@ -1127,7 +1127,7 @@ void InlineFlowBox::paintBoxDecorations(PaintInfo& paintInfo, int tx, int ty)
             // The simple case is where we either have no border image or we are the only box for this object.  In those
             // cases only a single call to draw is required.
             if (!hasBorderImage || (!prevLineBox() && !nextLineBox()))
-                boxModelObject()->paintBorder(context, tx, ty, w, h, renderer()->style(), BackgroundBleedNone, includeLogicalLeftEdge(), includeLogicalRightEdge());
+                boxModelObject()->paintBorder(context, IntRect(tx, ty, w, h), renderer()->style(), BackgroundBleedNone, includeLogicalLeftEdge(), includeLogicalRightEdge());
             else {
                 // We have a border image that spans multiple lines.
                 // We need to adjust tx and ty by the width of all previous lines.
@@ -1150,7 +1150,7 @@ void InlineFlowBox::paintBoxDecorations(PaintInfo& paintInfo, int tx, int ty)
 
                 GraphicsContextStateSaver stateSaver(*context);
                 context->clip(IntRect(tx, ty, w, h));
-                boxModelObject()->paintBorder(context, stripX, stripY, stripWidth, stripHeight, renderer()->style());
+                boxModelObject()->paintBorder(context, IntRect(stripX, stripY, stripWidth, stripHeight), renderer()->style());
             }
         }
     }

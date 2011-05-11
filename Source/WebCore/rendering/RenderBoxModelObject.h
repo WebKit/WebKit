@@ -118,7 +118,7 @@ public:
 
     virtual void childBecameNonInline(RenderObject* /*child*/) { }
 
-    void paintBorder(GraphicsContext*, int tx, int ty, int w, int h, const RenderStyle*, BackgroundBleedAvoidance = BackgroundBleedNone, bool includeLogicalLeftEdge = true, bool includeLogicalRightEdge = true);
+    void paintBorder(GraphicsContext*, const IntRect&, const RenderStyle*, BackgroundBleedAvoidance = BackgroundBleedNone, bool includeLogicalLeftEdge = true, bool includeLogicalRightEdge = true);
     bool paintNinePieceImage(GraphicsContext*, const IntRect&, const RenderStyle*, const NinePieceImage&, CompositeOperator = CompositeSourceOver);
     void paintBoxShadow(GraphicsContext*, int tx, int ty, int w, int h, const RenderStyle*, ShadowStyle, bool includeLogicalLeftEdge = true, bool includeLogicalRightEdge = true);
     void paintFillLayerExtended(const PaintInfo&, const Color&, const FillLayer*, int tx, int ty, int width, int height, BackgroundBleedAvoidance, InlineFlowBox* = 0, int inlineBoxWidth = 0, int inlineBoxHeight = 0, CompositeOperator = CompositeSourceOver, RenderObject* backgroundObject = 0);

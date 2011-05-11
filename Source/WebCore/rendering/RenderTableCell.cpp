@@ -1020,7 +1020,7 @@ void RenderTableCell::paintBoxDecorations(PaintInfo& paintInfo, int tx, int ty)
     if (!style()->hasBorder() || tableElt->collapseBorders())
         return;
 
-    paintBorder(paintInfo.context, tx, ty, w, h, style());
+    paintBorder(paintInfo.context, IntRect(tx, ty, w, h), style());
 }
 
 void RenderTableCell::paintMask(PaintInfo& paintInfo, int tx, int ty)
