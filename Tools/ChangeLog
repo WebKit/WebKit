@@ -1,3 +1,12 @@
+2011-05-10  Stephen White  <senorblanco@chromium.org>
+
+        Reviewed by David Levin.
+
+        Adding myself as a reviewer.
+        https://bugs.webkit.org/show_bug.cgi?id=60587
+
+        * Scripts/webkitpy/common/config/committers.py:
+
 2011-05-11  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Csaba Osztrogonác.
