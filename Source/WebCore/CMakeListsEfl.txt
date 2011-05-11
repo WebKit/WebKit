@@ -76,6 +76,10 @@ LIST(APPEND WebCore_SOURCES
   plugins/PluginDataNone.cpp
 )
 
+LIST(APPEND WebCore_USER_AGENT_STYLE_SHEETS
+    ${WEBCORE_DIR}/css/mediaControlsEfl.css
+)
+
 IF (WTF_USE_CAIRO)
   LIST(APPEND WebCore_INCLUDE_DIRECTORIES
     "${WEBCORE_DIR}/platform/graphics/cairo"

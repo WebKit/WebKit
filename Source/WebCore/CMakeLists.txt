@@ -1411,7 +1411,6 @@ SET(WebCore_USER_AGENT_STYLE_SHEETS
     ${WEBCORE_DIR}/css/html.css
     ${WEBCORE_DIR}/css/mathml.css
     ${WEBCORE_DIR}/css/mediaControls.css
-    ${WEBCORE_DIR}/css/mediaControlsEfl.css
     ${WEBCORE_DIR}/css/quirks.css
     ${WEBCORE_DIR}/css/svg.css
     ${WEBCORE_DIR}/css/view-source.css
@@ -1953,7 +1952,12 @@ SET(SCRIPTS_BINDINGS
 )
 
 INCLUDE(${WEBCORE_DIR}/UseJSC.cmake)
- 
+
+SET(WebCore_LIBRARIES ${JavaScriptCore_LIBRARY_NAME})
+SET(WebCore_LINK_FLAGS "")
+INCLUDE_IF_EXISTS(${WEBCORE_DIR}/CMakeLists${PORT}.txt)
+
+
 # All Web Inspector generated files are created with this one call to CodeGeneratorInspector.pm
 ADD_CUSTOM_COMMAND(
     OUTPUT ${DERIVED_SOURCES_WEBCORE_DIR}/Inspector.idl
@@ -2108,7 +2112,6 @@ LIST(APPEND WebCore_SOURCES ${DERIVED_SOURCES_WEBCORE_DIR}/XMLNSNames.cpp)
 GENERATE_DOM_NAMES(XML ${WEBCORE_DIR}/xml/xmlattrs.in)
 LIST(APPEND WebCore_SOURCES ${DERIVED_SOURCES_WEBCORE_DIR}/XMLNames.cpp)
 
-
 ADD_CUSTOM_COMMAND(
     OUTPUT ${DERIVED_SOURCES_WEBCORE_DIR}/WebKitVersion.h
     MAIN_DEPENDENCY ${WEBKIT_DIR}/scripts/generate-webkitversion.pl
@@ -2118,13 +2121,6 @@ ADD_CUSTOM_COMMAND(
 LIST(APPEND WebCore_SOURCES ${DERIVED_SOURCES_WEBCORE_DIR}/WebKitVersion.h)
 
 
-SET(WebCore_LIBRARIES
-    ${JavaScriptCore_LIBRARY_NAME}
-)
-
-
-SET(WebCore_LINK_FLAGS "")
-INCLUDE_IF_EXISTS(${WEBCORE_DIR}/CMakeLists${PORT}.txt)
 
 WEBKIT_WRAP_SOURCELIST(${WebCore_IDL_FILES} ${WebCore_SOURCES})
 ADD_DEFINITIONS(-DBUILDING_WebCore)

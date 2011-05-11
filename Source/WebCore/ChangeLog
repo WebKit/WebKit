@@ -1,3 +1,20 @@
+2011-05-11  Lucas De Marchi  <lucas.demarchi@profusion.mobi>
+
+        Reviewed by Antonio Gomes.
+
+        [CMAKE] Move EFL-specific file to CMakeListsEfl.txt
+        https://bugs.webkit.org/show_bug.cgi?id=60642
+
+        Move file EFL-specific file to the CMakeListsEfl.txt file. This implies
+        having to include CMakeLists${PORT}.txt before the ADD_CUSTOM_COMMAND
+        calls, since they depend on lists that now may change inside a port
+        like WebCore_USER_AGENT_STYLE_SHEETS.
+
+        No new tests since no change in functionality.
+
+        * CMakeLists.txt: remove css file specific to EFL port.
+        * CMakeListsEfl.txt: move file here.
+
 2011-05-11  Tao Bai  <michaelbai@chromium.org>
 
         Reviewed by David Kilzer.
