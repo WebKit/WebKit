@@ -1,3 +1,16 @@
+2011-05-11  Ademar de Souza Reis Jr.  <ademar.reis@openbossa.org>
+
+        Reviewed by Mark Rowe.
+
+        Update Qt/Nokia Security contacts
+        https://bugs.webkit.org/show_bug.cgi?id=60650
+
+        Ademar (me) replaced Simon as the release manager and primary security
+        contact for QtWebKit. See:
+        http://lists.webkit.org/mailman/private.cgi/webkit-security/2011-February/000584.html
+
+        * security/security-group-members.html:
+
 2011-05-09  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Adam Barth.
