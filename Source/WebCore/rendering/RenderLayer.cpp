@@ -2296,7 +2296,7 @@ void RenderLayer::paintScrollCorner(GraphicsContext* context, int tx, int ty, co
     }
 
     if (m_scrollCorner) {
-        m_scrollCorner->paintIntoRect(context, LayerOffset(tx, ty), absRect);
+        m_scrollCorner->paintIntoRect(context, tx, ty, absRect);
         return;
     }
 
@@ -2325,7 +2325,7 @@ void RenderLayer::paintResizer(GraphicsContext* context, int tx, int ty, const I
     }
     
     if (m_resizer) {
-        m_resizer->paintIntoRect(context, LayerOffset(tx, ty), absRect);
+        m_resizer->paintIntoRect(context, tx, ty, absRect);
         return;
     }
 

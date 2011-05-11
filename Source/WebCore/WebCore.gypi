@@ -848,7 +848,6 @@
             'platform/graphics/IntRectHash.h',
             'platform/graphics/IntSize.h',
             'platform/graphics/IntSizeHash.h',
-            'platform/graphics/LayerOffset.h',
             'platform/graphics/MediaPlayer.h',
             'platform/graphics/Path.h',
             'platform/graphics/Pattern.h',

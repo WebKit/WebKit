@@ -275,7 +275,7 @@ void RenderScrollbar::paintPart(GraphicsContext* graphicsContext, ScrollbarPart 
     RenderScrollbarPart* partRenderer = m_parts.get(partType);
     if (!partRenderer)
         return;
-    partRenderer->paintIntoRect(graphicsContext, pos(), rect);
+    partRenderer->paintIntoRect(graphicsContext, x(), y(), rect);
 }
 
 IntRect RenderScrollbar::buttonRect(ScrollbarPart partType)

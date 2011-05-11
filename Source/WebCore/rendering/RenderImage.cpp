@@ -302,7 +302,7 @@ void RenderImage::paintReplaced(PaintInfo& paintInfo, int tx, int ty)
 
 #if PLATFORM(MAC)
         if (style()->highlight() != nullAtom && !paintInfo.context->paintingDisabled())
-            paintCustomHighlight(LayerOffset(tx - x(), ty - y()), style()->highlight(), true);
+            paintCustomHighlight(tx - x(), ty - y(), style()->highlight(), true);
 #endif
 
         IntSize contentSize(cWidth, cHeight);

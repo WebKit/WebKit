@@ -1077,7 +1077,7 @@ bool RenderBox::repaintLayerRectsForImage(WrappedImagePtr image, const FillLayer
 
 #if PLATFORM(MAC)
 
-void RenderBox::paintCustomHighlight(LayerOffset layoutOffset, const AtomicString& type, bool behindText)
+void RenderBox::paintCustomHighlight(int tx, int ty, const AtomicString& type, bool behindText)
 {
     Frame* frame = this->frame();
     if (!frame)
@@ -1089,11 +1089,11 @@ void RenderBox::paintCustomHighlight(LayerOffset layoutOffset, const AtomicStrin
     InlineBox* boxWrap = inlineBoxWrapper();
     RootInlineBox* r = boxWrap ? boxWrap->root() : 0;
     if (r) {
-        FloatRect rootRect(layoutOffset.x() + r->x(), layoutOffset.y() + r->selectionTop(), r->logicalWidth(), r->selectionHeight());
-        FloatRect imageRect(location() + layoutOffset, IntSize(width(), rootRect.height()));
+        FloatRect rootRect(tx + r->x(), ty + r->selectionTop(), r->logicalWidth(), r->selectionHeight());
+        FloatRect imageRect(tx + x(), rootRect.y(), width(), rootRect.height());
         page->chrome()->client()->paintCustomHighlight(node(), type, imageRect, rootRect, behindText, false);
     } else {
-        FloatRect imageRect(location() + layoutOffset, IntSize(width(), height()));
+        FloatRect imageRect(tx + x(), ty + y(), width(), height());
         page->chrome()->client()->paintCustomHighlight(node(), type, imageRect, imageRect, behindText, false);
     }
 }

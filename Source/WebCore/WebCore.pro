@@ -1951,7 +1951,6 @@ HEADERS += \
     platform/graphics/IntPoint.h \
     platform/graphics/IntPointHash.h \
     platform/graphics/IntRect.h \
-    platform/graphics/LayerOffset.h \
     platform/graphics/MediaPlayer.h \
     platform/graphics/Path.h \
     platform/graphics/PathTraversalState.h \

@@ -1,3 +1,51 @@
+2011-05-10  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r86195.
+        http://trac.webkit.org/changeset/86195
+        https://bugs.webkit.org/show_bug.cgi?id=60597
+
+        LayerOffset is a really bad name (Requested by smfr on
+        #webkit).
+
+        * GNUmakefile.list.am:
+        * WebCore.gypi:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * page/FrameView.cpp:
+        (WebCore::FrameView::paintScrollCorner):
+        * platform/graphics/LayerOffset.h: Removed.
+        * rendering/InlineTextBox.cpp:
+        (WebCore::InlineTextBox::paint):
+        (WebCore::InlineTextBox::paintCustomHighlight):
+        * rendering/InlineTextBox.h:
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::paintCustomHighlight):
+        * rendering/RenderBox.h:
+        * rendering/RenderImage.cpp:
+        (WebCore::RenderImage::paintReplaced):
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::paintScrollCorner):
+        (WebCore::RenderLayer::paintResizer):
+        * rendering/RenderListMarker.cpp:
+        (WebCore::RenderListMarker::paint):
+        * rendering/RenderObject.h:
+        * rendering/RenderScrollbar.cpp:
+        (WebCore::RenderScrollbar::paintPart):
+        * rendering/RenderScrollbarPart.cpp:
+        (WebCore::RenderScrollbarPart::paintIntoRect):
+        * rendering/RenderScrollbarPart.h:
+        * rendering/RenderTable.cpp:
+        (WebCore::RenderTable::paintObject):
+        (WebCore::RenderTable::paintMask):
+        * rendering/RenderTable.h:
+        * rendering/RenderWidget.cpp:
+        (WebCore::RenderWidget::paint):
+        * rendering/RootInlineBox.cpp:
+        (WebCore::RootInlineBox::paintCustomHighlight):
+        (WebCore::RootInlineBox::paint):
+        * rendering/RootInlineBox.h:
+
 2011-05-10  Emil A Eklund  <eae@chromium.org>
 
         Reviewed by Eric Seidel.
