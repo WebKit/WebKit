@@ -1,5 +1,11 @@
 2011-05-11  Kent Tamura  <tkent@chromium.org>
 
+        The tests added by r86224 don't work on WebKit2/mac.
+
+        * platform/mac-wk2/Skipped:
+
+2011-05-11  Kent Tamura  <tkent@chromium.org>
+
         Reviewed by Hajime Morita.
 
         The position of validation message bubble is wrong for non text fields.
