@@ -1,3 +1,17 @@
+2011-05-04  Philippe Normand  <pnormand@igalia.com>
+
+        Reviewed by Martin Robinson.
+
+        [Gtk+] deadlock in gstreamer video player when exiting fullscreen
+        https://bugs.webkit.org/show_bug.cgi?id=58548
+
+        Block data flow towards the pipeline branch to remove to avoid
+        potential deadlocks during the PAUSED->READY transitions of the
+        elements to remove.
+
+        * platform/graphics/gstreamer/GStreamerGWorld.cpp:
+        (WebCore::GStreamerGWorld::exitFullscreen):
+
 2011-05-11  Kent Tamura  <tkent@chromium.org>
 
         Reviewed by Hajime Morita.

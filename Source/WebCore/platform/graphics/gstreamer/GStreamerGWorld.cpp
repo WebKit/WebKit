@@ -178,6 +178,9 @@ void GStreamerGWorld::exitFullscreen()
     GstPad* srcPad = gst_element_get_static_pad(tee, m_dynamicPadName);
     GstPad* sinkPad = gst_element_get_static_pad(queue, "sink");
 
+    // Block data flow towards the pipeline branch to remove.
+    gst_pad_set_blocked(srcPad, true);
+
     // Unlink and release request pad.
     gst_pad_unlink(srcPad, sinkPad);
     gst_element_release_request_pad(tee, srcPad);
