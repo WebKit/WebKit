@@ -1,3 +1,9 @@
+2011-05-10  Lucas De Marchi  <lucas.demarchi@profusion.mobi>
+
+        Unreviewed, adding Rafael Antognolli as a committer.
+
+        * Scripts/webkitpy/common/config/committers.py:
+
 2011-05-10  Chris Evans  <cevans@chromium.org>
 
         Reviewed by Adam Barth.
