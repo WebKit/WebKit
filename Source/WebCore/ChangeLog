@@ -1,3 +1,20 @@
+2011-05-11  Daniel Bates  <dbates@rim.com>
+
+        Reviewed by Antonio Gomes.
+
+        [Qt] Extract code to set mouse event modifiers into common function
+        https://bugs.webkit.org/show_bug.cgi?id=60649
+
+        Consolidate code to set the keyboard modifiers for a mouse event into a common
+        function that can be used by both PlatformMouseEvent(QGraphicsSceneMouseEvent*, int clickCount)
+        and PlatformMouseEvent(QInputEvent*, int clickCount) so as to remove duplicate code.
+
+        No functionality was changed. So, no new tests.
+
+        * platform/qt/PlatformMouseEventQt.cpp:
+        (WebCore::mouseEventModifiersFromQtKeyboardModifiers): Added.
+        (WebCore::PlatformMouseEvent::PlatformMouseEvent): Modified to call mouseEventModifiersFromQtKeyboardModifiers().
+
 2011-05-11  Levi Weintraub  <leviw@chromium.org>
 
         Reviewed by Eric Seidel.
