@@ -28,6 +28,7 @@ GraphicsLayerTextureMapper::GraphicsLayerTextureMapper(GraphicsLayerClient* clie
     : GraphicsLayer(client)
     , m_node(adoptPtr(new TextureMapperNode()))
     , m_changeMask(0)
+    , m_animationStartedTimer(this, &GraphicsLayerTextureMapper::animationStartedTimerFired)
 {
 }
 
@@ -70,7 +71,7 @@ void GraphicsLayerTextureMapper::setNeedsDisplayInRect(const FloatRect& rect)
 {
     if (m_pendingContent.needsDisplay)
         return;
-    m_pendingContent.needsDisplayRect.unite(IntRect(rect));
+    m_pendingContent.needsDisplayRect.unite(rect);
     notifyChange(TextureMapperNode::DisplayChange);
 }
 
@@ -319,62 +320,105 @@ void GraphicsLayerTextureMapper::setContentsToImage(Image* image)
     GraphicsLayer::setContentsToImage(image);
 }
 
-/* \reimp (GraphicsLayer.h)
-*/
-void GraphicsLayerTextureMapper::setContentsBackgroundColor(const Color& color)
-{
-    notifyChange(TextureMapperNode::ContentChange);
-    m_pendingContent.contentType = TextureMapperNode::ColorContentType;
-    m_pendingContent.backgroundColor = color;
-    GraphicsLayer::setContentsBackgroundColor(color);
-}
-
-
-void GraphicsLayerTextureMapper::setContentsToMedia(PlatformLayer* media)
+void GraphicsLayerTextureMapper::setContentsToMedia(TextureMapperPlatformLayer* media)
 {
     GraphicsLayer::setContentsToMedia(media);
     notifyChange(TextureMapperNode::ContentChange);
     m_pendingContent.contentType = media ? TextureMapperNode::MediaContentType : TextureMapperNode::HTMLContentType;
-    if (media)
-        m_pendingContent.media = static_cast<TextureMapperMediaLayer*>(media);
-    else
-        m_pendingContent.media = 0;
-}
-
-/* \reimp (GraphicsLayer.h)
-*/
-void GraphicsLayerTextureMapper::setContentsOrientation(CompositingCoordinatesOrientation orientation)
-{
-    if (contentsOrientation() == orientation)
-        return;
-    notifyChange(TextureMapperNode::ContentsOrientationChange);
-    GraphicsLayer::setContentsOrientation(orientation);
+    m_pendingContent.media = media;
 }
 
 /* \reimp (GraphicsLayer.h)
 */
 void GraphicsLayerTextureMapper::syncCompositingStateForThisLayerOnly()
 {
-    m_node->syncCompositingState(this, false);
+    m_node->syncCompositingState(this);
 }
 
 /* \reimp (GraphicsLayer.h)
 */
 void GraphicsLayerTextureMapper::syncCompositingState()
 {
-    m_node->syncCompositingState(this, true);
+    m_node->syncCompositingState(this, TextureMapperNode::TraverseDescendants);
 }
 
 /* \reimp (GraphicsLayer.h)
 */
 PlatformLayer* GraphicsLayerTextureMapper::platformLayer() const
 {
-    return m_node.get();
+    return const_cast<TextureMapperPlatformLayer*>(node()->media());
 }
 
 PassOwnPtr<GraphicsLayer> GraphicsLayer::create(GraphicsLayerClient* client)
 {
     return new GraphicsLayerTextureMapper(client);
+}
+
+bool GraphicsLayerTextureMapper::addAnimation(const KeyframeValueList& valueList, const IntSize& boxSize, const Animation* anim, const String& keyframesName, double timeOffset)
+{
+    ASSERT(!keyframesName.isEmpty());
+
+    if (!anim || anim->isEmptyOrZeroDuration() || valueList.size() < 2 || (valueList.property() != AnimatedPropertyWebkitTransform && valueList.property() != AnimatedPropertyOpacity))
+        return false;
+
+    for (size_t i = 0; i < m_animations.size(); ++i) {
+        // The same animation name can be used for two animations with different properties.
+        if (m_animations[i]->name != keyframesName || m_animations[i]->keyframes.property() != valueList.property())
+            continue;
+
+        // We already have a copy of this animation, that means that we're resuming it rather than adding it.
+        RefPtr<TextureMapperAnimation>& animation = m_animations[i];
+        animation->animation = Animation::create(anim);
+        animation->paused = false;
+        animation->startTime = WTF::currentTime() - timeOffset;
+        notifyChange(TextureMapperNode::AnimationChange);
+        m_animationStartedTimer.startOneShot(0);
+        return true;
+    }
+
+    RefPtr<TextureMapperAnimation> animation = TextureMapperAnimation::create(valueList);
+    animation->boxSize = boxSize;
+    animation->name = keyframesName;
+    animation->animation = Animation::create(anim);
+    animation->paused = false;
+    animation->startTime = WTF::currentTime() - timeOffset;
+
+    if (valueList.property() == AnimatedPropertyWebkitTransform) {
+        bool hasBigRotation; // Not used, but required as a pointer parameter for the function.
+        fetchTransformOperationList(valueList, animation->functionList, animation->listsMatch, hasBigRotation);
+    }
+
+    m_animations.append(animation);
+    notifyChange(TextureMapperNode::AnimationChange);
+    m_animationStartedTimer.startOneShot(0);
+
+    return true;
+}
+
+void GraphicsLayerTextureMapper::pauseAnimation(const String& animationName, double timeOffset)
+{
+    for (size_t i = 0; i < m_animations.size(); ++i) {
+        if (m_animations[i]->name != animationName)
+            continue;
+        m_animations[i]->paused = true;
+        notifyChange(TextureMapperNode::AnimationChange);
+    }
+}
+
+void GraphicsLayerTextureMapper::removeAnimation(const String& animationName)
+{
+    for (int i = m_animations.size() - 1; i >= 0; --i) {
+        // The same animation name can be used for two animations with different properties. We should remove both.
+        if (m_animations[i]->name != animationName)
+            continue;
+        m_animations.remove(i);
+        notifyChange(TextureMapperNode::AnimationChange);
+    }
+}
+
+void GraphicsLayerTextureMapper::animationStartedTimerFired(Timer<GraphicsLayerTextureMapper>*)
+{
+    client()->notifyAnimationStarted(this, /* DOM time */ WTF::currentTime());
 }
 
 }

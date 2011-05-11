@@ -39,6 +39,10 @@
 #include <wtf/UnusedParam.h>
 #include <wtf/text/CString.h>
 
+#if USE(ACCELERATED_COMPOSITING) && USE(TEXTURE_MAPPER)
+#include <opengl/TextureMapperGL.h>
+#endif
+
 #if ENABLE(WEBGL)
 
 namespace WebCore {
@@ -154,7 +158,15 @@ typedef void (APIENTRY* glVertexAttrib4fType) (GLuint, const GLfloat, const GLfl
 typedef void (APIENTRY* glVertexAttrib4fvType) (GLuint, const GLfloat*);
 typedef void (APIENTRY* glVertexAttribPointerType) (GLuint, GLint, GLenum, GLboolean, GLsizei, const GLvoid*);
 
-class GraphicsContext3DInternal : public QGraphicsObject {
+class GraphicsContext3DInternal
+#if USE(ACCELERATED_COMPOSITING)
+#if USE(TEXTURE_MAPPER)
+        : public TextureMapperPlatformLayer
+#else
+        : public QGraphicsObject
+#endif
+#endif
+{
 public:
     GraphicsContext3DInternal(GraphicsContext3D::Attributes attrs, HostWindow* hostWindow);
     ~GraphicsContext3DInternal();
@@ -163,6 +175,10 @@ public:
 
     QGLWidget* getViewportGLWidget();
     void reshape(int width, int height);
+#if USE(ACCELERATED_COMPOSITING) && USE(TEXTURE_MAPPER)
+    virtual void paintToTextureMapper(TextureMapper*, const FloatRect& target, const TransformationMatrix&, float opacity, BitmapTexture* mask) const;
+#endif
+
     void paint(QPainter*, const QStyleOptionGraphicsItem*, QWidget*);
     QRectF boundingRect() const;
 
@@ -533,6 +549,65 @@ void GraphicsContext3DInternal::reshape(int width, int height)
     glFlush();
 }
 
+#if USE(ACCELERATED_COMPOSITING) && USE(TEXTURE_MAPPER)
+void GraphicsContext3DInternal::paintToTextureMapper(TextureMapper* textureMapper, const FloatRect& targetRect, const TransformationMatrix& matrix, float opacity, BitmapTexture* mask) const
+{
+    if (textureMapper->isOpenGLBacked()) {
+        TextureMapperGL* texmapGL = static_cast<TextureMapperGL*>(textureMapper);
+        texmapGL->drawTexture(m_texture, !m_attrs.alpha, FloatSize(1, 1), targetRect, matrix, opacity, mask, true /* flip */);
+        return;
+    }
+
+    GraphicsContext* context = textureMapper->graphicsContext();
+    QPainter* painter = context->platformContext();
+    painter->save();
+    painter->setTransform(matrix);
+    painter->setOpacity(opacity);
+
+    // Alternatively read pixels to a memory buffer.
+    QImage offscreenImage(m_boundingRect.width(), m_boundingRect.height(), QImage::Format_ARGB32);
+    quint32* imagePixels = reinterpret_cast<quint32*>(offscreenImage.bits());
+
+    m_glWidget->makeCurrent();
+    bindFramebuffer(GraphicsContext3D::FRAMEBUFFER, m_canvasFbo);
+    glReadPixels(/* x */ 0, /* y */ 0, m_boundingRect.width(), m_boundingRect.height(), GraphicsContext3D::RGBA, GraphicsContext3D::UNSIGNED_BYTE, imagePixels);
+
+    bindFramebuffer(GraphicsContext3D::FRAMEBUFFER, m_currentFbo);
+
+    // OpenGL gives us ABGR on 32 bits, and with the origin at the bottom left
+    // We need RGB32 or ARGB32_PM, with the origin at the top left.
+    quint32* pixelsSrc = imagePixels;
+    const int height = static_cast<int>(m_boundingRect.height());
+    const int width = static_cast<int>(m_boundingRect.width());
+    const int halfHeight = height / 2;
+    for (int row = 0; row < halfHeight; ++row) {
+        const int targetIdx = (height - 1 - row) * width;
+        quint32* pixelsDst = imagePixels + targetIdx;
+        for (int column = 0; column < width; ++column) {
+            quint32 tempPixel = *pixelsSrc;
+            *pixelsSrc = swapBgrToRgb(*pixelsDst);
+            *pixelsDst = swapBgrToRgb(tempPixel);
+            ++pixelsSrc;
+            ++pixelsDst;
+        }
+    }
+    if (static_cast<int>(height) % 2) {
+        for (int column = 0; column < width; ++column) {
+            *pixelsSrc = swapBgrToRgb(*pixelsSrc);
+            ++pixelsSrc;
+        }
+    }
+
+    painter->drawImage(targetRect, offscreenImage);
+    painter->restore();
+}
+#endif // USE(ACCELERATED_COMPOSITING)
+
+QRectF GraphicsContext3DInternal::boundingRect() const
+{
+    return m_boundingRect;
+}
+
 void GraphicsContext3DInternal::paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget)
 {
     Q_UNUSED(widget);
@@ -580,12 +655,8 @@ void GraphicsContext3DInternal::paint(QPainter* painter, const QStyleOptionGraph
             ++pixelsSrc;
         }
     }
-    painter->drawImage(/* x */ 0, /* y */ 0, offscreenImage);
-}
 
-QRectF GraphicsContext3DInternal::boundingRect() const
-{
-    return m_boundingRect;
+    painter->drawImage(/* x */ 0, /* y */ 0, offscreenImage);
 }
 
 void* GraphicsContext3DInternal::getProcAddress(const String& proc)
@@ -635,10 +706,12 @@ Platform3DObject GraphicsContext3D::platformTexture() const
     return m_internal->m_texture;
 }
 
+#if USE(ACCELERATED_COMPOSITING)
 PlatformLayer* GraphicsContext3D::platformLayer() const
 {
     return m_internal.get();
 }
+#endif
 
 void GraphicsContext3D::makeContextCurrent()
 {

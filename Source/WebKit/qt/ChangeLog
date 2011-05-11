@@ -5,6 +5,47 @@
         [Texmap][Qt] Upstream texture-mapper changes from Qt's WebKit2 branch
         https://bugs.webkit.org/show_bug.cgi?id=60439
 
+        Patch 10/12: Glue the TextureMapper refactoring into Webkit(1).
+        1. Pass a GraphicsLayer* instead of a PlatformLayer* to the QWebPageClient.
+        2. Set parameters in TextureMapper/TextureMapperNode instead of passing them in an options argument.
+        3. Rename PlatformLayerProxyQt to TextureMapperNodeClient
+
+        * Api/qwebframe.cpp:
+        (QWebFramePrivate::renderCompositedLayers):
+        * Api/qwebframe.h:
+        * Api/qwebframe_p.h:
+        (QWebFramePrivate::QWebFramePrivate):
+        * WebCoreSupport/ChromeClientQt.cpp:
+        (WebCore::ChromeClientQt::attachRootGraphicsLayer):
+        * WebCoreSupport/PageClientQt.cpp:
+        (WebCore::TextureMapperNodeClientQt::TextureMapperNodeClientQt):
+        (WebCore::TextureMapperNodeClientQt::scroll):
+        (WebCore::TextureMapperNodeClientQt::setTextureMapper):
+        (WebCore::TextureMapperNodeClientQt::~TextureMapperNodeClientQt):
+        (WebCore::TextureMapperNodeClientQt::computeLastModifiedRect):
+        (WebCore::TextureMapperNodeClientQt::syncRootLayer):
+        (WebCore::TextureMapperNodeClientQt::rootNode):
+        (WebCore::PageClientQWidget::setRootGraphicsLayer):
+        (WebCore::PageClientQWidget::syncLayers):
+        (WebCore::PageClientQWidget::~PageClientQWidget):
+        (WebCore::PageClientQGraphicsWidget::~PageClientQGraphicsWidget):
+        (WebCore::PageClientQGraphicsWidget::update):
+        (WebCore::PageClientQGraphicsWidget::syncLayers):
+        (WebCore::PageClientQGraphicsWidget::setRootGraphicsLayer):
+        (WebCore::PageClientQGraphicsWidget::markForSync):
+        * WebCoreSupport/PageClientQt.h:
+        (WebCore::PageClientQWidget::PageClientQWidget):
+        (WebCore::PageClientQGraphicsWidget::PageClientQGraphicsWidget):
+        (WebCore::PageClientQGraphicsWidget::syncLayersTimeout):
+
+
+2011-05-11  Noam Rosenthal  <noam.rosenthal@nokia.com>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        [Texmap][Qt] Upstream texture-mapper changes from Qt's WebKit2 branch
+        https://bugs.webkit.org/show_bug.cgi?id=60439
+
         Patch 4/12: Update the settings to enable accelerated compositing for all the relevant settings
         attributes.
 

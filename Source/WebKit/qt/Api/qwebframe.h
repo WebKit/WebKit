@@ -56,7 +56,7 @@ namespace WebCore {
     class WidgetPrivate;
     class FrameLoaderClientQt;
     class ChromeClientQt;
-    class PlatformLayerProxyQt;
+    class TextureMapperNodeClientQt;
 }
 class QWebFrameData;
 class QWebHitTestResultPrivate;
@@ -232,7 +232,7 @@ private:
     friend class WebCore::WidgetPrivate;
     friend class WebCore::FrameLoaderClientQt;
     friend class WebCore::ChromeClientQt;
-    friend class WebCore::PlatformLayerProxyQt;
+    friend class WebCore::TextureMapperNodeClientQt;
     QWebFramePrivate *d;
     Q_PRIVATE_SLOT(d, void _q_orientationChanged())
 };

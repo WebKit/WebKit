@@ -31,11 +31,17 @@ class QGraphicsVideoItem;
 class QGraphicsScene;
 QT_END_NAMESPACE
 
+#if USE(ACCELERATED_COMPOSITING) && USE(TEXTURE_MAPPER)
+#include "TextureMapper.h"
+#endif
+
 namespace WebCore {
 
-class TextureMapperMediaLayer;
-
-class MediaPlayerPrivateQt : public QObject, public MediaPlayerPrivateInterface {
+class MediaPlayerPrivateQt : public QObject, public MediaPlayerPrivateInterface
+#if USE(ACCELERATED_COMPOSITING) && USE(TEXTURE_MAPPER)
+        , public TextureMapperPlatformLayer
+#endif
+{
 
     Q_OBJECT
 
@@ -99,9 +105,10 @@ public:
     // whether accelerated rendering is supported by the media engine for the current media.
     virtual bool supportsAcceleratedRendering() const { return true; }
     // called when the rendering system flips the into or out of accelerated rendering mode.
-    virtual void acceleratedRenderingStateChanged();
-    // returns an object that can be directly composited via GraphicsLayerQt (essentially a QGraphicsItem*)
-    virtual PlatformLayer* platformLayer() const;
+    virtual void acceleratedRenderingStateChanged() { }
+    // Const-casting here is safe, since all of TextureMapperPlatformLayer's functions are const.g
+    virtual PlatformLayer* platformLayer() const { return const_cast<MediaPlayerPrivateQt*>(this); }
+    virtual void paintToTextureMapper(TextureMapper*, const FloatRect& targetRect, const TransformationMatrix&, float opacity, BitmapTexture* mask) const;
 #else
     virtual bool supportsAcceleratedRendering() const { return false; }
     virtual void acceleratedRenderingStateChanged() { }
@@ -138,9 +145,6 @@ private:
     QMediaPlayerControl* m_mediaPlayerControl;
     QGraphicsVideoItem* m_videoItem;
     QGraphicsScene* m_videoScene;
-#if USE(ACCELERATED_COMPOSITING) && USE(TEXTURE_MAPPER)
-    OwnPtr<TextureMapperMediaLayer> m_platformLayer;
-#endif
 
     mutable MediaPlayer::NetworkState m_networkState;
     mutable MediaPlayer::ReadyState m_readyState;

@@ -41,11 +41,22 @@
 
 #include <Settings.h>
 
-#if USE(ACCELERATED_COMPOSITING) && USE(TEXTURE_MAPPER)
-#include "texmap/TextureMapperPlatformLayer.h"
-#endif
-
 namespace WebCore {
+
+#if USE(ACCELERATED_COMPOSITING) && USE(TEXTURE_MAPPER)
+class TextureMapperNodeClientQt {
+public:
+    TextureMapperNodeClientQt(QWebFrame*, GraphicsLayer*);
+    virtual ~TextureMapperNodeClientQt();
+    void setTextureMapper(const PassOwnPtr<TextureMapper>&);
+    void syncRootLayer();
+    TextureMapperNode* rootNode();
+
+private:
+    QWebFrame* m_frame;
+    OwnPtr<GraphicsLayer> m_rootGraphicsLayer;
+};
+#endif
 
 class PageClientQWidget : public QWebPageClient {
 public:
@@ -54,7 +65,6 @@ public:
         , page(newPage)
 #if USE(ACCELERATED_COMPOSITING) && USE(TEXTURE_MAPPER)
         , syncTimer(this, &PageClientQWidget::syncLayers)
-        , platformLayerProxy(0)
 #endif
     {
         Q_ASSERT(view);
@@ -91,7 +101,7 @@ public:
     QWebPage* page;
 
 #if USE(ACCELERATED_COMPOSITING) && USE(TEXTURE_MAPPER)
-    virtual void setRootGraphicsLayer(TextureMapperPlatformLayer* layer);
+    virtual void setRootGraphicsLayer(GraphicsLayer*);
     virtual void markForSync(bool scheduleSync);
     void syncLayers(Timer<PageClientQWidget>*);
 #endif
@@ -104,7 +114,7 @@ public:
 
 #if USE(ACCELERATED_COMPOSITING) && USE(TEXTURE_MAPPER)
     Timer<PageClientQWidget> syncTimer;
-    PlatformLayerProxyQt* platformLayerProxy;
+    OwnPtr<TextureMapperNodeClientQt> textureMapperNodeClient;
 #endif
 };
 
@@ -150,9 +160,7 @@ public:
         , page(newPage)
         , viewResizesToContents(false)
 #if USE(ACCELERATED_COMPOSITING)
-#if USE(TEXTURE_MAPPER)
-        , platformLayerProxy(0)
-#endif
+        , syncTimer(this, &PageClientQGraphicsWidget::syncLayersTimeout)
         , shouldSync(false)
 #endif
         , overlay(0)
@@ -162,7 +170,6 @@ public:
         // the overlay and stays alive for the lifetime of
         // this QGraphicsWebView as the scrollbars are needed when there's no compositing
         view->setFlag(QGraphicsItem::ItemUsesExtendedStyleOption);
-        syncMetaMethod = view->metaObject()->method(view->metaObject()->indexOfMethod("syncLayers()"));
 #endif
     }
 
@@ -200,9 +207,10 @@ public:
 #endif
 
 #if USE(ACCELERATED_COMPOSITING)
-    virtual void setRootGraphicsLayer(PlatformLayer* layer);
+    virtual void setRootGraphicsLayer(GraphicsLayer*);
     virtual void markForSync(bool scheduleSync);
     void syncLayers();
+    void syncLayersTimeout(Timer<PageClientQGraphicsWidget>*) { syncLayers(); }
 
     // QGraphicsWebView can render composited layers
     virtual bool allowsAcceleratedCompositing() const { return true; }
@@ -216,12 +224,12 @@ public:
 
 #if USE(ACCELERATED_COMPOSITING)
 #if USE(TEXTURE_MAPPER)
-    PlatformLayerProxyQt* platformLayerProxy;
+    OwnPtr<TextureMapperNodeClientQt> textureMapperNodeClient;
 #else
     QWeakPointer<QGraphicsObject> rootGraphicsLayer;
 #endif
     // we have to flush quite often, so we use a meta-method instead of QTimer::singleShot for putting the event in the queue
-    QMetaMethod syncMetaMethod;
+    Timer<PageClientQGraphicsWidget> syncTimer;
 
     // we need to sync the layers if we get a special call from the WebCore
     // compositor telling us to do so. We'll get that call from ChromeClientQt

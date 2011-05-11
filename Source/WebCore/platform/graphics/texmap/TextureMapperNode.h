@@ -25,7 +25,6 @@
 #include "GraphicsLayer.h"
 #include "Image.h"
 #include "TextureMapper.h"
-#include "TextureMapperPlatformLayer.h"
 #include "Timer.h"
 #include "TransformOperations.h"
 #include "TranslateTransformOperation.h"
@@ -36,22 +35,38 @@
 
 namespace WebCore {
 
+class TextureMapperPlatformLayer;
 class TextureMapperNode;
-class TextureMapperCache;
 class GraphicsLayerTextureMapper;
+class TextureMapperSurfaceManager;
 
-struct TexmapPaintOptions {
+class TextureMapperPaintOptions {
+public:
     BitmapTexture* surface;
     TextureMapper* textureMapper;
-    TextureMapperNode* rootLayer;
+    TextureMapperSurfaceManager* surfaceManager;
+
     float opacity;
-    IntRect scissorRect;
-    IntRect visibleRect;
     bool isSurface;
-    TextureMapperCache* cache;
+    TextureMapperPaintOptions() : surface(0), textureMapper(0), opacity(1.0), isSurface(false) { }
 };
 
-class TextureMapperNode : public TextureMapperContentLayer {
+class TextureMapperAnimation : public RefCounted<TextureMapperAnimation> {
+public:
+    String name;
+    KeyframeValueList keyframes;
+    IntSize boxSize;
+    RefPtr<Animation> animation;
+    bool paused;
+    Vector<TransformOperation::OperationType> functionList;
+    bool listsMatch;
+    bool hasBigRotation;
+    double startTime;
+    TextureMapperAnimation(const KeyframeValueList&);
+    static PassRefPtr<TextureMapperAnimation> create(const KeyframeValueList& values) { return adoptRef(new TextureMapperAnimation(values)); }
+};
+
+class TextureMapperNode {
 
 public:
     // This set of flags help us defer which properties of the layer have been
@@ -83,19 +98,24 @@ public:
         DisplayChange =             (1L << 18),
         BackgroundColorChange =     (1L << 19),
 
-        ReplicaLayerChange =        (1L << 20)
+        ReplicaLayerChange =        (1L << 20),
+        AnimationChange =           (1L << 21)
     };
+
+    enum SyncOptions {
+        TraverseDescendants = 1
+    };
+
     // The compositor lets us special-case images and colors, so we try to do so.
     enum ContentType { HTMLContentType, DirectImageContentType, ColorContentType, MediaContentType, Canvas3DContentType};
     struct ContentData {
-        IntRect needsDisplayRect;
+        FloatRect needsDisplayRect;
         bool needsDisplay;
         Color backgroundColor;
 
         ContentType contentType;
         RefPtr<Image> image;
-        TextureMapperMediaLayer* media;
-
+        const TextureMapperPlatformLayer* media;
         ContentData()
             : needsDisplay(false)
             , contentType(HTMLContentType)
@@ -105,100 +125,107 @@ public:
         }
     };
 
+    TextureMapperNode()
+        : m_parent(0), m_effectTarget(0), m_opacity(1.0), m_surfaceManager(0), m_textureMapper(0) { }
 
-    TextureMapperNode();
     virtual ~TextureMapperNode();
 
-    void syncCompositingState(GraphicsLayerTextureMapper*, bool recursive);
+    void syncCompositingState(GraphicsLayerTextureMapper*, int syncOptions = 0);
+    void syncCompositingState(GraphicsLayerTextureMapper*, TextureMapper*, int syncOptions = 0);
+    IntSize size() const { return IntSize(m_size.width() + .5, m_size.height() + .5); }
+    void setTransform(const TransformationMatrix&);
+    void setOpacity(float value) { m_opacity = value; }
+    void setVisibleRect(const IntRect&);
+    void setTextureMapper(TextureMapper* texmap) { m_textureMapper = texmap; }
+    bool descendantsOrSelfHaveRunningAnimations() const;
 
-protected:
-    // Reimps from TextureMapperContentLayer
-    virtual IntSize size() const { return m_size; }
-    virtual void setPlatformLayerClient(TextureMapperLayerClient*);
-    virtual void paint(TextureMapper*, const TextureMapperContentLayer::PaintOptions&);
+    void paint();
+
+    bool needsToComputeBoundingRect() const;
+
+    const TextureMapperPlatformLayer* media() const { return m_currentContent.media; }
 
 private:
     TextureMapperNode* rootLayer();
-    void clearDirectImage();
-    void computeTransformations();
-    IntSize nearestSurfaceSize() const;
-    void computeReplicaTransform();
-    void computeLayerType();
-    void computeLocalTransform();
-    void flattenTo2DSpaceIfNecessary();
-    void initializeTextureMapper(TextureMapper*);
-    void invalidateTransform();
-    void notifyChange(ChangeMask);
-    void setNeedsDisplay();
-    void setNeedsDisplayInRect(IntRect);
-    void performPostSyncOperations();
-    void syncCompositingStateInternal(GraphicsLayerTextureMapper*, bool recursive, TextureMapper*);
-    void syncCompositingStateSelf(GraphicsLayerTextureMapper* graphicsLayer, TextureMapper* textureMapper);
-    TextureMapperCache* cache();
-
-    void paintRecursive(TexmapPaintOptions options);
-    bool paintReplica(const TexmapPaintOptions& options);
-    void paintSurface(const TexmapPaintOptions& options);
-    void paintSelf(const TexmapPaintOptions& options);
-    void paintSelfAndChildren(const TexmapPaintOptions& options, TexmapPaintOptions& optionsForDescendants);
-    void uploadTextureFromContent(TextureMapper* textureMapper, const IntRect& visibleRect, GraphicsLayer* layer);
-
+    void computeAllTransforms();
+    void computeVisibleRectIfNeeded();
+    void computePerspectiveTransformIfNeeded();
+    void computeReplicaTransformIfNeeded();
+    void computeOverlapsIfNeeded();
+    void computeLocalTransformIfNeeded();
+    void computeBoundingRectFromRootIfNeeded();
+    void computeTiles();
     int countDescendantsWithContent() const;
-    bool hasSurfaceDescendants() const;
+    FloatRect targetRectForTileRect(const FloatRect& totalTargetRect, const FloatRect& tileRect) const;
+    void invalidateViewport(const FloatRect&);
+    void notifyChange(ChangeMask);
+    void syncCompositingStateSelf(GraphicsLayerTextureMapper* graphicsLayer, TextureMapper* textureMapper);
 
-    TextureMapper* textureMapper();
-
-
-    static TextureMapperNode* toTextureMapperNode(GraphicsLayer*);
     static int compareGraphicsLayersZValue(const void* a, const void* b);
     static void sortByZOrder(Vector<TextureMapperNode* >& array, int first, int last);
+
+    BitmapTexture* texture() { return m_tiles.isEmpty() ? 0 : m_tiles[0].texture.get(); }
+
+    void paintRecursive(TextureMapperPaintOptions);
+    bool paintReflection(const TextureMapperPaintOptions&, BitmapTexture* surface);
+    void paintSelf(const TextureMapperPaintOptions&);
+    void paintSelfAndChildren(const TextureMapperPaintOptions&, TextureMapperPaintOptions& optionsForDescendants);
+    void renderContent(TextureMapper*, GraphicsLayer*);
+
+    void syncAnimations(GraphicsLayerTextureMapper*);
+    void applyAnimation(const TextureMapperAnimation&, double runningTime);
+    void applyAnimationFrame(const TextureMapperAnimation&, const AnimationValue* from, const AnimationValue* to, float progress);
+    void applyOpacityAnimation(float fromOpacity, float toOpacity, double);
+    void applyTransformAnimation(const TextureMapperAnimation&, const TransformOperations* start, const TransformOperations* end, double);
+    bool hasRunningOpacityAnimation() const;
+    bool hasRunningTransformAnimation() const;
+
     struct TransformData {
-        TransformationMatrix base, target, replica, forDescendants, perspective, local;
-        IntRect targetBoundingRect;
+        TransformationMatrix target;
+        TransformationMatrix replica;
+        TransformationMatrix forDescendants;
+        TransformationMatrix local;
+        TransformationMatrix base;
+        TransformationMatrix perspective;
+        FloatRect targetBoundingRect;
         float centerZ;
-        bool dirty, localDirty, perspectiveDirty;
-        IntRect boundingRectFromRoot;
-        TransformData() : dirty(true), localDirty(true), perspectiveDirty(true) { }
+        FloatRect boundingRectFromRoot;
+        FloatRect boundingRectFromRootForDescendants;
+        TransformData() { }
     };
 
     TransformData m_transforms;
 
-    enum LayerType {
-        DefaultLayer,
-        RootLayer,
-        ScissorLayer,
-        ClipLayer,
-        TransparencyLayer
-    };
-
-    LayerType m_layerType;
-
-    inline IntRect targetRect() const
+    inline FloatRect targetRect() const
     {
         return m_currentContent.contentType == HTMLContentType ? entireRect() : m_state.contentsRect;
     }
 
-    inline IntRect entireRect() const
+    inline FloatRect entireRect() const
     {
-        return IntRect(0, 0, m_size.width(), m_size.height());
+        return FloatRect(0, 0, m_size.width(), m_size.height());
     }
 
-    inline IntRect replicaRect() const
+    FloatSize contentSize() const
     {
-        return m_layerType == TransparencyLayer ? IntRect(0, 0, m_nearestSurfaceSize.width(), m_nearestSurfaceSize.height()) : entireRect();
+        return m_currentContent.contentType == DirectImageContentType && m_currentContent.image ? m_currentContent.image->size() : m_size;
     }
+    struct Tile {
+        FloatRect rect;
+        RefPtr<BitmapTexture> texture;
+        bool needsReset;
+    };
 
-    RefPtr<BitmapTexture> m_texture;
-    RefPtr<BitmapTexture> m_surface, m_replicaSurface;
+    Vector<Tile> m_tiles;
 
     ContentData m_currentContent;
 
     Vector<TextureMapperNode*> m_children;
     TextureMapperNode* m_parent;
     TextureMapperNode* m_effectTarget;
-    IntSize m_size, m_nearestSurfaceSize;
+    FloatSize m_size;
+    float m_opacity;
     String m_name;
-    TextureMapperLayerClient* m_platformClient;
 
     struct State {
         FloatPoint pos;
@@ -206,29 +233,26 @@ private:
         FloatSize size;
         TransformationMatrix transform;
         TransformationMatrix childrenTransform;
-        Color backgroundColor;
-        Color currentColor;
-        GraphicsLayer::CompositingCoordinatesOrientation geoOrientation;
-        GraphicsLayer::CompositingCoordinatesOrientation contentsOrientation;
         float opacity;
-        IntRect contentsRect;
+        FloatRect contentsRect;
         int descendantsWithContent;
         TextureMapperNode* maskLayer;
         TextureMapperNode* replicaLayer;
-        bool preserves3D;
-        bool masksToBounds;
-        bool drawsContent;
-        bool contentsOpaque;
-        bool backfaceVisibility;
-        bool visible;
-        bool dirty;
-        bool tiled;
-        bool hasSurfaceDescendants;
-        IntRect visibleRect;
+        bool preserves3D : 1;
+        bool masksToBounds : 1;
+        bool drawsContent : 1;
+        bool contentsOpaque : 1;
+        bool backfaceVisibility : 1;
+        bool visible : 1;
+        bool needsReset: 1;
+        bool mightHaveOverlaps : 1;
+        bool needsRepaint;
+        FloatRect visibleRect;
+        FloatRect rootVisibleRect;
+        float contentScale;
 
         State()
             : opacity(1.f)
-            , descendantsWithContent(0)
             , maskLayer(0)
             , replicaLayer(0)
             , preserves3D(false)
@@ -237,16 +261,22 @@ private:
             , contentsOpaque(false)
             , backfaceVisibility(false)
             , visible(true)
-            , dirty(true)
-            , tiled(false)
-            , hasSurfaceDescendants(false)
+            , needsReset(false)
+            , mightHaveOverlaps(false)
+            , contentScale(1.0f)
         {
         }
     };
 
     State m_state;
-    TextureMapperCache* m_cache;
+    TextureMapperSurfaceManager* m_surfaceManager;
+    TextureMapper* m_textureMapper;
+
+    Vector<RefPtr<TextureMapperAnimation> > m_animations;
 };
+
+
+TextureMapperNode* toTextureMapperNode(GraphicsLayer*);
 
 }
 #endif // TextureMapperNode_h

@@ -58,6 +58,10 @@ typedef PlatformWidget PlatformPluginWidget;
 #endif
 #endif
 #if PLATFORM(QT)
+#if USE(TEXTURE_MAPPER)
+#include "TextureMapperPlatformLayer.h"
+#endif
+
 #include <QGraphicsItem>
 #include <QImage>
 QT_BEGIN_NAMESPACE

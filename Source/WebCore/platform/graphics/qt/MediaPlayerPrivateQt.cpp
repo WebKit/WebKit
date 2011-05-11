@@ -22,6 +22,7 @@
 
 #include "FrameView.h"
 #include "GraphicsContext.h"
+#include "GraphicsLayer.h"
 #include "HTMLMediaElement.h"
 #include "HTMLVideoElement.h"
 #include "NetworkingContext.h"
@@ -50,8 +51,8 @@
 #include <wtf/HashSet.h>
 #include <wtf/text/CString.h>
 
-#if USE(ACCELERATED_COMPOSITING)
-#include "texmap/TextureMapperPlatformLayer.h"
+#if USE(ACCELERATED_COMPOSITING) && USE(TEXTURE_MAPPER)
+#include "texmap/TextureMapper.h"
 #endif
 
 using namespace WTF;
@@ -603,58 +604,19 @@ void MediaPlayerPrivateQt::paintCurrentFrameInContext(GraphicsContext* context, 
 void MediaPlayerPrivateQt::repaint()
 {
     m_webCorePlayer->repaint();
+
 }
 
 #if USE(ACCELERATED_COMPOSITING) && USE(TEXTURE_MAPPER)
-
-class TextureMapperVideoLayerQt : public virtual TextureMapperMediaLayer {
-public:
-    TextureMapperVideoLayerQt(QGraphicsVideoItem* videoItem)
-        : m_videoItem(videoItem)
-    {
-    }
-
-    virtual void setPlatformLayerClient(TextureMapperLayerClient* client)
-    {
-        m_client = client;
-    }
-
-    virtual void paint(GraphicsContext* context)
-    {
-        if (!m_videoItem)
-            return;
-
-        QStyleOptionGraphicsItem opt;
-        opt.exposedRect = m_videoItem.data()->sceneBoundingRect();
-        opt.rect = opt.exposedRect.toRect();
-        m_videoItem.data()->paint(context->platformContext(), &opt);
-    }
-
-    virtual IntSize size() const
-    {
-        return m_videoItem ? IntSize(m_videoItem.data()->size().width(), m_videoItem.data()->size().height()) : IntSize();
-    }
-
-    QWeakPointer<QGraphicsVideoItem> m_videoItem;
-    TextureMapperLayerClient* m_client;
-};
-
-
-void MediaPlayerPrivateQt::acceleratedRenderingStateChanged()
+void MediaPlayerPrivateQt::paintToTextureMapper(TextureMapper* textureMapper, const FloatRect& targetRect, const TransformationMatrix& matrix, float opacity, BitmapTexture*) const
 {
-    MediaPlayerClient* client = m_webCorePlayer->mediaPlayerClient();
-    bool composited = client->mediaPlayerRenderingCanBeAccelerated(m_webCorePlayer);
-    if (composited == m_composited)
-        return;
-
-    m_composited = composited;
-    if (composited)
-        m_platformLayer = new TextureMapperVideoLayerQt(m_videoItem);
-}
-
-PlatformLayer* MediaPlayerPrivateQt::platformLayer() const
-{
-    return m_composited ? m_platformLayer.get() : 0;
+        GraphicsContext* context = textureMapper->graphicsContext();
+        QPainter* painter = context->platformContext();
+        painter->save();
+        painter->setTransform(matrix);
+        painter->setOpacity(opacity);
+        m_videoScene->render(painter, QRectF(targetRect), m_videoItem->sceneBoundingRect());
+        painter->restore();
 }
 #endif
 

@@ -19,148 +19,68 @@
  */
 
 #include "config.h"
-
 #include "PageClientQt.h"
-#include "TextureMapperQt.h"
-#include "texmap/TextureMapperPlatformLayer.h"
+
 #include <QGraphicsScene>
 #include <QGraphicsView>
 #if defined(Q_WS_X11)
 #include <QX11Info>
 #endif
 
+#if USE(ACCELERATED_COMPOSITING) && USE(TEXTURE_MAPPER)
+#include "TextureMapperQt.h"
+#include "texmap/TextureMapperNode.h"
+
 #ifdef QT_OPENGL_LIB
 #include "opengl/TextureMapperGL.h"
-#include <QGLWidget>
+#endif
 #endif
 
 namespace WebCore {
 
-#if USE(ACCELERATED_COMPOSITING) && USE(TEXTURE_MAPPER)    
-class PlatformLayerProxyQt : public QObject, public virtual TextureMapperLayerClient {
-public:
-    PlatformLayerProxyQt(QWebFrame* frame, TextureMapperContentLayer* layer, QObject* object)
-        : QObject(object)
-        , m_frame(frame)
-        , m_layer(layer)
-    {
-        if (m_layer)
-            m_layer->setPlatformLayerClient(this);
-        m_frame->d->rootGraphicsLayer = m_layer;
-    }
+#if USE(ACCELERATED_COMPOSITING) && USE(TEXTURE_MAPPER)
+TextureMapperNodeClientQt::TextureMapperNodeClientQt(QWebFrame* frame, GraphicsLayer* layer)
+    : m_frame(frame)
+    , m_rootGraphicsLayer(GraphicsLayer::create(0))
+{
+    m_frame->d->rootTextureMapperNode = rootNode();
+    m_rootGraphicsLayer->addChild(layer);
+    m_rootGraphicsLayer->setDrawsContent(false);
+    m_rootGraphicsLayer->setMasksToBounds(false);
+    m_rootGraphicsLayer->setSize(IntSize(1, 1));
+}
 
-    void setTextureMapper(PassOwnPtr<TextureMapper> textureMapper)
-    {
-        m_frame->d->textureMapper = textureMapper;
-    }
+void TextureMapperNodeClientQt::setTextureMapper(const PassOwnPtr<TextureMapper>& textureMapper)
+{
+    m_frame->d->textureMapper = textureMapper;
+    m_frame->d->rootTextureMapperNode->setTextureMapper(m_frame->d->textureMapper.get());
+}
 
-    virtual ~PlatformLayerProxyQt()
-    {
-        if (m_layer)
-            m_layer->setPlatformLayerClient(0);
-        if (m_frame->d)
-            m_frame->d->rootGraphicsLayer = 0;
-    }
+TextureMapperNodeClientQt::~TextureMapperNodeClientQt()
+{
+    m_frame->d->rootTextureMapperNode = 0;
+}
 
-    virtual TextureMapper* textureMapper()
-    {
-        return m_frame->d->textureMapper.get();
-    }
+void TextureMapperNodeClientQt::syncRootLayer()
+{
+    m_rootGraphicsLayer->syncCompositingStateForThisLayerOnly();
+}
 
-    // Since we just paint the composited tree and never create a special item for it, we don't have to handle its size changes.
-    void setSizeChanged(const IntSize&) { }
+TextureMapperNode* TextureMapperNodeClientQt::rootNode()
+{
+    return toTextureMapperNode(m_rootGraphicsLayer.get());
+}
 
-private:
-    QWebFrame* m_frame;
-    TextureMapperContentLayer* m_layer;
-};
 
-class PlatformLayerProxyQWidget : public PlatformLayerProxyQt {
-public:
-    PlatformLayerProxyQWidget(QWebFrame* frame, TextureMapperContentLayer* layer, QWidget* widget)
-        : PlatformLayerProxyQt(frame, layer, widget)
-        , m_widget(widget)
-    {
-        if (m_widget)
-            m_widget->installEventFilter(this);
-
-        if (textureMapper())
-            return;
-
-        setTextureMapper(TextureMapperQt::create());
-    }
-
-    // We don't want a huge region-clip on the compositing layers; instead we unite the rectangles together
-    // and clear them when the paint actually occurs.
-    bool eventFilter(QObject* object, QEvent* event)
-    {
-        if (object == m_widget && event->type() == QEvent::Paint)
-            m_dirtyRect = QRect();
-        return QObject::eventFilter(object, event);
-    }
-
-    void setNeedsDisplay()
-    {
-        if (m_widget)
-            m_widget->update();
-    }
-
-    void setNeedsDisplayInRect(const IntRect& rect)
-    {
-        m_dirtyRect |= rect;
-        m_widget->update(m_dirtyRect);
-    }
-
-private:
-    QRect m_dirtyRect;
-    QWidget* m_widget;
-};
-
-#if !defined(QT_NO_GRAPHICSVIEW)
-class PlatformLayerProxyQGraphicsObject : public PlatformLayerProxyQt {
-public:
-    PlatformLayerProxyQGraphicsObject(QWebFrame* frame, TextureMapperContentLayer* layer, QGraphicsObject* object)
-        : PlatformLayerProxyQt(frame, layer, object)
-        , m_graphicsItem(object)
-    {
-        if (textureMapper())
-            return;
-
-#ifdef QT_OPENGL_LIB
-        QGraphicsView* view = object->scene()->views()[0];
-        if (view && view->viewport() && view->viewport()->inherits("QGLWidget")) {
-            setTextureMapper(TextureMapperGL::create());
-            return;
-        }
-#endif
-        setTextureMapper(TextureMapperQt::create());
-    }
-
-    void setNeedsDisplay()
-    {
-        if (m_graphicsItem)
-            m_graphicsItem->update();
-    }
-
-    void setNeedsDisplayInRect(const IntRect& rect)
-    {
-        if (m_graphicsItem)
-            m_graphicsItem->update(QRectF(rect));
-    }
-
-private:
-    QGraphicsItem* m_graphicsItem;
-};
-#endif // QT_NO_GRAPHICSVIEW
-
-void PageClientQWidget::setRootGraphicsLayer(TextureMapperPlatformLayer* layer)
+void PageClientQWidget::setRootGraphicsLayer(GraphicsLayer* layer)
 {
     if (layer) {
-        platformLayerProxy = new PlatformLayerProxyQWidget(page->mainFrame(), static_cast<TextureMapperContentLayer*>(layer), view);
+        textureMapperNodeClient = adoptPtr(new TextureMapperNodeClientQt(page->mainFrame(), layer));
+        textureMapperNodeClient->setTextureMapper(new TextureMapperQt);
+        textureMapperNodeClient->syncRootLayer();
         return;
     }
-    delete platformLayerProxy;
-    platformLayerProxy = 0;
+    textureMapperNodeClient.clear();
 }
 
 void PageClientQWidget::markForSync(bool scheduleSync)
@@ -170,7 +90,14 @@ void PageClientQWidget::markForSync(bool scheduleSync)
 
 void PageClientQWidget::syncLayers(Timer<PageClientQWidget>*)
 {
+    if (textureMapperNodeClient)
+        textureMapperNodeClient->syncRootLayer();
     QWebFramePrivate::core(page->mainFrame())->view()->syncCompositingStateIncludingSubframes();
+    if (!textureMapperNodeClient)
+        return;
+    if (textureMapperNodeClient->rootNode()->descendantsOrSelfHaveRunningAnimations())
+        syncTimer.startOneShot(1.0 / 60.0);
+    update(view->rect());
 }
 #endif
 
@@ -201,9 +128,6 @@ void PageClientQWidget::setInputMethodHints(Qt::InputMethodHints hints)
 
 PageClientQWidget::~PageClientQWidget()
 {
-#if USE(ACCELERATED_COMPOSITING) && USE(TEXTURE_MAPPER)
-    delete platformLayerProxy;
-#endif
 }
 
 #ifndef QT_NO_CURSOR
@@ -260,16 +184,12 @@ QRectF PageClientQWidget::windowRect() const
 PageClientQGraphicsWidget::~PageClientQGraphicsWidget()
 {
     delete overlay;
-#if USE(ACCELERATED_COMPOSITING)
-#if USE(TEXTURE_MAPPER)
-    delete platformLayerProxy;
-#else
+#if USE(ACCELERATED_COMPOSITING) && !USE(TEXTURE_MAPPER)
     if (!rootGraphicsLayer)
         return;
     // we don't need to delete the root graphics layer. The lifecycle is managed in GraphicsLayerQt.cpp.
     rootGraphicsLayer.data()->setParentItem(0);
     view->scene()->removeItem(rootGraphicsLayer.data());
-#endif
 #endif
 }
 
@@ -285,7 +205,7 @@ void PageClientQGraphicsWidget::update(const QRect& dirtyRect)
     createOrDeleteOverlay();
     if (overlay)
         overlay->update(QRectF(dirtyRect));
-#if USE(ACCELERATED_COMPOSITING)
+#if USE(ACCELERATED_COMPOSITING) && !USE(TEXTURE_MAPPER)
     syncLayers();
 #endif
 }
@@ -320,24 +240,45 @@ void PageClientQGraphicsWidget::createOrDeleteOverlay()
 #if USE(ACCELERATED_COMPOSITING)
 void PageClientQGraphicsWidget::syncLayers()
 {
-    if (shouldSync) {
-        QWebFramePrivate::core(page->mainFrame())->view()->syncCompositingStateIncludingSubframes();
-        shouldSync = false;
-    }
+#if USE(TEXTURE_MAPPER)
+    if (textureMapperNodeClient)
+        textureMapperNodeClient->syncRootLayer();
+#endif
+
+    QWebFramePrivate::core(page->mainFrame())->view()->syncCompositingStateIncludingSubframes();
+
+#if USE(TEXTURE_MAPPER)
+    if (!textureMapperNodeClient)
+        return;
+
+    if (textureMapperNodeClient->rootNode()->descendantsOrSelfHaveRunningAnimations())
+        syncTimer.startOneShot(1.0 / 60.0);
+    update(view->boundingRect().toAlignedRect());
+    if (!shouldSync)
+        return;
+    shouldSync = false;
+#endif
 }
 
 #if USE(TEXTURE_MAPPER)
-void PageClientQGraphicsWidget::setRootGraphicsLayer(TextureMapperPlatformLayer* layer)
+void PageClientQGraphicsWidget::setRootGraphicsLayer(GraphicsLayer* layer)
 {
     if (layer) {
-        platformLayerProxy = new PlatformLayerProxyQGraphicsObject(page->mainFrame(), static_cast<TextureMapperContentLayer*>(layer), view);
+        textureMapperNodeClient = adoptPtr(new TextureMapperNodeClientQt(page->mainFrame(), layer));
+#ifdef QT_OPENGL_LIB
+        QGraphicsView* graphicsView = view->scene()->views()[0];
+        if (graphicsView && graphicsView->viewport() && graphicsView->viewport()->inherits("QGLWidget")) {
+            textureMapperNodeClient->setTextureMapper(TextureMapperGL::create());
+            return;
+        }
+#endif
+        textureMapperNodeClient->setTextureMapper(TextureMapperQt::create());
         return;
     }
-    delete platformLayerProxy;
-    platformLayerProxy = 0;
+    textureMapperNodeClient.clear();
 }
 #else
-void PageClientQGraphicsWidget::setRootGraphicsLayer(QGraphicsObject* layer)
+void PageClientQGraphicsWidget::setRootGraphicsLayer(GraphicsLayer* layer)
 {
     if (rootGraphicsLayer) {
         rootGraphicsLayer.data()->setParentItem(0);
@@ -345,12 +286,12 @@ void PageClientQGraphicsWidget::setRootGraphicsLayer(QGraphicsObject* layer)
         QWebFramePrivate::core(page->mainFrame())->view()->syncCompositingStateIncludingSubframes();
     }
 
-    rootGraphicsLayer = layer;
+    rootGraphicsLayer = layer ? layer->platformLayer() : 0;
 
-    if (layer) {
-        layer->setFlag(QGraphicsItem::ItemClipsChildrenToShape, true);
-        layer->setParentItem(view);
-        layer->setZValue(RootGraphicsLayerZValue);
+    if (rootGraphicsLayer) {
+        rootGraphicsLayer.data()->setFlag(QGraphicsItem::ItemClipsChildrenToShape, true);
+        rootGraphicsLayer.data()->setParentItem(view);
+        rootGraphicsLayer.data()->setZValue(RootGraphicsLayerZValue);
     }
     createOrDeleteOverlay();
 }
@@ -359,8 +300,7 @@ void PageClientQGraphicsWidget::setRootGraphicsLayer(QGraphicsObject* layer)
 void PageClientQGraphicsWidget::markForSync(bool scheduleSync)
 {
     shouldSync = true;
-    if (scheduleSync)
-        syncMetaMethod.invoke(view, Qt::QueuedConnection);
+    syncTimer.startOneShot(0);
 }
 
 #endif

@@ -30,6 +30,7 @@
 namespace WebCore {
 
 class TextureMapperGLData;
+class GraphicsContext;
 
 // An OpenGL-ES2 implementation of TextureMapper.
 class TextureMapperGL : public TextureMapper {
@@ -38,23 +39,26 @@ public:
     virtual ~TextureMapperGL();
 
     // reimps from TextureMapper
-    virtual void drawTexture(const BitmapTexture& texture, const IntRect&, const TransformationMatrix& transform, float opacity, const BitmapTexture* maskTexture);
+    virtual void drawTexture(const BitmapTexture&, const FloatRect&, const TransformationMatrix&, float opacity, const BitmapTexture* maskTexture);
+    virtual void drawTexture(uint32_t texture, bool opaque, const FloatSize&, const FloatRect&, const TransformationMatrix&, float opacity, const BitmapTexture* maskTexture, bool flip);
     virtual void bindSurface(BitmapTexture* surface);
-    virtual void setClip(const IntRect&);
-    virtual void paintToTarget(const BitmapTexture&, const IntSize&, const TransformationMatrix&, float opacity, const IntRect& visibleRect);
-    virtual bool allowSurfaceForRoot() const { return true; }
+    virtual void beginClip(const TransformationMatrix&, const FloatRect&);
+    virtual void endClip();
+    virtual bool allowSurfaceForRoot() const { return false; }
     virtual PassRefPtr<BitmapTexture> createTexture();
     virtual const char* type() const;
-    void obtainCurrentContext();
-    bool makeContextCurrent();
-    static PassOwnPtr<TextureMapperGL> create()
-    {
-        return new TextureMapperGL;
-    }
+    static PassOwnPtr<TextureMapperGL> create() { return adoptPtr(new TextureMapperGL); }
+    void beginPainting();
+    void endPainting();
+    void setGraphicsContext(GraphicsContext* context) { m_context = context; }
+    GraphicsContext* graphicsContext() { return m_context; }
+    virtual bool isOpenGLBacked() const { return true; }
 
 private:
+    void initializeShaders();
     inline TextureMapperGLData& data() { return *m_data; }
     TextureMapperGLData* m_data;
+    GraphicsContext* m_context;
     friend class BitmapTextureGL;
 };
 
@@ -83,6 +87,9 @@ static inline IntSize nextPowerOfTwo(const IntSize& size)
 {
     return IntSize(nextPowerOfTwo(size.width()), nextPowerOfTwo(size.height()));
 }
+
+typedef uint64_t ImageUID;
+ImageUID uidForImage(Image*);
 
 };
 

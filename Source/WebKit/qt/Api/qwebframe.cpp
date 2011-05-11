@@ -98,7 +98,7 @@
 #endif
 #if USE(TEXTURE_MAPPER)
 #include "texmap/TextureMapper.h"
-#include "texmap/TextureMapperPlatformLayer.h"
+#include "texmap/TextureMapperNode.h"
 #endif
 #include "wtf/HashMap.h"
 #include <QMultiMap>
@@ -321,24 +321,28 @@ void QWebFramePrivate::renderFromTiledBackingStore(GraphicsContext* context, con
 #if USE(ACCELERATED_COMPOSITING) && USE(TEXTURE_MAPPER)
 void QWebFramePrivate::renderCompositedLayers(GraphicsContext* context, const IntRect& clip)
 {
-    if (!rootGraphicsLayer)
+    if (!rootTextureMapperNode || !textureMapper)
         return;
 
     textureMapper->setGraphicsContext(context);
     textureMapper->setImageInterpolationQuality(context->imageInterpolationQuality());
     textureMapper->setTextDrawingMode(context->textDrawingMode());
+    textureMapper->setViewportSize(frame->view()->frameRect().size());
     QPainter* painter = context->platformContext();
-    FrameView* view = frame->view();
-    painter->save();
-    painter->beginNativePainting();
-    TextureMapperContentLayer::PaintOptions options;
-    options.visibleRect = clip;
-    options.targetRect = view->frameRect();
-    options.viewportSize = view->size();
-    options.opacity = painter->opacity();
-    rootGraphicsLayer->paint(textureMapper.get(), options);
-    painter->endNativePainting();
-    painter->restore();
+    const QTransform transform = painter->worldTransform();
+    const TransformationMatrix matrix(
+                transform.m11(), transform.m12(), 0, transform.m13(),
+                transform.m21(), transform.m22(), 0, transform.m23(),
+                0, 0, 1, 0,
+                transform.m31(), transform.m32(), 0, transform.m33()
+                );
+    rootTextureMapperNode->setTransform(matrix);
+    rootTextureMapperNode->setOpacity(painter->opacity());
+    textureMapper->beginPainting();
+    textureMapper->beginClip(matrix, clip);
+    rootTextureMapperNode->paint();
+    textureMapper->endClip();
+    textureMapper->endPainting();
 }
 #endif
 

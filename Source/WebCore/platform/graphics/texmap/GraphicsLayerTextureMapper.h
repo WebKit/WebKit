@@ -45,6 +45,7 @@ public:
 
     // reimps from GraphicsLayer.h
     virtual void setNeedsDisplay();
+    virtual void setContentsNeedsDisplay() { setNeedsDisplay(); };
     virtual void setNeedsDisplayInRect(const FloatRect&);
     virtual void setParent(GraphicsLayer* layer);
     virtual bool setChildren(const Vector<GraphicsLayer*>&);
@@ -72,29 +73,31 @@ public:
     virtual void setReplicatedByLayer(GraphicsLayer*);
     virtual void setContentsToImage(Image*);
     virtual void setContentsToMedia(PlatformLayer*);
-    virtual void setContentsBackgroundColor(const Color&);
-#if ENABLE(WEBGL)
-    virtual void setContentsToGraphicsContext3D(const GraphicsContext3D*);
-    virtual void setGraphicsContext3DNeedsDisplay();
-#endif
-    virtual void setContentsOrientation(CompositingCoordinatesOrientation orientation);
+    virtual void setContentsToCanvas(PlatformLayer* canvas) { setContentsToMedia(canvas); }
     virtual void syncCompositingState();
     virtual void syncCompositingStateForThisLayerOnly();
     virtual void setName(const String& name);
     virtual PlatformLayer* platformLayer() const;
-
-    virtual bool addAnimation(const KeyframeValueList&, const IntSize& /*boxSize*/, const Animation*, const String& /*keyframesName*/, double /*timeOffset*/) { return false; }
 
     void notifyChange(TextureMapperNode::ChangeMask changeMask);
     inline TextureMapperNode::ContentData& pendingContent() { return m_pendingContent; }
     inline int changeMask() const { return m_changeMask; }
     void didSynchronize();
 
+    virtual bool addAnimation(const KeyframeValueList&, const IntSize&, const Animation*, const String&, double);
+    virtual void pauseAnimation(const String&, double);
+    virtual void removeAnimation(const String&);
+
+    TextureMapperNode* node() const { return m_node.get(); }
+
 private:
     OwnPtr<TextureMapperNode> m_node;
     bool m_syncQueued;
     int m_changeMask;
     TextureMapperNode::ContentData m_pendingContent;
+    Vector<RefPtr<TextureMapperAnimation> > m_animations;
+    void animationStartedTimerFired(Timer<GraphicsLayerTextureMapper>*);
+    Timer<GraphicsLayerTextureMapper> m_animationStartedTimer;
 };
 
 inline static GraphicsLayerTextureMapper* toGraphicsLayerTextureMapper(GraphicsLayer* layer)

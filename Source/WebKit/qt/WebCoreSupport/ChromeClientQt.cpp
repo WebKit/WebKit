@@ -621,7 +621,7 @@ void ChromeClientQt::setCursor(const Cursor& cursor)
 void ChromeClientQt::attachRootGraphicsLayer(Frame* frame, GraphicsLayer* graphicsLayer)
 {
     if (platformPageClient())
-        platformPageClient()->setRootGraphicsLayer(graphicsLayer ? graphicsLayer->platformLayer() : 0);
+        platformPageClient()->setRootGraphicsLayer(graphicsLayer);
 }
 
 void ChromeClientQt::setNeedsOneShotDrawingSynchronization()

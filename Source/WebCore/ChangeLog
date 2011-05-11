@@ -1,3 +1,260 @@
+2011-05-11  Noam Rosenthal  <noam.rosenthal@nokia.com>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        [Texmap][Qt] Upstream texture-mapper changes from Qt's WebKit2 branch
+        https://bugs.webkit.org/show_bug.cgi?id=60439
+
+        Patch 12/12: Enable accelerated animations in texture-mapper. The entire interpolation
+        mechanism happens inside TextureMapper, and we interpolate right before we paint.
+
+        No new tests. Tests in LayoutTests/compositing cover this.
+
+        * platform/graphics/texmap/GraphicsLayerTextureMapper.cpp:
+        (WebCore::GraphicsLayerTextureMapper::GraphicsLayerTextureMapper):
+        (WebCore::GraphicsLayerTextureMapper::syncCompositingState):
+        (WebCore::GraphicsLayerTextureMapper::addAnimation):
+        (WebCore::GraphicsLayerTextureMapper::pauseAnimation):
+        (WebCore::GraphicsLayerTextureMapper::removeAnimation):
+        (WebCore::GraphicsLayerTextureMapper::animationStartedTimerFired):
+        * platform/graphics/texmap/TextureMapperNode.cpp:
+        (WebCore::TextureMapperNode::descendantsOrSelfHaveRunningAnimations):
+        (WebCore::normalizedAnimationValue):
+        (WebCore::TextureMapperNode::applyOpacityAnimation):
+        (WebCore::solveEpsilon):
+        (WebCore::solveCubicBezierFunction):
+        (WebCore::solveStepsFunction):
+        (WebCore::applyTimingFunction):
+        (WebCore::TextureMapperNode::applyTransformAnimation):
+        (WebCore::TextureMapperNode::applyAnimationFrame):
+        (WebCore::TextureMapperNode::applyAnimation):
+        (WebCore::TextureMapperNode::hasRunningOpacityAnimation):
+        (WebCore::TextureMapperNode::hasRunningTransformAnimation):
+        (WebCore::TextureMapperNode::syncAnimations):
+        (WebCore::copyTimingFunction):
+        (WebCore::copyAnimationValue):
+        (WebCore::TextureMapperAnimation::TextureMapperAnimation):
+        * platform/graphics/texmap/TextureMapperNode.h:
+        (WebCore::TextureMapperAnimation::create):
+
+2011-05-11  Noam Rosenthal  <noam.rosenthal@nokia.com>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        [Texmap][Qt] Upstream texture-mapper changes from Qt's WebKit2 branch
+        https://bugs.webkit.org/show_bug.cgi?id=60439
+
+        Patch 11/12: Patch PluginView to build with TextureMapper on Linux.
+
+        No new tests. This is a build fix.
+
+        * platform/qt/QWebPageClient.h:
+        (QWebPageClient::setRootGraphicsLayer):
+
+2011-05-11  Noam Rosenthal  <noam.rosenthal@nokia.com>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        [Texmap][Qt] Upstream texture-mapper changes from Qt's WebKit2 branch
+        https://bugs.webkit.org/show_bug.cgi?id=60439
+
+        Patch 10/12: Glue the TextureMapper refactoring into Webkit(1).
+        Pass a GraphicsLayer* instead of a PlatformLayer* to the QWebPageClient.
+
+        No new tests. Tests in LayoutTests/compositing cover this.
+
+        * platform/qt/QWebPageClient.h:
+        (QWebPageClient::setRootGraphicsLayer):
+
+2011-05-11  Noam Rosenthal  <noam.rosenthal@nokia.com>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        [Texmap][Qt] Upstream texture-mapper changes from Qt's WebKit2 branch
+        https://bugs.webkit.org/show_bug.cgi?id=60439
+
+        Patch 9/12: Refactor TextureMapperNode for performance, readability and accuracy.
+        Changes include:
+        1. Support the new TextureMapperPlatformLayer for media & WebGL.
+        2. Use a pool for intermediate surfaces, to avoid constant allocating/freeing of textures.
+        3. Divide computation operations to different smaller functions.
+        4. Get rid of scissor/clip layers, use transformed clip instead.
+        5. Allow tiling for big layers.
+
+        No new tests. Tests in LayoutTests/compositing cover this.
+
+        * platform/graphics/texmap/GraphicsLayerTextureMapper.cpp:
+        (WebCore::GraphicsLayerTextureMapper::GraphicsLayerTextureMapper):
+        (WebCore::GraphicsLayerTextureMapper::setNeedsDisplayInRect):
+        (WebCore::GraphicsLayerTextureMapper::setContentsToMedia):
+        (WebCore::GraphicsLayerTextureMapper::platformLayer):
+        * platform/graphics/texmap/GraphicsLayerTextureMapper.h:
+        (WebCore::GraphicsLayerTextureMapper::setContentsNeedsDisplay):
+        (WebCore::GraphicsLayerTextureMapper::setContentsToCanvas):
+        (WebCore::GraphicsLayerTextureMapper::node):
+        * platform/graphics/texmap/TextureMapperNode.cpp:
+        (WebCore::TextureMapperSurfaceManager::getIntermediateSurface):
+        (WebCore::TextureMapperSurfaceManager::releaseIntermediateSurface):
+        (WebCore::toTextureMapperNode):
+        (WebCore::TextureMapperNode::rootLayer):
+        (WebCore::TextureMapperNode::setTransform):
+        (WebCore::TextureMapperNode::computePerspectiveTransformIfNeeded):
+        (WebCore::TextureMapperNode::countDescendantsWithContent):
+        (WebCore::TextureMapperNode::computeOverlapsIfNeeded):
+        (WebCore::TextureMapperNode::computeReplicaTransformIfNeeded):
+        (WebCore::TextureMapperNode::computeLocalTransformIfNeeded):
+        (WebCore::TextureMapperNode::needsToComputeBoundingRect):
+        (WebCore::TextureMapperNode::computeAllTransforms):
+        (WebCore::TextureMapperNode::computeBoundingRectFromRootIfNeeded):
+        (WebCore::TextureMapperNode::computeTiles):
+        (WebCore::TextureMapperNode::computeVisibleRectIfNeeded):
+        (WebCore::TextureMapperNode::renderContent):
+        (WebCore::TextureMapperNode::paint):
+        (WebCore::TextureMapperNode::targetRectForTileRect):
+        (WebCore::TextureMapperNode::paintSelf):
+        (WebCore::TextureMapperNode::compareGraphicsLayersZValue):
+        (WebCore::TextureMapperNode::sortByZOrder):
+        (WebCore::TextureMapperNode::paintSelfAndChildren):
+        (WebCore::TextureMapperNode::paintReflection):
+        (WebCore::TextureMapperNode::paintRecursive):
+        (WebCore::TextureMapperNode::~TextureMapperNode):
+        (WebCore::TextureMapperNode::resetDescendants):
+        (WebCore::TextureMapperNode::setContentScale):
+        (WebCore::TextureMapperNode::setVisibleRect):
+        (WebCore::TextureMapperNode::syncCompositingState):
+        (WebCore::TextureMapperNode::invalidateOverlaps):
+        (WebCore::TextureMapperNode::syncCompositingStateSelf):
+        (WebCore::TextureMapperNode::descendantsOrSelfHaveRunningAnimations):
+        * platform/graphics/texmap/TextureMapperNode.h:
+        (WebCore::TextureMapperPaintOptions::TextureMapperPaintOptions):
+        (WebCore::TextureMapperAnimation::create):
+        (WebCore::TextureMapperNode::TextureMapperNode):
+        (WebCore::TextureMapperNode::size):
+        (WebCore::TextureMapperNode::setOpacity):
+        (WebCore::TextureMapperNode::setTextureMapper):
+        (WebCore::TextureMapperNode::media):
+        (WebCore::TextureMapperNode::texture):
+        (WebCore::TextureMapperNode::targetRect):
+        (WebCore::TextureMapperNode::entireRect):
+        (WebCore::TextureMapperNode::contentSize):
+        (WebCore::TextureMapperNode::State::State):
+        (WebCore::deleteOwnedPtr):
+
+2011-05-07  Noam Rosenthal  <noam.rosenthal@nokia.com>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        [Texmap][Qt] Upstream texture-mapper changes from Qt's WebKit2 branch
+        https://bugs.webkit.org/show_bug.cgi?id=60439
+
+        Patch 8/12: Changes to the GL backend of TextureMapper. The code for these changes is intertwined so it was hard to separate
+        them to different patches. This is the summary of what the changes do:
+
+        1. Use stencil for clipping instead of scissors, refactor beginClip/endClip functions to accomodate that.
+        2. Get rid of the "Target" program which forced an intermediate framebuffer for any content. Instead,
+           we upload the texture with BGRA from the start. Ports other than Qt can optimize this for their needs.
+        3. Use glGetAttribLocation instead of glBindAttribLocation; On some platforms we might be polluting the
+           GL context otherwise.
+        4. Use image UIDs (cache-key in Qt) instead of image pointers. This is important for images that change their
+           internal content.
+        5. Allow packing and unpacking. This is currently a stub, for future memory optimizations.
+        6. Put some of the initialization code here (beginPainting/endPainting).
+        7. Allow painting a texture via an ID instead of a BitmapTexture data type.
+        8. Get rid of makeContextCurrent / obtainCurrentContext. We only use texture-mapper when the context is current.
+
+        No new tests. Tests in LayoutTests/compositing test this.
+
+        * platform/graphics/opengl/TextureMapperGL.cpp:
+        (WebCore::debugGLCommand):
+        (WebCore::TextureMapperGLData::GlobalGLData::createShaderProgram):
+        (WebCore::TextureMapperGLData::GlobalGLData::GlobalGLData):
+        (WebCore::TextureMapperGLData::DirectlyCompositedImageRepository::findOrCreate):
+        (WebCore::TextureMapperGLData::DirectlyCompositedImageRepository::deref):
+        (WebCore::TextureMapperGLData::DirectlyCompositedImageRepository::~DirectlyCompositedImageRepository):
+        (WebCore::TextureMapperGLData::TextureMapperGLData):
+        (WebCore::BitmapTextureGL::id):
+        (WebCore::BitmapTextureGL::isOpaque):
+        (WebCore::BitmapTextureGL::relativeSize):
+        (WebCore::BitmapTextureGL::setTextureMapper):
+        (WebCore::BitmapTextureGL::pack):
+        (WebCore::BitmapTextureGL::unpack):
+        (WebCore::BitmapTextureGL::isPacked):
+        (WebCore::BitmapTextureGL::BitmapTextureGL):
+        (WebCore::TextureMapperGL::TextureMapperGL):
+        (WebCore::TextureMapperGL::initializeShaders):
+        (WebCore::TextureMapperGL::beginPainting):
+        (WebCore::TextureMapperGL::endPainting):
+        (WebCore::TextureMapperGL::drawTexture):
+        (WebCore::BitmapTextureGL::reset):
+        (WebCore::BitmapTextureGL::endPaint):
+        (WebCore::BitmapTextureGL::setContentsToImage):
+        (WebCore::createProjectionMatrix):
+        (WebCore::BitmapTextureGL::bind):
+        (WebCore::BitmapTextureGL::destroy):
+        (WebCore::TextureMapperGL::~TextureMapperGL):
+        (WebCore::TextureMapperGL::bindSurface):
+        (WebCore::TextureMapperGL::beginClip):
+        (WebCore::TextureMapperGL::endClip):
+        (WebCore::TextureMapperGL::createTexture):
+        * platform/graphics/opengl/TextureMapperGL.h:
+        (WebCore::TextureMapperGL::allowSurfaceForRoot):
+        (WebCore::TextureMapperGL::create):
+        (WebCore::TextureMapperGL::setGraphicsContext):
+        (WebCore::TextureMapperGL::graphicsContext):
+        (WebCore::TextureMapperGL::isOpenGLBacked):
+        * platform/graphics/qt/GraphicsContext3DQt.cpp:
+        (WebCore::GraphicsContext3DInternal::paintToTextureMapper):
+        (WebCore::GraphicsContext3DInternal::boundingRect):
+        (WebCore::GraphicsContext3DInternal::paint):
+        * platform/graphics/qt/MediaPlayerPrivateQt.cpp:
+        (WebCore::MediaPlayerPrivateQt::repaint):
+        (WebCore::MediaPlayerPrivateQt::paintToTextureMapper):
+        * platform/graphics/qt/MediaPlayerPrivateQt.h:
+        (WebCore::MediaPlayerPrivateQt::acceleratedRenderingStateChanged):
+        (WebCore::MediaPlayerPrivateQt::platformLayer):
+
+2011-05-11  Noam Rosenthal  <noam.rosenthal@nokia.com>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        [Texmap][Qt] Upstream texture-mapper changes from Qt's WebKit2 branch
+        https://bugs.webkit.org/show_bug.cgi?id=60439
+
+        Patch 7/12: Allow a 3D-context (WebGL) to paint itself into a TextureMapper.
+        This allows using a WebGL canvas with CSS.
+
+        No new tests. Tests in LayoutTests/compositing/webgl cover this.
+
+        * platform/graphics/qt/GraphicsContext3DQt.cpp:
+        (WebCore::GraphicsContext3DInternal::paintToTextureMapper):
+        (WebCore::GraphicsContext3DInternal::boundingRect):
+        (WebCore::GraphicsContext3DInternal::paint):
+        * platform/graphics/qt/MediaPlayerPrivateQt.cpp:
+        (WebCore::MediaPlayerPrivateQt::repaint):
+        (WebCore::MediaPlayerPrivateQt::paintToTextureMapper):
+        * platform/graphics/qt/MediaPlayerPrivateQt.h:
+        (WebCore::MediaPlayerPrivateQt::acceleratedRenderingStateChanged):
+        (WebCore::MediaPlayerPrivateQt::platformLayer):
+
+2011-05-11  Noam Rosenthal  <noam.rosenthal@nokia.com>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        [Texmap][Qt] Upstream texture-mapper changes from Qt's WebKit2 branch
+        https://bugs.webkit.org/show_bug.cgi?id=60439
+
+        Patch 6/12: Allow the Qt media player implementation to paint into a TextureMapper,
+        to allow videos to be composited.
+
+        No new tests. Tests in LayoutTests/compositing cover this.
+
+        * platform/graphics/qt/MediaPlayerPrivateQt.cpp:
+        (WebCore::MediaPlayerPrivateQt::repaint):
+        (WebCore::MediaPlayerPrivateQt::paintToTextureMapper):
+        * platform/graphics/qt/MediaPlayerPrivateQt.h:
+        (WebCore::MediaPlayerPrivateQt::acceleratedRenderingStateChanged):
+        (WebCore::MediaPlayerPrivateQt::platformLayer):
+
 2011-05-11  John Bauman  <jbauman@chromium.org>
 
         Reviewed by Kenneth Russell.
