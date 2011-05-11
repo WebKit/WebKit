@@ -1348,8 +1348,15 @@ bool RenderThemeMac::paintSliderThumb(RenderObject* o, const PaintInfo& paintInf
         paintInfo.context->scale(FloatSize(zoomLevel, zoomLevel));
         paintInfo.context->translate(-unzoomedRect.x(), -unzoomedRect.y());
     }
-
-    [sliderThumbCell drawWithFrame:unzoomedRect inView:documentViewFor(o)];
+    
+    // Workaround for <rdar://problem/9421781>.
+    if (!o->view()->frameView()->documentView()) {
+        paintInfo.context->translate(0, unzoomedRect.y());
+        paintInfo.context->scale(FloatSize(1, -1));
+        paintInfo.context->translate(0, -(unzoomedRect.y() + unzoomedRect.height()));
+    }
+    
+    [sliderThumbCell drawInteriorWithFrame:unzoomedRect inView:documentViewFor(o)];
     [sliderThumbCell setControlView:nil];
 
     return false;

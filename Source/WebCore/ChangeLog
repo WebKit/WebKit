@@ -1,3 +1,23 @@
+2011-05-11  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Dave Hyatt.
+
+        <rdar://problem/9421781> Slider thumb draws upside-down in WebKit2
+        <rdar://problem/9418025> Slider thumb has odd appearance
+
+        Fix two issues drawing the slider thumb.
+        
+        To fix <rdar://problem/9421781>, if we detect that we're in WebKit2
+        by virtual of the FrameView not having a documentView, then flip
+        the graphics context.
+
+        To fix <rdar://problem/9418025>, we call -drawInteriorWithFrame:inView:
+        rather than -drawWithFrame:inView: so that AppKit doesn't draw a section
+        of track behind the thumb.
+
+        * rendering/RenderThemeMac.mm:
+        (WebCore::RenderThemeMac::paintSliderThumb):
+
 2011-05-11  Jessie Berlin  <jberlin@apple.com>
 
         Reviewed by Steve Falkenburg.
