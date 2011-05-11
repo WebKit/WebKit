@@ -521,10 +521,9 @@ private:
 
     bool shouldBeNormalFlowOnly() const; 
 
+    int scrollPosition(Scrollbar*) const;
+    
     // ScrollableArea interface
-    virtual int scrollSize(ScrollbarOrientation orientation) const;
-    virtual void setScrollOffset(const IntPoint&);
-    virtual int scrollPosition(Scrollbar*) const;
     virtual void invalidateScrollbarRect(Scrollbar*, const IntRect&);
     virtual void invalidateScrollCornerRect(const IntRect&);
     virtual bool isActive() const;
@@ -534,10 +533,18 @@ private:
     virtual IntRect convertFromContainingViewToScrollbar(const Scrollbar*, const IntRect&) const;
     virtual IntPoint convertFromScrollbarToContainingView(const Scrollbar*, const IntPoint&) const;
     virtual IntPoint convertFromContainingViewToScrollbar(const Scrollbar*, const IntPoint&) const;
-    virtual IntSize contentsSize() const;
+    virtual int scrollSize(ScrollbarOrientation) const;
+    virtual void setScrollOffset(const IntPoint&);
+    virtual IntPoint scrollPosition() const;
+    virtual IntPoint minimumScrollPosition() const;
+    virtual IntPoint maximumScrollPosition() const;
+    virtual IntRect visibleContentRect(bool includeScrollbars) const;
     virtual int visibleHeight() const;
     virtual int visibleWidth() const;
+    virtual IntSize contentsSize() const;
+    virtual IntSize overhangAmount() const;
     virtual IntPoint currentMousePosition() const;
+    virtual void didCompleteRubberBand(const IntSize&) const;
     virtual bool shouldSuspendScrollAnimations() const;
 
     // Rectangle encompassing the scroll corner and resizer rect.

@@ -121,7 +121,7 @@ public:
     virtual IntPoint scrollPosition() const { ASSERT_NOT_REACHED(); return IntPoint(); }
     virtual IntPoint minimumScrollPosition() const { ASSERT_NOT_REACHED(); return IntPoint(); }
     virtual IntPoint maximumScrollPosition() const { ASSERT_NOT_REACHED(); return IntPoint(); }
-    virtual IntRect visibleContentRect(bool = false) const { ASSERT_NOT_REACHED(); return IntRect(); }
+    virtual IntRect visibleContentRect(bool /*includeScrollbars*/ = false) const { ASSERT_NOT_REACHED(); return IntRect(); }
     virtual int visibleHeight() const { ASSERT_NOT_REACHED(); return 0; }
     virtual int visibleWidth() const { ASSERT_NOT_REACHED(); return 0; }
     virtual IntSize contentsSize() const { ASSERT_NOT_REACHED(); return IntSize(); }

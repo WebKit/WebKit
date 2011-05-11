@@ -1650,6 +1650,45 @@ int RenderLayer::scrollPosition(Scrollbar* scrollbar) const
     return 0;
 }
 
+IntPoint RenderLayer::scrollPosition() const
+{
+    return m_scrollOrigin + m_scrollOffset;
+}
+
+IntPoint RenderLayer::minimumScrollPosition() const
+{
+    return m_scrollOrigin;
+}
+
+IntPoint RenderLayer::maximumScrollPosition() const
+{
+    // FIXME: m_scrollSize may not be up-to-date if m_scrollDimensionsDirty is true.
+    return m_scrollOrigin + m_scrollSize;
+}
+
+IntRect RenderLayer::visibleContentRect(bool includeScrollbars) const
+{
+    int verticalScrollbarWidth = 0;
+    int horizontalScrollbarHeight = 0;
+    if (includeScrollbars) {
+        verticalScrollbarWidth = (verticalScrollbar() && !verticalScrollbar()->isOverlayScrollbar()) ? verticalScrollbar()->width() : 0;
+        horizontalScrollbarHeight = (horizontalScrollbar() && !horizontalScrollbar()->isOverlayScrollbar()) ? horizontalScrollbar()->height() : 0;
+    }
+    
+    return IntRect(IntPoint(scrollXOffset(), scrollYOffset()),
+                   IntSize(max(0, m_layerSize.width() - verticalScrollbarWidth), 
+                           max(0, m_layerSize.height() - horizontalScrollbarHeight)));
+}
+
+IntSize RenderLayer::overhangAmount() const
+{
+    return IntSize();
+}
+
+void RenderLayer::didCompleteRubberBand(const IntSize&) const
+{
+}
+
 bool RenderLayer::isActive() const
 {
     Page* page = renderer()->frame()->page();

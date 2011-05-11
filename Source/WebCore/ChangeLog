@@ -1,5 +1,27 @@
 2011-05-11  Simon Fraser  <simon.fraser@apple.com>
 
+        Reviewed by Darin Adler.
+
+        Flesh out RenderLayer's ScrollableArea implementation a little more
+        https://bugs.webkit.org/show_bug.cgi?id=60593
+
+        Override a few more ScrollableArea methods on RenderLayer
+        as a baby-step towards animating overflow div scrolling.
+
+        * platform/ScrollableArea.h:
+        (WebCore::ScrollableArea::visibleContentRect):
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::scrollPosition):
+        (WebCore::RenderLayer::minimumScrollPosition):
+        (WebCore::RenderLayer::maximumScrollPosition):
+        (WebCore::RenderLayer::visibleContentRect):
+        (WebCore::RenderLayer::overhangAmount):
+        (WebCore::RenderLayer::didCompleteRubberBand):
+        * rendering/RenderLayer.h:
+        (WebCore::RenderLayer::shouldSuspendScrollAnimations):
+
+2011-05-11  Simon Fraser  <simon.fraser@apple.com>
+
         Reviewed by Dave Hyatt.
 
         <rdar://problem/9421781> Slider thumb draws upside-down in WebKit2
