@@ -32,7 +32,6 @@
 #include <WebCore/FileSystem.h>
 #include <WebCore/MemoryCache.h>
 #include <WebCore/PageCache.h>
-#include <WebCore/ResourceHandle.h>
 #include <WebCore/Settings.h>
 #include <wtf/text/WTFString.h>
 
@@ -70,14 +69,7 @@ static uint64_t volumeFreeSize(CFStringRef cfstringPath)
 void WebProcess::platformSetCacheModel(CacheModel cacheModel)
 {
 #if USE(CFNETWORK)
-    RetainPtr<CFStringRef> cfurlCacheDirectory;
-#if USE(CFURLSTORAGESESSIONS)
-    if (CFURLStorageSessionRef defaultStorageSession = ResourceHandle::defaultStorageSession())
-        cfurlCacheDirectory.adoptCF(wkCopyFoundationCacheDirectory(defaultStorageSession));
-    else
-#endif
-        cfurlCacheDirectory.adoptCF(wkCopyFoundationCacheDirectory(0));
-
+    RetainPtr<CFStringRef> cfurlCacheDirectory(AdoptCF, wkCopyFoundationCacheDirectory());
     if (!cfurlCacheDirectory)
         cfurlCacheDirectory.adoptCF(WebCore::localUserSpecificStorageDirectory().createCFString());
 
@@ -102,14 +94,7 @@ void WebProcess::platformSetCacheModel(CacheModel cacheModel)
     memoryCache()->setDeadDecodedDataDeletionInterval(deadDecodedDataDeletionInterval);
     pageCache()->setCapacity(pageCacheCapacity);
 
-    RetainPtr<CFURLCacheRef> cfurlCache;
-#if USE(CFURLSTORAGESESSIONS)
-    if (CFURLStorageSessionRef defaultStorageSession = ResourceHandle::defaultStorageSession())
-        cfurlCache.adoptCF(wkCopyURLCache(defaultStorageSession));
-    else
-#endif // USE(CFURLSTORAGESESSIONS)
-        cfurlCache.adoptCF(CFURLCacheCopySharedURLCache());
-
+    RetainPtr<CFURLCacheRef> cfurlCache(AdoptCF, CFURLCacheCopySharedURLCache());
     CFURLCacheSetMemoryCapacity(cfurlCache.get(), urlCacheMemoryCapacity);
     CFURLCacheSetDiskCapacity(cfurlCache.get(), max<unsigned long>(urlCacheDiskCapacity, CFURLCacheDiskCapacity(cfurlCache.get()))); // Don't shrink a big disk cache, since that would cause churn.
 #endif
@@ -120,17 +105,8 @@ void WebProcess::platformClearResourceCaches(ResourceCachesToClear cachesToClear
 #if USE(CFNETWORK)
     if (cachesToClear == InMemoryResourceCachesOnly)
         return;
-
-    RetainPtr<CFURLCacheRef> cache;
-#if USE(CFURLSTORAGESESSIONS)
-    if (CFURLStorageSessionRef defaultStorageSession = ResourceHandle::defaultStorageSession())
-        cache.adoptCF(wkCopyURLCache(defaultStorageSession));
-    else
-#endif // USE(CFURLSTORAGESESSIONS)
-        cache.adoptCF(CFURLCacheCopySharedURLCache());
-
-    CFURLCacheRemoveAllCachedResponses(cache.get());
-#endif // USE(CFNETWORK)
+    CFURLCacheRemoveAllCachedResponses(RetainPtr<CFURLCacheRef>(AdoptCF, CFURLCacheCopySharedURLCache()).get());
+#endif
 }
 
 void WebProcess::platformInitializeWebProcess(const WebProcessCreationParameters& parameters, CoreIPC::ArgumentDecoder*)
@@ -138,13 +114,6 @@ void WebProcess::platformInitializeWebProcess(const WebProcessCreationParameters
     setShouldPaintNativeControls(parameters.shouldPaintNativeControls);
 
 #if USE(CFNETWORK)
-#if USE(CFURLSTORAGESESSIONS)
-    if (CFURLStorageSessionRef defaultStorageSession = wkDeserializeStorageSession(parameters.serializedDefaultStorageSession.get())) {
-        ResourceHandle::setDefaultStorageSession(defaultStorageSession);
-        return;
-    }
-#endif // USE(CFURLSTORAGESESSIONS)
-
     RetainPtr<CFStringRef> cachePath(AdoptCF, parameters.cfURLCachePath.createCFString());
     if (!cachePath)
         return;
@@ -153,7 +122,7 @@ void WebProcess::platformInitializeWebProcess(const WebProcessCreationParameters
     CFIndex cacheMemoryCapacity = parameters.cfURLCacheMemoryCapacity;
     RetainPtr<CFURLCacheRef> uiProcessCache(AdoptCF, CFURLCacheCreate(kCFAllocatorDefault, cacheMemoryCapacity, cacheDiskCapacity, cachePath.get()));
     CFURLCacheSetSharedURLCache(uiProcessCache.get());
-#endif // USE(CFNETWORK)
+#endif
 
     WebCookieManager::shared().setHTTPCookieAcceptPolicy(parameters.initialHTTPCookieAcceptPolicy);
 }

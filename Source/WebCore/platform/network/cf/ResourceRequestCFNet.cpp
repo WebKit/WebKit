@@ -26,7 +26,6 @@
 #include "config.h"
 #include "ResourceRequestCFNet.h"
 
-#include "ResourceHandle.h"
 #include "ResourceRequest.h"
 
 #if PLATFORM(MAC)
@@ -124,11 +123,9 @@ void ResourceRequest::doUpdatePlatformRequest()
         CFURLRequestSetMainDocumentURL(cfRequest, firstPartyForCookies.get());
         CFURLRequestSetCachePolicy(cfRequest, (CFURLRequestCachePolicy)cachePolicy());
         CFURLRequestSetTimeoutInterval(cfRequest, timeoutInterval());
-    } else
+    } else {
         cfRequest = CFURLRequestCreateMutable(0, url.get(), (CFURLRequestCachePolicy)cachePolicy(), timeoutInterval(), firstPartyForCookies.get());
-#if USE(CFURLSTORAGESESSIONS)
-    wkSetRequestStorageSession(ResourceHandle::currentStorageSession(), cfRequest);
-#endif
+    }
 
     RetainPtr<CFStringRef> requestMethod(AdoptCF, httpMethod().createCFString());
     CFURLRequestSetHTTPRequestMethod(cfRequest, requestMethod.get());

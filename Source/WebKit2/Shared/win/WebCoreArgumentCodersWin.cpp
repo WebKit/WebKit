@@ -29,9 +29,7 @@
 #if USE(CFNETWORK)
 #include "ArgumentCodersCF.h"
 #include "PlatformCertificateInfo.h"
-#include <CFNetwork/CFURLRequestPriv.h>
 #include <WebCore/CertificateCFWin.h>
-#include <WebCore/ResourceHandle.h>
 #include <WebKitSystemInterface/WebKitSystemInterface.h>
 #endif
 
@@ -72,13 +70,8 @@ bool decodeResourceRequest(ArgumentDecoder* decoder, WebCore::ResourceRequest& r
     CFURLRequestRef cfURLRequest = wkCFURLRequestCreateFromSerializableRepresentation(dictionary.get(), CoreIPC::tokenNullTypeRef());
     if (!cfURLRequest)
         return false;
-    CFMutableURLRequestRef mutableCFURLRequest = CFURLRequestCreateMutableCopy(0, cfURLRequest);
-    CFRelease(cfURLRequest);
-#if USE(CFURLSTORAGESESSIONS)
-    wkSetRequestStorageSession(WebCore::ResourceHandle::currentStorageSession(), mutableCFURLRequest);
-#endif
 
-    resourceRequest = WebCore::ResourceRequest(mutableCFURLRequest);
+    resourceRequest = WebCore::ResourceRequest(cfURLRequest);
     return true;
 #else
     return false;

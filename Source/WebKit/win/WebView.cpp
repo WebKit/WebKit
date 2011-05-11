@@ -452,7 +452,7 @@ void WebView::setCacheModel(WebCacheModel cacheModel)
         return;
 
     RetainPtr<CFURLCacheRef> cfurlCache(AdoptCF, CFURLCacheCopySharedURLCache());
-    RetainPtr<CFStringRef> cfurlCacheDirectory(AdoptCF, wkCopyFoundationCacheDirectory(0));
+    RetainPtr<CFStringRef> cfurlCacheDirectory(AdoptCF, wkCopyFoundationCacheDirectory());
     if (!cfurlCacheDirectory)
         cfurlCacheDirectory.adoptCF(WebCore::localUserSpecificStorageDirectory().createCFString());
 

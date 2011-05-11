@@ -1,3 +1,16 @@
+2011-05-11  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r86255.
+        http://trac.webkit.org/changeset/86255
+        https://bugs.webkit.org/show_bug.cgi?id=60660
+
+        REGRESSION (r86255): Lots of tests crashing in
+        CFWriteStreamCreateWithAllocatedBuffers on Windows 7 Release
+        (WebKit2 Tests) (Requested by aroben on #webkit).
+
+        * win/include/WebKitSystemInterface/WebKitSystemInterface.h:
+        * win/lib/WebKitSystemInterface.lib:
+
 2011-05-11  Jessie Berlin  <jberlin@apple.com>
 
         Reviewed by Steve Falkenburg.

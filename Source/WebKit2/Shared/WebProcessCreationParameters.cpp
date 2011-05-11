@@ -27,9 +27,6 @@
 #include "WebProcessCreationParameters.h"
 
 #include "ArgumentCoders.h"
-#if USE(CFURLSTORAGESESSIONS) && PLATFORM(WIN)
-#include "ArgumentCodersCF.h"
-#endif
 
 namespace WebKit {
 
@@ -82,9 +79,6 @@ void WebProcessCreationParameters::encode(CoreIPC::ArgumentEncoder* encoder) con
     encoder->encode(cfURLCacheDiskCapacity);
     encoder->encode(cfURLCacheMemoryCapacity);
     encoder->encode(initialHTTPCookieAcceptPolicy);
-#if USE(CFURLSTORAGESESSIONS)
-    CoreIPC::encode(encoder, serializedDefaultStorageSession.get());
-#endif // USE(CFURLSTORAGESESSIONS)
 #endif
 }
 
@@ -155,10 +149,6 @@ bool WebProcessCreationParameters::decode(CoreIPC::ArgumentDecoder* decoder, Web
         return false;
     if (!decoder->decode(parameters.initialHTTPCookieAcceptPolicy))
         return false;
-#if USE(CFURLSTORAGESESSIONS)
-    if (!CoreIPC::decode(decoder, parameters.serializedDefaultStorageSession))
-        return false;
-#endif // USE(CFURLSTORAGESESSIONS)
 #endif
 
     return true;

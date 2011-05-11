@@ -1,3 +1,28 @@
+2011-05-11  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r86255.
+        http://trac.webkit.org/changeset/86255
+        https://bugs.webkit.org/show_bug.cgi?id=60660
+
+        REGRESSION (r86255): Lots of tests crashing in
+        CFWriteStreamCreateWithAllocatedBuffers on Windows 7 Release
+        (WebKit2 Tests) (Requested by aroben on #webkit).
+
+        * Shared/WebProcessCreationParameters.cpp:
+        (WebKit::WebProcessCreationParameters::encode):
+        (WebKit::WebProcessCreationParameters::decode):
+        * Shared/WebProcessCreationParameters.h:
+        * Shared/win/WebCoreArgumentCodersWin.cpp:
+        (CoreIPC::decodeResourceRequest):
+        * UIProcess/win/WebContextWin.cpp:
+        (WebKit::WebContext::platformInitializeWebProcess):
+        * WebProcess/WebPage/win/WebPageWin.cpp:
+        (WebKit::cachedResponseForURL):
+        * WebProcess/win/WebProcessWin.cpp:
+        (WebKit::WebProcess::platformSetCacheModel):
+        (WebKit::WebProcess::platformClearResourceCaches):
+        (WebKit::WebProcess::platformInitializeWebProcess):
+
 2011-05-11  Adam Roben  <aroben@apple.com>
 
         Don't notify the plugin when a targeted javascript: URL request completes
