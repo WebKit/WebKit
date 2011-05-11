@@ -1,5 +1,22 @@
 2011-05-11  Adam Roben  <aroben@apple.com>
 
+        Use case-insensitive comparisons when checking plugin filenames on Windows
+
+        Windows paths are nearly always case-insensitive.
+
+        I couldn't think of a good way to test this.
+
+        Fixes <http://webkit.org/b/60633> WebKit1 loads Windows Presentation Foundation plugin, but
+        should not
+
+        Reviewed by Steve Falkenburg.
+
+        * plugins/win/PluginPackageWin.cpp:
+        (WebCore::PluginPackage::isPluginBlacklisted): Use equalIgnoringCase instead of == when
+        checking plugin filenames.
+
+2011-05-11  Adam Roben  <aroben@apple.com>
+
         Turn on strict PassOwnPtr on Windows
 
         Fixes <http://webkit.org/b/60632> Windows should build with strict PassOwnPtr enabled
