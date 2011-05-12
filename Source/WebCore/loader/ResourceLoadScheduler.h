@@ -50,7 +50,7 @@ class ResourceLoadScheduler {
 public:
     friend ResourceLoadScheduler* resourceLoadScheduler();
 
-    PassRefPtr<SubresourceLoader> scheduleSubresourceLoad(Frame*, SubresourceLoaderClient*, const ResourceRequest&, ResourceLoadPriority = ResourceLoadPriorityLow, SecurityCheckPolicy = DoSecurityCheck, bool sendResourceLoadCallbacks = true, bool shouldContentSniff = true, const String& optionalOutgoingReferrer = String());
+    PassRefPtr<SubresourceLoader> scheduleSubresourceLoad(Frame*, SubresourceLoaderClient*, const ResourceRequest&, ResourceLoadPriority = ResourceLoadPriorityLow, SecurityCheckPolicy = DoSecurityCheck, bool sendResourceLoadCallbacks = true, bool shouldContentSniff = true, const String& optionalOutgoingReferrer = String(), bool shouldBufferData = true);
     PassRefPtr<NetscapePlugInStreamLoader> schedulePluginStreamLoad(Frame*, NetscapePlugInStreamLoaderClient*, const ResourceRequest&);
     void addMainResourceLoad(ResourceLoader*);
     void remove(ResourceLoader*);

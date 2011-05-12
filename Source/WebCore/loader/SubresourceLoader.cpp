@@ -61,7 +61,7 @@ SubresourceLoader::~SubresourceLoader()
 #endif
 }
 
-PassRefPtr<SubresourceLoader> SubresourceLoader::create(Frame* frame, SubresourceLoaderClient* client, const ResourceRequest& request, SecurityCheckPolicy securityCheck, bool sendResourceLoadCallbacks, bool shouldContentSniff, const String& optionalOutgoingReferrer)
+PassRefPtr<SubresourceLoader> SubresourceLoader::create(Frame* frame, SubresourceLoaderClient* client, const ResourceRequest& request, SecurityCheckPolicy securityCheck, bool sendResourceLoadCallbacks, bool shouldContentSniff, const String& optionalOutgoingReferrer, bool shouldBufferData)
 {
     if (!frame)
         return 0;
@@ -100,6 +100,7 @@ PassRefPtr<SubresourceLoader> SubresourceLoader::create(Frame* frame, Subresourc
     fl->addExtraFieldsToSubresourceRequest(newRequest);
 
     RefPtr<SubresourceLoader> subloader(adoptRef(new SubresourceLoader(frame, client, sendResourceLoadCallbacks, shouldContentSniff)));
+    subloader->setShouldBufferData(shouldBufferData);
     subloader->documentLoader()->addSubresourceLoader(subloader.get());
     if (!subloader->init(newRequest))
         return 0;

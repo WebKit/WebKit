@@ -210,6 +210,7 @@ void AssociatedURLLoader::loadAsynchronously(const WebURLRequest& request, WebUR
     options.allowCredentials = m_options.allowCredentials;
     options.forcePreflight = m_options.forcePreflight;
     options.crossOriginRequestPolicy = static_cast<WebCore::CrossOriginRequestPolicy>(m_options.crossOriginRequestPolicy);
+    options.shouldBufferData = false;
 
     const ResourceRequest& webcoreRequest = request.toResourceRequest();
     Document* webcoreDocument = m_frameImpl->frame()->document();

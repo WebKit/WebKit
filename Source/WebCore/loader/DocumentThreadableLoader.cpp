@@ -346,11 +346,13 @@ void DocumentThreadableLoader::loadRequest(const ResourceRequest& request, Secur
         // Don't sniff content or send load callbacks for the preflight request.
         bool sendLoadCallbacks = m_options.sendLoadCallbacks && !m_actualRequest;
         bool sniffContent = m_options.sniffContent && !m_actualRequest;
+        // Keep buffering the data for the preflight request.
+        bool shouldBufferData = m_options.shouldBufferData || m_actualRequest;
 
         // Clear the loader so that any callbacks from SubresourceLoader::create will not have the old loader.
         m_loader = 0;
         m_loader = resourceLoadScheduler()->scheduleSubresourceLoad(m_document->frame(), this, request, ResourceLoadPriorityMedium, securityCheck, sendLoadCallbacks,
-                                                                    sniffContent, m_optionalOutgoingReferrer);
+                                                                    sniffContent, m_optionalOutgoingReferrer, shouldBufferData);
         return;
     }
     

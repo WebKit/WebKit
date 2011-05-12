@@ -1,3 +1,30 @@
+2011-05-11  Antoine Labour  <piman@chromium.org>
+
+        Reviewed by David Levin.
+
+        Expose shouldBufferData to ThreadableLoaderOptions to be able to disable buffering of the
+        loaded resource.
+        https://bugs.webkit.org/show_bug.cgi?id=60656
+
+        * loader/DocumentThreadableLoader.cpp:
+        (WebCore::DocumentThreadableLoader::loadRequest):
+        Pass the shouldBufferData to the resource load scheduler, forcing it to true for the
+        preflight request.
+        * loader/ResourceLoadScheduler.cpp:
+        (WebCore::ResourceLoadScheduler::scheduleSubresourceLoad):
+        Pass through shouldBufferData to SubresourceLoader::create
+        * loader/ResourceLoadScheduler.h:
+
+        * loader/SubresourceLoader.cpp:
+        (WebCore::SubresourceLoader::create):
+        Set shouldBufferData on the newly created loader
+
+        * loader/SubresourceLoader.h:
+
+        * loader/ThreadableLoader.h:
+        (WebCore::ThreadableLoaderOptions::ThreadableLoaderOptions):
+        Add shouldBufferData to the options, defaulting to true.
+
 2011-05-11  Jay Civelli  <jcivelli@chromium.org>
 
         Reviewed by Adam Barth.

@@ -1,3 +1,13 @@
+2011-05-11  Antoine Labour  <piman@chromium.org>
+
+        Reviewed by David Levin.
+
+        Don't buffer data for resources loaded by AssociatedURLLoader.
+        https://bugs.webkit.org/show_bug.cgi?id=60656
+
+        * src/AssociatedURLLoader.cpp:
+        (WebKit::AssociatedURLLoader::loadAsynchronously): set shouldBufferData to false in ThreadableLoaderOptions
+
 2011-05-11  Nat Duca  <nduca@chromium.org>
 
         Reviewed by Kenneth Russell.

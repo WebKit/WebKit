@@ -84,9 +84,9 @@ ResourceLoadScheduler::ResourceLoadScheduler()
 }
 
 PassRefPtr<SubresourceLoader> ResourceLoadScheduler::scheduleSubresourceLoad(Frame* frame, SubresourceLoaderClient* client, const ResourceRequest& request, ResourceLoadPriority priority, SecurityCheckPolicy securityCheck,
-                                                                             bool sendResourceLoadCallbacks, bool shouldContentSniff, const String& optionalOutgoingReferrer)
+                                                                             bool sendResourceLoadCallbacks, bool shouldContentSniff, const String& optionalOutgoingReferrer, bool shouldBufferData)
 {
-    RefPtr<SubresourceLoader> loader = SubresourceLoader::create(frame, client, request, securityCheck, sendResourceLoadCallbacks, shouldContentSniff, optionalOutgoingReferrer);
+    RefPtr<SubresourceLoader> loader = SubresourceLoader::create(frame, client, request, securityCheck, sendResourceLoadCallbacks, shouldContentSniff, optionalOutgoingReferrer, shouldBufferData);
     if (loader)
         scheduleLoad(loader.get(), priority);
     return loader.release();
