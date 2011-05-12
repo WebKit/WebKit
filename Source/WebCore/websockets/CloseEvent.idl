@@ -28,6 +28,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#if defined(ENABLE_WEB_SOCKETS) && ENABLE_WEB_SOCKETS
 module events {
 
 interface CloseEvent : Event {
@@ -36,3 +37,4 @@ interface CloseEvent : Event {
 };
 
 }
+#endif
