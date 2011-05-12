@@ -1,3 +1,11 @@
+2011-05-12  Adam Roben  <aroben@apple.com>
+
+        Fix linker warnings in Production builds
+
+        * WebCore.vcproj/WebCore.vcproj: Exclude JSSVGFEDropShadowElement.cpp from the build in the
+        Production configuration, just like in the other configurations. Let VS resort some files
+        (again).
+
 2011-05-12  Philippe Normand  <pnormand@igalia.com>
 
         Reviewed by Adam Roben.
