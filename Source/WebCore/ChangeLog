@@ -1,3 +1,19 @@
+2011-05-12  Emil A Eklund  <eae@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        Replace IntPoint with const IntPoint& in RenderFlexibleBox::placeChild
+        https://bugs.webkit.org/show_bug.cgi?id=60640
+
+        Pass by const reference instead of by value for consistency reasons.
+
+        Refactoring, covered by existing tests.
+
+        * rendering/RenderFlexibleBox.cpp:
+        (WebCore::RenderFlexibleBox::placeChild):
+        * rendering/RenderFlexibleBox.h:
+        Use const IntPoint& instead of just IntPoint to avoid extra constructor overhead
+
 2011-05-12  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Sam Weinig.

@@ -933,7 +933,7 @@ void RenderFlexibleBox::applyLineClamp(FlexBoxIterator& iterator, bool relayoutC
     }
 }
 
-void RenderFlexibleBox::placeChild(RenderBox* child, IntPoint location)
+void RenderFlexibleBox::placeChild(RenderBox* child, const IntPoint& location)
 {
     IntRect oldRect = child->frameRect();
 
