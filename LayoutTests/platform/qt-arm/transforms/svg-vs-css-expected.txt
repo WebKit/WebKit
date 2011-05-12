@@ -1,0 +1,66 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x576
+  RenderBlock {html} at (0,0) size 800x576
+    RenderBody {body} at (8,8) size 784x560
+      RenderBlock {div} at (10,10) size 220x540
+        RenderBlock {h2} at (0,19) size 220x27
+          RenderText {#text} at (0,2) size 150x23
+            text run at (0,2) width 150: "SVG nested"
+        RenderBlock {h2} at (0,284) size 220x27
+          RenderText {#text} at (0,2) size 150x23
+            text run at (0,2) width 150: "CSS nested"
+      RenderText {#text} at (240,2) size 5x29
+        text run at (240,2) width 5: " "
+      RenderBlock {div} at (255,10) size 220x540
+        RenderBlock {h2} at (0,19) size 220x27
+          RenderText {#text} at (0,2) size 180x23
+            text run at (0,2) width 180: "SVG compound"
+        RenderBlock {h2} at (0,284) size 220x27
+          RenderText {#text} at (0,2) size 180x23
+            text run at (0,2) width 180: "CSS compound"
+      RenderText {#text} at (485,2) size 5x29
+        text run at (485,2) width 5: " "
+      RenderBlock {div} at (500,10) size 220x540
+        RenderBlock {h2} at (0,19) size 220x27
+          RenderText {#text} at (0,2) size 150x23
+            text run at (0,2) width 150: "SVG Matrix"
+        RenderBlock {h2} at (0,284) size 220x27
+          RenderText {#text} at (0,2) size 135x23
+            text run at (0,2) width 135: "CSSMatrix"
+      RenderText {#text} at (0,0) size 0x0
+layer at (28,83) size 200x200
+  RenderBlock (relative positioned) {div} at (10,65) size 200x200 [bgcolor=#C0C0C0] [border: (1px solid #000000)]
+    RenderSVGRoot {svg} at (29,107) size 196x174
+      RenderSVGContainer {g} at (29,107) size 196x174 [transform={m=((1.00,0.00)(0.00,1.00)) t=(75.00,25.00)}]
+        RenderSVGPath {rect} at (103,108) size 62x62 [stroke={[type=SOLID] [color=#000000] [dash array={1.00, 1.00}]}] [x=0.00] [y=0.00] [width=60.00] [height=60.00]
+        RenderSVGContainer {g} at (29,107) size 197x174 [transform={m=((2.00,0.00)(0.00,2.00)) t=(0.00,0.00)}]
+          RenderSVGPath {rect} at (102,107) size 124x124 [stroke={[type=SOLID] [color=#000000] [dash array={1.00, 1.00}]}] [x=0.00] [y=0.00] [width=60.00] [height=60.00]
+          RenderSVGPath {rect} at (29,105) size 163x178 [transform={m=((0.71,0.71)(-0.71,0.71)) t=(0.00,0.00)}] [stroke={[type=SOLID] [color=#0000FF]}] [x=0.00] [y=0.00] [width=60.00] [height=60.00]
+    RenderText {#text} at (0,0) size 0x0
+layer at (28,348) size 200x200
+  RenderBlock (relative positioned) {div} at (10,330) size 200x200 [bgcolor=#C0C0C0] [border: (1px solid #000000)]
+layer at (29,349) size 60x60
+  RenderBlock (positioned) {div} at (1,1) size 60x60 [border: (1px dotted #000000)]
+layer at (30,350) size 60x60
+  RenderBlock (positioned) {div} at (1,1) size 60x60 [border: (1px dotted #000000)]
+layer at (31,351) size 60x60
+  RenderBlock (positioned) {div} at (1,1) size 60x60 [border: (1px solid #0000FF)]
+layer at (273,83) size 200x200
+  RenderBlock (relative positioned) {div} at (10,65) size 200x200 [bgcolor=#C0C0C0] [border: (1px solid #000000)]
+    RenderSVGRoot {svg} at (274,107) size 162x174
+      RenderSVGPath {rect} at (274,106) size 163x176 [transform={m=((1.41,1.41)(-1.41,1.41)) t=(75.00,25.00)}] [stroke={[type=SOLID] [color=#0000FF]}] [x=0.00] [y=0.00] [width=60.00] [height=60.00]
+    RenderText {#text} at (0,0) size 0x0
+layer at (273,348) size 200x200
+  RenderBlock (relative positioned) {div} at (10,330) size 200x200 [bgcolor=#C0C0C0] [border: (1px solid #000000)]
+layer at (274,349) size 60x60
+  RenderBlock (positioned) {div} at (1,1) size 60x60 [border: (1px solid #0000FF)]
+layer at (518,83) size 200x200
+  RenderBlock (relative positioned) {div} at (10,65) size 200x200 [bgcolor=#C0C0C0] [border: (1px solid #000000)]
+    RenderSVGRoot {svg} at (519,107) size 162x174
+      RenderSVGPath {rect} at (519,106) size 163x176 [transform={m=((1.41,1.41)(-1.41,1.41)) t=(75.00,25.00)}] [stroke={[type=SOLID] [color=#0000FF]}] [x=0.00] [y=0.00] [width=60.00] [height=60.00]
+    RenderText {#text} at (0,0) size 0x0
+layer at (518,348) size 200x200
+  RenderBlock (relative positioned) {div} at (10,330) size 200x200 [bgcolor=#C0C0C0] [border: (1px solid #000000)]
+layer at (519,349) size 60x60
+  RenderBlock (positioned) {div} at (1,1) size 60x60 [border: (1px solid #0000FF)]

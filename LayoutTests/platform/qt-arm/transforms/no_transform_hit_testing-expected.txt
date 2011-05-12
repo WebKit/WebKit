@@ -1,0 +1,20 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x576
+      RenderBlock {H1} at (0,0) size 784x74
+        RenderText {#text} at (0,2) size 720x69
+          text run at (0,2) width 720: "Testing hittest on a layer with null"
+          text run at (0,39) width 180: "transform"
+      RenderBlock {P} at (0,95) size 784x34
+        RenderText {#text} at (0,2) size 326x29
+          text run at (0,2) width 326: "https://bugs.webkit.org/show_bug.cgi?id=24252"
+layer at (20,96) size 400x100
+  RenderBlock (positioned) {P} at (20,96) size 400x100 [bgcolor=#DDDDFF]
+    RenderText {#text} at (0,2) size 131x29
+      text run at (0,2) width 131: "transformed element"
+layer at (8,216) size 26x34
+  RenderBlock (positioned) {P} at (8,216) size 26x34
+    RenderText {#text} at (0,2) size 26x29
+      text run at (0,2) width 26: "pass"

@@ -4133,3 +4133,6 @@ plugins/embed-prefers-plugins-for-images.html
 editing/pasteboard/4242293-1.html
 editing/pasteboard/paste-text-001.html
 editing/pasteboard/paste-text-at-tabspan-001.html
+
+# Missing plugin.getURLNotify() implementation
+plugins/get-targeted-javascript-url.html

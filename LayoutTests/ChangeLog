@@ -1,3 +1,21 @@
+2011-05-12  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Add new expected files after r86313.
+
+        * platform/qt-arm/fast/transforms/transform-positioned-ancestor-expected.txt: Added.
+        * platform/qt-arm/transforms/2d/transform-borderbox-expected.txt: Added.
+        * platform/qt-arm/transforms/2d/transform-origin-borderbox-expected.txt: Added.
+        * platform/qt-arm/transforms/2d/zoom-menulist-expected.txt: Added.
+        * platform/qt-arm/transforms/no_transform_hit_testing-expected.txt: Added.
+        * platform/qt-arm/transforms/svg-vs-css-expected.txt: Added.
+        * platform/qt-mac/Skipped: Add plugins/get-targeted-javascript-url.html because of missing plugin.getURLNotify() implementation
+        * platform/qt-mac/fast/transforms/transform-positioned-ancestor-expected.txt: Added.
+        * platform/qt-mac/transforms/2d/transform-borderbox-expected.txt: Added.
+        * platform/qt-mac/transforms/2d/transform-origin-borderbox-expected.txt: Added.
+        * platform/qt-mac/transforms/2d/zoom-menulist-expected.txt: Added.
+        * platform/qt-mac/transforms/no_transform_hit_testing-expected.txt: Added.
+        * platform/qt-mac/transforms/svg-vs-css-expected.txt: Added.
+
 2011-05-12  Philippe Normand  <pnormand@igalia.com>
 
         Unreviewed, GTK rebaseline after r86307.
