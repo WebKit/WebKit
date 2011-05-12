@@ -1,3 +1,17 @@
+2011-05-12  Philippe Normand  <pnormand@igalia.com>
+
+        Reviewed by Adam Roben.
+
+        Autocorrection persists after deleting and retyping the same word at same location.
+        https://bugs.webkit.org/show_bug.cgi?id=60555
+
+        Follow-up fix for the 3 editing/deleting tests crashing on GTK,
+        Leopard and Windows XP. Don't create the Range if the start of the
+        selection has no next position.
+
+        * editing/DeleteSelectionCommand.cpp:
+        (WebCore::DeleteSelectionCommand::originalStringForAutocorrectionAtBeginningOfSelection):
+
 2011-05-12  Adam Roben  <aroben@apple.com>
 
         Attempted WinCairo build fix after r86169

@@ -754,7 +754,11 @@ String DeleteSelectionCommand::originalStringForAutocorrectionAtBeginningOfSelec
     if (!isStartOfWord(startOfSelection))
         return String();
 
-    RefPtr<Range> rangeOfFirstCharacter = Range::create(document(), startOfSelection.deepEquivalent(), startOfSelection.next().deepEquivalent());
+    VisiblePosition nextPosition = startOfSelection.next();
+    if (nextPosition.isNull())
+        return String();
+
+    RefPtr<Range> rangeOfFirstCharacter = Range::create(document(), startOfSelection.deepEquivalent(), nextPosition.deepEquivalent());
     Vector<DocumentMarker> markers = document()->markers()->markersInRange(rangeOfFirstCharacter.get(), DocumentMarker::Autocorrected);
     for (size_t i = 0; i < markers.size(); ++i) {
         const DocumentMarker& marker = markers[i];
