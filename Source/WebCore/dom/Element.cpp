@@ -154,7 +154,7 @@ PassRefPtr<DocumentFragment> Element::deprecatedCreateContextualFragment(const S
     RefPtr<Node> nextNode;
     for (RefPtr<Node> node = fragment->firstChild(); node; node = nextNode) {
         nextNode = node->nextSibling();
-        if (node->hasTagName(htmlTag) || node->hasTagName(bodyTag)) {
+        if (node->hasTagName(htmlTag) || node->hasTagName(headTag) || node->hasTagName(bodyTag)) {
             HTMLElement* element = toHTMLElement(node.get());
             Node* firstChild = element->firstChild();
             if (firstChild)
@@ -169,14 +169,11 @@ PassRefPtr<DocumentFragment> Element::deprecatedCreateContextualFragment(const S
             }
             fragment->removeChild(element, ignoredExceptionCode);
             ASSERT(!ignoredExceptionCode);
-        } else if (node->hasTagName(headTag)) {
-            fragment->removeChild(node.get(), ignoredExceptionCode);
-            ASSERT(!ignoredExceptionCode);
         }
     }
     return fragment.release();
 }
-    
+
 PassRefPtr<Node> Element::cloneNode(bool deep)
 {
     return deep ? cloneElementWithChildren() : cloneElementWithoutChildren();

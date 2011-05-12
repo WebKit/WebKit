@@ -1,3 +1,20 @@
+2011-05-12  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        REGRESSION (r65868): createContextualFragment does not work with <style>
+        https://bugs.webkit.org/show_bug.cgi?id=60155
+
+        createContextualFragment doesn't have a spec, so it's hard to tell what
+        we're supposed to do exactly.  This patch appears to make our behavior
+        more like Firefox and should fix the compat issue with this site.
+
+        Tests: fast/parser/style-in-create-contextual-fragment-head.html
+               fast/parser/style-in-create-contextual-fragment.html
+
+        * dom/Element.cpp:
+        (WebCore::Element::deprecatedCreateContextualFragment):
+
 2011-05-12  Ryosuke Niwa  <rniwa@webkit.org>
 
         Reviewed by Darin Adler.
