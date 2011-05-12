@@ -430,13 +430,13 @@ private:
     {
         // The shadows in ShadowData are stored in reverse order, so when animating mismatched lists,
         // reverse them and match from the end.
-        Vector<const ShadowData*> fromShadows(fromLength);
+        Vector<const ShadowData*, 4> fromShadows(fromLength);
         for (int i = fromLength - 1; i >= 0; --i) {
             fromShadows[i] = shadowA;
             shadowA = shadowA->next();
         }
 
-        Vector<const ShadowData*> toShadows(toLength);
+        Vector<const ShadowData*, 4> toShadows(toLength);
         for (int i = toLength - 1; i >= 0; --i) {
             toShadows[i] = shadowB;
             shadowB = shadowB->next();

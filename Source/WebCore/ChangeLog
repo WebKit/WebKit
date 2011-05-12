@@ -1,5 +1,13 @@
 2011-05-12  Simon Fraser  <simon.fraser@apple.com>
 
+        Followup to r86351; give the vectors some inline capacity
+        to avoid heap allocations in most cases.
+
+        * page/animation/AnimationBase.cpp:
+        (WebCore::PropertyWrapperShadow::blendMismatchedShadowLists):
+
+2011-05-12  Simon Fraser  <simon.fraser@apple.com>
+
         Reviewed by Dan Bernstein.
 
         Mismatched multiple box-shadows do not transition as expected
