@@ -1,3 +1,15 @@
+2011-05-12  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Reviewed by Martin Robinson.
+
+        Fix the build with ENABLE_PLUGIN_PROCESS
+        https://bugs.webkit.org/show_bug.cgi?id=60628
+
+        * WebProcess/Plugins/PluginProxy.cpp:
+        (WebKit::PluginProxy::initialize): Move the call to
+        pluginController->isAcceleratedCompositingEnabled() to a #ifdef block.
+        * WebProcess/Plugins/PluginProxy.h: Add include for <WebCore/IntRect.h>.
+
 2011-05-11  Damian Kaleta  <dkaleta@apple.com>
 
         Reviewed by Brady Eidson.

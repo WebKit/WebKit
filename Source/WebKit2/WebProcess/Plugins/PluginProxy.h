@@ -30,6 +30,7 @@
 
 #include "Connection.h"
 #include "Plugin.h"
+#include <WebCore/IntRect.h>
 
 #if PLATFORM(MAC)
 #include <wtf/RetainPtr.h>

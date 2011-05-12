@@ -99,9 +99,13 @@ bool PluginProxy::initialize(PluginController* pluginController, const Parameter
 
     // Ask the plug-in process to create a plug-in.
     bool result = false;
+    bool isAcceleratedCompositingEnabled = false;
+#if USE(ACCELERATED_COMPOSITING)
+    isAcceleratedCompositingEnabled = pluginController->isAcceleratedCompositingEnabled();
+#endif
 
     uint32_t remoteLayerClientID = 0;
-    if (!m_connection->connection()->sendSync(Messages::WebProcessConnection::CreatePlugin(m_pluginInstanceID, parameters, pluginController->userAgent(), pluginController->isPrivateBrowsingEnabled(), pluginController->isAcceleratedCompositingEnabled()), Messages::WebProcessConnection::CreatePlugin::Reply(result, remoteLayerClientID), 0) || !result) {
+    if (!m_connection->connection()->sendSync(Messages::WebProcessConnection::CreatePlugin(m_pluginInstanceID, parameters, pluginController->userAgent(), pluginController->isPrivateBrowsingEnabled(), isAcceleratedCompositingEnabled), Messages::WebProcessConnection::CreatePlugin::Reply(result, remoteLayerClientID), 0) || !result) {
         m_connection->removePluginProxy(this);
         return false;
     }
