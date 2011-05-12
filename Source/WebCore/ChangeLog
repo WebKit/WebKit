@@ -1,5 +1,15 @@
 2011-05-12  Adam Roben  <aroben@apple.com>
 
+        Attempted WinCairo build fix after r86169
+
+        * WebCore.vcproj/WebCore.vcproj: Added CredentialStorageCurl.cpp. Also let VS do what it
+        wants.
+
+        * platform/network/curl/CredentialStorageCurl.cpp: Added.
+        (WebCore::CredentialStorage::getFromPersistentStorage): Stubbed out.
+
+2011-05-12  Adam Roben  <aroben@apple.com>
+
         Build fixes after r86325
 
         * editing/SpellingCorrectionController.cpp:

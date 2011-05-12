@@ -24502,11 +24502,11 @@
 				>
 			</File>
 			<File
-				RelativePath="..\page\DragState.h"
+				RelativePath="..\page\win\DragControllerWin.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\page\win\DragControllerWin.cpp"
+				RelativePath="..\page\DragState.h"
 				>
 			</File>
 			<File
@@ -30024,6 +30024,42 @@
 						</FileConfiguration>
 					</File>
 					<File
+						RelativePath="..\platform\network\curl\CredentialStorageCurl.cpp"
+						>
+						<FileConfiguration
+							Name="Debug|Win32"
+							ExcludedFromBuild="true"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+							/>
+						</FileConfiguration>
+						<FileConfiguration
+							Name="Release|Win32"
+							ExcludedFromBuild="true"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+							/>
+						</FileConfiguration>
+						<FileConfiguration
+							Name="Debug_All|Win32"
+							ExcludedFromBuild="true"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+							/>
+						</FileConfiguration>
+						<FileConfiguration
+							Name="Production|Win32"
+							ExcludedFromBuild="true"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+							/>
+						</FileConfiguration>
+					</File>
+					<File
 						RelativePath="..\platform\network\curl\DNSCurl.cpp"
 						>
 						<FileConfiguration
@@ -30536,14 +30572,14 @@
 					RelativePath="..\platform\text\PlatformString.h"
 					>
 				</File>
-                                <File
-                                        RelativePath="..\platform\text\QuotedPrintable.cpp"
-                                        >
-                                </File>
-                                <File
-                                        RelativePath="..\platform\text\QuotedPrintable.h"
-                                        >
-                                </File>
+				<File
+					RelativePath="..\platform\text\QuotedPrintable.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\platform\text\QuotedPrintable.h"
+					>
+				</File>
 				<File
 					RelativePath="..\platform\text\RegularExpression.cpp"
 					>
@@ -44530,10 +44566,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\dom\IgnoreDestructiveWriteCountIncrementer.h"
-				>
-			</File>
-			<File
 				RelativePath="..\dom\IconURL.cpp"
 				>
 				<FileConfiguration
@@ -44587,6 +44619,10 @@
 			</File>
 			<File
 				RelativePath="..\dom\IconURL.h"
+				>
+			</File>
+			<File
+				RelativePath="..\dom\IgnoreDestructiveWriteCountIncrementer.h"
 				>
 			</File>
 			<File
@@ -66829,11 +66865,11 @@
 					>
 				</File>
 				<File
-					RelativePath="..\inspector\front-end\UglifyJS\JavaScriptFormatter.js"
+					RelativePath="..\inspector\front-end\JavaScriptFormatter.js"
 					>
 				</File>
 				<File
-					RelativePath="..\inspector\front-end\JavaScriptFormatter.js"
+					RelativePath="..\inspector\front-end\UglifyJS\JavaScriptFormatter.js"
 					>
 				</File>
 				<File
