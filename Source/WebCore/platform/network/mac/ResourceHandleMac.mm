@@ -137,16 +137,6 @@ namespace WebCore {
 static bool isInitializingConnection;
 #endif
     
-class CallbackGuard {
-public:
-    CallbackGuard()
-    {
-    }
-    ~CallbackGuard()
-    {
-    }
-};
-
 static String encodeBasicAuthorization(const String& user, const String& password)
 {
     return base64Encode((user + ":" + password).utf8());
@@ -717,7 +707,6 @@ String ResourceHandle::privateBrowsingStorageSessionIdentifierDefaultBase()
         }
     }
 
-    CallbackGuard guard;
     ResourceRequest request = newRequest;
 
     // Should not set Referer after a redirect from a secure resource to non-secure one.
@@ -749,7 +738,6 @@ String ResourceHandle::privateBrowsingStorageSessionIdentifierDefaultBase()
     if (!m_handle)
         return NO;
 
-    CallbackGuard guard;
     return m_handle->shouldUseCredentialStorage();
 }
 
@@ -761,7 +749,6 @@ String ResourceHandle::privateBrowsingStorageSessionIdentifierDefaultBase()
 
     if (!m_handle)
         return;
-    CallbackGuard guard;
     m_handle->didReceiveAuthenticationChallenge(core(challenge));
 }
 
@@ -773,7 +760,6 @@ String ResourceHandle::privateBrowsingStorageSessionIdentifierDefaultBase()
 
     if (!m_handle)
         return;
-    CallbackGuard guard;
     m_handle->didCancelAuthenticationChallenge(core(challenge));
 }
 
@@ -785,7 +771,6 @@ String ResourceHandle::privateBrowsingStorageSessionIdentifierDefaultBase()
     if (!m_handle)
         return NO;
         
-    CallbackGuard guard;
     return m_handle->canAuthenticateAgainstProtectionSpace(core(protectionSpace));
 }
 #endif
@@ -798,7 +783,6 @@ String ResourceHandle::privateBrowsingStorageSessionIdentifierDefaultBase()
 
     if (!m_handle || !m_handle->client())
         return;
-    CallbackGuard guard;
 
     // Avoid MIME type sniffing if the response comes back as 304 Not Modified.
     int statusCode = [r respondsToSelector:@selector(statusCode)] ? [(id)r statusCode] : 0;
@@ -851,7 +835,7 @@ String ResourceHandle::privateBrowsingStorageSessionIdentifierDefaultBase()
     // FIXME: If we get more than 2B bytes in a single chunk, this code won't do the right thing.
     // However, with today's computers and networking speeds, this won't happen in practice.
     // Could be an issue with a giant local file.
-    CallbackGuard guard;
+
     // FIXME: https://bugs.webkit.org/show_bug.cgi?id=19793
     // -1 means we do not provide any data about transfer size to inspector so it would use
     // Content-Length headers or content size to show transfer size.
@@ -869,7 +853,6 @@ String ResourceHandle::privateBrowsingStorageSessionIdentifierDefaultBase()
     // FIXME: If we get a resource with more than 2B bytes, this code won't do the right thing.
     // However, with today's computers and networking speeds, this won't happen in practice.
     // Could be an issue with a giant local file.
-    CallbackGuard guard;
     m_handle->client()->willStopBufferingData(m_handle, (const char*)[data bytes], static_cast<int>([data length]));
 }
 
@@ -882,7 +865,6 @@ String ResourceHandle::privateBrowsingStorageSessionIdentifierDefaultBase()
 
     if (!m_handle || !m_handle->client())
         return;
-    CallbackGuard guard;
     m_handle->client()->didSendData(m_handle, totalBytesWritten, totalBytesExpectedToWrite);
 }
 
@@ -894,7 +876,6 @@ String ResourceHandle::privateBrowsingStorageSessionIdentifierDefaultBase()
 
     if (!m_handle || !m_handle->client())
         return;
-    CallbackGuard guard;
 
     if (!ResourceHandle::didSendBodyDataDelegateExists())
         disassociateStreamWithResourceHandle([m_handle->firstRequest().nsURLRequest() HTTPBodyStream]);
@@ -910,7 +891,6 @@ String ResourceHandle::privateBrowsingStorageSessionIdentifierDefaultBase()
 
     if (!m_handle || !m_handle->client())
         return;
-    CallbackGuard guard;
 
     if (!ResourceHandle::didSendBodyDataDelegateExists())
         disassociateStreamWithResourceHandle([m_handle->firstRequest().nsURLRequest() HTTPBodyStream]);
@@ -933,8 +913,6 @@ String ResourceHandle::privateBrowsingStorageSessionIdentifierDefaultBase()
     if (!m_handle || !m_handle->client())
         return nil;
 
-    CallbackGuard guard;
-    
     NSCachedURLResponse *newResponse = m_handle->client()->willCacheResponse(m_handle, cachedResponse);
     if (newResponse != cachedResponse)
         return newResponse;

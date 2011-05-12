@@ -1,3 +1,26 @@
+2011-05-11  Pratik Solanki  <psolanki@apple.com>
+
+        Reviewed by Andreas Kling.
+
+        Remove empty class CallbackGuard
+        https://bugs.webkit.org/show_bug.cgi?id=60610
+
+        CallbackGuard was only ever used on Tiger and it is now an empty class. Remove all uses of it.
+
+        * platform/network/mac/ResourceHandleMac.mm:
+        (-[WebCoreResourceHandleAsDelegate connection:willSendRequest:redirectResponse:]):
+        (-[WebCoreResourceHandleAsDelegate connectionShouldUseCredentialStorage:]):
+        (-[WebCoreResourceHandleAsDelegate connection:didReceiveAuthenticationChallenge:]):
+        (-[WebCoreResourceHandleAsDelegate connection:didCancelAuthenticationChallenge:]):
+        (-[WebCoreResourceHandleAsDelegate connection:canAuthenticateAgainstProtectionSpace:]):
+        (-[WebCoreResourceHandleAsDelegate connection:didReceiveResponse:]):
+        (-[WebCoreResourceHandleAsDelegate connection:didReceiveData:lengthReceived:]):
+        (-[WebCoreResourceHandleAsDelegate connection:willStopBufferingData:]):
+        (-[WebCoreResourceHandleAsDelegate connection:didSendBodyData:totalBytesWritten:totalBytesExpectedToWrite:]):
+        (-[WebCoreResourceHandleAsDelegate connectionDidFinishLoading:]):
+        (-[WebCoreResourceHandleAsDelegate connection:didFailWithError:]):
+        (-[WebCoreResourceHandleAsDelegate connection:willCacheResponse:]):
+
 2011-05-11  Luke Macpherson   <macpherson@chromium.org>
 
         Reviewed by Eric Seidel.
