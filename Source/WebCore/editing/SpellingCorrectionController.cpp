@@ -429,6 +429,9 @@ void SpellingCorrectionController::respondToAppliedEditing(EditCommand* command)
 {
     if (command->isTopLevelCommand() && !command->shouldRetainAutocorrectionIndicator())
         m_frame->document()->markers()->removeMarkers(DocumentMarker::CorrectionIndicator);
+
+    markPrecedingWhitespaceForDeletedAutocorrectionAfterCommand(command);
+    m_originalStringForLastDeletedAutocorrection = String();
 }
 
 void SpellingCorrectionController::respondToUnappliedEditing(EditCommand* command)
@@ -502,6 +505,59 @@ void SpellingCorrectionController::recordSpellcheckerResponseForModifiedCorrecti
     markers->removeMarkers(rangeOfCorrection, DocumentMarker::Autocorrected, DocumentMarkerController::RemovePartiallyOverlappingMarker);
 }
 
+void SpellingCorrectionController::deletedAutocorrectionAtPosition(const Position& position, const String& originalString)
+{
+    m_originalStringForLastDeletedAutocorrection = originalString;
+    m_positionForLastDeletedAutocorrection = position;
+}
+
+void SpellingCorrectionController::markPrecedingWhitespaceForDeletedAutocorrectionAfterCommand(EditCommand* command)
+{
+    Position endOfSelection = command->endingSelection().end();
+    if (endOfSelection != m_positionForLastDeletedAutocorrection)
+        return;
+
+    Position precedingCharacterPosition = endOfSelection.previous();
+    if (endOfSelection == precedingCharacterPosition)
+        return;
+
+    RefPtr<Range> precedingCharacterRange = Range::create(m_frame->document(), precedingCharacterPosition, endOfSelection);
+    String string = plainText(precedingCharacterRange.get());
+    if (string.isEmpty() || !isWhitespace(string[string.length() - 1]))
+        return;
+
+    // Mark this whitespace to indicate we have deleted an autocorrection following this
+    // whitespace. So if the user types the same original word again at this position, we
+    // won't autocorrect it again.
+    m_frame->document()->markers()->addMarker(precedingCharacterRange.get(), DocumentMarker::DeletedAutocorrection, m_originalStringForLastDeletedAutocorrection);
+}
+
+bool SpellingCorrectionController::processMarkersOnTextToBeReplacedByResult(const TextCheckingResult* result, Range* rangeToBeReplaced, const String& stringToBeReplaced)
+{
+    DocumentMarkerController* markerController = m_frame->document()->markers();
+    if (markerController->hasMarkers(rangeToBeReplaced, DocumentMarker::Replacement)) {
+        if (result->type == TextCheckingTypeCorrection)
+            recordSpellcheckerResponseForModifiedCorrection(rangeToBeReplaced, stringToBeReplaced, result->replacement);
+        return false;
+    }
+
+    if (markerController->hasMarkers(rangeToBeReplaced, DocumentMarker::RejectedCorrection))
+        return false;
+
+    Position beginningOfRange = rangeToBeReplaced->startPosition();
+    Position precedingCharacterPosition = beginningOfRange.previous();
+    RefPtr<Range> precedingCharacterRange = Range::create(m_frame->document(), precedingCharacterPosition, beginningOfRange);
+
+    Vector<DocumentMarker> markers = markerController->markersInRange(precedingCharacterRange.get(), DocumentMarker::DeletedAutocorrection);
+
+    for (size_t i = 0; i < markers.size(); ++i) {
+        if (markers[i].description == stringToBeReplaced)
+            return false;
+    }
+
+    return true;
+}
+    
 #endif
 
 } // namespace WebCore

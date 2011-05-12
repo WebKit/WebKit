@@ -2229,18 +2229,12 @@ void Editor::markAllMisspellingsAndBadGrammarInRanges(TextCheckingOptions textCh
             if (result->type == TextCheckingTypeLink && selectionOffset > resultLocation + resultLength + 1)
                 continue;
 
-            String replacedString = plainText(rangeToReplace.get());
-
-            // Don't correct spelling in an already-corrected word.
-            DocumentMarkerController* markers = m_frame->document()->markers();
-            if (markers->hasMarkers(rangeToReplace.get(), DocumentMarker::Replacement)) {
-                doReplacement = false;
-                if (result->type == TextCheckingTypeCorrection)
-                    m_spellingCorrector->recordSpellcheckerResponseForModifiedCorrection(rangeToReplace.get(), replacedString, result->replacement);
-            } else if (markers->hasMarkers(rangeToReplace.get(), DocumentMarker::RejectedCorrection))
-                doReplacement = false;
-
             if (!(shouldPerformReplacement || shouldShowCorrectionPanel) || !doReplacement)
+                continue;
+
+            String replacedString = plainText(rangeToReplace.get());
+            bool existingMarkersPermitReplacement = m_spellingCorrector->processMarkersOnTextToBeReplacedByResult(result, rangeToReplace.get(), replacedString);
+            if (!existingMarkersPermitReplacement)
                 continue;
 
             if (shouldShowCorrectionPanel) {
@@ -2424,6 +2418,11 @@ void Editor::updateMarkersForWordsAffectedByEditing(bool doNotRemoveIfSelectionA
 
     document->markers()->removeMarkers(wordRange.get(), DocumentMarker::Spelling | DocumentMarker::CorrectionIndicator | DocumentMarker::SpellCheckingExemption, DocumentMarkerController::RemovePartiallyOverlappingMarker);
     document->markers()->clearDescriptionOnMarkersIntersectingRange(wordRange.get(), DocumentMarker::Replacement);
+}
+
+void Editor::deletedAutocorrectionAtPosition(const Position& position, const String& originalString)
+{
+    m_spellingCorrector->deletedAutocorrectionAtPosition(position, originalString);
 }
 
 PassRefPtr<Range> Editor::rangeForPoint(const IntPoint& windowPoint)

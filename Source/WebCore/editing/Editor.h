@@ -384,6 +384,7 @@ public:
 
     bool selectionStartHasMarkerFor(DocumentMarker::MarkerType, int from, int length) const;
     void updateMarkersForWordsAffectedByEditing(bool onlyHandleWordsContainingSelection);
+    void deletedAutocorrectionAtPosition(const Position&, const String& originalString);
 
 private:
     Frame* m_frame;

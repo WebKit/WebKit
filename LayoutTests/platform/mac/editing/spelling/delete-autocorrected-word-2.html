@@ -1,0 +1,46 @@
+<html> 
+<head>
+
+<style>
+.editing { 
+    border: 2px solid red; 
+    padding: 12px; 
+    font-size: 24px; 
+}
+</style>
+<script src=../../../../editing/editing.js language="JavaScript" type="text/JavaScript" ></script>
+
+<script>
+
+function editingTest() {
+	textarea = document.getElementById('test');
+	textarea.focus();
+    document.execCommand("InsertText", false, "the mesage ");
+    execDeleteCommand();
+    execDeleteCommand();
+    execDeleteCommand();
+    execDeleteCommand();
+    execDeleteCommand();
+    execDeleteCommand();
+    execDeleteCommand();
+    execDeleteCommand();
+    document.execCommand("InsertText", false, "mesage ");
+}
+
+</script>
+
+<title>Test Deleting Autocorretion</title> 
+</head> 
+<body>
+<div>The test verified that, after deleting an autocorrection, typing the same misspelled word at the same position will not trigger autocorrection again. You should see the phrase "the mesage " with red underline on "mesage"</div>
+<p  style="color:green">Note, this test can fail due to user specific spell checking data. If the user has previously dismissed 'message' as the correct spelling of 'mesage' several times, the spell checker will not provide 'notational' as a suggestion anymore. To fix this, remove all files in ~/Library/Spelling.</p>
+<textarea id="test" cols="80" rows="10"></textarea>
+</div>
+
+
+<script>
+runEditingTest();
+</script>
+
+</body>
+</html>

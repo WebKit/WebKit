@@ -70,7 +70,7 @@ public:
 
     DocumentMarker* markerContainingPoint(const IntPoint&, DocumentMarker::MarkerType);
     Vector<DocumentMarker> markersForNode(Node*);
-    Vector<DocumentMarker> markersInRange(Range*, DocumentMarker::MarkerType);
+    Vector<DocumentMarker> markersInRange(Range*, DocumentMarker::MarkerTypes);
     Vector<IntRect> renderedRectsForMarkers(DocumentMarker::MarkerType);
     void clearDescriptionOnMarkersIntersectingRange(Range*, DocumentMarker::MarkerTypes);
 

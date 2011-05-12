@@ -313,6 +313,11 @@ VisiblePosition nextWordPosition(const VisiblePosition &c)
     return c.honorEditableBoundaryAtOrAfter(next);
 }
 
+bool isStartOfWord(const VisiblePosition& p)
+{
+    return p.isNotNull() && p == startOfWord(p, RightWordIfOnBoundary);
+}
+
 // ---------
 
 static RootInlineBox *rootBoxForLine(const VisiblePosition &c)

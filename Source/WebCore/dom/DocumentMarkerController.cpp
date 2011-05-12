@@ -293,9 +293,9 @@ Vector<DocumentMarker> DocumentMarkerController::markersForNode(Node* node)
     return result;
 }
 
-Vector<DocumentMarker> DocumentMarkerController::markersInRange(Range* range, DocumentMarker::MarkerType markerType)
+Vector<DocumentMarker> DocumentMarkerController::markersInRange(Range* range, DocumentMarker::MarkerTypes markerTypes)
 {
-    if (!possiblyHasMarkers(markerType))
+    if (!possiblyHasMarkers(markerTypes))
         return Vector<DocumentMarker>();
 
     Vector<DocumentMarker> foundMarkers;
@@ -310,7 +310,7 @@ Vector<DocumentMarker> DocumentMarkerController::markersInRange(Range* range, Do
         Vector<DocumentMarker> markers = markersForNode(node);
         Vector<DocumentMarker>::const_iterator end = markers.end();
         for (Vector<DocumentMarker>::const_iterator it = markers.begin(); it != end; ++it) {
-            if (markerType != it->type)
+            if (!markerTypes.contains(it->type))
                 continue;
             if (node == startContainer && it->endOffset <= static_cast<unsigned>(range->startOffset()))
                 continue;

@@ -44,6 +44,7 @@ VisiblePosition previousWordPosition(const VisiblePosition &);
 VisiblePosition nextWordPosition(const VisiblePosition &);
 VisiblePosition rightWordPosition(const VisiblePosition&);
 VisiblePosition leftWordPosition(const VisiblePosition&);
+bool isStartOfWord(const VisiblePosition&);
 
 // sentences
 VisiblePosition startOfSentence(const VisiblePosition &);

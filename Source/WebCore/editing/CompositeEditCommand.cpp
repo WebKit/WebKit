@@ -32,6 +32,7 @@
 #include "DeleteSelectionCommand.h"
 #include "Document.h"
 #include "DocumentFragment.h"
+#include "DocumentMarkerController.h"
 #include "EditorInsertAction.h"
 #include "Frame.h"
 #include "HTMLElement.h"
@@ -340,6 +341,17 @@ void CompositeEditCommand::replaceTextInNode(PassRefPtr<Text> node, unsigned off
     applyCommandToComposite(InsertIntoTextNodeCommand::create(node, offset, replacementText));
 }
 
+void CompositeEditCommand::replaceTextInNodePreservingMarkers(PassRefPtr<Text> prpNode, unsigned offset, unsigned count, const String& replacementText)
+{
+    RefPtr<Text> node(prpNode);
+    DocumentMarkerController* markerController = document()->markers();
+    Vector<DocumentMarker> markers = markerController->markersInRange(Range::create(document(), node, offset, node, offset + count).get(), DocumentMarker::AllMarkers());
+    replaceTextInNode(node, offset, count, replacementText);
+    RefPtr<Range> newRange = Range::create(document(), node, offset, node, offset + replacementText.length());
+    for (size_t i = 0; i < markers.size(); ++i)
+        markerController->addMarker(newRange.get(), markers[i].type, markers[i].description);
+}
+
 Position CompositeEditCommand::positionOutsideTabSpan(const Position& pos)
 {
     if (!isTabSpanTextNode(pos.anchorNode()))
@@ -475,7 +487,7 @@ void CompositeEditCommand::rebalanceWhitespaceOnTextSubstring(RefPtr<Text> textN
                                                              isEndOfParagraph(visibleDownstreamPos) || (unsigned)downstream == text.length());
     
     if (string != rebalancedString)
-        replaceTextInNode(textNode, upstream, length, rebalancedString);
+        replaceTextInNodePreservingMarkers(textNode, upstream, length, rebalancedString);
 }
 
 void CompositeEditCommand::prepareWhitespaceAtPositionForSplit(Position& position)
@@ -501,9 +513,9 @@ void CompositeEditCommand::prepareWhitespaceAtPositionForSplit(Position& positio
     Position previous(previousVisiblePos.deepEquivalent());
     
     if (isCollapsibleWhitespace(previousVisiblePos.characterAfter()) && previous.deprecatedNode()->isTextNode() && !previous.deprecatedNode()->hasTagName(brTag))
-        replaceTextInNode(static_cast<Text*>(previous.deprecatedNode()), previous.deprecatedEditingOffset(), 1, nonBreakingSpaceString());
+        replaceTextInNodePreservingMarkers(static_cast<Text*>(previous.deprecatedNode()), previous.deprecatedEditingOffset(), 1, nonBreakingSpaceString());
     if (isCollapsibleWhitespace(visiblePos.characterAfter()) && position.deprecatedNode()->isTextNode() && !position.deprecatedNode()->hasTagName(brTag))
-        replaceTextInNode(static_cast<Text*>(position.deprecatedNode()), position.deprecatedEditingOffset(), 1, nonBreakingSpaceString());
+        replaceTextInNodePreservingMarkers(static_cast<Text*>(position.deprecatedNode()), position.deprecatedEditingOffset(), 1, nonBreakingSpaceString());
 }
 
 void CompositeEditCommand::rebalanceWhitespace()

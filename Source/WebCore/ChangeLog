@@ -1,3 +1,65 @@
+2011-05-11  Jia Pu  <jpu@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Autocorrection persists after deleting and retyping the same word at same location.
+        https://bugs.webkit.org/show_bug.cgi?id=60555
+        <rdar://problem/9373915>
+
+        This patch intends to alleviate the issue of repetitively applying the same autocorrection
+        when user delete and retype the same word at the same location. This scenario is especially
+        common when autocorrection modifies the first letter of the word.
+
+        This patch consists following major changes:
+        1. Added a new marker type, DeletedAutocorrection. This marker is added to the whitespace that
+           precedes a deleted autocorrection. If the user later types the same original word at after
+           this whitespace, the autocorrection will not be applied again.
+        2. In DeleteSelectionCommand, added code to notify SpellingCorrectionController about the
+           autocorrection that has just been deleted.
+        3. In Editor and SpellingCorrectionController, added code to apply the marker and to suppress
+           autocorrection when necessary.
+        4. The change in CompositeEditCommand::replaceTextInNode is necessary for preserving markers.
+           Otherwise, we will loose the DeletedAutocorrection on the whitespace, when inserting text
+           after the whitespace.
+
+        Test: platform/mac/editing/spelling/delete-autocorrected-word-2.html
+
+        * dom/DocumentMarker.h: Added new marker type DeletedAutocorrection.
+        (WebCore::DocumentMarker::AllMarkers::AllMarkers):
+        * dom/DocumentMarkerController.cpp:
+        (WebCore::DocumentMarkerController::markersInRange): Support querying multiple marker types.
+        * dom/DocumentMarkerController.h:
+        * editing/CompositeEditCommand.cpp:
+        (WebCore::CompositeEditCommand::replaceTextInNodeAndPreserveMarkers):
+        (WebCore::CompositeEditCommand::rebalanceWhitespaceOnTextSubstring):
+        (WebCore::CompositeEditCommand::prepareWhitespaceAtPositionForSplit):
+        * editing/CompositeEditCommand.h:
+        * editing/DeleteSelectionCommand.cpp:
+        (WebCore::DeleteSelectionCommand::DeleteSelectionCommand):
+        (WebCore::DeleteSelectionCommand::fixupWhitespace):
+        (WebCore::DeleteSelectionCommand::originalStringForAutocorrectionAtBeginningOfSelection): Extracting
+           the original string if we are deleting an autocorrection.
+        (WebCore::DeleteSelectionCommand::doApply): Notify editor about the deleted autocorrection and its position.
+        * editing/DeleteSelectionCommand.h:
+        * editing/Editor.cpp:
+        (WebCore::Editor::markAllMisspellingsAndBadGrammarInRanges): Moved all logic of determining
+           when to suppress an autocorrection into SpellingCorrectionController.
+        (WebCore::Editor::deletedAutocorrectionAtPosition):
+        * editing/Editor.h:
+        * editing/InsertParagraphSeparatorCommand.cpp:
+        (WebCore::InsertParagraphSeparatorCommand::doApply):
+        * editing/SpellingCorrectionController.cpp:
+        (WebCore::SpellingCorrectionController::respondToAppliedEditing):
+        (WebCore::SpellingCorrectionController::deletedAutocorrectionAtPosition):
+        (WebCore::SpellingCorrectionController::markPrecedingWhitespaceForDeletedAutocorrectionAfterCommand):
+        (WebCore::SpellingCorrectionController::processMarkersOnTextToBeReplacedByResult):
+        * editing/SpellingCorrectionController.h:
+        (WebCore::SpellingCorrectionController::UNLESS_ENABLED):
+        * editing/visible_units.cpp:
+        (WebCore::isStartOfWord):
+        * editing/visible_units.h:
+        * manual-tests/autocorrection/spell-checking-after-reversion.html:
+
 2011-05-11  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Darin Adler.

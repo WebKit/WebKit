@@ -54,6 +54,11 @@ struct DocumentMarker {
         Autocorrected = 1 << 6,
         // On some platforms, this prevents the text from being spellchecked again.
         SpellCheckingExemption = 1 << 7,
+        // This marker indicates user has deleted an autocorrection starting at the end of the
+        // range that bears this marker. In some platforms, if the user later inserts the same original
+        // word again at this position, it will not be autocorrected again. The description of this
+        // marker is the original word before autocorrection was applied.
+        DeletedAutocorrection = 1 << 8
     };
 
     class MarkerTypes {
@@ -75,7 +80,7 @@ struct DocumentMarker {
     class AllMarkers : public MarkerTypes {
     public:
         AllMarkers()
-            : MarkerTypes(Spelling | Grammar | TextMatch | Replacement | CorrectionIndicator | RejectedCorrection | Autocorrected | SpellCheckingExemption)
+            : MarkerTypes(Spelling | Grammar | TextMatch | Replacement | CorrectionIndicator | RejectedCorrection | Autocorrected | SpellCheckingExemption | DeletedAutocorrection)
         {
         }
     };

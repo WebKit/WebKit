@@ -66,6 +66,8 @@ struct CorrectionPanelInfo {
     bool isActive;
 };
 
+struct TextCheckingResult;
+
 enum ReasonForDismissingCorrectionPanel {
     ReasonForDismissingCorrectionPanelCancelled = 0,
     ReasonForDismissingCorrectionPanelIgnored,
@@ -117,6 +119,10 @@ public:
     void markCorrection(PassRefPtr<Range> replacedRange, const String& replacedString) UNLESS_ENABLED({ UNUSED_PARAM(replacedRange); UNUSED_PARAM(replacedString); })
     void recordSpellcheckerResponseForModifiedCorrection(Range* rangeOfCorrection, const String& corrected, const String& correction) UNLESS_ENABLED({ UNUSED_PARAM(rangeOfCorrection); UNUSED_PARAM(corrected); UNUSED_PARAM(correction); })
 
+    // This function returns false if the replacement should not be carried out.
+    bool processMarkersOnTextToBeReplacedByResult(const TextCheckingResult*, Range* rangeToBeReplaced, const String& stringToBeReplaced) UNLESS_ENABLED({ UNUSED_PARAM(rangeToBeReplaced); UNUSED_PARAM(stringToBeReplaced); return true; });
+    void deletedAutocorrectionAtPosition(const Position&, const String& originalString) UNLESS_ENABLED({ UNUSED_PARAM(originalString); })
+
 #if SUPPORT_AUTOCORRECTION_PANEL
 private:
     void recordAutocorrectionResponseReversed(const String& replacedString, const String& replacementString);
@@ -130,6 +136,7 @@ private:
     EditorClient* client();
     TextCheckerClient* textChecker();
     FloatRect windowRectForRange(const Range*) const;
+    void markPrecedingWhitespaceForDeletedAutocorrectionAfterCommand(EditCommand*);
 
     EditorClient* m_client;
     Frame* m_frame;
@@ -137,6 +144,9 @@ private:
     Timer<SpellingCorrectionController> m_correctionPanelTimer;
     CorrectionPanelInfo m_correctionPanelInfo;
     bool m_correctionPanelIsDismissedByEditor;
+
+    String m_originalStringForLastDeletedAutocorrection;
+    Position m_positionForLastDeletedAutocorrection;
 #endif
 };
 

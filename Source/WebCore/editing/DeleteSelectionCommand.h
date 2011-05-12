@@ -68,6 +68,9 @@ private:
     virtual void removeNode(PassRefPtr<Node>);
     virtual void deleteTextFromNode(PassRefPtr<Text>, unsigned, unsigned);
 
+    // This function provides access to original string after the correction has been deleted.
+    String originalStringForAutocorrectionAtBeginningOfSelection();
+
     bool m_hasSelectionToDelete;
     bool m_smartDelete;
     bool m_mergeBlocksAfterDelete;

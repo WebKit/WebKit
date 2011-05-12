@@ -83,6 +83,7 @@ protected:
     void removeNodeAndPruneAncestors(PassRefPtr<Node>);
     void prune(PassRefPtr<Node>);
     void replaceTextInNode(PassRefPtr<Text>, unsigned offset, unsigned count, const String& replacementText);
+    void replaceTextInNodePreservingMarkers(PassRefPtr<Text>, unsigned offset, unsigned count, const String& replacementText);
     Position positionOutsideTabSpan(const Position&);
     void setNodeAttribute(PassRefPtr<Element>, const QualifiedName& attribute, const AtomicString& value);
     void splitElement(PassRefPtr<Element>, PassRefPtr<Node> atChild);

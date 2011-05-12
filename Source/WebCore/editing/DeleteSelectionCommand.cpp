@@ -28,6 +28,7 @@
 
 #include "Document.h"
 #include "DocumentFragment.h"
+#include "DocumentMarkerController.h"
 #include "EditingBoundary.h"
 #include "Editor.h"
 #include "EditorClient.h"
@@ -68,37 +69,37 @@ static bool isTableRowEmpty(Node* row)
 }
 
 DeleteSelectionCommand::DeleteSelectionCommand(Document *document, bool smartDelete, bool mergeBlocksAfterDelete, bool replace, bool expandForSpecialElements)
-    : CompositeEditCommand(document), 
-      m_hasSelectionToDelete(false), 
-      m_smartDelete(smartDelete), 
-      m_mergeBlocksAfterDelete(mergeBlocksAfterDelete),
-      m_needPlaceholder(false),
-      m_replace(replace),
-      m_expandForSpecialElements(expandForSpecialElements),
-      m_pruneStartBlockIfNecessary(false),
-      m_startsAtEmptyLine(false),
-      m_startBlock(0),
-      m_endBlock(0),
-      m_typingStyle(0),
-      m_deleteIntoBlockquoteStyle(0)
+    : CompositeEditCommand(document)
+    , m_hasSelectionToDelete(false)
+    , m_smartDelete(smartDelete)
+    , m_mergeBlocksAfterDelete(mergeBlocksAfterDelete)
+    , m_needPlaceholder(false)
+    , m_replace(replace)
+    , m_expandForSpecialElements(expandForSpecialElements)
+    , m_pruneStartBlockIfNecessary(false)
+    , m_startsAtEmptyLine(false)
+    , m_startBlock(0)
+    , m_endBlock(0)
+    , m_typingStyle(0)
+    , m_deleteIntoBlockquoteStyle(0)
 {
 }
 
 DeleteSelectionCommand::DeleteSelectionCommand(const VisibleSelection& selection, bool smartDelete, bool mergeBlocksAfterDelete, bool replace, bool expandForSpecialElements)
-    : CompositeEditCommand(selection.start().anchorNode()->document()), 
-      m_hasSelectionToDelete(true), 
-      m_smartDelete(smartDelete), 
-      m_mergeBlocksAfterDelete(mergeBlocksAfterDelete),
-      m_needPlaceholder(false),
-      m_replace(replace),
-      m_expandForSpecialElements(expandForSpecialElements),
-      m_pruneStartBlockIfNecessary(false),
-      m_startsAtEmptyLine(false),
-      m_selectionToDelete(selection),
-      m_startBlock(0),
-      m_endBlock(0),
-      m_typingStyle(0),
-      m_deleteIntoBlockquoteStyle(0)
+    : CompositeEditCommand(selection.start().anchorNode()->document())
+    , m_hasSelectionToDelete(true)
+    , m_smartDelete(smartDelete)
+    , m_mergeBlocksAfterDelete(mergeBlocksAfterDelete)
+    , m_needPlaceholder(false)
+    , m_replace(replace)
+    , m_expandForSpecialElements(expandForSpecialElements)
+    , m_pruneStartBlockIfNecessary(false)
+    , m_startsAtEmptyLine(false)
+    , m_selectionToDelete(selection)
+    , m_startBlock(0)
+    , m_endBlock(0)
+    , m_typingStyle(0)
+    , m_deleteIntoBlockquoteStyle(0)
 {
 }
 
@@ -555,12 +556,12 @@ void DeleteSelectionCommand::fixupWhitespace()
     if (m_leadingWhitespace.isNotNull() && !m_leadingWhitespace.isRenderedCharacter() && m_leadingWhitespace.deprecatedNode()->isTextNode()) {
         Text* textNode = static_cast<Text*>(m_leadingWhitespace.deprecatedNode());
         ASSERT(!textNode->renderer() || textNode->renderer()->style()->collapseWhiteSpace());
-        replaceTextInNode(textNode, m_leadingWhitespace.deprecatedEditingOffset(), 1, nonBreakingSpaceString());
+        replaceTextInNodePreservingMarkers(textNode, m_leadingWhitespace.deprecatedEditingOffset(), 1, nonBreakingSpaceString());
     }
     if (m_trailingWhitespace.isNotNull() && !m_trailingWhitespace.isRenderedCharacter() && m_trailingWhitespace.deprecatedNode()->isTextNode()) {
         Text* textNode = static_cast<Text*>(m_trailingWhitespace.deprecatedNode());
         ASSERT(!textNode->renderer() ||textNode->renderer()->style()->collapseWhiteSpace());
-        replaceTextInNode(textNode, m_trailingWhitespace.deprecatedEditingOffset(), 1, nonBreakingSpaceString());
+        replaceTextInNodePreservingMarkers(textNode, m_trailingWhitespace.deprecatedEditingOffset(), 1, nonBreakingSpaceString());
     }
 }
 
@@ -743,6 +744,26 @@ void DeleteSelectionCommand::clearTransientState()
     m_leadingWhitespace.clear();
     m_trailingWhitespace.clear();
 }
+    
+String DeleteSelectionCommand::originalStringForAutocorrectionAtBeginningOfSelection()
+{
+    if (!m_selectionToDelete.isRange())
+        return String();
+
+    VisiblePosition startOfSelection = m_selectionToDelete.start();
+    if (!isStartOfWord(startOfSelection))
+        return String();
+
+    RefPtr<Range> rangeOfFirstCharacter = Range::create(document(), startOfSelection.deepEquivalent(), startOfSelection.next().deepEquivalent());
+    Vector<DocumentMarker> markers = document()->markers()->markersInRange(rangeOfFirstCharacter.get(), DocumentMarker::Autocorrected);
+    for (size_t i = 0; i < markers.size(); ++i) {
+        const DocumentMarker& marker = markers[i];
+        int startOffset = marker.startOffset;
+        if (startOffset == startOfSelection.deepEquivalent().offsetInContainerNode())
+            return marker.description;
+    }
+    return String();
+}
 
 void DeleteSelectionCommand::doApply()
 {
@@ -753,6 +774,8 @@ void DeleteSelectionCommand::doApply()
 
     if (!m_selectionToDelete.isNonOrphanedRange())
         return;
+
+    String originalString = originalStringForAutocorrectionAtBeginningOfSelection();
 
     // If the deletion is occurring in a text field, and we're not deleting to replace the selection, then let the frame call across the bridge to notify the form delegate. 
     if (!m_replace) {
@@ -815,7 +838,12 @@ void DeleteSelectionCommand::doApply()
     rebalanceWhitespaceAt(m_endingPosition);
 
     calculateTypingStyleAfterDelete();
-    
+
+    if (!originalString.isEmpty()) {
+        if (Frame* frame = document()->frame())
+            frame->editor()->deletedAutocorrectionAtPosition(m_endingPosition, originalString);
+    }
+
     setEndingSelection(VisibleSelection(m_endingPosition, affinity));
     clearTransientState();
 }
