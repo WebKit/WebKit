@@ -36,6 +36,7 @@ function setVersionSuccess()
     window.trans = evalAndLog("trans = event.target.result");
     shouldBeTrue("trans !== null");
     trans.onabort = unexpectedAbortCallback;
+    trans.oncomplete = checkQuotaEnforcing;
 
     deleteAllObjectStores(db);
 
@@ -47,7 +48,6 @@ function setVersionSuccess()
 
     objectStore = evalAndLog('db.createObjectStore("test123")');
     checkObjectStore();
-    commitAndContinue();
 }
 
 function checkObjectStore()
@@ -57,11 +57,6 @@ function checkObjectStore()
     shouldBe("db.objectStoreNames.contains('')", "false");
     shouldBe("db.objectStoreNames.contains('test456')", "false");
     shouldBe("db.objectStoreNames.contains('test123')", "true");
-}
-
-function commitAndContinue()
-{
-    window.setTimeout(checkQuotaEnforcing, 0);
 }
 
 function checkQuotaEnforcing()
@@ -97,7 +92,7 @@ function addData()
 
 function logError()
 {
-    debug("Error function called: (" + event.code + ") " + event.message);
+    debug("Error function called: (" + event.target.errorCode + ") " + event.target.webkitErrorMessage);
     evalAndLog("event.preventDefault()");
 }
 

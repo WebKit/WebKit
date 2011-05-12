@@ -1,3 +1,16 @@
+2011-05-12  David Grogan  <dgrogan@chromium.org>
+
+        Reviewed by Nate Chapin.
+
+        IndexedDB: fix up database-quota.html layout test
+        https://bugs.webkit.org/show_bug.cgi?id=60519
+
+        Remove commitAndContinue idiom; translate some missed instances of
+        event.code to event.target.errorCode from bug 54331
+
+        * storage/indexeddb/database-quota-expected.txt:
+        * storage/indexeddb/database-quota.html:
+
 2011-05-12  Ryosuke Niwa  <rniwa@webkit.org>
 
         Reviewed by Darin Adler.

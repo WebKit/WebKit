@@ -25,7 +25,7 @@ trans = db.transaction([], webkitIDBTransaction.READ_WRITE)
 Creating 'data' which contains 64K of data
 PASS data.length is 65536
 store = trans.objectStore('test123')
-Error function called: (undefined) undefined
+Error function called: (13) The transaction was aborted, so the request cannot be fulfilled.
 event.preventDefault()
 PASS Adding data failed due to quota error. Data added was about 5 MB
 PASS successfullyParsed is true
