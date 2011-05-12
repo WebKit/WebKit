@@ -974,7 +974,7 @@ IntRect RenderBox::maskClipRect()
             IntRect maskRect;
             IntPoint phase;
             IntSize tileSize;
-            calculateBackgroundImageGeometry(maskLayer, bbox.x(), bbox.y(), bbox.width(), bbox.height(), maskRect, phase, tileSize);
+            calculateBackgroundImageGeometry(maskLayer, bbox, maskRect, phase, tileSize);
             result.unite(maskRect);
         }
     }
@@ -1068,7 +1068,7 @@ bool RenderBox::repaintLayerRectsForImage(WrappedImagePtr image, const FillLayer
             IntRect repaintRect;
             IntPoint phase;
             IntSize tileSize;
-            layerRenderer->calculateBackgroundImageGeometry(curLayer, rendererRect.x(), rendererRect.y(), rendererRect.width(), rendererRect.height(), repaintRect, phase, tileSize);
+            layerRenderer->calculateBackgroundImageGeometry(curLayer, rendererRect, repaintRect, phase, tileSize);
             layerRenderer->repaintRectangle(repaintRect);
             if (repaintRect == rendererRect)
                 return true;

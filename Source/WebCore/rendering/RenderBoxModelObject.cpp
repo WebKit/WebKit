@@ -759,7 +759,7 @@ void RenderBoxModelObject::paintFillLayerExtended(const PaintInfo& paintInfo, co
         IntPoint phase;
         IntSize tileSize;
 
-        calculateBackgroundImageGeometry(bgLayer, scrolledPaintRect.x(), scrolledPaintRect.y(), scrolledPaintRect.width(), scrolledPaintRect.height(), destRect, phase, tileSize);
+        calculateBackgroundImageGeometry(bgLayer, scrolledPaintRect, destRect, phase, tileSize);
         IntPoint destOrigin = destRect.location();
         destRect.intersect(paintInfo.rect);
         if (!destRect.isEmpty()) {
@@ -834,7 +834,7 @@ IntSize RenderBoxModelObject::calculateFillTileSize(const FillLayer* fillLayer, 
     return image->imageSize(this, style()->effectiveZoom());
 }
 
-void RenderBoxModelObject::calculateBackgroundImageGeometry(const FillLayer* fillLayer, int tx, int ty, int w, int h, 
+void RenderBoxModelObject::calculateBackgroundImageGeometry(const FillLayer* fillLayer, const IntRect& paintRect, 
                                                             IntRect& destRect, IntPoint& phase, IntSize& tileSize)
 {
     int left = 0;
@@ -856,7 +856,7 @@ void RenderBoxModelObject::calculateBackgroundImageGeometry(const FillLayer* fil
 #endif
 
     if (!fixedAttachment) {
-        destRect = IntRect(tx, ty, w, h);
+        destRect = paintRect;
 
         int right = 0;
         int bottom = 0;
@@ -882,7 +882,7 @@ void RenderBoxModelObject::calculateBackgroundImageGeometry(const FillLayer* fil
             left += marginLeft();
             top += marginTop();
         } else
-            positioningAreaSize = IntSize(w - left - right, h - top - bottom);
+            positioningAreaSize = IntSize(paintRect.width() - left - right, paintRect.height() - top - bottom);
     } else {
         destRect = viewRect();
         positioningAreaSize = destRect.size();
@@ -912,9 +912,9 @@ void RenderBoxModelObject::calculateBackgroundImageGeometry(const FillLayer* fil
     }
 
     if (fixedAttachment)
-        phase.move(max(tx - destRect.x(), 0), max(ty - destRect.y(), 0));
+        phase.move(max(paintRect.x() - destRect.x(), 0), max(paintRect.y() - destRect.y(), 0));
 
-    destRect.intersect(IntRect(tx, ty, w, h));
+    destRect.intersect(paintRect);
 }
 
 bool RenderBoxModelObject::paintNinePieceImage(GraphicsContext* graphicsContext, const IntRect& rect, const RenderStyle* style,

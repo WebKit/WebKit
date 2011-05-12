@@ -134,7 +134,7 @@ public:
 
     virtual void setSelectionState(SelectionState s);
 protected:
-    void calculateBackgroundImageGeometry(const FillLayer*, int tx, int ty, int w, int h, IntRect& destRect, IntPoint& phase, IntSize& tileSize);
+    void calculateBackgroundImageGeometry(const FillLayer*, const IntRect& paintRect, IntRect& destRect, IntPoint& phase, IntSize& tileSize);
     void getBorderEdgeInfo(class BorderEdge[], bool includeLogicalLeftEdge = true, bool includeLogicalRightEdge = true) const;
     bool borderObscuresBackgroundEdge(const FloatSize& contextScale) const;
 
