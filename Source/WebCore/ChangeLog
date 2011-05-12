@@ -1,3 +1,16 @@
+2011-05-12  Rob Buis  <rbuis@rim.com>
+
+        Reviewed by Eric Seidel.
+
+        SVGStyledElement::resolveStyle(RenderStyle*) must be removed/fixed!
+        https://bugs.webkit.org/show_bug.cgi?id=15479
+
+        Finally remove resolveStyle, it is not used anymore.
+
+        * svg/SVGStyledElement.cpp:
+        (WebCore::SVGStyledElement::childrenChanged):
+        * svg/SVGStyledElement.h:
+
 2011-05-12  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Darin Adler.

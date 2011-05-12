@@ -25,7 +25,6 @@
 
 #include "Attr.h"
 #include "CSSParser.h"
-#include "CSSStyleSelector.h"
 #include "Document.h"
 #include "HTMLNames.h"
 #include "PlatformString.h"
@@ -403,13 +402,6 @@ void SVGStyledElement::childrenChanged(bool changedByParser, Node* beforeChange,
     // Invalidate all SVGElementInstances associated with us
     if (!changedByParser)
         SVGElementInstance::invalidateAllInstancesOfElement(this);
-}
-
-PassRefPtr<RenderStyle> SVGStyledElement::resolveStyle(RenderStyle* parentStyle)
-{
-    if (renderer())
-        return renderer()->style();
-    return document()->styleSelector()->styleForElement(this, parentStyle);
 }
 
 PassRefPtr<CSSValue> SVGStyledElement::getPresentationAttribute(const String& name)

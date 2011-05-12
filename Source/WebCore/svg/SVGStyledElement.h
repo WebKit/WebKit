@@ -46,9 +46,6 @@ public:
 
     bool isKnownAttribute(const QualifiedName&);
 
-    // Centralized place to force a manual style resolution. Hacky but needed for now.
-    PassRefPtr<RenderStyle> resolveStyle(RenderStyle* parentStyle);
-
     bool instanceUpdatesBlocked() const;
     void setInstanceUpdatesBlocked(bool);
 
