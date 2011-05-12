@@ -1,3 +1,13 @@
+2011-05-10  Yury Semikhatsky  <yurys@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: test that eval can access scoped variables in console
+        https://bugs.webkit.org/show_bug.cgi?id=60547
+
+        * inspector/console/console-eval-scoped-expected.txt: Added.
+        * inspector/console/console-eval-scoped.html: Added.
+
 2011-05-12  Csaba Osztrogonác  <ossy@webkit.org>
 
         Add new expected files after r86313.

@@ -1,0 +1,53 @@
+<html>
+<head>
+<script src="../../http/tests/inspector/inspector-test.js"></script>
+<script src="../../http/tests/inspector/console-test.js"></script>
+<script>
+function test()
+{
+    function snippet1() {
+        (function (obj) {
+           with (obj) {
+              console.log('with: ' + a);
+              eval("console.log('eval in with: ' + a)");
+           }
+        })({ a: "Object property value" })
+    }
+
+    function snippet2() {
+        (function (a) { eval("console.log('eval in function: ' + a)"); })("Function parameter")
+    }
+
+    function bodyText(f) {
+        var text = f.toString();
+        var begin = text.indexOf("{");
+        return text.substring(begin);
+    }
+
+    InspectorTest.evaluateInPage(bodyText(snippet1), step1);
+
+    function step1()
+    {
+        InspectorTest.runAfterPendingDispatches(step2);
+    }
+
+    function step2()
+    {
+        InspectorTest.evaluateInPage(bodyText(snippet2), step3);
+    }
+
+    function step3()
+    {
+        InspectorTest.dumpConsoleMessages();
+        InspectorTest.completeTest();
+    }
+}
+</script>
+</head>
+<body onload="runTest()">
+<p>
+Tests that evaluating 'console.log()' in the console will have access to its outer scope variables.
+<a href="https://bugs.webkit.org/show_bug.cgi?id=60547">Bug 60547.</a>
+</p>
+</body>
+</html>
