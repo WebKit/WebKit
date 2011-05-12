@@ -4032,6 +4032,8 @@ BUGCR82414 GPU : media/video-transformed.html = IMAGE PASS
 
 BUGANTONM DEBUG : html5lib/runner.html = PASS TIMEOUT
 
+BUGCR82419 : svg/custom/fill-opacity-update.svg = IMAGE
+
 // New pixel tests added for bug 58999, rebaseline when webkit 58999 rolls.
 BUGWK58999 WIN LINUX MAC : fast/borders/outline-alpha-block.html = IMAGE+TEXT IMAGE
 BUGWK58999 WIN LINUX MAC : fast/borders/outline-alpha-inline.html = IMAGE+TEXT IMAGE

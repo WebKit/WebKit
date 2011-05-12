@@ -10,6 +10,14 @@
 
         Unreviewed.
 
+        Chromium expectations.
+
+        * platform/chromium/test_expectations.txt:
+
+2011-05-12  Anton Muhin  <antonnm@chromium.org>
+
+        Unreviewed.
+
         Fixed typo.
 
         * platform/chromium/test_expectations.txt:
