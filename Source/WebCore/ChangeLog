@@ -1,3 +1,14 @@
+2011-05-11  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Darin Adler.
+
+        <rdar://problem/9414874> Layout unnecessarily interrupts smooth scrolling at msnbc.com
+        https://bugs.webkit.org/show_bug.cgi?id=60677
+
+        * platform/ScrollView.cpp:
+        (WebCore::ScrollView::updateScrollbars): Only perform an immediate scroll, aborting any running
+        animation, if the new scroll offset computed here is different from the current scroll offset.
+
 2011-05-11  Kent Tamura  <tkent@chromium.org>
 
         Reviewed by Dimitri Glazkov.

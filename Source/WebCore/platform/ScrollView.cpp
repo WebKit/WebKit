@@ -536,9 +536,6 @@ void ScrollView::updateScrollbars(const IntSize& desiredOffset)
 
     m_inUpdateScrollbars = true;
 
-    IntPoint scrollPoint = adjustScrollPositionWithinRange(IntPoint(desiredOffset));
-    IntSize scroll(scrollPoint.x(), scrollPoint.y());
-
     if (m_horizontalScrollbar) {
         int clientWidth = visibleWidth();
         m_horizontalScrollbar->setEnabled(contentsWidth() > clientWidth);
@@ -586,7 +583,9 @@ void ScrollView::updateScrollbars(const IntSize& desiredOffset)
         updateScrollCorner();
     }
 
-    ScrollableArea::scrollToOffsetWithoutAnimation(FloatPoint(scroll.width() + m_scrollOrigin.x(), scroll.height() + m_scrollOrigin.y()));
+    IntPoint scrollPoint = adjustScrollPositionWithinRange(IntPoint(desiredOffset)) + IntSize(m_scrollOrigin.x(), m_scrollOrigin.y());
+    if (scrollPoint != scrollPosition())
+        ScrollableArea::scrollToOffsetWithoutAnimation(scrollPoint);
 
     // Make sure the scrollbar offsets are up to date.
     if (m_horizontalScrollbar)
