@@ -115,7 +115,7 @@ void InspectorInstrumentation::willInsertDOMNodeImpl(InspectorAgent* inspectorAg
 
 void InspectorInstrumentation::didInsertDOMNodeImpl(InspectorAgent* inspectorAgent, Node* node)
 {
-    if (InspectorDOMAgent* domAgent = inspectorAgent->domAgent())
+    if (InspectorDOMAgent* domAgent = inspectorAgent->instrumentingAgents()->inspectorDOMAgent())
         domAgent->didInsertDOMNode(node);
 #if ENABLE(JAVASCRIPT_DEBUGGER)
     if (InspectorDOMDebuggerAgent* domDebuggerAgent = inspectorAgent->instrumentingAgents()->inspectorDOMDebuggerAgent())
@@ -137,7 +137,7 @@ void InspectorInstrumentation::didRemoveDOMNodeImpl(InspectorAgent* inspectorAge
     if (InspectorDOMDebuggerAgent* domDebuggerAgent = inspectorAgent->instrumentingAgents()->inspectorDOMDebuggerAgent())
         domDebuggerAgent->didRemoveDOMNode(node);
 #endif
-    if (InspectorDOMAgent* domAgent = inspectorAgent->domAgent())
+    if (InspectorDOMAgent* domAgent = inspectorAgent->instrumentingAgents()->inspectorDOMAgent())
         domAgent->didRemoveDOMNode(node);
 }
 
@@ -151,13 +151,13 @@ void InspectorInstrumentation::willModifyDOMAttrImpl(InspectorAgent* inspectorAg
 
 void InspectorInstrumentation::didModifyDOMAttrImpl(InspectorAgent* inspectorAgent, Element* element)
 {
-    if (InspectorDOMAgent* domAgent = inspectorAgent->domAgent())
+    if (InspectorDOMAgent* domAgent = inspectorAgent->instrumentingAgents()->inspectorDOMAgent())
         domAgent->didModifyDOMAttr(element);
 }
 
 void InspectorInstrumentation::didInvalidateStyleAttrImpl(InspectorAgent* inspectorAgent, Node* node)
 {
-    if (InspectorDOMAgent* domAgent = inspectorAgent->domAgent())
+    if (InspectorDOMAgent* domAgent = inspectorAgent->instrumentingAgents()->inspectorDOMAgent())
         domAgent->didInvalidateStyleAttr(node);
 }
 
@@ -176,7 +176,7 @@ bool InspectorInstrumentation::handleMousePressImpl(InspectorAgent* inspectorAge
 
 void InspectorInstrumentation::characterDataModifiedImpl(InspectorAgent* inspectorAgent, CharacterData* characterData)
 {
-    if (InspectorDOMAgent* domAgent = inspectorAgent->domAgent())
+    if (InspectorDOMAgent* domAgent = inspectorAgent->instrumentingAgents()->inspectorDOMAgent())
         domAgent->characterDataModified(characterData);
 }
 
@@ -460,7 +460,8 @@ void InspectorInstrumentation::didReceiveResourceResponseImpl(const InspectorIns
     if (InspectorAgent* inspectorAgent = inspectorAgentForFrame(loader->frame())) {
         if (InspectorResourceAgent* resourceAgent = retrieveResourceAgent(inspectorAgent))
             resourceAgent->didReceiveResponse(identifier, loader, response);
-        inspectorAgent->consoleAgent()->didReceiveResponse(identifier, response); // This should come AFTER resource notification, front-end relies on this.
+        if (InspectorConsoleAgent* consoleAgent = inspectorAgent->instrumentingAgents()->inspectorConsoleAgent())
+            consoleAgent->didReceiveResponse(identifier, response); // This should come AFTER resource notification, front-end relies on this.
     }
 }
 
@@ -505,12 +506,14 @@ void InspectorInstrumentation::didFailLoadingImpl(InspectorAgent* inspectorAgent
         timelineAgent->didFinishLoadingResource(identifier, true, 0);
     if (InspectorResourceAgent* resourceAgent = retrieveResourceAgent(inspectorAgent))
         resourceAgent->didFailLoading(identifier, error);
-    inspectorAgent->consoleAgent()->didFailLoading(identifier, error); // This should come AFTER resource notification, front-end relies on this.
+    if (InspectorConsoleAgent* consoleAgent = inspectorAgent->instrumentingAgents()->inspectorConsoleAgent())
+        consoleAgent->didFailLoading(identifier, error); // This should come AFTER resource notification, front-end relies on this.
 }
 
 void InspectorInstrumentation::resourceRetrievedByXMLHttpRequestImpl(InspectorAgent* inspectorAgent, unsigned long identifier, const String& sourceString, const String& url, const String& sendURL, unsigned sendLineNumber)
 {
-    inspectorAgent->consoleAgent()->resourceRetrievedByXMLHttpRequest(url, sendURL, sendLineNumber);
+    if (InspectorConsoleAgent* consoleAgent = inspectorAgent->instrumentingAgents()->inspectorConsoleAgent())
+        consoleAgent->resourceRetrievedByXMLHttpRequest(url, sendURL, sendLineNumber);
     if (InspectorResourceAgent* resourceAgent = retrieveResourceAgent(inspectorAgent))
         resourceAgent->setInitialXHRContent(identifier, sourceString);
 }
@@ -628,27 +631,32 @@ void InspectorInstrumentation::didWriteHTMLImpl(const InspectorInstrumentationCo
 
 void InspectorInstrumentation::addMessageToConsoleImpl(InspectorAgent* inspectorAgent, MessageSource source, MessageType type, MessageLevel level, const String& message, PassRefPtr<ScriptArguments> arguments, PassRefPtr<ScriptCallStack> callStack)
 {
-    inspectorAgent->consoleAgent()->addMessageToConsole(source, type, level, message, arguments, callStack);
+    if (InspectorConsoleAgent* consoleAgent = inspectorAgent->instrumentingAgents()->inspectorConsoleAgent())
+        consoleAgent->addMessageToConsole(source, type, level, message, arguments, callStack);
 }
 
 void InspectorInstrumentation::addMessageToConsoleImpl(InspectorAgent* inspectorAgent, MessageSource source, MessageType type, MessageLevel level, const String& message, unsigned lineNumber, const String& sourceID)
 {
-    inspectorAgent->consoleAgent()->addMessageToConsole(source, type, level, message, lineNumber, sourceID);
+    if (InspectorConsoleAgent* consoleAgent = inspectorAgent->instrumentingAgents()->inspectorConsoleAgent())
+        consoleAgent->addMessageToConsole(source, type, level, message, lineNumber, sourceID);
 }
 
 void InspectorInstrumentation::consoleCountImpl(InspectorAgent* inspectorAgent, PassRefPtr<ScriptArguments> arguments, PassRefPtr<ScriptCallStack> stack)
 {
-    inspectorAgent->consoleAgent()->count(arguments, stack);
+    if (InspectorConsoleAgent* consoleAgent = inspectorAgent->instrumentingAgents()->inspectorConsoleAgent())
+        consoleAgent->count(arguments, stack);
 }
 
 void InspectorInstrumentation::startConsoleTimingImpl(InspectorAgent* inspectorAgent, const String& title)
 {
-    inspectorAgent->consoleAgent()->startTiming(title);
+    if (InspectorConsoleAgent* consoleAgent = inspectorAgent->instrumentingAgents()->inspectorConsoleAgent())
+        consoleAgent->startTiming(title);
 }
 
 void InspectorInstrumentation::stopConsoleTimingImpl(InspectorAgent* inspectorAgent, const String& title, PassRefPtr<ScriptCallStack> stack)
 {
-    inspectorAgent->consoleAgent()->stopTiming(title, stack);
+    if (InspectorConsoleAgent* consoleAgent = inspectorAgent->instrumentingAgents()->inspectorConsoleAgent())
+        consoleAgent->stopTiming(title, stack);
 }
 
 void InspectorInstrumentation::consoleMarkTimelineImpl(InspectorAgent* inspectorAgent, PassRefPtr<ScriptArguments> arguments)
@@ -663,13 +671,13 @@ void InspectorInstrumentation::consoleMarkTimelineImpl(InspectorAgent* inspector
 #if ENABLE(JAVASCRIPT_DEBUGGER)
 void InspectorInstrumentation::addStartProfilingMessageToConsoleImpl(InspectorAgent* inspectorAgent, const String& title, unsigned lineNumber, const String& sourceURL)
 {
-    if (InspectorProfilerAgent* profilerAgent = inspectorAgent->profilerAgent())
+    if (InspectorProfilerAgent* profilerAgent = inspectorAgent->instrumentingAgents()->inspectorProfilerAgent())
         profilerAgent->addStartProfilingMessageToConsole(title, lineNumber, sourceURL);
 }
 
 void InspectorInstrumentation::addProfileImpl(InspectorAgent* inspectorAgent, RefPtr<ScriptProfile> profile, PassRefPtr<ScriptCallStack> callStack)
 {
-    if (InspectorProfilerAgent* profilerAgent = inspectorAgent->profilerAgent()) {
+    if (InspectorProfilerAgent* profilerAgent = inspectorAgent->instrumentingAgents()->inspectorProfilerAgent()) {
         const ScriptCallFrame& lastCaller = callStack->at(0);
         profilerAgent->addProfile(profile, lastCaller.lineNumber(), lastCaller.sourceURL());
     }
@@ -677,14 +685,16 @@ void InspectorInstrumentation::addProfileImpl(InspectorAgent* inspectorAgent, Re
 
 String InspectorInstrumentation::getCurrentUserInitiatedProfileNameImpl(InspectorAgent* inspectorAgent, bool incrementProfileNumber)
 {
-    if (InspectorProfilerAgent* profilerAgent = inspectorAgent->profilerAgent())
+    if (InspectorProfilerAgent* profilerAgent = inspectorAgent->instrumentingAgents()->inspectorProfilerAgent())
         return profilerAgent->getCurrentUserInitiatedProfileName(incrementProfileNumber);
     return "";
 }
 
 bool InspectorInstrumentation::profilerEnabledImpl(InspectorAgent* inspectorAgent)
 {
-    return inspectorAgent->instrumentingAgents()->inspectorProfilerAgent()->enabled();
+    if (InspectorProfilerAgent* profilerAgent = inspectorAgent->instrumentingAgents()->inspectorProfilerAgent())
+        return profilerAgent->enabled();
+    return false;
 }
 #endif
 
@@ -784,7 +794,7 @@ void InspectorInstrumentation::pauseOnNativeEventIfNeeded(InspectorAgent* inspec
 void InspectorInstrumentation::cancelPauseOnNativeEvent(InspectorAgent* inspectorAgent)
 {
 #if ENABLE(JAVASCRIPT_DEBUGGER)
-    if (InspectorDebuggerAgent* debuggerAgent = inspectorAgent->debuggerAgent())
+    if (InspectorDebuggerAgent* debuggerAgent = inspectorAgent->instrumentingAgents()->inspectorDebuggerAgent())
         debuggerAgent->cancelPauseOnNextStatement();
 #endif
 }

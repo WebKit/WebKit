@@ -39,120 +39,38 @@
 #include "GraphicsContext.h"
 #include "InjectedScriptHost.h"
 #include "InjectedScriptManager.h"
-#include "InspectorDOMDebuggerAgent.h"
-#include "InspectorCSSAgent.h"
-#include "InspectorClient.h"
-#include "InspectorConsoleAgent.h"
 #include "InspectorController.h"
-#include "InspectorDOMAgent.h"
 #include "InspectorFrontend.h"
 #include "InspectorInstrumentation.h"
-#include "InspectorPageAgent.h"
-#include "InspectorProfilerAgent.h"
-#include "InspectorResourceAgent.h"
-#include "InspectorRuntimeAgent.h"
-#include "InspectorState.h"
-#include "InspectorTimelineAgent.h"
 #include "InspectorValues.h"
-#include "InspectorWorkerAgent.h"
 #include "InspectorWorkerResource.h"
 #include "InstrumentingAgents.h"
 #include "Page.h"
-#include "PageDebuggerAgent.h"
 #include "ResourceRequest.h"
 #include "ScriptFunctionCall.h"
 #include "ScriptObject.h"
-#include "ScriptState.h"
 #include "Settings.h"
-
-#if ENABLE(DATABASE)
-#include "InspectorDatabaseAgent.h"
-#endif
-
-#if ENABLE(DOM_STORAGE)
-#include "InspectorDOMStorageAgent.h"
-#endif
-
-#if ENABLE(OFFLINE_WEB_APPLICATIONS)
-#include "InspectorApplicationCacheAgent.h"
-#endif
+#include <wtf/PassRefPtr.h>
+#include <wtf/RefPtr.h>
 
 using namespace std;
 
 namespace WebCore {
 
-namespace InspectorAgentState {
-static const char timelineProfilerEnabled[] = "timelineProfilerEnabled";
-static const char debuggerEnabled[] = "debuggerEnabled";
-}
-
 static const char scriptsPanelName[] = "scripts";
 static const char consolePanelName[] = "console";
 static const char profilesPanelName[] = "profiles";
 
-namespace {
-
-class PageRuntimeAgent : public InspectorRuntimeAgent {
-public:
-    PageRuntimeAgent(InjectedScriptManager* injectedScriptManager, Page* page)
-        : InspectorRuntimeAgent(injectedScriptManager)
-        , m_inspectedPage(page) { }
-    virtual ~PageRuntimeAgent() { }
-
-private:
-    virtual ScriptState* getDefaultInspectedState() { return mainWorldScriptState(m_inspectedPage->mainFrame()); }
-    Page* m_inspectedPage;
-};
-
-}
-
-InspectorAgent::InspectorAgent(Page* page, InspectorClient* client, InjectedScriptManager* injectedScriptManager)
+InspectorAgent::InspectorAgent(Page* page, InjectedScriptManager* injectedScriptManager, InstrumentingAgents* instrumentingAgents)
     : m_inspectedPage(page)
-    , m_client(client)
     , m_frontend(0)
-    , m_instrumentingAgents(adoptPtr(new InstrumentingAgents))
+    , m_instrumentingAgents(instrumentingAgents)
     , m_injectedScriptManager(injectedScriptManager)
-    , m_state(adoptPtr(new InspectorState(client)))
-    , m_pageAgent(InspectorPageAgent::create(m_instrumentingAgents.get(), page, injectedScriptManager))
-    , m_domAgent(InspectorDOMAgent::create(m_instrumentingAgents.get(), m_pageAgent.get(), m_client, m_state.get(), injectedScriptManager))
-    , m_cssAgent(adoptPtr(new InspectorCSSAgent(m_instrumentingAgents.get(), m_domAgent.get())))
-#if ENABLE(DATABASE)
-    , m_databaseAgent(InspectorDatabaseAgent::create(m_instrumentingAgents.get(), m_state.get()))
-#endif
-#if ENABLE(DOM_STORAGE)
-    , m_domStorageAgent(InspectorDOMStorageAgent::create(m_instrumentingAgents.get(), m_state.get()))
-#endif
-    , m_timelineAgent(InspectorTimelineAgent::create(m_instrumentingAgents.get(), m_state.get()))
-#if ENABLE(OFFLINE_WEB_APPLICATIONS)
-    , m_applicationCacheAgent(adoptPtr(new InspectorApplicationCacheAgent(m_instrumentingAgents.get(), page)))
-#endif
-    , m_resourceAgent(InspectorResourceAgent::create(m_instrumentingAgents.get(), m_pageAgent.get(), m_state.get()))
-    , m_runtimeAgent(adoptPtr(new PageRuntimeAgent(m_injectedScriptManager, page)))
-    , m_consoleAgent(adoptPtr(new InspectorConsoleAgent(m_instrumentingAgents.get(), this, m_state.get(), injectedScriptManager, m_domAgent.get())))
-#if ENABLE(JAVASCRIPT_DEBUGGER)
-    , m_debuggerAgent(PageDebuggerAgent::create(m_instrumentingAgents.get(), m_state.get(), page, injectedScriptManager))
-    , m_domDebuggerAgent(InspectorDOMDebuggerAgent::create(m_instrumentingAgents.get(), m_state.get(), m_domAgent.get(), m_debuggerAgent.get(), this))
-    , m_profilerAgent(InspectorProfilerAgent::create(m_instrumentingAgents.get(), m_consoleAgent.get(), page, m_state.get()))
-#endif
-#if ENABLE(WORKERS)
-    , m_workerAgent(InspectorWorkerAgent::create(m_instrumentingAgents.get()))
-#endif
     , m_canIssueEvaluateForTestInFrontend(false)
 {
     ASSERT_ARG(page, page);
-    ASSERT_ARG(client, client);
     InspectorInstrumentation::bindInspectorAgent(m_inspectedPage, this);
     m_instrumentingAgents->setInspectorAgent(this);
-
-    m_injectedScriptManager->injectedScriptHost()->init(this
-        , m_consoleAgent.get()
-#if ENABLE(DATABASE)
-        , m_databaseAgent.get()
-#endif
-#if ENABLE(DOM_STORAGE)
-        , m_domStorageAgent.get()
-#endif
-    );
 }
 
 InspectorAgent::~InspectorAgent()
@@ -160,54 +78,21 @@ InspectorAgent::~InspectorAgent()
     m_instrumentingAgents->setInspectorAgent(0);
 
     // These should have been cleared in inspectedPageDestroyed().
-    ASSERT(!m_client);
     ASSERT(!m_inspectedPage);
 }
 
 void InspectorAgent::inspectedPageDestroyed()
 {
-    if (m_frontend) {
+    if (m_frontend)
         m_frontend->inspector()->disconnectFromBackend();
-        disconnectFrontend();
-    }
-
-#if ENABLE(JAVASCRIPT_DEBUGGER)
-    m_domDebuggerAgent.clear();
-    m_debuggerAgent.clear();
-#endif
-
     ASSERT(m_inspectedPage);
     InspectorInstrumentation::unbindInspectorAgent(m_inspectedPage);
     m_inspectedPage = 0;
-
-    m_injectedScriptManager->disconnect();
-
-    m_client->inspectorDestroyed();
-    m_client = 0;
 }
 
-void InspectorAgent::restoreInspectorStateFromCookie(const String& inspectorStateCookie)
+void InspectorAgent::restore()
 {
-    m_state->loadFromCookie(inspectorStateCookie);
-
     m_frontend->inspector()->frontendReused();
-
-    m_domAgent->restore();
-    m_resourceAgent->restore();
-    m_timelineAgent->restore();
-
-#if ENABLE(DATABASE)
-    m_databaseAgent->restore();
-#endif
-
-#if ENABLE(DOM_STORAGE)
-    m_domStorageAgent->restore();
-#endif
-
-#if ENABLE(JAVASCRIPT_DEBUGGER)
-    m_debuggerAgent->restore();
-    m_profilerAgent->restore();
-#endif
 }
 
 void InspectorAgent::didClearWindowObjectInWorld(Frame* frame, DOMWrapperWorld* world)
@@ -221,29 +106,7 @@ void InspectorAgent::didClearWindowObjectInWorld(Frame* frame, DOMWrapperWorld* 
 
 void InspectorAgent::setFrontend(InspectorFrontend* inspectorFrontend)
 {
-    // We can reconnect to existing front-end -> unmute state.
-    m_state->unmute();
-
     m_frontend = inspectorFrontend;
-
-#if ENABLE(OFFLINE_WEB_APPLICATIONS)
-    m_applicationCacheAgent->setFrontend(m_frontend);
-#endif
-    m_pageAgent->setFrontend(m_frontend);
-    m_domAgent->setFrontend(m_frontend);
-    m_consoleAgent->setFrontend(m_frontend);
-    m_timelineAgent->setFrontend(m_frontend);
-    m_resourceAgent->setFrontend(m_frontend);
-#if ENABLE(JAVASCRIPT_DEBUGGER)
-    m_debuggerAgent->setFrontend(m_frontend);
-    m_profilerAgent->setFrontend(m_frontend);
-#endif
-#if ENABLE(DATABASE)
-    m_databaseAgent->setFrontend(m_frontend);
-#endif
-#if ENABLE(DOM_STORAGE)
-    m_domStorageAgent->setFrontend(m_frontend);
-#endif
 
     if (!m_showPanelAfterVisible.isEmpty()) {
         m_frontend->inspector()->showPanel(m_showPanelAfterVisible);
@@ -256,52 +119,16 @@ void InspectorAgent::setFrontend(InspectorFrontend* inspectorFrontend)
         m_frontend->inspector()->didCreateWorker(worker->id(), worker->url(), worker->isSharedWorker());
     }
 #endif
-#if ENABLE(WORKERS)
-    m_workerAgent->setFrontend(m_frontend);
-#endif
 
     // Dispatch pending frontend commands
     issueEvaluateForTestCommands();
 }
 
-void InspectorAgent::disconnectFrontend()
+void InspectorAgent::clearFrontend()
 {
-    if (!m_frontend)
-        return;
-
     m_canIssueEvaluateForTestInFrontend = false;
     m_pendingEvaluateTestCommands.clear();
-
-    // Destroying agents would change the state, but we don't want that.
-    // Pre-disconnect state will be used to restore inspector agents.
-    m_state->mute();
-
     m_frontend = 0;
-
-#if ENABLE(JAVASCRIPT_DEBUGGER)
-    m_debuggerAgent->clearFrontend();
-    m_domDebuggerAgent->clearFrontend();
-    m_profilerAgent->clearFrontend();
-#endif
-
-#if ENABLE(OFFLINE_WEB_APPLICATIONS)
-    m_applicationCacheAgent->clearFrontend();
-#endif
-
-    m_consoleAgent->clearFrontend();
-    m_domAgent->clearFrontend();
-    m_timelineAgent->clearFrontend();
-    m_resourceAgent->clearFrontend();
-#if ENABLE(DATABASE)
-    m_databaseAgent->clearFrontend();
-#endif
-#if ENABLE(DOM_STORAGE)
-    m_domStorageAgent->clearFrontend();
-#endif
-    m_pageAgent->clearFrontend();
-#if ENABLE(WORKERS)
-    m_workerAgent->clearFrontend();
-#endif
 }
 
 void InspectorAgent::didCommitLoad()

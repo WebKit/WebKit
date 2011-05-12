@@ -46,6 +46,7 @@ class InspectorDOMStorageAgent;
 class InspectorDatabaseAgent;
 class InspectorFrontend;
 class InspectorObject;
+class InspectorValue;
 class Node;
 class ScriptObject;
 class ScriptValue;

@@ -43,10 +43,27 @@ class Frame;
 class GraphicsContext;
 class InjectedScriptManager;
 class InspectorAgent;
+class InspectorApplicationCacheAgent;
 class InspectorBackendDispatcher;
+class InspectorCSSAgent;
 class InspectorClient;
+class InspectorConsoleAgent;
+class InspectorDOMAgent;
+class InspectorDOMDebuggerAgent;
+class InspectorDOMStorageAgent;
+class InspectorDatabaseAgent;
+class InspectorDebuggerAgent;
 class InspectorFrontend;
 class InspectorFrontendClient;
+class InspectorPageAgent;
+class InspectorProfilerAgent;
+class InspectorResourceAgent;
+class InspectorRuntimeAgent;
+class InspectorState;
+class InspectorStorageAgent;
+class InspectorTimelineAgent;
+class InspectorWorkerAgent;
+class InstrumentingAgents;
 class Page;
 class PostWorkerNotificationToFrontendTask;
 class Node;
@@ -57,6 +74,7 @@ class InspectorController {
 public:
     InspectorController(Page*, InspectorClient*);
     ~InspectorController();
+    void inspectedPageDestroyed();
 
     bool enabled() const;
     Page* inspectedPage() const;
@@ -104,8 +122,36 @@ public:
 private:
     friend class PostWorkerNotificationToFrontendTask;
 
+    OwnPtr<InstrumentingAgents> m_instrumentingAgents;
     OwnPtr<InjectedScriptManager> m_injectedScriptManager;
+    OwnPtr<InspectorState> m_state;
     OwnPtr<InspectorAgent> m_inspectorAgent;
+
+    OwnPtr<InspectorPageAgent> m_pageAgent;
+    OwnPtr<InspectorDOMAgent> m_domAgent;
+    OwnPtr<InspectorCSSAgent> m_cssAgent;
+#if ENABLE(DATABASE)
+    OwnPtr<InspectorDatabaseAgent> m_databaseAgent;
+#endif
+#if ENABLE(DOM_STORAGE)
+    OwnPtr<InspectorDOMStorageAgent> m_domStorageAgent;
+#endif
+    OwnPtr<InspectorTimelineAgent> m_timelineAgent;
+#if ENABLE(OFFLINE_WEB_APPLICATIONS)
+    OwnPtr<InspectorApplicationCacheAgent> m_applicationCacheAgent;
+#endif
+    RefPtr<InspectorResourceAgent> m_resourceAgent;
+    OwnPtr<InspectorRuntimeAgent> m_runtimeAgent;
+    OwnPtr<InspectorConsoleAgent> m_consoleAgent;
+#if ENABLE(JAVASCRIPT_DEBUGGER)
+    OwnPtr<InspectorDebuggerAgent> m_debuggerAgent;
+    OwnPtr<InspectorDOMDebuggerAgent> m_domDebuggerAgent;
+    OwnPtr<InspectorProfilerAgent> m_profilerAgent;
+#endif
+#if ENABLE(WORKERS)
+    OwnPtr<InspectorWorkerAgent> m_workerAgent;
+#endif
+
     OwnPtr<InspectorBackendDispatcher> m_inspectorBackendDispatcher;
     OwnPtr<InspectorFrontendClient> m_inspectorFrontendClient;
     OwnPtr<InspectorFrontend> m_inspectorFrontend;

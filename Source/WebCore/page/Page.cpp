@@ -204,6 +204,9 @@ Page::~Page()
     m_editorClient->pageDestroyed();
 
     InspectorInstrumentation::inspectedPageDestroyed(this);
+#if ENABLE(INSPECTOR)
+    m_inspectorController->inspectedPageDestroyed();
+#endif
 
     backForward()->close();
 
