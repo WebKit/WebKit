@@ -137,7 +137,7 @@ static bool verifyAndGetDestinationPathForCopyOrMove(const EntryBase* source, En
     return true;
 }
 
-static bool pathToAbsolutePath(const EntryBase* base, String path, String& absolutePath)
+static bool pathToAbsolutePath(AsyncFileSystem::Type type, const EntryBase* base, String path, String& absolutePath)
 {
     ASSERT(base);
 
@@ -145,7 +145,7 @@ static bool pathToAbsolutePath(const EntryBase* base, String path, String& absol
         path = DOMFilePath::append(base->fullPath(), path);
     absolutePath = DOMFilePath::removeExtraParentReferences(path);
 
-    if (!DOMFilePath::isValidPath(absolutePath))
+    if ((type == AsyncFileSystem::Temporary || type == AsyncFileSystem::Persistent) && !DOMFilePath::isValidPath(absolutePath))
         return false;
     return true;
 }
@@ -208,7 +208,7 @@ bool DOMFileSystemBase::getParent(const EntryBase* entry, PassRefPtr<EntryCallba
 bool DOMFileSystemBase::getFile(const EntryBase* base, const String& path, PassRefPtr<WebKitFlags> flags, PassRefPtr<EntryCallback> successCallback, PassRefPtr<ErrorCallback> errorCallback)
 {
     String absolutePath;
-    if (!pathToAbsolutePath(base, path, absolutePath))
+    if (!pathToAbsolutePath(m_asyncFileSystem->type(), base, path, absolutePath))
         return false;
 
     String platformPath = m_asyncFileSystem->virtualToPlatformPath(absolutePath);
@@ -223,7 +223,7 @@ bool DOMFileSystemBase::getFile(const EntryBase* base, const String& path, PassR
 bool DOMFileSystemBase::getDirectory(const EntryBase* base, const String& path, PassRefPtr<WebKitFlags> flags, PassRefPtr<EntryCallback> successCallback, PassRefPtr<ErrorCallback> errorCallback)
 {
     String absolutePath;
-    if (!pathToAbsolutePath(base, path, absolutePath))
+    if (!pathToAbsolutePath(m_asyncFileSystem->type(), base, path, absolutePath))
         return false;
 
     String platformPath = m_asyncFileSystem->virtualToPlatformPath(absolutePath);

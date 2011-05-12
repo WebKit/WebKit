@@ -1,3 +1,22 @@
+2011-05-11  Zelidrag Hornung  <zelidrag@chromium.org>
+
+        Reviewed by David Levin.
+
+        Prevented DOMFileSystemBase from imposing file naming restrictions on
+        external file systems.
+
+        https://bugs.webkit.org/show_bug.cgi?id=60583
+
+        There are no new tests for this change since it requires the presence
+        of external file system provider which is specific to the platform host
+        process. Chromium implementation will test this within its extension API
+        test suite.
+
+        * fileapi/DOMFileSystemBase.cpp:
+        (WebCore::pathToAbsolutePath):
+        (WebCore::DOMFileSystemBase::getFile):
+        (WebCore::DOMFileSystemBase::getDirectory):
+
 2011-05-11  Antoine Labour  <piman@chromium.org>
 
         Reviewed by David Levin.
