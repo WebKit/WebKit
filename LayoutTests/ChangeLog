@@ -1,3 +1,22 @@
+2011-05-12  Chang Shu  <cshu@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        Rebaseline editing/inserting tests that work
+        https://bugs.webkit.org/show_bug.cgi?id=60702
+
+        * platform/qt/Skipped:
+        * platform/qt/editing/inserting/4278698-expected.png: Added.
+        * platform/qt/editing/inserting/4278698-expected.txt:
+        * platform/qt/editing/inserting/editable-html-element-expected.png: Added.
+        * platform/qt/editing/inserting/editable-html-element-expected.txt:
+        * platform/qt/editing/inserting/editing-empty-divs-expected.png: Added.
+        * platform/qt/editing/inserting/editing-empty-divs-expected.txt:
+        * platform/qt/editing/inserting/insert-div-023-expected.png: Added.
+        * platform/qt/editing/inserting/insert-div-023-expected.txt:
+        * platform/qt/editing/inserting/multiple-lines-selected-expected.png: Added.
+        * platform/qt/editing/inserting/multiple-lines-selected-expected.txt: Added.
+
 2011-05-12  Rob Buis  <rwlbuis@gmail.com>
 
         Reviewed by Darin Adler.

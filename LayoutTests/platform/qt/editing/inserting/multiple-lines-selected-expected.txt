@@ -1,0 +1,28 @@
+EDITING DELEGATE: shouldBeginEditingInDOMRange:range from 0 of DIV > BODY > HTML > #document to 2 of DIV > BODY > HTML > #document
+EDITING DELEGATE: webViewDidBeginEditing:WebViewDidBeginEditingNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: shouldChangeSelectedDOMRange:(null) toDOMRange:range from 0 of DIV > DIV > BODY > HTML > #document to 0 of DIV > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock {P} at (0,0) size 784x44
+        RenderText {#text} at (0,0) size 776x44
+          text run at (0,0) width 610: "This tests inserting a paragraph separator into a selection that spans multiple paragraphs. "
+          text run at (610,0) width 166: "'ar' should be on the line"
+          text run at (0,22) width 336: "after 'f' and the caret should be just before the 'a'."
+      RenderBlock {DIV} at (0,60) size 784x44
+        RenderBlock {DIV} at (0,0) size 784x22
+          RenderText {#text} at (0,0) size 5x22
+            text run at (0,0) width 5: "f"
+        RenderBlock {DIV} at (0,22) size 784x22
+          RenderText {#text} at (0,0) size 15x22
+            text run at (0,0) width 15: "ar"
+caret: position 0 of child 0 {#text} of child 1 {DIV} of child 2 {DIV} of body

@@ -327,13 +327,8 @@ editing/inserting/caret-position.html
 fast/dom/tab-in-right-alignment.html
 svg/text/caret-in-svg-text.xhtml
 
-# ---- to be reviewed
-editing/inserting/4278698.html
-editing/inserting/editable-html-element.html
-editing/inserting/editing-empty-divs.html
-editing/inserting/insert-div-023.html
-editing/inserting/multiple-lines-selected.html
 editing/inserting/5994480-2.html
+editing/inserting/typing-at-end-of-line.html
 
 # http://bugreports.qt.nokia.com/browse/QTBUG-15566
 http/tests/xmlhttprequest/basic-auth-nouser.html
