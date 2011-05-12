@@ -1,3 +1,30 @@
+2011-05-12  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        Mismatched multiple box-shadows do not transition as expected
+        https://bugs.webkit.org/show_bug.cgi?id=60137
+        
+        When animating between two sets of shadows of different lengths, we need
+        to walk the ShadowData list backwards, since it stores the shadows in
+        reverse order relative to the CSS (so that painting is back-to-front).
+        
+        This progresses the behavior of the transitions/multiple-shadow-transitions.html
+        test, which is given new expected results.
+
+        Test: transitions/mismatched-shadow-transitions.html
+
+        * page/animation/AnimationBase.cpp:
+        (WebCore::shadowListLength): Utility to walk the list of ShadowData and count the number
+        of shadows.
+        (WebCore::shadowForBlending): Return a ShadowData* that is useful as a blending target,
+        based on the shadow type, and whether it's a -webkit-box-shadow.
+        (WebCore::PropertyWrapperShadow::blend): Call one of the specialized blend methods.
+        (WebCore::PropertyWrapperShadow::blendSimpleOrMatchedShadowLists): Fast path
+        for shadow blending, when the list lengths match, or both are single or null shadows.
+        (WebCore::PropertyWrapperShadow::blendMismatchedShadowLists): Slower path that builds
+        vectors for each list to reverse them.
+
 2011-05-12  Adam Roben  <aroben@apple.com>
 
         Attempted WinCairo build fix after r86169, part II
