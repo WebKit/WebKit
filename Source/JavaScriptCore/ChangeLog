@@ -1,3 +1,9 @@
+2011-05-12  Philippe Normand  <pnormand@igalia.com>
+
+        Unreviewed, GTK build fix.
+
+        * wtf/Platform.h:
+
 2011-05-12  Keith Kyzivat  <keith.kyzivat@nokia.com>
 
         Reviewed by Csaba Osztrogonác.

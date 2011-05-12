@@ -1221,7 +1221,7 @@
 #define WTF_USE_UNIX_DOMAIN_SOCKETS 1
 #endif
 
-// Make this debug only again -- https://bugs.webkit.org/show_bug.cgi?id=60680
+/* Make this debug only again -- https://bugs.webkit.org/show_bug.cgi?id=60680 */
 #define ENABLE_GC_VALIDATION 1
 
 #endif /* WTF_Platform_h */
