@@ -1,3 +1,12 @@
+2011-05-12  Adam Roben  <aroben@apple.com>
+
+        A little gtest cleanup after r86287
+
+        * WebKit.vcproj/WebKit.sln:
+            - Move gtest into the Tools folder
+            - Make gtest build just before TestWebKitAPIGenerated
+            - Use gtest's new Debug_All and Production configurations as appropriate
+
 2011-05-12  Nikolas Zimmermann  <nzimmermann@rim.com>
 
         Reviewed by Darin Adler.

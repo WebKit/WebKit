@@ -1,0 +1,8 @@
+2011-05-12  Adam Roben  <aroben@apple.com>
+
+        A little gtest cleanup after r86287
+
+        * gtest/msvc/gtest-md.vcproj: Added Debug_All and Production configurations to match our
+        other projects. (At some point all the settings should be moved into .vsprops files to match
+        our other projects, too.)
+
