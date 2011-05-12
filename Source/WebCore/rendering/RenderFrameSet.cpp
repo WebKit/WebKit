@@ -518,7 +518,7 @@ void RenderFrameSet::positionFrames()
         int xPos = 0;
         int height = m_rows.m_sizes[r];
         for (int c = 0; c < cols; c++) {
-            child->setLocation(xPos, yPos);
+            child->setLocation(IntPoint(xPos, yPos));
             int width = m_cols.m_sizes[c];
 
             // has to be resized and itself resize its contents
@@ -615,7 +615,7 @@ void RenderFrameSet::positionFramesWithFlattening()
             // ensure the rows and columns are filled
             IntRect oldRect = child->frameRect();
 
-            child->setLocation(xPos, yPos);
+            child->setLocation(IntPoint(xPos, yPos));
             child->setHeight(m_rows.m_sizes[r]);
             child->setWidth(m_cols.m_sizes[c]);
 

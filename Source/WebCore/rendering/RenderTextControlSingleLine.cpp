@@ -291,7 +291,7 @@ void RenderTextControlSingleLine::layout()
 
     // Ignores the paddings for the inner spin button.
     if (RenderBox* spinBox = m_innerSpinButton ? m_innerSpinButton->renderBox() : 0) {
-        spinBox->setLocation(spinBox->x() + paddingRight(), borderTop());
+        spinBox->setLocation(IntPoint(spinBox->x() + paddingRight(), borderTop()));
         spinBox->setHeight(height() - borderTop() - borderBottom());
     }
 
@@ -302,7 +302,7 @@ void RenderTextControlSingleLine::layout()
             // of the inner block and laid out at the far right.
             int x = width() - borderAndPaddingWidth() - button->width() - button->borderAndPaddingWidth();
             int y = (height() - button->height()) / 2;
-            button->setLocation(x, y);
+            button->setLocation(IntPoint(x, y));
         } else {
             int x = width() - borderRight() - paddingRight() - button->width();
             if (m_outerSpinButton && m_outerSpinButton->renderBox())
@@ -314,7 +314,7 @@ void RenderTextControlSingleLine::layout()
             else
                 innerTextRenderer->setX(paddingLeft() + borderLeft() + (spinBox ? spinBox->width() : 0));
             int y = (height() - button->height()) / 2;
-            button->setLocation(x, y);
+            button->setLocation(IntPoint(x, y));
         }
     }
 #endif
@@ -328,7 +328,7 @@ void RenderTextControlSingleLine::layout()
         // shadow at the bottom.
         int y = (diff / 2) + (diff % 2);
         int x = width() - borderRight() - paddingRight() - spinBox->width();
-        spinBox->setLocation(x, y);
+        spinBox->setLocation(IntPoint(x, y));
     }
 }
 

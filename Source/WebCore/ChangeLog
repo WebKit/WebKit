@@ -1,3 +1,35 @@
+2011-05-12  Emil A Eklund  <eae@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        Convert RenderBox::setLocation, setLogicalLocation and setLogicalSize to IntPoint/IntSize
+        https://bugs.webkit.org/show_bug.cgi?id=60585
+
+        Refactoring, covered by existing tests.
+
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::positionLineBox):
+        * rendering/RenderBox.h:
+        (WebCore::RenderBox::setLogicalLocation):
+        (WebCore::RenderBox::setLogicalSize):
+        (WebCore::RenderBox::setLocation):
+        * rendering/RenderFrameSet.cpp:
+        (WebCore::RenderFrameSet::positionFrames):
+        (WebCore::RenderFrameSet::positionFramesWithFlattening):
+        * rendering/RenderMedia.cpp:
+        (WebCore::RenderMedia::layout):
+        * rendering/RenderScrollbarPart.cpp:
+        (WebCore::RenderScrollbarPart::paintIntoRect):
+        * rendering/RenderTable.cpp:
+        (WebCore::RenderTable::adjustLogicalHeightForCaption):
+        (WebCore::RenderTable::layout):
+        * rendering/RenderTableSection.cpp:
+        (WebCore::RenderTableSection::layoutRows):
+        * rendering/RenderTextControlSingleLine.cpp:
+        (WebCore::RenderTextControlSingleLine::layout):
+        * rendering/svg/SVGRootInlineBox.cpp:
+        (WebCore::SVGRootInlineBox::layoutRootBox):
+
 2011-05-12  Adrienne Walker  <enne@google.com>
 
         Reviewed by James Robinson.

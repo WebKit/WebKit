@@ -257,7 +257,7 @@ void RenderTable::adjustLogicalHeightForCaption()
     ASSERT(m_caption);
     IntRect captionRect(m_caption->x(), m_caption->y(), m_caption->width(), m_caption->height());
 
-    m_caption->setLogicalLocation(m_caption->marginStart(), logicalHeight());
+    m_caption->setLogicalLocation(IntPoint(m_caption->marginStart(), logicalHeight()));
     if (!selfNeedsLayout() && m_caption->checkForRepaintDuringLayout())
         m_caption->repaintDuringLayoutIfMoved(captionRect);
 
@@ -374,7 +374,7 @@ void RenderTable::layout()
             sectionMoved = true;
             movedSectionLogicalTop = min(logicalHeight(), section->logicalTop()) + (style()->isHorizontalWritingMode() ? section->minYVisualOverflow() : section->minXVisualOverflow());
         }
-        section->setLogicalLocation(sectionLogicalLeft, logicalHeight());
+        section->setLogicalLocation(IntPoint(sectionLogicalLeft, logicalHeight()));
 
         setLogicalHeight(logicalHeight() + section->logicalHeight());
         section = sectionBelow(section);

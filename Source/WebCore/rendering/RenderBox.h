@@ -75,6 +75,13 @@ public:
         else
             setX(top);
     }
+    void setLogicalLocation(const IntPoint& location)
+    {
+        if (style()->isHorizontalWritingMode())
+            setLocation(location);
+        else
+            setLocation(location.transposedPoint());
+    }
     void setLogicalWidth(int size)
     {
         if (style()->isHorizontalWritingMode())
@@ -89,12 +96,12 @@ public:
         else
             setWidth(size);
     }
-    void setLogicalLocation(int left, int top)
+    void setLogicalSize(const IntSize& size)
     {
         if (style()->isHorizontalWritingMode())
-            setLocation(left, top);
+            setSize(size);
         else
-            setLocation(top, left);
+            setSize(size.transposedSize());
     }
 
     IntPoint location() const { return m_frameRect.location(); }
@@ -102,7 +109,6 @@ public:
     IntSize size() const { return m_frameRect.size(); }
 
     void setLocation(const IntPoint& location) { m_frameRect.setLocation(location); }
-    void setLocation(int x, int y) { setLocation(IntPoint(x, y)); }
     
     void setSize(const IntSize& size) { m_frameRect.setSize(size); }
     void move(int dx, int dy) { m_frameRect.move(dx, dy); }

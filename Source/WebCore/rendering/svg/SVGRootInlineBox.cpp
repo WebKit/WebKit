@@ -176,22 +176,19 @@ void SVGRootInlineBox::layoutRootBox()
         childRect.unite(child->calculateBoundaries());
     }
 
-    int xBlock = childRect.x();
-    int yBlock = childRect.y();
     int widthBlock = childRect.width();
     int heightBlock = childRect.height();
 
     // Finally, assign the root block position, now that all content is laid out.
-    parentBlock->setLocation(xBlock, yBlock);
-    parentBlock->setWidth(widthBlock);
-    parentBlock->setHeight(heightBlock);
+    parentBlock->setLocation(childRect.location());
+    parentBlock->setSize(childRect.size());
 
     // Position all children relative to the parent block.
     for (InlineBox* child = firstChild(); child; child = child->nextOnLine()) {
         // Skip generated content.
         if (!child->renderer()->node())
             continue;
-        child->adjustPosition(-xBlock, -yBlock);
+        child->adjustPosition(-childRect.x(), -childRect.y());
     }
 
     // Position ourselves.

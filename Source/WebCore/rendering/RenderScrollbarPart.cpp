@@ -162,7 +162,7 @@ void RenderScrollbarPart::imageChanged(WrappedImagePtr image, const IntRect* rec
 void RenderScrollbarPart::paintIntoRect(GraphicsContext* graphicsContext, int tx, int ty, const IntRect& rect)
 {
     // Make sure our dimensions match the rect.
-    setLocation(rect.x() - tx, rect.y() - ty);
+    setLocation(rect.location() - IntSize(tx, ty));
     setWidth(rect.width());
     setHeight(rect.height());
 

@@ -74,7 +74,7 @@ void RenderMedia::layout()
     // and this method will be called many times per second during playback, use a LayoutStateMaintainer:
     LayoutStateMaintainer statePusher(view(), this, IntSize(x(), y()), hasTransform() || hasReflection() || style()->isFlippedBlocksWritingMode());
 
-    controlsRenderer->setLocation(borderLeft() + paddingLeft(), borderTop() + paddingTop());
+    controlsRenderer->setLocation(IntPoint(borderLeft(), borderTop()) + IntSize(paddingLeft(), paddingTop()));
     controlsRenderer->style()->setHeight(Length(newSize.height(), Fixed));
     controlsRenderer->style()->setWidth(Length(newSize.width(), Fixed));
     controlsRenderer->setNeedsLayout(true, false);

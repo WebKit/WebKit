@@ -493,7 +493,7 @@ int RenderTableSection::layoutRows(int toAdd)
     for (int r = 0; r < totalRows; r++) {
         // Set the row's x/y position and width/height.
         if (RenderTableRow* rowRenderer = m_grid[r].rowRenderer) {
-            rowRenderer->setLocation(0, m_rowPos[r]);
+            rowRenderer->setLocation(IntPoint(0, m_rowPos[r]));
             rowRenderer->setLogicalWidth(logicalWidth());
             rowRenderer->setLogicalHeight(m_rowPos[r + 1] - m_rowPos[r] - vspacing);
             rowRenderer->updateLayerTransform();
@@ -607,10 +607,12 @@ int RenderTableSection::layoutRows(int toAdd)
 
             IntRect oldCellRect(cell->x(), cell->y() , cell->width(), cell->height());
 
+            IntPoint cellLocation(0, m_rowPos[rindx]);
             if (!style()->isLeftToRightDirection())
-                cell->setLogicalLocation(table()->columnPositions()[nEffCols] - table()->columnPositions()[table()->colToEffCol(cell->col() + cell->colSpan())] + hspacing, m_rowPos[rindx]);
+                cellLocation.setX(table()->columnPositions()[nEffCols] - table()->columnPositions()[table()->colToEffCol(cell->col() + cell->colSpan())] + hspacing);
             else
-                cell->setLogicalLocation(table()->columnPositions()[c] + hspacing, m_rowPos[rindx]);
+                cellLocation.setX(table()->columnPositions()[c] + hspacing);
+            cell->setLogicalLocation(cellLocation);
             view()->addLayoutDelta(IntSize(oldCellRect.x() - cell->x(), oldCellRect.y() - cell->y()));
 
             if (intrinsicPaddingBefore != oldIntrinsicPaddingBefore || intrinsicPaddingAfter != oldIntrinsicPaddingAfter)
