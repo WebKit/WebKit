@@ -4045,8 +4045,8 @@ BUGATWILSON LINUX WIN : svg/custom/stroke-opacity-update.svg = IMAGE
 BUGATWILSON LINUX WIN : fast/repaint/border-fit-lines.html = IMAGE
 
 // JamesR says this is due to nduca's patch
-BUGATWILSON LINUX WIN : compositing/color-matching/image-color-matching.html = IMAGE+TEXT
-BUGATWILSON LINUX WIN : compositing/layers-inside-overflow-scroll.html = IMAGE+TEXT
+BUGATWILSON LINUX WIN : compositing/color-matching/image-color-matching.html = IMAGE+TEXT IMAGE
+BUGATWILSON LINUX WIN : compositing/layers-inside-overflow-scroll.html = IMAGE+TEXT IMAGE
 
 BUGATWILSON WIN GPU : compositing/self-painting-layers.html = IMAGE
 
