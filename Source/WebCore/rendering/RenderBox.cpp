@@ -837,11 +837,11 @@ void RenderBox::paintBoxDecorationsWithSize(PaintInfo& paintInfo, int tx, int ty
     IntRect paintRect = IntRect(tx, ty, width, height);
     // border-fit can adjust where we paint our border and background.  If set, we snugly fit our line box descendants.  (The iChat
     // balloon layout is an example of this).
-    borderFitAdjust(tx, width);
+    borderFitAdjust(paintRect);
 
     // FIXME: Should eventually give the theme control over whether the box shadow should paint, since controls could have
     // custom shadows of their own.
-    paintBoxShadow(paintInfo.context, tx, ty, width, height, style(), Normal);
+    paintBoxShadow(paintInfo.context, paintRect.x(), paintRect.y(), paintRect.width(), paintRect.height(), style(), Normal);
 
     BackgroundBleedAvoidance bleedAvoidance = determineBackgroundBleedAvoidance(paintInfo.context);
 
@@ -870,32 +870,31 @@ void RenderBox::paintBoxDecorationsWithSize(PaintInfo& paintInfo, int tx, int ty
         if (style()->hasAppearance())
             theme()->paintDecorations(this, paintInfo, paintRect);
     }
-    paintBoxShadow(paintInfo.context, tx, ty, width, height, style(), Inset);
+    paintBoxShadow(paintInfo.context, paintRect.x(), paintRect.y(), paintRect.width(), paintRect.height(), style(), Inset);
 
     // The theme will tell us whether or not we should also paint the CSS border.
     if ((!style()->hasAppearance() || (!themePainted && theme()->paintBorderOnly(this, paintInfo, paintRect))) && style()->hasBorder())
-        paintBorder(paintInfo.context, IntRect(tx, ty, width, height), style(), bleedAvoidance);
+        paintBorder(paintInfo.context, paintRect, style(), bleedAvoidance);
 
     if (bleedAvoidance == BackgroundBleedUseTransparencyLayer)
         paintInfo.context->endTransparencyLayer();
 }
 
-void RenderBox::paintMask(PaintInfo& paintInfo, int tx, int ty)
+void RenderBox::paintMask(PaintInfo& paintInfo, IntSize paintOffset)
 {
     if (!paintInfo.shouldPaintWithinRoot(this) || style()->visibility() != VISIBLE || paintInfo.phase != PaintPhaseMask || paintInfo.context->paintingDisabled())
         return;
 
-    int w = width();
-    int h = height();
+    IntRect paintRect = IntRect(toPoint(paintOffset), size());
 
     // border-fit can adjust where we paint our border and background.  If set, we snugly fit our line box descendants.  (The iChat
     // balloon layout is an example of this).
-    borderFitAdjust(tx, w);
+    borderFitAdjust(paintRect);
 
-    paintMaskImages(paintInfo, tx, ty, w, h);
+    paintMaskImages(paintInfo, paintRect);
 }
 
-void RenderBox::paintMaskImages(const PaintInfo& paintInfo, int tx, int ty, int w, int h)
+void RenderBox::paintMaskImages(const PaintInfo& paintInfo, const IntRect& paintRect)
 {
     // Figure out if we need to push a transparency layer to render our mask.
     bool pushTransparencyLayer = false;
@@ -953,7 +952,6 @@ void RenderBox::paintMaskImages(const PaintInfo& paintInfo, int tx, int ty, int 
     }
 
     if (allMaskImagesLoaded) {
-        IntRect paintRect = IntRect(tx, ty, w, h);
         paintFillLayers(paintInfo, Color(), style()->maskLayers(), paintRect, BackgroundBleedNone, compositeOp);
         paintNinePieceImage(paintInfo.context, paintRect, style(), style()->maskBoxImage(), compositeOp);
     }

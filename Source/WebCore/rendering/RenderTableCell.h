@@ -143,7 +143,7 @@ private:
     virtual void computeLogicalWidth();
 
     virtual void paintBoxDecorations(PaintInfo&, int tx, int ty);
-    virtual void paintMask(PaintInfo&, int tx, int ty);
+    virtual void paintMask(PaintInfo&, IntSize);
 
     virtual IntSize offsetFromContainer(RenderObject*, const IntPoint&) const;
     virtual IntRect clippedOverflowRectForRepaint(RenderBoxModelObject* repaintContainer);

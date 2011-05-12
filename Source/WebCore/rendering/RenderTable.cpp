@@ -480,7 +480,7 @@ void RenderTable::paintObject(PaintInfo& paintInfo, int tx, int ty)
         paintBoxDecorations(paintInfo, tx, ty);
 
     if (paintPhase == PaintPhaseMask) {
-        paintMask(paintInfo, tx, ty);
+        paintMask(paintInfo, IntSize(tx, ty));
         return;
     }
 
@@ -573,15 +573,15 @@ void RenderTable::paintBoxDecorations(PaintInfo& paintInfo, int tx, int ty)
         paintBorder(paintInfo.context, rect, style());
 }
 
-void RenderTable::paintMask(PaintInfo& paintInfo, int tx, int ty)
+void RenderTable::paintMask(PaintInfo& paintInfo, IntSize paintOffset)
 {
     if (style()->visibility() != VISIBLE || paintInfo.phase != PaintPhaseMask)
         return;
 
-    IntRect rect(tx, ty, width(), height());
+    IntRect rect(toPoint(paintOffset), size());
     subtractCaptionRect(rect);
 
-    paintMaskImages(paintInfo, rect.x(), rect.y(), rect.width(), rect.height());
+    paintMaskImages(paintInfo, rect);
 }
 
 void RenderTable::computePreferredLogicalWidths()

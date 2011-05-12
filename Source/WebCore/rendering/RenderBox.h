@@ -252,7 +252,7 @@ public:
     int computeContentBoxLogicalWidth(int width) const;
     int computeContentBoxLogicalHeight(int height) const;
 
-    virtual void borderFitAdjust(int& /*x*/, int& /*w*/) const { } // Shrink the box in which the border paints if border-fit is set.
+    virtual void borderFitAdjust(IntRect&) const { } // Shrink the box in which the border paints if border-fit is set.
 
     // Resolve auto margins in the inline direction of the containing block so that objects can be pushed to the start, middle or end
     // of the containing block.
@@ -345,7 +345,7 @@ public:
 
     virtual void paintObject(PaintInfo&, int /*tx*/, int /*ty*/) { ASSERT_NOT_REACHED(); }
     virtual void paintBoxDecorations(PaintInfo&, int tx, int ty);
-    virtual void paintMask(PaintInfo&, int tx, int ty);
+    virtual void paintMask(PaintInfo&, IntSize);
     virtual void imageChanged(WrappedImagePtr, const IntRect* = 0);
 
     // Called when a positioned object moves but doesn't necessarily change size.  A simplified layout is attempted
@@ -409,7 +409,7 @@ protected:
     void paintFillLayers(const PaintInfo&, const Color&, const FillLayer*, const IntRect&, BackgroundBleedAvoidance = BackgroundBleedNone, CompositeOperator = CompositeSourceOver, RenderObject* backgroundObject = 0);
 
     void paintBoxDecorationsWithSize(PaintInfo&, int tx, int ty, int width, int height);
-    void paintMaskImages(const PaintInfo&, int tx, int ty, int width, int height);
+    void paintMaskImages(const PaintInfo&, const IntRect&);
 
 #if PLATFORM(MAC)
     void paintCustomHighlight(int tx, int ty, const AtomicString& type, bool behindText);

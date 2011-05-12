@@ -1023,7 +1023,7 @@ void RenderTableCell::paintBoxDecorations(PaintInfo& paintInfo, int tx, int ty)
     paintBorder(paintInfo.context, IntRect(tx, ty, w, h), style());
 }
 
-void RenderTableCell::paintMask(PaintInfo& paintInfo, int tx, int ty)
+void RenderTableCell::paintMask(PaintInfo& paintInfo, IntSize paintOffset)
 {
     if (style()->visibility() != VISIBLE || paintInfo.phase != PaintPhaseMask)
         return;
@@ -1031,11 +1031,8 @@ void RenderTableCell::paintMask(PaintInfo& paintInfo, int tx, int ty)
     RenderTable* tableElt = table();
     if (!tableElt->collapseBorders() && style()->emptyCells() == HIDE && !firstChild())
         return;
-
-    int w = width();
-    int h = height();
    
-    paintMaskImages(paintInfo, tx, ty, w, h);
+    paintMaskImages(paintInfo, IntRect(toPoint(paintOffset), size()));
 }
 
 void RenderTableCell::scrollbarsChanged(bool horizontalScrollbarChanged, bool verticalScrollbarChanged)

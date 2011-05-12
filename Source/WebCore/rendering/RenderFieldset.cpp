@@ -170,31 +170,31 @@ void RenderFieldset::paintBoxDecorations(PaintInfo& paintInfo, int tx, int ty)
     paintBorder(paintInfo.context, IntRect(tx, ty, w, h), style());
 }
 
-void RenderFieldset::paintMask(PaintInfo& paintInfo, int tx, int ty)
+void RenderFieldset::paintMask(PaintInfo& paintInfo, IntSize paintOffset)
 {
     if (style()->visibility() != VISIBLE || paintInfo.phase != PaintPhaseMask)
         return;
 
-    int w = width();
-    int h = height();
+    IntRect paintRect = IntRect(toPoint(paintOffset), size());
+    IntSize adjustedSize = size();
     RenderBox* legend = findLegend();
     if (!legend)
-        return RenderBlock::paintMask(paintInfo, tx, ty);
+        return RenderBlock::paintMask(paintInfo, paintOffset);
 
     // FIXME: We need to work with "rl" and "bt" block flow directions.  In those
     // cases the legend is embedded in the right and bottom borders respectively.
     // https://bugs.webkit.org/show_bug.cgi?id=47236
     if (style()->isHorizontalWritingMode()) {
         int yOff = (legend->y() > 0) ? 0 : (legend->height() - borderTop()) / 2;
-        h -= yOff;
-        ty += yOff;
+        paintRect.expand(0, -yOff);
+        paintRect.move(0, yOff);
     } else {
         int xOff = (legend->x() > 0) ? 0 : (legend->width() - borderLeft()) / 2;
-        w -= xOff;
-        tx += xOff;
+        paintRect.expand(-xOff, 0);
+        paintRect.move(xOff, 0);
     }
 
-    paintMaskImages(paintInfo, tx, ty, w, h);
+    paintMaskImages(paintInfo, paintRect);
 }
 
 } // namespace WebCore

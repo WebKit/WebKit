@@ -106,7 +106,7 @@ void RenderReplaced::paint(PaintInfo& paintInfo, int tx, int ty)
         paintBoxDecorations(paintInfo, tx, ty);
     
     if (paintInfo.phase == PaintPhaseMask) {
-        paintMask(paintInfo, tx, ty);
+        paintMask(paintInfo, IntSize(tx, ty));
         return;
     }
 

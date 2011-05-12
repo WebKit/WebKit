@@ -2462,7 +2462,7 @@ void RenderBlock::paintObject(PaintInfo& paintInfo, int tx, int ty)
     }
 
     if (paintPhase == PaintPhaseMask && style()->visibility() == VISIBLE) {
-        paintMask(paintInfo, tx, ty);
+        paintMask(paintInfo, IntSize(tx, ty));
         return;
     }
 
@@ -5595,7 +5595,7 @@ void RenderBlock::adjustForBorderFit(int x, int& left, int& right) const
     }
 }
 
-void RenderBlock::borderFitAdjust(int& x, int& w) const
+void RenderBlock::borderFitAdjust(IntRect& rect) const
 {
     if (style()->borderFit() == BorderFitBorder)
         return;
@@ -5603,19 +5603,19 @@ void RenderBlock::borderFitAdjust(int& x, int& w) const
     // Walk any normal flow lines to snugly fit.
     int left = INT_MAX;
     int right = INT_MIN;
-    int oldWidth = w;
+    int oldWidth = rect.width();
     adjustForBorderFit(0, left, right);
     if (left != INT_MAX) {
         left -= (borderLeft() + paddingLeft());
         if (left > 0) {
-            x += left;
-            w -= left;
+            rect.move(left, 0);
+            rect.expand(-left, 0);
         }
     }
     if (right != INT_MIN) {
         right += (borderRight() + paddingRight());
         if (right < oldWidth)
-            w -= (oldWidth - right);
+            rect.expand(-(oldWidth - right), 0);
     }
 }
 

@@ -45,7 +45,7 @@ private:
     virtual bool stretchesToMinIntrinsicLogicalWidth() const { return true; }
 
     virtual void paintBoxDecorations(PaintInfo&, int tx, int ty);
-    virtual void paintMask(PaintInfo&, int tx, int ty);
+    virtual void paintMask(PaintInfo&, IntSize);
 };
 
 inline RenderFieldset* toRenderFieldset(RenderObject* object)

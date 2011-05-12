@@ -1,3 +1,47 @@
+2011-05-12  Levi Weintraub  <leviw@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        Switch paintMask and paintMaskImages off of ints
+        https://bugs.webkit.org/show_bug.cgi?id=60578
+
+        Primarily switching paintMask and paintMaskImages to use IntSize and IntRect respectively.
+        In the process of that:
+         - added an "expand" function to IntRect that allows you to add an IntSize or pair of
+           integers to the size portion of an IntRect.
+         - changed borderFitAdjust to take an IntRect. It modifies only the x and width attributes.
+
+        No new tests since this refactoring.
+
+        * platform/graphics/IntRect.h:
+        (WebCore::IntRect::expand): Added for convenience.
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::paintObject):
+        (WebCore::RenderBlock::borderFitAdjust):
+        * rendering/RenderBlock.h:
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::paintBoxDecorationsWithSize):
+        (WebCore::RenderBox::paintMask):
+        (WebCore::RenderBox::paintMaskImages):
+        * rendering/RenderBox.h:
+        (WebCore::RenderBox::borderFitAdjust):
+        * rendering/RenderFieldset.cpp:
+        (WebCore::RenderFieldset::paintMask):
+        * rendering/RenderFieldset.h:
+        * rendering/RenderReplaced.cpp:
+        (WebCore::RenderReplaced::paint):
+        * rendering/RenderReplica.cpp:
+        (WebCore::RenderReplica::paint):
+        * rendering/RenderTable.cpp:
+        (WebCore::RenderTable::paintObject):
+        (WebCore::RenderTable::paintMask):
+        * rendering/RenderTable.h:
+        * rendering/RenderTableCell.cpp:
+        (WebCore::RenderTableCell::paintMask):
+        * rendering/RenderTableCell.h:
+        * rendering/RenderWidget.cpp:
+        (WebCore::RenderWidget::paint):
+
 2011-05-12  Patrick Gansterer  <paroga@webkit.org>
 
         Reviewed by Eric Seidel.

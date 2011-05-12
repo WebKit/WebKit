@@ -360,7 +360,7 @@ private:
     void layoutInlineChildren(bool relayoutChildren, int& repaintLogicalTop, int& repaintLogicalBottom);
     BidiRun* handleTrailingSpaces(BidiRunList<BidiRun>&, BidiContext*);
 
-    virtual void borderFitAdjust(int& x, int& w) const; // Shrink the box in which the border paints if border-fit is set.
+    virtual void borderFitAdjust(IntRect&) const; // Shrink the box in which the border paints if border-fit is set.
 
     virtual void updateBeforeAfterContent(PseudoId);
 
