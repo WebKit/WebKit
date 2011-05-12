@@ -589,7 +589,18 @@ void DocumentLoader::substituteResourceDeliveryTimerFired(Timer<DocumentLoader>*
             SharedBuffer* data = resource->data();
         
             loader->didReceiveResponse(resource->response());
+
+            // Calling ResourceLoader::didReceiveResponse can end up cancelling the load,
+            // so we need to check if the loader has reached its terminal state.
+            if (loader->reachedTerminalState())
+                return;
+
+            // Calling ResourceLoader::didReceiveData can end up cancelling the load,
+            // so we need to check if the loader has reached its terminal state.
             loader->didReceiveData(data->data(), data->size(), data->size(), true);
+            if (loader->reachedTerminalState())
+                return;
+
             loader->didFinishLoading(0);
         } else {
             // A null resource means that we should fail the load.

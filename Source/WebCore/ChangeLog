@@ -1,3 +1,27 @@
+2011-05-12  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        Crash when a plug-in tries to load a resource from the application cache
+        https://bugs.webkit.org/show_bug.cgi?id=60735
+        <rdar://problem/8216142>
+
+        When loading application cache resources from disk, we would never restore the
+        HTTP status code, which means that resources would always have a 0 status code.
+        This led to the plug-in stream loader canceling the load, something which the application
+        cache loading machinery couldn't deal and thus would crash.
+
+        Fix the reading of the HTTP status code, and make the loader more robust against
+        application cache loads being canceled.
+
+        Unfortunately, I couldn't come up with a test for this because I couldn't find a reliable way
+        to force the application cache to be read from disk, so all resources would have valid values.
+
+        * loader/DocumentLoader.cpp:
+        (WebCore::DocumentLoader::substituteResourceDeliveryTimerFired):
+        * loader/appcache/ApplicationCacheStorage.cpp:
+        (WebCore::ApplicationCacheStorage::loadCache):
+
 2011-05-12  Emil A Eklund  <eae@chromium.org>
 
         Reviewed by Darin Adler.

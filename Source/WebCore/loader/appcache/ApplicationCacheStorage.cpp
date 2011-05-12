@@ -1055,7 +1055,7 @@ static inline void parseHeaders(const String& headers, ResourceResponse& respons
 PassRefPtr<ApplicationCache> ApplicationCacheStorage::loadCache(unsigned storageID)
 {
     SQLiteStatement cacheStatement(m_database, 
-                                   "SELECT url, type, mimeType, textEncodingName, headers, CacheResourceData.data, CacheResourceData.path FROM CacheEntries INNER JOIN CacheResources ON CacheEntries.resource=CacheResources.id "
+                                   "SELECT url, statusCode, type, mimeType, textEncodingName, headers, CacheResourceData.data, CacheResourceData.path FROM CacheEntries INNER JOIN CacheResources ON CacheEntries.resource=CacheResources.id "
                                    "INNER JOIN CacheResourceData ON CacheResourceData.id=CacheResources.data WHERE CacheEntries.cache=?");
     if (cacheStatement.prepare() != SQLResultOk) {
         LOG_ERROR("Could not prepare cache statement, error \"%s\"", m_database.lastErrorMsg());
@@ -1072,14 +1072,16 @@ PassRefPtr<ApplicationCache> ApplicationCacheStorage::loadCache(unsigned storage
     while ((result = cacheStatement.step()) == SQLResultRow) {
         KURL url(ParsedURLString, cacheStatement.getColumnText(0));
         
-        unsigned type = static_cast<unsigned>(cacheStatement.getColumnInt64(1));
+        int httpStatusCode = cacheStatement.getColumnInt(1);
+
+        unsigned type = static_cast<unsigned>(cacheStatement.getColumnInt64(2));
 
         Vector<char> blob;
-        cacheStatement.getColumnBlobAsVector(5, blob);
+        cacheStatement.getColumnBlobAsVector(6, blob);
         
         RefPtr<SharedBuffer> data = SharedBuffer::adoptVector(blob);
         
-        String path = cacheStatement.getColumnText(6);
+        String path = cacheStatement.getColumnText(7);
         long long size = 0;
         if (path.isEmpty())
             size = data->size();
@@ -1088,12 +1090,13 @@ PassRefPtr<ApplicationCache> ApplicationCacheStorage::loadCache(unsigned storage
             getFileSize(path, size);
         }
         
-        String mimeType = cacheStatement.getColumnText(2);
-        String textEncodingName = cacheStatement.getColumnText(3);
+        String mimeType = cacheStatement.getColumnText(3);
+        String textEncodingName = cacheStatement.getColumnText(4);
         
         ResourceResponse response(url, mimeType, size, textEncodingName, "");
+        response.setHTTPStatusCode(httpStatusCode);
 
-        String headers = cacheStatement.getColumnText(4);
+        String headers = cacheStatement.getColumnText(5);
         parseHeaders(headers, response);
         
         RefPtr<ApplicationCacheResource> resource = ApplicationCacheResource::create(url, response, type, data.release(), path);
