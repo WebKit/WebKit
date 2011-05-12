@@ -1,5 +1,12 @@
 2011-05-12  Anders Carlsson  <andersca@apple.com>
 
+        Address review comment by Dan Bernstein.
+
+        * loader/DocumentLoader.cpp:
+        (WebCore::DocumentLoader::substituteResourceDeliveryTimerFired):
+
+2011-05-12  Anders Carlsson  <andersca@apple.com>
+
         Reviewed by Dan Bernstein.
 
         Crash when a plug-in tries to load a resource from the application cache

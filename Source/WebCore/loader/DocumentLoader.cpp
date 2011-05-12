@@ -595,9 +595,10 @@ void DocumentLoader::substituteResourceDeliveryTimerFired(Timer<DocumentLoader>*
             if (loader->reachedTerminalState())
                 return;
 
+            loader->didReceiveData(data->data(), data->size(), data->size(), true);
+
             // Calling ResourceLoader::didReceiveData can end up cancelling the load,
             // so we need to check if the loader has reached its terminal state.
-            loader->didReceiveData(data->data(), data->size(), data->size(), true);
             if (loader->reachedTerminalState())
                 return;
 
