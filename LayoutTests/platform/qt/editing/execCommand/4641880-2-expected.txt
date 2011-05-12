@@ -3,7 +3,7 @@ EDITING DELEGATE: webViewDidBeginEditing:WebViewDidBeginEditingNotification
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
-EDITING DELEGATE: shouldChangeSelectedDOMRange:(null) toDOMRange:range from 0 of #text > BLOCKQUOTE > DIV > BODY > HTML > #document to 34 of #text > BLOCKQUOTE > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: shouldChangeSelectedDOMRange:(null) toDOMRange:range from 1 of #text > BLOCKQUOTE > DIV > BODY > HTML > #document to 35 of #text > BLOCKQUOTE > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
 layer at (0,0) size 800x600
@@ -11,18 +11,18 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {P} at (0,0) size 784x38
-        RenderText {#text} at (0,0) size 777x38
-          text run at (0,0) width 438: "This tests Indent on a selection that ends at the start of a paragraph. "
-          text run at (438,0) width 339: "Since we don't paint the gap before the paragraph for"
-          text run at (0,19) width 588: "most selections like this, we don't perform Indent on the paragraph that the selection ends in."
-      RenderBlock {DIV} at (0,52) size 784x38
-        RenderBlock {BLOCKQUOTE} at (40,0) size 744x19
-          RenderText {#text} at (0,0) size 226x19
-            text run at (0,0) width 226: "This paragraph should be indented."
-        RenderBlock (anonymous) at (0,19) size 784x19
-          RenderText {#text} at (0,0) size 250x19
-            text run at (0,0) width 250: "This paragraph should not be indented."
-          RenderBR {BR} at (250,14) size 0x0
-selection start: position 0 of child 0 {#text} of child 0 {BLOCKQUOTE} of child 2 {DIV} of body
-selection end:   position 34 of child 0 {#text} of child 0 {BLOCKQUOTE} of child 2 {DIV} of body
+      RenderBlock {P} at (0,0) size 784x44
+        RenderText {#text} at (0,0) size 727x44
+          text run at (0,0) width 463: "This tests Indent on a selection that ends at the start of a paragraph. "
+          text run at (463,0) width 263: "Since we don't paint the gap before the"
+          text run at (0,22) width 727: "paragraph for most selections like this, we don't perform Indent on the paragraph that the selection ends in."
+      RenderBlock {DIV} at (0,60) size 784x44
+        RenderBlock {BLOCKQUOTE} at (40,0) size 744x22
+          RenderText {#text} at (0,0) size 243x22
+            text run at (0,0) width 243: "This paragraph should be indented."
+        RenderBlock (anonymous) at (0,22) size 784x22
+          RenderText {#text} at (0,0) size 269x22
+            text run at (0,0) width 269: "This paragraph should not be indented."
+          RenderBR {BR} at (269,16) size 0x0
+selection start: position 1 of child 0 {#text} of child 0 {BLOCKQUOTE} of child 2 {DIV} of body
+selection end:   position 35 of child 0 {#text} of child 0 {BLOCKQUOTE} of child 2 {DIV} of body

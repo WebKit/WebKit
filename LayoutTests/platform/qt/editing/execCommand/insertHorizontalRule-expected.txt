@@ -4,7 +4,8 @@ EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotificatio
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
-EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 3 of #text > DIV > BODY > HTML > #document to 3 of #text > DIV > BODY > HTML > #document toDOMRange:range from 2 of DIV > BODY > HTML > #document to 2 of DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 0 of #text > DIV > BODY > HTML > #document to 0 of #text > DIV > BODY > HTML > #document toDOMRange:range from 2 of DIV > BODY > HTML > #document to 2 of DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
 EDITING DELEGATE: shouldEndEditingInDOMRange:range from 0 of DIV > BODY > HTML > #document to 3 of DIV > BODY > HTML > #document
@@ -15,7 +16,8 @@ EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotificatio
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
-EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 3 of #text > DIV > BODY > HTML > #document to 3 of #text > DIV > BODY > HTML > #document toDOMRange:range from 2 of DIV > BODY > HTML > #document to 2 of DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 0 of #text > DIV > BODY > HTML > #document to 0 of #text > DIV > BODY > HTML > #document toDOMRange:range from 2 of DIV > BODY > HTML > #document to 2 of DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
@@ -24,25 +26,25 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {P} at (0,0) size 784x19
-        RenderText {#text} at (0,0) size 363x19
-          text run at (0,0) width 363: "These are tests for execCommand(InsertHorizontalRule)."
-      RenderBlock {P} at (0,33) size 784x19
-        RenderText {#text} at (0,0) size 288x19
-          text run at (0,0) width 288: "This test inserts an hr between 'foo' and 'bar'."
-      RenderBlock {DIV} at (0,66) size 784x54
-        RenderBlock (anonymous) at (0,0) size 784x19
-          RenderText {#text} at (0,0) size 20x19
-            text run at (0,0) width 20: "foo"
-        RenderBlock {HR} at (0,26) size 784x2 [border: (1px inset #000000)]
-        RenderBlock (anonymous) at (0,35) size 784x19
-          RenderText {#text} at (0,0) size 21x19
-            text run at (0,0) width 21: "bar"
-      RenderBlock {P} at (0,134) size 784x19
-        RenderText {#text} at (0,0) size 635x19
-          text run at (0,0) width 635: "This test inserts an hr with id=\"hr\" between 'foo' and 'bar', fetches the hr using its id, then removes it."
-      RenderBlock {DIV} at (0,167) size 784x19
-        RenderText {#text} at (0,0) size 20x19
-          text run at (0,0) width 20: "foo"
-        RenderText {#text} at (20,0) size 21x19
-          text run at (20,0) width 21: "bar"
+      RenderBlock {P} at (0,0) size 784x22
+        RenderText {#text} at (0,0) size 386x22
+          text run at (0,0) width 386: "These are tests for execCommand(InsertHorizontalRule)."
+      RenderBlock {P} at (0,38) size 784x22
+        RenderText {#text} at (0,0) size 309x22
+          text run at (0,0) width 309: "This test inserts an hr between 'foo' and 'bar'."
+      RenderBlock {DIV} at (0,76) size 784x62
+        RenderBlock (anonymous) at (0,0) size 784x22
+          RenderText {#text} at (0,0) size 21x22
+            text run at (0,0) width 21: "foo"
+        RenderBlock {HR} at (0,30) size 784x2 [border: (1px inset #000000)]
+        RenderBlock (anonymous) at (0,40) size 784x22
+          RenderText {#text} at (0,0) size 24x22
+            text run at (0,0) width 24: "bar"
+      RenderBlock {P} at (0,154) size 784x22
+        RenderText {#text} at (0,0) size 689x22
+          text run at (0,0) width 689: "This test inserts an hr with id=\"hr\" between 'foo' and 'bar', fetches the hr using its id, then removes it."
+      RenderBlock {DIV} at (0,192) size 784x22
+        RenderText {#text} at (0,0) size 21x22
+          text run at (0,0) width 21: "foo"
+        RenderText {#text} at (21,0) size 24x22
+          text run at (21,0) width 24: "bar"

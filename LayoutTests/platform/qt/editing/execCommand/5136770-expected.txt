@@ -2,26 +2,26 @@ layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
-    RenderBody {BODY} at (8,8) size 784x578
-      RenderBlock {P} at (0,0) size 784x19
-        RenderText {#text} at (0,0) size 375x19
-          text run at (0,0) width 375: "This tests for a hang when performing InsertUnorderedList."
-      RenderBlock {DIV} at (0,33) size 784x90
-        RenderBlock {DIV} at (0,0) size 784x19
-          RenderText {#text} at (0,0) size 347x19
-            text run at (0,0) width 347: "There should be two empty unordered list items below."
-        RenderBlock {DIV} at (0,33) size 784x57
-          RenderBlock {UL} at (0,0) size 784x57
-            RenderListItem {LI} at (40,0) size 744x19
-              RenderListMarker at (-17,0) size 7x19: bullet
-              RenderBR {BR} at (0,0) size 0x19
-            RenderListItem {LI} at (40,19) size 744x19
-              RenderListMarker at (-17,0) size 7x19: bullet
-              RenderBR {BR} at (0,0) size 0x19
-            RenderListItem {LI} at (40,38) size 744x19
-              RenderListMarker at (-17,0) size 7x19: bullet
-              RenderText {#text} at (0,0) size 239x19
-                text run at (0,0) width 239: "This should be an unordered list item."
-          RenderBlock (anonymous) at (0,71) size 784x0
+    RenderBody {BODY} at (8,8) size 784x576
+      RenderBlock {P} at (0,0) size 784x22
+        RenderText {#text} at (0,0) size 408x22
+          text run at (0,0) width 408: "This tests for a hang when performing InsertUnorderedList."
+      RenderBlock {DIV} at (0,38) size 784x104
+        RenderBlock {DIV} at (0,0) size 784x22
+          RenderText {#text} at (0,0) size 371x22
+            text run at (0,0) width 371: "There should be two empty unordered list items below."
+        RenderBlock {DIV} at (0,38) size 784x66
+          RenderBlock {UL} at (0,0) size 784x66
+            RenderListItem {LI} at (40,0) size 744x22
+              RenderListMarker at (-18,0) size 7x22: bullet
+              RenderBR {BR} at (0,0) size 0x22
+            RenderListItem {LI} at (40,22) size 744x22
+              RenderListMarker at (-18,0) size 7x22: bullet
+              RenderBR {BR} at (0,0) size 0x22
+            RenderListItem {LI} at (40,44) size 744x22
+              RenderListMarker at (-18,0) size 7x22: bullet
+              RenderText {#text} at (0,0) size 256x22
+                text run at (0,0) width 256: "This should be an unordered list item."
+          RenderBlock (anonymous) at (0,82) size 784x0
 selection start: position 0 of child 0 {BR} of child 0 {LI} of child 0 {UL} of child 3 {DIV} of child 2 {DIV} of body
 selection end:   position 38 of child 0 {#text} of child 2 {LI} of child 0 {UL} of child 3 {DIV} of child 2 {DIV} of body

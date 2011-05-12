@@ -3,17 +3,18 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {P} at (0,0) size 784x57
-        RenderText {#text} at (0,0) size 779x57
-          text run at (0,0) width 494: "This tests for a bug where indented text would appear quoted in GoogleDocs. "
-          text run at (494,0) width 222: "Google docs uses blockquotes and"
-          text run at (0,19) width 779: "FormatBlock to implement a \"Quote Text\" feature, and style rules for blockquotes appeared on the blockquotes that we use"
-          text run at (0,38) width 148: "to implement indenting."
-      RenderBlock {DIV} at (0,71) size 784x61
-        RenderBlock {BLOCKQUOTE} at (40,0) size 744x19
-          RenderText {#text} at (0,0) size 232x19
-            text run at (0,0) width 232: "This should be indented, not quoted."
-        RenderBlock {BLOCKQUOTE} at (7,26) size 770x35 [border: (1px dashed #AAAAAA)]
-          RenderText {#text} at (8,8) size 175x19
-            text run at (8,8) width 175: "This text should be Quoted."
-caret: position 0 of child 0 {#text} of child 1 {BLOCKQUOTE} of child 3 {DIV} of body
+      RenderBlock {P} at (0,0) size 784x66
+        RenderText {#text} at (0,0) size 757x66
+          text run at (0,0) width 525: "This tests for a bug where indented text would appear quoted in GoogleDocs. "
+          text run at (525,0) width 228: "Google docs uses blockquotes and"
+          text run at (0,22) width 757: "FormatBlock to implement a \"Quote Text\" feature, and style rules for blockquotes appeared on the blockquotes"
+          text run at (0,44) width 240: "that we use to implement indenting."
+      RenderBlock {DIV} at (0,82) size 784x70
+        RenderBlock {BLOCKQUOTE} at (40,0) size 744x22
+          RenderBlock {DIV} at (0,0) size 744x22
+            RenderText {#text} at (0,0) size 247x22
+              text run at (0,0) width 247: "This should be indented, not quoted."
+        RenderBlock {BLOCKQUOTE} at (8,30) size 768x40 [border: (1px dashed #AAAAAA)]
+          RenderText {#text} at (9,9) size 186x22
+            text run at (9,9) width 186: "This text should be Quoted."
+caret: position 0 of child 0 {#text} of child 0 {DIV} of child 1 {BLOCKQUOTE} of child 3 {DIV} of body

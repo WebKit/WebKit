@@ -6,7 +6,10 @@ EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotificatio
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: shouldInsertNode:#document-fragment replacingDOMRange:range from 4 of #text > BODY > HTML > #document to 5 of #text > BODY > HTML > #document givenAction:WebViewInsertActionPasted
-EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 3 of #text > BODY > HTML > #document to 0 of #text > BODY > HTML > #document toDOMRange:range from 3 of #text > BODY > HTML > #document to 3 of #text > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 3 of #text > BODY > HTML > #document to 4 of #text > BODY > HTML > #document toDOMRange:range from 3 of #text > BODY > HTML > #document to 3 of #text > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
 layer at (0,0) size 800x600
@@ -14,21 +17,21 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {P} at (0,0) size 784x38
-        RenderText {#text} at (0,0) size 783x38
-          text run at (0,0) width 334: "This tests find and replace inside an editable iframe. "
-          text run at (334,0) width 449: "You should see 'A B A B' below. With bug 4462420, you would see 'A B"
-          text run at (0,19) width 29: "B A'."
-      RenderBlock (anonymous) at (0,52) size 784x154
+      RenderBlock {P} at (0,0) size 784x44
+        RenderText {#text} at (0,0) size 781x44
+          text run at (0,0) width 354: "This tests find and replace inside an editable iframe. "
+          text run at (354,0) width 427: "You should see 'A B A B' below. With bug 4462420, you would"
+          text run at (0,22) width 94: "see 'A B B A'."
+      RenderBlock (anonymous) at (0,60) size 784x154
         RenderPartObject {IFRAME} at (0,0) size 304x154 [border: (2px inset #000000)]
           layer at (0,0) size 300x150
             RenderView at (0,0) size 300x150
           layer at (0,0) size 300x150
             RenderBlock {HTML} at (0,0) size 300x150
               RenderBody {BODY} at (8,8) size 284x134 [bgcolor=#FFFFE0]
-                RenderText {#text} at (0,0) size 26x19
-                  text run at (0,0) width 26: "A B "
-                RenderText {#text} at (26,0) size 22x19
-                  text run at (26,0) width 22: "A B"
+                RenderText {#text} at (0,0) size 31x22
+                  text run at (0,0) width 31: "A B "
+                RenderText {#text} at (31,0) size 27x22
+                  text run at (31,0) width 27: "A B"
         RenderText {#text} at (0,0) size 0x0
         RenderText {#text} at (0,0) size 0x0

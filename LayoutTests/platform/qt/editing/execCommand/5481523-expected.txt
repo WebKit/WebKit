@@ -1,0 +1,32 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock {P} at (0,0) size 784x44
+        RenderText {#text} at (0,0) size 756x44
+          text run at (0,0) width 432: "This tests for a hang when indenting a fully selected table twice. "
+          text run at (432,0) width 324: "You should see a twice indented table, with four"
+          text run at (0,22) width 80: "cells, below."
+      RenderBlock {DIV} at (0,60) size 784x60
+        RenderBlock {BLOCKQUOTE} at (40,0) size 744x60
+          RenderBlock {BLOCKQUOTE} at (40,0) size 704x60
+            RenderTable {TABLE} at (0,0) size 91x60 [border: (1px outset #808080)]
+              RenderTableSection {TBODY} at (1,1) size 89x58
+                RenderTableRow {TR} at (0,2) size 89x26
+                  RenderTableCell {TD} at (2,2) size 45x26 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+                    RenderText {#text} at (2,2) size 28x22
+                      text run at (2,2) width 28: "One"
+                  RenderTableCell {TD} at (49,2) size 38x26 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
+                    RenderText {#text} at (2,2) size 31x22
+                      text run at (2,2) width 31: "Two"
+                RenderTableRow {TR} at (0,30) size 89x26
+                  RenderTableCell {TD} at (2,30) size 45x26 [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
+                    RenderText {#text} at (2,2) size 41x22
+                      text run at (2,2) width 41: "Three"
+                  RenderTableCell {TD} at (49,30) size 38x26 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
+                    RenderText {#text} at (2,2) size 34x22
+                      text run at (2,2) width 34: "Four"
+        RenderBlock (anonymous) at (0,60) size 784x0
+selection start: position 0 of child 0 {TABLE} of child 0 {BLOCKQUOTE} of child 1 {BLOCKQUOTE} of child 2 {DIV} of body
+selection end:   position 2 of child 0 {TABLE} of child 0 {BLOCKQUOTE} of child 1 {BLOCKQUOTE} of child 2 {DIV} of body

@@ -3,18 +3,20 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {P} at (0,0) size 784x38
-        RenderText {#text} at (0,0) size 756x38
-          text run at (0,0) width 383: "This tests selection preservation during an indent operation. "
-          text run at (383,0) width 373: "The selection should start and end in the same parts of the"
-          text run at (0,19) width 368: "words 'foo' and 'bar' before and after the indent operation."
-      RenderBlock {DIV} at (0,52) size 784x38
-        RenderBlock {BLOCKQUOTE} at (40,0) size 744x38
-          RenderText {#text} at (0,0) size 20x19
-            text run at (0,0) width 20: "foo"
-          RenderBR {BR} at (20,14) size 0x0
-          RenderText {#text} at (0,19) size 21x19
-            text run at (0,19) width 21: "bar"
-        RenderBlock (anonymous) at (0,38) size 784x0
-selection start: position 1 of child 0 {#text} of child 0 {BLOCKQUOTE} of child 2 {DIV} of body
-selection end:   position 2 of child 2 {#text} of child 0 {BLOCKQUOTE} of child 2 {DIV} of body
+      RenderBlock {P} at (0,0) size 784x44
+        RenderText {#text} at (0,0) size 775x44
+          text run at (0,0) width 408: "This tests selection preservation during an indent operation. "
+          text run at (408,0) width 367: "The selection should start and end in the same parts of"
+          text run at (0,22) width 424: "the words 'foo' and 'bar' before and after the indent operation."
+      RenderBlock {DIV} at (0,60) size 784x44
+        RenderBlock {BLOCKQUOTE} at (40,0) size 744x44
+          RenderInline {SPAN} at (0,0) size 21x22
+            RenderText {#text} at (0,0) size 21x22
+              text run at (0,0) width 21: "foo"
+            RenderBR {BR} at (21,16) size 0x0
+          RenderInline {SPAN} at (0,0) size 24x22
+            RenderText {#text} at (0,22) size 24x22
+              text run at (0,22) width 24: "bar"
+        RenderBlock (anonymous) at (0,44) size 784x0
+selection start: position 1 of child 0 {#text} of child 0 {SPAN} of child 0 {BLOCKQUOTE} of child 2 {DIV} of body
+selection end:   position 2 of child 0 {#text} of child 1 {SPAN} of child 0 {BLOCKQUOTE} of child 2 {DIV} of body

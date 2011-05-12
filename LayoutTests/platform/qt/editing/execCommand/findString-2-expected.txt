@@ -1,23 +1,24 @@
 EDITING DELEGATE: shouldChangeSelectedDOMRange:(null) toDOMRange:range from 1 of #text > SPAN > DIV > BODY > HTML > #document to 1 of #text > SPAN > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
-EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 1 of #text > SPAN > DIV > BODY > HTML > #document to 1 of #text > SPAN > DIV > BODY > HTML > #document toDOMRange:range from 1 of #text > SPAN > DIV > BODY > HTML > #document to 1 of #text > SPAN > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 1 of #text > SPAN > DIV > BODY > HTML > #document to 1 of #text > SPAN > DIV > BODY > HTML > #document toDOMRange:range from 0 of #text > SPAN > DIV > BODY > HTML > #document to 3 of #text > SPAN > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {P} at (0,0) size 784x38
-        RenderText {#text} at (0,0) size 767x38
-          text run at (0,0) width 767: "This tests to see if Find will get stuck when searching for a word that is currently selected, and was selected with a double"
-          text run at (0,19) width 31: "click."
-      RenderBlock {DIV} at (0,52) size 784x19
-        RenderText {#text} at (0,0) size 24x19
-          text run at (0,0) width 24: "foo "
-        RenderInline {SPAN} at (0,0) size 21x19
-          RenderText {#text} at (24,0) size 21x19
-            text run at (24,0) width 21: "bar"
-        RenderText {#text} at (45,0) size 103x19
-          text run at (45,0) width 103: " baz foo bar baz"
+      RenderBlock {P} at (0,0) size 784x44
+        RenderText {#text} at (0,0) size 765x44
+          text run at (0,0) width 765: "This tests to see if Find will get stuck when searching for a word that is currently selected, and was selected with a"
+          text run at (0,22) width 85: "double click."
+      RenderBlock {DIV} at (0,60) size 784x22
+        RenderText {#text} at (0,0) size 25x22
+          text run at (0,0) width 25: "foo "
+        RenderInline {SPAN} at (0,0) size 24x22
+          RenderText {#text} at (25,0) size 24x22
+            text run at (25,0) width 24: "bar"
+        RenderText {#text} at (49,0) size 109x22
+          text run at (49,0) width 109: " baz foo bar baz"
 selection start: position 9 of child 2 {#text} of child 2 {DIV} of body
 selection end:   position 12 of child 2 {#text} of child 2 {DIV} of body

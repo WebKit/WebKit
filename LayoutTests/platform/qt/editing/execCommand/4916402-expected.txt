@@ -2,21 +2,21 @@ layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
-    RenderBody {BODY} at (8,8) size 784x578
-      RenderBlock {P} at (0,0) size 784x38
-        RenderText {#text} at (0,0) size 766x38
-          text run at (0,0) width 766: "This tests to see that creating an ordered list item from the last list item in an unordered list creates a new list that is not a"
-          text run at (0,19) width 162: "sublist of the original one."
-      RenderBlock {DIV} at (0,52) size 784x52
-        RenderBlock {UL} at (0,0) size 784x19
-          RenderListItem {LI} at (40,0) size 744x19
-            RenderListMarker at (-17,0) size 7x19: bullet
-            RenderText {#text} at (0,0) size 20x19
-              text run at (0,0) width 20: "foo"
-        RenderBlock {OL} at (0,33) size 784x19
-          RenderListItem {LI} at (40,0) size 744x19
-            RenderListMarker at (-20,0) size 16x19: "1"
-            RenderText {#text} at (0,0) size 21x19
-              text run at (0,0) width 21: "bar"
-        RenderBlock (anonymous) at (0,66) size 784x0
+    RenderBody {BODY} at (8,8) size 784x576
+      RenderBlock {P} at (0,0) size 784x44
+        RenderText {#text} at (0,0) size 774x44
+          text run at (0,0) width 774: "This tests to see that creating an ordered list item from the last list item in an unordered list creates a new list that is"
+          text run at (0,22) width 211: "not a sublist of the original one."
+      RenderBlock {DIV} at (0,60) size 784x60
+        RenderBlock {UL} at (0,0) size 784x22
+          RenderListItem {LI} at (40,0) size 744x22
+            RenderListMarker at (-18,0) size 7x22: bullet
+            RenderText {#text} at (0,0) size 21x22
+              text run at (0,0) width 21: "foo"
+        RenderBlock {OL} at (0,38) size 784x22
+          RenderListItem {LI} at (40,0) size 744x22
+            RenderListMarker at (-21,0) size 16x22: "1"
+            RenderText {#text} at (0,0) size 24x22
+              text run at (0,0) width 24: "bar"
+        RenderBlock (anonymous) at (0,76) size 784x0
 caret: position 0 of child 0 {#text} of child 0 {LI} of child 1 {OL} of child 2 {DIV} of body
