@@ -1208,11 +1208,32 @@ void RenderThemeQt::paintMediaBackground(QPainter* painter, const IntRect& r) co
     painter->drawRoundedRect(r.x(), r.y(), r.width(), r.height(), 5.0, 5.0);
 }
 
+static bool mediaElementCanPlay(RenderObject* o)
+{
+    HTMLMediaElement* mediaElement = toParentMediaElement(o);
+    if (!mediaElement)
+        return false;
+
+    return mediaElement->readyState() > HTMLMediaElement::HAVE_METADATA
+           || (mediaElement->readyState() == HTMLMediaElement::HAVE_NOTHING
+               && o->style()->appearance() == MediaPlayButtonPart && mediaElement->preload() == "none");
+}
+
 QColor RenderThemeQt::getMediaControlForegroundColor(RenderObject* o) const
 {
     QColor fgColor = platformActiveSelectionBackgroundColor();
-    if (o && o->node()->active())
+    if (!o)
+        return fgColor;
+
+    if (o->node()->active())
         fgColor = fgColor.lighter();
+
+    if (!mediaElementCanPlay(o)) {
+        QPalette pal = QApplication::palette();
+        setPaletteFromPageClientIfExists(pal);
+        fgColor = pal.brush(QPalette::Disabled, QPalette::Text).color();
+    }
+
     return fgColor;
 }
 
@@ -1420,6 +1441,14 @@ bool RenderThemeQt::paintMediaSliderTrack(RenderObject* o, const PaintInfo& pain
 
 bool RenderThemeQt::paintMediaSliderThumb(RenderObject* o, const PaintInfo& paintInfo, const IntRect& r)
 {
+    if (!o->parent()->isSlider())
+        return false;
+
+    // We can get the HTMLMediaElement from the parent of the thumb : MediaControlTimelineElement.
+    HTMLMediaElement* mediaElement = toParentMediaElement(o->parent());
+    if (!mediaElement)
+        return false;
+
     StylePainter p(this, paintInfo);
     if (!p.isValid())
         return true;
@@ -1427,7 +1456,7 @@ bool RenderThemeQt::paintMediaSliderThumb(RenderObject* o, const PaintInfo& pain
     p.painter->setRenderHint(QPainter::Antialiasing, true);
 
     p.painter->setPen(Qt::NoPen);
-    p.painter->setBrush(getMediaControlForegroundColor(o));
+    p.painter->setBrush(getMediaControlForegroundColor(o->parent()));
     p.painter->drawRect(r.x(), r.y(), r.width(), r.height());
 
     return false;
