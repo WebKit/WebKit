@@ -1,0 +1,23 @@
+<?xml version="1.0" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" 
+  "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg width="6cm" height="5cm" viewBox="0 0 600 500"
+     xmlns="http://www.w3.org/2000/svg" version="1.1" onload="setTimeout('runTest()', 0)">
+<script>
+    if (window.layoutTestController)
+        window.layoutTestController.waitUntilDone();
+function circle_click(evt) {
+    evt.target.setAttribute("fill-opacity", "1");
+    if (window.layoutTestController)
+        layoutTestController.notifyDone();
+}
+function runTest() {
+    if (window.eventSender) {
+        eventSender.mouseMoveTo(100, 100);
+        eventSender.mouseDown();
+        eventSender.mouseUp();
+    }
+}
+</script>
+<circle onclick="circle_click(evt)" cx="300" cy="225" r="100" fill="green" fill-opacity="0"/>
+</svg>

@@ -1,3 +1,17 @@
+2011-05-12  Rob Buis  <rwlbuis@gmail.com>
+
+        Reviewed by Eric Seidel.
+
+        REGRESSION(79985): Changes in fill-opacity should trigger repaint but don't
+        https://bugs.webkit.org/show_bug.cgi?id=59941
+
+        Also consider fill-opacity when determining whether StyleDifferenceRepaint is needed.
+
+        Test: svg/custom/fill-opacity-update.svg
+
+        * rendering/style/SVGRenderStyle.cpp:
+        (WebCore::SVGRenderStyle::diff):
+
 2011-05-12  Nikolas Zimmermann  <nzimmermann@rim.com>
 
         Reviewed by Darin Adler.

@@ -193,7 +193,8 @@ StyleDifference SVGRenderStyle::diff(const SVGRenderStyle* other) const
     }
 
     // If fill changes, we just need to repaint. Fill boundaries are not influenced by this, only by the Path, that RenderSVGPath contains.
-    if (fill->paintType != other->fill->paintType || fill->paintColor != other->fill->paintColor || fill->paintUri != other->fill->paintUri)
+    if (fill->paintType != other->fill->paintType || fill->paintColor != other->fill->paintColor
+        || fill->paintUri != other->fill->paintUri || fill->opacity != other->fill->opacity)
         return StyleDifferenceRepaint;
 
     // If gradient stops change, we just need to repaint. Style updates are already handled through RenderSVGGradientSTop.
