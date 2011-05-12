@@ -404,7 +404,7 @@ static void initializeGlobalObjectKey()
     pthread_key_create(&globalObjectKey, unprotectGlobalObject);
 }
 
-JSGlobalData* getThreadGlobalData()
+static JSGlobalData* getThreadGlobalData()
 {
     return &JSGlobalData::sharedInstance();
 }

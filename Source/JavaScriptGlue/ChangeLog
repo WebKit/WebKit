@@ -1,3 +1,22 @@
+2011-05-12  David Kilzer  <ddkilzer@apple.com>
+
+        <http://webkit.org/b/60710> JavaScriptGlue should compile with -Wmissing-prototypes
+
+        Reviewed by Geoffrey Garen.
+
+        Enabling -Wmissing-prototypes fixes an Xcode 4 project warning.
+
+        This also fixes the following compiler warning:
+
+            JavaScriptGlue/JSUtils.cpp:407:15: error: no previous prototype for function 'getThreadGlobalData' [-Werror,-Wmissing-prototypes,3]
+             JSGlobalData* getThreadGlobalData()
+                           ^
+
+        * Configurations/Base.xcconfig: Set
+        GCC_WARN_ABOUT_MISSING_PROTOTYPES = YES.
+        * JSUtils.cpp:
+        (getThreadGlobalData): Made static.
+
 2011-05-06  David Kilzer  <ddkilzer@apple.com>
 
         Remove unused GCC_ENABLE_FIX_AND_CONTINUE and ZERO_LINK settings
