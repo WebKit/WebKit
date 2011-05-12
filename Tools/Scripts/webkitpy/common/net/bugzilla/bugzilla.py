@@ -174,6 +174,32 @@ class BugzillaQueries(object):
         review_queue_url = "request.cgi?action=queue&type=review&group=type"
         return self._fetch_attachment_ids_request_query(review_queue_url)
 
+    def _login_from_row(self, row):
+        first_cell = row.find("td")
+        # The first row is just headers, we skip it.
+        if not first_cell:
+            return None
+        # When there were no results, we have a fake "<none>" entry in the table.
+        if first_cell.find(text="<none>"):
+            return None
+        # Otherwise the <td> contains a single <a> which contains the login name or a single <i> with the string "<none>".
+        return str(first_cell.find("a").string).strip()
+
+    def _parse_logins_from_editusers_results(self, results_page):
+        soup = BeautifulSoup(results_page, convertEntities=BeautifulStoneSoup.HTML_ENTITIES)
+        results_table = soup.find(id="admin_table")
+        logins = [self._login_from_row(row) for row in results_table('tr')]
+        # Filter out None from the logins.
+        return filter(lambda login: bool(login), logins)
+
+    # This only works if your account has edituser privileges.
+    # We could easily parse https://bugs.webkit.org/userprefs.cgi?tab=permissions to
+    # check permissions, but bugzilla will just return an error if we don't have them.
+    def fetch_logins_matching_substring(self, search_string):
+        review_queue_url = "editusers.cgi?action=list&matchvalue=login_name&matchstr=%s&matchtype=substr" % urllib.quote(search_string)
+        results_page = self._load_query(review_queue_url)
+        return self._parse_logins_from_editusers_results(results_page)
+
 
 class Bugzilla(object):
 
@@ -719,7 +745,7 @@ class Bugzilla(object):
 
         if not self._has_control(self.browser, "assigned_to"):
             log("""Failed to assign bug to you (can't find assigned_to) control.
-Do you have EditBugs privilages at bugs.webkit.org?
+Do you have EditBugs privileges at bugs.webkit.org?
 https://bugs.webkit.org/userprefs.cgi?tab=permissions
 
 If not, you should email webkit-committers@webkit.org or ask in #webkit for

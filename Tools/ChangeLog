@@ -1,3 +1,29 @@
+2011-05-11  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by David Levin.
+
+        Teach validate-committer-lists how to validate committers bugzilla_email()
+        https://bugs.webkit.org/show_bug.cgi?id=60651
+
+        It turns out we currently have 9 committers with invalid values for their
+        bugzilla_email field (meaning we don't know what email is their bugzilla account).
+        "Alexander Kellett" <lypanov@mac.com>
+        "Andre Boule" <aboule@apple.com>
+        "Cameron McCormack" <cam@webkit.org>
+        "Chris Petersen" <cpetersen@apple.com>
+        "Eli Fidler" <eli@staikos.net>
+        "Matt Lilek" <webkit@mattlilek.com>
+        "Pierre d'Herbemont" <pdherbemont@free.fr>
+        "Scott Violet" <sky@chromium.org>
+        "Adam Treat" <treat@kde.org>
+
+        Most of those haven't committed in a very long time, so it's not suprising
+        that we haven't noticed that their bugzilla emails are bogus.
+
+        * Scripts/validate-committer-lists:
+        * Scripts/webkitpy/common/net/bugzilla/bugzilla.py:
+        * Scripts/webkitpy/common/net/bugzilla/bugzilla_unittest.py:
+
 2011-05-11  Dmitry Lomov  <dslomov@google.com>
 
         Reviewed by David Levin.

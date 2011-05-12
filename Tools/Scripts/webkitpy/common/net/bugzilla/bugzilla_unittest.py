@@ -132,24 +132,24 @@ class BugzillaTest(unittest.TestCase):
 
 Ignore this bug.  Just for testing failure modes of webkit-patch and the commit-queue.</thetext>
           </long_desc>
-          <attachment 
+          <attachment
               isobsolete="0"
               ispatch="1"
               isprivate="0"
-          > 
-            <attachid>45548</attachid> 
-            <date>2009-12-27 23:51 PST</date> 
-            <desc>Patch</desc> 
-            <filename>bug-32585-20091228005112.patch</filename> 
-            <type>text/plain</type> 
-            <size>10882</size> 
-            <attacher>mjs@apple.com</attacher> 
+          >
+            <attachid>45548</attachid>
+            <date>2009-12-27 23:51 PST</date>
+            <desc>Patch</desc>
+            <filename>bug-32585-20091228005112.patch</filename>
+            <type>text/plain</type>
+            <size>10882</size>
+            <attacher>mjs@apple.com</attacher>
 
-              <token>1261988248-dc51409e9c421a4358f365fa8bec8357</token> 
+              <token>1261988248-dc51409e9c421a4358f365fa8bec8357</token>
               <data encoding="base64">SW5kZXg6IFdlYktpdC9tYWMvQ2hhbmdlTG9nCj09PT09PT09PT09PT09PT09PT09PT09PT09PT09
 removed-because-it-was-really-long
 ZEZpbmlzaExvYWRXaXRoUmVhc29uOnJlYXNvbl07Cit9CisKIEBlbmQKIAogI2VuZGlmCg==
-</data>        
+</data>
 
             <flag name="review"
                 id="27602"
@@ -391,3 +391,58 @@ class BugzillaQueriesTest(unittest.TestCase):
     def test_load_query(self):
         queries = BugzillaQueries(Mock())
         queries._load_query("request.cgi?action=queue&type=review&group=type")
+
+    _example_user_results = """
+    <div id="bugzilla-body">
+    <p>1 user found.</p>
+    <table id="admin_table" border="1" cellpadding="4" cellspacing="0">
+      <tr bgcolor="#6666FF">
+          <th align="left">Edit user...
+          </th>
+          <th align="left">Real name
+          </th>
+          <th align="left">Account History
+          </th>
+      </tr>
+      <tr>
+          <td >
+              <a href="editusers.cgi?action=edit&amp;userid=1234&amp;matchvalue=login_name&amp;groupid=&amp;grouprestrict=&amp;matchtype=substr&amp;matchstr=abarth%40webkit.org">
+            abarth&#64;webkit.org
+              </a>
+          </td>
+          <td >
+            Adam Barth
+          </td>
+          <td >
+              <a href="editusers.cgi?action=activity&amp;userid=1234&amp;matchvalue=login_name&amp;groupid=&amp;grouprestrict=&amp;matchtype=substr&amp;matchstr=abarth%40webkit.org">
+            View
+              </a>
+          </td>
+      </tr>
+    </table>
+"""
+
+    _example_empty_user_results = """
+    <div id="bugzilla-body">
+    <p>0 users found.</p>
+    <table id="admin_table" border="1" cellpadding="4" cellspacing="0">
+      <tr bgcolor="#6666FF">
+          <th align="left">Edit user...
+          </th>
+          <th align="left">Real name
+          </th>
+          <th align="left">Account History
+          </th>
+      </tr>
+      <tr><td colspan="3" align="center"><i>&lt;none&gt;</i></td></tr>
+    </table>
+    """
+
+    def _assert_parsed_logins(self, results_page, expected_logins):
+        queries = BugzillaQueries(None)
+        logins = queries._parse_logins_from_editusers_results(results_page)
+        self.assertEquals(logins, expected_logins)
+
+    def test_parse_logins_from_editusers_results(self):
+        self._assert_parsed_logins(self._example_user_results, ["abarth@webkit.org"])
+        self._assert_parsed_logins(self._example_empty_user_results, [])
