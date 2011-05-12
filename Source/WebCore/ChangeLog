@@ -2,6 +2,24 @@
 
         Reviewed by Eric Seidel.
 
+        Switch paintBoxDecorationWithSize to IntRect
+        https://bugs.webkit.org/show_bug.cgi?id=60679
+
+        Switching paintBoxDecorationWithSize to take an IntRect instead of 4 ints.
+
+        No new tests as this is simple refactoring.
+
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::paintBoxDecorations): Cleaning up amazingly confusing logic.
+        (WebCore::RenderBox::paintBoxDecorationsWithSize):
+        * rendering/RenderBox.h:
+        * rendering/RenderTextControlSingleLine.cpp:
+        (WebCore::RenderTextControlSingleLine::paintBoxDecorations):
+
+2011-05-12  Levi Weintraub  <leviw@chromium.org>
+
+        Reviewed by Eric Seidel.
+
         Switch paintBoxShadow to use IntRect
         https://bugs.webkit.org/show_bug.cgi?id=60713
 

@@ -233,7 +233,7 @@ void RenderTextControlSingleLine::paint(PaintInfo& paintInfo, int tx, int ty)
 
 void RenderTextControlSingleLine::paintBoxDecorations(PaintInfo& paintInfo, int tx, int ty)
 {
-    paintBoxDecorationsWithSize(paintInfo, tx, ty, width() - decorationWidthRight(), height());
+    paintBoxDecorationsWithSize(paintInfo, IntRect(tx, ty, width() - decorationWidthRight(), height()));
 }
 
 void RenderTextControlSingleLine::addFocusRingRects(Vector<IntRect>& rects, int tx, int ty)

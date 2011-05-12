@@ -408,7 +408,7 @@ protected:
     void paintFillLayer(const PaintInfo&, const Color&, const FillLayer*, const IntRect&, BackgroundBleedAvoidance, CompositeOperator, RenderObject* backgroundObject);
     void paintFillLayers(const PaintInfo&, const Color&, const FillLayer*, const IntRect&, BackgroundBleedAvoidance = BackgroundBleedNone, CompositeOperator = CompositeSourceOver, RenderObject* backgroundObject = 0);
 
-    void paintBoxDecorationsWithSize(PaintInfo&, int tx, int ty, int width, int height);
+    void paintBoxDecorationsWithSize(PaintInfo&, IntRect);
     void paintMaskImages(const PaintInfo&, const IntRect&);
 
 #if PLATFORM(MAC)
