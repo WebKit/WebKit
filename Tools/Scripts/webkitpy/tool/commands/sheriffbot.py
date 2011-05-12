@@ -88,12 +88,7 @@ class SheriffBot(AbstractQueue, StepSequenceErrorHandler):
                     print "FAILED to fetch CommitInfo for r%s, likely missing ChangeLog" % revision
                     continue
                 self._sheriff.post_irc_warning(commit_info, builders)
-                # We skip the bug post if there are too many failing_revisions
-                # because these posts are likely to be spammy.
-                # FIXME: Add better huerstics to narrow down the blamelist!
-                if number_of_failing_revisions <= 3:
-                    self._sheriff.post_blame_comment_on_bug(commit_info, builders, tests)
-
+                # We used to post on bugs, but it was too spammy.
             finally:
                 for builder in builders:
                     self._tool.status_server.update_svn_revision(revision, builder.name())

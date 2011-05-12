@@ -1,3 +1,11 @@
+2011-05-12  Adam Barth  <abarth@webkit.org>
+
+        This patch disables sheriffbot's bug postings.  He's just been way too
+        spammy recently due to test flakiness.
+
+        * Scripts/webkitpy/tool/commands/sheriffbot.py:
+        * Scripts/webkitpy/tool/commands/sheriffbot_unittest.py:
+
 2011-05-11  Brian Weinstein  <bweinstein@apple.com>
 
         Reviewed by Anders Carlsson.
