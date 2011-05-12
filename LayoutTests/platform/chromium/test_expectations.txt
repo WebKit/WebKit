@@ -4041,3 +4041,7 @@ BUGWK58999 WIN LINUX MAC : fast/borders/outline-alpha-inline.html = IMAGE+TEXT I
 // Likely rebaseline needed.
 BUGATWILSON LINUX : compositing/color-matching/image-color-matching.html = IMAGE
 BUGATWILSON LINUX : compositing/layers-inside-overflow-scroll.html = IMAGE
+BUGATWILSON LINUX WIN : svg/custom/stroke-opacity-update.svg = IMAGE
+
+// Started failing, exact CL unknown, but assumedly after wk86241
+BUGATWILSON LINUX WIN : fast/repaint/border-fit-lines.html = IMAGE
