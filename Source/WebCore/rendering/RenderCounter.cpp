@@ -575,6 +575,19 @@ void RenderCounter::destroyCounterNode(RenderObject* owner, const AtomicString& 
     // map associated with a renderer, so there is no risk in leaking the map.
 }
 
+void RenderCounter::rendererRemovedFromTree(RenderObject* removedRenderer)
+{
+    RenderObject* currentRenderer = removedRenderer->lastLeafChild();
+    if (!currentRenderer)
+        currentRenderer = removedRenderer;
+    while (true) {
+        destroyCounterNodes(currentRenderer);
+        if (currentRenderer == removedRenderer)
+            break;
+        currentRenderer = currentRenderer->previousInPreOrder();
+    }
+}
+
 static void updateCounters(RenderObject* renderer)
 {
     ASSERT(renderer->style());

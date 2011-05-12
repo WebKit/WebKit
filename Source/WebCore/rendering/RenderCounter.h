@@ -37,6 +37,7 @@ public:
     static void destroyCounterNodes(RenderObject*);
     static void destroyCounterNode(RenderObject*, const AtomicString& identifier);
     static void rendererSubtreeAttached(RenderObject*);
+    static void rendererRemovedFromTree(RenderObject*);
     static void rendererStyleChanged(RenderObject*, const RenderStyle* oldStyle, const RenderStyle* newStyle);
 
 private:

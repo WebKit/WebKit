@@ -1,3 +1,30 @@
+2011-05-12  Carol Szabo  <carol@webkit.org>
+
+        Reviewed by David Hyatt.
+
+        Fix reparenting and destruction of counter nodes. 
+        https://bugs.webkit.org/show_bug.cgi?id=57929
+
+        Fixed several issues related to not met assertions.
+        See below in the per file description.
+
+        Test: fast/css/counters/element-removal-crash.xhtml
+
+        * dom/ContainerNode.cpp:
+        (WebCore::ContainerNode::removeChildren):
+        Fixed the fact that Node::detach() used to be called
+        while the DOM tree was in an inconsistent state.
+        * rendering/RenderCounter.cpp:
+        (WebCore::RenderCounter::rendererRemovedFromTree):
+        Introduced this function to remove counters from
+        descendents of renderers removed from the renderer
+        tree not only from the removed renderers themselves.
+        * rendering/RenderCounter.h:
+        * rendering/RenderObjectChildList.cpp:
+        (WebCore::RenderObjectChildList::removeChildNode):
+        Changed to call RenderCounter::rendererRemovedFromTree
+        instead of RenderCounter::destroyCounters.
+
 2011-05-12  Luke Macpherson   <macpherson@chromium.org>
 
         Reviewed by Dimitri Glazkov.

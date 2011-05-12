@@ -129,8 +129,7 @@ RenderObject* RenderObjectChildList::removeChildNode(RenderObject* owner, Render
     oldChild->setNextSibling(0);
     oldChild->setParent(0);
 
-    if (oldChild->m_hasCounterNodeMap)
-        RenderCounter::destroyCounterNodes(oldChild);
+    RenderCounter::rendererRemovedFromTree(oldChild);
     RenderQuote::rendererRemovedFromTree(oldChild);
 
     if (AXObjectCache::accessibilityEnabled())
