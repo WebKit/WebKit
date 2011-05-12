@@ -159,7 +159,7 @@ PassRefPtr<FrameView> FrameView::create(Frame* frame)
 PassRefPtr<FrameView> FrameView::create(Frame* frame, const IntSize& initialSize)
 {
     RefPtr<FrameView> view = adoptRef(new FrameView(frame));
-    view->Widget::setFrameRect(IntRect(view->pos(), initialSize));
+    view->Widget::setFrameRect(IntRect(view->location(), initialSize));
     view->setInitialBoundsSize(initialSize);
     view->show();
     return view.release();

@@ -1,3 +1,16 @@
+2011-05-11  Levi Weintraub  <leviw@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        Rename Widget::pos()
+        https://bugs.webkit.org/show_bug.cgi?id=60575
+
+        Renaming Widget::pos() to the more-descriptive location().
+
+        * src/WebInputEventConversion.cpp:
+        (WebKit::WebMouseEventBuilder::WebMouseEventBuilder):
+        (WebKit::WebMouseWheelEventBuilder::WebMouseWheelEventBuilder):
+
 2011-05-11  Antoine Labour  <piman@chromium.org>
 
         Reviewed by David Levin.

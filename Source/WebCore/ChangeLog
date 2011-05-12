@@ -1,3 +1,20 @@
+2011-05-11  Levi Weintraub  <leviw@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        Rename Widget::pos()
+        https://bugs.webkit.org/show_bug.cgi?id=60575
+
+        Renaming Widget::pos() to the more-descriptive location().
+
+        No new tests as this is a simple rename
+
+        * page/FrameView.cpp:
+        (WebCore::FrameView::create):
+        * platform/Widget.h:
+        (WebCore::Widget::location):
+        (WebCore::Widget::resize):
+
 2011-05-10  MORITA Hajime  <morrita@google.com>
 
         Reviewed by Kent Tamura.

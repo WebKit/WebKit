@@ -291,8 +291,8 @@ WebMouseEventBuilder::WebMouseEventBuilder(const Widget* widget, const MouseEven
     globalY = event.screenY();
     windowX = p.x();
     windowY = p.y();
-    x = event.absoluteLocation().x() - widget->pos().x();
-    y = event.absoluteLocation().y() - widget->pos().y();
+    x = event.absoluteLocation().x() - widget->location().x();
+    y = event.absoluteLocation().y() - widget->location().y();
     clickCount = event.detail();
 }
 
@@ -310,8 +310,8 @@ WebMouseWheelEventBuilder::WebMouseWheelEventBuilder(const Widget* widget, const
     globalY = event.screenY();
     windowX = p.x();
     windowY = p.y();
-    x = event.absoluteLocation().x() - widget->pos().x();
-    y = event.absoluteLocation().y() - widget->pos().y();
+    x = event.absoluteLocation().x() - widget->location().x();
+    y = event.absoluteLocation().y() - widget->location().y();
     deltaX = static_cast<float>(event.rawDeltaX());
     deltaY = static_cast<float>(event.rawDeltaY());
     // The 120 is from WheelEvent::initWheelEvent().
