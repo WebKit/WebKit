@@ -25,10 +25,6 @@
  */
 
 #include "config.h"
-
-// FIXME: Remove this define!
-#define LOOSE_OWN_PTR
-
 #include "XMLDocumentParser.h"
 
 #include "CDATASection.h"
@@ -84,16 +80,16 @@ namespace WebCore {
 class PendingCallbacks {
     WTF_MAKE_NONCOPYABLE(PendingCallbacks);
 public:
-    PendingCallbacks() { }
-    ~PendingCallbacks()
+    ~PendingCallbacks() { }
+    static PassOwnPtr<PendingCallbacks> create()
     {
-        deleteAllValues(m_callbacks);
+        return adoptPtr(new PendingCallbacks);
     }
-
+    
     void appendStartElementNSCallback(const xmlChar* xmlLocalName, const xmlChar* xmlPrefix, const xmlChar* xmlURI, int nb_namespaces,
                                       const xmlChar** namespaces, int nb_attributes, int nb_defaulted, const xmlChar** attributes)
     {
-        PendingStartElementNSCallback* callback = new PendingStartElementNSCallback;
+        OwnPtr<PendingStartElementNSCallback> callback = adoptPtr(new PendingStartElementNSCallback);
 
         callback->xmlLocalName = xmlStrdup(xmlLocalName);
         callback->xmlPrefix = xmlStrdup(xmlPrefix);
@@ -118,87 +114,87 @@ public:
             callback->attributes[i * 5 + 4] = callback->attributes[i * 5 + 3] + len;
         }
 
-        m_callbacks.append(callback);
+        m_callbacks.append(callback.release());
     }
 
     void appendEndElementNSCallback()
     {
-        PendingEndElementNSCallback* callback = new PendingEndElementNSCallback;
-
-        m_callbacks.append(callback);
+        m_callbacks.append(adoptPtr(new PendingEndElementNSCallback));
     }
 
     void appendCharactersCallback(const xmlChar* s, int len)
     {
-        PendingCharactersCallback* callback = new PendingCharactersCallback;
+        OwnPtr<PendingCharactersCallback> callback = adoptPtr(new PendingCharactersCallback);
 
         callback->s = xmlStrndup(s, len);
         callback->len = len;
 
-        m_callbacks.append(callback);
+        m_callbacks.append(callback.release());
     }
 
     void appendProcessingInstructionCallback(const xmlChar* target, const xmlChar* data)
     {
-        PendingProcessingInstructionCallback* callback = new PendingProcessingInstructionCallback;
+        OwnPtr<PendingProcessingInstructionCallback> callback = adoptPtr(new PendingProcessingInstructionCallback);
 
         callback->target = xmlStrdup(target);
         callback->data = xmlStrdup(data);
 
-        m_callbacks.append(callback);
+        m_callbacks.append(callback.release());
     }
 
     void appendCDATABlockCallback(const xmlChar* s, int len)
     {
-        PendingCDATABlockCallback* callback = new PendingCDATABlockCallback;
+        OwnPtr<PendingCDATABlockCallback> callback = adoptPtr(new PendingCDATABlockCallback);
 
         callback->s = xmlStrndup(s, len);
         callback->len = len;
 
-        m_callbacks.append(callback);
+        m_callbacks.append(callback.release());
     }
 
     void appendCommentCallback(const xmlChar* s)
     {
-        PendingCommentCallback* callback = new PendingCommentCallback;
+        OwnPtr<PendingCommentCallback> callback = adoptPtr(new PendingCommentCallback);
 
         callback->s = xmlStrdup(s);
 
-        m_callbacks.append(callback);
+        m_callbacks.append(callback.release());
     }
 
     void appendInternalSubsetCallback(const xmlChar* name, const xmlChar* externalID, const xmlChar* systemID)
     {
-        PendingInternalSubsetCallback* callback = new PendingInternalSubsetCallback;
+        OwnPtr<PendingInternalSubsetCallback> callback = adoptPtr(new PendingInternalSubsetCallback);
 
         callback->name = xmlStrdup(name);
         callback->externalID = xmlStrdup(externalID);
         callback->systemID = xmlStrdup(systemID);
 
-        m_callbacks.append(callback);
+        m_callbacks.append(callback.release());
     }
 
     void appendErrorCallback(XMLDocumentParser::ErrorType type, const xmlChar* message, int lineNumber, int columnNumber)
     {
-        PendingErrorCallback* callback = new PendingErrorCallback;
+        OwnPtr<PendingErrorCallback> callback = adoptPtr(new PendingErrorCallback);
 
         callback->message = xmlStrdup(message);
         callback->type = type;
         callback->lineNumber = lineNumber;
         callback->columnNumber = columnNumber;
 
-        m_callbacks.append(callback);
+        m_callbacks.append(callback.release());
     }
 
     void callAndRemoveFirstCallback(XMLDocumentParser* parser)
     {
-        OwnPtr<PendingCallback> callback(m_callbacks.takeFirst());
+        OwnPtr<PendingCallback> callback = m_callbacks.takeFirst();
         callback->call(parser);
     }
 
     bool isEmpty() const { return m_callbacks.isEmpty(); }
 
 private:
+    PendingCallbacks() { }
+
     struct PendingCallback {
         virtual ~PendingCallback() { }
         virtual void call(XMLDocumentParser* parser) = 0;
@@ -338,7 +334,7 @@ private:
         int columnNumber;
     };
 
-    Deque<PendingCallback*> m_callbacks;
+    Deque<OwnPtr<PendingCallback> > m_callbacks;
 };
 // --------------------------------
 
@@ -551,7 +547,7 @@ XMLDocumentParser::XMLDocumentParser(Document* document, FrameView* frameView)
     : ScriptableDocumentParser(document)
     , m_view(frameView)
     , m_context(0)
-    , m_pendingCallbacks(new PendingCallbacks)
+    , m_pendingCallbacks(PendingCallbacks::create())
     , m_currentNode(document)
     , m_sawError(false)
     , m_sawCSS(false)
@@ -578,7 +574,7 @@ XMLDocumentParser::XMLDocumentParser(DocumentFragment* fragment, Element* parent
     : ScriptableDocumentParser(fragment->document())
     , m_view(0)
     , m_context(0)
-    , m_pendingCallbacks(new PendingCallbacks)
+    , m_pendingCallbacks(PendingCallbacks::create())
     , m_currentNode(fragment)
     , m_sawError(false)
     , m_sawCSS(false)

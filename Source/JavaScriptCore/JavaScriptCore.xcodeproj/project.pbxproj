@@ -218,6 +218,7 @@
 		5DBB1525131D0BD70056AD36 /* minidom.js in Copy Support Script */ = {isa = PBXBuildFile; fileRef = 1412110D0A48788700480255 /* minidom.js */; };
 		5DE6E5B30E1728EC00180407 /* create_hash_table in Headers */ = {isa = PBXBuildFile; fileRef = F692A8540255597D01FF60F7 /* create_hash_table */; settings = {ATTRIBUTES = (); }; };
 		6507D29E0E871E5E00D7D896 /* JSTypeInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = 6507D2970E871E4A00D7D896 /* JSTypeInfo.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		651DCA04136A6FEF00F74194 /* PassTraits.h in Headers */ = {isa = PBXBuildFile; fileRef = 651DCA02136A6FAB00F74194 /* PassTraits.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		655EB29B10CE2581001A990E /* NodesCodegen.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 655EB29A10CE2581001A990E /* NodesCodegen.cpp */; };
 		65DFC93308EA173A00F7300B /* HashTable.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 65DFC92D08EA173A00F7300B /* HashTable.cpp */; };
 		65E1A3DF122B894500B26097 /* NonCopyingSort.h in Headers */ = {isa = PBXBuildFile; fileRef = 65E1A2F4122B880D00B26097 /* NonCopyingSort.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -868,6 +869,7 @@
 		5DBD18AF0C5401A700C15EAE /* MallocZoneSupport.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MallocZoneSupport.h; sourceTree = "<group>"; };
 		5DE3D0F40DD8DDFB00468714 /* WebKitAvailability.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebKitAvailability.h; sourceTree = "<group>"; };
 		6507D2970E871E4A00D7D896 /* JSTypeInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSTypeInfo.h; sourceTree = "<group>"; };
+		651DCA02136A6FAB00F74194 /* PassTraits.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PassTraits.h; sourceTree = "<group>"; };
 		651F6412039D5B5F0078395C /* dtoa.cpp */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; path = dtoa.cpp; sourceTree = "<group>"; tabWidth = 8; };
 		651F6413039D5B5F0078395C /* dtoa.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = dtoa.h; sourceTree = "<group>"; tabWidth = 8; };
 		652246A40C8D7A0E007BDAF7 /* HashIterators.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HashIterators.h; sourceTree = "<group>"; };
@@ -1724,6 +1726,7 @@
 				BCFBE695122560E800309E9D /* PassOwnArrayPtr.h */,
 				44DD48520FAEA85000D6B4EB /* PassOwnPtr.h */,
 				6580F795094070560082C219 /* PassRefPtr.h */,
+				651DCA02136A6FAB00F74194 /* PassTraits.h */,
 				7934BB761361979300CB99A1 /* ParallelJobs.h */,
 				7934BB771361979300CB99A1 /* ParallelJobsGeneric.cpp */,
 				7934BB781361979300CB99A1 /* ParallelJobsGeneric.h */,
@@ -2603,6 +2606,7 @@
 				7934BB7D1361979400CB99A1 /* ParallelJobsGeneric.h in Headers */,
 				7934BB7E1361979400CB99A1 /* ParallelJobsLibdispatch.h in Headers */,
 				7934BB7F1361979400CB99A1 /* ParallelJobsOpenMP.h in Headers */,
+				651DCA04136A6FEF00F74194 /* PassTraits.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

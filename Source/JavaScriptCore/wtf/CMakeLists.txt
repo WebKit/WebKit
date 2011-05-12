@@ -58,6 +58,7 @@ SET(WTF_HEADERS
     PassOwnArrayPtr.h
     PassOwnPtr.h
     PassRefPtr.h
+    PassTraits.h
     ParallelJobs.h
     ParallelJobsGeneric.h
     ParallelJobsLibdispatch.h

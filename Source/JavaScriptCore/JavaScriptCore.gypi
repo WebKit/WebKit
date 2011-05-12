@@ -187,6 +187,7 @@
             'wtf/PassOwnArrayPtr.h',
             'wtf/PassOwnPtr.h',
             'wtf/PassRefPtr.h',
+            'wtf/PassTraits.h',
             'wtf/Platform.h',
             'wtf/PossiblyNull.h',
             'wtf/RandomNumber.h',

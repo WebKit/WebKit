@@ -479,6 +479,7 @@ javascriptcore_sources += \
 	Source/JavaScriptCore/wtf/PassOwnArrayPtr.h \
 	Source/JavaScriptCore/wtf/PassOwnPtr.h \
 	Source/JavaScriptCore/wtf/PassRefPtr.h \
+	Source/JavaScriptCore/wtf/PassTraits.h \
 	Source/JavaScriptCore/wtf/ParallelJobs.h \
 	Source/JavaScriptCore/wtf/ParallelJobsGeneric.cpp \
 	Source/JavaScriptCore/wtf/ParallelJobsGeneric.h \

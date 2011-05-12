@@ -33,6 +33,7 @@
 // FIXME: Could move what Vector and Deque share into a separate file.
 // Deque doesn't actually use Vector.
 
+#include "PassTraits.h"
 #include "Vector.h"
 
 namespace WTF {
@@ -51,6 +52,8 @@ namespace WTF {
         typedef DequeConstIterator<T, inlineCapacity> const_iterator;
         typedef DequeReverseIterator<T, inlineCapacity> reverse_iterator;
         typedef DequeConstReverseIterator<T, inlineCapacity> const_reverse_iterator;
+        typedef PassTraits<T> Pass;
+        typedef typename PassTraits<T>::PassType PassType;
 
         Deque();
         Deque(const Deque<T, inlineCapacity>&);
@@ -73,7 +76,7 @@ namespace WTF {
 
         T& first() { ASSERT(m_start != m_end); return m_buffer.buffer()[m_start]; }
         const T& first() const { ASSERT(m_start != m_end); return m_buffer.buffer()[m_start]; }
-        T takeFirst();
+        PassType takeFirst();
 
         template<typename U> void append(const U&);
         template<typename U> void prepend(const U&);
@@ -436,11 +439,11 @@ namespace WTF {
     }
 
     template<typename T, size_t inlineCapacity>
-    inline T Deque<T, inlineCapacity>::takeFirst()
+    inline typename Deque<T, inlineCapacity>::PassType Deque<T, inlineCapacity>::takeFirst()
     {
-        T oldFirst = first();
+        T oldFirst = Pass::transfer(first());
         removeFirst();
-        return oldFirst;
+        return Pass::transfer(oldFirst);
     }
 
     template<typename T, size_t inlineCapacity> template<typename U>

@@ -1,3 +1,26 @@
+2011-05-12  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Darin Adler.
+
+        XMLDocumentParserLibxml2 should play nice with strict OwnPtrs
+        https://bugs.webkit.org/show_bug.cgi?id=59394
+
+        This portion of the change introduces a PassTraits template, which
+        is used to enable takeFirst() to work for a Deque holding OwnPtrs,
+        and optimize it for a Deque holding RefPtrs. In the future it can
+        be deployed elsewhere to make our data structures work better with
+        our smart pointers.
+
+        * GNUmakefile.list.am:
+        * JavaScriptCore.gypi:
+        * JavaScriptCore.vcproj/WTF/WTF.vcproj:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * wtf/CMakeLists.txt:
+        * wtf/Deque.h:
+        (WTF::::takeFirst):
+        * wtf/PassTraits.h: Added.
+        (WTF::PassTraits::transfer):
+
 2011-05-12  Nikolas Zimmermann  <nzimmermann@rim.com>
 
         Not reviewed.

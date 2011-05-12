@@ -1,3 +1,27 @@
+2011-05-12  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Darin Adler.
+
+        XMLDocumentParserLibxml2 should play nice with strict OwnPtrs
+        https://bugs.webkit.org/show_bug.cgi?id=59394
+
+        Properly fix this (formerly rolled out for breaking the build). I think the original
+        failure had nothing to do with Deque<OwnPtr>, which in fact appears to work fine.
+
+        * dom/XMLDocumentParserLibxml2.cpp:
+        (WebCore::PendingCallbacks::~PendingCallbacks):
+        (WebCore::PendingCallbacks::create):
+        (WebCore::PendingCallbacks::appendStartElementNSCallback):
+        (WebCore::PendingCallbacks::appendEndElementNSCallback):
+        (WebCore::PendingCallbacks::appendCharactersCallback):
+        (WebCore::PendingCallbacks::appendProcessingInstructionCallback):
+        (WebCore::PendingCallbacks::appendCDATABlockCallback):
+        (WebCore::PendingCallbacks::appendCommentCallback):
+        (WebCore::PendingCallbacks::appendInternalSubsetCallback):
+        (WebCore::PendingCallbacks::appendErrorCallback):
+        (WebCore::PendingCallbacks::PendingCallbacks):
+        (WebCore::XMLDocumentParser::XMLDocumentParser):
+
 2011-05-12  Daniel Bates  <dbates@rim.com>
 
         Reviewed by Kenneth Rohde Christiansen.

@@ -849,6 +849,10 @@
 			>
 		</File>
 		<File
+			RelativePath="..\..\wtf\PassTraits.h"
+			>
+		</File>
+		<File
 			RelativePath="..\..\wtf\ParallelJobs.h"
 			>
 		</File>
