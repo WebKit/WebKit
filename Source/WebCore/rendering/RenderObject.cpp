@@ -1051,6 +1051,14 @@ void RenderObject::paintOutline(GraphicsContext* graphicsContext, int tx, int ty
     if (h < 0 || w < 0)
         return;
 
+#if !USE(SKIA)
+    bool useTransparencyLayer = outlineColor.hasAlpha();
+    if (useTransparencyLayer) {
+        graphicsContext->beginTransparencyLayer(static_cast<float>(outlineColor.alpha()) / 255);
+        outlineColor = Color(outlineColor.red(), outlineColor.green(), outlineColor.blue());
+    }
+#endif
+
     int leftOuter = tx - outlineWidth;
     int leftInner = tx;
     int rightOuter = tx + w + outlineWidth;
@@ -1064,6 +1072,11 @@ void RenderObject::paintOutline(GraphicsContext* graphicsContext, int tx, int ty
     drawLineForBoxSide(graphicsContext, leftOuter, topOuter, rightOuter, topInner, BSTop, outlineColor, outlineStyle, outlineWidth, outlineWidth);
     drawLineForBoxSide(graphicsContext, rightInner, topOuter, rightOuter, bottomOuter, BSRight, outlineColor, outlineStyle, outlineWidth, outlineWidth);
     drawLineForBoxSide(graphicsContext, leftOuter, bottomInner, rightOuter, bottomOuter, BSBottom, outlineColor, outlineStyle, outlineWidth, outlineWidth);
+
+#if !USE(SKIA)
+    if (useTransparencyLayer)
+        graphicsContext->endTransparencyLayer();
+#endif
 }
 
 IntRect RenderObject::absoluteBoundingBoxRect(bool useTransforms)

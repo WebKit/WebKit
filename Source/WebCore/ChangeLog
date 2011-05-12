@@ -1,3 +1,24 @@
+2011-05-12  Ben Wells  <benwells@chromium.org>
+
+        Reviewed by Simon Fraser.
+
+        RGBA colors in outlines show overpainting at the corners
+        https://bugs.webkit.org/show_bug.cgi?id=58999
+
+        Tests: fast/borders/outline-alpha-block.html
+               fast/borders/outline-alpha-inline.html
+
+        Updated baseline images for tests with rgba outlines:
+               fast/box-shadow/box-shadow-radius.html
+               fast/layers/self-painting-outline.html
+
+         * rendering/RenderInline.cpp:
+        (WebCore::RenderInline::paintOutline):
+        (WebCore::RenderInline::paintOutlineForLine):
+        * rendering/RenderInline.h:
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::paintOutline):
+
 2011-05-11  Levi Weintraub  <leviw@chromium.org>
 
         Reviewed by Eric Seidel.

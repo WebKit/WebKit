@@ -1397,17 +1397,31 @@ void RenderInline::paintOutline(GraphicsContext* graphicsContext, int tx, int ty
     }
     rects.append(IntRect());
 
+    Color outlineColor = styleToUse->visitedDependentColor(CSSPropertyOutlineColor);
+#if !USE(SKIA)
+    bool useTransparencyLayer = outlineColor.hasAlpha();
+    if (useTransparencyLayer) {
+        graphicsContext->beginTransparencyLayer(static_cast<float>(outlineColor.alpha()) / 255);
+        outlineColor = Color(outlineColor.red(), outlineColor.green(), outlineColor.blue());
+    }
+#endif
+
     for (unsigned i = 1; i < rects.size() - 1; i++)
-        paintOutlineForLine(graphicsContext, tx, ty, rects.at(i - 1), rects.at(i), rects.at(i + 1));
+        paintOutlineForLine(graphicsContext, tx, ty, rects.at(i - 1), rects.at(i), rects.at(i + 1), outlineColor);
+
+#if !USE(SKIA)
+    if (useTransparencyLayer)
+        graphicsContext->endTransparencyLayer();
+#endif
 }
 
 void RenderInline::paintOutlineForLine(GraphicsContext* graphicsContext, int tx, int ty,
-                                       const IntRect& lastline, const IntRect& thisline, const IntRect& nextline)
+                                       const IntRect& lastline, const IntRect& thisline, const IntRect& nextline,
+                                       const Color outlineColor)
 {
     RenderStyle* styleToUse = style();
     int ow = styleToUse->outlineWidth();
     EBorderStyle os = styleToUse->outlineStyle();
-    Color oc = styleToUse->visitedDependentColor(CSSPropertyOutlineColor);
 
     int offset = style()->outlineOffset();
 
@@ -1423,7 +1437,7 @@ void RenderInline::paintOutlineForLine(GraphicsContext* graphicsContext, int tx,
                l,
                b + (nextline.isEmpty() || thisline.x() <= nextline.x() || (nextline.maxX() - 1) <= thisline.x() ? ow : 0),
                BSLeft,
-               oc, os,
+               outlineColor, os,
                (lastline.isEmpty() || thisline.x() < lastline.x() || (lastline.maxX() - 1) <= thisline.x() ? ow : -ow),
                (nextline.isEmpty() || thisline.x() <= nextline.x() || (nextline.maxX() - 1) <= thisline.x() ? ow : -ow));
     
@@ -1434,7 +1448,7 @@ void RenderInline::paintOutlineForLine(GraphicsContext* graphicsContext, int tx,
                r + ow,
                b + (nextline.isEmpty() || nextline.maxX() <= thisline.maxX() || (thisline.maxX() - 1) <= nextline.x() ? ow : 0),
                BSRight,
-               oc, os,
+               outlineColor, os,
                (lastline.isEmpty() || lastline.maxX() < thisline.maxX() || (thisline.maxX() - 1) <= lastline.x() ? ow : -ow),
                (nextline.isEmpty() || nextline.maxX() <= thisline.maxX() || (thisline.maxX() - 1) <= nextline.x() ? ow : -ow));
     // upper edge
@@ -1444,7 +1458,7 @@ void RenderInline::paintOutlineForLine(GraphicsContext* graphicsContext, int tx,
                    t - ow,
                    min(r+ow, (lastline.isEmpty() ? 1000000 : tx + lastline.x())),
                    t ,
-                   BSTop, oc, os,
+                   BSTop, outlineColor, os,
                    ow,
                    (!lastline.isEmpty() && tx + lastline.x() + 1 < r + ow) ? -ow : ow);
     
@@ -1454,7 +1468,7 @@ void RenderInline::paintOutlineForLine(GraphicsContext* graphicsContext, int tx,
                    t - ow,
                    r + ow,
                    t ,
-                   BSTop, oc, os,
+                   BSTop, outlineColor, os,
                    (!lastline.isEmpty() && l - ow < tx + lastline.maxX()) ? -ow : ow,
                    ow);
     
@@ -1465,7 +1479,7 @@ void RenderInline::paintOutlineForLine(GraphicsContext* graphicsContext, int tx,
                    b,
                    min(r + ow, !nextline.isEmpty() ? tx + nextline.x() + 1 : 1000000),
                    b + ow,
-                   BSBottom, oc, os,
+                   BSBottom, outlineColor, os,
                    ow,
                    (!nextline.isEmpty() && tx + nextline.x() + 1 < r + ow) ? -ow : ow);
     
@@ -1475,7 +1489,7 @@ void RenderInline::paintOutlineForLine(GraphicsContext* graphicsContext, int tx,
                    b,
                    r + ow,
                    b + ow,
-                   BSBottom, oc, os,
+                   BSBottom, outlineColor, os,
                    (!nextline.isEmpty() && l - ow < tx + nextline.maxX()) ? -ow : ow,
                    ow);
 }

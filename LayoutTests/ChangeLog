@@ -1,3 +1,20 @@
+2011-05-12  Ben Wells  <benwells@chromium.org>
+
+        Reviewed by Simon Fraser.
+
+        RGBA colors in outlines show overpainting at the corners
+        https://bugs.webkit.org/show_bug.cgi?id=58999
+
+        * fast/borders/outline-alpha-block.html: Added.
+        * fast/borders/outline-alpha-inline.html: Added.
+        * platform/chromium/test_expectations.txt:
+        * platform/mac/fast/borders/outline-alpha-block-expected.png: Added.
+        * platform/mac/fast/borders/outline-alpha-block-expected.txt: Added.
+        * platform/mac/fast/borders/outline-alpha-inline-expected.png: Added.
+        * platform/mac/fast/borders/outline-alpha-inline-expected.txt: Added.
+        * platform/mac/fast/box-shadow/box-shadow-radius-expected.png: Rebaselined as this test had rgba outlines.
+        * platform/mac/fast/layers/self-painting-outline-expected.png: Rebaselined as this test had rgba outlines.
+
 2011-05-11  Srinivasulu Chereddy  <Srinivasulu.Chereddy@nokia.com>
 
         Reviewed by Eric Seidel.
