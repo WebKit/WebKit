@@ -1,3 +1,24 @@
+2011-05-12  Brian Weinstein  <bweinstein@apple.com>
+
+        Reviewed by Adam Roben.
+
+        WebKit2: Implement plugin quirk for Mozilla user agent for older Flash
+        https://bugs.webkit.org/show_bug.cgi?id=60726
+        <rdar://problem/8470824>
+        
+        Implement the quirk for versions of Flash before v10 that only request windowless plugins
+        if we use a Mozilla user agent.
+
+        * Shared/Plugins/Netscape/win/NetscapePluginModuleWin.cpp:
+        (WebKit::NetscapePluginModule::determineQuirks): If we have a plugin that handles the
+            "application/x-shockwave-flash" MIME type with a version less than 10, tell it to use
+            the Mozilla user agent.
+        * Shared/Plugins/PluginQuirks.h:
+        * WebProcess/Plugins/Netscape/NetscapePlugin.cpp:
+        (WebKit::NetscapePlugin::userAgent): Add an early return if the plugin uses the Mozilla user
+            agent.
+        * win/WebKit2.vcproj: Add PluginQuirks.h.
+
 2011-05-12  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Simon Fraser.

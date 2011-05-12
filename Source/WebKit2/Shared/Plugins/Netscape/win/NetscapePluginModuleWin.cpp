@@ -116,6 +116,25 @@ bool NetscapePluginModule::getPluginInfo(const String& pluginPath, PluginInfoSto
 
 void NetscapePluginModule::determineQuirks()
 {
+    PluginInfoStore::Plugin plugin;
+    getPluginInfo(m_pluginPath, plugin);
+
+    Vector<MimeClassInfo> mimeTypes = plugin.info.mimes;
+    for (size_t i = 0; i < mimeTypes.size(); ++i) {
+        // FIXME: It seems strange to assume that any plugin that handles this MIME type needs this quirk. Should
+        // we be be checking the plugin's name instead?
+        if (mimeTypes[i].type == "application/x-shockwave-flash") {
+            uint64_t flashTenVersion = fileVersion(0x00000000, 0x000a0000);
+            uint64_t version = plugin.fileVersion;
+
+            // Pre Flash v10 only requests windowless plugins if we use a Mozilla user agent.
+            // For testing information, see: https://bugs.webkit.org/show_bug.cgi?id=60726.
+            if (version < flashTenVersion)
+                m_pluginQuirks.add(PluginQuirks::WantsMozillaUserAgent);
+
+            break;
+        }
+    }
 }
 
 } // namespace WebKit

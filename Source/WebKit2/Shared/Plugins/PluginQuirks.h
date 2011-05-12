@@ -61,6 +61,9 @@ public:
         // NPN_GetValue even when it is a lie.
         RequiresGTKToolKit,
 #endif
+   
+        WantsMozillaUserAgent,
+
         NumPluginQuirks
     };
     

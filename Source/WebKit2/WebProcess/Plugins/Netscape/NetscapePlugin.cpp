@@ -132,8 +132,26 @@ const char* NetscapePlugin::userAgent(NPP npp)
     return 0;
 }
 
+static const char* MozillaUserAgent = "Mozilla/5.0 ("
+#if PLUGIN_ARCHITECTURE(MAC)
+        "Macintosh; U; Intel Mac OS X;"
+#elif PLUGIN_ARCHITECTURE(WIN)
+        "Windows; U; Windows NT 5.1;"
+#elif PLUGIN_ARCHITECTURE(X11)
+// The Gtk port uses X11 plugins in Mac.
+#if OS(DARWIN) && PLATFORM(GTK)
+    "X11; U; Intel Mac OS X;"
+#else
+    "X11; U; Linux i686;"
+#endif
+#endif
+        " en-US; rv:1.8.1) Gecko/20061010 Firefox/2.0";
+
 const char* NetscapePlugin::userAgent()
 {
+    if (quirks().contains(PluginQuirks::WantsMozillaUserAgent))
+        return MozillaUserAgent;
+
     if (m_userAgent.isNull()) {
         m_userAgent = m_pluginController->userAgent().utf8();
         ASSERT(!m_userAgent.isNull());
