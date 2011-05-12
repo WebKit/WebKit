@@ -1,5 +1,28 @@
 2011-05-11  Oliver Hunt  <oliver@apple.com>
 
+        Reviewed by Darin Adler.
+
+        Protect JSC from WebCore executing JS during JS wrapper finalization
+        https://bugs.webkit.org/show_bug.cgi?id=60672
+        <rdar://problem/9350997>
+
+        Detect when we're trying to execute JS during GC and prevent the
+        execution from happening.  We also assert that this isn't happening
+        as it implies incorrect behaviour of an object's destructor.
+
+        * JavaScriptCore.exp:
+        * heap/Heap.cpp:
+        * heap/Heap.h:
+        (JSC::Heap::isBusy):
+        * interpreter/Interpreter.cpp:
+        (JSC::Interpreter::execute):
+        (JSC::Interpreter::executeCall):
+        (JSC::Interpreter::executeConstruct):
+        * runtime/JSGlobalData.h:
+        (JSC::JSGlobalData::isCollectorBusy):
+
+2011-05-11  Oliver Hunt  <oliver@apple.com>
+
         Reviewed by Gavin Barraclough.
 
         Enable gc mark validation in temporarily in release builds

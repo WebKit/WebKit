@@ -76,7 +76,9 @@ namespace JSC {
         GCActivityCallback* activityCallback();
         void setActivityCallback(PassOwnPtr<GCActivityCallback>);
 
-        bool isBusy(); // true if an allocation or collection is in progress
+        // true if an allocation or collection is in progress
+        inline bool isBusy();
+
         void* allocate(size_t);
         void collectAllGarbage();
 
@@ -145,6 +147,11 @@ namespace JSC {
 
         size_t m_extraCost;
     };
+
+    bool Heap::isBusy()
+    {
+        return m_operationInProgress != NoOperation;
+    }
 
     inline bool Heap::isMarked(const JSCell* cell)
     {

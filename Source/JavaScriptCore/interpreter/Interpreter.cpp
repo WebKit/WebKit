@@ -728,6 +728,9 @@ static inline JSObject* checkedReturn(JSObject* returnValue)
 JSValue Interpreter::execute(ProgramExecutable* program, CallFrame* callFrame, ScopeChainNode* scopeChain, JSObject* thisObj)
 {
     ASSERT(!scopeChain->globalData->exception);
+    ASSERT(!callFrame->globalData().isCollectorBusy());
+    if (callFrame->globalData().isCollectorBusy())
+        return jsNull();
 
     if (m_reentryDepth >= MaxSmallThreadReentryDepth && m_reentryDepth >= callFrame->globalData().maxReentryDepth)
         return checkedReturn(throwStackOverflowError(callFrame));
@@ -786,6 +789,9 @@ JSValue Interpreter::execute(ProgramExecutable* program, CallFrame* callFrame, S
 JSValue Interpreter::executeCall(CallFrame* callFrame, JSObject* function, CallType callType, const CallData& callData, JSValue thisValue, const ArgList& args)
 {
     ASSERT(!callFrame->hadException());
+    ASSERT(!callFrame->globalData().isCollectorBusy());
+    if (callFrame->globalData().isCollectorBusy())
+        return jsNull();
 
     if (m_reentryDepth >= MaxSmallThreadReentryDepth && m_reentryDepth >= callFrame->globalData().maxReentryDepth)
         return checkedReturn(throwStackOverflowError(callFrame));
@@ -876,6 +882,11 @@ JSValue Interpreter::executeCall(CallFrame* callFrame, JSObject* function, CallT
 JSObject* Interpreter::executeConstruct(CallFrame* callFrame, JSObject* constructor, ConstructType constructType, const ConstructData& constructData, const ArgList& args)
 {
     ASSERT(!callFrame->hadException());
+    ASSERT(!callFrame->globalData().isCollectorBusy());
+    // We throw in this case because we have to return something "valid" but we're
+    // already in an invalid state.
+    if (callFrame->globalData().isCollectorBusy())
+        return checkedReturn(throwStackOverflowError(callFrame));
 
     if (m_reentryDepth >= MaxSmallThreadReentryDepth && m_reentryDepth >= callFrame->globalData().maxReentryDepth)
         return checkedReturn(throwStackOverflowError(callFrame));
@@ -1014,6 +1025,9 @@ CallFrameClosure Interpreter::prepareForRepeatCall(FunctionExecutable* FunctionE
 
 JSValue Interpreter::execute(CallFrameClosure& closure) 
 {
+    ASSERT(!closure.oldCallFrame->globalData().isCollectorBusy());
+    if (closure.oldCallFrame->globalData().isCollectorBusy())
+        return jsNull();
     closure.resetCallFrame();
     Profiler** profiler = Profiler::enabledProfilerReference();
     if (*profiler)
@@ -1060,6 +1074,9 @@ JSValue Interpreter::execute(EvalExecutable* eval, CallFrame* callFrame, JSObjec
 JSValue Interpreter::execute(EvalExecutable* eval, CallFrame* callFrame, JSObject* thisObj, int globalRegisterOffset, ScopeChainNode* scopeChain)
 {
     ASSERT(!scopeChain->globalData->exception);
+    ASSERT(!callFrame->globalData().isCollectorBusy());
+    if (callFrame->globalData().isCollectorBusy())
+        return jsNull();
 
     DynamicGlobalObjectScope globalObjectScope(*scopeChain->globalData, scopeChain->globalObject.get());
 

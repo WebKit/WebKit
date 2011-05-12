@@ -269,6 +269,8 @@ namespace JSC {
         HandleSlot allocateLocalHandle() { return heap.allocateLocalHandle(); }
         void clearBuiltinStructures();
 
+        bool isCollectorBusy() { return heap.isBusy(); }
+
     private:
         JSGlobalData(GlobalDataType, ThreadStackType);
         static JSGlobalData*& sharedInstanceInternal();

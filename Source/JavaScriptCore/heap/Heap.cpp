@@ -376,11 +376,6 @@ PassOwnPtr<TypeCountSet> Heap::objectTypeCounts()
     return typeCounter.take();
 }
 
-bool Heap::isBusy()
-{
-    return m_operationInProgress != NoOperation;
-}
-
 void Heap::collectAllGarbage()
 {
     reset(DoSweep);
