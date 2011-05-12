@@ -31,8 +31,6 @@
 #ifndef CloseEvent_h
 #define CloseEvent_h
 
-#if ENABLE(WEB_SOCKETS)
-
 #include "Event.h"
 #include "EventNames.h"
 
@@ -69,7 +67,5 @@ private:
 };
 
 } // namespace WebCore
-
-#endif // ENABLE(WEB_SOCKETS)
 
 #endif // CloseEvent_h

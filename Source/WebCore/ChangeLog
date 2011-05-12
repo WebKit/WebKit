@@ -1,5 +1,12 @@
 2011-05-12  Yuta Kitamura  <yutak@chromium.org>
 
+        Unreviewed, another attempt of build fix.
+
+        * websockets/CloseEvent.h:
+        * websockets/CloseEvent.idl:
+
+2011-05-12  Yuta Kitamura  <yutak@chromium.org>
+
         Unreviewed, trying to fix Qt minimal compile.
 
         * websockets/CloseEvent.idl:
