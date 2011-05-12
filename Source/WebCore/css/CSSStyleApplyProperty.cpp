@@ -505,11 +505,13 @@ CSSStyleApplyProperty::CSSStyleApplyProperty()
     setPropertyHandler(CSSPropertyMarginRight, new ApplyPropertyLength<AutoEnabled>(&RenderStyle::marginRight, &RenderStyle::setMarginRight, &RenderStyle::initialMargin));
     setPropertyHandler(CSSPropertyMarginBottom, new ApplyPropertyLength<AutoEnabled>(&RenderStyle::marginBottom, &RenderStyle::setMarginBottom, &RenderStyle::initialMargin));
     setPropertyHandler(CSSPropertyMarginLeft, new ApplyPropertyLength<AutoEnabled>(&RenderStyle::marginLeft, &RenderStyle::setMarginLeft, &RenderStyle::initialMargin));
+    setPropertyHandler(CSSPropertyMargin, new ApplyPropertyExpandingSuppressValue(propertyHandler(CSSPropertyMarginTop), propertyHandler(CSSPropertyMarginRight), propertyHandler(CSSPropertyMarginBottom), propertyHandler(CSSPropertyMarginLeft)));
 
     setPropertyHandler(CSSPropertyPaddingTop, new ApplyPropertyLength<>(&RenderStyle::paddingTop, &RenderStyle::setPaddingTop, &RenderStyle::initialPadding));
     setPropertyHandler(CSSPropertyPaddingRight, new ApplyPropertyLength<>(&RenderStyle::paddingRight, &RenderStyle::setPaddingRight, &RenderStyle::initialPadding));
     setPropertyHandler(CSSPropertyPaddingBottom, new ApplyPropertyLength<>(&RenderStyle::paddingBottom, &RenderStyle::setPaddingBottom, &RenderStyle::initialPadding));
     setPropertyHandler(CSSPropertyPaddingLeft, new ApplyPropertyLength<>(&RenderStyle::paddingLeft, &RenderStyle::setPaddingLeft, &RenderStyle::initialPadding));
+    setPropertyHandler(CSSPropertyPadding, new ApplyPropertyExpandingSuppressValue(propertyHandler(CSSPropertyPaddingTop), propertyHandler(CSSPropertyPaddingRight), propertyHandler(CSSPropertyPaddingBottom), propertyHandler(CSSPropertyPaddingLeft)));
 
     setPropertyHandler(CSSPropertyWebkitPerspectiveOriginX, new ApplyPropertyLength<>(&RenderStyle::perspectiveOriginX, &RenderStyle::setPerspectiveOriginX, &RenderStyle::initialPerspectiveOriginX));
     setPropertyHandler(CSSPropertyWebkitPerspectiveOriginY, new ApplyPropertyLength<>(&RenderStyle::perspectiveOriginY, &RenderStyle::setPerspectiveOriginY, &RenderStyle::initialPerspectiveOriginY));

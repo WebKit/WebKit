@@ -1,3 +1,19 @@
+2011-05-11  Luke Macpherson   <macpherson@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        Implement CSSPropertyMargin and CSSPropertyPadding in CSSStyleApplyProperty.
+        https://bugs.webkit.org/show_bug.cgi?id=60609
+
+        No new tests - refactoring only.
+
+        * css/CSSStyleApplyProperty.cpp:
+        (WebCore::CSSStyleApplyProperty::CSSStyleApplyProperty):
+        Initialise CSSPropertyMargin and CSSPropertyPadding handlers.
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::applyProperty):
+        Remove unused implementations.
+
 2011-05-11  Robin Dunn  <robin@alldunn.com>
 
         Reviewed by Kevin Ollivier.

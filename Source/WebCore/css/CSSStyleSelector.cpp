@@ -4441,26 +4441,6 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
         else if (isInherit)
             m_style->inheritMaskLayers(*m_parentStyle->maskLayers());
         return;
-    case CSSPropertyMargin:
-        if (isInherit) {
-            m_style->setMarginTop(m_parentStyle->marginTop());
-            m_style->setMarginBottom(m_parentStyle->marginBottom());
-            m_style->setMarginLeft(m_parentStyle->marginLeft());
-            m_style->setMarginRight(m_parentStyle->marginRight());
-        }
-        else if (isInitial)
-            m_style->resetMargin();
-        return;
-    case CSSPropertyPadding:
-        if (isInherit) {
-            m_style->setPaddingTop(m_parentStyle->paddingTop());
-            m_style->setPaddingBottom(m_parentStyle->paddingBottom());
-            m_style->setPaddingLeft(m_parentStyle->paddingLeft());
-            m_style->setPaddingRight(m_parentStyle->paddingRight());
-        }
-        else if (isInitial)
-            m_style->resetPadding();
-        return;
     case CSSPropertyFont:
         if (isInherit) {
             FontDescription fontDescription = m_parentStyle->fontDescription();
@@ -5538,10 +5518,12 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
     case CSSPropertyMarginRight:
     case CSSPropertyMarginBottom:
     case CSSPropertyMarginLeft:
+    case CSSPropertyMargin:
     case CSSPropertyPaddingTop:
     case CSSPropertyPaddingRight:
     case CSSPropertyPaddingBottom:
     case CSSPropertyPaddingLeft:
+    case CSSPropertyPadding:
     case CSSPropertyTextIndent:
     case CSSPropertyMaxHeight:
     case CSSPropertyHeight:
