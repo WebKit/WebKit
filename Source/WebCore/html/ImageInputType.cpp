@@ -68,7 +68,7 @@ bool ImageInputType::appendFormData(FormDataList& encoding, bool) const
     encoding.appendData(name + dotXString, m_clickLocation.x());
     encoding.appendData(name + dotYString, m_clickLocation.y());
 
-    if (!!element()->value().isEmpty())
+    if (!element()->value().isEmpty())
         encoding.appendData(name, element()->value());
     return true;
 }
