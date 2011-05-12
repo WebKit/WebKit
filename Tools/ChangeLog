@@ -1,3 +1,42 @@
+2011-05-11  Brian Weinstein  <bweinstein@apple.com>
+
+        Reviewed by Anders Carlsson.
+
+        After relaunching an unresponsive web process, web page stops responding to mouse movement
+        https://bugs.webkit.org/show_bug.cgi?id=60669
+        <rdar://problem/9409934>
+        
+        This test follows the steps needed to reproduce this bug:
+        1) Hang the web process
+        2) While the web process is hung, move the mouse (so WebPageProxy thinks it is processing a mouse move event)
+        3) Kill and restart the WebProcess
+        4) Move the mouse
+        
+        We are testing that we receive mouse move events after the WebProcess has restarted.
+
+        * TestWebKitAPI/Tests/WebKit2/MouseMoveAfterCrash.cpp: Added.
+        (TestWebKitAPI::didFinishLoadForFrame): Set a flag that we finished loading.
+        (TestWebKitAPI::processDidBecomeUnresponsive): Kill the web process once we become unresponsive.
+        (TestWebKitAPI::processDidCrash): Reload the page when the process crashes, which restarts the web process.
+        (TestWebKitAPI::setPageLoaderClient):
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WebKit2/MouseMoveAfterCrash_Bundle.cpp: Added.
+        (TestWebKitAPI::MouseMoveAfterCrashTest::MouseMoveAfterCrashTest):
+        (TestWebKitAPI::MouseMoveAfterCrashTest::didReceiveMessage):
+        * TestWebKitAPI/Tests/WebKit2/mouse-move-listener.html: Added.
+
+        * TestWebKitAPI/PlatformWebView.h:
+        * TestWebKitAPI/mac/PlatformWebViewMac.mm:
+        (TestWebKitAPI::PlatformWebView::simulateMouseMove): Sends the messages that simulate a mouse move.
+        * TestWebKitAPI/win/PlatformWebViewWin.cpp:
+        (TestWebKitAPI::PlatformWebView::simulateMouseMove): Ditto.
+
+        Add new files.
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/win/TestWebKitAPI.vcproj:
+        * TestWebKitAPI/win/TestWebKitAPIInjectedBundle.vcproj:
+        * TestWebKitAPI/win/copy-resources.cmd:
+
 2011-05-12  Tomasz Morawski  <t.morawski@samsung.com>
 
         Reviewed by Antonio Gomes.

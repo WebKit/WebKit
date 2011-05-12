@@ -416,6 +416,10 @@
 					>
 				</File>
 				<File
+					RelativePath="..\Tests\WebKit2\MouseMoveAfterCrash_Bundle.cpp"
+					>
+				</File>
+				<File
 					RelativePath="..\Tests\WebKit2\ResponsivenessTimerDoesntFireEarly_Bundle.cpp"
 					>
 				</File>

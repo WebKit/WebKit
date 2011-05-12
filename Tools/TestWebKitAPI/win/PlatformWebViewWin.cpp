@@ -117,6 +117,13 @@ void PlatformWebView::simulateRightClick(unsigned x, unsigned y)
     ::SendMessageW(window, WM_RBUTTONUP, 0, MAKELPARAM(x, y));
 }
 
+void PlatformWebView::simulateMouseMove(unsigned x, unsigned y)
+{
+    HWND window = WKViewGetWindow(m_view);
+
+    ::SendMessageW(window, WM_MOUSEMOVE, 0, MAKELPARAM(x, y));
+}
+
 LRESULT PlatformWebView::wndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
     PlatformWebView* webView;

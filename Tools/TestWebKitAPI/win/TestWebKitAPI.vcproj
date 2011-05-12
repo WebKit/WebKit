@@ -472,6 +472,14 @@
 					>
 				</File>
 				<File
+					RelativePath="..\Tests\WebKit2\mouse-move-listener.html"
+					>
+				</File>
+				<File
+					RelativePath="..\Tests\WebKit2\MouseMoveAfterCrash.cpp"
+					>
+				</File>
+				<File
 					RelativePath="..\Tests\WebKit2\PageLoadBasic.cpp"
 					>
 				</File>

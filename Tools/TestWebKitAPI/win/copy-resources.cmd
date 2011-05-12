@@ -11,6 +11,7 @@ for %%f in (
     ..\Tests\WebKit2\file-with-anchor.html
     ..\Tests\WebKit2\find.html
     ..\Tests\WebKit2\icon.png
+    ..\Tests\WebKit2\mouse-move-listener.html
     ..\Tests\WebKit2\simple.html
     ..\Tests\WebKit2\simple-accelerated-compositing.html
     ..\Tests\WebKit2\simple-form.html

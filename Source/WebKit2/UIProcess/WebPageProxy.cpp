@@ -2903,6 +2903,8 @@ void WebPageProxy::processDidCrash()
     m_nextMouseMoveEvent = nullptr;
     m_currentlyProcessedMouseDownEvent = nullptr;
 
+    m_processingMouseMoveEvent = false;
+
 #if PLATFORM(MAC) && !defined(BUILDING_ON_SNOW_LEOPARD)
     dismissCorrectionPanel(ReasonForDismissingCorrectionPanelIgnored);
     m_pageClient->dismissDictionaryLookupPanel();

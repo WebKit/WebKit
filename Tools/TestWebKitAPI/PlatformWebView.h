@@ -66,6 +66,7 @@ public:
     void simulateSpacebarKeyPress();
     void simulateAltKeyPress();
     void simulateRightClick(unsigned x, unsigned y);
+    void simulateMouseMove(unsigned x, unsigned y);
 
 #if PLATFORM(WIN)
     void simulateAKeyDown();
