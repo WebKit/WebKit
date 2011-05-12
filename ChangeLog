@@ -1,3 +1,20 @@
+2011-05-12  Lucas De Marchi  <lucas.demarchi@profusion.mobi>
+
+        Reviewed by Antonio Gomes.
+
+        [CMAKE] Add option to unconditionally enable/disable a feature
+        https://bugs.webkit.org/show_bug.cgi?id=60643
+
+        Create an argument to be used in WEBKIT_FEATURE macro, allowing a port
+        to enable a feature without showing to user that it can be disabled.
+        This is useful if a port needs an option to be always ON/OFF and
+        changing it will break the build.
+
+        This way it's possible to add mandatory features to each port without
+        touching the cmakeconfig.cmake file.
+
+        * Source/cmake/WebKitFeatures.cmake:
+
 2011-05-11  Dmitry Lomov  <dslomov@google.com>
 
         Reviewed by David Levin.

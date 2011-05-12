@@ -1,5 +1,6 @@
 SET(DEFAULT 0)
 SET(DEPENDS 1)
+SET(ALWAYS 2)
 
 SET(WEBKIT_FEATURES "")
 
@@ -36,8 +37,10 @@ MACRO(WEBKIT_FEATURE _feature _description _type _args)
 		OPTION(${_feature} "${_description}" DEPS_OK_${_feature})
 	ELSEIF (${_type} EQUAL ${DEFAULT})
 		OPTION(${_feature} "${_description}" ${_args})
+	ELSEIF (${_type} EQUAL ${ALWAYS})
+		SET(${_feature} ${_args})
 	ENDIF ()
-	
+
 	LIST(APPEND WEBKIT_FEATURES ${_feature})
 
 	IF (${_feature})
