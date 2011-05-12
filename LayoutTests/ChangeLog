@@ -1,3 +1,14 @@
+2011-05-10  MORITA Hajime  <morrita@google.com>
+
+        Reviewed by Kent Tamura.
+
+        Crashes if the document inside iframe is removed during pasting some text into it.
+        https://bugs.webkit.org/show_bug.cgi?id=60534
+
+        * editing/pasteboard/paste-removing-iframe-expected.txt: Added.
+        * editing/pasteboard/paste-removing-iframe.html: Added.
+        * editing/pasteboard/resources/paste-removing-iframe-child.html: Added.
+
 2011-05-11  MORITA Hajime  <morrita@google.com>
 
         Reviewed by Kent Tamura.
