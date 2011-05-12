@@ -483,7 +483,8 @@ GrContext* SharedGraphicsContext3D::grContext()
         return 0;
     if (!m_grContext) {
         m_grContext = GrContext::CreateGLShaderContext();
-        m_grContext->setTextureCacheLimits(maxTextureCacheCount, maxTextureCacheBytes);
+        if (m_grContext)
+            m_grContext->setTextureCacheLimits(maxTextureCacheCount, maxTextureCacheBytes);
     }
     return m_grContext;
 }

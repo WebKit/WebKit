@@ -1,3 +1,15 @@
+2011-05-11  Brian Salomon  <bsalomon@google.com>
+
+        Reviewed by Eric Seidel.
+
+        Handle case when GrContext creation fails
+        https://bugs.webkit.org/show_bug.cgi?id=60410
+
+        Exercised by all canvas tests when DRT is run with skia-gpu
+
+        * platform/graphics/gpu/SharedGraphicsContext3D.cpp:
+        (WebCore::SharedGraphicsContext3D::grContext):
+
 2011-05-11  Pratik Solanki  <psolanki@apple.com>
 
         Reviewed by Andreas Kling.
