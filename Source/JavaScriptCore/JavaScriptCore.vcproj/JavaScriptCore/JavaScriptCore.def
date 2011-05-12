@@ -44,6 +44,9 @@ EXPORTS
     ??2JSGlobalObject@JSC@@SAPAXIPAVJSGlobalData@1@@Z
     ??8JSC@@YA_NABVUString@0@0@Z
     ??8WTF@@YA_NABVCString@0@0@Z
+    ??HWTF@@YA?AVString@0@ABV10@PBD@Z
+    ??HWTF@@YA?AVString@0@PBDABV10@@Z
+    ??HWTF@@YA?AVString@0@ABV10@0@Z
     ?NaN@JSC@@3NB
     ?absoluteTimeToWaitTimeoutInterval@WTF@@YAKN@Z
     ?activityCallback@Heap@JSC@@QAEPAVGCActivityCallback@2@XZ
