@@ -1,3 +1,38 @@
+2011-05-12  Daniel Bates  <dbates@rim.com>
+
+        Reviewed by Adele Peterson.
+
+        Frame's noResize attribute can not be set by JavaScript
+        https://bugs.webkit.org/show_bug.cgi?id=14845
+
+        Tests: fast/frames/frame-inherit-noresize-from-frameset.html
+               fast/frames/frame-programmatic-noresize.html
+               fast/frames/frame-with-noresize-can-be-resized-after-removal-of-noresize.html
+               fast/frames/frame-with-noresize-can-be-resized-after-setting-noResize-to-false.html
+
+        Implements support to programmatically allow and disallow frame resizing.
+
+        Currently, HTMLFrameElement::parseMappedAttribute() is hardcoded to disallow frame resize (i.e.
+        m_noResize = true) when either the noresize DOM attribute is specified (or existed at some
+        point in time) or the value of the noResize attribute is modified. Instead we should allow/disallow
+        frame resize depending on the presence of the noresize DOM attribute/the value of the noResize
+        attribute.
+
+        * html/HTMLFrameElement.cpp:
+        (WebCore::HTMLFrameElement::HTMLFrameElement):
+        (WebCore::HTMLFrameElement::noResize): Made this a non-inline function since this
+        code path isn't performance critical.
+        (WebCore::HTMLFrameElement::attach): Removed code to inherit noresize attribute from
+        parent <frameset> since this functionality is part of RenderFrameSet::computeEdgeInfo().
+        (WebCore::HTMLFrameElement::parseMappedAttribute):
+        * html/HTMLFrameElement.h:
+        * rendering/RenderFrame.cpp:
+        (WebCore::RenderFrame::updateFromElement): Added.
+        * rendering/RenderFrame.h:
+        * rendering/RenderFrameSet.cpp:
+        (WebCore::RenderFrameSet::notifyFrameEdgeInfoChanged): Added.
+        * rendering/RenderFrameSet.h:
+
 2011-05-12  Emil A Eklund  <eae@chromium.org>
 
         Reviewed by Darin Adler.

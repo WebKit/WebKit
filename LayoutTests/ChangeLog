@@ -1,3 +1,35 @@
+2011-05-12  Daniel Bates  <dbates@rim.com>
+
+        Reviewed by Adele Peterson.
+
+        Frame's noResize attribute can not be set by JavaScript
+        https://bugs.webkit.org/show_bug.cgi?id=14845
+
+        Tests that frame resizing is allowed and disallowed depending on the value of the noResize property.
+
+        Also, tests to ensure that frame resizing is allowed and disallowed when programmatically
+        removing and adding the noresize attribute, respectively.
+
+        * fast/frames/frame-inherit-noresize-from-frameset-expected.txt: Added.
+        * fast/frames/frame-inherit-noresize-from-frameset.html: Added. See <https://bugs.webkit.org/show_bug.cgi?id=57604>.
+        * fast/frames/frame-programmatic-noresize-expected.txt: Added.
+        * fast/frames/frame-programmatic-noresize.html: Added.
+        * fast/frames/frame-with-noresize-can-be-resized-after-removal-of-noresize-expected.txt: Added.
+        * fast/frames/frame-with-noresize-can-be-resized-after-removal-of-noresize.html: Added.
+        * fast/frames/frame-with-noresize-can-be-resized-after-setting-noResize-to-false-expected.txt: Added.
+        * fast/frames/frame-with-noresize-can-be-resized-after-setting-noResize-to-false.html: Added.
+        * fast/frames/resources/frame-programmatic-resize.js: Added.
+        (setTestFrameById):
+        (deltaWidth):
+        (shouldAllowFrameResize):
+        (shouldDisallowFrameResize):
+        (shouldDisallowFrameResizeAfterProcessingFrame):
+        (shouldAllowFrameResizeAfterProcessingFrame):
+        (checkTestFrameWidthEquals):
+        (resizeTestFrameBy):
+        (log):
+        (description):
+
 2011-05-12  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Sam Weinig.

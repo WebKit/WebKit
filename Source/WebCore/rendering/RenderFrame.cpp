@@ -42,6 +42,12 @@ FrameEdgeInfo RenderFrame::edgeInfo() const
     return FrameEdgeInfo(element->noResize(), element->hasFrameBorder());
 }
 
+void RenderFrame::updateFromElement()
+{
+    if (parent() && parent()->isFrameSet())
+        toRenderFrameSet(parent())->notifyFrameEdgeInfoChanged();
+}
+
 void RenderFrame::viewCleared()
 {
     HTMLFrameElement* element = static_cast<HTMLFrameElement*>(node());
