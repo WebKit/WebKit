@@ -1,5 +1,14 @@
 2011-05-12  Yuta Kitamura  <yutak@chromium.org>
 
+        Unreviewed. Update Qt test expectations affected in r86320.
+
+        * platform/qt/fast/dom/Window/window-properties-expected.txt:
+        * platform/qt/fast/dom/Window/window-property-descriptors-expected.txt:
+        * platform/qt/fast/dom/prototype-inheritance-expected.txt:
+        * platform/qt/fast/js/global-constructors-expected.txt:
+
+2011-05-12  Yuta Kitamura  <yutak@chromium.org>
+
         Reviewed by Kent Tamura.
 
         WebSocket add new event: CloseEvent
