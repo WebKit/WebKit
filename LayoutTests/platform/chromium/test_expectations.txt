@@ -4030,6 +4030,8 @@ BUGCR82281 : fast/xpath/xpath-snapshot-result-should-mark-its-nodeset.html = TEX
 
 BUGCR82414 GPU : media/video-transformed.html = IMAGE PASS
 
+BUGANTONM DEBUG : html5lin/runner.html = PASS TIMEOUT
+
 // New pixel tests added for bug 58999, rebaseline when webkit 58999 rolls.
 BUGWK58999 WIN LINUX : fast/borders/outline-alpha-block.html = IMAGE+TEXT
 BUGWK58999 WIN LINUX : fast/borders/outline-alpha-inline.html = IMAGE+TEXT
