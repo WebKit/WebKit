@@ -24,22 +24,19 @@
  */
 
 #include "config.h"
-
-// FIXME: Remove this define!
-#define LOOSE_OWN_PTR
-
 #include "PluginHalter.h"
 
 #include "HaltablePlugin.h"
 #include "PlatformString.h"
 #include <wtf/CurrentTime.h>
+#include <wtf/PassOwnPtr.h>
 #include <wtf/Vector.h>
 
 using namespace std;
 
 namespace WebCore {
 
-PluginHalter::PluginHalter(PluginHalterClient* client)
+PluginHalter::PluginHalter(PassOwnPtr<PluginHalterClient> client)
     : m_client(client)
     , m_timer(this, &PluginHalter::timerFired)
     , m_pluginAllowedRunTime(numeric_limits<unsigned>::max())

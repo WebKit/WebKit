@@ -113,7 +113,7 @@ namespace WebCore {
             EditorClient* editorClient;
             DragClient* dragClient;
             InspectorClient* inspectorClient;
-            PluginHalterClient* pluginHalterClient;
+            OwnPtr<PluginHalterClient> pluginHalterClient;
             GeolocationClient* geolocationClient;
             DeviceMotionClient* deviceMotionClient;
             DeviceOrientationClient* deviceOrientationClient;
@@ -122,7 +122,7 @@ namespace WebCore {
             MediaStreamClient* mediaStreamClient;
         };
 
-        Page(const PageClients&);
+        Page(PageClients&);
         ~Page();
 
         void setNeedsRecalcStyleInAllFrames();

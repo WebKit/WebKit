@@ -722,7 +722,7 @@ static NSString *leakOutlookQuirksUserScriptContents()
     pageClients.editorClient = new WebEditorClient(self);
     pageClients.dragClient = new WebDragClient(self);
     pageClients.inspectorClient = new WebInspectorClient(self);
-    pageClients.pluginHalterClient = new WebPluginHalterClient(self);
+    pageClients.pluginHalterClient = adoptPtr(new WebPluginHalterClient(self));
 #if ENABLE(CLIENT_BASED_GEOLOCATION)
     pageClients.geolocationClient = new WebGeolocationClient(self);
 #endif

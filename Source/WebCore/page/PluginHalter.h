@@ -38,7 +38,7 @@ class HaltablePlugin;
 class PluginHalter {
     WTF_MAKE_NONCOPYABLE(PluginHalter); WTF_MAKE_FAST_ALLOCATED;
 public:
-    PluginHalter(PluginHalterClient*);
+    PluginHalter(PassOwnPtr<PluginHalterClient>);
 
     void didStartPlugin(HaltablePlugin*);
     void didStopPlugin(HaltablePlugin*);

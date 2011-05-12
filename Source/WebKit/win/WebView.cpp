@@ -2642,7 +2642,7 @@ HRESULT STDMETHODCALLTYPE WebView::initWithFrame(
     pageClients.editorClient = new WebEditorClient(this);
     pageClients.dragClient = new WebDragClient(this);
     pageClients.inspectorClient = new WebInspectorClient(this);
-    pageClients.pluginHalterClient = new WebPluginHalterClient(this);
+    pageClients.pluginHalterClient = adoptPtr(new WebPluginHalterClient(this));
 #if ENABLE(CLIENT_BASED_GEOLOCATION)
     pageClients.geolocationClient = new WebGeolocationClient(this);
 #endif
