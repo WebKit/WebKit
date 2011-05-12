@@ -4028,6 +4028,8 @@ BUGCR82281 : fast/xpath/xpath-iterator-result-should-mark-its-nodeset.html = TEX
 BUGCR82281 : fast/xpath/xpath-other-nodeset-result-should-mark-its-nodeset.html = TEXT
 BUGCR82281 : fast/xpath/xpath-snapshot-result-should-mark-its-nodeset.html = TEXT
 
+BUGCR82414 GPU : media/video-transformed.html = IMAGE PASS
+
 // New pixel tests added for bug 58999, rebaseline when webkit 58999 rolls.
 BUGWK58999 WIN LINUX : fast/borders/outline-alpha-block.html = IMAGE+TEXT
 BUGWK58999 WIN LINUX : fast/borders/outline-alpha-inline.html = IMAGE+TEXT

@@ -1,3 +1,11 @@
+2011-05-12  Anton Muhin  <antonnm@chromium.org>
+
+        Unreviewed.
+
+        Chromium GPU suppressions.
+
+        * platform/chromium/test_expectations.txt:
+
 2011-05-12  Adam Roben  <aroben@apple.com>
 
         Update Windows results after r86315
