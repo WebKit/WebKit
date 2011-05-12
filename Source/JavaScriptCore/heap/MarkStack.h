@@ -76,8 +76,10 @@ namespace JSC {
     private:
         friend class HeapRootVisitor; // Allowed to mark a JSValue* or JSCell** directly.
 
+#if ENABLE(GC_VALIDATION)
         static void validateSet(JSValue*, size_t);
         static void validateValue(JSValue);
+#endif
 
         void append(JSValue*);
         void append(JSValue*, size_t count);
@@ -206,7 +208,7 @@ namespace JSC {
     {
         if (!count)
             return;
-#if !ASSERT_DISABLED
+#if ENABLE(GC_VALIDATION)
         validateSet(slot, count);
 #endif
         m_markSets.append(MarkSet(slot, slot + count, NoNullValues));
@@ -227,7 +229,7 @@ namespace JSC {
     ALWAYS_INLINE void MarkStack::internalAppend(JSValue value)
     {
         ASSERT(value);
-#if !ASSERT_DISABLED
+#if ENABLE(GC_VALIDATION)
         validateValue(value);
 #endif
         if (value.isCell())

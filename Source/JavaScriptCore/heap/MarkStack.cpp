@@ -132,6 +132,7 @@ void MarkStack::drain()
 #endif
 }
 
+#if ENABLE(GC_VALIDATION)
 void MarkStack::validateSet(JSValue* values, size_t count)
 {
     for (size_t i = 0; i < count; i++) {
@@ -158,6 +159,6 @@ void MarkStack::validateValue(JSValue value)
     if (cell->structure()->structure()->JSCell::classInfo() != cell->structure()->JSCell::classInfo())
         CRASH();
 }
-
+#endif
 
 } // namespace JSC

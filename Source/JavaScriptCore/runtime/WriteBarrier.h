@@ -181,7 +181,7 @@ template<typename T> inline void MarkStack::append(WriteBarrierBase<T>* slot)
 inline void MarkStack::appendValues(WriteBarrierBase<Unknown>* barriers, size_t count, MarkSetProperties properties)
 {
     JSValue* values = barriers->slot();
-#if !ASSERT_DISABLED
+#if ENABLE(GC_VALIDATION)
     validateSet(values, count);
 #endif
     if (count)

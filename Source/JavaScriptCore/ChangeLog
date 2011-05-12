@@ -1,3 +1,21 @@
+2011-05-11  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Gavin Barraclough.
+
+        Enable gc mark validation in temporarily in release builds
+        https://bugs.webkit.org/show_bug.cgi?id=60678
+
+        Make it easier to turn the gc mark validation on and off, and
+        temporarily turn it on for all builds.
+
+        * heap/MarkStack.cpp:
+        * heap/MarkStack.h:
+        (JSC::MarkStack::append):
+        (JSC::MarkStack::internalAppend):
+        * runtime/WriteBarrier.h:
+        (JSC::MarkStack::appendValues):
+        * wtf/Platform.h:
+
 2011-05-11  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Oliver Hunt.
