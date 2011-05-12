@@ -2,6 +2,14 @@
 
         Not reviewed.
 
+        Revert r86334, it broke the win build. WinCE build is fixed even without this patch. WinCairo remains broken atm, everything else works.
+
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.def:
+
+2011-05-12  Nikolas Zimmermann  <nzimmermann@rim.com>
+
+        Not reviewed.
+
         String operator+ reallocates unnecessarily when concatting > 2 strings
         https://bugs.webkit.org/show_bug.cgi?id=58420
 
