@@ -1620,7 +1620,6 @@ fast/text/whitespace/pre-wrap-spaces-after-newline.html
 fast/text/whitespace/tab-character-basics.html
 fast/text/word-break.html
 fast/text/word-break-run-rounding.html
-fast/transforms/transform-positioned-ancestor.html
 
 # -- timedout with --platform mac --ignore-metrics
 fast/events/5056619.html
@@ -2050,12 +2049,8 @@ canvas/philip/tests/2d.pattern.image.incomplete.omitted.html
 # ============================================================================= #
 # failing transforms tests
 # ============================================================================= #
-# -- fail with --platform mac --ignore-metrics
-transforms/2d/zoom-menulist.html
+
 # -- pass with --platform mac --ignore-metrics
-transforms/2d/transform-borderbox.html
-transforms/2d/transform-origin-borderbox.html
-transforms/no_transform_hit_testing.html
 transforms/2d/hindi-rotated.html
 
 # ============================================================================= #
@@ -2585,7 +2580,6 @@ svg/text/small-fonts-in-html5.html
 svg/text/small-fonts.svg
 svg/text/text-midpoint-split-bug.svg
 svg/text/text-path-middle-align.svg
-transforms/svg-vs-css.xhtml
 transitions/default-timing-function.html
 http/tests/inspector/console-websocket-error.html
 

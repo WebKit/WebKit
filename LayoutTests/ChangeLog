@@ -1,3 +1,24 @@
+2011-05-11  Srinivasulu Chereddy  <Srinivasulu.Chereddy@nokia.com>
+
+        Reviewed by Eric Seidel.
+
+        [Qt] Expected results for 6 new CSS3 transforms tests and the updated skipped list
+        https://bugs.webkit.org/show_bug.cgi?id=60654
+
+        * platform/qt/Skipped:
+        * platform/qt/fast/transforms/transform-positioned-ancestor-expected.png: Added.
+        * platform/qt/fast/transforms/transform-positioned-ancestor-expected.txt: Added.
+        * platform/qt/transforms/2d/transform-borderbox-expected.png: Added.
+        * platform/qt/transforms/2d/transform-borderbox-expected.txt: Added.
+        * platform/qt/transforms/2d/transform-origin-borderbox-expected.png: Added.
+        * platform/qt/transforms/2d/transform-origin-borderbox-expected.txt: Added.
+        * platform/qt/transforms/2d/zoom-menulist-expected.png: Added.
+        * platform/qt/transforms/2d/zoom-menulist-expected.txt: Added.
+        * platform/qt/transforms/no_transform_hit_testing-expected.png: Added.
+        * platform/qt/transforms/no_transform_hit_testing-expected.txt: Added.
+        * platform/qt/transforms/svg-vs-css-expected.png: Added.
+        * platform/qt/transforms/svg-vs-css-expected.txt: Added.
+
 2011-05-10  MORITA Hajime  <morrita@google.com>
 
         Reviewed by Kent Tamura.
