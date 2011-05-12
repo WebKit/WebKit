@@ -32,10 +32,10 @@
 #include "FileSystem.h"
 
 #include "NotImplemented.h"
-#include "PlatformString.h"
 #include <wincrypt.h>
 #include <windows.h>
 #include <wtf/text/CString.h>
+#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
@@ -310,7 +310,7 @@ Vector<String> listDirectory(const String& path, const String& filter)
             // is so far only called by PluginDatabase.cpp to list
             // all plugins in a folder, where it's not supposed to list sub-folders.
             if (!(findData.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY))
-                entries.append(root + findData.cFileName);
+                entries.append(root + String(findData.cFileName));
         } while (FindNextFile(hFind, &findData));
         FindClose(hFind);
     }

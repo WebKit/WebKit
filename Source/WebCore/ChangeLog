@@ -5,6 +5,18 @@
         String operator+ reallocates unnecessary when concatting > 2 strings
         https://bugs.webkit.org/show_bug.cgi?id=58420
 
+        Attempt to fix the WinCE build. WinCE/WinCairo still won't link because of unresolved symbols, hmm. If we had EWS for those, I would have caught the problem earlier.
+
+        * platform/wince/FileSystemWinCE.cpp:
+        (WebCore::listDirectory):
+
+2011-05-12  Nikolas Zimmermann  <nzimmermann@rim.com>
+
+        Not reviewed.
+
+        String operator+ reallocates unnecessary when concatting > 2 strings
+        https://bugs.webkit.org/show_bug.cgi?id=58420
+
         Fix fast/forms/input-image-submit.html regression, seens on the bots - by removing a last-minute typo: s/!!/!/
 
         * html/ImageInputType.cpp:
