@@ -32,19 +32,17 @@
 #include "ResourceHandleClient.h"
 #include "ResourceRequest.h"
 #include "ResourceResponse.h"
-#include <wtf/RefCounted.h>
-#include "AuthenticationChallenge.h"
-#include "KURL.h"
 
 #include <wtf/Forward.h>
+#include <wtf/RefCounted.h>
 
 namespace WebCore {
 
-    class ApplicationCacheHost;
+    class AuthenticationChallenge;
     class DocumentLoader;
     class Frame;
     class FrameLoader;
-    class ProtectionSpace;
+    class KURL;
     class ResourceHandle;
     class SharedBuffer;
     

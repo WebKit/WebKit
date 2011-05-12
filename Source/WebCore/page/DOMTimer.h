@@ -27,13 +27,13 @@
 #ifndef DOMTimer_h
 #define DOMTimer_h
 
-#include "ScheduledAction.h"
 #include "SuspendableTimer.h"
 #include <wtf/OwnPtr.h>
 #include <wtf/PassOwnPtr.h>
 
 namespace WebCore {
 
+    class ScheduledAction;
     class Settings;
 
     class DOMTimer : public SuspendableTimer {

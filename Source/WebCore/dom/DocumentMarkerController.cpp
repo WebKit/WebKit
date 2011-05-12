@@ -29,6 +29,7 @@
 
 #include "Node.h"
 #include "Range.h"
+#include "RenderObject.h"
 #include "RenderedDocumentMarker.h"
 #include "TextIterator.h"
 

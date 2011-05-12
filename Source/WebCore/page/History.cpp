@@ -35,6 +35,7 @@
 #include "HistoryItem.h"
 #include "Page.h"
 #include "SecurityOrigin.h"
+#include "SerializedScriptValue.h"
 
 namespace WebCore {
 

@@ -34,11 +34,12 @@
 #if ENABLE(NOTIFICATIONS)
 
 #include "Notification.h"
-#include "NotificationCenter.h"
-#include "NotificationContents.h"
 
 #include "Document.h"
 #include "EventNames.h"
+#include "NotificationCenter.h"
+#include "NotificationContents.h"
+#include "NotificationPresenter.h"
 #include "ResourceRequest.h"
 #include "ResourceResponse.h"
 #include "ThreadableLoader.h"

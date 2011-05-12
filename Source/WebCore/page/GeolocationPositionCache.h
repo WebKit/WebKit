@@ -26,6 +26,7 @@
 #ifndef GeolocationPositionCache_h
 #define GeolocationPositionCache_h
 
+#include "Geoposition.h"
 #include "PlatformString.h"
 #include "ScriptExecutionContext.h"
 
@@ -35,8 +36,6 @@
 #include <wtf/RefPtr.h>
 
 namespace WebCore {
-
-class Geoposition;
 
 // Maintains a cached position for Geolocation. Takes care of writing and
 // reading the position to a database on a background thread. The Geolocation

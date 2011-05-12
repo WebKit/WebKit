@@ -1,3 +1,73 @@
+2011-05-10  Tony Gentilcore  <tonyg@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        Perform some forward declarations suggested by include-what-you-use
+        https://bugs.webkit.org/show_bug.cgi?id=60545
+
+        * accessibility/AccessibilityObject.cpp:
+        * accessibility/AccessibilityRenderObject.cpp:
+        * accessibility/mac/AccessibilityObjectWrapper.mm:
+        * dom/DocumentMarkerController.cpp:
+        * dom/Position.cpp:
+        * dom/PositionIterator.cpp:
+        * dom/Range.cpp:
+        * editing/ApplyBlockElementCommand.cpp:
+        * editing/ApplyStyleCommand.cpp:
+        * editing/Editor.cpp:
+        * editing/EditorCommand.cpp:
+        * editing/FrameSelection.cpp:
+        * editing/HTMLInterchange.cpp:
+        * editing/IndentOutdentCommand.cpp:
+        * editing/ReplaceSelectionCommand.cpp:
+        * editing/SpellChecker.h:
+        * editing/SpellingCorrectionCommand.cpp:
+        * editing/SpellingCorrectionController.h:
+        * editing/TextCheckingHelper.cpp:
+        * editing/TextIterator.h:
+        * editing/htmlediting.h:
+        * editing/markup.cpp:
+        * editing/visible_units.cpp:
+        * editing/visible_units.h:
+        * fileapi/DOMFileSystem.cpp:
+        * fileapi/DirectoryReaderSync.cpp:
+        * fileapi/DirectoryReaderSync.h:
+        * fileapi/FileEntry.h:
+        * fileapi/FileWriter.h:
+        * fileapi/FileWriterBase.h:
+        * fileapi/FileWriterSync.h:
+        * history/CachedFrame.cpp:
+        * history/CachedPage.cpp:
+        * history/HistoryItem.cpp:
+        * history/HistoryItem.h:
+        * history/PageCache.h:
+        * loader/HistoryController.h:
+        * loader/PingLoader.h:
+        * loader/ResourceLoader.h:
+        * loader/appcache/DOMApplicationCache.h:
+        * loader/cache/CachedCSSStyleSheet.h:
+        * loader/cache/CachedFont.cpp:
+        * loader/cache/CachedFont.h:
+        * loader/cache/CachedResourceRequest.cpp:
+        * loader/cache/CachedResourceRequest.h:
+        * loader/cache/MemoryCache.h:
+        * notifications/Notification.cpp:
+        * notifications/Notification.h:
+        * notifications/NotificationCenter.cpp:
+        * notifications/NotificationCenter.h:
+        * page/Chrome.cpp:
+        * page/Chrome.h:
+        * page/DOMSelection.cpp:
+        * page/DOMTimer.h:
+        * page/DOMWindow.cpp:
+        * page/EventHandler.cpp:
+        * page/FocusController.h:
+        * page/Geolocation.cpp:
+        * page/Geolocation.h:
+        * page/History.cpp:
+        * rendering/RenderListBox.cpp:
+        * workers/WorkerContext.cpp:
+
 2011-05-12  Yuta Kitamura  <yutak@chromium.org>
 
         Unreviewed, another attempt of build fix.

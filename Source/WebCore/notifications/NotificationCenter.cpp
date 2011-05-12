@@ -35,6 +35,7 @@
 #include "NotificationCenter.h"
 
 #include "Document.h"
+#include "NotificationPresenter.h"
 #include "VoidCallback.h"
 #include "WorkerContext.h"
 

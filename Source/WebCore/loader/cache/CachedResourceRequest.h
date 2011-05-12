@@ -23,17 +23,20 @@
 #define CachedResourceRequest_h
 
 #include "FrameLoaderTypes.h"
-#include "SubresourceLoader.h"
 #include "SubresourceLoaderClient.h"
 #include <wtf/HashMap.h>
 #include <wtf/Noncopyable.h>
+#include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
 
 namespace WebCore {
 
     class CachedResource;
     class CachedResourceLoader;
-    class Request;
+    class ResourceError;
+    class ResourceRequest;
+    class ResourceResponse;
+    class SubresourceLoader;
 
     class CachedResourceRequest : public RefCounted<CachedResourceRequest>, private SubresourceLoaderClient {
     public:

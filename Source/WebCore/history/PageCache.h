@@ -26,7 +26,6 @@
 #ifndef PageCache_h
 #define PageCache_h
 
-#include "HistoryItem.h"
 #include "Timer.h"
 #include <wtf/Forward.h>
 #include <wtf/HashSet.h>

@@ -38,19 +38,16 @@
 #endif // #if PLATFORM(MAC) && !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOW_LEOPARD)
 
 #include "DocumentMarker.h"
-#include "EditCommand.h"
-#include "FloatRect.h"
 #include "Range.h"
 #include "Timer.h"
+#include "VisibleSelection.h"
 #include <wtf/Noncopyable.h>
 #include <wtf/UnusedParam.h>
 
 namespace WebCore {
 
-class EditorClient;
-class Range;
-class TextCheckerClient;
-class VisibleSelection;
+class EditCommand;
+class Frame;
 
 struct CorrectionPanelInfo {
     enum PanelType {

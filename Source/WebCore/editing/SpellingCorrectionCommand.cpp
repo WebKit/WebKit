@@ -26,11 +26,12 @@
 #include "config.h"
 #include "SpellingCorrectionCommand.h"
 
-#include "SpellingCorrectionController.h"
+#include "Document.h"
 #include "DocumentFragment.h"
 #include "Frame.h"
 #include "ReplaceSelectionCommand.h"
 #include "SetSelectionCommand.h"
+#include "SpellingCorrectionController.h"
 #include "TextIterator.h"
 #include "markup.h"
 

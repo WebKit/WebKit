@@ -25,7 +25,6 @@
 #ifndef Cache_h
 #define Cache_h
 
-#include "CachePolicy.h"
 #include "CachedResource.h"
 #include "PlatformString.h"
 #include <wtf/HashMap.h>

@@ -37,7 +37,6 @@
 #include "DirectoryEntrySync.h"
 #include "EntryArraySync.h"
 #include "EntrySync.h"
-#include "ExceptionCode.h"
 #include "FileEntrySync.h"
 #include "FileException.h"
 #include "SyncCallbackHelper.h"

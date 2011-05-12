@@ -33,6 +33,7 @@
 #include "Chrome.h"
 #include "Document.h"
 #include "Frame.h"
+#include "Geoposition.h"
 #include "Page.h"
 #include <wtf/CurrentTime.h>
 

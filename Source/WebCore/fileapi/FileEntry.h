@@ -34,12 +34,12 @@
 #if ENABLE(FILE_SYSTEM)
 
 #include "Entry.h"
-#include "FileCallback.h"
-#include "FileWriterCallback.h"
 
 namespace WebCore {
 
 class DOMFileSystemBase;
+class FileCallback;
+class FileWriterCallback;
 
 class FileEntry : public Entry {
 public:

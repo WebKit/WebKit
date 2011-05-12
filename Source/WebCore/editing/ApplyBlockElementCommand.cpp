@@ -29,6 +29,8 @@
 
 #include "HTMLElement.h"
 #include "HTMLNames.h"
+#include "RenderObject.h"
+#include "RenderStyle.h"
 #include "Text.h"
 #include "TextIterator.h"
 #include "VisiblePosition.h"

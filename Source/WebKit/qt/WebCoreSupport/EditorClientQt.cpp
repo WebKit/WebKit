@@ -47,6 +47,7 @@
 #include "QWebPageClient.h"
 #include "Range.h"
 #include "Settings.h"
+#include "SpatialNavigation.h"
 #include "WindowsKeyboardCodes.h"
 #include "qwebpage.h"
 #include "qwebpage_p.h"

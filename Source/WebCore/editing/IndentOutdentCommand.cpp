@@ -33,6 +33,7 @@
 #include "InsertLineBreakCommand.h"
 #include "InsertListCommand.h"
 #include "Range.h"
+#include "RenderObject.h"
 #include "SplitElementCommand.h"
 #include "Text.h"
 #include "TextIterator.h"

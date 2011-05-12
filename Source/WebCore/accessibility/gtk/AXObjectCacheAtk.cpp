@@ -22,6 +22,8 @@
 
 #include "AccessibilityObject.h"
 #include "AccessibilityObjectWrapperAtk.h"
+#include "Document.h"
+#include "Element.h"
 #include "GOwnPtr.h"
 #include "Range.h"
 #include "SelectElement.h"

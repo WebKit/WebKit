@@ -36,6 +36,7 @@
 #include "TextCheckerClient.h"
 #include "TextCheckingHelper.h"
 #include "TextIterator.h"
+#include "VisibleSelection.h"
 #include "htmlediting.h"
 #include "markup.h"
 #include "visible_units.h"

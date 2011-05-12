@@ -33,7 +33,7 @@
 
 #if ENABLE(FILE_SYSTEM)
 
-#include "ActiveDOMObject.h"
+#include "AsyncFileWriterClient.h"
 #include "FileError.h"
 #include "FileWriterBase.h"
 #include <wtf/PassRefPtr.h>

@@ -37,6 +37,7 @@
 #include "ResourceRequest.h"
 #include "ResourceResponse.h"
 #include "SharedBuffer.h"
+#include "SubresourceLoader.h"
 #include <wtf/Assertions.h>
 #include <wtf/Vector.h>
 #include <wtf/text/CString.h>

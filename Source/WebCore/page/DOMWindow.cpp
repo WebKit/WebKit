@@ -80,6 +80,7 @@
 #include "Performance.h"
 #include "PlatformScreen.h"
 #include "PlatformString.h"
+#include "ScheduledAction.h"
 #include "Screen.h"
 #include "SecurityOrigin.h"
 #include "SerializedScriptValue.h"

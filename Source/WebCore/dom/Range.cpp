@@ -33,6 +33,8 @@
 #include "HTMLElement.h"
 #include "NodeWithIndex.h"
 #include "ProcessingInstruction.h"
+#include "RenderBoxModelObject.h"
+#include "RenderText.h"
 #include "Text.h"
 #include "TextIterator.h"
 #include "VisiblePosition.h"

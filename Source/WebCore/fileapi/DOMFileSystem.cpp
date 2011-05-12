@@ -38,6 +38,7 @@
 #include "DirectoryEntry.h"
 #include "ErrorCallback.h"
 #include "File.h"
+#include "FileCallback.h"
 #include "FileEntry.h"
 #include "FileMetadata.h"
 #include "FileSystemCallbacks.h"

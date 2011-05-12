@@ -34,12 +34,14 @@
 #if ENABLE(FILE_SYSTEM)
 
 #include "DirectoryReaderBase.h"
-#include "EntryArraySync.h"
+#include "ExceptionCode.h"
 #include "PlatformString.h"
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
 
 namespace WebCore {
+
+class EntryArraySync;
 
 class DirectoryReaderSync : public DirectoryReaderBase {
 public:

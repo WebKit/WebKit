@@ -27,9 +27,12 @@
 #include "Position.h"
 
 #include "CSSComputedStyleDeclaration.h"
+#include "HTMLNames.h"
+#include "InlineTextBox.h"
 #include "Logging.h"
 #include "PositionIterator.h"
 #include "RenderBlock.h"
+#include "RenderText.h"
 #include "Text.h"
 #include "TextIterator.h"
 #include "VisiblePosition.h"

@@ -33,6 +33,7 @@
 
 #if ENABLE(NOTIFICATIONS)
 
+#include "Event.h"
 #include "Notification.h"
 #include "UserGestureIndicator.h"
 

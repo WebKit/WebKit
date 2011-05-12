@@ -45,6 +45,7 @@
 #include "HTMLInterchange.h"
 #include "HTMLNames.h"
 #include "NodeList.h"
+#include "RenderObject.h"
 #include "SmartReplace.h"
 #include "TextIterator.h"
 #include "htmlediting.h"

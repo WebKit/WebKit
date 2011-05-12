@@ -27,15 +27,15 @@
 #define FocusController_h
 
 #include "FocusDirection.h"
-#include "SpatialNavigation.h"
 #include <wtf/Forward.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/RefPtr.h>
 
 namespace WebCore {
 
-class Document;
+struct FocusCandidate;
 class Frame;
+class IntRect;
 class KeyboardEvent;
 class Node;
 class Page;

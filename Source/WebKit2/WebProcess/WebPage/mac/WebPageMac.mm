@@ -47,6 +47,8 @@
 #import <WebCore/Page.h>
 #import <WebCore/PlatformKeyboardEvent.h>
 #import <WebCore/ResourceHandle.h>
+#import <WebCore/RenderObject.h>
+#import <WebCore/RenderStyle.h>
 #import <WebCore/ScrollView.h>
 #import <WebCore/TextIterator.h>
 #import <WebCore/WindowsKeyboardCodes.h>

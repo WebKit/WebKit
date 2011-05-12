@@ -47,6 +47,7 @@
 #include "KURL.h"
 #include "MessagePort.h"
 #include "NotImplemented.h"
+#include "ScheduledAction.h"
 #include "ScriptCallStack.h"
 #include "ScriptSourceCode.h"
 #include "ScriptValue.h"

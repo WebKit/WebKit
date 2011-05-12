@@ -71,6 +71,7 @@
 #include "ScrollAnimator.h"
 #include "Scrollbar.h"
 #include "Settings.h"
+#include "SpatialNavigation.h"
 #include "StyleCachedImage.h"
 #include "TextEvent.h"
 #include "TextIterator.h"

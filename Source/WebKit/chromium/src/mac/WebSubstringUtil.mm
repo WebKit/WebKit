@@ -41,6 +41,8 @@
 #include "HTMLElement.h"
 #include "Node.h"
 #include "Range.h"
+#include "RenderObject.h"
+#include "RenderStyle.h"
 #include "TextIterator.h"
 #include "WebRect.h"
 

@@ -58,6 +58,7 @@
 #include "PluginPackage.h"
 #include "RenderLayer.h"
 #include "Settings.h"
+#include "SpatialNavigation.h"
 #include "JSDOMBinding.h"
 #include "npruntime_impl.h"
 #include "runtime_root.h"

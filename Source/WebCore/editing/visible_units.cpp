@@ -29,6 +29,7 @@
 #include "Document.h"
 #include "Element.h"
 #include "HTMLNames.h"
+#include "InlineTextBox.h"
 #include "Position.h"
 #include "RenderBlock.h"
 #include "RenderLayer.h"

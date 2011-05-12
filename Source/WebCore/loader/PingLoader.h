@@ -32,7 +32,6 @@
 #ifndef PingLoader_h
 #define PingLoader_h
 
-#include "FormData.h"
 #include "ResourceHandleClient.h"
 #include "Timer.h"
 #include <wtf/Noncopyable.h>
@@ -40,6 +39,7 @@
 
 namespace WebCore {
 
+class FormData;
 class Frame;
 class KURL;
 class ResourceError;

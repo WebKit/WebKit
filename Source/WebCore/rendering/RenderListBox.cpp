@@ -55,6 +55,7 @@
 #include "Scrollbar.h"
 #include "ScrollbarTheme.h"
 #include "SelectElement.h"
+#include "SpatialNavigation.h"
 #include "TextRun.h"
 #include <math.h>
 

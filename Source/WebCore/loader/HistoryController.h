@@ -32,6 +32,7 @@
 
 #include "FrameLoaderTypes.h"
 #include "PlatformString.h"
+#include "SerializedScriptValue.h"
 #include <wtf/Noncopyable.h>
 #include <wtf/RefPtr.h>
 

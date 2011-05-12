@@ -22,11 +22,8 @@
 #define Chrome_h
 
 #include "Cursor.h"
-#include "FileChooser.h"
 #include "FocusDirection.h"
 #include "HostWindow.h"
-#include "PopupMenu.h"
-#include "SearchPopupMenu.h"
 #include <wtf/Forward.h>
 #include <wtf/RefPtr.h>
 
@@ -39,7 +36,7 @@ class NSView;
 namespace WebCore {
 
     class ChromeClient;
-    class ContextMenu;
+    class FileChooser;
     class FloatRect;
     class Frame;
     class Geolocation;
@@ -48,10 +45,12 @@ namespace WebCore {
     class NavigationAction;
     class Node;
     class Page;
+    class PopupMenu;
     class PopupMenuClient;
 #if ENABLE(NOTIFICATIONS)
     class NotificationPresenter;
 #endif
+    class SearchPopupMenu;
 
     struct FrameLoadRequest;
     struct ViewportArguments;

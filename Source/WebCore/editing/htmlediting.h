@@ -27,8 +27,6 @@
 #define htmlediting_h
 
 #include "EditingBoundary.h"
-#include "ExceptionCode.h"
-#include "HTMLNames.h"
 #include "Position.h"
 #include "TextDirection.h"
 #include <wtf/Forward.h>

@@ -51,6 +51,7 @@
 #import "HTMLFrameOwnerElement.h"
 #import "HTMLImageElement.h"
 #import "HTMLInputElement.h"
+#import "HTMLNames.h"
 #import "HTMLTextAreaElement.h"
 #import "LocalizedStrings.h"
 #import "RenderTextControl.h"

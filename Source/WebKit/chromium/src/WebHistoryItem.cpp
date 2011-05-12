@@ -34,6 +34,7 @@
 #include "FormData.h"
 #include "HistoryItem.h"
 #include "KURL.h"
+#include "SerializedScriptValue.h"
 
 #include "WebHTTPBody.h"
 #include "WebPoint.h"

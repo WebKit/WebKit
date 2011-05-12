@@ -33,18 +33,13 @@
 #define Notification_h
 
 #include "ActiveDOMObject.h"
-#include "Event.h"
-#include "EventListener.h"
 #include "EventNames.h"
 #include "EventTarget.h"
 #include "ExceptionCode.h"
 #include "KURL.h"
-#include "NotificationPresenter.h"
 #include "NotificationContents.h"
-#include "RegisteredEventListener.h"
 #include "SharedBuffer.h"
 #include "TextDirection.h"
-#include "ThreadableLoader.h"
 #include "ThreadableLoaderClient.h"
 #include <wtf/OwnPtr.h>
 #include <wtf/PassRefPtr.h>
@@ -56,7 +51,10 @@
 namespace WebCore {
 
     class NotificationCenter;
-    class WorkerContext;
+    class ResourceError;
+    class ResourceResponse;
+    class ScriptExecutionContext;
+    class ThreadableLoader;
 
     class Notification : public RefCounted<Notification>, public ActiveDOMObject, public ThreadableLoaderClient, public EventTarget {
         WTF_MAKE_FAST_ALLOCATED;

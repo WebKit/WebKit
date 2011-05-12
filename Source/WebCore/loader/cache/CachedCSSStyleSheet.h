@@ -27,12 +27,12 @@
 #define CachedCSSStyleSheet_h
 
 #include "CachedResource.h"
-#include "TextEncoding.h"
 #include <wtf/Vector.h>
 
 namespace WebCore {
 
-    class CachedResourceLoader;
+    class CachedResourceClient;
+    class SharedBuffer;
     class TextResourceDecoder;
 
     class CachedCSSStyleSheet : public CachedResource {

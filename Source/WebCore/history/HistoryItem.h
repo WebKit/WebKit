@@ -28,7 +28,6 @@
 
 #include "IntPoint.h"
 #include "PlatformString.h"
-#include "SerializedScriptValue.h"
 #include <wtf/HashMap.h>
 #include <wtf/OwnPtr.h>
 #include <wtf/PassOwnPtr.h>
@@ -57,6 +56,7 @@ class HistoryItem;
 class Image;
 class KURL;
 class ResourceRequest;
+class SerializedScriptValue;
 
 typedef Vector<RefPtr<HistoryItem> > HistoryItemVector;
 

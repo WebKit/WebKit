@@ -44,6 +44,7 @@
 #include "NodeList.h"
 #include "Range.h"
 #include "RenderObject.h"
+#include "RenderText.h"
 #include "Text.h"
 #include "TextIterator.h"
 #include "htmlediting.h"

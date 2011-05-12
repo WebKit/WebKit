@@ -30,6 +30,7 @@
 #include "config.h"
 #include "DOMSelection.h"
 
+#include "Document.h"
 #include "ExceptionCode.h"
 #include "Frame.h"
 #include "FrameSelection.h"

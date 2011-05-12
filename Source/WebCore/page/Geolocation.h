@@ -28,7 +28,6 @@
 #define Geolocation_h
 
 #include "GeolocationPositionCache.h"
-#include "Geoposition.h"
 #include "PositionCallback.h"
 #include "PositionError.h"
 #include "PositionErrorCallback.h"
@@ -42,12 +41,12 @@
 namespace WebCore {
 
 class Frame;
-class Page;
-
 #if ENABLE(CLIENT_BASED_GEOLOCATION)
 class GeolocationPosition;
 class GeolocationError;
 #endif
+class Geoposition;
+class Page;
 
 class Geolocation : public RefCounted<Geolocation>
 #if !ENABLE(CLIENT_BASED_GEOLOCATION) && ENABLE(GEOLOCATION)

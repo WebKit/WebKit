@@ -27,12 +27,11 @@
 #define visible_units_h
 
 #include "EditingBoundary.h"
-#include "Position.h"
-#include "TextAffinity.h"
+#include "TextDirection.h"
 
 namespace WebCore {
 
-class RootInlineBox;
+class Node;
 class VisiblePosition;
 
 enum EWordSide { RightWordIfOnBoundary = false, LeftWordIfOnBoundary = true };

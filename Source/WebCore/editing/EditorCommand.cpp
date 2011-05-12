@@ -45,6 +45,7 @@
 #include "HTMLFontElement.h"
 #include "HTMLHRElement.h"
 #include "HTMLImageElement.h"
+#include "HTMLNames.h"
 #include "IndentOutdentCommand.h"
 #include "InsertListCommand.h"
 #include "KillRing.h"

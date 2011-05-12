@@ -26,15 +26,18 @@
 #ifndef SpellChecker_h
 #define SpellChecker_h
 
-#include "DocumentMarker.h"
-#include "TextCheckerClient.h"
+#include "PlatformString.h"
+#include "TextChecking.h"
+#include <wtf/RefPtr.h>
 #include <wtf/Noncopyable.h>
+#include <wtf/Vector.h>
 
 namespace WebCore {
 
-class TextCheckerClient;
 class Frame;
 class Node;
+class TextCheckerClient;
+struct TextCheckingResult;
 
 class SpellChecker {
     WTF_MAKE_NONCOPYABLE(SpellChecker);

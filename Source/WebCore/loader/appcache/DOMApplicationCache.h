@@ -29,7 +29,6 @@
 #if ENABLE(OFFLINE_WEB_APPLICATIONS)
 
 #include "ApplicationCacheHost.h"
-#include "EventListener.h"
 #include "EventNames.h"
 #include "EventTarget.h"
 #include <wtf/Forward.h>

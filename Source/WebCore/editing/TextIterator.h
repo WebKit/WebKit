@@ -27,12 +27,12 @@
 #define TextIterator_h
 
 #include "FindOptions.h"
-#include "InlineTextBox.h"
 #include "Range.h"
 #include <wtf/Vector.h>
 
 namespace WebCore {
 
+class InlineTextBox;
 class RenderText;
 class RenderTextFragment;
 

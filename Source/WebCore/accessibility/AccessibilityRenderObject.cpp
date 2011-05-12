@@ -44,6 +44,7 @@
 #include "HTMLInputElement.h"
 #include "HTMLLabelElement.h"
 #include "HTMLMapElement.h"
+#include "HTMLNames.h"
 #include "HTMLOptGroupElement.h"
 #include "HTMLOptionElement.h"
 #include "HTMLOptionsCollection.h"

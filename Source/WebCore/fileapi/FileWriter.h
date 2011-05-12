@@ -34,6 +34,7 @@
 #if ENABLE(FILE_SYSTEM)
 
 #include "ActiveDOMObject.h"
+#include "AsyncFileWriterClient.h"
 #include "EventTarget.h"
 #include "FileWriterBase.h"
 #include "ScriptExecutionContext.h"

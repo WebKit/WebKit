@@ -31,19 +31,16 @@
 #include "FontRenderingMode.h"
 #include "FontWidthVariant.h"
 #include "TextOrientation.h"
-#include <wtf/Vector.h>
-
-#if ENABLE(SVG_FONTS)
-#include "SVGElement.h"
-#include "SVGDocument.h"
-#endif
 
 namespace WebCore {
 
+class CachedResourceClient;
 class CachedResourceLoader;
-class MemoryCache;
 class FontPlatformData;
+class SVGDocument;
 class SVGFontElement;
+class SharedBuffer;
+struct FontCustomPlatformData;
 
 struct FontCustomPlatformData;
 

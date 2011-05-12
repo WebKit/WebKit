@@ -44,6 +44,7 @@
 #import <WebCore/FrameView.h>
 #import <WebCore/HTMLPlugInElement.h>
 #import <WebCore/RenderEmbeddedObject.h>
+#import <WebCore/ResourceError.h>
 #import <WebCore/WebCoreObjCExtras.h>
 #import <WebCore/runtime_root.h>
 #import <runtime/InitializeThreading.h>

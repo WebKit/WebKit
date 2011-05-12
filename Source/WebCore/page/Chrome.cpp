@@ -24,6 +24,7 @@
 #include "ChromeClient.h"
 #include "DNS.h"
 #include "Document.h"
+#include "FileChooser.h"
 #include "FileList.h"
 #include "FloatRect.h"
 #include "Frame.h"

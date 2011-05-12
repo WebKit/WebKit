@@ -47,6 +47,7 @@
 
 #if ENABLE(SVG_FONTS)
 #include "NodeList.h"
+#include "SVGDocument.h"
 #include "SVGElement.h"
 #include "SVGFontElement.h"
 #include "SVGGElement.h"

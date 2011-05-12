@@ -44,6 +44,7 @@
 #include <WebCore/PlatformKeyboardEvent.h>
 #include <WebCore/Range.h>
 #include <WebCore/UserTypingGestureIndicator.h>
+#include <WebCore/VisibleSelection.h>
 
 using namespace WebCore;
 using namespace HTMLNames;

@@ -27,9 +27,12 @@
 #include "CachedPage.h"
 
 #include "CSSStyleSelector.h"
+#include "Document.h"
+#include "Element.h"
 #include "FocusController.h"
 #include "Frame.h"
 #include "FrameView.h"
+#include "Node.h"
 #include "Page.h"
 #include <wtf/CurrentTime.h>
 #include <wtf/RefCountedLeakCounter.h>

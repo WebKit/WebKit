@@ -35,6 +35,7 @@
 #include "WebProcess.h"
 #include <WebCore/Chrome.h>
 #include <WebCore/CookieJar.h>
+#include <WebCore/Credential.h>
 #include <WebCore/CredentialStorage.h>
 #include <WebCore/DocumentLoader.h>
 #include <WebCore/Event.h>

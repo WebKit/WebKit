@@ -71,6 +71,7 @@
 #import <WebCore/FrameTree.h>
 #import <WebCore/GraphicsContext.h>
 #import <WebCore/HTMLFrameOwnerElement.h>
+#import <WebCore/HTMLNames.h>
 #import <WebCore/HistoryItem.h>
 #import <WebCore/HitTestResult.h>
 #import <WebCore/LegacyWebArchive.h>

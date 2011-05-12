@@ -51,6 +51,7 @@
 #include "KURL.h"
 #include "MarkupAccumulator.h"
 #include "Range.h"
+#include "RenderObject.h"
 #include "TextIterator.h"
 #include "VisibleSelection.h"
 #include "XMLNSNames.h"

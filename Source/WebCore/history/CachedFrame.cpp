@@ -27,6 +27,7 @@
 #include "CachedPage.h"
 
 #include "CachedFramePlatformData.h"
+#include "Document.h"
 #include "DocumentLoader.h"
 #include "ExceptionCode.h"
 #include "EventNames.h"
@@ -37,6 +38,7 @@
 #include "HistoryItem.h"
 #include "Logging.h"
 #include "PageTransitionEvent.h"
+#include "SerializedScriptValue.h"
 #include <wtf/text/CString.h>
 #include <wtf/RefCountedLeakCounter.h>
 

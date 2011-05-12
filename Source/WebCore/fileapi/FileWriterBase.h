@@ -33,7 +33,6 @@
 
 #if ENABLE(FILE_SYSTEM)
 
-#include "AsyncFileWriterClient.h"
 #include <wtf/OwnPtr.h>
 #include <wtf/PassOwnPtr.h>
 #include <wtf/RefCounted.h>
@@ -41,7 +40,6 @@
 namespace WebCore {
 
 class AsyncFileWriter;
-class Blob;
 
 typedef int ExceptionCode;
 

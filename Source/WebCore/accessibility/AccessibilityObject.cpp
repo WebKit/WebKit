@@ -36,6 +36,7 @@
 #include "Frame.h"
 #include "FrameLoader.h"
 #include "FrameSelection.h"
+#include "HTMLNames.h"
 #include "LocalizedStrings.h"
 #include "NodeList.h"
 #include "NotImplemented.h"
