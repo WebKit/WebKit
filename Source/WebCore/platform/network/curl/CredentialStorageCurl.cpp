@@ -26,6 +26,7 @@
 #include "config.h"
 #include "CredentialStorage.h"
 
+#include "Credential.h"
 #include "NotImplemented.h"
 
 namespace WebCore {

@@ -1,5 +1,11 @@
 2011-05-12  Adam Roben  <aroben@apple.com>
 
+        Attempted WinCairo build fix after r86169, part II
+
+        * platform/network/curl/CredentialStorageCurl.cpp: Added a missing #include.
+
+2011-05-12  Adam Roben  <aroben@apple.com>
+
         Fix linker warnings in Production builds
 
         * WebCore.vcproj/WebCore.vcproj: Exclude JSSVGFEDropShadowElement.cpp from the build in the
