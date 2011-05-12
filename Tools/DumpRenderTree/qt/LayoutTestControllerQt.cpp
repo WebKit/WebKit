@@ -933,5 +933,10 @@ void LayoutTestController::syncLocalStorage()
     // FIXME: Implement.
 }
 
+QString LayoutTestController::layerTreeAsText()
+{
+    return DumpRenderTreeSupportQt::layerTreeAsText(m_drt->webPage()->mainFrame());
+}
+
 const unsigned LayoutTestController::maxViewWidth = 800;
 const unsigned LayoutTestController::maxViewHeight = 600;

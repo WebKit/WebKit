@@ -207,6 +207,8 @@ public:
     static QVariant ensureShadowRoot(const QWebElement&);
     static void removeShadowRoot(const QWebElement&);
     static QString shadowPseudoId(const QWebElement&);
+
+    static QString layerTreeAsText(QWebFrame*);
 };
 
 #endif

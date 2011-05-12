@@ -1136,6 +1136,12 @@ void DumpRenderTreeSupportQt::confirmComposition(QWebPage* page, const char* tex
         editor->insertText(String::fromUTF8(text), 0);
 }
 
+QString DumpRenderTreeSupportQt::layerTreeAsText(QWebFrame* frame)
+{
+    WebCore::Frame* coreFrame = QWebFramePrivate::core(frame);
+    return coreFrame->layerTreeAsText();
+}
+
 // Provide a backward compatibility with previously exported private symbols as of QtWebKit 4.6 release
 
 void QWEBKIT_EXPORT qt_resumeActiveDOMObjects(QWebFrame* frame)

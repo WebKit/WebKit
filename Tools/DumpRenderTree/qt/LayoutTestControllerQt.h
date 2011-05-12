@@ -270,6 +270,7 @@ public slots:
     long long localStorageDiskUsageForOrigin(const QString& originIdentifier);
     void observeStorageTrackerNotifications(unsigned number);
     void syncLocalStorage();
+    QString layerTreeAsText();
 
 private slots:
     void processWork();
