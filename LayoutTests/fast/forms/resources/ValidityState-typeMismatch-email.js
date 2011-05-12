@@ -35,6 +35,7 @@ emailCheck("wo..oly@example.com", false);
 emailCheck("someone@do-ma-in.com", false);
 emailCheck("someone@do-.com", false);
 emailCheck("somebody@-.com", false);
+emailCheck("somebody@example", false);
 
 // INVALID
 emailCheck("invalid:email@example.com", true);

@@ -19,6 +19,7 @@ PASS wo..oly@example.com is a correct valid email address
 PASS someone@do-ma-in.com is a correct valid email address 
 PASS someone@do-.com is a correct valid email address 
 PASS somebody@-.com is a correct valid email address 
+PASS somebody@example is a correct valid email address 
 PASS invalid:email@example.com is a correct invalid email address 
 PASS @somewhere.com is a correct invalid email address 
 PASS example.com is a correct invalid email address 

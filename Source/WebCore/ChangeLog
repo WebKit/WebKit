@@ -1,3 +1,14 @@
+2011-05-11  Kent Tamura  <tkent@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        input type=email is too strict
+        https://bugs.webkit.org/show_bug.cgi?id=55988
+
+        Follow the updated specification.
+
+        * html/EmailInputType.cpp: Update the pattern to allow a domain part without periods.
+
 2011-05-11  Jia Pu  <jpu@apple.com>
 
         Reviewed by Darin Adler.

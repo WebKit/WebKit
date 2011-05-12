@@ -34,7 +34,7 @@ namespace WebCore {
 static const char emailPattern[] =
     "[a-z0-9!#$%&'*+/=?^_`{|}~.-]+" // local part
     "@"
-    "[a-z0-9-]+(\\.[a-z0-9-]+)+"; // domain part
+    "[a-z0-9-]+(\\.[a-z0-9-]+)*"; // domain part
 
 static bool isValidEmailAddress(const String& address)
 {
