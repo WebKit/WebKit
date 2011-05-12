@@ -1,3 +1,19 @@
+2011-05-12  Rob Buis  <rwlbuis@gmail.com>
+
+        Reviewed by Darin Adler.
+
+        REGRESSION(79985): Changes in fill-opacity should trigger repaint but don't
+        https://bugs.webkit.org/show_bug.cgi?id=59941
+
+        Improve test to not need a click. Offer a stroke-opacity variant as well.
+
+        * platform/mac/svg/custom/fill-opacity-update-expected.png:
+        * platform/mac/svg/custom/fill-opacity-update-expected.txt:
+        * platform/mac/svg/custom/stroke-opacity-update-expected.png: Added.
+        * platform/mac/svg/custom/stroke-opacity-update-expected.txt: Added.
+        * svg/custom/fill-opacity-update.svg:
+        * svg/custom/stroke-opacity-update.svg: Added.
+
 2011-05-12  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Dan Bernstein.

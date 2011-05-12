@@ -1,10 +1,10 @@
 <svg xmlns="http://www.w3.org/2000/svg" version="1.1" onload="setTimeout('runTest()', 0)">
-<circle cx="100" cy="100" r="100" fill="green" fill-opacity="0"/>
+<circle cx="100" cy="100" r="100" fill="none" stroke="green" stroke-width="5px" stroke-opacity="0"/>
 <script>
     if (window.layoutTestController)
         window.layoutTestController.waitUntilDone();
     function runTest() {
-        document.getElementsByTagName("circle")[0].setAttribute("fill-opacity", "1");
+        document.getElementsByTagName("circle")[0].setAttribute("stroke-opacity", "1");
         if (window.layoutTestController)
             window.layoutTestController.notifyDone();
     }
