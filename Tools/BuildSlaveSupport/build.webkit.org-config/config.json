@@ -19,6 +19,8 @@
                     { "name": "apple-macpro-5", "platform": "mac-leopard" },	
                     { "name": "apple-macpro-6", "platform": "mac-leopard" },
                     { "name": "apple-macpro-7", "platform": "mac-leopard" },	
+                    { "name": "apple-macpro-8", "platform": "mac-snowleopard" },	
+                    { "name": "apple-macpro-9", "platform": "mac-snowleopard" },	
                     	
 
                     { "name": "apple-windows-1", "platform": "win"},
@@ -89,9 +91,18 @@
                       "triggers": ["snowleopard-intel-release-tests", "snowleopard-intel-release-tests-wk2"],
                       "slavenames": ["apple-xserve-4", "test-slave"]
                     },
+                    { "name": "SnowLeopard Intel Debug (Build)", "type": "Build", "builddir": "snowleopard-intel-debug",
+                      "platform": "mac-snowleopard", "configuration": "debug", "architectures": ["x86_64"],
+                      "triggers": ["snowleopard-intel-debug-tests", "snowleopard-intel-debug-tests-wk2"],
+                      "slavenames": ["apple-xserve-9"]
+                    },
                     { "name": "SnowLeopard Intel Release (Tests)", "type": "Test", "builddir": "snowleopard-intel-release-tests",
                       "platform": "mac-snowleopard", "configuration": "release", "architectures": ["x86_64"],
                       "slavenames": ["apple-xserve-5", "apple-xserve-6", "test-slave"]
+                    },
+                    { "name": "SnowLeopard Intel Debug (Tests)", "type": "Test", "builddir": "snowleopard-intel-debug-tests",
+                      "platform": "mac-snowleopard", "configuration": "debug", "architectures": ["x86_64"],
+                      "slavenames": ["apple-xserve-8"]
                     },
                     { "name": "SnowLeopard Intel Leaks", "type": "BuildAndTestLeaks", "builddir": "snowleopard-intel-leaks",
                       "platform": "mac-snowleopard", "configuration": "debug", "architectures": ["x86_64"],
@@ -236,7 +247,7 @@
                       "builderNames": ["Leopard Intel Release (Build)", "Leopard Intel Debug (Build)", "Leopard Intel Release (NRWT)"]
                     },
                     { "type": "PlatformSpecificScheduler", "platform": "mac-snowleopard", "branch": "trunk", "treeStableTimer": 45.0,
-                      "builderNames": ["SnowLeopard Intel Release (Build)", "SnowLeopard Intel Leaks", "SnowLeopard Intel Release (NRWT)"]
+                      "builderNames": ["SnowLeopard Intel Release (Build)", "SnowLeopard Intel Leaks", "SnowLeopard Intel Release (NRWT)", "SnowLeopard Intel Debug (Build)"]
                     },
                     { "type": "PlatformSpecificScheduler", "platform": "win", "branch": "trunk", "treeStableTimer": 45.0,
                       "builderNames": ["Windows Release (Build)", "Windows Debug (Build)"]
@@ -252,6 +263,12 @@
                     },
                     { "type": "Triggerable", "name": "snowleopard-intel-release-tests-wk2",
                       "builderNames": ["SnowLeopard Intel Release (WebKit2 Tests)"]
+                    },
+                    { "type": "Triggerable", "name": "snowleopard-intel-debug-tests",
+                      "builderNames": ["SnowLeopard Intel Debug (Tests)"]
+                    },
+                    { "type": "Triggerable", "name": "snowleopard-intel-debug-tests-wk2",
+                      "builderNames": ["SnowLeopard Intel Debug (WebKit2 Tests)"]
                     },
                     { "type": "Triggerable", "name": "win-release-tests",
                       "builderNames": ["Windows 7 Release (Tests)"]

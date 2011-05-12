@@ -1,3 +1,13 @@
+2011-05-12  Lucas Forschler  <lforschler@apple.com>
+
+        Reviewed by Stephanie Lewis.
+
+        Add SnowLeopard Debug builder and Test bot.
+        apple-xserve-8 = SL Debug Tester.
+        apple-xserve-9 = SL Debug Builder.
+        
+        * BuildSlaveSupport/build.webkit.org-config/config.json:
+
 2011-05-12  Adam Barth  <abarth@webkit.org>
 
         This patch disables sheriffbot's bug postings.  He's just been way too
