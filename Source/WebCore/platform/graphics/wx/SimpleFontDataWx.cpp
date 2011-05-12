@@ -90,12 +90,12 @@ void SimpleFontData::platformDestroy()
 #endif
 }
 
-SimpleFontData* SimpleFontData::scaledFontData(const FontDescription& fontDescription, float scaleFactor) const
+PassOwnPtr<SimpleFontData> SimpleFontData::scaledFontData(const FontDescription& fontDescription, float scaleFactor) const
 {
     FontDescription desc = FontDescription(fontDescription);
     desc.setSpecifiedSize(scaleFactor * fontDescription.computedSize());
     FontPlatformData platformData(desc, desc.family().family());
-    return new SimpleFontData(platformData, isCustomFont(), false);
+    return adoptPtr(new SimpleFontData(platformData, isCustomFont(), false));
 }
 
 SimpleFontData* SimpleFontData::smallCapsFontData(const FontDescription& fontDescription) const

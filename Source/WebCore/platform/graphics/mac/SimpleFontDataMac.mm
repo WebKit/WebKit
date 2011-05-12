@@ -28,10 +28,6 @@
  */
 
 #import "config.h"
-
-// FIXME: Remove this define!
-#define LOOSE_PASS_OWN_PTR
-
 #import "SimpleFontData.h"
 
 #import "BlockExceptions.h"
@@ -300,12 +296,12 @@ void SimpleFontData::platformDestroy()
 #endif
 }
 
-SimpleFontData* SimpleFontData::scaledFontData(const FontDescription& fontDescription, float scaleFactor) const
+PassOwnPtr<SimpleFontData> SimpleFontData::scaledFontData(const FontDescription& fontDescription, float scaleFactor) const
 {
     if (isCustomFont()) {
         FontPlatformData scaledFontData(m_platformData);
         scaledFontData.m_size = scaledFontData.m_size * scaleFactor;
-        return new SimpleFontData(scaledFontData, true, false);
+        return adoptPtr(new SimpleFontData(scaledFontData, true, false));
     }
 
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
@@ -329,11 +325,12 @@ SimpleFontData* SimpleFontData::scaledFontData(const FontDescription& fontDescri
         scaledFontData.m_syntheticBold = (fontTraits & NSBoldFontMask) && !(scaledFontTraits & NSBoldFontMask);
         scaledFontData.m_syntheticOblique = (fontTraits & NSItalicFontMask) && !(scaledFontTraits & NSItalicFontMask);
 
-        return fontCache()->getCachedFontData(&scaledFontData);
+        // SimpleFontData::platformDestroy() takes care of not deleting the cached font data twice.
+        return adoptPtr(fontCache()->getCachedFontData(&scaledFontData));
     }
     END_BLOCK_OBJC_EXCEPTIONS;
 
-    return 0;
+    return nullptr;
 }
 
 SimpleFontData* SimpleFontData::smallCapsFontData(const FontDescription& fontDescription) const

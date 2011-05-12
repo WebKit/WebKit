@@ -27,10 +27,6 @@
  */
 
 #include "config.h"
-
-// FIXME: Remove this define!
-#define LOOSE_PASS_OWN_PTR
-
 #include "SimpleFontData.h"
 
 #include "Font.h"
@@ -112,20 +108,20 @@ void SimpleFontData::platformDestroy()
     delete m_scriptFontProperties;
 }
 
-SimpleFontData* SimpleFontData::scaledFontData(const FontDescription& fontDescription, float scaleFactor) const
+PassOwnPtr<SimpleFontData> SimpleFontData::scaledFontData(const FontDescription& fontDescription, float scaleFactor) const
 {
-        float scaledSize = scaleFactor * m_platformData.size();
-        if (isCustomFont()) {
-            FontPlatformData scaledFont(m_platformData);
-            scaledFont.setSize(scaledSize);
-            return new SimpleFontData(scaledFont, true, false);
-        }
+    float scaledSize = scaleFactor * m_platformData.size();
+    if (isCustomFont()) {
+        FontPlatformData scaledFont(m_platformData);
+        scaledFont.setSize(scaledSize);
+        return adoptPtr(new SimpleFontData(scaledFont, true, false));
+    }
 
-        LOGFONT winfont;
-        GetObject(m_platformData.hfont(), sizeof(LOGFONT), &winfont);
-        winfont.lfHeight = -lroundf(scaledSize * (m_platformData.useGDI() ? 1 : 32));
-        HFONT hfont = CreateFontIndirect(&winfont);
-        return new SimpleFontData(FontPlatformData(hfont, scaledSize, m_platformData.syntheticBold(), m_platformData.syntheticOblique(), m_platformData.useGDI()), isCustomFont(), false);
+    LOGFONT winfont;
+    GetObject(m_platformData.hfont(), sizeof(LOGFONT), &winfont);
+    winfont.lfHeight = -lroundf(scaledSize * (m_platformData.useGDI() ? 1 : 32));
+    HFONT hfont = CreateFontIndirect(&winfont);
+    return adoptPtr(new SimpleFontData(FontPlatformData(hfont, scaledSize, m_platformData.syntheticBold(), m_platformData.syntheticOblique(), m_platformData.useGDI()), isCustomFont(), false));
 }
 
 SimpleFontData* SimpleFontData::smallCapsFontData(const FontDescription& fontDescription) const

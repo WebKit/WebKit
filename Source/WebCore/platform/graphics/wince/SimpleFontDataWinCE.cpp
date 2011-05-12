@@ -28,10 +28,6 @@
  */
 
 #include "config.h"
-
-// FIXME: Remove this define!
-#define LOOSE_PASS_OWN_PTR
-
 #include "SimpleFontData.h"
 
 #include "FloatRect.h"
@@ -67,14 +63,16 @@ void SimpleFontData::platformDestroy()
 {
 }
 
-SimpleFontData* SimpleFontData::scaledFontData(const FontDescription& fontDescription, float scaleFactor) const
+PassOwnPtr<SimpleFontData> SimpleFontData::scaledFontData(const FontDescription& fontDescription, float scaleFactor) const
 {
     FontDescription fontDesc(fontDescription);
     fontDesc.setComputedSize(lroundf(scaleFactor * fontDesc.computedSize()));
     fontDesc.setSpecifiedSize(lroundf(scaleFactor * fontDesc.specifiedSize()));
     fontDesc.setKeywordSize(lroundf(scaleFactor * fontDesc.keywordSize()));
     FontPlatformData* result = fontCache()->getCachedFontPlatformData(fontDesc, m_platformData.family());
-    return result ? new SimpleFontData(*result) : 0;
+    if (!result)
+        return nullptr;
+    return adoptPtr(new SimpleFontData(*result));
 }
 
 SimpleFontData* SimpleFontData::smallCapsFontData(const FontDescription& fontDescription) const
