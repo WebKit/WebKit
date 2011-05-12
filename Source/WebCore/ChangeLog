@@ -1,3 +1,13 @@
+2011-05-12  ojab  <ojab@ojab.ru>
+
+        Reviewed by Eric Seidel.
+
+        Fix build with --disable-video --enable-fullscreen-api
+        https://bugs.webkit.org/show_bug.cgi?id=60542
+
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::SelectorChecker::checkOneSelector):
+
 2011-05-12  Yuta Kitamura  <yutak@chromium.org>
 
         Reviewed by Kent Tamura.

@@ -2909,8 +2909,10 @@ bool CSSStyleSelector::SelectorChecker::checkOneSelector(CSSSelector* sel, Eleme
             case CSSSelector::PseudoFullScreenMediaDocument:
                 if (!e->document()->webkitIsFullScreen())
                     return false;
+#if ENABLE(VIDEO)
                 if (!e->document()->webkitCurrentFullScreenElement() || !e->document()->webkitCurrentFullScreenElement()->isMediaElement())
                     return false;
+#endif
                 return true;
             case CSSSelector::PseudoFullScreenDocument:
                 // While a Document is in the fullscreen state, the 'full-screen-document' pseudoclass applies 
