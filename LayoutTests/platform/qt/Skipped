@@ -1241,10 +1241,6 @@ editing/unsupported-content/table-type-before.html
 # failing fast tests
 # ============================================================================= #
 
-# [Qt] fast/events/fire-mousedown-while-pressing-mouse-button.html failing
-# https://bugs.webkit.org/show_bug.cgi?id=58863
-fast/events/fire-mousedown-while-pressing-mouse-button.html
-
 # [Qt] fast/ruby/overhang* tests fail
 # https://bugs.webkit.org/show_bug.cgi?id=57824
 fast/ruby/overhang-horizontal.html

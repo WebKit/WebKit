@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2006 Zack Rusin <zack@kde.org>
+ * Copyright (C) 2011 Research In Motion Limited.
  *
  * All rights reserved.
  *
@@ -42,35 +43,79 @@ static void mouseEventModifiersFromQtKeyboardModifiers(Qt::KeyboardModifiers key
     shiftKey = keyboardModifiers & Qt::ShiftModifier;
 }
 
+static void mouseEventTypeAndMouseButtonFromQEvent(const QEvent* event, MouseEventType& mouseEventType, MouseButton& mouseButton)
+{
+    enum { MouseEvent, GraphicsSceneMouseEvent } frameworkMouseEventType;
+    switch (event->type()) {
+    case QEvent::MouseButtonDblClick:
+    case QEvent::MouseButtonPress:
+        frameworkMouseEventType = MouseEvent;
+        mouseEventType = MouseEventPressed;
+        break;
+    case QEvent::MouseButtonRelease:
+        frameworkMouseEventType = MouseEvent;
+        mouseEventType = MouseEventReleased;
+        break;
+    case QEvent::MouseMove:
+        frameworkMouseEventType = MouseEvent;
+        mouseEventType = MouseEventMoved;
+        break;
+#if !defined(QT_NO_GRAPHICSVIEW)
+    case QEvent::GraphicsSceneMouseDoubleClick:
+    case QEvent::GraphicsSceneMousePress:
+        frameworkMouseEventType = GraphicsSceneMouseEvent;
+        mouseEventType = MouseEventPressed;
+        break;
+    case QEvent::GraphicsSceneMouseRelease:
+        frameworkMouseEventType = GraphicsSceneMouseEvent;
+        mouseEventType = MouseEventReleased;
+        break;
+    case QEvent::GraphicsSceneMouseMove:
+        frameworkMouseEventType = GraphicsSceneMouseEvent;
+        mouseEventType = MouseEventMoved;
+        break;
+#endif
+    default:
+        ASSERT_NOT_REACHED();
+        frameworkMouseEventType = MouseEvent;
+        mouseEventType = MouseEventMoved;
+        break;
+    }
+
+    Qt::MouseButtons mouseButtons;
+    switch (frameworkMouseEventType) {
+    case MouseEvent: {
+        const QMouseEvent* mouseEvent = static_cast<const QMouseEvent*>(event);
+        mouseButtons = mouseEventType == MouseEventMoved ? mouseEvent->buttons() : mouseEvent->button();
+        break;
+    }
+    case GraphicsSceneMouseEvent: {
+        const QGraphicsSceneMouseEvent* mouseEvent = static_cast<const QGraphicsSceneMouseEvent*>(event);
+        mouseButtons = mouseEventType == MouseEventMoved ? mouseEvent->buttons() : mouseEvent->button();
+        break;
+    }
+    }
+
+    if (mouseButtons & Qt::LeftButton)
+        mouseButton = LeftButton;
+    else if (mouseButtons & Qt::RightButton)
+        mouseButton = RightButton;
+    else if (mouseButtons & Qt::MidButton)
+        mouseButton = MiddleButton;
+    else
+        mouseButton = NoButton;
+}
+
 #if !defined(QT_NO_GRAPHICSVIEW)
 PlatformMouseEvent::PlatformMouseEvent(QGraphicsSceneMouseEvent* event, int clickCount)
 {
     m_timestamp = WTF::currentTime();
 
-    switch (event->type()) {
-    case QEvent::GraphicsSceneMouseDoubleClick:
-    case QEvent::GraphicsSceneMousePress:
-        m_eventType = MouseEventPressed;
-        break;
-    case QEvent::GraphicsSceneMouseRelease:
-        m_eventType = MouseEventReleased;
-        break;
-    case QEvent::GraphicsSceneMouseMove:
-    default:
-        m_eventType = MouseEventMoved;
-    }
-
+    // FIXME: Why don't we handle a context menu event here as we do in PlatformMouseEvent(QInputEvent*, int)?
+    // See <https://bugs.webkit.org/show_bug.cgi?id=60728>.
+    mouseEventTypeAndMouseButtonFromQEvent(event, m_eventType, m_button);
     m_position = IntPoint(event->pos().toPoint());
     m_globalPosition = IntPoint(event->screenPos());
-
-    if (event->button() == Qt::LeftButton || (event->buttons() & Qt::LeftButton))
-        m_button = LeftButton;
-    else if (event->button() == Qt::RightButton || (event->buttons() & Qt::RightButton))
-        m_button = RightButton;
-    else if (event->button() == Qt::MidButton || (event->buttons() & Qt::MidButton))
-        m_button = MiddleButton;
-    else
-        m_button = NoButton;
 
     m_clickCount = clickCount;
     mouseEventModifiersFromQtKeyboardModifiers(event->modifiers(), m_altKey, m_ctrlKey, m_metaKey, m_shiftKey);
@@ -81,48 +126,22 @@ PlatformMouseEvent::PlatformMouseEvent(QInputEvent* event, int clickCount)
 {
     m_timestamp = WTF::currentTime();
 
-    QMouseEvent* me = 0;
-
-    switch (event->type()) {
-    case QEvent::MouseMove:
-        m_eventType = MouseEventMoved;
-        me = static_cast<QMouseEvent *>(event);
-        break;
-    case QEvent::MouseButtonDblClick:
-    case QEvent::MouseButtonPress:
-        m_eventType = MouseEventPressed;
-        me = static_cast<QMouseEvent *>(event);
-        break;
-    case QEvent::MouseButtonRelease:
-        m_eventType = MouseEventReleased;
-        me = static_cast<QMouseEvent *>(event);
-        break;
+    bool isContextMenuEvent = false;
 #ifndef QT_NO_CONTEXTMENU
-    case QEvent::ContextMenu: {
+    if (event->type() == QEvent::ContextMenu) {
+        isContextMenuEvent = true;
         m_eventType = MouseEventPressed;
         QContextMenuEvent* ce = static_cast<QContextMenuEvent*>(event);
         m_position = IntPoint(ce->pos());
         m_globalPosition = IntPoint(ce->globalPos());
         m_button = RightButton;
-        break;
     }
-#endif // QT_NO_CONTEXTMENU
-    default:
-        m_eventType = MouseEventMoved;
-    }
-
-    if (me) {
-        m_position = IntPoint(me->pos());
-        m_globalPosition = IntPoint(me->globalPos());
-
-        if (me->button() == Qt::LeftButton || (me->buttons() & Qt::LeftButton))
-            m_button = LeftButton;
-        else if (me->button() == Qt::RightButton || (me->buttons() & Qt::RightButton))
-            m_button = RightButton;
-        else if (me->button() == Qt::MidButton || (me->buttons() & Qt::MidButton))
-            m_button = MiddleButton;
-        else
-            m_button = NoButton;
+#endif
+    if (!isContextMenuEvent) {
+        mouseEventTypeAndMouseButtonFromQEvent(event, m_eventType, m_button);
+        QMouseEvent* mouseEvent = static_cast<QMouseEvent*>(event);
+        m_position = IntPoint(mouseEvent->pos());
+        m_globalPosition = IntPoint(mouseEvent->globalPos());
     }
 
     m_clickCount = clickCount;
