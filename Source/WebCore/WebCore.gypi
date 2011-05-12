@@ -4701,6 +4701,8 @@
             'platform/network/BlobResourceHandle.cpp',
             'platform/network/BlobResourceHandle.h',
             'platform/network/BlobStorageData.h',
+            'platform/network/ContentTypeParser.cpp',
+            'platform/network/ContentTypeParser.h',
             'platform/network/Credential.cpp',
             'platform/network/CredentialStorage.cpp',
             'platform/network/DNS.h',

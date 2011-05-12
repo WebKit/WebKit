@@ -1,3 +1,14 @@
+2011-05-11  Jay Civelli  <jcivelli@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        Adding a Content-Type parser. This is needed for MHTML support.
+        https://bugs.webkit.org/show_bug.cgi?id=60637
+
+        (WebCore::ScriptController::disableEval):
+        * platform/network/ContentTypeParser.cpp: Added.
+        * platform/network/ContentTypeParser.h: Added.
+
 2011-05-11  Jessie Berlin  <jberlin@apple.com>
 
         Reviewed by Steve Falkenburg.
