@@ -452,10 +452,13 @@ void StorageTracker::syncDeleteOrigin(const String& originIdentifier)
     openTrackerDatabase(false);
     if (!m_database.isOpen())
         return;
-    
-    String path = databasePathForOrigin(originIdentifier);
 
-    ASSERT(!path.isEmpty());
+    String path = databasePathForOrigin(originIdentifier);
+    if (path.isEmpty()) {
+        // It is possible to get a request from the API to delete the storage for an origin that
+        // has no such storage.
+        return;
+    }
     
     SQLiteStatement deleteStatement(m_database, "DELETE FROM Origins where origin=?");
     if (deleteStatement.prepare() != SQLResultOk) {

@@ -2,6 +2,18 @@
 
         Reviewed by Darin Adler.
 
+        Assertion failure when requesting that storage be deleted for an origin without storage.
+        https://bugs.webkit.org/show_bug.cgi?id=60709
+
+        * storage/StorageTracker.cpp:
+        (WebCore::StorageTracker::syncDeleteOrigin):
+        If the path to the storage location for the givin origin is empty, return early instead of
+        asserting.
+
+2011-05-12  Jessie Berlin  <jberlin@apple.com>
+
+        Reviewed by Darin Adler.
+
         [Windows WebKit2] Use cookies set in WebKit1
         https://bugs.webkit.org/show_bug.cgi?id=60274
 
