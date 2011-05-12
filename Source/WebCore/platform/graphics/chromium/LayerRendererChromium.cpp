@@ -121,6 +121,9 @@ LayerRendererChromium::LayerRendererChromium(PassRefPtr<GraphicsContext3D> conte
     , m_defaultRenderSurface(0)
 {
     m_contextSupportsLatch = m_context->getExtensions()->supports("GL_CHROMIUM_latch");
+    m_contextSupportsMapSub = m_context->getExtensions()->supports("GL_CHROMIUM_map_sub");
+    if (m_contextSupportsMapSub)
+        m_context->getExtensions()->ensureEnabled("GL_CHROMIUM_map_sub");
     m_hardwareCompositing = initializeSharedObjects();
     m_rootLayerContentTiler = LayerTilerChromium::create(this, IntSize(256, 256), LayerTilerChromium::NoBorderTexels);
     ASSERT(m_rootLayerContentTiler);

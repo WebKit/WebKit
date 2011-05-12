@@ -86,6 +86,8 @@ private:
 
     OwnPtr<Font> m_smallFont;
     OwnPtr<Font> m_mediumFont;
+
+    bool m_useMapSubForUploads;
 };
 
 }

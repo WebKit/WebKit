@@ -73,6 +73,7 @@ public:
     ~LayerRendererChromium();
 
     GraphicsContext3D* context();
+    bool contextSupportsMapSub() const { return m_contextSupportsMapSub; }
 
     void invalidateRootLayerRect(const IntRect& dirtyRect);
 
@@ -240,6 +241,7 @@ private:
     bool m_childContextsWereCopied;
 
     bool m_contextSupportsLatch;
+    bool m_contextSupportsMapSub;
 
     bool m_animating;
 

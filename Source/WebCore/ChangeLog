@@ -1,3 +1,16 @@
+2011-05-11  Nat Duca  <nduca@chromium.org>
+
+        Reviewed by James Robinson.
+
+        [chromium] Use mapTexSubImage2D for tile uploads if available
+        https://bugs.webkit.org/show_bug.cgi?id=60008
+
+        * platform/graphics/chromium/LayerTilerChromium.cpp:
+        (WebCore::LayerTilerChromium::LayerTilerChromium):
+        (WebCore::LayerTilerChromium::update):
+        (WebCore::LayerTilerChromium::updateFromPixels):
+        * platform/graphics/chromium/LayerTilerChromium.h:
+
 2011-05-11  Alexis Menard  <alexis.menard@openbossa.org>
 
         Reviewed by Kenneth Rohde Christiansen.

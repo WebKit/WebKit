@@ -27,6 +27,7 @@
 #if USE(ACCELERATED_COMPOSITING)
 #include "CCHeadsUpDisplay.h"
 
+#include "Extensions3DChromium.h"
 #include "Font.h"
 #include "FontDescription.h"
 #include "GraphicsContext3D.h"
@@ -50,6 +51,7 @@ CCHeadsUpDisplay::CCHeadsUpDisplay(LayerRendererChromium* owner)
     , m_layerRenderer(owner)
     , m_showFPSCounter(false)
     , m_showPlatformLayerTree(false)
+    , m_useMapSubForUploads(owner->contextSupportsMapSub())
 {
     m_beginTimeHistoryInSec[0] = currentTime();
     m_beginTimeHistoryInSec[1] = m_beginTimeHistoryInSec[0];
@@ -106,7 +108,13 @@ void CCHeadsUpDisplay::draw()
         PlatformCanvas::AutoLocker locker(&canvas);
 
         m_hudTexture->bindTexture();
-        GLC(context.get(), context->texImage2D(GraphicsContext3D::TEXTURE_2D, 0, GraphicsContext3D::RGBA, canvas.size().width(), canvas.size().height(), 0, GraphicsContext3D::RGBA, GraphicsContext3D::UNSIGNED_BYTE, locker.pixels()));
+        if (m_useMapSubForUploads) {
+            Extensions3DChromium* extensions = static_cast<Extensions3DChromium*>(context->getExtensions());
+            uint8_t* pixelDest = static_cast<uint8_t*>(extensions->mapTexSubImage2DCHROMIUM(GraphicsContext3D::TEXTURE_2D, 0, 0, 0, hudSize.width(), hudSize.height(), GraphicsContext3D::RGBA, GraphicsContext3D::UNSIGNED_BYTE, Extensions3DChromium::WRITE_ONLY));
+            memcpy(pixelDest, locker.pixels(), hudSize.width() * hudSize.height() * 4);
+            extensions->unmapTexSubImage2DCHROMIUM(pixelDest);
+        } else
+            GLC(context.get(), context->texImage2D(GraphicsContext3D::TEXTURE_2D, 0, GraphicsContext3D::RGBA, canvas.size().width(), canvas.size().height(), 0, GraphicsContext3D::RGBA, GraphicsContext3D::UNSIGNED_BYTE, locker.pixels()));
     }
 
     // Draw the HUD onto the default render surface.

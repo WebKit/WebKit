@@ -167,6 +167,9 @@ private:
 
     TilingData m_tilingData;
 
+    // Whether the tiler will use GL_CHROMIUM_map_sub for texture uploads.
+    bool m_useMapSubForUploads;
+
     LayerRendererChromium* m_layerRenderer;
 };
 

@@ -30,6 +30,7 @@
 
 #include "LayerTilerChromium.h"
 
+#include "Extensions3DChromium.h"
 #include "GraphicsContext.h"
 #include "GraphicsContext3D.h"
 #include "LayerRendererChromium.h"
@@ -53,6 +54,7 @@ PassOwnPtr<LayerTilerChromium> LayerTilerChromium::create(LayerRendererChromium*
 LayerTilerChromium::LayerTilerChromium(LayerRendererChromium* layerRenderer, const IntSize& tileSize, BorderTexelOption border)
     : m_skipsDraw(false)
     , m_tilingData(max(tileSize.width(), tileSize.height()), 0, 0, border == HasBorderTexels)
+    , m_useMapSubForUploads(layerRenderer->contextSupportsMapSub())
     , m_layerRenderer(layerRenderer)
 {
     setTileSize(tileSize);
@@ -84,7 +86,8 @@ void LayerTilerChromium::setTileSize(const IntSize& size)
     reset();
 
     m_tileSize = size;
-    m_tilePixels = adoptArrayPtr(new uint8_t[m_tileSize.width() * m_tileSize.height() * 4]);
+    if (!m_useMapSubForUploads)
+        m_tilePixels = adoptArrayPtr(new uint8_t[m_tileSize.width() * m_tileSize.height() * 4]);
     m_tilingData.setMaxTextureSize(max(size.width(), size.height()));
 }
 
@@ -341,27 +344,46 @@ void LayerTilerChromium::updateFromPixels(const IntRect& contentRect, const IntR
             if (paintOffset.y() + destRect.height() > paintRect.height())
                 CRASH();
 
-            const uint8_t* pixelSource;
-            if (paintRect.width() == sourceRect.width() && !paintOffset.x())
-                pixelSource = &paintPixels[4 * paintOffset.y() * paintRect.width()];
-            else {
-                // Strides not equal, so do a row-by-row memcpy from the
-                // paint results into a temp buffer for uploading.
-                for (int row = 0; row < destRect.height(); ++row)
-                    memcpy(&m_tilePixels[destRect.width() * 4 * row],
-                           &paintPixels[4 * (paintOffset.x() + (paintOffset.y() + row) * paintRect.width())],
-                           destRect.width() * 4);
-
-                pixelSource = &m_tilePixels[0];
-            }
-
-            tile->texture()->bindTexture();
-
             const GC3Dint filter = m_tilingData.borderTexels() ? GraphicsContext3D::LINEAR : GraphicsContext3D::NEAREST;
             GLC(context, context->texParameteri(GraphicsContext3D::TEXTURE_2D, GraphicsContext3D::TEXTURE_MIN_FILTER, filter));
             GLC(context, context->texParameteri(GraphicsContext3D::TEXTURE_2D, GraphicsContext3D::TEXTURE_MAG_FILTER, filter));
 
-            GLC(context, context->texSubImage2D(GraphicsContext3D::TEXTURE_2D, 0, destRect.x(), destRect.y(), destRect.width(), destRect.height(), GraphicsContext3D::RGBA, GraphicsContext3D::UNSIGNED_BYTE, pixelSource));
+            tile->texture()->bindTexture();
+
+            if (m_useMapSubForUploads) {
+                // Upload tile data via a mapped transfer buffer
+                Extensions3DChromium* extensions = static_cast<Extensions3DChromium*>(context->getExtensions());
+                uint8_t* pixelDest = static_cast<uint8_t*>(extensions->mapTexSubImage2DCHROMIUM(GraphicsContext3D::TEXTURE_2D, 0, destRect.x(), destRect.y(), destRect.width(), destRect.height(), GraphicsContext3D::RGBA, GraphicsContext3D::UNSIGNED_BYTE, Extensions3DChromium::WRITE_ONLY));
+                ASSERT(pixelDest);
+                if (paintRect.width() == sourceRect.width() && !paintOffset.x())
+                    memcpy(pixelDest, &paintPixels[4 * paintOffset.y() * paintRect.width()], paintRect.width() * destRect.height() * 4);
+                else {
+                    // Strides not equal, so do a row-by-row memcpy from the
+                    // paint results into the pixelDest
+                    for (int row = 0; row < destRect.height(); ++row)
+                        memcpy(&pixelDest[destRect.width() * 4 * row],
+                               &paintPixels[4 * (paintOffset.x() + (paintOffset.y() + row) * paintRect.width())],
+                               destRect.width() * 4);
+                }
+                extensions->unmapTexSubImage2DCHROMIUM(pixelDest);
+            } else {
+                const uint8_t* pixelSource;
+                if (paintRect.width() == sourceRect.width() && !paintOffset.x())
+                    pixelSource = &paintPixels[4 * paintOffset.y() * paintRect.width()];
+                else {
+                    // Strides not equal, so do a row-by-row memcpy from the
+                    // paint results into a temp buffer for uploading.
+                    for (int row = 0; row < destRect.height(); ++row)
+                        memcpy(&m_tilePixels[destRect.width() * 4 * row],
+                               &paintPixels[4 * (paintOffset.x() + (paintOffset.y() + row) * paintRect.width())],
+                               destRect.width() * 4);
+
+                    pixelSource = &m_tilePixels[0];
+                }
+
+
+                GLC(context, context->texSubImage2D(GraphicsContext3D::TEXTURE_2D, 0, destRect.x(), destRect.y(), destRect.width(), destRect.height(), GraphicsContext3D::RGBA, GraphicsContext3D::UNSIGNED_BYTE, pixelSource));
+            }
 
             tile->clearDirty();
         }
