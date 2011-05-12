@@ -1,3 +1,18 @@
+2011-05-12  Luke Macpherson   <macpherson@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        Merge ApplyPropertyExpanding and ApplyPropertyExpandingSuppressValue classes using template.
+        https://bugs.webkit.org/show_bug.cgi?id=60691
+
+        No new tests - refactoring only.
+
+        * css/CSSStyleApplyProperty.cpp:
+        (WebCore::ApplyPropertyExpanding::applyValue):
+        Use new template parameter to early exit if needed.
+        (WebCore::CSSStyleApplyProperty::CSSStyleApplyProperty):
+        Specify template parameters for ApplyPropertyExpanding.
+
 2011-05-12  Simon Fraser  <simon.fraser@apple.com>
 
         Followup to r86351; give the vectors some inline capacity
