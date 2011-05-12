@@ -1,3 +1,14 @@
+2011-05-11  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        Enable strict PassOwnPtr on Mac
+        https://bugs.webkit.org/show_bug.cgi?id=60684
+
+        This should build cleanly now.
+
+        * wtf/PassOwnPtr.h:
+
 2011-05-11  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Darin Adler.
