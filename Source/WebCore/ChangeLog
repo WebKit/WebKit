@@ -1,3 +1,16 @@
+2011-05-12  Adrienne Walker  <enne@google.com>
+
+        Reviewed by James Robinson.
+
+        [chromium] show-composited-layer-tree crashes on null ptr deref
+        https://bugs.webkit.org/show_bug.cgi?id=60734
+
+        The tiler is created lazily, so it won't not be around for the first
+        dumpLayerProperties call.
+
+        * platform/graphics/chromium/ContentLayerChromium.cpp:
+        (WebCore::ContentLayerChromium::dumpLayerProperties):
+
 2011-05-12  Patrick Gansterer  <paroga@webkit.org>
 
         Reviewed by Adam Barth.

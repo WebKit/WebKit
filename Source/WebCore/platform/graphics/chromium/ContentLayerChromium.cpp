@@ -231,7 +231,7 @@ void ContentLayerChromium::dumpLayerProperties(TextStream& ts, int indent) const
 {
     LayerChromium::dumpLayerProperties(ts, indent);
     writeIndent(ts, indent);
-    ts << "skipsDraw: " << m_tiler->skipsDraw() << "\n";
+    ts << "skipsDraw: " << (!m_tiler || m_tiler->skipsDraw()) << "\n";
 }
 
 }
