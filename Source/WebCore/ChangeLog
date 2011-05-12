@@ -2,7 +2,7 @@
 
         Reviewed by Sam Weinig.
 
-        <rdar://problem/8970549> WebFindOptionsAtWordStarts still fails with some Japanese words
+        <rdar://problem/9427336> WebFindOptionsAtWordStarts still fails with some Japanese words
         https://bugs.webkit.org/show_bug.cgi?id=60730
 
         * editing/TextIterator.cpp:
