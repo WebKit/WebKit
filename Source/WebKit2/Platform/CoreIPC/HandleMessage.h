@@ -312,7 +312,7 @@ void handleMessageDelayed(Connection* connection, ArgumentDecoder* argumentDecod
     if (!argumentDecoder->decode(arguments))
         return;
 
-    RefPtr<typename T::DelayedReply> delayedReply = adoptRef(new typename T::DelayedReply(connection, replyEncoder));
+    RefPtr<typename T::DelayedReply> delayedReply = adoptRef(new typename T::DelayedReply(connection, adoptPtr(replyEncoder)));
     callMemberFunction(arguments, delayedReply.release(), object, function);
 }
 

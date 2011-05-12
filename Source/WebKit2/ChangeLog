@@ -1,3 +1,14 @@
+2011-05-11  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Gavin Barraclough.
+
+        WebKit2 doesn't build on Mac with strict PassOwnPtr
+        https://bugs.webkit.org/show_bug.cgi?id=60655
+
+        * Platform/CoreIPC/HandleMessage.h:
+        (CoreIPC::handleMessageDelayed):
+        Add explicit adoptPtr to indicate that the constructor is taking ownership.
+
 2011-05-11  Jessie Berlin  <jberlin@apple.com>
 
         Reviewed by Steve Falkenburg.
