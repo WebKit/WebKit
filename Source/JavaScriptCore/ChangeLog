@@ -1,3 +1,61 @@
+2011-05-12  Nikolas Zimmermann  <nzimmermann@rim.com>
+
+        Reviewed by Darin Adler.
+
+        String operator+ reallocates unnecessarily when concatting > 2 strings
+        https://bugs.webkit.org/show_bug.cgi?id=58420
+
+        Provide a faster String append operator.
+        Up until now, "String operator+(const String& a, const String& b)" copied String a into a temporary
+        object, and used a.append(b), which reallocates a new buffer of aLength+bLength. When concatting
+        N strings using operator+, this leads to N-1 reallocations.
+
+        Replace this with a flexible operator+ implementation, that avoids these reallocations.
+        When concatting a 'String' with any string type (char*, UChar, Vector<char>, String, AtomicString, etc..)
+        a StringAppend<String, T> object is created, which holds the intermediate string objects, and delays
+        creation of the final string, until operator String() is invoked.
+
+        template<typename T>
+        StringAppend<String, T> operator+(const String& string1, T string2)
+        {
+            return StringAppend<String, T>(string1, string2);
+        }
+
+        template<typename U, typename V, typename W>
+        StringAppend<U, StringAppend<V, W> > operator+(U string1, const StringAppend<V, W>& string2)
+        {
+            return StringAppend<U, StringAppend<V, W> >(string1, string2);
+        }
+
+        When concatting three strings - "String a, b, c; String result = a + b + c;" following happens:
+        first a StringAppend<String, String> object is created by operator+(const String& string1, String string2).
+        Then operator+(String string1, const StringAppend<String, String>& string2) is invoked, which returns
+        a StringAppend<String, StringAppend<String, String> > object.
+        Then operator String() is invoked, which allocates a StringImpl object, once, large enough to hold the
+        final string - it uses tryMakeString provided by StringConcatenate.h under the hoods, which guards us
+        against too big string allocations, etc.
+
+        Note that the second template, defines a recursive way to concat an arbitary number of strings
+        into a single String with just one allocation.
+
+        * GNUmakefile.list.am: Add StringOperators.h to build.
+        * JavaScriptCore.exp: Export WTF::emptyString(). Remove no longer needed symbols.
+        * JavaScriptCore.gypi: Add StringOperators.h to build.
+        * JavaScriptCore.vcproj/WTF/WTF.vcproj: Ditto.
+        * JavaScriptCore.xcodeproj/project.pbxproj: Ditto.
+        * wtf/text/AtomicString.h: Pull in StringConcatenate.h at the end of the file.
+        * wtf/text/StringConcatenate.h: Conditionally include AtomicString.h to avoid a cyclic dependency. Pull in StringOperators.h at the end of the file.
+        * wtf/text/StringOperators.h: Added. This is never meant to be included directly, including either WTFString.h or AtomicString.h automatically pulls in this file.
+        (WTF::StringAppend::StringAppend):
+        (WTF::StringAppend::operator String):
+        (WTF::StringAppend::operator AtomicString):
+        (WTF::StringAppend::writeTo):
+        (WTF::StringAppend::length):
+        (WTF::operator+):
+        * wtf/text/WTFString.cpp: Remove operator+ implementations that use String::append(). 
+        (WTF::emptyString): Add new shared empty string free function.
+        * wtf/text/WTFString.h: Replace operator+ implementations by StringAppend template solution. Pull in AtomicString.h at the end of the file.
+
 2011-05-12  Philippe Normand  <pnormand@igalia.com>
 
         Unreviewed, GTK build fix.

@@ -493,7 +493,7 @@ static inline WebDataSource *dataSource(DocumentLoader* loader)
 
 - (NSString *)_stringWithDocumentTypeStringAndMarkupString:(NSString *)markupString
 {
-    return _private->coreFrame->documentTypeString() + markupString;
+    return String(_private->coreFrame->documentTypeString() + String(markupString));
 }
 
 - (NSArray *)_nodesFromList:(Vector<Node*> *)nodesVector

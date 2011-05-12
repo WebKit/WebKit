@@ -66,12 +66,12 @@ String WorkerLocation::pathname() const
 
 String WorkerLocation::search() const
 {
-    return m_url.query().isEmpty() ? "" : "?" + m_url.query();
+    return m_url.query().isEmpty() ? emptyString() : "?" + m_url.query();
 }
 
 String WorkerLocation::hash() const
 {
-    return m_url.fragmentIdentifier().isEmpty() ? "" : "#" + m_url.fragmentIdentifier();
+    return m_url.fragmentIdentifier().isEmpty() ? emptyString() : "#" + m_url.fragmentIdentifier();
 }
 
 String WorkerLocation::toString() const

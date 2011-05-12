@@ -26,7 +26,9 @@
 #ifndef StringConcatenate_h
 #define StringConcatenate_h
 
-#include <wtf/text/WTFString.h>
+#ifndef WTFString_h
+#include "AtomicString.h"
+#endif
 
 namespace WTF {
 
@@ -182,6 +184,21 @@ public:
 
 private:
     const String& m_buffer;
+};
+
+template<>
+class StringTypeAdapter<AtomicString> {
+public:
+    StringTypeAdapter<AtomicString>(const AtomicString& string)
+        : m_adapter(string.string())
+    {
+    }
+
+    unsigned length() { return m_adapter.length(); }
+    void writeTo(UChar* destination) { m_adapter.writeTo(destination); }
+
+private:
+    StringTypeAdapter<String> m_adapter;
 };
 
 inline void sumWithOverflow(unsigned& total, unsigned addend, bool& overflow)
@@ -580,4 +597,5 @@ String makeString(StringType1 string1, StringType2 string2, StringType3 string3,
 
 using WTF::makeString;
 
+#include "StringOperators.h"
 #endif

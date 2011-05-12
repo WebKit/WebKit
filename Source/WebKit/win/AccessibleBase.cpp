@@ -375,7 +375,7 @@ HRESULT STDMETHODCALLTYPE AccessibleBase::get_accKeyboardShortcut(VARIANT vChild
         if (modifiers & PlatformKeyboardEvent::MetaKey)
             accessKeyModifiers += "Win+";
     }
-    *shortcut = BString(accessKeyModifiers + accessKey).release();
+    *shortcut = BString(String(accessKeyModifiers + accessKey)).release();
     return S_OK;
 }
 

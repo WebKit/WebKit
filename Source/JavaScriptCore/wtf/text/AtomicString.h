@@ -201,4 +201,5 @@ using WTF::xmlAtom;
 using WTF::xmlnsAtom;
 #endif
 
+#include "StringConcatenate.h"
 #endif // AtomicString_h

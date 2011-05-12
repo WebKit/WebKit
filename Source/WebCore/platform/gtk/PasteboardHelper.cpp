@@ -162,7 +162,7 @@ void PasteboardHelper::fillSelectionData(GtkSelectionData* selectionData, guint 
     else if (info == getIdForTargetType(TargetTypeMarkup)) {
         // Some Linux applications refuse to accept pasted markup unless it is
         // prefixed by a content-type meta tag.
-        CString markup = (gMarkupPrefix + dataObject->markup()).utf8();
+        CString markup = String(gMarkupPrefix + dataObject->markup()).utf8();
         gtk_selection_data_set(selectionData, markupAtom, 8,
             reinterpret_cast<const guchar*>(markup.data()), markup.length() + 1);
 

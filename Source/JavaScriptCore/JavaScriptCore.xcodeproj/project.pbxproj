@@ -223,6 +223,7 @@
 		65E1A3DF122B894500B26097 /* NonCopyingSort.h in Headers */ = {isa = PBXBuildFile; fileRef = 65E1A2F4122B880D00B26097 /* NonCopyingSort.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		65FDE49C0BDD1D4A00E80111 /* Assertions.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 65E217B808E7EECC0023E5F6 /* Assertions.cpp */; };
 		7186A6EC13100BA5004479E1 /* HexNumber.h in Headers */ = {isa = PBXBuildFile; fileRef = 7186A6E813100B57004479E1 /* HexNumber.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		71DA9D82134F3F3D00B767E7 /* StringOperators.h in Headers */ = {isa = PBXBuildFile; fileRef = 718A8482134F3A1200B87529 /* StringOperators.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		76FB9F0F12E851860051A2EB /* SHA1.h in Headers */ = {isa = PBXBuildFile; fileRef = 76FB9F0E12E851860051A2EB /* SHA1.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		76FB9F1112E851960051A2EB /* SHA1.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 76FB9F1012E851960051A2EB /* SHA1.cpp */; };
 		7934BB7B1361979300CB99A1 /* ParallelJobs.h in Headers */ = {isa = PBXBuildFile; fileRef = 7934BB761361979300CB99A1 /* ParallelJobs.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -909,6 +910,7 @@
 		65EA73630BAE35D1001BB560 /* CommonIdentifiers.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = CommonIdentifiers.h; sourceTree = "<group>"; };
 		704FD35305697E6D003DBED9 /* BooleanObject.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = BooleanObject.h; sourceTree = "<group>"; tabWidth = 8; };
 		7186A6E813100B57004479E1 /* HexNumber.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HexNumber.h; sourceTree = "<group>"; };
+		718A8482134F3A1200B87529 /* StringOperators.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = StringOperators.h; path = text/StringOperators.h; sourceTree = "<group>"; };
 		76FB9F0E12E851860051A2EB /* SHA1.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SHA1.h; sourceTree = "<group>"; };
 		76FB9F1012E851960051A2EB /* SHA1.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SHA1.cpp; sourceTree = "<group>"; };
 		7934BB761361979300CB99A1 /* ParallelJobs.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ParallelJobs.h; sourceTree = "<group>"; };
@@ -2032,6 +2034,7 @@
 				868BFA06117CEFD100B908B1 /* StringImpl.cpp */,
 				868BFA07117CEFD100B908B1 /* StringImpl.h */,
 				86B99AE2117E578100DF5A90 /* StringImplBase.h */,
+				718A8482134F3A1200B87529 /* StringOperators.h */,
 				8626BECE11928E3900782FAB /* StringStatics.cpp */,
 				F3BD31D0126730180065467F /* TextPosition.h */,
 				868BFA15117CF19900B908B1 /* WTFString.cpp */,
@@ -2529,6 +2532,7 @@
 				5D63E9AD10F2BD6E00FC8AE9 /* StringHasher.h in Headers */,
 				868BFA0F117CEFD100B908B1 /* StringImpl.h in Headers */,
 				86B99AE4117E578100DF5A90 /* StringImplBase.h in Headers */,
+				71DA9D82134F3F3D00B767E7 /* StringOperators.h in Headers */,
 				BC18C4680E16F5CD00B34460 /* StringObject.h in Headers */,
 				BC18C4690E16F5CD00B34460 /* StringObjectThatMasqueradesAsUndefined.h in Headers */,
 				BC18C46A0E16F5CD00B34460 /* StringPrototype.h in Headers */,

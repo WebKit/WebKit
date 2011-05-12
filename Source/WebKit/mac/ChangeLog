@@ -1,3 +1,15 @@
+2011-05-12  Nikolas Zimmermann  <nzimmermann@rim.com>
+
+        Reviewed by Darin Adler.
+
+        String operator+ reallocates unnecessarily when concatting > 2 strings
+        https://bugs.webkit.org/show_bug.cgi?id=58420
+
+        Provide a faster String append operator. See Source/JavaScriptCore/ChangeLog for details.
+
+        * WebView/WebFrame.mm: Explicitely cast to Strings first, so operator NSString*() can be invoked.
+        (-[WebFrame _stringWithDocumentTypeStringAndMarkupString:]):
+
 2011-05-10  Tony Gentilcore  <tonyg@chromium.org>
 
         Reviewed by Darin Adler.

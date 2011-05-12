@@ -57,9 +57,18 @@ bool ImageInputType::appendFormData(FormDataList& encoding, bool) const
     if (!element()->isActivatedSubmit())
         return false;
     const AtomicString& name = element()->name();
-    encoding.appendData(name.isEmpty() ? "x" : (name + ".x"), m_clickLocation.x());
-    encoding.appendData(name.isEmpty() ? "y" : (name + ".y"), m_clickLocation.y());
-    if (!name.isEmpty() && !element()->value().isEmpty())
+    if (name.isEmpty()) {
+        encoding.appendData("x", m_clickLocation.x());
+        encoding.appendData("y", m_clickLocation.y());
+        return true;
+    }
+
+    DEFINE_STATIC_LOCAL(String, dotXString, (".x"));
+    DEFINE_STATIC_LOCAL(String, dotYString, (".y"));
+    encoding.appendData(name + dotXString, m_clickLocation.x());
+    encoding.appendData(name + dotYString, m_clickLocation.y());
+
+    if (!!element()->value().isEmpty())
         encoding.appendData(name, element()->value());
     return true;
 }

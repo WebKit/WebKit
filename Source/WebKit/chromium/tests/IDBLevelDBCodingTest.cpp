@@ -180,10 +180,10 @@ TEST(IDBLevelDBCodingTest, DecodeString)
     EXPECT_EQ(String("foo"), decodeString(v.data(), v.data() + v.size()));
 
     v = encodeString(String(testStringA));
-    EXPECT_EQ(testStringA, decodeString(v.data(), v.data() + v.size()));
+    EXPECT_EQ(String(testStringA), decodeString(v.data(), v.data() + v.size()));
 
     v = encodeString(String(testStringB));
-    EXPECT_EQ(testStringB, decodeString(v.data(), v.data() + v.size()));
+    EXPECT_EQ(String(testStringB), decodeString(v.data(), v.data() + v.size()));
 }
 
 TEST(IDBLevelDBCodingTest, EncodeStringWithLength)

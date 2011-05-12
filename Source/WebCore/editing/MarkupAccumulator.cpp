@@ -210,8 +210,11 @@ bool MarkupAccumulator::shouldAddNamespaceElement(const Element* element)
 {
     // Don't add namespace attribute if it is already defined for this elem.
     const AtomicString& prefix = element->prefix();
-    AtomicString attr = !prefix.isEmpty() ? "xmlns:" + prefix : "xmlns";
-    return !element->hasAttribute(attr);
+    if (prefix.isEmpty())
+        return !element->hasAttribute(xmlnsAtom);
+
+    DEFINE_STATIC_LOCAL(String, xmlnsWithColon, ("xmlns:"));
+    return !element->hasAttribute(xmlnsWithColon + prefix);
 }
 
 bool MarkupAccumulator::shouldAddNamespaceAttribute(const Attribute& attribute, Namespaces& namespaces)

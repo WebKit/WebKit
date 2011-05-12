@@ -525,6 +525,7 @@ javascriptcore_sources += \
 	Source/JavaScriptCore/wtf/text/StringImplBase.h \
 	Source/JavaScriptCore/wtf/text/StringImpl.cpp \
 	Source/JavaScriptCore/wtf/text/StringImpl.h \
+	Source/JavaScriptCore/wtf/text/StringOperators.h \
 	Source/JavaScriptCore/wtf/text/StringStatics.cpp \
 	Source/JavaScriptCore/wtf/text/TextPosition.h \
 	Source/JavaScriptCore/wtf/text/WTFString.cpp \

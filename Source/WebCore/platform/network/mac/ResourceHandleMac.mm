@@ -139,7 +139,7 @@ static bool isInitializingConnection;
     
 static String encodeBasicAuthorization(const String& user, const String& password)
 {
-    return base64Encode((user + ":" + password).utf8());
+    return base64Encode(String(user + ":" + password).utf8());
 }
 
 ResourceHandleInternal::~ResourceHandleInternal()

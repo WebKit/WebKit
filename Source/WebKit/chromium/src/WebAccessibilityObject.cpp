@@ -423,7 +423,7 @@ WebString WebAccessibilityObject::keyboardShortcut() const
             modifierString += "Win+";
     }
 
-    return modifierString + accessKey;
+    return String(modifierString + accessKey);
 }
 
 bool WebAccessibilityObject::performDefaultAction() const

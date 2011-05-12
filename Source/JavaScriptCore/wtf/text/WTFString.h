@@ -356,10 +356,6 @@ QDataStream& operator<<(QDataStream& stream, const String& str);
 QDataStream& operator>>(QDataStream& stream, String& str);
 #endif
 
-String operator+(const String&, const String&);
-String operator+(const String&, const char*);
-String operator+(const char*, const String&);
-
 inline String& operator+=(String& a, const String& b) { a.append(b); return a; }
 
 inline bool operator==(const String& a, const String& b) { return equal(a.impl(), b.impl()); }
@@ -501,10 +497,14 @@ template<> struct DefaultHash<String> {
 
 template <> struct VectorTraits<String> : SimpleClassVectorTraits { };
 
+// Shared global empty string.
+const String& emptyString();
+
 }
 
 using WTF::CString;
 using WTF::String;
+using WTF::emptyString;
 using WTF::append;
 using WTF::appendNumber;
 using WTF::charactersAreAllASCII;
@@ -528,4 +528,5 @@ using WTF::isAllSpecialCharacters;
 using WTF::isSpaceOrNewline;
 using WTF::reverseFind;
 
+#include "AtomicString.h"
 #endif

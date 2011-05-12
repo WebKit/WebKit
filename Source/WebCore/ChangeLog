@@ -1,3 +1,43 @@
+2011-05-12  Nikolas Zimmermann  <nzimmermann@rim.com>
+
+        Reviewed by Darin Adler.
+
+        String operator+ reallocates unnecessary when concatting > 2 strings
+        https://bugs.webkit.org/show_bug.cgi?id=58420
+
+        Provide a faster String append operator. See Source/JavaScriptCore/ChangeLog for details.
+
+        * dom/XMLDocumentParserLibxml2.cpp:
+        (WebCore::handleElementAttributes):
+        * editing/MarkupAccumulator.cpp:
+        (WebCore::MarkupAccumulator::shouldAddNamespaceElement):
+        * html/HTMLAnchorElement.cpp:
+        (WebCore::HTMLAnchorElement::hash):
+        (WebCore::HTMLAnchorElement::search):
+        * html/ImageInputType.cpp:
+        (WebCore::ImageInputType::appendFormData):
+        * html/parser/HTMLTreeBuilder.cpp:
+        * loader/CrossOriginAccessControl.cpp:
+        (WebCore::passesAccessControlCheck):
+        * page/Location.cpp:
+        (WebCore::Location::search):
+        (WebCore::Location::hash):
+        * page/NavigatorBase.cpp:
+        (WebCore::NavigatorBase::platform):
+        * platform/chromium/ClipboardChromium.cpp:
+        (WebCore::writeImageToDataObject):
+        * platform/gtk/PasteboardHelper.cpp:
+        (WebCore::PasteboardHelper::fillSelectionData):
+        * platform/network/cf/ResourceHandleCFNet.cpp:
+        (WebCore::encodeBasicAuthorization):
+        * platform/network/cf/SocketStreamHandleCFNet.cpp:
+        (WebCore::SocketStreamHandle::copyCFStreamDescription):
+        * platform/network/mac/ResourceHandleMac.mm:
+        (WebCore::encodeBasicAuthorization):
+        * workers/WorkerLocation.cpp:
+        (WebCore::WorkerLocation::search):
+        (WebCore::WorkerLocation::hash):
+
 2011-05-06  Yury Semikhatsky  <yurys@chromium.org>
 
         Reviewed by Pavel Feldman.

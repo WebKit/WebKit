@@ -739,7 +739,7 @@ static inline void handleElementAttributes(Element* newElement, const xmlChar** 
         AtomicString attrValue = toAtomicString(attributes[i].value, valueLength);
         String attrPrefix = toString(attributes[i].prefix);
         AtomicString attrURI = attrPrefix.isEmpty() ? AtomicString() : toAtomicString(attributes[i].uri);
-        AtomicString attrQName = attrPrefix.isEmpty() ? toAtomicString(attributes[i].localname) : AtomicString(attrPrefix + ":" + toString(attributes[i].localname));
+        AtomicString attrQName = attrPrefix.isEmpty() ? toAtomicString(attributes[i].localname) : attrPrefix + ":" + toString(attributes[i].localname);
 
         newElement->setAttributeNS(attrURI, attrQName, attrValue, ec, scriptingPermission);
         if (ec) // exception setting attributes

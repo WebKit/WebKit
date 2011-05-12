@@ -109,8 +109,10 @@ bool passesAccessControlCheck(const ResourceResponse& response, bool includeCred
     // FIXME: Access-Control-Allow-Origin can contain a list of origins.
     RefPtr<SecurityOrigin> accessControlOrigin = SecurityOrigin::createFromString(accessControlOriginString);
     if (!accessControlOrigin->isSameSchemeHostPort(securityOrigin)) {
-        errorDescription = (accessControlOriginString == "*") ? "Cannot use wildcard in Access-Control-Allow-Origin when credentials flag is true."
-            : "Origin " + securityOrigin->toString() + " is not allowed by Access-Control-Allow-Origin.";
+        if (accessControlOriginString == "*")
+            errorDescription = "Cannot use wildcard in Access-Control-Allow-Origin when credentials flag is true.";
+        else
+            errorDescription =  "Origin " + securityOrigin->toString() + " is not allowed by Access-Control-Allow-Origin.";
         return false;
     }
 

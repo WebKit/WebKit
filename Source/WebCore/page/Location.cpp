@@ -120,7 +120,7 @@ String Location::search() const
         return String();
 
     const KURL& url = this->url();
-    return url.query().isEmpty() ? "" : "?" + url.query();
+    return url.query().isEmpty() ? emptyString() : "?" + url.query();
 }
 
 String Location::origin() const
@@ -136,7 +136,7 @@ String Location::hash() const
         return String();
 
     const String& fragmentIdentifier = url().fragmentIdentifier();
-    return fragmentIdentifier.isEmpty() ? "" : "#" + fragmentIdentifier;
+    return fragmentIdentifier.isEmpty() ? emptyString() : "#" + fragmentIdentifier;
 }
 
 String Location::getParameter(const String& name) const

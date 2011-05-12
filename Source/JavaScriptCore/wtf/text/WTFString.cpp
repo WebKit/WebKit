@@ -131,27 +131,6 @@ void String::append(UChar c)
         m_impl = StringImpl::create(&c, 1);
 }
 
-String operator+(const String& a, const String& b)
-{
-    if (a.isEmpty())
-        return b;
-    if (b.isEmpty())
-        return a;
-    String c = a;
-    c += b;
-    return c;
-}
-
-String operator+(const String& s, const char* cs)
-{
-    return s + String(cs);
-}
-
-String operator+(const char* cs, const String& s)
-{
-    return String(cs) + s;
-}
-
 int codePointCompare(const String& a, const String& b)
 {
     return codePointCompare(a.impl(), b.impl());
@@ -969,6 +948,12 @@ float charactersToFloat(const UChar* data, size_t length, bool* ok, bool* didRea
 {
     // FIXME: This will return ok even when the string fits into a double but not a float.
     return static_cast<float>(charactersToDouble(data, length, ok, didReadNumber));
+}
+
+const String& emptyString()
+{
+    DEFINE_STATIC_LOCAL(String, emptyString, (StringImpl::empty()));
+    return emptyString;
 }
 
 } // namespace WTF

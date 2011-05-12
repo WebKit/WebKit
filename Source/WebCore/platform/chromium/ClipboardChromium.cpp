@@ -230,7 +230,7 @@ static void writeImageToDataObject(ChromiumDataObject* dataObject, Element* elem
     // in the URL.
     String extension = MIMETypeRegistry::getPreferredExtensionForMIMEType(
         cachedImage->response().mimeType());
-    dataObject->setFileExtension(extension.isEmpty() ? "" : "." + extension);
+    dataObject->setFileExtension(extension.isEmpty() ? emptyString() : "." + extension);
     String title = element->getAttribute(altAttr);
     if (title.isEmpty())
         title = cachedImage->response().suggestedFilename();

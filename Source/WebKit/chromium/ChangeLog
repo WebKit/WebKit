@@ -1,3 +1,19 @@
+2011-05-12  Nikolas Zimmermann  <nzimmermann@rim.com>
+
+        Reviewed by Darin Adler.
+
+        String operator+ reallocates unnecessarily when concatting > 2 strings
+        https://bugs.webkit.org/show_bug.cgi?id=58420
+
+        Provide a faster String append operator. See Source/JavaScriptCore/ChangeLog for details.
+
+        * src/WebAccessibilityObject.cpp:
+        (WebKit::WebAccessibilityObject::keyboardShortcut): Cast to String first, before trying to convert to platform dependant type.
+        * src/WebHTTPLoadInfo.cpp:
+        (WebKit::addHeader): Don't pass WebString to makeString, explicit cast to String first.
+        * tests/IDBLevelDBCodingTest.cpp: Cast to String first, to avoid conflicting with gtests global templatified operator+.
+        (IDBLevelDBCoding::TEST):
+
 2011-05-10  Tony Gentilcore  <tonyg@chromium.org>
 
         Reviewed by Darin Adler.

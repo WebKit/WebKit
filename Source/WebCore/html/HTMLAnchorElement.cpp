@@ -305,7 +305,7 @@ String HTMLAnchorElement::target() const
 String HTMLAnchorElement::hash() const
 {
     String fragmentIdentifier = href().fragmentIdentifier();
-    return fragmentIdentifier.isEmpty() ? "" : "#" + fragmentIdentifier;
+    return fragmentIdentifier.isEmpty() ? emptyString() : "#" + fragmentIdentifier;
 }
 
 void HTMLAnchorElement::setHash(const String& value)
@@ -442,7 +442,7 @@ void HTMLAnchorElement::setProtocol(const String& value)
 String HTMLAnchorElement::search() const
 {
     String query = href().query();
-    return query.isEmpty() ? "" : "?" + query;
+    return query.isEmpty() ? emptyString() : "?" + query;
 }
 
 String HTMLAnchorElement::origin() const

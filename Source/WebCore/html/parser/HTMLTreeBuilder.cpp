@@ -669,7 +669,7 @@ void addNamesWithPrefix(PrefixedNameToQualifiedNameMap* map, const AtomicString&
     for (size_t i = 0; i < length; ++i) {
         QualifiedName* name = names[i];
         const AtomicString& localName = name->localName();
-        AtomicString prefixColonLocalName(prefix + ":" + localName);
+        AtomicString prefixColonLocalName = prefix + ':' + localName;
         QualifiedName nameWithPrefix(prefix, localName, name->namespaceURI());
         map->add(prefixColonLocalName, nameWithPrefix);
     }
