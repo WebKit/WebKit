@@ -1,3 +1,10 @@
+2011-05-12  Philippe Normand  <pnormand@igalia.com>
+
+        Unreviewed, GTK rebaseline after r86307.
+
+        * platform/gtk/fast/dom/HTMLMeterElement/meter-styles-expected.txt:
+        * platform/gtk/fast/dom/HTMLMeterElement/meter-styles-expected.png:
+
 2011-05-12  Yuta Kitamura  <yutak@chromium.org>
 
         Unreviewed. Update Qt test expectations affected in r86320.
