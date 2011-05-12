@@ -104,6 +104,7 @@ Searching for ‘P64’ in ‘LP64’ with options [AtWordStarts, TreatMedialCap
 PASS: Got no match as expected.
 
 Searching for ‘動戦士’ in ‘起動戦士’ with options [AtWordStarts]:
+PASS: Got a match at 1,4 as expected.
 PASS: Got no match as expected.
 
 Searching for ‘戦士’ in ‘起動戦士’ with options [AtWordStarts]:
@@ -111,6 +112,7 @@ PASS: Got a match at 2,4 as expected.
 PASS: Got no match as expected.
 
 Searching for ‘士’ in ‘起動戦士’ with options [AtWordStarts]:
+PASS: Got a match at 3,4 as expected.
 PASS: Got no match as expected.
 
 Searching for ‘a’ in long string with options [AtWordStarts]:

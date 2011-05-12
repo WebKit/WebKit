@@ -71,9 +71,9 @@
     testFindString("LP64", "64", ["AtWordStarts", "TreatMedialCapitalAsWordStart"], [[2, 4], []]);
     testFindString("LP64", "P64", ["AtWordStarts", "TreatMedialCapitalAsWordStart"], [[]]);
 
-    testFindString("\u8d77\u52d5\u6226\u58eb", "\u52d5\u6226\u58eb", ["AtWordStarts"], [[]]);
+    testFindString("\u8d77\u52d5\u6226\u58eb", "\u52d5\u6226\u58eb", ["AtWordStarts"], [[1, 4], []]);
     testFindString("\u8d77\u52d5\u6226\u58eb", "\u6226\u58eb", ["AtWordStarts"], [[2, 4], []]);
-    testFindString("\u8d77\u52d5\u6226\u58eb", "\u58eb", ["AtWordStarts"], [[]]);
+    testFindString("\u8d77\u52d5\u6226\u58eb", "\u58eb", ["AtWordStarts"], [[3, 4], []]);
 
     const searchBufferSize = 8192;
     const searchBufferOverlapSize = searchBufferSize / 4;

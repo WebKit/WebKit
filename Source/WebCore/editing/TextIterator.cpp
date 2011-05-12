@@ -2040,11 +2040,12 @@ inline bool SearchBuffer::isWordStartMatch(size_t start, size_t length) const
     if (!start)
         return true;
 
+    int size = m_buffer.size();
+    int offset = start;
+    UChar32 firstCharacter;
+    U16_GET(m_buffer.data(), 0, offset, size, firstCharacter);
+
     if (m_options & TreatMedialCapitalAsWordStart) {
-        int size = m_buffer.size();
-        int offset = start;
-        UChar32 firstCharacter;
-        U16_GET(m_buffer.data(), 0, offset, size, firstCharacter);
         UChar32 previousCharacter;
         U16_PREV(m_buffer.data(), 0, offset, previousCharacter);
 
@@ -2075,6 +2076,11 @@ inline bool SearchBuffer::isWordStartMatch(size_t start, size_t length) const
             return true;
         }
     }
+
+    // Chinese and Japanese lack word boundary marks, and there is no clear agreement on what constitutes
+    // a word, so treat the position before any CJK character as a word start.
+    if (Font::isCJKIdeographOrSymbol(firstCharacter))
+        return true;
 
     size_t wordBreakSearchStart = start + length;
     while (wordBreakSearchStart > start)

@@ -1,3 +1,14 @@
+2011-05-12  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        <rdar://problem/8970549> WebFindOptionsAtWordStarts still fails with some Japanese words
+        https://bugs.webkit.org/show_bug.cgi?id=60730
+
+        * editing/TextIterator.cpp:
+        (WebCore::SearchBuffer::isWordStartMatch): Consider all positions before a CJK ideograph as
+        word starts.
+
 2011-05-12  Levi Weintraub  <leviw@chromium.org>
 
         Reviewed by Eric Seidel.
