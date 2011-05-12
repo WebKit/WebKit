@@ -861,9 +861,13 @@ void PluginView::invalidateRect(const IntRect& dirtyRect)
         return;
 #endif
 
-    IntRect dirtyRectInWindowCoordinates = convertToContainingWindow(dirtyRect);
-
-    parent()->hostWindow()->invalidateContentsAndWindow(intersection(dirtyRectInWindowCoordinates, clipRectInWindowCoordinates()), false);
+    RenderBoxModelObject* renderer = toRenderBoxModelObject(m_pluginElement->renderer());
+    if (!renderer)
+        return;
+    
+    IntRect contentRect(dirtyRect);
+    contentRect.move(renderer->borderLeft() + renderer->paddingLeft(), renderer->borderTop() + renderer->paddingTop());
+    renderer->repaintRectangle(contentRect);
 }
 
 void PluginView::setFocus(bool hasFocus)
