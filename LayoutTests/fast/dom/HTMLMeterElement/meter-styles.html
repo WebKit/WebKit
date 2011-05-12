@@ -6,7 +6,7 @@ if (window.layoutTestController)
 </script>
 <style>
   meter.usestyle { -webkit-appearance: none; /* this forces styling; */ }
-  meter.tall { width: 30px; height: 40px; }
+  meter.tall { width: 30px; height: 40px; -webkit-appearance: none; /* this forces styling; */ }
   ul, h2, p { margin: 0.2em; }
   h1, h2 { font-size: medium; }
   li { margin: 0.2em; list-style-type: none; }
@@ -29,9 +29,9 @@ if (window.layoutTestController)
   <h2>Providing meter styles</h2>
   <div style="background-color: #eee">
     <ul>
-      <li><meter style="background-color: #aac; border-color: #224; border-style: solid; border-width: 10px 50px 5px 100px;" min="0" max="100" low="30" high="60" optimum="100" value="80" ></meter> has border</li>
-      <li><meter style="background-color: #aac; border-color: #224; padding: 10px 50px 5px 100px;" min="0" max="100" low="30" high="60" optimum="100" value="80" ></meter> has padding</li>
-      <li><meter style="background-color: #aac; border-color: #224; margin: 10px 50px 5px 100px;" min="0" max="100" low="30" high="60" optimum="100" value="80" ></meter> has margin</li>
+      <li><meter style="background-color: #aac; border-color: #224; border-style: solid; border-width: 5px 20px 5px 10px;" min="0" max="100" low="30" high="60" optimum="100" value="80" ></meter> has border</li>
+      <li><meter style="background-color: #aac; border-color: #224; padding: 5px 20px 5px 10px;" min="0" max="100" low="30" high="60" optimum="100" value="80" ></meter> has padding</li>
+      <li><meter style="background-color: #aac; border-color: #224; margin:  5px 20px 5px 10px;" min="0" max="100" low="30" high="60" optimum="100" value="80" ></meter> has margin</li>
     </ul>
   </div>
   <h2>Providing bar and/or value styles</h2>

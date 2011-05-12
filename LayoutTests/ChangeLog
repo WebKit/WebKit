@@ -1,3 +1,18 @@
+2011-05-11  MORITA Hajime  <morrita@google.com>
+
+        Reviewed by Kent Tamura.
+
+        Some elements in meter-styles.html are hiding its content part with non-content-area.
+        https://bugs.webkit.org/show_bug.cgi?id=58149
+        
+        - Resized the border and padding values
+        - Gave "-webkit-appearance: none" to test that is intended to be painted using shadows.
+
+        * fast/dom/HTMLMeterElement/meter-styles.html:
+        * platform/mac/fast/dom/HTMLMeterElement/meter-styles-expected.checksum:
+        * platform/mac/fast/dom/HTMLMeterElement/meter-styles-expected.png:
+        * platform/mac/fast/dom/HTMLMeterElement/meter-styles-expected.txt:
+
 2011-05-11  Kent Tamura  <tkent@chromium.org>
 
         Reviewed by Dimitri Glazkov.
