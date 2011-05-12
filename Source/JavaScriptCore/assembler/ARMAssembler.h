@@ -683,7 +683,7 @@ namespace JSC {
         void* executableCopy(ExecutablePool* allocator);
 
 #ifndef NDEBUG
-        unsigned debugOffset() { return m_formatter.debugOffset(); }
+        unsigned debugOffset() { return m_buffer.debugOffset(); }
 #endif
 
         // Patching helpers
