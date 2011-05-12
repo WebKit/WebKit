@@ -1,3 +1,10 @@
+2011-05-12  Tony Gentilcore  <tonyg@chromium.org>
+
+        Build fix: include ExceptionCode.h
+        https://bugs.webkit.org/show_bug.cgi?id=60694
+
+        * dom/Range.cpp:
+
 2011-05-10  Tony Gentilcore  <tonyg@chromium.org>
 
         Reviewed by Darin Adler.
