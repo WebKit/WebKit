@@ -42,6 +42,9 @@ public:
     // Controls whether access to Web Databases is allowed for this frame.
     virtual bool allowDatabase(WebFrame*, const WebString& name, const WebString& displayName, unsigned long estimatedSize) { return true; }
 
+    // Controls whether access to File System is allowed for this frame.
+    virtual bool allowFileSystem(WebFrame*) { return true; }
+
     // Controls whether images are allowed for this frame.
     virtual bool allowImages(WebFrame*, bool enabledPerSettings) { return enabledPerSettings; }
 

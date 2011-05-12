@@ -1,3 +1,23 @@
+2011-05-11  John Abd-El-Malek  <jam@chromium.org>
+
+        Reviewed by James Robinson.
+
+        [chromium] Make openFileSystem check for permission first
+        https://bugs.webkit.org/show_bug.cgi?id=60683
+
+        * public/WebCommonWorkerClient.h:
+        (WebKit::WebCommonWorkerClient::allowFileSystem):
+        * public/WebPermissionClient.h:
+        (WebKit::WebPermissionClient::allowFileSystem):
+        * src/LocalFileSystemChromium.cpp:
+        (WebCore::openFileSystemNotAllowed):
+        (WebCore::openFileSystemHelper):
+        * src/WebWorkerBase.cpp:
+        (WebKit::WebWorkerBase::allowFileSystem):
+        * src/WebWorkerBase.h:
+        * src/WebWorkerClientImpl.h:
+        (WebKit::WebWorkerClientImpl::allowFileSystem):
+
 2011-05-12  Nikolas Zimmermann  <nzimmermann@rim.com>
 
         Reviewed by Darin Adler.

@@ -87,6 +87,12 @@ public:
     virtual bool allowDatabase(WebFrame*, const WebString& name, const WebString& displayName, unsigned long estimatedSize) = 0;
 
     // Called on the main webkit thread before opening a file system.
+    virtual bool allowFileSystem()
+    {
+        return true;
+    }
+
+    // Called on the main webkit thread before opening a file system.
     virtual void openFileSystem(WebFileSystem::Type, long long size, bool create, WebFileSystemCallbacks*)
     {
         WEBKIT_ASSERT_NOT_REACHED();

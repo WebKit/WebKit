@@ -89,9 +89,11 @@ public:
     virtual WebApplicationCacheHost* createApplicationCacheHost(WebFrame*, WebApplicationCacheHostClient*);
 
     // Controls whether access to Web Databases is allowed for this worker.
-    virtual bool allowDatabase(WebFrame*, const WebString& name, const WebString& displayName, unsigned long estimatedSize);
+    bool allowDatabase(WebFrame*, const WebString& name, const WebString& displayName, unsigned long estimatedSize);
 
 #if ENABLE(FILE_SYSTEM)
+    // Controls whether access to File System is allowed for this worker.
+    bool allowFileSystem();
     void openFileSystemForWorker(WebFileSystem::Type, long long size, bool create, WebFileSystemCallbacks*, bool synchronous);
 #endif
 

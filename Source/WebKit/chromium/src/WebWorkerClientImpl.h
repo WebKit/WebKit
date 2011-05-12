@@ -99,6 +99,11 @@ public:
         ASSERT_NOT_REACHED();
         return true;
     }
+    virtual bool allowFileSystem(WebFrame*)
+    {
+        ASSERT_NOT_REACHED();
+        return true;
+    }
 
 private:
     virtual ~WebWorkerClientImpl();

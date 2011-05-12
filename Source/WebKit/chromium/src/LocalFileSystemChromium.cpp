@@ -34,15 +34,19 @@
 #if ENABLE(FILE_SYSTEM)
 
 #include "AsyncFileSystem.h"
+#include "CrossThreadTask.h"
 #include "Document.h"
 #include "ErrorCallback.h"
 #include "FileSystemCallback.h"
 #include "FileSystemCallbacks.h"
 #include "PlatformString.h"
+#include "WebFileError.h"
 #include "WebFileSystem.h"
 #include "WebFileSystemCallbacksImpl.h"
 #include "WebFrameClient.h"
 #include "WebFrameImpl.h"
+#include "WebPermissionClient.h"
+#include "WebViewImpl.h"
 #include "WebWorkerImpl.h"
 #include "WorkerContext.h"
 #include "WorkerThread.h"
@@ -67,18 +71,36 @@ enum CreationFlag {
 
 } // namespace
 
+static void openFileSystemNotAllowed(ScriptExecutionContext*, PassOwnPtr<AsyncFileSystemCallbacks> callbacks)
+{
+    callbacks->didFail(WebKit::WebFileErrorAbort);
+}
+
 static void openFileSystemHelper(ScriptExecutionContext* context, AsyncFileSystem::Type type, PassOwnPtr<AsyncFileSystemCallbacks> callbacks, bool synchronous, long long size, CreationFlag create)
 {
+    bool allowed = true;
     ASSERT(context);
     if (context->isDocument()) {
         Document* document = static_cast<Document*>(context);
         WebFrameImpl* webFrame = WebFrameImpl::fromFrame(document->frame());
-        webFrame->client()->openFileSystem(webFrame, static_cast<WebFileSystem::Type>(type), size, create == CreateIfNotPresent, new WebFileSystemCallbacksImpl(callbacks, type));
+        WebKit::WebViewImpl* webView = webFrame->viewImpl();
+        if (webView->permissionClient() && !webView->permissionClient()->allowFileSystem(webFrame))
+            allowed = false;
+        else
+            webFrame->client()->openFileSystem(webFrame, static_cast<WebFileSystem::Type>(type), size, create == CreateIfNotPresent, new WebFileSystemCallbacksImpl(callbacks, type));
     } else {
         WorkerContext* workerContext = static_cast<WorkerContext*>(context);
         WorkerLoaderProxy* workerLoaderProxy = &workerContext->thread()->workerLoaderProxy();
         WebWorkerBase* webWorker = static_cast<WebWorkerBase*>(workerLoaderProxy);
-        webWorker->openFileSystemForWorker(static_cast<WebFileSystem::Type>(type), size, create == CreateIfNotPresent, new WebFileSystemCallbacksImpl(callbacks, type, context, synchronous), synchronous);
+        if (!webWorker->allowFileSystem())
+            allowed = false;
+        else
+            webWorker->openFileSystemForWorker(static_cast<WebFileSystem::Type>(type), size, create == CreateIfNotPresent, new WebFileSystemCallbacksImpl(callbacks, type, context, synchronous), synchronous);
+    }
+
+    if (!allowed) {
+        // The tasks are expected to be called asynchronously.
+        context->postTask(createCallbackTask(&openFileSystemNotAllowed, callbacks));
     }
 }
 
