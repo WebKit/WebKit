@@ -994,7 +994,7 @@ void RenderTableCell::paintBackgroundsBehindCell(PaintInfo& paintInfo, int tx, i
                 w - borderLeft() - borderRight(), h - borderTop() - borderBottom());
             paintInfo.context->clip(clipRect);
         }
-        paintFillLayers(paintInfo, c, bgLayer, tx, ty, w, h, BackgroundBleedNone, CompositeSourceOver, backgroundObject);
+        paintFillLayers(paintInfo, c, bgLayer, IntRect(tx, ty, w, h), BackgroundBleedNone, CompositeSourceOver, backgroundObject);
     }
 }
 

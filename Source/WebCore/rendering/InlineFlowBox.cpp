@@ -1016,20 +1016,20 @@ void InlineFlowBox::paint(PaintInfo& paintInfo, int tx, int ty, int lineTop, int
     }
 }
 
-void InlineFlowBox::paintFillLayers(const PaintInfo& paintInfo, const Color& c, const FillLayer* fillLayer, int _tx, int _ty, int w, int h, CompositeOperator op)
+void InlineFlowBox::paintFillLayers(const PaintInfo& paintInfo, const Color& c, const FillLayer* fillLayer, const IntRect& rect, CompositeOperator op)
 {
     if (!fillLayer)
         return;
-    paintFillLayers(paintInfo, c, fillLayer->next(), _tx, _ty, w, h, op);
-    paintFillLayer(paintInfo, c, fillLayer, _tx, _ty, w, h, op);
+    paintFillLayers(paintInfo, c, fillLayer->next(), rect, op);
+    paintFillLayer(paintInfo, c, fillLayer, rect, op);
 }
 
-void InlineFlowBox::paintFillLayer(const PaintInfo& paintInfo, const Color& c, const FillLayer* fillLayer, int tx, int ty, int w, int h, CompositeOperator op)
+void InlineFlowBox::paintFillLayer(const PaintInfo& paintInfo, const Color& c, const FillLayer* fillLayer, const IntRect& rect, CompositeOperator op)
 {
     StyleImage* img = fillLayer->image();
     bool hasFillImage = img && img->canRender(renderer()->style()->effectiveZoom());
     if ((!hasFillImage && !renderer()->style()->hasBorderRadius()) || (!prevLineBox() && !nextLineBox()) || !parent())
-        boxModelObject()->paintFillLayerExtended(paintInfo, c, fillLayer, tx, ty, w, h, BackgroundBleedNone, this, w, h, op);
+        boxModelObject()->paintFillLayerExtended(paintInfo, c, fillLayer, rect, BackgroundBleedNone, this, rect.size(), op);
     else {
         // We have a fill image that spans multiple lines.
         // We need to adjust tx and ty by the width of all previous lines.
@@ -1052,14 +1052,14 @@ void InlineFlowBox::paintFillLayer(const PaintInfo& paintInfo, const Color& c, c
             for (InlineFlowBox* curr = this; curr; curr = curr->prevLineBox())
                 totalLogicalWidth += curr->logicalWidth();
         }
-        int stripX = tx - (isHorizontal() ? logicalOffsetOnLine : 0);
-        int stripY = ty - (isHorizontal() ? 0 : logicalOffsetOnLine);
+        int stripX = rect.x() - (isHorizontal() ? logicalOffsetOnLine : 0);
+        int stripY = rect.y() - (isHorizontal() ? 0 : logicalOffsetOnLine);
         int stripWidth = isHorizontal() ? totalLogicalWidth : width();
         int stripHeight = isHorizontal() ? height() : totalLogicalWidth;
 
         GraphicsContextStateSaver stateSaver(*paintInfo.context);
-        paintInfo.context->clip(IntRect(tx, ty, width(), height()));
-        boxModelObject()->paintFillLayerExtended(paintInfo, c, fillLayer, stripX, stripY, stripWidth, stripHeight, BackgroundBleedNone, this, w, h, op);
+        paintInfo.context->clip(IntRect(rect.x(), rect.y(), width(), height()));
+        boxModelObject()->paintFillLayerExtended(paintInfo, c, fillLayer, IntRect(stripX, stripY, stripWidth, stripHeight), BackgroundBleedNone, this, rect.size(), op);
     }
 }
 
@@ -1113,7 +1113,7 @@ void InlineFlowBox::paintBoxDecorations(PaintInfo& paintInfo, int tx, int ty)
         paintBoxShadow(context, styleToUse, Normal, tx, ty, w, h);
 
         Color c = styleToUse->visitedDependentColor(CSSPropertyBackgroundColor);
-        paintFillLayers(paintInfo, c, styleToUse->backgroundLayers(), tx, ty, w, h);
+        paintFillLayers(paintInfo, c, styleToUse->backgroundLayers(), IntRect(tx, ty, w, h));
         paintBoxShadow(context, styleToUse, Inset, tx, ty, w, h);
 
         // :first-line cannot be used to put borders on a line. Always paint borders with our
@@ -1204,7 +1204,7 @@ void InlineFlowBox::paintMask(PaintInfo& paintInfo, int tx, int ty)
         }
     }
 
-    paintFillLayers(paintInfo, Color(), renderer()->style()->maskLayers(), tx, ty, w, h, compositeOp);
+    paintFillLayers(paintInfo, Color(), renderer()->style()->maskLayers(), IntRect(tx, ty, w, h), compositeOp);
     
     bool hasBoxImage = maskBoxImage && maskBoxImage->canRender(renderer()->style()->effectiveZoom());
     if (!hasBoxImage || !maskBoxImage->isLoaded())

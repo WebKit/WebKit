@@ -121,7 +121,7 @@ public:
     void paintBorder(GraphicsContext*, const IntRect&, const RenderStyle*, BackgroundBleedAvoidance = BackgroundBleedNone, bool includeLogicalLeftEdge = true, bool includeLogicalRightEdge = true);
     bool paintNinePieceImage(GraphicsContext*, const IntRect&, const RenderStyle*, const NinePieceImage&, CompositeOperator = CompositeSourceOver);
     void paintBoxShadow(GraphicsContext*, int tx, int ty, int w, int h, const RenderStyle*, ShadowStyle, bool includeLogicalLeftEdge = true, bool includeLogicalRightEdge = true);
-    void paintFillLayerExtended(const PaintInfo&, const Color&, const FillLayer*, int tx, int ty, int width, int height, BackgroundBleedAvoidance, InlineFlowBox* = 0, int inlineBoxWidth = 0, int inlineBoxHeight = 0, CompositeOperator = CompositeSourceOver, RenderObject* backgroundObject = 0);
+    void paintFillLayerExtended(const PaintInfo&, const Color&, const FillLayer*, const IntRect&, BackgroundBleedAvoidance, InlineFlowBox* = 0, const IntSize& = IntSize(), CompositeOperator = CompositeSourceOver, RenderObject* backgroundObject = 0);
     
     // Overridden by subclasses to determine line height and baseline position.
     virtual int lineHeight(bool firstLine, LineDirectionMode, LinePositionMode = PositionOnContainingLine) const = 0;
