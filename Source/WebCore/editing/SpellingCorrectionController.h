@@ -46,8 +46,10 @@
 
 namespace WebCore {
 
+class EditorClient;
 class EditCommand;
 class Frame;
+class TextCheckerClient;
 
 struct CorrectionPanelInfo {
     enum PanelType {

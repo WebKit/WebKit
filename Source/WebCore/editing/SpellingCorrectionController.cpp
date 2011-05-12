@@ -30,6 +30,7 @@
 #include "DocumentMarkerController.h"
 #include "EditCommand.h"
 #include "EditorClient.h"
+#include "FloatQuad.h"
 #include "Frame.h"
 #include "FrameView.h"
 #include "SpellingCorrectionCommand.h"

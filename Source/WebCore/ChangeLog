@@ -1,3 +1,11 @@
+2011-05-12  Adam Roben  <aroben@apple.com>
+
+        Build fixes after r86325
+
+        * editing/SpellingCorrectionController.cpp:
+        * editing/SpellingCorrectionController.h:
+        Added missing declarations/#includes.
+
 2011-05-12  Nikolas Zimmermann  <nzimmermann@rim.com>
 
         Not reviewed.
