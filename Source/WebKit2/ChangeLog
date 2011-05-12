@@ -1,3 +1,21 @@
+2011-05-12  Jessie Berlin  <jberlin@apple.com>
+
+        Reviewed by Darin Adler.
+
+        [Windows WebKit2] Use cookies set in WebKit1
+        https://bugs.webkit.org/show_bug.cgi?id=60274
+
+        Properly handle the case where there is no serialized default storage session by not trying
+        to encode or decode 0, while still making sure to decode any valid storage session.
+
+        * Shared/WebProcessCreationParameters.cpp:
+        (WebKit::WebProcessCreationParameters::WebProcessCreationParameters):
+        (WebKit::WebProcessCreationParameters::encode):
+        Only encode the storage session if there is one to encode.
+        (WebKit::WebProcessCreationParameters::decode):
+        Only decode the storage session there is one to decode.
+        * Shared/WebProcessCreationParameters.h:
+
 2011-05-11  Brian Weinstein  <bweinstein@apple.com>
 
         Reviewed by Anders Carlsson.

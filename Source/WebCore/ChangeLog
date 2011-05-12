@@ -1,3 +1,15 @@
+2011-05-12  Jessie Berlin  <jberlin@apple.com>
+
+        Reviewed by Darin Adler.
+
+        [Windows WebKit2] Use cookies set in WebKit1
+        https://bugs.webkit.org/show_bug.cgi?id=60274
+
+        Make sure any Private Browsing session is based off the default session.
+
+        * platform/network/cf/ResourceHandleCFNet.cpp:
+        (WebCore::ResourceHandle::createPrivateBrowsingStorageSession):
+
 2011-05-12  Rob Buis  <rbuis@rim.com>
 
         Reviewed by Eric Seidel.

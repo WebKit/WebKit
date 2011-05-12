@@ -1,3 +1,15 @@
+2011-05-12  Jessie Berlin  <jberlin@apple.com>
+
+        Reviewed by Darin Adler.
+
+        [Windows WebKit2] Use cookies set in WebKit1
+        https://bugs.webkit.org/show_bug.cgi?id=60274
+
+        Update WKSI with the changes to wkCreatePrivateStorageSession.
+
+        * win/include/WebKitSystemInterface/WebKitSystemInterface.h:
+        * win/lib/WebKitSystemInterface.lib:
+
 2011-05-11  Jessie Berlin  <jberlin@apple.com>
 
         Reviewed by Steve Falkenburg.

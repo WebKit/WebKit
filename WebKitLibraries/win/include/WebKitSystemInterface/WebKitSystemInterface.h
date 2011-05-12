@@ -99,7 +99,7 @@ void wkSetClientCertificateInSSLProperties(CFMutableDictionaryRef, CFDataRef);
 CFArrayRef wkCFURLRequestCopyHTTPRequestBodyParts(CFURLRequestRef);
 void wkCFURLRequestSetHTTPRequestBodyParts(CFMutableURLRequestRef, CFArrayRef bodyParts);
 
-CFURLStorageSessionRef wkCreatePrivateStorageSession(CFStringRef identifier);
+CFURLStorageSessionRef wkCreatePrivateStorageSession(CFStringRef identifier, CFURLStorageSessionRef defaultStorageSession);
 void wkSetRequestStorageSession(CFURLStorageSessionRef, CFMutableURLRequestRef);
 CFURLCacheRef wkCopyURLCache(CFURLStorageSessionRef);
 CFHTTPCookieStorageRef wkCopyHTTPCookieStorage(CFURLStorageSessionRef);

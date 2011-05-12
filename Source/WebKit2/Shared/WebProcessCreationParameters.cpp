@@ -83,8 +83,10 @@ void WebProcessCreationParameters::encode(CoreIPC::ArgumentEncoder* encoder) con
     encoder->encode(cfURLCacheMemoryCapacity);
     encoder->encode(initialHTTPCookieAcceptPolicy);
 #if USE(CFURLSTORAGESESSIONS)
-    if (CFDataRef data = serializedDefaultStorageSession.get())
-        CoreIPC::encode(encoder, data);
+    CFDataRef storageSession = serializedDefaultStorageSession.get();
+    encoder->encodeBool(storageSession);
+    if (storageSession)
+        CoreIPC::encode(encoder, storageSession);
 #endif // USE(CFURLSTORAGESESSIONS)
 #endif
 }
@@ -157,7 +159,10 @@ bool WebProcessCreationParameters::decode(CoreIPC::ArgumentDecoder* decoder, Web
     if (!decoder->decode(parameters.initialHTTPCookieAcceptPolicy))
         return false;
 #if USE(CFURLSTORAGESESSIONS)
-    if (parameters.serializedDefaultStorageSession && !CoreIPC::decode(decoder, parameters.serializedDefaultStorageSession))
+    bool hasStorageSession = false;
+    if (!decoder->decode(hasStorageSession))
+        return false;
+    if (hasStorageSession && !CoreIPC::decode(decoder, parameters.serializedDefaultStorageSession))
         return false;
 #endif // USE(CFURLSTORAGESESSIONS)
 #endif
