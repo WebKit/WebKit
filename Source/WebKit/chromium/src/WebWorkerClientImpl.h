@@ -99,7 +99,7 @@ public:
         ASSERT_NOT_REACHED();
         return true;
     }
-    virtual bool allowFileSystem(WebFrame*)
+    virtual bool allowFileSystem()
     {
         ASSERT_NOT_REACHED();
         return true;
