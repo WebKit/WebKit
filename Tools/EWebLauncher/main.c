@@ -636,6 +636,7 @@ quit(Eina_Bool success, const char *msg)
 {
     edje_shutdown();
     ecore_evas_shutdown();
+    ecore_file_shutdown();
 
     if (msg)
         fputs(msg, (success) ? stdout : stderr);
@@ -796,11 +797,8 @@ findThemePath(const char *theme)
     if (!theme)
         theme = defaultTheme;
 
-    rpath = realpath(theme, NULL);
-    if (!rpath)
-        return NULL;
-
-    if (stat(rpath, &st)) {
+    rpath = ecore_file_realpath(theme);
+    if (!strlen(rpath) || stat(rpath, &st)) {
         free(rpath);
         return NULL;
     }
@@ -854,6 +852,12 @@ main(int argc, char *argv[])
         return EXIT_FAILURE;
     }
 
+    if (!ecore_file_init()) {
+        edje_shutdown();
+        ecore_evas_shutdown();
+        return EXIT_FAILURE;
+    }
+
     ecore_app_args_set(argc, (const char**) argv);
     args = ecore_getopt_parse(&options, values, argc, argv);
 
@@ -877,7 +881,9 @@ main(int argc, char *argv[])
     if (!tmp)
         tmp = "/tmp";
     snprintf(path, sizeof(path), "%s/.ewebkit-%u", tmp, getuid());
-    ecore_file_mkpath(path);
+    if (!ecore_file_mkpath(path))
+        return quit(EINA_FALSE, "ERROR: could not create settings database directory.\n");
+
     ewk_settings_icon_database_path_set(path);
     ewk_settings_web_database_path_set(path);
 
