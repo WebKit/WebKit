@@ -25,6 +25,8 @@ PASS patternMismatchFor("match-14") is false
 PASS patternMismatchFor("match-15") is false
 PASS patternMismatchFor("match-16") is false
 PASS patternMismatchFor("match-17") is false
+PASS patternMismatchFor("match-18") is false
+PASS patternMismatchFor("match-19") is false
 PASS patternMismatchFor("wrong-gray-or-grey") is true
 PASS patternMismatchFor("gray") is false
 PASS patternMismatchFor("grey") is false

@@ -7,6 +7,7 @@
 <body>
 <p id="description"></p>
 <div id="console"></div>
+<div id=container>
 <input id="simple" pattern="[0-9][A-Z]{3}" value="0AAA"
 /><input id="no-pattern-and-no-value" 
 /><input id="ip-address" type="text" pattern="\b(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\b" value="127.0.0.1" 
@@ -28,8 +29,10 @@
 /><input id="match-14" type="text" pattern="...\)\(..." value="aaa)(bbb"
 /><input id="match-15" type="text" pattern="^" value=""
 /><input id="match-16" type="text" pattern="$" value=""
-/><input id="match-17" type="text" pattern="foobar" value=""
-/><input id="wrong-gray-or-grey" type="text" pattern="gr[ae]y" value="Wrong!"
+/><input id="match-17" type="text" pattern="foobar" value="" />
+<input id="match-18" type="text" pattern="[0-9]|10|11|12" value="10" />
+<input id="match-19" type="text" pattern="10|11|12|[0-9]" value="12" />
+<input id="wrong-gray-or-grey" type="text" pattern="gr[ae]y" value="Wrong!"
 /><input id="gray" type="text" pattern="gr[ae]y" value="gray"
 /><input id="grey" type="text" pattern="gr[ae]y" value="grey"
 /><input id="empty-gray-or-grey" type="text" pattern="gr[ae]y" value=""
@@ -54,7 +57,7 @@
 /><input id="mismatch-19" type="text" pattern="^" value="wrong"
 /><input id="mismatch-20" type="text" pattern="$" value="wrong"
 /><input id="empty-pattern" type="text" pattern="" value="Lorem Ipsum"
-/><input id="disabled" pattern="[0-9][A-Z]{3}" value="00AA" disabled />
+/><input id="disabled" pattern="[0-9][A-Z]{3}" value="00AA" disabled /></div>
 <script language="JavaScript" type="text/javascript">
 function patternMismatchFor(id) {
     return document.getElementById(id).validity.patternMismatch;
@@ -85,6 +88,8 @@ shouldBeFalse('patternMismatchFor("match-14")');
 shouldBeFalse('patternMismatchFor("match-15")');
 shouldBeFalse('patternMismatchFor("match-16")');
 shouldBeFalse('patternMismatchFor("match-17")');
+shouldBeFalse('patternMismatchFor("match-18")');
+shouldBeFalse('patternMismatchFor("match-19")');
 
 shouldBeTrue('patternMismatchFor("wrong-gray-or-grey")');
 shouldBeFalse('patternMismatchFor("gray")');
@@ -116,6 +121,7 @@ shouldBeFalse('patternMismatchFor("empty-pattern")');
 
 shouldBeFalse('patternMismatchFor("disabled")');
 
+document.body.removeChild(document.getElementById('container'));
 var successfullyParsed = true;
 </script>
 <script src="../../fast/js/resources/js-test-post.js"></script>

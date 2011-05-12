@@ -39,10 +39,11 @@ bool BaseTextInputType::isTextType() const
 
 bool BaseTextInputType::patternMismatch(const String& value) const
 {
-    const AtomicString& pattern = element()->fastGetAttribute(patternAttr);
+    const AtomicString& rawPattern = element()->fastGetAttribute(patternAttr);
     // Empty values can't be mismatched
-    if (pattern.isEmpty() || value.isEmpty())
+    if (rawPattern.isEmpty() || value.isEmpty())
         return false;
+    String pattern = "^(" + rawPattern + ")$";
     int matchLength = 0;
     int valueLength = value.length();
     int matchOffset = RegularExpression(pattern, TextCaseSensitive).match(value, 0, &matchLength);
