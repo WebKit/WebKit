@@ -1,3 +1,30 @@
+2011-05-12  Levi Weintraub  <leviw@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        Switch paintBoxShadow to use IntRect
+        https://bugs.webkit.org/show_bug.cgi?id=60713
+
+        Switching paintBoxShadow from taking four ints to taking an IntRect.
+
+        No new tests since this is refactoring.
+
+        * rendering/InlineFlowBox.cpp:
+        (WebCore::InlineFlowBox::paintBoxShadow):
+        (WebCore::InlineFlowBox::paintBoxDecorations):
+        * rendering/InlineFlowBox.h:
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::paintBoxDecorationsWithSize):
+        * rendering/RenderBoxModelObject.cpp:
+        (WebCore::RenderBoxModelObject::paintBoxShadow):
+        * rendering/RenderBoxModelObject.h:
+        * rendering/RenderFieldset.cpp:
+        (WebCore::RenderFieldset::paintBoxDecorations):
+        * rendering/RenderTable.cpp:
+        (WebCore::RenderTable::paintBoxDecorations):
+        * rendering/RenderTableCell.cpp:
+        (WebCore::RenderTableCell::paintBoxDecorations):
+
 2011-05-12  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Darin Adler.

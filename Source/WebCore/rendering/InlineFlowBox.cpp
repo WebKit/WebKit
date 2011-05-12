@@ -1063,14 +1063,14 @@ void InlineFlowBox::paintFillLayer(const PaintInfo& paintInfo, const Color& c, c
     }
 }
 
-void InlineFlowBox::paintBoxShadow(GraphicsContext* context, RenderStyle* s, ShadowStyle shadowStyle, int tx, int ty, int w, int h)
+void InlineFlowBox::paintBoxShadow(GraphicsContext* context, RenderStyle* s, ShadowStyle shadowStyle, const IntRect& paintRect)
 {
     if ((!prevLineBox() && !nextLineBox()) || !parent())
-        boxModelObject()->paintBoxShadow(context, tx, ty, w, h, s, shadowStyle);
+        boxModelObject()->paintBoxShadow(context, paintRect, s, shadowStyle);
     else {
         // FIXME: We can do better here in the multi-line case. We want to push a clip so that the shadow doesn't
         // protrude incorrectly at the edges, and we want to possibly include shadows cast from the previous/following lines
-        boxModelObject()->paintBoxShadow(context, tx, ty, w, h, s, shadowStyle, includeLogicalLeftEdge(), includeLogicalRightEdge());
+        boxModelObject()->paintBoxShadow(context, paintRect, s, shadowStyle, includeLogicalLeftEdge(), includeLogicalRightEdge());
     }
 }
 
@@ -1109,12 +1109,13 @@ void InlineFlowBox::paintBoxDecorations(PaintInfo& paintInfo, int tx, int ty)
     // a line may actually have to paint a background.
     RenderStyle* styleToUse = renderer()->style(m_firstLine);
     if ((!parent() && m_firstLine && styleToUse != renderer()->style()) || (parent() && renderer()->hasBoxDecorations())) {
+        IntRect paintRect = IntRect(tx, ty, w, h);
         // Shadow comes first and is behind the background and border.
-        paintBoxShadow(context, styleToUse, Normal, tx, ty, w, h);
+        paintBoxShadow(context, styleToUse, Normal, paintRect);
 
         Color c = styleToUse->visitedDependentColor(CSSPropertyBackgroundColor);
-        paintFillLayers(paintInfo, c, styleToUse->backgroundLayers(), IntRect(tx, ty, w, h));
-        paintBoxShadow(context, styleToUse, Inset, tx, ty, w, h);
+        paintFillLayers(paintInfo, c, styleToUse->backgroundLayers(), paintRect);
+        paintBoxShadow(context, styleToUse, Inset, paintRect);
 
         // :first-line cannot be used to put borders on a line. Always paint borders with our
         // non-first-line style.
@@ -1127,7 +1128,7 @@ void InlineFlowBox::paintBoxDecorations(PaintInfo& paintInfo, int tx, int ty)
             // The simple case is where we either have no border image or we are the only box for this object.  In those
             // cases only a single call to draw is required.
             if (!hasBorderImage || (!prevLineBox() && !nextLineBox()))
-                boxModelObject()->paintBorder(context, IntRect(tx, ty, w, h), renderer()->style(), BackgroundBleedNone, includeLogicalLeftEdge(), includeLogicalRightEdge());
+                boxModelObject()->paintBorder(context, paintRect, renderer()->style(), BackgroundBleedNone, includeLogicalLeftEdge(), includeLogicalRightEdge());
             else {
                 // We have a border image that spans multiple lines.
                 // We need to adjust tx and ty by the width of all previous lines.

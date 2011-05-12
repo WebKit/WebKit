@@ -142,10 +142,11 @@ void RenderFieldset::paintBoxDecorations(PaintInfo& paintInfo, int tx, int ty)
         tx += xOff;
     }
 
-    paintBoxShadow(paintInfo.context, tx, ty, w, h, style(), Normal);
-
-    paintFillLayers(paintInfo, style()->visitedDependentColor(CSSPropertyBackgroundColor), style()->backgroundLayers(), IntRect(tx, ty, w, h));
-    paintBoxShadow(paintInfo.context, tx, ty, w, h, style(), Inset);
+    IntRect paintRect = IntRect(tx, ty, w, h);
+    
+    paintBoxShadow(paintInfo.context, paintRect, style(), Normal);
+    paintFillLayers(paintInfo, style()->visitedDependentColor(CSSPropertyBackgroundColor), style()->backgroundLayers(), paintRect);
+    paintBoxShadow(paintInfo.context, paintRect, style(), Inset);
 
     if (!style()->hasBorder())
         return;
@@ -167,7 +168,7 @@ void RenderFieldset::paintBoxDecorations(PaintInfo& paintInfo, int tx, int ty)
         graphicsContext->clipOut(IntRect(clipLeft, ty + legend->y(), clipWidth, legend->height()));
     }
 
-    paintBorder(paintInfo.context, IntRect(tx, ty, w, h), style());
+    paintBorder(paintInfo.context, paintRect, style());
 }
 
 void RenderFieldset::paintMask(PaintInfo& paintInfo, IntSize paintOffset)

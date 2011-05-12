@@ -1007,20 +1007,18 @@ void RenderTableCell::paintBoxDecorations(PaintInfo& paintInfo, int tx, int ty)
     if (!tableElt->collapseBorders() && style()->emptyCells() == HIDE && !firstChild())
         return;
 
-    int w = width();
-    int h = height();
-   
-    paintBoxShadow(paintInfo.context, tx, ty, w, h, style(), Normal);
+    IntRect paintRect = IntRect(IntPoint(tx, ty), size());
+    paintBoxShadow(paintInfo.context, paintRect, style(), Normal);
     
     // Paint our cell background.
     paintBackgroundsBehindCell(paintInfo, tx, ty, this);
 
-    paintBoxShadow(paintInfo.context, tx, ty, w, h, style(), Inset);
+    paintBoxShadow(paintInfo.context, paintRect, style(), Inset);
 
     if (!style()->hasBorder() || tableElt->collapseBorders())
         return;
 
-    paintBorder(paintInfo.context, IntRect(tx, ty, w, h), style());
+    paintBorder(paintInfo.context, paintRect, style());
 }
 
 void RenderTableCell::paintMask(PaintInfo& paintInfo, IntSize paintOffset)

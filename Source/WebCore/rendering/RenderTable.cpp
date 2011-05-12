@@ -558,7 +558,7 @@ void RenderTable::paintBoxDecorations(PaintInfo& paintInfo, int tx, int ty)
     IntRect rect(tx, ty, width(), height());
     subtractCaptionRect(rect);
 
-    paintBoxShadow(paintInfo.context, rect.x(), rect.y(), rect.width(), rect.height(), style(), Normal);
+    paintBoxShadow(paintInfo.context, rect, style(), Normal);
     
     if (isRoot())
         paintRootBoxFillLayers(paintInfo);
@@ -567,7 +567,7 @@ void RenderTable::paintBoxDecorations(PaintInfo& paintInfo, int tx, int ty)
         // independent of the body.
         paintFillLayers(paintInfo, style()->visitedDependentColor(CSSPropertyBackgroundColor), style()->backgroundLayers(), rect);
 
-    paintBoxShadow(paintInfo.context, rect.x(), rect.y(), rect.width(), rect.height(), style(), Inset);
+    paintBoxShadow(paintInfo.context, rect, style(), Inset);
 
     if (style()->hasBorder() && !collapseBorders())
         paintBorder(paintInfo.context, rect, style());

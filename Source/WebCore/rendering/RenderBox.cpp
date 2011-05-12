@@ -841,7 +841,7 @@ void RenderBox::paintBoxDecorationsWithSize(PaintInfo& paintInfo, int tx, int ty
 
     // FIXME: Should eventually give the theme control over whether the box shadow should paint, since controls could have
     // custom shadows of their own.
-    paintBoxShadow(paintInfo.context, paintRect.x(), paintRect.y(), paintRect.width(), paintRect.height(), style(), Normal);
+    paintBoxShadow(paintInfo.context, paintRect, style(), Normal);
 
     BackgroundBleedAvoidance bleedAvoidance = determineBackgroundBleedAvoidance(paintInfo.context);
 
@@ -870,7 +870,7 @@ void RenderBox::paintBoxDecorationsWithSize(PaintInfo& paintInfo, int tx, int ty
         if (style()->hasAppearance())
             theme()->paintDecorations(this, paintInfo, paintRect);
     }
-    paintBoxShadow(paintInfo.context, paintRect.x(), paintRect.y(), paintRect.width(), paintRect.height(), style(), Inset);
+    paintBoxShadow(paintInfo.context, paintRect, style(), Inset);
 
     // The theme will tell us whether or not we should also paint the CSS border.
     if ((!style()->hasAppearance() || (!themePainted && theme()->paintBorderOnly(this, paintInfo, paintRect))) && style()->hasBorder())
