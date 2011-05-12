@@ -1,3 +1,20 @@
+2011-05-12  Philippe Normand  <pnormand@igalia.com>
+
+        Unreviewed, GTK baselines for new tests.
+
+        * platform/gtk/fast/block/positioning/hiding-inside-relpositioned-inline-expected.png: Added.
+        * platform/gtk/fast/block/positioning/hiding-inside-relpositioned-inline-expected.txt: Added.
+        * platform/gtk/fast/borders/outline-alpha-block-expected.png: Added.
+        * platform/gtk/fast/borders/outline-alpha-block-expected.txt: Added.
+        * platform/gtk/fast/borders/outline-alpha-inline-expected.png: Added.
+        * platform/gtk/fast/borders/outline-alpha-inline-expected.txt: Added.
+        * platform/gtk/fast/inline/nested-top-alignment-expected.png: Added.
+        * platform/gtk/fast/inline/nested-top-alignment-expected.txt: Added.
+        * platform/gtk/scrollbars/scrollbars-on-positioned-content-expected.png: Added.
+        * platform/gtk/scrollbars/scrollbars-on-positioned-content-expected.txt: Added.
+        * platform/gtk/svg/custom/fill-opacity-update-expected.png: Added.
+        * platform/gtk/svg/custom/fill-opacity-update-expected.txt: Added.
+
 2011-05-12  Anton Muhin  <antonnm@chromium.org>
 
         Unreviewed.

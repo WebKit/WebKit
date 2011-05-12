@@ -1,0 +1,88 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x518
+  RenderBlock {HTML} at (0,0) size 800x518
+    RenderBody {BODY} at (8,8) size 784x502
+      RenderText {#text} at (0,0) size 777x38
+        text run at (0,0) width 777: "The outlines should be a consistent color all the way around the outline. There should be no dark pixels or blocks at corners"
+        text run at (0,19) width 107: "or between lines."
+      RenderBR {BR} at (107,19) size 0x19
+      RenderBR {BR} at (0,38) size 0x19
+      RenderBlock {DIV} at (20,77) size 100x57
+        RenderInline {SPAN} at (0,0) size 90x57
+          RenderText {#text} at (0,0) size 90x57
+            text run at (0,0) width 90: "Text spanning"
+            text run at (0,19) width 90: "more than one"
+            text run at (0,38) width 27: "line."
+        RenderText {#text} at (0,0) size 0x0
+      RenderText {#text} at (140,115) size 38x19
+        text run at (140,115) width 38: " solid "
+      RenderBlock {DIV} at (198,77) size 100x57
+        RenderInline {SPAN} at (0,0) size 90x57
+          RenderText {#text} at (0,0) size 90x57
+            text run at (0,0) width 90: "Text spanning"
+            text run at (0,19) width 90: "more than one"
+            text run at (0,38) width 27: "line."
+        RenderText {#text} at (0,0) size 0x0
+      RenderText {#text} at (318,115) size 47x19
+        text run at (318,115) width 47: " double"
+      RenderBR {BR} at (365,115) size 0x19
+      RenderBR {BR} at (0,154) size 0x19
+      RenderBlock {DIV} at (20,193) size 100x57
+        RenderInline {SPAN} at (0,0) size 90x57
+          RenderText {#text} at (0,0) size 90x57
+            text run at (0,0) width 90: "Text spanning"
+            text run at (0,19) width 90: "more than one"
+            text run at (0,38) width 27: "line."
+        RenderText {#text} at (0,0) size 0x0
+      RenderText {#text} at (140,231) size 47x19
+        text run at (140,231) width 47: " dotted "
+      RenderBlock {DIV} at (207,193) size 100x57
+        RenderInline {SPAN} at (0,0) size 90x57
+          RenderText {#text} at (0,0) size 90x57
+            text run at (0,0) width 90: "Text spanning"
+            text run at (0,19) width 90: "more than one"
+            text run at (0,38) width 27: "line."
+        RenderText {#text} at (0,0) size 0x0
+      RenderText {#text} at (327,231) size 48x19
+        text run at (327,231) width 48: " dashed"
+      RenderBR {BR} at (375,231) size 0x19
+      RenderBR {BR} at (0,270) size 0x19
+      RenderBlock {DIV} at (20,309) size 100x57
+        RenderInline {SPAN} at (0,0) size 90x57
+          RenderText {#text} at (0,0) size 90x57
+            text run at (0,0) width 90: "Text spanning"
+            text run at (0,19) width 90: "more than one"
+            text run at (0,38) width 27: "line."
+        RenderText {#text} at (0,0) size 0x0
+      RenderText {#text} at (140,347) size 40x19
+        text run at (140,347) width 40: " ridge "
+      RenderBlock {DIV} at (200,309) size 100x57
+        RenderInline {SPAN} at (0,0) size 90x57
+          RenderText {#text} at (0,0) size 90x57
+            text run at (0,0) width 90: "Text spanning"
+            text run at (0,19) width 90: "more than one"
+            text run at (0,38) width 27: "line."
+        RenderText {#text} at (0,0) size 0x0
+      RenderText {#text} at (320,347) size 48x19
+        text run at (320,347) width 48: " groove"
+      RenderBR {BR} at (368,347) size 0x19
+      RenderBR {BR} at (0,386) size 0x19
+      RenderBlock {DIV} at (20,425) size 100x57
+        RenderInline {SPAN} at (0,0) size 90x57
+          RenderText {#text} at (0,0) size 90x57
+            text run at (0,0) width 90: "Text spanning"
+            text run at (0,19) width 90: "more than one"
+            text run at (0,38) width 27: "line."
+        RenderText {#text} at (0,0) size 0x0
+      RenderText {#text} at (140,463) size 37x19
+        text run at (140,463) width 37: " inset "
+      RenderBlock {DIV} at (197,425) size 100x57
+        RenderInline {SPAN} at (0,0) size 90x57
+          RenderText {#text} at (0,0) size 90x57
+            text run at (0,0) width 90: "Text spanning"
+            text run at (0,19) width 90: "more than one"
+            text run at (0,38) width 27: "line."
+        RenderText {#text} at (0,0) size 0x0
+      RenderText {#text} at (317,463) size 41x19
+        text run at (317,463) width 41: " outset"
