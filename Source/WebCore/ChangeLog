@@ -1,3 +1,22 @@
+2011-05-12  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        WebKit inserts base, link, meta, style, and title elements into an editable region
+        when pasting table cells from Excel
+        https://bugs.webkit.org/show_bug.cgi?id=60644
+
+        Strip base, link, meta, style, and tile elements from the fragment to be pasted prior
+        to the merge. We don't have to strip these elements in performTrivialReplace because
+        the function only handles a fragment that consists of exactly one text node.
+
+        Test: editing/pasteboard/paste-head-contents.html
+
+        * editing/ReplaceSelectionCommand.cpp:
+        (WebCore::removeHeadContents): Added.
+        (WebCore::ReplaceSelectionCommand::doApply): Calls removeHeadContents before handing
+        style spans.
+
 2011-05-12  Levi Weintraub  <leviw@chromium.org>
 
         Reviewed by Simon Fraser.

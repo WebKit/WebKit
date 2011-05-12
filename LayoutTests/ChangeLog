@@ -1,3 +1,16 @@
+2011-05-12  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        WebKit inserts base, link, meta, style, and title elements into an editable region
+        when pasting table cells from Excel
+        https://bugs.webkit.org/show_bug.cgi?id=60644
+
+        Added a test to ensure WebKit strips the said elements prior to inserting HTML.
+
+        * editing/pasteboard/paste-head-contents-expected.txt: Added.
+        * editing/pasteboard/paste-head-contents.html: Added.
+
 2011-05-08 Abhishek Arya <inferno@chromium.org> and Carol Szabo  <carol@webkit.org>
 
         Reviewed by David Hyatt.

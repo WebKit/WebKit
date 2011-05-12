@@ -551,6 +551,22 @@ VisiblePosition ReplaceSelectionCommand::positionAtStartOfInsertedContent()
     return VisiblePosition(nextCandidate(positionInParentBeforeNode(m_firstNodeInserted.get())));
 }
 
+static void removeHeadContents(ReplacementFragment& fragment)
+{
+    Node* next = 0;
+    for (Node* node = fragment.firstChild(); node; node = next) {
+        if (node->hasTagName(baseTag)
+            || node->hasTagName(linkTag)
+            || node->hasTagName(metaTag)
+            || node->hasTagName(styleTag)
+            || node->hasTagName(titleTag)) {
+            next = node->traverseNextSibling();
+            fragment.removeNode(node);
+        } else
+            next = node->traverseNextNode();
+    }
+}
+
 // Remove style spans before insertion if they are unnecessary.  It's faster because we'll 
 // avoid doing a layout.
 static bool handleStyleSpansBeforeInsertion(ReplacementFragment& fragment, const Position& insertionPos)
@@ -937,7 +953,9 @@ void ReplaceSelectionCommand::doApply()
     // any work performed after this that queries or uses the typing style.
     if (Frame* frame = document()->frame())
         frame->selection()->clearTypingStyle();
-    
+
+    removeHeadContents(fragment);
+
     bool handledStyleSpans = handleStyleSpansBeforeInsertion(fragment, insertionPos);
 
     // We don't want the destination to end up inside nodes that weren't selected.  To avoid that, we move the
