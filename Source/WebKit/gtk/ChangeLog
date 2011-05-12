@@ -1,3 +1,11 @@
+2011-05-12  Martin Robinson  <mrobinson@igalia.com>
+
+        Attempt to fix the GTK+ unit test testwebview on the 32-bit Release
+        bot which appears to be more sensitive to timing issues than the
+        other bots.
+
+        * tests/testwebview.c: Add another short pause waiting for adjustments to update.
+
 2011-05-09  Martin Robinson  <mrobinson@igalia.com>
 
         Fix a test after r86102. Scrollbars update asynchronously, so we

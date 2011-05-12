@@ -242,6 +242,10 @@ static void do_test_webkit_web_view_adjustments(gboolean with_page_cache)
     webkit_web_view_load_uri(view, effective_uri);
     g_main_loop_run(loop);
 
+    /* Adjustments update asynchronously, so we must wait a bit. */
+    g_timeout_add(100, quit_after_short_delay_cb, loop);
+    g_main_loop_run(loop);
+
     adjustment = gtk_scrolled_window_get_vadjustment(GTK_SCROLLED_WINDOW(scrolled_window));
     g_assert_cmpfloat(gtk_adjustment_get_value(adjustment), ==, 0.0);
 
