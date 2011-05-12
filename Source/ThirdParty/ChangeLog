@@ -1,5 +1,12 @@
 2011-05-12  Adam Roben  <aroben@apple.com>
 
+        Windows production build fix
+
+        * gtest/msvc/gtest-md.vcproj: Fix the OutputDirectory and IntermediateDirectory attributes
+        for all configurations.
+
+2011-05-12  Adam Roben  <aroben@apple.com>
+
         A little gtest cleanup after r86287
 
         * gtest/msvc/gtest-md.vcproj: Added Debug_All and Production configurations to match our

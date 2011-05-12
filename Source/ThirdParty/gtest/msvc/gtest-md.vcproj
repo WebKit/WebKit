@@ -18,6 +18,7 @@
 		<Configuration
 			Name="Debug|Win32"
 			OutputDirectory="$(ConfigurationBuildDir)\lib"
+			IntermediateDirectory="$(ConfigurationBuildDir)\obj\$(ProjectName)"
 			ConfigurationType="4"
 			InheritedPropertySheets="$(ProjectDir)\..\..\..\..\WebKitLibraries\win\tools\vsprops\common.vsprops"
 			CharacterSet="2"
@@ -265,8 +266,8 @@
 		</Configuration>
 		<Configuration
 			Name="Production|Win32"
-			OutputDirectory="$(SolutionDir)$(ConfigurationName)"
-			IntermediateDirectory="$(ConfigurationName)"
+			OutputDirectory="$(ConfigurationBuildDir)\lib"
+			IntermediateDirectory="$(ConfigurationBuildDir)\obj\$(ProjectName)"
 			ConfigurationType="4"
 			InheritedPropertySheets="$(ProjectDir)\..\..\..\..\WebKitLibraries\win\tools\vsprops\common.vsprops"
 			CharacterSet="2"
@@ -326,8 +327,8 @@
 		</Configuration>
 		<Configuration
 			Name="Debug_All|Win32"
-			OutputDirectory="$(SolutionDir)$(ConfigurationName)"
-			IntermediateDirectory="$(ConfigurationName)"
+			OutputDirectory="$(ConfigurationBuildDir)\lib"
+			IntermediateDirectory="$(ConfigurationBuildDir)\obj\$(ProjectName)"
 			ConfigurationType="4"
 			InheritedPropertySheets="$(ProjectDir)\..\..\..\..\WebKitLibraries\win\tools\vsprops\common.vsprops"
 			CharacterSet="2"
