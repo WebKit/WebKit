@@ -80,6 +80,13 @@
 #define RVCT_VERSION_AT_LEAST(major, minor, patch, build) 0
 #endif
 
+/* COMPILER(GCCE) - GNU Compiler Collection for Embedded */
+#if defined(__GCCE__)
+#define WTF_COMPILER_GCCE 1
+#define GCCE_VERSION (__GCCE__ * 10000 + __GCCE_MINOR__ * 100 + __GCCE_PATCHLEVEL__)
+#define GCCE_VERSION_AT_LEAST(major, minor, patch) (GCCE_VERSION >= (major * 10000 + minor * 100 + patch))
+#endif
+
 /* COMPILER(GCC) - GNU Compiler Collection */
 /* --gnu option of the RVCT compiler also defines __GNUC__ */
 #if defined(__GNUC__) && !COMPILER(RVCT)

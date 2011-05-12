@@ -1,3 +1,15 @@
+2011-05-11  Igor Oliveira  <igor.oliveira@openbossa.org>
+
+        Reviewed by Eric Seidel.
+
+        WebKit does not build with GCCE
+        https://bugs.webkit.org/show_bug.cgi?id=60667
+
+        Allow compile WebKit with GCCE
+
+        * wtf/Alignment.h:
+        * wtf/Platform.h:
+
 2011-05-11  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Eric Seidel.

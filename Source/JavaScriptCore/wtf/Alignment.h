@@ -23,7 +23,7 @@
 
 #include <wtf/Platform.h>
 
-#if COMPILER(GCC) || COMPILER(MINGW) || COMPILER(RVCT) || COMPILER(WINSCW)
+#if COMPILER(GCC) || COMPILER(MINGW) || COMPILER(RVCT) || COMPILER(WINSCW) || COMPILER(GCCE)
     #define WTF_ALIGN_OF(type) __alignof__(type)
     #define WTF_ALIGNED(variable_type, variable, n) variable_type variable __attribute__((__aligned__(n)))
 #elif COMPILER(MSVC)
