@@ -1,3 +1,22 @@
+2011-05-12  Yuta Kitamura  <yutak@chromium.org>
+
+        Reviewed by Kent Tamura.
+
+        WebSocket add new event: CloseEvent
+        https://bugs.webkit.org/show_bug.cgi?id=35573
+
+        Original patch was written by Fumitoshi Ukai <ukai@chromium.org>.
+        I modified the test close-event.html slightly so that it passes on Chromium.
+        I also updated a few test results that are affected by this change.
+
+        * fast/dom/Window/window-properties-expected.txt:
+        * fast/dom/Window/window-property-descriptors-expected.txt:
+        * fast/dom/prototype-inheritance-expected.txt:
+        * fast/js/global-constructors-expected.txt:
+        * http/tests/websocket/tests/close-event-expected.txt: Added.
+        * http/tests/websocket/tests/close-event.html: Added.
+        * platform/chromium/fast/dom/prototype-inheritance-expected.txt:
+
 2011-05-12  Ben Wells  <benwells@chromium.org>
 
         Reviewed by Simon Fraser.

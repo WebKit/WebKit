@@ -46,6 +46,7 @@
 #include "JSClientRect.cpp"
 #include "JSClientRectList.cpp"
 #include "JSClipboard.cpp"
+#include "JSCloseEvent.cpp"
 #include "JSComment.cpp"
 #include "JSCompositionEvent.cpp"
 #include "JSConsole.cpp"

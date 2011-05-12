@@ -57,6 +57,8 @@ PASS inner.ClientRectList.isInner is true
 PASS inner.ClientRectList.constructor.isInner is true
 PASS inner.Clipboard.isInner is true
 PASS inner.Clipboard.constructor.isInner is true
+PASS inner.CloseEvent.isInner is true
+PASS inner.CloseEvent.constructor.isInner is true
 PASS inner.Comment.isInner is true
 PASS inner.Comment.constructor.isInner is true
 PASS inner.Counter.isInner is true

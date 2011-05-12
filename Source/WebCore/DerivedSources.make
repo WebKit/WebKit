@@ -122,6 +122,7 @@ DOM_CLASSES = \
     ClientRect \
     ClientRectList \
     Clipboard \
+    CloseEvent \
     Comment \
     CompositionEvent \
     Console \

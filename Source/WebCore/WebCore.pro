@@ -3374,6 +3374,7 @@ SOURCES += \
 
 contains(DEFINES, ENABLE_WEB_SOCKETS=1) {
     HEADERS += \
+        websockets/CloseEvent.h \
         websockets/ThreadableWebSocketChannel.h \
         websockets/ThreadableWebSocketChannelClientWrapper.h \
         websockets/WebSocket.h \

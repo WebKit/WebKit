@@ -144,6 +144,9 @@ namespace WebCore {
 #if ENABLE(INPUT_SPEECH)
         virtual bool isSpeechInputEvent() const;
 #endif
+#if ENABLE(WEB_SOCKETS)
+        virtual bool isCloseEvent() const;
+#endif
         bool fromUserGesture();
         
         bool propagationStopped() const { return m_propagationStopped || m_immediatePropagationStopped; }

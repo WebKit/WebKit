@@ -529,6 +529,7 @@ IDL_BINDINGS += \
     webaudio/JavaScriptAudioNode.idl \
     webaudio/LowPass2FilterNode.idl \
     webaudio/RealtimeAnalyserNode.idl \
+    websockets/CloseEvent.idl \
     websockets/WebSocket.idl \
     workers/AbstractWorker.idl \
     workers/DedicatedWorkerContext.idl \

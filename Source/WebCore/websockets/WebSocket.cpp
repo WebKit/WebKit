@@ -34,6 +34,7 @@
 
 #include "WebSocket.h"
 
+#include "CloseEvent.h"
 #include "DOMWindow.h"
 #include "Event.h"
 #include "EventException.h"
@@ -284,7 +285,9 @@ void WebSocket::didClose(unsigned long unhandledBufferedAmount)
     m_state = CLOSED;
     m_bufferedAmountAfterClose += unhandledBufferedAmount;
     ASSERT(scriptExecutionContext());
-    dispatchEvent(Event::create(eventNames().closeEvent, false, false));
+    RefPtr<CloseEvent> event = CloseEvent::create(false);
+    event->initCloseEvent(eventNames().closeEvent, false, false, false);
+    dispatchEvent(event);
     if (m_channel) {
         m_channel->disconnect();
         m_channel = 0;

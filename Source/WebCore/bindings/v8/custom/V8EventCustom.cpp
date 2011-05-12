@@ -38,6 +38,7 @@
 #include "V8BeforeLoadEvent.h"
 #include "V8Binding.h"
 #include "V8Clipboard.h"
+#include "V8CloseEvent.h"
 #include "V8CompositionEvent.h"
 #include "V8CustomEvent.h"
 #include "V8DeviceMotionEvent.h"
@@ -179,6 +180,10 @@ v8::Handle<v8::Value> toV8(Event* impl)
 #endif
     if (impl->isCustomEvent())
         return toV8(static_cast<CustomEvent*>(impl));
+#if ENABLE(WEB_SOCKETS)
+    if (impl->isCloseEvent())
+        return toV8(static_cast<CloseEvent*>(impl));
+#endif
     return V8Event::wrap(impl);
 }
 } // namespace WebCore

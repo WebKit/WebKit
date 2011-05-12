@@ -243,6 +243,13 @@ bool Event::isSpeechInputEvent() const
 }
 #endif
 
+#if ENABLE(WEB_SOCKETS)
+bool Event::isCloseEvent() const
+{
+    return false;
+}
+#endif
+
 bool Event::fromUserGesture()
 {
     if (!UserGestureIndicator::processingUserGesture())

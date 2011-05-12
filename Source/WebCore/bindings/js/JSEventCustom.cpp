@@ -105,6 +105,11 @@
 #include "OfflineAudioCompletionEvent.h"
 #endif
 
+#if ENABLE(WEB_SOCKETS)
+#include "CloseEvent.h"
+#include "JSCloseEvent.h"
+#endif
+
 using namespace JSC;
 
 namespace WebCore {
@@ -198,6 +203,10 @@ JSValue toJS(ExecState* exec, JSDOMGlobalObject* globalObject, Event* event)
 #if ENABLE(INPUT_SPEECH)
     else if (event->isSpeechInputEvent())
         wrapper = CREATE_DOM_WRAPPER(exec, globalObject, SpeechInputEvent, event);
+#endif
+#if ENABLE(WEB_SOCKETS)
+    else if (event->isCloseEvent())
+        wrapper = CREATE_DOM_WRAPPER(exec, globalObject, CloseEvent, event);
 #endif
     else
         wrapper = CREATE_DOM_WRAPPER(exec, globalObject, Event, event);

@@ -1,3 +1,43 @@
+2011-05-12  Yuta Kitamura  <yutak@chromium.org>
+
+        Reviewed by Kent Tamura.
+
+        WebSocket add new event: CloseEvent
+        https://bugs.webkit.org/show_bug.cgi?id=35573
+
+        Original patch was written by Fumitoshi Ukai <ukai@chromium.org>.
+        I added CloseEvent constructor to DOMWindow, so it can be referred
+        in the new test (close-event.html).
+
+        Test: http/tests/websocket/tests/close-event.html
+
+        * CMakeLists.txt:
+        * CodeGenerators.pri:
+        * DerivedSources.cpp:
+        * DerivedSources.make:
+        * GNUmakefile.list.am:
+        * WebCore.gypi:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/JSEventCustom.cpp:
+        (WebCore::toJS):
+        * bindings/v8/custom/V8EventCustom.cpp:
+        (WebCore::toV8):
+        * dom/Event.cpp:
+        (WebCore::Event::isCloseEvent):
+        * dom/Event.h:
+        * page/DOMWindow.idl: Add CloseEvent constructor.
+        * websockets/CloseEvent.h: Added.
+        (WebCore::CloseEvent::isCloseEvent):
+        (WebCore::CloseEvent::create):
+        (WebCore::CloseEvent::initCloseEvent):
+        (WebCore::CloseEvent::wasClean):
+        (WebCore::CloseEvent::CloseEvent):
+        * websockets/CloseEvent.idl: Added.
+        * websockets/WebSocket.cpp:
+        (WebCore::WebSocket::didClose):
+
 2011-05-12  Ben Wells  <benwells@chromium.org>
 
         Reviewed by Simon Fraser.

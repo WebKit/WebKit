@@ -3553,6 +3553,7 @@ webcore_sources += \
 	Source/WebCore/svg/SVGZoomEvent.cpp \
 	Source/WebCore/svg/SVGZoomEvent.h \
 	Source/WebCore/WebCorePrefix.h \
+	Source/WebCore/websockets/CloseEvent.h \
 	Source/WebCore/websockets/ThreadableWebSocketChannelClientWrapper.h \
 	Source/WebCore/websockets/ThreadableWebSocketChannel.cpp \
 	Source/WebCore/websockets/ThreadableWebSocketChannel.h \
@@ -4456,6 +4457,8 @@ endif
 # ----
 if ENABLE_WEB_SOCKETS
 webcore_built_sources += \
+	DerivedSources/WebCore/JSCloseEvent.cpp \
+	DerivedSources/WebCore/JSCloseEvent.h \
 	DerivedSources/WebCore/JSWebSocket.cpp \
 	DerivedSources/WebCore/JSWebSocket.h
 endif  # END ENABLE_WEB_SOCKETS
