@@ -1,3 +1,15 @@
+2011-05-11  Robin Dunn  <robin@alldunn.com>
+
+        Reviewed by Kevin Ollivier.
+
+        [wx] Implement more clipping functions for wxWebKit.
+        
+        https://bugs.webkit.org/show_bug.cgi?id=60662
+
+        * platform/graphics/wx/GraphicsContextWx.cpp:
+        (WebCore::GraphicsContext::clip):
+        (WebCore::GraphicsContext::clipOut):
+
 2011-05-11  Damian Kaleta  <dkaleta@apple.com>
 
         Reviewed by Brady Eidson.

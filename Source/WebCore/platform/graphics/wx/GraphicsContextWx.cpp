@@ -50,7 +50,19 @@
 #if __WXMAC__
 #include <Carbon/Carbon.h>
 #elif __WXMSW__
+
+#include "wx/msw/private.h"
+// TODO remove this dependency (gdiplus needs the macros)
+
+#undef max
+#define max(a, b)            (((a) > (b)) ? (a) : (b))
+
+#undef min
+#define min(a, b)            (((a) < (b)) ? (a) : (b))
+
 #include <windows.h>
+
+#include <gdiplus.h>
 #endif
 
 namespace WebCore {
@@ -303,27 +315,7 @@ void GraphicsContext::drawFocusRing(const Vector<IntRect>& rects, int width, int
 
 void GraphicsContext::clip(const FloatRect& r)
 {
-    wxWindowDC* windc = dynamic_cast<wxWindowDC*>(m_data->context);
-    wxPoint pos(0, 0);
-
-    if (windc) {
-#if !defined(__WXGTK__) || wxCHECK_VERSION(2,9,0)
-        wxWindow* window = windc->GetWindow();
-#else
-        wxWindow* window = windc->m_owner;
-#endif
-        if (window) {
-            wxWindow* parent = window->GetParent();
-            // we need to convert from WebView "global" to WebFrame "local" coords.
-            // FIXME: We only want to go to the top WebView.  
-            while (parent) {
-                pos += window->GetPosition();
-                parent = parent->GetParent();
-            }
-        }
-    }
-
-    m_data->context->SetClippingRegion(r.x() - pos.x, r.y() - pos.y, r.width() + pos.x, r.height() + pos.y);
+    m_data->context->SetClippingRegion(r.x(), r.y(), r.width(), r.height());
 }
 
 void GraphicsContext::clipOut(const Path&)
@@ -331,8 +323,33 @@ void GraphicsContext::clipOut(const Path&)
     notImplemented();
 }
 
-void GraphicsContext::clipOut(const IntRect&)
+void GraphicsContext::clipOut(const IntRect& rect)
 {
+    if (paintingDisabled())
+        return;
+
+#if USE(WXGC)
+    wxGraphicsContext* gc = m_data->context->GetGraphicsContext();
+
+#ifdef __WXMAC__
+    CGContextRef context = (CGContextRef)gc->GetNativeContext();
+
+    CGRect rects[2] = { CGContextGetClipBoundingBox(context), CGRectMake(rect.x(), rect.y(), rect.width(), rect.height()) };
+    CGContextBeginPath(context);
+    CGContextAddRects(context, rects, 2);
+    CGContextEOClip(context);
+    return;
+#endif
+
+#ifdef __WXMSW__
+    Gdiplus::Graphics* g = (Gdiplus::Graphics*)gc->GetNativeContext();
+    Gdiplus::Region excludeRegion(Gdiplus::Rect(rect.x(), rect.y(), rect.width(), rect.height()));
+    g->ExcludeClip(&excludeRegion);
+    return; 
+#endif
+
+#endif // USE(WXGC)
+
     notImplemented();
 }
 
@@ -366,9 +383,32 @@ void GraphicsContext::drawLineForTextChecking(const FloatPoint& origin, float wi
     m_data->context->DrawLine(origin.x(), origin.y(), origin.x() + width, origin.y());
 }
 
-void GraphicsContext::clip(const Path&) 
-{ 
+void GraphicsContext::clip(const Path& path) 
+{
+#ifdef __WXMAC__
+    if (paintingDisabled())
+        return;
+    
+    wxGraphicsContext* gc = m_data->context->GetGraphicsContext();
+    CGContextRef context = (CGContextRef)gc->GetNativeContext();
+
+    if (!context)
+        return;
+        
+    CGPathRef nativePath = (CGPathRef)path.platformPath()->GetNativePath();
+    // CGContextClip does nothing if the path is empty, so in this case, we
+    // instead clip against a zero rect to reduce the clipping region to
+    // nothing - which is the intended behavior of clip() if the path is empty.    
+    if (path.isEmpty())
+        CGContextClipToRect(context, CGRectZero);
+    else if (nativePath) {
+        CGContextBeginPath(context);
+        CGContextAddPath(context, nativePath);
+        CGContextClip(context);
+    }
+#else
     notImplemented();
+#endif
 }
 
 void GraphicsContext::canvasClip(const Path& path)
