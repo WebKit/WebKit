@@ -2,7 +2,8 @@ EDITING DELEGATE: shouldBeginEditingInDOMRange:range from 0 of DIV > BODY > HTML
 EDITING DELEGATE: webViewDidBeginEditing:WebViewDidBeginEditingNotification
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
-EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 5 of #text > DIV > BODY > HTML > #document to 5 of #text > DIV > BODY > HTML > #document toDOMRange:range from 11 of #text > DIV > BODY > HTML > #document to 11 of #text > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 5 of #text > DIV > BODY > HTML > #document to 16 of #text > DIV > BODY > HTML > #document toDOMRange:range from 16 of #text > DIV > BODY > HTML > #document to 16 of #text > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
 layer at (0,0) size 800x600
@@ -10,21 +11,20 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {P} at (0,0) size 784x38
-        RenderText {#text} at (0,0) size 761x38
-          text run at (0,0) width 761: "This is a test to make sure that a placeholder, even one without our special class on it, is removed only when it has been"
-          text run at (0,19) width 411: "collapsed away or when it has been displaced by pasted content."
-      RenderBlock {P} at (0,52) size 784x38
-        RenderText {#text} at (0,0) size 773x38
-          text run at (0,0) width 704: "Placeholders with our special class can, through bugs in deletion, be inserted into the document unnecessarily. "
-          text run at (704,0) width 62: "Once that"
-          text run at (0,19) width 773: "happens, we don't want to make matters worse by removing them if they are acting as line breaks instead of placeholders."
-      RenderBlock {DIV} at (0,104) size 784x38
-        RenderText {#text} at (0,0) size 28x19
-          text run at (0,0) width 28: "First"
-        RenderText {#text} at (28,0) size 74x19
-          text run at (28,0) width 74: " paragraph."
-        RenderBR {BR} at (102,14) size 0x0
-        RenderText {#text} at (0,19) size 122x19
-          text run at (0,19) width 122: "Second paragraph."
-caret: position 11 of child 1 {#text} of child 4 {DIV} of body
+      RenderBlock {P} at (0,0) size 784x44
+        RenderText {#text} at (0,0) size 764x44
+          text run at (0,0) width 764: "This is a test to make sure that a placeholder, even one without our special class on it, is removed only when it has"
+          text run at (0,22) width 468: "been collapsed away or when it has been displaced by pasted content."
+      RenderBlock {P} at (0,60) size 784x66
+        RenderText {#text} at (0,0) size 779x66
+          text run at (0,0) width 744: "Placeholders with our special class can, through bugs in deletion, be inserted into the document unnecessarily. "
+          text run at (744,0) width 35: "Once"
+          text run at (0,22) width 758: "that happens, we don't want to make matters worse by removing them if they are acting as line breaks instead of"
+          text run at (0,44) width 89: "placeholders."
+      RenderBlock {DIV} at (0,142) size 784x44
+        RenderText {#text} at (0,0) size 113x22
+          text run at (0,0) width 113: "First paragraph."
+        RenderBR {BR} at (113,16) size 0x0
+        RenderText {#text} at (0,22) size 130x22
+          text run at (0,22) width 130: "Second paragraph."
+caret: position 16 of child 0 {#text} of child 4 {DIV} of body

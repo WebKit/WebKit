@@ -336,26 +336,11 @@ http/tests/xmlhttprequest/basic-auth-nouser.html
 # =========================================================================== #
 #       Failing pasteboard tests.                                             #
 # =========================================================================== #
-#------ Not selecting all of text.
-#------ sel.modify("move", "forward", "word"); does not select the last character in the word
-editing/pasteboard/smart-paste-008.html
 #------ safe to skip. Qt results same as chromium's. Mac drops the 'b' in the final bar,
 #------ that looks like a bug.
 editing/pasteboard/interchange-newline-2.html
 # ----- Results appear correct but have suspicious rendertree differences.
 editing/pasteboard/pasting-tabs.html
-editing/pasteboard/nested-blocks-with-text-area.html
-editing/pasteboard/nested-blocks-with-text-field.html
-editing/pasteboard/input-field-1.html
-editing/pasteboard/4806874.html
-# ----- These are actually safe to unskip. x/y differences only.
-editing/pasteboard/5387578.html
-editing/pasteboard/bad-placeholder.html
-# ----- Rendertree results OK but differences in message from editing delegate.
-editing/pasteboard/4076267-2.html
-editing/pasteboard/4076267.html
-editing/pasteboard/block-wrappers-necessary.html
-editing/pasteboard/paste-text-008.html
 # ----- Rendertree results OK but differences in editing delegate message due to rendering.
 # ----- This looks safe to unskip.
 editing/pasteboard/paste-xml.xhtml

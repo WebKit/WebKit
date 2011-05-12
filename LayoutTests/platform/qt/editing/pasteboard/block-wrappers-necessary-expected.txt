@@ -22,80 +22,81 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {DIV} at (0,0) size 784x132 [border: (2px solid #0000FF)]
-        RenderBlock {DIV} at (14,14) size 756x44
-          RenderText {#text} at (0,0) size 51x22
+      RenderBlock {DIV} at (0,0) size 784x169 [border: (2px solid #0000FF)]
+        RenderBlock {DIV} at (14,14) size 756x50
+          RenderText {#text} at (0,0) size 51x25
             text run at (0,0) width 51: "Tests: "
           RenderBR {BR} at (0,0) size 0x0
-          RenderText {#text} at (0,22) size 86x22
-            text run at (0,22) width 86: "Bug fix for "
-          RenderInline {A} at (0,0) size 192x22 [color=#0000EE]
-            RenderText {#text} at (86,22) size 192x22
-              text run at (86,22) width 192: "<rdar://problem/4180820>"
-          RenderText {#text} at (278,22) size 390x22
-            text run at (278,22) width 390: " Erroneous spacing between lines introduced on paste"
-        RenderBlock (anonymous) at (14,74) size 756x44
-          RenderText {#text} at (0,0) size 713x44
-            text run at (0,0) width 711: "Applying block styles, like text-align, used to wrap paragraphs that needed block style changes in"
-            text run at (0,22) width 324: "clones of other paragraphs in the document. "
-            text run at (324,22) width 389: "This would almost always introduce unwanted styles."
-      RenderBlock {DIV} at (0,156) size 784x190
-        RenderBlock {DIV} at (0,0) size 784x190 [border: (2px solid #FF0000)]
-          RenderBlock {CENTER} at (2,20) size 780x150
-            RenderBlock {P} at (0,0) size 780x150
-              RenderBlock {P} at (0,0) size 780x110
-                RenderText {#text} at (2,0) size 71x22
-                  text run at (2,0) width 71: "This is an"
-                RenderText {#text} at (73,0) size 5x22
-                  text run at (73,0) width 5: " "
-                RenderInline {B} at (0,0) size 82x22
-                  RenderText {#text} at (78,0) size 82x22
-                    text run at (78,0) width 82: "interactive"
-                RenderText {#text} at (160,0) size 5x22
-                  text run at (160,0) width 5: " "
-                RenderText {#text} at (165,0) size 615x44
-                  text run at (165,0) width 612: "documentation site, so please help out by posting any useful information that you've"
-                  text run at (777,0) width 3: " "
-                  text run at (325,22) width 129: "had to search out."
-                RenderBR {BR} at (454,39) size 0x0
-                RenderText {#text} at (20,44) size 110x22
-                  text run at (20,44) width 110: "(Adding to this"
-                RenderText {#text} at (130,44) size 5x22
-                  text run at (130,44) width 5: " "
-                RenderInline {A} at (0,0) size 107x22 [color=#0000EE]
-                  RenderText {#text} at (135,44) size 107x22
-                    text run at (135,44) width 107: "wiki is so easy"
-                RenderText {#text} at (242,44) size 202x22
-                  text run at (242,44) width 202: ", you can't screw it up). See"
-                RenderText {#text} at (444,44) size 5x22
-                  text run at (444,44) width 5: " "
-                RenderInline {A} at (0,0) size 114x22 [color=#0000EE]
-                  RenderText {#text} at (449,44) size 114x22
-                    text run at (449,44) width 114: "Wiki Reference"
-                RenderText {#text} at (563,44) size 5x22
-                  text run at (563,44) width 5: " "
-                RenderText {#text} at (568,44) size 191x22
-                  text run at (568,44) width 191: "for text formatting syntax."
-                RenderBR {BR} at (759,61) size 0x0
-                RenderText {#text} at (161,66) size 278x22
-                  text run at (161,66) width 278: "Info for setting up your own wiki is at"
-                RenderText {#text} at (439,66) size 5x22
-                  text run at (439,66) width 5: " "
-                RenderInline {A} at (0,0) size 170x22 [color=#0000EE]
-                  RenderText {#text} at (444,66) size 170x22
-                    text run at (444,66) width 170: "about howto.apple.com"
-                RenderText {#text} at (614,66) size 5x22
-                  text run at (614,66) width 5: "."
-                RenderBR {BR} at (619,83) size 0x0
-                RenderText {#text} at (96,88) size 509x22
-                  text run at (96,88) width 509: "Check out a cool wiki editor application that helps in wiki generation:"
-                RenderText {#text} at (605,88) size 5x22
-                  text run at (605,88) width 5: " "
-                RenderInline {A} at (0,0) size 73x22 [color=#0000EE]
-                  RenderText {#text} at (610,88) size 73x22
-                    text run at (610,88) width 73: "Wikinator"
-              RenderBlock {P} at (0,128) size 780x22
-                RenderText {#text} at (85,0) size 610x22
-                  text run at (85,0) width 610: "Start browsing the topics below, or use the search field at the bottom of every page."
-              RenderBlock (anonymous) at (0,168) size 780x0
+          RenderText {#text} at (0,25) size 89x25
+            text run at (0,25) width 89: "Bug fix for "
+          RenderInline {A} at (0,0) size 204x25 [color=#0000EE]
+            RenderText {#text} at (89,25) size 204x25
+              text run at (89,25) width 204: "<rdar://problem/4180820>"
+          RenderText {#text} at (293,25) size 415x25
+            text run at (293,25) width 415: " Erroneous spacing between lines introduced on paste"
+        RenderBlock (anonymous) at (14,80) size 756x75
+          RenderText {#text} at (0,0) size 753x75
+            text run at (0,0) width 753: "Applying block styles, like text-align, used to wrap paragraphs that needed block style changes in"
+            text run at (0,25) width 347: "clones of other paragraphs in the document. "
+            text run at (347,25) width 359: "This would almost always introduce unwanted"
+            text run at (0,50) width 47: "styles."
+      RenderBlock {DIV} at (0,193) size 784x208
+        RenderBlock {DIV} at (0,0) size 784x208 [border: (2px solid #FF0000)]
+          RenderBlock {CENTER} at (2,20) size 780x168
+            RenderBlock {P} at (0,0) size 780x168
+              RenderBlock {P} at (0,0) size 780x125
+                RenderText {#text} at (9,0) size 76x25
+                  text run at (9,0) width 76: "This is an"
+                RenderText {#text} at (84,0) size 6x25
+                  text run at (84,0) width 6: " "
+                RenderInline {B} at (0,0) size 83x25
+                  RenderText {#text} at (89,0) size 83x25
+                    text run at (89,0) width 83: "interactive"
+                RenderText {#text} at (171,0) size 6x25
+                  text run at (171,0) width 6: " "
+                RenderText {#text} at (176,0) size 600x50
+                  text run at (176,0) width 595: "documentation site, so please help out by posting any useful information that"
+                  text run at (770,0) width 6: " "
+                  text run at (293,25) width 194: "you've had to search out."
+                RenderBR {BR} at (487,43) size 0x0
+                RenderText {#text} at (1,50) size 116x25
+                  text run at (1,50) width 116: "(Adding to this"
+                RenderText {#text} at (117,50) size 5x25
+                  text run at (117,50) width 5: " "
+                RenderInline {A} at (0,0) size 109x25 [color=#0000EE]
+                  RenderText {#text} at (122,50) size 109x25
+                    text run at (122,50) width 109: "wiki is so easy"
+                RenderText {#text} at (231,50) size 213x25
+                  text run at (231,50) width 213: ", you can't screw it up). See"
+                RenderText {#text} at (444,50) size 5x25
+                  text run at (444,50) width 5: " "
+                RenderInline {A} at (0,0) size 120x25 [color=#0000EE]
+                  RenderText {#text} at (449,50) size 120x25
+                    text run at (449,50) width 120: "Wiki Reference"
+                RenderText {#text} at (569,50) size 5x25
+                  text run at (569,50) width 5: " "
+                RenderText {#text} at (574,50) size 205x25
+                  text run at (574,50) width 205: "for text formatting syntax."
+                RenderBR {BR} at (779,68) size 0x0
+                RenderText {#text} at (148,75) size 294x25
+                  text run at (148,75) width 294: "Info for setting up your own wiki is at"
+                RenderText {#text} at (442,75) size 5x25
+                  text run at (442,75) width 5: " "
+                RenderInline {A} at (0,0) size 180x25 [color=#0000EE]
+                  RenderText {#text} at (447,75) size 180x25
+                    text run at (447,75) width 180: "about howto.apple.com"
+                RenderText {#text} at (627,75) size 5x25
+                  text run at (627,75) width 5: "."
+                RenderBR {BR} at (632,93) size 0x0
+                RenderText {#text} at (77,100) size 541x25
+                  text run at (77,100) width 541: "Check out a cool wiki editor application that helps in wiki generation:"
+                RenderText {#text} at (618,100) size 5x25
+                  text run at (618,100) width 5: " "
+                RenderInline {A} at (0,0) size 80x25 [color=#0000EE]
+                  RenderText {#text} at (623,100) size 80x25
+                    text run at (623,100) width 80: "Wikinator"
+              RenderBlock {P} at (0,143) size 780x25
+                RenderText {#text} at (67,0) size 646x25
+                  text run at (67,0) width 646: "Start browsing the topics below, or use the search field at the bottom of every page."
+              RenderBlock (anonymous) at (0,186) size 780x0
 caret: position 85 of child 0 {#text} of child 1 {P} of child 1 {P} of child 1 {CENTER} of child 1 {DIV} of child 3 {DIV} of body
