@@ -1,3 +1,21 @@
+2011-05-11  Damian Kaleta  <dkaleta@apple.com>
+
+        Reviewed by Brady Eidson.
+
+        Need a new API that will try to restore the scrollbars' position, when navigating in the back/forward history
+        https://bugs.webkit.org/show_bug.cgi?id=60674
+
+        * UIProcess/API/C/WKPage.cpp:
+        (WKPageTryRestoreScrollPosition):
+        * UIProcess/API/C/WKPage.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::tryRestoreScrollPosition):
+        * UIProcess/WebPageProxy.h:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::tryRestoreScrollPosition):
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/WebPage.messages.in:
+
 2011-05-11  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Gavin Barraclough.

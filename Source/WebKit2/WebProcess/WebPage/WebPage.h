@@ -463,6 +463,7 @@ private:
     void goForward(uint64_t, const SandboxExtension::Handle&);
     void goBack(uint64_t, const SandboxExtension::Handle&);
     void goToBackForwardItem(uint64_t, const SandboxExtension::Handle&);
+    void tryRestoreScrollPosition();
     void setActive(bool);
     void setFocused(bool);
     void setInitialFocus(bool);

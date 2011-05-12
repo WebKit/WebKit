@@ -516,6 +516,14 @@ void WebPageProxy::goToBackForwardItem(WebBackForwardListItem* item)
     process()->responsivenessTimer()->start();
 }
 
+void WebPageProxy::tryRestoreScrollPosition()
+{
+    if (!isValid())
+        return;
+
+    process()->send(Messages::WebPage::TryRestoreScrollPosition(), m_pageID);
+}
+
 void WebPageProxy::didChangeBackForwardList(WebBackForwardListItem* added, Vector<RefPtr<APIObject> >* removed)
 {
     m_loaderClient.didChangeBackForwardList(this, added, removed);

@@ -136,6 +136,11 @@ void WKPageGoToBackForwardListItem(WKPageRef pageRef, WKBackForwardListItemRef i
     toImpl(pageRef)->goToBackForwardItem(toImpl(itemRef));
 }
 
+void WKPageTryRestoreScrollPosition(WKPageRef pageRef)
+{
+    toImpl(pageRef)->tryRestoreScrollPosition();
+}
+
 WKBackForwardListRef WKPageGetBackForwardList(WKPageRef pageRef)
 {
     return toAPI(toImpl(pageRef)->backForwardList());

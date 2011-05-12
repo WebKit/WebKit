@@ -581,6 +581,11 @@ void WebPage::goToBackForwardItem(uint64_t backForwardItemID, const SandboxExten
     m_page->goToItem(item, FrameLoadTypeIndexedBackForward);
 }
 
+void WebPage::tryRestoreScrollPosition()
+{
+    m_page->mainFrame()->loader()->history()->restoreScrollPositionAndViewState();
+}
+
 void WebPage::layoutIfNeeded()
 {
     if (m_mainFrame->coreFrame()->view())

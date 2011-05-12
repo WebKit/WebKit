@@ -222,6 +222,7 @@ public:
     bool canGoBack() const;
 
     void goToBackForwardItem(WebBackForwardListItem*);
+    void tryRestoreScrollPosition();
     void didChangeBackForwardList(WebBackForwardListItem* addedItem, Vector<RefPtr<APIObject> >* removedItems);
     void shouldGoToBackForwardListItem(uint64_t itemID, bool& shouldGoToBackForwardListItem);
 

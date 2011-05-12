@@ -49,6 +49,7 @@ messages -> WebPage {
     GoBack(uint64_t backForwardItemID, WebKit::SandboxExtension::Handle sandboxExtensionHandle)
     GoForward(uint64_t backForwardItemID, WebKit::SandboxExtension::Handle sandboxExtensionHandle)
     GoToBackForwardItem(uint64_t backForwardItemID, WebKit::SandboxExtension::Handle sandboxExtensionHandle)
+    TryRestoreScrollPosition()
     LoadHTMLString(WTF::String htmlString, WTF::String baseURL)
     LoadAlternateHTMLString(WTF::String htmlString, WTF::String baseURL, WTF::String unreachableURL); 
     LoadPlainTextString(WTF::String string)

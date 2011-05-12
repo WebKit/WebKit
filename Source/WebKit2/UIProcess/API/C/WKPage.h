@@ -286,6 +286,7 @@ WK_EXPORT bool WKPageCanGoForward(WKPageRef page);
 WK_EXPORT void WKPageGoBack(WKPageRef page);
 WK_EXPORT bool WKPageCanGoBack(WKPageRef page);
 WK_EXPORT void WKPageGoToBackForwardListItem(WKPageRef page, WKBackForwardListItemRef item);
+WK_EXPORT void WKPageTryRestoreScrollPosition(WKPageRef page);
 WK_EXPORT WKBackForwardListRef WKPageGetBackForwardList(WKPageRef page);
 
 WK_EXPORT WKStringRef WKPageCopyTitle(WKPageRef page);
