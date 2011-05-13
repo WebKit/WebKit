@@ -106,14 +106,14 @@ private:
 
 static HashSet<String>& allowsAnyHTTPSCertificateHosts()
 {
-    static HashSet<String> hosts;
-
+    DEFINE_STATIC_LOCAL(HashSet<String>, hosts, ());
     return hosts;
 }
 
 static HashMap<String, RetainPtr<CFDataRef> >& clientCerts()
 {
-    static HashMap<String, RetainPtr<CFDataRef> > certs;
+    typedef HashMap<String, RetainPtr<CFDataRef> > CertsMap;
+    DEFINE_STATIC_LOCAL(CertsMap, certs, ());
     return certs;
 }
 
@@ -129,8 +129,11 @@ static String encodeBasicAuthorization(const String& user, const String& passwor
     return base64Encode(String(user + ":" + password).utf8());
 }
 
-CFURLRequestRef willSendRequest(CFURLConnectionRef conn, CFURLRequestRef cfRequest, CFURLResponseRef cfRedirectResponse, const void* clientInfo)
+static CFURLRequestRef willSendRequest(CFURLConnectionRef conn, CFURLRequestRef cfRequest, CFURLResponseRef cfRedirectResponse, const void* clientInfo)
 {
+#if LOG_DISABLED
+    UNUSED_PARAM(conn);
+#endif
     ResourceHandle* handle = static_cast<ResourceHandle*>(const_cast<void*>(clientInfo));
 
     if (!cfRedirectResponse) {
@@ -184,8 +187,11 @@ CFURLRequestRef willSendRequest(CFURLConnectionRef conn, CFURLRequestRef cfReque
     return cfRequest;
 }
 
-void didReceiveResponse(CFURLConnectionRef conn, CFURLResponseRef cfResponse, const void* clientInfo) 
+static void didReceiveResponse(CFURLConnectionRef conn, CFURLResponseRef cfResponse, const void* clientInfo)
 {
+#if LOG_DISABLED
+    UNUSED_PARAM(conn);
+#endif
     ResourceHandle* handle = static_cast<ResourceHandle*>(const_cast<void*>(clientInfo));
 
     LOG(Network, "CFNet - didReceiveResponse(conn=%p, handle=%p) (%s)", conn, handle, handle->firstRequest().url().string().utf8().data());
@@ -202,19 +208,22 @@ void didReceiveResponse(CFURLConnectionRef conn, CFURLResponseRef cfResponse, co
     handle->client()->didReceiveResponse(handle, cfResponse);
 }
 
-void didReceiveData(CFURLConnectionRef conn, CFDataRef data, CFIndex originalLength, const void* clientInfo) 
+static void didReceiveData(CFURLConnectionRef conn, CFDataRef data, CFIndex originalLength, const void* clientInfo)
 {
+#if LOG_DISABLED
+    UNUSED_PARAM(conn);
+#endif
     ResourceHandle* handle = static_cast<ResourceHandle*>(const_cast<void*>(clientInfo));
     const UInt8* bytes = CFDataGetBytePtr(data);
     CFIndex length = CFDataGetLength(data);
 
-    LOG(Network, "CFNet - didReceiveData(conn=%p, handle=%p, bytes=%d) (%s)", conn, handle, length, handle->firstRequest().url().string().utf8().data());
+    LOG(Network, "CFNet - didReceiveData(conn=%p, handle=%p, bytes=%ld) (%s)", conn, handle, length, handle->firstRequest().url().string().utf8().data());
 
     if (handle->client())
         handle->client()->didReceiveData(handle, (const char*)bytes, length, originalLength);
 }
 
-static void didSendBodyData(CFURLConnectionRef conn, CFIndex bytesWritten, CFIndex totalBytesWritten, CFIndex totalBytesExpectedToWrite, const void *clientInfo)
+static void didSendBodyData(CFURLConnectionRef, CFIndex, CFIndex totalBytesWritten, CFIndex totalBytesExpectedToWrite, const void *clientInfo)
 {
     ResourceHandle* handle = static_cast<ResourceHandle*>(const_cast<void*>(clientInfo));
     if (!handle || !handle->client())
@@ -224,6 +233,9 @@ static void didSendBodyData(CFURLConnectionRef conn, CFIndex bytesWritten, CFInd
 
 static Boolean shouldUseCredentialStorageCallback(CFURLConnectionRef conn, const void* clientInfo)
 {
+#if LOG_DISABLED
+    UNUSED_PARAM(conn);
+#endif
     ResourceHandle* handle = const_cast<ResourceHandle*>(static_cast<const ResourceHandle*>(clientInfo));
 
     LOG(Network, "CFNet - shouldUseCredentialStorage(conn=%p, handle=%p) (%s)", conn, handle, handle->firstRequest().url().string().utf8().data());
@@ -234,8 +246,11 @@ static Boolean shouldUseCredentialStorageCallback(CFURLConnectionRef conn, const
     return handle->shouldUseCredentialStorage();
 }
 
-void didFinishLoading(CFURLConnectionRef conn, const void* clientInfo) 
+static void didFinishLoading(CFURLConnectionRef conn, const void* clientInfo)
 {
+#if LOG_DISABLED
+    UNUSED_PARAM(conn);
+#endif
     ResourceHandle* handle = static_cast<ResourceHandle*>(const_cast<void*>(clientInfo));
 
     LOG(Network, "CFNet - didFinishLoading(conn=%p, handle=%p) (%s)", conn, handle, handle->firstRequest().url().string().utf8().data());
@@ -244,8 +259,11 @@ void didFinishLoading(CFURLConnectionRef conn, const void* clientInfo)
         handle->client()->didFinishLoading(handle, 0);
 }
 
-void didFail(CFURLConnectionRef conn, CFErrorRef error, const void* clientInfo) 
+static void didFail(CFURLConnectionRef conn, CFErrorRef error, const void* clientInfo)
 {
+#if LOG_DISABLED
+    UNUSED_PARAM(conn);
+#endif
     ResourceHandle* handle = static_cast<ResourceHandle*>(const_cast<void*>(clientInfo));
 
     LOG(Network, "CFNet - didFail(conn=%p, handle=%p, error = %p) (%s)", conn, handle, error, handle->firstRequest().url().string().utf8().data());
@@ -283,28 +301,16 @@ static CFCachedURLResponseRef willCacheResponse(CFURLConnectionRef, CFCachedURLR
     return cachedResponse;
 }
 
-void didReceiveChallenge(CFURLConnectionRef conn, CFURLAuthChallengeRef challenge, const void* clientInfo)
+static void didReceiveChallenge(CFURLConnectionRef conn, CFURLAuthChallengeRef challenge, const void* clientInfo)
 {
+#if LOG_DISABLED
+    UNUSED_PARAM(conn);
+#endif
     ResourceHandle* handle = static_cast<ResourceHandle*>(const_cast<void*>(clientInfo));
     ASSERT(handle);
     LOG(Network, "CFNet - didReceiveChallenge(conn=%p, handle=%p (%s)", conn, handle, handle->firstRequest().url().string().utf8().data());
 
     handle->didReceiveAuthenticationChallenge(AuthenticationChallenge(challenge, handle));
-}
-
-void addHeadersFromHashMap(CFMutableURLRequestRef request, const HTTPHeaderMap& requestHeaders) 
-{
-    if (!requestHeaders.size())
-        return;
-
-    HTTPHeaderMap::const_iterator end = requestHeaders.end();
-    for (HTTPHeaderMap::const_iterator it = requestHeaders.begin(); it != end; ++it) {
-        CFStringRef key = it->first.createCFString();
-        CFStringRef value = it->second.createCFString();
-        CFURLRequestSetHTTPHeaderFieldValue(request, key, value);
-        CFRelease(key);
-        CFRelease(value);
-    }
 }
 
 ResourceHandleInternal::~ResourceHandleInternal()
@@ -318,26 +324,6 @@ ResourceHandleInternal::~ResourceHandleInternal()
 ResourceHandle::~ResourceHandle()
 {
     LOG(Network, "CFNet - Destroying job %p (%s)", this, d->m_firstRequest.url().string().utf8().data());
-}
-
-CFArrayRef arrayFromFormData(const FormData& d)
-{
-    size_t size = d.elements().size();
-    CFMutableArrayRef a = CFArrayCreateMutable(0, d.elements().size(), &kCFTypeArrayCallBacks);
-    for (size_t i = 0; i < size; ++i) {
-        const FormDataElement& e = d.elements()[i];
-        if (e.m_type == FormDataElement::data) {
-            CFDataRef data = CFDataCreate(0, (const UInt8*)e.m_data.data(), e.m_data.size());
-            CFArrayAppendValue(a, data);
-            CFRelease(data);
-        } else {
-            ASSERT(e.m_type == FormDataElement::encodedFile);
-            CFStringRef filename = e.m_filename.createCFString();
-            CFArrayAppendValue(a, filename);
-            CFRelease(filename);
-        }
-    }
-    return a;
 }
 
 static CFURLRequestRef makeFinalRequest(const ResourceRequest& request, bool shouldContentSniff)
@@ -364,7 +350,9 @@ static CFURLRequestRef makeFinalRequest(const ResourceRequest& request, bool sho
     if (clientCert != clientCerts().end()) {
         if (!sslProps)
             sslProps.adoptCF(CFDictionaryCreateMutable(kCFAllocatorDefault, 0, &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks));
+#if PLATFORM(WIN)
         wkSetClientCertificateInSSLProperties(sslProps.get(), (clientCert->second).get());
+#endif
     }
 
     if (sslProps)
@@ -714,7 +702,7 @@ bool ResourceHandle::loadsBlocked()
     return false;
 }
 
-bool ResourceHandle::willLoadFromCache(ResourceRequest& request, Frame* frame)
+bool ResourceHandle::willLoadFromCache(ResourceRequest& request, Frame*)
 {
     request.setCachePolicy(ReturnCacheDataDontLoad);
     

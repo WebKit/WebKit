@@ -196,8 +196,10 @@ CFStreamError ResourceError::cfStreamError() const
         result.domain = kCFStreamErrorDomainPOSIX;
     else if (m_domain == "NSOSStatusErrorDomain")
         result.domain = kCFStreamErrorDomainMacOSStatus;
-    else
+    else {
+        result.domain = kCFStreamErrorDomainCustom;
         ASSERT_NOT_REACHED();
+    }
 
     return result;
 }
