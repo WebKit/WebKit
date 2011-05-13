@@ -110,8 +110,9 @@ void RenderReplaced::paint(PaintInfo& paintInfo, int tx, int ty)
         return;
     }
 
+    IntRect paintRect = IntRect(IntPoint(tx, ty), size());
     if ((paintInfo.phase == PaintPhaseOutline || paintInfo.phase == PaintPhaseSelfOutline) && style()->outlineWidth())
-        paintOutline(paintInfo.context, tx, ty, width(), height());
+        paintOutline(paintInfo.context, paintRect);
     
     if (paintInfo.phase != PaintPhaseForeground && paintInfo.phase != PaintPhaseSelection)
         return;
@@ -135,7 +136,7 @@ void RenderReplaced::paint(PaintInfo& paintInfo, int tx, int ty)
         else {
             // Push a clip if we have a border radius, since we want to round the foreground content that gets painted.
             paintInfo.context->save();
-            paintInfo.context->addRoundedRectClip(style()->getRoundedBorderFor(borderRect));
+            paintInfo.context->addRoundedRectClip(style()->getRoundedBorderFor(paintRect));
         }
     }
 

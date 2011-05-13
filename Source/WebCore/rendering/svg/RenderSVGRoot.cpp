@@ -189,7 +189,7 @@ void RenderSVGRoot::paint(PaintInfo& paintInfo, int parentX, int parentY)
     childPaintInfo.context->restore();
 
     if ((paintInfo.phase == PaintPhaseOutline || paintInfo.phase == PaintPhaseSelfOutline) && style()->outlineWidth() && isVisible)
-        paintOutline(paintInfo.context, borderBoxOriginInContainer.x(), borderBoxOriginInContainer.y(), width(), height());
+        paintOutline(paintInfo.context, IntRect(borderBoxOriginInContainer, size()));
 }
 
 void RenderSVGRoot::destroy()

@@ -134,7 +134,7 @@ void RenderSVGContainer::paint(PaintInfo& paintInfo, int, int)
     // We should instead disable our clip during PaintPhaseOutline
     if ((paintInfo.phase == PaintPhaseOutline || paintInfo.phase == PaintPhaseSelfOutline) && style()->outlineWidth() && style()->visibility() == VISIBLE) {
         IntRect paintRectInParent = enclosingIntRect(localToParentTransform().mapRect(repaintRect));
-        paintOutline(paintInfo.context, paintRectInParent.x(), paintRectInParent.y(), paintRectInParent.width(), paintRectInParent.height());
+        paintOutline(paintInfo.context, paintRectInParent);
     }
 }
 

@@ -529,7 +529,7 @@ void RenderTable::paintObject(PaintInfo& paintInfo, int tx, int ty)
 
     // Paint outline.
     if ((paintPhase == PaintPhaseOutline || paintPhase == PaintPhaseSelfOutline) && hasOutline() && style()->visibility() == VISIBLE)
-        paintOutline(paintInfo.context, tx, ty, width(), height());
+        paintOutline(paintInfo.context, IntRect(IntPoint(tx, ty), size()));
 }
 
 void RenderTable::subtractCaptionRect(IntRect& rect) const

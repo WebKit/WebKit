@@ -792,7 +792,7 @@ protected:
                             Color, EBorderStyle, int adjbw1, int adjbw2, bool antialias = false);
 
     void paintFocusRing(GraphicsContext*, int tx, int ty, RenderStyle*);
-    void paintOutline(GraphicsContext*, int tx, int ty, int w, int h);
+    void paintOutline(GraphicsContext*, const IntRect&);
     void addPDFURLRect(GraphicsContext*, const IntRect&);
 
     virtual IntRect viewRect() const;

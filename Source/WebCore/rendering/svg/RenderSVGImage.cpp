@@ -137,8 +137,7 @@ void RenderSVGImage::paint(PaintInfo& paintInfo, int, int)
         }
 
         if (drawsOutline)
-            paintOutline(childPaintInfo.context, static_cast<int>(boundingBox.x()), static_cast<int>(boundingBox.y()),
-                static_cast<int>(boundingBox.width()), static_cast<int>(boundingBox.height()));
+            paintOutline(childPaintInfo.context, IntRect(boundingBox));
     }
 }
 

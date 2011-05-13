@@ -1020,7 +1020,7 @@ void RenderObject::addPDFURLRect(GraphicsContext* context, const IntRect& rect)
     context->setURLForRect(n->document()->completeURL(href), rect);
 }
 
-void RenderObject::paintOutline(GraphicsContext* graphicsContext, int tx, int ty, int w, int h)
+void RenderObject::paintOutline(GraphicsContext* graphicsContext, const IntRect& paintRect)
 {
     if (!hasOutline())
         return;
@@ -1036,19 +1036,17 @@ void RenderObject::paintOutline(GraphicsContext* graphicsContext, int tx, int ty
     if (styleToUse->outlineStyleIsAuto() || hasOutlineAnnotation()) {
         if (!theme()->supportsFocusRing(styleToUse)) {
             // Only paint the focus ring by hand if the theme isn't able to draw the focus ring.
-            paintFocusRing(graphicsContext, tx, ty, styleToUse);
+            paintFocusRing(graphicsContext, paintRect.x(), paintRect.y(), styleToUse);
         }
     }
 
     if (styleToUse->outlineStyleIsAuto() || styleToUse->outlineStyle() == BNONE)
         return;
 
-    tx -= offset;
-    ty -= offset;
-    w += 2 * offset;
-    h += 2 * offset;
+    IntRect adjustedPaintRec = paintRect;
+    adjustedPaintRec.inflate(offset);
 
-    if (h < 0 || w < 0)
+    if (adjustedPaintRec.isEmpty())
         return;
 
 #if !USE(SKIA)
@@ -1059,14 +1057,14 @@ void RenderObject::paintOutline(GraphicsContext* graphicsContext, int tx, int ty
     }
 #endif
 
-    int leftOuter = tx - outlineWidth;
-    int leftInner = tx;
-    int rightOuter = tx + w + outlineWidth;
-    int rightInner = tx + w;
-    int topOuter = ty - outlineWidth;
-    int topInner = ty;
-    int bottomOuter = ty + h + outlineWidth;
-    int bottomInner = ty + h;
+    int leftOuter = adjustedPaintRec.x() - outlineWidth;
+    int leftInner = adjustedPaintRec.x();
+    int rightOuter = adjustedPaintRec.maxX() + outlineWidth;
+    int rightInner = adjustedPaintRec.maxX();
+    int topOuter = adjustedPaintRec.y() - outlineWidth;
+    int topInner = adjustedPaintRec.y();
+    int bottomOuter = adjustedPaintRec.maxY() + outlineWidth;
+    int bottomInner = adjustedPaintRec.maxY();
     
     drawLineForBoxSide(graphicsContext, leftOuter, topOuter, leftInner, bottomOuter, BSLeft, outlineColor, outlineStyle, outlineWidth, outlineWidth);
     drawLineForBoxSide(graphicsContext, leftOuter, topOuter, rightOuter, topInner, BSTop, outlineColor, outlineStyle, outlineWidth, outlineWidth);

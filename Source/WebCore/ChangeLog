@@ -1,3 +1,32 @@
+2011-05-12  Levi Weintraub  <leviw@chromium.org>
+
+        Reviewed by Simon Fraser.
+
+        Switch paintOutline to use IntRect
+        https://bugs.webkit.org/show_bug.cgi?id=60718
+
+        Switching paintOutline to use an IntRect instead of 4 ints.
+
+        No new tests as this is just refactoring.
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::paintObject):
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::paintOutline):
+        * rendering/RenderObject.h:
+        * rendering/RenderReplaced.cpp:
+        (WebCore::RenderReplaced::paint):
+        * rendering/RenderTable.cpp:
+        (WebCore::RenderTable::paintObject):
+        * rendering/svg/RenderSVGContainer.cpp:
+        (WebCore::RenderSVGContainer::paint):
+        * rendering/svg/RenderSVGImage.cpp:
+        (WebCore::RenderSVGImage::paint):
+        * rendering/svg/RenderSVGPath.cpp:
+        (WebCore::RenderSVGPath::paint):
+        * rendering/svg/RenderSVGRoot.cpp:
+        (WebCore::RenderSVGRoot::paint):
+
 2011-05-12  Anders Carlsson  <andersca@apple.com>
 
         Address review comment by Dan Bernstein.
