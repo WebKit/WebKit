@@ -46,6 +46,7 @@
 #include "GeolocationError.h"
 #include "GeolocationPosition.h"
 #include "HTMLInputElement.h"
+#include "IconURL.h"
 #include "IDBFactoryBackendInterface.h"
 #include "IDBKey.h"
 #include "MediaPlayer.h"
@@ -73,6 +74,7 @@
 #include "WebGeolocationPosition.h"
 #include "WebIDBFactory.h"
 #include "WebIDBKey.h"
+#include "WebIconURL.h"
 #include "WebInputElement.h"
 #include "WebMediaPlayer.h"
 #include "WebNotificationPresenter.h"
@@ -303,6 +305,11 @@ COMPILE_ASSERT_MATCHING_ENUM(WebFontDescription::Weight800, FontWeight800);
 COMPILE_ASSERT_MATCHING_ENUM(WebFontDescription::Weight900, FontWeight900);
 COMPILE_ASSERT_MATCHING_ENUM(WebFontDescription::WeightNormal, FontWeightNormal);
 COMPILE_ASSERT_MATCHING_ENUM(WebFontDescription::WeightBold, FontWeightBold);
+
+COMPILE_ASSERT_MATCHING_ENUM(WebIconURL::TypeInvalid, InvalidIcon);
+COMPILE_ASSERT_MATCHING_ENUM(WebIconURL::TypeFavicon, Favicon);
+COMPILE_ASSERT_MATCHING_ENUM(WebIconURL::TypeTouch, TouchIcon);
+COMPILE_ASSERT_MATCHING_ENUM(WebIconURL::TypeTouchPrecomposed, TouchPrecomposedIcon);
 
 COMPILE_ASSERT_MATCHING_ENUM(WebNode::ElementNode, Node::ELEMENT_NODE);
 COMPILE_ASSERT_MATCHING_ENUM(WebNode::AttributeNode, Node::ATTRIBUTE_NODE);

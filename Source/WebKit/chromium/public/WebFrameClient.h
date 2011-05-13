@@ -33,6 +33,7 @@
 
 #include "WebCommon.h"
 #include "WebFileSystem.h"
+#include "WebIconURL.h"
 #include "WebNavigationPolicy.h"
 #include "WebNavigationType.h"
 #include "WebStorageQuotaType.h"
@@ -201,8 +202,11 @@ public:
         didReceiveTitle(frame, title);
     }
 
-    // The icons for the page have changed.
+    // DEPRECATED: Implement didChangeIcon instead.
     virtual void didChangeIcons(WebFrame*) { }
+
+    // The icon for the page have changed.
+    virtual void didChangeIcon(WebFrame*, WebIconURL::Type) { }
 
     // The frame's document finished loading.
     virtual void didFinishDocumentLoad(WebFrame*) { }

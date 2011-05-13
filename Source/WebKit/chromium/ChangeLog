@@ -1,3 +1,30 @@
+2011-05-13  Tao Bai  <michaelbai@chromium.org>
+
+        Reviewed by Darin Fisher.
+
+        Handle the touch icon.
+        https://bugs.webkit.org/show_bug.cgi?id=60247
+
+        Added WebIconURL for the corresponding IconURL.
+        Added method iconURLs() to specify the type of icon need to return.
+        The favIconURL() is deprecated and will be removed later. 
+
+        * WebKit.gyp:
+        * features.gypi:
+        * public/WebFrame.h:
+        * public/WebFrameClient.h:
+        (WebKit::WebFrameClient::didChangeIcons):
+        * public/WebIconURL.h: Added.
+        (WebKit::WebIconURL::WebIconURL):
+        (WebKit::WebIconURL::iconType):
+        (WebKit::WebIconURL::iconURL):
+        * src/AssertMatchingEnums.cpp:
+        * src/FrameLoaderClientImpl.cpp:
+        (WebKit::FrameLoaderClientImpl::dispatchDidChangeIcons):
+        * src/WebFrameImpl.cpp:
+        (WebKit::WebFrameImpl::favIconURL):
+        * src/WebFrameImpl.h:
+
 2011-05-13  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Anders Carlsson.
@@ -264,8 +291,8 @@
         https://bugs.webkit.org/show_bug.cgi?id=60247
 
         Added WebIconURL for the corresponding IconURL.
-        Added a parameter to favIconURL() to specify the type of icon need to
-        return.
+        Added method iconURLs() to specify the type of icon need to return.
+        The favIconURL() is deprecated.
 
         * WebKit.gyp:
         * features.gypi:

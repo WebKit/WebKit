@@ -71,6 +71,7 @@ public:
     virtual long long identifier() const;
     virtual WebURL url() const;
     virtual WebURL favIconURL() const;
+    virtual WebVector<WebIconURL> iconURLs(int iconTypes) const;
     virtual WebURL openSearchDescriptionURL() const;
     virtual WebString encoding() const;
     virtual WebSize scrollOffset() const;

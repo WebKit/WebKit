@@ -101,6 +101,7 @@
 #include "HTMLNames.h"
 #include "HistoryItem.h"
 #include "HitTestResult.h"
+#include "IconURL.h"
 #include "InspectorController.h"
 #include "Page.h"
 #include "painting/GraphicsContextBuilder.h"
@@ -137,6 +138,7 @@
 #include "WebFormElement.h"
 #include "WebFrameClient.h"
 #include "WebHistoryItem.h"
+#include "WebIconURL.h"
 #include "WebInputElement.h"
 #include "WebNode.h"
 #include "WebPasswordAutocompleteListener.h"
@@ -520,15 +522,20 @@ WebURL WebFrameImpl::url() const
 
 WebURL WebFrameImpl::favIconURL() const
 {
-    FrameLoader* frameLoader = m_frame->loader();
-    // The URL to the favicon may be in the header. As such, only
-    // ask the loader for the favicon if it's finished loading.
-    if (frameLoader->state() == FrameStateComplete) {
-        const KURL& url = frameLoader->iconURL();
-        if (!url.isEmpty())
-            return url;
-    }
+    WebVector<WebIconURL> urls = iconURLs(WebIconURL::TypeFavicon);
+    if (urls.size())
+        return urls[0].iconURL();
     return WebURL();
+}
+
+WebVector<WebIconURL> WebFrameImpl::iconURLs(int iconTypes) const
+{
+    FrameLoader* frameLoader = m_frame->loader();
+    // The URL to the icon may be in the header. As such, only
+    // ask the loader for the icon if it's finished loading.
+    if (frameLoader->state() == FrameStateComplete)
+        return frameLoader->iconURLs(iconTypes);
+    return WebVector<WebIconURL>();
 }
 
 WebURL WebFrameImpl::openSearchDescriptionURL() const
