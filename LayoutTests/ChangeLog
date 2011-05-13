@@ -1,3 +1,19 @@
+2011-05-13  Alexey Proskuryakov  <ap@apple.com>
+
+        Unreviewed test changes.
+
+        Web Inspector: Show Error Messages for Application Cache Errors
+        https://bugs.webkit.org/show_bug.cgi?id=41642
+
+        * http/tests/appcache/404-resource-expected.txt:
+        * http/tests/appcache/manifest-redirect-expected.txt:
+        * http/tests/appcache/origin-quota-expected.txt:
+        * http/tests/appcache/resource-redirect-2-expected.txt:
+        * http/tests/appcache/resource-redirect-expected.txt:
+        * http/tests/appcache/wrong-content-type-expected.txt:
+        * http/tests/appcache/wrong-signature-2-expected.txt:
+        * http/tests/appcache/wrong-signature-expected.txt:
+
 2011-05-12  Ben Wells  <benwells@chromium.org>
 
         Reviewed by Simon Fraser.

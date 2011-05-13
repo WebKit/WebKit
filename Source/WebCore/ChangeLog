@@ -1,3 +1,18 @@
+2011-05-13  Alexey Proskuryakov  <ap@apple.com>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: Show Error Messages for Application Cache Errors
+        https://bugs.webkit.org/show_bug.cgi?id=41642
+
+        * loader/appcache/ApplicationCacheGroup.cpp:
+        (WebCore::ApplicationCacheGroup::didReceiveResponse):
+        (WebCore::ApplicationCacheGroup::didFail):
+        (WebCore::ApplicationCacheGroup::didReceiveManifestResponse):
+        (WebCore::ApplicationCacheGroup::didFinishLoadingManifest):
+        (WebCore::ApplicationCacheGroup::cacheUpdateFailedDueToOriginQuota):
+        Added console error logging.
+
 2011-05-12  Pratik Solanki  <psolanki@apple.com>
 
         Reviewed by Antti Koivisto.

@@ -34,6 +34,7 @@
 #include "ApplicationCacheStorage.h"
 #include "Chrome.h"
 #include "ChromeClient.h"
+#include "Console.h"
 #include "DOMApplicationCache.h"
 #include "DOMWindow.h"
 #include "DocumentLoader.h"
@@ -525,6 +526,8 @@ void ApplicationCacheGroup::didReceiveResponse(ResourceHandle* handle, const Res
 
     if (response.httpStatusCode() / 100 != 2 || response.url() != m_currentHandle->firstRequest().url()) {
         if ((type & ApplicationCacheResource::Explicit) || (type & ApplicationCacheResource::Fallback)) {
+            m_frame->domWindow()->console()->addMessage(OtherMessageSource, LogMessageType, ErrorMessageLevel, "Application Cache update failed, because " + m_currentHandle->firstRequest().url().string() + 
+                ((response.httpStatusCode() / 100 != 2) ? " could not be fetched." : " was redirected."), 0, String());
             // Note that cacheUpdateFailed() can cause the cache group to be deleted.
             cacheUpdateFailed();
         } else if (response.httpStatusCode() == 404 || response.httpStatusCode() == 410) {
@@ -622,6 +625,7 @@ void ApplicationCacheGroup::didFail(ResourceHandle* handle, const ResourceError&
 #endif
 
     if (handle == m_manifestHandle) {
+        // A network error is logged elsewhere, no need to log again. Also, it's normal for manifest fetching to fail when working offline.
         cacheUpdateFailed();
         return;
     }
@@ -636,6 +640,7 @@ void ApplicationCacheGroup::didFail(ResourceHandle* handle, const ResourceError&
     m_pendingEntries.remove(url);
 
     if ((type & ApplicationCacheResource::Explicit) || (type & ApplicationCacheResource::Fallback)) {
+        m_frame->domWindow()->console()->addMessage(OtherMessageSource, LogMessageType, ErrorMessageLevel, "Application Cache update failed, because " + url.string() + " could not be fetched.", 0, String());
         // Note that cacheUpdateFailed() can cause the cache group to be deleted.
         cacheUpdateFailed();
     } else {
@@ -663,7 +668,20 @@ void ApplicationCacheGroup::didReceiveManifestResponse(const ResourceResponse& r
     if (response.httpStatusCode() == 304)
         return;
 
-    if (response.httpStatusCode() / 100 != 2 || response.url() != m_manifestHandle->firstRequest().url() || !equalIgnoringCase(response.mimeType(), "text/cache-manifest")) {
+    if (response.httpStatusCode() / 100 != 2) {
+        m_frame->domWindow()->console()->addMessage(OtherMessageSource, LogMessageType, ErrorMessageLevel, "Application Cache manifest could not be fetched.", 0, String());
+        cacheUpdateFailed();
+        return;
+    }
+
+    if (response.url() != m_manifestHandle->firstRequest().url()) {
+        m_frame->domWindow()->console()->addMessage(OtherMessageSource, LogMessageType, ErrorMessageLevel, "Application Cache manifest could not be fetched, because a redirection was attempted.", 0, String());
+        cacheUpdateFailed();
+        return;
+    }
+
+    if (!equalIgnoringCase(response.mimeType(), "text/cache-manifest")) {
+        m_frame->domWindow()->console()->addMessage(OtherMessageSource, LogMessageType, ErrorMessageLevel, "Application Cache manifest had an incorrect MIME type: " + response.mimeType() + ".", 0, String());
         cacheUpdateFailed();
         return;
     }
@@ -683,6 +701,7 @@ void ApplicationCacheGroup::didFinishLoadingManifest()
 
     if (!isUpgradeAttempt && !m_manifestResource) {
         // The server returned 304 Not Modified even though we didn't send a conditional request.
+        m_frame->domWindow()->console()->addMessage(OtherMessageSource, LogMessageType, ErrorMessageLevel, "Application Cache manifest could not be fetched because of an unexpected 304 Not Modified server response.", 0, String());
         cacheUpdateFailed();
         return;
     }
@@ -707,6 +726,8 @@ void ApplicationCacheGroup::didFinishLoadingManifest()
     
     Manifest manifest;
     if (!parseManifest(m_manifestURL, m_manifestResource->data()->data(), m_manifestResource->data()->size(), manifest)) {
+        // At the time of this writing, lack of "CACHE MANIFEST" signature is the only reason for parseManifest to fail.
+        m_frame->domWindow()->console()->addMessage(OtherMessageSource, LogMessageType, ErrorMessageLevel, "Application Cache manifest could not be parsed. Does it start with CACHE MANIFEST?", 0, String());
         cacheUpdateFailed();
         return;
     }
@@ -786,6 +807,9 @@ void ApplicationCacheGroup::cacheUpdateFailedDueToOriginQuota()
         scheduleReachedOriginQuotaCallback();
     }
 
+    m_frame->domWindow()->console()->addMessage(OtherMessageSource, LogMessageType, ErrorMessageLevel, "Application Cache update failed, because size quota was exceeded.", 0, String());
+
+    // FIXME: Should not abort cache update - the user may choose to increase the quota.
     cacheUpdateFailed();
 }
     
