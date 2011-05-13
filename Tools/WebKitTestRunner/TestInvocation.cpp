@@ -161,13 +161,15 @@ void TestInvocation::invoke()
     WKInspectorClose(WKPageGetInspector(TestController::shared().mainWebView()->page()));
 }
 
-void TestInvocation::dump(const char* stringToDump)
+void TestInvocation::dump(const char* stringToDump, bool singleEOF)
 {
     printf("Content-Type: text/plain\n");
     printf("%s", stringToDump);
 
     fputs("#EOF\n", stdout);
     fputs("#EOF\n", stderr);
+    if (!singleEOF)
+        fputs("#EOF\n", stdout);
     fflush(stdout);
     fflush(stderr);
 }
@@ -207,7 +209,7 @@ void TestInvocation::didReceiveMessageFromInjectedBundle(WKStringRef messageName
         ASSERT(!pixelResult || m_dumpPixels);
 
         // Dump text.
-        dump(toSTD(textOutput).c_str());
+        dump(toSTD(textOutput).c_str(), true);
 
         // Dump pixels (if necessary).
         if (m_dumpPixels && pixelResult)

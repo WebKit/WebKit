@@ -1,3 +1,20 @@
+2011-05-13  Zoltan Herczeg  <zherczeg@webkit.org>
+
+        Reviewed by Csaba Osztrogonác.
+
+        Missing 2nd #EOF if WebProcess is killed.
+        https://bugs.webkit.org/show_bug.cgi?id=60761
+
+        If the WebProcess is killed, only one #EOF is yielded
+        by WebKitTestRunner. However, run-webkit-test wait for
+        a second #EOF, which signals the finishing of pixel dump.
+        Since this never happens, run-webkit-test waits forever.
+
+        * WebKitTestRunner/TestInvocation.cpp:
+        (WTR::TestInvocation::dump):
+        (WTR::TestInvocation::didReceiveMessageFromInjectedBundle):
+        * WebKitTestRunner/TestInvocation.h:
+
 2011-05-13  Kristóf Kosztyó  <Kosztyo.Kristof@stud.u-szeged.hu>
 
         Reviewed by Csaba Osztrogonác.

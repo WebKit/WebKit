@@ -45,7 +45,7 @@ public:
     WKRetainPtr<WKTypeRef> didReceiveSynchronousMessageFromInjectedBundle(WKStringRef messageName, WKTypeRef messageBody);
 
 private:
-    void dump(const char*);
+    void dump(const char*, bool singleEOF = false);
     void dumpPixelsAndCompareWithExpected(WKImageRef);
     
     WKRetainPtr<WKURLRef> m_url;
