@@ -1,3 +1,12 @@
+2011-05-13  Adam Roben  <aroben@apple.com>
+
+        Fix manual tests that got broken by the move of WebCore into Source
+
+        * manual-tests/plugins/object-clipping.html:
+        * manual-tests/pointer-events.html:
+        * manual-tests/video-waiting-seeking.html:
+        Updated some paths.
+
 2011-05-13  Nat Duca  <nduca@chromium.org>
 
         Reviewed by James Robinson.
