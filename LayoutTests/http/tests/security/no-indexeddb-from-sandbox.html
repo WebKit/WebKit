@@ -1,0 +1,11 @@
+<script>
+if (window.layoutTestController)
+    layoutTestController.dumpAsText();
+</script>
+<iframe sandbox="allow-scripts"
+    src="data:text/html,
+         <script>
+         var db = window.webkitIndexedDB;
+         alert(db ? 'FAIL' : 'PASS');
+         </script>"
+     ></iframe>

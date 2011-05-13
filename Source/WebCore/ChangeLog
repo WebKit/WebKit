@@ -1,3 +1,18 @@
+2011-05-13  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        indexedDB is visible inside iframe sandbox
+        https://bugs.webkit.org/show_bug.cgi?id=60785
+
+        We're supposed to return a null indexedDB factory when inside an iframe
+        sandbox.
+
+        Test: http/tests/security/no-indexeddb-from-sandbox.html
+
+        * page/DOMWindow.cpp:
+        (WebCore::DOMWindow::webkitIndexedDB):
+
 2011-05-13  Adam Roben  <aroben@apple.com>
 
         Fix manual tests that got broken by the move of WebCore into Source

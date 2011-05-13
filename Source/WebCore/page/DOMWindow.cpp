@@ -729,22 +729,19 @@ void DOMWindow::resetGeolocation()
 #if ENABLE(INDEXED_DATABASE)
 IDBFactory* DOMWindow::webkitIndexedDB() const
 {
-    if (m_idbFactory)
-        return m_idbFactory.get();
-
     Document* document = this->document();
     if (!document)
         return 0;
-
-    // FIXME: See if access is allowed.
 
     Page* page = document->page();
     if (!page)
         return 0;
 
-    // FIXME: See if indexedDatabase access is allowed.
+    if (!document->securityOrigin()->canAccessDatabase())
+        return 0;
 
-    m_idbFactory = IDBFactory::create(page->group().idbFactory());
+    if (!m_idbFactory)
+        m_idbFactory = IDBFactory::create(page->group().idbFactory());
     return m_idbFactory.get();
 }
 #endif

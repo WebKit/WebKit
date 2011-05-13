@@ -1,3 +1,13 @@
+2011-05-13  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        indexedDB is visible inside iframe sandbox
+        https://bugs.webkit.org/show_bug.cgi?id=60785
+
+        * http/tests/security/no-indexeddb-from-sandbox-expected.txt: Added.
+        * http/tests/security/no-indexeddb-from-sandbox.html: Added.
+
 2011-05-13  Mark Pilgrim  <pilgrim@chromium.org>
 
         Reviewed by Tony Chang.
