@@ -1,3 +1,15 @@
+2011-05-13  Nat Duca  <nduca@chromium.org>
+
+        Reviewed by James Robinson.
+
+        [chromium] compositing tests are failing
+        https://bugs.webkit.org/show_bug.cgi?id=60738
+
+        Bind texture before setting its filtering state.
+
+        * platform/graphics/chromium/LayerTilerChromium.cpp:
+        (WebCore::LayerTilerChromium::updateFromPixels):
+
 2011-05-13  Alexey Proskuryakov  <ap@apple.com>
 
         Reviewed by Dan Bernstein.

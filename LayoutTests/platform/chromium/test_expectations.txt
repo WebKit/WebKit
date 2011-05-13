@@ -4040,10 +4040,6 @@ BUGWK58999 WIN LINUX : fast/borders/outline-alpha-inline.html = IMAGE
 BUGWK58999 MAC : fast/borders/outline-alpha-block.html = IMAGE
 BUGWK58999 MAC : fast/borders/outline-alpha-inline.html = IMAGE
 
-BUGWK60738 LINUX WIN : compositing/color-matching/image-color-matching.html = IMAGE+TEXT IMAGE
-BUGWK60738 LINUX WIN : compositing/layers-inside-overflow-scroll.html = IMAGE+TEXT IMAGE
-BUGWK60738 WIN GPU : compositing/self-painting-layers.html = IMAGE
-
 // Likely rebaseline needed.
 BUGATWILSON LINUX WIN : svg/custom/stroke-opacity-update.svg = IMAGE
 

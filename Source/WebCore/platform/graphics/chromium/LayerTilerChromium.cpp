@@ -344,11 +344,11 @@ void LayerTilerChromium::updateFromPixels(const IntRect& contentRect, const IntR
             if (paintOffset.y() + destRect.height() > paintRect.height())
                 CRASH();
 
+            tile->texture()->bindTexture();
+
             const GC3Dint filter = m_tilingData.borderTexels() ? GraphicsContext3D::LINEAR : GraphicsContext3D::NEAREST;
             GLC(context, context->texParameteri(GraphicsContext3D::TEXTURE_2D, GraphicsContext3D::TEXTURE_MIN_FILTER, filter));
             GLC(context, context->texParameteri(GraphicsContext3D::TEXTURE_2D, GraphicsContext3D::TEXTURE_MAG_FILTER, filter));
-
-            tile->texture()->bindTexture();
 
             if (m_useMapSubForUploads) {
                 // Upload tile data via a mapped transfer buffer
