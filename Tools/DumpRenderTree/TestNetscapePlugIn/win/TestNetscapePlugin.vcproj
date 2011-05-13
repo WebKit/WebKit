@@ -398,6 +398,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\Tests\GetURLWithJavaScriptURL.cpp"
+				>
+			</File>
+			<File
 				RelativePath="..\Tests\GetURLWithJavaScriptURLDestroyingPlugin.cpp"
 				>
 			</File>

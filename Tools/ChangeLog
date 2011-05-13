@@ -1,3 +1,37 @@
+2011-05-13  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        NPN_GetURL with a javascript: URL doesn't send back the result in the stream
+        https://bugs.webkit.org/show_bug.cgi?id=60810
+
+        Add a test that calls NPN_GetURL on a javascript: URL and checks that it gets back the expected result.
+
+        * DumpRenderTree/DumpRenderTree.gypi:
+        * DumpRenderTree/DumpRenderTree.xcodeproj/project.pbxproj:
+        * DumpRenderTree/TestNetscapePlugIn/win/TestNetscapePlugin.vcproj:
+        * DumpRenderTree/qt/TestNetscapePlugin/TestNetscapePlugin.pro:
+        * GNUmakefile.am:
+        Add files.
+
+        * DumpRenderTree/TestNetscapePlugIn/PluginTest.cpp:
+        * DumpRenderTree/TestNetscapePlugIn/PluginTest.h:
+        Add new NPN and NPP wrappers and sort them according to the order they appear in npfunctions.h
+
+        * DumpRenderTree/TestNetscapePlugIn/Tests/GetURLWithJavaScriptURL.cpp: Added.
+        (GetURLWithJavaScriptURL::GetURLWithJavaScriptURL):
+        (GetURLWithJavaScriptURL::NPP_New):
+        (GetURLWithJavaScriptURL::NPP_NewStream):
+        (GetURLWithJavaScriptURL::NPP_DestroyStream):
+        (GetURLWithJavaScriptURL::NPP_WriteReady):
+        (GetURLWithJavaScriptURL::NPP_Write):
+        * DumpRenderTree/TestNetscapePlugIn/main.cpp:
+        (NPP_NewStream):
+        (NPP_WriteReady):
+        (NPP_Write):
+        (NPP_URLNotify):
+        call the PluginTest NPP wrappers.
+
 2011-05-13  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r86447.

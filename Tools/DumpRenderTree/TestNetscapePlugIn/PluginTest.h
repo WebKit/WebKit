@@ -59,20 +59,28 @@ public:
     // NPP functions.
     virtual NPError NPP_New(NPMIMEType pluginType, uint16_t mode, int16_t argc, char *argn[], char *argv[], NPSavedData *saved);
     virtual NPError NPP_Destroy(NPSavedData**);
-    virtual NPError NPP_DestroyStream(NPStream* stream, NPReason reason);
-    virtual NPError NPP_GetValue(NPPVariable, void* value);
     virtual NPError NPP_SetWindow(NPP, NPWindow*);
+    virtual NPError NPP_NewStream(NPMIMEType, NPStream*, NPBool seekable, uint16_t* stype);
+    virtual NPError NPP_DestroyStream(NPStream*, NPReason);
+    virtual int32_t NPP_WriteReady(NPStream*);
+    virtual int32_t NPP_Write(NPStream*, int32_t offset, int32_t len, void* buffer);
+    
     virtual int16_t NPP_HandleEvent(void* event);
+    virtual bool NPP_URLNotify(const char* url, NPReason, void* notifyData);
+    virtual NPError NPP_GetValue(NPPVariable, void* value);
 
     // NPN functions.
     NPError NPN_GetURL(const char* url, const char* target);
-    
+    NPError NPN_GetURLNotify(const char* url, const char* target, void* notifyData);
+    NPError NPN_GetValue(NPNVariable, void* value);
     void NPN_InvalidateRect(NPRect* invalidRect);
+
+    // NPRuntime NPN functions.
     NPIdentifier NPN_GetStringIdentifier(const NPUTF8* name);
     NPIdentifier NPN_GetIntIdentifier(int32_t intid);
-    NPError NPN_GetValue(NPNVariable, void* value);
     NPObject* NPN_CreateObject(NPClass*);
     bool NPN_RemoveProperty(NPObject*, NPIdentifier propertyName);
+
 #ifdef XP_MACOSX
     bool NPN_ConvertPoint(double sourceX, double sourceY, NPCoordinateSpace sourceSpace, double *destX, double *destY, NPCoordinateSpace destSpace);
 #endif

@@ -45,9 +45,9 @@ class NetscapePlugin;
 
 class NetscapePluginStream : public RefCounted<NetscapePluginStream> {
 public:
-    static PassRefPtr<NetscapePluginStream> create(PassRefPtr<NetscapePlugin> plugin, uint64_t streamID, bool sendNotification, void* notificationData)
+    static PassRefPtr<NetscapePluginStream> create(PassRefPtr<NetscapePlugin> plugin, uint64_t streamID, const String& requestURLString, bool sendNotification, void* notificationData)
     {
-        return adoptRef(new NetscapePluginStream(plugin, streamID, sendNotification, notificationData));
+        return adoptRef(new NetscapePluginStream(plugin, streamID, requestURLString, sendNotification, notificationData));
     }
     ~NetscapePluginStream();
 
@@ -60,13 +60,13 @@ public:
     void didFinishLoading();
     void didFail(bool wasCancelled);
 
-    void sendJavaScriptStream(const String& requestURLString, const String& result);
+    void sendJavaScriptStream(const String& result);
 
     void stop(NPReason);
     NPError destroy(NPReason);
 
 private:
-    NetscapePluginStream(PassRefPtr<NetscapePlugin>, uint64_t streamID, bool sendNotification, void* notificationData);
+    NetscapePluginStream(PassRefPtr<NetscapePlugin>, uint64_t streamID, const String& requestURLString, bool sendNotification, void* notificationData);
 
     bool start(const String& responseURLString, uint32_t streamLength, 
                uint32_t lastModifiedTime, const String& mimeType, const String& headers);
@@ -80,7 +80,8 @@ private:
 
     RefPtr<NetscapePlugin> m_plugin;
     uint64_t m_streamID;
-    
+
+    String m_requestURLString;
     bool m_sendNotification;
     void* m_notificationData;
 

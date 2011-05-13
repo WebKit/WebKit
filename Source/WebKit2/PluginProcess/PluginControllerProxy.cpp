@@ -402,9 +402,9 @@ void PluginControllerProxy::geometryDidChange(const IntRect& frameRect, const In
     m_plugin->geometryDidChange(frameRect, clipRect);
 }
 
-void PluginControllerProxy::didEvaluateJavaScript(uint64_t requestID, const String& requestURLString, const String& result)
+void PluginControllerProxy::didEvaluateJavaScript(uint64_t requestID, const String& result)
 {
-    m_plugin->didEvaluateJavaScript(requestID, requestURLString, result);
+    m_plugin->didEvaluateJavaScript(requestID, result);
 }
 
 void PluginControllerProxy::streamDidReceiveResponse(uint64_t streamID, const String& responseURLString, uint32_t streamLength, uint32_t lastModifiedTime, const String& mimeType, const String& headers)

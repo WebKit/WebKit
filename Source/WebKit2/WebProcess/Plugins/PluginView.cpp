@@ -793,7 +793,7 @@ void PluginView::performJavaScriptURLRequest(URLRequest* request)
     result.getString(scriptState, resultString);
   
     // Send the result back to the plug-in.
-    plugin->didEvaluateJavaScript(request->requestID(), decodeURLEscapeSequences(request->request().url()), resultString);
+    plugin->didEvaluateJavaScript(request->requestID(), resultString);
 }
 
 void PluginView::addStream(Stream* stream)

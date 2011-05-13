@@ -34,9 +34,10 @@ using namespace std;
 
 namespace WebKit {
 
-NetscapePluginStream::NetscapePluginStream(PassRefPtr<NetscapePlugin> plugin, uint64_t streamID, bool sendNotification, void* notificationData)
+NetscapePluginStream::NetscapePluginStream(PassRefPtr<NetscapePlugin> plugin, uint64_t streamID, const String& requestURLString, bool sendNotification, void* notificationData)
     : m_plugin(plugin)
     , m_streamID(streamID)
+    , m_requestURLString(requestURLString)
     , m_sendNotification(sendNotification)
     , m_notificationData(notificationData)
     , m_npStream()
@@ -91,20 +92,20 @@ void NetscapePluginStream::didFail(bool wasCancelled)
     stop(wasCancelled ? NPRES_USER_BREAK : NPRES_NETWORK_ERR);
 }
     
-void NetscapePluginStream::sendJavaScriptStream(const String& requestURLString, const String& result)
+void NetscapePluginStream::sendJavaScriptStream(const String& result)
 {
     // starting the stream or delivering the data to it might cause the plug-in stream to go away, so we keep
     // a reference to it here.
     RefPtr<NetscapePluginStream> protect(this);
 
-    CString resultCString = requestURLString.utf8();
+    CString resultCString = result.utf8();
     if (resultCString.isNull()) {
         // There was an error evaluating the JavaScript, call NPP_URLNotify if needed and then destroy the stream.
         notifyAndDestroyStream(NPRES_NETWORK_ERR);
         return;
     }
 
-    if (!start(requestURLString, resultCString.length(), 0, "text/plain", ""))
+    if (!start(m_requestURLString, resultCString.length(), 0, "text/plain", ""))
         return;
 
     deliverData(resultCString.data(), resultCString.length());

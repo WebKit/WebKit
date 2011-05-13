@@ -1,3 +1,35 @@
+2011-05-13  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        NPN_GetURL with a javascript: URL doesn't send back the result in the stream
+        https://bugs.webkit.org/show_bug.cgi?id=60810
+
+        In NetscapePluginStream::sendJavaScriptStream, we were incorrectly passing the result URL
+        to the stream, instead of the result. Also, store the request URL in the NetscapePluginStream object
+        to avoid sending it over the wire.
+
+        * PluginProcess/PluginControllerProxy.cpp:
+        (WebKit::PluginControllerProxy::didEvaluateJavaScript):
+        * PluginProcess/PluginControllerProxy.h:
+        * PluginProcess/PluginControllerProxy.messages.in:
+        * WebProcess/Plugins/Netscape/NetscapePlugin.cpp:
+        (WebKit::NetscapePlugin::loadURL):
+        (WebKit::NetscapePlugin::didEvaluateJavaScript):
+        (WebKit::NetscapePlugin::manualStreamDidReceiveResponse):
+        * WebProcess/Plugins/Netscape/NetscapePlugin.h:
+        * WebProcess/Plugins/Netscape/NetscapePluginStream.cpp:
+        (WebKit::NetscapePluginStream::NetscapePluginStream):
+        (WebKit::NetscapePluginStream::sendJavaScriptStream):
+        * WebProcess/Plugins/Netscape/NetscapePluginStream.h:
+        (WebKit::NetscapePluginStream::create):
+        * WebProcess/Plugins/Plugin.h:
+        * WebProcess/Plugins/PluginProxy.cpp:
+        (WebKit::PluginProxy::didEvaluateJavaScript):
+        * WebProcess/Plugins/PluginProxy.h:
+        * WebProcess/Plugins/PluginView.cpp:
+        (WebKit::PluginView::performJavaScriptURLRequest):
+
 2011-05-13  Jeff Miller  <jeffm@apple.com>
 
         Reviewed by Darin Adler.

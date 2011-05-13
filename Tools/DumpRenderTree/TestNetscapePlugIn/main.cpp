@@ -396,7 +396,7 @@ NPError NPP_NewStream(NPP instance, NPMIMEType type, NPStream *stream, NPBool se
     if (obj->onStreamLoad)
         executeScript(obj, obj->onStreamLoad);
 
-    return NPERR_NO_ERROR;
+    return obj->pluginTest->NPP_NewStream(type, stream, seekable, stype);
 }
 
 NPError NPP_DestroyStream(NPP instance, NPStream *stream, NPReason reason)
@@ -431,7 +431,8 @@ NPError NPP_DestroyStream(NPP instance, NPStream *stream, NPReason reason)
 
 int32_t NPP_WriteReady(NPP instance, NPStream *stream)
 {
-    return 4096;
+    PluginObject* obj = (PluginObject*)instance->pdata;
+    return obj->pluginTest->NPP_WriteReady(stream);
 }
 
 int32_t NPP_Write(NPP instance, NPStream *stream, int32_t offset, int32_t len, void *buffer)
@@ -441,7 +442,7 @@ int32_t NPP_Write(NPP instance, NPStream *stream, int32_t offset, int32_t len, v
     if (obj->returnNegativeOneFromWrite)
         return -1;
 
-    return len;
+    return obj->pluginTest->NPP_Write(stream, offset, len, buffer);
 }
 
 void NPP_StreamAsFile(NPP instance, NPStream *stream, const char *fname)
@@ -718,8 +719,10 @@ int16_t NPP_HandleEvent(NPP instance, void *event)
 void NPP_URLNotify(NPP instance, const char *url, NPReason reason, void *notifyData)
 {
     PluginObject* obj = static_cast<PluginObject*>(instance->pdata);
- 
-     if (obj->onURLNotify)
+    if (obj->pluginTest->NPP_URLNotify(url, reason, notifyData))
+        return;
+
+    if (obj->onURLNotify)
          executeScript(obj, obj->onURLNotify);
 
     handleCallback(obj, url, reason, notifyData);

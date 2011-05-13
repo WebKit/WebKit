@@ -168,7 +168,7 @@ void NetscapePlugin::loadURL(const String& method, const String& urlString, cons
 
     if (target.isNull()) {
         // The browser is going to send the data in a stream, create a plug-in stream.
-        RefPtr<NetscapePluginStream> pluginStream = NetscapePluginStream::create(this, requestID, sendNotification, notificationData);
+        RefPtr<NetscapePluginStream> pluginStream = NetscapePluginStream::create(this, requestID, urlString, sendNotification, notificationData);
         ASSERT(!m_streams.contains(requestID));
 
         m_streams.set(requestID, pluginStream.release());
@@ -611,12 +611,12 @@ void NetscapePlugin::frameDidFail(uint64_t requestID, bool wasCancelled)
     NPP_URLNotify(url.utf8().data(), wasCancelled ? NPRES_USER_BREAK : NPRES_NETWORK_ERR, notificationData);
 }
 
-void NetscapePlugin::didEvaluateJavaScript(uint64_t requestID, const String& requestURLString, const String& result)
+void NetscapePlugin::didEvaluateJavaScript(uint64_t requestID, const String& result)
 {
     ASSERT(m_isStarted);
     
     if (NetscapePluginStream* pluginStream = streamFromID(requestID))
-        pluginStream->sendJavaScriptStream(requestURLString, result);
+        pluginStream->sendJavaScriptStream(result);
 }
 
 void NetscapePlugin::streamDidReceiveResponse(uint64_t streamID, const KURL& responseURL, uint32_t streamLength, 
@@ -659,7 +659,7 @@ void NetscapePlugin::manualStreamDidReceiveResponse(const KURL& responseURL, uin
     ASSERT(m_loadManually);
     ASSERT(!m_manualStream);
     
-    m_manualStream = NetscapePluginStream::create(this, 0, false, 0);
+    m_manualStream = NetscapePluginStream::create(this, 0, responseURL.string(), false, 0);
     m_manualStream->didReceiveResponse(responseURL, streamLength, lastModifiedTime, mimeType, headers);
 }
 

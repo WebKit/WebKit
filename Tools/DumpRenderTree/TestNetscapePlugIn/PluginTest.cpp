@@ -92,9 +92,41 @@ NPError PluginTest::NPP_Destroy(NPSavedData**)
     return NPERR_NO_ERROR;
 }
 
+NPError PluginTest::NPP_SetWindow(NPP, NPWindow*)
+{
+    return NPERR_NO_ERROR;
+}
+
+NPError PluginTest::NPP_NewStream(NPMIMEType type, NPStream* stream, NPBool seekable, uint16_t* stype)
+{
+    return NPERR_NO_ERROR;
+}
+
 NPError PluginTest::NPP_DestroyStream(NPStream *stream, NPReason reason)
 {
     return NPERR_NO_ERROR;
+}
+
+int32_t PluginTest::NPP_WriteReady(NPStream*)
+{
+    return 4096;
+}
+
+int32_t PluginTest::NPP_Write(NPStream*, int32_t offset, int32_t len, void* buffer)
+{
+    return len;
+}
+
+int16_t PluginTest::NPP_HandleEvent(void*)
+{
+    return 0;
+}
+
+bool PluginTest::NPP_URLNotify(const char* url, NPReason, void* notifyData)
+{
+    // FIXME: Port the code from NPP_URLNotify in main.cpp over to always using
+    // PluginTest, so we don't have to use a return value to indicate whether the "default" NPP_URLNotify implementation should be invoked.
+    return false;
 }
 
 NPError PluginTest::NPP_GetValue(NPPVariable variable, void *value)
@@ -103,14 +135,21 @@ NPError PluginTest::NPP_GetValue(NPPVariable variable, void *value)
     return NPERR_GENERIC_ERROR;
 }
 
-NPError PluginTest::NPP_SetWindow(NPP, NPWindow*)
+// NPN functions.
+
+NPError PluginTest::NPN_GetURL(const char* url, const char* target)
 {
-    return NPERR_NO_ERROR;
+    return browser->geturl(m_npp, url, target);
 }
 
-int16_t PluginTest::NPP_HandleEvent(void*)
+NPError PluginTest::NPN_GetURLNotify(const char *url, const char *target, void *notifyData)
 {
-    return 0;
+    return browser->geturlnotify(m_npp, url, target, notifyData);
+}
+
+NPError PluginTest::NPN_GetValue(NPNVariable variable, void* value)
+{
+    return browser->getvalue(m_npp, variable, value);
 }
 
 void PluginTest::NPN_InvalidateRect(NPRect* invalidRect)
@@ -118,10 +157,7 @@ void PluginTest::NPN_InvalidateRect(NPRect* invalidRect)
     browser->invalidaterect(m_npp, invalidRect);
 }
 
-NPError PluginTest::NPN_GetURL(const char* url, const char* target)
-{
-    return browser->geturl(m_npp, url, target);
-}
+// NPRuntime NPN functions.
 
 NPIdentifier PluginTest::NPN_GetStringIdentifier(const NPUTF8 *name)
 {
@@ -131,11 +167,6 @@ NPIdentifier PluginTest::NPN_GetStringIdentifier(const NPUTF8 *name)
 NPIdentifier PluginTest::NPN_GetIntIdentifier(int32_t intid)
 {
     return browser->getintidentifier(intid);
-}
-
-NPError PluginTest::NPN_GetValue(NPNVariable variable, void* value)
-{
-    return browser->getvalue(m_npp, variable, value);
 }
 
 NPObject* PluginTest::NPN_CreateObject(NPClass* npClass)

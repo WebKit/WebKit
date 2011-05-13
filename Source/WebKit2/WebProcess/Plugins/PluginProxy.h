@@ -75,7 +75,7 @@ private:
     virtual void visibilityDidChange();
     virtual void frameDidFinishLoading(uint64_t requestID);
     virtual void frameDidFail(uint64_t requestID, bool wasCancelled);
-    virtual void didEvaluateJavaScript(uint64_t requestID, const WTF::String& requestURLString, const WTF::String& result);
+    virtual void didEvaluateJavaScript(uint64_t requestID, const String& result);
     virtual void streamDidReceiveResponse(uint64_t streamID, const WebCore::KURL& responseURL, uint32_t streamLength, uint32_t lastModifiedTime, const WTF::String& mimeType, const WTF::String& headers);
     virtual void streamDidReceiveData(uint64_t streamID, const char* bytes, int length);
     virtual void streamDidFinishLoading(uint64_t streamID);

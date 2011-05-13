@@ -233,9 +233,9 @@ void PluginProxy::frameDidFail(uint64_t requestID, bool wasCancelled)
     m_connection->connection()->send(Messages::PluginControllerProxy::FrameDidFail(requestID, wasCancelled), m_pluginInstanceID);
 }
 
-void PluginProxy::didEvaluateJavaScript(uint64_t requestID, const WTF::String& requestURLString, const WTF::String& result)
+void PluginProxy::didEvaluateJavaScript(uint64_t requestID, const WTF::String& result)
 {
-    m_connection->connection()->send(Messages::PluginControllerProxy::DidEvaluateJavaScript(requestID, requestURLString, result), m_pluginInstanceID);
+    m_connection->connection()->send(Messages::PluginControllerProxy::DidEvaluateJavaScript(requestID, result), m_pluginInstanceID);
 }
 
 void PluginProxy::streamDidReceiveResponse(uint64_t streamID, const KURL& responseURL, uint32_t streamLength, uint32_t lastModifiedTime, const WTF::String& mimeType, const WTF::String& headers)

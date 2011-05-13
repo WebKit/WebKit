@@ -102,7 +102,7 @@ public:
 
     // Tells the plug-in that a request to evaluate JavaScript (using PluginController::loadURL) has been fulfilled and passes
     // back the result. If evaluating the script failed, result will be null.
-    virtual void didEvaluateJavaScript(uint64_t requestID, const String& requestURLString, const String& result) = 0;
+    virtual void didEvaluateJavaScript(uint64_t requestID, const String& result) = 0;
 
     // Tells the plug-in that a stream has received its HTTP response.
     virtual void streamDidReceiveResponse(uint64_t streamID, const WebCore::KURL& responseURL, uint32_t streamLength, 

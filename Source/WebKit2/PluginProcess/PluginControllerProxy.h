@@ -110,7 +110,7 @@ private:
     void frameDidFinishLoading(uint64_t requestID);
     void frameDidFail(uint64_t requestID, bool wasCancelled);
     void geometryDidChange(const WebCore::IntRect& frameRect, const WebCore::IntRect& clipRect, const ShareableBitmap::Handle& backingStoreHandle);
-    void didEvaluateJavaScript(uint64_t requestID, const String& requestURLString, const String& result);
+    void didEvaluateJavaScript(uint64_t requestID, const String& result);
     void streamDidReceiveResponse(uint64_t streamID, const String& responseURLString, uint32_t streamLength, uint32_t lastModifiedTime, const String& mimeType, const String& headers);
     void streamDidReceiveData(uint64_t streamID, const CoreIPC::DataReference& data);
     void streamDidFinishLoading(uint64_t streamID);

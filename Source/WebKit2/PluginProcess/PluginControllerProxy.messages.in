@@ -33,7 +33,7 @@ messages -> PluginControllerProxy {
     FrameDidFail(uint64_t requestID, bool wasCancelled)
 
     # Sent when JavaScript that the plug-in asked to be evaluated has been evaluated.
-    DidEvaluateJavaScript(uint64_t requestID, WTF::String requestURLString, WTF::String result)
+    DidEvaluateJavaScript(uint64_t requestID, WTF::String result)
 
     # Sent when the plug-in receives a response for a stream.
     StreamDidReceiveResponse(uint64_t streamID, WTF::String responseURLString, uint32_t streamLength, uint32_t lastModifiedTime, WTF::String mimeType, WTF::String headers)
