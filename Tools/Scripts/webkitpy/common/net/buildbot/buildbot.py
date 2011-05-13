@@ -292,7 +292,7 @@ class BuildBot(object):
             "SnowLeopard.*Build",
             "SnowLeopard.*\(Test",
             "SnowLeopard.*\(WebKit2 Test",
-            "Leopard.*",
+            "Leopard.*\((?:Build|Test)",
             "Windows.*Build",
             "Windows.*\(Test",
             "WinCairo",

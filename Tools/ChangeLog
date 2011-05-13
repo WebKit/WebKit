@@ -1,5 +1,21 @@
 2011-05-13  Adam Roben  <aroben@apple.com>
 
+        Exclude the Leopard NRWT bot from the core builder set
+
+        Fixes <http://webkit.org/b/60392> Leopard Intel Release (NRWT) shouldn't be a core builder
+
+        Reviewed by Darin Adler.
+
+        * Scripts/webkitpy/common/net/buildbot/buildbot.py:
+        (BuildBot.__init__): Tighten up the Leopard regexp to only allow the non-NRWT Leopard bots
+        in the core builder set.
+
+        * Scripts/webkitpy/common/net/buildbot/buildbot_unittest.py:
+        (BuildBotTest.test_builder_name_regexps): Updated to match the current set of builders and
+        regexps.
+
+2011-05-13  Adam Roben  <aroben@apple.com>
+
         Group all the NRWT bots together
 
         This also gets the new NRWT bots out of the middle of Apple's bots. Since these new NRWT
