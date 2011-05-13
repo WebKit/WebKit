@@ -41,7 +41,7 @@ PluginHalter::PluginHalter(PassOwnPtr<PluginHalterClient> client)
     , m_timer(this, &PluginHalter::timerFired)
     , m_pluginAllowedRunTime(numeric_limits<unsigned>::max())
 {
-    ASSERT_ARG(client, client);
+    ASSERT_ARG(m_client, m_client);
 }
 
 void PluginHalter::didStartPlugin(HaltablePlugin* obj)
