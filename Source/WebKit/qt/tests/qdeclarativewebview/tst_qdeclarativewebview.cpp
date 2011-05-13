@@ -138,10 +138,11 @@ void tst_QDeclarativeWebView::elementAreaAt()
     QDeclarativeEngine engine;
     QDeclarativeComponent component(&engine, QUrl("qrc:///resources/elements.qml"));
     checkNoErrors(component);
-    QDeclarativeWebView* wv = qobject_cast<QDeclarativeWebView*>(component.create());
+    QObject* wv = component.create();
     QVERIFY(wv);
     QTRY_COMPARE(wv->property("progress").toDouble(), 1.0);
 
+    // FIXME: Tests disabled since elementAreaAt isn't exported.
     // Areas from elements.html.
 //    const QRect areaA(1, 1, 75, 54);
 //    const QRect areaB(78, 3, 110, 50);

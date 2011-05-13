@@ -2,6 +2,19 @@
 
         Reviewed by nobody, build fix.
 
+        [Qt] Fix build on MSVC.
+
+        qobject_cast<> requires the class to be exported on MSVC,
+        removing it since the code that needs it is commented out for
+        the same reason.
+
+        * tests/qdeclarativewebview/tst_qdeclarativewebview.cpp:
+        (tst_QDeclarativeWebView::elementAreaAt):
+
+2011-05-11  Jocelyn Turcotte  <jocelyn.turcotte@nokia.com>
+
+        Reviewed by nobody, build fix.
+
         [Qt] Fix build on MSVC by only enabling tst_MIMESniffing on linux.
 
         * tests/tests.pro:
