@@ -1,3 +1,17 @@
+2011-05-12  Ben Wells  <benwells@chromium.org>
+
+        Reviewed by Simon Fraser.
+
+        RGBA colors in outlines show overpainting at the corners
+        https://bugs.webkit.org/show_bug.cgi?id=58999
+
+        Added FIXMEs near temporary $if !USE(SKIA)s, referencing bug 60342.
+
+        * rendering/RenderInline.cpp:
+        (WebCore::RenderInline::paintOutline):
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::paintOutline):
+
 2011-05-12  Adele Peterson  <adele@apple.com>
 
         Reviewed by Darin Adler and Adam Barth.

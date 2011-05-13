@@ -1,3 +1,24 @@
+2011-05-12  Ben Wells  <benwells@chromium.org>
+
+        Reviewed by Simon Fraser.
+
+        RGBA colors in outlines show overpainting at the corners
+        https://bugs.webkit.org/show_bug.cgi?id=58999
+
+        Converted the new tests to be text tests with pixel results
+        (using dumpAsText(true)).
+        Updated test_expectations comments to be more helpful and accurate and split
+        new expectations into two groups for skia / chromium-mac as chromium-mac can be
+        rebaselined now.
+
+        * fast/borders/outline-alpha-block-expected.txt: Added.
+        * fast/borders/outline-alpha-block.html:
+        * fast/borders/outline-alpha-inline-expected.txt: Added.
+        * fast/borders/outline-alpha-inline.html:
+        * platform/chromium/test_expectations.txt:
+        * platform/mac/fast/borders/outline-alpha-block-expected.txt: Removed.
+        * platform/mac/fast/borders/outline-alpha-inline-expected.txt: Removed.
+
 2011-05-12  David Grogan  <dgrogan@chromium.org>
 
         Reviewed by Darin Adler.

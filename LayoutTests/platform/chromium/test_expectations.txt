@@ -4031,9 +4031,15 @@ BUGANTONM DEBUG : html5lib/runner.html = PASS TIMEOUT
 
 BUGCR82419 : svg/custom/fill-opacity-update.svg = IMAGE
 
-// New pixel tests added for bug 58999, rebaseline when webkit 58999 rolls.
-BUGWK58999 WIN LINUX MAC : fast/borders/outline-alpha-block.html = IMAGE+TEXT IMAGE
-BUGWK58999 WIN LINUX MAC : fast/borders/outline-alpha-inline.html = IMAGE+TEXT IMAGE
+// New pixel tests added for bug 58999. These will fail on windows and linux until bug
+// 60342 is fixed and the 58999 fix enabled for skia.
+BUGWK58999 WIN LINUX : fast/borders/outline-alpha-block.html = IMAGE
+BUGWK58999 WIN LINUX : fast/borders/outline-alpha-inline.html = IMAGE
+
+// New pixel tests added for bug 58999. These should be rebaselined for chromium-mac
+// as the bug fix is available on that platform but there are image differences due to fonts
+BUGWK58999 MAC : fast/borders/outline-alpha-block.html = IMAGE
+BUGWK58999 MAC : fast/borders/outline-alpha-inline.html = IMAGE
 
 BUGWK60738 LINUX WIN : compositing/color-matching/image-color-matching.html = IMAGE+TEXT IMAGE
 BUGWK60738 LINUX WIN : compositing/layers-inside-overflow-scroll.html = IMAGE+TEXT IMAGE
