@@ -1,3 +1,15 @@
+2011-05-13  Brett Wilson  <brettw@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        Don't destroy a null FcPattern when failing to do a FontConfig match.
+        This crashes, and there's nothing FcDestroy could do with a null
+        pointer even if it didn't crash.
+        https://bugs.webkit.org/show_bug.cgi?id=60777
+
+        * src/gtk/WebFontInfo.cpp:
+        (WebKit::WebFontInfo::renderStyleForStrike):
+
 2011-05-11  Hans Wennborg  <hans@chromium.org>
 
         Reviewed by Tony Gentilcore.

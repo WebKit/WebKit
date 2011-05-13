@@ -154,10 +154,8 @@ void WebFontInfo::renderStyleForStrike(const char* family, int sizeAndStyle, Web
 
     out->setDefaults();
 
-    if (!match) {
-        FcPatternDestroy(match);
+    if (!match)
         return;
-    }
 
     FcBool b;
     int i;
