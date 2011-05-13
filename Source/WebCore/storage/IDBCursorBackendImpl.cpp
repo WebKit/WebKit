@@ -48,10 +48,12 @@ IDBCursorBackendImpl::IDBCursorBackendImpl(PassRefPtr<IDBBackingStore::Cursor> c
     , m_transaction(transaction)
     , m_objectStore(objectStore)
 {
+    m_transaction->registerOpenCursor(this);
 }
 
 IDBCursorBackendImpl::~IDBCursorBackendImpl()
 {
+    m_transaction->unregisterOpenCursor(this);
 }
 
 unsigned short IDBCursorBackendImpl::direction() const
@@ -118,6 +120,12 @@ void IDBCursorBackendImpl::deleteFunction(PassRefPtr<IDBCallbacks> prpCallbacks,
     }
 
     m_objectStore->deleteFunction(m_cursor->primaryKey(), prpCallbacks, m_transaction.get(), ec);
+}
+
+void IDBCursorBackendImpl::close()
+{
+    if (m_cursor)
+        m_cursor->close();
 }
 
 } // namespace WebCore

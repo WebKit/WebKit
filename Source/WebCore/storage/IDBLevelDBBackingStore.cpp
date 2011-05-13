@@ -812,6 +812,7 @@ public:
     virtual String value() = 0;
     virtual PassRefPtr<IDBBackingStore::ObjectStoreRecordIdentifier> objectStoreRecordIdentifier() = 0; // FIXME: I don't think this is actually used, so drop it.
     virtual int64_t indexDataId() = 0;
+    virtual void close() { }
 
     virtual bool loadCurrentRow() = 0;
     bool firstSeek();

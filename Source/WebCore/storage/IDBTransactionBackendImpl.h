@@ -34,6 +34,7 @@
 #include "IDBTransactionCallbacks.h"
 #include "Timer.h"
 #include <wtf/Deque.h>
+#include <wtf/HashSet.h>
 #include <wtf/RefPtr.h>
 
 namespace WebCore {
@@ -51,6 +52,8 @@ public:
     virtual void didCompleteTaskEvents();
     virtual void abort();
     virtual void setCallbacks(IDBTransactionCallbacks* callbacks) { m_callbacks = callbacks; }
+    virtual void registerOpenCursor(IDBCursorBackendImpl*);
+    virtual void unregisterOpenCursor(IDBCursorBackendImpl*);
 
     void run();
 
@@ -69,6 +72,7 @@ private:
 
     void taskTimerFired(Timer<IDBTransactionBackendImpl>*);
     void taskEventTimerFired(Timer<IDBTransactionBackendImpl>*);
+    void closeOpenCursors();
 
     RefPtr<DOMStringList> m_objectStoreNames;
     unsigned short m_mode;
@@ -87,6 +91,8 @@ private:
     Timer<IDBTransactionBackendImpl> m_taskTimer;
     Timer<IDBTransactionBackendImpl> m_taskEventTimer;
     int m_pendingEvents;
+
+    HashSet<IDBCursorBackendImpl*> m_openCursors;
 };
 
 } // namespace WebCore

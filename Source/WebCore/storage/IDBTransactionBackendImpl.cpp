@@ -29,6 +29,7 @@
 #if ENABLE(INDEXED_DATABASE)
 
 #include "IDBBackingStore.h"
+#include "IDBCursorBackendImpl.h"
 #include "IDBDatabaseBackendImpl.h"
 #include "IDBDatabaseException.h"
 #include "IDBTransactionCoordinator.h"
@@ -113,6 +114,8 @@ void IDBTransactionBackendImpl::abort()
     m_state = Finished;
     m_taskTimer.stop();
     m_taskEventTimer.stop();
+
+    closeOpenCursors();
     m_transaction->rollback();
 
     // Run the abort tasks, if any.
@@ -126,6 +129,16 @@ void IDBTransactionBackendImpl::abort()
     m_database->transactionCoordinator()->didFinishTransaction(this);
     ASSERT(!m_database->transactionCoordinator()->isActive(this));
     m_database = 0;
+}
+
+void IDBTransactionBackendImpl::registerOpenCursor(IDBCursorBackendImpl* cursor)
+{
+    m_openCursors.add(cursor);
+}
+
+void IDBTransactionBackendImpl::unregisterOpenCursor(IDBCursorBackendImpl* cursor)
+{
+    m_openCursors.remove(cursor);
 }
 
 void IDBTransactionBackendImpl::didCompleteTaskEvents()
@@ -166,6 +179,7 @@ void IDBTransactionBackendImpl::commit()
     ASSERT(m_state == Running);
 
     m_state = Finished;
+    closeOpenCursors();
     m_transaction->commit();
     m_callbacks->onComplete();
     m_database->transactionCoordinator()->didFinishTransaction(this);
@@ -208,6 +222,13 @@ void IDBTransactionBackendImpl::taskEventTimerFired(Timer<IDBTransactionBackendI
     // We can therfore schedule the timer again.
     if (!m_taskQueue.isEmpty() && !m_taskTimer.isActive())
         m_taskTimer.startOneShot(0);
+}
+
+void IDBTransactionBackendImpl::closeOpenCursors()
+{
+    for (HashSet<IDBCursorBackendImpl*>::iterator i = m_openCursors.begin(); i != m_openCursors.end(); ++i)
+        (*i)->close();
+    m_openCursors.clear();
 }
 
 };

@@ -91,7 +91,8 @@ public:
         virtual String value() = 0;
         virtual PassRefPtr<ObjectStoreRecordIdentifier> objectStoreRecordIdentifier() = 0;
         virtual int64_t indexDataId() = 0;
-        virtual ~Cursor() {};
+        virtual void close() = 0;
+        virtual ~Cursor() { };
     };
 
     virtual PassRefPtr<Cursor> openObjectStoreCursor(int64_t databaseId, int64_t objectStoreId, const IDBKeyRange*, IDBCursor::Direction) = 0;

@@ -36,6 +36,7 @@
 
 namespace WebCore {
 
+class IDBCursorBackendImpl;
 class IDBObjectStoreBackendInterface;
 class IDBTransactionCallbacks;
 
@@ -53,6 +54,8 @@ public:
     virtual void didCompleteTaskEvents() = 0;
     virtual void abort() = 0;
     virtual void setCallbacks(IDBTransactionCallbacks*) = 0;
+    virtual void registerOpenCursor(IDBCursorBackendImpl*) = 0;
+    virtual void unregisterOpenCursor(IDBCursorBackendImpl*) = 0;
 };
 
 } // namespace WebCore

@@ -47,6 +47,8 @@ public:
     virtual bool scheduleTask(PassOwnPtr<WebCore::ScriptExecutionContext::Task>, PassOwnPtr<WebCore::ScriptExecutionContext::Task>);
     virtual void didCompleteTaskEvents();
     virtual void setCallbacks(WebCore::IDBTransactionCallbacks*);
+    virtual void registerOpenCursor(WebCore::IDBCursorBackendImpl*);
+    virtual void unregisterOpenCursor(WebCore::IDBCursorBackendImpl*);
 
     WebIDBTransaction* getWebIDBTransaction() const { return m_webIDBTransaction.get(); }
 

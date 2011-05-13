@@ -708,6 +708,7 @@ public:
     virtual String value() = 0;
     virtual PassRefPtr<IDBBackingStore::ObjectStoreRecordIdentifier> objectStoreRecordIdentifier() = 0;
     virtual int64_t indexDataId() = 0;
+    virtual void close() { m_query.finalize(); }
 
     virtual void loadCurrentRow() = 0;
     virtual bool currentRowExists() = 0;
