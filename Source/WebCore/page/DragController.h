@@ -37,6 +37,7 @@ namespace WebCore {
     class Document;
     class DragClient;
     class DragData;
+    struct DragState;
     class Element;
     class Frame;
     class FrameSelection;
@@ -75,13 +76,12 @@ namespace WebCore {
         DragDestinationAction dragDestinationAction() const { return m_dragDestinationAction; }
         DragSourceAction delegateDragSourceAction(const IntPoint& pagePoint);
         
-        Node* draggableNode(const Frame*, Node*, bool dhtmlOK, bool uaOK, int x, int y, bool& dhtmlWillDrag) const;
-        bool mayStartDragAtEventLocation(const Frame*, const IntPoint& framePos, Node*) const;
+        Node* draggableNode(const Frame*, Node*, const IntPoint&, DragState&) const;
         void dragEnded();
         
         void placeDragCaret(const IntPoint&);
         
-        bool startDrag(Frame* src, Clipboard*, DragOperation srcOp, const PlatformMouseEvent& dragEvent, const IntPoint& dragOrigin, bool isDHTMLDrag);
+        bool startDrag(Frame* src, const DragState&, DragOperation srcOp, const PlatformMouseEvent& dragEvent, const IntPoint& dragOrigin);
         static const IntSize& maxDragImageSize();
         
         static const int LinkDragBorderInset;

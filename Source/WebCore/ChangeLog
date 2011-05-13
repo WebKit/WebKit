@@ -1,3 +1,38 @@
+2011-05-13  Daniel Cheng  <dcheng@chromium.org>
+
+        Reviewed by Tony Chang.
+
+        Improve drag start logic
+        https://bugs.webkit.org/show_bug.cgi?id=59409
+
+        Rewrite and simplify the dragging logic to better match IE, Firefox, and the behavior
+        defined in the spec. Among other things:
+        - draggableNode() no longer returns text nodes when dragging anchors.
+        - When starting a drag over an image in a selection, prefer to drag the selection.
+        - Several redundant hit tests have been removed.
+        - Minor refactoring to make the logic easier to follow.
+
+        Test: platform/mac/editing/pasteboard/drag-selections-to-contenteditable.html
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * page/DragController.cpp:
+        (WebCore::DragController::draggableNode):
+        (WebCore::DragController::startDrag):
+        * page/DragController.h:
+        * page/DragState.h:
+        (WebCore::DragState::shouldDispatchEvents):
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::EventHandler):
+        (WebCore::EventHandler::eventMayStartDrag):
+        (WebCore::EventHandler::updateDragSourceActionsAllowed):
+        (WebCore::EventHandler::updateDragAndDrop):
+        (WebCore::EventHandler::cancelDragAndDrop):
+        (WebCore::EventHandler::dragHysteresisExceeded):
+        (WebCore::EventHandler::dragSourceEndedAt):
+        (WebCore::ExactlyOneBitSet):
+        (WebCore::EventHandler::handleDrag):
+        * page/EventHandler.h:
+
 2011-05-13  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Geoffrey Garen.

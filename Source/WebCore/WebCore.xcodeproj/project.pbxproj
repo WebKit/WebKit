@@ -1675,7 +1675,7 @@
 		81BE209911F4AB8D00915DFA /* IDBCursorBackendInterface.h in Headers */ = {isa = PBXBuildFile; fileRef = 81BE209411F4AB8D00915DFA /* IDBCursorBackendInterface.h */; };
 		81BE20D211F4BC3200915DFA /* JSIDBCursor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 81BE20A711F4B66F00915DFA /* JSIDBCursor.cpp */; };
 		81BE20D311F4BC3200915DFA /* JSIDBCursor.h in Headers */ = {isa = PBXBuildFile; fileRef = 81BE20A811F4B66F00915DFA /* JSIDBCursor.h */; };
-		81F65FF613788FAA00FF6F2D /* DragState.h in Headers */ = {isa = PBXBuildFile; fileRef = 81F65FF513788FAA00FF6F2D /* DragState.h */; };
+		81F65FF613788FAA00FF6F2D /* DragState.h in Headers */ = {isa = PBXBuildFile; fileRef = 81F65FF513788FAA00FF6F2D /* DragState.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		82AB1743124B99EC00C5069D /* InspectorCSSAgent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 82AB1741124B99EC00C5069D /* InspectorCSSAgent.cpp */; };
 		82AB1744124B99EC00C5069D /* InspectorCSSAgent.h in Headers */ = {isa = PBXBuildFile; fileRef = 82AB1742124B99EC00C5069D /* InspectorCSSAgent.h */; };
 		82AB1773125C826700C5069D /* InspectorStyleSheet.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 82AB176F125C826700C5069D /* InspectorStyleSheet.cpp */; };

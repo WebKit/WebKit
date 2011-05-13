@@ -79,6 +79,7 @@
 #include "UserTypingGestureIndicator.h"
 #include "WheelEvent.h"
 #include "WindowsKeyboardCodes.h"
+#include <wtf/Assertions.h>
 #include <wtf/CurrentTime.h>
 #include <wtf/StdLibExtras.h>
 
@@ -178,6 +179,7 @@ EventHandler::EventHandler(Frame* frame)
     , m_mouseDownMayStartSelect(false)
 #if ENABLE(DRAG_SUPPORT)
     , m_mouseDownMayStartDrag(false)
+    , m_dragMayStartSelectionInstead(false)
 #endif
     , m_mouseDownWasSingleClickInSelection(false)
     , m_beganSelectingText(false)
@@ -594,12 +596,6 @@ bool EventHandler::eventMayStartDrag(const PlatformMouseEvent& event) const
     if (event.button() != LeftButton || event.clickCount() != 1)
         return false;
     
-    bool DHTMLFlag;
-    bool UAFlag;
-    allowDHTMLDrag(DHTMLFlag, UAFlag);
-    if (!DHTMLFlag && !UAFlag)
-        return false;
-
     FrameView* view = m_frame->view();
     if (!view)
         return false;
@@ -608,11 +604,12 @@ bool EventHandler::eventMayStartDrag(const PlatformMouseEvent& event) const
     if (!page)
         return false;
 
+    updateDragSourceActionsAllowed();
     HitTestRequest request(HitTestRequest::ReadOnly);
     HitTestResult result(view->windowToContents(event.pos()));
     m_frame->contentRenderer()->layer()->hitTest(request, result);
-    bool srcIsDHTML;
-    return result.innerNode() && page->dragController()->draggableNode(m_frame, result.innerNode(), DHTMLFlag, UAFlag, result.point().x(), result.point().y(), srcIsDHTML);
+    DragState state;
+    return result.innerNode() && page->dragController()->draggableNode(m_frame, result.innerNode(), result.point(), state);
 }
 
 void EventHandler::updateSelectionForMouseDrag()
@@ -899,25 +896,20 @@ void EventHandler::setAutoscrollRenderer(RenderObject* renderer)
 }
 
 #if ENABLE(DRAG_SUPPORT)
-void EventHandler::allowDHTMLDrag(bool& flagDHTML, bool& flagUA) const
+DragSourceAction EventHandler::updateDragSourceActionsAllowed() const
 {
-    flagDHTML = false;
-    flagUA = false;
-
     if (!m_frame)
-        return;
+        return DragSourceActionNone;
 
     Page* page = m_frame->page();
     if (!page)
-        return;
+        return DragSourceActionNone;
 
     FrameView* view = m_frame->view();
     if (!view)
-        return;
+        return DragSourceActionNone;
 
-    unsigned mask = page->dragController()->delegateDragSourceAction(view->contentsToWindow(m_mouseDownPos));
-    flagDHTML = (mask & DragSourceActionDHTML) != DragSourceActionNone;
-    flagUA = ((mask & DragSourceActionImage) || (mask & DragSourceActionLink) || (mask & DragSourceActionSelection));
+    return page->dragController()->delegateDragSourceAction(view->contentsToWindow(m_mouseDownPos));
 }
 #endif // ENABLE(DRAG_SUPPORT)
     
@@ -1809,7 +1801,7 @@ bool EventHandler::updateDragAndDrop(const PlatformMouseEvent& event, Clipboard*
         // Moreover, this ordering conforms to section 7.9.4 of the HTML 5 spec. <http://dev.w3.org/html5/spec/Overview.html#drag-and-drop-processing-model>.
         if (newTarget && canHandleDragAndDropForTarget(UpdateDragAndDrop, newTarget, event, clipboard, &accept)) {
             // As per section 7.9.4 of the HTML 5 spec., we must always fire a drag event before firing a dragenter, dragleave, or dragover event.
-            if (dragState().m_dragSrc && dragState().m_dragSrcMayBeDHTML) {
+            if (dragState().m_dragSrc && dragState().shouldDispatchEvents()) {
                 // for now we don't care if event handler cancels default behavior, since there is none
                 dispatchDragSrcEvent(eventNames().dragEvent, event);
             }
@@ -1827,7 +1819,7 @@ bool EventHandler::updateDragAndDrop(const PlatformMouseEvent& event, Clipboard*
     } else {
         if (newTarget && canHandleDragAndDropForTarget(UpdateDragAndDrop, newTarget, event, clipboard, &accept)) {
             // Note, when dealing with sub-frames, we may need to fire only a dragover event as a drag event may have been fired earlier.
-            if (!m_shouldOnlyFireDragOverEvent && dragState().m_dragSrc && dragState().m_dragSrcMayBeDHTML) {
+            if (!m_shouldOnlyFireDragOverEvent && dragState().m_dragSrc && dragState().shouldDispatchEvents()) {
                 // for now we don't care if event handler cancels default behavior, since there is none
                 dispatchDragSrcEvent(eventNames().dragEvent, event);
             }
@@ -1843,7 +1835,7 @@ bool EventHandler::updateDragAndDrop(const PlatformMouseEvent& event, Clipboard*
 void EventHandler::cancelDragAndDrop(const PlatformMouseEvent& event, Clipboard* clipboard)
 {
     if (m_dragTarget && canHandleDragAndDropForTarget(CancelDragAndDrop, m_dragTarget.get(), event, clipboard)) {
-        if (dragState().m_dragSrc && dragState().m_dragSrcMayBeDHTML)
+        if (dragState().m_dragSrc && dragState().shouldDispatchEvents())
             dispatchDragSrcEvent(eventNames().dragEvent, event);
         dispatchDragEvent(eventNames().dragleaveEvent, m_dragTarget.get(), event, clipboard);
     }
@@ -2636,12 +2628,22 @@ bool EventHandler::dragHysteresisExceeded(const IntPoint& dragViewportLocation) 
     IntSize delta = dragLocation - m_mouseDownPos;
     
     int threshold = GeneralDragHysteresis;
-    if (dragState().m_dragSrcIsImage)
-        threshold = ImageDragHysteresis;
-    else if (dragState().m_dragSrcIsLink)
-        threshold = LinkDragHysteresis;
-    else if (dragState().m_dragSrcInSelection)
+    switch (dragState().m_dragType) {
+    case DragSourceActionSelection:
         threshold = TextDragHysteresis;
+        break;
+    case DragSourceActionImage:
+        threshold = ImageDragHysteresis;
+        break;
+    case DragSourceActionLink:
+        threshold = LinkDragHysteresis;
+        break;
+    case DragSourceActionDHTML:
+        break;
+    case DragSourceActionNone:
+    case DragSourceActionAny:
+        ASSERT_NOT_REACHED();
+    }
     
     return abs(delta.width()) >= threshold || abs(delta.height()) >= threshold;
 }
@@ -2654,7 +2656,7 @@ void EventHandler::freeClipboard()
 
 void EventHandler::dragSourceEndedAt(const PlatformMouseEvent& event, DragOperation operation)
 {
-    if (dragState().m_dragSrc && dragState().m_dragSrcMayBeDHTML) {
+    if (dragState().m_dragSrc && dragState().shouldDispatchEvents()) {
         dragState().m_dragClipboard->setDestinationOperation(operation);
         // for now we don't care if event handler cancels default behavior, since there is none
         dispatchDragSrcEvent(eventNames().dragendEvent, event);
@@ -2672,6 +2674,11 @@ bool EventHandler::dispatchDragSrcEvent(const AtomicString& eventType, const Pla
     return !dispatchDragEvent(eventType, dragState().m_dragSrc.get(), event, dragState().m_dragClipboard.get());
 }
     
+static bool ExactlyOneBitSet(DragSourceAction n)
+{
+    return n && !(n & (n - 1));
+}
+
 bool EventHandler::handleDrag(const MouseEventWithHitTestResults& event)
 {
     if (event.event().button() != LeftButton || event.event().eventType() != MouseEventMoved) {
@@ -2689,50 +2696,62 @@ bool EventHandler::handleDrag(const MouseEventWithHitTestResults& event)
     // Careful that the drag starting logic stays in sync with eventMayStartDrag()
     
     if (m_mouseDownMayStartDrag && !dragState().m_dragSrc) {
-        allowDHTMLDrag(dragState().m_dragSrcMayBeDHTML, dragState().m_dragSrcMayBeUA);
-        if (!dragState().m_dragSrcMayBeDHTML && !dragState().m_dragSrcMayBeUA)
-            m_mouseDownMayStartDrag = false; // no element is draggable
-    }
+        dragState().m_eventDispatchPolicy = (updateDragSourceActionsAllowed() & DragSourceActionDHTML) ? DragState::DispatchEvents: DragState::DoNotDispatchEvents;
 
-    if (m_mouseDownMayStartDrag && !dragState().m_dragSrc) {
         // try to find an element that wants to be dragged
         HitTestRequest request(HitTestRequest::ReadOnly);
         HitTestResult result(m_mouseDownPos);
         m_frame->contentRenderer()->layer()->hitTest(request, result);
         Node* node = result.innerNode();
         if (node && m_frame->page())
-            dragState().m_dragSrc = m_frame->page()->dragController()->draggableNode(m_frame, node, dragState().m_dragSrcMayBeDHTML, dragState().m_dragSrcMayBeUA,
-                                                                                     m_mouseDownPos.x(), m_mouseDownPos.y(), dragState().m_dragSrcIsDHTML);
+            dragState().m_dragSrc = m_frame->page()->dragController()->draggableNode(m_frame, node, m_mouseDownPos, dragState());
         else
             dragState().m_dragSrc = 0;
         
         if (!dragState().m_dragSrc)
             m_mouseDownMayStartDrag = false; // no element is draggable
-        else {
-            // remember some facts about this source, while we have a HitTestResult handy
-            node = result.URLElement();
-            dragState().m_dragSrcIsLink = node && node->isLink();
-            
-            node = result.innerNonSharedNode();
-            dragState().m_dragSrcIsImage = node && node->renderer() && node->renderer()->isImage();
-            
-            dragState().m_dragSrcInSelection = m_frame->selection()->contains(m_mouseDownPos);
-        }                
+        else
+            m_dragMayStartSelectionInstead = (dragState().m_dragType & DragSourceActionSelection);
     }
     
     // For drags starting in the selection, the user must wait between the mousedown and mousedrag,
     // or else we bail on the dragging stuff and allow selection to occur
-    if (m_mouseDownMayStartDrag && !dragState().m_dragSrcIsImage && dragState().m_dragSrcInSelection && event.event().timestamp() - m_mouseDownTimestamp < TextDragDelay) {
-        m_mouseDownMayStartDrag = false;
-        dragState().m_dragSrc = 0;
-        // ...but if this was the first click in the window, we don't even want to start selection
-        if (eventActivatedView(event.event()))
-            m_mouseDownMayStartSelect = false;
+    if (m_mouseDownMayStartDrag && m_dragMayStartSelectionInstead && (dragState().m_dragType & DragSourceActionSelection) && event.event().timestamp() - m_mouseDownTimestamp < TextDragDelay) {
+        ASSERT(event.event().eventType() == MouseEventMoved);
+        if ((dragState().m_dragType & DragSourceActionImage)) {
+            // ... unless the mouse is over an image, then we start dragging just the image
+            dragState().m_dragType = DragSourceActionImage;
+        } else if (!(dragState().m_dragType & (DragSourceActionDHTML | DragSourceActionLink))) {
+            // ... but only bail if we're not over an unselectable element.
+            m_mouseDownMayStartDrag = false;
+            dragState().m_dragSrc = 0;
+            // ... but if this was the first click in the window, we don't even want to start selection
+            if (eventActivatedView(event.event()))
+                m_mouseDownMayStartSelect = false;
+        } else {
+            // Prevent the following case from occuring:
+            // 1. User starts a drag immediately after mouse down over an unselectable element.
+            // 2. We enter this block and decided that since we're over an unselectable element,
+            //    don't cancel the drag.
+            // 3. The drag gets resolved as a potential selection drag below /but/ we haven't
+            //    exceeded the drag hysteresis yet.
+            // 4. We enter this block again, and since it's now marked as a selection drag, we
+            //    cancel the drag.
+            m_dragMayStartSelectionInstead = false;
+        }
     }
     
     if (!m_mouseDownMayStartDrag)
         return !mouseDownMayStartSelect() && !m_mouseDownMayStartAutoscroll;
     
+    if (!ExactlyOneBitSet(dragState().m_dragType)) {
+        ASSERT((dragState().m_dragType & DragSourceActionSelection));
+        ASSERT((dragState().m_dragType & ~DragSourceActionSelection) == DragSourceActionDHTML
+                || (dragState().m_dragType & ~DragSourceActionSelection) == DragSourceActionImage
+                || (dragState().m_dragType & ~DragSourceActionSelection) == DragSourceActionLink);
+        dragState().m_dragType = DragSourceActionSelection;
+    }
+
     // We are starting a text/image/url drag, so the cursor should be an arrow
     if (FrameView* view = m_frame->view()) {
         // FIXME <rdar://7577595>: Custom cursors aren't supported during drag and drop (default to pointer).
@@ -2751,10 +2770,10 @@ bool EventHandler::handleDrag(const MouseEventWithHitTestResults& event)
                      // to make sure it gets numbified
     dragState().m_dragClipboard = createDraggingClipboard();  
     
-    if (dragState().m_dragSrcMayBeDHTML) {
+    if (dragState().shouldDispatchEvents()) {
         // Check to see if the is a DOM based drag, if it is get the DOM specified drag 
         // image and offset
-        if (dragState().m_dragSrcIsDHTML) {
+        if (dragState().m_dragType == DragSourceActionDHTML) {
             if (RenderObject* renderer = dragState().m_dragSrc->renderer()) {
                 // FIXME: This doesn't work correctly with transforms.
                 FloatPoint absPos = renderer->localToAbsolute();
@@ -2790,8 +2809,8 @@ bool EventHandler::handleDrag(const MouseEventWithHitTestResults& event)
     if (m_mouseDownMayStartDrag) {
         Page* page = m_frame->page();
         DragController* dragController = page ? page->dragController() : 0;
-        bool startedDrag = dragController && dragController->startDrag(m_frame, dragState().m_dragClipboard.get(), srcOp, event.event(), m_mouseDownPos, dragState().m_dragSrcIsDHTML);
-        if (!startedDrag && dragState().m_dragSrcMayBeDHTML) {
+        bool startedDrag = dragController && dragController->startDrag(m_frame, dragState(), srcOp, event.event(), m_mouseDownPos);
+        if (!startedDrag && dragState().shouldDispatchEvents()) {
             // Drag was canned at the last minute - we owe m_dragSrc a DRAGEND event
             dispatchDragSrcEvent(eventNames().dragendEvent, event.event());
             m_mouseDownMayStartDrag = false;

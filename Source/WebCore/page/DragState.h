@@ -26,23 +26,29 @@
 #ifndef DragState_h
 #define DragState_h
 
+#include "DragActions.h"
 #include <wtf/Forward.h>
+#include <wtf/Noncopyable.h>
 #include <wtf/RefPtr.h>
 
 namespace WebCore {
+
+class Clipboard;
+class Node;
 
 struct DragState {
     WTF_MAKE_NONCOPYABLE(DragState);
     WTF_MAKE_FAST_ALLOCATED;
 public:
+    enum EventDispatchPolicy {
+        DoNotDispatchEvents,
+        DispatchEvents,
+    };
     DragState() { }
+    bool shouldDispatchEvents() const { return m_eventDispatchPolicy == DispatchEvents; }
     RefPtr<Node> m_dragSrc; // element that may be a drag source, for the current mouse gesture
-    bool m_dragSrcIsLink;
-    bool m_dragSrcIsImage;
-    bool m_dragSrcInSelection;
-    bool m_dragSrcMayBeDHTML;
-    bool m_dragSrcMayBeUA; // Are DHTML and/or the UserAgent allowed to drag out?
-    bool m_dragSrcIsDHTML;
+    EventDispatchPolicy m_eventDispatchPolicy;
+    DragSourceAction m_dragType;
     RefPtr<Clipboard> m_dragClipboard; // used on only the source side of dragging
 };
 

@@ -27,6 +27,7 @@
 #define EventHandler_h
 
 #include "DragActions.h"
+#include "DragState.h"
 #include "FocusDirection.h"
 #include "HitTestRequest.h"
 #include "PlatformMouseEvent.h"
@@ -49,7 +50,6 @@ namespace WebCore {
 
 class Clipboard;
 class Cursor;
-struct DragState;
 class Event;
 class EventTarget;
 class FloatPoint;
@@ -323,7 +323,7 @@ private:
     void defaultArrowEventHandler(FocusDirection, KeyboardEvent*);
 
 #if ENABLE(DRAG_SUPPORT)
-    void allowDHTMLDrag(bool& flagDHTML, bool& flagUA) const;
+    DragSourceAction updateDragSourceActionsAllowed() const;
 #endif
 
     // The following are called at the beginning of handleMouseUp and handleDrag.  
@@ -360,6 +360,7 @@ private:
     bool m_mouseDownMayStartSelect;
 #if ENABLE(DRAG_SUPPORT)
     bool m_mouseDownMayStartDrag;
+    bool m_dragMayStartSelectionInstead;
 #endif
     bool m_mouseDownWasSingleClickInSelection;
     bool m_beganSelectingText;

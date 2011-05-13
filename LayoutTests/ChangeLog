@@ -1,3 +1,17 @@
+2011-05-13  Daniel Cheng  <dcheng@chromium.org>
+
+        Reviewed by Tony Chang.
+
+        Improve drag start logic
+        https://bugs.webkit.org/show_bug.cgi?id=59409
+
+        Add a new test to test drag start edge cases on Mac (because of a non-zero text drag delay)
+        as well as rebase an existing test.
+
+        * fast/css/user-drag-none.html: Text nodes are no longer draggable.
+        * platform/mac/editing/pasteboard/drag-selections-to-contenteditable-expected.txt: Added.
+        * platform/mac/editing/pasteboard/drag-selections-to-contenteditable.html: Added.
+
 2011-05-13  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Sam Weinig.
