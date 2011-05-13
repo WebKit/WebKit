@@ -111,7 +111,7 @@ void ewk_view_viewport_attributes_set(Evas_Object *o, const WebCore::ViewportArg
 
 void ewk_view_download_request(Evas_Object *o, Ewk_Download *download);
 
-int ewk_view_dpi_get(void);
+int ewk_util_dpi_get(void);
 
 #if ENABLE(TOUCH_EVENTS)
 void ewk_view_need_touch_events_set(Evas_Object*, bool needed);

@@ -52,10 +52,6 @@
 #include <inttypes.h>
 #include <sys/time.h>
 
-#ifdef HAVE_ECORE_X
-#include <Ecore_X.h>
-#endif
-
 #define ZOOM_MIN (0.05)
 #define ZOOM_MAX (4.0)
 
@@ -1014,7 +1010,7 @@ static WebCore::ViewportAttributes _ewk_view_viewport_attributes_compute(Evas_Ob
     EWK_VIEW_PRIV_GET(sd, priv);
 
     int desktop_width = 980;
-    int device_dpi = ewk_view_dpi_get();
+    int device_dpi = ewk_util_dpi_get();
 
     int available_width = (int) priv->page->chrome()->client()->pageRect().width();
     int available_height = (int) priv->page->chrome()->client()->pageRect().height();
@@ -4444,21 +4440,6 @@ WebCore::FloatRect ewk_view_page_rect_get(Evas_Object *o)
     WebCore::Frame* main_frame = priv->page->mainFrame();
     return main_frame->view()->frameRect();
 } 
-
-/**
- * @internal
- * Gets dpi value.
- *
- * @return device's dpi value.
- */
-int ewk_view_dpi_get(void)
-{
-#ifdef HAVE_ECORE_X
-     return ecore_x_dpi_get();
-#else
-     return 160;
-#endif
-}
 
 #if ENABLE(TOUCH_EVENTS)
 void ewk_view_need_touch_events_set(Evas_Object* o, bool needed)

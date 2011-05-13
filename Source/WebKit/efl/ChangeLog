@@ -1,3 +1,18 @@
+2011-05-13  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        [EFL] Move ewk_view_dpi_get() to ewk_util.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=60753
+
+        Move ewk_view_dpi_get() to ewk_util.cpp
+
+        * ewk/ewk_private.h:
+        * ewk/ewk_util.cpp:
+        (ewk_util_dpi_get):
+        * ewk/ewk_view.cpp:
+        (_ewk_view_viewport_attributes_compute):
+
 2011-05-11  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
         Reviewed by Antonio Gomes.
