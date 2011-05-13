@@ -252,7 +252,7 @@
 }
 
 .heapshot-help-status-bar-item .glyph {
-    -webkit-mask-image: url(Images/helpButtonGlyph.png);
+    -webkit-mask-position: -160px 0;
 }
 
 table.heapshot-help {

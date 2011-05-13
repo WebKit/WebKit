@@ -1,3 +1,10 @@
+2011-05-13  Mikhail Naganov  <mnaganov@chromium.org>
+
+        Web Inspector: Unreviewed image glyph position fix in CSS after r85588.
+
+        * inspector/front-end/heapProfiler.css:
+        (.heapshot-help-status-bar-item .glyph):
+
 2011-05-13  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Eric Seidel.
