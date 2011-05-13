@@ -59,6 +59,7 @@ class ApplicationCacheResource;
 
 class MediaPlayerPrivateQTKit : public MediaPlayerPrivateInterface {
 public:
+    ~MediaPlayerPrivateQTKit();
     static void registerMediaEngine(MediaEngineRegistrar);
 
     void repaint();
@@ -70,10 +71,9 @@ public:
 
 private:
     MediaPlayerPrivateQTKit(MediaPlayer*);
-    ~MediaPlayerPrivateQTKit();
 
     // engine support
-    static MediaPlayerPrivateInterface* create(MediaPlayer* player);
+    static PassOwnPtr<MediaPlayerPrivateInterface> create(MediaPlayer*);
     static void getSupportedTypes(HashSet<String>& types);
     static MediaPlayer::SupportsType supportsType(const String& type, const String& codecs);
     static void getSitesInMediaCache(Vector<String>&);

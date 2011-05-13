@@ -1,3 +1,40 @@
+2011-05-13  Patrick Gansterer  <paroga@webkit.org>
+
+        Reviewed by Adam Barth.
+
+        Enable OwnPtr strict mode in MediaPlayer
+        https://bugs.webkit.org/show_bug.cgi?id=59466
+
+        Let the CreateMediaEnginePlayer function return a PassOwnPtr instead of a raw pointer.
+        Also fix the templete argument of OwnPtr for the m_private member variable.
+
+        * platform/graphics/MediaPlayer.cpp:
+        (WebCore::MediaPlayer::MediaPlayer):
+        (WebCore::MediaPlayer::loadWithNextMediaEngine):
+        * platform/graphics/MediaPlayer.h:
+        * platform/graphics/avfoundation/MediaPlayerPrivateAVFoundationObjC.h:
+        * platform/graphics/avfoundation/MediaPlayerPrivateAVFoundationObjC.mm:
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::create):
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.cpp:
+        (WebCore::MediaPlayerPrivateGStreamer::create):
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.h:
+        * platform/graphics/mac/MediaPlayerPrivateQTKit.h:
+        * platform/graphics/mac/MediaPlayerPrivateQTKit.mm:
+        (WebCore::MediaPlayerPrivateQTKit::create):
+        * platform/graphics/qt/MediaPlayerPrivatePhonon.cpp:
+        (WebCore::MediaPlayerPrivatePhonon::create):
+        * platform/graphics/qt/MediaPlayerPrivatePhonon.h:
+        * platform/graphics/qt/MediaPlayerPrivateQt.cpp:
+        (WebCore::MediaPlayerPrivateQt::create):
+        * platform/graphics/qt/MediaPlayerPrivateQt.h:
+        * platform/graphics/win/MediaPlayerPrivateQuickTimeVisualContext.cpp:
+        (WebCore::MediaPlayerPrivateQuickTimeVisualContext::create):
+        * platform/graphics/win/MediaPlayerPrivateQuickTimeVisualContext.h:
+        * platform/graphics/win/MediaPlayerPrivateQuickTimeWin.cpp:
+        (WebCore::MediaPlayerPrivate::create):
+        * platform/graphics/win/MediaPlayerPrivateQuickTimeWin.h:
+        * platform/graphics/wince/MediaPlayerPrivateWinCE.h:
+
 2011-05-13  Alexey Proskuryakov  <ap@apple.com>
 
         Reviewed by Pavel Feldman.

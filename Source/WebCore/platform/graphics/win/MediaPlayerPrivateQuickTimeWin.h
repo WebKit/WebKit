@@ -137,7 +137,7 @@ private:
     virtual void movieNewImageAvailable(QTMovieGWorld*);
 
     // engine support
-    static MediaPlayerPrivateInterface* create(MediaPlayer*);
+    static PassOwnPtr<MediaPlayerPrivateInterface> create(MediaPlayer*);
     static void getSupportedTypes(HashSet<String>& types);
     static MediaPlayer::SupportsType supportsType(const String& type, const String& codecs);
     static bool isAvailable();

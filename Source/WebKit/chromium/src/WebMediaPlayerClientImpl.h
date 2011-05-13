@@ -134,7 +134,7 @@ private:
     void startDelayedLoad();
     void loadInternal();
 
-    static WebCore::MediaPlayerPrivateInterface* create(WebCore::MediaPlayer*);
+    static PassOwnPtr<WebCore::MediaPlayerPrivateInterface> create(WebCore::MediaPlayer*);
     static void getSupportedTypes(WTF::HashSet<WTF::String>&);
     static WebCore::MediaPlayer::SupportsType supportsType(
         const WTF::String& type, const WTF::String& codecs);

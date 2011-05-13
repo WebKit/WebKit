@@ -181,11 +181,9 @@ using namespace std;
 
 namespace WebCore {
 
-
-
-MediaPlayerPrivateInterface* MediaPlayerPrivateQTKit::create(MediaPlayer* player) 
+PassOwnPtr<MediaPlayerPrivateInterface> MediaPlayerPrivateQTKit::create(MediaPlayer* player)
 { 
-    return new MediaPlayerPrivateQTKit(player);
+    return adoptPtr(new MediaPlayerPrivateQTKit(player));
 }
 
 void MediaPlayerPrivateQTKit::registerMediaEngine(MediaEngineRegistrar registrar)

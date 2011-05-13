@@ -118,9 +118,9 @@ MediaPlayerPrivatePhonon::MediaPlayerPrivatePhonon(MediaPlayer* player)
     connect(m_mediaObject, SIGNAL(totalTimeChanged(qint64)), this, SLOT(totalTimeChanged(qint64)));
 }
 
-MediaPlayerPrivateInterface* MediaPlayerPrivatePhonon::create(MediaPlayer* player)
+PassOwnPtr<MediaPlayerPrivateInterface> MediaPlayerPrivatePhonon::create(MediaPlayer* player)
 {
-    return new MediaPlayerPrivatePhonon(player);
+    return adoptPtr(new MediaPlayerPrivatePhonon(player));
 }
 
 void MediaPlayerPrivatePhonon::registerMediaEngine(MediaEngineRegistrar registrar)

@@ -123,9 +123,9 @@ static const char *boolString(bool val)
 
 static const float invalidTime = -1.0f;
 
-MediaPlayerPrivateInterface* MediaPlayerPrivateAVFoundationObjC::create(MediaPlayer* player) 
+PassOwnPtr<MediaPlayerPrivateInterface> MediaPlayerPrivateAVFoundationObjC::create(MediaPlayer* player)
 { 
-    return new MediaPlayerPrivateAVFoundationObjC(player);
+    return adoptPtr(new MediaPlayerPrivateAVFoundationObjC(player));
 }
 
 void MediaPlayerPrivateAVFoundationObjC::registerMediaEngine(MediaEngineRegistrar registrar)

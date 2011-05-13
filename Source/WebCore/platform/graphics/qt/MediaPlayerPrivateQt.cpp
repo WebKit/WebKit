@@ -59,9 +59,9 @@ using namespace WTF;
 
 namespace WebCore {
 
-MediaPlayerPrivateInterface* MediaPlayerPrivateQt::create(MediaPlayer* player)
+PassOwnPtr<MediaPlayerPrivateInterface> MediaPlayerPrivateQt::create(MediaPlayer* player)
 {
-    return new MediaPlayerPrivateQt(player);
+    return adoptPtr(new MediaPlayerPrivateQt(player));
 }
 
 void MediaPlayerPrivateQt::registerMediaEngine(MediaEngineRegistrar registrar)

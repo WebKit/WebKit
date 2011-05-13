@@ -547,9 +547,9 @@ void WebMediaPlayerClientImpl::putCurrentFrame(VideoFrameChromium* videoFrame)
 }
 #endif
 
-MediaPlayerPrivateInterface* WebMediaPlayerClientImpl::create(MediaPlayer* player)
+PassOwnPtr<MediaPlayerPrivateInterface> WebMediaPlayerClientImpl::create(MediaPlayer* player)
 {
-    WebMediaPlayerClientImpl* client = new WebMediaPlayerClientImpl();
+    OwnPtr<WebMediaPlayerClientImpl> client = adoptPtr(new WebMediaPlayerClientImpl());
     client->m_mediaPlayer = player;
 
 #if USE(ACCELERATED_COMPOSITING)
@@ -564,7 +564,7 @@ MediaPlayerPrivateInterface* WebMediaPlayerClientImpl::create(MediaPlayer* playe
         frame->contentRenderer()->compositor()->hasAcceleratedCompositing();
 #endif
 
-    return client;
+    return client.release();
 }
 
 void WebMediaPlayerClientImpl::getSupportedTypes(HashSet<String>& supportedTypes)

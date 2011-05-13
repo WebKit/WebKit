@@ -151,9 +151,9 @@ static void mediaPlayerPrivateRepaintCallback(WebKitVideoSink*, GstBuffer *buffe
     playerPrivate->triggerRepaint(buffer);
 }
 
-MediaPlayerPrivateInterface* MediaPlayerPrivateGStreamer::create(MediaPlayer* player)
+PassOwnPtr<MediaPlayerPrivateInterface> MediaPlayerPrivateGStreamer::create(MediaPlayer* player)
 {
-    return new MediaPlayerPrivateGStreamer(player);
+    return adoptPtr(new MediaPlayerPrivateGStreamer(player));
 }
 
 void MediaPlayerPrivateGStreamer::registerMediaEngine(MediaEngineRegistrar registrar)

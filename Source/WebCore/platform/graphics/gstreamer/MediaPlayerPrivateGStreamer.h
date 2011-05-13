@@ -47,6 +47,7 @@ class MediaPlayerPrivateGStreamer;
 class MediaPlayerPrivateGStreamer : public MediaPlayerPrivateInterface {
 
         public:
+            ~MediaPlayerPrivateGStreamer();
             static void registerMediaEngine(MediaEngineRegistrar);
             gboolean handleMessage(GstMessage*);
 
@@ -124,9 +125,8 @@ class MediaPlayerPrivateGStreamer : public MediaPlayerPrivateInterface {
 
         private:
             MediaPlayerPrivateGStreamer(MediaPlayer*);
-            ~MediaPlayerPrivateGStreamer();
 
-            static MediaPlayerPrivateInterface* create(MediaPlayer* player);
+            static PassOwnPtr<MediaPlayerPrivateInterface> create(MediaPlayer*);
 
             static void getSupportedTypes(HashSet<String>&);
             static MediaPlayer::SupportsType supportsType(const String& type, const String& codecs);

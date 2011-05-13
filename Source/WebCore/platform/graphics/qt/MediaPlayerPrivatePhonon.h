@@ -128,7 +128,7 @@ namespace WebCore {
 
     private:
         MediaPlayerPrivatePhonon(MediaPlayer*);
-        static MediaPlayerPrivateInterface* create(MediaPlayer* player);
+        static PassOwnPtr<MediaPlayerPrivateInterface> create(MediaPlayer*);
 
         static void getSupportedTypes(HashSet<String>&);
         static MediaPlayer::SupportsType supportsType(const String& type, const String& codecs);

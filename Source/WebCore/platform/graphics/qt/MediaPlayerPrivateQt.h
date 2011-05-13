@@ -46,7 +46,7 @@ class MediaPlayerPrivateQt : public QObject, public MediaPlayerPrivateInterface
     Q_OBJECT
 
 public:
-    static MediaPlayerPrivateInterface* create(MediaPlayer* player);
+    static PassOwnPtr<MediaPlayerPrivateInterface> create(MediaPlayer*);
     ~MediaPlayerPrivateQt();
 
     static void registerMediaEngine(MediaEngineRegistrar);

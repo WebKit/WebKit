@@ -148,9 +148,9 @@ private:
     MediaPlayerPrivateQuickTimeVisualContext* m_parent;
 };
 
-MediaPlayerPrivateInterface* MediaPlayerPrivateQuickTimeVisualContext::create(MediaPlayer* player) 
+PassOwnPtr<MediaPlayerPrivateInterface> MediaPlayerPrivateQuickTimeVisualContext::create(MediaPlayer* player)
 { 
-    return new MediaPlayerPrivateQuickTimeVisualContext(player);
+    return adoptPtr(new MediaPlayerPrivateQuickTimeVisualContext(player));
 }
 
 void MediaPlayerPrivateQuickTimeVisualContext::registerMediaEngine(MediaEngineRegistrar registrar)

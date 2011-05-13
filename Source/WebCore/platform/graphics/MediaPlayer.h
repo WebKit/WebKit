@@ -310,7 +310,7 @@ private:
 
     MediaPlayerClient* m_mediaPlayerClient;
     Timer<MediaPlayer> m_reloadTimer;
-    OwnPtr<MediaPlayerPrivateInterface*> m_private;
+    OwnPtr<MediaPlayerPrivateInterface> m_private;
     MediaPlayerFactory* m_currentMediaEngine;
     String m_url;
     String m_contentMIMEType;
@@ -330,7 +330,7 @@ private:
 #endif
 };
 
-typedef MediaPlayerPrivateInterface* (*CreateMediaEnginePlayer)(MediaPlayer*);
+typedef PassOwnPtr<MediaPlayerPrivateInterface> (*CreateMediaEnginePlayer)(MediaPlayer*);
 typedef void (*MediaEngineSupportedTypes)(HashSet<String>& types);
 typedef MediaPlayer::SupportsType (*MediaEngineSupportsType)(const String& type, const String& codecs);
 typedef void (*MediaEngineGetSitesInMediaCache)(Vector<String>&);

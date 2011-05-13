@@ -25,9 +25,6 @@
 
 #include "config.h"
 
-// FIXME: Remove this define!
-#define LOOSE_OWN_PTR
-
 #if ENABLE(VIDEO)
 #include "MediaPlayer.h"
 
@@ -310,8 +307,7 @@ MediaPlayer::MediaPlayer(MediaPlayerClient* client)
     Vector<MediaPlayerFactory*>& engines = installedMediaEngines();
     if (!engines.isEmpty()) {
         m_currentMediaEngine = engines[0];
-        m_private.clear();
-        m_private.set(engines[0]->constructor(this));
+        m_private = engines[0]->constructor(this);
         if (m_mediaPlayerClient)
             m_mediaPlayerClient->mediaPlayerEngineUpdated(this);
     }
@@ -362,11 +358,10 @@ void MediaPlayer::loadWithNextMediaEngine(MediaPlayerFactory* current)
     // Don't delete and recreate the player unless it comes from a different engine.
     if (!engine) {
         m_currentMediaEngine = engine;
-        m_private.clear();
+        m_private = nullptr;
     } else if (m_currentMediaEngine != engine) {
         m_currentMediaEngine = engine;
-        m_private.clear();
-        m_private.set(engine->constructor(this));
+        m_private = engine->constructor(this);
         if (m_mediaPlayerClient)
             m_mediaPlayerClient->mediaPlayerEngineUpdated(this);
 #if ENABLE(PLUGIN_PROXY_FOR_VIDEO)

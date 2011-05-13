@@ -71,9 +71,9 @@ namespace WebCore {
 SOFT_LINK_LIBRARY(Wininet)
 SOFT_LINK(Wininet, InternetSetCookieExW, DWORD, WINAPI, (LPCWSTR lpszUrl, LPCWSTR lpszCookieName, LPCWSTR lpszCookieData, DWORD dwFlags, DWORD_PTR dwReserved), (lpszUrl, lpszCookieName, lpszCookieData, dwFlags, dwReserved))
 
-MediaPlayerPrivateInterface* MediaPlayerPrivate::create(MediaPlayer* player) 
+PassOwnPtr<MediaPlayerPrivateInterface> MediaPlayerPrivate::create(MediaPlayer* player)
 { 
-    return new MediaPlayerPrivate(player);
+    return adoptPtr(new MediaPlayerPrivate(player));
 }
 
 void MediaPlayerPrivate::registerMediaEngine(MediaEngineRegistrar registrar)
