@@ -1,3 +1,15 @@
+2011-05-01  Holger Hans Peter Freyther  <holger@moiji-mobile.com>
+
+        Reviewed by Adam Barth.
+
+        [android] Forward declare types for PlatformWidget and DragImage
+        https://bugs.webkit.org/show_bug.cgi?id=59890
+
+        This is a simple build fix.
+
+        * platform/DragImage.h:
+        * platform/Widget.h:
+
 2011-05-06  Pavel Podivilov  <podivilov@chromium.org>
 
         Reviewed by Yury Semikhatsky.
