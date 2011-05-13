@@ -1,5 +1,21 @@
 2011-05-13  Adam Roben  <aroben@apple.com>
 
+        Add a plugin test that dumps the plugin window's rect
+
+        Part of the test for <http://webkit.org/b/60194> <rdar://problem/9383760> REGRESSION
+        (r79167): Windowed plugins in Google Reader don't move when the article list is scrolled
+
+        Reviewed by Dan Bernstein.
+
+        * DumpRenderTree/TestNetscapePlugIn/Tests/win/DumpWindowRect.cpp: Added.
+        (DumpWindowRect::DumpWindowRect): Just call up to the base class.
+        (DumpWindowRect::performWindowGeometryTest): Find our window rect relative to the test
+        harness window and log it.
+
+        * DumpRenderTree/TestNetscapePlugIn/win/TestNetscapePlugin.vcproj: Added DumpWindowRect.
+
+2011-05-13  Adam Roben  <aroben@apple.com>
+
         Move code required for most tests of plugin window geometry into a base class
 
         WebKit2's asynchronous plugin window positioning makes testing window geometry tricky. By

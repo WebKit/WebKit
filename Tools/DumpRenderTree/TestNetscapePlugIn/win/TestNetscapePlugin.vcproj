@@ -441,6 +441,10 @@
 					>
 				</File>
 				<File
+					RelativePath="..\Tests\win\DumpWindowRect.cpp"
+					>
+				</File>
+				<File
 					RelativePath="..\Tests\win\GetValueNetscapeWindow.cpp"
 					>
 				</File>

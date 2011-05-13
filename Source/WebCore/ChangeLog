@@ -1,3 +1,37 @@
+2011-05-13  Adam Roben  <aroben@apple.com>
+
+        Tell ScrollView's child Widgets that their frame rects have changed when its own frame rect
+        changes
+
+        r79167 moved some code from setFrameRect to setBoundsSize, including a call to
+        frameRectsChanged. This was done because positionScrollbarLayers, which is called by
+        frameRectsChanged, only needs to be called when the bounds change, not when the frame rect
+        changes. But the recursive calls inside frameRectsChanged *do* need to be called when the
+        frame rect changes.
+
+        This patch moves the positionScrollbarLayers call out of frameRectsChanged, since it needs
+        to be called at different times from frameRectsChanged. Then it restores the
+        frameRectsChanged call to setFrameRect, which fixes the bug.
+
+        Test: platform/win/plugins/iframe-inside-overflow.html
+
+        Fixes <http://webkit.org/b/60194> <rdar://problem/9383760> REGRESSION (r79167): Windowed
+        plugins in Google Reader don't move when the article list is scrolled
+
+        Reviewed by Dan Bernstein.
+
+        * platform/ScrollView.cpp:
+        (WebCore::ScrollView::updateScrollbars): Added a positionScrollbarLayers call here now that
+        frameRectsChanged doesn't call it for us. Also added a FIXME because it seems strange to
+        call frameRectsChanged here when our frame rect hasn't changed.
+        (WebCore::ScrollView::setFrameRect): Added back the frameRectsChanged call that was removed
+        in r79167.
+        (WebCore::ScrollView::setBoundsSize): Replaced a frameRectsChanged call with a call to
+        positionScrollbarLayers. We were only calling frameRectsChanged here in order to get
+        positionScrollbarLayers to be called.
+        (WebCore::ScrollView::frameRectsChanged): Removed the call to positionScrollbarLayers. All
+        callers of frameRectsChanged have been updated to call positionScrollbarLayers if needed.
+
 2011-05-13  Martin Robinson  <mrobinson@igalia.com>
 
         Reviewed by Eric Seidel.
