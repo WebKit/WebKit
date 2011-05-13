@@ -13,15 +13,28 @@ iframe.contentWindow.onstorage = function (e) {
     window.parent.storageEventList.push(e);
 }
 
-function runAfterStorageEvents(callback) {
-    var currentCount = storageEventList.length;
-    function onTimeout() {
-        if (currentCount != storageEventList.length)
-            runAfterStorageEvents(callback);
-        else
+function runAfterNStorageEvents(callback, expectedNumEvents)
+{
+    countStorageEvents(callback, expectedNumEvents, 0)
+}
+
+function countStorageEvents(callback, expectedNumEvents, times)
+{
+    function onTimeout()
+    {
+        var currentCount = storageEventList.length;
+        if (currentCount == expectedNumEvents)
             callback();
+        else if (currentCount > expectedNumEvents) {
+            testFailed("got at least " + currentCount + ", expected only " + expectedNumEvents + " events");
+            callback();
+        } else if (times > 50) {
+            testFailed("Timeout: only got " + currentCount + ", expected " + expectedNumEvents + " events");
+            callback();
+        } else
+            countStorageEvents(callback, expectedNumEvents, times+1)
     }
-    setTimeout(onTimeout, 0);
+    setTimeout(onTimeout, 20);
 }
 
 function testStorages(testCallback)
@@ -34,6 +47,8 @@ function testStorages(testCallback)
         window.successfullyParsed = true;
         isSuccessfullyParsed();
         debug("");
+        localStorage.clear();
+        sessionStorage.clear();
         if (window.layoutTestController)
             layoutTestController.notifyDone()
     }

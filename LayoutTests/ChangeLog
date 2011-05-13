@@ -1,3 +1,47 @@
+2011-05-12  David Grogan  <dgrogan@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        make layout tests in storage/domstorage/events more deterministic
+        https://bugs.webkit.org/show_bug.cgi?id=60299
+
+        Instead of counting the number of storage events fired between two
+        setTimeout(0) events, specify the number of events to wait for and wait up to
+        1 second for them.
+
+        * storage/domstorage/events/resources/eventTestHarness.js:
+        (runAfterNStorageEvents):
+        (countStorageEvents.onTimeout):
+        (countStorageEvents):
+        (testStorages.allDone):
+        * storage/domstorage/events/script-tests/basic-body-attribute.js:
+        (step1):
+        (step2):
+        (step3):
+        (step4):
+        (step5):
+        * storage/domstorage/events/script-tests/basic-setattribute.js:
+        (step1):
+        (step2):
+        (step3):
+        (step4):
+        (step5):
+        * storage/domstorage/events/script-tests/basic.js:
+        (test):
+        (step1):
+        (step2):
+        (step3):
+        (step4):
+        (step5):
+        * storage/domstorage/events/script-tests/case-sensitive.js:
+        (test):
+        (step1):
+        (step2):
+        * storage/domstorage/events/script-tests/documentURI.js:
+        (test):
+        (step1):
+        (step2):
+
 2011-05-12  Andrew Wilson  <atwilson@chromium.org>
 
         Unreviewed expectations tweaks for chromium.

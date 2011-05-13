@@ -11,6 +11,7 @@ function test(storageString, callback)
 
     debug("Testing " + storageString);
 
+    storageEventList = new Array();
     evalAndLog("storage.clear()");
     shouldBe("storage.length", "0");
 
@@ -18,7 +19,7 @@ function test(storageString, callback)
     debug("Verify storage events are case sensitive");
     evalAndLog("storage.foo = 'test'");
 
-    runAfterStorageEvents(step1);
+    runAfterNStorageEvents(step1, 1);
 }
 
 function step1()
@@ -27,7 +28,7 @@ function step1()
     evalAndLog("storageEventList = new Array()");
     evalAndLog("storage.foo = 'test'");
 
-    runAfterStorageEvents(step2);
+    runAfterNStorageEvents(step2, 0);
 }
 
 function step2()
@@ -35,7 +36,7 @@ function step2()
     shouldBe("storageEventList.length", "0");
     evalAndLog("storage.foo = 'TEST'");
 
-    runAfterStorageEvents(step3);
+    runAfterNStorageEvents(step3, 1);
 }
 
 function step3()

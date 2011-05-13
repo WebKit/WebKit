@@ -11,10 +11,11 @@ function test(storageString, callback)
 
     debug("Testing " + storageString);
 
+    storageEventList = new Array();
     evalAndLog("storage.clear()");
     shouldBe("storage.length", "0");
 
-    runAfterStorageEvents(step1);
+    runAfterNStorageEvents(step1, 0);
 }
 
 function step1()
@@ -23,7 +24,7 @@ function step1()
     evalAndLog("storageEventList = new Array()");
     evalAndLog("storage.foo = '123'");
 
-    runAfterStorageEvents(step2);
+    runAfterNStorageEvents(step2, 1);
 }
 
 function step2()
@@ -36,7 +37,7 @@ function step2()
     shouldBeEqualToString("document.documentURI", "abc");
     evalAndLog("storage.foo = 'xyz'");
 
-    runAfterStorageEvents(step3);
+    runAfterNStorageEvents(step3, 2);
 }
 
 function step3()

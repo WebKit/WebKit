@@ -24,7 +24,7 @@ function step1()
     evalAndLog("storageEventList = new Array()");
     evalAndLog("storage.setItem('FOO', 'BAR')");
 
-    runAfterStorageEvents(step2);
+    runAfterNStorageEvents(step2, 1);
 }
 
 function step2()
@@ -38,7 +38,7 @@ function step2()
     evalAndLog("storage.setItem('b', '2')");
     evalAndLog("storage.setItem('b', '3')");
 
-    runAfterStorageEvents(step3);
+    runAfterNStorageEvents(step3, 5);
 }
 
 function step3()
@@ -58,7 +58,7 @@ function step3()
     shouldBeEqualToString("storageEventList[4].newValue", "3");
     evalAndLog("storage.removeItem('FOO')");
 
-    runAfterStorageEvents(step4);
+    runAfterNStorageEvents(step4, 6);
 }
 
 function step4()
@@ -69,7 +69,7 @@ function step4()
     shouldBeNull("storageEventList[5].newValue");
     evalAndLog("storage.removeItem('FU')");
 
-    runAfterStorageEvents(step5);
+    runAfterNStorageEvents(step5, 7);
 }
 
 function step5()
@@ -80,7 +80,7 @@ function step5()
     shouldBeNull("storageEventList[6].newValue");
     evalAndLog("storage.clear()");
  
-    runAfterStorageEvents(step6);
+    runAfterNStorageEvents(step6, 8);
 }
 
 function step6()
