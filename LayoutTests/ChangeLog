@@ -1,3 +1,18 @@
+2011-05-02  Robert Hogan  <robert@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        Make fast/dom/object-embed-plugin-scripting.html compatible with non-Mac ports
+
+        https://bugs.webkit.org/show_bug.cgi?id=59930
+
+        * fast/dom/resources/articles.m4a: Removed.
+        * platform/chromium/test_expectations.txt: Unskip object-embed-plugin-scripting.html on Linux
+        * platform/qt/Skipped: Unskip object-embed-plugin-scripting.html
+        * plugins/object-embed-plugin-scripting-expected.txt: Renamed from LayoutTests/fast/dom/object-embed-plugin-scripting-expected.txt.
+        * plugins/object-embed-plugin-scripting.html: Renamed from LayoutTests/fast/dom/object-embed-plugin-scripting.html.
+        * plugins/resources/apple.gif: Added.
+
 2011-05-13  Steve VanDeBogart  <vandebo@chromium.org>
 
         Unreviewed.
