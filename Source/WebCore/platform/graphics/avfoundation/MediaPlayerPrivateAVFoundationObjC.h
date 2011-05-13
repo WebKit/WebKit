@@ -55,6 +55,7 @@ class ApplicationCacheResource;
 
 class MediaPlayerPrivateAVFoundationObjC : public MediaPlayerPrivateAVFoundation {
 public:
+    ~MediaPlayerPrivateAVFoundationObjC();
 
     static void registerMediaEngine(MediaEngineRegistrar);
 
@@ -63,7 +64,6 @@ public:
 
 private:
     MediaPlayerPrivateAVFoundationObjC(MediaPlayer*);
-    ~MediaPlayerPrivateAVFoundationObjC();
 
     // engine support
     static PassOwnPtr<MediaPlayerPrivateInterface> create(MediaPlayer*);

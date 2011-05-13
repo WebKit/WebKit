@@ -1,3 +1,11 @@
+2011-05-13  Adam Roben  <aroben@apple.com>
+
+        Build fix after r86418
+
+        * platform/graphics/avfoundation/MediaPlayerPrivateAVFoundationObjC.h:
+        Made the destructor public so that this class can be used with
+        [Pass]OwnPtr.
+
 2011-05-11  Hans Wennborg  <hans@chromium.org>
 
         Reviewed by Tony Gentilcore.
