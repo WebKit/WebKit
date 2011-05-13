@@ -1,3 +1,21 @@
+2011-05-13  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        iframe sandbox doesn't properly block popups
+        https://bugs.webkit.org/show_bug.cgi?id=60784
+
+        Previously, we weren't implementing this requirement from the spec:
+
+        "This flag also prevents content from creating new auxiliary browsing
+        contexts, e.g. using the target attribute or the window.open() method."
+
+        Tests: http/tests/security/no-popup-from-sandbox-top.html
+               http/tests/security/no-popup-from-sandbox.html
+
+        * loader/PolicyChecker.cpp:
+        (WebCore::PolicyChecker::checkNewWindowPolicy):
+
 2011-05-13  Ryosuke Niwa  <rniwa@webkit.org>
 
         Reviewed by Darin Adler.

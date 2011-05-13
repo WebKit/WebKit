@@ -1,3 +1,17 @@
+2011-05-13  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        iframe sandbox doesn't properly block popups
+        https://bugs.webkit.org/show_bug.cgi?id=60784
+
+        Test that we block popup windows from inside sandbox.
+
+        * http/tests/security/no-popup-from-sandbox-expected.txt: Added.
+        * http/tests/security/no-popup-from-sandbox-top-expected.txt: Added.
+        * http/tests/security/no-popup-from-sandbox-top.html: Added.
+        * http/tests/security/no-popup-from-sandbox.html: Added.
+
 2011-05-13  Ryosuke Niwa  <rniwa@webkit.org>
 
         Reviewed by Darin Adler.
