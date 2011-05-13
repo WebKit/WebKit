@@ -1,3 +1,35 @@
+2011-05-13  Adam Roben  <aroben@apple.com>
+
+        Move code required for most tests of plugin window geometry into a base class
+
+        WebKit2's asynchronous plugin window positioning makes testing window geometry tricky. By
+        having all the trickiness in a shared base class, writing new window geometry tests will be
+        much easier.
+
+        Fixes <http://webkit.org/b/60776> It's hard to write tests that check plugin window geometry
+
+        Reviewed by Anders Carlsson.
+
+        * DumpRenderTree/TestNetscapePlugIn/Tests/win/WindowRegionIsSetToClipRect.cpp:
+        (WindowRegionIsSetToClipRect::WindowRegionIsSetToClipRect): Changed to inherit from the new
+        WindowGeometryTest base class. Most of the code from this class was moved to the new base
+        class.
+        (WindowRegionIsSetToClipRect::performWindowGeometryTest): Renamed from checkWindowRegion.
+        This is called by the base class when it is safe to check the window's geometry. Note that
+        the m_didCheckWindowRegion logic was removed completely; it has never been needed and was
+        just vestigial code from an earlier version of this test.
+
+        * DumpRenderTree/TestNetscapePlugIn/win/TestNetscapePlugin.vcproj: Added new
+        WindowGeometryTest class.
+
+        * DumpRenderTree/TestNetscapePlugIn/win/WindowGeometryTest.cpp: Added. Code came from
+        WindowRegionIsSetToClipRect.
+        (WindowGeometryTest::finishTest): This is the only change from WindowRegionIsSetToClipRect.
+        We now call the new virtual performWindowGeometryTest function instead of checkWindowRegion.
+        Subclasses can implement that function to perform their own tests.
+
+        * DumpRenderTree/TestNetscapePlugIn/win/WindowGeometryTest.h: Added.
+
 2011-05-13  Zoltan Herczeg  <zherczeg@webkit.org>
 
         Reviewed by Csaba Osztrogonác.
