@@ -2,6 +2,28 @@
 
         Reviewed by Yury Semikhatsky.
 
+        Web Inspector: TextEditor should support editing a range.
+        https://bugs.webkit.org/show_bug.cgi?id=59688
+
+        * inspector/front-end/TextViewer.js:
+        (WebInspector.TextEditorChunkedPanel.prototype.makeLineAChunk):
+        (WebInspector.TextEditorChunkedPanel.prototype._splitChunkOnALine):
+        (WebInspector.TextEditorMainPanel.prototype.setEditableRange):
+        (WebInspector.TextEditorMainPanel.prototype.clearEditableRange):
+        (WebInspector.TextEditorMainPanel.prototype._splitChunkOnALine):
+        (WebInspector.TextEditorMainPanel.prototype._applyDomUpdates):
+        (WebInspector.TextEditorMainChunk):
+        (WebInspector.TextEditorMainChunk.prototype.set expanded):
+        (WebInspector.TextEditorMainChunk.prototype.set readOnly):
+        (WebInspector.TextEditorMainChunk.prototype.get readOnly):
+        (WebInspector.TextEditorMainChunk.prototype._updateElementReadOnlyState):
+        * inspector/front-end/textViewer.css:
+        (.text-editor-read-only):
+
+2011-05-05  Pavel Podivilov  <podivilov@chromium.org>
+
+        Reviewed by Yury Semikhatsky.
+
         Web Inspector: fix source mapping for formatted scripts.
         https://bugs.webkit.org/show_bug.cgi?id=60263
 

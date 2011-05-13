@@ -446,10 +446,10 @@ WebInspector.TextEditorChunkedPanel.prototype = {
         if (oldChunk.linesCount === 1)
             return oldChunk;
 
-        return this._splitChunkOnALine(lineNumber, chunkNumber);
+        return this._splitChunkOnALine(lineNumber, chunkNumber, true);
     },
 
-    _splitChunkOnALine: function(lineNumber, chunkNumber)
+    _splitChunkOnALine: function(lineNumber, chunkNumber, createSuffixChunk)
     {
         this.beginDomUpdates();
 
@@ -462,18 +462,22 @@ WebInspector.TextEditorChunkedPanel.prototype = {
         // Prefix chunk.
         if (lineNumber > oldChunk.startLine) {
             var prefixChunk = this._createNewChunk(oldChunk.startLine, lineNumber);
+            prefixChunk.readOnly = oldChunk.readOnly;
             this._textChunks.splice(insertIndex++, 0, prefixChunk);
             this._container.insertBefore(prefixChunk.element, oldChunk.element);
         }
 
         // Line chunk.
-        var lineChunk = this._createNewChunk(lineNumber, lineNumber + 1);
+        var endLine = createSuffixChunk ? lineNumber + 1 : oldChunk.startLine + oldChunk.linesCount;
+        var lineChunk = this._createNewChunk(lineNumber, endLine);
+        lineChunk.readOnly = oldChunk.readOnly;
         this._textChunks.splice(insertIndex++, 0, lineChunk);
         this._container.insertBefore(lineChunk.element, oldChunk.element);
 
         // Suffix chunk.
-        if (oldChunk.startLine + oldChunk.linesCount > lineNumber + 1) {
-            var suffixChunk = this._createNewChunk(lineNumber + 1, oldChunk.startLine + oldChunk.linesCount);
+        if (oldChunk.startLine + oldChunk.linesCount > endLine) {
+            var suffixChunk = this._createNewChunk(endLine, oldChunk.startLine + oldChunk.linesCount);
+            suffixChunk.readOnly = oldChunk.readOnly;
             this._textChunks.splice(insertIndex, 0, suffixChunk);
             this._container.insertBefore(suffixChunk.element, oldChunk.element);
         }
@@ -907,6 +911,43 @@ WebInspector.TextEditorMainPanel.prototype = {
         return this._readOnly;
     },
 
+    setEditableRange: function(startLine, endLine)
+    {
+        this.beginDomUpdates();
+
+        var firstChunkNumber = this._chunkNumberForLine(startLine);
+        var firstChunk = this._textChunks[firstChunkNumber];
+        if (firstChunk.startLine !== startLine) {
+            this._splitChunkOnALine(startLine, firstChunkNumber);
+            firstChunkNumber += 1;
+        }
+
+        var lastChunkNumber = this._textChunks.length;
+        if (endLine !== this._textModel.linesCount) {
+            lastChunkNumber = this._chunkNumberForLine(endLine);
+            var lastChunk = this._textChunks[lastChunkNumber];
+            if (lastChunk && lastChunk.startLine !== endLine) {
+                this._splitChunkOnALine(endLine, lastChunkNumber);
+                lastChunkNumber += 1;
+            }
+        }
+
+        for (var chunkNumber = 0; chunkNumber < firstChunkNumber; ++chunkNumber)
+            this._textChunks[chunkNumber].readOnly = true;
+        for (var chunkNumber = firstChunkNumber; chunkNumber < lastChunkNumber; ++chunkNumber)
+            this._textChunks[chunkNumber].readOnly = false;
+        for (var chunkNumber = lastChunkNumber; chunkNumber < this._textChunks.length; ++chunkNumber)
+            this._textChunks[chunkNumber].readOnly = true;
+
+        this.endDomUpdates();
+    },
+
+    clearEditableRange: function()
+    {
+        for (var chunkNumber = 0; chunkNumber < this._textChunks.length; ++chunkNumber)
+            this._textChunks[chunkNumber].readOnly = false;
+    },
+
     markAndRevealRange: function(range)
     {
         if (this._rangeToMark) {
@@ -1010,10 +1051,10 @@ WebInspector.TextEditorMainPanel.prototype = {
         return true;
     },
 
-    _splitChunkOnALine: function(lineNumber, chunkNumber)
+    _splitChunkOnALine: function(lineNumber, chunkNumber, createSuffixChunk)
     {
         var selection = this._getSelection();
-        var chunk = WebInspector.TextEditorChunkedPanel.prototype._splitChunkOnALine.call(this, lineNumber, chunkNumber);
+        var chunk = WebInspector.TextEditorChunkedPanel.prototype._splitChunkOnALine.call(this, lineNumber, chunkNumber, createSuffixChunk);
         this._restoreSelection(selection);
         return chunk;
     },
@@ -1578,7 +1619,7 @@ WebInspector.TextEditorMainPanel.prototype = {
             var oldRange = new WebInspector.TextRange(startLine, startColumn, endLine - 1, endColumn);
 
         var newRange = this._setText(oldRange, lines.join("\n"));
-        
+
         this._paintScheduledLines(true);
         this._restoreSelection(selection);
 
@@ -1776,6 +1817,7 @@ WebInspector.TextEditorMainChunk = function(textViewer, startLine, endLine)
     this.linesCount = endLine - startLine;
 
     this._expanded = false;
+    this._readOnly = false;
 
     this.updateCollapsedLineRow();
 }
@@ -1863,6 +1905,7 @@ WebInspector.TextEditorMainChunk.prototype = {
             var parentElement = this.element.parentElement;
             for (var i = this.startLine; i < this.startLine + this.linesCount; ++i) {
                 var lineRow = this._createRow(i);
+                this._updateElementReadOnlyState(lineRow);
                 parentElement.insertBefore(lineRow, this.element);
                 this._expandedLineRows.push(lineRow);
             }
@@ -1886,6 +1929,32 @@ WebInspector.TextEditorMainChunk.prototype = {
         }
 
         this._textViewer.endDomUpdates();
+    },
+
+    set readOnly(readOnly)
+    {
+        if (this._readOnly === readOnly)
+            return;
+
+        this._readOnly = readOnly;
+        this._updateElementReadOnlyState(this.element);
+        if (this._expandedLineRows) {
+            for (var i = 0; i < this._expandedLineRows.length; ++i)
+                this._updateElementReadOnlyState(this._expandedLineRows[i]);
+        }
+    },
+
+    get readOnly()
+    {
+        return this._readOnly;
+    },
+
+    _updateElementReadOnlyState: function(element)
+    {
+        if (this._readOnly)
+            element.addStyleClass("text-editor-read-only");
+        else
+            element.removeStyleClass("text-editor-read-only");
     },
 
     get height()

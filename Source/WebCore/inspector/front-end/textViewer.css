@@ -43,6 +43,11 @@
     -webkit-user-modify: read-write-plaintext-only;
 }
 
+.text-editor-read-only {
+    -webkit-user-modify: read-only;
+    background-color: rgb(240, 240, 240);
+}
+
 .webkit-line-decorations {
     pointer-events: none;
     -webkit-user-select: none;
