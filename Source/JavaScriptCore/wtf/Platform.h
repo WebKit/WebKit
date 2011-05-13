@@ -533,13 +533,6 @@
 #define WTF_PLATFORM_IOS 0
 #endif
 
-/* PLATFORM(ANDROID) */
-/* FIXME: this is sometimes used as an OS() switch, and other times to drive
-   policy choices */
-#if defined(ANDROID)
-#define WTF_PLATFORM_ANDROID 1
-#endif
-
 /* Graphics engines */
 
 /* USE(CG) and PLATFORM(CI) */

@@ -1,3 +1,15 @@
+2011-05-01  Holger Hans Peter Freyther  <holger@moiji-mobile.com>
+
+        Reviewed by Steve Block.
+
+        [android] OS(ANDROID) does not imply PLATFORM(ANDROID)
+        https://bugs.webkit.org/show_bug.cgi?id=59888
+
+        It is possible to build QtWebKit and others for OS(ANDROID). Let
+        the buildsystem decide which platform is to be build.
+
+        * wtf/Platform.h:
+
 2011-05-12  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Darin Adler.
