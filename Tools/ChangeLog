@@ -1,5 +1,21 @@
 2011-05-13  Adam Roben  <aroben@apple.com>
 
+        Group all the NRWT bots together
+
+        This also gets the new NRWT bots out of the middle of Apple's bots. Since these new NRWT
+        bots are experimental, it seems best not to clutter up the non-experimental bots with
+        experimental ones.
+
+        Fixes <http://webkit.org/b/60769> New "(NRWT)" bots are right in the middle of Apple's bots
+        on build.webkit.org
+
+        Reviewed by Dan Bernstein.
+
+        * BuildSlaveSupport/build.webkit.org-config/config.json: Moved the "(NRWT)" bots next to the
+        Chromium testers, which also use new-run-webkit-tests.
+
+2011-05-13  Adam Roben  <aroben@apple.com>
+
         Add a plugin test that dumps the plugin window's rect
 
         Part of the test for <http://webkit.org/b/60194> <rdar://problem/9383760> REGRESSION

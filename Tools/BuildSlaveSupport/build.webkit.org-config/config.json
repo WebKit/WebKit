@@ -117,16 +117,6 @@
                       "slavenames": ["apple-xserve-9"]
                     },
                     {
-                      "name": "Leopard Intel Release (NRWT)", "type": "NewBuildAndTest", "builddir": "google-new-tests-leopard",
-                      "platform": "mac-leopard", "configuration": "release", "architectures": ["i386"],
-                      "slavenames": ["google-new-tests-leopard"]
-                    },
-                    {
-                      "name": "SnowLeopard Intel Release (NRWT)", "type": "NewBuildAndTest", "builddir": "google-new-tests",
-                      "platform": "mac-snowleopard", "configuration": "release", "architectures": ["x86_64"],
-                      "slavenames": ["google-new-tests"]
-                    },
-                    {
                       "name": "Windows Release (Build)", "type": "Build", "builddir": "win-release",
                       "platform": "win", "configuration": "release", "architectures": ["i386"],
                       "triggers": ["win-release-tests", "win-release-tests-wk2"],
@@ -221,6 +211,16 @@
                       "name": "Chromium Linux Release (Tests)", "type": "NewBuildAndTest", "builddir": "chromium-linux-release-tests",
                       "platform": "chromium-linux", "configuration": "release", "architectures": ["i386"],
                       "slavenames": ["google-linux-2"]
+                    },
+                    {
+                      "name": "Leopard Intel Release (NRWT)", "type": "NewBuildAndTest", "builddir": "google-new-tests-leopard",
+                      "platform": "mac-leopard", "configuration": "release", "architectures": ["i386"],
+                      "slavenames": ["google-new-tests-leopard"]
+                    },
+                    {
+                      "name": "SnowLeopard Intel Release (NRWT)", "type": "NewBuildAndTest", "builddir": "google-new-tests",
+                      "platform": "mac-snowleopard", "configuration": "release", "architectures": ["x86_64"],
+                      "slavenames": ["google-new-tests"]
                     },
                     {
                       "name": "WinCairo Debug (Build)", "type": "Build", "builddir": "win-cairo-debug",
