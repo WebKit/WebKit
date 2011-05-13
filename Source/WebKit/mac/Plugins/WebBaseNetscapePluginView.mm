@@ -41,6 +41,7 @@
 #import "WebView.h"
 #import "WebViewInternal.h"
 
+#import <WebCore/AuthenticationCF.h>
 #import <WebCore/AuthenticationMac.h>
 #import <WebCore/BitmapImage.h>
 #import <WebCore/Credential.h>

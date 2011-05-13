@@ -50,7 +50,7 @@ public:
 #if USE(CFNETWORK)
     AuthenticationChallenge(CFURLAuthChallengeRef, AuthenticationClient*);
 
-    AuthenticationClient* authenticationClient() const { return m_authenticationClient.get(); }
+    AuthenticationClient* authenticationClient() const;
     void setAuthenticationClient(AuthenticationClient* client) { m_authenticationClient = client; }
 
     CFURLAuthChallengeRef cfURLAuthChallengeRef() const { return m_cfChallenge.get(); }

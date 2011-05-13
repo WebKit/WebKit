@@ -1652,6 +1652,10 @@ __ZN7WebCore3macERKNS_15ProtectionSpaceE
 __ZNK7WebCore15ProtectionSpace20authenticationSchemeEv
 #endif
 
+#if USE(PROTECTION_SPACE_AUTH_CALLBACK) && USE(CFNETWORK)
+__ZN7WebCore8createCFERKNS_15ProtectionSpaceE
+#endif
+
 #if ENABLE(SVG_ANIMATION) && ENABLE(SVG_DOM_OBJC_BINDINGS)
 .objc_class_name_DOMSVGAnimateElement
 .objc_class_name_DOMSVGAnimateTransformElement

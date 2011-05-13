@@ -26,6 +26,8 @@
 #include "config.h"
 #include "CredentialStorage.h"
 
+#if !USE(CFNETWORK)
+
 #include "AuthenticationMac.h"
 #include "Credential.h"
 
@@ -38,3 +40,5 @@ Credential CredentialStorage::getFromPersistentStorage(const ProtectionSpace& pr
 }
 
 } // namespace WebCore
+
+#endif // !USE(CFNETWORK)

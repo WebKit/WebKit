@@ -68,6 +68,11 @@ AuthenticationChallenge::AuthenticationChallenge(CFURLAuthChallengeRef cfChallen
 {
 }
 
+AuthenticationClient* AuthenticationChallenge::authenticationClient() const
+{
+    return m_authenticationClient.get();
+}
+
 bool AuthenticationChallenge::platformCompare(const AuthenticationChallenge& a, const AuthenticationChallenge& b)
 {
     if (a.authenticationClient() != b.authenticationClient())
@@ -170,6 +175,14 @@ CFURLProtectionSpaceRef createCF(const ProtectionSpace& coreSpace)
     case ProtectionSpaceAuthenticationSchemeNegotiate:
         scheme = kCFURLProtectionSpaceAuthenticationSchemeNegotiate;
         break;
+#if USE(PROTECTION_SPACE_AUTH_CALLBACK)
+    case ProtectionSpaceAuthenticationSchemeServerTrustEvaluationRequested:
+        scheme = kCFURLProtectionSpaceAuthenticationSchemeServerTrustEvaluationRequested;
+        break;
+    case ProtectionSpaceAuthenticationSchemeClientCertificateRequested:
+        scheme = kCFURLProtectionSpaceAuthenticationSchemeClientCertificateRequested;
+        break;
+#endif
     default:
         ASSERT_NOT_REACHED();
     }
@@ -258,6 +271,14 @@ ProtectionSpace core(CFURLProtectionSpaceRef cfSpace)
     case kCFURLProtectionSpaceAuthenticationSchemeNegotiate:
         scheme = ProtectionSpaceAuthenticationSchemeNegotiate;
         break;
+#if USE(PROTECTION_SPACE_AUTH_CALLBACK)
+    case kCFURLProtectionSpaceAuthenticationSchemeClientCertificateRequested:
+        scheme = ProtectionSpaceAuthenticationSchemeClientCertificateRequested;
+        break;
+    case kCFURLProtectionSpaceAuthenticationSchemeServerTrustEvaluationRequested:
+        scheme = ProtectionSpaceAuthenticationSchemeServerTrustEvaluationRequested;
+        break;
+#endif
     default:
         scheme = ProtectionSpaceAuthenticationSchemeUnknown;
         ASSERT_NOT_REACHED();

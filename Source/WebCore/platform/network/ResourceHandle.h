@@ -122,7 +122,7 @@ public:
     virtual void receivedCancellation(const AuthenticationChallenge&);
 #endif
 
-#if PLATFORM(MAC)
+#if PLATFORM(MAC) && !USE(CFNETWORK)
     void didCancelAuthenticationChallenge(const AuthenticationChallenge&);
 #if USE(PROTECTION_SPACE_AUTH_CALLBACK)
     bool canAuthenticateAgainstProtectionSpace(const ProtectionSpace&);
@@ -131,10 +131,13 @@ public:
     WebCoreResourceHandleAsDelegate *delegate();
     void releaseDelegate();
     id releaseProxy();
+#endif
 
+#if PLATFORM(MAC)
     void schedule(SchedulePair*);
     void unschedule(SchedulePair*);
-#elif USE(CFNETWORK)
+#endif
+#if USE(CFNETWORK)
     CFURLConnectionRef connection() const;
     CFURLConnectionRef releaseConnectionForDownload();
     static void setHostAllowsAnyHTTPSCertificate(const String&);

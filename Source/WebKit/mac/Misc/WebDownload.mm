@@ -30,6 +30,7 @@
 
 #import <Foundation/NSURLAuthenticationChallenge.h>
 #import <Foundation/NSURLDownload.h>
+#import <WebCore/AuthenticationCF.h>
 #import <WebCore/AuthenticationMac.h>
 #import <WebCore/Credential.h>
 #import <WebCore/CredentialStorage.h>
