@@ -1,3 +1,16 @@
+2011-05-13  Adam Roben  <aroben@apple.com>
+
+        Load plugins in the order they're found
+
+        Fixes <http://webkit.org/b/60788> <rdar://problem/9435787> REGRESSION (r69790): WebKit2
+        doesn't prefer plugins in the additional plugins directory
+
+        Reviewed by Anders Carlsson.
+
+        * UIProcess/Plugins/PluginInfoStore.cpp:
+        (WebKit::addFromVector):
+        Changed to use a ListHashSet instead of a HashSet to store the plugin paths.
+
 2011-05-13  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Anders Carlsson.

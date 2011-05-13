@@ -29,6 +29,7 @@
 #include <WebCore/KURL.h>
 #include <WebCore/MIMETypeRegistry.h>
 #include <algorithm>
+#include <wtf/ListHashSet.h>
 #include <wtf/StdLibExtras.h>
 
 using namespace std;
@@ -52,17 +53,19 @@ void PluginInfoStore::refresh()
     m_pluginListIsUpToDate = false;
 }
 
-template <typename T, typename U, typename V, typename W>
-static void addFromVector(HashSet<T, U, V>& hashSet, const W& vector)
+template <typename T, typename U>
+static void addFromVector(T& hashSet, const U& vector)
 {
     for (size_t i = 0; i < vector.size(); ++i)
         hashSet.add(vector[i]);
 }
 
+// We use a ListHashSet so that plugins will be loaded from the additional plugins directories first
+// (which in turn means those plugins will be preferred if two plugins claim the same MIME type).
 #if OS(WINDOWS)
-typedef HashSet<String, CaseFoldingHash> PathHashSet;
+typedef ListHashSet<String, 32, CaseFoldingHash> PathHashSet;
 #else
-typedef HashSet<String> PathHashSet;
+typedef ListHashSet<String, 32> PathHashSet;
 #endif
 
 void PluginInfoStore::loadPluginsIfNecessary()
