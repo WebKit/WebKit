@@ -1,3 +1,15 @@
+2011-05-12  Kent Tamura  <tkent@chromium.org>
+
+        [Chromium] Update test expectations for r86224.
+
+        * platform/chromium-linux/fast/forms/validation-message-appearance-expected.png:
+        * platform/chromium-linux/fast/forms/validation-message-appearance-expected.txt:
+        * platform/chromium-mac-leopard/fast/forms/validation-message-appearance-expected.png:
+        * platform/chromium-mac/fast/forms/validation-message-appearance-expected.png: Removed.
+        * platform/chromium-win-vista/fast/forms/validation-message-appearance-expected.png: Added.
+        * platform/chromium-win-vista/fast/forms/validation-message-appearance-expected.txt: Copied from LayoutTests/platform/chromium-linux/fast/forms/validation-message-appearance-expected.txt.
+        * platform/chromium/test_expectations.txt:
+
 2011-05-12  Daniel Bates  <dbates@rim.com>
 
         Reviewed by Adele Peterson.

@@ -3963,9 +3963,6 @@ BUGWK59768 WIN LINUX GPU : canvas/philip/tests/2d.shadow.alpha.3.html = TEXT
 BUGWK59768 WIN LINUX GPU : canvas/philip/tests/2d.shadow.alpha.4.html = TEXT
 BUGWK59768 WIN LINUX GPU : canvas/philip/tests/2d.shadow.alpha.5.html = TEXT
 
-// Need rebaseline.
-BUGWK60341 : fast/forms/validation-message-appearance.html = FAIL
-
 // flakiness on the deps bots (noted r~83476)
 BUGWK60105 DEBUG : fast/css/empty-pseudo-class.html = PASS TEXT
 
