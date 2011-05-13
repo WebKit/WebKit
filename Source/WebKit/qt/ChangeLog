@@ -1,3 +1,19 @@
+2011-05-13  Robert Hogan  <robert@webkit.org>
+
+        Reviewed by Benjamin Poulain.
+
+        [Qt] fix http/tests/plugins/plugin-document-has-focus.html
+        https://bugs.webkit.org/show_bug.cgi?id=60722
+
+        QWebPage::setView() will display the browser window, so
+        implement a private version that does just enough to 
+        satisfy EventSender's requirement to install an event
+        filter on a page's web view.
+
+        * WebCoreSupport/DumpRenderTreeSupportQt.cpp:
+        (DumpRenderTreeSupportQt::setView):
+        * WebCoreSupport/DumpRenderTreeSupportQt.h:
+
 2011-05-11  Jocelyn Turcotte  <jocelyn.turcotte@nokia.com>
 
         Reviewed by nobody, build fix.

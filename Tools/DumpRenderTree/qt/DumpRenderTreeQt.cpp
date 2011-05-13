@@ -136,6 +136,7 @@ public:
 WebPage::WebPage(QObject* parent, DumpRenderTree* drt)
     : QWebPage(parent)
     , m_webInspector(0)
+    , m_eventSender(0)
     , m_drt(drt)
 {
     QWebSettings* globalSettings = QWebSettings::globalSettings();
@@ -168,6 +169,14 @@ WebPage::~WebPage()
 {
     delete m_webInspector;
 }
+
+EventSender* WebPage::eventSender()
+{
+    if (!m_eventSender)
+        m_eventSender = new EventSender(this);
+    return m_eventSender;
+}
+
 
 QWebInspector* WebPage::webInspector()
 {
@@ -464,7 +473,7 @@ DumpRenderTree::DumpRenderTree()
     connect(m_controller, SIGNAL(geolocationPermissionSet()), this, SLOT(geolocationPermissionSet()));
 
     connect(m_controller, SIGNAL(done()), this, SLOT(dump()));
-    m_eventSender = new EventSender(m_page);
+    m_eventSender = m_page->eventSender();
     m_textInputController = new TextInputController(m_page);
     m_plainTextController = new PlainTextController(m_page);
     m_gcController = new GCController(m_page);
@@ -775,7 +784,7 @@ void DumpRenderTree::initJSObjects()
     QWebFrame *frame = qobject_cast<QWebFrame*>(sender());
     Q_ASSERT(frame);
     frame->addToJavaScriptWindowObject(QLatin1String("layoutTestController"), m_controller);
-    frame->addToJavaScriptWindowObject(QLatin1String("eventSender"), m_eventSender);
+    frame->addToJavaScriptWindowObject(QLatin1String("eventSender"), qobject_cast<WebPage*>(frame->page())->eventSender());
     frame->addToJavaScriptWindowObject(QLatin1String("textInputController"), m_textInputController);
     frame->addToJavaScriptWindowObject(QLatin1String("GCController"), m_gcController);
     frame->addToJavaScriptWindowObject(QLatin1String("plainText"), m_plainTextController);
@@ -1097,6 +1106,10 @@ QWebPage *DumpRenderTree::createWindow()
     QObject* container = new QObject(m_mainView);
     // create a QWebPage we want to return
     QWebPage* page = static_cast<QWebPage*>(new WebPage(container, this));
+    // QWebPage::setView() will display the page, so use a minimal version
+    // that is just enough to allow EventSender to interact with the page's view
+    DumpRenderTreeSupportQt::setView(page, m_mainView);
+
     // gets cleaned up in closeRemainingWindows()
     windows.append(container);
 

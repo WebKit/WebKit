@@ -1,3 +1,29 @@
+2011-05-13  Robert Hogan  <robert@webkit.org>
+
+        Reviewed by Benjamin Poulain.
+
+        [Qt] fix http/tests/plugins/plugin-document-has-focus.html
+
+        The support for this test added to the unix test plugin here
+        may allow other platforms to pass it (nearly everyone
+        skips it). On Qt it required a bit of trickiness with
+        the page's EventSender object to get it working fully though,
+        so only unskipping Qt here.
+
+        https://bugs.webkit.org/show_bug.cgi?id=60722
+
+        * DumpRenderTree/qt/DumpRenderTreeQt.cpp:
+        (WebCore::WebPage::WebPage):
+        (WebCore::WebPage::eventSender):
+        (WebCore::DumpRenderTree::DumpRenderTree):
+        (WebCore::DumpRenderTree::initJSObjects):
+        (WebCore::DumpRenderTree::createWindow):
+        * DumpRenderTree/qt/DumpRenderTreeQt.h:
+        * DumpRenderTree/unix/TestNetscapePlugin/TestNetscapePlugin.cpp:
+        (webkit_test_plugin_new_instance):
+        (webkit_test_plugin_set_window):
+        (webkit_test_plugin_handle_event):
+
 2011-05-13  Adam Roben  <aroben@apple.com>
 
         Exclude the Leopard NRWT bot from the core builder set

@@ -107,6 +107,7 @@ public:
     static void setCaretBrowsingEnabled(QWebPage* page, bool value);
     static void setMediaType(QWebFrame* qframe, const QString& type);
     static void setDumpRenderTreeModeEnabled(bool b);
+    static void setView(QWebPage*, QWidget* view);
 
     static void garbageCollectorCollect();
     static void garbageCollectorCollectOnAlternateThread(bool waitUntilDone);

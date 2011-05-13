@@ -1,3 +1,21 @@
+2011-05-13  Robert Hogan  <robert@webkit.org>
+
+        Reviewed by Benjamin Poulain.
+
+        [Qt] fix http/tests/plugins/plugin-document-has-focus.html
+
+        For some reason the platform-independent expected result has
+        no newline at the end of the file. The unix test plugin also
+        reports the event from a different line. These are harmless
+        differences, so create platform-specific result.
+
+        Note that nearly every platform skips this test at the moment.
+
+        https://bugs.webkit.org/show_bug.cgi?id=60722
+
+        * platform/qt/Skipped:
+        * platform/qt/http/tests/plugins/plugin-document-has-focus-expected.txt: Added.
+
 2011-05-05  Pavel Podivilov  <podivilov@chromium.org>
 
         Reviewed by Yury Semikhatsky.
