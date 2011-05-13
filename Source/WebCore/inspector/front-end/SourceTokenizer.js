@@ -90,7 +90,7 @@ WebInspector.SourceTokenizer.Registry.prototype = {
         var tokenizer = this._tokenizers[tokenizerClass];
         if (!tokenizer) {
             tokenizer = new WebInspector[tokenizerClass]();
-            this._tokenizers[mimeType] = tokenizer;
+            this._tokenizers[tokenizerClass] = tokenizer;
         }
         return tokenizer;
     }

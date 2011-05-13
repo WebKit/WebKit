@@ -70,19 +70,23 @@ WebInspector.SourceHTMLTokenizer = function()
         STYLE: 32
     };
 
-    this.initialCondition = { lexCondition: this._lexConditions.INITIAL, parseCondition: this._parseConditions.INITIAL };
-    this.condition = this.initialCondition;
+    this.condition = this.createInitialCondition();
 }
 
 WebInspector.SourceHTMLTokenizer.prototype = {
+    createInitialCondition: function()
+    {
+        return { lexCondition: this._lexConditions.INITIAL, parseCondition: this._parseConditions.INITIAL };
+    },
+
     set line(line) {
-        if (this._internalJavaScriptTokenizer) {
+        if (this._condition.internalJavaScriptTokenizerCondition) {
             var match = /<\/script/i.exec(line);
             if (match) {
                 this._internalJavaScriptTokenizer.line = line.substring(0, match.index);
             } else
                 this._internalJavaScriptTokenizer.line = line;
-        } else if (this._internalCSSTokenizer) {
+        } else if (this._condition.internalCSSTokenizerCondition) {
             var match = /<\/style/i.exec(line);
             if (match) {
                 this._internalCSSTokenizer.line = line.substring(0, match.index);
@@ -138,12 +142,19 @@ WebInspector.SourceHTMLTokenizer.prototype = {
         return "html-attribute-value";
     },
 
+    get _internalJavaScriptTokenizer()
+    {
+        return WebInspector.SourceTokenizer.Registry.getInstance().getTokenizer("text/javascript");
+    },
+
+    get _internalCSSTokenizer()
+    {
+        return WebInspector.SourceTokenizer.Registry.getInstance().getTokenizer("text/css");
+    },
+
     scriptStarted: function(cursor)
     {
-        if (!this._internalJavaScriptTokenizer) {
-            this._internalJavaScriptTokenizer = WebInspector.SourceTokenizer.Registry.getInstance().getTokenizer("text/javascript");
-            this._condition.internalJavaScriptTokenizerCondition = this._internalJavaScriptTokenizer.initialCondition;
-        }
+        this._condition.internalJavaScriptTokenizerCondition = this._internalJavaScriptTokenizer.createInitialCondition();
     },
 
     scriptEnded: function(cursor)
@@ -152,10 +163,7 @@ WebInspector.SourceHTMLTokenizer.prototype = {
 
     styleSheetStarted: function(cursor)
     {
-        if (!this._internalCSSTokenizer) {
-            this._internalCSSTokenizer = WebInspector.SourceTokenizer.Registry.getInstance().getTokenizer("text/css");
-            this._condition.internalCSSTokenizerCondition = this._internalCSSTokenizer.initialCondition;
-        }
+        this._condition.internalCSSTokenizerCondition = this._internalCSSTokenizer.createInitialCondition();
     },
 
     styleSheetEnded: function(cursor)
@@ -164,7 +172,7 @@ WebInspector.SourceHTMLTokenizer.prototype = {
 
     nextToken: function(cursor)
     {
-        if (this._internalJavaScriptTokenizer) {
+        if (this._condition.internalJavaScriptTokenizerCondition) {
             // Re-set line to force </script> detection first.
             this.line = this._line;
             if (cursor !== this._internalJavaScriptTokenizer._line.length) {
@@ -175,8 +183,8 @@ WebInspector.SourceHTMLTokenizer.prototype = {
                 this._condition.internalJavaScriptTokenizerCondition = this._internalJavaScriptTokenizer.condition;
                 return result;
             } else if (cursor !== this._line.length)
-                delete this._internalJavaScriptTokenizer;
-        } else if (this._internalCSSTokenizer) {
+                delete this._condition.internalJavaScriptTokenizerCondition;
+        } else if (this._condition.internalCSSTokenizerCondition) {
             // Re-set line to force </style> detection first.
             this.line = this._line;
             if (cursor !== this._internalCSSTokenizer._line.length) {
@@ -187,7 +195,7 @@ WebInspector.SourceHTMLTokenizer.prototype = {
                 this._condition.internalCSSTokenizerCondition = this._internalCSSTokenizer.condition;
                 return result;
             } else if (cursor !== this._line.length)
-                delete this._internalCSSTokenizer;
+                delete this._condition.internalCSSTokenizerCondition;
         }
 
         var cursorOnEnter = cursor;
@@ -284,7 +292,7 @@ WebInspector.SourceHTMLTokenizer.prototype = {
                 {
                     this.tokenType = "html-tag";
                     this._condition.parseCondition = this._parseConditions.INITIAL;
-                    this.styleEnded(cursor - 7);
+                    this.styleSheetEnded(cursor - 7);
                     return cursor;
                 }
 

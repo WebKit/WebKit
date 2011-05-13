@@ -141,7 +141,7 @@ WebInspector.TextEditorHighlighter.prototype = {
     {
         // Restore highlighter context taken from previous line.
         var state = this._textModel.getAttribute(startLine - 1, "highlight");
-        var postConditionStringified = state ? state.postConditionStringified : JSON.stringify(this._tokenizer.initialCondition);
+        var postConditionStringified = state ? state.postConditionStringified : JSON.stringify(this._tokenizer.createInitialCondition());
 
         var tokensCount = 0;
         for (var lineNumber = startLine; lineNumber < endLine; ++lineNumber) {

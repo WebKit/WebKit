@@ -44,7 +44,7 @@ WebInspector.DOMSyntaxHighlighter.prototype = {
 
     syntaxHighlightNode: function(node)
     {
-        this._tokenizer.condition = this._tokenizer.initialCondition;
+        this._tokenizer.condition = this._tokenizer.createInitialCondition();
         var lines = node.textContent.split("\n");
         node.removeChildren();
 

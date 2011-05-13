@@ -117,10 +117,15 @@ WebInspector.SourceCSSTokenizer = function()
     this.case_DSTRING = 1003;
     this.case_SSTRING = 1004;
 
-    this.initialCondition = { lexCondition: this._lexConditions.INITIAL, parseCondition: this._parseConditions.INITIAL }
+    this.condition = this.createInitialCondition();
 }
 
 WebInspector.SourceCSSTokenizer.prototype = {
+    createInitialCondition: function()
+    {
+        return { lexCondition: this._lexConditions.INITIAL, parseCondition: this._parseConditions.INITIAL };
+    },
+
     _stringToken: function(cursor, stringEnds)
     {
         if (this._isPropertyValue())

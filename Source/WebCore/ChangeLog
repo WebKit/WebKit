@@ -1,3 +1,42 @@
+2011-05-06  Pavel Podivilov  <podivilov@chromium.org>
+
+        Reviewed by Yury Semikhatsky.
+
+        Web Inspector: fix incremental html highlight.
+        https://bugs.webkit.org/show_bug.cgi?id=60163
+
+        SourceTokenizers for html, js, and css are declared to be stateless. However they store some state in
+        various ways (like using _internalJavaScriptTokenizer field in html tokenizer, or modifying "static"
+        initialCondition object via condition link). This all worked because of another bug in tokenizers registry
+        that always returned new tokenizer object.
+        For incremental highlighting, we need to be able to stringify tokenizers state and then restore the
+        state from string. That's why we need tokenizers to be truly stateless.
+
+        * inspector/front-end/DOMSyntaxHighlighter.js:
+        (WebInspector.DOMSyntaxHighlighter.prototype.syntaxHighlightNode):
+        * inspector/front-end/SourceCSSTokenizer.js:
+        (WebInspector.SourceCSSTokenizer):
+        (WebInspector.SourceCSSTokenizer.prototype.createInitialCondition):
+        * inspector/front-end/SourceCSSTokenizer.re2js:
+        * inspector/front-end/SourceHTMLTokenizer.js:
+        (WebInspector.SourceHTMLTokenizer):
+        (WebInspector.SourceHTMLTokenizer.prototype.createInitialCondition):
+        (WebInspector.SourceHTMLTokenizer.prototype.set line):
+        (WebInspector.SourceHTMLTokenizer.prototype.get _internalJavaScriptTokenizer):
+        (WebInspector.SourceHTMLTokenizer.prototype.get _internalCSSTokenizer):
+        (WebInspector.SourceHTMLTokenizer.prototype.scriptStarted):
+        (WebInspector.SourceHTMLTokenizer.prototype.styleSheetStarted):
+        (WebInspector.SourceHTMLTokenizer.prototype.nextToken):
+        * inspector/front-end/SourceHTMLTokenizer.re2js:
+        * inspector/front-end/SourceJavaScriptTokenizer.js:
+        (WebInspector.SourceJavaScriptTokenizer):
+        (WebInspector.SourceJavaScriptTokenizer.prototype.createInitialCondition):
+        * inspector/front-end/SourceJavaScriptTokenizer.re2js:
+        * inspector/front-end/SourceTokenizer.js:
+        (WebInspector.SourceTokenizer.Registry.prototype.getTokenizer):
+        * inspector/front-end/TextEditorHighlighter.js:
+        (WebInspector.TextEditorHighlighter.prototype._highlightLines):
+
 2011-05-13  Adam Roben  <aroben@apple.com>
 
         Build fix after r86418

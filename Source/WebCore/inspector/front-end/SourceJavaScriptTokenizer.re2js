@@ -67,11 +67,15 @@ WebInspector.SourceJavaScriptTokenizer = function()
     this.case_SSTRING = 1004;
     this.case_REGEX = 1005;
 
-    this.initialCondition = { lexCondition: this._lexConditions.NODIV }
-    this.condition = this.initialCondition;
+    this.condition = this.createInitialCondition();
 }
 
 WebInspector.SourceJavaScriptTokenizer.prototype = {
+    createInitialCondition: function()
+    {
+        return { lexCondition: this._lexConditions.NODIV };
+    },
+
     nextToken: function(cursor)
     {
         var cursorOnEnter = cursor;
