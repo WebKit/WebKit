@@ -149,7 +149,7 @@ private:
     virtual IntRect clippedOverflowRectForRepaint(RenderBoxModelObject* repaintContainer);
     virtual void computeRectForRepaint(RenderBoxModelObject* repaintContainer, IntRect&, bool fixed = false);
 
-    void paintCollapsedBorder(GraphicsContext*, int x, int y, int w, int h);
+    void paintCollapsedBorder(GraphicsContext*, const IntRect&);
 
     int m_row;
     int m_column;

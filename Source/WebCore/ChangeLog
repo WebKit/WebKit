@@ -1,3 +1,20 @@
+2011-05-13  Levi Weintraub  <leviw@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        Switch paintCollapsedBorder to use IntRect
+        https://bugs.webkit.org/show_bug.cgi?id=60739
+
+        Updating the last offending paint function that takes four ints
+        instead of an IntRect.
+
+        No new tests as this is simple refactoring.
+
+        * rendering/RenderTableCell.cpp:
+        (WebCore::RenderTableCell::paint):
+        (WebCore::RenderTableCell::paintCollapsedBorder):
+        * rendering/RenderTableCell.h:
+
 2011-05-13  Abhishek Arya  <inferno@chromium.org>
 
         Reviewed by Dave Hyatt.

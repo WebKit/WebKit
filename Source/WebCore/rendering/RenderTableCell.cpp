@@ -812,7 +812,7 @@ void RenderTableCell::paint(PaintInfo& paintInfo, int tx, int ty)
         int os = 2 * maximalOutlineSize(paintInfo.phase);
         if (ty - table()->outerBorderTop() < paintInfo.rect.maxY() + os
             && ty + height() + table()->outerBorderBottom() > paintInfo.rect.y() - os)
-            paintCollapsedBorder(paintInfo.context, tx, ty, width(), height());
+            paintCollapsedBorder(paintInfo.context, IntRect(tx, ty, width(), height()));
         return;
     } 
     
@@ -912,7 +912,7 @@ void RenderTableCell::sortBorderStyles(CollapsedBorderStyles& borderStyles)
         compareBorderStylesForQSort);
 }
 
-void RenderTableCell::paintCollapsedBorder(GraphicsContext* graphicsContext, int tx, int ty, int w, int h)
+void RenderTableCell::paintCollapsedBorder(GraphicsContext* graphicsContext, const IntRect& paintRect)
 {
     if (!table()->currentBorderStyle())
         return;
@@ -928,10 +928,10 @@ void RenderTableCell::paintCollapsedBorder(GraphicsContext* graphicsContext, int
     int leftWidth = leftVal.width();
     int rightWidth = rightVal.width();
     
-    tx -= leftWidth / 2;
-    ty -= topWidth / 2;
-    w += leftWidth / 2 + (rightWidth + 1) / 2;
-    h += topWidth / 2 + (bottomWidth + 1) / 2;
+    int x = paintRect.x() - leftWidth / 2;
+    int y = paintRect.y() - topWidth / 2;
+    int w = paintRect.width() + leftWidth / 2 + (rightWidth + 1) / 2;
+    int h = paintRect.height() + topWidth / 2 + (bottomWidth + 1) / 2;
     
     EBorderStyle topStyle = collapsedBorderStyle(topVal.style());
     EBorderStyle bottomStyle = collapsedBorderStyle(bottomVal.style());
@@ -946,10 +946,10 @@ void RenderTableCell::paintCollapsedBorder(GraphicsContext* graphicsContext, int
     // We never paint diagonals at the joins.  We simply let the border with the highest
     // precedence paint on top of borders with lower precedence.  
     CollapsedBorders borders;
-    borders.addBorder(topVal, BSTop, renderTop, tx, ty, tx + w, ty + topWidth, topStyle);
-    borders.addBorder(bottomVal, BSBottom, renderBottom, tx, ty + h - bottomWidth, tx + w, ty + h, bottomStyle);
-    borders.addBorder(leftVal, BSLeft, renderLeft, tx, ty, tx + leftWidth, ty + h, leftStyle);
-    borders.addBorder(rightVal, BSRight, renderRight, tx + w - rightWidth, ty, tx + w, ty + h, rightStyle);
+    borders.addBorder(topVal, BSTop, renderTop, x, y, x + w, y + topWidth, topStyle);
+    borders.addBorder(bottomVal, BSBottom, renderBottom, x, y + h - bottomWidth, x + w, y + h, bottomStyle);
+    borders.addBorder(leftVal, BSLeft, renderLeft, x, y, x + leftWidth, y + h, leftStyle);
+    borders.addBorder(rightVal, BSRight, renderRight, x + w - rightWidth, y, x + w, y + h, rightStyle);
     
     for (CollapsedBorder* border = borders.nextBorder(); border; border = borders.nextBorder()) {
         if (border->borderValue == *table()->currentBorderStyle())
