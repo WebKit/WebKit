@@ -121,8 +121,6 @@ static const Ecore_Getopt options = {
             ('t', "theme", "path to read the theme file from."),
         ECORE_GETOPT_STORE_STR
             ('U', "user-agent", "custom user agent string to use."),
-        ECORE_GETOPT_STORE_DEF_BOOL
-            ('S', "sudo-workaround", "Workaround mode for making Flash work with sudo.", 0),
         ECORE_GETOPT_COUNT
             ('v', "verbose", "be more verbose."),
         ECORE_GETOPT_VERSION
