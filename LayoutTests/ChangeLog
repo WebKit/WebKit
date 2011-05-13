@@ -1,3 +1,12 @@
+2011-05-13  Steve VanDeBogart  <vandebo@chromium.org>
+
+        Unreviewed.
+
+        Update expectations for GPU tests that use shadows after fix (Skia rev 1297).
+        https://bugs.webkit.org/show_bug.cgi?id=60742
+
+        * platform/chromium/test_expectations.txt:
+
 2011-05-13  Csaba Osztrogonác  <ossy@webkit.org>
 
         [Qt] Unreviewed fix after r86357, r86374, r86376. Skip failing tests.
