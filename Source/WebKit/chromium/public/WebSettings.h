@@ -82,6 +82,7 @@ public:
     virtual void setDownloadableBinaryFontsEnabled(bool) = 0;
     virtual void setJavaScriptCanAccessClipboard(bool) = 0;
     virtual void setXSSAuditorEnabled(bool) = 0;
+    virtual void setDNSPrefetchingEnabled(bool) = 0;
     virtual void setLocalStorageEnabled(bool) = 0;
     virtual void setEditableLinkBehaviorNeverLive() = 0;
     virtual void setFrameFlatteningEnabled(bool) = 0;

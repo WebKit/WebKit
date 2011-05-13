@@ -214,6 +214,11 @@ void WebSettingsImpl::setXSSAuditorEnabled(bool enabled)
     m_settings->setXSSAuditorEnabled(enabled);
 }
 
+void WebSettingsImpl::setDNSPrefetchingEnabled(bool enabled)
+{
+    m_settings->setDNSPrefetchingEnabled(enabled);
+}
+
 void WebSettingsImpl::setLocalStorageEnabled(bool enabled)
 {
     m_settings->setLocalStorageEnabled(enabled);
