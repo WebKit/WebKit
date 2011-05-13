@@ -1,3 +1,24 @@
+2011-05-13  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r86447.
+        http://trac.webkit.org/changeset/86447
+        https://bugs.webkit.org/show_bug.cgi?id=60809
+
+        "Broke some uses of EventSender object on Qt" (Requested by
+        mwenge on #webkit).
+
+        * DumpRenderTree/qt/DumpRenderTreeQt.cpp:
+        (WebCore::WebPage::WebPage):
+        (WebCore::DumpRenderTree::DumpRenderTree):
+        (WebCore::DumpRenderTree::initJSObjects):
+        (WebCore::DumpRenderTree::createWindow):
+        * DumpRenderTree/qt/DumpRenderTreeQt.h:
+        (WebCore::DumpRenderTree::eventSender):
+        * DumpRenderTree/unix/TestNetscapePlugin/TestNetscapePlugin.cpp:
+        (webkit_test_plugin_new_instance):
+        (webkit_test_plugin_set_window):
+        (webkit_test_plugin_handle_event):
+
 2011-05-13  Robert Hogan  <robert@webkit.org>
 
         Reviewed by Benjamin Poulain.

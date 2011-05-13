@@ -1,3 +1,15 @@
+2011-05-13  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r86447.
+        http://trac.webkit.org/changeset/86447
+        https://bugs.webkit.org/show_bug.cgi?id=60809
+
+        "Broke some uses of EventSender object on Qt" (Requested by
+        mwenge on #webkit).
+
+        * WebCoreSupport/DumpRenderTreeSupportQt.cpp:
+        * WebCoreSupport/DumpRenderTreeSupportQt.h:
+
 2011-05-13  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Anders Carlsson.
