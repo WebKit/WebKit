@@ -43,22 +43,22 @@ void slowValidateCell(JSCell*);
 void slowValidateCell(JSGlobalObject*);
     
 #if ENABLE(GC_VALIDATION)
-template<class T> static inline void validateCell(T cell)
+template<class T> inline void validateCell(T cell)
 {
     ASSERT_GC_OBJECT_INHERITS(cell, &WTF::RemovePointer<T>::Type::s_info);
 }
 
-template<> static inline void validateCell<JSCell*>(JSCell* cell)
+template<> inline void validateCell<JSCell*>(JSCell* cell)
 {
     slowValidateCell(cell);
 }
 
-template<> static inline void validateCell<JSGlobalObject*>(JSGlobalObject* globalObject)
+template<> inline void validateCell<JSGlobalObject*>(JSGlobalObject* globalObject)
 {
     slowValidateCell(globalObject);
 }
 #else
-template<class T> static inline void validateCell(T)
+template<class T> inline void validateCell(T)
 {
 }
 #endif

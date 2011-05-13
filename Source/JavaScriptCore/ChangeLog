@@ -1,5 +1,14 @@
 2011-05-13  Oliver Hunt  <oliver@apple.com>
 
+        Build fix.
+
+        * runtime/WriteBarrier.h:
+        (JSC::validateCell):
+        (JSC::JSCell):
+        (JSC::JSGlobalObject):
+
+2011-05-13  Oliver Hunt  <oliver@apple.com>
+
         Reviewed by Geoffrey Garen.
 
         Make GC validation more aggressive
