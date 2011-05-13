@@ -1,5 +1,12 @@
 2011-05-13  Sergio Villar Senin  <svillar@igalia.com>
 
+        Unreviewed, new GTK+ test expectations after r86352.
+
+        * platform/gtk/svg/custom/stroke-opacity-update-expected.png: Added.
+        * platform/gtk/svg/custom/stroke-opacity-update-expected.txt: Added.
+
+2011-05-13  Sergio Villar Senin  <svillar@igalia.com>
+
         Unreviewed, new GTK+ test expectations.
 
         * platform/gtk/fast/borders/outline-alpha-block-expected.png:
