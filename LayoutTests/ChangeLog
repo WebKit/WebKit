@@ -1,3 +1,9 @@
+2011-05-13  Andrew Wilson  <atwilson@chromium.org>
+
+        Suppress crasher in chromium. Unreviewed.
+
+        * platform/chromium/test_expectations.txt:
+
 2011-05-13  Abhishek Arya  <inferno@chromium.org>
 
         Reviewed by Dave Hyatt.

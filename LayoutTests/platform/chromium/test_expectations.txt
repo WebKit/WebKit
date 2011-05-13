@@ -4050,3 +4050,5 @@ BUGATWILSON LINUX WIN : svg/custom/stroke-opacity-update.svg = IMAGE
 // Started failing, exact CL unknown, but assumedly after wk86241
 BUGATWILSON LINUX WIN : fast/repaint/border-fit-lines.html = IMAGE
 
+// New test at r86442 exposed this crash.
+BUGWK60414 WIN : platform/win/plugins/iframe-inside-overflow.html = CRASH
