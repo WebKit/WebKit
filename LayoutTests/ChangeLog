@@ -80,6 +80,13 @@
 
 2011-05-13  Andrew Wilson  <atwilson@chromium.org>
 
+        Removed chromium border-fit-lines.html suppression as it seems to pass now. Unreviewed.
+
+
+        * platform/chromium/test_expectations.txt:
+
+2011-05-13  Andrew Wilson  <atwilson@chromium.org>
+
         Suppress crasher in chromium. Unreviewed.
 
         * platform/chromium/test_expectations.txt:
