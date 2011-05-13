@@ -1,3 +1,15 @@
+2011-05-05  Pavel Podivilov  <podivilov@chromium.org>
+
+        Reviewed by Yury Semikhatsky.
+
+        Web Inspector: fix source mapping for formatted scripts.
+        https://bugs.webkit.org/show_bug.cgi?id=60263
+
+        * inspector/debugger/resources/obfuscated.js:
+        (formatted1):
+        (formatted2):
+        * inspector/debugger/script-formatter.html:
+
 2011-05-13  Adam Roben  <aroben@apple.com>
 
         Add a test for windowed plugins inside iframes inside scrolled overflow areas

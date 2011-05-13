@@ -34,7 +34,7 @@ onmessage = function(event) {
         var formatter = new HTMLScriptFormatter();
         result = formatter.format(event.data.content);
     } else {
-        result.mapping = { original: [], formatted: [] };
+        result.mapping = { original: [0], formatted: [0] };
         result.content = formatScript(event.data.content, result.mapping, 0, 0);
     }
     postMessage(result);
@@ -70,7 +70,7 @@ HTMLScriptFormatter.prototype = {
         this.line = content;
         this._content = content;
         this._formattedContent = "";
-        this._mapping = { original: [], formatted: [] };
+        this._mapping = { original: [0], formatted: [0] };
         this._position = 0;
 
         var cursor = 0;

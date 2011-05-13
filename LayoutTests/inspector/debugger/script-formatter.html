@@ -44,20 +44,31 @@ var test = function()
 
         function testSourceMapping(next)
         {
-            worker.onmessage = InspectorTest.safeWrap(function(event)
+            var formatter = new WebInspector.ScriptFormatter();
+
+            InspectorTest.showScriptSource("obfuscated.js", didShowScriptSource);
+            function didShowScriptSource(sourceFrame)
+            {
+                formatter.formatContent("text/javascript", sourceFrame._content, didFormatContent);
+            }
+
+            function didFormatContent(content, mapping)
             {
                 var source = WebInspector.panels.scripts.visibleView._content;
-                var formattedSource = event.data.content;
-                var mapping = event.data.mapping;
+                var formattedSource = content;
 
                 function testMapping(string)
                 {
-                    var position = source.indexOf(string);
-                    var index = mapping.original.upperBound(position) - 1;
-                    var delta = position - mapping.original[index];
-                    var formattedPosition = Math.min(mapping.formatted[index] + delta, mapping.formatted[index + 1]);
-                    InspectorTest.assertEquals(string, formattedSource.substr(formattedPosition, string.length));
+                    var originalLocation = WebInspector.ScriptFormatter.positionToLocation(source.lineEndings(), source.indexOf(string));
+                    var formattedLocation = mapping.originalToFormatted(originalLocation);
+                    var formattedPosition = WebInspector.ScriptFormatter.locationToPosition(formattedSource.lineEndings(), formattedLocation);
+                    var expectedFormattedPosition = formattedSource.indexOf(string);
+                    InspectorTest.assertEquals(expectedFormattedPosition, formattedPosition);
                 }
+
+                testMapping("function");
+                testMapping("formatted1");
+                testMapping("variable1");
 
                 testMapping("onmessage");
                 testMapping("indent_start");
@@ -65,20 +76,10 @@ var test = function()
                 testMapping("var regexp");
                 testMapping("importScripts");
 
+                testMapping("formatted2");
+                testMapping("variable2");
+
                 next();
-            });
-
-            worker.onerror = function(event)
-            {
-                InspectorTest.addResult("Error in worker: " + event.data);
-                next();
-            };
-
-            InspectorTest.showScriptSource("obfuscated.js", didShowScriptSource);
-
-            function didShowScriptSource(sourceFrame)
-            {
-                worker.postMessage({ mimeType: "text/javascript", content: sourceFrame._content });
             }
         },
 

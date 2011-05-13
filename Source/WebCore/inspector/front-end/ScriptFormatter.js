@@ -41,11 +41,6 @@ WebInspector.ScriptFormatter.locationToPosition = function(lineEndings, location
     return position + location.columnNumber;
 }
 
-WebInspector.ScriptFormatter.lineToPosition = function(lineEndings, lineNumber)
-{
-    return this.locationToPosition(lineEndings, { lineNumber: lineNumber, columnNumber: 0 });
-}
-
 WebInspector.ScriptFormatter.positionToLocation = function(lineEndings, position)
 {
     var location = {};
@@ -69,7 +64,41 @@ WebInspector.ScriptFormatter.prototype = {
     _didFormatContent: function(event)
     {
         var task = this._tasks.shift();
-        event.data.mapping.originalLineEndings = task.data.content.lineEndings();
-        task.callback(event.data.content, event.data.mapping);
+        var originalContent = task.data.content;
+        var formattedContent = event.data.content;
+        var sourceMapping = new WebInspector.FormattedSourceMapping(originalContent.lineEndings(), formattedContent.lineEndings(), event.data.mapping);
+        task.callback(formattedContent, sourceMapping);
+    }
+}
+
+WebInspector.FormattedSourceMapping = function(originalLineEndings, formattedLineEndings, mapping)
+{
+    this._originalLineEndings = originalLineEndings;
+    this._formattedLineEndings = formattedLineEndings;
+    this._mapping = mapping;
+}
+
+WebInspector.FormattedSourceMapping.prototype = {
+    originalToFormatted: function(location)
+    {
+        var originalPosition = WebInspector.ScriptFormatter.locationToPosition(this._originalLineEndings, location);
+        var formattedPosition = this._convertPosition(this._mapping.original, this._mapping.formatted, originalPosition);
+        return WebInspector.ScriptFormatter.positionToLocation(this._formattedLineEndings, formattedPosition);
+    },
+
+    formattedToOriginal: function(location)
+    {
+        var formattedPosition = WebInspector.ScriptFormatter.locationToPosition(this._formattedLineEndings, location);
+        var originalPosition = this._convertPosition(this._mapping.formatted, this._mapping.original, formattedPosition);
+        return WebInspector.ScriptFormatter.positionToLocation(this._originalLineEndings, originalPosition);
+    },
+
+    _convertPosition: function(positions1, positions2, position)
+    {
+        var index = positions1.upperBound(position) - 1;
+        var convertedPosition = positions2[index] + position - positions1[index];
+        if (index < positions2.length - 1 && convertedPosition > positions2[index + 1])
+            convertedPosition = positions2[index + 1];
+        return convertedPosition;
     }
 }

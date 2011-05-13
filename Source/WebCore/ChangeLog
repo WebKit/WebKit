@@ -1,3 +1,28 @@
+2011-05-05  Pavel Podivilov  <podivilov@chromium.org>
+
+        Reviewed by Yury Semikhatsky.
+
+        Web Inspector: fix source mapping for formatted scripts.
+        https://bugs.webkit.org/show_bug.cgi?id=60263
+
+        Source mapping is broken for script chunks that are already formatted at the beginning
+        and at the end of the script (see script-formatter.html).
+
+        * inspector/front-end/ScriptFormatter.js:
+        (WebInspector.ScriptFormatter.prototype._didFormatContent):
+        (WebInspector.FormattedSourceMapping):
+        (WebInspector.FormattedSourceMapping.prototype.originalToFormatted):
+        (WebInspector.FormattedSourceMapping.prototype.formattedToOriginal):
+        (WebInspector.FormattedSourceMapping.prototype._convertPosition):
+        * inspector/front-end/ScriptFormatterWorker.js:
+        (onmessage):
+        (HTMLScriptFormatter.prototype.format):
+        * inspector/front-end/SourceFile.js:
+        (WebInspector.FormattedSourceFile.prototype._didRequestContent):
+        (WebInspector.SourceMappingForFormattedSourceFile):
+        (WebInspector.SourceMappingForFormattedSourceFile.prototype.scriptLocationToSourceLine):
+        (WebInspector.SourceMappingForFormattedSourceFile.prototype.sourceLineToScriptLocation):
+
 2011-05-13  Adam Roben  <aroben@apple.com>
 
         Tell ScrollView's child Widgets that their frame rects have changed when its own frame rect
