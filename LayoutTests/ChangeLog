@@ -1,3 +1,13 @@
+2011-05-13  Abhishek Arya  <inferno@chromium.org>
+
+        Reviewed by Dave Hyatt.
+
+        Tests that we do not crash when trying to access a deleted float.
+        https://bugs.webkit.org/show_bug.cgi?id=60780
+
+        * fast/block/float/float-not-removed-crash-expected.txt: Added.
+        * fast/block/float/float-not-removed-crash.html: Added.
+
 2011-05-13  Robert Hogan  <robert@webkit.org>
 
         Reviewed by Benjamin Poulain.
