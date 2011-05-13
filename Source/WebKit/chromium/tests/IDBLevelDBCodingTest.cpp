@@ -30,8 +30,14 @@
 #if ENABLE(LEVELDB)
 
 #include "IDBKey.h"
+#include "LevelDBSlice.h"
 #include <gtest/gtest.h>
 #include <wtf/Vector.h>
+
+#ifndef INT64_MAX
+// FIXME: We shouldn't need to rely on these macros.
+#define INT64_MAX 0x7fffffffffffffffLL
+#endif
 
 using namespace WebCore;
 using namespace IDBLevelDBCoding;
@@ -204,7 +210,7 @@ TEST(IDBLevelDBCodingTest, DecodeStringWithLength)
 
     const int kLongStringLen = 1234;
     UChar longString[kLongStringLen + 1];
-    for (int i = 0; i < kLongStringLen; i++)
+    for (int i = 0; i < kLongStringLen; ++i)
         longString[i] = i;
     longString[kLongStringLen] = 0;
 
@@ -302,7 +308,7 @@ TEST(IDBLevelDBCodingTest, ExtractAndCompareIDBKeys)
     keys.append(IDBKey::createString("b"));
     keys.append(IDBKey::createString("baaa"));
 
-    for (size_t i = 0; i < keys.size() - 1; i++) {
+    for (size_t i = 0; i < keys.size() - 1; ++i) {
         RefPtr<IDBKey> keyA = keys[i];
         RefPtr<IDBKey> keyB = keys[i + 1];
 
@@ -330,6 +336,61 @@ TEST(IDBLevelDBCodingTest, ExtractAndCompareIDBKeys)
         EXPECT_EQ(compareEncodedIDBKeys(extractedB, extractedB), 0);
 
         EXPECT_EQ(0, extractEncodedIDBKey(encodedA.data(), encodedA.data() + encodedA.size() - 1, &extractedA));
+    }
+}
+
+TEST(IDBLevelDBCodingTest, ComparisonTest)
+{
+    Vector<Vector<char> > keys;
+    keys.append(SchemaVersionKey::encode());
+    keys.append(MaxDatabaseIdKey::encode());
+    keys.append(DatabaseFreeListKey::encode(0));
+    keys.append(DatabaseFreeListKey::encode(INT64_MAX));
+    keys.append(DatabaseNameKey::encode("", ""));
+    keys.append(DatabaseNameKey::encode("", "a"));
+    keys.append(DatabaseNameKey::encode("a", "a"));
+    keys.append(DatabaseMetaDataKey::encode(1, DatabaseMetaDataKey::kOriginName));
+    keys.append(ObjectStoreMetaDataKey::encode(1, 1, 0));
+    keys.append(ObjectStoreMetaDataKey::encode(1, INT64_MAX, 0));
+    keys.append(IndexMetaDataKey::encode(1, 1, 30, 0));
+    keys.append(IndexMetaDataKey::encode(1, 1, INT64_MAX, 0));
+    keys.append(ObjectStoreFreeListKey::encode(1, 1));
+    keys.append(ObjectStoreFreeListKey::encode(1, INT64_MAX));
+    keys.append(IndexFreeListKey::encode(1, 1, 30));
+    keys.append(IndexFreeListKey::encode(1, 1, INT64_MAX));
+    keys.append(IndexFreeListKey::encode(1, INT64_MAX, 30));
+    keys.append(IndexFreeListKey::encode(1, INT64_MAX, INT64_MAX));
+    keys.append(ObjectStoreNamesKey::encode(1, ""));
+    keys.append(ObjectStoreNamesKey::encode(1, "a"));
+    keys.append(IndexNamesKey::encode(1, 1, ""));
+    keys.append(IndexNamesKey::encode(1, 1, "a"));
+    keys.append(IndexNamesKey::encode(1, INT64_MAX, "a"));
+    keys.append(ObjectStoreDataKey::encode(1, 1, minIDBKey()));
+    keys.append(ObjectStoreDataKey::encode(1, 1, maxIDBKey()));
+    keys.append(ExistsEntryKey::encode(1, 1, minIDBKey()));
+    keys.append(ExistsEntryKey::encode(1, 1, maxIDBKey()));
+    keys.append(IndexDataKey::encode(1, 1, 30, minIDBKey(), 0));
+    keys.append(IndexDataKey::encode(1, 1, 30, minIDBKey(), INT64_MAX));
+    keys.append(IndexDataKey::encode(1, 1, 30, maxIDBKey(), 0));
+    keys.append(IndexDataKey::encode(1, 1, 30, maxIDBKey(), INT64_MAX));
+    keys.append(IndexDataKey::encode(1, 1, 31, minIDBKey(), 0));
+    keys.append(IndexDataKey::encode(1, 2, 30, minIDBKey(), 0));
+    keys.append(IndexDataKey::encodeMaxKey(1, 2));
+    keys.append(ObjectStoreDataKey::encode(1, INT64_MAX, minIDBKey()));
+    keys.append(ExistsEntryKey::encode(1, INT64_MAX, maxIDBKey()));
+    keys.append(IndexDataKey::encodeMaxKey(1, INT64_MAX));
+    keys.append(DatabaseMetaDataKey::encode(INT64_MAX, DatabaseMetaDataKey::kOriginName));
+    keys.append(IndexDataKey::encodeMaxKey(INT64_MAX, INT64_MAX));
+
+    for (size_t i = 0; i < keys.size(); ++i) {
+        const LevelDBSlice keyA(keys[i]);
+        EXPECT_EQ(compare(keyA, keyA), 0);
+
+        for (size_t j = i + 1; j < keys.size(); ++j) {
+            const LevelDBSlice keyB(keys[j]);
+            EXPECT_LT(compare(keyA, keyB), 0);
+            EXPECT_GT(compare(keyB, keyA), 0);
+        }
     }
 }
 

@@ -199,6 +199,19 @@ int64_t decodeInt(const char* begin, const char* end)
     return ret;
 }
 
+static int compareInts(int64_t a, int64_t b)
+{
+    ASSERT(a >= 0);
+    ASSERT(b >= 0);
+
+    int64_t diff = a - b;
+    if (diff < 0)
+        return -1;
+    if (diff > 0)
+        return 1;
+    return 0;
+}
+
 Vector<char> encodeVarInt(int64_t n)
 {
     Vector<char> ret; // FIXME: Size this at creation.
@@ -660,11 +673,11 @@ int KeyPrefix::compare(const KeyPrefix& other) const
     ASSERT(m_indexId != kInvalidId);
 
     if (m_databaseId != other.m_databaseId)
-        return m_databaseId - other.m_databaseId;
+        return compareInts(m_databaseId, other.m_databaseId);
     if (m_objectStoreId != other.m_objectStoreId)
-        return m_objectStoreId - other.m_objectStoreId;
+        return compareInts(m_objectStoreId, other.m_objectStoreId);
     if (m_indexId != other.m_indexId)
-        return m_indexId - other.m_indexId;
+        return compareInts(m_indexId, other.m_indexId);
     return 0;
 }
 
@@ -746,7 +759,7 @@ int64_t DatabaseFreeListKey::databaseId() const
 int DatabaseFreeListKey::compare(const DatabaseFreeListKey& other) const
 {
     ASSERT(m_databaseId >= 0);
-    return m_databaseId - other.m_databaseId;
+    return compareInts(m_databaseId, other.m_databaseId);
 }
 
 const char* DatabaseNameKey::decode(const char* start, const char* limit, DatabaseNameKey* result)
@@ -850,8 +863,8 @@ int ObjectStoreMetaDataKey::compare(const ObjectStoreMetaDataKey& other)
 {
     ASSERT(m_objectStoreId >= 0);
     ASSERT(m_metaDataType >= 0);
-    if (int x = m_objectStoreId - other.m_objectStoreId)
-        return x; // FIXME: Is this cast safe? I.e., will it preserve the sign?
+    if (int x = compareInts(m_objectStoreId, other.m_objectStoreId))
+        return x;
     return m_metaDataType - other.m_metaDataType;
 }
 
@@ -905,9 +918,9 @@ int IndexMetaDataKey::compare(const IndexMetaDataKey& other)
     ASSERT(m_objectStoreId >= 0);
     ASSERT(m_indexId >= 0);
 
-    if (int x = m_objectStoreId - other.m_objectStoreId)
+    if (int x = compareInts(m_objectStoreId, other.m_objectStoreId))
         return x;
-    if (int x = m_indexId - other.m_indexId)
+    if (int x = compareInts(m_indexId, other.m_indexId))
         return x;
     return m_metaDataType - other.m_metaDataType;
 }
@@ -962,7 +975,7 @@ int ObjectStoreFreeListKey::compare(const ObjectStoreFreeListKey& other)
     // but that comparison will have been made earlier.
     // We should probably make this more clear, though...
     ASSERT(m_objectStoreId >= 0);
-    return m_objectStoreId - other.m_objectStoreId;
+    return compareInts(m_objectStoreId, other.m_objectStoreId);
 }
 
 IndexFreeListKey::IndexFreeListKey()
@@ -1006,9 +1019,9 @@ int IndexFreeListKey::compare(const IndexFreeListKey& other)
 {
     ASSERT(m_objectStoreId >= 0);
     ASSERT(m_indexId >= 0);
-    if (int x = m_objectStoreId - other.m_objectStoreId)
+    if (int x = compareInts(m_objectStoreId, other.m_objectStoreId))
         return x;
-    return m_indexId - other.m_indexId;
+    return compareInts(m_indexId, other.m_indexId);
 }
 
 int64_t IndexFreeListKey::objectStoreId() const
@@ -1046,7 +1059,6 @@ Vector<char> ObjectStoreNamesKey::encode(int64_t databaseId, const String& objec
 {
     KeyPrefix prefix(databaseId, 0, 0);
     Vector<char> ret = prefix.encode();
-    ret.append(encodeByte(kSchemaVersionTypeByte));
     ret.append(encodeByte(kObjectStoreNamesTypeByte));
     ret.append(encodeStringWithLength(objectStoreName));
     return ret;
@@ -1098,7 +1110,7 @@ Vector<char> IndexNamesKey::encode(int64_t databaseId, int64_t objectStoreId, co
 int IndexNamesKey::compare(const IndexNamesKey& other)
 {
     ASSERT(m_objectStoreId >= 0);
-    if (int x = m_objectStoreId - other.m_objectStoreId)
+    if (int x = compareInts(m_objectStoreId, other.m_objectStoreId))
         return x;
     return codePointCompare(m_indexName, other.m_indexName);
 }
@@ -1244,7 +1256,7 @@ int IndexDataKey::compare(const IndexDataKey& other, bool ignoreSequenceNumber)
         return x;
     if (ignoreSequenceNumber)
         return 0;
-    return m_sequenceNumber - other.m_sequenceNumber;
+    return compareInts(m_sequenceNumber, other.m_sequenceNumber);
 }
 
 int64_t IndexDataKey::databaseId() const

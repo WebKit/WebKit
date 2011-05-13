@@ -1,3 +1,28 @@
+2011-05-11  Hans Wennborg  <hans@chromium.org>
+
+        Reviewed by Tony Gentilcore.
+
+        IndexedDB: Fix integer comparison bug in LevelDB coding routines
+        https://bugs.webkit.org/show_bug.cgi?id=60623
+
+        Fix the code for comparing two int64_t variables.
+        Also remove faulty line in ObjectStoreNamesKey::encode which was
+        uncovered by the unit test in this patch.
+
+        Very hard to cover with layout tests; covered by unit test.
+
+        * storage/IDBLevelDBCoding.cpp:
+        (WebCore::IDBLevelDBCoding::compareInts):
+        (WebCore::IDBLevelDBCoding::KeyPrefix::compare):
+        (WebCore::IDBLevelDBCoding::DatabaseFreeListKey::compare):
+        (WebCore::IDBLevelDBCoding::ObjectStoreMetaDataKey::compare):
+        (WebCore::IDBLevelDBCoding::IndexMetaDataKey::compare):
+        (WebCore::IDBLevelDBCoding::ObjectStoreFreeListKey::compare):
+        (WebCore::IDBLevelDBCoding::IndexFreeListKey::compare):
+        (WebCore::IDBLevelDBCoding::ObjectStoreNamesKey::encode):
+        (WebCore::IDBLevelDBCoding::IndexNamesKey::compare):
+        (WebCore::IDBLevelDBCoding::IndexDataKey::compare):
+
 2011-05-13  Andrew Wason  <rectalogic@rectalogic.com>
 
         Reviewed by Darin Adler.
