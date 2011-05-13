@@ -2,6 +2,12 @@
 
         [Qt] Unreviewed fix after r86357, r86374, r86376. Skip failing tests.
 
+        * platform/qt-wk2/Skipped:
+
+2011-05-13  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [Qt] Unreviewed fix after r86357, r86374, r86376. Skip failing tests.
+
         * platform/qt-arm/Skipped:
         * platform/qt-mac/Skipped:
 
