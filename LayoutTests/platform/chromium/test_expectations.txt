@@ -4035,15 +4035,13 @@ BUGCR82419 : svg/custom/fill-opacity-update.svg = IMAGE
 BUGWK58999 WIN LINUX MAC : fast/borders/outline-alpha-block.html = IMAGE+TEXT IMAGE
 BUGWK58999 WIN LINUX MAC : fast/borders/outline-alpha-inline.html = IMAGE+TEXT IMAGE
 
+BUGWK60738 LINUX WIN : compositing/color-matching/image-color-matching.html = IMAGE+TEXT IMAGE
+BUGWK60738 LINUX WIN : compositing/layers-inside-overflow-scroll.html = IMAGE+TEXT IMAGE
+BUGWK60738 WIN GPU : compositing/self-painting-layers.html = IMAGE
+
 // Likely rebaseline needed.
 BUGATWILSON LINUX WIN : svg/custom/stroke-opacity-update.svg = IMAGE
 
 // Started failing, exact CL unknown, but assumedly after wk86241
 BUGATWILSON LINUX WIN : fast/repaint/border-fit-lines.html = IMAGE
-
-// JamesR says this is due to nduca's patch
-BUGATWILSON LINUX WIN : compositing/color-matching/image-color-matching.html = IMAGE+TEXT IMAGE
-BUGATWILSON LINUX WIN : compositing/layers-inside-overflow-scroll.html = IMAGE+TEXT IMAGE
-
-BUGATWILSON WIN GPU : compositing/self-painting-layers.html = IMAGE
 

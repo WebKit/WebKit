@@ -1,3 +1,9 @@
+2011-05-12  Andrew Wilson  <atwilson@chromium.org>
+
+        Unreviewed expectations tweaks for chromium.
+
+        * platform/chromium/test_expectations.txt:
+
 2011-05-12  Kent Tamura  <tkent@chromium.org>
 
         [Chromium] Update test expectations for r86224.
