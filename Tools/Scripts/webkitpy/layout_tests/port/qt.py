@@ -58,17 +58,6 @@ class QtPort(WebKitPort):
         port_names.append("qt")
         return map(self._webkit_baseline_path, port_names)
 
-    def _tests_for_other_platforms(self):
-        # FIXME: This list could be dynamic based on platform name and
-        # pushed into base.Port.
-        # This really need to be automated.
-        return [
-            "platform/chromium",
-            "platform/win",
-            "platform/gtk",
-            "platform/mac",
-        ]
-
     def _path_to_apache_config_file(self):
         # FIXME: This needs to detect the distribution and change config files.
         return self._filesystem.join(self.layout_tests_dir(), 'http', 'conf',

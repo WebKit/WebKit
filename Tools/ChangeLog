@@ -1,3 +1,17 @@
+2011-05-13  Kristóf Kosztyó  <Kosztyo.Kristof@stud.u-szeged.hu>
+
+        Reviewed by Csaba Osztrogonác.
+
+        [NRWT] chromium-linux tests shouldn't run on other platforms
+        https://bugs.webkit.org/show_bug.cgi?id=60162
+
+        Remove _tests_for_other_platforms defs because r82753
+        implemented it properly in the baseclass in webkit.py.
+
+        * Scripts/webkitpy/layout_tests/port/gtk.py:
+        * Scripts/webkitpy/layout_tests/port/qt.py:
+        * Scripts/webkitpy/layout_tests/port/win.py:
+
 2011-05-12  Ryuan Choi  <ryuan.choi@samsung.com>
 
         Reviewed by Antonio Gomes.
