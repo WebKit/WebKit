@@ -52,6 +52,7 @@
 #include <WebCore/BackForwardController.h>
 #include <WebCore/CachedFrame.h>
 #include <WebCore/DocumentLoader.h>
+#include <WebCore/Frame.h>
 #include <WebCore/FrameLoader.h>
 #include <WebCore/FrameTree.h>
 #include <WebCore/FrameView.h>

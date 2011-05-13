@@ -24394,6 +24394,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\page\AdjustViewSizeOrNot.h"
+				>
+			</File>
+			<File
 				RelativePath="..\page\BarInfo.cpp"
 				>
 			</File>

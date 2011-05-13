@@ -27,8 +27,10 @@
 
 #include "Chrome.h"
 #include "ChromeClientEfl.h"
+#include "Frame.h"
 #include "FrameView.h"
 #include "NotImplemented.h"
+#include "Page.h"
 #include "PopupMenuClient.h"
 
 namespace WebCore {

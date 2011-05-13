@@ -32,12 +32,11 @@
 #if ENABLE(OFFLINE_WEB_APPLICATIONS)
 #include "ApplicationCacheHost.h"
 #include "ApplicationCacheResource.h"
-#include "DocumentLoader.h"
 #endif
-
 
 #import "BlockExceptions.h"
 #import "DocumentLoader.h"
+#import "Frame.h"
 #import "FrameView.h"
 #import "GraphicsContext.h"
 #import "KURL.h"
@@ -55,7 +54,6 @@
 
 #if DRAW_FRAME_RATE
 #import "Font.h"
-#import "Frame.h"
 #import "Document.h"
 #import "RenderObject.h"
 #import "RenderStyle.h"

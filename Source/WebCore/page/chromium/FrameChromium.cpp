@@ -25,6 +25,7 @@
  */
 
 #include "config.h"
+#include "Frame.h"
 
 #include "Document.h"
 #include "FloatRect.h"

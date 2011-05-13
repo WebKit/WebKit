@@ -25,24 +25,31 @@
 #ifndef FrameView_h
 #define FrameView_h
 
-#include "Frame.h"
-#include "Page.h"
+#include "AdjustViewSizeOrNot.h"
+#include "Color.h"
 #include "PaintPhase.h"
 #include "ScrollView.h"
 #include <wtf/Forward.h>
 #include <wtf/OwnPtr.h>
+#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
 class Color;
 class Event;
+class FloatSize;
+class Frame;
 class FrameActionScheduler;
 class IntRect;
+class KURL;
 class Node;
+class Page;
+class RenderEmbeddedObject;
 class RenderLayer;
 class RenderObject;
-class RenderEmbeddedObject;
 class RenderScrollbarPart;
+
+typedef unsigned long long DOMTimeStamp;
 
 class FrameView : public ScrollView {
 public:
@@ -217,7 +224,7 @@ public:
     void setIsVisuallyNonEmpty() { m_isVisuallyNonEmpty = true; }
 
     void forceLayout(bool allowSubtree = false);
-    void forceLayoutForPagination(const FloatSize& pageSize, float maximumShrinkFactor, Frame::AdjustViewSizeOrNot);
+    void forceLayoutForPagination(const FloatSize& pageSize, float maximumShrinkFactor, AdjustViewSizeOrNot);
 
     // FIXME: This method is retained because of embedded WebViews in AppKit.  When a WebView is embedded inside
     // some enclosing view with auto-pagination, no call happens to resize the view.  The new pagination model

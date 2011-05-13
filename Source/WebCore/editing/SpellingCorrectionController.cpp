@@ -33,6 +33,7 @@
 #include "FloatQuad.h"
 #include "Frame.h"
 #include "FrameView.h"
+#include "Page.h"
 #include "SpellingCorrectionCommand.h"
 #include "TextCheckerClient.h"
 #include "TextCheckingHelper.h"
@@ -41,7 +42,6 @@
 #include "htmlediting.h"
 #include "markup.h"
 #include "visible_units.h"
-
 
 namespace WebCore {
 

@@ -30,23 +30,18 @@
 #include "SpellingCorrectionController.h"
 #include "EditorInsertAction.h"
 #include "FloatRect.h"
-#include "PlatformString.h"
 #include "TextAffinity.h"
 #include <wtf/Forward.h>
 #include <wtf/Vector.h>
 
 #if PLATFORM(MAC)
 #ifdef __OBJC__
-@class NSArray;
 @class NSAttributedString;
-@class NSData;
 @class NSPasteboard;
 @class NSString;
 @class NSURL;
 #else
-class NSArray;
 class NSAttributedString;
-class NSData;
 class NSPasteboard;
 class NSString;
 class NSURL;

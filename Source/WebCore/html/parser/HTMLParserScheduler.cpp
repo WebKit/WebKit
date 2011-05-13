@@ -26,9 +26,10 @@
 #include "config.h"
 #include "HTMLParserScheduler.h"
 
-#include "FrameView.h" // Only for isLayoutTimerActive
-#include "HTMLDocumentParser.h"
 #include "Document.h"
+#include "FrameView.h"
+#include "HTMLDocumentParser.h"
+#include "Page.h"
 
 // defaultParserChunkSize is used to define how many tokens the parser will
 // process before checking against parserTimeLimit and possibly yielding.

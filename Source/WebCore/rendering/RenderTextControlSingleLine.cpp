@@ -37,6 +37,7 @@
 #include "HitTestResult.h"
 #include "LocalizedStrings.h"
 #include "MouseEvent.h"
+#include "Page.h"
 #include "PlatformKeyboardEvent.h"
 #include "RenderLayer.h"
 #include "RenderScrollbar.h"

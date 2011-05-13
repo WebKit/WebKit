@@ -38,6 +38,7 @@
 #include "GraphicsContext.h"
 #include "KURL.h"
 #include "MediaPlayerPrivateTaskTimer.h"
+#include "Page.h"
 #include "QTCFDictionary.h"
 #include "QTDecompressionSession.h"
 #include "QTMovie.h"

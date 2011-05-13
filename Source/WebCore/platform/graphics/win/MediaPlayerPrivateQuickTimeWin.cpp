@@ -35,6 +35,7 @@
 #include "GraphicsContext.h"
 #include "KURL.h"
 #include "MediaPlayerPrivateTaskTimer.h"
+#include "Page.h"
 #include "QTMovieTask.h"
 #include "ScrollView.h"
 #include "SoftLinking.h"

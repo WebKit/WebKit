@@ -35,6 +35,7 @@
 #include "FramelessScrollView.h"
 #include "FrameView.h"
 #include "IntRect.h"
+#include "NotImplemented.h"
 #include "painting/GraphicsContextBuilder.h"
 #include "PlatformKeyboardEvent.h"
 #include "PlatformMouseEvent.h"

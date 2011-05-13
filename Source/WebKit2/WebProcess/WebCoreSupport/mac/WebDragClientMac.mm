@@ -35,6 +35,7 @@
 #import <WebCore/DOMElementInternal.h>
 #import <WebCore/DOMPrivate.h>
 #import <WebCore/DragController.h>
+#import <WebCore/Frame.h>
 #import <WebCore/FrameView.h>
 #import <WebCore/GraphicsContext.h>
 #import <WebCore/LegacyWebArchive.h>

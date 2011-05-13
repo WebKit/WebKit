@@ -23,6 +23,7 @@
 #include "CSSStyleSelector.h"
 #include "Document.h"
 #include "Element.h"
+#include "Frame.h"
 #include "FrameView.h"
 #include "MediaList.h"
 #include "MediaQueryEvaluator.h"

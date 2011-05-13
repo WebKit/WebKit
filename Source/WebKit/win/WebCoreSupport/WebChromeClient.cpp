@@ -43,6 +43,7 @@
 #include <WebCore/Cursor.h>
 #include <WebCore/FileChooser.h>
 #include <WebCore/FloatRect.h>
+#include <WebCore/Frame.h>
 #include <WebCore/FrameLoadRequest.h>
 #include <WebCore/FrameView.h>
 #include <WebCore/FullScreenController.h>

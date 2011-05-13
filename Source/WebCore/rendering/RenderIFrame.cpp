@@ -26,9 +26,11 @@
 #include "config.h"
 #include "RenderIFrame.h"
 
+#include "Frame.h"
 #include "FrameView.h"
-#include "HTMLNames.h"
 #include "HTMLIFrameElement.h"
+#include "HTMLNames.h"
+#include "Page.h"
 #include "RenderView.h"
 #include "Settings.h"
 

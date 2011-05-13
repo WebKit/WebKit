@@ -37,6 +37,7 @@
 #include "FrameView.h"
 #include "HistoryItem.h"
 #include "Logging.h"
+#include "Page.h"
 #include "PageTransitionEvent.h"
 #include "SerializedScriptValue.h"
 #include <wtf/text/CString.h>
@@ -49,7 +50,6 @@
 #if ENABLE(TOUCH_EVENTS)
 #include "Chrome.h"
 #include "ChromeClient.h"
-#include "Page.h"
 #endif
 
 namespace WebCore {

@@ -26,17 +26,14 @@
 #include "config.h"
 #include "FrameWin.h"
 
-#include <windows.h>
-
 #include "BitmapInfo.h"
+#include "Frame.h"
 #include "FrameView.h"
 #include "GraphicsContextCG.h"
 #include "RenderObject.h"
 #include "Settings.h"
-
 #include <CoreGraphics/CoreGraphics.h>
-
-using std::min;
+#include <windows.h>
 
 namespace WebCore {
 

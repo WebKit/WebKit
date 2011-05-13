@@ -35,6 +35,7 @@
 #include "NodeRenderStyle.h"
 #include "OptionElement.h"
 #include "OptionGroupElement.h"
+#include "Page.h"
 #include "PopupMenu.h"
 #include "RenderBR.h"
 #include "RenderScrollbar.h"

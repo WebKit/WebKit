@@ -31,6 +31,7 @@
 #import "WebFrameInternal.h"
 #import "WebFrameView.h"
 #import "WebViewPrivate.h"
+#import <WebCore/Frame.h>
 #import <WebCore/FrameView.h>
 
 // WebClipView's entire reason for existing is to set the clip used by focus ring redrawing.

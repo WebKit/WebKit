@@ -1,3 +1,61 @@
+2011-05-13  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Anders Carlsson.
+
+        Prune #includes from FrameView.h (Part 2)
+        https://bugs.webkit.org/show_bug.cgi?id=60748
+
+        - Replace #includes in FrameView.h of Frame.h and Page.h
+          with Color.h, wtf/text/WTFString.h, and the new AdjustViewSizeOrNot.h
+
+        - Update files that were depending on FrameView.h #including Frame.h or
+          Page.h.
+
+        * GNUmakefile.list.am:
+        * WebCore.exp.in:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * accessibility/AccessibilityRenderObject.cpp:
+        * accessibility/AccessibilityScrollView.cpp:
+        * accessibility/chromium/AXObjectCacheChromium.cpp:
+        * accessibility/mac/AccessibilityObjectWrapper.mm:
+        * css/MediaQueryMatcher.cpp:
+        * dom/Range.cpp:
+        * editing/SpellingCorrectionController.cpp:
+        * history/CachedFrame.cpp:
+        * html/HTMLBodyElement.cpp:
+        * html/canvas/WebGLRenderingContext.cpp:
+        * html/parser/HTMLParserScheduler.cpp:
+        * page/AdjustViewSizeOrNot.h: Added.
+        * page/EditorClient.h:
+        * page/Frame.h:
+        * page/FrameView.cpp:
+        (WebCore::FrameView::forceLayoutForPagination):
+        * page/FrameView.h:
+        * page/PrintContext.cpp:
+        (WebCore::PrintContext::begin):
+        (WebCore::PrintContext::end):
+        * page/chromium/FrameChromium.cpp:
+        * page/win/FrameCGWin.cpp:
+        * page/win/FrameWin.cpp:
+        * platform/efl/PopupMenuEfl.cpp:
+        * platform/graphics/avfoundation/MediaPlayerPrivateAVFoundation.cpp:
+        * platform/graphics/mac/MediaPlayerPrivateQTKit.mm:
+        * platform/graphics/qt/MediaPlayerPrivateQt.cpp:
+        * platform/graphics/win/MediaPlayerPrivateQuickTimeVisualContext.cpp:
+        * platform/graphics/win/MediaPlayerPrivateQuickTimeWin.cpp:
+        * platform/gtk/WidgetGtk.cpp:
+        * plugins/IFrameShimSupport.cpp:
+        * rendering/RenderBlock.cpp:
+        * rendering/RenderBoxModelObject.cpp:
+        * rendering/RenderFrameBase.cpp:
+        * rendering/RenderIFrame.cpp:
+        * rendering/RenderMenuList.cpp:
+        * rendering/RenderTextControlSingleLine.cpp:
+        * rendering/RenderWidget.cpp:
+        * svg/SVGSVGElement.cpp:
+
 2011-05-13  Levi Weintraub  <leviw@chromium.org>
 
         Reviewed by Eric Seidel.

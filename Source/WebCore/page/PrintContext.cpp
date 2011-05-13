@@ -179,7 +179,7 @@ void PrintContext::begin(float width, float height)
     float minLayoutHeight = height * printingMinimumShrinkFactor;
 
     // This changes layout, so callers need to make sure that they don't paint to screen while in printing mode.
-    m_frame->setPrinting(true, FloatSize(minLayoutWidth, minLayoutHeight), printingMaximumShrinkFactor / printingMinimumShrinkFactor, Frame::AdjustViewSize);
+    m_frame->setPrinting(true, FloatSize(minLayoutWidth, minLayoutHeight), printingMaximumShrinkFactor / printingMinimumShrinkFactor, AdjustViewSize);
 }
 
 float PrintContext::computeAutomaticScaleFactor(const FloatSize& availablePaperSize)
@@ -228,7 +228,7 @@ void PrintContext::end()
 {
     ASSERT(m_isPrinting);
     m_isPrinting = false;
-    m_frame->setPrinting(false, FloatSize(), 0, Frame::AdjustViewSize);
+    m_frame->setPrinting(false, FloatSize(), 0, AdjustViewSize);
 }
 
 static RenderBoxModelObject* enclosingBoxModelObject(RenderObject* object)

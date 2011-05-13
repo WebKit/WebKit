@@ -35,6 +35,7 @@
 
 #include "Chrome.h"
 #include "ChromeClientImpl.h"
+#include "Page.h"
 #include "WebAudioBus.h"
 #include "WebClipboard.h"
 #include "WebCookie.h"

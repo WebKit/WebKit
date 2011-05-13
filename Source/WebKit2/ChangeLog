@@ -1,3 +1,18 @@
+2011-05-13  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Anders Carlsson.
+
+        Prune #includes from FrameView.h (Part 2)
+        https://bugs.webkit.org/show_bug.cgi?id=60748
+
+        - Update files that were depending on FrameView.h #including Frame.h or
+          Page.h.
+
+        * WebProcess/Plugins/PluginView.cpp:
+        * WebProcess/WebCoreSupport/mac/WebDragClientMac.mm:
+        * WebProcess/WebPage/WebContextMenu.cpp:
+        * WebProcess/WebPage/mac/AccessibilityWebPageObject.mm:
+
 2011-05-13  Martin Robinson  <mrobinson@igalia.com>
 
         Reviewed by Eric Seidel.

@@ -32,6 +32,7 @@
 #include "IFrameShimSupport.h"
 
 #include "Element.h"
+#include "Frame.h"
 #include "FrameView.h"
 #include "HTMLElement.h"
 #include "HTMLFrameOwnerElement.h"

@@ -33,6 +33,7 @@
 #include "EventNames.h"
 #include "FloatConversion.h"
 #include "FloatRect.h"
+#include "Frame.h"
 #include "FrameSelection.h"
 #include "FrameView.h"
 #include "HTMLNames.h"

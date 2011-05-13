@@ -55,6 +55,7 @@
 #include "LocalizedStrings.h"
 #include "MathMLNames.h"
 #include "NodeList.h"
+#include "Page.h"
 #include "ProgressTracker.h"
 #include "RenderButton.h"
 #include "RenderFieldset.h"

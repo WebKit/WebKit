@@ -3033,7 +3033,7 @@ WEBCORE_COMMAND(yankAndSelect)
             FloatSize pageSize(minPageLogicalWidth, minPageLogicalHeight);
             if (coreFrame->document() && coreFrame->document()->renderView() && !coreFrame->document()->renderView()->style()->isHorizontalWritingMode())
                 pageSize = FloatSize(minPageLogicalHeight, minPageLogicalWidth);
-            coreView->forceLayoutForPagination(pageSize, maxPageLogicalWidth / minPageLogicalWidth, adjustViewSize ? Frame::AdjustViewSize : Frame::DoNotAdjustViewSize);
+            coreView->forceLayoutForPagination(pageSize, maxPageLogicalWidth / minPageLogicalWidth, adjustViewSize ? AdjustViewSize : DoNotAdjustViewSize);
         } else {
             coreView->forceLayout(!adjustViewSize);
             if (adjustViewSize)

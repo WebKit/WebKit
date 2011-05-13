@@ -28,6 +28,7 @@
 #ifndef Frame_h
 #define Frame_h
 
+#include "AdjustViewSizeOrNot.h"
 #include "AnimationController.h"
 #include "DragImage.h"
 #include "Editor.h"
@@ -146,7 +147,6 @@ namespace WebCore {
 
         Settings* settings() const; // can be NULL
 
-        enum AdjustViewSizeOrNot { DoNotAdjustViewSize, AdjustViewSize };
         void setPrinting(bool printing, const FloatSize& pageSize, float maximumShrinkRatio, AdjustViewSizeOrNot);
 
         bool inViewSourceMode() const;

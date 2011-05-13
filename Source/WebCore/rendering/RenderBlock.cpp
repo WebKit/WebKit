@@ -37,6 +37,7 @@
 #include "HitTestResult.h"
 #include "InlineIterator.h"
 #include "InlineTextBox.h"
+#include "Page.h"
 #include "PaintInfo.h"
 #include "RenderCombineText.h"
 #include "RenderFlexibleBox.h"

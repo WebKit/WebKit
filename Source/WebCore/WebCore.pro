@@ -1832,6 +1832,7 @@ HEADERS += \
     page/animation/CompositeAnimation.h \
     page/animation/ImplicitAnimation.h \
     page/animation/KeyframeAnimation.h \
+    page/AdjustViewSizeOrNot.h \
     page/BarInfo.h \
     page/Chrome.h \
     page/Console.h \

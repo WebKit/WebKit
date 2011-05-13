@@ -48,6 +48,7 @@
 #include "NetworkingContext.h"
 #include "NotImplemented.h"
 #include "NotificationPresenterClientQt.h"
+#include "Page.h"
 #include "PageClientQt.h"
 #include "PopupMenuQt.h"
 #if defined(Q_WS_MAEMO_5)

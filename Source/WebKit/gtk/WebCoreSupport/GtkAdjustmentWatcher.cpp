@@ -19,6 +19,7 @@
 #include "config.h"
 #include "GtkAdjustmentWatcher.h"
 
+#include "Frame.h"
 #include "FrameView.h"
 #include "Page.h"
 #include "Scrollbar.h"

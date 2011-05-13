@@ -30,6 +30,7 @@
 #include "HTMLFrameOwnerElement.h"
 #include "HTMLNames.h"
 #include "ImageBuffer.h"
+#include "Page.h"
 #include "Path.h"
 #include "RenderBlock.h"
 #include "RenderInline.h"

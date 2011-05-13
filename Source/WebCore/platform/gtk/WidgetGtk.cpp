@@ -30,11 +30,13 @@
 
 #include "Chrome.h"
 #include "Cursor.h"
+#include "Frame.h"
 #include "FrameView.h"
 #include "GraphicsContext.h"
 #include "GtkVersioning.h"
 #include "HostWindow.h"
 #include "IntRect.h"
+#include "Page.h"
 #include "RenderObject.h"
 
 #include <gdk/gdk.h>

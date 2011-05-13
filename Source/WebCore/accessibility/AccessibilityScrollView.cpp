@@ -28,6 +28,7 @@
 
 #include "AXObjectCache.h"
 #include "AccessibilityScrollbar.h"
+#include "Frame.h"
 #include "FrameView.h"
 #include "HTMLFrameOwnerElement.h"
 #include "RenderPart.h"

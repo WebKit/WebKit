@@ -31,7 +31,9 @@
 #include "AccessibilityScrollbar.h"
 #include "Chrome.h"
 #include "ChromeClient.h"
+#include "Frame.h"
 #include "FrameView.h"
+#include "Page.h"
 #include "RenderObject.h"
 #include "Scrollbar.h"
 
