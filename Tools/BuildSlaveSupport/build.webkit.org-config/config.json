@@ -9,6 +9,8 @@
                     { "name": "apple-xserve-5", "platform": "mac-snowleopard" },
                     { "name": "apple-xserve-6", "platform": "mac-snowleopard" },
                     { "name": "apple-xserve-7", "platform": "mac-snowleopard" },
+                    { "name": "apple-xserve-8", "platform": "mac-snowleopard" },	
+                    { "name": "apple-xserve-9", "platform": "mac-snowleopard" },	
 
                     { "name": "apple-pixel-1", "platform": "mac-leopard" },
 
@@ -19,8 +21,6 @@
                     { "name": "apple-macpro-5", "platform": "mac-leopard" },	
                     { "name": "apple-macpro-6", "platform": "mac-leopard" },
                     { "name": "apple-macpro-7", "platform": "mac-leopard" },	
-                    { "name": "apple-macpro-8", "platform": "mac-snowleopard" },	
-                    { "name": "apple-macpro-9", "platform": "mac-snowleopard" },	
                     	
 
                     { "name": "apple-windows-1", "platform": "win"},
@@ -111,6 +111,10 @@
                     { "name": "SnowLeopard Intel Release (WebKit2 Tests)", "type": "TestWebKit2", "builddir": "snowleopard-intel-release-tests-wk2",
                       "platform": "mac-snowleopard", "configuration": "release", "architectures": ["x86_64"],
                       "slavenames": ["apple-xserve-7", "test-slave"]
+                    },
+                    { "name": "SnowLeopard Intel Debug (WebKit2 Tests)", "type": "TestWebKit2", "builddir": "snowleopard-intel-debug-tests-wk2",
+                      "platform": "mac-snowleopard", "configuration": "debug", "architectures": ["x86_64"],
+                      "slavenames": ["apple-xserve-9"]
                     },
                     {
                       "name": "Leopard Intel Release (NRWT)", "type": "NewBuildAndTest", "builddir": "google-new-tests-leopard",

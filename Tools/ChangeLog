@@ -2,6 +2,15 @@
 
         Reviewed by Stephanie Lewis.
 
+        Fix config.json to address missing WK2 builder/tester config.
+        Fix naming of machines (xserve not macpro)
+
+        * BuildSlaveSupport/build.webkit.org-config/config.json:
+
+2011-05-12  Lucas Forschler  <lforschler@apple.com>
+
+        Reviewed by Stephanie Lewis.
+
         Add SnowLeopard Debug builder and Test bot.
         apple-xserve-8 = SL Debug Tester.
         apple-xserve-9 = SL Debug Builder.
