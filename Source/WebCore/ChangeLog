@@ -1,3 +1,19 @@
+2011-05-13  Alexey Proskuryakov  <ap@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        https://bugs.webkit.org/show_bug.cgi?id=60787
+        Add some assertions to ApplicationCacheGroup
+
+        * loader/appcache/ApplicationCacheGroup.cpp:
+        (WebCore::ApplicationCacheGroup::finishedLoadingMainResource): Check that count doesn't underflow.
+        (WebCore::ApplicationCacheGroup::failedLoadingMainResource): Ditto.
+        (WebCore::ApplicationCacheGroup::stopLoading): Check that we are the handle's client before
+        resetting it.
+        (WebCore::ApplicationCacheGroup::update): Check that there isn't a stale current handle or
+        resource hanging around.
+        (WebCore::ApplicationCacheGroup::didFail): Check that the handle is either manifest or current one.
+
 2011-05-13  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Anders Carlsson.

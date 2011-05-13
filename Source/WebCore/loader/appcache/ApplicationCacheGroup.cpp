@@ -273,6 +273,7 @@ void ApplicationCacheGroup::finishedLoadingMainResource(DocumentLoader* loader)
         break;
     }
 
+    ASSERT(m_downloadingPendingMasterResourceLoadersCount > 0);
     m_downloadingPendingMasterResourceLoadersCount--;
     checkIfLoadIsComplete();
 }
@@ -317,6 +318,7 @@ void ApplicationCacheGroup::failedLoadingMainResource(DocumentLoader* loader)
         break;
     }
 
+    ASSERT(m_downloadingPendingMasterResourceLoadersCount > 0);
     m_downloadingPendingMasterResourceLoadersCount--;
     checkIfLoadIsComplete();
 }
@@ -326,7 +328,9 @@ void ApplicationCacheGroup::stopLoading()
     if (m_manifestHandle) {
         ASSERT(!m_currentHandle);
 
+        ASSERT(m_manifestHandle->client() == this);
         m_manifestHandle->setClient(0);
+
         m_manifestHandle->cancel();
         m_manifestHandle = 0;
     }
@@ -335,7 +339,9 @@ void ApplicationCacheGroup::stopLoading()
         ASSERT(!m_manifestHandle);
         ASSERT(m_cacheBeingUpdated);
 
+        ASSERT(m_currentHandle->client() == this);
         m_currentHandle->setClient(0);
+
         m_currentHandle->cancel();
         m_currentHandle = 0;
     }    
@@ -448,6 +454,8 @@ void ApplicationCacheGroup::update(Frame* frame, ApplicationCacheUpdateOption up
     
     ASSERT(!m_manifestHandle);
     ASSERT(!m_manifestResource);
+    ASSERT(!m_currentHandle);
+    ASSERT(!m_currentResource);
     ASSERT(m_completionType == None);
 
     // FIXME: Handle defer loading
@@ -629,6 +637,8 @@ void ApplicationCacheGroup::didFail(ResourceHandle* handle, const ResourceError&
         cacheUpdateFailed();
         return;
     }
+
+    ASSERT(handle == m_currentHandle);
 
     unsigned type = m_currentResource ? m_currentResource->type() : m_pendingEntries.get(handle->firstRequest().url());
     KURL url(handle->firstRequest().url());
