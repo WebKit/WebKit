@@ -1,3 +1,17 @@
+2011-05-12  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Gavin Barraclough.
+
+        WebProcess sandbox denies file:/// accesses after you navigate to a nonexistent file
+        <rdar://problem/9427752>
+        https://bugs.webkit.org/show_bug.cgi?id=60745
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::SandboxExtensionTracker::didStartProvisionalLoad):
+        Don't attempt to re-use a non-existent committed sandbox extension. This can
+        happen when the previous load was file: url, but did not require an extension,
+        such as an error page.
+
 2011-05-12  Jia Pu  <jpu@apple.com>
 
         Reviewed by Darin Adler.

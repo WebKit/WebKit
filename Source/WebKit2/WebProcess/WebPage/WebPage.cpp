@@ -2101,7 +2101,9 @@ void WebPage::SandboxExtensionTracker::didStartProvisionalLoad(WebFrame* frame)
     if (!frame->isMainFrame())
         return;
 
-    if (shouldReuseCommittedSandboxExtension(frame)) {
+    // We should only reuse the commited sandbox extension if it is not null. It can be
+    // null if the last load was for an error page.
+    if (m_committedSandboxExtension && shouldReuseCommittedSandboxExtension(frame)) {
         m_pendingProvisionalSandboxExtension = m_committedSandboxExtension.release();
         ASSERT(!m_committedSandboxExtension);
     }
