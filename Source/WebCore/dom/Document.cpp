@@ -3399,6 +3399,7 @@ void Document::nodeChildrenWillBeRemoved(ContainerNode* container)
 
     if (Frame* frame = this->frame()) {
         for (Node* n = container->firstChild(); n; n = n->nextSibling()) {
+            frame->eventHandler()->nodeWillBeRemoved(n);
             frame->selection()->nodeWillBeRemoved(n);
             frame->page()->dragCaretController()->nodeWillBeRemoved(n);
         }
@@ -3418,6 +3419,7 @@ void Document::nodeWillBeRemoved(Node* n)
     }
 
     if (Frame* frame = this->frame()) {
+        frame->eventHandler()->nodeWillBeRemoved(n);
         frame->selection()->nodeWillBeRemoved(n);
         frame->page()->dragCaretController()->nodeWillBeRemoved(n);
     }

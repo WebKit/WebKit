@@ -1,3 +1,26 @@
+2011-05-13  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        click event shouldn't fire when the target is ever removed in mouseup
+        https://bugs.webkit.org/show_bug.cgi?id=60600
+
+        Fixed the bug by invalidating m_clickNode when it or one of its ancestors has been removed
+        from the document. New behavior matches Internet Explorer and Firefox.
+
+        Tests: fast/events/remove-target-in-mouseup-deep.html
+               fast/events/remove-target-in-mouseup-insertback.html
+               fast/events/remove-target-in-mouseup-twice.html
+               fast/events/remove-target-in-mouseup.html
+
+        * dom/Document.cpp:
+        (WebCore::Document::nodeChildrenWillBeRemoved): Calls EventHandler::nodeWillBeRemoved.
+        (WebCore::Document::nodeWillBeRemoved): Calls EventHandler::nodeWillBeRemoved.
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::nodeWillBeRemoved): Added; invalidates m_clickNode when m_clickNode
+        or one of its ancestor is removed from the document.
+        * page/EventHandler.h:
+
 2011-05-13  Alexey Proskuryakov  <ap@apple.com>
 
         Reviewed by Joseph Pecoraro.

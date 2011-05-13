@@ -259,6 +259,12 @@ void EventHandler::clear()
 #endif
 }
 
+void EventHandler::nodeWillBeRemoved(Node* nodeToBeRemoved)
+{
+    if (nodeToBeRemoved->contains(m_clickNode.get()))
+        m_clickNode = 0;
+}
+
 static void setSelectionIfNeeded(FrameSelection* selection, const VisibleSelection& newSelection)
 {
     ASSERT(selection);

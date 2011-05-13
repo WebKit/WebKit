@@ -98,6 +98,7 @@ public:
     ~EventHandler();
 
     void clear();
+    void nodeWillBeRemoved(Node*);
 
 #if ENABLE(DRAG_SUPPORT)
     void updateSelectionForMouseDrag();
