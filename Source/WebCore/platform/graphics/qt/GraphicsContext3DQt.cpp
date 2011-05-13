@@ -686,7 +686,7 @@ PassRefPtr<GraphicsContext3D> GraphicsContext3D::create(GraphicsContext3D::Attri
 }
 
 GraphicsContext3D::GraphicsContext3D(GraphicsContext3D::Attributes attrs, HostWindow* hostWindow, bool)
-    : m_internal(adoptPtr(new GraphicsContext3DInternal(attrs, hostWindow))), m_isResourceSafe(false)
+    : m_isResourceSafe(false), m_internal(adoptPtr(new GraphicsContext3DInternal(attrs, hostWindow)))
 {
     if (!m_internal->isValid())
         m_internal = 0;
