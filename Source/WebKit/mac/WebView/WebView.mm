@@ -4473,14 +4473,24 @@ static WebFrame *incrementFrame(WebFrame *frame, WebFindOptions options = 0)
 
 - (void)scheduleInRunLoop:(NSRunLoop *)runLoop forMode:(NSString *)mode
 {
+#if USE(CFNETWORK)
+    CFRunLoopRef schedulePairRunLoop = [runLoop getCFRunLoop];
+#else
+    NSRunLoop *schedulePairRunLoop = runLoop;
+#endif
     if (runLoop && mode)
-        core(self)->addSchedulePair(SchedulePair::create(runLoop, (CFStringRef)mode));
+        core(self)->addSchedulePair(SchedulePair::create(schedulePairRunLoop, (CFStringRef)mode));
 }
 
 - (void)unscheduleFromRunLoop:(NSRunLoop *)runLoop forMode:(NSString *)mode
 {
+#if USE(CFNETWORK)
+    CFRunLoopRef schedulePairRunLoop = [runLoop getCFRunLoop];
+#else
+    NSRunLoop *schedulePairRunLoop = runLoop;
+#endif
     if (runLoop && mode)
-        core(self)->removeSchedulePair(SchedulePair::create(runLoop, (CFStringRef)mode));
+        core(self)->removeSchedulePair(SchedulePair::create(schedulePairRunLoop, (CFStringRef)mode));
 }
 
 static BOOL findString(NSView <WebDocumentSearching> *searchView, NSString *string, WebFindOptions options)

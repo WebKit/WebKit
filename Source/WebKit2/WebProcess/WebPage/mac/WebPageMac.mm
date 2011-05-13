@@ -63,7 +63,11 @@ static PassRefPtr<Range> convertToRange(Frame*, NSRange);
 
 void WebPage::platformInitialize()
 {
+#if USE(CFNETWORK)
+    m_page->addSchedulePair(SchedulePair::create([[NSRunLoop currentRunLoop] getCFRunLoop], kCFRunLoopCommonModes));
+#else
     m_page->addSchedulePair(SchedulePair::create([NSRunLoop currentRunLoop], kCFRunLoopCommonModes));
+#endif
 
     AccessibilityWebPageObject* mockAccessibilityElement = [[[AccessibilityWebPageObject alloc] init] autorelease];
 

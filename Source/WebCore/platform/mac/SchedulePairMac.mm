@@ -30,6 +30,8 @@
 
 #include "SchedulePair.h"
 
+#if !USE(CFNETWORK)
+
 namespace WebCore {
 
 SchedulePair::SchedulePair(NSRunLoop* runLoop, CFStringRef mode)
@@ -41,3 +43,5 @@ SchedulePair::SchedulePair(NSRunLoop* runLoop, CFStringRef mode)
 }
 
 } // namespace
+
+#endif

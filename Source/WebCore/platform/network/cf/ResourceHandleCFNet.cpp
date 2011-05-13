@@ -777,6 +777,30 @@ CFURLStorageSessionRef ResourceHandle::defaultStorageSession()
 
 #endif // USE(CFURLSTORAGESESSIONS)
 
+#if PLATFORM(MAC)
+void ResourceHandle::schedule(SchedulePair* pair)
+{
+    CFRunLoopRef runLoop = pair->runLoop();
+    if (!runLoop)
+        return;
+
+    CFURLConnectionScheduleWithRunLoop(d->m_connection.get(), runLoop, pair->mode());
+    if (d->m_startWhenScheduled) {
+        CFURLConnectionStart(d->m_connection.get());
+        d->m_startWhenScheduled = false;
+    }
+}
+
+void ResourceHandle::unschedule(SchedulePair* pair)
+{
+    CFRunLoopRef runLoop = pair->runLoop();
+    if (!runLoop)
+        return;
+
+    CFURLConnectionUnscheduleFromRunLoop(d->m_connection.get(), runLoop, pair->mode());
+}
+#endif
+
 void WebCoreSynchronousLoaderClient::willSendRequest(ResourceHandle* handle, ResourceRequest& request, const ResourceResponse& /*redirectResponse*/)
 {
     // FIXME: This needs to be fixed to follow the redirect correctly even for cross-domain requests.
