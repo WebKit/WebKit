@@ -1,3 +1,15 @@
+2011-05-13  Alexey Proskuryakov  <ap@apple.com>
+
+        Reviewed by Joseph Pecoraro.
+
+        Hide appcache status bar items
+        https://bugs.webkit.org/show_bug.cgi?id=60799
+
+        We have a number of non-trivial bugs that make these more misleading than helpful to developers.
+
+        * inspector/front-end/ApplicationCacheItemsView.js: (WebInspector.ApplicationCacheItemsView):
+        Just hide the items for now. Removing all support code would be complicated, and not helpful.
+
 2011-05-13  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Eric Seidel.

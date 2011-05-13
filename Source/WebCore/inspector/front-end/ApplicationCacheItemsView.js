@@ -30,13 +30,11 @@ WebInspector.ApplicationCacheItemsView = function(treeElement, appcacheDomain)
     this.element.addStyleClass("storage-view");
     this.element.addStyleClass("table");
 
-    // FIXME: Delete Button semantics are not yet defined.
     // FIXME: Needs better tooltip. (Localized)
     this.deleteButton = new WebInspector.StatusBarButton(WebInspector.UIString("Delete"), "delete-storage-status-bar-item");
     this.deleteButton.visible = false;
     this.deleteButton.addEventListener("click", this._deleteButtonClicked.bind(this), false);
 
-    // FIXME: Refresh Button semantics are not yet defined.
     // FIXME: Needs better tooltip. (Localized)
     this.refreshButton = new WebInspector.StatusBarButton(WebInspector.UIString("Refresh"), "refresh-storage-status-bar-item");
     this.refreshButton.addEventListener("click", this._refreshButtonClicked.bind(this), false);
@@ -69,6 +67,21 @@ WebInspector.ApplicationCacheItemsView = function(treeElement, appcacheDomain)
     this.element.appendChild(this._emptyMsgElement);
 
     this.updateStatus(applicationCache.UNCACHED);
+
+    // FIXME: Status bar items don't work well enough yet, so they are being hidden.
+    // http://webkit.org/b/41637 Web Inspector: Give Semantics to "Refresh" and "Delete" Buttons in ApplicationCache DataGrid
+    // http://webkit.org/b/60590 Application cache status always displayed as UNCACHED at first
+    // http://webkit.org/b/60793 Application cache status indicator gets stuck at DOWNLOADING after a failure
+    this.deleteButton.element.style.display = "none";
+    this.refreshButton.element.style.display = "none";
+    if (Preferences.onlineDetectionEnabled) {
+        this.connectivityIcon.style.display = "none";
+        this.connectivityMessage.style.display = "none";
+    }
+    this.divider.style.display = "none";
+    this.statusIcon.style.display = "none";
+    this.statusMessage.style.display = "none";
+    
 }
 
 WebInspector.ApplicationCacheItemsView.prototype = {
