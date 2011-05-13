@@ -1,3 +1,12 @@
+2011-05-12  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Darin Adler and Adam Barth.
+
+        Fix for <rdar://problem/9253454> Solar Walk For Mac: Info window is blank (HTML5 parser)
+        https://bugs.webkit.org/show_bug.cgi?id=60685
+
+        * WebKit.xcodeproj/project.pbxproj: Added Misc/SolarWalkQuirksUserScript.js and copy it to Resources during the build phase. 
+
 2011-04-18  Timothy Hatcher  <timothy@apple.com>
 
         Make update-webkit-localizable-strings put WebKit/win strings in WebCore

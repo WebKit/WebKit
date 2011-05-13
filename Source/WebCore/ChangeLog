@@ -1,3 +1,16 @@
+2011-05-12  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Darin Adler and Adam Barth.
+
+        Fix for <rdar://problem/9253454> Solar Walk For Mac: Info window is blank (HTML5 parser)
+        https://bugs.webkit.org/show_bug.cgi?id=60685
+
+        Detect the Solar Walk application so we can add targeted parser quirks.
+
+        * WebCore.exp.in:
+        * platform/RuntimeApplicationChecks.cpp: (WebCore::applicationIsSolarWalk):
+        * platform/RuntimeApplicationChecks.h:
+
 2011-05-12  Jia Pu  <jpu@apple.com>
 
         Reviewed by Darin Adler.

@@ -1,3 +1,20 @@
+2011-05-12  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Darin Adler and Adam Barth.
+
+        Fix for <rdar://problem/9253454> Solar Walk For Mac: Info window is blank (HTML5 parser)
+        https://bugs.webkit.org/show_bug.cgi?id=60685
+
+        Solar Walk uses a self closing title tag, so to match the behavior of the old parser, 
+        we use a UserScript to write the contents of the title element to the end of the document so it can be re-parsed.
+
+        * Misc/SolarWalkQuirksUserScript.js: Added.
+        * WebView/WebView.mm:
+        (needsSolarWalkQuirksScript):
+        (leakSolarWalkQuirksUserScriptContents):
+        (-[WebView _injectSolarWalkQuirksScript]):
+        (-[WebView _commonInitializationWithFrameName:groupName:usesDocumentViews:]):
+
 2011-05-12  Jia Pu  <jpu@apple.com>
 
         Reviewed by Darin Adler.
