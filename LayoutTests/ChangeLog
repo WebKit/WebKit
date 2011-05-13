@@ -1,3 +1,14 @@
+2011-05-13  Sergio Villar Senin  <svillar@igalia.com>
+
+        Unreviewed, new GTK+ test expectations.
+
+        * platform/gtk/fast/borders/outline-alpha-block-expected.png:
+        * platform/gtk/fast/borders/outline-alpha-block-expected.txt:
+        * platform/gtk/fast/borders/outline-alpha-inline-expected.png:
+        * platform/gtk/fast/borders/outline-alpha-inline-expected.txt:
+        * platform/gtk/svg/custom/fill-opacity-update-expected.png:
+        * platform/gtk/svg/custom/fill-opacity-update-expected.txt:
+
 2011-05-13  Alexey Proskuryakov  <ap@apple.com>
 
         Unreviewed test changes.
