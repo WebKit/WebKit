@@ -80,7 +80,7 @@ struct PropertyMapEntry {
         : key(key)
         , offset(offset)
         , attributes(attributes)
-        , specificValue(globalData, owner, specificValue)
+        , specificValue(globalData, owner, specificValue, WriteBarrier<JSCell>::MayBeNull)
     {
     }
 };

@@ -907,10 +907,12 @@ sub GenerateHeader
     if ($dataNode->extendedAttributes->{"InlineGetOwnPropertySlot"} && !$dataNode->extendedAttributes->{"CustomGetOwnPropertySlot"}) {
         push(@headerContent, "ALWAYS_INLINE bool ${className}::getOwnPropertySlot(JSC::ExecState* exec, const JSC::Identifier& propertyName, JSC::PropertySlot& slot)\n");
         push(@headerContent, "{\n");
+        push(@headerContent, "    ASSERT_GC_OBJECT_INHERITS(this, &s_info);\n");
         push(@headerContent, GenerateGetOwnPropertySlotBody($dataNode, $interfaceName, $className, $implClassName, $numAttributes > 0, 1));
         push(@headerContent, "}\n\n");
         push(@headerContent, "ALWAYS_INLINE bool ${className}::getOwnPropertyDescriptor(JSC::ExecState* exec, const JSC::Identifier& propertyName, JSC::PropertyDescriptor& descriptor)\n");
         push(@headerContent, "{\n");
+        push(@headerContent, "    ASSERT_GC_OBJECT_INHERITS(this, &s_info);\n");
         push(@headerContent, GenerateGetOwnPropertyDescriptorBody($dataNode, $interfaceName, $className, $implClassName, $numAttributes > 0, 1));
         push(@headerContent, "}\n\n");
     }
@@ -1452,6 +1454,9 @@ sub GenerateImplementation
     if ($needsMarkChildren && !$dataNode->extendedAttributes->{"CustomMarkFunction"}) {
         push(@implContent, "void ${className}::visitChildren(SlotVisitor& visitor)\n");
         push(@implContent, "{\n");
+        push(@implContent, "    ASSERT_GC_OBJECT_INHERITS(this, &s_info);\n");
+        push(@implContent, "    COMPILE_ASSERT(StructureFlags & OverridesVisitChildren, OverridesVisitChildrenWithoutSettingFlag);\n");
+        push(@implContent, "    ASSERT(structure()->typeInfo().overridesVisitChildren());\n");
         push(@implContent, "    Base::visitChildren(visitor);\n");
         push(@implContent, "    impl()->visitJSEventListeners(visitor);\n");
         push(@implContent, "}\n\n");
@@ -1484,10 +1489,12 @@ sub GenerateImplementation
         if (!$dataNode->extendedAttributes->{"InlineGetOwnPropertySlot"} && !$dataNode->extendedAttributes->{"CustomGetOwnPropertySlot"}) {
             push(@implContent, "bool ${className}::getOwnPropertySlot(ExecState* exec, const Identifier& propertyName, PropertySlot& slot)\n");
             push(@implContent, "{\n");
+            push(@implContent, "    ASSERT_GC_OBJECT_INHERITS(this, &s_info);\n");
             push(@implContent, GenerateGetOwnPropertySlotBody($dataNode, $interfaceName, $className, $implClassName, $numAttributes > 0, 0));
             push(@implContent, "}\n\n");
             push(@implContent, "bool ${className}::getOwnPropertyDescriptor(ExecState* exec, const Identifier& propertyName, PropertyDescriptor& descriptor)\n");
             push(@implContent, "{\n");
+            push(@implContent, "    ASSERT_GC_OBJECT_INHERITS(this, &s_info);\n");
             push(@implContent, GenerateGetOwnPropertyDescriptorBody($dataNode, $interfaceName, $className, $implClassName, $numAttributes > 0, 0));
             push(@implContent, "}\n\n");
         }
@@ -1496,6 +1503,7 @@ sub GenerateImplementation
                 && !$dataNode->extendedAttributes->{"HasOverridingNameGetter"}) {
             push(@implContent, "bool ${className}::getOwnPropertySlot(ExecState* exec, unsigned propertyName, PropertySlot& slot)\n");
             push(@implContent, "{\n");
+            push(@implContent, "    ASSERT_GC_OBJECT_INHERITS(this, &s_info);\n");
             push(@implContent, "    if (propertyName < static_cast<$implClassName*>(impl())->length()) {\n");
             if ($dataNode->extendedAttributes->{"HasCustomIndexGetter"} || $dataNode->extendedAttributes->{"HasNumericIndexGetter"}) {
                 push(@implContent, "        slot.setValue(getByIndex(exec, propertyName));\n");
@@ -1647,6 +1655,7 @@ sub GenerateImplementation
             if (!$dataNode->extendedAttributes->{"CustomPutFunction"}) {
                 push(@implContent, "void ${className}::put(ExecState* exec, const Identifier& propertyName, JSValue value, PutPropertySlot& slot)\n");
                 push(@implContent, "{\n");
+                push(@implContent, "    ASSERT_GC_OBJECT_INHERITS(this, &s_info);\n");
                 if ($dataNode->extendedAttributes->{"HasCustomIndexSetter"}) {
                     push(@implContent, "    bool ok;\n");
                     push(@implContent, "    unsigned index = propertyName.toUInt32(ok);\n");
@@ -1671,6 +1680,7 @@ sub GenerateImplementation
             if ($dataNode->extendedAttributes->{"HasCustomIndexSetter"}) {
                 push(@implContent, "void ${className}::put(ExecState* exec, unsigned propertyName, JSValue value)\n");
                 push(@implContent, "{\n");
+                push(@implContent, "    ASSERT_GC_OBJECT_INHERITS(this, &s_info);\n");
                 push(@implContent, "    indexSetter(exec, propertyName, value);\n");
                 push(@implContent, "    return;\n");
                 push(@implContent, "}\n\n");
@@ -1825,6 +1835,7 @@ sub GenerateImplementation
     if (($dataNode->extendedAttributes->{"HasIndexGetter"} || $dataNode->extendedAttributes->{"HasCustomIndexGetter"} || $dataNode->extendedAttributes->{"HasNumericIndexGetter"}) && !$dataNode->extendedAttributes->{"CustomGetPropertyNames"}) {
         push(@implContent, "void ${className}::getOwnPropertyNames(ExecState* exec, PropertyNameArray& propertyNames, EnumerationMode mode)\n");
         push(@implContent, "{\n");
+        push(@implContent, "    ASSERT_GC_OBJECT_INHERITS(this, &s_info);\n");
         if ($dataNode->extendedAttributes->{"HasIndexGetter"} || $dataNode->extendedAttributes->{"HasCustomIndexGetter"} || $dataNode->extendedAttributes->{"HasNumericIndexGetter"}) {
             push(@implContent, "    for (unsigned i = 0; i < static_cast<${implClassName}*>(impl())->length(); ++i)\n");
             push(@implContent, "        propertyNames.add(Identifier::from(exec, i));\n");
@@ -1875,6 +1886,7 @@ sub GenerateImplementation
                 push(@implContent, "        return throwVMTypeError(exec);\n");
                 push(@implContent, "    $className* castedThis = static_cast<$className*>(asObject(thisValue));\n");
             }
+            push(@implContent, "    ASSERT_GC_OBJECT_INHERITS(castedThis, &${className}::s_info);\n");
 
             if ($dataNode->extendedAttributes->{"CheckDomainSecurity"} && 
                 !$function->signature->extendedAttributes->{"DoNotCheckDomainSecurity"}) {
@@ -2106,6 +2118,7 @@ sub GenerateImplementation
         push(@implContent, "\nJSValue ${className}::indexGetter(ExecState* exec, JSValue slotBase, unsigned index)\n");
         push(@implContent, "{\n");
         push(@implContent, "    ${className}* thisObj = static_cast<$className*>(asObject(slotBase));\n");
+        push(@implContent, "    ASSERT_GC_OBJECT_INHERITS(thisObj, &s_info);\n");
         if (IndexGetterReturnsStrings($implClassName)) {
             $implIncludes{"KURL.h"} = 1;
             push(@implContent, "    return jsStringOrNull(exec, thisObj->impl()->item(index));\n");
@@ -2122,6 +2135,7 @@ sub GenerateImplementation
     if ($dataNode->extendedAttributes->{"HasNumericIndexGetter"}) {
         push(@implContent, "\nJSValue ${className}::getByIndex(ExecState*, unsigned index)\n");
         push(@implContent, "{\n");
+        push(@implContent, "    ASSERT_GC_OBJECT_INHERITS(this, &s_info);\n");
         push(@implContent, "    return jsNumber(static_cast<$implClassName*>(impl())->item(index));\n");
         push(@implContent, "}\n\n");
         if ($interfaceName eq "HTMLCollection" or $interfaceName eq "HTMLAllCollection") {

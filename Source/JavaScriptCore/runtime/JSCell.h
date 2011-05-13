@@ -71,6 +71,7 @@ namespace JSC {
         friend class ScopeChainNode;
         friend class Structure;
         friend class StructureChain;
+        enum CreatingEarlyCellTag { CreatingEarlyCell };
 
     protected:
         enum VPtrStealingHackType { VPtrStealingHack };
@@ -78,6 +79,7 @@ namespace JSC {
     private:
         explicit JSCell(VPtrStealingHackType) { }
         JSCell(JSGlobalData&, Structure*);
+        JSCell(JSGlobalData&, Structure*, CreatingEarlyCellTag);
         virtual ~JSCell();
         static const ClassInfo s_dummyCellInfo;
 
@@ -148,6 +150,10 @@ namespace JSC {
             return OBJECT_OFFSETOF(JSCell, m_structure);
         }
 
+#if ENABLE(GC_VALIDATION)
+        Structure* unvalidatedStructure() { return m_structure.unvalidatedGet(); }
+#endif
+        
     protected:
         static const unsigned AnonymousSlotCount = 0;
 
@@ -162,6 +168,15 @@ namespace JSC {
     inline JSCell::JSCell(JSGlobalData& globalData, Structure* structure)
         : m_structure(globalData, this, structure)
     {
+        ASSERT(m_structure);
+    }
+
+    inline JSCell::JSCell(JSGlobalData& globalData, Structure* structure, CreatingEarlyCellTag)
+    {
+#if ENABLE(GC_VALIDATION)
+        if (structure)
+#endif
+            m_structure.setEarlyValue(globalData, this, structure);
         // Very first set of allocations won't have a real structure.
         ASSERT(m_structure || !globalData.dummyMarkableCellStructure);
     }

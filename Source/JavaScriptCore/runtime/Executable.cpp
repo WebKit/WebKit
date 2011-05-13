@@ -145,6 +145,9 @@ JSObject* EvalExecutable::compileInternal(ExecState* exec, ScopeChainNode* scope
 
 void EvalExecutable::visitChildren(SlotVisitor& visitor)
 {
+    ASSERT_GC_OBJECT_INHERITS(this, &s_info);
+    COMPILE_ASSERT(StructureFlags & OverridesVisitChildren, OverridesVisitChildrenWithoutSettingFlag);
+    ASSERT(structure()->typeInfo().overridesVisitChildren());
     ScriptExecutable::visitChildren(visitor);
     if (m_evalCodeBlock)
         m_evalCodeBlock->visitAggregate(visitor);
@@ -237,6 +240,9 @@ static bool tryDFGCompile(JSGlobalData* globalData, CodeBlock* codeBlock, JITCod
 
 void ProgramExecutable::visitChildren(SlotVisitor& visitor)
 {
+    ASSERT_GC_OBJECT_INHERITS(this, &s_info);
+    COMPILE_ASSERT(StructureFlags & OverridesVisitChildren, OverridesVisitChildrenWithoutSettingFlag);
+    ASSERT(structure()->typeInfo().overridesVisitChildren());
     ScriptExecutable::visitChildren(visitor);
     if (m_programCodeBlock)
         m_programCodeBlock->visitAggregate(visitor);
@@ -349,6 +355,9 @@ JSObject* FunctionExecutable::compileForConstructInternal(ExecState* exec, Scope
 
 void FunctionExecutable::visitChildren(SlotVisitor& visitor)
 {
+    ASSERT_GC_OBJECT_INHERITS(this, &s_info);
+    COMPILE_ASSERT(StructureFlags & OverridesVisitChildren, OverridesVisitChildrenWithoutSettingFlag);
+    ASSERT(structure()->typeInfo().overridesVisitChildren());
     ScriptExecutable::visitChildren(visitor);
     if (m_codeBlockForCall)
         m_codeBlockForCall->visitAggregate(visitor);

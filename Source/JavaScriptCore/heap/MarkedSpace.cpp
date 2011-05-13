@@ -21,6 +21,7 @@
 #include "config.h"
 #include "MarkedSpace.h"
 
+#include "JSGlobalObject.h"
 #include "JSCell.h"
 #include "JSGlobalData.h"
 #include "JSLock.h"

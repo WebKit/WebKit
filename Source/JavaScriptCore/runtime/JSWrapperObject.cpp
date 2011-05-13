@@ -28,6 +28,9 @@ ASSERT_CLASS_FITS_IN_CELL(JSWrapperObject);
 
 void JSWrapperObject::visitChildren(SlotVisitor& visitor) 
 {
+    ASSERT_GC_OBJECT_INHERITS(this, &s_info);
+    COMPILE_ASSERT(StructureFlags & OverridesVisitChildren, OverridesVisitChildrenWithoutSettingFlag);
+    ASSERT(structure()->typeInfo().overridesVisitChildren());
     JSObject::visitChildren(visitor);
     if (m_internalValue)
         visitor.append(&m_internalValue);

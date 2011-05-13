@@ -40,8 +40,9 @@ namespace JSC {
         {
             return Structure::create(globalData, prototype, TypeInfo(CompoundType, OverridesVisitChildren | OverridesGetPropertyNames), AnonymousSlotCount, &s_info);
         }
-
         
+        static const ClassInfo s_info;
+
     private:
         JSAPIValueWrapper(ExecState* exec, JSValue value)
             : JSCell(exec->globalData(), exec->globalData().apiWrapperStructure.get())
@@ -49,7 +50,6 @@ namespace JSC {
             m_value.set(exec->globalData(), this, value);
             ASSERT(!value.isCell());
         }
-        static const ClassInfo s_info;
 
         WriteBarrier<Unknown> m_value;
     };

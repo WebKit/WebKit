@@ -310,6 +310,9 @@ void JSGlobalObject::resetPrototype(JSGlobalData& globalData, JSValue prototype)
 
 void JSGlobalObject::visitChildren(SlotVisitor& visitor)
 {
+    ASSERT_GC_OBJECT_INHERITS(this, &s_info);
+    COMPILE_ASSERT(StructureFlags & OverridesVisitChildren, OverridesVisitChildrenWithoutSettingFlag);
+    ASSERT(structure()->typeInfo().overridesVisitChildren());
     JSVariableObject::visitChildren(visitor);
 
     visitIfNeeded(visitor, &m_globalScopeChain);
@@ -457,6 +460,13 @@ DynamicGlobalObjectScope::DynamicGlobalObjectScope(JSGlobalData& globalData, JSG
         // to observe time zone changes.
         globalData.resetDateCache();
     }
+}
+
+void slowValidateCell(JSGlobalObject* globalObject)
+{
+    if (!globalObject->isGlobalObject())
+        CRASH();
+    ASSERT_GC_OBJECT_INHERITS(globalObject, &JSGlobalObject::s_info);
 }
 
 } // namespace JSC

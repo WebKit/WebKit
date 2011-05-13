@@ -206,7 +206,7 @@ Structure::Structure(JSGlobalData& globalData, JSValue prototype, const TypeInfo
 const ClassInfo Structure::s_info = { "Structure", 0, 0, 0 };
 
 Structure::Structure(JSGlobalData& globalData)
-    : JSCell(globalData, this)
+    : JSCell(globalData, this, CreatingEarlyCell)
     , m_typeInfo(CompoundType, OverridesVisitChildren)
     , m_prototype(globalData, this, jsNull())
     , m_classInfo(&s_info)
@@ -358,11 +358,11 @@ Structure* Structure::addPropertyTransition(JSGlobalData& globalData, Structure*
 
     Structure* transition = create(globalData, structure);
 
-    transition->m_cachedPrototypeChain.set(globalData, transition, structure->m_cachedPrototypeChain.get());
+    transition->m_cachedPrototypeChain.setMayBeNull(globalData, transition, structure->m_cachedPrototypeChain.get());
     transition->m_previous.set(globalData, transition, structure);
     transition->m_nameInPrevious = propertyName.impl();
     transition->m_attributesInPrevious = attributes;
-    transition->m_specificValueInPrevious.set(globalData, transition, specificValue);
+    transition->m_specificValueInPrevious.setMayBeNull(globalData, transition, specificValue);
 
     if (structure->m_propertyTable) {
         if (structure->m_isPinnedPropertyTable)
@@ -779,6 +779,8 @@ void Structure::getPropertyNames(JSGlobalData& globalData, PropertyNameArray& pr
 
 void Structure::visitChildren(SlotVisitor& visitor)
 {
+    ASSERT_GC_OBJECT_INHERITS(this, &s_info);
+    ASSERT(structure()->typeInfo().overridesVisitChildren());
     JSCell::visitChildren(visitor);
     if (m_prototype)
         visitor.append(&m_prototype);

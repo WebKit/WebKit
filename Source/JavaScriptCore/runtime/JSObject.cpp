@@ -70,6 +70,7 @@ static inline void getClassPropertyNames(ExecState* exec, const ClassInfo* class
 
 void JSObject::visitChildren(SlotVisitor& visitor)
 {
+    ASSERT_GC_OBJECT_INHERITS(this, &s_info);
 #ifndef NDEBUG
     bool wasCheckingForDefaultMarkViolation = visitor.m_isCheckingForDefaultMarkViolation;
     visitor.m_isCheckingForDefaultMarkViolation = false;
