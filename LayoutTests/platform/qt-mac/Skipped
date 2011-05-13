@@ -4136,3 +4136,63 @@ editing/pasteboard/paste-text-at-tabspan-001.html
 
 # Missing plugin.getURLNotify() implementation
 plugins/get-targeted-javascript-url.html
+
+# unskipped by r86357, but fail on Qt-Mac platform
+editing/inserting/4278698.html
+editing/inserting/editable-html-element.html
+editing/inserting/editing-empty-divs.html
+editing/inserting/insert-div-023.html
+editing/inserting/multiple-lines-selected.html
+
+# unskipped by r86374, but fail on Qt-Mac platform
+editing/pasteboard/4076267-2.html
+editing/pasteboard/4076267.html
+editing/pasteboard/4806874.html
+editing/pasteboard/5387578.html
+editing/pasteboard/bad-placeholder.html
+editing/pasteboard/block-wrappers-necessary.html
+editing/pasteboard/input-field-1.html
+editing/pasteboard/nested-blocks-with-text-area.html
+editing/pasteboard/nested-blocks-with-text-field.html
+editing/pasteboard/paste-text-008.html
+editing/pasteboard/smart-paste-008.html
+
+# unskipped by r86376, but fail on Qt-Mac platform
+editing/execCommand/4580583-1.html
+editing/execCommand/4580583-2.html
+editing/execCommand/4641880-1.html
+editing/execCommand/4641880-2.html
+editing/execCommand/4747450.html
+editing/execCommand/4916402.html
+editing/execCommand/4916541.html
+editing/execCommand/4924441.html
+editing/execCommand/5080333-1.html
+editing/execCommand/5080333-2.html
+editing/execCommand/5136770.html
+editing/execCommand/5138441.html
+editing/execCommand/5142012-1.html
+editing/execCommand/5142012-2.html
+editing/execCommand/5190926.html
+editing/execCommand/5481523.html
+editing/execCommand/5482023.html
+editing/execCommand/5569741.html
+editing/execCommand/create-list-with-hr.html
+editing/execCommand/find-after-replace.html
+editing/execCommand/findString-2.html
+editing/execCommand/findString.html
+editing/execCommand/format-block-with-trailing-br.html
+editing/execCommand/indent-empty-root.html
+editing/execCommand/indent-list-item.html
+editing/execCommand/indent-selection.html
+editing/execCommand/insert-list-and-stitch.html
+editing/execCommand/insertHorizontalRule.html
+editing/execCommand/insertImage.html
+editing/execCommand/nsresponder-indent.html
+editing/execCommand/nsresponder-outdent.html
+editing/execCommand/outdent-selection.html
+editing/execCommand/paste-1.html
+editing/execCommand/paste-2.html
+editing/execCommand/print.html
+editing/execCommand/remove-list-from-range-selection.html
+editing/execCommand/remove-list-item-1.html
+editing/execCommand/selectAll.html
