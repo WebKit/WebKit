@@ -3500,11 +3500,15 @@ editing/execCommand/create-list-with-hr.html
 editing/execCommand/find-after-replace.html
 editing/execCommand/findString-2.html
 editing/execCommand/findString.html
+editing/execCommand/format-block.html
+editing/execCommand/format-block-with-braces.html
 editing/execCommand/format-block-with-trailing-br.html
+editing/execCommand/hilitecolor.html
 editing/execCommand/indent-empty-root.html
-editing/execCommand/indent-list-item.html
-editing/execCommand/indent-selection.html
 editing/execCommand/insert-list-and-stitch.html
+editing/execCommand/indent-list-item.html
+editing/execCommand/indent-paragraphs.html
+editing/execCommand/indent-selection.html
 editing/execCommand/insertHorizontalRule.html
 editing/execCommand/insertImage.html
 editing/execCommand/nsresponder-indent.html
