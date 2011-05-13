@@ -1,3 +1,32 @@
+2011-05-13  Martin Robinson  <mrobinson@igalia.com>
+
+        Reviewed by Eric Seidel.
+
+        [GTK] Share the GTK+ key binding code between WebKit1 and WebKit2
+        https://bugs.webkit.org/show_bug.cgi?id=59765
+
+        Move the keybinding code form WebKit1/WebKit2 to this utility class. This code is
+        almost directly moved from the WebKit layer.
+
+        No new tests. This is covered by the editing tests.
+
+        * GNUmakefile.list.am:
+        * platform/gtk/KeyBindingTranslator.cpp: Added.
+        (WebCore::backspaceCallback):Added.
+        (WebCore::selectAllCallback):Added.
+        (WebCore::cutClipboardCallback):Added.
+        (WebCore::copyClipboardCallback):Added.
+        (WebCore::pasteClipboardCallback):Added.
+        (WebCore::toggleOverwriteCallback):Added.
+        (WebCore::popupMenuCallback):Added.
+        (WebCore::showHelpCallback):Added.
+        (WebCore::deleteFromCursorCallback):Added.
+        (WebCore::moveCursorCallback):Added.
+        (WebCore::KeyBindingTranslator::KeyBindingTranslator):Added.
+        (WebCore::KeyBindingTranslator::getEditorCommandsForKeyEvent):Added.
+        * platform/gtk/KeyBindingTranslator.h: Added.
+        (WebCore::KeyBindingTranslator::addPendingEditorCommand):Added.
+
 2011-05-01  Holger Hans Peter Freyther  <holger@moiji-mobile.com>
 
         Reviewed by Adam Barth.

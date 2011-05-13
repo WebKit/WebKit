@@ -1,3 +1,20 @@
+2011-05-13  Martin Robinson  <mrobinson@igalia.com>
+
+        Reviewed by Eric Seidel.
+
+        [GTK] Share the GTK+ key binding code between WebKit1 and WebKit2
+        https://bugs.webkit.org/show_bug.cgi?id=59765
+
+        Use the new KeyBindingTranslator class from WebCore/platform/gtk. With this utility
+        class we can now share the code with WebKit2.
+
+        * WebCoreSupport/EditorClientGtk.cpp:
+        (WebKit::EditorClient::executePendingEditorCommands): Updated to reflect the fact that
+        the command vector now contains WTF::string.
+        (WebKit::EditorClient::handleKeyboardEvent): Use the new helper utility class.
+        (WebKit::EditorClient::EditorClient): 
+        * WebCoreSupport/EditorClientGtk.h: Remove unnecessary member. Add the utility class.
+
 2011-05-12  Martin Robinson  <mrobinson@igalia.com>
 
         Attempt to fix the GTK+ unit test testwebview on the 32-bit Release

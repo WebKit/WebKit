@@ -32,8 +32,8 @@
 #define EditorClientGtk_h
 
 #include "EditorClient.h"
+#include "KeyBindingTranslator.h"
 #include "TextCheckerClient.h"
-
 #include <wtf/Deque.h>
 #include <wtf/Forward.h>
 #include <wtf/gobject/GOwnPtr.h>
@@ -146,8 +146,9 @@ class EditorClient : public WebCore::EditorClient {
         bool m_preventNextCompositionCommit;
         bool m_treatContextCommitAsKeyEvent;
         GOwnPtr<gchar> m_pendingComposition;
-        Vector<const char*> m_pendingEditorCommands;
-        GRefPtr<GtkWidget> m_nativeWidget;
+
+        WebCore::KeyBindingTranslator m_keyBindingTranslator;
+        Vector<WTF::String> m_pendingEditorCommands;
     };
 }
 

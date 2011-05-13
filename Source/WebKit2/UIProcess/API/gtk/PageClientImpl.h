@@ -28,6 +28,7 @@
 #ifndef PageClientImpl_h
 #define PageClientImpl_h
 
+#include "KeyBindingTranslator.h"
 #include "PageClient.h"
 #include "WebPageProxy.h"
 #include "WindowsKeyboardCodes.h"
@@ -46,8 +47,6 @@ public:
     {
         return adoptPtr(new PageClientImpl(viewWidget));
     }
-
-    void addPendingEditorCommand(const char* command) { m_pendingEditorCommands.append(WTF::String(command)); }
 
 private:
     PageClientImpl(GtkWidget*);
@@ -100,8 +99,7 @@ private:
 
     // Members of PageClientImpl class
     GtkWidget* m_viewWidget;
-    Vector<WTF::String> m_pendingEditorCommands;
-    GRefPtr<GtkWidget> m_nativeWidget;
+    WebCore::KeyBindingTranslator m_keyBindingTranslator;
 };
 
 } // namespace WebKit
