@@ -1,5 +1,11 @@
 2011-05-13  Anders Carlsson  <andersca@apple.com>
 
+        Build fix.
+
+        * DumpRenderTree/TestNetscapePlugIn/Tests/GetURLWithJavaScriptURL.cpp:
+
+2011-05-13  Anders Carlsson  <andersca@apple.com>
+
         Reviewed by Sam Weinig.
 
         NPN_GetURL with a javascript: URL doesn't send back the result in the stream

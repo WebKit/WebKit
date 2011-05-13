@@ -25,6 +25,7 @@
 
 #include "PluginTest.h"
 
+#include <string.h>
 #include <vector>
 
 using namespace std;
