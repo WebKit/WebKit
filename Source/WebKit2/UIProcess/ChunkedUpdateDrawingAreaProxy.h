@@ -69,7 +69,7 @@ public:
 private:
     ChunkedUpdateDrawingAreaProxy(PlatformWebView*, WebPageProxy*);
 
-    WebPageProxy* page();
+    WebPageProxy* page() const;
 
     // DrawingAreaProxy
     virtual void didReceiveMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::ArgumentDecoder*);

@@ -39,7 +39,7 @@ using namespace WebCore;
 
 namespace WebKit {
 
-WebPageProxy* ChunkedUpdateDrawingAreaProxy::page()
+WebPageProxy* ChunkedUpdateDrawingAreaProxy::page() const
 {
     return toImpl(m_webView->page()->pageRef());
 }

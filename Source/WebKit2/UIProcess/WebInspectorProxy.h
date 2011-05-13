@@ -74,7 +74,7 @@ public:
     void invalidate();
 
     // Public APIs
-    WebPageProxy* page() { return m_page; }
+    WebPageProxy* page() const { return m_page; }
 
     bool isVisible() const { return m_isVisible; }
     void show();

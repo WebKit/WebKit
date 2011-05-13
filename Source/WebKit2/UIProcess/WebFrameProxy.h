@@ -70,7 +70,7 @@ public:
     };
 
     uint64_t frameID() const { return m_frameID; }
-    WebPageProxy* page() { return m_page; }
+    WebPageProxy* page() const { return m_page; }
 
     WebFrameProxy* parentFrame() { return m_parentFrame; }
     WebFrameProxy* nextSibling() { return m_nextSibling; }
