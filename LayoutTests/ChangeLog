@@ -1,3 +1,17 @@
+2011-05-13  Mark Pilgrim  <pilgrim@chromium.org>
+
+        Reviewed by Tony Chang.
+
+        Port Mozilla's IndexedDB tests: indexes with keys and key ranges
+        https://bugs.webkit.org/show_bug.cgi?id=60733
+
+        This megatest creates an object store with several rows of data,
+        creates indexes on each key, then iterates each index in a variety
+        of ways (keys, key ranges, etc).
+
+        * storage/indexeddb/mozilla/indexes-expected.txt: Added.
+        * storage/indexeddb/mozilla/indexes.html: Added.
+
 2011-05-13  Nat Duca  <nduca@chromium.org>
 
         Reviewed by James Robinson.
