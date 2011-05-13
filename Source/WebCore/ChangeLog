@@ -1,3 +1,15 @@
+2011-05-12  Jia Pu  <jpu@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Regression caused by changeset 86281
+        https://bugs.webkit.org/show_bug.cgi?id=60712
+
+        Changed wording in some tests to reflect AppKit UI change.
+
+        * manual-tests/autocorrection/delete-to-end-of-word-to-show-reversion.html:
+        * manual-tests/autocorrection/move-to-end-of-word-to-show-reversion.html:
+
 2011-05-12  Daniel Bates  <dbates@rim.com>
 
         Attempt to fix the build after changeset 86391 <http://trac.webkit.org/changeset/86391>

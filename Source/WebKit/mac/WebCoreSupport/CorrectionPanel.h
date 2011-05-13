@@ -39,21 +39,18 @@ public:
     CorrectionPanel();
     ~CorrectionPanel();
     void show(WebView*, WebCore::CorrectionPanelInfo::PanelType, const WebCore::FloatRect& boundingBoxOfReplacedString, const String& replacedString, const String& replacementString, const Vector<String>& alternativeReplacementStrings);
-    void dismiss(WebCore::ReasonForDismissingCorrectionPanel);
-    String dismissSoon(WebCore::ReasonForDismissingCorrectionPanel);
+    String dismiss(WebCore::ReasonForDismissingCorrectionPanel);
     static void recordAutocorrectionResponse(WebView*, NSCorrectionResponse, const String& replacedString, const String& replacementString);
 
 private:
     bool isShowing() const { return m_view; }
-    void dismissInternal(WebCore::ReasonForDismissingCorrectionPanel, bool dismissingExternally);
+    String dismissInternal(WebCore::ReasonForDismissingCorrectionPanel, bool dismissingExternally);
     void handleAcceptedReplacement(NSString* acceptedReplacement, NSString* replaced, NSString* proposedReplacement, NSCorrectionIndicatorType);
 
     bool m_wasDismissedExternally;
     WebCore::ReasonForDismissingCorrectionPanel m_reasonForDismissing;
     RetainPtr<WebView> m_view;
-    RetainPtr<NSString> m_resultForSynchronousDismissal;
-    RetainPtr<NSCondition> m_resultCondition;
-    bool m_isDismissing;
+    RetainPtr<NSString> m_resultForDismissal;
 };
 
 #endif // !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOW_LEOPARD)

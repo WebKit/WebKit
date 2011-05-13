@@ -875,7 +875,7 @@ void WebEditorClient::dismissCorrectionPanel(ReasonForDismissingCorrectionPanel 
 
 String WebEditorClient::dismissCorrectionPanelSoon(ReasonForDismissingCorrectionPanel reasonForDismissing)
 {
-    return m_correctionPanel.dismissSoon(reasonForDismissing);
+    return m_correctionPanel.dismiss(reasonForDismissing);
 }
 
 void WebEditorClient::recordAutocorrectionResponse(EditorClient::AutocorrectionResponseType responseType, const String& replacedString, const String& replacementString)

@@ -432,7 +432,7 @@ void PageClientImpl::dismissCorrectionPanel(ReasonForDismissingCorrectionPanel r
 String PageClientImpl::dismissCorrectionPanelSoon(WebCore::ReasonForDismissingCorrectionPanel reason)
 {
 #if !defined(BUILDING_ON_SNOW_LEOPARD)
-    return m_correctionPanel.dismissSoon(reason);
+    return m_correctionPanel.dismiss(reason);
 #else
     return String();
 #endif

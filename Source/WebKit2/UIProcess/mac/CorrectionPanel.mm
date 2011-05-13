@@ -52,8 +52,6 @@ namespace WebKit {
 CorrectionPanel::CorrectionPanel()
     : m_wasDismissedExternally(false)
     , m_reasonForDismissing(ReasonForDismissingCorrectionPanelIgnored)
-    , m_resultCondition(AdoptNS, [[NSCondition alloc] init])
-    , m_isDismissing(false)
 {
 }
 
@@ -86,35 +84,23 @@ void CorrectionPanel::show(WKView* view, CorrectionPanelInfo::PanelType type, co
     [spellChecker showCorrectionIndicatorOfType:indicatorType primaryString:replacementStringAsNSString alternativeStrings:alternativeStrings forStringInRect:boundingBoxOfReplacedString view:m_view.get() completionHandler:^(NSString* acceptedString) {
         handleAcceptedReplacement(acceptedString, replacedStringAsNSString, replacementStringAsNSString, indicatorType);
     }];
-    m_isDismissing = false;
 }
 
-void CorrectionPanel::dismiss(ReasonForDismissingCorrectionPanel reason)
+String CorrectionPanel::dismiss(ReasonForDismissingCorrectionPanel reason)
 {
-    dismissInternal(reason, true);
+    return dismissInternal(reason, true);
 }
 
-String CorrectionPanel::dismissSoon(ReasonForDismissingCorrectionPanel reason)
-{
-    dismissInternal(reason, true);
-    [m_resultCondition.get() lock];
-    while (m_isDismissing)
-        [m_resultCondition.get() wait];
-    [m_resultCondition.get() unlock];
-    return m_resultForSynchronousDismissal.get();
-}
-
-void CorrectionPanel::dismissInternal(ReasonForDismissingCorrectionPanel reason, bool dismissingExternally)
+String CorrectionPanel::dismissInternal(ReasonForDismissingCorrectionPanel reason, bool dismissingExternally)
 {
     if (!isShowing())
-        return;
+        return String();
 
-    m_isDismissing = true;
     m_wasDismissedExternally = dismissingExternally;
     m_reasonForDismissing = reason;
-    m_resultForSynchronousDismissal.clear();
+    m_resultForDismissal.clear();
     [[NSSpellChecker sharedSpellChecker] dismissCorrectionIndicatorForView:m_view.get()];
-    m_view.clear();
+    return m_resultForDismissal.get();
 }
 
 void CorrectionPanel::recordAutocorrectionResponse(WKView* view, NSCorrectionResponse response, const String& replacedString, const String& replacementString)
@@ -124,6 +110,9 @@ void CorrectionPanel::recordAutocorrectionResponse(WKView* view, NSCorrectionRes
 
 void CorrectionPanel::handleAcceptedReplacement(NSString* acceptedReplacement, NSString* replaced, NSString* proposedReplacement,  NSCorrectionIndicatorType correctionIndicatorType)
 {
+    if (!m_view)
+        return;
+
     NSSpellChecker* spellChecker = [NSSpellChecker sharedSpellChecker];
     NSInteger documentTag = [m_view.get() spellCheckerDocumentTag];
     
@@ -147,16 +136,11 @@ void CorrectionPanel::handleAcceptedReplacement(NSString* acceptedReplacement, N
             [spellChecker recordResponse:NSCorrectionResponseAccepted toCorrection:acceptedReplacement forWord:replaced language:nil inSpellDocumentWithTag:documentTag];
         break;
     }
-    
-    if (!m_wasDismissedExternally)
-        [m_view.get() handleCorrectionPanelResult:acceptedReplacement];
+
+    [m_view.get() handleCorrectionPanelResult:acceptedReplacement];
+    m_view.clear();
     if (acceptedReplacement)
-        m_resultForSynchronousDismissal.adoptNS([acceptedReplacement copy]);
-    
-    [m_resultCondition.get() lock];
-    m_isDismissing = false;
-    [m_resultCondition.get() signal];
-    [m_resultCondition.get() unlock];
+        m_resultForDismissal.adoptNS([acceptedReplacement copy]);
 }
 
 } // namespace WebKit

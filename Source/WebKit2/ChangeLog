@@ -1,3 +1,29 @@
+2011-05-12  Jia Pu  <jpu@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Regression caused by changeset 86281
+        https://bugs.webkit.org/show_bug.cgi?id=60712
+        <rdar://problem/9427970>
+
+        Removed the condition variable. [NSSpellChecker dismissCorrectionIndicatorForView:] is blocking.
+        So handleAcceptedReplacement() triggered by dismissInternal() will return before dismissInternal()
+        returns. So we don't need to use the condition to coordinate between these two function. In fact,
+        all callbacks are delivered on main thread. We don't really need any locking here.
+
+        Since now we don't have distinction between dismiss() and dismissSoon(). dismissSoon() has
+        been removed.
+
+        * UIProcess/API/mac/PageClientImpl.mm:
+        (WebKit::PageClientImpl::dismissCorrectionPanelSoon):
+        * UIProcess/mac/CorrectionPanel.h:
+        * UIProcess/mac/CorrectionPanel.mm:
+        (WebKit::CorrectionPanel::CorrectionPanel):
+        (WebKit::CorrectionPanel::show):
+        (WebKit::CorrectionPanel::dismiss):
+        (WebKit::CorrectionPanel::dismissInternal):
+        (WebKit::CorrectionPanel::handleAcceptedReplacement):
+
 2011-05-12  Brian Weinstein  <bweinstein@apple.com>
 
         Reviewed by Adam Roben.
