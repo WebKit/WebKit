@@ -1,3 +1,9 @@
+2011-05-12  Anton Muhin  <antonnm@chromium.org>
+
+        Unreviewed.
+
+        Rebaselining tests under r86417.
+
 2011-05-05  Hans Wennborg  <hans@chromium.org>
 
         Reviewed by Steve Block.
