@@ -1,3 +1,13 @@
+2011-05-12  Gregg Tavares  <gman@chromium.org>
+
+        Reviewed by Kenneth Russell.
+
+        Add option to select GraphicsContext3D implementation.
+        https://bugs.webkit.org/show_bug.cgi?id=60297
+
+        * Source/WebKit/chromium/DEPS:
+        * Tools/DumpRenderTree/chromium/DumpRenderTree.cpp:
+
 2011-05-12  Lucas De Marchi  <lucas.demarchi@profusion.mobi>
 
         Reviewed by Antonio Gomes.

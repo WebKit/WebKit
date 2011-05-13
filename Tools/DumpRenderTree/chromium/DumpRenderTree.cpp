@@ -59,6 +59,7 @@ static const char optionEnableAccelerated2DCanvas[] = "--enable-accelerated-2d-c
 static const char optionEnableLegacyAccelerated2DCanvas[] = "--enable-legacy-accelerated-2d-canvas";
 static const char optionEnableAcceleratedDrawing[] = "--enable-accelerated-drawing";
 static const char optionEnableCompositeToTexture[] = "--enable-composite-to-texture";
+static const char optionUseGraphicsContext3DImplementation[] = "--use-graphics-context-3d-implementation=";
 
 static const char optionStressOpt[] = "--stress-opt";
 static const char optionStressDeopt[] = "--stress-deopt";
@@ -184,7 +185,15 @@ int main(int argc, char* argv[])
             legacyAccelerated2DCanvasEnabled = true;
         else if (argument == optionEnableAcceleratedDrawing)
             acceleratedDrawingEnabled = true;
-        else if (argument == optionStressOpt)
+        else if (!argument.find(optionUseGraphicsContext3DImplementation)) {
+            string implementation = argument.substr(strlen(optionUseGraphicsContext3DImplementation));
+            if (!implementation.compare("IN_PROCESS")) 
+              webkit_support::SetGraphicsContext3DImplementation(webkit_support::IN_PROCESS);
+            else if (!implementation.compare("IN_PROCESS_COMMAND_BUFFER")) 
+              webkit_support::SetGraphicsContext3DImplementation(webkit_support::IN_PROCESS_COMMAND_BUFFER);
+            else 
+              fprintf(stderr, "Unknown GraphicContext3D implementation %s\n", implementation.c_str());
+        } else if (argument == optionStressOpt)
             stressOpt = true;
         else if (argument == optionStressDeopt)
             stressDeopt = true;
