@@ -112,7 +112,7 @@ void SimpleFontData::platformDestroy()
 {
 }
 
-PassOwnPtr<SimpleFontData> SimpleFontData::scaledFontData(const FontDescription& fontDescription, float scaleFactor) const
+PassOwnPtr<SimpleFontData> SimpleFontData::createScaledFontData(const FontDescription& fontDescription, float scaleFactor) const
 {
     LOGFONT winFont;
     GetObject(m_platformData.hfont(), sizeof(LOGFONT), &winFont);
@@ -127,7 +127,7 @@ SimpleFontData* SimpleFontData::smallCapsFontData(const FontDescription& fontDes
     if (!m_derivedFontData)
         m_derivedFontData = DerivedFontData::create(isCustomFont());
     if (!m_derivedFontData->smallCaps)
-        m_derivedFontData->smallCaps = scaledFontData(fontDescription, .7);
+        m_derivedFontData->smallCaps = createScaledFontData(fontDescription, .7);
 
     return m_derivedFontData->smallCaps.get();
 }
@@ -137,7 +137,7 @@ SimpleFontData* SimpleFontData::emphasisMarkFontData(const FontDescription& font
     if (!m_derivedFontData)
         m_derivedFontData = DerivedFontData::create(isCustomFont());
     if (!m_derivedFontData->emphasisMark)
-        m_derivedFontData->emphasisMark = scaledFontData(fontDescription, .5);
+        m_derivedFontData->emphasisMark = createScaledFontData(fontDescription, .5);
 
     return m_derivedFontData->emphasisMark.get();
 }

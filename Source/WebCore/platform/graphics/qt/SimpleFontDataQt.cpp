@@ -71,7 +71,7 @@ float SimpleFontData::platformWidthForGlyph(Glyph glyph) const
     return advances.at(0).x();
 }
 
-PassOwnPtr<SimpleFontData> SimpleFontData::scaledFontData(const FontDescription& fontDescription, float scaleFactor) const
+PassOwnPtr<SimpleFontData> SimpleFontData::createScaledFontData(const FontDescription& fontDescription, float scaleFactor) const
 {
     const float scaledSize = lroundf(fontDescription.computedSize() * scaleFactor);
     return adoptPtr(new SimpleFontData(FontPlatformData(m_platformData, scaledSize), isCustomFont(), false));
@@ -82,7 +82,7 @@ SimpleFontData* SimpleFontData::smallCapsFontData(const FontDescription& fontDes
     if (!m_derivedFontData)
         m_derivedFontData = DerivedFontData::create(isCustomFont());
     if (!m_derivedFontData->smallCaps)
-        m_derivedFontData->smallCaps = scaledFontData(fontDescription, smallCapsFraction);
+        m_derivedFontData->smallCaps = createScaledFontData(fontDescription, smallCapsFraction);
 
     return m_derivedFontData->smallCaps.get();
 }
@@ -92,7 +92,7 @@ SimpleFontData* SimpleFontData::emphasisMarkFontData(const FontDescription& font
     if (!m_derivedFontData)
         m_derivedFontData = DerivedFontData::create(isCustomFont());
     if (!m_derivedFontData->emphasisMark)
-        m_derivedFontData->emphasisMark = scaledFontData(fontDescription, emphasisMarkFraction);
+        m_derivedFontData->emphasisMark = createScaledFontData(fontDescription, emphasisMarkFraction);
 
     return m_derivedFontData->emphasisMark.get();
 }

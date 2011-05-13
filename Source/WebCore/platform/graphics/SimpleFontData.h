@@ -193,7 +193,7 @@ private:
 
     void commonInit();
 
-    PassOwnPtr<SimpleFontData> scaledFontData(const FontDescription&, float scaleFactor) const;
+    PassOwnPtr<SimpleFontData> createScaledFontData(const FontDescription&, float scaleFactor) const;
 
 #if (PLATFORM(WIN) && !OS(WINCE)) \
     || (OS(WINDOWS) && PLATFORM(WX))
