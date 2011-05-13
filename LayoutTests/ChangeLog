@@ -1,3 +1,17 @@
+2011-05-13  Mark Pilgrim  <pilgrim@chromium.org>
+
+        Reviewed by Tony Chang.
+
+        Port Mozilla's IndexedDB tests: remove objectstore
+        https://bugs.webkit.org/show_bug.cgi?id=60768
+
+        This test creates an objectstore, populates it with 100 records,
+        deletes the objectstore, and checks that the objectStoreNames array
+        is updated properly at each step.
+
+        * storage/indexeddb/mozilla/remove-objectstore-expected.txt: Added.
+        * storage/indexeddb/mozilla/remove-objectstore.html: Added.
+
 2011-05-13  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r86447.
