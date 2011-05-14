@@ -1,5 +1,25 @@
 2011-05-13  Anders Carlsson  <andersca@apple.com>
 
+        Reviewed by Sam Weinig.
+
+        NPP_URLNotify is not called if a URL passed to NPN_GetURLNotify fails to load
+        https://bugs.webkit.org/show_bug.cgi?id=60823
+        <rdar://problem/9430386>
+
+        Add test that calls NPN_GetURLNotify on a URL that can't be loaded, and checks if NPP_URLNotify is called.
+
+        * DumpRenderTree/DumpRenderTree.gypi:
+        * DumpRenderTree/DumpRenderTree.xcodeproj/project.pbxproj:
+        * DumpRenderTree/TestNetscapePlugIn/Tests/GetURLNotifyWithURLThatFailsToLoad.cpp: Added.
+        (GetURLNotifyWithURLThatFailsToLoad::GetURLNotifyWithURLThatFailsToLoad):
+        (GetURLNotifyWithURLThatFailsToLoad::NPP_New):
+        (GetURLNotifyWithURLThatFailsToLoad::NPP_URLNotify):
+        * DumpRenderTree/TestNetscapePlugIn/win/TestNetscapePlugin.vcproj:
+        * DumpRenderTree/qt/TestNetscapePlugin/TestNetscapePlugin.pro:
+        * GNUmakefile.am:
+
+2011-05-13  Anders Carlsson  <andersca@apple.com>
+
         Build fix.
 
         * DumpRenderTree/TestNetscapePlugIn/Tests/GetURLWithJavaScriptURL.cpp:

@@ -1,3 +1,20 @@
+2011-05-13  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        NPP_URLNotify is not called if a URL passed to NPN_GetURLNotify fails to load
+        https://bugs.webkit.org/show_bug.cgi?id=60823
+        <rdar://problem/9430386>
+
+        If a plug-in stream fails to load before it's been started, we won't destroy the stream.
+
+        * WebProcess/Plugins/Netscape/NetscapePluginStream.cpp:
+        (WebKit::NetscapePluginStream::stop):
+        Call notifyAndDestroyStream which will call NPP_URLNotify if necessary, and also destroy the stream.
+
+        (WebKit::NetscapePluginStream::notifyAndDestroyStream):
+        Pass the request URL to NPP_URLNotify, matching other browsers.
+
 2011-05-13  Michael Saboff  <msaboff@apple.com>
 
         Reviewed by Geoffrey Garen.

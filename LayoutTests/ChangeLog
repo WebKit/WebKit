@@ -1,3 +1,16 @@
+2011-05-13  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        NPP_URLNotify is not called if a URL passed to NPN_GetURLNotify fails to load
+        https://bugs.webkit.org/show_bug.cgi?id=60823
+        <rdar://problem/9430386>
+
+        Add test.
+
+        * plugins/get-url-notify-with-url-that-fails-to-load-expected.txt: Added.
+        * plugins/get-url-notify-with-url-that-fails-to-load.html: Added.
+
 2011-05-13  Andrew Wilson  <atwilson@chromium.org>
 
         Disable failing test on chromium. Unreviewed.
