@@ -85,20 +85,6 @@ static ClipboardDataType clipboardTypeFromMIMEType(const String& type)
     return ClipboardDataTypeNone;
 }
 
-static inline FORMATETC* fileDescriptorFormat()
-{
-    static UINT cf = RegisterClipboardFormat(CFSTR_FILEDESCRIPTOR);
-    static FORMATETC fileDescriptorFormat = {cf, 0, DVASPECT_CONTENT, -1, TYMED_HGLOBAL};
-    return &fileDescriptorFormat;
-}
-
-static inline FORMATETC* fileContentFormatZero()
-{
-    static UINT cf = RegisterClipboardFormat(CFSTR_FILECONTENTS);
-    static FORMATETC fileContentFormat = {cf, 0, DVASPECT_CONTENT, 0, TYMED_HGLOBAL};
-    return &fileContentFormat;
-}
-
 #if !OS(WINCE)
 static inline void pathRemoveBadFSCharacters(PWSTR psz, size_t length)
 {
@@ -714,7 +700,7 @@ void ClipboardWin::writeURL(const KURL& kurl, const String& titleStr, Frame*)
     ASSERT(url.containsOnlyASCII()); // KURL::string() is URL encoded.
 
     String fsPath = filesystemPathFromUrlOrTitle(url, titleStr, L".URL", true);
-    CString content = makeString("[InternetShortcut]\r\nURL=", url, "\r\n").ascii();
+    CString content = makeString("[InternetShortcut]\r\nURL=", url, "\r\n").latin1();
 
     if (fsPath.length() <= 0)
         return;

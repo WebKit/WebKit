@@ -48,6 +48,8 @@ FORMATETC* filenameFormat();
 FORMATETC* htmlFormat();
 FORMATETC* cfHDropFormat();
 FORMATETC* smartPasteFormat();
+FORMATETC* fileDescriptorFormat();
+FORMATETC* fileContentFormatZero();
 
 void markupToCFHTML(const String& markup, const String& srcURL, Vector<char>& result);
 
@@ -76,6 +78,10 @@ String getCFHTML(const DragDataMap*);
 
 void getClipboardData(IDataObject*, FORMATETC* fetc, Vector<String>& dataStrings);
 void setClipboardData(IDataObject*, UINT format, const Vector<String>& dataStrings);
+void getFileDescriptorData(IDataObject*, int& size, String& pathname);
+void getFileContentData(IDataObject*, int size, void* dataBlob);
+void setFileDescriptorData(IDataObject*, int size, String pathname);
+void setFileContentData(IDataObject*, int size, void* dataBlob);
 
 } // namespace WebCore
 

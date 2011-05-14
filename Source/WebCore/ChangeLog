@@ -1,3 +1,36 @@
+2011-05-13  Enrica Casucci  <enrica@apple.com>
+
+        Reviewed by Darin Adler and Brian Weinstein.
+
+        REGRESSION (WK2): Can't drag and drop a link or image from Safari to Desktop
+        https://bugs.webkit.org/show_bug.cgi?id=60819
+        <rdar://problem/9370689>
+
+        To support drag-and-drop to the desktop and other windows applications,
+        we need to support the fileDescriptor and fileContentZero clipboard formats.
+        This patch adds the support for serializing these types across the process boundary.
+        It also fixes a regression introduced by r70914, that was causing the content of the
+        shortcut files to be corrupted. Using ascii() to convert from String to CString was
+        causing '\n' and '\r' to be replaced with '?'.
+        
+        * platform/DragData.h:
+        * platform/win/ClipboardUtilitiesWin.cpp:
+        (WebCore::fileDescriptorFormat): Moved from ClipboardWin.cpp.
+        (WebCore::fileContentFormatZero): Moved from ClipboardWin.cpp.
+        (WebCore::getFileDescriptorData): Serialize FileDescriptor type.
+        (WebCore::getFileContentData): Serialize FileContent type.
+        (WebCore::setFileDescriptorData): Deserialize FileDescriptor type.
+        (WebCore::setFileContentData): Deserialize FileContent type.
+        (WebCore::setCFData): Added missing initialization of the tymed field
+        that was causing the cfHDrop format not to be deserialized correctly. 
+        * platform/win/ClipboardUtilitiesWin.h:
+        * platform/win/ClipboardWin.cpp:
+        (WebCore::createGlobalHDropContent): Changed ascii() to latin1().
+        (WebCore::ClipboardWin::writeURL):
+        * platform/win/DragDataWin.cpp:
+        (WebCore::DragData::getDragFileDescriptorData):
+        (WebCore::DragData::getDragFileContentData):
+
 2011-05-13  Daniel Cheng  <dcheng@chromium.org>
 
         Fix the build.

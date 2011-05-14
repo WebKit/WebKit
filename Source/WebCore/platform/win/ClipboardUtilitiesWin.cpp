@@ -368,6 +368,84 @@ FORMATETC* smartPasteFormat()
     return &htmlFormat;
 }
 
+FORMATETC* fileDescriptorFormat()
+{
+    static UINT cf = RegisterClipboardFormat(CFSTR_FILEDESCRIPTOR);
+    static FORMATETC fileDescriptorFormat = { cf, 0, DVASPECT_CONTENT, -1, TYMED_HGLOBAL };
+    return &fileDescriptorFormat;
+}
+
+FORMATETC* fileContentFormatZero()
+{
+    static UINT cf = RegisterClipboardFormat(CFSTR_FILECONTENTS);
+    static FORMATETC fileContentFormat = { cf, 0, DVASPECT_CONTENT, 0, TYMED_HGLOBAL };
+    return &fileContentFormat;
+}
+
+void getFileDescriptorData(IDataObject* dataObject, int& size, String& pathname)
+{
+    STGMEDIUM store;
+    size = 0;
+    if (FAILED(dataObject->GetData(fileDescriptorFormat(), &store)))
+        return;
+
+    FILEGROUPDESCRIPTOR* fgd = static_cast<FILEGROUPDESCRIPTOR*>(::GlobalLock(store.hGlobal));
+    size = fgd->fgd[0].nFileSizeLow;
+    pathname = fgd->fgd[0].cFileName;
+
+    ::GlobalUnlock(store.hGlobal);
+    ::ReleaseStgMedium(&store);
+}
+
+void getFileContentData(IDataObject* dataObject, int size, void* dataBlob)
+{
+    STGMEDIUM store;
+    if (FAILED(dataObject->GetData(fileContentFormatZero(), &store)))
+        return;
+    void* data = ::GlobalLock(store.hGlobal);
+    ::CopyMemory(dataBlob, data, size);
+    
+    ::GlobalUnlock(store.hGlobal);
+    ::ReleaseStgMedium(&store);
+}
+
+void setFileDescriptorData(IDataObject* dataObject, int size, String pathname)
+{
+    STGMEDIUM medium = { 0 };
+    medium.tymed = TYMED_HGLOBAL;
+
+    medium.hGlobal = ::GlobalAlloc(GPTR, sizeof(FILEGROUPDESCRIPTOR));
+    if (!medium.hGlobal)
+        return;
+
+    FILEGROUPDESCRIPTOR* fgd = static_cast<FILEGROUPDESCRIPTOR*>(::GlobalLock(medium.hGlobal));
+    ::ZeroMemory(fgd, sizeof(FILEGROUPDESCRIPTOR));
+    fgd->cItems = 1;
+    fgd->fgd[0].dwFlags = FD_FILESIZE;
+    fgd->fgd[0].nFileSizeLow = size;
+    
+    int maxSize = std::min(pathname.length(), WTF_ARRAY_LENGTH(fgd->fgd[0].cFileName));
+    CopyMemory(fgd->fgd[0].cFileName, pathname.charactersWithNullTermination(), maxSize * sizeof(UChar));
+    ::GlobalUnlock(medium.hGlobal);
+    
+    dataObject->SetData(fileDescriptorFormat(), &medium, TRUE);
+}
+
+void setFileContentData(IDataObject* dataObject, int size, void* dataBlob)
+{
+    STGMEDIUM medium = { 0 };
+    medium.tymed = TYMED_HGLOBAL;
+
+    medium.hGlobal = ::GlobalAlloc(GPTR, size);
+    if (!medium.hGlobal)
+        return;
+    void* fileContents = ::GlobalLock(medium.hGlobal);
+    ::CopyMemory(fileContents, dataBlob, size);  
+    ::GlobalUnlock(medium.hGlobal);
+
+    dataObject->SetData(fileContentFormatZero(), &medium, TRUE);
+}
+
 String getURL(IDataObject* dataObject, DragData::FilenameConversionPolicy filenamePolicy, bool& success, String* title)
 {
     STGMEDIUM store;
@@ -714,6 +792,8 @@ void setUtf8Data(IDataObject* data, FORMATETC* format, const Vector<String>& dat
 void setCFData(IDataObject* data, FORMATETC* format, const Vector<String>& dataStrings)
 {
     STGMEDIUM medium = {0};
+    medium.tymed = TYMED_HGLOBAL;
+
     SIZE_T dropFilesSize = sizeof(DROPFILES) + (sizeof(WCHAR) * (dataStrings.first().length() + 2));
     medium.hGlobal = ::GlobalAlloc(GHND | GMEM_SHARE, dropFilesSize);
     if (!medium.hGlobal) 

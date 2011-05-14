@@ -395,7 +395,58 @@ template<typename T1, typename T2, typename T3, typename T4, typename T5, typena
 {
     return Arguments8<T1&, T2&, T3&, T4&, T5&, T6&, T7&, T8&>(t1, t2, t3, t4, t5, t6, t7, t8);
 }
+
+template<typename T1, typename T2, typename T3, typename T4, typename T5, typename T6, typename T7, typename T8, typename T9, typename T10> struct Arguments10 : Arguments8<T1, T2, T3, T4, T5, T6, T7, T8> {
+    typedef Arguments10<typename WTF::RemoveConst<typename WTF::RemoveReference<T1>::Type>::Type,
+    typename WTF::RemoveConst<typename WTF::RemoveReference<T2>::Type>::Type,
+    typename WTF::RemoveConst<typename WTF::RemoveReference<T3>::Type>::Type,
+    typename WTF::RemoveConst<typename WTF::RemoveReference<T4>::Type>::Type,
+    typename WTF::RemoveConst<typename WTF::RemoveReference<T5>::Type>::Type,
+    typename WTF::RemoveConst<typename WTF::RemoveReference<T6>::Type>::Type,
+    typename WTF::RemoveConst<typename WTF::RemoveReference<T7>::Type>::Type,
+    typename WTF::RemoveConst<typename WTF::RemoveReference<T8>::Type>::Type,
+    typename WTF::RemoveConst<typename WTF::RemoveReference<T9>::Type>::Type,
+    typename WTF::RemoveConst<typename WTF::RemoveReference<T10>::Type>::Type> ValueType;
+
+    Arguments10() { }
     
+    Arguments10(T1 t1, T2 t2, T3 t3, T4 t4, T5 t5, T6 t6, T7 t7, T8 t8, T9 t9, T10 t10)
+        : Arguments8<T1, T2, T3, T4, T5, T6, T7, T8>(t1, t2, t3, t4, t5, t6, t7, t8)
+        , argument9(t9)
+        , argument10(t10)
+    {
+    }
+
+    void encode(ArgumentEncoder* encoder) const
+    {
+        Arguments8<T1, T2, T3, T4, T5, T6, T7, T8>::encode(encoder);
+        encoder->encode(argument9);
+        encoder->encode(argument10);
+    }
+
+    static bool decode(ArgumentDecoder* decoder, Arguments10& result)
+    {
+        if (!Arguments8<T1, T2, T3, T4, T5, T6, T7, T8>::decode(decoder, result))
+            return false;
+
+        decoder->decode(result.argument9);
+        return decoder->decode(result.argument10);
+    }
+
+    T9 argument9;
+    T10 argument10;
+};
+
+template<typename T1, typename T2, typename T3, typename T4, typename T5, typename T6, typename T7, typename T8, typename T9, typename T10> Arguments10<const T1&, const T2&, const T3&, const T4&, const T5&, const T6&, const T7&, const T8&, const T9&, const T10&> In(const T1& t1, const T2& t2, const T3 &t3, const T4& t4, const T5& t5, const T6& t6, const T7& t7, const T8& t8, const T9& t9, const T10& t10)
+{
+    return Arguments10<const T1&, const T2&, const T3&, const T4&, const T5&, const T6&, const T7&, const T8&, const T9&, const T10&>(t1, t2, t3, t4, t5, t6, t7, t8, t9, t10);
+}
+
+template<typename T1, typename T2, typename T3, typename T4, typename T5, typename T6, typename T7, typename T8, typename T9, typename T10> Arguments10<T1&, T2&, T3&, T4&, T5&, T6&, T7&, T8&, T9&, T10&> Out(T1& t1, T2& t2, T3& t3, T4& t4, T5& t5, T6& t6, T7& t7, T8& t8, T9& t9, T10& t10)
+{
+    return Arguments10<T1&, T2&, T3&, T4&, T5&, T6&, T7&, T8&, T9&, T10&>(t1, t2, t3, t4, t5, t6, t7, t8, t9, t10);
+}
+
 } // namespace CoreIPC
 
 #endif // Arguments_h

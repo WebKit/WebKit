@@ -82,8 +82,20 @@ void WebDragClient::startDrag(DragImageRef image, const IntPoint& imageOrigin, c
     if (!memoryBuffer->createHandle(handle, SharedMemory::ReadOnly))
         return;
     DWORD okEffect = draggingSourceOperationMaskToDragCursors(m_page->corePage()->dragController()->sourceDragOperation());
+    
     DragData dragData(dataObject.get(), IntPoint(), IntPoint(), DragOperationNone);
-    m_page->send(Messages::WebPageProxy::StartDragDrop(imageOrigin, dragPoint, okEffect, dragData.dragDataMap(), IntSize(bitmapInfo.bmiHeader.biWidth, bitmapInfo.bmiHeader.biHeight), handle, isLink), m_page->pageID());
+    int fileSize;
+    String pathname;
+    dragData.getDragFileDescriptorData(fileSize, pathname);
+    RefPtr<SharedMemory> fileContentBuffer;
+    SharedMemory::Handle fileContentHandle;
+    if (fileSize) {
+        fileContentBuffer = SharedMemory::create(fileSize);
+        dragData.getDragFileContentData(fileSize, fileContentBuffer->data());
+        fileContentBuffer->createHandle(fileContentHandle, SharedMemory::ReadOnly);
+    }
+
+    m_page->send(Messages::WebPageProxy::StartDragDrop(imageOrigin, dragPoint, okEffect, dragData.dragDataMap(), (uint64_t)fileSize, pathname, fileContentHandle, IntSize(bitmapInfo.bmiHeader.biWidth, bitmapInfo.bmiHeader.biHeight), handle, isLink), m_page->pageID());
 }
 
 } // namespace WebKit

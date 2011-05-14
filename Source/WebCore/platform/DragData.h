@@ -99,6 +99,8 @@ public:
 #if PLATFORM(WIN)
     DragData(const DragDataMap&, const IntPoint& clientPosition, const IntPoint& globalPosition, DragOperation sourceOperationMask, DragApplicationFlags = DragApplicationNone);
     const DragDataMap& dragDataMap();
+    void getDragFileDescriptorData(int& size, String& pathname);
+    void getDragFileContentData(int size, void* dataBlob);
 #endif
     const IntPoint& clientPosition() const { return m_clientPosition; }
     const IntPoint& globalPosition() const { return m_globalPosition; }

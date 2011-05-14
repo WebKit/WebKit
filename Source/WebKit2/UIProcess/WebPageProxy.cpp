@@ -80,6 +80,7 @@
 #if PLATFORM(WIN)
 #include "WebDragSource.h"
 #include <WebCore/BitmapInfo.h>
+#include <WebCore/ClipboardUtilitiesWin.h>
 #include <WebCore/COMPtr.h>
 #include <WebCore/WCDataObject.h>
 #include <shlobj.h>
@@ -778,11 +779,16 @@ void WebPageProxy::didPerformDragControllerAction(uint64_t resultOperation)
 
 #if PLATFORM(WIN)
 
-void WebPageProxy::startDragDrop(const IntPoint& imageOrigin, const IntPoint& dragPoint, uint64_t okEffect, 
-    const HashMap<UINT, Vector<String> >& dataMap, const IntSize& dragImageSize, const SharedMemory::Handle& dragImageHandle, bool isLinkDrag)
+void WebPageProxy::startDragDrop(const IntPoint& imageOrigin, const IntPoint& dragPoint, uint64_t okEffect, const HashMap<UINT, Vector<String> >& dataMap, uint64_t fileSize, const String& pathname, const SharedMemory::Handle& fileContentHandle, const IntSize& dragImageSize, const SharedMemory::Handle& dragImageHandle, bool isLinkDrag)
 {
     COMPtr<WCDataObject> dataObject;
     WCDataObject::createInstance(&dataObject, dataMap);
+
+    if (fileSize) {
+        RefPtr<SharedMemory> fileContentBuffer = SharedMemory::create(fileContentHandle, SharedMemory::ReadOnly);
+        setFileDescriptorData(dataObject.get(), fileSize, pathname);
+        setFileContentData(dataObject.get(), fileSize, fileContentBuffer->data());
+    }
 
     RefPtr<SharedMemory> memoryBuffer = SharedMemory::create(dragImageHandle, SharedMemory::ReadOnly);
     if (!memoryBuffer)

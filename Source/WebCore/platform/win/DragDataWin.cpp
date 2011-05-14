@@ -86,6 +86,19 @@ const DragDataMap& DragData::dragDataMap()
     return m_dragDataMap;
 }
 
+void DragData::getDragFileDescriptorData(int& size, String& pathname)
+{
+    size = 0;
+    if (m_platformDragData)
+        getFileDescriptorData(m_platformDragData, size, pathname);
+}
+
+void DragData::getDragFileContentData(int size, void* dataBlob)
+{
+    if (m_platformDragData)
+        getFileContentData(m_platformDragData, size, dataBlob);
+}
+
 String DragData::asURL(Frame*, FilenameConversionPolicy filenamePolicy, String* title) const
 {
     bool success;
