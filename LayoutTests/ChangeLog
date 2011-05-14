@@ -1,3 +1,9 @@
+2011-05-13  Andrew Wilson  <atwilson@chromium.org>
+
+        Disable failing test on chromium. Unreviewed.
+
+        * platform/chromium/test_expectations.txt:
+
 2011-05-13  Daniel Cheng  <dcheng@chromium.org>
 
         Reviewed by Tony Chang.

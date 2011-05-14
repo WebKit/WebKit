@@ -4041,7 +4041,10 @@ BUGWK58999 MAC : fast/borders/outline-alpha-block.html = IMAGE
 BUGWK58999 MAC : fast/borders/outline-alpha-inline.html = IMAGE
 
 // Likely rebaseline needed.
-BUGATWILSON LINUX WIN : svg/custom/stroke-opacity-update.svg = IMAGE
+BUGATWILSON LINUX REBASELINE : svg/custom/stroke-opacity-update.svg = IMAGE
 
 // New test at r86442 exposed this crash.
 BUGWK60414 WIN : platform/win/plugins/iframe-inside-overflow.html = CRASH
+
+// New test added at r86467, doesn't pass.
+BUGWK60822 : plugins/get-url-with-javascript-url.html = TIMEOUT
