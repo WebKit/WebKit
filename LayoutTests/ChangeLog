@@ -1,3 +1,19 @@
+2011-05-14  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Kevin Decker.
+
+        NPP_URLNotify is not called if a URL passed to NPN_GetURLNotify fails to load
+        https://bugs.webkit.org/show_bug.cgi?id=60823
+        <rdar://problem/9430386>
+
+        Add test.
+
+        * platform/gtk/Skipped:
+        Add test to Skipped list since it apparently crashes.
+
+        * plugins/get-url-notify-with-url-that-fails-to-load-expected.txt: Added.
+        * plugins/get-url-notify-with-url-that-fails-to-load.html: Added.
+
 2011-05-14  Csaba Osztrogonác  <ossy@webkit.org>
 
         [Qt]fast/events/remove-target-in-mouseup* tests fail

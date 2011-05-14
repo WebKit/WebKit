@@ -157,6 +157,9 @@ svg/text/select-textLength-spacing-squeeze-1.svg
 # https://bugs.webkit.org/show_bug.cgi?id=31433
 plugins/document-open.html
 
+# https://bugs.webkit.org/show_bug.cgi?id=60838
+plugins/get-url-notify-with-url-that-fails-to-load.html
+
 # https://bugs.webkit.org/show_bug.cgi?id=37574
 plugins/window-open.html
 
