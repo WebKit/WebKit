@@ -2594,3 +2594,14 @@ http/tests/inspector/network/x-frame-options-deny.html
 # [Qt] fast/events/backspace-nagivates-back fails on Qt bots (Mac and Linux)
 # https://bugs.webkit.org/show_bug.cgi?id=60311
 fast/events/backspace-navigates-back.html
+
+# [Qt]fast/events/remove-target-in-mouseup* tests fail
+# https://bugs.webkit.org/show_bug.cgi?id=60833
+fast/events/remove-target-in-mouseup-deep.html
+fast/events/remove-target-in-mouseup-insertback.html
+fast/events/remove-target-in-mouseup-twice.html
+fast/events/remove-target-in-mouseup.html
+
+# [Qt][GTK] plugins/get-url-with-javascript-url.html fails
+# https://bugs.webkit.org/show_bug.cgi?id=60834
+plugins/get-url-with-javascript-url.html
