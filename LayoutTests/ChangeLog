@@ -1,3 +1,9 @@
+2011-05-14  Anders Carlsson  <andersca@apple.com>
+
+        
+        * platform/qt/Skipped:
+        Add plugins/get-url-notify-with-url-that-fails-to-load.html to the skipped list.
+
 2011-05-14  Jeremy Noble  <jer.noble@apple.com>
 
         Reviewed by Darin Adler.
