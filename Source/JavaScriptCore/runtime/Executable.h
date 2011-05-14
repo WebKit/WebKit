@@ -66,10 +66,11 @@ namespace JSC {
         }
 
         static Structure* createStructure(JSGlobalData& globalData, JSValue proto) { return Structure::create(globalData, proto, TypeInfo(CompoundType, StructureFlags), AnonymousSlotCount, &s_info); }
+        
+        static const ClassInfo s_info;
 
     protected:
         static const unsigned StructureFlags = 0;
-        static const ClassInfo s_info;
         int m_numParametersForCall;
         int m_numParametersForConstruct;
 
@@ -117,7 +118,9 @@ namespace JSC {
         NativeFunction function() { return m_function; }
 
         static Structure* createStructure(JSGlobalData& globalData, JSValue proto) { return Structure::create(globalData, proto, TypeInfo(LeafType, StructureFlags), AnonymousSlotCount, &s_info); }
-
+        
+        static const ClassInfo s_info;
+    
     private:
 #if ENABLE(JIT)
         NativeExecutable(JSGlobalData& globalData, JITCode callThunk, NativeFunction function, JITCode constructThunk, NativeFunction constructor)
@@ -143,7 +146,6 @@ namespace JSC {
         // Probably should be a NativeConstructor, but this will currently require rewriting the JIT
         // trampoline. It may be easier to make NativeFunction be passed 'this' as a part of the ArgList.
         NativeFunction m_constructor;
-        static const ClassInfo s_info;
     };
 
     class ScriptExecutable : public ExecutableBase {
@@ -236,10 +238,10 @@ namespace JSC {
         {
             return Structure::create(globalData, proto, TypeInfo(CompoundType, StructureFlags), AnonymousSlotCount, &s_info);
         }
-
+        
+        static const ClassInfo s_info;
     private:
         static const unsigned StructureFlags = OverridesVisitChildren | ScriptExecutable::StructureFlags;
-        static const ClassInfo s_info;
         EvalExecutable(ExecState*, const SourceCode&, bool);
 
         JSObject* compileInternal(ExecState*, ScopeChainNode*);
@@ -286,10 +288,11 @@ namespace JSC {
         {
             return Structure::create(globalData, proto, TypeInfo(CompoundType, StructureFlags), AnonymousSlotCount, &s_info);
         }
+        
+        static const ClassInfo s_info;
 
     private:
         static const unsigned StructureFlags = OverridesVisitChildren | ScriptExecutable::StructureFlags;
-        static const ClassInfo s_info;
         ProgramExecutable(ExecState*, const SourceCode&);
 
         JSObject* compileInternal(ExecState*, ScopeChainNode*);
@@ -382,6 +385,8 @@ namespace JSC {
         {
             return Structure::create(globalData, proto, TypeInfo(CompoundType, StructureFlags), AnonymousSlotCount, &s_info);
         }
+        
+        static const ClassInfo s_info;
 
     private:
         FunctionExecutable(JSGlobalData*, const Identifier& name, const SourceCode&, bool forceUsesArguments, FunctionParameters*, bool, int firstLine, int lastLine);
@@ -391,7 +396,6 @@ namespace JSC {
         JSObject* compileForConstructInternal(ExecState*, ScopeChainNode*);
         
         static const unsigned StructureFlags = OverridesVisitChildren | ScriptExecutable::StructureFlags;
-        static const ClassInfo s_info;
         unsigned m_numCapturedVariables : 31;
         bool m_forceUsesArguments : 1;
 

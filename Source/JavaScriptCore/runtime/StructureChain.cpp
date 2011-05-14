@@ -55,6 +55,8 @@ StructureChain::~StructureChain()
 
 void StructureChain::visitChildren(SlotVisitor& visitor)
 {
+    ASSERT_GC_OBJECT_INHERITS(this, &s_info);
+    ASSERT(structure()->typeInfo().overridesVisitChildren());
     size_t i = 0;
     while (m_vector[i])
         visitor.append(&m_vector[i++]);

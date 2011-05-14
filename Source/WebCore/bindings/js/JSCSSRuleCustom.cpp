@@ -50,6 +50,9 @@ namespace WebCore {
 
 void JSCSSRule::visitChildren(SlotVisitor& visitor)
 {
+    ASSERT_GC_OBJECT_INHERITS(this, &s_info);
+    COMPILE_ASSERT(StructureFlags & OverridesVisitChildren, OverridesVisitChildrenWithoutSettingFlag);
+    ASSERT(structure()->typeInfo().overridesVisitChildren());
     Base::visitChildren(visitor);
     visitor.addOpaqueRoot(root(impl()));
 }

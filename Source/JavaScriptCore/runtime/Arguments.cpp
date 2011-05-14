@@ -45,6 +45,9 @@ Arguments::~Arguments()
 
 void Arguments::visitChildren(SlotVisitor& visitor)
 {
+    ASSERT_GC_OBJECT_INHERITS(this, &s_info);
+    COMPILE_ASSERT(StructureFlags & OverridesVisitChildren, OverridesVisitChildrenWithoutSettingFlag);
+    ASSERT(structure()->typeInfo().overridesVisitChildren());
     JSObject::visitChildren(visitor);
 
     if (d->registerArray)

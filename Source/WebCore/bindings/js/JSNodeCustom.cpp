@@ -194,6 +194,9 @@ ScopeChainNode* JSNode::pushEventHandlerScope(ExecState*, ScopeChainNode* node) 
 
 void JSNode::visitChildren(SlotVisitor& visitor)
 {
+    ASSERT_GC_OBJECT_INHERITS(this, &s_info);
+    COMPILE_ASSERT(StructureFlags & OverridesVisitChildren, OverridesVisitChildrenWithoutSettingFlag);
+    ASSERT(structure()->typeInfo().overridesVisitChildren());
     Base::visitChildren(visitor);
 
     Node* node = m_impl.get();

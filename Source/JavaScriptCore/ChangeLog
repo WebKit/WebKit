@@ -1,3 +1,185 @@
+2011-05-13  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Geoffrey Garen.
+
+        Make GC validation more aggressive
+        https://bugs.webkit.org/show_bug.cgi?id=60802
+
+        This patch makes the checks performed under GC_VALIDATION
+        much more aggressive, and adds the checks to more places
+        in order to allow us to catch GC bugs much closer to the
+        point of failure.
+
+        * JavaScriptCore.exp:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * debugger/DebuggerActivation.cpp:
+        (JSC::DebuggerActivation::visitChildren):
+        * heap/MarkedBlock.cpp:
+        (JSC::MarkedBlock::MarkedBlock):
+        * heap/MarkedSpace.cpp:
+        * runtime/Arguments.cpp:
+        (JSC::Arguments::visitChildren):
+        * runtime/Executable.cpp:
+        (JSC::EvalExecutable::visitChildren):
+        (JSC::ProgramExecutable::visitChildren):
+        (JSC::FunctionExecutable::visitChildren):
+        * runtime/Executable.h:
+        * runtime/GetterSetter.cpp:
+        (JSC::GetterSetter::visitChildren):
+        * runtime/GetterSetter.h:
+        * runtime/JSAPIValueWrapper.h:
+        (JSC::JSAPIValueWrapper::createStructure):
+        (JSC::JSAPIValueWrapper::JSAPIValueWrapper):
+        * runtime/JSActivation.cpp:
+        (JSC::JSActivation::visitChildren):
+        * runtime/JSArray.cpp:
+        (JSC::JSArray::visitChildren):
+        * runtime/JSCell.cpp:
+        (JSC::slowValidateCell):
+        * runtime/JSCell.h:
+        (JSC::JSCell::JSCell::unvalidatedStructure):
+        (JSC::JSCell::JSCell::JSCell):
+        * runtime/JSFunction.cpp:
+        (JSC::JSFunction::visitChildren):
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::visitChildren):
+        (JSC::slowValidateCell):
+        * runtime/JSONObject.h:
+        * runtime/JSObject.cpp:
+        (JSC::JSObject::visitChildren):
+        * runtime/JSPropertyNameIterator.cpp:
+        (JSC::JSPropertyNameIterator::visitChildren):
+        * runtime/JSPropertyNameIterator.h:
+        * runtime/JSStaticScopeObject.cpp:
+        (JSC::JSStaticScopeObject::visitChildren):
+        * runtime/JSString.h:
+        (JSC::RopeBuilder::JSString):
+        * runtime/JSWrapperObject.cpp:
+        (JSC::JSWrapperObject::visitChildren):
+        * runtime/NativeErrorConstructor.cpp:
+        (JSC::NativeErrorConstructor::visitChildren):
+        * runtime/PropertyMapHashTable.h:
+        (JSC::PropertyMapEntry::PropertyMapEntry):
+        * runtime/RegExpObject.cpp:
+        (JSC::RegExpObject::visitChildren):
+        * runtime/ScopeChain.cpp:
+        (JSC::ScopeChainNode::visitChildren):
+        * runtime/ScopeChain.h:
+        (JSC::ScopeChainNode::ScopeChainNode):
+        * runtime/Structure.cpp:
+        (JSC::Structure::Structure):
+        (JSC::Structure::addPropertyTransition):
+        (JSC::Structure::visitChildren):
+        * runtime/Structure.h:
+        (JSC::JSCell::classInfo):
+        * runtime/StructureChain.cpp:
+        (JSC::StructureChain::visitChildren):
+        * runtime/StructureChain.h:
+        * runtime/WriteBarrier.h:
+        (JSC::validateCell):
+        (JSC::JSCell):
+        (JSC::JSGlobalObject):
+        (JSC::WriteBarrierBase::set):
+        (JSC::WriteBarrierBase::setMayBeNull):
+        (JSC::WriteBarrierBase::setEarlyValue):
+        (JSC::WriteBarrierBase::get):
+        (JSC::WriteBarrierBase::operator*):
+        (JSC::WriteBarrierBase::operator->):
+        (JSC::WriteBarrierBase::unvalidatedGet):
+        (JSC::WriteBarrier::WriteBarrier):
+        * wtf/Assertions.h:
+
+2011-05-13  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Geoffrey Garen.
+
+        Make GC validation more aggressive
+        https://bugs.webkit.org/show_bug.cgi?id=60802
+
+        This patch makes the checks performed under GC_VALIDATION
+        much more aggressive, and adds the checks to more places
+        in order to allow us to catch GC bugs much closer to the
+        point of failure.
+
+        * JavaScriptCore.exp:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * debugger/DebuggerActivation.cpp:
+        (JSC::DebuggerActivation::visitChildren):
+        * heap/MarkedBlock.cpp:
+        (JSC::MarkedBlock::MarkedBlock):
+        * heap/MarkedSpace.cpp:
+        * runtime/Arguments.cpp:
+        (JSC::Arguments::visitChildren):
+        * runtime/Executable.cpp:
+        (JSC::EvalExecutable::visitChildren):
+        (JSC::ProgramExecutable::visitChildren):
+        (JSC::FunctionExecutable::visitChildren):
+        * runtime/Executable.h:
+        * runtime/GetterSetter.cpp:
+        (JSC::GetterSetter::visitChildren):
+        * runtime/GetterSetter.h:
+        * runtime/JSAPIValueWrapper.h:
+        (JSC::JSAPIValueWrapper::createStructure):
+        (JSC::JSAPIValueWrapper::JSAPIValueWrapper):
+        * runtime/JSActivation.cpp:
+        (JSC::JSActivation::visitChildren):
+        * runtime/JSArray.cpp:
+        (JSC::JSArray::visitChildren):
+        * runtime/JSCell.cpp:
+        (JSC::slowValidateCell):
+        * runtime/JSCell.h:
+        (JSC::JSCell::JSCell::unvalidatedStructure):
+        (JSC::JSCell::JSCell::JSCell):
+        * runtime/JSFunction.cpp:
+        (JSC::JSFunction::visitChildren):
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::visitChildren):
+        (JSC::slowValidateCell):
+        * runtime/JSONObject.h:
+        * runtime/JSObject.cpp:
+        (JSC::JSObject::visitChildren):
+        * runtime/JSPropertyNameIterator.cpp:
+        (JSC::JSPropertyNameIterator::visitChildren):
+        * runtime/JSPropertyNameIterator.h:
+        * runtime/JSStaticScopeObject.cpp:
+        (JSC::JSStaticScopeObject::visitChildren):
+        * runtime/JSString.h:
+        (JSC::RopeBuilder::JSString):
+        * runtime/JSWrapperObject.cpp:
+        (JSC::JSWrapperObject::visitChildren):
+        * runtime/NativeErrorConstructor.cpp:
+        (JSC::NativeErrorConstructor::visitChildren):
+        * runtime/PropertyMapHashTable.h:
+        (JSC::PropertyMapEntry::PropertyMapEntry):
+        * runtime/RegExpObject.cpp:
+        (JSC::RegExpObject::visitChildren):
+        * runtime/ScopeChain.cpp:
+        (JSC::ScopeChainNode::visitChildren):
+        * runtime/ScopeChain.h:
+        (JSC::ScopeChainNode::ScopeChainNode):
+        * runtime/Structure.cpp:
+        (JSC::Structure::Structure):
+        (JSC::Structure::addPropertyTransition):
+        (JSC::Structure::visitChildren):
+        * runtime/Structure.h:
+        (JSC::JSCell::classInfo):
+        * runtime/StructureChain.cpp:
+        (JSC::StructureChain::visitChildren):
+        * runtime/StructureChain.h:
+        * runtime/WriteBarrier.h:
+        (JSC::validateCell):
+        (JSC::JSCell):
+        (JSC::JSGlobalObject):
+        (JSC::WriteBarrierBase::set):
+        (JSC::WriteBarrierBase::setMayBeNull):
+        (JSC::WriteBarrierBase::setEarlyValue):
+        (JSC::WriteBarrierBase::get):
+        (JSC::WriteBarrierBase::operator*):
+        (JSC::WriteBarrierBase::operator->):
+        (JSC::WriteBarrierBase::unvalidatedGet):
+        (JSC::WriteBarrier::WriteBarrier):
+        * wtf/Assertions.h:
+
 2011-05-14  Csaba Osztrogonác  <ossy@webkit.org>
 
         Unreviewed, rolling out r86469 and r86471, because they made hundreds tests crash on Qt.

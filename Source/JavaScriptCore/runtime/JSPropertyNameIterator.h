@@ -75,9 +75,10 @@ namespace JSC {
 
         void setCachedPrototypeChain(JSGlobalData& globalData, StructureChain* cachedPrototypeChain) { m_cachedPrototypeChain.set(globalData, this, cachedPrototypeChain); }
         StructureChain* cachedPrototypeChain() { return m_cachedPrototypeChain.get(); }
+        
+        static const ClassInfo s_info;
 
     private:
-        static const ClassInfo s_info;
         JSPropertyNameIterator(ExecState*, PropertyNameArrayData* propertyNameArrayData, size_t numCacheableSlot);
 
         WriteBarrier<Structure> m_cachedStructure;

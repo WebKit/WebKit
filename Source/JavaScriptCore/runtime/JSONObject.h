@@ -40,6 +40,8 @@ namespace JSC {
         {
             return Structure::create(globalData, prototype, TypeInfo(ObjectType, StructureFlags), AnonymousSlotCount, &s_info);
         }
+        
+        static const ClassInfo s_info;
 
     protected:
         static const unsigned StructureFlags = OverridesGetOwnPropertySlot | JSObject::StructureFlags;
@@ -48,7 +50,6 @@ namespace JSC {
         virtual bool getOwnPropertySlot(ExecState*, const Identifier&, PropertySlot&);
         virtual bool getOwnPropertyDescriptor(ExecState*, const Identifier&, PropertyDescriptor&);
 
-        static const ClassInfo s_info;
     };
 
     UString JSONStringify(ExecState* exec, JSValue value, unsigned indent);

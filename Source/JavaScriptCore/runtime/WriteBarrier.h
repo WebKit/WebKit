@@ -28,19 +28,61 @@
 
 #include "HandleTypes.h"
 #include "Heap.h"
+#include "TypeTraits.h"
 
 namespace JSC {
 
 class JSCell;
 class JSGlobalData;
+class JSGlobalObject;
 
 template<class T> class WriteBarrierBase;
 template<> class WriteBarrierBase<JSValue>;
 
+void slowValidateCell(JSCell*);
+void slowValidateCell(JSGlobalObject*);
+    
+#if ENABLE(GC_VALIDATION)
+template<class T> inline void validateCell(T cell)
+{
+    ASSERT_GC_OBJECT_INHERITS(cell, &WTF::RemovePointer<T>::Type::s_info);
+}
+
+template<> inline void validateCell<JSCell*>(JSCell* cell)
+{
+    slowValidateCell(cell);
+}
+
+template<> inline void validateCell<JSGlobalObject*>(JSGlobalObject* globalObject)
+{
+    slowValidateCell(globalObject);
+}
+#else
+template<class T> inline void validateCell(T)
+{
+}
+#endif
+
 // We have a separate base class with no constructors for use in Unions.
 template <typename T> class WriteBarrierBase {
 public:
-    void set(JSGlobalData&, const JSCell* owner, T* value)
+    void set(JSGlobalData& globalData, const JSCell* owner, T* value)
+    {
+        ASSERT(value);
+        validateCell(value);
+        setEarlyValue(globalData, owner, value);
+    }
+
+    void setMayBeNull(JSGlobalData& globalData, const JSCell* owner, T* value)
+    {
+        if (value)
+            validateCell(value);
+        setEarlyValue(globalData, owner, value);
+    }
+
+    // Should only be used by JSCell during early initialisation
+    // when some basic types aren't yet completely instantiated
+    void setEarlyValue(JSGlobalData&, const JSCell* owner, T* value)
     {
         this->m_cell = reinterpret_cast<JSCell*>(value);
         Heap::writeBarrier(owner, this->m_cell);
@@ -52,6 +94,8 @@ public:
     
     T* get() const
     {
+        if (m_cell)
+            validateCell(m_cell);
         return reinterpret_cast<T*>(m_cell);
     }
 
@@ -61,12 +105,14 @@ public:
 #if ENABLE(JSC_ZOMBIES)
         ASSERT(!isZombie(m_cell));
 #endif
+        validateCell<T>(static_cast<T*>(m_cell));
         return static_cast<T*>(m_cell);
     }
 
     T* operator->() const
     {
         ASSERT(m_cell);
+        validateCell(static_cast<T*>(m_cell));
         return static_cast<T*>(m_cell);
     }
 
@@ -86,6 +132,10 @@ public:
         ASSERT(!m_cell || !isZombie(m_cell));
 #endif
     }
+
+#if ENABLE(GC_VALIDATION)
+    T* unvalidatedGet() const { return reinterpret_cast<T*>(m_cell); }
+#endif
 
 private:
     JSCell* m_cell;
@@ -150,6 +200,12 @@ public:
     WriteBarrier(JSGlobalData& globalData, const JSCell* owner, T* value)
     {
         this->set(globalData, owner, value);
+    }
+
+    enum MayBeNullTag { MayBeNull };
+    WriteBarrier(JSGlobalData& globalData, const JSCell* owner, T* value, MayBeNullTag)
+    {
+        this->setMayBeNull(globalData, owner, value);
     }
 };
 

@@ -52,6 +52,9 @@ JSDOMGlobalObject::JSDOMGlobalObject(JSGlobalData& globalData, Structure* struct
 
 void JSDOMGlobalObject::visitChildren(SlotVisitor& visitor)
 {
+    ASSERT_GC_OBJECT_INHERITS(this, &s_info);
+    COMPILE_ASSERT(StructureFlags & OverridesVisitChildren, OverridesVisitChildrenWithoutSettingFlag);
+    ASSERT(structure()->typeInfo().overridesVisitChildren());
     Base::visitChildren(visitor);
 
     JSDOMStructureMap::iterator end = structures().end();
@@ -78,7 +81,7 @@ Event* JSDOMGlobalObject::currentEvent() const
 
 void JSDOMGlobalObject::setInjectedScript(JSObject* injectedScript)
 {
-    m_injectedScript.set(globalData(), this, injectedScript);
+    m_injectedScript.setMayBeNull(globalData(), this, injectedScript);
 }
 
 JSObject* JSDOMGlobalObject::injectedScript() const

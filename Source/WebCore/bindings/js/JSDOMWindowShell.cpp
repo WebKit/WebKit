@@ -75,6 +75,9 @@ void JSDOMWindowShell::setWindow(PassRefPtr<DOMWindow> domWindow)
 
 void JSDOMWindowShell::visitChildren(SlotVisitor& visitor)
 {
+    ASSERT_GC_OBJECT_INHERITS(this, &s_info);
+    COMPILE_ASSERT(StructureFlags & OverridesVisitChildren, OverridesVisitChildrenWithoutSettingFlag);
+    ASSERT(structure()->typeInfo().overridesVisitChildren());
     Base::visitChildren(visitor);
     if (m_window)
         visitor.append(&m_window);

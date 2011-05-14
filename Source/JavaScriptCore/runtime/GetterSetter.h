@@ -52,9 +52,11 @@ namespace JSC {
         {
             return Structure::create(globalData, prototype, TypeInfo(GetterSetterType, OverridesVisitChildren), AnonymousSlotCount, &s_info);
         }
+        
+        static const ClassInfo s_info;
+
     private:
         virtual bool isGetterSetter() const;
-        static const ClassInfo s_info;
 
         WriteBarrier<JSObject> m_getter;
         WriteBarrier<JSObject> m_setter;  
