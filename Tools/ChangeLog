@@ -1,3 +1,12 @@
+2011-05-14  Arno Renevier  <arno@renevier.net>
+
+        Reviewed by Martin Robinson.
+
+        make run-gtk-tests executable
+        https://bugs.webkit.org/show_bug.cgi?id=59278
+
+        * Scripts/run-gtk-tests:
+
 2011-05-14  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Kevin Decker.
