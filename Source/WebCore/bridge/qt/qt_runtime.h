@@ -23,6 +23,7 @@
 #include "BridgeJSC.h"
 #include "Completion.h"
 #include "Strong.h"
+#include "Weak.h"
 #include "runtime_method.h"
 
 #include <qbytearray.h>
@@ -115,11 +116,15 @@ private:
 // Based on RuntimeMethod
 
 // Extra data classes (to avoid the CELL_SIZE limit on JS objects)
-
-class QtRuntimeMethodData {
+class QtRuntimeMethod;
+class QtRuntimeMethodData : public WeakHandleOwner {
     public:
         virtual ~QtRuntimeMethodData();
         RefPtr<QtInstance> m_instance;
+        Weak<QtRuntimeMethod> m_finalizer;
+
+    private:
+        void finalize(Handle<Unknown>, void*);
 };
 
 class QtRuntimeConnectionMethod;

@@ -987,12 +987,11 @@ QtRuntimeMethod::QtRuntimeMethod(QtRuntimeMethodData* dd, ExecState* exec, const
 {
     QW_D(QtRuntimeMethod);
     d->m_instance = inst;
+    d->m_finalizer.set(exec->globalData(), this, d);
 }
 
 QtRuntimeMethod::~QtRuntimeMethod()
 {
-    QW_D(QtRuntimeMethod);
-    d->m_instance->removeCachedMethod(this);
     delete d_ptr;
 }
 
@@ -1000,6 +999,11 @@ QtRuntimeMethod::~QtRuntimeMethod()
 
 QtRuntimeMethodData::~QtRuntimeMethodData()
 {
+}
+
+void QtRuntimeMethodData::finalize(Handle<Unknown> value, void*)
+{
+    m_instance->removeCachedMethod(static_cast<JSObject*>(value.get().asCell()));
 }
 
 QtRuntimeMetaMethodData::~QtRuntimeMetaMethodData()
