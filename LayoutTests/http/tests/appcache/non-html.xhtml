@@ -82,8 +82,10 @@ function frameCreated()
     else
         log("FAIL: Frame.onload was called, but the image doesn't seem to be loaded.");
     
-    if (window.layoutTestController)
+    if (window.layoutTestController) {
+        applicationCache.onerror = null;
         layoutTestController.notifyDone();
+    }
 }
 
 function error()
@@ -96,7 +98,7 @@ function error()
 applicationCache.addEventListener('cached', cached, false);
 applicationCache.addEventListener('noupdate', cached, false);
 
-applicationCache.addEventListener('error', error, false);
+applicationCache.onerror = error;
 
 </script>
 </body>

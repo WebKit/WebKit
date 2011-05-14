@@ -27,8 +27,10 @@ function test()
 
 function done()
 {
-    if (window.layoutTestController)
+    if (window.layoutTestController) {
+        applicationCache.onerror = null;
         layoutTestController.notifyDone();
+    }
     setNetworkEnabled(true);
 }
 

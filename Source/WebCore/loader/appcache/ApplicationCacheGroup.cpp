@@ -345,7 +345,8 @@ void ApplicationCacheGroup::stopLoading()
         m_currentHandle->cancel();
         m_currentHandle = 0;
     }    
-    
+
+    // FIXME: Resetting just a tiny part of the state in this function is confusing. Callers have to take care of a lot more.
     m_cacheBeingUpdated = 0;
     m_pendingEntries.clear();
 }    
@@ -397,7 +398,7 @@ void ApplicationCacheGroup::stopLoadingInFrame(Frame* frame)
     if (frame != m_frame)
         return;
 
-    stopLoading();
+    cacheUpdateFailed();
 }
 
 void ApplicationCacheGroup::setNewestCache(PassRefPtr<ApplicationCache> newestCache)

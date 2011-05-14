@@ -1,3 +1,20 @@
+2011-05-13  Alexey Proskuryakov  <ap@apple.com>
+
+        Reviewed by Darin Adler.
+
+        HTML5 Application Cache Update Failures on Page Refresh
+        https://bugs.webkit.org/show_bug.cgi?id=60598
+        <rdar://problem/9418639>
+
+        * http/tests/appcache/interrupted-update-expected.txt: Added.
+        * http/tests/appcache/interrupted-update.html: Added.
+        * http/tests/appcache/resources/interrupted-update.manifest: Added.
+
+        * http/tests/appcache/main-resource-redirect.html:
+        * http/tests/appcache/non-html.xhtml:
+        Now that we dispatch an error even when aborting a load due to navigation, error event
+        handler was getting called after notifyDone().
+
 2011-05-13  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Sam Weinig.

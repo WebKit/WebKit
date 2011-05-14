@@ -1,3 +1,27 @@
+2011-05-13  Alexey Proskuryakov  <ap@apple.com>
+
+        Reviewed by Darin Adler.
+
+        HTML5 Application Cache Update Failures on Page Refresh
+        https://bugs.webkit.org/show_bug.cgi?id=60598
+        <rdar://problem/9418639>
+
+        Test: http/tests/appcache/interrupted-update.html
+
+        The reason was two-fold:
+        1) Cache group state wasn't fully reset after a failed cache update (or an initial load).
+        2) The cache group is not deleted until after after the navigation (from autorelease pool),
+        so the failed and sorry old version was picked up by cache selection algorithm.
+
+        The latter is more of a surprising behavior than a problem in itself. Keeping an appcache in
+        memory for reload is generally a good thing for performance.
+
+        * loader/appcache/ApplicationCacheGroup.cpp:
+        (WebCore::ApplicationCacheGroup::stopLoading): Added a FIXME about half-baked state resetting
+        code that sent me looking for a wrong fix originally.
+        (WebCore::ApplicationCacheGroup::stopLoadingInFrame): Stopped load is an update failure like
+        any other, so we should call cacheUpdateFailed(), which knows how to reset state.
+
 2011-05-13  Enrica Casucci  <enrica@apple.com>
 
         Reviewed by Darin Adler and Brian Weinstein.
