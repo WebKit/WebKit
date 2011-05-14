@@ -1,3 +1,9 @@
+2011-05-14  Andrew Wilson  <atwilson@chromium.org>
+
+        Unreviewed chromium expectations change.
+
+        * platform/chromium/test_expectations.txt:
+
 2011-05-14  Anders Carlsson  <andersca@apple.com>
 
         
