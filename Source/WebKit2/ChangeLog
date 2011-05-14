@@ -1,3 +1,19 @@
+2011-05-14  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Alice Liu.
+
+        WKView does not draw after forced repaint before the first update
+        https://bugs.webkit.org/show_bug.cgi?id=60845
+
+        * UIProcess/DrawingAreaProxy.h:
+        (WebKit::DrawingAreaProxy::waitForBackingStoreUpdateOnNextPaint): Added.
+        * UIProcess/DrawingAreaProxyImpl.cpp:
+        (WebKit::DrawingAreaProxyImpl::waitForBackingStoreUpdateOnNextPaint): Set m_hasReceivedFirstUpdate
+        to true, ensuring that paint() will wait for an update if needed.
+        * UIProcess/DrawingAreaProxyImpl.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::forceRepaint): Call DrawingAreaProxy::waitForBackingStoreUpdateOnNextPaint().
+
 2011-05-14  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Sam Weinig.

@@ -55,6 +55,7 @@ private:
     virtual void visibilityDidChange();
     virtual void setPageIsVisible(bool);
     virtual void setBackingStoreIsDiscardable(bool);
+    virtual void waitForBackingStoreUpdateOnNextPaint();
 
     // CoreIPC message handlers
     virtual void update(uint64_t backingStoreStateID, const UpdateInfo&);

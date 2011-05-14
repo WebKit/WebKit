@@ -162,6 +162,11 @@ void DrawingAreaProxyImpl::setBackingStoreIsDiscardable(bool isBackingStoreDisca
         m_discardBackingStoreTimer.stop();
 }
 
+void DrawingAreaProxyImpl::waitForBackingStoreUpdateOnNextPaint()
+{
+    m_hasReceivedFirstUpdate = true;
+}
+
 void DrawingAreaProxyImpl::update(uint64_t backingStoreStateID, const UpdateInfo& updateInfo)
 {
     ASSERT_ARG(backingStoreStateID, backingStoreStateID <= m_currentBackingStoreStateID);

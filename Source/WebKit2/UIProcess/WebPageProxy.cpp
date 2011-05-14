@@ -1305,6 +1305,7 @@ void WebPageProxy::forceRepaint(PassRefPtr<VoidCallback> prpCallback)
 
     uint64_t callbackID = callback->callbackID();
     m_voidCallbacks.set(callbackID, callback.get());
+    m_drawingArea->waitForBackingStoreUpdateOnNextPaint();
     process()->send(Messages::WebPage::ForceRepaint(callbackID), m_pageID); 
 }
 
