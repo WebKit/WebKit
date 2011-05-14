@@ -1,3 +1,24 @@
+2011-05-14  Jer Noble  <jer.noble@apple.com>
+
+        Reviewed by Simon Fraser.
+
+        Flashing window frame and graphical glitches after exiting full screen mode.
+        https://bugs.webkit.org/show_bug.cgi?id=60825
+
+        A layer-backed WebView throws an exception when moved from a layer-backed parent view
+        to a non-layer-backed one, so make the WebView a child of the content view, instead of
+        the animation view.  There is an unrelated fix in beganExitFullScreen, which was calling
+        finishedExitFullScreenAnimation: instead of finishedEnterFullScreenAnimation: when 
+        notifications come out of order.
+
+        * UIProcess/mac/WKFullScreenWindowController.mm:
+        (-[WKFullScreenWindowController finishedEnterFullScreenAnimation:]): Add the _webView
+            to the full screen window's content view, instead of the _animationView.
+        (-[WKFullScreenWindowController beganExitFullScreenAnimation]): Call 
+            finishedEnterFullScreenAnimation: instead of finishedExitFullScreenAnimation:.
+        (-[WKFullScreenWindowController enterAcceleratedCompositingMode:WebKit::]): Add the
+            _layerHostingView to the contentView, instead of the animationView.
+
 2011-05-14  Csaba Osztrogonác  <ossy@webkit.org>
 
         Unreviewed, rolling out r86469 and r86471, because they made hundreds tests crash on Qt.

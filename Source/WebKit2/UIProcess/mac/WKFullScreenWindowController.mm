@@ -251,9 +251,9 @@ using namespace WebCore;
         [self _swapView:_webView with:_webViewPlaceholder.get()];
         
         // Then insert the WebView into the full screen window
-        NSView* animationView = [[self _fullScreenWindow] animationView];
-        [animationView addSubview:_webView positioned:NSWindowBelow relativeTo:_layerHostingView.get()];
-        [_webView setFrame:[animationView bounds]];
+        NSView* contentView = [[self _fullScreenWindow] contentView];
+        [contentView addSubview:_webView positioned:NSWindowBelow relativeTo:_layerHostingView.get()];
+        [_webView setFrame:[contentView bounds]];
 
         [CATransaction begin];
         [CATransaction setDisableActions:YES];
@@ -298,7 +298,7 @@ using namespace WebCore;
     _isExitingFullScreen = YES;
 
     if (_isEnteringFullScreen)
-        [self finishedExitFullScreenAnimation:NO];
+        [self finishedEnterFullScreenAnimation:NO];
 
     [self _updateMenuAndDockForFullScreen];   
     [self _updatePowerAssertions];
@@ -367,7 +367,7 @@ using namespace WebCore;
     [CATransaction begin];
     [CATransaction setDisableActions:YES];
     WKFullScreenWindow* window = [self _fullScreenWindow];
-    [[window animationView] addSubview:_layerHostingView.get()];
+    [[window contentView] addSubview:_layerHostingView.get() positioned:NSWindowAbove relativeTo:[window animationView]];
     
     // Create a root layer that will back the NSView.
     RetainPtr<CALayer> rootLayer(AdoptNS, [[CALayer alloc] init]);
