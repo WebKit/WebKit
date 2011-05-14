@@ -1,5 +1,11 @@
 2011-05-13  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
+        Unreviewed. Fix style error.
+
+        * ewk/ewk_history.cpp:
+
+2011-05-13  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
         Reviewed by Kenneth Rohde Christiansen.
 
         [EFL] Move ewk_view_dpi_get() to ewk_util.cpp

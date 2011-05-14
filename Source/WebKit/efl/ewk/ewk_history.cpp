@@ -28,10 +28,10 @@
 #include "Image.h"
 #include "IntSize.h"
 #include "ewk_private.h"
-#include <wtf/text/CString.h>
 
 #include <Eina.h>
 #include <eina_safety_checks.h>
+#include <wtf/text/CString.h>
 
 struct _Ewk_History {
     WebCore::BackForwardListImpl *core;
