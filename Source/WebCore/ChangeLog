@@ -1,3 +1,25 @@
+2011-05-14  Jeremy Noble  <jer.noble@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Exiting full screen causes <video> element inline controls to become visible
+        https://bugs.webkit.org/show_bug.cgi?id=60142
+
+        Create a queue of elements who must be targeted with webkitfullscreenchange events. Instead of dispatching
+        a single event with whatever the current value of m_fullScreenElement is (which may have been cleared, or
+        changed since the timer was asked to fire), dispatch one event for each entry in the queue.
+
+        Test: fullscreen/video-controls-override.html
+
+        * dom/Document.cpp:
+        (WebCore::Document::webkitDidEnterFullScreenForElement): Push current full screen element onto the
+            webkitfullscreenchange event delay queue.
+        (WebCore::Document::webkitDidExitFullScreenForElement): Ditto.
+        (WebCore::Document::fullScreenElementRemoved): Ditto.
+        (WebCore::Document::fullScreenChangeDelayTimerFired): Empty the queue, dispatching a 
+            webkitfullscreenchange event for each entry.
+        * dom/Document.h:
+
 2011-05-14  Patrick Gansterer  <paroga@webkit.org>
 
         Reviewed by Andreas Kling.

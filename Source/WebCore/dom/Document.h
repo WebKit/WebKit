@@ -41,6 +41,7 @@
 #include "Timer.h"
 #include "TreeScope.h"
 #include "ViewportArguments.h"
+#include <wtf/Deque.h>
 #include <wtf/FixedArray.h>
 #include <wtf/OwnPtr.h>
 #include <wtf/PassOwnPtr.h>
@@ -1379,6 +1380,7 @@ private:
     RefPtr<Element> m_fullScreenElement;
     RenderFullScreen* m_fullScreenRenderer;
     Timer<Document> m_fullScreenChangeDelayTimer;
+    Deque<RefPtr<Element> > m_fullScreenChangeEventTargetQueue;
 #endif
 
     int m_loadEventDelayCount;

@@ -1,0 +1,11 @@
+This tests that the video element's "controls" attribute is overridden in full screen mode, and that the controls are correctly hidden upon exiting full screen. Press any key to continue.
+
+EVENT(webkitfullscreenchange)
+EXPECTED (shadowRoot = layoutTestController.shadowRoot(video) != 'null') OK
+EXPECTED (panel = shadowRoot.firstChild.firstChild != 'null') OK
+EXPECTED (layoutTestController.shadowPseudoId(panel) == '-webkit-media-controls-panel') OK
+EXPECTED (document.defaultView.getComputedStyle(panel)['display'] != 'none') OK
+EVENT(webkitfullscreenchange)
+EXPECTED (document.defaultView.getComputedStyle(panel)['display'] == 'none') OK
+END OF TEST
+

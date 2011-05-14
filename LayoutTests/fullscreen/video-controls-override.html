@@ -1,0 +1,39 @@
+<body>
+    <p>This tests that the video element's "controls" attribute is overridden in full screen mode, and that the controls are correctly hidden upon exiting full screen.  Press any key to continue.</p>
+    <video id="video" width="300"></video>
+    <script src="full-screen-test.js"></script>
+    <script>
+        var callback;
+        var shadowRoot;
+        var panel;
+
+        var fullscreenChanged = function(event)
+        {
+            if (callback)
+                callback(event)
+        };
+        waitForEvent(document, 'webkitfullscreenchange', fullscreenChanged);
+
+        var video = document.getElementById('video');
+
+        var videoEnteredFullScreen = function() {
+            if (layoutTestController) {
+                testExpected("shadowRoot = layoutTestController.shadowRoot(video)", null, "!=");
+                testExpected("panel = shadowRoot.firstChild.firstChild", null, "!=");
+                testExpected("layoutTestController.shadowPseudoId(panel)", "-webkit-media-controls-panel");
+                testExpected("document.defaultView.getComputedStyle(panel)['display']", 'none', "!=");
+            }
+            callback = cancelledFullScreen;
+            document.webkitCancelFullScreen();
+        };
+
+        var cancelledFullScreen = function() {
+            if (layoutTestController)
+                testExpected("document.defaultView.getComputedStyle(panel)['display']", 'none');
+            endTest();
+        };
+
+        callback = videoEnteredFullScreen;
+        runWithKeyDown(function(){video.webkitRequestFullScreen()});
+    </script>
+</body>

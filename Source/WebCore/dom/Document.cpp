@@ -4897,6 +4897,7 @@ void Document::webkitDidEnterFullScreenForElement(Element*)
         page()->chrome()->client()->setRootFullScreenLayer(0);
 #endif
     }
+    m_fullScreenChangeEventTargetQueue.append(m_fullScreenElement);
     m_fullScreenChangeDelayTimer.startOneShot(0);
 }
 
@@ -4924,7 +4925,7 @@ void Document::webkitDidExitFullScreenForElement(Element*)
     if (m_fullScreenElement != documentElement())
         m_fullScreenElement->detach();
 
-    m_fullScreenElement = 0;
+    m_fullScreenChangeEventTargetQueue.append(m_fullScreenElement.release());
     setFullScreenRenderer(0);
 #if USE(ACCELERATED_COMPOSITING)
     page()->chrome()->client()->setRootFullScreenLayer(0);
@@ -4977,11 +4978,13 @@ void Document::setFullScreenRendererBackgroundColor(Color backgroundColor)
     
 void Document::fullScreenChangeDelayTimerFired(Timer<Document>*)
 {
-    Element* element = m_fullScreenElement.get();
-    if (!element)
-        element = documentElement();
-    
-    element->dispatchEvent(Event::create(eventNames().webkitfullscreenchangeEvent, true, false));
+    while (!m_fullScreenChangeEventTargetQueue.isEmpty()) {
+        RefPtr<Element> element = m_fullScreenChangeEventTargetQueue.takeFirst();
+        if (!element)
+            element = documentElement();
+        
+        element->dispatchEvent(Event::create(eventNames().webkitfullscreenchangeEvent, true, false));
+    }
 }
 
 void Document::fullScreenElementRemoved()
@@ -4991,11 +4994,16 @@ void Document::fullScreenElementRemoved()
     // clients of the DOM.
     if (m_fullScreenRenderer)
         m_fullScreenRenderer->remove();
-    
     setFullScreenRenderer(0);
+
+    m_fullScreenChangeEventTargetQueue.append(m_fullScreenElement.release());
     m_fullScreenElement = documentElement();
     recalcStyle(Force);
-    m_fullScreenChangeDelayTimer.startOneShot(0);
+    
+    // Dispatch this event manually, before the element is actually removed from the DOM
+    // so that the message cascades as expected.
+    fullScreenChangeDelayTimerFired(&m_fullScreenChangeDelayTimer);
+    m_fullScreenChangeDelayTimer.stop();
 }
 
 void Document::removeFullScreenElementOfSubtree(Node* node, bool amongChildrenOnly)
