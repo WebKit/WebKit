@@ -49,7 +49,6 @@ class WebKitTimer: public wxTimer
 
 WebKitTimer::WebKitTimer()
 {
-    wxTimer::wxTimer();
 }
 
 WebKitTimer::~WebKitTimer()

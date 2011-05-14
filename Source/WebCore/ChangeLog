@@ -1,5 +1,16 @@
 2011-05-14  Patrick Gansterer  <paroga@webkit.org>
 
+        Reviewed by Andreas Kling.
+
+        Buildfix for SharedTimerWx.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=60829
+
+        * platform/wx/SharedTimerWx.cpp:
+        (WebCore::WebKitTimer::WebKitTimer):
+        We can't call the constructor of a base class in the body of the constructor.
+
+2011-05-14  Patrick Gansterer  <paroga@webkit.org>
+
         Unreviewed WinCE build fix for r86477.
 
         Remove the global namespace prefix from GlobalLock/GlobalUnlock.
