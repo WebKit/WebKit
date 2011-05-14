@@ -36,6 +36,7 @@ namespace WebKit {
 
 class NPRemoteObjectMap;
 class PluginControllerProxy;
+struct PluginCreationParameters;
     
 // A connection from a plug-in process to a web process.
 
@@ -65,7 +66,7 @@ private:
 
     // Message handlers.
     CoreIPC::SyncReplyMode didReceiveSyncWebProcessConnectionMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::ArgumentDecoder*, CoreIPC::ArgumentEncoder*);
-    void createPlugin(uint64_t pluginInstanceID, const Plugin::Parameters&, const String& userAgent, bool isPrivateBrowsingEnabled, bool isAcceleratedCompositingEnabled, bool& result, uint32_t& remoteLayerClientID);
+    void createPlugin(const PluginCreationParameters&, bool& result, uint32_t& remoteLayerClientID);
     void destroyPlugin(uint64_t pluginInstanceID);
 
     RefPtr<CoreIPC::Connection> m_connection;

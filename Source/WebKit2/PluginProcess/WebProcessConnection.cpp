@@ -30,6 +30,7 @@
 
 #include "NPRemoteObjectMap.h"
 #include "PluginControllerProxy.h"
+#include "PluginCreationParameters.h"
 #include "PluginProcess.h"
 #include "RunLoop.h"
 
@@ -161,9 +162,9 @@ void WebProcessConnection::syncMessageSendTimedOut(CoreIPC::Connection*)
 {
 }
 
-void WebProcessConnection::createPlugin(uint64_t pluginInstanceID, const Plugin::Parameters& parameters, const String& userAgent, bool isPrivateBrowsingEnabled, bool isAcceleratedCompositingEnabled, bool& result, uint32_t& remoteLayerClientID)
+void WebProcessConnection::createPlugin(const PluginCreationParameters& creationParameters, bool& result, uint32_t& remoteLayerClientID)
 {
-    OwnPtr<PluginControllerProxy> pluginControllerProxy = PluginControllerProxy::create(this, pluginInstanceID, userAgent, isPrivateBrowsingEnabled, isAcceleratedCompositingEnabled);
+    OwnPtr<PluginControllerProxy> pluginControllerProxy = PluginControllerProxy::create(this, creationParameters);
 
     PluginControllerProxy* pluginControllerProxyPtr = pluginControllerProxy.get();
 
@@ -172,7 +173,7 @@ void WebProcessConnection::createPlugin(uint64_t pluginInstanceID, const Plugin:
     addPluginControllerProxy(pluginControllerProxy.release());
 
     // Now try to initialize the plug-in.
-    result = pluginControllerProxyPtr->initialize(parameters);
+    result = pluginControllerProxyPtr->initialize(creationParameters.parameters);
 
     if (!result)
         return;

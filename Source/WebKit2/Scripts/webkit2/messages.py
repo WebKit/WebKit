@@ -265,6 +265,7 @@ def struct_or_class(namespace, type):
         'WebKit::DrawingAreaInfo',
         'WebKit::EditorState',
         'WebKit::PlatformPopupMenuData',
+        'WebKit::PluginCreationParameters',
         'WebKit::PluginProcessCreationParameters',
         'WebKit::PrintInfo',
         'WebKit::SecurityOriginData',

@@ -50,12 +50,13 @@ namespace WebKit {
 
 class ShareableBitmap;
 class WebProcessConnection;
+struct PluginCreationParameters;
 
 class PluginControllerProxy : PluginController {
     WTF_MAKE_NONCOPYABLE(PluginControllerProxy);
 
 public:
-    static PassOwnPtr<PluginControllerProxy> create(WebProcessConnection* connection, uint64_t pluginInstanceID, const String& userAgent, bool isPrivateBrowsingEnabled, bool isAcceleratedCompositingEnabled);
+    static PassOwnPtr<PluginControllerProxy> create(WebProcessConnection*, const PluginCreationParameters&);
     ~PluginControllerProxy();
 
     uint64_t pluginInstanceID() const { return m_pluginInstanceID; }
@@ -73,7 +74,7 @@ public:
     PluginController* asPluginController() { return this; }
 
 private:
-    PluginControllerProxy(WebProcessConnection* connection, uint64_t pluginInstanceID, const String& userAgent, bool isPrivateBrowsingEnabled, bool isAcceleratedCompositingEnabled);
+    PluginControllerProxy(WebProcessConnection*, const PluginCreationParameters&);
 
     void startPaintTimer();
     void paint();

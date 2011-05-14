@@ -34,6 +34,7 @@
 #include "NPVariantData.h"
 #include "PluginController.h"
 #include "PluginControllerProxyMessages.h"
+#include "PluginCreationParameters.h"
 #include "PluginProcessConnection.h"
 #include "PluginProcessConnectionManager.h"
 #include "ShareableBitmap.h"
@@ -98,14 +99,19 @@ bool PluginProxy::initialize(PluginController* pluginController, const Parameter
     m_connection->addPluginProxy(this);
 
     // Ask the plug-in process to create a plug-in.
-    bool result = false;
-    bool isAcceleratedCompositingEnabled = false;
+    PluginCreationParameters creationParameters;
+    creationParameters.pluginInstanceID = m_pluginInstanceID;
+    creationParameters.parameters = parameters;
+    creationParameters.userAgent = pluginController->userAgent();
+    creationParameters.isPrivateBrowsingEnabled = pluginController->isPrivateBrowsingEnabled();
 #if USE(ACCELERATED_COMPOSITING)
-    isAcceleratedCompositingEnabled = pluginController->isAcceleratedCompositingEnabled();
+    creationParameters.isAcceleratedCompositingEnabled = pluginController->isAcceleratedCompositingEnabled();
 #endif
 
+    bool result = false;
     uint32_t remoteLayerClientID = 0;
-    if (!m_connection->connection()->sendSync(Messages::WebProcessConnection::CreatePlugin(m_pluginInstanceID, parameters, pluginController->userAgent(), pluginController->isPrivateBrowsingEnabled(), isAcceleratedCompositingEnabled), Messages::WebProcessConnection::CreatePlugin::Reply(result, remoteLayerClientID), 0) || !result) {
+
+    if (!m_connection->connection()->sendSync(Messages::WebProcessConnection::CreatePlugin(creationParameters), Messages::WebProcessConnection::CreatePlugin::Reply(result, remoteLayerClientID), 0) || !result) {
         m_connection->removePluginProxy(this);
         return false;
     }

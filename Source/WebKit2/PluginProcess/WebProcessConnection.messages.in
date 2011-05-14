@@ -23,8 +23,8 @@
 #if ENABLE(PLUGIN_PROCESS)
 
 messages -> WebProcessConnection {
-    # Creates a plug-in instance with the given instance ID.
-    CreatePlugin(uint64_t pluginInstanceID, WebKit::Plugin::Parameters parameters, WTF::String userAgent, bool isPrivateBrowsingEnabled, bool isAcceleratedCompositingEnabled) -> (bool result, uint32_t remoteLayerClientID)
+    # Creates a plug-in instance using the given creation parameters.
+    CreatePlugin(WebKit::PluginCreationParameters pluginCreationParameters) -> (bool result, uint32_t remoteLayerClientID)
 
     # Destroys the plug-in instance with the given instance ID.
     DestroyPlugin(uint64_t pluginInstanceID) -> ()

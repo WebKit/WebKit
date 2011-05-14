@@ -34,6 +34,7 @@
 #include "NPRuntimeUtilities.h"
 #include "NPVariantData.h"
 #include "NetscapePlugin.h"
+#include "PluginCreationParameters.h"
 #include "PluginProcess.h"
 #include "PluginProxyMessages.h"
 #include "ShareableBitmap.h"
@@ -47,17 +48,19 @@ using namespace WebCore;
 
 namespace WebKit {
 
-PassOwnPtr<PluginControllerProxy> PluginControllerProxy::create(WebProcessConnection* connection, uint64_t pluginInstanceID, const String& userAgent, bool isPrivateBrowsingEnabled, bool isAcceleratedCompositingEnabled)
+PassOwnPtr<PluginControllerProxy> PluginControllerProxy::create(WebProcessConnection* connection, const PluginCreationParameters& creationParameters)
 {
-    return adoptPtr(new PluginControllerProxy(connection, pluginInstanceID, userAgent, isPrivateBrowsingEnabled, isAcceleratedCompositingEnabled));
+    return adoptPtr(new PluginControllerProxy(connection, creationParameters));
 }
 
-PluginControllerProxy::PluginControllerProxy(WebProcessConnection* connection, uint64_t pluginInstanceID, const String& userAgent, bool isPrivateBrowsingEnabled, bool isAcceleratedCompositingEnabled)
+PluginControllerProxy::PluginControllerProxy(WebProcessConnection* connection, const PluginCreationParameters& creationParameters)
     : m_connection(connection)
-    , m_pluginInstanceID(pluginInstanceID)
-    , m_userAgent(userAgent)
-    , m_isPrivateBrowsingEnabled(isPrivateBrowsingEnabled)
-    , m_isAcceleratedCompositingEnabled(isAcceleratedCompositingEnabled)
+    , m_pluginInstanceID(creationParameters.pluginInstanceID)
+    , m_userAgent(creationParameters.userAgent)
+    , m_isPrivateBrowsingEnabled(creationParameters.isPrivateBrowsingEnabled)
+#if USE(ACCELERATED_COMPOSITING)
+    , m_isAcceleratedCompositingEnabled(creationParameters.isAcceleratedCompositingEnabled)
+#endif
     , m_paintTimer(RunLoop::main(), this, &PluginControllerProxy::paint)
     , m_pluginDestructionProtectCount(0)
     , m_pluginDestroyTimer(RunLoop::main(), this, &PluginControllerProxy::destroy)

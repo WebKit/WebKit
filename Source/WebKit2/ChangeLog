@@ -1,5 +1,30 @@
 2011-05-14  Anders Carlsson  <andersca@apple.com>
 
+        Reviewed by Sam Weinig.
+
+        Consolidate plug-in creation parameters to a single struct
+        https://bugs.webkit.org/show_bug.cgi?id=60839
+
+        * PluginProcess/PluginControllerProxy.cpp:
+        (WebKit::PluginControllerProxy::create):
+        (WebKit::PluginControllerProxy::PluginControllerProxy):
+        * PluginProcess/PluginControllerProxy.h:
+        * PluginProcess/PluginCreationParameters.cpp: Added.
+        (WebKit::PluginCreationParameters::PluginCreationParameters):
+        (WebKit::PluginCreationParameters::encode):
+        (WebKit::PluginCreationParameters::decode):
+        * PluginProcess/PluginCreationParameters.h: Added.
+        * PluginProcess/WebProcessConnection.cpp:
+        (WebKit::WebProcessConnection::createPlugin):
+        * PluginProcess/WebProcessConnection.h:
+        * PluginProcess/WebProcessConnection.messages.in:
+        * Scripts/webkit2/messages.py:
+        * WebKit2.xcodeproj/project.pbxproj:
+        * WebProcess/Plugins/PluginProxy.cpp:
+        (WebKit::PluginProxy::initialize):
+
+2011-05-14  Anders Carlsson  <andersca@apple.com>
+
         Reviewed by Kevin Decker.
 
         NPP_URLNotify is not called if a URL passed to NPN_GetURLNotify fails to load
