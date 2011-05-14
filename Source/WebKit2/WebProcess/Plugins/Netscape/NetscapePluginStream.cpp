@@ -280,11 +280,8 @@ void NetscapePluginStream::stop(NPReason reason)
 {
     // The stream was stopped before it got a chance to start. This can happen if a stream is cancelled by
     // WebKit before it received a response.
-    if (!m_isStarted) {
-        ASSERT(reason != NPRES_DONE);
-        notifyAndDestroyStream(reason);
+    if (!m_isStarted)
         return;
-    }
 
     if (reason == NPRES_DONE && m_deliveryData && !m_deliveryData->isEmpty()) {
         // There is still data left that the plug-in hasn't been able to consume yet.
@@ -348,7 +345,7 @@ void NetscapePluginStream::notifyAndDestroyStream(NPReason reason)
     ASSERT(!m_urlNotifyHasBeenCalled);
     
     if (m_sendNotification) {
-        m_plugin->NPP_URLNotify(m_requestURLString.utf8().data(), reason, m_notificationData);
+        m_plugin->NPP_URLNotify(m_responseURL.data(), reason, m_notificationData);
     
 #if !ASSERT_DISABLED
         m_urlNotifyHasBeenCalled = true;

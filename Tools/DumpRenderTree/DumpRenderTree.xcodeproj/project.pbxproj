@@ -47,7 +47,6 @@
 		1ACF898D132EF41C00E915D4 /* NPDeallocateCalledBeforeNPShutdown.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1ACF898B132EF41C00E915D4 /* NPDeallocateCalledBeforeNPShutdown.cpp */; };
 		1AD4CB2212A6D1350027A7AF /* GetUserAgentWithNullNPPFromNPPNew.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1AD4CB2012A6D1350027A7AF /* GetUserAgentWithNullNPPFromNPPNew.cpp */; };
 		1AD9D2FE12028409001A70D1 /* PluginScriptableNPObjectInvokeDefault.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1AD9D2FD12028409001A70D1 /* PluginScriptableNPObjectInvokeDefault.cpp */; };
-		1AFF66BC137DEFD200791696 /* GetURLNotifyWithURLThatFailsToLoad.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1AFF66BB137DEA8300791696 /* GetURLNotifyWithURLThatFailsToLoad.cpp */; };
 		23BCB8900EA57623003C6289 /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 23BCB88F0EA57623003C6289 /* OpenGL.framework */; };
 		29CFBA10122736E600BC30C0 /* AccessibilityTextMarker.h in Headers */ = {isa = PBXBuildFile; fileRef = 29CFBA0E122736E600BC30C0 /* AccessibilityTextMarker.h */; };
 		29CFBA11122736E600BC30C0 /* AccessibilityTextMarker.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 29CFBA0F122736E600BC30C0 /* AccessibilityTextMarker.cpp */; };
@@ -226,7 +225,6 @@
 		1ACF898B132EF41C00E915D4 /* NPDeallocateCalledBeforeNPShutdown.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = NPDeallocateCalledBeforeNPShutdown.cpp; sourceTree = "<group>"; };
 		1AD4CB2012A6D1350027A7AF /* GetUserAgentWithNullNPPFromNPPNew.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GetUserAgentWithNullNPPFromNPPNew.cpp; sourceTree = "<group>"; };
 		1AD9D2FD12028409001A70D1 /* PluginScriptableNPObjectInvokeDefault.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PluginScriptableNPObjectInvokeDefault.cpp; sourceTree = "<group>"; };
-		1AFF66BB137DEA8300791696 /* GetURLNotifyWithURLThatFailsToLoad.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GetURLNotifyWithURLThatFailsToLoad.cpp; sourceTree = "<group>"; };
 		23BCB88F0EA57623003C6289 /* OpenGL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGL.framework; path = /System/Library/Frameworks/OpenGL.framework; sourceTree = "<absolute>"; };
 		29CFBA0E122736E600BC30C0 /* AccessibilityTextMarker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AccessibilityTextMarker.h; sourceTree = "<group>"; };
 		29CFBA0F122736E600BC30C0 /* AccessibilityTextMarker.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AccessibilityTextMarker.cpp; sourceTree = "<group>"; };
@@ -491,7 +489,6 @@
 				1A31EB3613466AC100017372 /* mac */,
 				1A215A7511F26072008AD0F5 /* DocumentOpenInDestroyStream.cpp */,
 				C0E720741281C828004EF533 /* EvaluateJSAfterRemovingPluginElement.cpp */,
-				1AFF66BB137DEA8300791696 /* GetURLNotifyWithURLThatFailsToLoad.cpp */,
 				1A5CC1F3137DD2EC00A5D7E7 /* GetURLWithJavaScriptURL.cpp */,
 				1A3E28A91311D73B00501349 /* GetURLWithJavaScriptURLDestroyingPlugin.cpp */,
 				1AD4CB2012A6D1350027A7AF /* GetUserAgentWithNullNPPFromNPPNew.cpp */,
@@ -806,7 +803,6 @@
 				1A31EB3813466AC100017372 /* ConvertPoint.cpp in Sources */,
 				C031182B134E4A2B00919757 /* NPPSetWindowCalledDuringDestruction.cpp in Sources */,
 				1A5CC1F5137DD2EC00A5D7E7 /* GetURLWithJavaScriptURL.cpp in Sources */,
-				1AFF66BC137DEFD200791696 /* GetURLNotifyWithURLThatFailsToLoad.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -52,7 +52,6 @@
             'TestNetscapePlugIn/TestObject.h',
             'TestNetscapePlugIn/Tests/DocumentOpenInDestroyStream.cpp',
             'TestNetscapePlugIn/Tests/EvaluateJSAfterRemovingPluginElement.cpp',
-            'TestNetscapePlugIn/Tests/GetURLNotifyWithURLThatFailsToLoad.cpp',
             'TestNetscapePlugIn/Tests/GetURLWithJavaScriptURL.cpp',
             'TestNetscapePlugIn/Tests/GetURLWithJavaScriptURLDestroyingPlugin.cpp',
             'TestNetscapePlugIn/Tests/GetUserAgentWithNullNPPFromNPPNew.cpp',
