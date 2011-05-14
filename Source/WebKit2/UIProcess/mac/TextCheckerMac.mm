@@ -180,7 +180,7 @@ bool TextChecker::isSmartInsertDeleteEnabled()
     static bool readSmartInsertDeleteEnabledDefault;
 
     if (!readSmartInsertDeleteEnabledDefault) {
-        smartInsertDeleteEnabled = [[NSUserDefaults standardUserDefaults] boolForKey:WebSmartInsertDeleteEnabled];
+        smartInsertDeleteEnabled = ![[NSUserDefaults standardUserDefaults] objectForKey:WebSmartInsertDeleteEnabled] || [[NSUserDefaults standardUserDefaults] boolForKey:WebSmartInsertDeleteEnabled];
 
         readSmartInsertDeleteEnabledDefault = true;
     }

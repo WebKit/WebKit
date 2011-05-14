@@ -1,3 +1,14 @@
+2011-05-14  Alexey Proskuryakov  <ap@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        WebKit2: Smart cut&paste is broken
+        https://bugs.webkit.org/show_bug.cgi?id=60840
+        <rdar://problem/9439927>
+
+        * UIProcess/mac/TextCheckerMac.mm: (WebKit::TextChecker::isSmartInsertDeleteEnabled):
+        Match WK1 - this default defaults to YES if not present.
+
 2011-05-14  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Alice Liu.
