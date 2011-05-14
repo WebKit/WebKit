@@ -60,9 +60,14 @@ public:
         // and refuse to load and work if it is not GTK 2 so we need to fake it in
         // NPN_GetValue even when it is a lie.
         RequiresGTKToolKit,
-#endif
-   
+
+        // Windows specific quirks:
+#elif PLUGIN_ARCHITECTURE(WIN)
+        // Whether NPN_UserAgent should always return a Mozilla user agent.
+        // Flash on Windows prior to version 10 only requests windowless plugins 
+        // if we return a Mozilla user agent.
         WantsMozillaUserAgent,
+#endif
 
         NumPluginQuirks
     };
