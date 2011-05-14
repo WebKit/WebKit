@@ -39,7 +39,7 @@ namespace JSC {
         ScopeChainNode(ScopeChainNode* next, JSObject* object, JSGlobalData* globalData, JSGlobalObject* globalObject, JSObject* globalThis)
             : JSCell(*globalData, globalData->scopeChainNodeStructure.get())
             , globalData(globalData)
-            , next(*globalData, this, next, WriteBarrier<ScopeChainNode>::MayBeNull)
+            , next(*globalData, this, next)
             , object(*globalData, this, object)
             , globalObject(*globalData, this, globalObject)
             , globalThis(*globalData, this, globalThis)
@@ -68,10 +68,9 @@ namespace JSC {
         
         static Structure* createStructure(JSGlobalData& globalData, JSValue proto) { return Structure::create(globalData, proto, TypeInfo(CompoundType, StructureFlags), AnonymousSlotCount, &s_info); }
         virtual void visitChildren(SlotVisitor&);
-        static JS_EXPORTDATA const ClassInfo s_info;
-
     private:
         static const unsigned StructureFlags = OverridesVisitChildren;
+        static const ClassInfo s_info;
     };
 
     inline ScopeChainNode* ScopeChainNode::push(JSObject* o)

@@ -60,9 +60,6 @@ JSActivation::~JSActivation()
 
 void JSActivation::visitChildren(SlotVisitor& visitor)
 {
-    ASSERT_GC_OBJECT_INHERITS(this, &s_info);
-    COMPILE_ASSERT(StructureFlags & OverridesVisitChildren, OverridesVisitChildrenWithoutSettingFlag);
-    ASSERT(structure()->typeInfo().overridesVisitChildren());
     Base::visitChildren(visitor);
 
     // No need to mark our registers if they're still in the RegisterFile.

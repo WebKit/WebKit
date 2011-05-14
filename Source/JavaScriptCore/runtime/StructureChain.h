@@ -47,13 +47,12 @@ namespace JSC {
         void visitChildren(SlotVisitor&);
 
         static Structure* createStructure(JSGlobalData& globalData, JSValue prototype) { return Structure::create(globalData, prototype, TypeInfo(CompoundType, OverridesVisitChildren), 0, &s_info); }
-        
-        static ClassInfo s_info;
 
     private:
         StructureChain(JSGlobalData&, Structure*, Structure* head);
         ~StructureChain();
         OwnArrayPtr<WriteBarrier<Structure> > m_vector;
+        static ClassInfo s_info;
     };
 
 } // namespace JSC

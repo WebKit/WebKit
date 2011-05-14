@@ -72,7 +72,6 @@ JSNPObject::~JSNPObject()
 void JSNPObject::invalidate()
 {
     ASSERT(m_npObject);
-    ASSERT_GC_OBJECT_INHERITS(this, &s_info);
 
     releaseNPObject(m_npObject);
     m_npObject = 0;
@@ -80,7 +79,6 @@ void JSNPObject::invalidate()
 
 JSValue JSNPObject::callMethod(ExecState* exec, NPIdentifier methodName)
 {
-    ASSERT_GC_OBJECT_INHERITS(this, &s_info);
     if (!m_npObject)
         return throwInvalidAccessError(exec);
 
@@ -120,7 +118,6 @@ JSValue JSNPObject::callMethod(ExecState* exec, NPIdentifier methodName)
 
 JSC::JSValue JSNPObject::callObject(JSC::ExecState* exec)
 {
-    ASSERT_GC_OBJECT_INHERITS(this, &s_info);
     if (!m_npObject)
         return throwInvalidAccessError(exec);
 
@@ -160,7 +157,6 @@ JSC::JSValue JSNPObject::callObject(JSC::ExecState* exec)
 
 JSValue JSNPObject::callConstructor(ExecState* exec)
 {
-    ASSERT_GC_OBJECT_INHERITS(this, &s_info);
     if (!m_npObject)
         return throwInvalidAccessError(exec);
 
@@ -204,7 +200,6 @@ static EncodedJSValue JSC_HOST_CALL callNPJSObject(ExecState* exec)
 
 JSC::CallType JSNPObject::getCallData(JSC::CallData& callData)
 {
-    ASSERT_GC_OBJECT_INHERITS(this, &s_info);
     if (!m_npObject || !m_npObject->_class->invokeDefault)
         return CallTypeNone;
 
@@ -222,7 +217,6 @@ static EncodedJSValue JSC_HOST_CALL constructWithConstructor(ExecState* exec)
 
 ConstructType JSNPObject::getConstructData(ConstructData& constructData)
 {
-    ASSERT_GC_OBJECT_INHERITS(this, &s_info);
     if (!m_npObject || !m_npObject->_class->construct)
         return ConstructTypeNone;
 
@@ -232,7 +226,6 @@ ConstructType JSNPObject::getConstructData(ConstructData& constructData)
 
 bool JSNPObject::getOwnPropertySlot(ExecState* exec, const Identifier& propertyName, PropertySlot& slot)
 {
-    ASSERT_GC_OBJECT_INHERITS(this, &s_info);
     if (!m_npObject) {
         throwInvalidAccessError(exec);
         return false;
@@ -257,7 +250,6 @@ bool JSNPObject::getOwnPropertySlot(ExecState* exec, const Identifier& propertyN
 
 bool JSNPObject::getOwnPropertyDescriptor(ExecState* exec, const Identifier& propertyName, PropertyDescriptor& descriptor)
 {
-    ASSERT_GC_OBJECT_INHERITS(this, &s_info);
     if (!m_npObject) {
         throwInvalidAccessError(exec);
         return false;
@@ -286,7 +278,6 @@ bool JSNPObject::getOwnPropertyDescriptor(ExecState* exec, const Identifier& pro
 
 void JSNPObject::put(ExecState* exec, const Identifier& propertyName, JSValue value, PutPropertySlot&)
 {
-    ASSERT_GC_OBJECT_INHERITS(this, &s_info);
     if (!m_npObject) {
         throwInvalidAccessError(exec);
         return;
@@ -324,7 +315,6 @@ void JSNPObject::put(ExecState* exec, const Identifier& propertyName, JSValue va
 
 void JSNPObject::getOwnPropertyNames(ExecState* exec, PropertyNameArray& propertyNameArray, EnumerationMode mode)
 {
-    ASSERT_GC_OBJECT_INHERITS(this, &s_info);
     if (!m_npObject) {
         throwInvalidAccessError(exec);
         return;
@@ -372,8 +362,7 @@ void JSNPObject::getOwnPropertyNames(ExecState* exec, PropertyNameArray& propert
 JSValue JSNPObject::propertyGetter(ExecState* exec, JSValue slotBase, const Identifier& propertyName)
 {
     JSNPObject* thisObj = static_cast<JSNPObject*>(asObject(slotBase));
-    ASSERT_GC_OBJECT_INHERITS(thisObj, &s_info);
-    
+
     if (!thisObj->m_npObject)
         return throwInvalidAccessError(exec);
 
@@ -408,7 +397,6 @@ JSValue JSNPObject::propertyGetter(ExecState* exec, JSValue slotBase, const Iden
 JSValue JSNPObject::methodGetter(ExecState* exec, JSValue slotBase, const Identifier& methodName)
 {
     JSNPObject* thisObj = static_cast<JSNPObject*>(asObject(slotBase));
-    ASSERT_GC_OBJECT_INHERITS(thisObj, &s_info);
     
     if (!thisObj->m_npObject)
         return throwInvalidAccessError(exec);

@@ -40,7 +40,7 @@ JSEventListener::JSEventListener(JSObject* function, JSObject* wrapper, bool isA
     , m_isolatedWorld(isolatedWorld)
 {
     if (wrapper)
-        m_jsFunction.setMayBeNull(*m_isolatedWorld->globalData(), wrapper, function);
+        m_jsFunction.set(*m_isolatedWorld->globalData(), wrapper, function);
     else
         ASSERT(!function);
 

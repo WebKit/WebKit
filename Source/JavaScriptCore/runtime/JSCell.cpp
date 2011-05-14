@@ -221,9 +221,4 @@ bool isZombie(const JSCell* cell)
 #endif
 }
 
-void slowValidateCell(JSCell* cell)
-{
-    ASSERT_GC_OBJECT_LOOKS_VALID(cell);
-}
-
 } // namespace JSC

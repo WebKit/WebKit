@@ -48,9 +48,6 @@ JSValue JSNamedNodeMap::nameGetter(ExecState* exec, JSValue slotBase, const Iden
 
 void JSNamedNodeMap::visitChildren(SlotVisitor& visitor)
 {
-    ASSERT_GC_OBJECT_INHERITS(this, &s_info);
-    COMPILE_ASSERT(StructureFlags & OverridesVisitChildren, OverridesVisitChildrenWithoutSettingFlag);
-    ASSERT(structure()->typeInfo().overridesVisitChildren());
     Base::visitChildren(visitor);
 
     // We need to keep the wrapper for our underlying NamedNodeMap's element

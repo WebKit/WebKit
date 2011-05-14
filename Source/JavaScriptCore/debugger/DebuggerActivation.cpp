@@ -40,9 +40,6 @@ DebuggerActivation::DebuggerActivation(JSGlobalData& globalData, JSObject* activ
 
 void DebuggerActivation::visitChildren(SlotVisitor& visitor)
 {
-    ASSERT_GC_OBJECT_INHERITS(this, &s_info);
-    COMPILE_ASSERT(StructureFlags & OverridesVisitChildren, OverridesVisitChildrenWithoutSettingFlag);
-    ASSERT(structure()->typeInfo().overridesVisitChildren());
     JSObject::visitChildren(visitor);
 
     if (m_activation)

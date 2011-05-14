@@ -160,8 +160,6 @@ namespace JSC {
             ASSERT(!globalData.structureStructure);
             return new (&globalData) Structure(globalData);
         }
-        
-        static JS_EXPORTDATA const ClassInfo s_info;
 
     private:
         Structure(JSGlobalData&, JSValue prototype, const TypeInfo&, unsigned anonymousSlotCount, const ClassInfo*);
@@ -174,6 +172,8 @@ namespace JSC {
             return new (&globalData) Structure(globalData, structure);
         }
         
+        static JS_EXPORTDATA const ClassInfo s_info;
+
         typedef enum { 
             NoneDictionaryKind = 0,
             CachedDictionaryKind = 1,
@@ -278,11 +278,7 @@ namespace JSC {
 
     inline const ClassInfo* JSCell::classInfo() const
     {
-#if ENABLE(GC_VALIDATION)
-        return m_structure.unvalidatedGet()->classInfo();
-#else
         return m_structure->classInfo();
-#endif
     }
 
     inline Structure* JSCell::createDummyStructure(JSGlobalData& globalData)

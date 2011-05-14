@@ -32,8 +32,6 @@ const ClassInfo GetterSetter::s_info = { "GetterSetter", 0, 0, 0 };
 
 void GetterSetter::visitChildren(SlotVisitor& visitor)
 {
-    ASSERT_GC_OBJECT_INHERITS(this, &s_info);
-    ASSERT(structure()->typeInfo().overridesVisitChildren());
     JSCell::visitChildren(visitor);
 
     if (m_getter)

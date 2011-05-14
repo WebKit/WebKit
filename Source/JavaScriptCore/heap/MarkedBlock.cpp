@@ -60,7 +60,7 @@ MarkedBlock::MarkedBlock(const PageAllocationAligned& allocation, JSGlobalData* 
 
     Structure* dummyMarkableCellStructure = globalData->dummyMarkableCellStructure.get();
     for (size_t i = firstAtom(); i < m_endAtom; i += m_atomsPerCell)
-        new (&atoms()[i]) JSCell(*globalData, dummyMarkableCellStructure, JSCell::CreatingEarlyCell);
+        new (&atoms()[i]) JSCell(*globalData, dummyMarkableCellStructure);
 }
 
 void MarkedBlock::sweep()

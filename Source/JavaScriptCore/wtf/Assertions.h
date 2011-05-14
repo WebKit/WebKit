@@ -379,23 +379,4 @@ while (0)
 #define LOG_VERBOSE(channel, ...) WTFLogVerbose(__FILE__, __LINE__, WTF_PRETTY_FUNCTION, &JOIN_LOG_CHANNEL_WITH_PREFIX(LOG_CHANNEL_PREFIX, channel), __VA_ARGS__)
 #endif
 
-#if ENABLE(GC_VALIDATION)
-#define ASSERT_GC_OBJECT_LOOKS_VALID(cell) do { \
-    if (!(cell))\
-        CRASH();\
-    if (cell->unvalidatedStructure()->unvalidatedStructure() != cell->unvalidatedStructure()->unvalidatedStructure()->unvalidatedStructure())\
-        CRASH();\
-} while (0)
-
-#define ASSERT_GC_OBJECT_INHERITS(object, classInfo) do {\
-    ASSERT_GC_OBJECT_LOOKS_VALID(object); \
-    if (!object->inherits(classInfo)) \
-        CRASH();\
-} while (0)
-
-#else
-#define ASSERT_GC_OBJECT_LOOKS_VALID(cell) do { (void)cell; } while (0)
-#define ASSERT_GC_OBJECT_INHERITS(object, classInfo) do { (void)object; (void)classInfo; } while (0)
-#endif
-
 #endif /* WTF_Assertions_h */

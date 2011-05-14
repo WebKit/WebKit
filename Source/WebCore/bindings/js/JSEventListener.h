@@ -75,7 +75,7 @@ namespace WebCore {
     inline JSC::JSObject* JSEventListener::jsFunction(ScriptExecutionContext* scriptExecutionContext) const
     {
         if (!m_jsFunction)
-            m_jsFunction.setMayBeNull(*scriptExecutionContext->globalData(), m_wrapper.get(), initializeJSFunction(scriptExecutionContext));
+            m_jsFunction.set(*scriptExecutionContext->globalData(), m_wrapper.get(), initializeJSFunction(scriptExecutionContext));
 
         // Verify that we have a valid wrapper protecting our function from
         // garbage collection.

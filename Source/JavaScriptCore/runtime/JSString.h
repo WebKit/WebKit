@@ -330,8 +330,6 @@ namespace JSC {
         {
             return Structure::create(globalData, proto, TypeInfo(StringType, OverridesGetOwnPropertySlot | NeedsThisConversion), AnonymousSlotCount, &s_info);
         }
-        
-        static const ClassInfo s_info;
 
     private:
         JSString(VPtrStealingHackType) 
@@ -339,6 +337,7 @@ namespace JSC {
             , m_fiberCount(0)
         {
         }
+        static const ClassInfo s_info;
 
         void resolveRope(ExecState*) const;
         void resolveRopeSlowCase(ExecState*, UChar*) const;
