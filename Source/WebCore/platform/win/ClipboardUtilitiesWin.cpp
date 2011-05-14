@@ -389,11 +389,11 @@ void getFileDescriptorData(IDataObject* dataObject, int& size, String& pathname)
     if (FAILED(dataObject->GetData(fileDescriptorFormat(), &store)))
         return;
 
-    FILEGROUPDESCRIPTOR* fgd = static_cast<FILEGROUPDESCRIPTOR*>(::GlobalLock(store.hGlobal));
+    FILEGROUPDESCRIPTOR* fgd = static_cast<FILEGROUPDESCRIPTOR*>(GlobalLock(store.hGlobal));
     size = fgd->fgd[0].nFileSizeLow;
     pathname = fgd->fgd[0].cFileName;
 
-    ::GlobalUnlock(store.hGlobal);
+    GlobalUnlock(store.hGlobal);
     ::ReleaseStgMedium(&store);
 }
 
@@ -402,10 +402,10 @@ void getFileContentData(IDataObject* dataObject, int size, void* dataBlob)
     STGMEDIUM store;
     if (FAILED(dataObject->GetData(fileContentFormatZero(), &store)))
         return;
-    void* data = ::GlobalLock(store.hGlobal);
+    void* data = GlobalLock(store.hGlobal);
     ::CopyMemory(dataBlob, data, size);
-    
-    ::GlobalUnlock(store.hGlobal);
+
+    GlobalUnlock(store.hGlobal);
     ::ReleaseStgMedium(&store);
 }
 
@@ -418,16 +418,16 @@ void setFileDescriptorData(IDataObject* dataObject, int size, String pathname)
     if (!medium.hGlobal)
         return;
 
-    FILEGROUPDESCRIPTOR* fgd = static_cast<FILEGROUPDESCRIPTOR*>(::GlobalLock(medium.hGlobal));
+    FILEGROUPDESCRIPTOR* fgd = static_cast<FILEGROUPDESCRIPTOR*>(GlobalLock(medium.hGlobal));
     ::ZeroMemory(fgd, sizeof(FILEGROUPDESCRIPTOR));
     fgd->cItems = 1;
     fgd->fgd[0].dwFlags = FD_FILESIZE;
     fgd->fgd[0].nFileSizeLow = size;
-    
+
     int maxSize = std::min(pathname.length(), WTF_ARRAY_LENGTH(fgd->fgd[0].cFileName));
     CopyMemory(fgd->fgd[0].cFileName, pathname.charactersWithNullTermination(), maxSize * sizeof(UChar));
-    ::GlobalUnlock(medium.hGlobal);
-    
+    GlobalUnlock(medium.hGlobal);
+
     dataObject->SetData(fileDescriptorFormat(), &medium, TRUE);
 }
 
@@ -439,9 +439,9 @@ void setFileContentData(IDataObject* dataObject, int size, void* dataBlob)
     medium.hGlobal = ::GlobalAlloc(GPTR, size);
     if (!medium.hGlobal)
         return;
-    void* fileContents = ::GlobalLock(medium.hGlobal);
-    ::CopyMemory(fileContents, dataBlob, size);  
-    ::GlobalUnlock(medium.hGlobal);
+    void* fileContents = GlobalLock(medium.hGlobal);
+    ::CopyMemory(fileContents, dataBlob, size);
+    GlobalUnlock(medium.hGlobal);
 
     dataObject->SetData(fileContentFormatZero(), &medium, TRUE);
 }
