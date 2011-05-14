@@ -347,7 +347,7 @@ void DrawingAreaProxyImpl::exitAcceleratedCompositingMode()
 
 void DrawingAreaProxyImpl::discardBackingStoreSoon()
 {
-    if (!m_isBackingStoreDiscardable)
+    if (!m_isBackingStoreDiscardable || m_discardBackingStoreTimer.isActive())
         return;
 
     // We'll wait this many seconds after the last paint before throwing away our backing store to save memory.

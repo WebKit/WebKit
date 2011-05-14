@@ -1,3 +1,20 @@
+2011-05-13  Michael Saboff  <msaboff@apple.com>
+
+        Reviewed by Geoffrey Garen.
+
+        Backing store may not get discarded due to stopped timer
+        https://bugs.webkit.org/show_bug.cgi?id=60816
+
+        Changed the backing store timer to restart if it has been stopped.
+        The evaluation is done when the view's state is changed.
+        This change appears to be worth ~3MB (one backing store worth)
+        during memory tests.
+
+        * UIProcess/DrawingAreaProxyImpl.cpp:
+        (WebKit::DrawingAreaProxyImpl::discardBackingStoreSoon):
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::viewStateDidChange):
+
 2011-05-13  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Geoffrey Garen.

@@ -633,8 +633,7 @@ void WebPageProxy::viewStateDidChange(ViewStateFlags flags)
         }
     }
 
-    if (flags & (ViewWindowIsActive | ViewIsVisible))
-        updateBackingStoreDiscardableState();
+    updateBackingStoreDiscardableState();
 }
 
 IntSize WebPageProxy::viewSize() const
