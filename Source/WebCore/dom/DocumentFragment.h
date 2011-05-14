@@ -35,6 +35,8 @@ public:
 
     void parseHTML(const String&, Element* contextElement, FragmentScriptingPermission = FragmentScriptingAllowed);
     bool parseXML(const String&, Element* contextElement, FragmentScriptingPermission = FragmentScriptingAllowed);
+    
+    virtual bool canContainRangeEndPoint() const { return true; }
 
 protected:
     DocumentFragment(Document*);

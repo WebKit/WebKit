@@ -43,6 +43,8 @@ public:
 
     double position() const;
 
+    virtual bool canContainRangeEndPoint() const { return false; }
+
 private:
     HTMLProgressElement(const QualifiedName&, Document*, HTMLFormElement*);
     virtual ~HTMLProgressElement();

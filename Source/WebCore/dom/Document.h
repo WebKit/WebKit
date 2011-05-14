@@ -248,6 +248,8 @@ public:
 
     Element* getElementById(const AtomicString& id) const;
 
+    virtual bool canContainRangeEndPoint() const { return true; }
+
     Element* getElementByAccessKey(const String& key);
     void invalidateAccessKeyMap();
 

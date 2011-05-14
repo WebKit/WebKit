@@ -32,6 +32,8 @@ public:
     static PassRefPtr<HTMLHRElement> create(Document*);
     static PassRefPtr<HTMLHRElement> create(const QualifiedName&, Document*);
 
+    virtual bool canContainRangeEndPoint() const { return hasChildNodes(); }
+
 private:
     HTMLHRElement(const QualifiedName&, Document*);
     

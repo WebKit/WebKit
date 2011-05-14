@@ -326,6 +326,8 @@ public:
     virtual bool isOutOfRange() const { return false; }
     virtual bool isFrameElementBase() const { return false; }
 
+    virtual bool canContainRangeEndPoint() const { return true; }
+
     virtual bool formControlValueMatchesRenderer() const { return false; }
     virtual void setFormControlValueMatchesRenderer(bool) { }
 

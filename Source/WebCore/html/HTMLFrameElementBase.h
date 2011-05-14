@@ -49,6 +49,8 @@ public:
     virtual bool containsFullScreenElement() const { return m_containsFullScreenElement; };
 #endif
 
+    virtual bool canContainRangeEndPoint() const { return false; }
+
 protected:
     HTMLFrameElementBase(const QualifiedName&, Document*);
 

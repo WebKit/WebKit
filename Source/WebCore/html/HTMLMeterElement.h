@@ -59,6 +59,8 @@ public:
     double valueRatio() const;
     GaugeRegion gaugeRegion() const;
 
+    bool canContainRangeEndPoint() const { return false; }
+
 private:
     HTMLMeterElement(const QualifiedName&, Document*, HTMLFormElement*);
     virtual ~HTMLMeterElement();

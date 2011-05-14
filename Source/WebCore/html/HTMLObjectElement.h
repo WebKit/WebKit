@@ -63,6 +63,8 @@ public:
     using TreeShared<ContainerNode>::ref;
     using TreeShared<ContainerNode>::deref;
 
+    virtual bool canContainRangeEndPoint() const { return useFallbackContent(); }
+
 private:
     HTMLObjectElement(const QualifiedName&, Document*, HTMLFormElement*, bool createdByParser);
 

@@ -1,3 +1,60 @@
+2011-05-14  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        Make canHaveChildrenForEditing more efficient
+        https://bugs.webkit.org/show_bug.cgi?id=53564
+
+        Improved the performance (1-2% in release and 20% in debug) by adding virtual member function
+        canContainRangeEndPoint to Node. It returns true whenever the associated node can have be a container
+        node for a position.
+
+        As of this revision, canContainRangeEndPoint returns true on Document, DocumentFragment, Text nodes
+        and any elements except:
+
+        HTML: applet, br, embed, frame, frameset, hr (unless has children), img, input, keygen,
+              meter, object (unless uses fallback content), output, progress, select, and textarea.
+
+        No new tests are added since this change cannot be tested directly.
+
+        * dom/Document.h:
+        (WebCore::Document::canContainRangeEndPoint): Added; returns false.
+        * dom/DocumentFragment.h:
+        (WebCore::DocumentFragment::canContainRangeEndPoint): Added; returns true.
+        * dom/Element.h:
+        (WebCore::Element::canContainRangeEndPoint): Ditto.
+        * dom/Node.h:
+        (WebCore::Node::canContainRangeEndPoint): Added; returns false.
+        * dom/Text.h:
+        (WebCore::Text::canContainRangeEndPoint): Added; returns true.
+        * editing/htmlediting.cpp: Removed editingIgnoresContent and canHaveChildrenForEditing.
+        * editing/htmlediting.h:
+        (WebCore::editingIgnoresContent): Moved from htmlediting.cpp; made it inline.
+        (WebCore::canHaveChildrenForEditing): Ditto.
+        * html/HTMLBRElement.h:
+        (WebCore::HTMLBRElement::canContainRangeEndPoint): Added; returns false.
+        * html/HTMLButtonElement.h:
+        (WebCore::HTMLDataGridElement::canContainRangeEndPoint): Ditto.
+        * html/HTMLFormControlElement.h:
+        (WebCore::HTMLFormControlElementWithState::canContainRangeEndPoint): Ditto.
+        * html/HTMLFrameElementBase.h:
+        (WebCore::HTMLFrameElementBase::canContainRangeEndPoint): Ditto.
+        * html/HTMLImageElement.h:
+        (WebCore::HTMLImageElement::canContainRangeEndPoint): Ditto.
+        * html/HTMLMeterElement.h:
+        (WebCore::HTMLMeterElement::canContainRangeEndPoint): Ditto.
+        * html/HTMLOutputElement.h:
+        (WebCore::HTMLOutputElement::canContainRangeEndPoint): Ditto.
+        * html/HTMLPlugInElement.h:
+        (WebCore::HTMLPlugInElement::canContainRangeEndPoint): Ditto.
+        * html/HTMLProgressElement.h:
+        (WebCore::HTMLProgressElement::canContainRangeEndPoint): Ditto.
+        * html/HTMLHRElement.h:
+        (WebCore::HTMLHRElement::canContainRangeEndPoint): Added; returns true iff it has children.
+        * html/HTMLObjectElement.h:
+        (WebCore::HTMLObjectElement::canContainRangeEndPoint): Added; returns true iff it uses fallback
+        content.
+
 2011-05-14  Jeremy Noble  <jer.noble@apple.com>
 
         Reviewed by Darin Adler.

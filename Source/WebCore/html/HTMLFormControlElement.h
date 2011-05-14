@@ -172,6 +172,8 @@ class HTMLFormControlElementWithState : public HTMLFormControlElement {
 public:
     virtual ~HTMLFormControlElementWithState();
 
+    virtual bool canContainRangeEndPoint() const { return false; }
+
 protected:
     HTMLFormControlElementWithState(const QualifiedName& tagName, Document*, HTMLFormElement*);
 

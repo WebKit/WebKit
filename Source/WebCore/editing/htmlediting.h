@@ -76,8 +76,21 @@ int caretMaxOffset(const Node*);
 
 // boolean functions on Node
 
-bool editingIgnoresContent(const Node*);
-bool canHaveChildrenForEditing(const Node*);
+// FIXME: editingIgnoresContent, canHaveChildrenForEditing, and isAtomicNode
+// should be renamed to reflect its usage.
+
+// Returns true for nodes that either have no content, or have content that is ignored (skipped over) while editing.
+// There are no VisiblePositions inside these nodes.
+inline bool editingIgnoresContent(const Node* node)
+{
+    return !node->canContainRangeEndPoint();
+}
+
+inline bool canHaveChildrenForEditing(const Node* node)
+{
+    return !node->isTextNode() && node->canContainRangeEndPoint();
+}
+
 bool isAtomicNode(const Node*);
 bool isBlock(const Node*);
 bool isSpecialElement(const Node*);
