@@ -26,7 +26,9 @@
 #ifndef DragState_h
 #define DragState_h
 
+#include "Clipboard.h"
 #include "DragActions.h"
+#include "Node.h"
 #include <wtf/Forward.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/RefPtr.h>
