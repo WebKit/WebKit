@@ -31,6 +31,7 @@
 #include "Font.h"
 #include "IntRect.h"
 #include "NotImplemented.h"
+#include "Path.h"
 #include <wtf/MathExtras.h>
 
 #include <math.h>
@@ -248,7 +249,7 @@ void GraphicsContext::strokeArc(const IntRect& rect, int startAngle, int angleSp
         return;
     
     m_data->context->SetPen(wxPen(strokeColor(), strokeThickness(), strokeStyleToWxPenStyle(strokeStyle())));
-    m_data->context->DrawEllipticArc(rect.x(), rect.y(), rect.width(), rect.height(), startAngle, angleSpan);
+    m_data->context->DrawEllipticArc(rect.x(), rect.y(), rect.width(), rect.height(), startAngle, startAngle + angleSpan);
 }
 
 void GraphicsContext::drawConvexPolygon(size_t npoints, const FloatPoint* points, bool shouldAntialias)
@@ -275,7 +276,7 @@ void GraphicsContext::clipConvexPolygon(size_t numPoints, const FloatPoint* poin
     if (numPoints <= 1)
         return;
 
-    // FIXME: IMPLEMENT!!
+    notImplemented();
 }
 
 void GraphicsContext::fillRect(const FloatRect& rect, const Color& color, ColorSpace colorSpace)
@@ -297,12 +298,19 @@ void GraphicsContext::fillRoundedRect(const IntRect& rect, const IntSize& topLef
     if (paintingDisabled())
         return;
     
-    notImplemented();
+#if USE(WXGC)
+    Path path;
+    path.addRoundedRect(rect, topLeft, topRight, bottomLeft, bottomRight);
+    m_data->context->SetBrush(wxBrush(color));
+    wxGraphicsContext* gc = m_data->context->GetGraphicsContext();
+    gc->FillPath(*path.platformPath());
+#endif
 }
 
 void GraphicsContext::drawFocusRing(const Path& path, int width, int offset, const Color& color)
 {
     // FIXME: implement
+    notImplemented();
 }
 
 void GraphicsContext::drawFocusRing(const Vector<IntRect>& rects, int width, int offset, const Color& color)
@@ -320,6 +328,9 @@ void GraphicsContext::clip(const FloatRect& r)
 
 void GraphicsContext::clipOut(const Path&)
 {
+    if (paintingDisabled())
+        return;
+
     notImplemented();
 }
 
@@ -353,9 +364,35 @@ void GraphicsContext::clipOut(const IntRect& rect)
     notImplemented();
 }
 
-void GraphicsContext::clipPath(const Path&, WindRule)
+void GraphicsContext::clipPath(const Path& path, WindRule clipRule)
 {
-    notImplemented();
+    if (paintingDisabled())
+        return;
+        
+    if (path.isEmpty())
+        return; 
+    
+    wxGraphicsContext* gc = m_data->context->GetGraphicsContext();
+
+#if __WXMAC__
+    CGContextRef context = (CGContextRef)gc->GetNativeContext();   
+    CGPathRef nativePath = (CGPathRef)path.platformPath()->GetNativePath(); 
+    
+    CGContextBeginPath(context);
+    CGContextAddPath(context, nativePath);
+    if (clipRule == RULE_EVENODD)
+        CGContextEOClip(context);
+    else
+        CGContextClip(context);
+#elif __WXMSW__
+    Gdiplus::Graphics* g = (Gdiplus::Graphics*)gc->GetNativeContext();
+    Gdiplus::GraphicsPath* nativePath = (Gdiplus::GraphicsPath*)path.platformPath()->GetNativePath();
+    if (clipRule == RULE_EVENODD)
+        nativePath->SetFillMode(Gdiplus::FillModeAlternate);
+    else
+        nativePath->SetFillMode(Gdiplus::FillModeWinding);
+    g->SetClip(nativePath);
+#endif
 }
 
 void GraphicsContext::drawLineForText(const FloatPoint& origin, float width, bool printing)
@@ -384,31 +421,16 @@ void GraphicsContext::drawLineForTextChecking(const FloatPoint& origin, float wi
 }
 
 void GraphicsContext::clip(const Path& path) 
-{
-#ifdef __WXMAC__
+{ 
     if (paintingDisabled())
         return;
-    
-    wxGraphicsContext* gc = m_data->context->GetGraphicsContext();
-    CGContextRef context = (CGContextRef)gc->GetNativeContext();
 
-    if (!context)
-        return;
-        
-    CGPathRef nativePath = (CGPathRef)path.platformPath()->GetNativePath();
-    // CGContextClip does nothing if the path is empty, so in this case, we
-    // instead clip against a zero rect to reduce the clipping region to
-    // nothing - which is the intended behavior of clip() if the path is empty.    
+    // if the path is empty, we clip against a zero rect to reduce the clipping region to
+    // nothing - which is the intended behavior of clip() if the path is empty.
     if (path.isEmpty())
-        CGContextClipToRect(context, CGRectZero);
-    else if (nativePath) {
-        CGContextBeginPath(context);
-        CGContextAddPath(context, nativePath);
-        CGContextClip(context);
-    }
-#else
-    notImplemented();
-#endif
+        m_data->context->SetClippingRegion(0, 0, 0, 0);
+    else
+        clipPath(path, RULE_NONZERO);
 }
 
 void GraphicsContext::canvasClip(const Path& path)
@@ -647,9 +669,18 @@ void GraphicsContext::setAlpha(float)
     notImplemented();
 }
 
-void GraphicsContext::addInnerRoundedRectClip(const IntRect& rect, int thickness)
+void GraphicsContext::addInnerRoundedRectClip(const IntRect& r, int thickness)
 {
-    notImplemented();
+    if (paintingDisabled())
+        return;
+
+    FloatRect rect(r);
+    clip(rect);
+    Path path;
+    path.addEllipse(rect);
+    rect.inflate(-thickness);
+    path.addEllipse(rect);
+    clipPath(path, RULE_EVENODD);
 }
 
 #if OS(WINDOWS)
