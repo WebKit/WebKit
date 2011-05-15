@@ -1,0 +1,14 @@
+<html>
+Test passes if it does not crash.
+<style>
+    @font-face { font-family: inherit; }
+	
+	@font-face { font-family: initial; }
+</style>
+<script>
+    if (window.layoutTestController)
+	    layoutTestController.dumpAsText();
+		
+	document.body.offsetTop;
+</script>
+</html>

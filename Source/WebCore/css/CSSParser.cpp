@@ -6336,9 +6336,11 @@ CSSRule* CSSParser::createFontFaceRule()
         if ((id == CSSPropertyFontWeight || id == CSSPropertyFontStyle || id == CSSPropertyFontVariant) && property->value()->isPrimitiveValue()) {
             RefPtr<CSSValue> value = property->m_value.release();
             property->m_value = CSSValueList::createCommaSeparated();
-            static_cast<CSSValueList*>(property->m_value.get())->append(value.release());
-        } else if (id == CSSPropertyFontFamily && static_cast<CSSValueList*>(property->m_value.get())->length() != 1) {
-            // Unlike font-family property, font-family descriptor in @font-face rule can take only one family name.
+            static_cast<CSSValueList*>(property->value())->append(value.release());
+        } else if (id == CSSPropertyFontFamily && (!property->value()->isValueList() || static_cast<CSSValueList*>(property->value())->length() != 1)) {
+            // Unlike font-family property, font-family descriptor in @font-face rule 
+            // has to be a value list with exactly one family name. It cannot have a
+            // have 'initial' value and cannot 'inherit' from parent.
             // See http://dev.w3.org/csswg/css3-fonts/#font-family-desc
             clearProperties();
             return 0;

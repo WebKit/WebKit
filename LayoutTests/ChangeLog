@@ -1,3 +1,14 @@
+2011-05-14  Abhishek Arya  <inferno@chromium.org>
+
+        Reviewed by Dan Bernstein.
+
+        Tests that we do not crash when trying to parse an invalid font family
+        value of 'inherit' or 'initial' in a font face rule.
+        https://bugs.webkit.org/show_bug.cgi?id=60837
+
+        * fast/css/invalid-font-family-in-font-face-crash-expected.txt: Added.
+        * fast/css/invalid-font-family-in-font-face-crash.html: Added.
+
 2011-05-14  Andrew Wilson  <atwilson@chromium.org>
 
         Unreviewed chromium expectations change.

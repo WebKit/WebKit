@@ -1,3 +1,17 @@
+2011-05-14  Abhishek Arya  <inferno@chromium.org>
+
+        Reviewed by Dan Bernstein.
+
+        As per spec, only allow one font family name in a font face rule.
+        Other things like initial value, inherited value or multiple names
+        are discarded.
+        https://bugs.webkit.org/show_bug.cgi?id=60837
+
+        Test: fast/css/invalid-font-family-in-font-face-crash.html
+
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::createFontFaceRule):
+
 2011-05-13  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Geoffrey Garen.
