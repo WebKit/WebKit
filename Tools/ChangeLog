@@ -1,3 +1,24 @@
+2011-05-15  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r86504.
+        http://trac.webkit.org/changeset/86504
+        https://bugs.webkit.org/show_bug.cgi?id=60853
+
+        "Broke Qt EventSender in editing/selection tests" (Requested
+        by mwenge on #webkit).
+
+        * DumpRenderTree/qt/DumpRenderTreeQt.cpp:
+        (WebCore::WebPage::WebPage):
+        (WebCore::DumpRenderTree::DumpRenderTree):
+        (WebCore::DumpRenderTree::resetToConsistentStateBeforeTesting):
+        (WebCore::DumpRenderTree::initJSObjects):
+        * DumpRenderTree/qt/DumpRenderTreeQt.h:
+        (WebCore::DumpRenderTree::eventSender):
+        * DumpRenderTree/unix/TestNetscapePlugin/TestNetscapePlugin.cpp:
+        (webkit_test_plugin_new_instance):
+        (webkit_test_plugin_set_window):
+        (webkit_test_plugin_handle_event):
+
 2011-05-12  Robert Hogan  <robert@webkit.org>
 
         Reviewed by Benjamin Poulain.

@@ -98,10 +98,6 @@ webkit_test_plugin_new_instance(NPMIMEType mimetype,
                 obj->testWindowOpen = TRUE;
             else if (strcasecmp(argn[i], "onSetWindow") == 0 && !obj->onSetWindow)
                 obj->onSetWindow = strdup(argv[i]);
-            else if (!strcasecmp(argn[i], "src") && strstr(argv[i], "plugin-document-has-focus.pl")) {
-                browser->setvalue(instance, NPPVpluginWindowBool, false);
-                obj->testKeyboardFocusForPlugins = TRUE;
-            }
         }
 
         browser->getvalue(instance, NPNVprivateModeBool, (void *)&obj->cachedPrivateBrowsingMode);
@@ -167,11 +163,6 @@ webkit_test_plugin_set_window(NPP instance, NPWindow *window)
             obj->testWindowOpen = FALSE;
         }
 
-        if (obj->testKeyboardFocusForPlugins) {
-            obj->eventLogging = true;
-            browser->setvalue(instance, NPPVpluginWindowBool, false);
-            executeScript(obj, "eventSender.keyDown('A');");
-        }
     }
 
     return obj->pluginTest->NPP_SetWindow(instance, window);
@@ -301,11 +292,6 @@ webkit_test_plugin_handle_event(NPP instance, void* event)
             break;
         case KeyRelease:
             pluginLog(instance, "keyUp '%c'", keyEventToChar(&evt->xkey));
-            if (obj->testKeyboardFocusForPlugins) {
-                obj->eventLogging = false;
-                obj->testKeyboardFocusForPlugins = FALSE;
-                executeScript(obj, "layoutTestController.notifyDone();");
-            }
             break;
         case KeyPress:
             pluginLog(instance, "keyDown '%c'", keyEventToChar(&evt->xkey));

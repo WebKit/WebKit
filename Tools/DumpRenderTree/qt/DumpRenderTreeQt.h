@@ -89,6 +89,7 @@ public:
     void resetToConsistentStateBeforeTesting(const QUrl&);
 
     LayoutTestController *layoutTestController() const { return m_controller; }
+    EventSender *eventSender() const { return m_eventSender; }
     TextInputController *textInputController() const { return m_textInputController; }
     QString persistentStoragePath() const { return m_persistentStoragePath; }
     NetworkAccessManager *networkAccessManager() const { return m_networkAccessManager; }
@@ -149,6 +150,7 @@ private:
     WebPage *m_page;
     QWidget* m_mainView;
 
+    EventSender *m_eventSender;
     TextInputController *m_textInputController;
     GCController* m_gcController;
     PlainTextController* m_plainTextController;
@@ -182,7 +184,6 @@ public:
     WebPage(QObject* parent, DumpRenderTree*);
     virtual ~WebPage();
     QWebInspector* webInspector();
-    EventSender* eventSender() { return m_eventSender.data(); }
     void closeWebInspector();
 
     QWebPage *createWindow(QWebPage::WebWindowType);
@@ -215,7 +216,6 @@ private slots:
 
 private:
     QWebInspector* m_webInspector;
-    QScopedPointer<EventSender> m_eventSender;
     QList<QWebFrame*> m_pendingGeolocationRequests;
     DumpRenderTree *m_drt;
 };

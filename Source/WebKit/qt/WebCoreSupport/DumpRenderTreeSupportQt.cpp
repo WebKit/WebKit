@@ -1142,15 +1142,6 @@ QString DumpRenderTreeSupportQt::layerTreeAsText(QWebFrame* frame)
     return coreFrame->layerTreeAsText();
 }
 
-void DumpRenderTreeSupportQt::setView(QWebPage* page, QWidget* view)
-{
-    if (page->view() == view)
-        return;
-
-    page->d->view = view;
-    page->setViewportSize(view ? view->size() : QSize(0, 0));
-}
-
 // Provide a backward compatibility with previously exported private symbols as of QtWebKit 4.6 release
 
 void QWEBKIT_EXPORT qt_resumeActiveDOMObjects(QWebFrame* frame)
