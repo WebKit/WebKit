@@ -1,3 +1,10 @@
+2011-05-15  Ilya Tikhonovsky  <loislo@chromium.org>
+
+        Unreviewed. Just skipping a test.
+
+        * platform/qt/Skipped:
+        inspector/console/console-long-eval-crash.html
+
 2011-05-15  Eric Carlson  <eric.carlson@apple.com>
 
         Unreviewed, just skipping a test.
