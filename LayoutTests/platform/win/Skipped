@@ -1020,6 +1020,7 @@ fast/text/hyphens.html
 fast/events/show-modal-dialog-onblur-onfocus.html
 fast/harness/show-modal-dialog.html
 fast/events/scroll-event-during-modal-dialog.html
+inspector/console/console-long-eval-crash.html
 
 # These tests fail when showModalDialog is unsupported, even though they don't
 # rely on it directly http://webkit.org/b/53676

@@ -1678,6 +1678,7 @@ http/tests/xmlhttprequest/re-login-async.html
 # WebKit2 needs showModalDialog
 fast/events/scroll-event-during-modal-dialog.html
 fast/harness/show-modal-dialog.html
+inspector/console/console-long-eval-crash.html
 
 # WebKit2 needs fullscreen support
 # https://bugs.webkit.org/show_bug.cgi?id=56318

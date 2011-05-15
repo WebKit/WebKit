@@ -98,6 +98,9 @@ $typeTransform{"Frontend"} = {
 $typeTransform{"PassRefPtr"} = {
     "forwardHeader" => "wtf/PassRefPtr.h",
 };
+$typeTransform{"RefCounted"} = {
+    "forwardHeader" => "wtf/RefCounted.h",
+};
 $typeTransform{"InspectorFrontendChannel"} = {
     "forward" => "InspectorFrontendChannel",
     "header" => "InspectorFrontendChannel.h",
@@ -218,6 +221,7 @@ my $verbose;
 my $namespace;
 
 my $backendClassName;
+my $backendClassDeclaration;
 my $backendJSStubName;
 my %backendTypes;
 my @backendMethods;
@@ -278,10 +282,12 @@ sub GenerateModule
     $frontendTypes{"PassRefPtr"} = 1;
 
     $backendClassName = "InspectorBackendDispatcher";
+    $backendClassDeclaration = "InspectorBackendDispatcher: public RefCounted<InspectorBackendDispatcher>";
     $backendJSStubName = "InspectorBackendStub";
     $backendTypes{"Inspector"} = 1;
     $backendTypes{"InspectorFrontendChannel"} = 1;
     $backendTypes{"PassRefPtr"} = 1;
+    $backendTypes{"RefCounted"} = 1;
     $backendTypes{"Object"} = 1;
 }
 
@@ -389,7 +395,8 @@ sub generateFrontendFunction
         }
         push(@function, "    ${functionName}Message->setObject(\"params\", paramsObject);");
     }
-    push(@function, "    m_inspectorFrontendChannel->sendMessageToFrontend(${functionName}Message->toJSONString());");
+    push(@function, "    if (m_inspectorFrontendChannel)");
+    push(@function, "        m_inspectorFrontendChannel->sendMessageToFrontend(${functionName}Message->toJSONString());");
     push(@function, "}");
     push(@function, "");
     push(@frontendMethodsImpl, @function);
@@ -502,7 +509,8 @@ sub generateBackendFunction
     push(@function, "    responseMessage->setObject(\"result\", result);");
     push(@function, "");
     push(@function, "    responseMessage->setNumber(\"id\", callId);");
-    push(@function, "    m_inspectorFrontendChannel->sendMessageToFrontend(responseMessage->toJSONString());");
+    push(@function, "    if (m_inspectorFrontendChannel)");
+    push(@function, "        m_inspectorFrontendChannel->sendMessageToFrontend(responseMessage->toJSONString());");
     push(@function, "}");
     push(@function, "");
     push(@backendMethodsImpl, @function);
@@ -543,7 +551,8 @@ void ${backendClassName}::reportProtocolError(const long* const callId, CommonEr
         message->setNumber("id", *callId);
     else
         message->setValue("id", InspectorValue::null());
-    m_inspectorFrontendChannel->sendMessageToFrontend(message->toJSONString());
+    if (m_inspectorFrontendChannel)
+        m_inspectorFrontendChannel->sendMessageToFrontend(message->toJSONString());
 }
 EOF
     return split("\n", $reportProtocolError);
@@ -594,6 +603,7 @@ sub generateBackendDispatcher
     my $backendDispatcherBody = << "EOF";
 void ${backendClassName}::dispatch(const String& message)
 {
+    RefPtr<${backendClassName}> protect = this;
     typedef void (${backendClassName}::*CallHandler)(long callId, InspectorObject* messageObject);
     typedef HashMap<String, CallHandler> DispatchMap;
     DEFINE_STATIC_LOCAL(DispatchMap, dispatchMap, );
@@ -897,6 +907,7 @@ EOF
 sub generateHeader
 {
     my $className = shift;
+    my $classDeclaration = shift;
     my $types = shift;
     my $constructor = shift;
     my $constants = shift;
@@ -923,7 +934,7 @@ $forwardDeclarations
 
 typedef String ErrorString;
 
-class $className {
+class $classDeclaration {
 public:
 $constructor
 
@@ -1010,6 +1021,8 @@ sub generateBackendAgentFieldsAndConstructor
     push(@backendHead, @fieldInitializers);
     push(@backendHead, "    { }");
     push(@backendHead, "");
+    push(@backendHead, "    void clearFrontend() { m_inspectorFrontendChannel = 0; }");
+    push(@backendHead, "");
     push(@backendHead, "    enum CommonErrorCode {");
     push(@backendHead, "        ParseError = 0,");
     push(@backendHead, "        InvalidRequest,");
@@ -1041,7 +1054,7 @@ sub finish
     undef($SOURCE);
 
     open(my $HEADER, ">$outputHeadersDir/$frontendClassName.h") || die "Couldn't open file $outputHeadersDir/$frontendClassName.h";
-    print $HEADER generateHeader($frontendClassName, \%frontendTypes, $frontendConstructor, \@frontendConstantDeclarations, \@frontendMethods, join("\n", @frontendFooter));
+    print $HEADER generateHeader($frontendClassName, $frontendClassName, \%frontendTypes, $frontendConstructor, \@frontendConstantDeclarations, \@frontendMethods, join("\n", @frontendFooter));
     close($HEADER);
     undef($HEADER);
 
@@ -1067,7 +1080,7 @@ sub finish
     undef($SOURCE);
 
     open($HEADER, ">$outputHeadersDir/$backendClassName.h") || die "Couldn't open file $outputHeadersDir/$backendClassName.h";
-    print $HEADER join("\n", generateHeader($backendClassName, \%backendTypes, $backendConstructor, \@backendConstantDeclarations, \@backendMethods, join("\n", @backendFooter)));
+    print $HEADER join("\n", generateHeader($backendClassName, $backendClassDeclaration, \%backendTypes, $backendConstructor, \@backendConstantDeclarations, \@backendMethods, join("\n", @backendFooter)));
     close($HEADER);
     undef($HEADER);
 

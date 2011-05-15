@@ -357,3 +357,7 @@ fast/events/page-visibility-iframe-delete-test.html
 fast/events/page-visibility-iframe-move-test.html
 fast/events/page-visibility-iframe-propagation-test.html
 fast/events/page-visibility-transition-test.html
+
+# console long eval test is timeout 60616
+inspector/console/console-long-eval-crash.html
+

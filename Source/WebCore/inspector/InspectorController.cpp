@@ -214,7 +214,7 @@ void InspectorController::connectFrontend()
     InspectorInstrumentation::frontendCreated();
 
     ASSERT(m_inspectorClient);
-    m_inspectorBackendDispatcher = adoptPtr(new InspectorBackendDispatcher(
+    m_inspectorBackendDispatcher = adoptRef(new InspectorBackendDispatcher(
         m_inspectorClient,
 #if ENABLE(OFFLINE_WEB_APPLICATIONS)
         m_applicationCacheAgent.get(),
@@ -256,6 +256,7 @@ void InspectorController::disconnectFrontend()
 {
     if (!m_inspectorFrontend)
         return;
+    m_inspectorBackendDispatcher->clearFrontend();
     m_inspectorBackendDispatcher.clear();
 
     // Destroying agents would change the state, but we don't want that.

@@ -1,3 +1,20 @@
+2011-05-15  Ilya Tikhonovsky  <loislo@chromium.org>
+
+        Reviewed by Yury Semikhatsky.
+
+        Web Inspector: chromium renderer crash at eval in console.
+
+        https://bugs.webkit.org/show_bug.cgi?id=60616
+        Renderer of inspected page is crashing when modal dialog
+        has been opened via console eval and page is reloaded.
+
+        * inspector/console/console-long-eval-crash-expected.txt: Added.
+        * inspector/console/console-long-eval-crash.html: Added.
+        * platform/gtk/Skipped:
+        * platform/mac-wk2/Skipped:
+        * platform/qt-wk2/Skipped:
+        * platform/win/Skipped:
+
 2011-05-15  Eric Carlson  <eric.carlson@apple.com>
 
         Reviewed by Maciej Stachowiak.

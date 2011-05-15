@@ -1952,6 +1952,7 @@ http/tests/xmlhttprequest/re-login-async.html
 
 # WebKit2 needs showModalDialog
 fast/harness/show-modal-dialog.html
+inspector/console/console-long-eval-crash.html
 
 # WebKit2 needs fullscreen support
 fullscreen/full-screen-css.html

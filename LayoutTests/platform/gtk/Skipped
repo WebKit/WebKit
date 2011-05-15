@@ -1071,6 +1071,7 @@ fast/text/fake-italic.html
 fast/events/show-modal-dialog-onblur-onfocus.html
 fast/events/scroll-event-during-modal-dialog.html
 fast/harness/show-modal-dialog.html
+inspector/console/console-long-eval-crash.html
 sputnik/Conformance/10_Execution_Contexts/10.2_Entering_An_Execution_Context/10.2.2_Eval_Code/S10.2.2_A1.2_T10.html
 sputnik/Conformance/10_Execution_Contexts/10.2_Entering_An_Execution_Context/10.2.2_Eval_Code/S10.2.2_A1.1_T11.html
 sputnik/Conformance/10_Execution_Contexts/10.2_Entering_An_Execution_Context/10.2.2_Eval_Code/S10.2.2_A1.1_T2.html
