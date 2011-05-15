@@ -159,6 +159,11 @@ WebPage::WebPage(QObject* parent, DumpRenderTree* drt)
 
     setNetworkAccessManager(m_drt->networkAccessManager());
     setPluginFactory(new TestPlugin(this));
+    // Use a minimal, private version of QWebPage::setView() that does not set
+    // a PageClient widget. We do this so that EventSender can install event filters
+    // on the page without displaying it.
+    DumpRenderTreeSupportQt::setView(this, new QWidget(qobject_cast<QWidget*>(parent)));
+    m_eventSender.reset(new EventSender(this));
 
     connect(this, SIGNAL(featurePermissionRequested(QWebFrame*, QWebPage::Feature)), this, SLOT(requestPermission(QWebFrame*, QWebPage::Feature)));
     connect(this, SIGNAL(featurePermissionRequestCanceled(QWebFrame*, QWebPage::Feature)), this, SLOT(cancelPermission(QWebFrame*, QWebPage::Feature)));
@@ -464,7 +469,6 @@ DumpRenderTree::DumpRenderTree()
     connect(m_controller, SIGNAL(geolocationPermissionSet()), this, SLOT(geolocationPermissionSet()));
 
     connect(m_controller, SIGNAL(done()), this, SLOT(dump()));
-    m_eventSender = new EventSender(m_page);
     m_textInputController = new TextInputController(m_page);
     m_plainTextController = new PlainTextController(m_page);
     m_gcController = new GCController(m_page);
@@ -550,7 +554,7 @@ void DumpRenderTree::resetToConsistentStateBeforeTesting(const QUrl& url)
     m_controller->reset();
 
     // reset mouse clicks counter
-    m_eventSender->resetClickCount();
+    m_page->eventSender()->resetClickCount();
 
     closeRemainingWindows();
     
@@ -775,7 +779,7 @@ void DumpRenderTree::initJSObjects()
     QWebFrame *frame = qobject_cast<QWebFrame*>(sender());
     Q_ASSERT(frame);
     frame->addToJavaScriptWindowObject(QLatin1String("layoutTestController"), m_controller);
-    frame->addToJavaScriptWindowObject(QLatin1String("eventSender"), m_eventSender);
+    frame->addToJavaScriptWindowObject(QLatin1String("eventSender"), qobject_cast<WebPage*>(frame->page())->eventSender());
     frame->addToJavaScriptWindowObject(QLatin1String("textInputController"), m_textInputController);
     frame->addToJavaScriptWindowObject(QLatin1String("GCController"), m_gcController);
     frame->addToJavaScriptWindowObject(QLatin1String("plainText"), m_plainTextController);

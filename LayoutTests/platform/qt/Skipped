@@ -357,8 +357,6 @@ plugins/embed-attributes-style.html
 # ---- depends on QuickTime support
 plugins/embed-attributes-setting.html
 plugins/plugin-initiate-popup-window.html
-# ---- to be reviewed
-http/tests/plugins/plugin-document-has-focus.html
 
 # Crashes on the buildbot.
 plugins/get-url-notify-with-url-that-fails-to-load.html
