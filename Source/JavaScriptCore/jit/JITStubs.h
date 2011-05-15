@@ -59,6 +59,8 @@ namespace JSC {
     class RegisterFile;
     class RegExp;
 
+    template <typename T> class Weak;
+
     union JITStubArg {
         void* asPointer;
         EncodedJSValue asEncodedJSValue;
@@ -275,8 +277,6 @@ namespace JSC {
     extern "C" void ctiOpThrowNotCaught();
     extern "C" EncodedJSValue ctiTrampoline(void* code, RegisterFile*, CallFrame*, void* /*unused1*/, Profiler**, JSGlobalData*);
 
-    template <typename T> class Strong;
-
     class JITThunks {
     public:
         JITThunks(JSGlobalData*);
@@ -304,7 +304,7 @@ namespace JSC {
     private:
         typedef HashMap<ThunkGenerator, MacroAssemblerCodePtr> CTIStubMap;
         CTIStubMap m_ctiStubMap;
-        typedef HashMap<NativeFunction, Strong<NativeExecutable> > HostFunctionStubMap;
+        typedef HashMap<NativeFunction, Weak<NativeExecutable> > HostFunctionStubMap;
         OwnPtr<HostFunctionStubMap> m_hostFunctionStubMap;
         RefPtr<ExecutablePool> m_executablePool;
 

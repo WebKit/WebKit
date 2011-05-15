@@ -76,10 +76,10 @@ JSFunction::JSFunction(ExecState* exec, JSGlobalObject* globalObject, Structure*
     , m_scopeChain(exec->globalData(), this, globalObject->globalScopeChain())
 {
     ASSERT(inherits(&s_info));
-    // We separate out intialisation from setting the executable
-    // as getHostFunction may perform a GC allocation, so we have to be able to
-    // mark ourselves safely
+    
+    // Can't do this during initialization because getHostFunction might do a GC allocation.
     m_executable.set(exec->globalData(), this, exec->globalData().getHostFunction(func));
+    
     putDirect(exec->globalData(), exec->globalData().propertyNames->name, jsString(exec, name.isNull() ? "" : name.ustring()), DontDelete | ReadOnly | DontEnum);
     putDirect(exec->globalData(), exec->propertyNames().length, jsNumber(length), DontDelete | ReadOnly | DontEnum);
 }
@@ -141,12 +141,8 @@ void JSFunction::visitChildren(SlotVisitor& visitor)
     Base::visitChildren(visitor);
 
     visitor.append(&m_scopeChain);
-    if (m_executable) {
-        // Delightful race condition: m_executable may not have been initialised
-        // if this is a host function, as the executable isn't necessarily created 
-        // until after the function has been allocated.
+    if (m_executable)
         visitor.append(&m_executable);
-    }
 }
 
 CallType JSFunction::getCallData(CallData& callData)

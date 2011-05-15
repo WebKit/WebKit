@@ -1,3 +1,39 @@
+2011-05-15  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Maciej Stachowiak.
+
+        Partial fix for <rdar://problem/9417875> REGRESSION: SunSpider ~17% slower
+        in browser than on command line
+        
+        This patch fixes a few issues in generated code that could unreasonably
+        prolong object lifetimes.
+
+        * heap/Heap.cpp:
+        (JSC::Heap::collectAllGarbage): Throw away all function code before doing
+        a major collection. We want to clear polymorphic caches, since they can
+        keep alive large object graphs that have gone "stale". For the same reason,
+        but to a lesser extent, we also want to clear linked functions and other
+        one-off caches.
+
+        This has the side-benefit of reducing memory footprint from run-once
+        functions, and of allowing predictions and caches that have failed to
+        re-specialize.
+
+        Eventually, if compilation costs rise far enough, we may want a more
+        limited strategy for de-specializing code without throwing it away
+        completely, but this works for now, and it's the simplest solution.
+
+        * jit/JITStubs.cpp:
+        (JSC::JITThunks::hostFunctionStub):
+        * jit/JITStubs.h:
+        * runtime/JSFunction.cpp: Made the host function stub cache weak --
+        otherwise it's effectively a memory leak that can seriously fragment the
+        GC and JIT heaps.
+
+        (JSC::JSFunction::JSFunction):
+        (JSC::JSFunction::visitChildren): Cleared up some comments that confused
+        me when working with this code.
+
 2011-05-13  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Geoffrey Garen.
