@@ -527,6 +527,10 @@ http/tests/loading/text-content-type-with-binary-extension.html
 http/tests/media/video-play-stall-seek.html
 http/tests/media/video-play-stall.html
 http/tests/media/video-seekable-stall.html
+
+# QuickTime reference movie not supported.
+http/tests/media/video-cross-site.html
+
 http/tests/misc/acid3.html
 http/tests/misc/link-rel-prefetch-and-subresource.html
 http/tests/misc/policy-delegate-called-twice.html

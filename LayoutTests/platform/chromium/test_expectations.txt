@@ -488,6 +488,9 @@ WONTFIX SKIP : http/tests/notifications = FAIL
 // Doesn't apply to Chromium (QuickTime-specific behavior)
 WONTFIX SKIP : media/video-does-not-loop.html = TIMEOUT
 
+// QuickTime reference movies not supported.
+WONTFIX SKIP : http/tests/media/video-cross-site.html = PASS FAIL TIMEOUT
+
 // Pre-HTML5 parser quirks only apply to the mac port for now.
 WONTFIX SKIP : fast/parser/pre-html5-parser-quirks.html = FAIL
 

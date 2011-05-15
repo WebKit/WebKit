@@ -67,6 +67,7 @@ SOFT_LINK_POINTER(AVFoundation, AVMediaTypeVideo, NSString *)
 SOFT_LINK_POINTER(AVFoundation, AVMediaTypeAudio, NSString *)
 SOFT_LINK_POINTER(AVFoundation, AVPlayerItemDidPlayToEndTimeNotification, NSString *)
 SOFT_LINK_POINTER(AVFoundation, AVAssetImageGeneratorApertureModeCleanAperture, NSString *)
+SOFT_LINK_POINTER(AVFoundation, AVURLAssetReferenceRestrictionsKey, NSString *)
 
 SOFT_LINK_CONSTANT(CoreMedia, kCMTimeZero, CMTime)
 
@@ -83,6 +84,7 @@ SOFT_LINK_CONSTANT(CoreMedia, kCMTimeZero, CMTime)
 #define AVMediaTypeAudio getAVMediaTypeAudio()
 #define AVPlayerItemDidPlayToEndTimeNotification getAVPlayerItemDidPlayToEndTimeNotification()
 #define AVAssetImageGeneratorApertureModeCleanAperture getAVAssetImageGeneratorApertureModeCleanAperture()
+#define AVURLAssetReferenceRestrictionsKey getAVURLAssetReferenceRestrictionsKey()
 
 #define kCMTimeZero getkCMTimeZero()
 
@@ -253,8 +255,12 @@ void MediaPlayerPrivateAVFoundationObjC::createAVAssetForURL(const String& url)
 
     setDelayCallbacks(true);
 
+    NSDictionary *options = [NSDictionary dictionaryWithObjectsAndKeys:
+                        [NSNumber numberWithInt:AVAssetReferenceRestrictionForbidCrossSiteReference], AVURLAssetReferenceRestrictionsKey, 
+                        nil];
     NSURL *cocoaURL = KURL(ParsedURLString, url);
-    m_avAsset.adoptNS([[AVURLAsset alloc] initWithURL:cocoaURL options:nil]);
+    m_avAsset.adoptNS([[AVURLAsset alloc] initWithURL:cocoaURL options:options]);
+
     m_haveCheckedPlayability = false;
 
     setDelayCallbacks(false);
