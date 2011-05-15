@@ -145,6 +145,7 @@ sub patch($)
 
     my $fullPath = $diffHashRef->{indexPath};
     my $isSvnBinary = $diffHashRef->{isBinary} && $diffHashRef->{isSvn};
+    my $isEmptyTextPatch = !$patch || !$diffHashRef->{numTextChunks};
 
     $directoriesToCheck{dirname($fullPath)} = 1;
 
@@ -154,7 +155,7 @@ sub patch($)
     $addition = 1 if ($diffHashRef->{isNew} || $diffHashRef->{copiedFromPath} || $patch =~ /\n@@ -0,0 .* @@/);
     $deletion = 1 if ($diffHashRef->{isDeletion} || $patch =~ /\n@@ .* \+0,0 @@/);
 
-    if (!$addition && !$deletion && !$isSvnBinary) {
+    if (!$addition && !$deletion && !$isSvnBinary && !$isEmptyTextPatch) {
         # Standard patch, patch tool can handle this.
         if (basename($fullPath) eq "ChangeLog") {
             my $changeLogDotOrigExisted = -f "${fullPath}.orig";
@@ -198,7 +199,7 @@ sub patch($)
 
             # Show status if the file is modifed
             system "svn", "stat", $fullPath;
-        } else {
+        } elsif ($addition) {
             # Reverse addition
             #
             # FIXME: This should use the same logic as svn-apply's deletion

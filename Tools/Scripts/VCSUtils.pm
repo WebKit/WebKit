@@ -98,7 +98,7 @@ my $svnVersion;
 # Project time zone for Cupertino, CA, US
 my $changeLogTimeZone = "PST8PDT";
 
-my $chunkRangeRegEx = qr#^\@\@ -(\d+),(\d+) \+\d+,(\d+) \@\@$#; # e.g. @@ -2,6 +2,18 @@
+my $chunkRangeRegEx = qr#^\@\@ -(\d+),(\d+) \+\d+,(\d+) \@\@#; # e.g. "@@ -2,6 +2,18 @@" or "@@ -2,6 +2,18 @@ foo()"
 my $gitDiffStartRegEx = qr#^diff --git (\w/)?(.+) (\w/)?([^\r\n]+)#;
 my $svnDiffStartRegEx = qr#^Index: ([^\r\n]+)#;
 my $svnPropertiesStartRegEx = qr#^Property changes on: ([^\r\n]+)#; # $1 is normally the same as the index path.
@@ -882,6 +882,7 @@ sub parseDiff($$;$)
     my $svnPropertiesHashRef; # Last SVN properties diff found, as returned by parseSvnDiffProperties().
     my $svnText;
     my $indexPathEOL;
+    my $numTextChunks = 0;
     while (defined($line)) {
         if (!$headerHashRef && ($line =~ $gitDiffStartRegEx)) {
             # Then assume all diffs in the patch are Git-formatted. This
@@ -904,6 +905,7 @@ sub parseDiff($$;$)
         }
         if ($line !~ $headerStartRegEx) {
             # Then we are in the body of the diff.
+            $numTextChunks += $line =~ /$chunkRangeRegEx/;
             if ($indexPathEOL && $line !~ /$chunkRangeRegEx/) {
                 # The chunk range is part of the body of the diff, but its line endings should't be
                 # modified or patch(1) will complain. So, we only modify non-chunk range lines.
@@ -983,6 +985,7 @@ sub parseDiff($$;$)
         # diff for a file that only has property changes will not return
         # any SVN converted text.
         $diffHash{svnConvertedText} = $svnText if $svnText;
+        $diffHash{numTextChunks} = $numTextChunks if $svnText && !$headerHashRef->{isBinary};
         push @diffHashRefs, \%diffHash;
     }
 

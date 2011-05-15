@@ -1,3 +1,28 @@
+2011-05-15  Daniel Bates  <dbates@webkit.org>
+
+        Reviewed by Chris Jerdonek.
+
+        svn-apply can't handle Git diff that only changes executable bit
+        https://bugs.webkit.org/show_bug.cgi?id=60848
+
+        Fixes an issue where svn-{apply, unapply} fail to handle a Git diff for a file
+        that only has an executable bit change.
+
+        * Scripts/VCSUtils.pm:
+          - Modified regex $chunkRangeRegEx to match chunk range with ending text, say: @@ -2,6 +2,18 @@ foo().
+        (parseDiff): Modified to count the number of text chunks in the diff. This should also help towards
+        fixing <https://bugs.webkit.org/show_bug.cgi?id=29684>.
+        * Scripts/svn-apply:
+        (patch): Only use standard patch tool if the patch is non-empty and for a text file (i.e. not a binary patch).
+        * Scripts/svn-unapply:
+        (patch): Ditto.
+        * Scripts/webkitperl/VCSUtils_unittest/parseDiff.pl:
+          - Updated expected results for test cases to account for numTextChunks.
+          - Fixed malformed chunk range in test cases: "Git: simple", and "Git: Git diff followed by SVN diff".
+          - Added test case "Git: file that only has an executable bit change".
+        * Scripts/webkitperl/VCSUtils_unittest/parseDiffWithMockFiles.pl:
+          - Updated expected results for test cases to account for numTextChunks.
+
 2011-05-15  Sam Weinig  <sam@webkit.org>
 
         Fix windows build.

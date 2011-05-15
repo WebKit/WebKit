@@ -61,6 +61,7 @@ Index: Makefile
 END
     indexPath => "Makefile",
     isSvn => 1,
+    numTextChunks => 1,
     sourceRevision => "53052",
 }],
 undef],
@@ -175,6 +176,7 @@ Index: Makefile
 END
     indexPath => "Makefile",
     isSvn => 1,
+    numTextChunks => 1,
     sourceRevision => "53052",
 }],
 undef],
@@ -226,6 +228,7 @@ Index: Makefile
 END
     indexPath => "Makefile",
     isSvn => 1,
+    numTextChunks => 1,
     sourceRevision => "53131",
 }],
 "Index: Makefile_new\n"],
@@ -264,6 +267,7 @@ index f5d5e74..3b6aa92 100644
 END
     indexPath => "Makefile",
     isSvn => 1,
+    numTextChunks => 1,
     sourceRevision => "53131",
 }],
 undef],
@@ -308,6 +312,7 @@ END
     executableBitDelta => 1,
     indexPath => "Makefile",
     isSvn => 1,
+    numTextChunks => 1,
     sourceRevision => "60021",
 }],
 undef],
@@ -348,6 +353,7 @@ Index: Makefile
 END
     indexPath => "Makefile",
     isSvn => 1,
+    numTextChunks => 1,
     sourceRevision => "60021",
 }],
 "Property changes on: Makefile.shared\n"],
@@ -795,6 +801,7 @@ END
     executableBitDelta => 1,
     indexPath => "Makefile",
     isSvn => 1,
+    numTextChunks => 1,
     sourceRevision => "60021",
 }],
 "Property changes on: Makefile.shared\n"],
@@ -846,6 +853,7 @@ END
     executableBitDelta => 1,
     indexPath => "Makefile",
     isSvn => 1,
+    numTextChunks => 1,
     sourceRevision => "60021",
 }],
 "Property changes on: Makefile.shared\r\n"],
@@ -897,6 +905,7 @@ END
     executableBitDelta => -1,
     indexPath => "Makefile",
     isSvn => 1,
+    numTextChunks => 1,
     sourceRevision => "60021",
 }],
 "Index: Makefile.shared\n"],
@@ -950,6 +959,7 @@ END
     executableBitDelta => -1,
     indexPath => "Makefile",
     isSvn => 1,
+    numTextChunks => 1,
     sourceRevision => "60021",
 }],
 "Index: Makefile.shared\r\n"],
@@ -966,7 +976,7 @@ diff --git a/Makefile b/Makefile
 index f5d5e74..3b6aa92 100644
 --- a/Makefile
 +++ b/Makefile
-@@ -1,1 1,1 @@ public:
+@@ -1,1 +1,1 @@ public:
 END
     expectedReturn => [
 [{
@@ -975,10 +985,11 @@ Index: Makefile
 index f5d5e74..3b6aa92 100644
 --- Makefile
 +++ Makefile
-@@ -1,1 1,1 @@ public:
+@@ -1,1 +1,1 @@ public:
 END
     indexPath => "Makefile",
     isGit => 1,
+    numTextChunks => 1,
 }],
 undef],
     expectedNextLine => undef,
@@ -1010,6 +1021,7 @@ END
     indexPath => "foo.h",
     isGit => 1,
     isNew => 1,
+    numTextChunks => 1,
 }],
 "diff --git a/bar b/bar\n"],
     expectedNextLine => "index d45dd40..3494526 100644\n",
@@ -1041,6 +1053,7 @@ END
     indexPath => "foo",
     isDeletion => 1,
     isGit => 1,
+    numTextChunks => 1,
 }],
 "diff --git a/bar b/bar\n"],
     expectedNextLine => "index d45dd40..3494526 100644\n",
@@ -1053,7 +1066,7 @@ diff --git a/Makefile b/Makefile
 index f5d5e74..3b6aa92 100644
 --- a/Makefile
 +++ b/Makefile
-@@ -1,1 1,1 @@ public:
+@@ -1,1 +1,1 @@ public:
 Index: Makefile_new
 ===================================================================
 --- Makefile_new	(revision 53131)	(from Makefile:53131)
@@ -1065,13 +1078,37 @@ Index: Makefile
 index f5d5e74..3b6aa92 100644
 --- Makefile
 +++ Makefile
-@@ -1,1 1,1 @@ public:
+@@ -1,1 +1,1 @@ public:
 Index: Makefile_new
 ===================================================================
 --- Makefile_new	(revision 53131)	(from Makefile:53131)
 END
     indexPath => "Makefile",
     isGit => 1,
+    numTextChunks => 1,
+}],
+undef],
+    expectedNextLine => undef,
+},
+{
+    # New test
+    diffName => "Git: file that only has an executable bit change",
+    inputText => <<'END',
+diff --git a/foo b/foo
+old mode 100644
+new mode 100755
+END
+    expectedReturn => [
+[{
+    svnConvertedText =>  <<'END',
+Index: foo
+old mode 100644
+new mode 100755
+END
+    executableBitDelta => 1,
+    indexPath => "foo",
+    isGit => 1,
+    numTextChunks => 0,
 }],
 undef],
     expectedNextLine => undef,
@@ -1131,6 +1168,7 @@ END
 {
     indexPath => "foo_new",
     isGit => 1,
+    numTextChunks => 1,
     svnConvertedText => <<'END',
 Index: foo_new
 similarity index 99%
@@ -1174,6 +1212,7 @@ END
     executableBitDelta => 1,
     indexPath => "foo_new",
     isGit => 1,
+    numTextChunks => 0,
     svnConvertedText => <<'END',
 Index: foo_new
 old mode 100644

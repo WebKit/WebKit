@@ -315,6 +315,7 @@ sub patch($)
     my $fullPath = $diffHashRef->{indexPath};
     my $isBinary = $diffHashRef->{isBinary};
     my $isGit = $diffHashRef->{isGit};
+    my $isEmptyTextPatch = !$patch || !$diffHashRef->{numTextChunks};
 
     my $deletion = 0;
     my $addition = 0;
@@ -322,7 +323,7 @@ sub patch($)
     $addition = 1 if ($diffHashRef->{isNew} || $patch =~ /\n@@ -0,0 .* @@/);
     $deletion = 1 if ($diffHashRef->{isDeletion} || $patch =~ /\n@@ .* \+0,0 @@/);
 
-    if (!$addition && !$deletion && !$isBinary) {
+    if (!$addition && !$deletion && !$isBinary && !$isEmptyTextPatch) {
         # Standard patch, patch tool can handle this.
         if (basename($fullPath) eq "ChangeLog") {
             my $changeLogDotOrigExisted = -f "${fullPath}.orig";
@@ -331,7 +332,7 @@ sub patch($)
             applyPatch($newPatch, $fullPath, ["--fuzz=3"]);
             unlink("${fullPath}.orig") if (! $changeLogDotOrigExisted);
         } else {
-            applyPatch($patch, $fullPath) if $patch;
+            applyPatch($patch, $fullPath);
         }
     } else {
         # Either a deletion, an addition or a binary change.
@@ -347,7 +348,7 @@ sub patch($)
         } elsif ($deletion) {
             applyPatch($patch, $fullPath, ["--force"]) if $patch;
             scmRemove($fullPath);
-        } else {
+        } elsif ($addition) {
             # Addition
             rename($fullPath, "$fullPath.orig") if -e $fullPath;
             applyPatch($patch, $fullPath) if $patch;
