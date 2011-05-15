@@ -76,6 +76,9 @@ media/video-error-does-not-exist.html
 # requires video.buffered to be able to return multiple timeranges
 http/tests/media/video-buffered.html
 
+# Sometimes fails on SnowLeopard, QuickTime bug?
+http/tests/media/video-cross-site.html
+
 #  Test times out due to CoreGraphics bug
 # <rdar://problem/7499927>
 fast/images/size-failure.html

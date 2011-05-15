@@ -1,3 +1,11 @@
+2011-05-15  Eric Carlson  <eric.carlson@apple.com>
+
+        Unreviewed, just skipping a test.
+
+        New test fails on some of the SnowLeopard bots.
+
+        * platform/mac-snowleopard/Skipped:
+
 2011-05-15  Ilya Tikhonovsky  <loislo@chromium.org>
 
         Reviewed by Yury Semikhatsky.
