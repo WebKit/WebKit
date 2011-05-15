@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2010, 2011 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,20 +25,14 @@
 
 #include "TestsController.h"
 
-int main(int argc, const char* argv[])
+int main(int argc, char** argv)
 {
     // Cygwin calls ::SetErrorMode(SEM_FAILCRITICALERRORS), which we will inherit. This is bad for
     // testing/debugging, as it causes the post-mortem debugger not to be invoked. We reset the
     // error mode here to work around Cygwin's behavior. See <http://webkit.org/b/55222>.
     ::SetErrorMode(0);
 
-    bool passed = true;
-
-    std::string argument(argv[1]);
-    if (argument == "--dump-tests")
-        TestWebKitAPI::TestsController::shared().dumpTestNames();
-    else   
-        passed = TestWebKitAPI::TestsController::shared().runTestNamed(argument);
+    bool passed = TestWebKitAPI::TestsController::shared().run(argc, argv);
 
     return passed ? EXIT_SUCCESS : EXIT_FAILURE;
 }
