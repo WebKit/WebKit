@@ -1,3 +1,30 @@
+2011-05-15  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by David Levin.
+
+        Make API tester more gtest friendly
+        https://bugs.webkit.org/show_bug.cgi?id=60859
+
+        * Scripts/run-api-tests:
+        Numerous changes:
+        - Remove logic to run tests one at a time.
+        - Remove logic to build up a list of tests, instead just pass --gtest_list_tests to 
+          the test runner and allow gtest to print it for us.
+        - Forward stdout from the test tool to stdout, even in non-verbose runs.
+        - Run test tool from the current working directory instead of the root webkit
+          directory.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        Move plist to be with other bundle sources.
+
+        * TestWebKitAPI/TestsController.cpp:
+        (TestWebKitAPI::TestsController::TestsController):
+        (TestWebKitAPI::TestsController::run):
+        * TestWebKitAPI/TestsController.h:
+        * TestWebKitAPI/mac/main.mm:
+        Simplify TestController down to a single run function. We should consider removing the class
+        entirely at some point.
+
 2011-05-15  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r86504.

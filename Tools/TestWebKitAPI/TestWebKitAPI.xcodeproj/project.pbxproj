@@ -206,7 +206,6 @@
 				BC90957D12554CEA00083756 /* Configurations */,
 				08FB779DFE84155DC02AAC07 /* External Frameworks and Libraries */,
 				1AB674ADFE9D54B511CA2CBB /* Products */,
-				BC575981126E74AF006F0F12 /* InjectedBundle-Info.plist */,
 			);
 			name = TestWebKitAPI;
 			sourceTree = "<group>";
@@ -253,6 +252,7 @@
 		BC575944126E733C006F0F12 /* InjectedBundle */ = {
 			isa = PBXGroup;
 			children = (
+				BC575981126E74AF006F0F12 /* InjectedBundle-Info.plist */,
 				BC575946126E7351006F0F12 /* InjectedBundleMain.cpp */,
 				BC575A9E126E75FB006F0F12 /* InjectedBundleTest.h */,
 				BC575A9F126E7657006F0F12 /* InjectedBundleController.h */,

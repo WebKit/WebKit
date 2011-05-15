@@ -36,13 +36,8 @@ use Getopt::Long qw(:config pass_through);
 use IPC::Open3;
 use lib $FindBin::Bin;
 use webkitdirs;
-use Term::ANSIColor qw(:constants);
 
-sub dumpAllTests();
-sub runAllTests();
-sub runAllTestsInSuite($);
-sub runTest($$);
-sub populateTests();
+sub runTestTool(@);
 sub buildTestTool();
 
 my $showHelp = 0;
@@ -71,60 +66,18 @@ if ($showHelp) {
 setConfiguration();
 buildTestTool();
 setPathForRunningWebKitApp(\%ENV);
-my %testsToRun = populateTests();
 
 if ($dump) {
-    dumpAllTests();
-    exit 0;
+    my @dumpArguments = ("--gtest_list_tests");
+    runTestTool(@dumpArguments);
+    exit(0);
 }
 
-runAllTests();
+runTestTool();
 
-sub dumpAllTests()
+sub runTestTool(@)
 {
-    print "Dumping test cases\n";
-    print "------------------\n";
-    for my $suite (keys %testsToRun) {
-        print $suite . ":\n";
-        print map { "    " . $_ . "\n" } @{ $testsToRun{$suite} };
-    }
-    print "------------------\n";
-}
-
-sub runAllTests()
-{
-    my $anyFailures = 0;
-    for my $suite (keys %testsToRun) {
-        my $failed = runAllTestsInSuite($suite);
-        if ($failed) {
-            $anyFailures = 1;
-        }
-    }
-    return $anyFailures;
-}
-
-sub runAllTestsInSuite($)
-{
-    my ($suite) = @_;
-    print "Suite: $suite\n";
-
-    my $anyFailures = 0;
-    for my $test (@{$testsToRun{$suite}}) {
-        my $failed = runTest($suite, $test);
-        if ($failed) {
-            $anyFailures = 1;
-        }
-    }
-    
-    return $anyFailures;
-}
-
-sub runTest($$)
-{
-    my ($suite, $testName) = @_;
-    my $test = $suite . "." . $testName;
-
-    print "    Test: $testName -> ";
+    my (@arguments) = @_;
 
     my $result = 0;
     if (isAppleMacWebKit()) {
@@ -135,26 +88,26 @@ sub runTest($$)
 
         local *DEVNULL;
         my ($childIn, $childOut, $childErr);
+
+        $childOut = ">&STDOUT";
         unless ($verbose) {
             open(DEVNULL, ">", File::Spec->devnull()) or die "Failed to open /dev/null";
-            $childOut = ">&DEVNULL";
             $childErr = ">&DEVNULL";
         } else {
-            $childOut = ">&STDOUT";
             $childErr = ">&STDERR";
         }
 
         my $pid;
         if (architecture()) {
-            $pid = open3($childIn, $childOut, $childErr, "arch", "-" . architecture(), $apiTesterPath, $test, @ARGV) or die "Failed to run test: $test.";
+            $pid = open3($childIn, $childOut, $childErr, "arch", "-" . architecture(), $apiTesterPath, @arguments, @ARGV) or die "Failed to run test tool.";
         } else {
-            $pid = open3($childIn, $childOut, $childErr, $apiTesterPath, $test, @ARGV) or die "Failed to run test: $test.";
+            $pid = open3($childIn, $childOut, $childErr, $apiTesterPath, @arguments, @ARGV) or die "Failed to run test tool.";
         }
 
         close($childIn);
         close($childOut);
         close($childErr);
-        close(DEVNULL) unless ($verbose);
+        close(DEVNULL);
 
         waitpid($pid, 0);
         $result = $?;
@@ -166,84 +119,18 @@ sub runTest($$)
             $apiTesterNameSuffix = "_debug";
         }
         my $apiTesterPath = File::Spec->catfile(productDir(), "TestWebKitAPI$apiTesterNameSuffix.exe");
-        $result = system $apiTesterPath, $test, @ARGV;
+        $result = system $apiTesterPath, @ARGV;
     } else {
         die "run-api-tests is not supported on this platform.\n"
     }
     
-    if ($result == 0) {
-        print BOLD GREEN, "Passed", RESET, "\n";
-    } else {
-        print BOLD RED, "Failed", RESET, "\n";
-    }
-}
-
-sub populateTests()
-{
-    my @tests;
-
-    if (isAppleMacWebKit()) {
-        my $productDir = productDir();
-        $ENV{DYLD_FRAMEWORK_PATH} = $productDir;
-        $ENV{WEBKIT_UNSET_DYLD_FRAMEWORK_PATH} = "YES";
-        my $apiTesterPath = "$productDir/TestWebKitAPI";
-
-        local *DEVNULL;
-        my ($childIn, $childOut, $childErr);
-        unless ($verbose) {
-            open(DEVNULL, ">", File::Spec->devnull()) or die "Failed to open /dev/null";
-            $childErr = ">&DEVNULL";
-        } else {
-            $childErr = ">&STDERR";
-        }
-
-        my $pid;
-        if (architecture()) {
-            $pid = open3($childIn, $childOut, $childErr, "arch", "-" . architecture(), $apiTesterPath, "--dump-tests") or die "Failed to build list of tests!";
-        } else {
-            $pid = open3($childIn, $childOut, $childErr, $apiTesterPath, "--dump-tests") or die "Failed to build list of tests!";
-        }
-
-        close($childIn);
-        @tests = <$childOut>;
-        close($childOut);
-        close($childErr);
-        close(DEVNULL) unless ($verbose);
-
-        waitpid($pid, 0);
-        my $result = $?;
-
-        if ($result) {
-            print STDERR "Failed to build list of tests!\n";
-            exit exitStatus($result);
-        }
-    } elsif (isAppleWinWebKit()) {
-        my $apiTesterNameSuffix;
-        if (configurationForVisualStudio() ne "Debug_All") {
-            $apiTesterNameSuffix = "";
-        } else {
-            $apiTesterNameSuffix = "_debug";
-        }
-        my $apiTesterPath = File::Spec->catfile(productDir(), "TestWebKitAPI$apiTesterNameSuffix.exe");
-        open(TESTS, "-|", $apiTesterPath, "--dump-tests") or die $!;
-        @tests = <TESTS>;
-        close(TESTS) or die $!;
-    } else {
-        die "run-api-tests is not supported on this platform.\n"
-    }
-
-    my %keyedTests = ();
-    for my $test (@tests) {
-        $test =~ s/[\r\n]*$//;
-        my ($suite, $testName) = split(/\./, $test);
-        push @{$keyedTests{$suite}}, $testName;
-    }
-    
-    return %keyedTests;
+    return $result;
 }
 
 sub buildTestTool()
 {
+    my $originalCwd = getcwd();
+
     chdirWebKit();
 
     my $buildTestTool = "build-api-tests";
@@ -276,4 +163,6 @@ sub buildTestTool()
         print STDERR "Compiling TestWebKitAPI failed!\n";
         exit exitStatus($buildResult);
     }
+
+    chdir $originalCwd;
 }

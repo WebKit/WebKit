@@ -26,20 +26,13 @@
 #ifndef TestsController_h
 #define TestsController_h
 
-#include <map>
-#include <string>
-
 namespace TestWebKitAPI {
-
-class Test;
 
 class TestsController {
 public:
     static TestsController& shared();
 
-    void dumpTestNames();
-    bool runTestNamed(const std::string&);
-    bool runAllTests();
+    bool run(int argc, char** argv);
 
 private:
     TestsController();

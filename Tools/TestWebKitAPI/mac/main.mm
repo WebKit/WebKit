@@ -25,19 +25,13 @@
 
 #import "TestsController.h"
 
-int main(int argc, const char* argv[])
+int main(int argc, char** argv)
 {
     NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
 
     [NSApplication sharedApplication];
 
-    bool passed = true;
-
-    std::string argument(argv[1]);
-    if (argument == "--dump-tests")
-        TestWebKitAPI::TestsController::shared().dumpTestNames();
-    else   
-        passed = TestWebKitAPI::TestsController::shared().runTestNamed(argument);
+    bool passed = TestWebKitAPI::TestsController::shared().run(argc, argv);
 
     [pool drain];
 

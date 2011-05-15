@@ -25,10 +25,7 @@
 
 #include "TestsController.h"
 
-#include "Test.h"
-#include <assert.h>
 #include <gtest/gtest.h>
-#include <cstdio>
 
 namespace TestWebKitAPI {
 
@@ -40,31 +37,11 @@ TestsController& TestsController::shared()
 
 TestsController::TestsController()
 {
-    int argc = 0;
-    ::testing::InitGoogleTest(&argc, (char**)0);
 }
 
-void TestsController::dumpTestNames()
+bool TestsController::run(int argc, char** argv)
 {
-    ::testing::UnitTest* unit_test = ::testing::UnitTest::GetInstance();
-
-    for (int i = 0; i < unit_test->total_test_case_count(); i++) {
-        const ::testing::TestCase* test_case = unit_test->GetTestCase(i);
-        for (int j = 0; j < test_case->total_test_count(); j++) {
-          const ::testing::TestInfo* test_info = test_case->GetTestInfo(j);
-          printf("%s.%s\n", test_case->name(), test_info->name());
-        }
-    }
-}
-
-bool TestsController::runTestNamed(const std::string& identifier)
-{
-    ::testing::GTEST_FLAG(filter) = identifier;
-    return !RUN_ALL_TESTS();
-}
-
-bool TestsController::runAllTests()
-{
+    ::testing::InitGoogleTest(&argc, argv);
     return !RUN_ALL_TESTS();
 }
 
