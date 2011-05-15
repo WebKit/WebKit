@@ -1932,14 +1932,13 @@ void HTMLMediaElement::mediaPlayerMuteChanged(MediaPlayer*)
     endProcessingMediaPlayerCallback();
 }
 
-void HTMLMediaElement::mediaPlayerDurationChanged(MediaPlayer*)
+void HTMLMediaElement::mediaPlayerDurationChanged(MediaPlayer* player)
 {
     LOG(Media, "HTMLMediaElement::mediaPlayerDurationChanged");
 
     beginProcessingMediaPlayerCallback();
     scheduleEvent(eventNames().durationchangeEvent);
-    if (renderer())
-        renderer()->updateFromElement();
+    mediaPlayerCharacteristicChanged(player);
     endProcessingMediaPlayerCallback();
 }
 
@@ -2044,6 +2043,18 @@ void HTMLMediaElement::mediaPlayerFirstVideoFrameAvailable(MediaPlayer*)
         mediaPlayerRenderingModeChanged(m_player.get());
 #endif
     }
+    endProcessingMediaPlayerCallback();
+}
+
+void HTMLMediaElement::mediaPlayerCharacteristicChanged(MediaPlayer*)
+{
+    LOG(Media, "HTMLMediaElement::mediaPlayerCharacteristicChanged");
+    
+    beginProcessingMediaPlayerCallback();
+    if (hasMediaControls())
+        mediaControls()->reset();
+    if (renderer())
+        renderer()->updateFromElement();
     endProcessingMediaPlayerCallback();
 }
 

@@ -313,6 +313,30 @@ void MediaPlayerPrivateAVFoundation::setNaturalSize(IntSize size)
         m_player->sizeChanged();
 }
 
+void MediaPlayerPrivateAVFoundation::setHasVideo(bool b)
+{
+    if (m_cachedHasVideo != b) {
+        m_cachedHasVideo = b;
+        m_player->characteristicChanged();
+    }
+}
+
+void MediaPlayerPrivateAVFoundation::setHasAudio(bool b)
+{
+    if (m_cachedHasAudio != b) {
+        m_cachedHasAudio = b;
+        m_player->characteristicChanged();
+    }
+}
+
+void MediaPlayerPrivateAVFoundation::setHasClosedCaptions(bool b)
+{
+    if (m_cachedHasCaptions != b) {
+        m_cachedHasCaptions = b;
+        m_player->characteristicChanged();
+    }
+}
+
 PassRefPtr<TimeRanges> MediaPlayerPrivateAVFoundation::buffered() const
 {
     if (!m_cachedLoadedTimeRanges)
@@ -516,15 +540,7 @@ void MediaPlayerPrivateAVFoundation::loadedTimeRangesChanged()
 {
     m_cachedLoadedTimeRanges = 0;
     m_cachedMaxTimeLoaded = 0;
-
-    // For some media files, reported duration is estimated and updated as media is loaded
-    // so report duration changed when the estimate is upated.
-    float dur = duration();
-    if (dur != m_reportedDuration) {
-        if (m_reportedDuration != invalidTime())
-            m_player->durationChanged();
-        m_reportedDuration = dur;
-    }
+    invalidateCachedDuration();
 }
 
 void MediaPlayerPrivateAVFoundation::seekableTimeRangesChanged()
@@ -570,6 +586,23 @@ void MediaPlayerPrivateAVFoundation::didEnd()
 
     updateStates();
     m_player->timeChanged();
+}
+
+void MediaPlayerPrivateAVFoundation::invalidateCachedDuration()
+{
+    LOG(Media, "MediaPlayerPrivateAVFoundation::invalidateCachedDuration(%p)", this);
+    
+    m_cachedDuration = invalidTime();
+
+    // For some media files, reported duration is estimated and updated as media is loaded
+    // so report duration changed when the estimate is upated.
+    float duration = this->duration();
+    if (duration != m_reportedDuration) {
+        if (m_reportedDuration != invalidTime())
+            m_player->durationChanged();
+        m_reportedDuration = duration;
+    }
+    
 }
 
 void MediaPlayerPrivateAVFoundation::repaint()
@@ -761,6 +794,10 @@ void MediaPlayerPrivateAVFoundation::dispatchNotification()
         updateStates();
         playabilityKnown();
         break;
+    case Notification::DurationChanged:
+        invalidateCachedDuration();
+        break;
+
     case Notification::None:
         ASSERT_NOT_REACHED();
         break;

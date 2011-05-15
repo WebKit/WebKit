@@ -859,6 +859,12 @@ void MediaPlayer::firstVideoFrameAvailable()
         m_mediaPlayerClient->mediaPlayerFirstVideoFrameAvailable(this);
 }
 
+void MediaPlayer::characteristicChanged()
+{
+    if (m_mediaPlayerClient)
+        m_mediaPlayerClient->mediaPlayerCharacteristicChanged(this);
+}
+
 }
 
 #endif

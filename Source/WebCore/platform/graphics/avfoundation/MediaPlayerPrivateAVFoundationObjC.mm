@@ -414,13 +414,15 @@ void MediaPlayerPrivateAVFoundationObjC::platformPause()
 
 float MediaPlayerPrivateAVFoundationObjC::platformDuration() const
 {
-    if (!m_avAsset)
-        return invalidTime();
+    // Do not ask the asset for duration before it has been loaded or it will fetch the
+    // answer synchronously.
+    if (!m_avAsset || assetStatus() < MediaPlayerAVAssetStatusLoaded)
+         return invalidTime();
     
     CMTime cmDuration;
     
-    // Check the AVItem if we have one, some assets never report duration.
-    if (m_avPlayerItem)
+    // Check the AVItem if we have one and it has loaded duration, some assets never report duration.
+    if (m_avPlayerItem && playerItemStatus() >= MediaPlayerAVPlayerItemStatusReadyToPlay)
         cmDuration = [m_avPlayerItem.get() duration];
     else
         cmDuration= [m_avAsset.get() duration];
@@ -431,7 +433,7 @@ float MediaPlayerPrivateAVFoundationObjC::platformDuration() const
     if (CMTIME_IS_INDEFINITE(cmDuration))
         return numeric_limits<float>::infinity();
 
-    LOG(Media, "MediaPlayerPrivateAVFoundationObjC::duration(%p) - invalid duration, returning %.0f", this, invalidTime());
+    LOG(Media, "MediaPlayerPrivateAVFoundationObjC::platformDuration(%p) - invalid duration, returning %.0f", this, invalidTime());
     return invalidTime();
 }
 
@@ -796,6 +798,7 @@ NSArray* itemKVOProperties()
                 @"playbackLikelyToKeepUp",
                 @"playbackBufferFull",
                 @"playbackBufferEmpty",
+                @"duration",
                 nil];
     }
     return keys;
@@ -886,6 +889,8 @@ NSArray* itemKVOProperties()
             m_callback->scheduleMainThreadNotification(MediaPlayerPrivateAVFoundation::Notification::ItemTracksChanged);
         else if ([keyPath isEqualToString:@"presentationSize"])
             m_callback->scheduleMainThreadNotification(MediaPlayerPrivateAVFoundation::Notification::ItemPresentationSizeChanged);
+        else if ([keyPath isEqualToString:@"duration"])
+            m_callback->scheduleMainThreadNotification(MediaPlayerPrivateAVFoundation::Notification::DurationChanged);
 
         return;
     }
@@ -894,7 +899,7 @@ NSArray* itemKVOProperties()
         // A value changed for an AVPlayer.
         if ([keyPath isEqualToString:@"rate"])
             m_callback->scheduleMainThreadNotification(MediaPlayerPrivateAVFoundation::Notification::PlayerRateChanged);
-}
+    }
 }
 
 @end

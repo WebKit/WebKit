@@ -147,6 +147,9 @@ public:
     // first frame is not available immediately when prepareForRendering is called.
     virtual void mediaPlayerFirstVideoFrameAvailable(MediaPlayer*) { }
 
+    // A characteristic of the media file, eg. video, audio, closed captions, etc, has changed.
+    virtual void mediaPlayerCharacteristicChanged(MediaPlayer*) { }
+    
 #if USE(ACCELERATED_COMPOSITING)
     // whether the rendering system can accelerate the display of this MediaPlayer.
     virtual bool mediaPlayerRenderingCanBeAccelerated(MediaPlayer*) { return false; }
@@ -262,6 +265,8 @@ public:
     void playbackStateChanged();
     void durationChanged();
     void firstVideoFrameAvailable();
+    void characteristicChanged();
+
 
     void repaint();
 

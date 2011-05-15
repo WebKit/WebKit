@@ -1,3 +1,45 @@
+2011-05-14  Eric Carlson  <eric.carlson@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        HTTP video-on-demand streams frequently have live stream UI
+        https://bugs.webkit.org/show_bug.cgi?id=60849
+        <rdar://problem/9440502>
+
+        No new tests, we don't currently have tests for http live streams. Changes verified manually.
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::mediaPlayerDurationChanged): Reset the media controls so
+            a duration change which identifies a format will be picked up.
+        (WebCore::HTMLMediaElement::mediaPlayerCharacteristicChanged): New, reset media controls
+            so they can be reconfigured for the media file characteristics.
+        * html/HTMLMediaElement.h:
+
+        * platform/graphics/MediaPlayer.cpp:
+        (WebCore::MediaPlayer::characteristicChanged): New, pass through to the element.
+        * platform/graphics/MediaPlayer.h:
+        (WebCore::MediaPlayerClient::mediaPlayerCharacteristicChanged):
+
+        * platform/graphics/avfoundation/MediaPlayerPrivateAVFoundation.cpp:
+        (WebCore::MediaPlayerPrivateAVFoundation::setHasVideo): Call characteristicChanged when
+            setting changes.
+        (WebCore::MediaPlayerPrivateAVFoundation::setHasAudio): Ditto.
+        (WebCore::MediaPlayerPrivateAVFoundation::setHasClosedCaptions): Ditto.
+        (WebCore::MediaPlayerPrivateAVFoundation::loadedTimeRangesChanged): Move the duration
+            change notification logic to invalidateCachedDuration.
+        (WebCore::MediaPlayerPrivateAVFoundation::invalidateCachedDuration): New, invalidate
+            the cached duration and notify the element when it changes.
+        (WebCore::MediaPlayerPrivateAVFoundation::dispatchNotification): Call invalidateCachedDuration
+            for the DurationChanged notification.
+        * platform/graphics/avfoundation/MediaPlayerPrivateAVFoundation.h: Define DurationChanged.
+
+        * platform/graphics/avfoundation/MediaPlayerPrivateAVFoundationObjC.mm:
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::platformDuration): Don't check asset or
+            item duration until they have been loaded.
+        (WebCore::itemKVOProperties): Listen for duration change.
+        (-[WebCoreAVFMovieObserver observeValueForKeyPath:ofObject:change:context:]): Deal with
+            duration change notification.
+
 2011-05-14  Abhishek Arya  <inferno@chromium.org>
 
         Reviewed by Dan Bernstein.

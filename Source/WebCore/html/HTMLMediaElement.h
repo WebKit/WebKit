@@ -259,7 +259,9 @@ private:
     virtual void mediaPlayerRenderingModeChanged(MediaPlayer*);
 #endif
     virtual void mediaPlayerEngineUpdated(MediaPlayer*);
+    
     virtual void mediaPlayerFirstVideoFrameAvailable(MediaPlayer*);
+    virtual void mediaPlayerCharacteristicChanged(MediaPlayer*);
 
     void loadTimerFired(Timer<HTMLMediaElement>*);
     void asyncEventTimerFired(Timer<HTMLMediaElement>*);

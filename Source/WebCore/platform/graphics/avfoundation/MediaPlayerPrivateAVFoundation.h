@@ -68,6 +68,7 @@ public:
             PlayerRateChanged,
             PlayerTimeChanged,
             SeekCompleted,
+            DurationChanged,
         };
         
         Notification()
@@ -217,9 +218,9 @@ protected:
 protected:
     void updateStates();
 
-    void setHasVideo(bool b) { m_cachedHasVideo = b; };
-    void setHasAudio(bool b) { m_cachedHasAudio = b; }
-    void setHasClosedCaptions(bool b) { m_cachedHasCaptions = b; }
+    void setHasVideo(bool);
+    void setHasAudio(bool);
+    void setHasClosedCaptions(bool);
     void setDelayCallbacks(bool);
     void setIgnoreLoadStateChanges(bool delay) { m_ignoreLoadStateChanges = delay; }
     void setNaturalSize(IntSize);
@@ -240,6 +241,7 @@ protected:
     static void mainThreadCallback(void*);
     
     float invalidTime() const { return -1.0f; }
+    void invalidateCachedDuration();
 
 private:
     MediaPlayer* m_player;
