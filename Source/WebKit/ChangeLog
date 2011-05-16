@@ -1,3 +1,9 @@
+2011-05-16  Dan Bernstein  <mitz@apple.com>
+
+        No need to compile .js files, that is what the JIT is for.
+
+        * WebKit.xcodeproj/project.pbxproj:
+
 2011-05-12  Adele Peterson  <adele@apple.com>
 
         Reviewed by Darin Adler and Adam Barth.

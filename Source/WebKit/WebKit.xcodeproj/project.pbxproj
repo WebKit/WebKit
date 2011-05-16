@@ -344,7 +344,6 @@
 		AB9FBBBB0F8582B0006ADC43 /* WebDOMOperationsInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = AB9FBBBA0F8582B0006ADC43 /* WebDOMOperationsInternal.h */; };
 		ABDDF20D08EB0DDC001E1241 /* WebDownloadInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = ABDDF20C08EB0DDC001E1241 /* WebDownloadInternal.h */; };
 		B5974457137C7342002A18FF /* SolarWalkQuirksUserScript.js in Resources */ = {isa = PBXBuildFile; fileRef = B5DB1F17137C62F500A28E7E /* SolarWalkQuirksUserScript.js */; };
-		B5DB1F18137C62F500A28E7E /* SolarWalkQuirksUserScript.js in Sources */ = {isa = PBXBuildFile; fileRef = B5DB1F17137C62F500A28E7E /* SolarWalkQuirksUserScript.js */; };
 		B6CE5C24100BC5CE00219936 /* WebApplicationCache.mm in Sources */ = {isa = PBXBuildFile; fileRef = B68049720FFBCEC1009F7F62 /* WebApplicationCache.mm */; };
 		B6CE5C25100BC5F500219936 /* WebApplicationCache.h in Headers */ = {isa = PBXBuildFile; fileRef = B68049710FFBCEC1009F7F62 /* WebApplicationCache.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		B804176F1217A83100466BAE /* WebInspectorFrontend.h in Headers */ = {isa = PBXBuildFile; fileRef = B804176D1217A83100466BAE /* WebInspectorFrontend.h */; };
@@ -2032,7 +2031,6 @@
 				BC42D34D131ED3880075FA4B /* WebLocalizableStringsInternal.mm in Sources */,
 				B82958D4132707D0000D0E79 /* CorrectionPanel.mm in Sources */,
 				A5687BDB135B791A0074CBCB /* WebNodeHighlighter.mm in Sources */,
-				B5DB1F18137C62F500A28E7E /* SolarWalkQuirksUserScript.js in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
