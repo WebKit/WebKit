@@ -215,7 +215,7 @@ void XMLDocumentParser::doEnd()
 {
 #if ENABLE(XSLT)
     if (m_sawXSLTransform) {
-        document()->setTransformSource(new TransformSource(m_originalSourceForTransform));
+        document()->setTransformSource(adoptPtr(new TransformSource(m_originalSourceForTransform)));
         document()->setParsing(false); // Make the doc think it's done, so it will apply xsl sheets.
         document()->styleSelectorChanged(RecalcStyleImmediately);
         document()->setParsing(true);

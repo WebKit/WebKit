@@ -1,3 +1,10 @@
+2011-05-15  Adam Barth  <abarth@webkit.org>
+
+        Attempt to fix Qt build.  (Strict PassOwnPtr fix.)
+
+        * dom/XMLDocumentParserQt.cpp:
+        (WebCore::XMLDocumentParser::doEnd):
+
 2011-05-15  Kenichi Ishibashi  <bashi@chromium.org>
 
         Reviewed by Kent Tamura.
