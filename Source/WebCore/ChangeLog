@@ -1,3 +1,14 @@
+2011-05-16  Alexander Pavlov  <apavlov@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: Fix SourceJavaScriptTokenizer keyword parsing
+        https://bugs.webkit.org/show_bug.cgi?id=60773
+
+        * inspector/front-end/SourceJavaScriptTokenizer.js:
+        (WebInspector.SourceJavaScriptTokenizer.prototype.nextToken):
+        * inspector/front-end/SourceJavaScriptTokenizer.re2js:
+
 2011-05-16  Nikolas Zimmermann  <nzimmermann@rim.com>
 
         Reviewed by Darin Adler.

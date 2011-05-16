@@ -1,3 +1,13 @@
+2011-05-16  Alexander Pavlov  <apavlov@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: Fix SourceJavaScriptTokenizer keyword parsing
+        https://bugs.webkit.org/show_bug.cgi?id=60773
+
+        * inspector/syntax-highlight-javascript-expected.txt:
+        * inspector/syntax-highlight-javascript.html:
+
 2011-05-16  Robert Hogan  <robert@webkit.org>
 
         Reviewed by Yury Semikhatsky.

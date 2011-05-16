@@ -22,6 +22,8 @@ function test()
     dumpSyntaxHighlightJS("'\\f\\b\\t';");
     dumpSyntaxHighlightJS("'/\\\n/';");
     dumpSyntaxHighlightJS("foo/**\n/\n*/foo");
+    dumpSyntaxHighlightJS("{0: true}");
+    dumpSyntaxHighlightJS("var toString;");
 
     InspectorTest.completeTest();
 }
