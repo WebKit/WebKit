@@ -1,4 +1,4 @@
-Â Â LinkÂ Random text.
+ Link Random text.
  Link Random text.
 This test checks selection drag edge cases on Mac. To run the test manually:
 
@@ -13,4 +13,3 @@ IMG
 A
 SPAN
 Number of selected ranges: 1
-

@@ -1,3 +1,13 @@
+2011-05-16  Adam Roben  <aroben@apple.com>
+
+        Update results for a new Mac dragging test
+
+        This test has been failing since it was added in r86472. I don't know whether the old
+        results are wrong or the test is actually showing a bug. <http://webkit.org/b/60882> tracks
+        the failure.
+
+        * platform/mac/editing/pasteboard/drag-selections-to-contenteditable-expected.txt:
+
 2011-05-16  Pavel Feldman  <pfeldman@google.com>
 
         Not reviewed: simplify inspector dom actions test.
