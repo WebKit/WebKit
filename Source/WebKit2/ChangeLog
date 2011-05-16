@@ -1,3 +1,22 @@
+2011-05-16  Siddharth Mathur  <siddharth.mathur@nokia.com>
+
+        Rubber-stamped by Csaba Osztrogonác.
+
+        [Qt][Wk2][Symbian] Fix build after r86560
+        https://bugs.webkit.org/show_bug.cgi?id=60887
+
+        Temporarily fix Symbian build by re-enabling compilation
+        of Qt/Gtk common code (as was the case for Symbian before r55875).
+        This is a stop gap until the pure Symbian Core IPC and process launching bits land in Bug 55875
+        As of this revision, only the native SharedMemory implementation is in trunk.
+
+        * Platform/CoreIPC/Attachment.h: Compile Qt/Gtk common code for Qt-Symbian too
+        * Platform/CoreIPC/Connection.h: ditto
+        * Platform/SharedMemory.h:       ditto
+        * Platform/qt/SharedMemorySymbian.cpp: stub implementations of attachment handling
+        (WebKit::SharedMemory::Handle::releaseToAttachment):
+        (WebKit::SharedMemory::Handle::adoptFromAttachment):
+
 2011-05-16  Jon Lee  <jonlee@apple.com>
 
         Reviewed by Simon Fraser.

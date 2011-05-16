@@ -113,7 +113,7 @@ public:
 #elif PLATFORM(WIN)
     typedef HANDLE Identifier;
     static bool createServerAndClientIdentifiers(Identifier& serverIdentifier, Identifier& clientIdentifier);
-#elif USE(UNIX_DOMAIN_SOCKETS)
+#elif USE(UNIX_DOMAIN_SOCKETS) || OS(SYMBIAN)
     typedef int Identifier;
 #endif
 
@@ -339,7 +339,7 @@ private:
     OwnPtr<ArgumentEncoder> m_pendingWriteArguments;
     OVERLAPPED m_writeState;
     HANDLE m_connectionPipe;
-#elif USE(UNIX_DOMAIN_SOCKETS)
+#elif USE(UNIX_DOMAIN_SOCKETS) || OS(SYMBIAN)
     // Called on the connection queue.
     void readyReadHandler();
 

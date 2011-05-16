@@ -69,6 +69,17 @@ bool SharedMemory::Handle::decode(CoreIPC::ArgumentDecoder* decoder, Handle& han
     return true;
 }
 
+// FIXME: To be removed as part of Bug 55877
+CoreIPC::Attachment SharedMemory::Handle::releaseToAttachment() const
+{
+    return CoreIPC::Attachment(-1, 0);
+}
+
+// FIXME: To be removed as part of Bug 55877
+void SharedMemory::Handle::adoptFromAttachment(int, size_t)
+{
+}
+
 PassRefPtr<SharedMemory> SharedMemory::create(size_t size)
 {
     // On Symbian, global chunks (shared memory segments) have system-unique names, so we pick a random

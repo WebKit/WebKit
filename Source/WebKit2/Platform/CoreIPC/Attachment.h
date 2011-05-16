@@ -40,7 +40,7 @@ public:
 #if PLATFORM(MAC)
         MachPortType,
         MachOOLMemoryType,
-#elif USE(UNIX_DOMAIN_SOCKETS)
+#elif USE(UNIX_DOMAIN_SOCKETS) || OS(SYMBIAN)
         MappedMemory
 #endif
     };
@@ -48,7 +48,7 @@ public:
 #if PLATFORM(MAC)
     Attachment(mach_port_name_t port, mach_msg_type_name_t disposition);
     Attachment(void* address, mach_msg_size_t size, mach_msg_copy_options_t copyOptions, bool deallocate);
-#elif USE(UNIX_DOMAIN_SOCKETS)
+#elif USE(UNIX_DOMAIN_SOCKETS) || OS(SYMBIAN)
     Attachment(int fileDescriptor, size_t);
 #endif
 
@@ -66,7 +66,7 @@ public:
     mach_msg_size_t size() const { ASSERT(m_type == MachOOLMemoryType); return m_oolMemory.size; }
     mach_msg_copy_options_t copyOptions() const { ASSERT(m_type == MachOOLMemoryType); return m_oolMemory.copyOptions; }
     bool deallocate() const { ASSERT(m_type == MachOOLMemoryType); return m_oolMemory.deallocate; }
-#elif USE(UNIX_DOMAIN_SOCKETS)
+#elif USE(UNIX_DOMAIN_SOCKETS) || OS(SYMBIAN)
     size_t size() const { return m_size; }
 
     int releaseFileDescriptor() { int temp = m_fileDescriptor; m_fileDescriptor = -1; return temp; }
@@ -94,7 +94,7 @@ private:
             bool deallocate;
         } m_oolMemory;
     };
-#elif USE(UNIX_DOMAIN_SOCKETS)
+#elif USE(UNIX_DOMAIN_SOCKETS) || OS(SYMBIAN)
     int m_fileDescriptor;
     size_t m_size;
 #endif

@@ -60,7 +60,7 @@ public:
         void encode(CoreIPC::ArgumentEncoder*) const;
         static bool decode(CoreIPC::ArgumentDecoder*, Handle&);
 
-#if USE(UNIX_DOMAIN_SOCKETS)
+#if USE(UNIX_DOMAIN_SOCKETS) || OS(SYMBIAN)
         CoreIPC::Attachment releaseToAttachment() const;
         void adoptFromAttachment(int fileDescriptor, size_t);
 #endif
