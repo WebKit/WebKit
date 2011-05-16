@@ -1,3 +1,12 @@
+2011-05-16  Alejandro G. Castro  <alex@igalia.com>
+
+        Skipped failing test, the fail already has a bug:
+
+        [Qt][GTK] plugins/get-url-with-javascript-url.html fails
+        https://bugs.webkit.org/show_bug.cgi?id=60834
+
+        * platform/gtk/Skipped:
+
 2011-05-15  Gavin Barraclough  <barraclough@apple.com>
 
         Reviewed by Geoff Garen & Michael Saboff.
