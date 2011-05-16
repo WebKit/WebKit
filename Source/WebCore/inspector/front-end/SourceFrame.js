@@ -56,6 +56,26 @@ WebInspector.SourceFrame.Events = {
     Loaded: "loaded"
 }
 
+WebInspector.SourceFrame.createSearchRegex = function(query)
+{
+    var regex;
+    
+    // First try creating regex if user knows the / / hint.
+    try {
+        if (/^\/.*\/$/.test(query))
+            regex = new RegExp(query.substring(1, query.length - 1));
+    } catch (e) {
+        // Silent catch.
+    }
+
+    // Otherwise just do case-insensitive search.
+    if (!regex) 
+        regex = createSearchRegex(query);
+    
+    return regex;
+}
+
+
 WebInspector.SourceFrame.prototype = {
     get visible()
     {
@@ -357,18 +377,9 @@ WebInspector.SourceFrame.prototype = {
             this._currentSearchResultIndex = -1;
             this._searchResults = [];
 
-            // First do case-insensitive search.
-            var regexObject = createSearchRegex(query);
-            this._collectRegexMatches(regexObject, this._searchResults);
-
-            // Then try regex search if user knows the / / hint.
-            try {
-                if (/^\/.*\/$/.test(query))
-                    this._collectRegexMatches(new RegExp(query.substring(1, query.length - 1)), this._searchResults);
-            } catch (e) {
-                // Silent catch.
-            }
-
+            var regex = WebInspector.SourceFrame.createSearchRegex(query);
+            this._searchResults = this._collectRegexMatches(regex);
+            
             callback(this, this._searchResults.length);
         }
 
@@ -391,24 +402,29 @@ WebInspector.SourceFrame.prototype = {
         this._textViewer.markAndRevealRange(null);
     },
 
+    hasSearchResults: function()
+    {
+        return this._searchResults.length > 0;
+    },
+
     jumpToFirstSearchResult: function()
     {
-        this._jumpToSearchResult(0);
+        this.jumpToSearchResult(0);
     },
 
     jumpToLastSearchResult: function()
     {
-        this._jumpToSearchResult(this._searchResults.length - 1);
+        this.jumpToSearchResult(this._searchResults.length - 1);
     },
 
     jumpToNextSearchResult: function()
     {
-        this._jumpToSearchResult(this._currentSearchResultIndex + 1);
+        this.jumpToSearchResult(this._currentSearchResultIndex + 1);
     },
 
     jumpToPreviousSearchResult: function()
     {
-        this._jumpToSearchResult(this._currentSearchResultIndex - 1);
+        this.jumpToSearchResult(this._currentSearchResultIndex - 1);
     },
 
     showingFirstSearchResult: function()
@@ -421,7 +437,7 @@ WebInspector.SourceFrame.prototype = {
         return this._searchResults.length && this._currentSearchResultIndex === (this._searchResults.length - 1);
     },
 
-    _jumpToSearchResult: function(index)
+    jumpToSearchResult: function(index)
     {
         if (!this.loaded || !this._searchResults.length)
             return;
@@ -429,19 +445,21 @@ WebInspector.SourceFrame.prototype = {
         this._textViewer.markAndRevealRange(this._searchResults[this._currentSearchResultIndex]);
     },
 
-    _collectRegexMatches: function(regexObject, ranges)
+    _collectRegexMatches: function(regexObject)
     {
+        var ranges = [];
         for (var i = 0; i < this._textModel.linesCount; ++i) {
             var line = this._textModel.line(i);
             var offset = 0;
             do {
                 var match = regexObject.exec(line);
                 if (match) {
-                    ranges.push(new WebInspector.TextRange(i, offset + match.index, i, offset + match.index + match[0].length));
+                    if (match[0].length)
+                        ranges.push(new WebInspector.TextRange(i, offset + match.index, i, offset + match.index + match[0].length));
                     offset += match.index + 1;
                     line = line.substring(match.index + 1);
                 }
-            } while (match)
+            } while (match && line);
         }
         return ranges;
     },

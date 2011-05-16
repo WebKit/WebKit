@@ -372,6 +372,9 @@ WebInspector.ResourcesPanel.prototype = {
     _showResourceView: function(resource)
     {
         var view = WebInspector.ResourceView.resourceViewForResource(resource);
+        // FIXME: This could be removed once we stop caching SourceFrames.        
+        if (view.searchCanceled)
+            view.searchCanceled();
         this._fetchAndApplyDiffMarkup(view, resource);
         this._innerShowView(view);
     },
@@ -678,25 +681,134 @@ WebInspector.ResourcesPanel.prototype = {
         this.resize();
     },
 
-    get searchableViews()
+    performSearch: function(query) 
     {
-        var views = [];
+        this._resetSearchResults();
+        var regex = WebInspector.SourceFrame.createSearchRegex(query);
+        var totalMatchesCount = 0;
 
-        const visibleView = this.visibleView;
-        if (visibleView && visibleView.performSearch)
-            views.push(visibleView);
-
-        function callback(resourceTreeElement)
+        function searchInEditedResource(treeElement)
         {
-            var resource = resourceTreeElement._resource;
-            var resourceView = WebInspector.ResourceView.resourceViewForResource(resource);
-            if (resourceView.performSearch && resourceView !== visibleView)
-                views.push(resourceView);
+            var resource = treeElement.representedObject;
+            if (resource.history.length == 0)
+                return;
+            var matchesCount = countRegexMatches(regex, resource.content)
+            treeElement.searchMatchesFound(matchesCount);
+            totalMatchesCount += matchesCount;
         }
-        this._forAllResourceTreeElements(callback);
-        return views;
+
+        function callback(error, result)
+        {
+            if (!error) {
+                for (var i = 0; i < result.length; i++) {
+                    var searchResult = result[i];
+                    var frameTreeElement = this._treeElementForFrameId[searchResult.frameId];
+                    if (!frameTreeElement)
+                        continue;
+                    var resource = frameTreeElement.resourceByURL(searchResult.url);
+
+                    if (resource.history.length > 0)
+                        continue; // Skip edited resources.
+                    this._findTreeElementForResource(resource).searchMatchesFound(searchResult.matchesCount);
+                    totalMatchesCount += searchResult.matchesCount;
+                }
+            }
+            
+            WebInspector.searchController.updateSearchMatchesCount(totalMatchesCount, this);
+            this._searchController = new WebInspector.ResourcesSearchController(this.resourcesListTreeElement);
+
+            if (this.sidebarTree.selectedTreeElement && this.sidebarTree.selectedTreeElement.searchMatchesCount)
+                this.jumpToNextSearchResult();
+        }
+        
+        this._forAllResourceTreeElements(searchInEditedResource.bind(this));
+        PageAgent.searchInResources(regex.source, !regex.ignoreCase, true, callback.bind(this));            
+    },
+    
+    _ensureViewSearchPerformed: function(callback)
+    {
+        function viewSearchPerformedCallback(searchId)
+        {
+            if (searchId !== this._lastViewSearchId)
+                return; // Search is obsolete.
+            this._viewSearchInProgress = false;
+            callback();
+        }
+
+        if (!this._viewSearchInProgress) {
+            if (!this.visibleView.hasSearchResults()) {
+                // We give id to each search, so that we can skip callbacks for obsolete searches.
+                this._lastViewSearchId = this._lastViewSearchId ? this._lastViewSearchId + 1 : 0;
+                this._viewSearchInProgress = true;
+                this.visibleView.performSearch(this.currentQuery, viewSearchPerformedCallback.bind(this, this._lastViewSearchId));
+            } else
+                callback();
+        }
     },
 
+    _showSearchResult: function(searchResult)
+    {
+        this._lastSearchResultIndex = searchResult.index;
+        this._lastSearchResultTreeElement = searchResult.treeElement;
+
+        // At first show view for treeElement.
+        if (searchResult.treeElement !== this.sidebarTree.selectedTreeElement) {
+            this.showResource(searchResult.treeElement.representedObject);
+            WebInspector.searchController.focusSearchField();
+        }
+        
+        function callback(searchId)
+        {
+            if (this.sidebarTree.selectedTreeElement !== this._lastSearchResultTreeElement)
+                return; // User has selected another view while we were searching.
+            if (this._lastSearchResultIndex != -1)
+                this.visibleView.jumpToSearchResult(this._lastSearchResultIndex);
+        }
+
+        // Then run SourceFrame search if needed and jump to search result index when done.
+        this._ensureViewSearchPerformed(callback.bind(this));
+    },
+
+    _resetSearchResults: function()
+    {
+        function callback(resourceTreeElement)
+        {
+            resourceTreeElement._resetSearchResults();
+        }
+
+        this._forAllResourceTreeElements(callback);
+        if (this.visibleView && this.visibleView.searchCanceled)
+            this.visibleView.searchCanceled();
+
+        this._lastSearchResultTreeElement = null;
+        this._lastSearchResultIndex = -1;
+        this._viewSearchInProgress = false;
+    },
+
+    searchCanceled: function()
+    {
+        WebInspector.searchController.updateSearchMatchesCount(0, this);
+        this._resetSearchResults();
+    },
+
+    jumpToNextSearchResult: function()
+    {
+        if (!this.currentSearchMatches)
+            return;
+        var currentTreeElement = this.sidebarTree.selectedTreeElement;
+        var nextSearchResult = this._searchController.nextSearchResult(currentTreeElement);
+        this._showSearchResult(nextSearchResult);
+    },
+    
+    jumpToPreviousSearchResult: function()
+    {
+        if (!this.currentSearchMatches)
+            return;
+        var currentTreeElement = this.sidebarTree.selectedTreeElement;
+        var previousSearchResult = this._searchController.previousSearchResult(currentTreeElement);
+        this._showSearchResult(previousSearchResult);
+    },
+    
     _forAllResourceTreeElements: function(callback)
     {
         var stop = false;
@@ -704,15 +816,6 @@ WebInspector.ResourcesPanel.prototype = {
             if (treeElement instanceof WebInspector.FrameResourceTreeElement)
                 stop = callback(treeElement);
         }
-    },
-
-    searchMatchFound: function(view, matches)
-    {
-        if (!view.resource)
-            return;
-        var treeElement = this._findTreeElementForResource(view.resource);
-        if (treeElement)
-            treeElement.searchMatchFound(matches);
     },
 
     _findTreeElementForResource: function(resource)
@@ -730,30 +833,6 @@ WebInspector.ResourcesPanel.prototype = {
         }
 
         return this.sidebarTree.findTreeElement(resource, isAncestor, getParent);
-    },
-
-    searchCanceled: function(startingNewSearch)
-    {
-        WebInspector.Panel.prototype.searchCanceled.call(this, startingNewSearch);
-
-        if (startingNewSearch)
-            return;
-
-        function callback(resourceTreeElement)
-        {
-            resourceTreeElement._errorsWarningsUpdated();
-        }
-        this._forAllResourceTreeElements(callback);
-    },
-
-    performSearch: function(query)
-    {
-        function callback(resourceTreeElement)
-        {
-            resourceTreeElement._resetBubble();
-        }
-        this._forAllResourceTreeElements(callback);
-        WebInspector.Panel.prototype.performSearch.call(this, query);
     },
 
     showView: function(view)
@@ -1011,6 +1090,11 @@ WebInspector.FrameTreeElement.prototype = {
         this._treeElementForResource[resource.url] = resourceTreeElement;
     },
 
+    resourceByURL: function(url)
+    {
+        return this._treeElementForResource[url].representedObject;
+    },
+
     appendChild: function(treeElement)
     {
         this._insertInPresentationOrder(this, treeElement);
@@ -1164,11 +1248,23 @@ WebInspector.FrameResourceTreeElement.prototype = {
         }
     },
 
-    searchMatchFound: function(matches)
+    _resetSearchResults: function()
     {
         this._resetBubble();
+        this._searchMatchesCount = 0;
+    },
 
-        this._setBubbleText(matches);
+    get searchMatchesCount()
+    {
+        return this._searchMatchesCount;
+    },
+
+    searchMatchesFound: function(matchesCount)
+    {
+        this._resetSearchResults();
+
+        this._searchMatchesCount = matchesCount;
+        this._setBubbleText(matchesCount);
         this._bubbleElement.addStyleClass("search-matches");
 
         // Expand, do not scroll into view.
@@ -1429,3 +1525,110 @@ WebInspector.StorageCategoryView.prototype = {
 }
 
 WebInspector.StorageCategoryView.prototype.__proto__ = WebInspector.View.prototype;
+
+WebInspector.ResourcesSearchController = function(rootElement)
+{
+    this._root = rootElement;
+    this._traverser = new WebInspector.SearchResultsTreeElementsTraverser(rootElement);
+    this._lastTreeElement = null;
+    this._lastIndex = -1;
+}
+
+WebInspector.ResourcesSearchController.prototype = {
+    nextSearchResult: function(currentTreeElement)
+    {
+        if (!currentTreeElement)
+            return this._searchResult(this._traverser.first(), 0);
+
+        if (!currentTreeElement.searchMatchesCount)
+            return this._searchResult(this._traverser.next(currentTreeElement), 0);
+        
+        if (this._lastTreeElement !== currentTreeElement || this._lastIndex === -1)
+            return this._searchResult(currentTreeElement, 0);
+
+        if (this._lastIndex == currentTreeElement.searchMatchesCount - 1)
+            return this._searchResult(this._traverser.next(currentTreeElement), 0);
+
+        return this._searchResult(currentTreeElement, this._lastIndex + 1);
+    },
+    
+    previousSearchResult: function(currentTreeElement)
+    {
+        if (!currentTreeElement) {
+            var treeElement = this._traverser.last();
+            return this._searchResult(treeElement, treeElement.searchMatchesCount - 1);            
+        }
+        
+        if (currentTreeElement.searchMatchesCount && this._lastTreeElement === currentTreeElement && this._lastIndex > 0)
+            return this._searchResult(currentTreeElement, this._lastIndex - 1);
+         
+        var treeElement = this._traverser.previous(currentTreeElement)
+        return this._searchResult(treeElement, treeElement.searchMatchesCount - 1);
+    },
+
+    _searchResult: function(treeElement, index)
+    {
+        this._lastTreeElement = treeElement;
+        this._lastIndex = index;
+        return {treeElement: treeElement, index: index};
+    }
+}
+
+WebInspector.SearchResultsTreeElementsTraverser = function(rootElement)
+{
+    this._root = rootElement;
+}
+
+WebInspector.SearchResultsTreeElementsTraverser.prototype = {
+    first: function()
+    {
+        return this.next(this._root);
+    },
+        
+    last: function(startTreeElement)
+    {
+        return this.previous(this._root);    
+    },
+
+    next: function(startTreeElement)
+    {
+        var treeElement = startTreeElement;
+        do {
+            treeElement = this._traverseNext(treeElement) || this._root;
+        } while (treeElement != startTreeElement && !this._elementHasSearchResults(treeElement));
+        return treeElement;
+    },
+
+    previous: function(startTreeElement)
+    {
+        var treeElement = startTreeElement;
+        do {
+            treeElement = this._traversePrevious(treeElement) || this._lastTreeElement();
+        } while (treeElement != startTreeElement && !this._elementHasSearchResults(treeElement));
+        return treeElement;
+    },
+
+    _traverseNext: function(treeElement)
+    {
+        return treeElement.traverseNextTreeElement(false, this._root, true);
+    },
+
+    _elementHasSearchResults: function(treeElement)
+    {
+        return treeElement instanceof WebInspector.FrameResourceTreeElement && treeElement.searchMatchesCount;
+    },
+
+    _traversePrevious: function(treeElement)
+    {
+        return treeElement.traversePreviousTreeElement(false, this._root, true);
+    },
+
+    _lastTreeElement: function()
+    {
+        var treeElement = this._root;
+        var nextTreeElement; 
+        while (nextTreeElement = this._traverseNext(treeElement))
+            treeElement = nextTreeElement;
+        return treeElement;        
+    },
+}

@@ -51,6 +51,7 @@ class InspectorObject;
 class InstrumentingAgents;
 class KURL;
 class Page;
+class RegularExpression;
 
 typedef String ErrorString;
 
@@ -89,9 +90,9 @@ public:
     void deleteCookie(ErrorString*, const String& cookieName, const String& domain);
     void getResourceTree(ErrorString*, RefPtr<InspectorObject>*);
     void getResourceContent(ErrorString*, const String& frameId, const String& url, const bool* const base64Encode, String* content);
+    void searchInResources(ErrorString*, const String&, const bool* const caseSensitive, const bool* const isRegex, RefPtr<InspectorArray>*);
 
     // InspectorInstrumentation API
-    void didCommitLoad(const String& url);
     void didClearWindowObjectInWorld(Frame*, DOMWrapperWorld*);
     void domContentEventFired();
     void loadEventFired();

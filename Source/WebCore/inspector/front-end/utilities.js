@@ -1033,12 +1033,27 @@ function highlightSearchResults(element, resultRanges)
 
 function createSearchRegex(query, extraFlags)
 {
+    // This should be kept the same as the one in InspectorPageAgent.cpp.
+    regexSpecialCharacters = "[](){}+-*.,?\\^$|";
     var regex = "";
     for (var i = 0; i < query.length; ++i) {
         var char = query.charAt(i);
-        if (char === "]")
-            char = "\\]";
-        regex += "[" + char + "]";
+        if (regexSpecialCharacters.indexOf(char) != -1)
+            regex += "\\";
+        regex += char;
     }
     return new RegExp(regex, "i" + (extraFlags || ""));
+}
+
+function countRegexMatches(regex, content)
+{
+    var text = content;
+    var result = 0;
+    var match;
+    while (text && (match = regex.exec(text))) {
+        if (match[0].length > 0)
+            ++result;
+        text = text.substring(match.index + 1);
+    }
+    return result;
 }

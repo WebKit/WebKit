@@ -1,3 +1,70 @@
+2011-05-16  Vsevolod Vlasov  <vsevik@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: Move Resources Panel search to backend
+        https://bugs.webkit.org/show_bug.cgi?id=59596
+
+        * inspector/Inspector.json:
+        * inspector/InspectorPageAgent.cpp:
+        (WebCore::decodeMainResource):
+        (WebCore::InspectorPageAgent::resourceContent):
+        (WebCore::cachedResourcesForFrame):
+        (WebCore::InspectorPageAgent::getCookies):
+        (WebCore::InspectorPageAgent::deleteCookie):
+        (WebCore::createSearchRegexSource):
+        (WebCore::countRegularExpressionMatches):
+        (WebCore::buildObjectForSearchMatch):
+        (WebCore::InspectorPageAgent::searchInResources):
+        (WebCore::InspectorPageAgent::domContentEventFired):
+        (WebCore::InspectorPageAgent::loadEventFired):
+        (WebCore::InspectorPageAgent::frameNavigated):
+        (WebCore::InspectorPageAgent::frameDetached):
+        (WebCore::InspectorPageAgent::buildObjectForFrameTree):
+        * inspector/InspectorPageAgent.h:
+        * inspector/front-end/ResourcesPanel.js:
+        (WebInspector.ResourcesPanel.prototype._showResourceView):
+        (WebInspector.ResourcesPanel.prototype.performSearch.searchInEditedResource):
+        (WebInspector.ResourcesPanel.prototype.performSearch.callback):
+        (WebInspector.ResourcesPanel.prototype.performSearch):
+        (WebInspector.ResourcesPanel.prototype._ensureViewSearchPerformed):
+        (WebInspector.ResourcesPanel.prototype._showSearchResult.callback):
+        (WebInspector.ResourcesPanel.prototype._showSearchResult):
+        (WebInspector.ResourcesPanel.prototype._resetSearchResults):
+        (WebInspector.ResourcesPanel.prototype.searchCanceled):
+        (WebInspector.ResourcesPanel.prototype.jumpToNextSearchResult):
+        (WebInspector.ResourcesPanel.prototype.jumpToPreviousSearchResult):
+        (WebInspector.FrameTreeElement.prototype.resourceByURL):
+        (WebInspector.FrameResourceTreeElement.prototype._resetSearchResults):
+        (WebInspector.FrameResourceTreeElement.prototype.get searchMatchesCount):
+        (WebInspector.FrameResourceTreeElement.prototype.searchMatchesFound):
+        (WebInspector.ResourcesSearchController):
+        (WebInspector.ResourcesSearchController.prototype.nextSearchResult):
+        (WebInspector.ResourcesSearchController.prototype.previousSearchResult):
+        (WebInspector.ResourcesSearchController.prototype._searchResult):
+        (WebInspector.SearchResultsTreeElementsTraverser):
+        (WebInspector.SearchResultsTreeElementsTraverser.prototype.first):
+        (WebInspector.SearchResultsTreeElementsTraverser.prototype.last):
+        (WebInspector.SearchResultsTreeElementsTraverser.prototype.next):
+        (WebInspector.SearchResultsTreeElementsTraverser.prototype.previous):
+        (WebInspector.SearchResultsTreeElementsTraverser.prototype._traverseNext):
+        (WebInspector.SearchResultsTreeElementsTraverser.prototype._elementHasSearchResults):
+        (WebInspector.SearchResultsTreeElementsTraverser.prototype._traversePrevious):
+        (WebInspector.SearchResultsTreeElementsTraverser.prototype._lastTreeElement):
+        * inspector/front-end/SourceFrame.js:
+        (WebInspector.SourceFrame.createSearchRegex):
+        (WebInspector.SourceFrame.prototype.performSearch.doFindSearchMatches):
+        (WebInspector.SourceFrame.prototype.performSearch):
+        (WebInspector.SourceFrame.prototype.hasSearchResults):
+        (WebInspector.SourceFrame.prototype.jumpToFirstSearchResult):
+        (WebInspector.SourceFrame.prototype.jumpToLastSearchResult):
+        (WebInspector.SourceFrame.prototype.jumpToNextSearchResult):
+        (WebInspector.SourceFrame.prototype.jumpToPreviousSearchResult):
+        (WebInspector.SourceFrame.prototype.jumpToSearchResult):
+        (WebInspector.SourceFrame.prototype._collectRegexMatches):
+        * inspector/front-end/utilities.js:
+        ():
+
 2011-05-16  Andreas Kling  <kling@webkit.org>
 
         Reviewed by Darin Adler.

@@ -53,6 +53,7 @@
 #include "InstrumentingAgents.h"
 #include "MemoryCache.h"
 #include "Page.h"
+#include "RegularExpression.h"
 #include "ScriptObject.h"
 #include "SharedBuffer.h"
 #include "TextEncoding.h"
@@ -61,8 +62,14 @@
 
 #include <wtf/CurrentTime.h>
 #include <wtf/ListHashSet.h>
+#include <wtf/Vector.h>
 
 namespace WebCore {
+
+namespace {
+// This should be kept the same as the one in front-end/utilities.js
+static const char regexSpecialCharacters[] = "[](){}+-*.,?\\^$|";
+}
 
 static bool decodeSharedBuffer(PassRefPtr<SharedBuffer> buffer, const String& textEncodingName, String* result)
 {
@@ -128,6 +135,13 @@ static bool decodeCachedResource(CachedResource* cachedResource, String* result)
     return false;
 }
 
+static bool decodeMainResource(Frame* frame, String* result)
+{
+    String textEncodingName = frame->document()->inputEncoding();
+    RefPtr<SharedBuffer> buffer = frame->loader()->documentLoader()->mainResourceData();
+    return decodeSharedBuffer(buffer, textEncodingName, result);
+}
+
 PassOwnPtr<InspectorPageAgent> InspectorPageAgent::create(InstrumentingAgents* instrumentingAgents, Page* page, InjectedScriptManager* injectedScriptManager)
 {
     return adoptPtr(new InspectorPageAgent(instrumentingAgents, page, injectedScriptManager));
@@ -144,11 +158,8 @@ void InspectorPageAgent::resourceContent(ErrorString* errorString, Frame* frame,
     DocumentLoader* loader = frameLoader->documentLoader();
     RefPtr<SharedBuffer> buffer;
     bool success = false;
-    if (equalIgnoringFragmentIdentifier(url, loader->url())) {
-        String textEncodingName = frame->document()->inputEncoding();
-        buffer = frameLoader->documentLoader()->mainResourceData();
-        success = decodeSharedBuffer(buffer, textEncodingName, result);
-    }
+    if (equalIgnoringFragmentIdentifier(url, loader->url()))
+        success = decodeMainResource(frame, result);
     if (!success)
         success = decodeCachedResource(cachedResource(frame, url), result);
 
@@ -335,6 +346,18 @@ static PassRefPtr<InspectorArray> buildArrayForCookies(ListHashSet<Cookie>& cook
     return cookies;
 }
 
+static Vector<CachedResource*> cachedResourcesForFrame(Frame* frame)
+{
+    Vector<CachedResource*> result;
+
+    const CachedResourceLoader::DocumentResourceMap& allResources = frame->document()->cachedResourceLoader()->allCachedResources();
+    CachedResourceLoader::DocumentResourceMap::const_iterator end = allResources.end();
+    for (CachedResourceLoader::DocumentResourceMap::const_iterator it = allResources.begin(); it != end; ++it)
+        result.append(it->second.get());
+
+    return result;
+}
+
 void InspectorPageAgent::getCookies(ErrorString*, RefPtr<InspectorArray>* cookies, WTF::String* cookiesString)
 {
     // If we can get raw cookies.
@@ -350,11 +373,10 @@ void InspectorPageAgent::getCookies(ErrorString*, RefPtr<InspectorArray>* cookie
 
     for (Frame* frame = mainFrame(); frame; frame = frame->tree()->traverseNext(mainFrame())) {
         Document* document = frame->document();
-        const CachedResourceLoader::DocumentResourceMap& allResources = document->cachedResourceLoader()->allCachedResources();
-        CachedResourceLoader::DocumentResourceMap::const_iterator end = allResources.end();
-        for (CachedResourceLoader::DocumentResourceMap::const_iterator it = allResources.begin(); it != end; ++it) {
+        Vector<CachedResource*> allResources = cachedResourcesForFrame(frame);
+        for (Vector<CachedResource*>::const_iterator it = allResources.begin(); it != allResources.end(); ++it) {
             Vector<Cookie> docCookiesList;
-            rawCookiesImplemented = getRawCookies(document, KURL(ParsedURLString, it->second->url()), docCookiesList);
+            rawCookiesImplemented = getRawCookies(document, KURL(ParsedURLString, (*it)->url()), docCookiesList);
 
             if (!rawCookiesImplemented) {
                 // FIXME: We need duplication checking for the String representation of cookies.
@@ -385,10 +407,10 @@ void InspectorPageAgent::deleteCookie(ErrorString*, const String& cookieName, co
         Document* document = frame->document();
         if (document->url().host() != domain)
             continue;
-        const CachedResourceLoader::DocumentResourceMap& allResources = document->cachedResourceLoader()->allCachedResources();
-        CachedResourceLoader::DocumentResourceMap::const_iterator end = allResources.end();
-        for (CachedResourceLoader::DocumentResourceMap::const_iterator it = allResources.begin(); it != end; ++it)
-            WebCore::deleteCookie(document, KURL(ParsedURLString, it->second->url()), cookieName);
+
+        Vector<CachedResource*> allResources = cachedResourcesForFrame(frame);
+        for (Vector<CachedResource*>::const_iterator it = allResources.begin(); it != allResources.end(); ++it)
+            WebCore::deleteCookie(document, KURL(ParsedURLString, (*it)->url()), cookieName);
     }
 }
 
@@ -410,6 +432,102 @@ void InspectorPageAgent::getResourceContent(ErrorString* errorString, const Stri
         InspectorPageAgent::resourceContent(errorString, frame, KURL(ParsedURLString, url), content);
 }
 
+static String createSearchRegexSource(const String& text)
+{
+    String result;
+    const UChar* characters = text.characters();
+    String specials(regexSpecialCharacters);
+
+    for (unsigned i = 0; i < text.length(); i++) {
+        if (specials.find(characters[i]))
+            result.append("\\");
+        result.append(characters[i]);
+    }
+
+    return result;
+}
+
+static int countRegularExpressionMatches(const RegularExpression& regex, const String& content)
+{
+    int result = 0;
+    int position;
+    unsigned start = 0;
+    int matchLength;
+    while ((position = regex.match(content, start, &matchLength)) != -1) {
+        if (start >= content.length())
+            break;
+        if (matchLength > 0)
+            ++result;
+        start = position + 1;
+    }
+    return result;
+}
+
+static PassRefPtr<InspectorObject> buildObjectForSearchMatch(const String& frameId, const String& url, int matchesCount)
+{
+    RefPtr<InspectorObject> result = InspectorObject::create();
+    result->setString("frameId", frameId);
+    result->setString("url", url);
+    result->setNumber("matchesCount", matchesCount);
+
+    return result;
+}
+
+void InspectorPageAgent::searchInResources(ErrorString*, const String& text, const bool* const optionalCaseSensitive, const bool* const optionalIsRegex, RefPtr<InspectorArray>* object)
+{
+    RefPtr<InspectorArray> result = InspectorArray::create();
+
+    bool isRegex = optionalIsRegex ? *optionalIsRegex : false;
+    String regexSource = isRegex ? text : createSearchRegexSource(text);
+
+    bool caseSensitive = optionalCaseSensitive ? *optionalCaseSensitive : false;
+    RegularExpression regex(regexSource, caseSensitive ? TextCaseSensitive : TextCaseInsensitive);
+
+    for (Frame* frame = m_page->mainFrame(); frame; frame = frame->tree()->traverseNext(m_page->mainFrame())) {
+        String content;
+        Vector<CachedResource*> allResources = cachedResourcesForFrame(frame);
+        for (Vector<CachedResource*>::const_iterator it = allResources.begin(); it != allResources.end(); ++it) {
+            CachedResource* cachedResource = *it;
+            switch (InspectorPageAgent::cachedResourceType(*cachedResource)) {
+            case InspectorPageAgent::StylesheetResource:
+            case InspectorPageAgent::ScriptResource:
+                if (decodeCachedResource(cachedResource, &content)) {
+                    int matchesCount = countRegularExpressionMatches(regex, content);
+                    if (matchesCount)
+                        result->pushValue(buildObjectForSearchMatch(frameId(frame), cachedResource->url(), matchesCount));
+                }
+                break;
+            default:
+                break;
+            }
+        }
+        if (decodeMainResource(frame, &content)) {
+            int matchesCount = countRegularExpressionMatches(regex, content);
+            if (matchesCount)
+                result->pushValue(buildObjectForSearchMatch(frameId(frame), frame->document()->url(), matchesCount));
+        }
+    }
+
+    *object = result;
+}
+
+void InspectorPageAgent::didClearWindowObjectInWorld(Frame* frame, DOMWrapperWorld* world)
+{
+    if (world != mainThreadNormalWorld())
+        return;
+
+    if (frame == m_page->mainFrame())
+        m_injectedScriptManager->discardInjectedScripts();
+
+    if (m_scriptsToEvaluateOnLoad.size()) {
+        ScriptState* scriptState = mainWorldScriptState(frame);
+        for (Vector<String>::iterator it = m_scriptsToEvaluateOnLoad.begin();
+             it != m_scriptsToEvaluateOnLoad.end(); ++it) {
+            m_injectedScriptManager->injectScript(*it, scriptState);
+        }
+    }
+}
+
 void InspectorPageAgent::domContentEventFired()
 {
      m_frontend->domContentEventFired(currentTime());
@@ -428,23 +546,6 @@ void InspectorPageAgent::frameNavigated(DocumentLoader* loader)
 void InspectorPageAgent::frameDetached(Frame* frame)
 {
     m_frontend->frameDetached(frameId(frame));
-}
-
-void InspectorPageAgent::didClearWindowObjectInWorld(Frame* frame, DOMWrapperWorld* world)
-{
-    if (world != mainThreadNormalWorld())
-        return;
-
-    if (frame == m_page->mainFrame())
-        m_injectedScriptManager->discardInjectedScripts();
-
-    if (m_scriptsToEvaluateOnLoad.size()) {
-        ScriptState* scriptState = mainWorldScriptState(frame);
-        for (Vector<String>::iterator it = m_scriptsToEvaluateOnLoad.begin();
-             it != m_scriptsToEvaluateOnLoad.end(); ++it) {
-            m_injectedScriptManager->injectScript(*it, scriptState);
-        }
-    }
 }
 
 Frame* InspectorPageAgent::mainFrame()
@@ -504,10 +605,10 @@ PassRefPtr<InspectorObject> InspectorPageAgent::buildObjectForFrameTree(Frame* f
 
     RefPtr<InspectorArray> subresources = InspectorArray::create();
     result->setArray("resources", subresources);
-    const CachedResourceLoader::DocumentResourceMap& allResources = frame->document()->cachedResourceLoader()->allCachedResources();
-    CachedResourceLoader::DocumentResourceMap::const_iterator end = allResources.end();
-    for (CachedResourceLoader::DocumentResourceMap::const_iterator it = allResources.begin(); it != end; ++it) {
-        CachedResource* cachedResource = it->second.get();
+
+    Vector<CachedResource*> allResources = cachedResourcesForFrame(frame);
+    for (Vector<CachedResource*>::const_iterator it = allResources.begin(); it != allResources.end(); ++it) {
+        CachedResource* cachedResource = *it;
         RefPtr<InspectorObject> resourceObject = InspectorObject::create();
         resourceObject->setString("url", cachedResource->url());
         resourceObject->setString("type", cachedResourceTypeString(*cachedResource));
