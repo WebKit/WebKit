@@ -1,3 +1,12 @@
+2011-05-16  Andrew Scherkus  <scherkus@chromium.org>
+
+        Unreviewed, rebaselining media/video-aspect-ratio.html for chromium-gpu-{linux,mac,win}.
+
+        * platform/chromium-gpu-linux/media/video-aspect-ratio-expected.png: Added.
+        * platform/chromium-gpu-mac/media/video-aspect-ratio-expected.png: Added.
+        * platform/chromium-gpu-win/media/video-aspect-ratio-expected.png: Added.
+        * platform/chromium/test_expectations.txt:
+
 2011-05-16  Adam Barth  <abarth@webkit.org>
 
         Layout test file-URL-with-port-number.html fails on Mac and Linux

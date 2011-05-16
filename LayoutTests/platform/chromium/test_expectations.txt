@@ -3868,8 +3868,6 @@ BUGWK60121 : http/tests/misc/will-send-request-returns-null-on-redirect.html = T
 // changed in r84745 (see commented-out entry above)
 BUGWK50661 WIN LINUX : fast/dom/HTMLMeterElement/meter-element.html = TEXT
 
-BUGWK60116 BUGCR80855 GPU : media/video-aspect-ratio.html = IMAGE
-
 BUGSENORBLANCO WIN LINUX : animations/animation-drt-api-multiple-keyframes.html = TEXT
 BUGSENORBLANCO WIN LINUX : animations/animation-drt-api.html = TEXT
 BUGSENORBLANCO GPU LEOPARD : compositing/direct-image-compositing.html = IMAGE CRASH
