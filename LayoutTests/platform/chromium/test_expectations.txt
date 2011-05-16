@@ -2563,8 +2563,9 @@ BUGWK61161 LINUX WIN : fast/blockflow/border-image-vertical-lr.html = IMAGE+TEXT
 // see BUGCR75426 list
 
 // New test, added in http://trac.webkit.org/changeset/70814.
-// This test was removed by revert of r70814, but keep it for now.
-//BUGWK61166 LINUX MAC WIN : media/video-seek-by-small-increment.html = TEXT
+//
+// We're passing it but possibly by sheer luck. Needs investigation.
+//BUGCR61166 LINUX MAC WIN : media/video-seek-by-small-increment.html = TEXT
 
 // These tests started failing presumably after r70850
 BUGWK48627 LEOPARD : fast/invalid/missing-end-tag.xhtml = IMAGE

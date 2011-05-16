@@ -39,6 +39,12 @@
 
 2011-05-16  Andrew Scherkus  <scherkus@chromium.org>
 
+        Unreviewed, correcting bug number for a test expectation.
+
+        * platform/chromium/test_expectations.txt:
+
+2011-05-16  Andrew Scherkus  <scherkus@chromium.org>
+
         Unreviewed, de-duplicating media/video-zoom-controls.html expectations.
 
         * platform/chromium/test_expectations.txt:
