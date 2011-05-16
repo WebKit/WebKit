@@ -1,3 +1,28 @@
+2011-05-16  Yuzo Fujishima  <yuzo@google.com>
+
+        Reviewed by Antti Koivisto.
+
+        Fix for Bug 43704 - Web font is printed as blank if it is not cached
+        https://bugs.webkit.org/show_bug.cgi?id=43704
+
+        In setting printing, we should not validate resources already cached
+        for the document. If we do, web fonts used for screen are revalidated
+        and possiby reloaded. Then the fonts can be shown as blank on print.
+        This patch won't save the case where screen and print use different web
+        fonts. Nonetheless, this is an improvement.
+
+        No new tests because there seems to be no good way to test print images.
+
+        * editing/Editor.cpp:
+        (WebCore::Editor::paste): Use ResourceCacheValidationSuppressor instead of explicitly allowing/disallowing stale resources.
+        * loader/cache/CachedResourceLoader.h:
+        (WebCore::ResourceCacheValidationSuppressor::ResourceCacheValidationSuppressor): RAII class for allowing/disallowing stale resources.
+        (WebCore::ResourceCacheValidationSuppressor::~ResourceCacheValidationSuppressor):
+        * page/DragController.cpp:
+        (WebCore::DragController::concludeEditDrag): Use ResourceCacheValidationSuppressor instead of explicitly allowing/disallowing stale resources.
+        * page/Frame.cpp:
+        (WebCore::Frame::setPrinting): Use ResourceCacheValidationSuppressor to allow stale resources in printing.
+
 2011-05-16  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Darin Adler.

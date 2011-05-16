@@ -447,12 +447,11 @@ bool DragController::concludeEditDrag(DragData* dragData)
     if (!range)
         return false;
     CachedResourceLoader* cachedResourceLoader = range->ownerDocument()->cachedResourceLoader();
-    cachedResourceLoader->setAllowStaleResources(true);
+    ResourceCacheValidationSuppressor validationSuppressor(cachedResourceLoader);
     if (dragIsMove(innerFrame->selection(), dragData) || dragCaret.isContentRichlyEditable()) {
         bool chosePlainText = false;
         RefPtr<DocumentFragment> fragment = documentFragmentFromDragData(dragData, innerFrame, range, true, chosePlainText);
         if (!fragment || !innerFrame->editor()->shouldInsertFragment(fragment, range, EditorInsertActionDropped)) {
-            cachedResourceLoader->setAllowStaleResources(false);
             return false;
         }
 
@@ -476,7 +475,6 @@ bool DragController::concludeEditDrag(DragData* dragData)
     } else {
         String text = dragData->asPlainText(innerFrame);
         if (text.isEmpty() || !innerFrame->editor()->shouldInsertText(text, range.get(), EditorInsertActionDropped)) {
-            cachedResourceLoader->setAllowStaleResources(false);
             return false;
         }
 
@@ -484,7 +482,6 @@ bool DragController::concludeEditDrag(DragData* dragData)
         if (setSelectionToDragCaret(innerFrame, dragCaret, range, point))
             applyCommand(ReplaceSelectionCommand::create(m_documentUnderMouse.get(), createFragmentFromText(range.get(), text),  ReplaceSelectionCommand::SelectReplacement | ReplaceSelectionCommand::MatchStyle | ReplaceSelectionCommand::PreventNesting));
     }
-    cachedResourceLoader->setAllowStaleResources(false);
 
     return true;
 }

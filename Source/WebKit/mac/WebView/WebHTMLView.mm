@@ -76,6 +76,7 @@
 #import <WebCore/CSSMutableStyleDeclaration.h>
 #import <WebCore/CachedImage.h>
 #import <WebCore/CachedResourceClient.h>
+#import <WebCore/CachedResourceLoader.h>
 #import <WebCore/Chrome.h>
 #import <WebCore/ColorMac.h>
 #import <WebCore/ContextMenu.h>
@@ -3834,6 +3835,10 @@ static PassRefPtr<KeyboardEvent> currentKeyboardEvent(Frame* coreFrame)
         if (FrameView* coreView = coreFrame->view())
             coreView->setMediaType(_private->printing ? "print" : "screen");
         if (Document* document = coreFrame->document()) {
+            // In setting printing, we should not validate resources already cached for the document.
+            // See https://bugs.webkit.org/show_bug.cgi?id=43704
+            ResourceCacheValidationSuppressor validationSuppressor(document->cachedResourceLoader());
+
             document->setPaginatedForScreen(_private->paginateScreenContent);
             document->setPrinting(_private->printing);
             document->styleSelectorChanged(RecalcStyleImmediately);

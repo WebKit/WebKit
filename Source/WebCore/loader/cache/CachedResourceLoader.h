@@ -54,6 +54,7 @@ class KURL;
 class CachedResourceLoader {
     WTF_MAKE_NONCOPYABLE(CachedResourceLoader); WTF_MAKE_FAST_ALLOCATED;
 friend class ImageLoader;
+friend class ResourceCacheValidationSuppressor;
 
 public:
     CachedResourceLoader(Document*);
@@ -96,8 +97,6 @@ public:
     void loadDone(CachedResourceRequest*);
     void cancelRequests();
     
-    void setAllowStaleResources(bool allowStaleResources) { m_allowStaleResources = allowStaleResources; }
-
     void incrementRequestCount(const CachedResource*);
     void decrementRequestCount(const CachedResource*);
     int requestCount();
@@ -149,6 +148,29 @@ private:
     bool m_allowStaleResources : 1;
 };
 
-}
+class ResourceCacheValidationSuppressor {
+    WTF_MAKE_NONCOPYABLE(ResourceCacheValidationSuppressor);
+    WTF_MAKE_FAST_ALLOCATED;
+public:
+    ResourceCacheValidationSuppressor(CachedResourceLoader* loader)
+        : m_loader(loader)
+        , m_previousState(false)
+    {
+        if (m_loader) {
+            m_previousState = m_loader->m_allowStaleResources;
+            m_loader->m_allowStaleResources = true;
+        }
+    }
+    ~ResourceCacheValidationSuppressor()
+    {
+        if (m_loader)
+            m_loader->m_allowStaleResources = m_previousState;
+    }
+private:
+    CachedResourceLoader* m_loader;
+    bool m_previousState;
+};
+
+} // namespace WebCore
 
 #endif

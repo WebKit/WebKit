@@ -547,6 +547,10 @@ Color Frame::getDocumentBackgroundColor() const
 
 void Frame::setPrinting(bool printing, const FloatSize& pageSize, float maximumShrinkRatio, AdjustViewSizeOrNot shouldAdjustViewSize)
 {
+    // In setting printing, we should not validate resources already cached for the document.
+    // See https://bugs.webkit.org/show_bug.cgi?id=43704
+    ResourceCacheValidationSuppressor validationSuppressor(m_doc->cachedResourceLoader());
+
     m_doc->setPrinting(printing);
     view()->adjustMediaTypeForPrinting(printing);
 

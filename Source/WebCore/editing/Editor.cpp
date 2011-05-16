@@ -1216,12 +1216,11 @@ void Editor::paste()
         return;
     updateMarkersForWordsAffectedByEditing(false);
     CachedResourceLoader* loader = m_frame->document()->cachedResourceLoader();
-    loader->setAllowStaleResources(true);
+    ResourceCacheValidationSuppressor validationSuppressor(loader);
     if (m_frame->selection()->isContentRichlyEditable())
         pasteWithPasteboard(Pasteboard::generalPasteboard(), true);
     else
         pasteAsPlainTextWithPasteboard(Pasteboard::generalPasteboard());
-    loader->setAllowStaleResources(false);
 }
 
 void Editor::pasteAsPlainText()
