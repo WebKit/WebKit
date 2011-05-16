@@ -57,14 +57,15 @@ static String convertAttributeNameToPropertyName(const String& name)
     const UChar* characters = name.characters();
     unsigned length = name.length();
     for (unsigned i = 5; i < length; ++i) {
-        if (characters[i] != '-')
-            stringBuilder.append(characters[i]);
+        UChar character = characters[i];
+        if (character != '-')
+            stringBuilder.append(character);
         else {
             if ((i + 1 < length) && isASCIILower(characters[i + 1])) {
                 stringBuilder.append(toASCIIUpper(characters[i + 1]));
                 ++i;
             } else
-                stringBuilder.append(characters[i]);
+                stringBuilder.append(character);
         }
     }
 
@@ -121,7 +122,7 @@ static String convertPropertyNameToAttributeName(const String& name)
         UChar character = characters[i];
         if (isASCIIUpper(character)) {
             builder.append('-');
-            builder.append(toASCIILower(characters[i]));
+            builder.append(toASCIILower(character));
         } else
             builder.append(character);
     }

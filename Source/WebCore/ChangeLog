@@ -1,3 +1,16 @@
+2011-05-16  Nikolas Zimmermann  <nzimmermann@rim.com>
+
+        Not reviewed.
+
+        Switch from Vector<UChar> to StringBuilder in dom/
+        https://bugs.webkit.org/show_bug.cgi?id=57843
+
+        Incorporate comment from Darin/Andreas.
+
+        * dom/DatasetDOMStringMap.cpp:
+        (WebCore::convertAttributeNameToPropertyName): Use 'character' local, instead of charaters[i].
+        (WebCore::convertPropertyNameToAttributeName): Ditto.
+
 2011-05-16  Alexander Pavlov  <apavlov@chromium.org>
 
         Reviewed by Pavel Feldman.
