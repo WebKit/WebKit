@@ -1,3 +1,11 @@
+2011-05-16  Jon Lee  <jonlee@apple.com>
+
+        Fix for broken regression tests. Adding null pointer check
+
+        * page/FrameView.cpp:
+        (WebCore::FrameView::didAddHorizontalScrollbar):
+        (WebCore::FrameView::willRemoveHorizontalScrollbar):
+
 2011-05-16  Adrienne Walker  <enne@google.com>
 
         Reviewed by James Robinson.
