@@ -1,3 +1,9 @@
+2011-05-16  Pavel Feldman  <pfeldman@google.com>
+
+        Not reviewed: simplify inspector dom actions test.
+
+        * inspector/elements/edit-dom-actions.html:
+
 2011-05-16  Alexander Pavlov  <apavlov@chromium.org>
 
         Reviewed by Pavel Feldman.

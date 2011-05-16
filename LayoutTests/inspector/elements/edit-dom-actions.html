@@ -135,13 +135,12 @@ function test()
         var treeElement = WebInspector.panels.elements.treeOutline.findTreeElement(node);
         var textElement = treeElement.listItemElement.getElementsByClassName(className)[0];
         treeElement._startEditingTarget(textElement);
+        return textElement;
     }
 
     function editNodePartAndRun(node, className, newValue, step2)
     {
-        editNodePart(node, className);
-
-        var editorElement = window.getSelection().anchorNode.parentElement;
+        var editorElement = editNodePart(node, className);
         editorElement.textContent = newValue;
         editorElement.dispatchEvent(InspectorTest.createKeyEvent("Enter"));
         InspectorTest.runAfterPendingDispatches(step2);
