@@ -4091,6 +4091,7 @@
 		B1E54596134629C10092A545 /* MediaStreamFrameController.h in Headers */ = {isa = PBXBuildFile; fileRef = B1E5458A134629C10092A545 /* MediaStreamFrameController.h */; };
 		B1E54597134629C10092A545 /* MediaStreamController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B1E5458B134629C10092A545 /* MediaStreamController.cpp */; };
 		B1E54598134629C10092A545 /* MediaStreamController.h in Headers */ = {isa = PBXBuildFile; fileRef = B1E5458C134629C10092A545 /* MediaStreamController.h */; };
+		B1E54593134629C10092A545 /* CallbackTask.h in Headers */ = {isa = PBXBuildFile; fileRef = B1E54587134629C10092A545 /* CallbackTask.h */; };
 		B1E54599134629C10092A545 /* NavigatorUserMediaError.h in Headers */ = {isa = PBXBuildFile; fileRef = B1E5458D134629C10092A545 /* NavigatorUserMediaError.h */; };
 		B1E5459B134629C10092A545 /* NavigatorUserMediaErrorCallback.h in Headers */ = {isa = PBXBuildFile; fileRef = B1E5458F134629C10092A545 /* NavigatorUserMediaErrorCallback.h */; };
 		B1E5459D134629C10092A545 /* NavigatorUserMediaSuccessCallback.h in Headers */ = {isa = PBXBuildFile; fileRef = B1E54591134629C10092A545 /* NavigatorUserMediaSuccessCallback.h */; };
@@ -10348,6 +10349,7 @@
 		B1E5458A134629C10092A545 /* MediaStreamFrameController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MediaStreamFrameController.h; sourceTree = "<group>"; };
 		B1E5458B134629C10092A545 /* MediaStreamController.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MediaStreamController.cpp; sourceTree = "<group>"; };
 		B1E5458C134629C10092A545 /* MediaStreamController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MediaStreamController.h; sourceTree = "<group>"; };
+		B1E54587134629C10092A545 /* CallbackTask.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CallbackTask.h; sourceTree = "<group>"; };
 		B1E5458D134629C10092A545 /* NavigatorUserMediaError.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NavigatorUserMediaError.h; sourceTree = "<group>"; };
 		B1E5458E134629C10092A545 /* NavigatorUserMediaError.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = NavigatorUserMediaError.idl; sourceTree = "<group>"; };
 		B1E5458F134629C10092A545 /* NavigatorUserMediaErrorCallback.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NavigatorUserMediaErrorCallback.h; sourceTree = "<group>"; };
@@ -14096,6 +14098,7 @@
 				BC124EE40C2641CD009E2349 /* BarInfo.cpp */,
 				BC124EE50C2641CD009E2349 /* BarInfo.h */,
 				BC124EE60C2641CD009E2349 /* BarInfo.idl */,
+				B1E54587134629C10092A545 /* CallbackTask.h */,
 				14D8238A0AF92DF60004F057 /* Chrome.cpp */,
 				14D823500AF92A790004F057 /* Chrome.h */,
 				14D824060AF93AEB0004F057 /* ChromeClient.h */,
@@ -22773,6 +22776,7 @@
 				FD1660A513787C6D001FFA7B /* DenormalDisabler.h in Headers */,
 				BCE5644E137A34D6007D2934 /* ConsoleTypes.h in Headers */,
 				BCF7E491137CD7C7001DDAE7 /* AdjustViewSizeOrNot.h in Headers */,
+				B1E54593134629C10092A545 /* CallbackTask.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -3102,6 +3102,7 @@ contains(DEFINES, ENABLE_GEOLOCATION=1) {
 
 contains(DEFINES, ENABLE_MEDIA_STREAM=1) {
     HEADERS += \
+        page/CallbackTask.h \
         page/MediaStreamClient.h \
         page/MediaStreamController.h \
         page/MediaStreamFrameController.h \

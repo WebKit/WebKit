@@ -1,3 +1,15 @@
+2011-05-16  Leandro Gracia Gil  <leandrogracia@chromium.org>
+
+        Reviewed by Tony Gentilcore.
+
+        Media Stream API: add local stream requests.
+        https://bugs.webkit.org/show_bug.cgi?id=60177
+
+        Re-enable the argument-types test as the navigator.getUserMedia options
+        are now being parsed and raise the appropriate exceptions.
+
+        * platform/chromium/test_expectations.txt:
+
 2011-05-16  Mark Pilgrim  <pilgrim@chromium.org>
 
         Reviewed by Tony Chang.

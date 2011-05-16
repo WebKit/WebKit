@@ -27,14 +27,18 @@
 
 #if ENABLE(MEDIA_STREAM)
 
+#include "MediaStreamClient.h"
+#include "NavigatorUserMediaError.h"
 #include <wtf/Forward.h>
 #include <wtf/HashMap.h>
 #include <wtf/Noncopyable.h>
+#include <wtf/text/StringHash.h>
 
 namespace WebCore {
 
 class MediaStreamClient;
 class MediaStreamFrameController;
+class SecurityOrigin;
 
 class MediaStreamController {
     WTF_MAKE_NONCOPYABLE(MediaStreamController);
@@ -42,15 +46,24 @@ public:
     MediaStreamController(MediaStreamClient*);
     virtual ~MediaStreamController();
 
+    bool isClientAvailable() const;
     void unregisterFrameController(MediaStreamFrameController*);
+
+    void generateStream(MediaStreamFrameController*, int requestId, GenerateStreamOptionFlags, PassRefPtr<SecurityOrigin>);
+
+    void streamGenerated(int requestId, const String& streamLabel);
+    void streamGenerationFailed(int requestId, NavigatorUserMediaError::ErrorCode);
 
 private:
     int registerRequest(int localRequestId, MediaStreamFrameController*);
+    void registerStream(const String& streamLabel, MediaStreamFrameController*);
 
     class Request;
     typedef HashMap<int, Request> RequestMap;
+    typedef HashMap<String, MediaStreamFrameController*> StreamMap;
 
     RequestMap m_requests;
+    StreamMap m_streams;
 
     MediaStreamClient* m_client;
     int m_nextGlobalRequestId;

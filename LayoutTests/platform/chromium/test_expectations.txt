@@ -4025,9 +4025,6 @@ BUGWK54181 : fast/events/page-visibility-iframe-move-test.html = TIMEOUT
 BUGWK54181 : fast/events/page-visibility-iframe-propagation-test.html = TIMEOUT
 BUGWK54181 : fast/events/page-visibility-transition-test.html = TIMEOUT
 
-// To be re-enabled after landing https://bugs.webkit.org/show_bug.cgi?id=60177.
-BUGWK60387 : fast/dom/MediaStream/argument-types.html = FAIL
-
 BUGCR82281 : fast/xpath/xpath-iterator-result-should-mark-its-nodeset.html = TEXT
 BUGCR82281 : fast/xpath/xpath-other-nodeset-result-should-mark-its-nodeset.html = TEXT
 BUGCR82281 : fast/xpath/xpath-snapshot-result-should-mark-its-nodeset.html = TEXT

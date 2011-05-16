@@ -3391,6 +3391,7 @@
             'notifications/NotificationContents.h',
             'page/BarInfo.cpp',
             'page/BarInfo.h',
+            'page/CallbackTask.h',
             'page/Chrome.cpp',
             'page/Console.cpp',
             'page/ContentSecurityPolicy.cpp',

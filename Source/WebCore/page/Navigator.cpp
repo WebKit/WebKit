@@ -35,6 +35,7 @@
 #include "Geolocation.h"
 #include "KURL.h"
 #include "Language.h"
+#include "MediaStreamFrameController.h"
 #include "NavigatorUserMediaErrorCallback.h"
 #include "NavigatorUserMediaSuccessCallback.h"
 #include "Page.h"
@@ -245,9 +246,10 @@ void Navigator::registerProtocolHandler(const String& scheme, const String& url,
 #endif
 
 #if ENABLE(MEDIA_STREAM)
-void Navigator::webkitGetUserMedia(const String&, PassRefPtr<NavigatorUserMediaSuccessCallback>, PassRefPtr<NavigatorUserMediaErrorCallback>, ExceptionCode&)
+void Navigator::webkitGetUserMedia(const String& options, PassRefPtr<NavigatorUserMediaSuccessCallback> successCallback, PassRefPtr<NavigatorUserMediaErrorCallback> errorCallback, ExceptionCode& ec)
 {
-    // FIXME: implement a call to the media stream context when available.
+    if (m_frame && m_frame->mediaStreamFrameController())
+        m_frame->mediaStreamFrameController()->generateStream(options, successCallback, errorCallback, ec);
 }
 #endif
 

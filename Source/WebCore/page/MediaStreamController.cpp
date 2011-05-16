@@ -27,8 +27,8 @@
 
 #if ENABLE(MEDIA_STREAM)
 
-#include "MediaStreamClient.h"
 #include "MediaStreamFrameController.h"
+#include "SecurityOrigin.h"
 #include <wtf/Vector.h>
 
 namespace WebCore {
@@ -63,6 +63,11 @@ MediaStreamController::~MediaStreamController()
         m_client->mediaStreamDestroyed();
 }
 
+bool MediaStreamController::isClientAvailable() const
+{
+    return m_client;
+}
+
 void MediaStreamController::unregisterFrameController(MediaStreamFrameController* frameController)
 {
     ASSERT(frameController);
@@ -75,12 +80,58 @@ void MediaStreamController::unregisterFrameController(MediaStreamFrameController
 
     for (Vector<int>::iterator it = frameRequests.begin(); it != frameRequests.end(); ++it)
         m_requests.remove(*it);
+
+    Vector<String> frameStreams;
+    for (StreamMap::iterator it = m_streams.begin(); it != m_streams.end(); ++it)
+        if (it->second == frameController)
+            frameStreams.append(it->first);
+
+    for (Vector<String>::iterator it = frameStreams.begin(); it != frameStreams.end(); ++it)
+        m_streams.remove(*it);
 }
 
 int MediaStreamController::registerRequest(int localId, MediaStreamFrameController* frameController)
 {
+    ASSERT(localId > 0);
+    ASSERT(frameController);
     m_requests.add(m_nextGlobalRequestId, Request(localId, frameController));
     return m_nextGlobalRequestId++;
+}
+
+void MediaStreamController::registerStream(const String& streamLabel, MediaStreamFrameController* frameController)
+{
+    ASSERT(frameController);
+    ASSERT(!m_streams.contains(streamLabel));
+    m_streams.add(streamLabel, frameController);
+}
+
+void MediaStreamController::generateStream(MediaStreamFrameController* frameController, int localId, GenerateStreamOptionFlags flags, PassRefPtr<SecurityOrigin> securityOrigin)
+{
+    ASSERT(m_client);
+    int controllerRequestId = registerRequest(localId, frameController);
+    m_client->generateStream(controllerRequestId, flags, securityOrigin);
+}
+
+void MediaStreamController::streamGenerated(int controllerRequestId, const String& streamLabel)
+{
+    // Don't assert since the frame controller can have been destroyed while the request reply was coming back.
+    if (m_requests.contains(controllerRequestId)) {
+        const Request& request = m_requests.get(controllerRequestId);
+        registerStream(streamLabel, request.frameController());
+        m_requests.remove(controllerRequestId);
+        ASSERT(request.frameController());
+        request.frameController()->streamGenerated(request.localId(), streamLabel);
+    }
+}
+
+void MediaStreamController::streamGenerationFailed(int controllerRequestId, NavigatorUserMediaError::ErrorCode code)
+{
+    // Don't assert since the frame controller can have been destroyed while the request reply was coming back.
+    if (m_requests.contains(controllerRequestId)) {
+        const Request& request = m_requests.get(controllerRequestId);
+        m_requests.remove(controllerRequestId);
+        request.frameController()->streamGenerationFailed(request.localId(), code);
+    }
 }
 
 } // namespace WebCore

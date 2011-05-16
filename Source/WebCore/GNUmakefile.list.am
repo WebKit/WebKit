@@ -2135,6 +2135,7 @@ webcore_sources += \
 	Source/WebCore/page/AdjustViewSizeOrNot.h \
 	Source/WebCore/page/BarInfo.cpp \
 	Source/WebCore/page/BarInfo.h \
+	Source/WebCore/page/CallbackTask.h \
 	Source/WebCore/page/Chrome.cpp \
 	Source/WebCore/page/Chrome.h \
 	Source/WebCore/page/ChromeClient.h \

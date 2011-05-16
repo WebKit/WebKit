@@ -1,3 +1,77 @@
+2011-05-16  Leandro Gracia Gil  <leandrogracia@chromium.org>
+
+        Reviewed by Tony Gentilcore.
+
+        Media Stream API: add local stream requests.
+        https://bugs.webkit.org/show_bug.cgi?id=60177
+
+        Add the code and messages for requesting the generation of local streams and getting the reply back.
+
+        Tests for the Media Stream API will be provided by the bug 56587.
+        One test is re-enabled with this patch.
+
+        Test: fast/dom/MediaStream/argument-types.html
+
+        * GNUmakefile.list.am:
+        * WebCore.gypi:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * page/CallbackTask.h: Added.
+        (WebCore::CallbackTask1::create):
+        (WebCore::CallbackTask1::performTask):
+        (WebCore::CallbackTask1::Scheduler::scheduleCallback):
+        (WebCore::CallbackTask1::CallbackTask1):
+        * page/MediaStreamClient.h:
+        * page/MediaStreamController.cpp:
+        (WebCore::MediaStreamController::isClientAvailable):
+        (WebCore::MediaStreamController::unregisterFrameController):
+        (WebCore::MediaStreamController::registerRequest):
+        (WebCore::MediaStreamController::registerStream):
+        (WebCore::MediaStreamController::generateStream):
+        (WebCore::MediaStreamController::streamGenerated):
+        (WebCore::MediaStreamController::streamGenerationFailed):
+        * page/MediaStreamController.h:
+        * page/MediaStreamFrameController.cpp:
+        (WebCore::MediaStreamFrameController::GenerateStreamRequest::GenerateStreamRequest):
+        (WebCore::MediaStreamFrameController::GenerateStreamRequest::~GenerateStreamRequest):
+        (WebCore::MediaStreamFrameController::GenerateStreamRequest::isGenerateStreamRequest):
+        (WebCore::MediaStreamFrameController::GenerateStreamRequest::abort):
+        (WebCore::MediaStreamFrameController::GenerateStreamRequest::successCallback):
+        (WebCore::MediaStreamFrameController::GenerateStreamRequest::errorCallback):
+        (WebCore::::unregisterAll):
+        (WebCore::::detachEmbedder):
+        (WebCore::MediaStreamFrameController::MediaStreamFrameController):
+        (WebCore::MediaStreamFrameController::pageController):
+        (WebCore::MediaStreamFrameController::unregister):
+        (WebCore::MediaStreamFrameController::enterDetachedState):
+        (WebCore::MediaStreamFrameController::isClientAvailable):
+        (WebCore::MediaStreamFrameController::disconnectFrame):
+        (WebCore::MediaStreamFrameController::parseGenerateStreamOptions):
+        (WebCore::MediaStreamFrameController::generateStream):
+        (WebCore::MediaStreamFrameController::streamGenerated):
+        (WebCore::MediaStreamFrameController::streamGenerationFailed):
+        * page/MediaStreamFrameController.h:
+        (WebCore::MediaStreamFrameController::ClientBase::ClientBase):
+        (WebCore::MediaStreamFrameController::ClientBase::~ClientBase):
+        (WebCore::MediaStreamFrameController::ClientBase::mediaStreamFrameController):
+        (WebCore::MediaStreamFrameController::ClientBase::clientId):
+        (WebCore::MediaStreamFrameController::ClientBase::isStream):
+        (WebCore::MediaStreamFrameController::ClientBase::isGeneratedStream):
+        (WebCore::MediaStreamFrameController::ClientBase::detachEmbedder):
+        (WebCore::MediaStreamFrameController::ClientBase::associateFrameController):
+        (WebCore::MediaStreamFrameController::ClientBase::unregisterClient):
+        (WebCore::MediaStreamFrameController::StreamClient::StreamClient):
+        (WebCore::MediaStreamFrameController::StreamClient::~StreamClient):
+        (WebCore::MediaStreamFrameController::StreamClient::isStream):
+        (WebCore::MediaStreamFrameController::StreamClient::unregister):
+        (WebCore::MediaStreamFrameController::IdGenerator::IdGenerator):
+        (WebCore::MediaStreamFrameController::IdGenerator::getNextId):
+        (WebCore::MediaStreamFrameController::ClientMapBase::ClientMapBase):
+        * page/Navigator.cpp:
+        (WebCore::Navigator::webkitGetUserMedia):
+        * page/NavigatorUserMediaErrorCallback.h:
+
 2011-05-16  Pavel Podivilov  <podivilov@chromium.org>
 
         Reviewed by Yury Semikhatsky.

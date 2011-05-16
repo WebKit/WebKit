@@ -24406,6 +24406,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\page\CallbackTask.h"
+				>
+			</File>
+			<File
 				RelativePath="..\page\Chrome.cpp"
 				>
 			</File>

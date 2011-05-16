@@ -22,26 +22,58 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef NavigatorUserMediaErrorCallback_h
-#define NavigatorUserMediaErrorCallback_h
+#ifndef CallbackTask_h
+#define CallbackTask_h
 
 #if ENABLE(MEDIA_STREAM)
 
-#include "CallbackTask.h"
-#include "NavigatorUserMediaError.h"
-#include <wtf/RefCounted.h>
+#include "ScriptExecutionContext.h"
+#include <wtf/Forward.h>
+#include <wtf/PassRefPtr.h>
+#include <wtf/RefPtr.h>
 
 namespace WebCore {
 
-class NavigatorUserMediaErrorCallback : public RefCounted<NavigatorUserMediaErrorCallback>,
-                                        public CallbackTask1<NavigatorUserMediaErrorCallback, NavigatorUserMediaError>::Scheduler {
+// Helper template to schedule calls to callbacks using their own script execution context.
+// CallbackType is assumed to implement Scheduler and to be reference-counted.
+template <typename CallbackType, typename ArgumentType>
+class CallbackTask1 : public ScriptExecutionContext::Task {
 public:
-    virtual ~NavigatorUserMediaErrorCallback() { }
-    virtual bool handleEvent(NavigatorUserMediaError*) = 0;
+    static PassOwnPtr<CallbackTask1> create(PassRefPtr<CallbackType> callback, PassRefPtr<ArgumentType> data)
+    {
+        return adoptPtr(new CallbackTask1(callback, data));
+    }
+
+    virtual void performTask(ScriptExecutionContext*)
+    {
+        m_callback->handleEvent(m_data.get());
+    }
+
+    class Scheduler {
+    public:
+        bool scheduleCallback(ScriptExecutionContext* context, PassRefPtr<ArgumentType> data)
+        {
+            if (context) {
+                context->postTask(CallbackTask1<CallbackType, ArgumentType>::create(static_cast<CallbackType*>(this), data));
+                return true;
+            }
+            return false;
+        }
+    };
+
+private:
+    CallbackTask1(PassRefPtr<CallbackType> callback, PassRefPtr<ArgumentType> data)
+        : m_callback(callback)
+        , m_data(data)
+    {
+    }
+
+    RefPtr<CallbackType> m_callback;
+    RefPtr<ArgumentType> m_data;
 };
 
-} // namespace WebCore
+}
 
 #endif // ENABLE(MEDIA_STREAM)
 
-#endif // NavigatorUserMediaErrorCallback_h
+#endif // CallbackTask_h

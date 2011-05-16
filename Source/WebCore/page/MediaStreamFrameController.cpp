@@ -40,6 +40,7 @@
 namespace WebCore {
 
 class MediaStreamFrameController::Request : public RefCounted<Request> {
+    WTF_MAKE_NONCOPYABLE(Request);
 public:
     Request(ScriptExecutionContext* scriptExecutionContext)
         : m_scriptExecutionContext(scriptExecutionContext) { }
@@ -58,6 +59,37 @@ private:
     ScriptExecutionContext* m_scriptExecutionContext;
 };
 
+class MediaStreamFrameController::GenerateStreamRequest : public Request {
+    WTF_MAKE_NONCOPYABLE(GenerateStreamRequest);
+public:
+    GenerateStreamRequest(ScriptExecutionContext* scriptExecutionContext,
+                          PassRefPtr<NavigatorUserMediaSuccessCallback> successCallback,
+                          PassRefPtr<NavigatorUserMediaErrorCallback> errorCallback)
+        : Request(scriptExecutionContext)
+        , m_successCallback(successCallback)
+        , m_errorCallback(errorCallback) { }
+
+    virtual ~GenerateStreamRequest() { }
+
+    virtual bool isGenerateStreamRequest() const { return true; }
+
+    virtual void abort()
+    {
+        if (m_errorCallback) {
+            RefPtr<NavigatorUserMediaError> error = adoptRef(new NavigatorUserMediaError(NavigatorUserMediaError::PERMISSION_DENIED));
+            // The callback itself is made with the JS callback's context, not with the frame's context.
+            m_errorCallback->scheduleCallback(scriptExecutionContext(), error);
+        }
+    }
+
+    PassRefPtr<NavigatorUserMediaSuccessCallback> successCallback() const { return m_successCallback; }
+    PassRefPtr<NavigatorUserMediaErrorCallback> errorCallback() const { return m_errorCallback; }
+
+private:
+    RefPtr<NavigatorUserMediaSuccessCallback> m_successCallback;
+    RefPtr<NavigatorUserMediaErrorCallback> m_errorCallback;
+};
+
 void MediaStreamFrameController::RequestMap::abort(int requestId)
 {
     get(requestId)->abort();
@@ -72,10 +104,30 @@ void MediaStreamFrameController::RequestMap::abortAll()
     }
 }
 
+template <typename T>
+void MediaStreamFrameController::ClientMapBase<T>::unregisterAll()
+{
+    while (!this->isEmpty()) {
+        T key = this->begin()->first;
+        // unregister should remove the element from the map.
+        this->begin()->second->unregister();
+        ASSERT_UNUSED(key, !this->contains(key));
+    }
+}
+
+template <typename T>
+void MediaStreamFrameController::ClientMapBase<T>::detachEmbedder()
+{
+    for (typename MapType::iterator it = this->begin(); it != this->end(); ++it)
+        it->second->detachEmbedder();
+}
+
 MediaStreamFrameController::MediaStreamFrameController(Frame* frame)
     : m_frame(frame)
     , m_isInDetachedState(false)
 {
+    if (!isClientAvailable())
+        enterDetachedState();
 }
 
 MediaStreamFrameController::~MediaStreamFrameController()
@@ -94,7 +146,13 @@ ScriptExecutionContext* MediaStreamFrameController::scriptExecutionContext() con
 
 MediaStreamController* MediaStreamFrameController::pageController() const
 {
-    return !m_isInDetachedState && m_frame && m_frame->page() ? m_frame->page()->mediaStreamController() : 0;
+    return m_frame && m_frame->page() ? m_frame->page()->mediaStreamController() : 0;
+}
+
+void MediaStreamFrameController::unregister(StreamClient* client)
+{
+    ASSERT(m_streams.contains(client->clientId()));
+    m_streams.remove(client->clientId());
 }
 
 void MediaStreamFrameController::enterDetachedState()
@@ -105,7 +163,17 @@ void MediaStreamFrameController::enterDetachedState()
     }
 
     m_requests.abortAll();
+    m_streams.detachEmbedder();
     m_isInDetachedState = true;
+}
+
+bool MediaStreamFrameController::isClientAvailable() const
+{
+    if (m_isInDetachedState)
+        return false;
+
+    MediaStreamController* controller = pageController();
+    return controller && controller->isClientAvailable();
 }
 
 // Called also when the frame is detached from the page, in which case the page controller will remain alive.
@@ -123,6 +191,7 @@ void MediaStreamFrameController::disconnectFrame()
     disconnectPage();
 
     ASSERT(m_requests.isEmpty());
+    m_streams.unregisterAll();
 
     m_frame = 0;
 }
@@ -132,6 +201,95 @@ void MediaStreamFrameController::transferToNewPage(Page*)
     // FIXME: In the future we should keep running the media stream services while transfering frames between pages.
     // However, until a proper way to do this is decided, we're shutting down services.
     disconnectPage();
+}
+
+GenerateStreamOptionFlags MediaStreamFrameController::parseGenerateStreamOptions(const String& options)
+{
+    GenerateStreamOptionFlags flags = 0;
+    Vector<String> optionList;
+    options.split(',', optionList);
+
+    for (Vector<String>::const_iterator option = optionList.begin(); option != optionList.end(); ++option) {
+        Vector<String> suboptionList;
+        option->split(' ', suboptionList);
+
+        if (suboptionList.first() == "audio")
+            flags |= GenerateStreamRequestAudio;
+        else if (suboptionList.first() == "video") {
+            bool videoSuboptions = false;
+            Vector<String>::const_iterator suboption = suboptionList.begin();
+            for (++suboption; suboption != suboptionList.end(); ++suboption)
+                if (*suboption == "user") {
+                    flags |= GenerateStreamRequestVideoFacingUser;
+                    videoSuboptions = true;
+                } else if (*suboption == "environment") {
+                    flags |= GenerateStreamRequestVideoFacingEnvironment;
+                    videoSuboptions = true;
+                }
+
+            // Ask for all kind of cameras if no suboption was specified.
+            if (!videoSuboptions)
+                flags |= GenerateStreamRequestVideoFacingUser | GenerateStreamRequestVideoFacingEnvironment;
+        }
+    }
+
+    return flags;
+}
+
+// Implements the getUserMedia method from http://www.whatwg.org/specs/web-apps/current-work/#dom-navigator-getusermedia.
+void MediaStreamFrameController::generateStream(const String& options,
+                                                PassRefPtr<NavigatorUserMediaSuccessCallback> successCallback,
+                                                PassRefPtr<NavigatorUserMediaErrorCallback> errorCallback,
+                                                ExceptionCode& ec)
+{
+    ec = 0;
+    if (!successCallback)
+        return;
+
+    GenerateStreamOptionFlags flags = parseGenerateStreamOptions(options);
+    if (!flags) {
+        ec = NOT_SUPPORTED_ERR;
+        return;
+    }
+
+    int requestId = m_requests.getNextId();
+    m_requests.add(requestId, adoptRef(new GenerateStreamRequest(scriptExecutionContext(), successCallback, errorCallback)));
+
+    if (!isClientAvailable()) {
+        // This makes sure to call the error callback if provided.
+        m_requests.abort(requestId);
+        return;
+    }
+
+    pageController()->generateStream(this, requestId, flags, securityOrigin());
+}
+
+void MediaStreamFrameController::streamGenerated(int requestId, const String& label)
+{
+    // Don't assert since the request can have been aborted as a result of embedder detachment.
+    if (m_requests.contains(requestId)) {
+        ASSERT(m_requests.get(requestId)->isGenerateStreamRequest());
+        ASSERT(!label.isNull());
+
+        // FIXME: create a GeneratedStream object and invoke the callback when the class is available.
+        m_requests.remove(requestId);
+    }
+}
+
+void MediaStreamFrameController::streamGenerationFailed(int requestId, NavigatorUserMediaError::ErrorCode code)
+{
+    // Don't assert since the request can have been aborted as a result of embedder detachment.
+    if (m_requests.contains(requestId)) {
+        ASSERT(m_requests.get(requestId)->isGenerateStreamRequest());
+
+        RefPtr<GenerateStreamRequest> streamRequest = static_cast<GenerateStreamRequest*>(m_requests.get(requestId).get());
+        m_requests.remove(requestId);
+
+        if (streamRequest->errorCallback()) {
+            RefPtr<NavigatorUserMediaError> error = adoptRef(new NavigatorUserMediaError(code));
+            streamRequest->errorCallback()->handleEvent(error.get());
+        }
+    }
 }
 
 } // namespace WebCore

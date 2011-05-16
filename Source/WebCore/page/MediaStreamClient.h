@@ -27,14 +27,27 @@
 
 #if ENABLE(MEDIA_STREAM)
 
+#include <wtf/Forward.h>
+
 namespace WebCore {
+
+class SecurityOrigin;
+
+enum GenerateStreamOptionFlag {
+    GenerateStreamRequestAudio = 1,
+    GenerateStreamRequestVideoFacingUser = 1 << 1,
+    GenerateStreamRequestVideoFacingEnvironment = 1 << 2,
+};
+
+typedef unsigned GenerateStreamOptionFlags;
 
 class MediaStreamClient {
 public:
     // Notify the embedder client about the page controller being destroyed.
     virtual void mediaStreamDestroyed() = 0;
 
-    // FIXME: add here the requests to the embedder.
+    // Generate a new local stream.
+    virtual void generateStream(int requestId, GenerateStreamOptionFlags, PassRefPtr<SecurityOrigin>) = 0;
 
 protected:
     virtual ~MediaStreamClient() { }
