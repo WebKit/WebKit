@@ -1,3 +1,14 @@
+2011-05-06  Philippe Normand  <pnormand@igalia.com>
+
+        Reviewed by Martin Robinson.
+
+        media/video-volume-slider.html causes GTK 64 bit debug bot to time out
+        https://bugs.webkit.org/show_bug.cgi?id=60055
+
+        * media/video-volume-slider.html: Use the shadow DOM tree to
+        locate the mute button and get its coordinates. This test is now
+        more port-agnostic.
+
 2011-05-12  Philippe Normand  <pnormand@igalia.com>
 
         Reviewed by Darin Adler.

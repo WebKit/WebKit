@@ -2,6 +2,7 @@
 <head>
     <title>Test rendering of volume slider of video tag</title>
     <script src=media-file.js></script>
+    <script src=media-controls.js></script>
     <script>
         var video;
 
@@ -19,9 +20,12 @@
             video.volume = 0.7;
 
             if (window.eventSender) {
-                x = video.offsetLeft + video.offsetWidth - 10;
-                y = video.offsetTop + video.offsetHeight - 10;
-                eventSender.mouseMoveTo(x, y);
+                try {
+                    muteCoords = mediaControlsButtonCoordinates(video, "mute-button");
+                } catch (exception) {
+                    layoutTestController.notifyDone();
+                }
+                eventSender.mouseMoveTo(muteCoords[0], muteCoords[1]);
             }
 
             video.addEventListener("volumechange", function() {
