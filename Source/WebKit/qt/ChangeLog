@@ -1,5 +1,18 @@
 2011-05-16  Adam Barth  <abarth@webkit.org>
 
+        Partial revert of r86537.  FullScreenVideoQt.h can't depend on OwnPtr.h
+        because moc_FullScreenVideoQt.cpp fails to include config.h.
+        Apparently, having moc_FullScreenVideoQt.cpp properly include config.h
+        is hard, so we're going back to manual new and delete for this class.
+        Bad times.
+
+        * WebCoreSupport/FullScreenVideoQt.cpp:
+        (WebCore::FullScreenVideoQt::FullScreenVideoQt):
+        (WebCore::FullScreenVideoQt::~FullScreenVideoQt):
+        * WebCoreSupport/FullScreenVideoQt.h:
+
+2011-05-16  Adam Barth  <abarth@webkit.org>
+
         Sigh.  This code is somewhat crazy.
 
         * WebCoreSupport/InspectorClientQt.cpp:

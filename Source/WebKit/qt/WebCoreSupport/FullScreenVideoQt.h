@@ -23,7 +23,6 @@
 #include "qwebkitplatformplugin.h"
 #include <QObject>
 #include <wtf/Platform.h>
-#include <wtf/OwnPtr.h>
 
 QT_BEGIN_NAMESPACE
 class QGraphicsVideoItem;
@@ -105,10 +104,10 @@ private:
     ChromeClientQt* m_chromeClient;
     HTMLVideoElement* m_videoElement;
 #if USE(QT_MULTIMEDIA)
-    OwnPtr<QWebFullScreenVideoHandler> m_FullScreenVideoHandler;
+    QWebFullScreenVideoHandler* m_FullScreenVideoHandler;
 #endif
 #if USE(GSTREAMER)
-    OwnPtr<GStreamerFullScreenVideoHandler> m_FullScreenVideoHandlerGStreamer;
+    GStreamerFullScreenVideoHandler* m_FullScreenVideoHandlerGStreamer;
 #endif
 };
 
