@@ -91,6 +91,8 @@ PASS 'Hi Bob'.match(regexp52) is ['Bob',undefined,'Bob',undefined,undefined]
 PASS regexp53.exec('#') is ['',undefined,'']
 PASS regexp54.exec('#') is ['','',undefined,undefined,'']
 PASS regexp55.exec('#') is ['','']
+PASS regexp56.exec('a') is ['','']
+PASS regexp57.exec('a') is ['a','a']
 PASS successfullyParsed is true
 
 TEST COMPLETE

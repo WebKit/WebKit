@@ -240,5 +240,11 @@ shouldBe("regexp54.exec('#')", "['','',undefined,undefined,'']");
 var regexp55 = /(?:(?:(?:a?|(?:))((?:)))|a?)/m;
 shouldBe("regexp55.exec('#')", "['','']");
 
+// Test evaluation order of empty subpattern alternatives.
+var regexp56 = /(|a)/;
+shouldBe("regexp56.exec('a')", "['','']");
+var regexp57 = /(a|)/;
+shouldBe("regexp57.exec('a')", "['a','a']");
+
 var successfullyParsed = true;
 

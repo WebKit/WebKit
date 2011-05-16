@@ -1,3 +1,19 @@
+2011-05-16  Gavin Barraclough  <barraclough@apple.com>
+
+        Rubber stamped by Geoff Garen.
+
+        https://bugs.webkit.org/show_bug.cgi?id=60866
+        Evaluation order broken for empty alternatives in subpatterns
+
+        Reverted https://bugs.webkit.org/show_bug.cgi?id=51395, and added
+        test cases for /(|a)/ and /(a|)/, to test the evaluation order of
+        subpattern matches with empty alternatives.
+
+        * fast/regex/parentheses-expected.txt:
+        * fast/regex/script-tests/parentheses.js:
+        * fast/regex/script-tests/slow.js:
+        * fast/regex/slow-expected.txt:
+
 2011-05-16  Alejandro G. Castro  <alex@igalia.com>
 
         Skipped failing test, the fail already has a bug:
