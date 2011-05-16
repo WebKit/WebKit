@@ -251,7 +251,10 @@ void GraphicsLayer::paintGraphicsLayerContents(GraphicsContext& context, const I
 String GraphicsLayer::animationNameForTransition(AnimatedPropertyID property)
 {
     // | is not a valid identifier character in CSS, so this can never conflict with a keyframe identifier.
-    return "-|transition" + static_cast<char>(property) + '-';
+    String id = "-|transition";
+    id.append(static_cast<char>(property));
+    id.append('-');
+    return id;
 }
 
 void GraphicsLayer::suspendAnimations(double)

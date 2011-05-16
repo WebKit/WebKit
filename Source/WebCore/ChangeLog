@@ -1,3 +1,10 @@
+2011-05-16  Andrew Wilson  <atwilson@chromium.org>
+
+        Unreviewed prospective build fix/workaround for chromium ARM compiler error.
+
+        * platform/graphics/GraphicsLayer.cpp:
+        (WebCore::GraphicsLayer::animationNameForTransition):
+
 2011-05-16  Martin Robinson  <mrobinson@igalia.com>
 
         Reviewed by Anders Carlsson.
