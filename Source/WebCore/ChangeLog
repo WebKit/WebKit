@@ -1,3 +1,27 @@
+2011-05-13  Jer Noble  <jer.noble@apple.com>
+
+        Reviewed by Simon Fraser.
+
+        Video is blank, controller is misplaced on trailers.apple.com movie in fullscreen (with two screens)
+        https://bugs.webkit.org/show_bug.cgi?id=60826
+
+        Listen for a WebKitLayerHostChanged notification and, if the affected layer is an
+        ancestor layer of the qtMovieLayer, tear down the layer and recreate it the
+        next time setVisible(true) is called.
+
+        * dom/Document.cpp:
+        (WebCore::Document::webkitDidEnterFullScreenForElement):  Call setFullScreenRootLayer(0) 
+            before disabling animation on the full screen renderer.
+        * platform/graphics/mac/MediaPlayerPrivateQTKit.h:
+        * platform/graphics/mac/MediaPlayerPrivateQTKit.mm:
+        (WebCore::MediaPlayerPrivateQTKit::createQTMovie): Register an observer for the new 
+            WebKitLayerHostChanged notification.
+        (WebCore::layerIsDescendentOf): Added.
+        (WebCore::MediaPlayerPrivateQTKit::layerHostChanged): Added.  If the changed
+            layer is an ancestor of the movie layer, tear down rendering and re-
+            create the next time setVisible(true) is called.
+        (-[WebCoreMovieObserver layerHostChanged:]):  Added ObjC listener wrapper.
+
 2011-05-16  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Darin Adler.

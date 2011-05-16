@@ -1,3 +1,29 @@
+2011-05-13  Jer Noble  <jer.noble@apple.com>
+
+        Reviewed by Simon Fraser.
+
+        Video is blank, controller is misplaced on trailers.apple.com movie in fullscreen (with two screens)
+        https://bugs.webkit.org/show_bug.cgi?id=60826
+
+        Emit a notification when moving a CALayer from the WebProcess's main
+        layer host to a new context.  This allows listeners to invalidate their
+        layers which may not support moving between different CAContexts (as is
+        the case with QTMovieLayer).  In order to allow listeners to determine if they
+        are affected, the notification will pass the root CALayer in a userInfo
+        dictionary.
+
+        In WebFullScreenManagerMac, move from storing a pointer to a non-refcounted
+        class (GraphicsLayer) to a retainable class (PlatformLayer).
+
+        * WebProcess/FullScreen/mac/WebFullScreenManagerMac.h:
+        * WebProcess/FullScreen/mac/WebFullScreenManagerMac.mm:
+        (WebKit::WebFullScreenManagerMac::WebFullScreenManagerMac): No need to initialize
+            m_fullScreenRootLayer now that it is a RetainPtr<>.
+        (WebKit::WebFullScreenManagerMac::setRootFullScreenLayer): Emit a notification
+            after either creating or destroying the full screen layer host.
+        (WebKit::WebFullScreenManagerMac::beginEnterFullScreenAnimation):
+        (WebKit::WebFullScreenManagerMac::beginExitFullScreenAnimation):
+
 2011-05-16  Siddharth Mathur  <siddharth.mathur@nokia.com>
 
         Rubber-stamped by Csaba Osztrogonác.

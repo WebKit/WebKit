@@ -31,6 +31,7 @@
 #import "LayerTreeContext.h"
 #import "WebFullScreenManager.h"
 
+#import <WebCore/GraphicsLayer.h>
 #import <WebCore/IntRect.h>
 #import <wtf/RetainPtr.h>
 
@@ -53,7 +54,7 @@ private:
     virtual void beginExitFullScreenAnimation(float duration);
 
     OwnPtr<WebCore::GraphicsLayer> m_rootLayer;
-    WebCore::GraphicsLayer* m_fullScreenRootLayer;
+    RetainPtr<PlatformLayer> m_fullScreenRootLayer;
     LayerTreeContext m_layerTreeContext;
     RetainPtr<WKCARemoteLayerClientRef> m_remoteLayerClient;
     RetainPtr<id> m_enterFullScreenListener;

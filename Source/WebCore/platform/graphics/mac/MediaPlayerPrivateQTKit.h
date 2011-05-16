@@ -68,6 +68,9 @@ public:
     void sizeChanged();
     void timeChanged();
     void didEnd();
+#if USE(ACCELERATED_COMPOSITING)
+    void layerHostChanged(PlatformLayer* rootLayer);
+#endif
 
 private:
     MediaPlayerPrivateQTKit(MediaPlayer*);

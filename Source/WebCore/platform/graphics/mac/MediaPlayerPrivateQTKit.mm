@@ -170,6 +170,7 @@ using namespace std;
 -(void)sizeChanged:(NSNotification *)notification;
 -(void)timeChanged:(NSNotification *)notification;
 -(void)didEnd:(NSNotification *)notification;
+-(void)layerHostChanged:(NSNotification *)notification;
 @end
 
 @protocol WebKitVideoRenderingDetails
@@ -403,6 +404,12 @@ void MediaPlayerPrivateQTKit::createQTMovie(NSURL *url, NSDictionary *movieAttri
                                              selector:@selector(didEnd:) 
                                                  name:QTMovieDidEndNotification 
                                                object:m_qtMovie.get()];
+#if defined(BUILDING_ON_SNOW_LEOPARD)
+    [[NSNotificationCenter defaultCenter] addObserver:m_objcObserver.get()
+                                             selector:@selector(layerHostChanged:)
+                                                 name:@"WebKitLayerHostChanged"
+                                               object:nil];
+#endif
 }
 
 static void mainThreadSetNeedsDisplay(id self, SEL)
@@ -1205,6 +1212,40 @@ void MediaPlayerPrivateQTKit::didEnd()
     m_player->timeChanged();
 }
 
+#if USE(ACCELERATED_COMPOSITING)
+static bool layerIsDescendentOf(PlatformLayer* child, PlatformLayer* descendent)
+{
+    if (!child || !descendent)
+        return false;
+
+    do {
+        if (child == descendent)
+            return true;
+    } while((child = [child superlayer]));
+
+    return false;
+}
+
+void MediaPlayerPrivateQTKit::layerHostChanged(PlatformLayer* rootLayer)
+{
+#if defined(BUILDING_ON_SNOW_LEOPARD)
+    if (!rootLayer)
+        return;
+
+    if (layerIsDescendentOf(m_qtVideoLayer.get(), rootLayer)) {
+        // We own a child layer of a layer which has switched contexts.  
+        // Tear down our layer, and set m_visible to false, so that the 
+        // next time setVisible(true) is called, the layer will be re-
+        // created in the correct context.
+        tearDownVideoRendering();
+        m_visible = false;
+    }
+#else
+    UNUSED_PARAM(rootLayer);
+#endif
+}
+#endif
+
 void MediaPlayerPrivateQTKit::setSize(const IntSize&) 
 { 
     // Don't resize the view now because [view setFrame] also resizes the movie itself, and because
@@ -1697,6 +1738,16 @@ void MediaPlayerPrivateQTKit::setPrivateBrowsingMode(bool privateBrowsing)
 {
     UNUSED_PARAM(unusedNotification);
     [self repaint];
+}
+
+- (void)layerHostChanged:(NSNotification *)notification
+{
+#if USE(ACCELERATED_COMPOSITING)
+    CALayer* rootLayer = static_cast<CALayer*>([notification object]);
+    m_callback->layerHostChanged(rootLayer);
+#else
+    UNUSED_PARAM(notification);
+#endif
 }
 
 - (void)setDelayCallbacks:(BOOL)shouldDelay
